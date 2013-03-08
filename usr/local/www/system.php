@@ -246,17 +246,17 @@ include("head.inc");
 		print_info_box($savemsg);
 ?>
 	<form action="system.php" method="post">
-		<table width="100%" border="0" cellpadding="6" cellspacing="0">
+		<table width="100%" border="0" cellpadding="6" cellspacing="0" summary="general setup">
                         <tr>
                                 <td id="mainarea">
                                         <div class="tabcont">
-			<table width="100%" border="0" cellpadding="6" cellspacing="0">
+			<table width="100%" border="0" cellpadding="6" cellspacing="0" summary="main area">
 			<tr>
 				<td colspan="2" valign="top" class="listtopic"><?=gettext("System"); ?></td>
 			</tr>
 			<tr>
 				<td width="22%" valign="top" class="vncellreq"><?=gettext("Hostname"); ?></td>
-				<td width="78%" class="vtable"> <input name="hostname" type="text" class="formfld unknown" id="hostname" size="40" value="<?=htmlspecialchars($pconfig['hostname']);?>">
+				<td width="78%" class="vtable"> <input name="hostname" type="text" class="formfld unknown" id="hostname" size="40" value="<?=htmlspecialchars($pconfig['hostname']);?>" />
 					<br/>
 					<span class="vexpl">
 						<?=gettext("Name of the firewall host, without domain part"); ?>
@@ -267,7 +267,7 @@ include("head.inc");
 			</tr>
 			<tr>
 				<td width="22%" valign="top" class="vncellreq"><?=gettext("Domain"); ?></td>
-				<td width="78%" class="vtable"> <input name="domain" type="text" class="formfld unknown" id="domain" size="40" value="<?=htmlspecialchars($pconfig['domain']);?>">
+				<td width="78%" class="vtable"> <input name="domain" type="text" class="formfld unknown" id="domain" size="40" value="<?=htmlspecialchars($pconfig['domain']);?>" />
 					<br/>
 					<span class="vexpl">
 						<?=gettext("Do not use 'local' as a domain name. It will cause local hosts running mDNS (avahi, bonjour, etc.) to be unable to resolve local hosts not running mDNS."); ?>
@@ -279,8 +279,8 @@ include("head.inc");
 			<tr>
 				<td width="22%" valign="top" class="vncell"><?=gettext("DNS servers"); ?></td>
 				<td width="78%" class="vtable">
-					<p>
-						<table>
+						<br/>
+						<table summary="dns servers and gateways">
 							<tr>
 								<td><b><?=gettext("DNS Server"); ?></b></td>
 								<?php if ($multiwan): ?>
@@ -293,7 +293,7 @@ include("head.inc");
 							?>
 							<tr>
 								<td>
-									<input name="dns<?php echo $dnscounter;?>" type="text" class="formfld unknown" id="dns<?php echo $dnscounter;?>" size="28" value="<?php echo $pconfig['dns'.$dnscounter];?>">
+									<input name="dns<?php echo $dnscounter;?>" type="text" class="formfld unknown" id="dns<?php echo $dnscounter;?>" size="28" value="<?php echo $pconfig['dns'.$dnscounter];?>" />
 								</td>
 								<td>
 <?php if ($multiwan): ?>
@@ -302,13 +302,13 @@ include("head.inc");
 											$gwname = "none";
 											$dnsgw = "dns{$dnscounter}gw";
 											if($pconfig[$dnsgw] == $gwname) {
-												$selected = "selected";
+												$selected = "selected=\"selected\"";
 											} else {
 												$selected = "";
 											}
 											echo "<option value='$gwname' $selected>$gwname</option>\n";
 											foreach($arr_gateways as $gwname => $gwitem) {
-												echo $pconfig[$dnsgw];
+												//echo $pconfig[$dnsgw];
 												if((is_ipaddrv4(lookup_gateway_ip_by_name($pconfig[$dnsgw])) && (is_ipaddrv6($gwitem['gateway'])))) {
 													continue;
 												}
@@ -316,12 +316,11 @@ include("head.inc");
 													continue;
 												}
 												if($pconfig[$dnsgw] == $gwname) {
-													$selected = "selected";
+													$selected = "selected=\"selected\"";
 												} else {
 													$selected = "";
 												}
-												echo "<option value='$gwname' $selected>$gwname - {$gwitem['friendlyiface']} - {$gwitem['gateway']}
-</option>\n";
+												echo "<option value='$gwname' $selected>$gwname - {$gwitem['friendlyiface']} - {$gwitem['gateway']}</option>\n";
 											}
 										?>
 									</select>
@@ -330,7 +329,7 @@ include("head.inc");
 							</tr>
 							<?php endfor; ?>
 						</table>
-						<br>
+						<br />
 						<span class="vexpl">
 							<?=gettext("Enter IP addresses to by used by the system for DNS resolution." .
 							"These are also used for the DHCP service, DNS forwarder and for PPTP VPN clients."); ?>
@@ -342,7 +341,7 @@ include("head.inc");
 							<br/>
 							<?php endif; ?>
 							<br/>
-							<input name="dnsallowoverride" type="checkbox" id="dnsallowoverride" value="yes" <?php if ($pconfig['dnsallowoverride']) echo "checked"; ?>>
+							<input name="dnsallowoverride" type="checkbox" id="dnsallowoverride" value="yes" <?php if ($pconfig['dnsallowoverride']) echo "checked=\"checked\""; ?> />
 							<strong>
 								<?=gettext("Allow DNS server list to be overridden by DHCP/PPP on WAN"); ?>
 							</strong>
@@ -354,7 +353,7 @@ include("head.inc");
 							"VPN clients."), $g['product_name']); ?>
 							<br />
 							<br />
-							<input name="dnslocalhost" type="checkbox" id="dnslocalhost" value="yes" <?php if ($pconfig['dnslocalhost']) echo "checked"; ?> />
+							<input name="dnslocalhost" type="checkbox" id="dnslocalhost" value="yes" <?php if ($pconfig['dnslocalhost']) echo "checked=\"checked\""; ?> />
 							<strong>
 								<?=gettext("Do not use the DNS Forwarder as a DNS server for the firewall"); ?>
 							</strong>
@@ -362,7 +361,6 @@ include("head.inc");
 							<?=gettext("By default localhost (127.0.0.1) will be used as the first DNS server where the DNS forwarder is enabled, so system can use the DNS forwarder to perform lookups. ".
 							"Checking this box omits localhost from the list of DNS servers."); ?>
 						</span>
-					</p>
 				</td>
 			</tr>
 			<tr>
@@ -371,7 +369,7 @@ include("head.inc");
 					<select name="timezone" id="timezone">
 						<?php foreach ($timezonelist as $value): ?>
 						<?php if(strstr($value, "GMT")) continue; ?>
-						<option value="<?=htmlspecialchars($value);?>" <?php if ($value == $pconfig['timezone']) echo "selected"; ?>>
+						<option value="<?=htmlspecialchars($value);?>" <?php if ($value == $pconfig['timezone']) echo "selected=\"selected\""; ?>>
 							<?=htmlspecialchars($value);?>
 						</option>
 						<?php endforeach; ?>
@@ -386,7 +384,7 @@ include("head.inc");
 			<tr>
 				<td width="22%" valign="top" class="vncell">Time update interval</td>
 				<td width="78%" class="vtable">
-					<input name="timeupdateinterval" type="text" class="formfld unknown" id="timeupdateinterval" size="4" value="<?=htmlspecialchars($pconfig['timeupdateinterval']);?>">
+					<input name="timeupdateinterval" type="text" class="formfld unknown" id="timeupdateinterval" size="4" value="<?=htmlspecialchars($pconfig['timeupdateinterval']);?>" />
 					<br/>
 					<span class="vexpl">
 						Minutes between network time sync. 300 recommended,
@@ -398,7 +396,7 @@ include("head.inc");
 			<tr>
 				<td width="22%" valign="top" class="vncell"><?=gettext("NTP time server"); ?></td>
 				<td width="78%" class="vtable">
-					<input name="timeservers" type="text" class="formfld unknown" id="timeservers" size="40" value="<?=htmlspecialchars($pconfig['timeservers']);?>">
+					<input name="timeservers" type="text" class="formfld unknown" id="timeservers" size="40" value="<?=htmlspecialchars($pconfig['timeservers']);?>" />
 					<br/>
 					<span class="vexpl">
 						<?=gettext("Use a space to separate multiple hosts (only one " .
@@ -413,7 +411,7 @@ include("head.inc");
 					<select name="language">
 						<?php
 						foreach(get_locale_list() as $lcode => $ldesc) {
-							$selected = ' selected';
+							$selected = ' selected="selected"';
 							if($lcode != $pconfig['language'])
 								$selected = '';
 							echo "<option value=\"{$lcode}\"{$selected}>{$ldesc}</option>";
@@ -448,7 +446,7 @@ include("head.inc");
 									$curtheme = $config['theme'];
 								$selected = "";
 								if($f == $curtheme)
-									$selected = " SELECTED";
+									$selected = " selected=\"selected\"";
 						?>
 						<option <?=$selected;?>><?=$f;?></option>
 						<?php endforeach; ?>
@@ -466,7 +464,7 @@ include("head.inc");
 			<tr>
 				<td width="22%" valign="top">&nbsp;</td>
 				<td width="78%">
-					<input name="Submit" type="submit" class="formbtn" value="<?=gettext("Save");?>">
+					<input name="Submit" type="submit" class="formbtn" value="<?=gettext("Save");?>" />
 				</td>
 			</tr>
 		</table>

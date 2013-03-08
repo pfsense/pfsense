@@ -2928,7 +2928,8 @@ function interface_configure($interface = "wan", $reloadall = false, $linkupeven
 				if (empty($parentmtu))
 					$parentmtu = interface_vlan_mtu_configured($realhwif, $wancfg['mtu']);
 				if ($wancfg['mtu'] > $parentmtu) {
-					pfSense_interface_mtu($realhwif, $wancfg['mtu']);
+					if (get_interface_mtu($realhwif) != $wancfg['mtu'])
+						pfSense_interface_mtu($realhwif, $wancfg['mtu']);
 
 					/* All vlans need to use the same mtu value as their parent. */
 					foreach ($vlanifs as $vlan) {
@@ -2937,9 +2938,9 @@ function interface_configure($interface = "wan", $reloadall = false, $linkupeven
 						$assignedport = convert_real_interface_to_friendly_interface_name($vlan['vlanif']);
 						if (!empty($assignedport)) {
 							$portmtu = $config['interfaces'][$assignedport]['mtu'];
-							if (empty($portmtu))
+							if (empty($portmtu) && (get_interface_mtu($vlan['vlanif']) != $wancfg['mtu']))
 								pfSense_interface_mtu($vlan['vlanif'], $wancfg['mtu']);
-						} else
+						} else if (get_interface_mtu($vlan['vlanif']) != $wancfg['mtu'])
 							pfSense_interface_mtu($vlan['vlanif'], $wancfg['mtu']);
 					}
 				}
@@ -2955,9 +2956,9 @@ function interface_configure($interface = "wan", $reloadall = false, $linkupeven
 					$assignedport = convert_real_interface_to_friendly_interface_name($vlan['vlanif']);
 					if (!empty($assignedport)) {
 						$portmtu = $config['interfaces'][$assignedport]['mtu'];
-						if (empty($portmtu))
+						if (empty($portmtu) && (get_interface_mtu($vlan['vlanif']) != $mtu))
 							pfSense_interface_mtu($vlan['vlanif'], $mtu);
-					} else
+					} else if (get_interface_mtu($vlan['vlanif']) != $mtu)
 						pfSense_interface_mtu($vlan['vlanif'], $mtu);
 				}
 
@@ -2967,11 +2968,12 @@ function interface_configure($interface = "wan", $reloadall = false, $linkupeven
 		} else {
 			foreach ($vlanifs as $vlan) {
 				$assignedport = convert_real_interface_to_friendly_interface_name($vlan['vlanif']);
-				if (empty($assignedport))
-					pfSense_interface_mtu($vlan['vlanif'], $wancfg['mtu']);
-				else {
+				if (empty($assignedport)) {
+					if (get_interface_mtu($vlan['vlanif']) != $wancfg['mtu'])
+						pfSense_interface_mtu($vlan['vlanif'], $wancfg['mtu']);
+				} else {
 					$vlanmtu = $config['interfaces'][$assignedport]['mtu'];
-					if (empty($vlanmtu) || ($vlanmtu > $wancfg['mtu']))
+					if ((empty($vlanmtu) || ($vlanmtu > $wancfg['mtu'])) && (get_interface_mtu($vlan['vlanif']) != $wancfg['mtu']))
 						pfSense_interface_mtu($vlan['vlanif'], $wancfg['mtu']);
 				}
 			}
@@ -2983,7 +2985,9 @@ function interface_configure($interface = "wan", $reloadall = false, $linkupeven
 		$bigmtu = interface_vlan_mtu_configured($realhwif, $mtu);
 		if ($mtu < $bigmtu)
 			$mtu = $bigmtu;
-		pfSense_interface_mtu($realhwif, $mtu);
+
+		if (get_interface_mtu($realhwif) != $mtu)
+			pfSense_interface_mtu($realhwif, $mtu);
 
 		/* All vlans need to use the same mtu value as their parent. */
 		foreach ($vlanifs as $vlan) {
@@ -2992,21 +2996,22 @@ function interface_configure($interface = "wan", $reloadall = false, $linkupeven
 			$assignedport = convert_real_interface_to_friendly_interface_name($vlan['vlanif']);
 			if (!empty($assignedport)) {
 				$portmtu = $config['interfaces'][$assignedport]['mtu'];
-				if (empty($portmtu))
+				if (empty($portmtu) && (get_interface_mtu($vlan['vlanif']) != $mtu))
 					pfSense_interface_mtu($vlan['vlanif'], $mtu);
-			} else
+			} else if (get_interface_mtu($vlan['vlanif']) != $mtu)
 				pfSense_interface_mtu($vlan['vlanif'], $mtu);
 		}
-		pfSense_interface_mtu($realif, $mtu);
+		if (get_interface_mtu($realif) != $mtu)
+			pfSense_interface_mtu($realif, $mtu);
 	} else {
 		/* All vlans need to use the same mtu value as their parent. */
 		foreach ($vlanifs as $vlan) {
 			$assignedport = convert_real_interface_to_friendly_interface_name($vlan['vlanif']);
 			if (!empty($assignedport)) {
 				$portmtu = $config['interfaces'][$assignedport]['mtu'];
-				if (empty($portmtu))
+				if (empty($portmtu) && (get_interface_mtu($vlan['vlanif']) != $mtu))
 					pfSense_interface_mtu($vlan['vlanif'], $mtu);
-			} else
+			} else if (get_interface_mtu($vlan['vlanif']) != $mtu)
 				pfSense_interface_mtu($vlan['vlanif'], $mtu);
 		}
 		if ($mtu != get_interface_mtu($realhwif))

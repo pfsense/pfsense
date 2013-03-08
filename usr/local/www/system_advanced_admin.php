@@ -246,8 +246,8 @@ include("head.inc");
 
 <body link="#0000CC" vlink="#0000CC" alink="#0000CC">
 <?php include("fbegin.inc"); ?>
-<script language="JavaScript">
-<!--
+<script type="text/javascript">
+//<![CDATA[
 
 function prot_change() {
 
@@ -257,7 +257,7 @@ function prot_change() {
 		document.getElementById("ssl_opts").style.display="none";
 }
 
-//-->
+//]]>
 </script>
 <?php
 	if ($input_errors)
@@ -266,7 +266,7 @@ function prot_change() {
 		print_info_box($savemsg);
 ?>
 	<form action="system_advanced_admin.php" method="post" name="iform" id="iform">
-		<table width="100%" border="0" cellpadding="0" cellspacing="0">
+		<table width="100%" border="0" cellpadding="0" cellspacing="0" summary="system advanced admin">
 			<tr>
 				<td>
 					<?php
@@ -286,13 +286,13 @@ function prot_change() {
 					<div class="tabcont">
 						<span class="vexpl">
 							<span class="red">
-								<strong><?=gettext("NOTE:"); ?>&nbsp</strong>
+								<strong><?=gettext("NOTE:"); ?>&nbsp;</strong>
 							</span>
 							<?=gettext("The options on this page are intended for use by advanced users only."); ?>
 							<br/>
 						</span>
 						<br/>
-						<table width="100%" border="0" cellpadding="6" cellspacing="0">
+						<table width="100%" border="0" cellpadding="6" cellspacing="0" summary="main area">
 							<tr>
 								<td colspan="2" valign="top" class="listtopic"><?=gettext("webConfigurator"); ?></td>
 							</tr>
@@ -301,16 +301,16 @@ function prot_change() {
 								<td width="78%" class="vtable">
 									<?php
 										if ($pconfig['webguiproto'] == "http")
-											$http_chk = "checked";
+											$http_chk = "checked=\"checked\"";
 										if ($pconfig['webguiproto'] == "https")
-											$https_chk = "checked";
+											$https_chk = "checked=\"checked\"";
 										if (!$certs_available)
-											$https_disabled = "disabled";
+											$https_disabled = "disabled=\"disabled\"";
 									?>
-									<input name="webguiproto" id="http_proto" type="radio" value="http" <?=$http_chk;?> onClick="prot_change()">
+									<input name="webguiproto" id="http_proto" type="radio" value="http" <?=$http_chk;?> onclick="prot_change()" />
 									<?=gettext("HTTP"); ?>
 									&nbsp;&nbsp;&nbsp;
-									<input name="webguiproto" id="https_proto" type="radio" value="https" <?=$https_chk;?> <?=$https_disabled;?> onClick="prot_change()">
+									<input name="webguiproto" id="https_proto" type="radio" value="https" <?=$https_chk;?> <?=$https_disabled;?> onclick="prot_change()" />
 									<?=gettext("HTTPS"); ?>
 									<?php if (!$certs_available): ?>
 									<br/>
@@ -328,7 +328,7 @@ function prot_change() {
 											foreach($a_cert as $cert):
 												$selected = "";
 												if ($pconfig['ssl-certref'] == $cert['refid'])
-													$selected = "selected";
+													$selected = "selected=\"selected\"";
 										?>
 										<option value="<?=$cert['refid'];?>"<?=$selected;?>><?=$cert['descr'];?></option>
 										<?php endforeach; ?>
@@ -338,8 +338,8 @@ function prot_change() {
 							<tr>
 								<td valign="top" class="vncell"><?=gettext("TCP port"); ?></td>
 								<td class="vtable">
-									<input name="webguiport" type="text" class="formfld unknown" id="webguiport" "size="5" value="<?=htmlspecialchars($config['system']['webgui']['port']);?>">
-									<br>
+									<input name="webguiport" type="text" class="formfld unknown" id="webguiport" size="5" value="<?=htmlspecialchars($config['system']['webgui']['port']);?>" />
+									<br />
 									<span class="vexpl">
 										<?=gettext("Enter a custom port number for the webConfigurator " .
 										"above if you want to override the default (80 for HTTP, 443 " .
@@ -350,8 +350,8 @@ function prot_change() {
 							<tr>
 								<td valign="top" class="vncell"><?=gettext("Max Processes"); ?></td>
 								<td class="vtable">
-									<input name="max_procs" type="text" class="formfld unknown" id="max_procs" "size="5" value="<?=htmlspecialchars($pconfig['max_procs']);?>">
-									<br>
+									<input name="max_procs" type="text" class="formfld unknown" id="max_procs" size="5" value="<?=htmlspecialchars($pconfig['max_procs']);?>" />
+									<br />
 									<span class="vexpl">
 										<?=gettext("Enter the number of webConfigurator processes you " .
 										"want to run. This defaults to 2. Increasing this will allow more " .
@@ -362,7 +362,7 @@ function prot_change() {
 							<tr>
 								<td width="22%" valign="top" class="vncell"><?=gettext("WebGUI redirect"); ?></td>
 								<td width="78%" class="vtable">
-									<input name="disablehttpredirect" type="checkbox" id="disablehttpredirect" value="yes" <?php if ($pconfig['disablehttpredirect']) echo "checked"; ?> />
+									<input name="disablehttpredirect" type="checkbox" id="disablehttpredirect" value="yes" <?php if ($pconfig['disablehttpredirect']) echo "checked=\"checked\""; ?> />
 									<strong><?=gettext("Disable webConfigurator redirect rule"); ?></strong>
 									<br/>
 									<?php echo gettext("When this is unchecked, access to the webConfigurator " .
@@ -374,7 +374,7 @@ function prot_change() {
 							<tr>
 								<td width="22%" valign="top" class="vncell"><?=gettext("WebGUI Login Autocomplete"); ?></td>
 								<td width="78%" class="vtable">
-									<input name="noautocomplete" type="checkbox" id="noautocomplete" value="yes" <?php if ($pconfig['noautocomplete']) echo "checked"; ?> />
+									<input name="noautocomplete" type="checkbox" id="noautocomplete" value="yes" <?php if ($pconfig['noautocomplete']) echo "checked=\"checked\""; ?> />
 									<strong><?=gettext("Disable webConfigurator login autocomplete"); ?></strong>
 									<br/>
 									<?php echo gettext("When this is unchecked, login credentials for the webConfigurator " .
@@ -386,7 +386,7 @@ function prot_change() {
 							<tr>
 								<td width="22%" valign="top" class="vncell"><?=gettext("WebGUI login messages"); ?></td>
 								<td width="78%" class="vtable">
-									<input name="quietlogin" type="checkbox" id="quietlogin" value="yes" <?php if ($pconfig['quietlogin']) echo "checked"; ?> />
+									<input name="quietlogin" type="checkbox" id="quietlogin" value="yes" <?php if ($pconfig['quietlogin']) echo "checked=\"checked\""; ?> />
 									<strong><?=gettext("Disable logging of webConfigurator successful logins"); ?></strong>
 									<br/>
 									<?php echo gettext("When this is checked, successful logins to the webConfigurator " .
@@ -403,7 +403,7 @@ function prot_change() {
 										else 
 											$lockout_interface = "WAN";
 									?>
-									<input name="noantilockout" type="checkbox" id="noantilockout" value="yes" <?php if ($pconfig['noantilockout']) echo "checked"; ?> />
+									<input name="noantilockout" type="checkbox" id="noantilockout" value="yes" <?php if ($pconfig['noantilockout']) echo "checked=\"checked\""; ?> />
 									<strong><?=gettext("Disable webConfigurator anti-lockout rule"); ?></strong>
 									<br/>
 									<?php printf(gettext("When this is unchecked, access to the webConfigurator " .
@@ -418,7 +418,7 @@ function prot_change() {
 							<tr>
 								<td width="22%" valign="top" class="vncell"><?=gettext("DNS Rebind Check"); ?></td>
 								<td width="78%" class="vtable">
-									<input name="nodnsrebindcheck" type="checkbox" id="nodnsrebindcheck" value="yes" <?php if ($pconfig['nodnsrebindcheck']) echo "checked"; ?> />
+									<input name="nodnsrebindcheck" type="checkbox" id="nodnsrebindcheck" value="yes" <?php if ($pconfig['nodnsrebindcheck']) echo "checked=\"checked\""; ?> />
 									<strong><?=gettext("Disable DNS Rebinding Checks"); ?></strong>
 									<br/>
 									<?php echo gettext("When this is unchecked, your system " .
@@ -441,13 +441,13 @@ function prot_change() {
 							<tr>
 								<td width="22%" valign="top" class="vncell"><?=gettext("Browser HTTP_REFERER enforcement"); ?></td>
 								<td width="78%" class="vtable">
-									<input name="nohttpreferercheck" type="checkbox" id="nohttpreferercheck" value="yes" <?php if ($pconfig['nohttpreferercheck']) echo "checked"; ?> />
+									<input name="nohttpreferercheck" type="checkbox" id="nohttpreferercheck" value="yes" <?php if ($pconfig['nohttpreferercheck']) echo "checked=\"checked\""; ?> />
 									<strong><?=gettext("Disable HTTP_REFERER enforcement check"); ?></strong>
 									<br/>
 									<?php echo gettext("When this is unchecked, access to the webConfigurator " .
 									"is protected against HTTP_REFERER redirection attempts. " .
 									"Check this box to disable this protection if you find that it interferes with " .
-									"webConfigurator access in certain corner cases such as using external scripts to interact with this system. More information on HTTP_REFERER is available from <a target='_new' href='http://en.wikipedia.org/wiki/HTTP_referrer'>Wikipedia</a>."); ?>
+									"webConfigurator access in certain corner cases such as using external scripts to interact with this system. More information on HTTP_REFERER is available from <a target='_blank' href='http://en.wikipedia.org/wiki/HTTP_referrer'>Wikipedia</a>."); ?>
 								</td>
 							</tr>
 							<tr>
@@ -459,14 +459,14 @@ function prot_change() {
 							<tr>
 								<td width="22%" valign="top" class="vncell"><?=gettext("Secure Shell Server"); ?></td>
 								<td width="78%" class="vtable">
-									<input name="enablesshd" type="checkbox" id="enablesshd" value="yes" <?php if (isset($pconfig['enablesshd'])) echo "checked"; ?> />
+									<input name="enablesshd" type="checkbox" id="enablesshd" value="yes" <?php if (isset($pconfig['enablesshd'])) echo "checked=\"checked\""; ?> />
 									<strong><?=gettext("Enable Secure Shell"); ?></strong>
 								</td>
 							</tr>
 							<tr>
 								<td width="22%" valign="top" class="vncell"><?=gettext("Authentication Method"); ?></td>
 								<td width="78%" class="vtable">
-									<input name="sshdkeyonly" type="checkbox" id="sshdkeyonly" value="yes" <?php if ($pconfig['sshdkeyonly']) echo "checked"; ?> />
+									<input name="sshdkeyonly" type="checkbox" id="sshdkeyonly" value="yes" <?php if ($pconfig['sshdkeyonly']) echo "checked=\"checked\""; ?> />
 									<strong><?=gettext("Disable password login for Secure Shell (RSA/DSA key only)"); ?></strong>
 									<br/>
 									<?=gettext("When enabled, authorized keys need to be configured for each"); ?>
@@ -492,7 +492,7 @@ function prot_change() {
 							<tr>
 								<td width="22%" valign="top" class="vncell"><?=gettext("Serial Terminal"); ?></td>
 								<td width="78%" class="vtable">
-									<input name="enableserial" type="checkbox" id="enableserial" value="yes" <?php if (isset($pconfig['enableserial'])) echo "checked"; ?> />
+									<input name="enableserial" type="checkbox" id="enableserial" value="yes" <?php if (isset($pconfig['enableserial'])) echo "checked=\"checked\""; ?> />
 									<strong><?=gettext("Enables the first serial port with 9600/8/N/1 by default, or another speed selectable below."); ?></strong>
 									<span class="vexpl"><?=gettext("Note:  This will redirect the console output and messages to the serial port. You can still access the console menu from the internal video card/keyboard. A <b>null modem</b> serial cable or adapter is required to use the serial console."); ?></span>
 								</td>
@@ -502,12 +502,12 @@ function prot_change() {
 								<td width="22%" valign="top" class="vncell"><?=gettext("Serial Speed")?></td>
 								<td width="78%" class="vtable">
 									<select name="serialspeed" id="serialspeed" class="formselect">
-										<option value="9600"   <?php if ($pconfig['serialspeed'] == "9600")   echo "selected";?>>9600</option>
-										<option value="14400"  <?php if ($pconfig['serialspeed'] == "14400")  echo "selected";?>>14400</option>
-										<option value="19200"  <?php if ($pconfig['serialspeed'] == "19200")  echo "selected";?>>19200</option>
-										<option value="38400"  <?php if ($pconfig['serialspeed'] == "38400")  echo "selected";?>>38400</option>
-										<option value="57600"  <?php if ($pconfig['serialspeed'] == "57600")  echo "selected";?>>57600</option>
-										<option value="115200" <?php if ($pconfig['serialspeed'] == "115200") echo "selected";?>>115200</option>
+										<option value="9600"   <?php if ($pconfig['serialspeed'] == "9600")   echo "selected=\"selected\"";?>>9600</option>
+										<option value="14400"  <?php if ($pconfig['serialspeed'] == "14400")  echo "selected=\"selected\"";?>>14400</option>
+										<option value="19200"  <?php if ($pconfig['serialspeed'] == "19200")  echo "selected=\"selected\"";?>>19200</option>
+										<option value="38400"  <?php if ($pconfig['serialspeed'] == "38400")  echo "selected=\"selected\"";?>>38400</option>
+										<option value="57600"  <?php if ($pconfig['serialspeed'] == "57600")  echo "selected=\"selected\"";?>>57600</option>
+										<option value="115200" <?php if ($pconfig['serialspeed'] == "115200") echo "selected=\"selected\"";?>>115200</option>
 									</select> bps
 									<br/><?=gettext("Allows selection of different speeds for the serial console port."); ?>
 								</td>
@@ -521,7 +521,7 @@ function prot_change() {
 							<tr>
 								<td width="22%" valign="top" class="vncell"><?=gettext("Console menu"); ?></td>
 								<td width="78%" class="vtable">
-									<input name="disableconsolemenu" type="checkbox" id="disableconsolemenu" value="yes" <?php if ($pconfig['disableconsolemenu']) echo "checked"; ?>  />
+									<input name="disableconsolemenu" type="checkbox" id="disableconsolemenu" value="yes" <?php if ($pconfig['disableconsolemenu']) echo "checked=\"checked\""; ?>  />
 									<strong><?=gettext("Password protect the console menu"); ?></strong>
 									<br/>
 									<span class="vexpl"><?=gettext("Changes to this option will take effect after a reboot."); ?></span>
@@ -543,16 +543,16 @@ function prot_change() {
 			</tr>
 		</table>
 	</form>
-	<script language="JavaScript" type="text/javascript">
-	<!--
+	<script type="text/javascript">
+	//<![CDATA[
 		prot_change();
-	//-->
+	//]]>
 	</script>
 
 <?php include("fend.inc"); ?>
 <?php
 	if ($restart_webgui)
-		echo "<meta http-equiv=\"refresh\" content=\"20;url={$url}\">";
+		echo "<meta http-equiv=\"refresh\" content=\"20;url={$url}\" />";
 ?>
 </body>
 </html>

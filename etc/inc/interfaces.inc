@@ -2995,8 +2995,20 @@ function interface_configure($interface = "wan", $reloadall = false, $linkupeven
 				pfSense_interface_mtu($vlan['vlanif'], $mtu);
 		}
 		pfSense_interface_mtu($realif, $mtu);
-	} else if ($mtu != get_interface_mtu($realhwif))
-		pfSense_interface_mtu($realhwif, $mtu);
+	} else {
+		/* All vlans need to use the same mtu value as their parent. */
+		foreach ($vlanifs as $vlan) {
+			$assignedport = convert_real_interface_to_friendly_interface_name($vlan['vlanif']);
+			if (!empty($assignedport)) {
+				$portmtu = $config['interfaces'][$assignedport]['mtu'];
+				if (empty($portmtu))
+					pfSense_interface_mtu($vlan['vlanif'], $mtu);
+			} else
+				pfSense_interface_mtu($vlan['vlanif'], $mtu);
+		}
+		if ($mtu != get_interface_mtu($realhwif))
+			pfSense_interface_mtu($realhwif, $mtu);
+	}
 
 	unset($vlanifs);
 

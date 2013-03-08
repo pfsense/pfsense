@@ -2944,22 +2944,25 @@ function interface_configure($interface = "wan", $reloadall = false, $linkupeven
 					}
 				}
 			} else {
-				$bigmtu = interface_vlan_mtu_configured($realhwif, $wancfg['mtu']);
-				if ($wancfg['mtu'] >= $bigmtu) {
-					/* All vlans need to use the same mtu value as their parent. */
-					foreach ($vlanifs as $vlan) {
-						if ($vlan['vlanif'] == $realif)
-							continue;
-						$assignedport = convert_real_interface_to_friendly_interface_name($vlan['vlanif']);
-						if (!empty($assignedport)) {
-							$portmtu = $config['interfaces'][$assignedport]['mtu'];
-							if (empty($portmtu))
-								pfSense_interface_mtu($vlan['vlanif'], $wancfg['mtu']);
-						} else
-							pfSense_interface_mtu($vlan['vlanif'], $wancfg['mtu']);
-					}
-					pfSense_interface_mtu($realhwif, $wancfg['mtu']);
+				/* Parent is not assigned, back to default */
+				if (get_interface_mtu($realhwif) != $mtu)
+					pfSense_interface_mtu($realhwif, $mtu);
+
+				/* All vlans need to use the same mtu value as their parent. */
+				foreach ($vlanifs as $vlan) {
+					if ($vlan['vlanif'] == $realif)
+						continue;
+					$assignedport = convert_real_interface_to_friendly_interface_name($vlan['vlanif']);
+					if (!empty($assignedport)) {
+						$portmtu = $config['interfaces'][$assignedport]['mtu'];
+						if (empty($portmtu))
+							pfSense_interface_mtu($vlan['vlanif'], $mtu);
+					} else
+						pfSense_interface_mtu($vlan['vlanif'], $mtu);
 				}
+
+				if (get_interface_mtu($realif) != $wancfg['mtu'])
+					pfSense_interface_mtu($realif, $wancfg['mtu']);
 			}
 		} else {
 			foreach ($vlanifs as $vlan) {

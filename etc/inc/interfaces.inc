@@ -2966,7 +2966,7 @@ function interface_configure($interface = "wan", $reloadall = false, $linkupeven
 		} else {
 			$vlanifs = link_interface_to_vlans($realif);
 			if (!empty($vlanifs)) {
-				foreach ($vlanifs as $vlanif) {
+				foreach ($vlanifs as $vlan) {
 					$assignedport = convert_real_interface_to_friendly_interface_name($vlan['vlanif']);
 					if (empty($assignedport))
 						pfSense_interface_mtu($vlan['vlanif'], $wancfg['mtu']);

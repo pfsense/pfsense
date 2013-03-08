@@ -2810,7 +2810,7 @@ function interface_configure($interface = "wan", $reloadall = false, $linkupeven
 	}
 
 	/* skip vlans for checksumming and polling */
-	if (!stristr($realif, "vlan") && is_array($options)) {
+	if (!stristr($realif, "_vlan") && is_array($options)) {
 		$flags = 0;
 		if(isset($config['system']['disablechecksumoffloading'])) {
 			if (isset($options['encaps']['txcsum']))
@@ -2915,7 +2915,7 @@ function interface_configure($interface = "wan", $reloadall = false, $linkupeven
 	$mtu = get_interface_default_mtu(remove_ifindex($realhwif));
 
 	if (!empty($wancfg['mtu'])) {
-		if (stristr($realif, "vlan")) {
+		if (stristr($realif, "_vlan")) {
 			$assginedparent = convert_real_interface_to_friendly_interface_name($realhwif);
 			if (!empty($assginedparent)) {
 				$parentmtu = $config['interfaces'][$assginedparent]['mtu'];

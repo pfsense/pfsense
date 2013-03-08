@@ -633,7 +633,7 @@ if ($_POST['apply']) {
 	if (($_POST['spoofmac'] && !is_macaddr($_POST['spoofmac'])))
 		$input_errors[] = gettext("A valid MAC address must be specified.");
 	if ($_POST['mtu']) {
-		if ($_POST['mtu'] < 576)
+		if ($_POST['mtu'] < 576 || $_POST['mtu'] > 9000)
 			$input_errors[] = gettext("The MTU must be greater than 576 bytes.");
 
 		if (preg_match('/_vlan[0-9]/', $wancfg['if'])) {

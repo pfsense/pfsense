@@ -350,10 +350,10 @@ function filter_configure_sync($delete_states_if_needed = true) {
 
 	if(!empty($filterdns)) {
 		@file_put_contents("{$g['varetc_path']}/filterdns.conf", $filterdns);
-		if (isvalidpid("{$g['tmp_path']}/filterdns.pid"))
-			sigkillbypid("{$g['tmp_path']}/filterdns.pid", "HUP");
+		if (is_process_running("filterdns"))
+			sigkillbyname("filterdns", "HUP");
 		else {
-			killbypid("{$g['tmp_path']}/filterdns.pid");
+			killbyname("filterdns");
 			/*
 			 * FilterDNS has three debugging levels. The default choosen is 1.
 			 * Availabe are level 2 and greater then 2.

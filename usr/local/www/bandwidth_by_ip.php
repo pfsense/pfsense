@@ -30,7 +30,7 @@ $netmask = find_interface_subnet($real_interface);
 $intsubnet = gen_subnet($intip, $netmask) . "/$netmask";
 //get the sort method
 $sort = $_GET['sort'];
-if ($sort == "out") 
+if ($sort == "bwto") 
 	{$sort_method = "-T";}
 else
 	{$sort_method = "-R";}

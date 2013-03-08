@@ -2972,9 +2972,7 @@ function interface_configure($interface = "wan", $reloadall = false, $linkupeven
 						pfSense_interface_mtu($vlan['vlanif'], $wancfg['mtu']);
 					else {
 						$vlanmtu = $config['interfaces'][$assignedport]['mtu'];
-						if (!empty($vlanmtu) && $vlanmtu < $wancfg['mtu'])
-							continue;
-						else
+						if (empty($vlanmtu) || ($vlanmtu > $wancfg['mtu']))
 							pfSense_interface_mtu($vlan['vlanif'], $wancfg['mtu']);
 					}
 				}

@@ -119,11 +119,11 @@ include("head.inc");
 <script language="javascript" type="text/javascript">
 
 function updateBandwidth(){
-    var hostinterface = jQuery("#if").val();
+	var hostinterface = jQuery("#if").val();
 	var sorting = jQuery("#sort").val();
 	var filter = jQuery("#filter").val();
 	var hostipformat = jQuery("#hostipformat").val();
-    bandwidthAjax(hostinterface, sorting, filter, hostipformat);
+	bandwidthAjax(hostinterface, sorting, filter, hostipformat);
 }
 
 function bandwidthAjax(hostinterface, sorting, filter, hostipformat) {
@@ -149,11 +149,11 @@ function bandwidthAjax(hostinterface, sorting, filter, hostipformat) {
 }
 
 function updateBandwidthHosts(data){
-    var hosts_split = data.split("|");
-    d = document;
-    //parse top ten bandwidth abuser hosts
-    for (var y=0; y<10; y++){
-        if ((y < hosts_split.length) && (hosts_split[y] != "") && (hosts_split[y] != "no info")) {
+	var hosts_split = data.split("|");
+	d = document;
+	//parse top ten bandwidth abuser hosts
+	for (var y=0; y<10; y++){
+		if ((y < hosts_split.length) && (hosts_split[y] != "") && (hosts_split[y] != "no info")) {
 			hostinfo = hosts_split[y].split(";");
 
 			//update host ip info
@@ -161,15 +161,15 @@ function updateBandwidthHosts(data){
 			var hostip = d.getElementById(HostIpID);
 			hostip.innerHTML = hostinfo[0];
 
-			//update bandwidth inbound to host
-			var hostbandwidthInID = "bandwidthin" + y;
-			var hostbandwidthin = d.getElementById(hostbandwidthInID);
-			hostbandwidthin.innerHTML = hostinfo[1] + " Bits/sec";
+			//update bandwidth from hostip
+			var hostbandwidthFromID = "bandwidthfrom" + y;
+			var hostbandwidthfrom = d.getElementById(hostbandwidthFromID);
+			hostbandwidthfrom.innerHTML = hostinfo[1] + " Bits/sec";
 
-			//update bandwidth outbound from host
-			var hostbandwidthOutID = "bandwidthout" + y;
-			var hostbandwidthOut = d.getElementById(hostbandwidthOutID);
-			hostbandwidthOut.innerHTML = hostinfo[2] + " Bits/sec";
+			//update bandwidth to hostip
+			var hostbandwidthToID = "bandwidthto" + y;
+			var hostbandwidthto = d.getElementById(hostbandwidthToID);
+			hostbandwidthto.innerHTML = hostinfo[2] + " Bits/sec";
 
 			//make the row appear if hidden
 			var rowid = "#host" + y;
@@ -177,18 +177,18 @@ function updateBandwidthHosts(data){
 				//hide rows that contain no data
 				jQuery(rowid).show(1000);
 			}
-        }
-        else
-        {
-            var rowid = "#host" + y;
-            if (jQuery(rowid).css('display') != "none"){
-                //hide rows that contain no data
-                jQuery(rowid).fadeOut(2000);
-            }
-        }
-    }
-    
-    setTimeout('updateBandwidth()', 1000);
+		}
+		else
+		{
+			var rowid = "#host" + y;
+			if (jQuery(rowid).css('display') != "none"){
+				//hide rows that contain no data
+				jQuery(rowid).fadeOut(2000);
+			}
+		}
+	}
+
+	setTimeout('updateBandwidth()', 1000);
 }
 
 
@@ -215,8 +215,8 @@ foreach ($ifdescrs as $ifn => $ifd) {
 </select>
 , Sort by: 
 <select id="sort" name="sort" class="formselect" style="z-index: -10;" onchange="document.form1.submit()">
-	<option value="">Bw In</option>
-	<option value="out"<?php if ($cursort == "out") echo " selected";?>>Bw Out</option>
+	<option value="">Bw From</option>
+	<option value="bwto"<?php if ($cursort == "bwto") echo " selected";?>>Bw To</option>
 </select>
 , Filter: 
 <select id="filter" name="filter" class="formselect" style="z-index: -10;" onchange="document.form1.submit()">
@@ -233,97 +233,97 @@ foreach ($ifdescrs as $ifn => $ifd) {
 </form>
 <p>
 <div id="niftyOutter">
-    <div id="col1" style="float: left; width: 46%; padding: 5px; position: relative;">
-        <embed src="graph.php?ifnum=<?=htmlspecialchars($curif);?>&ifname=<?=rawurlencode($ifdescrs[htmlspecialchars($curif)]);?>" type="image/svg+xml" width="<?=$width;?>" height="<?=$height;?>" pluginspage="http://www.adobe.com/svg/viewer/install/auto" />
-    </div>
-    <div id="col2" style="float: right; width: 48%; padding: 5px; position: relative;">
-        <table width="100%" border="0" cellspacing="0" cellpadding="0">
-            <tr>
-                <td class="listtopic" valign="top"><?=(($curhostipformat=="") ? gettext("Host IP") : gettext("Host Name or IP")); ?></td>
-                <td class="listtopic" valign="top"><?=gettext("Bandwidth In"); ?></td>
-                <td class="listtopic" valign="top"><?=gettext("Bandwidth Out"); ?></td>
-           </tr>
-           <tr id="host0" style="display:none">
-                <td id="hostip0" class="vncell">
-                </td>
-                <td id="bandwidthin0" class="listr">
-                </td>
-                <td id="bandwidthout0" class="listr">
-                </td>
-           </tr>
-           <tr id="host1" style="display:none">
-                <td id="hostip1" class="vncell">
-                </td>
-                <td id="bandwidthin1" class="listr">
-                </td>
-                <td id="bandwidthout1" class="listr">
-                </td>
-           </tr>
-           <tr id="host2" style="display:none">
-                <td id="hostip2" class="vncell">
-                </td>
-                <td id="bandwidthin2" class="listr">
-                </td>
-                <td id="bandwidthout2" class="listr">
-                </td>
-           </tr>
-           <tr id="host3" style="display:none">
-                <td id="hostip3" class="vncell">
-                </td>
-                <td id="bandwidthin3" class="listr">
-                </td>
-                <td id="bandwidthout3" class="listr">
-                </td>
-           </tr>
-           <tr id="host4" style="display:none">
-                <td id="hostip4" class="vncell">
-                </td>
-                <td id="bandwidthin4" class="listr">
-                </td>
-                <td id="bandwidthout4" class="listr">
-                </td>
-           </tr>
-           <tr id="host5" style="display:none">
-                <td id="hostip5" class="vncell">
-                </td>
-                <td id="bandwidthin5" class="listr">
-                </td>
-                <td id="bandwidthout5" class="listr">
-                </td>
-           </tr>
-           <tr id="host6" style="display:none">
-                <td id="hostip6" class="vncell">
-                </td>
-                <td id="bandwidthin6" class="listr">
-                </td>
-                <td id="bandwidthout6" class="listr">
-                </td>
-           </tr>
-           <tr id="host7" style="display:none">
-                <td id="hostip7" class="vncell">
-                </td>
-                <td id="bandwidthin7" class="listr">
-                </td>
-                <td id="bandwidthout7" class="listr">
-                </td>
-           </tr>
-           <tr id="host8" style="display:none">
-                <td id="hostip8" class="vncell">
-                </td>
-                <td id="bandwidthin8" class="listr">
-                </td>
-                <td id="bandwidthout8" class="listr">
-                </td>
-           </tr>
-           <tr id="host9" style="display:none">
-                <td id="hostip9" class="vncell">
-                </td>
-                <td id="bandwidthin9" class="listr">
-                </td>
-                <td id="bandwidthout9" class="listr">
-                </td>
-           </tr>
-        </table>
+	<div id="col1" style="float: left; width: 46%; padding: 5px; position: relative;">
+		<embed src="graph.php?ifnum=<?=htmlspecialchars($curif);?>&ifname=<?=rawurlencode($ifdescrs[htmlspecialchars($curif)]);?>" type="image/svg+xml" width="<?=$width;?>" height="<?=$height;?>" pluginspage="http://www.adobe.com/svg/viewer/install/auto" />
+	</div>
+	<div id="col2" style="float: right; width: 48%; padding: 5px; position: relative;">
+		<table width="100%" border="0" cellspacing="0" cellpadding="0">
+			<tr>
+				<td class="listtopic" valign="top"><?=(($curhostipformat=="") ? gettext("Host IP") : gettext("Host Name or IP")); ?></td>
+				<td class="listtopic" valign="top"><?=gettext("Bandwidth From"); ?></td>
+				<td class="listtopic" valign="top"><?=gettext("Bandwidth To"); ?></td>
+			</tr>
+			<tr id="host0" style="display:none">
+				<td id="hostip0" class="vncell">
+				</td>
+				<td id="bandwidthfrom0" class="listr">
+				</td>
+				<td id="bandwidthto0" class="listr">
+				</td>
+			</tr>
+			<tr id="host1" style="display:none">
+				<td id="hostip1" class="vncell">
+				</td>
+				<td id="bandwidthfrom1" class="listr">
+				</td>
+				<td id="bandwidthto1" class="listr">
+				</td>
+			</tr>
+			<tr id="host2" style="display:none">
+				<td id="hostip2" class="vncell">
+				</td>
+				<td id="bandwidthfrom2" class="listr">
+				</td>
+				<td id="bandwidthto2" class="listr">
+				</td>
+			</tr>
+			<tr id="host3" style="display:none">
+				<td id="hostip3" class="vncell">
+				</td>
+				<td id="bandwidthfrom3" class="listr">
+				</td>
+				<td id="bandwidthto3" class="listr">
+				</td>
+			</tr>
+			<tr id="host4" style="display:none">
+				<td id="hostip4" class="vncell">
+				</td>
+				<td id="bandwidthfrom4" class="listr">
+				</td>
+				<td id="bandwidthto4" class="listr">
+				</td>
+			</tr>
+			<tr id="host5" style="display:none">
+				<td id="hostip5" class="vncell">
+				</td>
+				<td id="bandwidthfrom5" class="listr">
+				</td>
+				<td id="bandwidthto5" class="listr">
+				</td>
+			</tr>
+			<tr id="host6" style="display:none">
+				<td id="hostip6" class="vncell">
+				</td>
+				<td id="bandwidthfrom6" class="listr">
+				</td>
+				<td id="bandwidthto6" class="listr">
+				</td>
+			</tr>
+			<tr id="host7" style="display:none">
+				<td id="hostip7" class="vncell">
+				</td>
+				<td id="bandwidthfrom7" class="listr">
+				</td>
+				<td id="bandwidthto7" class="listr">
+				</td>
+			</tr>
+			<tr id="host8" style="display:none">
+				<td id="hostip8" class="vncell">
+				</td>
+				<td id="bandwidthfrom8" class="listr">
+				</td>
+				<td id="bandwidthto8" class="listr">
+				</td>
+			</tr>
+			<tr id="host9" style="display:none">
+				<td id="hostip9" class="vncell">
+				</td>
+				<td id="bandwidthfrom9" class="listr">
+				</td>
+				<td id="bandwidthto9" class="listr">
+				</td>
+			</tr>
+		</table>
 	</div>
 	<div style="clear: both;"></div>
 </div>

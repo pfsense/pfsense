@@ -1,2 +1,4 @@
 .DS_Store
 _notes/
+# Ignore Vim swap files
+.*.swp

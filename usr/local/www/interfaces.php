@@ -636,12 +636,11 @@ if ($_POST['apply']) {
 		if ($_POST['mtu'] < 576 || $_POST['mtu'] > 9000)
 			$input_errors[] = gettext("The MTU must be greater than 576 bytes.");
 
-		if (preg_match('/_vlan[0-9]/', $wancfg['if'])) {
+		if (stristr($wancfg['if'], "_vlan")) {
 			$realhwif_array = get_parent_interface($wancfg['if']);
 			// Need code to handle MLPPP if we ever use $realhwif for MLPPP handling
 			$parent_realhwif = $realhwif_array[0];
 			$parent_if = convert_real_interface_to_friendly_interface_name($parent_realhwif);
-
 			if (!empty($parent_if) && isset($config['interfaces'][$parent_if]['mtu'])) {
 				$parent_mtu = $config['interfaces'][$parent_if]['mtu'];
 

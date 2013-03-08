@@ -2913,10 +2913,12 @@ function interface_configure($interface = "wan", $reloadall = false, $linkupeven
 	}
 
 	$mtu = get_interface_default_mtu(remove_ifindex($realhwif));
+	$assignedparent = convert_real_interface_to_friendly_interface_name($realhwif);
+	if (!empty($assignedparent) && isset($config['interfaces'][$assignedparent]['mtu']))
+		$mtu = $config['interfaces'][$assignedparent]['mtu'];
 
 	if (!empty($wancfg['mtu'])) {
 		if (stristr($realif, "_vlan")) {
-			$assignedparent = convert_real_interface_to_friendly_interface_name($realhwif);
 			if (!empty($assignedparent)) {
 				$parentmtu = $config['interfaces'][$assignedparent]['mtu'];
 				if (empty($parentmtu))

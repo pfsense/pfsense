@@ -2964,7 +2964,7 @@ function interface_configure($interface = "wan", $reloadall = false, $linkupeven
 				}
 			}
 		} else {
-			$vlanifs = link_interface_to_vlans($realif);
+			$vlanifs = link_interface_to_vlans($realhwif);
 			if (!empty($vlanifs)) {
 				foreach ($vlanifs as $vlan) {
 					$assignedport = convert_real_interface_to_friendly_interface_name($vlan['vlanif']);

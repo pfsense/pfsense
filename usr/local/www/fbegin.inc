@@ -379,7 +379,7 @@ function add_to_menu($url, $name) {
 ?>
 
 <div>
-<span class="pgtitle"><a href="<?= $_SERVER['REQUEST_URI'] ?>"><?=genhtmltitle($pgtitle);?></a></span>
+<span class="pgtitle"><a href="<?= htmlentities($_SERVER['REQUEST_URI']) ?>"><?=genhtmltitle($pgtitle);?></a></span>
 <span style="float:right; margin: 0 0 20px 20px">
 <?php
 if (!$hide_service_status && !empty($shortcuts[$shortcut_section]['service'])) {

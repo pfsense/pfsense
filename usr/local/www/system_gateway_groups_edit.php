@@ -143,7 +143,7 @@ if ($_POST) {
 	}
 }
 
-$pgtitle = array(gettext("System"),gettext("Gateways"),gettext("Edit gateway"));
+$pgtitle = array(gettext("System"),gettext("Gateways"),gettext("Edit gateway group"));
 $shortcut_section = "gateway-groups";
 
 function build_gateway_protocol_map (&$a_gateways) {
@@ -222,7 +222,7 @@ jQuery(function ($) {
             <form action="system_gateway_groups_edit.php" method="post" name="iform" id="iform">
               <table width="100%" border="0" cellpadding="6" cellspacing="0">
 		<tr>
-			<td colspan="2" valign="top" class="listtopic"><?=gettext("Edit gateway entry"); ?></td>
+			<td colspan="2" valign="top" class="listtopic"><?=gettext("Edit gateway group entry"); ?></td>
 		</tr>	
                 <tr>
                   <td width="22%" valign="top" class="vncellreq"><?=gettext("Group Name"); ?></td>

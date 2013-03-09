@@ -207,7 +207,7 @@ include("head.inc");
                     <span class="vexpl"><?=gettext("Specify if route caching can be enabled. Be careful with these settings on dynamic networks. "); ?></span></td>
 			    </tr>
 				<tr>
-                  <td valign="top" class="vncell"><?=gettext("ECN friendly behaviour"); ?></td>
+                  <td valign="top" class="vncell"><?=gettext("ECN friendly behavior"); ?></td>
                   <td class="vtable">
                     <input name="link1" type="checkbox" id="link1" <?if ($pconfig['link1']) echo "checked";?>>
                     <br>

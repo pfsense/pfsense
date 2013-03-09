@@ -57,7 +57,7 @@ if(isset($_POST['servicestatusfilter'])) {
 
 <table width="100%" border="0" cellpadding="0" cellspacing="0" summary="services">
 	<tr>
-	  <td class="widgetsubheader" align="center"><b>Service></b></td>
+	  <td class="widgetsubheader" align="center"><b>Service</b></td>
 	  <td class="widgetsubheader" align="center"><b>Description</b></td>
 	  <td class="widgetsubheader" align="center"><b>Status</b></td>
 	  <td class="widgetsubheader">&nbsp;</td>

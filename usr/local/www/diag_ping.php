@@ -126,12 +126,12 @@ include("head.inc"); ?>
 					echo "<strong>" . gettext("Ping output") . ":</strong><br>";
 					echo('<pre>');
 					$ifaddr = get_interface_ip($interface);
-					if ($ifaddr)
+					if ($ifaddr && (is_ipaddrv4($host) || is_hostname($host)))
 						system("/sbin/ping -S$ifaddr -c$count " . escapeshellarg($host));
 					else
 						system("/sbin/ping -c$count " . escapeshellarg($host));
 					$ifaddr = get_interface_ipv6($interface);
-					if ($ifaddr)
+					if ($ifaddr && (is_ipaddrv6($host) || is_hostname($host)))
 						system("/sbin/ping6 -S$ifaddr -c$count " . escapeshellarg($host));
 					else
 						system("/sbin/ping6 -c$count " . escapeshellarg($host));

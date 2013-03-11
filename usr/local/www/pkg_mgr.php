@@ -178,7 +178,7 @@ include("head.inc");
 										continue;
 									/* get history/changelog git dir */
 									$commit_dir=explode("/",$index['config_file']);
-									$changeloglink ="https://github.com/bsdperimeter/pfsense-packages/commits/master/config/".$commit_dir[(count($commit_dir)-2)];
+									$changeloglink ="https://github.com/pfsense/pfsense-packages/commits/master/config/".$commit_dir[(count($commit_dir)-2)];
 									/* Check package info link */
 									if($index['pkginfolink']){
 										$pkginfolink = $index['pkginfolink'];

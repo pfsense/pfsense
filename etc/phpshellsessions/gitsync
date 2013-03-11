@@ -12,7 +12,7 @@ require_once("rrd.inc");
 require_once("pfsense-utils.inc");
 	
 $GIT_PKG = "git"; // Either "git" or the full package URL
-$GIT_REPO = "git://github.com/bsdperimeter/pfsense.git";
+$GIT_REPO = "git://github.com/pfsense/pfsense.git";
 $DEFAULT_BRANCH = "master";
 $CODIR =  "/root/pfsense/";
 $GITSYNC_MERGE = "/root/.gitsync_merge";

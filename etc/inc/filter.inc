@@ -2409,6 +2409,12 @@ function filter_rules_generate() {
 		$mt = microtime();
 		echo "filter_rules_generate() being called $mt\n";
 	}
+	
+	if(!isset($config['system']['ipv6allow'])) {
+		$ipfrules .= "# Block all IPv6\n";
+		$ipfrules .= "block in inet6 all label \"Block all IPv6\"\n";
+		$ipfrules .= "block out inet6 all label \"Block all IPv6\"\n";
+	}
 
 	$pptpdcfg = $config['pptpd'];
 
@@ -2463,12 +2469,6 @@ block quick inet6 proto { tcp, udp } from any to any port = 0
 
 
 EOD;
-
-	if(!isset($config['system']['ipv6allow'])) {
-		$ipfrules .= "# Block all IPv6\n";
-		$ipfrules .= "block in inet6 all label \"Default Deny ipv6 rule\"\n";
-		$ipfrules .= "block out inet6 all label \"Default Deny ipv6 rule\"\n";
-	}
 
 	$ipfrules .= <<<EOD
 

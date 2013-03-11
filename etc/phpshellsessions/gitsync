@@ -17,7 +17,7 @@ $arch = php_uname("m");
 $arch = ($arch == "i386") ? "" : '/' . $arch;
 
 $GIT_PKG = "http://files.pfsense.org/packages{$arch}/8/All/git-1.8.1.3.tbz"; // Either "git" or the full package URL
-$GIT_REPO = "git://github.com/bsdperimeter/pfsense.git";
+$GIT_REPO = "git://github.com/pfsense/pfsense.git";
 $DEFAULT_BRANCH = "RELENG_2_0";
 $CODIR =  "/root/pfsense/";
 $GITSYNC_MERGE = "/root/.gitsync_merge";

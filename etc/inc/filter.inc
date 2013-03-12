@@ -653,7 +653,10 @@ function filter_generate_gateways() {
 				$gwip = get_interface_gateway($gateway['friendlyiface']);
 			if (is_ipaddr($gwip) && !empty($int))
 				$route = "route-to ( {$int} {$gwip} )";
-			$rules .= "GW{$gwname} = \" {$route} \"\n";
+			if (($route === "") && isset($config['system']['skip_rules_gw_down']))
+				unset($GatewaysList[$gwname]);
+			else
+				$rules .= "GW{$gwname} = \" {$route} \"\n";
 		}
 	}
 
@@ -689,7 +692,10 @@ function filter_generate_gateways() {
 					}
 				}
 			}
-			$rules .= "GW{$gateway} = \" {$route} \"\n";
+			if (($route === "") && isset($config['system']['skip_rules_gw_down']))
+				unset($GatewayGroupsList[$gateway]);
+			else
+				$rules .= "GW{$gateway} = \" {$route} \"\n";
 		}
 	}
 
@@ -2162,6 +2168,8 @@ function filter_generate_user_rule($rule) {
 		if (isset($GatewaysList[$rule['gateway']]))
 			/* Add the load balanced gateways */
 			$aline['route'] = " \$GW{$rule['gateway']} ";
+		else if (isset($config['system']['skip_rules_gw_down']))
+			return "# rule " . $rule['descr'] . " disabled because gateway " . $rule['gateway'] . " is down ";
 		else
 			log_error("The gateway: {$rule['gateway']} is invalid or unknown, not using it.");
 	}

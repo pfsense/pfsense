@@ -68,6 +68,7 @@ $pconfig['crypto_hardware'] = $config['system']['crypto_hardware'];
 $pconfig['thermal_hardware'] = $config['system']['thermal_hardware'];
 $pconfig['schedule_states'] = isset($config['system']['schedule_states']);
 $pconfig['kill_states'] = isset($config['system']['kill_states']);
+$pconfig['skip_rules_gw_down'] = isset($config['system']['skip_rules_gw_down']);
 $pconfig['use_mfs_tmpvar'] = isset($config['system']['use_mfs_tmpvar']);
 $pconfig['use_mfs_tmp_size'] = $config['system']['use_mfs_tmp_size'];
 $pconfig['use_mfs_var_size'] = $config['system']['use_mfs_var_size'];
@@ -206,6 +207,11 @@ if ($_POST) {
 			$config['system']['kill_states'] = true;
 		else
 			unset($config['system']['kill_states']);
+
+		if($_POST['skip_rules_gw_down'] == "yes")
+			$config['system']['skip_rules_gw_down'] = true;
+		else
+			unset($config['system']['skip_rules_gw_down']);
 
 		if($_POST['use_mfs_tmpvar'] == "yes")
 			$config['system']['use_mfs_tmpvar'] = true;
@@ -546,6 +552,16 @@ function tmpvar_checked(obj) {
 									<br />
 									<?=gettext("By default the monitoring process will flush states for a gateway that goes down. ".
 									"This option overrides that behavior by not clearing states for existing connections."); ?>
+								</td>
+							</tr>
+							<tr>
+								<td width="22%" valign="top" class="vncell"><?=gettext("Skip rules when gateway is down"); ?></td>
+								<td width="78%" class="vtable">
+									<input name="skip_rules_gw_down" type="checkbox" id="skip_rules_gw_down" value="yes" <?php if ($pconfig['skip_rules_gw_down']) echo "checked=\"checked\""; ?> />
+									<br />
+									<?=gettext("By default, when a rule has a specific gateway set, and this gateway is down, ".
+									"rule is created and traffic is sent to default gateway.This option overrides that behavior ".
+									"and the rule is not created when gateway is down"); ?>
 								</td>
 							</tr>
 							<tr>

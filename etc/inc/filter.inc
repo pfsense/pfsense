@@ -2409,12 +2409,6 @@ function filter_rules_generate() {
 		$mt = microtime();
 		echo "filter_rules_generate() being called $mt\n";
 	}
-	
-	if(!isset($config['system']['ipv6allow'])) {
-		$ipfrules .= "# Block all IPv6\n";
-		$ipfrules .= "block in inet6 all label \"Block all IPv6\"\n";
-		$ipfrules .= "block out inet6 all label \"Block all IPv6\"\n";
-	}
 
 	$pptpdcfg = $config['pptpd'];
 
@@ -2433,6 +2427,13 @@ function filter_rules_generate() {
 		$log = "log";
 	else
 		$log = "";
+		
+	if(!isset($config['system']['ipv6allow'])) {
+		$ipfrules .= "# Block all IPv6\n";
+		$ipfrules .= "block in {$log} quick inet6 all label \"Block all IPv6\"\n";
+		$ipfrules .= "block out {$log} quick inet6 all label \"Block all IPv6\"\n";
+	}
+	
 	$ipfrules .= <<<EOD
 #---------------------------------------------------------------------------
 # default deny rules

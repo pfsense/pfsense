@@ -84,11 +84,6 @@ else
 		/sbin/mount -a || (/sbin/fsck -fy; /sbin/mount -a)
 	fi
 
-	USE_MFS_TMPVAR=`/usr/bin/grep -c use_mfs_tmpvar /cf/conf/config.xml`
-	if [ "${PLATFORM}" = "nanobsd" ] || [ "${PLATFORM}" = "embedded" ] || [ ${USE_MFS_TMPVAR} -gt 0 ]; then
-		/etc/rc.embedded
-	fi
-
 	# If /conf is a directory, convert it to a symlink to /cf/conf
 	if [ -d "/conf" ]; then
 		# If item is not a symlink then rm and recreate
@@ -97,6 +92,21 @@ else
 			/bin/rm -rf /conf
 			/bin/ln -s /cf/conf /conf
 		fi
+	fi
+
+	if [ ! "$PLATFORM" = "jail" ]; then
+		# Check to see if a compact flash mountpoint exists
+		# If it fails to mount then run a fsck -fy
+		if grep -q cf /etc/fstab; then
+			/sbin/mount -w /cf 2>/dev/null
+			/sbin/mount -uw /cf || \
+				(/sbin/umount /cf; /sbin/fsck -fy /cf; /sbin/mount -w /cf)
+		fi
+	fi
+
+	USE_MFS_TMPVAR=`/usr/bin/grep -c use_mfs_tmpvar /cf/conf/config.xml`
+	if [ "${PLATFORM}" = "nanobsd" ] || [ "${PLATFORM}" = "embedded" ] || [ ${USE_MFS_TMPVAR} -gt 0 ]; then
+		/etc/rc.embedded
 	fi
 fi
 
@@ -114,16 +124,6 @@ MANUFACTURER="huawei|zte"
 CDDEVICE=`dmesg |egrep -ie "($MANUFACTURER)" | awk -F: '/cd/ {print $1}'`
 if [ "$CDDEVICE" != "" ]; then
 	cdcontrol -f /dev/"$CDDEVICE" eject
-fi
-
-if [ ! "$PLATFORM" = "jail" ]; then
-	# Check to see if a compact flash mountpoint exists
-	# If it fails to mount then run a fsck -fy
-	if grep -q cf /etc/fstab; then
-		/sbin/mount -w /cf 2>/dev/null
-		/sbin/mount -uw /cf || \
-			(/sbin/umount /cf; /sbin/fsck -fy /cf; /sbin/mount -w /cf)
-	fi
 fi
 
 # sync pw database after mount.

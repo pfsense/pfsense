@@ -88,8 +88,8 @@ $thermal_hardware_modules = array(	'coretemp' => gettext("Intel Core* CPU on-die
 
 if ($_POST) {
 
-    unset($input_errors);
-    $pconfig = $_POST;
+	unset($input_errors);
+	$pconfig = $_POST;
 
 	ob_flush();
 	flush();
@@ -172,17 +172,17 @@ if ($_POST) {
 		}
 
 		if($_POST['maxmss_enable'] == "yes") {
-                        $config['system']['maxmss_enable'] = true;
+			$config['system']['maxmss_enable'] = true;
 			$config['system']['maxmss'] = $_POST['maxmss'];
-                } else {
-                        unset($config['system']['maxmss_enable']);
-                        unset($config['system']['maxmss']);
+		} else {
+			unset($config['system']['maxmss_enable']);
+			unset($config['system']['maxmss']);
 		}
 
 		if($_POST['powerd_enable'] == "yes")
-                        $config['system']['powerd_enable'] = true;
-                else
-                        unset($config['system']['powerd_enable']);
+			$config['system']['powerd_enable'] = true;
+		else
+			unset($config['system']['powerd_enable']);
 
 		$config['system']['powerd_ac_mode'] = $_POST['powerd_ac_mode'];
 		$config['system']['powerd_battery_mode'] = $_POST['powerd_battery_mode'];
@@ -198,14 +198,14 @@ if ($_POST) {
 			unset($config['system']['thermal_hardware']);
 
 		if($_POST['schedule_states'] == "yes")
-                        $config['system']['schedule_states'] = true;
-                else
-                        unset($config['system']['schedule_states']);
+			$config['system']['schedule_states'] = true;
+		else
+			unset($config['system']['schedule_states']);
 
 		if($_POST['kill_states'] == "yes")
-                        $config['system']['kill_states'] = true;
-                else
-                        unset($config['system']['kill_states']);
+			$config['system']['kill_states'] = true;
+		else
+			unset($config['system']['kill_states']);
 
 		if($_POST['use_mfs_tmpvar'] == "yes")
 			$config['system']['use_mfs_tmpvar'] = true;
@@ -230,10 +230,10 @@ if ($_POST) {
 		system_resolvconf_generate(true);
 		$retval = filter_configure();
 		if(stristr($retval, "error") <> true)
-		    $savemsg = get_std_save_message(gettext($retval));
+			$savemsg = get_std_save_message(gettext($retval));
 		else
-		    $savemsg = gettext($retval);
-		
+			$savemsg = gettext($retval);
+
 		activate_powerd();
 		load_crypto();
 		load_thermal_hardware();
@@ -411,19 +411,19 @@ function tmpvar_checked(obj) {
 										<option value="max"<?php if($pconfig['powerd_battery_mode']=="max") echo " selected=\"selected\""; ?>><?=gettext("Maximum");?></option>
 									</select>
 									<br/><br/>
-								     <?=gettext("The powerd utility monitors the system state and sets various power control " .
-								     "options accordingly.  It offers four modes (maximum, minimum, adaptive " .
-								     "and hiadaptive) that can be individually selected while on AC power or batteries. " . 
-								     "The modes maximum, minimum, adaptive and hiadaptive may be abbreviated max, " .
-								     "min, adp, hadp.  Maximum mode chooses the highest performance values.  Minimum " .
-								     "mode selects the lowest performance values to get the most power savings. " .
-								     "Adaptive mode attempts to strike a balance by degrading performance when " .
-								     "the system appears idle and increasing it when the system is busy.  It " .
-								     "offers a good balance between a small performance loss for greatly " .
-								     "increased power savings.  Hiadaptive mode is alike adaptive mode, but " .
-									 "tuned for systems where performance and interactivity are more important" .
-									 "than power consumption.  It rises frequency faster, drops slower and" .
-									 "keeps twice lower CPU load."); ?>
+									<?=gettext("The powerd utility monitors the system state and sets various power control " .
+									"options accordingly.  It offers four modes (maximum, minimum, adaptive " .
+									"and hiadaptive) that can be individually selected while on AC power or batteries. " .
+									"The modes maximum, minimum, adaptive and hiadaptive may be abbreviated max, " .
+									"min, adp, hadp.  Maximum mode chooses the highest performance values.  Minimum " .
+									"mode selects the lowest performance values to get the most power savings. " .
+									"Adaptive mode attempts to strike a balance by degrading performance when " .
+									"the system appears idle and increasing it when the system is busy.  It " .
+									"offers a good balance between a small performance loss for greatly " .
+									"increased power savings.  Hiadaptive mode is alike adaptive mode, but " .
+									"tuned for systems where performance and interactivity are more important" .
+									"than power consumption.  It rises frequency faster, drops slower and" .
+									"keeps twice lower CPU load."); ?>
 								</td>
 							</tr>
 							<tr>
@@ -442,16 +442,16 @@ function tmpvar_checked(obj) {
 										<?php endforeach; ?>
 									</select>
 									<br />
-								     <?=gettext("A cryptographic accelerator module will use hardware support to speed up some " .
+									<?=gettext("A cryptographic accelerator module will use hardware support to speed up some " .
 										"cryptographic functions on systems which have the chip. Do not enable this " .
 										"option if you have a Hifn cryptographic acceleration card, as this will take " .
 										"precedence and the Hifn card will not be used. Acceleration should be automatic " .
 										"for IPsec when using a cipher supported by your chip, such as AES-128. OpenVPN " .
 										"should be set for AES-128-CBC and have cryptodev enabled for hardware " .
 										"acceleration."); ?>
-								     <br/><br/>
-								     <?=gettext("If you do not have a crypto chip in your system, this option will have no " .
-								     "effect. To unload the selected module, set this option to 'none' and then reboot."); ?>
+									<br/><br/>
+									<?=gettext("If you do not have a crypto chip in your system, this option will have no " .
+									"effect. To unload the selected module, set this option to 'none' and then reboot."); ?>
 								</td>
 							</tr>
 							<tr>
@@ -518,36 +518,36 @@ function tmpvar_checked(obj) {
 									"This helps overcome problems with PMTUD on IPsec VPN links. If left blank, the default value is 1400 bytes. "); ?>
 								</td>
 							</tr>
-                                                        <tr>
-                                                                <td colspan="2" class="list" height="12">&nbsp;</td>
-                                                        </tr>
-                                                        <tr>
-                                                                <td colspan="2" valign="top" class="listtopic"><?=gettext("Schedules"); ?></td>
-                                                        </tr>
-                                                        <tr>
-                                                                <td width="22%" valign="top" class="vncell"><?=gettext("Schedule States"); ?></td>
-                                                                <td width="78%" class="vtable">
-                                                                        <input name="schedule_states" type="checkbox" id="schedule_states" value="yes" <?php if ($pconfig['schedule_states']) echo "checked=\"checked\""; ?> />
-                                                                        <br />
+							<tr>
+								<td colspan="2" class="list" height="12">&nbsp;</td>
+							</tr>
+							<tr>
+								<td colspan="2" valign="top" class="listtopic"><?=gettext("Schedules"); ?></td>
+							</tr>
+							<tr>
+								<td width="22%" valign="top" class="vncell"><?=gettext("Schedule States"); ?></td>
+								<td width="78%" class="vtable">
+									<input name="schedule_states" type="checkbox" id="schedule_states" value="yes" <?php if ($pconfig['schedule_states']) echo "checked=\"checked\""; ?> />
+									<br />
 									<?=gettext("By default schedules clear the states of existing connections when the expiration time has come. ".
 									"This option overrides that behavior by not clearing states for existing connections."); ?>
-                                                                </td>
-                                                        </tr>
-                                                        <tr>
-                                                                <td colspan="2" class="list" height="12">&nbsp;</td>
-                                                        </tr>
-                                                        <tr>
-                                                                <td colspan="2" valign="top" class="listtopic"><?=gettext("Gateway Monitoring"); ?></td>
-                                                        </tr>
-                                                        <tr>
-                                                                <td width="22%" valign="top" class="vncell"><?=gettext("States"); ?></td>
-                                                                <td width="78%" class="vtable">
-                                                                        <input name="kill_states" type="checkbox" id="kill_states" value="yes" <?php if ($pconfig['kill_states']) echo "checked=\"checked\""; ?> />
-                                                                        <br />
+								</td>
+							</tr>
+							<tr>
+								<td colspan="2" class="list" height="12">&nbsp;</td>
+							</tr>
+							<tr>
+								<td colspan="2" valign="top" class="listtopic"><?=gettext("Gateway Monitoring"); ?></td>
+							</tr>
+							<tr>
+								<td width="22%" valign="top" class="vncell"><?=gettext("States"); ?></td>
+								<td width="78%" class="vtable">
+									<input name="kill_states" type="checkbox" id="kill_states" value="yes" <?php if ($pconfig['kill_states']) echo "checked=\"checked\""; ?> />
+									<br />
 									<?=gettext("By default the monitoring process will flush states for a gateway that goes down. ".
 									"This option overrides that behavior by not clearing states for existing connections."); ?>
-                                                                </td>
-                                                        </tr>
+								</td>
+							</tr>
 							<tr>
 								<td colspan="2" valign="top" class="listtopic"><?=gettext("RAM Disks"); ?></td>
 							</tr>
@@ -624,7 +624,7 @@ function tmpvar_checked(obj) {
 								<td width="78%" class="vtable">
 									<select name="harddiskstandby" class="formselect">
 										<?php
-										 	## Values from ATA-2 http://www.t13.org/project/d0948r3-ATA-2.pdf (Page 66)
+											## Values from ATA-2 http://www.t13.org/project/d0948r3-ATA-2.pdf (Page 66)
 											$sbvals = explode(" ", "0.5,6 1,12 2,24 3,36 4,48 5,60 7.5,90 10,120 15,180 20,240 30,241 60,242");
 										?>
 										<option value="" <?php if(!$pconfig['harddiskstandby']) echo('selected="selected"');?>><?=gettext("Always on"); ?></option>

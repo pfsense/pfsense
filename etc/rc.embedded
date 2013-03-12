@@ -4,27 +4,27 @@
 # For pfSense
 
 # Size of /tmp
-tmpsize="40m"
+USE_MFS_TMP_SIZE=`/usr/bin/grep use_mfs_tmp_size /cf/conf/config.xml | /usr/bin/cut -f2 -d'>' | /usr/bin/cut -f1 -d'<'`
+if [ ${USE_MFS_TMP_SIZE} -gt 0 ]; then
+	tmpsize="${USE_MFS_TMP_SIZE}m"
+else
+	tmpsize="40m"
+fi
 
 # Size of /var
-varsize="60m"
+USE_MFS_VAR_SIZE=`/usr/bin/grep use_mfs_var_size /cf/conf/config.xml | /usr/bin/cut -f2 -d'>' | /usr/bin/cut -f1 -d'<'`
+if [ ${USE_MFS_VAR_SIZE} -gt 0 ]; then
+	varsize="${USE_MFS_VAR_SIZE}m"
+else
+	varsize="60m"
+fi
 
 # Run some initialization routines
 [ -f /etc/rc.d/uzip ] && /etc/rc.d/uzip start
 
-echo -n "Setting up embedded specific environment..."
-# Initialize MFS for /tmp. Partly taken from /etc/rc.d/var
-if (/bin/mkdir -p /tmp/.diskless 2> /dev/null); then
-	rmdir /tmp/.diskless
-else
-	mdmfs -S -M -s ${tmpsize} md /tmp
-fi
-# Initialize MFS for /var. Partly taken from /etc/rc.d/var
-if (/bin/mkdir -p /var/.diskless 2> /dev/null); then
-	rmdir /var/.diskless
-else
-	mdmfs -S -M -s ${varsize} md /var
-fi
+echo -n "Setting up memory disks..."
+mdmfs -S -M -s ${tmpsize} md /tmp
+mdmfs -S -M -s ${varsize} md /var
 
 # Create some needed directories
 /bin/mkdir -p /var/db

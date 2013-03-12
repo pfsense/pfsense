@@ -73,27 +73,22 @@ if [ "$PLATFORM" = "pfSense" ]; then
 	fi
 fi
 
-if [ "$PLATFORM" = "cdrom" ]; then
+if [ "${PLATFORM}" = "cdrom" ]; then
 	/etc/rc.cdrom
-fi
-
-if [ "$PLATFORM" = "embedded" ]; then
-	export PKG_TMPDIR=/root/
-	/etc/rc.embedded
-fi
-
-if [ "$PLATFORM" = "nanobsd" ]; then
-	export PKG_TMPDIR=/root/
-	/etc/rc.embedded
-fi
-
-# Mount /. If it fails run a fsck.
-if [ ! "$PLATFORM" = "cdrom" ] ; then
+else
+	# Mount /. If it fails run a fsck.
 	if [ "$PLATFORM" = "nanobsd" ]; then
+		export PKG_TMPDIR=/root/
 		/sbin/mount -uw / || (/sbin/fsck -fy; /sbin/mount -uw /)
 	else 
 		/sbin/mount -a || (/sbin/fsck -fy; /sbin/mount -a)
 	fi
+
+	USE_MFS_TMPVAR=`/usr/bin/grep -c use_mfs_tmpvar /cf/conf/config.xml`
+	if [ "${PLATFORM}" = "nanobsd" ] || [ "${PLATFORM}" = "embedded" ] || [ ${USE_MFS_TMPVAR} -gt 0 ]; then
+		/etc/rc.embedded
+	fi
+
 	# If /conf is a directory, convert it to a symlink to /cf/conf
 	if [ -d "/conf" ]; then
 		# If item is not a symlink then rm and recreate
@@ -165,7 +160,7 @@ if [ "$PLATFORM" = "cdrom" ] ; then
 	# do nothing for cdrom platform
 elif [ "$PLATFORM" = "embedded" ] ; then
     # do nothing for embedded platform
-elif [ "$PLATFORM" = "nanobsd" ] ; then
+elif [ "$PLATFORM" = "nanobsd" ] || [ ${USE_MFS_TMPVAR} -gt 0 ]; then
 	# Ensure that old-style PKG packages can be persistent across reboots
 	/bin/mkdir -p /root/var/db/pkg
 	/bin/rm -rf /var/db/pkg
@@ -180,6 +175,14 @@ else
 	SWAPDEVICE=`/bin/cat /etc/fstab | /usr/bin/grep swap | /usr/bin/cut -f1`
 	/sbin/swapon -a 2>/dev/null >/dev/null
 	/etc/rc.savecore
+
+	if [ -d /root/var/db/pkg ]; then
+		# User must have just disabled RAM disks, move these back into place.
+		/bin/mkdir -p /var/db/pkg
+		/bin/mv /root/var/db/pkg /var/db/pkg
+		/bin/mkdir -p /var/db/pbi
+		/bin/mv /root/var/db/pkg /var/db/pbi
+	fi
 fi
 
 if [ "$PLATFORM" = "cdrom" ] ; then

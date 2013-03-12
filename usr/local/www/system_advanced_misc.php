@@ -68,6 +68,9 @@ $pconfig['crypto_hardware'] = $config['system']['crypto_hardware'];
 $pconfig['thermal_hardware'] = $config['system']['thermal_hardware'];
 $pconfig['schedule_states'] = isset($config['system']['schedule_states']);
 $pconfig['kill_states'] = isset($config['system']['kill_states']);
+$pconfig['use_mfs_tmpvar'] = isset($config['system']['use_mfs_tmpvar']);
+$pconfig['use_mfs_tmp_size'] = $config['system']['use_mfs_tmp_size'];
+$pconfig['use_mfs_var_size'] = $config['system']['use_mfs_var_size'];
 
 $pconfig['powerd_ac_mode'] = "hadp";
 if (!empty($config['system']['powerd_ac_mode']))
@@ -96,6 +99,12 @@ if ($_POST) {
 
 	if (!empty($_POST['thermal_hardware']) && !array_key_exists($_POST['thermal_hardware'], $thermal_hardware_modules))
 		$input_errors[] = gettext("Please select a valid Thermal Hardware Sensor.");
+
+	if (!empty($_POST['use_mfs_tmp_size']) && !is_numeric($_POST['use_mfs_tmp_size']) && ($_POST['use_mfs_tmp_size'] <= 40))
+		$input_errors[] = gettext("/tmp Size should not be less than 40MB.");
+
+	if (!empty($_POST['use_mfs_var_size']) && !is_numeric($_POST['use_mfs_var_size']) && ($_POST['use_mfs_var_size'] <= 60))
+		$input_errors[] = gettext("/var Size should not be less than 60MB.");
 
 	if (!$input_errors) {
 
@@ -198,6 +207,23 @@ if ($_POST) {
                 else
                         unset($config['system']['kill_states']);
 
+		if($_POST['use_mfs_tmpvar'] == "yes")
+			$config['system']['use_mfs_tmpvar'] = true;
+		else
+			unset($config['system']['use_mfs_tmpvar']);
+
+		$config['system']['use_mfs_tmp_size'] = $_POST['use_mfs_tmp_size'];
+		$config['system']['use_mfs_var_size'] = $_POST['use_mfs_var_size'];
+
+		if (isset($_POST['rrdbackup'])) {
+			$config['system']['rrdbackup'] = $_POST['rrdbackup'];
+			install_cron_job("/etc/rc.backup_rrd.sh", ($config['system']['rrdbackup'] > 0), $minute="0", "*/{$config['system']['rrdbackup']}");
+		}
+		if (isset($_POST['dhcpbackup'])) {
+			$config['system']['dhcpbackup'] = $_POST['dhcpbackup'];
+			install_cron_job("/etc/rc.backup_dhcpleases.sh", ($config['system']['dhcpbackup'] > 0), $minute="0", "*/{$config['system']['dhcpbackup']}");
+		}
+
 		write_config();
 
 		$retval = 0;
@@ -245,6 +271,19 @@ function maxmss_checked(obj) {
 		jQuery('#maxmss').attr('disabled',false);
 	else
 		jQuery('#maxmss').attr('disabled','true');
+}
+function tmpvar_checked(obj) {
+	if (obj.checked) {
+		jQuery('#use_mfs_tmp_size').attr('disabled',false);
+		jQuery('#use_mfs_var_size').attr('disabled',false);
+		jQuery('#rrdbackup').attr('disabled',false);
+		jQuery('#dhcpbackup').attr('disabled',false);
+	} else {
+		jQuery('#use_mfs_tmp_size').attr('disabled','true');
+		jQuery('#use_mfs_var_size').attr('disabled','true');
+		jQuery('#rrdbackup').attr('disabled','true');
+		jQuery('#dhcpbackup').attr('disabled','true');
+	}
 }
 //]]>
 </script>
@@ -509,6 +548,70 @@ function maxmss_checked(obj) {
 									"This option overrides that behavior by not clearing states for existing connections."); ?>
                                                                 </td>
                                                         </tr>
+							<tr>
+								<td colspan="2" valign="top" class="listtopic"><?=gettext("RAM Disks"); ?></td>
+							</tr>
+							<?php if ($g['platform'] == "pfSense"): ?>
+							<tr>
+								<td width="22%" valign="top" class="vncell"><?=gettext("Use RAM Disks"); ?></td>
+								<td width="78%" class="vtable">
+									<input name="use_mfs_tmpvar" type="checkbox" id="use_mfs_tmpvar" value="yes" <?php if ($pconfig['use_mfs_tmpvar']) echo "checked=\"checked\""; ?> onclick="tmpvar_checked(this)" />
+									<strong><?=gettext("Use memory file system for /tmp and /var"); ?></strong><br/>
+									<?=gettext("Set this if you wish to use /tmp and /var as RAM disks (memory file system disks) on a full install " .
+									"rather than use the hard disk. Setting this will cause the data in /tmp and /var to be lost at reboot, including log data. RRD and DHCP Leases will be retained."); ?>
+								</td>
+							</tr>
+							<?php endif; ?>
+							<tr>
+								<td width="22%" valign="top" class="vncell"><?=gettext("/tmp RAM Disk Size"); ?></td>
+								<td width="78%" class="vtable">
+									<input name="use_mfs_tmp_size" id="use_mfs_tmp_size" value="<?php if ($pconfig['use_mfs_tmp_size'] <> "") echo $pconfig['use_mfs_tmp_size']; ?>" class="formfld unknown" <?php if (($g['platform'] == "pfSense") && ($pconfig['use_mfs_tmpvar'] == false)) echo "disabled=\"disabled\""; ?> /> MB
+									<br />
+									<?=gettext("Set the size, in MB, for the /tmp RAM disk. " .
+									"Leave blank for 40MB. Do not set lower than 40."); ?>
+								</td>
+							</tr>
+							<tr>
+								<td width="22%" valign="top" class="vncell"><?=gettext("/var RAM Disk Size"); ?></td>
+								<td width="78%" class="vtable">
+									<input name="use_mfs_var_size" id="use_mfs_var_size" value="<?php if ($pconfig['use_mfs_var_size'] <> "") echo $pconfig['use_mfs_var_size']; ?>" class="formfld unknown" <?php if (($g['platform'] == "pfSense") && ($pconfig['use_mfs_tmpvar'] == false)) echo "disabled=\"disabled\""; ?> /> MB
+									<br />
+									<?=gettext("Set the size, in MB, for the /var RAM disk. " .
+									"Leave blank for 60MB. Do not set lower than 60."); ?>
+								</td>
+							</tr>
+							<tr>
+								<td width="22%" valign="top" class="vncell"><?=gettext("Periodic RRD Backup");?></td>
+								<td width="78%" class="vtable">
+									<?=gettext("Frequency:");?>
+									<select name="rrdbackup" id="rrdbackup" <?php if (($g['platform'] == "pfSense") && ($pconfig['use_mfs_tmpvar'] == false)) echo "disabled=\"disabled\""; ?> >
+										<option value='0' <?php if (!isset($config['system']['rrdbackup']) || ($config['system']['rrdbackup'] == 0)) echo "selected"; ?>><?=gettext("Disable"); ?></option>
+									<?php for ($x=1; $x<=24; $x++) { ?>
+										<option value='<?= $x ?>' <?php if ($config['system']['rrdbackup'] == $x) echo "selected"; ?>><?= $x ?> <?=gettext("hour"); ?><?php if ($x>1) echo "s"; ?></option>
+									<?php } ?>
+									</select>
+									<br/>
+									<?=gettext("This will periodically backup the RRD data so it can be restored automatically on the next boot. Keep in mind that the more frequent the backup, the more writes will happen to your media.");?>
+									<br/>
+									<br/>
+								</td>
+							</tr>
+							<tr>
+								<td width="22%" valign="top" class="vncell"><?=gettext("Periodic DHCP Leases Backup");?></td>
+								<td width="78%" class="vtable">
+									<?=gettext("Frequency:");?>
+									<select name="dhcpbackup" id="dhcpbackup" <?php if (($g['platform'] == "pfSense") && ($pconfig['use_mfs_tmpvar'] == false)) echo "disabled=\"disabled\""; ?> >
+										<option value='0' <?php if (!isset($config['system']['dhcpbackup']) || ($config['system']['dhcpbackup'] == 0)) echo "selected"; ?>><?=gettext("Disable"); ?></option>
+									<?php for ($x=1; $x<=24; $x++) { ?>
+										<option value='<?= $x ?>' <?php if ($config['system']['dhcpbackup'] == $x) echo "selected"; ?>><?= $x ?> <?=gettext("hour"); ?><?php if ($x>1) echo "s"; ?></option>
+									<?php } ?>
+									</select>
+									<br/>
+									<?=gettext("This will periodically backup the DHCP leases data so it can be restored automatically on the next boot. Keep in mind that the more frequent the backup, the more writes will happen to your media.");?>
+									<br/>
+									<br/>
+								</td>
+							</tr>
 							<tr>
 								<td colspan="2" class="list" height="12">&nbsp;</td>
 							</tr>

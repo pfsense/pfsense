@@ -78,6 +78,10 @@ function restore_rrd() {
 			}
 			unlink($xml_file);
 		}
+		/* If this backup is still there on a full install, but we aren't going to use ram disks, remove the archive since this is a transition. */
+		if (($g['platform'] == "pfSense") && !isset($config['system']['use_mfs_tmpvar'])) {
+			unlink_if_exists("{$g['cf_conf_path']}/rrd.tgz");
+		}
 		return true;
 	}
 	return false;
@@ -270,9 +274,7 @@ function enable_rrd_graphing() {
 		chown($rrddbpath, "nobody");
 
 		if ($g['booting']) {
-			if ($g['platform'] != "pfSense") {
-				restore_rrd();
-			}
+			restore_rrd();
 		}
 
 		/* db update script */

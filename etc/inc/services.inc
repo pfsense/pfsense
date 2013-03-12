@@ -358,17 +358,19 @@ function services_dhcpdv4_configure() {
 					$is_olsr_enabled = true;
 
 	if ($g['booting']) {
-		if ($g['platform'] != "pfSense") {
-			/* restore the leases, if we have them */
-			if (file_exists("{$g['cf_conf_path']}/dhcpleases.tgz")) {
-				$dhcprestore = "";
-				$dhcpreturn = "";
-				exec("cd /;LANG=C /usr/bin/tar -xzf {$g['cf_conf_path']}/dhcpleases.tgz 2>&1", $dhcprestore, $dhcpreturn);
-				$dhcprestore = implode(" ", $dhcprestore);
-				if($dhcpreturn <> 0) {
-					log_error(sprintf(gettext('DHCP leases restore failed exited with %1$s, the error is: %2$s%3$s'), $dhcpreturn, $dhcprestore, "\n"));
-				}
+		/* restore the leases, if we have them */
+		if (file_exists("{$g['cf_conf_path']}/dhcpleases.tgz")) {
+			$dhcprestore = "";
+			$dhcpreturn = "";
+			exec("cd /;LANG=C /usr/bin/tar -xzf {$g['cf_conf_path']}/dhcpleases.tgz 2>&1", $dhcprestore, $dhcpreturn);
+			$dhcprestore = implode(" ", $dhcprestore);
+			if($dhcpreturn <> 0) {
+				log_error(sprintf(gettext('DHCP leases restore failed exited with %1$s, the error is: %2$s%3$s'), $dhcpreturn, $dhcprestore, "\n"));
 			}
+		}
+		/* If this backup is still there on a full install, but we aren't going to use ram disks, remove the archive since this is a transition. */
+		if (($g['platform'] == "pfSense") && !isset($config['system']['use_mfs_tmpvar'])) {
+			unlink_if_exists("{$g['cf_conf_path']}/dhcpleases.tgz");
 		}
 	}
 

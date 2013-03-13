@@ -209,7 +209,8 @@ function enable_change(enable_over) {
 								<td width="78%" class="vtable">
 									<input name="ipv6allow" type="checkbox" id="ipv6allow" value="yes" <?php if ($pconfig['ipv6allow']) echo "checked=\"checked\""; ?> onclick="enable_change(false)" />
 									<strong><?=gettext("Allow IPv6"); ?></strong><br/>
-									<?=gettext("All IPv6 will be blocked unless this box is checked."); ?><br/>
+									<?=gettext("All IPv6 traffic will be blocked by the firewall unless this box is checked."); ?><br/>
+									<?=gettext("NOTE: This does not disable any IPv6 features on the firewall, it only blocks traffic."); ?><br/>
 									<br/>
 								</td>
 							</tr>

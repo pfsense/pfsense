@@ -1019,7 +1019,7 @@ function internalca_change() {
 						</tr>
 
 						<tr>
-							<td width="22%" valign="top" class="vncellreq"><?=gettext("Signing Request data");?></td>
+							<td width="22%" valign="top" class="vncellreq"><?=gettext("Signing request data");?></td>
 							<td width="78%" class="vtable">
 								<textarea name="csr" id="csr" cols="65" rows="7" class="formfld_cert" readonly><?=htmlspecialchars($pconfig['csr']);?></textarea>
 								<br>
@@ -1027,7 +1027,7 @@ function internalca_change() {
 							</td>
 						</tr>
 						<tr>
-							<td width="22%" valign="top" class="vncellreq"><?=gettext("Final Certificate data");?></td>
+							<td width="22%" valign="top" class="vncellreq"><?=gettext("Final certificate data");?></td>
 							<td width="78%" class="vtable">
 								<textarea name="cert" id="cert" cols="65" rows="7" class="formfld_cert"><?=htmlspecialchars($pconfig['cert']);?></textarea>
 								<br>

@@ -1911,14 +1911,14 @@ function filter_generate_address(& $rule, $target = "source", $isnat = false) {
 			if($rule['ipprotocol'] == "inet6") {
 				if(preg_match("/opt([0-9]*)$/", $rule[$target]['network'], $optmatch)) {
 					$opt_ip = $FilterIflist["opt{$optmatch[1]}"]['ipv6'];
-					if(!is_ipaddr($opt_ip))
+					if(!is_ipaddrv6($opt_ip))
 						return "";
 					$src = $opt_ip . "/" .
 					$FilterIflist["opt{$optmatch[1]}"]['snv6'];
 				/* check for opt$NUMip here */
 				} else if(preg_match("/opt([0-9]*)ip/", $rule[$target]['network'], $matches)) {
 					$src = $FilterIflist["opt{$matches[1]}"]['ipv6'];
-					if(!is_ipaddr($src))
+					if(!is_ipaddrv6($src))
 						return "";
 				}
 				if(isset($rule[$target]['not']))
@@ -1926,14 +1926,14 @@ function filter_generate_address(& $rule, $target = "source", $isnat = false) {
 			} else {
 				if(preg_match("/opt([0-9]*)$/", $rule[$target]['network'], $optmatch)) {
 					$opt_ip = $FilterIflist["opt{$optmatch[1]}"]['ip'];
-					if(!is_ipaddr($opt_ip))
+					if(!is_ipaddrv4($opt_ip))
 						return "";
 					$src = $opt_ip . "/" .
 					$FilterIflist["opt{$optmatch[1]}"]['sn'];
 				/* check for opt$NUMip here */
 				} else if(preg_match("/opt([0-9]*)ip/", $rule[$target]['network'], $matches)) {
 					$src = $FilterIflist["opt{$matches[1]}"]['ip'];
-					if(!is_ipaddr($src))
+					if(!is_ipaddrv4($src))
 						return "";
 				}
 				if(isset($rule[$target]['not']))
@@ -1944,17 +1944,25 @@ function filter_generate_address(& $rule, $target = "source", $isnat = false) {
 				switch ($rule[$target]['network']) {
 					case 'wan':
 						$wansa = $FilterIflist['wan']['sav6'];
+						if (!is_ipaddrv6($wansa))
+							return "";
 						$wansn = $FilterIflist['wan']['snv6'];
 						$src = "{$wansa}/{$wansn}";
 						break;
 					case 'wanip':
 						$src = $FilterIflist["wan"]['ipv6'];
+						if (!is_ipaddrv6($src))
+							return "";
 						break;
 					case 'lanip':
 						$src = $FilterIflist["lan"]['ipv6'];
+						if (!is_ipaddrv6($src))
+							return "";
 						break;
 					case 'lan':
 						$lansa = $FilterIflist['lan']['sav6'];
+						if (!is_ipaddrv6($lansa))
+							return "";
 						$lansn = $FilterIflist['lan']['snv6'];
 						$src = "{$lansa}/{$lansn}";
 						break;
@@ -1976,6 +1984,8 @@ function filter_generate_address(& $rule, $target = "source", $isnat = false) {
 				switch ($rule[$target]['network']) {
 					case 'wan':
 						$wansa = $FilterIflist['wan']['sa'];
+						if (!is_ipaddrv4($wansa))
+							return "";
 						$wansn = $FilterIflist['wan']['sn'];
 						$src = "{$wansa}/{$wansn}";
 						break;
@@ -1987,6 +1997,8 @@ function filter_generate_address(& $rule, $target = "source", $isnat = false) {
 						break;
 					case 'lan':
 						$lansa = $FilterIflist['lan']['sa'];
+						if (!is_ipaddrv4($lansa))
+							return "";
 						$lansn = $FilterIflist['lan']['sn'];
 						$src = "{$lansa}/{$lansn}";
 						break;
@@ -2190,8 +2202,8 @@ function filter_generate_user_rule($rule) {
 	update_filter_reload_status(sprintf(gettext("Creating rule %s"), $rule['descr']));
 
 	/* source address */
-	$src = filter_generate_address($rule, "source");
-	if(empty($src) || ($src == "/")) {
+	$src = trim(filter_generate_address($rule, "source"));
+	if (empty($src) || ($src == "/")) {
 		return "# at the break!";
 	}
 	$aline['src'] = " from $src ";
@@ -2201,8 +2213,8 @@ function filter_generate_user_rule($rule) {
 		$aline['os'] = " os {$rule['os']} ";
 
 	/* destination address */
-	$dst = filter_generate_address($rule, "destination");
-	if(empty($dst) || ($dst == "/")) {
+	$dst = trim(filter_generate_address($rule, "destination"));
+	if (empty($dst) || ($dst == "/")) {
 		return "# returning at dst $dst == \"/\"";
 	}
 	$aline['dst'] = "to $dst ";

@@ -5,7 +5,7 @@
 
 # Size of /tmp
 USE_MFS_TMP_SIZE=`/usr/bin/grep use_mfs_tmp_size /cf/conf/config.xml | /usr/bin/cut -f2 -d'>' | /usr/bin/cut -f1 -d'<'`
-if [ ${USE_MFS_TMP_SIZE} -gt 0 ]; then
+if [ ! -z ${USE_MFS_TMP_SIZE} ] && [ ${USE_MFS_TMP_SIZE} -gt 0 ]; then
 	tmpsize="${USE_MFS_TMP_SIZE}m"
 else
 	tmpsize="40m"
@@ -13,7 +13,7 @@ fi
 
 # Size of /var
 USE_MFS_VAR_SIZE=`/usr/bin/grep use_mfs_var_size /cf/conf/config.xml | /usr/bin/cut -f2 -d'>' | /usr/bin/cut -f1 -d'<'`
-if [ ${USE_MFS_VAR_SIZE} -gt 0 ]; then
+if [ ! -z ${USE_MFS_VAR_SIZE} ] && [ ${USE_MFS_VAR_SIZE} -gt 0 ]; then
 	varsize="${USE_MFS_VAR_SIZE}m"
 else
 	varsize="60m"

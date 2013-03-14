@@ -2914,7 +2914,7 @@ function interface_configure($interface = "wan", $reloadall = false, $linkupeven
 
 	$mtu = get_interface_default_mtu(remove_ifindex($realhwif));
 	$assignedparent = convert_real_interface_to_friendly_interface_name($realhwif);
-	if (!empty($assignedparent) && isset($config['interfaces'][$assignedparent]['mtu']))
+	if (!empty($assignedparent) && !empty($config['interfaces'][$assignedparent]['mtu']))
 		$mtu = $config['interfaces'][$assignedparent]['mtu'];
 
 	$vlanifs = link_interface_to_vlans($realhwif);

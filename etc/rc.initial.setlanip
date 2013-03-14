@@ -258,7 +258,12 @@ function console_configure_ip_address($version) {
 			                    $upperifname, $label_IPvX) . "\n> ";
 			$intip = chop(fgets($fp));
 			$is_ipaddr = ($version === 6) ? is_ipaddrv6($intip) : is_ipaddrv4($intip);
-		} while (!($is_ipaddr || $intip == ''));
+			if ($is_ipaddr && is_ipaddr_configured($intip, $interface, true)) {
+				$ip_conflict = true;
+				echo gettext("This IP address conflicts with another interface or a VIP") . "\n";
+			} else
+				$ip_conflict = false;
+		} while (($ip_conflict === true) || !($is_ipaddr || $intip == ''));
 		if ($intip != '') {
 			echo "\n" . sprintf(gettext("Subnet masks are entered as bit counts (as in CIDR notation) in %s."),
 			                    $g['product_name']) . "\n";

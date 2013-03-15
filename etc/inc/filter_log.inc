@@ -92,7 +92,17 @@ function match_filter_line($flent, $filtertext = "") {
 function match_filter_field($flent, $fields) {
 	foreach ($fields as $field) {
 		if ($fields[$field] == "All") continue;
-		if ( !(in_arrayi($flent[$field], explode(",", str_replace(" ", ",", $fields[$field]))) ) ) return false;
+		if ((strpos($fields[$field], '!') === 0)) {
+			$fields[$field] = substr($fields[$field], 1);
+			if (preg_match("/act/i", $field)) {
+				if ( (in_arrayi($flent[$field], explode(",", str_replace(" ", ",", $fields[$field]))) ) ) return false;
+			} else if ( (preg_match("/{$fields[$field]}/i", $flent[$field])) ) return false;
+		}
+		else {
+			if (preg_match("/act/i", $field)) {
+				if ( !(in_arrayi($flent[$field], explode(",", str_replace(" ", ",", $fields[$field]))) ) ) return false;
+			} else if ( !(preg_match("/{$fields[$field]}/i", $flent[$field])) ) return false;
+		}
 	}	
 	return true;
 }

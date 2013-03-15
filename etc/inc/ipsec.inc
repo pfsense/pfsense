@@ -354,7 +354,7 @@ function ipsec_phase2_status(& $spd,& $sad,& $ph1ent,& $ph2ent) {
 	if( ipsec_lookup_ipsec_sa($spd,$sad,"out",$loc_ip,$rmt_ip,$loc_id,$rmt_id)) {
 		if (empty($ph2ent['natlocalid']) && ipsec_lookup_ipsec_sa($spd,$sad,"in",$rmt_ip,$loc_ip,$rmt_id,$loc_id))
 			return true;
-		else if (!empty($ph2ent['natlocalid']) && ipsec_lookup_ipsec_sa($spd,$sad,"in",$rmt_ip,$natloc_id,$rmt_id,$natloc_id))
+		else if (!empty($ph2ent['natlocalid']) && ipsec_lookup_ipsec_sa($spd,$sad,"out",$loc_ip,$rmt_ip,$loc_id,$rmt_id))
 			return true;
 	}
 

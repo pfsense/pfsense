@@ -88,7 +88,7 @@ if (!$if || !isset($iflist[$if])) {
 	}
 }
 
-if (is_array($config['dhcpdv6'][$if])){
+if (is_array($config['dhcpdv6'][$if])) {
 	/* RA specific */
 	$pconfig['ramode'] = $config['dhcpdv6'][$if]['ramode'];
 	$pconfig['rapriority'] = $config['dhcpdv6'][$if]['rapriority'];
@@ -101,9 +101,8 @@ if (is_array($config['dhcpdv6'][$if])){
 
 	$pconfig['subnets'] = $config['dhcpdv6'][$if]['subnets']['item'];
 }
-if (!is_array($pconfig['subnets'])) {
+if (!is_array($pconfig['subnets']))
 	$pconfig['subnets'] = array();
-}
 
 $advertise_modes = array("disabled" => "Disabled",
 			 "router" => "Router Only",
@@ -121,7 +120,6 @@ $subnets_help = gettext("Subnets are specified in CIDR format.  " .
 			"If no subnets are specified here, the Router Advertisement (RA) Daemon will advertise to the subnet to which the router's interface is assigned.");
 
 if ($_POST) {
-
 	unset($input_errors);
 
 	$pconfig = $_POST;
@@ -131,22 +129,19 @@ if ($_POST) {
 	$pconfig['subnets'] = array();
 	for ($x = 0; $x < 5000; $x += 1) {
 		$address = trim($_POST['subnet_address' . $x]);
-		$bits    = trim($_POST['subnet_bits' . $x]);
-		if ($address === "") {
+		if ($address === "")
 			continue;
-		}
-		if (is_ipaddrv6($address)) {
-			if ($bits === "") {
-				$pconfig['subnets'][] = $address . "/128";
-			} else {
-				$pconfig['subnets'][] = $address . "/" . $bits;
-			}
-		}
-		else if (is_alias($address)) {
+
+		$bits = trim($_POST['subnet_bits' . $x]);
+		if ($bits === "")
+			$bits = "128";
+
+		if (is_alias($address)) {
 			$pconfig['subnets'][] = $address;
-		}
-		else {
-			$input_errors[] = sprintf(gettext("An invalid subnet or alias was specified. [%s/%s]"), $address, $bits);
+		} else {
+			$pconfig['subnets'][] = $address . "/" . $bits;
+			if (!is_ipaddrv6($address))
+				$input_errors[] = sprintf(gettext("An invalid subnet or alias was specified. [%s/%s]"), $address, $bits);
 		}
 	}
 

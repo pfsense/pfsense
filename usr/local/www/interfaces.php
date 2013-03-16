@@ -273,7 +273,7 @@ if (isset($wancfg['wireless'])) {
 	$wl_chaninfo = get_wireless_channel_info($if);
 	$wl_sysctl_prefix = 'dev.' . $wlanbaseif_split[1] . '.' . $wlanbaseif_split[2];
 	$wl_sysctl = get_sysctl(array("{$wl_sysctl_prefix}.diversity", "{$wl_sysctl_prefix}.txantenna", "{$wl_sysctl_prefix}.rxantenna",
-	                              "{$wl_sysctl_prefix}.slottime", "{$wl_sysctl_prefix}.acktimeout", "{$wl_sysctl_prefix}.ctstimeout"));
+				      "{$wl_sysctl_prefix}.slottime", "{$wl_sysctl_prefix}.acktimeout", "{$wl_sysctl_prefix}.ctstimeout"));
 	$wl_regdomain_xml_attr = array();
 	$wl_regdomain_xml = parse_xml_regdomain($wl_regdomain_xml_attr);
 	$wl_regdomains = &$wl_regdomain_xml['regulatory-domains']['rd'];
@@ -548,7 +548,7 @@ if ($_POST['apply']) {
 			break;
 	}
 
-	
+
 	/* normalize MAC addresses - lowercase and convert Windows-ized hyphenated MACs to colon delimited */
 	$staticroutes = get_staticroutes(true);
 	$_POST['spoofmac'] = strtolower(str_replace("-", ":", $_POST['spoofmac']));
@@ -713,9 +713,9 @@ if ($_POST['apply']) {
 		}
 
 		if ($_POST['passphrase']) {
-                	$passlen = strlen($_POST['passphrase']);
-                	if ($passlen < 8 || $passlen > 64)
-                        	$input_errors[] = gettext("The length of the passphrase should be between 8 and 63 characters.");
+			$passlen = strlen($_POST['passphrase']);
+			if ($passlen < 8 || $passlen > 64)
+				$input_errors[] = gettext("The length of the passphrase should be between 8 and 63 characters.");
 		}
 	}
 	if (!$input_errors) {
@@ -732,7 +732,7 @@ if ($_POST['apply']) {
 				if($pid)
 					posix_kill($pid, SIGTERM);
 			}
-				
+
 		}
 		$ppp = array();
 		if ($wancfg['ipaddr'] != "ppp")
@@ -747,7 +747,7 @@ if ($_POST['apply']) {
 		unset($wancfg['dhcp6-duid']);
 		unset($wancfg['dhcp6-ia-pd-len']);
 		unset($wancfg['track6-interface']);
-		unset($wancfg['track6-prefix-id']);		
+		unset($wancfg['track6-prefix-id']);
 		unset($wancfg['prefix-6rd']);
 		unset($wancfg['prefix-6rd-v4plen']);
 		unset($wancfg['gateway-6rd']);
@@ -760,7 +760,7 @@ if ($_POST['apply']) {
 		if (empty($wancfg['pppoe']['pppoe-reset-type']))
 			unset($wancfg['pppoe']['pppoe-reset-type']);
 		unset($wancfg['local']);
-		
+
 		unset($wancfg['remote']);
 		unset($a_ppps[$pppid]['apn']);
 		unset($a_ppps[$pppid]['phone']);
@@ -938,7 +938,7 @@ if ($_POST['apply']) {
 			unset($wancfg['media']);
 			unset($wancfg['mediaopt']);
 		} else {
-			$mediaopts = explode(' ', $_POST['mediaopt']);	
+			$mediaopts = explode(' ', $_POST['mediaopt']);
 			if ($mediaopts[0] != ''){ $wancfg['media'] = $mediaopts[0]; }
 			if ($mediaopts[1] != ''){ $wancfg['mediaopt'] = $mediaopts[1]; }
 			else { unset($wancfg['mediaopt']); }
@@ -1010,7 +1010,7 @@ function handle_wireless_post() {
 	$wancfg['wireless']['auth_server_addr2'] = $_POST['auth_server_addr2'];
 	$wancfg['wireless']['auth_server_port2'] = $_POST['auth_server_port2'];
 	$wancfg['wireless']['auth_server_shared_secret2'] = $_POST['auth_server_shared_secret2'];
-	
+
 	if ($_POST['persistcommonwireless'] == "yes") {
 		if (!is_array($config['wireless']))
 			$config['wireless'] = array();
@@ -1145,9 +1145,9 @@ $intrealname = $config['interfaces'][$if]['if'];
 exec("/sbin/ifconfig -m $intrealname | grep \"media \"", $mediaopts);
 foreach ($mediaopts as $mediaopt){
 	preg_match("/media (.*)/", $mediaopt, $matches);
- 	if (preg_match("/(.*) mediaopt (.*)/", $matches[1], $matches1)){
+	if (preg_match("/(.*) mediaopt (.*)/", $matches[1], $matches1)){
 		// there is media + mediaopt like "media 1000baseT mediaopt full-duplex"
- 		array_push($mediaopts_list, $matches1[1] . " " . $matches1[2]);
+		array_push($mediaopts_list, $matches1[1] . " " . $matches1[2]);
 	}else{
 		// there is only media like "media 1000baseT"
 		array_push($mediaopts_list, $matches[1]);
@@ -1467,13 +1467,13 @@ $types6 = array("none" => gettext("None"), "staticv6" => gettext("Static IPv6"),
 								"header size) will be in effect."); ?>
 							</td>
 						</tr>
-						<?php 
+						<?php
 						if (count($mediaopts_list) > 0){
 						$mediaopt_from_config = $config['interfaces'][$if]['media'] . ' ' . $config['interfaces'][$if]['mediaopt'];
 						echo "<tr>";
 							echo '<td valign="top" class="vncell">' . gettext("Speed and duplex") . '</td>';
 							echo '<td class="vtable">';
-                                			echo '<div id="showadvmediabox"';
+							echo '<div id="showadvmediabox"';
 								if ($mediaopt_from_config != 'autoselect ' && $mediaopt_from_config != ' ') echo " style='display:none'>";
 								else echo '>';
 								echo '<input type="button" onClick="show_advanced_media()" value="' . gettext("Advanced") . '"></input> - ' . gettext("Show advanced option");
@@ -1865,7 +1865,7 @@ $types6 = array("none" => gettext("None"), "staticv6" => gettext("Static IPv6"),
 										<td width="22%" valign="top" class="vncell"><?=gettext("IPv6 Interface"); ?></td>
 										<td width="78%" class="vtable">
 										<select name='track6-interface' class='formselect' >
-										<?php 
+										<?php
 											$interfaces = get_configured_interface_with_descr(false, true);
 											$dynv6ifs = array();
 											foreach ($interfaces as $iface => $ifacename) {
@@ -1885,7 +1885,7 @@ $types6 = array("none" => gettext("None"), "staticv6" => gettext("Static IPv6"),
 													echo " selected";
 												echo ">" . htmlspecialchars($ifacename) . "</option>";
 											}
-										  ?>
+										?>
 										</select> <br>
 											<br>
 											<?=gettext("This selects the dynamic IPv6 WAN interface to track for configuration") ?><br />

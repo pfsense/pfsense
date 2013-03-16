@@ -324,7 +324,7 @@ if ($_POST) {
 		$retvaldhcp = 0;
 		$retvaldns = 0;
 		/* Stop DHCPv6 so we can cleanup leases */
-		killbyname("dhcpd -6");
+		killbypid("{$g['dhcpd_chroot_path']}{$g['varrun_path']}/dhcpdv6.pid");
 		// dhcp_clean_leases();
 		/* dnsmasq_configure calls dhcpd_configure */
 		/* no need to restart dhcpd twice */

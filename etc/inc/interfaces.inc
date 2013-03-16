@@ -3538,7 +3538,7 @@ function interface_dhcpv6_configure($interface = "wan", $wancfg) {
 		filter_configure_sync();
 
 	/* fire up dhcp6c for IPv6 first, this backgrounds immediately */
-	mwexec("/usr/local/sbin/dhcp6c -d -c {$g['varetc_path']}/dhcp6c_{$interface}.conf -p {$g['varrun_path']}/dhcp6c_{$interface}.pid {$wanif}");
+	mwexec("/usr/local/sbin/dhcp6c -d -c {$g['varetc_path']}/dhcp6c_{$interface}.conf -p {$g['varrun_path']}/dhcp6c_{$wanif}.pid {$wanif}");
 	sleep(1);
 	unset($out);
 	exec("/sbin/rtsol -d {$wanif} 2>&1", $out, $ret);

@@ -5,6 +5,7 @@ if(!file_exists($leases_file)) {
 	exit(1);
 }
 
+$duid_arr = array();
 foreach(file($leases_file) as $line) {
 	// echo "$line";
 	if(preg_match("/^(ia-[np][ad])[ ]+\"(.*?)\"/i ", $line, $duidmatch)) {

@@ -46,9 +46,6 @@
 require("guiconfig.inc");
 require_once("filter_log.inc");
 
-require_once("pfsense-utils.inc");
-require_once("functions.inc");
-
 function getGETPOSTsettingvalue($settingname, $default)
 {
 	$settingvalue = $default;
@@ -176,7 +173,7 @@ include("head.inc");
 						</td>
 						<td>
 							<div align=center valign=top><?=gettext("Quantity");?></div>
-							<div align=center valign=top><input id="filterlogentries_qty" name="filterlogentries_qty" class="formfld search" type="text" size="2" value="<?= $filterlogentries_qty ?>" /></div>
+							<div align=center valign=top><input id="filterlogentries_qty" name="filterlogentries_qty" class="" type="text" size="6" value="<?= $filterlogentries_qty ?>" /></div>
 						</td>
 					</tr>
 					<tr>
@@ -256,7 +253,7 @@ include("head.inc");
 						</td>
 						<td>
 							<div align=center valign=top><?=gettext("Quantity");?></div>
-							<div align=center valign=top><input id="filterlogentries_qty" name="filterlogentries_qty" class="formfld search" style="vertical-align:top;" type="text" size="2" value="<?= $filterlogentries_qty ?>" /></div>
+							<div align=center valign=top><input id="filterlogentries_qty" name="filterlogentries_qty" class="" style="vertical-align:top;" type="text" size="6" value="<?= $filterlogentries_qty ?>" /></div>
 						</td>
 						<td>
 							<div align=center valign=top>&nbsp</div>

@@ -63,10 +63,10 @@ if ($_POST['if'])
 /* if OLSRD is enabled, allow WAN to house DHCP. */
 if($config['installedpackages']['olsrd']) {
 	foreach($config['installedpackages']['olsrd']['config'] as $olsrd) {
-			if($olsrd['enable']) {
-				$is_olsr_enabled = true;
-				break;
-			}
+		if($olsrd['enable']) {
+			$is_olsr_enabled = true;
+			break;
+		}
 	}
 }
 
@@ -116,9 +116,9 @@ $priority_modes = array("low" => "Low",
 $carplist = get_configured_carp_interface_list();
 
 $subnets_help = gettext("Subnets are specified in CIDR format.  " .
-                        "Select the CIDR mask that pertains to each entry.  " .
-                        "/128 specifies a single IPv6 host; /64 specifies a normal IPv6 network; etc.  " .
-                        "If no subnets are specified here, the Router Advertisement (RA) Daemon will advertise to the subnet to which the router's interface is assigned.");
+			"Select the CIDR mask that pertains to each entry.  " .
+			"/128 specifies a single IPv6 host; /64 specifies a normal IPv6 network; etc.  " .
+			"If no subnets are specified here, the Router Advertisement (RA) Daemon will advertise to the subnet to which the router's interface is assigned.");
 
 if ($_POST) {
 
@@ -169,7 +169,7 @@ if ($_POST) {
 		$config['dhcpdv6'][$if]['ramode'] = $_POST['ramode'];
 		$config['dhcpdv6'][$if]['rapriority'] = $_POST['rapriority'];
 		$config['dhcpdv6'][$if]['rainterface'] = $_POST['rainterface'];
-		
+
 		$config['dhcpdv6'][$if]['radomainsearchlist'] = $_POST['radomainsearchlist'];
 		unset($config['dhcpdv6'][$if]['radnsserver']);
 		if ($_POST['radns1'])
@@ -359,11 +359,11 @@ display_top_tabs($tab_array);
 				</div>
 			</td>
 			</tr>
-			
+
 			<tr>
 			<td colspan="2" class="list" height="12">&nbsp;</td>
 			</tr>
-			
+
 			<tr>
 			<td colspan="2" valign="top" class="listtopic">DNS</td>
 			</tr>

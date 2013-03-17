@@ -144,6 +144,23 @@ if ($_POST) {
 	}
 }
 
+if( ($_POST['host']) && ($_POST['dialog_output']) ) {
+	display_host_results ($host,$resolved,$dns_speeds);
+	exit;
+}
+
+function display_host_results ($address,$hostname,$dns_speeds) {
+	echo gettext("IP Address") . ": {$address} \n";
+	echo gettext("Host Name") . ": {$hostname} \n";
+	echo "\n";
+	echo gettext("Server") . "\t" . gettext("Query Time") . "\n";
+	if(is_array($dns_speeds)) 
+		foreach($dns_speeds as $qt){
+			echo trim($qt['dns_server']) . "\t" . trim($qt['query_time']);
+			echo "\n";
+		}
+}
+
 include("head.inc"); ?>
 <body link="#000000" vlink="#000000" alink="#000000">
 <?php include("fbegin.inc"); ?>

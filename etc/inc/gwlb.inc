@@ -161,8 +161,9 @@ EOD;
 		/* Interface ip is needed since apinger will bind a socket to it. */
 		if (is_ipaddrv4($gateway['gateway'])) {
 			$gwifip = find_interface_ip($gateway['interface'], true);
-		}
-		if (is_ipaddrv6($gateway['gateway'])) {
+			if (!is_ipaddrv4($gwifip))
+				continue; //Skip this target
+		} else if (is_ipaddrv6($gateway['gateway'])) {
 			/* link locals really need a different src ip */
 			if(preg_match("/fe80::/i", $gateway['gateway'])) {
 				$linklocal = explode("%", find_interface_ipv6_ll($gateway['interface'], true));
@@ -171,9 +172,10 @@ EOD;
 			} else {
 				$gwifip = find_interface_ipv6($gateway['interface'], true);
 			}
-		}
-		if (!is_ipaddr($gwifip))
-			continue; //Skip this target
+			if (!is_ipaddrv6($gwifip))
+				continue; //Skip this target
+		} else
+			continue;
 
 		$monitor_ips[] = monitor_ips;
 		$apingercfg = "target \"{$gateway['monitor']}\" {\n";
@@ -363,20 +365,8 @@ function return_gateways_array($disabled = false, $localhost = false) {
 			 * store the address family in the gateway item */
 			if(is_ipaddrv4($gateway['gateway']))
 				$gateway['ipprotocol'] = "inet";
-			if(is_ipaddrv6($gateway['gateway']))
+			else if(is_ipaddrv6($gateway['gateway']))
 				$gateway['ipprotocol'] = "inet6";
-			if((preg_match("/dynamic/i", $gateway['gateway'])) && (!isset($gateway['ipprotocol']))) {
-				if(is_ipaddrv4($gateway['gateway']))
-					$gateway['ipprotocol'] = "inet";
-				if(is_ipaddrv6($gateway['gateway']))
-					$gateway['ipprotocol'] = "inet6";
-			}
-			if((preg_match("/dynamic/i", $gateway['monitor'])) && (!isset($gateway['ipprotocol']))) {
-				if(is_ipaddrv4($gateway['monitor']))
-					$gateway['ipprotocol'] = "inet";
-				if(is_ipaddrv6($gateway['monitor']))
-					$gateway['ipprotocol'] = "inet6";
-			}
 
 			/* if the gateway is dynamic and we can find the IPv4, Great! */
 			if((empty($gateway['gateway']) || ($gateway['gateway'] == "dynamic")) && ($gateway['ipprotocol'] == "inet")) {
@@ -407,6 +397,9 @@ function return_gateways_array($disabled = false, $localhost = false) {
 					case "6rd":
 					case "6to4":
 					case "dhcp6":
+					case "pppoe":
+					case "pptp":
+					case "ppp":
 						$gateway['ipprotocol'] = "inet6";
 						$gateway['gateway'] = get_interface_gateway_v6($gateway['interface']);
 						if($gateway['gateway'] == "dynamic6") {

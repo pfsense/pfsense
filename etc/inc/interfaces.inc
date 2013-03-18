@@ -3145,10 +3145,9 @@ function interface_track6_6rd_configure($interface = "lan", $lancfg) {
 		return;
 	}
 
-	$wanif = get_real_interface($lancfg['track6-interface']);
-	$ip4address = find_interface_ip($wanif);
+	$ip4address = get_interface_ip($lancfg['track6-interface']);
 	if (!is_ipaddrv4($ip4address)) { /* XXX: This should not be needed by 6rd || (is_private_ip($ip4address))) { */
-		log_error("The interface IPv4 '{$ip4address}' address on interface '{$wanif}' is not public, not configuring 6RD tunnel");
+		log_error("The interface IPv4 '{$ip4address}' address on interface '{$lancfg['track6-interface']}' is not public, not configuring 6RD tunnel");
 		return;
 	}
 	$hexwanv4 = return_hex_ipv4($ip4address);
@@ -3210,10 +3209,9 @@ function interface_track6_6to4_configure($interface = "lan", $lancfg) {
 	if (!is_numeric($lancfg['track6-prefix-id']))
 		$lancfg['track6-prefix-id'] = 0;
 
-	$wanif = get_real_interface($lancfg['track6-interface']);
-	$ip4address = find_interface_ip($wanif);
+	$ip4address = get_interface_ip($lancfg['track6-interface']);
 	if (!is_ipaddrv4($ip4address) || is_private_ip($ip4address)) {
-		log_error("The interface IPv4 '{$ip4address}' address on interface '{$wanif}' is not public, not configuring 6RD tunnel");
+		log_error("The interface IPv4 '{$ip4address}' address on interface '{$lancfg['track6-interface']}' is not public, not configuring 6RD tunnel");
 		return;
 	}
 	$hexwanv4 = return_hex_ipv4($ip4address);
@@ -3279,8 +3277,7 @@ function interface_track6_dhcp6_configure($interface = "lan", $lancfg) {
 	unset($interface_snv6_arr_cache[$lanif]);
 
 	if ($wancfg['ipaddrv6'] == "slaac") {
-		$wanif = get_real_interface($lancfg['track6-interface']);
-		$ifcfgipv6 = find_interface_ipv6($wanif);
+		$ifcfgipv6 = get_interface_ipv6($lancfg['track6-interface']);
 		if (is_ipaddrv6($ifcfgipv6)) {
 			$dhcp6lanarr = explode(":", Net_IPv6::uncompress($ifcfgipv6));
 			$dhcp6lanarr[4] = 0;

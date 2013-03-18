@@ -131,18 +131,20 @@ setup_gateways_monitor();
 /* signal filter reload */
 filter_configure();
 
-if (is_ipaddr($oldipv6) && $curwanipv6 == $oldipv6) {
-	// Still need to sync VPNs on PPPoE and such, as even with the same IP the VPN software is unhappy with the IP disappearing.
-	if (in_array($config['interfaces'][$interface]['ipaddrv6'], array('pppoe', 'pptp', 'ppp'))) {
-		/* reconfigure IPsec tunnels */
-		vpn_ipsec_force_reload();
+if (is_ipaddrv6($oldipv6)) {
+	if ($curwanipv6 == $oldipv6) {
+		// Still need to sync VPNs on PPPoE and such, as even with the same IP the VPN software is unhappy with the IP disappearing.
+		if (in_array($config['interfaces'][$interface]['ipaddrv6'], array('pppoe', 'pptp', 'ppp'))) {
+			/* reconfigure IPsec tunnels */
+			vpn_ipsec_force_reload();
 
-		/* start OpenVPN server & clients */
-		openvpn_resync_all($interface);
-	}
-	exit;
-} else
-	mwexec("/sbin/ifconfig {$interface_real} inet6 {$oldipv6} delete");
+			/* start OpenVPN server & clients */
+			openvpn_resync_all($interface);
+		}
+		exit;
+	} else
+		mwexec("/sbin/ifconfig {$interface_real} inet6 {$oldipv6} delete");
+}
 
 file_put_contents("{$g['vardb_path']}/{$interface}_cacheipv6", $curwanipv6);
 

@@ -3708,6 +3708,9 @@ function convert_real_interface_to_friendly_interface_name($interface = "wan") {
 	$ifdescrs = &$config['interfaces'];
 	//$ifdescrs = get_configured_interface_list(false, true);
 
+	if (strstr($interface, "_stf"))
+		$interface = str_replace("_stf", "", $interface);
+
 	foreach ($ifdescrs as $if => $ifname) {
 		if ($if == $interface || $config['interfaces'][$if]['if'] == $interface)
 			return $if;
@@ -3723,6 +3726,7 @@ function convert_real_interface_to_friendly_interface_name($interface = "wan") {
 			return $ifname;
 		 */
 	}
+
 	return NULL;
 }
 
@@ -4310,8 +4314,8 @@ function find_interface_ipv6($interface, $flush = false)
 
 	/* Setup IP cache */
 	if (!isset($interface_ipv6_arr_cache[$interface]) or $flush) {
-		$ifinfo = pfSense_get_interface_addresses($interface);
 		// FIXME: Add IPv6 support to the pfSense module
+		$ifinfo = array();
 		exec("/sbin/ifconfig {$interface} inet6", $output);
 		foreach($output as $line) {
 			if(preg_match("/inet6/", $line)) {

@@ -3099,21 +3099,21 @@ function interface_track6_configure($interface = "lan", $wancfg) {
 	}
 
 	switch($trackcfg['ipaddrv6']) {
-		case "6to4":
-			if ($g['debug'])
-				log_error("Interface {$interface} configured via {$wancfg['track6-interface']}  type {$type}");
-			interface_track6_6to4_configure($interface, $wancfg);
-			break;
-		case "6rd":
-			if ($g['debug'])
-				log_error("Interface {$interface} configured via {$wancfg['track6-interface']}  type {$type}");
-			interface_track6_6rd_configure($interface, $wancfg);
-			break;
-		case "dhcp6":
-			if ($g['debug'])
-				log_error("Interface {$interface} configured via {$wancfg['track6-interface']}  type {$type}");
-			interface_track6_dhcp6_configure($interface, $wancfg);
-			break;
+	case "6to4":
+		if ($g['debug'])
+			log_error("Interface {$interface} configured via {$wancfg['track6-interface']}  type {$type}");
+		interface_track6_6to4_configure($interface, $wancfg);
+		break;
+	case "6rd":
+		if ($g['debug'])
+			log_error("Interface {$interface} configured via {$wancfg['track6-interface']}  type {$type}");
+		interface_track6_6rd_configure($interface, $wancfg);
+		break;
+	case "dhcp6":
+		if ($g['debug'])
+			log_error("Interface {$interface} configured via {$wancfg['track6-interface']}  type {$type}");
+		interface_track6_dhcp6_configure($interface, $wancfg);
+		break;
 	}
 
 	if (!function_exists('services_dhcpd_configure'))
@@ -4547,17 +4547,7 @@ function get_interface_subnetv6($interface = "wan")
 {
 	global $config;
 
-	if (is_array($config['interfaces'][$interface])) {
-		switch($config['interfaces'][$interface]['ipaddrv6']) {
-			case "6rd":
-			case "6to4":
-				$realif = "{$interface}_stf";
-				break;
-			default:
-				$realif = get_real_interface($interface);
-				break;
-		}
-	}
+	$realif = get_real_interface($interface, "inet6");
 	if (!$realif) {
 		if (preg_match("/^[a-z0-9]+_vip/i", $interface))
 			$realif = $interface;
@@ -4634,11 +4624,7 @@ function interface_has_gatewayv6($friendly) {
 		switch ($ifname['ipaddrv6']) {
 			case "slaac":
 			case "dhcp6":
-				return true;
-				break;
 			case "6to4":
-				return true;
-				break;
 			case "6rd":
 				return true;
 				break;

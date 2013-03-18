@@ -893,7 +893,7 @@ function services_dhcpdv6_configure() {
 	/* we add a fake entry for interfaces that are set to track6 another WAN */
 	foreach ($Iflist as $ifname) {
 		$realif = get_real_interface($ifname);
-		$ifcfgipv6 = find_interface_ipv6($realif);
+		$ifcfgipv6 = get_interface_ipv6($ifname);
 		if(!is_ipaddrv6($ifcfgipv6))
 			continue;
 		$ifcfgipv6 = Net_IPv6::getNetmask($ifcfgipv6, 64);
@@ -906,6 +906,7 @@ function services_dhcpdv6_configure() {
 			$dhcpdv6cfg[$ifname]['enable'] = true;
 			/* range */
 			$ifcfgipv6arr[7] = "1000";
+			$dhcpdv6cfg[$ifname]['range'] = array();
 			$dhcpdv6cfg[$ifname]['range']['from'] = Net_IPv6::compress(implode(":", $ifcfgipv6arr));
 			$ifcfgipv6arr[7] = "2000";
 			$dhcpdv6cfg[$ifname]['range']['to'] = Net_IPv6::compress(implode(":", $ifcfgipv6arr));;
@@ -914,6 +915,7 @@ function services_dhcpdv6_configure() {
 				$pdlenmax = $pdlen;
 				$pdlenhalf = $pdlenmax -1;
 				$pdlenmin = (64 - ceil($pdlenhalf / 4));
+				$dhcpdv6cfg[$ifname]['prefixrange'] = array();
 				$dhcpdv6cfg[$ifname]['prefixrange']['prefixlength'] = $pdlenmin;
 
 				/* set the delegation start to half the current address block */

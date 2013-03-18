@@ -69,13 +69,11 @@ sleep(5);
 if(empty($argument)) {
 	$interface = "wan";
 	$interface_real = get_real_interface($interface);
-	$curwanipv6 = get_interface_ipv6($interface);
+	$curwanipv6 = get_interface_ipv6($interface, true);
 } else {
 	$interface_real = $argument;
 	$interface = convert_real_interface_to_friendly_interface_name($interface_real);
-	$curwanipv6 = find_interface_ipv6($interface_real, true);
-	if (empty($curwanipv6))
-		$curwanipv6 = get_interface_ipv6($interface);
+	$curwanipv6 = get_interface_ipv6($interface, true);
 }
 
 if (empty($interface)) {

@@ -3878,7 +3878,7 @@ function interface_get_wireless_clone($wlif) {
 	}
 }
 
-function get_real_interface($interface = "wan") {
+function get_real_interface($interface = "wan", $family = "all") {
 	global $config, $g;
 
 	$wanif = NULL;
@@ -3918,13 +3918,28 @@ function get_real_interface($interface = "wan") {
 
 		$cfg = &$config['interfaces'][$interface];
 
-		// Wireless cloned NIC support (FreeBSD 8+)
-		// interface name format: $parentnic_wlanparentnic#
-		// example: ath0_wlan0
-		if( is_array($cfg['wireless']) || preg_match($g['wireless_regex'], $cfg['if']))
-			$wanif = interface_get_wireless_clone($cfg['if']);
-		else
-			$wanif = $cfg['if'];
+		if ($family == "inet6") {
+			switch ($cfg['ipaddrv6']) {
+			case "6rd":
+			case "6to4":
+				$wanif = "{$interface}_stf";
+				break;
+			default:
+				if( is_array($cfg['wireless']) || preg_match($g['wireless_regex'], $cfg['if']))
+					$wanif = interface_get_wireless_clone($cfg['if']);
+				else
+					$wanif = $cfg['if'];
+				break;
+			}
+		} else {
+			// Wireless cloned NIC support (FreeBSD 8+)
+			// interface name format: $parentnic_wlanparentnic#
+			// example: ath0_wlan0
+			if( is_array($cfg['wireless']) || preg_match($g['wireless_regex'], $cfg['if']))
+				$wanif = interface_get_wireless_clone($cfg['if']);
+			else
+				$wanif = $cfg['if'];
+		}
 		break;
 	}
 
@@ -4471,7 +4486,7 @@ function get_interface_ip($interface = "wan")
 		return null;
 }
 
-function get_interface_ipv6($interface = "wan")
+function get_interface_ipv6($interface = "wan", $flush = false)
 {
 	global $config;
 
@@ -4491,7 +4506,7 @@ function get_interface_ipv6($interface = "wan")
 			return null;
 	}
 
-	$curip = find_interface_ipv6($realif);
+	$curip = find_interface_ipv6($realif, $flush);
 	if ($curip && is_ipaddrv6($curip) && ($curip != "::"))
 		return $curip;
 	else

@@ -125,6 +125,10 @@ if ($interface == "lan")
 
 /* check tunneled IPv6 interface tracking */
 switch($config['interfaces'][$interface]['ipaddrv6']) {
+	case "slaac":
+	case "dhcp6":
+		interface_dhcpv6_configure($interface, $config['interfaces'][$interface]);
+		break;
 	case "6to4":
 		interface_6to4_configure($interface, $config['interfaces'][$interface]);
 		break;

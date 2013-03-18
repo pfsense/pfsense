@@ -141,7 +141,7 @@ if (is_ipaddrv6($oldipv6)) {
 			openvpn_resync_all($interface);
 		}
 		exit;
-	} else
+	} else if (does_interface_exist($interface_realv6))
 		mwexec("/sbin/ifconfig {$interface_realv6} inet6 {$oldipv6} delete");
 }
 

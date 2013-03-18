@@ -44,7 +44,17 @@ function handle_argument_group($iface, $argument2) {
 
 	$ipaddr = $config['interfaces'][$iface]['ipaddr'];
 	$ip6addr = $config['interfaces'][$iface]['ipaddrv6'];
-	if ((!empty($ipaddr) && is_ipaddrv4($ipaddr)) || (empty($ipaddr) && empty($ip6addr)) || (!empty($ip6addr) && is_ipaddrv6($ip6addr))) {
+	$staticv4 = false;
+	if (empty($ipaddr))
+		$staticv4 = true;
+	else
+		$staticv4 = is_ipaddrv4($ipaddr);
+	$staticv6 = false;
+	if (empty($ip6addr))
+		$statcv6 = true;
+	else
+		$staticv6 = is_ipaddrv6($ip6addr);
+	if ($staticv4 === true && $staticv6 === true) {
 		$friendly = convert_friendly_interface_to_friendly_descr($iface);
 		log_error("Hotplug event detected for {$friendly}({$iface}) but ignoring since interface is configured with static IP ({$ipaddr} {$ip6addr})");
 		interfaces_staticarp_configure($iface);
@@ -60,17 +70,12 @@ function handle_argument_group($iface, $argument2) {
 			interface_bring_down($iface);
 			break;
 		case "start":
+		case "up":
 			log_error("DEVD Ethernet attached event for {$iface}");
 			interfaces_staticarp_configure($iface);
 			log_error("HOTPLUG: Configuring interface {$iface}");
 			// Do not try to readd to bridge otherwise em(4) has problems
 			interface_configure($iface, false, true); 
-			break;
-		case "up":
-			log_error("DEVD Ethernet attached event for {$iface}");
-			interfaces_staticarp_configure($iface);
-			log_error("HOTPLUG: Configuring interface {$iface}");
-			interface_configure($iface);
 			break;
 		}
 	}

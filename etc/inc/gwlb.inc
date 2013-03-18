@@ -429,20 +429,10 @@ function return_gateways_array($disabled = false, $localhost = false) {
 			$gateway['friendlyiface'] = $gateway['interface'];
 
 			/* special treatment for tunnel interfaces */
-			if($gateway['ipprotocol'] == "inet6") {
-				switch($wancfg['ipaddrv6']) {
-					case "6rd":
-					case "6to4":
-						$gateway['interface'] = "{$gateway['interface']}_stf";
-						break;
-					default:
-						$gateway['interface'] = get_real_interface($gateway['interface']);
-						break;
-				}
-			}
-			if($gateway['ipprotocol'] == "inet") {
+			if ($gateway['ipprotocol'] == "inet6")
+				$gateway['interface'] = get_real_interface($gateway['interface'], "inet6");
+			else if ($gateway['ipprotocol'] == "inet")
 				$gateway['interface'] = get_real_interface($gateway['interface']);
-			}
 
 			/* entry has a default flag, use it */
 			if (isset($gateway['defaultgw'])) {
@@ -584,17 +574,11 @@ function return_gateways_array($disabled = false, $localhost = false) {
 		$gateway['dynamic'] = false;
 		$gateway['ipprotocol'] = "inet6";
 		$gateway['gateway'] = get_interface_gateway_v6($ifname, $gateway['dynamic']);
+		$gateway['interface'] = get_real_interface($ifname, "inet6");
 		switch($ifcfg['ipaddrv6']) {
-			case "6to4":
-				$gateway['interface'] = "{$ifname}_stf";
-				$gateway['dynamic'] = "default";
-				break;
 			case "6rd":
-				$gateway['interface'] = "{$ifname}_stf";
+			case "6to4":
 				$gateway['dynamic'] = "default";
-				break;
-			default:
-				$gateway['interface'] = get_real_interface($ifname);
 				break;
 		}
 		$gateway['friendlyiface'] = $ifname;

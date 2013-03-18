@@ -2775,17 +2775,8 @@ EOD;
 		}
 
 		$gwv6 = get_interface_gateway_v6($ifdescr);
-		switch($ifcfg['type6']) {
-			case "6rd":
-			case "6to4":
-				$stf = "{$ifdescr}_stf";
-				$pdlen = 64 - calculate_ipv6_delegation_length($ifdescr);
-				break;
-			default:
-				$stf = $ifcfg['if'];
-				$pdlen = 64 - calculate_ipv6_delegation_length($ifdescr);
-			break;
-		}
+		$stf = get_real_interface($ifdescr, "inet6");
+		$pdlen = 64 - calculate_ipv6_delegation_length($ifdescr);
 		if (is_ipaddrv6($gwv6) && is_ipaddrv6($ifcfg['ipv6'])) {
 			$ipfrules .= "pass out route-to ( {$stf} {$gwv6} ) inet6 from {$ifcfg['ipv6']} to !{$ifcfg['ipv6']}/{$pdlen} keep state allow-opts label \"let out anything from firewall host itself\"\n";
 			if (is_array($ifcfg['vips6'])) {

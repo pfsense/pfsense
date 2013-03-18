@@ -4490,15 +4490,7 @@ function get_interface_ipv6($interface = "wan", $flush = false)
 {
 	global $config;
 
-	$realif = get_failover_interface($interface);
-	if (is_array($config['interfaces'][$interface])) {
-		switch($config['interfaces'][$interface]['ipaddrv6']) {
-			case "6rd":
-			case "6to4":
-				$realif = "{$interface}_stf";
-				break;
-		}
-	}
+	$realif = get_failover_interface($interface, "inet6");
 	if (!$realif) {
 		if (preg_match("/^[a-z0-9]+_vip/i", $interface))
 			$realif = $interface;
@@ -4928,11 +4920,11 @@ function interfaces_staticarp_configure($if) {
 	return 0;
 }
 
-function get_failover_interface($interface) {
+function get_failover_interface($interface, $family = "all") {
 	global $config;
 	/* shortcut to get_real_interface if we find it in the config */
 	if(is_array($config['interfaces'][$interface])) {
-		$wanif = get_real_interface($interface);
+		$wanif = get_real_interface($interface, $family);
 		return $wanif;
 	}
 
@@ -4948,7 +4940,7 @@ function get_failover_interface($interface) {
 		return $wanif;
 	}
 	/* fall through to get_real_interface */
-	$wanif = get_real_interface($interface);
+	$wanif = get_real_interface($interface, $family);
 	return $wanif;
 }
 

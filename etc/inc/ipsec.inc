@@ -151,10 +151,11 @@ function ipsec_get_phase1_src(& $ph1ent) {
 
 	if ($ph1ent['interface']) {
 		if (!is_ipaddr($ph1ent['interface'])) {
-			$if = get_failover_interface($ph1ent['interface']);
-			if($ph1ent['protocol'] == "inet6") {
+			if ($ph1ent['protocol'] == "inet6") { 
+				$if = get_failover_interface($ph1ent['interface'], "inet6");
 				$interfaceip = get_interface_ipv6($if);
 			} else {
+				$if = get_failover_interface($ph1ent['interface']);
 				$interfaceip = get_interface_ip($if);
 			}
 		} else {
@@ -162,11 +163,10 @@ function ipsec_get_phase1_src(& $ph1ent) {
 		}
 	} else {
 		$if = "wan";
-		if($ph1ent['protocol'] == "inet6") {
+		if ($ph1ent['protocol'] == "inet6")
 			$interfaceip = get_interface_ipv6($if);
-		} else {
+		else
 			$interfaceip = get_interface_ip($if);
-		}
 	}
 
 	return $interfaceip;

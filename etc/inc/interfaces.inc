@@ -3126,6 +3126,8 @@ function interface_track6_configure($interface = "lan", $wancfg) {
 
 function interface_track6_6rd_configure($interface = "lan", $lancfg) {
 	global $config, $g;
+	global $interface_ipv6_arr_cache;
+        global $interface_snv6_arr_cache;
 
 	if (!is_array($lancfg))
 		return;
@@ -3179,6 +3181,8 @@ function interface_track6_6rd_configure($interface = "lan", $lancfg) {
 	$oip = find_interface_ipv6($lanif);
 	if (is_ipaddrv6($oip))
 		mwexec("/sbin/ifconfig {$lanif} inet6 {$oip} delete");
+	unset($interface_ipv6_arr_cache[$lanif]);
+	unset($interface_snv6_arr_cache[$lanif]);
 	log_error("rd6 {$interface} with ipv6 address {$rd6lan} based on {$lancfg['track6-interface']} ipv4 {$ip4address}");
 	mwexec("/sbin/ifconfig {$lanif} inet6 {$rd6lan} prefixlen 64");
 
@@ -3187,6 +3191,8 @@ function interface_track6_6rd_configure($interface = "lan", $lancfg) {
 
 function interface_track6_6to4_configure($interface = "lan", $lancfg) {
 	global $config, $g;
+	global $interface_ipv6_arr_cache;
+        global $interface_snv6_arr_cache;
 
 	if (!is_array($lancfg))
 		return;
@@ -3236,6 +3242,8 @@ function interface_track6_6to4_configure($interface = "lan", $lancfg) {
 	$oip = find_interface_ipv6($lanif);
 	if (is_ipaddrv6($oip))
 		mwexec("/sbin/ifconfig {$lanif} inet6 {$oip} delete");
+	unset($interface_ipv6_arr_cache[$lanif]);
+	unset($interface_snv6_arr_cache[$lanif]);
 	log_error("sixto4 {$interface} with ipv6 address {$sixto4lan} based on {$lancfg['track6-interface']} ipv4 {$ip4address}");
 	mwexec("/sbin/ifconfig {$lanif} inet6 {$sixto4lan} prefixlen 64");
 
@@ -3244,6 +3252,8 @@ function interface_track6_6to4_configure($interface = "lan", $lancfg) {
 
 function interface_track6_dhcp6_configure($interface = "lan", $lancfg) {
 	global $config, $g;
+	global $interface_ipv6_arr_cache;
+        global $interface_snv6_arr_cache;
 
 	if (!is_array($lancfg))
 		return;
@@ -3265,6 +3275,8 @@ function interface_track6_dhcp6_configure($interface = "lan", $lancfg) {
 	$oip = find_interface_ipv6($lanif);
 	if (is_ipaddrv6($oip))
 		mwexec("/sbin/ifconfig {$lanif} inet6 {$oip} delete");
+	unset($interface_ipv6_arr_cache[$lanif]);
+	unset($interface_snv6_arr_cache[$lanif]);
 
 	if ($wancfg['ipaddrv6'] == "slaac") {
 		$wanif = get_real_interface($lancfg['track6-interface']);

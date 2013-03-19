@@ -15,7 +15,6 @@ if [ -n "${LOCAL_IP}" ]; then
 	/sbin/pfctl -k 0.0.0.0/0 -k ${LOCAL_IP}
 	/sbin/pfctl -k ${LOCAL_IP}
 	/sbin/pfctl -K ${LOCAL_IP}
-	/sbin/pfctl -i ${IF} -Fs
 fi
 
 /sbin/pfctl -i ${IF} -Fs

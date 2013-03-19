@@ -19,7 +19,7 @@ fi
 
 /sbin/pfctl -i $1 -Fs
 if [ -f "/tmp/${1}_defaultgw" ]; then
-	route delete default ${OLD_ROUTER}
+	route delete default `head -n 1 /tmp/${1}_defaultgw`;
 fi
 # delete the node just in case mpd cannot do that
 /usr/sbin/ngctl shutdown $1:

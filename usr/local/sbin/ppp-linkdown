@@ -7,17 +7,9 @@ if [ -f /tmp/${IF}up ] && [ -f /conf/${IF}.log ]; then
 	seconds=$((`date -j +%s` - `/usr/bin/stat -f %m /tmp/${IF}up`))
 	/usr/local/sbin/ppp-log-uptime.sh $seconds ${IF} &
 fi
-if [ -n "${LOCAL_IP}" ]; then
-	if ! echo "${LOCAL_IP}" | grep -q "/"; then
-		LOCAL_IP="${LOCAL_IP}/32"
-	fi
-	echo "Removing states from ${LOCAL_IP}" | /usr/bin/logger -t ppp-linkdown
-	/sbin/pfctl -k 0.0.0.0/0 -k ${LOCAL_IP}
-	/sbin/pfctl -k ${LOCAL_IP}
-	/sbin/pfctl -K ${LOCAL_IP}
-fi
 
-/sbin/pfctl -i ${IF} -Fs
+/etc/rc.kill_states ${IF} ${LOCAL_IP}
+
 if [ -f "/tmp/${IF}_defaultgw" ]; then
 	/sbin/route delete default `/usr/bin/head -n 1 /tmp/${IF}_defaultgw`;
 fi

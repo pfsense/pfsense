@@ -1173,7 +1173,7 @@ function interface_bring_down($interface = "wan", $destroy = false, $ifacecfg = 
 	case "dhcp":
 		$pid = find_dhclient_process($realif);
 		if($pid)
-			mwexec("/bin/kill {$pid}");
+			posix_kill($pid, SIGTERM);
 		sleep(1);
 		unlink_if_exists("{$g['varetc_path']}/dhclient_{$interface}.conf");
 		if(does_interface_exist("$realif")) {
@@ -3546,6 +3546,9 @@ function interface_dhcpv6_configure($interface = "wan", $wancfg) {
 	if (!$g['booting'])
 		filter_configure_sync(false);
 
+	$pidv6 = find_dhcp6c_process($wanif);
+	if ($pidv6)
+		posix_kill($pidv6, SIGTERM);
 	/* fire up dhcp6c for IPv6 first, this backgrounds immediately */
 	mwexec("/usr/local/sbin/dhcp6c -d -c {$g['varetc_path']}/dhcp6c_{$interface}.conf -p {$g['varrun_path']}/dhcp6c_{$wanif}.pid {$wanif}");
 	sleep(1);
@@ -3633,6 +3636,9 @@ EOD;
 	else
 		log_error(printf(gettext("Could not bring up %s interface in interface_dhcp_configure()"), $wanif));
 
+	$pid = find_dhclient_process($wanif);
+	if ($pid)
+		posix_kill($pid, SIGTERM);
 	/* fire up dhclient */
 	mwexec("/sbin/dhclient -c {$g['varetc_path']}/dhclient_{$interface}.conf {$wanif} > {$g['tmp_path']}/{$wanif}_output 2> {$g['tmp_path']}/{$wanif}_error_output");
 

@@ -232,7 +232,7 @@ function services_radvd_configure() {
 			log_error("configuring RA on {$if} for type {$autotype} radvd subnet {$subnetv6}/{$ifcfgsnv6}");
 
 		$dnslist = array();
-		if(is_ipaddrv6($subnetv6)) {
+		if(is_ipaddrv6($ifcfgipv6)) {
 			$radvdconf .= "# Generated config for {$autotype} delegation from {$trackif} on {$if}\n";
 			$radvdconf .= "interface {$realif} {\n";
 				$radvdconf .= "\tAdvSendAdvert on;\n";

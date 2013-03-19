@@ -3631,9 +3631,6 @@ EOD;
 	else
 		log_error(printf(gettext("Could not bring up %s interface in interface_dhcp_configure()"), $wanif));
 
-	$pid = find_dhclient_process($wanif);
-	if ($pid)
-		posix_kill($pid, SIGTERM);
 	/* fire up dhclient */
 	mwexec("/sbin/dhclient -c {$g['varetc_path']}/dhclient_{$interface}.conf {$wanif} > {$g['tmp_path']}/{$wanif}_output 2> {$g['tmp_path']}/{$wanif}_error_output");
 

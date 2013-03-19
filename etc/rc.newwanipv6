@@ -79,6 +79,10 @@ if (empty($interface)) {
 	exit;
 }
 
+//Do not process while booting
+if($g['booting'] && $config['interfaces'][$interface]['ipaddrv6'] != "dhcp6")
+	exit;
+
 if(empty($curwanipv6) || !is_ipaddrv6($curwanipv6)) {
         log_error("rc.newwanipv6: Failed to update {$interface} IPv6, restarting...");
 	// send_event("interface reconfigure {$interface}");

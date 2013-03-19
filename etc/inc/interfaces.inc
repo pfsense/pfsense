@@ -2694,12 +2694,9 @@ function find_dhclient_process($interface) {
 function find_rtsold_process($interface) {
 	global $g;
 
-	if ($interface) {
-		if (isvalidpid("{$g['varrun_path']}/rtsold_{$interface}.pid"))
-			$pid = trim(file_get_contents("{$g['varrun_path']}/rtsold_{$interface}.pid"), " \n");
-		else
-			return (false);
-	} else
+	if ($interface && isvalidpid("{$g['varrun_path']}/rtsold_{$interface}.pid"))
+		$pid = trim(file_get_contents("{$g['varrun_path']}/rtsold_{$interface}.pid"), " \n");
+	else
 		return(false);
 
 	return intval($pid);
@@ -2708,12 +2705,9 @@ function find_rtsold_process($interface) {
 function find_dhcp6c_process($interface) {
 	global $g;
 
-	if ($interface) {
-		if (isvalidpid("{$g['varrun_path']}/dhcp6c_{$interface}.pid"))
-			$pid = trim(file_get_contents("{$g['varrun_path']}/dhcp6c_{$interface}.pid"), " \n");
-		else
-			retun (false);
-	} else
+	if ($interface && isvalidpid("{$g['varrun_path']}/dhcp6c_{$interface}.pid"))
+		$pid = trim(file_get_contents("{$g['varrun_path']}/dhcp6c_{$interface}.pid"), " \n");
+	else
 		return(false);
 
 	return intval($pid);

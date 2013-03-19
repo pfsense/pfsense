@@ -2601,13 +2601,13 @@ function calculate_ipv6_delegation_length($if) {
 function huawei_rssi_to_string($rssi) {
 	$dbm = array();
 	$i = 0;
-	$dbstart = -51;
-	while($i < 31) {
-		$dbm[$i] = $dbstart - ($i * 2);
+	$dbstart = -113;
+	while($i < 32) {
+		$dbm[$i] = $dbstart + ($i * 2);
 		$i++;
 	}
 	$percent = round(($rssi / 31) * 100);
-	$string = "rssi:8 level:{$dbm[$rssi]}dBm percent:{$percent}%";
+	$string = "rssi:{$rssi} level:{$dbm[$rssi]}dBm percent:{$percent}%";
 	return $string;
 }
 

@@ -727,9 +727,6 @@ if ($_POST['apply']) {
 				$pid = find_dhcp6c_process($wancfg['if']);
 				if($pid)
 					posix_kill($pid, SIGTERM);
-				$pid = find_rtsold_process($wancfg['if']);
-				if($pid)
-					posix_kill($pid, SIGTERM);
 			} else if ($wancfg['ipaddr'] == "dhcp") {
 				$pid = find_dhclient_process($wancfg['if']);
 				if($pid)

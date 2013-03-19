@@ -1199,9 +1199,6 @@ function interface_bring_down($interface = "wan", $destroy = false, $ifacecfg = 
 		$pidv6 = find_dhcp6c_process($realif);
 		if($pidv6)
 			posix_kill($pidv6, SIGTERM);
-		$pidv6 = find_rtsold_process($realif);
-		if($pidv6)
-			posix_kill($pidv6, SIGTERM);
 		sleep(3);
 		unlink_if_exists("{$g['varetc_path']}/dhcp6c_{$interface}.conf");
 		if (does_interface_exist("$realif")) {
@@ -2687,17 +2684,6 @@ function find_dhclient_process($interface) {
 		$pid = `/bin/pgrep -axf "dhclient: {$interface}"`;
 	else
 		$pid = 0;
-
-	return intval($pid);
-}
-
-function find_rtsold_process($interface) {
-	global $g;
-
-	if ($interface && isvalidpid("{$g['varrun_path']}/rtsold_{$interface}.pid"))
-		$pid = trim(file_get_contents("{$g['varrun_path']}/rtsold_{$interface}.pid"), " \n");
-	else
-		return(false);
 
 	return intval($pid);
 }

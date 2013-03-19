@@ -3537,42 +3537,36 @@ function interface_dhcpv6_configure($interface = "wan", $wancfg) {
 	unset($dhcp6cscript);
 	@chmod("{$g['varetc_path']}/dhcp6c_{$interface}_script.sh", 0755);
 
+	$rtsoldscript = "#!/bin/sh\n";
+	$rtsoldscript .= "# This shell script launches dhcp6c and configured gateways for this interface.\n";
+	$rtsoldscript .= "echo $2 > {$g['tmp_path']}/{$wanif}_routerv6\n";
+	$rtsoldscript .= "echo $2 > {$g['tmp_path']}/{$wanif}_defaultgwv6\n";
+	$rtsoldscript .= "if [ -f {$g['varrun_path']}/dhcp6c_{$wanif}.pid ]; then\n";
+	$rtsoldscript .= "\tpkill -F {$g['varrun_path']}/dhcp6c_{$wanif}.pid\n";
+	$rtsoldscript .= "fi\n";
+	$rtsoldscript .= "/usr/local/sbin/dhcp6c -d -c {$g['varetc_path']}/dhcp6c_{$interface}.conf -p {$g['varrun_path']}/dhcp6c_{$wanif}.pid {$wanif}\n";
+	/* Add wide-dhcp6c shell script here. Because we can not pass a argument to it. */
+	if (!@file_put_contents("{$g['varetc_path']}/rtsold_{$wanif}_script.sh", $rtsoldscript)) {
+		printf("Error: cannot open rtsold_{$interface}_script.sh in interface_dhcpv6_configure() for writing.\n");
+		unset($rtsoldscript);
+		return 1;
+	}
+	unset($rtsoldscript);
+	@chmod("{$g['varetc_path']}/rtsold_{$wanif}_script.sh", 0755);
 
 	/* accept router advertisements for this interface */
 	mwexec("/sbin/sysctl -w net.inet6.ip6.accept_rtadv=1");
 	log_error("Accept router advertisements on interface {$wanif} ");
 	mwexec("/sbin/ifconfig {$wanif} inet6 accept_rtadv");
 
-	/* run a filter configure sync so that the filter rules allow traffic before we launch the client */
-	/* there reallyt is no good way around this i'm 'fraid */
-	if (!$g['booting'])
-		filter_configure_sync(false);
+	/* fire up rtsold for IPv6 RAs first, this backgrounds immediately. It will call dhcp6c */
+	if (isvalidpid("{$g['varrun_path']}/rtsold_{$wanif}.pid"))
+		killbypid("{$g['varrun_path']}/rtsold_{$wanif}.pid");
+	mwexec("/usr/sbin/rtsold -m -p {$g['varrun_path']}/rtsold_{$wanif}.pid -O {$g['varetc_path']}/rtsold_{$wanif}_script.sh {$wanif}");
 
-	$pidv6 = find_dhcp6c_process($wanif);
-	if ($pidv6)
-		posix_kill($pidv6, SIGTERM);
-	/* fire up dhcp6c for IPv6 first, this backgrounds immediately */
-	mwexec("/usr/local/sbin/dhcp6c -d -c {$g['varetc_path']}/dhcp6c_{$interface}.conf -p {$g['varrun_path']}/dhcp6c_{$wanif}.pid {$wanif}");
-	sleep(1);
-	unset($out);
-	exec("/sbin/rtsol -d {$wanif} 2>&1", $out, $ret);
-	if (!empty($out)) {
-		foreach($out as $line) {
-			if((stristr($line, "received")) && (!stristr($line, "unexpected"))) {
-				$parts = explode(" ", $line);
-				if(is_ipaddrv6($parts[3])) {
-					log_error("Found IPv6 default gateway '{$parts[3]}' by RA.");
-					file_put_contents("{$g['tmp_path']}/{$wanif}_routerv6", "{$parts[3]}\n");
-					file_put_contents("{$g['tmp_path']}/{$wanif}_defaultgwv6", "{$parts[3]}\n");
-					break;
-				}
-			}
-		}
-		unset($out);
-	}
-	/* worst case is that the rc.newwanipv6 handles setting up the track6 interface */
-	if (!$g['booting'] && $wancfg['ipaddrv6'] != "slaac")
-		link_interface_to_track6($interface, "update");
+	/* NOTE: will be called from rtsold invoked script 
+	 * link_interface_to_track6($interface, "update");
+	 */
 
 	return 0;
 }

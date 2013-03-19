@@ -2694,10 +2694,12 @@ function find_dhclient_process($interface) {
 function find_rtsold_process($interface) {
 	global $g;
 
-	if ($interface)
+	if ($interface) {
 		if (isvalidpid("{$g['varrun_path']}/rtsold_{$interface}.pid"))
 			$pid = trim(file_get_contents("{$g['varrun_path']}/rtsold_{$interface}.pid"), " \n");
-	else
+		else
+			retun (false);
+	} else
 		return(false);
 
 	return intval($pid);
@@ -2706,10 +2708,12 @@ function find_rtsold_process($interface) {
 function find_dhcp6c_process($interface) {
 	global $g;
 
-	if ($interface)
+	if ($interface) {
 		if (isvalidpid("{$g['varrun_path']}/dhcp6c_{$interface}.pid"))
 			$pid = trim(file_get_contents("{$g['varrun_path']}/dhcp6c_{$interface}.pid"), " \n");
-	else
+		else
+			retun (false);
+	} else
 		return(false);
 
 	return intval($pid);
@@ -3577,7 +3581,7 @@ function interface_dhcpv6_configure($interface = "wan", $wancfg) {
 	/* fire up rtsold for IPv6 RAs first, this backgrounds immediately. It will call dhcp6c */
 	if (isvalidpid("{$g['varrun_path']}/rtsold_{$wanif}.pid"))
 		killbypid("{$g['varrun_path']}/rtsold_{$wanif}.pid");
-	mwexec("/usr/sbin/rtsold -m -p {$g['varrun_path']}/rtsold_{$wanif}.pid -O {$g['varetc_path']}/rtsold_{$wanif}_script.sh {$wanif}");
+	mwexec("/usr/sbin/rtsold -1 -p {$g['varrun_path']}/rtsold_{$wanif}.pid -O {$g['varetc_path']}/rtsold_{$wanif}_script.sh {$wanif}");
 
 	/* NOTE: will be called from rtsold invoked script 
 	 * link_interface_to_track6($interface, "update");

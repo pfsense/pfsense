@@ -1012,9 +1012,8 @@ EOD;
 				$dnscfgv6 .= "	option dhcp6.name-servers " . join(",", $dns_arrv6) . ";";
 		}
 
-		if(is_ipaddrv6(ifcfgipv6)) {
-			$subnet6 = gen_subnetv6($ifcfgipv6, $ifcfgsnv6);
-			$dhcpdv6conf .= "subnet6 {$subnet6}/{$ifcfgsnv6} {\n";
+		if(is_ipaddrv6($ifcfgipv6)) {
+			$dhcpdv6conf .= "subnet6 {$subnetv6}/{$ifcfgsnv6} {\n";
 		} else {
 			$subnet6 = gen_subnetv6($dhcpv6ifconf['range']['from'], "64");
 			$dhcpdv6conf .= "subnet6 {$subnet6}/64 {\n";

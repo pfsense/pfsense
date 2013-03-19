@@ -552,6 +552,12 @@ function filter_generate_aliases() {
 	$aliases .= "#Snort tables\n";
 	$aliases .= "table <snort2c>\n";
 	$aliases .= "table <virusprot>\n";
+	if (!file_exists("/etc/bogons"))
+		@file_put_contents("/etc/bogons", "");
+	if (!file_exists("/etc/bogonsv6"))
+		@file_put_contents("/etc/bogonsv6", "");
+	$aliases .= "table <bogons> persist file \"/etc/bogons\"\n";
+	$aliases .= "table <bogonsv6> persist file \"/etc/bogonsv6\"\n";
 
 	$vpns_list = filter_get_vpns_list();
 	if($vpns_list)
@@ -2584,10 +2590,6 @@ EOD;
 		/* http://www.cymru.com/Documents/bogon-bn-nonagg.txt */
 		/* file is automatically in cron every 3000 minutes */
 		if(isset($config['interfaces'][$on]['blockbogons'])) {
-			if($bogontableinstalled == 0) {
-				$ipfrules .= "table <bogons> persist file \"/etc/bogons\"\n";
-				$ipfrules .= "table <bogonsv6> persist file \"/etc/bogonsv6\"\n";
-			}
 			$ipfrules .= <<<EOD
 # block bogon networks
 # http://www.cymru.com/Documents/bogon-bn-nonagg.txt
@@ -2596,7 +2598,6 @@ block in $log quick on \${$oc['descr']} from <bogons> to any label "block bogon 
 block in $log quick on \${$oc['descr']} from <bogonsv6> to any label "block bogon IPv6 networks from {$oc['descr']}"
 
 EOD;
-			$bogontableinstalled++;
 		}
 		$isbridged = false;
 		if(is_array($config['bridges']['bridged'])) {

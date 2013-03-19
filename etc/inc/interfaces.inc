@@ -4430,6 +4430,7 @@ function find_interface_subnetv6($interface, $flush = false)
 
 	$foundv6 = false;
 	if (!isset($interface_snv6_arr_cache[$interface]) or $flush) {
+		$ifinfo = array();
 		// FIXME: Add IPv6 support to the pfSense module
 		unset($output);
 		exec("/sbin/ifconfig {$interface} inet6", $output);

@@ -44,10 +44,6 @@ require_once("IPv6.inc");
 require_once("services.inc");
 require_once("rrd.inc");
 
-// Do not process while booting
-if($g['booting']) 
-	exit;
-
 function restart_packages() {
 	global $oldipv6, $curwanipv6, $g;
 

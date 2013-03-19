@@ -1199,7 +1199,7 @@ function interface_bring_down($interface = "wan", $destroy = false, $ifacecfg = 
 		$pidv6 = find_dhcp6c_process($realif);
 		if($pidv6)
 			posix_kill($pidv6, SIGTERM);
-		$pidv6 = find_rtsold_process($realif)
+		$pidv6 = find_rtsold_process($realif);
 		if($pidv6)
 			posix_kill($pidv6, SIGTERM);
 		sleep(3);

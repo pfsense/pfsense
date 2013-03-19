@@ -1,7 +1,7 @@
 #!/bin/sh
 if [ -f /tmp/$1up ] && [ -f /conf/$1.log ]; then
-        seconds=$((`date -j +%s` - `/usr/bin/stat -f %m /tmp/$1up`))
-        /usr/local/sbin/ppp-log-uptime.sh $seconds $1 &
+	seconds=$((`date -j +%s` - `/usr/bin/stat -f %m /tmp/$1up`))
+	/usr/local/sbin/ppp-log-uptime.sh $seconds $1 &
 fi
 if [ "$3" != "" ]; then
 	if echo "$3" | grep -q '/'; then

@@ -10,8 +10,10 @@ fi
 
 /etc/rc.kill_states ${IF} ${LOCAL_IP}
 
-if [ -f "/tmp/${IF}_defaultgw" ]; then
-	/sbin/route delete default `/usr/bin/head -n 1 /tmp/${IF}_defaultgw`;
+if [ -s "/tmp/${IF}_defaultgw" ]; then
+	GW=`head -n 1 /tmp/${IF}_defaultgw`
+	[ -n "${GW}" ] \
+		&& /sbin/route delete default ${GW}
 fi
 # delete the node just in case mpd cannot do that
 /usr/sbin/ngctl shutdown ${IF}:

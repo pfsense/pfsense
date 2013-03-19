@@ -3544,7 +3544,7 @@ function interface_dhcpv6_configure($interface = "wan", $wancfg) {
 	/* run a filter configure sync so that the filter rules allow traffic before we launch the client */
 	/* there reallyt is no good way around this i'm 'fraid */
 	if (!$g['booting'])
-		filter_configure_sync();
+		filter_configure_sync(false);
 
 	/* fire up dhcp6c for IPv6 first, this backgrounds immediately */
 	mwexec("/usr/local/sbin/dhcp6c -d -c {$g['varetc_path']}/dhcp6c_{$interface}.conf -p {$g['varrun_path']}/dhcp6c_{$wanif}.pid {$wanif}");

@@ -2698,7 +2698,7 @@ function find_rtsold_process($interface) {
 		if (isvalidpid("{$g['varrun_path']}/rtsold_{$interface}.pid"))
 			$pid = trim(file_get_contents("{$g['varrun_path']}/rtsold_{$interface}.pid"), " \n");
 		else
-			retun (false);
+			return (false);
 	} else
 		return(false);
 

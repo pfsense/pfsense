@@ -844,6 +844,7 @@ function filter_generate_optcfg_array() {
 		$oic['if'] = get_real_interface($if);
 		if (!does_interface_exist($oic['if']))
 			continue;
+		$oic['ifv6'] = get_real_interface($if, "inet6");
 		$oic['ip'] = get_interface_ip($if);
 		$oic['ipv6'] = get_interface_ipv6($if);
 		if(!is_ipaddrv4($oc['ipaddr']) && !empty($oc['ipaddr']))
@@ -2164,7 +2165,7 @@ function filter_generate_user_rule($rule) {
 		if ($rule['ipprotocol'] == "inet6") {
 			$rg = get_interface_gateway_v6($rule['interface']);
 			if (is_ipaddrv6($rg))
-				$aline['reply'] = "reply-to ( {$ifcfg['if']} {$rg} ) ";
+				$aline['reply'] = "reply-to ( {$ifcfg['ifv6']} {$rg} ) ";
 			else if ($rule['interface'] <> "pptp")
 				log_error("Could not find IPv6 gateway for interface({$rule['interface']}).");
 		} else {

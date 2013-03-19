@@ -3116,10 +3116,12 @@ function interface_track6_configure($interface = "lan", $wancfg) {
 		break;
 	}
 
-	if (!function_exists('services_dhcpd_configure'))
-		require_once("services.inc");
+	if (!$g['booting']) {
+		if (!function_exists('services_dhcpd_configure'))
+			require_once("services.inc");
 
-	services_dhcpd_configure("inet6");
+		services_dhcpd_configure("inet6");
+	}
 
 	return 0;
 }

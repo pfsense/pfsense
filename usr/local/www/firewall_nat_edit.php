@@ -71,9 +71,14 @@ if (isset($_GET['dup'])) {
 }
 
 if (isset($id) && $a_nat[$id]) {
+	if ( isset($a_nat[$id]['created']) && is_array($a_nat[$id]['created']) )
+		$pconfig['created'] = $a_nat[$id]['created'];
+
+	if ( isset($a_nat[$id]['updated']) && is_array($a_nat[$id]['updated']) )
+		$pconfig['updated'] = $a_nat[$id]['updated'];
+
 	$pconfig['disabled'] = isset($a_nat[$id]['disabled']);
 	$pconfig['nordr'] = isset($a_nat[$id]['nordr']);
-
 	address_to_pconfig($a_nat[$id]['source'], $pconfig['src'],
 		$pconfig['srcmask'], $pconfig['srcnot'],
 		$pconfig['srcbeginport'], $pconfig['srcendport']);
@@ -416,6 +421,11 @@ if ($_POST) {
 			mark_subsystem_dirty('filter');
 		}
 
+		if ( isset($a_nat[$id]['created']) && is_array($a_nat[$id]['created']) )
+			$natent['created'] = $a_nat[$id]['created'];
+
+		$natent['updated'] = make_config_revision_entry();
+
 		// Allow extending of the firewall edit page and include custom input validation 
 		pfSense_handle_custom_code("/usr/local/pkg/firewall_nat/pre_write_config");
 
@@ -423,6 +433,7 @@ if ($_POST) {
 		if (isset($id) && $a_nat[$id])
 			$a_nat[$id] = $natent;
 		else {
+			$natent['created'] = make_config_revision_entry();
 			if (is_numeric($after))
 				array_splice($a_nat, $after+1, 0, array($natent));
 			else
@@ -840,6 +851,34 @@ include("fbegin.inc"); ?>
 		// Allow extending of the firewall edit page and include custom input validation 
 		pfSense_handle_custom_code("/usr/local/pkg/firewall_nat/htmlphplate");
 ?>
+<?php
+$has_created_time = (isset($a_nat[$id]['created']) && is_array($a_nat[$id]['created']));
+$has_updated_time = (isset($a_nat[$id]['updated']) && is_array($a_nat[$id]['updated']));
+?>
+		<?php if ($has_created_time || $has_updated_time): ?>
+		<tr>
+			<td>&nbsp;</td>
+		</tr>
+		<tr>
+			<td colspan="2" valign="top" class="listtopic"><?=gettext("Rule Information");?></td>
+		</tr>
+		<?php if ($has_created_time): ?>
+		<tr>
+			<td width="22%" valign="top" class="vncell"><?=gettext("Created");?></td>
+			<td width="78%" class="vtable">
+				<?= date(gettext("n/j/y H:i:s"), $a_nat[$id]['created']['time']) ?> <?= gettext("by") ?> <strong><?= $a_nat[$id]['created']['username'] ?></strong>
+			</td>
+		</tr>
+		<?php endif; ?>
+		<?php if ($has_updated_time): ?>
+		<tr>
+			<td width="22%" valign="top" class="vncell"><?=gettext("Updated");?></td>
+			<td width="78%" class="vtable">
+				<?= date(gettext("n/j/y H:i:s"), $a_nat[$id]['updated']['time']) ?> <?= gettext("by") ?> <strong><?= $a_nat[$id]['updated']['username'] ?></strong>
+			</td>
+		</tr>
+		<?php endif; ?>
+		<?php endif; ?>
 				<tr>
                   <td width="22%" valign="top">&nbsp;</td>
                   <td width="78%">&nbsp;</td>

@@ -113,6 +113,7 @@ if (isset($_POST['save']) && $_POST['save'] == "Save") {
 					$natent['interface'] = $if2;
 					$natent['destination']['any'] = true;
 					$natent['staticnatport'] = true;
+					$natent['created'] = make_config_revision_entry(null, gettext("Manual Outbound NAT Switch"));
 					$a_out[] = $natent;
 					
 					$natent = array();
@@ -123,6 +124,7 @@ if (isset($_POST['save']) && $_POST['save'] == "Save") {
                                         $natent['interface'] = $if2;
                                         $natent['destination']['any'] = true;
                                         $natent['natport'] = "";
+					$natent['created'] = make_config_revision_entry(null, gettext("Manual Outbound NAT Switch"));
                                         $a_out[] = $natent;
 					
                                         $natent = array();
@@ -134,6 +136,7 @@ if (isset($_POST['save']) && $_POST['save'] == "Save") {
                                         $natent['destination']['any'] = true;
                                         $natent['staticnatport'] = false;
                                         $natent['natport'] = "1024:65535";
+					$natent['created'] = make_config_revision_entry(null, gettext("Manual Outbound NAT Switch"));
                                         $a_out[] = $natent;
 
 					/* PPTP subnet */
@@ -150,6 +153,7 @@ if (isset($_POST['save']) && $_POST['save'] == "Save") {
 							$natent['interface'] = $if2;
 							$natent['destination']['any'] = true;
 							$natent['natport'] = "";
+							$natent['created'] = make_config_revision_entry(null, gettext("Manual Outbound NAT Switch"));
 							$a_out[] = $natent;
 						}
 					}
@@ -170,6 +174,7 @@ if (isset($_POST['save']) && $_POST['save'] == "Save") {
 								$natent['interface'] = $if2;
 								$natent['destination']['any'] = true;
 								$natent['natport'] = "";
+								$natent['created'] = make_config_revision_entry(null, gettext("Manual Outbound NAT Switch"));
 								$a_out[] = $natent;
 							}
 						}
@@ -190,6 +195,7 @@ if (isset($_POST['save']) && $_POST['save'] == "Save") {
 							$natent['interface'] = $if2;
 							$natent['destination']['any'] = true;
 							$natent['natport'] = "";
+							$natent['created'] = make_config_revision_entry(null, gettext("Manual Outbound NAT Switch"));
 							$a_out[] = $natent;
 						}
 					}
@@ -204,6 +210,7 @@ if (isset($_POST['save']) && $_POST['save'] == "Save") {
 							$natent['interface'] = $if2;
 							$natent['destination']['any'] = true;
 							$natent['natport'] = "";
+							$natent['created'] = make_config_revision_entry(null, gettext("Manual Outbound NAT Switch"));
 							$a_out[] = $natent;
 						}
 					}

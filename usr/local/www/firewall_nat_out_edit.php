@@ -74,6 +74,12 @@ if (isset($_GET['dup']))  {
 }
 
 if (isset($id) && $a_out[$id]) {
+	if ( isset($a_out[$id]['created']) && is_array($a_out[$id]['created']) )
+		$pconfig['created'] = $a_out[$id]['created'];
+
+	if ( isset($a_out[$id]['updated']) && is_array($a_out[$id]['updated']) )
+		$pconfig['updated'] = $a_out[$id]['updated'];
+
 	$pconfig['protocol'] = $a_out[$id]['protocol'];
 	list($pconfig['source'],$pconfig['source_subnet']) = explode('/', $a_out[$id]['source']['network']);
 	if (!is_numeric($pconfig['source_subnet']))
@@ -294,12 +300,18 @@ if ($_POST) {
 			$natent['destination']['not'] = true;
 		}
 
+		if ( isset($a_out[$id]['created']) && is_array($a_out[$id]['created']) )
+			$natent['created'] = $a_out[$id]['created'];
+
+		$natent['updated'] = make_config_revision_entry();
+
 		// Allow extending of the firewall edit page and include custom input validation 
 		pfSense_handle_custom_code("/usr/local/pkg/firewall_aon/pre_write_config");
 
 		if (isset($id) && $a_out[$id]) {
 			$a_out[$id] = $natent;
 		} else {
+			$natent['created'] = make_config_revision_entry();
 			if (is_numeric($after)) {
 				array_splice($a_out, $after+1, 0, array($natent));
 			} else {
@@ -654,6 +666,34 @@ any)");?></td>
                     <br> <span class="vexpl"><?=gettext("You may enter a description here " .
                     "for your reference (not parsed).");?></span></td>
           </tr>
+<?php
+$has_created_time = (isset($a_out[$id]['created']) && is_array($a_out[$id]['created']));
+$has_updated_time = (isset($a_out[$id]['updated']) && is_array($a_out[$id]['updated']));
+?>
+		<?php if ($has_created_time || $has_updated_time): ?>
+		<tr>
+			<td>&nbsp;</td>
+		</tr>
+		<tr>
+			<td colspan="2" valign="top" class="listtopic"><?=gettext("Rule Information");?></td>
+		</tr>
+		<?php if ($has_created_time): ?>
+		<tr>
+			<td width="22%" valign="top" class="vncell"><?=gettext("Created");?></td>
+			<td width="78%" class="vtable">
+				<?= date(gettext("n/j/y H:i:s"), $a_out[$id]['created']['time']) ?> <?= gettext("by") ?> <strong><?= $a_out[$id]['created']['username'] ?></strong>
+			</td>
+		</tr>
+		<?php endif; ?>
+		<?php if ($has_updated_time): ?>
+		<tr>
+			<td width="22%" valign="top" class="vncell"><?=gettext("Updated");?></td>
+			<td width="78%" class="vtable">
+				<?= date(gettext("n/j/y H:i:s"), $a_out[$id]['updated']['time']) ?> <?= gettext("by") ?> <strong><?= $a_out[$id]['updated']['username'] ?></strong>
+			</td>
+		</tr>
+		<?php endif; ?>
+		<?php endif; ?>
 <?php
 		// Allow extending of the firewall edit page and include custom input validation 
 		pfSense_handle_custom_code("/usr/local/pkg/firewall_aon/htmlphplate");

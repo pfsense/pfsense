@@ -1,8 +1,8 @@
 <?php
 /*
     Original status page code from: services_dyndns.php
-    Copyright (C) 2008 Ermal Lu\xe7i
-    Edits to convert it to a widget: dyn_dns_status.php
+    Copyright (C) 2008 Ermal Luci
+    Edits to convert it to a widget: dyn_dns_status.widget.php
     Copyright (C) 2013 Stanley P. Miller \ stan-qaz
     All rights reserved.
 
@@ -43,6 +43,33 @@ if (!is_array($config['dyndnses']['dyndns']))
 	$config['dyndnses']['dyndns'] = array();
 
 $a_dyndns = &$config['dyndnses']['dyndns'];
+
+if($_REQUEST['getdyndnsstatus']) {
+	$first_entry = true;
+	foreach ($a_dyndns as $dyndns) {
+		if ($first_entry)
+			$first_entry = false;
+		else
+			// Put a vertical bar delimiter between the echoed HTML for each entry processed.
+			echo "|";
+
+		$filename = "{$g['conf_path']}/dyndns_{$dyndns['interface']}{$dyndns['type']}" . escapeshellarg($dyndns['host']) . "{$dyndns['id']}.cache";
+		if (file_exists($filename)) {
+			$ipaddr = dyndnsCheckIP($dyndns['interface']);
+			$cached_ip_s = split(":", file_get_contents($filename));
+			$cached_ip = $cached_ip_s[0];
+			if ($ipaddr <> $cached_ip)
+				echo "<font color='red'>";
+			else
+				echo "<font color='green'>";
+			echo htmlspecialchars($cached_ip);
+			echo "</font>";
+		} else {
+			echo "N/A";
+		}
+	}
+	exit;
+}
 
 ?>
 
@@ -101,23 +128,34 @@ $a_dyndns = &$config['dyndnses']['dyndns'];
 		?>
 		</td>
 		<td class="listlr">
-		<?php
-		$filename = "{$g['conf_path']}/dyndns_{$dyndns['interface']}{$dyndns['type']}" . escapeshellarg($dyndns['host']) . "{$dyndns['id']}.cache";
-		if (file_exists($filename)) {
-			$ipaddr = dyndnsCheckIP($dyndns['interface']);
-			$cached_ip_s = split(":", file_get_contents($filename));
-			$cached_ip = $cached_ip_s[0];
-			if ($ipaddr <> $cached_ip)
-				echo "<font color='red'>";
-			else
-				echo "<font color='green'>";
-			echo htmlspecialchars($cached_ip);
-			echo "</font>";
-		} else {
-			echo "N/A";
-		}
-		?>
+		<div id='dyndnsstatus<?php echo $i; ?>'><?php echo gettext("Checking ..."); ?></div>
 		</td>
 	</tr>
 	<?php $i++; endforeach; ?>
 </table>
+<script type="text/javascript">
+//<![CDATA[
+	function dyndns_getstatus() {
+		scroll(0,0);
+		var url = "/widgets/widgets/dyn_dns_status.widget.php";
+		var pars = 'getdyndnsstatus=yes';
+		jQuery.ajax(
+			url,
+			{
+				type: 'get',
+				data: pars,
+				complete: dyndnscallback
+			});
+	}
+	function dyndnscallback(transport) {
+		// The server returns a string of statuses separated by vertical bars
+		var responseStrings = transport.responseText.split("|");
+		for (var count=0; count<responseStrings.length; count++)
+		{
+			var divlabel = '#dyndnsstatus' + count;
+			jQuery(divlabel).prop('innerHTML',responseStrings[count]);
+		}
+	}
+	setTimeout('dyndns_getstatus()', 2000);
+//]]>
+</script>

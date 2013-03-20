@@ -3335,7 +3335,7 @@ function interface_6rd_configure($interface = "wan", $wancfg) {
 	/* convert the 128 bits for the broker address back into a valid IPv6 address */
 	$rd6prefix = convert_128bit_to_ipv6($rd6prefixbin);
 
-	$rd6brgw = "{$rd6prefix}::{$wancfg['gateway-6rd']}";
+	$rd6brgw = "{$rd6prefix}{$wancfg['gateway-6rd']}";
 
 	/* XXX: need to extend to support variable prefix size for v4 */
 	if (!is_module_loaded("if_stf"))

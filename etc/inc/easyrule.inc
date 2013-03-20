@@ -272,6 +272,9 @@ function easyrule_pass_rule_add($int, $proto, $srchost, $dsthost, $dstport, $ipp
 	if ($proto == "icmp")
 		$filterent['icmptype'] = 'echoreq';
 
+	if (strtolower($proto) == "icmp6")
+		$filterent['protocol'] = "icmp";
+
 	if (is_subnet($srchost)) {
 		list($srchost, $srcmask) = explode("/", $srchost);
 	} elseif (is_specialnet($srchost)) {

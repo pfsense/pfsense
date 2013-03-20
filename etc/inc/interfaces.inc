@@ -3322,21 +3322,8 @@ function interface_6rd_configure($interface = "wan", $wancfg) {
 	$rd6prefixlen = $rd6prefix[1];
 	$rd6prefix = Net_IPv6::uncompress($rd6prefix[0]);
 
-	/* we need the hex form of the broker IPv4 address */
-	$hexbrv4 = return_hex_ipv4($wancfg['gateway-6rd']);
-
 	/* binary presentation of the prefix for all 128 bits. */
 	$rd6prefixbin = convert_ipv6_to_128bit($rd6prefix);
-
-	/* just save the left prefix length bits */
-	$rd6brprefixbin = substr($rd6prefixbin, 0, $rd6prefixlen);
-	/* if the prefix length is not 32 bits we need to shave bits off from the left of the v4 address. */
-	$rd6brprefixbin .= substr(sprintf("%032b", hexdec($hexbrv4)), $wancfg['prefix-6rd-v4plen'], 32);
-	/* fill out the rest with 0's */
-	$rd6brprefixbin = str_pad($rd6brprefixbin, 128, "0", STR_PAD_RIGHT);
-
-	/* convert the 128 bits for the broker address back into a valid IPv6 address */
-	$rd6brgw = convert_128bit_to_ipv6($rd6brprefixbin);
 
 	/* just save the left prefix length bits */
 	$rd6prefixbin = substr($rd6prefixbin, 0, $rd6prefixlen);
@@ -3348,6 +3335,8 @@ function interface_6rd_configure($interface = "wan", $wancfg) {
 	/* convert the 128 bits for the broker address back into a valid IPv6 address */
 	$rd6prefix = convert_128bit_to_ipv6($rd6prefixbin);
 
+	$rd6brgw = "{$rd6prefix}::{$wancfg['gateway-6rd']}";
+
 	/* XXX: need to extend to support variable prefix size for v4 */
 	if (!is_module_loaded("if_stf"))
 		mwexec("/sbin/kldload if_stf.ko");
@@ -3358,6 +3347,8 @@ function interface_6rd_configure($interface = "wan", $wancfg) {
 	pfSense_interface_rename($tmpstfiface, $stfiface);
 	pfSense_interface_flags($stfiface, IFF_LINK2);
 	mwexec("/sbin/ifconfig {$stfiface} inet6 {$rd6prefix}/{$rd6prefixlen}");
+	if ($wancfg['prefix-6rd-v4plen'] < 32)
+		mwexec("/sbin/ifconfig {$stfiface} stfv4net {$ip4address}/{$wancfg['prefix-6rd-v4plen']}");
 	if ($g['debug'])
 		log_error("Created 6rd interface {$stfiface} {$rd6prefix}/{$rd6prefixlen}");
 

@@ -2531,11 +2531,7 @@ function return_hex_ipv4($ipv4) {
 
 	/* we need the hex form of the interface IPv4 address */
 	$ip4arr = explode(".", $ipv4);
-	$hexwanv4 = "";
-	foreach($ip4arr as $octet)
-		$hexwanv4 .= sprintf("%02x", $octet);
-
-	return($hexwanv4);
+	return (sprintf("%02x%02x%02x%02x", $ip4arr[0], $ip4arr[1], $ip4arr[2], $ip4arr[3]));
 }
 
 function convert_ipv6_to_128bit($ipv6) {

@@ -53,7 +53,7 @@ function setup_gateways_monitor() {
 	if (!is_array($gateways_arr)) {
 		log_error("No gateways to monitor. Apinger will not be run.");
 		killbypid("{$g['varrun_path']}/apinger.pid");
-		@unlink("{$g['tmp_path']}/apinger.status");
+		@unlink("{$g['varrun_path']}/apinger.status");
 		return;
 	}
 
@@ -78,7 +78,7 @@ pid_file "{$g['varrun_path']}/apinger.pid"
 
 status {
 	## File where the status information should be written to
-	file "{$g['tmp_path']}/apinger.status"
+	file "{$g['varrun_path']}/apinger.status"
 	## Interval between file updates
 	## when 0 or not set, file is written only when SIGUSR1 is received
 	interval 5s
@@ -267,7 +267,7 @@ EOD;
 	@chown("{$g['vardb_path']}/rrd", "nobody");
 
 	/* start a new apinger process */
-	@unlink("{$g['tmp_path']}/apinger.status");
+	@unlink("{$g['varrun_path']}/apinger.status");
 	sleep(1);
 	mwexec_bg("/usr/local/sbin/apinger -c {$g['varetc_path']}/apinger.conf");
 
@@ -279,8 +279,8 @@ function return_gateways_status($byname = false) {
 	global $config, $g;
 
 	$apingerstatus = array();
-	if (file_exists("{$g['tmp_path']}/apinger.status")) {
-		$apingerstatus = file("{$g['tmp_path']}/apinger.status");
+	if (file_exists("{$g['varrun_path']}/apinger.status")) {
+		$apingerstatus = file("{$g['varrun_path']}/apinger.status");
 	}
 
 	$status = array();

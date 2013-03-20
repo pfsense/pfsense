@@ -78,6 +78,12 @@ if (isset($id) && $a_filter[$id]) {
 	if (isset($a_filter[$id]['id']))
 		$pconfig['ruleid'] = $a_filter[$id]['id'];
 
+	if ( isset($a_filter[$id]['created']) && is_array($a_filter[$id]['created']) )
+		$pconfig['created'] = $a_filter[$id]['created'];
+
+	if ( isset($a_filter[$id]['updated']) && is_array($a_filter[$id]['updated']) )
+		$pconfig['updated'] = $a_filter[$id]['updated'];
+
 	if (!isset($a_filter[$id]['type']))
 		$pconfig['type'] = "pass";
 	else
@@ -636,12 +642,18 @@ if ($_POST) {
 			$filterent['associated-rule-id'] = $a_filter[$id]['associated-rule-id'];
 		}
 
+		if ( isset($a_filter[$id]['created']) && is_array($a_filter[$id]['created']) )
+			$filterent['created'] = $a_filter[$id]['created'];
+
+		$filterent['updated'] = make_config_revision_entry();
+
 		// Allow extending of the firewall edit page and include custom input validation 
 		pfSense_handle_custom_code("/usr/local/pkg/firewall_rules/pre_write_config");
 
 		if (isset($id) && $a_filter[$id])
 			$a_filter[$id] = $filterent;
 		else {
+			$filterent['created'] = make_config_revision_entry();
 			if (is_numeric($after))
 				array_splice($a_filter, $after+1, 0, array($filterent));
 			else
@@ -1559,6 +1571,34 @@ $i--): ?>
 		// Allow extending of the firewall edit page and include custom input validation 
 		pfSense_handle_custom_code("/usr/local/pkg/firewall_rules/htmlphplate");
 ?>
+<?php
+$has_created_time = (isset($a_filter[$id]['created']) && is_array($a_filter[$id]['created']));
+$has_updated_time = (isset($a_filter[$id]['updated']) && is_array($a_filter[$id]['updated']));
+?>
+		<?php if ($has_created_time || $has_updated_time): ?>
+		<tr>
+			<td>&nbsp;</td>
+		</tr>
+		<tr>
+			<td colspan="2" valign="top" class="listtopic"><?=gettext("Rule Information");?></td>
+		</tr>
+		<?php if ($has_created_time): ?>
+		<tr>
+			<td width="22%" valign="top" class="vncell"><?=gettext("Created");?></td>
+			<td width="78%" class="vtable">
+				<?= date(gettext("n/j/y H:i:s"), $a_filter[$id]['created']['time']) ?> <?= gettext("by") ?> <strong><?= $a_filter[$id]['created']['username'] ?></strong>
+			</td>
+		</tr>
+		<?php endif; ?>
+		<?php if ($has_updated_time): ?>
+		<tr>
+			<td width="22%" valign="top" class="vncell"><?=gettext("Updated");?></td>
+			<td width="78%" class="vtable">
+				<?= date(gettext("n/j/y H:i:s"), $a_filter[$id]['updated']['time']) ?> <?= gettext("by") ?> <strong><?= $a_filter[$id]['updated']['username'] ?></strong>
+			</td>
+		</tr>
+		<?php endif; ?>
+		<?php endif; ?>
 		<tr>
 			<td width="22%" valign="top">&nbsp;</td>
 			<td width="78%">

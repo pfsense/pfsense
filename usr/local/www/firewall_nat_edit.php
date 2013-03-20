@@ -409,6 +409,7 @@ if ($_POST) {
 			// If this is a new rule, create an ID and add the rule
 			if( $_POST['filter-rule-association']=='add-associated' ) {
 				$filterent['associated-rule-id'] = $natent['associated-rule-id'] = get_unique_id();
+				$filterent['created'] = make_config_revision_entry(null, gettext("NAT Port Forward"));
 				$config['filter']['rule'][] = $filterent;
 			}
 

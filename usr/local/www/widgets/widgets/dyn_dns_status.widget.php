@@ -65,7 +65,7 @@ if($_REQUEST['getdyndnsstatus']) {
 			echo htmlspecialchars($cached_ip);
 			echo "</font>";
 		} else {
-			echo "N/A";
+			echo "N/A " . date("H:i:s");
 		}
 	}
 	exit;
@@ -146,6 +146,8 @@ if($_REQUEST['getdyndnsstatus']) {
 				data: pars,
 				complete: dyndnscallback
 			});
+		// Refresh the status every 5 minutes
+		setTimeout('dyndns_getstatus()', 5*60*1000);
 	}
 	function dyndnscallback(transport) {
 		// The server returns a string of statuses separated by vertical bars
@@ -156,6 +158,7 @@ if($_REQUEST['getdyndnsstatus']) {
 			jQuery(divlabel).prop('innerHTML',responseStrings[count]);
 		}
 	}
+	// Do the first status check 2 seconds after the dashboard opens
 	setTimeout('dyndns_getstatus()', 2000);
 //]]>
 </script>

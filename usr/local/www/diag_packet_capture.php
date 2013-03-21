@@ -199,10 +199,13 @@ include("fbegin.inc");
 			</select>
 			<br/><?=gettext("Select the interface on which to capture traffic.");?>
 			</td>
+		</tr>
+		<tr>
+			<td width="17%" valign="top" class="vncellreq"><?=gettext("Promiscuous");?></td>
 			<td width="51%" class="vtable">
 			<input name="promiscuous" type="checkbox"<?php if($_POST['promiscuous']) echo " CHECKED"; ?>>
-			<br/><?=gettext("This check box will cause the");?> <a target="_blank" href="http://www.freebsd.org/cgi/man.cgi?query=tcpdump&amp;apropos=0&amp;sektion=0&amp;manpath=FreeBSD+8.3-stable&amp;arch=default&amp;format=html"><?= gettext("packet capture")?></a> <?= gettext("to perform in promiscuous mode.");?>
-			<br/><b><?=gettext("Note");?>: </b><?=gettext("Some NIC's do not support or work well in promiscuous mode.");?>
+			<br/><?=gettext("If checked, the");?> <a target="_blank" href="http://www.freebsd.org/cgi/man.cgi?query=tcpdump&amp;apropos=0&amp;sektion=0&amp;manpath=FreeBSD+8.3-stable&amp;arch=default&amp;format=html"><?= gettext("packet capture")?></a> <?= gettext("will be performed using promiscuous mode.");?>
+			<br/><b><?=gettext("Note");?>: </b><?=gettext("Some network adapters do not support or work well in promiscuous mode.");?>
 			</td>
 		</tr>
 		<tr>

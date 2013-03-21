@@ -42,9 +42,6 @@
 ##|*MATCH=index.php*
 ##|-PRIV
 
-// Turn off csrf for the dashboard
-$nocsrf = true; 
-
 // Turn on buffering to speed up rendering
 ini_set('output_buffering','true');
 

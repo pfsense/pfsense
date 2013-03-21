@@ -32,8 +32,6 @@
 	POSSIBILITY OF SUCH DAMAGE.
  */
 
-$nocsrf = true;
-
 require_once("guiconfig.inc");
 require_once("/usr/local/www/widgets/include/thermal_sensors.inc");
 

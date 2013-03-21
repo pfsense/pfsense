@@ -3358,7 +3358,7 @@ function interface_6rd_configure($interface = "wan", $wancfg) {
 
 	$ip4gateway = get_interface_gateway($interface);
 	if (is_ipaddrv4($ip4gateway))
-		mwexec("/sbin/route change -host " . $wancfg['gateway-6rd'] . " {$ip4gateway}");
+		mwexec("/sbin/route change -host " . escapeshellarg($wancfg['gateway-6rd']) . " {$ip4gateway}");
 
 	/* configure dependent interfaces */
 	if (!$g['booting'])

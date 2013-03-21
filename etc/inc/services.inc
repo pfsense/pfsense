@@ -1677,10 +1677,16 @@ trap := "{$config['snmpd']['trapstring']}"
 EOD;
 		}
 
+		$version = trim(file_get_contents('/etc/version'));
+		$platform = trim(file_get_contents('/etc/platform'));
+		$sysDescr = "{$g['product_name']} " . php_uname("n") .
+			" {$version} {$platform} " . php_uname("s") .
+			" " . php_uname("r") . " " . php_uname("m");
 
 		$snmpdconf .= <<<EOD
 system := 1     # pfSense
 %snmpd
+sysDescr			= "{$sysDescr}"
 begemotSnmpdDebugDumpPdus       = 2
 begemotSnmpdDebugSyslogPri      = 7
 begemotSnmpdCommunityString.0.1 = $(read)

@@ -147,7 +147,8 @@ $sysctls = array("net.inet.ip.portrange.first" => "1024",
 	"vfs.forcesync" => 0,
 	"kern.random.sys.harvest.interrupt" => 0,
 	"kern.random.sys.harvest.point_to_point" => 0,
-	"kern.random.sys.harvest.ethernet" => 0
+	"kern.random.sys.harvest.ethernet" => 0,
+	"net.route.netisr_maxqlen" => 1024
 );
 
 $config_parsed = false;

@@ -38,178 +38,22 @@
 ##|-PRIV
 
 require_once("guiconfig.inc");
-require_once("captiveportal.inc");
 require_once("service-utils.inc");
-require_once("openvpn.inc");
-require_once("ipsec.inc");
-require_once("vpn.inc");
-require_once("vslb.inc");
 require_once("shortcuts.inc");
 
 if($_GET['mode'] == "restartservice" and !empty($_GET['service'])) {
-	switch($_GET['service']) {
-		case 'radvd':
-			services_radvd_configure();
-			break;
-		case 'captiveportal':
-			$zone = $_GET['zone'];
-			killbypid("{$g['varrun_path']}/lighty-{$zone}-CaptivePortal.pid");
-			killbypid("{$g['varrun_path']}/lighty-{$zone}-CaptivePortal-SSL.pid");
-			captiveportal_init_webgui_zonename($zone);
-			break;
-		case 'ntpd':
-		case 'openntpd':
-			system_ntp_configure();
-			break;
-		case 'bsnmpd':
-			services_snmpd_configure();
-			break;
-		case 'dnsmasq':
-			services_dnsmasq_configure();
-			break;
-		case 'dhcpd':
-			services_dhcpd_configure();
-			break;
-		case 'igmpproxy':
-			services_igmpproxy_configure();
-			break;
-		case 'miniupnpd':
-			upnp_action('restart');	
-			break;
-		case 'racoon':
-			vpn_ipsec_force_reload();
-			break;
-		case 'openvpn':         
-			$vpnmode = $_GET['vpnmode'];
-			if ($vpnmode == "server" || $vpnmode == "client") {
-				$id = $_GET['id'];
-				$configfile = "{$g['varetc_path']}/openvpn/{$vpnmode}{$id}.conf";
-				if (file_exists($configfile))
-					openvpn_restart_by_vpnid($vpnmode, $id);
-			}
-			break;
-		case 'relayd':
-			relayd_configure(true);
-			break;
-		default:
-			restart_service($_GET['service']);
-			break;
-	}
-	$savemsg = sprintf(gettext("%s has been restarted."),htmlspecialchars($_GET['service']));
+	$savemsg = service_control_restart($_GET['service'], $_GET);
 	sleep(5);
 }
 
 if($_GET['mode'] == "startservice" and !empty($_GET['service'])) {
-	switch($_GET['service']) {
-		case 'radvd':
-			services_radvd_configure();
-			break;
-		case 'captiveportal':
-			$zone = $_GET['zone'];
-			captiveportal_init_webgui_zonename($zone);
-			break;
-		case 'ntpd':
-		case 'openntpd':
-			system_ntp_configure();
-			break;
-		case 'bsnmpd':
-			services_snmpd_configure();
-			break;
-		case 'dnsmasq':
-			services_dnsmasq_configure();
-			break;
-		case 'dhcpd':
-			services_dhcpd_configure();
-			break;
-		case 'igmpproxy':
-			services_igmpproxy_configure();
-			break;
-		case 'miniupnpd':
-			upnp_action('start');
-			break;
-		case 'racoon':
-			vpn_ipsec_force_reload();
-			break;
-		case 'openvpn':
-			$vpnmode = $_GET['vpnmode'];
-			if (($vpnmode == "server") || ($vpnmode == "client")) {
-				$id = $_GET['id'];
-				$configfile = "{$g['varetc_path']}/openvpn/{$vpnmode}{$id}.conf";
-				if (file_exists($configfile))
-					openvpn_restart_by_vpnid($vpnmode, $id);
-			}
-			break;
-		case 'relayd':
-			relayd_configure();
-			break;
-		default:
-			start_service($_GET['service']);
-			break;
-	}
-	$savemsg = sprintf(gettext("%s has been started."),htmlspecialchars($_GET['service']));
+	$savemsg = service_control_start($_GET['service'], $_GET);
 	sleep(5);
 }
 
 /* stop service */
 if($_GET['mode'] == "stopservice" && !empty($_GET['service'])) {
-	switch($_GET['service']) {
-		case 'radvd':
-			killbypid("{$g['varrun_path']}/radvd.pid");
-			break;
-		case 'captiveportal':
-			$zone = $_GET['zone'];
-			killbypid("{$g['varrun_path']}/lighty-{$zone}-CaptivePortal.pid");
-			killbypid("{$g['varrun_path']}/lighty-{$zone}-CaptivePortal-SSL.pid");
-			break;
-		case 'ntpd':
-			killbyname("ntpd");
-			break;		
-		case 'openntpd':
-			killbyname("openntpd");
-			break;
-		case 'bsnmpd':
-			killbypid("{$g['varrun_path']}/snmpd.pid");
-			break;
-		case 'choparp':
-			killbyname("choparp");
-			break;
-		case 'dhcpd':
-			killbyname("dhcpd");
-			break;
-		case 'dhcrelay':
-			killbypid("{$g['varrun_path']}/dhcrelay.pid");
-			break;
-		case 'dnsmasq':
-			killbypid("{$g['varrun_path']}/dnsmasq.pid");
-			break;
-		case 'igmpproxy':
-			killbyname("igmpproxy");
-			break;
-		case 'miniupnpd':
-			upnp_action('stop');
-			break;
-		case 'sshd':
-			killbyname("sshd");
-			break;
-		case 'racoon':
-			exec("killall -9 racoon");
-			break;
-		case 'openvpn':         
-			$vpnmode = $_GET['vpnmode'];
-			if (($vpnmode == "server") or ($vpnmode == "client")) {
-				$id = $_GET['id'];
-				$pidfile = "{$g['varrun_path']}/openvpn_{$vpnmode}{$id}.pid";
-				killbypid($pidfile);
-			}
-			break;
-		case 'relayd':
-			mwexec('pkill relayd');
-			break;
-		default:
-			stop_service($_GET['service']);
-			break;
-	}
-	$savemsg = sprintf(gettext("%s has been stopped."), htmlspecialchars($_GET['service']));
+	$savemsg = service_control_stop($_GET['service'], $_GET);
 	sleep(5);
 }
 

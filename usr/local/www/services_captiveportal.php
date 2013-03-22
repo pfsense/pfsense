@@ -180,8 +180,24 @@ if ($_POST) {
 		}
 	}
 
-	if ($_POST['timeout'] && (!is_numeric($_POST['timeout']) || ($_POST['timeout'] < 1))) {
-		$input_errors[] = gettext("The timeout must be at least 1 minute.");
+	if ($_POST['timeout']) {
+		if (!is_numeric($_POST['timeout']) || ($_POST['timeout'] < 1))
+			$input_errors[] = gettext("The timeout must be at least 1 minute.");
+		else if (isset($config['dhcpd']) && is_array($config['dhcpd'])) {
+			foreach ($config['dhcpd'] as $dhcpd_if => $dhcpd_data) {
+				if (!isset($dhcpd_data['enable']))
+					continue;
+				if (!is_array($_POST['cinterface']) || !in_array($dhcpd_if, $_POST['cinterface']))
+					continue;
+
+				$deftime = 7200; // Default lease time
+				if (isset($dhcpd_data['defaultleasetime']) && is_numeric($dhcpd_data['defaultleasetime']))
+					$deftime = $dhcpd_data['defaultleasetime'];
+
+				if ($_POST['timeout'] > $deftime)
+					$input_errors[] = gettext("Hard timeout must be less or equal Default lease time set on DHCP Server");
+			}
+		}
 	}
 	if ($_POST['idletimeout'] && (!is_numeric($_POST['idletimeout']) || ($_POST['idletimeout'] < 1))) {
 		$input_errors[] = gettext("The idle timeout must be at least 1 minute.");

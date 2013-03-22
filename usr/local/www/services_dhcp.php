@@ -254,7 +254,27 @@ if ($_POST) {
 			$input_errors[] = gettext("A valid IP address must be specified for the primary/secondary DNS servers.");
 
 		if ($_POST['deftime'] && (!is_numeric($_POST['deftime']) || ($_POST['deftime'] < 60)))
-			$input_errors[] = gettext("The default lease time must be at least 60 seconds.");
+				$input_errors[] = gettext("The default lease time must be at least 60 seconds.");
+
+		if (isset($config['captiveportal']) && is_array($config['captiveportal'])) {
+			$deftime = 7200; // Default value if it's empty
+			if (is_numeric($_POST['deftime']))
+				$deftime = $_POST['deftime'];
+
+			foreach ($config['captiveportal'] as $cpZone => $cpdata) {
+				if (!isset($cpdata['enable']))
+					continue;
+				if (!isset($cpdata['timeout']) || !is_numeric($cpdata['timeout']))
+					continue;
+				$cp_ifs = explode(',', $cpdata['interface']);
+				if (!in_array($if, $cp_ifs))
+					continue;
+				if ($cpdata['timeout'] > $deftime)
+					$input_errors[] = sprintf(gettext(
+						"The Captive Portal zone '%s' has Hard Timeout parameter set to a value bigger than Default lease time (%s)."), $cpZone, $deftime);
+			}
+		}
+
 		if ($_POST['maxtime'] && (!is_numeric($_POST['maxtime']) || ($_POST['maxtime'] < 60) || ($_POST['maxtime'] <= $_POST['deftime'])))
 			$input_errors[] = gettext("The maximum lease time must be at least 60 seconds and higher than the default lease time.");
 		if (($_POST['ddnsdomain'] && !is_domain($_POST['ddnsdomain'])))

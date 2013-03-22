@@ -59,7 +59,7 @@ if (!is_array($qlist))
 
 $tree = "<ul class=\"tree\" >";
 foreach ($qlist as $queue => $qkey) {
-	$tree .= "<li><a href=\"firewall_shaper_queues.php?queue={$queue}&action=show\" >";
+	$tree .= "<li><a href=\"firewall_shaper_queues.php?queue={$queue}&amp;action=show\" >";
 	if (isset($shaperIFlist[$queue]))
 		$tree .= $shaperIFlist[$queue] . "</a></li>";
 	else	
@@ -171,11 +171,12 @@ if ($_POST['apply']) {
 
 $pgtitle = gettext("Firewall: Shaper: By Queues View");
 $shortcut_section = "trafficshaper";
-
+$closehead = false;
 include("head.inc");
 ?>
 <link rel="stylesheet" type="text/css" media="all" href="./tree/tree.css" />
 <script type="text/javascript" src="./tree/tree.js"></script>
+</head>
 
 <body link="#0000CC" vlink="#0000CC" alink="#0000CC">
 <?php include("fbegin.inc"); ?>
@@ -184,9 +185,9 @@ include("head.inc");
 <form action="firewall_shaper_queues.php" method="post" name="iform" id="iform">
 <?php if ($savemsg) print_info_box($savemsg); ?>
 <?php if (is_subsystem_dirty('shaper')): ?><p>
-<?php print_info_box_np(gettext("The traffic shaper configuration has been changed") . ".<br>" . gettext("You must apply the changes in order for them to take effect."));?><br>
+<?php print_info_box_np(gettext("The traffic shaper configuration has been changed") . ".<br/>" . gettext("You must apply the changes in order for them to take effect."));?><br/></p>
 <?php endif; ?>
-<table width="100%" border="0" cellpadding="0" cellspacing="0">
+<table width="100%" border="0" cellpadding="0" cellspacing="0" summary="traffic shaper queues">
   <tr><td>
 <?php
 	$tab_array = array();
@@ -201,16 +202,16 @@ include("head.inc");
   <tr> 
     <td valign="top">
 	<div id="mainarea">
-		<table class="tabcont" width="100%" border="0" cellpadding="0" cellspacing="0">
+		<table class="tabcont" width="100%" border="0" cellpadding="0" cellspacing="0" summary="main area">
 		<tr>
-		<td width="30%" valign="top" algin="left">
+		<td width="30%" valign="top" align="left">
                 <?php      echo $tree; ?>
 		</td>
 		<td width="70%" valign="top" align="center">
 			<?php 
 				if ($qname)
         				echo "<pr class=\"pgtitle\">" . $qname . "</pr><br />";
-				echo "<table align=\"center\" class=\"tabcont\" width=\"80%\" border=\"0\" cellpadding=\"4\" cellspacing=\"0\">";
+				echo "<table align=\"center\" class=\"tabcont\" width=\"80%\" border=\"0\" cellpadding=\"4\" cellspacing=\"0\" summary=\"output form\">";
 				echo $output;
 				echo "</table>";
 			?>	
@@ -223,7 +224,6 @@ include("head.inc");
 	</tr>
 </table>
             </form>
-<?php include("fend.inc"); 
-?>
+<?php include("fend.inc"); ?>
 </body>
 </html>

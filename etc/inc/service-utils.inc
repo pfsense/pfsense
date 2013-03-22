@@ -37,6 +37,7 @@
 	pfSense_BUILDER_BINARIES:	/bin/pgrep /bin/sh /usr/bin/killall
 	pfSense_MODULE:	utils
 */
+require_once("globals.inc");
 require_once("captiveportal.inc");
 require_once("openvpn.inc");
 require_once("ipsec.inc");

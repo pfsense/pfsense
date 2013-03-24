@@ -326,6 +326,10 @@ function filter_configure_sync($delete_states_if_needed = true) {
 		}
 	}
 
+	# If allow IPv6 has been unchecked then we can remove any bogonsv6 table (if the table is not there, the kill is still fine).
+	if (!isset($config['system']['ipv6allow']))
+		$_grbg = exec("/sbin/pfctl -t bogonsv6 -T kill");
+
 	update_filter_reload_status(gettext("Starting up layer7 daemon"));
 	layer7_start_l7daemon();
 
@@ -557,7 +561,8 @@ function filter_generate_aliases() {
 	if (!file_exists("/etc/bogonsv6"))
 		@file_put_contents("/etc/bogonsv6", "");
 	$aliases .= "table <bogons> persist file \"/etc/bogons\"\n";
-	$aliases .= "table <bogonsv6> persist file \"/etc/bogonsv6\"\n";
+	if (isset($config['system']['ipv6allow']))
+		$aliases .= "table <bogonsv6> persist file \"/etc/bogonsv6\"\n";
 
 	$vpns_list = filter_get_vpns_list();
 	if($vpns_list)
@@ -2595,9 +2600,14 @@ EOD;
 # http://www.cymru.com/Documents/bogon-bn-nonagg.txt
 # http://www.team-cymru.org/Services/Bogons/fullbogons-ipv6.txt
 block in $log quick on \${$oc['descr']} from <bogons> to any label "block bogon IPv4 networks from {$oc['descr']}"
+
+EOD;
+			if(isset($config['system']['ipv6allow'])) {
+				$ipfrules .= <<<EOD
 block in $log quick on \${$oc['descr']} from <bogonsv6> to any label "block bogon IPv6 networks from {$oc['descr']}"
 
 EOD;
+			}
 		}
 		$isbridged = false;
 		if(is_array($config['bridges']['bridged'])) {

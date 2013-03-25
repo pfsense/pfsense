@@ -177,11 +177,14 @@ function services_radvd_configure() {
 
 		/* add DNS servers */
 		$dnslist = array();
-		if (is_array($dhcpv6ifconf['dnsserver']) && !empty($dhcpv6ifconf['dnsserver'])) {
-			foreach($dhcpv6ifconf['dnsserver'] as $server) {
-				if(is_ipaddrv6($server))
+		if (isset($dhcpv6ifconf['rasamednsasdhcp6']) && is_array($dhcpv6ifconf['dnsserver']) && !empty($dhcpv6ifconf['dnsserver'])) {
+			foreach($dhcpv6ifconf['dnsserver'] as $server)
+				if (is_ipaddrv6($server))
 					$dnslist[] = $server;
-			}
+		} elseif (!isset($dhcpv6ifconf['rasamednsasdhcp6']) && isset($dhcpv6ifconf['radnsserver']) && is_array($dhcpv6ifconf['radnsserver'])) {
+			foreach($dhcpv6ifconf['radnsserver'] as $server)
+				if (is_ipaddrv6($server))
+					$dnslist[] = $server;
 		} elseif (isset($config['dnsmasq']['enable'])) {
 			$dnslist[] = get_interface_ipv6($realif);
 		} elseif (is_array($config['system']['dnsserver']) && !empty($config['system']['dnsserver'])) {

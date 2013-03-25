@@ -113,10 +113,10 @@ if [ "$BOGON_V4_CKSUM" = "$ON_DISK_V4_CKSUM" ] || [ "$BOGON_V6_CKSUM" = "$ON_DIS
 	fi
 
 	if [ "$BOGON_V6_CKSUM" = "$ON_DISK_V6_CKSUM" ]; then
-		BOGONS_V6=`pfctl -sTables | grep bogonsv6`
+		BOGONS_V6_TABLE_COUNT=`pfctl -sTables | grep ^bogonsv6$ | wc -l | awk '{ print $1 }'`
 		ENTRIES_TOT=`pfctl -vvsTables | awk '/Addresses/ {s+=$2}; END {print s}'`
 		LINES_V6=`wc -l /tmp/bogonsv6 | awk '{ print $1 }'`
-		if [ "$BOGONS_V6" = "bogonsv6" ]; then
+		if [ $BOGONS_V6_TABLE_COUNT -gt 0 ]; then
 			ENTRIES_V6=`pfctl -vvsTables | awk '/-\tbogonsv6$/ {getline; print $2}'`
 			if [ $ENTRIES_MAX -gt $((2*ENTRIES_TOT-${ENTRIES_V6:-0}+LINES_V6)) ]; then
 				egrep -v "^fc00::/7" /tmp/bogonsv6 > /etc/bogonsv6

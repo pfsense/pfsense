@@ -343,9 +343,9 @@ $tree .= "</ul>";
 
 if (!$dontshow || $newqueue) {
 
-$output_form .= "<tr><td width=\"22%\" valign=\"center\" class=\"vncellreq\">";
+$output_form .= "<tr><td width=\"22%\" valign=\"middle\" class=\"vncellreq\">";
 $output_form .= "<br />" . gettext("Queue Actions") . "<br />";
-$output_form .= "</td><td valign=\"center\" class=\"vncellreq\" width=\"78%\"><br />";
+$output_form .= "</td><td valign=\"middle\" class=\"vncellreq\" width=\"78%\"><br />";
 
 $output_form .= "<input type=\"submit\" name=\"Submit\" value=\"" . gettext("Save") . "\" class=\"formbtn\" />";
 if ($can_add || $addnewaltq) {

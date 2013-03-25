@@ -3553,8 +3553,10 @@ function interface_dhcpv6_configure($interface = "wan", $wancfg) {
 	mwexec("/sbin/ifconfig {$wanif} inet6 accept_rtadv");
 
 	/* fire up rtsold for IPv6 RAs first, this backgrounds immediately. It will call dhcp6c */
-	if (isvalidpid("{$g['varrun_path']}/rtsold_{$wanif}.pid"))
+	if (isvalidpid("{$g['varrun_path']}/rtsold_{$wanif}.pid")) {
 		killbypid("{$g['varrun_path']}/rtsold_{$wanif}.pid");
+		sleep(2);
+	}
 	mwexec("/usr/sbin/rtsold -1 -p {$g['varrun_path']}/rtsold_{$wanif}.pid -O {$g['varetc_path']}/rtsold_{$wanif}_script.sh {$wanif}");
 
 	/* NOTE: will be called from rtsold invoked script 

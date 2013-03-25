@@ -1471,11 +1471,12 @@ function services_dyndns_configure_client($conf) {
 		$dnsPort = NULL,
 		$dnsUpdateURL = "{$conf['updateurl']}",
 		$forceUpdate = $conf['force'],
-                $dnsZoneID=$conf['zoneid'],
-                $dnsTTL=$conf['ttl'],
+		$dnsZoneID=$conf['zoneid'],
+		$dnsTTL=$conf['ttl'],
 		$dnsResultMatch = "{$conf['resultmatch']}",
 		$dnsRequestIf = "{$conf['requestif']}",
-		$dnsID = "{$conf['id']}");
+		$dnsID = "{$conf['id']}",
+		$dnsVerboseLog = $conf['verboselog']);
 }
 
 function services_dyndns_configure($int = "") {
@@ -1493,6 +1494,7 @@ function services_dyndns_configure($int = "") {
 
 		foreach ($dyndnscfg as $dyndns) {
 			if ((empty($int)) || ($int == $dyndns['interface']) || (is_array($gwgroups[$dyndns['interface']]))) {
+				$dyndns['verboselog'] = isset($dyndns['verboselog']);
 				services_dyndns_configure_client($dyndns);
 				sleep(1);
 			}

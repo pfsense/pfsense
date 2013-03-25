@@ -69,6 +69,7 @@ if (isset($id) && isset($a_dyndns[$id])) {
 	$pconfig['enable'] = !isset($a_dyndns[$id]['enable']);
 	$pconfig['interface'] = $a_dyndns[$id]['interface'];
 	$pconfig['wildcard'] = isset($a_dyndns[$id]['wildcard']);
+	$pconfig['verboselog'] = isset($a_dyndns[$id]['verboselog']);
 	$pconfig['zoneid'] = $a_dyndns[$id]['zoneid'];
 	$pconfig['ttl'] = isset($a_dyndns[$id]['ttl']);
 	$pconfig['updateurl'] = $a_dyndns[$id]['updateurl'];
@@ -117,6 +118,7 @@ if ($_POST) {
 		$dyndns['host'] = $_POST['host'];
 		$dyndns['mx'] = $_POST['mx'];
 		$dyndns['wildcard'] = $_POST['wildcard'] ? true : false;
+		$dyndns['verboselog'] = $_POST['verboselog'] ? true : false;
 		/* In this place enable means disabled */
 		if ($_POST['enable'])
 			unset($dyndns['enable']);
@@ -295,6 +297,12 @@ function _onTypeChange(type){
                   <td width="78%" class="vtable">
                     <input name="wildcard" type="checkbox" id="wildcard" value="yes" <?php if ($pconfig['wildcard']) echo "checked"; ?>>
                     <?=gettext("Enable ");?><?=gettext("Wildcard"); ?></td>
+				</tr>
+                <tr id="_verboselogtr">
+                  <td width="22%" valign="top" class="vncell"><?=gettext("Verbose logging"); ?></td>
+                  <td width="78%" class="vtable">
+                    <input name="verboselog" type="checkbox" id="verboselog" value="yes" <?php if ($pconfig['verboselog']) echo "checked"; ?>>
+                    <?=gettext("Enable ");?><?=gettext("verbose logging"); ?></td>
 				</tr>
                 <tr id="_usernametr">
                   <td width="22%" valign="top" class="vncellreq"><?=gettext("Username");?></td>

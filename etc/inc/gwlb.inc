@@ -304,37 +304,39 @@ function return_gateways_status($byname = false) {
 	 * or are down, which could cause gateway groups to fail */
 	$gateways_arr = return_gateways_array();
 	foreach($gateways_arr as $gwitem) {
-		if(isset($gwitem['monitor_disable'])) {
-			if(!is_ipaddr($gwitem['monitorip'])) {
-				$realif = $gwitem['interface'];
-				$tgtip = get_interface_gateway($realif);
-				$srcip = find_interface_ip($realif);
-			} else {
-				$tgtip = $gwitem['monitorip'];
-				$srcip = find_interface_ip($realif);
-			}
-			if($byname == true)
-				$target = $gwitem['name'];
-			else
-				$target = $tgtip;
+		if(isset($gwitem['monitor_disable']))
+			continue;
+		if(!is_ipaddr($gwitem['monitorip'])) {
+			$realif = $gwitem['interface'];
+			$tgtip = get_interface_gateway($realif);
+			if (!is_ipaddr($tgtip))
+				$tgtip = "none";
+			$srcip = find_interface_ip($realif);
+		} else {
+			$tgtip = $gwitem['monitorip'];
+			$srcip = find_interface_ip($realif);
+		}
+		if($byname == true)
+			$target = $gwitem['name'];
+		else
+			$target = $tgtip;
 
-			/* failsafe for down interfaces */
-			if($target == "") {
-				$target = $gwitem['name'];
-				$status[$target]['name'] = $gwitem['name'];
-				$status[$target]['lastcheck'] = date('r');
-				$status[$target]['delay'] = "0.0ms";
-				$status[$target]['loss'] = "100.0%";
-				$status[$target]['status'] = "down";
-			} else {
-				$status[$target]['monitorip'] = $tgtip;
-				$status[$target]['srcip'] = $srcip;
-				$status[$target]['name'] = $gwitem['name'];
-				$status[$target]['lastcheck'] = date('r');
-				$status[$target]['delay'] = "0.0ms";
-				$status[$target]['loss'] = "0.0%";
-				$status[$target]['status'] = "none";
-			}
+		/* failsafe for down interfaces */
+		if($target == "none") {
+			$target = $gwitem['name'];
+			$status[$target]['name'] = $gwitem['name'];
+			$status[$target]['lastcheck'] = date('r');
+			$status[$target]['delay'] = "0.0ms";
+			$status[$target]['loss'] = "100.0%";
+			$status[$target]['status'] = "down";
+		} else {
+			$status[$target]['monitorip'] = $tgtip;
+			$status[$target]['srcip'] = $srcip;
+			$status[$target]['name'] = $gwitem['name'];
+			$status[$target]['lastcheck'] = date('r');
+			$status[$target]['delay'] = "0.0ms";
+			$status[$target]['loss'] = "0.0%";
+			$status[$target]['status'] = "none";
 		}
 	}
 	return($status);

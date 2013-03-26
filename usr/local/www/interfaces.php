@@ -1557,10 +1557,10 @@ $types6 = array("none" => gettext("None"), "staticv6" => gettext("Static IPv6"),
 											</div>
 											<div style="display:none" id="addgateway" name="addgateway">
 												<p>
-												<table border="1" style="background:#990000; border-style: none none none none; width:225px;">
+												<table border="1" class="addgatewaybox">
 													<tr>
 														<td>
-															<table bgcolor="#990000" cellpadding="1" cellspacing="1">
+															<table class="addgatewaybox" cellpadding="1" cellspacing="1">
 																<tr><td>&nbsp;</td></tr>
 																<tr>
 																	<td colspan="2"><center><b><font color="white"><?=gettext("Add new gateway:"); ?></font></b></center></td>
@@ -1662,10 +1662,10 @@ $types6 = array("none" => gettext("None"), "staticv6" => gettext("Static IPv6"),
 											</div>
 											<div style="display:none" id="addgatewayv6" name="addgatewayv6">
 												<p>
-												<table border="1" style="background:#990000; border-style: none none none none; width:225px;">
+												<table border="1" class="addgatewaybox">
 													<tr>
 														<td>
-															<table bgcolor="#990000" cellpadding="1" cellspacing="1">
+															<table class="addgatewaybox" cellpadding="1" cellspacing="1">
 																<tr><td>&nbsp;</td></tr>
 																<tr>
 																	<td colspan="2"><center><b><font color="white"><?=gettext("Add new v6 gateway:"); ?></font></b></center></td>

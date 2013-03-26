@@ -10,6 +10,12 @@ html, body, td, th, input, select {
 	width:100%;
 }
 
+.addgatewaybox {
+	background-color: #990000;
+	border-style: none none none none;
+	width: 225px;
+}
+
 .infoboxsave {
 	padding-right: 10px;
 }

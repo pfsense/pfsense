@@ -305,7 +305,7 @@ function return_gateways_status($byname = false) {
 	 * or are down, which could cause gateway groups to fail */
 	$gateways_arr = return_gateways_array();
 	foreach($gateways_arr as $gwitem) {
-		if(isset($gwitem['monitor_disable']))
+		if(!isset($gwitem['monitor_disable']))
 			continue;
 		if(!is_ipaddr($gwitem['monitorip'])) {
 			$realif = $gwitem['interface'];

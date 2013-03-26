@@ -291,6 +291,7 @@ function return_gateways_status($byname = false) {
 		else
 			$target = $info[2];
 
+		$status[$target] = array();
 		$status[$target]['monitorip'] = $info[0];
 		$status[$target]['srcip'] = $info[1];
 		$status[$target]['name'] = $info[2];
@@ -719,14 +720,13 @@ function return_gateway_groups_array() {
 			$tiers = array();
 			$backupplan = array();
 			foreach($group['item'] as $item) {
-				$itemsplit = explode("|", $item);
-				$tier = $itemsplit[1];
-				$gwname = $itemsplit[0];
-				$vipname = $itemsplit[2];
+				list($gwname, $tier, $vipname) = explode("|", $item);
 				if(is_ipaddr($carplist[$vipname]))
 					$gwvip_arr[$group['name']][$gwname] = $vipname;
 
 				/* Do it here rather than reiterating again the group in case no member is up. */
+				if (!is_array($backupplan[$tier]))
+					$backupplan[$tier] = array();
 				$backupplan[$tier][] = $gwname;
 
 				/* check if the gateway is available before adding it to the array */
@@ -751,6 +751,8 @@ function return_gateway_groups_array() {
 						notify_via_smtp($msg);
 					} else {
 						/* Online add member */
+						if (!is_array($tiers[$tier]))
+							$tiers[$tier] = array();
 						$tiers[$tier][] = $gwname;
 					}
 				} else if (isset($gateways_arr[$gwname]['monitor_disable']))

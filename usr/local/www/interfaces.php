@@ -1266,11 +1266,11 @@ $types = array("none" => gettext("None"), "static" => gettext("Static"), "dhcp" 
 											</div>
 											<div style="display:none" id="addgateway" name="addgateway">
 												<p>
-												<table border="1" style="background:#990000; border-style: none none none none; width:225px;">
+												<table border="1" class="addgatewaybox">
 													<tr>
 														<td>
-															<table bgcolor="#990000" cellpadding="1" cellspacing="1">
-																<tr><td>&nbsp;</td>
+															<table class="addgatewaybox" cellpadding="1" cellspacing="1">
+																<tr><td>&nbsp;</td></tr>
 																<tr>
 																	<td colspan="2"><center><b><font color="white"><?=gettext("Add new gateway:"); ?></font></b></center></td>
 																</tr>

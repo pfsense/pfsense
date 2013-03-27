@@ -1213,7 +1213,8 @@ EOD;
         fclose($igmpfl);
 	unset($igmpconf);
 
-        mwexec("/usr/local/sbin/igmpproxy -c {$g['tmp_path']}/igmpproxy.conf");
+	/* NOTE: -d 4 means everything LOG_WARNING and smaller */
+        mwexec("/usr/local/sbin/igmpproxy -d 4 -c {$g['tmp_path']}/igmpproxy.conf");
         log_error(gettext("Started IGMP proxy service."));
 
         return 0;

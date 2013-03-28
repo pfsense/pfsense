@@ -1505,6 +1505,7 @@ $types6 = array("none" => gettext("None"), "staticv6" => gettext("Static IPv6"),
 						</tr>
 						<tr style="display:none;" name="staticv4" id="staticv4">
 							<td colspan="2" style="padding:0px;">
+								<a name="gatewaysection"></a>
 								<table width="100%" border="0" cellpadding="6" cellspacing="0">
 									<tr>
 										<td colspan="2" valign="top" class="listtopic"><?=gettext("Static IPv4 configuration"); ?></td>
@@ -1546,7 +1547,7 @@ $types6 = array("none" => gettext("None"), "staticv6" => gettext("Static IPv6"),
 													}
 													?>
 											</select>
-											- or  <strong><a OnClick="show_add_gateway();" href="#"><?=gettext("add a new one."); ?></a></strong>
+											- or  <strong><a OnClick="show_add_gateway();" href="#gatewaysection"><?=gettext("add a new one."); ?></a></strong>
 											<br/>
 											<div id='addgwbox'>
 												<?=gettext("If this interface is an Internet connection, select an existing Gateway from the list or add one using the link above"); ?>
@@ -1610,6 +1611,7 @@ $types6 = array("none" => gettext("None"), "staticv6" => gettext("Static IPv6"),
 						</tr>
 						<tr style="display:none;" name="staticv6" id="staticv6">
 							<td colspan="2" style="padding:0px;">
+								<a name="gatewayv6section"></a>
 								<table width="100%" border="0" cellpadding="6" cellspacing="0">
 									<tr>
 										<td colspan="2" valign="top" class="listtopic"><?=gettext("Static IPv6 configuration"); ?></td>
@@ -1651,7 +1653,7 @@ $types6 = array("none" => gettext("None"), "staticv6" => gettext("Static IPv6"),
 													}
 													?>
 											</select>
-											- or <strong><a OnClick="show_add_gateway_v6();" href="#"><?=gettext("add a new one."); ?></a></strong>
+											- or <strong><a OnClick="show_add_gateway_v6();" href="#gatewayv6section"><?=gettext("add a new one."); ?></a></strong>
 											<br/>
 											<div id='addgwboxv6'>
 											<?=gettext("If this interface is an Internet connection, select an existing Gateway from the list or add a new one using the link above"); ?>

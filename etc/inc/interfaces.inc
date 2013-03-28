@@ -436,7 +436,7 @@ function interfaces_bridge_configure($checkmember = 0) {
 				foreach ($members as $member) {
 					if (strstr($bridge['if'], "_vip"))
 						continue 2;
-					if (!empty($config['interfaces'][$bridge['if']]) && $config['interfaces'][$bridge['if']]['ipaddrv6'] == "track6")  
+					if (!empty($config['interfaces'][$bridge['if']]) && $config['interfaces'][$bridge['if']]['ipaddrv6'] == "track6")
 						continue 2;
 				}
 			}
@@ -445,7 +445,7 @@ function interfaces_bridge_configure($checkmember = 0) {
 				foreach ($members as $member) {
 					if (!strstr($bridge['if'], "_vip"))
 						continue 2;
-					if (empty($config['interfaces'][$bridge['if']]) || $config['interfaces'][$bridge['if']]['ipaddrv6'] != "track6")  
+					if (empty($config['interfaces'][$bridge['if']]) || $config['interfaces'][$bridge['if']]['ipaddrv6'] != "track6")
 						continue 2;
 				}
 			}
@@ -780,13 +780,13 @@ function interfaces_gre_configure($checkparent = 0) {
 			if ($checkparent == 1) {
 				if (strstr($gre['if'], "_vip"))
 					continue;
-				if (!empty($config['interfaces'][$gre['if']]) && $config['interfaces'][$gre['if']]['ipaddrv6'] == "track6")  
+				if (!empty($config['interfaces'][$gre['if']]) && $config['interfaces'][$gre['if']]['ipaddrv6'] == "track6")
 					continue;
 			}
 			else if ($checkparent == 2) {
 				if (!strstr($gre['if'], "_vip"))
 					continue;
-				if (empty($config['interfaces'][$gre['if']]) || $config['interfaces'][$gre['if']]['ipaddrv6'] != "track6")  
+				if (empty($config['interfaces'][$gre['if']]) || $config['interfaces'][$gre['if']]['ipaddrv6'] != "track6")
 					continue;
 			}
 			/* XXX: Maybe we should report any errors?! */
@@ -854,13 +854,13 @@ function interfaces_gif_configure($checkparent = 0) {
 			if ($checkparent == 1) {
 				if (strstr($gif['if'], "_vip"))
 					continue;
-				if (!empty($config['interfaces'][$gif['if']]) && $config['interfaces'][$gif['if']]['ipaddrv6'] == "track6")  
+				if (!empty($config['interfaces'][$gif['if']]) && $config['interfaces'][$gif['if']]['ipaddrv6'] == "track6")
 					continue;
 			}
 			else if ($checkparent == 2) {
 				if (!strstr($gre['if'], "_vip"))
 					continue;
-				if (empty($config['interfaces'][$gif['if']]) || $config['interfaces'][$gif['if']]['ipaddrv6'] != "track6")  
+				if (empty($config['interfaces'][$gif['if']]) || $config['interfaces'][$gif['if']]['ipaddrv6'] != "track6")
 					continue;
 			}
 			/* XXX: Maybe we should report any errors?! */
@@ -1346,7 +1346,7 @@ function handle_pppoe_reset($post_array) {
 			$item['month'] = "*";
 			$item['wday'] = "*";
 			break;
-	        case "weekly":
+		case "weekly":
 			$item['minute'] = "0";
 			$item['hour'] = "0";
 			$item['mday'] = "*";
@@ -2131,15 +2131,15 @@ function interface_wireless_clone($realif, $wlcfg) {
 	else
 		$wlcfg_mode = $wlcfg['mode'];
 	switch($wlcfg_mode) {
-		 case "hostap":
-			$mode = "wlanmode hostap";
-			break;
-		 case "adhoc":
-			$mode = "wlanmode adhoc";
-			break;
-		 default:
-			$mode = "";
-			break;
+	case "hostap":
+		$mode = "wlanmode hostap";
+		break;
+	case "adhoc":
+		$mode = "wlanmode adhoc";
+		break;
+	default:
+		$mode = "";
+		break;
 	}
 	$baseif = interface_get_wireless_base($wlcfg['if']);
 	if(does_interface_exist($realif)) {
@@ -2188,8 +2188,8 @@ function interface_sync_wireless_clones(&$ifcfg, $sync_changes = false) {
 	global $config, $g;
 
 	$shared_settings = array('standard', 'turbo', 'protmode', 'txpower', 'channel',
-	                         'diversity', 'txantenna', 'rxantenna', 'distance',
-	                         'regdomain', 'regcountry', 'reglocation');
+				 'diversity', 'txantenna', 'rxantenna', 'distance',
+				 'regdomain', 'regcountry', 'reglocation');
 
 	if(!is_interface_wireless($ifcfg['if']))
 		return;
@@ -3131,7 +3131,7 @@ function interface_track6_configure($interface = "lan", $wancfg) {
 function interface_track6_6rd_configure($interface = "lan", $lancfg) {
 	global $config, $g;
 	global $interface_ipv6_arr_cache;
-        global $interface_snv6_arr_cache;
+	global $interface_snv6_arr_cache;
 
 	if (!is_array($lancfg))
 		return;
@@ -3195,7 +3195,7 @@ function interface_track6_6rd_configure($interface = "lan", $lancfg) {
 function interface_track6_6to4_configure($interface = "lan", $lancfg) {
 	global $config, $g;
 	global $interface_ipv6_arr_cache;
-        global $interface_snv6_arr_cache;
+	global $interface_snv6_arr_cache;
 
 	if (!is_array($lancfg))
 		return;
@@ -3255,7 +3255,7 @@ function interface_track6_6to4_configure($interface = "lan", $lancfg) {
 function interface_track6_dhcp6_configure($interface = "lan", $lancfg) {
 	global $config, $g;
 	global $interface_ipv6_arr_cache;
-        global $interface_snv6_arr_cache;
+	global $interface_snv6_arr_cache;
 
 	if (!is_array($lancfg))
 		return;
@@ -3559,7 +3559,7 @@ function interface_dhcpv6_configure($interface = "wan", $wancfg) {
 	}
 	mwexec("/usr/sbin/rtsold -1 -p {$g['varrun_path']}/rtsold_{$wanif}.pid -O {$g['varetc_path']}/rtsold_{$wanif}_script.sh {$wanif}");
 
-	/* NOTE: will be called from rtsold invoked script 
+	/* NOTE: will be called from rtsold invoked script
 	 * link_interface_to_track6($interface, "update");
 	 */
 
@@ -3727,7 +3727,7 @@ function convert_real_interface_to_friendly_interface_name($interface = "wan") {
 		$int = get_parent_interface($if);
 		if ($int[0] == $interface)
 			return $ifname;
-		 */
+		*/
 	}
 
 	return NULL;
@@ -3993,9 +3993,9 @@ function guess_interface_from_ip($ipaddress) {
 function find_ip_interface($ip, $bits = null) {
 	if (!is_ipaddr($ip))
 		return false;
-	
+
 	$isv6ip = is_ipaddrv6($ip);
-	
+
 	/* if list */
 	$ifdescrs = get_configured_interface_list();
 
@@ -4026,15 +4026,15 @@ function find_ip_interface($ip, $bits = null) {
  */
 function find_virtual_ip_alias($ip, $bits = null) {
 	global $config;
-	
+
 	if (!is_array($config['virtualip']['vip'])) {
 		return false;
 	}
 	if (!is_ipaddr($ip))
 		return false;
-	
+
 	$isv6ip = is_ipaddrv6($ip);
-	
+
 	foreach ($config['virtualip']['vip'] as $vip) {
 		if ($vip['mode'] === "ipalias") {
 			if (is_ipaddrv6($vip['subnet']) != $isv6ip)
@@ -4295,8 +4295,7 @@ function link_interface_to_gif($interface) {
 /*
  * find_interface_ip($interface): return the interface ip (first found)
  */
-function find_interface_ip($interface, $flush = false)
-{
+function find_interface_ip($interface, $flush = false) {
 	global $interface_ip_arr_cache;
 	global $interface_sn_arr_cache;
 
@@ -4318,8 +4317,7 @@ function find_interface_ip($interface, $flush = false)
 /*
  * find_interface_ipv6($interface): return the interface ip (first found)
  */
-function find_interface_ipv6($interface, $flush = false)
-{
+function find_interface_ipv6($interface, $flush = false) {
 	global $interface_ipv6_arr_cache;
 	global $interface_snv6_arr_cache;
 	global $config;
@@ -4360,8 +4358,7 @@ function find_interface_ipv6($interface, $flush = false)
 /*
  * find_interface_ipv6_ll($interface): return the interface ipv6 link local (first found)
  */
-function find_interface_ipv6_ll($interface, $flush = false)
-{
+function find_interface_ipv6_ll($interface, $flush = false) {
 	global $interface_llv6_arr_cache;
 	global $config;
 
@@ -4389,8 +4386,7 @@ function find_interface_ipv6_ll($interface, $flush = false)
 	return $interface_llv6_arr_cache[$interface];
 }
 
-function find_interface_subnet($interface, $flush = false)
-{
+function find_interface_subnet($interface, $flush = false) {
 	global $interface_sn_arr_cache;
 	global $interface_ip_arr_cache;
 
@@ -4407,8 +4403,7 @@ function find_interface_subnet($interface, $flush = false)
 	return $interface_sn_arr_cache[$interface];
 }
 
-function find_interface_subnetv6($interface, $flush = false)
-{
+function find_interface_subnetv6($interface, $flush = false) {
 	global $interface_snv6_arr_cache;
 	global $interface_ipv6_arr_cache;
 
@@ -4470,8 +4465,7 @@ function ip_in_interface_alias_subnet($interface, $ipalias) {
 	return false;
 }
 
-function get_interface_ip($interface = "wan")
-{
+function get_interface_ip($interface = "wan") {
 	$realif = get_failover_interface($interface);
 	if (!$realif) {
 		if (preg_match("/^carp/i", $interface))
@@ -4489,8 +4483,7 @@ function get_interface_ip($interface = "wan")
 		return null;
 }
 
-function get_interface_ipv6($interface = "wan", $flush = false)
-{
+function get_interface_ipv6($interface = "wan", $flush = false) {
 	global $config;
 
 	$realif = get_failover_interface($interface, "inet6");
@@ -4508,8 +4501,7 @@ function get_interface_ipv6($interface = "wan", $flush = false)
 		return null;
 }
 
-function get_interface_linklocal($interface = "wan")
-{
+function get_interface_linklocal($interface = "wan") {
 	$realif = get_failover_interface($interface);
 	if (!$realif) {
 		if (preg_match("/^carp/i", $interface))
@@ -4527,8 +4519,7 @@ function get_interface_linklocal($interface = "wan")
 		return null;
 }
 
-function get_interface_subnet($interface = "wan")
-{
+function get_interface_subnet($interface = "wan") {
 	$realif = get_real_interface($interface);
 	if (!$realif) {
 		if (preg_match("/^carp/i", $interface))
@@ -4546,8 +4537,7 @@ function get_interface_subnet($interface = "wan")
 	return null;
 }
 
-function get_interface_subnetv6($interface = "wan")
-{
+function get_interface_subnetv6($interface = "wan") {
 	global $config;
 
 	$realif = get_real_interface($interface, "inet6");
@@ -4716,8 +4706,7 @@ function get_wireless_modes($interface) {
 		$interface_channel_count = count($interface_channels);
 
 		$c = 0;
-		while ($c < $interface_channel_count)
-		{
+		while ($c < $interface_channel_count) {
 			$channel_line = explode(",", $interface_channels["$c"]);
 			$wireless_mode = trim($channel_line[0]);
 			$wireless_channel = trim($channel_line[1]);

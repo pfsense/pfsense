@@ -313,14 +313,14 @@ class altq_root_queue {
 	}
 
 	function validate_input($data, &$input_errors) {
-		
+
 		$reqdfields[] = "bandwidth";
 		$reqdfieldsn[] = gettext("Bandwidth");
 		$reqdfields[] = "bandwidthtype";
 		$reqdfieldsn[] = gettext("Bandwidthtype");
-		
+
 		shaper_do_input_validation($data, $reqdfields, $reqdfieldsn, $input_errors);
-		
+
                 if ($data['bandwidth'] && (!is_numeric($data['bandwidth'])))
 			$input_errors[] = gettext("Bandwidth must be an integer.");
                 if ($data['bandwidth'] < 0)
@@ -494,7 +494,7 @@ class altq_root_queue {
 		$tree .= "</li>";
 		return $tree;
 	}
-	
+
 	function delete_queue() { 
 		foreach ($this->queues as $q) {
 		$this->SetAvailableBandwidth($this->GetAvailableBandwidth() + $q->GetAvailableBandwidth());
@@ -582,7 +582,7 @@ class altq_root_queue {
 
 		return $javascript;
 	}
-	
+
 	function build_shortform() {
 		global $g;
 
@@ -609,7 +609,7 @@ class altq_root_queue {
 
 	}
 	/*
-	 * For requesting the parameters of the root queue
+	 * For requesting the parameters of the root queues
 	 * to the user like the traffic wizard does.
 	 */
 	function build_form() { 
@@ -618,7 +618,7 @@ class altq_root_queue {
 		$form .= "<br/></td><td class=\"vncellreq\">";
 		$form .= " <input type=\"checkbox\" id=\"enabled\" name=\"enabled\" value=\"on\"";
                 if ($this->GetEnabled() == "on")
-                        $form .=  " CHECKED";
+                        $form .=  " checked=\"checked\"";
 		$form .= " /><span class=\"vexpl\"> " . gettext("Enable/disable discipline and its children") . "</span>";
 		$form .= "</td></tr>";
 		$form .= "<tr><td valign=\"middle\" class=\"vncellreq\"><br/><span class=\"vexpl\">" . gettext("Name") . "</span></td>";
@@ -631,19 +631,19 @@ class altq_root_queue {
 		$form .= "<select id=\"scheduler\" name=\"scheduler\" class=\"formselect\">";
 		$form .= "<option value=\"HFSC\"";
 		if ($this->GetScheduler() == "HFSC")
-			$form .= " selected=\"yes\"";
+			$form .= " selected=\"selected\"";
 		$form .= ">HFSC</option>";
 		$form .= "<option value=\"CBQ\"";
 		if ($this->GetScheduler() == "CBQ")
-			$form .= " selected=\"yes\"";
+			$form .= " selected=\"selected\"";
 		$form .= ">CBQ</option>";
 		$form .= "<option value=\"FAIRQ\"";
                 if ($this->GetScheduler() == "FAIRQ")
-                	$form .= " selected=\"yes\"";
+                	$form .= " selected=\"selected\"";
                 $form .= ">FAIRQ</option>";
 		$form .= "<option value=\"PRIQ\"";
 		if ($this->GetScheduler() == "PRIQ")
-			$form .= " selected=\"yes\"";
+			$form .= " selected=\"selected\"";
 		$form .= ">PRIQ</option>";
 		$form .= "</select>";
 		$form .= "<br/> <span class=\"vexpl\">";
@@ -658,19 +658,19 @@ class altq_root_queue {
 		$form .= "<select id=\"bandwidthtype\" name=\"bandwidthtype\" class=\"formselect\">";
 		$form .= "<option value=\"Kb\"";
 		if ($this->GetBwscale() == "Kb")
-			$form .= " selected=\"yes\"";
+			$form .= " selected=\"selected\"";
 		$form .= ">Kbit/s</option>";
 		$form .= "<option value=\"Mb\"";
 		if ($this->GetBwscale() == "Mb")
-			$form .= " selected=\"yes\"";
+			$form .= " selected=\"selected\"";
 		$form .= ">Mbit/s</option>";
 		$form .= "<option value=\"Gb\"";
 		if ($this->GetBwscale() == "Gb")
-			$form .= " selected=\"yes\"";
+			$form .= " selected=\"selected\"";
 		$form .= ">Gbit/s</option>";		
 		$form .= "<option value=\"b\"";
 		if ($this->GetBwscale() == "b")
-			$form .= " selected=\"yes\"";
+			$form .= " selected=\"selected\"";
 		$form .= ">Bit/s</option>";
 		$form .= "</select>";
 		$form .= "</td></tr>";
@@ -701,7 +701,7 @@ class altq_root_queue {
 	function update_altq_queue_data(&$data) { 
 		$this->ReadConfig($data);
 	}
-	
+
 	/*
 	 * Should call on each of it queues and subqueues
 	 * the same function much like build_rules();
@@ -890,10 +890,10 @@ class priq_queue {
 		$javascript .= "}\n";
 		$javascript .= "//]]>";
 		$javascript .= "</script>";
-		
+
 		return $javascript;
 	}
-	
+
 	function &add_queue($interface, &$qname, &$path, &$input_errors) { return; }
 
 	/* 
@@ -932,7 +932,7 @@ class priq_queue {
 	}
 
         function &get_queue_list(&$qlist) {
-		
+
 		$qlist[$this->GetQname()] = & $this;
 		if (is_array($this->subqueues)) {
 			foreach ($this->subqueues as $queue)
@@ -945,7 +945,7 @@ class priq_queue {
 		cleanup_queue_from_rules($this->GetQname());
 		unset_object_by_reference($this->GetLink());
 	}
-	
+
 	function delete_all() {
                 if (count($this->subqueues)) {
                         foreach ($this->subqueues as $q) {
@@ -961,11 +961,11 @@ class priq_queue {
 		if ($qname == $this->GetQname())
 			return $this; 
 	}
-	
+
 	function find_parentqueue($interface, $qname) { return; }
-		
+
 	function validate_input($data, &$input_errors) {
-	
+
 		$reqdfields[] = "name";
 		$reqdfieldsn[] = gettext("Name");
 		shaper_do_input_validation($data, $reqdfields, $reqdfieldsn, $input_errors);
@@ -1064,7 +1064,7 @@ class priq_queue {
 
 		return $tree;
 	}
-		
+
 	/* Should return something like:
 	 * queue $qname on $qinterface bandwidth ....
 	 */
@@ -1127,7 +1127,7 @@ class priq_queue {
                 $form .= "<br/></td><td class=\"vncellreq\">";
                 $form .= " <input type=\"checkbox\" id=\"enabled\" name=\"enabled\" value=\"on\"";
                 if ($this->GetEnabled() == "on")
-                        $form .=  " CHECKED";
+                        $form .=  " checked=\"checked\"";
                 $form .= " /><span class=\"vexpl\"> " . gettext("Enable/Disable queue and its children") . "</span>";
                 $form .= "</td></tr>";
 		$form .= "<tr>";
@@ -1160,7 +1160,7 @@ class priq_queue {
 		$form .= "<td width=\"78%\" class=\"vtable\">";
 		if (empty($this->subqueues)) {
 			if ($this->GetDefault()) { 
-				$form .= "<input type=\"checkbox\" id=\"default\" CHECKED name=\"default\" value=\"default\"";
+				$form .= "<input type=\"checkbox\" id=\"default\" checked=\"checked\" name=\"default\" value=\"default\"";
 				$form .= " /> " . gettext("Default queue") . "<br/>";
 			} else {
 				$form .= "<input type=\"checkbox\" id=\"default\" name=\"default\" value=\"default\"";
@@ -1170,17 +1170,17 @@ class priq_queue {
 		$form .= "<input type=\"checkbox\" id=\"red\" name=\"red\" value=\"red\" ";
 		$tmpvalue = $this->GetRed();
 		if(!empty($tmpvalue)) 
-			$form .=  " CHECKED";
+			$form .=  " checked=\"checked\"";
 		$form .= " /> <a target=\"_new\" href=\"http://www.openbsd.org/faq/pf/queueing.html#red\">" . gettext("Random Early Detection") . "</a><br/>";
 		$form .= "<input type=\"checkbox\" id=\"rio\" name=\"rio\" value=\"rio\"";
 		$tmpvalue = $this->GetRio();
 		if(!empty($tmpvalue)) 
-			$form .=  " CHECKED";
+			$form .=  " checked=\"checked\"";
 		$form .= " /> <a target=\"_new\" href=\"http://www.openbsd.org/faq/pf/queueing.html#rio\">" . gettext("Random Early Detection In and Out") . "</a><br/>";
 		$form .= "<input type=\"checkbox\" id=\"ecn\" name=\"ecn\" value=\"ecn\"";
 		$tmpvalue = $this->GetEcn();
 		if(!empty($tmpvalue)) 
-			$form .=  " CHECKED";
+			$form .=  " checked=\"checked\"";
 		$form .= " /> <a target=\"_new\" href=\"http://www.openbsd.org/faq/pf/queueing.html#ecn\">" . gettext("Explicit Congestion Notification") . "</a><br/>";
 		$form .= "<span class=\"vexpl\"><br/>" . gettext("Select options for this queue");
 		$form .= "</tr><tr>";
@@ -1198,7 +1198,7 @@ class priq_queue {
 		/* XXX: Hacks in site. Mostly layer violations!  */
 		global $g, $altq_list_queues;
 		global $shaperIFlist;
-		
+
 		$altq =& $altq_list_queues[$this->GetInterface()];
 		if ($altq)
 			$scheduler = ": " . $altq->GetScheduler();
@@ -1228,7 +1228,7 @@ class priq_queue {
 		$form .= "./themes/".$g['theme']."/images/icons/icon_x.gif\"";
 		$form .= " width=\"17\" height=\"17\" border=\"0\" title=\"" . gettext("Delete queue from interface") . "\" alt=\"delete\" />";
 		$form .= "<span>" . gettext("Delete queue from interface") . "</span></a></td></tr>";
-		
+
 		return $form;
 
 	}
@@ -1411,7 +1411,7 @@ class hfsc_queue extends priq_queue {
 				array_pop($path);
 			}
 		}
-	
+
 		return $q;
 	}
 
@@ -1543,17 +1543,17 @@ class hfsc_queue extends priq_queue {
 				return $result;
 		}
 	}
-	
+
 	function validate_input($data, &$input_errors) {
 		parent::validate_input($data, $input_errors);
-		
+
 		$reqdfields[] = "bandwidth";
 		$reqdfieldsn[] = gettext("Bandwidth");
 		$reqdfields[] = "bandwidthtype";
 		$reqdfieldsn[] = gettext("Bandwidthtype");
 
 		shaper_do_input_validation($data, $reqdfields, $reqdfieldsn, $input_errors);
-		
+
 		if (isset($data['linkshare3']) && $data['linkshare3'] <> "") {
 			if ($data['bandwidth'] && (!is_numeric($data['bandwidth'])))
 				$input_errors[] = gettext("Bandwidth must be an integer.");
@@ -1726,7 +1726,7 @@ class hfsc_queue extends priq_queue {
 			$pfq_rule .= " on ".get_real_interface($this->GetInterface());
 		if ($this->GetBandwidth() && $this->GetBwscale())
 			$pfq_rule .= " bandwidth ".trim($this->GetBandwidth()).$this->GetBwscale();
-				
+
 		$tmpvalue = $this->GetQlimit();
 		if (!empty($tmpvalue))
 			$pfq_rule .= " qlimit " . $this->GetQlimit();
@@ -1737,7 +1737,7 @@ class hfsc_queue extends priq_queue {
 				$comma = 1;
 				$pfq_rule .= " red ";
 			}
-			
+
 			$tmpvalue = $this->GetRio();
 			if (!empty($tmpvalue)) {
 				if ($comma) 
@@ -1805,7 +1805,7 @@ class hfsc_queue extends priq_queue {
 		}
 
 		 $pfq_rule .= " \n";
-			
+
 		return $pfq_rule;
 	}
 
@@ -1845,7 +1845,7 @@ class hfsc_queue extends priq_queue {
 		$javascript .= "document.iform.upperlimit2.disabled = 1;\n";
 		$javascript .= "document.iform.upperlimit3.disabled = 1;\n";
 		$javascript .= " } \n";
-			
+
 		$javascript .= "} \n";
 		$javascript .= "//]]>";
 		$javascript .= "</script>";
@@ -1863,23 +1863,23 @@ class hfsc_queue extends priq_queue {
 		$form .= "<select name=\"bandwidthtype\" id=\"bandwidthtype\" class=\"formselect\">";
 		$form .= "<option value=\"Gb\"";
 		if ($this->GetBwscale() == "Gb")
-			$form .= " selected=\"yes\"";
+			$form .= " selected=\"selected\"";
 		$form .= ">" . gettext("Gbit/s") . "</option>";
 		$form .= "<option value=\"Mb\"";
 		if ($this->GetBwscale() == "Mb")
-			$form .= " selected=\"yes\"";
+			$form .= " selected=\"selected\"";
 		$form .= ">" . gettext("Mbit/s") . "</option>";
 		$form .= "<option value=\"Kb\"";
 		if ($this->GetBwscale() == "Kb")
-			$form .= " selected=\"yes\"";
+			$form .= " selected=\"selected\"";
 		$form .= ">" . gettext("Kbit/s") . "</option>";
 		$form .= "<option value=\"b\"";
 		if ($this->GetBwscale() == "b")
-			$form .= " selected=\"yes\"";
+			$form .= " selected=\"selected\"";
 		$form .= ">" . gettext("Bit/s") . "</option>";
 		$form .= "<option value=\"%\"";
 		if ($this->GetBwscale() == "%")
-			$form .= " selected=\"yes\"";
+			$form .= " selected=\"selected\"";
 		$form .= ">%</option>";
 		$form .= "</select> <br/>";
 		$form .= "<span class=\"vexpl\">" . gettext("Choose the amount of bandwidth for this queue");
@@ -1891,60 +1891,60 @@ class hfsc_queue extends priq_queue {
 		$form .= "<tr><td>&nbsp;</td><td><center>m1</center></td><td><center>d</center></td><td><center><b>m2</b></center></td></tr>";
 		$form .= "<tr><td><input type=\"checkbox\" id=\"upperlimit\" name=\"upperlimit\"";
 		if($this->GetUpperlimit()<> "") 
-			$form .=  " CHECKED ";
+			$form .=  " checked=\"checked\" ";
 		$form .= "onchange=\"enable_upperlimit()\" /> " . gettext("Upperlimit:") . "</td><td><input size=\"6\" value=\"";
 		$form .= htmlspecialchars($this->GetU_m1());
 		$form .= "\" id=\"upperlimit1\" name=\"upperlimit1\" ";
 		if ($this->GetUpperlimit() == "")
-			$form .= " disabled";
+			$form .= " disabled=\"disabled\"";
 		$form .= " /></td><td><input size=\"6\" value=\"";
 		$form .= htmlspecialchars($this->GetU_d());
 		$form .= "\" id=\"upperlimi2\" name=\"upperlimit2\" ";
 		if ($this->GetUpperlimit() == "")
-			$form .= " disabled";
+			$form .= " disabled=\"disabled\"";
 		$form .= " /></td><td><input size=\"6\" value=\"";
 		$form .= htmlspecialchars($this->GetU_m2());
 		$form .= "\" id=\"upperlimit3\" name=\"upperlimit3\" ";
 		if ($this->GetUpperlimit() == "")
-			$form .= " disabled";
+			$form .= " disabled=\"disabled\"";
 		$form .= " /></td><td>" . gettext("The maximum allowed bandwidth for the queue.") . "</td></tr>";
 		$form .= "<tr><td><input type=\"checkbox\" id=\"realtime\" name=\"realtime\"";
 		if($this->GetRealtime() <> "") 
-			$form .=  " CHECKED ";
+			$form .=  " checked=\"checked\" ";
 		$form .= "onchange=\"enable_realtime()\" /> " . gettext("Real time:") . "</td><td><input size=\"6\" value=\"";
 		$form .= htmlspecialchars($this->GetR_m1());
 		$form .= "\" id=\"realtime1\" name=\"realtime1\" ";
 		if ($this->GetRealtime() == "")
-			$form .= " disabled";
+			$form .= " disabled=\"disabled\"";
 		$form .= " /></td><td><input size=\"6\" value=\"";
 		$form .= htmlspecialchars($this->GetR_d());
 		$form .= "\" id=\"realtime2\" name=\"realtime2\" ";
 		if ($this->GetRealtime() == "")
-			$form .= " disabled";
+			$form .= " disabled=\"disabled\"";
 		$form .= " /></td><td><input size=\"6\" value=\"";
 		$form .= htmlspecialchars($this->GetR_m2());
 		$form .= "\" id=\"realtime3\" name=\"realtime3\" ";
 		if ($this->GetRealtime() == "")
-			$form .= " disabled";
+			$form .= " disabled=\"disabled\"";
 		$form .= " /></td><td>" . gettext("The minimum required bandwidth for the queue.") . "</td></tr>";
 		$form .= "<tr><td><input type=\"checkbox\" id=\"linkshare\" id=\"linkshare\" name=\"linkshare\"";
 		if($this->GetLinkshare() <> "") 
-			$form .=  " CHECKED ";
+			$form .=  " checked=\"checked\" ";
 		$form .= "onchange=\"enable_linkshare()\" /> " . gettext("Link share:") . "</td><td><input size=\"6\" value=\"";
 		$form .= htmlspecialchars($this->GetL_m1());
 		$form .= "\" id=\"linkshare1\" name=\"linkshare1\" ";
 		if ($this->GetLinkshare() == "")
-			$form .= " disabled";
+			$form .= " disabled=\"disabled\"";
 		$form .= " /></td><td><input size=\"6\" value=\"";
 		$form .= htmlspecialchars($this->GetL_d());
 		$form .= "\" id=\"linkshare2\" name=\"linkshare2\" ";
 		if ($this->GetLinkshare() == "")
-			$form .= " disabled";
+			$form .= " disabled=\"disabled\"";
 		$form .= " /></td><td><input size=\"6\" value=\"";
 		$form .= htmlspecialchars($this->GetL_m2());
 		$form .= "\" id=\"linkshare3\" name=\"linkshare3\" ";
 		if ($this->GetLinkshare() == "")
-			$form .= " disabled";
+			$form .= " disabled=\"disabled\"";
 		$form .= " /></td><td>" . gettext("The bandwidth share of a backlogged queue - this overrides priority.") . "</td></tr>";
 		$form .= "</table><br/>";
 		$form .= gettext("The format for service curve specifications is (m1, d, m2).  m2 controls "
@@ -2158,7 +2158,7 @@ class cbq_queue extends priq_queue {
 			}
 		}
 	}
-	
+
 	/*
 	 * Should search even its children
 	 */
@@ -2191,10 +2191,10 @@ class cbq_queue extends priq_queue {
 		}
 		unset_object_by_reference($this->GetLink());
 	}
-	
+
 	function validate_input($data, &$input_errors) {
 		parent::validate_input($data, $input_errors);
-		
+
 		if ($data['priority'] > 7)
 				$input_errors[] = gettext("Priority must be an integer between 1 and 7.");
 		$reqdfields[] = "bandwidth";
@@ -2203,7 +2203,7 @@ class cbq_queue extends priq_queue {
 		$reqdfieldsn[] = gettext("Bandwidthtype");
 
 		shaper_do_input_validation($data, $reqdfields, $reqdfieldsn, $input_errors);
-		
+
 		if ($data['bandwidth'] && !is_numeric($data['bandwidth']))
 			$input_errors[] = gettext("Bandwidth must be an integer.");
 
@@ -2238,7 +2238,7 @@ class cbq_queue extends priq_queue {
 		else
 			$this->SetBorrow("");
 	}
-		
+
 	function build_javascript() {
 		return parent::build_javascript();
 	}
@@ -2260,7 +2260,7 @@ class cbq_queue extends priq_queue {
 		$tree .= "</li>";
 		return $tree;
 	}
-		
+
 	/* Even this should take children into consideration */
 	function build_rules(&$default = false) {
 		$pfq_rule = "queue ". $this->qname;
@@ -2341,23 +2341,23 @@ class cbq_queue extends priq_queue {
 		$form .= "<select name=\"bandwidthtype\" id=\"bandwidthtype\" class=\"formselect\">";
 		$form .= "<option value=\"Gb\"";
 		if ($this->GetBwscale() == "Gb")
-			$form .= " selected=\"yes\"";
+			$form .= " selected=\"selected\"";
 		$form .= ">" . gettext("Gbit/s") . "</option>";
 		$form .= "<option value=\"Mb\"";
 		if ($this->GetBwscale() == "Mb")
-			$form .= " selected=\"yes\"";
+			$form .= " selected=\"selected\"";
 		$form .= ">" . gettext("Mbit/s") . "</option>";
 		$form .= "<option value=\"Kb\"";
 		if ($this->GetBwscale() == "Kb")
-			$form .= " selected=\"yes\"";
+			$form .= " selected=\"selected\"";
 		$form .= ">" . gettext("Kbit/s") . "</option>";
 		$form .= "<option value=\"b\"";
 		if ($this->GetBwscale() == "b")
-			$form .= " selected=\"yes\"";
+			$form .= " selected=\"selected\"";
 		$form .= ">" . gettext("Bit/s") . "</option>";
 		$form .= "<option value=\"%\"";
 		if ($this->GetBwscale() == "%")
-			$form .= " selected=\"yes\"";
+			$form .= " selected=\"selected\"";
 		$form .= ">%</option>";
 		$form .= "</select> <br/>";
 		$form .= "<span class=\"vexpl\">" . gettext("Choose the amount of bandwidth for this queue");
@@ -2365,7 +2365,7 @@ class cbq_queue extends priq_queue {
 		$form .= "<tr><td class=\"vncellreq\">" . gettext("Scheduler specific options") . "</td>";
 		$form .= "<td class=\"vtable\"><input type=\"checkbox\" id=\"borrow\" name=\"borrow\"";
 		if($this->GetBorrow() == "on") 
-			$form .=  " CHECKED ";
+			$form .=  " checked=\"checked\" ";
 		$form .= " /> " . gettext("Borrow from other queues when available") . "<br/></td></tr>";
 
 		return $form;
@@ -2450,7 +2450,7 @@ class fairq_queue extends priq_queue {
                 $cflink['buckets'] = $this->GetBuckets();
 		$cflink['hogs'] = $this->GetHogs();
 	}
-	
+
 	/*
 	 * Should search even its children
 	 */
@@ -2466,10 +2466,10 @@ class fairq_queue extends priq_queue {
 		cleanup_queue_from_rules($this->GetQname());
 		unset_object_by_reference($this->GetLink());
 	}
-	
+
 	function validate_input($data, &$input_errors) {
 		parent::validate_input($data, $input_errors);
-		
+
 		if ($data['priority'] > 255)
 				$input_errors[] = gettext("Priority must be an integer between 1 and 255.");
 		$reqdfields[] = "bandwidth";
@@ -2478,7 +2478,7 @@ class fairq_queue extends priq_queue {
 		$reqdfieldsn[] = gettext("Bandwidthtype");
 
 		shaper_do_input_validation($data, $reqdfields, $reqdfieldsn, $input_errors);
-		
+
 		if ($data['bandwidth'] && !is_numeric($data['bandwidth']))
 			$input_errors[] = gettext("Bandwidth must be an integer.");
 
@@ -2505,7 +2505,7 @@ class fairq_queue extends priq_queue {
                         $input_errors[] = "The sum of children bandwidth exceeds that of the parent.";
 */
 	}
-	
+
 	function ReadConfig(&$q) {
 		parent::ReadConfig($q);
 		if (!empty($q['buckets']))
@@ -2517,7 +2517,7 @@ class fairq_queue extends priq_queue {
 		else
 			$this->SetHogs("");
 	}
-		
+
 	function build_javascript() {
 		return parent::build_javascript();
 	}
@@ -2533,7 +2533,7 @@ class fairq_queue extends priq_queue {
 		$tree .= "</li>";
 		return $tree;
 	}
-		
+
 	/* Even this should take children into consideration */
 	function build_rules(&$default = false) {
 		$pfq_rule = "queue ". $this->qname;
@@ -2607,23 +2607,23 @@ class fairq_queue extends priq_queue {
 		$form .= "<select name=\"bandwidthtype\" id=\"bandwidthtype\" class=\"formselect\">";
 		$form .= "<option value=\"Gb\"";
 		if ($this->GetBwscale() == "Gb")
-			$form .= " selected=\"yes\"";
+			$form .= " selected=\"selected\"";
 		$form .= ">" . gettext("Gbit/s") . "</option>";
 		$form .= "<option value=\"Mb\"";
 		if ($this->GetBwscale() == "Mb")
-			$form .= " selected=\"yes\"";
+			$form .= " selected=\"selected\"";
 		$form .= ">" . gettext("Mbit/s") . "</option>";
 		$form .= "<option value=\"Kb\"";
 		if ($this->GetBwscale() == "Kb")
-			$form .= " selected=\"yes\"";
+			$form .= " selected=\"selected\"";
 		$form .= ">" . gettext("Kbit/s") . "</option>";
 		$form .= "<option value=\"b\"";
 		if ($this->GetBwscale() == "b")
-			$form .= " selected=\"yes\"";
+			$form .= " selected=\"selected\"";
 		$form .= ">" . gettext("Bit/s") . "</option>";
 		$form .= "<option value=\"%\"";
 		if ($this->GetBwscale() == "%")
-			$form .= " selected=\"yes\"";
+			$form .= " selected=\"selected\"";
 		$form .= ">%</option>";
 		$form .= "</select> <br/>";
 		$form .= "<span class=\"vexpl\">" . gettext("Choose the amount of bandwidth for this queue");
@@ -2798,7 +2798,7 @@ class dummynet_class {
 		$reqdfieldsn[] = gettext("Bandwidthtype");
 		$reqdfields[] = "newname";
 		$reqdfieldsn[] = gettext("Name");
-	
+
 		shaper_do_input_validation($data, $reqdfields, $reqdfieldsn, $input_errors);
 
 		if ($data['plr'] && ((!is_numeric($data['plr'])) ||
@@ -2851,7 +2851,7 @@ class dnpipe_class extends dummynet_class {
 
 		if (!is_array($this->subqueues))
 			$this->subqueues = array();
-			
+
 		$q =& new dnqueue_class();
 		$q->SetLink($path);
 		$q->SetEnabled("on");
@@ -2880,7 +2880,7 @@ class dnpipe_class extends dummynet_class {
 		}
 		return $qlist;
 	}
-		
+
         /*
          * Should search even its children
          */
@@ -2995,7 +2995,7 @@ class dnpipe_class extends dummynet_class {
 			$tree .= "</ul>";
 		}
 		$tree .= "</li>";
-		
+
 		return $tree;
 	}
 
@@ -3153,7 +3153,7 @@ EOD;
                 $form .= "</td><td class=\"vncellreq\">";
                 $form .= " <input type=\"checkbox\" id=\"enabled\" name=\"enabled\" value=\"on\"";
                 if ($this->GetEnabled() == "on")
-                        $form .=  " CHECKED";
+                        $form .=  " checked=\"checked\"";
                 $form .= " /><span class=\"vexpl\"> " . gettext("Enable limiter and its children") . "</span>";
                 $form .= "</td></tr>";
 		$form .= "<tr><td valign=\"middle\" class=\"vncellreq\"><br/><span class=\"vexpl\">" . gettext("Name") . "</span></td>";
@@ -3186,7 +3186,7 @@ EOD;
 				foreach (array("Kb" => "Kbit/s", "Mb" => "Mbit/s", "Gb" => "Gbit/s", "b" => "Bit/s") as $bwsidx => $bwscale) {
 					$form .= "<option value=\"{$bwsidx}\"";
 					if ($bw['bwscale'] == $bwsidx)
-						$form .= " selected=\"yes\"";
+						$form .= " selected=\"selected\"";
 					$form .= ">{$bwscale}</option>";
 				}
 				$form .= "</select>";
@@ -3195,7 +3195,7 @@ EOD;
 				foreach ($schedules as $schd) {
 					$selected = "";
 					if ($bw['bwsched'] == $schd)
-						$selected = "selected";
+						$selected = "selected=\"selected\"";
 					$form .= "<option value='{$schd}' {$selected}>{$schd}</option>";
 				}
 				$form .= "</select>";
@@ -3213,15 +3213,15 @@ EOD;
 		$form .= "<select name=\"mask\" class=\"formselect\">";
 		$form .= "<option value=\"none\"";
 		if ($this->GetMask() == "none")
-			$form .= " selected=\"yes\"";
+			$form .= " selected=\"selected\"";
 		$form .= ">none</option>";
 		$form .= "<option value=\"srcaddress\"";
 		if ($this->GetMask() == "srcaddress")
-			$form .= " selected=\"yes\"";
+			$form .= " selected=\"selected\"";
 		$form .= ">" . gettext("Source addresses") . "</option>";
 		$form .= "<option value=\"dstaddress\"";
 		if ($this->GetMask() == "dstaddress")
-			$form .= " selected=\"yes\"";
+			$form .= " selected=\"selected\"";
 		$form .= ">" . gettext("Destination addresses") . "</option>";
 		$form .= "</select>";
 		$form .= "&nbsp;<br/>";
@@ -3285,7 +3285,7 @@ EOD;
                 $form .= "</td></tr>";
 
 		return $form;
-			
+
 		}
 
 	function wconfig() {
@@ -3401,7 +3401,7 @@ class dnqueue_class extends dummynet_class {
 		$tree = " <li><a href=\"firewall_shaper_vinterface.php?pipe=" . $parent->GetQname() ."&amp;queue=" . $this->GetQname() ."&amp;action=show\">"; 
 		$tree .= $this->GetQname() . "</a>";
 		$tree .= "</li>";
-		
+
 		return $tree;
 	}
 
@@ -3442,7 +3442,7 @@ class dnqueue_class extends dummynet_class {
                 $form .= "</td><td class=\"vncellreq\">";
                 $form .= " <input type=\"checkbox\" id=\"enabled\" name=\"enabled\" value=\"on\"";
                 if ($this->GetEnabled() == "on")
-                        $form .=  " CHECKED";
+                        $form .=  " checked=\"checked\"";
                 $form .= " /><span class=\"vexpl\"> " . gettext("Enable/Disable queue") . "</span>";
                 $form .= "</td></tr>";
 		$form .= "<tr><td valign=\"middle\" class=\"vncellreq\"><br/><span class=\"vexpl\">" . gettext("Name") . "</span></td>";
@@ -3461,15 +3461,15 @@ class dnqueue_class extends dummynet_class {
 		$form .= "<select name=\"mask\" class=\"formselect\">";
 		$form .= "<option value=\"none\"";
 		if ($this->GetMask() == "none")
-			$form .= " selected=\"yes\"";
+			$form .= " selected=\"selected\"";
 		$form .= ">" . gettext("none") . "</option>";
 		$form .= "<option value=\"srcaddress\"";
 		if ($this->GetMask() == "srcaddress")
-			$form .= " selected=\"yes\"";
+			$form .= " selected=\"selected\"";
 		$form .= ">" . gettext("Source addresses") . "</option>";
 		$form .= "<option value=\"dstaddress\"";
 		if ($this->GetMask() == "dstaddress")
-			$form .= " selected=\"yes\"";
+			$form .= " selected=\"selected\"";
 		$form .= ">" . gettext("Destination addresses") . "</option>";
 		$form .= "</select>";
 		$form .= "&nbsp;slots<br/>";
@@ -3535,7 +3535,7 @@ class dnqueue_class extends dummynet_class {
 		$form .= " value=\"" . $this->GetPipe() . "\" />";
 
 		return $form;
-			
+
 	}
 
         function update_dn_data(&$data) { 
@@ -3655,7 +3655,7 @@ class layer7 {
         $tree = " <li><a href=\"firewall_shaper_layer7.php?container=" . $this->GetRName() ."&amp;action=show\">"; 
         $tree .= $this->GetRName() . "</a>";
 	$tree .= "</li>";
-		
+
 	return $tree;
     }
     
@@ -3665,7 +3665,7 @@ class layer7 {
 	$form .= "</td><td class=\"vncellreq\">";
 	$form .= " <input type=\"checkbox\" id=\"enabled\" name=\"enabled\" value=\"on\" ";
 	if ($this->GetREnabled() == "on") {
-       	    $form .=  "checked = \"CHECKED\"";
+       	    $form .=  "checked=\"checked\"";
 	}
 	$form .= " /><span class=\"vexpl\"> " . gettext("Enable/Disable layer7 Container") . "</span>";
 	$form .= "</td></tr>";
@@ -3682,14 +3682,14 @@ class layer7 {
 	$form .= "<br/> <span class=\"vexpl\">";
 	$form .= gettext("You may enter a description here for your reference (not parsed).") . "</span>";
 	$form .= "</td></tr>";
-	
+
 	return $form;
     }
     
     //Write the setting to the $config array
     function wconfig() {
 	global $config;
-	
+
 	if(!is_array($config['l7shaper']['container'])) {
 		$config['l7shaper']['container'] = array();
 	}
@@ -3708,9 +3708,9 @@ class layer7 {
 	if(is_array($cflink['rules'])) {
 		unset($cflink['l7rules']);
 	}
-	
+
         $cflink['l7rules'] = array();
-	
+
         $i = 0;
         foreach($this->rsets as $rulel7) {
             $cflink['l7rules'][$i]['protocol'] = $rulel7->GetRProtocol();
@@ -3742,7 +3742,7 @@ class layer7 {
     function validate_input($data, &$input_errors) {
 	$reqdfields[] = "container";
 	$reqdfieldsn[] = gettext("Name");
-		
+
 	shaper_do_input_validation($data, $reqdfields, $reqdfieldsn, $input_errors);
         
         if (!preg_match("/^[a-zA-Z0-9_-]+$/", $data['container']))
@@ -3828,9 +3828,9 @@ function get_divert_ports() {
 
 function &get_l7c_reference_to_me_in_config(&$name) {
 	global $config;
-	
+
 	$ptr = NULL;
-	
+
 	if(is_array($config['l7shaper']['container'])) {
 		foreach($config['l7shaper']['container'] as $key => $value) {
 			if($value['name'] == $name)
@@ -3944,13 +3944,13 @@ function generate_protocols_array() {
 
 function get_l7_unique_list() {
 	global $layer7_rules_list;
-	
+
 	$l7list = array();
 	if(is_array($layer7_rules_list)) 
 		foreach($layer7_rules_list as $l7c)
 			if($l7c->GetREnabled())
 				$l7list[] = $l7c->GetRName();
-	
+
 	return $l7list;
 }
 
@@ -3966,15 +3966,15 @@ function cleanup_l7_from_rules(&$name) {
 }
 
 function get_dummynet_name_list() {
-	
+
 	$dn_name_list =& get_unique_dnqueue_list();
 	$dn_name = array();
 	if(is_array($dn_name_list))
 		foreach($dn_name_list as $key => $value)
 			$dn_name[] = $key;
-	
+
 	return $dn_name;
-	
+
 }
 
 function get_altq_name_list() {
@@ -3983,7 +3983,7 @@ function get_altq_name_list() {
 	if(is_array($altq_name_list))
 		foreach($altq_name_list as $key => $aqobj)
 			$altq_name[] = $key;
-		
+
 	return $altq_name;
 }
 
@@ -4017,13 +4017,13 @@ function altq_check_default_queues() {
 		}
 	}
 	else  $count++;;
-	
+
 	return 0;
 }
 
 function &get_unique_queue_list() {
 	global $altq_list_queues;
-	
+
 	$qlist = array();
 	if (is_array($altq_list_queues)) {
 		foreach ($altq_list_queues as $altq) {
@@ -4041,7 +4041,7 @@ function &get_unique_queue_list() {
 
 function &get_unique_dnqueue_list() {
 	global $dummynet_pipe_list;
-	
+
 	$qlist = array();
 	if (is_array($dummynet_pipe_list)) {
 		foreach ($dummynet_pipe_list as $dn) {
@@ -4074,7 +4074,7 @@ function unref_on_altq_queue_list($qname) {
 function read_altq_config() {
 	global $altq_list_queues, $config;
 	$path = array();
-	
+
 	if (!is_array($config['shaper']))
 		$config['shaper'] = array();
 	if (!is_array($config['shaper']['queue']))
@@ -4082,7 +4082,7 @@ function read_altq_config() {
 	$a_int = &$config['shaper']['queue'];
 
 	$altq_list_queues = array();
-	
+
 	if (!is_array($config['shaper']['queue']))
 		return;
 
@@ -4120,7 +4120,7 @@ function read_dummynet_config() {
 	$a_int = &$config['dnshaper']['queue'];
 
 	$dummynet_pipe_list = array();
-	
+
 	if (!is_array($config['dnshaper']['queue'])
 		|| !count($config['dnshaper']['queue']))
 		return;
@@ -4162,13 +4162,13 @@ function get_interface_list_to_show() {
 			$tree .= " <li><a href=\"firewall_shaper.php?interface=".$shif."&amp;action=add\">".$shDescr."</a></li>";
 		}
 	}
-	
+
 	return $tree;
 }
 
 function filter_generate_altq_queues() {
 	global $altq_list_queues;
-	
+
 	read_altq_config();
 
 	$altq_rules = "";
@@ -4239,9 +4239,9 @@ function dnpipe_find_nextnumber() {
 
 function filter_generate_dummynet_rules() {
 	global $g, $dummynet_pipe_list;
-	
+
 	read_dummynet_config();
-	
+
 	if (!empty($dummynet_pipe_list)) {
 		if (!is_module_loaded("dummynet.ko")) {
 			mwexec("/sbin/kldload dummynet");

@@ -135,6 +135,7 @@ if ($_POST) {
 			$a_gateway_groups[] = $gateway_group;
 		
 		mark_subsystem_dirty('staticroutes');
+		mark_subsystem_dirty('gwgroup.' . $gateway_group['name']);
 		
 		write_config();
 		

@@ -1566,8 +1566,7 @@ function load_crypto() {
 	if (!in_array($config['system']['crypto_hardware'], $crypto_modules))
 		return false;
 
-	$is_loaded = `/sbin/kldstat | /usr/bin/grep -c {$config['system']['crypto_hardware']}`;
-	if (!empty($config['system']['crypto_hardware']) && ($is_loaded == 0)) {
+	if (!empty($config['system']['crypto_hardware']) && !is_module_loaded($config['system']['crypto_hardware'])) {
 		log_error("Loading {$config['system']['crypto_hardware']} cryptographic accelerator module.");
 		mwexec("/sbin/kldload {$config['system']['crypto_hardware']}");
 	}
@@ -1583,8 +1582,7 @@ function load_thermal_hardware() {
 	if (!in_array($config['system']['thermal_hardware'], $thermal_hardware_modules))
 		return false;
 
-	$is_loaded = `/sbin/kldstat | /usr/bin/grep -c {$config['system']['thermal_hardware']}`;
-	if (!empty($config['system']['thermal_hardware']) && ($is_loaded == 0)) {
+	if (!empty($config['system']['thermal_hardware']) && !is_module_loaded($config['system']['thermal_hardware'])) {
 		log_error("Loading {$config['system']['thermal_hardware']} thermal monitor module.");
 		mwexec("/sbin/kldload {$config['system']['thermal_hardware']}");
 	}

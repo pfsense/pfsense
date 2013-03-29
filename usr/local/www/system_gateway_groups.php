@@ -43,6 +43,7 @@ require("guiconfig.inc");
 require_once("functions.inc");
 require_once("filter.inc");
 require_once("shaper.inc");
+require_once("openvpn.inc");
 
 if (!is_array($config['gateways']['gateway_group']))
 	$config['gateways']['gateway_group'] = array();
@@ -68,6 +69,14 @@ if ($_POST) {
 		$savemsg = get_std_save_message($retval);
 		if ($retval == 0)
 			clear_subsystem_dirty('staticroutes');
+
+		foreach ($a_gateway_groups as $gateway_group) {
+			$gw_subsystem = 'gwgroup.' . $gateway_group['name'];
+			if (is_subsystem_dirty($gw_subsystem)) {
+				openvpn_resync_gwgroup($gateway_group['name']);
+				clear_subsystem_dirty($gw_subsystem);
+			}
+		}
 	}
 }
 

@@ -28,7 +28,7 @@
 	POSSIBILITY OF SUCH DAMAGE.
 */
 
-/*	
+/*
 	pfSense_BUILDER_BINARIES:	/sbin/ping /sbin/ping6
 	pfSense_MODULE:	routing
 */
@@ -84,96 +84,91 @@ include("head.inc"); ?>
 <body link="#000000" vlink="#000000" alink="#000000">
 <?php include("fbegin.inc"); ?>
 <table width="100%" border="0" cellpadding="0" cellspacing="0">
-        <tr>
-                <td>
+<tr><td>
 <?php if ($input_errors) print_input_errors($input_errors); ?>
-			<form action="diag_ping.php" method="post" name="iform" id="iform">
-			  <table width="100%" border="0" cellpadding="6" cellspacing="0">
-				<tr>
-					<td colspan="2" valign="top" class="listtopic"><?=gettext("Ping"); ?></td>
-				</tr>
-                <tr>
-				  <td width="22%" valign="top" class="vncellreq"><?=gettext("Host"); ?></td>
-				  <td width="78%" class="vtable"> 
-                    <?=$mandfldhtml;?><input name="host" type="text" class="formfldunknown" id="host" size="20" value="<?=htmlspecialchars($host);?>"></td>
-				</tr>
-				<tr>
-					<td width="22%" valign="top" class="vncellreq"><?=gettext("IP Protocol"); ?></td>
-					<td width="78%" class="vtable">
-						<select name="ipproto" class="formselect">
-							<option value="ipv4" <?php if ($ipproto == "ipv4") echo 'selected="selected"' ?>>IPv4</option>
-							<option value="ipv6" <?php if ($ipproto == "ipv6") echo 'selected="selected"' ?>>IPv6</option>
-						</select>
-					</td>
-				</tr>
-				<tr>
-				  <td width="22%" valign="top" class="vncellreq"><?=gettext("Interface"); ?></td>
-				  <td width="78%" class="vtable">
-
-				<select name="interface" class="formselect">
-					<option value="">Any</option>
-				<?php  $listenips = get_possible_listen_ips();
-					foreach ($listenips as $lip):
-						$selected = "";
-						if (!link_interface_to_bridge($lip['value']) && ($lip['value'] == $interface))
-							$selected = 'selected="selected"';
-				?>
-					<option value="<?=$lip['value'];?>" <?=$selected;?>>
-						<?=htmlspecialchars($lip['name']);?>
-					</option>
-				<?php endforeach; ?>
-				</select>
-				</td>
-				</tr>
-				<tr>
-				  <td width="22%" valign="top" class="vncellreq"><?= gettext("Count"); ?></td>
-				  <td width="78%" class="vtable">
-					<select name="count" class="formfld" id="count">
-					<?php for ($i = 1; $i <= MAX_COUNT; $i++): ?>
-					<option value="<?=$i;?>" <?php if ($i == $count) echo "selected"; ?>><?=$i;?></option>
-					<?php endfor; ?>
-					</select></td>
-				</tr>
-				<tr>
-				  <td width="22%" valign="top">&nbsp;</td>
-				  <td width="78%"> 
-                    <input name="Submit" type="submit" class="formbtn" value="<?=gettext("Ping"); ?>">
-				</td>
-				</tr>
-				<tr>
-				<td valign="top" colspan="2">
-				<?php if ($do_ping) {
-					echo "<font face='terminal' size='2'>";
-					echo "<strong>" . gettext("Ping output") . ":</strong><br>";
-					echo('<pre>');
-					$command = "/sbin/ping";
-					
-					if ($ipproto == "ipv6") {
-						$command .= "6";
-						$ifaddr = get_interface_ipv6($interface);
-					} else {
-						$ifaddr = is_ipaddr($interface) ? $interface : get_interface_ip($interface);
-					}
-					if ($ifaddr && (is_ipaddr($host) || is_hostname($host)))
-						$cmd = "{$command} -S$ifaddr -c$count " . escapeshellarg($host);
-					else
-						$cmd = "{$command} -c$count " . escapeshellarg($host);
-					//echo "Ping command: {$cmd}\n";
-					system($cmd);
-					echo('</pre>');
-				}
-				?>
-				</td>
-				</tr>
-				<tr>
-				  <td width="22%" valign="top">&nbsp;</td>
-				  <td width="78%"> 
-				 </td>
-				</tr>			
-			</table>
-		</form>
+<form action="diag_ping.php" method="post" name="iform" id="iform">
+<table width="100%" border="0" cellpadding="6" cellspacing="0">
+<tr>
+	<td colspan="2" valign="top" class="listtopic"><?=gettext("Ping"); ?></td>
+</tr>
+<tr>
+	<td width="22%" valign="top" class="vncellreq"><?=gettext("Host"); ?></td>
+	<td width="78%" class="vtable">
+		<?=$mandfldhtml;?><input name="host" type="text" class="formfldunknown" id="host" size="20" value="<?=htmlspecialchars($host);?>"></td>
+</tr>
+<tr>
+	<td width="22%" valign="top" class="vncellreq"><?=gettext("IP Protocol"); ?></td>
+	<td width="78%" class="vtable">
+		<select name="ipproto" class="formselect">
+			<option value="ipv4" <?php if ($ipproto == "ipv4") echo 'selected="selected"' ?>>IPv4</option>
+			<option value="ipv6" <?php if ($ipproto == "ipv6") echo 'selected="selected"' ?>>IPv6</option>
+		</select>
 	</td>
 </tr>
+<tr>
+	<td width="22%" valign="top" class="vncellreq"><?=gettext("Interface"); ?></td>
+	<td width="78%" class="vtable">
+		<select name="interface" class="formselect">
+			<option value="">Any</option>
+		<?php $listenips = get_possible_listen_ips();
+			foreach ($listenips as $lip):
+				$selected = "";
+				if (!link_interface_to_bridge($lip['value']) && ($lip['value'] == $interface))
+					$selected = 'selected="selected"';
+		?>
+			<option value="<?=$lip['value'];?>" <?=$selected;?>>
+				<?=htmlspecialchars($lip['name']);?>
+			</option>
+			<?php endforeach; ?>
+		</select>
+	</td>
+</tr>
+<tr>
+	<td width="22%" valign="top" class="vncellreq"><?= gettext("Count"); ?></td>
+	<td width="78%" class="vtable">
+		<select name="count" class="formfld" id="count">
+		<?php for ($i = 1; $i <= MAX_COUNT; $i++): ?>
+			<option value="<?=$i;?>" <?php if ($i == $count) echo "selected"; ?>><?=$i;?></option>
+		<?php endfor; ?>
+		</select>
+	</td>
+</tr>
+<tr>
+	<td width="22%" valign="top">&nbsp;</td>
+	<td width="78%">
+		<input name="Submit" type="submit" class="formbtn" value="<?=gettext("Ping"); ?>">
+	</td>
+</tr>
+<tr>
+	<td valign="top" colspan="2">
+	<?php if ($do_ping) {
+		echo "<font face='terminal' size='2'>";
+		echo "<strong>" . gettext("Ping output") . ":</strong><br>";
+		echo('<pre>');
+		$command = "/sbin/ping";
+		if ($ipproto == "ipv6") {
+			$command .= "6";
+			$ifaddr = get_interface_ipv6($interface);
+		} else {
+			$ifaddr = is_ipaddr($interface) ? $interface : get_interface_ip($interface);
+		}
+		if ($ifaddr && (is_ipaddr($host) || is_hostname($host)))
+			$cmd = "{$command} -S$ifaddr -c$count " . escapeshellarg($host);
+		else
+			$cmd = "{$command} -c$count " . escapeshellarg($host);
+		//echo "Ping command: {$cmd}\n";
+		system($cmd);
+		echo('</pre>');
+	}
+	?>
+	</td>
+</tr>
+<tr>
+	<td width="22%" valign="top">&nbsp;</td>
+	<td width="78%">&nbsp;</td>
+</tr>
+</table>
+</form>
+</td></tr>
 </table>
 <?php include("fend.inc"); ?>
-

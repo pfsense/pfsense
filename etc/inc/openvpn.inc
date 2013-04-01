@@ -958,11 +958,9 @@ function openvpn_get_active_servers($type="multipoint") {
 			else
 				$server['name'] = "Server {$prot}:{$port}";
 			$server['conns'] = array();
-	
-			$vpnid = $settings['vpnid'];
-			$mode_id = "server{$vpnid}";
-			$server['mgmt'] = $mode_id;
-			$socket = "unix://{$g['varetc_path']}/openvpn/{$mode_id}.sock";
+			$server['vpnid'] = $settings['vpnid'];
+			$server['mgmt'] = "server{$server['vpnid']}";
+			$socket = "unix://{$g['varetc_path']}/openvpn/{$server['mgmt']}.sock";
 			list($tn, $sm) = explode('/', $settings['tunnel_network']);
 
 			if ((($server['mode'] == "p2p_shared_key") || ($sm >= 30) ) && ($type == "p2p"))
@@ -1032,8 +1030,8 @@ function openvpn_get_server_status($server, $socket) {
 	} else {
 		$conn = array();
 		$conn['common_name'] = "[error]";
-		$conn['remote_host'] = "Management Daemon Unreachable";
-		$conn['virtual_addr'] = "";
+		$conn['remote_host'] = "Unable to contact daemon";
+		$conn['virtual_addr'] = "Service not running?";
 		$conn['bytes_recv'] = 0;
 		$conn['bytes_sent'] = 0;
 		$conn['connect_time'] = 0;
@@ -1062,10 +1060,9 @@ function openvpn_get_active_clients() {
 			else
 				$client['name'] = "Client {$prot}{$port}";
 	
-			$vpnid = $settings['vpnid'];
-			$mode_id = "client{$vpnid}";
-			$client['mgmt'] = $mode_id;
-			$socket = "unix://{$g['varetc_path']}/openvpn/{$mode_id}.sock";
+			$client['vpnid'] = $settings['vpnid'];
+			$client['mgmt'] = "client{$client['vpnid']}";
+			$socket = "unix://{$g['varetc_path']}/openvpn/{$client['mgmt']}.sock";
 			$client['status']="down";
 
 			$clients[] = openvpn_get_client_status($client, $socket);
@@ -1155,8 +1152,8 @@ function openvpn_get_client_status($client, $socket) {
 
 	} else {
 		$DisplayNote=true;
-		$client['remote_host'] = "No Management Daemon";
-		$client['virtual_addr'] = "See Note Below";
+		$client['remote_host'] = "Unable to contact daemon";
+		$client['virtual_addr'] = "Service not running?";
 		$client['bytes_recv'] = 0;
 		$client['bytes_sent'] = 0;
 		$client['connect_time'] = 0;

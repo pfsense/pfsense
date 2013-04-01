@@ -48,6 +48,7 @@ $shortcut_section = "openvpn";
 
 require("guiconfig.inc");
 require_once("openvpn.inc");
+require_once("shortcuts.inc");
 
 /* Handle AJAX */
 if($_GET['action']) {
@@ -189,7 +190,16 @@ include("head.inc"); ?>
 			<?php endforeach; ?>
 			<tfoot>
 			<tr>
-				<td colspan="6" class="list" height="12"></td>
+				<td colspan="2" class="list" height="12">
+				<table>
+				<tr>
+				<?php $ssvc = find_service_by_openvpn_vpnid($server['vpnid']); ?>
+				<?= get_service_status_icon($ssvc, true, true); ?>
+				<td><?= get_service_control_links($ssvc, true); ?></td>
+				</tr>
+				</table>
+				</td>
+				<td colspan="4" class="list" height="12">&nbsp;</td>
 			</tr>
 			</tfoot>
 		</table>
@@ -293,6 +303,18 @@ include("head.inc"); ?>
 			</td>
 		</tr>
 <?php endforeach; ?>
+		<tr>
+			<td colspan="2" class="list" height="12">
+			<table>
+			<tr>
+			<?php $ssvc = find_service_by_openvpn_vpnid($sk_server['vpnid']); ?>
+			<?= get_service_status_icon($ssvc, true, true); ?>
+			<td><?= get_service_control_links($ssvc, true); ?></td>
+			</tr>
+			</table>
+			</td>
+			<td colspan="5" class="list" height="12">&nbsp;</td>
+		</tr>
 		</table>
 	</tr>
 </table>
@@ -344,6 +366,18 @@ include("head.inc"); ?>
 			</td>
 		</tr>
 <?php endforeach; ?>
+		<tr>
+			<td colspan="2" class="list" height="12">
+			<table>
+			<tr>
+			<?php $ssvc = find_service_by_openvpn_vpnid($client['vpnid']); ?>
+			<?= get_service_status_icon($ssvc, true, true); ?>
+			<td><?= get_service_control_links($ssvc, true); ?></td>
+			</tr>
+			</table>
+			</td>
+			<td colspan="5" class="list" height="12">&nbsp;</td>
+		</tr>
 		</table>
 	</tr>
 </table>
@@ -352,7 +386,7 @@ include("head.inc"); ?>
 }
 
 if ($DisplayNote) {
-	echo "<br/><b>" . gettext("NOTE") . ":</b> " . gettext("You need to bind each OpenVPN client to enable its management daemon: use 'Local port' setting in the OpenVPN client screen");
+	echo "<br/><b>" . gettext("NOTE") . ":</b> " . gettext("If you have custom options that override the management features of OpenVPN on a client or server, they will cause that OpenVPN instance to not work correctly with this status page.");
 }
 
 if ((empty($clients)) && (empty($servers)) && (empty($sk_servers))) {

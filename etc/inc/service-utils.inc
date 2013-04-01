@@ -197,6 +197,15 @@ function restart_service_if_running($service) {
 	return;
 }
 
+function is_service_enabled($service_name) {
+	global $config;
+	if ($service_name == "")
+		return false;
+	if (isset($config['installedpackages'][$service_name]['config'][0]['enable']) && !($config['installedpackages'][$service_name]['config'][0]['enable']))
+		return false;
+	return true;
+}
+
 function is_service_running($service, $ps = "") {
 	global $config;
 
@@ -422,7 +431,8 @@ function get_service_status_icon($service, $withtext = true, $smallicon = false)
 			$output .= "&nbsp;&nbsp;" . $statustext;
 		$output .= "</td>\n";
 	} else {
-		$statustext = gettext("Stopped");
+		$service_enabled = is_service_enabled($service['name']);
+		$statustext = ($service_enabled) ? gettext("Stopped") : gettext("Disabled");
 		$output .= '<td class="listbg" align="center">' . "\n";
 		$output .= "<img style=\"vertical-align:middle\" title=\"" . sprintf(gettext("%s Service is"),$service["name"]) . " {$statustext}\" src=\"/themes/" . $g["theme"] . "/images/icons/";
 		$output .= ($smallicon) ? "icon_block.gif" : "icon_service_stopped.gif";
@@ -463,6 +473,7 @@ function get_service_control_links($service, $addname = false) {
 		$output .= "<img style=\"vertical-align:middle\" title='" . sprintf(gettext("Stop %sService"),$stitle) . "' border='0' src='./themes/".$g['theme']."/images/icons/icon_service_stop.gif' alt='stop' />";
 		$output .= "</a>";
 	} else {
+		$service_enabled = is_service_enabled($service['name']);
 		switch ($service['name']) {
 			case "openvpn":
 				$output .= "<a href='status_services.php?mode=startservice&amp;service={$service['name']}&amp;vpnmode={$service['mode']}&amp;id={$service['vpnid']}'>";
@@ -471,9 +482,11 @@ function get_service_control_links($service, $addname = false) {
 				$output .= "<a href='status_services.php?mode=startservice&amp;service={$service['name']}&amp;zone={$service['zone']}'>";
 				break;
 			default:
-				$output .= "<a href='status_services.php?mode=startservice&amp;service={$service['name']}'>";
+				if ($service_enabled)
+					$output .= "<a href='status_services.php?mode=startservice&amp;service={$service['name']}'>";
 		}
-		$output .= "<img style=\"vertical-align:middle\" title='" . sprintf(gettext("Start %sService"),$stitle) . "' border='0' src='./themes/".$g['theme']."/images/icons/icon_service_start.gif' alt='start' /></a>\n";
+		if ($service_enabled)
+			$output .= "<img style=\"vertical-align:middle\" title='" . sprintf(gettext("Start %sService"),$stitle) . "' border='0' src='./themes/".$g['theme']."/images/icons/icon_service_start.gif' alt='start' /></a>\n";
 	}
 	return $output;
 }

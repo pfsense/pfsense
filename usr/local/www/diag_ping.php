@@ -59,9 +59,15 @@ if ($_POST || $_REQUEST['host']) {
 		$input_errors[] = sprintf(gettext("Count must be between 1 and %s"), MAX_COUNT);
 	}
 
+	$host = trim($_REQUEST['host']);
+	$ipproto = $_REQUEST['ipproto'];
+	if (($ipproto == "ipv4") && is_ipaddrv6($host))
+		$input_errors[] = gettext("When using IPv4, the target host must be an IPv4 address or hostname.");
+	if (($ipproto == "ipv6") && is_ipaddrv4($host))
+		$input_errors[] = gettext("When using IPv6, the target host must be an IPv6 address or hostname.");
+
 	if (!$input_errors) {
 		$do_ping = true;
-		$host = trim($_REQUEST['host']);
 		$interface = $_REQUEST['interface'];
 		$count = $_POST['count'];
 		if (preg_match('/[^0-9]/', $count) )
@@ -89,20 +95,35 @@ include("head.inc"); ?>
                 <tr>
 				  <td width="22%" valign="top" class="vncellreq"><?=gettext("Host"); ?></td>
 				  <td width="78%" class="vtable"> 
-                    <?=$mandfldhtml;?><input name="host" type="text" class="formfld" id="host" size="20" value="<?=htmlspecialchars($host);?>"></td>
+                    <?=$mandfldhtml;?><input name="host" type="text" class="formfldunknown" id="host" size="20" value="<?=htmlspecialchars($host);?>"></td>
+				</tr>
+				<tr>
+					<td width="22%" valign="top" class="vncellreq"><?=gettext("IP Protocol"); ?></td>
+					<td width="78%" class="vtable">
+						<select name="ipproto" class="formselect">
+							<option value="ipv4" <?php if ($ipproto == "ipv4") echo 'selected="selected"' ?>>IPv4</option>
+							<option value="ipv6" <?php if ($ipproto == "ipv6") echo 'selected="selected"' ?>>IPv6</option>
+						</select>
+					</td>
 				</tr>
 				<tr>
 				  <td width="22%" valign="top" class="vncellreq"><?=gettext("Interface"); ?></td>
 				  <td width="78%" class="vtable">
-				  <select name="interface" class="formfld">
-                      <?php $interfaces = get_configured_interface_with_descr();
-					  foreach ($interfaces as $iface => $ifacename): ?>
-                      <option value="<?=$iface;?>" <?php if (!link_interface_to_bridge($iface) && $iface == $interface) echo "selected"; ?>> 
-                      <?=htmlspecialchars($ifacename);?>
-                      </option>
-                      <?php endforeach; ?>
-                    </select>
-				  </td>
+
+				<select name="interface" class="formselect">
+					<option value="">Any</option>
+				<?php  $listenips = get_possible_listen_ips();
+					foreach ($listenips as $lip):
+						$selected = "";
+						if (!link_interface_to_bridge($lip['value']) && ($lip['value'] == $interface))
+							$selected = 'selected="selected"';
+				?>
+					<option value="<?=$lip['value'];?>" <?=$selected;?>>
+						<?=htmlspecialchars($lip['name']);?>
+					</option>
+				<?php endforeach; ?>
+				</select>
+				</td>
 				</tr>
 				<tr>
 				  <td width="22%" valign="top" class="vncellreq"><?= gettext("Count"); ?></td>
@@ -125,17 +146,20 @@ include("head.inc"); ?>
 					echo "<font face='terminal' size='2'>";
 					echo "<strong>" . gettext("Ping output") . ":</strong><br>";
 					echo('<pre>');
-					$ifaddr = get_interface_ip($interface);
-					if ($ifaddr && (is_ipaddrv4($host) || is_hostname($host)))
-						system("/sbin/ping -S$ifaddr -c$count " . escapeshellarg($host));
-					else
-						system("/sbin/ping -c$count " . escapeshellarg($host));
-					$ifaddr = get_interface_ipv6($interface);
-					if ($ifaddr && (is_ipaddrv6($host) || is_hostname($host)))
-						system("/sbin/ping6 -S$ifaddr -c$count " . escapeshellarg($host));
-					else
-						system("/sbin/ping6 -c$count " . escapeshellarg($host));
+					$command = "/sbin/ping";
 					
+					if ($ipproto == "ipv6") {
+						$command .= "6";
+						$ifaddr = get_interface_ipv6($interface);
+					} else {
+						$ifaddr = is_ipaddr($interface) ? $interface : get_interface_ip($interface);
+					}
+					if ($ifaddr && (is_ipaddr($host) || is_hostname($host)))
+						$cmd = "{$command} -S$ifaddr -c$count " . escapeshellarg($host);
+					else
+						$cmd = "{$command} -c$count " . escapeshellarg($host);
+					//echo "Ping command: {$cmd}\n";
+					system($cmd);
 					echo('</pre>');
 				}
 				?>

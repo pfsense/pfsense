@@ -95,8 +95,11 @@ if ($_POST) {
 		/* check for overlaps */
 		if(is_array($a_gateway_groups)) {
 			foreach ($a_gateway_groups as $gateway_group) {
-				if (isset($id) && ($a_gateway_groups[$id]) && ($a_gateway_groups[$id] === $gateway_group))
+				if (isset($id) && ($a_gateway_groups[$id]) && ($a_gateway_groups[$id] === $gateway_group)) {
+					if ($gateway_group['name'] != $_POST['name'])
+						$input_errors[] = gettext("Changing name on a gateway group is not allowed.");
 					continue;
+				}
 
 				if ($gateway_group['name'] == $_POST['name']) {
 					$input_errors[] = sprintf(gettext('A gateway group with this name "%s" already exists.'), $_POST['name']);

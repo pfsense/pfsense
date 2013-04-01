@@ -823,6 +823,88 @@ function dhclient_update_gateway_groups_defaultroute($interface = "wan") {
 		write_config(sprintf(gettext('Updating gateway group gateway for %1$s - new gateway is %2$s'), $interfac, $current_gw));
 }
 
+/* Change the name of a gateway group and update all references to it in the config */
+function update_gateway_group_name($oldgwgname, $newgwgname) {
+	global $config;
+	$update_done = false;
+	if ($oldgwgname == "") {
+		log_error("update_gateway_group_name called with old gateway group name null.");
+		return $update_done;
+	}
+	if ($newgwgname == "") {
+		log_error("update_gateway_group_name called with new gateway group name null.");
+		return $update_done;
+	}
+	if ($oldgwgname == $newgwgname) {
+		// It is OK to call this function with old and new names the same, in this case nothing is done.
+		return $update_done;
+	} else {
+		foreach ($config['gateways']['gateway_group'] as $id => &$gwgroup) {
+			if ($gwgroup['name'] == $oldgwgname) {
+				$gwgroup['name'] = $newgwgname;
+				// Fixup all the places in the config where the gateway group name could be used.
+				if (is_array($config['filter']['rule'])) {
+					foreach ($config['filter']['rule'] as &$rule) {
+						if ($rule['gateway'] == $oldgwgname) {
+							log_error(gettext("Gateway name changed on rule ") . $rule['descr'] . ".");
+							$rule['gateway'] = $newgwgname;
+						}
+					}
+					unset($rule);
+				}
+				if (is_array($config['ipsec']['phase1'])) {
+					foreach ($config['ipsec']['phase1'] as &$ipsecphase1) {
+						if ($ipsecphase1['interface'] == $oldgwgname) {
+							log_error(gettext("IPsec Phase1 interface name changed on ") . $ipsecphase1['descr'] . ".");
+							$ipsecphase1['interface'] = $newgwgname;
+						}
+					}
+					unset($ipsecphase1);
+				}
+				if (is_array($config['openvpn']['openvpn-server'])) {
+					foreach ($config['openvpn']['openvpn-server'] as &$ovpns) {
+						if ($ovpns['interface'] == $oldgwgname) {
+							log_error(gettext("OpenVPN server interface name changed on ") . $ovpns['description'] . ".");
+							$ovpns['interface'] = $newgwgname;
+						}
+					}
+					unset($ovpns);
+				}
+				if (is_array($config['openvpn']['openvpn-client'])) {
+					foreach ($config['openvpn']['openvpn-client'] as &$ovpnc) {
+						if ($ovpnc['interface'] == $oldgwgname) {
+							log_error(gettext("OpenVPN client interface name changed on ") . $ovpnc['description'] . ".");
+							$ovpnc['interface'] = $newgwgname;
+						}
+					}
+					unset($ovpnc);
+				}
+				if (is_array($config['dyndnses']['dyndns'])) {
+					foreach ($config['dyndnses']['dyndns'] as &$dyndns) {
+						if ($dyndns['interface'] == $oldgwgname) {
+							log_error(gettext("DynDNS interface name changed on ") . $dyndns['descr'] . ".");
+							$dyndns['interface'] = $newgwgname;
+						}
+						if ($dyndns['requestif'] == $oldgwgname) {
+							log_error(gettext("DynDNS request interface name changed on ") . $dyndns['descr'] . ".");
+							$dyndns['requestif'] = $newgwgname;
+						}
+					}
+					unset($dyndns);
+				}
+				log_error(gettext("Gateway group name changed from ") . $oldgwgname . " " . gettext("to") . " " . $newgwgname . ".");
+				write_config(sprintf(gettext('Gateway group name changed from %1$s to %2$s'), $oldgwgname, $newgwgname));
+				$update_done = true;
+				break;
+			}
+		}
+	}
+	if (!$update_done) {
+		log_error("update_gateway_group_name called but old gateway group " . $oldgwgname . " does not exist.");
+	}
+	return $update_done;
+}
+
 function lookup_gateway_ip_by_name($name) {
 
 	$gateways_arr = return_gateways_array(false, true);

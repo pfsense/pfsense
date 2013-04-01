@@ -68,7 +68,7 @@ $skipservices = explode(",", $config['widgets']['servicestatusfilter']);
 if (count($services) > 0) {
 	uasort($services, "service_name_compare");
 	foreach($services as $service) {
-		if((!$service['name']) || (in_array($service['name'], $skipservices)))
+		if((!$service['name']) || (in_array($service['name'], $skipservices)) || (!is_service_enabled($service['name'])))
 			continue;
 		if (empty($service['description']))
 			$service['description'] = get_pkg_descr($service['name']);

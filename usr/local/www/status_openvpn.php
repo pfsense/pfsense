@@ -276,7 +276,7 @@ include("head.inc"); ?>
 			<td class="listhdrr"><?=gettext("Remote Host"); ?></td>
 			<td class="listhdrr"><?=gettext("Bytes Sent"); ?></td>
 			<td class="listhdrr"><?=gettext("Bytes Rcvd"); ?></td>
-			<td class="listhdrr"><?=gettext("Svc"); ?></td>
+			<td class="listhdrr"><?=gettext("Service"); ?></td>
 		</tr>
 
 <?php foreach ($sk_servers as $sk_server): ?>
@@ -337,7 +337,7 @@ include("head.inc"); ?>
 			<td class="listhdrr"><?=gettext("Remote Host"); ?></td>
 			<td class="listhdrr"><?=gettext("Bytes Sent"); ?></td>
 			<td class="listhdrr"><?=gettext("Bytes Rcvd"); ?></td>
-			<td class="listhdrr"><?=gettext("Svc"); ?></td>
+			<td class="listhdrr"><?=gettext("Service"); ?></td>
 		</tr>
 
 <?php foreach ($clients as $client): ?>

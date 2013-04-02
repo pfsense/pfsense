@@ -150,14 +150,14 @@ include("head.inc"); ?>
 		$command = "/sbin/ping";
 		if ($ipproto == "ipv6") {
 			$command .= "6";
-			$ifaddr = get_interface_ipv6($sourceip);
+			$ifaddr = is_ipaddr($sourceip) ? $sourceip : get_interface_ipv6($sourceip);
 		} else {
 			$ifaddr = is_ipaddr($sourceip) ? $sourceip : get_interface_ip($sourceip);
 		}
 		if ($ifaddr && (is_ipaddr($host) || is_hostname($host)))
-			$cmd = "{$command} -S" . escapeshellarg($ifaddr) . " -c" . escapeshellarg($count) . " " . escapeshellarg($host);
-		else
-			$cmd = "{$command} -c" . escapeshellarg($count) . " " . escapeshellarg($host);
+			$srcip = "-S" . escapeshellarg($ifaddr);
+
+		$cmd = "{$command} {$srcip} -c" . escapeshellarg($count) . " " . escapeshellarg($host);
 		//echo "Ping command: {$cmd}\n";
 		system($cmd);
 		echo('</pre>');

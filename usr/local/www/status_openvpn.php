@@ -275,7 +275,8 @@ include("head.inc"); ?>
 			<td class="listhdrr"><?=gettext("Virtual Addr"); ?></td>
 			<td class="listhdrr"><?=gettext("Remote Host"); ?></td>
 			<td class="listhdrr"><?=gettext("Bytes Sent"); ?></td>
-			<td class="listhdrr"><?=gettext("Bytes Received"); ?></td>
+			<td class="listhdrr"><?=gettext("Bytes Rcvd"); ?></td>
+			<td class="listhdrr"><?=gettext("Svc"); ?></td>
 		</tr>
 
 <?php foreach ($sk_servers as $sk_server): ?>
@@ -301,20 +302,17 @@ include("head.inc"); ?>
 			<td class="listr">
 				<?=$sk_server['bytes_recv'];?>
 			</td>
-		</tr>
-<?php endforeach; ?>
-		<tr>
-			<td colspan="2" class="list" height="12">
+			<td class="listr">
 			<table>
 			<tr>
 			<?php $ssvc = find_service_by_openvpn_vpnid($sk_server['vpnid']); ?>
-			<?= get_service_status_icon($ssvc, true, true); ?>
+			<?= get_service_status_icon($ssvc, false, true); ?>
 			<td><?= get_service_control_links($ssvc, true); ?></td>
 			</tr>
 			</table>
 			</td>
-			<td colspan="5" class="list" height="12">&nbsp;</td>
 		</tr>
+<?php endforeach; ?>
 		</table>
 	</tr>
 </table>
@@ -338,7 +336,8 @@ include("head.inc"); ?>
 			<td class="listhdrr"><?=gettext("Virtual Addr"); ?></td>
 			<td class="listhdrr"><?=gettext("Remote Host"); ?></td>
 			<td class="listhdrr"><?=gettext("Bytes Sent"); ?></td>
-			<td class="listhdrr"><?=gettext("Bytes Received"); ?></td>
+			<td class="listhdrr"><?=gettext("Bytes Rcvd"); ?></td>
+			<td class="listhdrr"><?=gettext("Svc"); ?></td>
 		</tr>
 
 <?php foreach ($clients as $client): ?>
@@ -364,20 +363,17 @@ include("head.inc"); ?>
 			<td class="listr">
 				<?=$client['bytes_recv'];?>
 			</td>
-		</tr>
-<?php endforeach; ?>
-		<tr>
-			<td colspan="2" class="list" height="12">
+			<td class="listr" height="12">
 			<table>
 			<tr>
 			<?php $ssvc = find_service_by_openvpn_vpnid($client['vpnid']); ?>
-			<?= get_service_status_icon($ssvc, true, true); ?>
+			<?= get_service_status_icon($ssvc, false, true); ?>
 			<td><?= get_service_control_links($ssvc, true); ?></td>
 			</tr>
 			</table>
 			</td>
-			<td colspan="5" class="list" height="12">&nbsp;</td>
 		</tr>
+<?php endforeach; ?>
 		</table>
 	</tr>
 </table>

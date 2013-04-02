@@ -191,6 +191,10 @@ if ($_POST) {
 				$input_errors[] = gettext("Unable to fetch usable data.");
 				$dont_update = true;
 			}
+			if ($_POST["detail0"] <> "")
+				$final_address_details[] = $_POST["detail0"];
+			else
+				$final_address_details[] = sprintf(gettext("Entry added %s"), date('r'));
 		}
 	} elseif($_POST['type'] == "url") {
 		$isfirst = 0;
@@ -229,6 +233,10 @@ if ($_POST) {
 						if(!empty($tmp) && (is_ipaddr($tmp) || is_subnet($tmp))) {
 							$address[] = $tmp;
 							$isfirst = 1;
+							if ($_POST["detail{$x}"] <> "")
+								$final_address_details[] = $_POST["detail{$x}"];
+							else
+								$final_address_details[] = sprintf(gettext("Entry added %s"), date('r'));
 							$address_count++;
 						}
 					}

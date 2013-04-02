@@ -1615,4 +1615,21 @@ function get_possible_listen_ips() {
 	return $listenips;
 }
 
+function get_possible_traffic_source_addresses() {
+	global $config;
+	$sourceips = get_possible_listen_ips();
+	foreach (array('server', 'client') as $mode) {
+		if (is_array($config['openvpn']["openvpn-{$mode}"])) {
+			foreach ($config['openvpn']["openvpn-{$mode}"] as $id => $setting) {
+				if (!isset($setting['disable'])) {
+					$vpn = array();
+					$vpn['value'] = 'ovpn' . substr($mode, 0, 1) . $setting['vpnid'];
+					$vpn['name'] = gettext("OpenVPN") . " ".$mode.": ".htmlspecialchars($setting['description']);
+					$sourceips[] = $vpn;
+				}
+			}
+		}
+	}
+	return $sourceips;
+}
 ?>

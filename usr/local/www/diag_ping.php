@@ -40,6 +40,7 @@
 ##|*MATCH=diag_ping.php*
 ##|-PRIV
 
+$allowautocomplete = true;
 $pgtitle = array(gettext("Diagnostics"), gettext("Ping"));
 require_once("guiconfig.inc");
 
@@ -107,30 +108,18 @@ include("head.inc"); ?>
 	</td>
 </tr>
 <tr>
-	<td width="22%" valign="top" class="vncellreq"><?=gettext("Source Address"); ?></td>
+	<td width="22%" valign="top" class="vncell"><?=gettext("Source Address"); ?></td>
 	<td width="78%" class="vtable">
 		<select name="sourceip" class="formselect">
 			<option value="">Any</option>
-		<?php $listenips = get_possible_listen_ips();
-			foreach (array('server', 'client') as $mode) {
-				if (is_array($config['openvpn']["openvpn-{$mode}"])) {
-					foreach ($config['openvpn']["openvpn-{$mode}"] as $id => $setting) {
-						if (!isset($setting['disable'])) {
-							$vpn = array();
-							$vpn['value'] = 'ovpn' . substr($mode, 0, 1) . $setting['vpnid'];
-							$vpn['name'] = gettext("OpenVPN") . " ".$mode.": ".htmlspecialchars($setting['description']);
-							$listenips[] = $vpn;
-						}
-					}
-				}
-			}
-			foreach ($listenips as $lip):
+		<?php $sourceips = get_possible_traffic_source_addresses();
+			foreach ($sourceips as $sip):
 				$selected = "";
-				if (!link_interface_to_bridge($lip['value']) && ($lip['value'] == $sourceip))
+				if (!link_interface_to_bridge($sip['value']) && ($sip['value'] == $sourceip))
 					$selected = 'selected="selected"';
 		?>
-			<option value="<?=$lip['value'];?>" <?=$selected;?>>
-				<?=htmlspecialchars($lip['name']);?>
+			<option value="<?=$sip['value'];?>" <?=$selected;?>>
+				<?=htmlspecialchars($sip['name']);?>
 			</option>
 			<?php endforeach; ?>
 		</select>
@@ -166,9 +155,9 @@ include("head.inc"); ?>
 			$ifaddr = is_ipaddr($sourceip) ? $sourceip : get_interface_ip($sourceip);
 		}
 		if ($ifaddr && (is_ipaddr($host) || is_hostname($host)))
-			$cmd = "{$command} -S$ifaddr -c$count " . escapeshellarg($host);
+			$cmd = "{$command} -S" . escapeshellarg($ifaddr) . " -c" . escapeshellarg($count) . " " . escapeshellarg($host);
 		else
-			$cmd = "{$command} -c$count " . escapeshellarg($host);
+			$cmd = "{$command} -c" . escapeshellarg($count) . " " . escapeshellarg($host);
 		//echo "Ping command: {$cmd}\n";
 		system($cmd);
 		echo('</pre>');

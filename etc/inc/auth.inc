@@ -739,6 +739,7 @@ function ldap_test_bind($authcfg) {
         }
 
 	ldap_set_option($ldap, LDAP_OPT_REFERRALS, 0);
+	ldap_set_option($ldap, LDAP_OPT_DEREF, LDAP_DEREF_SEARCHING);
 	ldap_set_option($ldap, LDAP_OPT_PROTOCOL_VERSION, (int)$ldapver);
  
 	if ($ldapanon == true) {
@@ -809,6 +810,7 @@ function ldap_get_user_ous($show_complete_ou=true, $authcfg) {
 	$ldapfilter = "(|(ou=*)(cn=Users))";
 
 	ldap_set_option($ldap, LDAP_OPT_REFERRALS, 0);
+	ldap_set_option($ldap, LDAP_OPT_DEREF, LDAP_DEREF_SEARCHING);
 	ldap_set_option($ldap, LDAP_OPT_PROTOCOL_VERSION, (int)$ldapver);
 
 	if ($ldapanon == true) {
@@ -919,6 +921,7 @@ function ldap_get_groups($username, $authcfg) {
         }
     
 	ldap_set_option($ldap, LDAP_OPT_REFERRALS, 0);
+	ldap_set_option($ldap, LDAP_OPT_DEREF, LDAP_DEREF_SEARCHING);
 	ldap_set_option($ldap, LDAP_OPT_PROTOCOL_VERSION, (int)$ldapver);
 
 	/* bind as user that has rights to read group attributes */
@@ -1042,6 +1045,7 @@ function ldap_backed($username, $passwd, $authcfg) {
         ldap_setup_caenv($authcfg);
 
 	ldap_set_option($ldap, LDAP_OPT_REFERRALS, 0);
+	ldap_set_option($ldap, LDAP_OPT_DEREF, LDAP_DEREF_SEARCHING);
 	ldap_set_option($ldap, LDAP_OPT_PROTOCOL_VERSION, (int)$ldapver);
 
 	/* Make sure we can connect to LDAP */

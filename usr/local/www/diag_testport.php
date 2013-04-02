@@ -82,7 +82,7 @@ if ($_POST || $_REQUEST['host']) {
 	if (!$input_errors) {
 		$do_testport = true;
 		$host = $_REQUEST['host'];
-		$interface = $_REQUEST['interface'];
+		$sourceip = $_REQUEST['sourceip'];
 		$port = $_REQUEST['port'];
 		$srcport = $_REQUEST['srcport'];
 		$showtext = isset($_REQUEST['showtext']);
@@ -140,19 +140,21 @@ include("head.inc"); ?>
 			</td>
 		</tr>
 		<tr>
-			<td width="22%" valign="top" class="vncell"><?=gettext("Interface"); ?></td>
+			<td width="22%" valign="top" class="vncell"><?=gettext("Source Address"); ?></td>
 			<td width="78%" class="vtable">
-			<select name="interface" class="formfld">
-				<option value="any" <?php if ("any" == $interface) echo "selected"; ?>>
-					Any
-				</option>
-			<?php $interfaces = get_configured_interface_with_descr();
-			foreach ($interfaces as $iface => $ifacename): ?>
-				<option value="<?=$iface;?>" <?php if (!link_interface_to_bridge($iface) && $iface == $interface) echo "selected"; ?>>
-					<?=htmlspecialchars($ifacename);?>
-				</option>
-			<?php endforeach; ?>
-			</select>
+				<select name="sourceip" class="formselect">
+					<option value="">Any</option>
+				<?php   $sourceips = get_possible_traffic_source_addresses();
+					foreach ($sourceips as $sip):
+						$selected = "";
+						if (!link_interface_to_bridge($sip['value']) && ($sip['value'] == $sourceip))
+							$selected = 'selected="selected"';
+				?>
+					<option value="<?=$sip['value'];?>" <?=$selected;?>>
+						<?=htmlspecialchars($sip['name']);?>
+					</option>
+					<?php endforeach; ?>
+				</select>
 			</td>
 		</tr>
 		<tr>
@@ -195,26 +197,26 @@ include("head.inc"); ?>
 
 			/* Attempt to determine the interface address, if possible. Else try both. */
 			if (is_ipaddrv4($host)) {
-				$ifaddr = ($interface == "any") ? "" : get_interface_ip($interface);
+				$ifaddr = ($sourceip == "any") ? "" : get_interface_ip($sourceip);
 				$nc_args .= " -4";
 			} elseif (is_ipaddrv6($host)) {
-				$ifaddr = ($interface == "any") ? "" : get_interface_ipv6($interface);
+				$ifaddr = ($sourceip == "any") ? "" : get_interface_ipv6($sourceip);
 				$nc_args .= " -6";
 			} else {
 				switch ($ipprotocol) {
 					case "ipv4":
-						$ifaddr = get_interface_ip($interface);
+						$ifaddr = get_interface_ip($sourceip);
 						$nc_ipproto = " -4";
 						break;
 					case "ipv6":
-						$ifaddr = get_interface_ipv6($interface);
+						$ifaddr = get_interface_ipv6($sourceip);
 						$nc_ipproto = " -6";
 						break;
 					case "any":
-						$ifaddr = get_interface_ip($interface);
+						$ifaddr = get_interface_ip($sourceip);
 						$nc_ipproto = (!empty($ifaddr)) ? " -4" : "";
 						if (empty($ifaddr)) {
-							$ifaddr = get_interface_ipv6($interface);
+							$ifaddr = get_interface_ipv6($sourceip);
 							$nc_ipproto = (!empty($ifaddr)) ? " -6" : "";
 						}
 						break;
@@ -222,7 +224,7 @@ include("head.inc"); ?>
 				/* Netcat doesn't like it if we try to connect using a certain type of IP without specifying the family. */
 				if (!empty($ifaddr)) {
 					$nc_args .= $nc_ipproto;
-				} elseif ($interface == "any") {
+				} elseif ($sourceip == "any") {
 					switch ($ipprotocol) {
 						case "ipv4":
 							$nc_ipproto = " -4";
@@ -236,7 +238,7 @@ include("head.inc"); ?>
 			}
 			/* Only add on the interface IP if we managed to find one. */
 			if (!empty($ifaddr))
-				$nc_args .= " -s {$ifaddr} ";
+				$nc_args .= " -s " . escapeshellarg($ifaddr) . " ";
 
 			$nc_cmd = "{$nc_base_cmd} {$nc_args} " . escapeshellarg($host) . " " . escapeshellarg($port) . " 2>&1";
 			exec($nc_cmd, $result, $retval);

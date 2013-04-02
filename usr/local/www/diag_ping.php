@@ -69,7 +69,7 @@ if ($_POST || $_REQUEST['host']) {
 
 	if (!$input_errors) {
 		$do_ping = true;
-		$interface = $_REQUEST['interface'];
+		$sourceip = $_REQUEST['sourceip'];
 		$count = $_POST['count'];
 		if (preg_match('/[^0-9]/', $count) )
 			$count = DEFAULT_COUNT;
@@ -107,9 +107,9 @@ include("head.inc"); ?>
 	</td>
 </tr>
 <tr>
-	<td width="22%" valign="top" class="vncellreq"><?=gettext("Interface"); ?></td>
+	<td width="22%" valign="top" class="vncellreq"><?=gettext("Source Address"); ?></td>
 	<td width="78%" class="vtable">
-		<select name="interface" class="formselect">
+		<select name="sourceip" class="formselect">
 			<option value="">Any</option>
 		<?php $listenips = get_possible_listen_ips();
 			foreach (array('server', 'client') as $mode) {
@@ -126,7 +126,7 @@ include("head.inc"); ?>
 			}
 			foreach ($listenips as $lip):
 				$selected = "";
-				if (!link_interface_to_bridge($lip['value']) && ($lip['value'] == $interface))
+				if (!link_interface_to_bridge($lip['value']) && ($lip['value'] == $sourceip))
 					$selected = 'selected="selected"';
 		?>
 			<option value="<?=$lip['value'];?>" <?=$selected;?>>
@@ -161,9 +161,9 @@ include("head.inc"); ?>
 		$command = "/sbin/ping";
 		if ($ipproto == "ipv6") {
 			$command .= "6";
-			$ifaddr = get_interface_ipv6($interface);
+			$ifaddr = get_interface_ipv6($sourceip);
 		} else {
-			$ifaddr = is_ipaddr($interface) ? $interface : get_interface_ip($interface);
+			$ifaddr = is_ipaddr($sourceip) ? $sourceip : get_interface_ip($sourceip);
 		}
 		if ($ifaddr && (is_ipaddr($host) || is_hostname($host)))
 			$cmd = "{$command} -S$ifaddr -c$count " . escapeshellarg($host);

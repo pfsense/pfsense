@@ -195,7 +195,7 @@ if ($_POST) {
 		$address_count = 2;
 
 		/* item is a url type */
-		for($x=0; isset($_POST['address' . $x]); $x++) {
+		for($x=0; $x<4999; $x++) {
 			$_POST['address' . $x] = trim($_POST['address' . $x]);
 			if($_POST['address' . $x]) {
 				/* fetch down and add in */
@@ -210,6 +210,16 @@ if ($_POST) {
 				/* if the item is tar gzipped then extract */
 				if(stristr($_POST['address' . $x], ".tgz"))
 					process_alias_tgz($temp_filename);
+
+				if (!isset($alias['aliasurl']))
+					$alias['aliasurl'] = array();
+
+				$alias['aliasurl'][] = $_POST['address' . $x];
+				if ($_POST["detail{$x}"] <> "")
+					$final_address_details[] = $_POST["detail{$x}"];
+				else
+					$final_address_details[] = sprintf(gettext("Entry added %s"), date('r'));
+
 				if(file_exists("{$temp_filename}/aliases")) {
 					$file_contents = file_get_contents("{$temp_filename}/aliases");
 					$file_contents = str_replace("#", "\n#", $file_contents);
@@ -226,13 +236,7 @@ if ($_POST) {
 						$tmp = trim($tmp);
 						if(!empty($tmp) && (is_ipaddr($tmp) || is_subnet($tmp))) {
 							$address[] = $tmp;
-							if ($isfirst == 0) {
-								if ($_POST["detail{$x}"] <> "")
-									$final_address_details[] = $_POST["detail{$x}"];
-								else
-									$final_address_details[] = sprintf(gettext("Entry added %s"), date('r'));
-								$isfirst = 1;
-							}
+							$isfirst = 1;
 							$address_count++;
 						}
 					}
@@ -241,13 +245,8 @@ if ($_POST) {
 						$input_errors[] = sprintf(gettext("You must provide a valid URL. Could not fetch usable data from '%s'."), $_POST['address' . $x]);
 						$dont_update = true;
 					}
-					$alias['aliasurl'][] = $_POST['address' . $x];
 					mwexec("/bin/rm -rf {$temp_filename}");
 				} else {
-					$address[] = $_POST['address' . $x];
-					$alias['aliasurl'][] = $_POST['address' . $x];
-					if ($_POST["detail{$x}"] <> "")
-						$final_address_details[] = $_POST["detail{$x}"];
 					$input_errors[] = sprintf(gettext("URL '%s' is not valid."), $_POST['address' . $x]);
 					$dont_update = true;
 				}

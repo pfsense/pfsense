@@ -28,7 +28,7 @@
 */
 
 /*
-	pfSense_BUILDER_BINARIES:	/sbin/pfctl	
+	pfSense_BUILDER_BINARIES:	/sbin/pfctl
 	pfSense_MODULE:	filter
 */
 
@@ -56,20 +56,12 @@ if($_GET['action']) {
 
 if ($_GET['filter'] && ($_GET['killfilter'] == "Kill")) {
 	if (is_ipaddr($_GET['filter'])) {
-		$tokill = $_GET['filter'] . "/32";
+		$tokill = escapeshellarg($_GET['filter'] . "/32");
 	} elseif (is_subnet($_GET['filter'])) {
-		$tokill = $_GET['filter'];
+		$tokill = escapeshellarg($_GET['filter']);
 	}
 	$retval = mwexec("/sbin/pfctl -k {$tokill} -k 0/0");
 	$retval = mwexec("/sbin/pfctl -k 0.0.0.0/0 -k {$tokill}");
-}
-
-/* get our states */
-if($_GET['filter']) {
-	exec("/sbin/pfctl -s state | grep " . escapeshellarg(htmlspecialchars($_GET['filter'])), $states);
-}
-else {
-	exec("/sbin/pfctl -s state", $states);
 }
 
 $pgtitle = array(gettext("Diagnostics"),gettext("Show States"));
@@ -141,10 +133,7 @@ include("head.inc");
 			<table class="tabcont" width="100%" border="0" cellspacing="0" cellpadding="0">
 				<tr>
 					<td>
-						<?=gettext("Current state count");?>: <?= $current_statecount ?>
-						<?php if (!empty($_GET['filter'])): ?>
-							(<?=gettext("Matching filter")?>: <?= count($states) ?>)
-						<?php endif; ?>
+						<?=gettext("Current total state count");?>: <?= $current_statecount ?>
 					</td>
 					<td style="font-weight:bold;" align="right">
 						<?=gettext("Filter expression:");?>
@@ -173,48 +162,61 @@ include("head.inc");
 				<tbody>
 <?php
 $row = 0;
-if(count($states) > 0) {
-	foreach($states as $line) {
-		if($row >= 1000)
-			break;
+/* get our states */
+$grepline = ($_GET['filter']) ? "| grep " . escapeshellarg(htmlspecialchars($_GET['filter'])) : "";
+$fd = popen("/sbin/pfctl -s state {$grepline}", "r" );
+while ($line = chop(fgets($fd))) {
+	if($row >= 10000)
+		break;
 
-		$line_split = preg_split("/\s+/", $line);
-		$type  = array_shift($line_split);
-		$proto = array_shift($line_split);
-		$state = array_pop($line_split);
-		$info  = implode(" ", $line_split);
+	$line_split = preg_split("/\s+/", $line);
+	$type  = array_shift($line_split);
+	$proto = array_shift($line_split);
+	$state = array_pop($line_split);
+	$info  = implode(" ", $line_split);
 
-		/* break up info and extract $srcip and $dstip */
-		$ends = preg_split("/\<?-\>?/", $info);
-		$parts = explode(":", $ends[0]);
-		$srcip = trim($parts[0]);
-		$parts = explode(":", $ends[count($ends) - 1]);
-		$dstip = trim($parts[0]);
+	/* break up info and extract $srcip and $dstip */
+	$ends = preg_split("/\<?-\>?/", $info);
+	$parts = explode(":", $ends[0]);
+	$srcip = trim($parts[0]);
+	$parts = explode(":", $ends[count($ends) - 1]);
+	$dstip = trim($parts[0]);
 
-		echo "<tr valign='top' name='r:{$srcip}:{$dstip}'>
-				<td class='listlr'>{$proto}</td>
-				<td class='listr'>{$info}</td>
-				<td class='listr'>{$state}</td>
-				<td class='list'>
-				  <img src='/themes/{$g['theme']}/images/icons/icon_x.gif' height='17' width='17' border='0'
-				  	   onclick=\"removeState('{$srcip}', '{$dstip}');\" style='cursor:pointer;'
-				       name='i:{$srcip}:{$dstip}'
-				       title='" . gettext("Remove all state entries from") . " {$srcip} " . gettext("to") . " {$dstip}' alt='' />
-				</td>
-			  </tr>";
-		$row++;
-	}
-}
-else {
-	echo "<tr>
-			<td class='list' colspan='4' align='center' valign='top'>
-			  " . gettext("No states were found.") . "
+?>
+	<tr valign="top" name="r:<?= $srcip ?>:<?= $dstip ?>">
+			<td class="listlr"><?= $proto ?></td>
+			<td class="listr"><?= $info ?></td>
+			<td class="listr"><?= $state ?></td>
+			<td class="list">
+			<img src="/themes/<?= $g['theme'] ?>/images/icons/icon_x.gif" height="17" width="17" border="0"
+				onclick="removeState('<?= $srcip ?>', '<?= $dstip ?>');" style="cursor:pointer;"
+				name="i:<?= $srcip ?>:<?= $dstip ?>"
+				title="<?= gettext('Remove all state entries from') ?> <?= $srcip ?> <?= gettext('to') ?> <?= $dstip ?>" alt="" />
 			</td>
-		  </tr>";
+	</tr>
+<?php
+	$row++;
+	ob_flush();
 }
+
+if ($row == 0): ?>
+	<tr>
+		<td class="list" colspan="4" align="center" valign="top">
+		<?= gettext("No states were found.") ?>
+		</td>
+	</tr>
+<?php endif;
+pclose($fd);
 ?>
 			</tbody>
 			</table>
+		</td>
+	</tr>
+	<tr>
+		<td class="list" colspan="4" align="center" valign="top">
+		<?php if (!empty($_GET['filter'])): ?>
+			<?=gettext("States matching current filter")?>: <?= $row ?>
+		<?php endif; ?>
 		</td>
 	</tr>
 </table>

@@ -238,16 +238,18 @@ if ($_POST) {
 					}
 					if($isfirst == 0) {
 						/* nothing was found */
-						$input_errors[] = gettext("You must provide a valid URL. Could not fetch usable data.");
+						$input_errors[] = sprintf(gettext("You must provide a valid URL. Could not fetch usable data from '%s'."), $_POST['address' . $x]);
 						$dont_update = true;
-						break;
 					}
 					$alias['aliasurl'][] = $_POST['address' . $x];
 					mwexec("/bin/rm -rf {$temp_filename}");
 				} else {
-					$input_errors[] = gettext("You must provide a valid URL.");
+					$address[] = $_POST['address' . $x];
+					$alias['aliasurl'][] = $_POST['address' . $x];
+					if ($_POST["detail{$x}"] <> "")
+						$final_address_details[] = $_POST["detail{$x}"];
+					$input_errors[] = sprintf(gettext("URL '%s' is not valid."), $_POST['address' . $x]);
 					$dont_update = true;
-					break;
 				}
 			}
 		}

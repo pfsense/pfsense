@@ -325,7 +325,11 @@ include("head.inc");
 			  <img border="0" src="<?php echo find_action_image($filterent['act']);?>" width="11" height="11" align="middle" alt="<?php echo $filterent['act'];?>" title="<?php echo $filterent['act'];?>" />
 			  <?php if ($filterent['count']) echo $filterent['count'];?></a></center></td>
 			  <td class="listMRr" nowrap="nowrap"><?php echo htmlspecialchars($filterent['time']);?></td>
-			  <td class="listMRr" nowrap="nowrap"><?php echo htmlspecialchars($filterent['interface']);?></td>
+			  <td class="listMRr" nowrap="nowrap">
+				<?php if ($filterent['direction'] == "out"): ?>
+				<img border="0" src="/themes/<?= $g['theme']; ?>/images/icons/out.gif" alt="Direction=OUT" title="Direction=OUT"/>
+				<?php endif; ?>
+				<?php echo htmlspecialchars($filterent['interface']);?></td>
 			  <?php 
 			  if ($config['syslog']['filterdescriptions'] === "1")
 				echo("<td class=\"listMRr\" nowrap=\"nowrap\">".find_rule_by_number_buffer($filterent['rulenum'],$filterent['act'])."</td>");

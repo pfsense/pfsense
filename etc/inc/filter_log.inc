@@ -136,9 +136,9 @@ function collapse_filter_lines($logarr) {
 function parse_filter_line($line) {
 	global $config, $g;
 	$log_split = "";
-	preg_match("/(.*)\s(.*)\spf:\s.*\srule\s(.*)\(match\)\:\s(.*)\s\w+\son\s(\w+)\:\s\((.*)\)\s(.*)\s>\s(.*)\:\s(.*)/", $line, $log_split);
+	preg_match("/(.*)\s(.*)\spf:\s.*\srule\s(.*)\(match\)\:\s(.*)\s(\w+)\son\s(\w+)\:\s\((.*)\)\s(.*)\s>\s(.*)\:\s(.*)/", $line, $log_split);
 
-	list($all, $flent['time'], $host, $rule, $flent['act'], $flent['realint'], $details, $src, $dst, $leftovers) = $log_split;
+	list($all, $flent['time'], $host, $rule, $flent['act'], $flent['direction'], $flent['realint'], $details, $src, $dst, $leftovers) = $log_split;
 
 	list($flent['srcip'], $flent['srcport']) = parse_ipport($src);
 	list($flent['dstip'], $flent['dstport']) = parse_ipport($dst);

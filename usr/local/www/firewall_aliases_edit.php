@@ -112,18 +112,10 @@ if (isset($id) && $a_aliases[$id]) {
 	}
 	if($a_aliases[$id]['aliasurl'] <> "") {
 		$pconfig['type'] = "url";
-		if(is_array($a_aliases[$id]['aliasurl'])) {
-			$isfirst = 0;
-			$pconfig['address'] = "";
-			foreach($a_aliases[$id]['aliasurl'] as $aa) {
-				if($isfirst == 1)
-					$pconfig['address'] .= " ";
-				$isfirst = 1;
-				$pconfig['address'] .= $aa;
-			}
-		} else {
+		if(is_array($a_aliases[$id]['aliasurl']))
+			$pconfig['address'] = implode(" ", $a_aliases[$id]['aliasurl']);
+		else
 			$pconfig['address'] = $a_aliases[$id]['aliasurl'];
-		}
 	}
 }
 

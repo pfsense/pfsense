@@ -61,7 +61,7 @@ $reserved_keywords = array_merge($reserved_keywords, $reserved_ifs);
 if (!is_array($config['aliases']['alias']))
 	$config['aliases']['alias'] = array();
 $a_aliases = &$config['aliases']['alias'];
-	
+
 if($_POST)
 	$origname = $_POST['origname'];
 
@@ -71,7 +71,7 @@ if($debug)
 
 function alias_same_type($name, $type) {
 	global $config;
-	
+
 	foreach ($config['aliases']['alias'] as $alias) {
 		if ($name == $alias['name']) {
 			if (in_array($type, array("host", "network")) &&
@@ -101,7 +101,7 @@ if (isset($id) && $a_aliases[$id]) {
 	/* interface list */
 	$iflist = get_configured_interface_with_descr(false, true);
 	foreach ($iflist as $if => $ifdesc)
-		if($ifdesc == $pconfig['descr']) 
+		if($ifdesc == $pconfig['descr'])
 			$input_errors[] = sprintf(gettext("Sorry, an interface is already named %s."), $pconfig['descr']);
 
 	if($a_aliases[$id]['type'] == "urltable") {
@@ -155,7 +155,7 @@ if ($_POST) {
 	}
 
 	/* Check for reserved keyword names */
-	foreach($reserved_keywords as $rk) 
+	foreach($reserved_keywords as $rk)
 		if($rk == $_POST['name'])
 			$input_errors[] = sprintf(gettext("Cannot use a reserved keyword as alias name %s"), $rk);
 
@@ -166,7 +166,7 @@ if ($_POST) {
 			break;
 		}
 	}
-	
+
 	$alias = array();
 	$address = array();
 	$final_address_details = array();
@@ -288,7 +288,7 @@ if ($_POST) {
 			$input_errors[] = sprintf(gettext('The alias(es): %s cannot be nested because they are not of the same type.'), $wrongaliases);
 	}
 
-	// Allow extending of the firewall edit page and include custom input validation 
+	// Allow extending of the firewall edit page and include custom input validation
 	pfSense_handle_custom_code("/usr/local/pkg/firewall_aliases_edit/input_validation");
 
 	if (!$input_errors) {
@@ -413,7 +413,7 @@ function typesel_change() {
 				eval(comd);
 			}
 			break;
-/*		case 3:	 // OpenVPN Users
+/*		case 3:	// OpenVPN Users
 			var cmd;
 
 			newrows = totalrows;
@@ -577,124 +577,127 @@ EOD;
 <form action="firewall_aliases_edit.php" method="post" name="iform" id="iform">
 <input name="tab" type="hidden" id="tab" value="<?=htmlspecialchars($pconfig['type']);?>" />
 <table class="tabcont" width="100%" border="0" cellpadding="6" cellspacing="0">
-  <tr>
-	<td colspan="2" valign="top" class="listtopic"><?=gettext("Alias Edit"); ?></td>
-  </tr>
-  <tr>
-    <td valign="top" class="vncellreq"><?=gettext("Name"); ?></td>
-    <td class="vtable">
-      <input name="origname" type="hidden" id="origname" class="formfld unknown" size="40" value="<?=htmlspecialchars($pconfig['name']);?>" />
-      <input name="name" type="text" id="name" class="formfld unknown" size="40" value="<?=htmlspecialchars($pconfig['name']);?>" />
-      <?php if (isset($id) && $a_aliases[$id]): ?>
-      <input name="id" type="hidden" value="<?=htmlspecialchars($id);?>" />
-      <?php endif; ?>
-      <br />
-      <span class="vexpl">
-        <?=gettext("The name of the alias may only consist of the characters \"a-z, A-Z, 0-9 and _\"."); ?>
-      </span>
-    </td>
-  </tr>
-  <?php pfSense_handle_custom_code("/usr/local/pkg/firewall_aliases_edit/after_first_tr"); ?>
-  <tr>
-    <td width="22%" valign="top" class="vncell"><?=gettext("Description"); ?></td>
-    <td width="78%" class="vtable">
-      <input name="descr" type="text" class="formfld unknown" id="descr" size="40" value="<?=htmlspecialchars($pconfig['descr']);?>" />
-      <br />
-      <span class="vexpl">
-        <?=gettext("You may enter a description here for your reference (not parsed)."); ?>
-      </span>
-    </td>
-  </tr>
-  <tr>
-    <td valign="top" class="vncellreq"><?=gettext("Type"); ?></td>
-    <td class="vtable">
-      <select name="type" class="formselect" id="type" onchange="update_box_type(); typesel_change();">
-        <option value="host" <?php if ($pconfig['type'] == "host") echo "selected"; ?>><?=gettext("Host(s)"); ?></option>
-        <option value="network" <?php if ($pconfig['type'] == "network") echo "selected"; ?>><?=gettext("Network(s)"); ?></option>
-        <option value="port" <?php if ($pconfig['type'] == "port") echo "selected"; ?>><?=gettext("Port(s)"); ?></option>
-<!--        <option value="openvpn" <?php if ($pconfig['type'] == "openvpn") echo "selected"; ?>><?=gettext("OpenVPN Users"); ?></option> -->
-		<option value="url" <?php if ($pconfig['type'] == "url") echo "selected"; ?>><?=gettext("URL");?></option>
-        <option value="urltable" <?php if ($pconfig['type'] == "urltable") echo "selected"; ?>><?=gettext("URL Table"); ?></option>
-      </select>
-    </td>
-  </tr>
-  <tr>
-    <td width="22%" valign="top" class="vncellreq"><div id="addressnetworkport"><?=gettext("Host(s)"); ?></div></td>
-    <td width="78%" class="vtable">
-      <table id="maintable">
-        <tbody>
-          <tr>
-            <td colspan="4">
-      		    <div style="padding:5px; margin-top: 16px; margin-bottom: 16px; border:1px dashed #000066; background-color: #ffffff; color: #000000; font-size: 8pt;" id="itemhelp"><?=gettext("Item information"); ?></div>
-            </td>
-          </tr>
-          <tr>
-            <td><div id="onecolumn"><?=gettext("Network"); ?></div></td>
-            <td><div id="twocolumn">CIDR</div></td>
-           <td><div id="threecolumn"><?=gettext("Description"); ?></div></td>
-          </tr>
-
-	<?php
-	$counter = 0;
-	$address = $pconfig['address'];
-	if ($address <> "") {
-		$item = explode(" ", $address);
-		$item3 = explode("||", $pconfig['detail']);
-		foreach($item as $ww) {
-			$address = $item[$counter];
-			$address_subnet = "";
-			$item2 = explode("/", $address);
-			foreach($item2 as $current) {
-				if($item2[1] <> "") {
-					$address = $item2[0];
-					$address_subnet = $item2[1];
-				}
-				
-			}
-			$item4 = $item3[$counter];
-			$tracker = $counter;
-	?>
-          <tr>
-            <td>
-              <input autocomplete="off" name="address<?php echo $tracker; ?>" type="text" class="formfldalias ipv4v6" id="address<?php echo $tracker; ?>" size="30" value="<?=htmlspecialchars($address);?>" />
-            </td>
-            <td>
-			        <select name="address_subnet<?php echo $tracker; ?>" class="formselect ipv4v6" id="address_subnet<?php echo $tracker; ?>">
-				<option></option>
-			          <?php for ($i = 128; $i >= 1; $i--): ?>
-			          <option value="<?=$i;?>" <?php if (($i == $address_subnet) || ($i == $pconfig['updatefreq'])) echo "selected"; ?>><?=$i;?></option>
-			          <?php endfor; ?>
-			        </select>
-			      </td>
-            <td>
-              <input name="detail<?php echo $tracker; ?>" type="text" class="formfld unknown" id="detail<?php echo $tracker; ?>" size="50" value="<?=$item4;?>" />
-            </td>
-            <td>
-    		<a onclick="removeRow(this); return false;" href="#"><img border="0" src="/themes/<?echo $g['theme'];?>/images/icons/icon_x.gif" alt="" title="<?=gettext("remove this entry"); ?>" /></a>
-	      </td>
-          </tr>
-<?php
-        	$counter++;
-
-       		} // end foreach
-	} // end if
-?>
-        </tbody>
-        <tfoot>
-
-        </tfoot>
-		  </table>
-			<div id="addrowbutton"><a onclick="javascript:addRowTo('maintable', 'formfldalias'); typesel_change(); add_alias_control(this); return false;" href="#">
-        <img border="0" src="/themes/<?= $g['theme']; ?>/images/icons/icon_plus.gif" alt="" title="<?=gettext("add another entry"); ?>" /></a></div>
+	<tr>
+		<td colspan="2" valign="top" class="listtopic"><?=gettext("Alias Edit"); ?></td>
+	</tr>
+	<tr>
+		<td valign="top" class="vncellreq"><?=gettext("Name"); ?></td>
+		<td class="vtable">
+			<input name="origname" type="hidden" id="origname" class="formfld unknown" size="40" value="<?=htmlspecialchars($pconfig['name']);?>" />
+			<input name="name" type="text" id="name" class="formfld unknown" size="40" value="<?=htmlspecialchars($pconfig['name']);?>" />
+			<?php if (isset($id) && $a_aliases[$id]): ?>
+				<input name="id" type="hidden" value="<?=htmlspecialchars($id);?>" />
+			<?php endif; ?>
+			<br />
+			<span class="vexpl">
+				<?=gettext("The name of the alias may only consist of the characters \"a-z, A-Z, 0-9 and _\"."); ?>
+			</span>
 		</td>
-  </tr>
-  <tr>
-    <td width="22%" valign="top">&nbsp;</td>
-    <td width="78%">
-      <input id="submit" name="submit" type="submit" class="formbtn" value="<?=gettext("Save"); ?>" />
-      <a href="firewall_aliases.php"><input id="cancelbutton" name="cancelbutton" type="button" class="formbtn" value="<?=gettext("Cancel"); ?>" /></a>
-    </td>
-  </tr>
+	</tr>
+	<?php pfSense_handle_custom_code("/usr/local/pkg/firewall_aliases_edit/after_first_tr"); ?>
+	<tr>
+		<td width="22%" valign="top" class="vncell"><?=gettext("Description"); ?></td>
+		<td width="78%" class="vtable">
+			<input name="descr" type="text" class="formfld unknown" id="descr" size="40" value="<?=htmlspecialchars($pconfig['descr']);?>" />
+			<br />
+			<span class="vexpl">
+				<?=gettext("You may enter a description here for your reference (not parsed)."); ?>
+			</span>
+		</td>
+	</tr>
+	<tr>
+		<td valign="top" class="vncellreq"><?=gettext("Type"); ?></td>
+		<td class="vtable">
+			<select name="type" class="formselect" id="type" onchange="update_box_type(); typesel_change();">
+				<option value="host" <?php if ($pconfig['type'] == "host") echo "selected"; ?>><?=gettext("Host(s)"); ?></option>
+				<option value="network" <?php if ($pconfig['type'] == "network") echo "selected"; ?>><?=gettext("Network(s)"); ?></option>
+				<option value="port" <?php if ($pconfig['type'] == "port") echo "selected"; ?>><?=gettext("Port(s)"); ?></option>
+				<!--<option value="openvpn" <?php if ($pconfig['type'] == "openvpn") echo "selected"; ?>><?=gettext("OpenVPN Users"); ?></option> -->
+				<option value="url" <?php if ($pconfig['type'] == "url") echo "selected"; ?>><?=gettext("URL");?></option>
+				<option value="urltable" <?php if ($pconfig['type'] == "urltable") echo "selected"; ?>><?=gettext("URL Table"); ?></option>
+			</select>
+		</td>
+	</tr>
+	<tr>
+		<td width="22%" valign="top" class="vncellreq"><div id="addressnetworkport"><?=gettext("Host(s)"); ?></div></td>
+		<td width="78%" class="vtable">
+			<table id="maintable">
+				<tbody>
+					<tr>
+						<td colspan="4">
+							<div style="padding:5px; margin-top: 16px; margin-bottom: 16px; border:1px dashed #000066; background-color: #ffffff; color: #000000; font-size: 8pt;" id="itemhelp"><?=gettext("Item information"); ?></div>
+						</td>
+					</tr>
+					<tr>
+						<td><div id="onecolumn"><?=gettext("Network"); ?></div></td>
+						<td><div id="twocolumn">CIDR</div></td>
+						<td><div id="threecolumn"><?=gettext("Description"); ?></div></td>
+					</tr>
+
+					<?php
+					$counter = 0;
+					$address = $pconfig['address'];
+					if ($address <> "") {
+						$item = explode(" ", $address);
+						$item3 = explode("||", $pconfig['detail']);
+						foreach($item as $ww) {
+							$address = $item[$counter];
+							$address_subnet = "";
+							$item2 = explode("/", $address);
+							foreach($item2 as $current) {
+								if($item2[1] <> "") {
+									$address = $item2[0];
+									$address_subnet = $item2[1];
+								}
+
+							}
+							$item4 = $item3[$counter];
+							$tracker = $counter;
+					?>
+					<tr>
+						<td>
+							<input autocomplete="off" name="address<?php echo $tracker; ?>" type="text" class="formfldalias ipv4v6" id="address<?php echo $tracker; ?>" size="30" value="<?=htmlspecialchars($address);?>" />
+						</td>
+						<td>
+							<select name="address_subnet<?php echo $tracker; ?>" class="formselect ipv4v6" id="address_subnet<?php echo $tracker; ?>">
+								<option></option>
+								<?php for ($i = 128; $i >= 1; $i--): ?>
+									<option value="<?=$i;?>" <?php if (($i == $address_subnet) || ($i == $pconfig['updatefreq'])) echo "selected"; ?>><?=$i;?></option>
+								<?php endfor; ?>
+							</select>
+						</td>
+						<td>
+							<input name="detail<?php echo $tracker; ?>" type="text" class="formfld unknown" id="detail<?php echo $tracker; ?>" size="50" value="<?=$item4;?>" />
+						</td>
+						<td>
+							<a onclick="removeRow(this); return false;" href="#"><img border="0" src="/themes/<?echo $g['theme'];?>/images/icons/icon_x.gif" alt="" title="<?=gettext("remove this entry"); ?>" /></a>
+						</td>
+					</tr>
+					<?php
+						$counter++;
+
+						} // end foreach
+					} // end if
+					?>
+				</tbody>
+				<tfoot>
+
+				</tfoot>
+			</table>
+			<div id="addrowbutton">
+				<a onclick="javascript:addRowTo('maintable', 'formfldalias'); typesel_change(); add_alias_control(this); return false;" href="#">
+					<img border="0" src="/themes/<?= $g['theme']; ?>/images/icons/icon_plus.gif" alt="" title="<?=gettext("add another entry"); ?>" />
+				</a>
+			</div>
+		</td>
+	</tr>
+	<tr>
+		<td width="22%" valign="top">&nbsp;</td>
+		<td width="78%">
+			<input id="submit" name="submit" type="submit" class="formbtn" value="<?=gettext("Save"); ?>" />
+			<a href="firewall_aliases.php"><input id="cancelbutton" name="cancelbutton" type="button" class="formbtn" value="<?=gettext("Cancel"); ?>" /></a>
+		</td>
+	</tr>
 </table>
 </form>
 
@@ -710,7 +713,7 @@ EOD;
 	var addressarray = <?= json_encode(array_exclude($pconfig['name'], get_alias_list($pconfig['type']))) ?>;
 
 	function createAutoSuggest() {
-		<?php  
+		<?php
 		for ($jv = 0; $jv < $counter; $jv++)
 			echo "objAlias[{$jv}] = new AutoSuggestControl(document.getElementById(\"address{$jv}\"), new StateSuggestions(addressarray));\n";
 		?>

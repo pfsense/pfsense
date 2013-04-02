@@ -41,7 +41,8 @@
 ##|-PRIV
 
 $pgtitle = array(gettext("Diagnostics"), gettext("Ping"));
-require("guiconfig.inc");
+require_once("guiconfig.inc");
+
 
 define('MAX_COUNT', 10);
 define('DEFAULT_COUNT', 3);
@@ -111,6 +112,18 @@ include("head.inc"); ?>
 		<select name="interface" class="formselect">
 			<option value="">Any</option>
 		<?php $listenips = get_possible_listen_ips();
+			foreach (array('server', 'client') as $mode) {
+				if (is_array($config['openvpn']["openvpn-{$mode}"])) {
+					foreach ($config['openvpn']["openvpn-{$mode}"] as $id => $setting) {
+						if (!isset($setting['disable'])) {
+							$vpn = array();
+							$vpn['value'] = 'ovpn' . substr($mode, 0, 1) . $setting['vpnid'];
+							$vpn['name'] = gettext("OpenVPN") . " ".$mode.": ".htmlspecialchars($setting['description']);
+							$listenips[] = $vpn;
+						}
+					}
+				}
+			}
 			foreach ($listenips as $lip):
 				$selected = "";
 				if (!link_interface_to_bridge($lip['value']) && ($lip['value'] == $interface))

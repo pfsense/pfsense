@@ -62,6 +62,8 @@ if (!is_array($config['aliases']['alias']))
 	$config['aliases']['alias'] = array();
 $a_aliases = &$config['aliases']['alias'];
 
+$tab = $_REQUEST['tab'];
+
 if($_POST)
 	$origname = $_POST['origname'];
 
@@ -364,8 +366,8 @@ if ($_POST) {
 		if (write_config())
 			mark_subsystem_dirty('aliases');
 
-		if($_POST['tab'])
-			header("Location: firewall_aliases.php?tab=" . htmlspecialchars ($_POST['tab']));
+		if(!empty($tab))
+			header("Location: firewall_aliases.php?tab=" . htmlspecialchars ($tab));
 		else
 			header("Location: firewall_aliases.php");
 		exit;
@@ -583,7 +585,17 @@ EOD;
 <div id="inputerrors"></div>
 
 <form action="firewall_aliases_edit.php" method="post" name="iform" id="iform">
-<input name="tab" type="hidden" id="tab" value="<?=htmlspecialchars($pconfig['type']);?>" />
+<?php
+if (empty($tab)) {
+	if ($pconfig['type'] == 'urltable')
+		$tab = 'url';
+	else if ($pconfig['type'] == 'host')
+		$tab = 'ip';
+	else
+		$tab = $pconfig['type'];
+}
+?>
+<input name="tab" type="hidden" id="tab" value="<?=htmlspecialchars($tab);?>" />
 <table class="tabcont" width="100%" border="0" cellpadding="6" cellspacing="0">
 	<tr>
 		<td colspan="2" valign="top" class="listtopic"><?=gettext("Alias Edit"); ?></td>

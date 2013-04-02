@@ -50,10 +50,9 @@ if (!is_array($config['aliases']['alias']))
 	$config['aliases']['alias'] = array();
 $a_aliases = &$config['aliases']['alias'];
 
-if ($_POST) {
+$tab = ($_REQUEST['tab'] == "" ? "ip" : preg_replace("/\W/","",$_REQUEST['tab']));
 
-	if($_POST['tab'])
-		$tab = $_POST['tab'];
+if ($_POST) {
 
 	if ($_POST['apply']) {
 		$retval = 0;
@@ -111,7 +110,7 @@ if ($_GET['act'] == "del") {
 				filter_configure();
 				mark_subsystem_dirty('aliases');
 			}
-			header("Location: firewall_aliases.php");
+			header("Location: firewall_aliases.php?tab=" . $tab);
 			exit;
 		}
 	}
@@ -171,7 +170,6 @@ include("head.inc");
 	<tr>
 		<td class="tabnavtbl">
 			<?php
-				$tab=($_REQUEST['tab'] == "" ? "ip" : preg_replace("/\W/","",$_REQUEST['tab']));
 				$tab_array = array();
 				$tab_array[] = array(gettext("IP"),($tab=="ip" ? true : ($tab=="host" ? true : ($tab == "network" ? true : false))), "/firewall_aliases.php?tab=ip");
 				$tab_array[] = array(gettext("Ports"), ($tab=="port"? true : false), "/firewall_aliases.php?tab=port");
@@ -256,7 +254,7 @@ include("head.inc");
 							<table border="0" cellspacing="0" cellpadding="1">
 								<tr>
 									<td valign="middle"><a href="firewall_aliases_edit.php?id=<?=$i;?>"><img src="/themes/<?= $g['theme']; ?>/images/icons/icon_e.gif" width="17" height="17" border="0" <?=dom_title(gettext("Edit alias")." {$alias['name']}");?>></a></td>
-									<td><a href="firewall_aliases.php?act=del&id=<?=$i;?>" onclick="return confirm('<?=gettext("Do you really want to delete this alias? All elements that still use it will become invalid (e.g. filter rules)!");?>')"><img src="/themes/<?= $g['theme']; ?>/images/icons/icon_x.gif" width="17" height="17" border="0" <?=dom_title(gettext("Delete alias")." {$alias['name']}");?>></a></td>
+									<td><a href="firewall_aliases.php?act=del&tab=<?=$tab;?>&id=<?=$i;?>" onclick="return confirm('<?=gettext("Do you really want to delete this alias? All elements that still use it will become invalid (e.g. filter rules)!");?>')"><img src="/themes/<?= $g['theme']; ?>/images/icons/icon_x.gif" width="17" height="17" border="0" <?=dom_title(gettext("Delete alias")." {$alias['name']}");?>></a></td>
 								</tr>
 							</table>
 						</td>

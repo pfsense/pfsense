@@ -226,11 +226,13 @@ if ($_POST) {
 						$tmp = trim($tmp);
 						if(!empty($tmp) && (is_ipaddr($tmp) || is_subnet($tmp))) {
 							$address[] = $tmp;
-							$isfirst = 1;
-							if ($_POST["detail{$x}"] <> "")
-								$final_address_details[] = $_POST["detail{$x}"];
-							else
-								$final_address_details[] = sprintf(gettext("Entry added %s"), date('r'));
+							if ($isfirst == 0) {
+								if ($_POST["detail{$x}"] <> "")
+									$final_address_details[] = $_POST["detail{$x}"];
+								else
+									$final_address_details[] = sprintf(gettext("Entry added %s"), date('r'));
+								$isfirst = 1;
+							}
 							$address_count++;
 						}
 					}
@@ -369,7 +371,10 @@ if ($_POST) {
 	{
 		$pconfig['name'] = $_POST['name'];
 		$pconfig['descr'] = $_POST['descr'];
-		$pconfig['address'] = implode(" ", $address);
+		if ($_POST['type'] == 'url')
+			$pconfig['address'] = implode(" ", $alias['aliasurl']);
+		else
+			$pconfig['address'] = implode(" ", $address);
 		$pconfig['type'] = $_POST['type'];
 		$pconfig['detail'] = implode("||", $final_address_details);
 	}

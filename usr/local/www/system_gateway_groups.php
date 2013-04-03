@@ -105,12 +105,12 @@ include("head.inc");
 <body link="#0000CC" vlink="#0000CC" alink="#0000CC">
 <?php include("fbegin.inc"); ?>
 <form action="system_gateway_groups.php" method="post">
-<input type="hidden" name="y1" value="1">
+<input type="hidden" name="y1" value="1" />
 <?php if ($savemsg) print_info_box($savemsg); ?>
 <?php if (is_subsystem_dirty('staticroutes')): ?><p>
-<?php print_info_box_np(sprintf(gettext("The gateway configuration has been changed.%sYou must apply the changes in order for them to take effect."), "<br>"));?><br>
+<?php print_info_box_np(sprintf(gettext("The gateway configuration has been changed.%sYou must apply the changes in order for them to take effect."), "<br/>"));?><br/></p>
 <?php endif; ?>
-	<table width="100%" border="0" cellpadding="0" cellspacing="0">
+	<table width="100%" border="0" cellpadding="0" cellspacing="0" summary="system groups">
 		<tr>
 		  <td>
 <?php
@@ -124,7 +124,7 @@ include("head.inc");
  <tr>
    <td>
 	<div id="mainarea">
-             <table class="tabcont" width="100%" border="0" cellpadding="0" cellspacing="0">
+             <table class="tabcont" width="100%" border="0" cellpadding="0" cellspacing="0" summary="main area">
 		<thead>
                 <tr>
                   <td width="15%" class="listhdrr"><?=gettext("Group Name");?></td>
@@ -132,15 +132,27 @@ include("head.inc");
                   <td width="20%" class="listhdrr"><?=gettext("Priority");?></td>
                   <td width="30%" class="listhdr"><?=gettext("Description");?></td>
                   <td width="10%" class="list">
-			<table border="0" cellspacing="0" cellpadding="1">
+			<table border="0" cellspacing="0" cellpadding="1" summary="icons">
 			   <tr>
 				<td width="17"></td>
-				<td><a href="system_gateway_groups_edit.php"><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_plus.gif" width="17" height="17" border="0"></a></td>
+				<td><a href="system_gateway_groups_edit.php"><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_plus.gif" width="17" height="17" border="0" alt="edit" /></a></td>
 			   </tr>
 			</table>
 		  </td>
 		</tr>
 		</thead>
+		<tfoot>
+                  <tr><td class="list" colspan="4"></td>
+                  <td class="list">
+			<table border="0" cellspacing="0" cellpadding="1" summary="edit">
+			   <tr>
+				<td width="17"></td>
+				<td><a href="system_gateway_groups_edit.php"><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_plus.gif" width="17" height="17" border="0" alt="edit" /></a></td>
+			   </tr>
+		                    </table>
+				  </td>
+		                </tr>
+		</tfoot>
 		<tbody>
 			  <?php $i = 0; foreach ($a_gateway_groups as $gateway_group): ?>
                 <tr>
@@ -168,38 +180,26 @@ include("head.inc");
                   <td class="listbg" ondblclick="document.location='system_gateway_groups_edit.php?id=<?=$i;?>';">
 				<?=htmlspecialchars($gateway_group['descr']);?>&nbsp;
                   </td>
-                  <td valign="middle" nowrap class="list">
-			<table border="0" cellspacing="0" cellpadding="1">
+                  <td valign="middle" class="list nowrap">
+			<table border="0" cellspacing="0" cellpadding="1" summary="edit">
 			   <tr>
-				<td><a href="system_gateway_groups_edit.php?id=<?=$i;?>"><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_e.gif" width="17" height="17" border="0"></a>
-				<td><a href="system_gateway_groups.php?act=del&id=<?=$i;?>" onclick="return confirm('<?=gettext("Do you really want to delete this gateway group?");?>')"><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_x.gif" width="17" height="17" border="0"></a></td>
+				<td><a href="system_gateway_groups_edit.php?id=<?=$i;?>"><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_e.gif" width="17" height="17" border="0" alt="edit" /></a>
+				<td><a href="system_gateway_groups.php?act=del&amp;id=<?=$i;?>" onclick="return confirm('<?=gettext("Do you really want to delete this gateway group?");?>')"><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_x.gif" width="17" height="17" border="0" alt="delete" /></a></td>
 			   </tr>
 			   <tr>
 				<td width="17"></td>
-				<td><a href="system_gateway_groups_edit.php?dup=<?=$i;?>"><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_plus.gif" width="17" height="17" border="0"></a></td>
+				<td><a href="system_gateway_groups_edit.php?dup=<?=$i;?>"><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_plus.gif" width="17" height="17" border="0" alt="duplicate" /></a></td>
 			   </tr>
 			</table>
 
 		</tr>
 			  <?php $i++; endforeach; ?>
-                <tr>
+                <tr><td>&nbsp;</td></tr>
 		</tbody>
-		<tfoot>
-                  <td class="list" colspan="4"></td>
-                  <td class="list">
-			<table border="0" cellspacing="0" cellpadding="1">
-			   <tr>
-				<td width="17"></td>
-				<td><a href="system_gateway_groups_edit.php"><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_plus.gif" width="17" height="17" border="0"></a></td>
-			   </tr>
-		                    </table>
-				  </td>
-		                </tr>
 			</table>
 			</div>
 			</td>
 		  </tr>
-		</tfoot>
 		</table>
             </form>
 	<p><b><?=gettext("Note:");?></b>  <?=gettext("Remember to use these Gateway Groups in firewall rules in order to enable load balancing, failover, or policy-based routing. Without rules directing traffic into the Gateway Groups, they will not be used.");?></p>

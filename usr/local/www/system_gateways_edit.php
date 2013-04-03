@@ -431,7 +431,8 @@ include("head.inc");
 
 <body link="#0000CC" vlink="#0000CC" alink="#0000CC">
 <?php include("fbegin.inc"); ?>
-<script language="JavaScript">
+<script type="text/javascript">
+//<![CDATA[
 function show_advanced_gateway() {
 	document.getElementById("showadvgatewaybox").innerHTML='';
 	aodiv = document.getElementById('showgatewayadv');
@@ -440,6 +441,7 @@ function show_advanced_gateway() {
 function monitor_change() {
 	document.iform.monitor.disabled = document.iform.monitor_disable.checked;
 }
+//]]>
 </script>
 <?php if ($input_errors) print_input_errors($input_errors); ?>
 	<form action="system_gateways_edit.php" method="post" name="iform" id="iform">
@@ -447,34 +449,34 @@ function monitor_change() {
 
 	/* If this is a system gateway we need this var */
 	if(($pconfig['attribute'] == "system") || is_numeric($pconfig['attribute'])) {
-		echo "<input type='hidden' name='attribute' id='attribute' value='" . htmlspecialchars($pconfig['attribute']) . "' >\n";
+		echo "<input type='hidden' name='attribute' id='attribute' value='" . htmlspecialchars($pconfig['attribute']) . "' />\n";
 	}
-	echo "<input type='hidden' name='friendlyiface' id='friendlyiface' value='" . htmlspecialchars($pconfig['friendlyiface']) . "' >\n";
+	echo "<input type='hidden' name='friendlyiface' id='friendlyiface' value='" . htmlspecialchars($pconfig['friendlyiface']) . "' />\n";
 	?>
-		<table width="100%" border="0" cellpadding="6" cellspacing="0">
+		<table width="100%" border="0" cellpadding="6" cellspacing="0" summary="system gateways edit">
 			<tr>
 				<td colspan="2" valign="top" class="listtopic"><?=gettext("Edit gateway"); ?></td>
 			</tr>
 			<tr>
 				<td width="22%" valign="top" class="vncellreq"><?=gettext("Interface"); ?></td>
 				<td width="78%" class="vtable">
-					<select name='interface' class='formselect' >
+					<select name='interface' class='formselect'>
 					<?php
 						$interfaces = get_configured_interface_with_descr(false, true);
 						foreach ($interfaces as $iface => $ifacename) {
 							echo "<option value=\"{$iface}\"";
 							if ($iface == $pconfig['friendlyiface'])
-								echo " selected";
+								echo " selected='selected'";
 							echo ">" . htmlspecialchars($ifacename) . "</option>";
 						}
 						if (is_package_installed("openbgpd") == 1) {
 							echo "<option value=\"bgpd\"";
 							if ($pconfig['interface'] == "bgpd")
-								echo " selected";
+								echo " selected='selected'";
 							echo ">" . gettext("Use BGPD") . "</option>";
 						}
 					?>
-					</select> <br>
+					</select><br/>
 					<span class="vexpl"><?=gettext("Choose which interface this gateway applies to."); ?></span>
 				</td>
 			</tr>
@@ -487,32 +489,32 @@ function monitor_change() {
 						foreach ($options as $name => $string) {
 							echo "<option value=\"{$name}\"";
 							if ($name == $pconfig['ipprotocol'])
-								echo " selected";
+								echo " selected='selected'";
 							echo ">" . htmlspecialchars($string) . "</option>\n";
 						}
 					?>
-					</select> <br>
+					</select><br/>
 					<span class="vexpl"><?=gettext("Choose the Internet Protocol this gateway uses."); ?></span>
 				</td>
 			</tr>
 			<tr>
 				<td width="22%" valign="top" class="vncellreq"><?=gettext("Name"); ?></td>
 				<td width="78%" class="vtable">
-					<input name="name" type="text" class="formfld unknown" id="name" size="20" value="<?=htmlspecialchars($pconfig['name']);?>">
-					<br> <span class="vexpl"><?=gettext("Gateway name"); ?></span>
+					<input name="name" type="text" class="formfld unknown" id="name" size="20" value="<?=htmlspecialchars($pconfig['name']);?>" />
+					<br/><span class="vexpl"><?=gettext("Gateway name"); ?></span>
 				</td>
 			</tr>
 			<tr>
 				<td width="22%" valign="top" class="vncellreq"><?=gettext("Gateway"); ?></td>
 				<td width="78%" class="vtable">
-					<input name="gateway" type="text" class="formfld host" id="gateway" size="28" value="<?php if ($pconfig['dynamic']) echo "dynamic"; else echo htmlspecialchars($pconfig['gateway']); ?>">
-					<br> <span class="vexpl"><?=gettext("Gateway IP address"); ?></span>
+					<input name="gateway" type="text" class="formfld host" id="gateway" size="28" value="<?php if ($pconfig['dynamic']) echo "dynamic"; else echo htmlspecialchars($pconfig['gateway']); ?>" />
+					<br/><span class="vexpl"><?=gettext("Gateway IP address"); ?></span>
 				</td>
 			</tr>
 			<tr>
 				<td width="22%" valign="top" class="vncell"><?=gettext("Default Gateway"); ?></td>
 				<td width="78%" class="vtable">
-					<input name="defaultgw" type="checkbox" id="defaultgw" value="yes" <?php if ($pconfig['defaultgw'] == true) echo "checked"; ?> />
+					<input name="defaultgw" type="checkbox" id="defaultgw" value="yes" <?php if ($pconfig['defaultgw'] == true) echo "checked=\"checked\""; ?> />
 					<strong><?=gettext("Default Gateway"); ?></strong><br />
 					<?=gettext("This will select the above gateway as the default gateway"); ?>
 				</td>
@@ -520,7 +522,7 @@ function monitor_change() {
 			<tr>
 				<td width="22%" valign="top" class="vncell"><?=gettext("Disable Gateway Monitoring"); ?></td>
 				<td width="78%" class="vtable">
-					<input name="monitor_disable" type="checkbox" id="monitor_disable" value="yes" <?php if ($pconfig['monitor_disable'] == true) echo "checked"; ?> onClick="monitor_change()" />
+					<input name="monitor_disable" type="checkbox" id="monitor_disable" value="yes" <?php if ($pconfig['monitor_disable'] == true) echo "checked=\"checked\""; ?> onclick="monitor_change()" />
 					<strong><?=gettext("Disable Gateway Monitoring"); ?></strong><br />
 					<?=gettext("This will consider this gateway as always being up"); ?>
 				</td>
@@ -538,7 +540,7 @@ function monitor_change() {
 					<strong><?=gettext("Alternative monitor IP"); ?></strong> <br />
 					<?=gettext("Enter an alternative address here to be used to monitor the link. This is used for the " .
 					"quality RRD graphs as well as the load balancer entries. Use this if the gateway does not respond " .
-					"to ICMP echo requests (pings)"); ?>.</strong>
+					"to ICMP echo requests (pings)"); ?>.
 					<br />
 				</td>
 			</tr>
@@ -547,10 +549,10 @@ function monitor_change() {
 				<td width="78%" class="vtable">
 					<?php $showbutton = (!empty($pconfig['latencylow']) || !empty($pconfig['latencyhigh']) || !empty($pconfig['losslow']) || !empty($pconfig['losshigh']) || (isset($pconfig['weight']) && $pconfig['weight'] > 1) || (isset($pconfig['interval']) && ($pconfig['interval'] > $apinger_default['interval'])) || (isset($pconfig['down']) && !($pconfig['down'] == $apinger_default['down']))); ?>
 					<div id="showadvgatewaybox" <?php if ($showbutton) echo "style='display:none'"; ?>>
-						<input type="button" onClick="show_advanced_gateway()" value="Advanced"></input> - Show advanced option</a>
+						<input type="button" onclick="show_advanced_gateway()" value="Advanced" /><?=gettext(" - Show advanced option"); ?>
 					</div>
 					<div id="showgatewayadv" <?php if (!$showbutton) echo "style='display:none'"; ?>>
-						<table class="tabcont" width="100%" border="0" cellspacing="0" cellpadding="6">
+						<table class="tabcont" width="100%" border="0" cellspacing="0" cellpadding="6" summary="advanced options">
 							<tr>
 								<td width="22%" valign="top" class="vncellreq"><?=gettext("Weight");?></td>
 								<td width="78%" class="vtable">
@@ -559,7 +561,7 @@ function monitor_change() {
 										for ($i = 1; $i < 6; $i++) {
 											$selected = "";
 											if ($pconfig['weight'] == $i)
-												$selected = "selected";
+												$selected = "selected='selected'";
 											echo "<option value='{$i}' {$selected} >{$i}</option>";
 										}
 									?>
@@ -572,11 +574,11 @@ function monitor_change() {
 								<td width="78%" class="vtable">
 									<?=gettext("From");?>
 									<input name="latencylow" type="text" class="formfld unknown" id="latencylow" size="2"
-										value="<?=htmlspecialchars($pconfig['latencylow']);?>">
+										value="<?=htmlspecialchars($pconfig['latencylow']);?>" />
 									<?=gettext("To");?>
 									<input name="latencyhigh" type="text" class="formfld unknown" id="latencyhigh" size="2"
-										value="<?=htmlspecialchars($pconfig['latencyhigh']);?>">
-									<br> <span class="vexpl"><?=gettext(sprintf("Low and high thresholds for latency in milliseconds. Default is %d/%d.", $apinger_default['latencylow'], $apinger_default['latencyhigh']));?></span>
+										value="<?=htmlspecialchars($pconfig['latencyhigh']);?>" />
+									<br/><span class="vexpl"><?=gettext(sprintf("Low and high thresholds for latency in milliseconds. Default is %d/%d.", $apinger_default['latencylow'], $apinger_default['latencyhigh']));?></span>
 								</td>
 							</tr>
 							<tr>
@@ -584,19 +586,19 @@ function monitor_change() {
 								<td width="78%" class="vtable">
 									<?=gettext("From");?>
 									<input name="losslow" type="text" class="formfld unknown" id="losslow" size="2"
-										value="<?=htmlspecialchars($pconfig['losslow']);?>">
+										value="<?=htmlspecialchars($pconfig['losslow']);?>" />
 									<?=gettext("To");?>
 									<input name="losshigh" type="text" class="formfld unknown" id="losshigh" size="2"
-										value="<?=htmlspecialchars($pconfig['losshigh']);?>">
-									<br> <span class="vexpl"><?=gettext(sprintf("Low and high thresholds for packet loss in %%. Default is %d/%d.", $apinger_default['losslow'], $apinger_default['losshigh']));?></span>
+										value="<?=htmlspecialchars($pconfig['losshigh']);?>" />
+									<br /><span class="vexpl"><?=gettext(sprintf("Low and high thresholds for packet loss in %%. Default is %d/%d.", $apinger_default['losslow'], $apinger_default['losshigh']));?></span>
 								</td>
 							</tr>
 							<tr>
 								<td width="22%" valign="top" class="vncellreq"><?=gettext("Frequency Probe");?></td>
 								<td width="78%" class="vtable">
 									<input name="interval" type="text" class="formfld unknown" id="interval" size="2"
-										value="<?=htmlspecialchars($pconfig['interval']);?>">
-									<br><span class="vexpl">
+										value="<?=htmlspecialchars($pconfig['interval']);?>" />
+									<br/><span class="vexpl">
 										<?=gettext(sprintf("How often that an ICMP probe will be sent in seconds. Default is %d.", $apinger_default['interval']));?><br/><br/>
 										<?=gettext("NOTE: The quality graph is averaged over seconds, not intervals, so as the frequency probe is increased the accuracy of the quality graph is decreased.");?>
 									</span>
@@ -606,8 +608,8 @@ function monitor_change() {
 								<td width="22%" valign="top" class="vncellreq"><?=gettext("Down");?></td>
 								<td width="78%" class="vtable">
 									<input name="down" type="text" class="formfld unknown" id="down" size="2"
-										value="<?=htmlspecialchars($pconfig['down']);?>">
-									<br> <span class="vexpl"><?=gettext(sprintf("The number of seconds of failed probes before the alarm will fire. Default is %d.", $apinger_default['down']));?></span>
+										value="<?=htmlspecialchars($pconfig['down']);?>" />
+									<br/><span class="vexpl"><?=gettext(sprintf("The number of seconds of failed probes before the alarm will fire. Default is %d.", $apinger_default['down']));?></span>
 								</td>
 							</tr>
 							<tr>
@@ -622,24 +624,26 @@ function monitor_change() {
 			<tr>
 				<td width="22%" valign="top" class="vncell"><?=gettext("Description"); ?></td>
 				<td width="78%" class="vtable">
-					<input name="descr" type="text" class="formfld unknown" id="descr" size="40" value="<?=htmlspecialchars($pconfig['descr']);?>">
-					<br> <span class="vexpl"><?=gettext("You may enter a description here for your reference (not parsed)"); ?>.</span>
+					<input name="descr" type="text" class="formfld unknown" id="descr" size="40" value="<?=htmlspecialchars($pconfig['descr']);?>" />
+					<br/><span class="vexpl"><?=gettext("You may enter a description here for your reference (not parsed)"); ?>.</span>
 				</td>
 			</tr>
 			<tr>
 				<td width="22%" valign="top">&nbsp;</td>
 				<td width="78%">
-					<input name="Submit" type="submit" class="formbtn" value="<?=gettext("Save");?>"> <input type="button" value="<?=gettext("Cancel");?>" class="formbtn"  onclick="history.back()">
+					<input name="Submit" type="submit" class="formbtn" value="<?=gettext("Save");?>" /> <input type="button" value="<?=gettext("Cancel");?>" class="formbtn"  onclick="history.back()" />
 					<?php if (isset($id) && $a_gateways[$id]): ?>
-					<input name="id" type="hidden" value="<?=htmlspecialchars($id);?>">
+					<input name="id" type="hidden" value="<?=htmlspecialchars($id);?>" />
 					<?php endif; ?>
 				</td>
 			</tr>
 		</table>
 	</form>
 <?php include("fend.inc"); ?>
-<script language="JavaScript">
+<script type="text/javascript">
+//<![CDATA[
 monitor_change();
+//]]>
 </script>
 </body>
 </html>

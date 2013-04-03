@@ -938,6 +938,35 @@ function openvpn_resync_all($interface = "") {
 
 }
 
+// Resync and restart all VPNs using a gateway group.
+function openvpn_resync_gwgroup($gwgroupname = "") {
+	global $g, $config;
+
+	if ($gwgroupname <> "") {
+		if (is_array($config['openvpn']['openvpn-server'])) {
+			foreach ($config['openvpn']['openvpn-server'] as & $settings) {
+				if ($gwgroupname == $settings['interface']) {
+					log_error("Resyncing OpenVPN for gateway group " . $gwgroupname . " server " . $settings["description"] . ".");
+					openvpn_resync('server', $settings);
+				}
+			}
+		}
+
+		if (is_array($config['openvpn']['openvpn-client'])) {
+			foreach ($config['openvpn']['openvpn-client'] as & $settings) {
+				if ($gwgroupname == $settings['interface']) {
+					log_error("Resyncing OpenVPN for gateway group " . $gwgroupname . " client " . $settings["description"] . ".");
+					openvpn_resync('client', $settings);
+				}
+			}
+		}
+
+		// Note: no need to resysnc Client Specific (csc) here, as changes to the OpenVPN real interface do not effect these.
+
+	} else
+		log_error("openvpn_resync_gwgroup called with null gwgroup parameter."); 
+}
+
 function openvpn_get_active_servers($type="multipoint") {
 	global $config, $g;
 

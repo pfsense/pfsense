@@ -210,16 +210,16 @@ include("head.inc");
 		<td width="70%" valign="top" align="center">
 			<?php 
 				if ($qname)
-        				echo "<pr class=\"pgtitle\">" . $qname . "</pr><br />";
+        				echo "<p class=\"pgtitle\">" . $qname . "</p><br />";
 				echo "<table align=\"center\" class=\"tabcont\" width=\"80%\" border=\"0\" cellpadding=\"4\" cellspacing=\"0\" summary=\"output form\">";
 				echo $output;
+				echo "<tr><td>&nbsp;</td></tr>";
 				echo "</table>";
 			?>	
 			</td></tr>
-			</table>
+			</table><!-- table:main area -->
 
-		      </td></tr>
-		</div>
+		</div><!-- div:main area -->
 	  </td>
 	</tr>
 </table>

@@ -128,12 +128,12 @@ include("head.inc");
 <?php include("fbegin.inc"); ?>
 <?php if ($input_errors) print_input_errors($input_errors); ?>
 <form action="system_gateways.php" method="post">
-<input type="hidden" name="y1" value="1">
+<input type="hidden" name="y1" value="1" />
 <?php if ($savemsg) print_info_box($savemsg); ?>
 <?php if (is_subsystem_dirty('staticroutes')): ?><p>
-<?php print_info_box_np(gettext("The gateway configuration has been changed.") . "<br>" . gettext("You must apply the changes in order for them to take effect."));?><br>
+<?php print_info_box_np(gettext("The gateway configuration has been changed.") . "<br/>" . gettext("You must apply the changes in order for them to take effect."));?><br/></p>
 <?php endif; ?>
-	<table width="100%" border="0" cellpadding="0" cellspacing="0">
+	<table width="100%" border="0" cellpadding="0" cellspacing="0" summary="system gatewyas">
 		<tr>
 		  <td>
 <?php
@@ -147,7 +147,7 @@ include("head.inc");
  <tr>
    <td>
 	<div id="mainarea">
-             <table class="tabcont" width="100%" border="0" cellpadding="0" cellspacing="0">
+             <table class="tabcont" width="100%" border="0" cellpadding="0" cellspacing="0" summary="main area">
                 <tr>
                   <td width="15%" class="listhdrr"><?=gettext("Name"); ?></td>
                   <td width="15%" class="listhdrr"><?=gettext("Interface"); ?></td>
@@ -155,10 +155,10 @@ include("head.inc");
                   <td width="20%" class="listhdrr"><?=gettext("Monitor IP"); ?></td>
                   <td width="30%" class="listhdr"><?=gettext("Description"); ?></td>
                   <td width="10%" class="list">
-			<table border="0" cellspacing="0" cellpadding="1">
+			<table border="0" cellspacing="0" cellpadding="1" summary="add">
 			   <tr>
 				<td width="17"></td>
-				<td><a href="system_gateways_edit.php"><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_plus.gif" width="17" height="17" border="0"></a></td>
+				<td><a href="system_gateways_edit.php"><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_plus.gif" width="17" height="17" border="0" alt="add" /></a></td>
 			   </tr>
 			</table>
 		  </td>
@@ -169,7 +169,7 @@ include("head.inc");
 		<?php
 			echo $gateway['name'];
 			if(isset($gateway['defaultgw']))
-				echo " <strong>(default)<strong>";
+				echo " <strong>(default)</strong>";
 		?>
                   </td>
                   <td class="listr" ondblclick="document.location='system_gateways_edit.php?id=<?=$i;?>';">
@@ -195,15 +195,15 @@ include("head.inc");
                     <?=htmlspecialchars($gateway['descr']);?>&nbsp;
                   </td>
 
-                  <td valign="middle" nowrap class="list">
-			<table border="0" cellspacing="0" cellpadding="1">
+                  <td valign="middle" class="list nowrap">
+			<table border="0" cellspacing="0" cellpadding="1" summary="icons">
 			   <tr>
-				<td><a href="system_gateways_edit.php?id=<?=$i;?>"><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_e.gif" width="17" height="17" border="0"></a>
+				<td><a href="system_gateways_edit.php?id=<?=$i;?>"><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_e.gif" width="17" height="17" border="0" alt="edit" /></a></td>
 				<?php
 				if (is_numeric($gateway['attribute'])) : ?>
 					<td>
-						<a href="system_gateways.php?act=del&id=<?=$i;?>" onclick="return confirm('<?=gettext("Do you really want to delete this gateway?"); ?>')">
-							<img src="./themes/<?= $g['theme']; ?>/images/icons/icon_x.gif" width="17" height="17" border="0">
+						<a href="system_gateways.php?act=del&amp;id=<?=$i;?>" onclick="return confirm('<?=gettext("Do you really want to delete this gateway?"); ?>')">
+							<img src="./themes/<?= $g['theme']; ?>/images/icons/icon_x.gif" width="17" height="17" border="0" alt="delete" />
 						</a>
 					</td>
 				<?php else : ?>
@@ -212,19 +212,19 @@ include("head.inc");
 			   </tr>
 			   <tr>
 				<td width="17"></td>
-				<td><a href="system_gateways_edit.php?dup=<?=$i;?>"><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_plus.gif" width="17" height="17" border="0"></a></td>
+				<td><a href="system_gateways_edit.php?dup=<?=$i;?>"><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_plus.gif" width="17" height="17" border="0" alt="add" /></a></td>
 			   </tr>
 			</table>
-
+			</td>
 		</tr>
 		  <?php $i++; endforeach; ?>
                 <tr>
                   <td class="list" colspan="5"></td>
                   <td class="list">
-			<table border="0" cellspacing="0" cellpadding="1">
+			<table border="0" cellspacing="0" cellpadding="1" summary="edit">
 			   <tr>
 				<td width="17"></td>
-				<td><a href="system_gateways_edit.php"><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_plus.gif" width="17" height="17" border="0"></a></td>
+				<td><a href="system_gateways_edit.php"><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_plus.gif" width="17" height="17" border="0" alt="edit" /></a></td>
 			   </tr>
 		                    </table>
 				  </td>

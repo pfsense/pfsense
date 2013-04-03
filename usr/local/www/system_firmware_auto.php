@@ -57,13 +57,14 @@ else
 if($_POST['backupbeforeupgrade'])
 	touch("/tmp/perform_full_backup.txt");
 
+$closehead = false;
 $pgtitle = array(gettext("Diagnostics"),gettext("Firmware"),gettext("Auto Update"));
 include("head.inc");
 
 ?>
 
-<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
-<link href="gui.css" rel="stylesheet" type="text/css">
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+<link href="gui.css" rel="stylesheet" type="text/css" />
 </head>
 
 <body link="#0000CC" vlink="#0000CC" alink="#0000CC">
@@ -71,7 +72,7 @@ include("head.inc");
 <?php include("fbegin.inc"); ?>
 
 <form action="system_firmware_auto.php" method="post">
-<table width="100%" border="0" cellpadding="6" cellspacing="0">
+<table width="100%" border="0" cellpadding="6" cellspacing="0" summary="firmware auto-check">
 	<tr>
 		<td>
 		<?php
@@ -87,35 +88,31 @@ include("head.inc");
 	</tr>
 	<tr>
 		<td class="tabcont">
-			<table width="100%" border="0" cellpadding="6" cellspacing="0">
+			<table width="100%" border="0" cellpadding="6" cellspacing="0" summary="outer">
 				<tr>
 					<td class="tabcont">
-						<table width="100%" border="0" cellpadding="6" cellspacing="0">
+						<table width="100%" border="0" cellpadding="6" cellspacing="0" summary="inner">
 							<tr>
-								<td>
-									<center>
-									<table height='15' width='420' border='0' colspacing='0' cellpadding='0' cellspacing='0'>
+								<td align="center">
+									<table style="height:15;colspacing:0" width="420" border="0" cellpadding="0" cellspacing="0" summary="images">
 
 										<tr>
-											<td background="./themes/the_wall/images/misc/bar_left.gif" height='15' width='5'>
-											</td>
+											<td style="background:url('./themes/the_wall/images/misc/bar_left.gif')" height="15" width="5">	</td>
 											<td>
-											<table id="progholder" name="progholder" height='15' width='410' border='0' colspacing='0' cellpadding='0' cellspacing='0'>
-												<td background="./themes/the_wall/images/misc/bar_gray.gif" valign="top" align="left">
-												<img src='./themes/the_wall/images/misc/bar_blue.gif' width='0' height='15' name='progressbar' id='progressbar'>
-												</td>
+											<table id="progholder" style="height:15;colspacing:0" width="410" border="0" cellpadding="0" cellspacing="0" summary="">
+												<tr><td style="background:url('./themes/the_wall/images/misc/bar_gray.gif')" valign="top" align="left">
+												<img src="./themes/the_wall/images/misc/bar_blue.gif" width="0" height="15" name="progressbar" id="progressbar" alt="" />
+												</td></tr>
 											</table>
 											</td>
-											<td background="./themes/the_wall/images/misc/bar_right.gif" height='15' width='5'>
-											</td>
+											<td style="background:url('./themes/the_wall/images/misc/bar_right.gif')" height="15" width="5"></td>
 										</tr>
 									</table>
-									<br>
+									<br />
 									<!-- status box -->
 									<textarea cols="90" rows="1" name="status" id="status" wrap="hard"><?=gettext("Beginning firmware upgrade"); ?>.</textarea>
 									<!-- command output box -->
 									<textarea cols="90" rows="25" name="output" id="output" wrap="hard"></textarea>
-									</center>
 								</td>
 							</tr>
 						</table>
@@ -126,9 +123,8 @@ include("head.inc");
 	</tr>
 </table>
 </form>
+
 <?php include("fend.inc"); ?>
-</body>
-</html>
 
 <?php
 
@@ -238,7 +234,11 @@ if($downloaded_latest_tgz_sha256 <> $upgrade_latest_tgz_sha256) {
 	update_output_window(gettext("Auto upgrade aborted.") . "  \n\n" . gettext("Downloaded SHA256") . ": " . $downloaded_latest_tgz_sha256 . "\n\n" . gettext("Needed SHA256") . ": " . $upgrade_latest_tgz_sha256);
 } else {
 	update_output_window($g['product_name'] . " " . gettext("is now upgrading.") . "\\n\\n" . gettext("The firewall will reboot once the operation is completed."));
-	echo "\n<script language=\"JavaScript\">document.progressbar.style.visibility='hidden';\n</script>";
+	echo "\n<script type=\"text/javascript\">";
+	echo "\n//<![CDATA[";
+	echo "\ndocument.progressbar.style.visibility='hidden';";
+	echo "\n//]]>";
+	echo "\n</script>";
 	mwexec_bg($external_upgrade_helper_text);
 }
 
@@ -274,3 +274,6 @@ function read_body_firmware($ch, $string) {
 }
 
 ?>
+
+</body>
+</html>

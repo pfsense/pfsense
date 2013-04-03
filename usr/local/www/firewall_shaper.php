@@ -194,7 +194,7 @@ if ($_GET) {
 					$input_errors[] = gettext("Queue not found!");
 		break;
 		default:
-			$output_form .= "<p class=\"pgtitle\">" . $default_shaper_msg."</p>";
+			$output_form .= $default_shaper_msg;
 			$dontshow = true;
 			break;
 	}
@@ -309,12 +309,12 @@ if ($_GET) {
 		read_altq_config();
 		$output_form .= $queue->build_form();
 	} else  {
-		$output_form .= "<p class=\"pgtitle\">" . $default_shaper_msg."</p>";
+		$output_form .= $default_shaper_msg;
 		$dontshow = true;
 	}
 	mwexec("killall qstats");
 } else {
-	$output_form .= "<p class=\"pgtitle\">" . $default_shaper_msg."</p>";
+	$output_form .= $default_shaper_msg;
 	$dontshow = true;
 }
 
@@ -371,12 +371,12 @@ if ($can_add || $addnewaltq) {
 	$output_form .= "</a>";  
 }
 $output_form .= "<br /></td></tr>";
-$output_form .= "</div>";
+$output_form .= "</table>";
 }
 else 
-	$output_form .= "</div>";
+	$output_form .= "</table>";
 
-$output = "<div id=\"shaperarea\" style=\"position:relative\">";
+$output = "<table  summary=\"output form\">";
 $output .= $output_form;
 
 //$pgtitle = "Firewall: Shaper: By Interface View";
@@ -434,11 +434,11 @@ include("fbegin.inc");
 			?>
 			</td>
 			<td width="75%" valign="top" align="center">
-			<table summary="output form">
+			<div id="shaperarea" style="position:relative">
 			<?php
 				echo $output;
 			?>	
-			</table>
+			</div>
 
 		      </td></tr>
                     </table>

@@ -998,11 +998,24 @@ EOD;
  * For all other occasions the normal vpn_ipsec_configure()
  * will gracefully reload the settings without restarting
  */
-function vpn_ipsec_force_reload() {
-	global $config;
-	global $g;
+function vpn_ipsec_force_reload($interface = "") {
+	global $g, $config;
 
 	$ipseccfg = $config['ipsec'];
+
+	if (!empty($interface) && is_array($ipseccfg['phase1'])) {
+		$found = false;
+		foreach ($ipseccfg['phase1'] as $ipsec) {
+			if (!isset($ipsec['disabled']) && ($ipsec['interface'] == $interface)) {
+				$found = true;
+				break;
+			}
+		}
+		if (!$found) {
+			log_error(sprintf(gettext("Ignoring IPsec racoon daemon reload since there are no tunnels on interface %s"), $interface));
+			return;
+		}
+	}
 
 	/* send a SIGKILL to be sure */
 	killbypid("{$g['varrun_path']}/racoon.pid");

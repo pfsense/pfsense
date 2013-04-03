@@ -171,7 +171,7 @@ if (is_ipaddr($oldip) && $curwanip == $oldip) {
 	 * could be failing back in which case we need to switch IPs back anyhow. */
 
 	/* reconfigure IPsec tunnels */
-	vpn_ipsec_force_reload();
+	vpn_ipsec_force_reload($interface);
 
 	/* start OpenVPN server & clients */
 	if (substr($interface_real, 0, 4) != "ovpn")
@@ -194,7 +194,7 @@ services_dnsupdate_process($interface);
 services_dyndns_configure($interface);
 
 /* reconfigure IPsec tunnels */
-vpn_ipsec_force_reload();
+vpn_ipsec_force_reload($interface);
 
 /* start OpenVPN server & clients */
 if (substr($interface_real, 0, 4) != "ovpn")

@@ -63,7 +63,7 @@ $output_form = "";
 
 $default_layer7shaper_msg = "<tr><td colspan=\"4\">";
 $default_layer7shaper_msg .= "<span class=\"vexpl\"><span class=\"red\"><strong>" . gettext("Note") . ":<br/>";
-$default_layer7shaper_msg .= "</strong></span>" . gettext("You can add new layer7 protocol patterns by simply uploading the file") . " <a href=\"diag_patterns.php\">" . gettext("here") . ".</a><br/>";
+$default_layer7shaper_msg .= "</strong></span>" . gettext("You can add new layer7 protocol patterns by simply uploading the file") . " <a href=\"diag_patterns.php\">" . gettext("here") . ".</a></span><br/>";
 $default_layer7shaper_msg .= "</td></tr>";
 
 
@@ -114,7 +114,7 @@ if ($_GET) {
 		default:
 			echo log_error("Get default");
 			$show_proto_form = false;
-			$output_form .= "<p class=\"pgtitle\">" . $dn_default_shaper_msg . $default_layer7shaper_msg . "</p>";
+			$output_form .= $dn_default_shaper_msg . $default_layer7shaper_msg;
 			break;
 	}
 }
@@ -191,7 +191,7 @@ else if ($_POST) {
 			$output_form .= $container->build_form();
 		} else {
 			$show_proto_form = false;
-			$output_form .= "<p class=\"pgtitle\">" . $dn_default_shaper_msg . $default_layer7shaper_msg . "</p>";
+			$output_form .= $dn_default_shaper_msg . $default_layer7shaper_msg;
 		}
 	} else if ($_POST['delete']) {
 		$container->delete_l7c();
@@ -208,7 +208,7 @@ else if ($_POST) {
 }
 else {
 	$show_proto_form = false;
-	$output_form .= "<p class=\"pgtitle\">" . $dn_default_shaper_msg . $default_layer7shaper_msg . "</p>";
+	$output_form .= $dn_default_shaper_msg . $default_layer7shaper_msg;
 }
 
 // Builds the left tree
@@ -220,7 +220,7 @@ if (is_array($layer7_rules_list)) {
 }
 $tree .= "</ul>";
 
-$output = "<div id=\"shaperarea\" style=\"position:relative\">";
+$output = "<table summary=\"output form\">";
 $output .= $output_form;
 $closehead = false;
 include("head.inc");
@@ -269,47 +269,47 @@ function array_limiter(a_behav) {
 
 /* Fill the variables with available protocols, structures and behaviours */
 function fillProtocol() {
-	var protocol = '<select name="protocol[]" id="protocol" style="font-size:8pt">';
+	var protocol = '<select name="protocol[]" style="font-size:8pt">';
 	var name;
 
 	<?php foreach ($avail_protos as $key => $proto) { ?>
 		name = "<?= $proto; ?>";
-		protocol += "<option value=" + name + ">" + name + "</option>";
+		protocol += "<option value=" + name + ">" + name + "<\/option>";
 	<?php } ?>
-	protocol += "</select>";
+	protocol += "<\/select>";
 
 	return protocol;
 }
 
 function fillStructure() {
-	var structure = '<select name="structure[]" id="structure" style="font-size:8pt" onchange="changeBehaviourValues(this.parentNode.parentNode);">';
+	var structure = '<select name="structure[]" style="font-size:8pt" onchange="changeBehaviourValues(this.parentNode.parentNode);">';
 	var name;
 	<?php foreach ($avail_structures as $key => $struct) { ?>
 		name = "<?= $struct; ?>";
 		if(name == "queue") {
-		  if(js_behaviours_altq != "") { structure += "<option value=" + name + ">" + name + "</option>";}
+		  if(js_behaviours_altq != "") { structure += "<option value=" + name + ">" + name + "<\/option>";}
 		}
 		else {
 		  if(name == "limiter") {
-		    if(js_behaviours_limiter != "") { structure += "<option value=" + name + ">" + name + "</option>";}
+		    if(js_behaviours_limiter != "") { structure += "<option value=" + name + ">" + name + "<\/option>";}
 		  }
-		  else structure += "<option value=" + name + ">" + name + "</option>"; //action
+		  else structure += "<option value=" + name + ">" + name + "<\/option>"; //action
 		}
 	<?php } ?>
-	structure += "</select>";
+	structure += "<\/select>";
 
 	return structure;
 }
 
 //Used by default to fill the values when inserting a new row.
 function fillBehaviour() {
-	var behaviour = '<select name="behaviour[]" id="behaviour" style="width:80px; font-size:8pt">';
+	var behaviour = '<select name="behaviour[]" style="width:80px; font-size:8pt">';
 	var name;
 	<?php foreach ($avail_behaviours_action as $key => $behav) { ?>
 		name = "<?= $behav; ?>";
-		behaviour += "<option value=" + name + ">" + name + "</option>";
+		behaviour += "<option value=" + name + ">" + name + "<\/option>";
 	<?php } ?>
-	behaviour += "</select>";
+	behaviour += "<\/select>";
 
 	return behaviour;
 }
@@ -337,7 +337,7 @@ function changeBehaviourValues(row) {
 	var new_behav;
 	var name;
 	for(i=0; i<a_behav.length; i++) {
-		new_behav += "<option value=" + a_behav[i] + ">" + a_behav[i] + "</option>";
+		new_behav += "<option value=" + a_behav[i] + ">" + a_behav[i] + "<\/option>";
 	}
 
 	document.getElementsByName("behaviour[]")[selectedRow].innerHTML = new_behav;
@@ -356,7 +356,7 @@ function addRow(table_id) {
   var tFielsNum =  rows_count - initial_count[table_id];
   if (rows_limit!=0 && tFielsNum >= rows_limit) return false;
 
-  var remove = '<a onclick="removeRow(\''+table_id+'\',this.parentNode.parentNode)" href="#"><img border="0" src="/themes/<?=$g['theme'];?>/images/icons/icon_x.gif" alt="x" /></a>';
+  var remove = '<a onclick="removeRow(\''+table_id+'\',this.parentNode.parentNode)" href="#"><img border="0" src="/themes/<?=$g['theme'];?>/images/icons/icon_x.gif" alt="x" /><\/a>';
 
   try {
     var newRow = tbl.insertRow(rows_count);
@@ -433,14 +433,14 @@ function removeRow(tbl,row) {
 			</a><br/>
 			</td>
 			<td width="75%" valign="top" align="center">
-			<table summary="output form">
+			<div id="shaperarea" style="position:relative">
 			<?php
 				echo $output;
 			?>
 
 			<!-- Layer 7 rules form -->
 			<?php if($show_proto_form): ?>
-			<td width="22%" valign="top" class="vncellreq">
+			<tr><td width="22%" valign="top" class="vncellreq">
                                 <div id="addressnetworkport">
                                         <?=gettext("Rule(s)"); ?>
                                 </div>
@@ -488,14 +488,14 @@ function removeRow(tbl,row) {
 						?>
 						<tr>
 							<td>
-							<select name="protocol[]" class="formselect" id="protocol" style="font-size:8pt">
+							<select name="protocol[]" class="formselect" style="font-size:8pt">
 							<?php foreach($avail_protos as $proto): ?>
 							<option value="<?=$proto;?>" <?php if ($proto == $l7rule->GetRProtocol()) echo "selected=\"selected\""; ?>><?=$proto;?></option>
 							<?php endforeach; ?>
 							</select>
 						</td>
 						<td>
-							<select name="structure[]" class="formselect" id="structure" style="font-size:8pt" onchange="changeBehaviourValues(this.parentNode.parentNode);">
+							<select name="structure[]" class="formselect" style="font-size:8pt" onchange="changeBehaviourValues(this.parentNode.parentNode);">
 							<?php foreach($avail_structures as $struct) {
 							  if($struct == "queue") {
 							    if(!empty($avail_behaviours_altq)) { ?>
@@ -518,7 +518,7 @@ function removeRow(tbl,row) {
 							</select>
 						</td>
 						<td>
-							<select name="behaviour[]" class="formselect" id="behaviour" style="width:80px; font-size:8pt">
+							<select name="behaviour[]" class="formselect" style="width:80px; font-size:8pt">
 							<?php if($l7rule->GetRStructure() == "action"): ?>
 								<?php foreach($avail_behaviours_action as $behaviour): ?>
 								<option value="<?=$behaviour ?>" <?php if ($behaviour == $l7rule->GetRBehaviour()) echo "selected=\"selected\""; ?>><?=$behaviour;?></option>
@@ -562,21 +562,21 @@ function removeRow(tbl,row) {
                         </td>
 
                         <td width="78%">
-                                <input id="submit"
-                                name="submit" type="submit" class="formbtn" value="<?=gettext("Save"); ?>" />
+                                <input id="submit" name="submit" type="submit" class="formbtn" value="<?=gettext("Save"); ?>" />
 
 				<a href="firewall_shaper_layer7.php">
-                                <input id="cancelbutton"
-                                name="cancelbutton" type="button" class="formbtn" value="<?=gettext("Cancel"); ?>" /></a>
+                                <input id="cancelbutton" name="cancelbutton" type="button" class="formbtn" value="<?=gettext("Cancel"); ?>" />
 
 				<?php if($container): ?>
-						<input id="delete" type="submit" class="formbtn" name="delete" value="<?=gettext("Delete"); ?>" /></a>
+						<input id="delete" type="submit" class="formbtn" name="delete" value="<?=gettext("Delete"); ?>" />
 				<?php endif ?>
+				</a>
                         </td>
                         </tr>
 			<?php endif; ?>
 			<!-- End of layer7 rules form -->
 			</table>
+			</div><!-- end of div:shape area -->
 
 		      </td></tr>
                     </table>

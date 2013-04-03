@@ -601,9 +601,9 @@ function tmpvar_checked(obj) {
 								<td width="78%" class="vtable">
 									<?=gettext("Frequency:");?>
 									<select name="rrdbackup" id="rrdbackup" <?php if (($g['platform'] == "pfSense") && ($pconfig['use_mfs_tmpvar'] == false)) echo "disabled=\"disabled\""; ?> >
-										<option value='0' <?php if (!isset($config['system']['rrdbackup']) || ($config['system']['rrdbackup'] == 0)) echo "selected"; ?>><?=gettext("Disable"); ?></option>
+										<option value='0' <?php if (!isset($config['system']['rrdbackup']) || ($config['system']['rrdbackup'] == 0)) echo "selected='selected'"; ?>><?=gettext("Disable"); ?></option>
 									<?php for ($x=1; $x<=24; $x++) { ?>
-										<option value='<?= $x ?>' <?php if ($config['system']['rrdbackup'] == $x) echo "selected"; ?>><?= $x ?> <?=gettext("hour"); ?><?php if ($x>1) echo "s"; ?></option>
+										<option value='<?= $x ?>' <?php if ($config['system']['rrdbackup'] == $x) echo "selected='selected'"; ?>><?= $x ?> <?=gettext("hour"); ?><?php if ($x>1) echo "s"; ?></option>
 									<?php } ?>
 									</select>
 									<br/>
@@ -617,9 +617,9 @@ function tmpvar_checked(obj) {
 								<td width="78%" class="vtable">
 									<?=gettext("Frequency:");?>
 									<select name="dhcpbackup" id="dhcpbackup" <?php if (($g['platform'] == "pfSense") && ($pconfig['use_mfs_tmpvar'] == false)) echo "disabled=\"disabled\""; ?> >
-										<option value='0' <?php if (!isset($config['system']['dhcpbackup']) || ($config['system']['dhcpbackup'] == 0)) echo "selected"; ?>><?=gettext("Disable"); ?></option>
+										<option value='0' <?php if (!isset($config['system']['dhcpbackup']) || ($config['system']['dhcpbackup'] == 0)) echo "selected='selected'"; ?>><?=gettext("Disable"); ?></option>
 									<?php for ($x=1; $x<=24; $x++) { ?>
-										<option value='<?= $x ?>' <?php if ($config['system']['dhcpbackup'] == $x) echo "selected"; ?>><?= $x ?> <?=gettext("hour"); ?><?php if ($x>1) echo "s"; ?></option>
+										<option value='<?= $x ?>' <?php if ($config['system']['dhcpbackup'] == $x) echo "selected='selected'"; ?>><?= $x ?> <?=gettext("hour"); ?><?php if ($x>1) echo "s"; ?></option>
 									<?php } ?>
 									</select>
 									<br/>

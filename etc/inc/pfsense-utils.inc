@@ -1721,9 +1721,12 @@ function update_output_window($text) {
 	global $pkg_interface;
 	$log = preg_replace("/\n/", "\\n", $text);
 	if($pkg_interface != "console") {
-		echo "\n<script language=\"JavaScript\">\nthis.document.forms[0].output.value = \"" . $log . "\";\n";
-		echo "this.document.forms[0].output.scrollTop = this.document.forms[0].output.scrollHeight;\n";
-		echo "</script>";
+		echo "\n<script type=\"text/javascript\">";
+		echo "\n//<![CDATA[";
+		echo "\nthis.document.forms[0].output.value = \"" . $log . "\";";
+		echo "\nthis.document.forms[0].output.scrollTop = this.document.forms[0].output.scrollHeight;";
+		echo "\n//]]>";
+		echo "\n</script>";
 	}
 	/* ensure that contents are written out */
 	ob_flush();
@@ -1737,7 +1740,11 @@ function update_status($status) {
 	if($pkg_interface == "console") {
 		echo "\r{$status}";
 	} else {
-		echo "\n<script type=\"text/javascript\">this.document.forms[0].status.value=\"" . $status . "\";</script>";
+		echo "\n<script type=\"text/javascript\">";
+		echo "\n//<![CDATA[";
+		echo "\nthis.document.forms[0].status.value=\"" . $status . "\";";
+		echo "\n//]]>";
+		echo "\n</script>";
 	}
 	/* ensure that contents are written out */
 	ob_flush();
@@ -1750,8 +1757,10 @@ function update_progress_bar($percent, $first_time) {
 	global $pkg_interface;
 	if($percent > 100) $percent = 1;
 	if($pkg_interface <> "console") {
-		echo "\n<script type=\"text/javascript\" language=\"javascript\">";
+		echo "\n<script type=\"text/javascript\">";
+		echo "\n//<![CDATA[";
 		echo "\ndocument.progressbar.style.width='" . $percent . "%';";
+		echo "\n//]]>";
 		echo "\n</script>";
 	} else {
 		if(!($first_time))

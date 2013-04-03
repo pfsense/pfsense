@@ -203,6 +203,7 @@ function is_service_enabled($service_name) {
 		return false;
 	if (isset($config['installedpackages'][$service_name]['config'][0]['enable']) &&
 		(($config['installedpackages'][$service_name]['config'][0]['enable'] === false) ||
+		 ($config['installedpackages'][$service_name]['config'][0]['enable'] === '') ||
 		 ($config['installedpackages'][$service_name]['config'][0]['enable'] === 'false') ||
 		 ($config['installedpackages'][$service_name]['config'][0]['enable'] === 'off')))
 		return false;

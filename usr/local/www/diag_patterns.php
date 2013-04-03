@@ -64,28 +64,28 @@ include("head.inc");
 <?php if ($ulmsg) echo "<p class=\"red\"><strong>" . $ulmsg . "</strong></p>\n"; ?>
 <div id="mainarea">
 <form action="diag_patterns.php" method="post" enctype="multipart/form-data" name="frmPattern">
-  <table class="tabcont" width="100%" border="0" cellpadding="6" cellspacing="0">	
+  <table class="tabcont" width="100%" border="0" cellpadding="6" cellspacing="0" summary="upload pattern">
   	<tr>
     	<td colspan="4" valign="top" class="listtopic"><?=gettext("Upload layer7 pattern file");?></td>
   	</tr>
 	<tr>
 		<td align="right"><strong><?=gettext("File to upload:");?></strong></td>
 		<td valign="top" class="label">
-			<input name="ulfile" type="file" class="formfld file" id="ulfile">
+			<input name="ulfile" type="file" class="formfld file" id="ulfile" />
 		</td>
 	</tr>
 	<tr>
 		<td valign="top">&nbsp;&nbsp;&nbsp;</td>
 		<td valign="top" class="label">	
-			<input name="submit" type="submit"  class="button" id="upload" value="<?=gettext("Upload Pattern file");?>">
+			<input name="submit" type="submit" class="button" id="upload" value="<?=gettext("Upload Pattern file");?>" />
 		</td>
 	</tr>
 	<tr>
 		<td colspan="2" valign="top" height="16"></td>
 	</tr>    
   </table>
+</form>
 </div>
 <?php include("fend.inc"); ?>
-</form>
 </body>
 </html>

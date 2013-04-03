@@ -105,13 +105,13 @@ include("head.inc");
 <body link="#0000CC" vlink="#0000CC" alink="#0000CC">
 <?php include("fbegin.inc"); ?>
 <form action="system_routes.php" method="post">
-<input type="hidden" name="y1" value="1">
+<input type="hidden" name="y1" value="1" />
 <?php if ($savemsg) print_info_box($savemsg); ?>
 <?php if (is_subsystem_dirty('staticroutes')): ?><p>
-<?php print_info_box_np(sprintf(gettext("The static route configuration has been changed.%sYou must apply the changes in order for them to take effect."), "<br>"));?><br>
+<?php print_info_box_np(sprintf(gettext("The static route configuration has been changed.%sYou must apply the changes in order for them to take effect."), "<br/>"));?><br/></p>
 <?php endif; ?>
 
-              <table width="100%" border="0" cellpadding="0" cellspacing="0">
+              <table width="100%" border="0" cellpadding="0" cellspacing="0" summary="system routes">
 		<tr>
 		  <td>
 <?php
@@ -125,23 +125,23 @@ include("head.inc");
  <tr>
    <td>
 	<div id="mainarea">
-             <table class="tabcont" width="100%" border="0" cellpadding="0" cellspacing="0">
+             <table class="tabcont" width="100%" border="0" cellpadding="0" cellspacing="0" summary="main area">
                 <tr>
                   <td width="25%" class="listhdrr"><?=gettext("Network");?></td>
                   <td width="20%" class="listhdrr"><?=gettext("Gateway");?></td>
                   <td width="15%" class="listhdrr"><?=gettext("Interface");?></td>
                   <td width="30%" class="listhdr"><?=gettext("Description");?></td>
                   <td width="10%" class="list">
-			<table border="0" cellspacing="0" cellpadding="1">
+			<table border="0" cellspacing="0" cellpadding="1" summary="add">
 			   <tr>
 				<td width="17"></td>
-				<td><a href="system_routes_edit.php"><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_plus.gif" width="17" height="17" border="0"></a></td>
+				<td><a href="system_routes_edit.php"><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_plus.gif" width="17" height="17" border="0" alt="add" /></a></td>
 			   </tr>
 			</table>
 		  </td>
 		</tr>
+		<?php $i = 0; foreach ($a_routes as $route): ?>
                 <tr>
-			<?php $i = 0; foreach ($a_routes as $route): ?>
 			<?php
 				if (isset($route['disabled'])) {
 					$textss = "<span class=\"gray\">";
@@ -169,15 +169,15 @@ include("head.inc");
                   <td class="listbg" ondblclick="document.location='system_routes_edit.php?id=<?=$i;?>';">
                     <?=$textss;?><?=htmlspecialchars($route['descr']);?>&nbsp;<?=$textse;?>
                   </td>
-                  <td valign="middle" nowrap class="list">
-			<table border="0" cellspacing="0" cellpadding="1">
+                  <td valign="middle" class="list nowrap">
+			<table border="0" cellspacing="0" cellpadding="1" summary="edit">
 			   <tr>
-				<td><a href="system_routes_edit.php?id=<?=$i;?>"><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_e.gif" width="17" height="17" border="0"></a>
-				<td><a href="system_routes.php?act=del&id=<?=$i;?>" onclick="return confirm('<?=gettext("Do you really want to delete this route?");?>')"><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_x.gif" width="17" height="17" border="0"></a></td>
+				<td><a href="system_routes_edit.php?id=<?=$i;?>"><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_e.gif" width="17" height="17" border="0" alt="edit" /></a>
+				<td><a href="system_routes.php?act=del&amp;id=<?=$i;?>" onclick="return confirm('<?=gettext("Do you really want to delete this route?");?>')"><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_x.gif" width="17" height="17" border="0" alt="delete" /></a></td>
 			   </tr>
 			   <tr>
 				<td width="17"></td>
-				<td><a href="system_routes_edit.php?dup=<?=$i;?>"><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_plus.gif" width="17" height="17" border="0"></a></td>
+				<td><a href="system_routes_edit.php?dup=<?=$i;?>"><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_plus.gif" width="17" height="17" border="0" alt="add" /></a></td>
 			   </tr>
 			</table>
 		  </td>
@@ -186,10 +186,10 @@ include("head.inc");
                 <tr>
                   <td class="list" colspan="4"></td>
                   <td class="list">
-			<table border="0" cellspacing="0" cellpadding="1">
+			<table border="0" cellspacing="0" cellpadding="1" summary="edit">
 			   <tr>
 				<td width="17"></td>
-				<td><a href="system_routes_edit.php"><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_plus.gif" width="17" height="17" border="0"></a></td>
+				<td><a href="system_routes_edit.php"><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_plus.gif" width="17" height="17" border="0" alt="edit" /></a></td>
 			   </tr>
 		                    </table>
 				  </td>

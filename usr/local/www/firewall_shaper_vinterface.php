@@ -112,7 +112,7 @@ if ($_GET) {
 			$output_form .= $queue->build_form();
 		} else {
 			$input_errors[] = sprintf(gettext("No queue with name %s was found!"),$qname);
-			$output_form .= "<p class=\"pgtitle\">" . $dn_default_shaper_msg."</p>";
+			$output_form .= $dn_default_shaper_msg;
 			$dontshow = true;
 		}
 		break;
@@ -193,7 +193,7 @@ if ($_GET) {
 			$input_errors[] = gettext("Queue not found!");
 		break;
 	default:
-		$output_form .= "<p class=\"pgtitle\">" . $dn_default_shaper_msg."</p>";
+		$output_form .= $dn_default_shaper_msg;
 		$dontshow = true;
 		break;
 	}
@@ -283,11 +283,11 @@ if ($_GET) {
 		read_dummynet_config();
 		$output_form .= $queue->build_form();
 	} else  {
-		$output_form .= "<p class=\"pgtitle\">" . $dn_default_shaper_msg."</p>";
+		$output_form .= $dn_default_shaper_msg;
 		$dontshow = true;
 	}
 } else {
-	$output_form .= "<p class=\"pgtitle\">" . $dn_default_shaper_msg."</p>";
+	$output_form .= $dn_default_shaper_msg;
 	$dontshow = true;
 }
 
@@ -340,12 +340,12 @@ else
 	$output_form .= " value=\"" . gettext("Delete virtual interface") ."\" />";
 $output_form .= "</a>";  
 $output_form .= "</td></tr>";
-$output_form .= "</div>";
+$output_form .= "</table>";
 } 
 else 
-	$output_form .= "</div>";
+	$output_form .= "</table>";
 
-$output = "<div id=\"shaperarea\" style=\"position:relative\">";
+$output = "<table summary=\"output form\">";
 $output .= $output_form;
 $closehead = false;
 include("head.inc");
@@ -412,15 +412,15 @@ include("fbegin.inc");
 			?>
 			<br/><br/>
 			<a href="firewall_shaper_vinterface.php?pipe=new&amp;action=add">
-			<img src="./themes/<?= $g['theme']; ?>/images/icons/icon_plus.gif" title="<?=gettext("Create new limiter");?>" width="17" height="17" border="0" alt="add" /><?=gettext("Create new limiter");?>
+			<img src="./themes/<?= $g['theme']; ?>/images/icons/icon_plus.gif" title="<?=gettext("Create new limiter");?>" width="17" height="17" border="0" alt="add" />&nbsp;<?=gettext("Create new limiter");?>
 			</a><br/>
 			</td>
 			<td width="75%" valign="top" align="center">
-			<table summary="output form">
+			<div id="shaperarea" style="position:relative">
 			<?php
 				echo $output;
 			?>	
-			</table>
+			</div>
 
 		      </td></tr>
                     </table>

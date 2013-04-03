@@ -112,12 +112,12 @@ include("head.inc");
 <?php if ($savemsg) print_info_box($savemsg); ?>
 <?php if (is_subsystem_dirty('restore')): ?><p>
 <form action="reboot.php" method="post">
-<input name="Submit" type="hidden" value=" Yes ">
-<?php print_info_box(gettext("The firewall configuration has been changed.") . "<br/>" . gettext("The firewall is now rebooting."));?><br>
+<input name="Submit" type="hidden" value="Yes" />
+<?php print_info_box(gettext("The firewall configuration has been changed.") . "<br/>" . gettext("The firewall is now rebooting."));?><br/>
 </form>
 <?php endif; ?>
 <form action="system_firmware_restorefullbackup.php" method="post">
-<table width="100%" border="0" cellspacing="0" cellpadding="0">
+<table width="100%" border="0" cellspacing="0" cellpadding="0" summary="restore full backup">
 	<tr>
 		<td>
 <?php
@@ -134,7 +134,7 @@ include("head.inc");
 	<tr>
 		<td>
 			<div id="mainarea">
-			<table class="tabcont" align="center" width="100%" border="0" cellpadding="6" cellspacing="0">
+			<table class="tabcont" align="center" width="100%" border="0" cellpadding="6" cellspacing="0" summary="main area">
 				<tr>
 					<td colspan="1" class="listtopic"><?=gettext("Filename"); ?></td>
 					<td colspan="1" class="listtopic"><?=gettext("Date"); ?></td>
@@ -150,7 +150,7 @@ include("head.inc");
 					$size = exec("gzip -l /root/$arf | grep -v compressed | awk '{ print $2 }'");
 					echo "<tr>";
 					echo "<td  class='listlr' width='50%' colspan='1'>";
-					echo "<input type='radio' name='restorefile' value='$arf'> $arf";
+					echo "<input type='radio' name='restorefile' value='$arf' /> $arf";
 					echo "</td>";
 					echo "<td  class='listr' width='30%' colspan='1'>";
 					echo date ("F d Y H:i:s", filemtime($arf));
@@ -158,7 +158,7 @@ include("head.inc");
 					echo "<td  class='listr' width='40%' colspan='1'>";
 					echo format_bytes($size);
 					echo "</td>";
-					echo "<td  class='listr' width='20%' colspan='1'><nobr>";
+					echo "<td  class='listr nowrap' width='20%' colspan='1'>";
 					echo "<a onclick=\"return confirm('" . gettext("Do you really want to delete this backup?") . "')\" href='system_firmware_restorefullbackup.php?deletefile=" . htmlspecialchars($arf) . "'>";
 					echo gettext("Delete");
 					echo "</a> | ";
@@ -170,8 +170,8 @@ include("head.inc");
 				}
 				if($counter == 0) {
 					echo "<tr>";
-					echo "<td  class='listlr' width='100%' colspan='4'>";
-					echo gettext("<center>Could not locate any previous backups.</center>");
+					echo "<td  class='listlr' width='100%' colspan='4' align='center'>";
+					echo gettext("Could not locate any previous backups.");
 					echo "</td>";
 					echo "</tr>";
 				}
@@ -179,9 +179,9 @@ include("head.inc");
 				<tr>
 					<td width="78%" colspan="3">
 						&nbsp;<br/>
-						<input type="checkbox" name="overwriteconfigxml" id="overwriteconfigxml" CHECKED> do not restore config.xml.
-						<p/>
-						<input name="Restore" type="submit" class="formbtn" id="restore" value="<?=gettext("Restore"); ?>">
+						<input type="checkbox" name="overwriteconfigxml" id="overwriteconfigxml" checked="checked" /> <?=gettext("do not restore config.xml."); ?>
+						<br/>
+						<input name="Restore" type="submit" class="formbtn" id="restore" value="<?=gettext("Restore"); ?>" />
 					</td>
 				</tr>
 			</table>
@@ -191,11 +191,11 @@ include("head.inc");
 </table>
 </form>
 
-<script language="JavaScript">
-<!--
+<script type="text/javascript">
+//<![CDATA[
 encrypt_change();
 decrypt_change();
-//-->
+//]]>
 </script>
 
 <?php include("fend.inc"); ?>

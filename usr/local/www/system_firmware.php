@@ -110,7 +110,7 @@ if(is_subsystem_dirty('firmwarelock')) {
 	echo "<body link=\"#0000CC\" vlink=\"#0000CC\" alink=\"#0000CC\">\n";
 	include("fbegin.inc");
 	echo "<div>\n";
-	print_info_box(gettext("An upgrade is currently in progress.<p>The firewall will reboot when the operation is complete.") . "<p><img src='/themes/{$g['theme']}/images/icons/icon_fw-update.gif'>");
+	print_info_box(gettext("An upgrade is currently in progress.<p>The firewall will reboot when the operation is complete.") . "</p><p><img src='/themes/{$g['theme']}/images/icons/icon_fw-update.gif' alt='update' /></p>");
 	echo "</div>\n";
 	include("fend.inc");
 	echo "</body>";
@@ -227,20 +227,20 @@ include("head.inc");
 <?php if ($fwinfo <> "") print_info_box($fwinfo); ?>
 <?php if ($sig_warning && !$input_errors): ?>
 <?php
-	$sig_warning = "<strong>" . $sig_warning . "</strong><br>" . gettext("This means that the image you uploaded " .
+	$sig_warning = "<strong>" . $sig_warning . "</strong><br/>" . gettext("This means that the image you uploaded " .
 		"is not an official/supported image and may lead to unexpected behavior or security " .
 		"compromises. Only install images that come from sources that you trust, and make sure ".
-		"that the image has not been tampered with.") . "<br><br>".
+		"that the image has not been tampered with.") . "<br/><br/>".
 		gettext("Do you want to install this image anyway (on your own risk)?");
 print_info_box($sig_warning);
 if(stristr($_FILES['ulfile']['name'],"nanobsd"))
-	echo "<input type='hidden' name='isnano' id='isnano' value='yes'>\n";
+	echo "<input type='hidden' name='isnano' id='isnano' value='yes' />\n";
 ?>
-<input name="sig_override" type="submit" class="formbtn" id="sig_override" value=" <?=gettext("Yes");?> ">
-<input name="sig_no" type="submit" class="formbtn" id="sig_no" value=" <?=gettext("No"); ?> ">
+<input name="sig_override" type="submit" class="formbtn" id="sig_override" value=" <?=gettext("Yes");?> " />
+<input name="sig_no" type="submit" class="formbtn" id="sig_no" value=" <?=gettext("No"); ?> " />
 <?php else: ?>
 <?php if (!is_subsystem_dirty('firmwarelock')): ?>
-	<table width="100%" border="0" cellpadding="0" cellspacing="0">
+	<table width="100%" border="0" cellpadding="0" cellspacing="0" summary="firmware">
 		<tr>
 			<td>
 <?php
@@ -257,7 +257,7 @@ if(stristr($_FILES['ulfile']['name'],"nanobsd"))
 		<tr>
 			<td>
 				<div id="mainarea">
-					<table class="tabcont" width="100%" border="0" cellpadding="6" cellspacing="0">
+					<table class="tabcont" width="100%" border="0" cellpadding="6" cellspacing="0" summary="main area">
 					<tr>
 						<td colspan="2" class="listtopic"><?=gettext("Invoke") ." ". $g['product_name'] ." ".  gettext("Manual Upgrade"); ?></td>
 					</tr>
@@ -266,12 +266,12 @@ if(stristr($_FILES['ulfile']['name'],"nanobsd"))
 						<td width="78%" class="vtable">
 						<?php if (!is_subsystem_dirty('rebootreq')): ?>
 						<?php if (!is_subsystem_dirty('firmware')): ?>
-						<input name="Submit" type="submit" class="formbtn" value="<?=gettext("Enable firmware upload");?>">
+						<input name="Submit" type="submit" class="formbtn" value="<?=gettext("Enable firmware upload");?>" />
 						<br/>
 							<?php printf(gettext('Click "Enable firmware upload" to begin.'),$g['firmware_update_text']);?>
 						<br/>
 						<?php else: ?>
-							<input name="Submit" type="submit" class="formbtn" value="<?=gettext("Disable firmware upload");?>">
+							<input name="Submit" type="submit" class="formbtn" value="<?=gettext("Disable firmware upload");?>" />
 					</td>
 					</tr>
 					<tr>
@@ -284,8 +284,8 @@ if(stristr($_FILES['ulfile']['name'],"nanobsd"))
 									$type = "*.tgz";
 							?>
 							<strong><?=gettext("Firmware image file ($type):");?> </strong>
-							<input name="ulfile" type="file" class="formfld">
-							<br>
+							<input name="ulfile" type="file" class="formfld" />
+							<br />
 							<?php
 								if(!file_exists("/boot/kernel/pfsense_kernel.txt")) {
 									if($g['platform'] == "pfSense") {
@@ -295,31 +295,29 @@ if(stristr($_FILES['ulfile']['name'],"nanobsd"))
 											echo "<option value='{$kerntype}'>{$kerndescr}</option>";
 										}
 										echo "</select>";
-										echo "<br>";
+										echo "<br/>";
 									}
 								}
 							?>
 							<?php if ($g['hidebackupbeforeupgrade'] === false): ?>
-							<input type="checkbox" name='backupbeforeupgrade' id='backupbeforeupgrade'> <?=gettext("Perform full backup prior to upgrade");?>
-							<br>
+							<input type="checkbox" name='backupbeforeupgrade' id='backupbeforeupgrade' /> <?=gettext("Perform full backup prior to upgrade");?>
+							<br/>
 							<?php endif; ?>
-							<input name="Submit" type="submit" class="formbtn" value="<?=gettext("Upgrade firmware");?>">
+							<input name="Submit" type="submit" class="formbtn" value="<?=gettext("Upgrade firmware");?>" />
 							<?=gettext('Click "Upgrade firmware" to start the upgrade process.');?>
 						<?php endif; else: ?>
 							<strong><?=gettext("You must reboot the system before you can upgrade the firmware.");?></strong>
 						<?php endif; ?>
-					</td>
 				</td>
 			</tr>
 			<tr>
 				<td width="22%" valign="top">&nbsp;</td>
 				<td width="78%">
-						</span>
 						<?php if (is_subsystem_dirty('firmware')): ?>
 					<span class="vexpl">
 						<span class="red">
 							<strong>
-								<?=gettext("Warning:");?><br>
+								<?=gettext("Warning:");?><br/>
 							</strong>
 						</span>
 						<?=gettext("DO NOT abort the firmware upgrade once it " .
@@ -327,13 +325,14 @@ if(stristr($_FILES['ulfile']['name'],"nanobsd"))
 								"storing the new firmware. The configuration will be maintained.");?>
 					</span>
 						<?php endif; ?>
-				</td>
+				</td></tr>
 			</table>
 		</div>
-	</tr>
+	</td></tr>
 </table>
 
 <?php endif; endif; ?>
 <?php include("fend.inc"); ?>
+</form>
 </body>
 </html>

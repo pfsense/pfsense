@@ -141,7 +141,7 @@ include("head.inc");
                     <?=gettext("e.g."); ?> <em>192.168.100.100</em><br/><?=gettext("Or enter # for an exclusion to pass through this host/subdomain to standard nameservers instead of a previous override."); ?><br/><?=gettext("Or enter ! for lookups for this host/subdomain to NOT be forwarded anywhere."); ?></span></td>
                 </tr>
                                <tr>
-                  <td width="22%" valign="top" class="vncellreq"><?=gettext("Source IP");?></td>
+                  <td width="22%" valign="top" class="vncell"><?=gettext("Source IP");?></td>
                   <td width="78%" class="vtable">
                     <?=$mandfldhtml;?><input name="dnssrcip" type="text" class="formfld unknown" id="dnssrcip" size="40" value="<?=htmlspecialchars($pconfig['dnssrcip']);?>">
                     <br> <span class="vexpl"><?=gettext("Source IP address for queries to the DNS server for the override domain."); ?><br>

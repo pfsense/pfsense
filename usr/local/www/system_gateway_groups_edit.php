@@ -314,7 +314,7 @@ jQuery(function ($) {
 			"If all links in a priority level are exhausted we will use the next available link(s) in the next priority level.") ?>
 			<br />
 			<strong><?=gettext("Virtual IP"); ?></strong> <br />
-			<?=gettext("The virtual IP field selects what (virtual) IP should be used when this group applies to a local Dyndns, IPsec or openvpn endpoint") ?>
+			<?=gettext("The virtual IP field selects what (virtual) IP should be used when this group applies to a local Dynamic DNS, IPsec or OpenVPN endpoint") ?>
 			</span><br />
 		   </td>
                 </tr>

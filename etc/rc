@@ -39,25 +39,27 @@ if [ -e /root/force_fsck ]; then
 	fi
 fi
 
-TUNEFS_STATUS=`/sbin/tunefs -p / 2>&1 | /usr/bin/grep trim: | /usr/bin/awk '{print $4;}'`
-if [ -e /root/TRIM_set ] && [ "${TUNEFS_STATUS}" = "disabled" ]; then
-	echo "Enabling TRIM support"
-	/sbin/tunefs -t enable /
-	if [ "$PLATFORM" = "nanobsd" ]; then
-		/sbin/tunefs -t enable /cf
+if [ -e /root/TRIM_set -o -e /root/TRIM_unset ]; then
+	TUNEFS_STATUS=`/sbin/tunefs -p / 2>&1 | /usr/bin/grep trim: | /usr/bin/awk '{print $4;}'`
+	if [ -e /root/TRIM_set ] && [ "${TUNEFS_STATUS}" = "disabled" ]; then
+		echo "Enabling TRIM support"
+		/sbin/tunefs -t enable /
+		if [ "$PLATFORM" = "nanobsd" ]; then
+			/sbin/tunefs -t enable /cf
+		fi
+		echo "Rebooting in 5 seconds after enabling TRIM..."
+		sleep 5
+		/sbin/reboot
+	elif [ -e /root/TRIM_unset ] && [ "${TUNEFS_STATUS}" = "enabled" ]; then
+		echo "Disabling TRIM support"
+		/sbin/tunefs -t disable /
+		if [ "$PLATFORM" = "nanobsd" ]; then
+			/sbin/tunefs -t disable /cf
+		fi
+		echo "Rebooting in 5 seconds after disabling TRIM..."
+		sleep 5
+		/sbin/reboot
 	fi
-	echo "Rebooting in 5 seconds after enabling TRIM..."
-	sleep 5
-	/sbin/reboot
-elif [ -e /root/TRIM_unset ] && [ "${TUNEFS_STATUS}" = "enabled" ]; then
-	echo "Disabling TRIM support"
-	/sbin/tunefs -t disable /
-	if [ "$PLATFORM" = "nanobsd" ]; then
-		/sbin/tunefs -t disable /cf
-	fi
-	echo "Rebooting in 5 seconds after disabling TRIM..."
-	sleep 5
-	/sbin/reboot
 fi
 
 # Mount memory file system if it exists

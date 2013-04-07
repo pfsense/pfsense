@@ -563,7 +563,7 @@ class altq_root_queue {
 
 	function build_javascript() {
 		$javascript = "<script type=\"text/javascript\">";
-		$javascript .= "//<![CDATA[";
+		$javascript .= "//<![CDATA[\n";
 		$javascript .= "function mySuspend() {";
 		$javascript .= "if (document.layers && document.layers['shaperarea'] != null) ";
 		$javascript .= "document.layers['shaperarea'].visibility = 'hidden'; ";
@@ -874,7 +874,7 @@ class priq_queue {
 
 	function build_javascript() {
 		$javascript = "<script type=\"text/javascript\">";
-		$javascript .= "//<![CDATA[";
+		$javascript .= "//<![CDATA[\n";
 		$javascript .= "function mySuspend() { \n";
 		$javascript .= "if (document.layers && document.layers['shaperarea'] != null)\n";
 		$javascript .= "document.layers['shaperarea'].visibility = 'hidden';\n";
@@ -1811,7 +1811,7 @@ class hfsc_queue extends priq_queue {
 	function build_javascript() {
 		$javascript = parent::build_javascript();
 		$javascript .= "<script type=\"text/javascript\">";
-		$javascript .= "//<![CDATA[";
+		$javascript .= "//<![CDATA[\n";
 		$javascript .= "function enable_realtime(enable_over) { \n";
 		$javascript .= "if (document.iform.realtime.checked || enable_over) { \n";
 		$javascript .= "document.iform.realtime1.disabled = 0;\n";

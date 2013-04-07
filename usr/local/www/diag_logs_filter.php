@@ -321,7 +321,7 @@ include("head.inc");
 			<tr class="<?=$evenRowClass?>">
 			  <td class="listMRlr" nowrap="nowrap" align="center" sorttable_customkey="<?=$filterent['act']?>">
 			  <center>
-			  <a href="#" onclick="javascript:getURL('diag_logs_filter.php?getrulenum=<?php echo "{$filterent['rulenum']},{$filterent['act']}"; ?>', outputrule);">
+			  <a onclick="javascript:getURL('diag_logs_filter.php?getrulenum=<?php echo "{$filterent['rulenum']},{$filterent['act']}"; ?>', outputrule);">
 			  <img border="0" src="<?php echo find_action_image($filterent['act']);?>" width="11" height="11" align="middle" alt="<?php echo $filterent['act'];?>" title="<?php echo $filterent['act'];?>" />
 			  <?php if ($filterent['count']) echo $filterent['count'];?></a></center></td>
 			  <td class="listMRr" nowrap="nowrap"><?php echo htmlspecialchars($filterent['time']);?></td>
@@ -348,7 +348,7 @@ include("head.inc");
 			  $dststr = $filterent['dstip'] . get_port_with_service($filterent['dstport'], $proto);
 			  ?>
 			  <td class="listMRr" nowrap="nowrap">
-				<a href="#" onclick="javascript:getURL('diag_dns.php?host=<?php echo "{$filterent['srcip']}"; ?>&dialog_output=true', outputrule);" title="<?=gettext("Reverse Resolve with DNS");?>">
+				<a onclick="javascript:getURL('diag_dns.php?host=<?php echo "{$filterent['srcip']}"; ?>&dialog_output=true', outputrule);" title="<?=gettext("Reverse Resolve with DNS");?>">
 				<img border="0" src="/themes/<?= $g['theme']; ?>/images/icons/icon_log_d.gif" alt="Icon Reverse Resolve with DNS"/></a>
 				<a href="diag_dns.php?host=<?php echo $filterent['srcip']; ?>" title="<?=gettext("Reverse Resolve with DNS");?>">
 				<img border="0" src="/themes/<?= $g['theme']; ?>/images/icons/icon_log.gif" alt="Icon Reverse Resolve with DNS"/></a>
@@ -357,7 +357,7 @@ include("head.inc");
 				<?php echo $srcstr;?>
 			  </td>
 			  <td class="listMRr" nowrap="nowrap">
-				<a href="#" onclick="javascript:getURL('diag_dns.php?host=<?php echo "{$filterent['dstip']}"; ?>&dialog_output=true', outputrule);" title="<?=gettext("Reverse Resolve with DNS");?>">
+				<a onclick="javascript:getURL('diag_dns.php?host=<?php echo "{$filterent['dstip']}"; ?>&dialog_output=true', outputrule);" title="<?=gettext("Reverse Resolve with DNS");?>">
 				<img border="0" src="/themes/<?= $g['theme']; ?>/images/icons/icon_log_d.gif" alt="Icon Reverse Resolve with DNS" /></a>
 				<a href="diag_dns.php?host=<?php echo $filterent['dstip']; ?>" title="<?=gettext("Reverse Resolve with DNS");?>">
 				<img border="0" src="/themes/<?= $g['theme']; ?>/images/icons/icon_log.gif" alt="Icon Reverse Resolve with DNS" /></a>

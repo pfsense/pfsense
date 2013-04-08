@@ -124,7 +124,7 @@ function execCmds() {
 	}
 }
 
-global $g;
+global $g, $config;
 
 /* Set up all of the commands we want to execute. */
 defCmdT("System uptime","uptime");
@@ -138,7 +138,11 @@ defCmdT("top | head -n5", "/usr/bin/top | /usr/bin/head -n5");
 
 defCmdT("sysctl hw.physmem","/sbin/sysctl hw.physmem");
 
-defCmdT("ipfw show", "/sbin/ipfw show");
+if (isset($config['captiveportal']) && is_array($config['captiveportal']))
+	foreach ($config['captiveportal'] as $cpZone => $cpdata)
+		if (isset($cpdata['enable']))
+			defCmdT("ipfw -x {$cpZone} show", "/sbin/ipfw -x {$cpZone} show");
+
 defCmdT("pfctl -sn", "/sbin/pfctl -sn");
 defCmdT("pfctl -sr", "/sbin/pfctl -sr");
 defCmdT("pfctl -ss", "/sbin/pfctl -ss");

@@ -58,13 +58,12 @@ if ($_POST) {
 }
 
 $curcfg = $config['system']['altpkgrepo'];
-
+$closehead = false;
 $pgtitle = array(gettext("System"),gettext("Package Settings"));
 include("head.inc");
 ?>
-<script language="JavaScript">
-<!--
-
+<script type="text/javascript">
+//<![CDATA[
 
 function enable_altpkgrepourl(enable_over) {
 	if (document.iform.alturlenable.checked || enable_over) {
@@ -74,16 +73,16 @@ function enable_altpkgrepourl(enable_over) {
 	}
 }
 
-// -->
+//]]>
 </script>
-
+</head>
 <body link="#0000CC" vlink="#0000CC" alink="#0000CC">
 <?php include("fbegin.inc");?>
 <?php if ($input_errors) print_input_errors($input_errors); ?>
 
 <form action="pkg_mgr_settings.php" method="post" name="iform" id="iform">
             <?php if ($savemsg) print_info_box($savemsg); ?>
-              <table width="100%" border="0" cellpadding="0" cellspacing="0">
+              <table width="100%" border="0" cellpadding="0" cellspacing="0" summary="package manager settings">
 	<tr>
 		<td>
 <?php
@@ -96,28 +95,32 @@ function enable_altpkgrepourl(enable_over) {
 ?>
 		</td>
 	</tr>
-	<tr><td><div id=mainarea>
-	      <table class="tabcont" width="100%" border="0" cellpadding="6" cellspacing="0">
+	<tr><td><div id="mainarea">
+	      <table class="tabcont" width="100%" border="0" cellpadding="6" cellspacing="0" summary="main area">
 	<tr>
 		<td colspan="2" valign="top" class="listtopic"><?=gettext("Package Repository URL");?></td>
 	</tr>
 	<tr>
 		<td valign="top" class="vncell"><?=gettext("Package Repository URL");?></td>
 		<td class="vtable">
-			<input name="alturlenable" type="checkbox" id="alturlenable" value="yes" onClick="enable_altpkgrepourl()" <?php if(isset($curcfg['enable'])) echo "checked"; ?>> <?=gettext("Use a different URL server for packages other than");?> <?php echo $g['product_website']; ?><br>
-			<table>
-			<tr><td><?=gettext("Base URL:");?></td><td><input name="pkgrepourl" type="input" class="formfld url" id="pkgrepourl" size="64" value="<?php if($curcfg['xmlrpcbaseurl']) echo $curcfg['xmlrpcbaseurl']; else echo $g['']; ?>"></td></tr>
+			<input name="alturlenable" type="checkbox" id="alturlenable" value="yes" onclick="enable_altpkgrepourl()" <?php if(isset($curcfg['enable'])) echo "checked=\"checked\""; ?> /> <?=gettext("Use a different URL server for packages other than");?> <?php echo $g['product_website']; ?><br/>
+			<table summary="alternative URL">
+			<tr><td><?=gettext("Base URL:");?></td><td><input name="pkgrepourl" type="text" class="formfld url" id="pkgrepourl" size="64" value="<?php if($curcfg['xmlrpcbaseurl']) echo $curcfg['xmlrpcbaseurl']; else echo $g['']; ?>" /></td></tr>
 			</table>
 			<span class="vexpl">
 				<?php printf(gettext("This is where %s will check for packages when the"),$g['product_name']);?>, <a href="pkg_mgr.php"><?=gettext("System: Packages");?></a> <?=gettext("page is viewed.");?>
 				</span>
 				</td>
 	</tr>
-	<script>enable_altpkgrepourl();</script>
+	<script type="text/javascript">
+	//<![CDATA[
+	enable_altpkgrepourl();
+	//]]>
+	</script>
                 <tr>
                   <td width="22%" valign="top">&nbsp;</td>
                   <td width="78%">
-                    <input name="Submit" type="submit" class="formbtn" value="<?=gettext("Save");?>">
+                    <input name="Submit" type="submit" class="formbtn" value="<?=gettext("Save");?>" />
                   </td>
                 </tr>
               </table></div></td></tr></table>

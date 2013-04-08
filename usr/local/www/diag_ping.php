@@ -111,7 +111,7 @@ include("head.inc"); ?>
 	<td width="22%" valign="top" class="vncell"><?=gettext("Source Address"); ?></td>
 	<td width="78%" class="vtable">
 		<select name="sourceip" class="formselect">
-			<option value="">Any</option>
+			<option value="">Default</option>
 		<?php $sourceips = get_possible_traffic_source_addresses();
 			foreach ($sourceips as $sip):
 				$selected = "";

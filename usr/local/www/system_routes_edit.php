@@ -52,7 +52,10 @@ function staticroutes_sort() {
         usort($config['staticroutes']['route'], "staticroutecmp");
 }
 
-require("guiconfig.inc");
+require_once("guiconfig.inc");
+require_once("filter.inc");
+require_once("util.inc");
+require_once("gwlb.inc");
 
 if (!is_array($config['staticroutes']['route']))
 	$config['staticroutes']['route'] = array();

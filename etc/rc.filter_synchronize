@@ -253,7 +253,7 @@ function carp_sync_xml($url, $username, $password, $sections, $port = 80, $metho
 			file_notice("sync_settings", $error, "Settings Sync", "");
 		} else {
 			$parsed_response =  XML_RPC_decode($resp->value());
-			if(!is_array($parsed_response) && trim($parsed_repsonse) == "Authentication failed") {
+			if(!is_array($parsed_response) && trim($parsed_response) == "Authentication failed") {
 				$error = "An authentication failure occurred while trying to access {$url}:{$port} ($method).";
 				log_error($error);
 				file_notice("sync_settings", $error, "Settings Sync", "");

@@ -152,7 +152,7 @@ if (isset($config['ipsec']['phase1'])){?>
 				$iconfn = "interface_down";
 			}
 
-			echo "<img src ='/themes/{$g['theme']}/images/icons/icon_{$iconfn}.gif'>";
+			echo "<img src ='/themes/{$g['theme']}/images/icons/icon_{$iconfn}.gif' alt='Tunnel status' width='11' height='11' />";
 
 			?><?php echo $spane;?></div>
 		</div>

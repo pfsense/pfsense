@@ -125,7 +125,7 @@ include("head.inc");
 <body link="#0000CC" vlink="#0000CC" alink="#0000CC" onload="<?= $jsevents["body"]["onload"] ?>">
 <?php include("fbegin.inc"); ?>
 <script type="text/javascript">
-<!--
+//<![CDATA[
 
 <?php
 
@@ -151,7 +151,7 @@ function update_description() {
 	document.getElementById("pdesc").innerHTML = descs[index];
 }
 
-//-->
+//]]>
 </script>
 <?php
 	if ($input_errors)
@@ -159,7 +159,7 @@ function update_description() {
 	if ($savemsg)
 		print_info_box($savemsg);
 ?>
-<table width="100%" border="0" cellpadding="0" cellspacing="0">
+<table width="100%" border="0" cellpadding="0" cellspacing="0" summary="user manager add priveleges">
 	<tr>
 		<td>
 		<?php
@@ -176,11 +176,11 @@ function update_description() {
 		<td id="mainarea">
 			<div class="tabcont">
 				<form action="system_usermanager_addprivs.php" method="post" name="iform" id="iform">
-					<table width="100%" border="0" cellpadding="6" cellspacing="0">
+					<table width="100%" border="0" cellpadding="6" cellspacing="0" summary="main area">
 						<tr>
 							<td width="22%" valign="top" class="vncellreq"><?=gettext("System Privileges");?></td>
 							<td width="78%" class="vtable">
-								<select name="sysprivs[]" id="sysprivs" class="formselect" onchange="update_description();" multiple size="35">
+								<select name="sysprivs[]" id="sysprivs" class="formselect" onchange="update_description();" multiple="multiple" size="35">
 									<?php
 										foreach($priv_list as $pname => $pdata):
 											if (in_array($pname, $a_user['priv']))

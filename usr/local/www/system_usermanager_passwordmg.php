@@ -99,7 +99,7 @@ if ($islocal == false) {
 <div id="mainarea">
         <div class="tabcont">
                 <form action="system_usermanager_passwordmg.php" method="post" name="iform" id="iform">
-                        <table width="100%" border="0" cellpadding="6" cellspacing="0">
+                        <table width="100%" border="0" cellpadding="6" cellspacing="0" summary="main area">
                                 <tr>
                                         <td colspan="2" valign="top" class="listtopic"><?=$HTTP_SERVER_VARS['AUTH_USER']?>'s <?=gettext("Password"); ?></td>
                                 </tr>

@@ -136,7 +136,7 @@ product=`/usr/bin/grep product_name /etc/inc/globals.inc | /usr/bin/cut -d'"' -f
 hideplatform=`/usr/bin/grep hideplatform /etc/inc/globals.inc | /usr/bin/wc -l`
 varrunpath=`/usr/bin/grep varrun_path /etc/inc/globals.inc | /usr/bin/cut -d'"' -f4`
 
-if [ "$PLATFORM" = "pfSense" ]; then
+if [ "$PLATFORM" = "pfSense" ] && [ ${USE_MFS_TMPVAR} -eq 0 ]; then
 	/sbin/mdmfs -S -M -s 4m md $varrunpath
 fi
 

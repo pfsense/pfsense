@@ -61,7 +61,7 @@ include("head.inc");
 <?php include("fbegin.inc"); ?>
 	<form action="pkg_mgr_install.php" method="post">
 		<div id="mainareapkg">
-			<table width="100%" border="0" cellpadding="0" cellspacing="0">
+			<table width="100%" border="0" cellpadding="0" cellspacing="0" summary="package manager install">
 				<tr>
 					<td>
 						<?php
@@ -77,29 +77,26 @@ include("head.inc");
 					</td>
 				</tr>
 				<tr>
-					<td class="tabcont">
-						<center>
-							<table height='15' width='420' border='0' colspacing='0' cellpadding='0' cellspacing='0'>
-								<tr>
-									<td background="./themes/<?= $g['theme']; ?>/images/misc/bar_left.gif" height='15' width='5'>
-									</td>
-									<td>
-										<table id="progholder" name="progholder" height='15' width='410' border='0' colspacing='0' cellpadding='0' cellspacing='0'>
-											<td background="./themes/<?= $g['theme']; ?>/images/misc/bar_gray.gif" valign="top" align="left">
-												<img src='./themes/<?= $g['theme']; ?>/images/misc/bar_blue.gif' width='0' height='15' name='progressbar' id='progressbar'>
-											</td>
-										</table>
-									</td>
-									<td background="./themes/<?= $g['theme']; ?>/images/misc/bar_right.gif" height='15' width='5'>
-									</td>
-								</tr>
-							</table>
-							<br>
-							<!-- status box -->
-							<textarea cols="80" rows="1" name="status" id="status" wrap="hard"><?=gettext("Beginning package installation.");?></textarea>
-							<!-- command output box -->
-							<textarea cols="80" rows="35" name="output" id="output" wrap="hard"></textarea>
-						</center>
+					<td class="tabcont" align="center">
+						<table style="height:15;colspacing:0" width="420" border="0" cellpadding="0" cellspacing="0" summary="images">
+							<tr>
+								<td style="background:url('./themes/the_wall/images/misc/bar_left.gif')" height="15" width="5"></td>
+								<td>
+									<table id="progholder" style="height:15;colspacing:0" width="410" border="0" cellpadding="0" cellspacing="0" summary="progress bar">
+										<tr><td style="background:url('./themes/the_wall/images/misc/bar_gray.gif')" valign="top" align="left">
+											<img src='./themes/<?= $g['theme']; ?>/images/misc/bar_blue.gif' width="0" height="15" name="progressbar" id="progressbar" alt="progress bar" />
+										</td></tr>
+									</table>
+								</td>
+								<td style="background:url('./themes/the_wall/images/misc/bar_right.gif')" height="15" width="5">
+								</td>
+							</tr>
+						</table>
+						<br/>
+						<!-- status box -->
+						<textarea cols="80" rows="1" name="status" id="status" wrap="hard"><?=gettext("Beginning package installation.");?></textarea>
+						<!-- command output box -->
+						<textarea cols="80" rows="35" name="output" id="output" wrap="hard"></textarea>
 					</td>
 				</tr>
 			</table>
@@ -107,12 +104,11 @@ include("head.inc");
 	</form>
 <?php include("fend.inc"); ?>
 <script type="text/javascript">
+//<![CDATA[
 NiftyCheck();
 Rounded("div#mainareapkg","bl br","#FFF","#eeeeee","smooth");
+//]]>
 </script>
-</body>
-</html>
-
 
 <?php
 
@@ -227,3 +223,6 @@ if($fs_mounted_rw) {
 	conf_mount_ro();
 }
 ?>
+
+</body>
+</html>

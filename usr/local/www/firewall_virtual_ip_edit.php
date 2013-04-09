@@ -278,8 +278,8 @@ include("head.inc");
 <body link="#0000CC" vlink="#0000CC" alink="#0000CC">
 <script type="text/javascript" src="/javascript/jquery.ipv4v6ify.js"></script>
 <?php include("fbegin.inc"); ?>
-<script language="JavaScript">
-<!--
+<script type="text/javascript">
+//<![CDATA[
 function get_radio_value(obj)
 {
         for (i = 0; i < obj.length; i++) {
@@ -354,12 +354,12 @@ function typesel_change() {
 		break;
 	}
 }
-//-->
+//]]>
 </script>
 
 <?php if ($input_errors) print_input_errors($input_errors); ?>
             <form action="firewall_virtual_ip_edit.php" method="post" name="iform" id="iform">
-              <table width="100%" border="0" cellpadding="6" cellspacing="0">
+              <table width="100%" border="0" cellpadding="6" cellspacing="0" summary="virtual IP edit">
 				<tr>
 					<td colspan="2" valign="top" class="listtopic"><?=gettext("Edit Virtual IP");?></td>
 				</tr>	
@@ -367,13 +367,13 @@ function typesel_change() {
 		  		  <td width="22%" valign="top" class="vncellreq"><?=gettext("Type");?></td>
                   <td width="78%" class="vtable">
 					<input name="mode" type="radio" onclick="enable_change()" value="ipalias"
-					<?php if ($pconfig['mode'] == "ipalias") echo "checked";?>> <?=gettext("IP Alias");?>
+					<?php if ($pconfig['mode'] == "ipalias") echo "checked=\"checked\"";?> /> <?=gettext("IP Alias");?>
 					<input name="mode" type="radio" onclick="enable_change()" value="carp"
-					<?php if ($pconfig['mode'] == "carp") echo "checked";?>> <?=gettext("CARP"); ?>
+					<?php if ($pconfig['mode'] == "carp") echo "checked=\"checked\"";?> /> <?=gettext("CARP"); ?>
                     <input name="mode" type="radio" onclick="enable_change()" value="proxyarp"
-					<?php if ($pconfig['mode'] == "proxyarp") echo "checked";?>> <?=gettext("Proxy ARP"); ?>
+					<?php if ($pconfig['mode'] == "proxyarp") echo "checked=\"checked\"";?> /> <?=gettext("Proxy ARP"); ?>
 					<input name="mode" type="radio" onclick="enable_change()" value="other"
-					<?php if ($pconfig['mode'] == "other") echo "checked";?>> <?=gettext("Other");?>
+					<?php if ($pconfig['mode'] == "other") echo "checked=\"checked\"";?> /> <?=gettext("Other");?>
 				  </td>
 				</tr>
 				<tr>
@@ -386,7 +386,7 @@ function typesel_change() {
                                           foreach ($carplist as $cif => $carpip)
                                           	$interfaces[$cif] = $carpip." (".get_vip_descr($carpip).")";
 					  foreach ($interfaces as $iface => $ifacename): ?>
-						<option value="<?=$iface;?>" <?php if ($iface == $pconfig['interface']) echo "selected"; ?>>
+						<option value="<?=$iface;?>" <?php if ($iface == $pconfig['interface']) echo "selected=\"selected\""; ?>>
 						<?=htmlspecialchars($ifacename);?>
 						</option>
 					  <?php endforeach; ?>
@@ -396,24 +396,24 @@ function typesel_change() {
                 <tr>
                   <td valign="top" class="vncellreq"><?=gettext("IP Address(es)");?></td>
                   <td class="vtable">
-                    <table border="0" cellspacing="0" cellpadding="0">
+                    <table border="0" cellspacing="0" cellpadding="0" summary="ip addresses">
                       <tr>
                         <td><?=gettext("Type:");?>&nbsp;&nbsp;</td>
-                        <td><select name="type" class="formselect" onChange="typesel_change()">
-                            <option value="single" <?php if ((!$pconfig['range'] && $pconfig['subnet_bits'] == 32) || (!isset($pconfig['subnet']))) echo "selected"; ?>>
+                        <td><select name="type" class="formselect" onchange="typesel_change()">
+                            <option value="single" <?php if ((!$pconfig['range'] && $pconfig['subnet_bits'] == 32) || (!isset($pconfig['subnet']))) echo "selected=\"selected\""; ?>>
                             <?=gettext("Single address");?></option>
-                            <option value="network" <?php if (!$pconfig['range'] && $pconfig['subnet_bits'] != 32 && isset($pconfig['subnet'])) echo "selected"; ?>>
+                            <option value="network" <?php if (!$pconfig['range'] && $pconfig['subnet_bits'] != 32 && isset($pconfig['subnet'])) echo "selected=\"selected\""; ?>>
                             <?=gettext("Network");?></option>
-                            <!-- XXX: Billm, don't let anyone choose this until NAT configuration screens are ready for it <option value="range" <?php if ($pconfig['range']) echo "selected"; ?>>
+                            <!-- XXX: Billm, don't let anyone choose this until NAT configuration screens are ready for it <option value="range" <?php if ($pconfig['range']) echo "selected=\"selected\""; ?>>
                             Range</option> -->
                           </select></td>
                       </tr>
                       <tr>
                         <td><?=gettext("Address:");?>&nbsp;&nbsp;</td>
-                        <td><input name="subnet" type="text" class="formfld unknown ipv4v6" id="subnet" size="28" value="<?=htmlspecialchars($pconfig['subnet']);?>">
+                        <td><input name="subnet" type="text" class="formfld unknown ipv4v6" id="subnet" size="28" value="<?=htmlspecialchars($pconfig['subnet']);?>" />
                           /<select name="subnet_bits" class="formselect ipv4v6" id="select">
                             <?php for ($i = 128; $i >= 1; $i--): ?>
-                            <option value="<?=$i;?>" <?php if ($i == $pconfig['subnet_bits']) echo "selected"; ?>>
+                            <option value="<?=$i;?>" <?php if ($i == $pconfig['subnet_bits']) echo "selected=\"selected\""; ?>>
                             <?=$i;?>
                       </option>
                             <?php endfor; ?>
@@ -422,7 +422,7 @@ function typesel_change() {
                       </tr>
                       <tr id="noexpandrow">
                         <td><?=gettext("Expansion:");?>&nbsp;&nbsp;</td>
-                        <td><input name="noexpand" type="checkbox" class="formfld unknown" id="noexpand" <?php echo (isset($pconfig['noexpand'])) ? "checked" : "" ; ?>>
+                        <td><input name="noexpand" type="checkbox" class="formfld unknown" id="noexpand" <?php echo (isset($pconfig['noexpand'])) ? "checked=\"checked\"" : "" ; ?> />
                         	Disable expansion of this entry into IPs on NAT lists (e.g. 192.168.1.0/24 expands to 256 entries.)
                         	</td>
                       </tr>
@@ -430,9 +430,9 @@ function typesel_change() {
 		      /*
                         <tr>
                          <td>Range:&nbsp;&nbsp;</td>
-                          <td><input name="range_from" type="text" class="formfld unknown" id="range_from" size="28" value="<?=htmlspecialchars($pconfig['range']['from']);?>">
+                          <td><input name="range_from" type="text" class="formfld unknown" id="range_from" size="28" value="<?=htmlspecialchars($pconfig['range']['from']);?>" />
 -
-                          <input name="range_to" type="text" class="formfld unknown" id="range_to" size="28" value="<?=htmlspecialchars($pconfig['range']['to']);?>">
+                          <input name="range_to" type="text" class="formfld unknown" id="range_to" size="28" value="<?=htmlspecialchars($pconfig['range']['to']);?>" />
                           </td>
 			 </tr>
   		       */
@@ -442,20 +442,20 @@ function typesel_change() {
                 </tr>
 				<tr valign="top">
 				  <td width="22%" class="vncellreq"><?=gettext("Virtual IP Password");?></td>
-				  <td class="vtable"><input type='password'  name='password' value="<?=htmlspecialchars($pconfig['password']);?>">
-					<br><?=gettext("Enter the VHID group password.");?>
+				  <td class="vtable"><input type='password'  name='password' value="<?=htmlspecialchars($pconfig['password']);?>" />
+					<br/><?=gettext("Enter the VHID group password.");?>
 				  </td>
 				</tr>
 				<tr valign="top">
 				  <td width="22%" class="vncellreq"><?=gettext("VHID Group");?></td>
 				  <td class="vtable"><select id='vhid' name='vhid'>
                             <?php for ($i = 1; $i <= 255; $i++): ?>
-                            <option value="<?=$i;?>" <?php if ($i == $pconfig['vhid']) echo "selected"; ?>>
+                            <option value="<?=$i;?>" <?php if ($i == $pconfig['vhid']) echo "selected=\"selected\""; ?>>
                             <?=$i;?>
                       </option>
                             <?php endfor; ?>
                       </select>
-					<br><?=gettext("Enter the VHID group that the machines will share");?>
+					<br/><?=gettext("Enter the VHID group that the machines will share");?>
 				  </td>
 				</tr>
 				<tr valign="top">
@@ -463,14 +463,14 @@ function typesel_change() {
 				  <td class="vtable">
 					 Base: <select id='advbase' name='advbase'>
                             <?php for ($i = 1; $i <= 254; $i++): ?>
-                            	<option value="<?=$i;?>" <?php if ($i == $pconfig['advbase']) echo "selected"; ?>>
+                            	<option value="<?=$i;?>" <?php if ($i == $pconfig['advbase']) echo "selected=\"selected\""; ?>>
                             <?=$i;?>
                       			</option>
                             <?php endfor; ?>
                       		</select>
 					Skew: <select id='advskew' name='advskew'>
                             <?php for ($i = 0; $i <= 254; $i++): ?>
-                            	<option value="<?=$i;?>" <?php if ($i == $pconfig['advskew']) echo "selected"; ?>>
+                            	<option value="<?=$i;?>" <?php if ($i == $pconfig['advskew']) echo "selected=\"selected\""; ?>>
                             <?=$i;?>
                       			</option>
                             <?php endfor; ?>
@@ -482,38 +482,36 @@ function typesel_change() {
                 <tr>
                   <td width="22%" valign="top" class="vncell"><?=gettext("Description");?></td>
                   <td width="78%" class="vtable">
-                    <input name="descr" type="text" class="formfld unknown" id="descr" size="40" value="<?=htmlspecialchars($pconfig['descr']);?>">
-                    <br> <span class="vexpl"><?=gettext("You may enter a description here for your reference (not parsed).");?></span></td>
+                    <input name="descr" type="text" class="formfld unknown" id="descr" size="40" value="<?=htmlspecialchars($pconfig['descr']);?>" />
+                    <br/> <span class="vexpl"><?=gettext("You may enter a description here for your reference (not parsed).");?></span></td>
                 </tr>
                 <tr>
                   <td width="22%" valign="top">&nbsp;</td>
                   <td width="78%">
-                    <input name="Submit" type="submit" class="formbtn" value="<?=gettext("Save"); ?>"> <input type="button" class="formbtn" value="<?=gettext("Cancel"); ?>" onclick="history.back()">
+                    <input name="Submit" type="submit" class="formbtn" value="<?=gettext("Save"); ?>" /> <input type="button" class="formbtn" value="<?=gettext("Cancel"); ?>" onclick="history.back()" />
                     <?php if (isset($id) && $a_vip[$id]): ?>
-                    <input name="id" type="hidden" value="<?=htmlspecialchars($id);?>">
+                    <input name="id" type="hidden" value="<?=htmlspecialchars($id);?>" />
                     <?php endif; ?>
                   </td>
                 </tr>
 				<tr>
 				  <td colspan="4">
-				      <p>
 				      	<span class="vexpl">
 				      		<span class="red">
-							<b><?=gettext("Note:");?><br></b>
+							<b><?=gettext("Note:");?><br/></b>
 				      		</span>&nbsp;&nbsp;
 				      		<?=gettext("Proxy ARP and Other type Virtual IPs cannot be bound to by anything running on the firewall, such as IPsec, OpenVPN, etc.  Use a CARP or IP Alias type address for these cases.");?>
-				      		<p>&nbsp;&nbsp;&nbsp;<?=gettext("For more information on CARP and the above values, visit the OpenBSD ");?><a href='http://www.openbsd.org/faq/pf/carp.html'> <?=gettext("CARP FAQ"); ?></A>.
+				      		<br/><br/>&nbsp;&nbsp;&nbsp;<?=gettext("For more information on CARP and the above values, visit the OpenBSD ");?><a href='http://www.openbsd.org/faq/pf/carp.html'> <?=gettext("CARP FAQ"); ?></a>.
 						</span>
-					  </p>
 				  </td>
 				</tr>
 
               </table>
 </form>
-<script language="JavaScript">
-<!--
+<script type="text/javascript">
+//<![CDATA[
 enable_change();
-//-->
+//]]>
 </script>
 <?php include("fend.inc"); ?>
 </body>

@@ -386,7 +386,7 @@ include("head.inc");
 $jscriptstr = <<<EOD
 
 <script type="text/javascript">
-
+//<![CDATA[
 var objAlias = new Array(4999);
 function typesel_change() {
 	switch (document.iform.type.selectedIndex) {
@@ -540,6 +540,7 @@ function update_box_type() {
 		document.getElementById ("addrowbutton").style.display = 'none';
 	}
 }
+//]]>
 </script>
 
 EOD;
@@ -552,19 +553,16 @@ EOD;
 	echo $jscriptstr;
 ?>
 
-<script type="text/javascript" src="/javascript/jquery.ipv4v6ify.js">
-</script>
-<script type="text/javascript" src="/javascript/row_helper.js">
-</script>
-<script type="text/javascript" src="/javascript/autosuggest.js">
-</script>
-<script type="text/javascript" src="/javascript/suggestions.js">
-</script>
+<script type="text/javascript" src="/javascript/jquery.ipv4v6ify.js"></script>
+<script type="text/javascript" src="/javascript/row_helper.js"></script>
+<script type="text/javascript" src="/javascript/autosuggest.js"></script>
+<script type="text/javascript" src="/javascript/suggestions.js"></script>
 
 <input type='hidden' name='address_type' value='textbox' />
 <input type='hidden' name='address_subnet_type' value='select' />
 
 <script type="text/javascript">
+//<![CDATA[
 	rowname[0] = "address";
 	rowtype[0] = "textbox,ipv4v6";
 	rowsize[0] = "30";
@@ -576,6 +574,7 @@ EOD;
 	rowname[2] = "detail";
 	rowtype[2] = "textbox";
 	rowsize[2] = "50";
+//]]>
 </script>
 
 <?php pfSense_handle_custom_code("/usr/local/pkg/firewall_aliases_edit/pre_input_errors"); ?>
@@ -594,7 +593,7 @@ if (empty($tab)) {
 }
 ?>
 <input name="tab" type="hidden" id="tab" value="<?=htmlspecialchars($tab);?>" />
-<table class="tabcont" width="100%" border="0" cellpadding="6" cellspacing="0">
+<table class="tabcont" width="100%" border="0" cellpadding="6" cellspacing="0" summary="firewall aliases edit">
 	<tr>
 		<td colspan="2" valign="top" class="listtopic"><?=gettext("Alias Edit"); ?></td>
 	</tr>
@@ -627,19 +626,19 @@ if (empty($tab)) {
 		<td valign="top" class="vncellreq"><?=gettext("Type"); ?></td>
 		<td class="vtable">
 			<select name="type" class="formselect" id="type" onchange="update_box_type(); typesel_change();">
-				<option value="host" <?php if ($pconfig['type'] == "host") echo "selected"; ?>><?=gettext("Host(s)"); ?></option>
-				<option value="network" <?php if ($pconfig['type'] == "network") echo "selected"; ?>><?=gettext("Network(s)"); ?></option>
-				<option value="port" <?php if ($pconfig['type'] == "port") echo "selected"; ?>><?=gettext("Port(s)"); ?></option>
-				<!--<option value="openvpn" <?php if ($pconfig['type'] == "openvpn") echo "selected"; ?>><?=gettext("OpenVPN Users"); ?></option> -->
-				<option value="url" <?php if ($pconfig['type'] == "url") echo "selected"; ?>><?=gettext("URL");?></option>
-				<option value="urltable" <?php if ($pconfig['type'] == "urltable") echo "selected"; ?>><?=gettext("URL Table"); ?></option>
+				<option value="host" <?php if ($pconfig['type'] == "host") echo "selected=\"selected\""; ?>><?=gettext("Host(s)"); ?></option>
+				<option value="network" <?php if ($pconfig['type'] == "network") echo "selected=\"selected\""; ?>><?=gettext("Network(s)"); ?></option>
+				<option value="port" <?php if ($pconfig['type'] == "port") echo "selected=\"selected\""; ?>><?=gettext("Port(s)"); ?></option>
+				<!--<option value="openvpn" <?php if ($pconfig['type'] == "openvpn") echo "selected=\"selected\""; ?>><?=gettext("OpenVPN Users"); ?></option> -->
+				<option value="url" <?php if ($pconfig['type'] == "url") echo "selected=\"selected\""; ?>><?=gettext("URL");?></option>
+				<option value="urltable" <?php if ($pconfig['type'] == "urltable") echo "selected=\"selected\""; ?>><?=gettext("URL Table"); ?></option>
 			</select>
 		</td>
 	</tr>
 	<tr>
 		<td width="22%" valign="top" class="vncellreq"><div id="addressnetworkport"><?=gettext("Host(s)"); ?></div></td>
 		<td width="78%" class="vtable">
-			<table id="maintable">
+			<table id="maintable" summary="maintable">
 				<tbody>
 					<tr>
 						<td colspan="4">
@@ -680,7 +679,7 @@ if (empty($tab)) {
 							<select name="address_subnet<?php echo $tracker; ?>" class="formselect ipv4v6" id="address_subnet<?php echo $tracker; ?>">
 								<option></option>
 								<?php for ($i = 128; $i >= 1; $i--): ?>
-									<option value="<?=$i;?>" <?php if (($i == $address_subnet) || ($i == $pconfig['updatefreq'])) echo "selected"; ?>><?=$i;?></option>
+									<option value="<?=$i;?>" <?php if (($i == $address_subnet) || ($i == $pconfig['updatefreq'])) echo "selected=\"selected\""; ?>><?=$i;?></option>
 								<?php endfor; ?>
 							</select>
 						</td>
@@ -698,9 +697,6 @@ if (empty($tab)) {
 					} // end if
 					?>
 				</tbody>
-				<tfoot>
-
-				</tfoot>
 			</table>
 			<div id="addrowbutton">
 				<a onclick="javascript:addRowTo('maintable', 'formfldalias'); typesel_change(); add_alias_control(this); return false;" href="#">

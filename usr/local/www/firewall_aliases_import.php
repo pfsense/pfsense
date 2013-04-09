@@ -126,7 +126,7 @@ include("head.inc");
 <div id="niftyOutter">
 <form action="firewall_aliases_import.php" method="post" name="iform" id="iform">
 <div id="inputerrors"></div>
-<table width="100%" border="0" cellpadding="6" cellspacing="0">
+<table width="100%" border="0" cellpadding="6" cellspacing="0" summary="firewall alias import">
 	<tr>
 	  <td colspan="2" valign="top" class="listtopic"><?=gettext("Alias Import"); ?></td>
 	</tr>
@@ -144,7 +144,7 @@ include("head.inc");
 	</tr>
 	<tr>
 	  <td valign="top" class="vncellreq"><?=gettext("Aliases to import"); ?></td>
-	  <td class="vtable"><textarea name="aliasimport" ROWS="15" COLS="40"><?php echo $_POST['aliasimport']; ?></textarea>
+	  <td class="vtable"><textarea name="aliasimport" rows="15" cols="40"><?php echo $_POST['aliasimport']; ?></textarea>
 	    <br /> <span class="vexpl"><?=gettext("Paste in the aliases to import separated by a carriage return.  Common examples are lists of IPs, networks, blacklists, etc."); ?> 
 	    <br /> <?=gettext("The list may contain only IP addresses."); ?> </span></td>
 	</tr>
@@ -153,7 +153,7 @@ include("head.inc");
 	  <td width="78%">
       <input id="submit" name="Submit" type="submit" class="formbtn" value="<?=gettext("Save"); ?>" />
       <input class="formbtn" type="button" value="<?=gettext("Cancel"); ?>" onclick="history.back()" />
-	</tr>
+	</td></tr>
 </table>
 
 
@@ -163,10 +163,11 @@ include("head.inc");
 <?php include("fend.inc"); ?>
 	    
 <script type="text/javascript">
+//<![CDATA[
 	NiftyCheck();
 	Rounded("div#nifty","top","#FFF","#EEEEEE","smooth");
+//]]>
 </script>
-
 
 </body>
 </html>

@@ -1291,12 +1291,20 @@ function services_dhcrelay_configure() {
         		array_shift($route_str);
         		$route_arr = array();
         		foreach($route_str as $routeline) {
-                		$items = preg_split("/[ ]+/i", $routeline);
-				if (ip_in_subnet($srvip, $items[0])) {
+				$items = preg_split("/[ ]+/i", $routeline);
+				if (is_subnetv4($items[0])) {
+					$subnet = $items[0];
+				} elseif (is_ipaddrv4($items[0])) {
+					$subnet = "{$items[0]}/32";
+				} else {
+					// Not a subnet or IP address, skip to the next line.
+					continue;
+				}
+				if (ip_in_subnet($srvip, $subnet)) {
 					$destif = trim($items[6]);
 					break;
 				}
-        		}
+			}
 		}
 
 		if (!isset($destif)) {

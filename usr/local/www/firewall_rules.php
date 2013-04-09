@@ -301,23 +301,22 @@ include("head.inc");
 <?php include("fbegin.inc"); ?>
 <form action="firewall_rules.php" method="post">
 
-<script type="text/javascript" language="javascript" src="/javascript/row_toggle.js">
-</script>
+<script type="text/javascript" language="javascript" src="/javascript/row_toggle.js"></script>
 <?php if ($savemsg) print_info_box($savemsg); ?>
 <?php if (is_subsystem_dirty('filter')): ?><p>
 <?php
 if($_REQUEST['undodrag']) {
 	foreach($_REQUEST['dragtable'] as $dt)
 		$dragtable .= "&dragtable[]={$dt}";
-	print_info_box_np_undo(gettext("The firewall rule configuration has been changed.<br>You must apply the changes in order for them to take effect."), "apply" , gettext("Apply changes") , "firewall_rules.php?if={$_REQUEST['if']}&dragdroporder=true&{$dragtable}");
+	print_info_box_np_undo(gettext("The firewall rule configuration has been changed.<br/>You must apply the changes in order for them to take effect."), "apply" , gettext("Apply changes") , "firewall_rules.php?if={$_REQUEST['if']}&dragdroporder=true&{$dragtable}");
 } else {
-	print_info_box_np(gettext("The firewall rule configuration has been changed.<br>You must apply the changes in order for them to take effect."));
+	print_info_box_np(gettext("The firewall rule configuration has been changed.<br/>You must apply the changes in order for them to take effect."));
 }
 ?>
-<br>
+<br/>
 <?php endif; ?>
 <div id="loading" style="visibity:hidden">
-	<img src="/themes/<?=$g['theme']?>/images/misc/loader.gif"> Loading, please wait...
+	<img src="/themes/<?=$g['theme']?>/images/misc/loader.gif" alt="loader" /> Loading, please wait...
 	<p/>&nbsp;
 </div>
 <?php
@@ -384,11 +383,11 @@ if($_REQUEST['undodrag']) {
 					?>
 					<td>
 					<?php if ($nrules == 0): ?>
-						<img src="./themes/<?= $g['theme']; ?>/images/icons/icon_x_d.gif" width="17" height="17" title="<?gettext("delete selected rules"); ?>" border="0"><?php else: ?>
-						<input name="del" type="image" src="./themes/<?= $g['theme']; ?>/images/icons/icon_x.gif" width="17" height="17" title="<?=gettext("delete selected rules");?>" onclick="return confirm('<?=gettext('Do you really want to delete the selected rules?');?>')">
+						<img src="./themes/<?= $g['theme']; ?>/images/icons/icon_x_d.gif" width="17" height="17" title="<?gettext("delete selected rules"); ?>" border="0" alt="delete" /><?php else: ?>
+						<input name="del" type="image" src="./themes/<?= $g['theme']; ?>/images/icons/icon_x.gif" style="width:17;height:17" title="<?=gettext("delete selected rules");?>" onclick="return confirm('<?=gettext('Do you really want to delete the selected rules?');?>')" />
 					<?php endif; ?>
 					</td>
-					<td align="center" valign="middle"><a href="firewall_rules_edit.php?if=<?=htmlspecialchars($if);?>&after=-1"><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_plus.gif" title="<?=gettext("add new rule");?>" width="17" height="17" border="0"></a></td>
+					<td align="center" valign="middle"><a href="firewall_rules_edit.php?if=<?=htmlspecialchars($if);?>&amp;after=-1"><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_plus.gif" title="<?=gettext("add new rule");?>" width="17" height="17" border="0" alt="add" /></a></td>
 					</tr>
 				</table>
 			</td>
@@ -402,7 +401,7 @@ if($_REQUEST['undodrag']) {
 			?>
 			<tr valign="top" id="antilockout">
 			<td class="list">&nbsp;</td>
-			<td class="listt" align="center"><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_pass.gif" width="11" height="11" border="0"></td>
+			<td class="listt" align="center"><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_pass.gif" width="11" height="11" border="0" alt="pass" /></td>
 			<td class="listlr" style="background-color: #E0E0E0">&nbsp;</td>
 			<?php
 				pfSense_handle_custom_code("/usr/local/pkg/firewall_rules/pre_id_tr_antilockout");
@@ -416,15 +415,15 @@ if($_REQUEST['undodrag']) {
 			<td class="listr" style="background-color: #E0E0E0">*</td>
 			<td class="listr" style="background-color: #E0E0E0">&nbsp;</td>
 			<td class="listbg"><?=gettext("Anti-Lockout Rule");?></td>
-			<td valign="middle" nowrap class="list">
+			<td valign="middle" class="list nowrap">
 			<table border="0" cellspacing="0" cellpadding="1">
 				<tr>
-					<td><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_left_d.gif" width="17" height="17" title="<?=gettext("move selected rules before this rule");?>"></td>
-					<td><a href="system_advanced_admin.php"><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_e.gif" title="<?=gettext("edit rule");?>" width="17" height="17" border="0"></a></td>
+					<td><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_left_d.gif" width="17" height="17" title="<?=gettext("move selected rules before this rule");?>" alt="move" /></td>
+					<td><a href="system_advanced_admin.php"><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_e.gif" title="<?=gettext("edit rule");?>" width="17" height="17" border="0" alt="edit" /></a></td>
 				</tr>
 				<tr>
 					<td align="center" valign="middle"></td>
-					<td><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_plus_d.gif" title="<?=gettext("add a new rule based on this one");?>" width="17" height="17" border="0"></td>
+					<td><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_plus_d.gif" title="<?=gettext("add a new rule based on this one");?>" width="17" height="17" border="0" alt="add" /></td>
 				</tr>
 				</table>
 			</td>
@@ -434,7 +433,7 @@ if($_REQUEST['undodrag']) {
 <?php if (isset($config['interfaces'][$if]['blockpriv'])): ?>
 			<tr valign="top" id="frrfc1918">
 			<td class="list">&nbsp;</td>
-			<td class="listt" align="center"><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_block.gif" width="11" height="11" border="0"></td>
+			<td class="listt" align="center"><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_block.gif" width="11" height="11" border="0" alt=""block" /></td>
 			<td class="listlr" style="background-color: #E0E0E0">&nbsp;</td>
 			<td class="listr" style="background-color: #E0E0E0">*</td>
 			<td class="listr" style="background-color: #E0E0E0"><?=gettext("RFC 1918 networks");?></td>
@@ -445,15 +444,15 @@ if($_REQUEST['undodrag']) {
 			<td class="listr" style="background-color: #E0E0E0">*</td>
 			<td class="listr" style="background-color: #E0E0E0">&nbsp;</td>
 			<td class="listbg"><?=gettext("Block private networks");?></td>
-			<td valign="middle" nowrap class="list">
+			<td valign="middle" class="list nowrap">
 				<table border="0" cellspacing="0" cellpadding="1">
 					<tr>
-					<td><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_left_d.gif" width="17" height="17" title="<?=gettext("move selected rules before this rule");?>"></td>
-					<td><a href="interfaces.php?if=<?=htmlspecialchars($if)?>#rfc1918"><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_e.gif" title="<?=gettext("edit rule");?>" width="17" height="17" border="0"></a></td>
+					<td><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_left_d.gif" width="17" height="17" title="<?=gettext("move selected rules before this rule");?>" alt="edit" /></td>
+					<td><a href="interfaces.php?if=<?=htmlspecialchars($if)?>#rfc1918"><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_e.gif" title="<?=gettext("edit rule");?>" width="17" height="17" border="0" alt="edit" /></a></td>
 					</tr>
 					<tr>
 					<td align="center" valign="middle"></td>
-					<td><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_plus_d.gif" title="<?=gettext("add a new rule based on this one");?>" width="17" height="17" border="0"></td>
+					<td><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_plus_d.gif" title="<?=gettext("add a new rule based on this one");?>" width="17" height="17" border="0" alt="add" /></td>
 					</tr>
 				</table>
 			</td>
@@ -462,7 +461,7 @@ if($_REQUEST['undodrag']) {
 <?php if (isset($config['interfaces'][$if]['blockbogons'])): ?>
 			<tr valign="top" id="frrfc1918">
 			<td class="list">&nbsp;</td>
-			<td class="listt" align="center"><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_block.gif" width="11" height="11" border="0"></td>
+			<td class="listt" align="center"><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_block.gif" width="11" height="11" border="0" alt="block" /></td>
 			<td class="listlr" style="background-color: #E0E0E0">&nbsp;</td>
 			<td class="listr" style="background-color: #E0E0E0">*</td>
 			<td class="listr" style="background-color: #E0E0E0"><?=gettext("Reserved/not assigned by IANA");?></td>
@@ -473,21 +472,21 @@ if($_REQUEST['undodrag']) {
 			<td class="listr" style="background-color: #E0E0E0">*</td>
 			<td class="listr" style="background-color: #E0E0E0">*</td>
 			<td class="listbg"><?=gettext("Block bogon networks");?></td>
-			<td valign="middle" nowrap class="list">
+			<td valign="middle" class="list nowrap">
 				<table border="0" cellspacing="0" cellpadding="1">
 					<tr>
-					<td><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_left_d.gif" width="17" height="17" title="<?=gettext("move selected rules before this rule");?>"></td>
-					<td><a href="interfaces.php?if=<?=htmlspecialchars($if)?>#rfc1918"><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_e.gif" title="<?=gettext("edit rule");?>" width="17" height="17" border="0"></a></td>
+					<td><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_left_d.gif" width="17" height="17" title="<?=gettext("move selected rules before this rule");?>" alt="move" /></td>
+					<td><a href="interfaces.php?if=<?=htmlspecialchars($if)?>#rfc1918"><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_e.gif" title="<?=gettext("edit rule");?>" width="17" height="17" border="0" alt=" edit" /></a></td>
 					</tr>
 					<tr>
 					<td align="center" valign="middle"></td>
-					<td><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_plus_d.gif" title="<?=gettext("add a new rule based on this one");?>" width="17" height="17" border="0"></td>
+					<td><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_plus_d.gif" title="<?=gettext("add a new rule based on this one");?>" width="17" height="17" border="0" alt="add" /></td>
 					</tr>
 				</table>
 			</td>
 			</tr>
 <?php endif; ?>
-			<tbody id="dragtable" width="100%">
+			<tbody id="dragtable">
 <?php $nrules = 0; for ($i = 0; isset($a_filter[$i]); $i++):
 	pfSense_handle_custom_code("/usr/local/pkg/firewall_rules/row_start");
 	$filterent = $a_filter[$i];
@@ -497,13 +496,13 @@ if($_REQUEST['undodrag']) {
 		continue;
 	$isadvset = firewall_check_for_advanced_options($filterent);
 	if($isadvset)
-		$advanced_set = "<img src=\"./themes/{$g['theme']}/images/icons/icon_advanced.gif\" title=\"" . gettext("advanced settings set") . ": {$isadvset}\" border=\"0\">";
+		$advanced_set = "<img src=\"./themes/{$g['theme']}/images/icons/icon_advanced.gif\" title=\"" . gettext("advanced settings set") . ": {$isadvset}\" border=\"0\" alt=\"avanced\" />";
 	else
 		$advanced_set = "";
 ?>
 			<tr valign="top" id="fr<?=$nrules;?>">
 			<td class="listt">
-				<input type="checkbox" id="frc<?=$nrules;?>" name="rule[]" value="<?=$i;?>" onClick="fr_bgcolor('<?=$nrules;?>')" style="margin: 0; padding: 0; width: 15px; height: 15px;">
+				<input type="checkbox" id="frc<?=$nrules;?>" name="rule[]" value="<?=$i;?>" onclick="fr_bgcolor('<?=$nrules;?>')" style="margin: 0; padding: 0; width: 15px; height: 15px;" />
 				<?php echo $advanced_set; ?>
 			</td>
 			<td class="listt" align="center">
@@ -522,14 +521,14 @@ if($_REQUEST['undodrag']) {
 					$textss = $textse = "";
 				}
 			?>
-				<a href="?if=<?=htmlspecialchars($if);?>&act=toggle&id=<?=$i;?>"><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_<?=$iconfn;?>.gif" width="11" height="11" border="0" title="<?=gettext("click to toggle enabled/disabled status");?>"></a>
+				<a href="?if=<?=htmlspecialchars($if);?>&amp;act=toggle&amp;id=<?=$i;?>"><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_<?=$iconfn;?>.gif" width="11" height="11" border="0" title="<?=gettext("click to toggle enabled/disabled status");?>" alt="icon" /></a>
 			<?php
 				if (isset($filterent['log'])):
 					$iconfnlog = "log_s";
 				if (isset($filterent['disabled']))
 					$iconfnlog .= "_d";
 			?>
-			<br><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_<?=$iconfnlog;?>.gif" width="11" height="15" border="0">
+			<br/><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_<?=$iconfnlog;?>.gif" width="11" height="15" border="0" alt="icon" />
 <?php endif; ?>
 			</td>
 			<?php
@@ -653,7 +652,7 @@ if($_REQUEST['undodrag']) {
 									}
 									$timeFriendly = $starttime . " - " . $stoptime;
 									$description = $timerange['rangedescr'];
-									$sched_content .= $dayFriendly . "; " . $timeFriendly . "<br>";
+									$sched_content .= $dayFriendly . "; " . $timeFriendly . "<br/>";
 								}
 							}
 							$sched_caption_escaped = str_replace("'", "\'", $schedule['descr']);
@@ -685,13 +684,13 @@ if($_REQUEST['undodrag']) {
 					}
 				}
 			?>
-			<td class="listlr" onClick="fr_toggle(<?=$nrules;?>)" id="frd<?=$nrules;?>" ondblclick="document.location='firewall_rules_edit.php?id=<?=$i;?>';">
+			<td class="listlr" onclick="fr_toggle(<?=$nrules;?>)" id="frd<?=$nrules;?>" ondblclick="document.location='firewall_rules_edit.php?id=<?=$i;?>';">
 				<?=$textss;?><?php if (isset($filterent['id'])) echo $filterent['id']."&nbsp;"; else echo "&nbsp;"; ?><?=$textse;?>
 			</td>
 			<?php
 				pfSense_handle_custom_code("/usr/local/pkg/firewall_rules/pre_id_tr");
 			?>
-			<td class="listr" onClick="fr_toggle(<?=$nrules;?>)" id="frd<?=$nrules;?>" ondblclick="document.location='firewall_rules_edit.php?id=<?=$i;?>';">
+			<td class="listr" onclick="fr_toggle(<?=$nrules;?>)" id="frd<?=$nrules;?>" ondblclick="document.location='firewall_rules_edit.php?id=<?=$i;?>';">
 			<?=$textss;?>
 			<?php
 				if (isset($filterent['ipprotocol'])) {
@@ -720,62 +719,63 @@ if($_REQUEST['undodrag']) {
 			?>
 			<?=$textse;?>
 			</td>
-			<td class="listr" onClick="fr_toggle(<?=$nrules;?>)" id="frd<?=$nrules;?>" ondblclick="document.location='firewall_rules_edit.php?id=<?=$i;?>';">
+			<td class="listr" onclick="fr_toggle(<?=$nrules;?>)" id="frd<?=$nrules;?>" ondblclick="document.location='firewall_rules_edit.php?id=<?=$i;?>';">
 				<?=$textss;?><?php echo $alias_src_span_begin;?><?php echo htmlspecialchars(pprint_address($filterent['source']));?><?php echo $alias_src_span_end;?><?=$textse;?>
 			</td>
-			<td class="listr" onClick="fr_toggle(<?=$nrules;?>)" id="frd<?=$nrules;?>" ondblclick="document.location='firewall_rules_edit.php?id=<?=$i;?>';">
+			<td class="listr" onclick="fr_toggle(<?=$nrules;?>)" id="frd<?=$nrules;?>" ondblclick="document.location='firewall_rules_edit.php?id=<?=$i;?>';">
 				<?=$textss;?><?php echo $alias_src_port_span_begin;?><?php echo htmlspecialchars(pprint_port($filterent['source']['port'])); ?><?php echo $alias_src_port_span_end;?><?=$textse;?>
 			</td>
-			<td class="listr" onClick="fr_toggle(<?=$nrules;?>)" id="frd<?=$nrules;?>" ondblclick="document.location='firewall_rules_edit.php?id=<?=$i;?>';">
+			<td class="listr" onclick="fr_toggle(<?=$nrules;?>)" id="frd<?=$nrules;?>" ondblclick="document.location='firewall_rules_edit.php?id=<?=$i;?>';">
 				<?=$textss;?><?php echo $alias_dst_span_begin;?><?php echo htmlspecialchars(pprint_address($filterent['destination'])); ?><?php echo $alias_dst_span_end;?><?=$textse;?>
 			</td>
-			<td class="listr" onClick="fr_toggle(<?=$nrules;?>)" id="frd<?=$nrules;?>" ondblclick="document.location='firewall_rules_edit.php?id=<?=$i;?>';">
+			<td class="listr" onclick="fr_toggle(<?=$nrules;?>)" id="frd<?=$nrules;?>" ondblclick="document.location='firewall_rules_edit.php?id=<?=$i;?>';">
 				<?=$textss;?><?php echo $alias_dst_port_span_begin;?><?php echo htmlspecialchars(pprint_port($filterent['destination']['port'])); ?><?php echo $alias_dst_port_span_end;?><?=$textse;?>
 			</td>
-			<td class="listr" onClick="fr_toggle(<?=$nrules;?>)" id="frd<?=$nrules;?>" ondblclick="document.location='firewall_rules_edit.php?id=<?=$i;?>';">
+			<td class="listr" onclick="fr_toggle(<?=$nrules;?>)" id="frd<?=$nrules;?>" ondblclick="document.location='firewall_rules_edit.php?id=<?=$i;?>';">
 				<?=$textss;?><?php if (isset($config['interfaces'][$filterent['gateway']]['descr'])) echo htmlspecialchars($config['interfaces'][$filterent['gateway']]['descr']); else  echo htmlspecialchars(pprint_port($filterent['gateway'])); ?><?=$textse;?>
 			</td>
-			<td class="listr" onClick="fr_toggle(<?=$nrules;?>)" id="frd<?=$nrules;?>" ondblclick="document.location='firewall_rules_edit.php?id=<?=$i;?>';">
+			<td class="listr" onclick="fr_toggle(<?=$nrules;?>)" id="frd<?=$nrules;?>" ondblclick="document.location='firewall_rules_edit.php?id=<?=$i;?>';">
 			<?=$textss;?>
 			<?php
 				if (isset($filterent['ackqueue']) && isset($filterent['defaultqueue'])) {
 					$desc = $filterent['ackqueue'] ;
-					echo "<a href=\"firewall_shaper_queues.php?queue={$filterent['ackqueue']}&action=show\">{$desc}</a>";
+					echo "<a href=\"firewall_shaper_queues.php?queue={$filterent['ackqueue']}&amp;action=show\">{$desc}</a>";
 					$desc = $filterent['defaultqueue'];
-					echo "/<a href=\"firewall_shaper_queues.php?queue={$filterent['defaultqueue']}&action=show\">{$desc}</a>";
+					echo "/<a href=\"firewall_shaper_queues.php?queue={$filterent['defaultqueue']}&amp;action=show\">{$desc}</a>";
 				} else if (isset($filterent['defaultqueue'])) {
 					$desc = $filterent['defaultqueue'];
-					echo "<a href=\"firewall_shaper_queues.php?queue={$filterent['defaultqueue']}&action=show\">{$desc}</a>";
+					echo "<a href=\"firewall_shaper_queues.php?queue={$filterent['defaultqueue']}&amp;action=show\">{$desc}</a>";
 				} else
 					echo gettext("none");
 			?>
 			<?=$textse;?>
 			</td>
-			<td class="listr" onClick="fr_toggle(<?=$nrules;?>)" id="frd<?=$nrules;?>" ondblclick="document.location='firewall_rules_edit.php?id=<?=$i;?>';"><font color="black">
-				<?php if ($printicon) { ?><img src="./themes/<?= $g['theme']; ?>/images/icons/<?php echo $image; ?>.gif" title="<?php echo $alttext;?>" border="0"><?php } ?>&nbsp;<?=$textss;?><?php echo $schedule_span_begin;?><?=htmlspecialchars($filterent['sched']);?><?php echo $schedule_span_end; ?><?=$textse;?>
-			</td>
+			<td class="listr" onclick="fr_toggle(<?=$nrules;?>)" id="frd<?=$nrules;?>" ondblclick="document.location='firewall_rules_edit.php?id=<?=$i;?>';"><font color="black">
+				<?php if ($printicon) { ?><img src="./themes/<?= $g['theme']; ?>/images/icons/<?php echo $image; ?>.gif" title="<?php echo $alttext;?>" border="0" alt="icon" /><?php } ?>&nbsp;<?=$textss;?><?php echo $schedule_span_begin;?><?=htmlspecialchars($filterent['sched']);?><?php echo $schedule_span_end; ?><?=$textse;?>
+			</font></td>
 			<?php
 				pfSense_handle_custom_code("/usr/local/pkg/firewall_rules/pre_descr_tr");
 			?>
-			<td class="listbg" onClick="fr_toggle(<?=$nrules;?>)" ondblclick="document.location='firewall_rules_edit.php?id=<?=$i;?>';" class="descr">
+			<td class="listbg descr" onclick="fr_toggle(<?=$nrules;?>)" ondblclick="document.location='firewall_rules_edit.php?id=<?=$i;?>';">
 				<?=$textss;?><?=htmlspecialchars($filterent['descr']);?>&nbsp;<?=$textse;?>
 			</td>
-			<td valign="middle" nowrap class="list">
+			<td valign="middle" class="list nowrap">
 				<table border="0" cellspacing="0" cellpadding="1">
 					<tr>
-					<td><input name="move_<?=$i;?>" type="image" src="./themes/<?= $g['theme']; ?>/images/icons/icon_left.gif" width="17" height="17" title="<?=gettext("move selected rules before this rule"); ?>" onMouseOver="fr_insline(<?=$nrules;?>, true)" onMouseOut="fr_insline(<?=$nrules;?>, false)"></td>
-					<td><a href="firewall_rules_edit.php?id=<?=$i;?>"><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_e.gif" title="<?=gettext("edit rule"); ?>" width="17" height="17" border="0"></a></td>
+					<td><input name="move_<?=$i;?>" type="image" src="./themes/<?= $g['theme']; ?>/images/icons/icon_left.gif" style="width:17;height:17" title="<?=gettext("move selected rules before this rule"); ?>" onmouseover="fr_insline(<?=$nrules;?>, true)" onmouseout="fr_insline(<?=$nrules;?>, false)" /></td>
+					<td><a href="firewall_rules_edit.php?id=<?=$i;?>"><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_e.gif" title="<?=gettext("edit rule"); ?>" width="17" height="17" border="0" alt="edit" /></a></td>
 					</tr>
 					<tr>
-					<td align="center" valign="middle"><a href="firewall_rules.php?act=del&if=<?=htmlspecialchars($if);?>&id=<?=$i;?>"><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_x.gif" width="17" height="17" border="0" title="<?=gettext("delete rule"); ?>" onclick="return confirm('Do you really want to delete this rule?')"></a></td>
-					<td><a href="firewall_rules_edit.php?dup=<?=$i;?>"><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_plus.gif" title="<?=gettext("add a new rule based on this one"); ?>" width="17" height="17" border="0"></a></td>
+					<td align="center" valign="middle"><a href="firewall_rules.php?act=del&amp;if=<?=htmlspecialchars($if);?>&amp;id=<?=$i;?>"><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_x.gif" width="17" height="17" border="0" title="<?=gettext("delete rule"); ?>" onclick="return confirm('Do you really want to delete this rule?')" alt="delete" /></a></td>
+					<td><a href="firewall_rules_edit.php?dup=<?=$i;?>"><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_plus.gif" title="<?=gettext("add a new rule based on this one"); ?>" width="17" height="17" border="0" alt="add" /></a></td>
 					</tr>
 				</table>
 			</td>
 			</tr>
 			<?php $nrules++; endfor; ?>
-			  </tbody>
+			  <tr><td></td></tr></tbody>
 <?php if ($nrules == 0): ?>
+			<tr>
 			<td class="listt"></td>
 			<td class="listt"></td>
 			<td class="listlr" colspan="10" align="center" valign="middle">
@@ -786,8 +786,9 @@ if($_REQUEST['undodrag']) {
 				<?=gettext("No rules are currently defined for this interface"); ?><br/>
 				<?=gettext("All incoming connections on this interface will be blocked until you add pass rules."); ?><br/><br/>
 	<?php endif; ?>
-				<?=gettext("Click the"); ?> <a href="firewall_rules_edit.php?if=<?=htmlspecialchars($if);?>"><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_plus.gif" title="<?=gettext("add new rule");?>" border="0" width="17" height="17" align="absmiddle"></a><?=gettext(" button to add a new rule.");?></span>
+				<?=gettext("Click the"); ?> <a href="firewall_rules_edit.php?if=<?=htmlspecialchars($if);?>"><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_plus.gif" title="<?=gettext("add new rule");?>" border="0" width="17" height="17" align="middle" alt="add" /></a><?=gettext(" button to add a new rule.");?></span>
 			</td>
+			</tr>
 <?php endif; ?>
 			<tr id="fr<?=$nrules;?>">
 			<td class="list"></td>
@@ -809,17 +810,17 @@ if($_REQUEST['undodrag']) {
 				<table border="0" cellspacing="0" cellpadding="1">
 					<tr>
 					<td>
-						<?php if ($nrules == 0): ?><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_left_d.gif" width="17" height="17" title="<?=gettext("move selected rules to end");?>" border="0"><?php else: ?><input name="move_<?=$i;?>" type="image" src="./themes/<?= $g['theme']; ?>/images/icons/icon_left.gif" width="17" height="17" title="<?=gettext("move selected rules to end");?>" onMouseOver="fr_insline(<?=$nrules;?>, true)" onMouseOut="fr_insline(<?=$nrules;?>, false)"><?php endif; ?></td>
+						<?php if ($nrules == 0): ?><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_left_d.gif" width="17" height="17" title="<?=gettext("move selected rules to end");?>" border="0" alt="move" /><?php else: ?><input name="move_<?=$i;?>" type="image" src="./themes/<?= $g['theme']; ?>/images/icons/icon_left.gif" style="width:17;height:17" title="<?=gettext("move selected rules to end");?>" onmouseover="fr_insline(<?=$nrules;?>, true)" onmouseout="fr_insline(<?=$nrules;?>, false)" /><?php endif; ?></td>
 					<td></td>
 					</tr>
 					<tr>
 					<td>
 <?php if ($nrules == 0): ?>
-						<img src="./themes/<?= $g['theme']; ?>/images/icons/icon_x_d.gif" width="17" height="17" title="<?=gettext("delete selected rules");?>" border="0"><?php else: ?>
-						<input name="del" type="image" src="./themes/<?= $g['theme']; ?>/images/icons/icon_x.gif" width="17" height="17" title="<?=gettext("delete selected rules");?>" onclick="return confirm('<?=gettext('Do you really want to delete the selected rules?');?>')">
+						<img src="./themes/<?= $g['theme']; ?>/images/icons/icon_x_d.gif" width="17" height="17" title="<?=gettext("delete selected rules");?>" border="0" alt="delete" /><?php else: ?>
+						<input name="del" type="image" src="./themes/<?= $g['theme']; ?>/images/icons/icon_x.gif" style="width:17;height:17" title="<?=gettext("delete selected rules");?>" onclick="return confirm('<?=gettext('Do you really want to delete the selected rules?');?>')" />
 <?php endif; ?>
 					</td>
-			                <td><a href="firewall_rules_edit.php?if=<?=htmlspecialchars($if);?>"><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_plus.gif" title="<?=gettext("add new rule");?>" width="17" height="17" border="0"></a></td>
+			                <td><a href="firewall_rules_edit.php?if=<?=htmlspecialchars($if);?>"><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_plus.gif" title="<?=gettext("add new rule");?>" width="17" height="17" border="0" alt="add" /></a></td>
 					</tr>
 				</table>
 			</td>
@@ -827,37 +828,37 @@ if($_REQUEST['undodrag']) {
 		</table>
 		<table class="tabcont" width="100%" border="0" cellspacing="0" cellpadding="0">
 			<tr>
-				<td width="16"><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_pass.gif" width="11" height="11"></td>
+				<td width="16"><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_pass.gif" width="11" height="11" alt="pass" /></td>
 				<td><?=gettext("pass");?></td>
 				<td width="14"></td>
-				<td width="16"><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_block.gif" width="11" height="11"></td>
+				<td width="16"><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_block.gif" width="11" height="11" alt="block" /></td>
 				<td><?=gettext("block");?></td>
 				<td width="14"></td>
-				<td width="16"><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_reject.gif" width="11" height="11"></td>
+				<td width="16"><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_reject.gif" width="11" height="11" alt="reject" /></td>
 				<td><?=gettext("reject");?></td>
 				<td width="14"></td>
-				<td width="16"><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_log.gif" width="11" height="11"></td>
+				<td width="16"><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_log.gif" width="11" height="11" alt="log" /></td>
 				<td><?=gettext("log");?></td>
 			</tr>
 			<tr>
-				<td><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_pass_d.gif" width="11" height="11"></td>
-				<td nowrap><?=gettext("pass (disabled)");?></td>
+				<td><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_pass_d.gif" width="11" height="11" alt="pass disabled" /></td>
+				<td class="nowrap"><?=gettext("pass (disabled)");?></td>
 				<td>&nbsp;</td>
-				<td><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_block_d.gif" width="11" height="11"></td>
-				<td nowrap><?=gettext("block (disabled)");?></td>
+				<td><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_block_d.gif" width="11" height="11" alt="block disabled" /></td>
+				<td class="nowrap"><?=gettext("block (disabled)");?></td>
 				<td>&nbsp;</td>
-				<td><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_reject_d.gif" width="11" height="11"></td>
-				<td nowrap><?=gettext("reject (disabled)");?></td>
+				<td><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_reject_d.gif" width="11" height="11" alt="reject disabled" /></td>
+				<td class="nowrap"><?=gettext("reject (disabled)");?></td>
 				<td>&nbsp;</td>
-				<td width="16"><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_log_d.gif" width="11" height="11"></td>
-				<td nowrap><?=gettext("log (disabled)");?></td>
+				<td width="16"><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_log_d.gif" width="11" height="11" alt="log disabled" /></td>
+				<td class="nowrap"><?=gettext("log (disabled)");?></td>
 			</tr>
 			<tr>
 				<td colspan="10">
 					&nbsp;<p/>
 					<strong>
 						<span class="red"><?=gettext("Hint:");?></span>
-					</strong><br>
+					</strong><br/>
 					<ul>
 					<?php if ("FloatingRules" != $if): ?>
 						<li><?=gettext("Rules are evaluated on a first-match basis (i.e. " .
@@ -882,8 +883,9 @@ if($_REQUEST['undodrag']) {
 	</td>
 	</tr>
 </table>
-<input type="hidden" name="if" value="<?=htmlspecialchars($if);?>">
+<input type="hidden" name="if" value="<?=htmlspecialchars($if);?>" />
 <script type="text/javascript">
+//<![CDATA[
 	var number_of_rules = <?=$nrules?>;
 	<?php $nrules = 0; for ($i = 0; isset($a_filter[$i]); $i++): ?>
 	/*
@@ -910,6 +912,7 @@ if($_REQUEST['undodrag']) {
 		return;
 	}
 	jQuery('#loading').hide();
+//]]>
 </script>
 </form>
 <?php include("fend.inc"); ?>

@@ -3491,7 +3491,7 @@ class dnqueue_class extends dummynet_class {
                 $form .= "<td><div id=\"showadvancedboxspr\">";
                 $form .= "<p><input type=\"button\" onclick=\"show_source_port_range()\"";
 		$form .= " value=\"" . gettext("Show advanced options") . "\" />";
-                $form .= "</div></td></tr>";
+                $form .= "</p></div></td></tr>";
 		$form .= "<tr style=\"display:none\" id=\"sprtable\">";
 		$form .= "<td valign=\"middle\" class=\"vncellreq\">" . gettext("Weight") . "</td>";
 		$form .= "<td valign=\"middle\" class=\"vncellreq\">";

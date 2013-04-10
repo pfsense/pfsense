@@ -126,9 +126,9 @@ if ($_POST) {
 	} elseif (is_alias($_POST['network'])) {
 		$osn = $_POST['network'];
 		foreach (filter_expand_alias_array($_POST['network']) as $tgt) {
-			if (is_ipaddr($tgt))
+			if (is_ipaddrv4($tgt))
 				$tgt .= "/32";
-			if (is_ipaddr($tgt))
+			if (is_ipaddrv6($tgt))
 				$tgt .= "/128";
 			if (!is_subnet($tgt))
 				continue;

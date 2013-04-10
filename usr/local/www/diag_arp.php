@@ -338,6 +338,9 @@ $mac_man = load_mac_manufacturer_table();
 			</table>
 		</td>
 	</tr>
+	<tr>
+		<td><br/><?= gettext("NOTE: Local IPv6 peers use") ?> <a href="diag_ndp.php"><?= gettext("NDP") ?></a> <?= gettext("instead of ARP") ?>.</td>
+	</tr>
 </table>
 
 <?php include("fend.inc"); ?>

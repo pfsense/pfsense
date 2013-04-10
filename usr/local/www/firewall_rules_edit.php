@@ -1319,7 +1319,7 @@ $i--): ?>
 						else
 							$selected = "";
 						if ($vprio == "none")
-							$opts .= "<option value=\"{$vprio}\">{$vprio}</option>\n";
+							$opts .= "<option value=\"\">{$vprio}</option>\n";
 						else
 							$opts .= "<option value=\"{$vprio}\" {$selected}>" . strtoupper($vprio) . "</option>\n";
 					}

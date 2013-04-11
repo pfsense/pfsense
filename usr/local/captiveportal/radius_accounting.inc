@@ -42,6 +42,7 @@
 	pfSense_MODULE:	captiveportal
 */
 
+define('GIGAWORDS_RIGHT_OPERAND', '4294967296'); // 2^32
 
 /**
  * Get the NAS-IP-Address based on the current wan address
@@ -320,7 +321,7 @@ function gigawords($bytes) {
      */
 
     // We use BCMath functions since normal integers don't work with so large numbers
-    $gigawords = bcdiv( bcsub( $bytes, remainder($bytes) ) , PHP_INT_MAX) ;
+    $gigawords = bcdiv( bcsub( $bytes, remainder($bytes) ) , GIGAWORDS_RIGHT_OPERAND) ;
 
     // We need to manually set this to a zero instead of NULL for put_int() safety
     if (is_null($gigawords)) {
@@ -334,7 +335,7 @@ function gigawords($bytes) {
 function remainder($bytes) {
 
     // Calculate the bytes we are going to send to the radius
-    $bytes = bcmod($bytes, PHP_INT_MAX);
+    $bytes = bcmod($bytes, GIGAWORDS_RIGHT_OPERAND);
 
     if (is_null($bytes)) {
         $bytes = 0;

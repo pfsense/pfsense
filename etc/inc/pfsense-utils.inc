@@ -1933,7 +1933,8 @@ function version_get_string_value($a) {
 		5 => "C",
 		6 => "D",
 		7 => "RC",
-		8 => "RELEASE"
+		8 => "RELEASE",
+		9 => "*"			// Matches all release levels
 	);
 	$major = 0;
 	$minor = 0;
@@ -1949,7 +1950,12 @@ function version_get_string_value($a) {
 	return "{$major}.{$minor}";
 }
 function version_compare_string($a, $b) {
-	return version_compare_numeric(version_get_string_value($a), version_get_string_value($b));
+	// Only compare string parts if both versions give a specific release
+	// (If either version lacks a string part, assume intended to match all release levels)
+	if (isset($a) && isset($b)) 
+        	return version_compare_numeric(version_get_string_value($a), version_get_string_value($b));
+        else
+        	return 0;
 }
 function version_compare_numeric($a, $b) {
 	$a_arr = explode('.', rtrim($a, '.0'));

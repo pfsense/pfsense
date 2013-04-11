@@ -441,18 +441,18 @@ if ($_POST) {
 		if( $_POST['proto'] != "tcp" )
 			$input_errors[] = gettext("OS detection is only valid with protocol tcp.");
 
-	if ($_POST['ackqueue'] && $_POST['ackqueue'] != "none") {
-		if ($_POST['defaultqueue'] == "none" )
+	if ($_POST['ackqueue'] != "") {
+		if ($_POST['defaultqueue'] == "" )
 			$input_errors[] = gettext("You have to select a queue when you select an acknowledge queue too.");
 		else if ($_POST['ackqueue'] == $_POST['defaultqueue'])
 			$input_errors[] = gettext("Acknowledge queue and Queue cannot be the same.");		
 	}
-	if (isset($_POST['floating']) && $_POST['pdnpipe'] != "none" && (empty($_POST['direction']) || $_POST['direction'] == "any"))
+	if (isset($_POST['floating']) && $_POST['pdnpipe'] != "" && (empty($_POST['direction']) || $_POST['direction'] == "any"))
 		$input_errors[] = gettext("You can not use limiters in Floating rules without choosing a direction.");
 	if (isset($_POST['floating']) && $_POST['gateway'] != "" && (empty($_POST['direction']) || $_POST['direction'] == "any"))
 		$input_errors[] = gettext("You can not use gateways in Floating rules without choosing a direction.");
-	if ($_POST['pdnpipe'] && $_POST['pdnpipe'] != "none") {
-		if ($_POST['dnpipe'] == "none" )
+	if ($_POST['pdnpipe'] && $_POST['pdnpipe'] != "") {
+		if ($_POST['dnpipe'] == "" )
 			$input_errors[] = gettext("You must select a queue for the In direction before selecting one for Out too.");
 		else if ($_POST['pdnpipe'] == $_POST['dnpipe'])
 			$input_errors[] = gettext("In and Out Queue cannot be the same.");
@@ -465,7 +465,7 @@ if ($_POST) {
 	}
 	if( !empty($_POST['ruleid']) && !ctype_digit($_POST['ruleid']))
 		$input_errors[] = gettext('ID must be an integer');
-	if($_POST['l7container'] && $_POST['l7container'] != "none") {
+	if($_POST['l7container'] && $_POST['l7container'] != "") {
 		if(!($_POST['proto'] == "tcp" || $_POST['proto'] == "udp" || $_POST['proto'] == "tcp/udp"))
 			$input_errors[] = gettext("You can only select a layer7 container for TCP and/or UDP protocols");
 		if ($_POST['type'] <> "pass")
@@ -598,19 +598,19 @@ if ($_POST) {
 			$filterent['gateway'] = $_POST['gateway'];
 		}
 		
-		if (isset($_POST['defaultqueue']) && $_POST['defaultqueue'] != "none") {
+		if ($_POST['defaultqueue'] != "") {
 			$filterent['defaultqueue'] = $_POST['defaultqueue'];
-			if (isset($_POST['ackqueue']) && $_POST['ackqueue'] != "none")
+			if ($_POST['ackqueue'] != "")
 				$filterent['ackqueue'] = $_POST['ackqueue'];
 		}
 
-		if (isset($_POST['dnpipe']) && $_POST['dnpipe'] != "none") {
+		if ($_POST['dnpipe'] != "") {
 			$filterent['dnpipe'] = $_POST['dnpipe'];
-			if (isset($_POST['pdnpipe']) && $_POST['pdnpipe'] != "none")
+			if ($_POST['pdnpipe'] != "")
 				$filterent['pdnpipe'] = $_POST['pdnpipe'];
 		}
 
-		if (isset($_POST['l7container']) && $_POST['l7container'] != "none") {
+		if ($_POST['l7container'] != "") {
 			$filterent['l7container'] = $_POST['l7container'];
 		}
 		
@@ -1439,7 +1439,7 @@ $i--): ?>
 <?php
 		if (!is_array($dnqlist))
 			$dnqlist = array();
-		echo "<option value=\"none\"";
+		echo "<option value=\"\"";
 		if (!$dnqselected) echo " selected=\"selected\"";
 		echo " >none</option>";
 		foreach ($dnqlist as $dnq => $dnqkey) {
@@ -1457,7 +1457,7 @@ $i--): ?>
 			<select name="pdnpipe">
 <?php
 		$dnqselected = 0;
-		echo "<option value=\"none\"";
+		echo "<option value=\"\"";
 		if (!$dnqselected) echo " selected=\"selected\"";
 		echo " >none</option>";
 		foreach ($dnqlist as $dnq => $dnqkey) {
@@ -1489,7 +1489,7 @@ $i--): ?>
 <?php
 			if (!is_array($qlist))
 				$qlist = array();
-			echo "<option value=\"none\"";
+			echo "<option value=\"\"";
 			if (!$qselected) echo " selected=\"selected\"";
 			echo " >none</option>";
 			foreach ($qlist as $q => $qkey) {
@@ -1510,7 +1510,7 @@ $i--): ?>
 				<select name="defaultqueue">
 <?php
 			$qselected = 0;
-			echo "<option value=\"none\"";
+			echo "<option value=\"\"";
 			if (!$qselected) echo " selected=\"selected\"";
 			echo " >none</option>";
 			foreach ($qlist as $q => $qkey) {
@@ -1544,7 +1544,7 @@ $i--): ?>
 <?php
 					if (!is_array($l7clist))
 						$l7clist = array();
-					echo "<option value=\"none\"";
+					echo "<option value=\"\"";
 					echo " >none</option>";
 					foreach ($l7clist as $l7ckey) {
 						echo "<option value=\"{$l7ckey}\"";

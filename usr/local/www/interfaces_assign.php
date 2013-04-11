@@ -1,22 +1,22 @@
-<?php 
+<?php
 /*
 	interfaces_assign.php
 	part of m0n0wall (http://m0n0.ch/wall)
 	Written by Jim McBeath based on existing m0n0wall files
-	
+
 	Copyright (C) 2003-2005 Manuel Kasper <mk@neon1.net>.
 	All rights reserved.
-	
+
 	Redistribution and use in source and binary forms, with or without
 	modification, are permitted provided that the following conditions are met:
-	
+
 	1. Redistributions of source code must retain the above copyright notice,
 	   this list of conditions and the following disclaimer.
-	
+
 	2. Redistributions in binary form must reproduce the above copyright
 	   notice, this list of conditions and the following disclaimer in the
 	   documentation and/or other materials provided with the distribution.
-	
+
 	THIS SOFTWARE IS PROVIDED ``AS IS'' AND ANY EXPRESS OR IMPLIED WARRANTIES,
 	INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY
 	AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE
@@ -78,53 +78,53 @@ if (is_array($config['vlans']['vlan']) && count($config['vlans']['vlan'])) {
 
 /* add Bridge interfaces */
 if (is_array($config['bridges']['bridged']) && count($config['bridges']['bridged'])) {
-        foreach ($config['bridges']['bridged'] as $bridge) {
-                $portlist[$bridge['bridgeif']] = $bridge;
-                $portlist[$bridge['bridgeif']]['isbridge'] = true;
-        }
+	foreach ($config['bridges']['bridged'] as $bridge) {
+		$portlist[$bridge['bridgeif']] = $bridge;
+		$portlist[$bridge['bridgeif']]['isbridge'] = true;
+	}
 }
 
 /* add GIF interfaces */
 if (is_array($config['gifs']['gif']) && count($config['gifs']['gif'])) {
-        foreach ($config['gifs']['gif'] as $gif) {
-                $portlist[$gif['gifif']] = $gif;
-                $portlist[$gif['gifif']]['isgif'] = true;
-        }
+	foreach ($config['gifs']['gif'] as $gif) {
+		$portlist[$gif['gifif']] = $gif;
+		$portlist[$gif['gifif']]['isgif'] = true;
+	}
 }
 
 /* add GRE interfaces */
 if (is_array($config['gres']['gre']) && count($config['gres']['gre'])) {
-        foreach ($config['gres']['gre'] as $gre) {
-                $portlist[$gre['greif']] = $gre;
-                $portlist[$gre['greif']]['isgre'] = true;
-        }
+	foreach ($config['gres']['gre'] as $gre) {
+		$portlist[$gre['greif']] = $gre;
+		$portlist[$gre['greif']]['isgre'] = true;
+	}
 }
 
 /* add LAGG interfaces */
 if (is_array($config['laggs']['lagg']) && count($config['laggs']['lagg'])) {
-        foreach ($config['laggs']['lagg'] as $lagg) {
-                $portlist[$lagg['laggif']] = $lagg;
-                $portlist[$lagg['laggif']]['islagg'] = true;
+	foreach ($config['laggs']['lagg'] as $lagg) {
+		$portlist[$lagg['laggif']] = $lagg;
+		$portlist[$lagg['laggif']]['islagg'] = true;
 		/* LAGG members cannot be assigned */
 		$lagifs = explode(',', $lagg['members']);
 		foreach ($lagifs as $lagif)
 			if (isset($portlist[$lagif]))
 				unset($portlist[$lagif]);
-        }
+	}
 }
 
 /* add QinQ interfaces */
 if (is_array($config['qinqs']['qinqentry']) && count($config['qinqs']['qinqentry'])) {
-        foreach ($config['qinqs']['qinqentry'] as $qinq) {
-                $portlist["vlan{$qinq['tag']}"]['descr'] = "VLAN {$qinq['tag']}";
-                $portlist["vlan{$qinq['tag']}"]['isqinq'] = true;
-                /* QinQ members */
-                $qinqifs = explode(' ', $qinq['members']);
-                foreach ($qinqifs as $qinqif) {
-					$portlist["vlan{$qinq['tag']}_{$qinqif}"]['descr'] = "QinQ {$qinqif}";
-					$portlist["vlan{$qinq['tag']}_{$qinqif}"]['isqinq'] = true;
-				}
-        }
+	foreach ($config['qinqs']['qinqentry'] as $qinq) {
+		$portlist["vlan{$qinq['tag']}"]['descr'] = "VLAN {$qinq['tag']}";
+		$portlist["vlan{$qinq['tag']}"]['isqinq'] = true;
+		/* QinQ members */
+		$qinqifs = explode(' ', $qinq['members']);
+		foreach ($qinqifs as $qinqif) {
+			$portlist["vlan{$qinq['tag']}_{$qinqif}"]['descr'] = "QinQ {$qinqif}";
+			$portlist["vlan{$qinq['tag']}_{$qinqif}"]['isqinq'] = true;
+		}
+	}
 }
 
 /* add PPP interfaces */
@@ -182,7 +182,7 @@ if ($_POST['apply']) {
 		$portifmap[$portname] = array();
 
 	/* Go through the list of ports selected by the user,
-	   build a list of port-to-interface mappings in portifmap */
+	build a list of port-to-interface mappings in portifmap */
 	foreach ($_POST as $ifname => $ifport) {
 		if (($ifname == 'lan') || ($ifname == 'wan') || (substr($ifname, 0, 3) == 'opt'))
 			$portifmap[$ifport][] = strtoupper($ifname);
@@ -194,11 +194,24 @@ if ($_POST['apply']) {
 			$errstr = sprintf(gettext('Port %1$s '.
 				' was assigned to %2$s' .
 				' interfaces:'), $portname, count($ifnames));
-				
+
 			foreach ($portifmap[$portname] as $ifn)
 				$errstr .= " " . $ifn;
-			
+
 			$input_errors[] = $errstr;
+		} else if (count($ifnames) == 1 && preg_match('/^bridge[0-9]/', $portname) && is_array($config['bridges']['bridged']) && count($config['bridges']['bridged'])) {
+			foreach ($config['bridges']['bridged'] as $bridge) {
+				if ($bridge['bridgeif'] != $portname)
+					continue;
+
+				$members = explode(",", strtoupper($bridge['members']));
+				foreach ($members as $member) {
+					if ($member == $ifnames[0]) {
+						$input_errors[] = sprintf(gettext("You cannot set port %s to interface %s because this interface is a member of %s."), $portname, $member, $portname);
+						break;
+					}
+				}
+			}
 		}
 	}
 
@@ -212,10 +225,9 @@ if ($_POST['apply']) {
 	if (!$input_errors) {
 		/* No errors detected, so update the config */
 		foreach ($_POST as $ifname => $ifport) {
-		
-			if (($ifname == 'lan') || ($ifname == 'wan') ||
-				(substr($ifname, 0, 3) == 'opt')) {
-				
+
+			if (($ifname == 'lan') || ($ifname == 'wan') || (substr($ifname, 0, 3) == 'opt')) {
+
 				if (!is_array($ifport)) {
 					$reloadif = false;
 					if (!empty($config['interfaces'][$ifname]['if']) && $config['interfaces'][$ifname]['if'] <> $ifport) {
@@ -226,7 +238,7 @@ if ($_POST['apply']) {
 					$config['interfaces'][$ifname]['if'] = $ifport;
 					if (isset($portlist[$ifport]['isppp']))
 						$config['interfaces'][$ifname]['ipaddr'] = $portlist[$ifport]['type'];
-					
+
 					/* check for wireless interfaces, set or clear ['wireless'] */
 					if (preg_match($g['wireless_regex'], $ifport)) {
 						if (!is_array($config['interfaces'][$ifname]['wireless']))
@@ -234,11 +246,11 @@ if ($_POST['apply']) {
 					} else {
 						unset($config['interfaces'][$ifname]['wireless']);
 					}
-					
+
 					/* make sure there is a descr for all interfaces */
 					if (!isset($config['interfaces'][$ifname]['descr']))
 						$config['interfaces'][$ifname]['descr'] = strtoupper($ifname);
-						
+
 					if ($reloadif == true) {
 						if (preg_match($g['wireless_regex'], $ifport))
 							interface_sync_wireless_clones($config['interfaces'][$ifname], false);
@@ -248,9 +260,9 @@ if ($_POST['apply']) {
 				}
 			}
 		}
-	
+
 		write_config();
-		
+
 		enable_rrd_graphing();
 	}
 }
@@ -270,7 +282,7 @@ if ($_GET['act'] == "del") {
 		unset($config['interfaces'][$id]['enable']);
 		$realid = get_real_interface($id);
 		interface_bring_down($id);   /* down the interface */
-		
+
 		unset($config['interfaces'][$id]);	/* delete the specified OPTn or LAN*/
 
 		if (is_array($config['dhcpd']) && is_array($config['dhcpd'][$id])) {
@@ -283,32 +295,26 @@ if ($_GET['act'] == "del") {
 				if($rule['interface'] == $id)
 					unset($config['filter']['rule'][$x]);
 			}
-        	}
-		if (is_array($config['nat']['advancedoutbound']) && count($config['nat']['advancedoutbound']['rule']) > 0) {
-        	foreach ($config['nat']['advancedoutbound']['rule'] as $x => $rule) {
-				if($rule['interface'] == $id)
-					unset($config['nat']['advancedoutbound']['rule'][$x]['interface']);
-        		}
 		}
 		if (is_array($config['nat']['rule']) && count($config['nat']['rule']) > 0) {
 			foreach ($config['nat']['rule'] as $x => $rule) {
 				if($rule['interface'] == $id)
 					unset($config['nat']['rule'][$x]['interface']);
 			}
-        }
+		}
 
 		write_config();
-	
+
 		/* If we are in firewall/routing mode (not single interface)
 		 * then ensure that we are not running DHCP on the wan which
 		 * will make a lot of ISP's unhappy.
 		 */
 		if($config['interfaces']['lan'] && $config['dhcpd']['wan']) {
-			unset($config['dhcpd']['wan']);		
+			unset($config['dhcpd']['wan']);
 		}
 
 		link_interface_to_vlans($realid, "update");
-	
+
 		$savemsg = gettext("Interface has been deleted.");
 	}
 }
@@ -351,9 +357,9 @@ if ($_GET['act'] == "add" && (count($config['interfaces']) < count($portlist))) 
 			break;
 		}
 	}
-	
-        /* XXX: Do not remove this. */
-        mwexec("/bin/rm -f /tmp/config.cache");
+
+	/* XXX: Do not remove this. */
+	mwexec("/bin/rm -f /tmp/config.cache");
 
 	write_config();
 
@@ -364,9 +370,9 @@ if ($_GET['act'] == "add" && (count($config['interfaces']) < count($portlist))) 
 
 include("head.inc");
 
-if(file_exists("/var/run/interface_mismatch_reboot_needed")) 
+if(file_exists("/var/run/interface_mismatch_reboot_needed"))
 	if ($_POST) {
-		if($rebootingnow) 	
+		if($rebootingnow)
 			$savemsg = gettext("The system is now rebooting.  Please wait.");
 		else
 			$savemsg = gettext("Reboot is needed. Please apply the settings in order to reboot.");
@@ -404,13 +410,13 @@ if(file_exists("/var/run/interface_mismatch_reboot_needed"))
 	$tab_array[9] = array(gettext("Bridges"), false, "interfaces_bridge.php");
 	$tab_array[10] = array(gettext("LAGG"), false, "interfaces_lagg.php");
 	display_top_tabs($tab_array);
-?>  
+?>
   </td></tr>
-  <tr> 
+  <tr>
     <td>
 	<div id="mainarea">
         <table class="tabcont" width="100%" border="0" cellpadding="0" cellspacing="0">
-       <tr> 
+       <tr>
 	<td class="listhdrr"><?=gettext("Interface"); ?></td>
 	<td class="listhdr"><?=gettext("Network port"); ?></td>
 	<td class="list">&nbsp;</td>
@@ -421,7 +427,7 @@ if(file_exists("/var/run/interface_mismatch_reboot_needed"))
 	else
 		$ifdescr = strtoupper($ifname);
 	?>
-  <tr> 
+  <tr>
 	<td class="listlr" valign="middle"><strong><u><span onclick="location.href='/interfaces.php?if=<?=$ifname;?>'" style="cursor: pointer;"><?=$ifdescr;?></span></strong></td>
 	  <td valign="middle" class="listr">
 		<select onChange="javascript:jQuery('#savediv').show();" name="<?=$ifname;?>" id="<?=$ifname;?>">
@@ -462,7 +468,7 @@ if(file_exists("/var/run/interface_mismatch_reboot_needed"))
 				} elseif ($portinfo['isqinq']) {
 					echo htmlspecialchars($portinfo['descr']);
 				} elseif (substr($portname, 0, 4) == 'ovpn') {
-					echo htmlspecialchars($portname . " (" . $ovpn_descrs[substr($portname, 5, 1)] . ")");
+					echo htmlspecialchars($portname . " (" . $ovpn_descrs[substr($portname, 5)] . ")");
 				} else
 					echo htmlspecialchars($portname . " (" . $portinfo['mac'] . ")");
 			?></option>
@@ -471,7 +477,7 @@ if(file_exists("/var/run/interface_mismatch_reboot_needed"))
 	</td>
 	<td valign="middle" class="list">
 		  <?php if ($ifname != 'wan'): ?>
-		  <a href="interfaces_assign.php?act=del&id=<?=$ifname;?>" onclick="return confirm('<?=gettext("Do you really want to delete this interface?");?>')"><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_x.gif" title=<?=gettext("delete interface"); ?> width="17" height="17" border="0"></a> 
+		  <a href="interfaces_assign.php?act=del&id=<?=$ifname;?>" onclick="return confirm('<?=gettext("Do you really want to delete this interface?");?>')"><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_x.gif" title=<?=gettext("delete interface"); ?> width="17" height="17" border="0"></a>
 		  <?php endif; ?>
 		</td>
   </tr>

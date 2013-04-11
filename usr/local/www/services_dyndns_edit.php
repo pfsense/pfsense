@@ -1,7 +1,7 @@
 <?php
 /* $Id$ */
 /*
-	Copyright (C) 2008 Ermal Luçi
+	Copyright (C) 2008 Ermal LuÃ§i
 	All rights reserved.
 
 	Redistribution and use in source and binary forms, with or without
@@ -69,6 +69,7 @@ if (isset($id) && isset($a_dyndns[$id])) {
 	$pconfig['enable'] = !isset($a_dyndns[$id]['enable']);
 	$pconfig['interface'] = $a_dyndns[$id]['interface'];
 	$pconfig['wildcard'] = isset($a_dyndns[$id]['wildcard']);
+	$pconfig['verboselog'] = isset($a_dyndns[$id]['verboselog']);
 	$pconfig['zoneid'] = $a_dyndns[$id]['zoneid'];
 	$pconfig['ttl'] = isset($a_dyndns[$id]['ttl']);
 	$pconfig['updateurl'] = $a_dyndns[$id]['updateurl'];
@@ -117,7 +118,12 @@ if ($_POST) {
 		$dyndns['host'] = $_POST['host'];
 		$dyndns['mx'] = $_POST['mx'];
 		$dyndns['wildcard'] = $_POST['wildcard'] ? true : false;
-		$dyndns['enable'] = $_POST['enable'] ? false : true;
+		$dyndns['verboselog'] = $_POST['verboselog'] ? true : false;
+		/* In this place enable means disabled */
+		if ($_POST['enable'])
+			unset($dyndns['enable']);
+		else
+			$dyndns['enable'] = true;
 		$dyndns['interface'] = $_POST['interface'];
 		$dyndns['zoneid'] = $_POST['zoneid'];
 		$dyndns['ttl'] = $_POST['ttl'];
@@ -217,8 +223,8 @@ function _onTypeChange(type){
                   <td width="78%" class="vtable">
 			<select name="type" class="formselect" id="type" onchange="_onTypeChange(this.options[this.selectedIndex].value);">
                       <?php
-						$types = explode(",", "DNS-O-Matic, DynDNS (dynamic),DynDNS (static),DynDNS (custom),DHS,DyNS,easyDNS,No-IP,ODS.org,ZoneEdit,Loopia,freeDNS, DNSexit, OpenDNS, Namecheap, HE.net, HE.net Tunnelbroker, SelfHost, Route 53, Custom");
-						$vals = explode(" ", "dnsomatic dyndns dyndns-static dyndns-custom dhs dyns easydns noip ods zoneedit loopia freedns dnsexit opendns namecheap he-net he-net-tunnelbroker selfhost route53 custom");
+						$types = explode(",", DYNDNS_PROVIDER_DESCRIPTIONS);
+						$vals = explode(" ", DYNDNS_PROVIDER_VALUES);
 						$j = 0; for ($j = 0; $j < count($vals); $j++): ?>
                       <option value="<?=$vals[$j];?>" <?php if ($vals[$j] == $pconfig['type']) echo "selected";?>>
                       <?=htmlspecialchars($types[$j]);?>
@@ -291,6 +297,12 @@ function _onTypeChange(type){
                   <td width="78%" class="vtable">
                     <input name="wildcard" type="checkbox" id="wildcard" value="yes" <?php if ($pconfig['wildcard']) echo "checked"; ?>>
                     <?=gettext("Enable ");?><?=gettext("Wildcard"); ?></td>
+				</tr>
+                <tr id="_verboselogtr">
+                  <td width="22%" valign="top" class="vncell"><?=gettext("Verbose logging"); ?></td>
+                  <td width="78%" class="vtable">
+                    <input name="verboselog" type="checkbox" id="verboselog" value="yes" <?php if ($pconfig['verboselog']) echo "checked"; ?>>
+                    <?=gettext("Enable ");?><?=gettext("verbose logging"); ?></td>
 				</tr>
                 <tr id="_usernametr">
                   <td width="22%" valign="top" class="vncellreq"><?=gettext("Username");?></td>

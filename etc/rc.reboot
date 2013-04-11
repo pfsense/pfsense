@@ -14,7 +14,13 @@ sleep 1
 PLATFORM=`cat /etc/platform`
 if [ "$PLATFORM" = "pfSense" ]; then
 	rm -rf /tmp/*
-else
+fi
+
+USE_MFS_TMPVAR=`/usr/bin/grep -c use_mfs_tmpvar /cf/conf/config.xml`
+DISK_NAME=`/bin/df /var/db/rrd | /usr/bin/tail -1 | /usr/bin/awk '{print $1;}'`
+DISK_TYPE=`/usr/bin/basename ${DISK_NAME} | /usr/bin/cut -c1-2`
+# If we are not on a full install, or if the full install wants RAM disks, or if the full install _was_ using RAM disks, but isn't for the next boot...
+if [ "${PLATFORM}" != "pfSense" ] || [ ${USE_MFS_TMPVAR} -gt 0 ] || [ "${DISK_TYPE}" = "md" ]; then
 	/etc/rc.backup_rrd.sh
 	/etc/rc.backup_dhcpleases.sh
 fi

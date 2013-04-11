@@ -91,16 +91,16 @@ include("head.inc");
 <?php include("fbegin.inc"); ?>
 <?php if ($savemsg) print_info_box($savemsg); ?>
 <form action="firewall_schedule.php" method="post">
-	<table class="tabcont" width="100%" border="0" cellpadding="0" cellspacing="0">
+	<table class="tabcont" width="100%" border="0" cellpadding="0" cellspacing="0" summary="firewall schedule">
 	<tr>
 	  <td width="25%" class="listhdrr"><?=gettext("Name");?></td>
 	  <td width="35%" class="listhdrr"><?=gettext("Time Range(s)");?></td>
 	  <td width="35%" class="listhdr"><?=gettext("Description");?></td>
 	  <td width="5%" class="list sort_ignore">
-	    <table border="0" cellspacing="0" cellpadding="1">
+	    <table border="0" cellspacing="0" cellpadding="1" summary="add">
 	      <tr>
 		<td width="17"></td>
-	        <td valign="middle"><a href="firewall_schedule_edit.php"><img src="/themes/<?= $g['theme']; ?>/images/icons/icon_plus.gif" width="17" height="17" border="0" title="<?=gettext("add a new schedule");?>" alt="" /></a></td>
+	        <td valign="middle"><a href="firewall_schedule_edit.php"><img src="/themes/<?= $g['theme']; ?>/images/icons/icon_plus.gif" width="17" height="17" border="0" title="<?=gettext("add a new schedule");?>" alt="add" /></a></td>
 	      </tr>
 	    </table>
 	  </td>
@@ -112,12 +112,12 @@ include("head.inc");
 					<?php
 					$schedstatus = filter_get_time_based_rule_status($schedule);
 					 if ($schedstatus) { ?>
-					 	&nbsp;<img src="./themes/<?= $g['theme']; ?>/images/icons/icon_frmfld_time.png" title="<?=gettext("Schedule is currently active");?>" width="17" height="17" border="0">
+					 	&nbsp;<img src="./themes/<?= $g['theme']; ?>/images/icons/icon_frmfld_time.png" title="<?=gettext("Schedule is currently active");?>" width="17" height="17" border="0" alt="schedule" />
 					 <?php } ?>
 
   		</td>
   		<td class="listlr" ondblclick="document.location='firewall_schedule_edit.php?id=<?=$i;?>';">
-  			<table width="98%" border="0" cellpadding="0" cellspacing="0">
+  			<table width="98%" border="0" cellpadding="0" cellspacing="0" summary="schedule">
 			<?php
 
 				foreach($schedule['timerange'] as $timerange) {
@@ -207,18 +207,18 @@ include("head.inc");
 							$timeFriendly = $starttime . "-" . $stoptime;
 							$description = $timerange['rangedescr'];
 
-							?><tr><td><?=$dayFriendly;?></td><td><?=$timeFriendly;?></td><td><?=$description;?></td><tr/><?php
+							?><tr><td><?=$dayFriendly;?></td><td><?=$timeFriendly;?></td><td><?=$description;?></td></tr><?php
 						}
 					}//end for?></table>
 	  </td>
 	 <td class="listbg" ondblclick="document.location='firewall_schedule_edit.php?id=<?=$i;?>';">
     		<?=htmlspecialchars($schedule['descr']);?>&nbsp;
   		</td>
-  		  <td valign="middle" nowrap class="list">
-    <table border="0" cellspacing="0" cellpadding="1">
+  		  <td valign="middle" class="list nowrap">
+    <table border="0" cellspacing="0" cellpadding="1" summary="buttons">
       <tr>
-        <td valign="middle"><a href="firewall_schedule_edit.php?id=<?=$i;?>"><img src="/themes/<?= $g['theme']; ?>/images/icons/icon_e.gif" width="17" height="17" border="0" title="<?=gettext("edit alias");?>"></a></td>
-        <td><a href="firewall_schedule.php?act=del&id=<?=$i;?>" onclick="return confirm('<?=gettext('Do you really want to delete this schedule?');?>')"><img src="/themes/<?= $g['theme']; ?>/images/icons/icon_x.gif" width="17" height="17" border="0" title="<?=gettext("delete alias");?>"></a></td>
+        <td valign="middle"><a href="firewall_schedule_edit.php?id=<?=$i;?>"><img src="/themes/<?= $g['theme']; ?>/images/icons/icon_e.gif" width="17" height="17" border="0" title="<?=gettext("edit alias");?>" alt="edit" /></a></td>
+        <td><a href="firewall_schedule.php?act=del&amp;id=<?=$i;?>" onclick="return confirm('<?=gettext('Do you really want to delete this schedule?');?>')"><img src="/themes/<?= $g['theme']; ?>/images/icons/icon_x.gif" width="17" height="17" border="0" title="<?=gettext("delete alias");?>" alt="delete" /></a></td>
       </tr>
     </table>
   </td>
@@ -227,23 +227,21 @@ include("head.inc");
 <tr>
   <td class="list" colspan="3"></td>
   <td class="list">
-    <table border="0" cellspacing="0" cellpadding="1">
+    <table border="0" cellspacing="0" cellpadding="1" summary="add">
       <tr>
 	<td width="17"></td>
-        <td valign="middle"><a href="firewall_schedule_edit.php"><img src="/themes/<?= $g['theme']; ?>/images/icons/icon_plus.gif" width="17" height="17" border="0" title="<?=gettext("add a new schedule");?>" alt="" /></a></td>
+        <td valign="middle"><a href="firewall_schedule_edit.php"><img src="/themes/<?= $g['theme']; ?>/images/icons/icon_plus.gif" width="17" height="17" border="0" title="<?=gettext("add a new schedule");?>" alt="add" /></a></td>
       </tr>
     </table>
   </td>
 </tr>
 <tr>
   <td class="tabcont" colspan="3">
-   <p><span class="vexpl"><span class="red"><strong><?=gettext("Note:");?><br></strong></span><?=gettext("Schedules act as placeholders for time ranges to be used in Firewall Rules.");?></span></p>
+   <p><span class="vexpl"><span class="red"><strong><?=gettext("Note:");?><br/></strong></span><?=gettext("Schedules act as placeholders for time ranges to be used in Firewall Rules.");?></span></p>
   </td>
 </tr>
 </table>
-
 </form>
-
 <?php include("fend.inc"); ?>
 </body>
 </html>

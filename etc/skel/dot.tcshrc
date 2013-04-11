@@ -3,3 +3,19 @@ set autologout="0"
 set autolist set color set colorcat
 setenv CLICOLOR "true"
 setenv LSCOLORS "exfxcxdxbxegedabagacad"
+if ($term == "xterm" || $term == "vt100" || $term == "vt102" || $term == "vt220" || $term !~ "con*") then
+	bindkey "\e[2~" overwrite-mode     # Ins
+	bindkey "\e[3~" delete-char        # Del
+
+	bindkey "\e[1~" beginning-of-line  # Home vt
+	bindkey "\e[4~" end-of-line        # End vt
+
+	bindkey "\eOH" beginning-of-line   # Home vt220
+	bindkey "\eOF" end-of-line         # End vt220
+
+	bindkey "\e[H" beginning-of-line   # Home kvt
+	bindkey "\e[F" end-of-line         # End kvt
+
+	bindkey "\e[7~" beginning-of-line  # Home rxvt/konsole
+	bindkey "\e[8~" end-of-line        # End rxvt/konsole
+endif

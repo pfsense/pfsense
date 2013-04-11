@@ -31,11 +31,10 @@
         POSSIBILITY OF SUCH DAMAGE.
 */
 
-$nocsrf = true;
-
 require_once("functions.inc");
 require_once("guiconfig.inc");
 require_once('notices.inc');
+include_once("includes/functions.inc.php");
 
 if($_REQUEST['getupdatestatus']) {
 	if(isset($config['system']['firmware']['disablecheck'])) {
@@ -82,8 +81,8 @@ if($_REQUEST['getupdatestatus']) {
 $curcfg = $config['system']['firmware'];
 
 ?>
-</script>
-<table width="100%" border="0" cellspacing="0" cellpadding="0">
+
+<table width="100%" border="0" cellspacing="0" cellpadding="0" summary="system information">
 	<tbody>
 		<tr>
 			<td width="25%" class="vncellt">Name</td>
@@ -97,7 +96,7 @@ $curcfg = $config['system']['firmware'];
 				<br />
 				built on <?php readfile("/etc/version.buildtime"); ?>
 		<br />
-		<div name="uname" id="uname"><a href="#" onClick='swapuname(); return false;'><?php echo php_uname("s") . " " . php_uname("r"); ?></a></div>
+		<div id="uname"><a href="#" onclick='swapuname(); return false;'><?php echo php_uname("s") . " " . php_uname("r"); ?></a></div>
 		<?php if(!isset($config['system']['firmware']['disablecheck'])): ?>
 		<div id='updatestatus'><br/><?php echo gettext("Obtaining update status"); ?> ...</div>
 		<?php endif; ?>
@@ -167,7 +166,7 @@ $curcfg = $config['system']['firmware'];
 					<?php
 						$dns_servers = get_dns_servers();
 						foreach($dns_servers as $dns) {
-							echo "{$dns}<br>";
+							echo "{$dns}<br/>";
 						}
 					?>
 			</td>
@@ -201,7 +200,7 @@ $curcfg = $config['system']['firmware'];
                         <td width="25%" class="vncellt">Temperature</td>
 			<td width="75%" class="listr">
 				<?php $TempMeter = $temp = get_temp(); ?>
-				<img src="./themes/<?= $g['theme']; ?>/images/misc/bar_left.gif" height="15" width="4" border="0" align="middle" alt="left bar" /><img src="./themes/<?= $g['theme']; ?>/images/misc/bar_blue.gif" height="15" name="tempwidtha" id="tempwidtha" width="<?= $TempMeter; ?>" border="0" align="middle" alt="red bar" /><img src="./themes/<?= $g['theme']; ?>/images/misc/bar_gray.gif" height="15" name="tempwidthb" id="tempwidthb" width="<?= (100 - $TempMeter); ?>" border="0" align="middle" alt="gray bar" /><img src="./themes/<?= $g['theme']; ?>/images/misc/bar_right.gif" height="15" width="5" border="0" align="middle" alt="right bar" />
+				<img src="./themes/<?= $g['theme']; ?>/images/misc/bar_left.gif" height="15" width="4" border="0" align="middle" alt="left bar" /><img src="./themes/<?= $g['theme']; ?>/images/misc/bar_blue.gif" height="15" name="tempwidtha" id="tempwidtha" width="<?= round($TempMeter); ?>" border="0" align="middle" alt="red bar" /><img src="./themes/<?= $g['theme']; ?>/images/misc/bar_gray.gif" height="15" name="tempwidthb" id="tempwidthb" width="<?= (100 - $TempMeter); ?>" border="0" align="middle" alt="gray bar" /><img src="./themes/<?= $g['theme']; ?>/images/misc/bar_right.gif" height="15" width="5" border="0" align="middle" alt="right bar" />
 				&nbsp;
 				<span id="tempmeter"><?= $temp."&#176;C"; ?></span>
 			</td>
@@ -254,6 +253,7 @@ $curcfg = $config['system']['firmware'];
 	</tbody>
 </table>
 <script type="text/javascript">
+//<![CDATA[
 	function swapuname() {
 		jQuery('#uname').html("<?php echo php_uname("a"); ?>");
 	}
@@ -277,4 +277,5 @@ $curcfg = $config['system']['firmware'];
 	}
 	setTimeout('getstatus()', 4000);
 	<?php endif; ?>
+//]]>
 </script>

@@ -42,6 +42,11 @@ function get_boot_disk() {
 	return $disk;
 }
 
+function get_swap_disks() {
+	exec("/usr/sbin/swapinfo | /usr/bin/sed '/^\/dev/!d; s,^/dev/,,; s, .*\$,,'", $disks);
+	return $disks;
+}
+
 function get_disk_slices($disk) {
 	global $g, $debug;
 	$slices_array = array();
@@ -108,6 +113,7 @@ function find_config_xml() {
 	if(!is_array($disks)) 
 		return;
 	$boot_disk = get_boot_disk();
+	$swap_disks = get_swap_disks();
 	exec("/bin/mkdir -p /tmp/mnt/cf");
 	foreach($disks as $disk) {
 		$slices = get_disk_slices($disk);
@@ -118,6 +124,11 @@ function find_config_xml() {
 				if(stristr($slice, $boot_disk)) {
 					if($debug) 
 						echo "\nSkipping boot device slice $slice";
+					continue;
+				}
+				if(in_array($slice, $swap_disks)) {
+					if($debug)
+						echo "\nSkipping swap device slice $slice";
 					continue;
 				}
 				echo " $slice";

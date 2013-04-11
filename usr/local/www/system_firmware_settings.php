@@ -77,6 +77,7 @@ $curcfg = $config['system']['firmware'];
 $gitcfg = $config['system']['gitsync'];
 
 $pgtitle = array(gettext("System"),gettext("Firmware"),gettext("Settings"));
+$closehead = false;
 include("head.inc");
 
 exec("/usr/bin/fetch -q -o /tmp/manifest \"{$g['update_manifest']}\"");
@@ -85,8 +86,8 @@ if(file_exists("/tmp/manifest")) {
 }
 
 ?>
-<script language="JavaScript">
-<!--
+<script type="text/javascript">
+//<![CDATA[
 
 
 function enable_altfirmwareurl(enable_over) {  	 
@@ -98,8 +99,9 @@ function enable_altfirmwareurl(enable_over) {
 	} 	 
 }
 
-// -->
+//]]>
 </script>
+</head>
 
 <body link="#0000CC" vlink="#0000CC" alink="#0000CC">
 <?php include("fbegin.inc");?>
@@ -107,7 +109,7 @@ function enable_altfirmwareurl(enable_over) {
 
 <form action="system_firmware_settings.php" method="post" name="iform" id="iform">
             <?php if ($savemsg) print_info_box($savemsg); ?>
-              <table width="100%" border="0" cellpadding="0" cellspacing="0">
+              <table width="100%" border="0" cellpadding="0" cellspacing="0" summary="firmware settings">
 	<tr>
 		<td>
 <?php
@@ -121,8 +123,8 @@ function enable_altfirmwareurl(enable_over) {
 ?>
 		</td>
 	</tr>
-	<tr><td><div id=mainarea>
-	      <table class="tabcont" width="100%" border="0" cellpadding="6" cellspacing="0">
+	<tr><td><div id="mainarea">
+	      <table class="tabcont" width="100%" border="0" cellpadding="6" cellspacing="0" summary="main area">
 	<tr>
 		<td colspan="2" valign="top" class="listtopic"><?=gettext("Firmware Branch"); ?></td>
 	</tr>
@@ -130,29 +132,38 @@ function enable_altfirmwareurl(enable_over) {
 	<tr>
 		<td valign="top" class="vncell"><?=gettext("Default Auto Update URLs"); ?></td>
 		<td class="vtable">
-			<select name='preseturls' id='preseturls' onChange="firmwareurl.value = preseturls.value; document.iform.firmwareurl.disabled = 0; alturlenable.checked=true; jQuery('#preseturls').parent().effect('highlight');">
+			<select name='preseturls' id='preseturls' onchange="firmwareurl.value = preseturls.value; document.iform.firmwareurl.disabled = 0; alturlenable.checked=true; jQuery('#preseturls').parent().effect('highlight');">
 					<option></option>
 				<?php 
 					foreach($preset_urls_split as $pus) {
 						$pus_text = explode("\t", $pus);
-						if($pus_text[0])
-							echo "<option value='{$pus_text[1]}'>{$pus_text[0]}</option>";
+						if (empty($pus_text[0]))
+							continue;
+						if (stristr($pus_text[0], php_uname("m")) !== false) {
+							$style = " style=\"font-weight: bold\"";
+							$yourarch = " (Current architecture)";
+						} else {
+							$style = "";
+							$yourarch = "";
+						}
+						echo "<option value='{$pus_text[1]}'{$style}>{$pus_text[0]}{$yourarch}</option>";
 					}
 				?>
 			</select>
+		<br/><br/><?php echo sprintf(gettext("Entries denoted by \"Current architecture\" match the architecture of your current installation, such as %s. Changing architectures during an upgrade is not recommended, and may require a manual reboot after the update completes."), php_uname("m")); ?>
 		</td>
 	</tr>
 <?php endif; ?>
 	<tr>
 		<td valign="top" class="vncell"><?=gettext("Firmware Auto Update URL"); ?></td>
 		<td class="vtable">
-			<input name="alturlenable" type="checkbox" id="alturlenable" value="yes" onClick="enable_altfirmwareurl()" <?php if(isset($curcfg['alturl']['enable'])) echo "checked"; ?>> <?=gettext("Use a URL server for firmware upgrades other than") . " " . $g['product_website']; ?><br>
-			<table>
-			<tr><td><?=gettext("Base URL:"); ?></td><td><input name="firmwareurl" type="input" class="formfld url" id="firmwareurl" size="64" value="<?php if($curcfg['alturl']['firmwareurl']) echo $curcfg['alturl']['firmwareurl']; else echo $g['']; ?>"></td></tr>
+			<input name="alturlenable" type="checkbox" id="alturlenable" value="yes" onclick="enable_altfirmwareurl()" <?php if(isset($curcfg['alturl']['enable'])) echo "checked=\"checked\""; ?> /> <?=gettext("Use a URL server for firmware upgrades other than") . " " . $g['product_website']; ?><br />
+			<table summary="alternative Base URL">
+			<tr><td><?=gettext("Base URL:"); ?></td><td><input name="firmwareurl" type="text" class="formfld url" id="firmwareurl" size="64" value="<?php if($curcfg['alturl']['firmwareurl']) echo $curcfg['alturl']['firmwareurl']; else echo $g['']; ?>" /></td></tr>
 			</table>
 			<span class="vexpl">
 				<?=gettext("This is where"); ?> <?php echo $g['product_name'] ?> <?=gettext("will check for newer firmware versions when the"); ?> <a href="system_firmware_check.php"><?=gettext("System: Firmware: Auto Update"); ?></a> <?=gettext("page is viewed."); ?>
-				<p/>
+				<br/>
 				<b><?=gettext("NOTE:"); ?></b> <?php printf(gettext("When a custom URL is enabled, the system will not verify the digital signature from %s."), $g['product_website']); ?>
 				</span>
 				</td>
@@ -166,7 +177,7 @@ function enable_altfirmwareurl(enable_over) {
 	<tr>
 		<td width="22%" valign="top" class="vncell"><?=gettext("Unsigned images"); ?></td>
 		<td width="78%" class="vtable">
-			<input name="allowinvalidsig" type="checkbox" id="allowinvalidsig" value="yes" <?php if (isset($curcfg['allowinvalidsig'])) echo "checked"; ?> />
+			<input name="allowinvalidsig" type="checkbox" id="allowinvalidsig" value="yes" <?php if (isset($curcfg['allowinvalidsig'])) echo "checked=\"checked\""; ?> />
 			<br />
 			<?=gettext("Allow auto-update firmware images with a missing or invalid digital signature to be used."); ?>
 		</td>
@@ -174,7 +185,7 @@ function enable_altfirmwareurl(enable_over) {
 	<tr>
 		<td width="22%" valign="top" class="vncell"><?=gettext("Dashboard check"); ?></td>
 		<td width="78%" class="vtable">
-			<input name="disablecheck" type="checkbox" id="disablecheck" value="yes" <?php if (isset($curcfg['disablecheck'])) echo "checked"; ?> />
+			<input name="disablecheck" type="checkbox" id="disablecheck" value="yes" <?php if (isset($curcfg['disablecheck'])) echo "checked=\"checked\""; ?> />
 			<br />
 			<?=gettext("Disable the automatic dashboard auto-update check."); ?>
 		</td>
@@ -189,7 +200,7 @@ function enable_altfirmwareurl(enable_over) {
 	<tr>
 		<td width="22%" valign="top" class="vncell"><?=gettext("Auto sync on update"); ?></td>
 		<td width="78%" class="vtable">
-			<input name="synconupgrade" type="checkbox" id="synconupgrade" value="yes" <?php if (isset($gitcfg['synconupgrade'])) echo "checked"; ?> />
+			<input name="synconupgrade" type="checkbox" id="synconupgrade" value="yes" <?php if (isset($gitcfg['synconupgrade'])) echo "checked=\"checked\""; ?> />
 			<br />
 			<?=gettext("After updating, sync with the following repository/branch before reboot."); ?>
 		</td>
@@ -205,7 +216,7 @@ function enable_altfirmwareurl(enable_over) {
 	<tr>
 		<td width="22%" valign="top" class="vncell"><?=gettext("Repository URL"); ?></td>
 		<td width="78%" class="vtable">
-			<input name="repositoryurl" type="input" class="formfld url" id="repositoryurl" size="64" value="<?php if ($gitcfg['repositoryurl']) echo $gitcfg['repositoryurl']; ?>">
+			<input name="repositoryurl" type="input" class="formfld url" id="repositoryurl" size="64" value="<?php if ($gitcfg['repositoryurl']) echo $gitcfg['repositoryurl']; ?>" />
 <?php if($lastrepositoryurl): ?>
 			<br />
 			<?=sprintf(gettext("The most recently used repository was %s"), $lastrepositoryurl); ?>
@@ -231,7 +242,7 @@ function enable_altfirmwareurl(enable_over) {
 	<tr>
 		<td width="22%" valign="top" class="vncell"><?=gettext("Branch name"); ?></td>
 		<td width="78%" class="vtable">
-			<input name="branch" type="input" class="formfld unknown" id="branch" size="64" value="<?php if ($gitcfg['branch']) echo $gitcfg['branch']; ?>">
+			<input name="branch" type="input" class="formfld unknown" id="branch" size="64" value="<?php if ($gitcfg['branch']) echo $gitcfg['branch']; ?>" />
 <?php if($lastbranch): ?>
 			<br />
 			<?=sprintf(gettext("The most recently used branch was %s"), $lastbranch); ?>
@@ -244,11 +255,15 @@ function enable_altfirmwareurl(enable_over) {
 		</td>
 	</tr>
 <?php endif; ?>
-	<script>enable_altfirmwareurl();</script>
+	<tr><td><script type="text/javascript">
+	//<![CDATA[
+	enable_altfirmwareurl();
+	//]]>
+	</script></td></tr>
                 <tr>
                   <td width="22%" valign="top">&nbsp;</td>
                   <td width="78%">
-                    <input name="Submit" type="submit" class="formbtn" value="<?=gettext("Save"); ?>">
+                    <input name="Submit" type="submit" class="formbtn" value="<?=gettext("Save"); ?>" />
                   </td>
                 </tr>
               </table></div></td></tr></table>

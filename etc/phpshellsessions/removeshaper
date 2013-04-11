@@ -1,0 +1,24 @@
+require("config.inc");
+require_once("functions.inc");
+require_once("filter.inc");
+require_once("shaper.inc");
+require_once("rrd.inc");
+
+/* Much of this borrowed from firewall_shaper.php */
+
+echo gettext("Removing shaper settings...\n");
+
+unset($config['shaper']['queue']);
+unset($queue);
+unset($altq);
+
+foreach ($config['filter']['rule'] as $key => $rule) {
+	if (isset($rule['wizard']) && $rule['wizard'] == "yes")
+		unset($config['filter']['rule'][$key]);
+}
+if (write_config()) {
+	echo gettext("Shaper Successfully Removed.\n");
+} else {
+	echo gettext("Unable to write config.xml (Access Denied?)\n");
+}
+filter_configure();

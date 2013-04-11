@@ -87,6 +87,12 @@ if (!$_SESSION['Post_Login']) {
 	exit;
 }
 
+/* 
+ * Close session data to allow other scripts from same host to come in.
+ * A session can be reactivated from calling session_start again
+ */
+session_commit();
+
 /*
  * determine if the user is allowed access to the requested page
  */
@@ -101,8 +107,8 @@ function display_error_form($http_code, $desc) {
 ?>
 
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
-        "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<html>
+   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
 	<head>
 		<script type="text/javascript" src="/javascript/jquery.js"></script>
 		<title><?=$http_code?></title>
@@ -114,7 +120,7 @@ function display_error_form($http_code, $desc) {
 		<link rel="stylesheet" type="text/css" href="/themes/<?= $g['theme'] ?>/all.css" media="all" />
 		<?php endif; ?>
 		<script type="text/javascript">
-		<!--
+		//<![CDATA[
 			function page_load() {}
 			function clearError() {
 				if($('#inputerrors'))
@@ -124,7 +130,7 @@ function display_error_form($http_code, $desc) {
 				require("headjs.php");
 				echo getHeadJS();
 			?>
-		//-->
+		//]]>
 		</script>
 		<script type="text/javascript" src="/themes/<?= $g['theme'] ?>/javascript/niftyjsCode.js"></script>
 	</head>
@@ -197,18 +203,35 @@ if($config['virtualip']) {
 		}
 	}
 }
+if (is_array($config['openvpn']['openvpn-server'])) {
+	foreach ($config['openvpn']['openvpn-server'] as $ovpns) {
+		if (is_ipaddrv4($http_host) && !empty($ovpns['tunnel_network']) && ip_in_subnet($http_host, $ovpns['tunnel_network'])) {
+			$local_ip = true;
+			break;
+		}
+
+		if (is_ipaddrv6($http_host) && !empty($ovpns['tunnel_networkv6']) && ip_in_subnet($http_host, $ovpns['tunnel_networkv6'])) {
+			$local_ip = true;
+			break;
+		}
+	}
+}
 setcookie("cookie_test", time() + 3600);
 $have_cookies = isset($_COOKIE["cookie_test"]);
 
 ?>
 
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
-        "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<html>
+   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
 	<head>
 		<script type="text/javascript" src="/javascript/jquery.js"></script>
-		<script>$(document).ready(function() { jQuery('#usernamefld').focus(); });</script>
-		
+		<script type="text/javascript">
+		//<![CDATA[
+		$(document).ready(function() { jQuery('#usernamefld').focus(); });
+		//]]>
+		</script>
+
 		<title><?=gettext("Login"); ?></title>
 		<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
 		<link rel="shortcut icon" href="/themes/<?= $g['theme'] ?>/images/icons/favicon.ico" />
@@ -218,7 +241,7 @@ $have_cookies = isset($_COOKIE["cookie_test"]);
 		<link rel="stylesheet" type="text/css" href="/themes/<?= $g['theme'] ?>/all.css" media="all" />
 		<?php endif; ?>
 		<script type="text/javascript">
-		<!--
+		//<![CDATA[
 			function page_load() {}
 			function clearError() {
 				if($('#inputerrors'))
@@ -228,7 +251,7 @@ $have_cookies = isset($_COOKIE["cookie_test"]);
 				require("headjs.php");
 				echo getHeadJS();
 			?>
-		//-->
+		//]]>
 		</script>
 		<script type="text/javascript" src="/themes/<?= $g['theme'] ?>/javascript/niftyjsCode.js"></script>
 	</head>
@@ -241,40 +264,40 @@ $have_cookies = isset($_COOKIE["cookie_test"]);
 				}
 				$noautocomplete = isset($config['system']['webgui']['noautocomplete']) ? 'autocomplete="off"' : '';
 			?>
-			<form id="iform" name="login_iform" method="post" <?= $noautocomplete ?> action="<?=$_SERVER['SCRIPT_NAME'];?>">
-				<h1></h1>
+			<form id="iform" name="iform" method="post" <?= $noautocomplete ?> action="<?=$_SERVER['SCRIPT_NAME'];?>">
+				<h1>&nbsp;</h1>
 				<div id="inputerrors"><?=$_SESSION['Login_Error'];?></div>
 				<p>
 					<span style="text-align:left">
-						<?=gettext("Username:"); ?><br>
+						<?=gettext("Username:"); ?><br />
 						<input onclick="clearError();" onchange="clearError();" id="usernamefld" type="text" name="usernamefld" class="formfld user" tabindex="1" />
 					</span>
 				</p>
-				<br>
 				<p>
+					<br />
 					<span style="text-align:left">
-						<?=gettext("Password:"); ?> <br>
+						<?=gettext("Password:"); ?> <br />
 						<input onclick="clearError();" onchange="clearError();" id="passwordfld" type="password" name="passwordfld" class="formfld pwd" tabindex="2" />
 					</span>
 				</p>
-				<br>
 				<p>
+					<br />
 					<span style="text-align:center; font-weight: normal ; font-style: italic">
 						<?=gettext("Enter username and password to login."); ?>
 					</span>
 
-					<? if (!$have_cookies && isset($_POST['login'])): ?>
+					<?php if (!$have_cookies && isset($_POST['login'])): ?>
 					<br/><br/>
 					<span style="text-align:center; font-weight: normal ; font-style: italic; color: #ff0000">
 						<?= gettext("Your browser must support cookies to login."); ?>
 					</span>
-					<? endif; ?>
+					<?php endif; ?>
 				</p>        
 				<p>
 					<span style="text-align:center">
 						<input type="submit" name="login" class="formbtn" value="<?=gettext("Login"); ?>" tabindex="3" />
 					</span>
-				</P>
+				</p>
 			</form>
 		</div>
 	</body>

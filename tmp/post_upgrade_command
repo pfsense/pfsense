@@ -30,7 +30,11 @@ case "$OLDKERNEL" in
 	KERNELTYPE=SMP
 	;;
 	*)
-	KERNELTYPE=SMP
+	if [ "${PFSENSETYPE}" = "pfSense" ]; then
+		KERNELTYPE=SMP
+	elif [ "${PFSENSETYPE}" = "nanobsd" ]; then
+		KERNELTYPE=WRAP
+	fi
 	;;
 esac
 

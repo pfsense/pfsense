@@ -59,8 +59,12 @@ function gif_inuse($num) {
 }
 
 if ($_GET['act'] == "del") {
+	if (!isset($_GET['id']))
+                $input_errors[] = getext("Wrong parameters supplied");
+        else if (empty($a_gifs[$_GET['id']]))
+                $input_errors[] = getext("Wrong index supplied");
 	/* check if still in use */
-	if (gif_inuse($_GET['id'])) {
+	else if (gif_inuse($_GET['id'])) {
 		$input_errors[] = gettext("This gif TUNNEL cannot be deleted because it is still being used as an interface.");
 	} else {
 		mwexec("/sbin/ifconfig " . $a_gifs[$_GET['id']]['gifif'] . " destroy");

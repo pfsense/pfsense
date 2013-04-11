@@ -36,8 +36,8 @@
 
 ##|+PRIV
 ##|*IDENT=page-system-usermanager-settings
-##|*NAME=System: User manager: settings page
-##|*DESCR=Allow access to the 'System: User manager: settings' page.
+##|*NAME=System: User Manager: settings page
+##|*DESCR=Allow access to the 'System: User Manager: settings' page.
 ##|*MATCH=system_usermanager_settings.php*
 ##|-PRIV
 
@@ -97,15 +97,17 @@ include("head.inc");
 
 <?php
 	if($save_and_test) {
-		echo "<script language='javascript'>\n";
+		echo "<script type=\"text/javascript\">\n";
+		echo "//<![CDATA[\n";
 		echo "myRef = window.open('system_usermanager_settings_test.php?authserver={$pconfig['authmode']}','mywin', ";
 		echo "'left=20,top=20,width=700,height=550,toolbar=1,resizable=0');\n";
 		echo "if (myRef==null || typeof(myRef)=='undefined') alert('" . gettext("Popup blocker detected.  Action aborted.") ."');\n";
+		echo "//]]>\n";
 		echo "</script>\n";
 	}
 ?>
 
-  <table width="100%" border="0" cellpadding="0" cellspacing="0">
+  <table width="100%" border="0" cellpadding="0" cellspacing="0" summary="user manager settings">
     <tr>
       <td class="tabnavtbl">
 <?php
@@ -122,11 +124,12 @@ if(!$pconfig['backend'])
 
 ?>
       </td>
+    </tr>
     <tr>
        <td>
             <div id="mainarea">
             <form id="iform" name="iform" action="system_usermanager_settings.php" method="post">
-              <table class="tabcont" width="100%" border="0" cellspacing="0" cellpadding="6">
+              <table class="tabcont" width="100%" border="0" cellspacing="0" cellpadding="6" summary="main area">
 		<tr>
                         <td width="22%" valign="top" class="vncell"><?=gettext("Session Timeout"); ?></td>
                         <td width="78%" class="vtable">
@@ -145,9 +148,9 @@ if(!$pconfig['backend'])
                                         	foreach ($auth_servers as $auth_server):
                                                 	$selected = "";
                                                         if ($auth_server['name'] == $pconfig['authmode'])
-                                                        	$selected = "selected";
+                                                        	$selected = "selected=\"selected\"";
 							if (!isset($pconfig['authmode']) && $auth_server['name'] == "Local Database")
-								$selected = "selected";
+								$selected = "selected=\"selected\"";
 
                                         ?>
                                         <option value="<?=$auth_server['name'];?>" <?=$selected;?>><?=$auth_server['name'];?></option>

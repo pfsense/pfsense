@@ -101,7 +101,9 @@ exec("/usr/bin/grep -vi warning /tmp/PHP_errors.log", $php_errors);
 <?php
 	if (gettext($_POST['Submit']) == "Yes") {
 		echo gettext("Processing...");
-		file_put_contents("/var/crash/crashreport_header.txt", $crash_report_header);
+		if (!is_dir("/var/crash"))
+			mwexec("/bin/mkdir -p /var/crash");
+		@file_put_contents("/var/crash/crashreport_header.txt", $crash_report_header);
 		if(file_exists("/tmp/PHP_errors.log"))
 			exec("cp /tmp/PHP_errors.log /var/crash/");
 		exec("/usr/bin/gzip /var/crash/*");

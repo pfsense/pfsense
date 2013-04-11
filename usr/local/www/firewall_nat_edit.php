@@ -60,15 +60,25 @@ $id = $_GET['id'];
 if (isset($_POST['id']))
 	$id = $_POST['id'];
 
+$after = $_GET['after'];
+
+if (isset($_POST['after']))
+	$after = $_POST['after'];
+
 if (isset($_GET['dup'])) {
         $id = $_GET['dup'];
         $after = $_GET['dup'];
 }
 
 if (isset($id) && $a_nat[$id]) {
+	if ( isset($a_nat[$id]['created']) && is_array($a_nat[$id]['created']) )
+		$pconfig['created'] = $a_nat[$id]['created'];
+
+	if ( isset($a_nat[$id]['updated']) && is_array($a_nat[$id]['updated']) )
+		$pconfig['updated'] = $a_nat[$id]['updated'];
+
 	$pconfig['disabled'] = isset($a_nat[$id]['disabled']);
 	$pconfig['nordr'] = isset($a_nat[$id]['nordr']);
-
 	address_to_pconfig($a_nat[$id]['source'], $pconfig['src'],
 		$pconfig['srcmask'], $pconfig['srcnot'],
 		$pconfig['srcbeginport'], $pconfig['srcendport']);
@@ -365,16 +375,6 @@ if ($_POST) {
 			$_POST['filter-rule-association']=='add-unassociated') )
 			$need_filter_rule = true;
 
-		// Determine NAT entry ID now, we need it for the firewall rule
-		if (isset($id) && $a_nat[$id])
-			$a_nat[$id] = $natent;
-		else {
-			if (is_numeric($after))
-				$id = $after + 1;
-			else
-				$id = count($a_nat);
-		}
-
 		if ($need_filter_rule == true) {
 
 			/* auto-generate a matching firewall rule */
@@ -383,7 +383,7 @@ if ($_POST) {
 			// If a rule already exists, load it
 			if (!empty($natent['associated-rule-id'])) {
 				$filterentid = get_id($natent['associated-rule-id'], $config['filter']['rule']);
-				if ($filterentid == false)
+				if ($filterentid === false)
 					$filterent['associated-rule-id'] = $natent['associated-rule-id'];
 				else
 					$filterent =& $config['filter']['rule'][$filterentid];
@@ -414,11 +414,17 @@ if ($_POST) {
 			// If this is a new rule, create an ID and add the rule
 			if( $_POST['filter-rule-association']=='add-associated' ) {
 				$filterent['associated-rule-id'] = $natent['associated-rule-id'] = get_unique_id();
+				$filterent['created'] = make_config_revision_entry(null, gettext("NAT Port Forward"));
 				$config['filter']['rule'][] = $filterent;
 			}
 
 			mark_subsystem_dirty('filter');
 		}
+
+		if ( isset($a_nat[$id]['created']) && is_array($a_nat[$id]['created']) )
+			$natent['created'] = $a_nat[$id]['created'];
+
+		$natent['updated'] = make_config_revision_entry();
 
 		// Allow extending of the firewall edit page and include custom input validation 
 		pfSense_handle_custom_code("/usr/local/pkg/firewall_nat/pre_write_config");
@@ -427,6 +433,7 @@ if ($_POST) {
 		if (isset($id) && $a_nat[$id])
 			$a_nat[$id] = $natent;
 		else {
+			$natent['created'] = make_config_revision_entry();
 			if (is_numeric($after))
 				array_splice($a_nat, $after+1, 0, array($natent));
 			else
@@ -782,7 +789,7 @@ include("fbegin.inc"); ?>
 					<td width="22%" valign="top" class="vncell"><?=gettext("No XMLRPC Sync"); ?></td>
 					<td width="78%" class="vtable">
 						<input type="checkbox" value="yes" name="nosync"<?php if($pconfig['nosync']) echo " CHECKED"; ?>><br>
-						<?=gettext("HINT: This prevents the rule from automatically syncing to other CARP members"); ?>.
+						<?=gettext("Hint: This prevents the rule on Master from automatically syncing to other CARP members. This does NOT prevent the rule from being overwritten on Slave.");?>
 					</td>
 				</tr>
 				<tr>
@@ -837,12 +844,41 @@ include("fbegin.inc"); ?>
 						<option value="add-unassociated"><?=gettext("Add unassociated filter rule"); ?></option>
 						<option value="pass"><?=gettext("Pass"); ?></option>
 					</select>
+					<br/><br/><?=gettext("NOTE: The \"pass\" selection does not work properly with Multi-WAN. It will only work on an interface containing the default gateway.")?>
 				  </td>
                 </tr><?php endif; ?>
 <?php
 		// Allow extending of the firewall edit page and include custom input validation 
 		pfSense_handle_custom_code("/usr/local/pkg/firewall_nat/htmlphplate");
 ?>
+<?php
+$has_created_time = (isset($a_nat[$id]['created']) && is_array($a_nat[$id]['created']));
+$has_updated_time = (isset($a_nat[$id]['updated']) && is_array($a_nat[$id]['updated']));
+?>
+		<?php if ($has_created_time || $has_updated_time): ?>
+		<tr>
+			<td>&nbsp;</td>
+		</tr>
+		<tr>
+			<td colspan="2" valign="top" class="listtopic"><?=gettext("Rule Information");?></td>
+		</tr>
+		<?php if ($has_created_time): ?>
+		<tr>
+			<td width="22%" valign="top" class="vncell"><?=gettext("Created");?></td>
+			<td width="78%" class="vtable">
+				<?= date(gettext("n/j/y H:i:s"), $a_nat[$id]['created']['time']) ?> <?= gettext("by") ?> <strong><?= $a_nat[$id]['created']['username'] ?></strong>
+			</td>
+		</tr>
+		<?php endif; ?>
+		<?php if ($has_updated_time): ?>
+		<tr>
+			<td width="22%" valign="top" class="vncell"><?=gettext("Updated");?></td>
+			<td width="78%" class="vtable">
+				<?= date(gettext("n/j/y H:i:s"), $a_nat[$id]['updated']['time']) ?> <?= gettext("by") ?> <strong><?= $a_nat[$id]['updated']['username'] ?></strong>
+			</td>
+		</tr>
+		<?php endif; ?>
+		<?php endif; ?>
 				<tr>
                   <td width="22%" valign="top">&nbsp;</td>
                   <td width="78%">&nbsp;</td>
@@ -854,6 +890,7 @@ include("fbegin.inc"); ?>
                     <?php if (isset($id) && $a_nat[$id]): ?>
                     <input name="id" type="hidden" value="<?=htmlspecialchars($id);?>">
                     <?php endif; ?>
+                    <input name="after" type="hidden" value="<?=htmlspecialchars($after);?>">
                   </td>
                 </tr>
               </table>

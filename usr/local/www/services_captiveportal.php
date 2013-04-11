@@ -48,7 +48,7 @@ $cpzone = $_GET['zone'];
 if (isset($_POST['zone']))
 	$cpzone = $_POST['zone'];
 
-if (empty($cpzone)) {
+if (empty($cpzone) || empty($config['captiveportal'][$cpzone])) {
 	header("Location: services_captiveportal_zones.php");
 	exit;
 }
@@ -95,8 +95,8 @@ if ($a_cp[$cpzone]) {
 	$pconfig['freelogins_resettimeout'] = $a_cp[$cpzone]['freelogins_resettimeout'];
 	$pconfig['freelogins_updatetimeouts'] = isset($a_cp[$cpzone]['freelogins_updatetimeouts']);
 	$pconfig['enable'] = isset($a_cp[$cpzone]['enable']);
-	$pconfig['pms_enabled'] = $a_cp[$cpzone]['pms_enabled'];
 	$pconfig['auth_method'] = $a_cp[$cpzone]['auth_method'];
+	$pconfig['localauth_priv'] = isset($a_cp[$cpzone]['localauth_priv']);
 	$pconfig['radacct_enable'] = isset($a_cp[$cpzone]['radacct_enable']);
 	$pconfig['radmac_enable'] = isset($a_cp[$cpzone]['radmac_enable']);
 	$pconfig['radmac_secret'] = $a_cp[$cpzone]['radmac_secret'];
@@ -112,7 +112,7 @@ if ($a_cp[$cpzone]) {
 	$pconfig['bwdefaultup'] = $a_cp[$cpzone]['bwdefaultup'];
 	$pconfig['nomacfilter'] = isset($a_cp[$cpzone]['nomacfilter']);
 	$pconfig['noconcurrentlogins'] = isset($a_cp[$cpzone]['noconcurrentlogins']);
-        $pconfig['radius_protocol'] = $a_cp[$cpzone]['radius_protocol'];
+	$pconfig['radius_protocol'] = $a_cp[$cpzone]['radius_protocol'];
 	$pconfig['redirurl'] = $a_cp[$cpzone]['redirurl'];
 	$pconfig['radiusip'] = $a_cp[$cpzone]['radiusip'];
 	$pconfig['radiusip2'] = $a_cp[$cpzone]['radiusip2'];
@@ -133,6 +133,8 @@ if ($a_cp[$cpzone]) {
 	$pconfig['passthrumacadd'] = isset($a_cp[$cpzone]['passthrumacadd']);
 	$pconfig['passthrumacaddusername'] = isset($a_cp[$cpzone]['passthrumacaddusername']);
 	$pconfig['radmac_format'] = $a_cp[$cpzone]['radmac_format'];
+	$pconfig['reverseacct'] = isset($a_cp[$cpzone]['reverseacct']);
+	$pconfig['radiusnasid'] = $a_cp[$cpzone]['radiusnasid'];
 	$pconfig['page'] = array();
 	if ($a_cp[$cpzone]['page']['htmltext'])
 		$pconfig['page']['htmltext'] = $a_cp[$cpzone]['page']['htmltext'];
@@ -169,7 +171,7 @@ if ($_POST) {
 		}
 
 		if ($_POST['httpslogin_enable']) {
-		 	if (!$_POST['certref']) {
+			if (!$_POST['certref']) {
 				$input_errors[] = gettext("Certificate must be specified for HTTPS login.");
 			}
 			if (!$_POST['httpsname'] || !is_domain($_POST['httpsname'])) {
@@ -178,8 +180,24 @@ if ($_POST) {
 		}
 	}
 
-	if ($_POST['timeout'] && (!is_numeric($_POST['timeout']) || ($_POST['timeout'] < 1))) {
-		$input_errors[] = gettext("The timeout must be at least 1 minute.");
+	if ($_POST['timeout']) {
+		if (!is_numeric($_POST['timeout']) || ($_POST['timeout'] < 1))
+			$input_errors[] = gettext("The timeout must be at least 1 minute.");
+		else if (isset($config['dhcpd']) && is_array($config['dhcpd'])) {
+			foreach ($config['dhcpd'] as $dhcpd_if => $dhcpd_data) {
+				if (!isset($dhcpd_data['enable']))
+					continue;
+				if (!is_array($_POST['cinterface']) || !in_array($dhcpd_if, $_POST['cinterface']))
+					continue;
+
+				$deftime = 7200; // Default lease time
+				if (isset($dhcpd_data['defaultleasetime']) && is_numeric($dhcpd_data['defaultleasetime']))
+					$deftime = $dhcpd_data['defaultleasetime'];
+
+				if ($_POST['timeout'] > $deftime)
+					$input_errors[] = gettext("Hard timeout must be less or equal Default lease time set on DHCP Server");
+			}
+		}
 	}
 	if ($_POST['idletimeout'] && (!is_numeric($_POST['idletimeout']) || ($_POST['idletimeout'] < 1))) {
 		$input_errors[] = gettext("The idle timeout must be at least 1 minute.");
@@ -221,6 +239,9 @@ if ($_POST) {
 	if ($_POST['maxproc'] && (!is_numeric($_POST['maxproc']) || ($_POST['maxproc'] < 4) || ($_POST['maxproc'] > 100))) {
 		$input_errors[] = gettext("The maximum number of concurrent connections per client IP address may not be larger than the global maximum.");
 	}
+	if (trim($_POST['radiusnasid']) !== "" && !preg_match("/^[\x21-\x7e]{3,253}$/i", trim($_POST['radiusnasid']))) {
+		$input_errors[] = gettext("The NAS-Identifier must be 3-253 characters long and should only contain ASCII characters.");
+	}
 
 	if (!$input_errors) {
 		$newcp =& $a_cp[$cpzone];
@@ -231,7 +252,7 @@ if ($_POST) {
 				if ($cp['zoneid'] == $newcp['zoneid'] && $keycpzone != $cpzone)
 					$newcp['zoneid'] += 2; /* Resreve space for SSL config if needed */
 		}
-		$oldifaces = $newcp['interface'];
+		$oldifaces = explode(",", $newcp['interface']);
 		if (is_array($_POST['cinterface']))
 			$newcp['interface'] = implode(",", $_POST['cinterface']);
 		$newcp['maxproc'] = $_POST['maxproc'];
@@ -245,11 +266,8 @@ if ($_POST) {
 			$newcp['enable'] = true;
 		else
 			unset($newcp['enable']);
-		if ($_POST['pms_enabled'])
-			$newcp['pms_enabled'] = $_POST['pms_enabled'];
-		else
-			unset($newcp['pms_enabled']);
 		$newcp['auth_method'] = $_POST['auth_method'];
+		$newcp['localauth_priv'] = isset($_POST['localauth_priv']);
 		$newcp['radacct_enable'] = $_POST['radacct_enable'] ? true : false;
 		$newcp['reauthenticate'] = $_POST['reauthenticate'] ? true : false;
 		$newcp['radmac_enable'] = $_POST['radmac_enable'] ? true : false;
@@ -268,7 +286,7 @@ if ($_POST) {
 		$newcp['logoutwin_enable'] = $_POST['logoutwin_enable'] ? true : false;
 		$newcp['nomacfilter'] = $_POST['nomacfilter'] ? true : false;
 		$newcp['noconcurrentlogins'] = $_POST['noconcurrentlogins'] ? true : false;
-                $newcp['radius_protocol'] = $_POST['radius_protocol'];
+		$newcp['radius_protocol'] = $_POST['radius_protocol'];
 		$newcp['redirurl'] = $_POST['redirurl'];
 		if (isset($_POST['radiusip']))
 			$newcp['radiusip'] = $_POST['radiusip'];
@@ -303,6 +321,8 @@ if ($_POST) {
 		$newcp['passthrumacadd'] = $_POST['passthrumacadd'] ? true : false;
 		$newcp['passthrumacaddusername'] = $_POST['passthrumacaddusername'] ? true : false;
 		$newcp['radmac_format'] = $_POST['radmac_format'] ? $_POST['radmac_format'] : false;
+		$newcp['reverseacct'] = $_POST['reverseacct'] ? true : false;
+		$newcp['radiusnasid'] = trim($_POST['radiusnasid']);
 		if (!is_array($newcp['page']))
 			$newcp['page'] = array();
 
@@ -316,26 +336,20 @@ if ($_POST) {
 
 		write_config();
 
-		if (!empty($oldifaces) && $oldifaces != $newcp['interface']) {
-			$ocpinterfaces = explode(",", $oldifaces);
-			foreach ($ocpinterfaces as $cpifgrp) {
-				$listrealif = get_real_interface($cpifgrp);
-				if (does_interface_exist($listrealif)) {
-					pfSense_interface_flags($listrealif, -IFF_IPFW_FILTER);
-					$carpif = link_ip_to_carp_interface(find_interface_ip($listrealif));
-					if (!empty($carpif)) {
-						$carpsif = explode(" ", $carpif);
-						foreach ($carpsif as $cpcarp)
-							pfSense_interface_flags($cpcarp, -IFF_IPFW_FILTER);
-					}
-				}
+		/* Clear up unselected interfaces */
+		$newifaces = explode(",", $newcp['interface']);
+		$toremove = array_diff($oldifaces, $newifaces);
+		if (!empty($toremove)) {
+			foreach ($toremove as $removeif) {
+				$removeif = get_real_interface($removeif);
+				mwexec("/usr/local/sbin/ipfw_context -d {$cpzone} -x {$removeif}");
 			}
 		}
-
 		captiveportal_configure_zone($newcp);
+		unset($newcp, $newifaces, $toremove);
 		filter_configure();
 		header("Location: services_captiveportal_zones.php");
-                exit;
+		exit;
 	} else {
 		if (is_array($_POST['cinterface']))
 			$pconfig['cinterface'] = implode(",", $_POST['cinterface']);
@@ -348,6 +362,7 @@ include("head.inc");
 function enable_change(enable_change) {
 	var endis, radius_endis;
 	endis = !(document.iform.enable.checked || enable_change);
+	localauth_endis = !((!endis && document.iform.auth_method[1].checked) || enable_change);
 	radius_endis = !((!endis && document.iform.auth_method[2].checked) || enable_change);
 	https_endis = !((!endis && document.iform.httpslogin_enable.checked) || enable_change);
 
@@ -361,6 +376,7 @@ function enable_change(enable_change) {
 	document.iform.timeout.disabled = endis;
 	document.iform.preauthurl.disabled = endis;
 	document.iform.redirurl.disabled = endis;
+	document.iform.localauth_priv.disabled = localauth_endis;
 	document.iform.radiusip.disabled = radius_endis;
 	document.iform.radiusip2.disabled = radius_endis;
 	document.iform.radiusip3.disabled = radius_endis;
@@ -408,6 +424,8 @@ function enable_change(enable_change) {
 	document.iform.reauthenticateacct[0].disabled = radacct_dis;
 	document.iform.reauthenticateacct[1].disabled = radacct_dis;
 	document.iform.reauthenticateacct[2].disabled = radacct_dis;
+	document.iform.reverseacct.disabled = (radius_endis || !document.iform.radacct_enable.checked) && !enable_change;
+	document.iform.radiusnasid.disabled = radius_endis;
 }
 //-->
 </script>
@@ -423,7 +441,7 @@ function enable_change(enable_change) {
 	$tab_array[] = array(gettext("Captive portal(s)"), true, "services_captiveportal.php?zone={$cpzone}");
 	$tab_array[] = array(gettext("Pass-through MAC"), false, "services_captiveportal_mac.php?zone={$cpzone}");
 	$tab_array[] = array(gettext("Allowed IP addresses"), false, "services_captiveportal_ip.php?zone={$cpzone}");
-	$tab_array[] = array(gettext("Allowed Hostnames"), false, "services_captiveportal_hostname.php?zone={$cpzone}");	
+	$tab_array[] = array(gettext("Allowed Hostnames"), false, "services_captiveportal_hostname.php?zone={$cpzone}");
 	$tab_array[] = array(gettext("Vouchers"), false, "services_captiveportal_vouchers.php?zone={$cpzone}");
 	$tab_array[] = array(gettext("File Manager"), false, "services_captiveportal_filemanager.php?zone={$cpzone}");
 	display_top_tabs($tab_array, true);
@@ -441,7 +459,7 @@ function enable_change(enable_change) {
 	  <td width="22%" valign="top" class="vncellreq"><?=gettext("Interfaces"); ?></td>
 	  <td width="78%" class="vtable">
 		<select name="cinterface[]" multiple="true" size="<?php echo count($config['interfaces']); ?>" class="formselect" id="cinterface">
-		  <?php 
+		  <?php
 		  $interfaces = get_configured_interface_with_descr();
 		  $cselected = explode(",", $pconfig['cinterface']);
 		  foreach ($interfaces as $iface => $ifacename): ?>
@@ -510,7 +528,7 @@ function enable_change(enable_change) {
       <td valign="top" class="vncell"><?=gettext("Pre-authentication redirect URL"); ?> </td>
       <td class="vtable">
         <input name="preauthurl" type="text" class="formfld url" id="preauthurl" size="60" value="<?=htmlspecialchars($pconfig['preauthurl']);?>"><br>
-		<?php printf(gettext("Use this field to set \$PORTAL_REDIRURL\$ variable which can be accessed using your custom captive portal index.php page or error pages."));?> 
+		<?php printf(gettext("Use this field to set \$PORTAL_REDIRURL\$ variable which can be accessed using your custom captive portal index.php page or error pages."));?>
 	  </td>
 	</tr>
 	<tr>
@@ -542,7 +560,7 @@ function enable_change(enable_change) {
       <td class="vtable">
         <input name="passthrumacadd" type="checkbox" class="formfld" id="passthrumacadd" value="yes" <?php if ($pconfig['passthrumacadd']) echo "checked"; ?>>
         <strong><?=gettext("Enable Pass-through MAC automatic additions"); ?></strong><br>
-    <?=gettext("If this option is set, a MAC passthrough entry is automatically added after the user has successfully authenticated. Users of that MAC address will never have to authenticate again."); ?> 
+    <?=gettext("If this option is set, a MAC passthrough entry is automatically added after the user has successfully authenticated. Users of that MAC address will never have to authenticate again."); ?>
     <?=gettext("To remove the passthrough MAC entry you either have to log in and remove it manually from the"); ?> <a href="services_captiveportal_mac.php"><?=gettext("Pass-through MAC tab"); ?></a> <?=gettext("or send a POST from another system to remove it."); ?>
     <?=gettext("If this is enabled, RADIUS MAC authentication cannot be used. Also, the logout window will not be shown."); ?>
 	<br/><br/>
@@ -570,33 +588,32 @@ function enable_change(enable_change) {
         <?=gettext("If this option is set, the captive portal will restrict each user who logs in to the specified default bandwidth. RADIUS can override the default settings. Leave empty or set to 0 for no limit."); ?> </td>
 	</tr>
 	<tr>
-      <td valign="top" class="vncell"><?=gettext("PMS authentication"); ?> </td>
-      <td class="vtable">
-        <input name="pms_enabled" type="checkbox" class="formfld" id="pms_enabled" value="yes" <?php if ($pconfig['pms_enabled']) echo "checked"; ?>>
-        <strong><?=gettext("Enable PMS authentication"); ?></strong><br>
-    <?=gettext("If this option is set, users will be authenticated through the PMS backend if they fill the necessary information in the login page.");?>
-	</td>
-	</tr>
-	<tr>
 	  <td width="22%" valign="top" class="vncell"><?=gettext("Authentication"); ?></td>
 	  <td width="78%" class="vtable">
 		<table cellpadding="0" cellspacing="0">
 		<tr>
 		  <td colspan="2"><input name="auth_method" type="radio" id="auth_method" value="none" onClick="enable_change(false)" <?php if($pconfig['auth_method']!="local" && $pconfig['auth_method']!="radius") echo "checked"; ?>>
   <?=gettext("No Authentication"); ?></td>
-		  </tr>
+		</tr>
 		<tr>
 		  <td colspan="2"><input name="auth_method" type="radio" id="auth_method" value="local" onClick="enable_change(false)" <?php if($pconfig['auth_method']=="local") echo "checked"; ?>>
   <?=gettext("Local"); ?> <a href="system_usermanager.php"><?=gettext("User Manager"); ?></a> / <?=gettext("Vouchers"); ?></td>
-		  </tr>
+		</tr>
+		</tr><tr>
+		  <td>&nbsp;</td>
+		  <td>&nbsp;</td>
+		</tr>
 		<tr>
+		  <td>&nbsp;</td>
+		  <td><input name="localauth_priv" type="checkbox" id="localauth_priv" value="yes" onClick="enable_change(false)" <?php if($pconfig['localauth_priv']=="yes") echo "checked"; ?>>
+  <?=gettext("Allow only users/groups with 'Captive portal login' privilege set"); ?></td>
+		</tr><tr>
 		  <td colspan="2"><input name="auth_method" type="radio" id="auth_method" value="radius" onClick="enable_change(false)" <?php if($pconfig['auth_method']=="radius") echo "checked"; ?>>
   <?=gettext("RADIUS Authentication"); ?></td>
-		  </tr><tr>
+		</tr><tr>
 		  <td>&nbsp;</td>
 		  <td>&nbsp;</td>
-		  </tr>
-                  <tr>
+                </tr>
                   <td width="22%" valign="top" class="vncell"><?=gettext("Radius Protocol"); ?></td>
                   <td width="78%" class="vtable">
                     <table cellpadding="0" cellspacing="0">
@@ -711,10 +728,7 @@ function enable_change(enable_change) {
 			  <td colspan="2" class="list" height="12"></td>
 			</tr>
 			<tr>
-				<td colspan="2" valign="top" class="listtopic">&nbsp;</td>
-			</tr>
-			<tr>
-				<td colspan="2" valign="top" class="optsect_t2"><?=gettext("Accounting"); ?></td>
+				<td colspan="2" valign="top" class="listtopic"><?=gettext("Accounting"); ?></td>
 			</tr>
 			<tr>
 				<td class="vncell">&nbsp;</td>
@@ -731,16 +745,6 @@ function enable_change(enable_change) {
 			  <td colspan="2" class="list" height="12"></td>
 			</tr>
 			<tr>
-				<td colspan="2" valign="top" class="optsect_t2"><?=gettext("Reauthentication"); ?></td>
-			</tr>
-			<tr>
-				<td class="vncell">&nbsp;</td>
-				<td class="vtable"><input name="reauthenticate" type="checkbox" id="reauthenticate" value="yes" onClick="enable_change(false)" <?php if($pconfig['reauthenticate']) echo "checked"; ?>>
-			  <strong><?=gettext("Reauthenticate connected users every minute"); ?></strong><br>
-			  <?=gettext("If reauthentication is enabled, Access-Requests will be sent to the RADIUS server for each user that is " .
-			  "logged in every minute. If an Access-Reject is received for a user, that user is disconnected from the captive portal immediately."); ?></td>
-			</tr>
-			<tr>
 			  <td class="vncell" valign="top"><?=gettext("Accounting updates"); ?></td>
 			  <td class="vtable">
 			  <input name="reauthenticateacct" type="radio" value="" <?php if(!$pconfig['reauthenticateacct']) echo "checked"; ?>> <?=gettext("no accounting updates"); ?><br>
@@ -752,29 +756,29 @@ function enable_change(enable_change) {
 			  <td colspan="2" class="list" height="12"></td>
 			</tr>
 			<tr>
-				<td colspan="2" valign="top" class="optsect_t2"><?=gettext("RADIUS MAC authentication"); ?></td>
+				<td colspan="2" valign="top" class="listtopic"><?=gettext("RADIUS options"); ?></td>
 			</tr>
 			<tr>
-				<td class="vncell">&nbsp;</td>
-				<td class="vtable">
+				<td class="vncell"><?=gettext("Reauthentication"); ?></td>
+				<td class="vtable"><input name="reauthenticate" type="checkbox" id="reauthenticate" value="yes" onClick="enable_change(false)" <?php if($pconfig['reauthenticate']) echo "checked"; ?>>
+				<strong><?=gettext("Reauthenticate connected users every minute"); ?></strong><br>
+				<?=gettext("If reauthentication is enabled, Access-Requests will be sent to the RADIUS server for each user that is " .
+				"logged in every minute. If an Access-Reject is received for a user, that user is disconnected from the captive portal immediately."); ?></td>
+			</tr>
+			<tr>
+				<td class=""><?=gettext("RADIUS MAC authentication"); ?></td>
+				<td class="">
 				<input name="radmac_enable" type="checkbox" id="radmac_enable" value="yes" onClick="enable_change(false)" <?php if ($pconfig['radmac_enable']) echo "checked"; ?>><strong><?=gettext("Enable RADIUS MAC authentication"); ?></strong><br>
 				<?=gettext("If this option is enabled, the captive portal will try to authenticate users by sending their MAC address as the username and the password " .
 				"entered below to the RADIUS server."); ?></td>
 			</tr>
 			<tr>
-				<td class="vncell"><?=gettext("Shared secret"); ?></td>
+				<td class="vncell"><?=gettext("MAC authentication secret"); ?></td>
 				<td class="vtable"><input name="radmac_secret" type="text" class="formfld unknown" id="radmac_secret" size="16" value="<?=htmlspecialchars($pconfig['radmac_secret']);?>"></td>
 			</tr>
 			<tr>
-			  <td colspan="2" class="list" height="12"></td>
-			</tr>
-			<tr>
-				<td colspan="2" valign="top" class="optsect_t2"><?=gettext("RADIUS options"); ?></td>
-			</tr>
-
-			<tr>
 				<td class="vncell" valign="top"><?=gettext("RADIUS NAS IP attribute"); ?></td>
-				<td>
+				<td class="vtable">
 				<select name="radiussrcip_attribute" id="radiussrcip_attribute">
 				<?php $iflist = get_configured_interface_with_descr();
 					foreach ($iflist as $ifdesc => $ifdescr) {
@@ -787,18 +791,18 @@ function enable_change(enable_change) {
 						}
 					}
 					if (is_array($config['virtualip']['vip'])) {
-                				foreach ($config['virtualip']['vip'] as $sn) {
-                        				if ($sn['mode'] == "proxyarp" && $sn['type'] == "network") {
-                                				$start = ip2long32(gen_subnet($sn['subnet'], $sn['subnet_bits']));
-                                				$end = ip2long32(gen_subnet_max($sn['subnet'], $sn['subnet_bits']));
-                                				$len = $end - $start;
+						foreach ($config['virtualip']['vip'] as $sn) {
+							if ($sn['mode'] == "proxyarp" && $sn['type'] == "network") {
+								$start = ip2long32(gen_subnet($sn['subnet'], $sn['subnet_bits']));
+								$end = ip2long32(gen_subnet_max($sn['subnet'], $sn['subnet_bits']));
+								$len = $end - $start;
 
-                                				for ($i = 0; $i <= $len; $i++) {
-                                        				$snip = long2ip32($start+$i);
-                                					echo "<option value='{$snip}' {$selected}>" . htmlspecialchars("{$sn['descr']} - {$snip}") . "></option>\n";
+								for ($i = 0; $i <= $len; $i++) {
+									$snip = long2ip32($start+$i);
+									echo "<option value='{$snip}' {$selected}>" . htmlspecialchars("{$sn['descr']} - {$snip}") . "></option>\n";
 								}
 							} else
-                                				echo "<option value='{$sn['subnet']}' {$selected}>" . htmlspecialchars("{$sn['descr']} - {$sn['subnet']}") . "></option>\n";
+								echo "<option value='{$sn['subnet']}' {$selected}>" . htmlspecialchars("{$sn['descr']} - {$sn['subnet']}") . "></option>\n";
 						}
 					}
 				?>
@@ -830,43 +834,57 @@ function enable_change(enable_change) {
 				"the Called-Station-Id to the client's MAC address. Default behavior is Calling-Station-Id = client's MAC address and Called-Station-Id = %s's WAN IP address."),
 					$g['product_name']);?></td>
 			</tr>
+
+			<tr>
+				<td class="vncell" valign="top"><?=gettext("Accounting Style"); ?></td>
+				<td class="vtable"><input name="reverseacct" type="checkbox" id="reverseacct" value="yes" <?php if ($pconfig['reverseacct']) echo "checked"; ?>><strong><?=gettext("Invert Acct-Input-Octets and Acct-Output-Octets"); ?></strong><br>
+				<?=gettext("When this is enabled, data counts for RADIUS accounting packets will be taken from the client perspective, not the NAS. Acct-Input-Octets will represent download, and Acct-Output-Octets will represent upload."); ?></td>
+			</tr>
+
+			<tr>
+				<td class="vncell" valign="top"><?=gettext("NAS Identifier"); ?></td>
+				<td class="vtable"><input name="radiusnasid" type="text" maxlength="253" class="formfld unknown" id="radiusnasid" value="<?=htmlspecialchars($pconfig['radiusnasid']);?>"/><br/>
+					<?=gettext("Specify a NAS identifier to override the default value") . " (" . php_uname("n") . ")"; ?></td>
+			</tr>
+			<tr>
+				<td class="vncell" valign="top"><?=gettext("MAC address format"); ?></td>
+				<td class="vtable">
+					<select name="radmac_format" id="radmac_format">
+						<option value="default"><?php echo gettext("default"); ?></option>
+						<?php
+						$macformats = array("singledash","ietf","cisco","unformatted");
+						foreach ($macformats as $macformat) {
+							if ($pconfig['radmac_format'] == $macformat) {
+								echo "<option selected value=\"$macformat\">",gettext($macformat),"</option>\n";
+							} else {
+								echo "<option value=\"$macformat\">",gettext($macformat),"</option>\n";
+							}
+						}
+						?>
+					</select></br>
+					<?=gettext("This option changes the MAC address format used in the whole RADIUS system. Change this if you also"); ?>
+					<?=gettext("need to change the username format for RADIUS MAC authentication."); ?><br>
+					<?=gettext("default:"); ?> 00:11:22:33:44:55<br>
+					<?=gettext("singledash:"); ?> 001122-334455<br>
+					<?=gettext("ietf:"); ?> 00-11-22-33-44-55<br>
+					<?=gettext("cisco:"); ?> 0011.2233.4455<br>
+					<?=gettext("unformatted:"); ?> 001122334455
+				</td>
+			</tr>
 		</table>
 	</tr>
-    <tr>
-        <td class="vncell" valign="top"><?=gettext("MAC address format"); ?></td>
-        <td class="vtable">
-        <select name="radmac_format" id="radmac_format">
-        <option value="default"><?php echo gettext("default"); ?></option>
-        <?php
-        $macformats = array("singledash","ietf","cisco","unformatted");
-        foreach ($macformats as $macformat) {
-            if ($pconfig['radmac_format'] == $macformat)
-                echo "<option selected value=\"$macformat\">",gettext($macformat),"</option>\n";
-            else
-                echo "<option value=\"$macformat\">",gettext($macformat),"</option>\n";
-        }
-        ?>
-        </select></br>
-        <?=gettext("This option changes the MAC address format used in the whole RADIUS system. Change this if you also"); ?>
-        <?=gettext("need to change the username format for RADIUS MAC authentication."); ?><br>
-        <?=gettext("default:"); ?> 00:11:22:33:44:55<br>
-        <?=gettext("singledash:"); ?> 001122-334455<br>
-        <?=gettext("ietf:"); ?> 00-11-22-33-44-55<br>
-        <?=gettext("cisco:"); ?> 0011.2233.4455<br>
-        <?=gettext("unformatted:"); ?> 001122334455
-    </tr>
 	<tr>
-      <td valign="top" class="vncell"><?=gettext("HTTPS login"); ?></td>
-      <td class="vtable">
-        <input name="httpslogin_enable" type="checkbox" class="formfld" id="httpslogin_enable" value="yes" onClick="enable_change(false)" <?php if($pconfig['httpslogin_enable']) echo "checked"; ?>>
-        <strong><?=gettext("Enable HTTPS login"); ?></strong><br>
-    <?=gettext("If enabled, the username and password will be transmitted over an HTTPS connection to protect against eavesdroppers. A server name and certificate must also be specified below."); ?></td>
+		<td valign="top" class="vncell"><?=gettext("HTTPS login"); ?></td>
+		<td class="vtable">
+			<input name="httpslogin_enable" type="checkbox" class="formfld" id="httpslogin_enable" value="yes" onClick="enable_change(false)" <?php if($pconfig['httpslogin_enable']) echo "checked"; ?>>
+			<strong><?=gettext("Enable HTTPS login"); ?></strong><br>
+			<?=gettext("If enabled, the username and password will be transmitted over an HTTPS connection to protect against eavesdroppers. A server name and certificate must also be specified below."); ?></td>
 	</tr>
 	<tr>
-      <td valign="top" class="vncell"><?=gettext("HTTPS server name"); ?> </td>
-      <td class="vtable">
-        <input name="httpsname" type="text" class="formfld unknown" id="httpsname" size="30" value="<?=htmlspecialchars($pconfig['httpsname']);?>"><br>
-	<?php printf(gettext("This name will be used in the form action for the HTTPS POST and should match the Common Name (CN) in your certificate (otherwise, the client browser will most likely display a security warning). Make sure captive portal clients can resolve this name in DNS and verify on the client that the IP resolves to the correct interface IP on %s."), $g['product_name']);?> </td>
+		<td valign="top" class="vncell"><?=gettext("HTTPS server name"); ?> </td>
+		<td class="vtable">
+			<input name="httpsname" type="text" class="formfld unknown" id="httpsname" size="30" value="<?=htmlspecialchars($pconfig['httpsname']);?>"><br>
+			<?php printf(gettext("This name will be used in the form action for the HTTPS POST and should match the Common Name (CN) in your certificate (otherwise, the client browser will most likely display a security warning). Make sure captive portal clients can resolve this name in DNS and verify on the client that the IP resolves to the correct interface IP on %s."), $g['product_name']);?> </td>
 	</tr>
 	<tr id="ssl_opts">
 		<td width="22%" valign="top" class="vncell"><?=gettext("SSL Certificate"); ?></td>

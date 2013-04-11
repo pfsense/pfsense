@@ -42,9 +42,6 @@
 ##|*MATCH=index.php*
 ##|-PRIV
 
-// Turn off csrf for the dashboard
-$nocsrf = true; 
-
 // Turn on buffering to speed up rendering
 ini_set('output_buffering','true');
 
@@ -97,6 +94,9 @@ $widgetlist = array();
 
 while (false !== ($filename = readdir($dirhandle))) {
 	$periodpos = strpos($filename, ".");
+	/* Ignore files not ending in .php */
+	if (substr($filename, -4, 4) != ".php")
+		continue;
 	$widgetname = substr($filename, 0, $periodpos);
 	$widgetnames[] = $widgetname;
 	if ($widgetname != "system_information")
@@ -158,8 +158,8 @@ if (!is_array($config['widgets'])) {
 	if(file_exists('/conf/trigger_initial_wizard')) {
 		echo <<<EOF
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
-	"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<html>
+   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
 <head>
 	<title>{$g['product_name']}.localdomain - {$g['product_name']} first time setup</title>
 	<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
@@ -172,13 +172,13 @@ EOF;
 		echo "<body link=\"#0000CC\" vlink=\"#0000CC\" alink=\"#0000CC\">\n";
 
 		if(file_exists("/usr/local/www/themes/{$g['theme']}/wizard.css")) 
-			echo "<link rel=\"stylesheet\" href=\"/themes/{$g['theme']}/wizard.css\" media=\"all\" />\n";
+			echo "<link type=\"text/css\" rel=\"stylesheet\" href=\"/themes/{$g['theme']}/wizard.css\" media=\"all\" />\n";
 		else 
-			echo "<link rel=\"stylesheet\" href=\"/themes/{$g['theme']}/all.css\" media=\"all\" />";
+			echo "<link type=\"text/css\" rel=\"stylesheet\" href=\"/themes/{$g['theme']}/all.css\" media=\"all\" />";
 
 		echo "<form>\n";
 		echo "<center>\n";
-		echo "<img src=\"/themes/{$g['theme']}/images/logo.gif\" border=\"0\"><p>\n";
+		echo "<img src=\"/themes/{$g['theme']}/images/logo.gif\" border=\"0\" alt=\"logo\" /><p>\n";
 		echo "<div \" style=\"width:700px;background-color:#ffffff\" id=\"nifty\">\n";
 		echo sprintf(gettext("Welcome to %s!\n"),$g['product_name']) . "<p>";
 		echo gettext("One moment while we start the initial setup wizard.") . "<p>\n";
@@ -187,8 +187,10 @@ EOF;
 		echo "</div>\n";
 		echo "<meta http-equiv=\"refresh\" content=\"1;url=wizard.php?xml=setup_wizard.xml\">\n";
 		echo "<script type=\"text/javascript\">\n";
+		echo "//<![CDATA[\n";
 		echo "NiftyCheck();\n";
 		echo "Rounded(\"div#nifty\",\"all\",\"#AAA\",\"#FFFFFF\",\"smooth\");\n";
+		echo "//]]>\n";
 		echo "</script>\n";
 		exit;
 	}
@@ -271,8 +273,8 @@ foreach($phpincludefiles as $includename) {
 
 ##begin AJAX
 $jscriptstr = <<<EOD
-<script language="javascript" type="text/javascript">
-
+<script type="text/javascript">
+//<![CDATA[
 
 function widgetAjax(widget) {
 	uri = "widgets/widgets/" + widget + ".widget.php";
@@ -454,10 +456,10 @@ function changeTabDIV(selectedDiv){
 		}
 	}
 }
-
+//]]>
 </script>
 EOD;
-$closehead = false;
+
 
 ## Set Page Title and Include Header
 $pgtitle = array(gettext("Status: Dashboard"));
@@ -467,18 +469,17 @@ include("head.inc");
 
 <body link="#0000CC" vlink="#0000CC" alink="#0000CC">
 
-<script language="javascript" type="text/javascript">
-// <![CDATA[
+<script type="text/javascript">
+//<![CDATA[
 columns = ['col1','col2'];
-// ]]>
-
+//]]>
 </script>
 
 <?php
 include("fbegin.inc");
 echo $jscriptstr;
 	if(!file_exists("/usr/local/www/themes/{$g['theme']}/no_big_logo"))
-		echo "<center><img src=\"./themes/".$g['theme']."/images/logobig.jpg\"></center><br>";
+		echo "<center><img src=\"./themes/".$g['theme']."/images/logobig.jpg\" alt=\"big logo\" /></center><br />";
 
 if ($savemsg) 
 	print_info_box($savemsg); 
@@ -508,12 +509,12 @@ pfSense_handle_custom_code("/usr/local/pkg/dashboard/pre_dashboard");
 						//echo widget title 
 						?>
 						<span style="cursor: pointer;" onclick='return addWidget("<?php echo $widgetname; ?>")'>
-						<u><?php echo $$widgettitle; ?></u></span><br>
+						<u><?php echo $$widgettitle; ?></u></span><br />
 						<?php 
 					}
 					else {?>
 						<span style="cursor: pointer;" onclick='return addWidget("<?php echo $widgetname; ?>")'>
-						<u><?php echo $nicename; ?></u></span><br><?php
+						<u><?php echo $nicename; ?></u></span><br /><?php
 					}
 			}
 		?>
@@ -523,18 +524,16 @@ pfSense_handle_custom_code("/usr/local/pkg/dashboard/pre_dashboard");
 
 <div id="welcomecontainer" style="display:none">
 		<div id="welcome-container">
-			<h1>
-				<div style="float:left;width:80%;padding: 2px">
-					<?=gettext("Welcome to the Dashboard page"); ?>!
-				</div>
-				<div onclick="domTT_close(this);showAllWidgets();" style="float:right;width:8%; cursor:pointer;padding: 5px;" >
-					<img src="./themes/<?= $g['theme']; ?>/images/icons/icon_close.gif" />
-				</div>
-				<div style="clear:both;"></div>
-			</h1>
+			<div style="float:left;width:80%;padding: 2px">
+				<h1><?=gettext("Welcome to the Dashboard page"); ?>!</h1>
+			</div>
+			<div onclick="domTT_close(this);showAllWidgets();" style="float:right;width:8%; cursor:pointer;padding: 5px;" >
+				<img src="./themes/<?= $g['theme']; ?>/images/icons/icon_close.gif" alt="close" />
+			</div>
+			<div style="clear:both;"></div>
 			<p>
 			<?=gettext("This page allows you to customize the information you want to be displayed!");?><br/>
-			<?=gettext("To get started click the");?> <img src="./themes/<?= $g['theme']; ?>/images/icons/icon_plus.gif"> <?=gettext("icon to add widgets.");?><br/>
+			<?=gettext("To get started click the");?> <img src="./themes/<?= $g['theme']; ?>/images/icons/icon_plus.gif" alt="plus" /> <?=gettext("icon to add widgets.");?><br/>
 			<br/>
 			<?=gettext("You can move any widget around by clicking and dragging the title.");?>			
 			</p>
@@ -542,7 +541,7 @@ pfSense_handle_custom_code("/usr/local/pkg/dashboard/pre_dashboard");
 </div>
 
 <form action="index.php" method="post">
-<input type="hidden" value="" name="sequence" id="sequence">
+<input type="hidden" value="" name="sequence" id="sequence" />
 <img src="./themes/<?= $g['theme']; ?>/images/icons/icon_plus.gif" alt="<?=gettext("Click here to add widgets"); ?>" style="cursor: pointer;" onmouseup="domTT_activate(this, event, 'content', document.getElementById('content1'), 'type', 'velcro', 'delay', 0, 'fade', 'both', 'fadeMax', 100, 'styleClass', 'niceTitle');" />
 
 <img src="./themes/<?= $g['theme']; ?>/images/icons/icon_info_pkg.gif" alt="<?=gettext("Click here for help"); ?>" style="cursor: help;" onmouseup="hideAllWidgets();domTT_activate(this, event, 'content', document.getElementById('welcome-container'), 'type', 'sticky', 'closeLink', '','delay', 0, 'fade', 'both', 'fadeMax', 100, 'styleClass', 'niceTitle');" />
@@ -550,7 +549,6 @@ pfSense_handle_custom_code("/usr/local/pkg/dashboard/pre_dashboard");
 
 &nbsp;&nbsp;&nbsp;
 		<input id="submit" name="submit" type="submit" style="display:none" onclick="return updatePref();" class="formbtn" value="<?=gettext("Save Settings");?>" />
-</p>
 </form>
 <div id="niftyOutter">
 	<?php
@@ -659,7 +657,7 @@ pfSense_handle_custom_code("/usr/local/pkg/dashboard/pre_dashboard");
 		?>
 		<div style="clear:both;"></div>
 		<div  id="<?php echo $widgetname;?>-container" class="widgetdiv" style="display:<?php echo $divdisplay; ?>;">
-			<input type="hidden" value="<?php echo $inputdisplay;?>" id="<?php echo $widgetname;?>-container-input" name="<?php echo $widgetname;?>-container-input">
+			<input type="hidden" value="<?php echo $inputdisplay;?>" id="<?php echo $widgetname;?>-container-input" name="<?php echo $widgetname;?>-container-input" />
 			<div id="<?php echo $widgetname;?>-topic" class="widgetheader" style="cursor:move">
 				<div style="float:left;">
 					<?php 
@@ -670,7 +668,7 @@ pfSense_handle_custom_code("/usr/local/pkg/dashboard/pre_dashboard");
 					{
 						//only show link if defined
 						if ($$widgettitlelink != "") {?>						
-						<u><span onClick="location.href='/<?php echo $$widgettitlelink;?>'" style="cursor:pointer">
+						<u><span onclick="location.href='/<?php echo $$widgettitlelink;?>'" style="cursor:pointer">
 						<?php }
 							//echo widget title
 							echo $$widgettitle; 
@@ -680,7 +678,7 @@ pfSense_handle_custom_code("/usr/local/pkg/dashboard/pre_dashboard");
 					}
 					else{		
 						if ($$widgettitlelink != "") {?>						
-						<u><span onClick="location.href='/<?php echo $$widgettitlelink;?>'" style="cursor:pointer">
+						<u><span onclick="location.href='/<?php echo $$widgettitlelink;?>'" style="cursor:pointer">
 						<?php }
 						echo $nicename;
 							if ($$widgettitlelink != "") { ?>
@@ -690,20 +688,18 @@ pfSense_handle_custom_code("/usr/local/pkg/dashboard/pre_dashboard");
 					?>
 				</div>
 				<div align="right" style="float:right;">	
-					<div id="<?php echo $widgetname;?>-configure" onclick='return configureWidget("<?php echo $widgetname;?>")' style="display:none; cursor:pointer" ><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_configure.gif" /></div>									
-					<div id="<?php echo $widgetname;?>-open" onclick='return showWidget("<?php echo $widgetname;?>",true)' style="display:<?php echo $showWidget;?>; cursor:pointer" ><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_open.gif" /></div>	
-					<div id="<?php echo $widgetname;?>-min" onclick='return minimizeWidget("<?php echo $widgetname;?>",true)' style="display:<?php echo $mindiv;?>; cursor:pointer" ><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_minus.gif"/></div>												
-					<div id="<?php echo $widgetname;?>-close" onclick='return closeWidget("<?php echo $widgetname;?>",true)' style="display:inline; cursor:pointer" ><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_close.gif" /></div>	
+					<div id="<?php echo $widgetname;?>-configure" onclick='return configureWidget("<?php echo $widgetname;?>")' style="display:none; cursor:pointer" ><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_configure.gif" alt="configure" /></div>
+					<div id="<?php echo $widgetname;?>-open" onclick='return showWidget("<?php echo $widgetname;?>",true)' style="display:<?php echo $showWidget;?>; cursor:pointer" ><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_open.gif" alt="open" /></div>
+					<div id="<?php echo $widgetname;?>-min" onclick='return minimizeWidget("<?php echo $widgetname;?>",true)' style="display:<?php echo $mindiv;?>; cursor:pointer" ><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_minus.gif" alt="minimize" /></div>
+					<div id="<?php echo $widgetname;?>-close" onclick='return closeWidget("<?php echo $widgetname;?>",true)' style="display:inline; cursor:pointer" ><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_close.gif" alt="close" /></div>
 				</div>
 				<div style="clear:both;"></div>
 			</div>
 			<?php if ($divdisplay != "block") { ?>
-			<div id="<?php echo $widgetname;?>-loader" style="display:<?php echo $display; ?>;">
-				<br>	
-					<center>
-						<img src="./themes/<?= $g['theme']; ?>/images/misc/widget_loader.gif" width=25 height=25 alt="<?=gettext("Loading selected widget"); ?>...">
-					</center>	
-				<br>
+			<div id="<?php echo $widgetname;?>-loader" style="display:<?php echo $display; ?>;" align="center">
+				<br />
+					<img src="./themes/<?= $g['theme']; ?>/images/misc/widget_loader.gif" width="25" height="25" alt="<?=gettext("Loading selected widget"); ?>..." />
+				<br />
 			</div> <?php } if ($divdisplay != "block") $display = none; ?>
 			<div id="<?php echo $widgetname;?>" style="display:<?php echo $display; ?>;">				
 				<?php 
@@ -727,6 +723,7 @@ pfSense_handle_custom_code("/usr/local/pkg/dashboard/pre_dashboard");
 <?php include("fend.inc"); ?>
 	    
 <script type="text/javascript">
+//<![CDATA[
 	jQuery(document).ready(function(in_event)
 	{		
 			jQuery('#col1').sortable({connectWith: '#col2', dropOnEmpty: true, handle: '.widgetheader', change: showSave});
@@ -737,6 +734,7 @@ pfSense_handle_custom_code("/usr/local/pkg/dashboard/pre_dashboard");
 			domTT_activate('welcome1', null, 'x', 287, 'y', 107, 'content', document.getElementById('welcome-container'), 'type', 'sticky', 'closeLink', '','delay', 1000, 'fade', 'both', 'fadeMax', 100, 'styleClass', 'niceTitle');		
 	<?php } ?>
 	});
+//]]>
 </script>
 <?php
 	//build list of javascript include files
@@ -753,7 +751,6 @@ pfSense_handle_custom_code("/usr/local/pkg/dashboard/pre_dashboard");
 		echo "<script src='{$directory}{$jsincludename}' type='text/javascript'></script>\n";	
 	}
 ?>
-</script>
 
 </body>
 </html>

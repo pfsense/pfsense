@@ -34,7 +34,7 @@ OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
 	pfSense_MODULE:	config
 */
 
-if(!function_exists("dump_rrd_to_xml")) 
+if(!function_exists("dump_rrd_to_xml"))
 	require("rrd.inc");
 
 /* Upgrade functions must be named:
@@ -700,7 +700,7 @@ function upgrade_040_to_041() {
 		$config['sysctl']['item'][18]['tunable'] = "net.inet.tcp.tso";
 		$config['sysctl']['item'][18]['descr'] =    gettext("TCP Offload engine");
 		$config['sysctl']['item'][18]['value'] =   "default";
-		
+
 		$config['sysctl']['item'][19]['tunable'] = "net.inet.ip.portrange.first";
 		$config['sysctl']['item'][19]['descr'] =    "Set the ephemeral port range starting port";
 		$config['sysctl']['item'][19]['value'] =   "default";
@@ -748,7 +748,7 @@ function upgrade_042_to_043() {
 		$config['gateways']['gateway_item'][$i]['name'] = "GW_" . strtoupper($ifname);
 		/* add default gateway bit for wan on upgrade */
 		if($ifname == "wan") {
-			 $config['gateways']['gateway_item'][$i]['defaultgw'] = true;
+			$config['gateways']['gateway_item'][$i]['defaultgw'] = true;
 		}
 		if(is_ipaddr($config['interfaces'][$ifname]['use_rrd_gateway'])) {
 			$config['gateways']['gateway_item'][$i]['monitor'] = $config['interfaces'][$ifname]['use_rrd_gateway'];
@@ -800,7 +800,8 @@ function upgrade_043_to_044() {
 				/* We already added a gateway name for this IP */
 				$config['staticroutes']['route'][$idx]['gateway'] = "{$gwmap[$sroute['gateway']]}";
 				$found = true;
-			}			
+			}
+
 			if ($found == false) {
 				$gateway = array();
 				$gateway['name'] = "SROUTE{$i}";
@@ -834,7 +835,7 @@ function upgrade_044_to_045() {
 				}
 			}
 			$config['vlans']['vlan'][$i]['vlanif'] = "{$vlan_name}";
-			$i++;			
+			$i++;
 		}
 	}
 }
@@ -842,7 +843,7 @@ function upgrade_044_to_045() {
 
 function upgrade_045_to_046() {
 	global $config;
-	/* Load up monitors that are in the default config for 2.0 but not in 1.2.3 
+	/* Load up monitors that are in the default config for 2.0 but not in 1.2.3
 		thus wouldn't be in an upgraded config. */
 	$config['load_balancer']['monitor_type'] = array (
 		array ( 'name' => 'ICMP',
@@ -1284,13 +1285,13 @@ function upgrade_047_to_048() {
 			$tempdyn['username'] = $config['dyndns'][0]['username'];
 			$tempdyn['password'] = $config['dyndns'][0]['password'];
 			$tempdyn['host'] = $config['dyndns'][0]['host'];
-			$tempdyn['mx'] = $config['dyndns'][0]['mx'];		
+			$tempdyn['mx'] = $config['dyndns'][0]['mx'];
 			$tempdyn['interface'] = "wan";
 			$tempdyn['descr'] = sprintf(gettext("Upgraded Dyndns %s"), $tempdyn['type']);
 			$config['dyndnses']['dyndns'][] = $tempdyn;
 		}
 		unset($config['dyndns']);
-	}		
+	}
 	if (!empty($config['dnsupdate'])) {
 		$pconfig = $config['dnsupdate'][0];
 		if (!$pconfig['ttl'])
@@ -1737,8 +1738,8 @@ function upgrade_051_to_052() {
 						$assigned_if = substr($tmpstr, 3);
 						continue;
 					} else if (substr($tmpstr, 0, 5) == "local") {
-                                                $localip = substr($tmpstr, 5);
-                                                $client['ipaddr'] = str_replace("\n", "", $localip);
+						$localip = substr($tmpstr, 5);
+						$client['ipaddr'] = str_replace("\n", "", $localip);
 					} else
 						$cstmopts[] = $tmpcstmopt;
 				}
@@ -1837,14 +1838,14 @@ function upgrade_051_to_052() {
 	if (count($config['openvpn']['openvpn-server']) > 0 ||
 		count($config['openvpn']['openvpn-client']) > 0) {
 		$ovpnrule = array();
-                $ovpnrule['type'] = "pass";
-                $ovpnrule['interface'] = "openvpn";
-                $ovpnrule['statetype'] = "keep state";
-                $ovpnrule['source'] = array();
-                $ovpnrule['destination'] = array();
-                $ovpnrule['source']['any'] = true;
-                $ovpnrule['destination']['any'] = true;
-                $ovpnrule['descr'] = gettext("Auto added OpenVPN rule from config upgrade.");
+		$ovpnrule['type'] = "pass";
+		$ovpnrule['interface'] = "openvpn";
+		$ovpnrule['statetype'] = "keep state";
+		$ovpnrule['source'] = array();
+		$ovpnrule['destination'] = array();
+		$ovpnrule['source']['any'] = true;
+		$ovpnrule['destination']['any'] = true;
+		$ovpnrule['descr'] = gettext("Auto added OpenVPN rule from config upgrade.");
 		$config['filter']['rule'][] = $ovpnrule;
 	}
 
@@ -2048,8 +2049,7 @@ function upgrade_054_to_055() {
 	setup_gateways_monitor();
 
 	/* build a list of traffic and packets databases */
-	$databases = array();
-	exec("cd $rrddbpath;/usr/bin/find *-traffic.rrd *-packets.rrd", $databases);
+	$databases = return_dir_as_array($rrddbpath, '/-(traffic|packets)\.rrd$/');
 	rsort($databases);
 	foreach($databases as $database) {
 		$databasetmp = "{$database}.tmp";
@@ -2227,7 +2227,7 @@ function upgrade_059_to_060() {
 					$ca['caref'] = $issuer_crt['refid'];
 			}
 		}
-		
+
 		/* Locate issuer for all certificates */
 		if (is_array($config['cert'])) {
 			foreach ($config['cert'] as & $cert) {
@@ -2311,15 +2311,15 @@ function upgrade_062_to_063() {
 			$config['theme'] = "pfsense_ng";
 			break;
 	}
-	
+
 }
 
 function upgrade_063_to_064() {
 	global $config;
 	$j=0;
 	$ifcfg = &$config['interfaces'];
-	
-	if (is_array($config['ppps']['ppp']) && count($config['ppps']['ppp'])) {	
+
+	if (is_array($config['ppps']['ppp']) && count($config['ppps']['ppp'])) {
 		foreach ($config['ppps']['ppp'] as $pppid => $ppp) {
 			$config['ppps']['ppp'][$pppid]['if'] = "ppp".$j;
 			$config['ppps']['ppp'][$pppid]['ptpid'] = $j;
@@ -2335,7 +2335,7 @@ function upgrade_063_to_064() {
 				unset($config['ppps']['ppp'][$pppid]['defaultgw']);
 		}
 	}
-	
+
 	if (!is_array($config['ppps']['ppp']))
 		$config['ppps']['ppp'] = array();
 	$a_ppps = &$config['ppps']['ppp'];
@@ -2358,7 +2358,7 @@ function upgrade_063_to_064() {
 				$ppp['username'] = $ifinfo['pptp_username'];
 				$ppp['password'] = base64_encode($ifinfo['pptp_password']);
 			}
-			
+
 			if (isset($ifinfo['provider']))
 				$ppp['provider'] = $ifinfo['provider'];
 			if (isset($ifinfo['ondemand']))
@@ -2384,7 +2384,7 @@ function upgrade_063_to_064() {
 
 			$ifcfg[$ifname]['if'] = $ifinfo['ipaddr'].$j;
 			$j++;
-			
+
 			unset($ifcfg[$ifname]['pppoe_username']);
 			unset($ifcfg[$ifname]['pppoe_password']);
 			unset($ifcfg[$ifname]['provider']);
@@ -2398,9 +2398,9 @@ function upgrade_063_to_064() {
 			unset($ifcfg[$ifname]['local']);
 			unset($ifcfg[$ifname]['subnet']);
 			unset($ifcfg[$ifname]['remote']);
-			
+
 			$a_ppps[] = $ppp;
-			
+
 		}
 	}
 }
@@ -2417,20 +2417,20 @@ function upgrade_065_to_066() {
 
 	$dhcrelaycfg =& $config['dhcrelay'];
 
-        if (is_array($dhcrelaycfg)) {
-        	$dhcrelayifs = array();
+	if (is_array($dhcrelaycfg)) {
+		$dhcrelayifs = array();
 		$foundifs = false;
-        	/* DHCPRelay enabled on any interfaces? */
-                foreach ($dhcrelaycfg as $dhcrelayif => $dhcrelayifconf) {
-                        if (isset($dhcrelayifconf['enable'])) {
+		/* DHCPRelay enabled on any interfaces? */
+		foreach ($dhcrelaycfg as $dhcrelayif => $dhcrelayifconf) {
+			if (isset($dhcrelayifconf['enable'])) {
 				$dhcrelayifs[] = $dhcrelayif;
 				unset($dhcrelaycfg['dhcrelayif']);
 				$foundifs = true;
 			}
-                }
+		}
 		if ($foundifs == true)
 			$dhcrelaycfg['interface'] = implode(",", $dhcrelayifs);
-        }
+	}
 }
 
 function upgrade_066_to_067() {
@@ -2452,7 +2452,7 @@ function upgrade_067_to_068() {
 		$config['pppoes']['pppoe'][] = $config['pppoe'][0];
 
 		if (is_array($config['pppoe']['user'])) {
-			$username = array(); 
+			$username = array();
 			foreach ($config['pppoe']['user'] as $user) {
 				$usr = $user['name'] . ":" . base64_encode($user['password']);
 				if ($user['ip'])
@@ -2661,8 +2661,7 @@ function upgrade_080_to_081() {
 	$upstream = 125000000;
 
 	/* build a list of traffic and packets databases */
-	$databases = array();
-	exec("cd $rrddbpath;/usr/bin/find *-traffic.rrd *-packets.rrd", $databases);
+	$databases = return_dir_as_array($rrddbpath, '/-(traffic|packets)\.rrd$/');
 	rsort($databases);
 	foreach($databases as $database) {
 		$databasetmp = "{$database}.tmp";
@@ -2776,7 +2775,7 @@ function upgrade_084_to_085() {
 	foreach($gateways as $name => $gw) {
 		if(isset($gw['dynamic'])){
 			$oldname = strtoupper($config['interfaces'][$gw['friendlyiface']]['descr']);
-			$oldnames[$oldname] = $name; 
+			$oldnames[$oldname] = $name;
 		} else {
 			$oldnames[$name] = $name;
 		}
@@ -2861,14 +2860,14 @@ function upgrade_086_to_087() {
 	read_dummynet_config();
 
 	$dn_list = array();
-        if (is_array($dummynet_pipe_list)) {
-                foreach ($dummynet_pipe_list as $dn) {
-                        $tmplist =& $dn->get_queue_list();
-                        foreach ($tmplist as $qname => $link) {
-                                $dn_list[$link] = $qname;
-                        }
-                }
-        }
+	if (is_array($dummynet_pipe_list)) {
+		foreach ($dummynet_pipe_list as $dn) {
+			$tmplist =& $dn->get_queue_list();
+			foreach ($tmplist as $qname => $link) {
+				$dn_list[$link] = $qname;
+			}
+		}
+	}
 
 	foreach ($config['filter']['rule'] as $idx => $rule) {
 		if (!empty($rule['dnpipe'])) {
@@ -2890,48 +2889,49 @@ function upgrade_087_to_088() {
 }
 
 function upgrade_088_to_089() {
-  global $config;
-  if (!is_array($config['ca']))
-    $config['ca'] = array();
-  if (!is_array($config['cert']))
-    $config['cert'] = array();
-    
-  /* migrate captive portal ssl to certifcate mngr */
-  if (is_array($config['captiveportal'])) {
-    foreach ($config['captiveportal'] as $id => &$setting) {
-      if (isset($setting['httpslogin'])) {
-        /* create cert entry */
-        $cert = array();
-        $cert['refid'] = uniqid();
-        $cert['descr'] = "Captive Portal Cert - {$setting['zone']}";
-        $cert['crt'] = $setting['certificate'];
-        $cert['prv'] = $setting['private-key'];
-        
-        if (!empty($setting['cacertificate'])) {
-          /* create ca entry */
-          $ca = array();
-          $ca['refid'] = uniqid();
-          $ca['descr'] = "Captive Portal CA - {$setting['zone']}";
-          $ca['crt'] = $setting['cacertificate'];
-          $config['ca'][] = $ca;
-          
-          /* add ca reference to certificate */
-          $cert['caref'] = $ca['refid'];
-        }
-        
-        $config['cert'][] = $cert;
-        
-        /* create cert reference */
-        $setting['certref'] = $cert['refid'];
-        
-        unset($setting['certificate']);
-        unset($setting['private-key']);
-        unset($setting['cacertificate']);
-        
-      }
-    }
-  }
+	global $config;
+	if (!is_array($config['ca']))
+		$config['ca'] = array();
+	if (!is_array($config['cert']))
+		$config['cert'] = array();
+
+	/* migrate captive portal ssl to certifcate mngr */
+	if (is_array($config['captiveportal'])) {
+		foreach ($config['captiveportal'] as $id => &$setting) {
+			if (isset($setting['httpslogin'])) {
+				/* create cert entry */
+				$cert = array();
+				$cert['refid'] = uniqid();
+				$cert['descr'] = "Captive Portal Cert - {$setting['zone']}";
+				$cert['crt'] = $setting['certificate'];
+				$cert['prv'] = $setting['private-key'];
+
+				if (!empty($setting['cacertificate'])) {
+					/* create ca entry */
+					$ca = array();
+					$ca['refid'] = uniqid();
+					$ca['descr'] = "Captive Portal CA - {$setting['zone']}";
+					$ca['crt'] = $setting['cacertificate'];
+					$config['ca'][] = $ca;
+
+					/* add ca reference to certificate */
+					$cert['caref'] = $ca['refid'];
+				}
+
+				$config['cert'][] = $cert;
+
+				/* create cert reference */
+				$setting['certref'] = $cert['refid'];
+
+				unset($setting['certificate']);
+				unset($setting['private-key']);
+				unset($setting['cacertificate']);
+
+			}
+		}
+	}
 }
+
 function upgrade_089_to_090() {
 	global $config;
 	if (is_array($config['load_balancer']['virtual_server']) && count($config['load_balancer']['virtual_server'])) {
@@ -2965,4 +2965,41 @@ function upgrade_090_to_091() {
 		}
 	}
 }
+
+function upgrade_091_to_092() {
+	global $config;
+
+	if (is_array($config['nat']['advancedoutbound']) && is_array($config['nat']['advancedoutbound']['rule'])) {
+		$nat_rules = &$config['nat']['advancedoutbound']['rule'];
+		for ($i = 0; isset($nat_rules[$i]); $i++) {
+			if (empty($nat_rules[$i]['interface'])) {
+				$nat_rules[$i]['interface'] = 'wan';
+			}
+		}
+	}
+}
+
+function upgrade_092_to_093() {
+	global $g;
+
+	$suffixes = array("concurrent", "loggedin");
+
+	foreach ($suffixes as $suffix)
+		if (file_exists("{$g['vardb_path']}/rrd/captiveportal-{$suffix}.rrd"))
+			rename("{$g['vardb_path']}/rrd/captiveportal-{$suffix}.rrd",
+				"{$g['vardb_path']}/rrd/captiveportal-cpZone-{$suffix}.rrd");
+
+	enable_rrd_graphing();
+}
+
+function upgrade_093_to_094() {
+	global $config;
+
+	if (isset($config['system']['powerd_mode'])) {
+		$config['system']['powerd_ac_mode'] = $config['system']['powerd_mode'];
+		$config['system']['powerd_battery_mode'] = $config['system']['powerd_mode'];
+		unset($config['system']['powerd_mode']);
+	}
+}
+
 ?>

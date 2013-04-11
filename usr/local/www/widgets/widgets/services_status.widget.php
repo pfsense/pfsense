@@ -1,6 +1,6 @@
 <?php
 /*
-    services_status.php
+    services_status.widget.php
     Copyright (C) 2004, 2005 Scott Ullrich
     All rights reserved.
 
@@ -46,21 +46,21 @@ if(isset($_POST['servicestatusfilter'])) {
 	header("Location: ../../index.php");
 }
 ?>
-<input type="hidden" id="services_status-config" name="services_status-config" value="">
-<div id="services_status-settings" name="services_status-settings" class="widgetconfigdiv" style="display:none;">
-	<form action="/widgets/widgets/services_status.widget.php" method="post" name="iforma">
+<input type="hidden" id="services_status-config" name="services_status-config" value="" />
+<div id="services_status-settings" class="widgetconfigdiv" style="display:none;">
+	<form action="/widgets/widgets/services_status.widget.php" method="post" name="iformd">
 		Comma separated list of services to NOT display in the widget<br />
-		<input type="text" length="30" name="servicestatusfilter" class="formfld unknown" id="servicestatusfilter" value="<?= $config['widgets']['servicestatusfilter'] ?>">
-		<input id="submita" name="submita" type="submit" class="formbtn" value="Save" />
+		<input type="text" size="30" name="servicestatusfilter" class="formfld unknown" id="servicestatusfilter" value="<?= $config['widgets']['servicestatusfilter'] ?>" />
+		<input id="submitd" name="submitd" type="submit" class="formbtn" value="Save" />
     </form>
 </div>
 
-<table width="100%" border="0" cellpadding="0" cellspacing="0">
+<table width="100%" border="0" cellpadding="0" cellspacing="0" summary="services">
 	<tr>
-	  <td class="widgetsubheader"><b><center>Service</center></b></td>
-	  <td class="widgetsubheader"><b><center>Description</center></b></td>
-		<td class="widgetsubheader"><b><center>Status</center></b></td>
-		<td class="widgetsubheader">&nbsp;</td>
+	  <td class="widgetsubheader" align="center"><b>Service</b></td>
+	  <td class="widgetsubheader" align="center"><b>Description</b></td>
+	  <td class="widgetsubheader" align="center"><b>Status</b></td>
+	  <td class="widgetsubheader">&nbsp;</td>
 	</tr>
 <?php
 $skipservices = explode(",", $config['widgets']['servicestatusfilter']);
@@ -68,26 +68,29 @@ $skipservices = explode(",", $config['widgets']['servicestatusfilter']);
 if (count($services) > 0) {
 	uasort($services, "service_name_compare");
 	foreach($services as $service) {
-		if((!$service['name']) || (in_array($service['name'], $skipservices)))
+		if((!$service['name']) || (in_array($service['name'], $skipservices)) || (!is_service_enabled($service['name'])))
 			continue;
 		if (empty($service['description']))
 			$service['description'] = get_pkg_descr($service['name']);
+		$service_desc = explode(".",$service['description']);
 		echo '<tr><td class="listlr">' . $service['name'] . '</td>' . "\n";
-		echo '<td class="listr">' . $service['description'] . '</td>' . "\n";
+		echo '<td class="listr">' . $service_desc[0] . '</td>' . "\n";
 		echo get_service_status_icon($service, false, true);
-		echo '<td valign="middle" class="list" nowrap>';
+		echo '<td valign="middle" class="list nowrap">';
 		echo get_service_control_links($service);
 		echo "</td></tr>\n";
 	}
 } else {
-	echo "<tr><td colspan=\"3\"><center>" . gettext("No services found") . ".</td></tr>\n";
+	echo "<tr><td colspan=\"3\" align=\"center\">" . gettext("No services found") . ".</td></tr>\n";
 }
 ?>
 </table>
 
 <!-- needed to display the widget settings menu -->
-<script language="javascript" type="text/javascript">
+<script type="text/javascript">
+//<![CDATA[
 	selectIntLink = "services_status-configure";
 	textlink = document.getElementById(selectIntLink);
 	textlink.style.display = "inline";
+//]]>
 </script>

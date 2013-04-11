@@ -108,7 +108,7 @@ if ($_POST) {
 ?>
 <body link="#0000CC" vlink="#0000CC" alink="#0000CC">
 <?php include("fbegin.inc"); ?>
-<form action="status_lb_pool.php" method="POST">
+<form action="status_lb_pool.php" method="post">
 <?php if (is_subsystem_dirty('loadbalancer')): ?><p>
 <?php print_info_box_np(sprintf(gettext("The load balancer configuration has been changed%sYou must apply the changes in order for them to take effect."), "<br>"));?><br>
 <?php endif; ?>
@@ -174,7 +174,7 @@ if ($_POST) {
 			if($server['ip']['addr']!="") {
 				switch ($server['ip']['state']) {
 					case 'up':
-						$bgcolor = "lightgreen";
+						$bgcolor = "#90EE90";  // lightgreen
 						$checked = "checked";
 						break;
 					case 'disabled':
@@ -182,7 +182,7 @@ if ($_POST) {
 						$checked = "";
 						break;
 					default:
-						$bgcolor = "lightcoral";
+						$bgcolor = "#F08080";  // lightcoral
 						$checked = "checked";
 				}
 				echo "<tr>";
@@ -194,11 +194,11 @@ if ($_POST) {
 						echo "<td><input type='radio' name='{$pool['name']}' value='{$server['ip']['addr']}' {$checked}></td>\n";
 						break;
 				}
-				echo "<td bgcolor={$bgcolor}> {$server['ip']['addr']}:{$pool['port']} </td><td bgcolor={$bgcolor}>";
-#				echo "<td bgcolor={$bgcolor}> {$server['ip']['addr']}:{$pool['port']} ";
+				echo "<td bgcolor={$bgcolor}>&nbsp;{$server['ip']['addr']}:{$pool['port']}&nbsp;</td><td bgcolor={$bgcolor}>&nbsp;";
+#				echo "<td bgcolor={$bgcolor}>&nbsp;{$server['ip']['addr']}:{$pool['port']} ";
 				if($server['ip']['avail'])
 				  echo " ({$server['ip']['avail']}) ";
-				echo "</td></tr>";
+				echo "&nbsp;</td></tr>";
 			}
 		}
 		?>

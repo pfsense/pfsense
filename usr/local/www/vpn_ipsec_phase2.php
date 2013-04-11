@@ -129,6 +129,10 @@ if ($_POST) {
 			case "address":
 				if (!$pconfig['localid_address'] || !is_ipaddr($pconfig['localid_address']))
 					$input_errors[] = gettext("A valid local network IP address must be specified.");
+				elseif (is_ipaddrv4($pconfig['localid_address']) && ($pconfig['mode'] != "tunnel"))
+					$input_errors[] = gettext("A valid local network IPv4 address must be specified or you need to change Mode to IPv6");
+				elseif (is_ipaddrv6($pconfig['localid_address']) && ($pconfig['mode'] != "tunnel6"))
+					$input_errors[] = gettext("A valid local network IPv6 address must be specified or you need to change Mode to IPv4");
 				break;
 		}
 		/* Check if the localid_type is an interface, to confirm if it has a valid subnet. */
@@ -151,6 +155,10 @@ if ($_POST) {
 				case "address":
 					if (!empty($pconfig['natlocalid_address']) && !is_ipaddr($pconfig['natlocalid_address']))
 						$input_errors[] = gettext("A valid nat local network IP address must be specified.");
+					elseif (is_ipaddrv4($pconfig['natlocalid_address']) && ($pconfig['mode'] != "tunnel"))
+						$input_errors[] = gettext("A valid nat local network IPv4 address must be specified or you need to change Mode to IPv6");
+					elseif (is_ipaddrv6($pconfig['natlocalid_address']) && ($pconfig['mode'] != "tunnel6"))
+						$input_errors[] = gettext("A valid nat local network IPv6 address must be specified or you need to change Mode to IPv4");
 					break;
 			}
 
@@ -171,21 +179,27 @@ if ($_POST) {
 			case "address":
 				if (!$pconfig['remoteid_address'] || !is_ipaddr($pconfig['remoteid_address']))
 					$input_errors[] = gettext("A valid remote network IP address must be specified.");
+				elseif (is_ipaddrv4($pconfig['remoteid_address']) && ($pconfig['mode'] != "tunnel"))
+					$input_errors[] = gettext("A valid remote network IPv4 address must be specified or you need to change Mode to IPv6");
+				elseif (is_ipaddrv6($pconfig['remoteid_address']) && ($pconfig['mode'] != "tunnel6"))
+					$input_errors[] = gettext("A valid remote network IPv6 address must be specified or you need to change Mode to IPv4");
 				break;
 		}
 	}
 	/* Validate enabled phase2's are not duplicates */
 	if (isset($pconfig['mobile'])){
+		if (substr($pconfig['mode'], 0, 6) != "tunnel")
+			$input_errors[] = gettext("Mobile IPsec only supports Tunnel mode.");
 		/* User is adding phase 2 for mobile phase1 */
 		foreach($a_phase2 as $key => $name){
 			if (isset($name['mobile'])){
 				/* check duplicate localids only for mobile clents */
-				$localid_data = ipsec_idinfo_to_cidr($name['localid']);
+				$localid_data = ipsec_idinfo_to_cidr($name['localid'], false, $name['mode']);
 				$entered = array();
 				$entered['type'] = $pconfig['localid_type'];
 				if (isset($pconfig['localid_address'])) $entered['address'] = $pconfig['localid_address'];
 				if (isset($pconfig['localid_netbits'])) $entered['netbits'] = $pconfig['localid_netbits'];
-				$entered_localid_data = ipsec_idinfo_to_cidr($entered);
+				$entered_localid_data = ipsec_idinfo_to_cidr($entered, false, $pconfig['mode']);
 				if ($localid_data == $entered_localid_data){
 					if (!isset($pconfig['p2index'])){
 						/* adding new p2 entry */
@@ -205,18 +219,18 @@ if ($_POST) {
 		foreach($a_phase2 as $key => $name){
 			if (!isset($name['mobile']) && $pconfig['ikeid'] == $name['ikeid']){
 				/* check duplicate subnets only for given phase1 */
-				$localid_data = ipsec_idinfo_to_cidr($name['localid']);
-				$remoteid_data = ipsec_idinfo_to_cidr($name['remoteid']);
+				$localid_data = ipsec_idinfo_to_cidr($name['localid'], false, $name['mode']);
+				$remoteid_data = ipsec_idinfo_to_cidr($name['remoteid'], false, $name['mode']);
 				$entered_local = array();
 				$entered_local['type'] = $pconfig['localid_type'];
 				if (isset($pconfig['localid_address'])) $entered_local['address'] = $pconfig['localid_address'];
 				if (isset($pconfig['localid_netbits'])) $entered_local['netbits'] = $pconfig['localid_netbits'];
-				$entered_localid_data = ipsec_idinfo_to_cidr($entered_local);
+				$entered_localid_data = ipsec_idinfo_to_cidr($entered_local, false, $pconfig['mode']);
 				$entered_remote = array();
 				$entered_remote['type'] = $pconfig['remoteid_type'];
 				if (isset($pconfig['remoteid_address'])) $entered_remote['address'] = $pconfig['remoteid_address'];
 				if (isset($pconfig['remoteid_netbits'])) $entered_remote['netbits'] = $pconfig['remoteid_netbits'];
-				$entered_remoteid_data = ipsec_idinfo_to_cidr($entered_remote);
+				$entered_remoteid_data = ipsec_idinfo_to_cidr($entered_remote, false, $pconfig['mode']);
 				if ($localid_data == $entered_localid_data && $remoteid_data == $entered_remoteid_data) { 
 					if (!isset($pconfig['p2index'])){
 						/* adding new p2 entry */
@@ -268,6 +282,14 @@ if ($_POST) {
 		if (isset($pconfig['mobile']))
 			$ph2ent['mobile'] = true;
 
+		ipsec_lookup_phase1($ph2ent, $ph1ent);
+		if (($ph1ent['protocol'] == "inet") && ($ph2ent['mode'] == "tunnel6"))
+			$input_errors[] = gettext("Phase 1 is using IPv4. You cannot use Tunnel IPv6 on Phase 2.");
+		if (($ph1ent['protocol'] == "inet6") && ($ph2ent['mode'] == "tunnel"))
+			$input_errors[] = gettext("Phase 1 is using IPv6. You cannot use Tunnel IPv4 on Phase 2.");
+	}
+
+	if (!$input_errors) {
 		if (isset($p2index) && $a_phase2[$p2index])
 			$a_phase2[$p2index] = $ph2ent;
 		else
@@ -524,7 +546,6 @@ function change_protocol() {
 											?>
 											<option value="<?=$ifname; ?>" <?php if ($pconfig['localid_type'] == $ifname ) echo "selected";?>><?=sprintf(gettext("%s subnet"), $ifdescr); ?></option>
 											<?php endforeach; ?>
-											<option value="none" <?php if ($pconfig['localid_type'] == "none" ) echo "selected";?>><?=gettext("None"); ?></option>
 										</select>
 									</td>
 								</tr>

@@ -25,7 +25,7 @@
 	POSSIBILITY OF SUCH DAMAGE.
 */
 /*
-	pfSense_BUILDER_BINARIES:	/usr/local/bin/voucher
+	pfSense_BUILDER_BINARIES:	/usr/local/bin/voucher	/usr/local/bin/openssl
 	pfSense_MODULE:	captiveportal
 */
 
@@ -35,15 +35,6 @@
 ##|*DESCR=Allow access to the 'Services: Captive portal Vouchers' page.
 ##|*MATCH=services_captiveportal_vouchers.php*
 ##|-PRIV
-
-$cpzone = $_GET['zone'];
-if (isset($_POST['zone']))
-        $cpzone = $_POST['zone'];
-
-if (empty($cpzone)) {
-        header("Location: services_captiveportal_zones.php");
-        exit;
-}
 
 if ($_POST['postafterlogin'])
 	$nocsrf= true;
@@ -55,9 +46,18 @@ require("shaper.inc");
 require("captiveportal.inc");
 require_once("voucher.inc");
 
+$cpzone = $_GET['zone'];
+if (isset($_POST['zone']))
+        $cpzone = $_POST['zone'];
+
+if (empty($cpzone)) {
+        header("Location: services_captiveportal_zones.php");
+        exit;
+}
+
 if($_REQUEST['generatekey']) {
-	exec("openssl genrsa 64 > /tmp/key64.private");
-	exec("openssl rsa -pubout < /tmp/key64.private > /tmp/key64.public");
+	exec("/usr/local/bin/openssl genrsa 64 > /tmp/key64.private");
+	exec("/usr/local/bin/openssl rsa -pubout < /tmp/key64.private > /tmp/key64.public");
 	$privatekey = str_replace("\n", "\\n", file_get_contents("/tmp/key64.private"));
 	$publickey = str_replace("\n", "\\n", file_get_contents("/tmp/key64.public"));
 	exec("rm /tmp/key64.private /tmp/key64.public");
@@ -78,6 +78,13 @@ $a_cp =& $config['captiveportal'];
 
 if (!is_array($config['voucher'])) 
 	$config['voucher'] = array();
+
+if (empty($a_cp[$cpzone])) {
+	log_error("Submission on captiveportal page with unknown zone parameter: " . htmlspecialchars($cpzone));
+	header("Location: services_captiveportal_zones.php");
+	exit;
+}
+
 
 $pgtitle = array(gettext("Services"), gettext("Captive portal"), gettext("Vouchers"), $a_cp[$cpzone]['zone']);
 $shortcut_section = "captiveportal-vouchers";
@@ -135,9 +142,9 @@ if ($_GET['act'] == "del") {
 		voucher_unlink_db($roll);
 		unlock($voucherlck);
 		write_config();
-		header("Location: services_captiveportal_vouchers.php?zone={$cpzone}");
-		exit;
     }
+	header("Location: services_captiveportal_vouchers.php?zone={$cpzone}");
+	exit;
 }
 /* print all vouchers of the selected roll */
 else if ($_GET['act'] == "csv") {
@@ -157,10 +164,12 @@ else if ($_GET['act'] == "csv") {
 				$count = $a_voucher[$id]['count'];
 				header("Content-Type: application/octet-stream");
 				header("Content-Disposition: attachment; filename=vouchers_{$cpzone}_roll{$number}.csv");
-				system("/usr/local/bin/voucher -c {$g['varetc_path']}/voucher_{$cpzone}.cfg -p {$g['varetc_path']}/voucher_{$cpzone}.private $number $count");
-				unlink("{$g['varetc_path']}/voucher_{$cpzone}.private");
-				exit;
-			}
+				if (file_exists("{$g['varetc_path']}/voucher_{$cpzone}.cfg"))
+					system("/usr/local/bin/voucher -c {$g['varetc_path']}/voucher_{$cpzone}.cfg -p {$g['varetc_path']}/voucher_{$cpzone}.private $number $count");
+				@unlink("{$g['varetc_path']}/voucher_{$cpzone}.private");
+			} else
+				header("Location: services_captiveportal_vouchers.php?zone={$cpzone}");
+			exit;
 		}
 	} else {
 		$input_errors[] = gettext("Need private RSA key to print vouchers") . "\n";

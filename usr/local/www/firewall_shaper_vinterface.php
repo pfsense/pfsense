@@ -112,7 +112,7 @@ if ($_GET) {
 			$output_form .= $queue->build_form();
 		} else {
 			$input_errors[] = sprintf(gettext("No queue with name %s was found!"),$qname);
-			$output_form .= "<p class=\"pgtitle\">" . $dn_default_shaper_msg."</p>";
+			$output_form .= $dn_default_shaper_msg;
 			$dontshow = true;
 		}
 		break;
@@ -152,7 +152,7 @@ if ($_GET) {
 			$q = new dnqueue_class();
 			$q->SetPipe($pipe);
 			$output_form .= "<input type=\"hidden\" name=\"parentqueue\" id=\"parentqueue\"";
-			$output_form .= " value=\"".$pipe."\">";
+			$output_form .= " value=\"".$pipe."\" />";
 		} else if ($addnewpipe) {
 			$q = new dnpipe_class();
 			$q->SetQname($pipe);
@@ -193,7 +193,7 @@ if ($_GET) {
 			$input_errors[] = gettext("Queue not found!");
 		break;
 	default:
-		$output_form .= "<p class=\"pgtitle\">" . $dn_default_shaper_msg."</p>";
+		$output_form .= $dn_default_shaper_msg;
 		$dontshow = true;
 		break;
 	}
@@ -283,11 +283,11 @@ if ($_GET) {
 		read_dummynet_config();
 		$output_form .= $queue->build_form();
 	} else  {
-		$output_form .= "<p class=\"pgtitle\">" . $dn_default_shaper_msg."</p>";
+		$output_form .= $dn_default_shaper_msg;
 		$dontshow = true;
 	}
 } else {
-	$output_form .= "<p class=\"pgtitle\">" . $dn_default_shaper_msg."</p>";
+	$output_form .= $dn_default_shaper_msg;
 	$dontshow = true;
 }
 
@@ -321,40 +321,39 @@ if ($can_add || $addnewaltq) {
 	$output_form .= "<a href=\"firewall_shaper_vinterface.php?pipe=";
 	$output_form .= $pipe; 
 	if ($queue) {
-		$output_form .= "&queue=" . $queue->GetQname();
+		$output_form .= "&amp;queue=" . $queue->GetQname();
 	}
-	$output_form .= "&action=add\">";
-	$output_form .= "<input type=\"button\" class=\"formbtn\" name=\"add\" value=\"" . gettext("Add new queue") ."\">";
+	$output_form .= "&amp;action=add\">";
+	$output_form .= "<input type=\"button\" class=\"formbtn\" name=\"add\" value=\"" . gettext("Add new queue") ."\" />";
 	$output_form .= "</a>";
 }
 $output_form .= "<a href=\"firewall_shaper_vinterface.php?pipe=";
 $output_form .= $pipe;
 if ($queue) {
-	$output_form .= "&queue=" . $queue->GetQname();
+	$output_form .= "&amp;queue=" . $queue->GetQname();
 }
-$output_form .= "&action=delete\">";
+$output_form .= "&amp;action=delete\">";
 $output_form .= "<input type=\"button\" class=\"formbtn\" name=\"delete\"";
 if ($queue)
-	$output_form .= " value=\"" . gettext("Delete this queue") ."\">";
+	$output_form .= " value=\"" . gettext("Delete this queue") ."\" />";
 else
-	$output_form .= " value=\"" . gettext("Delete virtual interface") ."\">";
+	$output_form .= " value=\"" . gettext("Delete virtual interface") ."\" />";
 $output_form .= "</a>";  
 $output_form .= "</td></tr>";
-$output_form .= "</div>";
+$output_form .= "</table>";
 } 
 else 
-	$output_form .= "</div>";
+	$output_form .= "</table>";
 
-$output = "<div id=\"shaperarea\" style=\"position:relative\">";
+$output = "<table summary=\"output form\">";
 $output .= $output_form;
-
+$closehead = false;
 include("head.inc");
 ?>
-
-<body link="#0000CC" vlink="#0000CC" alink="#0000CC" >
 <link rel="stylesheet" type="text/css" media="all" href="./tree/tree.css" />
 <script type="text/javascript" src="./tree/tree.js"></script>
 <script type="text/javascript">
+//<![CDATA[
 function show_source_port_range() {
         document.getElementById("sprtable").style.display = '';
 	document.getElementById("sprtable1").style.display = '';
@@ -363,7 +362,11 @@ function show_source_port_range() {
 	document.getElementById("sprtable4").style.display = 'none';
 	document.getElementById("showadvancedboxspr").innerHTML='';
 }
+//]]>
 </script>
+</head>
+
+<body link="#0000CC" vlink="#0000CC" alink="#0000CC">
 
 <?php
 if ($queue)
@@ -380,9 +383,9 @@ include("fbegin.inc");
 
 <?php if ($savemsg) print_info_box($savemsg); ?>
 <?php if (is_subsystem_dirty('shaper')): ?><p>
-<?php print_info_box_np(gettext("The traffic shaper configuration has been changed.")."<br>".gettext("You must apply the changes in order for them to take effect."));?><br>
+<?php print_info_box_np(gettext("The traffic shaper configuration has been changed.")."<br/>".gettext("You must apply the changes in order for them to take effect."));?><br/></p>
 <?php endif; ?>
-<table width="100%" border="0" cellpadding="0" cellspacing="0">
+<table width="100%" border="0" cellpadding="0" cellspacing="0" summary="traffic shaper limiter">
   <tr><td>
 <?php
 	$tab_array = array();
@@ -397,27 +400,27 @@ include("fbegin.inc");
   <tr>
     <td>
 	<div id="mainarea">
-              <table class="tabcont" width="100%" border="0" cellpadding="0" cellspacing="0">
+              <table class="tabcont" width="100%" border="0" cellpadding="0" cellspacing="0" summary="main area">
 <?php if (count($dummynet_pipe_list) > 0): ?>
                         <tr class="tabcont"><td width="25%" align="left">
                         </td><td width="75%"> </td></tr>
 <?php endif; ?>
 			<tr>
-			<td width="25%" valign="top" algin="left">
+			<td width="25%" valign="top" align="left">
 			<?php
 				echo $tree; 
 			?>
 			<br/><br/>
-			<a href="firewall_shaper_vinterface.php?pipe=new&action=add">
-			<img src="./themes/<?= $g['theme']; ?>/images/icons/icon_plus.gif" title="<?=gettext("Create new limiter");?>" width="17" height="17" border="0"><?=gettext("Create new limiter");?>
+			<a href="firewall_shaper_vinterface.php?pipe=new&amp;action=add">
+			<img src="./themes/<?= $g['theme']; ?>/images/icons/icon_plus.gif" title="<?=gettext("Create new limiter");?>" width="17" height="17" border="0" alt="add" />&nbsp;<?=gettext("Create new limiter");?>
 			</a><br/>
 			</td>
 			<td width="75%" valign="top" align="center">
-			<table>
-			<?
+			<div id="shaperarea" style="position:relative">
+			<?php
 				echo $output;
 			?>	
-			</table>
+			</div>
 
 		      </td></tr>
                     </table>
@@ -427,12 +430,14 @@ include("fbegin.inc");
 </table>
 </form>
 <script type='text/javascript'>
+//<![CDATA[
 <?php
 	$totalrows = 0;
 	if (is_array($config['dnshaper']) && is_array($config['dnshaper']['queue'])) 
 		$totalrows = count($config['dnshaper']['queue']);
 	echo "totalrows = {$totalrows}";
 ?>
+//]]>
 </script>
 <?php include("fend.inc"); ?>
 </body>

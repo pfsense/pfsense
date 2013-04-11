@@ -105,16 +105,16 @@ include("head.inc");
                   <?php
                   switch (trim($rdr_a[$vsent['name']]['status'])) {
                     case 'active':
-                      $bgcolor = "lightgreen";
-					  $rdr_a[$vsent['name']]['status'] = "Active";
+                      $bgcolor = "#90EE90";  // lightgreen
+                      $rdr_a[$vsent['name']]['status'] = "Active";
                       break;
                     case 'down':
-                      $bgcolor = "lightcoral";
-					  $rdr_a[$vsent['name']]['status'] = "Down";
-					  break;
-					default:
-                      $bgcolor = "lightgray";
-					  $rdr_a[$vsent['name']]['status'] = 'Unknown - relayd not running?';
+                      $bgcolor = "#F08080";  // lightcoral
+                      $rdr_a[$vsent['name']]['status'] = "Down";
+                      break;
+                    default:
+                      $bgcolor = "#D3D3D3";  // lightgray
+                      $rdr_a[$vsent['name']]['status'] = 'Unknown - relayd not running?';
                   }
                   ?>
                   <td class="listr" nowrap>

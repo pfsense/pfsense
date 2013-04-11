@@ -687,14 +687,14 @@ function ldap_setup_caenv($authcfg) {
 		}
 		if (!is_dir("{$g['varrun_path']}/certs"))
 			@mkdir("{$g['varrun_path']}/certs");
-		if (file_exists("{$g['varrun_path']}/certs/{$authcfg['name']}.ca"))
-			@unlink("{$g['varrun_path']}/certs/{$authcfg['name']}.ca");
-		file_put_contents("{$g['varrun_path']}/certs/{$authcfg['name']}.ca", base64_decode($caref['crt']));
-		@chmod("{$g['varrun_path']}/certs/{$authcfg['name']}.ca", 0600);
+		if (file_exists("{$g['varrun_path']}/certs/{$caref['refid']}.ca"))
+			@unlink("{$g['varrun_path']}/certs/{$caref['refid']}.ca");
+		file_put_contents("{$g['varrun_path']}/certs/{$caref['refid']}.ca", base64_decode($caref['crt']));
+		@chmod("{$g['varrun_path']}/certs/{$caref['refid']}.ca", 0600);
 		putenv('LDAPTLS_REQCERT=hard');
 		/* XXX: Probably even the hashed link should be created for this? */
 		putenv("LDAPTLS_CACERTDIR={$g['varrun_path']}/certs");
-		putenv("LDAPTLS_CACERT={$g['varrun_path']}/certs/{$authcfg['name']}.ca");
+		putenv("LDAPTLS_CACERT={$g['varrun_path']}/certs/{$caref['refid']}.ca");
 	}
 }
 
@@ -739,6 +739,7 @@ function ldap_test_bind($authcfg) {
         }
 
 	ldap_set_option($ldap, LDAP_OPT_REFERRALS, 0);
+	ldap_set_option($ldap, LDAP_OPT_DEREF, LDAP_DEREF_SEARCHING);
 	ldap_set_option($ldap, LDAP_OPT_PROTOCOL_VERSION, (int)$ldapver);
  
 	if ($ldapanon == true) {
@@ -809,6 +810,7 @@ function ldap_get_user_ous($show_complete_ou=true, $authcfg) {
 	$ldapfilter = "(|(ou=*)(cn=Users))";
 
 	ldap_set_option($ldap, LDAP_OPT_REFERRALS, 0);
+	ldap_set_option($ldap, LDAP_OPT_DEREF, LDAP_DEREF_SEARCHING);
 	ldap_set_option($ldap, LDAP_OPT_PROTOCOL_VERSION, (int)$ldapver);
 
 	if ($ldapanon == true) {
@@ -919,6 +921,7 @@ function ldap_get_groups($username, $authcfg) {
         }
     
 	ldap_set_option($ldap, LDAP_OPT_REFERRALS, 0);
+	ldap_set_option($ldap, LDAP_OPT_DEREF, LDAP_DEREF_SEARCHING);
 	ldap_set_option($ldap, LDAP_OPT_PROTOCOL_VERSION, (int)$ldapver);
 
 	/* bind as user that has rights to read group attributes */
@@ -1042,6 +1045,7 @@ function ldap_backed($username, $passwd, $authcfg) {
         ldap_setup_caenv($authcfg);
 
 	ldap_set_option($ldap, LDAP_OPT_REFERRALS, 0);
+	ldap_set_option($ldap, LDAP_OPT_DEREF, LDAP_DEREF_SEARCHING);
 	ldap_set_option($ldap, LDAP_OPT_PROTOCOL_VERSION, (int)$ldapver);
 
 	/* Make sure we can connect to LDAP */
@@ -1120,7 +1124,7 @@ function ldap_backed($username, $passwd, $authcfg) {
 
 	/* Now lets bind as the user we found */
 	if (!($res = @ldap_bind($ldap, $userdn, $passwd))) {
-		log_error(sprintf(gettext('ERROR! Could not login to server %1$s as user %2$s.'), $ldapname, $username));
+		log_error(sprintf(gettext('ERROR! Could not login to server %1$s as user %2$s: %3$s'), $ldapname, $username, ldap_error($ldap)));
 		@ldap_unbind($ldap);
 		return false;
 	}
@@ -1146,12 +1150,15 @@ function radius_backed($username, $passwd, $authcfg, &$attributes = array()) {
 		$radiusservers[0]['ipaddr'] = $authcfg['host'];
 		$radiusservers[0]['port'] = $authcfg['radius_auth_port'];
 		$radiusservers[0]['sharedsecret'] = $authcfg['radius_secret'];
+		$radiusservers[0]['timeout'] = $authcfg['radius_timeout'];
 	} else
 		return false;
 
 	/* Add a new servers to our instance */
-	foreach ($radiusservers as $radsrv)
-		$rauth->addServer($radsrv['ipaddr'], $radsrv['port'], $radsrv['sharedsecret']);
+	foreach ($radiusservers as $radsrv) {
+		$timeout = (is_numeric($radsrv['timeout'])) ? $radsrv['timeout'] : 5;
+		$rauth->addServer($radsrv['ipaddr'], $radsrv['port'], $radsrv['sharedsecret'], $timeout);
+	}
 
 	if (PEAR::isError($rauth->start())) {
 		$retvalue['auth_val'] = 1;
@@ -1222,7 +1229,7 @@ function auth_get_authserver($name) {
                 }
         }
 	if ($name == "Local Database")
-		return array("name" => gettext("Local Database"), "type" => gettext("Local Auth"), "host" => $config['system']['hostname']);
+		return array("name" => gettext("Local Database"), "type" => "Local Auth", "host" => $config['system']['hostname']);
 }
 
 function auth_get_authserver_list() {
@@ -1237,7 +1244,7 @@ function auth_get_authserver_list() {
                 }
         }
 
-	$list["Local Database"] = array( "name" => gettext("Local Database"), "type" => gettext("Local Auth"), "host" => $config['system']['hostname']);
+	$list["Local Database"] = array( "name" => gettext("Local Database"), "type" => "Local Auth", "host" => $config['system']['hostname']);
 	return $list;
 }
 

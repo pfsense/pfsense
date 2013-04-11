@@ -37,6 +37,12 @@
 	pfSense_BUILDER_BINARIES:	/bin/pgrep /bin/sh /usr/bin/killall
 	pfSense_MODULE:	utils
 */
+require_once("globals.inc");
+require_once("captiveportal.inc");
+require_once("openvpn.inc");
+require_once("ipsec.inc");
+require_once("vpn.inc");
+require_once("vslb.inc");
 
 define("RCFILEPREFIX", "/usr/local/etc/rc.d/");
 function write_rcfile($params) {
@@ -173,9 +179,8 @@ function restart_service($name) {
 function is_pid_running($pidfile) {
 	if (!file_exists($pidfile))
 		return false;
-	$running = shell_exec("/bin/pgrep -F {$pidfile} 2>/dev/null");
 
-	return (!empty($running));
+	return (isvalidpid($pidfile));
 }
 
 function is_dhcp_running($interface) {
@@ -190,6 +195,17 @@ function restart_service_if_running($service) {
 	if(is_service_running($service))
 		restart_service($service);
 	return;
+}
+
+function is_service_enabled($service_name) {
+	global $config;
+	if ($service_name == "")
+		return false;
+	if (isset($config['installedpackages'][$service_name]['config'][0]['enable']) &&
+		((empty($config['installedpackages'][$service_name]['config'][0]['enable'])) ||
+		 ($config['installedpackages'][$service_name]['config'][0]['enable'] === 'off')))
+		return false;
+	return true;
 }
 
 function is_service_running($service, $ps = "") {
@@ -409,19 +425,20 @@ function get_service_status_icon($service, $withtext = true, $smallicon = false)
 	$output = "";
 	if(get_service_status($service)) {
 		$statustext = gettext("Running");
-		$output .= '<td class="listr"><center>' . "\n";
+		$output .= '<td class="listr" align="center">' . "\n";
 		$output .= "<img style=\"vertical-align:middle\" title=\"" . sprintf(gettext("%s Service is"),$service["name"]) . " {$statustext}\" src=\"/themes/" . $g["theme"] . "/images/icons/";
 		$output .= ($smallicon) ? "icon_pass.gif" : "icon_service_running.gif";
-		$output .= "\">";
+		$output .= "\" alt=\"status\" />";
 		if ($withtext)
 			$output .= "&nbsp;&nbsp;" . $statustext;
 		$output .= "</td>\n";
 	} else {
-		$statustext = gettext("Stopped");
-		$output .= '<td class="listbg"><center>' . "\n";
+		$service_enabled = is_service_enabled($service['name']);
+		$statustext = ($service_enabled) ? gettext("Stopped") : gettext("Disabled");
+		$output .= '<td class="listbg" align="center">' . "\n";
 		$output .= "<img style=\"vertical-align:middle\" title=\"" . sprintf(gettext("%s Service is"),$service["name"]) . " {$statustext}\" src=\"/themes/" . $g["theme"] . "/images/icons/";
 		$output .= ($smallicon) ? "icon_block.gif" : "icon_service_stopped.gif";
-		$output .= "\">";
+		$output .= "\" alt=\"status\" />";
 		if ($withtext)
 			$output .= "&nbsp;&nbsp;" . "<font color=\"white\">{$statustext}</font>";
 		$output .= "</td>\n";
@@ -436,40 +453,208 @@ function get_service_control_links($service, $addname = false) {
 	if(get_service_status($service)) {
 		switch ($service['name']) {
 			case "openvpn":
-				$output .= "<a href='status_services.php?mode=restartservice&service={$service['name']}&vpnmode={$service['mode']}&id={$service['vpnid']}'>";
+				$output .= "<a href='status_services.php?mode=restartservice&amp;service={$service['name']}&amp;vpnmode={$service['mode']}&amp;id={$service['vpnid']}'>";
 				break;
 			case "captiveportal":
-				$output .= "<a href='status_services.php?mode=restartservice&service={$service['name']}&zone={$service['zone']}'>";
+				$output .= "<a href='status_services.php?mode=restartservice&amp;service={$service['name']}&amp;zone={$service['zone']}'>";
 				break;
 			default:
-				$output .= "<a href='status_services.php?mode=restartservice&service={$service['name']}'>";
+				$output .= "<a href='status_services.php?mode=restartservice&amp;service={$service['name']}'>";
 		}
-		$output .= "<img style=\"vertical-align:middle\" title='" . sprintf(gettext("Restart %sService"),$stitle) . "' border='0' src='./themes/".$g['theme']."/images/icons/icon_service_restart.gif'></a>\n";
+		$output .= "<img style=\"vertical-align:middle\" title='" . sprintf(gettext("Restart %sService"),$stitle) . "' border='0' src='./themes/".$g['theme']."/images/icons/icon_service_restart.gif' alt='restart' /></a>\n";
 		switch ($service['name']) {
 			case "openvpn":
-				$output .= "<a href='status_services.php?mode=stopservice&service={$service['name']}&vpnmode={$service['mode']}&id={$service['vpnid']}'>";
+				$output .= "<a href='status_services.php?mode=stopservice&amp;service={$service['name']}&amp;vpnmode={$service['mode']}&amp;id={$service['vpnid']}'>";
 				break;
 			case "captiveportal":
-				$output .= "<a href='status_services.php?mode=stopservice&service={$service['name']}&zone={$service['zone']}'>";
+				$output .= "<a href='status_services.php?mode=stopservice&amp;service={$service['name']}&amp;zone={$service['zone']}'>";
 				break;
 			default:
-				$output .= "<a href='status_services.php?mode=stopservice&service={$service['name']}'>";
+				$output .= "<a href='status_services.php?mode=stopservice&amp;service={$service['name']}'>";
 		}
-		$output .= "<img style=\"vertical-align:middle\" title='" . sprintf(gettext("Stop %sService"),$stitle) . "' border='0' src='./themes/".$g['theme']."/images/icons/icon_service_stop.gif'>";
+		$output .= "<img style=\"vertical-align:middle\" title='" . sprintf(gettext("Stop %sService"),$stitle) . "' border='0' src='./themes/".$g['theme']."/images/icons/icon_service_stop.gif' alt='stop' />";
 		$output .= "</a>";
 	} else {
+		$service_enabled = is_service_enabled($service['name']);
 		switch ($service['name']) {
 			case "openvpn":
-				$output .= "<a href='status_services.php?mode=startservice&service={$service['name']}&vpnmode={$service['mode']}&id={$service['vpnid']}'>";
+				$output .= "<a href='status_services.php?mode=startservice&amp;service={$service['name']}&amp;vpnmode={$service['mode']}&amp;id={$service['vpnid']}'>";
 				break;
 			case "captiveportal":
-				$output .= "<a href='status_services.php?mode=startservice&service={$service['name']}&zone={$service['zone']}'>";
+				$output .= "<a href='status_services.php?mode=startservice&amp;service={$service['name']}&amp;zone={$service['zone']}'>";
 				break;
 			default:
-				$output .= "<a href='status_services.php?mode=startservice&service={$service['name']}'>";
+				if ($service_enabled)
+					$output .= "<a href='status_services.php?mode=startservice&amp;service={$service['name']}'>";
 		}
-		$output .= "<img style=\"vertical-align:middle\" title='" . sprintf(gettext("Start %sService"),$stitle) . "' border='0' src='./themes/".$g['theme']."/images/icons/icon_service_start.gif'></a>\n";
+		if ($service_enabled)
+			$output .= "<img style=\"vertical-align:middle\" title='" . sprintf(gettext("Start %sService"),$stitle) . "' border='0' src='./themes/".$g['theme']."/images/icons/icon_service_start.gif' alt='start' /></a>\n";
 	}
 	return $output;
 }
+
+function service_control_start($name, $extras) {
+	global $g;
+	switch($name) {
+		case 'radvd':
+			services_radvd_configure();
+			break;
+		case 'captiveportal':
+			$zone = $extras['zone'];
+			captiveportal_init_webgui_zonename($zone);
+			break;
+		case 'ntpd':
+		case 'openntpd':
+			system_ntp_configure();
+			break;
+		case 'bsnmpd':
+			services_snmpd_configure();
+			break;
+		case 'dnsmasq':
+			services_dnsmasq_configure();
+			break;
+		case 'dhcpd':
+			services_dhcpd_configure();
+			break;
+		case 'igmpproxy':
+			services_igmpproxy_configure();
+			break;
+		case 'miniupnpd':
+			upnp_action('start');
+			break;
+		case 'racoon':
+			vpn_ipsec_force_reload();
+			break;
+		case 'openvpn':
+			$vpnmode = $extras['vpnmode'];
+			if (($vpnmode == "server") || ($vpnmode == "client")) {
+				$id = $extras['id'];
+				$configfile = "{$g['varetc_path']}/openvpn/{$vpnmode}{$id}.conf";
+				if (file_exists($configfile))
+					openvpn_restart_by_vpnid($vpnmode, $id);
+			}
+			break;
+		case 'relayd':
+			relayd_configure();
+			break;
+		default:
+			start_service($name);
+			break;
+	}
+	return sprintf(gettext("%s has been started."),htmlspecialchars($name));
+}
+function service_control_stop($name, $extras) {
+	global $g;
+	switch($name) {
+		case 'radvd':
+			killbypid("{$g['varrun_path']}/radvd.pid");
+			break;
+		case 'captiveportal':
+			$zone = $extras['zone'];
+			killbypid("{$g['varrun_path']}/lighty-{$zone}-CaptivePortal.pid");
+			killbypid("{$g['varrun_path']}/lighty-{$zone}-CaptivePortal-SSL.pid");
+			break;
+		case 'ntpd':
+			killbyname("ntpd");
+			break;
+		case 'openntpd':
+			killbyname("openntpd");
+			break;
+		case 'bsnmpd':
+			killbypid("{$g['varrun_path']}/snmpd.pid");
+			break;
+		case 'choparp':
+			killbyname("choparp");
+			break;
+		case 'dhcpd':
+			killbyname("dhcpd");
+			break;
+		case 'dhcrelay':
+			killbypid("{$g['varrun_path']}/dhcrelay.pid");
+			break;
+		case 'dnsmasq':
+			killbypid("{$g['varrun_path']}/dnsmasq.pid");
+			break;
+		case 'igmpproxy':
+			killbyname("igmpproxy");
+			break;
+		case 'miniupnpd':
+			upnp_action('stop');
+			break;
+		case 'sshd':
+			killbyname("sshd");
+			break;
+		case 'racoon':
+			exec("killall -9 racoon");
+			break;
+		case 'openvpn':
+			$vpnmode = $extras['vpnmode'];
+			if (($vpnmode == "server") or ($vpnmode == "client")) {
+				$id = $extras['id'];
+				$pidfile = "{$g['varrun_path']}/openvpn_{$vpnmode}{$id}.pid";
+				killbypid($pidfile);
+			}
+			break;
+		case 'relayd':
+			mwexec('pkill relayd');
+			break;
+		default:
+			stop_service($name);
+			break;
+	}
+	return sprintf(gettext("%s has been stopped."), htmlspecialchars($name));
+}
+function service_control_restart($name, $extras) {
+	global $g;
+	switch($name) {
+		case 'radvd':
+			services_radvd_configure();
+			break;
+		case 'captiveportal':
+			$zone = $extras['zone'];
+			killbypid("{$g['varrun_path']}/lighty-{$zone}-CaptivePortal.pid");
+			killbypid("{$g['varrun_path']}/lighty-{$zone}-CaptivePortal-SSL.pid");
+			captiveportal_init_webgui_zonename($zone);
+			break;
+		case 'ntpd':
+		case 'openntpd':
+			system_ntp_configure();
+			break;
+		case 'bsnmpd':
+			services_snmpd_configure();
+			break;
+		case 'dnsmasq':
+			services_dnsmasq_configure();
+			break;
+		case 'dhcpd':
+			services_dhcpd_configure();
+			break;
+		case 'igmpproxy':
+			services_igmpproxy_configure();
+			break;
+		case 'miniupnpd':
+			upnp_action('restart');
+			break;
+		case 'racoon':
+			vpn_ipsec_force_reload();
+			break;
+		case 'openvpn':
+			$vpnmode = $extras['vpnmode'];
+			if ($vpnmode == "server" || $vpnmode == "client") {
+				$id = $extras['id'];
+				$configfile = "{$g['varetc_path']}/openvpn/{$vpnmode}{$id}.conf";
+				if (file_exists($configfile))
+					openvpn_restart_by_vpnid($vpnmode, $id);
+			}
+			break;
+		case 'relayd':
+			relayd_configure(true);
+			break;
+		default:
+			restart_service($name);
+			break;
+	}
+	return sprintf(gettext("%s has been restarted."),htmlspecialchars($name));
+}
+
 ?>

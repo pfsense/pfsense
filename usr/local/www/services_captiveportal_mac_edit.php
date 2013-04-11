@@ -61,7 +61,7 @@ $cpzone = $_GET['zone'];
 if (isset($_POST['zone']))
         $cpzone = $_POST['zone'];
 
-if (empty($cpzone)) {
+if (empty($cpzone) || empty($config['captiveportal'][$cpzone])) {
         header("Location: services_captiveportal_zones.php");
         exit;
 }
@@ -144,15 +144,22 @@ if ($_POST) {
 			$ruleno = captiveportal_get_ipfw_passthru_ruleno($oldmac);
 			if ($ruleno) {
 				captiveportal_free_ipfw_ruleno($ruleno);
+				$pipeno = captiveportal_get_dn_passthru_ruleno($oldmac);
+				if ($pipeno) {
+					captiveportal_free_dn_ruleno($pipeno);
+					$rules .= "pipe delete {$pipeno}\n";
+					++$pipeno;
+					$rules .= "pipe delete {$pipeno}\n";
+				}
 				$rules = "delete {$ruleno}\n";
 				$rules .= "delete " . ++$ruleno . "\n";
 			}
 			
 			$rules .= captiveportal_passthrumac_configure_entry($mac);
-			file_put_contents("{$g['tmp_path']}/{$cpzone}_tmpmacedit{$id}", $rules);
-			captiveportal_ipfw_set_context($cpzone);
-			mwexec("/sbin/ipfw -q {$g['tmp_path']}/{$cpzone}_tmpmacedit{$id}");
-			@unlink("{$g['tmp_path']}/{$cpzone}_tmpmacedit{$id}");
+			$uniqid = uniqid("{$cpzone}_macedit");
+			file_put_contents("{$g['tmp_path']}/{$uniqid}_tmp", $rules);
+			mwexec("/sbin/ipfw -x {$cpzone} -q {$g['tmp_path']}/{$uniqid}_tmp");
+			@unlink("{$g['tmp_path']}/{$uniqid}_tmp");
 		}
 
 		header("Location: services_captiveportal_mac.php?zone={$cpzone}");
@@ -173,6 +180,12 @@ include("head.inc");
                   <td width="22%" valign="top" class="vncellreq"><?=gettext("MAC address"); ?></td>
                   <td width="78%" class="vtable"> 
                     <?=$mandfldhtml;?><input name="mac" type="text" class="formfld unknown" id="mac" size="17" value="<?=htmlspecialchars($pconfig['mac']);?>">
+                    <?php
+                        $ip = getenv('REMOTE_ADDR');
+                        $mac = `/usr/sbin/arp -an | grep {$ip} | cut -d" " -f4`;
+                        $mac = str_replace("\n","",$mac);
+                    ?>
+                    <a OnClick="document.forms[0].mac.value='<?=$mac?>';" href="#"><?=gettext("Copy my MAC address");?></a>
                     <br> 
                     <span class="vexpl"><?=gettext("MAC address (6 hex octets separated by colons)"); ?></span></td>
                 </tr>

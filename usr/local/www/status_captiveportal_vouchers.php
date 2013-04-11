@@ -2,17 +2,17 @@
 /*
     Copyright (C) 2007 Marcel Wiget <mwiget@mac.com>.
     All rights reserved.
-    
+
     Redistribution and use in source and binary forms, with or without
     modification, are permitted provided that the following conditions are met:
-    
+
     1. Redistributions of source code must retain the above copyright notice,
        this list of conditions and the following disclaimer.
-    
+
     2. Redistributions in binary form must reproduce the above copyright
        notice, this list of conditions and the following disclaimer in the
        documentation and/or other materials provided with the distribution.
-    
+
     THIS SOFTWARE IS PROVIDED ``AS IS'' AND ANY EXPRESS OR IMPLIED WARRANTIES,
     INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY
     AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE
@@ -24,7 +24,7 @@
     ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
     POSSIBILITY OF SUCH DAMAGE.
 */
-/*	
+/*
 	pfSense_MODULE:	captiveportal
 */
 
@@ -44,52 +44,56 @@ require_once("voucher.inc");
 
 $cpzone = $_GET['zone'];
 if (isset($_POST['zone']))
-        $cpzone = $_POST['zone'];
+	$cpzone = $_POST['zone'];
 
 if (empty($cpzone)) {
-        header("Location: services_captiveportal_zones.php");
-        exit;
+	header("Location: services_captiveportal_zones.php");
+	exit;
 }
 
 if (!is_array($config['captiveportal']))
-        $config['captiveportal'] = array();
+	$config['captiveportal'] = array();
 $a_cp =& $config['captiveportal'];
 $pgtitle = array(gettext("Status"), gettext("Captive portal"), gettext("Vouchers"), $a_cp[$cpzone]['zone']);
 $shortcut_section = "captiveportal-vouchers";
 
 function clientcmp($a, $b) {
-    global $order;
-    return strcmp($a[$order], $b[$order]);
+	global $order;
+	return strcmp($a[$order], $b[$order]);
 }
 
 if (!is_array($config['voucher'][$cpzone]['roll'])) {
-    $config['voucher'][$cpzone]['roll'] = array();
+	$config['voucher'][$cpzone]['roll'] = array();
 }
 $a_roll = $config['voucher'][$cpzone]['roll'];
 
 $db = array();
 
 foreach($a_roll as $rollent) {
-    $roll = $rollent['number'];
-    $minutes = $rollent['minutes'];
-    $active_vouchers = file("{$g['vardb_path']}/voucher_{$cpzone}_active_$roll.db", FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
-    foreach($active_vouchers as $voucher => $line) {
-        list($voucher,$timestamp, $minutes) = explode(",", $line);
-        $remaining = (($timestamp + 60*$minutes) - time());
-        if ($remaining > 0) {
-            $dbent[0] = $voucher;
-            $dbent[1] = $roll;  
-            $dbent[2] = $timestamp;
-            $dbent[3] = intval($remaining/60);
-            $dbent[4] = $timestamp + 60*$minutes; // expires at 
-            $db[] = $dbent;
-        }
-    }
+	$roll = $rollent['number'];
+	$minutes = $rollent['minutes'];
+
+	if (!file_exists("{$g['vardb_path']}/voucher_{$cpzone}_active_$roll.db"))
+		continue;
+
+	$active_vouchers = file("{$g['vardb_path']}/voucher_{$cpzone}_active_$roll.db", FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
+	foreach($active_vouchers as $voucher => $line) {
+		list($voucher,$timestamp, $minutes) = explode(",", $line);
+		$remaining = (($timestamp + 60*$minutes) - time());
+		if ($remaining > 0) {
+			$dbent[0] = $voucher;
+			$dbent[1] = $roll;
+			$dbent[2] = $timestamp;
+			$dbent[3] = intval($remaining/60);
+			$dbent[4] = $timestamp + 60*$minutes; // expires at
+			$db[] = $dbent;
+		}
+	}
 }
 
-if ($_GET['order']) { 
-    $order = $_GET['order'];
-    usort($db, "clientcmp");
+if ($_GET['order']) {
+	$order = $_GET['order'];
+	usort($db, "clientcmp");
 }
 
 include("head.inc");
@@ -99,14 +103,15 @@ include("fbegin.inc");
 <form action="status_captiveportal_vouchers.php" method="post" enctype="multipart/form-data" name="iform" id="iform">
 <table width="100%" border="0" cellpadding="0" cellspacing="0" summary="tab pane">
 <tr><td class="tabnavtbl">
-<?php 
+<?php
 	$tab_array = array();
-        $tab_array[] = array(gettext("Active Users"), false, "status_captiveportal.php?zone={$cpzone}");
-        $tab_array[] = array(gettext("Active Vouchers"), true, "status_captiveportal_vouchers.php?zone={$cpzone}");
-        $tab_array[] = array(gettext("Voucher Rolls"), false, "status_captiveportal_voucher_rolls.php?zone={$cpzone}");
-        $tab_array[] = array(gettext("Test Vouchers"), false, "status_captiveportal_test.php?zone={$cpzone}");
-        display_top_tabs($tab_array);
-?> 
+	$tab_array[] = array(gettext("Active Users"), false, "status_captiveportal.php?zone={$cpzone}");
+	$tab_array[] = array(gettext("Active Vouchers"), true, "status_captiveportal_vouchers.php?zone={$cpzone}");
+	$tab_array[] = array(gettext("Voucher Rolls"), false, "status_captiveportal_voucher_rolls.php?zone={$cpzone}");
+	$tab_array[] = array(gettext("Test Vouchers"), false, "status_captiveportal_test.php?zone={$cpzone}");
+	$tab_array[] = array(gettext("Expire Vouchers"), false, "status_captiveportal_expire.php?zone={$cpzone}");
+	display_top_tabs($tab_array);
+?>
 </td></tr>
 <tr>
 <td class="tabcont">

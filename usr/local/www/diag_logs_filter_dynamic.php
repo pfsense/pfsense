@@ -81,13 +81,11 @@ include("head.inc");
 ?>
 	/* Called by the AJAX updater */
 	function format_log_line(row) {
-		var line = '';
-		line =  '  <span class="log-action" nowrap>' + row[0] + '</span>';
-		line += '  <span class="log-time" nowrap>' + row[1] + '</span>';
-		line += '  <span class="log-interface" nowrap>' + row[2] + '</span>';
-		line += '  <span class="log-source" nowrap>' + row[3] + '</span>';
-		line += '  <span class="log-destination" nowrap>' + row[4] + '</span>';
-		line += '  <span class="log-protocol" nowrap>' + row[5] + '</span>';
+		var i = 0;
+		var line = '<td class="listMRlr" nowrap="nowrap" align="center">' + row[i++] + '</td>';
+		while (i < 6) {
+			line += '<td class="listMRr" nowrap="nowrap">' + row[i++] + '</td>';
+		}
 		return line;
 	}
 </script>
@@ -106,7 +104,6 @@ include("head.inc");
 	$tab_array[] = array(gettext("Load Balancer"), false, "diag_logs_relayd.php");
 	$tab_array[] = array(gettext("OpenVPN"), false, "diag_logs_openvpn.php");
 	$tab_array[] = array(gettext("NTP"), false, "diag_logs_ntpd.php");
-	$tab_array[] = array(gettext("Wireless"), false, "diag_logs_wireless.php");
 	$tab_array[] = array(gettext("Settings"), false, "diag_logs_settings.php");
 	display_top_tabs($tab_array);
 ?>
@@ -114,43 +111,58 @@ include("head.inc");
   <tr>
      <td>
 	<div id="mainarea">
-		<div class="tabcont">
-			<a href="diag_logs_filter.php"><?=gettext("Normal View");?></a> | <?=gettext("Dynamic View");?> | <a href="diag_logs_filter_summary.php"><?=gettext("Summary View");?></a>
-		</div>
-		<div class="listtopic">
-			<?php printf(gettext("Last %s records"),$nentries);?>;   <?=gettext("Pause:");?><input valign="middle" type="checkbox" onClick="javascript:toggle_pause();">
-		</div>
-		<div id="log">
-			<div class="log-header">
-                                <span class="log-action"><?=gettext("Act");?></span>
-                                <span class="log-time"><?=gettext("Time");?></span>
-                                <span class="log-interface"><?=gettext("If");?></span>
-                                <span class="log-source"><?=gettext("Source");?></span>
-                                <span class="log-destination"><?=gettext("Destination");?></span>
-                                <span class="log-protocol"><?=gettext("Proto");?></span>
-			</div>
-			<?php $counter=0; foreach ($filterlog as $filterent): ?>
-			<div class="log-entry"<?php echo is_first_row($counter, count($filterlog)); ?>>
-				<span class="log-action" nowrap><a href="#" onClick="javascript:getURL('diag_logs_filter.php?getrulenum=<?php echo "{$filterent['rulenum']},{$filterent['act']}"; ?>', outputrule);">
-				<img border="0" src="<?php echo find_action_image($filterent['act']);?>" width="11" height="11" align="absmiddle" alt="<?php echo $filterent['act'];?>" title="<?php echo $filterent['act'];?>" /></a></span>
-				<span class="log-time" ><?php echo htmlspecialchars($filterent['time']);?></span>
-				<span class="log-interface" ><?php echo htmlspecialchars($filterent['interface']);?></span>
-				<span class="log-source" ><?php echo htmlspecialchars($filterent['src']);?></span>
-				<span class="log-destination" ><?php echo htmlspecialchars($filterent['dst']);?></span>
+		<table class="tabcont" width="100%" border="0" cellpadding="0" cellspacing="0">
+			<thead>
+			<tr>
+				<td colspan="6" align"left" valign="middle">
+				<a href="diag_logs_filter.php"><?=gettext("Normal View");?></a> | <?=gettext("Dynamic View");?> | <a href="diag_logs_filter_summary.php"><?=gettext("Summary View");?></a>
+				<br/><br/>
+				</td>
+			</tr>
+			<tr>
+				<td colspan="6" class="listtopic">
+				<?php printf(gettext("Last %s records"),$nentries);?>;   <?=gettext("Pause:");?><input valign="middle" type="checkbox" onClick="javascript:toggle_pause();">
+				</td>
+			</tr>
+			<tr>
+				<td width="10%" class="listhdrr"><?=gettext("Act");?></ td>
+				<td width="10%" class="listhdrr"><?=gettext("Time");?></ td>
+				<td width="15%" class="listhdrr"><?=gettext("If");?></ td>
+				<td width="25%" class="listhdrr"><?=gettext("Source");?></ td>
+				<td width="25%" class="listhdrr"><?=gettext("Destination");?></ td>
+				<td width="15%" class="listhdrr"><?=gettext("Proto");?></ td>
+			</tr>
+			</thead>
+			<tbody id="filter-log-entries">
+			<?php
+			$rowIndex = 0;
+			foreach ($filterlog as $filterent):
+			$evenRowClass = $rowIndex % 2 ? " listMReven" : " listMRodd";
+			$rowIndex++;?>
+			<tr class="<?=$evenRowClass?>">
+				<td class="listMRlr" nowrap="nowrap" align="center">
+				<a href="#" onclick="javascript:getURL('diag_logs_filter.php?getrulenum=<?php echo "{$filterent['rulenum']},{$filterent['act']}"; ?>', outputrule);">
+				<img border="0" src="<?php echo find_action_image($filterent['act']);?>" width="11" height="11" alt="<?php echo $filterent['act'];?>" title="<?php echo $filterent['act'];?>" />
+				</a>
+				</td>
+				<td class="listMRr" nowrap="nowrap"><?php echo htmlspecialchars($filterent['time']);?></td>
+				<td class="listMRr" nowrap="nowrap"><?php echo htmlspecialchars($filterent['interface']);?></td>
+				<td class="listMRr" nowrap="nowrap"><?php echo htmlspecialchars($filterent['src']);?></td>
+				<td class="listMRr" nowrap="nowrap"><?php echo htmlspecialchars($filterent['dst']);?></td>
 				<?php
 					if ($filterent['proto'] == "TCP")
 						$filterent['proto'] .= ":{$filterent['tcpflags']}";
 				?>
-				<span class="log-protocol" ><?php echo htmlspecialchars($filterent['proto']);?></span>
-			</div>
-			<?php $counter++; endforeach; ?>
-		</div>
+				<td class="listMRr" nowrap="nowrap"><?php echo htmlspecialchars($filterent['proto']);?></td>
+			</tr>
+			<?php endforeach; ?>
+			</tbody>
+		</table>
 	</div>
      </td>
   </tr>
 </table>
 <p><span class="vexpl"><a href="http://doc.pfsense.org/index.php/What_are_TCP_Flags%3F"><?=gettext("TCP Flags"); ?></a>: F - FIN, S - SYN, A or . - ACK, R - RST, P - PSH, U - URG, E - ECE, C - CWR</span></p>
-
 <?php include("fend.inc"); ?>
 </body>
 </html>

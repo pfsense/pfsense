@@ -1,10 +1,15 @@
 <?xml version="1.0"?>
 <!-- pfSense default system configuration -->
 <pfsense>
-	<version>8.3</version>
+	<version>9.4</version>
 	<lastchange></lastchange>
 	<theme>pfsense_ng</theme>
 	<sysctl>
+		<item>
+			<descr><![CDATA[Enable mounting the FS read only with more checks.]]></descr>
+			<tunable>vfs.forcesync</tunable>
+			<value>default</value>
+		</item>
 		<item>
 			<descr><![CDATA[Disable the pf ftp proxy handler.]]></descr>
 			<tunable>debug.pfftpproxy</tunable>
@@ -48,6 +53,16 @@
 		<item>
 			<descr><![CDATA[Enable sending IPv6 redirects]]></descr>
 			<tunable>net.inet6.ip6.redirect</tunable>
+			<value>default</value>
+		</item>
+		<item>
+			<descr><![CDATA[Enable privacy settings for IPv6 (RFC 4941)]]></descr>
+			<tunable>net.inet6.ip6.use_tempaddr</tunable>
+			<value>default</value>
+		</item>
+		<item>
+			<descr><![CDATA[Prefer privacy addresses and use them over the normal addresses]]></descr>
+			<tunable>net.inet6.ip6.prefer_tempaddr</tunable>
 			<value>default</value>
 		</item>
 		<item>
@@ -188,7 +203,11 @@
 		<disablesegmentationoffloading/>
 		<disablelargereceiveoffloading/>
 		<ipv6allow/>
-		<powerd_mode>hadp</powerd_mode>
+		<powerd_ac_mode>hadp</powerd_ac_mode>
+		<powerd_battery_mode>hadp</powerd_battery_mode>
+		<bogons>
+			<interval>monthly</interval>
+		</bogons>
 	</system>
 	<interfaces>
 		<wan>
@@ -368,8 +387,6 @@
 		</page>
 		<httpslogin/>
 		<httpsname></httpsname>
-		<certificate></certificate>
-		<private-key></private-key>
 		<redirurl></redirurl>
 		<radiusip></radiusip>
 		<radiusport></radiusport>
@@ -531,7 +548,6 @@
 		-->
 	</shaper>
 	<ipsec>
-		<preferoldsa/>
 		<!-- <enable/> -->
 		<!-- syntax:
 		<tunnel>

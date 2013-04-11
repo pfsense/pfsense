@@ -51,9 +51,9 @@ $cpzone = $_GET['zone'];
 if (isset($_POST['zone']))
 	$cpzone = $_POST['zone'];
 
-if (empty($cpzone)) {
-	header("Location: services_captiveportal_zones.php");
-	exit;
+if (empty($cpzone) || empty($config['captiveportal'][$cpzone])) {
+        header("Location: services_captiveportal_zones.php");
+        exit;
 }
 
 if (!is_array($config['captiveportal']))
@@ -73,20 +73,20 @@ if ($_GET['act'] == "del" && !empty($cpzone)) {
 				$ipent['ip'] .= "/{$ipent['sn']}";
 			$ip = gethostbyname($ipent['ip']);
 			if(is_ipaddr($ip)) {
-				captiveportal_ipfw_set_context($zone);
-				mwexec("/sbin/ipfw table 3 delete {$ip}");
-				mwexec("/sbin/ipfw table 4 delete {$ip}");
-				mwexec("/sbin/ipfw table 5 delete {$ip}");
-				mwexec("/sbin/ipfw table 6 delete {$ip}");
-				mwexec("/sbin/ipfw table 7 delete {$ip}");
-				mwexec("/sbin/ipfw table 8 delete {$ip}");
-				mwexec("/sbin/ipfw table 9 delete {$ip}");
-				mwexec("/sbin/ipfw table 10 delete {$ip}");
+				$ipfw = pfSense_ipfw_getTablestats($cpzone, 3, $ip);
+				if (is_array($ipfw)) {
+					captiveportal_free_dn_ruleno($ipfw['dnpipe']);
+					pfSense_pipe_action("pipe delete {$ipfw['dnpipe']}");
+					pfSense_pipe_action("pipe delete " . ($ipfw['dnpipe']+1));
+				}
+				pfSense_ipfw_Tableaction($cpzone, IP_FW_TABLE_DEL, 3, $ip);
+				pfSense_ipfw_Tableaction($cpzone, IP_FW_TABLE_DEL, 4, $ip);
 			}
 		}
 			
 		unset($a_allowedhostnames[$_GET['id']]);
 		write_config();
+		captiveportal_allowedhostname_configure();
 		header("Location: services_captiveportal_hostname.php?zone={$cpzone}");
 		exit;
 	}

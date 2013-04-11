@@ -1,0 +1,15 @@
+require_once("config.inc");
+require_once("util.inc");
+
+global $g, $config;
+
+echo "Installed packages:\n";
+
+foreach($config['installedpackages']['package'] as $package) {
+	$name = str_pad("{$package['name']}-{$package['version']}", 30);
+	$descr = $package['descr'];
+	$line = "{$name} {$descr}";
+	if (strlen($line) > 80)
+		$line = substr($line, 0, 77) . "...";
+	echo "{$line}\n";
+}

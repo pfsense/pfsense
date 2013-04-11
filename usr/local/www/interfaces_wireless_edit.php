@@ -40,6 +40,8 @@
 
 require("guiconfig.inc");
 
+if (!is_array($config['wireless']))
+	$config['wireless'] = array();
 if (!is_array($config['wireless']['clone']))
 	$config['wireless']['clone'] = array();
 
@@ -176,9 +178,9 @@ include("head.inc");
                   <td valign="top" class="vncellreq"><?=gettext("Mode");?></td>
                   <td class="vtable">
                     <select name="mode" class="formselect">
-                      <option <? if ($pconfig['mode'] == 'bss') echo "selected";?> value="bss"><?=gettext("Infrastructure (BSS)");?></option>
-                      <option <? if ($pconfig['mode'] == 'adhoc') echo "selected";?> value="adhoc"><?=gettext("Ad-hoc (IBSS)");?></option>
-                      <option <? if ($pconfig['mode'] == 'hostap') echo "selected";?> value="hostap"><?=gettext("Access Point");?></option>
+                      <option <?php if ($pconfig['mode'] == 'bss') echo "selected";?> value="bss"><?=gettext("Infrastructure (BSS)");?></option>
+                      <option <?php if ($pconfig['mode'] == 'adhoc') echo "selected";?> value="adhoc"><?=gettext("Ad-hoc (IBSS)");?></option>
+                      <option <?php if ($pconfig['mode'] == 'hostap') echo "selected";?> value="hostap"><?=gettext("Access Point");?></option>
                     </select></td>
                 </tr>
                 <tr>

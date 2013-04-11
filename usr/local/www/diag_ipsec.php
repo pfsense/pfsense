@@ -53,11 +53,13 @@ include("head.inc");
 require("ipsec.inc");
 
 if ($_GET['act'] == "connect") {
-	if (is_ipaddr($_GET['remoteid']) && is_ipaddr($_GET['source'])) {
+	if (is_ipaddrv4($_GET['remoteid']) && is_ipaddrv4($_GET['source'])) {
 		exec("/sbin/ping -S " . escapeshellarg($_GET['source']) . " -c 1 " . escapeshellarg($_GET['remoteid']));
 	}
+	else if (is_ipaddrv6($_GET['remoteid']) && is_ipaddrv6($_GET['source'])) {
+		exec("/sbin/ping6 -S " . escapeshellarg($_GET['source']) . " -c 1 " . escapeshellarg($_GET['remoteid']));
+	}
 }
-
 
 if ($_GET['act'] == "disconnect") {
 	if (!empty($_GET['user'])) {
@@ -150,28 +152,27 @@ $mobile = ipsec_dump_mobile();
 							$source = "";
 							$ip_interface = null;
 							$ip_alias = null;
-							if ($ph2ent['localid']['type'] == 'lan') {
-								$source = get_interface_ip('lan');
-							} else if ($ph2ent['localid']['type'] == 'network') {
-								$ip_interface = find_ip_interface($ph2ent['localid']['address'], $ph2ent['localid']['netbits']);
-								if (!$ip_interface) {
-									$ip_alias = find_virtual_ip_alias($ph2ent['localid']['address'], $ph2ent['localid']['netbits']);
-								}
-							} else {
-								$ip_interface = find_ip_interface($ph2ent['localid']['address']);
-								if (!$ip_interface) {
-									$ip_alias = find_virtual_ip_alias($ph2ent['localid']['address']);
-								}
-							}
+							$localinfo = ipsec_idinfo_to_cidr($ph2ent['localid'], false, $ph2ent['mode']);
+							list($localip, $localsub) = explode("/", $localinfo);
+							$ip_interface = find_ip_interface($localip, $localsub);
+							if (!$ip_interface)
+								$ip_alias = find_virtual_ip_alias($localip, $localsub);
 							if ($ip_interface) {
-								$source = get_interface_ip($ip_interface);
+								if (is_ipaddrv6($localip))
+									$source = get_interface_ipv6($ip_interface);
+								else
+									$source = get_interface_ip($ip_interface);
 							} else if ($ip_alias) {
 								$source = $ip_alias['subnet'];
 							}
+							if (!empty($ph2ent['pinghost']))
+								$remoteid = $ph2ent['pinghost'];
+							else
+								$remoteid = $ph2ent['remoteid']['address'];
 							?>
 							<?php if (($ph2ent['remoteid']['type'] != "mobile") && ($icon != "pass") && ($source != "")): ?>
 							<center>
-								<a href="diag_ipsec.php?act=connect&remoteid=<?php echo $ph2ent['remoteid']['address']; ?>&source=<?php echo $source; ?>">
+								<a href="diag_ipsec.php?act=connect&amp;remoteid=<?php echo $remoteid; ?>&amp;source=<?php echo $source; ?>">
 								<img src ="/themes/<?php echo $g['theme']; ?>/images/icons/icon_service_start.gif" alt="Connect VPN" title="Connect VPN" border="0">
 								</a>
 							</center>

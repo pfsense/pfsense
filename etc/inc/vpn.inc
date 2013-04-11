@@ -145,7 +145,6 @@ function vpn_ipsec_configure($ipchg = false)
 
 			$ipsecpinghosts = "";
 			/* step through each phase1 entry */
-			$ipsecpinghosts = "";
 			foreach ($a_phase1 as $ph1ent) {
 				if (isset($ph1ent['disabled']))
 					continue;
@@ -190,7 +189,6 @@ function vpn_ipsec_configure($ipchg = false)
 						if ($ikeid != $ph1ent['ikeid'])
 							continue;
 
-						$ph2ent['localid']['mode'] = $ph2ent['mode'];
 						/* add an ipsec pinghosts entry */
 						if ($ph2ent['pinghost']) {
 							if (!is_array($iflist))
@@ -200,7 +198,7 @@ function vpn_ipsec_configure($ipchg = false)
 									$interface_ip = get_interface_ipv6($ifent);
 									if(!is_ipaddrv6($interface_ip))
 										continue;
-									$local_subnet = ipsec_idinfo_to_cidr($ph2ent['localid'], true);
+									$local_subnet = ipsec_idinfo_to_cidr($ph2ent['localid'], true, $ph2ent['mode']);
 									if (ip_in_subnet($interface_ip, $local_subnet)) {
 										$srcip = $interface_ip;
 										break;
@@ -209,7 +207,7 @@ function vpn_ipsec_configure($ipchg = false)
 									$interface_ip = get_interface_ip($ifent);
 									if(!is_ipaddrv4($interface_ip))
 										continue;
-									$local_subnet = ipsec_idinfo_to_cidr($ph2ent['localid'], true);
+									$local_subnet = ipsec_idinfo_to_cidr($ph2ent['localid'], true, $ph2ent['mode']);
 									if ($local_subnet == "0.0.0.0/0" || ip_in_subnet($interface_ip, $local_subnet)) {
 										$srcip = $interface_ip;
 										break;
@@ -226,10 +224,10 @@ function vpn_ipsec_configure($ipchg = false)
 								$ipsecpinghosts[] = "{$srcip}|{$dstip}|3|||||{$family}|\n";
 						}
 					}
-					@file_put_contents("{$g['vardb_path']}/ipsecpinghosts", $ipsecpinghosts);
-					unset($ipsecpinghosts);
 				}
 			}
+			@file_put_contents("{$g['vardb_path']}/ipsecpinghosts", $ipsecpinghosts);
+			unset($ipsecpinghosts);
 		}
 
 		/* generate CA certificates files */
@@ -362,7 +360,7 @@ function vpn_ipsec_configure($ipchg = false)
 						if (!isset($ph2ent['mobile']))
 							continue;
 
-						$localid = ipsec_idinfo_to_cidr($ph2ent['localid'],true);
+						$localid = ipsec_idinfo_to_cidr($ph2ent['localid'], true, $ph2ent['mode']);
 
 						if ($net_list)
 							$net_list .= ", ";
@@ -419,6 +417,8 @@ function vpn_ipsec_configure($ipchg = false)
 				$sed = "\$authmodes=array(";
 				$firstsed = 0;
 				foreach ($authcfgs as $authcfg) {
+					if ($authcfg == "system")
+						$authcfg = "Local Database";
 					if ($firstsed > 0)
 						$sed .= ",";
 					$firstsed = 1;
@@ -669,8 +669,7 @@ EOD;
 					if (($ph2ent['mode'] == 'tunnel') or ($ph2ent['mode'] == 'tunnel6')) {
 
 						$localid_type = $ph2ent['localid']['type'];
-						$ph2ent['localid']['mode'] = $ph2ent['mode'];
-						$localid_data = ipsec_idinfo_to_cidr($ph2ent['localid']);
+						$localid_data = ipsec_idinfo_to_cidr($ph2ent['localid'], false, $ph2ent['mode']);
 						/* Do not print localid in some cases, such as a pure-psk or psk/xauth single phase2 mobile tunnel */
 						if (($localid_type == "none") ||
 							(($ph1ent['authentication_method'] == "xauth_psk_server") ||
@@ -683,13 +682,13 @@ EOD;
 								$localid_type = "subnet";
 							}
 							// Don't let an empty subnet into racoon.conf, it can cause parse errors. Ticket #2201.
-							if (!is_ipaddr($localid_data) && !is_subnet($localid_data)) {
+							if (!is_ipaddr($localid_data) && !is_subnet($localid_data) && ($localid_data != "0.0.0.0/0")) {
 								log_error("Invalid IPsec Phase 2 \"{$ph2ent['descr']}\" - {$ph2ent['localid']['type']} has no subnet.");
 								continue;
 							}
 							$localid_spec = "{$localid_type} {$localid_data} any";
 							if (!empty($ph2ent['natlocalid'])) {
-								$natlocalid_data =  ipsec_idinfo_to_cidr($ph2ent['natlocalid']);
+								$natlocalid_data =  ipsec_idinfo_to_cidr($ph2ent['natlocalid'], false, $ph2ent['mode']);
 								if ($ph2ent['natlocalid']['type'] != "address") {
 									if (is_subnet($natlocalid_data))
 										$localid_spec .= " nat subnet {$natlocalid_data} any";
@@ -705,7 +704,7 @@ EOD;
 							if ($remoteid_type != "address")
 								$remoteid_type = "subnet";
 
-							$remoteid_data = ipsec_idinfo_to_cidr($ph2ent['remoteid']);
+							$remoteid_data = ipsec_idinfo_to_cidr($ph2ent['remoteid'], false, $ph2ent['mode']);
 							$remoteid_spec = $remoteid_type." ".$remoteid_data." any";
 						} else
 							$remoteid_spec = "anonymous";
@@ -866,9 +865,8 @@ EOD;
 				if(!is_ipaddr($rgip))
 					continue;
 
-				$ph2ent['localid']['mode'] = $ph2ent['mode'];
-				$localid = ipsec_idinfo_to_cidr($ph2ent['localid'],true);
-				$remoteid = ipsec_idinfo_to_cidr($ph2ent['remoteid'],true);
+				$localid = ipsec_idinfo_to_cidr($ph2ent['localid'], true, $ph2ent['mode']);
+				$remoteid = ipsec_idinfo_to_cidr($ph2ent['remoteid'], true, $ph2ent['mode']);
 
 				if(($ph2ent['mode'] == "tunnel") or ($ph2ent['mode'] == 'tunnel6')) {
 					// Error will be logged above, no need to log this twice. #2201
@@ -884,7 +882,7 @@ EOD;
 						"{$ph2ent['protocol']}/tunnel/{$ep}-{$rgip}/unique;\n";
 
 					if (!empty($ph2ent['natlocalid'])) {
-						$natlocalid = ipsec_idinfo_to_cidr($ph2ent['natlocalid'],true);
+						$natlocalid = ipsec_idinfo_to_cidr($ph2ent['natlocalid'], true, $ph2ent['mode']);
 						$spdconf .= "spdadd {$family} {$remoteid} {$natlocalid} any -P in ipsec " .
 							"{$ph2ent['protocol']}/tunnel/{$rgip}-{$ep}/unique;\n";
 						$natfilterrules = true;
@@ -975,9 +973,14 @@ EOD;
 			file_put_contents("{$g['varetc_path']}/ipsec/filterdns-ipsec.hosts", $hostnames);
 			unset($hostnames);
 
+			if (isvalidpid("{$g['varrun_path']}/filterdns-ipsec.pid"))
+				sigkillbypid("{$g['varrun_path']}/filterdns-ipsec.pid", "HUP");
+			else {
+				mwexec("/usr/local/sbin/filterdns -p {$g['varrun_path']}/filterdns-ipsec.pid -i {$interval} -c {$g['varetc_path']}/ipsec/filterdns-ipsec.hosts -d 1");
+			}
+		} else {
 			killbypid("{$g['varrun_path']}/filterdns-ipsec.pid");
-			sleep(1);
-			mwexec("/usr/local/sbin/filterdns -p {$g['varrun_path']}/filterdns-ipsec.pid -i {$interval} -c {$g['varetc_path']}/ipsec/filterdns-ipsec.hosts -d 1");
+			@unlink("{$g['varrun_path']}/filterdns-ipsec.pid");
 		}
 	
 		vpn_ipsec_failover_configure();
@@ -995,11 +998,24 @@ EOD;
  * For all other occasions the normal vpn_ipsec_configure()
  * will gracefully reload the settings without restarting
  */
-function vpn_ipsec_force_reload() {
-	global $config;
-	global $g;
+function vpn_ipsec_force_reload($interface = "") {
+	global $g, $config;
 
 	$ipseccfg = $config['ipsec'];
+
+	if (!empty($interface) && is_array($ipseccfg['phase1'])) {
+		$found = false;
+		foreach ($ipseccfg['phase1'] as $ipsec) {
+			if (!isset($ipsec['disabled']) && ($ipsec['interface'] == $interface)) {
+				$found = true;
+				break;
+			}
+		}
+		if (!$found) {
+			log_error(sprintf(gettext("Ignoring IPsec racoon daemon reload since there are no tunnels on interface %s"), $interface));
+			return;
+		}
+	}
 
 	/* send a SIGKILL to be sure */
 	killbypid("{$g['varrun_path']}/racoon.pid");
@@ -1729,6 +1745,62 @@ function vpn_ipsec_refresh_policies() {
 	}
 }
 
+/* remove SPD polices */
+function remove_tunnel_spd_policy($phase1,$phase2) {
+	global $config;
+	global $g;
+
+	if (!$phase1 || !$phase2)
+		return false;
+
+	if (isset($phase1['mobile']))
+		return false;
+
+	$spdconf = "";
+	$ep = ipsec_get_phase1_src($phase1);
+	$gw = trim($phase1['remote-gateway']);
+	$sad_arr = ipsec_dump_sad();
+	$remote_subnet = ipsec_idinfo_to_cidr($phase2['remoteid'], false, $phase2['mode']);
+
+	if (!empty($phase2['natlocalid']))
+		$local_subnet = ipsec_idinfo_to_cidr($phase2['natlocalid'], false, $phase2['mode']);
+	else
+		$local_subnet = ipsec_idinfo_to_cidr($phase2['localid'], false, $phase2['mode']);
+
+	if ($phase2['mode'] == "tunnel6")
+		$family = "-6";
+	else
+		$family = "-4";
+
+	$spdconf .= "spddelete {$family} {$local_subnet} " .
+		"{$remote_subnet} any -P out ipsec " .
+		"{$phase2['protocol']}/tunnel/{$ep}-" .
+		"{$gw}/unique;\n";
+
+	$spdconf .= "spddelete {$family} {$remote_subnet} " .
+		"{$local_subnet} any -P in ipsec " .
+		"{$phase2['protocol']}/tunnel/{$gw}-" .
+		"{$ep}/unique;\n";
+
+	/* zap any existing SA entries */
+	foreach($sad_arr as $sad) {
+		if(($sad['dst'] == $ep) && ($sad['src'] == $gw))
+			$spdconf .= "delete {$family} {$ep} {$gw} {$phase2['protocol']} 0x{$sad['spi']};\n";
+		if(($sad['src'] == $ep) && ($sad['dst'] == $_gw))
+			$spdconf .= "delete {$family} {$gw} {$ep} {$phase2['protocol']} 0x{$sad['spi']};\n";
+	}
+
+	log_error(sprintf(gettext("Removing SPDs from tunnel gw '%1\$s'. Local Subnet '%2\$s' and Remote Subnet '%3\$s'. Reloading policy"),$phase1['remote-gateway'],$local_subnet,$remote_subnet));
+
+	$now = time();
+	$spdfile = tempnam("{$g['tmp_path']}", "spd.conf.reload.{$now}.");
+	/* generate temporary spd.conf */
+	@file_put_contents($spdfile, $spdconf);
+	unset($spdconf);
+
+	return true;
+}
+
 /* reloads the tunnel configuration for a tunnel item
  * Will remove and add SPD polices */
 function reload_tunnel_spd_policy($phase1, $phase2, $old_phase1, $old_phase2) {
@@ -1746,17 +1818,15 @@ function reload_tunnel_spd_policy($phase1, $phase2, $old_phase1, $old_phase2) {
 	$sad_arr = ipsec_dump_sad();
 
 	$ep = ipsec_get_phase1_src($phase1);
-	$phase2['localid']['mode'] = $phase2['mode'];
-	$local_subnet = ipsec_idinfo_to_cidr($phase2['localid']);
-	$remote_subnet = ipsec_idinfo_to_cidr($phase2['remoteid']);
+	$local_subnet = ipsec_idinfo_to_cidr($phase2['localid'], false, $phase2['mode']);
+	$remote_subnet = ipsec_idinfo_to_cidr($phase2['remoteid'], false, $phase2['mode']);
 
 	/* make sure we pass the oldtunnel array with a IP for the remote gw */
 	$old_gw = trim($old_phase1['remote-gateway']);
 
 	$old_ep = ipsec_get_phase1_src($old_phase1);
-	$old_phase2['localid']['mode'] = $old_phase2['mode'];
-	$old_local_subnet = ipsec_idinfo_to_cidr($old_phase2['localid']);
-	$old_remote_subnet = ipsec_idinfo_to_cidr($old_phase2['remoteid']);
+	$old_local_subnet = ipsec_idinfo_to_cidr($old_phase2['localid'], false, $old_phase2['mode']);
+	$old_remote_subnet = ipsec_idinfo_to_cidr($old_phase2['remoteid'], false, $old_phase2['mode']);
 
 	/* see if this tunnel has a hostname for the remote-gateway, and if so,
 	 * try to resolve it now and add it to the list for filterdns */
@@ -1800,7 +1870,7 @@ function reload_tunnel_spd_policy($phase1, $phase2, $old_phase1, $old_phase2) {
 			"{$old_phase2['protocol']}/tunnel/{$old_ep}-" .
 			"{$old_gw}/unique;\n";
 		if (!empty($old_phase2['natlocalid']))
-			$old_local_subnet = ipsec_idinfo_to_cidr($old_phase2['natlocalid']);
+			$old_local_subnet = ipsec_idinfo_to_cidr($old_phase2['natlocalid'], false, $old_phase2['mode']);
 		$spdconf .= "spddelete {$family} {$old_remote_subnet} " .
 			"{$old_local_subnet} any -P in ipsec " .
 			"{$old_phase2['protocol']}/tunnel/{$old_gw}-" .
@@ -1840,7 +1910,7 @@ function reload_tunnel_spd_policy($phase1, $phase2, $old_phase1, $old_phase2) {
 			"{$rgip}/unique;\n";
 
 		if (!empty($phase2['natlocalid']))
-			$local_subnet = ipsec_idinfo_to_cidr($phase2['natlocalid']);
+			$local_subnet = ipsec_idinfo_to_cidr($phase2['natlocalid'], false, $phase2['mode']);
 		$spdconf .= "spdadd {$family} {$remote_subnet} " .
 			"{$local_subnet} any -P in ipsec " .
 			"{$phase2['protocol']}/tunnel/{$rgip}-" .

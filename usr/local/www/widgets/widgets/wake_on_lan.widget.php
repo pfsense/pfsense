@@ -35,12 +35,12 @@ else
 	$wolcomputers = array();
 
 ?>
-<table width="100%" border="0" cellpadding="0" cellspacing="0">
+<table width="100%" border="0" cellpadding="0" cellspacing="0" summary="wol status">
 	<tr>
-		<?
-		echo '<td class="widgetsubheader"><b><center>' . gettext("Computer / Device") . '</center></b></td>';
-		echo '<td class="widgetsubheader"><b><center>' . gettext("Interface") . '</center></b></td>';
-		echo '<td class="widgetsubheader"><b><center>' . gettext("Status") . '</center></b></td>';
+		<?php
+		echo '<td class="widgetsubheader" align="center"><b>' . gettext("Computer / Device") . '</b></td>';
+		echo '<td class="widgetsubheader" align="center"><b>' . gettext("Interface") . '</b></td>';
+		echo '<td class="widgetsubheader" align="center"><b>' . gettext("Status") . '</b></td>';
 		?>
 		<td class="widgetsubheader">&nbsp;</td>
 	</tr>
@@ -53,23 +53,23 @@ if (count($wolcomputers) > 0) {
 		
 		$is_active = exec("/usr/sbin/arp -an |/usr/bin/grep {$wolent['mac']}| /usr/bin/wc -l|/usr/bin/awk '{print $1;}'");
 		if($is_active == 1) {
-			echo '<td class="listr"><center>' . "\n";
-			echo "<img src=\"/themes/" . $g["theme"] . "/images/icons/icon_pass.gif\"> " . gettext("Online") . "</td>\n";
+			echo '<td class="listr" align="center">' . "\n";
+			echo "<img src=\"/themes/" . $g["theme"] . "/images/icons/icon_pass.gif\" alt=\"pass\" /> " . gettext("Online") . "</td>\n";
 		} else {
-			echo '<td class="listbg"><center>' . "\n";
-			echo "<img src=\"/themes/" . $g["theme"] . "/images/icons/icon_block.gif\"> <font color=\"white\">" . gettext("Offline") . "</td>\n";
+			echo '<td class="listbg" align="center">' . "\n";
+			echo "<img src=\"/themes/" . $g["theme"] . "/images/icons/icon_block.gif\" alt=\"block\" />&nbsp;<font color=\"white\">" . gettext("Offline") . "</font></td>\n";
 		}
-		echo '<td valign="middle" class="list" nowrap>';
+		echo '<td valign="middle" class="list nowrap">';
 		/*if($is_active) { */
 			/* Will always show wake-up button even if pfsense thinks it is awake */
 		/* } else { */
-			echo "<a href='services_wol.php?mac={$wolent['mac']}&if={$wolent['interface']}'> ";
-			echo "<img title='" . gettext("Wake Up") . "' border='0' src='./themes/".$g['theme']."/images/icons/icon_wol_all.gif'></a>\n";
+			echo "<a href='services_wol.php?mac={$wolent['mac']}&amp;if={$wolent['interface']}'> ";
+			echo "<img title='" . gettext("Wake Up") . "' border='0' src='./themes/".$g['theme']."/images/icons/icon_wol_all.gif' alt='wol' /></a>\n";
 		/* } */
 		echo "</td></tr>\n";
 	}
 } else {
-	echo "<tr><td colspan=\"3\"><center>" . gettext("No saved WoL addresses") . ".</td></tr>\n";
+	echo "<tr><td colspan=\"3\" align=\"center\">" . gettext("No saved WoL addresses") . ".</td></tr>\n";
 }
 ?>
 </table>

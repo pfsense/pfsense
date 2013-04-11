@@ -78,6 +78,10 @@ function restore_rrd() {
 			}
 			unlink($xml_file);
 		}
+		/* If this backup is still there on a full install, but we aren't going to use ram disks, remove the archive since this is a transition. */
+		if (($g['platform'] == "pfSense") && !isset($config['system']['use_mfs_tmpvar'])) {
+			unlink_if_exists("{$g['cf_conf_path']}/rrd.tgz");
+		}
 		return true;
 	}
 	return false;
@@ -104,7 +108,7 @@ function migrate_rrd_format($rrdoldxml, $rrdnewxml) {
 	$numrranew = count($rrdnewxml['rra']);
 	$numdsnew = count($rrdnewxml['ds']);
 	log_error(sprintf(gettext('Import RRD has %1$s DS values and %2$s RRA databases, new format RRD has %3$s DS values and %4$s RRA databases'), $numdsold, $numrraold, $numdsnew ,$numrranew));
-	
+
 	/* add data sources not found in the old array from the new array */
 	$i = 0;
 	foreach($rrdnewxml['ds'] as $ds) {
@@ -194,7 +198,7 @@ function migrate_rrd_format($rrdoldxml, $rrdnewxml) {
 function enable_rrd_graphing() {
 	global $config, $g, $altq_list_queues;
 
-	if($g['booting']) 
+	if($g['booting'])
 		echo gettext("Generating RRD graphs...");
 
 	$rrddbpath = "/var/db/rrd/";
@@ -213,7 +217,6 @@ function enable_rrd_graphing() {
 	$vpnusers = "-vpnusers.rrd";
 	$captiveportalconcurrent = "-concurrent.rrd";
 	$captiveportalloggedin = "-loggedin.rrd";
-	$captiveportaltotalusers = "-totalusers.rrd";
 
 	$rrdtool = "/usr/bin/nice -n20 /usr/local/bin/rrdtool";
 	$netstat = "/usr/bin/netstat";
@@ -271,15 +274,16 @@ function enable_rrd_graphing() {
 		chown($rrddbpath, "nobody");
 
 		if ($g['booting']) {
-			if ($g['platform'] != "pfSense") {
-				restore_rrd();
-			}
+			restore_rrd();
 		}
 
 		/* db update script */
 		$rrdupdatesh = "#!/bin/sh\n";
 		$rrdupdatesh .= "\n";
 		$rrdupdatesh .= "export TERM=dumb\n";
+		$rrdupdatesh .= "\n";
+		$rrdupdatesh .= 'echo $$ > ' . $g['varrun_path'] . '/updaterrd.sh.pid';
+		$rrdupdatesh .= "\n";
 		$rrdupdatesh .= "counter=1\n";
 		$rrdupdatesh .= "while [ \"\$counter\" -ne 0 ]\n";
 		$rrdupdatesh .= "do\n";
@@ -321,6 +325,7 @@ function enable_rrd_graphing() {
 				$rrdcreate .= "RRA:AVERAGE:0.5:720:3000 ";
 
 				create_new_rrd($rrdcreate);
+				unset($rrdcreate);
 			}
 
 			/* enter UNKNOWN values in the RRD so it knows we rebooted. */
@@ -353,6 +358,7 @@ function enable_rrd_graphing() {
 				$rrdcreate .= "RRA:AVERAGE:0.5:720:3000 ";
 
 				create_new_rrd($rrdcreate);
+				unset($rrdcreate);
 			}
 
 			/* enter UNKNOWN values in the RRD so it knows we rebooted. */
@@ -379,8 +385,9 @@ function enable_rrd_graphing() {
 					$rrdcreate .= "RRA:AVERAGE:0.5:5:1000 ";
 					$rrdcreate .= "RRA:AVERAGE:0.5:60:1000 ";
 					$rrdcreate .= "RRA:AVERAGE:0.5:720:3000 ";
-	
+
 					create_new_rrd($rrdcreate);
+					unset($rrdcreate);
 				}
 
 				/* enter UNKNOWN values in the RRD so it knows we rebooted. */
@@ -403,8 +410,9 @@ function enable_rrd_graphing() {
 					$rrdcreate .= "RRA:AVERAGE:0.5:5:1000 ";
 					$rrdcreate .= "RRA:AVERAGE:0.5:60:1000 ";
 					$rrdcreate .= "RRA:AVERAGE:0.5:720:3000 ";
-	
+
 					create_new_rrd($rrdcreate);
+					unset($rrdcreate);
 				}
 
 				/* enter UNKNOWN values in the RRD so it knows we rebooted. */
@@ -470,6 +478,7 @@ function enable_rrd_graphing() {
 					$rrdcreate .= "RRA:AVERAGE:0.5:720:3000 ";
 
 					create_new_rrd($rrdcreate);
+					unset($rrdcreate);
 				}
 
 				if (!file_exists("$rrddbpath$ifname$queuesdrop")) {
@@ -486,6 +495,7 @@ function enable_rrd_graphing() {
 					$rrdcreate .= "RRA:AVERAGE:0.5:720:3000 ";
 
 					create_new_rrd($rrdcreate);
+					unset($rrdcreate);
 				}
 
 				if($g['booting']) {
@@ -552,6 +562,7 @@ function enable_rrd_graphing() {
 					$rrdcreate .= "RRA:AVERAGE:0.5:60:1000 ";
 					$rrdcreate .= "RRA:AVERAGE:0.5:720:3000 ";
 					create_new_rrd($rrdcreate);
+					unset($rrdcreate);
 				}
 
 				/* enter UNKNOWN values in the RRD so it knows we rebooted. */
@@ -585,6 +596,7 @@ function enable_rrd_graphing() {
 			$rrdcreate .= "RRA:AVERAGE:0.5:720:3000 ";
 
 			create_new_rrd($rrdcreate);
+			unset($rrdcreate);
 		}
 
 		/* enter UNKNOWN values in the RRD so it knows we rebooted. */
@@ -619,6 +631,7 @@ function enable_rrd_graphing() {
 			$rrdcreate .= "RRA:AVERAGE:0.5:720:3000 ";
 
 			create_new_rrd($rrdcreate);
+			unset($rrdcreate);
 		}
 
 		/* enter UNKNOWN values in the RRD so it knows we rebooted. */
@@ -656,6 +669,7 @@ function enable_rrd_graphing() {
 			$rrdcreate .= "RRA:MAX:0.5:720:3000";
 
 			create_new_rrd($rrdcreate);
+			unset($rrdcreate);
 		}
 
 		/* enter UNKNOWN values in the RRD so it knows we rebooted. */
@@ -668,7 +682,7 @@ function enable_rrd_graphing() {
 		$rrdupdatesh .= " $awk '{getline active;getline inactive;getline free;getline cache;getline wire;printf ";
 		$rrdupdatesh .= "((active/$0) * 100)\":\"((inactive/$0) * 100)\":\"((free/$0) * 100)\":\"((cache/$0) * 100)\":\"(wire/$0 * 100)}'`\n";
 		$rrdupdatesh .= "$rrdtool update $rrddbpath$ifname$mem N:\${MEM}\n";
-		
+
 		/* End Memory statistics */
 
 		/* SPAMD, set up the spamd rrd file */
@@ -693,6 +707,7 @@ function enable_rrd_graphing() {
 				$rrdcreate .= "RRA:MAX:0.5:720:3000 ";
 
 				create_new_rrd($rrdcreate);
+				unset($rrdcreate);
 			}
 
 			$rrdupdatesh .= "\n";
@@ -704,77 +719,85 @@ function enable_rrd_graphing() {
 		/* End System statistics */
 
 		/* Captive Portal statistics, set up the rrd file */
-		if(isset($config['captiveportal']['enable'])) {
-			$ifname= "captiveportal";
-			if (!file_exists("$rrddbpath$ifname$captiveportalconcurrent")) {
-				$rrdcreate = "$rrdtool create $rrddbpath$ifname$captiveportalconcurrent --step $rrdcaptiveportalinterval ";
-				$rrdcreate .= "DS:concurrentusers:GAUGE:$captiveportalvalid:0:10000 ";
-				$rrdcreate .= "RRA:AVERAGE:0.5:1:1000 ";
-				$rrdcreate .= "RRA:AVERAGE:0.5:5:1000 ";
-				$rrdcreate .= "RRA:AVERAGE:0.5:60:1000 ";
-				$rrdcreate .= "RRA:AVERAGE:0.5:720:3000 ";
-				$rrdcreate .= "RRA:MIN:0.5:1:1000 ";
-				$rrdcreate .= "RRA:MIN:0.5:5:1000 ";
-				$rrdcreate .= "RRA:MIN:0.5:60:1000 ";
-				$rrdcreate .= "RRA:MIN:0.5:720:3000 ";
-				$rrdcreate .= "RRA:MAX:0.5:1:1000 ";
-				$rrdcreate .= "RRA:MAX:0.5:5:1000 ";
-				$rrdcreate .= "RRA:MAX:0.5:60:1000 ";
-				$rrdcreate .= "RRA:MAX:0.5:720:3000 ";
-				$rrdcreate .= "RRA:LAST:0.5:1:1000 ";
-				$rrdcreate .= "RRA:LAST:0.5:5:1000 ";
-				$rrdcreate .= "RRA:LAST:0.5:60:1000 ";
-				$rrdcreate .= "RRA:LAST:0.5:720:3000 ";
+		if(is_array($config['captiveportal'])) {
+			foreach ($config['captiveportal'] as $cpkey => $cp) {
+				if (!isset($cp['enable']))
+					continue;
 
-				create_new_rrd($rrdcreate);
+				$ifname= "captiveportal";
+				$concurrent_filename = $rrddbpath . $ifname . '-' . $cpkey . $captiveportalconcurrent;
+				if (!file_exists("$concurrent_filename")) {
+					$rrdcreate = "$rrdtool create $concurrent_filename --step $rrdcaptiveportalinterval ";
+					$rrdcreate .= "DS:concurrentusers:GAUGE:$captiveportalvalid:0:10000 ";
+					$rrdcreate .= "RRA:AVERAGE:0.5:1:1000 ";
+					$rrdcreate .= "RRA:AVERAGE:0.5:5:1000 ";
+					$rrdcreate .= "RRA:AVERAGE:0.5:60:1000 ";
+					$rrdcreate .= "RRA:AVERAGE:0.5:720:3000 ";
+					$rrdcreate .= "RRA:MIN:0.5:1:1000 ";
+					$rrdcreate .= "RRA:MIN:0.5:5:1000 ";
+					$rrdcreate .= "RRA:MIN:0.5:60:1000 ";
+					$rrdcreate .= "RRA:MIN:0.5:720:3000 ";
+					$rrdcreate .= "RRA:MAX:0.5:1:1000 ";
+					$rrdcreate .= "RRA:MAX:0.5:5:1000 ";
+					$rrdcreate .= "RRA:MAX:0.5:60:1000 ";
+					$rrdcreate .= "RRA:MAX:0.5:720:3000 ";
+					$rrdcreate .= "RRA:LAST:0.5:1:1000 ";
+					$rrdcreate .= "RRA:LAST:0.5:5:1000 ";
+					$rrdcreate .= "RRA:LAST:0.5:60:1000 ";
+					$rrdcreate .= "RRA:LAST:0.5:720:3000 ";
+
+					create_new_rrd($rrdcreate);
+					unset($rrdcreate);
+				}
+
+				/* enter UNKNOWN values in the RRD so it knows we rebooted. */
+				if($g['booting']) {
+					mwexec("$rrdtool update $concurrent_filename N:U");
+				}
+
+				/* the Captive Portal stats gathering function. */
+				$rrdupdatesh .= "\n";
+				$rrdupdatesh .= "# polling Captive Portal for number of concurrent users\n";
+				$rrdupdatesh .= "CP=`$php -q $captiveportal_gather '$cpkey' $concurrent`\n";
+				$rrdupdatesh .= "$rrdtool update $concurrent_filename \${CP}\n";
+
+				$loggedin_filename = $rrddbpath . $ifname . '-' . $cpkey . $captiveportalloggedin;
+				if (!file_exists("$loggedin_filename")) {
+					$rrdcreate = "$rrdtool create $loggedin_filename --step $rrdcaptiveportalinterval ";
+					$rrdcreate .= "DS:loggedinusers:GAUGE:$captiveportalvalid:0:10000 ";
+					$rrdcreate .= "RRA:AVERAGE:0.5:1:1000 ";
+					$rrdcreate .= "RRA:AVERAGE:0.5:5:1000 ";
+					$rrdcreate .= "RRA:AVERAGE:0.5:60:1000 ";
+					$rrdcreate .= "RRA:AVERAGE:0.5:720:3000 ";
+					$rrdcreate .= "RRA:MIN:0.5:1:1000 ";
+					$rrdcreate .= "RRA:MIN:0.5:5:1000 ";
+					$rrdcreate .= "RRA:MIN:0.5:60:1000 ";
+					$rrdcreate .= "RRA:MIN:0.5:720:3000 ";
+					$rrdcreate .= "RRA:MAX:0.5:1:1000 ";
+					$rrdcreate .= "RRA:MAX:0.5:5:1000 ";
+					$rrdcreate .= "RRA:MAX:0.5:60:1000 ";
+					$rrdcreate .= "RRA:MAX:0.5:720:3000 ";
+					$rrdcreate .= "RRA:LAST:0.5:1:1000 ";
+					$rrdcreate .= "RRA:LAST:0.5:5:1000 ";
+					$rrdcreate .= "RRA:LAST:0.5:60:1000 ";
+					$rrdcreate .= "RRA:LAST:0.5:720:3000 ";
+
+					create_new_rrd($rrdcreate);
+					unset($rrdcreate);
+				}
+
+				/* enter UNKNOWN values in the RRD so it knows we rebooted. */
+				if($g['booting']) {
+					mwexec("$rrdtool update $loggedin_filename N:U");
+				}
+
+				/* the Captive Portal stats gathering function. */
+				$rrdupdatesh .= "\n";
+				$rrdupdatesh .= "# polling Captive Portal for number of logged in users\n";
+				$rrdupdatesh .= "CP=`$php -q $captiveportal_gather $cpkey loggedin`\n";
+				$rrdupdatesh .= "$rrdtool update $loggedin_filename \${CP}\n";
+
 			}
-
-			/* enter UNKNOWN values in the RRD so it knows we rebooted. */
-			if($g['booting']) {
-				mwexec("$rrdtool update $rrddbpath$ifname$captiveportalconcurrent N:U");
-			}
-			
-			/* the Captive Portal stats gathering function. */
-			$rrdupdatesh .= "\n";
-			$rrdupdatesh .= "# polling Captive Portal for number of concurrent users\n";
-			$rrdupdatesh .= "CP=`$php -q $captiveportal_gather concurrent`\n";
-			$rrdupdatesh .= "$rrdtool update $rrddbpath$ifname$captiveportalconcurrent \${CP}\n";
-			
-			$ifname= "captiveportal";
-			if (!file_exists("$rrddbpath$ifname$captiveportalloggedin")) {
-				$rrdcreate = "$rrdtool create $rrddbpath$ifname$captiveportalloggedin --step $rrdcaptiveportalinterval ";
-				$rrdcreate .= "DS:loggedinusers:GAUGE:$captiveportalvalid:0:10000 ";
-				$rrdcreate .= "RRA:AVERAGE:0.5:1:1000 ";
-				$rrdcreate .= "RRA:AVERAGE:0.5:5:1000 ";
-				$rrdcreate .= "RRA:AVERAGE:0.5:60:1000 ";
-				$rrdcreate .= "RRA:AVERAGE:0.5:720:3000 ";
-				$rrdcreate .= "RRA:MIN:0.5:1:1000 ";
-				$rrdcreate .= "RRA:MIN:0.5:5:1000 ";
-				$rrdcreate .= "RRA:MIN:0.5:60:1000 ";
-				$rrdcreate .= "RRA:MIN:0.5:720:3000 ";
-				$rrdcreate .= "RRA:MAX:0.5:1:1000 ";
-				$rrdcreate .= "RRA:MAX:0.5:5:1000 ";
-				$rrdcreate .= "RRA:MAX:0.5:60:1000 ";
-				$rrdcreate .= "RRA:MAX:0.5:720:3000 ";
-				$rrdcreate .= "RRA:LAST:0.5:1:1000 ";
-				$rrdcreate .= "RRA:LAST:0.5:5:1000 ";
-				$rrdcreate .= "RRA:LAST:0.5:60:1000 ";
-				$rrdcreate .= "RRA:LAST:0.5:720:3000 ";
-
-				create_new_rrd($rrdcreate);
-			}
-
-			/* enter UNKNOWN values in the RRD so it knows we rebooted. */
-			if($g['booting']) {
-				mwexec("$rrdtool update $rrddbpath$ifname$captiveportalloggedin N:U");
-			}
-
-			/* the Captive Portal stats gathering function. */
-			$rrdupdatesh .= "\n";
-			$rrdupdatesh .= "# polling Captive Portal for number of logged in users\n";
-			$rrdupdatesh .= "CP=`$php -q $captiveportal_gather loggedin`\n";
-			$rrdupdatesh .= "$rrdtool update $rrddbpath$ifname$captiveportalloggedin \${CP}\n";
-
 		}
 
 		$rrdupdatesh .= "sleep 60\n";
@@ -785,6 +808,8 @@ function enable_rrd_graphing() {
 		$fd = fopen("$updaterrdscript", "w");
 		fwrite($fd, "$rrdupdatesh");
 		fclose($fd);
+
+		unset($rrdupdatesh);
 
 		/* kill off traffic collectors */
 		kill_traffic_collector();
@@ -802,14 +827,15 @@ function enable_rrd_graphing() {
 		chown($database, "nobody");
 	}
 
-	if($g['booting']) 
+	if($g['booting'])
 		echo gettext("done.") . "\n";
-		
+
 }
 
 function kill_traffic_collector() {
-	mwexec("killall rrdtool", true);
-	mwexec("/bin/pkill -a -f updaterrd.sh", true);
+	global $g;
+
+	killbypid("{$g['varrun_path']}/updaterrd.sh.pid");
 }
 
 ?>

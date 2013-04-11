@@ -155,18 +155,18 @@ include("head.inc");
               <?php printf(gettext("The author of %s would like to thank the authors of these " .
               "software packages for their efforts"),$g['product_name']);?>.</p>
             <p>FreeBSD (<a href="http://www.freebsd.org" target="_blank">http://www.freebsd.org</a>)<br>
-              <?=gettext("Copyright");?> &copy;<?=gettext(" 1994-2003 FreeBSD, Inc. All rights reserved");?>.<br>
+              <?=gettext("Copyright");?> &copy;<?=gettext("1992-2012 The FreeBSD Project. All rights reserved");?>.<br>
               <br>
               <?=gettext("This product includes PHP, freely available from");?> <a href="http://www.php.net/" target="_blank">http://www.php.net</a>.<br>
-              <?=gettext("Copyright"); ?> &copy; <?=gettext("1999 - 2003 The PHP Group. All rights reserved");?>.<br>
+              <?=gettext("Copyright"); ?> &copy; <?=gettext("1999-2010 The PHP Group. All rights reserved.");?>.<br>
               <br>
               <?=gettext("LightTPD"); ?> (<a href="http://www.lighttpd.net" target="_blank">http://www.lighttpd.net)</a><br>
-              <?=gettext("Copyright"); ?> &copy;<?=gettext(" 2004 by Jan Kneschke ");?><jan@kneschke.de>
+              <?=gettext("Copyright"); ?> &copy;<?=gettext("2004, Jan Knescke, incremental");?><jan@kneschke.de>
               <?=gettext("All rights reserved.");?><br>
               <br>
               <?=gettext("ISC DHCP server ");?>(<a href="http://www.isc.org/products/DHCP/" target="_blank">http://www.isc.org/products/DHCP</a>)<br>
-              <?=gettext("Copyright"); ?> &copy; <?=gettext("1996-2003 Internet Software Consortium. All rights ".
-              "reserved.");?><br>
+              <?=gettext("Copyright"); ?> &copy; <?=gettext("2004-2012 Internet Software Consortium, Inc.");?><br>
+              <?=gettext("Copyright"); ?> &copy; <?=gettext("1995-2003 Internet Software Consortium");?><br>
               <br>
               <?=gettext("PF"); ?> (<a href="http://www.openbsd.org/faq/pf" target="_blank">http://www.openbsd.org</a>)<br>
 			  <br>
@@ -178,7 +178,7 @@ include("head.inc");
               <?=gettext("Copyright"); ?> &copy; 2001 Jeff Wheelhouse (jdw@wwwi.com)<br>
               <br>
               <?=gettext("Dnsmasq - a DNS forwarder for NAT firewalls");?> (<a href="http://www.thekelleys.org.uk" target="_blank">http://www.thekelleys.org.uk</a>)<br>
-              <?=gettext("Copyright"); ?> &copy; 2000-2003 Simon Kelley.<br>
+              <?=gettext("Copyright"); ?> &copy; 2000-2012 Simon Kelley.<br>
               <br>
               <?=gettext("Racoon"); ?> (<a href="http://www.kame.net/racoon" target="_blank">http://www.kame.net/racoon</a>)<br>
               <?=gettext("Copyright"); ?> &copy; <?=gettext("1995-2002 WIDE Project. All rights reserved.");?><br>

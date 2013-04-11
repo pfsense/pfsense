@@ -30,7 +30,7 @@
 */
 
 ##|+PRIV
-##|*IDENT=page-services-pppoeserver-eidt
+##|*IDENT=page-services-pppoeserver-edit
 ##|*NAME=Services: PPPoE Server: Edit page
 ##|*DESCR=Allow access to the 'Services: PPPoE Server: Edit' page.
 ##|*MATCH=vpn_pppoe_edit.php*
@@ -104,7 +104,7 @@ if (isset($id) && $a_pppoes[$id]) {
 if ($_POST) {
 
 	unset($input_errors);
-	//$pconfig = $_POST;
+	$pconfig = $_POST;
 
 	/* input validation */
 	if ($_POST['mode'] == "server") {
@@ -144,6 +144,9 @@ if ($_POST) {
 			}
 		}
 	}
+
+	if ($_POST['pppoeid'] && !is_numeric($_POST['pppoeid']))
+		$input_errors[] = gettext("Wrong data submitted");
 
 	if (!$input_errors) {
 		$pppoecfg = array();
@@ -442,14 +445,14 @@ function enable_change(enable_over) {
                     </td>
                 </tr>
                 <tr>
-                  <td width="22%" valign="top" class="vncellreq"><?=gettext("Description"); ?></td>
+                  <td width="22%" valign="top" class="vncell"><?=gettext("Description"); ?></td>
                   <td width="78%" class="vtable">
                     <?=$mandfldhtml;?><input name="descr" type="text" class="formfld unknown" id="descr" size="40" value="<?=htmlspecialchars($pconfig['descr']);?>">
                     <br/>
                     </td>
                 </tr>
                 <tr> 
-                  <td width="22%" valign="top" class="vncellreq"><?=gettext("DNS servers"); ?></td>
+                  <td width="22%" valign="top" class="vncell"><?=gettext("DNS servers"); ?></td>
                   <td width="78%" class="vtable"> 
                     <?=$mandfldhtml;?><input name="pppoe_dns1" type="text" class="formfld unknown" id="pppoe_dns1" size="20" value="<?=htmlspecialchars($pconfig['pppoe_dns1']);?>">
                     <br>

@@ -95,8 +95,11 @@ if ($_POST) {
 		/* check for overlaps */
 		if(is_array($a_gateway_groups)) {
 			foreach ($a_gateway_groups as $gateway_group) {
-				if (isset($id) && ($a_gateway_groups[$id]) && ($a_gateway_groups[$id] === $gateway_group))
+				if (isset($id) && ($a_gateway_groups[$id]) && ($a_gateway_groups[$id] === $gateway_group)) {
+					if ($gateway_group['name'] != $_POST['name'])
+						$input_errors[] = gettext("Changing name on a gateway group is not allowed.");
 					continue;
+				}
 
 				if ($gateway_group['name'] == $_POST['name']) {
 					$input_errors[] = sprintf(gettext('A gateway group with this name "%s" already exists.'), $_POST['name']);
@@ -135,6 +138,7 @@ if ($_POST) {
 			$a_gateway_groups[] = $gateway_group;
 		
 		mark_subsystem_dirty('staticroutes');
+		mark_subsystem_dirty('gwgroup.' . $gateway_group['name']);
 		
 		write_config();
 		
@@ -143,7 +147,7 @@ if ($_POST) {
 	}
 }
 
-$pgtitle = array(gettext("System"),gettext("Gateways"),gettext("Edit gateway"));
+$pgtitle = array(gettext("System"),gettext("Gateways"),gettext("Edit gateway group"));
 $shortcut_section = "gateway-groups";
 
 function build_gateway_protocol_map (&$a_gateways) {
@@ -220,20 +224,20 @@ jQuery(function ($) {
 <?php include("fbegin.inc"); ?>
 <?php if ($input_errors) print_input_errors($input_errors); ?>
             <form action="system_gateway_groups_edit.php" method="post" name="iform" id="iform">
-              <table width="100%" border="0" cellpadding="6" cellspacing="0">
+              <table width="100%" border="0" cellpadding="6" cellspacing="0" summary="system groups edit">
 		<tr>
-			<td colspan="2" valign="top" class="listtopic"><?=gettext("Edit gateway entry"); ?></td>
+			<td colspan="2" valign="top" class="listtopic"><?=gettext("Edit gateway group entry"); ?></td>
 		</tr>	
                 <tr>
                   <td width="22%" valign="top" class="vncellreq"><?=gettext("Group Name"); ?></td>
                   <td width="78%" class="vtable"> 
-                    <input name="name" type="text" class="formfld unknown" id="name" size="20" value="<?=htmlspecialchars($pconfig['name']);?>"> 
-                    <br> <span class="vexpl"><?=gettext("Group Name"); ?></span></td>
+                    <input name="name" type="text" class="formfld unknown" id="name" size="20" value="<?=htmlspecialchars($pconfig['name']);?>" />
+                    <br/> <span class="vexpl"><?=gettext("Group Name"); ?></span></td>
                 </tr>
 		<tr>
                   <td width="22%" valign="top" class="vncellreq"><?=gettext("Gateway Priority"); ?></td>
                   <td width="78%" class="vtable">
-			<table border=0 cellpadding="6" cellspacing="0">
+			<table border="0" cellpadding="6" cellspacing="0" summary="gateway priority">
 			<tr>
 				<td class="listhdrr">Gateway</td>
 				<td class="listhdrr">Tier</td>
@@ -253,10 +257,10 @@ jQuery(function ($) {
 				foreach((array)$pconfig['item'] as $item) {
 					$itemsplit = explode("|", $item);
 					if($itemsplit[0] == $gwname) {
-						$selected[$itemsplit[1]] = "selected";
+						$selected[$itemsplit[1]] = "selected=\"selected\"";
 						break;
 					} else {
-						$selected[0] = "selected";
+						$selected[0] = "selected=\"selected\"";
 					}
 				}
 				$tr_id = $gwname . "_row";
@@ -278,10 +282,10 @@ jQuery(function ($) {
 				foreach((array)$pconfig['item'] as $item) {
 					$itemsplit = explode("|", $item);
 					if($itemsplit[0] == $gwname) {
-						$selected[$itemsplit[2]] = "selected";
+						$selected[$itemsplit[2]] = "selected=\"selected\"";
 						break;
 					} else {
-						$selected['address'] = "selected";
+						$selected['address'] = "selected=\"selected\"";
 					}
 				}
 				echo "<td class='listr'>";
@@ -297,8 +301,8 @@ jQuery(function ($) {
 						continue;
 					echo "<option value='{$vip}' $selected[$vip] >$vip - $address</option>\n";
 				}
-				echo "</select>";
-				echo "<td class='listr'><strong>{$gateway['descr']}</strong>";
+				echo "</select></td>";
+				echo "<td class='listr'><strong>{$gateway['descr']}&nbsp;</strong>";
 				echo "</td></tr>";
 		 	}
 		?>
@@ -310,12 +314,10 @@ jQuery(function ($) {
 			"If all links in a priority level are exhausted we will use the next available link(s) in the next priority level.") ?>
 			<br />
 			<strong><?=gettext("Virtual IP"); ?></strong> <br />
-			<?=gettext("The virtual IP field selects what (virtual) IP should be used when this group applies to a local Dyndns, IPsec or openvpn endpoint") ?>
+			<?=gettext("The virtual IP field selects what (virtual) IP should be used when this group applies to a local Dynamic DNS, IPsec or OpenVPN endpoint") ?>
 			</span><br />
 		   </td>
                 </tr>
-		  </td>
-		</tr>
                 <tr>
                   <td width="22%" valign="top" class="vncellreq"><?=gettext("Trigger Level"); ?></td>
                   <td width="78%" class="vtable">
@@ -323,26 +325,25 @@ jQuery(function ($) {
 			<?php
 				foreach ($categories as $category => $categoryd) {
 				        echo "<option value=\"$category\"";
-				        if ($category == $pconfig['trigger']) echo " selected";
+				        if ($category == $pconfig['trigger']) echo " selected=\"selected\"";
 					echo ">" . htmlspecialchars($categoryd) . "</option>\n";
 				}
 			?>
 			</select>
-                    <br> <span class="vexpl"><?=gettext("When to trigger exclusion of a member"); ?></span></td>
+                    <br/> <span class="vexpl"><?=gettext("When to trigger exclusion of a member"); ?></span></td>
                 </tr>
 		<tr>
                   <td width="22%" valign="top" class="vncell"><?=gettext("Description"); ?></td>
                   <td width="78%" class="vtable"> 
-                    <input name="descr" type="text" class="formfld unknown" id="descr" size="40" 
-value="<?=htmlspecialchars($pconfig['descr']);?>">
-                    <br> <span class="vexpl"><?=gettext("You may enter a description here for your reference (not parsed)."); ?></span></td>
+                    <input name="descr" type="text" class="formfld unknown" id="descr" size="40" value="<?=htmlspecialchars($pconfig['descr']);?>" />
+                    <br/> <span class="vexpl"><?=gettext("You may enter a description here for your reference (not parsed)."); ?></span></td>
                 </tr>
                 <tr>
                   <td width="22%" valign="top">&nbsp;</td>
                   <td width="78%"> 
-                    <input name="Submit" type="submit" class="formbtn" value="<?=gettext("Save");?>"> <input type="button" value="<?=gettext("Cancel"); ?>" class="formbtn"  onclick="history.back()">
+                    <input name="Submit" type="submit" class="formbtn" value="<?=gettext("Save");?>" /> <input type="button" value="<?=gettext("Cancel"); ?>" class="formbtn"  onclick="history.back()" />
                     <?php if (isset($id) && $a_gateway_groups[$id]): ?>
-                    <input name="id" type="hidden" value="<?=htmlspecialchars($id);?>">
+                    <input name="id" type="hidden" value="<?=htmlspecialchars($id);?>" />
                     <?php endif; ?>
                   </td>
                 </tr>

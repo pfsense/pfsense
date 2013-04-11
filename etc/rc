@@ -31,6 +31,37 @@ if [ "$PLATFORM" = "pfSense" ]; then
 	/etc/rc.dumpon
 fi
 
+if [ -e /root/force_fsck ]; then
+	echo "Forcing filesystem check..."
+	/sbin/fsck -fy -t ufs /
+	if [ "$PLATFORM" = "nanobsd" ]; then
+		/sbin/fsck -fy -t ufs /cf
+	fi
+fi
+
+if [ -e /root/TRIM_set -o -e /root/TRIM_unset ]; then
+	TUNEFS_STATUS=`/sbin/tunefs -p / 2>&1 | /usr/bin/grep trim: | /usr/bin/awk '{print $4;}'`
+	if [ -e /root/TRIM_set ] && [ "${TUNEFS_STATUS}" = "disabled" ]; then
+		echo "Enabling TRIM support"
+		/sbin/tunefs -t enable /
+		if [ "$PLATFORM" = "nanobsd" ]; then
+			/sbin/tunefs -t enable /cf
+		fi
+		echo "Rebooting in 5 seconds after enabling TRIM..."
+		sleep 5
+		/sbin/reboot
+	elif [ -e /root/TRIM_unset ] && [ "${TUNEFS_STATUS}" = "enabled" ]; then
+		echo "Disabling TRIM support"
+		/sbin/tunefs -t disable /
+		if [ "$PLATFORM" = "nanobsd" ]; then
+			/sbin/tunefs -t disable /cf
+		fi
+		echo "Rebooting in 5 seconds after disabling TRIM..."
+		sleep 5
+		/sbin/reboot
+	fi
+fi
+
 # Mount memory file system if it exists
 echo "Mounting filesystems..."
 
@@ -44,27 +75,17 @@ if [ "$PLATFORM" = "pfSense" ]; then
 	fi
 fi
 
-if [ "$PLATFORM" = "cdrom" ]; then
+if [ "${PLATFORM}" = "cdrom" ]; then
 	/etc/rc.cdrom
-fi
-
-if [ "$PLATFORM" = "embedded" ]; then
-	export PKG_TMPDIR=/root/
-	/etc/rc.embedded
-fi
-
-if [ "$PLATFORM" = "nanobsd" ]; then
-	export PKG_TMPDIR=/root/
-	/etc/rc.embedded
-fi
-
-# Mount /. If it fails run a fsck.
-if [ ! "$PLATFORM" = "cdrom" ] ; then
+else
+	# Mount /. If it fails run a fsck.
 	if [ "$PLATFORM" = "nanobsd" ]; then
+		export PKG_TMPDIR=/root/
 		/sbin/mount -uw / || (/sbin/fsck -fy; /sbin/mount -uw /)
 	else 
 		/sbin/mount -a || (/sbin/fsck -fy; /sbin/mount -a)
 	fi
+
 	# If /conf is a directory, convert it to a symlink to /cf/conf
 	if [ -d "/conf" ]; then
 		# If item is not a symlink then rm and recreate
@@ -74,7 +95,26 @@ if [ ! "$PLATFORM" = "cdrom" ] ; then
 			/bin/ln -s /cf/conf /conf
 		fi
 	fi
+
+	if [ ! "$PLATFORM" = "jail" ]; then
+		# Check to see if a compact flash mountpoint exists
+		# If it fails to mount then run a fsck -fy
+		if grep -q cf /etc/fstab; then
+			/sbin/mount -w /cf 2>/dev/null
+			/sbin/mount -uw /cf || \
+				(/sbin/umount /cf; /sbin/fsck -fy /cf; /sbin/mount -w /cf)
+		fi
+	fi
+
+	USE_MFS_TMPVAR=`/usr/bin/grep -c use_mfs_tmpvar /cf/conf/config.xml`
+	if [ "${PLATFORM}" = "nanobsd" ] || [ "${PLATFORM}" = "embedded" ] || [ ${USE_MFS_TMPVAR} -gt 0 ]; then
+		/etc/rc.embedded
+	fi
 fi
+
+/bin/rm -f /root/force_fsck
+/bin/rm -f /root/TRIM_set
+/bin/rm -f /root/TRIM_unset
 
 # Disable APM on ATA drives. Leaving this on will kill drives long-term, especially laptop drives, by generating excessive Load Cycles.
 if [ -f /etc/rc.disable_hdd_apm ]; then
@@ -88,16 +128,6 @@ if [ "$CDDEVICE" != "" ]; then
 	cdcontrol -f /dev/"$CDDEVICE" eject
 fi
 
-if [ ! "$PLATFORM" = "jail" ]; then
-	# Check to see if a compact flash mountpoint exists
-	# If it fails to mount then run a fsck -fy
-	if grep -q cf /etc/fstab; then
-		/sbin/mount -w /cf 2>/dev/null
-		/sbin/mount -uw /cf || \
-			(/sbin/umount /cf; /sbin/fsck -fy /cf; /sbin/mount -w /cf)
-	fi
-fi
-
 # sync pw database after mount.
 rm -f /etc/spwd.db.tmp
 /usr/sbin/pwd_mkdb -d /etc/ /etc/master.passwd
@@ -106,7 +136,7 @@ product=`/usr/bin/grep product_name /etc/inc/globals.inc | /usr/bin/cut -d'"' -f
 hideplatform=`/usr/bin/grep hideplatform /etc/inc/globals.inc | /usr/bin/wc -l`
 varrunpath=`/usr/bin/grep varrun_path /etc/inc/globals.inc | /usr/bin/cut -d'"' -f4`
 
-if [ "$PLATFORM" = "pfSense" ]; then
+if [ "$PLATFORM" = "pfSense" ] && [ ${USE_MFS_TMPVAR} -eq 0 ]; then
 	/sbin/mdmfs -S -M -s 4m md $varrunpath
 fi
 
@@ -132,7 +162,7 @@ if [ "$PLATFORM" = "cdrom" ] ; then
 	# do nothing for cdrom platform
 elif [ "$PLATFORM" = "embedded" ] ; then
     # do nothing for embedded platform
-elif [ "$PLATFORM" = "nanobsd" ] ; then
+elif [ "$PLATFORM" = "nanobsd" ] || [ ${USE_MFS_TMPVAR} -gt 0 ]; then
 	# Ensure that old-style PKG packages can be persistent across reboots
 	/bin/mkdir -p /root/var/db/pkg
 	/bin/rm -rf /var/db/pkg
@@ -147,6 +177,14 @@ else
 	SWAPDEVICE=`/bin/cat /etc/fstab | /usr/bin/grep swap | /usr/bin/cut -f1`
 	/sbin/swapon -a 2>/dev/null >/dev/null
 	/etc/rc.savecore
+
+	if [ -d /root/var/db/pkg ]; then
+		# User must have just disabled RAM disks, move these back into place.
+		/bin/mkdir -p /var/db/pkg
+		/bin/mv /root/var/db/pkg /var/db/pkg
+		/bin/mkdir -p /var/db/pbi
+		/bin/mv /root/var/db/pkg /var/db/pbi
+	fi
 fi
 
 if [ "$PLATFORM" = "cdrom" ] ; then
@@ -176,6 +214,7 @@ fi
 
 # Cleanup configuration files from previous instance
 /bin/rm -rf /var/etc/*
+/bin/rm -rf /var/tmp/*
 
 echo -n "Creating symlinks..."
 # Make sure symlink is correct on embedded

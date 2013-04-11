@@ -69,9 +69,12 @@ if (!$if) {
 	exit;
 }
 
-if (!is_array($config['dhcpdv6'][$if]['staticmap'])) {
+if (!is_array($config['dhcpdv6']))
+	$config['dhcpdv6'] = array();
+if (!is_array($config['dhcpdv6'][$if]))
+	$config['dhcpdv6'][$if] = array();
+if (!is_array($config['dhcpdv6'][$if]['staticmap']))
 	$config['dhcpdv6'][$if]['staticmap'] = array();
-}
 
 $netboot_enabled=isset($config['dhcpdv6'][$if]['netboot']);
 $a_maps = &$config['dhcpdv6'][$if]['staticmap'];

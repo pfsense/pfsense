@@ -93,7 +93,7 @@ if (isset($p1index) && $a_phase1[$p1index]) {
 	$pconfig['generate_policy'] = $a_phase1[$p1index]['generate_policy'];
 	$pconfig['proposal_check'] = $a_phase1[$p1index]['proposal_check'];
 
-	if (($pconfig['authentication_method'] == "pre_shared_key") || 
+	if (($pconfig['authentication_method'] == "pre_shared_key") ||
 		($pconfig['authentication_method'] == "xauth_psk_server")) {
 		$pconfig['pskey'] = $a_phase1[$p1index]['pre-shared-key'];
 	} else {
@@ -112,7 +112,7 @@ if (isset($p1index) && $a_phase1[$p1index]) {
 } else {
 	/* defaults */
 	$pconfig['interface'] = "wan";
-	if($config['interfaces']['lan']) 
+	if($config['interfaces']['lan'])
 		$pconfig['localnet'] = "lan";
 	$pconfig['mode'] = "aggressive";
 	$pconfig['protocol'] = "inet";
@@ -143,15 +143,15 @@ if ($_POST) {
 	$method = $pconfig['authentication_method'];
 	// Unset ca and cert if not required to avaoid storing in config
 	if ($method == "pre_shared_key" || $method == "xauth_psk_server"){
-		unset($pconfig['caref']);	
-		unset($pconfig['certref']);	
+		unset($pconfig['caref']);
+		unset($pconfig['certref']);
 	}
 
 	// Only require PSK here for normal PSK tunnels (not mobile) or xauth.
 	// For RSA methods, require the CA/Cert.
 	switch ($method) {
 		case "pre_shared_key":
-			// If this is a mobile PSK tunnel the user PSKs go on 
+			// If this is a mobile PSK tunnel the user PSKs go on
 			//    the PSK tab, not here, so skip the check.
 			if ($pconfig['mobile'])
 				break;
@@ -176,8 +176,14 @@ if ($_POST) {
 	if (($pconfig['lifetime'] && !is_numeric($pconfig['lifetime'])))
 		$input_errors[] = gettext("The P1 lifetime must be an integer.");
 
-	if (($pconfig['remotegw'] && !is_ipaddr($pconfig['remotegw']) && !is_domain($pconfig['remotegw']))) 
-		$input_errors[] = gettext("A valid remote gateway address or host name must be specified.");
+	if ($pconfig['remotegw']) {
+		if (!is_ipaddr($pconfig['remotegw']) && !is_domain($pconfig['remotegw']))
+			$input_errors[] = gettext("A valid remote gateway address or host name must be specified.");
+		elseif (is_ipaddrv4($pconfig['remotegw']) && ($pconfig['protocol'] != "inet"))
+			$input_errors[] = gettext("A valid remote gateway IPv4 address must be specified or you need to change protocol to IPv6");
+		elseif (is_ipaddrv6($pconfig['remotegw']) && ($pconfig['protocol'] != "inet6"))
+			$input_errors[] = gettext("A valid remote gateway IPv6 address must be specified or you need to change protocol to IPv4");
+	}
 
 	if (($pconfig['remotegw'] && is_ipaddr($pconfig['remotegw']) && !isset($pconfig['disabled']) )) {
 		$t = 0;
@@ -189,6 +195,21 @@ if ($_POST) {
 				}
 			}
 			$t++;
+		}
+	}
+
+	if (is_array($a_phase2) && (count($a_phase2))) {
+		foreach ($a_phase2 as $phase2) {
+			if($phase2['ikeid'] == $pconfig['ikeid']) {
+				if (($pconfig['protocol'] == "inet") && ($phase2['mode'] == "tunnel6")) {
+					$input_errors[] = gettext("There is a Phase 2 using IPv6, you cannot use IPv4.");
+					break;
+				}
+				if (($pconfig['protocol'] == "inet6") && ($phase2['mode'] == "tunnel")) {
+					$input_errors[] = gettext("There is a Phase 2 using IPv4, you cannot use IPv6.");
+					break;
+				}
+			}
 		}
 	}
 
@@ -435,29 +456,29 @@ function methodsel_change() {
 function ealgosel_change(bits) {
 	switch (document.iform.ealgo.selectedIndex) {
 <?php
-  $i = 0;
-  foreach ($p1_ealgos as $algo => $algodata) {
-    if (is_array($algodata['keysel'])) {
-      echo "		case {$i}:\n";
-      echo "			document.iform.ealgo_keylen.style.visibility = 'visible';\n";
-      echo "			document.iform.ealgo_keylen.options.length = 0;\n";
-//      echo "			document.iform.ealgo_keylen.options[document.iform.ealgo_keylen.options.length] = new Option( 'auto', 'auto' );\n";
+$i = 0;
+foreach ($p1_ealgos as $algo => $algodata) {
+	if (is_array($algodata['keysel'])) {
+		echo "		case {$i}:\n";
+		echo "			document.iform.ealgo_keylen.style.visibility = 'visible';\n";
+		echo "			document.iform.ealgo_keylen.options.length = 0;\n";
+	//      echo "			document.iform.ealgo_keylen.options[document.iform.ealgo_keylen.options.length] = new Option( 'auto', 'auto' );\n";
 
-      $key_hi = $algodata['keysel']['hi'];
-      $key_lo = $algodata['keysel']['lo'];
-      $key_step = $algodata['keysel']['step'];
+		$key_hi = $algodata['keysel']['hi'];
+		$key_lo = $algodata['keysel']['lo'];
+		$key_step = $algodata['keysel']['step'];
 
-      for ($keylen = $key_hi; $keylen >= $key_lo; $keylen -= $key_step)
-        echo "			document.iform.ealgo_keylen.options[document.iform.ealgo_keylen.options.length] = new Option( '{$keylen} bits', '{$keylen}' );\n";
-      echo "			break;\n";
-    } else {
-      echo "		case {$i}:\n";
-      echo "			document.iform.ealgo_keylen.style.visibility = 'hidden';\n";
-      echo "			document.iform.ealgo_keylen.options.length = 0;\n";
-      echo "			break;\n";
-    }
-    $i++;
-  }
+		for ($keylen = $key_hi; $keylen >= $key_lo; $keylen -= $key_step)
+			echo "			document.iform.ealgo_keylen.options[document.iform.ealgo_keylen.options.length] = new Option( '{$keylen} bits', '{$keylen}' );\n";
+		echo "			break;\n";
+	} else {
+		echo "		case {$i}:\n";
+		echo "			document.iform.ealgo_keylen.style.visibility = 'hidden';\n";
+		echo "			document.iform.ealgo_keylen.options.length = 0;\n";
+		echo "			break;\n";
+	}
+	$i++;
+}
 ?>
 	}
 
@@ -537,7 +558,7 @@ function dpdchkbox_change() {
 						<td width="22%" valign="top" class="vncellreq"><?=gettext("Interface"); ?></td>
 						<td width="78%" class="vtable">
 							<select name="interface" class="formselect">
-							<?php 
+							<?php
 								$interfaces = get_configured_interface_with_descr();
 
 								$carplist = get_configured_carp_interface_list();

@@ -144,9 +144,26 @@ if ($_POST) {
 	}
 }
 
+if( ($_POST['host']) && ($_POST['dialog_output']) ) {
+	display_host_results ($host,$resolved,$dns_speeds);
+	exit;
+}
+
+function display_host_results ($address,$hostname,$dns_speeds) {
+	echo gettext("IP Address") . ": {$address} \n";
+	echo gettext("Host Name") . ": {$hostname} \n";
+	echo "\n";
+	echo gettext("Server") . "\t" . gettext("Query Time") . "\n";
+	if(is_array($dns_speeds)) 
+		foreach($dns_speeds as $qt){
+			echo trim($qt['dns_server']) . "\t" . trim($qt['query_time']);
+			echo "\n";
+		}
+}
+
 include("head.inc"); ?>
 <body link="#000000" vlink="#000000" alink="#000000">
-<? include("fbegin.inc"); ?>
+<?php include("fbegin.inc"); ?>
 <table width="100%" border="0" cellpadding="0" cellspacing="0">
         <tr>
                 <td>
@@ -165,7 +182,7 @@ include("head.inc"); ?>
 			<input name="host" type="text" class="formfld" id="host" size="20" value="<?=htmlspecialchars($host);?>">
 			</td>
 			<td>
-			<? if ($resolved && $type) { ?>
+			<?php if ($resolved && $type) { ?>
 			=  <font size="+1">
 <?php
 				$found = 0;

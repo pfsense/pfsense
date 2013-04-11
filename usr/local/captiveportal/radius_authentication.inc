@@ -85,7 +85,8 @@ function RADIUS_AUTHENTICATION($username,$password,$radiusservers,$clientip,$cli
     $radiusvendor = $config['captiveportal'][$cpzone]['radiusvendor'] ? $config['captiveportal'][$cpzone]['radiusvendor'] : null;
     $radius_protocol = $config['captiveportal'][$cpzone]['radius_protocol'];
     // Do we even need to set it to NULL?
-    $retvalue['error'] = $retvalue['reply_message'] = $retvalue['url_redirection'] = $retvalue['session_timeout'] = $retvalue['idle_timeout'] = $retvalue['session_terminate_time'] = null;
+    $retvalue['error'] = $retvalue['reply_message'] = $retvalue['url_redirection'] = $retvalue['session_timeout'] = null;
+    $retvalue['idle_timeout'] = $retvalue['session_terminate_time'] = $retvalue['interim_interval'] = null;
 
     switch($radiusvendor) {
 
@@ -204,6 +205,7 @@ function RADIUS_AUTHENTICATION($username,$password,$radiusservers,$clientip,$cli
 
     // close OO RADIUS_AUTHENTICATION
     $rauth->close();
+    unset($rauth);
 
     return $retvalue;
 

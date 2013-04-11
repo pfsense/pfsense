@@ -48,17 +48,8 @@ fi
 
 # Calculate APC SHM size according 
 # to detected memory values
-if [ "$AVAILMEM" -lt "65" ]; then
-	APCSHMEMSIZE="1M"
-fi
-if [ "$AVAILMEM" -lt "96" ]; then
-	APCSHMEMSIZE="5M"
-fi
-if [ "$AVAILMEM" -le "128" ]; then
+if [ "$AVAILMEM" -gt "135" ]; then
 	APCSHMEMSIZE="10M"
-fi
-if [ "$AVAILMEM" -gt "128" ]; then
-	APCSHMEMSIZE="15M"
 fi
 if [ "$AVAILMEM" -gt "256" ]; then
 	APCSHMEMSIZE="20M"
@@ -70,7 +61,7 @@ if [ "$AVAILMEM" -gt "512" ]; then
 	APCSHMEMSIZE="30M"
 fi
 if [ "$AVAILMEM" -gt "784" ]; then
-	APCSHMEMSIZE="35M"
+	APCSHMEMSIZE="50M"
 fi
 
 # Set upload directory
@@ -82,8 +73,10 @@ fi
 
 # Define php modules.  Do not add .so, it will  
 # be done automatically by the script below.
-PHPMODULES="apc"
-PHPMODULES="$PHPMODULES standard"
+PHPMODULES="standard"
+if [  "$AVAILMEM" -gt 135 ]; then
+	PHPMODULES="$PHPMODULES apc"
+fi
 # Config read/write
 PHPMODULES="$PHPMODULES xml libxml dom"
 PHPMODULES="$PHPMODULES simplexml xmlreader xmlwriter"

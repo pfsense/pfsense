@@ -124,6 +124,7 @@ include("head.inc");
 		  		</tr>
 				<?php
 				foreach($ipsec_logarr as $logent){
+					$logent = htmlspecialchars($logent);
 					foreach($search as $string) {
 						if(preg_match($string, $logent))
 							$match = true;

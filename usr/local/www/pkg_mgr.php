@@ -90,6 +90,7 @@ if (! empty($_GET))
 	if (isset($_GET['ver']))
 		$requested_version = htmlspecialchars($_GET['ver']);
 
+$closehead = false;
 $pgtitle = array(gettext("System"),gettext("Package Manager"));
 include("head.inc");
 
@@ -99,13 +100,15 @@ include("head.inc");
 <script type="text/javascript" src="javascript/domTT/behaviour.js"></script>
 <script type="text/javascript" src="javascript/domTT/fadomatic.js"></script>
 <script type="text/javascript" language="javascript" src="/javascript/row_helper_dynamic.js"></script>
+</head>
+
 <body link="#0000CC" vlink="#0000CC" alink="#0000CC">
 <?php
 	include("fbegin.inc");
 	if ($savemsg)
 		print_info_box($savemsg);
 ?>
-<table width="100%" border="0" cellpadding="0" cellspacing="0">
+<table width="100%" border="0" cellpadding="0" cellspacing="0" summary="package manager">
 	<tr>
 		<td>
 		<?php
@@ -124,13 +127,13 @@ include("head.inc");
 	<tr>
 		<td>
 			<div id="mainarea">
-				<table class="tabcont sortable" width="100%" border="0" cellpadding="6" cellspacing="0">
+				<table class="tabcont sortable" width="100%" border="0" cellpadding="6" cellspacing="0" summary="main area">
 					<tr>
 						<td width="12%" class="listhdrr"><?=gettext("Name"); ?></td>
 						<td width="18%" class="listhdrr"><?=gettext("Category"); ?></td>
 						<td width="15%" class="listhdrr"><?=gettext("Status"); ?></td>
 						<td width="53%" class="listhdr"><?=gettext("Description"); ?></td>
-						<td width="17">&nbsp</td>
+						<td width="17">&nbsp;</td>
 					</tr>
 					<?php
 						if(!$pkg_info) {
@@ -178,7 +181,7 @@ include("head.inc");
 										continue;
 									/* get history/changelog git dir */
 									$commit_dir=explode("/",$index['config_file']);
-									$changeloglink ="https://github.com/bsdperimeter/pfsense-packages/commits/master/config/".$commit_dir[(count($commit_dir)-2)];
+									$changeloglink ="https://github.com/pfsense/pfsense-packages/commits/master/config/".$commit_dir[(count($commit_dir)-2)];
 									/* Check package info link */
 									if($index['pkginfolink']){
 										$pkginfolink = $index['pkginfolink'];
@@ -191,7 +194,7 @@ include("head.inc");
 					?>
 					<tr valign="top">
 						<td class="listlr" <?=domTT_title(gettext("Click on package name to access its website."))?>>
-							<A target="_blank" href="<?= $index['website'] ?>"><?= $index['name'] ?></a>
+							<a target="_blank" href="<?= $index['website'] ?>"><?= $index['name'] ?></a>
 						</td>
 						<td class="listr">
 							<?= $index['category'] ?>
@@ -222,7 +225,7 @@ include("head.inc");
 						if ($g['disablepackagehistory'])
 							echo"<a>{$index['version']}</a>";
 						else
-							echo "<a target='_new' href='{$changeloglink}'>{$index['version']}</a>";
+							echo "<a target='_blank' href='{$changeloglink}'>{$index['version']}</a>";
 						?>
 						<br/>
 						<?=gettext("platform") .": ". $index['required_version'] ?>
@@ -232,18 +235,18 @@ include("head.inc");
 						<td class="listbg" style="overflow:hidden; text-align:justify;" <?=domTT_title(gettext("Click package info for more details about ".ucfirst($index['name'])." package."))?>>
 						<?= $index['descr'] ?>
 						<?php if (! $g['disablepackageinfo']): ?>
-						<br><br>
-						<a target='_new' href='<?=$pkginfolink?>' style='align:center;color:#ffffff; filter:Glow(color=#ff0000, strength=12);'><?=$pkginfo?></a>
+						<br/><br/>
+						<a target='_blank' href='<?=$pkginfolink?>' style='align:center;color:#ffffff; filter:Glow(color=#ff0000, strength=12);'><?=$pkginfo?></a>
 						<?php endif; ?>
 						</td>
-						<td valign="middle" class="list" nowrap width="17">
-							<a onclick="return confirm('<?=gettext("Do you really want to install ".ucfirst($index['name'])." package?"); ?>')" href="pkg_mgr_install.php?id=<?=$index['name'];?>"><img <?=domTT_title(gettext("Install ".ucfirst($index['name'])." package."))?> src="./themes/<?= $g['theme']; ?>/images/icons/icon_plus.gif" width="17" height="17" border="0"></a>
+						<td valign="middle" class="list nowrap" width="17">
+							<a onclick="return confirm('<?=gettext("Do you really want to install ".ucfirst($index['name'])." package?"); ?>')" href="pkg_mgr_install.php?id=<?=$index['name'];?>"><img <?=domTT_title(gettext("Install ".ucfirst($index['name'])." package."))?> src="./themes/<?= $g['theme']; ?>/images/icons/icon_plus.gif" width="17" height="17" border="0" alt="add" /></a>
 						</td>
 					</tr>
 					<?php
 								}
 							} else {
-								echo "<tr><td colspan='5'><center>" . gettext("There are currently no packages available for installation.") . "</center></td></tr>";
+								echo "<tr><td colspan='5' align='center'>" . gettext("There are currently no packages available for installation.") . "</td></tr>";
 							}
 						}
 					?>

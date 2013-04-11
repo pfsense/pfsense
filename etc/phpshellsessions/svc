@@ -1,0 +1,83 @@
+require_once("config.inc");
+require_once("util.inc");
+require_once("service-utils.inc");
+
+function usage() {
+	echo "Usage: playback svc <action> <service name> [service-specific options]\n\n";
+	echo "Examples:\n";
+	echo "playback svc stop dhcpd\n";
+	echo "playback svc restart openvpn client 2\n";
+	echo "playback svc stop captiveportal zone1\n";
+	echo "\n";
+}
+
+global $g, $config, $argv, $command_split;
+
+if(is_array($command_split))
+	$args = array_slice($command_split, 2);
+else
+	$args = array_slice($argv, 3);
+
+if (empty($args[0])) {
+	usage();
+}
+
+$extras = array();
+
+// start, stop, restart
+$action = $args[0];
+
+// dhcpd, openvpn, etc.
+$svc_name = $args[1];
+
+// Handle servive-specific options.
+switch ($svc_name) {
+	case "openvpn":
+		if (in_array($args[2], array("server", "client"))) {
+			$extras['vpnmode'] = $args[2];
+		} else {
+			echo "Invalid OpenVPN mode (server, client)\n";
+			return;
+		}
+		if (is_numeric($args[3])) {
+			$extras['id'] = $args[3];
+		} else {
+			echo "Invalid OpenVPN ID, must be numeric\n";
+			return;
+		}
+		$vpnsvc = find_service_by_openvpn_vpnid($extras['id']);
+		if (empty($vpnsvc)) {
+			echo "No OpenVPN client or server found with that ID.\n";
+			return;
+		}
+		break;
+	case "captiveportal":
+		if (is_validaliasname($args[2])) {
+			$extras['zone'] = $args[2];
+		} else {
+			echo "Invalid Captive Portal Zone.\n";
+			return;
+		}
+		$cpzone = find_service_by_cp_zone($extras['zone']);
+		if (empty($cpzone)) {
+			echo "No Captive Portal Zone found with that name.\n";
+			return;
+		}
+		break;
+}
+
+echo "Attempting to issue {$action} to {$svc_name} service...\n";
+
+switch ($action) {
+	case "restart":
+		$savemsg = service_control_restart($svc_name, $extras);
+		break;
+	case "start":
+		$savemsg = service_control_start($svc_name, $extras);
+		break;
+	case "stop":
+		$savemsg = service_control_stop($svc_name, $extras);
+		break;
+}
+
+echo "\n{$savemsg}\n";

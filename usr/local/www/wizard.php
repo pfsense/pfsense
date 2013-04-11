@@ -169,22 +169,21 @@ do {
 		eval($pkg['step'][$stepid]['stepbeforeformdisplay']);
 } while ($oldstepid != $stepid);
 
+$closehead = false;
 $pgtitle = array($title);
 include("head.inc");
 
+if(file_exists("/usr/local/www/themes/{$g['theme']}/wizard.css")) 
+	echo "<link type=\"text/css\" rel=\"stylesheet\" href=\"/themes/{$g['theme']}/wizard.css\" media=\"all\" />\n";
+else 
+	echo "<link type=\"text/css\" rel=\"stylesheet\" href=\"/themes/{$g['theme']}/all.css\" media=\"all\" />";
 ?>
+</head>
 <body link="#0000CC" vlink="#0000CC" alink="#0000CC" >
-<?php
-
-	if(file_exists("/usr/local/www/themes/{$g['theme']}/wizard.css")) 
-		echo "<link rel=\"stylesheet\" href=\"/themes/{$g['theme']}/wizard.css\" media=\"all\" />\n";
-	else 
-		echo "<link rel=\"stylesheet\" href=\"/themes/{$g['theme']}/all.css\" media=\"all\" />";
-?>
 
 <?php if($pkg['step'][$stepid]['fields']['field'] <> "") { ?>
 <script type="text/javascript">
-<!--
+//<![CDATA[
 
 function  FieldValidate(userinput,  regexp,  message)
 {
@@ -299,17 +298,17 @@ function showchange() {
 	}
 ?>
 }
-//-->
+//]]>
 </script>
 <?php } ?>
 
 <form action="wizard.php" method="post" name="iform" id="iform">
-<input type="hidden" name="xml" value="<?= htmlspecialchars($xml) ?>">
-<input type="hidden" name="stepid" value="<?= htmlspecialchars($stepid) ?>">
+<input type="hidden" name="xml" value="<?= htmlspecialchars($xml) ?>" />
+<input type="hidden" name="stepid" value="<?= htmlspecialchars($stepid) ?>" />
 
 <center>
 
-&nbsp;<br>
+&nbsp;<br/>
 
 <?php
 	if($title == "Reload in progress") {
@@ -319,8 +318,8 @@ function showchange() {
 	}
 	echo "<a href='$ip'>";
 ?>
-<img border="0" src="./themes/<?= $g['theme']; ?>/images/logo.gif"></a>
-<p>
+<img border="0" src="./themes/<?= $g['theme']; ?>/images/logo.gif" alt="logo" /></a>
+<p>&nbsp;</p>
 <div style="width:800px;background-color:#ffffff" id="roundme">
 <?php
 	if ($input_errors)
@@ -332,14 +331,14 @@ function showchange() {
 	if ($_POST['message'] != "")
 		print_info_box(htmlspecialchars($_POST['message']));
 ?>
-<table bgcolor="#ffffff" width="95%" border="0" cellspacing="0" cellpadding="2">
+<table bgcolor="#ffffff" width="95%" border="0" cellspacing="0" cellpadding="2" summary="wizard">
     <!-- wizard goes here -->
     <tr><td>&nbsp;</td></tr>
  <tr>
 	<td class="tabcont">
-	<table width="100%" border="0" cellpadding="6" cellspacing="0">
+	<table width="100%" border="0" cellpadding="6" cellspacing="0" summary="main area">
 
-    <tr><td colspan='2'><center><font size="2"><b><?= fixup_string($description) ?></b></font></center></td></tr><tr><td>&nbsp;</td></tr>
+    <tr><td colspan="2" align="center"><font size="2"><b><?= fixup_string($description) ?></b></font></td></tr><tr><td>&nbsp;</td></tr>
     <?php
 	if(!$pkg['step'][$stepid]['disableheader'])
 		echo "<tr><td colspan=\"2\" class=\"listtopic\">" . fixup_string($title) . "</td></tr>";
@@ -394,8 +393,8 @@ function showchange() {
 			if($field['size'])
 				echo " size='" . $field['size'] . "' ";
 			if($field['validate'])
-				echo " onChange='FieldValidate(this.value, \"{$field['validate']}\", \"{$field['message']}\");'";
-			echo ">\n";
+				echo " onchange='FieldValidate(this.value, \"{$field['validate']}\", \"{$field['message']}\");'";
+			echo " />\n";
 
 			if($field['description'] <> "") {
 				echo "<br /> " . $field['description'];
@@ -421,12 +420,12 @@ function showchange() {
 				echo "<td class=\"vtable\">\n";
 
 			$inputaliases[] = $name;
-			echo "<input class='formfldalias' autocomplete='off' class='formfldalias' id='" . $name . "' name='" . $name . "' value='" . htmlspecialchars($value) . "'";
+			echo "<input class='formfldalias' autocomplete='off' id='" . $name . "' name='" . $name . "' value='" . htmlspecialchars($value) . "'";
 			if($field['size'])
 				echo " size='" . $field['size'] . "' ";
 			if($field['validate'])
-				echo " onChange='FieldValidate(this.value, \"{$field['validate']}\", \"{$field['message']}\");'";
-			echo ">\n";
+				echo " onchange='FieldValidate(this.value, \"{$field['validate']}\", \"{$field['message']}\");'";
+			echo " />\n";
 
 			if($field['description'] <> "") {
 				echo "<br /> " . $field['description'];
@@ -449,7 +448,7 @@ function showchange() {
 			echo "<select class='formselect' id='{$name}' name='{$name}' {$size} {$multiple}>\n";
 			if($field['add_to_interfaces_selection'] <> "") {
 				$SELECTED = "";
-				if($field['add_to_interfaces_selection'] == $value) $SELECTED = " SELECTED";
+				if($field['add_to_interfaces_selection'] == $value) $SELECTED = " selected=\"selected\"";
 				echo "<option value='" . $field['add_to_interfaces_selection'] . "'" . $SELECTED . ">" . $field['add_to_interfaces_selection'] . "</option>\n";
 			}
 			if($field['type'] == "interface_select")
@@ -463,7 +462,7 @@ function showchange() {
 						$iface .= " ({$iface['mac']})";	
 				}
 			  $SELECTED = "";
-			  if ($value == $ifname) $SELECTED = " SELECTED";
+			  if ($value == $ifname) $SELECTED = " selected=\"selected\"";
 			  $to_echo = "<option value='" . $ifname . "'" . $SELECTED . ">" . $iface . "</option>\n";
 			  $to_echo .= "<!-- {$value} -->";
 			  $canecho = 0;
@@ -497,7 +496,7 @@ function showchange() {
 			echo "<input class='formfld pwd' id='" . $name . "' name='" . $name . "' value='" . htmlspecialchars($value) . "' type='password' ";
 			if($field['size'])
 				echo " size='" . $field['size'] . "' ";
-			echo ">\n";
+			echo " />\n";
 
 			if($field['description'] <> "") {
 				echo "<br /> " . $field['description'];
@@ -516,13 +515,13 @@ function showchange() {
                         echo "<select id='{$name}' name='{$name}' {$size}>\n";
                         if($field['add_to_certca_selection'] <> "") {
                                 $SELECTED = "";
-                                if($field['add_to_certca_selection'] == $value) $SELECTED = " SELECTED";
+                                if($field['add_to_certca_selection'] == $value) $SELECTED = " selected=\"selected\"";
                                 echo "<option value='" . $field['add_to_certca_selection'] . "'" . $SELECTED . ">" . $field['add_to_certca_selection'] . "</option>\n";
                         }
 			foreach($config['ca'] as $ca) {
 				$name = htmlspecialchars($ca['descr']);
                           $SELECTED = "";
-                          if ($value == $name) $SELECTED = " SELECTED";
+                          if ($value == $name) $SELECTED = " selected=\"selected\"";
                           $to_echo = "<option value='" . $ca['refid'] . "'" . $SELECTED . ">" . $name . "</option>\n";
                           $to_echo .= "<!-- {$value} -->";
                           $canecho = 0;
@@ -554,7 +553,7 @@ function showchange() {
                         echo "<select id='{$name}' name='{$name}' {$size}>\n";
                         if($field['add_to_cert_selection'] <> "") {
                                 $SELECTED = "";
-                                if($field['add_to_cert_selection'] == $value) $SELECTED = " SELECTED";
+                                if($field['add_to_cert_selection'] == $value) $SELECTED = " selected=\"selected\"";
                                 echo "<option value='" . $field['add_to_cert_selection'] . "'" . $SELECTED . ">" . $field['add_to_cert_selection'] . "</option>\n";
                         }
                         foreach($config['cert'] as $ca) {
@@ -562,7 +561,7 @@ function showchange() {
 					continue;
                                 $name = htmlspecialchars($ca['descr']);
                           $SELECTED = "";
-                          if ($value == $name) $SELECTED = " SELECTED";
+                          if ($value == $name) $SELECTED = " selected=\"selected\"";
                           $to_echo = "<option value='" . $ca['refid'] . "'" . $SELECTED . ">" . $name . "</option>\n";
                           $to_echo .= "<!-- {$value} -->";
                           $canecho = 0;
@@ -606,8 +605,8 @@ function showchange() {
 			foreach ($field['options']['option'] as $opt) {
 				$selected = "";
 				if($value == $opt['value'])
-					$selected = " SELECTED";
-				echo "\t<option name='" . $opt['name'] . "' value='" . $opt['value'] . "'" . $selected . ">";
+					$selected = " selected=\"selected\"";
+				echo "\t<option value='" . $opt['value'] . "'" . $selected . ">";
 				if ($opt['displayname'])
 					echo $opt['displayname'];
 				else
@@ -648,9 +647,9 @@ function showchange() {
 
 			break;
 		    case "submit":
-			echo "<td>&nbsp;<br></td></tr>";
-			echo "<tr><td colspan='2'><center>";
-			echo "<input type='submit' name='" . $name . "' value='" . htmlspecialchars($field['name']) . "'>\n";
+			echo "<td>&nbsp;<br/></td></tr>";
+			echo "<tr><td colspan=\"2\" align=\"center\">";
+			echo "<input type='submit' name='" . $name . "' value='" . htmlspecialchars($field['name']) . "' />\n";
 
 			if($field['description'] <> "") {
 				echo "<br /> " . $field['description'];
@@ -659,7 +658,7 @@ function showchange() {
 			break;
 		    case "listtopic":
 			echo "<td>&nbsp;</td></tr>";
-			echo "<tr><td colspan=\"2\" class=\"listtopic\">" . $field['name'] . "<br ></td>\n";
+			echo "<tr><td colspan=\"2\" class=\"listtopic\">" . $field['name'] . "<br /></td>\n";
 
 			break;
 		    case "subnet_select":
@@ -677,7 +676,7 @@ function showchange() {
 			echo "<select class='formselect' name='{$name}'>\n";
 			for($x=1; $x<33; $x++) {
 				$CHECKED = "";
-				if($value == $x) $CHECKED = " SELECTED";
+				if($value == $x) $CHECKED = " selected=\"selected\"";
 				if($x <> 31)
 					echo "<option value='{$x}' {$CHECKED}>{$x}</option>\n";
 			}
@@ -713,7 +712,7 @@ function showchange() {
 				if(strstr($tz, "GMT"))
 					continue;
 				$SELECTED = "";
-				if ($value == $tz) $SELECTED = " SELECTED";
+				if ($value == $tz) $SELECTED = " selected=\"selected\"";
 				echo "<option value='" . htmlspecialchars($tz) . "' {$SELECTED}>";
 				echo htmlspecialchars($tz);
 				echo "</option>\n";
@@ -737,13 +736,13 @@ function showchange() {
 			}
 			$checked = "";
 			if($value <> "")
-				$checked = " CHECKED";
+				$checked = " checked=\"checked\"";
 			echo "<td class=\"vtable\"><input value=\"on\" type='checkbox' id='" . $name . "' name='" . $name . "' " . $checked;
 			if(isset($field['enablefields']) or isset($field['checkenablefields']))
-				echo " onClick=\"enablechange()\"";
+				echo " onclick=\"enablechange()\"";
 			else if(isset($field['disablefields']) or isset($field['checkdisablefields']))
-				echo " onClick=\"disablechange()\"";
-			echo ">\n";
+				echo " onclick=\"disablechange()\"";
+			echo " />\n";
 
 			if($field['description'] <> "") {
 				echo $field['description'];
@@ -756,7 +755,7 @@ function showchange() {
 			echo $field['typehint'];
 		    }
 		    if($field['warning'] <> "") {
-			echo "<br ><b><font color=\"red\">" . $field['warning'] . "</font></b>";
+			echo "<br /><b><font color=\"red\">" . $field['warning'] . "</font></b>";
 		    }
 
 		    if(!$field['combinefieldsbegin']) {
@@ -772,11 +771,12 @@ function showchange() {
 	</table>
 	</td></tr>
 </table>
-<br>&nbsp;
+<br/>&nbsp;
 </div>
+</center>
 </form>
 <script type="text/javascript">
-<!--
+//<![CDATA[
 	if (typeof ext_change != 'undefined') {
 		ext_change();
 	}
@@ -815,15 +815,17 @@ function showchange() {
 
 	}
 
-//-->
+//]]>
 </script>
 <script type="text/javascript">
+//<![CDATA[
 NiftyCheck();
 var bgcolor = document.getElementsByTagName("body")[0].style.backgroundColor;
 Rounded("div#roundme","all",bgcolor,"#FFFFFF","smooth");
 enablechange();
 disablechange();
 showchange();
+//]]>
 </script>
 
 <?php
@@ -833,6 +835,7 @@ if($pkg['step'][$stepid]['disableallfieldsbydefault'] <> "") {
 	// create a fieldname loop that can be used with javascript
 	// hide and enable features.
 	echo "\n<script type=\"text/javascript\">\n";
+	echo "//<![CDATA[\n";
 	echo "function disableall() {\n";
 	foreach ($pkg['step'][$stepid]['fields']['field'] as $field) {
 		if($field['type'] <> "submit" and $field['type'] <> "listtopic") {
@@ -873,6 +876,7 @@ if($pkg['step'][$stepid]['disableallfieldsbydefault'] <> "") {
 		echo "\t}\n";
 	}
 	echo "}\n";
+	echo "//]]>\n";
 	echo "</script>\n\n";
 }
 

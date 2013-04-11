@@ -32,6 +32,7 @@ $nocsrf = true;
 require_once("guiconfig.inc");
 require_once("pfsense-utils.inc");
 require_once("functions.inc");
+require_once("/usr/local/www/widgets/include/gateways.inc");
 
 $a_gateways = return_gateways_array();
 $gateways_status = array();
@@ -40,78 +41,102 @@ $gateways_status = return_gateways_status(true);
 $counter = 1;
 
 ?>
-         <table bgcolor="#990000" width="100%" border="0" cellspacing="0" cellpadding="0">
-                <tr>
-                  <td width="10%" class="listhdrr">Name</td>
-                  <td width="10%" class="listhdrr">Gateway</td>
-                  <td width="10%" class="listhdrr">RTT</td>
-                  <td width="10%" class="listhdrr">Loss</td>
-                  <td width="30%" class="listhdrr">Status</td>
-                                </tr>
-         <?php foreach ($a_gateways as $gname => $gateway) { ?>
-                <tr>
-                  <td class="listlr" id="gateway<?= $counter; ?>">
-                                <?=$gateway['name'];?>
-				<?php $counter++; ?>
-                  </td>
-                  <td class="listr" align="center" id="gateway<?= $counter; ?>">
-		<?php 	if (is_ipaddr($gateway['gateway']))
-				echo $gateway['gateway'];
-			else {
-				if($gateway['ipprotocol'] == "inet")
-					echo get_interface_gateway($gateway['friendlyiface']);
-				if($gateway['ipprotocol'] == "inet6")
-					echo get_interface_gateway_v6($gateway['friendlyiface']);
-			}
-		?>
-				<?php $counter++; ?>
-                  </td>
-                  <td class="listr" align="center" id="gateway<?= $counter; ?>">
-		<?php	if ($gateways_status[$gname])
-				echo $gateways_status[$gname]['delay'];
-			else
-				echo gettext("Pending");
-		?>
-				<?php $counter++; ?>
-		  </td>
-                  <td class="listr" align="center" id="gateway<?= $counter; ?>">
-		<?php	if ($gateways_status[$gname])
-				echo $gateways_status[$gname]['loss'];
-			else
-				echo gettext("Pending");
-		?>
-				<?php $counter++; ?>
-		  </td>
-                  <td class="listr" id="gateway<?=$counter?>" >
-                        <table border="0" cellpadding="0" cellspacing="2">
-		<?php	if ($gateways_status[$gname]) {
-				if (stristr($gateways_status[$gname]['status'], "down")) {
-                                        $online = "Offline";
-                                        $bgcolor = "lightcoral";
-                                } elseif (stristr($gateways_status[$gname]['status'], "loss")) {
-                                        $online = "Packetloss";
-                                        $bgcolor = "khaki";
-                                } elseif (stristr($gateways_status[$gname]['status'], "delay")) {
-                                        $online = "Latency";
-                                        $bgcolor = "khaki";
-                                } elseif ($gateways_status[$gname]['status'] == "none") {
-                                        $online = "Online";
-                                        $bgcolor = "lightgreen";
-                                } elseif ($gateways_status[$gname]['status'] == "") {
-                                        $online = "Pending";
-                                        $bgcolor = "lightgray";
+
+<table bgcolor="#990000" width="100%" border="0" cellspacing="0" cellpadding="0" summary="gateway status">
+	<tr>
+	<td class="vncellt" width="30%" id="gatewayname">
+			Name
+	</td>
+	<td width="70%" class="listr">
+		<table width="100%" border="0" cellspacing="0" cellpadding="0" summary="heading">
+			<tr>
+			<td width="25%" class="listhdrr">RTT</td>
+			<td width="25%" class="listhdrr">Loss</td>
+			<td width="50%" class="listhdrr">Status</td>
+			</tr>
+		</table>
+	</td>
+	</tr>
+	<?php foreach ($a_gateways as $gname => $gateway) { ?>
+	<tr>
+	<td class="vncellt" width="30%" id="gateway<?php echo $counter; ?>">
+		<strong>
+		<?php echo htmlspecialchars($gateway['name']); ?>
+		</strong>
+		<?php $counter++; ?>
+	</td>
+	<td width="70%" class="listr">
+		<table width="100%" border="0" cellspacing="0" cellpadding="0" summary="address">
+			<tr>
+			<td class="vncellt" width="100%">
+				<div id="gateway<?php echo $counter; ?>" style="display:inline">
+					<?php
+						if (is_ipaddr($gateway['gateway']))
+							echo htmlspecialchars($gateway['gateway']);
+						else {
+							if($gateway['ipprotocol'] == "inet")
+								echo htmlspecialchars(get_interface_gateway($gateway['friendlyiface']));
+							if($gateway['ipprotocol'] == "inet6")
+								echo htmlspecialchars(get_interface_gateway_v6($gateway['friendlyiface']));
+						}
+						$counter++;
+					?>
+				</div>
+			</td>
+			</tr>
+		</table>
+		<table width="100%" border="0" cellspacing="0" cellpadding="0" summary="statistics">
+			<tr>
+			<td width="25%" class="listlr" align="center" id="gateway<?php echo $counter; ?>">
+			<?php
+				if ($gateways_status[$gname])
+					echo htmlspecialchars($gateways_status[$gname]['delay']);
+				else
+					echo gettext("Pending");
+			?>
+			<?php $counter++; ?>
+			</td>
+			<td width="25%" class="listr" align="center" id="gateway<?php echo $counter; ?>">
+			<?php
+				if ($gateways_status[$gname])
+					echo htmlspecialchars($gateways_status[$gname]['loss']);
+				else
+					echo gettext("Pending");
+			?>
+			<?php $counter++; ?>
+			</td>
+			<td width="50%" class="listr" id="gateway<?php echo $counter ?>" >
+			<table border="0" cellpadding="0" cellspacing="2" summary="status">
+			<?php
+				if ($gateways_status[$gname]) {
+					if (stristr($gateways_status[$gname]['status'], "down")) {
+						$online = "Offline";
+						$bgcolor = "#F08080";  // lightcoral
+					} elseif (stristr($gateways_status[$gname]['status'], "loss")) {
+						$online = "Packetloss";
+						$bgcolor = "#F0E68C";  // khaki
+					} elseif (stristr($gateways_status[$gname]['status'], "delay")) {
+						$online = "Latency";
+						$bgcolor = "#F0E68C";  // khaki
+					} elseif ($gateways_status[$gname]['status'] == "none") {
+						$online = "Online";
+						$bgcolor = "#90EE90";  // lightgreen
+					} elseif ($gateways_status[$gname]['status'] == "") {
+						$online = "Pending";
+						$bgcolor = "#D3D3D3";  // lightgray
+					}
+				} else {
+					$online = gettext("Unknown");
+					$bgcolor = "#ADD8E6";  // lightblue
 				}
-			} else {
-				$online = gettext("Unknown");
-                                $bgcolor = "lightblue";
-			}
-			echo "<tr><td bgcolor=\"$bgcolor\">$online</td></tr>\n";
-			$counter++;
-		?>
-                        </table>
-                  </td>
-                </tr>
-        <?php
-       		}
-        ?>
-          </table>
+				echo "<tr><td bgcolor=\"$bgcolor\">&nbsp;$online&nbsp;</td></tr>\n";
+				$counter++;
+			?>
+			</table>
+			</td>
+			</tr>
+		</table>
+	</td>
+	</tr>
+	<?php } // foreach ?>
+</table>

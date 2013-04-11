@@ -1,5 +1,5 @@
 #!/bin/sh
-# /sbin/pfctl -b $4 -b $5
+/sbin/pfctl -i $1 -Fs
 # delete the node just in case mpd cannot do that
 /bin/rm -f /var/etc/nameserver_$1
 /bin/rm -f /tmp/$1_router

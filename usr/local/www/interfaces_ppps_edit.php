@@ -58,6 +58,12 @@ $iflist = get_configured_interface_with_descr();
 $portlist = get_interface_list();
 $portlist = array_merge($portlist, $iflist);
 
+if (is_array($config['vlans']['vlan']) && count($config['vlans']['vlan'])) {
+	foreach ($config['vlans']['vlan'] as $vlan) {
+		$portlist[$vlan['vlanif']] = $vlan;
+	}
+}
+
 $id = $_GET['id'];
 if (isset($_POST['id']))
 	$id = $_POST['id'];

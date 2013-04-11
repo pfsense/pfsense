@@ -150,7 +150,6 @@ function RADIUS_ACCOUNTING_START($ruleno, $username, $sessionid, $radiusservers,
      */
 
     // Default attributes
-    $racct->putAttribute(RADIUS_SERVICE_TYPE, RADIUS_LOGIN);
     $racct->putAttribute(RADIUS_NAS_PORT_TYPE, RADIUS_ETHERNET);
     $racct->putAttribute(RADIUS_NAS_PORT, $nas_port, 'integer');
     $racct->putAttribute(RADIUS_ACCT_SESSION_ID, $sessionid);
@@ -180,6 +179,7 @@ function RADIUS_ACCOUNTING_START($ruleno, $username, $sessionid, $radiusservers,
 
     // close OO RADIUS_ACCOUNTING
     $racct->close();
+    unset($racct);
 
     return $retvalue ;
 
@@ -258,7 +258,6 @@ function RADIUS_ACCOUNTING_STOP($ruleno,$username,$sessionid,$start_time,$radius
     define("RADIUS_ACCT_OUTPUT_GIGAWORDS", "53");
 
     // Default attributes
-    $racct->putAttribute(RADIUS_SERVICE_TYPE, RADIUS_LOGIN);
     $racct->putAttribute(RADIUS_NAS_PORT_TYPE, RADIUS_ETHERNET);
     $racct->putAttribute(RADIUS_NAS_PORT, $nas_port, 'integer');
     $racct->putAttribute(RADIUS_ACCT_SESSION_ID, $sessionid);

@@ -60,8 +60,12 @@ function gre_inuse($num) {
 }
 
 if ($_GET['act'] == "del") {
+	if (!isset($_GET['id']))
+                $input_errors[] = getext("Wrong parameters supplied");
+        else if (empty($a_gres[$_GET['id']]))
+                $input_errors[] = getext("Wrong index supplied");
 	/* check if still in use */
-	if (gre_inuse($_GET['id'])) {
+	else if (gre_inuse($_GET['id'])) {
 		$input_errors[] = gettext("This GRE tunnel cannot be deleted because it is still being used as an interface.");
 	} else {
 		mwexec("/sbin/ifconfig " . $a_gres[$_GET['id']]['greif'] . " destroy");

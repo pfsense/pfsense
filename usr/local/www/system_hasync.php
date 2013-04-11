@@ -77,6 +77,7 @@ if ($_POST) {
 	$a_hasync['username']        = $pconfig['username'];
 	$a_hasync['password']        = $pconfig['password'];
 	write_config("Updated High Availability Sync configuration");
+	interfaces_carp_setup();
 	header("Location: system_hasync.php");
 	exit();
 }
@@ -101,12 +102,12 @@ include("head.inc");
 <?php include("fbegin.inc"); ?>
 
 <form action="system_hasync.php" method="post" name="iform" id="iform">
-<table width="100%" border="0" cellspacing="0" cellpadding="0">
+<table width="100%" border="0" cellspacing="0" cellpadding="0" summary="high availability sync">
 <tr>
 <td id="mainarea">
 <div class="tabcont">
 
-	<table class="tabcont" width="100%" border="0" cellpadding="6" cellspacing="0">
+	<table class="tabcont" width="100%" border="0" cellpadding="6" cellspacing="0" summary="main area">
 	<tr>
 		<td colspan="2" class="listtopic">State Synchronization Settings (pfsync)</td>
 	</tr>
@@ -115,7 +116,7 @@ include("head.inc");
 		<td class="vtable">
 			<input id='pfsyncenabled' type='checkbox' name='pfsyncenabled' value='on' <?php if ($pconfig['pfsyncenabled'] === "on") echo "checked='checked'"; ?> />
 			<br />
-			pfsync transfers state insertion, update, and deletion messages between firewalls. Each firewall sends these messages out via multicast on a specified interface, using the PFSYNC protocol (IP Protocol 240). It also listens on that interface for similar messages from other firewalls, and imports them into the local state table.<p>This setting should be enabled on all members of a failover group.<p>NOTE: Clicking save will force a configuration sync if it is enabled! (see Configuration Synchronization Settings below)
+			pfsync transfers state insertion, update, and deletion messages between firewalls. Each firewall sends these messages out via multicast on a specified interface, using the PFSYNC protocol (IP Protocol 240). It also listens on that interface for similar messages from other firewalls, and imports them into the local state table.<p>This setting should be enabled on all members of a failover group.</p><p>NOTE: Clicking save will force a configuration sync if it is enabled! (see Configuration Synchronization Settings below)</p>
 		</td>
 	</tr>
 	<tr valign="top">
@@ -342,8 +343,6 @@ include("head.inc");
 </tr>
 </table>
 </form>
-
-
 <?php include("fend.inc"); ?>
 </body>
 </html>

@@ -43,12 +43,12 @@
         * Adding of VENDOR Bay Networks (Nortel)
         * Adding of VENDOR Nomadix
         * Adding of VENDOR WISPr (Wi-Fi Alliance)
-	* Adding of VENDOR ChilliSpot (bandwidth-attributes only)
+        * Adding of VENDOR ChilliSpot (bandwidth-attributes only)
 
 */
 
 /*
-	pfSense_MODULE:	auth
+    pfSense_MODULE:    auth
 */
 
 require_once("PEAR.inc");
@@ -296,21 +296,23 @@ class Auth_RADIUS extends PEAR {
      */
     function putStandardAttributes()
     {
-	global $g;
+        global $config, $cpzone;
 
-	if (!function_exists("getNasIp"))
-		$ipaddr = "0.0.0.0";
-	else
-		$ipaddr = getNasIP();
+        if (!function_exists("getNasIp")) {
+            $ipaddr = "0.0.0.0";
+        } else {
+            $ipaddr = getNasIP();
+        }
         // Add support for sending NAS-IP-Address, set this explicitly as an ip_addr
         $this->putAttribute(RADIUS_NAS_IP_ADDRESS, $ipaddr, "addr");
 
         // Add support for sending NAS-Identifier
-	$nasId = "";
-	exec("/bin/hostname", $nasId);
-	if(!$nasId[0])
-		$nasId[0] = "{$g['product_name']}";
-        $this->putAttribute(RADIUS_NAS_IDENTIFIER, $nasId[0]);
+        if (empty($config["captiveportal"][$cpzone]["radiusnasid"])) {
+            $nasId = php_uname("n");
+        } else {
+            $nasId = $config["captiveportal"][$cpzone]["radiusnasid"];
+        }
+        $this->putAttribute(RADIUS_NAS_IDENTIFIER, $nasId);
     }
 
     /**
@@ -556,7 +558,7 @@ class Auth_RADIUS extends PEAR {
                     }
                 }
 
-                if ($vendor == 1584) {
+                elseif ($vendor == 1584) {
 
                     switch ($attrv) {
                     case 102:
@@ -565,7 +567,7 @@ class Auth_RADIUS extends PEAR {
                     }
                 }
 
-                if ($vendor == 3309) {    /* RADIUS_VENDOR_NOMADIX */
+                elseif ($vendor == 3309) {    /* RADIUS_VENDOR_NOMADIX */
 
                     switch ($attrv) {
                     case 1: /* RADIUS_NOMADIX_BW_UP */
@@ -592,58 +594,90 @@ class Auth_RADIUS extends PEAR {
                     }
                 } 
 
-        	if ($vendor == 14122) { /* RADIUS_VENDOR_WISPr Wi-Fi Alliance */
+                elseif ($vendor == 14122) { /* RADIUS_VENDOR_WISPr Wi-Fi Alliance */
 
-            		switch ($attrv) {
-            		case 1: /* WISPr-Location-ID */
-            			$this->attributes['location_id'] = radius_cvt_string($datav);
-            			break;
-            		case 2: /* WISPr-Location-Name */
-            			$this->attributes['location_name'] = radius_cvt_string($datav);
-            			break;
-            		case 3: /* WISPr-Logoff-URL */
-            			$this->attributes['url_logoff'] = radius_cvt_string($datav);
-            			break;
-            		case 4: /* WISPr-Redirection-URL */
-            			$this->attributes['url_redirection'] = radius_cvt_string($datav);
-            			break;
-            		case 5: /* WISPr-Bandwidth-Min-Up */
-            			$this->attributes['bw_up_min'] = radius_cvt_int($datav);
-            			break;
-            		case 6: /* WISPr-Bandwidth-Min-Down */
-            			$this->attributes['bw_down_min'] = radius_cvt_int($datav);
-            			break;
-            		case 7: /* WISPr-Bandwidth-Max-Up */
-            			$this->attributes['bw_up'] = radius_cvt_int($datav);
-            			break;
-            		case 8: /* WISPr-Bandwidth-Max-Down */
-            			$this->attributes['bw_down'] = radius_cvt_int($datav);
-            			break;
-            		case 9: /* WISPr-Session-Terminate-Time */
-            			$this->attributes['session_terminate_time'] = radius_cvt_string($datav);
-            			break;
-            		case 10: /* WISPr-Session-Terminate-End-Of-Day */
-            			$this->attributes['session_terminate_endofday'] = radius_cvt_int($datav);
-            			break;
-            		case 11: /* WISPr-Billing-Class-Of-Service */
-            			$this->attributes['billing_class_of_service'] = radius_cvt_string($datav);
-            			break;
-           		}
-        	}
+                    switch ($attrv) {
+                    case 1: /* WISPr-Location-ID */
+                        $this->attributes['location_id'] = radius_cvt_string($datav);
+                        break;
+                    case 2: /* WISPr-Location-Name */
+                        $this->attributes['location_name'] = radius_cvt_string($datav);
+                        break;
+                    case 3: /* WISPr-Logoff-URL */
+                        $this->attributes['url_logoff'] = radius_cvt_string($datav);
+                        break;
+                    case 4: /* WISPr-Redirection-URL */
+                        $this->attributes['url_redirection'] = radius_cvt_string($datav);
+                        break;
+                    case 5: /* WISPr-Bandwidth-Min-Up */
+                        $this->attributes['bw_up_min'] = radius_cvt_int($datav);
+                        break;
+                    case 6: /* WISPr-Bandwidth-Min-Down */
+                        $this->attributes['bw_down_min'] = radius_cvt_int($datav);
+                        break;
+                    case 7: /* WISPr-Bandwidth-Max-Up */
+                        $this->attributes['bw_up'] = radius_cvt_int($datav);
+                        break;
+                    case 8: /* WISPr-Bandwidth-Max-Down */
+                        $this->attributes['bw_down'] = radius_cvt_int($datav);
+                        break;
+                    case 9: /* WISPr-Session-Terminate-Time */
+                        $this->attributes['session_terminate_time'] = radius_cvt_string($datav);
+                        break;
+                    case 10: /* WISPr-Session-Terminate-End-Of-Day */
+                        $this->attributes['session_terminate_endofday'] = radius_cvt_int($datav);
+                        break;
+                    case 11: /* WISPr-Billing-Class-Of-Service */
+                        $this->attributes['billing_class_of_service'] = radius_cvt_string($datav);
+                        break;
+                    }
+                }
 
-		if ($vendor == 14559) { /* RADIUS_VENDOR_ChilliSpot */
-			switch ($attrv) {
-			case 4: /* ChilliSpot-Bandwidth-Max-Up */
-				$this->attributes['bw_up'] = radius_cvt_int($datav);
-				break;
-			case 5: /* ChilliSpot-Bandwidth-Max-Down */
-				$this->attributes['bw_down'] = radius_cvt_int($datav);
-				break;
-			}
-		}
+                elseif ($vendor == 14559) { /* RADIUS_VENDOR_ChilliSpot */
+                    switch ($attrv) {
+                    case 4: /* ChilliSpot-Bandwidth-Max-Up */
+                        $this->attributes['bw_up'] = radius_cvt_int($datav);
+                        break;
+                    case 5: /* ChilliSpot-Bandwidth-Max-Down */
+                        $this->attributes['bw_down'] = radius_cvt_int($datav);
+                        break;
+                    }
+                }
+
+                elseif ($vendor == 8744) { /* Colubris / HP MSM wireless */
+                    //documented at http://bizsupport1.austin.hp.com/bc/docs/support/SupportManual/c02704528/c02704528.pdf pg 15-67
+                    if ($attrv == 0) { /* Colubris AV-Pair */
+                        $datav = explode('=', $datav);
+                        switch ($datav[0]) {
+                        case 'max-input-rate':
+                            // "Controls the data rate [kbps] at which traffic can be transferred from the user to the [router]."
+                            $this->attributes['bw_up'] = radius_cvt_int($datav[1]);
+                            break;
+                        case 'max-output-rate':
+                            //"Controls the data rate [kbps] at which traffic can be transferred from the [router] to the user."
+                            $this->attributes['bw_down'] = radius_cvt_int($datav[1]);
+                            break;
+                        case 'max-input-octets':
+                            $this->attributes['maxbytesup'] = radius_cvt_int($datav[1]);
+                            break;
+                        case 'max-output-octets':
+                            $this->attributes['maxbytesdown'] = radius_cvt_int($datav[1]);
+                            break;
+                        case 'welcome-url':
+                            $this->attributes['url_redirection'] = radius_cvt_string($datav[1]);
+                            break;
+                        case 'goodbye-url':
+                            $this->attributes['url_logoff'] = radius_cvt_string($datav[1]);
+                            break;
+                        }
+                    }
+                }
 
                 break;
 
+            case 85: /* Acct-Interim-Interval: RFC 2869 */
+                $this->attributes['interim_interval'] = radius_cvt_int($datav[1]);
+                break;
             }
         }
 
@@ -1061,13 +1095,14 @@ class Auth_RADIUS_Acct extends Auth_RADIUS
         }
         $this->putAttribute(RADIUS_ACCT_STATUS_TYPE, $this->status_type);
         //if (isset($this->session_time) && $this->status_type == RADIUS_STOP) {
-	if (isset($this->session_time)) {
+        if (isset($this->session_time)) {
             $this->putAttribute(RADIUS_ACCT_SESSION_TIME, $this->session_time);
         }
         if (isset($this->authentic)) {
             $this->putAttribute(RADIUS_ACCT_AUTHENTIC, $this->authentic);
         }
 
+        $this->putStandardAttributes();
     }
 
 }
@@ -1124,6 +1159,40 @@ class Auth_RADIUS_Acct_Update extends Auth_RADIUS_Acct
      * @var  integer
      */
     var $status_type = RADIUS_UPDATE;
+}
+
+/**
+ * class Auth_RADIUS_Acct_On
+ *
+ * Class for sending Accounting-On updates
+ *
+ * @package Auth_RADIUS
+ */
+class Auth_RADIUS_Acct_On extends Auth_RADIUS_Acct
+{
+    /**
+      * Defines the type of the accounting request.
+      * It is set to RADIUS_ACCOUNTING_ON by default in this class.
+      * @var  integer
+      */
+    var $status_type = RADIUS_ACCOUNTING_ON;
+}
+
+/**
+ * class Auth_RADIUS_Acct_Off
+ *
+ * Class for sending Accounting-Off updates
+ *
+ * @package Auth_RADIUS
+ */
+class Auth_RADIUS_Acct_Off extends Auth_RADIUS_Acct
+{
+    /**
+      * Defines the type of the accounting request.
+      * It is set to RADIUS_ACCOUNTING_OFF by default in this class.
+      * @var  integer
+      */
+    var $status_type = RADIUS_ACCOUNTING_OFF;
 }
 
 ?>

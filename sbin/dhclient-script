@@ -66,8 +66,7 @@ delete_old_states() {
 		$LOGGER "Comparing IPs: Old: ${OLD_IP} New: ${new_ip_address}"
 		if [ -n "${OLD_IP}" ] && [ "${OLD_IP}" != "${new_ip_address}" ]; then
 			$LOGGER "Removing states from old IP '${OLD_IP}' (new IP '${new_ip_address}')"
-			/sbin/pfctl -k 0.0.0.0/0 -k ${OLD_IP}/32
-			/sbin/pfctl -k ${OLD_IP}/32
+			/sbin/pfctl -i $interface -Fs
 			pfctl -K ${OLD_IP}/32
 		fi
 	fi
@@ -78,11 +77,11 @@ delete_old_states() {
 	if [ -z "${OLD_ROUTER}" ] && [ -f /tmp/${interface}_router ]; then
 		OLD_ROUTER = `cat /tmp/${interface}_router`
 	fi
-	if [ -n $OLD_ROUTER ]; then
+	if [ -n "${OLD_ROUTER}" ]; then
 		$LOGGER "Comparing Routers: Old: ${OLD_ROUTER} New: ${new_routers}"
 		if [ "${OLD_ROUTER}" != "${new_routers}" ]; then
 			$LOGGER "Removing states through old gateway '${OLD_ROUTER}' (new gateway '${new_routers}')"
-			/sbin/pfctl -b 0.0.0.0/32 -b ${OLD_ROUTER}/32
+			/sbin/pfctl -i $interface -Fs -G ${OLD_ROUTER}
 		fi
 	fi
 }

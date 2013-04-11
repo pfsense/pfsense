@@ -128,6 +128,7 @@ $act = $_GET['act'];
 if (!empty($_POST['act']))
 	$act = $_POST['act'];
 
+$a_pools = array();
 
 if (is_array($config['dhcpd'][$if])){
 	$pool = $_GET['pool'];
@@ -163,6 +164,9 @@ if (is_array($dhcpdconf)) {
 		if (!is_array($dhcpdconf['staticmap']))
 			$dhcpdconf['staticmap'] = array();
 		$a_maps = &$dhcpdconf['staticmap'];
+	} else {
+		// Options that exist only in pools
+		$pconfig['descr'] = $dhcpdconf['descr'];
 	}
 
 	// Options that can be global or per-pool.
@@ -195,29 +199,6 @@ if (is_array($dhcpdconf)) {
 
 $ifcfgip = $config['interfaces'][$if]['ipaddr'];
 $ifcfgsn = $config['interfaces'][$if]['subnet'];
-
-/*   set the enabled flag which will tell us if DHCP relay is enabled
- *   on any interface. We will use this to disable DHCP server since
- *   the two are not compatible with each other.
- */
-
-$dhcrelay_enabled = false;
-$dhcrelaycfg = $config['dhcrelay'];
-
-if(is_array($dhcrelaycfg)) {
-	foreach ($dhcrelaycfg as $dhcrelayif => $dhcrelayifconf) {
-		if (isset($dhcrelayifconf['enable']) && isset($iflist[$dhcrelayif]) &&
-			(!link_interface_to_bridge($dhcrelayif)))
-			$dhcrelay_enabled = true;
-	}
-}
-
-function is_inrange($test, $start, $end) {
-	if ( (ip2ulong($test) < ip2ulong($end)) && (ip2ulong($test) > ip2ulong($start)) )
-		return true;
-	else
-		return false;
-}
 
 function validate_partial_mac_list($maclist) {
 	$macs = explode(',', $maclist);
@@ -253,7 +234,7 @@ if ($_POST) {
 		$reqdfields = explode(" ", "range_from range_to");
 		$reqdfieldsn = array(gettext("Range begin"),gettext("Range end"));
 
-		do_input_validation($_POST, $reqdfields, $reqdfieldsn, &$input_errors);
+		do_input_validation($_POST, $reqdfields, $reqdfieldsn, $input_errors);
 
 		if (($_POST['range_from'] && !is_ipaddrv4($_POST['range_from'])))
 			$input_errors[] = gettext("A valid range must be specified.");
@@ -266,14 +247,34 @@ if ($_POST) {
 		$parent_ip = get_interface_ip($_POST['if']);
 		if (is_ipaddrv4($parent_ip) && $_POST['gateway']) {
 			$parent_sn = get_interface_subnet($_POST['if']);
-			if(!ip_in_subnet($_POST['gateway'], gen_subnet($parent_ip, $parent_sn) . "/" . $parent_sn) && !ip_in_interface_alias_subnet($_POST['if'], $_POST['gateway'])) 
+			if(!ip_in_subnet($_POST['gateway'], gen_subnet($parent_ip, $parent_sn) . "/" . $parent_sn) && !ip_in_interface_alias_subnet($_POST['if'], $_POST['gateway']))
 				$input_errors[] = sprintf(gettext("The gateway address %s does not lie within the chosen interface's subnet."), $_POST['gateway']);
 		}
 		if (($_POST['dns1'] && !is_ipaddrv4($_POST['dns1'])) || ($_POST['dns2'] && !is_ipaddrv4($_POST['dns2'])))
 			$input_errors[] = gettext("A valid IP address must be specified for the primary/secondary DNS servers.");
 
 		if ($_POST['deftime'] && (!is_numeric($_POST['deftime']) || ($_POST['deftime'] < 60)))
-			$input_errors[] = gettext("The default lease time must be at least 60 seconds.");
+				$input_errors[] = gettext("The default lease time must be at least 60 seconds.");
+
+		if (isset($config['captiveportal']) && is_array($config['captiveportal'])) {
+			$deftime = 7200; // Default value if it's empty
+			if (is_numeric($_POST['deftime']))
+				$deftime = $_POST['deftime'];
+
+			foreach ($config['captiveportal'] as $cpZone => $cpdata) {
+				if (!isset($cpdata['enable']))
+					continue;
+				if (!isset($cpdata['timeout']) || !is_numeric($cpdata['timeout']))
+					continue;
+				$cp_ifs = explode(',', $cpdata['interface']);
+				if (!in_array($if, $cp_ifs))
+					continue;
+				if ($cpdata['timeout'] > $deftime)
+					$input_errors[] = sprintf(gettext(
+						"The Captive Portal zone '%s' has Hard Timeout parameter set to a value bigger than Default lease time (%s)."), $cpZone, $deftime);
+			}
+		}
+
 		if ($_POST['maxtime'] && (!is_numeric($_POST['maxtime']) || ($_POST['maxtime'] < 60) || ($_POST['maxtime'] <= $_POST['deftime'])))
 			$input_errors[] = gettext("The maximum lease time must be at least 60 seconds and higher than the default lease time.");
 		if (($_POST['ddnsdomain'] && !is_domain($_POST['ddnsdomain'])))
@@ -312,7 +313,7 @@ if ($_POST) {
 		if (is_array($config['virtualip']['vip'])) {
 			foreach($config['virtualip']['vip'] as $vip) {
 				if($vip['interface'] == $if)
-					if($vip['subnet'] && is_inrange($vip['subnet'], $_POST['range_from'], $_POST['range_to']))
+					if($vip['subnet'] && is_inrange_v4($vip['subnet'], $_POST['range_from'], $_POST['range_to']))
 						$input_errors[] = sprintf(gettext("The subnet range cannot overlap with virtual IP address %s."),$vip['subnet']);
 			}
 		}
@@ -363,12 +364,27 @@ if ($_POST) {
 			if (ip2ulong($_POST['range_from']) > ip2ulong($_POST['range_to']))
 				$input_errors[] = gettext("The range is invalid (first element higher than second element).");
 
-			// TODO: Ensure range and pools do not overlap!
-			// If we're editing the main range, check pools
-			// If we're editing a pool, locate parent range and other pools.
+			if (is_numeric($pool) || ($act == "newpool")) {
+				$rfrom = $config['dhcpd'][$if]['range']['from'];
+				$rto = $config['dhcpd'][$if]['range']['to'];
+
+				if (is_inrange_v4($_POST['range_from'], $rfrom, $rto) || is_inrange_v4($_POST['range_to'], $rfrom, $rto))
+					$input_errors[] = gettext("The specified range must not be within the DHCP range for this interface.");
+			}
+
+			foreach ($a_pools as $id => $p) {
+				if (is_numeric($pool) && ($id == $pool))
+					continue;
+
+				if (is_inrange_v4($_POST['range_from'], $p['range']['from'], $p['range']['to']) ||
+				    is_inrange_v4($_POST['range_to'], $p['range']['from'], $p['range']['to'])) {
+					$input_errors[] = gettext("The specified range must not be within the range configured on a DHCP pool for this interface.");
+					break;
+				}
+			}
 
 			/* make sure that the DHCP Relay isn't enabled on this interface */
-			if (isset($config['dhcrelay'][$if]['enable']))
+			if (isset($config['dhcrelay']['enable']) && (stristr($config['dhcrelay']['interface'], $if) !== false))
 				$input_errors[] = sprintf(gettext("You must disable the DHCP relay on the %s interface before enabling the DHCP server."),$iflist[$if]);
 
 			$dynsubnet_start = ip2ulong($_POST['range_from']);
@@ -417,6 +433,9 @@ if ($_POST) {
 				mwexec("/bin/rm -rf /var/dhcpd/var/db/*");
 			$dhcpdconf['failover_peerip'] = $_POST['failover_peerip'];
 			$dhcpdconf['dhcpleaseinlocaltime'] = $_POST['dhcpleaseinlocaltime'];
+		} else {
+			// Options that exist only in pools
+			$dhcpdconf['descr'] = $_POST['descr'];
 		}
 
 		// Options that can be global or per-pool.
@@ -563,6 +582,9 @@ include("head.inc");
 			enable_over = true;
 		<?php endif; ?>
 		endis = !(document.iform.enable.checked || enable_over);
+		<?php if (is_numeric($pool) || ($act == "newpool")): ?>
+			document.iform.descr.disabled = endis;
+		<?php endif; ?>
 		document.iform.range_from.disabled = endis;
 		document.iform.range_to.disabled = endis;
 		document.iform.wins1.disabled = endis;
@@ -641,7 +663,7 @@ include("head.inc");
 <?php if ($input_errors) print_input_errors($input_errors); ?>
 <?php if ($savemsg) print_info_box($savemsg); ?>
 <?php
-	if ($dhcrelay_enabled) {
+	if (isset($config['dhcrelay']['enable'])) {
 		echo gettext("DHCP Relay is currently enabled. Cannot enable the DHCP Server service while the DHCP Relay is enabled on any interface.");
 		include("fend.inc");
 		echo "</body>";
@@ -706,6 +728,14 @@ include("head.inc");
 				<strong><?=gettext("Deny unknown clients");?></strong><br>
 				<?=gettext("If this is checked, only the clients defined below will get DHCP leases from this server. ");?></td>
 			</tr>
+			<?php if (is_numeric($pool) || ($act == "newpool")): ?>
+				<tr>
+				<td width="22%" valign="top" class="vncell"><?=gettext("Pool Description");?></td>
+				<td width="78%" class="vtable">
+					<input name="descr" type="text" class="formfld unknown" id="descr" size="20" value="<?=htmlspecialchars($pconfig['descr']);?>">
+				</td>
+				</tr>
+			<?php endif; ?>
 			<tr>
 			<td width="22%" valign="top" class="vncellreq"><?=gettext("Subnet");?></td>
 			<td width="78%" class="vtable">
@@ -777,8 +807,9 @@ include("head.inc");
 				<?php echo gettext("If you need additional pools of addresses inside of this subnet outside the above Range, they may be specified here."); ?>
 				<table class="tabcont" width="100%" border="0" cellpadding="0" cellspacing="0">
 				<tr>
-					<td width="45%" class="listhdrr"><?=gettext("Pool Start");?></td>
-					<td width="45%" class="listhdrr"><?=gettext("Pool End");?></td>
+					<td width="35%" class="listhdrr"><?=gettext("Pool Start");?></td>
+					<td width="35%" class="listhdrr"><?=gettext("Pool End");?></td>
+					<td width="20%" class="listhdrr"><?=gettext("Description");?></td>
 					<td width="10%" class="list">
 					<table border="0" cellspacing="0" cellpadding="1">
 					<tr>
@@ -798,6 +829,9 @@ include("head.inc");
 				<td class="listr" ondblclick="document.location='services_dhcp.php?if=<?=htmlspecialchars($if);?>&pool=<?=$i;?>';">
 					<?=htmlspecialchars($poolent['range']['to']);?>&nbsp;
 				</td>
+				<td class="listr" ondblclick="document.location='services_dhcp.php?if=<?=htmlspecialchars($if);?>&pool=<?=$i;?>';">
+					<?=htmlspecialchars($poolent['descr']);?>&nbsp;
+				</td>
 				<td valign="middle" nowrap class="list">
 					<table border="0" cellspacing="0" cellpadding="1">
 					<tr>
@@ -811,7 +845,7 @@ include("head.inc");
 				<?php $i++; endforeach; ?>
 				<?php endif; ?>
 				<tr>
-				<td class="list" colspan="2"></td>
+				<td class="list" colspan="3"></td>
 				<td class="list">
 					<table border="0" cellspacing="0" cellpadding="1">
 					<tr>
@@ -844,7 +878,7 @@ include("head.inc");
 			<td width="22%" valign="top" class="vncell"><?=gettext("Gateway");?></td>
 			<td width="78%" class="vtable">
 				<input name="gateway" type="text" class="formfld host" id="gateway" size="20" value="<?=htmlspecialchars($pconfig['gateway']);?>"><br>
-			 	 <?=gettext("The default is to use the IP on this interface of the firewall as the gateway. Specify an alternate gateway here if this is not the correct gateway for your network.");?>
+				 <?=gettext("The default is to use the IP on this interface of the firewall as the gateway. Specify an alternate gateway here if this is not the correct gateway for your network.");?>
 			</td>
 			</tr>
 			<tr>
@@ -852,7 +886,7 @@ include("head.inc");
 			<td width="78%" class="vtable">
 				<input name="domain" type="text" class="formfld unknown" id="domain" size="20" value="<?=htmlspecialchars($pconfig['domain']);?>"><br>
 				 <?=gettext("The default is to use the domain name of this system as the default domain name provided by DHCP. You may specify an alternate domain name here.");?>
-			 </td>
+			</td>
 			</tr>
 			<tr>
 			<td width="22%" valign="top" class="vncell"><?=gettext("Domain search list");?></td>
@@ -886,7 +920,7 @@ include("head.inc");
 			<td width="22%" valign="top" class="vncell"><?=gettext("Failover peer IP:");?></td>
 			<td width="78%" class="vtable">
 				<input name="failover_peerip" type="text" class="formfld host" id="failover_peerip" size="20" value="<?=htmlspecialchars($pconfig['failover_peerip']);?>"><br>
-				<?=gettext("Leave blank to disable.  Enter the interface IP address of the other machine.  Machines must be using CARP.");?>
+				<?=gettext("Leave blank to disable.  Enter the interface IP address of the other machine.  Machines must be using CARP. Interface's advskew determines whether the DHCPd process is Primary or Secondary. Ensure one machine's advskew<20 (and the other is >20).");?>
 			</td>
 			</tr>
 			<?php endif; ?>
@@ -929,9 +963,8 @@ include("head.inc");
 					<tr>
 					<td>&nbsp;</td>
 					<td>
-						<span class="red"><strong><?=gettext("Note:");?></strong></span> <?=gettext("By default DHCP leases are displayed in UTC time.  By checking this 
+						<span class="red"><strong><?=gettext("Note:");?></strong></span> <?=gettext("By default DHCP leases are displayed in UTC time.  By checking this
 						box DHCP lease time will be displayed in local time and set to time zone selected.  This will be used for all DHCP interfaces lease time."); ?>
-					
 					</td>
 					</tr>
 				</table>
@@ -1127,9 +1160,15 @@ include("head.inc");
 			</td>
 			</tr>
 		</table>
+		<?php if (!is_numeric($pool) && !($act == "newpool")): ?>
 		<table class="tabcont" width="100%" border="0" cellpadding="0" cellspacing="0">
 		<tr>
-			<td width="25%" class="listhdrr"><?=gettext("MAC address");?></td>
+			<td colspan="5" valign="top" class="listtopic"><?=gettext("DHCP Static Mappings for this interface.");?></td>
+			<td>&nbsp;</td>
+		</tr>
+		<tr>
+			<td width="7%" class="listhdrr"><?=gettext("Static ARP");?></td>
+			<td width="18%" class="listhdrr"><?=gettext("MAC address");?></td>
 			<td width="15%" class="listhdrr"><?=gettext("IP address");?></td>
 			<td width="20%" class="listhdrr"><?=gettext("Hostname");?></td>
 			<td width="30%" class="listhdr"><?=gettext("Description");?></td>
@@ -1146,6 +1185,11 @@ include("head.inc");
 			<?php $i = 0; foreach ($a_maps as $mapent): ?>
 			<?php if($mapent['mac'] <> "" or $mapent['ipaddr'] <> ""): ?>
 		<tr>
+		<td align="center" class="listlr" ondblclick="document.location='services_dhcp_edit.php?if=<?=htmlspecialchars($if);?>&id=<?=$i;?>';">
+			<?php if (isset($mapent['arp_table_static_entry'])): ?>
+				<img src="./themes/<?= $g['theme']; ?>/images/icons/icon_alert.gif" alt="ARP Table Static Entry" width="17" height="17" border="0">
+			<?php endif; ?>
+		</td>
 		<td class="listlr" ondblclick="document.location='services_dhcp_edit.php?if=<?=htmlspecialchars($if);?>&id=<?=$i;?>';">
 			<?=htmlspecialchars($mapent['mac']);?>
 		</td>
@@ -1171,7 +1215,7 @@ include("head.inc");
 		<?php $i++; endforeach; ?>
 		<?php endif; ?>
 		<tr>
-		<td class="list" colspan="4"></td>
+		<td class="list" colspan="5"></td>
 		<td class="list">
 			<table border="0" cellspacing="0" cellpadding="1">
 			<tr>
@@ -1182,6 +1226,7 @@ include("head.inc");
 		</td>
 		</tr>
 		</table>
+		<?php endif; ?>
 	</div>
 </td>
 </tr>

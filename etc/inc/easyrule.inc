@@ -115,6 +115,7 @@ function easyrule_block_rule_create($int = 'wan', $ipproto = "inet") {
 	$filterent['source']['address'] = $blockaliasname . strtoupper($int);
 	$filterent['destination']['any'] = '';
 	$filterent['descr'] = gettext("Easy Rule: Blocked from Firewall Log View");
+	$filterent['created'] = make_config_revision_entry(null, gettext("Easy Rule"));
 
 	array_splice($a_filter, 0, 0, array($filterent));
 
@@ -271,10 +272,15 @@ function easyrule_pass_rule_add($int, $proto, $srchost, $dsthost, $dstport, $ipp
 	if ($proto == "icmp")
 		$filterent['icmptype'] = 'echoreq';
 
+	if (strtolower($proto) == "icmp6")
+		$filterent['protocol'] = "icmp";
+
 	if (is_subnet($srchost)) {
 		list($srchost, $srcmask) = explode("/", $srchost);
 	} elseif (is_specialnet($srchost)) {
 		$srcmask = 0;
+	} elseif (is_ipaddrv6($srchost)) {
+		$srcmask = 128;
 	} else {
 		$srcmask = 32;
 	}
@@ -283,6 +289,8 @@ function easyrule_pass_rule_add($int, $proto, $srchost, $dsthost, $dstport, $ipp
 		list($dsthost, $dstmask) = explode("/", $dsthost);
 	} elseif (is_specialnet($dsthost)) {
 		$dstmask = 0;
+	} elseif (is_ipaddrv6($dsthost)) {
+		$dstmask = 128;
 	} else {
 		$dstmask = 32;
 	}
@@ -290,6 +298,7 @@ function easyrule_pass_rule_add($int, $proto, $srchost, $dsthost, $dstport, $ipp
 	pconfig_to_address($filterent['source'], $srchost, $srcmask);
 	pconfig_to_address($filterent['destination'], $dsthost, $dstmask, '', $dstport, $dstport);
 
+	$filterent['created'] = make_config_revision_entry(null, gettext("Easy Rule"));
 	$a_filter[] = $filterent;
 
 	write_config($filterent['descr']);

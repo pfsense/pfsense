@@ -4,6 +4,14 @@ html, body, td, th, input, select {
 	font-size: 0.9em;
 }
 
+.nowrap { white-space: nowrap; }
+
+.addgatewaybox {
+	background-color: #990000;
+	border-style: none none none none;
+	width: 225px;
+}
+
 .infobox {
 	width:100%;
 }

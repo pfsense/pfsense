@@ -1,7 +1,7 @@
 #!/usr/local/bin/php -f
 <?php
 /*
-        rc.newwanip
+        rc.newwanipv6
         Copyright (C) 2006 Scott Ullrich (sullrich@gmail.com)
         part of pfSense (http://www.pfsense.com)
 
@@ -44,40 +44,33 @@ require_once("IPv6.inc");
 require_once("services.inc");
 require_once("rrd.inc");
 
-// Do not process while booting
-if($g['booting']) 
-	exit;
-
-
 function restart_packages() {
-	global $oldip, $curwanipv6, $g;
+	global $oldipv6, $curwanipv6, $g;
 
 	/* restart packages */
 	system_ntp_configure(false);
 	mwexec_bg("/usr/local/sbin/ntpdate_sync_once.sh", true);
-	log_error("{$g['product_name']} package system has detected an ip change $oldip ->  $curwanip ... Restarting packages.");		
-	mwexec_bg("/etc/rc.start_packages");
+	log_error("{$g['product_name']} package system has detected an ip change $oldipv6 ->  $curwanipv6 ... Restarting packages.");		
+	send_event("service reload packages");
 }
-
-log_error("rc.newwanipv6: Informational is starting.");
 
 /* Interface IP address has changed */
 $argument = str_replace("\n", "", $argv[1]);
 
-if($argument != "")
-	$interface = convert_real_interface_to_friendly_interface_name($argument);
-else
+log_error("rc.newwanipv6: Informational is starting {$argument}.");
+
+/* wait for the dhcp6c process to configure the LAN interface */
+sleep(5);
+
+if(empty($argument)) {
 	$interface = "wan";
-
-$interface_real = get_real_interface($interface);
-$curwanipv6 = get_interface_ipv6($interface_real);
-
-log_error("rc.newwanipv6: on (IP address: {$curwanipv6}) (interface: {$interface}) (real interface: {$interface_real}).");
-
-if($curwanipv6 == "" || !is_ipaddrv6($curwanipv6)) {
-        log_error("rc.newwanipv6: Failed to update {$interface} IPv6, restarting...");
-	// send_event("interface reconfigure {$interface}");
-        exit;
+	$interface_real = get_real_interface($interface);
+	$curwanipv6 = get_interface_ipv6($interface, true);
+} else {
+	$interface_real = $argument;
+	$interface = convert_real_interface_to_friendly_interface_name($interface_real);
+	$curwanipv6 = get_interface_ipv6($interface, true);
+	$interface_realv6 = get_real_interface($interface, "inet6");
 }
 
 if (empty($interface)) {
@@ -85,6 +78,35 @@ if (empty($interface)) {
 	// restart_packages();
 	exit;
 }
+
+//Do not process while booting
+if($g['booting'] && $config['interfaces'][$interface]['ipaddrv6'] != "dhcp6")
+	exit;
+
+if(empty($curwanipv6) || !is_ipaddrv6($curwanipv6)) {
+        log_error("rc.newwanipv6: Failed to update {$interface} IPv6, restarting...");
+	// send_event("interface reconfigure {$interface}");
+        exit;
+}
+
+if (!empty($_ENV['new_domain_name_servers'])) {
+	$name_servers = explode(" ", $_ENV['new_domain_name_servers']);
+	$valid_ns = array();
+	foreach($name_servers as $ns) {
+		if(is_ipaddrv6(trim($ns)))
+			$valid_ns[] = trim($ns);
+	}
+
+	if(count($valid_ns > 0))
+		file_put_contents("{$g['varetc_path']}/nameserver_v6{$interface}", implode("\n", $valid_ns));
+}
+if(!empty($_ENV['new_domain_name']))
+	file_put_contents("{$g['varetc_path']}/searchdomain_v6{$interface}", $_ENV['new_domain_name']);
+
+/* write current WAN IPv6 to file */
+file_put_contents("{$g['vardb_path']}/{$interface}_ipv6", $curwanipv6);
+
+log_error("rc.newwanipv6: on (IP address: {$curwanipv6}) (interface: {$interface}) (real interface: {$interface_realv6}).");
 
 $oldipv6 = "";
 if (file_exists("{$g['vardb_path']}/{$interface}_cacheipv6"))
@@ -94,27 +116,10 @@ $grouptmp = link_interface_to_group($interface);
 if (!empty($grouptmp))
 	array_walk($grouptmp, 'interface_group_add_member');
 
+link_interface_to_track6($interface, "update");
+
 /* regenerate resolv.conf if DNS overrides are allowed */
 system_resolvconf_generate(true);
-
-/* write current WAN IPv6 to file */
-file_put_contents("{$g['vardb_path']}/{$interface}_ipv6", $curwanipv6);
-
-/* pickup ipv6 router advertisements */
-pickup_ipv6_router_advertisement($interface_real);
-sleep(3);
-
-/* check native IPv6 interface tracking */
-switch($config['interfaces'][$interface]['ipaddrv6']) {
-	case "dhcp6":
-		foreach($config['interfaces'] as $iftrackname => $iftrack) {
-			if($iftrack['track6-interface'] == $interface) {
-				log_error("interface {$iftrackname} depends on {$interface}, configuring");
-				interface_track6_configure($iftrackname);
-			}
-		}
-		break;
-}
 
 /* reconfigure static routes (kernel may have deleted them) */
 system_routing_configure($interface);
@@ -125,16 +130,19 @@ setup_gateways_monitor();
 /* signal filter reload */
 filter_configure();
 
-if (is_ipaddr($oldipv6) && $curwanipv6 == $oldipv6) {
-	// Still need to sync VPNs on PPPoE and such, as even with the same IP the VPN software is unhappy with the IP disappearing.
-	if (in_array($config['interfaces'][$interface]['ipaddrv6'], array('pppoe', 'pptp', 'ppp'))) {
-		/* reconfigure IPsec tunnels */
-		vpn_ipsec_force_reload();
+if (is_ipaddrv6($oldipv6)) {
+	if ($curwanipv6 == $oldipv6) {
+		// Still need to sync VPNs on PPPoE and such, as even with the same IP the VPN software is unhappy with the IP disappearing.
+		if (in_array($config['interfaces'][$interface]['ipaddrv6'], array('pppoe', 'pptp', 'ppp'))) {
+			/* reconfigure IPsec tunnels */
+			vpn_ipsec_force_reload($interface);
 
-		/* start OpenVPN server & clients */
-		openvpn_resync_all($interface);
-	}
-	exit;
+			/* start OpenVPN server & clients */
+			openvpn_resync_all($interface);
+		}
+		exit;
+	} else if (does_interface_exist($interface_realv6))
+		mwexec("/sbin/ifconfig {$interface_realv6} inet6 {$oldipv6} delete");
 }
 
 file_put_contents("{$g['vardb_path']}/{$interface}_cacheipv6", $curwanipv6);
@@ -146,7 +154,7 @@ services_dnsupdate_process($interface);
 services_dyndns_configure($interface);
 
 /* reconfigure IPsec tunnels */
-vpn_ipsec_force_reload();
+vpn_ipsec_force_reload($interface);
 
 /* start OpenVPN server & clients */
 if (substr($interface_real, 0, 4) != "ovpn")
@@ -159,7 +167,5 @@ enable_rrd_graphing();
 services_igmpproxy_configure();
 
 restart_packages();
-
-services_radvd_configure();
 
 ?>

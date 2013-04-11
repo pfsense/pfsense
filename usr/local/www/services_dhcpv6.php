@@ -75,6 +75,7 @@ if (!$_GET['if'])
 		   "<p><b>" . gettext("Only interfaces configured with a static IP will be shown") . ".</b></p>";
 
 $iflist = get_configured_interface_with_descr();
+$iflist = array_merge($iflist, get_configured_pppoe_server_interfaces());
 
 /* set the starting interface */
 if (!$if || !isset($iflist[$if])) {
@@ -141,13 +142,6 @@ if(is_array($dhcrelaycfg)) {
 			(!link_interface_to_bridge($dhcrelayif)))
 			$dhcrelay_enabled = true;
 	}
-}
-
-function is_inrange($test, $start, $end) {
-	if ( (inet_pton($test) < inet_pton($end)) && (inet_pton($test) > inet_pton($start)) )
-		return true;
-	else
-		return false;
 }
 
 if ($_POST) {
@@ -217,7 +211,7 @@ if ($_POST) {
 		if (is_array($config['virtualip']['vip'])) {
 			foreach($config['virtualip']['vip'] as $vip) {
 				if($vip['interface'] == $if)
-					if($vip['subnetv6'] && is_inrange($vip['subnetv6'], $_POST['range_from'], $_POST['range_to']))
+					if($vip['subnetv6'] && is_inrange_v6($vip['subnetv6'], $_POST['range_from'], $_POST['range_to']))
 						$input_errors[] = sprintf(gettext("The subnet range cannot overlap with virtual IPv6 address %s."),$vip['subnetv6']);
 			}
 		}
@@ -232,11 +226,12 @@ if ($_POST) {
 			$subnet_start = gen_subnetv6($ifcfgip, $ifcfgsn);
 			$subnet_end = gen_subnetv6_max($ifcfgip, $ifcfgsn);
 
-			if ((! is_inrange($_POST['range_from'], $subnet_start, $subnet_end)) ||
-			    (! is_inrange($_POST['range_to'], $subnet_start, $subnet_end))) {
-				$input_errors[] = gettext("The specified range lies outside of the current subnet.");
+			if (is_ipaddrv6($ifcfgip)) {
+				if ((! is_inrange_v6($_POST['range_from'], $subnet_start, $subnet_end)) ||
+			   	 (! is_inrange_v6($_POST['range_to'], $subnet_start, $subnet_end))) {
+					$input_errors[] = gettext("The specified range lies outside of the current subnet.");
+				}
 			}
-
 			/* "from" cannot be higher than "to" */
 			if (inet_pton($_POST['range_from']) > inet_pton($_POST['range_to']))
 				$input_errors[] = gettext("The range is invalid (first element higher than second element).");
@@ -329,7 +324,7 @@ if ($_POST) {
 		$retvaldhcp = 0;
 		$retvaldns = 0;
 		/* Stop DHCPv6 so we can cleanup leases */
-		killbyname("dhcpd -6");
+		killbypid("{$g['dhcpd_chroot_path']}{$g['varrun_path']}/dhcpdv6.pid");
 		// dhcp_clean_leases();
 		/* dnsmasq_configure calls dhcpd_configure */
 		/* no need to restart dhcpd twice */
@@ -486,6 +481,22 @@ include("head.inc");
 		$tab_array[] = array($ifname, $active, "services_dhcpv6.php?if={$ifent}");
 		$tabscounter++;
 	}
+	/* tack on PPPoE or PPtP servers here */
+	/* pppoe server */
+	if (is_array($config['pppoes']['pppoe'])) {
+		foreach($config['pppoes']['pppoe'] as $pppoe) {
+			if ($pppoe['mode'] == "server") {
+				$ifent = "poes". $pppoe['pppoeid'];
+				$ifname = strtoupper($ifent);
+				if ($ifent == $if)
+					$active = true;
+				else
+					$active = false;
+				$tab_array[] = array($ifname, $active, "services_dhcpv6.php?if={$ifent}");
+				$tabscounter++;
+			}
+		}
+	}
 	if ($tabscounter == 0) {
 		echo "</td></tr></table></form>";
 		include("fend.inc");
@@ -524,6 +535,10 @@ display_top_tabs($tab_array);
 				<?=gettext("If this is checked, only the clients defined below will get DHCP leases from this server. ");?></td>
 			</tr>
 			<tr>
+			<?php
+			/* the PPPoE Server could well have no IPv6 address and operate fine with just link-local, just hide these */
+			if(is_ipaddrv6($ifcfgip)) {
+			?>
 			<td width="22%" valign="top" class="vncellreq"><?=gettext("Subnet");?></td>
 			<td width="78%" class="vtable">
 				<?=gen_subnetv6($ifcfgip, $ifcfgsn);?>
@@ -551,6 +566,8 @@ display_top_tabs($tab_array);
 			?>
 			</td>
 			</tr>
+			<?php } ?>
+
 			<?php if($is_olsr_enabled): ?>
 			<tr>
 			<td width="22%" valign="top" class="vncellreq"><?=gettext("Subnet Mask");?></td>
@@ -581,7 +598,7 @@ display_top_tabs($tab_array);
 			<td width="78%" class="vtable">
 				<input name="prefixrange_from" type="text" class="formfld unknown" id="prefixrange_from" size="28" value="<?=htmlspecialchars($pconfig['prefixrange_from']);?>">
 				&nbsp;<?=gettext("to"); ?>&nbsp; <input name="prefixrange_to" type="text" class="formfld unknown" id="prefixrange_to" size="28" value="<?=htmlspecialchars($pconfig['prefixrange_to']);?>">
-				&nbsp;<?=gettext("prefix delegation size"); ?>&nbsp; <select name="prefixrange_length" class="formselect" id="prefixrange_length">
+				&nbsp;<br/><?=gettext("Prefix Delegation Size"); ?>:&nbsp; <select name="prefixrange_length" class="formselect" id="prefixrange_length">
 					<option value="48" <?php if($pconfig['prefixrange_length'] == 48) echo "selected"; ?>>48</option>
 					<option value="52" <?php if($pconfig['prefixrange_length'] == 52) echo "selected"; ?>>52</option>
 					<option value="56" <?php if($pconfig['prefixrange_length'] == 56) echo "selected"; ?>>56</option>
@@ -825,6 +842,10 @@ display_top_tabs($tab_array);
 			</tr>
 		</table>
 		<table class="tabcont" width="100%" border="0" cellpadding="0" cellspacing="0">
+		<tr>
+			<td colspan="4" valign="top" class="listtopic"><?=gettext("DHCPv6 Static Mappings for this interface.");?></td>
+			<td>&nbsp;</td>
+		</tr>
 		<tr>
 			<td width="25%" class="listhdrr"><?=gettext("DUID");?></td>
 			<td width="15%" class="listhdrr"><?=gettext("IPv6 address");?></td>

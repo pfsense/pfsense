@@ -41,11 +41,13 @@ function killbypid($pidfile) {
 	return sigkillbypid($pidfile, "TERM");
 }
 
-function isvalidpid($pid) {
+function isvalidpid($pidfile) {
 	$output = "";
-	exec("/bin/pgrep -nF {$pid}", $output, $retval);
-
-	return (intval($retval) == 0);
+	if (file_exists($pidfile)) {
+		exec("/bin/pgrep -nF {$pidfile}", $output, $retval);
+		return (intval($retval) == 0);
+	}
+	return false;
 }
 
 function is_process_running($process) {
@@ -62,7 +64,7 @@ function isvalidproc($proc) {
 /* sigkill a process by pid file */
 /* return 1 for success and 0 for a failure */
 function sigkillbypid($pidfile, $sig) {
-	if (is_file($pidfile))
+	if (file_exists($pidfile))
 		return mwexec("/bin/pkill -{$sig} -F {$pidfile}", true);
 
 	return 0;
@@ -282,6 +284,7 @@ function gen_subnetv6($ipaddr, $bits) {
 		return "";
 
 	$address = Net_IPv6::getNetmask($ipaddr, $bits);
+	$address = Net_IPv6::compress($address);
 	return $address;
 }
 
@@ -305,7 +308,7 @@ function gen_subnetv6_max($ipaddr, $bits) {
 
 	$inet_end = $inet_ip | ~$inet_mask;
 
-	return(Net_IPv6::uncompress(inet_ntop($inet_end)));
+	return (inet_ntop($inet_end));
 }
 
 /* returns a subnet mask (long given a bit count) */
@@ -472,13 +475,14 @@ function is_ipaddr($ipaddr) {
 
 /* returns true if $ipaddr is a valid IPv6 address */
 function is_ipaddrv6($ipaddr) {
-	$result = Net_IPv6::checkIPv6($ipaddr);
-	return $result;
+	if (!is_string($ipaddr) || empty($ipaddr))
+		return false;
+	return Net_IPv6::checkIPv6($ipaddr);
 }
 
 /* returns true if $ipaddr is a valid dotted IPv4 address */
 function is_ipaddrv4($ipaddr) {
-	if (!is_string($ipaddr))
+	if (!is_string($ipaddr) || empty($ipaddr))
 		return false;
 
 	$ip_long = ip2long($ipaddr);
@@ -677,6 +681,22 @@ function is_valid_shaperbw($val) {
 	return (preg_match("/^(\d+(?:\.\d+)?)([MKG]?b|%)$/", $val));
 }
 
+/* returns true if $test is in the range between $start and $end */
+function is_inrange_v4($test, $start, $end) {
+	if ( (ip2ulong($test) <= ip2ulong($end)) && (ip2ulong($test) >= ip2ulong($start)) )
+		return true;
+	else
+		return false;
+}
+
+/* returns true if $test is in the range between $start and $end */
+function is_inrange_v6($test, $start, $end) {
+	if ( (inet_pton($test) <= inet_pton($end)) && (inet_pton($test) >= inet_pton($start)) )
+		return true;
+	else
+		return false;
+}
+
 /* return the configured carp interface list */
 function get_configured_carp_interface_list() {
 	global $config;
@@ -719,6 +739,20 @@ function get_configured_ip_aliases_list($returnfullentry = false) {
 	return $alias_list;
 }
 
+/* return all configured aliases list (IP, carp, proxyarp and other) */
+function get_configured_vips_list() {
+	global $config;
+
+	$alias_list=array();
+
+	if(is_array($config['virtualip']['vip'])) {
+		$viparr = &$config['virtualip']['vip'];
+		foreach ($viparr as $vip)
+			$alias_list[] = array("ipaddr" => $vip['subnet'], "if" => $vip['interface']);
+	}
+
+	return $alias_list;
+}
 
 /* comparison function for sorting by the order in which interfaces are normally created */
 function compare_interface_friendly_names($a, $b) {
@@ -800,19 +834,35 @@ function get_configured_interface_with_descr($only_opt = false, $withdisabled = 
  *
  */
 function get_configured_ip_addresses() {
-	require_once("interfaces.inc");
+	global $config;
+
+	if (!function_exists('get_interface_ip'))
+		require_once("interfaces.inc");
 	$ip_array = array();
 	$interfaces = get_configured_interface_list();
-	if(is_array($interfaces)) {
+	if (is_array($interfaces)) {
 		foreach($interfaces as $int) {
 			$ipaddr = get_interface_ip($int);
 			$ip_array[$int] = $ipaddr;
 		}
 	}
 	$interfaces = get_configured_carp_interface_list();
-	if(is_array($interfaces)) 
+	if (is_array($interfaces)) 
 		foreach($interfaces as $int => $ipaddr) 
 			$ip_array[$int] = $ipaddr;
+
+	/* pppoe server */
+	if (is_array($config['pppoes']) && is_array($config['pppoes']['pppoe'])) {
+		foreach($config['pppoes']['pppoe'] as $pppoe) {
+			if ($pppoe['mode'] == "server") {
+				if(is_ipaddr($pppoe['localip'])) {
+					$int = "pppoes". $pppoe['pppoeid'];
+					$ip_array[$int] = $pppoe['localip'];
+				}
+			}
+		}
+	}
+
 	return $ip_array;
 }
 
@@ -1041,10 +1091,11 @@ function mwexec_bg($command, $clearsigmask = false) {
 		$oldset = array();
 		pcntl_sigprocmask(SIG_SETMASK, array(), $oldset);
 	}
-	exec("nohup $command > /dev/null 2>&1 &");
+	$_gb = exec("/usr/bin/nohup $command > /dev/null 2>&1 &");
 	if ($clearsigmask) {
 		pcntl_sigprocmask(SIG_SETMASK, $oldset);
 	}
+	unset($_gb);
 }
 
 /* unlink a file, if it exists */
@@ -1121,7 +1172,7 @@ function alias_expand_urltable($name) {
 	return null;
 }
 
-function subnet_size ($subnet) {
+function subnet_size($subnet) {
 	if (is_subnetv4($subnet)) {
 		list ($ip, $bits) = explode("/", $subnet);
 		return round(exp(log(2) * (32 - $bits)));
@@ -1135,7 +1186,7 @@ function subnet_size ($subnet) {
 	}
 }
 
-function subnet_expand ($subnet) {
+function subnet_expand($subnet) {
 	if (is_subnetv4($subnet)) {
 		return subnetv4_expand($subnet);
 	} else if (is_subnetv6($subnet)) {
@@ -1145,7 +1196,7 @@ function subnet_expand ($subnet) {
 	}
 }
 
-function subnetv4_expand ($subnet) {
+function subnetv4_expand($subnet) {
 	$result = array();
 	list ($ip, $bits) = explode("/", $subnet);
 	$net  = ip2long($ip);
@@ -1177,6 +1228,16 @@ function check_subnets_overlap($subnet1, $bits1, $subnet2, $bits2) {
 	return ($sn1 == $sn2);
 }
 
+/* find out whether two IPv6 subnets overlap */
+function check_subnetsv6_overlap($subnet1, $bits1, $subnet2, $bits2) {
+	$sub1_min = gen_subnetv6($subnet1, $bits1);
+	$sub1_max = gen_subnetv6_max($subnet1, $bits1);
+	$sub2_min = gen_subnetv6($subnet2, $bits2);
+	$sub2_max = gen_subnetv6_max($subnet2, $bits2);
+	
+	return (is_inrange_v6($sub1_min, $sub2_min, $sub2_max) || is_inrange_v6($sub1_max, $sub2_min, $sub2_max) || is_inrange_v6($sub2_min, $sub1_min, $sub1_max));
+}
+
 /* compare two IP addresses */
 function ipcmp($a, $b) {
 	if (ip_less_than($a, $b))
@@ -1190,15 +1251,12 @@ function ipcmp($a, $b) {
 /* return true if $addr is in $subnet, false if not */
 function ip_in_subnet($addr,$subnet) {
 	if(is_ipaddrv6($addr)) {
-		$result = Net_IPv6::IsInNetmask($addr, $subnet);
-		if($result)
-			return true;
-		else
-			return false;
+		return (Net_IPv6::isInNetmask($addr, $subnet));
+	} else { /* XXX: Maybe check for IPv4 */
+		list($ip, $mask) = explode('/', $subnet);
+		$mask = (0xffffffff << (32 - $mask)) & 0xffffffff;
+		return ((ip2long($addr) & $mask) == (ip2long($ip) & $mask));
 	}
-	list($ip, $mask) = explode('/', $subnet);
-	$mask = (0xffffffff << (32 - $mask)) & 0xffffffff;
-	return ((ip2long($addr) & $mask) == (ip2long($ip) & $mask));
 }
 
 /* verify (and remove) the digital signature on a file - returns 0 if OK */
@@ -1300,23 +1358,24 @@ function update_filter_reload_status($text) {
 	file_put_contents("{$g['varrun_path']}/filter_reload_status", $text);
 }
 
-/****f* util/return_dir_as_array
+/****** util/return_dir_as_array
  * NAME
  *   return_dir_as_array - Return a directory's contents as an array.
  * INPUTS
- *   $dir       - string containing the path to the desired directory.
+ *   $dir          - string containing the path to the desired directory.
+ *   $filter_regex - string containing a regular expression to filter file names. Default empty.
  * RESULT
  *   $dir_array - array containing the directory's contents. This array will be empty if the path specified is invalid.
  ******/
-function return_dir_as_array($dir) {
+function return_dir_as_array($dir, $filter_regex = '') {
 	$dir_array = array();
 	if (is_dir($dir)) {
 		if ($dh = opendir($dir)) {
 			while (($file = readdir($dh)) !== false) {
-				$canadd = 0;
-				if($file == ".") $canadd = 1;
-				if($file == "..") $canadd = 1;
-				if($canadd == 0)
+				if (($file == ".") || ($file == ".."))
+					continue;
+
+				if (empty($filter_regex) || preg_match($filter_regex, $file))
 					array_push($dir_array, $file);
 			}
 			closedir($dh);
@@ -1438,19 +1497,11 @@ function set_sysctl($values) {
  *     [0]real and [1]available
  */
 function get_memory() {
-	$matches = "";
-	if(file_exists("/var/log/dmesg.boot"))
-		$mem = `cat /var/log/dmesg.boot | grep memory`;
-	else
-		$mem = `dmesg -a | grep memory`;			
-	if (preg_match_all("/avail memory.* \((.*)MB\)/", $mem, $matches)) 
-		return array($matches[1][0], $matches[1][0]);
-	if(!$real && !$avail) {
-		$real = trim(`sysctl hw.physmem | cut -d' ' -f2`);
-		$avail = trim(`sysctl hw.realmem | cut -d' ' -f2`);
-		/* convert from bytes to megabytes */
-		return array(($real/1048576),($avail/1048576));
-	}
+
+	$real = trim(`sysctl -n hw.physmem`, " \n");
+	$avail = trim(`sysctl -n hw.realmem`, " \n");
+	/* convert from bytes to megabytes */
+	return array(($real/1048576),($avail/1048576));
 }
 
 function mute_kernel_msgs() {
@@ -1774,26 +1825,29 @@ function explode_assoc($delimiter, $string) {
 
 function get_staticroutes($returnsubnetsonly = false) {
 	global $config;
-	require_once('filter.inc');
-	$allstaticroutes = array();
-	$allsubnets = array();
 
 	/* Bail if there are no routes, but return an array always so callers don't have to check. */
 	if (!is_array($config['staticroutes']['route']))
 		return array();
 
+	$allstaticroutes = array();
+	$allsubnets = array();
 	/* Loop through routes and expand aliases as we find them. */
 	foreach ($config['staticroutes']['route'] as $route) {
 		if (is_alias($route['network'])) {
+			if (!function_exists('filter_expand_alias_array'))
+				require_once('filter.inc');
 			$subnets = filter_expand_alias_array($route['network']);
 			foreach ($subnets as $net) {
-				if (is_ipaddrv4($net))
-					$net .= "/32";
-				if (is_ipaddrv6($net) && !is_subnetv6($net))
-					$net .= "/128";
-				/* This must be a hostname, we can't use it. */
-				if (!is_subnet($net))
-					continue;
+				if (!is_subnet($net)) {
+					if (is_ipaddrv4($net))
+						$net .= "/32";
+					else if (is_ipaddrv6($net))
+						$net .= "/128";
+					/* This must be a hostname, we can't use it. */
+					else
+						continue;
+				}
 				$temproute = $route;
 				$temproute['network'] = $net;
 				$allstaticroutes[] = $temproute;
@@ -1804,11 +1858,10 @@ function get_staticroutes($returnsubnetsonly = false) {
 			$allsubnets[] = $route['network'];
 		}
 	}
-	if ($returnsubnetsonly) {
+	if ($returnsubnetsonly)
 		return $allsubnets;
-	} else {
+	else
 		return $allstaticroutes;
-	}
 }
 
 /****f* util/get_alias_list
@@ -1881,7 +1934,7 @@ function get_current_theme() {
 	 *  If this device is an apple ipod/iphone
 	 *  switch the theme to one that works with it.
 	 */
-	$lowres_ua = array("iPhone", "iPod", "iPad", "Android", "BlackBerry", "Opera Mini", "Opera Mobi", "PlayBook");
+	$lowres_ua = array("iPhone", "iPod", "iPad", "Android", "BlackBerry", "Opera Mini", "Opera Mobi", "PlayBook", "IEMobile");
 	foreach($lowres_ua as $useragent)
 		if(strstr($_SERVER['HTTP_USER_AGENT'], $useragent))
 			$theme = (empty($g['theme_lowres']) && (is_dir($g["www_path"].'/themes/'.$g['theme_lowres']))) ? "pfsense" : $g['theme_lowres'];

@@ -126,7 +126,7 @@ echo ".";
 
 /* get system memory amount */
 $memory = get_memory();
-$avail = $memory[0];
+$avail = $memory[1];
 echo " done.\n";
 
 conf_mount_rw();
@@ -241,6 +241,9 @@ system_hosts_generate();
 /* configure loopback interface */
 interfaces_loopback_configure();
 
+/* start syslogd */
+system_syslogd_start();
+
 echo "Starting Secure Shell Services...";
 mwexec_bg("/etc/sshd");
 echo "done.\n";
@@ -272,9 +275,6 @@ echo "done.\n";
 
 /* generate resolv.conf */
 system_resolvconf_generate();
-
-/* start syslogd */
-system_syslogd_start();
 
 /* setup altq + pf */
 filter_configure_sync();
@@ -313,6 +313,9 @@ system_routing_configure();
 /* enable routing */
 system_routing_enable();
 
+/* start dnsmasq service */
+services_dnsmasq_configure();
+
 /* Do an initial time sync */
 echo "Starting NTP time client...";
 /* At bootup this will just write the config, ntpd will launch from ntpdate_sync_once.sh */
@@ -328,9 +331,6 @@ system_console_configure();
 
 /* start DHCP service */
 services_dhcpd_configure();
-
-/* start dnsmasq service */
-services_dnsmasq_configure();
 
 /* start dhcpleases dhpcp hosts leases program */
 system_dhcpleases_configure();
@@ -372,10 +372,6 @@ auto_login();
 
 /* load graphing functions */
 enable_rrd_graphing();
-
-/* startup routed if needed */
-include_once("/usr/local/pkg/routed.inc");
-setup_routed();
 
 /* enable watchdog if supported */
 enable_watchdog();
@@ -426,12 +422,9 @@ if(file_exists('/conf/needs_package_sync')) {
 	@unlink('/conf/needs_package_sync');
 }
 
-/* If syslogd is forwarding to an IPv6 server, give it a kick since otherwise syslogd 
-	won't forward to a v6 server. See #2370 (https://redmine.pfsense.org/issues/2370). */
-
-if (is_ipaddrv6($config['syslog']['remoteserver']) || is_ipaddrv6($config['syslog']['remoteserver2']) || is_ipaddrv6($config['syslog']['remoteserver3'])) {
-	system_syslogd_start();
-}
+/* Give syslogd a kick after everything else has been initialized, otherwise it can occasionally
+   fail to route syslog messages properly on both IPv4 and IPv6 */
+system_syslogd_start();
 
 /* done */
 unset($g['booting']);

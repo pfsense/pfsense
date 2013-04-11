@@ -93,13 +93,13 @@ function filter_pflog_start($kill_first = false) {
 	}
 	mute_kernel_msgs();
 	$output = 0;
-	exec("/bin/pgrep -af 'tcpdump -s 256 -v -l -n -e -ttt -i pflog0'", $output, $retval);
+	exec("/bin/pgrep -af 'tcpdump -s 256 -v -S -l -n -e -ttt -i pflog0'", $output, $retval);
 	if ($kill_first && ($output[0] > 1)) {
 		mwexec("/bin/kill {$output[0]}");
 		usleep(1000);
 	}
 	if($retval != 0)
-		mwexec_bg("/usr/sbin/tcpdump -s 256 -v -l -n -e -ttt -i pflog0 | logger -t pf -p local0.info");
+		mwexec_bg("/usr/sbin/tcpdump -s 256 -v -S -l -n -e -ttt -i pflog0 | logger -t pf -p local0.info");
 	unmute_kernel_msgs();
 }
 
@@ -128,7 +128,7 @@ function filter_delete_states_for_down_gateways() {
 
 	$a_gateways = return_gateways_status();
 	if (is_array($GatewaysList)) {
-                foreach ($GatewaysList as $gwname => $gateway) {
+		foreach ($GatewaysList as $gwname => $gateway) {
 			if (empty($gateway['monitor']))
 				continue;
 			if (!is_ipaddr($gateway['monitor']))
@@ -139,15 +139,15 @@ function filter_delete_states_for_down_gateways() {
 				continue;
 			$gwstatus =& $a_gateways[$gateway['monitor']];
 			if (strstr($gwstatus['status'], "down")) {
-                        	$gwip = $gateway['gateway'];
-                        	if (!is_ipaddr($gwip))
-                                	$gwip = get_interface_gateway($gateway['friendlyiface']);
-                        	if (is_ipaddr($gwstatus['srcip'])) {
-					$cmd = "/sbin/pfctl -b {$gwstatus['srcip']}/32 ";
-					if (is_ipaddr($gwip))
-						$cmd .= "-b {$gwip}/32";
-					else
-						$cmd .= "-b 0.0.0.0/32";
+				if (!empty($gateway['interface']))
+					$gwiface = $gateway['interface'];
+				else
+					$gwiface = get_real_interface($gateway['friendlyiface']);
+				$cmd = "/sbin/pfctl -i {$gwiface} -Fs";
+				mwexec($cmd);
+				$gwip = $gateway['gateway'];
+				if (is_ipaddr($gwip)) {
+					$cmd = "/sbin/pfctl -i {$gwiface} -Fs -G {$gwip}";
 					mwexec($cmd);
 				}
 			}
@@ -223,7 +223,7 @@ function filter_configure_sync($delete_states_if_needed = true) {
 
 	// Copy rules.debug to rules.debug.old
 	if(file_exists("{$g['tmp_path']}/rules.debug"))
-		copy("{$g['tmp_path']}/rules.debug", "{$g['tmp_path']}/rules.debug.old");
+		@copy("{$g['tmp_path']}/rules.debug", "{$g['tmp_path']}/rules.debug.old");
 
 	$limitrules = "";
 	/* Define the maximum number of tables the system can handle (should be at least aliases*2+some spare) */
@@ -240,6 +240,11 @@ function filter_configure_sync($delete_states_if_needed = true) {
 		}
 	} else
 		$limitrules .= "set optimization normal\n";
+
+	if (!empty($config['system']['adaptivestart']) && !empty($config['system']['adaptiveend']))
+		$limitrules .= "set timeout { adaptive.start {$config['system']['adaptivestart']}, adaptive.end {$config['system']['adaptiveend']} }\n";
+	else
+		$limitrules .= "set timeout { adaptive.start 0, adaptive.end 0 }\n";
 
 	if ($config['system']['maximumstates'] <> "" && is_numeric($config['system']['maximumstates'])) {
 		/* User defined maximum states in Advanced menu. */
@@ -276,77 +281,73 @@ function filter_configure_sync($delete_states_if_needed = true) {
 	$rules .= discover_pkg_rules("filter");
 
 	@file_put_contents("{$g['tmp_path']}/rules.limits", $limitrules);
-	mwexec("/sbin/pfctl -O -f {$g['tmp_path']}/rules.limits");
-	
-	if(!file_put_contents("{$g['tmp_path']}/rules.debug", $rules, LOCK_EX)) {
+	mwexec("/sbin/pfctl -o basic -f {$g['tmp_path']}/rules.limits");
+
+	if (!@file_put_contents("{$g['tmp_path']}/rules.debug", $rules, LOCK_EX)) {
 		log_error("WARNING: Could not write new rules!");
 		unlock($filterlck);
 		return;
 	}
 
-	/*
-	 * XXX: This are not being used for now so just comment them out.
-	$rules = "1"; // force to be diff from oldrules
-	$oldrules = "2"; // force to be diff from rules
+	unset($rules, $limitrules);
 
-	if(file_exists("{$g['tmp_path']}/rules.debug"))
-		$rules = file_get_contents("{$g['tmp_path']}/rules.debug");
-	if(file_exists("{$g['tmp_path']}/rules.debug.old"))
-		$oldrules = file_get_contents("{$g['tmp_path']}/rules.debug.old");
-	 *
-	 */
 	if(isset($config['system']['developerspew'])) {
 		$mt = microtime();
 		echo "pfctl being called at $mt\n";
 	}
-	$rules_loading = mwexec("/sbin/pfctl -o basic -f {$g['tmp_path']}/rules.debug");
+	unset($rules_loading, $rules_error);
+	$_grbg = exec("/sbin/pfctl -o basic -f {$g['tmp_path']}/rules.debug 2>&1", $rules_error, $rules_loading);
 	if(isset($config['system']['developerspew'])) {
 		$mt = microtime();
 		echo "pfctl done at $mt\n";
 	}
-	/* check for a error while loading the rules file.	if an error has occured
+	/*
+	 * check for a error while loading the rules file.	if an error has occured
 	 * then output the contents of the error to the caller
 	 */
 	if($rules_loading <> 0) {
-		$rules_error = exec_command("/sbin/pfctl -f {$g['tmp_path']}/rules.debug");
-		$line_error = explode(":", $rules_error);
+		$line_error = explode(":", $rules_error[0]);
 		$line_number = $line_error[1];
 		$line_split = file("{$g['tmp_path']}/rules.debug");
 		if(is_array($line_split))
 			$line_error = sprintf(gettext('The line in question reads [%1$d]: %2$s'), $line_number, $line_split[$line_number-1]);
-		if($line_error and $line_number) {
-			file_notice("filter_load", sprintf(gettext('There were error(s) loading the rules: %1$s - %2$s'), $rules_error, $line_error), "Filter Reload", "");
-			log_error("There were error(s) loading the rules: {$rules_error} - {$line_error}");
-			update_filter_reload_status(sprintf(gettext('There were error(s) loading the rules: %1$s - %2$s'), $rules_error, $line_error));
+		unset($line_split);
+		if ($line_error and $line_number) {
+			file_notice("filter_load", sprintf(gettext('There were error(s) loading the rules: %1$s - %2$s'), $rules_error[0], $line_error), "Filter Reload", "");
+			update_filter_reload_status(sprintf(gettext('There were error(s) loading the rules: %1$s - %2$s'), $rules_error[0], $line_error));
 			unlock($filterlck);
 			return;
 		}
 		/* Brutal ugly hack but required -- PF is stuck, unwedge */
-		if(strstr("$rules_error", "busy")) {
-			exec("/sbin/pfctl -d");
-			exec("/sbin/pfctl -e");
-			exec("/sbin/pfctl -f {$g['tmp_path']}/rules.debug");
+		if (strstr("$rules_error[0]", "busy")) {
+			exec("/sbin/pfctl -d; /sbin/pfctl -e; /sbin/pfctl -f {$g['tmp_path']}/rules.debug");
 			$error_msg = gettext("PF was wedged/busy and has been reset.");
 			file_notice("pf_busy", $error_msg, "pf_busy", "");
-			log_error($error_msg);
 		}
 	}
+
+	# If allow IPv6 has been unchecked then we can remove any bogonsv6 table (if the table is not there, the kill is still fine).
+	if (!isset($config['system']['ipv6allow']))
+		$_grbg = exec("/sbin/pfctl -t bogonsv6 -T kill");
 
 	update_filter_reload_status(gettext("Starting up layer7 daemon"));
 	layer7_start_l7daemon();
 
 	if(!empty($filterdns)) {
-		$filterdnsfd = fopen("{$g['varetc_path']}/filterdns.conf", "w");
-		if($filterdnsfd) {
-			fwrite($filterdnsfd, $filterdns);
-			fclose($filterdnsfd);
+		@file_put_contents("{$g['varetc_path']}/filterdns.conf", $filterdns);
+		unset($filterdns);
+		if (isvalidpid("{$g['varrun_path']}/filterdns.pid"))
+			sigkillbypid("{$g['varrun_path']}/filterdns.pid", "HUP");
+		else {
+			/*
+			 * FilterDNS has three debugging levels. The default choosen is 1.
+			 * Availabe are level 2 and greater then 2.
+			 */
+			mwexec("/usr/local/sbin/filterdns -p {$g['varrun_path']}/filterdns.pid -i 300 -c {$g['varetc_path']}/filterdns.conf -d 1");
 		}
-		killbypid("{$g['tmp_path']}/filterdns.pid");
-		/*
-		 * FilterDNS has three debugging levels. The default choosen is 1.
-		 * Availabe are level 2 and greater then 2.
-		 */
-		mwexec("/usr/local/sbin/filterdns -p {$g['tmp_path']}/filterdns.pid -i 300 -c {$g['varetc_path']}/filterdns.conf -d 1");
+	} else {
+		killbypid("{$g['varrun_path']}/filterdns.pid");
+		@unlink("{$g['varrun_path']}/filterdns.pid");
 	}
 
 	/* run items scheduled for after filter configure run */
@@ -472,7 +473,7 @@ function filter_generate_nested_alias($name, $alias, &$aliasnesting, &$aliasaddr
 			else if(!isset($aliasnesting[$address]))
 				$tmpline = filter_generate_nested_alias($name, $aliastable[$address], $aliasnesting, $aliasaddrnesting);
 		} else if(!isset($aliasaddrnesting[$address])) {
-			if (!is_ipaddr($address) && !is_subnet($address) && !is_port($address)) {
+			if (!is_ipaddr($address) && !is_subnet($address) && !is_port($address) && is_hostname($address)) {
 				$filterdns .= "pf {$address} {$name}\n";
 				/* Guarantee unique dns names on filterdns config */
 				$aliasaddrnesting[$address] = $address;
@@ -529,13 +530,21 @@ function filter_generate_aliases() {
 				$aliases .= " }\"\n";
 			}
 		} elseif (!empty($ifcfg['descr']) && !empty($ifcfg['if'])) {
-			/* XXX possibly add 6to4 in the future as well, stf0 */
 			if ($ifcfg['type6'] == '6rd')
-				$aliases .= "{$ifcfg['descr']} = \"{ {$ifcfg['if']} stf0 ";
+				$aliases .= "{$ifcfg['descr']} = \"{ {$ifcfg['if']} {$if}_stf";
 			else if ($ifcfg['type6'] == '6to4')
-				$aliases .= "{$ifcfg['descr']} = \"{ {$ifcfg['if']} stf0 ";
-			else 
+				$aliases .= "{$ifcfg['descr']} = \"{ {$ifcfg['if']} {$if}_stf";
+			else {
 				$aliases .= "{$ifcfg['descr']} = \"{ {$ifcfg['if']}";
+
+				if ($ifcfg['type'] == 'pptp') {
+					foreach (get_parent_interface($ifcfg['if']) as $parent_if) {
+						if ($parent_if != $ifcfg['if']) {
+							$aliases .= " {$parent_if}";
+						}
+					}
+				}
+			}
 			$aliases .= " }\"\n";
 		}
 	}
@@ -546,15 +555,31 @@ function filter_generate_aliases() {
 
 	$aliases .= "#Snort tables\n";
 	$aliases .= "table <snort2c>\n";
+	$aliases .= "table <virusprot>\n";
+	if (!file_exists("/etc/bogons"))
+		@file_put_contents("/etc/bogons", "");
+	if (!file_exists("/etc/bogonsv6"))
+		@file_put_contents("/etc/bogonsv6", "");
+	$aliases .= "table <bogons> persist file \"/etc/bogons\"\n";
+	if (isset($config['system']['ipv6allow']))
+		$aliases .= "table <bogonsv6> persist file \"/etc/bogonsv6\"\n";
 
-	$aliases .= "\ntable <virusprot>\n";
+	$vpns_list = filter_get_vpns_list();
+	if($vpns_list)
+		$aliases .= "table <vpn_networks> { $vpns_list }\n";
+
+	/* add a Negate_networks table */
+	$aliases .= "table <negate_networks> ";
+	if($vpns_list)
+		$aliases .= "{ $vpns_list }";
+	$aliases .= "\n";
 
 	$aliases .= "\n# User Aliases \n";
 	/* Setup pf groups */
 	if(isset($config['aliases']['alias'])) {
 		foreach ($config['aliases']['alias'] as $aliased) {
 			$extralias = "";
-			/* 
+			/*
 			 * XXX: i am not sure what this does so i am commenting it out for now, because as it is
 			 * its quite dangerous!
 			 * $ip = find_interface_ip($aliased['address']);
@@ -627,8 +652,8 @@ function filter_generate_gateways() {
 	update_filter_reload_status(gettext("Creating gateway group item..."));
 
 	/* Lookup Gateways to be used in filter rules once */
-        $GatewaysList = return_gateways_array();
-        $GatewayGroupsList = return_gateway_groups_array();
+	$GatewaysList = return_gateways_array();
+	$GatewayGroupsList = return_gateway_groups_array();
 
 	if (is_array($GatewaysList)) {
 		foreach ($GatewaysList as $gwname => $gateway) {
@@ -639,7 +664,10 @@ function filter_generate_gateways() {
 				$gwip = get_interface_gateway($gateway['friendlyiface']);
 			if (is_ipaddr($gwip) && !empty($int))
 				$route = "route-to ( {$int} {$gwip} )";
-			$rules .= "GW{$gwname} = \" {$route} \"\n";
+			if (($route === "") && isset($config['system']['skip_rules_gw_down']))
+				unset($GatewaysList[$gwname]);
+			else
+				$rules .= "GW{$gwname} = \" {$route} \"\n";
 		}
 	}
 
@@ -675,7 +703,10 @@ function filter_generate_gateways() {
 					}
 				}
 			}
-			$rules .= "GW{$gateway} = \" {$route} \"\n";
+			if (($route === "") && isset($config['system']['skip_rules_gw_down']))
+				unset($GatewayGroupsList[$gateway]);
+			else
+				$rules .= "GW{$gateway} = \" {$route} \"\n";
 		}
 	}
 
@@ -693,6 +724,25 @@ function filter_get_vpns_list() {
 
 	$vpns = "";
 	$vpns_arr = array();
+
+	/* ipsec */
+	if (isset($config['ipsec']['enable'])) {
+		if (is_array($config['ipsec']['phase2'])) {
+			foreach ($config['ipsec']['phase2'] as $ph2ent) {
+				if ((!$ph2ent['mobile']) && ($ph2ent['mode'] != 'transport')) {
+					if (!function_exists('ipsec_idinfo_to_cidr'))
+						require_once("ipsec.inc");
+					if (!is_array($ph2ent['remoteid']))
+						continue;
+					$ph2ent['remoteid']['mode'] = $ph2ent['mode'];
+					$vpns_subnet = ipsec_idinfo_to_cidr($ph2ent['remoteid']);
+					if ($vpns_subnet == "0.0.0.0/0")
+						continue;
+					$vpns_arr[] = $vpns_subnet;
+				}
+			}
+		}
+	}
 
 	/* openvpn */
 	foreach (array('client', 'server') as $type) {
@@ -719,9 +769,10 @@ function filter_get_vpns_list() {
 			}
 		}
 	}
-	if(!empty($vpns_arr)) {
+
+	if (!empty($vpns_arr))
 		$vpns = implode(" ", $vpns_arr);
-	}
+
 	return $vpns;
 }
 
@@ -804,12 +855,15 @@ function filter_generate_optcfg_array() {
 		$oic['if'] = get_real_interface($if);
 		if (!does_interface_exist($oic['if']))
 			continue;
+		$oic['ifv6'] = get_real_interface($if, "inet6");
 		$oic['ip'] = get_interface_ip($if);
 		$oic['ipv6'] = get_interface_ipv6($if);
 		if(!is_ipaddrv4($oc['ipaddr']) && !empty($oc['ipaddr']))
 			$oic['type'] = $oc['ipaddr'];
 		if(!is_ipaddrv6($oc['ipaddrv6']) && !empty($oc['ipaddrv6']))
 			$oic['type6'] = $oc['ipaddrv6'];
+		if (!empty($oc['track6-interface']))
+			$oc['track6-interface'] = $oc['track6-interface'];
 		$oic['sn'] = get_interface_subnet($if);
 		$oic['snv6'] = get_interface_subnetv6($if);
 		$oic['mtu'] = empty($oc['mtu']) ? 1500 : $oc['mtu'];
@@ -824,6 +878,29 @@ function filter_generate_optcfg_array() {
 		$oic['gatewayv6'] = $oc['gatewayv6'];
 		$oic['spoofcheck'] = "yes";
 		$oic['bridge'] = link_interface_to_bridge($if);
+		$vips = link_interface_to_vips($if);
+		if (!empty($vips)) {
+			foreach ($vips as $vipidx => $vip) {
+				if (is_ipaddrv4($vip['subnet'])) {
+					if (!is_array($oic['vips']))
+						$oic['vips'] = array();
+					$oic['vips'][$vipidx]['ip'] = $vip['subnet'];
+					if (empty($vip['subnet_bits']))
+						$oic['vips'][$vipidx]['sn'] = 32;
+					else
+						$oic['vips'][$vipidx]['sn'] = $vip['subnet_bits'];
+				} else if (is_ipaddrv6($vip['subnet'])) {
+					if (!is_array($oic['vips6']))
+						$oic['vips6'] = array();
+					$oic['vips6'][$vipidx]['ip'] = $vip['subnet'];
+					if (empty($vip['subnet_bits']))
+						$oic['vips6'][$vipidx]['sn'] = 128;
+					else
+						$oic['vips6'][$vipidx]['sn'] = $vip['subnet_bits'];
+				}
+			}
+		}
+		unset($vips);
 		$FilterIflist[$if] = $oic;
 	}
 
@@ -1312,9 +1389,9 @@ function filter_nat_rules_generate() {
 			$sn = "";
 			$sn1 = "";
 			$target = alias_expand($rule['external']);
-                        if (!$target) {
-                                $natrules .= "# Unresolvable alias {$rule['target']}\n";
-                                continue;               /* unresolvable alias */
+			if (!$target) {
+				$natrules .= "# Unresolvable alias {$rule['target']}\n";
+				continue;               /* unresolvable alias */
 			}
 
 			if (!$rule['interface'])
@@ -1322,12 +1399,12 @@ function filter_nat_rules_generate() {
 			else
 				$natif = $rule['interface'];
 			if (!isset($FilterIflist[$natif]))
-                                continue;
+				continue;
 
 			$srcaddr = filter_generate_address($rule, 'source');
-                        $dstaddr = filter_generate_address($rule, 'destination');
+			$dstaddr = filter_generate_address($rule, 'destination');
 			if(!$dstaddr)
-                                $dstaddr = $FilterIflist[$natif]['ip'];
+				$dstaddr = $FilterIflist[$natif]['ip'];
 
 			$srcaddr = trim($srcaddr);
 			$dstaddr = trim($dstaddr);
@@ -1374,10 +1451,10 @@ function filter_nat_rules_generate() {
 			else
 				$natif = $rule['interface'];
 			if (!isset($FilterIflist[$natif]))
-                                continue;
+				continue;
 
 			$srcaddr = filter_generate_address($rule, 'source');
-                        $dstaddr = filter_generate_address($rule, 'destination');
+			$dstaddr = filter_generate_address($rule, 'destination');
 
 			$srcaddr = trim($srcaddr);
 			$dstaddr = trim($dstaddr);
@@ -1397,16 +1474,25 @@ function filter_nat_rules_generate() {
 				if ($ph2ent['mode'] != 'transport' && !empty($ph2ent['natlocalid'])) {
 					if (!function_exists('ipsec_idinfo_to_cidr'))
 						require_once("ipsec.inc");
+					if (!is_array($ph2ent['localid']))
+						$ph2ent['localid'] = array();
+					$ph2ent['localid']['mode'] = $ph2ent['mode'];
 					$local_subnet = ipsec_idinfo_to_cidr($ph2ent['localid']);
 					if (empty($local_subnet) || $local_subnet == "0.0.0.0/0")
 						continue;
 					if (!is_subnet($local_subnet) && !is_ipaddr($local_subnet))
 						continue;
+					if (!is_array($ph2ent['natlocalid']))
+						$ph2ent['natlocalid'] = array();
+					$ph2ent['natlocalid']['mode'] = $ph2ent['mode'];
 					$natlocal_subnet = ipsec_idinfo_to_cidr($ph2ent['natlocalid']);
 					if (empty($natlocal_subnet) || $natlocal_subnet == "0.0.0.0/0")
 						continue;
 					if (!is_subnet($natlocal_subnet) && !is_ipaddr($natlocal_subnet))
 						continue;
+					if (!is_array($ph2ent['remoteid']))
+						$ph2ent['remoteid'] = array();
+					$ph2ent['remoteid']['mode'] = $ph2ent['mode'];
 					$remote_subnet = ipsec_idinfo_to_cidr($ph2ent['remoteid']);
 					if (empty($remote_subnet))
 						continue;
@@ -1416,7 +1502,7 @@ function filter_nat_rules_generate() {
 						$remote_subnet = "any";
 					if (is_ipaddr($natlocal_subnet) && !is_ipaddr($local_subnet) )
 						$nattype = "nat";
-					else					
+					else
 						$nattype = "binat";
 					$natrules .= "{$nattype} on enc0 from {$local_subnet} to {$remote_subnet} -> {$natlocal_subnet}\n";
 				}
@@ -1439,18 +1525,14 @@ function filter_nat_rules_generate() {
 					$dst = $obent['destination']['address'];
 				if(isset($obent['destination']['not']) && !isset($obent['destination']['any']))
 					$dst = "!" . $dst;
-				if(!$obent['interface'])
-					$natif = "wan";
-				else
-					$natif = $obent['interface'];
+
+				if(!$obent['interface'] || !isset($FilterIflist[$obent['interface']]))
+					continue;
 
 				$obtarget = ($obent['target'] == "other-subnet") ? $obent['targetip'] . '/' . $obent['targetip_subnet']: $obent['target'];
 				$poolopts = (is_subnet($obtarget) || is_alias($obtarget)) ? $obent['poolopts'] : "";
 
-				if (!isset($FilterIflist[$natif]))
-					continue;
-
-				$natrules .= filter_nat_rules_generate_if($natif,
+				$natrules .= filter_nat_rules_generate_if($obent['interface'],
 					$src,
 					$obent['sourceport'],
 					$dst,
@@ -1547,7 +1629,7 @@ function filter_nat_rules_generate() {
 			$tonathosts .= "{$config['ipsec']['client']['pool_address']}/{$config['ipsec']['client']['pool_netbits']} ";
 		}
 		$natrules .= "\n# Subnets to NAT \n";
-		$tonathosts .= "127.0.0.0/8 ";
+		$tonathosts .= "127.0.0.0/8 0.0.0.0 ";
 		if($numberofnathosts > 4) {
 			$natrules .= "table <tonatsubnets> { {$tonathosts} }\n";
 			$macroortable = "<tonatsubnets>";
@@ -1588,17 +1670,6 @@ function filter_nat_rules_generate() {
 				$natrules .= "rdr pass on {$FilterIflist[$tftpif]['if']} proto udp from any to any port tftp -> 127.0.0.1 port 6969\n";
 		}
 	}
-
-	$interface_counter = 0;
-	$vpns_list = filter_get_vpns_list();
-	if($vpns_list)
-		$natrules .= "table <vpn_networks> { $vpns_list }\n";
-	
-	/* add a Negate_networks table */
-	$natrules .= "table <negate_networks> {";
-	if($vpns_list)
-		$natrules .= " $vpns_list ";
-	$natrules .= "}\n";
 
 	/* DIAG: add ipv6 NAT, if requested */
 	if(isset($config['diag']['ipv6nat']['enable']) &&
@@ -1852,14 +1923,14 @@ function filter_generate_address(& $rule, $target = "source", $isnat = false) {
 			if($rule['ipprotocol'] == "inet6") {
 				if(preg_match("/opt([0-9]*)$/", $rule[$target]['network'], $optmatch)) {
 					$opt_ip = $FilterIflist["opt{$optmatch[1]}"]['ipv6'];
-					if(!is_ipaddr($opt_ip))
+					if(!is_ipaddrv6($opt_ip))
 						return "";
 					$src = $opt_ip . "/" .
 					$FilterIflist["opt{$optmatch[1]}"]['snv6'];
 				/* check for opt$NUMip here */
 				} else if(preg_match("/opt([0-9]*)ip/", $rule[$target]['network'], $matches)) {
 					$src = $FilterIflist["opt{$matches[1]}"]['ipv6'];
-					if(!is_ipaddr($src))
+					if(!is_ipaddrv6($src))
 						return "";
 				}
 				if(isset($rule[$target]['not']))
@@ -1867,14 +1938,14 @@ function filter_generate_address(& $rule, $target = "source", $isnat = false) {
 			} else {
 				if(preg_match("/opt([0-9]*)$/", $rule[$target]['network'], $optmatch)) {
 					$opt_ip = $FilterIflist["opt{$optmatch[1]}"]['ip'];
-					if(!is_ipaddr($opt_ip))
+					if(!is_ipaddrv4($opt_ip))
 						return "";
 					$src = $opt_ip . "/" .
 					$FilterIflist["opt{$optmatch[1]}"]['sn'];
 				/* check for opt$NUMip here */
 				} else if(preg_match("/opt([0-9]*)ip/", $rule[$target]['network'], $matches)) {
 					$src = $FilterIflist["opt{$matches[1]}"]['ip'];
-					if(!is_ipaddr($src))
+					if(!is_ipaddrv4($src))
 						return "";
 				}
 				if(isset($rule[$target]['not']))
@@ -1885,17 +1956,25 @@ function filter_generate_address(& $rule, $target = "source", $isnat = false) {
 				switch ($rule[$target]['network']) {
 					case 'wan':
 						$wansa = $FilterIflist['wan']['sav6'];
+						if (!is_ipaddrv6($wansa))
+							return "";
 						$wansn = $FilterIflist['wan']['snv6'];
 						$src = "{$wansa}/{$wansn}";
 						break;
 					case 'wanip':
 						$src = $FilterIflist["wan"]['ipv6'];
+						if (!is_ipaddrv6($src))
+							return "";
 						break;
 					case 'lanip':
 						$src = $FilterIflist["lan"]['ipv6'];
+						if (!is_ipaddrv6($src))
+							return "";
 						break;
 					case 'lan':
 						$lansa = $FilterIflist['lan']['sav6'];
+						if (!is_ipaddrv6($lansa))
+							return "";
 						$lansn = $FilterIflist['lan']['snv6'];
 						$src = "{$lansa}/{$lansn}";
 						break;
@@ -1911,10 +1990,14 @@ function filter_generate_address(& $rule, $target = "source", $isnat = false) {
 							$src = "{$pppoesav6}/{$pppoesnv6}";
 						}
 					}
+				if(isset($rule[$target]['not']))
+					$src = " !{$src}";
 			} else {
 				switch ($rule[$target]['network']) {
 					case 'wan':
 						$wansa = $FilterIflist['wan']['sa'];
+						if (!is_ipaddrv4($wansa))
+							return "";
 						$wansn = $FilterIflist['wan']['sn'];
 						$src = "{$wansa}/{$wansn}";
 						break;
@@ -1926,6 +2009,8 @@ function filter_generate_address(& $rule, $target = "source", $isnat = false) {
 						break;
 					case 'lan':
 						$lansa = $FilterIflist['lan']['sa'];
+						if (!is_ipaddrv4($lansa))
+							return "";
 						$lansn = $FilterIflist['lan']['sn'];
 						$src = "{$lansa}/{$lansn}";
 						break;
@@ -1947,6 +2032,8 @@ function filter_generate_address(& $rule, $target = "source", $isnat = false) {
 						}
 						break;
 				}
+				if(isset($rule[$target]['not']))
+					$src = " !{$src}";
 			}
 		}
 	} else if($rule[$target]['address']) {
@@ -2021,8 +2108,9 @@ function filter_generate_user_rule($rule) {
 		} else
 			$aline['interface'] = "";
 	} else if(!array_key_exists($rule['interface'], $FilterIflist)) {
-			foreach($FilterIflist as $oc) $item .= $oc['descr'];
-				return "# {$item} {$rule['interface']} array key does not exist for " . $rule['descr'];
+			foreach($FilterIflist as $oc)
+				$items .= $oc['descr'] . " ";
+			return "# array key \"{$rule['interface']}\" does not exist for \"" . $rule['descr'] . "\" in array: {{$items}}";
 	} else if((array_key_exists($rule['interface'], $FilterIflist))
 		&& (is_array($FilterIflist[$rule['interface']]))
 		&& (is_array($FilterIflist[$rule['interface']][0]))) {
@@ -2037,18 +2125,16 @@ function filter_generate_user_rule($rule) {
 				return "# source network or destination network == pptp on " . $rule['descr'];
 	}
 
-	if(isset($rule['ipprotocol'])) {
-		switch($rule['ipprotocol']) {
-			case "inet":
-				$aline['ipprotocol'] = "inet";
-				break;
-			case "inet6":
-				$aline['ipprotocol'] = "inet6";
-				break;
-			case "inet46":
-				$aline['ipprotocol'] = "";
-				break;
-		}
+	switch($rule['ipprotocol']) {
+	case "inet":
+		$aline['ipprotocol'] = "inet";
+		break;
+	case "inet6":
+		$aline['ipprotocol'] = "inet6";
+		break;
+	default:
+		$aline['ipprotocol'] = "";
+		break;
 	}
 
 	/* check for unresolvable aliases */
@@ -2087,24 +2173,18 @@ function filter_generate_user_rule($rule) {
 
 	/* do not process reply-to for gateway'd rules */
 	if($rule['gateway'] == "" && $aline['direction'] <> "" && interface_has_gateway($rule['interface']) && !isset($config['system']['disablereplyto']) && !isset($rule['disablereplyto']) && $type != "match") {
-		if($rule['ipprotocol'] == "inet6") {
+		if ($rule['ipprotocol'] == "inet6") {
 			$rg = get_interface_gateway_v6($rule['interface']);
-			if(is_ipaddrv6($rg)) {
-				$aline['reply'] = "reply-to ( {$ifcfg['if']} {$rg} ) ";
-			} else {
-				if($rule['interface'] <> "pptp") {
-					log_error("Could not find IPv6 gateway for interface({$rule['interface']}).");
-				}
-			}
+			if (is_ipaddrv6($rg))
+				$aline['reply'] = "reply-to ( {$ifcfg['ifv6']} {$rg} ) ";
+			else if ($rule['interface'] <> "pptp")
+				log_error("Could not find IPv6 gateway for interface({$rule['interface']}).");
 		} else {
 			$rg = get_interface_gateway($rule['interface']);
-			if(is_ipaddrv4($rg)) {
+			if (is_ipaddrv4($rg))
 				$aline['reply'] = "reply-to ( {$ifcfg['if']} {$rg} ) ";
-			} else {
-				if($rule['interface'] <> "pptp") {
-					log_error(sprintf(gettext("Could not find IPv4 gateway for interface (%s)."), $rule['interface']));
-				}
-			}
+			else if ($rule['interface'] <> "pptp")
+				log_error(sprintf(gettext("Could not find IPv4 gateway for interface (%s)."), $rule['interface']));
 		}
 	}
 	/* if user has selected a custom gateway, lets work with it */
@@ -2112,6 +2192,8 @@ function filter_generate_user_rule($rule) {
 		if (isset($GatewaysList[$rule['gateway']]))
 			/* Add the load balanced gateways */
 			$aline['route'] = " \$GW{$rule['gateway']} ";
+		else if (isset($config['system']['skip_rules_gw_down']))
+			return "# rule " . $rule['descr'] . " disabled because gateway " . $rule['gateway'] . " is down ";
 		else
 			log_error("The gateway: {$rule['gateway']} is invalid or unknown, not using it.");
 	}
@@ -2132,8 +2214,8 @@ function filter_generate_user_rule($rule) {
 	update_filter_reload_status(sprintf(gettext("Creating rule %s"), $rule['descr']));
 
 	/* source address */
-	$src = filter_generate_address($rule, "source");
-	if(empty($src) || ($src == "/")) {
+	$src = trim(filter_generate_address($rule, "source"));
+	if (empty($src) || ($src == "/")) {
 		return "# at the break!";
 	}
 	$aline['src'] = " from $src ";
@@ -2143,8 +2225,8 @@ function filter_generate_user_rule($rule) {
 		$aline['os'] = " os {$rule['os']} ";
 
 	/* destination address */
-	$dst = filter_generate_address($rule, "destination");
-	if(empty($dst) || ($dst == "/")) {
+	$dst = trim(filter_generate_address($rule, "destination"));
+	if (empty($dst) || ($dst == "/")) {
 		return "# returning at dst $dst == \"/\"";
 	}
 	$aline['dst'] = "to $dst ";
@@ -2158,26 +2240,26 @@ function filter_generate_user_rule($rule) {
 		$l7_structures = $l7rule->get_unique_structures();
 		$aline['divert'] = "divert " . $l7rule->GetRPort() . " ";
 	}
-	if(($rule['protocol'] == "icmp") && $rule['icmptype'] && ($rule['ipprotocol'] == "inet"))
+	if (($rule['protocol'] == "icmp") && $rule['icmptype'] && ($rule['ipprotocol'] == "inet"))
 		$aline['icmp-type'] = "icmp-type {$rule['icmptype']} ";
-	if(($rule['protocol'] == "icmp") && $rule['icmptype'] && ($rule['ipprotocol'] == "inet6"))
+	if (($rule['protocol'] == "icmp") && $rule['icmptype'] && ($rule['ipprotocol'] == "inet6"))
 		$aline['icmp6-type'] = "icmp6-type {$rule['icmptype']} ";
-	if(!empty($rule['tag']))
+	if (!empty($rule['tag']))
 		$aline['tag'] = " tag " .$rule['tag']. " ";
-	if(!empty($rule['tagged']))
+	if (!empty($rule['tagged']))
 		$aline['tagged'] = " tagged " .$rule['tagged'] . " ";
-	if(!empty($rule['dscp']))
+	if (!empty($rule['dscp']))
 		$aline['dscp'] = " dscp " . $rule['dscp'] . " ";
-	if(!empty($rule['vlanprio']))
+	if (!empty($rule['vlanprio']))
 		$aline['vlanprio'] = " ieee8021q-pcp " . $rule['vlanprio'] . " ";
-	if(!empty($rule['vlanprioset']))
+	if (!empty($rule['vlanprioset']))
 		$aline['vlanprioset'] = " ieee8021q-setpcp " . $rule['vlanprioset'] . " ";
-	if($type == "pass") {
-		if(isset($rule['allowopts']))
+	if ($type == "pass") {
+		if (isset($rule['allowopts']))
 			$aline['allowopts'] = " allow-opts ";
 
 		$aline['flags'] = "";
-		if($rule['protocol'] == "tcp") {
+		if ($rule['protocol'] == "tcp") {
 			if (isset($rule['tcpflags_any']))
 				$aline['flags'] = "flags any ";
 			else if (!empty($rule['tcpflags2'])) {
@@ -2377,6 +2459,13 @@ function filter_rules_generate() {
 		$log = "log";
 	else
 		$log = "";
+		
+	if(!isset($config['system']['ipv6allow'])) {
+		$ipfrules .= "# Block all IPv6\n";
+		$ipfrules .= "block in {$log} quick inet6 all label \"Block all IPv6\"\n";
+		$ipfrules .= "block out {$log} quick inet6 all label \"Block all IPv6\"\n";
+	}
+	
 	$ipfrules .= <<<EOD
 #---------------------------------------------------------------------------
 # default deny rules
@@ -2414,17 +2503,12 @@ block quick inet6 proto { tcp, udp } from any to any port = 0
 
 EOD;
 
-	if(!isset($config['system']['ipv6allow'])) {
-		$ipfrules .= "# Block all IPv6\n";
-		$ipfrules .= "block in inet6 all label \"Default Deny ipv6 rule\"\n";
-		$ipfrules .= "block out inet6 all label \"Default Deny ipv6 rule\"\n";
-	}
-
 	$ipfrules .= <<<EOD
 
 # Snort package
 block quick from <snort2c> to any label "Block snort2c hosts"
 block quick from any to <snort2c> label "Block snort2c hosts"
+
 
 EOD;
 
@@ -2446,7 +2530,7 @@ EOD;
 
 	$ipfrules .= "\n# webConfigurator lockout\n";
 	if(!$config['system']['webgui']['port']) {
-		if($config['system']['webgui']['protocol'] == "http") 
+		if($config['system']['webgui']['protocol'] == "http")
 			$webConfiguratorlockoutport = "80";
 		else
 			$webConfiguratorlockoutport = "443";
@@ -2463,47 +2547,47 @@ EOD;
 	$ipfrules .= "block in quick from <virusprot> to any label \"virusprot overload table\"\n";
 
 	/* if captive portal is enabled, ensure that access to this port
-         * is allowed on a locked down interface
-         */
-        if(is_array($config['captiveportal'])) {
-                foreach ($config['captiveportal'] as $cpcfg) {
-                        $cpinterfaces = explode(",", $cpcfg['interface']);
-                        $cpiflist = array();
-                        $cpiplist = array();
-                        foreach ($cpinterfaces as $cpifgrp) {
-                                if(!isset($FilterIflist[$cpifgrp]))
-                                        continue;
-                                $tmpif = get_real_interface($cpifgrp);
-                                if(!empty($tmpif)) {
-                                        $cpiflist[] = "{$tmpif}";
-                                        $cpipm = get_interface_ip($cpifgrp);
-                                        if(is_ipaddr($cpipm)) {
-                                                $carpif = link_ip_to_carp_interface($cpipm);
-                                                if (!empty($carpif)) {
-                                                        $cpiflist[] = $carpif;
-                                                        $carpsif = explode(" ", $carpif);
-                                                        foreach ($carpsif as $cpcarp) {
-                                                                $carpip = find_interface_ip($cpcarp);
-                                                                if (is_ipaddr($carpip))
-                                                                $cpiplist[] = $carpip;
-                                                        }
-                                                }
-                                                $cpiplist[] = $cpipm;
-                                        }
-                                }
-                        }
-                        if (count($cpiplist) > 0 && count($cpiflist) > 0) {
-                                $cpinterface = implode(" ", $cpiflist);
-                                $cpaddresses = implode(" ", $cpiplist);
+	 * is allowed on a locked down interface
+	 */
+	if(is_array($config['captiveportal'])) {
+		foreach ($config['captiveportal'] as $cpcfg) {
+			$cpinterfaces = explode(",", $cpcfg['interface']);
+			$cpiflist = array();
+			$cpiplist = array();
+			foreach ($cpinterfaces as $cpifgrp) {
+				if(!isset($FilterIflist[$cpifgrp]))
+					continue;
+				$tmpif = get_real_interface($cpifgrp);
+				if(!empty($tmpif)) {
+					$cpiflist[] = "{$tmpif}";
+					$cpipm = get_interface_ip($cpifgrp);
+					if(is_ipaddr($cpipm)) {
+						$carpif = link_ip_to_carp_interface($cpipm);
+						if (!empty($carpif)) {
+							$cpiflist[] = $carpif;
+							$carpsif = explode(" ", $carpif);
+							foreach ($carpsif as $cpcarp) {
+								$carpip = find_interface_ip($cpcarp);
+								if (is_ipaddr($carpip))
+									$cpiplist[] = $carpip;
+							}
+						}
+						$cpiplist[] = $cpipm;
+					}
+				}
+			}
+			if (count($cpiplist) > 0 && count($cpiflist) > 0) {
+				$cpinterface = implode(" ", $cpiflist);
+				$cpaddresses = implode(" ", $cpiplist);
 				$listenporthttps = $cpcfg['listenporthttps'] ? $cpcfg['listenporthttps'] : ($cpcfg['zoneid'] + 1);
 				$listenporthttp  = $cpcfg['listenporthttp']  ? $cpcfg['listenporthttp']  : $cpcfg['zoneid'];
-                                $portalias = $listenporthttps;
-                                $portalias .= " {$listenporthttp}";
-                                $ipfrules .= "pass in quick on { {$cpinterface} } proto tcp from any to { {$cpaddresses} } port { {$portalias} } keep state(sloppy)\n";
-                                $ipfrules .= "pass out quick on { {$cpinterface} } proto tcp from any to any flags any keep state(sloppy)\n";
-                        }
-                }
-        }
+				$portalias = $listenporthttps;
+				$portalias .= " {$listenporthttp}";
+				$ipfrules .= "pass in quick on { {$cpinterface} } proto tcp from any to { {$cpaddresses} } port { {$portalias} } keep state(sloppy)\n";
+				$ipfrules .= "pass out quick on { {$cpinterface} } proto tcp from any to any flags any keep state(sloppy)\n";
+			}
+		}
+	}
 
 	$bogontableinstalled = 0;
 	foreach ($FilterIflist as $on => $oc) {
@@ -2511,19 +2595,19 @@ EOD;
 		/* http://www.cymru.com/Documents/bogon-bn-nonagg.txt */
 		/* file is automatically in cron every 3000 minutes */
 		if(isset($config['interfaces'][$on]['blockbogons'])) {
-			if($bogontableinstalled == 0) {
-				$ipfrules .= "table <bogons> persist file \"/etc/bogons\"\n";
-				$ipfrules .= "table <bogonsv6> persist file \"/etc/bogonsv6\"\n";
-			}
 			$ipfrules .= <<<EOD
 # block bogon networks
 # http://www.cymru.com/Documents/bogon-bn-nonagg.txt
 # http://www.team-cymru.org/Services/Bogons/fullbogons-ipv6.txt
 block in $log quick on \${$oc['descr']} from <bogons> to any label "block bogon IPv4 networks from {$oc['descr']}"
+
+EOD;
+			if(isset($config['system']['ipv6allow'])) {
+				$ipfrules .= <<<EOD
 block in $log quick on \${$oc['descr']} from <bogonsv6> to any label "block bogon IPv6 networks from {$oc['descr']}"
 
 EOD;
-			$bogontableinstalled++;
+			}
 		}
 		$isbridged = false;
 		if(is_array($config['bridges']['bridged'])) {
@@ -2579,14 +2663,19 @@ EOD;
 			/* allow access to DHCP server on interfaces */
 			if(isset($config['dhcpd'][$on]['enable'])) {
 				$ipfrules .= <<<EOD
-
 # allow access to DHCP server on {$oc['descr']}
 pass in quick on \${$oc['descr']} proto udp from any port = 68 to 255.255.255.255 port = 67 label "allow access to DHCP server"
+
+EOD;
+				if (is_ipaddrv4($oc['ip'])) {
+					$ipfrules .= <<<EOD
 pass in quick on \${$oc['descr']} proto udp from any port = 68 to {$oc['ip']} port = 67 label "allow access to DHCP server"
 pass out quick on \${$oc['descr']} proto udp from {$oc['ip']} port = 67 to any port = 68 label "allow access to DHCP server"
 
 EOD;
-				if($config['dhcpd'][$on]['failover_peerip'] <> "") {
+				}
+
+				if(is_ipaddrv4($pc['ip']) && $config['dhcpd'][$on]['failover_peerip'] <> "") {
 					$ipfrules .= <<<EOD
 # allow access to DHCP failover on {$oc['descr']} from {$config['dhcpd'][$on]['failover_peerip']}
 pass in quick on \${$oc['descr']} proto { tcp udp } from {$config['dhcpd'][$on]['failover_peerip']} to {$oc['ip']} port = 519 label "allow access to DHCP failover"
@@ -2602,7 +2691,6 @@ EOD;
 		case "slaac":
 		case "dhcp6":
 			$ipfrules .= <<<EOD
-
 # allow our DHCPv6 client out to the {$oc['descr']}
 pass in quick on \${$oc['descr']} proto udp from fe80::/10 port = 546 to fe80::/10 port = 546 label "allow dhcpv6 client in {$oc['descr']}"
 pass in quick on \${$oc['descr']} proto udp from any port = 547 to any port = 546 label "allow dhcpv6 client in {$oc['descr']}"
@@ -2612,38 +2700,54 @@ EOD;
 			break;
 		case "6rd":
 			$ipfrules .= <<<EOD
-
 # allow our proto 41 traffic from the 6RD border relay in
 pass in on \${$oc['descr']} proto 41 from {$config['interfaces'][$on]['gateway-6rd']} to any label "Allow 6in4 traffic in for 6rd on {$oc['descr']}"
 pass out on \${$oc['descr']} proto 41 from any to {$config['interfaces'][$on]['gateway-6rd']} label "Allow 6in4 traffic out for 6rd on {$oc['descr']}"
 
 EOD;
-			break;
-		case "6to4":
+		if (is_ipaddrv6($oc['ipv6'])) {
 			$ipfrules .= <<<EOD
-
-# allow our proto 41 traffic from the 6to4 border relay in
-pass in on \${$oc['descr']} proto 41 from 192.88.99.1 to (self) label "Allow 6in4 traffic in for 6to4 on {$oc['descr']}"
-pass out on \${$oc['descr']} proto 41 from (self) to 192.88.99.1 label "Allow 6in4 traffic out for 6to4 on {$oc['descr']}"
+pass in on \${$oc['descr']} inet6 from any to {$oc['ipv6']}/{$oc['snv6']} label "Allow 6rd traffic in for 6rd on {$oc['descr']}"
+pass out on \${$oc['descr']} inet6 from {$oc['ipv6']}/{$oc['snv6']} to any label "Allow 6rd traffic out for 6rd on {$oc['descr']}"
 
 EOD;
+		}
+			break;
+		case "6to4":
+			if (is_ipaddrv4($oc['ip'])) {
+			$ipfrules .= <<<EOD
+# allow our proto 41 traffic from the 6to4 border relay in
+pass in on \${$oc['descr']} proto 41 from any to {$oc['ip']} label "Allow 6in4 traffic in for 6to4 on {$oc['descr']}"
+pass out on \${$oc['descr']} proto 41 from {$oc['ip']} to any label "Allow 6in4 traffic out for 6to4 on {$oc['descr']}"
+
+EOD;
+		}
+		if (is_ipaddrv6($oc['ipv6'])) {
+			$ipfrules .= <<<EOD
+pass in on \${$oc['descr']} inet6 from any to {$oc['ipv6']}/{$oc['snv6']} label "Allow 6in4 traffic in for 6to4 on {$oc['descr']}"
+pass out on \${$oc['descr']} inet6 from {$oc['ipv6']}/{$oc['snv6']} to any label "Allow 6in4 traffic out for 6to4 on {$oc['descr']}"
+
+EOD;
+		}
 			break;
 		default:
-			if((isset($config['dhcpdv6'][$on]['enable'])) ||
-					(isset($config['interfaces'][$on]['track6-interface']))) {
+			if ((is_array($config['dhcpdv6'][$on]) && isset($config['dhcpdv6'][$on]['enable'])) || isset($oc['track6-interface'])) {
 				$ipfrules .= <<<EOD
-
 # allow access to DHCPv6 server on {$oc['descr']}
-anchor "dhcpv6server{$oc['descr']}"
 # We need inet6 icmp for stateless autoconfig and dhcpv6
 pass quick on \${$oc['descr']} inet6 proto udp from fe80::/10 to fe80::/10 port = 546 label "allow access to DHCPv6 server"
 pass quick on \${$oc['descr']} inet6 proto udp from fe80::/10 to ff02::/16 port = 546 label "allow access to DHCPv6 server"
 pass quick on \${$oc['descr']} inet6 proto udp from fe80::/10 to ff02::/16 port = 547 label "allow access to DHCPv6 server"
 pass quick on \${$oc['descr']} inet6 proto udp from ff02::/16 to fe80::/10 port = 547 label "allow access to DHCPv6 server"
+
+EOD;
+				if (is_ipaddrv6($oc['ipv6'])) {
+					$ipfrules .= <<<EOD
 pass in quick on \${$oc['descr']} inet6 proto udp from fe80::/10 to {$oc['ipv6']} port = 546 label "allow access to DHCPv6 server"
 pass out quick on \${$oc['descr']} inet6 proto udp from {$oc['ipv6']} port = 547 to fe80::/10 label "allow access to DHCPv6 server"
 
 EOD;
+				}
 			}
 			break;
 		}
@@ -2674,25 +2778,26 @@ EOD;
 			continue;
 
 		$gw = get_interface_gateway($ifdescr);
-		if (is_ipaddr($gw) && is_ipaddr($ifcfg['ip']))
-                	$ipfrules .= "pass out route-to ( {$ifcfg['if']} {$gw} ) from {$ifcfg['ip']} to !{$ifcfg['sa']}/{$ifcfg['sn']} keep state allow-opts label \"let out anything from firewall host itself\"\n";
+		if (is_ipaddrv4($gw) && is_ipaddrv4($ifcfg['ip'])) {
+			$ipfrules .= "pass out route-to ( {$ifcfg['if']} {$gw} ) from {$ifcfg['ip']} to !{$ifcfg['sa']}/{$ifcfg['sn']} keep state allow-opts label \"let out anything from firewall host itself\"\n";
+			if (is_array($ifcfg['vips'])) {
+				foreach ($ifcfg['vips'] as $vip)
+					$ipfrules .= "pass out route-to ( {$ifcfg['if']} {$gw} ) from {$vip['ip']} to !{$vip['ip']}/{$vip['sn']} keep state allow-opts label \"let out anything from firewall host itself\"\n";
+			}
+		}
 
 		$gwv6 = get_interface_gateway_v6($ifdescr);
-		switch($ifcfg['type6']) {
-			case "6rd":
-			case "6to4":
-				$stf = stf0;
-				$pdlen = 64 - calculate_ipv6_delegation_length($ifdescr);
-				break;
-			default:
-				$stf = $ifcfg['if'];
-				$pdlen = 64 - calculate_ipv6_delegation_length($ifdescr);
-			break;
+		$stf = get_real_interface($ifdescr, "inet6");
+		$pdlen = 64 - calculate_ipv6_delegation_length($ifdescr);
+		if (is_ipaddrv6($gwv6) && is_ipaddrv6($ifcfg['ipv6'])) {
+			$ipfrules .= "pass out route-to ( {$stf} {$gwv6} ) inet6 from {$ifcfg['ipv6']} to !{$ifcfg['ipv6']}/{$pdlen} keep state allow-opts label \"let out anything from firewall host itself\"\n";
+			if (is_array($ifcfg['vips6'])) {
+				foreach ($ifcfg['vips6'] as $vip)
+					$ipfrules .= "pass out route-to ( {$stf} {$gwv6} ) inet6 from {$vip['ip']} to !{$vip['ip']}/{$pdlen} keep state allow-opts label \"let out anything from firewall host itself\"\n";
+			}
 		}
-		if (is_ipaddrv6($gwv6) && is_ipaddrv6($ifcfg['ipv6']))
-                	$ipfrules .= "pass out route-to ( {$stf} {$gwv6} ) inet6 from {$ifcfg['ipv6']} to !{$ifcfg['ipv6']}/{$pdlen} keep state allow-opts label \"let out anything from firewall host itself\"\n";
 	}
-	
+
 
 	/* add ipsec interfaces */
 	if(isset($config['ipsec']['enable']) || isset($config['ipsec']['client']['enable']))
@@ -2760,62 +2865,91 @@ EOD;
 		}
 	}
 
-	if(isset($config['filter']['rule'])) {
+	if (isset($config['filter']['rule'])) {
 		/* Pre-cache all our rules so we only have to generate them once */
 		$rule_arr1 = array();
 		$rule_arr2 = array();
+		$rule_arr3 = array();
+		$vpn_and_ppp_ifs = array("l2tp", "pptp", "pppoe", "enc0", "openvpn");
 		/*
-		 * NB: Floating rules need to be written before regular once.
+		 * NB: The order must be: Floating rules, then interface group and then regular ones.
 		 */
 		foreach ($config['filter']['rule'] as $rule) {
 			update_filter_reload_status("Pre-caching {$rule['descr']}...");
-			if(!isset ($rule['disabled'])) {
-				if(isset($rule['floating'])) {
+			if (isset ($rule['disabled']))
+				continue;
+
+			if (!empty($rule['ipprotocol']) && $rule['ipprotocol'] == "inet46") {
+				if (isset($rule['floating'])) {
+					$rule['ipprotocol'] = "inet";
 					$rule_arr1[] = filter_generate_user_rule_arr($rule);
-				} else {
+					$rule['ipprotocol'] = "inet6";
+					$rule_arr1[] = filter_generate_user_rule_arr($rule);
+				} else if (is_interface_group($rule['interface']) || in_array($rule['interface'], $vpn_and_ppp_ifs)) {
+					$rule['ipprotocol'] = "inet";
 					$rule_arr2[] = filter_generate_user_rule_arr($rule);
+					$rule['ipprotocol'] = "inet6";
+					$rule_arr2[] = filter_generate_user_rule_arr($rule);
+				} else {
+					$rule['ipprotocol'] = "inet";
+					$rule_arr3[] = filter_generate_user_rule_arr($rule);
+					$rule['ipprotocol'] = "inet6";
+					$rule_arr3[] = filter_generate_user_rule_arr($rule);
 				}
-				if($rule['sched'])
-					$time_based_rules = true;
+				$rule['ipprotocol'] = "inet46";
+			} else {
+				if (isset($rule['floating']))
+					$rule_arr1[] = filter_generate_user_rule_arr($rule);
+				else if (is_interface_group($rule['interface']) || in_array($rule['interface'], $vpn_and_ppp_ifs))
+					$rule_arr2[] = filter_generate_user_rule_arr($rule);
+				else
+					$rule_arr3[] = filter_generate_user_rule_arr($rule);
 			}
+			if ($rule['sched'])
+				$time_based_rules = true;
 		}
-		$rule_arr = array_merge($rule_arr1,$rule_arr2);
 
 		$ipfrules .= "\n# User-defined rules follow\n";
 		$ipfrules .= "\nanchor \"userrules/*\"\n";
 		/* Generate user rule lines */
-		foreach($rule_arr as $rule) {
-			if(isset($rule['disabled']))
+		foreach($rule_arr1 as $rule) {
+			if (isset($rule['disabled']))
 				continue;
-			if(!$rule['rule'])
+			if (!$rule['rule'])
 				continue;
 			$ipfrules .= "{$rule['rule']} {$rule['descr']}\n";
 		}
+		foreach($rule_arr2 as $rule) {
+			if (isset($rule['disabled']))
+				continue;
+			if (!$rule['rule'])
+				continue;
+			$ipfrules .= "{$rule['rule']} {$rule['descr']}\n";
+		}
+		foreach($rule_arr3 as $rule) {
+			if (isset($rule['disabled']))
+				continue;
+			if (!$rule['rule'])
+				continue;
+			$ipfrules .= "{$rule['rule']} {$rule['descr']}\n";
+		}
+		unset($rule_arr1, $rule_arr2, $rule_arr3);
 	}
 
 	$ipfrules .= "\n# Automatic Pass rules for any delegated IPv6 prefixes through dynamic IPv6 clients\n";
 	/* add automatic LAN rules to allow IPv6 traffic out for dynamic IPv6 networks */
 	foreach ($FilterIflist as $ifdescr => $ifcfg) {
-		$oc = $FilterIflist[$ifdescr];
-		if($config['interfaces'][$ifdescr]['track6-interface'] <> "") {
-			$realif = get_real_interface($ifdescr);
-			$ifcfgipv6 = find_interface_ipv6($realif);
-			$trackifname = $config['interfaces'][$ifdescr]['track6-interface'];
-			$trackcfg = $config['interfaces'][$trackifname];
-			if($trackcfg['descr'] == "")
-				$trackcfg['descr'] = $trackifname;
-			$trackcfg['descr'] = strtoupper($trackcfg['descr']);
-
-			$pdlen = 64 - calculate_ipv6_delegation_length($trackifname);
-			if(is_ipaddrv6($ifcfgipv6)) {
-				$prefix = Net_IPv6::getNetmask($ifcfgipv6, $pdlen);
-				$ipfrules .= "pass in quick on \${$oc['descr']} inet6 from $prefix/$pdlen to any keep state label \"Allow IPv6 on {$oc['descr']} to any\"\n";
+		if (isset($ifcfg['track6-interface'])) {
+			if (is_ipaddrv6($ifcfg['ipv6'])) {
+				$trackifname = $ifcfg['track6-interface'];
+				$trackcfg = $FilterIflist[$trackifname];
+				$pdlen = 64 - calculate_ipv6_delegation_length($trackifname);
+				$prefix = Net_IPv6::getNetmask($ifcfg['ipv6'], $pdlen);
+				$ipfrules .= "pass in on \${$ifcfg['descr']} inet6 from $prefix/$pdlen to any keep state label \"Allow IPv6 on {$ifcfg['descr']} to any\"\n";
 				/* add rules on the WAN for traffic back in, let the downstream router
 				 * figure out what to do with the traffic */
-				$trackcfgipv6 = find_interface_ipv6(get_real_interface($trackifname));
-				if(is_ipaddrv6($trackcfgipv6)) {
-					$ipfrules .= "pass in quick on \${$trackcfg['descr']} inet6 from any to $prefix/$pdlen keep state label \"Allow IPv6 in on {$trackcfg['descr']} to $prefix/$pdlen\"\n";
-				}
+				if (is_ipaddrv6($trackcfg['ipv6']))
+					$ipfrules .= "pass in on \${$trackcfg['descr']} inet6 from any to $prefix/$pdlen keep state label \"Allow IPv6 in on {$trackcfg['descr']} to $prefix/$pdlen\"\n";
 			}
 		}
 	}
@@ -2831,12 +2965,12 @@ EOD;
 			if(is_array($FilterIflist[$friendly])) {
 				$oc = $FilterIflist[$friendly];
 				$routeent = explode("/", $route['network']);
-				if($oc['ip']) {
+				unset($sa);
+				if (is_ipaddrv4($oc['ip'])) {
 					$sa = $oc['sa'];
 					$sn = $oc['sn'];
-					$if = $oc['if'];
 				}
-				if($sa && is_ipaddrv4($routeent[0])) {
+				if ($sa && is_ipaddrv4($routeent[0])) {
 					$ipfrules .= <<<EOD
 pass quick on \${$oc['descr']} proto tcp from {$sa}/{$sn} to {$route['network']} flags any keep state(sloppy) label "pass traffic between statically routed subnets"
 pass quick on \${$oc['descr']} from {$sa}/{$sn} to {$route['network']} keep state(sloppy) label "pass traffic between statically routed subnets"
@@ -2845,12 +2979,12 @@ pass quick on \${$oc['descr']} from {$route['network']} to {$sa}/{$sn} keep stat
 
 EOD;
 				}
-				if($oc['ipv6']) {
+				unset($sa);
+				if (is_ipaddrv6($oc['ipv6'])) {
 					$sa = $oc['sav6'];
 					$sn = $oc['snv6'];
-					$if = $oc['if'];
 				}
-				if($sa && is_ipaddrv6($routeent[0])) {
+				if ($sa && is_ipaddrv6($routeent[0])) {
 					$ipfrules .= <<<EOD
 pass quick on \${$oc['descr']} inet6 proto tcp from {$sa}/{$sn} to {$route['network']} flags any keep state(sloppy) label "pass traffic between statically routed subnets"
 pass quick on \${$oc['descr']} inet6 from {$sa}/{$sn} to {$route['network']} keep state(sloppy) label "pass traffic between statically routed subnets"
@@ -2872,29 +3006,26 @@ anchor "tftp-proxy/*"
 EOD;
 
 	update_filter_reload_status("Creating uPNP rules...");
-	if(isset($config['installedpackages']['miniupnpd']) && isset($config['installedpackages']['miniupnpd']['config'][0]['enable'])) {
+	if (is_array($config['installedpackages']['miniupnpd']) && is_array($config['installedpackages']['miniupnpd']['config'][0])) {
+		if (isset($config['installedpackages']['miniupnpd']['config'][0]['enable']))
+			$ipfrules .= "anchor \"miniupnpd\"\n";
 
-	$ipfrules .= <<<EOD
-# uPnPd
-anchor "miniupnpd"
-
-EOD;
-	
-		$upnp_interfaces = explode(",", $config['installedpackages']['miniupnpd'][0]['config']['iface_array']);
-		foreach($upnp_interfaces as $upnp_if) {
-			if(is_array($FilterIflist[$upnp_if])) {
-				$oc = $FilterIflist[$upnp_if];
-				if($oc['ip']) {
-					$sa = $oc['sa'];
-					$sn = $oc['sn'];
-					$if = $oc['if'];
-				}
-				if($sa) {
-					$ipfrules .= <<<EOD
-
+		if (is_array($config['installedpackages']['miniupnpd'][0]['config'])) {
+			$upnp_interfaces = explode(",", $config['installedpackages']['miniupnpd'][0]['config']['iface_array']);
+			foreach($upnp_interfaces as $upnp_if) {
+				if (is_array($FilterIflist[$upnp_if])) {
+					$oc = $FilterIflist[$upnp_if];
+					unset($sa);
+					if($oc['ip']) {
+						$sa = $oc['sa'];
+						$sn = $oc['sn'];
+					}
+					if($sa) {
+						$ipfrules .= <<<EOD
 pass in on \${$oc['descr']} proto tcp from {$sa}/{$sn} to 239.255.255.250/32 port 1900 keep state label "pass multicast traffic to miniupnpd"
 
 EOD;
+					}
 				}
 			}
 		}

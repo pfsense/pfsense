@@ -168,6 +168,24 @@ function get_pkg_id($pkg_name) {
 	return -1;
 }
 
+/****f* pkg-utils/get_pkg_internal_name
+ * NAME
+ *   get_pkg_internal_name - Find a package's internal name (e.g. squid3 internal name is squid)
+ * INPUTS
+ *   $package - array of package data from config
+ * RESULT
+ *   string - internal name (if defined) or default to package name
+ ******/
+function get_pkg_internal_name($package) {
+	if (isset($package['internal_name']) && ($package['internal_name'] != "")) {
+		/* e.g. name is Ipguard-dev, internal name is ipguard */
+		$pkg_internal_name = $package['internal_name'];
+	} else {
+		$pkg_internal_name = $package['name'];
+	}
+	return $pkg_internal_name;
+}
+
 /****f* pkg-utils/get_pkg_info
  * NAME
  *   get_pkg_info - Retrieve package information from pfsense.com.
@@ -240,7 +258,7 @@ function resync_all_package_configs($show_message = false) {
 			echo " " . $package['name'];
 		get_pkg_depends($package['name'], "all");
 		if($g['booting'] != true)
-			stop_service($package['name']);
+			stop_service(get_pkg_internal_name($package));
 		sync_package($idx, true, true);
 		if($pkg_interface == "console") 
 			echo "\n" . gettext("Syncing packages:");
@@ -356,10 +374,9 @@ function uninstall_package($pkg_name) {
 		}
 	}
 
-	stop_service($pkg_name);
-
 	$id = get_pkg_id($pkg_name);
 	if ($id >= 0) {
+		stop_service(get_pkg_internal_name($config['installedpackages']['package'][$id]));
 		$pkg_depends =& $config['installedpackages']['package'][$id]['depends_on_package_pbi'];
 		$static_output .= "Removing package...\n";
 		update_output_window($static_output);
@@ -423,9 +440,9 @@ function sync_package($pkg_name, $sync_depends = true, $show_message = false) {
 		if(empty($config['installedpackages']['package'][$pkg_id]))
 			return;  // No package belongs to the pkg_id passed to this function.
 	}
-        if (is_array($config['installedpackages']['package'][$pkg_id]))
+	if (is_array($config['installedpackages']['package'][$pkg_id]))
 		$package =& $config['installedpackages']['package'][$pkg_id];
-        else
+	else
 		return; /* empty package tag */
 	if(!file_exists("/usr/local/pkg/" . $package['configurationfile'])) {
 		log_error(sprintf(gettext("The %s package is missing its configuration file and must be reinstalled."), $package['name']));
@@ -570,7 +587,7 @@ function pkg_fetch_recursive($pkgname, $filename, $dependlevel = 0, $base_url = 
 	return true;
 }
 
-function install_package($package, $pkg_info = "") {
+function install_package($package, $pkg_info = "", $force_install = false) {
 	global $g, $config, $static_output, $pkg_interface;
 
 	/* safe side. Write config below will send to ro again. */
@@ -583,6 +600,24 @@ function install_package($package, $pkg_info = "") {
 		$pkg_info = get_pkg_info(array($package));
 		$pkg_info = $pkg_info[$package]; // We're only dealing with one package, so we can strip away the extra array.
 		if (empty($pkg_info)) {
+			conf_mount_ro();
+			return -1;
+		}
+	}
+	if (!$force_install) {
+		$compatible = true;
+		$version = rtrim(file_get_contents("/etc/version"));
+		
+		if (isset($pkg_info['required_version']))
+			$compatible = (pfs_version_compare("", $version, $pkg_info['required_version']) >= 0);
+		if (isset($pkg_info['maximum_version']))
+			$compatible = $compatible && (pfs_version_compare("", $version, $pkg_info['maximum_version']) <= 0);
+		
+		if (!$compatible) {
+			log_error(sprintf(gettext('Package %s is not supported on this version.'), $pkg_info['name']));
+			$static_output .= sprintf(gettext("Package %s is not supported on this version."), $pkg_info['name']);
+			update_status($static_output);
+			
 			conf_mount_ro();
 			return -1;
 		}
@@ -777,7 +812,7 @@ function install_package_xml($pkg) {
 					system("/bin/chmod {$pkg_chmod} {$prefix}{$filename}");
 				}
 				$static_output = $static_orig;
-                                update_output_window($static_output);
+				update_output_window($static_output);
 			}
 			$static_output .= gettext("done.") . "\n";
 			update_output_window($static_output);
@@ -1106,7 +1141,7 @@ function delete_package_xml($pkg) {
 		if($pkg_config['include_file'] <> "") {
 			$static_output .= gettext("Removing package instructions...");
 			update_output_window($static_output);
-                        pkg_debug(sprintf(gettext("Remove '%s'"), $pkg_config['include_file']) . "\n");
+			pkg_debug(sprintf(gettext("Remove '%s'"), $pkg_config['include_file']) . "\n");
 			unlink_if_exists("/usr/local/pkg/" . $pkg_config['include_file']);
 			$static_output .= gettext("done.") . "\n";
 			update_output_window($static_output);
@@ -1228,31 +1263,29 @@ function pkg_reinstall_all() {
 	global $g, $config;
 
 	@unlink('/conf/needs_package_sync');
-	$pkg_id = 0;
-	$todo = array();
-	if (is_array($config['installedpackages']['package']))
+	if (is_array($config['installedpackages']['package'])) {
+		echo "One moment please, reinstalling packages...\n";
+		echo " >>> Trying to fetch package info...";
+		$pkg_info = get_pkg_info();
+		if ($pkg_info) {
+			echo " Done.\n";
+		} else {
+			$xmlrpc_base_url = isset($config['system']['altpkgrepo']['enable']) ? $config['system']['altpkgrepo']['xmlrpcbaseurl'] : $g['xmlrpcbaseurl'];
+			echo "\n" . sprintf(gettext(' >>> Unable to communicate with %1$s. Please verify DNS and interface configuration, and that %2$s has functional Internet connectivity.'), $xmlrpc_base_url, $g['product_name']) . "\n";
+			return;
+		}
+		$todo = array();
 		foreach($config['installedpackages']['package'] as $package)
 			$todo[] = array('name' => $package['name'], 'version' => $package['version']);
-	echo "One moment please, reinstalling packages...\n";
-	echo " >>> Trying to fetch package info...";
-	$pkg_info = get_pkg_info();
-	if ($pkg_info) {
-		echo " Done.\n";
-	} else {
-		$xmlrpc_base_url = isset($config['system']['altpkgrepo']['enable']) ? $config['system']['altpkgrepo']['xmlrpcbaseurl'] : $g['xmlrpcbaseurl'];
-		echo "\n" . sprintf(gettext(' >>> Unable to communicate with %1$s. Please verify DNS and interface configuration, and that %2$s has functional Internet connectivity.'), $xmlrpc_base_url, $g['product_name']) . "\n";
-		return;
-	}
-	if(is_array($todo)) {
 		foreach($todo as $pkgtodo) {
 			$static_output = "";
 			if($pkgtodo['name']) {
 				uninstall_package($pkgtodo['name']);
 				install_package($pkgtodo['name']);
-				$pkg_id++;
 			}
 		}
-	}
+	} else
+		echo "No packages are installed.";
 }
 
 function stop_packages() {
@@ -1281,8 +1314,9 @@ function stop_packages() {
 	if (is_array($config['installedpackages']['package'])) {
 		foreach($config['installedpackages']['package'] as $package) {
 			echo " Stopping package {$package['name']}...";
-			stop_service($package['name']);
-			unset($rcfiles[RCFILEPREFIX . $package['name'] . ".sh"]);
+			$internal_name = get_pkg_internal_name($package);
+			stop_service($internal_name);
+			unset($rcfiles[RCFILEPREFIX . strtolower($internal_name) . ".sh"]);
 			echo "done.\n";
 		}
 	}

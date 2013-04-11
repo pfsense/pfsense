@@ -71,7 +71,8 @@ function conv_log_filter($logfile, $nentries, $tail = 50, $filtertext = "", $fil
 		$flent = parse_filter_line($logent);
 		if (!$filterinterface || ($filterinterface == $flent['interface']))
 		{
-			if (($flent != "") && (match_filter_line($flent, $filtertext))) {
+			if ( ( ($flent != "") && (!is_array($filtertext)) && (match_filter_line ($flent, $filtertext))) || 
+			     ( ($flent != "") && ( is_array($filtertext)) && (match_filter_field($flent, $filtertext)) ) ) {
 				$counter++;
 				$filterlog[] = $flent;
 			}
@@ -86,6 +87,29 @@ function match_filter_line($flent, $filtertext = "") {
 		return true;
 	$filtertext = str_replace(' ', '\s+', $filtertext);
 	return preg_match("/{$filtertext}/i", implode(" ", array_values($flent)));
+}
+
+function match_filter_field($flent, $fields) {
+	foreach ($fields as $field) {
+		if ($fields[$field] == "All") continue;
+		if ((strpos($fields[$field], '!') === 0)) {
+			$fields[$field] = substr($fields[$field], 1);
+			if (preg_match("/act/i", $field)) {
+				if ( (in_arrayi($flent[$field], explode(",", str_replace(" ", ",", $fields[$field]))) ) ) return false;
+			} else if ( (preg_match("/{$fields[$field]}/i", $flent[$field])) ) return false;
+		}
+		else {
+			if (preg_match("/act/i", $field)) {
+				if ( !(in_arrayi($flent[$field], explode(",", str_replace(" ", ",", $fields[$field]))) ) ) return false;
+			} else if ( !(preg_match("/{$fields[$field]}/i", $flent[$field])) ) return false;
+		}
+	}	
+	return true;
+}
+
+// Case Insensitive in_array function
+function in_arrayi($needle, $haystack) {
+    return in_array(strtolower($needle), array_map('strtolower', $haystack));
 }
 
 function collapse_filter_lines($logarr) {
@@ -112,9 +136,9 @@ function collapse_filter_lines($logarr) {
 function parse_filter_line($line) {
 	global $config, $g;
 	$log_split = "";
-	preg_match("/(.*)\s(.*)\spf:\s.*\srule\s(.*)\(match\)\:\s(.*)\s\w+\son\s(\w+)\:\s\((.*)\)\s(.*)\s>\s(.*)\:\s(.*)/", $line, $log_split);
+	preg_match("/(.*)\s(.*)\spf:\s.*\srule\s(.*)\(match\)\:\s(.*)\s(\w+)\son\s(\w+)\:\s\((.*)\)\s(.*)\s>\s(.*)\:\s(.*)/", $line, $log_split);
 
-	list($all, $flent['time'], $host, $rule, $flent['act'], $flent['realint'], $details, $src, $dst, $leftovers) = $log_split;
+	list($all, $flent['time'], $host, $rule, $flent['act'], $flent['direction'], $flent['realint'], $details, $src, $dst, $leftovers) = $log_split;
 
 	list($flent['srcip'], $flent['srcport']) = parse_ipport($src);
 	list($flent['dstip'], $flent['dstport']) = parse_ipport($dst);
@@ -156,7 +180,17 @@ function parse_filter_line($line) {
 		$flags = preg_split('/[, ]/', $leftovers);
 		$flent['tcpflags'] = str_replace(".", "A", substr($flags[1], 1, -1));
 	} elseif ($flent['proto'] == "Options") {
-		$flent['proto'] = "none";
+		/* Then there must be some info we missed */
+		if (!(strpos($leftovers, 'sum ok] ') === FALSE)) {
+			preg_match("/.*\ssum ok]\s(.*)\,\s.*/", $leftovers, $proto);
+		} elseif (!(strpos($line, 'sum ok] ') === FALSE)) {
+			preg_match("/.*\ssum ok]\s(.*)\,\s.*/", $line, $proto);
+		}
+		$proto = explode(" ", trim($proto[1]));
+		$flent['proto'] = rtrim($proto[0], ",");
+		/* If it's still 'Options', then just ignore it. */
+		if ($flent['proto'] == "Options")
+			$flent['proto'] = "none";
 	}
 
 	/* If there is a src, a dst, and a time, then the line should be usable/good */

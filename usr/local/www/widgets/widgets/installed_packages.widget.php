@@ -49,7 +49,7 @@ if(is_array($config['installedpackages']['package'])) {
 $updateavailable = false;
 ?>
 
-<table width="100%" border="0" cellpadding="6" cellspacing="0">
+<table width="100%" border="0" cellpadding="6" cellspacing="0" summary="installed packages">
 	<tr>
 		<td width="15%" class="listhdrr">Package Name</td>
 		<td width="15%" class="listhdrr">Category</td>
@@ -78,11 +78,11 @@ $updateavailable = false;
 				$latest_package = $currentvers[$pkg['name']]['version'];
 				if($latest_package == false) {
 					// We can't determine this package's version status.
-					echo "Current: Unknown.<br>Installed: " . $pkg['version'];
+					echo "Current: Unknown.<br/>Installed: " . $pkg['version'];
 				} elseif(strcmp($pkg['version'], $latest_package) > 0) {
 					/* we're running a newer version of the package */
 					echo "Current: {$latest_package}";
-					echo "<br>Installed: {$pkg['version']}";
+					echo "<br/>Installed: {$pkg['version']}";
 				} elseif(strcmp($pkg['version'], $latest_package) < 0) {
 					/* our package is out of date */
 					$updateavailable = true;
@@ -91,7 +91,7 @@ $updateavailable = false;
 						<b>Update Available!</b></div><div style="float:left">
 						Current: <?php echo $latest_package; ?><br/>
 						Installed: <?php echo $pkg['version']; ?></div><div style="float:right">
-					<a href="pkg_mgr_install.php?mode=reinstallpkg&pkg=<?= $pkg['name']; ?>"><img title="Update this package." src="./themes/<?= $g['theme']; ?>/images/icons/icon_reinstall_pkg.gif" width="17" height="17" border="0"/></a>
+					<a href="pkg_mgr_install.php?mode=reinstallpkg&amp;pkg=<?= $pkg['name']; ?>"><img title="Update this package." src="./themes/<?= $g['theme']; ?>/images/icons/icon_reinstall_pkg.gif" width="17" height="17" border="0" alt="reinstall" /></a>
 					</div>
 					<?php
 					$y++;
@@ -103,13 +103,14 @@ $updateavailable = false;
 		<?php	}
 		}
 	} else {
-		echo "<tr><td colspan=\"5\"><center>There are no packages currently installed.</td></tr>";
+		echo "<tr><td colspan=\"5\" align=\"center\">There are no packages currently installed.</td></tr>";
 	}
 	?>
 </table>
 
 <?php if ($updateavailable): ?>
-<script language="javascript" type="text/javascript">
+<script type="text/javascript">
+//<![CDATA[
 	window.onload = function(in_event)
 	{
 		for (y=1; y<=<?php echo $y;?>; y++){
@@ -117,5 +118,6 @@ $updateavailable = false;
 			jQuery(textID).effect('pulsate');
 		}
 	}
+//]]>
 </script>
 <?php endif; ?>

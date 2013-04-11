@@ -175,8 +175,8 @@ include("head.inc");
 
 <body link="#000000" vlink="#000000" alink="#000000" onload="<?= $jsevents["body"]["onload"] ?>">
 <?php include("fbegin.inc"); ?>
-<script language="JavaScript">
-<!--
+<script type="text/javascript">
+//<![CDATA[
 
 function setall_selected(id) {
 	selbox = document.getElementById(id);
@@ -224,7 +224,7 @@ function presubmit() {
 	setall_selected('members');
 }
 
-//-->
+//]]>
 </script>
 <?php
 	if ($input_errors)
@@ -232,7 +232,7 @@ function presubmit() {
 	if ($savemsg)
 		print_info_box($savemsg);
 ?>
-<table width="100%" border="0" cellpadding="0" cellspacing="0">
+<table width="100%" border="0" cellpadding="0" cellspacing="0" summary="group manager">
 	<tr>
 		<td>
 			<?php 
@@ -252,11 +252,11 @@ function presubmit() {
 				<?php if($_GET['act']=="new" || $_GET['act']=="edit"): ?>
 
 				<form action="system_groupmanager.php" method="post" name="iform" id="iform" onsubmit="presubmit()">
-					<table width="100%" border="0" cellpadding="6" cellspacing="0">
+					<table width="100%" border="0" cellpadding="6" cellspacing="0" summary="main area">
 	                    <?php
 	                        $ro = "";
 	                        if ($pconfig['gtype'] == "system")
-	                            $ro = "readonly = \"readonly\"";
+	                            $ro = "readonly=\"readonly\"";
 	                    ?>
 						<tr>
 							<td width="22%" valign="top" class="vncell"><?=gettext("Defined by");?></td>
@@ -268,14 +268,14 @@ function presubmit() {
 						<tr> 
 							<td width="22%" valign="top" class="vncellreq"><?=gettext("Group name");?></td>
 							<td width="78%" class="vtable"> 
-								<input name="groupname" type="text" class="formfld group" id="groupname" size="20" value="<?=htmlspecialchars($pconfig['name']);?>" <?=$ro;?>> 
+								<input name="groupname" type="text" class="formfld group" id="groupname" size="20" value="<?=htmlspecialchars($pconfig['name']);?>" <?=$ro;?> />
 							</td>
 						</tr>
 						<tr> 
 							<td width="22%" valign="top" class="vncell"><?=gettext("Description");?></td>
 							<td width="78%" class="vtable"> 
-								<input name="description" type="text" class="formfld unknown" id="description" size="20" value="<?=htmlspecialchars($pconfig['description']);?>">
-								<br>
+								<input name="description" type="text" class="formfld unknown" id="description" size="20" value="<?=htmlspecialchars($pconfig['description']);?>" />
+								<br/>
 								<?=gettext("Group description, for your own information only");?>
 							</td>
 						</tr>
@@ -285,12 +285,12 @@ function presubmit() {
 						<tr>
 							<td width="22%" valign="top" class="vncell"><?=gettext("Group Memberships");?></td>
 							<td width="78%" class="vtable" align="center">
-								<table class="tabcont" width="100%" border="0" cellpadding="0" cellspacing="0">
+								<table class="tabcont" width="100%" border="0" cellpadding="0" cellspacing="0" summary="membership">
 									<tr>
 										<td align="center" width="50%">
 											<strong><?=gettext("Not Members");?></strong><br/>
 											<br/>
-												<select size="10" style="width: 75%" name="notmembers[]" class="formselect" id="notmembers" onChange="clear_selected('members')" multiple>
+												<select size="10" style="width: 75%" name="notmembers[]" class="formselect" id="notmembers" onchange="clear_selected('members')" multiple="multiple">
 												<?php
 													foreach ($config['system']['user'] as $user):
 														if (is_array($pconfig['members']) && in_array($user['uid'],$pconfig['members']))
@@ -316,7 +316,7 @@ function presubmit() {
 										<td align="center" width="50%">
 											<strong><?=gettext("Members");?></strong><br/>
 											<br/>
-											<select size="10" style="width: 75%" name="members[]" class="formselect" id="members" onChange="clear_selected('notmembers')" multiple>
+											<select size="10" style="width: 75%" name="members[]" class="formselect" id="members" onchange="clear_selected('notmembers')" multiple="multiple">
 												<?php
 													foreach ($config['system']['user'] as $user):
 														if (!(is_array($pconfig['members']) && in_array($user['uid'],$pconfig['members'])))
@@ -341,7 +341,7 @@ function presubmit() {
 						<tr>
 							<td width="22%" valign="top" class="vncell"><?=gettext("Assigned Privileges");?></td>
 							<td width="78%" class="vtable">
-								<table class="tabcont" width="100%" border="0" cellpadding="0" cellspacing="0">
+								<table class="tabcont" width="100%" border="0" cellpadding="0" cellspacing="0" summary="privileges">
 									<tr>
 										<td width="40%" class="listhdrr"><?=gettext("Name");?></td>
 										<td width="60%" class="listhdrr"><?=gettext("Description");?></td>
@@ -359,9 +359,9 @@ function presubmit() {
 										<td class="listbg">
 											<?=htmlspecialchars($priv_list[$priv]['descr']);?>
 										</td>
-										<td valign="middle" nowrap class="list">
-											<a href="system_groupmanager.php?act=delpriv&id=<?=htmlspecialchars($id)?>&privid=<?=$i;?>" onclick="return confirm('<?=gettext("Do you really want to delete this privilege?");?>')">
-												<img src="/themes/<?= $g['theme']; ?>/images/icons/icon_x.gif" width="17" height="17" border="0" alt="" />
+										<td valign="middle" class="list nowrap">
+											<a href="system_groupmanager.php?act=delpriv&amp;id=<?=htmlspecialchars($id)?>&amp;privid=<?=$i;?>" onclick="return confirm('<?=gettext("Do you really want to delete this privilege?");?>')">
+												<img src="/themes/<?= $g['theme']; ?>/images/icons/icon_x.gif" width="17" height="17" border="0" alt="delete" />
 											</a>
 										</td>
 									</tr>
@@ -374,7 +374,7 @@ function presubmit() {
 										<td class="list" colspan="2"></td>
 										<td class="list">
 											<a href="system_groupmanager_addprivs.php?groupid=<?=htmlspecialchars($id)?>">
-												<img src="/themes/<?= $g['theme']; ?>/images/icons/icon_plus.gif" width="17" height="17" border="0" alt="" />
+												<img src="/themes/<?= $g['theme']; ?>/images/icons/icon_plus.gif" width="17" height="17" border="0" alt="add" />
 											</a>
 
 										</td>
@@ -387,10 +387,10 @@ function presubmit() {
 						<tr> 
 							<td width="22%" valign="top">&nbsp;</td>
 							<td width="78%"> 
-								<input name="save" type="submit" class="formbtn" value="<?=gettext("Save");?>"> 
+								<input name="save" type="submit" class="formbtn" value="<?=gettext("Save");?>" />
 								<?php if (isset($id) && $a_group[$id]): ?>
-								<input name="id" type="hidden" value="<?=htmlspecialchars($id);?>">
-								<input name="gid" type="hidden" value="<?=htmlspecialchars($pconfig['gid']);?>">
+								<input name="id" type="hidden" value="<?=htmlspecialchars($id);?>" />
+								<input name="gid" type="hidden" value="<?=htmlspecialchars($pconfig['gid']);?>" />
 								<?php endif; ?>
 							</td>
 						</tr>
@@ -399,7 +399,7 @@ function presubmit() {
 
 				<?php else: ?>
 
-				<table class="sortable" width="100%" border="0" cellpadding="0" cellspacing="0">
+				<table class="sortable" width="100%" border="0" cellpadding="0" cellspacing="0" summary="">
 					<thead>
 						<tr>
 							<th width="25%" class="listhdrr"><?=gettext("Group name");?></th>
@@ -408,61 +408,11 @@ function presubmit() {
 							<th width="10%" class="list"></th>
 						</tr>
 					</thead>
-					<tbody>
-						<?php
-							$i = 0;
-							foreach($a_group as $group):
-
-								if($group['scope'] == "system")
-									$grpimg = "/themes/{$g['theme']}/images/icons/icon_system-group-grey.png";
-								else
-									$grpimg = "/themes/{$g['theme']}/images/icons/icon_system-group.png";
-								$groupcount = count($group['member']);
-								if ($group["name"] == "all")
-									$groupcount = count($config['system']['user']);
-						?>
-						<tr ondblclick="document.location='system_groupmanager.php?act=edit&id=<?=$i;?>'">
-							<td class="listlr">
-								<table border="0" cellpadding="0" cellspacing="0">
-									<tr>
-										<td align="left" valign="center">
-											<img src="<?=$grpimg;?>" alt="<?=gettext("User");?>" title="<?=gettext("User");?>" border="0" height="16" width="16" />
-										</td>
-										</td>
-										<td align="left" valign="middle">
-											<?=htmlspecialchars($group['name']); ?>&nbsp;
-										</td>
-									</tr>
-								</table>
-							</td>
-							<td class="listr">
-								<?=htmlspecialchars($group['description']);?>&nbsp;
-							</td>
-							<td class="listbg">
-								<?=$groupcount;?>
-							</td>
-							<td valign="middle" nowrap class="list">
-								<a href="system_groupmanager.php?act=edit&id=<?=$i;?>">
-									<img src="./themes/<?=$g['theme'];?>/images/icons/icon_e.gif" title="<?=gettext("edit group");?>" width="17" height="17" border="0">
-								</a>
-								&nbsp;
-								<?php if($group['scope'] != "system"): ?>
-								<a href="system_groupmanager.php?act=delgroup&id=<?=$i;?>" onclick="return confirm('<?=gettext("Do you really want to delete this group?"); ?>')">
-									<img src="/themes/<?=$g['theme'];?>/images/icons/icon_x.gif" title="<?=gettext("delete group"); ?>" width="17" height="17" border="0">
-								</a>
-								<?php endif; ?>
-							</td>
-						</tr>
-						<?php
-							$i++;
-							endforeach;
-						?>
-					</tbody>
 					<tfoot>
 						<tr> 
 							<td class="list" colspan="3"></td>
 							<td class="list">
-								<a href="system_groupmanager.php?act=new"><img src="./themes/<?=$g['theme'];?>/images/icons/icon_plus.gif" title="<?=gettext("add group");?>" width="17" height="17" border="0">
+								<a href="system_groupmanager.php?act=new"><img src="./themes/<?=$g['theme'];?>/images/icons/icon_plus.gif" title="<?=gettext("add group");?>" width="17" height="17" border="0" alt="add" />
 								</a>
 							</td>
 						</tr>
@@ -477,6 +427,55 @@ function presubmit() {
 							</td>
 						</tr>
 					</tfoot>
+					<tbody>
+						<?php
+							$i = 0;
+							foreach($a_group as $group):
+
+								if($group['scope'] == "system")
+									$grpimg = "/themes/{$g['theme']}/images/icons/icon_system-group-grey.png";
+								else
+									$grpimg = "/themes/{$g['theme']}/images/icons/icon_system-group.png";
+								$groupcount = count($group['member']);
+								if ($group["name"] == "all")
+									$groupcount = count($config['system']['user']);
+						?>
+						<tr ondblclick="document.location='system_groupmanager.php?act=edit&amp;id=<?=$i;?>'">
+							<td class="listlr">
+								<table border="0" cellpadding="0" cellspacing="0" summary="">
+									<tr>
+										<td align="left" valign="middle">
+											<img src="<?=$grpimg;?>" alt="<?=gettext("User");?>" title="<?=gettext("User");?>" border="0" height="16" width="16" />
+										</td>
+										<td align="left" valign="middle">
+											<?=htmlspecialchars($group['name']); ?>&nbsp;
+										</td>
+									</tr>
+								</table>
+							</td>
+							<td class="listr">
+								<?=htmlspecialchars($group['description']);?>&nbsp;
+							</td>
+							<td class="listbg">
+								<?=$groupcount;?>
+							</td>
+							<td valign="middle" class="list nowrap">
+								<a href="system_groupmanager.php?act=edit&amp;id=<?=$i;?>">
+									<img src="./themes/<?=$g['theme'];?>/images/icons/icon_e.gif" title="<?=gettext("edit group");?>" width="17" height="17" border="0" alt="edit" />
+								</a>
+								&nbsp;
+								<?php if($group['scope'] != "system"): ?>
+								<a href="system_groupmanager.php?act=delgroup&amp;id=<?=$i;?>" onclick="return confirm('<?=gettext("Do you really want to delete this group?"); ?>')">
+									<img src="/themes/<?=$g['theme'];?>/images/icons/icon_x.gif" title="<?=gettext("delete group"); ?>" width="17" height="17" border="0" alt="delete" />
+								</a>
+								<?php endif; ?>
+							</td>
+						</tr>
+						<?php
+							$i++;
+							endforeach;
+						?>
+					</tbody>
 				</table>
 			
 				<?php endif; ?>
@@ -485,5 +484,6 @@ function presubmit() {
 		</td>
 	</tr>
 </table>
-</body>
 <?php include("fend.inc"); ?>
+</body>
+</html>

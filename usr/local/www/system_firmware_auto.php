@@ -5,8 +5,8 @@
 	Copyright (C) 2008 Scott Ullrich <sullrich@gmail.com>
 	Copyright (C) 2005 Scott Ullrich
 
-        Based originally on system_firmware.php
-        (C)2003-2004 Manuel Kasper
+	Based originally on system_firmware.php
+	(C)2003-2004 Manuel Kasper
 	All rights reserved.
 
 	Redistribution and use in source and binary forms, with or without
@@ -54,16 +54,17 @@ if(isset($curcfg['alturl']['enable']))
 else
 	$updater_url = $g['update_url'];
 
-if($_POST['backupbeforeupgrade']) 
+if($_POST['backupbeforeupgrade'])
 	touch("/tmp/perform_full_backup.txt");
-	
+
+$closehead = false;
 $pgtitle = array(gettext("Diagnostics"),gettext("Firmware"),gettext("Auto Update"));
 include("head.inc");
 
 ?>
 
-<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
-<link href="gui.css" rel="stylesheet" type="text/css">
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+<link href="gui.css" rel="stylesheet" type="text/css" />
 </head>
 
 <body link="#0000CC" vlink="#0000CC" alink="#0000CC">
@@ -71,62 +72,59 @@ include("head.inc");
 <?php include("fbegin.inc"); ?>
 
 <form action="system_firmware_auto.php" method="post">
-<table width="100%" border="0" cellpadding="6" cellspacing="0">
+<table width="100%" border="0" cellpadding="6" cellspacing="0" summary="firmware auto-check">
 	<tr>
 		<td>
-<?php
-	$tab_array = array();
-	$tab_array[] = array(gettext("Manual Update"), false, "system_firmware.php");
-	$tab_array[] = array(gettext("Auto Update"), true, "system_firmware_check.php");
-	$tab_array[] = array(gettext("Updater Settings"), false, "system_firmware_settings.php");
-	if($g['hidedownloadbackup'] == false)
-		$tab_array[] = array(gettext("Restore Full Backup"), false, "system_firmware_restorefullbackup.php");
-	display_top_tabs($tab_array);
-?>
+		<?php
+			$tab_array = array();
+			$tab_array[] = array(gettext("Manual Update"), false, "system_firmware.php");
+			$tab_array[] = array(gettext("Auto Update"), true, "system_firmware_check.php");
+			$tab_array[] = array(gettext("Updater Settings"), false, "system_firmware_settings.php");
+			if($g['hidedownloadbackup'] == false)
+				$tab_array[] = array(gettext("Restore Full Backup"), false, "system_firmware_restorefullbackup.php");
+			display_top_tabs($tab_array);
+		?>
 		</td>
 	</tr>
 	<tr>
-	  <td class="tabcont">
-	      <table width="100%" border="0" cellpadding="6" cellspacing="0">
-			  <tr>
-			    <td class="tabcont">
-					<table width="100%" border="0" cellpadding="6" cellspacing="0">
-						<tr>
-							<td>
-								<center>
-								<table height='15' width='420' border='0' colspacing='0' cellpadding='0' cellspacing='0'>
+		<td class="tabcont">
+			<table width="100%" border="0" cellpadding="6" cellspacing="0" summary="outer">
+				<tr>
+					<td class="tabcont">
+						<table width="100%" border="0" cellpadding="6" cellspacing="0" summary="inner">
+							<tr>
+								<td align="center">
+									<table style="height:15;colspacing:0" width="420" border="0" cellpadding="0" cellspacing="0" summary="images">
 
-								<tr>
-									<td background="./themes/the_wall/images/misc/bar_left.gif" height='15' width='5'>
-									</td>
-									<td>
-									<table id="progholder" name="progholder" height='15' width='410' border='0' colspacing='0' cellpadding='0' cellspacing='0'>
-										<td background="./themes/the_wall/images/misc/bar_gray.gif" valign="top" align="left">
-											<img src='./themes/the_wall/images/misc/bar_blue.gif' width='0' height='15' name='progressbar' id='progressbar'>
-										</td>
+										<tr>
+											<td style="background:url('./themes/the_wall/images/misc/bar_left.gif')" height="15" width="5">	</td>
+											<td>
+											<table id="progholder" style="height:15;colspacing:0" width="410" border="0" cellpadding="0" cellspacing="0" summary="">
+												<tr><td style="background:url('./themes/the_wall/images/misc/bar_gray.gif')" valign="top" align="left">
+												<img src="./themes/the_wall/images/misc/bar_blue.gif" width="0" height="15" name="progressbar" id="progressbar" alt="" />
+												</td></tr>
+											</table>
+											</td>
+											<td style="background:url('./themes/the_wall/images/misc/bar_right.gif')" height="15" width="5"></td>
+										</tr>
 									</table>
-								</td>
-								<td background="./themes/the_wall/images/misc/bar_right.gif" height='15' width='5'>
+									<br />
+									<!-- status box -->
+									<textarea cols="90" rows="1" name="status" id="status" wrap="hard"><?=gettext("Beginning firmware upgrade"); ?>.</textarea>
+									<!-- command output box -->
+									<textarea cols="90" rows="25" name="output" id="output" wrap="hard"></textarea>
 								</td>
 							</tr>
 						</table>
-						<br>
-						<!-- status box -->
-						<textarea cols="90" rows="1" name="status" id="status" wrap="hard"><?=gettext("Beginning firmware upgrade"); ?>.</textarea>
-						<!-- command output box -->
-						<textarea cols="90" rows="25" name="output" id="output" wrap="hard"></textarea>
-					</center>
 					</td>
 				</tr>
-	      </table>
-		</table>
-	  </td>
+			</table>
+		</td>
 	</tr>
 </table>
 </form>
+
 <?php include("fend.inc"); ?>
-</body>
-</html>
 
 <?php
 
@@ -166,7 +164,7 @@ if(!$latest_version) {
 			} else {
 				$update_filename = "latest.tgz";
 			}
-			$status = download_file_with_progress_bar("{$updater_url}/{$update_filename}", "{$g['upload_path']}/latest.tgz", "read_body_firmware");	
+			$status = download_file_with_progress_bar("{$updater_url}/{$update_filename}", "{$g['upload_path']}/latest.tgz", "read_body_firmware");
 			$status = download_file_with_progress_bar("{$updater_url}/{$update_filename}.sha256", "{$g['upload_path']}/latest.tgz.sha256");
 			conf_mount_ro();
 			update_output_window("{$g['product_name']} " . gettext("download complete."));
@@ -210,13 +208,13 @@ if ($sigchk == 1) {
 }
 
 if ($exitstatus) {
-        update_status($sig_warning);
-        update_output_window(gettext("Update cannot continue.  You can disable this check on the Updater Settings tab."));
-		require("fend.inc");
-        exit;
+	update_status($sig_warning);
+	update_output_window(gettext("Update cannot continue.  You can disable this check on the Updater Settings tab."));
+	require("fend.inc");
+	exit;
 } else if ($sigchk == 2) {
-        update_status("Upgrade in progress...");
-        update_output_window("\n" . gettext("Upgrade Image does not contain a signature but the system has been configured to allow unsigned images. One moment please...") . "\n");
+	update_status("Upgrade in progress...");
+	update_output_window("\n" . gettext("Upgrade Image does not contain a signature but the system has been configured to allow unsigned images. One moment please...") . "\n");
 }
 
 if (!verify_gzip_file("{$g['upload_path']}/latest.tgz")) {
@@ -236,8 +234,12 @@ if($downloaded_latest_tgz_sha256 <> $upgrade_latest_tgz_sha256) {
 	update_output_window(gettext("Auto upgrade aborted.") . "  \n\n" . gettext("Downloaded SHA256") . ": " . $downloaded_latest_tgz_sha256 . "\n\n" . gettext("Needed SHA256") . ": " . $upgrade_latest_tgz_sha256);
 } else {
 	update_output_window($g['product_name'] . " " . gettext("is now upgrading.") . "\\n\\n" . gettext("The firewall will reboot once the operation is completed."));
-	echo "\n<script language=\"JavaScript\">document.progressbar.style.visibility='hidden';\n</script>";
-	mwexec_bg("/usr/bin/nohup {$external_upgrade_helper_text}");
+	echo "\n<script type=\"text/javascript\">";
+	echo "\n//<![CDATA[";
+	echo "\ndocument.progressbar.style.visibility='hidden';";
+	echo "\n//]]>";
+	echo "\n</script>";
+	mwexec_bg($external_upgrade_helper_text);
 }
 
 /*
@@ -272,3 +274,6 @@ function read_body_firmware($ch, $string) {
 }
 
 ?>
+
+</body>
+</html>

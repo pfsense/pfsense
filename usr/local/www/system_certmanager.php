@@ -52,6 +52,7 @@ $cert_types = array(	"ca" => "Certificate Authority",
 			"user" => "User Certificate");
 
 $altname_types = array("DNS", "IP", "email", "URI");
+$openssl_digest_algs = array("sha1", "sha224", "sha256", "sha384", "sha512");
 
 $pgtitle = array(gettext("System"), gettext("Certificate Manager"));
 
@@ -106,6 +107,8 @@ if ($act == "del") {
 if ($act == "new") {
 	$pconfig['method'] = $_GET['method'];
 	$pconfig['keylen'] = "2048";
+	$pconfig['csr_keylen'] = "2048";
+	$pconfig['digest_alg'] = "sha256";
 	$pconfig['type'] = "user";
 	$pconfig['lifetime'] = "3650";
 }
@@ -292,6 +295,12 @@ if ($_POST) {
 				}else if (preg_match("/[\!\@\#\$\%\^\(\)\~\?\>\<\&\/\\\,\.\"\']/", $_POST["$reqdfields[$i]"]))
 					array_push($input_errors, "The field '" . $reqdfieldsn[$i] . "' contains invalid characters.");
 			}
+			if (isset($_POST["keylen"]) && !in_array($_POST["keylen"], $cert_keylens))
+				array_push($input_errors, gettext("Please select a valid Key Length."));
+			if (isset($_POST["csr_keylen"]) && !in_array($_POST["csr_keylen"], $cert_keylens))
+				array_push($input_errors, gettext("Please select a valid Key Length."));
+			if (!in_array($_POST["digest_alg"], $openssl_digest_algs))
+				array_push($input_errors, gettext("Please select a valid Digest Algorithm."));
 		}
 
 		/* if this is an AJAX caller then handle via JSON */
@@ -336,7 +345,7 @@ if ($_POST) {
 						$dn['subjectAltName'] = implode(",", $altnames_tmp);
 					}
 					if (!cert_create($cert, $pconfig['caref'], $pconfig['keylen'],
-						$pconfig['lifetime'], $dn, $pconfig['type'])){
+						$pconfig['lifetime'], $dn, $pconfig['type'], $pconfig['digest_alg'])){
 						while($ssl_err = openssl_error_string()){
 							$input_errors = array();
 							array_push($input_errors, "openssl library returns: " . $ssl_err);
@@ -359,7 +368,7 @@ if ($_POST) {
 						}
 						$dn['subjectAltName'] = implode(",", $altnames_tmp);
 					}
-					if(!csr_generate($cert, $pconfig['csr_keylen'], $dn)){
+					if(!csr_generate($cert, $pconfig['csr_keylen'], $dn, $pconfig['digest_alg'])){
 						while($ssl_err = openssl_error_string()){
 							$input_errors = array();
 							array_push($input_errors, "openssl library returns: " . $ssl_err);
@@ -443,10 +452,10 @@ if ($_POST) {
 include("head.inc");
 ?>
 
-<body link="#000000" vlink="#000000" alink="#000000" onLoad="<?= $jsevents["body"]["onload"] ?>">
+<body link="#000000" vlink="#000000" alink="#000000" onload="<?= $jsevents["body"]["onload"] ?>">
 <?php include("fbegin.inc"); ?>
 <script type="text/javascript">
-<!--
+//<![CDATA[
 
 function method_change() {
 
@@ -520,19 +529,20 @@ function internalca_change() {
 }
 <?php endif; ?>
 
-//-->
+//]]>
 </script>
-<script type="text/javascript" src="/javascript/row_helper_dynamic.js">
-</script>
+<script type="text/javascript" src="/javascript/row_helper_dynamic.js"></script>
 <input type='hidden' name='altname_value_type' value='select' />
 <input type='hidden' name='altname_type_type' value='textbox' />
 <script type="text/javascript">
+//<![CDATA[
 	rowname[0] = "altname_type";
 	rowtype[0] = "textbox";
 	rowsize[0] = "10";
 	rowname[1] = "altname_value";
 	rowtype[1] = "textbox";
 	rowsize[1] = "30";
+//]]>
 </script>
 <?php
 	if ($input_errors)
@@ -549,7 +559,7 @@ function internalca_change() {
                                 array_push($dn_cc, $matches[1]);
         }
 ?>
-<table width="100%" border="0" cellpadding="0" cellspacing="0">
+<table width="100%" border="0" cellpadding="0" cellspacing="0" summary="cert manager">
 	<tr>
 		<td class="tabnavtbl">
 		<?php
@@ -568,7 +578,7 @@ function internalca_change() {
 				<?php if ($act == "new" || (($_POST['save'] == gettext("Save")) && $input_errors)): ?>
 
 				<form action="system_certmanager.php" method="post" name="iform" id="iform">
-					<table width="100%" border="0" cellpadding="6" cellspacing="0">
+					<table width="100%" border="0" cellpadding="6" cellspacing="0" summary="main area">
 						<?php if (!isset($id)): ?>
 						<tr>
 							<td width="22%" valign="top" class="vncellreq"><?=gettext("Method");?></td>
@@ -578,7 +588,7 @@ function internalca_change() {
 									foreach($cert_methods as $method => $desc):
 									$selected = "";
 									if ($pconfig['method'] == $method)
-										$selected = "selected";
+										$selected = " selected=\"selected\"";
 								?>
 									<option value="<?=$method;?>"<?=$selected;?>><?=$desc;?></option>
 								<?php endforeach; ?>
@@ -598,7 +608,7 @@ function internalca_change() {
 						</tr>
 					</table>
 
-					<table width="100%" border="0" cellpadding="6" cellspacing="0" id="import">
+					<table width="100%" border="0" cellpadding="6" cellspacing="0" id="import" summary="import">
 						<tr>
 							<td colspan="2" class="list" height="12"></td>
 						</tr>
@@ -610,21 +620,21 @@ function internalca_change() {
 							<td width="22%" valign="top" class="vncellreq"><?=gettext("Certificate data");?></td>
 							<td width="78%" class="vtable">
 								<textarea name="cert" id="cert" cols="65" rows="7" class="formfld_cert"><?=htmlspecialchars($pconfig['cert']);?></textarea>
-								<br>
-									<?=gettext("Paste a certificate in X.509 PEM format here.");?></td>
+								<br/>
+								<?=gettext("Paste a certificate in X.509 PEM format here.");?>
 							</td>
 						</tr>
 						<tr>
 							<td width="22%" valign="top" class="vncellreq"><?=gettext("Private key data");?></td>
 							<td width="78%" class="vtable">
 								<textarea name="key" id="key" cols="65" rows="7" class="formfld_cert"><?=htmlspecialchars($pconfig['key']);?></textarea>
-								<br>
-								<?=gettext("Paste a private key in X.509 PEM format here.");?></td>
+								<br/>
+								<?=gettext("Paste a private key in X.509 PEM format here.");?>
 							</td>
 						</tr>
 					</table>
 
-					<table width="100%" border="0" cellpadding="6" cellspacing="0" id="internal">
+					<table width="100%" border="0" cellpadding="6" cellspacing="0" id="internal" summary="internal">
 						<tr>
 							<td colspan="2" class="list" height="12"></td>
 						</tr>
@@ -637,7 +647,7 @@ function internalca_change() {
 						<tr>
 							<td colspan="2" align="center" class="vtable">
 								<?=gettext("No internal Certificate Authorities have been defined. You must");?>
-								<a href="system_camanager.php?act=new&method=internal"><?=gettext("create");?></a>
+								<a href="system_camanager.php?act=new&amp;method=internal"><?=gettext("create");?></a>
 								<?=gettext("an internal CA before creating an internal certificate.");?>
 							</td>
 						</tr>
@@ -647,14 +657,14 @@ function internalca_change() {
 						<tr>
 							<td width="22%" valign="top" class="vncellreq"><?=gettext("Certificate authority");?></td>
 							<td width="78%" class="vtable">
-								<select name='caref' id='caref' class="formselect" onChange='internalca_change()'>
+								<select name='caref' id='caref' class="formselect" onchange='internalca_change()'>
 								<?php
 									foreach( $a_ca as $ca):
 									if (!$ca['prv'])
 										continue;
 									$selected = "";
 									if ($pconfig['caref'] == $ca['refid'])
-										$selected = "selected";
+										$selected = " selected=\"selected\"";
 								?>
 									<option value="<?=$ca['refid'];?>"<?=$selected;?>><?=$ca['descr'];?></option>
 								<?php endforeach; ?>
@@ -669,12 +679,28 @@ function internalca_change() {
 									foreach( $cert_keylens as $len):
 									$selected = "";
 									if ($pconfig['keylen'] == $len)
-										$selected = "selected";
+										$selected = " selected=\"selected\"";
 								?>
 									<option value="<?=$len;?>"<?=$selected;?>><?=$len;?></option>
 								<?php endforeach; ?>
 								</select>
 								<?=gettext("bits");?>
+							</td>
+						</tr>
+						<tr>
+							<td width="22%" valign="top" class="vncellreq"><?=gettext("Digest Algorithm");?></td>
+							<td width="78%" class="vtable">
+								<select name='digest_alg' id='digest_alg' class="formselect">
+								<?php
+									foreach( $openssl_digest_algs as $digest_alg):
+									$selected = "";
+									if ($pconfig['digest_alg'] == $digest_alg)
+										$selected = " selected=\"selected\"";
+								?>
+									<option value="<?=$digest_alg;?>"<?=$selected;?>><?=strtoupper($digest_alg);?></option>
+								<?php endforeach; ?>
+								</select>
+								<br/><?= gettext("NOTE: It is recommended to use an algorithm stronger than SHA1 when possible.") ?>
 							</td>
 						</tr>
 						<tr>
@@ -685,7 +711,7 @@ function internalca_change() {
 									foreach( $cert_types as $ct => $ctdesc ):
 									$selected = "";
 									if ($pconfig['type'] == $ct)
-										$selected = "selected";
+										$selected = " selected=\"selected\"";
 								?>
 									<option value="<?=$ct;?>"<?=$selected;?>><?=$ctdesc;?></option>
 								<?php endforeach; ?>
@@ -704,7 +730,7 @@ function internalca_change() {
 						<tr>
 							<td width="22%" valign="top" class="vncellreq"><?=gettext("Distinguished name");?></td>
 							<td width="78%" class="vtable">
-								<table border="0" cellspacing="0" cellpadding="2">
+								<table border="0" cellspacing="0" cellpadding="2" summary="name">
 									<tr>
 										<td align="right"><?=gettext("Country Code");?> : &nbsp;</td>
 										<td align="left">
@@ -787,16 +813,19 @@ function internalca_change() {
 												endforeach;
 												endif;
 											?>
+											<tr><td>&nbsp;</td></tr>
 											</tbody>
 											</table>
 											<a onclick="javascript:addRowTo('altNametable', 'formfldalias'); return false;" href="#">
 												<img border="0" src="/themes/<?= $g['theme']; ?>/images/icons/icon_plus.gif" alt="" title="<?=gettext("add another entry");?>" />
 											</a>
 											<script type="text/javascript">
+											//<![CDATA[
 												field_counter_js = 3;
 												rows = 1;
 												totalrows = <?php echo $counter; ?>;
 												loaded = <?php echo $counter; ?>;
+											//]]>
 											</script>
 											<br/>NOTE: Type must be one of DNS (FQDN or Hostname), IP (IP address), URI, or email.
 										</td>
@@ -809,7 +838,7 @@ function internalca_change() {
 
 					</table>
 
-					<table width="100%" border="0" cellpadding="6" cellspacing="0" id="external">
+					<table width="100%" border="0" cellpadding="6" cellspacing="0" id="external" summary="external">
 						<tr>
 							<td colspan="2" class="list" height="12"></td>
 						</tr>
@@ -821,12 +850,12 @@ function internalca_change() {
 							<td width="78%" class="vtable">
 								<select name='csr_keylen' class="formselect">
 								<?php
-									if (!isset($pconfig['keylen']) && isset($pconfig['csr_keylen']))
-										$pconfig['keylen'] = $pconfig['csr_keylen'];
+									if (!isset($pconfig['csr_keylen']) && isset($pconfig['csr_keylen']))
+										$pconfig['csr_keylen'] = $pconfig['csr_keylen'];
 									foreach( $cert_keylens as $len):
 									$selected = "";
-									if ($pconfig['keylen'] == $len)
-										$selected = "selected";
+									if ($pconfig['csr_keylen'] == $len)
+										$selected = " selected=\"selected\"";
 								?>
 									<option value="<?=$len;?>"<?=$selected;?>><?=$len;?></option>
 								<?php endforeach; ?>
@@ -835,9 +864,25 @@ function internalca_change() {
 							</td>
 						</tr>
 						<tr>
+							<td width="22%" valign="top" class="vncellreq"><?=gettext("Digest Algorithm");?></td>
+							<td width="78%" class="vtable">
+								<select name='digest_alg' id='digest_alg' class="formselect">
+								<?php
+									foreach( $openssl_digest_algs as $digest_alg):
+									$selected = "";
+									if ($pconfig['digest_alg'] == $digest_alg)
+										$selected = " selected=\"selected\"";
+								?>
+									<option value="<?=$digest_alg;?>"<?=$selected;?>><?=strtoupper($digest_alg);?></option>
+								<?php endforeach; ?>
+								</select>
+								<br/><?= gettext("NOTE: It is recommended to use an algorithm stronger than SHA1 when possible.") ?>
+							</td>
+						</tr>
+						<tr>
 							<td width="22%" valign="top" class="vncellreq"><?=gettext("Distinguished name");?></td>
 							<td width="78%" class="vtable">
-								<table border="0" cellspacing="0" cellpadding="2">
+								<table border="0" cellspacing="0" cellpadding="2" summary="name">
 									<tr>
 										<td align="right"><?=gettext("Country Code");?> : &nbsp;</td>
 										<td align="left">
@@ -845,8 +890,9 @@ function internalca_change() {
 											<?php
 											foreach( $dn_cc as $cc){
 												$selected = "";
-												if ($pconfig['csr_dn_country'] == $cc) $selected = "selected";
-												print "<option value=\"$cc\" $selected>$cc</option>";
+												if ($pconfig['csr_dn_country'] == $cc)
+													$selected = " selected=\"selected\"";
+												print "<option value=\"$cc\"$selected>$cc</option>";
 												}
 											?>
 											</select>
@@ -907,7 +953,7 @@ function internalca_change() {
 						</tr>
 					</table>
 
-					<table width="100%" border="0" cellpadding="6" cellspacing="0" id="existing">
+					<table width="100%" border="0" cellpadding="6" cellspacing="0" id="existing" summary="existing">
 						<tr>
 							<td colspan="2" class="list" height="12"></td>
 						</tr>
@@ -927,26 +973,26 @@ function internalca_change() {
 										$caname = "";
 										$inuse = "";
 										$revoked = "";
-										if (in_array($cert['refid'], $config['system']['user'][$userid]['cert']))
+										if (isset($userid) && in_array($cert['refid'], $config['system']['user'][$userid]['cert']))
 											continue;
 										$ca = lookup_ca($cert['caref']);
 										if ($ca)
 											$caname = " (CA: {$ca['descr']})";
 										if ($pconfig['certref'] == $cert['refid'])
-											$selected = "selected";
+											$selected = " selected=\"selected\"";
 										if (cert_in_use($cert['refid']))
 											$inuse = " *In Use";
 											if (is_cert_revoked($cert))
 											$revoked = " *Revoked";
 								?>
-									<option value="<?=$cert['refid'];?>" <?=$selected;?>><?=$cert['descr'] . $caname . $inuse . $revoked;?></option>
+									<option value="<?=$cert['refid'];?>"<?=$selected;?>><?=$cert['descr'] . $caname . $inuse . $revoked;?></option>
 								<?php endforeach; ?>
 								</select>
 							</td>
 						</tr>
 					</table>
 
-					<table width="100%" border="0" cellpadding="6" cellspacing="0">
+					<table width="100%" border="0" cellpadding="6" cellspacing="0" summary="save">
 						<tr>
 							<td width="22%" valign="top">&nbsp;</td>
 							<td width="78%">
@@ -962,7 +1008,7 @@ function internalca_change() {
 				<?php elseif ($act == "csr" || (($_POST['save'] == gettext("Update")) && $input_errors)):?>
 
 				<form action="system_certmanager.php" method="post" name="iform" id="iform">
-					<table width="100%" border="0" cellpadding="6" cellspacing="0">
+					<table width="100%" border="0" cellpadding="6" cellspacing="0" summary="name">
 						<tr>
 							<td width="22%" valign="top" class="vncellreq"><?=gettext("Descriptive name");?></td>
 							<td width="78%" class="vtable">
@@ -977,18 +1023,18 @@ function internalca_change() {
 						</tr>
 
 						<tr>
-							<td width="22%" valign="top" class="vncellreq"><?=gettext("Signing Request data");?></td>
+							<td width="22%" valign="top" class="vncellreq"><?=gettext("Signing request data");?></td>
 							<td width="78%" class="vtable">
-								<textarea name="csr" id="csr" cols="65" rows="7" class="formfld_cert" readonly><?=htmlspecialchars($pconfig['csr']);?></textarea>
-								<br>
+								<textarea name="csr" id="csr" cols="65" rows="7" class="formfld_cert" readonly="readonly"><?=htmlspecialchars($pconfig['csr']);?></textarea>
+								<br/>
 								<?=gettext("Copy the certificate signing data from here and forward it to your certificate authority for signing.");?></td>
 							</td>
 						</tr>
 						<tr>
-							<td width="22%" valign="top" class="vncellreq"><?=gettext("Final Certificate data");?></td>
+							<td width="22%" valign="top" class="vncellreq"><?=gettext("Final certificate data");?></td>
 							<td width="78%" class="vtable">
 								<textarea name="cert" id="cert" cols="65" rows="7" class="formfld_cert"><?=htmlspecialchars($pconfig['cert']);?></textarea>
-								<br>
+								<br/>
 								<?=gettext("Paste the certificate received from your certificate authority here.");?></td>
 							</td>
 						</tr>
@@ -1015,7 +1061,7 @@ function internalca_change() {
 
 				<?php else:?>
 
-				<table width="100%" border="0" cellpadding="0" cellspacing="0">
+				<table width="100%" border="0" cellpadding="0" cellspacing="0" summary="details">
 					<tr>
 						<td width="15%" class="listhdrr"><?=gettext("Name");?></td>
 						<td width="15%" class="listhdrr"><?=gettext("Issuer");?></td>
@@ -1032,6 +1078,7 @@ function internalca_change() {
 								$subj = cert_get_subject($cert['crt']);
 								$issuer = cert_get_issuer($cert['crt']);
 								$purpose = cert_get_purpose($cert['crt']);
+								list($startdate, $enddate) = cert_get_dates($cert['crt']);
 								if($subj==$issuer)
 								  $caname = "<em>" . gettext("self-signed") . "</em>";
 								else
@@ -1055,9 +1102,9 @@ function internalca_change() {
 					?>
 					<tr>
 						<td class="listlr">
-							<table border="0" cellpadding="0" cellspacing="0">
+							<table border="0" cellpadding="0" cellspacing="0" summary="icon">
 								<tr>
-									<td align="left" valign="center">
+									<td align="left" valign="middle">
 										<img src="<?=$certimg;?>" alt="CA" title="CA" border="0" height="16" width="16" />
 									</td>
 									<td align="left" valign="middle">
@@ -1077,7 +1124,20 @@ function internalca_change() {
 							</table>
 						</td>
 						<td class="listr"><?=$caname;?>&nbsp;</td>
-						<td class="listr"><?=$subj;?>&nbsp;</td>
+						<td class="listr"><?=$subj;?>&nbsp;<br />
+							<table width="100%" style="font-size: 9px" summary="valid">
+								<tr>
+									<td width="10%">&nbsp;</td>
+									<td width="20%"><?=gettext("Valid From")?>:</td>
+									<td width="70%"><?= $startdate ?></td>
+								</tr>
+								<tr>
+									<td>&nbsp;</td>
+									<td><?=gettext("Valid Until")?>:</td>
+									<td><?= $enddate ?></td>
+								</tr>
+							</table>
+						</td>
 						<td class="listr">
 							<?php if (is_cert_revoked($cert)): ?>
 							<b>Revoked</b><br/>
@@ -1101,24 +1161,24 @@ function internalca_change() {
 							Captive Portal<br/>
 							<?php endif; ?>
 						</td>
-						<td valign="middle" nowrap class="list">
-							<a href="system_certmanager.php?act=exp&id=<?=$i;?>">
+						<td valign="middle" class="list nowrap">
+							<a href="system_certmanager.php?act=exp&amp;id=<?=$i;?>">
 								<img src="/themes/<?= $g['theme'];?>/images/icons/icon_down.gif" title="<?=gettext("export cert");?>" alt="<?=gettext("export ca");?>" width="17" height="17" border="0" />
 							</a>
-							<a href="system_certmanager.php?act=key&id=<?=$i;?>">
+							<a href="system_certmanager.php?act=key&amp;id=<?=$i;?>">
 								<img src="/themes/<?= $g['theme'];?>/images/icons/icon_down.gif" title="<?=gettext("export key");?>" alt="<?=gettext("export ca");?>" width="17" height="17" border="0" />
 							</a>
-							<a href="system_certmanager.php?act=p12&id=<?=$i;?>">
+							<a href="system_certmanager.php?act=p12&amp;id=<?=$i;?>">
 								<img src="/themes/<?= $g['theme'];?>/images/icons/icon_down.gif" title="<?=gettext("export cert+key in .p12");?>" alt="<?=gettext("export cert+key in .p12");?>" width="17" height="17" border="0" />
 							</a>
 							<?php	if (!cert_in_use($cert['refid'])): ?>
-							<a href="system_certmanager.php?act=del&id=<?=$i;?>" onClick="return confirm('<?=gettext("Do you really want to delete this Certificate?");?>')">
+							<a href="system_certmanager.php?act=del&amp;id=<?=$i;?>" onclick="return confirm('<?=gettext("Do you really want to delete this Certificate?");?>')">
 								<img src="/themes/<?= $g['theme'];?>/images/icons/icon_x.gif" title="<?=gettext("delete cert");?>" alt="<?=gettext("delete cert");?>" width="17" height="17" border="0" />
 							</a>
 							<?php	endif; ?>
 							<?php	if ($cert['csr']): ?>
 							&nbsp;
-								<a href="system_certmanager.php?act=csr&id=<?=$i;?>">
+								<a href="system_certmanager.php?act=csr&amp;id=<?=$i;?>">
 								<img src="/themes/<?= $g['theme'];?>/images/icons/icon_e.gif" title="<?=gettext("update csr");?>" alt="<?=gettext("update csr");?>" width="17" height="17" border="0" />
 							</a>
 							<?php	endif; ?>
@@ -1150,12 +1210,13 @@ function internalca_change() {
 </table>
 <?php include("fend.inc");?>
 <script type="text/javascript">
-<!--
+//<![CDATA[
 
 method_change();
 internalca_change();
 
-//-->
+//]]>
 </script>
 
 </body>
+</html>

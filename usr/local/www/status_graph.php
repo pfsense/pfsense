@@ -72,19 +72,40 @@ foreach (array('server', 'client') as $mode) {
 if ($_GET['if']) {
 	$curif = $_GET['if'];
 	$found = false;
-	foreach($ifdescrs as $descr => $ifdescr) 
-		if($descr == $curif) $found = true;
-	if(!$found) {
+	foreach($ifdescrs as $descr => $ifdescr) {
+		if ($descr == $curif) {
+			$found = true;
+			break;
+		}
+	}
+	if ($found === false) {
 		Header("Location: status_graph.php");
 		exit;
 	}
 } else {
-	$curif = "wan";
+	if (empty($ifdescrs["wan"])) {
+		/* Handle the case when WAN has been disabled. Use the first key in ifdescrs. */
+		reset($ifdescrs);
+		$curif = key($ifdescrs);
+	}
+	else {
+		$curif = "wan";
+	}
 }
 if ($_GET['sort']) {
 	$cursort = $_GET['sort'];
 } else {
 	$cursort = "";
+}
+if ($_GET['filter']) {
+	$curfilter = $_GET['filter'];
+} else {
+	$curfilter = "";
+}
+if ($_GET['hostipformat']) {
+	$curhostipformat = $_GET['hostipformat'];
+} else {
+	$curhostipformat = "";
 }
 
 $pgtitle = array(gettext("Status"),gettext("Traffic Graph"));
@@ -98,23 +119,27 @@ include("head.inc");
 <script language="javascript" type="text/javascript">
 
 function updateBandwidth(){
-    var hostinterface = "<?php echo htmlspecialchars($curif); ?>";
-	var sorting = "<?php echo htmlspecialchars($cursort); ?>";
-    bandwidthAjax(hostinterface, sorting);
+    var hostinterface = jQuery("#if").val();
+	var sorting = jQuery("#sort").val();
+	var filter = jQuery("#filter").val();
+	var hostipformat = jQuery("#hostipformat").val();
+    bandwidthAjax(hostinterface, sorting, filter, hostipformat);
 }
 
-function bandwidthAjax(hostinterface, sorting) {
-	uri = "bandwidth_by_ip.php?if=" + hostinterface + "&sort=" + sorting;
+function bandwidthAjax(hostinterface, sorting, filter, hostipformat) {
+	uri = "bandwidth_by_ip.php?if=" + hostinterface + "&sort=" + sorting + "&filter=" + filter + "&hostipformat=" + hostipformat;
 	var opt = {
 	    // Use GET
 	    type: 'get',
 	    error: function(req) {
-	        // Handle 404
+	        /* XXX: Leave this for debugging purposes: Handle 404
 	        if(req.status == 404)
 	            alert('Error 404: location "' + uri + '" was not found.');
-	        // Handle other errors
+		*/
+	        /* Handle other errors
 	        else
-	            alert('Error ' + req.status + ' -- ' + req.statusText);
+	            alert('Error ' + req.status + ' -- ' + req.statusText + ' -- ' + uri);
+		*/
 	    },
 		success: function(data) {
 			updateBandwidthHosts(data);
@@ -128,32 +153,30 @@ function updateBandwidthHosts(data){
     d = document;
     //parse top ten bandwidth abuser hosts
     for (var y=0; y<10; y++){
-        if (hosts_split[y] != "" && hosts_split[y] != "no info"){
-            if (hosts_split[y]) {
-                hostinfo = hosts_split[y].split(";");
+        if ((y < hosts_split.length) && (hosts_split[y] != "") && (hosts_split[y] != "no info")) {
+			hostinfo = hosts_split[y].split(";");
 
-                //update host ip info
-                var HostIpID = "hostip" + y;
-                var hostip = d.getElementById(HostIpID);
-                hostip.innerHTML = hostinfo[0];
+			//update host ip info
+			var HostIpID = "hostip" + y;
+			var hostip = d.getElementById(HostIpID);
+			hostip.innerHTML = hostinfo[0];
 
-                //update bandwidth inbound to host
-                var hostbandwidthInID = "bandwidthin" + y;
-                var hostbandwidthin = d.getElementById(hostbandwidthInID);
-                hostbandwidthin.innerHTML = hostinfo[1] + " Bits/sec";
+			//update bandwidth inbound to host
+			var hostbandwidthInID = "bandwidthin" + y;
+			var hostbandwidthin = d.getElementById(hostbandwidthInID);
+			hostbandwidthin.innerHTML = hostinfo[1] + " Bits/sec";
 
-                //update bandwidth outbound from host
-                var hostbandwidthOutID = "bandwidthout" + y;
-                var hostbandwidthOut = d.getElementById(hostbandwidthOutID);
-                hostbandwidthOut.innerHTML = hostinfo[2] + " Bits/sec";
+			//update bandwidth outbound from host
+			var hostbandwidthOutID = "bandwidthout" + y;
+			var hostbandwidthOut = d.getElementById(hostbandwidthOutID);
+			hostbandwidthOut.innerHTML = hostinfo[2] + " Bits/sec";
 
-                //make the row appear if hidden
-                var rowid = "#host" + y;
-                if (jQuery(rowid).css('display') == "none"){
-                     //hide rows that contain no data
-                     jQuery(rowid).show(1000);
-                }
-            }
+			//make the row appear if hidden
+			var rowid = "#host" + y;
+			if (jQuery(rowid).css('display') == "none"){
+				//hide rows that contain no data
+				jQuery(rowid).show(1000);
+			}
         }
         else
         {
@@ -181,7 +204,7 @@ if (isset($config['ipsec']['enable']) || isset($config['ipsec']['client']['enabl
 ?>
 <form name="form1" action="status_graph.php" method="get" style="padding-bottom: 10px; margin-bottom: 14px; border-bottom: 1px solid #999999">
 <?=gettext("Interface"); ?>:
-<select name="if" class="formselect" style="z-index: -10;" onchange="document.form1.submit()">
+<select id="if" name="if" class="formselect" style="z-index: -10;" onchange="document.form1.submit()">
 <?php
 foreach ($ifdescrs as $ifn => $ifd) {
 	echo "<option value=\"$ifn\"";
@@ -191,12 +214,22 @@ foreach ($ifdescrs as $ifn => $ifd) {
 ?>
 </select>
 , Sort by: 
-<select name="sort" class="formselect" style="z-index: -10;" onchange="document.form1.submit()">
-	<option value="">Bandwidth In</option>
-	<option value="out"<?php if ($cursort == "out") echo " selected";?>>Bandwidth Out</option>
+<select id="sort" name="sort" class="formselect" style="z-index: -10;" onchange="document.form1.submit()">
+	<option value="">Bw In</option>
+	<option value="out"<?php if ($cursort == "out") echo " selected";?>>Bw Out</option>
 </select>
-</form>
-<p><form method="post" action="status_graph.php">
+, Filter: 
+<select id="filter" name="filter" class="formselect" style="z-index: -10;" onchange="document.form1.submit()">
+	<option value="">All</option>
+	<option value="local"<?php if ($curfilter == "local") echo " selected";?>>Local</option>
+	<option value="remote"<?php if ($curfilter == "remote") echo " selected";?>>Remote</option>
+</select>
+, Display: 
+<select id="hostipformat" name="hostipformat" class="formselect" style="z-index: -10;" onchange="document.form1.submit()">
+	<option value="">IP Address</option>
+	<option value="hostname"<?php if ($curhostipformat == "hostname") echo " selected";?>>Host Name</option>
+	<option value="fqdn"<?php if ($curhostipformat == "fqdn") echo " selected";?>>FQDN</option>
+</select>
 </form>
 <p>
 <div id="niftyOutter">
@@ -206,7 +239,7 @@ foreach ($ifdescrs as $ifn => $ifd) {
     <div id="col2" style="float: right; width: 48%; padding: 5px; position: relative;">
         <table width="100%" border="0" cellspacing="0" cellpadding="0">
             <tr>
-                <td class="listtopic" valign="top"><?=gettext("Host IP"); ?></td>
+                <td class="listtopic" valign="top"><?=(($curhostipformat=="") ? gettext("Host IP") : gettext("Host Name or IP")); ?></td>
                 <td class="listtopic" valign="top"><?=gettext("Bandwidth In"); ?></td>
                 <td class="listtopic" valign="top"><?=gettext("Bandwidth Out"); ?></td>
            </tr>
@@ -299,11 +332,7 @@ foreach ($ifdescrs as $ifn => $ifd) {
 <?php include("fend.inc"); ?>
 
 <script type="text/javascript">
-window.onload = function(in_event)
-	{
-        updateBandwidth();
-    }
-
+jQuery(document).ready(updateBandwidth);
 </script>
 </body>
 </html>

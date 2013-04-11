@@ -63,7 +63,7 @@ include("head.inc");
 <?php include("fbegin.inc"); ?>
 <?php if ($savemsg) print_info_box($savemsg); ?>
 <?php
-if(!$config['installedpackages']['miniupnpd']['config'][0]['iface_array'] ||
+if(!$config['installedpackages'] || !$config['installedpackages']['miniupnpd']['config'][0]['iface_array'] ||
 	!$config['installedpackages']['miniupnpd']['config'][0]['enable']) {
 	echo gettext("UPnP is currently disabled.");
 	include("fend.inc");

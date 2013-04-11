@@ -63,7 +63,7 @@ $cpzone = $_GET['zone'];
 if (isset($_POST['zone']))
         $cpzone = $_POST['zone'];
 
-if (empty($cpzone)) {
+if (empty($cpzone) || empty($config['captiveportal'][$cpzone])) {
         header("Location: services_captiveportal_zones.php");
         exit;
 }
@@ -138,8 +138,10 @@ if ($_POST) {
 		
 		write_config();
 
-		if (isset($a_cp[$cpzone]['enable']) && is_module_loaded("ipfw.ko")) 
-			captiveportal_init_rules();
+		$rules = captiveportal_allowedhostname_configure();
+		@file_put_contents("{$g['tmp_path']}/hostname_rules", $rules);
+		mwexec("/sbin/ipfw -x {$cpzone} {$g['tmp_path']}/hostname_rules");
+		unset($rules);
 		
 		header("Location: services_captiveportal_hostname.php?zone={$cpzone}");
 		exit;

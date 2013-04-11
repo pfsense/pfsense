@@ -197,28 +197,35 @@ function add_gateway_to_config($interface, $gatewayip, $inet_type) {
 	if ($dry_run) {
 		print_r($a_gateways);
 	}
-	$new_name = next_unused_gateway_name($interface);
+	$new_name = '';
 	$is_default = true;
 	foreach ($a_gateways as $item) {
 		if ($item['ipprotocol'] === $inet_type) {
-			$is_default = false;
-			break;
+			if (isset($item['defaultgw']))
+				$is_default = false;
+			if (($item['interface'] === $interface) && ($item['gateway'] === $gatewayip))
+				$new_name = $item['name'];
 		}
 	}
-	$item = array(
-		"interface" => $interface,
-		"gateway" => $gatewayip,
-		"name" => $new_name,
-		"weight" => 1,
-		"ipprotocol" => $inet_type,
-		"interval" => true,
-		"descr" => "Interface $interface Gateway",
-		"defaultgw" => $is_default
-	);
-	if ($dry_run) {
-		print_r($item);
+	if ($new_name == '') {
+		$new_name = next_unused_gateway_name($interface);
+		$item = array(
+			"interface" => $interface,
+			"gateway" => $gatewayip,
+			"name" => $new_name,
+			"weight" => 1,
+			"ipprotocol" => $inet_type,
+			"interval" => true,
+			"descr" => "Interface $interface Gateway",
+			"defaultgw" => $is_default
+		);
+		if ($dry_run) {
+			print_r($item);
+		}
+		$a_gateways[] = $item;
 	}
-	$a_gateways[] = $item;
+
+	return $new_name;
 }
 
 function console_configure_ip_address($version) {
@@ -251,7 +258,12 @@ function console_configure_ip_address($version) {
 			                    $upperifname, $label_IPvX) . "\n> ";
 			$intip = chop(fgets($fp));
 			$is_ipaddr = ($version === 6) ? is_ipaddrv6($intip) : is_ipaddrv4($intip);
-		} while (!($is_ipaddr || $intip == ''));
+			if ($is_ipaddr && is_ipaddr_configured($intip, $interface, true)) {
+				$ip_conflict = true;
+				echo gettext("This IP address conflicts with another interface or a VIP") . "\n";
+			} else
+				$ip_conflict = false;
+		} while (($ip_conflict === true) || !($is_ipaddr || $intip == ''));
 		if ($intip != '') {
 			echo "\n" . sprintf(gettext("Subnet masks are entered as bit counts (as in CIDR notation) in %s."),
 			                    $g['product_name']) . "\n";
@@ -296,35 +308,35 @@ function console_configure_ip_address($version) {
 
 			if ($gwip != '') {
 				$inet_type = ($version === 6) ? "inet6" : "inet";
-				add_gateway_to_config($interface, $gwip, $inet_type);
+				$gwname = add_gateway_to_config($interface, $gwip, $inet_type);
 			}
 		}
-		$ifppp = console_get_interface_from_ppp(get_real_interface("wan"));
+		$ifppp = console_get_interface_from_ppp(get_real_interface($interface));
 		if (!empty($ifppp))
 			$ifaceassigned = $ifppp;
 	}
 
-	return array($intip, $intbits, $gwip);
+	return array($intip, $intbits, $gwname);
 }
 
-list($intip,  $intbits,  $gwip)  = console_configure_ip_address(4);
-list($intip6, $intbits6, $gwip6) = console_configure_ip_address(6);
+list($intip,  $intbits,  $gwname)  = console_configure_ip_address(4);
+list($intip6, $intbits6, $gwname6) = console_configure_ip_address(6);
 
 if (!empty($ifaceassigned))
 	$config['interfaces'][$interface]['if'] = $ifaceassigned;
-$config['interfaces'][$interface]['ipaddr'] = $intip;
-$config['interfaces'][$interface]['subnet'] = $intbits;
-if ($intip6) {
-	$config['interfaces'][$interface]['ipaddrv6'] = $intip6;
-	$config['interfaces'][$interface]['subnetv6'] = $intbits6;
-}
-$config['interfaces'][$interface]['enable'] = true;
+$config['interfaces'][$interface]['ipaddr']    = $intip;
+$config['interfaces'][$interface]['subnet']    = $intbits;
+$config['interfaces'][$interface]['gateway']   = $gwname;
+$config['interfaces'][$interface]['ipaddrv6']  = $intip6;
+$config['interfaces'][$interface]['subnetv6']  = $intbits6;
+$config['interfaces'][$interface]['gatewayv6'] = $gwname6;
+$config['interfaces'][$interface]['enable']    = true;
 
 function console_configure_dhcpd($version = 4) {
 	global $g, $config, $restart_dhcpd, $fp, $interface, $dry_run;
 
-	$label_IPvX = ($version === 6) ? "IPv6"   : "IPv4";
-	$dhcpd      = ($version === 6) ? "dhcpd6" : "dhcpd";
+	$label_IPvX = ($version === 6) ? "IPv6"    : "IPv4";
+	$dhcpd      = ($version === 6) ? "dhcpdv6" : "dhcpd";
 
 	if($g['services_dhcp_server_enable'])
 		$yn = prompt_for_enable_dhcp_server($version);
@@ -396,17 +408,17 @@ if($config['interfaces']['lan']) {
 	if($config['dhcpd'])
 		if($config['dhcpd']['wan'])
 			unset($config['dhcpd']['wan']);		
-	if($config['dhcpd6'])
-		if($config['dhcpd6']['wan'])
-			unset($config['dhcpd6']['wan']);		
+	if($config['dhcpdv6'])
+		if($config['dhcpdv6']['wan'])
+			unset($config['dhcpdv6']['wan']);
 }
 
 if(!$config['interfaces']['lan']) {
 	unset($config['interfaces']['lan']);
 	if($config['dhcpd']['lan'])
 		unset($config['dhcpd']['lan']);
-	if($config['dhcpd6']['lan'])
-		unset($config['dhcpd6']['lan']);
+	if($config['dhcpdv6']['lan'])
+		unset($config['dhcpdv6']['lan']);
 	unset($config['shaper']);
 	unset($config['ezshaper']);
 	unset($config['nat']);

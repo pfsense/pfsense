@@ -1,35 +1,31 @@
 #!/bin/sh
-if [ -f /tmp/$1up ] && [ -f /conf/$1.log ]; then
-        seconds=$((`date -j +%s` - `/usr/bin/stat -f %m /tmp/$1up`))
-        /usr/local/sbin/ppp-log-uptime.sh $seconds $1 &
-fi
-if [ "$3" != "" ]; then
-	echo "Removing states from $3" | logger -t ppp-linkdown
-	/sbin/pfctl -k 0.0.0.0/0 -k $3/32
-	/sbin/pfctl -k $3/32
-	pfctl -K $3/32
+
+IF="${1}"
+LOCAL_IP="${3}"
+
+if [ -f /tmp/${IF}up ] && [ -f /conf/${IF}.log ]; then
+	seconds=$((`date -j +%s` - `/usr/bin/stat -f %m /tmp/${IF}up`))
+	/usr/local/sbin/ppp-log-uptime.sh $seconds ${IF} &
 fi
 
-OLD_ROUTER=`/bin/cat /tmp/${1}_router`
-if [ "${OLD_ROUTER}" != "" ]; then
-	echo "Removing states to ${OLD_ROUTER}" | logger -t ppp-linkdown
-	/sbin/pfctl -b 0.0.0.0/32 -b ${OLD_ROUTER}/32
+/etc/rc.kill_states ${IF} ${LOCAL_IP}
 
-	if [ -f "/tmp/${interface}_defaultgw" ]; then
-		route delete default ${OLD_ROUTER}
-	fi
+if [ -s "/tmp/${IF}_defaultgw" ]; then
+	GW=`head -n 1 /tmp/${IF}_defaultgw`
+	[ -n "${GW}" ] \
+		&& /sbin/route delete default ${GW}
 fi
 # delete the node just in case mpd cannot do that
-/usr/sbin/ngctl shutdown $1:
-if [ -f "/var/etc/nameserver_$1" ]; then
+/usr/sbin/ngctl shutdown ${IF}:
+if [ -f "/var/etc/nameserver_${IF}" ]; then
 	# Remove old entries
-	for nameserver in `cat /var/etc/nameserver_$1`; do
-		/sbin/route delete $nameserver >/dev/null 2>&1
+	for nameserver in `cat /var/etc/nameserver_${IF}`; do
+		/sbin/route delete ${nameserver} >/dev/null 2>&1
 	done
-	/bin/rm -f /var/etc/nameserver_$1
+	/bin/rm -f /var/etc/nameserver_${IF}
 fi
 # Do not remove gateway used during filter reload.
-/bin/rm -f /tmp/$1_router
-/bin/rm -f /tmp/$1up
-/bin/rm -f /tmp/$1_ip
+/bin/rm -f /tmp/${IF}_router
+/bin/rm -f /tmp/${IF}up
+/bin/rm -f /tmp/${IF}_ip
 /usr/local/sbin/pfSctl -c 'service reload dns'

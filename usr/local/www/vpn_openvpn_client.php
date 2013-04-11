@@ -155,6 +155,17 @@ if ($_POST) {
 	else
 		$vpnid = 0;
 
+	list($iv_iface, $iv_ip) = explode ("|",$pconfig['interface']);
+	if (is_ipaddrv4($iv_ip) && (stristr($pconfig['protocol'], "6") !== false)) {
+		$input_errors[] = gettext("Protocol and IP address families do not match. You cannot select an IPv6 protocol and an IPv4 IP address.");
+	} elseif (is_ipaddrv6($iv_ip) && (stristr($pconfig['protocol'], "6") === false)) {
+		$input_errors[] = gettext("Protocol and IP address families do not match. You cannot select an IPv4 protocol and an IPv6 IP address.");
+	} elseif ((stristr($pconfig['protocol'], "6") === false) && !get_interface_ip($iv_iface) && ($pconfig['interface'] != "any")) {
+		$input_errors[] = gettext("An IPv4 protocol was selected, but the selected interface has no IPv4 address.");
+	} elseif ((stristr($pconfig['protocol'], "6") !== false) && !get_interface_ipv6($iv_iface) && ($pconfig['interface'] != "any")) {
+		$input_errors[] = gettext("An IPv6 protocol was selected, but the selected interface has no IPv6 address.");
+	}
+
 	if ($pconfig['mode'] != "p2p_shared_key")
 		$tls_mode = true;
 	else
@@ -166,7 +177,7 @@ if ($_POST) {
 		if ($result = openvpn_validate_port($pconfig['local_port'], 'Local port'))
 			$input_errors[] = $result;
 
-		$portused = openvpn_port_used($pconfig['protocol'], $pconfig['local_port']);
+		$portused = openvpn_port_used($pconfig['protocol'], $pconfig['interface'], $pconfig['local_port'], $vpnid);
 		if (($portused != $vpnid) && ($portused != 0))
 			$input_errors[] = gettext("The specified 'Local port' is in use. Please select another value");
 	}
@@ -192,10 +203,17 @@ if ($_POST) {
 	}
 
 	if($pconfig['tunnel_network'])
-		if ($result = openvpn_validate_cidr($pconfig['tunnel_network'], 'Tunnel network'))
+		if ($result = openvpn_validate_cidr($pconfig['tunnel_network'], 'IPv4 Tunnel Network', false, "ipv4"))
 			$input_errors[] = $result;
 
-	if ($result = openvpn_validate_cidr($pconfig['remote_network'], 'Remote network'))
+	if($pconfig['tunnel_networkv6'])
+		if ($result = openvpn_validate_cidr($pconfig['tunnel_networkv6'], 'IPv6 Tunnel Network', false, "ipv6"))
+			$input_errors[] = $result;
+
+	if ($result = openvpn_validate_cidr($pconfig['remote_network'], 'IPv4 Remote Network', true, "ipv4"))
+		$input_errors[] = $result;
+
+	if ($result = openvpn_validate_cidr($pconfig['remote_networkv6'], 'IPv6 Remote Network', true, "ipv6"))
 		$input_errors[] = $result;
 
 	if (!empty($pconfig['use_shaper']) && (!is_numeric($pconfig['use_shaper']) || ($pconfig['use_shaper'] <= 0)))
@@ -482,6 +500,7 @@ if ($savemsg)
 											$vipif = $group[0]['int'];
 										$interfaces[$name] = "GW Group {$name}";
 									}
+									$interfaces['lo0'] = "Localhost";
 									$interfaces['any'] = "any";
 									foreach ($interfaces as $iface => $ifacename):
 										$selected = "";
@@ -796,30 +815,30 @@ if ($savemsg)
 						</td>
 					</tr>
 					<tr>
-						<td width="22%" valign="top" class="vncell"><?=gettext("IPv4 Remote Network"); ?></td>
+						<td width="22%" valign="top" class="vncell"><?=gettext("IPv4 Remote Network/s"); ?></td>
 						<td width="78%" class="vtable">
-							<input name="remote_network" type="text" class="formfld unknown" size="20" value="<?=htmlspecialchars($pconfig['remote_network']);?>">
+							<input name="remote_network" type="text" class="formfld unknown" size="40" value="<?=htmlspecialchars($pconfig['remote_network']);?>">
 							<br>
-							<?=gettext("This is a network that will be routed through " .
+							<?=gettext("These are the IPv4 networks that will be routed through " .
 							"the tunnel, so that a site-to-site VPN can be " .
-							"established without manually changing the " .
-							"routing tables. Expressed as a CIDR range. If " .
-							"this is a site-to-site VPN, enter the " .
-							"remote LAN here. You may leave this blank to " .
+							"established without manually changing the routing tables. " .
+							"Expressed as a comma-separated list of one or more CIDR ranges. " .
+							"If this is a site-to-site VPN, enter the " .
+							"remote LAN/s here. You may leave this blank to " .
 							"only communicate with other clients"); ?>.
 						</td>
 					</tr>
 					<tr>
-						<td width="22%" valign="top" class="vncell"><?=gettext("IPv6 Remote Network"); ?></td>
+						<td width="22%" valign="top" class="vncell"><?=gettext("IPv6 Remote Network/s"); ?></td>
 						<td width="78%" class="vtable">
-							<input name="remote_networkv6" type="text" class="formfld unknown" size="20" value="<?=htmlspecialchars($pconfig['remote_networkv6']);?>">
+							<input name="remote_networkv6" type="text" class="formfld unknown" size="40" value="<?=htmlspecialchars($pconfig['remote_networkv6']);?>">
 							<br>
-							<?=gettext("This is an IPv6 network that will be routed through " .
+							<?=gettext("These are the IPv6 networks that will be routed through " .
 							"the tunnel, so that a site-to-site VPN can be " .
-							"established without manually changing the " .
-							"routing tables. Expressed as an IP/PREFIX. If " .
-							"this is a site-to-site VPN, enter the " .
-							"remote LAN here. You may leave this blank to " .
+							"established without manually changing the routing tables. " .
+							"Expressed as a comma-separated list of one or more IP/PREFIX. " .
+							"If this is a site-to-site VPN, enter the " .
+							"remote LAN/s here. You may leave this blank to " .
 							"only communicate with other clients"); ?>.
 						</td>
 					</tr>
@@ -887,7 +906,7 @@ if ($savemsg)
 									<td>
 										<textarea rows="6" cols="78" name="custom_options" id="custom_options"><?=htmlspecialchars($pconfig['custom_options']);?></textarea><br/>
 										<?=gettext("Enter any additional options you would like to add to the OpenVPN client configuration here, separated by a semicolon"); ?><br/>
-										<?=gettext("EXAMPLE: route 10.0.0.0 255.255.255.0;"); ?>
+										<?=gettext("EXAMPLE:"); ?> <strong>remote server.mysite.com 1194;</strong> or <strong>remote 1.2.3.4 1194;</strong>
 									</td>
 								</tr>
 							</table>

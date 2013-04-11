@@ -150,6 +150,7 @@ if($_GET['act']=="edit"){
 
 		$pconfig['dynamic_ip'] = $a_server[$id]['dynamic_ip'];
 		$pconfig['pool_enable'] = $a_server[$id]['pool_enable'];
+		$pconfig['topology_subnet'] = $a_server[$id]['topology_subnet'];
 
 		$pconfig['serverbridge_dhcp'] = $a_server[$id]['serverbridge_dhcp'];
 		$pconfig['serverbridge_interface'] = $a_server[$id]['serverbridge_interface'];
@@ -207,6 +208,17 @@ if ($_POST) {
 	else
 		$vpnid = 0;
 
+	list($iv_iface, $iv_ip) = explode ("|",$pconfig['interface']);
+	if (is_ipaddrv4($iv_ip) && (stristr($pconfig['protocol'], "6") !== false)) {
+		$input_errors[] = gettext("Protocol and IP address families do not match. You cannot select an IPv6 protocol and an IPv4 IP address.");
+	} elseif (is_ipaddrv6($iv_ip) && (stristr($pconfig['protocol'], "6") === false)) {
+		$input_errors[] = gettext("Protocol and IP address families do not match. You cannot select an IPv4 protocol and an IPv6 IP address.");
+	} elseif ((stristr($pconfig['protocol'], "6") === false) && !get_interface_ip($iv_iface) && ($pconfig['interface'] != "any")) {
+		$input_errors[] = gettext("An IPv4 protocol was selected, but the selected interface has no IPv4 address.");
+	} elseif ((stristr($pconfig['protocol'], "6") !== false) && !get_interface_ipv6($iv_iface) && ($pconfig['interface'] != "any")) {
+		$input_errors[] = gettext("An IPv6 protocol was selected, but the selected interface has no IPv6 address.");
+	}
+
 	if ($pconfig['mode'] != "p2p_shared_key")
 		$tls_mode = true;
 	else
@@ -219,16 +231,25 @@ if ($_POST) {
 	if ($result = openvpn_validate_port($pconfig['local_port'], 'Local port'))
 		$input_errors[] = $result;
 
-	if ($result = openvpn_validate_cidr($pconfig['tunnel_network'], 'Tunnel network'))
+	if ($result = openvpn_validate_cidr($pconfig['tunnel_network'], 'IPv4 Tunnel Network', false, "ipv4"))
 		$input_errors[] = $result;
 
-	if ($result = openvpn_validate_cidr($pconfig['remote_network'], 'Remote network'))
+	if ($result = openvpn_validate_cidr($pconfig['tunnel_networkv6'], 'IPv6 Tunnel Network', false, "ipv6"))
 		$input_errors[] = $result;
 
-	if ($result = openvpn_validate_cidr($pconfig['local_network'], 'Local network'))
+	if ($result = openvpn_validate_cidr($pconfig['remote_network'], 'IPv4 Remote Network', true, "ipv4"))
 		$input_errors[] = $result;
 
-	$portused = openvpn_port_used($pconfig['protocol'], $pconfig['local_port']);
+	if ($result = openvpn_validate_cidr($pconfig['remote_networkv6'], 'IPv6 Remote Network', true, "ipv6"))
+		$input_errors[] = $result;
+
+	if ($result = openvpn_validate_cidr($pconfig['local_network'], 'IPv4 Local Network', true, "ipv4"))
+		$input_errors[] = $result;
+
+	if ($result = openvpn_validate_cidr($pconfig['local_networkv6'], 'IPv6 Local Network', true, "ipv6"))
+		$input_errors[] = $result;
+
+	$portused = openvpn_port_used($pconfig['protocol'], $pconfig['interface'], $pconfig['local_port'], $vpnid);
 	if (($portused != $vpnid) && ($portused != 0))
 		$input_errors[] = gettext("The specified 'Local port' is in use. Please select another value");
 
@@ -367,6 +388,7 @@ if ($_POST) {
 
 		$server['dynamic_ip'] = $pconfig['dynamic_ip'];
 		$server['pool_enable'] = $pconfig['pool_enable'];
+		$server['topology_subnet'] = $pconfig['topology_subnet'];
 
 		$server['serverbridge_dhcp'] = $pconfig['serverbridge_dhcp'];
 		$server['serverbridge_interface'] = $pconfig['serverbridge_interface'];
@@ -518,7 +540,7 @@ function mode_change() {
 
 function autokey_change() {
 
-	if (document.iform.autokey_enable.checked)
+	if ((document.iform.autokey_enable != null) && (document.iform.autokey_enable.checked))
 		document.getElementById("autokey_opts").style.display="none";
 	else
 		document.getElementById("autokey_opts").style.display="";
@@ -628,6 +650,7 @@ function tuntap_change() {
 			document.getElementById("serverbridge_interface").style.display="none";
 			document.getElementById("serverbridge_dhcp_start").style.display="none";
 			document.getElementById("serverbridge_dhcp_end").style.display="none";
+			document.getElementById("topology_subnet_opt").style.display="";
 			break;
 		case "tap":
 			document.getElementById("ipv4_tunnel_network").className="vncell";
@@ -636,6 +659,8 @@ function tuntap_change() {
 				document.getElementById("serverbridge_interface").style.display="";
 				document.getElementById("serverbridge_dhcp_start").style.display="";
 				document.getElementById("serverbridge_dhcp_end").style.display="";
+				document.getElementById("topology_subnet_opt").style.display="none";
+				document.iform.serverbridge_dhcp.disabled = false;
 				if (document.iform.serverbridge_dhcp.checked) {
 					document.iform.serverbridge_interface.disabled = false;
 					document.iform.serverbridge_dhcp_start.disabled = false;
@@ -646,6 +671,7 @@ function tuntap_change() {
 					document.iform.serverbridge_dhcp_end.disabled = true;
 				}
 			} else {
+				document.getElementById("topology_subnet_opt").style.display="none";
 				document.iform.serverbridge_dhcp.disabled = true;
 				document.iform.serverbridge_interface.disabled = true;
 				document.iform.serverbridge_dhcp_start.disabled = true;
@@ -800,6 +826,7 @@ if ($savemsg)
 											$vipif = $group[0]['int'];
 										$interfaces[$name] = "GW Group {$name}";
 									}
+									$interfaces['lo0'] = "Localhost";
 									$interfaces['any'] = "any";
 									foreach ($interfaces as $iface => $ifacename):
 										$selected = "";
@@ -1196,56 +1223,56 @@ if ($savemsg)
 						</td>
 					</tr>
 					<tr id="local_optsv4">
-						<td width="22%" valign="top" class="vncell"><?=gettext("IPv4 Local Network"); ?></td>
+						<td width="22%" valign="top" class="vncell"><?=gettext("IPv4 Local Network/s"); ?></td>
 						<td width="78%" class="vtable">
-							<input name="local_network" type="text" class="formfld unknown" size="20" value="<?=htmlspecialchars($pconfig['local_network']);?>">
+							<input name="local_network" type="text" class="formfld unknown" size="40" value="<?=htmlspecialchars($pconfig['local_network']);?>">
 							<br>
-							<?=gettext("This is the network that will be accessible " .
-							"from the remote endpoint. Expressed as a CIDR " .
-							"range. You may leave this blank if you don't " .
+							<?=gettext("These are the IPv4 networks that will be accessible " .
+							"from the remote endpoint. Expressed as a comma-separated list of one or more CIDR ranges. " .
+							"You may leave this blank if you don't " .
 							"want to add a route to the local network " .
 							"through this tunnel on the remote machine. " .
 							"This is generally set to your LAN network"); ?>.
 						</td>
 					</tr>
 					<tr id="local_optsv6">
-						<td width="22%" valign="top" class="vncell"><?=gettext("IPv6 Local Network"); ?></td>
+						<td width="22%" valign="top" class="vncell"><?=gettext("IPv6 Local Network/s"); ?></td>
 						<td width="78%" class="vtable">
-							<input name="local_networkv6" type="text" class="formfld unknown" size="20" value="<?=htmlspecialchars($pconfig['local_networkv6']);?>">
+							<input name="local_networkv6" type="text" class="formfld unknown" size="40" value="<?=htmlspecialchars($pconfig['local_networkv6']);?>">
 							<br>
-							<?=gettext("This is the IPv6 network that will be accessible " .
-							"from the remote endpoint. Expressed as a CIDR " .
-							"range. You may leave this blank if you don't " .
+							<?=gettext("These are the IPv6 networks that will be accessible " .
+							"from the remote endpoint. Expressed as a comma-separated list of one or more IP/PREFIX. " .
+							"You may leave this blank if you don't " .
 							"want to add a route to the local network " .
 							"through this tunnel on the remote machine. " .
 							"This is generally set to your LAN network"); ?>.
 						</td>
 					</tr>
 					<tr id="remote_optsv4">
-						<td width="22%" valign="top" class="vncell"><?=gettext("IPv4 Remote Network"); ?></td>
+						<td width="22%" valign="top" class="vncell"><?=gettext("IPv4 Remote Network/s"); ?></td>
 						<td width="78%" class="vtable">
-							<input name="remote_network" type="text" class="formfld unknown" size="20" value="<?=htmlspecialchars($pconfig['remote_network']);?>">
+							<input name="remote_network" type="text" class="formfld unknown" size="40" value="<?=htmlspecialchars($pconfig['remote_network']);?>">
 							<br>
-							<?=gettext("This is a network that will be routed through " .
+							<?=gettext("These are the IPv4 networks that will be routed through " .
 							"the tunnel, so that a site-to-site VPN can be " .
-							"established without manually changing the " .
-							"routing tables. Expressed as a CIDR range. If " .
-							"this is a site-to-site VPN, enter the " .
-							"remote LAN here. You may leave this blank if " .
+							"established without manually changing the routing tables. " .
+							"Expressed as a comma-separated list of one or more CIDR ranges. " .
+							"If this is a site-to-site VPN, enter the " .
+							"remote LAN/s here. You may leave this blank if " .
 							"you don't want a site-to-site VPN"); ?>.
 						</td>
 					</tr>
 					<tr id="remote_optsv6">
-						<td width="22%" valign="top" class="vncell"><?=gettext("IPv6 Remote Network"); ?></td>
+						<td width="22%" valign="top" class="vncell"><?=gettext("IPv6 Remote Network/s"); ?></td>
 						<td width="78%" class="vtable">
-							<input name="remote_networkv6" type="text" class="formfld unknown" size="20" value="<?=htmlspecialchars($pconfig['remote_networkv6']);?>">
+							<input name="remote_networkv6" type="text" class="formfld unknown" size="40" value="<?=htmlspecialchars($pconfig['remote_networkv6']);?>">
 							<br>
-							<?=gettext("This is an IPv6 network that will be routed through " .
+							<?=gettext("These are the IPv6 networks that will be routed through " .
 							"the tunnel, so that a site-to-site VPN can be " .
-							"established without manually changing the " .
-							"routing tables. Expressed as an IP/PREFIX. If " .
-							"this is a site-to-site VPN, enter the " .
-							"remote LAN here. You may leave this blank if " .
+							"established without manually changing the routing tables. " .
+							"Expressed as a comma-separated list of one or more IP/PREFIX. " .
+							"If this is a site-to-site VPN, enter the " .
+							"remote LAN/s here. You may leave this blank if " .
 							"you don't want a site-to-site VPN"); ?>.
 						</td>
 					</tr>
@@ -1369,6 +1396,31 @@ if ($savemsg)
 										<span class="vexpl">
 											<?=gettext("Provide a virtual adapter IP address to clients (see Tunnel Network)"); ?><br>
 										</span>
+									</td>
+								</tr>
+							</table>
+						</td>
+					</tr>
+					<tr id="topology_subnet_opt">
+						<td width="22%" valign="top" class="vncell"><?=gettext("Topology"); ?></td>
+						<td width="78%" class="vtable">
+							<table border="0" cellpadding="2" cellspacing="0">
+								<tr>
+									<td>
+										<?php set_checked($pconfig['topology_subnet'],$chk); ?>
+										<input name="topology_subnet" type="checkbox" id="topology_subnet" value="yes" <?=$chk;?>/>
+									</td>
+									<td>
+										<span class="vexpl">
+											<?=gettext("Allocate only one IP per client (topology subnet), rather than an isolated subnet per client (topology net30)."); ?><br/>
+										</span>
+									</td>
+								</tr>
+								<tr>
+									<td>&nbsp;</td>
+									<td>
+										<?=gettext("Relevant when supplying a virtual adapter IP address to clients when using tun mode on IPv4."); ?><br/>
+										<?=gettext("Some clients may require this even for IPv6, such as OpenVPN Connect (iOS/Android). Others may break if it is present, such as older versions of OpenVPN or clients such as Yealink phones."); ?><br>
 									</td>
 								</tr>
 							</table>

@@ -497,30 +497,25 @@ function write_config($desc="Unknown", $backup = true) {
 		log_error("WARNING! Configuration written on bootup.  This can cause stray openvpn and load balancing items in config.xml");
 	*/
 
-	if (!empty($_SESSION['Username']) && ($_SESSION['Username'] != "admin")) {
-		$user = getUserEntry($_SESSION['Username']);
-		if (is_array($user) && userHasPrivilege($user, "user-config-readonly"))
-			return false;
+	if (!empty($_SERVER['REMOTE_ADDR'])) {
+		if (!session_id())
+			@session_start();
+		if (!empty($_SESSION['Username']) && ($_SESSION['Username'] != "admin")) {
+			$user = getUserEntry($_SESSION['Username']);
+			if (is_array($user) && userHasPrivilege($user, "user-config-readonly")) {
+				session_commit();
+				return false;
+			}
+		}
 	}
-	$username = empty($_SESSION["Username"]) ? "(system)" : $_SESSION['Username'];
-	if (!empty($_SERVER['REMOTE_ADDR']))
-		$username .= '@' . $_SERVER['REMOTE_ADDR'];
+
+	if (!isset($argc))
+		session_commit();
 
 	if($backup)
 		backup_config();
 
-	if (!is_array($config['revision']))
-		$config['revision'] = array();
-
-	if (time() > mktime(0, 0, 0, 9, 1, 2004))       /* make sure the clock settings are plausible */
-		$config['revision']['time'] = time();
-
-	/* Log the running script so it's not entirely unlogged what changed */
-	if ($desc == "Unknown")
-		$desc = sprintf(gettext("%s made unknown change"), $_SERVER['SCRIPT_NAME']);
-
-	$config['revision']['description'] = "{$username}: " . $desc;
-	$config['revision']['username'] = $username;
+	$config['revision'] = make_config_revision_entry($desc);
 
 	conf_mount_rw();
 	$lockkey = lock('config', LOCK_EX);
@@ -875,6 +870,41 @@ function set_device_perms() {
 			chmod($path, $attr['mode']);
 		}
 	}
+}
+
+function get_config_user() {
+	if (empty($_SESSION["Username"])) {
+		if (empty($_ENV['USER']) || $_ENV['USER'] == "root")
+			$username = "(system)";
+		else
+			$username = $_ENV['USER'];
+	} else
+		$username = $_SESSION["Username"];
+
+	if (!empty($_SERVER['REMOTE_ADDR']))
+		$username .= '@' . $_SERVER['REMOTE_ADDR'];
+
+	return $username;
+}
+
+function make_config_revision_entry($desc = null, $override_user = null) {
+	if (empty($override_user))
+		$username = get_config_user();
+	else
+		$username = $override_user;
+
+	$revision = array();
+
+	if (time() > mktime(0, 0, 0, 9, 1, 2004))       /* make sure the clock settings are plausible */
+		$revision['time'] = time();
+
+	/* Log the running script so it's not entirely unlogged what changed */
+	if ($desc == "Unknown")
+		$desc = sprintf(gettext("%s made unknown change"), $_SERVER['SCRIPT_NAME']);
+	if (!empty($desc))
+		$revision['description'] = "{$username}: " . $desc;
+	$revision['username'] = $username;
+	return $revision;
 }
 
 ?>

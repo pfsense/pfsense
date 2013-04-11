@@ -433,7 +433,7 @@ foreach ($leases as $data) {
 ?>
 </table>
 <p>
-<form action="status_dhcp_leases.php" method="GET">
+<form action="status_dhcp_leases.php" method="get">
 <input type="hidden" name="order" value="<?=htmlspecialchars($_GET['order']);?>">
 <?php if ($_GET['all']): ?>
 <input type="hidden" name="all" value="0">

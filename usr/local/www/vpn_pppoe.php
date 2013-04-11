@@ -1,6 +1,6 @@
 <?php
 /*
-	Copyright (C) 2010 Ermal Luçi
+	Copyright (C) 2010 Ermal Luci
 	All rights reserved.
 
 	Redistribution and use in source and binary forms, with or without
@@ -75,7 +75,8 @@ if ($_GET['act'] == "del") {
 	if ($a_pppoes[$_GET['id']]) {
 		if ("{$g['varrun_path']}/pppoe" . $a_pppoes[$_GET['id']]['pppoeid'] . "-vpn.pid")
 			killbypid("{$g['varrun_path']}/pppoe" . $a_pppoes[$_GET['id']]['pppoeid'] . "-vpn.pid");
-		mwexec("/bin/rm -r {$g['varetc_path']}/pppoe" . $a_pppoes[$_GET['id']]['pppoeid']);
+		if (is_dir("{$g['varetc_path']}/pppoe" . $a_pppoes[$_GET['id']]['pppoeid']))
+			mwexec("/bin/rm -r {$g['varetc_path']}/pppoe" . $a_pppoes[$_GET['id']]['pppoeid']);
 		unset($a_pppoes[$_GET['id']]);
 		write_config();
 		header("Location: vpn_pppoe.php");

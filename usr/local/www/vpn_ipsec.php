@@ -88,8 +88,13 @@ if ($_GET['act'] == "delph1")
 		/* remove all phase2 entries that match the ikeid */
 		$ikeid = $a_phase1[$_GET['p1index']]['ikeid'];
 		foreach ($a_phase2 as $p2index => $ph2tmp)
-			if ($ph2tmp['ikeid'] == $ikeid)
+			if ($ph2tmp['ikeid'] == $ikeid) {
+				remove_tunnel_spd_policy($a_phase1[$_GET['p1index']],$a_phase2[$p2index]);
 				unset($a_phase2[$p2index]);
+			}
+
+		/* needs to guarantee that SPDs will be removed before phase 1 */
+		vpn_ipsec_refresh_policies();
 
 		/* remove the phase1 entry */
 		unset($a_phase1[$_GET['p1index']]);
@@ -104,7 +109,8 @@ if ($_GET['act'] == "delph1")
 
 if ($_GET['act'] == "delph2")
 {
-	if ($a_phase2[$_GET['p2index']]) {
+	if ($a_phase1[$_GET['p1index']] && $a_phase2[$_GET['p2index']]) {
+		remove_tunnel_spd_policy($a_phase1[$_GET['p1index']],$a_phase2[$_GET['p2index']]);
 		/* remove the phase2 entry */
 		unset($a_phase2[$_GET['p2index']]);
 		vpn_ipsec_refresh_policies();
@@ -382,7 +388,7 @@ include("head.inc");
 										<a href="vpn_ipsec_phase2.php?p2index=<?=$j;?>">
 											<img src="./themes/<?= $g['theme']; ?>/images/icons/icon_e.gif" title="<?=gettext("edit phase2 entry"); ?>" width="17" height="17" border="0">
 										</a>
-										<a href="vpn_ipsec.php?act=delph2&p2index=<?=$j;?>" onclick="return confirm('<?=gettext("Do you really want to delete this phase2 entry?"); ?>')">
+										<a href="vpn_ipsec.php?act=delph2&p1index=<?=$i;?>&p2index=<?=$j;?>" onclick="return confirm('<?=gettext("Do you really want to delete this phase2 entry?"); ?>')">
 											<img src="./themes/<?= $g['theme']; ?>/images/icons/icon_x.gif" title="<?=gettext("delete phase2 entry"); ?>" width="17" height="17" border="0">
 										</a>
 										<a href="vpn_ipsec_phase2.php?dup=<?=$j;?>">

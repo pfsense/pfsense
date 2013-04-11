@@ -1323,13 +1323,25 @@ $i--): ?>
 						else
 							$opts .= "<option value=\"{$vprio}\" {$selected}>" . strtoupper($vprio) . "</option>\n";
 					}
+
+					$optsset = "";
+					foreach($vlanprio as $vprioset) {
+						if ($vprioset == $pconfig['vlanprioset'])
+							$selected = " selected=\"selected\"";
+						else
+							$selected = "";
+						if ($vprioset == "none")
+							$optsset .= "<option value=\"\">{$vprioset}</option>\n";
+						else
+							$optsset .= "<option value=\"{$vprioset}\" {$selected}>" . strtoupper($vprioset) . "</option>\n";
+					}
 ?>
 					<select name='vlanprio'>
 					<?php echo $opts; ?>
 					</select>
 					<p><?=gettext("Choose 802.1p priority to match on");?></p>
 					<select name='vlanprioset'>
-					<?php echo $opts; ?>
+					<?php echo $optsset; ?>
 					</select>
 					<p><?=gettext("Choose 802.1p priority to apply");?></p>
 				</div>

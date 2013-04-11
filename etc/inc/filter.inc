@@ -2250,9 +2250,9 @@ function filter_generate_user_rule($rule) {
 		$aline['tagged'] = " tagged " .$rule['tagged'] . " ";
 	if (!empty($rule['dscp']))
 		$aline['dscp'] = " dscp " . $rule['dscp'] . " ";
-	if (!empty($rule['vlanprio']))
+	if (!empty($rule['vlanprio']) && ($rule['vlanprio'] != "none"))
 		$aline['vlanprio'] = " ieee8021q-pcp " . $rule['vlanprio'] . " ";
-	if (!empty($rule['vlanprioset']))
+	if (!empty($rule['vlanprioset']) && ($rule['vlanprioset'] != "none"))
 		$aline['vlanprioset'] = " ieee8021q-setpcp " . $rule['vlanprioset'] . " ";
 	if ($type == "pass") {
 		if (isset($rule['allowopts']))

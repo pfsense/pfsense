@@ -72,7 +72,6 @@ function handle_argument_group($iface, $argument2) {
 		case "start":
 		case "up":
 			log_error("DEVD Ethernet attached event for {$iface}");
-			interfaces_staticarp_configure($iface);
 			log_error("HOTPLUG: Configuring interface {$iface}");
 			// Do not try to readd to bridge otherwise em(4) has problems
 			interface_configure($iface, false, true); 

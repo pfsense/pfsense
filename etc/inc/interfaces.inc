@@ -3071,6 +3071,7 @@ function interface_configure($interface = "wan", $reloadall = false, $linkupeven
 		}
 	}
 
+	interfaces_staticarp_configure($interface);
 	return 0;
 }
 

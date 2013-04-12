@@ -177,11 +177,6 @@ if (is_ipaddr($oldip) && $curwanip == $oldip) {
 	if (substr($interface_real, 0, 4) != "ovpn")
 		openvpn_resync_all($interface);
 
-	/* perform RFC 2136 DNS update */
-	services_dnsupdate_process($interface);
-
-	/* signal dyndns update */
-	services_dyndns_configure($interface);
 	exit;
 }
 

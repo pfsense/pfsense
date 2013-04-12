@@ -994,4 +994,26 @@ function interface_gateway_group_member($interface) {
 	return false;
 }
 
+function gateway_is_gwgroup_member($name) {
+	global $config;
+
+	if (is_array($config['gateways']['gateway_group']))
+		$groups = $config['gateways']['gateway_group'];
+	else
+		return false;
+
+	$members = array();
+	foreach($groups as $group) {
+		if (is_array($group['item'])) {
+			foreach($group['item'] as $item) {
+				$elements = explode("|", $item);
+				$gwname = $elements[0];
+				if ($name == $elements[0])
+					$members[] = $group['name'];
+			}
+		}
+	}
+
+	return $members;
+}
 ?>

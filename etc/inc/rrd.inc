@@ -57,26 +57,28 @@ function restore_rrd() {
 	$rrdreturn = "";
 	if (file_exists("{$g['cf_conf_path']}/rrd.tgz")) {
 		foreach (glob("{$rrddbpath}/*.xml") as $xml_file) {
-			unlink($xml_file);
+			@unlink($xml_file);
 		}
-		exec("cd /;LANG=C /usr/bin/tar -xzf {$g['cf_conf_path']}/rrd.tgz 2>&1", $rrdrestore, $rrdreturn);
+		$_gb = exec("cd /;LANG=C /usr/bin/tar -xzf {$g['cf_conf_path']}/rrd.tgz 2>&1", $rrdrestore, $rrdreturn);
 		$rrdrestore = implode(" ", $rrdrestore);
 		if($rrdreturn != 0) {
 			log_error("RRD restore failed exited with $rrdreturn, the error is: $rrdrestore\n");
 		}
+		unset($rrdrestore);
 		foreach (glob("{$rrddbpath}/*.xml") as $xml_file) {
 			$rrd_file = preg_replace('/\.xml$/', ".rrd", $xml_file);
 			if (file_exists("{$rrd_file}")) {
-				unlink($rrd_file);
+				@unlink($rrd_file);
 			}
 			$output = array();
 			$status = null;
-			exec("$rrdtool restore -f '{$xml_file}' '{$rrd_file}'", $output, $status);
+			$_gb = exec("$rrdtool restore -f '{$xml_file}' '{$rrd_file}'", $output, $status);
 			if ($status) {
 				log_error("rrdtool restore -f '{$xml_file}' '{$rrd_file}' failed returning {$status}.");
 				continue;
 			}
-			unlink($xml_file);
+			unset($output);
+			@unlink($xml_file);
 		}
 		/* If this backup is still there on a full install, but we aren't going to use ram disks, remove the archive since this is a transition. */
 		if (($g['platform'] == "pfSense") && !isset($config['system']['use_mfs_tmpvar'])) {
@@ -90,22 +92,23 @@ function restore_rrd() {
 function create_new_rrd($rrdcreatecmd) {
 	$rrdcreateoutput = array();
 	$rrdcreatereturn = 0;
-	exec("$rrdcreatecmd 2>&1", $rrdcreateoutput, $rrdcreatereturn);
+	$_gb = exec("$rrdcreatecmd 2>&1", $rrdcreateoutput, $rrdcreatereturn);
 	if ($rrdcreatereturn <> 0) {
 		$rrdcreateoutput = implode(" ", $rrdcreateoutput);
 		log_error(sprintf(gettext('RRD create failed exited with %1$s, the error is: %2$s'), $rrdcreatereturn, $rrdcreateoutput));
 	}
+	unset($rrdcreateoutput);
 	return $rrdcreatereturn;
 }
 
 function migrate_rrd_format($rrdoldxml, $rrdnewxml) {
 	if(!file_exists("/tmp/rrd_notice_sent.txt")) {
-		exec("echo 'Converting RRD configuration to new format.  This might take a bit...' | wall");
-		touch("/tmp/rrd_notice_sent.txt");
+		$_gb = exec("echo 'Converting RRD configuration to new format.  This might take a bit...' | wall");
+		@touch("/tmp/rrd_notice_sent.txt");
 	}
 	$numrraold = count($rrdoldxml['rra']);
-	$numdsold = count($rrdoldxml['ds']);
 	$numrranew = count($rrdnewxml['rra']);
+	$numdsold = count($rrdoldxml['ds']);
 	$numdsnew = count($rrdnewxml['ds']);
 	log_error(sprintf(gettext('Import RRD has %1$s DS values and %2$s RRA databases, new format RRD has %3$s DS values and %4$s RRA databases'), $numdsold, $numrraold, $numdsnew ,$numrranew));
 

@@ -48,7 +48,8 @@ if(isset($config['openvpn']['enable']))
 	log_error("OpenVPN: One or more OpenVPN tunnel endpoints may have changed its IP. Reloading.");
 else
 	return;
-	
+
+$gwgroups = array();
 $openvpnlck = lock('openvpn', LOCK_EX);
 if (empty($argument) || $argument == "all")
 	$interface = ""; 
@@ -56,18 +57,20 @@ else {
 	$interface = lookup_gateway_interface_by_name($argument);
 	if (empty($interface))
 		$interface = $argument;
+	else
+		$gwgroups = gateway_is_gwgroup_member($argument);
 }
 
 if(is_array($config['openvpn']['openvpn-server'])) {
 	foreach($config['openvpn']['openvpn-server'] as &$server) {
-		if ($server['interface'] == $interface || empty($interface))
+		if ($server['interface'] == $interface || empty($interface) || (!empty($gwgroups) && in_array($argument, $gwgroups)))
 			openvpn_resync('server', $server);
 	}
 }
 
 if (is_array($config['openvpn']['openvpn-client'])) {
 	foreach($config['openvpn']['openvpn-client'] as &$client) {
-		if ($client['interface'] == $interface || empty($interface))
+		if ($client['interface'] == $interface || empty($interface) || (!empty($gwgroups) && in_array($argument, $gwgroups)))
 			openvpn_resync('client', $client);
 	}
 }

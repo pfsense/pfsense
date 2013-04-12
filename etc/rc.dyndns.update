@@ -42,8 +42,11 @@ if(empty($argument)) {
 	services_dyndns_configure();
 	services_dnsupdate_process();
 } else {
-	services_dyndns_configure($argument);
-	services_dnsupdate_process($argument);
+	$interface = lookup_gateway_interface_by_name($argument);
+	if (empty($interface))
+		$interface = $argument;
+	services_dyndns_configure($interface);
+	services_dnsupdate_process($interface);
 }
 
 ?>

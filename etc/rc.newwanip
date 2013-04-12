@@ -156,19 +156,25 @@ if(is_array($config['gifs']['gif'])){
 	}
 }
 
-/* reconfigure static routes (kernel may have deleted them) */
-system_routing_configure($interface);
+/*
+ * We need to force sync VPNs on such even when the IP is the same for dynamic interfaces.
+ * Even with the same IP the VPN software is unhappy with the IP disappearing, and we
+ * could be failing back in which case we need to switch IPs back anyhow.
+ */
+if (!is_ipaddr($oldip) || $curwanip != $oldip || !is_ipaddrv4($config['interfaces'][$interface]['ipaddr'])) {
+	/* reconfigure static routes (kernel may have deleted them) */
+	system_routing_configure($interface);
 
-/* reconfigure our gateway monitor */
-setup_gateways_monitor();
+	/* reconfigure our gateway monitor */
+	setup_gateways_monitor();
 
-/* signal filter reload */
-filter_configure();
+	file_put_contents("{$g['vardb_path']}/{$interface}_cacheip", $curwanip);
 
-if (is_ipaddr($oldip) && $curwanip == $oldip) {
-	/* We need to force sync VPNs on such even when the IP is the same. Even with
-	 * the same IP the VPN software is unhappy with the IP disappearing, and we
-	 * could be failing back in which case we need to switch IPs back anyhow. */
+	/* perform RFC 2136 DNS update */
+	services_dnsupdate_process($interface);
+
+	/* signal dyndns update */
+	services_dyndns_configure($interface);
 
 	/* reconfigure IPsec tunnels */
 	vpn_ipsec_force_reload($interface);
@@ -177,33 +183,19 @@ if (is_ipaddr($oldip) && $curwanip == $oldip) {
 	if (substr($interface_real, 0, 4) != "ovpn")
 		openvpn_resync_all($interface);
 
-	exit;
+	/* reload graphing functions */
+	enable_rrd_graphing();
+
+	/* reload igmpproxy */
+	services_igmpproxy_configure();
+
+	/* restart snmp */
+	services_snmpd_configure();
+
+	restart_packages();
 }
 
-file_put_contents("{$g['vardb_path']}/{$interface}_cacheip", $curwanip);
-
-/* perform RFC 2136 DNS update */
-services_dnsupdate_process($interface);
-
-/* signal dyndns update */
-services_dyndns_configure($interface);
-
-/* reconfigure IPsec tunnels */
-vpn_ipsec_force_reload($interface);
-
-/* start OpenVPN server & clients */
-if (substr($interface_real, 0, 4) != "ovpn")
-	openvpn_resync_all($interface);
-
-/* reload graphing functions */
-enable_rrd_graphing();
-
-/* reload igmpproxy */
-services_igmpproxy_configure();
-
-/* restart snmp */
-services_snmpd_configure();
-
-restart_packages();
+/* signal filter reload */
+filter_configure();
 
 ?>

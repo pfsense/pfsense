@@ -52,22 +52,23 @@ else
 $openvpnlck = lock('openvpn', LOCK_EX);
 if (empty($argument) || $argument == "all")
 	$interface = ""; 
-else
+else {
 	$interface = lookup_gateway_interface_by_name($argument);
+	if (empty($interface))
+		$interface = $argument;
+}
 
 if(is_array($config['openvpn']['openvpn-server'])) {
 	foreach($config['openvpn']['openvpn-server'] as &$server) {
-		if ($server['interface'] == $interface || empty($interface))) {
+		if ($server['interface'] == $interface || empty($interface))
 			openvpn_resync('server', $server);
-		}
 	}
 }
 
 if (is_array($config['openvpn']['openvpn-client'])) {
 	foreach($config['openvpn']['openvpn-client'] as &$client) {
-		if ($client['interface'] == $interface || empty($interface))) {
+		if ($client['interface'] == $interface || empty($interface))
 			openvpn_resync('client', $client);
-		}
 	}
 }
 

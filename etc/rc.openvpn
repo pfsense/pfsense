@@ -30,38 +30,46 @@
 	POSSIBILITY OF SUCH DAMAGE.
 */
 
-	/* parse the configuration and include all functions used below */
-	require_once("config.inc");
-	require_once("functions.inc");
-	require_once("filter.inc");
-	require_once("openvpn.inc");
-	require_once("util.inc");
+/* parse the configuration and include all functions used below */
+require_once("util.inc");
+require_once("config.inc");
+require_once("functions.inc");
+require_once("filter.inc");
+require_once("gwlb.inc");
+require_once("openvpn.inc");
 
-	/* make sure to wait until the boot scripts have finished */
-	while (file_exists("{$g['varrun_path']}/booting")) {
-		sleep(1);
-	}
-	$openvpnlck = lock('openvpn', LOCK_EX);
+/* make sure to wait until the boot scripts have finished */
+if (file_exists("{$g['varrun_path']}/booting"))
+	return;;
+
+$argument = trim($argv[1], " \n");
+
+if(isset($config['openvpn']['enable']))
+	log_error("OpenVPN: One or more OpenVPN tunnel endpoints may have changed its IP. Reloading.");
+else
+	return;
 	
-	if(isset($config['openvpn']['enable']))
-		log_error("OpenVPN: One or more OpenVPN tunnel endpoints may have changed its IP. Reloading.");
-	
-	$gwgroups = return_gateway_groups_array();
-	if(is_array($config['openvpn']['openvpn-server'])) {
-		foreach($config['openvpn']['openvpn-server'] as &$server) {
-			if(is_array($gwgroups[$server['interface']])) {
-				openvpn_resync('server', $server);
-			}
+$openvpnlck = lock('openvpn', LOCK_EX);
+if (empty($argument) || $argument == "all")
+	$interface = ""; 
+else
+	$interface = lookup_gateway_interface_by_name($argument);
+
+if(is_array($config['openvpn']['openvpn-server'])) {
+	foreach($config['openvpn']['openvpn-server'] as &$server) {
+		if ($server['interface'] == $interface || empty($interface))) {
+			openvpn_resync('server', $server);
 		}
 	}
-	
-	if(is_array($config['openvpn']['openvpn-client'])) {
-		foreach($config['openvpn']['openvpn-client'] as &$client) {
-			if(is_array($gwgroups[$client['interface']])) {
-				openvpn_resync('client', $client);
-			}
+}
+
+if (is_array($config['openvpn']['openvpn-client'])) {
+	foreach($config['openvpn']['openvpn-client'] as &$client) {
+		if ($client['interface'] == $interface || empty($interface))) {
+			openvpn_resync('client', $client);
 		}
 	}
+}
 
-	unlock($openvpnlck);
+unlock($openvpnlck);
 ?>

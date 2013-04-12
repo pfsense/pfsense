@@ -2695,23 +2695,27 @@ function upgrade_080_to_081() {
 		dump_rrd_to_xml("{$g['tmp_path']}/{$databasetmp}", "{$g['tmp_path']}/{$xmldumptmp}");
 
 		$rrdold = xml2array(file_get_contents("{$g['tmp_path']}/{$xmldump}"), 1, "tag");
-		$rrdold = $rrdold['rrd'];
+		$rrdolder = $rrdold['rrd'];
+		unset($rrdold);
 
 		$rrdnew = xml2array(file_get_contents("{$g['tmp_path']}/{$xmldumptmp}"), 1, "tag");
-		$rrdnew = $rrdnew['rrd'];
+		$rrdnewer = $rrdnew['rrd'];
+		unset($rrdnew);
 
 		/* remove any MAX RRA's. Not needed for traffic. */
-		$i = 0;
-		foreach ($rrdold['rra'] as $rra) {
-			if(trim($rra['cf']) == "MAX") {
-				unset($rrdold['rra'][$i]);
+		if (is_array($rrdolder)) {
+			$i = 0;
+			foreach ($rrdolder['rra'] as $rra) {
+				if(trim($rra['cf']) == "MAX") {
+					unset($rrdolder['rra'][$i]);
+				}
+				$i++;
 			}
-			$i++;
+
+			file_put_contents("{$g['tmp_path']}/{$xmldumpnew}", dump_xml_config_raw(migrate_rrd_format($rrdolder, $rrdnewer), "rrd"));
+			mwexec("$rrdtool restore -f {$g['tmp_path']}/{$xmldumpnew} {$rrddbpath}/{$database} 2>&1");
+			unset($rrdolder, $rrdnewer);
 		}
-
-		file_put_contents("{$g['tmp_path']}/{$xmldumpnew}", dump_xml_config_raw(migrate_rrd_format($rrdold, $rrdnew), "rrd"));
-		mwexec("$rrdtool restore -f {$g['tmp_path']}/{$xmldumpnew} {$rrddbpath}/{$database} 2>&1");
-
 	}
 	enable_rrd_graphing();
 	if ($g['booting'])
@@ -2720,6 +2724,7 @@ function upgrade_080_to_081() {
 		if (isset($rule['protocol']) && !empty($rule['protocol']))
 			$rule['protocol'] = strtolower($rule['protocol']);
 	}
+	unset($rule);
 }
 
 function upgrade_081_to_082() {
@@ -2735,15 +2740,15 @@ function upgrade_082_to_083() {
 	if (!empty($config['captiveportal'])) {
 		$tmpcp = $config['captiveportal'];
 		$config['captiveportal'] = array();
-		$config['captiveportal']['cpZone'] = array();
-		$config['captiveportal']['cpZone'] = $tmpcp;
-		$config['captiveportal']['cpZone']['zoneid'] = 8000;
+		$config['captiveportal']['cpzone'] = array();
+		$config['captiveportal']['cpzone'] = $tmpcp;
+		$config['captiveportal']['cpzone']['zoneid'] = 8000;
 	}
 	if (!empty($config['voucher'])) {
 		$tmpcp = $config['voucher'];
 		$config['voucher'] = array();
-		$config['voucher']['cpZone'] = array();
-		$config['voucher']['cpZone'] = $tmpcp;
+		$config['voucher']['cpzone'] = array();
+		$config['voucher']['cpzone'] = $tmpcp;
 	}
 }
 
@@ -2805,9 +2810,10 @@ function upgrade_084_to_085() {
 	$rrddbpath = "/var/db/rrd";
 	foreach($oldnames as $old => $new) {
 		if(is_readable("{$rrddbpath}/{$old}-quality.rrd")) {
-			rename("{$rrddbpath}/{$old}-quality.rrd", "{$rrddbpath}/{$new}-quality.rrd");
+			@rename("{$rrddbpath}/{$old}-quality.rrd", "{$rrddbpath}/{$new}-quality.rrd");
 		}
 	}
+	unset($gateways, $oldnames, $gateway_group_arr);
 }
 
 function upgrade_085_to_086() {
@@ -2826,6 +2832,7 @@ function upgrade_085_to_086() {
 			write_config();
 			mwexec("/usr/bin/sed -I \"\" -f {$g['tmp_path']}/vipreplace /conf/config.xml");
 			require_once("config.lib.inc");
+			unset($config);
 			$config = parse_config(true);
 			@unlink("{$g['tmp_path']}/vipreplace");
 		}
@@ -2867,6 +2874,7 @@ function upgrade_086_to_087() {
 				$dn_list[$link] = $qname;
 			}
 		}
+		unset($dummynet_pipe_list);
 	}
 
 	foreach ($config['filter']['rule'] as $idx => $rule) {

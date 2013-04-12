@@ -30,31 +30,35 @@
 	POSSIBILITY OF SUCH DAMAGE.
 */
 
-	/* parse the configuration and include all functions used below */
-	require_once("config.inc");
-	require_once("functions.inc");
-	require_once("filter.inc");	
-	require_once("shaper.inc");	
-	require_once("ipsec.inc");
-	require_once("vpn.inc");
-	require_once("util.inc");
+/* parse the configuration and include all functions used below */
+require_once("util.inc");
+require_once("config.inc");
+require_once("gwlb.inc");
+require_once("functions.inc");
+require_once("filter.inc");	
+require_once("shaper.inc");	
+require_once("ipsec.inc");
+require_once("vpn.inc");
 
-	/* make sure to wait until the boot scripts have finished */
-	while (file_exists("{$g['varrun_path']}/booting")) {
-		sleep(1);
-	}
-	$ipseclck = lock('ipsecdns', LOCK_EX);
-	
-	if(isset($config['ipsec']['enable']))
-		log_error("IPSEC: One or more IPsec tunnel endpoints has changed its IP. Refreshing.");
-	/* We will walk the list of hostnames found in the ipsec tunnel
-	 * configuration. Since we are already triggered by filterdns
-	 * that a hostname has changed we can proceed to compare the 
-	 * new IP address with the old address from the DNS cache.
-	 */
-	vpn_ipsec_refresh_policies();
-	
-	vpn_ipsec_configure();
+/* make sure to wait until the boot scripts have finished */
+if (file_exists("{$g['varrun_path']}/booting"))
+	return;
 
-	unlock($ipseclck);
+if (isset($config['ipsec']['enable']))
+	log_error("IPSEC: One or more IPsec tunnel endpoints has changed its IP. Refreshing.");
+else
+	return;
+
+$ipseclck = lock('ipsecdns', LOCK_EX);
+
+/* We will walk the list of hostnames found in the ipsec tunnel
+ * configuration. Since we are already triggered by filterdns
+ * that a hostname has changed we can proceed to compare the 
+ * new IP address with the old address from the DNS cache.
+ */
+vpn_ipsec_refresh_policies();
+
+vpn_ipsec_configure();
+
+unlock($ipseclck);
 ?>

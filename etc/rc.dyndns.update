@@ -39,7 +39,7 @@ require_once("shaper.inc");
 
 $argument = trim($argv[1], " \n");
 
-if(empty($argument)) {
+if(empty($argument) || $argument == "all") {
 	services_dyndns_configure();
 	services_dnsupdate_process();
 } else {

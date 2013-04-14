@@ -119,7 +119,7 @@ if [ "$BOGON_V4_CKSUM" = "$ON_DISK_V4_CKSUM" ] || [ "$BOGON_V6_CKSUM" = "$ON_DIS
 		if [ $BOGONS_V6_TABLE_COUNT -gt 0 ]; then
 			ENTRIES_V6=`pfctl -vvsTables | awk '/-\tbogonsv6$/ {getline; print $2}'`
 			if [ $ENTRIES_MAX -gt $((2*ENTRIES_TOT-${ENTRIES_V6:-0}+LINES_V6)) ]; then
-				egrep -v "^fc00::/7" /tmp/bogonsv6 > /etc/bogonsv6
+				egrep -iv "^fc00::/7" /tmp/bogonsv6 > /etc/bogonsv6
 				RESULT=`/sbin/pfctl -t bogonsv6 -T replace -f /etc/bogonsv6 2>&1`
 				echo "$RESULT" | awk '{ print "Bogons V6 file downloaded: " $0 }' | logger
 			else
@@ -127,7 +127,7 @@ if [ "$BOGON_V4_CKSUM" = "$ON_DISK_V4_CKSUM" ] || [ "$BOGON_V6_CKSUM" = "$ON_DIS
 			fi
 		else
 			if [ $ENTRIES_MAX -gt $((2*ENTRIES_TOT+LINES_V6)) ]; then
-				egrep -v "^fc00::/7" /tmp/bogonsv6 > /etc/bogonsv6
+				egrep -iv "^fc00::/7" /tmp/bogonsv6 > /etc/bogonsv6
 				echo "Bogons V6 file downloaded but not updating IPv6 bogons table because IPv6 Allow is off" | logger
 			else
 				echo "Not saving IPv6 bogons table (IPv6 Allow is off and table-entries limit is potentially too low)" | logger

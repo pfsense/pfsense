@@ -356,7 +356,7 @@ if ($pkg['custom_php_after_head_command'])
 	}
 	?>
 }
-//]]>>
+//]]>
 </script>
 <?php } ?>
 <script type="text/javascript" src="javascript/domTT/domLib.js"></script>

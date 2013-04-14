@@ -267,11 +267,14 @@ if ($pkg['custom_php_after_head_command'])
 
 <body link="#0000CC" vlink="#0000CC" alink="#0000CC">
 
+<?php include("fbegin.inc"); ?>
+
 <script type="text/javascript" src="/javascript/autosuggest.js"></script>
 <script type="text/javascript" src="/javascript/suggestions.js"></script>
 
 <?php if($pkg['fields']['field'] <> "") { ?>
-<script type="text/javascript" language="javascript">
+<script type="text/javascript">
+//<![CDATA[
 	//Everything inside it will load as soon as the DOM is loaded and before the page contents are loaded
 	jQuery(document).ready(function() {
 		
@@ -302,7 +305,7 @@ if ($pkg['custom_php_after_head_command'])
 			var c_id=jQuery("#maintable tr").length;
 			var new_row=jQuery("table#maintable tr:last").html().replace(/(name|id)="(\w+)(\d+)"/g,"$1='$2"+c_id+"'");
 			//apply new id to created line rowhelperid
-			jQuery("table#maintable tr:last").after("<tr>"+new_row+"</tr>");
+			jQuery("table#maintable tr:last").after("<tr>"+new_row+"<\/tr>");
 	    });
 		// Call enablechange function
 		enablechange();
@@ -353,16 +356,15 @@ if ($pkg['custom_php_after_head_command'])
 	}
 	?>
 }
-//-->
+//]]>>
 </script>
 <?php } ?>
 <script type="text/javascript" src="javascript/domTT/domLib.js"></script>
 <script type="text/javascript" src="javascript/domTT/domTT.js"></script>
 <script type="text/javascript" src="javascript/domTT/behaviour.js"></script>
 <script type="text/javascript" src="javascript/domTT/fadomatic.js"></script>
-<script type="text/javascript" language="javascript" src="/javascript/row_helper_dynamic.js"></script>
+<script type="text/javascript" src="/javascript/row_helper_dynamic.js"></script>
 
-<?php include("fbegin.inc"); ?>
 <?php if (!empty($input_errors)) print_input_errors($input_errors); ?>
 <form name="iform" action="pkg_edit.php" method="post">
 <input type="hidden" name="xml" value="<?= htmlspecialchars($xml) ?>">
@@ -436,7 +438,7 @@ if ($pkg['tabs'] <> "") {
 
 		if ($pkga['type'] == "listtopic") {
 			$input = "<tr id='td_{$pkga['fieldname']}'><td>&nbsp;</td></tr>";
-			$input .= "<tr id='tr_{$pkga['fieldname']}'><td colspan=\"2\" class=\"listtopic\">{$pkga['name']}<br></td></tr>\n";
+			$input .= "<tr id='tr_{$pkga['fieldname']}'><td colspan=\"2\" class=\"listtopic\">{$pkga['name']}<br/></td></tr>\n";
 			if(isset($pkga['advancedfield']) && isset($adv_filed_count)) {
 				$advanced .= $input;
 				$adv_filed_count++;
@@ -518,7 +520,7 @@ if ($pkg['tabs'] <> "") {
 			case "input":
 				$size = ($pkga['size'] ? " size='{$pkga['size']}' " : "");
 				$input = "<input {$size} id='{$pkga['fieldname']}' name='{$pkga['fieldname']}' class='formfld unknown' value='" . htmlspecialchars($value) ."'>\n";
-				$input .= "<br>" . fixup_string($pkga['description']) . "\n";
+				$input .= "<br/>" . fixup_string($pkga['description']) . "\n";
 				if(isset($pkga['advancedfield']) && isset($adv_filed_count)) {
 					$js_array[] = $pkga['fieldname'];
 					$advanced .= display_advanced_field($pkga['fieldname']).$input ."</div>\n";
@@ -530,7 +532,7 @@ if ($pkg['tabs'] <> "") {
 			case "password":
 				$size = ($pkga['size'] ? " size='{$pkga['size']}' " : "");
 				$input = "<input " . $size . " id='" . $pkga['fieldname'] . "' type='password' " . $size . " name='" . $pkga['fieldname'] . "' class='formfld pwd' value='" . htmlspecialchars($value) . "'>\n";
-				$input .= "<br>" . fixup_string($pkga['description']) . "\n";
+				$input .= "<br/>" . fixup_string($pkga['description']) . "\n";
 				if(isset($pkga['advancedfield']) && isset($adv_filed_count)) {
 					$js_array[] = $pkga['fieldname'];
 					$advanced .= display_advanced_field($pkga['fieldname']).$input ."</div>\n";
@@ -624,7 +626,7 @@ if ($pkg['tabs'] <> "") {
 					$input .= "\t<option value=\"{$vpn['descr']}\">{$vpn['descr']}</option>\n";
 					}
 				$input .= "</select>\n";
-				$input .= "<br>" . fixup_string($pkga['description']) . "\n";
+				$input .= "<br/>" . fixup_string($pkga['description']) . "\n";
 
 				if(isset($pkga['advancedfield']) && isset($adv_filed_count)) {
 					$js_array[] = $pkga['fieldname'];
@@ -641,7 +643,7 @@ if ($pkg['tabs'] <> "") {
 				if (isset($pkga['enablefields']) || isset($pkga['checkenablefields']))
 					$onclick = ' onclick="javascript:enablechange();"';
 				$input = "<input id='{$pkga['fieldname']}' type='checkbox' name='{$pkga['fieldname']}' {$checkboxchecked} {$onclick} {$onchange}>\n";
-				$input .= "<br>" . fixup_string($pkga['description']) . "\n";
+				$input .= "<br/>" . fixup_string($pkga['description']) . "\n";
 
 				if(isset($pkga['advancedfield']) && isset($adv_filed_count)) {
 					$js_array[] = $pkga['fieldname'];
@@ -661,7 +663,7 @@ if ($pkg['tabs'] <> "") {
 					$value = base64_decode($value);
 				$wrap =($pkga['wrap'] == "off" ? 'wrap="off" style="white-space:nowrap;"' : '');		  
 				$input = "<textarea {$rows} {$cols} name='{$pkga['fieldname']}'{$wrap}>{$value}</textarea>\n";
-				$input .= "<br>" . fixup_string($pkga['description']) . "\n";
+				$input .= "<br/>" . fixup_string($pkga['description']) . "\n";
 				if(isset($pkga['advancedfield']) && isset($adv_filed_count)) {
 					$js_array[] = $pkga['fieldname'];
 					$advanced .= display_advanced_field($pkga['fieldname']).$input;
@@ -701,8 +703,10 @@ if ($pkg['tabs'] <> "") {
 				$input .= fixup_string($pkga['description']) . "\n";
 
 				$script = "<script type='text/javascript'>\n";
+				$script /= "//<![CDATA[\n";
 				$script .= "var aliasarray = new Array({$aliasesaddr})\n";
 				$script .= "var oTextbox1 = new AutoSuggestControl(document.getElementById('{$fieldname}'), new StateSuggestions(aliasarray))\n";
+				$script .= "//]]>\n";
 				$script .= "</script>";
 
 				echo $input;
@@ -787,15 +791,15 @@ if ($pkg['tabs'] <> "") {
 				if(isset($pkga['placeonbottom']))
 					$pkg_buttons .= $input;
 				else
-					echo $input ."\n<br>" . fixup_string($pkga['description']) . "\n";;
+					echo $input ."\n<br/>" . fixup_string($pkga['description']) . "\n";;
 				break;
 
 			case "rowhelper":
 				#$rowhelpername=($fields['fieldname'] ? $fields['fieldname'] : "row");
 				$rowhelpername="row";
 				?>
-				<script type="text/javascript" language='javascript'>
-				<!--
+				<script type="text/javascript">
+				//<![CDATA[
 				<?php
 					$rowcounter = 0;
 					$fieldcounter = 0;
@@ -806,7 +810,7 @@ if ($pkg['tabs'] <> "") {
 						$fieldcounter++;
 					}
 				?>
-				-->
+				//]]>
 				</script>
 				<table name="maintable" id="maintable">
 				<tr id='<?="tr_{$pkga['fieldname']}";?>'>
@@ -853,8 +857,8 @@ if ($pkg['tabs'] <> "") {
 							}
 						$rowcounter++;
 						echo "<td>";
-						#echo "<a onclick=\"removeRow(this); return false;\" href=\"#\"><img border=\"0\" src=\"./themes/".$g['theme']."/images/icons/icon_x.gif\" /></a>";
-						echo "<a class='delete' href=\"#\"><img border='0' src='./themes/{$g['theme']}/images/icons/icon_x.gif' /></a>";
+						#echo "<a onclick=\"removeRow(this); return false;\" href=\"#\"><img border=\"0\" src=\"./themes/".$g['theme']."/images/icons/icon_x.gif\" alt=\"remove\" /></a>";
+						echo "<a class='delete' href=\"#\"><img border='0' src='./themes/{$g['theme']}/images/icons/icon_x.gif' alt='delete' /></a>";
 						echo "</td>\n";
 						echo "</tr>\n";
 						}
@@ -862,17 +866,17 @@ if ($pkg['tabs'] <> "") {
 				<tbody></tbody>
 				</table>
 	
-				<!-- <br><a onClick="javascript:addRowTo('maintable'); return false;" href="#"><img border="0" src="./themes/<?#= $g['theme']; ?>/images/icons/icon_plus.gif"></a>-->
-				<br><a class="add" href="#"><img border="0" src="./themes/<?= $g['theme']; ?>/images/icons/icon_plus.gif"></a>
-				<br><?php if($pkga['description'] != "") echo $pkga['description']; ?>
-				<script language="JavaScript">
-				<!--
+				<!-- <br/><a onclick="javascript:addRowTo('maintable'); return false;" href="#"><img border="0" src="./themes/<?#= $g['theme']; ?>/images/icons/icon_plus.gif" alt"add" /></a>-->
+				<br/><a class="add" href="#"><img border="0" src="./themes/<?= $g['theme']; ?>/images/icons/icon_plus.gif" alt="add" /></a>
+				<br/><?php if($pkga['description'] != "") echo $pkga['description']; ?>
+				<script type="text/javascript">
+				//<![CDATA[
 				field_counter_js = <?= $fieldcounter ?>;
 				rows = <?= $rowcounter ?>;
 				totalrows = <?php echo $rowcounter; ?>;
 				loaded = <?php echo $rowcounter; ?>;
 				//typesel_change();
-				//-->
+				//]]>
 				</script>
 		
 				<?php
@@ -890,7 +894,7 @@ if ($pkg['tabs'] <> "") {
      	else{
 			$input= "</td></tr>";
 			if($pkga['usecolspan2'])
-				$input.= "</tr><br>";
+				$input.= "</tr><br/>";
 	     	}
    	 	if(isset($pkga['advancedfield']) && isset($adv_filed_count))
 			$advanced .= "{$input}\n";
@@ -938,12 +942,14 @@ if ($pkg['tabs'] <> "") {
 	/* JavaScript to handle the advanced fields. */
 	if ($pkg['advanced_options'] == "enabled") {
 		echo "<script type=\"text/javascript\">\n";
+		echo "//<![CDATA[\n";
 		foreach($js_array as $advfieldname) {
 			echo "function show_" . $advfieldname . "() {\n";
 			echo "\tjQuery('#showadv_{$advfieldname}').empty();\n";
 			echo "\tjQuery('#show_{$advfieldname}').css('display', 'block');\n";
 			echo "}\n\n";
 		}
+		echo "//]]>\n";
 		echo "</script>\n";
 	}
 ?>
@@ -1104,7 +1110,7 @@ function parse_package_templates() {
 /* Return html div fields */
 function display_advanced_field($fieldname) {
 	$div = "<div id='showadv_{$fieldname}'>\n";
-	$div .= "<input type='button' onClick='show_{$fieldname}()' value='" . gettext("Advanced") . "'></input> - " . gettext("Show advanced option") ."</div>\n";
+	$div .= "<input type='button' onclick='show_{$fieldname}()' value='" . gettext("Advanced") . "'></input> - " . gettext("Show advanced option") ."</div>\n";
 	$div .= "<div id='show_{$fieldname}' style='display:none'>\n";
 	return $div;
 }

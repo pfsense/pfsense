@@ -4,7 +4,7 @@
 	interfaces.php
 	Copyright (C) 2004-2008 Scott Ullrich
 	Copyright (C) 2006 Daniel S. Haischt.
-	Copyright (C) 2008-2010 Ermal Lu?i
+	Copyright (C) 2008-2010 Ermal Luçi
 	All rights reserved.
 
 	originally part of m0n0wall (http://m0n0.ch/wall)
@@ -1380,7 +1380,7 @@ $types6 = array("none" => gettext("None"), "staticv6" => gettext("Static IPv6"),
 						<tr>
 							<td width="22%" valign="top" class="vncell"><?=gettext("Enable"); ?></td>
 							<td width="78%" class="vtable">
-								<input name="enable" type="checkbox" value="yes" <?php if ($pconfig['enable'] == true) echo "checked"; ?> onClick="show_allcfg(this);">
+								<input name="enable" type="checkbox" value="yes" <?php if ($pconfig['enable'] == true) echo "checked"; ?> onclick="show_allcfg(this);">
 							<strong><?=gettext("Enable Interface"); ?></strong>
 							</td>
 						</tr>
@@ -1391,16 +1391,16 @@ $types6 = array("none" => gettext("None"), "staticv6" => gettext("Static IPv6"),
 							<td width="22%" valign="top" class="vncell"><?=gettext("Description"); ?></td>
 							<td width="78%" class="vtable">
 								<input name="descr" type="text" class="formfld unknown" id="descr" size="30" value="<?=htmlspecialchars($pconfig['descr']);?>">
-								<br><span class="vexpl"><?= gettext("Enter a description (name) for the interface here."); ?></span>
+								<br/><span class="vexpl"><?= gettext("Enter a description (name) for the interface here."); ?></span>
 							</td>
 						</tr>
 						<tr>
 							<td valign="middle" class="vncell"><strong><?=gettext("IPv4 Configuration Type"); ?></strong></td>
 							<td class="vtable">
-								<select name="type" onChange="updateType(this.value);" class="formselect" id="type">
+								<select name="type" onchange="updateType(this.value);" class="formselect" id="type">
 								<?php
 									foreach ($types4 as $key => $opt) {
-										echo "<option onClick=\"updateType('{$key}');\"";
+										echo "<option onclick=\"updateType('{$key}');\"";
 										if ($key == $pconfig['type'])
 											echo " selected";
 										echo " value=\"{$key}\" >" . htmlspecialchars($opt);
@@ -1413,10 +1413,10 @@ $types6 = array("none" => gettext("None"), "staticv6" => gettext("Static IPv6"),
 						<tr>
 							<td valign="middle" class="vncell"><strong><?=gettext("IPv6 Configuration Type"); ?></strong></td>
 							<td class="vtable">
-								<select name="type6" onChange="updateTypeSix(this.value);" class="formselect" id="type6">
+								<select name="type6" onchange="updateTypeSix(this.value);" class="formselect" id="type6">
 								<?php
 									foreach ($types6 as $key => $opt) {
-										echo "<option onClick=\"updateTypeSix('{$key}');\"";
+										echo "<option onclick=\"updateTypeSix('{$key}');\"";
 										if ($key == $pconfig['type6'])
 											echo " selected";
 										echo " value=\"{$key}\" >" . htmlspecialchars($opt);
@@ -1436,12 +1436,12 @@ $types6 = array("none" => gettext("None"), "staticv6" => gettext("Static IPv6"),
 									$mac = str_replace("\n","",$mac);
 									if($mac):
 								?>
-									<a OnClick="document.forms[0].spoofmac.value='<?=$mac?>';" href="#"><?=gettext("Insert my local MAC address"); ?></a>
+									<a onclick="document.forms[0].spoofmac.value='<?=$mac?>';" href="#"><?=gettext("Insert my local MAC address"); ?></a>
 								<?php endif; ?>
-								<br>
+								<br/>
 								<?=gettext("This field can be used to modify (\"spoof\") the MAC " .
-								"address of this interface"); ?><br>
-								<?=gettext("(may be required with some cable connections)"); ?><br>
+								"address of this interface"); ?><br/>
+								<?=gettext("(may be required with some cable connections)"); ?><br/>
 								<?=gettext("Enter a MAC address in the following format: xx:xx:xx:xx:xx:xx " .
 								"or leave blank"); ?>
 							</td>
@@ -1450,7 +1450,7 @@ $types6 = array("none" => gettext("None"), "staticv6" => gettext("Static IPv6"),
 							<td valign="top" class="vncell"><?=gettext("MTU"); ?></td>
 							<td class="vtable">
 								<input name="mtu" type="text" class="formfld unknown" id="mtu" size="8" value="<?=htmlspecialchars($pconfig['mtu']);?>">
-								<br>
+								<br/>
 								<?php
 									print gettext("If you leave this field blank, the adapter's default MTU will " .
 									"be used. This is typically 1500 bytes but can vary in some circumstances.");
@@ -1461,7 +1461,7 @@ $types6 = array("none" => gettext("None"), "staticv6" => gettext("Static IPv6"),
 							<td valign="top" class="vncell"><?=gettext("MSS"); ?></td>
 							<td class="vtable">
 								<input name="mss" type="text" class="formfld unknown" id="mss" size="8" value="<?=htmlspecialchars($pconfig['mss']);?>">
-								<br>
+								<br/>
 								<?=gettext("If you enter a value in this field, then MSS clamping for " .
 								"TCP connections to the value entered above minus 40 (TCP/IP " .
 								"header size) will be in effect."); ?>
@@ -1476,7 +1476,7 @@ $types6 = array("none" => gettext("None"), "staticv6" => gettext("Static IPv6"),
 							echo '<div id="showadvmediabox"';
 								if ($mediaopt_from_config != 'autoselect ' && $mediaopt_from_config != ' ') echo " style='display:none'>";
 								else echo '>';
-								echo '<input type="button" onClick="show_advanced_media()" value="' . gettext("Advanced") . '"></input> - ' . gettext("Show advanced option");
+								echo '<input type="button" onclick="show_advanced_media()" value="' . gettext("Advanced") . '"></input> - ' . gettext("Show advanced option");
 							echo "</div>";
 							echo '<div id="showmediaadv" ';
 							if ($mediaopt_from_config == 'autoselect ' || $mediaopt_from_config == ' ') echo "style='display:none'>";
@@ -1491,7 +1491,7 @@ $types6 = array("none" => gettext("None"), "staticv6" => gettext("Static IPv6"),
 										print "<option value=\"$mediaopt\" selected>" . gettext("$mediaopt") . "</option>";
 									}
 								}
-								echo '</select><br>';
+								echo '</select><br/>';
 								echo gettext("Here you can explicitly set speed and duplex mode for this interface. WARNING: You MUST leave this set to autoselect (automatically negotiate speed) unless the port this interface connects to has its speed and duplex forced.");
 						echo '</div>';
 							echo '</td>';
@@ -1547,7 +1547,7 @@ $types6 = array("none" => gettext("None"), "staticv6" => gettext("Static IPv6"),
 													}
 													?>
 											</select>
-											- or  <strong><a OnClick="show_add_gateway();" href="#gatewaysection"><?=gettext("add a new one."); ?></a></strong>
+											- or  <strong><a onclick="show_add_gateway();" href="#gatewaysection"><?=gettext("add a new one."); ?></a></strong>
 											<br/>
 											<div id='addgwbox'>
 												<?=gettext("If this interface is an Internet connection, select an existing Gateway from the list or add one using the link above"); ?>
@@ -1588,8 +1588,8 @@ $types6 = array("none" => gettext("None"), "staticv6" => gettext("Static IPv6"),
 																	<td colspan="2">
 																		<center>
 																			<div id='savebuttondiv'>
-																				<input id="gwsave" type="Button" value="<?=gettext("Save Gateway"); ?>" onClick='hide_add_gatewaysave();'>
-																				<input id="gwcancel" type="Button" value="<?=gettext("Cancel"); ?>" onClick='hide_add_gateway();'>
+																				<input id="gwsave" type="Button" value="<?=gettext("Save Gateway"); ?>" onclick='hide_add_gatewaysave();'>
+																				<input id="gwcancel" type="Button" value="<?=gettext("Cancel"); ?>" onclick='hide_add_gateway();'>
 																			</div>
 																		</center>
 																	</td>
@@ -1653,7 +1653,7 @@ $types6 = array("none" => gettext("None"), "staticv6" => gettext("Static IPv6"),
 													}
 													?>
 											</select>
-											- or <strong><a OnClick="show_add_gateway_v6();" href="#gatewayv6section"><?=gettext("add a new one."); ?></a></strong>
+											- or <strong><a onclick="show_add_gateway_v6();" href="#gatewayv6section"><?=gettext("add a new one."); ?></a></strong>
 											<br/>
 											<div id='addgwboxv6'>
 											<?=gettext("If this interface is an Internet connection, select an existing Gateway from the list or add a new one using the link above"); ?>
@@ -1694,8 +1694,8 @@ $types6 = array("none" => gettext("None"), "staticv6" => gettext("Static IPv6"),
 																	<td colspan="2">
 																		<center>
 																			<div id='savebuttondivv6'>
-																				<input id="gwsavev6" type="Button" value="<?=gettext("Save Gateway"); ?>" onClick='hide_add_gatewaysave_v6();'>
-																				<input id="gwcancelv6" type="Button" value="<?=gettext("Cancel"); ?>" onClick='hide_add_gateway_v6();'>
+																				<input id="gwsavev6" type="Button" value="<?=gettext("Save Gateway"); ?>" onclick='hide_add_gatewaysave_v6();'>
+																				<input id="gwcancelv6" type="Button" value="<?=gettext("Cancel"); ?>" onclick='hide_add_gateway_v6();'>
 																			</div>
 																		</center>
 																	</td>
@@ -1736,7 +1736,7 @@ $types6 = array("none" => gettext("None"), "staticv6" => gettext("Static IPv6"),
 										<td width="22%" valign="top" class="vncell"><?=gettext("Hostname"); ?></td>
 										<td width="78%" class="vtable">
 											<input name="dhcphostname" type="text" class="formfld unknown" id="dhcphostname" size="40" value="<?=htmlspecialchars($pconfig['dhcphostname']);?>">
-											<br>
+											<br/>
 											<?=gettext("The value in this field is sent as the DHCP client identifier " .
 											"and hostname when requesting a DHCP lease. Some ISPs may require " .
 											"this (for client identification)."); ?>
@@ -1778,7 +1778,7 @@ $types6 = array("none" => gettext("None"), "staticv6" => gettext("Static IPv6"),
 										<td width="22%" valign="top" class="vncell"><?=gettext("DHCPv6 Unique Identifier (DUID)"); ?></td>
 										<td width="78%" class="vtable">
 											<input name="dhcp6-duid" type="text" class="formfld unknown" id="dhcp6-duid" size="40" value="<?=htmlspecialchars($pconfig['dhcp6-duid']);?>">
-											<br>
+											<br/>
 											<?=gettext("The value in this field is sent as the DHCPv6 client identifier " .
 											"when requesting a DHCPv6 lease."); ?><br />
 											<?php	if(is_readable("/var/db/dhcp6c_duid")) {
@@ -1803,7 +1803,7 @@ $types6 = array("none" => gettext("None"), "staticv6" => gettext("Static IPv6"),
 												}
 												?>
 											</select>
-											<br>
+											<br/>
 											<?=gettext("The value in this field is the delegated prefix length provided by the DHCPv6 server. Normally specified by the ISP."); ?>
 										</td>
 									</tr>
@@ -1823,7 +1823,7 @@ $types6 = array("none" => gettext("None"), "staticv6" => gettext("Static IPv6"),
 										<td width="22%" valign="top" class="vncell"><?=gettext("6RD prefix"); ?></td>
 										<td width="78%" class="vtable">
 											<input name="prefix-6rd" type="text" class="formfld unknown" id="prefix-6rd" size="40" value="<?=htmlspecialchars($pconfig['prefix-6rd']);?>">
-											<br>
+											<br/>
 											<?=gettext("The value in this field is the 6RD IPv6 prefix assigned by your ISP. e.g. '2001:db8::/32'") ?><br />
 										</td>
 									</tr>
@@ -1831,7 +1831,7 @@ $types6 = array("none" => gettext("None"), "staticv6" => gettext("Static IPv6"),
 										<td width="22%" valign="top" class="vncell"><?=gettext("6RD Border Relay"); ?></td>
 										<td width="78%" class="vtable">
 											<input name="gateway-6rd" type="text" class="formfld unknown" id="gateway-6rd" size="40" value="<?=htmlspecialchars($pconfig['gateway-6rd']);?>">
-											<br>
+											<br/>
 											<?=gettext("The value in this field is 6RD IPv4 gateway address assigned by your ISP") ?><br />
 										</td>
 									</tr>
@@ -1847,7 +1847,7 @@ $types6 = array("none" => gettext("None"), "staticv6" => gettext("Static IPv6"),
 												}
 												?>
 											</select>
-											<br>
+											<br/>
 											<?=gettext("The value in this field is the 6RD IPv4 prefix length. Normally specified by the ISP. A value of 0 means we embed the entire IPv4 address in the 6RD prefix."); ?>
 										</td>
 									</tr>
@@ -1888,8 +1888,8 @@ $types6 = array("none" => gettext("None"), "staticv6" => gettext("Static IPv6"),
 												echo ">" . htmlspecialchars($ifacename) . "</option>";
 											}
 										?>
-										</select> <br>
-											<br>
+										</select> <br/>
+											<br/>
 											<?=gettext("This selects the dynamic IPv6 WAN interface to track for configuration") ?><br />
 										</td>
 									</tr>
@@ -1931,7 +1931,7 @@ $types6 = array("none" => gettext("None"), "staticv6" => gettext("Static IPv6"),
 												<tr id="trcountry">
 													<td><?=gettext("Country:"); ?> &nbsp;&nbsp;</td>
 													<td>
-														<select class="formselect" name="country" id="country" onChange="providers_list()">
+														<select class="formselect" name="country" id="country" onchange="providers_list()">
 															<option></option>
 														</select>
 													</td>
@@ -1939,7 +1939,7 @@ $types6 = array("none" => gettext("None"), "staticv6" => gettext("Static IPv6"),
 												<tr id="trprovider" style="display:none">
 													<td><?=gettext("Provider:"); ?> &nbsp;&nbsp;</td>
 													<td>
-														<select class="formselect" name="provider" id="provider" onChange="providerplan_list()">
+														<select class="formselect" name="provider" id="provider" onchange="providerplan_list()">
 															<option></option>
 														</select>
 													</td>
@@ -1947,7 +1947,7 @@ $types6 = array("none" => gettext("None"), "staticv6" => gettext("Static IPv6"),
 												<tr id="trproviderplan" style="display:none">
 													<td><?=gettext("Plan:"); ?> &nbsp;&nbsp;</td>
 													<td>
-														<select class="formselect" name="providerplan" id="providerplan" onChange="prefill_provider()">
+														<select class="formselect" name="providerplan" id="providerplan" onchange="prefill_provider()">
 															<option></option>
 														</select>
 													</td>
@@ -2039,21 +2039,21 @@ $types6 = array("none" => gettext("None"), "staticv6" => gettext("Static IPv6"),
 									<tr>
 										<td width="22%" valign="top" class="vncell"><?=gettext("Service name"); ?></td>
 										<td width="78%" class="vtable"><input name="provider" type="text" class="formfld unknown" id="provider" size="20" value="<?=htmlspecialchars($pconfig['provider']);?>">
-											<br> <span class="vexpl"><?=gettext("Hint: this field can usually be left empty"); ?></span>
+											<br/> <span class="vexpl"><?=gettext("Hint: this field can usually be left empty"); ?></span>
 										</td>
 									</tr>
 									<tr>
 										<td width="22%" valign="top" class="vncell"><?=gettext("Dial on demand"); ?></td>
 										<td width="78%" class="vtable">
 											<input name="pppoe_dialondemand" type="checkbox" id="pppoe_dialondemand" value="enable" <?php if ($pconfig['pppoe_dialondemand']) echo "checked"; ?>>
-											<strong><?=gettext("Enable Dial-On-Demand mode"); ?></strong><br>
+											<strong><?=gettext("Enable Dial-On-Demand mode"); ?></strong><br/>
 											<?=gettext("This option causes the interface to operate in dial-on-demand mode, allowing you to have a "); ?><i><?=gettext("virtual full time"); ?></i> <?=gettext("connection. The interface is configured, but the actual connection of the link is delayed until qualifying outgoing traffic is detected."); ?>
 										</td>
 									</tr>
 									<tr>
 										<td width="22%" valign="top" class="vncell"><?=gettext("Idle timeout"); ?></td>
 										<td width="78%" class="vtable">
-											<input name="pppoe_idletimeout" type="text" class="formfld unknown" id="pppoe_idletimeout" size="8" value="<?=htmlspecialchars($pconfig['pppoe_idletimeout']);?>"> <?=gettext("seconds"); ?><br><?=gettext("If no qualifying outgoing packets are transmitted for the specified number of seconds, the connection is brought down. An idle timeout of zero disables this feature."); ?>
+											<input name="pppoe_idletimeout" type="text" class="formfld unknown" id="pppoe_idletimeout" size="8" value="<?=htmlspecialchars($pconfig['pppoe_idletimeout']);?>"> <?=gettext("seconds"); ?><br/><?=gettext("If no qualifying outgoing packets are transmitted for the specified number of seconds, the connection is brought down. An idle timeout of zero disables this feature."); ?>
 										</td>
 									</tr>
 									<tr>
@@ -2063,7 +2063,7 @@ $types6 = array("none" => gettext("None"), "staticv6" => gettext("Static IPv6"),
 												<tr>
 													<td align="left" valign="top">
 														<p style="margin: 4px; padding: 4px 0 4px 0; width: 94%;">
-														<select valign="top" id="reset_type" name="pppoe-reset-type" class="formselect" onChange="show_reset_settings(this.value);">
+														<select valign="top" id="reset_type" name="pppoe-reset-type" class="formselect" onchange="show_reset_settings(this.value);">
 															<option value = ""><?=gettext("Disabled"); ?></option>
 															<option value="custom" <?php if ($pconfig['pppoe-reset-type'] == "custom") echo "selected"; ?>><?=gettext("Custom"); ?></option>
 															<option value="preset" <?php if ($pconfig['pppoe-reset-type'] == "preset") echo "selected"; ?>><?=gettext("Pre-Set"); ?></option>
@@ -2168,14 +2168,14 @@ $types6 = array("none" => gettext("None"), "staticv6" => gettext("Static IPv6"),
 										<td width="22%" valign="top" class="vncell"><?=gettext("Dial on demand"); ?></td>
 										<td width="78%" class="vtable">
 											<input name="pptp_dialondemand" type="checkbox" id="pptp_dialondemand" value="enable" <?php if ($pconfig['pptp_dialondemand']) echo "checked"; ?>>
-											<strong><?=gettext("Enable Dial-On-Demand mode"); ?></strong><br>
+											<strong><?=gettext("Enable Dial-On-Demand mode"); ?></strong><br/>
 											<?=gettext("This option causes the interface to operate in dial-on-demand mode, allowing you to have a"); ?> <i><?=gettext("virtual full time"); ?></i> <?=gettext("connection. The interface is configured, but the actual connection of the link is delayed until qualifying outgoing traffic is detected."); ?>
 										</td>
 									</tr>
 									<tr>
 										<td width="22%" valign="top" class="vncell"><?=gettext("Idle timeout"); ?></td>
 										<td width="78%" class="vtable">
-											<input name="pptp_idletimeout" type="text" class="formfld unknown" id="pptp_idletimeout" size="8" value="<?=htmlspecialchars($pconfig['pptp_idletimeout']);?>"> <?=gettext("seconds"); ?><br><?=gettext("If no qualifying outgoing packets are transmitted for the specified number of seconds, the connection is brought down. An idle timeout of zero disables this feature."); ?>
+											<input name="pptp_idletimeout" type="text" class="formfld unknown" id="pptp_idletimeout" size="8" value="<?=htmlspecialchars($pconfig['pptp_idletimeout']);?>"> <?=gettext("seconds"); ?><br/><?=gettext("If no qualifying outgoing packets are transmitted for the specified number of seconds, the connection is brought down. An idle timeout of zero disables this feature."); ?>
 										</td>
 									</tr>
 									<tr>
@@ -2676,7 +2676,7 @@ $types6 = array("none" => gettext("None"), "staticv6" => gettext("Static IPv6"),
 							<td class="vtable">
 								<a name="rfc1918"></a>
 								<input name="blockpriv" type="checkbox" id="blockpriv" value="yes" <?php if ($pconfig['blockpriv']) echo "checked"; ?>>
-								<strong><?=gettext("Block private networks"); ?></strong><br>
+								<strong><?=gettext("Block private networks"); ?></strong><br/>
 								<?=gettext("When set, this option blocks traffic from IP addresses that are reserved " .
 								"for private  networks as per RFC 1918 (10/8, 172.16/12, 192.168/16) as"); ?>
 								<?=gettext("well as loopback addresses (127/8)."); ?>&nbsp;&nbsp; <?=gettext("You should generally " .
@@ -2688,7 +2688,7 @@ $types6 = array("none" => gettext("None"), "staticv6" => gettext("Static IPv6"),
 							<td valign="middle" class="vncell">&nbsp;</td>
 							<td class="vtable">
 								<input name="blockbogons" type="checkbox" id="blockbogons" value="yes" <?php if ($pconfig['blockbogons']) echo "checked"; ?>>
-								<strong><?=gettext("Block bogon networks"); ?></strong><br>
+								<strong><?=gettext("Block bogon networks"); ?></strong><br/>
 								<?=gettext("When set, this option blocks traffic from IP addresses that are reserved " .
 								"(but not RFC 1918) or not yet assigned by IANA."); ?>&nbsp;&nbsp;
 								<?=gettext("Bogons are prefixes that should never appear in the Internet routing table, " .
@@ -2727,6 +2727,7 @@ $types6 = array("none" => gettext("None"), "staticv6" => gettext("Static IPv6"),
 		-->
 	</form>
 	<script type="text/javascript">
+	//<![CDATA[
 		var gatewayip;
 		var name;
 		var gatewayipv6;
@@ -2773,7 +2774,7 @@ $types6 = array("none" => gettext("None"), "staticv6" => gettext("Static IPv6"),
 		}
 		function hide_add_gatewaysave() {
 			document.getElementById("addgateway").style.display = 'none';
-			jQuery('#status').html('<img src="/themes/metallic/images/misc/loader.gif"> One moment please...');
+			jQuery('#status').html('<img src="/themes/metallic/images/misc/loader.gif" alt="loader" /> One moment please...');
 			var iface = jQuery('#if').val();
 			name = jQuery('#name').val();
 			var descr = jQuery('#gatewaydescr').val();
@@ -2793,7 +2794,7 @@ $types6 = array("none" => gettext("None"), "staticv6" => gettext("Static IPv6"),
 		}
 		function hide_add_gatewaysave_v6() {
 			document.getElementById("addgatewayv6").style.display = 'none';
-			jQuery('#statusv6').html('<img src="/themes/metallic/images/misc/loader.gif"> One moment please...');
+			jQuery('#statusv6').html('<img src="/themes/metallic/images/misc/loader.gif" alt="loader" /> One moment please...');
 			var iface = jQuery('#if').val();
 			name = jQuery('#namev6').val();
 			var descr = jQuery('#gatewaydescrv6').val();
@@ -2817,7 +2818,7 @@ $types6 = array("none" => gettext("None"), "staticv6" => gettext("Static IPv6"),
 			optn.value = value;
 			selectbox.append(optn);
 			selectbox.prop('selectedIndex',selectbox.children().length-1);
-			jQuery('#notebox').html("<p/><strong><?=gettext("NOTE:"); ?></strong> <?=gettext("You can manage Gateways"); ?> <a target='_new' href='system_gateways.php'><?=gettext("here"); ?></a>.");
+			jQuery('#notebox').html("<p><strong><?=gettext("NOTE:"); ?></strong> <?=gettext("You can manage Gateways"); ?> <a target='_blank' href='system_gateways.php'><?=gettext("here"); ?></a>.</p>");
 		}
 		function addOption_v6(selectbox,text,value)
 		{
@@ -2826,7 +2827,7 @@ $types6 = array("none" => gettext("None"), "staticv6" => gettext("Static IPv6"),
 			optn.value = value;
 			selectbox.append(optn);
 			selectbox.prop('selectedIndex',selectbox.children().length-1);
-			jQuery('#noteboxv6').html("<p/><strong><?=gettext("NOTE:"); ?></strong> <?=gettext("You can manage Gateways"); ?> <a target='_new' href='system_gateways.php'><?=gettext("here"); ?></a>.");
+			jQuery('#noteboxv6').html("<p><strong><?=gettext("NOTE:"); ?></strong> <?=gettext("You can manage Gateways"); ?> <a target='_blank' href='system_gateways.php'><?=gettext("here"); ?></a>.</p>");
 		}
 		function report_failure(request, textStatus, errorThrown) {
 			if (textStatus === "error" && request.getResponseHeader("Content-Type") === "text/plain") {
@@ -2852,7 +2853,7 @@ $types6 = array("none" => gettext("None"), "staticv6" => gettext("Static IPv6"),
 				addOption(jQuery('#gateway'), gwtext, name);
 				// Auto submit form?
 				//document.iform.submit();
-				//jQuery('#status').html('<img src="/themes/metallic/images/misc/loader.gif">');
+				//jQuery('#status').html('<img src="/themes/metallic/images/misc/loader.gif" alt="loader /">');
 			} else {
 				report_failure();
 			}
@@ -2870,7 +2871,7 @@ $types6 = array("none" => gettext("None"), "staticv6" => gettext("Static IPv6"),
 				addOption_v6(jQuery('#gatewayv6'), gwtext_v6, name);
 				// Auto submit form?
 				//document.iform.submit();
-				//jQuery('#statusv6').html('<img src="/themes/metallic/images/misc/loader.gif">');
+				//jQuery('#statusv6').html('<img src="/themes/metallic/images/misc/loader.gif" alt="loader" />');
 			} else {
 				report_failure_v6();
 			}
@@ -2880,6 +2881,7 @@ $types6 = array("none" => gettext("None"), "staticv6" => gettext("Static IPv6"),
 		echo "updateType('{$pconfig['type']}');\n";
 		echo "updateTypeSix('{$pconfig['type6']}');\n";
 		?>
+	//]]>
 	</script>
 	<?php include("fend.inc"); ?>
 	</body>

@@ -356,7 +356,7 @@ if ($pkg['custom_php_after_head_command'])
 	}
 	?>
 }
-//]]>>
+//]]>
 </script>
 <?php } ?>
 <script type="text/javascript" src="javascript/domTT/domLib.js"></script>
@@ -703,7 +703,7 @@ if ($pkg['tabs'] <> "") {
 				$input .= fixup_string($pkga['description']) . "\n";
 
 				$script = "<script type='text/javascript'>\n";
-				$script /= "//<![CDATA[\n";
+				$script .= "//<![CDATA[\n";
 				$script .= "var aliasarray = new Array({$aliasesaddr})\n";
 				$script .= "var oTextbox1 = new AutoSuggestControl(document.getElementById('{$fieldname}'), new StateSuggestions(aliasarray))\n";
 				$script .= "//]]>\n";
@@ -866,7 +866,7 @@ if ($pkg['tabs'] <> "") {
 				<tbody></tbody>
 				</table>
 	
-				<!-- <br/><a onclick="javascript:addRowTo('maintable'); return false;" href="#"><img border="0" src="./themes/<?#= $g['theme']; ?>/images/icons/icon_plus.gif" alt"add" /></a>-->
+				<!-- <br/><a onclick="javascript:addRowTo('maintable'); return false;" href="#"><img border="0" src="./themes/<?#= $g['theme']; ?>/images/icons/icon_plus.gif" alt="add" /></a>-->
 				<br/><a class="add" href="#"><img border="0" src="./themes/<?= $g['theme']; ?>/images/icons/icon_plus.gif" alt="add" /></a>
 				<br/><?php if($pkga['description'] != "") echo $pkga['description']; ?>
 				<script type="text/javascript">

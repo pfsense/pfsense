@@ -486,13 +486,14 @@ function filter_generate_nested_alias($name, $alias, &$aliasnesting, &$aliasaddr
 			$finallist .= "{$builtlist} \\\n";
 			$builtlist = "";
 		}
-		$builtlist .= " {$tmpline}";
+		if (!empty($tmpline))
+			$builtlist .= " {$tmpline}";
 	}
 	$finallist .= $builtlist;
 	return $finallist;
 }
 
-function filter_expand_alias($alias_name)
+function filter_expand_alias($alias_name, $all = false)
 {
 	global $config;
 
@@ -501,14 +502,19 @@ function filter_expand_alias($alias_name)
 			if($aliased['name'] == $alias_name) {
 				$aliasnesting = array();
 				$aliasaddrnesting = array();
-				return filter_generate_nested_alias($aliased['name'], $aliased['address'], $aliasnesting, $aliasaddrnesting);
+				$result = filter_generate_nested_alias($aliased['name'], $aliased['address'], $aliasnesting, $aliasaddrnesting);
+				if ($all === true)
+					foreach ($aliasaddrnesting as $addr)
+						if (!preg_match("/\s*$addr\s*/", $result))
+							$result .= " {$addr}";
+				return $result;
 			}
 		}
 	}
 }
 
-function filter_expand_alias_array($alias_name) {
-	$expansion = filter_expand_alias($alias_name);
+function filter_expand_alias_array($alias_name, $all = false) {
+	$expansion = filter_expand_alias($alias_name, $all);
 	return explode(" ", preg_replace('/\s+/', ' ', trim($expansion)));
 }
 

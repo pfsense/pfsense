@@ -440,7 +440,7 @@ function system_routing_configure($interface = "") {
 			;
 		else if (($interfacegwv6 <> "bgpd") && (is_ipaddrv6($gatewayipv6))) {
 			$ifscope = "";
-			if(preg_match("/fe80::/i", $gatewayipv6))
+			if(preg_match("/fe80:/i", $gatewayipv6))
 				$ifscope = "%{$defaultifv6}";
 			log_error("ROUTING: setting IPv6 default route to {$gatewayipv6}{$ifscope}");
 			mwexec("/sbin/route change -inet6 default " . escapeshellarg($gatewayipv6) ."{$ifscope}");

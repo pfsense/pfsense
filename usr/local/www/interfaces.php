@@ -1380,7 +1380,7 @@ $types6 = array("none" => gettext("None"), "staticv6" => gettext("Static IPv6"),
 						<tr>
 							<td width="22%" valign="top" class="vncell"><?=gettext("Enable"); ?></td>
 							<td width="78%" class="vtable">
-								<input name="enable" type="checkbox" value="yes" <?php if ($pconfig['enable'] == true) echo "checked"; ?> onclick="show_allcfg(this);">
+								<input name="enable" type="checkbox" value="yes" <?php if ($pconfig['enable'] == true) echo "checked"; ?> onclick="show_allcfg(this);" />
 							<strong><?=gettext("Enable Interface"); ?></strong>
 							</td>
 						</tr>
@@ -1390,7 +1390,7 @@ $types6 = array("none" => gettext("None"), "staticv6" => gettext("Static IPv6"),
 						<tr>
 							<td width="22%" valign="top" class="vncell"><?=gettext("Description"); ?></td>
 							<td width="78%" class="vtable">
-								<input name="descr" type="text" class="formfld unknown" id="descr" size="30" value="<?=htmlspecialchars($pconfig['descr']);?>">
+								<input name="descr" type="text" class="formfld unknown" id="descr" size="30" value="<?=htmlspecialchars($pconfig['descr']);?>" />
 								<br/><span class="vexpl"><?= gettext("Enter a description (name) for the interface here."); ?></span>
 							</td>
 						</tr>
@@ -1429,7 +1429,7 @@ $types6 = array("none" => gettext("None"), "staticv6" => gettext("Static IPv6"),
 						<tr>
 							<td valign="top" class="vncell"><?=gettext("MAC address"); ?></td>
 							<td class="vtable">
-								<input name="spoofmac" type="text" class="formfld unknown" id="spoofmac" size="30" value="<?=htmlspecialchars($pconfig['spoofmac']);?>">
+								<input name="spoofmac" type="text" class="formfld unknown" id="spoofmac" size="30" value="<?=htmlspecialchars($pconfig['spoofmac']);?>" />
 								<?php
 									$ip = getenv('REMOTE_ADDR');
 									$mac = `/usr/sbin/arp -an | grep {$ip} | cut -d" " -f4`;
@@ -1449,7 +1449,7 @@ $types6 = array("none" => gettext("None"), "staticv6" => gettext("Static IPv6"),
 						<tr>
 							<td valign="top" class="vncell"><?=gettext("MTU"); ?></td>
 							<td class="vtable">
-								<input name="mtu" type="text" class="formfld unknown" id="mtu" size="8" value="<?=htmlspecialchars($pconfig['mtu']);?>">
+								<input name="mtu" type="text" class="formfld unknown" id="mtu" size="8" value="<?=htmlspecialchars($pconfig['mtu']);?>" />
 								<br/>
 								<?php
 									print gettext("If you leave this field blank, the adapter's default MTU will " .
@@ -1460,7 +1460,7 @@ $types6 = array("none" => gettext("None"), "staticv6" => gettext("Static IPv6"),
 						<tr>
 							<td valign="top" class="vncell"><?=gettext("MSS"); ?></td>
 							<td class="vtable">
-								<input name="mss" type="text" class="formfld unknown" id="mss" size="8" value="<?=htmlspecialchars($pconfig['mss']);?>">
+								<input name="mss" type="text" class="formfld unknown" id="mss" size="8" value="<?=htmlspecialchars($pconfig['mss']);?>" />
 								<br/>
 								<?=gettext("If you enter a value in this field, then MSS clamping for " .
 								"TCP connections to the value entered above minus 40 (TCP/IP " .
@@ -1476,7 +1476,7 @@ $types6 = array("none" => gettext("None"), "staticv6" => gettext("Static IPv6"),
 							echo '<div id="showadvmediabox"';
 								if ($mediaopt_from_config != 'autoselect ' && $mediaopt_from_config != ' ') echo " style='display:none'>";
 								else echo '>';
-								echo '<input type="button" onclick="show_advanced_media()" value="' . gettext("Advanced") . '"></input> - ' . gettext("Show advanced option");
+								echo '<input type="button" onclick="show_advanced_media()" value="' . gettext("Advanced") . '" /> - ' . gettext("Show advanced option");
 							echo "</div>";
 							echo '<div id="showmediaadv" ';
 							if ($mediaopt_from_config == 'autoselect ' || $mediaopt_from_config == ' ') echo "style='display:none'>";
@@ -1513,7 +1513,7 @@ $types6 = array("none" => gettext("None"), "staticv6" => gettext("Static IPv6"),
 									<tr>
 										<td width="22%" valign="top" class="vncellreq"><?=gettext("IPv4 address"); ?></td>
 										<td width="78%" class="vtable">
-											<input name="ipaddr" type="text" class="formfld unknown" id="ipaddr" size="20" value="<?=htmlspecialchars($pconfig['ipaddr']);?>">
+											<input name="ipaddr" type="text" class="formfld unknown" id="ipaddr" size="20" value="<?=htmlspecialchars($pconfig['ipaddr']);?>" />
 											/
 											<select name="subnet" class="formselect" id="subnet">
 												<?php
@@ -1572,24 +1572,24 @@ $types6 = array("none" => gettext("None"), "staticv6" => gettext("Static IPv6"),
 																	$checked = " CHECKED";
 																?>
 																<tr>
-																	<td width="45%" align="right"><font color="white"><?=gettext("Default  gateway:"); ?></td><td><input type="checkbox" id="defaultgw" name="defaultgw"<?=$checked?>></td>
+																	<td width="45%" align="right"><font color="white"><?=gettext("Default  gateway:"); ?></font></td><td><input type="checkbox" id="defaultgw" name="defaultgw"<?=$checked?> /></td>
 																</tr>
 																<tr>
-																	<td align="right"><font color="white"><?=gettext("Gateway Name:"); ?></td><td><input id="name" name="name" value="<?=$wancfg['descr'] . "GW"?>"></td>
+																	<td align="right"><font color="white"><?=gettext("Gateway Name:"); ?></font></td><td><input id="name" name="name" value="<?=$wancfg['descr'] . "GW"?>" /></td>
 																</tr>
 																<tr>
-																	<td align="right"><font color="white"><?=gettext("Gateway IPv4:"); ?></td><td><input id="gatewayip" name="gatewayip"></td>
+																	<td align="right"><font color="white"><?=gettext("Gateway IPv4:"); ?></font></td><td><input id="gatewayip" name="gatewayip" /></td>
 																</tr>
 																<tr>
-																	<td align="right"><font color="white"><?=gettext("Description:"); ?></td><td><input id="gatewaydescr" name="gatewaydescr"></td>
+																	<td align="right"><font color="white"><?=gettext("Description:"); ?><</font>/td><td><input id="gatewaydescr" name="gatewaydescr" /></td>
 																</tr>
 																<tr><td>&nbsp;</td></tr>
 																<tr>
 																	<td colspan="2">
 																		<center>
 																			<div id='savebuttondiv'>
-																				<input id="gwsave" type="Button" value="<?=gettext("Save Gateway"); ?>" onclick='hide_add_gatewaysave();'>
-																				<input id="gwcancel" type="Button" value="<?=gettext("Cancel"); ?>" onclick='hide_add_gateway();'>
+																				<input id="gwsave" type="Button" value="<?=gettext("Save Gateway"); ?>" onclick='hide_add_gatewaysave();' />
+																				<input id="gwcancel" type="Button" value="<?=gettext("Cancel"); ?>" onclick='hide_add_gateway();' />
 																			</div>
 																		</center>
 																	</td>
@@ -1619,7 +1619,7 @@ $types6 = array("none" => gettext("None"), "staticv6" => gettext("Static IPv6"),
 									<tr>
 										<td width="22%" valign="top" class="vncellreq"><?=gettext("IPv6 address"); ?></td>
 										<td width="78%" class="vtable">
-											<input name="ipaddrv6" type="text" class="formfld unknown" id="ipaddrv6" size="28" value="<?=htmlspecialchars($pconfig['ipaddrv6']);?>">
+											<input name="ipaddrv6" type="text" class="formfld unknown" id="ipaddrv6" size="28" value="<?=htmlspecialchars($pconfig['ipaddrv6']);?>" />
 											/
 											<select name="subnetv6" class="formselect" id="subnetv6">
 												<?php
@@ -1678,24 +1678,24 @@ $types6 = array("none" => gettext("None"), "staticv6" => gettext("Static IPv6"),
 																	$checked = " CHECKED";
 																?>
 																<tr>
-																	<td width="45%" align="right"><font color="white"><?=gettext("Default v6 gateway:"); ?></td><td><input type="checkbox" id="defaultgwv6" name="defaultgwv6"<?=$checked?>></td>
+																	<td width="45%" align="right"><font color="white"><?=gettext("Default v6 gateway:"); ?></font></td><td><input type="checkbox" id="defaultgwv6" name="defaultgwv6"<?=$checked?> /></td>
 																</tr>
 																<tr>
-																	<td align="right"><font color="white"><?=gettext("Gateway Name IPv6:"); ?></td><td><input id="namev6" name="namev6" value="<?=$wancfg['descr'] . "GWv6"?>"></td>
+																	<td align="right"><font color="white"><?=gettext("Gateway Name IPv6:"); ?></font></td><td><input id="namev6" name="namev6" value="<?=$wancfg['descr'] . "GWv6"?>" /></td>
 																</tr>
 																<tr>
-																	<td align="right"><font color="white"><?=gettext("Gateway IPv6:"); ?></td><td><input id="gatewayipv6" name="gatewayipv6"></td>
+																	<td align="right"><font color="white"><?=gettext("Gateway IPv6:"); ?><</font>/td><td><input id="gatewayipv6" name="gatewayipv6" /></td>
 																</tr>
 																<tr>
-																	<td align="right"><font color="white"><?=gettext("Description:"); ?></td><td><input id="gatewaydescrv6" name="gatewaydescrv6"></td>
+																	<td align="right"><font color="white"><?=gettext("Description:"); ?></font></td><td><input id="gatewaydescrv6" name="gatewaydescrv6" /></td>
 																</tr>
 																<tr><td>&nbsp;</td></tr>
 																<tr>
 																	<td colspan="2">
 																		<center>
 																			<div id='savebuttondivv6'>
-																				<input id="gwsavev6" type="Button" value="<?=gettext("Save Gateway"); ?>" onclick='hide_add_gatewaysave_v6();'>
-																				<input id="gwcancelv6" type="Button" value="<?=gettext("Cancel"); ?>" onclick='hide_add_gateway_v6();'>
+																				<input id="gwsavev6" type="Button" value="<?=gettext("Save Gateway"); ?>" onclick='hide_add_gatewaysave_v6();' />
+																				<input id="gwcancelv6" type="Button" value="<?=gettext("Cancel"); ?>" onclick='hide_add_gateway_v6();' />
 																			</div>
 																		</center>
 																	</td>
@@ -1725,7 +1725,7 @@ $types6 = array("none" => gettext("None"), "staticv6" => gettext("Static IPv6"),
 									<tr>
 										<td width="22%" valign="top" class="vncell"><?=gettext("Enable DHCP+"); ?></td>
 										<td width="78%" class="vtable">
-											<input name="dhcp_plus" type="checkbox" value="yes" <?php if ($pconfig['dhcp_plus'] == true) echo "checked"; ?> >
+											<input name="dhcp_plus" type="checkbox" value="yes" <?php if ($pconfig['dhcp_plus'] == true) echo "checked"; ?> />
 										<strong><?=gettext("Enable DHCP+L2TP or DHCP+PPTP."); ?></strong>
 										<br/>
 										<?=gettext("Status changes on this interface will trigger reconfiguration (if necessary) of the associated PPTP/L2TP link."); ?>
@@ -1735,7 +1735,7 @@ $types6 = array("none" => gettext("None"), "staticv6" => gettext("Static IPv6"),
 									<tr>
 										<td width="22%" valign="top" class="vncell"><?=gettext("Hostname"); ?></td>
 										<td width="78%" class="vtable">
-											<input name="dhcphostname" type="text" class="formfld unknown" id="dhcphostname" size="40" value="<?=htmlspecialchars($pconfig['dhcphostname']);?>">
+											<input name="dhcphostname" type="text" class="formfld unknown" id="dhcphostname" size="40" value="<?=htmlspecialchars($pconfig['dhcphostname']);?>" />
 											<br/>
 											<?=gettext("The value in this field is sent as the DHCP client identifier " .
 											"and hostname when requesting a DHCP lease. Some ISPs may require " .
@@ -1745,7 +1745,7 @@ $types6 = array("none" => gettext("None"), "staticv6" => gettext("Static IPv6"),
 									<tr>
 										<td width="22%" valign="top" class="vncell"><?=gettext("Alias IPv4 address"); ?></td>
 										<td width="78%" class="vtable">
-											<input name="alias-address" type="text" class="formfld unknown" id="alias-address" size="20" value="<?=htmlspecialchars($pconfig['alias-address']);?>">
+											<input name="alias-address" type="text" class="formfld unknown" id="alias-address" size="20" value="<?=htmlspecialchars($pconfig['alias-address']);?>" />
 											<select name="alias-subnet" class="formselect" id="alias-subnet">
 												<?php
 												for ($i = 32; $i > 0; $i--) {
@@ -1777,7 +1777,7 @@ $types6 = array("none" => gettext("None"), "staticv6" => gettext("Static IPv6"),
 									<tr>
 										<td width="22%" valign="top" class="vncell"><?=gettext("DHCPv6 Unique Identifier (DUID)"); ?></td>
 										<td width="78%" class="vtable">
-											<input name="dhcp6-duid" type="text" class="formfld unknown" id="dhcp6-duid" size="40" value="<?=htmlspecialchars($pconfig['dhcp6-duid']);?>">
+											<input name="dhcp6-duid" type="text" class="formfld unknown" id="dhcp6-duid" size="40" value="<?=htmlspecialchars($pconfig['dhcp6-duid']);?>" />
 											<br/>
 											<?=gettext("The value in this field is sent as the DHCPv6 client identifier " .
 											"when requesting a DHCPv6 lease."); ?><br />
@@ -1822,7 +1822,7 @@ $types6 = array("none" => gettext("None"), "staticv6" => gettext("Static IPv6"),
 									<tr>
 										<td width="22%" valign="top" class="vncell"><?=gettext("6RD prefix"); ?></td>
 										<td width="78%" class="vtable">
-											<input name="prefix-6rd" type="text" class="formfld unknown" id="prefix-6rd" size="40" value="<?=htmlspecialchars($pconfig['prefix-6rd']);?>">
+											<input name="prefix-6rd" type="text" class="formfld unknown" id="prefix-6rd" size="40" value="<?=htmlspecialchars($pconfig['prefix-6rd']);?>" />
 											<br/>
 											<?=gettext("The value in this field is the 6RD IPv6 prefix assigned by your ISP. e.g. '2001:db8::/32'") ?><br />
 										</td>
@@ -1830,7 +1830,7 @@ $types6 = array("none" => gettext("None"), "staticv6" => gettext("Static IPv6"),
 									<tr>
 										<td width="22%" valign="top" class="vncell"><?=gettext("6RD Border Relay"); ?></td>
 										<td width="78%" class="vtable">
-											<input name="gateway-6rd" type="text" class="formfld unknown" id="gateway-6rd" size="40" value="<?=htmlspecialchars($pconfig['gateway-6rd']);?>">
+											<input name="gateway-6rd" type="text" class="formfld unknown" id="gateway-6rd" size="40" value="<?=htmlspecialchars($pconfig['gateway-6rd']);?>" />
 											<br/>
 											<?=gettext("The value in this field is 6RD IPv4 gateway address assigned by your ISP") ?><br />
 										</td>
@@ -1959,25 +1959,25 @@ $types6 = array("none" => gettext("None"), "staticv6" => gettext("Static IPv6"),
 									<tr>
 										<td width="22%" valign="top" class="vncell"><?=gettext("Username"); ?></td>
 										<td width="78%" class="vtable">
-										<input name="username" type="text" class="formfld user" id="username" size="20" value="<?=htmlspecialchars($pconfig['username']);?>">
+										<input name="username" type="text" class="formfld user" id="username" size="20" value="<?=htmlspecialchars($pconfig['username']);?>" />
 										</td>
 									</tr>
 									<tr>
 										<td width="22%" valign="top" class="vncell"><?=gettext("Password"); ?></td>
 										<td width="78%" class="vtable">
-										<input name="password" type="password" class="formfld pwd" id="password" size="20" value="<?=htmlspecialchars($pconfig['password']);?>">
+										<input name="password" type="password" class="formfld pwd" id="password" size="20" value="<?=htmlspecialchars($pconfig['password']);?>" />
 										</td>
 									</tr>
 									<tr name="phone_num" id="phone_num">
 										<td width="22%" valign="top" class="vncellreq"><?=gettext("Phone Number"); ?></td>
 										<td width="78%" class="vtable">
-											<input name="phone" type="text" class="formfld unknown" id="phone" size="12" value="<?=htmlspecialchars($pconfig['phone']);?>">
+											<input name="phone" type="text" class="formfld unknown" id="phone" size="12" value="<?=htmlspecialchars($pconfig['phone']);?>" />
 										</td>
 									</tr>
 									<tr name="apn_" id="apn_">
 										<td width="22%" valign="top" class="vncell"><?=gettext("Access Point Name (APN)"); ?></td>
 										<td width="78%" class="vtable">
-											<input name="apn" type="text" class="formfld unknown" id="apn" size="40" value="<?=htmlspecialchars($pconfig['apn']);?>">
+											<input name="apn" type="text" class="formfld unknown" id="apn" size="40" value="<?=htmlspecialchars($pconfig['apn']);?>" />
 										</td>
 									</tr>
 									<tr name="interface" id="interface" >
@@ -2027,25 +2027,25 @@ $types6 = array("none" => gettext("None"), "staticv6" => gettext("Static IPv6"),
 									<tr>
 										<td width="22%" valign="top" class="vncellreq"><?=gettext("Username"); ?></td>
 										<td width="78%" class="vtable">
-												<input name="pppoe_username" type="text" class="formfld user" id="pppoe_username" size="20" value="<?=htmlspecialchars($pconfig['pppoe_username']);?>">
+												<input name="pppoe_username" type="text" class="formfld user" id="pppoe_username" size="20" value="<?=htmlspecialchars($pconfig['pppoe_username']);?>" />
 										</td>
 									</tr>
 									<tr>
 										<td width="22%" valign="top" class="vncellreq"><?=gettext("Password"); ?></td>
 										<td width="78%" class="vtable">
-											<input name="pppoe_password" type="password" class="formfld pwd" id="pppoe_password" size="20" value="<?=htmlspecialchars($pconfig['pppoe_password']);?>">
+											<input name="pppoe_password" type="password" class="formfld pwd" id="pppoe_password" size="20" value="<?=htmlspecialchars($pconfig['pppoe_password']);?>" />
 										</td>
 									</tr>
 									<tr>
 										<td width="22%" valign="top" class="vncell"><?=gettext("Service name"); ?></td>
-										<td width="78%" class="vtable"><input name="provider" type="text" class="formfld unknown" id="provider" size="20" value="<?=htmlspecialchars($pconfig['provider']);?>">
+										<td width="78%" class="vtable"><input name="provider" type="text" class="formfld unknown" id="provider" size="20" value="<?=htmlspecialchars($pconfig['provider']);?>" />
 											<br/> <span class="vexpl"><?=gettext("Hint: this field can usually be left empty"); ?></span>
 										</td>
 									</tr>
 									<tr>
 										<td width="22%" valign="top" class="vncell"><?=gettext("Dial on demand"); ?></td>
 										<td width="78%" class="vtable">
-											<input name="pppoe_dialondemand" type="checkbox" id="pppoe_dialondemand" value="enable" <?php if ($pconfig['pppoe_dialondemand']) echo "checked"; ?>>
+											<input name="pppoe_dialondemand" type="checkbox" id="pppoe_dialondemand" value="enable" <?php if ($pconfig['pppoe_dialondemand']) echo "checked"; ?> />
 											<strong><?=gettext("Enable Dial-On-Demand mode"); ?></strong><br/>
 											<?=gettext("This option causes the interface to operate in dial-on-demand mode, allowing you to have a "); ?><i><?=gettext("virtual full time"); ?></i> <?=gettext("connection. The interface is configured, but the actual connection of the link is delayed until qualifying outgoing traffic is detected."); ?>
 										</td>
@@ -2053,7 +2053,7 @@ $types6 = array("none" => gettext("None"), "staticv6" => gettext("Static IPv6"),
 									<tr>
 										<td width="22%" valign="top" class="vncell"><?=gettext("Idle timeout"); ?></td>
 										<td width="78%" class="vtable">
-											<input name="pppoe_idletimeout" type="text" class="formfld unknown" id="pppoe_idletimeout" size="8" value="<?=htmlspecialchars($pconfig['pppoe_idletimeout']);?>"> <?=gettext("seconds"); ?><br/><?=gettext("If no qualifying outgoing packets are transmitted for the specified number of seconds, the connection is brought down. An idle timeout of zero disables this feature."); ?>
+											<input name="pppoe_idletimeout" type="text" class="formfld unknown" id="pppoe_idletimeout" size="8" value="<?=htmlspecialchars($pconfig['pppoe_idletimeout']);?>" /> <?=gettext("seconds"); ?><br/><?=gettext("If no qualifying outgoing packets are transmitted for the specified number of seconds, the connection is brought down. An idle timeout of zero disables this feature."); ?>
 										</td>
 									</tr>
 									<tr>
@@ -2136,19 +2136,19 @@ $types6 = array("none" => gettext("None"), "staticv6" => gettext("Static IPv6"),
 									<tr>
 										<td width="22%" valign="top" class="vncellreq"><?=gettext("Username"); ?></td>
 										<td width="78%" class="vtable">
-											<input name="pptp_username" type="text" class="formfld user" id="pptp_username" size="20" value="<?=htmlspecialchars($pconfig['pptp_username']);?>">
+											<input name="pptp_username" type="text" class="formfld user" id="pptp_username" size="20" value="<?=htmlspecialchars($pconfig['pptp_username']);?>" />
 										</td>
 									</tr>
 									<tr>
 										<td width="22%" valign="top" class="vncellreq"><?=gettext("Password"); ?></td>
 										<td width="78%" class="vtable">
-											<input name="pptp_password" type="password" class="formfld pwd" id="pptp_password" size="20" value="<?=htmlspecialchars($pconfig['pptp_password']);?>">
+											<input name="pptp_password" type="password" class="formfld pwd" id="pptp_password" size="20" value="<?=htmlspecialchars($pconfig['pptp_password']);?>" />
 										</td>
 									</tr>
 									<tr>
 										<td width="22%" width="100" valign="top" class="vncellreq"><?=gettext("Local IP address"); ?></td>
 										<td width="78%" class="vtable">
-											<input name="pptp_local" type="text" class="formfld unknown" id="pptp_local" size="20"  value="<?=htmlspecialchars($pconfig['pptp_local'][0]);?>">
+											<input name="pptp_local" type="text" class="formfld unknown" id="pptp_local" size="20"  value="<?=htmlspecialchars($pconfig['pptp_local'][0]);?>" />
 											/
 											<select name="pptp_subnet" class="formselect" id="pptp_subnet">
 												<?php for ($i = 31; $i > 0; $i--): ?>
@@ -2161,13 +2161,13 @@ $types6 = array("none" => gettext("None"), "staticv6" => gettext("Static IPv6"),
 									<tr>
 										<td width="22%" width="100" valign="top" class="vncellreq"><?=gettext("Remote IP address"); ?></td>
 										<td width="78%" class="vtable">
-											<input name="pptp_remote" type="text" class="formfld unknown" id="pptp_remote" size="20" value="<?=htmlspecialchars($pconfig['pptp_remote'][0]);?>">
+											<input name="pptp_remote" type="text" class="formfld unknown" id="pptp_remote" size="20" value="<?=htmlspecialchars($pconfig['pptp_remote'][0]);?>" />
 										</td>
 									</tr>
 									<tr>
 										<td width="22%" valign="top" class="vncell"><?=gettext("Dial on demand"); ?></td>
 										<td width="78%" class="vtable">
-											<input name="pptp_dialondemand" type="checkbox" id="pptp_dialondemand" value="enable" <?php if ($pconfig['pptp_dialondemand']) echo "checked"; ?>>
+											<input name="pptp_dialondemand" type="checkbox" id="pptp_dialondemand" value="enable" <?php if ($pconfig['pptp_dialondemand']) echo "checked"; ?> />
 											<strong><?=gettext("Enable Dial-On-Demand mode"); ?></strong><br/>
 											<?=gettext("This option causes the interface to operate in dial-on-demand mode, allowing you to have a"); ?> <i><?=gettext("virtual full time"); ?></i> <?=gettext("connection. The interface is configured, but the actual connection of the link is delayed until qualifying outgoing traffic is detected."); ?>
 										</td>
@@ -2175,7 +2175,7 @@ $types6 = array("none" => gettext("None"), "staticv6" => gettext("Static IPv6"),
 									<tr>
 										<td width="22%" valign="top" class="vncell"><?=gettext("Idle timeout"); ?></td>
 										<td width="78%" class="vtable">
-											<input name="pptp_idletimeout" type="text" class="formfld unknown" id="pptp_idletimeout" size="8" value="<?=htmlspecialchars($pconfig['pptp_idletimeout']);?>"> <?=gettext("seconds"); ?><br/><?=gettext("If no qualifying outgoing packets are transmitted for the specified number of seconds, the connection is brought down. An idle timeout of zero disables this feature."); ?>
+											<input name="pptp_idletimeout" type="text" class="formfld unknown" id="pptp_idletimeout" size="8" value="<?=htmlspecialchars($pconfig['pptp_idletimeout']);?>" /> <?=gettext("seconds"); ?><br/><?=gettext("If no qualifying outgoing packets are transmitted for the specified number of seconds, the connection is brought down. An idle timeout of zero disables this feature."); ?>
 										</td>
 									</tr>
 									<tr>
@@ -2208,7 +2208,7 @@ $types6 = array("none" => gettext("None"), "staticv6" => gettext("Static IPv6"),
 						<tr>
 							<td valign="top" class="vncell"><?=gettext("Persist common settings");?></td>
 							<td class="vtable">
-								<input name="persistcommonwireless" type="checkbox" value="yes"  class="formfld" id="persistcommonwireless" <?php if ($pconfig['persistcommonwireless']) echo "checked";?>>
+								<input name="persistcommonwireless" type="checkbox" value="yes"  class="formfld" id="persistcommonwireless" <?php if ($pconfig['persistcommonwireless']) echo "checked";?> />
 								<br/><?=gettext("Enabling this preserves the common wireless configuration through interface deletions and reassignments.");?>
 							</td>
 						</tr>
@@ -2242,7 +2242,7 @@ $types6 = array("none" => gettext("None"), "staticv6" => gettext("Static IPv6"),
 							</td>
 						</tr>
 						<?php else: ?>
-						<input name="protmode" type="hidden" id="protmode" value="off">
+						<input name="protmode" type="hidden" id="protmode" value="off" />
 						<?php endif; ?>
 						<tr>
 							<td valign="top" class="vncellreq"><?=gettext("Transmit power"); ?></td>
@@ -2341,7 +2341,7 @@ $types6 = array("none" => gettext("None"), "staticv6" => gettext("Static IPv6"),
 						<tr>
 							<td valign="top" class="vncell"><?=gettext("Distance setting"); ?></td>
 							<td class="vtable">
-								<input name="distance" type="text" class="formfld unknown" id="distance" size="5" value="<?=htmlspecialchars($pconfig['distance']);?>">
+								<input name="distance" type="text" class="formfld unknown" id="distance" size="5" value="<?=htmlspecialchars($pconfig['distance']);?>" />
 								<br/>
 								<?=gettext("Note: This field can be used to tune ACK/CTS timers to fit the distance between AP and Client"); ?><br/>
 								<?=gettext("(measured in Meters and works only for Atheros based cards !)"); ?>
@@ -2415,7 +2415,7 @@ $types6 = array("none" => gettext("None"), "staticv6" => gettext("Static IPv6"),
 						<tr>
 							<td valign="top" class="vncellreq"><?=gettext("SSID"); ?></td>
 							<td class="vtable">
-								<input name="ssid" type="text" class="formfld unknown" id="ssid" size="20" value="<?=htmlspecialchars($pconfig['ssid']); ?>">
+								<input name="ssid" type="text" class="formfld unknown" id="ssid" size="20" value="<?=htmlspecialchars($pconfig['ssid']); ?>" />
 								<br/>
 								<?=gettext("Note: Only required in Access Point mode. If left blank in Ad-hoc or Infrastructure mode, this interface will connect to any available SSID"); ?>
 							</td>
@@ -2439,7 +2439,7 @@ $types6 = array("none" => gettext("None"), "staticv6" => gettext("Static IPv6"),
 						<tr>
 							<td valign="top" class="vncell"><?=gettext("802.11g only"); ?></td>
 							<td class="vtable">
-								<input name="puremode" type="checkbox" value="11g"  class="formfld" id="puremode" <?php if ($pconfig['puremode'] == '11g') echo "checked";?>>
+								<input name="puremode" type="checkbox" value="11g"  class="formfld" id="puremode" <?php if ($pconfig['puremode'] == '11g') echo "checked";?> />
 								<br/><?=gettext("When operating as an access point in 802.11g mode, allow only 11g-capable stations to associate (11b-only stations are not permitted to associate)."); ?>
 							</td>
 						</tr>
@@ -2447,7 +2447,7 @@ $types6 = array("none" => gettext("None"), "staticv6" => gettext("Static IPv6"),
 						<tr>
 							<td valign="top" class="vncell"><?=gettext("Allow intra-BSS communication"); ?></td>
 							<td class="vtable">
-								<input name="apbridge_enable" type="checkbox" value="yes"  class="formfld" id="apbridge_enable" <?php if ($pconfig['apbridge_enable']) echo "checked";?>>
+								<input name="apbridge_enable" type="checkbox" value="yes"  class="formfld" id="apbridge_enable" <?php if ($pconfig['apbridge_enable']) echo "checked";?> />
 								<br/>
 								<?=gettext("When operating as an access point, enable this if you want to pass packets between wireless clients directly."); ?>
 								<br/>
@@ -2457,14 +2457,14 @@ $types6 = array("none" => gettext("None"), "staticv6" => gettext("Static IPv6"),
 						<tr>
 							<td valign="top" class="vncell"><?=gettext("Enable WME"); ?></td>
 							<td class="vtable">
-								<input name="wme_enable" type="checkbox" class="formfld" id="wme_enable" value="yes" <?php if ($pconfig['wme_enable']) echo "checked";?>>
+								<input name="wme_enable" type="checkbox" class="formfld" id="wme_enable" value="yes" <?php if ($pconfig['wme_enable']) echo "checked";?> />
 								<br/><?=gettext("Setting this option will force the card to use WME (wireless QoS)."); ?>
 							</td>
 						</tr>
 						<tr>
 							<td valign="top" class="vncell"><?=gettext("Enable Hide SSID"); ?></td>
 							<td class="vtable">
-								<input name="hidessid_enable" type="checkbox" class="formfld" id="hidessid_enable" value="yes" <?php if ($pconfig['hidessid_enable']) echo "checked";?>>
+								<input name="hidessid_enable" type="checkbox" class="formfld" id="hidessid_enable" value="yes" <?php if ($pconfig['hidessid_enable']) echo "checked";?> />
 								<br/>
 								<?=gettext("Setting this option will force the card to NOT broadcast its SSID"); ?>
 								<br/>
@@ -2474,7 +2474,7 @@ $types6 = array("none" => gettext("None"), "staticv6" => gettext("Static IPv6"),
 						<tr>
 							<td valign="top" class="vncell"><?=gettext("WEP"); ?></td>
 							<td class="vtable">
-								<input name="wep_enable" type="checkbox" id="wep_enable" value="yes" <?php if ($pconfig['wep_enable']) echo "checked"; ?>>
+								<input name="wep_enable" type="checkbox" id="wep_enable" value="yes" <?php if ($pconfig['wep_enable']) echo "checked"; ?> />
 								<strong><?=gettext("Enable WEP"); ?></strong>
 								<table border="0" cellspacing="0" cellpadding="0">
 									<tr>
@@ -2485,7 +2485,7 @@ $types6 = array("none" => gettext("None"), "staticv6" => gettext("Static IPv6"),
 									<tr>
 										<td><?=gettext("Key 1:"); ?>&nbsp;&nbsp;</td>
 										<td>
-											<input name="key1" type="text" class="formfld unknown" id="key1" size="30" value="<?=htmlspecialchars($pconfig['key1']);?>">
+											<input name="key1" type="text" class="formfld unknown" id="key1" size="30" value="<?=htmlspecialchars($pconfig['key1']);?>" />
 										</td>
 										<td align="center">
 											<input name="txkey" type="radio" value="1" <?php if ($pconfig['txkey'] == 1) echo "checked";?>>
@@ -2494,16 +2494,16 @@ $types6 = array("none" => gettext("None"), "staticv6" => gettext("Static IPv6"),
 									<tr>
 										<td><?=gettext("Key 2:"); ?>&nbsp;&nbsp;</td>
 										<td>
-											<input name="key2" type="text" class="formfld unknown" id="key2" size="30" value="<?=htmlspecialchars($pconfig['key2']);?>">
+											<input name="key2" type="text" class="formfld unknown" id="key2" size="30" value="<?=htmlspecialchars($pconfig['key2']);?>" />
 										</td>
 										<td align="center">
-											<input name="txkey" type="radio" value="2" <?php if ($pconfig['txkey'] == 2) echo "checked";?>>
+											<input name="txkey" type="radio" value="2" <?php if ($pconfig['txkey'] == 2) echo "checked";?> />
 										</td>
 									</tr>
 									<tr>
 										<td><?=gettext("Key 3:"); ?>&nbsp;&nbsp;</td>
 										<td>
-											<input name="key3" type="text" class="formfld unknown" id="key3" size="30" value="<?=htmlspecialchars($pconfig['key3']);?>">
+											<input name="key3" type="text" class="formfld unknown" id="key3" size="30" value="<?=htmlspecialchars($pconfig['key3']);?>" />
 										</td>
 										<td align="center">
 											<input name="txkey" type="radio" value="3" <?php if ($pconfig['txkey'] == 3) echo "checked";?>>
@@ -2512,7 +2512,7 @@ $types6 = array("none" => gettext("None"), "staticv6" => gettext("Static IPv6"),
 									<tr>
 										<td><?=gettext("Key 4:"); ?>&nbsp;&nbsp;</td>
 										<td>
-											<input name="key4" type="text" class="formfld unknown" id="key4" size="30" value="<?=htmlspecialchars($pconfig['key4']);?>">
+											<input name="key4" type="text" class="formfld unknown" id="key4" size="30" value="<?=htmlspecialchars($pconfig['key4']);?>" />
 										</td>
 										<td align="center">
 											<input name="txkey" type="radio" value="4" <?php if ($pconfig['txkey'] == 4) echo "checked";?>>
@@ -2527,7 +2527,7 @@ $types6 = array("none" => gettext("None"), "staticv6" => gettext("Static IPv6"),
 						<tr>
 							<td valign="top" class="vncell"><?=gettext("WPA"); ?></td>
 							<td class="vtable">
-								<input name="wpa_enable" type="checkbox" class="formfld" id="wpa_enable" value="yes" <?php if ($pconfig['wpa_enable']) echo "checked"; ?>>
+								<input name="wpa_enable" type="checkbox" class="formfld" id="wpa_enable" value="yes" <?php if ($pconfig['wpa_enable']) echo "checked"; ?> />
 								<strong><?=gettext("Enable WPA"); ?></strong>
 								<br/><br/>
 								<table border="0" cellspacing="0" cellpadding="0">
@@ -2538,7 +2538,7 @@ $types6 = array("none" => gettext("None"), "staticv6" => gettext("Static IPv6"),
 									<tr>
 										<td><?=gettext("PSK:"); ?>&nbsp;&nbsp;</td>
 										<td>
-											<input name="passphrase" type="text" class="formfld unknown" id="passphrase" size="66" value="<?=htmlspecialchars($pconfig['passphrase']);?>">
+											<input name="passphrase" type="text" class="formfld unknown" id="passphrase" size="66" value="<?=htmlspecialchars($pconfig['passphrase']);?>" />
 										</td>
 									</tr>
 								</table>
@@ -2589,28 +2589,28 @@ $types6 = array("none" => gettext("None"), "staticv6" => gettext("Static IPv6"),
 						<tr>
 							<td valign="top" class="vncell"><?=gettext("Key Rotation"); ?></td>
 							<td class="vtable">
-								<input name="wpa_group_rekey" type="text" class="formfld unknown" id="wpa_group_rekey" size="30" value="<?php echo $pconfig['wpa_group_rekey'] ? $pconfig['wpa_group_rekey'] : "60";?>">
+								<input name="wpa_group_rekey" type="text" class="formfld unknown" id="wpa_group_rekey" size="30" value="<?php echo $pconfig['wpa_group_rekey'] ? $pconfig['wpa_group_rekey'] : "60";?>" />
 								<br/><?=gettext("Allowed values are 1-9999 but should not be longer than Master Key Regeneration time."); ?>
 							</td>
 						</tr>
 						<tr>
 							<td valign="top" class="vncell"><?=gettext("Master Key Regeneration"); ?></td>
 							<td class="vtable">
-								<input name="wpa_gmk_rekey" type="text" class="formfld" id="wpa_gmk_rekey" size="30" value="<?php echo $pconfig['wpa_gmk_rekey'] ? $pconfig['wpa_gmk_rekey'] : "3600";?>">
+								<input name="wpa_gmk_rekey" type="text" class="formfld" id="wpa_gmk_rekey" size="30" value="<?php echo $pconfig['wpa_gmk_rekey'] ? $pconfig['wpa_gmk_rekey'] : "3600";?>" />
 								<br/><?=gettext("Allowed values are 1-9999 but should not be shorter than Key Rotation time."); ?>
 							</td>
 						</tr>
 						<tr>
 							<td valign="top" class="vncell"><?=gettext("Strict Key Regeneration"); ?></td>
 							<td class="vtable">
-								<input name="wpa_strict_rekey" type="checkbox" value="yes"  class="formfld" id="wpa_strict_rekey" <?php if ($pconfig['wpa_strict_rekey']) echo "checked"; ?>>
+								<input name="wpa_strict_rekey" type="checkbox" value="yes"  class="formfld" id="wpa_strict_rekey" <?php if ($pconfig['wpa_strict_rekey']) echo "checked"; ?> />
 								<br/><?=gettext("Setting this option will force the AP to rekey whenever a client disassociates."); ?>
 							</td>
 						</tr>
 						<tr>
 							<td valign="top" class="vncell"><?=gettext("Enable IEEE802.1X Authentication"); ?></td>
 							<td class="vtable">
-								<input name="ieee8021x" type="checkbox" value="yes"  class="formfld" id="ieee8021x" <?php if ($pconfig['ieee8021x']) echo "checked";?>>
+								<input name="ieee8021x" type="checkbox" value="yes"  class="formfld" id="ieee8021x" <?php if ($pconfig['ieee8021x']) echo "checked";?> />
 								<br/><?=gettext("Setting this option will enable 802.1x authentication."); ?>
 								<br/><span class="red"><strong><?=gettext("NOTE"); ?>:</strong></span> <?=gettext("this option requires checking the \"Enable WPA box\"."); ?>
 							</td>
@@ -2618,49 +2618,49 @@ $types6 = array("none" => gettext("None"), "staticv6" => gettext("Static IPv6"),
 						<tr>
 							<td valign="top" class="vncell"><?=gettext("802.1X Authentication Server IP Address"); ?></td>
 							<td class="vtable">
-								<input name="auth_server_addr" id="auth_server_addr" type="text" class="formfld unknown" size="66" value="<?=htmlspecialchars($pconfig['auth_server_addr']);?>">
+								<input name="auth_server_addr" id="auth_server_addr" type="text" class="formfld unknown" size="66" value="<?=htmlspecialchars($pconfig['auth_server_addr']);?>" />
 								<br/><?=gettext("Enter the IP address of the 802.1X Authentication Server.  This is commonly a Radius server (FreeRadius, Internet Authentication Services, etc.)"); ?>
 							</td>
 						</tr>
 						<tr>
 							<td valign="top" class="vncell"><?=gettext("802.1X Authentication Server Port"); ?></td>
 							<td class="vtable">
-								<input name="auth_server_port" id="auth_server_port" type="text" class="formfld unknown" size="66" value="<?=htmlspecialchars($pconfig['auth_server_port']);?>">
+								<input name="auth_server_port" id="auth_server_port" type="text" class="formfld unknown" size="66" value="<?=htmlspecialchars($pconfig['auth_server_port']);?>" />
 								<br/><?=gettext("Leave blank for the default 1812 port."); ?>
 							</td>
 						</tr>
 						<tr>
 							<td valign="top" class="vncell"><?=gettext("802.1X Authentication Server Shared Secret"); ?></td>
 							<td class="vtable">
-								<input name="auth_server_shared_secret" id="auth_server_shared_secret" type="text" class="formfld unknown" size="66" value="<?=htmlspecialchars($pconfig['auth_server_shared_secret']);?>">
+								<input name="auth_server_shared_secret" id="auth_server_shared_secret" type="text" class="formfld unknown" size="66" value="<?=htmlspecialchars($pconfig['auth_server_shared_secret']);?>" />
 								<br/>
 							</td>
 						</tr>
 						<tr>
 					<td valign="top" class="vncell"><?=gettext("Secondary 802.1X Authentication Server IP Address"); ?></td>
 							<td class="vtable">
-								<input name="auth_server_addr2" id="auth_server_addr2" type="text" class="formfld unknown" size="66" value="<?=htmlspecialchars($pconfig['auth_server_addr2']);?>">
+								<input name="auth_server_addr2" id="auth_server_addr2" type="text" class="formfld unknown" size="66" value="<?=htmlspecialchars($pconfig['auth_server_addr2']);?>" />
 								<br/><?=gettext("Enter the IP address of the 802.1X Authentication Server.  This is commonly a Radius server (FreeRadius, Internet Authentication Services, etc.)"); ?>
 							</td>
 						</tr>
 						<tr>
 							<td valign="top" class="vncell"><?=gettext("Secondary 802.1X Authentication Server Port"); ?></td>
 							<td class="vtable">
-								<input name="auth_server_port2" id="auth_server_port2" type="text" class="formfld unknown" size="66" value="<?=htmlspecialchars($pconfig['auth_server_port2']);?>">
+								<input name="auth_server_port2" id="auth_server_port2" type="text" class="formfld unknown" size="66" value="<?=htmlspecialchars($pconfig['auth_server_port2']);?>" />
 								<br/><?=gettext("Leave blank for the default 1812 port."); ?>
 							</td>
 						</tr>
 						<tr>
 							<td valign="top" class="vncell"><?=gettext("Secondary 802.1X Authentication Server Shared Secret"); ?></td>
 							<td class="vtable">
-								<input name="auth_server_shared_secret2" id="auth_server_shared_secret2" type="text" class="formfld unknown" size="66" value="<?=htmlspecialchars($pconfig['auth_server_shared_secret2']);?>">
+								<input name="auth_server_shared_secret2" id="auth_server_shared_secret2" type="text" class="formfld unknown" size="66" value="<?=htmlspecialchars($pconfig['auth_server_shared_secret2']);?>" />
 								<br/>
 							</td>
 						</tr>
 						<tr>
 							<td valign="top" class="vncell">802.1X <?=gettext("Authentication Roaming Preauth"); ?></td>
 							<td class="vtable">
-								<input name="rsn_preauth" id="rsn_preauth" type="checkbox" class="formfld unknown" size="66" value="yes" <?php if ($pconfig['rsn_preauth']) echo "checked"; ?>>
+								<input name="rsn_preauth" id="rsn_preauth" type="checkbox" class="formfld unknown" size="66" value="yes" <?php if ($pconfig['rsn_preauth']) echo "checked"; ?> />
 								<br/>
 							</td>
 						</tr>
@@ -2675,7 +2675,7 @@ $types6 = array("none" => gettext("None"), "staticv6" => gettext("Static IPv6"),
 							<td valign="middle" class="vncell">&nbsp;</td>
 							<td class="vtable">
 								<a name="rfc1918"></a>
-								<input name="blockpriv" type="checkbox" id="blockpriv" value="yes" <?php if ($pconfig['blockpriv']) echo "checked"; ?>>
+								<input name="blockpriv" type="checkbox" id="blockpriv" value="yes" <?php if ($pconfig['blockpriv']) echo "checked"; ?> />
 								<strong><?=gettext("Block private networks"); ?></strong><br/>
 								<?=gettext("When set, this option blocks traffic from IP addresses that are reserved " .
 								"for private  networks as per RFC 1918 (10/8, 172.16/12, 192.168/16) as"); ?>
@@ -2687,7 +2687,7 @@ $types6 = array("none" => gettext("None"), "staticv6" => gettext("Static IPv6"),
 						<tr>
 							<td valign="middle" class="vncell">&nbsp;</td>
 							<td class="vtable">
-								<input name="blockbogons" type="checkbox" id="blockbogons" value="yes" <?php if ($pconfig['blockbogons']) echo "checked"; ?>>
+								<input name="blockbogons" type="checkbox" id="blockbogons" value="yes" <?php if ($pconfig['blockbogons']) echo "checked"; ?> />
 								<strong><?=gettext("Block bogon networks"); ?></strong><br/>
 								<?=gettext("When set, this option blocks traffic from IP addresses that are reserved " .
 								"(but not RFC 1918) or not yet assigned by IANA."); ?>&nbsp;&nbsp;
@@ -2707,13 +2707,13 @@ $types6 = array("none" => gettext("None"), "staticv6" => gettext("Static IPv6"),
 							</td>
 							<td width="78%">
 								<br/>
-								<input id="save" name="Submit" type="submit" class="formbtn" value="<?=gettext("Save"); ?>">
-								<input id="cancel" type="button" class="formbtn" value="<?=gettext("Cancel"); ?>" onclick="history.back()">
-								<input name="if" type="hidden" id="if" value="<?=$if;?>">
+								<input id="save" name="Submit" type="submit" class="formbtn" value="<?=gettext("Save"); ?>" />
+								<input id="cancel" type="button" class="formbtn" value="<?=gettext("Cancel"); ?>" onclick="history.back()" />
+								<input name="if" type="hidden" id="if" value="<?=$if;?>" />
 								<?php if ($wancfg['if'] == $a_ppps[$pppid]['if']) : ?>
-								<input name="ppp_port" type="hidden" value="<?=htmlspecialchars($pconfig['port']);?>">
+								<input name="ppp_port" type="hidden" value="<?=htmlspecialchars($pconfig['port']);?>" />
 								<?php endif; ?>
-								<input name="ptpid" type="hidden" value="<?=htmlspecialchars($pconfig['ptpid']);?>">
+								<input name="ptpid" type="hidden" value="<?=htmlspecialchars($pconfig['ptpid']);?>" />
 							</td>
 						</tr>
 					</table>

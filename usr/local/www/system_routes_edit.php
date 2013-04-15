@@ -152,8 +152,10 @@ if ($_POST) {
 	if (!empty($oroute)) {
 		if (is_alias($oroute['network'])) {
 			foreach (filter_expand_alias_array($oroute['network']) as $tgt) {
-				if (is_ipaddr($tgt))
+				if (is_ipaddrv4($tgt))
 					$tgt .= "/32";
+				else if (is_ipaddrv6($tgt))
+					$tgt .= "/128";
 				if (!is_subnet($tgt))
 					continue;
 				$old_targets[] = $tgt;

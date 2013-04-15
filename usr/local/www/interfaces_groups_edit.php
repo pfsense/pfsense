@@ -167,11 +167,10 @@ include("head.inc");
 ?>
 
 <body link="#0000CC" vlink="#0000CC" alink="#0000CC" onload="<?= $jsevents["body"]["onload"] ?>">
-<?php
-	include("fbegin.inc");
-?>
+<?php include("fbegin.inc"); ?>
 
 <script type="text/javascript">
+//<![CDATA[
 // Global Variables
 var rowname = new Array(9999);
 var rowtype = new Array(9999);
@@ -199,11 +198,11 @@ var addRowTo = (function() {
         for (i = 0; i < field_counter_js; i++) {
                 td = d.createElement("td");
 		<?php
-                        $innerHTML="\"<INPUT type='hidden' value='\" + totalrows +\"' name='\" + rowname[i] + \"_row-\" + totalrows + \"'></input><select size='1' name='\" + rowname[i] + totalrows + \"'>\" +\"";
+                        $innerHTML="\"<input type='hidden' value='\" + totalrows +\"' name='\" + rowname[i] + \"_row-\" + totalrows + \"' /><select size='1' name='\" + rowname[i] + totalrows + \"'>\" +\"";
 
 			$iflist = get_configured_interface_with_descr();
                         foreach ($iflist as $ifnam => $ifdescr)
-                                $innerHTML .= "<option value={$ifnam}>{$ifdescr}</option>";
+                                $innerHTML .= "<option value='{$ifnam}'>{$ifdescr}</option>";
 			$innerHTML .= "</select>\";";
                 ?>
 			td.innerHTML=<?=$innerHTML;?>
@@ -212,7 +211,7 @@ var addRowTo = (function() {
         td = d.createElement("td");
         td.rowSpan = "1";
 
-        td.innerHTML = '<a onclick="removeRow(this);return false;" href="#"><img border="0" src="/themes/' + theme + '/images/icons/icon_x.gif" /></a>';
+        td.innerHTML = '<a onclick="removeRow(this);return false;" href="#"><img border="0" src="/themes/' + theme + '/images/icons/icon_x.gif" alt="remove" /></a>';
         tr.appendChild(td);
         tbody.appendChild(tr);
         totalrows++;
@@ -237,6 +236,7 @@ function removeRow(el) {
 	rowname[2] = "detail";
 	rowtype[2] = "textbox";
 	rowsize[2] = "50";
+//]]>
 </script>
 <input type='hidden' name='members_type' value='textbox' class="formfld unknown" />
 
@@ -244,7 +244,7 @@ function removeRow(el) {
 <div id="inputerrors"></div>
 
 <form action="interfaces_groups_edit.php" method="post" name="iform" id="iform">
-<table width="100%" border="0" cellpadding="6" cellspacing="0">
+<table width="100%" border="0" cellpadding="6" cellspacing="0" summary="interfaces groups edit">
   <tr>
 	<td colspan="2" valign="top" class="listtopic"><?=gettext("Interface Groups Edit");?></td>
   </tr>
@@ -269,7 +269,7 @@ function removeRow(el) {
   <tr>
     <td width="22%" valign="top" class="vncellreq"><div id="membersnetworkport"><?=gettext("Member (s)");?></div></td>
     <td width="78%" class="vtable">
-      <table id="maintable">
+      <table id="maintable" summary="main table">
         <tbody>
           <tr>
             <td><div id="onecolumn"><?=gettext("Interface");?></div></td>
@@ -289,16 +289,16 @@ function removeRow(el) {
 	        <select name="members<?php echo $tracker; ?>" class="formselect" id="members<?php echo $tracker; ?>">
 			<?php
 				foreach ($iflist as $ifnam => $ifdescr) {
-					echo "<option value={$ifnam}";
+					echo "<option value=\"{$ifnam}\"";
 					if ($ifnam == $members)
-						echo " selected";
+						echo " selected=\"selected\"";
 					echo ">{$ifdescr}</option>";
 				}
 			?>
                         </select>
 	</td>
         <td>
-	<a onclick="removeRow(this); return false;" href="#"><img border="0" src="/themes/<?echo $g['theme'];?>/images/icons/icon_x.gif" /></a>
+	<a onclick="removeRow(this); return false;" href="#"><img border="0" src="/themes/<?echo $g['theme'];?>/images/icons/icon_x.gif" alt="remove" /></a>
 	      </td>
           </tr>
 <?php
@@ -308,9 +308,6 @@ function removeRow(el) {
 	} // end if
 ?>
         </tbody>
-        <tfoot>
-
-        </tfoot>
 		  </table>
 			<a onclick="javascript:addRowTo('maintable'); return false;" href="#">
         <img border="0" src="/themes/<?= $g['theme']; ?>/images/icons/icon_plus.gif" alt="" title="<?=gettext("add another entry");?>" />
@@ -331,10 +328,12 @@ function removeRow(el) {
 </form>
 
 <script type="text/javascript">
+//<![CDATA[
 	field_counter_js = 1;
 	rows = 1;
 	totalrows = <?php echo $counter; ?>;
 	loaded = <?php echo $counter; ?>;
+//]]>
 </script>
 
 <?php include("fend.inc"); ?>

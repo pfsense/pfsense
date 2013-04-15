@@ -367,7 +367,7 @@ if ($pkg['custom_php_after_head_command'])
 
 <?php if (!empty($input_errors)) print_input_errors($input_errors); ?>
 <form name="iform" action="pkg_edit.php" method="post">
-<input type="hidden" name="xml" value="<?= htmlspecialchars($xml) ?>">
+<input type="hidden" name="xml" value="<?= htmlspecialchars($xml) ?>" />
 <?php if ($savemsg) print_info_box($savemsg); ?>
 <table width="100%" border="0" cellpadding="0" cellspacing="0">
 <?php
@@ -476,7 +476,7 @@ if ($pkg['tabs'] <> "") {
 			unset($req);
 			if (isset($pkga['required']))
 				$req = 'req';
-			$input= "<td valign='top' width=\"22%\" class=\"vncell{$req}\">";
+			$input= "<tr><td valign='top' width=\"22%\" class=\"vncell{$req}\">";
 			$input .= fixup_string($pkga['fielddescr']);
 			$input .= "</td>";
 			if(isset($pkga['advancedfield']) && isset($adv_filed_count)) {
@@ -519,7 +519,7 @@ if ($pkg['tabs'] <> "") {
 		switch($pkga['type']){
 			case "input":
 				$size = ($pkga['size'] ? " size='{$pkga['size']}' " : "");
-				$input = "<input {$size} id='{$pkga['fieldname']}' name='{$pkga['fieldname']}' class='formfld unknown' value='" . htmlspecialchars($value) ."'>\n";
+				$input = "<input {$size} id='{$pkga['fieldname']}' name='{$pkga['fieldname']}' class='formfld unknown' value='" . htmlspecialchars($value) ."' />\n";
 				$input .= "<br/>" . fixup_string($pkga['description']) . "\n";
 				if(isset($pkga['advancedfield']) && isset($adv_filed_count)) {
 					$js_array[] = $pkga['fieldname'];
@@ -531,7 +531,7 @@ if ($pkg['tabs'] <> "") {
 
 			case "password":
 				$size = ($pkga['size'] ? " size='{$pkga['size']}' " : "");
-				$input = "<input " . $size . " id='" . $pkga['fieldname'] . "' type='password' " . $size . " name='" . $pkga['fieldname'] . "' class='formfld pwd' value='" . htmlspecialchars($value) . "'>\n";
+				$input = "<input " . $size . " id='" . $pkga['fieldname'] . "' type='password' " . $size . " name='" . $pkga['fieldname'] . "' class='formfld pwd' value='" . htmlspecialchars($value) . "' />\n";
 				$input .= "<br/>" . fixup_string($pkga['description']) . "\n";
 				if(isset($pkga['advancedfield']) && isset($adv_filed_count)) {
 					$js_array[] = $pkga['fieldname'];
@@ -563,10 +563,10 @@ if ($pkg['tabs'] <> "") {
 				}
 				$size = ($pkga['size'] ? " size='{$pkga['size']}' " : "");
 				$onchange = (isset($pkga['onchange']) ? "onchange=\"{$pkga['onchange']}\"" : '');
-				$input = "<select id='" . $pkga['fieldname'] . "' $multiple $size $onchange id=\"$fieldname\" name=\"$fieldname\">\n";
+				$input = "<select id='" . $pkga['fieldname'] . "' $multiple $size $onchange name=\"$fieldname\">\n";
 				foreach ($pkga['options']['option'] as $opt) {
 					$selected = (in_array($opt['value'], $items) ? 'selected="selected"' : '');
-					$input .= "\t<option name=\"{$opt['name']}\" value=\"{$opt['value']}\" {$selected}>{$opt['name']}</option>\n";
+					$input .= "\t<option value=\"{$opt['value']}\" {$selected}>{$opt['name']}</option>\n";
 					}
 				$input .= "</select>\n<br />\n" . fixup_string($pkga['description']) . "\n";
                 if(isset($pkga['advancedfield']) && isset($adv_filed_count)) {
@@ -590,7 +590,7 @@ if ($pkg['tabs'] <> "") {
 				}
 				$size = (isset($pkga['size']) ? "size=\"{$pkga['size']}\"" : '');
 				$onchange = (isset($pkga['onchange']) ? "onchange=\"{$pkga['onchange']}\"" : '');
-				$input = "<select id='{$pkga['fieldname']}' {$multiple} {$size} {$onchange} id=\"{$fieldname}\" name=\"{$fieldname}\">\n";
+				$input = "<select id='{$pkga['fieldname']}' {$multiple} {$size} {$onchange} name=\"{$fieldname}\">\n";
 
 				if(isset($pkga['advancedfield']) && isset($adv_filed_count)) {
 					$js_array[] = $pkga['fieldname'];
@@ -611,7 +611,7 @@ if ($pkg['tabs'] <> "") {
 					$source_name =($pkga['source_name']? $opt[$pkga['source_name']] : $opt[$pkga['name']]);
 					$source_value =($pkga['source_value'] ? $opt[$pkga['source_value']] : $opt[$pkga['value']]);
 					$selected = (in_array($source_value, $items)? 'selected="selected"' : '' );
-					$input  .= "\t<option name=\"{$source_name}\" value=\"{$source_value}\" $selected>{$source_name}</option>\n";
+					$input  .= "\t<option value=\"{$source_value}\" $selected>{$source_name}</option>\n";
 					}
 				$input .= "</select>\n<br />\n" . fixup_string($pkga['description']) . "\n";
 				if(isset($pkga['advancedfield']) && isset($adv_filed_count))
@@ -638,11 +638,11 @@ if ($pkg['tabs'] <> "") {
 				break;
 
 			case "checkbox":
-				$checkboxchecked =($value == "on" ? " CHECKED" : "");
+				$checkboxchecked =($value == "on" ? " checked=\"checked\"" : "");
 				$onchange = (isset($pkga['onchange']) ? "onchange=\"{$pkga['onchange']}\"" : '');
 				if (isset($pkga['enablefields']) || isset($pkga['checkenablefields']))
 					$onclick = ' onclick="javascript:enablechange();"';
-				$input = "<input id='{$pkga['fieldname']}' type='checkbox' name='{$pkga['fieldname']}' {$checkboxchecked} {$onclick} {$onchange}>\n";
+				$input = "<input id='{$pkga['fieldname']}' type='checkbox' name='{$pkga['fieldname']}' {$checkboxchecked} {$onclick} {$onchange} />\n";
 				$input .= "<br/>" . fixup_string($pkga['description']) . "\n";
 
 				if(isset($pkga['advancedfield']) && isset($adv_filed_count)) {
@@ -699,7 +699,7 @@ if ($pkg['tabs'] <> "") {
 					}
 				}
 
-				$input = "<input name='{$fieldname}' type='text' class='formfldalias' id='{$fieldname}' {$size} {$value}>\n<br />";
+				$input = "<input name='{$fieldname}' type='text' class='formfldalias' id='{$fieldname}' {$size} {$value} />\n<br />";
 				$input .= fixup_string($pkga['description']) . "\n";
 
 				$script = "<script type='text/javascript'>\n";
@@ -760,7 +760,7 @@ if ($pkg['tabs'] <> "") {
 				$fieldname = $pkga['fieldname'];
 				if (isset($pkga['multiple'])) {
 					$fieldname .= '[]';
-					$multiple = 'multiple';
+					$multiple = 'multiple="multiple"';
 					}
 				$input = "<select id='{$pkga['fieldname']}' name=\"{$fieldname}\" {$size} {$multiple}>\n";
 				if(is_array($value))
@@ -768,7 +768,7 @@ if ($pkg['tabs'] <> "") {
 				else
 					$values  =  explode(',',  $value);
 				foreach($ips as $iface){
-					$selected = (in_array($iface['ip'], $values) ? 'selected' : '');
+					$selected = (in_array($iface['ip'], $values) ? 'selected="selected"' : '');
 					$input .= "<option value=\"{$iface['ip']}\" {$selected}>{$iface['description']}</option>\n";
 					}
 				$input .= "</select>\n<br />" . fixup_string($pkga['description']) . "\n";
@@ -779,7 +779,7 @@ if ($pkg['tabs'] <> "") {
 				break;
 
 			case "radio":
-				$input = "<input type='radio' id='{$pkga['fieldname']}' name='{$pkga['fieldname']}' value='{$value}'>";
+				$input = "<input type='radio' id='{$pkga['fieldname']}' name='{$pkga['fieldname']}' value='{$value}' />";
 				if(isset($pkga['advancedfield']) && isset($adv_filed_count))
 					$advanced .= $input;
 				else
@@ -787,7 +787,7 @@ if ($pkg['tabs'] <> "") {
 					break;
 
 			case "button":
-				$input = "<input type='submit' id='{$pkga['fieldname']}' name='{$pkga['fieldname']}' class='formbtn' value='{$pkga['fieldname']}'>\n";
+				$input = "<input type='submit' id='{$pkga['fieldname']}' name='{$pkga['fieldname']}' class='formbtn' value='{$pkga['fieldname']}' />\n";
 				if(isset($pkga['placeonbottom']))
 					$pkg_buttons .= $input;
 				else
@@ -915,16 +915,16 @@ if ($pkg['tabs'] <> "") {
   <tr>
     <td width="22%" valign="top">&nbsp;</td>
     <td width="78%">
-    <div id=buttons>
+    <div id="buttons">
 		<?php
 		if($pkg['note'] != ""){
 			echo "<p><span class=\"red\"><strong>" . gettext("Note") . ":</strong></span> {$pkg['note']}</p>";
 			}
 		//if (isset($id) && $a_pkg[$id]) // We'll always have a valid ID in our hands
-		echo "<input name='id' type='hidden' value='" . htmlspecialchars($id) . "'>";
-		echo "<input name='Submit' type='submit' class='formbtn' value='" . htmlspecialchars($savevalue) . "'>\n{$pkg_buttons}\n";
+		echo "<input name='id' type='hidden' value='" . htmlspecialchars($id) . "' />";
+		echo "<input name='Submit' type='submit' class='formbtn' value='" . htmlspecialchars($savevalue) . "' />\n{$pkg_buttons}\n";
 		if (!$only_edit){
-			echo "<input class='formbtn' type='button' value='".gettext("Cancel")."' onclick='history.back()'>";
+			echo "<input class='formbtn' type='button' value='".gettext("Cancel")."' onclick='history.back()' />";
 			}
 		?>
 	</div>
@@ -967,13 +967,13 @@ function display_row($trc, $value, $fieldname, $type, $rowhelper, $size) {
 	echo "<td>\n";
 	switch($type){
 		case "input":
-			echo "<input size='{$size}' name='{$fieldname}{$trc}' id='{$fieldname}{$trc}' class='formfld unknown' value='" . htmlspecialchars($value) . "'>\n";
+			echo "<input size='{$size}' name='{$fieldname}{$trc}' id='{$fieldname}{$trc}' class='formfld unknown' value='" . htmlspecialchars($value) . "' />\n";
 			break;
 		case "checkbox":
-			echo "<input size='{$size}' type='checkbox' id='{$fieldname}{$trc}' name='{$fieldname}{$trc}' value='ON' ".($value?"CHECKED":"").">\n";
+			echo "<input size='{$size}' type='checkbox' id='{$fieldname}{$trc}' name='{$fieldname}{$trc}' value='ON' ".($value?"CHECKED":"")." />\n";
 			break;
 		case "password":
-			echo "<input size='{$size}' type='password' id='{$fieldname}{$trc}' name='{$fieldname}{$trc}' class='formfld pwd' value='" . htmlspecialchars($value) . "'>\n";
+			echo "<input size='{$size}' type='password' id='{$fieldname}{$trc}' name='{$fieldname}{$trc}' class='formfld pwd' value='" . htmlspecialchars($value) . "' />\n";
 			break;
 		case "textarea":
 			echo "<textarea rows='2' cols='12' id='{$fieldname}{$trc}' class='formfld unknown' name='{$fieldname}{$trc}'>{$value}</textarea>\n";
@@ -981,7 +981,7 @@ function display_row($trc, $value, $fieldname, $type, $rowhelper, $size) {
 			echo "<select style='height:22px;'  id='{$fieldname}{$trc}' name='{$fieldname}{$trc}' {$title}>\n";
 			foreach($rowhelper['options']['option'] as $rowopt) {
 				$text .= "<option value='{$rowopt['value']}'>{$rowopt['name']}</option>";
-				echo "<option value='{$rowopt['value']}'".($rowopt['value'] == $value?" SELECTED":"").">{$rowopt['name']}</option>\n";
+				echo "<option value='{$rowopt['value']}'".($rowopt['value'] == $value?" selected=\"selected\"":"").">{$rowopt['name']}</option>\n";
 				}
 			echo "</select>\n";
 			break;
@@ -990,7 +990,7 @@ function display_row($trc, $value, $fieldname, $type, $rowhelper, $size) {
 			$multiple = '';
 			if (isset($rowhelper['multiple'])) {
 				$fieldname .= '[]';
-				$multiple = 'multiple';
+				$multiple = 'multiple="multiple';
 			}
 			echo "<select style='height:22px;' id='{$fieldname}{$trc}' name='{$fieldname}{$trc}' {$size} {$multiple}>\n";
 			$ifaces = get_configured_interface_with_descr();
@@ -1005,7 +1005,7 @@ function display_row($trc, $value, $fieldname, $type, $rowhelper, $size) {
 			echo "<option><name></name><value></value></option>/n";
 			foreach($ifaces as $ifname => $iface) {
 				$text .="<option value=\\\"$ifname\\\">$iface</option>";
-				echo "<option value=\"{$ifname}\" ".(in_array($ifname, $values) ? 'selected' : '').">{$iface}</option>\n";
+				echo "<option value=\"{$ifname}\" ".(in_array($ifname, $values) ? 'selected="selected"' : '').">{$iface}</option>\n";
 				}
 			echo "</select>\n";
 			break;
@@ -1019,7 +1019,7 @@ function display_row($trc, $value, $fieldname, $type, $rowhelper, $size) {
 				$source_name = ($rowhelper['source_name'] ? $opt[$rowhelper['source_name']] : $opt[$rowhelper['name']]);
 				$source_value = ($rowhelper['source_value'] ? $opt[$rowhelper['source_value']] : $opt[$rowhelper['value']]);
 				$text .= "<option value='{$source_value}'>{$source_name}</option>";
-				echo "<option value='{$source_value}'".($source_value == $value?" SELECTED":"").">{$source_name}</option>\n";
+				echo "<option value='{$source_value}'".($source_value == $value?" selected=\"selected\"":"").">{$source_name}</option>\n";
 				}
 			echo "</select>\n";
 			break;		
@@ -1110,7 +1110,7 @@ function parse_package_templates() {
 /* Return html div fields */
 function display_advanced_field($fieldname) {
 	$div = "<div id='showadv_{$fieldname}'>\n";
-	$div .= "<input type='button' onclick='show_{$fieldname}()' value='" . gettext("Advanced") . "'></input> - " . gettext("Show advanced option") ."</div>\n";
+	$div .= "<input type='button' onclick='show_{$fieldname}()' value='" . gettext("Advanced") . "' /> - " . gettext("Show advanced option") ."</div>\n";
 	$div .= "<div id='show_{$fieldname}' style='display:none'>\n";
 	return $div;
 }

@@ -95,7 +95,7 @@ include("head.inc");
 <body link="#0000CC" vlink="#0000CC" alink="#0000CC">
 <?php include("fbegin.inc"); ?>
 <?php if ($input_errors) print_input_errors($input_errors); ?>
-<table width="100%" border="0" cellpadding="0" cellspacing="0">
+<table width="100%" border="0" cellpadding="0" cellspacing="0" summary="interfaces qinqs">
   <tr><td>
 <?php
 	$tab_array = array();
@@ -115,7 +115,7 @@ include("head.inc");
   <tr>
     <td>
 	<div id="mainarea">
-	<table class="tabcont" width="100%" border="0" cellpadding="0" cellspacing="0">
+	<table class="tabcont" width="100%" border="0" cellpadding="0" cellspacing="0" summary="main area">
                 <tr>
                   <td width="15%" class="listhdrr"><?=gettext("Interface");?></td>
                   <td width="10%" class="listhdrr"><?=gettext("Tag");?></td>
@@ -142,17 +142,17 @@ include("head.inc");
                   <td class="listbg">
                     <?=htmlspecialchars($qinq['descr']);?>&nbsp;
                   </td>
-                  <td valign="middle" nowrap class="list"> <a href="interfaces_qinq_edit.php?id=<?=$i;?>"><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_e.gif" width="17" height="17" border="0"></a>
-                     &nbsp;<a href="interfaces_qinq.php?act=del&id=<?=$i;?>" onclick="return confirm('<?=gettext("Do you really want to delete this QinQ?");?>')"><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_x.gif" width="17" height="17" border="0"></a></td>
+                  <td valign="middle" class="list nowrap"> <a href="interfaces_qinq_edit.php?id=<?=$i;?>"><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_e.gif" width="17" height="17" border="0" alt="edit" /></a>
+                     &nbsp;<a href="interfaces_qinq.php?act=del&amp;id=<?=$i;?>" onclick="return confirm('<?=gettext("Do you really want to delete this QinQ?");?>')"><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_x.gif" width="17" height="17" border="0" alt="remove" /></a></td>
 				</tr>
 			  <?php $i++; endforeach; ?>
                 <tr>
                   <td class="list" colspan="4">&nbsp;</td>
-                  <td class="list"> <a href="interfaces_qinq_edit.php"><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_plus.gif" width="17" height="17" border="0"></a></td>
+                  <td class="list"> <a href="interfaces_qinq_edit.php"><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_plus.gif" width="17" height="17" border="0" alt="add" /></a></td>
 				</tr>
 				<tr>
 				<td colspan="4" class="list"><p class="vexpl"><span class="red"><strong>
-				  <?=gettext("Note:");?><br>
+				  <?=gettext("Note:");?><br/>
 				  </strong></span>
 				  <?php printf(gettext("Not all drivers/NICs support 802.1Q QinQ tagging properly. On cards that do not explicitly support it, QinQ tagging will still work, but the reduced MTU may cause problems. See the %s handbook for information on supported cards."), $g['product_name']);?></p>
 				  </td>

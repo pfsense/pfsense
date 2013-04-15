@@ -387,7 +387,7 @@ if(file_exists("/var/run/interface_mismatch_reboot_needed"))
 <form action="interfaces_assign.php" method="post" name="iform" id="iform">
 
 <?php if (file_exists("/tmp/reload_interfaces")): ?><p>
-	<?php print_info_box_np(gettext("The interface configuration has been changed.<br>You must apply the changes in order for them to take effect."));?><br>
+	<?php print_info_box_np(gettext("The interface configuration has been changed.<br>You must apply the changes in order for them to take effect."));?><br/></p>
 <?php elseif($savemsg): ?>
 	<?php print_info_box($savemsg); ?>
 <?php endif; ?>
@@ -395,7 +395,7 @@ if(file_exists("/var/run/interface_mismatch_reboot_needed"))
 <?php pfSense_handle_custom_code("/usr/local/pkg/interfaces_assign/pre_input_errors"); ?>
 <?php if ($input_errors) print_input_errors($input_errors); ?>
 
-<table width="100%" border="0" cellpadding="0" cellspacing="0">
+<table width="100%" border="0" cellpadding="0" cellspacing="0" summary="interfaces assign">
   <tr><td class="tabnavtbl">
 <?php
 	$tab_array = array();
@@ -415,7 +415,7 @@ if(file_exists("/var/run/interface_mismatch_reboot_needed"))
   <tr>
     <td>
 	<div id="mainarea">
-        <table class="tabcont" width="100%" border="0" cellpadding="0" cellspacing="0">
+        <table class="tabcont" width="100%" border="0" cellpadding="0" cellspacing="0" summary="main area">
        <tr>
 	<td class="listhdrr"><?=gettext("Interface"); ?></td>
 	<td class="listhdr"><?=gettext("Network port"); ?></td>
@@ -428,11 +428,11 @@ if(file_exists("/var/run/interface_mismatch_reboot_needed"))
 		$ifdescr = strtoupper($ifname);
 	?>
   <tr>
-	<td class="listlr" valign="middle"><strong><u><span onclick="location.href='/interfaces.php?if=<?=$ifname;?>'" style="cursor: pointer;"><?=$ifdescr;?></span></strong></td>
+	<td class="listlr" valign="middle"><strong><u><span onclick="location.href='/interfaces.php?if=<?=$ifname;?>'" style="cursor: pointer;"><?=$ifdescr;?></span></u></strong></td>
 	  <td valign="middle" class="listr">
-		<select onChange="javascript:jQuery('#savediv').show();" name="<?=$ifname;?>" id="<?=$ifname;?>">
+		<select onchange="javascript:jQuery('#savediv').show();" name="<?=$ifname;?>" id="<?=$ifname;?>">
 		  <?php foreach ($portlist as $portname => $portinfo): ?>
-			<option  value="<?=$portname;?>"  <?php if ($portname == $iface['if']) echo " selected";?>>
+			<option  value="<?=$portname;?>"  <?php if ($portname == $iface['if']) echo " selected=\"selected\"";?>>
 				<?php if ($portinfo['isvlan']) {
 					$descr = sprintf(gettext('VLAN %1$s on %2$s'),$portinfo['tag'],$portinfo['if']);
 				if ($portinfo['descr'])
@@ -477,7 +477,7 @@ if(file_exists("/var/run/interface_mismatch_reboot_needed"))
 	</td>
 	<td valign="middle" class="list">
 		  <?php if ($ifname != 'wan'): ?>
-		  <a href="interfaces_assign.php?act=del&id=<?=$ifname;?>" onclick="return confirm('<?=gettext("Do you really want to delete this interface?");?>')"><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_x.gif" title=<?=gettext("delete interface"); ?> width="17" height="17" border="0"></a>
+		  <a href="interfaces_assign.php?act=del&amp;id=<?=$ifname;?>" onclick="return confirm('<?=gettext("Do you really want to delete this interface?");?>')"><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_x.gif" title="<?=gettext("delete interface"); ?>" width="17" height="17" border="0" alt="delete" /></a>
 		  <?php endif; ?>
 		</td>
   </tr>
@@ -485,8 +485,8 @@ if(file_exists("/var/run/interface_mismatch_reboot_needed"))
   <?php if (count($config['interfaces']) < count($portlist)): ?>
   <tr>
 	<td class="list" colspan="2"></td>
-	<td class="list" nowrap>
-	<a href="interfaces_assign.php?act=add"><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_plus.gif" title=<?=gettext("add interface"); ?> width="17" height="17" border="0"></a>
+	<td class="list nowrap">
+	<a href="interfaces_assign.php?act=add"><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_plus.gif" title=<?=gettext("add interface"); ?> width="17" height="17" border="0" alt="add" /></a>
 	</td>
   </tr>
   <?php else: ?>
@@ -497,11 +497,9 @@ if(file_exists("/var/run/interface_mismatch_reboot_needed"))
 </table>
 </div>
 <br/>
-<div name='savediv' id='savediv' <?php if (empty($_GET['act'])) echo "style='display:none;'"; ?>>
-	<input name="Submit" type="submit" class="formbtn" value="<?=gettext("Save"); ?>"><br><br>
-	<p>
+<div id='savediv' <?php if (empty($_GET['act'])) echo "style='display:none;'"; ?>>
+	<input name="Submit" type="submit" class="formbtn" value="<?=gettext("Save"); ?>" /><br/><br/>
 </div>
-</p>
 <ul>
 	<li><span class="vexpl"><?=gettext("Interfaces that are configured as members of a lagg(4) interface will not be shown."); ?></span></li>
 </ul>

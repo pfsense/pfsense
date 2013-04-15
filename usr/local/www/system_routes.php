@@ -80,18 +80,33 @@ if ($_POST) {
 
 if ($_GET['act'] == "del") {
 	if ($a_routes[$_GET['id']]) {
-		$changedesc .= gettext("removed route to") . " " . $a_routes[$_GET['id']['route']];
-		list($ip, $mask) = explode("/", $a_routes[$_GET['id']]['network']);
-		if (is_ipaddr($ip)) {
-			$family = "";
-			if(is_ipaddrv6($ip))
-				$family = "-inet6";
-			mwexec("/sbin/route delete {$family} " . escapeshellarg($a_routes[$_GET['id']]['network']));
-			unset($a_routes[$_GET['id']]);
-			write_config($changedesc);
-			header("Location: system_routes.php");
-			exit;
+		$changedesc .= gettext("removed route to") . " " . $a_routes[$_GET['id']]['route'];
+
+		$targets = array();
+		if (is_alias($a_routes[$_GET['id']]['network'])) {
+			foreach (filter_expand_alias_array($a_routes[$_GET['id']]['network']) as $tgt) {
+				if (is_ipaddrv4($tgt))
+					$tgt .= "/32";
+				else if (is_ipaddrv6($tgt))
+					$tgt .= "/128";
+				if (!is_subnet($tgt))
+					continue;
+				$targets[] = $tgt;
+			}
+		} else {
+			$targets[] = $a_routes[$_GET['id']]['network'];
 		}
+
+		foreach ($targets as $tgt) {
+			$family = (is_subnetv6($tgt) ? "-inet6" : "-inet");
+			mwexec("/sbin/route delete {$family} " . escapeshellarg($tgt));
+		}
+
+		unset($a_routes[$_GET['id']]);
+		unset($targets);
+		write_config($changedesc);
+		header("Location: system_routes.php");
+		exit;
 	}
 }
 

@@ -383,6 +383,14 @@ function return_gateways_array($disabled = false, $localhost = false) {
 								$gateway['gateway'] = "dynamic";
 							$gateway['dynamic'] = true;
 							break;
+						default:
+							$gateway['ipprotocol'] = "inet";
+							$gateway['gateway'] = get_interface_gateway($gateway['interface']);
+							/* no IP address found, set to dynamic */
+							if (!is_ipaddrv4($gateway['gateway']))
+								$gateway['gateway'] = "dynamic";
+							$gateway['dynamic'] = true;
+							break;
 					}
 				}
 
@@ -396,6 +404,14 @@ function return_gateways_array($disabled = false, $localhost = false) {
 						case "pppoe":
 						case "pptp":
 						case "ppp":
+							$gateway['ipprotocol'] = "inet6";
+							$gateway['gateway'] = get_interface_gateway_v6($gateway['interface']);
+							/* no IPv6 address found, set to dynamic6 */
+							if (!is_ipaddrv6($gateway['gateway']))
+								$gateway['gateway'] = "dynamic6";
+							$gateway['dynamic'] = true;
+							break;
+						default:
 							$gateway['ipprotocol'] = "inet6";
 							$gateway['gateway'] = get_interface_gateway_v6($gateway['interface']);
 							/* no IPv6 address found, set to dynamic6 */

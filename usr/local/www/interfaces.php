@@ -1380,7 +1380,7 @@ $types6 = array("none" => gettext("None"), "staticv6" => gettext("Static IPv6"),
 						<tr>
 							<td width="22%" valign="top" class="vncell"><?=gettext("Enable"); ?></td>
 							<td width="78%" class="vtable">
-								<input name="enable" type="checkbox" value="yes" <?php if ($pconfig['enable'] == true) echo "checked"; ?> onclick="show_allcfg(this);" />
+								<input name="enable" type="checkbox" value="yes" <?php if ($pconfig['enable'] == true) echo "checked=\"checked\""; ?> onclick="show_allcfg(this);" />
 							<strong><?=gettext("Enable Interface"); ?></strong>
 							</td>
 						</tr>
@@ -1402,7 +1402,7 @@ $types6 = array("none" => gettext("None"), "staticv6" => gettext("Static IPv6"),
 									foreach ($types4 as $key => $opt) {
 										echo "<option onclick=\"updateType('{$key}');\"";
 										if ($key == $pconfig['type'])
-											echo " selected";
+											echo " selected=\"selected\"";
 										echo " value=\"{$key}\" >" . htmlspecialchars($opt);
 										echo "</option>";
 									}
@@ -1418,7 +1418,7 @@ $types6 = array("none" => gettext("None"), "staticv6" => gettext("Static IPv6"),
 									foreach ($types6 as $key => $opt) {
 										echo "<option onclick=\"updateTypeSix('{$key}');\"";
 										if ($key == $pconfig['type6'])
-											echo " selected";
+											echo " selected=\"selected\"";
 										echo " value=\"{$key}\" >" . htmlspecialchars($opt);
 										echo "</option>";
 									}
@@ -1488,7 +1488,7 @@ $types6 = array("none" => gettext("None"), "staticv6" => gettext("Static IPv6"),
 									if ($mediaopt != rtrim($mediaopt_from_config)){
 										print "<option value=\"$mediaopt\">" . gettext("$mediaopt") . "</option>";
 									} else {
-										print "<option value=\"$mediaopt\" selected>" . gettext("$mediaopt") . "</option>";
+										print "<option value=\"$mediaopt\" selected=\"selected\">" . gettext("$mediaopt") . "</option>";
 									}
 								}
 								echo '</select><br/>';
@@ -1520,7 +1520,7 @@ $types6 = array("none" => gettext("None"), "staticv6" => gettext("Static IPv6"),
 												for ($i = 32; $i > 0; $i--) {
 													if($i <> 31) {
 														echo "<option value=\"{$i}\" ";
-														if ($i == $pconfig['subnet']) echo "selected";
+														if ($i == $pconfig['subnet']) echo "selected=\"selected\"";
 														echo ">" . $i . "</option>";
 													}
 												}
@@ -1532,13 +1532,13 @@ $types6 = array("none" => gettext("None"), "staticv6" => gettext("Static IPv6"),
 										<td width="22%" valign="top" class="vncell"><?=gettext("Gateway"); ?></td>
 										<td width="78%" class="vtable">
 											<select name="gateway" class="formselect" id="gateway">
-												<option value="none" selected><?=gettext("None"); ?></option>
+												<option value="none" selected="selected"><?=gettext("None"); ?></option>
 													<?php
 													if(count($a_gateways) > 0) {
 														foreach ($a_gateways as $gateway) {
 															if(($gateway['interface'] == $if)  && (is_ipaddrv4($gateway['gateway']))) {
 													?>
-															<option value="<?=$gateway['name'];?>" <?php if ($gateway['name'] == $pconfig['gateway']) echo "selected"; ?>>
+															<option value="<?=$gateway['name'];?>" <?php if ($gateway['name'] == $pconfig['gateway']) echo "selected=\"selected\""; ?>>
 																<?=htmlspecialchars($gateway['name']) . " - " . htmlspecialchars($gateway['gateway']);?>
 															</option>
 													<?php
@@ -1569,7 +1569,7 @@ $types6 = array("none" => gettext("None"), "staticv6" => gettext("Static IPv6"),
 																<tr><td>&nbsp;</td></tr>
 																<?php
 																if($if == "wan" || $if == "WAN")
-																	$checked = " CHECKED";
+																	$checked = " checked=\"checked\"";
 																?>
 																<tr>
 																	<td width="45%" align="right"><font color="white"><?=gettext("Default  gateway:"); ?></font></td><td><input type="checkbox" id="defaultgw" name="defaultgw"<?=$checked?> /></td>
@@ -1626,7 +1626,7 @@ $types6 = array("none" => gettext("None"), "staticv6" => gettext("Static IPv6"),
 												for ($i = 128; $i > 0; $i--) {
 													if($i <> 127) {
 														echo "<option value=\"{$i}\" ";
-														if ($i == $pconfig['subnetv6']) echo "selected";
+														if ($i == $pconfig['subnetv6']) echo "selected=\"selected\"";
 														echo ">" . $i . "</option>";
 													}
 												}
@@ -1638,13 +1638,13 @@ $types6 = array("none" => gettext("None"), "staticv6" => gettext("Static IPv6"),
 										<td width="22%" valign="top" class="vncell"><?=gettext("Gateway IPv6"); ?></td>
 										<td width="78%" class="vtable">
 											<select name="gatewayv6" class="formselect" id="gatewayv6">
-												<option value="none" selected><?=gettext("None"); ?></option>
+												<option value="none" selected="selected"><?=gettext("None"); ?></option>
 													<?php
 													if(count($a_gateways) > 0) {
 														foreach ($a_gateways as $gateway) {
 															if(($gateway['interface'] == $if) && (is_ipaddrv6($gateway['gateway']))) {
 													?>
-															<option value="<?=$gateway['name'];?>" <?php if ($gateway['name'] == $pconfig['gatewayv6']) echo "selected"; ?>>
+															<option value="<?=$gateway['name'];?>" <?php if ($gateway['name'] == $pconfig['gatewayv6']) echo "selected=\"selected\""; ?>>
 																<?=htmlspecialchars($gateway['name']) . " - " . htmlspecialchars($gateway['gateway']);?>
 															</option>
 													<?php
@@ -1675,7 +1675,7 @@ $types6 = array("none" => gettext("None"), "staticv6" => gettext("Static IPv6"),
 																<tr><td>&nbsp;</td></tr>
 																<?php
 																if($if == "wan" || $if == "WAN")
-																	$checked = " CHECKED";
+																	$checked = " checked=\"checked\"";
 																?>
 																<tr>
 																	<td width="45%" align="right"><font color="white"><?=gettext("Default v6 gateway:"); ?></font></td><td><input type="checkbox" id="defaultgwv6" name="defaultgwv6"<?=$checked?> /></td>
@@ -1725,7 +1725,7 @@ $types6 = array("none" => gettext("None"), "staticv6" => gettext("Static IPv6"),
 									<tr>
 										<td width="22%" valign="top" class="vncell"><?=gettext("Enable DHCP+"); ?></td>
 										<td width="78%" class="vtable">
-											<input name="dhcp_plus" type="checkbox" value="yes" <?php if ($pconfig['dhcp_plus'] == true) echo "checked"; ?> />
+											<input name="dhcp_plus" type="checkbox" value="yes" <?php if ($pconfig['dhcp_plus'] == true) echo "checked=\"checked\""; ?> />
 										<strong><?=gettext("Enable DHCP+L2TP or DHCP+PPTP."); ?></strong>
 										<br/>
 										<?=gettext("Status changes on this interface will trigger reconfiguration (if necessary) of the associated PPTP/L2TP link."); ?>
@@ -1751,7 +1751,7 @@ $types6 = array("none" => gettext("None"), "staticv6" => gettext("Static IPv6"),
 												for ($i = 32; $i > 0; $i--) {
 													if($i <> 31) {
 														echo "<option value=\"{$i}\" ";
-														if ($i == $pconfig['alias-subnet']) echo "selected";
+														if ($i == $pconfig['alias-subnet']) echo "selected=\"selected\"";
 														echo ">" . $i . "</option>";
 													}
 												}
@@ -1798,7 +1798,7 @@ $types6 = array("none" => gettext("None"), "staticv6" => gettext("Static IPv6"),
 												$sizes = array("none" => "None", 16 => "48", 12 => "52", 8 => "56", 4 => "60", 2 => "62", 1 => "63", 0 => "64");
 												foreach($sizes as $bits => $length) {
 													echo "<option value=\"{$bits}\" ";
-													if (is_numeric($pconfig['dhcp6-ia-pd-len']) && ($bits == $pconfig['dhcp6-ia-pd-len'])) echo "selected";
+													if (is_numeric($pconfig['dhcp6-ia-pd-len']) && ($bits == $pconfig['dhcp6-ia-pd-len'])) echo "selected=\"selected\"";
 													echo ">" . $length . "</option>";
 												}
 												?>
@@ -1842,7 +1842,7 @@ $types6 = array("none" => gettext("None"), "staticv6" => gettext("Static IPv6"),
 												<?php
 												for ($i = 0; $i < 32; $i++) {
 													echo "<option value=\"{$i}\" ";
-													if (is_numeric($pconfig['prefix-6rd-v4plen']) && ($i == $pconfig['prefix-6rd-v4plen'])) echo "selected";
+													if (is_numeric($pconfig['prefix-6rd-v4plen']) && ($i == $pconfig['prefix-6rd-v4plen'])) echo "selected=\"selected\"";
 													echo ">" . $i . " bits</option>";
 												}
 												?>
@@ -1884,7 +1884,7 @@ $types6 = array("none" => gettext("None"), "staticv6" => gettext("Static IPv6"),
 											foreach($dynv6ifs as $iface => $ifacename) {
 												echo "<option value=\"{$iface}\"";
 												if ($iface == $pconfig['track6-interface'])
-													echo " selected";
+													echo " selected=\"selected\"";
 												echo ">" . htmlspecialchars($ifacename) . "</option>";
 											}
 										?>
@@ -1993,7 +1993,7 @@ $types6 = array("none" => gettext("None"), "staticv6" => gettext("Static IPv6"),
 														continue;
 													echo "<option value=\"".trim($port)."\"";
 													if ($pconfig['port'] == $port)
-														echo "selected";
+														echo " selected=\"selected\"";
 													echo ">{$port}</option>";
 												}?>
 											</select>
@@ -2045,7 +2045,7 @@ $types6 = array("none" => gettext("None"), "staticv6" => gettext("Static IPv6"),
 									<tr>
 										<td width="22%" valign="top" class="vncell"><?=gettext("Dial on demand"); ?></td>
 										<td width="78%" class="vtable">
-											<input name="pppoe_dialondemand" type="checkbox" id="pppoe_dialondemand" value="enable" <?php if ($pconfig['pppoe_dialondemand']) echo "checked"; ?> />
+											<input name="pppoe_dialondemand" type="checkbox" id="pppoe_dialondemand" value="enable" <?php if ($pconfig['pppoe_dialondemand']) echo "checked=\"checked\""; ?> />
 											<strong><?=gettext("Enable Dial-On-Demand mode"); ?></strong><br/>
 											<?=gettext("This option causes the interface to operate in dial-on-demand mode, allowing you to have a "); ?><i><?=gettext("virtual full time"); ?></i> <?=gettext("connection. The interface is configured, but the actual connection of the link is delayed until qualifying outgoing traffic is detected."); ?>
 										</td>
@@ -2064,9 +2064,9 @@ $types6 = array("none" => gettext("None"), "staticv6" => gettext("Static IPv6"),
 													<td align="left" valign="top">
 														<p style="margin: 4px; padding: 4px 0 4px 0; width: 94%;">
 														<select valign="top" id="reset_type" name="pppoe-reset-type" class="formselect" onchange="show_reset_settings(this.value);">
-															<option value = ""><?=gettext("Disabled"); ?></option>
-															<option value="custom" <?php if ($pconfig['pppoe-reset-type'] == "custom") echo "selected"; ?>><?=gettext("Custom"); ?></option>
-															<option value="preset" <?php if ($pconfig['pppoe-reset-type'] == "preset") echo "selected"; ?>><?=gettext("Pre-Set"); ?></option>
+															<option value=""><?=gettext("Disabled"); ?></option>
+															<option value="custom" <?php if ($pconfig['pppoe-reset-type'] == "custom") echo "selected=\"selected\""; ?>><?=gettext("Custom"); ?></option>
+															<option value="preset" <?php if ($pconfig['pppoe-reset-type'] == "preset") echo "selected=\"selected\""; ?>><?=gettext("Pre-Set"); ?></option>
 														</select> <?=gettext("Select a reset timing type"); ?>
 														</p>
 														<?php if ($pconfig['pppoe_pr_custom']): ?>
@@ -2152,7 +2152,7 @@ $types6 = array("none" => gettext("None"), "staticv6" => gettext("Static IPv6"),
 											/
 											<select name="pptp_subnet" class="formselect" id="pptp_subnet">
 												<?php for ($i = 31; $i > 0; $i--): ?>
-													<option value="<?=$i;?>" <?php if ($i == $pconfig['pptp_subnet'][0]) echo "selected"; ?>>
+													<option value="<?=$i;?>" <?php if ($i == $pconfig['pptp_subnet'][0]) echo "selected=\"selected\""; ?>>
 														<?=$i;?></option>
 												<?php endfor; ?>
 											</select>
@@ -2167,7 +2167,7 @@ $types6 = array("none" => gettext("None"), "staticv6" => gettext("Static IPv6"),
 									<tr>
 										<td width="22%" valign="top" class="vncell"><?=gettext("Dial on demand"); ?></td>
 										<td width="78%" class="vtable">
-											<input name="pptp_dialondemand" type="checkbox" id="pptp_dialondemand" value="enable" <?php if ($pconfig['pptp_dialondemand']) echo "checked"; ?> />
+											<input name="pptp_dialondemand" type="checkbox" id="pptp_dialondemand" value="enable" <?php if ($pconfig['pptp_dialondemand']) echo "checked=\"checked\""; ?> />
 											<strong><?=gettext("Enable Dial-On-Demand mode"); ?></strong><br/>
 											<?=gettext("This option causes the interface to operate in dial-on-demand mode, allowing you to have a"); ?> <i><?=gettext("virtual full time"); ?></i> <?=gettext("connection. The interface is configured, but the actual connection of the link is delayed until qualifying outgoing traffic is detected."); ?>
 										</td>
@@ -2208,7 +2208,7 @@ $types6 = array("none" => gettext("None"), "staticv6" => gettext("Static IPv6"),
 						<tr>
 							<td valign="top" class="vncell"><?=gettext("Persist common settings");?></td>
 							<td class="vtable">
-								<input name="persistcommonwireless" type="checkbox" value="yes"  class="formfld" id="persistcommonwireless" <?php if ($pconfig['persistcommonwireless']) echo "checked";?> />
+								<input name="persistcommonwireless" type="checkbox" value="yes"  class="formfld" id="persistcommonwireless" <?php if ($pconfig['persistcommonwireless']) echo "checked=\"checked\"";?> />
 								<br/><?=gettext("Enabling this preserves the common wireless configuration through interface deletions and reassignments.");?>
 							</td>
 						</tr>
@@ -2220,7 +2220,7 @@ $types6 = array("none" => gettext("None"), "staticv6" => gettext("Static IPv6"),
 								foreach($wl_modes as $wl_standard => $wl_channels) {
 									echo "<option ";
 									if ($pconfig['standard'] == "$wl_standard")
-										echo "selected ";
+										echo "selected=\"selected\" ";
 									echo "value=\"$wl_standard\">802.$wl_standard</option>\n";
 								}
 								?>
@@ -2232,9 +2232,9 @@ $types6 = array("none" => gettext("None"), "staticv6" => gettext("Static IPv6"),
 							<td valign="top" class="vncellreq">802.11g OFDM <?=gettext("Protection Mode"); ?></td>
 							<td class="vtable">
 								<select name="protmode" class="formselect" id="protmode">
-									<option <?php if ($pconfig['protmode'] == 'off') echo "selected";?> value="off"><?=gettext("Protection mode off"); ?></option>
-									<option <?php if ($pconfig['protmode'] == 'cts') echo "selected";?> value="cts"><?=gettext("Protection mode CTS to self"); ?></option>
-									<option <?php if ($pconfig['protmode'] == 'rtscts') echo "selected";?> value="rtscts"><?=gettext("Protection mode RTS and CTS"); ?></option>
+									<option <?php if ($pconfig['protmode'] == 'off') echo "selected=\"selected\"";?> value="off"><?=gettext("Protection mode off"); ?></option>
+									<option <?php if ($pconfig['protmode'] == 'cts') echo "selected=\"selected\"";?> value="cts"><?=gettext("Protection mode CTS to self"); ?></option>
+									<option <?php if ($pconfig['protmode'] == 'rtscts') echo "selected=\"selected\"";?> value="rtscts"><?=gettext("Protection mode RTS and CTS"); ?></option>
 								</select>
 								<br/>
 								<?=gettext("For IEEE 802.11g, use the specified technique for protecting OFDM frames in a mixed 11b/11g network."); ?>
@@ -2251,7 +2251,7 @@ $types6 = array("none" => gettext("None"), "staticv6" => gettext("Static IPv6"),
 									<?
 									for($x = 99; $x > 0; $x--) {
 										if($pconfig["txpower"] == $x)
-											$SELECTED = " SELECTED";
+											$SELECTED = " selected=\"selected\"";
 										else
 											$SELECTED = "";
 										echo "<option {$SELECTED}>{$x}</option>\n";
@@ -2265,7 +2265,7 @@ $types6 = array("none" => gettext("None"), "staticv6" => gettext("Static IPv6"),
 							<td valign="top" class="vncellreq"><?=gettext("Channel"); ?></td>
 							<td class="vtable">
 								<select name="channel" class="formselect" id="channel">
-									<option <?php if ($pconfig['channel'] == 0) echo "selected"; ?> value="0"><?=gettext("Auto"); ?></option>
+									<option <?php if ($pconfig['channel'] == 0) echo "selected=\"selected\""; ?> value="0"><?=gettext("Auto"); ?></option>
 									<?php
 									foreach($wl_modes as $wl_standard => $wl_channels) {
 										if($wl_standard == "11g") { $wl_standard = "11b/g"; }
@@ -2274,7 +2274,7 @@ $types6 = array("none" => gettext("None"), "staticv6" => gettext("Static IPv6"),
 										foreach($wl_channels as $wl_channel) {
 											echo "<option ";
 											if ($pconfig['channel'] == "$wl_channel") {
-												echo "selected ";
+												echo "selected=\"selected\" ";
 											}
 											echo "value=\"$wl_channel\">$wl_standard - $wl_channel";
 											if(isset($wl_chaninfo[$wl_channel]))
@@ -2300,9 +2300,9 @@ $types6 = array("none" => gettext("None"), "staticv6" => gettext("Static IPv6"),
 										<td>
 											<?=gettext("Diversity"); ?><br/>
 											<select name="diversity" class="formselect" id="diversity">
-												<option <?php if (!isset($pconfig['diversity'])) echo "selected"; ?> value=""><?=gettext("Default"); ?></option>
-												<option <?php if ($pconfig['diversity'] === '0') echo "selected"; ?> value="0"><?=gettext("Off"); ?></option>
-												<option <?php if ($pconfig['diversity'] === '1') echo "selected"; ?> value="1"><?=gettext("On"); ?></option>
+												<option <?php if (!isset($pconfig['diversity'])) echo "selected=\"selected\""; ?> value=""><?=gettext("Default"); ?></option>
+												<option <?php if ($pconfig['diversity'] === '0') echo "selected=\"selected\""; ?> value="0"><?=gettext("Off"); ?></option>
+												<option <?php if ($pconfig['diversity'] === '1') echo "selected=\"selected\""; ?> value="1"><?=gettext("On"); ?></option>
 											</select>
 										</td>
 										<td>&nbsp;&nbsp</td>
@@ -2311,10 +2311,10 @@ $types6 = array("none" => gettext("None"), "staticv6" => gettext("Static IPv6"),
 										<td>
 											<?=gettext("Transmit antenna"); ?><br/>
 											<select name="txantenna" class="formselect" id="txantenna">
-												<option <?php if (!isset($pconfig['txantenna'])) echo "selected"; ?> value=""><?=gettext("Default"); ?></option>
-												<option <?php if ($pconfig['txantenna'] === '0') echo "selected"; ?> value="0"><?=gettext("Auto"); ?></option>
-												<option <?php if ($pconfig['txantenna'] === '1') echo "selected"; ?> value="1"><?=gettext("#1"); ?></option>
-												<option <?php if ($pconfig['txantenna'] === '2') echo "selected"; ?> value="2"><?=gettext("#2"); ?></option>
+												<option <?php if (!isset($pconfig['txantenna'])) echo "selected=\"selected\""; ?> value=""><?=gettext("Default"); ?></option>
+												<option <?php if ($pconfig['txantenna'] === '0') echo "selected=\"selected\""; ?> value="0"><?=gettext("Auto"); ?></option>
+												<option <?php if ($pconfig['txantenna'] === '1') echo "selected=\"selected\""; ?> value="1"><?=gettext("#1"); ?></option>
+												<option <?php if ($pconfig['txantenna'] === '2') echo "selected=\"selected\""; ?> value="2"><?=gettext("#2"); ?></option>
 											</select>
 										</td>
 										<td>&nbsp;&nbsp</td>
@@ -2323,10 +2323,10 @@ $types6 = array("none" => gettext("None"), "staticv6" => gettext("Static IPv6"),
 										<td>
 											<?=gettext("Receive antenna"); ?><br/>
 											<select name="rxantenna" class="formselect" id="rxantenna">
-												<option <?php if (!isset($pconfig['rxantenna'])) echo "selected"; ?> value=""><?=gettext("Default"); ?></option>
-												<option <?php if ($pconfig['rxantenna'] === '0') echo "selected"; ?> value="0"><?=gettext("Auto"); ?></option>
-												<option <?php if ($pconfig['rxantenna'] === '1') echo "selected"; ?> value="1"><?=gettext("#1"); ?></option>
-												<option <?php if ($pconfig['rxantenna'] === '2') echo "selected"; ?> value="2"><?=gettext("#2"); ?></option>
+												<option <?php if (!isset($pconfig['rxantenna'])) echo "selected=\"selected\""; ?> value=""><?=gettext("Default"); ?></option>
+												<option <?php if ($pconfig['rxantenna'] === '0') echo "selected=\"selected\""; ?> value="0"><?=gettext("Auto"); ?></option>
+												<option <?php if ($pconfig['rxantenna'] === '1') echo "selected=\"selected\""; ?> value="1"><?=gettext("#1"); ?></option>
+												<option <?php if ($pconfig['rxantenna'] === '2') echo "selected=\"selected\""; ?> value="2"><?=gettext("#2"); ?></option>
 											</select>
 										</td>
 										<?php endif; ?>
@@ -2353,12 +2353,12 @@ $types6 = array("none" => gettext("None"), "staticv6" => gettext("Static IPv6"),
 							<td class="vtable">
 								<?=gettext("Regulatory domain"); ?><br/>
 								<select name="regdomain" class="formselect" id="regdomain">
-									<option <?php if (empty($pconfig['regdomain'])) echo "selected"; ?> value=""><?=gettext("Default"); ?></option>
+									<option <?php if (empty($pconfig['regdomain'])) echo "selected=\"selected\""; ?> value=""><?=gettext("Default"); ?></option>
 									<?php
 									foreach($wl_regdomains as $wl_regdomain_key => $wl_regdomain) {
 										echo "<option ";
 										if ($pconfig['regdomain'] == $wl_regdomains_attr[$wl_regdomain_key]['ID']) {
-											echo "selected ";
+											echo "selected=\"selected\" ";
 										}
 										echo "value=\"{$wl_regdomains_attr[$wl_regdomain_key]['ID']}\">{$wl_regdomain['name']}</option>\n";
 									}
@@ -2369,12 +2369,12 @@ $types6 = array("none" => gettext("None"), "staticv6" => gettext("Static IPv6"),
 								<br/><br/>
 								<?=gettext("Country (listed with country code and regulatory domain)"); ?><br/>
 								<select name="regcountry" class="formselect" id="regcountry">
-									<option <?php if (empty($pconfig['regcountry'])) echo "selected"; ?> value=""><?=gettext("Default"); ?></option>
+									<option <?php if (empty($pconfig['regcountry'])) echo "selected=\"selected\""; ?> value=""><?=gettext("Default"); ?></option>
 									<?php
 									foreach($wl_countries as $wl_country_key => $wl_country) {
 										echo "<option ";
 										if ($pconfig['regcountry'] == $wl_countries_attr[$wl_country_key]['ID']) {
-											echo "selected ";
+											echo "selected=\"selected\" ";
 										}
 										echo "value=\"{$wl_countries_attr[$wl_country_key]['ID']}\">{$wl_country['name']} -- ({$wl_countries_attr[$wl_country_key]['ID']}, " . strtoupper($wl_countries_attr[$wl_country_key]['rd'][0]['REF']) . ")</option>\n";
 									}
@@ -2385,10 +2385,10 @@ $types6 = array("none" => gettext("None"), "staticv6" => gettext("Static IPv6"),
 								<br/><br/>
 								<?=gettext("Location"); ?><br/>
 								<select name="reglocation" class="formselect" id="reglocation">
-									<option <?php if (empty($pconfig['reglocation'])) echo "selected"; ?> value=""><?=gettext("Default"); ?></option>
-									<option <?php if ($pconfig['reglocation'] == 'indoor') echo "selected"; ?> value="indoor"><?=gettext("Indoor"); ?></option>
-									<option <?php if ($pconfig['reglocation'] == 'outdoor') echo "selected"; ?> value="outdoor"><?=gettext("Outdoor"); ?></option>
-									<option <?php if ($pconfig['reglocation'] == 'anywhere') echo "selected"; ?> value="anywhere"><?=gettext("Anywhere"); ?></option>
+									<option <?php if (empty($pconfig['reglocation'])) echo "selected=\"selected\""; ?> value=""><?=gettext("Default"); ?></option>
+									<option <?php if ($pconfig['reglocation'] == 'indoor') echo "selected=\"selected\""; ?> value="indoor"><?=gettext("Indoor"); ?></option>
+									<option <?php if ($pconfig['reglocation'] == 'outdoor') echo "selected=\"selected\""; ?> value="outdoor"><?=gettext("Outdoor"); ?></option>
+									<option <?php if ($pconfig['reglocation'] == 'anywhere') echo "selected=\"selected\""; ?> value="anywhere"><?=gettext("Anywhere"); ?></option>
 								</select>
 								<br/><br/>
 								<?=gettext("These settings may affect which channels are available and the maximum transmit power allowed on those channels.  Using the correct settings to comply with local regulatory requirements is recommended."); ?>
@@ -2406,9 +2406,9 @@ $types6 = array("none" => gettext("None"), "staticv6" => gettext("Static IPv6"),
 							<td valign="top" class="vncellreq"><?=gettext("Mode"); ?></td>
 							<td class="vtable">
 								<select name="mode" class="formselect" id="mode">
-									<option <?php if ($pconfig['mode'] == 'bss') echo "selected";?> value="bss"><?=gettext("Infrastructure (BSS)"); ?></option>
-									<option <?php if ($pconfig['mode'] == 'adhoc') echo "selected";?> value="adhoc"><?=gettext("Ad-hoc (IBSS)"); ?></option>
-									<option <?php if ($pconfig['mode'] == 'hostap') echo "selected";?> value="hostap"><?=gettext("Access Point"); ?></option>
+									<option <?php if ($pconfig['mode'] == 'bss') echo "selected=\"selected\"";?> value="bss"><?=gettext("Infrastructure (BSS)"); ?></option>
+									<option <?php if ($pconfig['mode'] == 'adhoc') echo "selected=\"selected\"";?> value="adhoc"><?=gettext("Ad-hoc (IBSS)"); ?></option>
+									<option <?php if ($pconfig['mode'] == 'hostap') echo "selected=\"selected\"";?> value="hostap"><?=gettext("Access Point"); ?></option>
 								</select>
 							</td>
 						</tr>
@@ -2425,11 +2425,11 @@ $types6 = array("none" => gettext("None"), "staticv6" => gettext("Static IPv6"),
 							<td valign="top" class="vncell"><?=gettext("Minimum wireless standard"); ?></td>
 							<td class="vtable">
 								<select name="puremode" class="formselect" id="puremode">
-									<option <?php if ($pconfig['puremode'] == 'any') echo "selected";?> value="any"><?=gettext("Any"); ?></option>
+									<option <?php if ($pconfig['puremode'] == 'any') echo "selected=\"selected\"";?> value="any"><?=gettext("Any"); ?></option>
 									<?php if (isset($wl_modes['11g'])): ?>
-									<option <?php if ($pconfig['puremode'] == '11g') echo "selected";?> value="11g"><?=gettext("802.11g"); ?></option>
+									<option <?php if ($pconfig['puremode'] == '11g') echo "selected=\"selected\"";?> value="11g"><?=gettext("802.11g"); ?></option>
 									<?php endif; ?>
-									<option <?php if ($pconfig['puremode'] == '11n') echo "selected";?> value="11n"><?=gettext("802.11n"); ?></option>
+									<option <?php if ($pconfig['puremode'] == '11n') echo "selected=\"selected\"";?> value="11n"><?=gettext("802.11n"); ?></option>
 								</select>
 								<br/>
 								<?=gettext("When operating as an access point, allow only stations capable of the selected wireless standard to associate (stations not capable are not permitted to associate)."); ?>
@@ -2439,7 +2439,7 @@ $types6 = array("none" => gettext("None"), "staticv6" => gettext("Static IPv6"),
 						<tr>
 							<td valign="top" class="vncell"><?=gettext("802.11g only"); ?></td>
 							<td class="vtable">
-								<input name="puremode" type="checkbox" value="11g"  class="formfld" id="puremode" <?php if ($pconfig['puremode'] == '11g') echo "checked";?> />
+								<input name="puremode" type="checkbox" value="11g"  class="formfld" id="puremode" <?php if ($pconfig['puremode'] == '11g') echo "checked=\"checked\"";?> />
 								<br/><?=gettext("When operating as an access point in 802.11g mode, allow only 11g-capable stations to associate (11b-only stations are not permitted to associate)."); ?>
 							</td>
 						</tr>
@@ -2447,7 +2447,7 @@ $types6 = array("none" => gettext("None"), "staticv6" => gettext("Static IPv6"),
 						<tr>
 							<td valign="top" class="vncell"><?=gettext("Allow intra-BSS communication"); ?></td>
 							<td class="vtable">
-								<input name="apbridge_enable" type="checkbox" value="yes"  class="formfld" id="apbridge_enable" <?php if ($pconfig['apbridge_enable']) echo "checked";?> />
+								<input name="apbridge_enable" type="checkbox" value="yes"  class="formfld" id="apbridge_enable" <?php if ($pconfig['apbridge_enable']) echo "checked=\"checked\"";?> />
 								<br/>
 								<?=gettext("When operating as an access point, enable this if you want to pass packets between wireless clients directly."); ?>
 								<br/>
@@ -2457,14 +2457,14 @@ $types6 = array("none" => gettext("None"), "staticv6" => gettext("Static IPv6"),
 						<tr>
 							<td valign="top" class="vncell"><?=gettext("Enable WME"); ?></td>
 							<td class="vtable">
-								<input name="wme_enable" type="checkbox" class="formfld" id="wme_enable" value="yes" <?php if ($pconfig['wme_enable']) echo "checked";?> />
+								<input name="wme_enable" type="checkbox" class="formfld" id="wme_enable" value="yes" <?php if ($pconfig['wme_enable']) echo "checked=\"checked\"";?> />
 								<br/><?=gettext("Setting this option will force the card to use WME (wireless QoS)."); ?>
 							</td>
 						</tr>
 						<tr>
 							<td valign="top" class="vncell"><?=gettext("Enable Hide SSID"); ?></td>
 							<td class="vtable">
-								<input name="hidessid_enable" type="checkbox" class="formfld" id="hidessid_enable" value="yes" <?php if ($pconfig['hidessid_enable']) echo "checked";?> />
+								<input name="hidessid_enable" type="checkbox" class="formfld" id="hidessid_enable" value="yes" <?php if ($pconfig['hidessid_enable']) echo "checked=\"checked\"";?> />
 								<br/>
 								<?=gettext("Setting this option will force the card to NOT broadcast its SSID"); ?>
 								<br/>
@@ -2474,7 +2474,7 @@ $types6 = array("none" => gettext("None"), "staticv6" => gettext("Static IPv6"),
 						<tr>
 							<td valign="top" class="vncell"><?=gettext("WEP"); ?></td>
 							<td class="vtable">
-								<input name="wep_enable" type="checkbox" id="wep_enable" value="yes" <?php if ($pconfig['wep_enable']) echo "checked"; ?> />
+								<input name="wep_enable" type="checkbox" id="wep_enable" value="yes" <?php if ($pconfig['wep_enable']) echo "checked=\"checked\""; ?> />
 								<strong><?=gettext("Enable WEP"); ?></strong>
 								<table border="0" cellspacing="0" cellpadding="0">
 									<tr>
@@ -2488,7 +2488,7 @@ $types6 = array("none" => gettext("None"), "staticv6" => gettext("Static IPv6"),
 											<input name="key1" type="text" class="formfld unknown" id="key1" size="30" value="<?=htmlspecialchars($pconfig['key1']);?>" />
 										</td>
 										<td align="center">
-											<input name="txkey" type="radio" value="1" <?php if ($pconfig['txkey'] == 1) echo "checked";?>>
+											<input name="txkey" type="radio" value="1" <?php if ($pconfig['txkey'] == 1) echo "checked=\"checked\"";?>>
 										</td>
 									</tr>
 									<tr>
@@ -2497,7 +2497,7 @@ $types6 = array("none" => gettext("None"), "staticv6" => gettext("Static IPv6"),
 											<input name="key2" type="text" class="formfld unknown" id="key2" size="30" value="<?=htmlspecialchars($pconfig['key2']);?>" />
 										</td>
 										<td align="center">
-											<input name="txkey" type="radio" value="2" <?php if ($pconfig['txkey'] == 2) echo "checked";?> />
+											<input name="txkey" type="radio" value="2" <?php if ($pconfig['txkey'] == 2) echo "checked=\"checked\"";?> />
 										</td>
 									</tr>
 									<tr>
@@ -2506,7 +2506,7 @@ $types6 = array("none" => gettext("None"), "staticv6" => gettext("Static IPv6"),
 											<input name="key3" type="text" class="formfld unknown" id="key3" size="30" value="<?=htmlspecialchars($pconfig['key3']);?>" />
 										</td>
 										<td align="center">
-											<input name="txkey" type="radio" value="3" <?php if ($pconfig['txkey'] == 3) echo "checked";?>>
+											<input name="txkey" type="radio" value="3" <?php if ($pconfig['txkey'] == 3) echo "checked=\"checked\"";?> />
 										</td>
 									</tr>
 									<tr>
@@ -2515,7 +2515,7 @@ $types6 = array("none" => gettext("None"), "staticv6" => gettext("Static IPv6"),
 											<input name="key4" type="text" class="formfld unknown" id="key4" size="30" value="<?=htmlspecialchars($pconfig['key4']);?>" />
 										</td>
 										<td align="center">
-											<input name="txkey" type="radio" value="4" <?php if ($pconfig['txkey'] == 4) echo "checked";?>>
+											<input name="txkey" type="radio" value="4" <?php if ($pconfig['txkey'] == 4) echo "checked=\"checked\"";?> />
 										</td>
 									</tr>
 								</table>
@@ -2527,7 +2527,7 @@ $types6 = array("none" => gettext("None"), "staticv6" => gettext("Static IPv6"),
 						<tr>
 							<td valign="top" class="vncell"><?=gettext("WPA"); ?></td>
 							<td class="vtable">
-								<input name="wpa_enable" type="checkbox" class="formfld" id="wpa_enable" value="yes" <?php if ($pconfig['wpa_enable']) echo "checked"; ?> />
+								<input name="wpa_enable" type="checkbox" class="formfld" id="wpa_enable" value="yes" <?php if ($pconfig['wpa_enable']) echo "checked=\"checked\""; ?> />
 								<strong><?=gettext("Enable WPA"); ?></strong>
 								<br/><br/>
 								<table border="0" cellspacing="0" cellpadding="0">
@@ -2549,9 +2549,9 @@ $types6 = array("none" => gettext("None"), "staticv6" => gettext("Static IPv6"),
 							<td valign="top" class="vncell"><?=gettext("WPA Mode"); ?></td>
 							<td class="vtable">
 								<select name="wpa_mode" class="formselect" id="wpa_mode">
-									<option <?php if ($pconfig['wpa_mode'] == '1') echo "selected";?> value="1"><?=gettext("WPA"); ?></option>
-									<option <?php if ($pconfig['wpa_mode'] == '2') echo "selected";?> value="2"><?=gettext("WPA2"); ?></option>
-									<option <?php if ($pconfig['wpa_mode'] == '3') echo "selected";?> value="3"><?=gettext("Both"); ?></option>
+									<option <?php if ($pconfig['wpa_mode'] == '1') echo "selected=\"selected\"";?> value="1"><?=gettext("WPA"); ?></option>
+									<option <?php if ($pconfig['wpa_mode'] == '2') echo "selected=\"selected\"";?> value="2"><?=gettext("WPA2"); ?></option>
+									<option <?php if ($pconfig['wpa_mode'] == '3') echo "selected=\"selected\"";?> value="3"><?=gettext("Both"); ?></option>
 								</select>
 							</td>
 						</tr>
@@ -2559,9 +2559,9 @@ $types6 = array("none" => gettext("None"), "staticv6" => gettext("Static IPv6"),
 							<td valign="top" class="vncell"><?=gettext("WPA Key Management Mode"); ?></td>
 							<td class="vtable">
 								<select name="wpa_key_mgmt" class="formselect" id="wpa_key_mgmt">
-									<option <?php if ($pconfig['wpa_key_mgmt'] == 'WPA-PSK') echo "selected";?> value="WPA-PSK"><?=gettext("Pre-Shared Key"); ?></option>
-									<option <?php if ($pconfig['wpa_key_mgmt'] == 'WPA-EAP') echo "selected";?> value="WPA-EAP"><?=gettext("Extensible Authentication Protocol"); ?></option>
-									<option <?php if ($pconfig['wpa_key_mgmt'] == 'WPA-PSK WPA-EAP') echo "selected";?> value="WPA-PSK WPA-EAP"><?=gettext("Both"); ?></option>
+									<option <?php if ($pconfig['wpa_key_mgmt'] == 'WPA-PSK') echo "selected=\"selected\"";?> value="WPA-PSK"><?=gettext("Pre-Shared Key"); ?></option>
+									<option <?php if ($pconfig['wpa_key_mgmt'] == 'WPA-EAP') echo "selected=\"selected\"";?> value="WPA-EAP"><?=gettext("Extensible Authentication Protocol"); ?></option>
+									<option <?php if ($pconfig['wpa_key_mgmt'] == 'WPA-PSK WPA-EAP') echo "selected=\"selected\"";?> value="WPA-PSK WPA-EAP"><?=gettext("Both"); ?></option>
 								</select>
 							</td>
 						</tr>
@@ -2569,9 +2569,9 @@ $types6 = array("none" => gettext("None"), "staticv6" => gettext("Static IPv6"),
 							<td valign="top" class="vncell"><?=gettext("Authentication"); ?></td>
 							<td class="vtable">
 								<select name="auth_algs" class="formselect" id="auth_algs">
-									<option <?php if ($pconfig['auth_algs'] == '1') echo "selected";?> value="1"><?=gettext("Open System Authentication"); ?></option>
-									<option <?php if ($pconfig['auth_algs'] == '2') echo "selected";?> value="2"><?=gettext("Shared Key Authentication"); ?></option>
-									<option <?php if ($pconfig['auth_algs'] == '3') echo "selected";?> value="3"><?=gettext("Both"); ?></option>
+									<option <?php if ($pconfig['auth_algs'] == '1') echo "selected=\"selected\"";?> value="1"><?=gettext("Open System Authentication"); ?></option>
+									<option <?php if ($pconfig['auth_algs'] == '2') echo "selected=\"selected\"";?> value="2"><?=gettext("Shared Key Authentication"); ?></option>
+									<option <?php if ($pconfig['auth_algs'] == '3') echo "selected=\"selected\"";?> value="3"><?=gettext("Both"); ?></option>
 								</select>
 								<br/><?=gettext("Note: Shared Key Authentication requires WEP."); ?></br>
 							</td>
@@ -2580,9 +2580,9 @@ $types6 = array("none" => gettext("None"), "staticv6" => gettext("Static IPv6"),
 							<td valign="top" class="vncell"><?=gettext("WPA Pairwise"); ?></td>
 							<td class="vtable">
 								<select name="wpa_pairwise" class="formselect" id="wpa_pairwise">
-									<option <?php if ($pconfig['wpa_pairwise'] == 'CCMP TKIP') echo "selected";?> value="CCMP TKIP"><?=gettext("Both"); ?></option>
-									<option <?php if ($pconfig['wpa_pairwise'] == 'CCMP') echo "selected";?> value="CCMP"><?=gettext("AES (recommended)"); ?></option>
-									<option <?php if ($pconfig['wpa_pairwise'] == 'TKIP') echo "selected";?> value="TKIP"><?=gettext("TKIP"); ?></option>
+									<option <?php if ($pconfig['wpa_pairwise'] == 'CCMP TKIP') echo "selected=\"selected\"";?> value="CCMP TKIP"><?=gettext("Both"); ?></option>
+									<option <?php if ($pconfig['wpa_pairwise'] == 'CCMP') echo "selected=\"selected\"";?> value="CCMP"><?=gettext("AES (recommended)"); ?></option>
+									<option <?php if ($pconfig['wpa_pairwise'] == 'TKIP') echo "selected=\"selected\"";?> value="TKIP"><?=gettext("TKIP"); ?></option>
 								</select>
 							</td>
 						</tr>
@@ -2603,14 +2603,14 @@ $types6 = array("none" => gettext("None"), "staticv6" => gettext("Static IPv6"),
 						<tr>
 							<td valign="top" class="vncell"><?=gettext("Strict Key Regeneration"); ?></td>
 							<td class="vtable">
-								<input name="wpa_strict_rekey" type="checkbox" value="yes"  class="formfld" id="wpa_strict_rekey" <?php if ($pconfig['wpa_strict_rekey']) echo "checked"; ?> />
+								<input name="wpa_strict_rekey" type="checkbox" value="yes"  class="formfld" id="wpa_strict_rekey" <?php if ($pconfig['wpa_strict_rekey']) echo "checked=\"checked\""; ?> />
 								<br/><?=gettext("Setting this option will force the AP to rekey whenever a client disassociates."); ?>
 							</td>
 						</tr>
 						<tr>
 							<td valign="top" class="vncell"><?=gettext("Enable IEEE802.1X Authentication"); ?></td>
 							<td class="vtable">
-								<input name="ieee8021x" type="checkbox" value="yes"  class="formfld" id="ieee8021x" <?php if ($pconfig['ieee8021x']) echo "checked";?> />
+								<input name="ieee8021x" type="checkbox" value="yes"  class="formfld" id="ieee8021x" <?php if ($pconfig['ieee8021x']) echo "checked=\"checked\"";?> />
 								<br/><?=gettext("Setting this option will enable 802.1x authentication."); ?>
 								<br/><span class="red"><strong><?=gettext("NOTE"); ?>:</strong></span> <?=gettext("this option requires checking the \"Enable WPA box\"."); ?>
 							</td>
@@ -2660,7 +2660,7 @@ $types6 = array("none" => gettext("None"), "staticv6" => gettext("Static IPv6"),
 						<tr>
 							<td valign="top" class="vncell">802.1X <?=gettext("Authentication Roaming Preauth"); ?></td>
 							<td class="vtable">
-								<input name="rsn_preauth" id="rsn_preauth" type="checkbox" class="formfld unknown" size="66" value="yes" <?php if ($pconfig['rsn_preauth']) echo "checked"; ?> />
+								<input name="rsn_preauth" id="rsn_preauth" type="checkbox" class="formfld unknown" size="66" value="yes" <?php if ($pconfig['rsn_preauth']) echo "checked=\"checked\""; ?> />
 								<br/>
 							</td>
 						</tr>
@@ -2675,7 +2675,7 @@ $types6 = array("none" => gettext("None"), "staticv6" => gettext("Static IPv6"),
 							<td valign="middle" class="vncell">&nbsp;</td>
 							<td class="vtable">
 								<a name="rfc1918"></a>
-								<input name="blockpriv" type="checkbox" id="blockpriv" value="yes" <?php if ($pconfig['blockpriv']) echo "checked"; ?> />
+								<input name="blockpriv" type="checkbox" id="blockpriv" value="yes" <?php if ($pconfig['blockpriv']) echo "checked=\"checked\""; ?> />
 								<strong><?=gettext("Block private networks"); ?></strong><br/>
 								<?=gettext("When set, this option blocks traffic from IP addresses that are reserved " .
 								"for private  networks as per RFC 1918 (10/8, 172.16/12, 192.168/16) as"); ?>
@@ -2687,7 +2687,7 @@ $types6 = array("none" => gettext("None"), "staticv6" => gettext("Static IPv6"),
 						<tr>
 							<td valign="middle" class="vncell">&nbsp;</td>
 							<td class="vtable">
-								<input name="blockbogons" type="checkbox" id="blockbogons" value="yes" <?php if ($pconfig['blockbogons']) echo "checked"; ?> />
+								<input name="blockbogons" type="checkbox" id="blockbogons" value="yes" <?php if ($pconfig['blockbogons']) echo "checked=\"checked\""; ?> />
 								<strong><?=gettext("Block bogon networks"); ?></strong><br/>
 								<?=gettext("When set, this option blocks traffic from IP addresses that are reserved " .
 								"(but not RFC 1918) or not yet assigned by IANA."); ?>&nbsp;&nbsp;

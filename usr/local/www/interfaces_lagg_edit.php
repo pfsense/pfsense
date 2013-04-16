@@ -140,21 +140,21 @@ include("head.inc");
 <?php include("fbegin.inc"); ?>
 <?php if ($input_errors) print_input_errors($input_errors); ?>
             <form action="interfaces_lagg_edit.php" method="post" name="iform" id="iform">
-              <table width="100%" border="0" cellpadding="6" cellspacing="0">
+              <table width="100%" border="0" cellpadding="6" cellspacing="0" summary="interfaces lagg edit">
 				<tr>
 					<td colspan="2" valign="top" class="listtopic"><?=gettext("LAGG configuration"); ?></td>
 				</tr>
 				<tr>
                   <td width="22%" valign="top" class="vncellreq"><?=gettext("Parent interface"); ?></td>
                   <td width="78%" class="vtable">
-                    <select name="members[]" multiple="true" size="4" class="formselect">
+                    <select name="members[]" multiple="multiple" size="4" class="formselect">
                       <?php
 						foreach ($portlist as $ifn => $ifinfo) {
 							if (array_key_exists($ifn, $realifchecklist))
 								continue;
 							echo "<option value=\"{$ifn}\"";
 							if (stristr($pconfig['members'], $ifn))
-								echo "selected";
+								echo " selected=\"selected\"";
 							echo ">". $ifn ."(".$ifinfo['mac'] .")</option>";
 						}
 				?>
@@ -170,14 +170,13 @@ include("head.inc");
 		foreach ($laggprotos as $proto) {
 			echo "<option value=\"{$proto}\"";
 			if ($proto == $pconfig['proto'])
-				echo "selected";
+				echo " selected=\"selected\"";
 			echo ">".strtoupper($proto)."</option>";
 		}
 		?>
                     </select>
                     <br/>
-                    <span class="vexpl">
-		   <ul>
+		   <ul class="vexpl">
 		<li>
 		    <b><?=gettext("failover"); ?></b><br/>
 			<?=gettext("Sends and receives traffic only through the master port.  If " .
@@ -216,22 +215,22 @@ include("head.inc");
                   "traffic without disabling the lagg interface itself"); ?>.
 		</li>
 	</ul>
-	          </span></td>
+	          </td>
 	    </tr>
 		<tr>
                   <td width="22%" valign="top" class="vncell"><?=gettext("Description"); ?></td>
                   <td width="78%" class="vtable">
-                    <input name="descr" type="text" class="formfld unknown" id="descr" size="40" value="<?=htmlspecialchars($pconfig['descr']);?>">
-                    <br> <span class="vexpl"><?=gettext("You may enter a description here " .
+                    <input name="descr" type="text" class="formfld unknown" id="descr" size="40" value="<?=htmlspecialchars($pconfig['descr']);?>" />
+                    <br/> <span class="vexpl"><?=gettext("You may enter a description here " .
                     "for your reference (not parsed)"); ?>.</span></td>
                 </tr>
                 <tr>
                   <td width="22%" valign="top">&nbsp;</td>
                   <td width="78%">
-				    <input type="hidden" name="laggif" value="<?=htmlspecialchars($pconfig['laggif']); ?>">
-                    <input name="Submit" type="submit" class="formbtn" value="<?=gettext("Save"); ?>"> <input type="button" value="<?=gettext("Cancel"); ?>" onclick="history.back()">
+				    <input type="hidden" name="laggif" value="<?=htmlspecialchars($pconfig['laggif']); ?>" />
+                    <input name="Submit" type="submit" class="formbtn" value="<?=gettext("Save"); ?>" /> <input type="button" value="<?=gettext("Cancel"); ?>" onclick="history.back()" />
                     <?php if (isset($id) && $a_laggs[$id]): ?>
-                    <input name="id" type="hidden" value="<?=htmlspecialchars($id);?>">
+                    <input name="id" type="hidden" value="<?=htmlspecialchars($id);?>" />
                     <?php endif; ?>
                   </td>
                 </tr>

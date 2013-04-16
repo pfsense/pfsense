@@ -87,7 +87,7 @@ include("head.inc");
 <body link="#0000CC" vlink="#0000CC" alink="#0000CC">
 <?php include("fbegin.inc"); ?>
 <?php if ($input_errors) print_input_errors($input_errors); ?>
-<table width="100%" border="0" cellpadding="0" cellspacing="0">
+<table width="100%" border="0" cellpadding="0" cellspacing="0" summary="interfaces gre">
   <tr><td>
 <?php
 	$tab_array = array();
@@ -107,7 +107,7 @@ include("head.inc");
   <tr>
     <td>
 	<div id="mainarea">
-	<table class="tabcont" width="100%" border="0" cellpadding="0" cellspacing="0">
+	<table class="tabcont" width="100%" border="0" cellpadding="0" cellspacing="0" summary="main area">
                 <tr>
                   <td width="20%" class="listhdrr"><?=gettext("Interface");?></td>
                   <td width="20%" class="listhdrr"><?=gettext("Tunnel to...");?></td>
@@ -125,17 +125,17 @@ include("head.inc");
                   <td class="listbg">
                     <?=htmlspecialchars($gre['descr']);?>&nbsp;
                   </td>
-                  <td valign="middle" nowrap class="list"> <a href="interfaces_gre_edit.php?id=<?=$i;?>"><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_e.gif" width="17" height="17" border="0"></a>
-                     &nbsp;<a href="interfaces_gre.php?act=del&id=<?=$i;?>" onclick="return confirm('<?=gettext("Do you really want to delete this GRE tunnel?");?>')"><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_x.gif" width="17" height="17" border="0"></a></td>
+                  <td valign="middle" class="list nowrap"> <a href="interfaces_gre_edit.php?id=<?=$i;?>"><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_e.gif" width="17" height="17" border="0" alt="edit" /></a>
+                     &nbsp;<a href="interfaces_gre.php?act=del&amp;id=<?=$i;?>" onclick="return confirm('<?=gettext("Do you really want to delete this GRE tunnel?");?>')"><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_x.gif" width="17" height="17" border="0" alt="delete" /></a></td>
 				</tr>
 			  <?php $i++; endforeach; ?>
                 <tr>
                   <td class="list" colspan="3">&nbsp;</td>
-                  <td class="list"> <a href="interfaces_gre_edit.php"><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_plus.gif" width="17" height="17" border="0"></a></td>
+                  <td class="list"> <a href="interfaces_gre_edit.php"><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_plus.gif" width="17" height="17" border="0" alt="add" /></a></td>
 				</tr>
         <tr>
                 <td class="tabcont" colspan="3">
-                    <p><span class="vexpl"><span class="red"><strong><?=gettext("Note:");?><br></strong></span><?=gettext("Here you can configure Generic Routing Encapsulation (GRE - RFC 2784) tunnels.");?></span></p>
+                    <p><span class="vexpl"><span class="red"><strong><?=gettext("Note:");?><br/></strong></span><?=gettext("Here you can configure Generic Routing Encapsulation (GRE - RFC 2784) tunnels.");?></span></p>
                     </td>
                 </tr>
               </table>

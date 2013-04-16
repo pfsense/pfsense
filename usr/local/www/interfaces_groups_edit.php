@@ -202,8 +202,8 @@ var addRowTo = (function() {
 
 			$iflist = get_configured_interface_with_descr();
                         foreach ($iflist as $ifnam => $ifdescr)
-                                $innerHTML .= "<option value='{$ifnam}'>{$ifdescr}</option>";
-			$innerHTML .= "</select>\";";
+                                $innerHTML .= "<option value='{$ifnam}'>{$ifdescr}<\/option>";
+			$innerHTML .= "<\/select>\";";
                 ?>
 			td.innerHTML=<?=$innerHTML;?>
                 tr.appendChild(td);
@@ -211,7 +211,7 @@ var addRowTo = (function() {
         td = d.createElement("td");
         td.rowSpan = "1";
 
-        td.innerHTML = '<a onclick="removeRow(this);return false;" href="#"><img border="0" src="/themes/' + theme + '/images/icons/icon_x.gif" alt="remove" /></a>';
+        td.innerHTML = '<a onclick="removeRow(this);return false;" href="#"><img border="0" src="/themes/' + theme + '/images/icons/icon_x.gif" alt="remove" /><\/a>';
         tr.appendChild(td);
         tbody.appendChild(tr);
         totalrows++;

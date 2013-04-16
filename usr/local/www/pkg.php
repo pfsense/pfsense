@@ -518,7 +518,7 @@ if ($pkg['tabs'] <> "") {
 				<?php
 				#Show save button only when movable is defined
 				if($pkg['adddeleteeditpagefields']['movable']){?>
-				<td><input class="formbtn" type="button" value="Save" name="Submit" onclick="save_changes_to_xml('<?=$xml?>')" /></td>
+				<tr><td><input class="formbtn" type="button" value="Save" name="Submit" onclick="save_changes_to_xml('<?=$xml?>')" /></td></tr>
 				<?php }?>
 		</table>
 	</td>

@@ -141,7 +141,7 @@ include("head.inc");
 <?php include("fbegin.inc"); ?>
 <?php if ($input_errors) print_input_errors($input_errors); ?>
             <form action="interfaces_gif_edit.php" method="post" name="iform" id="iform">
-              <table width="100%" border="0" cellpadding="6" cellspacing="0">
+              <table width="100%" border="0" cellpadding="6" cellspacing="0" summary="interfaces gif edit">
 				<tr>
 					<td colspan="2" valign="top" class="listtopic"><?=gettext("GIF configuration"); ?></td>
 				</tr>
@@ -160,7 +160,7 @@ include("head.inc");
 						foreach ($portlist as $ifn => $ifinfo) {
 							echo "<option value=\"{$ifn}\"";
 							if ($ifn == $pconfig['if'])
-								echo "selected";
+								echo " selected=\"selected\"";
 							echo ">{$ifinfo}</option>";
 						}
 		      		?>
@@ -171,27 +171,27 @@ include("head.inc");
 				<tr>
                   <td valign="top" class="vncellreq"><?=gettext("gif remote address"); ?></td>
                   <td class="vtable">
-                    <input name="remote-addr" type="text" class="formfld unknown" id="remote-addr" size="24" value="<?=htmlspecialchars($pconfig['remote-addr']);?>">
-                    <br>
+                    <input name="remote-addr" type="text" class="formfld unknown" id="remote-addr" size="24" value="<?=htmlspecialchars($pconfig['remote-addr']);?>" />
+                    <br/>
                     <span class="vexpl"><?=gettext("Peer address where encapsulated gif packets will be sent. "); ?></span></td>
 			    </tr>
 				<tr>
                   <td valign="top" class="vncellreq"><?=gettext("gif tunnel local address"); ?></td>
                   <td class="vtable">
-                    <input name="tunnel-local-addr" type="text" class="formfld unknown" id="tunnel-local-addr" size="24" value="<?=htmlspecialchars($pconfig['tunnel-local-addr']);?>">
-                    <br>
+                    <input name="tunnel-local-addr" type="text" class="formfld unknown" id="tunnel-local-addr" size="24" value="<?=htmlspecialchars($pconfig['tunnel-local-addr']);?>" />
+                    <br/>
                     <span class="vexpl"><?=gettext("Local gif tunnel endpoint"); ?></span></td>
 			    </tr>
 				<tr>
                   <td valign="top" class="vncellreq"><?=gettext("gif tunnel remote address "); ?></td>
                   <td class="vtable">
-                    <input name="tunnel-remote-addr" type="text" class="formfld unknown ipv4v6" id="tunnel-remote-addr" size="24" value="<?=htmlspecialchars($pconfig['tunnel-remote-addr']);?>">
+                    <input name="tunnel-remote-addr" type="text" class="formfld unknown ipv4v6" id="tunnel-remote-addr" size="24" value="<?=htmlspecialchars($pconfig['tunnel-remote-addr']);?>" />
                     <select name="tunnel-remote-net" class="formselect ipv4v6" id="tunnel-remote-net">
                                         <?php
                                         for ($i = 128; $i > 0; $i--) {
-						echo "<option value=\"{$i}\" ";
+						echo "<option value=\"{$i}\"";
 						if ($i == $pconfig['tunnel-remote-net'])
-							echo "selected";
+							echo " selected=\"selected\"";
 						echo ">" . $i . "</option>";
                                         }
                                         ?>
@@ -202,15 +202,15 @@ include("head.inc");
 				<tr>
                   <td valign="top" class="vncell"><?=gettext("Route caching  "); ?></td>
                   <td class="vtable">
-                    <input name="link0" type="checkbox" id="link0" <?if ($pconfig['link0']) echo "checked";?>>
-                    <br>
+                    <input name="link0" type="checkbox" id="link0" <?if ($pconfig['link0']) echo "checked=\"checked\"";?> />
+                    <br/>
                     <span class="vexpl"><?=gettext("Specify if route caching can be enabled. Be careful with these settings on dynamic networks. "); ?></span></td>
 			    </tr>
 				<tr>
                   <td valign="top" class="vncell"><?=gettext("ECN friendly behavior"); ?></td>
                   <td class="vtable">
-                    <input name="link1" type="checkbox" id="link1" <?if ($pconfig['link1']) echo "checked";?>>
-                    <br>
+                    <input name="link1" type="checkbox" id="link1" <?if ($pconfig['link1']) echo "checked=\"checked\"";?> />
+                    <br/>
                     <span class="vexpl">
      <?=gettext("Note that the ECN friendly behavior violates RFC2893.  This should be " .
      "used in mutual agreement with the peer."); ?>					
@@ -219,17 +219,17 @@ include("head.inc");
 				<tr>
                   <td width="22%" valign="top" class="vncell"><?=gettext("Description"); ?></td>
                   <td width="78%" class="vtable">
-                    <input name="descr" type="text" class="formfld unknown" id="descr" size="40" value="<?=htmlspecialchars($pconfig['descr']);?>">
-                    <br> <span class="vexpl"><?=gettext("You may enter a description here " .
+                    <input name="descr" type="text" class="formfld unknown" id="descr" size="40" value="<?=htmlspecialchars($pconfig['descr']);?>" />
+                    <br/> <span class="vexpl"><?=gettext("You may enter a description here " .
                     "for your reference (not parsed)."); ?></span></td>
                 </tr>
                 <tr>
                   <td width="22%" valign="top">&nbsp;</td>
                   <td width="78%">
-		    <input type="hidden" name="gifif" value="<?=htmlspecialchars($pconfig['gifif']); ?>">
-                    <input name="Submit" type="submit" class="formbtn" value="<?=gettext("Save"); ?>"> <input type="button" value="<?=gettext("Cancel"); ?>" onclick="history.back()">
+		    <input type="hidden" name="gifif" value="<?=htmlspecialchars($pconfig['gifif']); ?>" />
+                    <input name="Submit" type="submit" class="formbtn" value="<?=gettext("Save"); ?>" /> <input type="button" value="<?=gettext("Cancel"); ?>" onclick="history.back()" />
                     <?php if (isset($id) && $a_gifs[$id]): ?>
-                    <input name="id" type="hidden" value="<?=htmlspecialchars($id);?>">
+                    <input name="id" type="hidden" value="<?=htmlspecialchars($id);?>" />
                     <?php endif; ?>
                   </td>
                 </tr>

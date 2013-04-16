@@ -2664,9 +2664,7 @@ function upgrade_080_to_081() {
 	$databases = return_dir_as_array($rrddbpath, '/-(traffic|packets)\.rrd$/');
 	rsort($databases);
 	foreach($databases as $database) {
-		$databasetmp = "{$database}.tmp";
 		$xmldump = "{$database}.old.xml";
-		$xmldumptmp = "{$database}.tmp.xml";
 		$xmldumpnew = "{$database}.new.xml";
 
 		if ($g['booting'])
@@ -2675,47 +2673,113 @@ function upgrade_080_to_081() {
 		/* dump contents to xml and move database out of the way */
 		dump_rrd_to_xml("{$rrddbpath}/{$database}", "{$g['tmp_path']}/{$xmldump}");
 
-		/* create new rrd database file */
-		$rrdcreate = "$rrdtool create {$g['tmp_path']}/{$databasetmp} --step $rrdinterval ";
-		$rrdcreate .= "DS:inpass:COUNTER:$valid:0:$downstream ";
-		$rrdcreate .= "DS:outpass:COUNTER:$valid:0:$upstream ";
-		$rrdcreate .= "DS:inblock:COUNTER:$valid:0:$downstream ";
-		$rrdcreate .= "DS:outblock:COUNTER:$valid:0:$upstream ";
-		$rrdcreate .= "DS:inpass6:COUNTER:$valid:0:$downstream ";
-		$rrdcreate .= "DS:outpass6:COUNTER:$valid:0:$upstream ";
-		$rrdcreate .= "DS:inblock6:COUNTER:$valid:0:$downstream ";
-		$rrdcreate .= "DS:outblock6:COUNTER:$valid:0:$upstream ";
-		$rrdcreate .= "RRA:AVERAGE:0.5:1:1000 ";
-		$rrdcreate .= "RRA:AVERAGE:0.5:5:1000 ";
-		$rrdcreate .= "RRA:AVERAGE:0.5:60:1000 ";
-		$rrdcreate .= "RRA:AVERAGE:0.5:720:3000 ";
+		/* search and replace tags to add data sources */
+		$ds_search = "<!-- Round Robin Archives -->";
+		$ds_arr = array();
+		$ds_arr[] = "	<ds>
+				<name> inpass6 </name>
+				<type> COUNTER </type>
+				<minimal_heartbeat> {$valid} </minimal_heartbeat>
+				<min> 0.0000000000e+00 </min>
+				<max> 1.2500000000e+08 </max>
 
-		create_new_rrd("$rrdcreate");
-		/* create temporary xml from new RRD */
-		dump_rrd_to_xml("{$g['tmp_path']}/{$databasetmp}", "{$g['tmp_path']}/{$xmldumptmp}");
+				<!-- PDP Status -->
+				<last_ds> 0 </last_ds>
+				<value> NaN </value>
+				<unknown_sec> 3 </unknown_sec>
+			</ds>
+			";
+		$ds_arr[] = "	<ds>
+				<name> outpass6 </name>
+				<type> COUNTER </type>
+				<minimal_heartbeat> {$valid} </minimal_heartbeat>
+				<min> 0.0000000000e+00 </min>
+				<max> 1.2500000000e+08 </max>
 
-		$rrdold = xml2array(file_get_contents("{$g['tmp_path']}/{$xmldump}"), 1, "tag");
-		$rrdolder = $rrdold['rrd'];
-		unset($rrdold);
+				<!-- PDP Status -->
+				<last_ds> 0 </last_ds>
+				<value> NaN </value>
+				<unknown_sec> 3 </unknown_sec>
+			</ds>
+			";
+		$ds_arr[] = "	<ds>
+				<name> inblock6 </name>
+				<type> COUNTER </type>
+				<minimal_heartbeat> {$valid} </minimal_heartbeat>
+				<min> 0.0000000000e+00 </min>
+				<max> 1.2500000000e+08 </max>
 
-		$rrdnew = xml2array(file_get_contents("{$g['tmp_path']}/{$xmldumptmp}"), 1, "tag");
-		$rrdnewer = $rrdnew['rrd'];
-		unset($rrdnew);
+				<!-- PDP Status -->
+				<last_ds> 0 </last_ds>
+				<value> NaN </value>
+				<unknown_sec> 3 </unknown_sec>
+			</ds>
+			";
+		$ds_arr[] = "	<ds>
+				<name> outblock6 </name>
+				<type> COUNTER </type>
+				<minimal_heartbeat> {$valid} </minimal_heartbeat>
+				<min> 0.0000000000e+00 </min>
+				<max> 1.2500000000e+08 </max>
 
-		/* remove any MAX RRA's. Not needed for traffic. */
-		if (is_array($rrdolder)) {
-			$i = 0;
-			foreach ($rrdolder['rra'] as $rra) {
-				if(trim($rra['cf']) == "MAX") {
-					unset($rrdolder['rra'][$i]);
-				}
-				$i++;
-			}
+				<!-- PDP Status -->
+				<last_ds> 0 </last_ds>
+				<value> NaN </value>
+				<unknown_sec> 3 </unknown_sec>
+			</ds>
+			";
 
-			file_put_contents("{$g['tmp_path']}/{$xmldumpnew}", dump_xml_config_raw(migrate_rrd_format($rrdolder, $rrdnewer), "rrd"));
-			mwexec("$rrdtool restore -f {$g['tmp_path']}/{$xmldumpnew} {$rrddbpath}/{$database} 2>&1");
-			unset($rrdolder, $rrdnewer);
+		$cdp_search = "<\/cdp_prep>";
+		$cdp_replace = "</cdp_prep>";
+		$cdp_arr = array();
+		$cdp_arr[] = "			<ds>
+					<primary_value> NaN </primary_value>
+					<secondary_value> 0.0000000000e+00 </secondary_value>
+					<value> NaN </value>
+					<unknown_datapoints> 0 </unknown_datapoints>
+					</ds>
+		";
+		$cdp_arr[] = "			<ds>
+					<primary_value> NaN </primary_value>
+					<secondary_value> 0.0000000000e+00 </secondary_value>
+					<value> NaN </value>
+					<unknown_datapoints> 0 </unknown_datapoints>
+					</ds>
+		";
+		$cdp_arr[] = "			<ds>
+					<primary_value> NaN </primary_value>
+					<secondary_value> 0.0000000000e+00 </secondary_value>
+					<value> NaN </value>
+					<unknown_datapoints> 0 </unknown_datapoints>
+					</ds>
+		";
+		$cdp_arr[] = "			<ds>
+					<primary_value> NaN </primary_value>
+					<secondary_value> 0.0000000000e+00 </secondary_value>
+					<value> NaN </value>
+					<unknown_datapoints> 0 </unknown_datapoints>
+					</ds>
+		";
+
+		$value_search = "<\/row>";
+		$value_replace = "</row>";
+		$value = "<v> NaN </v>";
+
+		$xml = file_get_contents("{$g['tmp_path']}/{$xmldump}");
+		foreach($ds_arr as $ds) {
+			$xml = preg_replace("/$ds_search/s", "$ds{$ds_search}", $xml);
 		}
+		foreach($cdp_arr as $cdp) {
+			$xml = preg_replace("/$cdp_search/s", "$cdp{$cdp_replace}", $xml);
+		}
+		foreach($ds_arr as $ds) {
+			$xml = preg_replace("/$value_search/s", "$value{$value_replace}", $xml);
+		}
+		
+		file_put_contents("{$g['tmp_path']}/{$xmldumpnew}", $xml);
+		mwexec("$rrdtool restore -f {$g['tmp_path']}/{$xmldumpnew} {$rrddbpath}/{$database} 2>&1");
+		unset($xml);
+
 	}
 	enable_rrd_graphing();
 	if ($g['booting'])

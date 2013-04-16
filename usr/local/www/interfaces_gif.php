@@ -86,7 +86,7 @@ include("head.inc");
 <body link="#0000CC" vlink="#0000CC" alink="#0000CC">
 <?php include("fbegin.inc"); ?>
 <?php if ($input_errors) print_input_errors($input_errors); ?>
-<table width="100%" border="0" cellpadding="0" cellspacing="0">
+<table width="100%" border="0" cellpadding="0" cellspacing="0" summary="interfaces gif">
   <tr><td>
 <?php
 	$tab_array = array();
@@ -106,7 +106,7 @@ include("head.inc");
   <tr>
     <td>
 	<div id="mainarea">
-	<table class="tabcont" width="100%" border="0" cellpadding="0" cellspacing="0">
+	<table class="tabcont" width="100%" border="0" cellpadding="0" cellspacing="0" summary="main area">
                 <tr>
                   <td width="20%" class="listhdrr"><?=gettext("Interface"); ?></td>
                   <td width="20%" class="listhdrr"><?=gettext("Tunnel to..."); ?></td>
@@ -124,21 +124,21 @@ include("head.inc");
                   <td class="listbg">
                     <?=htmlspecialchars($gif['descr']);?>&nbsp;
                   </td>
-                  <td valign="middle" nowrap class="list"> <a href="interfaces_gif_edit.php?id=<?=$i;?>"><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_e.gif" width="17" height="17" border="0"></a>
-                     &nbsp;<a href="interfaces_gif.php?act=del&id=<?=$i;?>" onclick="return confirm('<?=gettext("Do you really want to delete this gif tunnel?"); ?>')"><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_x.gif" width="17" height="17" border="0"></a></td>
+                  <td valign="middle" class="list nowrap"> <a href="interfaces_gif_edit.php?id=<?=$i;?>"><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_e.gif" width="17" height="17" border="0" alt="edit" /></a>
+                     &nbsp;<a href="interfaces_gif.php?act=del&amp;id=<?=$i;?>" onclick="return confirm('<?=gettext("Do you really want to delete this gif tunnel?"); ?>')"><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_x.gif" width="17" height="17" border="0" alt="delete" /></a></td>
 				</tr>
 			  <?php $i++; endforeach; ?>
                 <tr>
                   <td class="list" colspan="3">&nbsp;</td>
-                  <td class="list"> <a href="interfaces_gif_edit.php"><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_plus.gif" width="17" height="17" border="0"></a></td>
+                  <td class="list"> <a href="interfaces_gif_edit.php"><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_plus.gif" width="17" height="17" border="0" alt="add" /></a></td>
 				</tr>
 				<tr>
 				<td colspan="3" class="list"><p class="vexpl"><span class="red"><strong>
-				  <?=gettext("Note:"); ?><br>
+				  <?=gettext("Note:"); ?><br/>
 				  </strong></span>
 				  <?=gettext("GIF tunnels are configured here."); ?>
 				  <br/><br/>
-				  <?php echo gettext("If you are using a GIF tunnel to connect to a Hurricane Electric (he.net) Tunnel Broker on a WAN with a dynamic IP, you may want to add a"); ?> <a href="services_dyndns.php"><?php echo gettext("HE.net Tunnelbroker type DynDNS Entry"); ?></a> <?php echo gettext("to keep your tunnel functional when your IP changes."); ?>
+				  <?php echo gettext("If you are using a GIF tunnel to connect to a Hurricane Electric (he.net) Tunnel Broker on a WAN with a dynamic IP, you may want to add a"); ?> <a href="services_dyndns.php"><?php echo gettext("HE.net Tunnelbroker type DynDNS Entry"); ?></a> <?php echo gettext("to keep your tunnel functional when your IP changes."); ?></p>
 				  </td>
 				<td class="list">&nbsp;</td>
 				</tr>

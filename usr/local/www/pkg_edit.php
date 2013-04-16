@@ -369,7 +369,7 @@ if ($pkg['custom_php_after_head_command'])
 <form name="iform" action="pkg_edit.php" method="post">
 <input type="hidden" name="xml" value="<?= htmlspecialchars($xml) ?>" />
 <?php if ($savemsg) print_info_box($savemsg); ?>
-<table width="100%" border="0" cellpadding="0" cellspacing="0">
+<table width="100%" border="0" cellpadding="0" cellspacing="0" summary="package edit">
 <?php
 if ($pkg['tabs'] <> "") {
 	$tab_array = array();
@@ -416,7 +416,7 @@ if ($pkg['tabs'] <> "") {
 }
 
 ?>
-<tr><td><div id="mainarea"><table id="t" class="tabcont" width="100%" border="0" cellpadding="6" cellspacing="0">
+<tr><td><div id="mainarea"><table id="t" class="tabcont" width="100%" border="0" cellpadding="6" cellspacing="0" summary="main area">
 <?php
 	$cols = 0;
 	$savevalue = gettext("Save");
@@ -487,7 +487,7 @@ if ($pkg['tabs'] <> "") {
 				echo $input;
 		}
 		if($pkga['combinefields']=="begin"){
-			$input="<td class=\"vncell\"><table>";
+			$input="<td class=\"vncell\"><table summary=\"advanced\">";
 			if(isset($pkga['advancedfield']) && isset($adv_filed_count))
 				$advanced .= $input;
 			else
@@ -531,7 +531,7 @@ if ($pkg['tabs'] <> "") {
 
 			case "password":
 				$size = ($pkga['size'] ? " size='{$pkga['size']}' " : "");
-				$input = "<input " . $size . " id='" . $pkga['fieldname'] . "' type='password' " . $size . " name='" . $pkga['fieldname'] . "' class='formfld pwd' value='" . htmlspecialchars($value) . "' />\n";
+				$input = "<input " . $size . " id='" . $pkga['fieldname'] . "' type='password' name='" . $pkga['fieldname'] . "' class='formfld pwd' value='" . htmlspecialchars($value) . "' />\n";
 				$input .= "<br/>" . fixup_string($pkga['description']) . "\n";
 				if(isset($pkga['advancedfield']) && isset($adv_filed_count)) {
 					$js_array[] = $pkga['fieldname'];
@@ -812,7 +812,7 @@ if ($pkg['tabs'] <> "") {
 				?>
 				//]]>
 				</script>
-				<table name="maintable" id="maintable">
+				<table id="maintable" summary="main table">
 				<tr id='<?="tr_{$pkga['fieldname']}";?>'>
 				<?php
 					foreach($pkga['rowhelper']['rowhelperfield'] as $rowhelper) {

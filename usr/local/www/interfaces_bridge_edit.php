@@ -241,6 +241,7 @@ include("head.inc");
 
 <body link="#0000CC" vlink="#0000CC" alink="#0000CC">
 <script type="text/javascript">
+//<![CDATA[
 function show_source_port_range() {
         document.getElementById("sprtable").style.display = 'none';
         document.getElementById("sprtable1").style.display = '';
@@ -254,24 +255,25 @@ function show_source_port_range() {
         document.getElementById("sprtable9").style.display = '';
         document.getElementById("sprtable10").style.display = '';
 }
+//]]>
 </script>
 
 <?php include("fbegin.inc"); ?>
 <?php if ($input_errors) print_input_errors($input_errors); ?>
             <form action="interfaces_bridge_edit.php" method="post" name="iform" id="iform">
-              <table width="100%" border="0" cellpadding="6" cellspacing="0">
+              <table width="100%" border="0" cellpadding="6" cellspacing="0" summary="interfaces bridge edit">
 				<tr>
 					<td colspan="2" valign="top" class="listtopic"><?=gettext("Bridge configuration"); ?></td>
 				</tr>
 				<tr>
                   <td width="22%" valign="top" class="vncellreq"><?=gettext("Member interfaces"); ?></td>
                   <td width="78%" class="vtable">
-				  <select name="members[]" multiple="true" class="formselect" size="3">
+				  <select name="members[]" multiple="multiple" class="formselect" size="3">
                       <?php
 						foreach ($ifacelist as $ifn => $ifinfo) {
 							echo "<option value=\"{$ifn}\"";
 							if (stristr($pconfig['members'], $ifn))
-								echo "selected";
+								echo " selected=\"selected\"";
 							echo ">{$ifinfo}</option>";
 						}
 				?>
@@ -283,22 +285,22 @@ function show_source_port_range() {
 			<tr>
                   <td width="22%" valign="top" class="vncell"><?=gettext("Description"); ?></td>
                   <td width="78%" class="vtable">
-				  <input type="text" name="descr" id="descr" class="formfld unknown" size="50" value="<?=htmlspecialchars($pconfig['descr']);?>">
+				  <input type="text" name="descr" id="descr" class="formfld unknown" size="50" value="<?=htmlspecialchars($pconfig['descr']);?>" />
 					</td>
 				</tr>
-            <tr id="sprtable" name="sprtable">
+            <tr id="sprtable">
                 <td></td>
                 <td>
-                <p><input type="button" onClick="show_source_port_range()" value="<?=gettext("Show advanced options"); ?>"></p>
+                <p><input type="button" onclick="show_source_port_range()" value="<?=gettext("Show advanced options"); ?>" /></p>
                 </td>
 			</tr>
-                <tr style="display:none" id="sprtable1" name="sprtable1">
-                  <td valign="top" class="vncell" align="middle"><?=gettext("RSTP/STP"); ?>  </td>
+                <tr style="display:none" id="sprtable1">
+                  <td valign="top" class="vncell" align="center"><?=gettext("RSTP/STP"); ?>  </td>
                   <td class="vtable">
-					<input type="checkbox" name="enablestp" id="enablestp" <?php if ($pconfig['enablestp']) echo "checked";?>>
+					<input type="checkbox" name="enablestp" id="enablestp" <?php if ($pconfig['enablestp']) echo "checked=\"checked\"";?> />
 					<span class="vexpl"><strong><?=gettext("Enable spanning tree options for this bridge."); ?> </strong></span>
 					<br/><br/>
-					<table id="stpoptions" name="stpoptions" border="0" cellpadding="6" cellspacing="0">
+					<table id="stpoptions" border="0" cellpadding="6" cellspacing="0" summary="protocol">
 					<tr><td valign="top" class="vncell" width="20%"><?=gettext("Protocol"); ?></td>
 					<td class="vtable" width="80%">
 					<select name="proto" id="proto">
@@ -306,22 +308,22 @@ function show_source_port_range() {
 							foreach (array("rstp", "stp") as $proto) {
 								echo "<option value=\"{$proto}\"";
 								if ($pconfig['proto'] == $proto)
-									echo "selected";
+									echo " selected=\"selected\"";
 								echo ">".strtoupper($proto)."</option>";
 							}
 						?>
 					</select>
                     <br/>
                     <span class="vexpl"><?=gettext("Protocol used for spanning tree."); ?> </span></td>
-					</td></tr>
+					</tr>
 					<tr> <td valign="top" class="vncell" width="20%"><?=gettext("STP interfaces"); ?></td>
 					<td class="vtable" width="80%">
-					<select name="stp[]" class="formselect" multiple="true" size="3">
+					<select name="stp[]" class="formselect" multiple="multiple" size="3">
 						<?php
 							foreach ($ifacelist as $ifn => $ifdescr) {
 								echo "<option value=\"{$ifn}\"";
 								if (stristr($pconfig['stp'], $ifn))
-									echo "selected";
+									echo " selected=\"selected\"";
 								echo ">{$ifdescr}</option>";
 							}
 						?>
@@ -336,7 +338,7 @@ function show_source_port_range() {
 					</td></tr>
 					<tr><td valign="top" class="vncell" width="20%"><?=gettext("Valid time"); ?></td>
 					<td class="vtable" width="80%">
-					<input name="maxage" type="text" class="formfld unkown" id="maxage" size="8" value="<?=htmlspecialchars($pconfig['maxage']);?>"> <?=gettext("seconds"); ?>
+					<input name="maxage" type="text" class="formfld unkown" id="maxage" size="8" value="<?=htmlspecialchars($pconfig['maxage']);?>" /> <?=gettext("seconds"); ?>
 					<br/>
 					<span class="vexpl">
 	     <?=gettext("Set the time that a Spanning Tree Protocol configuration is " .
@@ -346,7 +348,7 @@ function show_source_port_range() {
 					</td></tr>
 					<tr><td valign="top" class="vncell" width="20%"><?=gettext("Forward time"); ?> </td>
 					<td class="vtable" width="80%">
-					<input name="fwdelay" type="text" class="formfld unkown" id="fwdelay" size="8" value="<?=htmlspecialchars($pconfig['fwdelay']);?>"> <?=gettext("seconds"); ?>
+					<input name="fwdelay" type="text" class="formfld unkown" id="fwdelay" size="8" value="<?=htmlspecialchars($pconfig['fwdelay']);?>" /> <?=gettext("seconds"); ?>
 					<br/>
 					<span class="vexpl">
 	     <?=gettext("Set the time that must pass before an interface begins forwarding " .
@@ -355,7 +357,7 @@ function show_source_port_range() {
 					</td></tr>
 					<tr><td valign="top" class="vncell" width="20%"><?=gettext("Hello time"); ?></td>
 					<td class="vtable" width="80%">
-					<input name="hellotime" type="text" class="formfld unkown" size="8" id="hellotime" value="<?=htmlspecialchars($pconfig['hellotime']);?>"> <?=gettext("seconds"); ?>
+					<input name="hellotime" type="text" class="formfld unkown" size="8" id="hellotime" value="<?=htmlspecialchars($pconfig['hellotime']);?>" /> <?=gettext("seconds"); ?>
 					<br/>
 					<span class="vexpl">
 	     <?=gettext("Set the time between broadcasting of Spanning Tree Protocol configuration messages.  The hello time may only be changed when " .
@@ -364,7 +366,7 @@ function show_source_port_range() {
 					</td></tr>
 					<tr><td valign="top" class="vncell" width="20%"><?=gettext("Priority"); ?></td>
 					<td class="vtable" width="80%">
-					<input name="priority" type="text" class="formfld unkown" id="priority" value="<?=htmlspecialchars($pconfig['priority']);?>">
+					<input name="priority" type="text" class="formfld unkown" id="priority" value="<?=htmlspecialchars($pconfig['priority']);?>" />
 					<br/>
 					<span class="vexpl">
 	     <?=gettext("Set the bridge priority for Spanning Tree.  The default is 32768. " .
@@ -373,7 +375,7 @@ function show_source_port_range() {
 					</td></tr>
 					<tr><td valign="top" class="vncell" width="20%"><?=gettext("Hold count"); ?></td>
 					<td class="vtable" width="80%">
-					<input name="holdcnt" type="text" class="formfld unkown" id="holdcnt" value="<?=htmlspecialchars($pconfig['holdcnt']);?>">
+					<input name="holdcnt" type="text" class="formfld unkown" id="holdcnt" value="<?=htmlspecialchars($pconfig['holdcnt']);?>" />
 					<br/>
 					<span class="vexpl">
 	     <?=gettext("Set the transmit hold count for Spanning Tree.  This is the num- " .
@@ -383,10 +385,11 @@ function show_source_port_range() {
 					</td></tr>
 					<tr><td valign="top" class="vncell" width="20%"><?=gettext("Priority"); ?></td>
 					<td class="vtable" width="80%">
-					<table>
+					<table summary="priority">
 					<?php foreach ($ifacelist as $ifn => $ifdescr)
-							echo "<tr><td>{$ifdescr}</td><td><input size=\"5\" name=\"{$ifn}\" type=\"text\" class=\"formfld unkown\" id=\"{$ifn}\" value=\"{$ifpriority[$ifn]}\"></td></tr>";
+							echo "<tr><td>{$ifdescr}</td><td><input size=\"5\" name=\"{$ifn}\" type=\"text\" class=\"formfld unkown\" id=\"{$ifn}\" value=\"{$ifpriority[$ifn]}\" /></td></tr>";
 					?>
+					<tr><td></td></tr>
 					</table>
 					<br/>
 					<span class="vexpl" >
@@ -396,10 +399,11 @@ function show_source_port_range() {
 					</td></tr>
 					<tr><td valign="top" class="vncell" width="20%"><?=gettext("Path cost"); ?></td>
 					<td class="vtable" width="80%">
-					<table>
+					<table summary="path cost">
 					<?php $i = 0; foreach ($ifacelist as $ifn => $ifdescr)
-							echo "<tr><td>{$ifdescr}</td><td><input size=\"8\" name=\"{$ifn}{$i}\" type=\"text\" class=\"formfld unkown\" id=\"{$ifn}{$i}\" value=\"{$ifpathcost[$ifn]}\"></td></tr>";
+							echo "<tr><td>{$ifdescr}</td><td><input size=\"8\" name=\"{$ifn}{$i}\" type=\"text\" class=\"formfld unkown\" id=\"{$ifn}{$i}\" value=\"{$ifpathcost[$ifn]}\" /></td></tr>";
 					?>
+					<tr><td></td></tr>
 					</table>
 					<br/>
 					<span class="vexpl" >
@@ -410,21 +414,21 @@ function show_source_port_range() {
 					</td></tr>
 
 			    </table>
-				</tr>
-                <tr style="display:none" id="sprtable2" name="sprtable2">
+				</td></tr>
+                <tr style="display:none" id="sprtable2">
                   <td valign="top" class="vncell"><?=gettext("Cache size"); ?></td>
 					<td class="vtable">
-						<input name="maxaddr" size="10" type="text" class="formfld unkown" id="maxaddr" value="<?=htmlspecialchars($pconfig['maxaddr']);?>"> <?=gettext("entries"); ?>
+						<input name="maxaddr" size="10" type="text" class="formfld unkown" id="maxaddr" value="<?=htmlspecialchars($pconfig['maxaddr']);?>" /> <?=gettext("entries"); ?>
 					<br/><span class="vexpl">
 <?=gettext("Set the size of the bridge address cache to size.	The default is " .
 	     ".100 entries."); ?>
 					</span>
 					</td>
 				</tr>
-                <tr style="display:none" id="sprtable3" name="sprtable3">
+                <tr style="display:none" id="sprtable3">
                   <td valign="top" class="vncell"><?=gettext("Cache entry expire time"); ?></td>
 				  <td>
-					<input name="timeout" type="text" class="formfld unkown" id="timeout" size="10" value="<?=htmlspecialchars($pconfig['timeout']);?>"> <?=gettext("seconds"); ?>
+					<input name="timeout" type="text" class="formfld unkown" id="timeout" size="10" value="<?=htmlspecialchars($pconfig['timeout']);?>" /> <?=gettext("seconds"); ?>
 					<br/><span class="vexpl">
 	     <?=gettext("Set the timeout of address cache entries to this number of seconds.  If " .
 	     "seconds is zero, then address cache entries will not be expired. " .
@@ -432,16 +436,16 @@ function show_source_port_range() {
 					</span>
 					</td>
 				</tr>
-                <tr style="display:none" id="sprtable4" name="sprtable4">
+                <tr style="display:none" id="sprtable4">
                   <td valign="top" class="vncell"><?=gettext("Span port"); ?></td>
 					<td class="vtable">
 				  	<select name="span" class="formselect" id="span">
-						<option value="none" selected><?=gettext("None"); ?></option>
+						<option value="none" selected="selected"><?=gettext("None"); ?></option>
 						<?php
 							foreach ($ifacelist as $ifn => $ifdescr) {
 								echo "<option value=\"{$ifn}\"";
 								if ($ifn == $pconfig['span'])
-									echo "selected";
+									echo " selected=\"selected\"";
 								echo ">{$ifdescr}</option>";
 							}
 						?>
@@ -454,113 +458,113 @@ function show_source_port_range() {
 	     "the bridge."); ?>
 					</span>
 		<p class="vexpl"><span class="red"><strong>
-					 <?=gettext("Note:"); ?><br>
+					 <?=gettext("Note:"); ?><br/>
                                   </strong></span>
                  <?=gettext("The span interface cannot be part of the bridge member interfaces."); ?>
-                                        </span>
+                                        </p>
 					</td>
 				</tr>
-                <tr style="display:none" id="sprtable5" name="sprtable5">
+                <tr style="display:none" id="sprtable5">
                   <td valign="top" class="vncell"><?=gettext("Edge ports"); ?></td>
                   <td class="vtable">
-					<select name="edge[]" class="formselect" multiple="true" size="3">
+					<select name="edge[]" class="formselect" multiple="multiple" size="3">
 						<?php
 							foreach ($ifacelist as $ifn => $ifdescr) {
 								echo "<option value=\"{$ifn}\"";
 								if (stristr($pconfig['edge'], $ifn))
-									echo "selected";
+									echo " selected=\"selected\"";
 								echo ">{$ifdescr}</option>";
 							}
 						?>
 					</select>
-                    <br>
+                    <br/>
                     <span class="vexpl">
 	     <?=gettext("Set interface as an edge port.  An edge port connects directly to " .
 	     "end stations and cannot create bridging loops in the network; this " .
 	     "allows it to transition straight to forwarding."); ?>
 					</span></td>
 			    </tr>
-                <tr style="display:none" id="sprtable6" name="sprtable6">
+                <tr style="display:none" id="sprtable6">
                   <td valign="top" class="vncell"><?=gettext("Auto Edge ports"); ?></td>
                   <td class="vtable">
-					<select name="autoedge[]" class="formselect" multiple="true" size="3">
+					<select name="autoedge[]" class="formselect" multiple="multiple" size="3">
 						<?php
 							foreach ($ifacelist as $ifn => $ifdescr) {
 								echo "<option value=\"{$ifn}\"";
 								if (stristr($pconfig['autoedge'], $ifn))
-									echo "selected";
+									echo " selected=\"selected\"";
 								echo ">{$ifdescr}</option>";
 							}
 						?>
 					</select>
-                    <br>
+                    <br/>
                     <span class="vexpl">
 	     <?=gettext("Allow interface to automatically detect edge status.  This is the " .
-	     "default for all interfaces added to a bridge."); ?>
+	     "default for all interfaces added to a bridge."); ?></span>
 		 <p class="vexpl"><span class="red"><strong>
-				  <?=gettext("Note:"); ?><br>
+				  <?=gettext("Note:"); ?><br/>
 				  </strong></span>
 		 <?=gettext("This will disable the autoedge status of interfaces."); ?>
-					</span></td>
+					</p></td>
 			    </tr>
-                <tr style="display:none" id="sprtable7" name="sprtable7">
+                <tr style="display:none" id="sprtable7">
                   <td valign="top" class="vncell"><?=gettext("PTP ports"); ?></td>
                   <td class="vtable">
-					<select name="ptp[]" class="formselect" multiple="true" size="3">
+					<select name="ptp[]" class="formselect" multiple="multiple" size="3">
 						<?php
 							foreach ($ifacelist as $ifn => $ifdescr) {
 								echo "<option value=\"{$ifn}\"";
 								if (stristr($pconfig['ptp'], $ifn))
-									echo "selected";
+									echo " selected=\"selected\"";
 								echo ">{$ifdescr}</option>";
 							}
 						?>
 					</select>
-                    <br>
+                    <br/>
                     <span class="vexpl">
 	     <?=gettext("Set the interface as a point-to-point link.  This is required for " .
 	     "straight transitions to forwarding and should be enabled on a " .
 	     "direct link to another RSTP-capable switch."); ?>
 					</span></td>
 			    </tr>
-                <tr style="display:none" id="sprtable8" name="sprtable8">
+                <tr style="display:none" id="sprtable8">
                   <td valign="top" class="vncell"><?=gettext("Auto PTP ports"); ?></td>
                   <td class="vtable">
-					<select name="autoptp[]" class="formselect" multiple="true" size="3">
+					<select name="autoptp[]" class="formselect" multiple="multiple" size="3">
 						<?php
 							foreach ($ifacelist as $ifn => $ifdescr) {
 								echo "<option value=\"{$ifn}\"";
 								if (stristr($pconfig['autoptp'], $ifn))
-									echo "selected";
+									echo " selected=\"selected\"";
 								echo ">{$ifdescr}</option>";
 							}
 						?>
 					</select>
-                    <br>
+                    <br/>
                     <span class="vexpl">
 	     <?=gettext("Automatically detect the point-to-point status on interface by " .
 	     "checking the full duplex link status.  This is the default for " .
-	     "interfaces added to the bridge."); ?>
+	     "interfaces added to the bridge."); ?></span>
 				 <p class="vexpl"><span class="red"><strong>
-				  <?=gettext("Note:"); ?><br>
+				  <?=gettext("Note:"); ?><br/>
 				  </strong></span>
 		 <?=gettext("The interfaces selected here will be removed from default autoedge status."); ?>
-					</span></td>
+					</p></td>
 			    </tr>
-                <tr style="display:none" id="sprtable9" name="sprtable9">
+                <tr style="display:none" id="sprtable9">
                   <td valign="top" class="vncell"><?=gettext("Sticky ports"); ?></td>
                   <td class="vtable">
-					<select name="static[]" class="formselect" multiple="true" size="3">
+					<select name="static[]" class="formselect" multiple="multiple" size="3">
 						<?php
 							foreach ($ifacelist as $ifn => $ifdescr) {
 								echo "<option value=\"{$ifn}\"";
 								if (stristr($pconfig['static'], $ifn))
-									echo "selected";
+									echo " selected=\"selected\"";
 								echo ">{$ifdescr}</option>";
 							}
 						?>
 					</select>
-                    <br>
+                    <br/>
                     <span class="vexpl">
 	     <?=gettext("Mark an interface as a \"sticky\" interface.  Dynamically learned " .
 	     "address entries are treated as static once entered into the " .
@@ -568,20 +572,20 @@ function show_source_port_range() {
 	     "replaced, even if the address is seen on a different interface."); ?>
 					</span></td>
 			    </tr>
-                <tr style="display:none" id="sprtable10" name="sprtable10">
+                <tr style="display:none" id="sprtable10">
                   <td valign="top" class="vncell"><?=gettext("Private ports"); ?></td>
                   <td class="vtable">
-					<select name="private[]" class="formselect" multiple="true" size="3">
+					<select name="private[]" class="formselect" multiple="multiple" size="3">
 						<?php
 							foreach ($ifacelist as $ifn => $ifdescr) {
 								echo "<option value=\"{$ifn}\"";
 								if (stristr($pconfig['private'], $ifn))
-									echo "selected";
+									echo " selected=\"selected\"";
 								echo ">{$ifdescr}</option>";
 							}
 						?>
 					</select>
-                    <br>
+                    <br/>
                     <span class="vexpl">
 	     <?=gettext("Mark an interface as a \"private\" interface.  A private interface does not forward any traffic to any other port that is also " .
 	     "a private interface."); ?>
@@ -590,10 +594,10 @@ function show_source_port_range() {
                 <tr>
                   <td width="22%" valign="top">&nbsp;</td>
                   <td width="78%">
-		    <input type="hidden" name="bridgeif" value="<?=htmlspecialchars($pconfig['bridgeif']); ?>">
-                    <input name="Submit" type="submit" class="formbtn" value="<?=gettext("Save"); ?>"> <input type="button" value="<?=gettext("Cancel"); ?>" onclick="history.back()">
+		    <input type="hidden" name="bridgeif" value="<?=htmlspecialchars($pconfig['bridgeif']); ?>" />
+                    <input name="Submit" type="submit" class="formbtn" value="<?=gettext("Save"); ?>" /> <input type="button" value="<?=gettext("Cancel"); ?>" onclick="history.back()" />
                     <?php if (isset($id) && $a_bridges[$id]): ?>
-                    <input name="id" type="hidden" value="<?=htmlspecialchars($id);?>">
+                    <input name="id" type="hidden" value="<?=htmlspecialchars($id);?>" />
                     <?php endif; ?>
                   </td>
                 </tr>

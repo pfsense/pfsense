@@ -293,7 +293,7 @@ $closehead = false;
 
 include("head.inc");
 ?>
-<link rel="stylesheet" href="/javascript/chosen/chosen.css" />
+<link type="text/css" rel="stylesheet" href="/javascript/chosen/chosen.css" />
 </head>
 
 <body link="#0000CC" vlink="#0000CC" alink="#0000CC">
@@ -317,12 +317,12 @@ if($_REQUEST['undodrag']) {
 <?php endif; ?>
 <div id="loading" style="visibity:hidden">
 	<img src="/themes/<?=$g['theme']?>/images/misc/loader.gif" alt="loader" /> Loading, please wait...
-	<p/>&nbsp;
+	<p>&nbsp;</p>
 </div>
 <?php
 	pfSense_handle_custom_code("/usr/local/pkg/firewall_rules/before_table");
 ?>
-<table width="100%" border="0" cellpadding="0" cellspacing="0">
+<table width="100%" border="0" cellpadding="0" cellspacing="0" summary="firewall rules">
 	<tr><td class="tabnavtbl">
 	<?php
 	/* active tabs */
@@ -344,7 +344,7 @@ if($_REQUEST['undodrag']) {
 	</td></tr>
 	<tr><td>
 		<div id="mainarea">
-		<table class="tabcont" width="100%" border="0" cellpadding="0" cellspacing="0">
+		<table class="tabcont" width="100%" border="0" cellpadding="0" cellspacing="0" summary="main area">
 			<?php
 				pfSense_handle_custom_code("/usr/local/pkg/firewall_rules/before_first_tr");
 			?>
@@ -368,7 +368,7 @@ if($_REQUEST['undodrag']) {
 			?>
 			<td width="19%" class="listhdr"><?=gettext("Description");?></td>
 			<td width="10%" class="list">
-				<table border="0" cellspacing="0" cellpadding="1">
+				<table border="0" cellspacing="0" cellpadding="1" summary="delete selected rules">
 					<tr>
 					<?php
 						$nrules = 0;
@@ -416,7 +416,7 @@ if($_REQUEST['undodrag']) {
 			<td class="listr" style="background-color: #E0E0E0">&nbsp;</td>
 			<td class="listbg"><?=gettext("Anti-Lockout Rule");?></td>
 			<td valign="middle" class="list nowrap">
-			<table border="0" cellspacing="0" cellpadding="1">
+			<table border="0" cellspacing="0" cellpadding="1" summary="move rules before">
 				<tr>
 					<td><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_left_d.gif" width="17" height="17" title="<?=gettext("move selected rules before this rule");?>" alt="move" /></td>
 					<td><a href="system_advanced_admin.php"><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_e.gif" title="<?=gettext("edit rule");?>" width="17" height="17" border="0" alt="edit" /></a></td>
@@ -445,7 +445,7 @@ if($_REQUEST['undodrag']) {
 			<td class="listr" style="background-color: #E0E0E0">&nbsp;</td>
 			<td class="listbg"><?=gettext("Block private networks");?></td>
 			<td valign="middle" class="list nowrap">
-				<table border="0" cellspacing="0" cellpadding="1">
+				<table border="0" cellspacing="0" cellpadding="1" summary="move rules before">
 					<tr>
 					<td><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_left_d.gif" width="17" height="17" title="<?=gettext("move selected rules before this rule");?>" alt="edit" /></td>
 					<td><a href="interfaces.php?if=<?=htmlspecialchars($if)?>#rfc1918"><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_e.gif" title="<?=gettext("edit rule");?>" width="17" height="17" border="0" alt="edit" /></a></td>
@@ -473,7 +473,7 @@ if($_REQUEST['undodrag']) {
 			<td class="listr" style="background-color: #E0E0E0">*</td>
 			<td class="listbg"><?=gettext("Block bogon networks");?></td>
 			<td valign="middle" class="list nowrap">
-				<table border="0" cellspacing="0" cellpadding="1">
+				<table border="0" cellspacing="0" cellpadding="1" summary="move rules before">
 					<tr>
 					<td><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_left_d.gif" width="17" height="17" title="<?=gettext("move selected rules before this rule");?>" alt="move" /></td>
 					<td><a href="interfaces.php?if=<?=htmlspecialchars($if)?>#rfc1918"><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_e.gif" title="<?=gettext("edit rule");?>" width="17" height="17" border="0" alt=" edit" /></a></td>
@@ -751,7 +751,7 @@ if($_REQUEST['undodrag']) {
 			<?=$textse;?>
 			</td>
 			<td class="listr" onclick="fr_toggle(<?=$nrules;?>)" id="frd<?=$nrules;?>" ondblclick="document.location='firewall_rules_edit.php?id=<?=$i;?>';"><font color="black">
-				<?php if ($printicon) { ?><img src="./themes/<?= $g['theme']; ?>/images/icons/<?php echo $image; ?>.gif" title="<?php echo $alttext;?>" border="0" alt="icon" /><?php } ?>&nbsp;<?=$textss;?><?php echo $schedule_span_begin;?><?=htmlspecialchars($filterent['sched']);?><?php echo $schedule_span_end; ?><?=$textse;?>
+				<?php if ($printicon) { ?><img src="./themes/<?= $g['theme']; ?>/images/icons/<?php echo $image; ?>.gif" title="<?php echo $alttext;?>" border="0" alt="icon" /><?php } ?><?=$textss;?><?php echo $schedule_span_begin;?><?=htmlspecialchars($filterent['sched']);?>&nbsp;<?php echo $schedule_span_end; ?><?=$textse;?>
 			</font></td>
 			<?php
 				pfSense_handle_custom_code("/usr/local/pkg/firewall_rules/pre_descr_tr");
@@ -760,7 +760,7 @@ if($_REQUEST['undodrag']) {
 				<?=$textss;?><?=htmlspecialchars($filterent['descr']);?>&nbsp;<?=$textse;?>
 			</td>
 			<td valign="middle" class="list nowrap">
-				<table border="0" cellspacing="0" cellpadding="1">
+				<table border="0" cellspacing="0" cellpadding="1" summary="move before">
 					<tr>
 					<td><input name="move_<?=$i;?>" type="image" src="./themes/<?= $g['theme']; ?>/images/icons/icon_left.gif" style="width:17;height:17" title="<?=gettext("move selected rules before this rule"); ?>" onmouseover="fr_insline(<?=$nrules;?>, true)" onmouseout="fr_insline(<?=$nrules;?>, false)" /></td>
 					<td><a href="firewall_rules_edit.php?id=<?=$i;?>"><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_e.gif" title="<?=gettext("edit rule"); ?>" width="17" height="17" border="0" alt="edit" /></a></td>
@@ -807,7 +807,7 @@ if($_REQUEST['undodrag']) {
 			<td class="list">&nbsp;</td>
 			<td class="list">&nbsp;</td>
 			<td class="list">
-				<table border="0" cellspacing="0" cellpadding="1">
+				<table border="0" cellspacing="0" cellpadding="1" summary="move rules">
 					<tr>
 					<td>
 						<?php if ($nrules == 0): ?><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_left_d.gif" width="17" height="17" title="<?=gettext("move selected rules to end");?>" border="0" alt="move" /><?php else: ?><input name="move_<?=$i;?>" type="image" src="./themes/<?= $g['theme']; ?>/images/icons/icon_left.gif" style="width:17;height:17" title="<?=gettext("move selected rules to end");?>" onmouseover="fr_insline(<?=$nrules;?>, true)" onmouseout="fr_insline(<?=$nrules;?>, false)" /><?php endif; ?></td>
@@ -826,7 +826,7 @@ if($_REQUEST['undodrag']) {
 			</td>
 			</tr>
 		</table>
-		<table class="tabcont" width="100%" border="0" cellspacing="0" cellpadding="0">
+		<table class="tabcont" width="100%" border="0" cellspacing="0" cellpadding="0" summary="icons">
 			<tr>
 				<td width="16"><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_pass.gif" width="11" height="11" alt="pass" /></td>
 				<td><?=gettext("pass");?></td>
@@ -855,7 +855,7 @@ if($_REQUEST['undodrag']) {
 			</tr>
 			<tr>
 				<td colspan="10">
-					&nbsp;<p/>
+					<p>&nbsp;</p>
 					<strong>
 						<span class="red"><?=gettext("Hint:");?></span>
 					</strong><br/>

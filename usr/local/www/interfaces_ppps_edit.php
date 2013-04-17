@@ -400,19 +400,19 @@ $types = array("select" => gettext("Select"), "ppp" => "PPP", "pppoe" => "PPPoE"
 <?php include("fbegin.inc"); ?>
 <?php if ($input_errors) print_input_errors($input_errors); ?>
 	<form action="interfaces_ppps_edit.php" method="post" name="iform" id="iform">
-	  <table id="interfacetable" width="100%" border="0" cellpadding="6" cellspacing="0">
+	  <table id="interfacetable" width="100%" border="0" cellpadding="6" cellspacing="0" summary="interfaces ppps edit">
 		<tr>
 			<td colspan="2" valign="top" class="listtopic"><?= gettext("PPPs configuration"); ?></td>
 		</tr>
 		<tr>
 			<td valign="middle" class="vncell"><strong><?= gettext("Link Type"); ?></strong></td>
 			<td class="vtable"> 
-				<select name="type" onChange="updateType(this.value);" class="formselect" id="type">
+				<select name="type" onchange="updateType(this.value);" class="formselect" id="type">
 				<?php 
 					foreach ($types as $key => $opt) { 
-						echo "<option onClick=\"updateType('{$key}');\"";
+						echo "<option onclick=\"updateType('{$key}');\"";
 						if ($key == $pconfig['type']) 
-							echo " selected";
+							echo " selected=\"selected\"";
 						echo " value=\"{$key}\" >" . htmlspecialchars($opt) . "</option>";
 					} 
 				?>
@@ -422,7 +422,7 @@ $types = array("select" => gettext("Select"), "ppp" => "PPP", "pppoe" => "PPPoE"
 		<tr name="interface" id="interface" >
 			<td width="22%" valign="top" class="vncellreq"><?= gettext("Link interface(s)"); ?></td>
 			<td width="78%" class="vtable">
-				<select valign="top" name="interfaces[]" multiple="true" class="formselect" size="4" onChange="show_hide_linkfields(this.options);">
+				<select style="vertical-align:top" name="interfaces[]" multiple="multiple" class="formselect" size="4" onchange="show_hide_linkfields(this.options);">
 					<option></option>
 				</select>
 
@@ -477,18 +477,16 @@ $types = array("select" => gettext("Select"), "ppp" => "PPP", "pppoe" => "PPPoE"
 				<br/> <span class="vexpl"><?= gettext("You may enter a description here for your reference. Description will appear in the \"Interfaces Assign\" select lists."); ?></span>
 			</td>
 		</tr>	
-		<tr style="display:none" name="select" id="select"></tr>
-		
+		<tr style="display:none" name="select" id="select"><td style="display:none"></td></tr>
 		<?php $k=0; ?>
-		
 		<tr style="display:none" name="ppp_provider" id="ppp_provider">
 			<td width="22%" valign="top" class="vncell"><?= gettext("Service Provider"); ?></td>
 			<td width="78%" class="vtable">
-				<table border="0" cellpadding="0" cellspacing="0">
+				<table border="0" cellpadding="0" cellspacing="0" summary="service provider">
 					<tr id="trcountry" style="display:none">
 						<td><?= gettext("Country:"); ?> &nbsp;&nbsp;</td>
 						<td>
-							<select class="formselect" name="country" id="country" onChange="providers_list()">
+							<select class="formselect" name="country" id="country" onchange="providers_list()">
 								<option></option>
 							</select>
 						</td>
@@ -496,7 +494,7 @@ $types = array("select" => gettext("Select"), "ppp" => "PPP", "pppoe" => "PPPoE"
 					<tr id="trprovider" style="display:none">
 						<td><?= gettext("Provider:"); ?> &nbsp;&nbsp;</td>
 						<td>
-							<select class="formselect" name="provider" id="provider" onChange="providerplan_list()">
+							<select class="formselect" name="provider" id="provider" onchange="providerplan_list()">
 								<option></option>
 							</select>
 						</td>
@@ -504,7 +502,7 @@ $types = array("select" => gettext("Select"), "ppp" => "PPP", "pppoe" => "PPPoE"
 					<tr id="trproviderplan" style="display:none">
 						<td><?= gettext("Plan:"); ?> &nbsp;&nbsp;</td>
 						<td>
-							<select class="formselect" name="providerplan" id="providerplan" onChange="prefill_provider()">
+							<select class="formselect" name="providerplan" id="providerplan" onchange="prefill_provider()">
 								<option></option>
 							</select>
 						</td>
@@ -542,7 +540,7 @@ $types = array("select" => gettext("Select"), "ppp" => "PPP", "pppoe" => "PPPoE"
 		
 		<tr style="display:none" name="ppp" id="ppp">
 			<td colspan="2" style="padding:0px;">
-				<table width="100%" border="0" cellpadding="6" cellspacing="0">		
+				<table width="100%" border="0" cellpadding="6" cellspacing="0" summary="advanced">		
 					<tr style="display:none" id="advanced_<?=$k;?>" name="advanced_<?=$k;$k++;?>">
 						<td width="22%" valign="top" class="vncell"><?= gettext("APN number (optional)"); ?></td>
 						<td width="78%" class="vtable">
@@ -582,7 +580,7 @@ $types = array("select" => gettext("Select"), "ppp" => "PPP", "pppoe" => "PPPoE"
 					<tr style="display:none" id="advanced_<?=$k;?>" name="advanced_<?=$k;$k++;?>">
 						<td valign="top" class="vncell"><?= gettext("Uptime Logging"); ?></td>
 						<td class="vtable">
-							<input type="checkbox" value="on" id="uptime" name="uptime" <?php if (isset($pconfig['uptime'])) echo "checked"; ?> /> <?= gettext("Enable persistent logging of connection uptime."); ?> 
+							<input type="checkbox" value="on" id="uptime" name="uptime" <?php if (isset($pconfig['uptime'])) echo "checked=\"checked\""; ?> /> <?= gettext("Enable persistent logging of connection uptime."); ?> 
 							<br/> <span class="vexpl"><?= gettext("This option causes cumulative uptime to be recorded and displayed on the Status Interfaces page."); ?></span>
 						</td>
 					</tr>
@@ -591,25 +589,25 @@ $types = array("select" => gettext("Select"), "ppp" => "PPP", "pppoe" => "PPPoE"
 		</tr>
 		<tr style="display:none" name="pppoe" id="pppoe">
 			<td colspan="2" style="padding:0px;">
-				<table width="100%" border="0" cellpadding="6" cellspacing="0">
+				<table width="100%" border="0" cellpadding="6" cellspacing="0" summary="service name">
 					<tr>
 						<td width="22%" valign="top" class="vncell"><?= gettext("Service name"); ?></td>
 						<td width="78%" class="vtable"><input name="provider" type="text" class="formfld unknown" id="provider" size="20" value="<?=htmlspecialchars($pconfig['provider']);?>" />&nbsp;&nbsp;
-						<input type="checkbox" value="on" id="null_service" name="null_service" <?php if (isset($pconfig['null_service'])) echo "checked"; ?> /> <?= gettext("Configure a NULL Service name"); ?> 
+						<input type="checkbox" value="on" id="null_service" name="null_service" <?php if (isset($pconfig['null_service'])) echo "checked=\"checked\""; ?> /> <?= gettext("Configure a NULL Service name"); ?> 
 							<br/> <span class="vexpl"><?= gettext("Hint: this field can usually be left empty. Service name will not be configured if this field is empty. Check the \"Configure NULL\" box to configure a blank Service name."); ?></span>
 						</td>
 					</tr>
 					<tr style="display:none" id="advanced_<?=$k;?>" name="advanced_<?=$k;$k++;?>">
 						<td width="22%" valign="top" class="vncell"><?=gettext("Periodic reset");?></td>
 						<td width="78%" class="vtable">
-							<table id="presetwrap" cellspacing="0" cellpadding="0" width="100%">
+							<table id="presetwrap" cellspacing="0" cellpadding="0" width="100%" summary="periodic reset">
 								<tr>
 									<td align="left" valign="top">
 										<p style="margin: 4px; padding: 4px 0 4px 0; width: 94%;">
-										<select valign="top" id="reset_type" name="pppoe-reset-type" class="formselect" onChange="show_reset_settings(this.value);">
+										<select style="vertical-align:top" id="reset_type" name="pppoe-reset-type" class="formselect" onchange="show_reset_settings(this.value);">
 											<option value = ""><?= gettext("Disabled"); ?></option>
-											<option value="custom" <?php if ($pconfig['pppoe-reset-type'] == "custom") echo "selected"; ?>><?= gettext("Custom"); ?></option>
-											<option value="preset" <?php if ($pconfig['pppoe-reset-type'] == "preset") echo "selected"; ?>><?= gettext("Pre-Set"); ?></option>
+											<option value="custom" <?php if ($pconfig['pppoe-reset-type'] == "custom") echo "selected=\"selected\""; ?>><?= gettext("Custom"); ?></option>
+											<option value="preset" <?php if ($pconfig['pppoe-reset-type'] == "preset") echo "selected=\"selected\""; ?>><?= gettext("Pre-Set"); ?></option>
 										</select> <?= gettext("Select a reset timing type"); ?>
 										</p>
 										<?php if ($pconfig['pppoe_pr_custom']): ?>
@@ -660,9 +658,9 @@ $types = array("select" => gettext("Select"), "ppp" => "PPP", "pppoe" => "PPPoE"
 			<td width="78%" class="vtable"> 
 				<input name="localip[]" type="text" class="formfld unknown" id="localip<?=$j;?>" size="20"  value="<?=htmlspecialchars($pconfig['localip'][$j]);?>" />
 				/
-				<select name="subnet[]" class="formselect" id="subnet<?=$j;?>" disabled="true">
+				<select name="subnet[]" class="formselect" id="subnet<?=$j;?>" disabled="disabled">
 				<?php for ($i = 31; $i > 0; $i--): ?>
-					<option value="<?=$i;?>"<?php if ($i == $pconfig['subnet'][$j]) echo " selected"; ?>><?=$i;?></option>
+					<option value="<?=$i;?>"<?php if ($i == $pconfig['subnet'][$j]) echo " selected=\"selected\""; ?>><?=$i;?></option>
 				<?php endfor; ?>
 				</select> <?= gettext("IP Address"); ?>
 				
@@ -684,7 +682,7 @@ $types = array("select" => gettext("Select"), "ppp" => "PPP", "pppoe" => "PPPoE"
 		<tr style="display:none" id="advanced_<?=$k;?>" name="advanced_<?=$k;$k++;?>">
 		<td valign="top" class="vncell"><?= gettext("Dial On Demand"); ?></td>
 			<td class="vtable">
-				<input type="checkbox" value="on" id="ondemand" name="ondemand" <?php if (isset($pconfig['ondemand'])) echo "checked"; ?> /> <?= gettext("Enable Dial-on-Demand mode"); ?> 
+				<input type="checkbox" value="on" id="ondemand" name="ondemand" <?php if (isset($pconfig['ondemand'])) echo "checked=\"checked\""; ?> /> <?= gettext("Enable Dial-on-Demand mode"); ?> 
 				<br/> <span class="vexpl"><?= gettext("This option causes the interface to operate in dial-on-demand mode. Do NOT enable if you want your link to be always up. " .  
 				"The interface is configured, but the actual connection of the link is delayed until qualifying outgoing traffic is detected."); ?> </span>
 			</td>
@@ -700,7 +698,7 @@ $types = array("select" => gettext("Select"), "ppp" => "PPP", "pppoe" => "PPPoE"
 		<tr style="display:none" id="advanced_<?=$k;?>" name="advanced_<?=$k;$k++;?>">
 			<td width="22%" valign="top" class="vncell"><?= gettext("Compression"); ?></td>
 			<td width="78%" class="vtable">
-				<input type="checkbox" value="on" id="vjcomp" name="vjcomp" <?php if (isset($pconfig['vjcomp'])) echo "checked"; ?> />&nbsp;<?= gettext("Disable vjcomp(compression) (auto-negotiated by default)."); ?>
+				<input type="checkbox" value="on" id="vjcomp" name="vjcomp" <?php if (isset($pconfig['vjcomp'])) echo "checked=\"checked\""; ?> />&nbsp;<?= gettext("Disable vjcomp(compression) (auto-negotiated by default)."); ?>
 				<br/> <span class="vexpl"><?=gettext("This option enables Van Jacobson TCP header compression, which saves several bytes per TCP data packet. " .
 				"You almost always want this option. This compression ineffective for TCP connections with enabled modern extensions like time " .
 				"stamping or SACK, which modify TCP options between sequential packets.");?></span>
@@ -709,7 +707,7 @@ $types = array("select" => gettext("Select"), "ppp" => "PPP", "pppoe" => "PPPoE"
 		<tr style="display:none" id="advanced_<?=$k;?>" name="advanced_<?=$k;$k++;?>">
 			<td width="22%" valign="top" class="vncell"><?= gettext("TCPmssFix"); ?></td>
 			<td width="78%" class="vtable">
-				<input type="checkbox" value="on" id="tcpmssfix" name="tcpmssfix" <?php if (isset($pconfig['tcpmssfix'])) echo "checked"; ?> />&nbsp;<?= gettext("Disable tcpmssfix (enabled by default)."); ?>
+				<input type="checkbox" value="on" id="tcpmssfix" name="tcpmssfix" <?php if (isset($pconfig['tcpmssfix'])) echo "checked=\"checked\""; ?> />&nbsp;<?= gettext("Disable tcpmssfix (enabled by default)."); ?>
 				<br/> <span class="vexpl"><?=gettext("This option causes mpd to adjust incoming and outgoing TCP SYN segments so that the requested maximum segment size is not greater than the amount ". 
 				"allowed by the interface MTU. This is necessary in many setups to avoid problems caused by routers that drop ICMP Datagram Too Big messages. Without these messages, ".
 				"the originating machine sends data, it passes the rogue router then hits a machine that has an MTU that is not big enough for the data. Because the IP Don't Fragment option is set, ".
@@ -720,7 +718,7 @@ $types = array("select" => gettext("Select"), "ppp" => "PPP", "pppoe" => "PPPoE"
 		<tr style="display:none" id="advanced_<?=$k;?>" name="advanced_<?=$k;$k++;?>">
 			<td width="22%" valign="top" class="vncell"><?=gettext("ShortSeq");?></td>
 			<td width="78%" class="vtable">
-				<input type="checkbox" value="on" id="shortseq" name="shortseq" <?php if (isset($pconfig['shortseq'])) echo "checked"; ?> />&nbsp;<?= gettext("Disable shortseq (auto-negotiated by default)."); ?>
+				<input type="checkbox" value="on" id="shortseq" name="shortseq" <?php if (isset($pconfig['shortseq'])) echo "checked=\"checked\""; ?> />&nbsp;<?= gettext("Disable shortseq (auto-negotiated by default)."); ?>
 				<br/> <span class="vexpl"><?= gettext("This option is only meaningful if multi-link PPP is negotiated. It proscribes shorter multi-link fragment headers, saving two bytes on every frame. " .
 				"It is not necessary to disable this for connections that are not multi-link."); ?></span>
 			</td>
@@ -728,31 +726,30 @@ $types = array("select" => gettext("Select"), "ppp" => "PPP", "pppoe" => "PPPoE"
 		<tr style="display:none" id="advanced_<?=$k;?>" name="advanced_<?=$k;$k++;?>">
 			<td width="22%" valign="top" class="vncell"><?=gettext("ACFComp"); ?></td>
 			<td width="78%" class="vtable">
-				<input type="checkbox" value="on" id="acfcomp" name="acfcomp" <?php if (isset($pconfig['acfcomp'])) echo "checked"; ?> />&nbsp;<?= gettext("Disable acfcomp (compression) (auto-negotiated by default)."); ?>
+				<input type="checkbox" value="on" id="acfcomp" name="acfcomp" <?php if (isset($pconfig['acfcomp'])) echo "checked=\"checked\""; ?> />&nbsp;<?= gettext("Disable acfcomp (compression) (auto-negotiated by default)."); ?>
 				<br/> <span class="vexpl"><?= gettext("Address and control field compression. This option only applies to asynchronous link types. It saves two bytes per frame."); ?></span>
 			</td>
 		</tr>
 		<tr style="display:none" id="advanced_<?=$k;?>" name="advanced_<?=$k;$k++;?>">
 			<td width="22%" valign="top" class="vncell"><?=gettext("ProtoComp"); ?></td>
 			<td width="78%" class="vtable">
-				<input type="checkbox" value="on" id="protocomp" name="protocomp" <?php if (isset($pconfig['protocomp'])) echo "checked"; ?> />&nbsp;<?= gettext("Disable protocomp (compression) (auto-negotiated by default)."); ?>
+				<input type="checkbox" value="on" id="protocomp" name="protocomp" <?php if (isset($pconfig['protocomp'])) echo "checked=\"checked\""; ?> />&nbsp;<?= gettext("Disable protocomp (compression) (auto-negotiated by default)."); ?>
 				<br/> <span class="vexpl"><?= gettext("Protocol field compression. This option saves one byte per frame for most frames."); ?></span>
 			</td>
 		</tr>
 		<tr id="advanced_" name="advanced_">
 			<td>&nbsp;</td>
 			<td>
-			<p><input type="button" onClick="show_advanced(1)" value="<?=gettext("Show advanced options"); ?>" /></p>
+			<p><input type="button" onclick="show_advanced(1)" value="<?=gettext("Show advanced options"); ?>" /></p>
 			</td>
 			<td style="display:none" id="adv_rows" name="adv_rows"><?=$k;?></td>
 			<td style="display:none" id="adv_show" name="adv_show">0</td>
 		</tr>
-		<tr>
 		<?php for($i=0; $i < $port_count; $i++) : ?>
 		<tr style="display:none" id="link<?=$i;?>">
 			<td width="22%" valign="top" id="linklabel<?=$i;?>" class="vncell"> <?=gettext("Link Parameters");?></td>
 			<td class="vtable">
-				<table name="link_parameters" border="0" cellpadding="6" cellspacing="0">
+				<table name="link_parameters" border="0" cellpadding="6" cellspacing="0" summary="link parameters">
 					<tr>
 						<td width="22%" id="bwlabel<?=$i;?>" valign="top"class="vncell"> <?=gettext("Bandwidth");?></td>
 						<td width="78%" class="vtable">

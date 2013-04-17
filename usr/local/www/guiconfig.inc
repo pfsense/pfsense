@@ -249,15 +249,13 @@ function print_input_errors($input_errors) {
 
 	print <<<EOF
 	<div id="inputerrorsdiv">
-	<p>
 	<table border="0" cellspacing="0" cellpadding="4" width="100%" summary="input errors">
 	<tr>
 		<td class="inputerrorsleft">
 			<img src="/themes/{$g['theme']}/images/icons/icon_error.gif" alt="errors" />
 		</td>
-		<td class="inputerrorsright">
-			<span class="errmsg"><p>
-				The following input errors were detected:
+		<td class="inputerrorsright errmsg">
+			<p>The following input errors were detected:</p>
 				<ul>
 EOF;
 		foreach ($input_errors as $ierr) {
@@ -266,11 +264,10 @@ EOF;
 
 	print <<<EOF2
 				</ul>
-			</p></span>
 		</td></tr>
 	</table>
 	</div>
-	</p>&nbsp;<br />
+	&nbsp;<br />
 EOF2;
 
 }

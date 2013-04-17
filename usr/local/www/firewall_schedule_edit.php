@@ -605,7 +605,7 @@ function insertElements(tempFriendlyTime, starttimehour, starttimemin, stoptimeh
 		tbody = d.getElementById("scheduletable").getElementsByTagName("tbody").item(0);
 		tr = d.createElement("tr");
 		td = d.createElement("td");
-		td.innerHTML= "<span class='vexpl'>" + tempFriendlyTime + "</span>";
+		td.innerHTML= "<span class='vexpl'>" + tempFriendlyTime + "<\/span>";
 		tr.appendChild(td);	
 			
 		td = d.createElement("td");
@@ -621,11 +621,11 @@ function insertElements(tempFriendlyTime, starttimehour, starttimemin, stoptimeh
 		tr.appendChild(td);
 		
 		td = d.createElement("td");
-		td.innerHTML = "<a onclick='editRow(\"" + tempTime + "\",this); return false;' href='#'><img border='0' src='/themes/" + theme + "/images/icons/icon_e.gif' /></a>";
+		td.innerHTML = "<a onclick='editRow(\"" + tempTime + "\",this); return false;' href='#'><img border='0' src='/themes/" + theme + "/images/icons/icon_e.gif' alt='edit' /></\a>";
 		tr.appendChild(td);
 			
 		td = d.createElement("td");
-		td.innerHTML = "<a onclick='removeRow(this); return false;' href='#'><img border='0' src='/themes/" + theme + "/images/icons/icon_x.gif' /></a>";
+		td.innerHTML = "<a onclick='removeRow(this); return false;' href='#'><img border='0' src='/themes/" + theme + "/images/icons/icon_x.gif' alt='remove' /></\a>";
 		tr.appendChild(td);
 		
 		td = d.createElement("td");		
@@ -764,13 +764,13 @@ EOD;
 <div id="inputerrors"></div>
 
 <form action="firewall_schedule_edit.php" method="post" name="iform" id="iform">
-	<table width="100%" border="0" cellpadding="0" cellspacing="0">
+	<table width="100%" border="0" cellpadding="0" cellspacing="0" summary="firewall schedule">
 		<tr>
 			<td colspan="2" valign="top" class="listtopic"><?=gettext("Schedule information");?></td>
 		</tr>	
         <tr>
           <td>
-			  <table width="100%" border="0" cellpadding="6" cellspacing="0">
+			  <table width="100%" border="0" cellpadding="6" cellspacing="0" summary="main area">
                	<tr>
 				  <td width="15%" valign="top" class="vncellreq"><?=gettext("Schedule Name");?></td>
 				  <td width="85%" class="vtable">
@@ -838,7 +838,7 @@ EOD;
 						$positioncounter = 1;//7 for Sun, 1 for Mon, 2 for Tues, etc						
 						?>	
 	                        <div id="<?php echo date("F y",mktime(0, 0, 0, date($monthcounter), 1, date($yearcounter)));?>" style=" position:relative; display:<?php if($firstmonth)echo "block";else echo "none";?>">    	
-		                   	<table border="1" cellspacing="1" cellpadding="1" id="calTable" class="tabcont">
+		                   	<table border="1" cellspacing="1" cellpadding="1" id="calTable" class="tabcont" summary="month">
 								<tr><td colspan="7" align="center" class="listbg"><b><?php echo date("F Y", mktime(0, 0, 0, date($monthcounter), 1, date($yearcounter)));?></b></td>
 								</tr>
 								<tr>	
@@ -908,7 +908,7 @@ EOD;
 				<tr>
 				  <td width="15%" valign="top" class="vncellreq"><?=gettext("Time");?></td>
 				  <td width="85%" class="vtable">
-				  	<table cellspacing="2" class="tabcont">
+				  	<table cellspacing="2" class="tabcont" summary="time">
 				  		<tr>
 				  			<td class="listhdrr" align="center"><?=gettext("Start Time");?></td><td></td><td class="listhdrr" align="center"><?=gettext("Stop Time");?></td>
 				  		</tr>
@@ -988,7 +988,7 @@ EOD;
 				<tr>
 					<td width="15%" valign="top" class="vncellreq"><?=gettext("Configured Ranges");?></td>
 					<td width="85%">
-						<table id="scheduletable">
+						<table id="scheduletable" summary="range">
 							<tbody>
 								<tr>
 									<td align="center" class="listbg" width="35%"><?=gettext("Day(s)");?></td>
@@ -1118,22 +1118,22 @@ EOD;
 									?>
 						          <tr>
 						          	<td>
-						          		<span class="vexpl"><?php echo $tempFriendlyTime; ?><span>
+						          		<span class="vexpl"><?php echo $tempFriendlyTime; ?></span>
 						          	</td>
 									<td>
-						              <input type='text' readonly class='vexpl' name='starttime<?php echo $counter; ?>' id='starttime<?php echo $counter; ?>' style=' word-wrap:break-word; width:100%; border:0px solid;' value='<?php echo $starttime; ?>' />
+						              <input type='text' readonly='readonly' class='vexpl' name='starttime<?php echo $counter; ?>' id='starttime<?php echo $counter; ?>' style=' word-wrap:break-word; width:100%; border:0px solid;' value='<?php echo $starttime; ?>' />
 							        </td>
 						            <td>
-						              <input type='text' readonly class='vexpl' name='stoptime<?php echo $counter; ?>' id='stoptime<?php echo $counter; ?>' style=' word-wrap:break-word; width:100%; border:0px solid;' value='<?php echo $stoptime; ?>' /> 
+						              <input type='text' readonly='readonly' class='vexpl' name='stoptime<?php echo $counter; ?>' id='stoptime<?php echo $counter; ?>' style=' word-wrap:break-word; width:100%; border:0px solid;' value='<?php echo $stoptime; ?>' /> 
 							        </td>
 							        <td>
-							        	<input type='text' readonly class='vexpl' name='timedescr<?php echo $counter; ?>' id='timedescr<?php echo $counter; ?>' style=' word-wrap:break-word; width:100%; border:0px solid;' value='<?php echo $timedescr; ?>' />
+							        	<input type='text' readonly='readonly' class='vexpl' name='timedescr<?php echo $counter; ?>' id='timedescr<?php echo $counter; ?>' style=' word-wrap:break-word; width:100%; border:0px solid;' value='<?php echo $timedescr; ?>' />
 							        </td>
 							        <td>
-							        	<a onclick='editRow("<?php echo $tempTime; ?>",this); return false;' href='#'><img border='0' src='/themes/<?php echo $g['theme']; ?>/images/icons/icon_e.gif' /></a>
+							        	<a onclick='editRow("<?php echo $tempTime; ?>",this); return false;' href='#'><img border='0' src='/themes/<?php echo $g['theme']; ?>/images/icons/icon_e.gif' alt='edit' /></a>
 							        </td>
 							        <td>
-							        	<a onclick='removeRow(this); return false;' href='#'><img border='0' src='/themes/<?php echo $g['theme']; ?>/images/icons/icon_x.gif' /></a>
+							        	<a onclick='removeRow(this); return false;' href='#'><img border='0' src='/themes/<?php echo $g['theme']; ?>/images/icons/icon_x.gif' alt='remove' /></a>
 							        </td>
 							        <td>
 							        	<input type='hidden' id='schedule<?php echo $counter; ?>' name='schedule<?php echo $counter; ?>' value='<?php echo $tempID; ?>' />

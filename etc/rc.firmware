@@ -208,8 +208,9 @@ pfSenseNanoBSDupgrade)
 	SIZE=`/sbin/fdisk ${COMPLETE_PATH} | /usr/bin/grep Meg | /usr/bin/awk '{ print $5 }' | /usr/bin/cut -d"(" -f2`
 	# USB slices are under-reported even more than CF slices when viewed
 	#   directly, instead of when looking at the entire disk. Compensate
-	#   by adding a few MB.
-	SIZE=`expr $SIZE + 4`
+	#   by adding exactly 6MB. 4MB was consistently 2MB too few, and
+	#   was resulting in failing upgrades on USB Flash based installs.
+	SIZE=`expr $SIZE + 6`
 	if [ "$SIZE" -lt "$NEW_IMG_SIZE" ]; then
 		file_notice "UpgradeFailure" "Upgrade failed due to the upgrade image being larger than the partition that is configured on disk.  Halting. Size on disk: $SIZE < Size of new image: $NEW_IMG_SIZE"
 		echo "Upgrade failed.  Please check the system log file for more information" | wall

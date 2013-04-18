@@ -53,7 +53,7 @@ $FilterIflist = array();
 $GatewaysList = array();
 
 /* Used for the hostname dns resolver */
-$filterdns = "";
+$filterdns = array(); 
 
 /* Used for aliases and interface macros */
 $aliases = "";
@@ -334,7 +334,7 @@ function filter_configure_sync($delete_states_if_needed = true) {
 	layer7_start_l7daemon();
 
 	if(!empty($filterdns)) {
-		@file_put_contents("{$g['varetc_path']}/filterdns.conf", $filterdns);
+		@file_put_contents("{$g['varetc_path']}/filterdns.conf", implode("\n", $filterdns));
 		unset($filterdns);
 		if (isvalidpid("{$g['varrun_path']}/filterdns.pid"))
 			sigkillbypid("{$g['varrun_path']}/filterdns.pid", "HUP");
@@ -474,9 +474,8 @@ function filter_generate_nested_alias($name, $alias, &$aliasnesting, &$aliasaddr
 				$tmpline = filter_generate_nested_alias($name, $aliastable[$address], $aliasnesting, $aliasaddrnesting);
 		} else if(!isset($aliasaddrnesting[$address])) {
 			if (!is_ipaddr($address) && !is_subnet($address) && !is_port($address) && is_hostname($address)) {
-				$filterdns .= "pf {$address} {$name}\n";
-				/* Guarantee unique dns names on filterdns config */
-				$aliasaddrnesting[$address] = ' ';
+				if (!isset($filterdns["{$address}{$name}"]))
+					$filterdns["{$address}{$name}"] = "pf {$address} {$name}\n";
 				continue;
 			}
 			$aliasaddrnesting[$address] = $address;

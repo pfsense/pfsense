@@ -475,7 +475,7 @@ function filter_generate_nested_alias($name, $alias, &$aliasnesting, &$aliasaddr
 		} else if(!isset($aliasaddrnesting[$address])) {
 			if (!is_ipaddr($address) && !is_subnet($address) && !is_port($address) && is_hostname($address)) {
 				if (!isset($filterdns["{$address}{$name}"]))
-					$filterdns["{$address}{$name}"] = "pf {$address} {$name}\n";
+					$filterdns["{$address}{$name}"] = "pf {$address} {$name}";
 				continue;
 			}
 			$aliasaddrnesting[$address] = $address;

@@ -838,7 +838,7 @@ EOD;
 						$positioncounter = 1;//7 for Sun, 1 for Mon, 2 for Tues, etc						
 						?>	
 	                        <div id="<?php echo date("F y",mktime(0, 0, 0, date($monthcounter), 1, date($yearcounter)));?>" style=" position:relative; display:<?php if($firstmonth)echo "block";else echo "none";?>">    	
-		                   	<table border="1" cellspacing="1" cellpadding="1" id="calTable" class="tabcont" summary="month">
+		                   	<table border="1" cellspacing="1" cellpadding="1" id="calTable<?=$monthcounter . $yearcounter;?>" class="tabcont" summary="month">
 								<tr><td colspan="7" align="center" class="listbg"><b><?php echo date("F Y", mktime(0, 0, 0, date($monthcounter), 1, date($yearcounter)));?></b></td>
 								</tr>
 								<tr>	
@@ -877,7 +877,7 @@ EOD;
 										echo "<td align=\"center\" class=\"listr\"></td>";
 									}
 									
-									if ($positioncounter ==7){
+									if ($positioncounter == 7 || $daycounter > $numberofdays){
 										$positioncounter = 1;
 										echo "</tr>";
 									}

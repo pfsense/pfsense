@@ -68,7 +68,7 @@ user "root"
 group "wheel"
 
 ## Mailer to use (default: "/usr/lib/sendmail -t")
-#mailer "/var/qmail/bin/qmail-inject" 
+#mailer "/var/qmail/bin/qmail-inject"
 
 ## Location of the pid-file (default: "/var/run/apinger.pid")
 pid_file "{$g['varrun_path']}/apinger.pid"
@@ -90,19 +90,19 @@ status {
 rrd interval 60s;
 
 ## These parameters can be overridden in a specific alarm configuration
-alarm default { 
+alarm default {
 	command on "/usr/local/sbin/pfSctl -c 'service reload dyndns %T' -c 'service reload ipsecdns' -c 'service reload openvpn %T' -c 'filter reload' "
 	command off "/usr/local/sbin/pfSctl -c 'service reload dyndnsall' -c 'service reload ipsecdns' -c 'service reload openvpn' -c 'filter reload' "
 	combine 10s
 }
 
-## "Down" alarm definition. 
+## "Down" alarm definition.
 ## This alarm will be fired when target doesn't respond for 30 seconds.
 alarm down "down" {
 	time {$apinger_default['down']}s
 }
 
-## "Delay" alarm definition. 
+## "Delay" alarm definition.
 ## This alarm will be fired when responses are delayed more than 200ms
 ## it will be canceled, when the delay drops below 100ms
 alarm delay "delay" {
@@ -110,7 +110,7 @@ alarm delay "delay" {
 	delay_high {$apinger_default['latencyhigh']}ms
 }
 
-## "Loss" alarm definition. 
+## "Loss" alarm definition.
 ## This alarm will be fired when packet loss goes over 20%
 ## it will be canceled, when the loss drops below 10%
 alarm loss "loss" {
@@ -119,13 +119,13 @@ alarm loss "loss" {
 }
 
 target default {
-	## How often the probe should be sent	
+	## How often the probe should be sent
 	interval {$apinger_default['interval']}s
-	
-	## How many replies should be used to compute average delay 
+
+	## How many replies should be used to compute average delay
 	## for controlling "delay" alarms
 	avg_delay_samples 10
-	
+
 	## How many probes should be used to compute average loss
 	avg_loss_samples 50
 
@@ -154,10 +154,10 @@ EOD;
 				continue;
 		}
 
-		/* if the monitor address is already used before, skip */ 
+		/* if the monitor address is already used before, skip */
 		if(in_array($gateway['monitor'], $monitor_ips))
 			continue;
-		
+
 		/* Interface ip is needed since apinger will bind a socket to it. */
 		if (is_ipaddrv4($gateway['gateway'])) {
 			$gwifip = find_interface_ip($gateway['interface'], true);
@@ -189,7 +189,7 @@ EOD;
 		if (!empty($gateway['losslow'])) {
 			$alarmscfg .= "alarm loss \"{$name}loss\" {\n";
 			$alarmscfg .= "\tpercent_low {$gateway['losslow']}\n";
-       			$alarmscfg .= "\tpercent_high {$gateway['losshigh']}\n";
+			$alarmscfg .= "\tpercent_high {$gateway['losshigh']}\n";
 			$alarmscfg .= "}\n";
 			$alarms .= "\"{$name}loss\"";
 			$override = true;
@@ -488,7 +488,7 @@ function return_gateways_array($disabled = false, $localhost = false) {
 
 		if (isset($interfaces_v4[$ifname]))
 			continue;
-			
+
 		$ctype = "";
 		switch($ifcfg['ipaddr']) {
 			case "dhcp":
@@ -512,7 +512,7 @@ function return_gateways_array($disabled = false, $localhost = false) {
 		$gateway['friendlyiface'] = $ifname;
 		$gateway['name'] = "{$friendly}{$ctype}";
 		$gateway['attribute'] = "system";
-	
+
 		if (($gateway['dynamic'] === "default") && ($found_defaultv4 == 0)) {
 			$gateway['defaultgw'] = true;
 			$gateway['dynamic'] = true;
@@ -555,7 +555,7 @@ function return_gateways_array($disabled = false, $localhost = false) {
 
 		if(!empty($ifcfg['ipaddrv6']) && is_ipaddrv6($ifcfg['ipaddrv6']))
 			continue;
-			
+
 		if(isset($interfaces_v6[$ifname]))
 			continue;
 
@@ -588,7 +588,7 @@ function return_gateways_array($disabled = false, $localhost = false) {
 		$gateway['friendlyiface'] = $ifname;
 		$gateway['name'] = "{$friendly}{$ctype}";
 		$gateway['attribute'] = "system";
-	
+
 		if (($gateway['dynamic'] === "default")  && ($found_defaultv6 == 0)) {
 			$gateway['defaultgw'] = true;
 			$gateway['dynamic'] = true;
@@ -794,11 +794,11 @@ function return_gateway_groups_array() {
 						$gateway = $gateways_arr[$member];
 						$int = $gateway['interface'];
 						$gatewayip = "";
-						if(is_ipaddr($gateway['gateway'])) 
+						if(is_ipaddr($gateway['gateway']))
 							$gatewayip = $gateway['gateway'];
 						else if (!empty($int))
 							$gatewayip = get_interface_gateway($gateway['friendlyiface']);
-					
+
 						if (!empty($int) && is_ipaddr($gatewayip)) {
 							$groupmember = array();
 							$groupmember['int']  = $int;
@@ -826,7 +826,7 @@ function return_gateway_groups_array() {
 /* Update DHCP WAN Interface ip address in gateway group item */
 function dhclient_update_gateway_groups_defaultroute($interface = "wan") {
 	global $config, $g;
-	foreach($config['gateways']['gateway_item'] as & $gw) {	
+	foreach($config['gateways']['gateway_item'] as & $gw) {
 		if($gw['interface'] == $interface) {
 			$current_gw = get_interface_gateway($interface);
 			if($gw['gateway'] <> $current_gw) {
@@ -842,37 +842,37 @@ function dhclient_update_gateway_groups_defaultroute($interface = "wan") {
 function lookup_gateway_ip_by_name($name) {
 
 	$gateways_arr = return_gateways_array(false, true);
-        foreach ($gateways_arr as $gname => $gw) {
-                if ($gw['name'] == $name || $gname == $name)
-                        return $gw['gateway'];
-        }
+	foreach ($gateways_arr as $gname => $gw) {
+		if ($gw['name'] == $name || $gname == $name)
+			return $gw['gateway'];
+	}
 
 	return false;
 }
 
 function lookup_gateway_monitor_ip_by_name($name) {
 
-        $gateways_arr = return_gateways_array(false, true);
+	$gateways_arr = return_gateways_array(false, true);
 	if (!empty($gateways_arr[$name])) {
 		$gateway = $gateways_arr[$name];
 		if(!is_ipaddr($gateway['monitor']))
 			return $gateway['gateway'];
 
 		return $gateway['monitor'];
-        }
+	}
 
-        return (false);
+	return (false);
 }
 
 function lookup_gateway_interface_by_name($name) {
 
-        $gateways_arr = return_gateways_array(false, true);
+	$gateways_arr = return_gateways_array(false, true);
 	if (!empty($gateways_arr[$name])) {
 		$interfacegw = $gateways_arr[$name]['interface'];
 		return ($interfacegw);
-        }
+	}
 
-        return (false);
+	return (false);
 }
 
 function get_interface_gateway($interface, &$dynamic = false) {
@@ -899,7 +899,7 @@ function get_interface_gateway($interface, &$dynamic = false) {
 		}
 		if (file_exists("{$g['tmp_path']}/{$realif}_defaultgw"))
 			$dynamic = "default";
-			
+
 	}
 
 	/* return gateway */
@@ -929,7 +929,7 @@ function get_interface_gateway_v6($interface, &$dynamic = false) {
 			}
 			if (file_exists("{$g['tmp_path']}/{$realif}_defaultgwv6"))
 				$dynamic = "default";
-			
+
 	}
 	/* return gateway */
 	return ($gw);
@@ -979,7 +979,7 @@ function validate_address_family($ipaddr, $gwname) {
 		return true;
 	if($v6ip && $v6gw)
 		return true;
-	
+
 	return false;
 }
 
@@ -992,7 +992,7 @@ function interface_gateway_group_member($interface) {
 	else
 		return false;
 
-        $gateways_arr = return_gateways_array(false, true);
+	$gateways_arr = return_gateways_array(false, true);
 	foreach($groups as $group) {
 		if(is_array($group['item'])) {
 			foreach($group['item'] as $item) {

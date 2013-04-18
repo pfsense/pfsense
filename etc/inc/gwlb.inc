@@ -1,7 +1,7 @@
 <?php
 /*
   Copyright (C) 2008 Bill Marquette, Seth Mos
-  Copyright (C) 2010 Ermal Luçi
+  Copyright (C) 2010 Ermal Lu?i
   All rights reserved.
 
   Redistribution and use in source and binary forms, with or without
@@ -546,7 +546,7 @@ function lookup_gateway_ip_by_name($name) {
 
 	$gateways_arr = return_gateways_array();
         foreach ($gateways_arr as $gname => $gw) {
-                if ($gw['name'] == $name || $gname == $name)
+                if ($gw['name'] === $name || $gname === $name)
                         return $gw['gateway'];
         }
 

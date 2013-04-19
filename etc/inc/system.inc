@@ -260,8 +260,14 @@ function system_hosts_generate() {
 	}
 
 	foreach ($hostscfg as $host) {
-		if ($host['host'])
-			$lhosts .= "{$host['ip']}	{$host['host']}.{$host['domain']} {$host['host']}\n";
+		if ($host['host']) {
+			$lhosts .= "{$host['ip']}	";
+			$aliases = preg_split("/\s+/", trim($host['host']));
+			foreach ($aliases as $alias) {
+				$lhosts .= "{$alias}.{$host['domain']} {$alias} ";
+			}
+			$lhosts .= "\n";
+		}
 		else
 			$lhosts .= "{$host['ip']}	{$host['domain']}\n";
 		if (!is_array($host['aliases']) || !is_array($host['aliases']['item']))

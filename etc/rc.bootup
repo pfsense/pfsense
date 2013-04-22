@@ -1,5 +1,7 @@
 #!/usr/local/bin/php -f
 <?php
+ini_set('apc.enabled', '0');
+
 /* $Id$ */
 /*
 	rc.bootup

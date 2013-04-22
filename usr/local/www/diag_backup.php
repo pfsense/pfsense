@@ -650,7 +650,7 @@ function backuparea_change(obj) {
 						<p><strong><span class="red"><?=gettext("Note:"); ?></span></strong><br /><?=gettext("The firewall will reboot after restoring the configuration."); ?><br /></p>
 					</td>
 				</tr>
-				<?php if($config['installedpackages']['package'] != "") { ?>
+				<?php if (($config['installedpackages']['package'] != "") || (is_subsystem_dirty("packagelock"))) { ?>
 				<tr>
 					<td colspan="2" class="list" height="12">&nbsp;</td>
 				</tr>

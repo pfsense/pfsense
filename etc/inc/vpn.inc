@@ -118,7 +118,7 @@ function vpn_ipsec_configure($ipchg = false)
 		mwexec("/sbin/ifconfig enc0 down");
 		exec("/sbin/sysctl net.inet.ip.ipsec_in_use=0");
 
-		return true;
+		return 0;
 	} else {
 		mwexec("/sbin/ifconfig enc0 up");
 		mwexec("/sbin/sysctl net.inet.ip.ipsec_in_use=1");
@@ -987,9 +987,9 @@ EOD;
 
 		if ($g['booting'])
 			echo "done\n";
-	}
 
-	return 0;
+		return count($filterdns_list);
+	}
 }
 
 /* 

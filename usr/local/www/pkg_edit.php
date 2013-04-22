@@ -816,7 +816,7 @@ if ($pkg['tabs'] <> "") {
 				<tr id='<?="tr_{$pkga['fieldname']}";?>'>
 				<?php
 					foreach($pkga['rowhelper']['rowhelperfield'] as $rowhelper) {
-					  echo "<td ".domTT_title($rowhelper['description'])."><b>" . fixup_string($rowhelper['fielddescr']) . "</td>\n";
+					  echo "<td ".domTT_title($rowhelper['description'])."><b>" . fixup_string($rowhelper['fielddescr']) . "</b></td>\n";
 					}
 
 					$rowcounter = 0;
@@ -1024,6 +1024,7 @@ function display_row($trc, $value, $fieldname, $type, $rowhelper, $size) {
 			echo "</select>\n";
 			break;		
 		}
+	echo "</td>\n";
 }
 
 function fixup_string($string) {

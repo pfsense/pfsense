@@ -433,7 +433,7 @@ if($_REQUEST['undodrag']) {
 <?php if (isset($config['interfaces'][$if]['blockpriv'])): ?>
 			<tr valign="top" id="frrfc1918">
 			<td class="list">&nbsp;</td>
-			<td class="listt" align="center"><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_block.gif" width="11" height="11" border="0" alt=""block" /></td>
+			<td class="listt" align="center"><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_block.gif" width="11" height="11" border="0" alt="block" /></td>
 			<td class="listlr" style="background-color: #E0E0E0">&nbsp;</td>
 			<td class="listr" style="background-color: #E0E0E0">*</td>
 			<td class="listr" style="background-color: #E0E0E0"><?=gettext("RFC 1918 networks");?></td>

@@ -173,13 +173,13 @@ include("head.inc");
 			  <?php $i = 0; foreach ($a_wol as $wolent): ?>
                 <tr>
                   <td class="listlr" ondblclick="document.location='services_wol_edit.php?id=<?=$i;?>';">
-                    <?=convert_friendly_interface_to_friendly_descr($wolent['interface']);?>&nbsp;
+                    <?=convert_friendly_interface_to_friendly_descr($wolent['interface']);?>
                   </td>
                   <td class="listr" ondblclick="document.location='services_wol_edit.php?id=<?=$i;?>';">
-                    <a href="?mac=<?=$wolent['mac'];?>&if=<?=$wolent['interface'];?>"><?=strtolower($wolent['mac']);?></a>&nbsp;
+                    <a href="?mac=<?=$wolent['mac'];?>&if=<?=$wolent['interface'];?>"><?=strtolower($wolent['mac']);?></a>
                   </td>
                   <td class="listbg" ondblclick="document.location='services_wol_edit.php?id=<?=$i;?>';">
-                    <?=htmlspecialchars($wolent['descr']);?>&nbsp;
+                    <?=htmlspecialchars($wolent['descr']);?>
                   </td>
                   <td valign="middle" nowrap class="list">
                     <table border="0" cellspacing="0" cellpadding="1">

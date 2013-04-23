@@ -818,16 +818,6 @@ function showchange() {
 
 //]]>
 </script>
-<script type="text/javascript">
-//<![CDATA[
-NiftyCheck();
-var bgcolor = document.getElementsByTagName("body")[0].style.backgroundColor;
-Rounded("div#roundme","all",bgcolor,"#FFFFFF","smooth");
-enablechange();
-disablechange();
-showchange();
-//]]>
-</script>
 
 <?php
 
@@ -880,8 +870,20 @@ if($pkg['step'][$stepid]['disableallfieldsbydefault'] <> "") {
 	echo "//]]>\n";
 	echo "</script>\n\n";
 }
+?>
 
+<script type="text/javascript">
+//<![CDATA[
+NiftyCheck();
+var bgcolor = document.getElementsByTagName("body")[0].style.backgroundColor;
+Rounded("div#roundme","all",bgcolor,"#FFFFFF","smooth");
+enablechange();
+disablechange();
+showchange();
+//]]>
+</script>
 
+<?php
 if($pkg['step'][$stepid]['stepafterformdisplay'] <> "") {
 	// handle after form display event.
 	eval($pkg['step'][$stepid]['stepafterformdisplay']);

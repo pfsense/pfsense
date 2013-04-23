@@ -56,7 +56,8 @@ class CrashReporter {
     {
         /* @var $crash_report_header type string */
         $this->crash_report_header = '';
-        $this->crash_report_header = "Crash report begins.  Anonymous machine information:\n\n";
+        $this->crash_report_header = "Crash report begins.  
+            Anonymous machine information:\n\n";
         $this->crash_report_header .= php_uname("m") . "\n";
         $this->crash_report_header .= php_uname("r") . "\n";
         $this->crash_report_header .= php_uname("v") . "\n";
@@ -68,7 +69,8 @@ class CrashReporter {
     {
         if (count($this->php_errors) > 0) {
 			$this->crash_reports .= "\nPHP Errors:\n";
-			$this->crash_reports .= implode("\n", $this->php_errors) . "\n\n";
+			$this->crash_reports .= implode("\n", $this->php_errors) 
+                                . "\n\n";
 		}
 		if(is_array($this->crash_files))	{
 			foreach($this->crash_files as $cf) {
@@ -80,6 +82,7 @@ class CrashReporter {
 		} else { 
                         $this->crash_reports .= "Could not locate any crash data."; 
 		}
+        return $this->crash_reports;
     }
     function purge_crash_logs()
     {

@@ -28,7 +28,10 @@ class CrashReporterTest extends PHPUnit_Framework_TestCase {
         $cr = new CrashReporter();
         $this->assertNotNull($cr->prepare_report_header());
     }
-    
+    public function testPrepareReport() {
+        $cr = new CrashReporter();
+        $this->assertNotNull($cr->prepare_report());
+    }
     public function testGetCrashFiles() {
         $cr = new CrashReporter();
         $this->assertInternalType('array', $cr->get_crash_files());

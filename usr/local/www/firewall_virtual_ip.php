@@ -107,6 +107,29 @@ if ($_GET['act'] == "del") {
 			}
 		}
 
+		if (is_ipaddrv6($a_vip[$_GET['id']]['subnet']))
+			$subnet = gen_subnetv6($a_vip[$_GET['id']]['subnet'], $a_vip[$_GET['id']]['subnet_bits']);
+		else
+			$subnet = gen_subnet($a_vip[$_GET['id']]['subnet'], $a_vip[$_GET['id']]['subnet_bits']);
+
+		$subnet .= "/" . $a_vip[$_GET['id']]['subnet_bits'];
+
+		$is_ipv6 = is_ipaddrv6($a_vip[$_GET['id']]['subnet']);
+		if (is_array($config['gateways']['gateway_item']))
+			foreach($config['gateways']['gateway_item'] as $gateway) {
+				if ($a_vip[$_GET['id']]['interface'] != $gateway['interface'])
+					continue;
+				if ($is_ipv6 && $gateway['ipprotocol'] == 'inet')
+					continue;
+				if (!$is_ipv6 && $gateway['ipprotocol'] == 'inet6')
+					continue;
+
+				if (ip_in_subnet($gateway['gateway'], $subnet)) {
+					$input_errors[] = gettext("This entry cannot be deleted because it is still referenced by at least one Gateway.");
+					break;
+				}
+			}
+
 		if ($a_vip[$_GET['id']]['mode'] == "ipalias") {
 			$found_carp = false;
 			$found_other_alias = false;

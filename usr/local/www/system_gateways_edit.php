@@ -119,9 +119,24 @@ if ($_POST) {
 			if(empty($parent_ip) || empty($parent_sn)) {
 				$input_errors[] = gettext("You can not use a IPv4 Gateway Address on a IPv6 only interface.");
 			} else {
-				$subnet = gen_subnet($parent_ip, $parent_sn) . "/" . $parent_sn;
-				if(!ip_in_subnet($_POST['gateway'], $subnet))
-					$input_errors[] = sprintf(gettext("The gateway address %1\$s does not lie within the chosen interface's subnet '%2\$s'."), $_POST['gateway'],$subnet);
+				$subnets = array(gen_subnet($parent_ip, $parent_sn) . "/" . $parent_sn);
+				$vips = link_interface_to_vips($_POST['interface']);
+				if (is_array($vips))
+					foreach($vips as $vip) {
+						if (!is_ipaddrv4($vip['subnet']))
+							continue;
+						$subnets[] = gen_subnet($vip['subnet'], $vip['subnet_bits']) . "/" . $vip['subnet_bits'];
+					}
+
+				$found = false;
+				foreach($subnets as $subnet)
+					if(ip_in_subnet($_POST['gateway'], $subnet)) {
+						$found = true;
+						break;
+					}
+
+				if ($found === false)
+					$input_errors[] = sprintf(gettext("The gateway address %1\$s does not lie within one of the chosen interface's subnets."), $_POST['gateway']);
 			}
 		}
 		else if(is_ipaddrv6($_POST['gateway'])) {
@@ -132,9 +147,24 @@ if ($_POST) {
 				if(empty($parent_ip) || empty($parent_sn)) {
 					$input_errors[] = gettext("You can not use a IPv6 Gateway Address on a IPv4 only interface.");
 				} else {
-					$subnet = gen_subnetv6($parent_ip, $parent_sn) . "/" . $parent_sn;
-					if(!ip_in_subnet($_POST['gateway'], $subnet))
-						$input_errors[] = sprintf(gettext("The gateway address %1\$s does not lie within the chosen interface's subnet '%2\$s'."), $_POST['gateway'],$subnet);
+					$subnets = array(gen_subnetv6($parent_ip, $parent_sn) . "/" . $parent_sn);
+					$vips = link_interface_to_vips($_POST['interface']);
+					if (is_array($vips))
+						foreach($vips as $vip) {
+							if (!is_ipaddrv6($vip['subnet']))
+								continue;
+							$subnets[] = gen_subnetv6($vip['subnet'], $vip['subnet_bits']) . "/" . $vip['subnet_bits'];
+						}
+
+					$found = false;
+					foreach($subnets as $subnet)
+						if(ip_in_subnet($_POST['gateway'], $subnet)) {
+							$found = true;
+							break;
+						}
+
+					if ($found === false)
+						$input_errors[] = sprintf(gettext("The gateway address %1\$s does not lie within one of the chosen interface's subnets."), $_POST['gateway']);
 				}
 			}
 		}

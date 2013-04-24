@@ -82,7 +82,7 @@ if ($_POST) {
 	
 	do_input_validation($_POST, $reqdfields, $reqdfieldsn, &$input_errors);
 	
-	if (($_POST['host'] && !is_hostname($_POST['host']))) 
+	if (($_POST['host'] && !is_hostname($_POST['host']) && !preg_match("/\s/", $_POST['host'])))
 		$input_errors[] = gettext("The hostname can only contain the characters A-Z, 0-9 and '-'.");
 
 	if (($_POST['domain'] && !is_domain($_POST['domain']))) 
@@ -198,7 +198,7 @@ include("head.inc");
                   <td width="78%" class="vtable"> 
                     <input name="host" type="text" class="formfld" id="host" size="40" value="<?=htmlspecialchars($pconfig['host']);?>">
                     <br> <span class="vexpl"><?=gettext("Name of the host, without".
-                   " domain part"); ?><br>
+                   " domain part (with optional aliases separated by spaces)"); ?><br>
                    <?=gettext("e.g."); ?> <em><?=gettext("myhost"); ?></em></span></td>
                 </tr>
 				<tr>

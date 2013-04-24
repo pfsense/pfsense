@@ -1203,7 +1203,6 @@ function apply_all_choosen_items() {
 			    $rule['type'] = "match";
 			    $rule['interface'] = "wan";
 			    $rule['descr'] = gettext("Penalty Box");
-			    $rule['source']['any'] = TRUE;
 			    $rule['defaultqueue'] = "qOthersLow";
 			    $rule['source']['address'] = $config['ezshaper']['step4']['address'];
 			    $rule['destination']['any'] = TRUE;

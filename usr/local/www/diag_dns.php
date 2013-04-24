@@ -208,7 +208,7 @@ include("head.inc"); ?>
 					}
 				}
 ?>
-				<font size="-1>">
+				<font size="-1">
 
 			<?	} ?>
 			</td></tr></table>

@@ -95,8 +95,10 @@ $curcfg = $config['system']['firmware'];
 				(<?php echo php_uname("m"); ?>)
 				<br />
 				built on <?php readfile("/etc/version.buildtime"); ?>
+		<?php if(!$g['hideuname']): ?>
 		<br />
 		<div id="uname"><a href="#" onclick='swapuname(); return false;'><?php echo php_uname("s") . " " . php_uname("r"); ?></a></div>
+		<?php endif; ?>
 		<?php if(!isset($config['system']['firmware']['disablecheck'])): ?>
 		<div id='updatestatus'><br/><?php echo gettext("Obtaining update status"); ?> ...</div>
 		<?php endif; ?>

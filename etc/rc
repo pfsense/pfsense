@@ -68,9 +68,9 @@ echo "Mounting filesystems..."
 # Handle ZFS read-only case
 if [ "$PLATFORM" = "pfSense" ]; then
 	if [ -f /usr/bin/grep ]; then
-		WHEREISROOT=`/sbin/mount | /usr/bin/grep " / " | /usr/bin/grep "tank" | /usr/bin/cut -d' ' -f1`
-		if [ "$WHEREISROOT" != "" ]; then
-			/sbin/zfs set readonly=off $WHEREISROOT
+		ZFSROOT=`/sbin/mount | /usr/bin/grep " / " | /usr/bin/awk -F ' on ' '{print $1}'`
+		if [ "$ZFSROOT" != "" ]; then
+			echo /sbin/zfs set readonly=off $ZFSROOT
 		fi
 	fi
 fi

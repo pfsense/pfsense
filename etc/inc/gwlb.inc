@@ -368,7 +368,7 @@ function return_gateways_array($disabled = false, $localhost = false) {
 				continue;
 
 			/* if the gateway is dynamic and we can find the IPv4, Great! */
-			if (empty($gateway['gateway']) || $gateway['gateway'] == "dynamic") {
+			if (empty($gateway['gateway']) || $gateway['gateway'] == "dynamic" || $gateway['gateway'] == "dynamic6") {
 				if ($gateway['ipprotocol'] == "inet") {
 					/* we know which interfaces is dynamic, this should be made a function */
 					$gateway['ipprotocol'] = "inet";

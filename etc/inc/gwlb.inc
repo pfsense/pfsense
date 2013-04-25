@@ -380,7 +380,7 @@ function return_gateways_array($disabled = false, $localhost = false) {
 				}
 
 				/* if the gateway is dynamic6 and we can find the IPv6, Great! */
-				if ($gateway['ipprotocol'] == "inet6") {
+				else if ($gateway['ipprotocol'] == "inet6") {
 					/* we know which interfaces is dynamic, this should be made a function, and for v6 too */
 					$gateway['ipprotocol'] = "inet6";
 					$gateway['gateway'] = get_interface_gateway_v6($gateway['interface']);

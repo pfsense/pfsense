@@ -378,8 +378,8 @@ function show_source_port_range() {
 					<input name="holdcnt" type="text" class="formfld unkown" id="holdcnt" value="<?=htmlspecialchars($pconfig['holdcnt']);?>" />
 					<br/>
 					<span class="vexpl">
-	     <?=gettext("Set the transmit hold count for Spanning Tree.  This is the num- " .
-	     "ber of packets transmitted before being rate limited.  The " .
+	     <?=gettext("Set the transmit hold count for Spanning Tree.  This is the number" .
+	     " of packets transmitted before being rate limited.  The " .
 	     "default is 6.  The minimum is 1 and the maximum is 10."); ?>
 					</span>
 					</td></tr>

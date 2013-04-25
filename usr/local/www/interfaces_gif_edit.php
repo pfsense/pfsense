@@ -166,7 +166,7 @@ include("head.inc");
 		      		?>
                     </select>
 			<br/>
-			<span class="vexpl"><?=gettext("The interface here servers as the local address to be used for the gif tunnel."); ?></span></td>
+			<span class="vexpl"><?=gettext("The interface here serves as the local address to be used for the gif tunnel."); ?></span></td>
                 </tr>
 				<tr>
                   <td valign="top" class="vncellreq"><?=gettext("gif remote address"); ?></td>

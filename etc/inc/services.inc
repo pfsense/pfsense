@@ -1577,6 +1577,31 @@ function services_dnsmasq_configure() {
 		if (is_port($config['dnsmasq']['port']))
 			$args .= " --port={$config['dnsmasq']['port']} ";
 
+		$listen_addresses = "";
+		if(isset($config['dnsmasq']['interface'])) {
+			$interfaces = explode(",", $config['dnsmasq']['interface']);
+			foreach ($interfaces as $interface) {
+				if (is_ipaddr($interface)) {
+					$listen_addresses .= " --listen-address={$interface} ";
+				} else {
+					$if = get_real_interface($interface);
+					if (does_interface_exist($if)) {
+						$laddr = find_interface_ip($if);
+						if (is_ipaddrv4($laddr))
+							$listen_addresses .= " --listen-address={$laddr} ";
+						$laddr6 = find_interface_ipv6($if);
+						if (is_ipaddrv6($laddr6) && !isset($config['dnsmasq']['strictbind']))
+							$listen_addresses .= " --listen-address={$laddr6} ";
+					}
+				}
+			}
+			if (!empty($listen_addresses)) {
+				$args .= " {$listen_addresses} ";
+				if (isset($config['dnsmasq']['strictbind']))
+					$args .= " --bind-interfaces ";
+			}
+		}
+
 		/* Setup forwarded domains */
 		if (isset($config['dnsmasq']['domainoverrides']) && is_array($config['dnsmasq']['domainoverrides'])) {
 			foreach($config['dnsmasq']['domainoverrides'] as $override) {
@@ -1625,7 +1650,9 @@ function services_dnsmasq_configure() {
 		}
 
 		/* run dnsmasq */
-		mwexec_bg("/usr/local/sbin/dnsmasq --local-ttl 1 --all-servers {$dns_rebind} --dns-forward-max=5000 --cache-size=10000 {$args}");
+		$cmd = "/usr/local/sbin/dnsmasq --local-ttl 1 --all-servers {$dns_rebind} --dns-forward-max=5000 --cache-size=10000 {$args}";
+		//log_error("dnsmasq command: {$cmd}");
+		mwexec_bg($cmd);
 		unset($args);
 
 		if ($g['booting'])

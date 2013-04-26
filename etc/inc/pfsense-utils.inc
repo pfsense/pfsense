@@ -1464,11 +1464,12 @@ function load_glxsb() {
  ******/
 function isvm() {
 	$virtualenvs = array("vmware", "parallels", "qemu", "bochs", "plex86");
-	$bios_vendor = strtolower(`/bin/kenv | /usr/bin/awk -F= '/smbios.bios.vendor/ {print $2}'`);
-	if(in_array($bios_vendor, $virtualenvs)) 
-		return true;
-	else
-		return false;
+	$bios_product = trim(`/bin/kenv | /usr/bin/awk -F= '/smbios.system.product/ {print $2}'`);
+	foreach ($virtualenvs as $virtualenv)
+		if (stripos($bios_product, $virtualenv) !== false)
+			return true;
+
+	return false;
 }
 
 function get_freebsd_version() {

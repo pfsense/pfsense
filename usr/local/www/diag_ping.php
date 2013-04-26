@@ -112,7 +112,7 @@ include("head.inc"); ?>
 	<td width="78%" class="vtable">
 		<select name="sourceip" class="formselect">
 			<option value="">Default</option>
-		<?php $sourceips = get_possible_traffic_source_addresses();
+		<?php $sourceips = get_possible_traffic_source_addresses(true);
 			foreach ($sourceips as $sip):
 				$selected = "";
 				if (!link_interface_to_bridge($sip['value']) && ($sip['value'] == $sourceip))

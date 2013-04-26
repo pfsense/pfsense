@@ -51,6 +51,7 @@ $pconfig['dhcpfirst'] = isset($config['dnsmasq']['dhcpfirst']);
 $pconfig['strict_order'] = isset($config['dnsmasq']['strict_order']);
 $pconfig['domain_needed'] = isset($config['dnsmasq']['domain_needed']);
 $pconfig['no_private_reverse'] = isset($config['dnsmasq']['no_private_reverse']);
+$pconfig['port'] = $config['dnsmasq']['port'];
 $pconfig['custom_options'] = $config['dnsmasq']['custom_options'];
 
 if (!is_array($config['dnsmasq']['hosts']))
@@ -76,6 +77,18 @@ if ($_POST) {
 	$config['dnsmasq']['domain_needed'] = ($_POST['domain_needed']) ? true : false;
 	$config['dnsmasq']['no_private_reverse'] = ($_POST['no_private_reverse']) ? true : false;
 	$config['dnsmasq']['custom_options'] = str_replace("\r\n", "\n", $_POST['custom_options']);
+
+	if ($_POST['port'])
+		if(is_port($_POST['port']))
+			$config['dnsmasq']['port'] = $_POST['port'];
+		else
+			$input_errors[] = gettext("You must specify a valid port number");
+	else if (isset($config['dnsmasq']['port']))
+		unset($config['dnsmasq']['port']);
+
+	if ($_POST['port'])
+		if(!is_port($_POST['port']))
+			$input_errors[] = gettext("You must specify a valid port number");
 
 	if ($config['dnsmasq']['custom_options']) {
 		$args = '';
@@ -227,6 +240,14 @@ function show_advanced_dns() {
 					"Any entries in the Domain Overrides section forwarding private \"n.n.n.in-addr.arpa\" names to a specific server are still forwarded. ".
 					"If the IP to name is not known from /etc/hosts, DHCP or a specific domain override then a \"not found\" answer is immediately returned. ".
 					""), $g['product_name']); ?></p>
+		</td>
+	</tr>
+	<tr>
+		<td width="22%" valign="top" class="vncellreq"><?=gettext("Listen Port");?></td>
+		<td width="78%" class="vtable"><p>
+			<input name="port" type="text" id="port" size="6" <?php if ($pconfig['port']) echo "value=\"{$pconfig['port']}\"";?>>
+			<br /><br />
+			<?=gettext("The port used for responding to DNS queries. It should normally be left blank unless another service needs to bind to TCP/UDP port 53.");?></p>
 		</td>
 	</tr>
 	<tr>

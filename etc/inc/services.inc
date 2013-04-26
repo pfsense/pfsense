@@ -1573,6 +1573,10 @@ function services_dnsmasq_configure() {
 			$args .= " --dhcp-hostsfile={$g['varetc_path']}/hosts ";
 		}
 
+		/* Setup listen port, if non-default */
+		if (is_port($config['dnsmasq']['port']))
+			$args .= " --port={$config['dnsmasq']['port']} ";
+
 		/* Setup forwarded domains */
 		if (isset($config['dnsmasq']['domainoverrides']) && is_array($config['dnsmasq']['domainoverrides'])) {
 			foreach($config['dnsmasq']['domainoverrides'] as $override) {

@@ -55,7 +55,10 @@ $pconfig['port'] = $config['dnsmasq']['port'];
 $pconfig['custom_options'] = $config['dnsmasq']['custom_options'];
 
 $pconfig['strictbind'] = isset($config['dnsmasq']['strictbind']);
-$pconfig['interface'] = explode(",", $config['dnsmasq']['interface']);
+if (!empty($config['dnsmasq']['interface']))
+	$pconfig['interface'] = explode(",", $config['dnsmasq']['interface']);
+else
+	$pconfig['interface'] = array();
 
 if (!is_array($config['dnsmasq']['hosts']))
 	$config['dnsmasq']['hosts'] = array();
@@ -262,10 +265,10 @@ function show_advanced_dns() {
 			$interface_addresses = get_possible_listen_ips(true);
 			$size=count($interface_addresses)+1;
 		?>
-			<?=gettext("Interface IPs used to respond to queries from the DNS Forwarder. In an interface has both IPv4 and IPv6 IPs, both are used. Queries to other interface IPs not selected below are discarded. The default behavior is to respond to queries on every available IPv4 and IPv6 address.");?>
+			<?=gettext("Interface IPs used by the DNS Forwarder for responding to queries from clients. If an interface has both IPv4 and IPv6 IPs, both are used. Queries to other interface IPs not selected below are discarded. The default behavior is to respond to queries on every available IPv4 and IPv6 address.");?>
 			<br /><br />
 			<select id="interface" name="interface[]" multiple="true" class="formselect" size="<?php echo $size; ?>">
-				<option value="">All</option>
+				<option value="" <?php if (empty($pconfig['interface'])) echo 'selected="selected"'; ?>>All</option>
 			<?php  foreach ($interface_addresses as $laddr):
 					$selected = "";
 					if (in_array($laddr['value'], $pconfig['interface']))
@@ -276,7 +279,7 @@ function show_advanced_dns() {
 				</option>
 			<?php endforeach; ?>
 			</select>
-			<br />
+			<br /><br />
 		</td>
 	</tr>
 	<tr>
@@ -284,7 +287,7 @@ function show_advanced_dns() {
 			<input name="strictbind" type="checkbox" id="strictbind" value="yes" <?php if ($pconfig['strictbind'] == "yes") echo "checked";?>>
 			<strong><?=gettext("Strict Interface Binding");?></strong>
 			<br />
-			<?= gettext("If this option is set, the DNS forwarder will only bind to the interfaces selected above, rather than binding to all interfaces and discarding queries to other addresses."); ?>
+			<?= gettext("If this option is set, the DNS forwarder will only bind to the interfaces containing the IP addresses selected above, rather than binding to all interfaces and discarding queries to other addresses."); ?>
 			<br /><br />
 			<?= gettext("NOTE: This option does NOT work with IPv6. If set, dnsmasq will not bind to IPv6 addresses."); ?>
 			</p>

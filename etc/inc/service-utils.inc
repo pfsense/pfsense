@@ -414,6 +414,9 @@ function get_service_status($service) {
 			if (isset($config['captiveportal'][$service['zone']]['httpslogin']))
 				$running = $running && is_pid_running("{$g['varrun_path']}/lighty-{$service['zone']}-CaptivePortal-SSL.pid");
 			break;
+		case "vhosts-http":
+			$running = is_pid_running("{$g['varrun_path']}/vhosts-http.pid");
+			break;
 		default:
 			$running = is_service_running($service['name']);
 	}

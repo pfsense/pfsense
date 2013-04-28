@@ -388,7 +388,7 @@
 		<![CDATA[
 		if (is_array($config['gateways']['gateway_item']))
 			foreach ($config['gateways']['gateway_item'] as $gw)
-				if ($gw['name'] == 'WANGW')
+				if ($gw['name'] == 'WANGW' || (!empty($config['wizardtemp']['wangateway']) && $gw['gateway'] == $config['wizardtemp']['wangateway']))
 					$config['wizardtemp']['wangateway'] = $gw['gateway'];
 		]]>
 	</stepbeforeformdisplay>
@@ -573,10 +573,16 @@
 			if (!is_array($config['gateways']['gateway_item']))
 				$config['gateways']['gateway_item'] = array();
 			$found = false;
+			$defaultgw_found = false;
 			foreach ($config['gateways']['gateway_item'] as & $gw) {
-				if ($gw['name'] == 'WANGW') {
+				if ($gw['interface'] != "wan")
+					continue;
+				if (isset($gw['defaultgw']))
+					$defaultgw_found = true;
+				if ($gw['name'] == 'WANGW' || (!empty($config['wizardtemp']['wangateway']) && $gw['gateway'] == $config['wizardtemp']['wangateway'])) {
 					$found = true;
 					$gw['gateway'] = $config['wizardtemp']['wangateway'];
+					$config['interfaces']['wan']['gateway'] = $gw['name'];
 				}
 			}
 			if (!$found) {
@@ -586,10 +592,10 @@
 				$newgw['name'] = "WANGW";
 				$newgw['weight'] = 1;
 				$newgw['descr'] = "WAN Gateway";
-				$newgw['defaultgw'] = true;
+				$newgw['defaultgw'] = !$defaultgw_found;
 				$config['gateways']['gateway_item'][] = $newgw;
+				$config['interfaces']['wan']['gateway'] = "WANGW";
 			}
-			$config['interfaces']['wan']['gateway'] = "WANGW";
 		}
 		unset($config['wizardtemp']);
 		write_config();

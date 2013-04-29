@@ -192,14 +192,15 @@ function disk_usage()
 	return $diskusage;
 }
 
-function swap_usage()
-{
-	$swapUsage = `/usr/sbin/swapinfo | /usr/bin/awk '{print $5;'}|/usr/bin/grep '%'`;
-	$swapUsage = ereg_replace('%', "", $swapUsage);
-	$swapUsage = rtrim($swapUsage);
 
-	return $swapUsage;
+ function swap_usage() {
+         $swapUsage = "";
+         exec("/usr/sbin/swapinfo | /usr/bin/awk '{print $5}' | /usr/bin/grep '%'", $swapUsage);
+         $swapUsage = ereg_replace('%', "", $swapUsage[0]);
+         $swapUsage = rtrim($swapUsage);
+         return $swapUsage;
 }
+
 
 function mem_usage() {
 	$memory = "";

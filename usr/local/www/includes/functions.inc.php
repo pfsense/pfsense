@@ -183,8 +183,7 @@ function get_temp() {
 	 return $temp_out;
 }
 
-function disk_usage()
-{
+function disk_usage() {
 	$dfout = "";
 	exec("/bin/df -h | /usr/bin/grep -w '/' | /usr/bin/awk '{ print $5 }' | /usr/bin/cut -d '%' -f 1", $dfout);
 	$diskusage = trim($dfout[0]);
@@ -192,14 +191,16 @@ function disk_usage()
 	return $diskusage;
 }
 
-function swap_usage()
-{
-	$swapUsage = `/usr/sbin/swapinfo | /usr/bin/awk '{print $5;'}|/usr/bin/grep '%'`;
-	$swapUsage = ereg_replace('%', "", $swapUsage);
-	$swapUsage = rtrim($swapUsage);
+
+function swap_usage() {
+	$swapUsage = "";
+	exec("/usr/sbin/swapinfo | /usr/bin/awk '{print $5}' | /usr/bin/grep '%'", $swapUsage);
+	$swapUsage = ereg_replace('%', "", $swapUsage[0]);
+	 $swapUsage = rtrim($swapUsage);
 
 	return $swapUsage;
 }
+
 
 function mem_usage() {
 	$memory = "";

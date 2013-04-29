@@ -33,9 +33,9 @@ fi
 
 if [ -e /root/force_fsck ]; then
 	echo "Forcing filesystem check..."
-	/sbin/fsck -fy -t ufs /
+	/sbin/fsck -y -t ufs /
 	if [ "$PLATFORM" = "nanobsd" ]; then
-		/sbin/fsck -fy -t ufs /cf
+		/sbin/fsck -y -t ufs /cf
 	fi
 fi
 
@@ -81,9 +81,9 @@ else
 	# Mount /. If it fails run a fsck.
 	if [ "$PLATFORM" = "nanobsd" ]; then
 		export PKG_TMPDIR=/root/
-		/sbin/mount -uw / || (/sbin/fsck -fy; /sbin/mount -uw /)
+		/sbin/mount -uw / || (/sbin/fsck -y /; /sbin/fsck -y /cf; /sbin/mount -uw /)
 	else 
-		/sbin/mount -a || (/sbin/fsck -fy; /sbin/mount -a)
+		/sbin/mount -a || (/sbin/fsck -y /; /sbin/mount -a)
 	fi
 
 	# If /conf is a directory, convert it to a symlink to /cf/conf
@@ -98,11 +98,11 @@ else
 
 	if [ ! "$PLATFORM" = "jail" ]; then
 		# Check to see if a compact flash mountpoint exists
-		# If it fails to mount then run a fsck -fy
+		# If it fails to mount then run a fsck -y
 		if grep -q cf /etc/fstab; then
 			/sbin/mount -w /cf 2>/dev/null
 			/sbin/mount -uw /cf || \
-				(/sbin/umount /cf; /sbin/fsck -fy /cf; /sbin/mount -w /cf)
+				(/sbin/umount /cf; /sbin/fsck -y /cf; /sbin/mount -w /cf)
 		fi
 	fi
 

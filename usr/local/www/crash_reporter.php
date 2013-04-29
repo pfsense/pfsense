@@ -41,112 +41,56 @@
 require("guiconfig.inc");
 require("functions.inc");
 require("captiveportal.inc");
+require("./classes/CrashReporter.inc");
 
 define("FILE_SIZE", 450000);
 
-function upload_crash_report($files) {
-	global $g;
-	$post = array();
-	$counter = 0;
-	foreach($files as $file) {
-		$post["file{$counter}"] = "@{$file}";
-		$counter++;
-	}
-    $ch = curl_init();
-    curl_setopt($ch, CURLOPT_HEADER, 0);
-    curl_setopt($ch, CURLOPT_VERBOSE, 0);
-    curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-    curl_setopt($ch, CURLOPT_USERAGENT, "Mozilla/4.0 (compatible;)");
-    curl_setopt($ch, CURLOPT_URL, $g['crashreporterurl']);
-    curl_setopt($ch, CURLOPT_POST, true);
-    curl_setopt($ch, CURLOPT_POSTFIELDS, $post); 
-    $response = curl_exec($ch);
-	return $response;
-}
-
-function output_crash_reporter_html($crash_reports) {
-	echo "<strong>" . gettext("Unfortunately we have detected a programming bug.") . "</strong></p>";
-	echo gettext("Would you like to submit the programming debug logs to the pfSense developers for inspection?") . "</p>";
-	echo "<p>";
-	echo "<i>" . gettext("Please double check the contents to ensure you are comfortable sending this information before clicking Yes.") . "</i><br/>";
-	echo "<p>";
-	echo gettext("Contents of crash reports") . ":<br/>";
-	echo "<textarea readonly rows='40' cols='65' name='crashreports'>{$crash_reports}</textarea>";
-	echo "<p/>";
-	echo "<input name=\"Submit\" type=\"submit\" class=\"formbtn\" value=\"" . gettext("Yes") .  "\">" . gettext(" - Submit this to the developers for inspection");
-	echo "<p/><input name=\"Submit\" type=\"submit\" class=\"formbtn\" value=\"" . gettext("No") .  "\">" . gettext(" - Just delete the crash report and take me back to the Dashboard");
-	echo "<p/>";
-	echo "</form>";
-}
-
 $pgtitle = array(gettext("Diagnostics"),gettext("Crash reporter"));
-include('head.inc');
 
-$crash_report_header = "Crash report begins.  Anonymous machine information:\n\n";
-$crash_report_header .= php_uname("m") . "\n";
-$crash_report_header .= php_uname("r") . "\n";
-$crash_report_header .= php_uname("v") . "\n";
-$crash_report_header .= "\nCrash report details:\n";
-
-exec("/usr/bin/grep -vi warning /tmp/PHP_errors.log", $php_errors);
+require('head.inc');
 
 ?>
 
 <body link="#0000CC" vlink="#0000CC" alink="#0000CC">
 
-<?php include("fbegin.inc"); ?>
+<?php require("fbegin.inc"); ?>
 
 	<form action="crash_reporter.php" method="post">
 
 <?php
+        $crash_reporter = new CrashReporter();
+        $crash_reporter->get_php_errors();
+        $crash_reporter->prepare_report_header();
+        $crash_reporter->get_crash_files();
+        
 	if (gettext($_POST['Submit']) == "Yes") {
 		echo gettext("Processing...");
-		if (!is_dir("/var/crash"))
-			mwexec("/bin/mkdir -p /var/crash");
-		@file_put_contents("/var/crash/crashreport_header.txt", $crash_report_header);
-		if(file_exists("/tmp/PHP_errors.log"))
-			exec("cp /tmp/PHP_errors.log /var/crash/");
-		exec("/usr/bin/gzip /var/crash/*");
-		$files_to_upload = glob("/var/crash/*");
+                $crash_reporter->submit_form();
 		echo "<p/>";
 		echo gettext("Uploading...");
 		ob_flush();
 		flush();
-		if(is_array($files_to_upload)) {
-			$resp = upload_crash_report($files_to_upload);
-			exec("rm /var/crash/*");
-			// Erase the contents of the PHP error log
-			fclose(fopen("/tmp/PHP_errors.log", 'w'));
+		if(count($crash_reporter->files_to_upload) > 0 ) {
+                        $resp = $crash_reporter->upload();
+                        $crash_reporter->purge_crash_logs();
 			echo "<p/>";
 			print_r($resp);
-			echo "<p/><a href='/'>" . gettext("Continue") . "</a>" . gettext(" and delete crash report files from local disk.");
+			echo "<p/><a href='/'>" . gettext('Continue') . 
+                                "</a>" . gettext('and delete crash report files from local disk.');
 		} else {
 			echo "Could not find any crash files.";
 		}
 	} else if(gettext($_POST['Submit']) == "No") {
-		exec("rm /var/crash/*");
-		// Erase the contents of the PHP error log
-		fclose(fopen("/tmp/PHP_errors.log", 'w'));
-		Header("Location: /");
+                $crash_reporter->purge_crash_logs();
+                Header("Location: /");
 		exit;
 	} else {
-		$crash_files = glob("/var/crash/*");
-		$crash_reports = $crash_report_header;
-		if (count($php_errors) > 0) {
-			$crash_reports .= "\nPHP Errors:\n";
-			$crash_reports .= implode("\n", $php_errors) . "\n\n";
-		}
-		if(is_array($crash_files))	{
-			foreach($crash_files as $cf) {
-				if(filesize($cf) < FILE_SIZE) {
-					$crash_reports .= "\nFilename: {$cf}\n";
-					$crash_reports .= file_get_contents($cf);
-				}
-			}
-		} else { 
-			echo "Could not locate any crash data.";
-		}
-		output_crash_reporter_html($crash_reports);
+            $crash_reporter->prepare_report();
+            //glob() gives an empty array if path is not found
+            if(count($crash_reporter->crash_files) <= 0) {
+                echo "Could not find any crash files."; 
+            }            
+            echo $crash_reporter->output_html();
 	}
 ?>
 

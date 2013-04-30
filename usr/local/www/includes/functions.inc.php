@@ -32,7 +32,7 @@ function get_gatewaystats() {
 	$data = "";
 	$isfirst = true;
 	foreach($a_gateways as $gname => $gw) {
-		if(!$isfirst) 
+		if(!$isfirst)
 			$data .= ",";
 		$isfirst = false;
 		$data .= $gw['name'] . ",";
@@ -81,9 +81,9 @@ function get_uptime() {
 	$boottime = $matches[1];
 	$uptime = time() - $boottime;
 
-	if(intval($boottime) == 0) 
+	if(intval($boottime) == 0)
 		return;
-	if(intval($uptime) == 0) 
+	if(intval($uptime) == 0)
 		return;
 
 	$updays = (int)($uptime / 86400);
@@ -91,7 +91,7 @@ function get_uptime() {
 	$uphours = (int)($uptime / 3600);
 	$uptime %= 3600;
 	$upmins = (int)($uptime / 60);
-        $uptime %= 60;
+	$uptime %= 60;
 	$upsecs = (int)($uptime);
 
 	$uptimestr = "";
@@ -100,15 +100,15 @@ function get_uptime() {
 	else if ($updays > 0)
 		$uptimestr .= "1 Day ";
 
-        if ($uphours > 1)
-           $hours = "s";
-        
-        if ($upmins > 1)
-           $minutes = "s";
-        
-        if ($upmins > 1)
-           $seconds = "s";
-        
+	if ($uphours > 1)
+		$hours = "s";
+
+	if ($upmins > 1)
+		$minutes = "s";
+
+	if ($upmins > 1)
+		$seconds = "s";
+
 	$uptimestr .= sprintf("%02d Hour$hours %02d Minute$minutes %02d Second$seconds", $uphours, $upmins, $upsecs);
 	return $uptimestr;
 }
@@ -120,7 +120,7 @@ function cpu_usage() {
 	$cpuTicks = array_combine($diff, explode(" ", `/sbin/sysctl -n kern.cp_time`));
 	sleep($duration);
 	$cpuTicks2 = array_combine($diff, explode(" ", `/sbin/sysctl -n kern.cp_time`));
-	
+
 	$totalStart = array_sum($cpuTicks);
 	$totalEnd = array_sum($cpuTicks2);
 
@@ -133,7 +133,7 @@ function cpu_usage() {
 
 	// Calculate the percentage used
 	$cpuUsage = floor(100 * ($totalUsed / ($totalEnd - $totalStart)));
-	
+
 	return $cpuUsage;
 }
 
@@ -141,50 +141,40 @@ function get_pfstate() {
 	global $config;
 	$matches = "";
 	if (isset($config['system']['maximumstates']) and $config['system']['maximumstates'] > 0)
-	        $maxstates="{$config['system']['maximumstates']}";
+		$maxstates="{$config['system']['maximumstates']}";
 	else
-	        $maxstates=pfsense_default_state_size();
+		$maxstates=pfsense_default_state_size();
 	$curentries = `/sbin/pfctl -si |grep current`;
 	if (preg_match("/([0-9]+)/", $curentries, $matches)) {
-	     $curentries = $matches[1];
+		$curentries = $matches[1];
 	}
 	return $curentries . "/" . $maxstates;
 }
 
 function has_temp() {
-
 	/* no known temp monitors available at present */
-	
+
 	/* should only reach here if there is no hardware monitor */
 	return false;
 }
 
 function get_hwtype() {
-
 	return;
 }
 
 function get_temp() {
-//	switch(get_hwtype()) {
-//		default:
-//			return;
-//	}
-//
-//	return $ret;
+	$temp_out = "";
+	exec("/sbin/sysctl dev.cpu.0.temperature | /usr/bin/awk '{ print $2 }' | /usr/bin/cut -d 'C' -f 1", $dfout);
+	$temp_out = trim($dfout[0]);
+	if ($temp_out == "") {
+		exec("/sbin/sysctl hw.acpi.thermal.tz0.temperature | /usr/bin/awk '{ print $2 }' | /usr/bin/cut -d 'C' -f 1", $dfout);
+		$temp_out = trim($dfout[0]);
+	}
 
-         $temp_out = "";
-	 exec("/sbin/sysctl dev.cpu.0.temperature | /usr/bin/awk '{ print $2 }' | /usr/bin/cut -d 'C' -f 1", $dfout);
-         $temp_out = trim($dfout[0]);
-         if ($temp_out == "") {
-           exec("/sbin/sysctl hw.acpi.thermal.tz0.temperature | /usr/bin/awk '{ print $2 }' | /usr/bin/cut -d 'C' -f 1", $dfout);
-   	   $temp_out = trim($dfout[0]);
-         }
-
-	 return $temp_out;
+	return $temp_out;
 }
 
-function disk_usage()
-{
+function disk_usage() {
 	$dfout = "";
 	exec("/bin/df -h | /usr/bin/grep -w '/' | /usr/bin/awk '{ print $5 }' | /usr/bin/cut -d '%' -f 1", $dfout);
 	$diskusage = trim($dfout[0]);
@@ -192,8 +182,7 @@ function disk_usage()
 	return $diskusage;
 }
 
-function swap_usage()
-{
+function swap_usage() {
 	$swapUsage = `/usr/sbin/swapinfo | /usr/bin/awk '{print $5;'}|/usr/bin/grep '%'`;
 	$swapUsage = ereg_replace('%', "", $swapUsage);
 	$swapUsage = rtrim($swapUsage);
@@ -205,7 +194,7 @@ function mem_usage() {
 	$memory = "";
 	exec("/sbin/sysctl -n vm.stats.vm.v_page_count vm.stats.vm.v_inactive_count " .
 		"vm.stats.vm.v_cache_count vm.stats.vm.v_free_count", $memory);
-	
+
 	$totalMem = $memory[0];
 	$availMem = $memory[1] + $memory[2] + $memory[3];
 	$usedMem = $totalMem - $availMem;
@@ -215,7 +204,6 @@ function mem_usage() {
 }
 
 function update_date_time() {
-	
 	$datetime = date("D M j G:i:s T Y");
 	return $datetime;
 }
@@ -242,7 +230,6 @@ function get_load_average() {
 }
 
 function get_interfacestats() {
-	
 	global $config;
 	//build interface list for widget use
 	$ifdescrs = get_configured_interface_list();
@@ -256,10 +243,10 @@ function get_interfacestats() {
 	$array_collisions = array();
 	$array_interrupt = array();
 	$new_data = "";
-	
+
 	//build data arrays
 	foreach ($ifdescrs as $ifdescr => $ifname){
-		$ifinfo = get_interface_info($ifdescr);	
+		$ifinfo = get_interface_info($ifdescr);
 			$new_data .= "{$ifinfo['inpkts']},";
 			$new_data .= "{$ifinfo['outpkts']},";
 			$new_data .= format_bytes($ifinfo['inbytes']) . ",";
@@ -277,9 +264,8 @@ function get_interfacestats() {
 			else
 				$new_data .= "0,";
 	}//end for
-	
-	return $new_data;
 
+	return $new_data;
 }
 
 function get_interfacestatus() {
@@ -288,7 +274,7 @@ function get_interfacestatus() {
 
 	//build interface list for widget use
 	$ifdescrs = get_configured_interface_with_descr();
-	
+
 	foreach ($ifdescrs as $ifdescr => $ifname){
 		$ifinfo = get_interface_info($ifdescr);
 		$data .= $ifname . ",";
@@ -305,10 +291,10 @@ function get_interfacestatus() {
 		$data .= ",";
 		if ($ifinfo['status'] != "down")
 			$data .= htmlspecialchars($ifinfo['media']);
-			
+
 		$data .= "~";
-		
-	}	
+
+	}
 	return $data;
 }
 

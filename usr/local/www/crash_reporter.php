@@ -58,14 +58,14 @@ require('head.inc');
 	<form action="crash_reporter.php" method="post">
 
 <?php
-        $crash_reporter = new CrashReporter();
-        $crash_reporter->get_php_errors();
-        $crash_reporter->prepare_report_header();
-        $crash_reporter->get_crash_files();
-        
+	$crash_reporter = new CrashReporter();
+	$crash_reporter->get_php_errors();
+	$crash_reporter->prepare_report_header();
+	$crash_reporter->get_crash_files();
+	
 	if (gettext($_POST['Submit']) == "Yes") {
 		echo gettext("Processing...");
-                $crash_reporter->submit_form();
+	$crash_reporter->submit_form();
 		echo "<p/>";
 		echo gettext("Uploading...");
 		ob_flush();
@@ -81,16 +81,16 @@ require('head.inc');
 			echo "Could not find any crash files.";
 		}
 	} else if(gettext($_POST['Submit']) == "No") {
-                $crash_reporter->purge_crash_logs();
-                Header("Location: /");
+	$crash_reporter->purge_crash_logs();
+	Header("Location: /");
 		exit;
 	} else {
-            $crash_reporter->prepare_report();
-            //glob() gives an empty array if path is not found
-            if(count($crash_reporter->crash_files) <= 0) {
-                echo "Could not find any crash files."; 
-            }            
-            echo $crash_reporter->output_html();
+	$crash_reporter->prepare_report();
+	//glob() gives an empty array if path is not found
+	if(count($crash_reporter->crash_files) <= 0) {
+	echo "Could not find any crash files."; 
+	}            
+	echo $crash_reporter->output_html();
 	}
 ?>
 

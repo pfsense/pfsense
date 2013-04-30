@@ -16,7 +16,7 @@ require_once 'PHPUnit/Autoload.php';
 class CrashReporterTest extends PHPUnit_Framework_TestCase {
 
     public function testNULL() {
-        $this->assertNotNull(new CrashReporter());
+	$this->assertNotNull(new CrashReporter());
     }
     
     public function testOutputHTML() {
@@ -25,16 +25,16 @@ class CrashReporterTest extends PHPUnit_Framework_TestCase {
     }
     
     public function testPrepareReportHeader() {
-        $cr = new CrashReporter();
-        $this->assertNotNull($cr->prepare_report_header());
+	$cr = new CrashReporter();
+	$this->assertNotNull($cr->prepare_report_header());
     }
     public function testPrepareReport() {
-        $cr = new CrashReporter();
-        $this->assertNotNull($cr->prepare_report());
+	$cr = new CrashReporter();
+	$this->assertNotNull($cr->prepare_report());
     }
     public function testGetCrashFiles() {
-        $cr = new CrashReporter();
-        $this->assertInternalType('array', $cr->get_crash_files());
+	$cr = new CrashReporter();
+	$this->assertInternalType('array', $cr->get_crash_files());
     }
 }
 

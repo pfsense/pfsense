@@ -70,7 +70,7 @@ if [ "$PLATFORM" = "pfSense" ]; then
 	if [ -f /usr/bin/grep ]; then
 		ZFSROOT=`/sbin/zfs mount | /usr/bin/grep ' /$' | /usr/bin/cut -d ' ' -f 1`
 		if [ "$ZFSROOT" != "" ]; then
-			echo /sbin/zfs set readonly=off $ZFSROOT
+			/sbin/zfs set readonly=off $ZFSROOT
 		fi
 	fi
 fi

@@ -183,9 +183,9 @@ function disk_usage() {
 }
 
 function swap_usage() {
-	$swap_info = exec_command("/usr/sbin/swapinfo");
+	exec("/usr/sbin/swapinfo", $swap_info);
 	$swap_used = "";
-	foreach (explode("\n", $swap_info) as $line)
+	foreach ($swap_info as $line)
 		if (preg_match('/(\d+)%$/', $line, $matches)) {
 			$swap_used = $matches[1];
 			break;

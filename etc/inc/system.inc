@@ -233,11 +233,6 @@ function system_hosts_generate() {
 	$syscfg = $config['system'];
 	$dnsmasqcfg = $config['dnsmasq'];
 
-	if (!is_array($dnsmasqcfg['hosts'])) {
-		$dnsmasqcfg['hosts'] = array();
-	}
-	$hostscfg = $dnsmasqcfg['hosts'];
-
 	$hosts = "127.0.0.1	localhost localhost.{$syscfg['domain']}\n";
 	$lhosts = "";
 	$dhosts = "";
@@ -259,39 +254,44 @@ function system_hosts_generate() {
 		}
 	}
 
-	foreach ($hostscfg as $host) {
-		if ($host['host'])
-			$lhosts .= "{$host['ip']}	{$host['host']}.{$host['domain']} {$host['host']}\n";
-		else
-			$lhosts .= "{$host['ip']}	{$host['domain']}\n";
-		if (!is_array($host['aliases']) || !is_array($host['aliases']['item']))
-			continue;
-		foreach ($host['aliases']['item'] as $alias) {
-			if ($alias['host'])
-				$lhosts .= "{$host['ip']}	{$alias['host']}.{$alias['domain']} {$alias['host']}\n";
-			else
-				$lhosts .= "{$host['ip']}	{$alias['domain']}\n";
-		}
-	}
-	if (isset($dnsmasqcfg['regdhcpstatic']) && is_array($config['dhcpd'])) {
-		foreach ($config['dhcpd'] as $dhcpif => $dhcpifconf)
-			if(is_array($dhcpifconf['staticmap']) && isset($dhcpifconf['enable']))
-					foreach ($dhcpifconf['staticmap'] as $host)
-						if ($host['ipaddr'] && $host['hostname'])
-							$dhosts .= "{$host['ipaddr']}	{$host['hostname']}.{$syscfg['domain']} {$host['hostname']}\n";
-	}
-	if (isset($dnsmasqcfg['regdhcpstatic']) && is_array($config['dhcpdv6'])) {
-		foreach ($config['dhcpdv6'] as $dhcpif => $dhcpifconf)
-			if(is_array($dhcpifconf['staticmap']) && isset($dhcpifconf['enable']))
-					foreach ($dhcpifconf['staticmap'] as $host)
-						if ($host['ipaddrv6'] && $host['hostname'])
-							$dhosts .= "{$host['ipaddrv6']}	{$host['hostname']}.{$syscfg['domain']} {$host['hostname']}\n";
-	}
+	if (isset($dnsmasq['enable'])) {
+		if (!is_array($dnsmasqcfg['hosts']))
+			$dnsmasqcfg['hosts'] = array();
 
-	if (isset($dnsmasqcfg['dhcpfirst']))
-		$hosts .= $dhosts . $lhosts;
-	else
-		$hosts .= $lhosts . $dhosts;
+		foreach ($dnsmasqcfg['hosts'] as $host) {
+			if ($host['host'])
+				$lhosts .= "{$host['ip']}	{$host['host']}.{$host['domain']} {$host['host']}\n";
+			else
+				$lhosts .= "{$host['ip']}	{$host['domain']}\n";
+			if (!is_array($host['aliases']) || !is_array($host['aliases']['item']))
+				continue;
+			foreach ($host['aliases']['item'] as $alias) {
+				if ($alias['host'])
+					$lhosts .= "{$host['ip']}	{$alias['host']}.{$alias['domain']} {$alias['host']}\n";
+				else
+					$lhosts .= "{$host['ip']}	{$alias['domain']}\n";
+			}
+		}
+		if (isset($dnsmasqcfg['regdhcpstatic']) && is_array($config['dhcpd'])) {
+			foreach ($config['dhcpd'] as $dhcpif => $dhcpifconf)
+				if(is_array($dhcpifconf['staticmap']) && isset($dhcpifconf['enable']))
+						foreach ($dhcpifconf['staticmap'] as $host)
+							if ($host['ipaddr'] && $host['hostname'])
+								$dhosts .= "{$host['ipaddr']}	{$host['hostname']}.{$syscfg['domain']} {$host['hostname']}\n";
+		}
+		if (isset($dnsmasqcfg['regdhcpstatic']) && is_array($config['dhcpdv6'])) {
+			foreach ($config['dhcpdv6'] as $dhcpif => $dhcpifconf)
+				if(is_array($dhcpifconf['staticmap']) && isset($dhcpifconf['enable']))
+						foreach ($dhcpifconf['staticmap'] as $host)
+							if ($host['ipaddrv6'] && $host['hostname'])
+								$dhosts .= "{$host['ipaddrv6']}	{$host['hostname']}.{$syscfg['domain']} {$host['hostname']}\n";
+		}
+
+		if (isset($dnsmasqcfg['dhcpfirst']))
+			$hosts .= $dhosts . $lhosts;
+		else
+			$hosts .= $lhosts . $dhosts;
+	}
 
 	/*
 	 * Do not remove this because dhcpleases monitors with kqueue it needs to be 
@@ -299,7 +299,7 @@ function system_hosts_generate() {
 	 */
 	if (file_exists("{$g['varrun_path']}/dhcpleases.pid")) {
 		sigkillbypid("{$g['varrun_path']}/dhcpleases.pid", "TERM");
-                @unlink("{$g['varrun_path']}/dhcpleases.pid");
+		@unlink("{$g['varrun_path']}/dhcpleases.pid");
 	}
 	$fd = fopen("{$g['varetc_path']}/hosts", "w");
 	if (!$fd) {
@@ -320,7 +320,7 @@ function system_dhcpleases_configure() {
 	if ($g['platform'] == 'jail')
 		return;
 	/* Start the monitoring process for dynamic dhcpclients. */
-	if (isset($config['dnsmasq']['regdhcp'])) {
+	if (isset($config['dnsmasq']['enable']) && isset($config['dnsmasq']['regdhcp'])) {
 		/* Make sure we do not error out */
 		mwexec("/bin/mkdir -p {$g['dhcpd_chroot_path']}/var/db");
 		if (!file_exists("{$g['dhcpd_chroot_path']}/var/db/dhcpd.leases"))

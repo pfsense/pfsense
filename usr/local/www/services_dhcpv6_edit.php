@@ -166,7 +166,7 @@ if ($_POST) {
 
 		if(isset($config['dhcpdv6'][$if]['enable'])) {
 			mark_subsystem_dirty('staticmaps');
-			if (isset($config['dnsmasq']['regdhcpstatic']))	
+			if (isset($config['dnsmasq']['enable']) && isset($config['dnsmasq']['regdhcpstatic']))
 				mark_subsystem_dirty('hosts');
 		}
 

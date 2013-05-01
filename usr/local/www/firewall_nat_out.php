@@ -305,13 +305,12 @@ include("head.inc");
 <body link="#0000CC" vlink="#0000CC" alink="#0000CC">
 <?php include("fbegin.inc"); ?>
 <form action="firewall_nat_out.php" method="post" name="iform">
-<script type="text/javascript" language="javascript" src="/javascript/row_toggle.js">
-</script>
+<script type="text/javascript" language="javascript" src="/javascript/row_toggle.js"></script>
 <?php if ($savemsg) print_info_box($savemsg); ?>
-<?php if (is_subsystem_dirty('natconf')): ?><p>
-<?php print_info_box_np(gettext("The NAT configuration has been changed.")."<br>".gettext("You must apply the changes in order for them to take effect."));?><br>
+<?php if (is_subsystem_dirty('natconf')): ?>
+<?php print_info_box_np(gettext("The NAT configuration has been changed.")."<br/>".gettext("You must apply the changes in order for them to take effect."));?><br/>
 <?php endif; ?>
-<table width="100%" border="0" cellpadding="0" cellspacing="0">  <tr><td>
+<table width="100%" border="0" cellpadding="0" cellspacing="0" summary="firwall nat outbound">  <tr><td>
 <?php
 	$tab_array = array();
 	$tab_array[] = array(gettext("Port Forward"), false, "firewall_nat.php");
@@ -324,18 +323,18 @@ include("head.inc");
   <tr>
     <td>
 	<div id="mainarea">
-              <table class="tabcont" width="100%" border="0" cellpadding="0" cellspacing="0">
+              <table class="tabcont" width="100%" border="0" cellpadding="0" cellspacing="0" summary="main area">
 				<tr><td align="right"><b><?=gettext("Mode:"); ?></b></td>
                   <td>
-                      &nbsp;&nbsp;<input name="advancedoripsec" type="radio" id="ipsecpassthru" value="ipsecpassthru" <?php if (isset($config['nat']['ipsecpassthru']['enable'])) echo "checked";?>>
+                      &nbsp;&nbsp;<input name="advancedoripsec" type="radio" id="ipsecpassthru" value="ipsecpassthru" <?php if (isset($config['nat']['ipsecpassthru']['enable'])) echo "checked=\"checked\"";?> />
                       <strong><?=gettext("Automatic outbound NAT rule generation"); ?><br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<?=gettext("(IPsec passthrough included)");?></strong>
                   </td>
 
                   <td>
-                      &nbsp;&nbsp;<input name="advancedoripsec" type="radio" id="advancedoutbound" value="advancedoutboundnat" <?php if (isset($config['nat']['advancedoutbound']['enable'])) echo "checked";?>>
+                      &nbsp;&nbsp;<input name="advancedoripsec" type="radio" id="advancedoutbound" value="advancedoutboundnat" <?php if (isset($config['nat']['advancedoutbound']['enable'])) echo "checked=\"checked\"";?> />
                       <strong><?=gettext("Manual Outbound NAT rule generation") . "<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;" . gettext("(AON - Advanced Outbound NAT)");?></strong></td>
                   <td valign="middle" align="left">
-					<input name="save" type="submit" class="formbtn" value="<?=gettext("Save");?>">
+					<input name="save" type="submit" class="formbtn" value="<?=gettext("Save");?>" />
 					&nbsp;<br/>&nbsp;
                   </td>
                 </tr>
@@ -350,7 +349,7 @@ include("head.inc");
 					</td>
 				</tr>
               </table>
-              <table class="tabcont" width="100%" border="0" cellpadding="0" cellspacing="0">
+              <table class="tabcont" width="100%" border="0" cellpadding="0" cellspacing="0" summary="mappings">
 				<tr><td colspan="5"><b>&nbsp;<?=gettext("Mappings:"); ?></b></td></tr>
 				<tr><td>&nbsp;</td></tr>
                 <tr id="frheader">
@@ -366,26 +365,26 @@ include("head.inc");
 		  <td width="10%" class="listhdrr"><?=gettext("Static Port");?></td>
                   <td width="25%" class="listhdr"><?=gettext("Description");?></td>
                   <td width="5%" class="list">
-                    <table border="0" cellspacing="0" cellpadding="1">
+                    <table border="0" cellspacing="0" cellpadding="1" summary="add">
                       <tr>
 			<td width="17"></td>
-                        <td><a href="firewall_nat_out_edit.php?after=-1"><img src="/themes/<?= $g['theme']; ?>/images/icons/icon_plus.gif" width="17" height="17" border="0" title="<?=gettext("add new mapping");?>"></a></td>
+                        <td><a href="firewall_nat_out_edit.php?after=-1"><img src="/themes/<?= $g['theme']; ?>/images/icons/icon_plus.gif" width="17" height="17" border="0" title="<?=gettext("add new mapping");?>" alt="add" /></a></td>
                       </tr>
                     </table>
 		  </td>
                 </tr>
               <?php $nnats = $i = 0; foreach ($a_out as $natent): ?>
                 <tr valign="top" id="fr<?=$nnats;?>">
-                  <td class="listt"><input type="checkbox" id="frc<?=$nnats;?>" name="rule[]" value="<?=$i;?>" onClick="fr_bgcolor('<?=$nnats;?>')" style="margin: 0; padding: 0; width: 15px; height: 15px;"></td>
+                  <td class="listt"><input type="checkbox" id="frc<?=$nnats;?>" name="rule[]" value="<?=$i;?>" onclick="fr_bgcolor('<?=$nnats;?>')" style="margin: 0; padding: 0; width: 15px; height: 15px;" /></td>
                   <td class="listt" align="center"></td>
-                  <td class="listlr" onClick="fr_toggle(<?=$nnats;?>)" id="frd<?=$nnats;?>" ondblclick="document.location='firewall_nat_out_edit.php?id=<?=$nnats;?>';">
+                  <td class="listlr" onclick="fr_toggle(<?=$nnats;?>)" id="frd<?=$nnats;?>" ondblclick="document.location='firewall_nat_out_edit.php?id=<?=$nnats;?>';">
                     <?php echo htmlspecialchars(convert_friendly_interface_to_friendly_descr($natent['interface'])); ?>
                                         &nbsp;
                   </td>
-                  <td class="listr" onClick="fr_toggle(<?=$nnats;?>)" id="frd<?=$nnats;?>" ondblclick="document.location='firewall_nat_out_edit.php?id=<?=$nnats;?>';">
+                  <td class="listr" onclick="fr_toggle(<?=$nnats;?>)" id="frd<?=$nnats;?>" ondblclick="document.location='firewall_nat_out_edit.php?id=<?=$nnats;?>';">
                     <?=$natent['source']['network'];?>
                   </td>
-                  <td class="listr" onClick="fr_toggle(<?=$nnats;?>)" id="frd<?=$nnats;?>" ondblclick="document.location='firewall_nat_out_edit.php?id=<?=$nnats;?>';">
+                  <td class="listr" onclick="fr_toggle(<?=$nnats;?>)" id="frd<?=$nnats;?>" ondblclick="document.location='firewall_nat_out_edit.php?id=<?=$nnats;?>';">
                     <?php
 			echo ($natent['protocol']) ? $natent['protocol'] . '/' : "" ;
                       if (!$natent['sourceport'])
@@ -394,7 +393,7 @@ include("head.inc");
                           echo $natent['sourceport'];
                     ?>
                   </td>
-                  <td class="listr" onClick="fr_toggle(<?=$nnats;?>)" id="frd<?=$nnats;?>" ondblclick="document.location='firewall_nat_out_edit.php?id=<?=$nnats;?>';">
+                  <td class="listr" onclick="fr_toggle(<?=$nnats;?>)" id="frd<?=$nnats;?>" ondblclick="document.location='firewall_nat_out_edit.php?id=<?=$nnats;?>';">
                     <?php
                       if (isset($natent['destination']['any']))
                           echo "*";
@@ -405,7 +404,7 @@ include("head.inc");
                       }
                     ?>
                   </td>
-                  <td class="listr" onClick="fr_toggle(<?=$nnats;?>)" id="frd<?=$nnats;?>" ondblclick="document.location='firewall_nat_out_edit.php?id=<?=$nnats;?>';">
+                  <td class="listr" onclick="fr_toggle(<?=$nnats;?>)" id="frd<?=$nnats;?>" ondblclick="document.location='firewall_nat_out_edit.php?id=<?=$nnats;?>';">
                     <?php
 			echo ($natent['protocol']) ? $natent['protocol'] . '/' : "" ;
                       if (!$natent['dstport'])
@@ -414,7 +413,7 @@ include("head.inc");
                           echo $natent['dstport'];
                     ?>
                   </td>
-                  <td class="listr" onClick="fr_toggle(<?=$nnats;?>)" id="frd<?=$nnats;?>" ondblclick="document.location='firewall_nat_out_edit.php?id=<?=$nnats;?>';">
+                  <td class="listr" onclick="fr_toggle(<?=$nnats;?>)" id="frd<?=$nnats;?>" ondblclick="document.location='firewall_nat_out_edit.php?id=<?=$nnats;?>';">
                     <?php
 					if (isset($natent['nonat']))
 						echo '<I>NO NAT</I>';
@@ -426,7 +425,7 @@ include("head.inc");
 						echo $natent['target'];
                     ?>
                   </td>
-                  <td class="listr" onClick="fr_toggle(<?=$nnats;?>)" id="frd<?=$nnats;?>" ondblclick="document.location='firewall_nat_out_edit.php?id=<?=$nnats;?>';">
+                  <td class="listr" onclick="fr_toggle(<?=$nnats;?>)" id="frd<?=$nnats;?>" ondblclick="document.location='firewall_nat_out_edit.php?id=<?=$nnats;?>';">
                     <?php
                       if (!$natent['natport'])
                           echo "*";
@@ -434,45 +433,45 @@ include("head.inc");
                           echo $natent['natport'];
                     ?>
                   </td>
-                  <td class="listr" onClick="fr_toggle(<?=$nnats;?>)" id="frd<?=$nnats;?>" ondblclick="document.location='firewall_nat_out_edit.php?id=<?=$nnats;?>';">
+                  <td class="listr" onclick="fr_toggle(<?=$nnats;?>)" id="frd<?=$nnats;?>" ondblclick="document.location='firewall_nat_out_edit.php?id=<?=$nnats;?>';" align="center">
                     <?php
 			if(isset($natent['staticnatport']))
-			    echo "<CENTER>" . gettext("YES") . "</CENTER>";
+			    echo gettext("YES");
 			else
-			    echo "<CENTER>" . gettext("NO") . "</CENTER>";
+			    echo gettext("NO");
                     ?>		    
                   </td>
-                  <td class="listbg"  onClick="fr_toggle(<?=$nnats;?>)" ondblclick="document.location='firewall_nat_out_edit.php?id=<?=$nnats;?>';">
+                  <td class="listbg" onclick="fr_toggle(<?=$nnats;?>)" ondblclick="document.location='firewall_nat_out_edit.php?id=<?=$nnats;?>';">
                     <?=htmlspecialchars($natent['descr']);?>&nbsp;
                   </td>
-                  <td class="list" valign="middle" nowrap>
-                    <table border="0" cellspacing="0" cellpadding="1">
+                  <td class="list nowrap" valign="middle">
+                    <table border="0" cellspacing="0" cellpadding="1" summary="move">
                       <tr>
-                        <td><input onmouseover="fr_insline(<?=$nnats;?>, true)" onmouseout="fr_insline(<?=$nnats;?>, false)" name="move_<?=$i;?>" src="/themes/<?= $g['theme']; ?>/images/icons/icon_left.gif" title="<?=gettext("move selected rules before this rule");?>" height="17" type="image" width="17" border="0"></td>
-                        <td><a href="firewall_nat_out_edit.php?id=<?=$i;?>"><img src="/themes/<?= $g['theme']; ?>/images/icons/icon_e.gif" width="17" height="17" border="0" title="<?=gettext("edit mapping");?>"></a></td>
+                        <td><input onmouseover="fr_insline(<?=$nnats;?>, true)" onmouseout="fr_insline(<?=$nnats;?>, false)" name="move_<?=$i;?>" src="/themes/<?= $g['theme']; ?>/images/icons/icon_left.gif" title="<?=gettext("move selected rules before this rule");?>" type="image" style="height:17;width:17;border:0" /></td>
+                        <td><a href="firewall_nat_out_edit.php?id=<?=$i;?>"><img src="/themes/<?= $g['theme']; ?>/images/icons/icon_e.gif" width="17" height="17" border="0" title="<?=gettext("edit mapping");?>" alt="edit" /></a></td>
                       </tr>
                       <tr>
-			<td align="center" valign="middle"><a href="firewall_nat_out.php?act=del&id=<?=$i;?>" onclick="return confirm('<?=gettext("Do you really want to delete this rule?");?>')"><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_x.gif" width="17" height="17" border="0" title="<?=gettext("delete rule");?>"></a></td>
-                        <td><a href="firewall_nat_out_edit.php?dup=<?=$i;?>"><img src="/themes/<?= $g['theme']; ?>/images/icons/icon_plus.gif" title="<?=gettext("add a new nat based on this one");?>" width="17" height="17" border="0"></a></td>
+			<td align="center" valign="middle"><a href="firewall_nat_out.php?act=del&amp;id=<?=$i;?>" onclick="return confirm('<?=gettext("Do you really want to delete this rule?");?>')"><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_x.gif" width="17" height="17" border="0" title="<?=gettext("delete rule");?>" alt="delete" /></a></td>
+                        <td><a href="firewall_nat_out_edit.php?dup=<?=$i;?>"><img src="/themes/<?= $g['theme']; ?>/images/icons/icon_plus.gif" title="<?=gettext("add a new nat based on this one");?>" width="17" height="17" border="0" alt="duplicate" /></a></td>
                       </tr>
                     </table>
               <?php $i++; $nnats++; endforeach; ?>
                 <tr>
                   <td class="list" colspan="11"></td>
-                  <td class="list" valign="middle" nowrap>
-                    <table border="0" cellspacing="0" cellpadding="1">
+                  <td class="list nowrap" valign="middle">
+                    <table border="0" cellspacing="0" cellpadding="1" summary="edit">
                       <tr>
-                        <td><?php if ($nnats == 0): ?><img src="/themes/<?= $g['theme']; ?>/images/icons/icon_left_d.gif" width="17" height="17" title="<?=gettext("move selected mappings to end");?>" border="0"><?php else: ?><input name="move_<?=$i;?>" type="image" src="/themes/<?= $g['theme']; ?>/images/icons/icon_left.gif" width="17" height="17" title="<?=gettext("move selected mappings to end");?>" border="0"><?php endif; ?></td>
-                        <td><a href="firewall_nat_out_edit.php"><img src="/themes/<?= $g['theme']; ?>/images/icons/icon_plus.gif" width="17" height="17" border="0" title="<?=gettext("add new mapping");?>"></a></td>
+                        <td><?php if ($nnats == 0): ?><img src="/themes/<?= $g['theme']; ?>/images/icons/icon_left_d.gif" width="17" height="17" title="<?=gettext("move selected mappings to end");?>" border="0" alt="move" /><?php else: ?><input name="move_<?=$i;?>" type="image" src="/themes/<?= $g['theme']; ?>/images/icons/icon_left.gif" style="width:17;height:17;border:0" title="<?=gettext("move selected mappings to end");?>" /><?php endif; ?></td>
+                        <td><a href="firewall_nat_out_edit.php"><img src="/themes/<?= $g['theme']; ?>/images/icons/icon_plus.gif" width="17" height="17" border="0" title="<?=gettext("add new mapping");?>" alt="add" /></a></td>
                       </tr>
                       <tr>
-                        <td><?php if ($nnats == 0): ?><img src="/themes/<?= $g['theme']; ?>/images/icons/icon_x_d.gif" width="17" height="17" title="<?=gettext("delete selected rules");?>" border="0"><?php else: ?><input name="del" type="image" src="/themes/<?= $g['theme']; ?>/images/icons/icon_x.gif" width="17" height="17" title="<?=gettext("delete selected mappings");?>" onclick="return confirm('<?=gettext("Do you really want to delete the selected mappings?");?>')"><?php endif; ?></td>
+                        <td><?php if ($nnats == 0): ?><img src="/themes/<?= $g['theme']; ?>/images/icons/icon_x_d.gif" width="17" height="17" title="<?=gettext("delete selected rules");?>" border="0" alt="delete" /><?php else: ?><input name="del" type="image" src="/themes/<?= $g['theme']; ?>/images/icons/icon_x.gif" style="width:17;height:17" title="<?=gettext("delete selected mappings");?>" onclick="return confirm('<?=gettext("Do you really want to delete the selected mappings?");?>')" /><?php endif; ?></td>
                       </tr>
                     </table></td>
                 </tr>
                 <tr>
                   <td colspan="12">
-			<p><span class="vexpl"><span class="red"><strong><?=gettext("Note:"); ?><br>
+			<p><span class="vexpl"><span class="red"><strong><?=gettext("Note:"); ?><br/>
 			</strong></span>
 			<?=gettext("With automatic outbound NAT enabled, a mapping is automatically created " .
 			"for each interface's subnet (except WAN-type connections) and the rules " .
@@ -486,7 +485,7 @@ include("head.inc");
 			<?= gettext(" may also be required.") ?>
 			<br/><br/>
 			<?= gettext("To completely disable outbound NAT, switch to Manual Outbound NAT then delete any " .
-			"NAT rules that appear in the list.") ?>
+			"NAT rules that appear in the list.") ?></span></p>
                     </td>
                 </tr>
 

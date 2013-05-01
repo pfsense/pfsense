@@ -147,25 +147,24 @@ include("head.inc");
 ?>
 
 <body link="#0000CC" vlink="#0000CC" alink="#0000CC">
-<script type="text/javascript" src="/javascript/suggestions.js">
-</script>
-<script type="text/javascript" src="/javascript/autosuggest.js">
-</script>
+<script type="text/javascript" src="/javascript/suggestions.js"></script>
+<script type="text/javascript" src="/javascript/autosuggest.js"></script>
 
 <?php include("fbegin.inc"); ?>
 <?php if ($input_errors) print_input_errors($input_errors); ?>
             <form action="firewall_nat_npt_edit.php" method="post" name="iform" id="iform">
-              <table width="100%" border="0" cellpadding="6" cellspacing="0">
+              <table width="100%" border="0" cellpadding="6" cellspacing="0" summary="firewall nat npt edit">
 				<tr>
 					<td colspan="2" valign="top" class="listtopic"><?=gettext("Edit NAT NPt entry"); ?></td>
 				</tr>	
 		<tr>
                         <td width="22%" valign="top" class="vncellreq"><?=gettext("Disabled"); ?></td>
                         <td width="78%" class="vtable">
-                                <input name="disabled" type="checkbox" id="disabled" value="yes" <?php if ($pconfig['disabled']) echo "checked"; ?>>
+                                <input name="disabled" type="checkbox" id="disabled" value="yes" <?php if ($pconfig['disabled']) echo "checked=\"checked\""; ?> />
                                 <strong><?=gettext("Disable this rule"); ?></strong><br />
                                 <span class="vexpl"><?=gettext("Set this option to disable this rule without removing it from the list."); ?></span>
-		</td>
+                        </td>
+		</tr>
 		<tr>
 			  <td width="22%" valign="top" class="vncellreq"><?=gettext("Interface"); ?></td>
 			  <td width="78%" class="vtable">
@@ -198,31 +197,31 @@ include("head.inc");
 
 					foreach ($interfaces as $iface => $ifacename): 
 					?>
-					<option value="<?=$iface;?>" <?php if ($iface == $pconfig['interface']) echo "selected"; ?>>
+					<option value="<?=$iface;?>" <?php if ($iface == $pconfig['interface']) echo "selected=\"selected\""; ?>>
 					<?=htmlspecialchars($ifacename);?>
 					</option>
 					<?php endforeach; ?>
-				</select><br>
-			  <span class="vexpl"><?=gettext("Choose which interface this rule applies to"); ?>.<br>
+				</select><br/>
+			  <span class="vexpl"><?=gettext("Choose which interface this rule applies to"); ?>.<br/>
 			  <?=gettext("Hint: in most cases, you'll want to use WAN here"); ?>.</span></td>
 		</tr>
 		<tr>
                         <td width="22%" valign="top" class="vncellreq"><?=gettext("Internal IPv6 Prefix"); ?></td>
                         <td width="78%" class="vtable">
-                                <input name="srcnot" type="checkbox" id="srcnot" value="yes" <?php if ($pconfig['srcnot']) echo "checked"; ?>>
+                                <input name="srcnot" type="checkbox" id="srcnot" value="yes" <?php if ($pconfig['srcnot']) echo "checked=\"checked\""; ?> />
                                 <strong><?=gettext("not"); ?></strong>
                                 <br />
                                 <?=gettext("Use this option to invert the sense of the match."); ?>
                                 <br />
                                 <br />
-                                <table border="0" cellspacing="0" cellpadding="0">
+                                <table border="0" cellspacing="0" cellpadding="0" summary="internal">
                                         <tr>
                                                 <td><?=gettext("Address:"); ?>&nbsp;&nbsp;</td>
                                                 <td>
-                                                        <input name="src" type="text" class="formfldalias" id="src" size="20" value="<?php if (!is_specialnet($pconfig['src'])) echo htmlspecialchars($pconfig['src']);?>"> /
+                                                        <input name="src" type="text" class="formfldalias" id="src" size="20" value="<?php if (!is_specialnet($pconfig['src'])) echo htmlspecialchars($pconfig['src']);?>" /> /
                                                         <select name="srcmask" class="formselect" id="srcmask">
 <?php                                           for ($i = 128; $i > 0; $i--): ?>
-                                                        <option value="<?=$i;?>" <?php if ($i == $pconfig['srcmask']) echo "selected"; ?>><?=$i;?></option>
+                                                        <option value="<?=$i;?>" <?php if ($i == $pconfig['srcmask']) echo "selected=\"selected\""; ?>><?=$i;?></option>
 <?php                                           endfor; ?>
                                                         </select>
                                                 </td>
@@ -237,43 +236,44 @@ external prefix.");
 		<tr>
                         <td width="22%" valign="top" class="vncellreq"><?=gettext("Destination IPv6 Prefix"); ?></td>
                         <td width="78%" class="vtable">
-                                <input name="dstnot" type="checkbox" id="dstnot" value="yes" <?php if ($pconfig['dstnot']) echo "checked"; ?>>
+                                <input name="dstnot" type="checkbox" id="dstnot" value="yes" <?php if ($pconfig['dstnot']) echo "checked=\"checked\""; ?> />
                                 <strong><?=gettext("not"); ?></strong>
                                         <br />
                                 <?=gettext("Use this option to invert the sense of the match."); ?>
                                         <br />
                                         <br />
-                                <table border="0" cellspacing="0" cellpadding="0">
-                                        </tr>
+                                <table border="0" cellspacing="0" cellpadding="0" summary="destination">
+                                        <tr>
                                                 <td><?=gettext("Address:"); ?>&nbsp;&nbsp;</td>
                                                 <td>
-                                                        <input name="dst" type="text" class="formfldalias" id="dst" size="20" value="<?php if (!is_specialnet($pconfig['dst'])) echo htmlspecialchars($pconfig['dst']);?>">
+                                                        <input name="dst" type="text" class="formfldalias" id="dst" size="20" value="<?php if (!is_specialnet($pconfig['dst'])) echo htmlspecialchars($pconfig['dst']);?>" />
                                                         /
                                                         <select name="dstmask" class="formselect" id="dstmask">
 <?php
                                                         for ($i = 128; $i > 0; $i--): ?>
-                                                                <option value="<?=$i;?>" <?php if ($i == $pconfig['dstmask']) echo "selected"; ?>><?=$i;?></option>
+                                                                <option value="<?=$i;?>" <?php if ($i == $pconfig['dstmask']) echo "selected=\"selected\""; ?>><?=$i;?></option>
 <?php                                           endfor; ?>
                                                         </select>
                                                 </td>
                                         </tr>
                                 </table>
 			<br/>
-                     <span class="vexpl"><?=gettext("Enter the Global Unicast routable IPv6 prefix here"); ?><br></span>
+                     <span class="vexpl"><?=gettext("Enter the Global Unicast routable IPv6 prefix here"); ?><br/></span>
+                     </td>
                 </tr>
                 <tr> 
                   <td width="22%" valign="top" class="vncell"><?=gettext("Description"); ?></td>
                   <td width="78%" class="vtable"> 
-                    <input name="descr" type="text" class="formfld unknown" id="descr" size="40" value="<?=htmlspecialchars($pconfig['descr']);?>"> 
+                    <input name="descr" type="text" class="formfld unknown" id="descr" size="40" value="<?=htmlspecialchars($pconfig['descr']);?>" />
                     <br/> <span class="vexpl"><?=gettext("You may enter a description here " .
                     "for your reference (not parsed)."); ?></span></td>
                 </tr>
                 <tr> 
                   <td width="22%" valign="top">&nbsp;</td>
                   <td width="78%"> 
-                    <input name="Submit" type="submit" class="formbtn" value="<?=gettext("Save"); ?>"> <input type="button" class="formbtn" value="<?=gettext("Cancel"); ?>" onclick="history.back()">
+                    <input name="Submit" type="submit" class="formbtn" value="<?=gettext("Save"); ?>" /> <input type="button" class="formbtn" value="<?=gettext("Cancel"); ?>" onclick="history.back()" />
                     <?php if (isset($id) && $a_npt[$id]): ?>
-                    <input name="id" type="hidden" value="<?=htmlspecialchars($id);?>"> 
+                    <input name="id" type="hidden" value="<?=htmlspecialchars($id);?>" />
                     <?php endif; ?>
                   </td>
                 </tr>

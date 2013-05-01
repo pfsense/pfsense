@@ -334,8 +334,8 @@ include("head.inc");
 
 <script type="text/javascript" src="/javascript/suggestions.js"></script>
 <script type="text/javascript" src="/javascript/autosuggest.js"></script>
-<script language="JavaScript">
-<!--
+<script type="text/javascript">
+//<![CDATA[
 var portsenabled = 1;
 function staticportchange() {
 	if(document.iform.staticnatport.checked) {
@@ -419,7 +419,7 @@ function poolopts_change() {
 		jQuery('#targetip_subnet').val('0');
 	}
 }
-//-->
+//]]>
 </script>
 </head>
 
@@ -427,7 +427,7 @@ function poolopts_change() {
 <?php include("fbegin.inc"); ?>
 <?php if ($input_errors) print_input_errors($input_errors); ?>
             <form action="firewall_nat_out_edit.php" method="post" name="iform" id="iform">
-              <table width="100%" border="0" cellpadding="6" cellspacing="1">
+              <table width="100%" border="0" cellpadding="6" cellspacing="1" summary="firewall nat outbound edit">
 				<tr>
 					<td colspan="2" valign="top" class="listtopic"><?=gettext("Edit Advanced Outbound NAT entry");?></td>
 				</tr>
@@ -438,9 +438,9 @@ function poolopts_change() {
 	        <tr>
                   <td width="22%" valign="top" class="vncell"><?=gettext("Do not NAT");?></td>
                   <td width="78%" class="vtable">
-			<input type="checkbox" name="nonat" id="nonat" onClick="nonat_change();" <?php if(isset($pconfig['nonat'])) echo " CHECKED"; ?>>
+			<input type="checkbox" name="nonat" id="nonat" onclick="nonat_change();" <?php if(isset($pconfig['nonat'])) echo " checked=\"checked\""; ?> />
                      <span class="vexpl"><?=gettext("Enabling this option will disable NAT for traffic matching this rule and stop processing Outbound NAT rules.");?>
-		     <br><?=gettext("Hint: in most cases, you won't use this option.");?></span></td>
+		     <br/><?=gettext("Hint: in most cases, you won't use this option.");?></span></td>
                 </tr>
 	        <tr>
                   <td width="22%" valign="top" class="vncellreq"><?=gettext("Interface");?></td>
@@ -473,42 +473,44 @@ function poolopts_change() {
 					$interfaces["openvpn"] = "OpenVPN";
 
 				foreach ($interfaces as $iface => $ifacename): ?>
-				<option value="<?=$iface;?>" <?php if ($iface == $pconfig['interface']) echo "selected"; ?>>
+				<option value="<?=$iface;?>" <?php if ($iface == $pconfig['interface']) echo "selected=\"selected\""; ?>>
 				<?=htmlspecialchars($ifacename);?>
 				</option>
 				<?php endforeach; ?>
-			</select><br>
-                     <span class="vexpl"><?=gettext("Choose which interface this rule applies to.");?><br>
+			</select><br/>
+                     <span class="vexpl"><?=gettext("Choose which interface this rule applies to.");?><br/>
                      <?=gettext("Hint: in most cases, you'll want to use WAN here.");?></span></td>
                 </tr>
 		<tr>
 			<td width="22%" valign="top" class="vncellreq"><?=gettext("Protocol");?></td>
 			<td width="78%" class="vtable">
-				<select name="protocol" class="formselect" onChange="proto_change();">
+				<select name="protocol" class="formselect" onchange="proto_change();">
 				<?php $protocols = explode(" ", "any TCP UDP TCP/UDP ICMP ESP AH GRE IGMP carp pfsync");
                                 foreach ($protocols as $proto): ?>
-                                        <option value="<?=strtolower($proto);?>" <?php if (strtolower($proto) == $pconfig['protocol']) echo "selected"; ?>><?=htmlspecialchars($proto);?></option>
+                                        <option value="<?=strtolower($proto);?>" <?php if (strtolower($proto) == $pconfig['protocol']) echo "selected=\"selected\""; ?>><?=htmlspecialchars($proto);?></option>
 				<?php endforeach; ?>
-				 </select> <br> <span class="vexpl"><?=gettext("Choose which protocol this rule should match.");?><br />
-				 <?php printf(gettext("Hint: in most cases, you should specify %s any %s here."),"<em>","</em>&nbsp");?></span>
+				 </select> <br/> <span class="vexpl"><?=gettext("Choose which protocol this rule should match.");?><br />
+				 <?php printf(gettext("Hint: in most cases, you should specify %s any %s here."),"<em>","</em>&nbsp;");?></span>
 			</td>
 		</tr>
                 <tr>
                   <td width="22%" valign="top" class="vncellreq"><?=gettext("Source");?></td>
                   <td width="78%" class="vtable">
-                    <table border="0" cellspacing="1" cellpadding="1">
+                    <table border="0" cellspacing="1" cellpadding="1" summary="source">
                       <tr>
 		        <td><?=gettext("Type:");?>&nbsp;&nbsp;</td>
 			<td>
-			    <select name="source_type" class="formselect" onChange="sourcesel_change()">
-                              <option value="any" <?php if ($pconfig['source'] == "any") echo "selected"; ?>><?=gettext("any");?></option>
-                              <option value="network" <?php if ($pconfig['source'] != "any") echo "selected"; ?>><?=gettext("Network");?></option>
+			    <select name="source_type" class="formselect" onchange="sourcesel_change()">
+                              <option value="any" <?php if ($pconfig['source'] == "any") echo "selected=\"selected\""; ?>><?=gettext("any");?></option>
+                              <option value="network" <?php if ($pconfig['source'] != "any") echo "selected=\"selected\""; ?>><?=gettext("Network");?></option>
                             </select>
-			</td></tr>
+			</td>
+                      </tr>
+                      <tr>
                         <td><?=gettext("Address:");?>&nbsp;&nbsp;</td>
-                        <td><input name="source" type="text" autocomplete="off" class="formfldalias" id="source" size="20" value="<?=htmlspecialchars($pconfig['source']);?>">/<select name="source_subnet" class="formfld" id="source_subnet">
+                        <td><input name="source" type="text" autocomplete="off" class="formfldalias" id="source" size="20" value="<?=htmlspecialchars($pconfig['source']);?>" />/<select name="source_subnet" class="formfld" id="source_subnet">
 <?php for ($i = 32; $i >= 0; $i--): ?>
-                          <option value="<?=$i;?>"<?php if ($i == $pconfig['source_subnet']) echo " selected"; ?>><?=$i;?></option>
+                          <option value="<?=$i;?>"<?php if ($i == $pconfig['source_subnet']) echo " selected=\"selected\""; ?>><?=$i;?></option>
 <?php endfor; ?>
                           </select></td>
                       </tr>
@@ -518,35 +520,34 @@ function poolopts_change() {
                       </tr>
                       <tr name="sport_tr" id="sport_tr">
                         <td><?=gettext("Source port:");?>&nbsp;&nbsp;</td>
-                        <td><input name="sourceport" type="text" autocomplete="off" class="formfldalias" id="sourceport" size="5" value="<?=htmlspecialchars($pconfig['sourceport']);?>"> <?=gettext("(leave 
-blank for any)");?></td>
+                        <td><input name="sourceport" type="text" autocomplete="off" class="formfldalias" id="sourceport" size="5" value="<?=htmlspecialchars($pconfig['sourceport']);?>" /> <?=gettext("(leave blank for any)");?></td>
                       </tr>
                     </table></td>
                 </tr>
                 <tr>
                   <td width="22%" valign="top" class="vncellreq"><?=gettext("Destination");?></td>
                   <td width="78%" class="vtable">
-<input name="destination_not" type="checkbox" id="destination_not" value="yes" <?php if ($pconfig['destination_not']) echo "checked"; ?>>
-                    <strong><?=gettext("not");?></strong><br>
-                    <?=gettext("Use this option to invert the sense of the match.");?><br>
-                    <br>
-                    <table border="0" cellspacing="1" cellpadding="1">
+<input name="destination_not" type="checkbox" id="destination_not" value="yes" <?php if ($pconfig['destination_not']) echo "checked=\"checked\""; ?> />
+                    <strong><?=gettext("not");?></strong><br/>
+                    <?=gettext("Use this option to invert the sense of the match.");?><br/>
+                    <br/>
+                    <table border="0" cellspacing="1" cellpadding="1" summary="destination">
                       <tr>
                         <td><?=gettext("Type:");?>&nbsp;&nbsp;</td>
-                        <td><select name="destination_type" class="formselect" onChange="typesel_change()">
-                            <option value="any"<?php if ($pconfig['destination'] == "any") echo " selected"; ?>>
+                        <td><select name="destination_type" class="formselect" onchange="typesel_change()">
+                            <option value="any"<?php if ($pconfig['destination'] == "any") echo " selected=\"selected\""; ?>>
                             <?=gettext("any");?></option>
-                            <option value="network"<?php if ($pconfig['destination'] != "any") echo " selected"; ?>>
+                            <option value="network"<?php if ($pconfig['destination'] != "any") echo " selected=\"selected\""; ?>>
                             <?=gettext("Network");?></option>
                           </select></td>
                       </tr>
                       <tr>
                         <td><?=gettext("Address:");?>&nbsp;&nbsp;</td>
-                        <td><input name="destination" type="text" autocomplete="off" class="formfldalias" id="destination" size="20" value="<?=htmlspecialchars($pconfig['destination']);?>">
+                        <td><input name="destination" type="text" autocomplete="off" class="formfldalias" id="destination" size="20" value="<?=htmlspecialchars($pconfig['destination']);?>" />
                           /
                           <select name="destination_subnet" class="formselect" id="destination_subnet">
 <?php for ($i = 32; $i >= 0; $i--): ?>
-                            <option value="<?=$i;?>"<?php if ($i == $pconfig['destination_subnet']) echo " selected"; ?>><?=$i;?></option>
+                            <option value="<?=$i;?>"<?php if ($i == $pconfig['destination_subnet']) echo " selected=\"selected\""; ?>><?=$i;?></option>
 <?php endfor; ?>
                           </select> </td>
                       </tr>
@@ -557,8 +558,7 @@ blank for any)");?></td>
                       </tr>
                       <tr name="dport_tr" id="dport_tr">
                         <td><?=gettext("Destination port:");?>&nbsp;&nbsp;</td>
-                        <td><input name="dstport" type="text" autocomplete="off" class="formfldalias" id="dstport" size="5" value="<?=htmlspecialchars($pconfig['dstport']);?>"> <?=gettext("(leave blank for 
-any)");?></td>
+                        <td><input name="dstport" type="text" autocomplete="off" class="formfldalias" id="dstport" size="5" value="<?=htmlspecialchars($pconfig['dstport']);?>" /> <?=gettext("(leave blank for any)");?></td>
                       </tr>
                     </table>
 		  </td>
@@ -566,11 +566,11 @@ any)");?></td>
                 <tr name="transtable" id="transtable">
                   <td width="22%" valign="top" class="vncell"><?=gettext("Translation");?></td>
                   <td width="78%" class="vtable">
-			<table border="0" cellspacing="1" cellpadding="1">
+			<table border="0" cellspacing="1" cellpadding="1" summary="translation">
 			<tr>
 			  <td><?=gettext("Address:");?>&nbsp;&nbsp;</td>
-			  <td><select name="target" class="formselect" id="target" onChange="poolopts_change();">
-				<option value=""<?php if (!$pconfig['target']) echo " selected"; ?>><?=gettext("Interface address");?></option>
+			  <td><select name="target" class="formselect" id="target" onchange="poolopts_change();">
+				<option value=""<?php if (!$pconfig['target']) echo " selected=\"selected\""; ?>><?=gettext("Interface address");?></option>
 <?php	if (is_array($config['virtualip']['vip'])):
 		foreach ($config['virtualip']['vip'] as $sn):
 			if (isset($sn['noexpand']))
@@ -579,22 +579,22 @@ any)");?></td>
 				$start = ip2long32(gen_subnet($sn['subnet'], $sn['subnet_bits']));
 				$end = ip2long32(gen_subnet_max($sn['subnet'], $sn['subnet_bits']));
 				$len = $end - $start; ?>
-				<option value="<?=$sn['subnet'].'/'.$sn['subnet_bits'];?>" <?php if ($sn['subnet'].'/'.$sn['subnet_bits'] == $pconfig['target']) echo "selected"; ?>><?=htmlspecialchars("Subnet: {$sn['subnet']}/{$sn['subnet_bits']} ({$sn['descr']})");?></option>
+				<option value="<?=$sn['subnet'].'/'.$sn['subnet_bits'];?>" <?php if ($sn['subnet'].'/'.$sn['subnet_bits'] == $pconfig['target']) echo "selected=\"selected\""; ?>><?=htmlspecialchars("Subnet: {$sn['subnet']}/{$sn['subnet_bits']} ({$sn['descr']})");?></option>
 			<?php	for ($i = 0; $i <= $len; $i++):
 					$snip = long2ip32($start+$i);
 ?>
 				<option value="<?=$snip;?>" <?php if ($snip == $pconfig['target']) echo "selected"; ?>><?=htmlspecialchars("{$snip} ({$sn['descr']})");?></option>
 				<?php endfor; ?>
 			<?php else: ?>
-				<option value="<?=$sn['subnet'];?>" <?php if ($sn['subnet'] == $pconfig['target']) echo "selected"; ?>><?=htmlspecialchars("{$sn['subnet']} ({$sn['descr']})");?></option>
+				<option value="<?=$sn['subnet'];?>" <?php if ($sn['subnet'] == $pconfig['target']) echo "selected=\"selected\""; ?>><?=htmlspecialchars("{$sn['subnet']} ({$sn['descr']})");?></option>
 <?php 		endif; endforeach;
 	endif;
 	foreach ($a_aliases as $alias):
 		if ($alias['type'] != "host")
 			continue; ?>
-				<option value="<?=$alias['name'];?>" <?php if ($alias['name'] == $pconfig['target']) echo "selected"; ?>><?=htmlspecialchars("Host Alias: {$alias['name']} ({$alias['descr']})");?></option>
+				<option value="<?=$alias['name'];?>" <?php if ($alias['name'] == $pconfig['target']) echo "selected=\"selected\""; ?>><?=htmlspecialchars("Host Alias: {$alias['name']} ({$alias['descr']})");?></option>
 <?php	endforeach; ?>
-				<option value="other-subnet"<?php if($pconfig['target'] == "other-subnet") echo " selected"; ?>><?=gettext("Other Subnet (Enter Below)");?></option>
+				<option value="other-subnet"<?php if($pconfig['target'] == "other-subnet") echo " selected=\"selected\""; ?>><?=gettext("Other Subnet (Enter Below)");?></option>
 			  </select>
 			  </td>
 			</tr>
@@ -602,16 +602,16 @@ any)");?></td>
 			<tr id="target_network">
 				<td><?=gettext("Other Subnet:");?>&nbsp;&nbsp;</td>
 				<td>
-					<input name="targetip" type="text" class="formfld unknown" id="targetip" size="20" value="<?=htmlspecialchars($pconfig['targetip']);?>">/<select name="targetip_subnet" class="formfld" id="targetip_subnet">
+					<input name="targetip" type="text" class="formfld unknown" id="targetip" size="20" value="<?=htmlspecialchars($pconfig['targetip']);?>" />/<select name="targetip_subnet" class="formfld" id="targetip_subnet">
 <?php for ($i = 32; $i >= 0; $i--): ?>
-					<option value="<?=$i;?>"<?php if ($i == $pconfig['targetip_subnet']) echo " selected"; ?>><?=$i;?></option>
+					<option value="<?=$i;?>"<?php if ($i == $pconfig['targetip_subnet']) echo " selected=\"selected\""; ?>><?=$i;?></option>
 <?php endfor; ?>
 					</select>
 				</td>
 			</tr>
 
 			<tr><td>&nbsp;</td><td>
-				<span class="vexpl"><?=gettext("Packets matching this rule will be mapped to the IP address given here.");?><br>
+				<span class="vexpl"><?=gettext("Packets matching this rule will be mapped to the IP address given here.");?><br/>
 				<?=gettext("If you want this rule to apply to another IP address rather than the IP address of the interface chosen above, ".
 				"select it here (you will need to define ");?> <a href="firewall_virtual_ip.php"><?=gettext("Virtual IP");?></a> <?=gettext("addresses on the interface first).");?>
 				</span><br/>
@@ -620,13 +620,13 @@ any)");?></td>
 				<td valign="top">Pool Options</td>
 				<td>
 				<select name="poolopts" id="poolopts">
-					<option value=""                           <?php if ($pconfig['poolopts'] == ""                          ) echo "selected"; ?>><?=htmlspecialchars("Default"                        );?></option>
-					<option value="round-robin"                <?php if ($pconfig['poolopts'] == "round-robin"               ) echo "selected"; ?>><?=htmlspecialchars("Round Robin"                    );?></option>
-					<option value="round-robin sticky-address" <?php if ($pconfig['poolopts'] == "round-robin sticky-address") echo "selected"; ?>><?=htmlspecialchars("Round Robin with Sticky Address");?></option>
-					<option value="random"                     <?php if ($pconfig['poolopts'] == "random"                    ) echo "selected"; ?>><?=htmlspecialchars("Random"                         );?></option>
-					<option value="random sticky-address"      <?php if ($pconfig['poolopts'] == "random sticky-address"     ) echo "selected"; ?>><?=htmlspecialchars("Random with Sticky Address"     );?></option>
-					<option value="source-hash"                <?php if ($pconfig['poolopts'] == "source-hash"               ) echo "selected"; ?>><?=htmlspecialchars("Source Hash"                    );?></option>
-					<option value="bitmask"                    <?php if ($pconfig['poolopts'] == "bitmask"                   ) echo "selected"; ?>><?=htmlspecialchars("Bitmask"                        );?></option>
+					<option value=""                           <?php if ($pconfig['poolopts'] == ""                          ) echo "selected=\"selected\""; ?>><?=htmlspecialchars("Default"                        );?></option>
+					<option value="round-robin"                <?php if ($pconfig['poolopts'] == "round-robin"               ) echo "selected=\"selected\""; ?>><?=htmlspecialchars("Round Robin"                    );?></option>
+					<option value="round-robin sticky-address" <?php if ($pconfig['poolopts'] == "round-robin sticky-address") echo "selected=\"selected\""; ?>><?=htmlspecialchars("Round Robin with Sticky Address");?></option>
+					<option value="random"                     <?php if ($pconfig['poolopts'] == "random"                    ) echo "selected=\"selected\""; ?>><?=htmlspecialchars("Random"                         );?></option>
+					<option value="random sticky-address"      <?php if ($pconfig['poolopts'] == "random sticky-address"     ) echo "selected=\"selected\""; ?>><?=htmlspecialchars("Random with Sticky Address"     );?></option>
+					<option value="source-hash"                <?php if ($pconfig['poolopts'] == "source-hash"               ) echo "selected=\"selected\""; ?>><?=htmlspecialchars("Source Hash"                    );?></option>
+					<option value="bitmask"                    <?php if ($pconfig['poolopts'] == "bitmask"                   ) echo "selected=\"selected\""; ?>><?=htmlspecialchars("Bitmask"                        );?></option>
 				</select><br/>
 				<span class="vexpl">
 					<?=gettext("Only Round Robin types work with Host Aliases. Any type can be used with a Subnet.");?><br/>
@@ -640,14 +640,14 @@ any)");?></td>
 			</tr>
 			<tr name="tport_tr" id="tport_tr">
                           <td><?=gettext("Port:");?>&nbsp;&nbsp;</td>
-                          <td><input name="natport" type="text" class="formfld unknown" id="natport" size="5" value="<?=htmlspecialchars($pconfig['natport']);?>"></td>
+                          <td><input name="natport" type="text" class="formfld unknown" id="natport" size="5" value="<?=htmlspecialchars($pconfig['natport']);?>" /></td>
 			</tr>
 			<tr name="tporttext_tr" id="tporttext_tr"><td>&nbsp;</td><td>
                         <span class="vexpl"><?=gettext("Enter the source port for the outbound NAT mapping.");?></span>
 			</td></tr>
                         <tr name="tportstatic_tr" id="tportstatic_tr">
                           <td><?=gettext("Static-port:");?>&nbsp;&nbsp;</td>
-                          <td><input onChange="staticportchange();" name="staticnatport" type="checkbox" class="formfld" id="staticnatport" size="5"<?php if($pconfig['staticnatport']) echo " CHECKED";?>></td>
+                          <td><input onchange="staticportchange();" name="staticnatport" type="checkbox" class="formfld" id="staticnatport" size="5"<?php if($pconfig['staticnatport']) echo " checked=\"checked\"";?> /></td>
 			</tr>
 			</table>
 		  </td>
@@ -655,15 +655,15 @@ any)");?></td>
 				<tr>
 				  <td width="22%" valign="top" class="vncell"><?=gettext("No XMLRPC Sync");?></td>
 				  <td width="78%" class="vtable">
-					<input value="yes" name="nosync" type="checkbox" class="formfld" id="nosync"<?php if($pconfig['nosync']) echo " CHECKED"; ?>><br>
+					<input value="yes" name="nosync" type="checkbox" class="formfld" id="nosync"<?php if($pconfig['nosync']) echo " checked=\"checked\""; ?> /><br/>
 						<?=gettext("Hint: This prevents the rule on Master from automatically syncing to other CARP members. This does NOT prevent the rule from being overwritten on Slave.");?>
 				  </td>
 				</tr>
                 <tr>
                   <td width="22%" valign="top" class="vncell"><?=gettext("Description");?></td>
                   <td width="78%" class="vtable">
-                    <input name="descr" type="text" class="formfld unknown" id="descr" size="40" value="<?=htmlspecialchars($pconfig['descr']);?>">
-                    <br> <span class="vexpl"><?=gettext("You may enter a description here " .
+                    <input name="descr" type="text" class="formfld unknown" id="descr" size="40" value="<?=htmlspecialchars($pconfig['descr']);?>" />
+                    <br/> <span class="vexpl"><?=gettext("You may enter a description here " .
                     "for your reference (not parsed).");?></span></td>
           </tr>
 <?php
@@ -701,16 +701,16 @@ $has_updated_time = (isset($a_out[$id]['updated']) && is_array($a_out[$id]['upda
                 <tr>
                   <td width="22%" valign="top">&nbsp;</td>
                   <td width="78%">
-                    <input name="Submit" type="submit" class="formbtn" value="<?=gettext("Save"); ?>"> <input type="button" class="formbtn" value="<?=gettext("Cancel");?>" onclick="history.back()">
+                    <input name="Submit" type="submit" class="formbtn" value="<?=gettext("Save"); ?>" /> <input type="button" class="formbtn" value="<?=gettext("Cancel");?>" onclick="history.back()" />
                     <?php if (isset($id) && $a_out[$id]): ?>
-                    <input name="id" type="hidden" value="<?=htmlspecialchars($id);?>">
+                    <input name="id" type="hidden" value="<?=htmlspecialchars($id);?>" />
                     <?php endif; ?>
-                    <input name="after" type="hidden" value="<?=htmlspecialchars($after);?>">
+                    <input name="after" type="hidden" value="<?=htmlspecialchars($after);?>" />
                   </td>
                 </tr>
               </table>
 </form>
-<script language="JavaScript">
+<script type="text/javascript">
 //<![CDATA[
 	sourcesel_change();
 	typesel_change();

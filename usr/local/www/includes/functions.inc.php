@@ -154,13 +154,13 @@ function get_pfstate() {
 	$current_key = key(preg_grep("/current/",$curentries));
 	
 	if(!$current_key)
-        return 0;
+	return 0;
 
-    $current_line = $curentries[$current_key];
+	$current_line = $curentries[$current_key];
 
-    if (preg_match("/([0-9]+)/", $current_line, $matches)) {
-    	$curentries = $matches[1];
-    }
+	if (preg_match("/([0-9]+)/", $current_line, $matches)) {
+			$curentries = $matches[1];
+	}
 
 	return $curentries . "/" . $maxstates;
 }

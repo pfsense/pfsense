@@ -228,8 +228,7 @@ function get_cpufreq() {
 }
 
 function get_load_average() {
-	$load_average = "";
-	exec("/usr/bin/uptime | /usr/bin/sed 's/^.*: //'", $load_average);
+	$load_average = sys_getloadavg();
 	return $load_average[0];
 }
 

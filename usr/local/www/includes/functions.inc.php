@@ -144,10 +144,24 @@ function get_pfstate() {
 		$maxstates="{$config['system']['maximumstates']}";
 	else
 		$maxstates=pfsense_default_state_size();
-	$curentries = `/sbin/pfctl -si |grep current`;
-	if (preg_match("/([0-9]+)/", $curentries, $matches)) {
-		$curentries = $matches[1];
-	}
+	
+	//TODO
+	//we should make sure that pfsense_default_state_size() doesn't return 0
+	if(!$maxstates)
+		return 0;
+	
+	exec("/sbin/pfctl -si", $curentries);
+	$current_key = key(preg_grep("/current/",$curentries));
+	
+	if(!$current_key)
+        return 0;
+
+    $current_line = $curentries[$current_key];
+
+    if (preg_match("/([0-9]+)/", $current_line, $matches)) {
+    	$curentries = $matches[1];
+    }
+
 	return $curentries . "/" . $maxstates;
 }
 

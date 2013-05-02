@@ -150,8 +150,6 @@ function get_pfstate() {
 	exec("/sbin/pfctl -si", $curentries);
 	$current_key = key(preg_grep("/current/",$curentries));
 	
-	if(!$current_key)
-	    return "-" . "/" $maxstates;
 
 	$current_line = $curentries[$current_key];
 

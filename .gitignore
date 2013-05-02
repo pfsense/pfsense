@@ -2,4 +2,3 @@
 _notes/
 # Ignore Vim swap files
 .*.swp
-/nbproject/private/

@@ -228,8 +228,11 @@ function get_cpufreq() {
 }
 
 function get_load_average() {
+	$func = function($value) {
+		return sprintf("%.2f", round( $value, 2));
+	};
 	$load_average = sys_getloadavg();
-	return $load_average[0];
+	return join(array_map($func,$load_average),', ');
 }
 
 function get_interfacestats() {

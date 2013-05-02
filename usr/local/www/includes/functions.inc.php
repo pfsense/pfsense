@@ -145,18 +145,19 @@ function get_pfstate() {
 	else
 		$maxstates=pfsense_default_state_size();
 	
-	
-	
 	exec("/sbin/pfctl -si", $curentries);
 	$current_key = key(preg_grep("/current/",$curentries));
 	
 
-	$current_line = $curentries[$current_key];
-
-	if (preg_match("/([0-9]+)/", $current_line, $matches)) {
-			$curentries = $matches[1];
+	if(!$current_key) {
+		$current_entries = "-";
+	}else {
+		$current_line = $curentries[$current_key];
+		if (preg_match("/([0-9]+)/", $current_line, $matches)) {
+		$curentries = $matches[1];
+		}
 	}
-
+	
 	return $curentries . "/" . $maxstates;
 }
 

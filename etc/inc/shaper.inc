@@ -2712,6 +2712,7 @@ class dummynet_class {
         var $buckets;
         /* mask parameters */
         var $mask;
+	var $maskvalue;
         var $noerror;
 
         /* Accessor functions */
@@ -2721,11 +2722,17 @@ class dummynet_class {
         function GetLink() {
                 return $this->link;
         }
-	function Getmask() {
+	function GetMask() {
 		return $this->mask;
 	}
 	function SetMask($mask) {
 		$this->mask = $mask;
+	}
+	function GetMaskValue() {
+		return $this->maskvalue;
+	}
+	function SetMaskValue($maskvalue) {
+		$this->maskvalue = $maskvalue;
 	}
 	function &GetParent() {
 		return $this->qparent;
@@ -2812,6 +2819,8 @@ class dummynet_class {
 			$input_errors[] = gettext("Queue names must be alphanumeric and _ or - only.");
         	if (!empty($data['name']) && !preg_match("/^[a-zA-Z0-9_-]+$/", $data['name']))
 			$input_errors[] = gettext("Queue names must be alphanumeric and _ or - only.");
+        if (!empty($data['maskvalue']) && ($data['maskvalue'] <> "") && !is_ipaddrv4($data['maskvalue']))
+			$input_errors[] = gettext("Mask value must be dotted quad IPV4 address.");
 	}
 }
 
@@ -2963,6 +2972,10 @@ class dnpipe_class extends dummynet_class {
               		$this->SetMask($q['mask']);
 		else
               		$this->SetMask("");
+		if (isset($q['maskvalue']) && $q['maskvalue'] <> "")
+			$this->SetMaskValue($q['maskvalue']);
+		else
+			$this->SetMaskValue("");
 		if (isset($q['buckets']) && $q['buckets'] <> "")
               		$this->SetBuckets($q['buckets']);
 		else
@@ -3048,13 +3061,22 @@ class dnpipe_class extends dummynet_class {
 
 		$mask = $this->GetMask();
 		if (!empty($mask)) {
-			/* XXX TODO extend this to support more complicated masks */
 			switch ($mask) {
 			case 'srcaddress':
-				$pfq_rule .= " mask src-ip 0xffffffff ";
+				$pfq_rule .= " mask src-ip 0x";
+				$maskvalue = $this->GetMaskValue();
+				if (!empty($maskvalue) && ($maskvalue <> ""))
+					$pfq_rule .= return_hex_ipv4($maskvalue) . " ";
+				else
+					$pfq_rule .= "ffffffff ";
 				break;
 			case 'dstaddress':
-				$pfq_rule .= " mask dst-ip 0xffffffff ";
+				$pfq_rule .= " mask dst-ip 0x";
+				$maskvalue = $this->GetMaskValue();
+				if (!empty($maskvalue) && ($maskvalue <> ""))
+					$pfq_rule .= return_hex_ipv4($maskvalue) . " ";
+				else
+					$pfq_rule .= "ffffffff ";
 				break;
 			default:
 				break;
@@ -3229,6 +3251,14 @@ EOD;
 		      .  "be created for each source/destination IP address encountered, \n"
 		      .  "respectively. This makes it possible to easily specify bandwidth \n"
 		      .  "limits per host.") . "</span>";
+		$form .= "<input type=\"text\" class=\"formfld unknown\" size=\"20\" id=\"maskvalue\" name=\"maskvalue\" value=\"";
+		$form .= $this->GetMaskValue();
+		$form .= "\" />";
+		$form .= "&nbsp;<br/>";
+		$form .= "<span class=\"vexpl\">" . gettext("If 'source' or 'destination' is chosen, \n"
+		      .  "leaving the mask value blank will create one pipe per host. Otherwise specify \n"
+		      .  "a dotted quad value that will be used as a mask to group multiple hosts \n"
+		      .  "per pipe.") . "</span>";
 		$form .= "</td></tr>";
 		$form .= "<tr><td valign=\"middle\" class=\"vncellreq\">" . gettext("Description") . "</td>";
 		$form .= "<td class=\"vncellreq\">";
@@ -3308,6 +3338,7 @@ EOD;
 		$cflink['enabled'] = $this->GetEnabled();
 		$cflink['buckets'] = $this->GetBuckets();
 		$cflink['mask'] = $this->GetMask();
+		$cflink['maskvalue'] = $this->GetMaskValue();
 		$cflink['delay'] = $this->GetDelay();
 	}
 

@@ -860,9 +860,9 @@ if ($pkg['tabs'] <> "") {
 						#echo "<a onclick=\"removeRow(this); return false;\" href=\"#\"><img border=\"0\" src=\"./themes/".$g['theme']."/images/icons/icon_x.gif\" alt=\"remove\" /></a>";
 						echo "<a class='delete' href=\"#\"><img border='0' src='./themes/{$g['theme']}/images/icons/icon_x.gif' alt='delete' /></a>";
 						echo "</td>\n";
-						echo "</tr>\n";
 						}
 				?>
+				</tr>
 				<tbody></tbody>
 				</table>
 	

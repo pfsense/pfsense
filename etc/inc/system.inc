@@ -254,7 +254,7 @@ function system_hosts_generate() {
 		}
 	}
 
-	if (isset($dnsmasq['enable'])) {
+	if (isset($dnsmasqcfg['enable'])) {
 		if (!is_array($dnsmasqcfg['hosts']))
 			$dnsmasqcfg['hosts'] = array();
 

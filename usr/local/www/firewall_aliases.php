@@ -230,20 +230,21 @@ include("head.inc");
 						<?php
 						if ($alias["url"]) {
 							echo $alias["url"] . "<br/>";
-						}
-						if(is_array($alias["aliasurl"])) {
-							$aliasurls = implode(", ", array_slice($alias["aliasurl"], 0, 10));
-							echo $aliasurls;
-							if(count($aliasurls) > 10) {
-								echo "...<br/>";
+						} else {
+							if(is_array($alias["aliasurl"])) {
+								$aliasurls = implode(", ", array_slice($alias["aliasurl"], 0, 10));
+								echo $aliasurls;
+								if(count($aliasurls) > 10) {
+									echo "...<br/>";
+								}
+								echo "<br/>\n";
 							}
-							echo "<br/>\n";
-						}
-						$tmpaddr = explode(" ", $alias['address']);
-						$addresses = implode(", ", array_slice($tmpaddr, 0, 10));
-						echo $addresses;
-						if(count($tmpaddr) > 10) {
-							echo "...";
+							$tmpaddr = explode(" ", $alias['address']);
+							$addresses = implode(", ", array_slice($tmpaddr, 0, 10));
+							echo $addresses;
+							if(count($tmpaddr) > 10) {
+								echo "...";
+							}
 						}
 						?>
 						</td>

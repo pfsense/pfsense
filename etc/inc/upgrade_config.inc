@@ -3074,4 +3074,16 @@ function upgrade_093_to_094() {
 	}
 }
 
+function upgrade_094_to_095() {
+	global $config;
+
+	if (!isset($config['interfaces']) || !is_array($config['interfaces']))
+		return;
+
+	foreach ($config['interfaces'] as $iface => $cfg)
+		if (isset($cfg['ipaddrv6']) && ($cfg['ipaddrv6'] == "track6"))
+			if (!isset($cfg['track6-prefix-id']) || ($cfg['track6-prefix-id'] == ""))
+				$config['interfaces'][$iface]['track6-prefix-id'] = 0;
+}
+
 ?>

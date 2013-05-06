@@ -264,7 +264,10 @@ class altq_root_queue {
 		$this->qenabled = $value;
 	}
 	function CanHaveChildren() {
-		return true;
+		if ($this->GetScheduler() == "CODELQ")
+			return false;
+		else
+			return true;
 	}
 	function CanBeDeleted() {
 		return false;
@@ -549,6 +552,7 @@ class altq_root_queue {
 					$rules .= $q->build_rules($default);
 				}
 			}
+
 			if ($default == false) {
 				$error = "SHAPER: no default queue specified for interface ". $this->GetInterface() . ". The interface queue will be enforced as default.";
 				file_notice("Shaper", $error, "Error occurred", "");
@@ -556,7 +560,23 @@ class altq_root_queue {
 				return "\n";
 			} 
 			$frule .= $rules;
+		} else if ($this->GetEnabled() == "on" && $this->GetScheduler() == "CODELQ") {
+			$rules = " altq on  " . get_real_interface($this->GetInterface());
+			if ($this->GetScheduler())
+				$rules .= " ".strtolower($this->GetScheduler());
+			if ($this->GetQlimit() > 0)
+				$rules .= " ( qlimit " . $this->GetQlimit() . " ) ";
+			if ($this->GetBandwidth()) {
+				$rules .= " bandwidth ".trim($this->GetBandwidth());
+				if ($this->GetBwscale())
+					$rules .= $this->GetBwscale();
+			}
+			if ($this->GetTbrConfig())
+				$rules .= " tbrsize ".$this->GetTbrConfig();
+
+			$rules .= " queue";
 		}
+
 		$rules .= " \n";
 		return $rules;
 	}
@@ -641,6 +661,10 @@ class altq_root_queue {
                 if ($this->GetScheduler() == "FAIRQ")
                 	$form .= " selected=\"selected\"";
                 $form .= ">FAIRQ</option>";
+		$form .= "<option value=\"CODELQ\"";
+                if ($this->GetScheduler() == "CODELQ")
+                	$form .= " selected=\"selected\"";
+                $form .= ">CODELQ</option>";
 		$form .= "<option value=\"PRIQ\"";
 		if ($this->GetScheduler() == "PRIQ")
 			$form .= " selected=\"selected\"";
@@ -740,6 +764,7 @@ class priq_queue {
 	var $qdefault = "";
 	var $qrio = "";
 	var $qred = "";
+	var $qcodel = "";
 	var $qecn = "";
 	var $qack;
 	var $qenabled = "";
@@ -847,6 +872,12 @@ class priq_queue {
 	function SetDefault($value = false) {
 		$this->qdefault = $value;
 	}
+	function GetCodel() {
+		return $this->codel;
+	}
+	function SetCodel($codel = false) {
+		$this->codel = $codel;
+	}
 	function GetRed() {
 		return $this->qred;
 	}
@@ -910,6 +941,7 @@ class priq_queue {
                 $cflink['enabled'] = $this->GetEnabled();
                 $cflink['default'] = $this->GetDefault();
                 $cflink['red'] = $this->GetRed();
+                $cflink['codel'] = $this->GetCodel();
                 $cflink['rio'] = $this->GetRio();
                 $cflink['ecn'] = $this->GetEcn();
 
@@ -1023,6 +1055,10 @@ class priq_queue {
 			$this->SetRed($q['red']);
 		else
 			$this->SetRed();
+		if (!empty($q['codel']))
+			$this->SetCodel($q['codel']);
+		else
+			$this->SetCodel();
 		if (!empty($q['rio']))
 			$this->SetRio($q['rio']);
 		else
@@ -1078,7 +1114,7 @@ class priq_queue {
 		$tmpvalue = $this->GetQlimit();
 		if (!empty($tmpvalue))
 			$pfq_rule .= " qlimit " . $this->GetQlimit();
-		if ($this->GetRed() || $this->GetRio() || $this->GetEcn() || $this->GetDefault()) {
+		if ($this->GetRed() || $this->GetRio() || $this->GetEcn() || $this->GetDefault() || $this->GetCodel()) {
 			$pfq_rule .= " priq ( ";
 			$tmpvalue = $this->GetRed();
 			if (!empty($tmpvalue)) {
@@ -1098,6 +1134,13 @@ class priq_queue {
 					$pfq_rule .= " ,";
 				$comma = 1;
 				$pfq_rule .= " ecn ";
+			}
+			$tmpvalue = $this->GetCodel();
+			if (!empty($tmpvalue)) {
+				if ($comma) 
+					$pfq_rule .= " ,";
+				$comma = 1;
+				$pfq_rule .= " codel ";
 			}
 			$tmpvalue = $this->GetDefault();
 			if (!empty($tmpvalue)) {
@@ -1182,6 +1225,11 @@ class priq_queue {
 		if(!empty($tmpvalue)) 
 			$form .=  " checked=\"checked\"";
 		$form .= " /> <a target=\"_new\" href=\"http://www.openbsd.org/faq/pf/queueing.html#ecn\">" . gettext("Explicit Congestion Notification") . "</a><br/>";
+		$form .= "<input type=\"checkbox\" id=\"codel\" name=\"codel\" value=\"codel\"";
+		$tmpvalue = $this->GetCodel();
+		if(!empty($tmpvalue)) 
+			$form .=  " checked=\"checked\"";
+		$form .= " /> <a target=\"_new\" href=\"http://http://www.bufferbloat.net/projects/codel/wiki\">" . gettext("Codel Active Queue") . "</a><br/>";
 		$form .= "<span class=\"vexpl\"><br/>" . gettext("Select options for this queue");
 		$form .= "</span></td></tr><tr>";
 		$form .= "<td width=\"22%\" class=\"vncellreq\">" . gettext("Description") . "</td>";
@@ -1260,6 +1308,9 @@ class priq_queue {
 		$cflink['red'] = trim($this->GetRed());
 		if (empty($cflink['red']))
 			unset($cflink['red']);
+		$cflink['codel'] = trim($this->GetCodel());
+		if (empty($cflink['codel']))
+			unset($cflink['codel']);
 		$cflink['rio'] = trim($this->GetRio());
 		if (empty($cflink['rio']))
 			unset($cflink['rio']);
@@ -1729,7 +1780,7 @@ class hfsc_queue extends priq_queue {
 		$tmpvalue = $this->GetQlimit();
 		if (!empty($tmpvalue))
 			$pfq_rule .= " qlimit " . $this->GetQlimit();
-		if ($this->GetDefault() || $this->GetRed() || $this->GetRio() || $this->GetEcn() || $this->GetRealtime() <> "" || $this->GetLinkshare() <> "" || $this->GetUpperlimit() <> "") {
+		if ($this->GetDefault() || $this->GetRed() || $this->GetRio() || $this->GetEcn() || $this->GetCodel() || $this->GetRealtime() <> "" || $this->GetLinkshare() <> "" || $this->GetUpperlimit() <> "") {
 			$pfq_rule .= " hfsc ( ";
 			$tmpvalue = $this->GetRed();
 			if (!empty($tmpvalue)) {
@@ -1750,6 +1801,13 @@ class hfsc_queue extends priq_queue {
 					$pfq_rule .= " ,";
 				$comma = 1;
 				$pfq_rule .= " ecn ";
+			}
+			$tmpvalue = $this->GetCodel();
+			if (!empty($tmpvalue)) {
+				if ($comma) 
+					$pfq_rule .= " ,";
+				$comma = 1;
+				$pfq_rule .= " codel ";
 			}
 			$tmpvalue = $this->GetDefault();
 			if (!empty($tmpvalue)) {
@@ -2273,12 +2331,17 @@ class cbq_queue extends priq_queue {
 		$tmpvalue = trim($this->GetQlimit());
 		if (!empty($tmpvalue))
 			$pfq_rule .= " qlimit " . $this->GetQlimit();
-		if ($this->GetDefault() || $this->GetRed() || $this->GetRio() || $this->GetEcn() || $this->GetBorrow()) {
+		if ($this->GetDefault() || $this->GetRed() || $this->GetRio() || $this->GetEcn() || $this->GetBorrow() || $this->GetCodel()) {
 			$pfq_rule .= " cbq ( ";
 			$tmpvalue = trim($this->GetRed());
 			if (!empty($tmpvalue)) {
 				$comma = 1;
 				$pfq_rule .= " red ";
+			}
+			$tmpvalue = trim($this->GetCodel());
+			if (!empty($tmpvalue)) {
+				$comma = 1;
+				$pfq_rule .= " codel ";
 			}
 			$tmpvalue = trim($this->GetRio());
 			if (!empty($tmpvalue)) {
@@ -2547,12 +2610,17 @@ class fairq_queue extends priq_queue {
 		if (!empty($tmpvalue))
 			$pfq_rule .= " qlimit " . $this->GetQlimit();
 		if ($this->GetDefault() || $this->GetRed() || $this->GetRio() 
-			|| $this->GetEcn() || $this->GetBuckets() || $this->GetHogs()) {
+			|| $this->GetEcn() || $this->GetBuckets() || $this->GetHogs() || $this->GetCodel()) {
 			$pfq_rule .= " fairq ( ";
 			$tmpvalue = trim($this->GetRed());
 			if (!empty($tmpvalue)) {
 				$comma = 1;
 				$pfq_rule .= " red ";
+			}
+			$tmpvalue = trim($this->GetCodel());
+			if (!empty($tmpvalue)) {
+				$comma = 1;
+				$pfq_rule .= " codel ";
 			}
 			$tmpvalue = trim($this->GetRio());
 			if (!empty($tmpvalue)) {

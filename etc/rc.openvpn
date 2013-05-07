@@ -44,9 +44,9 @@ if (file_exists("{$g['varrun_path']}/booting"))
 
 $argument = trim($argv[1], " \n");
 
-if(is_array($config['openvpn']['openvpn-server']) || is_array($config['openvpn']['openvpn-server'])) {
+if(is_array($config['openvpn']['openvpn-server']) || is_array($config['openvpn']['openvpn-client'])) {
 	if (empty($argument) || $argument == "all")
-		$log_text = "all"; 
+		$log_text = "all";
 	else
 		$log_text = "endpoints that may use " . $argument;
 	log_error("OpenVPN: One or more OpenVPN tunnel endpoints may have changed its IP. Reloading " . $log_text . ".");

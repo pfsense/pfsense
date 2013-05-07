@@ -38,6 +38,27 @@ require_once("filter.inc");
 require_once("gwlb.inc");
 require_once("openvpn.inc");
 
+function openvpn_resync_if_needed ($mode, $ovpn_settings, $interface) {
+	global $g, $config;
+
+	$resync_needed = false;
+	if (empty($interface)) {
+		$resync_needed = true;
+	} else {
+		$mode_id = $mode . $ovpn_settings['vpnid'];
+		$fpath = "{$g['varetc_path']}/openvpn/{$mode_id}.interface";
+		$current_device = file_get_contents($fpath);
+		$new_device = get_failover_interface($ovpn_settings['interface']);
+		$this_device = $config['interfaces'][$interface]['if'];
+		if (($current_device != $new_device) || ($current_device == $this_device) || ($new_device == $this_device))
+			$resync_needed = true;
+	}
+	if ($resync_needed) {
+		log_error("OpenVPN: Resync " . $mode_id . " " . $ovpn_settings['description']);
+		openvpn_resync($mode, $ovpn_settings);
+	}
+}
+
 /* make sure to wait until the boot scripts have finished */
 if (file_exists("{$g['varrun_path']}/booting"))
 	return;
@@ -70,14 +91,14 @@ else {
 if(is_array($config['openvpn']['openvpn-server'])) {
 	foreach($config['openvpn']['openvpn-server'] as &$server) {
 		if ($server['interface'] == $interface || empty($interface) || (!empty($gwgroups) && in_array($server['interface'], $gwgroups)))
-			openvpn_resync('server', $server);
+			openvpn_resync_if_needed('server', $server, $interface);
 	}
 }
 
 if (is_array($config['openvpn']['openvpn-client'])) {
 	foreach($config['openvpn']['openvpn-client'] as &$client) {
 		if ($client['interface'] == $interface || empty($interface) || (!empty($gwgroups) && in_array($client['interface'], $gwgroups)))
-			openvpn_resync('client', $client);
+			openvpn_resync_if_needed('client', $client, $interface);
 	}
 }
 

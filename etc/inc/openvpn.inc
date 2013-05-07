@@ -744,9 +744,12 @@ function openvpn_reconfigure($mode, $settings) {
 	$fpath = "{$g['varetc_path']}/openvpn/{$mode_id}.conf";
 	file_put_contents($fpath, $conf);
 	unset($conf);
+	$fpath = "{$g['varetc_path']}/openvpn/{$mode_id}.interface";
+	file_put_contents($fpath, $interface);
 	//chown($fpath, 'nobody');
 	//chgrp($fpath, 'nobody');
 	@chmod("{$g['varetc_path']}/openvpn/{$mode_id}.conf", 0600);
+	@chmod("{$g['varetc_path']}/openvpn/{$mode_id}.interface", 0600);
 	@chmod("{$g['varetc_path']}/openvpn/{$mode_id}.key", 0600);
 	@chmod("{$g['varetc_path']}/openvpn/{$mode_id}.tls-auth", 0600);
 	@chmod("{$g['varetc_path']}/openvpn/{$mode_id}.conf", 0600);

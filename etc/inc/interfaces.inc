@@ -45,6 +45,8 @@
 require_once("globals.inc");
 require_once("util.inc");
 require_once("gwlb.inc");
+require_once("vpn.inc");
+require_once("captiveportal.inc");
 
 function interfaces_bring_up($interface) {
 	if(!$interface) {

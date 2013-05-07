@@ -3091,7 +3091,7 @@ function interface_track6_configure($interface = "lan", $wancfg) {
 	/* always configure a link-local of fe80::1:1 on the track6 interfaces */
 	$realif = get_real_interface($interface);
 	$linklocal = find_interface_ipv6_ll($realif);
-	if (!empty($linklocal) && ($linklocal != "fe80::1:1"))
+	if (!empty($linklocal))
 		mwexec("/sbin/ifconfig {$realif} inet6 {$linklocal} delete");
 	mwexec("/sbin/ifconfig {$realif} inet6 fe80::1:1%{$realif}");
 
@@ -3267,11 +3267,10 @@ function interface_track6_dhcp6_configure($interface = "lan", $lancfg) {
 
 	$lanif = get_real_interface($interface);
 	$oip = find_interface_ipv6($lanif);
-	if (is_ipaddrv6($oip) && ($wancfg['ipaddrv6'] != "dhcp6")) {
+	if (is_ipaddrv6($oip))
 		mwexec("/sbin/ifconfig {$lanif} inet6 {$oip} delete");
-		unset($interface_ipv6_arr_cache[$lanif]);
-		unset($interface_snv6_arr_cache[$lanif]);
-	}
+	unset($interface_ipv6_arr_cache[$lanif]);
+	unset($interface_snv6_arr_cache[$lanif]);
 
 	if ($wancfg['ipaddrv6'] == "slaac") {
 		$ifcfgipv6 = get_interface_ipv6($lancfg['track6-interface']);

@@ -225,12 +225,11 @@ switch($wancfg['ipaddrv6']) {
 	case "track6":
 		$pconfig['type6'] = "track6";
 		$pconfig['track6-interface'] = $wancfg['track6-interface'];
-		$pconfig['track6-prefix-id'] = $wancfg['track6-prefix-id'];
-		if ($wancfg['track6-prefix-id'] == "" || $wancfg['track6-prefix-id'] == "none") {
-			$pconfig['track6-prefix-id--hex'] = "";
-		} else {
-			$pconfig['track6-prefix-id--hex'] = sprintf("%x", $wancfg['track6-prefix-id']);
-		}
+		if ($wancfg['track6-prefix-id'] == "")
+			$pconfig['track6-prefix-id'] = 0;
+		else
+			$pconfig['track6-prefix-id'] = $wancfg['track6-prefix-id'];
+		$pconfig['track6-prefix-id--hex'] = sprintf("%x", $pconfig['track6-prefix-id']);
 		break;
 	case "6rd":
 		$pconfig['prefix-6rd'] = $wancfg['prefix-6rd'];
@@ -402,13 +401,10 @@ if ($_POST['apply']) {
 
 	unset($input_errors);
 	$pconfig = $_POST;
-	if ($pconfig['track6-prefix-id--hex'] === "") {
-		$pconfig['track6-prefix-id'] = "none";
-	} else if (is_numeric("0x" . $_POST['track6-prefix-id--hex'])) {
+	if (is_numeric("0x" . $_POST['track6-prefix-id--hex']))
 		$pconfig['track6-prefix-id'] = intval($_POST['track6-prefix-id--hex'], 16);
-	} else {
-		$pconfig['track6-prefix-id'] = "none";
-	}
+	else
+		$pconfig['track6-prefix-id'] = 0;
 	conf_mount_rw();
 
 	/* filter out spaces from descriptions  */
@@ -900,13 +896,12 @@ if ($_POST['apply']) {
 			case "track6":
 				$wancfg['ipaddrv6'] = "track6";
 				$wancfg['track6-interface'] = $_POST['track6-interface'];
-				if ($_POST['track6-prefix-id--hex'] === "") {
-					$wancfg['track6-prefix-id'] = "none";
-				} else if (is_numeric("0x" . $_POST['track6-prefix-id--hex'])) {
+				if ($_POST['track6-prefix-id--hex'] === "")
+					$wancfg['track6-prefix-id'] = 0;
+				else if (is_numeric("0x" . $_POST['track6-prefix-id--hex']))
 					$wancfg['track6-prefix-id'] = intval($_POST['track6-prefix-id--hex'], 16);
-				} else {
-					$wancfg['track6-prefix-id'] = "none";
-				}
+				else
+					$wancfg['track6-prefix-id'] = 0;
 				break;
 			case "none":
 				break;
@@ -1894,17 +1889,15 @@ $types6 = array("none" => gettext("None"), "staticv6" => gettext("Static IPv6"),
 										<td width="22%" valign="top" class="vncell"><?=gettext("IPv6 Prefix ID"); ?></td>
 										<td width="78%" class="vtable">
 											<?php
-												if ($pconfig['track6-prefix-id'] == "none" || $pconfig['track6-prefix-id'] == "") {
-													$track6_prefix_id_hex = "";
-												} else {
-													$track6_prefix_id_hex = sprintf("%x", $pconfig['track6-prefix-id']);
-												}
+												if ($pconfig['track6-prefix-id'] == "")
+													$pconfig['track6-prefix-id'] = 0;
+												$track6_prefix_id_hex = sprintf("%x", $pconfig['track6-prefix-id']);
 											?>
 											<input name="track6-prefix-id--hex" type="text" class="formfld unknown" id="track6-prefix-id--hex" size="8" value="<?= $track6_prefix_id_hex ?>" />
 											<br />
 											<?= gettext("The value in this field is the (Delegated) IPv6 prefix id. This determines the configurable network ID based on the dynamic IPv6 connection"); ?>
 											<br />
-											<?= sprintf(gettext("Enter a <b>hexadecimal</b> value between %x and %x here, or leave blank."), 0, $ipv6_num_prefix_ids - 1); ?>
+											<?= sprintf(gettext("Enter a <b>hexadecimal</b> value between %x and %x here, default value is 0."), 0, $ipv6_num_prefix_ids - 1); ?>
 										</td>
 									</tr>
 									<tr>

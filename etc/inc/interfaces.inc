@@ -3141,9 +3141,6 @@ function interface_track6_6rd_configure($interface = "lan", $lancfg) {
 	if (empty($lancfg['track6-interface']))
 		return;
 
-	if (!is_numeric($lancfg['track6-prefix-id']))
-		$lancfg['track6-prefix-id'] = 0;
-
 	$wancfg = $config['interfaces'][$lancfg['track6-interface']];
 	if (empty($wancfg)) {
 		log_error("Interface {$interface} tracking non-existant interface {$lancfg['track6-interface']}");
@@ -3211,9 +3208,6 @@ function interface_track6_6to4_configure($interface = "lan", $lancfg) {
 		return;
 	}
 
-	if (!is_numeric($lancfg['track6-prefix-id']))
-		$lancfg['track6-prefix-id'] = 0;
-
 	$ip4address = get_interface_ip($lancfg['track6-interface']);
 	if (!is_ipaddrv4($ip4address) || is_private_ip($ip4address)) {
 		log_error("The interface IPv4 '{$ip4address}' address on interface '{$lancfg['track6-interface']}' is not public, not configuring 6RD tunnel");
@@ -3264,9 +3258,6 @@ function interface_track6_dhcp6_configure($interface = "lan", $lancfg) {
 	/* If the interface is not configured via another, exit */
 	if (empty($lancfg['track6-interface']))
 		return;
-
-	if (!is_numeric($lancfg['track6-prefix-id']))
-		$lancfg['track6-prefix-id'] = 0;
 
 	$wancfg = $config['interfaces'][$lancfg['track6-interface']];
 	if (empty($wancfg)) {

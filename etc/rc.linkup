@@ -73,6 +73,8 @@ function handle_argument_group($iface, $argument2) {
 		case "up":
 			log_error("DEVD Ethernet attached event for {$iface}");
 			log_error("HOTPLUG: Configuring interface {$iface}");
+			require_once("vpn.inc");
+			require_once("captiveportal.inc");
 			// Do not try to readd to bridge otherwise em(4) has problems
 			interface_configure($iface, true, true); 
 			break;

@@ -40,13 +40,17 @@ require_once("openvpn.inc");
 
 /* make sure to wait until the boot scripts have finished */
 if (file_exists("{$g['varrun_path']}/booting"))
-	return;;
+	return;
 
 $argument = trim($argv[1], " \n");
 
-if(isset($config['openvpn']['enable']))
-	log_error("OpenVPN: One or more OpenVPN tunnel endpoints may have changed its IP. Reloading.");
-else
+if(is_array($config['openvpn']['openvpn-server']) || is_array($config['openvpn']['openvpn-server'])) {
+	if (empty($argument) || $argument == "all")
+		$log_text = "all"; 
+	else
+		$log_text = "endpoints that may use " . $argument;
+	log_error("OpenVPN: One or more OpenVPN tunnel endpoints may have changed its IP. Reloading " . $log_text . ".");
+} else
 	return;
 
 $gwgroups = array();
@@ -54,23 +58,25 @@ $openvpnlck = lock('openvpn', LOCK_EX);
 if (empty($argument) || $argument == "all")
 	$interface = ""; 
 else {
+	// e.g. $argument = "WANGW", $interface = "wan"
 	$interface = lookup_gateway_interface_by_name($argument);
 	if (empty($interface))
 		$interface = $argument;
 	else
+		// e.g. $argument = "WANGW", $gwgroups = array of gateway groups that use "wan"
 		$gwgroups = gateway_is_gwgroup_member($argument);
 }
 
 if(is_array($config['openvpn']['openvpn-server'])) {
 	foreach($config['openvpn']['openvpn-server'] as &$server) {
-		if ($server['interface'] == $interface || empty($interface) || (!empty($gwgroups) && in_array($argument, $gwgroups)))
+		if ($server['interface'] == $interface || empty($interface) || (!empty($gwgroups) && in_array($server['interface'], $gwgroups)))
 			openvpn_resync('server', $server);
 	}
 }
 
 if (is_array($config['openvpn']['openvpn-client'])) {
 	foreach($config['openvpn']['openvpn-client'] as &$client) {
-		if ($client['interface'] == $interface || empty($interface) || (!empty($gwgroups) && in_array($argument, $gwgroups)))
+		if ($client['interface'] == $interface || empty($interface) || (!empty($gwgroups) && in_array($client['interface'], $gwgroups)))
 			openvpn_resync('client', $client);
 	}
 }

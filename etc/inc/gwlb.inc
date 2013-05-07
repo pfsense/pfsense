@@ -92,7 +92,7 @@ rrd interval 60s;
 ## These parameters can be overridden in a specific alarm configuration
 alarm default {
 	command on "/usr/local/sbin/pfSctl -c 'service reload dyndns %T' -c 'service reload ipsecdns' -c 'service reload openvpn %T' -c 'filter reload' "
-	command off "/usr/local/sbin/pfSctl -c 'service reload dyndnsall' -c 'service reload ipsecdns' -c 'service reload openvpn' -c 'filter reload' "
+	command off "/usr/local/sbin/pfSctl -c 'service reload dyndns %T' -c 'service reload ipsecdns' -c 'service reload openvpn %T' -c 'filter reload' "
 	combine 10s
 }
 
@@ -836,7 +836,7 @@ function lookup_gateway_interface_by_name($name) {
 
 	$gateways_arr = return_gateways_array(false, true);
 	if (!empty($gateways_arr[$name])) {
-		$interfacegw = $gateways_arr[$name]['interface'];
+		$interfacegw = $gateways_arr[$name]['friendlyiface'];
 		return ($interfacegw);
 	}
 

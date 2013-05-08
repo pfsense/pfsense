@@ -569,7 +569,7 @@ function system_syslogd_start() {
 	}
 	
 	if (isset($syslogcfg)) {
-		$separatelogfacilities = array('ntp','ntpd','ntpdate','racoon','openvpn','pptps','poes','l2tps','relayd','hostapd','dnsmasq','unbound','dhcpd','dhcrelay','apinger','radvd','routed','olsrd','zebra','ospfd','bgpd');
+		$separatelogfacilities = array('ntp','ntpd','ntpdate','racoon','openvpn','pptps','poes','l2tps','relayd','hostapd','dnsmasq','filterdns','unbound','dhcpd','dhcrelay','apinger','radvd','routed','olsrd','zebra','ospfd','bgpd');
 		$syslogconf = "";
 		if($config['installedpackages']['package']) {
 			foreach($config['installedpackages']['package'] as $package) {
@@ -623,7 +623,7 @@ function system_syslogd_start() {
 		if (isset($syslogcfg['apinger']))
 			$syslogconf .= system_syslogd_get_remote_servers($syslogcfg, "*.*");
 
-		$syslogconf .= "!dnsmasq,unbound\n";
+		$syslogconf .= "!dnsmasq,filterdns,unbound\n";
 		if (!isset($syslogcfg['disablelocallogging']))
 			$syslogconf .= "*.*								{$log_directive}{$g['varlog_path']}/resolver.log\n";
 		if (isset($syslogcfg['apinger']))

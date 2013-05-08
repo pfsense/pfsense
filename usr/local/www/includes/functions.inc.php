@@ -178,9 +178,9 @@ function get_temp() {
 function disk_usage() {
 	$free_disk_space  = disk_free_space("/")  / pow(1024, 2);
 	$total_disk_space = disk_total_space("/") / pow(1024, 2);	
-	$used_disk_space  = ($total_disk_space - $free_disk_space) / pow(1024, 2);
-	$percentage_used  = $used_disk_space ? round($used_disk_space / $total_disk_space,2) * 100: 100;
-	return $percentage_used;
+	$used_disk_space  = $total_disk_space - $free_disk_space;
+	$percentage_used  = $used_disk_space ? ($used_disk_space / $total_disk_space) * 100: 100;
+	return floor($percentage_used);
 }
 
 function swap_usage() {

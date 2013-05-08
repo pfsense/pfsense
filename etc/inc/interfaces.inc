@@ -3112,11 +3112,6 @@ function interface_track6_configure($interface = "lan", $wancfg) {
 			log_error("Interface {$interface} configured via {$wancfg['track6-interface']}  type {$type}");
 		interface_track6_6rd_configure($interface, $wancfg);
 		break;
-	case "dhcp6":
-		if ($g['debug'])
-			log_error("Interface {$interface} configured via {$wancfg['track6-interface']}  type {$type}");
-		interface_track6_dhcp6_configure($interface, $wancfg);
-		break;
 	}
 
 	if (!$g['booting']) {
@@ -3243,48 +3238,6 @@ function interface_track6_6to4_configure($interface = "lan", $lancfg) {
 	unset($interface_snv6_arr_cache[$lanif]);
 	log_error("sixto4 {$interface} with ipv6 address {$sixto4lan} based on {$lancfg['track6-interface']} ipv4 {$ip4address}");
 	mwexec("/sbin/ifconfig {$lanif} inet6 {$sixto4lan} prefixlen 64");
-
-	return 0;
-}
-
-function interface_track6_dhcp6_configure($interface = "lan", $lancfg) {
-	global $config, $g;
-	global $interface_ipv6_arr_cache;
-	global $interface_snv6_arr_cache;
-
-	if (!is_array($lancfg))
-		return;
-
-	/* If the interface is not configured via another, exit */
-	if (empty($lancfg['track6-interface']))
-		return;
-
-	$wancfg = $config['interfaces'][$lancfg['track6-interface']];
-	if (empty($wancfg)) {
-		log_error("Interface {$interface} tracking non-existant interface {$lancfg['track6-interface']}");
-		return;
-	}
-
-	$lanif = get_real_interface($interface);
-	$oip = find_interface_ipv6($lanif);
-	if (is_ipaddrv6($oip))
-		mwexec("/sbin/ifconfig {$lanif} inet6 {$oip} delete");
-	unset($interface_ipv6_arr_cache[$lanif]);
-	unset($interface_snv6_arr_cache[$lanif]);
-
-	if ($wancfg['ipaddrv6'] == "slaac") {
-		$ifcfgipv6 = get_interface_ipv6($lancfg['track6-interface']);
-		if (is_ipaddrv6($ifcfgipv6)) {
-			$dhcp6lanarr = explode(":", Net_IPv6::uncompress($ifcfgipv6));
-			$dhcp6lanarr[4] = 0;
-			$dhcp6lanarr[5] = 0;
-			$dhcp6lanarr[6] = 0;
-			$dhcp6lanarr[7] = 1;
-			$dhcp6lan =  Net_IPv6::compress(implode(":", $dhcp6lanarr));
-			log_error("dhcp6 {$interface} with ipv6 address {$dhcp6lan} based on {$lancfg['track6-interface']}");
-			mwexec("/sbin/ifconfig {$lanif} inet6 {$dhcp6lan} prefixlen 64");
-		}
-	}
 
 	return 0;
 }

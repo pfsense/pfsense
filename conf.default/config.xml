@@ -151,6 +151,11 @@
 			<value>default</value>
 		</item>
 		<item>
+			<descr><![CDATA[UDP Checksums]]></descr>
+			<tunable>net.inet.udp.checksum</tunable>
+			<value>default</value>
+		</item>
+		<item>
 			<descr><![CDATA[Maximum socket buffer size]]></descr>
 			<tunable>kern.ipc.maxsockbuf</tunable>
 			<value>default</value>

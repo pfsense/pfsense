@@ -2780,6 +2780,7 @@ class dummynet_class {
         var $buckets;
         /* mask parameters */
         var $mask;
+	var $maskbits;
         var $noerror;
 
         /* Accessor functions */
@@ -2789,11 +2790,17 @@ class dummynet_class {
         function GetLink() {
                 return $this->link;
         }
-	function Getmask() {
+	function GetMask() {
 		return $this->mask;
 	}
 	function SetMask($mask) {
 		$this->mask = $mask;
+	}
+	function GetMaskBits() {
+		return $this->maskbits;
+	}
+	function SetMaskBits($maskbits) {
+		$this->maskbits = $maskbits;
 	}
 	function &GetParent() {
 		return $this->qparent;
@@ -2880,6 +2887,10 @@ class dummynet_class {
 			$input_errors[] = gettext("Queue names must be alphanumeric and _ or - only.");
         	if (!empty($data['name']) && !preg_match("/^[a-zA-Z0-9_-]+$/", $data['name']))
 			$input_errors[] = gettext("Queue names must be alphanumeric and _ or - only.");
+        if (isset($data['maskbits']) && ($data['maskbits'] <> "")) {
+			if ((!is_numeric($data['maskbits'])) || ($data['maskbits'] <= 0) || ($data['maskbits'] > 32))
+				$input_errors[] = gettext("Mask value must be blank or numeric value between 1 and 32.");
+		}
 	}
 }
 
@@ -3031,6 +3042,10 @@ class dnpipe_class extends dummynet_class {
               		$this->SetMask($q['mask']);
 		else
               		$this->SetMask("");
+		if (isset($q['maskbits']) && $q['maskbits'] <> "")
+			$this->SetMaskBits($q['maskbits']);
+		else
+			$this->SetMaskBits("");
 		if (isset($q['buckets']) && $q['buckets'] <> "")
               		$this->SetBuckets($q['buckets']);
 		else
@@ -3116,13 +3131,22 @@ class dnpipe_class extends dummynet_class {
 
 		$mask = $this->GetMask();
 		if (!empty($mask)) {
-			/* XXX TODO extend this to support more complicated masks */
 			switch ($mask) {
 			case 'srcaddress':
-				$pfq_rule .= " mask src-ip 0xffffffff ";
+				$pfq_rule .= " mask src-ip 0x";
+				$maskbits = $this->GetMaskBits();
+				if (!empty($maskbits) && ($maskbits <> ""))
+					$pfq_rule .= sprintf("%x", gen_subnet_mask_long($maskbits)) . " ";
+				else
+					$pfq_rule .= "ffffffff ";
 				break;
 			case 'dstaddress':
-				$pfq_rule .= " mask dst-ip 0xffffffff ";
+				$pfq_rule .= " mask dst-ip 0x";
+				$maskbits = $this->GetMaskBits();
+				if (!empty($maskbits) && ($maskbits <> ""))
+					$pfq_rule .= sprintf("%x", gen_subnet_mask_long($maskbits)) . " ";
+				else
+					$pfq_rule .= "ffffffff ";
 				break;
 			default:
 				break;
@@ -3296,7 +3320,15 @@ EOD;
 		      .  "a dynamic pipe with the bandwidth, delay, packet loss and queue size given above will \n"
 		      .  "be created for each source/destination IP address encountered, \n"
 		      .  "respectively. This makes it possible to easily specify bandwidth \n"
-		      .  "limits per host.") . "</span>";
+		      .  "limits per host.") . "</span><br />";
+		$form .= "255.255.255.255/&nbsp;<input type=\"text\" class=\"formfld unknown\" size=\"2\" id=\"maskbits\" name=\"maskbits\" value=\"";
+		$form .= $this->GetMaskBits();
+		$form .= "\" />";
+		$form .= "&nbsp; mask bits (1-32)<br/>";
+		$form .= "<span class=\"vexpl\">" . gettext("If 'source' or 'destination' is chosen, \n"
+		      .  "leaving the mask bits blank will create one pipe per host. Otherwise specify \n"
+		      .  "the number of \'one\' bits in the subnet mask used to group multiple hosts \n"
+		      .  "per pipe.") . "</span>";
 		$form .= "</td></tr>";
 		$form .= "<tr><td valign=\"middle\" class=\"vncellreq\">" . gettext("Description") . "</td>";
 		$form .= "<td class=\"vncellreq\">";
@@ -3376,6 +3408,7 @@ EOD;
 		$cflink['enabled'] = $this->GetEnabled();
 		$cflink['buckets'] = $this->GetBuckets();
 		$cflink['mask'] = $this->GetMask();
+		$cflink['maskbits'] = $this->GetMaskBits();
 		$cflink['delay'] = $this->GetDelay();
 	}
 

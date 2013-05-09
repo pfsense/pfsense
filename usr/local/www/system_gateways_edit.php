@@ -141,7 +141,7 @@ if ($_POST) {
 		}
 		else if(is_ipaddrv6($_POST['gateway'])) {
 			/* do not do a subnet match on a link local address, it's valid */
-			if(! preg_match("/fe80:/i", $_POST['gateway'])) {
+			if(!is_linklocal($_POST['gateway'])) {
 				$parent_ip = get_interface_ipv6($_POST['interface']);
 				$parent_sn = get_interface_subnetv6($_POST['interface']);
 				if(empty($parent_ip) || empty($parent_sn)) {

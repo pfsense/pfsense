@@ -4281,7 +4281,7 @@ function find_interface_ipv6($interface, $flush = false) {
 		foreach($output as $line) {
 			if(preg_match("/inet6/", $line)) {
 				$parts = explode(" ", $line);
-				if(! preg_match("/fe80:/i", $parts[1])) {
+				if(!is_linklocal($parts[1])) {
 					$ifinfo['ipaddrv6'] = $parts[1];
 					if($parts[2] == "-->") {
 						$parts[5] = "126";
@@ -4320,7 +4320,7 @@ function find_interface_ipv6_ll($interface, $flush = false) {
 		foreach($output as $line) {
 			if(preg_match("/inet6/", $line)) {
 				$parts = explode(" ", $line);
-				if(preg_match("/fe80:/i", $parts[1])) {
+				if(is_linklocal($parts[1])) {
 					$partsaddress = explode("%", $parts[1]);
 					$ifinfo['linklocal'] = $partsaddress[0];
 				}
@@ -4366,7 +4366,7 @@ function find_interface_subnetv6($interface, $flush = false) {
 			$line = trim($line);
 			if(preg_match("/inet6/", $line)) {
 				$parts = explode(" ", $line);
-				if(! preg_match("/fe80:/i", $parts[1])) {
+				if(!is_linklocal($parts[1])) {
 					$ifinfo['ipaddrv6'] = $parts[1];
 					if($parts[2] == "-->") {
 						$parts[5] = "126";

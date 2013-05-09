@@ -165,7 +165,7 @@ EOD;
 				continue; //Skip this target
 		} else if (is_ipaddrv6($gateway['gateway'])) {
 			/* link locals really need a different src ip */
-			if(preg_match("/fe80:/i", $gateway['gateway'])) {
+			if(is_linklocal($gateway['gateway'])) {
 				$linklocal = explode("%", find_interface_ipv6_ll($gateway['interface'], true));
 				$gwifip = $linklocal[0];
 				$ifscope = "%". $linklocal[1];

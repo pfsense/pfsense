@@ -2534,7 +2534,6 @@ function get_locale_list() {
 	$locales = array(
 		"en_US" => gettext("English"),
 		"pt_BR" => gettext("Portuguese (Brazil)"),
-		"tr_TR" => gettext("Turkish"),
 	);
 	asort($locales);
 	return $locales;

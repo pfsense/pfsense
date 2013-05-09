@@ -473,12 +473,12 @@ function filter_generate_nested_alias($name, $alias, &$aliasnesting, &$aliasaddr
 			else if(!isset($aliasnesting[$address]))
 				$tmpline = filter_generate_nested_alias($name, $aliastable[$address], $aliasnesting, $aliasaddrnesting);
 		} else if(!isset($aliasaddrnesting[$address])) {
+			$aliasaddrnesting[$address] = $address;
 			if (!is_ipaddr($address) && !is_subnet($address) && !is_port($address) && is_hostname($address)) {
 				if (!isset($filterdns["{$address}{$name}"]))
 					$filterdns["{$address}{$name}"] = "pf {$address} {$name}\n";
 				continue;
 			}
-			$aliasaddrnesting[$address] = $address;
 			$tmpline = " {$address}";
 		}
 		if ((strlen($tmpline)+ $linelength) > 4036) {

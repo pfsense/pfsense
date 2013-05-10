@@ -1512,7 +1512,7 @@ function pfsense_default_table_entries_size() {
 
 /* Compare the current hostname DNS to the DNS cache we made
  * if it has changed we return the old records
- * if no change we return true */
+ * if no change we return false */
 function compare_hostname_to_dnscache($hostname) {
 	if(!is_dir("/var/db/dnscache")) {
 		mkdir("/var/db/dnscache");

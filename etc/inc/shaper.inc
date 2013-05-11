@@ -2789,7 +2789,7 @@ class dummynet_class {
         function GetLink() {
                 return $this->link;
         }
-	function Getmask() {
+	function GetMask() {
 		return $this->mask;
 	}
 	function SetMask($mask) {
@@ -2880,6 +2880,10 @@ class dummynet_class {
 			$input_errors[] = gettext("Queue names must be alphanumeric and _ or - only.");
         	if (!empty($data['name']) && !preg_match("/^[a-zA-Z0-9_-]+$/", $data['name']))
 			$input_errors[] = gettext("Queue names must be alphanumeric and _ or - only.");
+        if (isset($data['maskbits']) && ($data['maskbits'] <> "")) {
+			if ((!is_numeric($data['maskbits'])) || ($data['maskbits'] <= 0) || ($data['maskbits'] > 32))
+				$input_errors[] = gettext("Bit mask must be blank or numeric value between 1 and 32.");
+		}
 	}
 }
 
@@ -3028,9 +3032,14 @@ class dnpipe_class extends dummynet_class {
 		else
               		$this->SetQlimit("");
 		if (isset($q['mask']) && $q['mask'] <> "")
-              		$this->SetMask($q['mask']);
+			$masktype = $q['mask'];
 		else
-              		$this->SetMask("");
+			$masktype = "";
+		if (isset($q['maskbits']) && $q['maskbits'] <> "")
+			$maskbits = $q['maskbits'];
+		else
+			$maskbits = "";
+        $this->SetMask(array("type" => $masktype, "bits" => $maskbits));
 		if (isset($q['buckets']) && $q['buckets'] <> "")
               		$this->SetBuckets($q['buckets']);
 		else
@@ -3115,19 +3124,26 @@ class dnpipe_class extends dummynet_class {
 			$pfq_rule .= " delay " . $this->GetDelay();
 
 		$mask = $this->GetMask();
-		if (!empty($mask)) {
-			/* XXX TODO extend this to support more complicated masks */
-			switch ($mask) {
+		if (!empty($mask['type'])) {
+			switch ($mask['type']) {
 			case 'srcaddress':
-				$pfq_rule .= " mask src-ip 0xffffffff ";
+				$pfq_rule .= " mask src-ip 0x";
+				if (!empty($mask['bits']) && ($mask['bits'] <> ""))
+					$pfq_rule .= sprintf("%x", gen_subnet_mask_long($mask['bits']));
+				else
+					$pfq_rule .= "ffffffff";
 				break;
 			case 'dstaddress':
-				$pfq_rule .= " mask dst-ip 0xffffffff ";
+				$pfq_rule .= " mask dst-ip 0x";
+				if (!empty($mask['bits']) && ($mask['bits'] <> ""))
+					$pfq_rule .= sprintf("%x", gen_subnet_mask_long($mask['bits']));
+				else
+					$pfq_rule .= "ffffffff";
 				break;
 			default:
 				break;
 			}
-    		}            
+    	}            
 		$pfq_rule .= "\n";
 
 		if (!empty($this->subqueues) && count($this->subqueues) > 0) {
@@ -3279,24 +3295,34 @@ EOD;
 		$form .= "<td class=\"vncellreq\">";
 		$form .= "<select name=\"mask\" class=\"formselect\">";
 		$form .= "<option value=\"none\"";
-		if ($this->GetMask() == "none")
+		$mask = $this->GetMask();
+		if ($mask['type'] == "none")
 			$form .= " selected=\"selected\"";
 		$form .= ">none</option>";
 		$form .= "<option value=\"srcaddress\"";
-		if ($this->GetMask() == "srcaddress")
+		if ($mask['type'] == "srcaddress")
 			$form .= " selected=\"selected\"";
 		$form .= ">" . gettext("Source addresses") . "</option>";
 		$form .= "<option value=\"dstaddress\"";
-		if ($this->GetMask() == "dstaddress")
+		if ($mask['type'] == "dstaddress")
 			$form .= " selected=\"selected\"";
 		$form .= ">" . gettext("Destination addresses") . "</option>";
 		$form .= "</select>";
 		$form .= "&nbsp;<br/>";
-		$form .= "<span class=\"vexpl\">" . gettext("If 'source' or 'destination' is chosen, \n"
+		$form .= "<span class=\"vexpl\">" . gettext("If 'source' or 'destination' slots is chosen, \n"
 		      .  "a dynamic pipe with the bandwidth, delay, packet loss and queue size given above will \n"
 		      .  "be created for each source/destination IP address encountered, \n"
 		      .  "respectively. This makes it possible to easily specify bandwidth \n"
-		      .  "limits per host.") . "</span>";
+		      .  "limits per host.") . "</span><br />";
+		$form .= "255.255.255.255/&nbsp;<input type=\"text\" class=\"formfld unknown\" size=\"2\" id=\"maskbits\" name=\"maskbits\" value=\"";
+		$mask = $this->GetMask();
+		$form .= $mask['bits'];
+		$form .= "\" />";
+		$form .= "&nbsp; mask bits (1-32)<br/>";
+		$form .= "<span class=\"vexpl\">" . gettext("If 'source' or 'destination' slots is chosen, \n"
+		      .  "leaving the mask bits blank will create one pipe per host. Otherwise specify \n"
+		      .  "the number of 'one' bits in the subnet mask used to group multiple hosts \n"
+		      .  "per pipe.") . "</span>";
 		$form .= "</td></tr>";
 		$form .= "<tr><td valign=\"middle\" class=\"vncellreq\">" . gettext("Description") . "</td>";
 		$form .= "<td class=\"vncellreq\">";
@@ -3375,7 +3401,9 @@ EOD;
 
 		$cflink['enabled'] = $this->GetEnabled();
 		$cflink['buckets'] = $this->GetBuckets();
-		$cflink['mask'] = $this->GetMask();
+		$mask = $this->GetMask();
+		$cflink['mask'] = $mask['type'];
+		$cflink['maskbits'] = $mask['bits'];
 		$cflink['delay'] = $this->GetDelay();
 	}
 
@@ -3448,10 +3476,16 @@ class dnqueue_class extends dummynet_class {
        		       	$this->SetQlimit($q['qlimit']);
 		else
        		       	$this->SetQlimit("");
+		$mask = array();
 		if (isset($q['mask']) && $q['mask'] <> "")
-              		$this->SetMask($q['mask']);
+			$masktype = $q['mask'];
 		else
-              		$this->SetMask("");
+			$masktype = "";
+		if (isset($q['maskbits']) && $q['maskbits'] <> "")
+			$maskbits = $q['maskbits'];
+		else
+			$maskbits = "";
+        $this->SetMask(array("type" => $masktype, "bits" => $maskbits));
        		if (isset($q['weight']) && $q['weight'] <> "")
             		$this->SetWeight($q['weight']);
 		else
@@ -3485,14 +3519,21 @@ class dnqueue_class extends dummynet_class {
 		if ($this->GetBuckets())
 			$pfq_rule .= " buckets " . $this->GetBuckets();
 		$mask = $this->GetMask();
-		if (!empty($mask)) {
-			/* XXX TODO extend this to support more complicated masks */
-			switch ($mask) {
+		if (!empty($mask['type'])) {
+			switch ($mask['type']) {
 			case 'srcaddress':
-				$pfq_rule .= " mask src-ip 0xffffffff ";
+				$pfq_rule .= " mask src-ip 0x";
+				if (!empty($mask['bits']) && ($mask['bits'] <> ""))
+					$pfq_rule .= sprintf("%x", gen_subnet_mask_long($mask['bits']));
+				else
+					$pfq_rule .= "ffffffff";
 				break;
 			case 'dstaddress':
-				$pfq_rule .= " mask dst-ip 0xffffffff ";
+				$pfq_rule .= " mask dst-ip 0x";
+				if (!empty($mask['bits']) && ($mask['bits'] <> ""))
+					$pfq_rule .= sprintf("%x", gen_subnet_mask_long($mask['bits']));
+				else
+					$pfq_rule .= "ffffffff";
 				break;
 			default:
 				break;
@@ -3527,24 +3568,34 @@ class dnqueue_class extends dummynet_class {
 		$form .= "<td class=\"vncellreq\">";
 		$form .= "<select name=\"mask\" class=\"formselect\">";
 		$form .= "<option value=\"none\"";
-		if ($this->GetMask() == "none")
+		$mask = $this->GetMask();
+		if ($mask['type'] == "none")
 			$form .= " selected=\"selected\"";
 		$form .= ">" . gettext("none") . "</option>";
 		$form .= "<option value=\"srcaddress\"";
-		if ($this->GetMask() == "srcaddress")
+		if ($mask['type'] == "srcaddress")
 			$form .= " selected=\"selected\"";
 		$form .= ">" . gettext("Source addresses") . "</option>";
 		$form .= "<option value=\"dstaddress\"";
-		if ($this->GetMask() == "dstaddress")
+		if ($mask['type'] == "dstaddress")
 			$form .= " selected=\"selected\"";
 		$form .= ">" . gettext("Destination addresses") . "</option>";
 		$form .= "</select>";
 		$form .= "&nbsp;slots<br/>";
-		$form .= "<span class=\"vexpl\">" . gettext("If 'source' or 'destination' is chosen, \n"
+		$form .= "<span class=\"vexpl\">" . gettext("If 'source' or 'destination' slots is chosen, \n"
 		      .  "a dynamic pipe with the bandwidth, delay, packet loss and queue size given above will \n"
 		      .  "be created for each source/destination IP address encountered, \n"
 		      .  "respectively. This makes it possible to easily specify bandwidth \n"
-		      .  "limits per host.") . "</span>";
+		      .  "limits per host.") . "</span><br/>";
+		$form .= "255.255.255.255/&nbsp;<input type=\"text\" class=\"formfld unknown\" size=\"2\" id=\"maskbits\" name=\"maskbits\" value=\"";
+		$mask = $this->GetMask();
+		$form .= $mask['bits'];
+		$form .= "\" />";
+		$form .= "&nbsp; mask bits (1-32)<br/>";
+		$form .= "<span class=\"vexpl\">" . gettext("If 'source' or 'destination' slots is chosen, \n"
+		      .  "leaving the mask bits blank will create one pipe per host. Otherwise specify \n"
+		      .  "the number of 'one' bits in the subnet mask used to group multiple hosts \n"
+		      .  "per queue.") . "</span>";
 		$form .= "</td></tr>";
 		$form .= "<tr><td valign=\"middle\" class=\"vncellreq\">" . gettext("Description") . "</td>";
 		$form .= "<td class=\"vncellreq\">";
@@ -3620,7 +3671,9 @@ class dnqueue_class extends dummynet_class {
 		$cflink['weight'] = $this->GetWeight();
 		$cflink['enabled'] = $this->GetEnabled();
 		$cflink['buckets'] = $this->GetBuckets();
-		$cflink['mask'] = $this->GetMask();
+		$mask = $this->GetMask();
+		$cflink['mask'] = $mask['type'];
+		$cflink['maskbits'] = $mask['bits'];
 	}
 }
 

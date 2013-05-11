@@ -3476,7 +3476,6 @@ class dnqueue_class extends dummynet_class {
        		       	$this->SetQlimit($q['qlimit']);
 		else
        		       	$this->SetQlimit("");
-		$mask = array();
 		if (isset($q['mask']) && $q['mask'] <> "")
 			$masktype = $q['mask'];
 		else

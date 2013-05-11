@@ -1530,6 +1530,14 @@ function services_dnsmasq_configure() {
 	global $config, $g;
 	$return = 0;
 
+	// hard coded args: will be removed to avoid duplication if specified in custom_options
+	$standard_args = array(
+		"dns-forward-max" => "--dns-forward-max=5000", 
+		"cache-size" => "--cache-size=10000", 
+		"local-ttl" => "--local-ttl=1"
+	);
+
+
 	if(isset($config['system']['developerspew'])) {
 		$mt = microtime();
 		echo "services_dnsmasq_configure() being called $mt\n";
@@ -1585,13 +1593,17 @@ function services_dnsmasq_configure() {
 			$args .= " --domain-needed ";
 		}
 
-		if ($config['dnsmasq']['custom_options']) {
-			foreach (preg_split('/\s+/', $config['dnsmasq']['custom_options']) as $c)
+		if ($config['dnsmasq']['custom_options'])
+			foreach (preg_split('/\s+/', $config['dnsmasq']['custom_options']) as $c) {
 				$args .= " --$c";
-		}
+				$p = explode('=', $c);
+				if (array_key_exists($p[0], $standard_args))
+					unset($standard_args[$p[0]]);
+			}
+		$args .= implode(' ', array_values($standard_args));
 
 		/* run dnsmasq */
-		mwexec_bg("/usr/local/sbin/dnsmasq --local-ttl 1 --all-servers {$dns_rebind} --dns-forward-max=5000 --cache-size=10000 {$args}");
+		mwexec_bg("/usr/local/sbin/dnsmasq --all-servers {$dns_rebind} {$args}");
 		unset($args);
 
 		if ($g['booting'])

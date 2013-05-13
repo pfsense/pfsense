@@ -49,6 +49,23 @@ header("Cache-Control: post-check=0, pre-check=0", FALSE );
 header("Pragma: no-cache"); // HTTP/1.0
 header("Content-type: image/svg+xml");
 
+/********** HTTP GET Based Default setting ***********/
+if ($_GET["savesettings"]) {
+	// savesettings indicates it's a callback to save graph units/autoscale config, no return value is expected
+
+	$dosave = false;
+	if ($_GET["unit"] == "bits" || $_GET["unit"] == "bytes") {
+		$config['traffic_graph']['unit'] = $_GET["unit"];
+		$dosave = true;
+	}
+
+// TODO: future option - save scale too
+
+	if ($dosave)
+		write_config(gettext("Saved change to traffic graph settings"));
+	exit;
+}
+
 /********** HTTP GET Based Conf ***********/
 $ifnum=@$_GET["ifnum"];  // BSD / SNMP interface name / number
 $ifnum = get_real_interface($ifnum);
@@ -66,6 +83,14 @@ if ($_GET["initdelay"])
 	$init_delay = $_GET["initdelay"];		//Initial Delay
 else
 	$init_delay = 3;
+
+if (isset($config['traffic_graph']['unit']) && $config['traffic_graph']['unit'] == 'bytes') {
+	$init_unit = 'bytes';
+	$init_switch_unit = 'bits';
+} else {
+	$init_unit = 'bits';
+	$init_switch_unit = 'bytes';
+}
 
 //SVG attributes
 $attribs['axis']='fill="black" stroke="black"';
@@ -89,6 +114,7 @@ $height=100;            //SVG internal height : do not modify
 $width=200;             //SVG internal width : do not modify
 
 $fetch_link = "ifstats.php?if=" . htmlspecialchars($ifnum);
+$save_settings_link = "graph.php?savesettings=true";  // with args: &unit=X&scale=Y
 
 /* check for custom theme colors */
 if(file_exists("/usr/local/www/themes/{$g['theme']}/graph.php")) {
@@ -114,7 +140,7 @@ print('<?xml version="1.0" encoding="iso-8859-1"?>' . "\n");?>
     <text id="graph_in_txt" x="20" y="8" <?=$attribs['in']?>> </text>
     <text id="graph_out_txt" x="20" y="16" <?=$attribs['out']?>> </text>
     <text id="ifname" x="<?=$width?>" y="8" <?=$attribs['graphname']?> text-anchor="end"><?=htmlspecialchars($ifname)?></text>
-    <text id="switch_unit" x="<?=$width*0.55?>" y="5" <?=$attribs['switch_unit']?>><?=gettext("Switch to bytes/s"); ?></text>
+    <text id="switch_unit" x="<?=$width*0.55?>" y="5" <?=$attribs['switch_unit']?>><?=gettext("Switch to ". $init_switch_unit . "/s"); ?></text>
     <text id="switch_scale" x="<?=$width*0.55?>" y="11" <?=$attribs['switch_scale']?>><?=gettext("AutoScale"); ?> (<?=$scale_type?>)</text>
     <text id="datetime" x="<?=$width*0.33?>" y="5" <?=$attribs['legend']?>> </text>
     <text id="graphlast" x="<?=$width*0.55?>" y="17" <?=$attribs['legend']?>><?=gettext("Graph shows last"); ?> <?=$time_interval*$nb_plot?> <?=gettext("seconds"); ?></text>
@@ -179,7 +205,7 @@ var plot_out = new Array();
 
 var max_num_points = <?=$nb_plot?>;  // maximum number of plot data points
 var step = <?=$width?> / max_num_points ;
-var unit = 'bits';
+var unit = '<?=$init_unit?>';
 var scale_type = '<?=$scale_type?>';
 
 function init(evt) {
@@ -194,6 +220,11 @@ function switch_unit(event)
 {
   SVGDoc.getElementById('switch_unit').firstChild.data = '<?=gettext("Switch to"); ?> ' + unit + '/s';
   unit = (unit == 'bits') ? 'bytes' : 'bits';
+  save_settings_url = '<?=$save_settings_link?>&unit=' + unit;
+  getURL(save_settings_url, null_call);
+}
+
+function null_call() {
 }
 
 function switch_scale(event)

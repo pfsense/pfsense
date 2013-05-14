@@ -61,24 +61,21 @@ include("head.inc");
 
 ?>
 <body link="#0000CC" vlink="#0000CC" alink="#0000CC">
-
 <script type="text/javascript">
-	function getcpuactivity() {
-		var url = "/diag_pf_info.php";
-		var pars = 'getactivity=yes';
-		jQuery.ajax(
-			url,
-			{
-				type: 'post',
-				data: pars,
-				complete: activitycallback
-			});
+jQuery(document).ready(function() {setTimeout('getpfinfo()', 5000);});
+	function getpfinfo() {
+		jQuery.ajax({
+			type: "POST",
+			url: "/diag_pf_info.php",
+			data: 'getactivity=yes',
+			async: false,
+			complete: activitycallback
+		});
 	}
 	function activitycallback(transport) {
-		jQuery('#cpuactivitydiv').html('<font face="Courier"><font size="2"><b><pre style="text-align:left;">' + transport.responseText  + '</pre></font>');
-		setTimeout('getcpuactivity()', 2000);		
+		jQuery('#pfactivitydiv').html('<font face="Courier"><font size="2"><b><pre style="text-align:left;">' + transport.responseText  + '</pre></font>');
+		setTimeout('getpfinfo()', 2000);
 	}
-	setTimeout('getcpuactivity()', 5000);	
 </script>
 <div id='maincontent'>
 <?php
@@ -102,7 +99,7 @@ include("head.inc");
 				<center>
 				<table>
 					<tr><td>
-						<div name='cpuactivitydiv' id='cpuactivitydiv'>
+						<div name='pfactivitydiv' id='pfactivitydiv'>
 							<b><?=gettext("Gathering PF information, please wait...");?>
 						</div>
 					</td></tr>

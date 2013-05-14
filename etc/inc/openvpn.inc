@@ -1243,8 +1243,8 @@ function openvpn_get_interface_ipv6($ipv6, $prefix) {
 	// Is there a better way to do this math?
 	$ipv6_arr = explode(':', $basev6);
 	$last = hexdec(array_pop($ipv6_arr));
-	$ipv6_1 = Net_IPv6::compress(implode(':', $ipv6_arr) . ':' . dechex($last + 1));
-	$ipv6_2 = Net_IPv6::compress(implode(':', $ipv6_arr) . ':' . dechex($last + 2));
+	$ipv6_1 = Net_IPv6::compress(Net_IPv6::uncompress(implode(':', $ipv6_arr) . ':' . dechex($last + 1)));
+	$ipv6_2 = Net_IPv6::compress(Net_IPv6::uncompress(implode(':', $ipv6_arr) . ':' . dechex($last + 2)));
 	return array($ipv6_1, $ipv6_2);
 }
 

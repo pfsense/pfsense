@@ -580,6 +580,9 @@ class Net_IPv6 {
             $cip = preg_replace('/((^:)|(:$))/', '' ,$cip);
             $cip = preg_replace('/((^:)|(:$))/', '::' ,$cip);
 
+         } else {
+            // The input IP appears to be compressed already, give it back as-is to the caller.
+            $cip = $ip;
          }
          if ('' != $netmask) {
 

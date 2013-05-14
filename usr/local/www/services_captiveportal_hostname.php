@@ -122,7 +122,7 @@ include("head.inc");
 	  <td width="10%" class="list">
 		<table border="0" cellspacing="0" cellpadding="1">
 		   <tr>
-			<td width="17" heigth="17"></td>
+			<td width="17" height="17"></td>
 			<td><a href="services_captiveportal_hostname_edit.php?zone=<?=$cpzone;?>"><img src="/themes/<?php echo $g['theme']; ?>/images/icons/icon_plus.gif" title="<?=gettext("add address"); ?>" width="17" height="17" border="0"></a></td>
 		   </tr>
 		</table>
@@ -158,7 +158,7 @@ include("head.inc");
 	  <td class="list">
 		<table border="0" cellspacing="0" cellpadding="1">
 		   <tr>
-			<td width="17" heigth="17"></td>
+			<td width="17" height="17"></td>
 			<td><a href="services_captiveportal_hostname_edit.php?zone=<?=$cpzone;?>"><img src="/themes/<?php echo $g['theme']; ?>/images/icons/icon_plus.gif" title="<?=gettext("add address"); ?>" width="17" height="17" border="0"></a></td>
 		   </tr>
 		</table>

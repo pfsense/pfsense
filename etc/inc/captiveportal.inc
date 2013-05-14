@@ -708,8 +708,8 @@ function captiveportal_prune_old() {
 						$cpentry[2], // clientip
 						$cpentry[3], // clientmac
 						10); // NAS Request
-					pfSense_ipfw_Tableaction($cpzone, IP_FW_TABLE_ZERO_ENTRY_STATS, 1, $cpentry[2]);
-					pfSense_ipfw_Tableaction($cpzone, IP_FW_TABLE_ZERO_ENTRY_STATS, 2, $cpentry[2]);
+					$_gb = @pfSense_ipfw_Tableaction($cpzone, IP_FW_TABLE_ZERO_ENTRY_STATS, 1, $cpentry[2]);
+					$_gb = @pfSense_ipfw_Tableaction($cpzone, IP_FW_TABLE_ZERO_ENTRY_STATS, 2, $cpentry[2]);
 					RADIUS_ACCOUNTING_START($cpentry[1], // ruleno
 						$cpentry[4], // username
 						$cpentry[5], // sessionid
@@ -851,11 +851,11 @@ function captiveportal_disconnect($dbent, $radiusservers,$term_cause = 1,$stop_t
 	
 	if (is_ipaddr($dbent[2])) {
 		/* Delete client's ip entry from tables 1 and 2. */
-		pfSense_ipfw_Tableaction($cpzone, IP_FW_TABLE_DEL, 1, $dbent[2]);
-		pfSense_ipfw_Tableaction($cpzone, IP_FW_TABLE_DEL, 2, $dbent[2]);
+		$_gb = @pfSense_ipfw_Tableaction($cpzone, IP_FW_TABLE_DEL, 1, $dbent[2]);
+		$_gb = @pfSense_ipfw_Tableaction($cpzone, IP_FW_TABLE_DEL, 2, $dbent[2]);
 		/* XXX: Redundant?! Ensure all pf(4) states are killed. */
-		pfSense_kill_states($dbent[2]);
-		pfSense_kill_srcstates($dbent[2]);
+		$_gb = @pfSense_kill_states($dbent[2]);
+		$_gb = @pfSense_kill_srcstates($dbent[2]);
 	}
 
 	/* 
@@ -863,8 +863,8 @@ function captiveportal_disconnect($dbent, $radiusservers,$term_cause = 1,$stop_t
 	* We could get an error if the pipe doesn't exist but everything should still be fine
 	*/
 	if (!empty($dbent[1])) {
-		pfSense_pipe_action("pipe delete {$dbent[1]}");
-		pfSense_pipe_action("pipe delete " . ($dbent[1]+1));
+		$_gb = @pfSense_pipe_action("pipe delete {$dbent[1]}");
+		$_gb = @pfSense_pipe_action("pipe delete " . ($dbent[1]+1));
 
 		/* Release the ruleno so it can be reallocated to new clients. */
 		captiveportal_free_dn_ruleno($dbent[1]);
@@ -941,9 +941,9 @@ function captiveportal_passthrumac_configure_entry($macent) {
 
 	$rules = "";
 	$pipeup = $pipeno;
-	pfSense_pipe_action("pipe {$pipeup} config bw {$bwUp}Kbit/s queue 100 buckets 16");
+	$_gb = @pfSense_pipe_action("pipe {$pipeup} config bw {$bwUp}Kbit/s queue 100 buckets 16");
 	$pipedown = $pipeno + 1;
-	pfSense_pipe_action("pipe {$pipedown} config bw {$bwDown}Kbit/s queue 100 buckets 16");
+	$_gb = @pfSense_pipe_action("pipe {$pipedown} config bw {$bwDown}Kbit/s queue 100 buckets 16");
 	$rules .= "add {$ruleno} pipe {$pipeup} ip from any to any MAC {$macent['mac']} any\n";
 	$ruleno++;
 	$rules .= "add {$ruleno} pipe {$pipedown} ip from any to any MAC any {$macent['mac']}\n";
@@ -1005,9 +1005,9 @@ function captiveportal_allowedip_configure_entry($ipent, $ishostname = false) {
 	$enBwdown = empty($ipent['bw_down']) ? 0 : intval($ipent['bw_down']);
 
 	$pipeno = captiveportal_get_next_dn_ruleno();
-	pfSense_pipe_action("pipe {$pipeno} config bw {$enBwup}Kbit/s queue 100 buckets 16");
+	$_gb = @pfSense_pipe_action("pipe {$pipeno} config bw {$enBwup}Kbit/s queue 100 buckets 16");
 	$pipedown = $pipeno + 1;
-	pfSense_pipe_action("pipe {$pipedown} config bw {$enBwdown}Kbit/s queue 100 buckets 16");
+	$_gb = @pfSense_pipe_action("pipe {$pipedown} config bw {$enBwdown}Kbit/s queue 100 buckets 16");
 	if ($ishostname === true) {
 		$cp_filterdns_conf .= "ipfw {$ipent['hostname']} 3 pipe {$pipeno}\n";
 		$cp_filterdns_conf .= "ipfw {$ipent['hostname']} 4 pipe {$pipedown}\n";
@@ -1701,8 +1701,8 @@ function captiveportal_reapply_attributes($cpentry, $attributes) {
 	$bw_up_pipeno = $cpentry[1];
 	$bw_down_pipeno = $cpentry[1]+1;
 
-	pfSense_pipe_action("pipe {$bw_up_pipeno} config bw {$bw_up}Kbit/s queue 100 buckets 16");
-	pfSense_pipe_action("pipe {$bw_down_pipeno} config bw {$bw_down}Kbit/s queue 100 buckets 16");
+	$_gb = @pfSense_pipe_action("pipe {$bw_up_pipeno} config bw {$bw_up}Kbit/s queue 100 buckets 16");
+	$_gb = @pfSense_pipe_action("pipe {$bw_down_pipeno} config bw {$bw_down}Kbit/s queue 100 buckets 16");
 	//captiveportal_logportalauth($cpentry[4], $cpentry[3], $cpentry[2], "RADIUS_BANDWIDTH_REAPPLY", "{$bw_up}/{$bw_down}");
 
 	unset($bw_up_pipeno, $bw_down_pipeno, $bw_up, $bw_down);
@@ -1874,19 +1874,19 @@ function portal_allow($clientip,$clientmac,$username,$password = null, $attribut
 			$bw_up_pipeno = $pipeno;
 			$bw_down_pipeno = $pipeno + 1;
 			//$bw_up /= 1000; // Scale to Kbit/s
-			pfSense_pipe_action("pipe {$bw_up_pipeno} config bw {$bw_up}Kbit/s queue 100 buckets 16");
-			pfSense_pipe_action("pipe {$bw_down_pipeno} config bw {$bw_down}Kbit/s queue 100 buckets 16");
+			$_gb = @pfSense_pipe_action("pipe {$bw_up_pipeno} config bw {$bw_up}Kbit/s queue 100 buckets 16");
+			$_gb = @pfSense_pipe_action("pipe {$bw_down_pipeno} config bw {$bw_down}Kbit/s queue 100 buckets 16");
 
 			$clientsn = (is_ipaddrv6($clientip)) ? 128 : 32;
 			if (!isset($config['captiveportal'][$cpzone]['nomacfilter']))
-				pfSense_ipfw_Tableaction($cpzone, IP_FW_TABLE_ADD, 1, $clientip, $clientsn, $clientmac, $bw_up_pipeno);
+				$_gb = @pfSense_ipfw_Tableaction($cpzone, IP_FW_TABLE_ADD, 1, $clientip, $clientsn, $clientmac, $bw_up_pipeno);
 			else
-				pfSense_ipfw_Tableaction($cpzone, IP_FW_TABLE_ADD, 1, $clientip, $clientsn, NULL, $bw_up_pipeno);
+				$_gb = @pfSense_ipfw_Tableaction($cpzone, IP_FW_TABLE_ADD, 1, $clientip, $clientsn, NULL, $bw_up_pipeno);
 
 			if (!isset($config['captiveportal'][$cpzone]['nomacfilter']))
-				pfSense_ipfw_Tableaction($cpzone, IP_FW_TABLE_ADD, 2, $clientip, $clientsn, $clientmac, $bw_down_pipeno);
+				$_gb = @pfSense_ipfw_Tableaction($cpzone, IP_FW_TABLE_ADD, 2, $clientip, $clientsn, $clientmac, $bw_down_pipeno);
 			else
-				pfSense_ipfw_Tableaction($cpzone, IP_FW_TABLE_ADD, 2, $clientip, $clientsn, NULL, $bw_down_pipeno);
+				$_gb = @pfSense_ipfw_Tableaction($cpzone, IP_FW_TABLE_ADD, 2, $clientip, $clientsn, NULL, $bw_down_pipeno);
 
 			if ($attributes['voucher'])
 				$attributes['session_timeout'] = $remaining_time;

@@ -41,6 +41,8 @@
 $pgtitle = array(gettext("Diagnostics"), gettext("Edit file"));
 require("guiconfig.inc");
 
+$init_tabsize = 0; // default tab size (0=tab char)
+
 if($_POST['action']) {
 	switch($_POST['action']) {
 		case 'load':
@@ -97,6 +99,9 @@ outputJavaScriptFileInline("javascript/base64.js");
 <?php include("fbegin.inc"); ?>
 
 <script type="text/javascript">	
+
+	var tabsize = <?=$init_tabsize?>;
+
 	function loadFile() {
 		jQuery("#fileStatus").html("<?=gettext("Loading file"); ?> ...");
 		jQuery("#fileStatusBox").show(500);
@@ -183,12 +188,6 @@ outputJavaScriptFileInline("javascript/base64.js");
 			<input type="button" class="formbtn"      onclick="loadFile();" value="<?=gettext('Load');?>" />
 			<input type="button" class="formbtn"      id="fbOpen"           value="<?=gettext('Browse');?>" />
 			<input type="button" class="formbtn"      onclick="saveFile();" value="<?=gettext('Save');?>" />
-			<br />
-			<?php
-			/*
-			<input type="checkbox" id="highlight" /><?=gettext("Enable syntax highlighting");
-			*/
-			?>
 		</td>
 	</tr>
 </table>
@@ -205,6 +204,15 @@ outputJavaScriptFileInline("javascript/base64.js");
 			</div>
 		</td>
 	</tr>
+<tr>
+	<td>
+		<?php
+		/*
+		<input type="checkbox" id="highlight" /><?=gettext("Enable syntax highlighting");?__>&nbsp;&nbsp;&nbsp;
+		*/
+		?>
+		<input type="text" class="formfld" name="tabsize" id="tabsize" size="1" value="<?=($init_tabsize==0?'':$init_tabsize)?>" onchange="tabsize_modified();" />&nbsp;<?=gettext("Tab size (leave empty to use a tab character)")?>
+	</td>
 </table>
 
 		</td>
@@ -216,6 +224,10 @@ outputJavaScriptFileInline("javascript/base64.js");
 <script type="text/javascript" src="/code-syntax-highlighter/shBrushJScript.js"></script>
 <script type="text/javascript" src="/code-syntax-highlighter/shBrushPhp.js"></script>
 <script type="text/javascript" src="/code-syntax-highlighter/shBrushXml.js"></script>
+
+<!-- used for tab/indent handling -->
+<script type="text/javascript" src="/javascript/taboverride.js"></script>
+
 <script type="text/javascript">
 	jQuery(window).load(
 		function() {
@@ -234,6 +246,24 @@ outputJavaScriptFileInline("javascript/base64.js");
 			}
 		);
 	<?php endif; ?>
+
+// enable tab handling
+var textarea = document.getElementById('fileContent');
+TABOVERRIDE.set(textarea);
+TABOVERRIDE.autoIndent(true);
+TABOVERRIDE.tabSize(tabsize);
+
+function tabsize_modified() {
+
+	var t = document.getElementById('tabsize').value;
+	if (t.match(/^\s*$/))
+		tabsize = 0;
+	else if (t.match(/^\s*[0-9]\s*$/))
+		tabsize = Number(t);
+	TABOVERRIDE.tabSize(tabsize);
+	document.getElementById('tabsize').value = (tabsize==0?'':tabsize);
+}
+
 </script>
 
 <?php include("fend.inc"); ?>

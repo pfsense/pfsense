@@ -174,12 +174,13 @@ function get_temp() {
 	return $temp_out;
 }
 
+#return the percentage of used disk
 function disk_usage() {
-	$dfout = "";
-	exec("/bin/df -h | /usr/bin/grep -w '/' | /usr/bin/awk '{ print $5 }' | /usr/bin/cut -d '%' -f 1", $dfout);
-	$diskusage = trim($dfout[0]);
-
-	return $diskusage;
+	$free_disk_space  = disk_free_space("/")  / pow(1024, 2);
+	$total_disk_space = disk_total_space("/") / pow(1024, 2);	
+	$used_disk_space  = $total_disk_space - $free_disk_space;
+	$percentage_used  = $used_disk_space ? ($used_disk_space / $total_disk_space) * 100: 100;
+	return floor($percentage_used);
 }
 
 function swap_usage() {

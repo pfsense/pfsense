@@ -188,7 +188,7 @@ if ($_POST) {
 			$input_errors[] = sprintf(gettext("The IP address must not be within the DHCP range for this interface."));
 		}
 
-		foreach ($a_pools as $id => $p) {
+		foreach ($a_pools as $pidx => $p) {
 			if (is_inrange_v4($_POST['ipaddr'], $p['range']['from'], $p['range']['to'])) {
 				$input_errors[] = gettext("The IP address must not be within the range configured on a DHCP pool for this interface.");
 				break;

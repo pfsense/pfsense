@@ -428,7 +428,7 @@ function vpn_ipsec_configure($ipchg = false)
 					$sed .= "\$strictusercn = true;";
 				mwexec("/bin/cat /etc/inc/ipsec.auth-user.php | /usr/bin/sed 's/\/\/<template>/{$sed}/g' >  {$g['varetc_path']}/ipsec/ipsec.php");
 				mwexec("/bin/chmod a+x {$g['varetc_path']}/ipsec/ipsec.php");
-				$racoonconf .= "extcfg { script \"{$g['varetc_path']}/ipsec/ipsec.php\"; }\n";
+				$racoonconf .= "extcfg { script \"{$g['varetc_path']}/ipsec/ipsec.php\" }\n";
 			}
 
 			/* begin remote sections */

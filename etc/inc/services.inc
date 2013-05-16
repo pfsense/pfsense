@@ -1659,7 +1659,7 @@ function services_dnsmasq_configure() {
 				if (array_key_exists($p[0], $standard_args))
 					unset($standard_args[$p[0]]);
 			}
-		$args .= implode(' ', array_values($standard_args));
+		$args .= ' ' . implode(' ', array_values($standard_args));
 
 		/* run dnsmasq */
 		$cmd = "/usr/local/sbin/dnsmasq --all-servers {$dns_rebind} {$args}";

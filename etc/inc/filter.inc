@@ -3273,7 +3273,6 @@ function filter_process_carp_rules($log) {
 	if (!empty($config['hasync']) or !empty($config['virtualip']['vip'])) {
 		$lines .= "block in $log quick proto carp from (self) to any\n";
 		$lines .= "pass quick proto carp\n";
-		$lines .= "pass quick proto pfsync\n";
 	}
 	return $lines;
 }

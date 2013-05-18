@@ -700,7 +700,7 @@ pfSense_handle_custom_code("/usr/local/pkg/dashboard/pre_dashboard");
 				<br />
 					<img src="./themes/<?= $g['theme']; ?>/images/misc/widget_loader.gif" width="25" height="25" alt="<?=gettext("Loading selected widget"); ?>..." />
 				<br />
-			</div> <?php } if ($divdisplay != "block") $display = none; ?>
+			</div> <?php $display = "none"; } ?>
 			<div id="<?php echo $widgetname;?>" style="display:<?php echo $display; ?>;">				
 				<?php 
 					if ($divdisplay == "block")

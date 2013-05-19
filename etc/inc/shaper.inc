@@ -2781,8 +2781,25 @@ class dummynet_class {
         /* mask parameters */
         var $mask;
         var $noerror;
+        
+        var $ipv6allow;
+        
+        /* constructor */
+                
+        function __construct() {
+                global $config;
+                if (isset($config['system']['ipv6allow']))
+                        $this->ipv6allow = True;
+                else
+                        $this->ipv6allow = False;
+
+        }
 
         /* Accessor functions */
+        function AllowV6() {
+                return $this->ipv6allow;
+        }
+        
         function SetLink($link) {
                 $this->link = $link;
         }
@@ -2866,8 +2883,14 @@ class dummynet_class {
 		$javascript .= "if ((e.options[e.selectedIndex].text == \"none\") || enable_over) { \n";
 		$javascript .= "document.iform.maskbits.disabled = 1;\n";
 		$javascript .= "document.iform.maskbits.value = \"\";\n";
+                if ($this->AllowV6()) {
+                        $javascript .= "document.iform.maskbitsv6.disabled = 1;\n";
+                        $javascript .= "document.iform.maskbitsv6.value = \"\";\n";
+                }
 		$javascript .= "} else \n";
 		$javascript .= "document.iform.maskbits.disabled = 0;\n";
+                if ($this->AllowV6())
+                        $javascript .= "document.iform.maskbitsv6.disabled = 0;\n";
 		$javascript .= "} \n";
 		$javascript .= "//]]>\n";
 		$javascript .= "</script>";
@@ -2896,11 +2919,15 @@ class dummynet_class {
 			$input_errors[] = gettext("Queue names must be alphanumeric and _ or - only.");
         	if (!empty($data['name']) && !preg_match("/^[a-zA-Z0-9_-]+$/", $data['name']))
 			$input_errors[] = gettext("Queue names must be alphanumeric and _ or - only.");
-                if (isset($data['maskbits']) && ($data['maskbits'] <> "")) {
+                if (isset($data['maskbits']) && ($data['maskbits'] <> ""))
 			if ((!is_numeric($data['maskbits'])) || ($data['maskbits'] <= 0) || ($data['maskbits'] > 32))
-				$input_errors[] = gettext("Bit mask must be blank or numeric value between 1 and 32.");
-		}
+				$input_errors[] = gettext("IPV4 bit mask must be blank or numeric value between 1 and 32.");
+                if ($this->AllowV6())
+                        if (isset($data['maskbitsv6']) && ($data['maskbitsv6'] <> ""))
+                                if ((!is_numeric($data['maskbitsv6'])) || ($data['maskbitsv6'] <= 0) || ($data['maskbitsv6'] > 128))
+                                        $input_errors[] = gettext("IPV6 bit mask must be blank or numeric value between 1 and 128.");
 	}
+        
 }
 
 class dnpipe_class extends dummynet_class {
@@ -3055,7 +3082,11 @@ class dnpipe_class extends dummynet_class {
 			$maskbits = $q['maskbits'];
 		else
 			$maskbits = "";
-		$this->SetMask(array("type" => $masktype, "bits" => $maskbits));
+		if (isset($q['maskbitsv6']) && $q['maskbitsv6'] <> "")
+			$maskbitsv6 = $q['maskbitsv6'];
+		else
+			$maskbitsv6 = "";
+		$this->SetMask(array("type" => $masktype, "bits" => $maskbits, "bitsv6" => $maskbitsv6));
 		if (isset($q['buckets']) && $q['buckets'] <> "")
               		$this->SetBuckets($q['buckets']);
 		else
@@ -3143,18 +3174,40 @@ class dnpipe_class extends dummynet_class {
 		if (!empty($mask['type'])) {
 			switch ($mask['type']) {
 			case 'srcaddress':
-				$pfq_rule .= " mask src-ip 0x";
-				if (!empty($mask['bits']) && ($mask['bits'] <> ""))
-					$pfq_rule .= sprintf("%x", gen_subnet_mask_long($mask['bits']));
-				else
-					$pfq_rule .= "ffffffff";
+                                $empty = True;
+				$pfq_rule .= " mask";
+                                if ($this->AllowV6()) {
+                                        if (!empty($mask['bitsv6']) && ($mask['bitsv6'] <> "")) {
+                                                $empty = False;
+                                                $pfq_rule .= " src-ip6 /";
+                                                $pfq_rule .= $mask['bitsv6'];
+                                        }
+                                }
+                                if (!empty($mask['bits']) && ($mask['bits'] <> "")) {
+                                        $empty = False;
+                                        $pfq_rule .= " src-ip 0x";
+                                        $pfq_rule .= sprintf("%x", gen_subnet_mask_long($mask['bits']));
+                                }
+                                if ($empty)
+                                        $pfq_rule .= " src-ip 0xffffffff";
 				break;
 			case 'dstaddress':
-				$pfq_rule .= " mask dst-ip 0x";
-				if (!empty($mask['bits']) && ($mask['bits'] <> ""))
-					$pfq_rule .= sprintf("%x", gen_subnet_mask_long($mask['bits']));
-				else
-					$pfq_rule .= "ffffffff";
+                                $empty = True;
+				$pfq_rule .= " mask";
+                                if ($this->AllowV6()) {
+                                        if (!empty($mask['bitsv6']) && ($mask['bitsv6'] <> "")) {
+                                                $empty = False;
+                                                $pfq_rule .= " dst-ip6 /";
+                                                $pfq_rule .= $mask['bitsv6'];
+                                        }
+                                }
+                                if (!empty($mask['bits']) && ($mask['bits'] <> "")) {
+                                        $empty = False;
+                                        $pfq_rule .= " dst-ip 0x";
+                                        $pfq_rule .= sprintf("%x", gen_subnet_mask_long($mask['bits']));
+                                }
+                                if ($empty)
+                                        $pfq_rule .= " dst-ip 0xffffffff";
 				break;
 			default:
 				break;
@@ -3339,7 +3392,17 @@ EOD;
 		if ($mask['type'] == "none")
 			$form .= " disabled";
 		$form .= " />";
-		$form .= "&nbsp; mask bits (1-32)<br/>";
+		$form .= "&nbsp; IPV4 mask bits (1-32)<br/>";
+                if ($this->AllowV6()) {
+                        $form .= "ffff:ffff:ffff:ffff:ffff:ffff:ffff:ffff/&nbsp;<input type=\"text\" class=\"formfld unknown\" size=\"2\" id=\"maskbitsv6\" name=\"maskbitsv6\" value=\"";
+                        if ($mask['type'] <> "none")
+                        $form .= $mask['bitsv6'];
+                        $form .= "\"";
+                        if ($mask['type'] == "none")
+                                $form .= " disabled";
+                        $form .= " />";
+                        $form .= "&nbsp; IPV6 mask bits (1-128)<br/>";
+                }
 		$form .= "<span class=\"vexpl\">" . gettext("If 'source' or 'destination' slots is chosen, \n"
 		      .  "leaving the mask bits blank will create one pipe per host. Otherwise specify \n"
 		      .  "the number of 'one' bits in the subnet mask used to group multiple hosts \n"
@@ -3425,6 +3488,10 @@ EOD;
 		$mask = $this->GetMask();
 		$cflink['mask'] = $mask['type'];
 		$cflink['maskbits'] = $mask['bits'];
+                if ($this->AllowV6())
+                        $cflink['maskbitsv6'] = $mask['bitsv6'];
+                else
+                        $cflink['maskbitsv6'] = "";
 		$cflink['delay'] = $this->GetDelay();
 	}
 
@@ -3505,7 +3572,11 @@ class dnqueue_class extends dummynet_class {
 			$maskbits = $q['maskbits'];
 		else
 			$maskbits = "";
-		$this->SetMask(array("type" => $masktype, "bits" => $maskbits));
+		if (isset($q['maskbitsv6']) && $q['maskbitsv6'] <> "")
+			$maskbitsv6 = $q['maskbitsv6'];
+		else
+			$maskbitsv6 = "";
+		$this->SetMask(array("type" => $masktype, "bits" => $maskbits, "bitsv6" => $maskbitsv6));
        		if (isset($q['weight']) && $q['weight'] <> "")
             		$this->SetWeight($q['weight']);
 		else
@@ -3542,18 +3613,40 @@ class dnqueue_class extends dummynet_class {
 		if (!empty($mask['type'])) {
 			switch ($mask['type']) {
 			case 'srcaddress':
-				$pfq_rule .= " mask src-ip 0x";
-				if (!empty($mask['bits']) && ($mask['bits'] <> ""))
-					$pfq_rule .= sprintf("%x", gen_subnet_mask_long($mask['bits']));
-				else
-					$pfq_rule .= "ffffffff";
+                                $empty = True;
+				$pfq_rule .= " mask";
+                                if ($this->AllowV6()) {
+                                        if (!empty($mask['bitsv6']) && ($mask['bitsv6'] <> "")) {
+                                                $empty = False;
+                                                $pfq_rule .= " src-ip6 /";
+                                                $pfq_rule .= $mask['bitsv6'];
+                                        }
+                                }
+                                if (!empty($mask['bits']) && ($mask['bits'] <> "")) {
+                                        $empty = False;
+                                        $pfq_rule .= " src-ip 0x";
+                                        $pfq_rule .= sprintf("%x", gen_subnet_mask_long($mask['bits']));
+                                }
+                                if ($empty)
+                                        $pfq_rule .= " src-ip 0xffffffff";
 				break;
 			case 'dstaddress':
-				$pfq_rule .= " mask dst-ip 0x";
-				if (!empty($mask['bits']) && ($mask['bits'] <> ""))
-					$pfq_rule .= sprintf("%x", gen_subnet_mask_long($mask['bits']));
-				else
-					$pfq_rule .= "ffffffff";
+                                $empty = True;
+				$pfq_rule .= " mask";
+                                if ($this->AllowV6()) {
+                                        if (!empty($mask['bitsv6']) && ($mask['bitsv6'] <> "")) {
+                                                $empty = False;
+                                                $pfq_rule .= " dst-ip6 /";
+                                                $pfq_rule .= $mask['bitsv6'];
+                                        }
+                                }
+                                if (!empty($mask['bits']) && ($mask['bits'] <> "")) {
+                                        $empty = False;
+                                        $pfq_rule .= " dst-ip 0x";
+                                        $pfq_rule .= sprintf("%x", gen_subnet_mask_long($mask['bits']));
+                                }
+                                if ($empty)
+                                        $pfq_rule .= " dst-ip 0xffffffff";
 				break;
 			default:
 				break;
@@ -3619,7 +3712,17 @@ class dnqueue_class extends dummynet_class {
 		if ($mask['type'] == "none")
 			$form .= " disabled";
 		$form .= " />";
-		$form .= "&nbsp; mask bits (1-32)<br/>";
+		$form .= "&nbsp; IPV4 mask bits (1-32)<br/>";
+                if ($this->AllowV6()) {
+                        $form .= "ffff:ffff:ffff:ffff:ffff:ffff:ffff:ffff/&nbsp;<input type=\"text\" class=\"formfld unknown\" size=\"2\" id=\"maskbitsv6\" name=\"maskbitsv6\" value=\"";
+                        if ($mask['type'] <> "none")
+                        $form .= $mask['bitsv6'];
+                        $form .= "\"";
+                        if ($mask['type'] == "none")
+                                $form .= " disabled";
+                        $form .= " />";
+                        $form .= "&nbsp; IPV6 mask bits (1-128)<br/>";
+                }
 		$form .= "<span class=\"vexpl\">" . gettext("If 'source' or 'destination' slots is chosen, \n"
 		      .  "leaving the mask bits blank will create one pipe per host. Otherwise specify \n"
 		      .  "the number of 'one' bits in the subnet mask used to group multiple hosts \n"
@@ -3702,6 +3805,10 @@ class dnqueue_class extends dummynet_class {
 		$mask = $this->GetMask();
 		$cflink['mask'] = $mask['type'];
 		$cflink['maskbits'] = $mask['bits'];
+                if ($this->AllowV6())
+                        $cflink['maskbitsv6'] = $mask['bitsv6'];
+                else
+                        $cflink['maskbitsv6'] = "";
 	}
 }
 

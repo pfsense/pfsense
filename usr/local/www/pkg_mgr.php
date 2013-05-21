@@ -2,7 +2,7 @@
 /* $Id$ */
 /*
     pkg_mgr.php
-    Copyright (C) 2004-2013 Scott Ullrich <sullrich@gmail.com>
+    Copyright (C) 2004-2012 Scott Ullrich <sullrich@gmail.com>
     Copyright (C) 2013 Marcello Coutinho
     
     All rights reserved.
@@ -10,10 +10,10 @@
     Redistribution and use in source and binary forms, with or without
     modification, are permitted provided that the following conditions are met:
 
-    1. Redistributions of source code MUST retain the above copyright notice,
+    1. Redistributions of source code must retain the above copyright notice,
        this list of conditions and the following disclaimer.
 
-    2. Redistributions in binary form MUST reproduce the above copyright
+    2. Redistributions in binary form must reproduce the above copyright
        notice, this list of conditions and the following disclaimer in the
        documentation and/or other materials provided with the distribution.
 
@@ -157,28 +157,8 @@ include("head.inc");
 				if(count($pkg_keys) != 0) {
 					foreach($pkg_keys as $key) {
 						$index = &$pkg_info[$key];
-
-						if($g['platform'] == "nanobsd")
-							if($index['noembedded']) 
-								continue;
-						/* If we are on not on HEAD, and the package wants it, skip */
-						if ($version <> "HEAD" && $index['required_version'] == "HEAD" && $requested_version <> "other")
-							continue;
-							
-						/* If there is no required version, and the requested package version is not 'none', then skip */
-						if (empty($index['required_version']) && $requested_version <> "none")
-							continue;
-							
-						/* If the requested version is not 'other', and the required version is newer than what we have, skip. */
-						if($requested_version <> "other" && (pfs_version_compare("", $version, $index['required_version']) < 0))
-							continue;
-							
-						/* If the requestion version is 'other' and we are on the version requested, skip. */
-						if($requested_version == "other" && (pfs_version_compare("", $version, $index['required_version']) == 0))
-							continue;
-							
-						/* Package is only for an older version, lets skip */
-						if($index['maximum_version'] && (pfs_version_compare("", $version, $index['maximum_version']) > 0))
+						
+						if (package_skip_tests($index,$requested_version))
 							continue;
 						
 						$categories[$index['category']]++;
@@ -207,7 +187,8 @@ include("head.inc");
 						}
 					}
 				$tab_array[] = array(gettext("Other Categories"), $menu_category=="Other" ? true : false, "pkg_mgr.php?category=Other");
-				display_top_tabs($tab_array);
+				if (count($categories) > 1)
+					display_top_tabs($tab_array);
 				}
 		?>
 		</td>
@@ -234,31 +215,10 @@ include("head.inc");
 									$index = &$pkg_info[$key];
 									if(in_array($index['name'], $instpkgs))
 										continue;
-									if($g['platform'] == "nanobsd")
-										if($index['noembedded']) 
-											continue;
-									/* If we are on not on HEAD, and the package wants it, skip */
-									if ($version <> "HEAD" &&
-										$index['required_version'] == "HEAD" &&
-										$requested_version <> "other")
+										
+									if (package_skip_tests($index,$requested_version))
 										continue;
-									/* If there is no required version, and the requested package 
-										version is not 'none', then skip */
-									if (empty($index['required_version']) &&
-										$requested_version <> "none")
-										continue;
-									/* If the requested version is not 'other', and the required version is newer than what we have, skip. */
-									if($requested_version <> "other" &&
-										(pfs_version_compare("", $version, $index['required_version']) < 0))
-										continue;
-									/* If the requestion version is 'other' and we are on the version requested, skip. */
-									if($requested_version == "other" &&
-										(pfs_version_compare("", $version, $index['required_version']) == 0))
-										continue;
-									/* Package is only for an older version, lets skip */
-									if($index['maximum_version'] &&
-										(pfs_version_compare("", $version, $index['maximum_version']) > 0))
-										continue;
+										
 									/* get history/changelog git dir */
 									$commit_dir=explode("/",$index['config_file']);
 									$changeloglink ="https://github.com/pfsense/pfsense-packages/commits/master/config/".$commit_dir[(count($commit_dir)-2)];

@@ -335,6 +335,8 @@ function services_dhcpd_configure($family = "all") {
 
 function services_dhcpdv4_configure() {
 	global $config, $g;
+	$need_ddns_updates = false;
+	$ddns_zones = array();
 
 	if($g['services_dhcp_server_enable'] == false)
 		return;
@@ -410,7 +412,6 @@ option domain-search-list code 119 = text;
 default-lease-time 7200;
 max-lease-time 86400;
 log-facility local7;
-ddns-update-style none;
 one-lease-per-client true;
 deny duplicates;
 ping-check true;
@@ -501,6 +502,7 @@ EOPP;
 
 	foreach ($dhcpdcfg as $dhcpif => $dhcpifconf) {
 
+		$newzone = array();
 		$ifcfg = $config['interfaces'][$dhcpif];
 
 		if (!isset($dhcpifconf['enable']) || !isset($Iflist[$dhcpif]))
@@ -534,18 +536,36 @@ EOPP;
 		}
 
 		if (isset($dhcpifconf['ddnsupdate'])) {
+			$need_ddns_updates = true;
+			$newzone = array();
 			if($dhcpifconf['ddnsdomain'] <> "") {
+				$newzone['domain-name'] = $dhcpifconf['ddnsdomain'];
 				$dnscfg .= "	ddns-domainname \"{$dhcpifconf['ddnsdomain']}\";\n";
+			} else {
+				$newzone['domain-name'] = $config['system']['domain'];
 			}
-			$dnscfg .= "	ddns-update-style interim;\n";
+			$revsubnet = explode(".", $subnet);
+			$revsubnet = array_reverse($revsubnet);
+			foreach ($revsubnet as $octet) {
+				if ($octet != "0")
+					break;
+				array_shift($revsubnet);
+			}
+			$newzone['ptr-domain'] = implode(".", $revsubnet) . ".in-addr.arpa";
 		}
 
 		if (is_array($dhcpifconf['dnsserver']) && ($dhcpifconf['dnsserver'][0])) {
 			$dnscfg .= "	option domain-name-servers " . join(",", $dhcpifconf['dnsserver']) . ";";
+			if ($newzone['domain-name'])
+				$newzone['dns-servers'] = $dhcpifconf['dnsserver'];
 		} else if (isset($config['dnsmasq']['enable'])) {
 			$dnscfg .= "	option domain-name-servers {$ifcfgip};";
+			if ($newzone['domain-name'] && is_array($syscfg['dnsserver']) && ($syscfg['dnsserver'][0]))
+				$newzone['dns-servers'] = $syscfg['dnsserver'];
 		} else if (is_array($syscfg['dnsserver']) && ($syscfg['dnsserver'][0])) {
 			$dnscfg .= "	option domain-name-servers " . join(",", $syscfg['dnsserver']) . ";";
+			if ($newzone['domain-name'])
+				$newzone['dns-servers'] = $syscfg['dnsserver'];
 		}
 
 		/* Create classes - These all contain comma separated lists. Join them into one 
@@ -818,6 +838,30 @@ EOD;
 		}
 
 		$dhcpdifs[] = get_real_interface($dhcpif);
+		if ($newzone['domain-name'])
+			$ddns_zones[] = $newzone;
+	}
+
+	if ($need_ddns_updates) {
+		$dhcpdconf .= "ddns-update-style interim;\n";
+		if (is_array($ddns_zones)) {
+			foreach ($ddns_zones as $zone) {
+				if (!is_array($zone) || empty($zone) || !is_array($zone['dns-servers']))
+					continue;
+				$primary = $zone['dns-servers'][0];
+				$secondary = empty($zone['dns-servers'][1]) ? "" : $zone['dns-servers'][1];
+				$dhcpdconf .= "zone {$zone['domain-name']} {\n";
+				$dhcpdconf .= "	primary {$primary};\n";
+				if (is_ipaddrv4($secondary))
+					$dhcpdconf .= "	secondary {$secondary};\n";
+				$dhcpdconf .= "}\n";
+				$dhcpdconf .= "zone {$zone['ptr-domain']} {\n";
+				$dhcpdconf .= "	primary {$primary};\n";
+				if (is_ipaddrv4($secondary))
+					$dhcpdconf .= "	secondary {$secondary};\n";
+				$dhcpdconf .= "}\n";
+			}
+		}
 	}
 
 	/* write dhcpd.conf */

@@ -1333,4 +1333,37 @@ function stop_packages() {
 	}
 }
 
+function package_skip_tests($index,$requested_version){
+	global $config, $g;
+
+	/* Get pfsense version*/
+	$version = rtrim(file_get_contents("/etc/version"));
+	
+	if($g['platform'] == "nanobsd")
+		if($index['noembedded']) 
+			return true;
+						
+	/* If we are on not on HEAD, and the package wants it, skip */
+	if ($version <> "HEAD" && $index['required_version'] == "HEAD" && $requested_version <> "other")
+		return true;
+							
+	/* If there is no required version, and the requested package version is not 'none', then skip */
+	if (empty($index['required_version']) && $requested_version <> "none")
+		return true;
+							
+	/* If the requested version is not 'other', and the required version is newer than what we have, skip. */
+	if($requested_version <> "other" && (pfs_version_compare("", $version, $index['required_version']) < 0))
+		return true;
+							
+	/* If the requestion version is 'other' and we are on the version requested, skip. */
+	if($requested_version == "other" && (pfs_version_compare("", $version, $index['required_version']) == 0))
+		return true;
+							
+	/* Package is only for an older version, lets skip */
+	if($index['maximum_version'] && (pfs_version_compare("", $version, $index['maximum_version']) > 0))
+		return true;
+		
+	/* Do not skip package list */	
+	return false;
+}
 ?>

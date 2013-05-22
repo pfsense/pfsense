@@ -474,21 +474,15 @@ function system_routing_configure($interface = "") {
 			if (!strcasecmp("Null", substr($rtent['gateway'], 0, 3)))
 				$blackhole = "-blackhole";
 
-			if (is_subnetv6($rtent['network'])) {
-				if (is_ipaddrv6($gatewayip))
-					mwexec("/sbin/route change -inet6 {$blackhole} " . escapeshellarg($rtent['network']) .
-						" " . escapeshellarg($gatewayip));
+			$inet = (is_subnetv6($rtent['network']) ? "-inet6" : "-inet");
+
+			$cmd = "/sbin/route change {$inet} {$blackhole} " . escapeshellarg($rtent['network']) . " ";
+
+			if (is_subnet($rtent['network']))
+				if (is_ipaddr($gatewayip))
+					mwexec($cmd . escapeshellarg($gatewayip));
 				else if (!empty($interfacegw))
-					mwexec("/sbin/route change -inet6 {$blackhole} " . escapeshellarg($rtent['network']) .
-						" -iface " . escapeshellarg($interfacegw));
-			 } else if (is_subnetv4($rtent['network'])) {
-				if (is_ipaddrv4($gatewayip))
-					mwexec("/sbin/route change -inet {$blackhole} " . escapeshellarg($rtent['network']) .
-						" " . escapeshellarg($gatewayip));
-				else if (!empty($interfacegw))
-					mwexec("/sbin/route change -inet {$blackhole} " . escapeshellarg($rtent['network']) .
-						" -iface " . escapeshellarg($interfacegw));
-			}
+					mwexec($cmd . "-iface " . escapeshellarg($interfacegw));
 		}
 		unset($gateways_arr);
 	}

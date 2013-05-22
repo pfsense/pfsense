@@ -1713,20 +1713,18 @@ function vpn_ipsec_refresh_policies() {
 			continue;
 		if (is_ipaddr($phase1['remote-gateway']))
 			continue;
-		if (!is_ipaddr($phase1['remote-gateway'])) {
-			$dnscache = compare_hostname_to_dnscache($phase1['remote-gateway']);
-			$dnscache = trim($dnscache);
-			/* we should have the old IP addresses in the dnscache now */
-			if(!empty($dnscache)) {
-				$oldphase1 = $phase1;
-				$oldphase1['remote-gateway'] = $dnscache;
-				/* now we need to find all tunnels for this host */
-				if (!is_array($a_phase2) || (!count($a_phase2)))
-					continue;
-				foreach ($a_phase2 as $phase2) {
-					if ($phase2['ikeid'] == $phase1['ikeid'])
-						reload_tunnel_spd_policy ($phase1, $phase2, $oldphase1, $oldphase2);
-				}
+		$dnscache = compare_hostname_to_dnscache($phase1['remote-gateway']);
+		$dnscache = trim($dnscache);
+		/* we should have the old IP addresses in the dnscache now */
+		if(!empty($dnscache)) {
+			$oldphase1 = $phase1;
+			$oldphase1['remote-gateway'] = $dnscache;
+			/* now we need to find all tunnels for this host */
+			if (!is_array($a_phase2) || (!count($a_phase2)))
+				continue;
+			foreach ($a_phase2 as $phase2) {
+				if ($phase2['ikeid'] == $phase1['ikeid'])
+					reload_tunnel_spd_policy ($phase1, $phase2, $oldphase1, $oldphase2);
 			}
 		}
 	}

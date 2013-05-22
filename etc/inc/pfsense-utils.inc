@@ -1449,6 +1449,7 @@ function add_hostname_to_watch($hostname) {
 	if(!is_dir("/var/db/dnscache")) {
 		mkdir("/var/db/dnscache");
 	}
+	$result = array();
 	if((is_fqdn($hostname)) && (!is_ipaddr($hostname))) {
 		$domrecords = array();
 		$domips = array();
@@ -1471,7 +1472,9 @@ function add_hostname_to_watch($hostname) {
 			}
 		}
 		file_put_contents("/var/db/dnscache/$hostname", $contents);
+		$result = explode("\n", $contents);
 	}
+	return $result;
 }
 
 function is_fqdn($fqdn) {

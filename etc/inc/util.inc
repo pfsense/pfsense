@@ -1,4 +1,4 @@
-<?php 
+<?php
 /*
 	util.inc
 	part of the pfSense project (http://www.pfsense.com)
@@ -78,7 +78,7 @@ function sigkillbyname($procname, $sig) {
 
 /* kill a process by name */
 function killbyname($procname) {
-	if(isvalidproc($procname)) 
+	if(isvalidproc($procname))
 		mwexec("/usr/bin/killall " . escapeshellarg($procname));
 }
 
@@ -145,7 +145,7 @@ function send_event($cmd) {
 
 	if(!isset($g['event_address']))
 		$g['event_address'] = "unix:///var/run/check_reload_status";
-		
+
 	$try = 0;
 	while ($try < 3) {
 		$fd = @fsockopen($g['event_address']);
@@ -167,7 +167,7 @@ function send_multiple_events($cmds) {
 
 	if(!isset($g['event_address']))
 		$g['event_address'] = "unix:///var/run/check_reload_status";
-			
+
 	if (!is_array($cmds))
 		return;
 
@@ -300,9 +300,9 @@ function gen_subnet_max($ipaddr, $bits) {
 function gen_subnetv6_max($ipaddr, $bits) {
 	if(!is_ipaddrv6($ipaddr))
 		return false;
-	
+
 	$mask = Net_IPv6::getNetmask('FFFF:FFFF:FFFF:FFFF:FFFF:FFFF:FFFF:FFFF',$bits);
-	
+
 	$inet_ip = (binary)inet_pton($ipaddr);
 	$inet_mask = (binary)inet_pton($mask);
 
@@ -851,8 +851,8 @@ function get_configured_ip_addresses() {
 		}
 	}
 	$interfaces = get_configured_carp_interface_list();
-	if (is_array($interfaces)) 
-		foreach($interfaces as $int => $ipaddr) 
+	if (is_array($interfaces))
+		foreach($interfaces as $int => $ipaddr)
 			$ip_array[$int] = $ipaddr;
 
 	/* pppoe server */
@@ -886,8 +886,8 @@ function get_configured_ipv6_addresses() {
 		}
 	}
 	$interfaces = get_configured_carp_interface_list();
-	if(is_array($interfaces)) 
-		foreach($interfaces as $int => $ipaddrv6) 
+	if(is_array($interfaces))
+		foreach($interfaces as $int => $ipaddrv6)
 			$ipv6_array[$int] = $ipaddrv6;
 	return $ipv6_array;
 }
@@ -901,10 +901,10 @@ function get_configured_ipv6_addresses() {
  *			status (much slower)
  */
 function get_interface_list($mode = "active", $keyby = "physical", $vfaces = "") {
-        global $config;
+	global $config;
 	$upints = array();
-        /* get a list of virtual interface types */
-        if(!$vfaces) {
+	/* get a list of virtual interface types */
+	if(!$vfaces) {
 		$vfaces = array (
 				'bridge',
 				'ppp',
@@ -932,14 +932,14 @@ function get_interface_list($mode = "active", $keyby = "physical", $vfaces = "")
 	}
 	switch($mode) {
 	case "active":
-                $upints = pfSense_interface_listget(IFF_UP);
-        	break;
+		$upints = pfSense_interface_listget(IFF_UP);
+		break;
 	case "media":
 		$intlist = pfSense_interface_listget();
-                $ifconfig = "";
-                exec("/sbin/ifconfig -a", $ifconfig);
-                $regexp = '/(' . implode('|', $intlist) . '):\s/';
-                $ifstatus = preg_grep('/status:/', $ifconfig);
+		$ifconfig = "";
+		exec("/sbin/ifconfig -a", $ifconfig);
+		$regexp = '/(' . implode('|', $intlist) . '):\s/';
+		$ifstatus = preg_grep('/status:/', $ifconfig);
 		foreach($ifstatus as $status) {
 			$int = array_shift($intlist);
 			if(stristr($status, "active")) $upints[] = $int;
@@ -949,10 +949,10 @@ function get_interface_list($mode = "active", $keyby = "physical", $vfaces = "")
 		$upints = pfSense_interface_listget();
 		break;
 	}
-        /* build interface list with netstat */
-        $linkinfo = "";
-        exec("/usr/bin/netstat -inW -f link | awk '{ print $1, $4 }'", $linkinfo);
-        array_shift($linkinfo);
+	/* build interface list with netstat */
+	$linkinfo = "";
+	exec("/usr/bin/netstat -inW -f link | awk '{ print $1, $4 }'", $linkinfo);
+	array_shift($linkinfo);
 	/* build ip address list with netstat */
 	$ipinfo = "";
 	exec("/usr/bin/netstat -inW -f inet | awk '{ print $1, $4 }'", $ipinfo);
@@ -990,7 +990,7 @@ function get_interface_list($mode = "active", $keyby = "physical", $vfaces = "")
 				$iflist[$ifname] = $toput;
 				break;
 			case "ppp":
-				
+
 			case "friendly":
 				if($friendly != "") {
 					$toput['if'] = $ifname;
@@ -1134,8 +1134,8 @@ function is_alias($name) {
 }
 
 function alias_get_type($name) {
-        global $config;
-        
+	global $config;
+
 	if (is_array($config['aliases']['alias'])) {
 		foreach ($config['aliases']['alias'] as $alias) {
 			if ($name == $alias['name'])
@@ -1143,7 +1143,7 @@ function alias_get_type($name) {
 		}
 	}
 
-        return "";
+	return "";
 }
 
 /* expand a host or network alias, if necessary */
@@ -1238,7 +1238,7 @@ function check_subnetsv6_overlap($subnet1, $bits1, $subnet2, $bits2) {
 	$sub1_max = gen_subnetv6_max($subnet1, $bits1);
 	$sub2_min = gen_subnetv6($subnet2, $bits2);
 	$sub2_max = gen_subnetv6_max($subnet2, $bits2);
-	
+
 	return (is_inrange_v6($sub1_min, $sub2_min, $sub2_max) || is_inrange_v6($sub1_max, $sub2_min, $sub2_max) || is_inrange_v6($sub2_min, $sub1_min, $sub1_max));
 }
 
@@ -1301,27 +1301,27 @@ function xml_safe_fieldname($fieldname) {
 }
 
 function mac_format($clientmac) {
-    global $config, $cpzone;
+	global $config, $cpzone;
 
-    $mac = explode(":", $clientmac);
-    $mac_format = $cpzone ? $config['captiveportal'][$cpzone]['radmac_format'] : false;
+	$mac = explode(":", $clientmac);
+	$mac_format = $cpzone ? $config['captiveportal'][$cpzone]['radmac_format'] : false;
 
-    switch($mac_format) {
-        case 'singledash':
+	switch($mac_format) {
+	case 'singledash':
 		return "$mac[0]$mac[1]$mac[2]-$mac[3]$mac[4]$mac[5]";
 
-        case 'ietf':
+	case 'ietf':
 		return "$mac[0]-$mac[1]-$mac[2]-$mac[3]-$mac[4]-$mac[5]";
 
-        case 'cisco':
+	case 'cisco':
 		return "$mac[0]$mac[1].$mac[2]$mac[3].$mac[4]$mac[5]";
 
-        case 'unformatted':
+	case 'unformatted':
 		return "$mac[0]$mac[1]$mac[2]$mac[3]$mac[4]$mac[5]";
 
-        default:
+	default:
 		return $clientmac;
-    }
+	}
 }
 
 function resolve_retry($hostname, $retries = 5) {
@@ -1329,9 +1329,9 @@ function resolve_retry($hostname, $retries = 5) {
 	if (is_ipaddr($hostname))
 		return $hostname;
 
-       for ($i = 0; $i < $retries; $i++) {
+	for ($i = 0; $i < $retries; $i++) {
 		// FIXME: gethostbyname does not work for AAAA hostnames, boo, hiss
-               $ip = gethostbyname($hostname);
+		$ip = gethostbyname($hostname);
 
 		if ($ip && $ip != $hostname) {
 			/* success */
@@ -1397,7 +1397,7 @@ function run_plugins($directory) {
 		foreach ($files as $file) {
 			if (stristr($file, ".sh") == true)
 				mwexec($directory . $file . " start");
-			else if (!is_dir($directory . "/" . $file) && stristr($file,".inc")) 
+			else if (!is_dir($directory . "/" . $file) && stristr($file,".inc"))
 				require_once($directory . "/" . $file);
 		}
 	}
@@ -1517,8 +1517,8 @@ function mute_kernel_msgs() {
 		case "jail":
 			return;
 	}
-	if($config['system']['enableserial']) 
-		return;			
+	if($config['system']['enableserial'])
+		return;
 	exec("/sbin/conscontrol mute on");
 }
 
@@ -1629,7 +1629,7 @@ function timeout($timer = 9) {
 		if ($timer == 0)
 			break;
 	}
-	return $key;	
+	return $key;
 }
 
 /****f* util/msort
@@ -1661,7 +1661,7 @@ function msort($array, $id="id", $sort_ascending=true) {
 	if ($sort_ascending) {
 		return $temp_array;
 	} else {
-    		return array_reverse($temp_array);
+		return array_reverse($temp_array);
 	}
 }
 
@@ -1704,11 +1704,11 @@ function color($color = "0m") {
 		 46m set background color to cyan
 		 47m set background color to white
 		 49m set background color to default (black)
-	*/	
-	// Allow caching of TERM to 
+	*/
+	// Allow caching of TERM to
 	// speedup subequence requests.
 	global $TERM;
-	if(!$TERM) 
+	if(!$TERM)
 		$TERM=`/usr/bin/env | grep color`;
 	if(!$TERM)
 		$TERM=`/usr/bin/env | grep cons25`;
@@ -1716,23 +1716,23 @@ function color($color = "0m") {
 		$ESCAPE=chr(27);
 		switch ($color) {
 			case "black":
-				return "{$ESCAPE}[30m"; 
+				return "{$ESCAPE}[30m";
 			case "red":
-				return "{$ESCAPE}[31m"; 
+				return "{$ESCAPE}[31m";
 			case "green":
-				return "{$ESCAPE}[32m"; 
+				return "{$ESCAPE}[32m";
 			case "yellow":
-				return "{$ESCAPE}[33m"; 
+				return "{$ESCAPE}[33m";
 			case "blue":
-				return "{$ESCAPE}[34m"; 
+				return "{$ESCAPE}[34m";
 			case "magenta":
-				return "{$ESCAPE}[35m"; 
+				return "{$ESCAPE}[35m";
 			case "cyan":
-				return "{$ESCAPE}[36m"; 
+				return "{$ESCAPE}[36m";
 			case "white":
-				return "{$ESCAPE}[37m"; 
+				return "{$ESCAPE}[37m";
 			case "default":
-				return "{$ESCAPE}[39m"; 
+				return "{$ESCAPE}[39m";
 		}
 		return "{$ESCAPE}[{$color}";
 	}
@@ -1749,7 +1749,7 @@ function color($color = "0m") {
 function is_URL($url) {
 	$match = preg_match("'\b(([\w-]+://?|www[.])[^\s()<>]+(?:\([\w\d]+\)|([^[:punct:]\s]|/)))'", $url);
 	if($match)
-		return true;	
+		return true;
 	return false;
 }
 
@@ -1757,7 +1757,7 @@ function is_file_included($file = "") {
 	$files = get_included_files();
 	if (in_array($file, $files))
 		return true;
-	
+
 	return false;
 }
 
@@ -1779,7 +1779,7 @@ function array_merge_recursive_unique($array0, $array1) {
 
 		// The first remaining array is $array. We are processing it. So
 		// we remove it from remaing arrays.
-        array_shift($remains);
+		array_shift($remains);
 
 		// We don't care non array param, like array_merge since PHP 5.0.
 		if(is_array($array)) {
@@ -1896,7 +1896,7 @@ function get_alias_list($type = null) {
 				$result[] = $alias['name'];
 			}
 		}
-	}		
+	}
 	return $result;
 }
 

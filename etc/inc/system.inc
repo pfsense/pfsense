@@ -447,12 +447,19 @@ function system_routing_configure($interface = "") {
 		}
 	}
 
+	system_staticroutes_configure($interface, false);
+
+	return 0;
+}
+
+function system_staticroutes_configure($interface = "", $update_dns = false) {
+	global $config, $g, $aliastable;
+
 	$static_routes = get_staticroutes();
 	if (count($static_routes)) {
 		$gateways_arr = return_gateways_array(false, true);
 
 		foreach ($static_routes as $rtent) {
-			$gatewayip = "";
 			if (empty($gateways_arr[$rtent['gateway']])) {
 				log_error(sprintf(gettext("Static Routes: Gateway IP could not be found for %s"), $rtent['network']));
 				continue;
@@ -461,12 +468,6 @@ function system_routing_configure($interface = "") {
 			if (!empty($interface) && $interface != $gateway['friendlyiface'])
 				continue;
 
-			/* XXX: This is a bit dangerous in case of routing daemons!? */
-			if(isset($rtent['disabled'])) {
-				mwexec("/sbin/route delete " . escapeshellarg($rtent['network']), true);
-				continue;
-			}
-
 			$gatewayip = $gateway['gateway'];
 			$interfacegw = $gateway['interface'];
 
@@ -474,15 +475,63 @@ function system_routing_configure($interface = "") {
 			if (!strcasecmp("Null", substr($rtent['gateway'], 0, 3)))
 				$blackhole = "-blackhole";
 
-			$inet = (is_subnetv6($rtent['network']) ? "-inet6" : "-inet");
+			$targets = array();
+			if (is_alias($rtent['network'])) {
+				if (alias_get_type($rtent['network'] != "host"))
+					continue;
+				if (!isset($aliastable[$rtent['network']]))
+					continue;
+				$targets = preg_split('/\s+/', $aliastable[$rtent['network']]);
+			} else if (is_fqdn($rtent['network']) || is_ipaddr($rtent['network'])) {
+				$targets[] = $rtent['network'];
+			} else {
+				continue;
+			}
 
-			$cmd = "/sbin/route change {$inet} {$blackhole} " . escapeshellarg($rtent['network']) . " ";
+			foreach ($targets as $target) {
+				if(isset($rtent['disabled'])) {
+					if (!is_ipaddr($target)) {
+						$target = resolve_retry($target);
+						if (!is_ipaddr($target))
+							continue;
+					}
+					/* XXX: This is a bit dangerous in case of routing daemons!? */
+					mwexec("/sbin/route delete " . escapeshellarg($target), true);
+					continue;
+				}
 
-			if (is_subnet($rtent['network']))
-				if (is_ipaddr($gatewayip))
-					mwexec($cmd . escapeshellarg($gatewayip));
-				else if (!empty($interfacegw))
-					mwexec($cmd . "-iface " . escapeshellarg($interfacegw));
+				$dnscache = array();
+				if ($update_dns === true) {
+					if (is_ipaddr($target))
+						continue;
+					$dnscache = explode("\n", trim(compare_hostname_to_dnscache($target)));
+					if (empty($dnscache))
+						continue;
+				}
+
+				if (is_ipaddr($target))
+					$ips = array($target);
+				else
+					$ips = add_hostname_to_watch($target);
+
+				foreach ($dnscache as $ip) {
+					if (in_array($ip, $ips))
+						continue;
+					mwexec("/sbin/route delete " . escapeshellarg($ip), true);
+				}
+
+				foreach ($ips as $ip) {
+					$inet = (is_subnetv6($ip) ? "-inet6" : "-inet");
+
+					$cmd = "/sbin/route change {$inet} {$blackhole} " . escapeshellarg($ip) . " ";
+
+					if (is_subnet($ip))
+						if (is_ipaddr($gatewayip))
+							mwexec($cmd . escapeshellarg($gatewayip));
+						else if (!empty($interfacegw))
+							mwexec($cmd . "-iface " . escapeshellarg($interfacegw));
+				}
+			}
 		}
 		unset($gateways_arr);
 	}

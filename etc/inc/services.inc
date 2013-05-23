@@ -845,21 +845,29 @@ EOD;
 	if ($need_ddns_updates) {
 		$dhcpdconf .= "ddns-update-style interim;\n";
 		if (is_array($ddns_zones)) {
+			$added_zones = array();
 			foreach ($ddns_zones as $zone) {
 				if (!is_array($zone) || empty($zone) || !is_array($zone['dns-servers']))
 					continue;
 				$primary = $zone['dns-servers'][0];
 				$secondary = empty($zone['dns-servers'][1]) ? "" : $zone['dns-servers'][1];
-				$dhcpdconf .= "zone {$zone['domain-name']} {\n";
-				$dhcpdconf .= "	primary {$primary};\n";
-				if (is_ipaddrv4($secondary))
-					$dhcpdconf .= "	secondary {$secondary};\n";
-				$dhcpdconf .= "}\n";
-				$dhcpdconf .= "zone {$zone['ptr-domain']} {\n";
-				$dhcpdconf .= "	primary {$primary};\n";
-				if (is_ipaddrv4($secondary))
-					$dhcpdconf .= "	secondary {$secondary};\n";
-				$dhcpdconf .= "}\n";
+				// We don't need to add zones multiple times.
+				if (!in_array($zone['domain-name'], $added_zones)) {
+					$dhcpdconf .= "zone {$zone['domain-name']} {\n";
+					$dhcpdconf .= "	primary {$primary};\n";
+					if (is_ipaddrv4($secondary))
+						$dhcpdconf .= "	secondary {$secondary};\n";
+					$dhcpdconf .= "}\n";
+					$added_zones[] = $zone['domain-name'];
+				}
+				if (!in_array($zone['ptr-domain'], $added_zones)) {
+					$dhcpdconf .= "zone {$zone['ptr-domain']} {\n";
+					$dhcpdconf .= "	primary {$primary};\n";
+					if (is_ipaddrv4($secondary))
+						$dhcpdconf .= "	secondary {$secondary};\n";
+					$dhcpdconf .= "}\n";
+					$added_zones[] = $zone['ptr-domain'];
+				}
 			}
 		}
 	}

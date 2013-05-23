@@ -141,14 +141,7 @@ div.niceTitle p
   -moz-border-radius: 0 0 8px 8px;
 }
 
-body {
-  margin: 0px auto;
-  align: left;
-  background: url('images/background.jpg') no-repeat;
-  background-position : left 0px;
-  background-attachment: fixed;
-  background-color: #7f7f7f;
-}
+body {}
 a:link {
 	color: #550000;
 }
@@ -192,11 +185,7 @@ iframe {
 
 /* ID Based CSS Definitions */
 /* margin: 0px auto makes the content centered, margin 0px 0px makes it aligned to the left */
-#wrapper {
-	width: 810px;
-	margin: 0px 0px;
-/*	left: 0px; */
-}
+#wrapper {}
 
 #header {
 	background: url('images/header.png') no-repeat;
@@ -205,6 +194,7 @@ iframe {
 	width: 810px;
 	position: fixed;
 	left: 0;
+	top: 0;
 	margin-bottom: 5px;
 	z-index: 2;
 }
@@ -344,16 +334,9 @@ table#marquee div#container div#scroller {
 
 
 #content {
-	position: relative;
-	top: 0px;
-	left: 75px;
-	margin-top: 0px;
-	margin-left: 0px;
 	padding-top: 50px;
-	padding-left: 20px;
-	width: 840px;
-	background-color: #ffffff;
-	background: url('images/horizontal.png') repeat-y;
+	padding-right: 40px;
+	padding-left: 40px;
 }
 
 
@@ -364,37 +347,20 @@ table#marquee div#container div#scroller {
 }
 
 #right {
-	position: relative;
-	top: -10px;
-	left: 0px;
-	width: 770px;
-	margin-top: 0px;
-	margin-left: 5px;
-	margin-right: 5px;
-	padding-top: 20px;
-	padding-left: 10px;
-	padding-right: 10px;
-	padding-bottom: 90px;
-	min-height: 400px;
-
+	padding: 10px;
+	margin-bottom: 30px;
+	font-size: 12px;
+	font-weight: 200;
+	line-height: 12px;
+	color: inherit;
+	background-color: #eeeeee;
+	-webkit-border-radius: 6px;
+	-moz-border-radius: 6px;
+	border-radius: 6px;
 }
 
 #footer {
-	position: relative;
-/*	margin-bottom: 5px; */
-	background: url('images/footer.png') no-repeat;
-/*	top: -100px; */
-	bottom: 0px;
-	left: 75px;
-/*	width: 1210px; */
-	width: 840px;
-	height: 60px;
-	color: #000000;
 	text-align: center;
-	font-size: 0.9em;
-	padding-top: 10px;
-	padding-left: 10px;
-	clear: both;
 }
 #footer p {
 	padding: 0px;
@@ -1403,3 +1369,4 @@ table.sortable thead {
 .thermal_sensors_widget_scale100 { position: absolute; height: 9px; width: 1px; left: 100%; margin-top: -6px; background-color: lightgray; z-index: 0; font-size: 0; }
 
 .thermal_sensors_widget_mark100 { position: absolute; width: 15px; left: 96%; margin-top: -12px; font: 6pt Arial, sans-serif; text-align: left; color: #575757; }
+

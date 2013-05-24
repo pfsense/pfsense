@@ -486,7 +486,7 @@ if(file_exists("/var/run/interface_mismatch_reboot_needed"))
   <tr>
 	<td class="list" colspan="2"></td>
 	<td class="list nowrap">
-	<a href="interfaces_assign.php?act=add"><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_plus.gif" title=<?=gettext("add interface"); ?> width="17" height="17" border="0" alt="add" /></a>
+	<a href="interfaces_assign.php?act=add"><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_plus.gif" title="<?=gettext("add interface"); ?>" width="17" height="17" border="0" alt="add" /></a>
 	</td>
   </tr>
   <?php else: ?>

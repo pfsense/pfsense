@@ -130,7 +130,7 @@ include("head.inc");
                     <?=htmlspecialchars($ppp['descr']);?>&nbsp;
                   </td>
                   <td valign="middle" class="list nowrap"> <a href="interfaces_ppps_edit.php?id=<?=$i;?>"><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_e.gif" width="17" height="17" border="0" alt="edit" /></a>
-                     &nbsp;<a href="interfaces_ppps.php?act=del&id=<?=$i;?>" onclick="return confirm('<?=gettext("Do you really want to delete this PPP interface?");?>')"><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_x.gif" width="17" height="17" border="0" alt="remove" /></a></td>
+                     &nbsp;<a href="interfaces_ppps.php?act=del&amp;id=<?=$i;?>" onclick="return confirm('<?=gettext("Do you really want to delete this PPP interface?");?>')"><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_x.gif" width="17" height="17" border="0" alt="remove" /></a></td>
 				</tr>
 			  <?php $i++; endforeach; ?>
                 <tr>

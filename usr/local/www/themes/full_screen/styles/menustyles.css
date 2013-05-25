@@ -1,0 +1,44 @@
+#navigation {
+    /* border:1px solid black; */
+    width: 98%;
+    vertical-align: middle;
+    height: 16px;
+    padding-top: 4px;
+    }
+
+#menu {
+    /* background: #990000; */
+    /* border-bottom:1px solid white; */
+    padding: 0 0 0 0;
+    width: 98%;
+    vertical-align: middle;
+    height: 16px;
+    }
+#menu a {
+    padding: 2px 28px 4px 28px;
+    text-decoration: none;
+    font-weight: bold;
+    font-size: 1.0em;
+    color: #FFFFFF;
+    width: 08%;
+    height: 16px;
+    }
+#menu a.hover {
+    background: #AF2020;
+    }
+#menu span {
+    display: none;
+    }
+
+#subnav {
+    font-size: 10px;
+    margin-bottom: 2em;
+    }
+#subnav a {
+    color: #FF0000; /* #FB3B00; */
+    margin-right: 1em;
+    }
+#subnav span {
+    color: silver;
+    margin-right: 1em;
+    }

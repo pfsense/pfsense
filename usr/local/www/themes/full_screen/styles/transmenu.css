@@ -1,0 +1,75 @@
+/* this is the clipping region for the menu. it's width and height get set by script, depending on the size of the items table */
+.transMenu {
+	position:absolute;
+	overflow:hidden;
+	left:-1000px;
+	top:-1000px;
+	}
+
+/* this is the main container for the menu itself. it's width and height get set by script, depending on the size of the items table */
+.transMenu .content {
+	position:absolute;
+	}
+
+/* this table comprises all menu items. each TR is one item. It is relatively positioned so that the shadow and background transparent divs can be positioned underneath it */
+.transMenu .items {
+	position:relative;
+	left:0px; top:0px;
+	z-index:2;
+	}
+
+.transMenu.top .items {
+	border-top:none;
+	}
+
+/* each TR.item is one menu item */
+.transMenu .item {
+    color: #FFFFFF; /* #336; */
+    font-size: 1.1em;
+    font-weight: normal;
+    font-family:sans-serif;
+    text-decoration:none;
+	/* this is a hack for mac/ie5, whom incorrectly cascades the border properties of the parent table to each row */
+	border:none;
+	cursor:pointer;
+	cursor:hand;
+	}
+
+/* this DIV is the semi-transparent white background of each menu. the -moz-opacity is a proprietary way to get transparency in mozilla, the filter is for IE/windows 5.0+. */
+/* we set the background color in script because ie mac does not use it; that browser only uses a semi-transparent white PNG that the spacer gif inside this DIV is replaced by */
+.transMenu .background {
+	position:absolute;
+	left:0px; top:0px;
+	z-index:1;
+	-moz-opacity:.8;
+	filter:alpha(opacity=80);
+	}
+
+/* same concept as .background, but this is the sliver of shadow on the right of the menu. It's left, height, and background are set by script. In IE5/mac, it uses a PNG */
+.transMenu .shadowRight {
+	position:absolute;
+	z-index:3;
+	top:3px; width:2px;
+	-moz-opacity:.4;
+	filter:alpha(opacity=40);
+	}
+
+/* same concept as .background, but this is the sliver of shadow on the bottom of the menu. It's top, width, and background are set by script. In IE5/mac, it uses a PNG */
+.transMenu .shadowBottom {
+	position:absolute;
+	z-index:1;
+	left:3px; height:2px;
+	-moz-opacity:.4;
+	filter:alpha(opacity=40);
+	}
+
+/* this is the class that is used when the mouse is over an item. script sets the row to this class when required. */
+.transMenu .item.hover {
+	background:#fdfdfd;
+	color:black;
+	}
+
+/* this is either the dingbat that indicates there is a submenu, or a spacer gif in it's place. We give it extra margin to create some space between the text and the dingbat */
+.transMenu .item img {
+	margin-left:10px;
+	}

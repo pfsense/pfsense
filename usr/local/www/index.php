@@ -726,8 +726,8 @@ pfSense_handle_custom_code("/usr/local/pkg/dashboard/pre_dashboard");
 //<![CDATA[
 	jQuery(document).ready(function(in_event)
 	{
-			jQuery('#col1').sortable({connectWith: '#col2', dropOnEmpty: true, handle: '.widgetheader', change: showSave});
-			jQuery('#col2').sortable({connectWith: '#col1', dropOnEmpty: true, handle: '.widgetheader', change: showSave});
+			jQuery('#col1').sortable({connectWith: '.ui-sortable', dropOnEmpty: true, handle: '.widgetheader', change: showSave});
+			jQuery('#col2').sortable({connectWith: '.ui-sortable', dropOnEmpty: true, handle: '.widgetheader', change: showSave});
 
 	<?php if (!$config['widgets']  && $pconfig['sequence'] != ""){ ?>
 			hideAllWidgets();

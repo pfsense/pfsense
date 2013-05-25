@@ -642,18 +642,73 @@ pfSense_handle_custom_code("/usr/local/pkg/dashboard/pre_dashboard");
 				$printed = true;
 				?>
 				</div>
-				<div id="col2" style="float:right;width:49%;padding-bottom:40px">
+				<div id="col2" style="float:right;width:49%;padding-bottom:40px" class="ui-sortable">
 				<?php
 			}
-		}
-		else if ($widgetcounter >= $halftotal && $printed == false){
-			$printed = true;
-			?>
-			</div>
-			<div id="col2" style="float:right;width:49%;padding-bottom:40px">
-			<?php
-		}
+			else { 
+			
+				if($g['theme'] == "full_screen") { ?>	
+			
+					<script language="javascript" type="text/javascript">
+					var colpos = "<?=$colpos[$widgetcounter]?>";
+				
+					if (colpos == "col3" && printed3 == false){
+						createColumn(3);
+						printed3=true;
+					}
+					else if (colpos == "col4" && printed4 == false){
+						createColumn(4);
+						printed4=true;
+					}
+					else if (colpos == "col5" && printed5 == false){
+						createColumn(5);
+						printed5=true;
+					}
+					else if (colpos == "col6" && printed5 == false){
+						createColumn(6);
+						printed6=true;
+					}
+					else if (colpos == "col7" && printed5 == false){
+						createColumn(7);
+						printed6=true;
+					}
+					else if (colpos == "col8" && printed5 == false){
+						createColumn(8);
+						printed6=true;
+					}
+					else if (colpos == "col9" && printed5 == false){
+						createColumn(9);
+						printed6=true;
+					}
+					else if (colpos == "col10" && printed5 == false){
+						createColumn(10);
+						printed6=true;
+					}
+					</script>
+				<?php }
 
+				else {
+					if ($config['widgets'] && $pconfig['sequence'] != ""){
+						if ($colpos[$widgetcounter] == "col2" && $printed == false)
+						{
+							$printed = true;
+							?>
+							</div>
+							<div id="col2" style="float:right;width:49%;padding-bottom:40px" class="ui-sortable">
+							<?php
+						}
+					}
+					else if ($widgetcounter >= $halftotal && $printed == false){
+						$printed = true;
+						?>
+						</div>
+						<div id="col2" style="float:right;width:49%;padding-bottom:40px" class="ui-sortable">
+						<?php
+					}
+				}
+			}
+		}
+			
 		?>
 		<div style="clear:both;"></div>
 		<div  id="<?php echo $widgetname;?>-container" class="widgetdiv" style="display:<?php echo $divdisplay; ?>;">

@@ -471,7 +471,7 @@ include("head.inc");
 
 <script type="text/javascript">
 //<![CDATA[
-columns = ['col1','col2'];
+columns = ['col1','col2','col3','col4', 'col5','col6','col7','col8','col9','col10'];
 //]]>
 </script>
 

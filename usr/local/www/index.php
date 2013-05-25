@@ -559,7 +559,7 @@ pfSense_handle_custom_code("/usr/local/pkg/dashboard/pre_dashboard");
 	$printed = false;
 	$firstprint = false;
 	?>
-	<div id="col1" style="float:left;width:49%;padding-bottom:40px">
+	<div id="col1" style="float:left;width:49%;padding-bottom:40px" class="ui-sortable">
 	<?php
 
 	foreach($widgetlist as $widget) {
@@ -642,7 +642,7 @@ pfSense_handle_custom_code("/usr/local/pkg/dashboard/pre_dashboard");
 				$printed = true;
 				?>
 				</div>
-				<div id="col2" style="float:right;width:49%;padding-bottom:40px">
+				<div id="col2" style="float:right;width:49%;padding-bottom:40px" class="ui-sortable">
 				<?php
 			}
 		}
@@ -650,7 +650,7 @@ pfSense_handle_custom_code("/usr/local/pkg/dashboard/pre_dashboard");
 			$printed = true;
 			?>
 			</div>
-			<div id="col2" style="float:right;width:49%;padding-bottom:40px">
+			<div id="col2" style="float:right;width:49%;padding-bottom:40px" class="ui-sortable">
 			<?php
 		}
 
@@ -726,8 +726,7 @@ pfSense_handle_custom_code("/usr/local/pkg/dashboard/pre_dashboard");
 //<![CDATA[
 	jQuery(document).ready(function(in_event)
 	{
-			jQuery('#col1').sortable({connectWith: '#col2', dropOnEmpty: true, handle: '.widgetheader', change: showSave});
-			jQuery('#col2').sortable({connectWith: '#col1', dropOnEmpty: true, handle: '.widgetheader', change: showSave});
+			jQuery('.ui-sortable').sortable({connectWith: '.ui-sortable', dropOnEmpty: true, handle: '.widgetheader', change: showSave});
 
 	<?php if (!$config['widgets']  && $pconfig['sequence'] != ""){ ?>
 			hideAllWidgets();
@@ -754,3 +753,4 @@ pfSense_handle_custom_code("/usr/local/pkg/dashboard/pre_dashboard");
 
 </body>
 </html>
+

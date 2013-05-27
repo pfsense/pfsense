@@ -141,7 +141,9 @@ jQuery(document).ready(function () {
 			jQuery('#col' + colToDel ).remove();
 
 			// append deleted columns content to preceeding column
-			jQuery(colContent).appendTo('#col' + noCols );            
+			jQuery(colContent).appendTo('#col' + noCols );
+			
+			showSave();           
 		}
 	});
 });

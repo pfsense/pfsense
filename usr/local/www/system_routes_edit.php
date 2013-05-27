@@ -127,15 +127,7 @@ if ($_POST) {
 		}
 	} elseif (is_alias($_POST['network'])) {
 		$osn = $_POST['network'];
-		$fqdn_found = 0;
 		foreach (preg_split('/\s+/', $aliastable[$osn]) as $tgt) {
-			if (!is_ipaddr($tgt)) {
-				if ($fqdn_found === 0) {
-					$input_errors[] = sprintf(gettext("The alias (%s) has one or more FQDNs configured and cannot be used to configure a static route."), $_POST['network']);
-					$fqdn_found = 1;
-				}
-				continue;
-			}
 			if (is_ipaddrv4($tgt))
 				$tgt .= "/32";
 			if (is_ipaddrv6($tgt))

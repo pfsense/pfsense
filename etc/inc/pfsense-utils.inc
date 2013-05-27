@@ -1472,7 +1472,8 @@ function add_hostname_to_watch($hostname) {
 			}
 		}
 		file_put_contents("/var/db/dnscache/$hostname", $contents);
-		$result = explode("\n", $contents);
+		/* Remove empty elements */
+		$result = array_filter(explode("\n", $contents), 'strlen');
 	}
 	return $result;
 }

@@ -1827,8 +1827,8 @@ function explode_assoc($delimiter, $string) {
 	return $result;
 }
 
-function get_staticroutes($returnsubnetsonly = false) {
-	global $config;
+function get_staticroutes($returnsubnetsonly = false, $returnhostnames = false) {
+	global $config, $aliastable;
 
 	/* Bail if there are no routes, but return an array always so callers don't have to check. */
 	if (!is_array($config['staticroutes']['route']))
@@ -1839,17 +1839,17 @@ function get_staticroutes($returnsubnetsonly = false) {
 	/* Loop through routes and expand aliases as we find them. */
 	foreach ($config['staticroutes']['route'] as $route) {
 		if (is_alias($route['network'])) {
-			if (!function_exists('filter_expand_alias_array'))
-				require_once('filter.inc');
-			$subnets = filter_expand_alias_array($route['network']);
+			if (!isset($aliastable[$route['network']]))
+				continue;
+
+			$subnets = preg_split('/\s+/', $aliastable[$route['network']]);
 			foreach ($subnets as $net) {
 				if (!is_subnet($net)) {
 					if (is_ipaddrv4($net))
 						$net .= "/32";
 					else if (is_ipaddrv6($net))
 						$net .= "/128";
-					/* This must be a hostname, we can't use it. */
-					else
+					else if ($returnhostnames === false || !is_fqdn($net))
 						continue;
 				}
 				$temproute = $route;

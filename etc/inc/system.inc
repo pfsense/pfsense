@@ -35,6 +35,7 @@
 	pfSense_BUILDER_BINARIES:	/usr/sbin/pccardd	/usr/local/sbin/lighttpd	/bin/chmod 	/bin/mkdir
 	pfSense_BUILDER_BINARIES:	/usr/bin/tar		/usr/local/bin/ntpd	/usr/sbin/ntpdate
 	pfSense_BUILDER_BINARIES:	/usr/bin/nohup	/sbin/dmesg	/usr/local/sbin/atareinit	/sbin/kldload
+	pfSense_BUILDER_BINARIES:	/usr/local/sbin/filterdns
 	pfSense_MODULE:	utils
 */
 
@@ -455,6 +456,8 @@ function system_routing_configure($interface = "") {
 function system_staticroutes_configure($interface = "", $update_dns = false) {
 	global $config, $g, $aliastable;
 
+	$filterdns_list = array();
+
 	$static_routes = get_staticroutes();
 	if (count($static_routes)) {
 		$gateways_arr = return_gateways_array(false, true);
@@ -511,8 +514,10 @@ function system_staticroutes_configure($interface = "", $update_dns = false) {
 
 				if (is_ipaddr($target))
 					$ips = array($target);
-				else
+				else {
+					$filterdns_list[] = $target;
 					$ips = add_hostname_to_watch($target);
+				}
 
 				foreach ($dnscache as $ip) {
 					if (in_array($ip, $ips))
@@ -536,6 +541,24 @@ function system_staticroutes_configure($interface = "", $update_dns = false) {
 		unset($gateways_arr);
 	}
 	unset($static_routes);
+
+	if (count($filterdns_list)) {
+		$interval = 60;
+		$hostnames = "";
+		array_unique($filterdns_list);
+		foreach ($filterdns_list as $hostname)
+			$hostnames .= "cmd {$hostname} '/usr/local/sbin/pfSctl -c \"service reload routedns\"'\n";
+		file_put_contents("{$g['varetc_path']}/filterdns-route.hosts", $hostnames);
+		unset($hostnames);
+
+		if (isvalidpid("{$g['varrun_path']}/filterdns-route.pid"))
+			sigkillbypid("{$g['varrun_path']}/filterdns-route.pid", "HUP");
+		else
+			mwexec("/usr/local/sbin/filterdns -p {$g['varrun_path']}/filterdns-route.pid -i {$interval} -c {$g['varetc_path']}/filterdns-route.hosts -d 1");
+	} else {
+		killbypid("{$g['varrun_path']}/filterdns-route.pid");
+		@unlink("{$g['varrun_path']}/filterdns-route.pid");
+	}
 
 	return 0;
 }

@@ -108,7 +108,7 @@ jQuery(document).ready(function () {
 	///////////////////////////////////////////
 
 	jQuery('#col2').css("float","left");
-	jQuery('form').append( "<br/><br/><div><div id =\"addCol\" style=float:left><img src=\"./themes/full_screen/images/icons/icon_plus.gif\"/>&nbsp;Add column&nbsp;</div><div id =\"delCol\" style=float:left><img src=\"./themes/full_screen/images/icons/icon_x.gif\"/>&nbsp;Delete column</div><br/><br/></div> ");
+	jQuery('form[action="index.php"]').append( "<br/><br/><div><div id =\"addCol\" style=float:left><img src=\"./themes/full_screen/images/icons/icon_plus.gif\"/>&nbsp;Add column&nbsp;</div><div id =\"delCol\" style=float:left><img src=\"./themes/full_screen/images/icons/icon_x.gif\"/>&nbsp;Delete column</div><br/><br/></div> ");
 
 	// on click add a new column and change column widths
 	jQuery('#addCol').click(function(){

@@ -274,7 +274,12 @@ if ($_POST) {
 			   $newvoucher['vouchersyncport'] && $newvoucher['vouchersyncdbip']) {
 				// Synchronize the voucher DB from the master node
 				require_once("xmlrpc.inc");
-				if($newvoucher['vouchersyncport'] == "443") 
+
+				$protocol = "http";
+				if (is_array($config['system']) && is_array($config['system']['webgui']) && !empty($config['system']['webgui']['protocol']) &&
+				    $config['system']['webgui']['protocol'] == "https")
+					$protocol = "https";
+				if ($protocol == "https" || $newvoucher['vouchersyncport'] == "443")
 					$url = "https://{$newvoucher['vouchersyncdbip']}";
 				else 
 					$url = "http://{$newvoucher['vouchersyncdbip']}";

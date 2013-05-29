@@ -888,7 +888,7 @@ function ldap_get_groups($username, $authcfg) {
                 $ldapauthcont       = $authcfg['ldap_authcn'];
                 /* Convert attributes to lowercase.  php ldap arrays put everything in lowercase */
                 $ldapnameattribute  = strtolower($authcfg['ldap_attr_user']);
-                $ldapgroupattribute = strtolower($authcfg['ldap_attr_member']);
+                $ldapmemberattribute= strtolower($authcfg['ldap_attr_member']);
                 $ldapfilter         = "({$ldapnameattribute}={$username})";
                 $ldaptype           = "";
                 $ldapver            = $authcfg['ldap_protver'];
@@ -939,20 +939,20 @@ function ldap_get_groups($username, $authcfg) {
 	/* get groups from DN found */
 	/* use ldap_read instead of search so we don't have to do a bunch of extra work */
 	/* since we know the DN is in $_SESSION['ldapdn'] */
-	//$search    = ldap_read($ldap, $ldapdn, "(objectclass=*)", array($ldapgroupattribute));
+	//$search    = ldap_read($ldap, $ldapdn, "(objectclass=*)", array($ldapmemberattribute));
 	if ($ldapscope == "one")
                 $ldapfunc = "ldap_list";
         else
                 $ldapfunc = "ldap_search";
 
-	$search    = @$ldapfunc($ldap, $ldapdn, $ldapfilter, array($ldapgroupattribute));
+	$search    = @$ldapfunc($ldap, $ldapdn, $ldapfilter, array($ldapmemberattribute));
 	$info      = @ldap_get_entries($ldap, $search);
 
 	$countem = $info["count"];	
 	
-	if(is_array($info[0][$ldapgroupattribute])) {
+	if(is_array($info[0][$ldapmemberattribute])) {
 		/* Iterate through the groups and throw them into an array */
-		foreach ($info[0][$ldapgroupattribute] as $member) {
+		foreach ($info[0][$ldapmemberattribute] as $member) {
 			if (stristr($member, "CN=") !== false) {
 				$membersplit = explode(",", $member);
 				$memberof[] = preg_replace("/CN=/i", "", $membersplit[0]);

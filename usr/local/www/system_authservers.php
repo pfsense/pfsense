@@ -606,7 +606,7 @@ function select_clicked() {
 										<td>
 
 											<input name="ldap_extended_query" type="text" class="formfld unknown" id="ldap_extended_query" size="40" value="<?=htmlspecialchars($pconfig['ldap_extended_query']);?>"/>
-											<br /><?=gettext("Example: CN=Groupname,OU=MyGroups,DC=example,DC=com;OU=OtherUsers,DC=example,DC=com ");?>
+											<br /><?=gettext("Example: &(objectClass=inetOrgPerson)(mail=*@example.com)");?>
 										</td>
 									</tr>
 								</table>

@@ -953,9 +953,10 @@ function ldap_get_groups($username, $authcfg) {
 	if(is_array($info[0][$ldapmemberattribute])) {
 		/* Iterate through the groups and throw them into an array */
 		foreach ($info[0][$ldapmemberattribute] as $member) {
-			if (stristr($member, "CN=") !== false) {
-				$membersplit = explode(",", $member);
-				$memberof[] = preg_replace("/CN=/i", "", $membersplit[0]);
+			$membersplit = explode(",", $member);
+			$membersplit = explode("=", $membersplit[0]);
+			if (strtolower($membersplit[0]) == "cn") {
+				$memberof[] = $membersplit[1];
 			}
 		}
 	}

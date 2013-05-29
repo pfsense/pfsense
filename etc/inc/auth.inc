@@ -888,6 +888,7 @@ function ldap_get_groups($username, $authcfg) {
                 $ldapauthcont       = $authcfg['ldap_authcn'];
                 /* Convert attributes to lowercase.  php ldap arrays put everything in lowercase */
                 $ldapnameattribute  = strtolower($authcfg['ldap_attr_user']);
+                $ldapgroupattribute = strtolower($authcfg['ldap_attr_group']);
                 $ldapmemberattribute= strtolower($authcfg['ldap_attr_member']);
                 $ldapfilter         = "({$ldapnameattribute}={$username})";
                 $ldaptype           = "";
@@ -955,7 +956,7 @@ function ldap_get_groups($username, $authcfg) {
 		foreach ($info[0][$ldapmemberattribute] as $member) {
 			$membersplit = explode(",", $member);
 			$membersplit = explode("=", $membersplit[0]);
-			if (strtolower($membersplit[0]) == "cn") {
+			if (strtolower($membersplit[0]) == $ldapgroupattribute) {
 				$memberof[] = $membersplit[1];
 			}
 		}

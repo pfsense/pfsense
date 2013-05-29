@@ -261,9 +261,9 @@ function enable_rrd_graphing() {
 	$vpnvalid = $rrdvpninterval * 2;
 	$captiveportalvalid = $rrdcaptiveportalinterval * 2;
 
-	/* Asume GigE for now */
-	$downstream = 125000000;
-	$upstream = 125000000;
+	/* Assume 2*10GigE for now */
+	$downstream = 2500000000;
+	$upstream = 2500000000;
 
 	/* read the shaper config */
 	read_altq_config();

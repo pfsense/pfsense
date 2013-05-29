@@ -886,8 +886,9 @@ function ldap_get_groups($username, $authcfg) {
                 $ldapbindun         = $authcfg['ldap_binddn'];
                 $ldapbindpw         = $authcfg['ldap_bindpw'];
                 $ldapauthcont       = $authcfg['ldap_authcn'];
+                /* Convert attributes to lowercase.  php ldap arrays put everything in lowercase */
                 $ldapnameattribute  = strtolower($authcfg['ldap_attr_user']);
-                $ldapgroupattribute  = strtolower($authcfg['ldap_attr_member']);
+                $ldapgroupattribute = strtolower($authcfg['ldap_attr_member']);
                 $ldapfilter         = "({$ldapnameattribute}={$username})";
                 $ldaptype           = "";
                 $ldapver            = $authcfg['ldap_protver'];
@@ -903,8 +904,6 @@ function ldap_get_groups($username, $authcfg) {
 
 	$ldapdn             = $_SESSION['ldapdn'];
 
-	/*Convert attribute to lowercase.  php ldap arrays put everything in lowercase */
-	$ldapgroupattribute = strtolower($ldapgroupattribute);
 	$memberof = array();
 
         /* Setup CA environment if needed. */

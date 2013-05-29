@@ -3086,4 +3086,31 @@ function upgrade_094_to_095() {
 				$config['interfaces'][$iface]['track6-prefix-id'] = 0;
 }
 
+function upgrade_095_to_096() {
+	global $config, $g;
+
+	$names = array("inpass", "outpass", "inblock", "outblock",
+		"inpass6", "outpass6", "inblock6", "outblock6");
+	$rrddbpath = "/var/db/rrd";
+	$rrdtool = "/usr/local/bin/rrdtool";
+
+	/* Assume 2*10GigE for now */
+	$stream = 2500000000;
+
+	/* build a list of traffic and packets databases */
+	$databases = return_dir_as_array($rrddbpath, '/-(traffic|packets)\.rrd$/');
+	rsort($databases);
+	foreach($databases as $database) {
+		if ($g['booting'])
+			echo "Update RRD database {$database}.\n";
+
+		$cmd = "{$rrdtool} tune {$rrddbpath}/{$database}";
+		foreach ($names as $name)
+			$cmd .= " -a {$name}:{$stream}";
+		mwexec("{$cmd} 2>&1");
+
+	}
+	enable_rrd_graphing();
+}
+
 ?>

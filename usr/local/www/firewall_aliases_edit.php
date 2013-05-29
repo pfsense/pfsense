@@ -46,7 +46,7 @@
 
 
 // Keywords not allowed in names
-$reserved_keywords = array("all", "pass", "out", "queue", "max", "min", "pptp", "pppoe", "L2TP", "OpenVPN", "IPsec");
+$reserved_keywords = array("all", "pass", "block", "out", "queue", "max", "min", "pptp", "pppoe", "L2TP", "OpenVPN", "IPsec");
 
 require("guiconfig.inc");
 require_once("functions.inc");

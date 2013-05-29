@@ -438,8 +438,16 @@
 						log_error("DNS-O-Matic: DNS update() starting.");
 					if (isset($this->_dnsWildcard) && $this->_dnsWildcard != "OFF") $this->_dnsWildcard = "ON";
 					curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, FALSE);
-					curl_setopt($ch, CURLOPT_USERPWD, $this->_dnsUser.':'.$this->_dnsPass);
-					$server = "https://" . $this->_dnsUser . ":" . $this->_dnsPass . "@updates.dnsomatic.com/nic/update?hostname=";
+					/*
+					Reference: https://www.dnsomatic.com/wiki/api
+						DNS-O-Matic usernames are 3-25 characters.
+						DNS-O-Matic passwords are 6-20 characters.
+						All ASCII letters and numbers accepted.
+						Dots, dashes, and underscores allowed, but not at the beginning or end of the string.
+					Required: "rawurlencode" http://www.php.net/manual/en/function.rawurlencode.php
+						Encodes the given string according to RFC 3986.
+					*/
+					$server = "https://" . rawurlencode($this->_dnsUser) . ":" . rawurlencode($this->_dnsPass) . "@updates.dnsomatic.com/nic/update?hostname=";
 					if($this->_dnsServer)
 						$server = $this->_dnsServer;
 					if($this->_dnsPort)

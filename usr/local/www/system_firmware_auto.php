@@ -63,7 +63,7 @@ include("head.inc");
 
 ?>
 
-<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+<meta http-equiv="Content-Type" content="text/html; charset=<?=system_get_language_codeset();?>" />
 <link href="gui.css" rel="stylesheet" type="text/css" />
 </head>
 

@@ -1,0 +1,71 @@
+#: usr/local/www/widgets/widgets/system_information.widget.php:88 add line for 1857 in pfsense.pot
+msgid "Name"
+msgstr ""
+
+#: usr/local/www/widgets/widgets/system_information.widget.php:92 add line 43532 in pfsense.pot
+msgid "Version"
+msgstr ""
+
+#: usr/local/www/widgets/widgets/system_information.widget.php:109
+msgid "Platform"
+msgstr ""
+
+#: usr/local/www/widgets/widgets/system_information.widget.php:127
+msgid "NanoBSD Boot Slice"
+msgstr ""
+
+#: usr/local/www/widgets/widgets/system_information.widget.php:138
+msgid "CPU Type"
+msgstr ""
+
+#: usr/local/www/widgets/widgets/system_information.widget.php:151
+msgid "Hardware crypto"
+msgstr ""
+
+#: usr/local/www/widgets/widgets/system_information.widget.php:156
+msgid "Uptime"
+msgstr ""
+
+#: usr/local/www/widgets/widgets/system_information.widget.php:166
+msgid "DNS server(s)"
+msgstr ""
+
+#: usr/local/www/widgets/widgets/system_information.widget.php:178
+msgid "Last config change"
+msgstr ""
+
+#: usr/local/www/widgets/widgets/system_information.widget.php:183
+msgid "State table size"
+msgstr ""
+
+#: usr/local/www/widgets/widgets/system_information.widget.php:187
+msgid "Show states"
+msgstr ""
+
+#: usr/local/www/widgets/widgets/system_information.widget.php:191
+msgid "MBUF Usage"
+msgstr ""
+
+#: usr/local/www/widgets/widgets/system_information.widget.php:202
+msgid "Temperature"
+msgstr ""
+
+#: usr/local/www/widgets/widgets/system_information.widget.php:212
+msgid "Load average"
+msgstr ""
+
+#: usr/local/www/widgets/widgets/system_information.widget.php:218
+msgid "CPU usage"
+msgstr ""
+
+#: usr/local/www/widgets/widgets/system_information.widget.php:227
+msgid "Memory usage"
+msgstr ""
+
+#: usr/local/www/widgets/widgets/system_information.widget.php:237
+msgid "SWAP usage"
+msgstr ""
+
+#: usr/local/www/widgets/widgets/system_information.widget.php:247
+msgid "Disk usage"
+msgstr ""

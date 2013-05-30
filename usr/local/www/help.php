@@ -12,7 +12,7 @@ require_once("guiconfig.inc");
 $helppages = array(
 	/* These pages are confirmed to work and have usable content */
 	'index.php' => 'http://doc.pfsense.org/index.php/Dashboard',
-	'license.php' => 'http://www.pfsense.org/index.php?option=com_content&task=view&id=42&Itemid=62',
+	'license.php' => 'http://www.pfsense.org/index.php@option=com_content&task=view&id=42&Itemid=62.html',
 	'miniupnpd.xml' => 'http://doc.pfsense.org/index.php/What_is_UPNP%3F',
 	'status_upnp.php' => 'http://doc.pfsense.org/index.php/What_is_UPNP%3F',
 	'firewall_virtual_ip.php' => 'http://doc.pfsense.org/index.php/What_are_Virtual_IP_Addresses%3F',

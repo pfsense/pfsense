@@ -1037,8 +1037,8 @@
 							$this->_debug($resp);
 						}
 						log_error($status);
-          				}
-          				break;
+					}
+					break;
 			}
 			
 			if($successful_update == true) {

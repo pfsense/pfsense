@@ -1022,23 +1022,23 @@
 						} else if (preg_match('/INVLDHST/i', $resp)) {
 							$status = "DynDNS: An invalid hostname was specified. This may be due to the fact the hostname has not been created in the system. Creating new host names via clients is not supported.";
 						} else if (preg_match('/INVLDIP/i', $resp)) {
-              $status = "DynDNS: The IP address given is not valid.";
-            } else if (preg_match('/DUPHST/i', $resp)) {
-              $status = "DynDNS: Duplicate values exist for a record. Only single values for records are supported currently.";
-            } else if (preg_match('/NOUPDATE/i', $resp)) {
-              $status = "DynDNS: No changes made to the hostname (".strtok($resp,' ')."). Continual updates with no changes lead to blocked clients.";
-              $successful_update = true; //success if it is the same so that it saves
-            } else if (preg_match('/OK/i', $resp)) {
-              $status = "DynDNS: (Success) (".strtok($resp,' ').") IP Address for Changed Successfully! ($IP)";
-              $successful_update = true;
-            } else {
-              $status = "DynDNS: (Unknown Response)";
-              log_error("DynDNS: PAYLOAD: {$resp}");
-              $this->_debug($resp);
-           	}
-            log_error($status);
-          }
-          break;
+							$status = "DynDNS: The IP address given is not valid.";
+						} else if (preg_match('/DUPHST/i', $resp)) {
+							$status = "DynDNS: Duplicate values exist for a record. Only single values for records are supported currently.";
+						} else if (preg_match('/NOUPDATE/i', $resp)) {
+							$status = "DynDNS: No changes made to the hostname (".strtok($resp,' ')."). Continual updates with no changes lead to blocked clients.";
+							$successful_update = true; //success if it is the same so that it saves
+						} else if (preg_match('/OK/i', $resp)) {
+							$status = "DynDNS: (Success) (".strtok($resp,' ').") IP Address for Changed Successfully! ($IP)";
+							$successful_update = true;
+						} else {
+							$status = "DynDNS: (Unknown Response)";
+							log_error("DynDNS: PAYLOAD: {$resp}");
+							$this->_debug($resp);
+						}
+						log_error($status);
+          				}
+          				break;
 			}
 			
 			if($successful_update == true) {

@@ -147,8 +147,15 @@ function format_log_line(row) {
 		<input id="actreject" name="actreject" type="checkbox" value="Reject" <?php if (in_arrayi('Reject', $Include_Act)) echo "checked=\"checked\""; ?> /> Reject
 		<br/>
 		Interfaces: 
-		<input id="filterlogentriesinterfaces" name="filterlogentriesinterfaces" class="formfld unknown" type="text" size="20" value="<?= $nentriesinterfaces ?>" />
-        &nbsp; &nbsp; &nbsp; 
+		<select id="filterlogentriesinterfaces" name="filterlogentriesinterfaces" class="formselect">
+                      <?php 
+						$interfaces = get_configured_interface_with_descr();
+					  	foreach ($interfaces as $iface => $ifacename): ?>
+                      	<option value="<?=$iface;?>" <?php if (!link_interface_to_bridge($iface) && $iface == $if) echo "selected"; ?>>
+                      <?=htmlspecialchars($ifacename);?>
+                      </option>
+                      <?php endforeach; ?>
+                    </select> 
 
 		<input id="submita" name="submita" type="submit" class="formbtn" value="Save" />
 	</form>

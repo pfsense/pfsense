@@ -1029,7 +1029,7 @@
 							$status = "DynDNS: No changes made to the hostname (".strtok($resp,' ')."). Continual updates with no changes lead to blocked clients.";
 							$successful_update = true; //success if it is the same so that it saves
 						} else if (preg_match('/OK/i', $resp)) {
-							$status = "DynDNS: (Success) (".strtok($resp,' ').") IP Address for Changed Successfully! ($IP)";
+							$status = "DynDNS: (Success) (".strtok($resp,' ').") IP Address for Changed Successfully!";
 							$successful_update = true;
 						} else {
 							$status = "DynDNS: (Unknown Response)";

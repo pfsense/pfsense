@@ -41,6 +41,7 @@
 ##|-PRIV
 
 require("guiconfig.inc");
+require_once("filter.inc");
 
 if(!$g['services_dhcp_server_enable']) {
 	Header("Location: /");
@@ -424,9 +425,17 @@ if ($_POST) {
 		if (!is_array($dhcpdconf['range']))
 			$dhcpdconf['range'] = array();
 
+		$dhcpd_enable_changed = false;
+
 		// Global Options
 		if (!is_numeric($pool) && !($act == "newpool")) {
-			$dhcpdconf['enable'] = ($_POST['enable']) ? true : false;
+			$old_dhcpd_enable = isset($dhcpdconf['enable']);
+			$new_dhcpd_enable = ($_POST['enable']) ? true : false;
+			if ($old_dhcpd_enable != $new_dhcpd_enable) {
+				/* DHCP has been enabled or disabled. The pf ruleset will need to be rebuilt to allow or disallow DHCP. */
+				$dhcpd_enable_changed = true;
+			}
+			$dhcpdconf['enable'] = $new_dhcpd_enable;
 			$dhcpdconf['staticarp'] = ($_POST['staticarp']) ? true : false;
 			$previous = $dhcpdconf['failover_peerip'];
 			if($previous <> $_POST['failover_peerip'])
@@ -514,7 +523,10 @@ if ($_POST) {
 			if ($retvaldhcp == 0)
 				clear_subsystem_dirty('staticmaps');
 		}
-		if($retvaldhcp == 1 || $retvaldns == 1)
+		if ($dhcpd_enable_changed)
+			$retvalfc = filter_configure();
+
+		if($retvaldhcp == 1 || $retvaldns == 1 || $retvalfc == 1)
 			$retval = 1;
 		$savemsg = get_std_save_message($retval);
 	}

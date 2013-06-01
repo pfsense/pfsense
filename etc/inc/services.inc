@@ -851,6 +851,15 @@ EOD;
 					continue;
 				$primary = $zone['dns-servers'][0];
 				$secondary = empty($zone['dns-servers'][1]) ? "" : $zone['dns-servers'][1];
+				// Make sure we aren't using any invalid or IPv6 DNS servers.
+				if (!is_ipaddrv4($primary)) {
+					if (is_ipaddrv4($secondary)) {
+						$primary = $secondary;
+						$secondary = "";
+					} else {
+						continue;
+					}
+				}
 				// We don't need to add zones multiple times.
 				if (!in_array($zone['domain-name'], $added_zones)) {
 					$dhcpdconf .= "zone {$zone['domain-name']} {\n";

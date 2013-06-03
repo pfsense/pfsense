@@ -41,6 +41,8 @@
 	pfSense_MODULE:	vpn
 */
 
+require_once("ipsec.inc");
+
 /* include all configuration functions */
 
 function vpn_ipsec_failover_configure() {

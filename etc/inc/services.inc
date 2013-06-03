@@ -1570,6 +1570,8 @@ function services_dyndns_configure($int = "") {
 		foreach ($dyndnscfg as $dyndns) {
 			if ((empty($int)) || ($int == $dyndns['interface']) || (is_array($gwgroups[$dyndns['interface']]))) {
 				$dyndns['verboselog'] = isset($dyndns['verboselog']);
+				$dyndns['curl_ipresolve_v4'] = isset($dyndns['curl_ipresolve_v4']);
+				$dyndns['curl_ssl_verifypeer'] = isset($dyndns['curl_ssl_verifypeer']);
 				services_dyndns_configure_client($dyndns);
 				sleep(1);
 			}

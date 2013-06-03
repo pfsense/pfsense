@@ -1192,7 +1192,7 @@ function internalca_change() {
 						<td class="list" colspan="4"></td>
 						<td class="list">
 							<a href="system_certmanager.php?act=new">
-								<img src="/themes/<?= $g['theme'];?>/images/icons/icon_plus.gif" title="<?=gettext("add or import ca");?>" alt="<?=gettext("add ca");?>" width="17" height="17" border="0" />
+								<img src="/themes/<?= $g['theme'];?>/images/icons/icon_plus.gif" title="<?=gettext("add or import certificate");?>" alt="<?=gettext("add certificate");?>" width="17" height="17" border="0" />
 							</a>
 						</td>
 					</tr>

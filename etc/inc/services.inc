@@ -1549,7 +1549,9 @@ function services_dyndns_configure_client($conf) {
 		$dnsResultMatch = "{$conf['resultmatch']}",
 		$dnsRequestIf = "{$conf['requestif']}",
 		$dnsID = "{$conf['id']}",
-		$dnsVerboseLog = $conf['verboselog']);
+		$dnsVerboseLog = $conf['verboselog'],
+		$curlIpresolveV4 = $conf['curl_ipresolve_v4'],
+		$curlSslVerifypeer = $conf['curl_ssl_verifypeer']);
 }
 
 function services_dyndns_configure($int = "") {

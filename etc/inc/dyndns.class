@@ -99,6 +99,8 @@
 		var $_dnsRequestIf;
 		var $_dnsRequestIfIP;
 		var $_dnsVerboseLog;
+		var $_curlIpresolveV4;
+		var $_curlSslVerifypeer;
 		var $_dnsMaxCacheAgeDays;
 		var $_dnsDummyUpdateDone;
 		var $_forceUpdateNeeded;
@@ -116,13 +118,15 @@
 				    $dnsWildcard = 'OFF', $dnsMX = '', $dnsIf = '', $dnsBackMX = '',
 				    $dnsServer = '', $dnsPort = '', $dnsUpdateURL = '', $forceUpdate = false,
 				    $dnsZoneID ='', $dnsTTL='', $dnsResultMatch = '', $dnsRequestIf = '',
-				    $dnsID = '', $dnsVerboseLog = false) {
+				    $dnsID = '', $dnsVerboseLog = false, $curlIpresolveV4 = false, $curlSslVerifypeer = true) {
 			
 			global $config, $g;
 			
 			$this->_cacheFile = "{$g['conf_path']}/dyndns_{$dnsIf}{$dnsService}" . escapeshellarg($dnsHost) . "{$dnsID}.cache";
 			$this->_debugFile = "{$g['varetc_path']}/dyndns_{$dnsIf}{$dnsService}" . escapeshellarg($dnsHost) . "{$dnsID}.debug";
 
+			$this->_curlIpresolveV4 = $curlIpresolveV4;
+			$this->_curlSslVerifypeer = $curlSslVerifypeer;
 			$this->_dnsVerboseLog = $dnsVerboseLog;
 			if ($this->_dnsVerboseLog)
 				log_error("DynDns: updatedns() starting");
@@ -569,6 +573,12 @@
 						log_error("Custom DDNS ({$this->_dnsHost}): DNS update() starting.");
 					if (strstr($this->dnsUpdateURL, "%IP%")) {$needsIP = TRUE;} else {$needsIP = FALSE;}
 					if ($this->_dnsUser != '') {
+						if ($this->_curlIpresolveV4)
+							curl_setopt($ch, CURLOPT_IPRESOLVE, CURL_IPRESOLVE_V4 );
+						if ($this->_curlSslVerifypeer)
+							curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, TRUE);
+						else
+							curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, FALSE);
 						curl_setopt($ch, CURLOPT_HTTPAUTH, CURLAUTH_ANY); 
 						curl_setopt($ch, CURLOPT_USERPWD, "{$this->_dnsUser}:{$this->_dnsPass}");
 					}

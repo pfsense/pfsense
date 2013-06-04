@@ -56,7 +56,16 @@ if (($hostipformat != "") && (!isset($config['dnsmasq']['enable']) || !isset($co
 	}
 }
 
-$_grb = exec("/usr/local/bin/rate -i {$real_interface} -nlq 1 -Aba 20 {$sort_method} -c {$intsubnet} | tr \"|\" \" \" | awk '{ printf \"%s:%s:%s:%s:%s\\n\", $1,  $2,  $4,  $6,  $8 }'", $listedIPs);
+// get bits or bytes - set from within graph.php so setting must be read from config, not passed by argument
+if (isset($config['traffic_graph']['unit']) && $config['traffic_graph']['unit'] == "bytes") {
+	$b = '';
+	$unit = 'Bytes';
+} else {
+	$b = 'b';
+	$unit = 'bits';
+}
+
+$_grb = exec("/usr/local/bin/rate -i {$real_interface} -nlq 1 -A{$b}a 20 {$sort_method} -c {$intsubnet} | tr \"|\" \" \" | awk '{ printf \"%s:%s:%s:%s:%s\\n\", $1,  $2,  $4,  $6,  $8 }'", $listedIPs);
 
 $someinfo = false;
 for ($x=2; $x<12; $x++){
@@ -88,7 +97,7 @@ for ($x=2; $x<12; $x++){
 				}
 			}
 			//print host information;
-			echo $addrdata . ";" . $infoarray[1] . ";" . $infoarray[2] . "|";
+			echo $addrdata . ";" . $infoarray[1] . $unit . "/sec;" . $infoarray[2] . $unit . "/sec|";
 
 			//mark that we collected information
 			$someinfo = true;
@@ -103,3 +112,4 @@ if ($someinfo == false)
     echo gettext("no info");
 
 ?>
+

@@ -871,7 +871,7 @@ EOD;
 
 				if(($ph2ent['mode'] == "tunnel") or ($ph2ent['mode'] == 'tunnel6')) {
 					// Error will be logged above, no need to log this twice. #2201
-					if (!is_subnet($localid))
+					if (!is_subnet($localid) && ($localid != "0.0.0.0/0"))
 						continue;
 
 					if($ph2ent['mode'] == "tunnel6")

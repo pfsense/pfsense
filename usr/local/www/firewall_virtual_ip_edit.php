@@ -178,6 +178,8 @@ if ($_POST) {
 			$input_errors[] = sprintf(gettext("Sorry, we could not locate an interface with a matching subnet for %s.  Please add an IP alias in this subnet on this interface."),$cannot_find);
 		}
 
+		if ($_POST['interface'] == "lo0")
+			$input_errors[] = gettext("For this type of vip localhost is not allowed.");
 		if (strstr($_POST['interface'], "_vip"))
                         $input_errors[] = gettext("For this type of vip a carp parent is not allowed.");
 		break;
@@ -199,6 +201,8 @@ if ($_POST) {
 		}
 		break;
 	default:
+		if ($_POST['interface'] == "lo0")
+			$input_errors[] = gettext("For this type of vip localhost is not allowed.");
 		if (strstr($_POST['interface'], "_vip"))
 			$input_errors[] = gettext("For this type of VIP, a CARP parent is not allowed.");
 		break;
@@ -381,11 +385,12 @@ function typesel_change() {
 				  <td width="78%" class="vtable">
 					<select name="interface" class="formselect">
 					<?php 
-					  $interfaces = get_configured_interface_with_descr(false, true);
-					  $carplist = get_configured_carp_interface_list();
-                                          foreach ($carplist as $cif => $carpip)
-                                          	$interfaces[$cif] = $carpip." (".get_vip_descr($carpip).")";
-					  foreach ($interfaces as $iface => $ifacename): ?>
+					$interfaces = get_configured_interface_with_descr(false, true);
+					$carplist = get_configured_carp_interface_list();
+					foreach ($carplist as $cif => $carpip)
+						$interfaces[$cif] = $carpip." (".get_vip_descr($carpip).")";
+					$interfaces['lo0'] = "Localhost";
+					foreach ($interfaces as $iface => $ifacename): ?>
 						<option value="<?=$iface;?>" <?php if ($iface == $pconfig['interface']) echo "selected=\"selected\""; ?>>
 						<?=htmlspecialchars($ifacename);?>
 						</option>

@@ -94,9 +94,8 @@ function services_radvd_configure() {
 		}
 
 		$realif = get_real_interface($dhcpv6if);
-		if (in_array($realif, $radvdifs))
+		if (isset($radvdifs[$realif]))
 			continue;
-		$radvdifs[] = $realif;
 
 		$ifcfgipv6 = get_interface_ipv6($dhcpv6if);
 		if (!is_ipaddrv6($ifcfgipv6))
@@ -104,6 +103,7 @@ function services_radvd_configure() {
 
 		$ifcfgsnv6 = get_interface_subnetv6($dhcpv6if);
 		$subnetv6 = gen_subnetv6($ifcfgipv6, $ifcfgsnv6);
+		$radvdifs[$realif] = $realif;
 
 		$radvdconf .= "# Generated for DHCPv6 Server $dhcpv6if\n";
 		$radvdconf .= "interface {$realif} {\n";
@@ -212,10 +212,13 @@ function services_radvd_configure() {
 			continue;
 		if(!isset($config['interfaces'][$if]['enable']))
 			continue;
-			
+		$trackif = $config['interfaces'][$if]['track6-interface'];
+		if (empty($config['interfaces'][$trackif]))
+			continue;
+
 		$realif = get_real_interface($if);
 		/* prevent duplicate entries, manual overrides */
-		if(in_array($realif, $radvdifs))
+		if (isset($radvdifs[$realif]))
 			continue;
 
 		$ifcfgipv6 = get_interface_ipv6($if);
@@ -224,55 +227,49 @@ function services_radvd_configure() {
 
 		$ifcfgsnv6 = get_interface_subnetv6($if);
 		$subnetv6 = gen_subnetv6($ifcfgipv6, $ifcfgsnv6);
-		$trackif = $config['interfaces'][$if]['track6-interface'];
-		if (empty($config['interfaces'][$trackif]))
-			continue;
-		$radvdifs[] = $realif;
+		$radvdifs[$realif] = $realif;
 
 		$autotype = $config['interfaces'][$trackif]['ipaddrv6'];
 	
 		if ($g['debug'])
 			log_error("configuring RA on {$if} for type {$autotype} radvd subnet {$subnetv6}/{$ifcfgsnv6}");
 
-		$dnslist = array();
-		if(is_ipaddrv6($ifcfgipv6)) {
-			$radvdconf .= "# Generated config for {$autotype} delegation from {$trackif} on {$if}\n";
-			$radvdconf .= "interface {$realif} {\n";
-				$radvdconf .= "\tAdvSendAdvert on;\n";
-				$radvdconf .= "\tMinRtrAdvInterval 3;\n";
-				$radvdconf .= "\tMaxRtrAdvInterval 10;\n";
-				$mtu = get_interface_mtu($realif);
-				if (is_numeric($mtu))
-					$radvdconf .= "\tAdvLinkMTU {$mtu};\n";
-				else
-					$radvdconf .= "\tAdvLinkMTU 1280;\n";
-				$radvdconf .= "\tAdvOtherConfigFlag on;\n";
-					$radvdconf .= "\t\tprefix {$subnetv6}/{$ifcfgsnv6} {\n";
-					$radvdconf .= "\t\tAdvOnLink on;\n";
-					$radvdconf .= "\t\tAdvAutonomous on;\n";
-					$radvdconf .= "\t\tAdvRouterAddr on;\n";
-				$radvdconf .= "\t};\n";
+		$radvdconf .= "# Generated config for {$autotype} delegation from {$trackif} on {$if}\n";
+		$radvdconf .= "interface {$realif} {\n";
+		$radvdconf .= "\tAdvSendAdvert on;\n";
+		$radvdconf .= "\tMinRtrAdvInterval 3;\n";
+		$radvdconf .= "\tMaxRtrAdvInterval 10;\n";
+		$mtu = get_interface_mtu($realif);
+		if (is_numeric($mtu))
+			$radvdconf .= "\tAdvLinkMTU {$mtu};\n";
+		else
+			$radvdconf .= "\tAdvLinkMTU 1280;\n";
+		$radvdconf .= "\tAdvOtherConfigFlag on;\n";
+		$radvdconf .= "\t\tprefix {$subnetv6}/{$ifcfgsnv6} {\n";
+		$radvdconf .= "\t\tAdvOnLink on;\n";
+		$radvdconf .= "\t\tAdvAutonomous on;\n";
+		$radvdconf .= "\t\tAdvRouterAddr on;\n";
+		$radvdconf .= "\t};\n";
 
-				/* add DNS servers */
-				$dnslist = array();
-				if (isset($config['dnsmasq']['enable'])) {
-					$dnslist[] = $ifcfgipv6;
-				} elseif (is_array($config['system']['dnsserver']) && !empty($config['system']['dnsserver'])) {
-					foreach($config['system']['dnsserver'] as $server) {
-						if(is_ipaddrv6($server))
-							$dnslist[] = $server;
-					}
-				}
-				if (count($dnslist) > 0) {
-					$dnsstring = implode(" ", $dnslist);
-					if (!empty($dnsstring))
-						$radvdconf .= "\tRDNSS {$dnsstring} { };\n";
-				}
-				if (!empty($config['system']['domain'])) {
-					$radvdconf .= "\tDNSSL {$config['system']['domain']} { };\n";
-				}
-			$radvdconf .= "};\n";
+		/* add DNS servers */
+		$dnslist = array();
+		if (isset($config['dnsmasq']['enable'])) {
+			$dnslist[] = $ifcfgipv6;
+		} elseif (is_array($config['system']['dnsserver']) && !empty($config['system']['dnsserver'])) {
+			foreach($config['system']['dnsserver'] as $server) {
+				if(is_ipaddrv6($server))
+					$dnslist[] = $server;
+			}
 		}
+		if (count($dnslist) > 0) {
+			$dnsstring = implode(" ", $dnslist);
+			if (!empty($dnsstring))
+				$radvdconf .= "\tRDNSS {$dnsstring} { };\n";
+		}
+		if (!empty($config['system']['domain'])) {
+			$radvdconf .= "\tDNSSL {$config['system']['domain']} { };\n";
+		}
+		$radvdconf .= "};\n";
 	}
 
 	/* write radvd.conf */

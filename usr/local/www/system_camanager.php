@@ -213,7 +213,7 @@ if ($_POST) {
 			}else if ($reqdfields[$i] == 'dn_commonname'){
 				if (preg_match("/[\!\@\#\$\%\^\(\)\~\?\>\<\&\/\\\,\"\']/", $_POST["dn_commonname"]))
 					array_push($input_errors, "The field 'Distinguished name Common Name' contains invalid characters.");
-			}else if (preg_match("/[\!\@\#\$\%\^\(\)\~\?\>\<\&\/\\\,\.\"\']/", $_POST["$reqdfields[$i]"]))
+			}else if (($reqdfields[$i] != "descr") && preg_match("/[\!\@\#\$\%\^\(\)\~\?\>\<\&\/\\\,\.\"\']/", $_POST["$reqdfields[$i]"]))
 				array_push($input_errors, "The field '" . $reqdfieldsn[$i] . "' contains invalid characters.");
 		}
 		if (!in_array($_POST["keylen"], $ca_keylens))

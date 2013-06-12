@@ -412,7 +412,7 @@ function system_routing_configure($interface = "") {
 		@touch("{$g['tmp_path']}/{$defaultif}_defaultgw");
 	}	
 	if ($foundgwv6 == false) {
-		$defaultifv6 = get_real_interface("wan");
+		$defaultifv6 = get_real_interface("wan", "inet6");
 		$interfacegwv6 = "wan";
 		$gatewayipv6 = get_interface_gateway_v6("wan");
 		@touch("{$g['tmp_path']}/{$defaultif}_defaultgwv6");

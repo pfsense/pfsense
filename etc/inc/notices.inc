@@ -273,12 +273,6 @@ function notify_via_smtp($message, $force = false) {
 	if(isset($config['notifications']['smtp']['disable']) && !$force)
 		return;
 
-	if(!$config['notifications']['smtp']['ipaddress'])
-		return;
-
-	if(!$config['notifications']['smtp']['notifyemailaddress']) 
-		return;
-
 	/* Do NOT send the same message twice */
 	if(file_exists("/var/db/notices_lastmsg.txt")) {
 		$lastmsg = trim(file_get_contents("/var/db/notices_lastmsg.txt"));
@@ -286,8 +280,25 @@ function notify_via_smtp($message, $force = false) {
 			return;
 	}
 
+	/* Store last message sent to avoid spamming */
+	$fd = fopen("/var/db/notices_lastmsg.txt", "w");
+	fwrite($fd, $message);
+	fclose($fd);
+
+	send_smtp_message($message, "{$config['system']['hostname']}.{$config['system']['domain']} - Notification");
+	return;
+}
+
+function send_smtp_message($message, $subject = "(no subject)") {
+	global $config, $g;
 	require_once("sasl.inc");
 	require_once("smtp.inc");
+
+	if(!$config['notifications']['smtp']['ipaddress'])
+		return;
+
+	if(!$config['notifications']['smtp']['notifyemailaddress'])
+		return;
 
 	$smtp = new smtp_class;
 
@@ -317,14 +328,9 @@ function notify_via_smtp($message, $force = false) {
 	$headers = array(
 		"From: {$from}",
 		"To: {$to}",
-		"Subject: {$config['system']['hostname']}.{$config['system']['domain']} - Notification",
+		"Subject: {$subject}",
 		"Date: ".date("r")
 	);
-
-	/* Store last message sent to avoid spamming */
-	$fd = fopen("/var/db/notices_lastmsg.txt", "w");
-	fwrite($fd, $message);
-	fclose($fd);
 
 	if($smtp->SendMessage($from, preg_split('/\s*,\s*/', trim($to)), $headers, $message)) {
 		log_error(sprintf(gettext("Message sent to %s OK"), $to));
@@ -333,9 +339,7 @@ function notify_via_smtp($message, $force = false) {
 		log_error(sprintf(gettext('Could not send the message to %1$s -- Error: %2$s'), $to, $smtp->error));
 		return(sprintf(gettext('Could not send the message to %1$s -- Error: %2$s'), $to, $smtp->error));
 	}
-
 }
-
 
 /****f* notices/notify_via_growl
  * NAME

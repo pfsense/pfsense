@@ -265,9 +265,12 @@ function are_notices_pending($category = "all") {
  * RESULT
  *   returns true if message was sent
  ******/
-function notify_via_smtp($message) {
+function notify_via_smtp($message, $force = false) {
 	global $config, $g;
 	if($g['booting'])
+		return;
+
+	if(isset($config['notifications']['smtp']['disable']) && !$force)
 		return;
 
 	if(!$config['notifications']['smtp']['ipaddress'])
@@ -342,9 +345,12 @@ function notify_via_smtp($message) {
  * RESULT
  *   returns true if message was sent
  ******/
-function notify_via_growl($message) {
+function notify_via_growl($message, $force=false) {
 	require_once("growl.class");
 	global $config,$g;
+
+	if (isset($config['notifications']['growl']['disable']) && !$force)
+		return;
 
 	/* Do NOT send the same message twice */
 	if(file_exists("/var/db/growlnotices_lastmsg.txt")) {

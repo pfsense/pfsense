@@ -100,14 +100,14 @@ if(file_exists("/etc/platform")) {
 	$arch = php_uname("m");
 	$g['platform'] = trim(file_get_contents("/etc/platform"));
 	if($g['platform'] == "nanobsd") {
-		$g['update_url']="http://snapshots.pfsense.org/FreeBSD_RELENG_8_3/{$arch}/pfSense_HEAD/.updaters/";
+		$g['update_url']="http://snapshots.pfsense.org/FreeBSD_RELENG_8_3/{$arch}/pfSense_RELENG_2_1/.updaters/";
 		$g['update_manifest']="http://updates.pfSense.com/nanobsd/manifest";
 		$g['firmware_update_text']="pfSense-*.img.gz";
 		$g['hidedownloadbackup'] = true;
 		$g['hidebackupbeforeupgrade'] = true;
 
 	} else {
-		$g['update_url']="http://snapshots.pfsense.org/FreeBSD_RELENG_8_3/{$arch}/pfSense_HEAD/.updaters/";
+		$g['update_url']="http://snapshots.pfsense.org/FreeBSD_RELENG_8_3/{$arch}/pfSense_RELENG_2_1/.updaters/";
 		$g['update_manifest']="http://updates.pfSense.com/manifest";
 		$g['firmware_update_text']="pfSense-*.tgz";
 	}

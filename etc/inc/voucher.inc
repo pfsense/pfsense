@@ -40,7 +40,12 @@ if(!function_exists('captiveportal_syslog'))
 function xmlrpc_sync_voucher_expire($vouchers, $syncip, $port, $password, $username) {
 	global $g, $config, $cpzone;
 	require_once("xmlrpc.inc");
-	if ($port == "443") 
+
+	$protocol = "http";
+	if (is_array($config['system']) && is_array($config['system']['webgui']) && !empty($config['system']['webgui']['protocol']) &&
+	    $config['system']['webgui']['protocol'] == "https")
+		$protocol = "https";
+	if ($protocol == "https" || $port == "443")
 		$url = "https://{$syncip}";
 	else
 		$url = "http://{$syncip}";
@@ -88,7 +93,12 @@ EOF;
 function xmlrpc_sync_voucher_disconnect($dbent, $syncip, $port, $password, $username, $term_cause = 1, $stop_time = null) {
 	global $g, $config, $cpzone;
 	require_once("xmlrpc.inc");
-	if ($port == "443") 
+
+	$protocol = "http";
+	if (is_array($config['system']) && is_array($config['system']['webgui']) && !empty($config['system']['webgui']['protocol']) &&
+	    $config['system']['webgui']['protocol'] == "https")
+		$protocol = "https";
+	if ($protocol == "https" || $port == "443")
 		$url = "https://{$syncip}";
 	else
 		$url = "http://{$syncip}";
@@ -140,7 +150,12 @@ EOF;
 function xmlrpc_sync_used_voucher($voucher_received, $syncip, $port, $password, $username) {
 	global $g, $config, $cpzone;
 	require_once("xmlrpc.inc");
-	if ($port == "443") 
+
+	$protocol = "http";
+	if (is_array($config['system']) && is_array($config['system']['webgui']) && !empty($config['system']['webgui']['protocol']) &&
+	    $config['system']['webgui']['protocol'] == "https")
+		$protocol = "https";
+	if ($protocol == "https" || $port == "443")
 		$url = "https://{$syncip}";
 	else
 		$url = "http://{$syncip}";

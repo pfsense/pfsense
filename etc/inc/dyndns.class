@@ -24,6 +24,7 @@
 	 *    - Amazon Route 53 (aws.amazon.com)
 	 *    - DNS-O-Matic (dnsomatic.com)
 	 *    - Custom DDNS (any URL)
+	 *    - CloudFlare (www.cloudflare.com)
 	 * +----------------------------------------------------+
 	 *  Requirements:
 	 *    - PHP version 4.0.2 or higher with the CURL Library and the PCRE Library
@@ -60,6 +61,7 @@
 	 *  SelfHost       - Last Tested: 26 December 2011
 	 *  Amazon Route 53 - Last tested: 01 April 2012
 	 *  DNS-O-Matic	   - Last Tested: 9 September 2010
+	 *  CloudFlare     - Last Tested: 30 May 2013
 	 * +====================================================+
 	 *
 	 * @author 	E.Kristensen
@@ -97,6 +99,8 @@
 		var $_dnsRequestIf;
 		var $_dnsRequestIfIP;
 		var $_dnsVerboseLog;
+		var $_curlIpresolveV4;
+		var $_curlSslVerifypeer;
 		var $_dnsMaxCacheAgeDays;
 		var $_dnsDummyUpdateDone;
 		var $_forceUpdateNeeded;
@@ -114,13 +118,15 @@
 				    $dnsWildcard = 'OFF', $dnsMX = '', $dnsIf = '', $dnsBackMX = '',
 				    $dnsServer = '', $dnsPort = '', $dnsUpdateURL = '', $forceUpdate = false,
 				    $dnsZoneID ='', $dnsTTL='', $dnsResultMatch = '', $dnsRequestIf = '',
-				    $dnsID = '', $dnsVerboseLog = false) {
+				    $dnsID = '', $dnsVerboseLog = false, $curlIpresolveV4 = false, $curlSslVerifypeer = true) {
 			
 			global $config, $g;
 			
 			$this->_cacheFile = "{$g['conf_path']}/dyndns_{$dnsIf}{$dnsService}" . escapeshellarg($dnsHost) . "{$dnsID}.cache";
 			$this->_debugFile = "{$g['varetc_path']}/dyndns_{$dnsIf}{$dnsService}" . escapeshellarg($dnsHost) . "{$dnsID}.debug";
 
+			$this->_curlIpresolveV4 = $curlIpresolveV4;
+			$this->_curlSslVerifypeer = $curlSslVerifypeer;
 			$this->_dnsVerboseLog = $dnsVerboseLog;
 			if ($this->_dnsVerboseLog)
 				log_error("DynDns: updatedns() starting");
@@ -207,6 +213,7 @@
 				case 'selfhost':
 				case 'he-net-tunnelbroker':
 				case 'route53':
+				case 'cloudflare':
 					$this->_update();
 					if($this->_dnsDummyUpdateDone == true) {
 						// If a dummy update was needed, then sleep a while and do the update again to put the proper address back.
@@ -438,8 +445,16 @@
 						log_error("DNS-O-Matic: DNS update() starting.");
 					if (isset($this->_dnsWildcard) && $this->_dnsWildcard != "OFF") $this->_dnsWildcard = "ON";
 					curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, FALSE);
-					curl_setopt($ch, CURLOPT_USERPWD, $this->_dnsUser.':'.$this->_dnsPass);
-					$server = "https://" . $this->_dnsUser . ":" . $this->_dnsPass . "@updates.dnsomatic.com/nic/update?hostname=";
+					/*
+					Reference: https://www.dnsomatic.com/wiki/api
+						DNS-O-Matic usernames are 3-25 characters.
+						DNS-O-Matic passwords are 6-20 characters.
+						All ASCII letters and numbers accepted.
+						Dots, dashes, and underscores allowed, but not at the beginning or end of the string.
+					Required: "rawurlencode" http://www.php.net/manual/en/function.rawurlencode.php
+						Encodes the given string according to RFC 3986.
+					*/
+					$server = "https://" . rawurlencode($this->_dnsUser) . ":" . rawurlencode($this->_dnsPass) . "@updates.dnsomatic.com/nic/update?hostname=";
 					if($this->_dnsServer)
 						$server = $this->_dnsServer;
 					if($this->_dnsPort)
@@ -558,6 +573,12 @@
 						log_error("Custom DDNS ({$this->_dnsHost}): DNS update() starting.");
 					if (strstr($this->dnsUpdateURL, "%IP%")) {$needsIP = TRUE;} else {$needsIP = FALSE;}
 					if ($this->_dnsUser != '') {
+						if ($this->_curlIpresolveV4)
+							curl_setopt($ch, CURLOPT_IPRESOLVE, CURL_IPRESOLVE_V4 );
+						if ($this->_curlSslVerifypeer)
+							curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, TRUE);
+						else
+							curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, FALSE);
 						curl_setopt($ch, CURLOPT_HTTPAUTH, CURLAUTH_ANY); 
 						curl_setopt($ch, CURLOPT_USERPWD, "{$this->_dnsUser}:{$this->_dnsPass}");
 					}
@@ -565,6 +586,14 @@
 					if ($this->_dnsVerboseLog)
 						log_error("Sending request to: ".$server);
 					curl_setopt($ch, CURLOPT_URL, $server);
+					break;
+				case 'cloudflare':
+					$needsIP = TRUE;
+					$dnsServer ='www.cloudflare.com';
+					$dnsHost = str_replace(' ','', $this->_dnsHost);
+					$URL = "https://{$dnsServer}/api.html?a=DIUP&email={$this->_dnsUser}&tkn={$this->_dnsPass}&ip={$this->dnsIP}&hosts={$dnsHost}";
+					curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, FALSE);
+					curl_setopt($ch, CURLOPT_URL, $URL);
 					break;
 				default:
 					break;
@@ -987,6 +1016,38 @@
 						$status = "phpDynDNS: (Success) IP Address Updated Successfully!";
 					else
 						$status = "phpDynDNS: (Error) Result did not match.";
+					break;
+				case 'cloudflare':
+					// recieve multipe results
+					$data = explode("\n",$data);
+					$lines = count($data)-1;
+
+					// loop over the lines
+					for ($pos=0; ($successful_update || $pos == 0) && $pos < $lines; $pos++){
+						$resp = $data[$pos];
+						if (preg_match('/UAUTH/i', $resp)) {
+							$status = "DynDNS: The username specified is not authorized to update this hostname and domain.";
+						} else if (preg_match('/NOHOST/i', $resp)) {
+							$status = "DynDNS: No valid FQDN (fully qualified domain name) was specified";
+						} else if (preg_match('/INVLDHST/i', $resp)) {
+							$status = "DynDNS: An invalid hostname was specified. This may be due to the fact the hostname has not been created in the system. Creating new host names via clients is not supported.";
+						} else if (preg_match('/INVLDIP/i', $resp)) {
+							$status = "DynDNS: The IP address given is not valid.";
+						} else if (preg_match('/DUPHST/i', $resp)) {
+							$status = "DynDNS: Duplicate values exist for a record. Only single values for records are supported currently.";
+						} else if (preg_match('/NOUPDATE/i', $resp)) {
+							$status = "DynDNS: No changes made to the hostname (".strtok($resp,' ')."). Continual updates with no changes lead to blocked clients.";
+							$successful_update = true; //success if it is the same so that it saves
+						} else if (preg_match('/OK/i', $resp)) {
+							$status = "DynDNS: (Success) (".strtok($resp,' ').") IP Address for Changed Successfully!";
+							$successful_update = true;
+						} else {
+							$status = "DynDNS: (Unknown Response)";
+							log_error("DynDNS: PAYLOAD: {$resp}");
+							$this->_debug($resp);
+						}
+						log_error($status);
+					}
 					break;
 			}
 			

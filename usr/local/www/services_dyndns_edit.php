@@ -70,6 +70,8 @@ if (isset($id) && isset($a_dyndns[$id])) {
 	$pconfig['interface'] = $a_dyndns[$id]['interface'];
 	$pconfig['wildcard'] = isset($a_dyndns[$id]['wildcard']);
 	$pconfig['verboselog'] = isset($a_dyndns[$id]['verboselog']);
+	$pconfig['curl_ipresolve_v4'] = isset($a_dyndns[$id]['curl_ipresolve_v4']);
+	$pconfig['curl_ssl_verifypeer'] = isset($a_dyndns[$id]['curl_ssl_verifypeer']);
 	$pconfig['zoneid'] = $a_dyndns[$id]['zoneid'];
 	$pconfig['ttl'] = isset($a_dyndns[$id]['ttl']);
 	$pconfig['updateurl'] = $a_dyndns[$id]['updateurl'];
@@ -119,6 +121,8 @@ if ($_POST) {
 		$dyndns['mx'] = $_POST['mx'];
 		$dyndns['wildcard'] = $_POST['wildcard'] ? true : false;
 		$dyndns['verboselog'] = $_POST['verboselog'] ? true : false;
+		$dyndns['curl_ipresolve_v4'] = $_POST['curl_ipresolve_v4'] ? true : false;
+		$dyndns['curl_ssl_verifypeer'] = $_POST['curl_ssl_verifypeer'] ? true : false;
 		/* In this place enable means disabled */
 		if ($_POST['enable'])
 			unset($dyndns['enable']);
@@ -175,6 +179,7 @@ function _onTypeChange(type){
 			document.getElementById("_resulttr").style.display = '';
 			document.getElementById("_urltr").style.display = '';
 			document.getElementById("_requestiftr").style.display = '';
+			document.getElementById("_curloptions").style.display = '';
 			document.getElementById("_hostnametr").style.display = 'none';
 			document.getElementById("_mxtr").style.display = 'none';
 			document.getElementById("_wildcardtr").style.display = 'none';
@@ -185,6 +190,7 @@ function _onTypeChange(type){
 			document.getElementById("_resulttr").style.display = 'none';
 			document.getElementById("_urltr").style.display = 'none';
 			document.getElementById("_requestiftr").style.display = 'none';
+			document.getElementById("_curloptions").style.display = 'none';
 			document.getElementById("_hostnametr").style.display = '';
 			document.getElementById("_mxtr").style.display = '';
 			document.getElementById("_wildcardtr").style.display = '';
@@ -195,6 +201,7 @@ function _onTypeChange(type){
 			document.getElementById("_resulttr").style.display = 'none';
 			document.getElementById("_urltr").style.display = 'none';
 			document.getElementById("_requestiftr").style.display = 'none';
+			document.getElementById("_curloptions").style.display = 'none';
 			document.getElementById("_hostnametr").style.display = '';
 			document.getElementById("_mxtr").style.display = '';
 			document.getElementById("_wildcardtr").style.display = '';
@@ -303,6 +310,15 @@ function _onTypeChange(type){
                   <td width="78%" class="vtable">
                     <input name="verboselog" type="checkbox" id="verboselog" value="yes" <?php if ($pconfig['verboselog']) echo "checked"; ?>>
                     <?=gettext("Enable ");?><?=gettext("verbose logging"); ?></td>
+				</tr>
+				<tr id="_curloptions">
+                  <td width="22%" valign="top" class="vncell"><?=gettext("CURL options"); ?></td>
+                  <td width="78%" class="vtable">
+                    <input name="curl_ipresolve_v4" type="checkbox" id="curl_ipresolve_v4" value="yes" <?php if ($pconfig['curl_ipresolve_v4']) echo "checked"; ?>>
+                    <?=gettext("Force IPv4 resolving"); ?><br/>
+					<input name="curl_ssl_verifypeer" type="checkbox" id="curl_ssl_verifypeer" value="yes" <?php if ($pconfig['curl_ssl_verifypeer']) echo "checked"; ?>>
+                    <?=gettext("Verify SSL peer"); ?>
+				  </td>
 				</tr>
                 <tr id="_usernametr">
                   <td width="22%" valign="top" class="vncellreq"><?=gettext("Username");?></td>

@@ -142,8 +142,10 @@ $backup_config_section_sig = array(
 function backup_config_section_xmlrpc($raw_params) {
 	global $config, $xmlrpc_g;
 
-	if (xmlrpc_loop_detect())
+	if (xmlrpc_loop_detect()) {
 		log_error("Disallowing CARP sync loop");
+		return;
+	}
 
 	$params = xmlrpc_params_to_php($raw_params);
 	if(!xmlrpc_auth($params)) {
@@ -170,8 +172,10 @@ function restore_config_section_xmlrpc($raw_params) {
 
 	$old_config = $config;
 
-	if (xmlrpc_loop_detect())
+	if (xmlrpc_loop_detect()) {
 		log_error("Disallowing CARP sync loop");
+		return;
+	}
 
 	$params = xmlrpc_params_to_php($raw_params);
 	if(!xmlrpc_auth($params)) {
@@ -295,8 +299,10 @@ $merge_config_section_sig = array(
 function merge_installedpackages_section_xmlrpc($raw_params) {
 	global $config, $xmlrpc_g;
 
-	if (xmlrpc_loop_detect())
+	if (xmlrpc_loop_detect()) {
 		log_error("Disallowing CARP sync loop");
+		return;
+	}
 
 	$params = xmlrpc_params_to_php($raw_params);
 	if(!xmlrpc_auth($params)) {
@@ -323,8 +329,10 @@ $merge_config_section_sig = array(
 function merge_config_section_xmlrpc($raw_params) {
 	global $config, $xmlrpc_g;
 
-	if (xmlrpc_loop_detect())
+	if (xmlrpc_loop_detect()) {
 		log_error("Disallowing CARP sync loop");
+		return;
+	}
 
 	$params = xmlrpc_params_to_php($raw_params);
 	if(!xmlrpc_auth($params)) {
@@ -380,8 +388,10 @@ $carp_configure_sig = array(
 function interfaces_carp_configure_xmlrpc($raw_params) {
 	global $xmlrpc_g;
 
-	if (xmlrpc_loop_detect())
+	if (xmlrpc_loop_detect()) {
 		log_error("Disallowing CARP sync loop");
+		return;
+	}
 
 	$params = xmlrpc_params_to_php($raw_params);
 	if(!xmlrpc_auth($params)) {

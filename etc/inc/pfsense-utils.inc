@@ -44,7 +44,7 @@
  * NAME
  *   have_natpfruleint_access
  * INPUTS
- *	 none
+ *	none
  * RESULT
  *   returns true if user has access to edit a specific firewall nat port forward interface
  ******/
@@ -59,7 +59,7 @@ function have_natpfruleint_access($if) {
  * NAME
  *   have_ruleint_access
  * INPUTS
- *	 none
+ *	none
  * RESULT
  *   returns true if user has access to edit a specific firewall interface
  ******/
@@ -74,7 +74,7 @@ function have_ruleint_access($if) {
  * NAME
  *   does_url_exist
  * INPUTS
- *	 none
+ *	none
  * RESULT
  *   returns true if a url is available
  ******/
@@ -92,7 +92,7 @@ function does_url_exist($url) {
  * NAME
  *   is_private_ip
  * INPUTS
- *	 none
+ *	none
  * RESULT
  *   returns true if an ip address is in a private range
  ******/
@@ -115,7 +115,7 @@ function is_private_ip($iptocheck) {
  * NAME
  *   get_tmp_file
  * INPUTS
- *	 none
+ *	none
  * RESULT
  *   returns a temporary filename
  ******/
@@ -1449,6 +1449,7 @@ function add_hostname_to_watch($hostname) {
 	if(!is_dir("/var/db/dnscache")) {
 		mkdir("/var/db/dnscache");
 	}
+	$result = array();
 	if((is_fqdn($hostname)) && (!is_ipaddr($hostname))) {
 		$domrecords = array();
 		$domips = array();
@@ -1471,7 +1472,10 @@ function add_hostname_to_watch($hostname) {
 			}
 		}
 		file_put_contents("/var/db/dnscache/$hostname", $contents);
+		/* Remove empty elements */
+		$result = array_filter(explode("\n", $contents), 'strlen');
 	}
+	return $result;
 }
 
 function is_fqdn($fqdn) {
@@ -1512,7 +1516,7 @@ function pfsense_default_table_entries_size() {
 
 /* Compare the current hostname DNS to the DNS cache we made
  * if it has changed we return the old records
- * if no change we return true */
+ * if no change we return false */
 function compare_hostname_to_dnscache($hostname) {
 	if(!is_dir("/var/db/dnscache")) {
 		mkdir("/var/db/dnscache");
@@ -1592,7 +1596,7 @@ function load_thermal_hardware() {
  * NAME
  *   isvm
  * INPUTS
- *	 none
+ *	none
  * RESULT
  *   returns true if machine is running under a virtual environment
  ******/
@@ -1953,10 +1957,10 @@ function version_get_string_value($a) {
 function version_compare_string($a, $b) {
 	// Only compare string parts if both versions give a specific release
 	// (If either version lacks a string part, assume intended to match all release levels)
-	if (isset($a) && isset($b)) 
-        	return version_compare_numeric(version_get_string_value($a), version_get_string_value($b));
-        else
-        	return 0;
+	if (isset($a) && isset($b))
+		return version_compare_numeric(version_get_string_value($a), version_get_string_value($b));
+	else
+		return 0;
 }
 function version_compare_numeric($a, $b) {
 	$a_arr = explode('.', rtrim($a, '.0'));
@@ -2337,8 +2341,8 @@ function get_country_name($country_code) {
 	if($country_code == "ALL") {
 		$country_list = array();
 		foreach($country_names['ISO_3166-1_List_en']['ISO_3166-1_Entry'] as $country) {
-			$country_list[] = array( "code" => $country['ISO_3166-1_Alpha-2_Code_element'],
-						 "name" => ucwords(strtolower($country['ISO_3166-1_Country_name'])) );
+			$country_list[] = array("code" => $country['ISO_3166-1_Alpha-2_Code_element'],
+						"name" => ucwords(strtolower($country['ISO_3166-1_Country_name'])) );
 		}
 		return $country_list;
 	}

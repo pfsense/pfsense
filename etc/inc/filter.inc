@@ -492,7 +492,7 @@ function filter_generate_nested_alias($name, $alias, &$aliasnesting, &$aliasaddr
 	return $finallist;
 }
 
-function filter_expand_alias($alias_name, $all = false)
+function filter_expand_alias($alias_name)
 {
 	global $config;
 
@@ -501,19 +501,14 @@ function filter_expand_alias($alias_name, $all = false)
 			if($aliased['name'] == $alias_name) {
 				$aliasnesting = array();
 				$aliasaddrnesting = array();
-				$result = filter_generate_nested_alias($aliased['name'], $aliased['address'], $aliasnesting, $aliasaddrnesting);
-				if ($all === true)
-					foreach ($aliasaddrnesting as $addr)
-						if (!preg_match("/\s*$addr\s*/", $result))
-							$result .= " {$addr}";
-				return $result;
+				return filter_generate_nested_alias($aliased['name'], $aliased['address'], $aliasnesting, $aliasaddrnesting);
 			}
 		}
 	}
 }
 
-function filter_expand_alias_array($alias_name, $all = false) {
-	$expansion = filter_expand_alias($alias_name, $all);
+function filter_expand_alias_array($alias_name) {
+	$expansion = filter_expand_alias($alias_name);
 	return explode(" ", preg_replace('/\s+/', ' ', trim($expansion)));
 }
 
@@ -3273,7 +3268,6 @@ function filter_process_carp_rules($log) {
 	if (!empty($config['hasync']) or !empty($config['virtualip']['vip'])) {
 		$lines .= "block in $log quick proto carp from (self) to any\n";
 		$lines .= "pass quick proto carp\n";
-		$lines .= "pass quick proto pfsync\n";
 	}
 	return $lines;
 }

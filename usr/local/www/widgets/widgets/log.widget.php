@@ -108,10 +108,10 @@ else
 /* Called by the AJAX updater */
 function format_log_line(row) {
 	var line = '<td class="listMRlr" align="center">' + row[0] + '<\/td>' +
+		'<td class="listMRr ellipsis" title="' + row[1] + '">' + row[1].slice(0,-3) + '<\/td>' +
 		'<td class="listMRr ellipsis" title="' + row[2] + '">' + row[2] + '<\/td>' +
 		'<td class="listMRr ellipsis" title="' + row[3] + '">' + row[3] + '<\/td>' +
-		'<td class="listMRr ellipsis" title="' + row[4] + '">' + row[4] + '<\/td>' +
-		'<td class="listMRr ellipsis" title="' + row[5] + '">' + row[5] + '<\/td>';
+ 		'<td class="listMRr ellipsis" title="' + row[4] + '">' + row[4] + '<\/td>';
 
 	var nentriesacts = "<?php echo $nentriesacts; ?>";
 	var nentriesinterfaces = "<?php echo $nentriesinterfaces; ?>";
@@ -147,8 +147,15 @@ function format_log_line(row) {
 		<input id="actreject" name="actreject" type="checkbox" value="Reject" <?php if (in_arrayi('Reject', $Include_Act)) echo "checked=\"checked\""; ?> /> Reject
 		<br/>
 		Interfaces: 
-		<input id="filterlogentriesinterfaces" name="filterlogentriesinterfaces" class="formfld unknown" type="text" size="20" value="<?= $nentriesinterfaces ?>" />
-        &nbsp; &nbsp; &nbsp; 
+		<select id="filterlogentriesinterfaces" name="filterlogentriesinterfaces" class="formselect">
+                      <?php 
+						$interfaces = get_configured_interface_with_descr();
+					  	foreach ($interfaces as $iface => $ifacename): ?>
+                      	<option value="<?=$iface;?>" <?php if (!link_interface_to_bridge($iface) && $iface == $if) echo "selected"; ?>>
+                      <?=htmlspecialchars($ifacename);?>
+                      </option>
+                      <?php endforeach; ?>
+                    </select> 
 
 		<input id="submita" name="submita" type="submit" class="formbtn" value="Save" />
 	</form>
@@ -156,19 +163,19 @@ function format_log_line(row) {
 
 <table width="100%" border="0" cellpadding="0" cellspacing="0" style="table-layout: fixed;" summary="logs">
 	<colgroup>
-		<col style='width: 8%;' />
-		<col style='width: 10%;' />
-		<col style='width: 35%;' />
-		<col style='width: 35%;' />
-		<col style='width: 12%;' />
+		<col style='width:  7%;' />
+		<col style='width: 23%;' />
+		<col style='width: 11%;' />
+		<col style='width: 28%;' />
+		<col style='width: 31%;' />
 	</colgroup>
 	<thead>
 		<tr>
 			<td class="listhdrr"><?=gettext("Act");?></td>
+			<td class="listhdrr"><?=gettext("Time");?></td>
 			<td class="listhdrr"><?=gettext("IF");?></td>
 			<td class="listhdrr"><?=gettext("Source");?></td>
 			<td class="listhdrr"><?=gettext("Destination");?></td>
-			<td class="listhdrr"><?=gettext("Prot");?></td>
 		</tr>
 	</thead>
 	<tbody id='filter-log-entries'>
@@ -184,10 +191,11 @@ function format_log_line(row) {
 			<img border="0" src="<?php echo find_action_image($filterent['act']);?>" width="11" height="11" alt="<?php echo $filterent['act'];?>" title="<?php echo $filterent['act'];?>" />
 			</a>
 			</td>
+			<td class="listMRr ellipsis nowrap" title="<?php echo htmlspecialchars($filterent['time']);?>"><?php echo substr(htmlspecialchars($filterent['time']),0,-3);?></td>
 			<td class="listMRr ellipsis nowrap" title="<?php echo htmlspecialchars($filterent['interface']);?>"><?php echo htmlspecialchars($filterent['interface']);?></td>
 			<td class="listMRr ellipsis nowrap" title="<?php echo htmlspecialchars($filterent['src']);?>">
 				<a href="#" onclick="javascript:getURL('diag_dns.php?host=<?php echo "{$filterent['srcip']}"; ?>&dialog_output=true', outputrule);" title="<?=gettext("Reverse Resolve with DNS");?>">
-				<?php echo htmlspecialchars($filterent['srcip']);?></a><?php echo ":" . htmlspecialchars($filterent['srcport']);?></td>
+				<?php echo htmlspecialchars($filterent['srcip']);?></a></td>
 			<td class="listMRr ellipsis nowrap" title="<?php echo htmlspecialchars($filterent['dst']);?>">
 				<a href="#" onclick="javascript:getURL('diag_dns.php?host=<?php echo "{$filterent['dstip']}"; ?>&dialog_output=true', outputrule);" title="<?=gettext("Reverse Resolve with DNS");?>">
 				<?php echo htmlspecialchars($filterent['dstip']);?></a><?php echo ":" . htmlspecialchars($filterent['dstport']);?></td>
@@ -195,7 +203,6 @@ function format_log_line(row) {
 				if ($filterent['proto'] == "TCP")
 					$filterent['proto'] .= ":{$filterent['tcpflags']}";
 			?>
-			<td class="listMRr ellipsis nowrap" title="<?php echo htmlspecialchars($filterent['proto']);?>"><?php echo htmlspecialchars($filterent['proto']);?></td>
 		</tr>
 	<?php endforeach; ?>
 	</tbody>

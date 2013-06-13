@@ -35,6 +35,7 @@
 	pfSense_BUILDER_BINARIES:	/usr/sbin/pccardd	/usr/local/sbin/lighttpd	/bin/chmod 	/bin/mkdir
 	pfSense_BUILDER_BINARIES:	/usr/bin/tar		/usr/local/bin/ntpd	/usr/sbin/ntpdate
 	pfSense_BUILDER_BINARIES:	/usr/bin/nohup	/sbin/dmesg	/usr/local/sbin/atareinit	/sbin/kldload
+	pfSense_BUILDER_BINARIES:	/usr/local/sbin/filterdns
 	pfSense_MODULE:	utils
 */
 
@@ -411,7 +412,7 @@ function system_routing_configure($interface = "") {
 		@touch("{$g['tmp_path']}/{$defaultif}_defaultgw");
 	}	
 	if ($foundgwv6 == false) {
-		$defaultifv6 = get_real_interface("wan");
+		$defaultifv6 = get_real_interface("wan", "inet6");
 		$interfacegwv6 = "wan";
 		$gatewayipv6 = get_interface_gateway_v6("wan");
 		@touch("{$g['tmp_path']}/{$defaultif}_defaultgwv6");
@@ -447,12 +448,21 @@ function system_routing_configure($interface = "") {
 		}
 	}
 
-	$static_routes = get_staticroutes();
+	system_staticroutes_configure($interface, false);
+
+	return 0;
+}
+
+function system_staticroutes_configure($interface = "", $update_dns = false) {
+	global $config, $g, $aliastable;
+
+	$filterdns_list = array();
+
+	$static_routes = get_staticroutes(false, true);
 	if (count($static_routes)) {
 		$gateways_arr = return_gateways_array(false, true);
 
 		foreach ($static_routes as $rtent) {
-			$gatewayip = "";
 			if (empty($gateways_arr[$rtent['gateway']])) {
 				log_error(sprintf(gettext("Static Routes: Gateway IP could not be found for %s"), $rtent['network']));
 				continue;
@@ -461,12 +471,6 @@ function system_routing_configure($interface = "") {
 			if (!empty($interface) && $interface != $gateway['friendlyiface'])
 				continue;
 
-			/* XXX: This is a bit dangerous in case of routing daemons!? */
-			if(isset($rtent['disabled'])) {
-				mwexec("/sbin/route delete " . escapeshellarg($rtent['network']), true);
-				continue;
-			}
-
 			$gatewayip = $gateway['gateway'];
 			$interfacegw = $gateway['interface'];
 
@@ -474,25 +478,80 @@ function system_routing_configure($interface = "") {
 			if (!strcasecmp("Null", substr($rtent['gateway'], 0, 3)))
 				$blackhole = "-blackhole";
 
-			if (is_subnetv6($rtent['network'])) {
-				if (is_ipaddrv6($gatewayip))
-					mwexec("/sbin/route change -inet6 {$blackhole} " . escapeshellarg($rtent['network']) .
-						" " . escapeshellarg($gatewayip));
-				else if (!empty($interfacegw))
-					mwexec("/sbin/route change -inet6 {$blackhole} " . escapeshellarg($rtent['network']) .
-						" -iface " . escapeshellarg($interfacegw));
-			 } else if (is_subnetv4($rtent['network'])) {
-				if (is_ipaddrv4($gatewayip))
-					mwexec("/sbin/route change -inet {$blackhole} " . escapeshellarg($rtent['network']) .
-						" " . escapeshellarg($gatewayip));
-				else if (!empty($interfacegw))
-					mwexec("/sbin/route change -inet {$blackhole} " . escapeshellarg($rtent['network']) .
-						" -iface " . escapeshellarg($interfacegw));
+			if (!is_fqdn($rtent['network']) && !is_subnet($rtent['network']))
+				continue;
+
+			$dnscache = array();
+			if ($update_dns === true) {
+				if (is_subnet($rtent['network']))
+					continue;
+				$dnscache = explode("\n", trim(compare_hostname_to_dnscache($rtent['network'])));
+				if (empty($dnscache))
+					continue;
+			}
+
+			if (is_subnet($rtent['network']))
+				$ips = array($rtent['network']);
+			else {
+				if (!isset($rtent['disabled']))
+					$filterdns_list[] = $rtent['network'];
+				$ips = add_hostname_to_watch($rtent['network']);
+			}
+
+			foreach ($dnscache as $ip) {
+				if (in_array($ip, $ips))
+					continue;
+				mwexec("/sbin/route delete " . escapeshellarg($ip), true);
+			}
+
+			if (isset($rtent['disabled'])) {
+				/* XXX: This is a bit dangerous in case of routing daemons!? */
+				foreach ($ips as $ip)
+					mwexec("/sbin/route delete " . escapeshellarg($ip), true);
+				continue;
+			}
+
+			foreach ($ips as $ip) {
+				if (is_ipaddrv4($ip))
+					$ip .= "/32";
+				else if (is_ipaddrv6($ip))
+					$ip .= "/128";
+
+				$inet = (is_subnetv6($ip) ? "-inet6" : "-inet");
+
+				$cmd = "/sbin/route change {$inet} {$blackhole} " . escapeshellarg($ip) . " ";
+
+				if (is_subnet($ip))
+					if (is_ipaddr($gatewayip))
+						mwexec($cmd . escapeshellarg($gatewayip));
+					else if (!empty($interfacegw))
+						mwexec($cmd . "-iface " . escapeshellarg($interfacegw));
 			}
 		}
 		unset($gateways_arr);
 	}
 	unset($static_routes);
+
+	if ($update_dns === false) {
+		if (count($filterdns_list)) {
+			$interval = 60;
+			$hostnames = "";
+			array_unique($filterdns_list);
+			foreach ($filterdns_list as $hostname)
+				$hostnames .= "cmd {$hostname} '/usr/local/sbin/pfSctl -c \"service reload routedns\"'\n";
+			file_put_contents("{$g['varetc_path']}/filterdns-route.hosts", $hostnames);
+			unset($hostnames);
+
+			if (isvalidpid("{$g['varrun_path']}/filterdns-route.pid"))
+				sigkillbypid("{$g['varrun_path']}/filterdns-route.pid", "HUP");
+			else
+				mwexec("/usr/local/sbin/filterdns -p {$g['varrun_path']}/filterdns-route.pid -i {$interval} -c {$g['varetc_path']}/filterdns-route.hosts -d 1");
+		} else {
+			killbypid("{$g['varrun_path']}/filterdns-route.pid");
+			@unlink("{$g['varrun_path']}/filterdns-route.pid");
+		}
+	}
+	unset($filterdns_list);
 
 	return 0;
 }

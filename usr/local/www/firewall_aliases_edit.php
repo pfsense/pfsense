@@ -46,7 +46,7 @@
 
 
 // Keywords not allowed in names
-$reserved_keywords = array("all", "pass", "out", "queue", "max", "min", "pptp", "pppoe", "L2TP", "OpenVPN", "IPsec");
+$reserved_keywords = array("all", "pass", "block", "out", "queue", "max", "min", "pptp", "pppoe", "L2TP", "OpenVPN", "IPsec");
 
 require("guiconfig.inc");
 require_once("functions.inc");
@@ -254,15 +254,6 @@ if ($_POST) {
 		}
 	} else {
 		/* item is a normal alias type */
-		$used_for_routes = 0;
-		if (isset($config['staticroutes']['route']) && is_array($config['staticroutes']['route'])) {
-			foreach($config['staticroutes']['route'] as $route) {
-				if ($route['network'] == $_POST['origname']) {
-					$used_for_routes = 1;
-					break;
-				}
-			}
-		}
 		$wrongaliases = "";
 		for($x=0; $x<4999; $x++) {
 			if($_POST["address{$x}"] <> "") {
@@ -281,11 +272,6 @@ if ($_POST) {
 					 && !is_hostname($_POST["address{$x}"])
 					 && !is_iprange($_POST["address{$x}"]))
 						$input_errors[] = sprintf(gettext('%1$s is not a valid %2$s alias.'), $_POST["address{$x}"], $_POST['type']);
-					if (($used_for_routes === 1)
-					 && !is_ipaddr($_POST["address{$x}"])
-					 && !is_iprange($_POST["address{$x}"])
-					 && is_hostname($_POST["address{$x}"]))
-						$input_errors[] = gettext('This alias is used on a static route and cannot contain FQDNs.');
 				}
 				if (is_iprange($_POST["address{$x}"])) {
 					list($startip, $endip) = explode('-', $_POST["address{$x}"]);

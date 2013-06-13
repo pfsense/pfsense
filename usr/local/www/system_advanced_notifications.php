@@ -41,6 +41,7 @@ require("guiconfig.inc");
 require_once("notices.inc");
 
 // Growl
+$pconfig['disable_growl'] = isset($config['notifications']['growl']['disable']);
 if($config['notifications']['growl']['password']) 
 	$pconfig['password'] = $config['notifications']['growl']['password'];
 if($config['notifications']['growl']['ipaddress']) 
@@ -58,6 +59,7 @@ else
 
 
 // SMTP
+$pconfig['disable_smtp'] = isset($config['notifications']['smtp']['disable']);
 if($config['notifications']['smtp']['ipaddress']) 
 	$pconfig['smtpipaddress'] = $config['notifications']['smtp']['ipaddress'];
 if($config['notifications']['smtp']['port'])
@@ -102,6 +104,11 @@ if ($_POST) {
 		$config['notifications']['growl']['name'] = $_POST['name'];
 		$config['notifications']['growl']['notification_name'] = $_POST['notification_name'];
 
+		if($_POST['disable_growl'] == "yes")
+			$config['notifications']['growl']['disable'] = true;
+		else
+			unset($config['notifications']['growl']['disable']);
+
 		// SMTP
 		$config['notifications']['smtp']['ipaddress'] = $_POST['smtpipaddress'];
 		$config['notifications']['smtp']['port'] = $_POST['smtpport'];
@@ -111,6 +118,11 @@ if ($_POST) {
 		$config['notifications']['smtp']['password'] = $_POST['smtppassword'];
 		$config['notifications']['smtp']['fromaddress'] = $_POST['smtpfromaddress'];
 
+		if($_POST['disable_smtp'] == "yes")
+			$config['notifications']['smtp']['disable'] = true;
+		else
+			unset($config['notifications']['smtp']['disable']);
+
 		// System Sounds
 		if($_POST['disablebeep'] == "yes")
 			$config['system']['disablebeep'] = true;
@@ -118,23 +130,26 @@ if ($_POST) {
 			unset($config['system']['disablebeep']);
 
 		write_config();
+		pfSenseHeader("system_advanced_notifications.php");
+		return;
 
+	}
+	if ($_POST['test_growl'] == gettext("Test Growl")) {
 		// Send test message via growl
 		if($config['notifications']['growl']['ipaddress'] && 
-		   $config['notifications']['growl']['password'] = $_POST['password']) {
+			$config['notifications']['growl']['password'] = $_POST['password'] &&
+			!isset($config['notifications']['growl']['disable'])) {
 			unlink_if_exists($g['vardb_path'] . "/growlnotices_lastmsg.txt");
 			register_via_growl();
-			notify_via_growl(sprintf(gettext("This is a test message from %s.  It is safe to ignore this message."), $g['product_name']));
+			notify_via_growl(sprintf(gettext("This is a test message from %s.  It is safe to ignore this message."), $g['product_name']), true);
 		}
-
+	}
+	if ($_POST['test_smtp'] == gettext("Test SMTP")) {
 		// Send test message via smtp
 		if(file_exists("/var/db/notices_lastmsg.txt"))
 			unlink("/var/db/notices_lastmsg.txt");
-		$savemsg = notify_via_smtp(sprintf(gettext("This is a test message from %s.  It is safe to ignore this message."), $g['product_name']));
-
-		pfSenseHeader("system_advanced_notifications.php");
-		exit;
-    }
+		$savemsg = notify_via_smtp(sprintf(gettext("This is a test message from %s.  It is safe to ignore this message."), $g['product_name']), true);
+	}
 }
 
 $pgtitle = array(gettext("System"),gettext("Advanced: Notifications"));
@@ -177,6 +192,13 @@ include("head.inc");
 							<td colspan="2" valign="top" class="listtopic"><?=gettext("Growl"); ?></td>
 						</tr>
 						<tr>
+							<td width="22%" valign="top" class="vncell"><?=gettext("Disable Growl Notifications"); ?></td>
+							<td width="78%" class="vtable">
+								<input type='checkbox' name='disable_growl' value="yes" <?php if ($pconfig['disable_growl']) {?>checked="checked"<?php } ?> /><br/>
+								<?=gettext("Check this option to disable growl notifications but preserve the settings below."); ?>
+							</td>
+						</tr>
+						<tr>
 							<td width="22%" valign="top" class="vncell"><?=gettext("Registration Name"); ?></td>
 							<td width="78%" class="vtable">
 								<input name='name' value='<?php echo $pconfig['name']; ?>' /><br/>
@@ -205,11 +227,27 @@ include("head.inc");
 							</td>
 						</tr>
 						<tr>
+							<td valign="top" class="">
+								&nbsp;
+							</td>
+							<td>
+								<input type='submit' id='test_growl' name='test_growl' value='<?=gettext("Test Growl"); ?>' />
+								<br /><?= gettext("NOTE: A test notification will be sent even if the service is marked as disabled.") ?>
+							</td>
+						</tr>
+						<tr>
 							<td colspan="2" class="list" height="12">&nbsp;</td>
 						</tr>	
 						<!-- SMTP -->
 						<tr>
 							<td colspan="2" valign="top" class="listtopic"><?=gettext("SMTP E-Mail"); ?></td>
+						</tr>
+						<tr>
+							<td width="22%" valign="top" class="vncell"><?=gettext("Disable SMTP Notifications"); ?></td>
+							<td width="78%" class="vtable">
+								<input type='checkbox' name='disable_smtp' value="yes" <?php if ($pconfig['disable_smtp']) {?>checked="checked"<?php } ?> /><br/>
+								<?=gettext("Check this option to disable SMTP notifications but preserve the settings below. Some other mechanisms, such as packages, may need these settings in place to function."); ?>
+							</td>
 						</tr>
 						<tr>
 							<td width="22%" valign="top" class="vncell"><?=gettext("E-Mail server"); ?></td>
@@ -252,6 +290,15 @@ include("head.inc");
 							<td width="78%" class="vtable">
 								<input name='smtppassword' type='password' value='<?php echo $pconfig['smtppassword']; ?>' /><br/>
 								<?=gettext("Enter the e-mail address password for SMTP authentication."); ?>
+							</td>
+						</tr>
+						<tr>
+							<td valign="top" class="">
+								&nbsp;
+							</td>
+							<td>
+								<input type='submit' id='test_smtp' name='test_smtp' value='<?=gettext("Test SMTP"); ?>' />
+								<br /><?= gettext("NOTE: A test message will be sent even if the service is marked as disabled.") ?>
 							</td>
 						</tr>
 						<tr>

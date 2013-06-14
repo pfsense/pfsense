@@ -357,19 +357,19 @@ if ($can_add || $addnewaltq) {
 	$output_form .= "&amp;action=add\">";
 	$output_form .= "<input type=\"button\" class=\"formbtn\" name=\"add\" value=\"" . gettext("Add new queue") . "\" />";
 	$output_form .= "</a>";
-	$output_form .= "<a href=\"firewall_shaper.php?interface=";
-	$output_form .= $interface . "&amp;queue=";
-	if ($queue) {
-		$output_form .= "&amp;queue=" . $queue->GetQname();
-	}
-	$output_form .= "&amp;action=delete\">";
-	$output_form .= "<input type=\"button\" class=\"formbtn\" name=\"delete\"";
-	if ($queue)
-		$output_form .= " value=\"" . gettext("Delete this queue") . "\" />";
-	else
-		$output_form .= " value=\"" . gettext("Disable shaper on interface") . "\" />";
-	$output_form .= "</a>";  
 }
+$output_form .= "<a href=\"firewall_shaper.php?interface=";
+$output_form .= $interface . "&amp;queue=";
+if ($queue) {
+	$output_form .= "&amp;queue=" . $queue->GetQname();
+}
+$output_form .= "&amp;action=delete\">";
+$output_form .= "<input type=\"button\" class=\"formbtn\" name=\"delete\"";
+if ($queue)
+	$output_form .= " value=\"" . gettext("Delete this queue") . "\" />";
+else
+	$output_form .= " value=\"" . gettext("Disable shaper on interface") . "\" />";
+$output_form .= "</a>";
 $output_form .= "<br /></td></tr>";
 $output_form .= "</table>";
 }

@@ -710,7 +710,7 @@ if ($_POST['apply']) {
 
 		if ($_POST['passphrase']) {
 			$passlen = strlen($_POST['passphrase']);
-			if ($passlen < 8 || $passlen > 64)
+			if ($passlen < 8 || $passlen > 63)
 				$input_errors[] = gettext("The length of the passphrase should be between 8 and 63 characters.");
 		}
 	}

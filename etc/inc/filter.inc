@@ -2257,37 +2257,37 @@ function filter_generate_user_rule($rule) {
 	if ($type == "pass") {
 		if (isset($rule['allowopts']))
 			$aline['allowopts'] = " allow-opts ";
-
-		$aline['flags'] = "";
-		if ($rule['protocol'] == "tcp") {
-			if (isset($rule['tcpflags_any']))
-				$aline['flags'] = "flags any ";
-			else if (!empty($rule['tcpflags2'])) {
-				$aline['flags'] = "flags ";
-				if (!empty($rule['tcpflags1'])) {
-					$flags1 = explode(",", $rule['tcpflags1']);
-					foreach ($flags1 as $flag1) {
-						// CWR flag needs special treatment
-						if($flag1[0] == "c")
-							$aline['flags'] .= "W";
-						else
-							$aline['flags'] .= strtoupper($flag1[0]);
-					}
+	}
+	$aline['flags'] = "";
+	if ($rule['protocol'] == "tcp") {
+		if (isset($rule['tcpflags_any']))
+			$aline['flags'] = "flags any ";
+		else if (!empty($rule['tcpflags2'])) {
+			$aline['flags'] = "flags ";
+			if (!empty($rule['tcpflags1'])) {
+				$flags1 = explode(",", $rule['tcpflags1']);
+				foreach ($flags1 as $flag1) {
+					// CWR flag needs special treatment
+					if($flag1[0] == "c")
+						$aline['flags'] .= "W";
+					else
+						$aline['flags'] .= strtoupper($flag1[0]);
 				}
-				$aline['flags'] .= "/";
-				if (!empty($rule['tcpflags2'])) {
-					$flags2 = explode(",", $rule['tcpflags2']);
-					foreach ($flags2 as $flag2) {
-						// CWR flag needs special treatment
-						if($flag2[0] == "c")
-							$aline['flags'] .= "W";
-						else
-							$aline['flags'] .= strtoupper($flag2[0]);
-					}
+			}
+			$aline['flags'] .= "/";
+			if (!empty($rule['tcpflags2'])) {
+				$flags2 = explode(",", $rule['tcpflags2']);
+				foreach ($flags2 as $flag2) {
+					// CWR flag needs special treatment
+					if($flag2[0] == "c")
+						$aline['flags'] .= "W";
+					else
+						$aline['flags'] .= strtoupper($flag2[0]);
 				}
-				$aline['flags'] .= " ";
-			} else
-				$aline['flags'] = "flags S/SA ";
+			}
+			$aline['flags'] .= " ";
+		} else {
+			$aline['flags'] = "flags S/SA ";
 		}
 
 		/*

@@ -92,6 +92,7 @@ if (isset($_POST['id']))
 
 if (isset($id) && $a_maps[$id]) {
 	$pconfig['mac'] = $a_maps[$id]['mac'];
+	$pconfig['cid'] = $a_maps[$id]['cid'];
 	$pconfig['hostname'] = $a_maps[$id]['hostname'];
 	$pconfig['ipaddr'] = $a_maps[$id]['ipaddr'];
 	$pconfig['filename'] = $a_maps[$id]['filename'];
@@ -111,6 +112,7 @@ if (isset($id) && $a_maps[$id]) {
 	$pconfig['tftp'] = $a_maps[$id]['tftp'];
 } else {
 	$pconfig['mac'] = $_GET['mac'];
+	$pconfig['cid'] = $_GET['cid'];
 	$pconfig['hostname'] = $_GET['hostname'];
 	$pconfig['filename'] = $_GET['filename'];
 	$pconfig['rootpath'] = $_GET['rootpath'];
@@ -138,8 +140,8 @@ if ($_POST) {
 	$pconfig = $_POST;
 
 	/* input validation */
-	$reqdfields = explode(" ", "mac");
-	$reqdfieldsn = array(gettext("MAC address"));
+	$reqdfields = array();
+	$reqdfieldsn = array();
 
 	do_input_validation($_POST, $reqdfields, $reqdfieldsn, &$input_errors);
 
@@ -243,6 +245,7 @@ if ($_POST) {
 	if (!$input_errors) {
 		$mapent = array();
 		$mapent['mac'] = $_POST['mac'];
+		$mapent['cid'] = $_POST['cid'];
 		$mapent['ipaddr'] = $_POST['ipaddr'];
 		$mapent['hostname'] = $_POST['hostname'];
 		$mapent['descr'] = $_POST['descr'];
@@ -334,7 +337,7 @@ include("head.inc");
 					<td colspan="2" valign="top" class="listtopic"><?=gettext("Static DHCP Mapping");?></td>
 				</tr>
                 <tr>
-                  <td width="22%" valign="top" class="vncellreq"><?=gettext("MAC address");?></td>
+                  <td width="22%" valign="top" class="vncell"><?=gettext("MAC address");?></td>
                   <td width="78%" class="vtable">
                     <input name="mac" type="text" class="formfld unknown" id="mac" size="30" value="<?=htmlspecialchars($pconfig['mac']);?>">
 		    <?php
@@ -346,6 +349,11 @@ include("head.inc");
                     <br>
                     <span class="vexpl"><?=gettext("Enter a MAC address in the following format: ".
                     "xx:xx:xx:xx:xx:xx");?></span></td>
+                </tr>
+                  <td width="22%" valign="top" class="vncell"><?=gettext("Client identifier");?></td>
+                  <td width="78%" class="vtable">
+                    <input name="cid" type="text" class="formfld unknown" id="cid" size="30" value="<?=htmlspecialchars($pconfig['cid']);?>">
+                    <span class="vexpl"><?=gettext("");?></span></td>
                 </tr>
                 <tr>
                   <td width="22%" valign="top" class="vncell"><?=gettext("IP address");?></td>

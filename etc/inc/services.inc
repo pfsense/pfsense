@@ -764,11 +764,14 @@ EOD;
 
 			$i = 0;
 			foreach ($dhcpifconf['staticmap'] as $sm) {
-				$dhcpdconf .= <<<EOD
-host s_{$dhcpif}_{$i} {
-	hardware ethernet {$sm['mac']};
+				$dhcpdconf .= "host s_{$dhcpif}_{$i} {\n";
 
-EOD;
+                if ($sm['mac'])
+                    $dhcpdconf .= "        hardware ethernet {$sm['mac']};\n";
+
+                if ($sm['cid'])
+                    $dhcpdconf .= "        option dhcp-client-identifier \"{$sm['cid']}\";\n";
+
 				if ($sm['ipaddr'])
 					$dhcpdconf .= "	fixed-address {$sm['ipaddr']};\n";
 

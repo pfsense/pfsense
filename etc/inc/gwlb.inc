@@ -266,6 +266,19 @@ EOD;
 
 	@chown("{$g['vardb_path']}/rrd", "nobody");
 
+	# Create gateway quality RRD with settings more suitable for pfSense graph set, 
+	# since apinger uses default step (300) and other settings that are not so good 
+	# for the pfSense graph set.
+	if (!file_exists("{$g['vardb_path']}/rrd/{$gateway['name']}-quality.rrd"))
+		create_gateway_quality_rrd("{$g['vardb_path']}/rrd/{$gateway['name']}-quality.rrd");
+
+	/* enter UNKNOWN values in the RRD so it knows we rebooted. */
+	if($g['booting']) {
+		$rrdtool = "/usr/bin/nice -n20 /usr/local/bin/rrdtool";
+		mwexec("$rrdtool update {$g['vardb_path']}/rrd/{$gateway['name']}-quality.rrd N:U:U:U:U:U:U:U:U");
+		unset($rrdtool);
+	}
+
 	/* start a new apinger process */
 	@unlink("{$g['varrun_path']}/apinger.status");
 	sleep(1);

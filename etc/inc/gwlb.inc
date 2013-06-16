@@ -287,24 +287,6 @@ EOD;
 	return 0;
 }
 
-# Create gateway quality RRD with settings suitable for pfSense graph set.
-function create_gateway_quality_rrd($gatway_quality_rrd) {
-	$rrdqualityinterval = 60;
-	$qualityvalid = $rrdqualityinterval * 2;
-	$rrdtool = "/usr/bin/nice -n20 /usr/local/bin/rrdtool";
-
-	$rrdcreate = "$rrdtool create $gatway_quality_rrd --step $rrdqualityinterval ";
-	$rrdcreate .= "DS:loss:GAUGE:$qualityvalid:0:100 ";
-	$rrdcreate .= "DS:delay:GAUGE:$qualityvalid:0:100000 ";
-	$rrdcreate .= "RRA:AVERAGE:0.5:1:1000 ";
-	$rrdcreate .= "RRA:AVERAGE:0.5:5:1000 ";
-	$rrdcreate .= "RRA:AVERAGE:0.5:60:1000 ";
-	$rrdcreate .= "RRA:AVERAGE:0.5:720:3000 ";
-
-	create_new_rrd($rrdcreate);
-	unset($rrdcreate, $rrdtool, $rrdqualityinterval, $qualityvalid);
-}
-
 /* return the status of the apinger targets as a array */
 function return_gateways_status($byname = false) {
 	global $config, $g;

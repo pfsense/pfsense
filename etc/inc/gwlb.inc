@@ -266,12 +266,43 @@ EOD;
 
 	@chown("{$g['vardb_path']}/rrd", "nobody");
 
+	# Create gateway quality RRD with settings more suitable for pfSense graph set, 
+	# since apinger uses default step (300) and other settings that are not so good 
+	# for the pfSense graph set.
+	if (!file_exists("{$g['vardb_path']}/rrd/{$gateway['name']}-quality.rrd"))
+		create_gateway_quality_rrd("{$g['vardb_path']}/rrd/{$gateway['name']}-quality.rrd");
+
+	/* enter UNKNOWN values in the RRD so it knows we rebooted. */
+	if($g['booting']) {
+		$rrdtool = "/usr/bin/nice -n20 /usr/local/bin/rrdtool";
+		mwexec("$rrdtool update {$g['vardb_path']}/rrd/{$gateway['name']}-quality.rrd N:U:U:U:U:U:U:U:U");
+		unset($rrdtool);
+	}
+
 	/* start a new apinger process */
 	@unlink("{$g['varrun_path']}/apinger.status");
 	sleep(1);
 	mwexec_bg("/usr/local/sbin/apinger -c {$g['varetc_path']}/apinger.conf");
 
 	return 0;
+}
+
+# Create gateway quality RRD with settings suitable for pfSense graph set.
+function create_gateway_quality_rrd($gatway_quality_rrd) {
+	$rrdqualityinterval = 60;
+	$qualityvalid = $rrdqualityinterval * 2;
+	$rrdtool = "/usr/bin/nice -n20 /usr/local/bin/rrdtool";
+
+	$rrdcreate = "$rrdtool create $gatway_quality_rrd --step $rrdqualityinterval ";
+	$rrdcreate .= "DS:loss:GAUGE:$qualityvalid:0:100 ";
+	$rrdcreate .= "DS:delay:GAUGE:$qualityvalid:0:100000 ";
+	$rrdcreate .= "RRA:AVERAGE:0.5:1:1000 ";
+	$rrdcreate .= "RRA:AVERAGE:0.5:5:1000 ";
+	$rrdcreate .= "RRA:AVERAGE:0.5:60:1000 ";
+	$rrdcreate .= "RRA:AVERAGE:0.5:720:3000 ";
+
+	create_new_rrd($rrdcreate);
+	unset($rrdcreate, $rrdtool, $rrdqualityinterval, $qualityvalid);
 }
 
 /* return the status of the apinger targets as a array */

@@ -155,12 +155,12 @@ function system_resolvconf_generate($dynupdate = false) {
 				if (is_ipaddrv4($gatewayip)) {
 					/* dns server array starts at 0 */
 					$dnscountermo = $dnscounter - 1;
-					mwexec("route change -host " . $syscfg['dnsserver'][$dnscountermo] . " {$gatewayip}");
+					mwexec("/sbin/route change -host " . $syscfg['dnsserver'][$dnscountermo] . " {$gatewayip}");
 				}
 				if (is_ipaddrv6($gatewayip)) {
 					/* dns server array starts at 0 */
 					$dnscountermo = $dnscounter - 1;
-					mwexec("route change -host -inet6 " . $syscfg['dnsserver'][$dnscountermo] . " {$gatewayip}");
+					mwexec("/sbin/route change -host -inet6 " . $syscfg['dnsserver'][$dnscountermo] . " {$gatewayip}");
 				}
 			}
 		}

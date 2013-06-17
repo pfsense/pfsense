@@ -61,7 +61,7 @@ log_error("rc.newwanipv6: Informational is starting {$argument}.");
 
 if(empty($argument)) {
 	$interface = "wan";
-	$interface_real = get_real_interface($interface);
+	$interface_real = get_real_interface($interface, "inet6");
 	$curwanipv6 = get_interface_ipv6($interface, true);
 } else {
 	$interface_real = $argument;

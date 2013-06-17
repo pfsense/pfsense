@@ -343,7 +343,11 @@ function filter_configure_sync($delete_states_if_needed = true) {
 			 * FilterDNS has three debugging levels. The default choosen is 1.
 			 * Availabe are level 2 and greater then 2.
 			 */
-			mwexec("/usr/local/sbin/filterdns -p {$g['varrun_path']}/filterdns.pid -i 300 -c {$g['varetc_path']}/filterdns.conf -d 1");
+			if (isset($config['system']['aliasesresolveinterval']) && is_numeric($config['system']['aliasesresolveinterval']))
+				$resolve_interval = $config['system']['aliasesresolveinterval'];
+			else
+				$resolve_interval = 300;
+			mwexec("/usr/local/sbin/filterdns -p {$g['varrun_path']}/filterdns.pid -i {$resolve_interval} -c {$g['varetc_path']}/filterdns.conf -d 1");
 		}
 	} else {
 		killbypid("{$g['varrun_path']}/filterdns.pid");

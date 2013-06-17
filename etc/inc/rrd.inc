@@ -841,16 +841,25 @@ function create_gateway_quality_rrd($gatway_quality_rrd) {
 	$qualityvalid = $rrdqualityinterval * 2;
 	$rrdtool = "/usr/bin/nice -n20 /usr/local/bin/rrdtool";
 
-	$rrdcreate = "$rrdtool create $gatway_quality_rrd --step $rrdqualityinterval ";
-	$rrdcreate .= "DS:loss:GAUGE:$qualityvalid:0:100 ";
-	$rrdcreate .= "DS:delay:GAUGE:$qualityvalid:0:100000 ";
-	$rrdcreate .= "RRA:AVERAGE:0.5:1:1000 ";
-	$rrdcreate .= "RRA:AVERAGE:0.5:5:1000 ";
-	$rrdcreate .= "RRA:AVERAGE:0.5:60:1000 ";
-	$rrdcreate .= "RRA:AVERAGE:0.5:720:3000 ";
+	/* GATEWAY QUALITY, set up the rrd file */
+	if (!file_exists("$gatway_quality_rrd")) {
+		$rrdcreate = "$rrdtool create $gatway_quality_rrd --step $rrdqualityinterval ";
+		$rrdcreate .= "DS:loss:GAUGE:$qualityvalid:0:100 ";
+		$rrdcreate .= "DS:delay:GAUGE:$qualityvalid:0:100000 ";
+		$rrdcreate .= "RRA:AVERAGE:0.5:1:1000 ";
+		$rrdcreate .= "RRA:AVERAGE:0.5:5:1000 ";
+		$rrdcreate .= "RRA:AVERAGE:0.5:60:1000 ";
+		$rrdcreate .= "RRA:AVERAGE:0.5:720:3000 ";
 
-	create_new_rrd($rrdcreate);
-	unset($rrdcreate, $rrdtool, $rrdqualityinterval, $qualityvalid);
+		create_new_rrd($rrdcreate);
+		unset($rrdcreate);
+	}
+
+	/* enter UNKNOWN values in the RRD so it knows we rebooted. */
+	if($g['booting']) {
+		mwexec("$rrdtool update {$g['vardb_path']}/rrd/{$gateway['name']}-quality.rrd N:U:U:U:U:U:U:U:U");
+	}
+	unset($rrdtool, $rrdqualityinterval, $qualityvalid);
 }
 
 function kill_traffic_collector() {

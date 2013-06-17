@@ -2880,6 +2880,8 @@ class dummynet_class {
 	function validate_input($data, &$input_errors) {
 		$reqdfields[] = "bandwidth";
 		$reqdfieldsn[] = gettext("Bandwidth");
+		$reqdfields[] = "burst";
+		$reqdfieldsn[] = gettext("Burst");
 		$reqdfields[] = "bandwidthtype";
 		$reqdfieldsn[] = gettext("Bandwidthtype");
 		$reqdfields[] = "newname";
@@ -2971,6 +2973,12 @@ class dnpipe_class extends dummynet_class {
         function SetBandwidth($bandwidth) {
                 $this->qbandwidth = $bandwidth;
         }
+		function GetBurst() {
+				return $this->qburst;
+		}
+		function SetBurst($burst) {
+				$this->qburst = $burst;
+		}
 
 	function &add_queue($interface, &$queue, &$path, &$input_errors) {
 
@@ -3039,6 +3047,8 @@ class dnpipe_class extends dummynet_class {
 			if (!empty($data["bandwidth{$i}"])) {
 				if (!is_numeric($data["bandwidth{$i}"]))
 					$input_errors[] = sprintf(gettext("Bandwidth for schedule %s must be an integer."), $data["bwsched{$i}"]);
+				else if (!is_numeric($data["burst{$i}"]))
+					$input_errors[] = sprintf(gettext("Burst for schedule %s must be an integer."), $data["bwsched{$i}"]);
 				else
 					$entries++;
 			}
@@ -3069,6 +3079,7 @@ class dnpipe_class extends dummynet_class {
 				if (isset($q["bandwidth{$i}"]) && $q["bandwidth{$i}"] <> "") { 
 					$bw = array();
 					$bw['bw'] = $q["bandwidth{$i}"];
+					$bw['burst'] = $q["burst{$i}"];
 					if (isset($q["bwtype{$i}"]) && $q["bwtype{$i}"])
 						$bw['bwscale'] = $q["bwtype{$i}"];
 					if (isset($q["bwsched{$i}"]) && $q["bwsched{$i}"])
@@ -3078,9 +3089,12 @@ class dnpipe_class extends dummynet_class {
 			}
 			$this->SetBandwidth($bandwidth);
 		}
-		if (is_array($q['bandwidth']) && is_array($q['bandwidth']['item']))
+		
+		if (is_array($q['bandwidth']) && is_array($q['bandwidth']['item'])) {
 			$this->SetBandwidth($q['bandwidth']['item']);
-
+			$this->SetBurst($q['burst']['item']);
+		}
+			
 		if (isset($q['qlimit']) && $q['qlimit'] <> "")
               		$this->SetQlimit($q['qlimit']);
 		else
@@ -3151,6 +3165,7 @@ class dnpipe_class extends dummynet_class {
 							if ($bw['bwsched'] == $schedule['name']) {
 								if (filter_get_time_based_rule_status($schedule)) {
 									$pfq_rule .= " bw ".trim($bw['bw']).$bw['bwscale'];
+									$pfq_rule .= " burst ".trim($bw['burst']).$bw['bwscale'];
 									$found = true;
 									break;
 								}
@@ -3158,11 +3173,13 @@ class dnpipe_class extends dummynet_class {
 						}
 					} else {
 						$pfq_rule .= " bw 0";
+						$pfq_rule .= " burst 0";
 						$found = true;
 						break;
 					}
 				} else {
 					$pfq_rule .= " bw ".trim($bw['bw']).$bw['bwscale'];
+					$pfq_rule .= " burst ".trim($bw['burst']).$bw['bwscale'];
 					$found = true;
 					break;
 				}
@@ -3173,7 +3190,7 @@ class dnpipe_class extends dummynet_class {
 			$pfq_rule .= " bw 0";
 
 		if ($this->GetQlimit())
-                    	$pfq_rule .= " queue " . $this->GetQlimit();
+			$pfq_rule .= " queue " . $this->GetQlimit();
 		if ($this->GetPlr())
 			$pfq_rule .= " plr " . $this->GetPlr();
 		if ($this->GetBuckets())
@@ -3225,6 +3242,9 @@ var addBwRowTo = (function() {
 	tr = d.createElement("tr");
 	td = d.createElement("td");
 	td.innerHTML="<input type='hidden' value='" + totalrows +"' name='bandwidth_row-" + totalrows + "' /><input size='10' type='text' class='formfld unknown' name='bandwidth" + totalrows + "' id='bandwidth" + totalrows + "' />";
+	tr.appendChild(td);
+	td = d.createElement("td");
+	td.innerHTML="<input type='hidden' value='" + totalrows +"' name='burst_row-" + totalrows + "' /><input size='10' type='text' class='formfld unknown' name='burst" + totalrows + "' id='burst" + totalrows + "' />";
 	tr.appendChild(td);
 	td = d.createElement("td");
 	td.innerHTML="<input type='hidden' value='" + totalrows +"' name='bwtype_row-" + totalrows + "' /><select class='formselect' name='bwtype" + totalrows + "'>{$bwopt}</select>";
@@ -3295,7 +3315,8 @@ EOD;
 		$form .= "</td><td class=\"vncellreq\">";
 		$form .= "<table id='maintable'>";
 		$form .= "<tbody><tr>";
-		$form .= "<td width='40%'><div id='onecolumn'>Bandwidth</div></td>";
+		$form .= "<td width='35%'><div id='onecolumn'>Bandwidth</div></td>";
+		$form .= "<td width='35%'><div id='fifthcolumn'>Burst</div></td>";
 		$form .= "<td width='20%'><div id='twocolumn'>Bw type</div></td>";
 		$form .= "<td width='35%' ><div id='thirdcolumn'>Schedule</div></td>";
 		$form .= "<td width='5%'><div id='fourthcolumn'></div></td>";
@@ -3304,6 +3325,8 @@ EOD;
 			foreach ($bandwidth as $bwidx => $bw) {
 				$form .= "\n<tr><td width='40%'>";
 				$form .= "<input class='formfld unknown' size='10' type=\"text\" id=\"bandwidth{$bwidx}\" name=\"bandwidth{$bwidx}\" value=\"{$bw['bw']}\" />";
+				$form .= "</td><td width='20%'>";
+				$form .= "<input class='formfld unknown' size='10' type=\"text\" id=\"burst{$bwidx}\" name=\"burst{$bwidx}\" value=\"{$bw['burst']}\" />";
 				$form .= "</td><td width='20%'>";
 				$form .= "<select id=\"bwtype{$bwidx}\" name=\"bwtype{$bwidx}\" class=\"formselect\">";
 				foreach (array("Kb" => "Kbit/s", "Mb" => "Mbit/s", "Gb" => "Gbit/s", "b" => "Bit/s") as $bwsidx => $bwscale) {

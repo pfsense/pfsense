@@ -233,22 +233,6 @@ EOD;
 		$apingercfg .= "	rrd file \"{$g['vardb_path']}/rrd/{$gateway['name']}-quality.rrd\"\n";
 		$apingercfg .= "}\n";
 		$apingercfg .= "\n";
-		/*
-		 * If the gateway is the same as the monitor we do not add a
-		 * route as this will break the routing table.
-		 * Add static routes for each gateway with their monitor IP
-		 * not strictly necessary but is a added level of protection.
-		 */
-		if (is_ipaddr($gateway['gateway']) && $gateway['monitor'] != $gateway['gateway']) {
-			log_error(sprintf(gettext('Removing static route for monitor %1$s and adding a new route through %2$s'), $gateway['monitor'], $gateway['gateway']));
-			if(is_ipaddrv6($gateway['gateway'])) {
-				$inetfamily = "-inet6";
-			} else {
-				$inetfamily = "-inet";
-			}
-			// mwexec("/sbin/route change {$inetfamily} -host " . escapeshellarg($gateway['monitor']) .
-			//	" " . escapeshellarg($gateway['gateway']), true);
-		}
 
 		$apingerconfig .= $alarmscfg;
 		$apingerconfig .= $apingercfg;

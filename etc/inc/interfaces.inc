@@ -942,10 +942,10 @@ function interface_gif_configure(&$gif, $gifkey = "") {
 		file_put_contents("{$g['tmp_path']}/{$gifif}_routerv6", $gif['tunnel-remote-addr']);
 
 	if (is_ipaddrv4($realifgw)) {
-		mwexec("route change -host {$gif['remote-addr']} {$realifgw}");
+		mwexec("/sbin/route change -host {$gif['remote-addr']} {$realifgw}");
 	}
 	if (is_ipaddrv6($realifgw)) {
-		mwexec("route change -host -inet6 {$gif['remote-addr']} {$realifgw}");
+		mwexec("/sbin/route change -host -inet6 {$gif['remote-addr']} {$realifgw}");
 	}
 
 	return $gifif;
@@ -3401,7 +3401,7 @@ function interface_6to4_configure($interface = "wan", $wancfg){
 
 	$ip4gateway = get_interface_gateway($interface);
 	if (is_ipaddrv4($ip4gateway))
-		mwexec("route change -host 192.88.99.1 {$ip4gateway}");
+		mwexec("/sbin/route change -host 192.88.99.1 {$ip4gateway}");
 
 	if (!$g['booting'])
 		link_interface_to_track6($interface, "update");

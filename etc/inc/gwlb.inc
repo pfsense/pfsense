@@ -25,7 +25,7 @@
   ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
   POSSIBILITY OF SUCH DAMAGE.
 
-	pfSense_BUILDER_BINARIES:	/usr/bin/killall	/sbin/route	/usr/local/sbin/apinger
+	pfSense_BUILDER_BINARIES:	/sbin/route	/usr/local/sbin/apinger
 	pfSense_MODULE:	routing
 
  */

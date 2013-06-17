@@ -92,7 +92,7 @@ function services_radvd_configure() {
 			}
 		}
 
-		$realif = get_real_interface($dhcpv6if);
+		$realif = get_real_interface($dhcpv6if, "inet6");
 		if (isset($radvdifs[$realif]))
 			continue;
 
@@ -215,7 +215,7 @@ function services_radvd_configure() {
 		if (empty($config['interfaces'][$trackif]))
 			continue;
 
-		$realif = get_real_interface($if);
+		$realif = get_real_interface($if, "inet6");
 		/* prevent duplicate entries, manual overrides */
 		if (isset($radvdifs[$realif]))
 			continue;
@@ -311,8 +311,8 @@ function services_dhcpd_configure($family = "all") {
 	fwrite($fd, "/bin/mkdir -p {$g['dhcpd_chroot_path']}/lib\n");
 	fwrite($fd, "/bin/mkdir -p {$g['dhcpd_chroot_path']}/run\n");
 	fwrite($fd, "/usr/sbin/chown -R dhcpd:_dhcp {$g['dhcpd_chroot_path']}/*\n");
-	fwrite($fd, "/bin/cp /lib/libc.so.* {$g['dhcpd_chroot_path']}/lib/\n");
-	fwrite($fd, "/bin/cp /usr/local/sbin/dhcpd {$g['dhcpd_chroot_path']}/usr/local/sbin/\n");
+	fwrite($fd, "/bin/cp -n /lib/libc.so.* {$g['dhcpd_chroot_path']}/lib/\n");
+	fwrite($fd, "/bin/cp -n /usr/local/sbin/dhcpd {$g['dhcpd_chroot_path']}/usr/local/sbin/\n");
 	fwrite($fd, "/bin/chmod a+rx {$g['dhcpd_chroot_path']}/usr/local/sbin/dhcpd\n");
 
 	$status = `/sbin/mount | /usr/bin/grep -v grep  | /usr/bin/grep  "{$g['dhcpd_chroot_path']}/dev"`;
@@ -951,7 +951,7 @@ function services_dhcpdv6_configure() {
 	/* we add a fake entry for interfaces that are set to track6 another WAN */
 	foreach ($Iflist as $ifname) {
 		if (!empty($config['interfaces'][$ifname]['track6-interface'])) {
-			$realif = get_real_interface($ifname);
+			$realif = get_real_interface($ifname, "inet6");
 			$ifcfgipv6 = get_interface_ipv6($ifname);
 			if(!is_ipaddrv6($ifcfgipv6))
 				continue;

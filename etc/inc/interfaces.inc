@@ -3415,7 +3415,7 @@ function interface_dhcpv6_configure($interface = "wan", $wancfg) {
 	if (!is_array($wancfg))
 		return;
 
-	$wanif = get_real_interface($interface);
+	$wanif = get_real_interface($interface, "inet6");
 	$dhcp6cconf = "";
 	$dhcp6cconf .= "interface {$wanif} {\n";
 
@@ -4446,7 +4446,8 @@ function get_interface_ipv6($interface = "wan", $flush = false) {
 }
 
 function get_interface_linklocal($interface = "wan") {
-	$realif = get_failover_interface($interface);
+
+	$realif = get_failover_interface($interface, "inet6");
 	if (!$realif) {
 		if (preg_match("/^carp/i", $interface))
 			$realif = $interface;
@@ -4844,26 +4845,24 @@ function interfaces_staticarp_configure($if) {
 
 function get_failover_interface($interface, $family = "all") {
 	global $config;
+
 	/* shortcut to get_real_interface if we find it in the config */
-	if(is_array($config['interfaces'][$interface])) {
-		$wanif = get_real_interface($interface, $family);
-		return $wanif;
+	if (is_array($config['interfaces'][$interface])) {
+		return get_real_interface($interface, $family);
 	}
 
 	/* compare against gateway groups */
 	$a_groups = return_gateway_groups_array();
-	if(is_array($a_groups[$interface])) {
+	if (is_array($a_groups[$interface])) {
 		/* we found a gateway group, fetch the interface or vip */
-		if($a_groups[$interface][0]['vip'] <> "")
-			$wanif = $a_groups[$interface][0]['vip'];
+		if ($a_groups[$interface][0]['vip'] <> "")
+			return $a_groups[$interface][0]['vip'];
 		else
-			$wanif = $a_groups[$interface][0]['int'];
-
-		return $wanif;
+			return $a_groups[$interface][0]['int'];
 	}
 	/* fall through to get_real_interface */
-	$wanif = get_real_interface($interface, $family);
-	return $wanif;
+	/* XXX: Really needed? */
+	return get_real_interface($interface, $family);
 }
 
 function remove_ifindex($ifname) {

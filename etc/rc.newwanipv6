@@ -55,12 +55,9 @@ function restart_packages() {
 }
 
 /* Interface IP address has changed */
-$argument = str_replace("\n", "", $argv[1]);
+$argument = trim($argv[1], " \n\t");
 
 log_error("rc.newwanipv6: Informational is starting {$argument}.");
-
-/* wait for the dhcp6c process to configure the LAN interface */
-sleep(5);
 
 if(empty($argument)) {
 	$interface = "wan";

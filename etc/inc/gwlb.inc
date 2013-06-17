@@ -58,7 +58,6 @@ function setup_gateways_monitor() {
 	}
 
 	$apinger_default = return_apinger_defaults();
-	$fd = fopen("{$g['varetc_path']}/apinger.conf", "w");
 	$apingerconfig = <<<EOD
 
 # pfSense apinger configuration file. Automatically Generated!
@@ -254,8 +253,7 @@ EOD;
 		$apingerconfig .= $alarmscfg;
 		$apingerconfig .= $apingercfg;
 	}
-	fwrite($fd, $apingerconfig);
-	fclose($fd);
+	@file_put_contents("{$g['varetc_path']}/apinger.conf", $apingerconfig);
 	unset($apingerconfig);
 
 	killbypid("{$g['varrun_path']}/apinger.pid");

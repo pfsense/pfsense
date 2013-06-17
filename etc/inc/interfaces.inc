@@ -3658,14 +3658,11 @@ function convert_real_interface_to_friendly_interface_name($interface = "wan") {
 	$ifdescrs = &$config['interfaces'];
 	//$ifdescrs = get_configured_interface_list(false, true);
 
-	if (strstr($interface, "_stf"))
-		$interface = str_replace("_stf", "", $interface);
-
 	foreach ($ifdescrs as $if => $ifname) {
 		if ($if == $interface || $config['interfaces'][$if]['if'] == $interface)
 			return $if;
 
-		if (stristr($interface, "_wlan0") && $config['interfaces'][$if]['if'] == interface_get_wireless_base($interface))
+		if (get_real_interface($if) == $interface)
 			return $if;
 
 		// XXX: This case doesn't work anymore (segfaults - recursion?) - should be replaced with something else or just removed.

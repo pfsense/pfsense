@@ -2792,9 +2792,7 @@ function upgrade_080_to_081() {
 }
 
 function upgrade_081_to_082() {
-	global $config, $g;
-	/* enable the allow IPv6 toggle */
-	$config['system']['ipv6allow'] = true;
+	/* don't enable the allow IPv6 toggle */
 }
 
 function upgrade_082_to_083() {

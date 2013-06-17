@@ -145,6 +145,10 @@ if ($_POST) {
 
 	do_input_validation($_POST, $reqdfields, $reqdfieldsn, &$input_errors);
 
+    /* either MAC or Client-ID must be specified */
+    if (empty($_POST['mac']) && empty($_POST['cid']))
+        $input_errors[] = gettext("Either MAC address or Client identifier must be specified");
+
 	/* normalize MAC addresses - lowercase and convert Windows-ized hyphenated MACs to colon delimited */
 	$_POST['mac'] = strtolower(str_replace("-", ":", $_POST['mac']));
 
@@ -175,8 +179,8 @@ if ($_POST) {
 		if (isset($id) && ($a_maps[$id]) && ($a_maps[$id] === $mapent))
 			continue;
 
-		if ((($mapent['hostname'] == $_POST['hostname']) && $mapent['hostname'])  || ($mapent['mac'] == $_POST['mac'])) {
-			$input_errors[] = gettext("This Hostname, IP or MAC address already exists.");
+		if ((($mapent['hostname'] == $_POST['hostname']) && $mapent['hostname'])  || (($mapent['mac'] == $_POST['mac']) && $mapent['mac']) || (($mapent['cid'] == $_POST['cid']) && $mapent['cid'])) {
+			$input_errors[] = gettext("This Hostname, IP, MAC address or Client identifier already exists.");
 			break;
 		}
 	}

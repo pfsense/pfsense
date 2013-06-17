@@ -548,7 +548,7 @@
 	<id>7</id>
 	<title>Reload configuration</title>
 	<disableheader>true</disableheader>
-	<description>Click 'Reload' to reload pfSense with new changes.  If you changed the password, pfSense will ask you to log in again.</description>
+	<description>Click 'Reload' to reload pfSense with new changes.</description>
 	<fields>
 		<field>
 			<name>Reload</name>

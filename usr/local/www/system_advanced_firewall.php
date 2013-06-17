@@ -57,6 +57,8 @@ $pconfig['optimization'] = $config['filter']['optimization'];
 $pconfig['adaptivestart'] = $config['system']['adaptivestart'];
 $pconfig['adaptiveend'] = $config['system']['adaptiveend'];
 $pconfig['maximumstates'] = $config['system']['maximumstates'];
+$pconfig['aliasesresolveinterval'] = $config['system']['aliasesresolveinterval'];
+$old_aliasesresolveinterval = $config['system']['aliasesresolveinterval'];
 $pconfig['maximumtables'] = $config['system']['maximumtables'];
 $pconfig['maximumtableentries'] = $config['system']['maximumtableentries'];
 $pconfig['disablereplyto'] = isset($config['system']['disablereplyto']);
@@ -86,6 +88,9 @@ if ($_POST) {
 	}
 	if ($_POST['maximumstates'] && !is_numericint($_POST['maximumstates'])) {
 		$input_errors[] = gettext("The Firewall Maximum States value must be an integer.");
+	}
+	if ($_POST['aliasesresolveinterval'] && !is_numericint($_POST['aliasesresolveinterval'])) {
+		$input_errors[] = gettext("The Aliases Hostname Resolve Interval value must be an integer.");
 	}
 	if ($_POST['maximumtables'] && !is_numericint($_POST['maximumtables'])) {
 		$input_errors[] = gettext("The Firewall Maximum Tables value must be an integer.");
@@ -140,6 +145,7 @@ if ($_POST) {
 
 		$config['system']['optimization'] = $_POST['optimization'];
 		$config['system']['maximumstates'] = $_POST['maximumstates'];
+		$config['system']['aliasesresolveinterval'] = $_POST['aliasesresolveinterval'];
 		$config['system']['maximumtables'] = $_POST['maximumtables'];
 		$config['system']['maximumtableentries'] = $_POST['maximumtableentries'];
 
@@ -208,6 +214,11 @@ if ($_POST) {
 		}
 	
 		write_config();
+
+		// Kill filterdns when value changes, filter_configure() will restart it
+		if (($old_aliasesresolveinterval != $config['system']['aliasesresolveinterval']) &&
+		    isvalidpid("{$g['varrun_path']}/filterdns.pid"))
+			killbypid("{$g['varrun_path']}/filterdns.pid");
 
 		$retval = 0;
 		$retval = filter_configure();
@@ -439,6 +450,16 @@ function update_description(itemnum) {
 									<br />
 									<?=gettext("With Multi-WAN you generally want to ensure traffic reaches directly connected networks and VPN networks when using policy routing. You can disable this for special purposes but it requires manually creating rules for these networks");?>
 									<br />
+								</td>
+							</tr>
+							<tr>
+								<td width="22%" valign="top" class="vncell"><?=gettext("Aliases Hostnames Resolve Interval");?></td>
+								<td width="78%" class="vtable">
+									<input name="aliasesresolveinterval" type="text" id="aliasesresolveinterval" value="<?php echo $pconfig['aliasesresolveinterval']; ?>" />
+									<br/>
+									<strong><?=gettext("Interval, in seconds, that will be used to resolve hostnames configured on aliases.");?></strong>
+									<br/>
+									<span class="vexpl"><?=gettext("Note:  Leave this blank for the default (300s).");?></span>
 								</td>
 							</tr>
 							<tr>

@@ -857,9 +857,9 @@ function create_gateway_quality_rrd($gatway_quality_rrd) {
 
 	/* enter UNKNOWN values in the RRD so it knows we rebooted. */
 	if($g['booting']) {
-		mwexec("$rrdtool update {$g['vardb_path']}/rrd/{$gateway['name']}-quality.rrd N:U:U:U:U:U:U:U:U");
+		mwexec("$rrdtool update $gatway_quality_rrd N:U:U");
 	}
-	unset($rrdtool, $rrdqualityinterval, $qualityvalid);
+	unset($rrdtool, $rrdqualityinterval, $qualityvalid, $gatway_quality_rrd);
 }
 
 function kill_traffic_collector() {

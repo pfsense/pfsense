@@ -433,7 +433,6 @@ EOD;
 	/*    loop through and determine if we need to setup
 	 *    failover peer "bleh" entries
 	 */
-	$dhcpnum = 0;
 	foreach ($dhcpdcfg as $dhcpif => $dhcpifconf) {
 
 		interfaces_staticarp_configure($dhcpif);
@@ -475,7 +474,7 @@ EOD;
 				$dhcpdconf_pri .= "  mclt 600;\n";
 			}
 			$dhcpdconf .= <<<EOPP
-failover peer "dhcp{$dhcpnum}" {
+failover peer "dhcp_{$dhcpif}" {
   {$type};
   address {$intip};
   port {$my_port};
@@ -488,11 +487,8 @@ failover peer "dhcp{$dhcpnum}" {
 }
 
 EOPP;
-		$dhcpnum++;
 		}
 	}
-
-	$dhcpnum = 0;
 
 	foreach ($dhcpdcfg as $dhcpif => $dhcpifconf) {
 
@@ -620,8 +616,7 @@ EOPP;
 				$dhcpdconf .= "		option routers {$poolconf['gateway']};\n";
 
 			if($dhcpifconf['failover_peerip'] <> "") {
-				$dhcpdconf .= "		failover peer \"dhcp{$dhcpnum}\";\n";
-				$dhcpnum++;
+				$dhcpdconf .= "		failover peer \"dhcp_{$dhcpif}\";\n";
 			}
 
 			$pdnscfg = "";

@@ -63,7 +63,7 @@ if ($_POST) {
 		/* reload the filter in the background */
 		filter_configure();
 		$savemsg = get_std_save_message($retval);
-		if ($retval == 0) {
+		if ($retval >= 0) {
 			if (is_subsystem_dirty('ipsec'))
 				clear_subsystem_dirty('ipsec');
 		}

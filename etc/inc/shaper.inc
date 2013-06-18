@@ -3355,6 +3355,7 @@ EOD;
 		$form .= "</tbody></table>";
 		$form .= "<a onclick=\"javascript:addBwRowTo('maintable'); return false;\" href='#'>";
 		$form .= "<img border='0' src='/themes/{$g['theme']}/images/icons/icon_plus.gif' alt='add' title='" . gettext("add another schedule") . "' /></a>";
+		$form .= "<br/><span class=\"vexpl\">" . gettext("Bandwidth is a rate (e.g. Mbit/s), burst is a total amount of data that will be transferred at full speed after an idle period.") . "</span><br />";
 		$form .= "</td></tr>";
 		$form .= "<tr><td valign=\"middle\" class=\"vncellreq\">" . gettext("Mask") . "</td>";
 		$form .= "<td class=\"vncellreq\">";

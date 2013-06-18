@@ -48,7 +48,7 @@ function dump_rrd_to_xml($rrddatabase, $xmldumpfile) {
 }
 
 function restore_rrd() {
-	global $g;
+	global $g, $config;
 
 	$rrddbpath = "/var/db/rrd/";
 	$rrdtool = "/usr/bin/nice -n20 /usr/local/bin/rrdtool";

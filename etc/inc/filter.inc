@@ -2370,10 +2370,6 @@ function filter_generate_user_rule($rule) {
 					$aline['flags'] .= " ) ";
 				}
 	}
-	if($type == "reject" && $rule['protocol'] == "tcp" && (strpos($aline['flags'], 'flags') === false)) {
-		/* special reject packet */
-		$aline['flags'] .= "flags S/SA ";
-	}
 	if($rule['defaultqueue'] <> "") {
 		$aline['queue'] = " queue (".$rule['defaultqueue'];
 		if($rule['ackqueue'] <> "")

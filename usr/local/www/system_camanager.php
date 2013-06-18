@@ -75,7 +75,7 @@ if ($_POST['act'])
 
 if ($act == "del") {
 
-	if (!$a_ca[$id]) {
+	if (!isset($a_ca[$id])) {
 		pfSenseHeader("system_camanager.php");
 		exit;
 	}

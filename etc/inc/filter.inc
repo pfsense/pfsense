@@ -2293,7 +2293,8 @@ function filter_generate_user_rule($rule) {
 		} else {
 			$aline['flags'] = "flags S/SA ";
 		}
-
+	}
+	if (($rule['protocol'] == "tcp") && ($type == "pass")) {
 		/*
 		 *	# keep state
 		 *		works with TCP, UDP, and ICMP.
@@ -2369,7 +2370,7 @@ function filter_generate_user_rule($rule) {
 					$aline['flags'] .= " ) ";
 				}
 	}
-	if($type == "reject" && $rule['protocol'] == "tcp") {
+	if($type == "reject" && $rule['protocol'] == "tcp" && (strpos($aline['flags'], 'flags') === false)) {
 		/* special reject packet */
 		$aline['flags'] .= "flags S/SA ";
 	}

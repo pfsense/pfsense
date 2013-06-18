@@ -175,6 +175,7 @@ if ($wancfg['if'] == $a_ppps[$pppid]['if']) {
 $pconfig['dhcphostname'] = $wancfg['dhcphostname'];
 $pconfig['alias-address'] = $wancfg['alias-address'];
 $pconfig['alias-subnet'] = $wancfg['alias-subnet'];
+$pconfig['dhcprejectfrom'] = $wancfg['dhcprejectfrom'];
 $pconfig['dhcp_plus'] = isset($wancfg['dhcp_plus']);
 $pconfig['descr'] = remove_bad_chars($wancfg['descr']);
 $pconfig['enable'] = isset($wancfg['enable']);
@@ -590,6 +591,8 @@ if ($_POST['apply']) {
 		$input_errors[] = gettext("A valid alias IP address must be specified.");
 	if (($_POST['alias-subnet'] && !is_numeric($_POST['alias-subnet'])))
 		$input_errors[] = gettext("A valid alias subnet bit count must be specified.");
+	if ($_POST['dhcprejectfrom'] && !is_ipaddrv4($_POST['dhcprejectfrom']))
+		$input_errors[] = gettext("A valid alias IP address must be specified to reject DHCP Leases from.");
 	if (($_POST['gateway'] != "none") || ($_POST['gatewayv6'] != "none")) {
 		$match = false;
 		foreach($a_gateways as $gateway) {
@@ -740,6 +743,7 @@ if ($_POST['apply']) {
 		unset($wancfg['subnetv6']);
 		unset($wancfg['gatewayv6']);
 		unset($wancfg['dhcphostname']);
+		unset($wancfg['dhcprejectfrom']);
 		unset($wancfg['dhcp6-duid']);
 		unset($wancfg['dhcp6-ia-pd-len']);
 		unset($wancfg['track6-interface']);
@@ -783,6 +787,7 @@ if ($_POST['apply']) {
 				$wancfg['dhcphostname'] = $_POST['dhcphostname'];
 				$wancfg['alias-address'] = $_POST['alias-address'];
 				$wancfg['alias-subnet'] = $_POST['alias-subnet'];
+				$wancfg['dhcprejectfrom'] = $_POST['dhcprejectfrom'];
 				$wancfg['dhcp_plus'] = $_POST['dhcp_plus'] == "yes" ? true : false;
 				if($gateway_item) {
 					$a_gateways[] = $gateway_item;
@@ -1751,6 +1756,15 @@ $types6 = array("none" => gettext("None"), "staticv6" => gettext("Static IPv6"),
 											</select>
 											<?=gettext("The value in this field is used as a fixed alias IPv4 address by the " .
 											"DHCP client."); ?>
+										</td>
+									</tr>
+									<tr>
+										<td width="22%" valign="top" class="vncell"><?=gettext("Reject Leases From"); ?></td>
+										<td width="78%" class="vtable">
+											<input name="dhcprejectfrom" type="text" class="formfld unknown" id="dhcprejectfrom" size="20" value="<?=htmlspecialchars($pconfig['dhcprejectfrom']);?>" />
+											<br/>
+											<?=gettext("If there is a certain upstream DHCP server that should be ignored, place the IP address or subnet of the DHCP server to be ignored here."); ?>
+											<?=gettext("this is useful for rejecting leases from cable modems that offer private IPs when they lose upstream sync."); ?>
 										</td>
 									</tr>
 									<tr>

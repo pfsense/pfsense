@@ -3550,6 +3550,16 @@ select-timeout 0;
 initial-interval 1;
 	{$dhclientconf_hostname}
 	script "/sbin/dhclient-script";
+EOD;
+
+if (is_ipaddrv4($wancfg['dhcprejectfrom'])) {
+	$dhclientconf .= <<<EOD
+
+	reject {$wancfg['dhcprejectfrom']};
+EOD;
+}
+	$dhclientconf .= <<<EOD
+
 }
 
 EOD;

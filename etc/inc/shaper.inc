@@ -2890,10 +2890,10 @@ class dummynet_class {
 		shaper_do_input_validation($data, $reqdfields, $reqdfieldsn, $input_errors);
 
 		if ($data['plr'] && ((!is_numeric($data['plr'])) ||
-			($data['plr'] <= 0 && $data['plr'] > 1))) 
-				$input_errors[] = gettext("Plr must be an integer between 1 and 100.");
+			($data['plr'] < 0 && $data['plr'] > 1))) 
+				$input_errors[] = gettext("Plr must be a value between 0 and 1.");
 		if (($data['buckets'] && (!is_numeric($data['buckets']))) ||
-			($data['buckets'] < 1 && $data['buckets'] > 100)) 
+			($data['buckets'] < 16 && $data['buckets'] > 65535)) 
 				$input_errors[] = gettext("Buckets must be an integer between 16 and 65535.");
 		if ($data['qlimit'] && (!is_numeric($data['qlimit']))) 
             		$input_errors[] = gettext("Queue limit must be an integer");

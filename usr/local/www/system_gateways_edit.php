@@ -645,7 +645,7 @@ function monitor_change() {
 							<tr>
 								<td colspan="2">
 									<?= gettext("The Frequency Probe interval must be less than the Down time, otherwise the gateway will seem to go down then come up again at the next probe."); ?><br/><br/>
-									<?= gettext("The total time before a gateway is down is the product of the Frequency Probe and the Down fields. By default this is 1*10=10 seconds."); ?><br/>
+									<?= gettext("The Down time defines the length of time before the gateway is marked as down, but the accuracy is controlled by the Frequency Probe value. For example, if your Down time is 40 seconds but on a 30 second frequency, only one probe would have to fail before the gateway is marked down at the 40 second mark. By default, the gateway is considered down after 10 seconds, and the probe interval is 1 second, so 10 probes would have to fail before the gateway is marked down."); ?><br/>
 								</td>
 							</tr>
 						</table>

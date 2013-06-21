@@ -120,7 +120,10 @@ if ($_POST) {
 	
 	if (preg_match("/[^a-zA-Z0-9\.\-_ ]/", $_POST['groupname']))
 		$input_errors[] = gettext("The group name contains invalid characters.");
-		
+	
+	if (strlen($_POST['groupname']) > 16)
+		$input_errors[] = gettext("The group name is longer than 16 characters.");
+	
 	if (!$input_errors && !(isset($id) && $a_group[$id])) {
 		/* make sure there are no dupes */
 		foreach ($a_group as $group) {
@@ -268,7 +271,7 @@ function presubmit() {
 						<tr> 
 							<td width="22%" valign="top" class="vncellreq"><?=gettext("Group name");?></td>
 							<td width="78%" class="vtable"> 
-								<input name="groupname" type="text" class="formfld group" id="groupname" size="20" value="<?=htmlspecialchars($pconfig['name']);?>" <?=$ro;?> />
+								<input name="groupname" type="text" class="formfld group" id="groupname" size="20" maxlength="16" value="<?=htmlspecialchars($pconfig['name']);?>" <?=$ro;?> />
 							</td>
 						</tr>
 						<tr> 

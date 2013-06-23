@@ -846,10 +846,10 @@ function create_gateway_quality_rrd($gatway_quality_rrd) {
 		$rrdcreate = "$rrdtool create $gatway_quality_rrd --step $rrdqualityinterval ";
 		$rrdcreate .= "DS:loss:GAUGE:$qualityvalid:0:100 ";
 		$rrdcreate .= "DS:delay:GAUGE:$qualityvalid:0:100000 ";
-		$rrdcreate .= "RRA:AVERAGE:0.5:1:1000 ";
-		$rrdcreate .= "RRA:AVERAGE:0.5:5:1000 ";
-		$rrdcreate .= "RRA:AVERAGE:0.5:60:1000 ";
-		$rrdcreate .= "RRA:AVERAGE:0.5:720:3000 ";
+		$rrdcreate .= "RRA:AVERAGE:0.5:1:1200 ";
+		$rrdcreate .= "RRA:AVERAGE:0.5:5:720 ";
+		$rrdcreate .= "RRA:AVERAGE:0.5:60:1860 ";
+		$rrdcreate .= "RRA:AVERAGE:0.5:1440:3652 ";
 
 		create_new_rrd($rrdcreate);
 		unset($rrdcreate);

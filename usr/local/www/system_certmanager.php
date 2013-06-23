@@ -91,7 +91,7 @@ if ($_POST['act'])
 
 if ($act == "del") {
 
-	if (!$a_cert[$id]) {
+	if (!isset($a_cert[$id])) {
 		pfSenseHeader("system_certmanager.php");
 		exit;
 	}

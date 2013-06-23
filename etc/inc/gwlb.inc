@@ -25,7 +25,7 @@
   ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
   POSSIBILITY OF SUCH DAMAGE.
 
-	pfSense_BUILDER_BINARIES:	/usr/bin/killall	/sbin/route	/usr/local/sbin/apinger
+	pfSense_BUILDER_BINARIES:	/sbin/route	/usr/local/sbin/apinger
 	pfSense_MODULE:	routing
 
  */
@@ -58,7 +58,6 @@ function setup_gateways_monitor() {
 	}
 
 	$apinger_default = return_apinger_defaults();
-	$fd = fopen("{$g['varetc_path']}/apinger.conf", "w");
 	$apingerconfig = <<<EOD
 
 # pfSense apinger configuration file. Automatically Generated!
@@ -234,28 +233,11 @@ EOD;
 		$apingercfg .= "	rrd file \"{$g['vardb_path']}/rrd/{$gateway['name']}-quality.rrd\"\n";
 		$apingercfg .= "}\n";
 		$apingercfg .= "\n";
-		/*
-		 * If the gateway is the same as the monitor we do not add a
-		 * route as this will break the routing table.
-		 * Add static routes for each gateway with their monitor IP
-		 * not strictly necessary but is a added level of protection.
-		 */
-		if (is_ipaddr($gateway['gateway']) && $gateway['monitor'] != $gateway['gateway']) {
-			log_error(sprintf(gettext('Removing static route for monitor %1$s and adding a new route through %2$s'), $gateway['monitor'], $gateway['gateway']));
-			if(is_ipaddrv6($gateway['gateway'])) {
-				$inetfamily = "-inet6";
-			} else {
-				$inetfamily = "-inet";
-			}
-			// mwexec("/sbin/route change {$inetfamily} -host " . escapeshellarg($gateway['monitor']) .
-			//	" " . escapeshellarg($gateway['gateway']), true);
-		}
 
 		$apingerconfig .= $alarmscfg;
 		$apingerconfig .= $apingercfg;
 	}
-	fwrite($fd, $apingerconfig);
-	fclose($fd);
+	@file_put_contents("{$g['varetc_path']}/apinger.conf", $apingerconfig);
 	unset($apingerconfig);
 
 	killbypid("{$g['varrun_path']}/apinger.pid");

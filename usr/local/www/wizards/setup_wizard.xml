@@ -231,7 +231,14 @@
 			<name>MTU</name>
 			<type>input</type>
 			<bindstofield>interfaces->wan->mtu</bindstofield>
-			<description> If you enter a value in this field, then MSS clamping for TCP connections to the value entered above minus 40 (TCP/IP header size) will be in effect. If you leave this field blank, an MTU of 1492 bytes for PPPoE and 1500 bytes for all other connection types will be assumed.</description>
+			<description> Set the MTU of the WAN interface. If you leave this field blank, an MTU of 1492 bytes for PPPoE and 1500 bytes for all other connection types will be assumed.</description>
+		</field>
+		<field>
+			<donotdisable>true</donotdisable>
+			<name>MSS</name>
+			<type>input</type>
+			<bindstofield>interfaces->wan->mss</bindstofield>
+			<description> If you enter a value in this field, then MSS clamping for TCP connections to the value entered above minus 40 (TCP/IP header size) will be in effect. If you leave this field blank, an MSS of 1492 bytes for PPPoE and 1500 bytes for all other connection types will be assumed. This should match the above MTU value in most all cases.</description>
 		</field>
 		<field>
 			<name>Static IP Configuration</name>
@@ -548,7 +555,7 @@
 	<id>7</id>
 	<title>Reload configuration</title>
 	<disableheader>true</disableheader>
-	<description>Click 'Reload' to reload pfSense with new changes.  If you changed the password, pfSense will ask you to log in again.</description>
+	<description>Click 'Reload' to reload pfSense with new changes.</description>
 	<fields>
 		<field>
 			<name>Reload</name>

@@ -942,10 +942,10 @@ function interface_gif_configure(&$gif, $gifkey = "") {
 		file_put_contents("{$g['tmp_path']}/{$gifif}_routerv6", $gif['tunnel-remote-addr']);
 
 	if (is_ipaddrv4($realifgw)) {
-		mwexec("route change -host {$gif['remote-addr']} {$realifgw}");
+		mwexec("/sbin/route change -host {$gif['remote-addr']} {$realifgw}");
 	}
 	if (is_ipaddrv6($realifgw)) {
-		mwexec("route change -host -inet6 {$gif['remote-addr']} {$realifgw}");
+		mwexec("/sbin/route change -host -inet6 {$gif['remote-addr']} {$realifgw}");
 	}
 
 	return $gifif;
@@ -3401,7 +3401,7 @@ function interface_6to4_configure($interface = "wan", $wancfg){
 
 	$ip4gateway = get_interface_gateway($interface);
 	if (is_ipaddrv4($ip4gateway))
-		mwexec("route change -host 192.88.99.1 {$ip4gateway}");
+		mwexec("/sbin/route change -host 192.88.99.1 {$ip4gateway}");
 
 	if (!$g['booting'])
 		link_interface_to_track6($interface, "update");
@@ -3415,7 +3415,7 @@ function interface_dhcpv6_configure($interface = "wan", $wancfg) {
 	if (!is_array($wancfg))
 		return;
 
-	$wanif = get_real_interface($interface);
+	$wanif = get_real_interface($interface, "inet6");
 	$dhcp6cconf = "";
 	$dhcp6cconf .= "interface {$wanif} {\n";
 
@@ -3550,6 +3550,16 @@ select-timeout 0;
 initial-interval 1;
 	{$dhclientconf_hostname}
 	script "/sbin/dhclient-script";
+EOD;
+
+if (is_ipaddrv4($wancfg['dhcprejectfrom'])) {
+	$dhclientconf .= <<<EOD
+
+	reject {$wancfg['dhcprejectfrom']};
+EOD;
+}
+	$dhclientconf .= <<<EOD
+
 }
 
 EOD;
@@ -3658,14 +3668,11 @@ function convert_real_interface_to_friendly_interface_name($interface = "wan") {
 	$ifdescrs = &$config['interfaces'];
 	//$ifdescrs = get_configured_interface_list(false, true);
 
-	if (strstr($interface, "_stf"))
-		$interface = str_replace("_stf", "", $interface);
-
 	foreach ($ifdescrs as $if => $ifname) {
 		if ($if == $interface || $config['interfaces'][$if]['if'] == $interface)
 			return $if;
 
-		if (stristr($interface, "_wlan0") && $config['interfaces'][$if]['if'] == interface_get_wireless_base($interface))
+		if (get_real_interface($if) == $interface)
 			return $if;
 
 		// XXX: This case doesn't work anymore (segfaults - recursion?) - should be replaced with something else or just removed.
@@ -4449,7 +4456,8 @@ function get_interface_ipv6($interface = "wan", $flush = false) {
 }
 
 function get_interface_linklocal($interface = "wan") {
-	$realif = get_failover_interface($interface);
+
+	$realif = get_failover_interface($interface, "inet6");
 	if (!$realif) {
 		if (preg_match("/^carp/i", $interface))
 			$realif = $interface;
@@ -4847,26 +4855,24 @@ function interfaces_staticarp_configure($if) {
 
 function get_failover_interface($interface, $family = "all") {
 	global $config;
+
 	/* shortcut to get_real_interface if we find it in the config */
-	if(is_array($config['interfaces'][$interface])) {
-		$wanif = get_real_interface($interface, $family);
-		return $wanif;
+	if (is_array($config['interfaces'][$interface])) {
+		return get_real_interface($interface, $family);
 	}
 
 	/* compare against gateway groups */
 	$a_groups = return_gateway_groups_array();
-	if(is_array($a_groups[$interface])) {
+	if (is_array($a_groups[$interface])) {
 		/* we found a gateway group, fetch the interface or vip */
-		if($a_groups[$interface][0]['vip'] <> "")
-			$wanif = $a_groups[$interface][0]['vip'];
+		if ($a_groups[$interface][0]['vip'] <> "")
+			return $a_groups[$interface][0]['vip'];
 		else
-			$wanif = $a_groups[$interface][0]['int'];
-
-		return $wanif;
+			return $a_groups[$interface][0]['int'];
 	}
 	/* fall through to get_real_interface */
-	$wanif = get_real_interface($interface, $family);
-	return $wanif;
+	/* XXX: Really needed? */
+	return get_real_interface($interface, $family);
 }
 
 function remove_ifindex($ifname) {

@@ -55,22 +55,18 @@ function restart_packages() {
 }
 
 /* Interface IP address has changed */
-$argument = str_replace("\n", "", $argv[1]);
+$argument = trim($argv[1], " \n\t");
 
 log_error("rc.newwanipv6: Informational is starting {$argument}.");
 
-/* wait for the dhcp6c process to configure the LAN interface */
-sleep(5);
-
 if(empty($argument)) {
 	$interface = "wan";
-	$interface_real = get_real_interface($interface);
+	$interface_real = get_real_interface($interface, "inet6");
 	$curwanipv6 = get_interface_ipv6($interface, true);
 } else {
 	$interface_real = $argument;
 	$interface = convert_real_interface_to_friendly_interface_name($interface_real);
 	$curwanipv6 = get_interface_ipv6($interface, true);
-	$interface_realv6 = get_real_interface($interface, "inet6");
 }
 
 if (empty($interface)) {
@@ -80,10 +76,10 @@ if (empty($interface)) {
 }
 
 //Do not process while booting
-if($g['booting'] && $config['interfaces'][$interface]['ipaddrv6'] != "dhcp6")
+if ($g['booting'] && $config['interfaces'][$interface]['ipaddrv6'] != "dhcp6")
 	exit;
 
-if(empty($curwanipv6) || !is_ipaddrv6($curwanipv6)) {
+if (empty($curwanipv6) || !is_ipaddrv6($curwanipv6)) {
         log_error("rc.newwanipv6: Failed to update {$interface} IPv6, restarting...");
 	// send_event("interface reconfigure {$interface}");
         exit;
@@ -93,20 +89,20 @@ if (!empty($_ENV['new_domain_name_servers'])) {
 	$name_servers = explode(" ", $_ENV['new_domain_name_servers']);
 	$valid_ns = array();
 	foreach($name_servers as $ns) {
-		if(is_ipaddrv6(trim($ns)))
+		if (is_ipaddrv6(trim($ns)))
 			$valid_ns[] = trim($ns);
 	}
 
-	if(count($valid_ns > 0))
+	if (count($valid_ns > 0))
 		file_put_contents("{$g['varetc_path']}/nameserver_v6{$interface}", implode("\n", $valid_ns));
 }
-if(!empty($_ENV['new_domain_name']))
+if (!empty($_ENV['new_domain_name']))
 	file_put_contents("{$g['varetc_path']}/searchdomain_v6{$interface}", $_ENV['new_domain_name']);
 
 /* write current WAN IPv6 to file */
 file_put_contents("{$g['vardb_path']}/{$interface}_ipv6", $curwanipv6);
 
-log_error("rc.newwanipv6: on (IP address: {$curwanipv6}) (interface: {$interface}) (real interface: {$interface_realv6}).");
+log_error("rc.newwanipv6: on (IP address: {$curwanipv6}) (interface: {$interface}) (real interface: {$interface_real}).");
 
 $oldipv6 = "";
 if (file_exists("{$g['vardb_path']}/{$interface}_cacheipv6"))
@@ -138,11 +134,12 @@ if (is_ipaddrv6($oldipv6)) {
 			vpn_ipsec_force_reload($interface);
 
 			/* start OpenVPN server & clients */
-			openvpn_resync_all($interface);
+			if (substr($interface_real, 0, 4) != "ovpn")
+				openvpn_resync_all($interface);
 		}
 		exit;
-	} else if (does_interface_exist($interface_realv6))
-		mwexec("/sbin/ifconfig {$interface_realv6} inet6 {$oldipv6} delete");
+	} else if (does_interface_exist($interface_real))
+		mwexec("/sbin/ifconfig {$interface_real} inet6 {$oldipv6} delete");
 }
 
 file_put_contents("{$g['vardb_path']}/{$interface}_cacheipv6", $curwanipv6);

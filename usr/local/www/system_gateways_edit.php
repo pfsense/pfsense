@@ -324,10 +324,10 @@ if ($_POST) {
 
 	if($_POST['interval']) {
 		if (! is_numeric($_POST['interval'])) {
-			$input_errors[] = gettext("The frequency probe interval needs to be a numeric value.");
+			$input_errors[] = gettext("The probe interval needs to be a numeric value.");
 		} else {
 			if ($_POST['interval'] < 1) {
-				$input_errors[] = gettext("The frequency probe interval needs to be positive.");
+				$input_errors[] = gettext("The probe interval needs to be positive.");
 			}
 		}
 	}
@@ -345,21 +345,21 @@ if ($_POST) {
 	if(($_POST['interval']) && ($_POST['down'])){
 		if ((is_numeric($_POST['interval'])) && (is_numeric($_POST['down']))) {
 			if($_POST['interval'] > $_POST['down']) {
-				$input_errors[] = gettext("The Frequency Probe interval needs to be less than the down time setting.");
+				$input_errors[] = gettext("The probe interval needs to be less than the down time setting.");
 			}
 		}
 	} else {
 		if($_POST['interval']){
 			if (is_numeric($_POST['interval'])) {
 				if($_POST['interval'] > $apinger_default['down']) {
-					$input_errors[] = gettext(sprintf("The Frequency Probe interval needs to be less than the default down time setting (%d)", $apinger_default['down']));
+					$input_errors[] = gettext(sprintf("The probe interval needs to be less than the default down time setting (%d)", $apinger_default['down']));
 				}
 			}
 		}
 		if($_POST['down']){
 			if (is_numeric($_POST['down'])) {
 				if($_POST['down'] < $apinger_default['interval']) {
-					$input_errors[] = gettext(sprintf("The down time setting needs to be higher than the default Frequency Probe interval (%d)", $apinger_default['interval']));
+					$input_errors[] = gettext(sprintf("The down time setting needs to be higher than the default probe interval (%d)", $apinger_default['interval']));
 				}
 			}
 		}
@@ -624,13 +624,13 @@ function monitor_change() {
 								</td>
 							</tr>
 							<tr>
-								<td width="22%" valign="top" class="vncellreq"><?=gettext("Frequency Probe");?></td>
+								<td width="22%" valign="top" class="vncellreq"><?=gettext("Probe Interval");?></td>
 								<td width="78%" class="vtable">
 									<input name="interval" type="text" class="formfld unknown" id="interval" size="2"
 										value="<?=htmlspecialchars($pconfig['interval']);?>" />
 									<br/><span class="vexpl">
 										<?=gettext(sprintf("How often that an ICMP probe will be sent in seconds. Default is %d.", $apinger_default['interval']));?><br/><br/>
-										<?=gettext("NOTE: The quality graph is averaged over seconds, not intervals, so as the frequency probe is increased the accuracy of the quality graph is decreased.");?>
+										<?=gettext("NOTE: The quality graph is averaged over seconds, not intervals, so as the probe interval is increased the accuracy of the quality graph is decreased.");?>
 									</span>
 								</td>
 							</tr>
@@ -644,8 +644,8 @@ function monitor_change() {
 							</tr>
 							<tr>
 								<td colspan="2">
-									<?= gettext("The Frequency Probe interval must be less than the Down time, otherwise the gateway will seem to go down then come up again at the next probe."); ?><br/><br/>
-									<?= gettext("The total time before a gateway is down is the product of the Frequency Probe and the Down fields. By default this is 1*10=10 seconds."); ?><br/>
+									<?= gettext("The probe interval must be less than the down time, otherwise the gateway will seem to go down then come up again at the next probe."); ?><br/><br/>
+									<?= gettext("The down time defines the length of time before the gateway is marked as down, but the accuracy is controlled by the probe interval. For example, if your down time is 40 seconds but on a 30 second probe interval, only one probe would have to fail before the gateway is marked down at the 40 second mark. By default, the gateway is considered down after 10 seconds, and the probe interval is 1 second, so 10 probes would have to fail before the gateway is marked down."); ?><br/>
 								</td>
 							</tr>
 						</table>

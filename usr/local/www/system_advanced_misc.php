@@ -61,6 +61,7 @@ $pconfig['srctrack'] = $config['system']['srctrack'];
 $pconfig['gw_switch_default'] = isset($config['system']['gw_switch_default']);
 $pconfig['preferoldsa_enable'] = isset($config['ipsec']['preferoldsa']);
 $pconfig['racoondebug_enable'] = isset($config['ipsec']['racoondebug']);
+$pconfig['failoverforcereload'] = isset($config['ipsec']['failoverforcereload']);
 $pconfig['maxmss_enable'] = isset($config['system']['maxmss_enable']);
 $pconfig['maxmss'] = $config['system']['maxmss'];
 $pconfig['powerd_enable'] = isset($config['system']['powerd_enable']);
@@ -158,6 +159,11 @@ if ($_POST) {
 			$config['ipsec']['preferoldsa'] = true;
 		elseif (isset($config['ipsec']['preferoldsa']))
 			unset($config['ipsec']['preferoldsa']);
+
+		if($_POST['failoverforcereload'] == "yes")
+			$config['ipsec']['failoverforcereload'] = true;
+		elseif (isset($config['ipsec']['failoverforcereload']))
+			unset($config['ipsec']['failoverforcereload']);
 
 		$need_racoon_restart = false;
 		if($_POST['racoondebug_enable'] == "yes") {
@@ -510,6 +516,18 @@ function tmpvar_checked(obj) {
 									<?=gettext("Launches racoon in debug mode so that more verbose logs " .
 									"will be generated to aid in troubleshooting."); ?><br/>
 									<?=gettext("NOTE: Changing this setting will restart racoon."); ?>
+								</td>
+							</tr>
+							<tr>
+								<td width="22%" valign="top" class="vncell"><?=gettext("IPsec Reload on Failover"); ?></td>
+								<td width="78%" class="vtable">
+									<input name="failoverforcereload" type="checkbox" id="failoverforcereload" value="yes" <?php if ($pconfig['failoverforcereload']) echo "checked=\"checked\""; ?> />
+									<strong><?=gettext("Force IPsec Reload on Failover"); ?></strong>
+									<br />
+									<?=gettext("In some circumstances using a gateway group as the interface for " .
+									"an IPsec tunnel does not function properly, and IPsec must be forcefully reloaded " .
+									"when a failover occurs. Because this will disrupt all IPsec tunnels, this behavior" .
+									" is disabled by default. Check this box to force IPsec to fully reload on failover."); ?>
 								</td>
 							</tr>
 							<tr>

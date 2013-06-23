@@ -154,12 +154,12 @@ function system_resolvconf_generate($dynupdate = false) {
 				if (is_ipaddrv4($gatewayip)) {
 					/* dns server array starts at 0 */
 					$dnscountermo = $dnscounter - 1;
-					mwexec("route change -host " . $syscfg['dnsserver'][$dnscountermo] . " {$gatewayip}");
+					mwexec("/sbin/route change -host " . $syscfg['dnsserver'][$dnscountermo] . " {$gatewayip}");
 				}
 				if (is_ipaddrv6($gatewayip)) {
 					/* dns server array starts at 0 */
 					$dnscountermo = $dnscounter - 1;
-					mwexec("route change -host -inet6 " . $syscfg['dnsserver'][$dnscountermo] . " {$gatewayip}");
+					mwexec("/sbin/route change -host -inet6 " . $syscfg['dnsserver'][$dnscountermo] . " {$gatewayip}");
 				}
 			}
 		}
@@ -393,7 +393,7 @@ function system_routing_configure($interface = "") {
 					$gatewayipv6 = $gateway['gateway'];
 					$interfacegwv6 = $gateway['interface'];
 					if (!empty($gateway['interface'])) {
-						$defaultifv6 = get_real_interface($gateway['interface']);
+						$defaultifv6 = get_real_interface($gateway['interface'], "inet6");
 						if ($defaultifv6)
 							@file_put_contents("{$g['tmp_path']}/{$defaultifv6}_defaultgwv6", $gateway['gateway']);
 					}
@@ -440,7 +440,7 @@ function system_routing_configure($interface = "") {
 			;
 		else if (($interfacegwv6 <> "bgpd") && (is_ipaddrv6($gatewayipv6))) {
 			$ifscope = "";
-			if(is_linklocal($gatewayipv6))
+			if (is_linklocal($gatewayipv6))
 				$ifscope = "%{$defaultifv6}";
 			log_error("ROUTING: setting IPv6 default route to {$gatewayipv6}{$ifscope}");
 			mwexec("/sbin/route change -inet6 default " . escapeshellarg($gatewayipv6) ."{$ifscope}");

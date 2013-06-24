@@ -48,6 +48,7 @@ $a_hasync = &$config['hasync'];
 
 $checkbox_names = array('pfsyncenabled',
 			'synchronizeusers',
+			'synchronizeauthservers',
 			'synchronizecerts',
 			'synchronizerules',
 			'synchronizeschedules',
@@ -187,6 +188,14 @@ include("head.inc");
 			<input id='synchronizeusers' type='checkbox' name='synchronizeusers' value='on' <?php if ($pconfig['synchronizeusers'] === "on") echo "checked='checked'"; ?> />
 			<br />
 			When this option is enabled, this system will automatically sync the users and groups over to the other HA host when changes are made.
+		</td>
+	</tr>
+	<tr valign="top">
+		<td width="22%" class="vncell">Synchronize Auth Servers</td>
+		<td class="vtable">
+			<input id='synchronizeauthservers' type='checkbox' name='synchronizeauthservers' value='on' <?php if ($pconfig['synchronizeauthservers'] === "on") echo "checked='checked'"; ?> />
+			<br />
+			When this option is enabled, this system will automatically sync the authentication servers (e.g. LDAP, RADIUS) over to the other HA host when changes are made.
 		</td>
 	</tr>
 	<tr valign="top">

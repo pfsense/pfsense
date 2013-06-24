@@ -224,6 +224,8 @@ function carp_sync_xml($url, $username, $password, $sections, $port = 80, $metho
 				$xml['system'][$section] = $config_copy['system'][$section];
 				$xml['system']['nextgid'] = $config_copy['system']['nextgid'];
 				break;
+			case 'authserver':
+				$xml['system'][$section] = $config_copy['system'][$section];
 			default:
 				$xml[$section] = $config_copy[$section];
 		}
@@ -378,6 +380,9 @@ if (is_array($config['hasync'])) {
 		$sections[] = 'user';
 		$sections[] = 'group';
 	} 
+	if ($hasync['synchronizeauthservers'] != "") {
+		$sections[] = 'authserver';
+	}
 	if ($hasync['synchronizednsforwarder'] != "" and is_array($config['dnsmasq']))
 		$sections[] = 'dnsmasq';
 	if ($hasync['synchronizeschedules'] != "" || $hasync['synchronizerules'] != "") {

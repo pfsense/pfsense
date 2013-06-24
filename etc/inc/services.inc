@@ -1952,7 +1952,8 @@ function services_dnsupdate_process($int = "") {
 			/* determine interface name */
 			$if = get_real_interface($dnsupdate['interface']);
 			$wanip = get_interface_ip($dnsupdate['interface']);
-			if ($wanip) {
+			$wanipv6 = get_interface_ipv6($dnsupdate['interface']);
+			if ($wanip || $wanipv6) {
 
 				$keyname = $dnsupdate['keyname'];
 				/* trailing dot */
@@ -1997,8 +1998,16 @@ EOD;
 				$upinst = "";
 				if (!empty($dnsupdate['server']))
 					$upinst .= "server {$dnsupdate['server']}\n";
-				$upinst .= "update delete {$dnsupdate['host']} A\n";
-				$upinst .= "update add {$dnsupdate['host']} {$dnsupdate['ttl']} A {$wanip}\n";
+				/* Update IPv4 if we have it. */
+				if (is_ipaddrv4($wanip)) {
+					$upinst .= "update delete {$dnsupdate['host']}. A\n";
+					$upinst .= "update add {$dnsupdate['host']}. {$dnsupdate['ttl']} A {$wanip}\n";
+				}
+				/* Update IPv6 if we have it. */
+				if (is_ipaddrv6($wanipv6)) {
+					$upinst .= "update delete {$dnsupdate['host']}. AAAA\n";
+					$upinst .= "update add {$dnsupdate['host']}. {$dnsupdate['ttl']} AAAA {$wanipv6}\n";
+				}
 				$upinst .= "\n";	/* mind that trailing newline! */
 
 				@file_put_contents("{$g['varetc_path']}/nsupdatecmds{$i}", $upinst);

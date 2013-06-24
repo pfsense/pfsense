@@ -63,6 +63,24 @@ if (!empty($local_ip)) {
 if (!isset($config['system']['kill_states'])) {
 	if (!empty($local_ip)) {
 		log_error("rc.kill_states: Removing states for IP {$local_ip}/{$subnet_bits}");
+		$nat_states = exec_command("/sbin/pfctl -i {$interface} -ss | " .
+			"/usr/bin/egrep '\-> +{$local_ip}:[0-9]+ +\->'");
+
+		$cleared_states = array();
+		foreach(explode("\n", $nat_states) as $nat_state) {
+			if (preg_match_all('/([\d\.]+):[\d]+[\s->]+/i', $nat_state, $matches, PREG_SET_ORDER) != 3)
+				continue;
+
+			$src = $matches[0][1];
+			$dst = $matches[2][1];
+
+			if (empty($src) || empty($dst) || in_array("{$src},{$dst}", $cleared_states))
+				continue;
+
+			$cleared_states[] = "{$src},{$dst}";
+			mwexec("/sbin/pfctl -k {$src} -k {$dst}", true);
+		}
+
 		mwexec("/sbin/pfctl -k 0.0.0.0/0 -k {$local_ip}/{$subnet_bits}", true);
 		mwexec("/sbin/pfctl -k {$local_ip}/{$subnet_bits}", true);
 		mwexec("/sbin/pfctl -K {$local_ip}/{$subnet_bits}", true);

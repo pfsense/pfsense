@@ -128,9 +128,8 @@ function services_radvd_configure() {
 		}
 		switch($dhcpv6ifconf['ramode']) {
 			case "managed":
-				$radvdconf .= "\tAdvManagedFlag on;\n";
-				break;
 			case "assist":
+				$radvdconf .= "\tAdvManagedFlag on;\n";
 				$radvdconf .= "\tAdvOtherConfigFlag on;\n";
 				break;
 		}

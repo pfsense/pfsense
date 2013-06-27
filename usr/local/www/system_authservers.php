@@ -490,6 +490,7 @@ function select_clicked() {
 							<td width="22%" valign="top" class="vncellreq"><?=gettext("Hostname or IP address");?></td>
 							<td width="78%" class="vtable">
 								<input name="ldap_host" type="text" class="formfld unknown" id="ldap_host" size="20" value="<?=htmlspecialchars($pconfig['ldap_host']);?>"/>
+								<br /><?= gettext("NOTE: When using SSL, this hostname MUST match the Common Name (CN) of the LDAP server's SSL Certificate."); ?>
 							</td>
 						</tr>
 						<tr>

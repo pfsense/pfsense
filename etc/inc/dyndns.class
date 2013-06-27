@@ -25,6 +25,7 @@
 	 *    - DNS-O-Matic (dnsomatic.com)
 	 *    - Custom DDNS (any URL)
 	 *    - CloudFlare (www.cloudflare.com)
+ 	 *    - Eurodns (eurodns.com)
 	 * +----------------------------------------------------+
 	 *  Requirements:
 	 *    - PHP version 4.0.2 or higher with the CURL Library and the PCRE Library
@@ -62,6 +63,7 @@
 	 *  Amazon Route 53 - Last tested: 01 April 2012
 	 *  DNS-O-Matic	   - Last Tested: 9 September 2010
 	 *  CloudFlare     - Last Tested: 30 May 2013
+  	 *  Eurodns	   		- Last Tested : 27 June 2013
 	 * +====================================================+
 	 *
 	 * @author 	E.Kristensen
@@ -214,6 +216,7 @@
 				case 'he-net-tunnelbroker':
 				case 'route53':
 				case 'cloudflare':
+				case 'eurodns':
 					$this->_update();
 					if($this->_dnsDummyUpdateDone == true) {
 						// If a dummy update was needed, then sleep a while and do the update again to put the proper address back.
@@ -595,6 +598,18 @@
 					curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, FALSE);
 					curl_setopt($ch, CURLOPT_URL, $URL);
 					break;
+				case 'eurodns':		
+					$needsIP = TRUE;
+					if ($this->_dnsVerboseLog)
+						log_error("EuroDynDns ({$this->_dnsHost}) DNS update() starting.");
+					curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, FALSE);
+					curl_setopt($ch, CURLOPT_USERPWD, $this->_dnsUser.':'.$this->_dnsPass);
+					$server = "https://eurodyndns.org/update/";
+					$port = "";
+					if($this->_dnsPort)
+						$port = ":" . $this->_dnsPort;
+					curl_setopt($ch, CURLOPT_URL, $server .$port . '?hostname=' . $this->_dnsHost . '&myip=' . $this->_dnsIP);
+					break;	
 				default:
 					break;
 			}
@@ -1047,6 +1062,23 @@
 							$this->_debug($resp);
 						}
 						log_error($status);
+					}
+					break;
+				case 'eurodns':
+					if (preg_match('/notfqdn/i', $data)) {
+						$status = "phpDynDNS: (Error) Not A FQDN!";
+					} else if (preg_match('/nochg/i', $data)) {
+						$status = "phpDynDNS: (Success) No Change In IP Address";
+						$successful_update = true;
+					} else if (preg_match('/good/i', $data)) {
+						$status = "phpDynDNS: (Success) IP Address Changed Successfully! (".$this->_dnsIP.")";
+						$successful_update = true;
+					} else if (preg_match('/badauth/i', $data)) {
+						$status = "phpDynDNS: (Error) User Authorization Failed";
+					} else {
+						$status = "phpDynDNS: (Unknown Response)";
+						log_error("phpDynDNS: PAYLOAD: {$data}");
+						$this->_debug($data);
 					}
 					break;
 			}

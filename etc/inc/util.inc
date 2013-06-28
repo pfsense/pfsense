@@ -1014,6 +1014,10 @@ function get_interface_list($mode = "active", $keyby = "physical", $vfaces = "")
 function log_error($error) {
 	global $g;
 	$page = $_SERVER['SCRIPT_NAME'];
+	if (empty($page)) {
+		$files = get_included_files();
+		$page = basename($files[0]);
+	}
 	syslog(LOG_ERR, "$page: $error");
 	if ($g['debug'])
 		syslog(LOG_WARNING, var_dump(debug_backtrace()));

@@ -259,8 +259,7 @@ function filter_configure_zeromq($raw_params) {
 	relayd_configure();
 	require_once("openvpn.inc");
 	openvpn_resync_all();
-	services_dhcpd_configure();
-	services_dnsmasq_configure();
+	services_dns_configure(); // calls services_dhcpd_configure()
 	local_sync_accounts();
 	return ZEROMQ_FASLE;
 }

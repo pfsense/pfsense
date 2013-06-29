@@ -190,6 +190,28 @@ function is_dhcp_running($interface) {
 	return false;
 }
 
+function is_dns_enabled() {
+	global $config;
+	if (isset($config['dnsmasq']['enable']))
+		return true;
+	if (get_pkg_for_system_service("dns"))
+		return true;
+	return false;
+}
+
+function is_dns_option_set($option)
+{
+	global $config;
+	if (isset($config['dnsmasq']['enable']))
+		return isset($config['dnsmasq'][$option]);
+	$pkg_name = get_pkg_for_system_service("dns");
+	if ($pkg_name) {
+		$package_config = get_config_for_pkg($pkg_name);
+		return isset($package_config[$option]);
+	}
+	return false;
+}
+
 function restart_service_if_running($service) {
 	global $config;
 	if(is_service_running($service))

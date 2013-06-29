@@ -210,6 +210,97 @@ function get_pkg_info($pkgs = 'all', $info = 'all') {
 	return $resp ? $resp : array();
 }
 
+/****f* pkg-utils/get_pkg_for_system_function
+ * NAME
+ *   get_pkg_for_system_function - Find an enabled package that advertises a system function
+ * INPUTS
+ *   $function - system function name
+ * RESULT
+ *   string - package name or null if not found
+ ******/
+function get_pkg_for_system_service($function) {
+	global $config;
+
+	if (is_array($config['installedpackages']['package'])) {
+		foreach($config['installedpackages']['package'] as $idx => $package) {
+			$pkg_config = get_pkg_config($package['name']);
+			if ($pkg_config && is_array($pkg_config['system_services'])) {
+				if (isset($pkg_config['system_services'][$function])) {
+					if (is_service_enabled($pkg_config['name']))
+						return $package['name'];
+				}
+			}
+		}
+	}
+	return null;
+}
+
+/****f* pkg-utils/get_pkg_config
+ * NAME
+ *   get_pkg_config - Load configuration for package (package configuration XML file)
+ * INPUTS
+ *   $pkg_name - package name
+ * RESULT
+ *   array - package configuration
+ ******/
+function get_pkg_config($pkg_name) {
+	global $config;
+	static $config_cache = array();
+
+	$pkg_id = get_pkg_id($pkg_name);
+	if (-1 < $pkg_id) {
+		if (isset($config_cache[$pkg_id])) {
+			return $config_cache[$pkg_id];
+		} else {
+			$package =& $config['installedpackages']['package'][$pkg_id];
+			$pkg_config = null;
+			if (isset($package['configurationfile']))
+				$pkg_config = @parse_xml_config_pkg("/usr/local/pkg/" . $package['configurationfile'], "packagegui");
+			$config_cache[$pkg_id] = $pkg_config;
+			return $pkg_config;
+		}
+	}
+	return null;
+}
+
+/****f* pkg-utils/call_pkg_function
+ * NAME
+ *   call_pkg_function - Call a funciton specified in package configuration
+ * INPUTS
+ *   $pkg_name - package name
+ *   $function - function key
+ ******/
+function call_pkg_function($pkg_name, $function) {
+	$pkg_config = get_pkg_config($pkg_name);
+	if ($pkg_config && (!empty($pkg_config[$function]))) {
+		if (!empty($pkg_config['include_file'])) {
+			$include_file = $pkg_config['include_file'];
+			if (file_exists($include_file))
+				require_once($include_file);
+		}
+		@eval($pkg_config[$function]);
+	}
+}
+
+/****f* pkg-utils/get_config_for_pkg
+ * NAME
+ *   get_config_for_pkg - Get system configuration info for package (from $config)
+ * INPUTS
+ *   $pkg_name - package name
+ * RESULT
+ *   array - configuration information for package
+ ******/
+function get_config_for_pkg($pkg_name) {
+	global $config;
+
+	$pkg_config = get_pkg_config($pkg_name);
+	if ($pkg_config && (!empty($pkg_config['name']))) {
+		if (isset($config['installedpackages'][$pkg_config['name']]['config'][0]))
+			return $config['installedpackages'][$pkg_config['name']]['config'][0];
+	}
+	return null;
+}
+
 function get_pkg_sizes($pkgs = 'all') {
 	global $config, $g;
 

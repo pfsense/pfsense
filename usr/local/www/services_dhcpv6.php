@@ -326,10 +326,10 @@ if ($_POST) {
 		/* Stop DHCPv6 so we can cleanup leases */
 		killbypid("{$g['dhcpd_chroot_path']}{$g['varrun_path']}/dhcpdv6.pid");
 		// dhcp_clean_leases();
-		/* dnsmasq_configure calls dhcpd_configure */
+		/* dns_configure calls dhcpd_configure */
 		/* no need to restart dhcpd twice */
-		if (isset($config['dnsmasq']['enable']) && isset($config['dnsmasq']['regdhcpstatic']))	{
-			$retvaldns = services_dnsmasq_configure();
+		if (is_dns_enabled() && is_dns_option_set('regdhcpstatic'))	{
+			$retvaldns = services_dns_configure();
 			if ($retvaldns == 0) {
 				clear_subsystem_dirty('hosts');
 				clear_subsystem_dirty('staticmaps');
@@ -351,7 +351,7 @@ if ($_GET['act'] == "del") {
 		write_config();
 		if(isset($config['dhcpdv6'][$if]['enable'])) {
 			mark_subsystem_dirty('staticmapsv6');
-			if (isset($config['dnsmasq']['enable']) && isset($config['dnsmasq']['regdhcpstaticv6']))
+			if (is_dns_enabled() && is_dns_option_set('regdhcpstatic'))
 				mark_subsystem_dirty('hosts');
 		}
 		header("Location: services_dhcpv6.php?if={$if}");

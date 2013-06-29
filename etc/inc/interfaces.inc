@@ -1082,8 +1082,8 @@ function interfaces_configure() {
 		/* reload dhcpd (interface enabled/disabled status may have changed) */
 		services_dhcpd_configure();
 
-		/* restart dnsmasq */
-		services_dnsmasq_configure();
+		/* restart dns */
+		services_dns_configure();
 
 		/* reload captive portal */
 		if (function_exists('captiveportal_init_rules'))
@@ -3060,8 +3060,8 @@ function interface_configure($interface = "wan", $reloadall = false, $linkupeven
 			/* reload ipsec tunnels */
 			vpn_ipsec_configure();
 
-			/* restart dnsmasq */
-			services_dnsmasq_configure();
+			/* restart dns */
+			services_dns_configure();
 
 			/* update dyndns */
 			send_event("service reload dyndns {$interface}");

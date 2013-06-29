@@ -218,7 +218,7 @@ if ($_POST) {
 		$retval = system_hostname_configure();
 		$retval |= system_hosts_generate();
 		$retval |= system_resolvconf_generate();
-		$retval |= services_dnsmasq_configure();
+		$retval |= services_dns_configure();
 		$retval |= system_timezone_configure();
 		$retval |= system_ntp_configure();
 

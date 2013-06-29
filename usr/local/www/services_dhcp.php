@@ -510,10 +510,10 @@ if ($_POST) {
 		/* Stop DHCP so we can cleanup leases */
 		killbyname("dhcpd");
 		dhcp_clean_leases();
-		/* dnsmasq_configure calls dhcpd_configure */
+		/* dns_configure calls dhcpd_configure */
 		/* no need to restart dhcpd twice */
-		if (isset($config['dnsmasq']['enable']) && isset($config['dnsmasq']['regdhcpstatic']))	{
-			$retvaldns = services_dnsmasq_configure();
+		if (is_dns_enabled() && is_dns_option_set('regdhcpstatic'))	{
+			$retvaldns = services_dns_configure();
 			if ($retvaldns == 0) {
 				clear_subsystem_dirty('hosts');
 				clear_subsystem_dirty('staticmaps');
@@ -547,7 +547,7 @@ if ($act == "del") {
 		write_config();
 		if(isset($config['dhcpd'][$if]['enable'])) {
 			mark_subsystem_dirty('staticmaps');
-			if (isset($config['dnsmasq']['enable']) && isset($config['dnsmasq']['regdhcpstatic']))
+			if (is_dns_enabled() && is_dns_option_set('regdhcpstatic'))
 				mark_subsystem_dirty('hosts');
 		}
 		header("Location: services_dhcp.php?if={$if}");

@@ -37,6 +37,8 @@
 	pfSense_BUILDER_BINARIES:	/usr/local/sbin/dhcleases6	/usr/sbin/bsnmpd
 	pfSense_MODULE:	utils
 */
+require_once("service-utils.inc");
+require_once("pkg-utils.inc");
 
 define('DYNDNS_PROVIDER_VALUES', 'dnsomatic dyndns dyndns-static dyndns-custom dhs dyns easydns noip noip-free ods zoneedit loopia freedns dnsexit opendns namecheap he-net he-net-tunnelbroker selfhost route53 cloudflare custom eurodns');
 define('DYNDNS_PROVIDER_DESCRIPTIONS', 'DNS-O-Matic,DynDNS (dynamic),DynDNS (static),DynDNS (custom),DHS,DyNS,easyDNS,No-IP,No-IP (free),ODS.org,ZoneEdit,Loopia,freeDNS,DNSexit,OpenDNS,Namecheap,HE.net,HE.net Tunnelbroker,SelfHost,Route 53,CloudFlare, Custom, Euro Dns');
@@ -183,7 +185,7 @@ function services_radvd_configure() {
 			foreach($dhcpv6ifconf['radnsserver'] as $server)
 				if (is_ipaddrv6($server))
 					$dnslist[] = $server;
-		} elseif (isset($config['dnsmasq']['enable'])) {
+		} elseif (is_dns_enabled()) {
 			$dnslist[] = get_interface_ipv6($realif);
 		} elseif (is_array($config['system']['dnsserver']) && !empty($config['system']['dnsserver'])) {
 			foreach($config['system']['dnsserver'] as $server) {
@@ -251,7 +253,7 @@ function services_radvd_configure() {
 
 		/* add DNS servers */
 		$dnslist = array();
-		if (isset($config['dnsmasq']['enable'])) {
+		if (is_dns_enabled()) {
 			$dnslist[] = $ifcfgipv6;
 		} elseif (is_array($config['system']['dnsserver']) && !empty($config['system']['dnsserver'])) {
 			foreach($config['system']['dnsserver'] as $server) {
@@ -547,7 +549,7 @@ EOPP;
 			$dnscfg .= "	option domain-name-servers " . join(",", $dhcpifconf['dnsserver']) . ";";
 			if ($newzone['domain-name'])
 				$newzone['dns-servers'] = $dhcpifconf['dnsserver'];
-		} else if (isset($config['dnsmasq']['enable'])) {
+		} else if (is_dns_enabled()) {
 			$dnscfg .= "	option domain-name-servers {$ifcfgip};";
 			if ($newzone['domain-name'] && is_array($syscfg['dnsserver']) && ($syscfg['dnsserver'][0]))
 				$newzone['dns-servers'] = $syscfg['dnsserver'];
@@ -1052,7 +1054,7 @@ EOD;
 
 		if (is_array($dhcpv6ifconf['dnsserver']) && ($dhcpv6ifconf['dnsserver'][0])) {
 			$dnscfgv6 .= "	option dhcp6.name-servers " . join(",", $dhcpv6ifconf['dnsserver']) . ";";
-		} else if ((isset($config['dnsmasq']['enable'])) && (is_ipaddrv6($ifcfgipv6))) {
+		} else if ((is_dns_enabled()) && (is_ipaddrv6($ifcfgipv6))) {
 			$dnscfgv6 .= "	option dhcp6.name-servers {$ifcfgipv6};";
 		} else if (is_array($syscfg['dnsserver']) && ($syscfg['dnsserver'][0])) {
 			$dns_arrv6 = array();
@@ -1597,6 +1599,26 @@ function dyndnsCheckIP($int) {
 	return $ip_address;
 }
 
+function services_dns_configure() {
+	global $config, $g;
+	$return = 0;
+
+	if (isset($config['dnsmasq']['enable'])) {
+		$return = services_dnsmasq_configure();
+	} elseif (!$g['booting']) {
+		$pkg_name = get_pkg_for_system_service('dns');
+		if ($pkg_name)
+			call_pkg_function($pkg_name, 'custom_php_resync_config_command');
+	}
+	
+	if (!$g['booting']) {
+		if(services_dhcpd_configure()!=0)
+			$return = 1;
+	}
+
+	return $return;
+}
+
 function services_dnsmasq_configure() {
 	global $config, $g;
 	$return = 0;
@@ -1723,11 +1745,6 @@ function services_dnsmasq_configure() {
 
 		if ($g['booting'])
 			echo gettext("done.") . "\n";
-	}
-
-	if (!$g['booting']) {
-		if(services_dhcpd_configure()!=0)
-			$return = 1;
 	}
 
 	return $return;

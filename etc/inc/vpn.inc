@@ -1176,7 +1176,7 @@ EOD;
 				if (!empty($pptpdcfg['dns2']))
 					$mpdconf .= " " . $pptpdcfg['dns2'];
 				$mpdconf .= "\n";
-			} elseif (isset ($config['dnsmasq']['enable'])) {
+			} elseif (is_dns_enabled()) {
 				$mpdconf .= "	set ipcp dns " . get_interface_ip("lan");
 				if ($syscfg['dnsserver'][0])
 					$mpdconf .= " " . $syscfg['dnsserver'][0];
@@ -1395,7 +1395,7 @@ EOD;
 				if (!empty($pppoecfg['dns2']))
 					$mpdconf .= " " . $pppoecfg['dns2'];
 				$mpdconf .= "\n";
-			} elseif (isset ($config['dnsmasq']['enable'])) {
+			} elseif (is_dns_enabled()) {
 				$mpdconf .= "	set ipcp dns " . get_interface_ip("lan");
 				if ($syscfg['dnsserver'][0])
 					$mpdconf .= " " . $syscfg['dnsserver'][0];
@@ -1599,7 +1599,7 @@ EOD;
 				if (is_ipaddr($l2tpcfg['dns2']))
 					$mpdconf .= " " . $l2tpcfg['dns2'];
 				$mpdconf .= "\n";
-			} elseif (isset ($config['dnsmasq']['enable'])) {
+			} elseif (is_dns_enabled()) {
 				$mpdconf .= "	set ipcp dns " . get_interface_ip("lan");
 				if ($syscfg['dnsserver'][0])
 					$mpdconf .= " " . $syscfg['dnsserver'][0];

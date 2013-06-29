@@ -111,7 +111,7 @@ if ($_POST) {
 		write_config();
 
 		$retval = 0;
-		$retval = services_dnsmasq_configure();
+		$retval = services_dns_configure();
 		$savemsg = get_std_save_message($retval);
 
 		// Relaod filter (we might need to sync to CARP hosts)

@@ -4,7 +4,7 @@
 	interfaces.php
 	Copyright (C) 2004-2008 Scott Ullrich
 	Copyright (C) 2006 Daniel S. Haischt.
-	Copyright (C) 2008-2010 Ermal Luçi
+	Copyright (C) 2008-2010 Ermal LuÃ§i
 	All rights reserved.
 
 	originally part of m0n0wall (http://m0n0.ch/wall)
@@ -1926,7 +1926,7 @@ $types6 = array("none" => gettext("None"), "staticv6" => gettext("Static IPv6"),
 											"DHCP client."); ?>
 										</td>
 									</tr>
-									<tr>
+									<tr style='display:none' name="show_basic_dhcprejectlease" id="show_basic_dhcprejectlease">
 										<td width="22%" valign="top" class="vncell"><?=gettext("Reject Leases From"); ?></td>
 										<td width="78%" class="vtable">
 											<input name="dhcprejectfrom" type="text" class="formfld unknown" id="dhcprejectfrom" size="20" value="<?=htmlspecialchars($pconfig['dhcprejectfrom']);?>" />
@@ -1935,8 +1935,6 @@ $types6 = array("none" => gettext("None"), "staticv6" => gettext("Static IPv6"),
 											<?=gettext("this is useful for rejecting leases from cable modems that offer private IPs when they lose upstream sync."); ?>
 										</td>
 									</tr>
-									<tr>
-										<td colspan="2" valign="top" height="16"></td>
 
 									<tr style='display:none' name="show_adv_dhcp_protocol_timing" id="show_adv_dhcp_protocol_timing">
 										<td width="22%" valign="top" class="vncell"><?=gettext("<a target=FreeBSD DHCP href=http://www.freebsd.org/cgi/man.cgi?query=dhclient.conf&sektion=5#PROTOCOL_TIMING>Protocol Timing</a>"); ?></td>
@@ -2063,6 +2061,7 @@ $types6 = array("none" => gettext("None"), "staticv6" => gettext("Static IPv6"),
 
 											document.getElementById("show_basic_dhcphostname").style.display = basic;
 											document.getElementById("show_basic_dhcpalias-address").style.display = basic;
+											document.getElementById("show_basic_dhcprejectlease").style.display = basic;
 
 											document.getElementById("show_adv_dhcp_protocol_timing").style.display = advanced;
 											document.getElementById("show_adv_dhcp_lease_requirements_and_requests").style.display = advanced;

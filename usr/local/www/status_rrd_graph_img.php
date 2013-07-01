@@ -112,7 +112,7 @@ $defOptions = array(
 /* always set the average to the highest value as a fallback */
 $average = 720 * 60;
 foreach($archives as $rra => $value) {
-        $archivestart = $end - ($rra * 60 * $value);
+        $archivestart = $now - ($rra * 60 * $value);
         if($archivestart <= $start) {
                 $average = $rra * 60;
                 break;

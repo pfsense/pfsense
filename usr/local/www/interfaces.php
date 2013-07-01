@@ -2018,7 +2018,7 @@ $types6 = array("none" => gettext("None"), "staticv6" => gettext("Static IPv6"),
 											<?=gettext("<a target=FreeBSD DHCP href=http://www.freebsd.org/cgi/man.cgi?query=dhclient.conf&sektion=5#LEASE_REQUIREMENTS_AND_REQUESTS>Require</a> <a target=FreeBSD DHCP href=http://www.freebsd.org/cgi/man.cgi?query=dhcp-options&sektion=5>Options</a>"); ?><br>
 											<input name="adv_dhcp_required_options" type="text" class="formfld unknown" id="adv_dhcp_required_options" size="86" value="<?=htmlspecialchars($pconfig['adv_dhcp_required_options']);?>">
 											<br>
-											<?=gettext("The values in this field are DHCP optiions required by the client when requesting a DHCP lease.  [option [, ...]] "); ?>
+											<?=gettext("The values in this field are DHCP options required by the client when requesting a DHCP lease.  [option [, ...]] "); ?>
 										</td>
 									</tr>
 
@@ -2027,7 +2027,7 @@ $types6 = array("none" => gettext("None"), "staticv6" => gettext("Static IPv6"),
 										<td width="78%" class="vtable">
 											<input name="adv_dhcp_option_modifiers" type="text" class="formfld unknown" id="adv_dhcp_option_modifiers" size="86" value="<?=htmlspecialchars($pconfig['adv_dhcp_option_modifiers']);?>">
 											<br>
-											<?=gettext("The values in this field are DHCP optiion modifires applied to obtained DHCP lease.  [modifier option declaration [, ...]] <br> " . 
+											<?=gettext("The values in this field are DHCP option modifiers applied to obtained DHCP lease.  [modifier option declaration [, ...]] <br> " .
 											"modifiers: (default, supersede, prepend, append)"); ?>
 										</td>
 									</tr>

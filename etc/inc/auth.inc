@@ -130,6 +130,7 @@ if(function_exists("display_error_form") && !isset($config['system']['webgui']['
 			if(strcasecmp($referrer_host, $config['system']['hostname'] . "." . $config['system']['domain']) == 0
 					|| strcasecmp($referrer_host, $config['system']['hostname']) == 0)
 				$found_host = true;
+
 			if(!empty($config['system']['webgui']['althostnames']) && !$found_host) {
 				$althosts = explode(" ", $config['system']['webgui']['althostnames']);
 				foreach ($althosts as $ah) {
@@ -139,6 +140,21 @@ if(function_exists("display_error_form") && !isset($config['system']['webgui']['
 					}
 				}
 			}
+
+			if(is_array($config['dyndnses']['dyndns']) && !$found_host)
+				foreach($config['dyndnses']['dyndns'] as $dyndns)
+					if(strcasecmp($dyndns['host'], $referrer_host) == 0) {
+						$found_host = true;
+						break;
+					}
+
+			if(is_array($config['dnsupdates']['dnsupdate']) && !$found_host)
+				foreach($config['dnsupdates']['dnsupdate'] as $rfc2136)
+					if(strcasecmp($rfc2136['host'], $referrer_host) == 0) {
+						$found_host = true;
+						break;
+					}
+
 			if(!$found_host) {
 				$interface_list_ips = get_configured_ip_addresses();
 				foreach($interface_list_ips as $ilips) {

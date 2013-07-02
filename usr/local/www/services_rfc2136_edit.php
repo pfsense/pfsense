@@ -55,6 +55,7 @@ if (isset($id) && isset($a_rfc2136[$id])) {
 	$pconfig['server'] = $a_rfc2136[$id]['server'];
 	$pconfig['interface'] = $a_rfc2136[$id]['interface'];
 	$pconfig['usetcp'] = isset($a_rfc2136[$id]['usetcp']);
+	$pconfig['usepublicip'] = isset($a_rfc2136[$id]['usepublicip']);
 	$pconfig['descr'] = $a_rfc2136[$id]['descr'];
 
 }
@@ -89,6 +90,7 @@ if ($_POST) {
 		$rfc2136['keydata'] = $_POST['keydata'];
 		$rfc2136['server'] = $_POST['server'];
 		$rfc2136['usetcp'] = $_POST['usetcp'] ? true : false;
+		$rfc2136['usepublicip'] = $_POST['usepublicip'] ? true : false;
 		$rfc2136['interface'] = $_POST['interface'];
 		$rfc2136['descr'] = $_POST['descr'];
 
@@ -191,6 +193,13 @@ include("head.inc");
                     <input name="usetcp" type="checkbox" id="usetcp" value="<?=gettext("yes");?>" <?php if ($pconfig['usetcp']) echo "checked"; ?>>
                     <strong><?=gettext("Use TCP instead of UDP");?></strong></td>
 				</tr>
+		<tr>
+			<td width="22%" valign="top" class="vncellreq"><?=gettext("Use Public IP");?></td>
+			<td width="78%" class="vtable">
+				<input name="usepublicip" type="checkbox" id="usepublicip" value="<?=gettext("yes");?>" <?php if ($pconfig['usepublicip']) echo "checked"; ?>>
+				<strong><?=gettext("If the interface IP is private, attempt to fetch and use the public IP instead.");?></strong>
+			</td>
+		</tr>
                 <tr>
                   <td width="22%" valign="top" class="vncellreq"><?=gettext("Description");?></td>
                   <td width="78%" class="vtable">

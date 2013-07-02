@@ -1319,17 +1319,8 @@ function captiveportal_write_elements() {
 	
 	$cpcfg = $config['captiveportal'][$cpzone];
 
-	/* delete any existing elements */
-	if (is_dir($g['captiveportal_element_path'])) {
-		$dh = opendir($g['captiveportal_element_path']);
-		while (($file = readdir($dh)) !== false) {
-			if ($file != "." && $file != "..")
-				unlink($g['captiveportal_element_path'] . "/" . $file);
-		}
-		closedir($dh);
-	} else {
+	if (!is_dir($g['captiveportal_element_path']))
 		@mkdir($g['captiveportal_element_path']);
-	}
 
 	if (is_array($cpcfg['element'])) {
 		conf_mount_rw();
@@ -1338,8 +1329,8 @@ function captiveportal_write_elements() {
 				printf(gettext("Error: cannot open '%s' in captiveportal_write_elements()%s"), $data['name'], "\n");
 				return 1;
 			}
-			unlink_if_exists("{$g['captiveportal_path']}/{$data['name']}");
-			@symlink("{$g['captiveportal_element_path']}/{$data['name']}", "{$g['captiveportal_path']}/{$data['name']}");
+			if (!file_exists("{$g['captiveportal_path']}/{$data['name']}"))
+				@symlink("{$g['captiveportal_element_path']}/{$data['name']}", "{$g['captiveportal_path']}/{$data['name']}");
 		}
 		conf_mount_ro();
 	}

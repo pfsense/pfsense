@@ -96,10 +96,10 @@ $scales[16070400] = "WEEK:1:MONTH:1:MONTH:1:0:%b";
 $scales[42854400] = "MONTH:1:MONTH:1:MONTH:1:0:%b";
 
 $archives = array();
-$archives[1] = 1000;
-$archives[5] = 1000;
-$archives[60] = 1000;
-$archives[720] = 3000;
+$archives[1] = 1200;
+$archives[5] = 720;
+$archives[60] = 1860;
+$archives[1440] = 3652;
 
 $defOptions = array(
 	'to' => 1,
@@ -110,9 +110,9 @@ $defOptions = array(
 );
 
 /* always set the average to the highest value as a fallback */
-$average = 720 * 60;
+$average = 1440 * 60;
 foreach($archives as $rra => $value) {
-        $archivestart = $end - ($rra * 60 * $value);
+        $archivestart = $now - ($rra * 60 * $value);
         if($archivestart <= $start) {
                 $average = $rra * 60;
                 break;

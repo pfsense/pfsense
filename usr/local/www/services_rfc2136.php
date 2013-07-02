@@ -82,7 +82,7 @@ include("head.inc");
 		  <td width="10%" class="list"></td>
 		</tr>
 		<?php $i = 0; foreach ($a_rfc2136 as $rfc2136): ?>
-		<tr>
+		<tr ondblclick="document.location='services_rfc2136_edit.php?id=<?=$i;?>'">
 		  <td class="listlr">
 		  <?php
 			$iflist = get_configured_interface_with_descr();

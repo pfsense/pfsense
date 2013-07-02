@@ -219,6 +219,7 @@ switch($wancfg['ipaddrv6']) {
 			$wancfg['dhcp6-ia-pd-len'] = "none";
 		$pconfig['dhcp6-ia-pd-len'] = $wancfg['dhcp6-ia-pd-len'];
 		$pconfig['type6'] = "dhcp6";
+		$pconfig['dhcp6prefixonly'] = isset($wancfg['dhcp6prefixonly']);
 		break;
 	case "6to4":
 		$pconfig['type6'] = "6to4";
@@ -746,6 +747,7 @@ if ($_POST['apply']) {
 		unset($wancfg['dhcprejectfrom']);
 		unset($wancfg['dhcp6-duid']);
 		unset($wancfg['dhcp6-ia-pd-len']);
+		unset($wancfg['dhcp6prefixonly']);
 		unset($wancfg['track6-interface']);
 		unset($wancfg['track6-prefix-id']);
 		unset($wancfg['prefix-6rd']);
@@ -874,6 +876,8 @@ if ($_POST['apply']) {
 				if ($_POST['gatewayv6'] != "none") {
 					$wancfg['gatewayv6'] = $_POST['gatewayv6'];
 				}
+				if($_POST['dhcp6prefixonly'] == "yes")
+					$wancfg['dhcp6prefixonly'] = true;
 				break;
 			case "slaac":
 				$wancfg['ipaddrv6'] = "slaac";
@@ -1796,6 +1800,13 @@ $types6 = array("none" => gettext("None"), "staticv6" => gettext("Static IPv6"),
 										</td>
 									</tr>
 									-->
+									<tr>
+										<td width="22%" valign="top" class="vncell"><?=gettext("Request only a IPv6 prefix"); ?></td>
+										<td width="78%" class="vtable">
+											<input name="dhcp6prefixonly" type="checkbox" value="yes" <?php if ($pconfig['dhcp6prefixonly'] == true) echo "checked=\"checked\""; ?>" />
+											<?=gettext("Only request a IPv6 prefix, do not request a IPv6 address"); ?>
+										</td>
+									</tr>
 									<tr>
 										<td width="22%" valign="top" class="vncell"><?=gettext("DHCPv6 Prefix Delegation size"); ?></td>
 										<td width="78%" class="vtable">

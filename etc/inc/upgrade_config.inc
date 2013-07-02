@@ -2892,7 +2892,7 @@ function upgrade_085_to_086() {
 		if (!empty($vipchg)) {
 			file_put_contents("{$g['tmp_path']}/vipreplace", $vipchg);
 			write_config();
-			mwexec("/usr/bin/sed -I \"\" -f {$g['tmp_path']}/vipreplace /conf/config.xml");
+			mwexec("/usr/bin/sed -I \"\" -f {$g['tmp_path']}/vipreplace {$g['conf_path']}/config.xml");
 			require_once("config.lib.inc");
 			unset($config);
 			$config = parse_config(true);

@@ -86,6 +86,13 @@ if (function_exists("display_error_form") && !isset($config['system']['webgui'][
 				break;
 			}
 
+	if(is_array($config['dnsupdates']['dnsupdate']) && !$found_host)
+		foreach($config['dnsupdates']['dnsupdate'] as $rfc2136)
+			if(strcasecmp($rfc2136['host'], $http_host) == 0) {
+				$found_host = true;
+				break;
+			}
+
 	if(!empty($config['system']['webgui']['althostnames']) && !$found_host) {
 		$althosts = explode(" ", $config['system']['webgui']['althostnames']);
 		foreach ($althosts as $ah)

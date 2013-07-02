@@ -2018,6 +2018,9 @@ EOD;
 				/* Update IPv4 if we have it. */
 				if (is_ipaddrv4($wanip)) {
 					if (($wanip != $cachedipv4) || (($currentTime - $cacheTimev4) > $maxCacheAgeSecs) || $forced) {
+						if (isset($dnsupdate['usepublicip'])) {
+							$wanip = dyndnsCheckIP($dnsupdate['interface']);
+						}
 						$upinst .= "update delete {$dnsupdate['host']}. A\n";
 						$upinst .= "update add {$dnsupdate['host']}. {$dnsupdate['ttl']} A {$wanip}\n";
 						$notify_text .= sprintf(gettext("DynDNS updated IP Address (A) for {$dnsupdate['host']} on %s (%s) to %s"), convert_real_interface_to_friendly_descr($if), $if, $wanip) . "\n";

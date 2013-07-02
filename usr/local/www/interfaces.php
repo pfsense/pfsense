@@ -273,6 +273,7 @@ switch($wancfg['ipaddrv6']) {
 			$wancfg['dhcp6-ia-pd-len'] = "none";
 		$pconfig['dhcp6-ia-pd-len'] = $wancfg['dhcp6-ia-pd-len'];
 		$pconfig['type6'] = "dhcp6";
+		$pconfig['dhcp6prefixonly'] = isset($wancfg['dhcp6prefixonly']);
 		break;
 	case "6to4":
 		$pconfig['type6'] = "6to4";
@@ -800,6 +801,7 @@ if ($_POST['apply']) {
 		unset($wancfg['dhcprejectfrom']);
 		unset($wancfg['dhcp6-duid']);
 		unset($wancfg['dhcp6-ia-pd-len']);
+		unset($wancfg['dhcp6prefixonly']);
 		unset($wancfg['track6-interface']);
 		unset($wancfg['track6-prefix-id']);
 		unset($wancfg['prefix-6rd']);
@@ -1009,6 +1011,8 @@ if ($_POST['apply']) {
 				$wancfg['ipaddrv6'] = "dhcp6";
 				$wancfg['dhcp6-duid'] = $_POST['dhcp6-duid'];
 				$wancfg['dhcp6-ia-pd-len'] = $_POST['dhcp6-ia-pd-len'];
+				if($_POST['dhcp6prefixonly'] == "yes")
+					$wancfg['dhcp6prefixonly'] = true;
 
 				$wancfg['adv_dhcp6_interface_statement_send_options'] = $_POST['adv_dhcp6_interface_statement_send_options'];
 				$wancfg['adv_dhcp6_interface_statement_request_options'] = $_POST['adv_dhcp6_interface_statement_request_options'];
@@ -2110,6 +2114,13 @@ $types6 = array("none" => gettext("None"), "staticv6" => gettext("Static IPv6"),
 										</td>
 									</tr>
 									-->
+									<tr style='display:none' name="basicdhcp6_show_dhcp6_prefix_only" id="basicdhcp6_show_dhcp6_prefix_only">
+										<td width="22%" valign="top" class="vncell"><?=gettext("Request only a IPv6 prefix"); ?></td>
+										<td width="78%" class="vtable">
+											<input name="dhcp6prefixonly" type="checkbox" value="yes" <?php if ($pconfig['dhcp6prefixonly'] == true) echo "checked=\"checked\""; ?>" />
+											<?=gettext("Only request a IPv6 prefix, do not request a IPv6 address"); ?>
+										</td>
+									</tr>
 									<tr style='display:none' name="basicdhcp6_show_dhcp6_prefix_delegation_size" id="basicdhcp6_show_dhcp6_prefix_delegation_size">
 										<td width="22%" valign="top" class="vncell"><?=gettext("DHCPv6 Prefix Delegation size"); ?></td>
 										<td width="78%" class="vtable">
@@ -2281,6 +2292,7 @@ $types6 = array("none" => gettext("None"), "staticv6" => gettext("Static IPv6"),
 										function show_hide_adv_dhcp6(basic, advanced, override) {
 
 											document.getElementById("basicdhcp6_show_dhcp6_prefix_delegation_size").style.display = basic;
+											document.getElementById("basicdhcp6_show_dhcp6_prefix_only").style.display = basic;
 
 											document.getElementById("show_adv_dhcp6_interface_statement").style.display = advanced;
 											document.getElementById("show_adv_dhcp6_id_assoc_statement").style.display = advanced;

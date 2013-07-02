@@ -1934,7 +1934,7 @@ EOD;
 	return 0;
 }
 
-function services_dnsupdate_process($int = "") {
+function services_dnsupdate_process($int = "", $updatehost = "", $forced = false) {
 	global $config, $g;
 	if(isset($config['system']['developerspew'])) {
 		$mt = microtime();
@@ -1943,18 +1943,24 @@ function services_dnsupdate_process($int = "") {
 
 	/* Dynamic DNS updating active? */
 	if (is_array($config['dnsupdates']['dnsupdate'])) {
+		$notify_text = "";
 		foreach ($config['dnsupdates']['dnsupdate'] as $i => $dnsupdate) {
 			if (!isset($dnsupdate['enable']))
 				continue;
 			if (!empty($int) && $int != $dnsupdate['interface'])
+				continue;
+			if (!empty($updatehost) && ($updatehost != $dnsupdate['host']))
 				continue;
 
 			/* determine interface name */
 			$if = get_real_interface($dnsupdate['interface']);
 			$wanip = get_interface_ip($dnsupdate['interface']);
 			$wanipv6 = get_interface_ipv6($dnsupdate['interface']);
-			if ($wanip || $wanipv6) {
 
+			$cacheFile = "{$g['conf_path']}/dyndns_{$dnsupdate['interface']}_rfc2136_" . escapeshellarg($dnsupdate['host']) . "_{$dnsupdate['server']}.cache";
+			$currentTime = time();
+
+			if ($wanip || $wanipv6) {
 				$keyname = $dnsupdate['keyname'];
 				/* trailing dot */
 				if (substr($keyname, -1) != ".")
@@ -1998,30 +2004,64 @@ EOD;
 				$upinst = "";
 				if (!empty($dnsupdate['server']))
 					$upinst .= "server {$dnsupdate['server']}\n";
+
+				if (file_exists($cacheFile)) {
+					list($cachedipv4, $cacheTimev4) = explode("|", file_get_contents($cacheFile));
+				}
+				if (file_exists("{$cacheFile}.ipv6")) {
+					list($cachedipv6, $cacheTimev6) = explode("|", file_get_contents("{$cacheFile}.ipv6"));
+				}
+
+				// 25 Days
+				$maxCacheAgeSecs = 25 * 24 * 60 * 60;
+				$need_update = false;
 				/* Update IPv4 if we have it. */
 				if (is_ipaddrv4($wanip)) {
-					$upinst .= "update delete {$dnsupdate['host']}. A\n";
-					$upinst .= "update add {$dnsupdate['host']}. {$dnsupdate['ttl']} A {$wanip}\n";
-				}
+					if (($wanip != $cachedipv4) || (($currentTime - $cacheTimev4) > $maxCacheAgeSecs) || $forced) {
+						$upinst .= "update delete {$dnsupdate['host']}. A\n";
+						$upinst .= "update add {$dnsupdate['host']}. {$dnsupdate['ttl']} A {$wanip}\n";
+						$notify_text .= sprintf(gettext("DynDNS updated IP Address (A) for {$dnsupdate['host']} on %s (%s) to %s"), convert_real_interface_to_friendly_descr($if), $if, $wanip) . "\n";
+						@file_put_contents($cacheFile, "{$wanip}|{$currentTime}");
+						log_error("phpDynDNS: updating cache file {$cacheFile}: {$wanip}");
+						$need_update = true;
+					} else {
+						log_error("phpDynDNS: Not updating {$dnsupdate['host']} A record because the IP address has not changed.");
+					}
+				} else
+					@unlink($cacheFile);
+
 				/* Update IPv6 if we have it. */
 				if (is_ipaddrv6($wanipv6)) {
-					$upinst .= "update delete {$dnsupdate['host']}. AAAA\n";
-					$upinst .= "update add {$dnsupdate['host']}. {$dnsupdate['ttl']} AAAA {$wanipv6}\n";
-				}
+					if (($wanipv6 != $cachedipv6) || (($currentTime - $cacheTimev6) > $maxCacheAgeSecs) || $forced) {
+						$upinst .= "update delete {$dnsupdate['host']}. AAAA\n";
+						$upinst .= "update add {$dnsupdate['host']}. {$dnsupdate['ttl']} AAAA {$wanipv6}\n";
+						$notify_text .= sprintf(gettext("DynDNS updated IPv6 Address (AAAA) for {$dnsupdate['host']} on %s (%s) to %s"), convert_real_interface_to_friendly_descr($if), $if, $wanipv6) . "\n";
+						@file_put_contents("{$cacheFile}.ipv6", "{$wanipv6}|{$currentTime}");
+						log_error("phpDynDNS: updating cache file {$cacheFile}.ipv6: {$wanipv6}");
+						$need_update = true;
+					} else {
+						log_error("phpDynDNS: Not updating {$dnsupdate['host']} AAAA record because the IPv6 address has not changed.");
+					}
+				} else
+					@unlink("{$cacheFile}.ipv6");
+
 				$upinst .= "\n";	/* mind that trailing newline! */
 
-				@file_put_contents("{$g['varetc_path']}/nsupdatecmds{$i}", $upinst);
-				unset($upinst);
-
-				/* invoke nsupdate */
-				$cmd = "/usr/bin/nsupdate -k {$g['varetc_path']}/K{$i}{$keyname}+157+00000.key";
-				if (isset($dnsupdate['usetcp']))
-					$cmd .= " -v";
-				$cmd .= " {$g['varetc_path']}/nsupdatecmds{$i}";
-
-				mwexec_bg($cmd);
-				unset($cmd);
+				if ($need_update) {
+					@file_put_contents("{$g['varetc_path']}/nsupdatecmds{$i}", $upinst);
+					unset($upinst);
+					/* invoke nsupdate */
+					$cmd = "/usr/bin/nsupdate -k {$g['varetc_path']}/K{$i}{$keyname}+157+00000.key";
+					if (isset($dnsupdate['usetcp']))
+						$cmd .= " -v";
+					$cmd .= " {$g['varetc_path']}/nsupdatecmds{$i}";
+					mwexec_bg($cmd);
+					unset($cmd);
+				}
 			}
+		}
+		if (!empty($notify_text)) {
+			notify_all_remote($notify_text);
 		}
 	}
 

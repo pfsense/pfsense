@@ -99,7 +99,10 @@ if ($_POST) {
 
 		write_config(gettext("New/Edited RFC2136 dnsupdate entry was posted."));
 
-                $retval = services_dnsupdate_process();
+		if ($_POST['Submit'] == gettext("Save & Force Update"))
+			$retval = services_dnsupdate_process("", $rfc2136['host'], true);
+		else
+			$retval = services_dnsupdate_process();
 
 		header("Location: services_rfc2136.php");
 		exit;
@@ -197,8 +200,9 @@ include("head.inc");
                 <tr>
                   <td width="22%" valign="top">&nbsp;</td>
                   <td width="78%">
-                    <input name="Submit" type="submit" class="formbtn" value="<?=gettext("Save");?>" onClick="enable_change(true)">
+					<input name="Submit" type="submit" class="formbtn" value="<?=gettext("Save");?>" onClick="enable_change(true)">
 					<a href="services_rfc2136.php"><input name="Cancel" type="button" class="formbtn" value="<?=gettext("Cancel");?>"></a>
+					<input name="Submit" type="submit" class="formbtn" value="<?=gettext("Save & Force Update");?>" onClick="enable_change(true)">
 					<?php if (isset($id) && $a_rfc2136[$id]): ?>
 						<input name="id" type="hidden" value="<?=htmlspecialchars($id);?>">
 					<?php endif; ?>

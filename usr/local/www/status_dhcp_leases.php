@@ -170,7 +170,8 @@ foreach($leases_content as $lease) {
 	while($f < $fcount) {
 		switch($data[$f]) {
 			case "failover":
-				$pools[$p]['name'] = $data[$f+2];
+				$pools[$p]['name'] = trim($data[$f+2], '"');
+				$pools[$p]['name'] = "{$pools[$p]['name']} (" . convert_friendly_interface_to_friendly_descr(substr($pools[$p]['name'], 5)) . ")";
 				$pools[$p]['mystate'] = $data[$f+7];
 				$pools[$p]['peerstate'] = $data[$f+14];
 				$pools[$p]['mydate'] = $data[$f+10];

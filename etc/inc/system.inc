@@ -242,15 +242,21 @@ function system_hosts_generate() {
 		$cfgip = get_interface_ip("lan");
 		if (is_ipaddr($cfgip))
 			$hosts .= "{$cfgip}	{$syscfg['hostname']}.{$syscfg['domain']} {$syscfg['hostname']}\n";
+		$cfgip6 = get_interface_ipv6("lan");
+		if (is_ipaddrv6($cfgip6))
+			$hosts .= "{$cfgip6}	{$syscfg['hostname']}.{$syscfg['domain']} {$syscfg['hostname']}\n";
 	} else {
 		$sysiflist = get_configured_interface_list();
 		foreach ($sysiflist as $sysif) {
 			if (!interface_has_gateway($sysif)) {
 				$cfgip = get_interface_ip($sysif);
-				if (is_ipaddr($cfgip)) {
+				if (is_ipaddr($cfgip))
 					$hosts .= "{$cfgip}	{$syscfg['hostname']}.{$syscfg['domain']} {$syscfg['hostname']}\n";
+				$cfgip6 = get_interface_ipv6($sysif);
+				if (is_ipaddrv6($cfgip6))
+					$hosts .= "{$cfgip6}	{$syscfg['hostname']}.{$syscfg['domain']} {$syscfg['hostname']}\n";
+				if (is_ipaddr($cfgip) || is_ipaddrv6($cfgip6))
 					break;
-				}
 			}
 		}
 	}

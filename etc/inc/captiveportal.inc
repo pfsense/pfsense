@@ -202,6 +202,9 @@ function captiveportal_configure_zone($cpcfg) {
 
 		/* init ipfw rules */
 		captiveportal_init_rules(true);
+		
+		/* Clean PIPENO Database */
+		captiveportal_clean_dn_database();
 
 		/* kill any running minicron */
 		killbypid("{$g['varrun_path']}/cp_prunedb_{$cpzone}.pid");
@@ -1200,7 +1203,8 @@ function radius($username,$password,$clientip,$clientmac,$type, $radiusctx = nul
 	$pipeno = captiveportal_get_next_dn_ruleno();
 
 	/* If the pool is empty, return appropriate message and fail authentication */
-	if (is_null($pipeno)) {
+	/* Changed because $pipeno takes the value 0 (integer) and is_null function would return always FALSE */
+	if (empty($pipeno)) {
 		$auth_list = array();
 		$auth_list['auth_val'] = 1;
 		$auth_list['error'] = "System reached maximum login capacity";
@@ -1367,6 +1371,20 @@ function captiveportal_get_next_dn_ruleno($rulenos_start = 2000, $rulenos_range_
 	unlock($cpruleslck);
 
 	return $ruleno;
+}
+
+/* To liberate all PIPENO at the Start*/
+
+function captiveportal_clean_dn_database($rulenos_range_max = 64500) {
+	global $config, $g;
+
+	if (file_exists("{$g['vardb_path']}/captiveportaldn.rules")) {
+		$cpruleslck = lock("captiveportalrulesdn", LOCK_EX);
+		$rules = unserialize(file_get_contents("{$g['vardb_path']}/captiveportaldn.rules"));
+		$rules = array_pad(array(), $rulenos_range_max, false);
+		file_put_contents("{$g['vardb_path']}/captiveportaldn.rules", serialize($rules));
+		unlock($cpruleslck);	
+	}
 }
 
 function captiveportal_free_dn_ruleno($ruleno) {
@@ -1675,13 +1693,15 @@ function portal_mac_radius($clientmac,$clientip) {
 	/* authentication against the radius server */
 	$username = mac_format($clientmac);
 	$auth_list = radius($username,$radmac_secret,$clientip,$clientmac,"MACHINE LOGIN");
+	
+	return FALSE; /* moved here to avoid the function always return FALSE*/
+	
 	if ($auth_list['auth_val'] == 2)
 		return TRUE;
 
 	if (!empty($auth_list['url_redirection']))
 		portal_reply_page($auth_list['url_redirection'], "redir");
 
-	return FALSE;
 }
 
 function captiveportal_reapply_attributes($cpentry, $attributes) {

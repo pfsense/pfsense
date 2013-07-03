@@ -3,7 +3,7 @@
 	captiveportal.inc
 	part of pfSense (http://www.pfSense.org)
 	Copyright (C) 2004-2011 Scott Ullrich <sullrich@gmail.com>
-	Copyright (C) 2009-2012 Ermal Lu�i <eri@pfsense.org>
+	Copyright (C) 2009-2012 Ermal Luçi <eri@pfsense.org>
 	Copyright (C) 2003-2006 Manuel Kasper <mk@neon1.net>.
 
 	originally part of m0n0wall (http://m0n0.ch/wall)
@@ -203,6 +203,9 @@ function captiveportal_configure_zone($cpcfg) {
 		/* init ipfw rules */
 		captiveportal_init_rules(true);
 
+		/* Clean PIPENO Database */
+		captiveportal_clean_dn_database();
+		
 		/* kill any running minicron */
 		killbypid("{$g['varrun_path']}/cp_prunedb_{$cpzone}.pid");
 
@@ -1196,23 +1199,21 @@ function captiveportal_syslog($message) {
 
 function radius($username,$password,$clientip,$clientmac,$type, $radiusctx = null) {
 	global $g, $config;
-
+	
+	$radiusservers = captiveportal_get_radius_servers();
 	$pipeno = captiveportal_get_next_dn_ruleno();
 
 	/* If the pool is empty, return appropriate message and fail authentication */
-	if (is_null($pipeno)) {
+	if (empty($pipeno)) {
 		$auth_list = array();
 		$auth_list['auth_val'] = 1;
 		$auth_list['error'] = "System reached maximum login capacity";
 		return $auth_list;
 	}
 
-	$radiusservers = captiveportal_get_radius_servers();
-
 	if (is_null($radiusctx))
 		$radiusctx = 'first';
-
-	$auth_list = RADIUS_AUTHENTICATION($username,
+		$auth_list = RADIUS_AUTHENTICATION($username,
 		$password,
 		$radiusservers[$radiusctx],
 		$clientip,
@@ -1227,10 +1228,10 @@ function radius($username,$password,$clientip,$clientmac,$type, $radiusctx = nul
 			$password,
 			$auth_list,
 			$pipeno,
-			$radiusctx);
-	} else {
-	         captiveportal_free_dn_ruleno($pipeno);
-	       }
+			$radiusctx);} 
+	else {
+	      captiveportal_free_dn_ruleno($pipeno);
+	     }
 
 	return $auth_list;
 }
@@ -1367,6 +1368,20 @@ function captiveportal_get_next_dn_ruleno($rulenos_start = 2000, $rulenos_range_
 	unlock($cpruleslck);
 
 	return $ruleno;
+}
+
+/* To liberate all PIPENO at the Start*/
+
+function captiveportal_clean_dn_database($rulenos_range_max = 64500) {
+	global $config, $g;
+
+	if (file_exists("{$g['vardb_path']}/captiveportaldn.rules")) {
+		$cpruleslck = lock("captiveportalrulesdn", LOCK_EX);
+		$rules = unserialize(file_get_contents("{$g['vardb_path']}/captiveportaldn.rules"));
+		$rules = array_pad(array(), $rulenos_range_max, false);
+		file_put_contents("{$g['vardb_path']}/captiveportaldn.rules", serialize($rules));
+		unlock($cpruleslck);	
+	}
 }
 
 function captiveportal_free_dn_ruleno($ruleno) {
@@ -1675,13 +1690,14 @@ function portal_mac_radius($clientmac,$clientip) {
 	/* authentication against the radius server */
 	$username = mac_format($clientmac);
 	$auth_list = radius($username,$radmac_secret,$clientip,$clientmac,"MACHINE LOGIN");
+	
+	return FALSE;
+
 	if ($auth_list['auth_val'] == 2)
 		return TRUE;
-
-	if (!empty($auth_list['url_redirection']))
-		portal_reply_page($auth_list['url_redirection'], "redir");
-
-	return FALSE;
+	if (!empty($auth_list['url_redirection'])) 
+	   portal_reply_page($auth_list['url_redirection'], "redir");
+	
 }
 
 function captiveportal_reapply_attributes($cpentry, $attributes) {

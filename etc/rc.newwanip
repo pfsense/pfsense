@@ -120,8 +120,7 @@ if ($linkupevent == false || substr($interface_real, 0, 4) == "ovpn") {
 }
 
 /* make new hosts file */
-if ($interface == "lan")
-	system_hosts_generate();
+system_hosts_generate();
 
 /* check tunneled IPv6 interface tracking */
 switch($config['interfaces'][$interface]['ipaddrv6']) {

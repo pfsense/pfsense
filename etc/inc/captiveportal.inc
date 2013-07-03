@@ -3,7 +3,7 @@
 	captiveportal.inc
 	part of pfSense (http://www.pfSense.org)
 	Copyright (C) 2004-2011 Scott Ullrich <sullrich@gmail.com>
-	Copyright (C) 2009-2012 Ermal Luçi <eri@pfsense.org>
+	Copyright (C) 2009-2012 Ermal Luï¿½i <eri@pfsense.org>
 	Copyright (C) 2003-2006 Manuel Kasper <mk@neon1.net>.
 
 	originally part of m0n0wall (http://m0n0.ch/wall)
@@ -1228,7 +1228,9 @@ function radius($username,$password,$clientip,$clientmac,$type, $radiusctx = nul
 			$auth_list,
 			$pipeno,
 			$radiusctx);
-	}
+	} else {
+	         captiveportal_free_dn_ruleno($pipeno);
+	       }
 
 	return $auth_list;
 }
@@ -1357,9 +1359,9 @@ function captiveportal_get_next_dn_ruleno($rulenos_start = 2000, $rulenos_range_
 		}
 	} else {
 		$rules = array_pad(array(), $rulenos_range_max, false);
+		$ruleno = $rulenos_start;
 		$rules[$rulenos_start] = "used";
 		$rules[++$rulenos_start] = "used";
-		$ruleno = $rulenos_start;
 	}
 	file_put_contents("{$g['vardb_path']}/captiveportaldn.rules", serialize($rules));
 	unlock($cpruleslck);

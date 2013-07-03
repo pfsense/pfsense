@@ -1603,6 +1603,10 @@ function services_dns_configure() {
 	global $config, $g;
 	$return = 0;
 
+	/* generate hosts file */
+	if(system_hosts_generate()!=0)
+		$return = 1;
+
 	if (isset($config['dnsmasq']['enable'])) {
 		$return = services_dnsmasq_configure();
 	} elseif (!$g['booting']) {
@@ -1646,10 +1650,6 @@ function services_dnsmasq_configure() {
 			echo gettext("Starting DNS forwarder...");
 		else
 			sleep(1);
-
-		/* generate hosts file */
-		if(system_hosts_generate()!=0)
-			$return = 1;
 
 		$args = "";
 

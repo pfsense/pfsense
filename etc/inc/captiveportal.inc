@@ -3,7 +3,7 @@
 	captiveportal.inc
 	part of pfSense (http://www.pfSense.org)
 	Copyright (C) 2004-2011 Scott Ullrich <sullrich@gmail.com>
-	Copyright (C) 2009-2012 Ermal Lu�i <eri@pfsense.org>
+	Copyright (C) 2009-2012 Ermal Luçi <eri@pfsense.org>
 	Copyright (C) 2003-2006 Manuel Kasper <mk@neon1.net>.
 
 	originally part of m0n0wall (http://m0n0.ch/wall)
@@ -1196,23 +1196,21 @@ function captiveportal_syslog($message) {
 
 function radius($username,$password,$clientip,$clientmac,$type, $radiusctx = null) {
 	global $g, $config;
-
+	
+	$radiusservers = captiveportal_get_radius_servers();
 	$pipeno = captiveportal_get_next_dn_ruleno();
 
 	/* If the pool is empty, return appropriate message and fail authentication */
-	if (is_null($pipeno)) {
+	if (empty($pipeno)) {
 		$auth_list = array();
 		$auth_list['auth_val'] = 1;
 		$auth_list['error'] = "System reached maximum login capacity";
 		return $auth_list;
 	}
 
-	$radiusservers = captiveportal_get_radius_servers();
-
 	if (is_null($radiusctx))
 		$radiusctx = 'first';
-
-	$auth_list = RADIUS_AUTHENTICATION($username,
+		$auth_list = RADIUS_AUTHENTICATION($username,
 		$password,
 		$radiusservers[$radiusctx],
 		$clientip,
@@ -1227,10 +1225,10 @@ function radius($username,$password,$clientip,$clientmac,$type, $radiusctx = nul
 			$password,
 			$auth_list,
 			$pipeno,
-			$radiusctx);
-	} else {
-	         captiveportal_free_dn_ruleno($pipeno);
-	       }
+			$radiusctx);} 
+	else {
+	      captiveportal_free_dn_ruleno($pipeno);
+	     }
 
 	return $auth_list;
 }
@@ -1675,13 +1673,12 @@ function portal_mac_radius($clientmac,$clientip) {
 	/* authentication against the radius server */
 	$username = mac_format($clientmac);
 	$auth_list = radius($username,$radmac_secret,$clientip,$clientmac,"MACHINE LOGIN");
+	if (!empty($auth_list['url_redirection'])) 
+	   portal_reply_page($auth_list['url_redirection'], "redir");
+	return FALSE;
+
 	if ($auth_list['auth_val'] == 2)
 		return TRUE;
-
-	if (!empty($auth_list['url_redirection']))
-		portal_reply_page($auth_list['url_redirection'], "redir");
-
-	return FALSE;
 }
 
 function captiveportal_reapply_attributes($cpentry, $attributes) {

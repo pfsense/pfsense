@@ -83,9 +83,7 @@ function handle_argument_group($iface, $argument2) {
 }
 
 global $g;
-if (file_exists("{$g['varrun_path']}/booting")) {
-	/* ignore all linkup events */
-} else {
+if (!file_exists("{$g['varrun_path']}/booting") && empty($g['booting'])) {
 	if ($argc < 3) {
 		log_error("HOTPLUG event: The number of required parameters not passed!");
 		exit;

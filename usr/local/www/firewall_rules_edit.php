@@ -1629,7 +1629,7 @@ $has_updated_time = (isset($a_filter[$id]['updated']) && is_array($a_filter[$id]
 	<?php endif; ?>
 
 	var addressarray = <?= json_encode(get_alias_list(array("host", "network", "openvpn", "urltable"))) ?>;
-	var customarray  = <?= json_encode(get_alias_list("port")) ?>;
+	var customarray  = <?= json_encode(get_alias_list(array("port", "url_ports"))) ?>;
 
 	var oTextbox1 = new AutoSuggestControl(document.getElementById("src"), new StateSuggestions(addressarray));
 	var oTextbox2 = new AutoSuggestControl(document.getElementById("srcbeginport_cust"), new StateSuggestions(customarray));

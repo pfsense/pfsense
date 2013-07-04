@@ -720,7 +720,7 @@ $has_updated_time = (isset($a_out[$id]['updated']) && is_array($a_out[$id]['upda
 	poolopts_change();
 
 	var addressarray = <?= json_encode(get_alias_list(array("host", "network", "openvpn", "urltable"))) ?>;
-	var customarray  = <?= json_encode(get_alias_list("port")) ?>;
+	var customarray  = <?= json_encode(get_alias_list(array("port", "url_ports"))) ?>;
 
 	var oTextbox1 = new AutoSuggestControl(document.getElementById("source"), new StateSuggestions(addressarray));
 	var oTextbox2 = new AutoSuggestControl(document.getElementById("sourceport"), new StateSuggestions(customarray));

@@ -912,7 +912,7 @@ $has_updated_time = (isset($a_nat[$id]['updated']) && is_array($a_nat[$id]['upda
 <script type="text/javascript">
 //<![CDATA[
 	var addressarray = <?= json_encode(get_alias_list(array("host", "network", "openvpn", "urltable"))) ?>;
-	var customarray  = <?= json_encode(get_alias_list("port")) ?>;
+	var customarray  = <?= json_encode(get_alias_list(array("port", "url_ports"))) ?>;
 
 	var oTextbox1 = new AutoSuggestControl(document.getElementById("localip"), new StateSuggestions(addressarray));
 	var oTextbox2 = new AutoSuggestControl(document.getElementById("src"), new StateSuggestions(addressarray));

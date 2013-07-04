@@ -538,7 +538,7 @@ function is_ipaddroralias($ipaddr) {
 	if (is_alias($ipaddr)) {
 		if (is_array($config['aliases']['alias'])) {
 			foreach ($config['aliases']['alias'] as $alias) {
-				if ($alias['name'] == $ipaddr && $alias['type'] != "port")
+				if ($alias['name'] == $ipaddr && !preg_match("/port/i", $alias['type']))
 					return true;
 			}
 		}
@@ -671,7 +671,7 @@ function is_portoralias($port) {
 	if (is_alias($port)) {
 		if (is_array($config['aliases']['alias'])) {
 			foreach ($config['aliases']['alias'] as $alias) {
-				if ($alias['name'] == $port && $alias['type'] == "port")
+				if ($alias['name'] == $port && preg_match("/port/i", $alias['type']))
 					return true;
 				}
 			}

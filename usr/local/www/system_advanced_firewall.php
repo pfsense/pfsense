@@ -59,6 +59,7 @@ $pconfig['adaptiveend'] = $config['system']['adaptiveend'];
 $pconfig['maximumstates'] = $config['system']['maximumstates'];
 $pconfig['aliasesresolveinterval'] = $config['system']['aliasesresolveinterval'];
 $old_aliasesresolveinterval = $config['system']['aliasesresolveinterval'];
+$pconfig['checkaliasesurlcert'] = $config['system']['checkaliasesurlcert'];
 $pconfig['maximumtables'] = $config['system']['maximumtables'];
 $pconfig['maximumtableentries'] = $config['system']['maximumtableentries'];
 $pconfig['disablereplyto'] = isset($config['system']['disablereplyto']);
@@ -142,6 +143,11 @@ if ($_POST) {
 			$config['system']['adaptivestart'] = $_POST['adaptivestart'];
                 else
                         unset($config['system']['adaptivestart']);
+
+		if (!empty($config['system']['checkaliasesurlcert']))
+			$config['system']['checkaliasesurlcert'] = $_POST['checkaliasesurlcert'];
+		else
+			unset($config['system']['checkaliasesurlcert']);
 
 		$config['system']['optimization'] = $_POST['optimization'];
 		$config['system']['maximumstates'] = $_POST['maximumstates'];
@@ -460,6 +466,16 @@ function update_description(itemnum) {
 									<strong><?=gettext("Interval, in seconds, that will be used to resolve hostnames configured on aliases.");?></strong>
 									<br/>
 									<span class="vexpl"><?=gettext("Note:  Leave this blank for the default (300s).");?></span>
+								</td>
+							</tr>
+							<tr>
+							<td width="22%" valign="top" class="vncell"><?=gettext("Check certificate of aliases URLs");?></td>
+								<td width="78%" class="vtable">
+									<input name="checkaliasesurlcert" type="checkbox" id="checkaliasesurlcert" value="yes" <?php if ($pconfig['checkaliasesurlcert']) echo "checked=\"checked\""; ?> />
+									<strong><?=gettext("Verify HTTPS certificates when downloadling aliases URLs");?></strong>
+									<br />
+									<?=gettext("Make sure the certificate is valid for all HTTPS addresses on Aliases, if it's not valid or is revoked, do not download it.");?>
+									<br />
 								</td>
 							</tr>
 							<tr>

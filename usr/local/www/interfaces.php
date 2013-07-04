@@ -4,7 +4,7 @@
 	interfaces.php
 	Copyright (C) 2004-2008 Scott Ullrich
 	Copyright (C) 2006 Daniel S. Haischt.
-	Copyright (C) 2008-2010 Ermal Luçi
+	Copyright (C) 2008-2010 Ermal Luï¿½i
 	All rights reserved.
 
 	originally part of m0n0wall (http://m0n0.ch/wall)
@@ -1803,7 +1803,7 @@ $types6 = array("none" => gettext("None"), "staticv6" => gettext("Static IPv6"),
 									<tr>
 										<td width="22%" valign="top" class="vncell"><?=gettext("Request only a IPv6 prefix"); ?></td>
 										<td width="78%" class="vtable">
-											<input name="dhcp6prefixonly" type="checkbox" value="yes" <?php if ($pconfig['dhcp6prefixonly'] == true) echo "checked=\"checked\""; ?>" />
+											<input name="dhcp6prefixonly" type="checkbox" value="yes" <?php if ($pconfig['dhcp6prefixonly'] == true) echo "checked=\"checked\""; ?> />
 											<?=gettext("Only request a IPv6 prefix, do not request a IPv6 address"); ?>
 										</td>
 									</tr>

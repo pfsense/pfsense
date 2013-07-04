@@ -1615,6 +1615,41 @@ function get_freebsd_version() {
 	return $version[0];
 }
 
+function download_file($url, $destination, $verify_ssl = false, $connect_timeout = 60, $timeout = 0) {
+	global $config, $g;
+
+	$fp = fopen($destination, "wb");
+
+	if (!$fp)
+		return false;
+
+	$ch = curl_init();
+	curl_setopt($ch, CURLOPT_URL, $url);
+	curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, $verify_ssl);
+	curl_setopt($ch, CURLOPT_FILE, $fp);
+	curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, $connect_timeout);
+	curl_setopt($ch, CURLOPT_TIMEOUT, $timeout);
+	curl_setopt($ch, CURLOPT_HEADER, false);
+	curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true);
+	curl_setopt($ch, CURLOPT_USERAGENT, $g['product_name'] . '/' . rtrim(file_get_contents("/etc/version")));
+
+	if (!empty($config['system']['proxyurl'])) {
+		curl_setopt($ch, CURLOPT_PROXY, $config['system']['proxyurl']);
+		if (!empty($config['system']['proxyport']))
+			curl_setopt($ch, CURLOPT_PROXYPORT, $config['system']['proxyport']);
+		if (!empty($config['system']['proxyuser']) && !empty($config['system']['proxypass'])) {
+			@curl_setopt($ch, CURLOPT_PROXYAUTH, CURLAUTH_ANY | CURLAUTH_ANYSAFE);
+			curl_setopt($ch, CURLOPT_PROXYUSERPWD, "{$config['system']['proxyuser']}:{$config['system']['proxypass']}");
+		}
+	}
+
+	@curl_exec($ch);
+	$http_code = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+	fclose($fp);
+	curl_close($ch);
+	return ($http_code == 200) ? true : $http_code;
+}
+
 function download_file_with_progress_bar($url_file, $destination_file, $readbody = 'read_body', $connect_timeout=60, $timeout=0) {
 	global $ch, $fout, $file_size, $downloaded, $config, $first_progress_update;
 	$file_size  = 1;

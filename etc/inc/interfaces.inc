@@ -3430,7 +3430,6 @@ function interface_dhcpv6_configure($interface = "wan", $wancfg) {
 		/* skip address request if this is set */
 		if(!isset($wancfg['dhcp6prefixonly']))
 			$dhcp6cconf .= "        send ia-na 0;   # request stateful address\n";
-		$dhcp6cconf .= " 	send ia-na 0;	# request stateful address\n";
 		if(is_numeric($wancfg['dhcp6-ia-pd-len']))
 			$dhcp6cconf .= "	send ia-pd 0;	# request prefix delegation\n";
 

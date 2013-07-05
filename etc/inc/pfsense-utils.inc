@@ -1835,9 +1835,6 @@ function update_alias_url_data() {
 				/* fetch down and add in */
 				$temp_filename = tempnam("{$g['tmp_path']}/", "alias_import");
 				unlink($temp_filename);
-				$fda = fopen("{$g['tmp_path']}/tmpfetch","w");
-				fwrite($fda, "/usr/bin/fetch -T 5 -q -o \"{$temp_filename}/aliases\" \"" . $alias_url . "\"");
-				fclose($fda);
 				mwexec("/bin/mkdir -p {$temp_filename}");
 				mwexec("/usr/bin/fetch -T 5 -q -o \"{$temp_filename}/aliases\" \"" . $alias_url . "\"");
 				/* if the item is tar gzipped then extract */

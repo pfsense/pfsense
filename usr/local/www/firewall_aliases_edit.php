@@ -201,9 +201,6 @@ if ($_POST) {
 				$isfirst = 0;
 				$temp_filename = tempnam("{$g['tmp_path']}/", "alias_import");
 				unlink($temp_filename);
-				$fda = fopen("{$g['tmp_path']}/tmpfetch","w");
-				fwrite($fda, "/usr/bin/fetch -q -o \"{$temp_filename}/aliases\" \"" . $_POST['address' . $x] . "\"");
-				fclose($fda);
 				mwexec("/bin/mkdir -p {$temp_filename}");
 				mwexec("/usr/bin/fetch -q -o \"{$temp_filename}/aliases\" \"" . $_POST['address' . $x] . "\"");
 				/* if the item is tar gzipped then extract */

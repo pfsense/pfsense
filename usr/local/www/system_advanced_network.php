@@ -61,14 +61,14 @@ $pconfig['flowtable'] = isset($config['system']['flowtable']);
 
 if ($_POST) {
 
-    unset($input_errors);
-    $pconfig = $_POST;
+	unset($input_errors);
+	$pconfig = $_POST;
 
 	if ($_POST['ipv6nat_enable'] && !is_ipaddr($_POST['ipv6nat_ipaddr']))
 		$input_errors[] = gettext("You must specify an IP address to NAT IPv6 packets.");
 
-    ob_flush();
-    flush();
+	ob_flush();
+	flush();
 	if (!$input_errors) {
 
 		if($_POST['ipv6nat_enable'] == "yes") {
@@ -78,15 +78,15 @@ if ($_POST) {
 			if($config['diag']) {
 				if($config['diag']['ipv6nat']) {
 					unset($config['diag']['ipv6nat']['enable']);
-					unset($config['diag']['ipv6nat']['ipaddr']);				
+					unset($config['diag']['ipv6nat']['ipaddr']);
 				}
 			}
 		}
-		
+
 		if($_POST['ipv6allow'] == "yes") {
-		    $config['system']['ipv6allow'] = true;
+			$config['system']['ipv6allow'] = true;
 		} else {
-		    unset($config['system']['ipv6allow']);
+			unset($config['system']['ipv6allow']);
 		}
 
 		if($_POST['sharednet'] == "yes") {
@@ -139,9 +139,9 @@ if ($_POST) {
 
 		$retval = filter_configure();
 		if(stristr($retval, "error") <> true)
-		    $savemsg = get_std_save_message(gettext($retval));
+			$savemsg = get_std_save_message(gettext($retval));
 		else
-		    $savemsg = gettext($retval);
+			$savemsg = gettext($retval);
 	}
 }
 
@@ -184,7 +184,7 @@ function enable_change(enable_over) {
 						$tab_array[] = array(gettext("Networking"), true, "system_advanced_network.php");
 						$tab_array[] = array(gettext("Miscellaneous"), false, "system_advanced_misc.php");
 						$tab_array[] = array(gettext("System Tunables"), false, "system_advanced_sysctl.php");
-						$tab_array[] = array(gettext("Notifications"), false, "system_advanced_notifications.php");						
+						$tab_array[] = array(gettext("Notifications"), false, "system_advanced_notifications.php");
 						display_top_tabs($tab_array);
 					?>
 				</td>
@@ -193,7 +193,7 @@ function enable_change(enable_over) {
 				<td id="mainarea">
 					<div class="tabcont">
 						<span class="vexpl">
-		    	        	<span class="red">
+						<span class="red">
 								<strong><?=gettext("NOTE:"); ?>&nbsp;</strong>
 							</span>
 							<?=gettext("The options on this page are intended for use by advanced users only."); ?>
@@ -274,7 +274,7 @@ function enable_change(enable_over) {
 									<?=gettext("This option will suppress ARP log messages when multiple interfaces reside on the same broadcast domain"); ?>
 								</td>
 							</tr>
-<?php 
+<?php
 /*
 	$version = get_freebsd_version();
 	if($version == "8"):
@@ -290,8 +290,8 @@ function enable_change(enable_over) {
 								<td width="78%" class="vtable">
 									<input name="flowtable" type="checkbox" id="polling_enable" value="yes" <?php if ($pconfig['flowtable']) echo "checked=\"checked\""; ?> />
 									<strong>Enable flowtable support</strong><br />
-									 Enables infrastructure for caching flows as a means of accelerating L3 and L2 lookups 
-									 as well as providing stateful load balancing when used with RADIX_MPATH.<br/>
+									Enables infrastructure for caching flows as a means of accelerating L3 and L2 lookups
+									as well as providing stateful load balancing when used with RADIX_MPATH.<br/>
 								</td>
 							</tr>
 <?php endif; ?>
@@ -299,7 +299,7 @@ function enable_change(enable_over) {
 ?>
 							<tr>
 								<td colspan="2" class="list" height="12">&nbsp;</td>
-							</tr>							
+							</tr>
 							<tr>
 								<td width="22%" valign="top">&nbsp;</td>
 								<td width="78%"><input name="Submit" type="submit" class="formbtn" value="<?=gettext("Save");?>" /></td>

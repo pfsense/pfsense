@@ -59,7 +59,7 @@ $pconfig['adaptiveend'] = $config['system']['adaptiveend'];
 $pconfig['maximumstates'] = $config['system']['maximumstates'];
 $pconfig['aliasesresolveinterval'] = $config['system']['aliasesresolveinterval'];
 $old_aliasesresolveinterval = $config['system']['aliasesresolveinterval'];
-$pconfig['checkaliasesurlcert'] = $config['system']['checkaliasesurlcert'];
+$pconfig['checkaliasesurlcert'] = isset($config['system']['checkaliasesurlcert']);
 $pconfig['maximumtables'] = $config['system']['maximumtables'];
 $pconfig['maximumtableentries'] = $config['system']['maximumtableentries'];
 $pconfig['disablereplyto'] = isset($config['system']['disablereplyto']);
@@ -144,8 +144,8 @@ if ($_POST) {
                 else
                         unset($config['system']['adaptivestart']);
 
-		if (!empty($config['system']['checkaliasesurlcert']))
-			$config['system']['checkaliasesurlcert'] = $_POST['checkaliasesurlcert'];
+		if ($_POST['checkaliasesurlcert'] == "yes") {
+			$config['system']['checkaliasesurlcert'] = true;
 		else
 			unset($config['system']['checkaliasesurlcert']);
 

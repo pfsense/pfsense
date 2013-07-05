@@ -97,6 +97,7 @@ system_resolvconf_generate(true);
 /* write current WAN IP to file */
 file_put_contents("{$g['vardb_path']}/{$interface}_ip", $curwanip);
 
+interface_ipalias_cleanup($interface, "inet4");
 link_interface_to_vips($interface, "update");
 
 unset($gre);

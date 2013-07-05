@@ -106,8 +106,8 @@ if ($_POST) {
 		$input_errors[] = gettext("The Reflection timeout must be an integer.");
 	}
 
-    ob_flush();
-    flush();
+	ob_flush();
+	flush();
 
 	if (!$input_errors) {
 
@@ -131,18 +131,18 @@ if ($_POST) {
 			unset($config['system']['scrubnodf']);
 
 		if($_POST['scrubrnid'] == "yes")
-                        $config['system']['scrubrnid'] = "enabled";
-                else
-                        unset($config['system']['scrubrnid']);
+			$config['system']['scrubrnid'] = "enabled";
+		else
+			unset($config['system']['scrubrnid']);
 
 		if (!empty($_POST['adaptiveend']))
 			$config['system']['adaptiveend'] = $_POST['adaptiveend'];
-                else
-                        unset($config['system']['adaptiveend']);
+		else
+			unset($config['system']['adaptiveend']);
 		if (!empty($_POST['adaptivestart']))
 			$config['system']['adaptivestart'] = $_POST['adaptivestart'];
-                else
-                        unset($config['system']['adaptivestart']);
+		else
+			unset($config['system']['adaptivestart']);
 
 		if ($_POST['checkaliasesurlcert'] == "yes") {
 			$config['system']['checkaliasesurlcert'] = true;
@@ -172,14 +172,14 @@ if ($_POST) {
 			unset($config['system']['enablebinatreflection']);
 
 		if($_POST['disablereplyto'] == "yes")
-                        $config['system']['disablereplyto'] = $_POST['disablereplyto'];
-                else
-                        unset($config['system']['disablereplyto']);
+			$config['system']['disablereplyto'] = $_POST['disablereplyto'];
+		else
+			unset($config['system']['disablereplyto']);
 
 		if($_POST['disablenegate'] == "yes")
-                        $config['system']['disablenegate'] = $_POST['disablenegate'];
-                else
-                        unset($config['system']['disablenegate']);
+			$config['system']['disablenegate'] = $_POST['disablenegate'];
+		else
+			unset($config['system']['disablenegate']);
 
 		if($_POST['enablenatreflectionhelper'] == "yes")
 			$config['system']['enablenatreflectionhelper'] = "yes";
@@ -202,7 +202,7 @@ if ($_POST) {
 			$config['system']['tftpinterface'] = implode(",", $_POST['tftpinterface']);
 		else
 			unset($config['system']['tftpinterface']);
-		
+
 		if ($_POST['bogonsinterval'] != $config['system']['bogons']['interval']) {
 			switch ($_POST['bogonsinterval']) {
 				case 'daily':
@@ -218,7 +218,7 @@ if ($_POST) {
 			}
 			$config['system']['bogons']['interval'] = $_POST['bogonsinterval'];
 		}
-	
+
 		write_config();
 
 		// Kill filterdns when value changes, filter_configure() will restart it
@@ -229,9 +229,9 @@ if ($_POST) {
 		$retval = 0;
 		$retval = filter_configure();
 		if(stristr($retval, "error") <> true)
-		    $savemsg = get_std_save_message($retval);
+			$savemsg = get_std_save_message($retval);
 		else
-		    $savemsg = $retval;
+			$savemsg = $retval;
 	}
 }
 
@@ -253,7 +253,7 @@ descs[2]="<?=gettext("expires idle connections quicker. More efficient use of CP
 descs[3]="<?=gettext("tries to avoid dropping any legitimate idle connections at the expense of increased memory usage and CPU utilization.");?>";
 
 function update_description(itemnum) {
-        document.forms[0].info.value=descs[itemnum];
+	document.forms[0].info.value=descs[itemnum];
 
 }
 
@@ -366,7 +366,7 @@ function update_description(itemnum) {
 									<br/>
 									<input name="adaptivestart" type="text" id="adaptivestart" value="<?php echo $pconfig['adaptivestart']; ?>" />
 									<br/><?=gettext("When the number of state entries exceeds this value, adaptive scaling begins.  All timeout values are scaled linearly with factor (adaptive.end - number of states) / (adaptive.end - adaptive.start).");?>
-									
+
 									<br/>
 									<input name="adaptiveend" type="text" id="adaptiveend" value="<?php echo $pconfig['adaptiveend']; ?>" />
 									<br/><?=gettext("When reaching this number of state entries, all timeout values become zero, effectively purging all state entries immediately.  This value is used to define the scale factor, it should not actually be reached (set a lower state limit, see below).");?>
@@ -422,7 +422,7 @@ function update_description(itemnum) {
 									<strong><?=gettext("Bypass firewall rules for traffic on the same interface");?></strong>
 									<br/>
 									<?=gettext("This option only applies if you have defined one or more static routes. If it is enabled, traffic that enters and " .
-					 				"leaves through the same interface will not be checked by the firewall. This may be desirable in some situations where " .
+									"leaves through the same interface will not be checked by the firewall. This may be desirable in some situations where " .
 									"multiple subnets are connected to the same interface.");?>
 									<br/>
 								</td>
@@ -433,7 +433,7 @@ function update_description(itemnum) {
 									<input name="disablevpnrules" type="checkbox" id="disablevpnrules" value="yes" <?php if (isset($config['system']['disablevpnrules'])) echo "checked=\"checked\""; ?> />
 									<strong><?=gettext("Disable all auto-added VPN rules.");?></strong>
 									<br />
-									<span class="vexpl"><?=gettext("Note: This disables automatically added rules for IPsec, PPTP.");?> 
+									<span class="vexpl"><?=gettext("Note: This disables automatically added rules for IPsec, PPTP.");?>
 									</span>
 								</td>
 							</tr>
@@ -449,7 +449,7 @@ function update_description(itemnum) {
 								</td>
 							</tr>
 							<tr>
-								<td width="22%" valign="top" class="vncell">Disable Negate rules</td> 
+								<td width="22%" valign="top" class="vncell">Disable Negate rules</td>
 								<td width="78%" class="vtable">
 									<input name="disablenegate" type="checkbox" id="disablenegate" value="yes" <?php if ($pconfig['disablenegate']) echo "checked=\"checked\""; ?> />
 									<strong><?=gettext("Disable Negate rule on policy routing rules");?></strong>
@@ -483,7 +483,7 @@ function update_description(itemnum) {
 							</tr>
 							<tr>
 								<td colspan="2" valign="top" class="listtopic"><?=gettext("Bogon Networks");?></td>
-							</tr>		
+							</tr>
 							<tr>
 								<td width="22%" valign="top" class="vncell"><?=gettext("Update Frequency");?></td>
 								<td width="78%" class="vtable">
@@ -502,7 +502,7 @@ function update_description(itemnum) {
 							<?php if(count($config['interfaces']) > 1): ?>
 							<tr>
 								<td colspan="2" valign="top" class="listtopic"><?=gettext("Network Address Translation");?></td>
-							</tr>		
+							</tr>
 							<tr>
 								<td width="22%" valign="top" class="vncell"><?=gettext("NAT Reflection mode for port forwards");?></td>
 								<td width="78%" class="vtable">

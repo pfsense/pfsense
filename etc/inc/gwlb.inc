@@ -238,6 +238,8 @@ EOD;
 	@unlink("{$g['varrun_path']}/apinger.status");
 	sleep(1);
 	mwexec_bg("/usr/local/sbin/apinger -c {$g['varetc_path']}/apinger.conf");
+	sleep(1);
+	sigkillbypid("{$g['varrun_path']}/apinger.pid", "USR1");
 
 	return 0;
 }

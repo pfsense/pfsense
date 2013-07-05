@@ -76,7 +76,7 @@ $pconfig['disablevpnrules'] = isset($config['system']['disablevpnrules']);
 if ($_POST) {
 
 	unset($input_errors);
-	$pconfig = array_merge($pconfig, $_POST);
+	$pconfig = $_POST;
 
 	/* input validation */
 	if ((empty($_POST['adaptivestart']) && !empty($_POST['adaptiveend'])) || (!empty($_POST['adaptivestart']) && empty($_POST['adaptiveend'])))

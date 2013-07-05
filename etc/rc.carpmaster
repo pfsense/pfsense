@@ -50,5 +50,13 @@ if (is_array($config['openvpn']) && is_array($config['openvpn']['openvpn-client'
 		}
 	}
 }
+if (is_array($config['openvpn']) && is_array($config['openvpn']['openvpn-server'])) {
+	foreach ($config['openvpn']['openvpn-server'] as $settings) {
+		if ($settings['interface'] == $argv[1]) {
+			log_error("Starting OpenVPN instance on {$settings['interface']} because of transition to CARP master.");
+			openvpn_restart('server', $settings);
+		}
+	}
+}
 
 ?>

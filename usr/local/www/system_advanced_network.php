@@ -56,7 +56,6 @@ $pconfig['sharednet'] = $config['system']['sharednet'];
 $pconfig['disablechecksumoffloading'] = isset($config['system']['disablechecksumoffloading']);
 $pconfig['disablesegmentationoffloading'] = isset($config['system']['disablesegmentationoffloading']);
 $pconfig['disablelargereceiveoffloading'] = isset($config['system']['disablelargereceiveoffloading']);
-$pconfig['flowtable'] = false;
 $pconfig['flowtable'] = isset($config['system']['flowtable']);
 
 if ($_POST) {

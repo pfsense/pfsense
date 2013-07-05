@@ -144,7 +144,7 @@ if ($_POST) {
 		else
 			unset($config['system']['adaptivestart']);
 
-		if ($_POST['checkaliasesurlcert'] == "yes") {
+		if ($_POST['checkaliasesurlcert'] == "yes")
 			$config['system']['checkaliasesurlcert'] = true;
 		else
 			unset($config['system']['checkaliasesurlcert']);

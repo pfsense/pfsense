@@ -1964,6 +1964,21 @@ function interface_proxyarp_configure($interface = "") {
 	}
 }
 
+function interface_ipalias_cleanup($interface, $inet = "inet4") {
+	global $g, $config;
+
+	if (is_array($config['virtualip']['vip'])) {
+		foreach ($config['virtualip']['vip'] as $vip) {
+			if ($vip['mode'] == "ipalias" && $vip['interface'] == $interface) {
+				if ($inet == "inet6" && is_ipaddrv6($vip['subnet']))
+					interface_vip_bring_down($vip);
+				else if ($inet == "inet4" && is_ipaddrv4($vip['subnet']))
+					interface_vip_bring_down($vip);
+			}
+		}
+	}
+}
+
 function interfaces_vips_configure($interface = "") {
 	global $g, $config;
 	if(isset($config['system']['developerspew'])) {

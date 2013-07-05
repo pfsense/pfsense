@@ -1874,8 +1874,10 @@ function update_alias_url_data() {
 				/* fetch down and add in */
 				$temp_filename = tempnam("{$g['tmp_path']}/", "alias_import");
 				unlink($temp_filename);
+				$verify_ssl = isset($config['system']['checkaliasesurlcert']);
 				mwexec("/bin/mkdir -p {$temp_filename}");
-				mwexec("/usr/bin/fetch -T 5 -q -o \"{$temp_filename}/aliases\" \"" . $alias_url . "\"");
+				download_file($alias_url, $temp_filename . "/aliases", $verify_ssl);
+
 				/* if the item is tar gzipped then extract */
 				if (stristr($alias_url, ".tgz"))
 					process_alias_tgz($temp_filename);

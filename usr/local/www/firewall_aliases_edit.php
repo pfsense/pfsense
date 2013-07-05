@@ -201,8 +201,10 @@ if ($_POST) {
 				$isfirst = 0;
 				$temp_filename = tempnam("{$g['tmp_path']}/", "alias_import");
 				unlink($temp_filename);
+				$verify_ssl = isset($config['system']['checkaliasesurlcert']);
 				mwexec("/bin/mkdir -p {$temp_filename}");
-				mwexec("/usr/bin/fetch -q -o \"{$temp_filename}/aliases\" \"" . $_POST['address' . $x] . "\"");
+				download_file($_POST['address' . $x], $temp_filename . "/aliases", $verify_ssl);
+
 				/* if the item is tar gzipped then extract */
 				if(stristr($_POST['address' . $x], ".tgz"))
 					process_alias_tgz($temp_filename);

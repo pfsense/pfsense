@@ -46,6 +46,9 @@ require_once("rrd.inc");
 if($g['booting'])
 	exit;
 
+/* NOTE: Check #2495 before being smart here */
+interface_ipalias_cleanup($interface, "inet4");
+
 function restart_packages() {
 	global $oldip, $curwanip, $g;
 
@@ -97,7 +100,6 @@ system_resolvconf_generate(true);
 /* write current WAN IP to file */
 file_put_contents("{$g['vardb_path']}/{$interface}_ip", $curwanip);
 
-interface_ipalias_cleanup($interface, "inet4");
 link_interface_to_vips($interface, "update");
 
 unset($gre);

@@ -107,14 +107,21 @@ if ($_GET['act'] == "del") {
 			}
 		}
 
-		if (is_ipaddrv6($a_vip[$_GET['id']]['subnet']))
+		if (is_ipaddrv6($a_vip[$_GET['id']]['subnet'])) {
+			$is_ipv6 = true;
 			$subnet = gen_subnetv6($a_vip[$_GET['id']]['subnet'], $a_vip[$_GET['id']]['subnet_bits']);
-		else
+			$if_subnet_bits = get_interface_subnetv6($a_vip[$_GET['id']]['interface']);
+			$if_subnet = gen_subnetv6(get_interface_ipv6($a_vip[$_GET['id']]['interface']), $if_subnet_bits);
+		} else {
+			$is_ipv6 = false;
 			$subnet = gen_subnet($a_vip[$_GET['id']]['subnet'], $a_vip[$_GET['id']]['subnet_bits']);
+			$if_subnet_bits = get_interface_subnet($a_vip[$_GET['id']]['interface']);
+			$if_subnet = gen_subnet(get_interface_ip($a_vip[$_GET['id']]['interface']), $if_subnet_bits);
+		}
 
 		$subnet .= "/" . $a_vip[$_GET['id']]['subnet_bits'];
+		$if_subnet .= "/" . $if_subnet_bits;
 
-		$is_ipv6 = is_ipaddrv6($a_vip[$_GET['id']]['subnet']);
 		if (is_array($config['gateways']['gateway_item']))
 			foreach($config['gateways']['gateway_item'] as $gateway) {
 				if ($a_vip[$_GET['id']]['interface'] != $gateway['interface'])
@@ -122,6 +129,8 @@ if ($_GET['act'] == "del") {
 				if ($is_ipv6 && $gateway['ipprotocol'] == 'inet')
 					continue;
 				if (!$is_ipv6 && $gateway['ipprotocol'] == 'inet6')
+					continue;
+				if (ip_in_subnet($gateway['gateway'], $if_subnet))
 					continue;
 
 				if (ip_in_subnet($gateway['gateway'], $subnet)) {

@@ -472,9 +472,9 @@ function update_description(itemnum) {
 							<td width="22%" valign="top" class="vncell"><?=gettext("Check certificate of aliases URLs");?></td>
 								<td width="78%" class="vtable">
 									<input name="checkaliasesurlcert" type="checkbox" id="checkaliasesurlcert" value="yes" <?php if ($pconfig['checkaliasesurlcert']) echo "checked=\"checked\""; ?> />
-									<strong><?=gettext("Verify HTTPS certificates when downloadling aliases URLs");?></strong>
+									<strong><?=gettext("Verify HTTPS certificates when downloading alias URLs");?></strong>
 									<br />
-									<?=gettext("Make sure the certificate is valid for all HTTPS addresses on Aliases, if it's not valid or is revoked, do not download it.");?>
+									<?=gettext("Make sure the certificate is valid for all HTTPS addresses on aliases. If it's not valid or is revoked, do not download it.");?>
 									<br />
 								</td>
 							</tr>

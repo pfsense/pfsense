@@ -203,6 +203,9 @@ function captiveportal_configure_zone($cpcfg) {
 		/* init ipfw rules */
 		captiveportal_init_rules(true);
 
+		/* init dn rules  */
+		captiveportal_init_dn_rules();
+		
 		/* kill any running minicron */
 		killbypid("{$g['varrun_path']}/cp_prunedb_{$cpzone}.pid");
 
@@ -1200,7 +1203,7 @@ function radius($username,$password,$clientip,$clientmac,$type, $radiusctx = nul
 	$pipeno = captiveportal_get_next_dn_ruleno();
 
 	/* If the pool is empty, return appropriate message and fail authentication */
-	if (is_null($pipeno)) {
+	if (empty($pipeno)) {  /* changed is_null for empty to return true on 0 value */
 		$auth_list = array();
 		$auth_list['auth_val'] = 1;
 		$auth_list['error'] = "System reached maximum login capacity";
@@ -1381,6 +1384,19 @@ function captiveportal_free_dn_ruleno($ruleno) {
 	}
 	unlock($cpruleslck);
 }
+
+/* Function to init rules dn numbers */
+
+function captiveportal_init_dn_rules() {
+  global $config, $g;
+  if (file_exists("{$g['vardb_path']}/captiveportaldn.rules"))
+  {
+    $file = "{$g['vardb_path']}/captiveportaldn.rules";
+    unlink($file);
+  }
+}
+
+
 
 function captiveportal_get_dn_passthru_ruleno($value) {
 	global $config, $g, $cpzone;
@@ -1675,13 +1691,15 @@ function portal_mac_radius($clientmac,$clientip) {
 	/* authentication against the radius server */
 	$username = mac_format($clientmac);
 	$auth_list = radius($username,$radmac_secret,$clientip,$clientmac,"MACHINE LOGIN");
+	
+	return FALSE; /* moved here to avoid the function always return false */
+	
 	if ($auth_list['auth_val'] == 2)
 		return TRUE;
 
 	if (!empty($auth_list['url_redirection']))
 		portal_reply_page($auth_list['url_redirection'], "redir");
 
-	return FALSE;
 }
 
 function captiveportal_reapply_attributes($cpentry, $attributes) {

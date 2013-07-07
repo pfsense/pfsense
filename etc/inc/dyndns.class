@@ -1026,7 +1026,7 @@
 					$currentTime = time();
 					notify_all_remote(sprintf(gettext("DynDNS updated IPv6 Address on %s (%s) to %s"), convert_real_interface_to_friendly_descr($this->_if), $this->_if, $wan_ip));
 					log_error("phpDynDNS: updating cache file {$this->_cacheFile_v6}: {$wan_ip}");
-					@file_put_contents($this->_cacheFile_v6, "{$wan_ip}@{$currentTime}");
+					@file_put_contents($this->_cacheFile_v6, "{$wan_ip}|{$currentTime}");
 				} else
 					@unlink($this->_cacheFile_v6);
 				conf_mount_ro();
@@ -1104,14 +1104,14 @@
 			if ($this->_useIPv6 == true) {
 				if (file_exists($this->_cacheFile_v6)) {
 					$contents = file_get_contents($this->_cacheFile_v6);
-					list($cacheIP,$cacheTime) = explode('@', $contents);
+					list($cacheIP,$cacheTime) = explode('|', $contents);
 					$this->_debug($cacheIP.'/'.$cacheTime);
 					$initial = false;
 					$log_error .= "Cached IPv6: {$cacheIP} ";
 				} else {
 					conf_mount_rw();
 					$cacheIP = '::';
-					@file_put_contents($this->_cacheFile, "::@{$currentTime}");
+					@file_put_contents($this->_cacheFile, "::|{$currentTime}");
 					conf_mount_ro();
 					$cacheTime = $currentTime;
 					$initial = true;

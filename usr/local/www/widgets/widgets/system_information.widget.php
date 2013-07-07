@@ -47,7 +47,11 @@ if($_REQUEST['getupdatestatus']) {
 
 	$nanosize = "";
 	if ($g['platform'] == "nanobsd") {
-		$nanosize = "-nanobsd-" . strtolower(trim(file_get_contents("/etc/nanosize.txt")));
+		if (file_exists("/etc/nano_use_vga.txt"))
+			$nanosize = "-nanobsd-vga-";
+		else
+			$nanosize = "-nanobsd-";
+		$nanosize .= strtolower(trim(file_get_contents("/etc/nanosize.txt")));
 	}
 
 	@unlink("/tmp/{$g['product_name']}_version");

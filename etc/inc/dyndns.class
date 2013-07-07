@@ -19,11 +19,13 @@
 	 *    - OpenDNS (opendns.com)
 	 *    - Namecheap (namecheap.com)
 	 *    - HE.net (dns.he.net)
+	 *    - HE.net IPv6 (dns.he.net)
 	 *    - HE.net Tunnelbroker IP update (ipv4.tunnelbroker.net)
 	 *    - SelfHost (selfhost.de)
 	 *    - Amazon Route 53 (aws.amazon.com)
 	 *    - DNS-O-Matic (dnsomatic.com)
 	 *    - Custom DDNS (any URL)
+	 *    - Custom DDNS IPv6 (any URL)
 	 * +----------------------------------------------------+
 	 *  Requirements:
 	 *    - PHP version 4.0.2 or higher with the CURL Library and the PCRE Library
@@ -55,7 +57,8 @@
 	 *  DNSexit	   - Last Tested: 20 July 2008
 	 *  OpenDNS	   - Last Tested: 4 August 2008
 	 *  Namecheap	   - Last Tested: 31 August 2010
-	 *  HE.net         - Last Tested: NEVER
+	 *  HE.net         - Last Tested: 7 July 2013
+	 *  HE.net IPv6    - Last Tested: 7 July 2013
 	 *  HE.net Tunnel  - Last Tested: 28 June 2011
 	 *  SelfHost       - Last Tested: 26 December 2011
 	 *  Amazon Route 53 - Last tested: 01 April 2012
@@ -154,6 +157,7 @@
 			
 			switch ($dnsService) {
 			case 'he-net-v6':
+			case 'custom-v6':
 				$this->_useIPv6 = true;
 				break;
 			default:
@@ -211,6 +215,7 @@
 				case 'staticcling':
 				case 'dnsexit':
 				case 'custom':
+				case 'custom-v6':
 				case 'opendns':
 				case 'namecheap':
 				case 'he-net':
@@ -574,6 +579,7 @@
 					$this->_checkStatus(0, $result);
 					break;
 				case 'custom':
+				case 'custom-v6':
 					if ($this->_dnsVerboseLog)
 						log_error("Custom DDNS ({$this->_dnsHost}): DNS update() starting.");
 					if (strstr($this->dnsUpdateURL, "%IP%")) {$needsIP = TRUE;} else {$needsIP = FALSE;}
@@ -991,6 +997,7 @@
 					$successful_update = true;
 					break;
 				case 'custom':
+				case 'custom-v6':
 					$successful_update = false;
 					if ($this->_dnsResultMatch == "") {
 						$successful_update = true;

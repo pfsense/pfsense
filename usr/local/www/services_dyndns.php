@@ -152,7 +152,7 @@ include("head.inc");
 				echo "</font>";
 			} else if (file_exists($filename_v6)) {
 				$ipv6addr = get_interface_ipv6($dyndns['interface']);
-				$cached_ipv6_s = explode("@", file_get_contents($filename_v6));
+				$cached_ipv6_s = explode("|", file_get_contents($filename_v6));
 				$cached_ipv6 = $cached_ipv6_s[0];
 				if ($ipv6addr <> $cached_ipv6) 
 					echo "<font color='red'>";

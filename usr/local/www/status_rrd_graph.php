@@ -240,10 +240,10 @@ $graph_length = array(
 	"8hour" => 28800,
 	"day" => 86400,
 	"week" => 604800,
-	"month" => 2764800,
-	"quarter" => 8035200,
+	"month" => 2678400,
+	"quarter" => 7948800,
 	"year" => 31622400,
-	"4year" => 126489600);
+	"4year" => 126230400);
 
 $pgtitle = array(gettext("Status"),gettext("RRD Graphs"));
 

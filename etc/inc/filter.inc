@@ -867,7 +867,7 @@ function filter_generate_optcfg_array() {
 		if(!is_ipaddrv6($oc['ipaddrv6']) && !empty($oc['ipaddrv6']))
 			$oic['type6'] = $oc['ipaddrv6'];
 		if (!empty($oc['track6-interface']))
-			$oc['track6-interface'] = $oc['track6-interface'];
+			$oic['track6-interface'] = $oc['track6-interface'];
 		$oic['sn'] = get_interface_subnet($if);
 		$oic['snv6'] = get_interface_subnetv6($if);
 		$oic['mtu'] = empty($oc['mtu']) ? 1500 : $oc['mtu'];

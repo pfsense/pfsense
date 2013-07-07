@@ -139,6 +139,7 @@ include("head.inc");
 		  <td class="listr">
 		  <?php
 			$filename = "{$g['conf_path']}/dyndns_{$dyndns['interface']}{$dyndns['type']}" . escapeshellarg($dyndns['host']) . "{$dyndns['id']}.cache";
+			$filename_v6 = "{$g['conf_path']}/dyndns_{$dyndns['interface']}{$dyndns['type']}" . escapeshellarg($dyndns['host']) . "{$dyndns['id']}_v6.cache";
 			if (file_exists($filename)) {
 				$ipaddr = dyndnsCheckIP($dyndns['interface']);
 				$cached_ip_s = explode(":", file_get_contents($filename));
@@ -148,6 +149,16 @@ include("head.inc");
 				else 
 					echo "<font color='green'>";
 				echo htmlspecialchars($cached_ip);
+				echo "</font>";
+			} else if (file_exists($filename_v6)) {
+				$ipv6addr = get_interface_ipv6($dyndns['interface']);
+				$cached_ipv6_s = explode("@", file_get_contents($filename_v6));
+				$cached_ipv6 = $cached_ipv6_s[0];
+				if ($ipv6addr <> $cached_ipv6) 
+					echo "<font color='red'>";
+				else 
+					echo "<font color='green'>";
+				echo htmlspecialchars($cached_ipv6);
 				echo "</font>";
 			} else {
 				echo "N/A";

@@ -835,7 +835,7 @@ EOD;
 
 	if ($need_ddns_updates) {
 		$dhcpdconf .= "ddns-update-style interim;\n";
-		$dhcpdconf .= "update-static-mappings on;\n";
+		$dhcpdconf .= "update-static-leases on;\n";
 		
 		if (is_array($ddns_zones)) {
 			$added_zones = array();

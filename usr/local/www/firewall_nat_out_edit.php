@@ -485,7 +485,7 @@ function poolopts_change() {
 			<td width="22%" valign="top" class="vncellreq"><?=gettext("Protocol");?></td>
 			<td width="78%" class="vtable">
 				<select name="protocol" class="formselect" onchange="proto_change();">
-				<?php $protocols = explode(" ", "any TCP UDP TCP/UDP ICMP ESP AH GRE IGMP carp pfsync");
+				<?php $protocols = explode(" ", "any TCP UDP TCP/UDP ICMP ESP AH GRE IPV6 IGMP carp pfsync");
                                 foreach ($protocols as $proto): ?>
                                         <option value="<?=strtolower($proto);?>" <?php if (strtolower($proto) == $pconfig['protocol']) echo "selected=\"selected\""; ?>><?=htmlspecialchars($proto);?></option>
 				<?php endforeach; ?>

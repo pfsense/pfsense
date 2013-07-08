@@ -213,7 +213,7 @@ include("head.inc");
                   <td class="vtable">
                     <input name="link2" type="checkbox" id="link2" <?if ($pconfig['link2']) echo "checked=\"checked\"";?> />
                     <br/>
-                    <span class="vexpl"><?=gettext("Specify which WCCP encapsulation(version 1 or 2) method the tunnel should use");?></span></td>
+                    <span class="vexpl"><?=gettext("Check this box for WCCP encapsulation version 2, or leave unchecked for version 1.");?></span></td>
 			    </tr>
 				<tr>
                   <td width="22%" valign="top" class="vncell"><?=gettext("Description");?></td>

@@ -173,7 +173,7 @@ include("head.inc");
 				$tab_array = array();
 				$tab_array[] = array(gettext("IP"),($tab=="ip" ? true : ($tab=="host" ? true : ($tab == "network" ? true : false))), "/firewall_aliases.php?tab=ip");
 				$tab_array[] = array(gettext("Ports"), ($tab=="port"? true : false), "/firewall_aliases.php?tab=port");
-				$tab_array[] = array(gettext("Urls"), ($tab=="url"? true : false), "/firewall_aliases.php?tab=url");
+				$tab_array[] = array(gettext("URLs"), ($tab=="url"? true : false), "/firewall_aliases.php?tab=url");
 				$tab_array[] = array(gettext("All"), ($tab=="all"? true : false), "/firewall_aliases.php?tab=all");
 				display_top_tabs($tab_array);
 			?>

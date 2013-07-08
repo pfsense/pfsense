@@ -106,7 +106,7 @@ if (isset($id) && $a_aliases[$id]) {
 		if($ifdesc == $pconfig['descr'])
 			$input_errors[] = sprintf(gettext("Sorry, an interface is already named %s."), $pconfig['descr']);
 
-	if($a_aliases[$id]['type'] == "urltable") {
+	if(preg_match("/urltable/i", $a_aliases[$id]['type'])) {
 		$pconfig['address'] = $a_aliases[$id]['url'];
 		$pconfig['updatefreq'] = $a_aliases[$id]['updatefreq'];
 	}
@@ -165,7 +165,7 @@ if ($_POST) {
 	$final_address_details = array();
 	$alias['name'] = $_POST['name'];
 
-	if ($_POST['type'] == "urltable") {
+	if (preg_match("/urltable/i", $_POST['type'])) {
 		$address = "";
 		$isfirst = 0;
 
@@ -269,7 +269,7 @@ if ($_POST) {
 					if (!alias_same_type($_POST["address{$x}"], $_POST['type']))
 						// But alias type network can include alias type urltable. Feature#1603.
 						if (!($_POST['type'] == 'network' &&
-						      alias_get_type($_POST["address{$x}"]) == 'urltable'))
+						      preg_match("/urltable/i", alias_get_type($_POST["address{$x}"]))))
 							$wrongaliases .= " " . $_POST["address{$x}"];
 				} else if ($_POST['type'] == "port") {
 					if (!is_port($_POST["address{$x}"]))
@@ -464,6 +464,14 @@ function typesel_change() {
 				eval(comd);
 			}
 			break;
+		case 6:	/* urltable_ports */
+			var cmd;
+			newrows = totalrows;
+			for(i=0; i<newrows; i++) {
+				comd = 'document.iform.address_subnet' + i + '.disabled = 0;';
+				eval(comd);
+			}
+			break;
 	}
 }
 
@@ -486,7 +494,8 @@ $ports_str = gettext("Port(s)");
 $port_str = gettext("Port");
 $url_str = gettext("URL (IPs)");
 $url_ports_str = gettext("URL (Ports)");
-$urltable_str = gettext("URL Table");
+$urltable_str = gettext("URL Table (IPs)");
+$urltable_ports_str = gettext("URL Table (Ports)");
 $update_freq_str = gettext("Update Freq.");
 
 $networks_help = gettext("Networks are specified in CIDR format.  Select the CIDR mask that pertains to each entry. /32 specifies a single IPv4 host, /128 specifies a single IPv6 host, /24 specifies 255.255.255.0, /64 specifies a normal IPv6 network, etc. Hostnames (FQDNs) may also be specified, using a /32 mask for IPv4 or /128 for IPv6. You may also enter an IP range such as 192.168.1.1-192.168.1.254 and a list of CIDR networks will be derived to fill the range.");
@@ -495,6 +504,7 @@ $ports_help = gettext("Enter as many ports as you wish.  Port ranges can be expr
 $url_help = sprintf(gettext("Enter as many URLs as you wish. After saving %s will download the URL and import the items into the alias. Use only with small sets of IP addresses (less than 3000)."), $g['product_name']);
 $url_ports_help = sprintf(gettext("Enter as many URLs as you wish. After saving %s will download the URL and import the items into the alias. Use only with small sets of Ports (less than 3000)."), $g['product_name']);
 $urltable_help = sprintf(gettext("Enter a single URL containing a large number of IPs and/or Subnets. After saving %s will download the URL and create a table file containing these addresses. This will work with large numbers of addresses (30,000+) or small numbers."), $g['product_name']);
+$urltable_ports_help = sprintf(gettext("Enter a single URL containing a list of Port numbers and/or Port ranges. After saving %s will download the URL."), $g['product_name']);
 
 $openvpn_str = gettext("Username");
 $openvpn_user_str = gettext("OpenVPN Users");
@@ -560,6 +570,19 @@ function update_box_type() {
 		document.getElementById ("threecolumn").firstChild.data = "";
 		document.getElementById ("threecolumn").style.display = 'none';
 		document.getElementById ("itemhelp").firstChild.data = "{$urltable_help}";
+		document.getElementById ("addrowbutton").style.display = 'none';
+	} else if(selected == '{$urltable_ports_str}') {
+		if ((typeof(totalrows) == "undefined") || (totalrows < 1)) {
+			addRowTo('maintable', 'formfldalias');
+			typesel_change();
+			add_alias_control(this);
+		}
+		document.getElementById ("addressnetworkport").firstChild.data = "{$url_str}";
+		document.getElementById ("onecolumn").firstChild.data = "{$url_str}";
+		document.getElementById ("twocolumn").firstChild.data = "{$update_freq_str}";
+		document.getElementById ("threecolumn").firstChild.data = "";
+		document.getElementById ("threecolumn").style.display = 'none';
+		document.getElementById ("itemhelp").firstChild.data = "{$urltable_ports_help}";
 		document.getElementById ("addrowbutton").style.display = 'none';
 	}
 }
@@ -655,7 +678,8 @@ if (empty($tab)) {
 				<!--<option value="openvpn" <?php if ($pconfig['type'] == "openvpn") echo "selected=\"selected\""; ?>><?=gettext("OpenVPN Users"); ?></option> -->
 				<option value="url" <?php if ($pconfig['type'] == "url") echo "selected=\"selected\""; ?>><?=gettext("URL (IPs)");?></option>
 				<option value="url_ports" <?php if ($pconfig['type'] == "url_ports") echo "selected=\"selected\""; ?>><?=gettext("URL (Ports)");?></option>
-				<option value="urltable" <?php if ($pconfig['type'] == "urltable") echo "selected=\"selected\""; ?>><?=gettext("URL Table"); ?></option>
+				<option value="urltable" <?php if ($pconfig['type'] == "urltable") echo "selected=\"selected\""; ?>><?=gettext("URL Table (IPs)"); ?></option>
+				<option value="urltable_ports" <?php if ($pconfig['type'] == "urltable_ports") echo "selected=\"selected\""; ?>><?=gettext("URL Table (Ports)"); ?></option>
 			</select>
 		</td>
 	</tr>

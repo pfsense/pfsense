@@ -1030,9 +1030,16 @@ function alias_info_popup($alias_id){
 		$alias_name=$config['aliases']['alias'][$alias_id];
 		$alias_objects_with_details = "<table width=\"100%\" border=\"0\" cellpadding=\"2\" cellspacing=\"0\" summary=\"alias info popup\">";
 		if ($alias_name['url']) {
-			exec("/sbin/pfctl -t {$alias_name['name']} -T show | wc -l", $total_entries);
-			$counter=preg_replace("/\D/","",$total_entries[0]);
-			exec("/sbin/pfctl -t {$alias_name['name']} -T show | head -10002", $alias_addresses);
+			// TODO: Change it when pf supports tables with ports
+			if ($alias_name['type'] == "urltable") {
+				exec("/sbin/pfctl -t {$alias_name['name']} -T show | wc -l", $total_entries);
+				$counter=preg_replace("/\D/","",$total_entries[0]);
+				exec("/sbin/pfctl -t {$alias_name['name']} -T show | head -10002", $alias_addresses);
+			} else {
+				$urlfn = alias_expand_urltable($alias_name['name']);
+				$alias_addresses = explode("\n", file_get_contents($urlfn));
+				$counter = count($alias_addresses);
+			}
 			$alias_objects_with_details .= "<tr><td colspan=\"3\" $close_title class=\"vncell\">{$alias_name['url']}</td></tr>";
 			$x=0;
 			foreach ($alias_addresses as $alias_ports_address ) {

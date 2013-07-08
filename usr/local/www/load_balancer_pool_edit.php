@@ -215,7 +215,7 @@ function clearcombo(){
 				</div>
 				<script type="text/javascript">
 				//<![CDATA[
-					var addressarray = <?= json_encode(get_alias_list(array("port", "url_ports"))) ?>;
+					var addressarray = <?= json_encode(get_alias_list(array("port", "url_ports", "urltable_ports"))) ?>;
 					var oTextbox1 = new AutoSuggestControl(document.getElementById("port"), new StateSuggestions(addressarray));
 				//]]>
 				</script>

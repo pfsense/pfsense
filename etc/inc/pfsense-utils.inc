@@ -2041,6 +2041,8 @@ function pfs_version_compare($cur_time, $cur_text, $remote) {
 	return $v;
 }
 function process_alias_urltable($name, $url, $freq, $forceupdate=false) {
+	global $config;
+
 	$urltable_prefix = "/var/db/aliastables/";
 	$urltable_filename = $urltable_prefix . $name . ".txt";
 
@@ -2060,11 +2062,14 @@ function process_alias_urltable($name, $url, $freq, $forceupdate=false) {
 		// Try to fetch the URL supplied
 		conf_mount_rw();
 		unlink_if_exists($urltable_filename . ".tmp");
-		// Use fetch to grab data since these may be large files, we don't want to process them through PHP if we can help it.
-		mwexec("/usr/bin/fetch -T 5 -q -o " . escapeshellarg($urltable_filename . ".tmp") . " " . escapeshellarg($url));
-		// Remove comments. Might need some grep-fu to only allow lines that look like IPs/subnets
-		if (file_exists($urltable_filename . ".tmp")) {
-			mwexec("/usr/bin/sed 's/\;.*//g' ". escapeshellarg($urltable_filename . ".tmp") . "| /usr/bin/egrep -v '^[[:space:]]*$|^#' > " . escapeshellarg($urltable_filename));
+		$verify_ssl = isset($config['system']['checkaliasesurlcert']);
+		if (download_file($url, $urltable_filename . ".tmp", $verify_ssl)) {
+			mwexec("/usr/bin/sed -E 's/\;.*//g; /^[[:space:]]*($|#)/d' ". escapeshellarg($urltable_filename . ".tmp") . " > " . escapeshellarg($urltable_filename));
+			if (alias_get_type($name) == "urltable_ports") {
+				$ports = explode("\n", file_get_contents($urltable_filename));
+				$ports = group_ports($ports);
+				file_put_contents($urltable_filename, implode("\n", $ports));
+			}
 			unlink_if_exists($urltable_filename . ".tmp");
 		} else
 			mwexec("/usr/bin/touch {$urltable_filename}");

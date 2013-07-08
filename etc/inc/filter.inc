@@ -634,7 +634,14 @@ function filter_generate_aliases() {
 					$aliases .= "{$aliased['name']} = \"<{$aliased['name']}>\"\n";
 				}
 				break;
+			case "urltable_ports":
+				// TODO: Change it when pf supports tables with ports
+				$urlfn = alias_expand_urltable($aliased['name']);
+				if ($urlfn)
+					$aliases .= "{$aliased['name']} = \"{ " . preg_replace("/\n/", " ", file_get_contents($urlfn)) . " }\"\n";
+				break;
 			case "port":
+			case "url_ports":
 				$aliases .= "{$aliased['name']} = \"{ {$addrlist} }\"\n";
 				break;
 			default:

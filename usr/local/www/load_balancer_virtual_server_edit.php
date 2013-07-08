@@ -186,7 +186,7 @@ include("head.inc");
 					<br><?=gettext("You may also specify a port alias listed in Firewall -&gt; Aliases here."); ?>
 					<script type="text/javascript">
 					//<![CDATA[
-						var port_aliases = <?= json_encode(get_alias_list(array("port", "url_ports"))) ?>;
+						var port_aliases = <?= json_encode(get_alias_list(array("port", "url_ports", "urltable_ports"))) ?>;
 						var oTextbox2 = new AutoSuggestControl(document.getElementById("port"), new StateSuggestions(port_aliases));
 					//]]>
 					</script>

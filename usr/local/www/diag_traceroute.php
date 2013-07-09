@@ -187,7 +187,7 @@ if ($do_traceroute) {
 	if ($ifaddr && (is_ipaddr($host) || is_hostname($host)))
 		$srcip = "-s " . escapeshellarg($ifaddr);
 
-	$cmd = "{$command} {$n} {$srcip} -w 2 -m " . escapeshellarg($ttl) . " " . escapeshellarg($host);
+	$cmd = "{$command} {$n} {$srcip} -w 2 {$useicmp} -m " . escapeshellarg($ttl) . " " . escapeshellarg($host);
 
 	//echo "Traceroute command: {$cmd}\n";
 	system($cmd);

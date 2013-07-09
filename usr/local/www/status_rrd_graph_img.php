@@ -95,12 +95,6 @@ $scales[2764800] = "DAY:1:WEEK:1:WEEK:1:0:Week %W";
 $scales[16070400] = "WEEK:1:MONTH:1:MONTH:1:0:%b";
 $scales[42854400] = "MONTH:1:MONTH:1:MONTH:1:0:%b";
 
-$archives = array();
-$archives[1] = 1200;
-$archives[5] = 720;
-$archives[60] = 1860;
-$archives[1440] = 3652;
-
 $defOptions = array(
 	'to' => 1,
 	'parts' => 1,
@@ -109,14 +103,16 @@ $defOptions = array(
 	'separator' => ', '
 );
 
-/* always set the average to the highest value as a fallback */
-$average = 1440 * 60;
-foreach($archives as $rra => $value) {
-        $archivestart = $now - ($rra * 60 * $value);
-        if($archivestart <= $start) {
-                $average = $rra * 60;
-                break;
-        }
+/* Set the average granularity of each graph length. */
+switch($curgraph) {
+	case "8hour":	$average =    1 * 60;	break;
+	case "day":		$average =    5 * 60;	break;
+	case "week":	$average =   60 * 60;	break;
+	case "month":	$average =   60 * 60;	break;
+	case "quarter":	$average = 1440 * 60;	break;
+	case "year":	$average = 1440 * 60;	break;
+	case "4year":	$average = 1440 * 60;	break;
+	default:		$average = 1440 * 60;	break;	// always set the average to the highest value as a fallback
 }
 
 foreach($scales as $scalelength => $value) {

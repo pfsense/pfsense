@@ -1392,8 +1392,6 @@ function captiveportal_init_dn_rules() {
 	unlink_if_exists("{$g['vardb_path']}/captiveportaldn.rules"); /* improved thank's to Renato Botelho */
 }
 
-
-
 function captiveportal_get_dn_passthru_ruleno($value) {
 	global $config, $g, $cpzone;
 

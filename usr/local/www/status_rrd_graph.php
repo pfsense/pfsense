@@ -336,14 +336,11 @@ function get_dates($curperiod, $graph) {
 						break;
 				}
 				$start = mktime($houroffset, 0, 0, $curmonth, $curday, $curyear);
-				if($offset != 0) {
-					$end = mktime(($houroffset + 8), 0, 0, $curmonth, $curday, $curyear);
-				}
+				$end = mktime(($houroffset + 8), 0, 0, $curmonth, $curday, $curyear);
 				break;
 			case "day":
 				$start = mktime(0, 0, 0, $curmonth, ($curday + $offset), $curyear);
-				if($offset != 0)
-					$end = mktime(0, 0, 0, $curmonth, (($curday + $offset) + 1), $curyear);
+				$end = mktime(0, 0, 0, $curmonth, (($curday + $offset) + 1), $curyear);
 				break;
 			case "week":
 				switch($offset) {
@@ -355,30 +352,26 @@ function get_dates($curperiod, $graph) {
 						break;
 				}
 				$start = mktime(0, 0, 0, $curmonth, (($curday - $curweekday) + $weekoffset), $curyear);
-				if($offset != 0)
-					$end = mktime(0, 0, 0, $curmonth, (($curday - $curweekday) + $weekoffset + 7), $curyear);
+				$end = mktime(0, 0, 0, $curmonth, (($curday - $curweekday) + $weekoffset + 7), $curyear);
 				break;
 			case "month":
 				$start = mktime(0, 0, 0, ($curmonth + $offset), 0, $curyear);
-				if($offset != 0)
-					$end = mktime(0, 0, 0, (($curmonth + $offset) + 1), 0, $curyear);
+				$end = mktime(0, 0, 0, (($curmonth + $offset) + 1), 0, $curyear);
 				break;
 			case "quarter":
 				$start = mktime(0, 0, 0, (($curmonth - 2) + $offset), 0, $curyear);
-				if($offset != 0)
-					$end = mktime(0, 0, 0, (($curmonth + $offset) + 1), 0, $curyear);
+				$end = mktime(0, 0, 0, (($curmonth + $offset) + 1), 0, $curyear);
 				break;
 			case "year":
 				$start = mktime(0, 0, 0, 1, 0, ($curyear + $offset));
-				if($offset != 0)
-					$end = mktime(0, 0, 0, 1, 0, (($curyear + $offset) +1));
+				$end = mktime(0, 0, 0, 1, 0, (($curyear + $offset) +1));
 				break;
 			case "4year":
 				$start = mktime(0, 0, 0, 1, 0, (($curyear - 3) + $offset));
-				if($offset != 0)
-					$end = mktime(0, 0, 0, 1, 0, (($curyear + $offset) +1));
+				$end = mktime(0, 0, 0, 1, 0, (($curyear + $offset) +1));
 				break;
 		}
+		if($offset == 0) $end -= 1;
 	}
 	// echo "start $start ". date('l jS \of F Y h:i:s A', $start) .", end $end ". date('l jS \of F Y h:i:s A', $end) ."<br>";
 	$dates = array();

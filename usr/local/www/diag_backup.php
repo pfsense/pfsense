@@ -182,6 +182,7 @@ function spit_out_select_items($name, $showall) {
 		       "voucher" => gettext("Captive Portal Vouchers"),
 		       "dnsmasq" => gettext("DNS Forwarder"),
 		       "dhcpd" => gettext("DHCP Server"),
+		       "dhcpdv6" => gettext("DHCPv6 Server"),
 		       "filter" => gettext("Firewall Rules"),
 		       "interfaces" => gettext("Interfaces"),
 		       "ipsec" => gettext("IPSEC"),

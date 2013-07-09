@@ -1389,11 +1389,7 @@ function captiveportal_free_dn_ruleno($ruleno) {
 
 function captiveportal_init_dn_rules() {
   global $config, $g;
-  if (file_exists("{$g['vardb_path']}/captiveportaldn.rules"))
-  {
-    $file = "{$g['vardb_path']}/captiveportaldn.rules";
-    unlink($file);
-  }
+	unlink_if_exists("{$g['vardb_path']}/captiveportaldn.rules"); /* improved thank's to Renato Botelho */
 }
 
 

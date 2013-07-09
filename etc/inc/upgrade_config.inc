@@ -3111,4 +3111,12 @@ function upgrade_095_to_096() {
 	enable_rrd_graphing();
 }
 
+function upgrade_096_to_097() {
+	global $config, $g;
+	/* If the user had disabled default block rule logging before, then bogon/private network logging was already off, so respect their choice. */
+	if (isset($config['syslog']['nologdefaultblock'])) {
+		$config['syslog']['nologbogons'] = true;
+		$config['syslog']['nologprivatenets'] = true;
+	}
+}
 ?>

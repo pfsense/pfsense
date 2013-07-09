@@ -2613,17 +2613,22 @@ EOD;
 		/* block bogon networks */
 		/* http://www.cymru.com/Documents/bogon-bn-nonagg.txt */
 		/* file is automatically in cron every 3000 minutes */
+		if(!isset($config['syslog']['nologbogons']))
+			$bogonlog = "log";
+		else
+			$bogonlog = "";
+
 		if(isset($config['interfaces'][$on]['blockbogons'])) {
 			$ipfrules .= <<<EOD
 # block bogon networks
 # http://www.cymru.com/Documents/bogon-bn-nonagg.txt
 # http://www.team-cymru.org/Services/Bogons/fullbogons-ipv6.txt
-block in $log quick on \${$oc['descr']} from <bogons> to any label "block bogon IPv4 networks from {$oc['descr']}"
+block in $bogonlog quick on \${$oc['descr']} from <bogons> to any label "block bogon IPv4 networks from {$oc['descr']}"
 
 EOD;
 			if(isset($config['system']['ipv6allow'])) {
 				$ipfrules .= <<<EOD
-block in $log quick on \${$oc['descr']} from <bogonsv6> to any label "block bogon IPv6 networks from {$oc['descr']}"
+block in $bogonlog quick on \${$oc['descr']} from <bogonsv6> to any label "block bogon IPv6 networks from {$oc['descr']}"
 
 EOD;
 			}
@@ -2640,17 +2645,22 @@ EOD;
 		if($oc['ip'] && !($isbridged) && isset($oc['spoofcheck']))
 			$ipfrules .= filter_rules_spoofcheck_generate($on, $oc['if'], $oc['sa'], $oc['sn'], $log);
 		/* block private networks ? */
+		if(!isset($config['syslog']['nologprivatenets']))
+			$privnetlog = "log";
+		else
+			$privnetlog = "";
+
 		if(isset($config['interfaces'][$on]['blockpriv'])) {
 			if($isbridged == false) {
 				$ipfrules .= <<<EOD
 # block anything from private networks on interfaces with the option set
 antispoof for \${$oc['descr']}
-block in $log quick on \${$oc['descr']} from 10.0.0.0/8 to any label "Block private networks from {$oc['descr']} block 10/8"
-block in $log quick on \${$oc['descr']} from 127.0.0.0/8 to any label "Block private networks from {$oc['descr']} block 127/8"
-block in $log quick on \${$oc['descr']} from 100.64.0.0/10 to any label "Block private networks from {$oc['descr']} block 100.64/10"
-block in $log quick on \${$oc['descr']} from 172.16.0.0/12 to any label "Block private networks from {$oc['descr']} block 172.16/12"
-block in $log quick on \${$oc['descr']} from 192.168.0.0/16 to any label "Block private networks from {$oc['descr']} block 192.168/16"
-block in $log quick on \${$oc['descr']} from fc00::/7 to any label "Block ULA networks from {$oc['descr']} block fc00::/7"
+block in $privnetlog quick on \${$oc['descr']} from 10.0.0.0/8 to any label "Block private networks from {$oc['descr']} block 10/8"
+block in $privnetlog quick on \${$oc['descr']} from 127.0.0.0/8 to any label "Block private networks from {$oc['descr']} block 127/8"
+block in $privnetlog quick on \${$oc['descr']} from 100.64.0.0/10 to any label "Block private networks from {$oc['descr']} block 100.64/10"
+block in $privnetlog quick on \${$oc['descr']} from 172.16.0.0/12 to any label "Block private networks from {$oc['descr']} block 172.16/12"
+block in $privnetlog quick on \${$oc['descr']} from 192.168.0.0/16 to any label "Block private networks from {$oc['descr']} block 192.168/16"
+block in $privnetlog quick on \${$oc['descr']} from fc00::/7 to any label "Block ULA networks from {$oc['descr']} block fc00::/7"
 
 EOD;
 			}

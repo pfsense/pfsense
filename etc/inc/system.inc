@@ -963,6 +963,14 @@ function system_generate_lighty_config($filename,
 	else
 		$fast_cgi_path = "{$g['tmp_path']}/php-fastcgi.socket";
 
+	if(!isset($config['syslog']['nologlighttpd'])) {
+		$lighty_use_syslog = <<<EOD
+## where to send error-messages to
+server.errorlog-use-syslog="enable"
+EOD;
+	}
+
+
 	$fastcgi_config = <<<EOD
 #### fastcgi module
 ## read fastcgi.txt for more info
@@ -1011,8 +1019,7 @@ server.document-root        = "{$document_root}"
 # Maximum idle time with nothing being written (php downloading)
 server.max-write-idle = 999
 
-## where to send error-messages to
-server.errorlog-use-syslog="enable"
+{$lighty_use_syslog}
 
 # files to check for if .../ is requested
 server.indexfiles           = ( "index.php", "index.html",

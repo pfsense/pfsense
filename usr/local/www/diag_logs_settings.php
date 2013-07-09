@@ -63,6 +63,9 @@ $pconfig['logall'] = isset($config['syslog']['logall']);
 $pconfig['system'] = isset($config['syslog']['system']);
 $pconfig['enable'] = isset($config['syslog']['enable']);
 $pconfig['logdefaultblock'] = !isset($config['syslog']['nologdefaultblock']);
+$pconfig['logbogons'] = !isset($config['syslog']['nologbogons']);
+$pconfig['logprivatenets'] = !isset($config['syslog']['nologprivatenets']);
+$pconfig['loglighttpd'] = !isset($config['syslog']['nologlighttpd']);
 $pconfig['rawfilter'] = isset($config['syslog']['rawfilter']);
 $pconfig['filterdescriptions'] = $config['syslog']['filterdescriptions'];
 $pconfig['disablelocallogging'] = isset($config['syslog']['disablelocallogging']);
@@ -115,7 +118,13 @@ if ($_POST) {
 		$config['syslog']['disablelocallogging'] = $_POST['disablelocallogging'] ? true : false;
 		$config['syslog']['enable'] = $_POST['enable'] ? true : false;
 		$oldnologdefaultblock = isset($config['syslog']['nologdefaultblock']);
+		$oldnologbogons = isset($config['syslog']['nologbogons']);
+		$oldnologprivatenets = isset($config['syslog']['nologprivatenets']);
+		$oldnologlighttpd = isset($config['syslog']['nologlighttpd']);
 		$config['syslog']['nologdefaultblock'] = $_POST['logdefaultblock'] ? false : true;
+		$config['syslog']['nologbogons'] = $_POST['logbogons'] ? false : true;
+		$config['syslog']['nologprivatenets'] = $_POST['logprivatenets'] ? false : true;
+		$config['syslog']['nologlighttpd'] = $_POST['loglighttpd'] ? false : true;
 		$config['syslog']['rawfilter'] = $_POST['rawfilter'] ? true : false;
 		if (is_numeric($_POST['filterdescriptions']) && $_POST['filterdescriptions'] > 0)
 			$config['syslog']['filterdescriptions'] = $_POST['filterdescriptions'];
@@ -131,12 +140,22 @@ if ($_POST) {
 
 		$retval = 0;
 		$retval = system_syslogd_start();
-		if ($oldnologdefaultblock !== isset($config['syslog']['nologdefaultblock']))
+		if (($oldnologdefaultblock !== isset($config['syslog']['nologdefaultblock']))
+			|| ($oldnologbogons !== isset($config['syslog']['nologbogons']))
+			|| ($oldnologprivatenets !== isset($config['syslog']['nologprivatenets'])))
 			$retval |= filter_configure();
 
-		filter_pflog_start(true);
-
 		$savemsg = get_std_save_message($retval);
+
+		if ($oldnologlighttpd !== isset($config['syslog']['nologlighttpd'])) {
+			ob_flush();
+			flush();
+			log_error(gettext("webConfigurator configuration has changed. Restarting webConfigurator."));
+			send_event("service restart webgui");
+			$savemsg .= "<br />" . gettext("WebGUI process is restarting.");
+		}
+
+		filter_pflog_start(true);
 	}
 }
 
@@ -253,11 +272,23 @@ function check_everything() {
 		</tr>
 		<tr>
 			<td valign="top" class="vtable">Log Firewall Default Blocks</td>
-			<td class="vtable"> <input name="logdefaultblock" type="checkbox" id="logdefaultblock" value="yes" <?php if ($pconfig['logdefaultblock']) echo "checked"; ?>>
-			<strong><?=gettext("Log packets blocked by the default rule");?></strong><br>
-				<?=gettext("Hint: packets that are blocked by the " .
-				"implicit default block rule will not be logged " .
-				"if you uncheck this option. Per-rule logging options are still respected.");?></td>
+			<td class="vtable">
+				<input name="logdefaultblock" type="checkbox" id="logdefaultblock" value="yes" <?php if ($pconfig['logdefaultblock']) echo "checked"; ?>>
+				<strong><?=gettext("Log packets blocked by the default rule");?></strong><br/>
+				<?=gettext("Hint: packets that are blocked by the implicit default block rule will not be logged if you uncheck this option. Per-rule logging options are still respected.");?>
+				<br/>
+				<input name="logbogons" type="checkbox" id="logbogons" value="yes" <?php if ($pconfig['logbogons']) echo "checked"; ?>>
+				<strong><?=gettext("Log packets blocked by 'Block Bogon Networks' rules");?></strong><br/>
+				<br/>
+				<input name="logprivatenets" type="checkbox" id="logprivatenets" value="yes" <?php if ($pconfig['logprivatenets']) echo "checked"; ?>>
+				<strong><?=gettext("Log packets blocked by 'Block Private Networks' rules");?></strong><br/>
+			</td>
+		</tr>
+		<tr>
+			<td valign="top" class="vtable">Web Server Log</td>
+			<td class="vtable"> <input name="loglighttpd" type="checkbox" id="loglighttpd" value="yes" <?php if ($pconfig['loglighttpd']) echo "checked"; ?>>
+			<strong><?=gettext("Log errors from the web server process.");?></strong><br>
+			<?=gettext("Hint: If this is checked, errors from the lighttpd web server process for the GUI or Captive Portal will appear in the main system log.");?></td>
 		</tr>
 		<tr>
 			<td valign="top" class="vtable">Raw Logs</td>

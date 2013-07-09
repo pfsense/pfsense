@@ -706,7 +706,7 @@ function get_dates($curperiod, $graph) {
 									$id = preg_replace('/\./', '_', $id);
 
 									echo "\n";
-									echo "\t\tjQuery('#{$id}').attr('src','status_rrd_graph_img.php?start={$start}&graph={$graph}&database={$curdatabase}&style={$curstyle}&tmp=' + randomid);\n";
+									echo "\t\tjQuery('#{$id}').attr('src','status_rrd_graph_img.php?start={$start}&end={$end}&graph={$graph}&database={$curdatabase}&style={$curstyle}&tmp=' + randomid);\n";
 									}
 								}
 							?>

@@ -1686,13 +1686,13 @@ function portal_mac_radius($clientmac,$clientip) {
 	$username = mac_format($clientmac);
 	$auth_list = radius($username,$radmac_secret,$clientip,$clientmac,"MACHINE LOGIN");
 	
-	return FALSE; /* moved here to avoid the function always return false */
-	
 	if ($auth_list['auth_val'] == 2)
 		return TRUE;
 
 	if (!empty($auth_list['url_redirection']))
 		portal_reply_page($auth_list['url_redirection'], "redir");
+
+	return FALSE;
 
 }
 

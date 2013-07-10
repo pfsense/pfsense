@@ -371,7 +371,6 @@ function get_dates($curperiod, $graph) {
 				$end = mktime(0, 0, 0, 1, 0, (($curyear + $offset) +1));
 				break;
 		}
-		if($offset == 0) $end -= 1;
 	}
 	// echo "start $start ". date('l jS \of F Y h:i:s A', $start) .", end $end ". date('l jS \of F Y h:i:s A', $end) ."<br>";
 	$dates = array();

@@ -690,7 +690,8 @@ function get_dates($curperiod, $graph) {
 									}
 									$dates = get_dates($curperiod, $graph);
 									$start = $dates['start'];
-									if($curperiod == "current") {
+									$end = '';
+									if( ($curperiod == "current") || ($curperiod == "previous") ) {
 										$end = $dates['end'];
 									}
 									/* generate update events utilizing jQuery('') feature */

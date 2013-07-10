@@ -362,6 +362,7 @@ EOD;
 		/* remove old information */
 		unlink_if_exists("{$g['vardb_path']}/captiveportal{$cpzone}.db");
 		unlink_if_exists("{$g['vardb_path']}/captiveportal_radius_{$cpzone}.db");
+		unlink_if_exists("{$g['vardb_path']}/captiveportal_{$cpzone}.rules");
 
 		mwexec("/usr/local/sbin/ipfw_context -d {$cpzone}", true);
 
@@ -1200,7 +1201,7 @@ function radius($username,$password,$clientip,$clientmac,$type, $radiusctx = nul
 	$pipeno = captiveportal_get_next_dn_ruleno();
 
 	/* If the pool is empty, return appropriate message and fail authentication */
-	if (is_null($pipeno)) {
+	if (empty($pipeno)) {
 		$auth_list = array();
 		$auth_list['auth_val'] = 1;
 		$auth_list['error'] = "System reached maximum login capacity";

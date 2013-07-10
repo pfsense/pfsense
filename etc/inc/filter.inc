@@ -2966,24 +2966,6 @@ EOD;
 		unset($rule_arr1, $rule_arr2, $rule_arr3);
 	}
 
-	$ipfrules .= "\n# Automatic Pass rules for any delegated IPv6 prefixes through dynamic IPv6 clients\n";
-	/* add automatic LAN rules to allow IPv6 traffic out for dynamic IPv6 networks */
-	foreach ($FilterIflist as $ifdescr => $ifcfg) {
-		if (isset($ifcfg['track6-interface'])) {
-			if (is_ipaddrv6($ifcfg['ipv6'])) {
-				$trackifname = $ifcfg['track6-interface'];
-				$trackcfg = $FilterIflist[$trackifname];
-				$pdlen = 64 - calculate_ipv6_delegation_length($trackifname);
-				$prefix = Net_IPv6::getNetmask($ifcfg['ipv6'], $pdlen);
-				$ipfrules .= "pass in on \${$ifcfg['descr']} inet6 from $prefix/$pdlen to any keep state label \"Allow IPv6 on {$ifcfg['descr']} to any\"\n";
-				/* add rules on the WAN for traffic back in, let the downstream router
-				 * figure out what to do with the traffic */
-				if (is_ipaddrv6($trackcfg['ipv6']))
-					$ipfrules .= "pass in on \${$trackcfg['descr']} inet6 from any to $prefix/$pdlen keep state label \"Allow IPv6 in on {$trackcfg['descr']} to $prefix/$pdlen\"\n";
-			}
-		}
-	}
-
 	/*  pass traffic between statically routed subnets and the subnet on the
 	 *  interface in question to avoid problems with complicated routing
 	 *  topologies

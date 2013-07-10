@@ -363,6 +363,8 @@ EOD;
 		unlink_if_exists("{$g['vardb_path']}/captiveportal{$cpzone}.db");
 		unlink_if_exists("{$g['vardb_path']}/captiveportal_radius_{$cpzone}.db");
 		unlink_if_exists("{$g['vardb_path']}/captiveportal_{$cpzone}.rules");
+		/* Release allocated pipes for this zone */
+		captiveportal_free_dnrules();
 
 		mwexec("/usr/local/sbin/ipfw_context -d {$cpzone}", true);
 
@@ -1341,8 +1343,26 @@ function captiveportal_write_elements() {
 	return 0;
 }
 
+function captiveportal_free_dnrules($rulenos_start = 2000, $rulenos_range_max = 64500) {
+	global $cpzone;
+
+	$cpruleslck = lock("captiveportalrulesdn", LOCK_EX);
+	if (file_exists("{$g['vardb_path']}/captiveportaldn.rules")) {
+		$rules = unserialize(file_get_contents("{$g['vardb_path']}/captiveportaldn.rules"));
+		for ($ridx = $rulenos_start; $ridx < $rulenos_range_max; $ridx++) {
+			if ($rules[$ridx] == $cpzone) {
+				$rules[$ruleno] = false;
+				$ridx++;
+				$rules[$ruleno] = false;
+			}
+		}
+	}
+	file_put_contents("{$g['vardb_path']}/captiveportaldn.rules", serialize($rules));
+	unlock($cpruleslck);
+}
+
 function captiveportal_get_next_dn_ruleno($rulenos_start = 2000, $rulenos_range_max = 64500) {
-	global $config, $g;
+	global $config, $g, $cpzone;
 
 	$cpruleslck = lock("captiveportalrulesdn", LOCK_EX);
 	$ruleno = 0;
@@ -1354,15 +1374,15 @@ function captiveportal_get_next_dn_ruleno($rulenos_start = 2000, $rulenos_range_
 				continue;
 			}
 			$ruleno = $ridx;
-			$rules[$ridx] = "used";
-			$rules[++$ridx] = "used";
+			$rules[$ridx] = $cpzone;
+			$rules[++$ridx] = $cpzone;
 			break;
 		}
 	} else {
 		$rules = array_pad(array(), $rulenos_range_max, false);
 		$ruleno = $rulenos_start;
-		$rules[$rulenos_start] = "used";
-		$rules[++$rulenos_start] = "used";
+		$rules[$rulenos_start] = $cpzone;
+		$rules[++$rulenos_start] = $cpzone;
 	}
 	file_put_contents("{$g['vardb_path']}/captiveportaldn.rules", serialize($rules));
 	unlock($cpruleslck);

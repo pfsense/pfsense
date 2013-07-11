@@ -1351,9 +1351,9 @@ function captiveportal_free_dnrules($rulenos_start = 2000, $rulenos_range_max = 
 		$rules = unserialize(file_get_contents("{$g['vardb_path']}/captiveportaldn.rules"));
 		for ($ridx = $rulenos_start; $ridx < $rulenos_range_max; $ridx++) {
 			if ($rules[$ridx] == $cpzone) {
-				$rules[$ruleno] = false;
+				$rules[$ridx] = false;
 				$ridx++;
-				$rules[$ruleno] = false;
+				$rules[$ridx] = false;
 			}
 		}
 	}

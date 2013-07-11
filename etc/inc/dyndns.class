@@ -19,11 +19,13 @@
 	 *    - OpenDNS (opendns.com)
 	 *    - Namecheap (namecheap.com)
 	 *    - HE.net (dns.he.net)
+	 *    - HE.net IPv6 (dns.he.net)
 	 *    - HE.net Tunnelbroker IP update (ipv4.tunnelbroker.net)
 	 *    - SelfHost (selfhost.de)
 	 *    - Amazon Route 53 (aws.amazon.com)
 	 *    - DNS-O-Matic (dnsomatic.com)
 	 *    - Custom DDNS (any URL)
+	 *    - Custom DDNS IPv6 (any URL)
 	 * +----------------------------------------------------+
 	 *  Requirements:
 	 *    - PHP version 4.0.2 or higher with the CURL Library and the PCRE Library
@@ -55,7 +57,8 @@
 	 *  DNSexit	   - Last Tested: 20 July 2008
 	 *  OpenDNS	   - Last Tested: 4 August 2008
 	 *  Namecheap	   - Last Tested: 31 August 2010
-	 *  HE.net         - Last Tested: NEVER
+	 *  HE.net         - Last Tested: 7 July 2013
+	 *  HE.net IPv6    - Last Tested: 7 July 2013
 	 *  HE.net Tunnel  - Last Tested: 28 June 2011
 	 *  SelfHost       - Last Tested: 26 December 2011
 	 *  Amazon Route 53 - Last tested: 01 April 2012
@@ -74,6 +77,7 @@
 
 	class updatedns {
 		var $_cacheFile;
+		var $_cacheFile_v6;
 		var $_debugFile;
 		var $_UserAgent = 'User-Agent: phpDynDNS/0.7';
 		var $_errorVerbosity = 0;
@@ -100,6 +104,7 @@
 		var $_dnsMaxCacheAgeDays;
 		var $_dnsDummyUpdateDone;
 		var $_forceUpdateNeeded;
+		var $_useIPv6;
 		
 		/* 
 		 * Public Constructor Function (added 12 July 05) [beta]
@@ -119,6 +124,7 @@
 			global $config, $g;
 			
 			$this->_cacheFile = "{$g['conf_path']}/dyndns_{$dnsIf}{$dnsService}" . escapeshellarg($dnsHost) . "{$dnsID}.cache";
+			$this->_cacheFile_v6 = "{$g['conf_path']}/dyndns_{$dnsIf}{$dnsService}" . escapeshellarg($dnsHost) . "{$dnsID}_v6.cache";
 			$this->_debugFile = "{$g['varetc_path']}/dyndns_{$dnsIf}{$dnsService}" . escapeshellarg($dnsHost) . "{$dnsID}.debug";
 
 			$this->_dnsVerboseLog = $dnsVerboseLog;
@@ -149,6 +155,14 @@
 				if (!$dnsHost) $this->_error(5);
 			}
 			
+			switch ($dnsService) {
+			case 'he-net-v6':
+			case 'custom-v6':
+				$this->_useIPv6 = true;
+				break;
+			default:
+				$this->_useIPv6 = false;
+			}
 			$this->_dnsService = strtolower($dnsService);
 			$this->_dnsUser = $dnsUser;
 			$this->_dnsPass = $dnsPass;
@@ -201,9 +215,11 @@
 				case 'staticcling':
 				case 'dnsexit':
 				case 'custom':
+				case 'custom-v6':
 				case 'opendns':
 				case 'namecheap':
 				case 'he-net':
+				case 'he-net-v6':
 				case 'selfhost':
 				case 'he-net-tunnelbroker':
 				case 'route53':
@@ -472,6 +488,7 @@
 					curl_setopt($ch, CURLOPT_URL, $server);
 					break;
 				case 'he-net':
+				case 'he-net-v6':
 					$needsIP = FALSE;
 					if ($this->_dnsVerboseLog)
 						log_error("HE.net ({$this->_dnsHost}): DNS update() starting.");
@@ -562,6 +579,7 @@
 					$this->_checkStatus(0, $result);
 					break;
 				case 'custom':
+				case 'custom-v6':
 					if ($this->_dnsVerboseLog)
 						log_error("Custom DDNS ({$this->_dnsHost}): DNS update() starting.");
 					if (strstr($this->dnsUpdateURL, "%IP%")) {$needsIP = TRUE;} else {$needsIP = FALSE;}
@@ -912,6 +930,7 @@
 					break;
 					
 				case 'he-net':
+				case 'he-net-v6':
 					if (preg_match("/badip/i", $data)) {
 						$status = "phpDynDNS: (Error) Bad Request - The IP provided was invalid.";
 					} else if (preg_match('/nohost/i', $data)) {
@@ -978,6 +997,7 @@
 					$successful_update = true;
 					break;
 				case 'custom':
+				case 'custom-v6':
 					$successful_update = false;
 					if ($this->_dnsResultMatch == "") {
 						$successful_update = true;
@@ -1002,13 +1022,20 @@
 				/* Write WAN IP to cache file */
 				$wan_ip = $this->_checkIP();
 				conf_mount_rw();
-				if ($wan_ip > 0) {
+				if ($this->_useIPv6 == false && $wan_ip > 0) {
 					$currentTime = time();
 					notify_all_remote(sprintf(gettext("DynDNS updated IP Address on %s (%s) to %s"), convert_real_interface_to_friendly_descr($this->_if), $this->_if, $wan_ip));
 					log_error("phpDynDNS: updating cache file {$this->_cacheFile}: {$wan_ip}");
 					@file_put_contents($this->_cacheFile, "{$wan_ip}:{$currentTime}");
 				} else
 					@unlink($this->_cacheFile);
+				if ($this->_useIPv6 == true && $wan_ip > 0) {
+					$currentTime = time();
+					notify_all_remote(sprintf(gettext("DynDNS updated IPv6 Address on %s (%s) to %s"), convert_real_interface_to_friendly_descr($this->_if), $this->_if, $wan_ip));
+					log_error("phpDynDNS: updating cache file {$this->_cacheFile_v6}: {$wan_ip}");
+					@file_put_contents($this->_cacheFile_v6, "{$wan_ip}|{$currentTime}");
+				} else
+					@unlink($this->_cacheFile_v6);
 				conf_mount_ro();
 			}
 			$this->status = $status;
@@ -1081,20 +1108,38 @@
 			}
 			$log_error = "DynDns ({$this->_dnsHost}): Current WAN IP: {$wan_ip} ";
 
-			if (file_exists($this->_cacheFile)) {
-				$contents = file_get_contents($this->_cacheFile);
-				list($cacheIP,$cacheTime) = explode(':', $contents);
-				$this->_debug($cacheIP.'/'.$cacheTime);
-				$initial = false;
-				$log_error .= "Cached IP: {$cacheIP} ";
+			if ($this->_useIPv6 == true) {
+				if (file_exists($this->_cacheFile_v6)) {
+					$contents = file_get_contents($this->_cacheFile_v6);
+					list($cacheIP,$cacheTime) = explode('|', $contents);
+					$this->_debug($cacheIP.'/'.$cacheTime);
+					$initial = false;
+					$log_error .= "Cached IPv6: {$cacheIP} ";
+				} else {
+					conf_mount_rw();
+					$cacheIP = '::';
+					@file_put_contents($this->_cacheFile, "::|{$currentTime}");
+					conf_mount_ro();
+					$cacheTime = $currentTime;
+					$initial = true;
+					$log_error .= "No Cached IPv6 found.";
+				}
 			} else {
-				conf_mount_rw();
-				$cacheIP = '0.0.0.0';
-				@file_put_contents($this->_cacheFile, "0.0.0.0:{$currentTime}");
-				conf_mount_ro();
-				$cacheTime = $currentTime;
-				$initial = true;
-				$log_error .= "No Cached IP found.";
+				if (file_exists($this->_cacheFile)) {
+					$contents = file_get_contents($this->_cacheFile);
+					list($cacheIP,$cacheTime) = explode(':', $contents);
+					$this->_debug($cacheIP.'/'.$cacheTime);
+					$initial = false;
+					$log_error .= "Cached IP: {$cacheIP} ";
+				} else {
+					conf_mount_rw();
+					$cacheIP = '0.0.0.0';
+					@file_put_contents($this->_cacheFile, "0.0.0.0:{$currentTime}");
+					conf_mount_ro();
+					$cacheTime = $currentTime;
+					$initial = true;
+					$log_error .= "No Cached IP found.";
+				}
 			}
 			if ($this->_dnsVerboseLog)
 				log_error($log_error);
@@ -1156,10 +1201,16 @@
 			if ($debug)
 				log_error("DynDns ({$this->_dnsHost}): _checkIP() starting.");
 
-			$ip_address = find_interface_ip($this->_if);
-			if (!is_ipaddr($ip_address))
-				return 0;
-			if (is_private_ip($ip_address)) {
+			if ($this->_useIPv6 == true) {
+				$ip_address = find_interface_ipv6($this->_if);
+				if (!is_ipaddrv6($ip_address))
+					return 0;
+			} else {
+				$ip_address = find_interface_ip($this->_if);
+				if (!is_ipaddr($ip_address))
+					return 0;
+			}
+			if ($this->_useIPv6 == false && is_private_ip($ip_address)) {
 				$hosttocheck = "checkip.dyndns.org";
 				$try = 0;
 				while ($try < 3) {

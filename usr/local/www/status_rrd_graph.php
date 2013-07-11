@@ -606,7 +606,7 @@ include("head.inc");
 									$id = preg_replace('/\./', '_', $id);
 
 									echo "\n";
-									echo "\t\tjQuery('#{$id}').attr('src','status_rrd_graph_img.php?start={$start}&period={$curperiod}&graph={$graph}&database={$curdatabase}&style={$curstyle}&tmp=' + randomid);\n";
+									echo "\t\tjQuery('#{$id}').attr('src','status_rrd_graph_update.php?start={$start}&period={$curperiod}&graph={$graph}&database={$curdatabase}&style={$curstyle}&tmp=' + randomid);\n";
 									}
 								}
 							?>

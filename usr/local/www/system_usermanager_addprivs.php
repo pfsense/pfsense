@@ -136,7 +136,7 @@ if (is_array($priv_list)) {
 	foreach($priv_list as $pname => $pdata) {
 		if (in_array($pname, $a_user['priv']))
 			continue;
-		$desc = addslashes($pdata['descr']);
+		$desc = addslashes(preg_replace("/pfSense/i", $g['product_name'], $pdata['descr']));
 		$jdescs .= "descs[{$id}] = '{$desc}';\n";
 		$id++;
 	}

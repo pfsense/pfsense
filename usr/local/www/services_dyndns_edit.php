@@ -91,7 +91,7 @@ if ($_POST) {
 	$reqdfieldsn = array();
 	$reqdfields = array("type");
 	$reqdfieldsn = array(gettext("Service type"));
-	if ($pconfig['type'] != "custom") {
+	if ($pconfig['type'] != "custom" && $pconfig['type'] != "custom-v6") {
 		$reqdfields[] = "host";
 		$reqdfieldsn[] = gettext("Hostname");
 		$reqdfields[] = "password";
@@ -130,7 +130,7 @@ if ($_POST) {
 		$dyndns['updateurl'] = $_POST['updateurl'];
 		// Trim hard-to-type but sometimes returned characters
 		$dyndns['resultmatch'] = trim($_POST['resultmatch'], "\t\n\r");
-		$dyndns['type'] == "custom" ? $dyndns['requestif'] = $_POST['requestif'] : $dyndns['requestif'] = $_POST['interface'];
+		($dyndns['type'] == "custom" || $dyndns['type'] == "custom-v6") ? $dyndns['requestif'] = $_POST['requestif'] : $dyndns['requestif'] = $_POST['interface'];
 		$dyndns['descr'] = $_POST['descr'];
 		$dyndns['force'] = isset($_POST['force']);
 		
@@ -172,6 +172,7 @@ include("head.inc");
 function _onTypeChange(type){ 
 	switch(type) {
 		case "custom":
+		case "custom-v6":
 			document.getElementById("_resulttr").style.display = '';
 			document.getElementById("_urltr").style.display = '';
 			document.getElementById("_requestiftr").style.display = '';

@@ -1505,7 +1505,7 @@ function services_dhcrelay6_configure() {
 		return; /* XXX */
 	}
 
-	$cmd = "/usr/local/sbin/dhcrelay -6 -pf \"{$g['varetc_path']}/dhcrelay6.pid\"";
+	$cmd = "/usr/local/sbin/dhcrelay -6 -pf \"{$g['varrun_path']}/dhcrelay6.pid\"";
 	foreach ($dhcrelayifs as $dhcrelayif) {
 		$cmd .= " -l {$dhcrelayif}";
 	}

@@ -340,6 +340,9 @@ system_dhcpleases_configure();
 /* start DHCP relay */
 services_dhcrelay_configure();
 
+/* start DHCP6 relay */
+services_dhcrelay6_configure();
+
 /* dyndns service updates */
 send_event("service reload dyndnsall");
 

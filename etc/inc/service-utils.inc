@@ -295,6 +295,13 @@ function get_services() {
 		$services[] = $pconfig;
 	}
 
+	if(isset($config['dhcrelay6']['enable'])) {
+		$pconfig = array();
+		$pconfig['name'] = "dhcrelay6";
+		$pconfig['description'] = gettext("DHCPv6 Relay");
+		$services[] = $pconfig;
+	}
+
 	if(is_dhcp_server_enabled()) {
 		$pconfig = array();
 		$pconfig['name'] = "dhcpd";
@@ -417,6 +424,9 @@ function get_service_status($service) {
 		case "vhosts-http":
 			$running = is_pid_running("{$g['varrun_path']}/vhosts-http.pid");
 			break;
+		case "dhcrelay6":
+			$running = is_pid_running("{$g['varrun_path']}/dhcrelay6.pid");
+			break;
 		default:
 			$running = is_service_running($service['name']);
 	}
@@ -513,6 +523,12 @@ function service_control_start($name, $extras) {
 		case 'bsnmpd':
 			services_snmpd_configure();
 			break;
+		case 'dhcrelay':
+			services_dhcrelay_configure();
+			break;
+		case 'dhcrelay6':
+			services_dhcrelay6_configure();
+			break;
 		case 'dnsmasq':
 			services_dnsmasq_configure();
 			break;
@@ -575,6 +591,9 @@ function service_control_stop($name, $extras) {
 		case 'dhcrelay':
 			killbypid("{$g['varrun_path']}/dhcrelay.pid");
 			break;
+		case 'dhcrelay6':
+			killbypid("{$g['varrun_path']}/dhcrelay6.pid");
+			break;
 		case 'dnsmasq':
 			killbypid("{$g['varrun_path']}/dnsmasq.pid");
 			break;
@@ -625,6 +644,12 @@ function service_control_restart($name, $extras) {
 			break;
 		case 'bsnmpd':
 			services_snmpd_configure();
+			break;
+		case 'dhcrelay':
+			services_dhcrelay_configure();
+			break;
+		case 'dhcrelay6':
+			services_dhcrelay6_configure();
 			break;
 		case 'dnsmasq':
 			services_dnsmasq_configure();

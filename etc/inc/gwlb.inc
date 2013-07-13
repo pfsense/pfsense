@@ -176,7 +176,7 @@ EOD;
 		} else
 			continue;
 
-		$monitor_ips[] = monitor_ips;
+		$monitor_ips[] = $gateway['monitor'];
 		$apingercfg = "target \"{$gateway['monitor']}\" {\n";
 		$apingercfg .= "	description \"{$name}\"\n";
 		$apingercfg .= "	srcip \"{$gwifip}\"\n";

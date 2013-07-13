@@ -1399,7 +1399,7 @@ function services_dhcrelay6_configure() {
 		return;
 	if(isset($config['system']['developerspew'])) {
 		$mt = microtime();
-		echo "services_dhcrelay_configure() being called $mt\n";
+		echo "services_dhcrelay6_configure() being called $mt\n";
 	}
 
 	/* kill any running dhcrelay */

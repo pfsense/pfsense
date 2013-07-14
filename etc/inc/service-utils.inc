@@ -282,13 +282,8 @@ function get_services() {
 		if ($oc['if'] && (!link_interface_to_bridge($if)))
 			$iflist[$if] = $if;
 	}
-	$show_dhcprelay = false;
-	foreach($iflist as $if) {
-		if(isset($config['dhcrelay'][$if]['enable']))
-			$show_dhcprelay = true;
-	}
 
-	if($show_dhcprelay == true) {
+	if(isset($config['dhcrelay']['enable'])) {
 		$pconfig = array();
 		$pconfig['name'] = "dhcrelay";
 		$pconfig['description'] = gettext("DHCP Relay");

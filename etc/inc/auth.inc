@@ -461,18 +461,18 @@ function local_user_set(& $user) {
 		mkdir($user_home, 0700);
 		mwexec("/bin/cp /root/.* {$home_base}/", true);
 	}
-	chown($user_home, $user_name);
-	chgrp($user_home, $user_group);
+	@chown($user_home, $user_name);
+	@chgrp($user_home, $user_group);
 
 	/* write out ssh authorized key file */
 	if($user['authorizedkeys']) {
 		if (!is_dir("{$user_home}/.ssh")) {
-			mkdir("{$user_home}/.ssh", 0700);
-			chown("{$user_home}/.ssh", $user_name);
+			@mkdir("{$user_home}/.ssh", 0700);
+			@chown("{$user_home}/.ssh", $user_name);
 		}
 		$keys = base64_decode($user['authorizedkeys']);
-		file_put_contents("{$user_home}/.ssh/authorized_keys", $keys);
-		chown("{$user_home}/.ssh/authorized_keys", $user_name);
+		@file_put_contents("{$user_home}/.ssh/authorized_keys", $keys);
+		@chown("{$user_home}/.ssh/authorized_keys", $user_name);
 	} else
 		unlink_if_exists("{$user_home}/.ssh/authorized_keys");
 

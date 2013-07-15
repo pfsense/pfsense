@@ -546,6 +546,7 @@ include("head.inc");
 							//alert('updating');
 							var randomid = Math.floor(Math.random()*11);
 							<?php
+							echo "\n";
 							foreach($graphs as $graph) {
 								/* check which databases are valid for our category */
 								foreach($ui_databases as $curdatabase) {
@@ -596,19 +597,14 @@ include("head.inc");
 												continue 2;
 											}
 									}
-									$dates = get_dates($curperiod, $graph);
-									$start = $dates['start'];
-									if($curperiod == "current") {
-										$end = $dates['end'];
-									}
 									/* generate update events utilizing jQuery('') feature */
 									$id = "{$graph}-{$curoption}-{$curdatabase}";
 									$id = preg_replace('/\./', '_', $id);
 
-									echo "\n";
-									echo "\t\tjQuery('#{$id}').attr('src','status_rrd_graph_update.php?start={$start}&period={$curperiod}&graph={$graph}&database={$curdatabase}&style={$curstyle}&tmp=' + randomid);\n";
-									}
+									echo "\t\tjQuery('#{$id}').attr('src','status_rrd_graph_update.php?period={$curperiod}&graph={$graph}&database={$curdatabase}&style={$curstyle}&tmp=' + randomid);\n";
 								}
+							}
+							echo "\n";
 							?>
 							window.setTimeout('update_graph_images()', 355000);
 						}

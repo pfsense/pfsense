@@ -3902,10 +3902,24 @@ function get_real_interface($interface = "wan", $family = "all") {
 				$wanif = "{$interface}_stf";
 				break;
 			default:
-				if( is_array($cfg['wireless']) || preg_match($g['wireless_regex'], $cfg['if']))
-					$wanif = interface_get_wireless_clone($cfg['if']);
-				else
-					$wanif = $cfg['if'];
+				switch ($cfg['ipaddr']) {
+				case 'pppoe':
+				case 'ppp':
+				case 'l2tp':
+				case 'pptp':
+					$parents = get_parent_interface($interface);
+					if (!empty($parents[0]))
+						$wanif = $parents[0];
+					else
+						$wanif = $cfg['if'];
+					break;
+				default:
+					if( is_array($cfg['wireless']) || preg_match($g['wireless_regex'], $cfg['if']))
+						$wanif = interface_get_wireless_clone($cfg['if']);
+					else
+						$wanif = $cfg['if'];
+					break;
+				}
 				break;
 			}
 		} else {

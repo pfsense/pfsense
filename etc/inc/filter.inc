@@ -1851,19 +1851,20 @@ function filter_nat_rules_generate() {
 					}
 				}
 
-				if($reflection_type == "proxy" && !isset($rule['nordr'])) {
-					$natrules .= filter_generate_reflection_proxy($rule, $nordr, $nat_if_list, $srcaddr, $dstaddr, $starting_localhost_port, $reflection_rules);
-					$nat_if_list = array($natif);
-
-					foreach ($reflection_rules as $txtline)
-						fwrite($inetd_fd, $txtline);
-				} else if($reflection_type == "purenat" || isset($rule['nordr'])) {
-					$rdr_if_list = implode(" ", $nat_if_list);
-					if(count($nat_if_list) > 1)
-						$rdr_if_list = "{ {$rdr_if_list} }";
-					$natrules .= "\n# Reflection redirect\n";
-					$natrules .= "{$nordr}rdr {$rdrpass}on {$rdr_if_list} proto {$protocol} from {$srcaddr} to {$dstaddr_reflect}" . ($nordr == "" ? " -> {$target}{$localport}" : "");
-					$nat_if_list = array_merge(array($natif), $nat_if_list);
+				if ($reflection_type != "none") {
+					if($reflection_type == "proxy" && !isset($rule['nordr'])) {
+						$natrules .= filter_generate_reflection_proxy($rule, $nordr, $nat_if_list, $srcaddr, $dstaddr, $starting_localhost_port, $reflection_rules);
+						$nat_if_list = array($natif);
+						foreach ($reflection_rules as $txtline)
+							fwrite($inetd_fd, $txtline);
+					} else if($reflection_type == "purenat" || isset($rule['nordr'])) {
+						$rdr_if_list = implode(" ", $nat_if_list);
+						if(count($nat_if_list) > 1)
+							$rdr_if_list = "{ {$rdr_if_list} }";
+						$natrules .= "\n# Reflection redirect\n";
+						$natrules .= "{$nordr}rdr {$rdrpass}on {$rdr_if_list} proto {$protocol} from {$srcaddr} to {$dstaddr_reflect}" . ($nordr == "" ? " -> {$target}{$localport}" : "");
+						$nat_if_list = array_merge(array($natif), $nat_if_list);
+					}
 				}
 
 				if(empty($nat_if_list))

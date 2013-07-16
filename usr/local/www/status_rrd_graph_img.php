@@ -210,6 +210,7 @@ $colorpacketsdown = array("990000", "CC0000", "b36666", "bd9090");
 $colortraffic95 = array("660000", "FF0000");
 $colorstates = array('990000','a83c3c','b36666','bd9090','cccccc','000000');
 $colorprocessor = array('990000','a83c3c','b36666','bd9090','cccccc','000000');
+$colormbuf = array('990000','a83c3c','b36666','bd9090','cccccc','000000');
 $colormemory = array('990000','a83c3c','b36666','bd9090','cccccc','000000');
 $colorqueuesup = array('000000','7B0000','990000','BB0000','CC0000','D90000','EE0000','FF0000','CC0000');
 $colorqueuesdown = array('000000','7B7B7B','999999','BBBBBB','CCCCCC','D9D9D9','EEEEEE','FFFFFF','CCCCCC');
@@ -902,6 +903,50 @@ elseif((strstr($curdatabase, "-memory.rrd")) && (file_exists("$rrddbpath$curdata
 	$graphcmd .= "GPRINT:\"wire:AVERAGE:%7.2lf %s    \" ";
 	$graphcmd .= "GPRINT:\"wire:MAX:%7.2lf %s    \" ";
 	$graphcmd .= "GPRINT:\"wire:LAST:%7.2lf %S    \" ";
+	$graphcmd .= "COMMENT:\"\\n\" ";
+	$graphcmd .= "COMMENT:\"\t\t\t\t\t\t\t\t\t\t\t\t\t`date +\"%b %d %H\:%M\:%S %Y\"`\" ";
+}
+elseif((strstr($curdatabase, "-mbuf.rrd")) && (file_exists("$rrddbpath$curdatabase"))) {
+	/* define graphcmd for mbuf usage stats */
+	$graphcmd = "$rrdtool graph $rrdtmppath$curdatabase-$curgraph.png ";
+	$graphcmd .= "--start $start --end $end --step $step ";
+	$graphcmd .= "--vertical-label \"utilization, percent\" ";
+	$graphcmd .= "--color SHADEA#eeeeee --color SHADEB#eeeeee ";
+	$graphcmd .= "--title \"`hostname` - {$prettydb} - {$hperiod} - {$havg} average\" ";
+	$graphcmd .= "--height 200 --width 620 ";
+	$graphcmd .= "DEF:\"current=$rrddbpath$curdatabase:current:AVERAGE:step=$step\" ";
+	$graphcmd .= "DEF:\"cache=$rrddbpath$curdatabase:cache:AVERAGE:step=$step\" ";
+	$graphcmd .= "DEF:\"total=$rrddbpath$curdatabase:total:AVERAGE:step=$step\" ";
+	$graphcmd .= "DEF:\"max=$rrddbpath$curdatabase:max:AVERAGE:step=$step\" ";
+	$graphcmd .= "LINE2:\"current#{$colormbuf[0]}:current\" ";
+	$graphcmd .= "LINE2:\"cache#{$colormbuf[1]}:cache\" ";
+	$graphcmd .= "LINE2:\"total#{$colormbuf[2]}:total\" ";
+	$graphcmd .= "LINE2:\"max#{$colormbuf[3]}:max\" ";
+	$graphcmd .= "COMMENT:\"\\n\" ";
+	$graphcmd .= "COMMENT:\"\t\t      minimum        average        maximum        current\\n\" ";
+	$graphcmd .= "COMMENT:\"Current.      \" ";
+	$graphcmd .= "GPRINT:\"current:MIN:%7.2lf %s    \" ";
+	$graphcmd .= "GPRINT:\"current:AVERAGE:%7.2lf %s    \" ";
+	$graphcmd .= "GPRINT:\"current:MAX:%7.2lf %s    \" ";
+	$graphcmd .= "GPRINT:\"current:LAST:%7.2lf %S    \" ";
+	$graphcmd .= "COMMENT:\"\\n\" ";
+	$graphcmd .= "COMMENT:\"Cache.        \" ";
+	$graphcmd .= "GPRINT:\"cache:MIN:%7.2lf %s    \" ";
+	$graphcmd .= "GPRINT:\"cache:AVERAGE:%7.2lf %s    \" ";
+	$graphcmd .= "GPRINT:\"cache:MAX:%7.2lf %s    \" ";
+	$graphcmd .= "GPRINT:\"cache:LAST:%7.2lf %S    \" ";
+	$graphcmd .= "COMMENT:\"\\n\" ";
+	$graphcmd .= "COMMENT:\"Total.        \" ";
+	$graphcmd .= "GPRINT:\"total:MIN:%7.2lf %s    \" ";
+	$graphcmd .= "GPRINT:\"total:AVERAGE:%7.2lf %s    \" ";
+	$graphcmd .= "GPRINT:\"total:MAX:%7.2lf %s    \" ";
+	$graphcmd .= "GPRINT:\"total:LAST:%7.2lf %S    \" ";
+	$graphcmd .= "COMMENT:\"\\n\" ";
+	$graphcmd .= "COMMENT:\"Max.          \" ";
+	$graphcmd .= "GPRINT:\"max:MIN:%7.2lf %s    \" ";
+	$graphcmd .= "GPRINT:\"max:AVERAGE:%7.2lf %s    \" ";
+	$graphcmd .= "GPRINT:\"max:MAX:%7.2lf %s    \" ";
+	$graphcmd .= "GPRINT:\"max:LAST:%7.2lf %S    \" ";
 	$graphcmd .= "COMMENT:\"\\n\" ";
 	$graphcmd .= "COMMENT:\"\t\t\t\t\t\t\t\t\t\t\t\t\t`date +\"%b %d %H\:%M\:%S %Y\"`\" ";
 }

@@ -216,6 +216,7 @@ function enable_rrd_graphing() {
 	$spamd = "-spamd.rrd";
 	$proc = "-processor.rrd";
 	$mem = "-memory.rrd";
+	$mbuf = "-mbuf.rrd";
 	$cellular = "-cellular.rrd";
 	$vpnusers = "-vpnusers.rrd";
 	$captiveportalconcurrent = "-concurrent.rrd";
@@ -243,6 +244,7 @@ function enable_rrd_graphing() {
 	$rrdlbpoolinterval = 60;
 	$rrdprocinterval = 60;
 	$rrdmeminterval = 60;
+	$rrdmbufinterval = 60;
 	$rrdcellularinterval = 60;
 	$rrdvpninterval = 60;
 	$rrdcaptiveportalinterval = 60;
@@ -257,6 +259,7 @@ function enable_rrd_graphing() {
 	$lbpoolvalid = $rrdlbpoolinterval * 2;
 	$procvalid = $rrdlbpoolinterval * 2;
 	$memvalid = $rrdmeminterval * 2;
+	$mbufvalid = $rrdmbufinterval * 2;
 	$cellularvalid = $rrdcellularinterval * 2;
 	$vpnvalid = $rrdvpninterval * 2;
 	$captiveportalvalid = $rrdcaptiveportalinterval * 2;
@@ -687,6 +690,42 @@ function enable_rrd_graphing() {
 		$rrdupdatesh .= "$rrdtool update $rrddbpath$ifname$mem N:\${MEM}\n";
 
 		/* End Memory statistics */
+
+		/* mbuf, create mbuf statistics database */
+		if(! file_exists("$rrddbpath$ifname$mbuf")) {
+			$rrdcreate = "$rrdtool create $rrddbpath$ifname$mbuf --step $rrdmbufinterval ";
+			$rrdcreate .= "DS:current:GAUGE:$mbufvalid:0:10000000 ";
+			$rrdcreate .= "DS:cache:GAUGE:$mbufvalid:0:10000000 ";
+			$rrdcreate .= "DS:total:GAUGE:$mbufvalid:0:10000000 ";
+			$rrdcreate .= "DS:max:GAUGE:$mbufvalid:0:10000000 ";
+			$rrdcreate .= "RRA:MIN:0.5:1:1200 ";
+			$rrdcreate .= "RRA:MIN:0.5:5:720 ";
+			$rrdcreate .= "RRA:MIN:0.5:60:1860 ";
+			$rrdcreate .= "RRA:MIN:0.5:1440:3652 ";
+			$rrdcreate .= "RRA:AVERAGE:0.5:1:1200 ";
+			$rrdcreate .= "RRA:AVERAGE:0.5:5:720 ";
+			$rrdcreate .= "RRA:AVERAGE:0.5:60:1860 ";
+			$rrdcreate .= "RRA:AVERAGE:0.5:1440:3652 ";
+			$rrdcreate .= "RRA:MAX:0.5:1:1200 ";
+			$rrdcreate .= "RRA:MAX:0.5:5:720 ";
+			$rrdcreate .= "RRA:MAX:0.5:60:1860 ";
+			$rrdcreate .= "RRA:MAX:0.5:1440:3652";
+
+			create_new_rrd($rrdcreate);
+			unset($rrdcreate);
+		}
+
+		/* enter UNKNOWN values in the RRD so it knows we rebooted. */
+		if($g['booting']) {
+			mwexec("$rrdtool update $rrddbpath$ifname$mbuf N:U:U:U:U:U");
+		}
+
+		/* the mbuf stats gathering function. */
+		$rrdupdatesh .= "MBUF=`$netstat -m | ";
+		$rrdupdatesh .= " $awk '/mbuf clusters in use/ { gsub(/\//, \":\", $1); print $1; }'`\n";
+		$rrdupdatesh .= "$rrdtool update $rrddbpath$ifname$mbuf N:\${MBUF}\n";
+
+		/* End mbuf statistics */
 
 		/* SPAMD, set up the spamd rrd file */
 		if (isset($config['installedpackages']['spamdsettings']) &&

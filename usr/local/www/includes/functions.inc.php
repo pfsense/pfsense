@@ -21,6 +21,7 @@ function get_stats() {
 	$stats['gateways'] = get_gatewaystats();
 	$stats['cpufreq'] = get_cpufreq();
 	$stats['load_average'] = get_load_average();
+	$stats['mbuf'] = get_mbuf();
 	$stats = join("|", $stats);
 	return $stats;
 }
@@ -160,6 +161,12 @@ function has_temp() {
 
 function get_hwtype() {
 	return;
+}
+
+function get_mbuf() {
+	$mbufs_output=trim(`netstat -mb | grep "mbuf clusters in use" | awk '{ print $1 }'`);
+	list( $mbufs_current, $mbufs_cache, $mbufs_total, $mbufs_max ) = explode( "/", $mbufs_output);
+	$mbufusage = round(($mbufs_total / $mbufs_max) * 100);
 }
 
 function get_temp() {

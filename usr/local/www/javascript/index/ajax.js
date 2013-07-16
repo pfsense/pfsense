@@ -44,7 +44,8 @@ function stats(x) {
         updateCpuFreq(values[9]);
         updateLoadAverage(values[10]);
         updateMbuf(values[11]);
-        updateStateMeter(values[12]);
+        updateMbufMeter(values[12]);
+        updateStateMeter(values[13]);
 }
 
 function updateMemory(x) {
@@ -57,6 +58,11 @@ function updateMemory(x) {
 }
 
 function updateMbuf(x) {
+	if(jQuery('#mbuf'))
+		jQuery("#mbuf").html(x);
+}
+
+function updateMbufMeter(x) {
 	if(jQuery('#mbufusagemeter'))
 		jQuery("#mbufusagemeter").html(x + '%');
 	if(jQuery('#mbufwidtha'))

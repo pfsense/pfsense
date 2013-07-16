@@ -44,6 +44,7 @@ function stats(x) {
         updateCpuFreq(values[9]);
         updateLoadAverage(values[10]);
         updateMbuf(values[11]);
+        updateStateMeter(values[12]);
 }
 
 function updateMemory(x) {
@@ -99,6 +100,15 @@ function updateUptime(x) {
 function updateState(x) {
 	if(jQuery('#pfstate'))
 		jQuery("#pfstate").html(x);
+}
+
+function updateStateMeter(x) {
+	if(jQuery('#pfstateusagemeter'))
+		jQuery("#pfstateusagemeter").html(x + '%');
+	if(jQuery('#pfstatewidtha'))
+		jQuery("#pfstatewidtha").css('width',x + 'px');
+	if(jQuery('#pfstatewidthb'))
+		jQuery("#pfstatewidthb").css('width',(100 - x) + 'px');
 }
 
 function updateGatewayStats(x){

@@ -22,6 +22,7 @@ function get_stats() {
 	$stats['cpufreq'] = get_cpufreq();
 	$stats['load_average'] = get_load_average();
 	$stats['mbuf'] = get_mbuf();
+	$stats['statepercent'] = get_pfstate(true);
 	$stats = join("|", $stats);
 	return $stats;
 }
@@ -138,7 +139,7 @@ function cpu_usage() {
 	return $cpuUsage;
 }
 
-function get_pfstate() {
+function get_pfstate($percent=false) {
 	global $config;
 	$matches = "";
 	if (isset($config['system']['maximumstates']) and $config['system']['maximumstates'] > 0)
@@ -149,7 +150,10 @@ function get_pfstate() {
 	if (preg_match("/([0-9]+)/", $curentries, $matches)) {
 		$curentries = $matches[1];
 	}
-	return $curentries . "/" . $maxstates;
+	if ($percent)
+		return ($curentries / $maxstates) * 100;
+	else
+		return $curentries . "/" . $maxstates;
 }
 
 function has_temp() {

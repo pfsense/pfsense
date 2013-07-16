@@ -186,7 +186,11 @@ $curcfg = $config['system']['firmware'];
 		<tr>
 			<td width="25%" class="vncellt">State table size</td>
 			<td width="75%" class="listr">
-				<span id="pfstate"><?= htmlspecialchars(get_pfstate()); ?></span>
+				<?php	$pfstatetext = get_pfstate();
+					$pfstateusage = get_pfstate(true);
+				?>
+				<img src="./themes/<?= $g['theme']; ?>/images/misc/bar_left.gif" height="15" width="4" border="0" align="middle" alt="left bar" /><img src="./themes/<?= $g['theme']; ?>/images/misc/bar_blue.gif" height="15" name="pfstatewidtha" id="pfstatewidtha" width="<?= round($pfstateusage); ?>" border="0" align="middle" alt="red bar" /><img src="./themes/<?= $g['theme']; ?>/images/misc/bar_gray.gif" height="15" name="pfstatewidthb" id="pfstatewidthb" width="<?= (100 - $pfstateusage); ?>" border="0" align="middle" alt="gray bar" /><img src="./themes/<?= $g['theme']; ?>/images/misc/bar_right.gif" height="15" width="5" border="0" align="middle" alt="right bar" />
+				<br/><span id="pfstateusagemeter"><?= $pfstateusage.'%'; ?></span> (<span id="pfstate"><?= htmlspecialchars($pfstatetext); ?></span>)
 		    	<br />
 		    	<a href="diag_dump_states.php">Show states</a>
 			</td>

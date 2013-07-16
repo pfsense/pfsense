@@ -195,10 +195,12 @@ $curcfg = $config['system']['firmware'];
 			<td width="25%" class="vncellt"><?=gettext("MBUF Usage");?></td>
 			<td width="75%" class="listr">
 				<?php
-					$mbufs_output=`netstat -mb | grep "mbuf clusters in use" | awk '{ print $1 }'`;
+					$mbufs_output=trim(`netstat -mb | grep "mbuf clusters in use" | awk '{ print $1 }'`);
 					list( $mbufs_current, $mbufs_cache, $mbufs_total, $mbufs_max ) = explode( "/", $mbufs_output);
+					$mbufusage = sprintf("%.2f", ($mbufs_total / $mbufs_max) * 100);
 				?>
-				<?= $mbufs_total ?>/<?= $mbufs_max ?>
+				<img src="./themes/<?= $g['theme']; ?>/images/misc/bar_left.gif" height="15" width="4" border="0" align="middle" alt="left bar" /><img src="./themes/<?= $g['theme']; ?>/images/misc/bar_blue.gif" height="15" name="tempwidtha" id="tempwidtha" width="<?= round($mbufusage); ?>" border="0" align="middle" alt="red bar" /><img src="./themes/<?= $g['theme']; ?>/images/misc/bar_gray.gif" height="15" name="tempwidthb" id="tempwidthb" width="<?= (100 - $mbufusage); ?>" border="0" align="middle" alt="gray bar" /><img src="./themes/<?= $g['theme']; ?>/images/misc/bar_right.gif" height="15" width="5" border="0" align="middle" alt="right bar" />
+				<br/><span id="mbufusagemeter"><?= $mbufusage.'%'; ?></span> (<?= $mbufs_total ?>/<?= $mbufs_max ?>)
 			</td>
 		</tr>
                 <?php if (get_temp() != ""): ?>

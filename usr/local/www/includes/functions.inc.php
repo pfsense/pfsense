@@ -164,9 +164,10 @@ function get_hwtype() {
 }
 
 function get_mbuf() {
-	$mbufs_output=trim(`netstat -mb | grep "mbuf clusters in use" | awk '{ print $1 }'`);
+	$mbufs_output=trim(`/usr/bin/netstat -mb | /usr/bin/grep "mbuf clusters in use" | /usr/bin/awk '{ print $1 }'`);
 	list( $mbufs_current, $mbufs_cache, $mbufs_total, $mbufs_max ) = explode( "/", $mbufs_output);
 	$mbufusage = round(($mbufs_total / $mbufs_max) * 100);
+	return $mbufusage;
 }
 
 function get_temp() {

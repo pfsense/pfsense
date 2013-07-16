@@ -43,6 +43,7 @@ function stats(x) {
         updateGatewayStats(values[8]);
         updateCpuFreq(values[9]);
         updateLoadAverage(values[10]);
+        updateMbuf(values[11]);
 }
 
 function updateMemory(x) {
@@ -52,6 +53,15 @@ function updateMemory(x) {
 		jQuery("#memwidtha").css('width',x + 'px');
 	if(jQuery('#memwidthb'))
 		jQuery("#memwidthb").css('width', (100 - x) + 'px');
+}
+
+function updateMbuf(x) {
+	if(jQuery('#mbufusagemeter'))
+		jQuery("#mbufusagemeter").html(x + '%');
+	if(jQuery('#mbufwidtha'))
+		jQuery("#mbufwidtha").css('width',x + 'px');
+	if(jQuery('#mbufwidthb'))
+		jQuery("#mbufwidthb").css('width', (100 - x) + 'px');
 }
 
 function updateCPU(x) {

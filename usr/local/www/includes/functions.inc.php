@@ -222,7 +222,7 @@ function get_cpufreq() {
 	$curfreq = "";
 	exec("/sbin/sysctl -n dev.cpu.0.freq", $curfreq);
 	$curfreq = trim($curfreq[0]);
-	if ($curfreq != $maxfreq)
+	if (($curfreq > 0) && ($curfreq != $maxfreq))
 		$out = "Current: {$curfreq} MHz, Max: {$maxfreq} MHz";
 	return $out;
 }

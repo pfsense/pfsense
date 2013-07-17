@@ -102,12 +102,12 @@ function update_data(obj) {
 	result_text = result_text.replace("\n","");
 	result_text = result_text.replace("\r","");
 	if (result_text) {
-		jQuery('#status').html('<img src="/themes/metallic/images/misc/loader.gif"> ' + result_text + '...');
+		jQuery('#status').html('<img src="/themes/<?=$g['theme'];?>/images/misc/loader.gif"> ' + result_text + '...');
 	} else {
-		jQuery('#status').html('<img src="/themes/metallic/images/misc/loader.gif"> Obtaining filter status...');
+		jQuery('#status').html('<img src="/themes/<?=$g['theme'];?>/images/misc/loader.gif"> Obtaining filter status...');
 	}
 	if(result_text == "Initializing") {
-		jQuery('#status').html('<img src="/themes/metallic/images/misc/loader.gif"> Initializing...');
+		jQuery('#status').html('<img src="/themes/<?=$g['theme'];?>/images/misc/loader.gif"> Initializing...');
 	} else if(result_text == "Done") {
 		jQuery('#status').effect('highlight');
 		jQuery('#status').html('Done.  The filter rules have been reloaded.');

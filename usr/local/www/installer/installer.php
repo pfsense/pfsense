@@ -674,16 +674,16 @@ function installing_gui() {
 													<center>
 													<table id='pbtable' height='15' width='640' border='0' colspacing='0' cellpadding='0' cellspacing='0'>
 														<tr>
-															<td background="/themes/the_wall/images/misc/bar_left.gif" height='15' width='5'>
+															<td background="/themes/{$g['theme']}/images/misc/bar_left.gif" height='15' width='5'>
 															</td>
 															<td>
 																<table id="progholder" name="progholder" height='15' width='630' border='0' colspacing='0' cellpadding='0' cellspacing='0'>
-																	<td background="/themes/the_wall/images/misc/bar_gray.gif" valign="top" align="left">
-																		<img src='/themes/the_wall/images/misc/bar_blue.gif' width='0' height='15' name='progressbar' id='progressbar'>
+																	<td background="/themes/{$g['theme']}/images/misc/bar_gray.gif" valign="top" align="left">
+																		<img src='/themes/{$g['theme']}/images/misc/bar_blue.gif' width='0' height='15' name='progressbar' id='progressbar'>
 																	</td>
 																</table>
 															</td>
-															<td background="/themes/the_wall/images/misc/bar_right.gif" height='15' width='5'>
+															<td background="/themes/{$g['theme']}/images/misc/bar_right.gif" height='15' width='5'>
 															</td>
 														</tr>
 													</table>

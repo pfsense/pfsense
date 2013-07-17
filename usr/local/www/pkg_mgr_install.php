@@ -80,15 +80,15 @@ include("head.inc");
 					<td class="tabcont" align="center">
 						<table style="height:15;colspacing:0" width="420" border="0" cellpadding="0" cellspacing="0" summary="images">
 							<tr>
-								<td style="background:url('./themes/the_wall/images/misc/bar_left.gif')" height="15" width="5"></td>
+								<td style="background:url('./themes/<?=$g['theme'];?>/images/misc/bar_left.gif')" height="15" width="5"></td>
 								<td>
 									<table id="progholder" style="height:15;colspacing:0" width="410" border="0" cellpadding="0" cellspacing="0" summary="progress bar">
-										<tr><td style="background:url('./themes/the_wall/images/misc/bar_gray.gif')" valign="top" align="left">
+										<tr><td style="background:url('./themes/<?=$g['theme'];?>/images/misc/bar_gray.gif')" valign="top" align="left">
 											<img src='./themes/<?= $g['theme']; ?>/images/misc/bar_blue.gif' width="0" height="15" name="progressbar" id="progressbar" alt="progress bar" />
 										</td></tr>
 									</table>
 								</td>
-								<td style="background:url('./themes/the_wall/images/misc/bar_right.gif')" height="15" width="5">
+								<td style="background:url('./themes/<?=$g['theme'];?>/images/misc/bar_right.gif')" height="15" width="5">
 								</td>
 							</tr>
 						</table>

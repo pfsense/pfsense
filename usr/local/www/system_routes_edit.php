@@ -373,7 +373,7 @@ include("head.inc");
 	}
 	function hide_add_gatewaysave() {
 		document.getElementById("addgateway").style.display = 'none';
-		jQuery('#status').html('<img src="/themes/metallic/images/misc/loader.gif"> One moment please...');
+		jQuery('#status').html('<img src="/themes/<?=$g['theme'];?>/images/misc/loader.gif"> One moment please...');
 		var iface = jQuery('#addinterfacegw').val();
 		name = jQuery('#name').val();
 		var descr = jQuery('#gatewaydescr').val();

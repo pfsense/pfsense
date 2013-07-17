@@ -164,8 +164,8 @@ if (!is_array($config['widgets'])) {
 	<title>{$g['product_name']}.localdomain - {$g['product_name']} first time setup</title>
 	<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
 	<link rel="stylesheet" type="text/css" href="/niftycssprintCode.css" media="print" />
-	<script type="text/javascript">var theme = "nervecenter"</script>
-	<script type="text/javascript" src="/themes/nervecenter/loader.js"></script>
+	<script type="text/javascript">var theme = "{$g['theme']}"</script>
+	<script type="text/javascript" src="/themes/{$g['theme']}/loader.js"></script>
 
 EOF;
 

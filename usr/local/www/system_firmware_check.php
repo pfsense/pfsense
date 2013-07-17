@@ -79,15 +79,15 @@ include("head.inc");
 						<table style="height:15;colspacing:0" width="420" border="0" cellpadding="0" cellspacing="0" summary="images">
 
 							<tr>
-								<td style="background:url('./themes/the_wall/images/misc/bar_left.gif')" height="15" width="5"></td>
+								<td style="background:url('./themes/<?=$g['theme'];?>/images/misc/bar_left.gif')" height="15" width="5"></td>
 								<td>
 									<table id="progholder" style="height:15;colspacing:0" width="410" border="0" cellpadding="0" cellspacing="0" summary="">
-										<tr><td style="background:url('./themes/the_wall/images/misc/bar_gray.gif')" valign="top" align="left">
-										<img src="./themes/the_wall/images/misc/bar_blue.gif" width="0" height="15" name="progressbar" id="progressbar" alt="" />
+										<tr><td style="background:url('./themes/<?=$g['theme'];?>/images/misc/bar_gray.gif')" valign="top" align="left">
+										<img src="./themes/<?=$g['theme'];?>/images/misc/bar_blue.gif" width="0" height="15" name="progressbar" id="progressbar" alt="" />
 										</td></tr>
 									</table>
 								</td>
-								<td style="background:url('./themes/the_wall/images/misc/bar_right.gif')" height="15" width="5"></td>
+								<td style="background:url('./themes/<?=$g['theme'];?>/images/misc/bar_right.gif')" height="15" width="5"></td>
 							</tr>
 						</table>
 						<br />

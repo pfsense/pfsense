@@ -2784,7 +2784,7 @@ $types6 = array("none" => gettext("None"), "staticv6" => gettext("Static IPv6"),
 		}
 		function hide_add_gatewaysave() {
 			document.getElementById("addgateway").style.display = 'none';
-			jQuery('#status').html('<img src="/themes/metallic/images/misc/loader.gif" alt="loader" /> One moment please...');
+			jQuery('#status').html('<img src="/themes/<?=$g['theme'];?>/images/misc/loader.gif" alt="loader" /> One moment please...');
 			var iface = jQuery('#if').val();
 			name = jQuery('#name').val();
 			var descr = jQuery('#gatewaydescr').val();
@@ -2804,7 +2804,7 @@ $types6 = array("none" => gettext("None"), "staticv6" => gettext("Static IPv6"),
 		}
 		function hide_add_gatewaysave_v6() {
 			document.getElementById("addgatewayv6").style.display = 'none';
-			jQuery('#statusv6').html('<img src="/themes/metallic/images/misc/loader.gif" alt="loader" /> One moment please...');
+			jQuery('#statusv6').html('<img src="/themes/<?=$g['theme'];?>/images/misc/loader.gif" alt="loader" /> One moment please...');
 			var iface = jQuery('#if').val();
 			name = jQuery('#namev6').val();
 			var descr = jQuery('#gatewaydescrv6').val();
@@ -2863,7 +2863,7 @@ $types6 = array("none" => gettext("None"), "staticv6" => gettext("Static IPv6"),
 				addOption(jQuery('#gateway'), gwtext, name);
 				// Auto submit form?
 				//document.iform.submit();
-				//jQuery('#status').html('<img src="/themes/metallic/images/misc/loader.gif" alt="loader /">');
+				//jQuery('#status').html('<img src="/themes/<?=$g['theme'];?>/images/misc/loader.gif" alt="loader /">');
 			} else {
 				report_failure();
 			}
@@ -2881,7 +2881,7 @@ $types6 = array("none" => gettext("None"), "staticv6" => gettext("Static IPv6"),
 				addOption_v6(jQuery('#gatewayv6'), gwtext_v6, name);
 				// Auto submit form?
 				//document.iform.submit();
-				//jQuery('#statusv6').html('<img src="/themes/metallic/images/misc/loader.gif" alt="loader" />');
+				//jQuery('#statusv6').html('<img src="/themes/<?=$g['theme'];?>/images/misc/loader.gif" alt="loader" />');
 			} else {
 				report_failure_v6();
 			}

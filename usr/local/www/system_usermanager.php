@@ -746,13 +746,13 @@ function sshkeyClicked(obj) {
 						<?php 	endif; endif; ?>
 						<?php endif; ?>
 
-						<tr id="sshkeychck">
+						<tr id="sshkeychck" <?php if(!empty($pconfig['authorizedkeys'])) echo 'style="display:none"'; ?>>
                                                         <td width="22%" valign="top" class="vncell"><?=gettext("Authorized keys");?></td>
                                                         <td width="78%" class="vtable">
                                                         <input type="checkbox" onclick="javascript:sshkeyClicked(this)" /> <?=gettext("Click to paste an authorized key."); ?>
                                                         </td>
                                                 </tr>
-						<tr id="sshkey" style="display:none">
+						<tr id="sshkey" <?php if(empty($pconfig['authorizedkeys'])) echo 'style="display:none"'; ?>>
 							<td width="22%" valign="top" class="vncell"><?=gettext("Authorized keys");?></td>
 							<td width="78%" class="vtable">
 								<textarea name="authorizedkeys" cols="65" rows="7" id="authorizedkeys" class="formfld_cert" wrap="off"><?=htmlspecialchars($pconfig['authorizedkeys']);?></textarea>

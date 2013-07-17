@@ -186,7 +186,11 @@ $curcfg = $config['system']['firmware'];
 		<tr>
 			<td width="25%" class="vncellt">State table size</td>
 			<td width="75%" class="listr">
-				<span id="pfstate"><?= htmlspecialchars(get_pfstate()); ?></span>
+				<?php	$pfstatetext = get_pfstate();
+					$pfstateusage = get_pfstate(true);
+				?>
+				<img src="./themes/<?= $g['theme']; ?>/images/misc/bar_left.gif" height="15" width="4" border="0" align="middle" alt="left bar" /><img src="./themes/<?= $g['theme']; ?>/images/misc/bar_blue.gif" height="15" name="pfstatewidtha" id="pfstatewidtha" width="<?= round($pfstateusage); ?>" border="0" align="middle" alt="red bar" /><img src="./themes/<?= $g['theme']; ?>/images/misc/bar_gray.gif" height="15" name="pfstatewidthb" id="pfstatewidthb" width="<?= (100 - $pfstateusage); ?>" border="0" align="middle" alt="gray bar" /><img src="./themes/<?= $g['theme']; ?>/images/misc/bar_right.gif" height="15" width="5" border="0" align="middle" alt="right bar" />
+				<br/><span id="pfstateusagemeter"><?= $pfstateusage.'%'; ?></span> (<span id="pfstate"><?= htmlspecialchars($pfstatetext); ?></span>)
 		    	<br />
 		    	<a href="diag_dump_states.php">Show states</a>
 			</td>
@@ -195,10 +199,11 @@ $curcfg = $config['system']['firmware'];
 			<td width="25%" class="vncellt">MBUF Usage</td>
 			<td width="75%" class="listr">
 				<?php
-					$mbufs_output=`netstat -mb | grep "mbuf clusters in use" | awk '{ print $1 }'`;
-					list( $mbufs_current, $mbufs_cache, $mbufs_total, $mbufs_max ) = explode( "/", $mbufs_output);
+					$mbufstext = get_mbuf();
+					$mbufusage = get_mbuf(true);
 				?>
-				<?= $mbufs_total ?>/<?= $mbufs_max ?>
+				<img src="./themes/<?= $g['theme']; ?>/images/misc/bar_left.gif" height="15" width="4" border="0" align="middle" alt="left bar" /><img src="./themes/<?= $g['theme']; ?>/images/misc/bar_blue.gif" height="15" name="mbufwidtha" id="mbufwidtha" width="<?= round($mbufusage); ?>" border="0" align="middle" alt="red bar" /><img src="./themes/<?= $g['theme']; ?>/images/misc/bar_gray.gif" height="15" name="mbufwidthb" id="mbufwidthb" width="<?= (100 - $mbufusage); ?>" border="0" align="middle" alt="gray bar" /><img src="./themes/<?= $g['theme']; ?>/images/misc/bar_right.gif" height="15" width="5" border="0" align="middle" alt="right bar" />
+				<br/><span id="mbufusagemeter"><?= $mbufusage.'%'; ?></span> (<span id="mbuf"><?= $mbufstext ?></span>)
 			</td>
 		</tr>
                 <?php if (get_temp() != ""): ?>
@@ -233,7 +238,7 @@ $curcfg = $config['system']['firmware'];
 				<?php $memUsage = mem_usage(); ?>
 				<img src="./themes/<?= $g['theme']; ?>/images/misc/bar_left.gif" height="15" width="4" border="0" align="middle" alt="left bar" /><img src="./themes/<?= $g['theme']; ?>/images/misc/bar_blue.gif" height="15" name="memwidtha" id="memwidtha" width="<?= $memUsage; ?>" border="0" align="middle" alt="red bar" /><img src="./themes/<?= $g['theme']; ?>/images/misc/bar_gray.gif" height="15" name="memwidthb" id="memwidthb" width="<?= (100 - $memUsage); ?>" border="0" align="middle" alt="gray bar" /><img src="./themes/<?= $g['theme']; ?>/images/misc/bar_right.gif" height="15" width="5" border="0" align="middle" alt="right bar" />
 				&nbsp;
-				<br/><span id="memusagemeter"><?= $memUsage.'%'; ?></span>
+				<br/><span id="memusagemeter"><?= $memUsage.'%'; ?></span> of <?= sprintf("%.0f", `/sbin/sysctl -n hw.physmem` / (1024*1024)) ?> MB
 			</td>
 		</tr>
 		<?php if($showswap == true): ?>
@@ -243,7 +248,7 @@ $curcfg = $config['system']['firmware'];
 				<?php $swapusage = swap_usage(); ?>
 				<img src="./themes/<?= $g['theme']; ?>/images/misc/bar_left.gif" height="15" width="4" border="0" align="middle" alt="left bar" /><img src="./themes/<?= $g['theme']; ?>/images/misc/bar_blue.gif" height="15" width="<?= $swapusage; ?>" border="0" align="middle" alt="red bar" /><img src="./themes/<?= $g['theme']; ?>/images/misc/bar_gray.gif" height="15" width="<?= (100 - $swapusage); ?>" border="0" align="middle" alt="gray bar" /><img src="./themes/<?= $g['theme']; ?>/images/misc/bar_right.gif" height="15" width="5" border="0" align="middle" alt="right bar" />
 				&nbsp;
-				<br/><span id="swapusagemeter"><?= $swapusage.'%'; ?></span>
+				<br/><span id="swapusagemeter"><?= $swapusage.'%'; ?></span> of <?= sprintf("%.0f", `/usr/sbin/swapinfo -m | /usr/bin/grep -v Device | /usr/bin/awk '{ print $2;}'`) ?> MB
 			</td>
 		</tr>
 		<?php endif; ?>
@@ -253,7 +258,7 @@ $curcfg = $config['system']['firmware'];
 				<?php $diskusage = disk_usage(); ?>
 				<img src="./themes/<?= $g["theme"]; ?>/images/misc/bar_left.gif" height="15" width="4" border="0" align="middle" alt="left bar" /><img src="./themes/<?= $g["theme"]; ?>/images/misc/bar_blue.gif" height="15" width="<?= $diskusage; ?>" border="0" align="middle" alt="red bar" /><img src="./themes/<?= $g["theme"]; ?>/images/misc/bar_gray.gif" height="15" width="<?= (100 - $diskusage); ?>" border="0" align="middle" alt="gray bar" /><img src="./themes/<?= $g["theme"]; ?>/images/misc/bar_right.gif" height="15" width="5" border="0" align="middle" alt="right bar" />
 				&nbsp;
-				<br/><span id="diskusagemeter"><?= $diskusage.'%'; ?></span>
+				<br/><span id="diskusagemeter"><?= $diskusage.'%'; ?></span> of <?= `/bin/df -h / | /usr/bin/grep -v 'Size' | /usr/bin/awk '{ print $2 }'` ?>
 			</td>
 		</tr>
 	</tbody>

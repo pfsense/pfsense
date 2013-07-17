@@ -43,6 +43,9 @@ function stats(x) {
         updateGatewayStats(values[8]);
         updateCpuFreq(values[9]);
         updateLoadAverage(values[10]);
+        updateMbuf(values[11]);
+        updateMbufMeter(values[12]);
+        updateStateMeter(values[13]);
 }
 
 function updateMemory(x) {
@@ -52,6 +55,20 @@ function updateMemory(x) {
 		jQuery("#memwidtha").css('width',x + 'px');
 	if(jQuery('#memwidthb'))
 		jQuery("#memwidthb").css('width', (100 - x) + 'px');
+}
+
+function updateMbuf(x) {
+	if(jQuery('#mbuf'))
+		jQuery("#mbuf").html(x);
+}
+
+function updateMbufMeter(x) {
+	if(jQuery('#mbufusagemeter'))
+		jQuery("#mbufusagemeter").html(x + '%');
+	if(jQuery('#mbufwidtha'))
+		jQuery("#mbufwidtha").css('width',x + 'px');
+	if(jQuery('#mbufwidthb'))
+		jQuery("#mbufwidthb").css('width', (100 - x) + 'px');
 }
 
 function updateCPU(x) {
@@ -89,6 +106,15 @@ function updateUptime(x) {
 function updateState(x) {
 	if(jQuery('#pfstate'))
 		jQuery("#pfstate").html(x);
+}
+
+function updateStateMeter(x) {
+	if(jQuery('#pfstateusagemeter'))
+		jQuery("#pfstateusagemeter").html(x + '%');
+	if(jQuery('#pfstatewidtha'))
+		jQuery("#pfstatewidtha").css('width',x + 'px');
+	if(jQuery('#pfstatewidthb'))
+		jQuery("#pfstatewidthb").css('width',(100 - x) + 'px');
 }
 
 function updateGatewayStats(x){

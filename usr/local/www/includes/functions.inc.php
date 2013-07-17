@@ -21,6 +21,9 @@ function get_stats() {
 	$stats['gateways'] = get_gatewaystats();
 	$stats['cpufreq'] = get_cpufreq();
 	$stats['load_average'] = get_load_average();
+	$stats['mbuf'] = get_mbuf();
+	$stats['mbufpercent'] = get_mbuf(true);
+	$stats['statepercent'] = get_pfstate(true);
 	$stats = join("|", $stats);
 	return $stats;
 }
@@ -137,7 +140,7 @@ function cpu_usage() {
 	return $cpuUsage;
 }
 
-function get_pfstate() {
+function get_pfstate($percent=false) {
 	global $config;
 	$matches = "";
 	if (isset($config['system']['maximumstates']) and $config['system']['maximumstates'] > 0)
@@ -148,7 +151,10 @@ function get_pfstate() {
 	if (preg_match("/([0-9]+)/", $curentries, $matches)) {
 		$curentries = $matches[1];
 	}
-	return $curentries . "/" . $maxstates;
+	if ($percent)
+		return round(($curentries / $maxstates) * 100, 0);
+	else
+		return $curentries . "/" . $maxstates;
 }
 
 function has_temp() {
@@ -160,6 +166,15 @@ function has_temp() {
 
 function get_hwtype() {
 	return;
+}
+
+function get_mbuf($percent=false) {
+	$mbufs_output=trim(`/usr/bin/netstat -mb | /usr/bin/grep "mbuf clusters in use" | /usr/bin/awk '{ print $1 }'`);
+	list( $mbufs_current, $mbufs_cache, $mbufs_total, $mbufs_max ) = explode( "/", $mbufs_output);
+	if ($percent)
+		return round(($mbufs_total / $mbufs_max) * 100, 0);
+	else
+		return "{$mbufs_total}/{$mbufs_max}";
 }
 
 function get_temp() {
@@ -222,7 +237,7 @@ function get_cpufreq() {
 	$curfreq = "";
 	exec("/sbin/sysctl -n dev.cpu.0.freq", $curfreq);
 	$curfreq = trim($curfreq[0]);
-	if ($curfreq != $maxfreq)
+	if (($curfreq > 0) && ($curfreq != $maxfreq))
 		$out = "Current: {$curfreq} MHz, Max: {$maxfreq} MHz";
 	return $out;
 }

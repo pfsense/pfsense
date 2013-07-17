@@ -69,7 +69,7 @@ if($_POST['bootslice']) {
 	$statusmsg = gettext("Setting slice information, please wait..."); 
 	echo <<<EOF
 	 	<div id="loading">
-			<img src="/themes/metallic/images/misc/loader.gif"> 
+			<img src="/themes/{$g['theme']}/images/misc/loader.gif"> 
 			$statusmsg
 			<p/>&nbsp;
 		</div>
@@ -85,7 +85,7 @@ if($_POST['destslice']) {
 	$statusmsg = gettext("Duplicating slice.  Please wait, this will take a moment...");
 echo <<<EOF
  	<div id="loading">
-		<img src="/themes/metallic/images/misc/loader.gif">
+		<img src="/themes/{$g['theme']}/images/misc/loader.gif">
 		$statusmsg
 		<p/>&nbsp;
 	</div>

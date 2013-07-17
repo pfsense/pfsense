@@ -910,7 +910,7 @@ elseif((strstr($curdatabase, "-mbuf.rrd")) && (file_exists("$rrddbpath$curdataba
 	/* define graphcmd for mbuf usage stats */
 	$graphcmd = "$rrdtool graph $rrdtmppath$curdatabase-$curgraph.png ";
 	$graphcmd .= "--start $start --end $end --step $step ";
-	$graphcmd .= "--vertical-label \"utilization, percent\" ";
+	$graphcmd .= "--vertical-label \"utilization\" ";
 	$graphcmd .= "--color SHADEA#eeeeee --color SHADEB#eeeeee ";
 	$graphcmd .= "--title \"`hostname` - {$prettydb} - {$hperiod} - {$havg} average\" ";
 	$graphcmd .= "--height 200 --width 620 ";

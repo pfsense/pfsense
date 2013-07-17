@@ -605,10 +605,14 @@ include("head.inc");
 								}
 							}
 							echo "\n";
+							if($config['rrd']['update_interval'])
+								$update_interval = $config['rrd']['update_interval'] * 1000;
+							else
+								$update_interval = 355 * 1000;
 							?>
-							window.setTimeout('update_graph_images()', 355000);
+							window.setTimeout('update_graph_images()', <?php echo $update_interval;	?>);
 						}
-						window.setTimeout('update_graph_images()', 355000);
+						window.setTimeout('update_graph_images()', <?php echo $update_interval;	?>);
 					</script>
 					</form>
 					</td>

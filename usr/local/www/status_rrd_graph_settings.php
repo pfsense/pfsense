@@ -48,6 +48,7 @@ $pconfig['enable'] = isset($config['rrd']['enable']);
 $pconfig['category'] = $config['rrd']['category'];
 $pconfig['style'] = $config['rrd']['style'];
 $pconfig['period'] = $config['rrd']['period'];
+$pconfig['update_interval'] = $config['rrd']['update_interval'];
 
 $curcat = "settings";
 $categories = array('system' => gettext("System"),
@@ -79,6 +80,7 @@ if ($_POST['ResetRRD']) {
                 $config['rrd']['category'] = $_POST['category'];
                 $config['rrd']['style'] = $_POST['style'];
                 $config['rrd']['period'] = $_POST['period'];
+                $config['rrd']['update_interval'] = $_POST['update_interval'];
                 write_config();
 
                 $retval = 0;
@@ -218,6 +220,13 @@ include("head.inc");
 					?>
 					</select>
 					<b><?=gettext("This selects the default period.");?></b>
+				</td>
+			</tr>
+			<tr>
+				<td width="22%" valign="top" class="vtable"><?=gettext("Update interval");?></td>
+				<td width="78%" class="vtable">
+					<input name="update_interval" type="text" id="update_interval" size="10" value="<?php if($pconfig['update_interval']) echo $pconfig['update_interval']; else echo '335' ?>">
+					<b><?=gettext("This sets the graph update interval seconds.");?></b>
 				</td>
 			</tr>
 			<tr>

@@ -58,6 +58,21 @@ $filterdns = array();
 /* Used for aliases and interface macros */
 $aliases = "";
 
+function is_bogonsv6_used() {
+	global $config, $g;
+	# Only use bogonsv6 table if IPv6 Allow is on, and at least 1 enabled interface also has "blockbogons" enabled.
+	$usebogonsv6 = false;
+	if (isset($config['system']['ipv6allow'])) {
+		foreach ($config['interfaces'] as $ifacedata) {
+			if(isset($ifacedata['enable']) && isset($ifacedata['blockbogons'])) {
+				$usebogonsv6 = true;
+				break;
+			}
+		}
+	}
+	return $usebogonsv6;
+}
+
 function flowtable_configure() {
 	global $config, $g;
 
@@ -326,8 +341,8 @@ function filter_configure_sync($delete_states_if_needed = true) {
 		}
 	}
 
-	# If allow IPv6 has been unchecked then we can remove any bogonsv6 table (if the table is not there, the kill is still fine).
-	if (!isset($config['system']['ipv6allow']))
+	# If we are not using bogonsv6 then we can remove any bogonsv6 table from the running pf (if the table is not there, the kill is still fine).
+	if (!is_bogonsv6_used())
 		$_grbg = exec("/sbin/pfctl -t bogonsv6 -T kill");
 
 	update_filter_reload_status(gettext("Starting up layer7 daemon"));
@@ -565,7 +580,7 @@ function filter_generate_aliases() {
 	if (!file_exists("/etc/bogonsv6"))
 		@file_put_contents("/etc/bogonsv6", "");
 	$aliases .= "table <bogons> persist file \"/etc/bogons\"\n";
-	if (isset($config['system']['ipv6allow']))
+	if (is_bogonsv6_used())
 		$aliases .= "table <bogonsv6> persist file \"/etc/bogonsv6\"\n";
 
 	$vpns_list = filter_get_vpns_list();

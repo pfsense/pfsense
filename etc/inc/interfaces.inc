@@ -4452,7 +4452,8 @@ function ip_in_interface_alias_subnet($interface, $ipalias) {
 			case "ipalias":
 				if ($vip['interface'] <> $interface)
 					break;
-				if (ip_in_subnet($ipalias, gen_subnet($vip['subnet'], $vip['subnet_bits']) . "/" . $vip['subnet_bits']))
+				$subnet = is_ipaddrv6($ipalias) ? gen_subnetv6($vip['subnet'], $vip['subnet_bits']) : gen_subnet($vip['subnet'], $vip['subnet_bits']);
+				if (ip_in_subnet($ipalias, $subnet . "/" . $vip['subnet_bits']))
 					return true;
 				break;
 			}

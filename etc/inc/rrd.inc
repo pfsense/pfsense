@@ -849,7 +849,7 @@ function create_gateway_quality_rrd($gatway_quality_rrd) {
 		$rrdcreate .= "RRA:AVERAGE:0.5:1:1200 ";
 		$rrdcreate .= "RRA:AVERAGE:0.5:5:720 ";
 		$rrdcreate .= "RRA:AVERAGE:0.5:60:1860 ";
-		$rrdcreate .= "RRA:AVERAGE:0.5:1440:3652 ";
+		$rrdcreate .= "RRA:AVERAGE:0.5:1440:2284 ";
 
 		create_new_rrd($rrdcreate);
 		unset($rrdcreate);

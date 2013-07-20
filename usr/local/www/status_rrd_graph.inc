@@ -32,36 +32,31 @@
 	pfSense_MODULE:	system
 */
 
-/* Specify and return length of each graph (seconds).  */
-function create_graph_length_array() {
-	$graph_length = array(
-		"8hour" => 28800,		#                    8 x 60 x 60
-		"day" => 86400,			#              1  x 24 x 60 x 60
-		"week" => 604800,		#              7  x 24 x 60 x 60
-		"month" => 2678400,		#             31  x 24 x 60 x 60
-		"quarter" => 7948800,	#  (30 + 31 + 31) x 24 x 60 x 60
-		"year" => 31622400,		#  (    365  + 1) x 24 x 60 x 60
-		"4year" => 126230400);	# ((4 x 365) + 1) x 24 x 60 x 60
-
-	return $graph_length;
-}
-
 /* Calculate and return graph start and end date based on period and graph. */
 function get_dates($period, $graph) {
-	global $graph_length;
 	$now = time();
-	$end = $now;
+
+	$curyear = date('Y', $now);
+	$curmonth = date('m', $now);
+	$curweek = date('W', $now);
+	$curweekday = date('N', $now) - 1; // We want to start on monday
+	$curday = date('d', $now);
+	$curhour = date('G', $now);
+	$curminute = date('i', $now);
+	$cursecond = date('s', $now);
 
 	if($period == "absolute") {
-		$start = $end - $graph_length[$graph] + 1;
+		switch($graph) {
+			case "8hour":	$start = mktime($curhour - 8,	$curminute, $cursecond + 1, $curmonth,		$curday,		$curyear);		break;
+			case "day":		$start = mktime($curhour,		$curminute, $cursecond + 1, $curmonth,		$curday - 1,	$curyear);		break;
+			case "week":	$start = mktime($curhour,		$curminute, $cursecond + 1, $curmonth,		$curday - 7,	$curyear);		break;
+			case "month":	$start = mktime($curhour,		$curminute, $cursecond + 1, $curmonth - 1,	$curday,		$curyear);		break;
+			case "quarter":	$start = mktime($curhour,		$curminute, $cursecond + 1, $curmonth - 3,	$curday,		$curyear);		break;
+			case "year":	$start = mktime($curhour,		$curminute, $cursecond + 1, $curmonth,		$curday,		$curyear - 1);	break;
+			case "4year":	$start = mktime($curhour,		$curminute, $cursecond + 1, $curmonth,		$curday,		$curyear - 4);	break;
+		}
+							  $end = mktime($curhour,		$curminute, $cursecond,		$curmonth,		$curday,		$curyear);
 	} else {
-		$curyear = date('Y', $now);
-		$curmonth = date('m', $now);
-		$curweek = date('W', $now);
-		$curweekday = date('N', $now) - 1; // We want to start on monday
-		$curday = date('d', $now);
-		$curhour = date('G', $now);
-
 		switch($period) {
 			case "previous":
 				$offset = -1;

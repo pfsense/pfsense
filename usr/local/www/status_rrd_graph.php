@@ -237,7 +237,6 @@ $custom_databases = array_merge($dbheader_custom, $databases);
 
 $graphs = array("8hour", "day", "week", "month", "quarter", "year", "4year");
 $periods = array("absolute" => gettext("Absolute Timespans"), "current" => gettext("Current Period"), "previous" => gettext("Previous Period"));
-$graph_length = create_graph_length_array();
 
 $pgtitle = array(gettext("Status"),gettext("RRD Graphs"));
 

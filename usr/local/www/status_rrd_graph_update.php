@@ -34,8 +34,6 @@
 
 require_once("status_rrd_graph.inc");
 
-$graph_length = create_graph_length_array();
-
 status_rrd_graph_update_set_start_end();
 
 /* Now update the graph. */

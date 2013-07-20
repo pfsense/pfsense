@@ -99,7 +99,7 @@ $archives = array();
 $archives[1] = 1200;
 $archives[5] = 720;
 $archives[60] = 1860;
-$archives[1440] = 3652;
+$archives[1440] = 2284;
 
 $defOptions = array(
 	'to' => 1,

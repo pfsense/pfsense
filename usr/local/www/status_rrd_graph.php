@@ -139,8 +139,9 @@ if ($_GET['option']) {
 	}
 }
 
-$now = time();
 if($curcat == "custom") {
+	$now = time();
+
 	if (is_numeric($_GET['start'])) {
 		if($start < ($now - (3600 * 24 * 365 * 5))) {
 			$start = $now - (8 * 3600);
@@ -155,27 +156,27 @@ if($curcat == "custom") {
 	} else {
 		$start = $now - (8 * 3600);
 	}
-}
 
-if (is_numeric($_GET['end'])) {
+	if (is_numeric($_GET['end'])) {
         $end = $_GET['end'];
-} else if ($_GET['end']) {
-	$end = strtotime($_GET['end']);
-	if ($end === FALSE || $end === -1) {
-		$input_errors[] = gettext("Invalid end date/time:") . " '{$_GET['end']}'";
-		$end = $now;
+	} else if ($_GET['end']) {
+		$end = strtotime($_GET['end']);
+		if ($end === FALSE || $end === -1) {
+			$input_errors[] = gettext("Invalid end date/time:") . " '{$_GET['end']}'";
+			$end = $now;
+		}
+	} else {
+        $end = $now;
 	}
-} else {
-        $end = $now;
-}
 
-/* this should never happen */
-if($end < $start) {
-	log_error("start $start is smaller than end $end");
+	/* this should never happen */
+	if($end < $start) {
+		log_error("start $start is smaller than end $end");
         $end = $now;
-}
+	}
 
-$seconds = $end - $start;
+	$seconds = $end - $start;
+}
 
 $styles = array('inverse' => gettext('Inverse'),
 		'absolute' => gettext('Absolute'));
@@ -451,7 +452,7 @@ include("head.inc");
 						<input type="submit" name="Submit" value="<?=gettext("Go"); ?>">
 						<?php
 						$curdatabase = $curoption;
-						$graph = "custom-$curdatabase";
+						$graph = "custom";
 						if(in_array($curdatabase, $custom_databases)) {
 							$id = "{$graph}-{$curoption}-{$curdatabase}";
 							$id = preg_replace('/\./', '_', $id);

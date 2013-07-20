@@ -116,6 +116,23 @@ switch($curgraph) {
 	case "quarter":	$average = 1440 * 60;	break;
 	case "year":	$average = 1440 * 60;	break;
 	case "4year":	$average = 1440 * 60;	break;
+	case "custom": 
+		$archives = array();
+		$archives[1] = 1200;
+		$archives[5] = 720;
+		$archives[60] = 1860;
+		$archives[1440] = 2284;
+
+		/* always set the average to the highest value as a fallback */
+		$average = 1440 * 60;
+		foreach($archives as $rra => $value) {
+			$archivestart = $now - ($rra * 60 * $value);
+			if($archivestart <= $start) {
+				$average = $rra * 60;
+				break;
+			}
+		}
+		break;
 	default:		$average = 1440 * 60;	break;	// always set the average to the highest value as a fallback
 }
 

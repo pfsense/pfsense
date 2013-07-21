@@ -3813,7 +3813,7 @@ function DHCP_Config_File_Advanced($interface, $wancfg, $wanif) {
 
 	$required_options = "";
 	if ($wancfg['adv_dhcp_required_options'] != '') {
-		$required_options = "\trequired {$wancfg['adv_dhcp_required_options']};\n";
+		$required_options = "\trequire {$wancfg['adv_dhcp_required_options']};\n";
 	}
 
 	$option_modifiers = "";

@@ -433,8 +433,8 @@ function tmpvar_checked(obj) {
 									"the system appears idle and increasing it when the system is busy.  It " .
 									"offers a good balance between a small performance loss for greatly " .
 									"increased power savings.  Hiadaptive mode is alike adaptive mode, but " .
-									"tuned for systems where performance and interactivity are more important" .
-									"than power consumption.  It rises frequency faster, drops slower and" .
+									"tuned for systems where performance and interactivity are more important " .
+									"than power consumption.  It raises frequency faster, drops slower and " .
 									"keeps twice lower CPU load."); ?>
 								</td>
 							</tr>

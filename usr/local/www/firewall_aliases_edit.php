@@ -3,7 +3,7 @@
 /*
 	firewall_aliases_edit.php
 	Copyright (C) 2004 Scott Ullrich
-	Copyright (C) 2009 Ermal Luçi
+	Copyright (C) 2009 Ermal LuÃ§i
 	Copyright (C) 2010 Jim Pingle
 	All rights reserved.
 
@@ -641,9 +641,9 @@ if (empty($tab)) {
 			<select name="type" class="formselect" id="type" onchange="update_box_type(); typesel_change();">
 				<option value="host" <?php if ($pconfig['type'] == "host") echo "selected=\"selected\""; ?>><?=gettext("Host(s)"); ?></option>
 				<option value="network" <?php if ($pconfig['type'] == "network") echo "selected=\"selected\""; ?>><?=gettext("Network(s)"); ?></option>
-				<option value="port" <?php if ($pconfig['type'] == "port") echo "selected=\"selected\""; ?>><?=gettext("Port(s)"); ?></option>
+				<option value="port" <?php if (($pconfig['type'] == "port") || (empty($pconfig['type']) && ($tab == "port"))) echo "selected=\"selected\""; ?>><?=gettext("Port(s)"); ?></option>
 				<!--<option value="openvpn" <?php if ($pconfig['type'] == "openvpn") echo "selected=\"selected\""; ?>><?=gettext("OpenVPN Users"); ?></option> -->
-				<option value="url" <?php if ($pconfig['type'] == "url") echo "selected=\"selected\""; ?>><?=gettext("URL");?></option>
+				<option value="url" <?php if (($pconfig['type'] == "url") || (empty($pconfig['type']) && ($tab == "url"))) echo "selected=\"selected\""; ?>><?=gettext("URL");?></option>
 				<option value="urltable" <?php if ($pconfig['type'] == "urltable") echo "selected=\"selected\""; ?>><?=gettext("URL Table"); ?></option>
 			</select>
 		</td>

@@ -60,11 +60,11 @@ $aliases = "";
 
 function is_bogonsv6_used() {
 	global $config, $g;
-	# Only use bogonsv6 table if IPv6 Allow is on, and at least 1 enabled interface also has "blockbogons" enabled.
+	# Use bogonsv6 table if IPv6 Allow is on, and at least 1 enabled interface also has "blockbogons" enabled and some IPv6 address type.
 	$usebogonsv6 = false;
 	if (isset($config['system']['ipv6allow'])) {
 		foreach ($config['interfaces'] as $ifacedata) {
-			if(isset($ifacedata['enable']) && isset($ifacedata['blockbogons'])) {
+			if(isset($ifacedata['enable']) && !empty($ifacedata['ipaddrv6']) && isset($ifacedata['blockbogons'])) {
 				$usebogonsv6 = true;
 				break;
 			}
@@ -2642,7 +2642,7 @@ EOD;
 block in $bogonlog quick on \${$oc['descr']} from <bogons> to any label "block bogon IPv4 networks from {$oc['descr']}"
 
 EOD;
-			if(isset($config['system']['ipv6allow'])) {
+			if(isset($config['system']['ipv6allow']) && !empty($config['interfaces'][$on]['ipaddrv6'])) {
 				$ipfrules .= <<<EOD
 block in $bogonlog quick on \${$oc['descr']} from <bogonsv6> to any label "block bogon IPv6 networks from {$oc['descr']}"
 

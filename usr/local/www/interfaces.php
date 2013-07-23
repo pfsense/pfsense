@@ -876,8 +876,6 @@ if ($_POST['apply']) {
 				if ($_POST['gatewayv6'] != "none") {
 					$wancfg['gatewayv6'] = $_POST['gatewayv6'];
 				}
-				if($_POST['dhcp6prefixonly'] == "yes")
-					$wancfg['dhcp6prefixonly'] = true;
 				break;
 			case "slaac":
 				$wancfg['ipaddrv6'] = "slaac";
@@ -886,6 +884,8 @@ if ($_POST['apply']) {
 				$wancfg['ipaddrv6'] = "dhcp6";
 				$wancfg['dhcp6-duid'] = $_POST['dhcp6-duid'];
 				$wancfg['dhcp6-ia-pd-len'] = $_POST['dhcp6-ia-pd-len'];
+				if($_POST['dhcp6prefixonly'] == "yes")
+					$wancfg['dhcp6prefixonly'] = true;
 				if($gateway_item) {
 					$a_gateways[] = $gateway_item;
 				}

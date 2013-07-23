@@ -220,6 +220,7 @@ switch($wancfg['ipaddrv6']) {
 		$pconfig['dhcp6-ia-pd-len'] = $wancfg['dhcp6-ia-pd-len'];
 		$pconfig['type6'] = "dhcp6";
 		$pconfig['dhcp6prefixonly'] = isset($wancfg['dhcp6prefixonly']);
+		$pconfig['dhcp6usev4iface'] = isset($wancfg['dhcp6usev4iface']);
 		break;
 	case "6to4":
 		$pconfig['type6'] = "6to4";
@@ -748,6 +749,7 @@ if ($_POST['apply']) {
 		unset($wancfg['dhcp6-duid']);
 		unset($wancfg['dhcp6-ia-pd-len']);
 		unset($wancfg['dhcp6prefixonly']);
+		unset($wancfg['dhcp6usev4iface']);
 		unset($wancfg['track6-interface']);
 		unset($wancfg['track6-prefix-id']);
 		unset($wancfg['prefix-6rd']);
@@ -886,6 +888,8 @@ if ($_POST['apply']) {
 				$wancfg['dhcp6-ia-pd-len'] = $_POST['dhcp6-ia-pd-len'];
 				if($_POST['dhcp6prefixonly'] == "yes")
 					$wancfg['dhcp6prefixonly'] = true;
+				if($_POST['dhcp6usev4iface'] == "yes")
+					$wancfg['dhcp6usev4iface'] = true;
 				if($gateway_item) {
 					$a_gateways[] = $gateway_item;
 				}
@@ -1800,6 +1804,13 @@ $types6 = array("none" => gettext("None"), "staticv6" => gettext("Static IPv6"),
 										</td>
 									</tr>
 									-->
+									<tr>
+										<td width="22%" valign="top" class="vncell"><?=gettext("Use IPv4 connectivity as parent interface"); ?></td>
+										<td width="78%" class="vtable">
+											<input name="dhcp6usev4iface" type="checkbox" id="dhcp6usev4iface" value="yes" <?php if ($pconfig['dhcp6usev4iface'] == true) echo "checked=\"checked\""; ?> />
+											<?=gettext("Request a IPv6 prefix/information through the IPv4 connectivity link"); ?>
+										</td>
+									</tr>
 									<tr>
 										<td width="22%" valign="top" class="vncell"><?=gettext("Request only a IPv6 prefix"); ?></td>
 										<td width="78%" class="vtable">

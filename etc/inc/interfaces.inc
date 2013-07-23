@@ -4216,11 +4216,15 @@ function get_real_interface($interface = "wan", $family = "all") {
 				case 'ppp':
 				case 'l2tp':
 				case 'pptp':
-					$parents = get_parent_interface($interface);
-					if (!empty($parents[0]))
-						$wanif = $parents[0];
-					else
+					if (isset($cfg['dhcp6usev4iface']))
 						$wanif = $cfg['if'];
+					else {
+						$parents = get_parent_interface($interface);
+						if (!empty($parents[0]))
+							$wanif = $parents[0];
+						else
+							$wanif = $cfg['if'];
+					}
 					break;
 				default:
 					if( is_array($cfg['wireless']) || preg_match($g['wireless_regex'], $cfg['if']))

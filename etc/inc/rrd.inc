@@ -717,7 +717,7 @@ function enable_rrd_graphing() {
 
 		/* enter UNKNOWN values in the RRD so it knows we rebooted. */
 		if($g['booting']) {
-			mwexec("$rrdtool update $rrddbpath$ifname$mbuf N:U:U:U:U:U");
+			mwexec("$rrdtool update $rrddbpath$ifname$mbuf N:U:U:U:U");
 		}
 
 		/* the mbuf stats gathering function. */

@@ -2321,7 +2321,7 @@ function filter_generate_user_rule($rule) {
 			$aline['flags'] = "flags S/SA ";
 		}
 	}
-	if (($rule['protocol'] == "tcp") && ($type == "pass")) {
+	if (in_array($rule['protocol'], array("icmp","udp","tcp","tcp/udp")) && ($type == "pass")) {
 		/*
 		 *	# keep state
 		 *		works with TCP, UDP, and ICMP.
@@ -2336,7 +2336,7 @@ function filter_generate_user_rule($rule) {
 		 *		queueing in certain situations. please check the faq.
 		 */
 		$noadvoptions = false;
-		if(isset($rule['statetype']) && $rule['statetype'] <> "") {
+		if (isset($rule['statetype']) && $rule['statetype'] <> "") {
 			switch($rule['statetype']) {
 				case "none":
 					$noadvoptions = true;
@@ -2344,7 +2344,7 @@ function filter_generate_user_rule($rule) {
 					break;
 				case "modulate state":
 				case "synproxy state":
-					if($rule['protocol'] == "tcp")
+					if ($rule['protocol'] == "tcp")
 						$aline['flags'] .= "{$rule['statetype']} ";
 					break;
 				case "sloppy state":
@@ -2358,32 +2358,38 @@ function filter_generate_user_rule($rule) {
 		} else
 			$aline['flags'] .= "keep state ";
 
-		if($noadvoptions == false || $l7_present)
-			if( (isset($rule['source-track']) and $rule['source-track'] <> "") or
+		if ($noadvoptions == false || $l7_present)
+			if ((isset($rule['source-track']) and $rule['source-track'] <> "") or
 			    (isset($rule['max']) and $rule['max'] <> "") or
 			    (isset($rule['max-src-nodes']) and $rule['max-src-nodes'] <> "") or
-			    (isset($rule['max-src-conn']) and $rule['max-src-conn'] <> "") or
-			    (isset($rule['max-src-conn-rate']) and $rule['max-src-conn-rate'] <> "") or
-			    (isset($rule['max-src-conn-rates']) and $rule['max-src-conn-rates'] <> "") or
 			    (isset($rule['max-src-states']) and $rule['max-src-states'] <> "") or
-			    (isset($rule['statetimeout']) and $rule['statetimeout'] <> "") or
+			    ((in_array($rule['protocol'], array("tcp","tcp/udp"))) and
+			     ((isset($rule['statetimeout']) and $rule['statetimeout'] <> "") or
+			      (isset($rule['max-src-conn']) and $rule['max-src-conn'] <> "") or
+			      (isset($rule['max-src-conn-rate']) and $rule['max-src-conn-rate'] <> "") or
+			      (isset($rule['max-src-conn-rates']) and $rule['max-src-conn-rates'] <> ""))) or
 			    isset($rule['sloppy']) or $l7_present) {
 					$aline['flags'] .= "( ";
 					if (isset($rule['sloppy']))
 						$aline['flags'] .= "sloppy ";
-					if(isset($rule['source-track']) and $rule['source-track'] <> "")
+					if (isset($rule['source-track']) and $rule['source-track'] <> "")
 						$aline['flags'] .= "source-track rule ";
-					if(isset($rule['max']) and $rule['max'] <> "")
+					if (isset($rule['max']) and $rule['max'] <> "")
 						$aline['flags'] .= "max " . $rule['max'] . " ";
-					if(isset($rule['max-src-nodes']) and $rule['max-src-nodes'] <> "")
+					if (isset($rule['max-src-nodes']) and $rule['max-src-nodes'] <> "")
 						$aline['flags'] .= "max-src-nodes " . $rule['max-src-nodes'] . " ";
-					if(isset($rule['max-src-conn']) and $rule['max-src-conn'] <> "")
+					if ((in_array($rule['protocol'], array("tcp","tcp/udp"))) 
+							and isset($rule['max-src-conn']) 
+							and $rule['max-src-conn'] <> "")
 						$aline['flags'] .= "max-src-conn " . $rule['max-src-conn'] . " ";
-					if(isset($rule['max-src-states']) and $rule['max-src-states'] <> "")
+					if (isset($rule['max-src-states']) and $rule['max-src-states'] <> "")
 						$aline['flags'] .= "max-src-states " . $rule['max-src-states'] . " ";
-					if(isset($rule['statetimeout']) and $rule['statetimeout'] <> "")
+					if ((in_array($rule['protocol'], array("tcp","tcp/udp"))) 
+							and isset($rule['statetimeout']) 
+							and $rule['statetimeout'] <> "")
 						$aline['flags'] .= "tcp.established " . $rule['statetimeout'] . " ";
-					if(isset($rule['max-src-conn-rate'])
+					if ((in_array($rule['protocol'], array("tcp","tcp/udp"))) 
+							and isset($rule['max-src-conn-rate'])
 							and $rule['max-src-conn-rate'] <> ""
 							and isset($rule['max-src-conn-rates'])
 							and $rule['max-src-conn-rates'] <> "") {

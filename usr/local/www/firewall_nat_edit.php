@@ -718,7 +718,7 @@ include("fbegin.inc"); ?>
 					<tr>
 						<td><?=gettext("from:"); ?>&nbsp;&nbsp;</td>
 						<td>
-							<select name="dstbeginport" class="formselect" onchange="dst_rep_change();ext_change()">
+							<select name="dstbeginport" id="dstbeginport" class="formselect" onchange="dst_rep_change();ext_change()">
 								<option value="">(<?=gettext("other"); ?>)</option>
 <?php 							$bfound = 0;
 								foreach ($wkports as $wkport => $wkportdesc): ?>
@@ -731,7 +731,7 @@ include("fbegin.inc"); ?>
 					<tr>
 						<td><?=gettext("to:"); ?></td>
 						<td>
-							<select name="dstendport" class="formselect" onchange="ext_change()">
+							<select name="dstendport" id="dstendport" class="formselect" onchange="ext_change()">
 								<option value="">(<?=gettext("other"); ?>)</option>
 <?php							$bfound = 0;
 								foreach ($wkports as $wkport => $wkportdesc): ?>
@@ -761,7 +761,7 @@ include("fbegin.inc"); ?>
                 <tr name="lprtr" id="lprtr">
                   <td width="22%" valign="top" class="vncellreq"><?=gettext("Redirect target port"); ?></td>
                   <td width="78%" class="vtable">
-                    <select name="localbeginport" class="formselect" onchange="ext_change();check_for_aliases();">
+                    <select name="localbeginport" id="localbeginport" class="formselect" onchange="ext_change();check_for_aliases();">
                       <option value="">(<?=gettext("other"); ?>)</option>
                       <?php $bfound = 0; foreach ($wkports as $wkport => $wkportdesc): ?>
                       <option value="<?=$wkport;?>" <?php if ($wkport == $pconfig['localbeginport']) {

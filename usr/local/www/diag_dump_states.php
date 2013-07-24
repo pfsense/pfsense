@@ -142,7 +142,7 @@ include("head.inc");
 					<?php if (is_ipaddr($_GET['filter']) || is_subnet($_GET['filter'])): ?>
 						<input type="submit" class="formbtn" name="killfilter" value="<?=gettext("Kill");?>" />
 					<?php endif; ?>
-					<td>
+					</td>
 				</tr>
 			</table>
 			</form>

@@ -472,19 +472,22 @@ if ($_POST) {
 			$input_errors[] = gettext("You can only select a layer7 container for Pass type rules.");
 	}
 
-	if ($_POST['proto'] <> "tcp") {
-		if (!empty($_POST['max']))
-			$input_errors[] = gettext("You can only specify the maximum state entries (advanced option) for TCP protocol.");
-		if (!empty($_POST['max-src-nodes']))
-			$input_errors[] = gettext("You can only specify the maximum number of unique source hosts (advanced option) for TCP protocol.");
+	if (!in_array($_POST['proto'], array("tcp","tcp/udp"))) {
 		if (!empty($_POST['max-src-conn']))
 			$input_errors[] = gettext("You can only specify the maximum number of established connections per host (advanced option) for TCP protocol.");
-		if (!empty($_POST['max-src-states']))
-			$input_errors[] = gettext("You can only specify the maximum state entries per host (advanced option) for TCP protocol.");
 		if (!empty($_POST['max-src-conn-rate']) || !empty($_POST['max-src-conn-rates']))
 			$input_errors[] = gettext("You can only specify the maximum new connections / per second(s) (advanced option) for TCP protocol.");
 		if (!empty($_POST['statetimeout']))
 			$input_errors[] = gettext("You can only specify the state timeout (advanced option) for TCP protocol.");
+	}
+
+	if (!in_array($_POST['proto'], array("icmp","udp","tcp","tcp/udp"))) {
+		if (!empty($_POST['max']))
+			$input_errors[] = gettext("You can only specify the maximum state entries (advanced option) for ICMP/TCP/UDP protocols.");
+		if (!empty($_POST['max-src-nodes']))
+			$input_errors[] = gettext("You can only specify the maximum number of unique source hosts (advanced option) for ICMP/TCP/UDP protocols.");
+		if (!empty($_POST['max-src-states']))
+			$input_errors[] = gettext("You can only specify the maximum state entries per host (advanced option) for ICMP/TCP/UDP protocols.");
 	}
 
 	if ($_POST['type'] <> "pass") {
@@ -1252,10 +1255,10 @@ $i--): ?>
 				<input name="tagged" id="tagged" value="<?=htmlspecialchars($pconfig['tagged']);?>" />
 				<br /><span class="vexpl"><?=gettext("You can match packet on a mark placed before on another rule.")?>
 				</span></p><p>
-				<input name="max" id="max" value="<?php echo htmlspecialchars($pconfig['max']) ?>" /><br/><?=gettext(" Maximum state entries this rule can create");?></p><p>
-				<input name="max-src-nodes" id="max-src-nodes" value="<?php echo htmlspecialchars($pconfig['max-src-nodes']) ?>" /><br/><?=gettext(" Maximum number of unique source hosts");?></p><p>
-				<input name="max-src-conn" id="max-src-conn" value="<?php echo htmlspecialchars($pconfig['max-src-conn']) ?>" /><br/><?=gettext(" Maximum number of established connections per host");?></p><p>
-				<input name="max-src-states" id="max-src-states" value="<?php echo htmlspecialchars($pconfig['max-src-states']) ?>" /><br/><?=gettext(" Maximum state entries per host");?></p><p>
+				<input name="max" id="max" value="<?php echo htmlspecialchars($pconfig['max']) ?>" /><br/><?=gettext(" Maximum state entries this rule can create (TCP/UDP/ICMP)");?></p><p>
+				<input name="max-src-nodes" id="max-src-nodes" value="<?php echo htmlspecialchars($pconfig['max-src-nodes']) ?>" /><br/><?=gettext(" Maximum number of unique source hosts (TCP/UDP/ICMP)");?></p><p>
+				<input name="max-src-conn" id="max-src-conn" value="<?php echo htmlspecialchars($pconfig['max-src-conn']) ?>" /><br/><?=gettext(" Maximum number of established connections per host (TCP only)");?></p><p>
+				<input name="max-src-states" id="max-src-states" value="<?php echo htmlspecialchars($pconfig['max-src-states']) ?>" /><br/><?=gettext(" Maximum state entries per host (TCP/UDP/ICMP)");?></p><p>
 				<input name="max-src-conn-rate" id="max-src-conn-rate" value="<?php echo htmlspecialchars($pconfig['max-src-conn-rate']) ?>" /> /
 				<select name="max-src-conn-rates" id="max-src-conn-rates">
 					<option value=""<?php if(intval($pconfig['max-src-conn-rates']) < 1) echo " selected=\"selected\""; ?>></option>
@@ -1264,10 +1267,10 @@ $i--): ?>
 						echo "<option value=\"{$x}\"{$selected}>{$x}</option>\n";
 					} ?>
 				</select><br />
-				<?=gettext("Maximum new connections / per second(s)");?>
+				<?=gettext("Maximum new connections / per second(s) (TCP only)");?>
 				</p><p>
 				<input name="statetimeout" value="<?php echo htmlspecialchars($pconfig['statetimeout']) ?>" /><br/>
-				<?=gettext("State Timeout in seconds");?>
+				<?=gettext("State Timeout in seconds (TCP only)");?>
 				</p>
 				<p><strong><?=gettext("Note: Leave fields blank to disable that feature.");?></strong></p>
 			</div>

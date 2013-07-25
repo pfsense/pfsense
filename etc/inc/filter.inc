@@ -296,7 +296,7 @@ function filter_configure_sync($delete_states_if_needed = true) {
 	$rules .= discover_pkg_rules("filter");
 
 	@file_put_contents("{$g['tmp_path']}/rules.limits", $limitrules);
-	mwexec("/sbin/pfctl -o basic -f {$g['tmp_path']}/rules.limits");
+	mwexec("/sbin/pfctl -f {$g['tmp_path']}/rules.limits");
 
 	if (!@file_put_contents("{$g['tmp_path']}/rules.debug", $rules, LOCK_EX)) {
 		log_error("WARNING: Could not write new rules!");

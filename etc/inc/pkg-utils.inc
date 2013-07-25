@@ -1299,4 +1299,20 @@ function stop_packages() {
 	}
 }
 
+function remove_widget($widget_name) {
+	global $config;
+
+	$widgets = &$config['widgets']['sequence'];
+	$widgets_array = explode(",",$widgets);
+	$total_widgets = count($widgets_array);
+
+	for($i=0; $i < $total_widgets; $i++) {
+		if(preg_match("/^$widget_name/",$widgets_array[$i]))
+			unset($widgets_array[$i]);
+	}
+
+	$widgets = implode(",",$widgets_array);
+	write_config("Removed {$widget_name} widget.");
+}
+
 ?>

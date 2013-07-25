@@ -35,7 +35,7 @@ require_once("functions.inc");
 if($_GET['getpic']=="true") {
 	$pic_type_s = explode(".", $config['widgets']['picturewidget_filename']);
 	$pic_type = $pic_type_s[1];
-	if($config['widgets']['picturewidget']) 
+	if($config['widgets']['picturewidget'])
 		$data = base64_decode($config['widgets']['picturewidget']);
 	header("Content-Disposition: inline; filename=\"{$config['widgets']['picturewidget_filename']}\"");
 	header("Content-Type: image/{$pic_type}");
@@ -47,7 +47,7 @@ if($_GET['getpic']=="true") {
 if($_POST) {
 	if (is_uploaded_file($_FILES['pictfile']['tmp_name'])) {
 		/* read the file contents */
-		$fd_pic = fopen($_FILES['pictfile']['tmp_name'], "rb");		
+		$fd_pic = fopen($_FILES['pictfile']['tmp_name'], "rb");
 		while ( ($buf=fread( $fd_pic, 8192 )) != '' ) {
 		    // Here, $buf is guaranted to contain data
 		    $data .= $buf;
@@ -83,7 +83,7 @@ if($_POST) {
 	<a href='/widgets/widgets/picture.widget.php?getpic=true' target='_blank'>
 		<img border="0" width="100%" height="100%" src="/widgets/widgets/picture.widget.php?getpic=true" alt="picture" />
 	</a>
-</div>											 
+</div>
 
 <!-- needed to show the settings widget icon -->
 <script type="text/javascript">

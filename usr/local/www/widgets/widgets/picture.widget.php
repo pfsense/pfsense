@@ -74,7 +74,7 @@ if($_POST) {
 <div id="picture-settings" class="widgetconfigdiv" style="display:none;">
 	<form action="/widgets/widgets/picture.widget.php" method="post" name="iforma" enctype="multipart/form-data">
 		<input name="pictfile" type="file" class="formbtn" id="pictfile" size="20" />
-		<input id="submita" name="submita" type="submit" class="formbtn" value="Upload" /><br/>
+		<input id="submita" name="submita" type="submit" class="formbtn" value="Upload" />
 	</form>
 </div>
 

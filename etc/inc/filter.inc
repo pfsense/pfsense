@@ -1173,11 +1173,12 @@ function filter_generate_reflection_proxy($rule, $nordr, $rdr_ifs, $srcaddr, $ds
 		}
 
 		$dstaddr = explode(" ", $dstaddr_port);
-		if($dstaddr[2])
-			$rflctintrange = $dstaddr[2];
-		else
+		if($dstaddr[2]) {
+			$rflctintrange = array_pop($dstaddr);
+			array_pop($dstaddr);
+		} else
 			return "";
-		$dstaddr = $dstaddr[0];
+		$dstaddr = implode(" ", $dstaddr);
 		if(empty($dstaddr) || trim($dstaddr) == "0.0.0.0" || strtolower(trim($dstaddr)) == "port")
 			return "";
 

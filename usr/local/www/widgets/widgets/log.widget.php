@@ -64,8 +64,8 @@ if($_POST['filterlogentries']) {
     echo '</script>';
     echo '<noscript>';
     echo '<meta http-equiv="refresh" content="0;url='.$filename.'" />';
-    echo '</noscript>';  
-  } 
+    echo '</noscript>';
+  }
 	Header("Location: /");
 }
 
@@ -131,14 +131,14 @@ function format_log_line(row) {
 
 <div id="log-settings" class="widgetconfigdiv" style="display:none;">
 	<form action="/widgets/widgets/log.widget.php" method="post" name="iforma">
-		Number of lines to display: 
+		Number of lines to display:
 		<select name="filterlogentries" class="formfld unknown" id="filterlogentries">
-		<?php for ($i = 0; $i <= 20; $i++) { ?>
-			<option value="<?php if ($i > 0) echo $i; else echo ' ';?>" <?php if ($nentries == $i) echo "selected=\"selected\"";?>><?php if ($i > 0) echo ' ' . $i; else echo ' ';?></option>
+		<?php for ($i = 1; $i <= 20; $i++) { ?>
+			<option value="<?php echo $i;?>" <?php if ($nentries == $i) echo "SELECTED";?>><?php echo $i;?></option>
 		<?php } ?>
 		</select>
 
-<?php 
+<?php
 		$Include_Act = explode(",", str_replace(" ", ",", $nentriesacts));
 		if ($nentriesinterfaces == "All") $nentriesinterfaces = "";
 ?>
@@ -146,16 +146,17 @@ function format_log_line(row) {
 		<input id="actblock"  name="actblock"  type="checkbox" value="Block"  <?php if (in_arrayi('Block',  $Include_Act)) echo "checked=\"checked\""; ?> /> Block
 		<input id="actreject" name="actreject" type="checkbox" value="Reject" <?php if (in_arrayi('Reject', $Include_Act)) echo "checked=\"checked\""; ?> /> Reject
 		<br/>
-		Interfaces: 
+		Interfaces:
 		<select id="filterlogentriesinterfaces" name="filterlogentriesinterfaces" class="formselect">
-                      <?php 
+			<option value="All">ALL</option>
+                      <?php
 						$interfaces = get_configured_interface_with_descr();
 					  	foreach ($interfaces as $iface => $ifacename): ?>
-                      	<option value="<?=$iface;?>" <?php if (!link_interface_to_bridge($iface) && $iface == $if) echo "selected"; ?>>
+                        <option value="<?=$iface;?>" <?php if ($nentriesinterfaces == $iface) echo "selected='selected'";?>>
                       <?=htmlspecialchars($ifacename);?>
                       </option>
                       <?php endforeach; ?>
-                    </select> 
+                    </select>
 
 		<input id="submita" name="submita" type="submit" class="formbtn" value="Save" />
 	</form>

@@ -133,8 +133,8 @@ function format_log_line(row) {
 	<form action="/widgets/widgets/log.widget.php" method="post" name="iforma">
 		Number of lines to display: 
 		<select name="filterlogentries" class="formfld unknown" id="filterlogentries">
-		<?php for ($i = 0; $i <= 20; $i++) { ?>
-			<option value="<?php if ($i > 0) echo $i; else echo ' ';?>" <?php if ($nentries == $i) echo "selected=\"selected\"";?>><?php if ($i > 0) echo ' ' . $i; else echo ' ';?></option>
+		<?php for ($i = 1; $i <= 20; $i++) { ?>
+			<option value="<?php echo $i;?>" <?php if ($nentries == $i) echo "SELECTED";?>><?php echo $i;?></option>
 		<?php } ?>
 		</select>
 

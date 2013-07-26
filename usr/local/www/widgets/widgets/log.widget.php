@@ -138,7 +138,7 @@ function format_log_line(row) {
 		<?php } ?>
 		</select>
 
-<?php 
+<?php
 		$Include_Act = explode(",", str_replace(" ", ",", $nentriesacts));
 		if ($nentriesinterfaces == "All") $nentriesinterfaces = "";
 ?>

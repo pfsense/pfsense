@@ -151,7 +151,7 @@ function format_log_line(row) {
                       <?php
 						$interfaces = get_configured_interface_with_descr();
 					  	foreach ($interfaces as $iface => $ifacename): ?>
-                      	<option value="<?=$iface;?>" <?php if (!link_interface_to_bridge($iface) && $iface == $if) echo "selected"; ?>>
+                        <option value="<?=$iface;?>" <?php if ($nentriesinterfaces == $iface) echo "selected='selected'";?>>
                       <?=htmlspecialchars($ifacename);?>
                       </option>
                       <?php endforeach; ?>

@@ -148,6 +148,7 @@ function format_log_line(row) {
 		<br/>
 		Interfaces:
 		<select id="filterlogentriesinterfaces" name="filterlogentriesinterfaces" class="formselect">
+			<option value="All">ALL</option>
                       <?php
 						$interfaces = get_configured_interface_with_descr();
 					  	foreach ($interfaces as $iface => $ifacename): ?>

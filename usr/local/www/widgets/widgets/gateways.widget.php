@@ -42,7 +42,7 @@ $counter = 1;
 
 ?>
 
-<table bgcolor="#990000" width="100%" border="0" cellspacing="0" cellpadding="0" style="table-layout: fixed;" summary="gateway status">
+<table bgcolor="#990000" width="100%" border="0" cellspacing="0" cellpadding="0" summary="gateway status">
 	<tr>
 	<td class="vncellt" width="30%" id="gatewayname">
 			Name
@@ -140,4 +140,5 @@ $counter = 1;
 	</tr>
 	<?php } // foreach ?>
 </table>
+
 

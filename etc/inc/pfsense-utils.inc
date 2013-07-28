@@ -1811,9 +1811,9 @@ function update_progress_bar($percent, $first_time) {
 
 /* Split() is being DEPRECATED as of PHP 5.3.0 and REMOVED as of PHP 6.0.0. Relying on this feature is highly discouraged. */
 if(!function_exists("split")) {
-	function split($seperator, $haystack, $limit = null) {
-		log_error("deprecated split() call with seperator '{$seperator}'");
-		return preg_split($seperator, $haystack, $limit);
+	function split($separator, $haystack, $limit = null) {
+		log_error("deprecated split() call with separator '{$separator}'");
+		return preg_split($separator, $haystack, $limit);
 	}
 }
 

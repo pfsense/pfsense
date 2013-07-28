@@ -255,7 +255,7 @@ fi
 # Setup compatibility link for packages that
 # have trouble overriding the PREFIX configure
 # argument since we build our packages in a
-# seperated PREFIX area
+# separated PREFIX area
 # Only create if symlink does not exist. 
 if [ ! -h /tmp/tmp ]; then
     /bin/ln -hfs / /tmp/tmp

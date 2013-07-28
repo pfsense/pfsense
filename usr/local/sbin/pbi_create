@@ -318,7 +318,7 @@ Options:
   --key key    		-- Path to the public key file for this repo
   --url url    		-- Base URL for fetching the INDEX files
   --mirror mirrorurl 	-- Mirror url(s) for fetching PBIs, use ',' as 
-			   seperator for multiple
+			   separator for multiple
 
 EOF
         exit_trap

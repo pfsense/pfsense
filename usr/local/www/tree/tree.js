@@ -1,5 +1,5 @@
 /*
- * Content-seperated javascript tree widget
+ * Content-separated javascript tree widget
  * Copyright (C) 2005 SilverStripe Limited
  * Feel free to use this on your websites, but please leave this message in the fies
  * http://www.silverstripe.com/blog

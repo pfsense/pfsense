@@ -376,7 +376,7 @@ display_top_tabs($tab_array);
 			<td width="22%" valign="top" class="vncell"><?=gettext("Domain search list");?></td>
 			<td width="78%" class="vtable">
 				<input name="radomainsearchlist" type="text" class="formfld unknown" id="radomainsearchlist" size="28" value="<?=htmlspecialchars($pconfig['radomainsearchlist']);?>"><br>
-				<?=gettext("The RA server can optionally provide a domain search list. Use the semicolon character as seperator");?>
+				<?=gettext("The RA server can optionally provide a domain search list. Use the semicolon character as separator");?>
 			</td>
 			</tr>
 

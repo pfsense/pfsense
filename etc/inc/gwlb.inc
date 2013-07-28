@@ -676,7 +676,7 @@ function return_gateway_groups_array() {
 	if (is_array($config['gateways']['gateway_group'])) {
 		$carplist = get_configured_carp_interface_list();
 		foreach ($config['gateways']['gateway_group'] as $group) {
-			/* create array with group gateways members seperated by tier */
+			/* create array with group gateways members separated by tier */
 			$tiers = array();
 			$backupplan = array();
 			$gwvip_arr = array();

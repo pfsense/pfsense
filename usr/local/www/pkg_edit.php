@@ -1080,10 +1080,10 @@ function parse_package_templates() {
 								$row_helper_data .= $value;
 								$sep = "";
 								ereg($rowhelperfield['fieldname'] . "_fieldvalue\[(.*)\]", $template_text, $sep);
-								foreach ($sep as $se) $seperator = $se;
-								if($seperator <> "") {
-							    	$row_helper_data = ereg_replace("  ", $seperator, $row_helper_data);
-							    	$template_text = ereg_replace("\[{$seperator}\]", "", $template_text);
+								foreach ($sep as $se) $separator = $se;
+								if($separator <> "") {
+							    	$row_helper_data = ereg_replace("  ", $separator, $row_helper_data);
+							    	$template_text = ereg_replace("\[{$separator}\]", "", $template_text);
 									}
 								$template_text = str_replace($rowhelperfield['fieldname'] . "_fieldvalue", $row_helper_data, $template_text);
 								}

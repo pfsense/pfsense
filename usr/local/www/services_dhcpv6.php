@@ -630,7 +630,7 @@ display_top_tabs($tab_array);
 			<td width="22%" valign="top" class="vncell"><?=gettext("Domain search list");?></td>
 			<td width="78%" class="vtable">
 				<input name="domainsearchlist" type="text" class="formfld unknown" id="domainsearchlist" size="28" value="<?=htmlspecialchars($pconfig['domainsearchlist']);?>"><br>
-				<?=gettext("The DHCP server can optionally provide a domain search list. Use the semicolon character as seperator");?>
+				<?=gettext("The DHCP server can optionally provide a domain search list. Use the semicolon character as separator");?>
 			</td>
 			</tr>
 			<tr>

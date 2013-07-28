@@ -11,7 +11,7 @@ if(empty($argv[1])) {
 /* Huawei example */
 $device = "/dev/{$argv[1]}";
 $statfile = "/tmp/3gstats.{$argv[2]}";
-/* mode is a comma seperated value, thus submode is born */
+/* mode is a comma separated value, thus submode is born */
 $header = "#seconds,rssi,mode,submode,upstream,downstream,sentbytes,receivedbyts,bwupstream,bwdownstream,simstate,service\n";
 
 $i = 0;

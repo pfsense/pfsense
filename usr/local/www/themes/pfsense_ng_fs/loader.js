@@ -108,7 +108,7 @@ jQuery(document).ready(function () {
 	///////////////////////////////////////////
 
 	jQuery('#col2').css("float","left");
-	jQuery('<br/><br/><div><div id =\"addCol\" style=float:left><img src=\"./themes/pfsense_ng_fs/images/icons/icon_plus.gif\"/>&nbsp;Add column&nbsp;</div><div id =\"delCol\" style=float:left><img src=\"./themes/pfsense_ng_fs/images/icons/icon_x.gif\"/>&nbsp;Delete column</div><br/><br/></div> ').insertBefore('#niftyOutter');
+	jQuery('<br/><br/><div><div id =\"addCol\" style=float:left><img src=\"./themes/pfsense_ng_fs/images/icons/icon_plus.gif\"/>&nbsp;Add column&nbsp;</div><div id =\"delCol\" style=float:left><img src=\"./themes/pfsense_ng_fs/images/icons/icon_x.gif\"/>&nbsp;Delete column</div><br/><br/></div> ').insertBefore('#niftyOutter.fakeClass');
 	
 	// on click add a new column and change column widths
 	jQuery('#addCol').click(function(){

@@ -71,7 +71,7 @@ if (isset($id) && isset($a_dyndns[$id])) {
 	$pconfig['wildcard'] = isset($a_dyndns[$id]['wildcard']);
 	$pconfig['verboselog'] = isset($a_dyndns[$id]['verboselog']);
 	$pconfig['zoneid'] = $a_dyndns[$id]['zoneid'];
-	$pconfig['ttl'] = isset($a_dyndns[$id]['ttl']);
+	$pconfig['ttl'] = $a_dyndns[$id]['ttl'];
 	$pconfig['updateurl'] = $a_dyndns[$id]['updateurl'];
 	$pconfig['resultmatch'] = $a_dyndns[$id]['resultmatch'];
 	$pconfig['requestif'] = $a_dyndns[$id]['requestif'];

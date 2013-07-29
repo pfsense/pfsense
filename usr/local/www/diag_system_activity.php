@@ -46,7 +46,7 @@ $pfSversion = str_replace("\n", "", file_get_contents("/etc/version"));
 $pgtitle = gettext("Diagnostics: System Activity");
 
 if($_REQUEST['getactivity']) {
-	$text = `/usr/bin/top -aHS | cut -c1-105`;
+	$text = `/usr/bin/top -aHS | /usr/bin/cut -c1-105`;
 	echo $text;
 	exit;
 }

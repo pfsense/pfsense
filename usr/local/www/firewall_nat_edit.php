@@ -240,7 +240,7 @@ if ($_POST) {
 		$input_errors[] = sprintf(gettext("%s is not a valid end destination port. It must be a port alias or integer between 1 and 65535."), $_POST['dstendport']);
 
 	if ((strtoupper($_POST['proto']) == "TCP" || strtoupper($_POST['proto']) == "UDP" || strtoupper($_POST['proto']) == "TCP/UDP") && (!isset($_POST['nordr']) && !is_portoralias($_POST['localbeginport']))) {
-		$input_errors[] = sprintf(gettext("A valid local port must be specified. It must be a port alias or integer between 1 and 65535."), $_POST['localbeginport']);
+		$input_errors[] = sprintf(gettext("A valid redirect target port must be specified. It must be a port alias or integer between 1 and 65535."), $_POST['localbeginport']);
 	}
 
 	/* if user enters an alias and selects "network" then disallow. */

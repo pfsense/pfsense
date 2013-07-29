@@ -550,7 +550,8 @@ pfSense_handle_custom_code("/usr/local/pkg/dashboard/pre_dashboard");
 &nbsp;&nbsp;&nbsp;
 		<input id="submit" name="submit" type="submit" style="display:none" onclick="return updatePref();" class="formbtn" value="<?=gettext("Save Settings");?>" />
 </form>
-<div id="niftyOutter">
+<!-- fakeClass contains no CSS but is used as an identifier in theme pfsense_ng_fs - loader.js -->
+<div id="niftyOutter" class="fakeClass">
 	<?php
 	$totalwidgets = count($widgetfiles);
 	$halftotal = $totalwidgets / 2 - 2;

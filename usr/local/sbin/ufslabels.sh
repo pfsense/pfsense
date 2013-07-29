@@ -90,7 +90,7 @@ echo "===================="
 echo "New fstab:"
 cat ${FSTAB}.tmp
 
-if [ ${1} = "commit" ]; then
+if [ "${1}" = "commit" ]; then
 	COMMIT=y
 else
 	echo "Commit changes? (y/n):"

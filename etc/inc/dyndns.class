@@ -641,7 +641,7 @@
 			switch ($this->_dnsCASource) {
 				# Get the site CA from system trusted root CA bundle (for SSL/TLS).
 				case 'ca_bundle':
-					# Leave the CURLOPT_CAINFO option unset so the system tusted root CA bundle will be used.
+					# Leave the CURLOPT_CAINFO option unset so the system trusted root CA bundle will be used.
 					if ($this->_dnsVerboseLog)
 						log_error('CA Source: '.'System Trusted Root CA Bundle.');
 					break;

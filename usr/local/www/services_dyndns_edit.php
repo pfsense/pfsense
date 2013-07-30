@@ -282,7 +282,7 @@ function _onTypeChange(type){
 				</tr>
 
 <script type="text/javascript">
-	/* Make server PHP arrays availble to client JavaScript. */
+	/* Make server PHP arrays available to client JavaScript. */
 	ssl_service = new Array();
 	<?	foreach ($SSL_Service as $key => $value) { ?>
 		ssl_service["<? echo $key; ?>"] = "<? echo $value; ?>";
@@ -451,7 +451,7 @@ function _ca_source(){
 					<td width="22%" valign="top" class="vncell"><?=gettext("Verify Peer and/or Host"); ?></td>
 					<td width="78%" class="vtable">
 						<input name="verifypeer" type="checkbox" id="verifypeer" value="yes" <?php if ($pconfig['verifypeer']) echo "checked"; ?> onchange="_onVerifyPeerChange();">
-						<?=gettext("Verify");?> <?=gettext("Peer");?>&nbsp&nbsp&nbsp&nbsp<?=gettext("Verifies the server certtificate against a trusted CA.");?><br>
+						<?=gettext("Verify");?> <?=gettext("Peer");?>&nbsp&nbsp&nbsp&nbsp<?=gettext("Verifies the server certificate against a trusted CA.");?><br>
 						<input name="verifyhost" type="checkbox" id="verifyhost" value="yes" <?php if ($pconfig['verifyhost']) echo "checked"; ?> >
 						<?=gettext("Verify");?> <?=gettext("Host");?>&nbsp&nbsp&nbsp&nbsp<?=gettext("Check existence of a common name and verify that it matches the hostname provided.");?><br>
 					</td>

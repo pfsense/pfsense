@@ -41,8 +41,8 @@ require_once("/usr/local/www/widgets/include/smart_status.inc");
 
 <?php
 $devs = array();
-## Get all AD* and DA* (IDE and SCSI) devices currently installed and st$
-exec("ls /dev | grep '^[ad][da][0-9]\{1,2\}$'", $devs); ## leant from orginal SMART status screen
+## Get all adX, daX, and adaX (IDE, SCSI, and AHCI) devices currently installed
+exec("ls /dev | grep '^[ad][da]a*[0-9]\{1,2\}$'", $devs); ## From SMART status page
 
 if(count($devs) > 0)  {
 	foreach($devs as $dev)  {	## for each found drive do

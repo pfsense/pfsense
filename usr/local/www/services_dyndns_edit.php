@@ -105,6 +105,8 @@ if ($_POST) {
 
 	do_input_validation($_POST, $reqdfields, $reqdfieldsn, &$input_errors);
 
+	if (($_POST['host'] && !is_domain($_POST['host'])))
+		$input_errors[] = gettext("The Hostname contains invalid characters.");
 	if (($_POST['mx'] && !is_domain($_POST['mx']))) 
 		$input_errors[] = gettext("The MX contains invalid characters.");
 	if ((in_array("username", $reqdfields) && $_POST['username'] && !is_dyndns_username($_POST['username'])) || ((in_array("username", $reqdfields)) && ($_POST['username'] == ""))) 

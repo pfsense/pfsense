@@ -40,6 +40,9 @@
 
 define('DYNDNS_PROVIDER_VALUES', 'dnsomatic dyndns dyndns-static dyndns-custom dhs dyns easydns noip noip-free ods zoneedit loopia freedns dnsexit opendns namecheap he-net he-net-v6 he-net-tunnelbroker selfhost route53 custom custom-v6');
 define('DYNDNS_PROVIDER_DESCRIPTIONS', 'DNS-O-Matic,DynDNS (dynamic),DynDNS (static),DynDNS (custom),DHS,DyNS,easyDNS,No-IP,No-IP (free),ODS.org,ZoneEdit,Loopia,freeDNS,DNSexit,OpenDNS,Namecheap,HE.net,HE.net (v6),HE.net Tunnelbroker,SelfHost,Route 53,Custom,Custom (v6)');
+define('DYNDNS_PROVIDER_SSL_SERVICE', 'YES YES YES YES YES NO NO NO NO NO YES YES NO NO YES YES YES YES YES YES YES URL URL');
+define('DYNDNS_PROVIDER_VERIFY_PEER', 'NO NO NO NO NO NO NO NO NO NO NO NO NO NO NO NO NO NO NO NO YES YES YES');				# These match the previous hard coded option.
+define('DYNDNS_PROVIDER_VERIFY_HOST', 'YES YES YES YES YES NO NO NO NO NO NO YES NO NO YES YES YES YES YES YES YES YES YES');	# These match the previous hard coded option.
 
 /* implement ipv6 route advertising deamon */
 function services_radvd_configure() {
@@ -1533,6 +1536,11 @@ function services_dyndns_configure_client($conf) {
 		$dnsPort = NULL,
 		$dnsUpdateURL = "{$conf['updateurl']}",
 		$forceUpdate = $conf['force'],
+		$dnsVerifyPeer = $conf['verifypeer'],
+		$dnsVerifyHost = $conf['verifyhost'],
+		$dnsCASource = "{$conf['casource']}",
+		$dnsCARefID = "{$conf['carefid']}",
+		$dnsCAFile = "{$conf['cafile']}",
 		$dnsZoneID=$conf['zoneid'],
 		$dnsTTL=$conf['ttl'],
 		$dnsResultMatch = "{$conf['resultmatch']}",

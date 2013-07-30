@@ -2167,12 +2167,14 @@ function filter_generate_user_rule($rule) {
 
 	/* check for unresolvable aliases */
 	if($rule['source']['address'] && !alias_expand($rule['source']['address'])) {
-		file_notice("Filter_Reload", "# unresolvable source aliases {$rule['descr']}");
-		return "# unresolvable source aliases {$rule['descr']}";
+		$error_text = "Unresolvable source alias '{$rule['source']['address']}' for rule '{$rule['descr']}'";
+		file_notice("Filter_Reload", $error_text);
+		return "# {$error_text}";
 	}
 	if($rule['destination']['address'] && !alias_expand($rule['destination']['address'])) {
-		file_notice("Filter_Reload", "# unresolvable dest aliases {$rule['descr']}");
-		return "# unresolvable dest aliases {$rule['descr']}";
+		$error_text = "Unresolvable destination alias '{$rule['destination']['address']}' for rule '{$rule['descr']}'";
+		file_notice("Filter_Reload", $error_text);
+		return "# {$error_text}";
 	}
 	update_filter_reload_status("Setting up pass/block rules");
 	$type = $rule['type'];

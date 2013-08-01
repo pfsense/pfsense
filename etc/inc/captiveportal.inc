@@ -1180,17 +1180,20 @@ function captiveportal_get_radius_servers() {
 function captiveportal_logportalauth($user,$mac,$ip,$status, $message = null) {
 	// Log it
 	if (!$message)
-		$message = "$status: $user, $mac, $ip";
+		$message = "{$status}: {$user}, {$mac}, {$ip}";
 	else {
 		$message = trim($message);
-		$message = "$status: $user, $mac, $ip, $message";
+		$message = "{$status}: {$user}, {$mac}, {$ip}, {$message}";
 	}
 	captiveportal_syslog($message);
 }
 
 /* log simple messages to syslog */
 function captiveportal_syslog($message) {
+	global $cpzone;
+
 	$message = trim($message);
+	$message .= "Zone: {$cpzone} - {$message}";
 	openlog("logportalauth", LOG_PID, LOG_LOCAL4);
 	// Log it
 	syslog(LOG_INFO, $message);
@@ -1875,7 +1878,7 @@ function portal_allow($clientip,$clientmac,$username,$password = null, $attribut
 			/* if the pool is empty, return appropriate message and exit */
 			if (is_null($pipeno)) {
 				portal_reply_page($redirurl, "error", "System reached maximum login capacity");
-				log_error("WARNING!  Captive portal has reached maximum login capacity");
+				log_error("Zone: {$cpzone} - WARNING!  Captive portal has reached maximum login capacity");
 				unlock($cpdblck);
 				return;
 			}

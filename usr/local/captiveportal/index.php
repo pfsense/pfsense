@@ -62,7 +62,7 @@ $clientip = $_SERVER['REMOTE_ADDR'];
 
 if (!$clientip) {
 	/* not good - bail out */
-	log_error("Captive portal could not determine client's IP address.");
+	log_error("Zone: {$cpzone} - Captive portal could not determine client's IP address.");
 	$error_message = "An error occurred.  Please check the system logs for more information.";
 	portal_reply_page($redirurl, "error", $errormsg);
 	ob_flush();
@@ -97,7 +97,7 @@ if ($macfilter || $passthrumac) {
 		/* unable to find MAC address - shouldn't happen! - bail out */
 		captiveportal_logportalauth("unauthenticated","noclientmac",$clientip,"ERROR");
 		echo "An error occurred.  Please check the system logs for more information.";
-		log_error("Captive portal could not determine client's MAC address.  Disable MAC address filtering in captive portal if you do not need this functionality.");
+		log_error("Zone: {$cpzone} - Captive portal could not determine client's MAC address.  Disable MAC address filtering in captive portal if you do not need this functionality.");
 		ob_flush();
 		return;
 	}

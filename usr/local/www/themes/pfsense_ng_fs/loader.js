@@ -104,53 +104,55 @@ jQuery(document).ready(function () {
     jQuery('#navigation ul li ul').css('max-height', hwindow);
     
     ///////////////////////////////////////////
-	// jQuery code for columns / widgets part 2    
-	///////////////////////////////////////////
+    // jQuery code for columns / widgets part 2    
+    ///////////////////////////////////////////
 
-	jQuery('#col2').css("float","left");
-	jQuery('<br/><br/><div id=\"columnModifier\"><div style=\"float:left\"><div id =\"addCol\" style=\"float:left\"><img src=\"./themes/pfsense_ng_fs/images/icons/icon_plus.gif\" style=\"cursor:pointer\" alt=\"Click here to add a column\"/></div>&nbsp;Add column&nbsp;</div><div style=\"float:left\"><div id =\"delCol\" style=\"float:left\"><img src=\"./themes/pfsense_ng_fs/images/icons/icon_x.gif\" style=\"cursor:pointer\" alt=\"Click here to delete a column\"/></div>&nbsp;Delete column</div><div id=\"columnWarningText\" style=\"float:left; margin-left:5em\"></div><br/><br/>').insertBefore('#niftyOutter.fakeClass');
+    jQuery('#col2').css("float","left");
+
+    // insert add/delete column buttons
+    jQuery('<br/><br/><div id=\"columnModifier\"><div style=\"float:left\"><div id =\"addCol\" style=\"float:left\"><img src=\"./themes/pfsense_ng_fs/images/icons/icon_plus.gif\" style=\"cursor:pointer\" alt=\"Click here to add a column\"/></div>&nbsp;Add column&nbsp;</div><div style=\"float:left\"><div id =\"delCol\" style=\"float:left\"><img src=\"./themes/pfsense_ng_fs/images/icons/icon_x.gif\" style=\"cursor:pointer\" alt=\"Click here to delete a column\"/></div>&nbsp;Delete column</div><div id=\"columnWarningText\" style=\"float:left; margin-left:5em\"></div><br/><br/>').insertBefore('#niftyOutter.fakeClass');
 	
-	// on click add a new column and change column widths
-	jQuery('#addCol').click(function(){
-		if( noCols < 10 ){
-			var colAfter = noCols;
-			noCols++;
+    // on click add a new column and change column widths
+    jQuery('#addCol').click(function(){
+	if( noCols < 10 ){
+		var colAfter = noCols;
+		noCols++;
 
-			// insert new column
-			jQuery('#col' + (colAfter).toString() ).after("<div id=\"col" + noCols + "\" style=\"float: left; padding-bottom: 40px\" class=\"ui-sortable\"> </div>");
+		// insert new column
+		jQuery('#col' + (colAfter).toString() ).after("<div id=\"col" + noCols + "\" style=\"float: left; padding-bottom: 40px\" class=\"ui-sortable\"> </div>");
 
-			correctWidgetDisplay(noCols);
+		correctWidgetDisplay(noCols);
 		
-			// connect new column with other columns 
-			jQuery('.ui-sortable').sortable({connectWith: '.ui-sortable', dropOnEmpty: true, handle: '.widgetheader', change: showSave});
-		}
-		else{
-			jQuery('#columnWarningText').html('<b>Maximum number of columns reached</b>').show().delay(1000).fadeOut(1000);
-		}		  
-	});
+		// connect new column with other columns 
+		jQuery('.ui-sortable').sortable({connectWith: '.ui-sortable', dropOnEmpty: true, handle: '.widgetheader', change: showSave});
+	}
+	else{
+		jQuery('#columnWarningText').html('<b>Maximum number of columns reached</b>').show().delay(1000).fadeOut(1000);
+	}
+    });
 
-	// on click delete a columns and change column widths
-	jQuery('#delCol').click(function(){
-		if( noCols > 2 ){
-			var colToDel = noCols;
-			noCols -= 1;
+    // on click delete a columns and change column widths
+    jQuery('#delCol').click(function(){
+	if( noCols > 2 ){
+		var colToDel = noCols;
+		noCols -= 1;
 
-			correctWidgetDisplay(noCols);
+		correctWidgetDisplay(noCols);
 
-			// get column contents before deletion
-			var colContent = jQuery('#col' + colToDel ).html();
+		// get column contents before deletion
+		var colContent = jQuery('#col' + colToDel ).html();
 
-			// remove column
-			jQuery('#col' + colToDel ).remove();
+		// remove column
+		jQuery('#col' + colToDel ).remove();
 
-			// append deleted columns content to preceeding column
-			jQuery(colContent).appendTo('#col' + noCols );
+		// append deleted columns content to preceeding column
+		jQuery(colContent).appendTo('#col' + noCols );
 			
-			showSave();           
-		}
-		else{
-			jQuery('#columnWarningText').html('<b>Minimum number of columns reached</b>').show().delay(1000).fadeOut(1000);
-		}
-	});
+		showSave();           
+	}
+	else{
+		jQuery('#columnWarningText').html('<b>Minimum number of columns reached</b>').show().delay(1000).fadeOut(1000);
+	}
+    });
 });
 //]]>

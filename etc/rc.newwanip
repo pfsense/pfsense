@@ -69,9 +69,6 @@ if(empty($argument)) {
 	$interface_real = $argument;
 }
 
-/* NOTE: Check #2495 before being smart here */
-interface_ipalias_cleanup($interface, "inet4");
-
 if(empty($argument))
 	$curwanip = get_interface_ip();
 else {

@@ -104,10 +104,10 @@ add_new_address() {
 		$medium
 	$IFCONFIG $interface setfirst $new_ip_address
 
-		$LOGGER "New IP Address ($interface): $new_ip_address"
-		$LOGGER "New Subnet Mask ($interface): $new_subnet_mask"
-		$LOGGER "New Broadcast Address ($interface): $new_broadcast_address"
-		$LOGGER "New Routers ($interface): $new_routers"
+	$LOGGER "New IP Address ($interface): $new_ip_address"
+	$LOGGER "New Subnet Mask ($interface): $new_subnet_mask"
+	$LOGGER "New Broadcast Address ($interface): $new_broadcast_address"
+	$LOGGER "New Routers ($interface): $new_routers"
 
 
 	# This is necessary otherwise apinger will try to ping all 1s address

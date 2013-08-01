@@ -108,7 +108,7 @@ jQuery(document).ready(function () {
 	///////////////////////////////////////////
 
 	jQuery('#col2').css("float","left");
-	jQuery('<br/><br/><div><div id =\"addCol\" style=float:left><img src=\"./themes/pfsense_ng_fs/images/icons/icon_plus.gif\"/>&nbsp;Add column&nbsp;</div><div id =\"delCol\" style=float:left><img src=\"./themes/pfsense_ng_fs/images/icons/icon_x.gif\"/>&nbsp;Delete column</div><br/><br/></div> ').insertBefore('#niftyOutter.fakeClass');
+	jQuery('<br/><br/><div><div id =\"addCol\" style="float:left; cursor:pointer"><img src=\"./themes/pfsense_ng_fs/images/icons/icon_plus.gif\" alt="Click here to add a column"/>&nbsp;Add column&nbsp;</div><div id =\"delCol\" style="float:left; cursor:pointer"><img src=\"./themes/pfsense_ng_fs/images/icons/icon_x.gif\" alt="Click here to delete a column"/>&nbsp;Delete column<text id="columnWarningText" style="margin-left:5em"></text></div><br/><br/></div> ').insertBefore('#niftyOutter.fakeClass');
 	
 	// on click add a new column and change column widths
 	jQuery('#addCol').click(function(){
@@ -123,6 +123,9 @@ jQuery(document).ready(function () {
 		
 			// connect new column with other columns 
 			jQuery('.ui-sortable').sortable({connectWith: '.ui-sortable', dropOnEmpty: true, handle: '.widgetheader', change: showSave});
+		}
+		else{
+			jQuery('#columnWarningText').html('<b>Maximum number of columns reached</b>').show().delay(1000).fadeOut(1000);
 		}		  
 	});
 
@@ -144,6 +147,9 @@ jQuery(document).ready(function () {
 			jQuery(colContent).appendTo('#col' + noCols );
 			
 			showSave();           
+		}
+		else{
+			jQuery('#columnWarningText').html('<b>Minimum number of columns reached</b>').show().delay(1000).fadeOut(1000);
 		}
 	});
 });

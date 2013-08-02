@@ -240,7 +240,6 @@ EOD;
 	@file_put_contents("{$g['varetc_path']}/apinger.conf", $apingerconfig);
 	unset($apingerconfig);
 
-	killbypid("{$g['varrun_path']}/apinger.pid");
 	if (is_dir("{$g['tmp_path']}"))
 		chmod("{$g['tmp_path']}", 01777);
 	if (!is_dir("{$g['vardb_path']}/rrd"))
@@ -248,12 +247,16 @@ EOD;
 
 	@chown("{$g['vardb_path']}/rrd", "nobody");
 
-	/* start a new apinger process */
-	@unlink("{$g['varrun_path']}/apinger.status");
-	sleep(1);
-	mwexec_bg("/usr/local/sbin/apinger -c {$g['varetc_path']}/apinger.conf");
-	sleep(1);
-	sigkillbypid("{$g['varrun_path']}/apinger.pid", "USR1");
+	if (isvalidpid("{$g['varrun_path']}/apinger.pid"))
+		sigkillbypid("{$g['varrun_path']}/apinger.pid", "HUP");
+	else {
+		/* start a new apinger process */
+		@unlink("{$g['varrun_path']}/apinger.status");
+		sleep(1);
+		mwexec_bg("/usr/local/sbin/apinger -c {$g['varetc_path']}/apinger.conf");
+		sleep(1);
+		sigkillbypid("{$g['varrun_path']}/apinger.pid", "USR1");
+	}
 
 	return 0;
 }

@@ -320,7 +320,7 @@ function filter_configure_sync($delete_states_if_needed = true) {
 		echo "pfctl done at $mt\n";
 	}
 	/*
-	 * check for a error while loading the rules file.	if an error has occured
+	 * check for a error while loading the rules file.	if an error has occurred
 	 * then output the contents of the error to the caller
 	 */
 	if($rules_loading <> 0) {

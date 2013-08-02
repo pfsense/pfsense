@@ -107,7 +107,7 @@ function carp_check_version($url, $username, $password, $port = 80, $method = 'p
 		/* send our XMLRPC message and timeout after 240 seconds */
 		$resp = $cli->send($msg, "240");
 		if(!is_object($resp)) {
-			$error = "A communications error occured while attempting XMLRPC sync with username {$username} {$url}:{$port}.";
+			$error = "A communications error occurred while attempting XMLRPC sync with username {$username} {$url}:{$port}.";
 		} elseif($resp->faultCode()) {
 			$error = "An error code was received while attempting XMLRPC sync with username {$username} {$url}:{$port} - Code " . $resp->faultCode() . ": " . $resp->faultString();
 		} else {
@@ -247,7 +247,7 @@ function carp_sync_xml($url, $username, $password, $sections, $port = 80, $metho
 		/* send our XMLRPC message and timeout after 240 seconds */
 		$resp = $cli->send($msg, "240");
 		if(!is_object($resp)) {
-			$error = "A communications error occured while attempting XMLRPC sync with username {$username} {$url}:{$port}.";
+			$error = "A communications error occurred while attempting XMLRPC sync with username {$username} {$url}:{$port}.";
 			log_error($error);
 			file_notice("sync_settings", $error, "Settings Sync", "");
 		} elseif($resp->faultCode()) {
@@ -420,7 +420,7 @@ if (is_array($config['hasync'])) {
 	$resp = $cli->send($msg, "900");
 
 	if (!is_object($resp)) {
-		$error = "A communications error occured while attempting Filter sync with username {$username} {$synchronizetoip}:{$port}.";
+		$error = "A communications error occurred while attempting Filter sync with username {$username} {$synchronizetoip}:{$port}.";
 		log_error($error);
 		file_notice("sync_settings", $error, "Settings Sync", "");
 	} elseif($resp->faultCode()) {

@@ -105,7 +105,7 @@ if ($_POST) {
 
                 $gre['greif'] = interface_gre_configure($gre);
                 if ($gre['greif'] == "" || !stristr($gre['greif'], "gre"))
-                        $input_errors[] = gettext("Error occured creating interface, please retry.");
+                        $input_errors[] = gettext("Error occurred creating interface, please retry.");
                 else {
                         if (isset($id) && $a_gres[$id])
                                 $a_gres[$id] = $gre;

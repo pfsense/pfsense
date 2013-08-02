@@ -12928,7 +12928,7 @@ msgstr ""
 #: usr/local/www/interfaces_lagg_edit.php:114
 #: usr/local/www/interfaces_gif_edit.php:114
 #: usr/local/www/interfaces_bridge_edit.php:217
-msgid "Error occured creating interface, please retry."
+msgid "Error occurred creating interface, please retry."
 msgstr ""
 "Arabirim oluşturulurken bir hata meydana geldi, lütfen tekrar deneyiniz."
 

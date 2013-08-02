@@ -111,7 +111,7 @@ if ($_POST) {
 
 		$lagg['laggif'] = interface_lagg_configure($lagg);
 		if ($lagg['laggif'] == "" || !stristr($lagg['laggif'], "lagg"))
-			$input_errors[] = gettext("Error occured creating interface, please retry.");
+			$input_errors[] = gettext("Error occurred creating interface, please retry.");
 		else {
 			if (isset($id) && $a_laggs[$id])
 				$a_laggs[$id] = $lagg;

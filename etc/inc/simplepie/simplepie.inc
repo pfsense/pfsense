@@ -1817,7 +1817,7 @@ function embed_wmedia(width, height, link) {
 	}
 
 	/**
-	 * Return the error message for the occured error
+	 * Return the error message for the occurred error
 	 *
 	 * @access public
 	 * @return string Error message

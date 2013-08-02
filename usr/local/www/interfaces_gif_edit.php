@@ -111,7 +111,7 @@ if ($_POST) {
 
                 $gif['gifif'] = interface_gif_configure($gif);
                 if ($gif['gifif'] == "" || !stristr($gif['gifif'], "gif"))
-                        $input_errors[] = gettext("Error occured creating interface, please retry.");
+                        $input_errors[] = gettext("Error occurred creating interface, please retry.");
                 else {
                         if (isset($id) && $a_gifs[$id])
                                 $a_gifs[$id] = $gif;

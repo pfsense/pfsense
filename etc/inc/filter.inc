@@ -2334,7 +2334,7 @@ function filter_generate_user_rule($rule) {
 			$aline['flags'] = "flags S/SA ";
 		}
 	}
-	if (in_array($rule['protocol'], array("icmp","udp","tcp","tcp/udp")) && ($type == "pass")) {
+	if ($type == "pass") {
 		/*
 		 *	# keep state
 		 *		works with TCP, UDP, and ICMP.

@@ -523,7 +523,7 @@ function prot_change() {
 								<td colspan="2" class="list" height="12">&nbsp;</td>
 							</tr>
 							<tr>
-								<td colspan="2" valign="top" class="listtopic"><?=gettext("Serial Communcations"); ?></td>
+								<td colspan="2" valign="top" class="listtopic"><?=gettext("Serial Communications"); ?></td>
 							</tr>
 							<?php if($g['platform'] == "pfSense" || $g['platform'] == "cdrom"): ?>
 							<tr>

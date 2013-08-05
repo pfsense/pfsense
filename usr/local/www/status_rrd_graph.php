@@ -95,12 +95,23 @@ if ($_GET['option']) {
 			$curoption = "queuedrops";
 			break;
 		case "quality":
+			/* Get default gateway */
+			foreach($config['gateways']['gateway_item'] as $default_gateway) {
+				if(isset($default_gateway['defaultgw']))
+					break;
+			}
 			foreach($databases as $database) {
 				if(preg_match("/[-]quality\.rrd/i", $database)) {
-					/* pick off the 1st database we find that matches the quality graph */
+					/* pick off the default gateway database, else the 1st database we find that matches the quality graph */
 					$name = explode("-", $database);
 					$curoption = "$name[0]";
-					continue 2;
+					if(isset($default_gateway['defaultgw'])) {
+						if($curoption == $default_gateway['name'])
+							continue 2;
+					}
+					else {
+						continue 2;
+					}
 				}
 			}
 		case "wireless":

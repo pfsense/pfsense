@@ -1940,7 +1940,7 @@ $types6 = array("none" => gettext("None"), "staticv6" => gettext("Static IPv6"),
 											<input name="dhcprejectfrom" type="text" class="formfld unknown" id="dhcprejectfrom" size="20" value="<?=htmlspecialchars($pconfig['dhcprejectfrom']);?>" />
 											<br/>
 											<?=gettext("If there is a certain upstream DHCP server that should be ignored, place the IP address or subnet of the DHCP server to be ignored here."); ?>
-											<?=gettext("this is useful for rejecting leases from cable modems that offer private IPs when they lose upstream sync."); ?>
+											<?=gettext("This is useful for rejecting leases from cable modems that offer private IPs when they lose upstream sync."); ?>
 										</td>
 									</tr>
 

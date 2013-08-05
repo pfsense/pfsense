@@ -49,13 +49,13 @@ if($_POST) {
 		/* read the file contents */
 		$fd_pic = fopen($_FILES['pictfile']['tmp_name'], "rb");
 		while ( ($buf=fread( $fd_pic, 8192 )) != '' ) {
-		    // Here, $buf is guaranted to contain data
+		    // Here, $buf is guaranteed to contain data
 		    $data .= $buf;
 		}
 		fclose($fd_pic);
 		if(!$data) {
 			log_error("Warning, could not read file " . $_FILES['pictfile']['tmp_name']);
-			die("Cold not read temporary file");
+			die("Could not read temporary file");
 		} else {
 			$picname = basename($_FILES['uploadedfile']['name']);
 			$config['widgets']['picturewidget'] = base64_encode($data);

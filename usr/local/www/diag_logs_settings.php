@@ -306,7 +306,7 @@ function check_everything() {
 				</select>
 				<strong><?=gettext("Show the applied rule description below or in the firewall log rows.");?></strong>
 				<br/>
-				<?=gettext("Displaying rule descriptions for all lines in the log might affect performance with large rulessets.");?></td>
+				<?=gettext("Displaying rule descriptions for all lines in the log might affect performance with large rule sets.");?></td>
 			</td>
 		</tr>
 		<tr>

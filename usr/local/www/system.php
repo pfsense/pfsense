@@ -331,7 +331,7 @@ include("head.inc");
 						</table>
 						<br />
 						<span class="vexpl">
-							<?=gettext("Enter IP addresses to be used by the system for DNS resolution." .
+							<?=gettext("Enter IP addresses to be used by the system for DNS resolution. " .
 							"These are also used for the DHCP service, DNS forwarder and for PPTP VPN clients."); ?>
 							<br/>
 							<?php if($multiwan): ?>

@@ -42,8 +42,8 @@ if($_POST['rssfeed']) {
 }
 
 // Use saved feed and max items
-if($config['widgets']['rssfeed']) 
-	$rss_feed_s = explode(",", $config['widgets']['rssfeed']);	
+if($config['widgets']['rssfeed'])
+	$rss_feed_s = explode(",", $config['widgets']['rssfeed']);
 
 if($config['widgets']['rssmaxitems'])
 	$max_items =  $config['widgets']['rssmaxitems'];
@@ -59,19 +59,19 @@ if(!$rss_feed_s) {
 	$rss_feed_s = "http://blog.pfsense.org";
 	$config['widgets']['rssfeed'] = "http://blog.pfsense.org";
 }
-	
+
 if(!$max_items)
 	$max_items = 10;
 
 if(!$rsswidgetheight)
 	$rsswidgetheight = 300;
-	
+
 if(!$rsswidgettextlength)
 	$rsswidgettextlength = 140;	// oh twitter, how do we love thee?
 
-if($config['widgets']['rssfeed']) 
+if($config['widgets']['rssfeed'])
 	$textarea_txt =  str_replace(",", "\n", $config['widgets']['rssfeed']);
-else 
+else
 	$textarea_txt = "";
 
 ?>
@@ -85,46 +85,46 @@ else
 		<table summary="rss widget">
 			<tr>
 				<td align="right">
-					Display number of items: 
+					Display number of items:
 				</td>
 				<td>
 					<select name='rssmaxitems' id='rssmaxitems'>
 						<option value='<?= $max_items ?>'><?= $max_items ?></option>
 						<?php
-							for($x=100; $x<5100; $x=$x+100) 
+							for($x=100; $x<5100; $x=$x+100)
 								echo "<option value='{$x}'>{$x}</option>\n";
 						?>
 					</select>
 				</td>
 			</tr>
 			<tr>
-				<td align="right">		
-					Widget height: 
+				<td align="right">
+					Widget height:
 				</td>
 				<td>
 					<select name='rsswidgetheight' id='rsswidgetheight'>
 						<option value='<?= $rsswidgetheight ?>'><?= $rsswidgetheight ?>px</option>
 						<?php
-							for($x=100; $x<5100; $x=$x+100) 
+							for($x=100; $x<5100; $x=$x+100)
 								echo "<option value='{$x}'>{$x}px</option>\n";
 						?>
 					</select>
 				</td>
 			</tr>
 			<tr>
-				<td align="right">		
+				<td align="right">
 					Show how many characters from story:
 				</td>
 				<td>
 					<select name='rsswidgettextlength' id='rsswidgettextlength'>
 						<option value='<?= $rsswidgettextlength ?>'><?= $rsswidgettextlength ?></option>
 						<?php
-							for($x=10; $x<5100; $x=$x+10) 
+							for($x=10; $x<5100; $x=$x+10)
 								echo "<option value='{$x}'>{$x}</option>\n";
 						?>
 					</select>
 				</td>
-			</tr>			
+			</tr>
 			<tr>
 				<td>
 					&nbsp;
@@ -150,7 +150,7 @@ else
 	  if(strlen($string) > $length)
 	  return (preg_match('/^(.*)\W.*$/', substr($string, 0, $length+1), $matches) ? $matches[1] : substr($string, 0, $length)) . $replacer;
 	  return $string;
-	}	
+	}
 	$feed = new SimplePie();
 	$feed->set_cache_location("/tmp/simplepie/");
 	$feed->set_feed_url($rss_feed_s);
@@ -169,10 +169,10 @@ else
 		$counter++;
 		if($counter > $max_items)
 			break;
-		echo "<hr/>";			
+		echo "<hr/>";
 	}
 ?>
-</div>				 
+</div>
 
 <!-- needed to display the widget settings menu -->
 <script type="text/javascript">

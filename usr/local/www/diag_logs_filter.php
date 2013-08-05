@@ -248,7 +248,7 @@ include("head.inc");
 							</div>
 						</td>
 						<td>
-							<div align=center valign=top><?=gettext("Filter expresion");?></div>
+							<div align=center valign=top><?=gettext("Filter expression");?></div>
 							<div align=center valign=top><input id="filtertext" name="filtertext" class="formfld search" style="vertical-align:top;" type="text" size="35" value="<?=$filtertext?>" /></div>
 						</td>
 						<td>

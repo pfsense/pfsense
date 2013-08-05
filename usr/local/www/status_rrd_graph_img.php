@@ -946,7 +946,7 @@ elseif((strstr($curdatabase, "-mbuf.rrd")) && (file_exists("$rrddbpath$curdataba
 	$graphcmd .= "--start $start --end $end --step $step ";
 	$graphcmd .= "--vertical-label \"utilization, percent\" ";
 	$graphcmd .= "--color SHADEA#eeeeee --color SHADEB#eeeeee ";
-	$graphcmd .= "--title \"`hostname` - {$prettydb} - {$hperiod} - {$havg} average\" ";
+	$graphcmd .= "--title \"`hostname` - {$prettydb} clusters - {$hperiod} - {$havg} average\" ";
 	$graphcmd .= "--height 200 --width 620 ";
 	$graphcmd .= "DEF:\"current=$rrddbpath$curdatabase:current:AVERAGE:step=$step\" ";
 	$graphcmd .= "DEF:\"cache=$rrddbpath$curdatabase:cache:AVERAGE:step=$step\" ";

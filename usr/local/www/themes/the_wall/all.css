@@ -1300,3 +1300,11 @@ table.sortable thead {
 .thermal_sensors_widget_scale100 { position: absolute; height: 9px; width: 1px; left: 100%; margin-top: -6px; background-color: lightgray; z-index: 0; font-size: 0; }
 
 .thermal_sensors_widget_mark100 { position: absolute; width: 15px; left: 96%; margin-top: -12px; font: 6pt Arial, sans-serif; text-align: left; color: #575757; }
+
+/* widget textarea styles - full width */
+.textarea_widget { 
+	width: 100%; 
+	-webkit-box-sizing: border-box; /* Safari/Chrome, other WebKit */
+	-moz-box-sizing: border-box;    /* Firefox, other Gecko */
+	box-sizing: border-box;         /* IE 8+ */
+}

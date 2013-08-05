@@ -80,7 +80,7 @@ else
 
 <div id="rss-settings" class="widgetconfigdiv" style="display:none;">
 	<form action="/widgets/widgets/rss.widget.php" method="post" name="iformc">
-		<textarea name="rssfeed" class="formfld unknown" id="rssfeed" cols="40" rows="3"><?=$textarea_txt;?></textarea>
+		<textarea name="rssfeed" class="formfld unknown textarea_widget" id="rssfeed" cols="40" rows="3"><?=$textarea_txt;?></textarea>
 		<br/>
 		<table summary="rss widget">
 			<tr>

@@ -43,6 +43,7 @@ require_once("openvpn.inc");
 require_once("ipsec.inc");
 require_once("vpn.inc");
 require_once("vslb.inc");
+require_once("gwlb.inc");
 
 define("RCFILEPREFIX", "/usr/local/etc/rc.d/");
 function write_rcfile($params) {
@@ -304,6 +305,14 @@ function get_services() {
 		$services[] = $pconfig;
 	}
 
+	$gateways_arr = return_gateways_array();
+	if (is_array($gateways_arr)) {
+		$pconfig = array();
+		$pconfig['name'] = "apinger";
+		$pconfig['description'] = gettext("Gateway Monitoring Daemon");
+		$services[] = $pconfig;
+	}
+
 	if(isset($config['snmpd']['enable'])) {
 		$pconfig = array();
 		$pconfig['name'] = "bsnmpd";
@@ -515,6 +524,9 @@ function service_control_start($name, $extras) {
 		case 'openntpd':
 			system_ntp_configure();
 			break;
+		case 'apinger':
+			setup_gateways_monitor();
+			break;
 		case 'bsnmpd':
 			services_snmpd_configure();
 			break;
@@ -573,6 +585,9 @@ function service_control_stop($name, $extras) {
 			break;
 		case 'openntpd':
 			killbyname("openntpd");
+			break;
+		case 'apinger':
+			killbypid("{$g['varrun_path']}/apinger.pid");
 			break;
 		case 'bsnmpd':
 			killbypid("{$g['varrun_path']}/snmpd.pid");
@@ -636,6 +651,10 @@ function service_control_restart($name, $extras) {
 		case 'ntpd':
 		case 'openntpd':
 			system_ntp_configure();
+			break;
+		case 'apinger':
+			killbypid("{$g['varrun_path']}/apinger.pid");
+			setup_gateways_monitor();
 			break;
 		case 'bsnmpd':
 			services_snmpd_configure();

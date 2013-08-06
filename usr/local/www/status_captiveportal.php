@@ -95,6 +95,9 @@ if (!empty($cpzone)) {
 	}
 }
 
+// Load MAC-Manufacturer table
+$mac_man = load_mac_manufacturer_table();
+
 ?>
 
 <?php if (!empty($cpzone) && isset($config['voucher'][$cpzone]['enable'])): ?>
@@ -157,7 +160,16 @@ if (!empty($cpzone)) {
 <?php foreach ($cpdb as $cpent): ?>
   <tr>
     <td class="listlr"><?=$cpent[2];?></td>
-    <td class="listr"><?=$cpent[3];?>&nbsp;</td>
+	<td class="listr">
+		<?php
+		$mac=trim($cpent[3]);
+		if (!empty($mac)) {
+			$mac_hi = strtoupper($mac[0] . $mac[1] . $mac[3] . $mac[4] . $mac[6] . $mac[7]);
+			print htmlentities($mac);
+			if(isset($mac_man[$mac_hi])){ print "<br/><font size=\"-2\"><i>{$mac_man[$mac_hi]}</i></font>"; }
+		}
+		?>&nbsp;
+	</td>
     <td class="listr"><?=$cpent[4];?>&nbsp;</td>
     <td class="listr"><?=htmlspecialchars(date("m/d/Y H:i:s", $cpent[0]));?></td>
 	<?php if ($_GET['showact']):

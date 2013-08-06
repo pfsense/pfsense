@@ -70,20 +70,11 @@ else
 
 ?>
 
-<style>
-	textarea {
-		width: 100%;
-		-webkit-box-sizing: border-box; /* Safari/Chrome, other WebKit */
-		-moz-box-sizing: border-box;    /* Firefox, other Gecko */
-		box-sizing: border-box;         /* IE 8+ */
-	}
-</style>
-
 <input type="hidden" id="custom_widg-configure" name="custom_widg-configure" value=""/>
 
 <div id="custom_widg-settings" class="widgetconfigdiv" style="display:none;">
 	<form action="/widgets/widgets/custom_widg.widget.php" method="post" name="iformc">
-		<textarea name="widget_code" class="formfld unknown" id="widget_code" rows="3"><?=$textarea_txt;?></textarea>
+		<textarea name="widget_code" class="formfld unknown textarea_widget" id="widget_code" rows="3"><?=$textarea_txt;?></textarea>
 		<br/>
 			<tr>
 				<td align="right">

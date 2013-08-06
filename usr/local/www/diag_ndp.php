@@ -100,6 +100,9 @@ foreach ($data as &$entry) {
 // Sort the data alpha first
 $data = msort($data, "dnsresolve");
 
+// Load MAC-Manufacturer table
+$mac_man = load_mac_manufacturer_table();
+
 $pgtitle = array(gettext("Diagnostics"),gettext("NDP Table"));
 include("head.inc");
 
@@ -135,7 +138,14 @@ ob_implicit_flush(1);
 				<?php foreach ($data as $entry): ?>
 					<tr>
 						<td class="listlr"><?=$entry['ipv6'];?></td>
-						<td class="listr"><?=$entry['mac'];?></td>
+						<td class="listr">
+							<?php
+							$mac=trim($entry['mac']);
+							$mac_hi = strtoupper($mac[0] . $mac[1] . $mac[3] . $mac[4] . $mac[6] . $mac[7]);
+							print $mac;
+							if(isset($mac_man[$mac_hi])){ print "<br/><font size=\"-2\"><i>{$mac_man[$mac_hi]}</i></font>"; }
+							?>
+						</td>
 						<td class="listr">
 							<?php
 							echo "&nbsp;". str_replace("Z_ ", "", $entry['dnsresolve']);

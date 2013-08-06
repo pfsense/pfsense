@@ -165,7 +165,7 @@ $curcfg = $config['system']['firmware'];
             <td width="75%" class="listr">
                 <div id="datetime"><?= date("D M j G:i:s T Y"); ?></div>
             </td>
-        </tr>			
+        </tr>
 		 <tr>
              <td width="30%" class="vncellt"><?=gettext("DNS server(s)");?></td>
              <td width="70%" class="listr">

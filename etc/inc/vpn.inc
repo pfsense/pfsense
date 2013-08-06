@@ -1837,7 +1837,10 @@ function reload_tunnel_spd_policy($phase1, $phase2, $old_phase1, $old_phase2) {
 		} else {
 			add_hostname_to_watch($phase1['remote-gateway']);
 		}
-		if (!is_ipaddr($rgip)) {
+		if (isset($phase1['mobile'])) {
+			/* Don't log anything here, it's normal and we should skip it. */
+			return false;
+		} elseif (!is_ipaddr($rgip)) {
 			log_error("Could not determine VPN endpoint for '{$phase1['descr']}'");
 			return false;
 		}

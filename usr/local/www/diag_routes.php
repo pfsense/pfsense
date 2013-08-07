@@ -51,7 +51,6 @@ if (isset($_REQUEST['isAjax'])) {
 		$netstat .= " -f inet";
 		echo "IPv4\n";
 	}
-	$netstat .= (isset($_REQUEST['IPv6']) ? " -f inet6" : " -f inet");
 	if (!isset($_REQUEST['resolve']))
 		$netstat .= " -n";
 

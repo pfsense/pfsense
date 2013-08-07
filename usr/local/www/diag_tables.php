@@ -48,16 +48,16 @@ require_once("guiconfig.inc");
 
 // Set default table
 $tablename = "sshlockout";
-	
-if($_REQUEST['type']) 
+
+if($_REQUEST['type'])
 	$tablename = $_REQUEST['type'];
-	
+
 if($_REQUEST['delete']) {
 	if(is_ipaddr($_REQUEST['delete']) || is_subnet($_REQUEST['delete'])) {
 		exec("/sbin/pfctl -t " . escapeshellarg($_REQUEST['type']) . " -T delete " . escapeshellarg($_REQUEST['delete']), $delete);
 		echo htmlentities($_REQUEST['delete']);
 	}
-	exit;	
+	exit;
 }
 
 if($_REQUEST['deleteall']) {
@@ -114,8 +114,8 @@ include("fbegin.inc");
 		});
 	}
 </script>
-	
-<?=gettext("Table:");?> 
+
+<?=gettext("Table:");?>
 <select id='type' onChange='method_change(jQuery("#type").val());' name='type'>
 	<?php foreach ($tables as $table) {
 		echo "<option name='{$table}' value='{$table}'";
@@ -149,7 +149,7 @@ include("fbegin.inc");
 <?php $count++; endforeach; ?>
 <?php
 	if($count == 0)
-  		if( ($tablename == "bogons") || ($tablename == "bogonsv6") )
+		if( ($tablename == "bogons") || ($tablename == "bogonsv6") )
 			echo "<p/>" . gettext("No entries exist in this table.") . "&nbsp&nbsp" . "<input name='Download' type='submit' class='formbtn' value='" . gettext("Download") . "'> " . gettext(" the latest bogon data.");
 		else
 			echo "<p/>" . gettext("No entries exist in this table.");
@@ -157,7 +157,7 @@ include("fbegin.inc");
 
 <?php
 	if($count > 0)
-  		if( ($tablename == "bogons") || ($tablename == "bogonsv6") ) {
+		if( ($tablename == "bogons") || ($tablename == "bogonsv6") ) {
 			$last_updated = exec('/usr/bin/grep -i -m 1 -E "^# last updated" /etc/' . escapeshellarg($tablename));
 			echo "<p/>&nbsp<b>$count</b> " . gettext("entries in this table.") . "&nbsp&nbsp" . "<input name='Download' type='submit' class='formbtn' value='" . gettext("Download") . "'> " . gettext(" the latest bogon data.") . "<br>" . "$last_updated";
 		}

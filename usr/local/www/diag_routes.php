@@ -42,6 +42,32 @@
 
 include('guiconfig.inc');
 
+if (isset($_REQUEST['isAjax'])) {
+	$netstat = "/usr/bin/netstat -rW";
+	if (isset($_REQUEST['IPv6'])) {
+		$netstat .= " -f inet6";
+		echo "IPv6\n";
+	} else {
+		$netstat .= " -f inet";
+		echo "IPv4\n";
+	}
+	$netstat .= (isset($_REQUEST['IPv6']) ? " -f inet6" : " -f inet");
+	if (!isset($_REQUEST['resolve']))
+		$netstat .= " -n";
+
+	if (!empty($_REQUEST['filter']))
+		$netstat .= " | /usr/bin/sed -e '1,3d; 5,\$ { /" . escapeshellarg(htmlspecialchars($_REQUEST['filter'])) . "/!d; };'";
+	else
+		$netstat .= " | /usr/bin/sed -e '1,3d'";
+
+	if (is_numeric($_REQUEST['limit']) && $_REQUEST['limit'] > 0)
+		$netstat .= " | /usr/bin/head -n {$_REQUEST['limit']}";
+
+	echo htmlspecialchars_decode(shell_exec($netstat));
+
+	exit;
+}
+
 $pgtitle = array(gettext("Diagnostics"),gettext("Routing tables"));
 $shortcut_section = "routing";
 
@@ -49,7 +75,91 @@ include('head.inc');
 
 ?>
 <body link="#000000" vlink="#000000" alink="#000000">
+
+<script type="text/javascript">
+//<![CDATA[
+
+	function update_routes(section) {
+		var url = "diag_routes.php";
+		var limit = jQuery('#limit option:selected').text();
+		var filter = jQuery('#filter').val();
+		var params = "isAjax=true&limit=" + limit + "&filter=" + filter;
+		if (jQuery('#resolve').is(':checked'))
+			params += "&resolve=true";
+		if (section == "IPv6")
+			params += "&IPv6=true";
+		var myAjax = new Ajax.Request(
+			url,
+			{
+				method: 'post',
+				parameters: params,
+				onComplete: update_routes_callback
+			});
+	}
+
+	function update_routes_callback(transport) {
+		// First line contains section
+		var responseTextArr = transport.responseText.split("\n");
+		var section = responseTextArr.shift();
+		var tbody = '';
+		var field = '';
+		var elements = 8;
+		var tr_class = '';
+
+		var thead = '<tr><td class="listtopic" colspan="' + elements + '"><strong>' + section + '</strong></td></tr>' + "\n";
+		for (var i = 0; i < responseTextArr.length; i++) {
+			if (responseTextArr[i] == "")
+				continue;
+			var tmp = '';
+			if (i == 0) {
+				tr_class = 'listhdrr';
+				tmp += '<tr class="sortableHeaderRowIdentifier">' + "\n";
+			} else {
+				tr_class = 'listlr';
+				tmp += '<tr>' + "\n";
+			}
+			var j = 0;
+			var entry = responseTextArr[i].split(" ");
+			for (var k = 0; k < entry.length; k++) {
+				if (entry[k] == "")
+					continue;
+				if (i == 0 && j == (elements - 1))
+					tr_class = 'listhdr';
+				tmp += '<td class="' + tr_class + '">' + entry[k] + '</td>' + "\n";
+				if (i > 0)
+					tr_class = 'listr';
+				j++;
+			}
+			// The 'Expire' field might be blank
+			if (j == (elements - 1))
+				tmp += '<td class="listr">&nbsp;</td>' + "\n";
+			tmp += '</tr>' + "\n";
+			if (i == 0)
+				thead += tmp;
+			else
+				tbody += tmp;
+		}
+		jQuery('#' + section + ' > thead').html(thead);
+		jQuery('#' + section + ' > tbody').html(tbody);
+	}
+
+//]]>
+</script>
+
 <?php include("fbegin.inc"); ?>
+
+<script type="text/javascript">
+//<![CDATA[
+
+	function update_all_routes() {
+		update_routes("IPv4");
+		update_routes("IPv6");
+	}
+
+	jQuery(document).ready(function(){setTimeout('update_all_routes()', 5000);});
+
+//]]>
+</script>
 
 <div id="mainarea">
 <form action="diag_routes.php" method="post">
@@ -58,16 +168,40 @@ include('head.inc');
 <tr>
 <td class="vncellreq" width="22%"><?=gettext("Name resolution");?></td>
 <td class="vtable" width="78%">
-<input type="checkbox" class="formfld" name="resolve" value="yes" <?php if ($_POST['resolve'] == 'yes') echo 'checked'; ?>><?=gettext("Enable");?></input>
+<input type="checkbox" class="formfld" id="resolve" name="resolve" value="yes" <?php if ($_POST['resolve'] == 'yes') echo 'checked'; ?>><?=gettext("Enable");?></input>
 <br />
 <span class="expl"><?=gettext("Enable this to attempt to resolve names when displaying the tables.");?></span>
 </td>
 </tr>
 
 <tr>
+<td class="vncellreq" width="22%"><?=gettext("Number of rows");?></td>
+<td class="vtable" width="78%">
+<select id="limit" name="limit">
+<?php
+	foreach (array("10", "50", "100", "200", "500", "1000", gettext("all")) as $item) {
+		echo "<option value=\"{$item}\" " . ($item == "100" ? "selected" : "") . ">{$item}</option>\n";
+	}
+?>
+</select>
+<br />
+<span class="expl"><?=gettext("Select how many rows to display.");?></span>
+</td>
+</tr>
+
+<tr>
+<td class="vncellreq" width="22%"><?=gettext("Filter expression");?></td>
+<td class="vtable" width="78%">
+<input type="text" class="formfld search" name="filter" id="filter" />
+<br />
+<span class="expl"><?=gettext("Use a regular expression to filter IP address or hostnames.");?></span>
+</td>
+</tr>
+
+<tr>
 <td class="vncellreq" width="22%">&nbsp;</td>
 <td class="vtable" width="78%">
-<input type="submit" class="formbtn" name="submit" value="<?=gettext("Show"); ?>" />
+<input type="button" class="formbtn" name="update" onclick="update_all_routes();" value="<?=gettext("Update"); ?>" />
 <br />
 <br />
 <span class="vexpl"><span class="red"><strong><?=gettext("Note:")?></strong></span> <?=gettext("By enabling name resolution, the query should take a bit longer. You can stop it at any time by clicking the Stop button in your browser.");?></span>
@@ -77,54 +211,21 @@ include('head.inc');
 </table>
 </form>
 
-<?php
-
-	$netstat = ($_POST['resolve'] == 'yes' ? 'netstat -rW' : 'netstat -nrW');
-	list($dummy, $internet, $internet6) = explode("\n\n", shell_exec($netstat));
-
-	foreach (array(&$internet, &$internet6) as $tabindex => $table) {
-		$elements = ($tabindex == 0 ? 8 : 8);
-		$name = ($tabindex == 0 ? 'IPv4' : 'IPv6');
-?>
-<table class="tabcont sortable" width="100%" cellspacing="0" cellpadding="6" border="0">
-<thead>
-<tr><td class="listtopic" colspan="<?=$elements?>"><strong><?=$name;?></strong></font></td></tr>
-<?php
-		foreach (explode("\n", $table) as $i => $line) {
-			if ($i == 0) continue;
-			if ($line == "") continue;
-
-			if ($i == 1)
-				$class = 'listhdrr';
-			else
-				$class = 'listlr';
-
-			if ($i == 1)
-				print("<tr class=\"sortableHeaderRowIdentifier\">\n");
-			else
-				print("<tr>\n");
-				
-			$j = 0;
-			foreach (explode(' ', $line) as $entry) {
-				if ($entry == '') continue;
-				if ($i == 1 && $j == $elements - 1)
-					$class = 'listhdr';
-				print("<td class=\"$class\">$entry</td>\n");
-				if ($i > 1)
-					$class = 'listr';
-				$j++;
-			}
-			// The 'Expire' field might be blank
-			if ($j == $elements - 1)
-				print('<td class="listr">&nbsp;</td>' . "\n");
-			print("</tr>\n");
-			if ($i == 1)
-				print("</thead>\n");
-		}
-		print("</table>\n");
-	} 
-
-?>
+<table class="tabcont sortable" width="100%" cellspacing="0" cellpadding="6" border="0" id="IPv4">
+	<thead>
+		<tr><td class="listtopic"><strong>IPv4</strong></td></tr>
+	</thead>
+	<tbody>
+		<tr><td class="listhdrr"><?=gettext("Gathering data, please wait...");?></td></tr>
+	</tbody>
+</table>
+<table class="tabcont sortable" width="100%" cellspacing="0" cellpadding="6" border="0" id="IPv6">
+	<thead>
+		<tr><td class="listtopic"><strong>IPv6</strong></td></tr>
+	</thead>
+	<tbody>
+		<tr><td class="listhdrr"><?=gettext("Gathering data, please wait...");?></td></tr>
+	</tbody>
 </table>
 
 </div>

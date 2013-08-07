@@ -1565,6 +1565,8 @@ function services_dyndns_configure($int = "") {
 		foreach ($dyndnscfg as $dyndns) {
 			if ((empty($int)) || ($int == $dyndns['interface']) || (is_array($gwgroups[$dyndns['interface']]))) {
 				$dyndns['verboselog'] = isset($dyndns['verboselog']);
+				$dyndns['verifypeer'] = isset($dyndns['verifypeer']);
+				$dyndns['verifyhost'] = isset($dyndns['verifyhost']);
 				services_dyndns_configure_client($dyndns);
 				sleep(1);
 			}

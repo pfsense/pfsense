@@ -247,6 +247,9 @@ function enable_change(enable_over) {
 									<input name="disablechecksumoffloading" type="checkbox" id="disablechecksumoffloading" value="yes" <?php if (isset($config['system']['disablechecksumoffloading'])) echo "checked=\"checked\""; ?> />
 									<strong><?=gettext("Disable hardware checksum offload"); ?></strong><br />
 									<?=gettext("Checking this option will disable hardware checksum offloading. Checksum offloading is broken in some hardware, particularly some Realtek cards. Rarely, drivers may have problems with checksum offloading and some specific NICs."); ?>
+									<br/>
+									<span class="red"><strong><?=gettext("Note:");?>&nbsp;</strong></span>
+									<?=gettext("This will take effect after you reboot the machine or re-configure each interface.");?>
 								</td>
 							</tr>
 							<tr>
@@ -255,6 +258,9 @@ function enable_change(enable_over) {
 									<input name="disablesegmentationoffloading" type="checkbox" id="disablesegmentationoffloading" value="yes" <?php if (isset($config['system']['disablesegmentationoffloading'])) echo "checked=\"checked\""; ?> />
 									<strong><?=gettext("Disable hardware TCP segmentation offload"); ?></strong><br />
 									<?=gettext("Checking this option will disable hardware TCP segmentation offloading (TSO, TSO4, TSO6). This offloading is broken in some hardware drivers, and may impact performance with some specific NICs."); ?>
+									<br/>
+									<span class="red"><strong><?=gettext("Note:");?>&nbsp;</strong></span>
+									<?=gettext("This will take effect after you reboot the machine or re-configure each interface.");?>
 								</td>
 							</tr>
 							<tr>
@@ -263,6 +269,9 @@ function enable_change(enable_over) {
 									<input name="disablelargereceiveoffloading" type="checkbox" id="disablelargereceiveoffloading" value="yes" <?php if (isset($config['system']['disablelargereceiveoffloading'])) echo "checked=\"checked\""; ?> />
 									<strong><?=gettext("Disable hardware large receive offload"); ?></strong><br />
 									<?=gettext("Checking this option will disable hardware large receive offloading (LRO). This offloading is broken in some hardware drivers, and may impact performance with some specific NICs."); ?>
+									<br/>
+									<span class="red"><strong><?=gettext("Note:");?>&nbsp;</strong></span>
+									<?=gettext("This will take effect after you reboot the machine or re-configure each interface.");?>
 								</td>
 							</tr>
 							<tr>

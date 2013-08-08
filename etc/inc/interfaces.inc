@@ -2816,12 +2816,6 @@ function interface_configure($interface = "wan", $reloadall = false, $linkupeven
 		mwexec($cmd);
 	}
 	$options = pfSense_get_interface_addresses($realhwif);
-	if (is_array($options) && isset($options['caps']['polling'])) {
-		if (isset($config['system']['polling']))
-			pfSense_interface_capabilities($realif, IFCAP_POLLING);
-		else
-			pfSense_interface_capabilities($realif, -IFCAP_POLLING);
-	}
 
 	/* skip vlans for checksumming and polling */
 	if (!stristr($realif, "_vlan") && is_array($options)) {

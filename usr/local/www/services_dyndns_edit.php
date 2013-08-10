@@ -73,6 +73,11 @@ if (isset($id) && isset($a_dyndns[$id])) {
 	$pconfig['zoneid'] = $a_dyndns[$id]['zoneid'];
 	$pconfig['ttl'] = $a_dyndns[$id]['ttl'];
 	$pconfig['updateurl'] = $a_dyndns[$id]['updateurl'];
+	$pconfig['verifypeer'] = isset($a_dyndns[$id]['verifypeer']);
+	$pconfig['verifyhost'] = isset($a_dyndns[$id]['verifyhost']);
+	$pconfig['casource'] = $a_dyndns[$id]['casource'];
+	$pconfig['carefid'] = $a_dyndns[$id]['carefid'];
+	$pconfig['cafile'] = $a_dyndns[$id]['cafile'];
 	$pconfig['resultmatch'] = $a_dyndns[$id]['resultmatch'];
 	$pconfig['requestif'] = $a_dyndns[$id]['requestif'];
 	$pconfig['descr'] = $a_dyndns[$id]['descr'];
@@ -102,6 +107,14 @@ if ($_POST) {
 		$reqdfields[] = "updateurl";
 		$reqdfieldsn[] = gettext("Update URL");
  	}
+	if ($pconfig['casource'] == 'ca_manager') {
+		$reqdfields[] = "carefid";
+		$reqdfieldsn[] = gettext("Certificate Authority - CA Selection");
+	}
+	elseif ($pconfig['casource'] == 'ca_file') {
+		$reqdfields[] = "cafile";
+		$reqdfieldsn[] = gettext("Certificate Authority - CA File");
+	}
 
 	do_input_validation($_POST, $reqdfields, $reqdfieldsn, &$input_errors);
 
@@ -130,6 +143,11 @@ if ($_POST) {
 		$dyndns['zoneid'] = $_POST['zoneid'];
 		$dyndns['ttl'] = $_POST['ttl'];
 		$dyndns['updateurl'] = $_POST['updateurl'];
+		$dyndns['verifypeer'] = $_POST['verifypeer'] ? true : false;
+		$dyndns['verifyhost'] = $_POST['verifyhost'] ? true : false;
+		$dyndns['casource'] = $_POST['casource'];
+		$dyndns['carefid'] = $_POST['carefid'];
+		$dyndns['cafile'] = $_POST['cafile'];
 		// Trim hard-to-type but sometimes returned characters
 		$dyndns['resultmatch'] = trim($_POST['resultmatch'], "\t\n\r");
 		($dyndns['type'] == "custom" || $dyndns['type'] == "custom-v6") ? $dyndns['requestif'] = $_POST['requestif'] : $dyndns['requestif'] = $_POST['interface'];
@@ -172,11 +190,13 @@ include("head.inc");
 <?php if ($savemsg) print_info_box($savemsg); ?>
 <script type="text/javascript">
 function _onTypeChange(type){ 
+	if(!type) type = document.getElementById("type").value;
 	switch(type) {
 		case "custom":
 		case "custom-v6":
 			document.getElementById("_resulttr").style.display = '';
 			document.getElementById("_urltr").style.display = '';
+			document.getElementById("_verifypeerhosttr").style.display = '';
 			document.getElementById("_requestiftr").style.display = '';
 			document.getElementById("_hostnametr").style.display = 'none';
 			document.getElementById("_mxtr").style.display = 'none';
@@ -187,6 +207,7 @@ function _onTypeChange(type){
 		case "route53":
 			document.getElementById("_resulttr").style.display = 'none';
 			document.getElementById("_urltr").style.display = 'none';
+			document.getElementById("_verifypeerhosttr").style.display = '';
 			document.getElementById("_requestiftr").style.display = 'none';
 			document.getElementById("_hostnametr").style.display = '';
 			document.getElementById("_mxtr").style.display = '';
@@ -197,6 +218,7 @@ function _onTypeChange(type){
 		default:
 			document.getElementById("_resulttr").style.display = 'none';
 			document.getElementById("_urltr").style.display = 'none';
+			document.getElementById("_verifypeerhosttr").style.display = '';
 			document.getElementById("_requestiftr").style.display = 'none';
 			document.getElementById("_hostnametr").style.display = '';
 			document.getElementById("_mxtr").style.display = '';
@@ -204,6 +226,15 @@ function _onTypeChange(type){
 			document.getElementById("r53_zoneid").style.display='none';
 			document.getElementById("r53_ttl").style.display='none';
 	}
+
+	SSL = ssl_service[type];
+
+	<? if (!isset($id)) {?>	// When creating a new entry use defaults.
+		document.getElementById("verifypeer").checked = ssl_verify_peer[type];
+		document.getElementById("verifyhost").checked = ssl_verify_host[type];
+	<? } ?>
+
+	_onURLChange();
 }
 </script>
 <form action="services_dyndns_edit.php" method="post" name="iform" id="iform">
@@ -228,13 +259,48 @@ function _onTypeChange(type){
                       <?php
 						$types = explode(",", DYNDNS_PROVIDER_DESCRIPTIONS);
 						$vals = explode(" ", DYNDNS_PROVIDER_VALUES);
+						$SSL = explode(" ", DYNDNS_PROVIDER_SSL_SERVICE);
+						$Verify_Peer = explode(" ", DYNDNS_PROVIDER_VERIFY_PEER);
+						$Verify_Host = explode(" ", DYNDNS_PROVIDER_VERIFY_HOST);
+						$SSL_Service = array();
+						$SSL_Verify_Peer = array();
+						$SSL_Verify_Host = array();
 						$j = 0; for ($j = 0; $j < count($vals); $j++): ?>
                       <option value="<?=$vals[$j];?>" <?php if ($vals[$j] == $pconfig['type']) echo "selected";?>>
                       <?=htmlspecialchars($types[$j]);?>
                       </option>
+						<?php
+							if($SSL[$j] == "YES") $SSL_Service[$vals[$j]] = true;
+							else $SSL_Service[$vals[$j]] = false;
+
+							if($Verify_Peer[$j] == "YES") $SSL_Verify_Peer[$vals[$j]] = true;
+							else $SSL_Verify_Peer[$vals[$j]] = false;
+
+							if($Verify_Host[$j] == "YES") $SSL_Verify_Host[$vals[$j]] = true;
+							else $SSL_Verify_Host[$vals[$j]] = false;
+						?>
                       <?php endfor; ?>
                     </select></td>
 				</tr>
+
+<script type="text/javascript">
+	/* Make server PHP arrays available to client JavaScript. */
+	ssl_service = new Array();
+	<?	foreach ($SSL_Service as $key => $value) { ?>
+		ssl_service["<? echo $key; ?>"] = "<? echo $value; ?>";
+	<?	} ?>
+
+	ssl_verify_peer = new Array();
+	<?	foreach ($SSL_Verify_Peer as $key => $value) { ?>
+		ssl_verify_peer["<? echo $key; ?>"] = "<? echo $value; ?>";
+	<?	} ?>
+
+	ssl_verify_host = new Array();
+	<?	foreach ($SSL_Verify_Host as $key => $value) { ?>
+		ssl_verify_host["<? echo $key; ?>"] = "<? echo $value; ?>";
+	<?	} ?>
+</script>
+
 				<tr>
 				   <td width="22%" valign="top" class="vncellreq"><?=gettext("Interface to monitor");?></td>  
 				   <td width="78%" class="vtable">
@@ -326,17 +392,121 @@ function _onTypeChange(type){
                   </td>
                 </tr>
 
-                <tr id="r53_zoneid" style="display:none">
-                  <td width="22%" valign="top" class="vncellreq"><?=gettext("Zone ID");?></td>
-                  <td width="78%" class="vtable">
-                    <input name="zoneid" type="text" class="formfld user" id="zoneid" size="20" value="<?=htmlspecialchars($pconfig['zoneid']);?>">
-                    <br/><?= gettext("Enter Zone ID that you received when you created your domain in Route 53.");?>
-                  </td>
-                </tr>
+<script type="text/javascript">
+function _onURLChange(URL){
+	if (!URL) var URL = document.getElementById("updateurl").value;
+
+	var pattern=/^https:/i;
+	var https=pattern.test(URL);
+
+	var pattern=/^custom.*/i;
+	var custom=pattern.test(document.getElementById("type").value);
+
+	/* For none custom types, use the system default CA source selection. */
+	if (custom) document.getElementById("<? if($pconfig['casource']) echo $pconfig['casource']; else echo "ca_default"; ?>").checked = true;
+	else document.getElementById("ca_default").checked = true;
+
+	if ((https && custom) || SSL) {
+		document.getElementById("_verifypeerhosttr").style.display = '';
+		_onVerifyPeerChange();
+	}
+	else {
+		document.getElementById("_verifypeerhosttr").style.display = 'none';
+		document.getElementById("_tls_catr").style.display = 'none';
+	}
+}
+
+function _onVerifyPeerChange(){ 
+
+	var pattern=/^custom.*/i;
+	var custom=pattern.test(document.getElementById("type").value);
+
+	if (document.getElementById("verifypeer").checked && custom) {
+		document.getElementById("_tls_catr").style.display = '';
+	}
+	else {
+		document.getElementById("_tls_catr").style.display = 'none';
+	}
+	_ca_source();
+}
+
+function _ca_source(){
+	if (document.getElementById("ca_bundle").checked) {
+		document.getElementById("_ca_manager").style.display = 'none';
+		document.getElementById("_ca_file").style.display = 'none';
+	}
+	else if (document.getElementById("ca_manager").checked) {
+		document.getElementById("_ca_manager").style.display = '';
+		document.getElementById("_ca_file").style.display = 'none';
+	}
+	else if (document.getElementById("ca_file").checked) {
+		document.getElementById("_ca_manager").style.display = 'none';
+		document.getElementById("_ca_file").style.display = '';
+	}
+	else {
+		document.getElementById("_ca_manager").style.display = 'none';
+		document.getElementById("_ca_file").style.display = 'none';
+	}
+}
+</script>
+				<tr id="_verifypeerhosttr">
+					<td width="22%" valign="top" class="vncell"><?=gettext("Verify Peer and/or Host"); ?></td>
+					<td width="78%" class="vtable">
+						<input name="verifypeer" type="checkbox" id="verifypeer" value="yes" <?php if ($pconfig['verifypeer']) echo "checked"; ?> onchange="_onVerifyPeerChange();">
+						<?=gettext("Verify");?> <?=gettext("Peer");?>&nbsp&nbsp&nbsp&nbsp<?=gettext("Verifies the server certificate against a trusted CA.");?><br>
+						<input name="verifyhost" type="checkbox" id="verifyhost" value="yes" <?php if ($pconfig['verifyhost']) echo "checked"; ?> >
+						<?=gettext("Verify");?> <?=gettext("Host");?>&nbsp&nbsp&nbsp&nbsp<?=gettext("Check existence of a common name and verify that it matches the hostname provided.");?><br>
+					</td>
+				</tr>
+
+				<tr id="_tls_catr">
+					<td width="22%" valign="top" class="vncell"><?=gettext("Certificate Authority"); ?></td>
+					<td width="78%" class="vtable">
+						<?= gettext("CA Source: ");?>&nbsp
+
+						<input name="casource" id="ca_default" type="radio" value="" checked style="display:none" onClick="_ca_source(this.id)">	<!-- Default Value to Post -->
+						<input name="casource" id="ca_bundle" type="radio" value="ca_bundle" <?php if ($pconfig['casource'] == "ca_bundle") echo "checked"; ?> onClick="_ca_source(this.id)">	
+						<?= gettext("System CA Bundle");?>&nbsp &nbsp
+						<input name="casource" id="ca_manager" type="radio" value="ca_manager" <?php if ($pconfig['casource'] == "ca_manager") echo "checked"; ?> onClick="_ca_source(this.id)">
+						<?= gettext("pfSense CA Manager");?>&nbsp &nbsp
+						<input name="casource" id="ca_file" type="radio" value="ca_file" <?php if ($pconfig['casource'] == "ca_file") echo "checked"; ?> onClick="_ca_source(this.id)">
+						<?= gettext("CA File");?>&nbsp &nbsp
+
+						<div name="_ca_manager" id="_ca_manager">
+						<?php 
+						if (!is_array($config['ca']))
+							$config['ca'] = array();
+						$a_ca =& $config['ca'];
+						if (count($a_ca)): 
+						?>
+						<br><select name='carefid' id='carefid' class="formselect">
+						<option value="" selected></option>
+						<?php
+							foreach ($a_ca as $ca):
+								$selected = "";
+								if ($pconfig['carefid'] == $ca['refid'])
+									$selected = "selected";
+						?>
+							<option value="<?=$ca['refid'];?>" <?=$selected;?>><?=$ca['descr'];?></option>
+						<?php endforeach; ?>
+						</select>
+						<br><?= gettext("Select CA from pfSense CA Manager.");?>
+						<?php else: ?>
+							<br><b>No Certificate Authorities defined.</b> <br/>Create one under <a href="system_camanager.php">System &gt; Cert Manager</a>.
+						<?php endif; ?>
+						</div>
+
+						<div name="_ca_file" id="_ca_file">
+						<br><input name="cafile" type="text" class="formfld unknown" id="cafile" size="60" value="<?=$pconfig['cafile'];?>">
+						<br><?= gettext("CA File (absolute path).");?>
+						</div>
+					</td>
+				</tr>
+
                 <tr id="_urltr">
                   <td width="22%" valign="top" class="vncell"><?=gettext("Update URL");?></td>
                   <td width="78%" class="vtable">
-                    <input name="updateurl" type="text" class="formfld unknown" id="updateurl" size="60" value="<?=htmlspecialchars($pconfig['updateurl']);?>">
+                    <input name="updateurl" type="text" class="formfld unknown" id="updateurl" size="60" value="<?=htmlspecialchars($pconfig['updateurl']);?>" onchange="_onURLChange(this.value);">
                     <br/><?= gettext("This is the only field required by for Custom Dynamic DNS, and is only used by Custom Entries.");?>
 			<br/>
 			<?= gettext("If you need the new IP to be included in the request, put %IP% in its place.");?>
@@ -359,6 +529,13 @@ function _onTypeChange(type){
                 </tr>
                 <tr>
 
+                <tr id="r53_zoneid" style="display:none">
+                  <td width="22%" valign="top" class="vncellreq"><?=gettext("Zone ID");?></td>
+                  <td width="78%" class="vtable">
+                    <input name="zoneid" type="text" class="formfld user" id="zoneid" size="20" value="<?=htmlspecialchars($pconfig['zoneid']);?>">
+                    <br/><?= gettext("Enter Zone ID that you received when you created your domain in Route 53.");?>
+                  </td>
+                </tr>
                 <tr id="r53_ttl" style="display:none">
                   <td width="22%" valign="top" class="vncellreq"><?=gettext("TTL");?></td>
                   <td width="78%" class="vtable">

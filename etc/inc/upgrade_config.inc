@@ -3119,4 +3119,57 @@ function upgrade_096_to_097() {
 		$config['syslog']['nologprivatenets'] = true;
 	}
 }
+
+function upgrade_097_to_098() {
+	global $config;
+
+	# Match the previously hard coded settings for each dyndnses type.
+	foreach ($config['dyndnses']['dyndns'] as $dyndns) {
+		switch ($dyndns['type']) {
+			# http:
+			case 'dyns':
+			case 'easydns':
+			case 'noip':
+			case 'noip-free':
+			case 'ods':
+			case 'freedns':
+			case 'dnsexit':
+				$dyndns['verifypeer'] = false;
+				$dyndns['verifyhost'] = false;
+				break;
+			# https:
+			case 'zoneedit':
+				$dyndns['verifypeer'] = false;
+				$dyndns['verifyhost'] = false;
+				break;
+			case 'dnsomatic':
+			case 'dyndns':
+			case 'dyndns-static':
+			case 'dyndns-custom':
+			case 'dhs':
+			case 'loopia':
+			case 'opendns':
+			case 'namecheap':
+			case 'he-net':
+			case 'he-net-v6':
+			case 'he-net-tunnelbroker':
+			case 'selfhost':
+				$dyndns['verifypeer'] = false;
+				$dyndns['verifyhost'] = true;
+				break;
+			case 'route53':
+			# http: or https:
+			case 'custom':
+			case 'custom-v6':
+				$dyndns['verifypeer'] = true;
+				$dyndns['verifyhost'] = true;
+				break;
+			default:
+				$dyndns['verifypeer'] = false;
+				$dyndns['verifyhost'] = true;
+				break;
+		}
+	}
+}
+
 ?>

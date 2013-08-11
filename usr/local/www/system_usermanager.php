@@ -346,14 +346,18 @@ if ($_POST) {
 include("head.inc");
 ?>
 
+<link rel="stylesheet" type="text/css" href="/javascript/jquery-ui-timepicker-addon/css/jquery-ui-timepicker-addon.css" />
+<link rel="stylesheet" type="text/css" href="/javascript/jquery/jquery-ui.custom.css" />
+
+<script>
+	jQuery(function() {
+		jQuery( "#expires" ).datepicker( { dateFormat: 'mm/dd/yy', changeYear: true, yearRange: "+0:2099" } );
+	});
+</script>
+
 <body link="#000000" vlink="#000000" alink="#000000" onload="<?= $jsevents["body"]["onload"] ?>">
 <?php include("fbegin.inc"); ?>
-<!--
-//Date Time Picker script- by TengYong Ng of http://www.rainforestnet.com
-//Script featured on JavaScript Kit (http://www.javascriptkit.com)
-//For this script, visit http://www.javascriptkit.com
-// -->
-<script type="text/javascript" src="javascript/datetimepicker.js"></script>
+
 <script type="text/javascript">
 //<![CDATA[
 
@@ -499,9 +503,6 @@ function sshkeyClicked(obj) {
 							<td width="22%" valign="top" class="vncell"><?=gettext("Expiration date"); ?></td>
 							<td width="78%" class="vtable">
 								<input name="expires" type="text" class="formfld unknown" id="expires" size="10" value="<?=htmlspecialchars($pconfig['expires']);?>" />
-								<a href="javascript:NewCal('expires','mmddyyyy')">
-									<img src="/themes/<?php echo $g['theme']; ?>/images/icons/icon_cal.gif" width="16" height="16" border="0" alt="<?=gettext("Pick a date");?>" />
-								</a>
 								<br/>
 								<span class="vexpl"><?=gettext("Leave blank if the account shouldn't expire, otherwise enter the expiration date in the following format: mm/dd/yyyy"); ?></span></td>
 						</tr>
@@ -871,3 +872,4 @@ function sshkeyClicked(obj) {
 <?php include("fend.inc");?>
 </body>
 </html>
+

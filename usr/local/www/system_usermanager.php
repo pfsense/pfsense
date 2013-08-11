@@ -351,7 +351,7 @@ include("head.inc");
 
 <script>
 	jQuery(function() {
-		jQuery( "#expires" ).datepicker( { dateFormat: 'mm/dd/yy', changeYear: true, yearRange: "+0:2099" } );
+		jQuery( "#expires" ).datepicker( { dateFormat: 'mm/dd/yy', changeYear: true, yearRange: "+0:+100" } );
 	});
 </script>
 

@@ -35,7 +35,7 @@
     POSSIBILITY OF SUCH DAMAGE.
 */
 /*
-	pfSense_BUILDER_BINARIES:	
+	pfSense_BUILDER_BINARIES:
 	pfSense_MODULE:	auth
 */
 
@@ -57,7 +57,7 @@ $id = $_GET['id'];
 if (isset($_POST['id']))
 	$id = $_POST['id'];
 
-if (!is_array($config['system']['user'])) 
+if (!is_array($config['system']['user']))
 	$config['system']['user'] = array();
 
 $a_user = &$config['system']['user'];
@@ -282,10 +282,10 @@ if ($_POST) {
 		$userent['expires'] = $_POST['expires'];
 		$userent['authorizedkeys'] = base64_encode($_POST['authorizedkeys']);
 		$userent['ipsecpsk'] = $_POST['ipsecpsk'];
-		
+
 		if($_POST['disabled'])
 			$userent['disabled'] = true;
-		else 
+		else
 			unset($userent['disabled']);
 
 		if (isset($id) && $a_user[$id])
@@ -338,7 +338,7 @@ if ($_POST) {
 			run_plugins("/etc/inc/privhooks");
 
 		conf_mount_ro();
-		
+
 		pfSenseHeader("system_usermanager.php");
 	}
 }
@@ -578,7 +578,7 @@ function sshkeyClicked(obj) {
 										<td class="list"></td>
 									</tr>
 									<?php
-											
+
 										$privdesc = get_user_privdesc($a_user[$id]);
 										if(is_array($privdesc)):
 											$i = 0;
@@ -631,7 +631,7 @@ function sshkeyClicked(obj) {
 										<td class="list"></td>
 									</tr>
 									<?php
-										
+
 										$a_cert = $a_user[$id]['cert'];
 										if(is_array($a_cert)):
 											$i = 0;

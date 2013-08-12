@@ -184,7 +184,7 @@ include("head.inc");
 		  <td class="list"> <a href="services_dyndns_edit.php"><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_plus.gif" width="17" height="17" border="0"></a></td>
 		</tr>
 		<tr>
-		  <td colspan="3" class="list"><p class="vexpl"><span class="red"><strong>
+		  <td colspan="5" class="list"><p class="vexpl"><span class="red"><strong>
 			<?=gettext("Note:");?><br>
 			</strong></span>
 			<?=gettext("IP addresses appearing in green are up to date with Dynamic DNS provider.");?><br>

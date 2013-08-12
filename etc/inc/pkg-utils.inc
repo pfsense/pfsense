@@ -1348,4 +1348,19 @@ function stop_packages() {
 	}
 }
 
+function get_pkg_interfaces_select_source($include_localhost=false) {
+	$interfaces = get_configured_interface_with_descr();
+	$ssifs = array();
+	foreach ($interfaces as $iface => $ifacename) {
+		$tmp["name"]  = $ifacename;
+		$tmp["value"] = $iface;
+		$ssifs[] = $tmp;
+	}
+	if ($include_localhost) {
+		$tmp["name"]  = "Localhost";
+		$tmp["value"] = "lo0";
+		$ssifs[] = $tmp;
+	}
+	return $ssifs;
+}
 ?>

@@ -83,6 +83,12 @@ if ($_POST) {
 	if (!does_interface_exist($_POST['if']))
 		$input_errors[] = gettext("Interface supplied as parent is invalid");
 
+	if (isset($id)) {
+		if ($_POST['tag'] && $_POST['tag'] != $a_vlans[$id]['tag']) {
+			if (!empty($a_vlans[$id]['vlanif']) && convert_real_interface_to_friendly_interface_name($a_vlans[$id]['vlanif']) != NULL)
+				$input_errors[] = gettext("Interface is assigned and you cannot change the VLAN tag while assigned.");
+		}
+	}
 	foreach ($a_vlans as $vlan) {
 		if (isset($id) && ($a_vlans[$id]) && ($a_vlans[$id] === $vlan))
 			continue;

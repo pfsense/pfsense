@@ -266,9 +266,13 @@ function return_gateways_status($byname = false) {
 	global $config, $g;
 
 	$apingerstatus = array();
+	/* Always get the latest status from apinger */
+	if (file_exists("{$g['varrun_path']}/apinger.pid"))
+                sigkillbypid("{$g['varrun_path']}/apinger.pid", "USR1");
 	if (file_exists("{$g['varrun_path']}/apinger.status")) {
 		$apingerstatus = file("{$g['varrun_path']}/apinger.status");
-	}
+	} else
+		$apingerstatus = array();
 
 	$status = array();
 	foreach($apingerstatus as $line) {

@@ -838,6 +838,16 @@ function openvpn_delete($mode, & $settings) {
 	mwexec("/bin/rm {$g['varetc_path']}/openvpn/{$mode_id}.*");
 }
 
+function openvpn_cleanup_csc($common_name) {
+	global $g, $config;
+	if (empty($common_name))
+		return;
+	$fpath = "{$g['varetc_path']}/openvpn-csc/" . basename($common_name);
+	if (is_file($fpath))
+		unlink_if_exists($fpath);
+	return;
+}
+
 function openvpn_resync_csc(& $settings) {
 	global $g, $config;
 

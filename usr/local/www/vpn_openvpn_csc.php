@@ -210,11 +210,14 @@ if ($_POST) {
 				$csc['nbdd_server1'] = $pconfig['nbdd_server1'];
 		}
 	
-		if (isset($id) && $a_csc[$id])
+		if (isset($id) && $a_csc[$id]) {
+			$old_csc_cn = $a_csc[$id]['common_name'];
 			$a_csc[$id] = $csc;
-		else
+		} else
 			$a_csc[] = $csc;
 
+		if (!empty($old_csc_cn))
+			openvpn_cleanup_csc($old_csc_cn);
 		openvpn_resync_csc($csc);
 		write_config();
 		

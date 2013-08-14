@@ -263,6 +263,7 @@ if ($_POST) {
 			}
 		}
 		$wrongaliases = "";
+		$wrongaliases_fqdn = "";
 		for($x=0; $x<4999; $x++) {
 			if($_POST["address{$x}"] <> "") {
 				$_POST["address{$x}"] = trim($_POST["address{$x}"]);
@@ -272,6 +273,18 @@ if ($_POST) {
 						if (!($_POST['type'] == 'network' &&
 						      alias_get_type($_POST["address{$x}"]) == 'urltable'))
 							$wrongaliases .= " " . $_POST["address{$x}"];
+					if ($used_for_routes === 1) {
+						foreach (filter_expand_alias_array($_POST["address{$x}"], true) as $tgt) {
+							if (is_ipaddrv4($tgt))
+								$tgt .= "/32";
+							if (is_ipaddrv6($tgt))
+								$tgt .= "/128";
+							if (!is_subnet($tgt) && is_fqdn($tgt)) {
+								$wrongaliases_fqdn .= " " . $_POST["address{$x}"];
+								break;
+							}
+						}
+					}
 				} else if ($_POST['type'] == "port") {
 					if (!is_port($_POST["address{$x}"]))
 						$input_errors[] = $_POST["address{$x}"] . " " . gettext("is not a valid port or alias.");
@@ -304,6 +317,8 @@ if ($_POST) {
 		}
 		if ($wrongaliases <> "")
 			$input_errors[] = sprintf(gettext('The alias(es): %s cannot be nested because they are not of the same type.'), $wrongaliases);
+		if ($wrongaliases_fqdn <> "")
+			$input_errors[] = sprintf(gettext('The alias(es): %s cannot be nested because they contain FQDNs and this alias is used on at least one static route.'), $wrongaliases_fqdn);
 	}
 
 	// Allow extending of the firewall edit page and include custom input validation

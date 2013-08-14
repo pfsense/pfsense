@@ -496,7 +496,7 @@ function is_ipaddrv4($ipaddr) {
 
 /* returns true if $ipaddr is a valid linklocal address */
 function is_linklocal($ipaddr) {
-	return preg_match('/^fe80:/i', $ipaddr);
+	return (substr($ipaddr, 0, 5) == "fe80:");
 }
 
 /* returns true if $ipaddr is a valid literal IPv6 address */

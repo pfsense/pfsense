@@ -683,7 +683,7 @@ function netbios_change() {
 						if (isset($csc['disable']))
 							$disabled = "YES";
 				?>
-				<tr>
+				<tr ondblclick="document.location='vpn_openvpn_csc.php?act=edit&id=<?=$i;?>'">
 					<td class="listlr">
 						<?=$disabled;?>
 					</td>

@@ -462,7 +462,7 @@ function filter_generate_scrubing() {
 	return $scrubrules;
 }
 
-function filter_generate_nested_alias($name, $alias, &$aliasnesting, &$aliasaddrnesting) {
+function filter_generate_nested_alias($name, $alias, &$aliasnesting, &$aliasaddrnesting, $all = false) {
 	global $aliastable, $filterdns;
 
 	$addresses = explode(" ", $alias);
@@ -493,9 +493,9 @@ function filter_generate_nested_alias($name, $alias, &$aliasnesting, &$aliasaddr
 			}
 			/* We already expanded this alias so there is no neccessity to do it again. */
 			else if(!isset($aliasnesting[$address]))
-				$tmpline = filter_generate_nested_alias($name, $aliastable[$address], $aliasnesting, $aliasaddrnesting);
+				$tmpline = filter_generate_nested_alias($name, $aliastable[$address], $aliasnesting, $aliasaddrnesting, $all);
 		} else if(!isset($aliasaddrnesting[$address])) {
-			if (!is_ipaddr($address) && !is_subnet($address) && !is_port($address) && is_hostname($address)) {
+			if ($all === false && !is_ipaddr($address) && !is_subnet($address) && !is_port($address) && is_hostname($address)) {
 				if (!isset($filterdns["{$address}{$name}"]))
 					$filterdns["{$address}{$name}"] = "pf {$address} {$name}\n";
 				continue;
@@ -514,7 +514,7 @@ function filter_generate_nested_alias($name, $alias, &$aliasnesting, &$aliasaddr
 	return $finallist;
 }
 
-function filter_expand_alias($alias_name)
+function filter_expand_alias($alias_name, $all = false)
 {
 	global $config;
 
@@ -523,14 +523,14 @@ function filter_expand_alias($alias_name)
 			if($aliased['name'] == $alias_name) {
 				$aliasnesting = array();
 				$aliasaddrnesting = array();
-				return filter_generate_nested_alias($aliased['name'], $aliased['address'], $aliasnesting, $aliasaddrnesting);
+				return filter_generate_nested_alias($aliased['name'], $aliased['address'], $aliasnesting, $aliasaddrnesting, $all);
 			}
 		}
 	}
 }
 
-function filter_expand_alias_array($alias_name) {
-	$expansion = filter_expand_alias($alias_name);
+function filter_expand_alias_array($alias_name, $all = false) {
+	$expansion = filter_expand_alias($alias_name, $all);
 	return explode(" ", preg_replace('/\s+/', ' ', trim($expansion)));
 }
 

@@ -49,8 +49,10 @@ require_once("certs.inc");
 require_once('pfsense-utils.inc');
 require_once("auth.inc");
 
+global $openvpn_prots;
 $openvpn_prots = array("UDP", "UDP6", "TCP", "TCP6");
 
+global $openvpn_dev_mode;
 $openvpn_dev_mode = array("tun", "tap");
 
 /* 
@@ -66,9 +68,11 @@ $openvpn_dev_mode = array("tun", "tap");
  * -mgrooms
  */
 
+global $openvpn_dh_lengths;
 $openvpn_dh_lengths = array(
 	1024, 2048, 4096 );
 
+global $openvpn_cert_depths;
 $openvpn_cert_depths = array(
 	1 => "One (Client+Server)",
 	2 => "Two (Client+Intermediate+Server)",
@@ -77,6 +81,7 @@ $openvpn_cert_depths = array(
 	5 => "Five (Client+4xIntermediate+Server)"
 );
 
+global $openvpn_server_modes;
 $openvpn_server_modes = array(
 	'p2p_tls' => gettext("Peer to Peer ( SSL/TLS )"),
 	'p2p_shared_key' => gettext("Peer to Peer ( Shared Key )"),
@@ -84,6 +89,7 @@ $openvpn_server_modes = array(
 	'server_user' => gettext("Remote Access ( User Auth )"),
 	'server_tls_user' => gettext("Remote Access ( SSL/TLS + User Auth )"));
 
+global $openvpn_client_modes;
 $openvpn_client_modes = array(
 	'p2p_tls' => gettext("Peer to Peer ( SSL/TLS )"),
 	'p2p_shared_key' => gettext("Peer to Peer ( Shared Key )") );

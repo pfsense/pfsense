@@ -524,11 +524,11 @@ pfSense_handle_custom_code("/usr/local/pkg/dashboard/pre_dashboard");
 
 <div id="welcomecontainer" style="display:none">
 		<div id="welcome-container">
-			<div style="float:left;width:80%;padding: 2px">
+			<div style="float:left;width:100%;padding: 2px">
 				<h1><?=gettext("Welcome to the Dashboard page"); ?>!</h1>
 			</div>
-			<div onclick="domTT_close(this);showAllWidgets();" style="float:right;width:8%; cursor:pointer;padding: 5px;" >
-				<img src="./themes/<?= $g['theme']; ?>/images/icons/icon_close.gif" alt="close" />
+			<div onclick="domTT_close(this);showAllWidgets();" style="width:87%; position: absolute; cursor:pointer; padding: 10px;" >
+				<img src="./themes/<?= $g['theme']; ?>/images/icons/icon_close.gif" alt="close" style="float:right" />
 			</div>
 			<div style="clear:both;"></div>
 			<p>

@@ -91,7 +91,14 @@ $curcfg = $config['system']['firmware'];
 		jQuery("#mbufPB").progressbar( { value: <?php echo get_mbuf(true); ?> } );
 		jQuery("#cpuPB").progressbar( { value:false } );
 		jQuery("#memUsagePB").progressbar( { value: <?php echo mem_usage(); ?> } );
-		jQuery("#diskUsagePB").progressbar( { value: <?php echo disk_usage(); ?> } );    
+		jQuery("#diskUsagePB").progressbar( { value: <?php echo disk_usage(); ?> } );
+
+		<?php if($showswap == true): ?>
+			jQuery("#swapUsagePB").progressbar( { value: <?php echo swap_usage(); ?> } );
+		<?php endif; ?>
+		<?php if (get_temp() != ""): ?>
+                	jQuery("#tempPB").progressbar( { value: <?php echo get_temp(); ?> } );
+		<?php endif; ?>
 	});
 </script>
 <link rel="stylesheet" href="javascript/jquery/jquery-ui.custom.css" />
@@ -221,9 +228,6 @@ $curcfg = $config['system']['firmware'];
                         <td width="25%" class="vncellt"><?=gettext("Temperature");?></td>
 			<td width="75%" class="listr">
 				<?php $TempMeter = $temp = get_temp(); ?>
-				<script>
-					jQuery("#tempPB").progressbar( { value: <?php echo get_temp(); ?> } );
-				</script>
 				<div id="tempPB"></div>
 				<span id="tempmeter"><?= $temp."&#176;C"; ?></span>
 			</td>
@@ -255,9 +259,6 @@ $curcfg = $config['system']['firmware'];
 			<td width="25%" class="vncellt"><?=gettext("SWAP usage");?></td>
 			<td width="75%" class="listr">
 				<?php $swapusage = swap_usage(); ?>
-				<script>
-					jQuery("#swapUsagePB").progressbar( { value: <?php echo swap_usage(); ?> } );
-				</script>
 				<div id="swapUsagePB"></div>
 				<span id="swapusagemeter"><?= $swapusage.'%'; ?></span> of <?= sprintf("%.0f", `/usr/sbin/swapinfo -m | /usr/bin/grep -v Device | /usr/bin/awk '{ print $2;}'`) ?> MB
 			</td>

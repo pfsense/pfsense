@@ -304,16 +304,15 @@ function filter_configure_sync($delete_states_if_needed = true) {
 		return;
 	}
 
-	unset($rules, $limitrules);
-	unset($rules_loading, $rules_error);
-
 	@file_put_contents("{$g['tmp_path']}/rules.limits", $limitrules);
 	mwexec("/sbin/pfctl -f {$g['tmp_path']}/rules.limits");
+	unset($rules, $limitrules);
 
 	if(isset($config['system']['developerspew'])) {
 		$mt = microtime();
 		echo "pfctl being called at $mt\n";
 	}
+	unset($rules_loading, $rules_error);
 	$_grbg = exec("/sbin/pfctl -o basic -f {$g['tmp_path']}/rules.debug 2>&1", $rules_error, $rules_loading);
 	if(isset($config['system']['developerspew'])) {
 		$mt = microtime();

@@ -58,6 +58,8 @@ if ($_POST) {
 		$retval |= filter_configure();
 		$retval |= relayd_configure();
 		$savemsg = get_std_save_message($retval);
+		/* Wipe out old relayd anchors no longer in use. */
+		cleanup_lb_marked();
 		clear_subsystem_dirty('loadbalancer');
 	}
 }
@@ -66,6 +68,7 @@ if ($_GET['act'] == "del") {
 	if (array_key_exists($_GET['id'], $a_vs)) {
 
 		if (!$input_errors) {
+			cleanup_lb_mark_anchor($a_vs[$_GET['id']]['name']);
 			unset($a_vs[$_GET['id']]);
 			write_config();
 			mark_subsystem_dirty('loadbalancer');

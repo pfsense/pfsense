@@ -117,9 +117,13 @@ if ($_POST) {
 		if($_POST['sitedown'] == "")
 			unset($vsent['sitedown']);
 
-		if (isset($id) && $a_vs[$id])
+		if (isset($id) && $a_vs[$id]) {
+			if ($a_vs[$id]['name'] != $_POST['name']) {
+				/* Because the VS name changed, mark the old name for cleanup. */
+				cleanup_lb_mark_anchor($a_vs[$id]['name']);
+			}
 			$a_vs[$id] = $vsent;
-		else
+		} else
 			$a_vs[] = $vsent;
 
 		if ($changecount > 0) {

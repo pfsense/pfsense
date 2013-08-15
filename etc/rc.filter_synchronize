@@ -322,6 +322,8 @@ if (is_array($config['hasync'])) {
 	}
 	if ($hasync['synchronizedhcpd'] != "" and is_array($config['dhcpd']))
 		$sections[] = 'dhcpd';
+	if ($hasync['synchronizedhcpd'] != "" and is_array($config['dhcpdv6']))
+		$sections[] = 'dhcpdv6';
 	if ($hasync['synchronizewol'] != "") {
 		if (!is_array($config['wol']))
 			$config['wol'] = array();

@@ -1174,22 +1174,33 @@ function interface_bring_down($interface = "wan", $destroy = false, $ifacecfg = 
 	if ($g['debug'])
 		log_error("Calling interface down for interface {$interface}, destroy is " . (($destroy) ? 'true' : 'false'));
 
+	/*
+	 * NOTE: The $realifv6 is needed when WANv4 is type PPP and v6 is DHCP and the option v6 from v4 is used.
+	 * In this case the real $realif of v4 is different from that of v6 for operation.
+	 * Keep this in mind while doing changes here!
+	 */
 	if ($ifacecfg === false) {
 		$ifcfg = $config['interfaces'][$interface];
 		$ppps = $config['ppps']['ppp'];
 		$realif = get_real_interface($interface);
+		$realifv6 = get_real_interface($interface, "inet6", true);
 	} elseif (!is_array($ifacecfg)) {
 		log_error(gettext("Wrong parameters used during interface_bring_down"));
 		$ifcfg = $config['interfaces'][$interface];
 		$ppps = $config['ppps']['ppp'];
 		$realif = get_real_interface($interface);
+		$realifv6 = get_real_interface($interface, "inet6", true);
 	} else {
 		$ifcfg = $ifacecfg['ifcfg'];
 		$ppps = $ifacecfg['ppps'];
-		if (isset($ifacecfg['ifcfg']['realif']))
+		if (isset($ifacecfg['ifcfg']['realif'])) {
 			$realif = $ifacecfg['ifcfg']['realif'];
-		else
+			/* XXX: Any better way? */
+			$realifv6 = $realif;
+		} else {
 			$realif = get_real_interface($interface);
+			$realifv6 = get_real_interface($interface, "inet6", true);
+		}
 	}
 
 	switch ($ifcfg['ipaddr']) {
@@ -1245,10 +1256,10 @@ function interface_bring_down($interface = "wan", $destroy = false, $ifacecfg = 
 			posix_kill($pidv6, SIGTERM);
 		sleep(3);
 		unlink_if_exists("{$g['varetc_path']}/dhcp6c_{$interface}.conf");
-		if (does_interface_exist("$realif")) {
-			$ip6 = get_interface_ipv6($interface);
-			if (is_ipaddrv6($ip6))
-				mwexec("/sbin/ifconfig " . escapeshellarg($realif) . " inet6 {$ip6} delete", true);
+		if (does_interface_exist($realifv6)) {
+			$ip6 = find_interface_ipv6($realifv6);
+			if (is_ipaddrv6($ip6) && $ip6 != "::")
+				mwexec("/sbin/ifconfig " . escapeshellarg($realifv6) . " inet6 {$ip6} delete", true);
 			if ($destroy == true)
 				pfSense_interface_flags($realif, -IFF_UP);
 			mwexec("/usr/sbin/arp -d -i {$realif} -a");
@@ -4196,7 +4207,7 @@ function interface_get_wireless_clone($wlif) {
 	}
 }
 
-function get_real_interface($interface = "wan", $family = "all") {
+function get_real_interface($interface = "wan", $family = "all", $realv6iface = false) {
 	global $config, $g;
 
 	$wanif = NULL;
@@ -4257,7 +4268,7 @@ function get_real_interface($interface = "wan", $family = "all") {
 				case 'ppp':
 				case 'l2tp':
 				case 'pptp':
-					if (isset($cfg['dhcp6usev4iface']))
+					if (isset($cfg['dhcp6usev4iface']) && $realv6iface === false)
 						$wanif = $cfg['if'];
 					else {
 						$parents = get_parent_interface($interface);

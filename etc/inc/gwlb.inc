@@ -170,7 +170,7 @@ EOD;
 				$gwifip = find_interface_ipv6($gateway['interface'], true);
 			}
 			if (is_linklocal($gateway['monitor']) && !strstr($gateway['monitor'], '%'))
-				$gateway['monitor'] .= "{$gateway['monitor']}%{$gateway['interface']}";
+				$gateway['monitor'] .= "%{$gateway['interface']}";
 			if (!is_ipaddrv6($gwifip))
 				continue; //Skip this target
 		} else

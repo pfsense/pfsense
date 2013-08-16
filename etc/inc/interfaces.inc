@@ -4810,6 +4810,15 @@ function get_interface_ipv6($interface = "wan", $flush = false) {
 	 * the communication on WAN will be done over link-local.
 	 */
 	if (is_array($config['interfaces'][$interface])) {
+		switch ($config['interfaces'][$interface]['ipaddr']) {
+		case 'pppoe':
+		case 'l2tp':
+		case 'pptp':
+		case 'ppp':
+			if ($config['interfaces'][$interface]['ipaddrv6'] == 'dhcp6')
+				$realif = get_real_interface($interface, "inet6", true);
+			break;
+		}
 		if (isset($config['interfaces'][$interface]['dhcp6prefixonly'])) {
 			$curip = find_interface_ipv6_ll($realif, $flush);
 			if ($curip && is_ipaddrv6($curip) && ($curip != "::"))

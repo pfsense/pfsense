@@ -12,7 +12,7 @@ while [ "$NOTSYNCED" = "true" ] && [ ${ATTEMPT} -le ${MAX_ATTEMPTS} ]; do
 	/usr/bin/killall ntpd 2>/dev/null
 	/usr/bin/killall ntpdate 2>/dev/null
 	sleep 1
-	/usr/sbin/ntpdate -s -t 5 ${SERVER}
+	/usr/local/bin/ntpdate -s -t 5 ${SERVER}
 	if [ "$?" = "0" ]; then
 		NOTSYNCED="false"
 	else

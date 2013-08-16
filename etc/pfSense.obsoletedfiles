@@ -56,3 +56,4 @@
 /usr/local/www/progress.php
 /usr/local/www/upload_progress.php
 /usr/sbin/ntpd
+/usr/sbin/ntpdate

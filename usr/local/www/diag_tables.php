@@ -108,6 +108,7 @@ include("fbegin.inc");
 			if (200 == response.status) {
 				// Escape all dots to not confuse jQuery selectors
 				name = response.responseText.replace(/\./g,'\\.');
+				name = name.replace(/\//g,'\\/');
 				jQuery('#' + name).fadeOut(1000);
 			}
 		}

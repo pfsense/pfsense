@@ -1660,9 +1660,9 @@ function services_dnsmasq_configure() {
 						$laddr6 = find_interface_ipv6($if);
 						if (is_ipaddrv6($laddr6) && !isset($config['dnsmasq']['strictbind'])) {
 							/*
-							* XXX: Since dnsmasq does not support link-local address
-							* with scope specified. These checks are being done.
-							*/
+							 * XXX: Since dnsmasq does not support link-local address
+							 * with scope specified. These checks are being done.
+							 */
 							if (is_linklocal($laddr6) && strstr($laddr6, "%")) {
 								$tmpaddrll6 = explode("%", $laddr6);
 								$listen_addresses .= " --listen-address={$tmpaddrll6[0]} ";

@@ -4142,7 +4142,8 @@ function get_parent_interface($interface) {
 		return $parents;
 
 	// If we got a real interface, find it's friendly assigned name
-	$interface = convert_real_interface_to_friendly_interface_name($interface);
+	if ($interface == $realif)
+		$interface = convert_real_interface_to_friendly_interface_name($interface);
 
 	if (!empty($interface) && isset($config['interfaces'][$interface])) {
 		$ifcfg = $config['interfaces'][$interface];

@@ -1648,8 +1648,18 @@ function services_dnsmasq_configure() {
 		if(isset($config['dnsmasq']['interface'])) {
 			$interfaces = explode(",", $config['dnsmasq']['interface']);
 			foreach ($interfaces as $interface) {
-				if (is_ipaddr($interface)) {
+				if (is_ipaddrv4($interface)) {
 					$listen_addresses .= " --listen-address={$interface} ";
+				} else if (is_ipaddrv6($interface)) {
+					/*
+					 * XXX: Since dnsmasq does not support link-local address
+					 * with scope specified. These checks are being done.
+					 */
+					if (is_linklocal($interface) && strstr($interface, "%")) {
+						$tmpaddrll6 = explode("%", $interface);
+						$listen_addresses .= " --listen-address={$tmpaddrll6[0]} ";
+					} else 
+						$listen_addresses .= " --listen-address={$interface} ";
 				} else {
 					$if = get_real_interface($interface);
 					if (does_interface_exist($if)) {

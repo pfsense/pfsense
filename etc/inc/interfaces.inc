@@ -1180,6 +1180,9 @@ function interface_bring_down($interface = "wan", $destroy = false, $ifacecfg = 
 		$realif = get_real_interface($interface);
 	} elseif (!is_array($ifacecfg)) {
 		log_error(gettext("Wrong parameters used during interface_bring_down"));
+		$ifcfg = $config['interfaces'][$interface];
+		$ppps = $config['ppps']['ppp'];
+		$realif = get_real_interface($interface);
 	} else {
 		$ifcfg = $ifacecfg['ifcfg'];
 		$ppps = $ifacecfg['ppps'];

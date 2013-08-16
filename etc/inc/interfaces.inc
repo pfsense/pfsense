@@ -4805,6 +4805,18 @@ function get_interface_ipv6($interface = "wan", $flush = false) {
 			return null;
 	}
 
+	/*
+	 * NOTE: On the case when only the prefix is requested,
+	 * the communication on WAN will be done over link-local.
+	 */
+	if (is_array($config['interfaces'][$interface])) {
+		if (isset($config['interfaces'][$interface]['dhcp6prefixonly'])) {
+			$curip = find_interface_ipv6_ll($realif, $flush);
+			if ($curip && is_ipaddrv6($curip) && ($curip != "::"))
+				return $curip;
+		}
+	}
+
 	$curip = find_interface_ipv6($realif, $flush);
 	if ($curip && is_ipaddrv6($curip) && ($curip != "::"))
 		return $curip;

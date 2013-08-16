@@ -2799,8 +2799,15 @@ function interface_configure($interface = "wan", $reloadall = false, $linkupeven
 
 	if (!$g['booting'] && !(substr($realif, 0, 4) == "ovpn")) {
 		/* remove all IPv4 and IPv6 addresses */
-		while (mwexec("/sbin/ifconfig " . escapeshellarg($realif) . " -alias", true) == 0);
-		while (mwexec("/sbin/ifconfig " . escapeshellarg($realif) . " inet6 -alias", true) == 0);
+		$tmpifaces = pfSense_getall_interface_addresses($realif);
+		if (is_array($tmpifaces)) {
+			foreach ($tmpifaces as $tmpiface) {
+				if (strstr($iface, ":"))
+					mwexec("/sbin/ifconfig " . escapeshellarg($realif) . " inet6 {$iface} delete");
+				else
+					mwexec("/sbin/ifconfig " . escapeshellarg($realif) . " inet {$iface} delete");
+			}
+		}
 
 		/* only bring down the interface when both v4 and v6 are set to NONE */
 		if(empty($wancfg['ipaddr']) && empty($wancfg['ipaddrv6'])) {

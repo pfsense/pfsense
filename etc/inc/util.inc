@@ -477,6 +477,10 @@ function is_ipaddr($ipaddr) {
 function is_ipaddrv6($ipaddr) {
 	if (!is_string($ipaddr) || empty($ipaddr))
 		return false;
+	if (strstr($ipaddr, "%") && is_linklocal($ipaddr)) {
+		$tmpip = explode("%", $ipaddr);
+		$ipaddr = $tmpip[0];
+	}
 	return Net_IPv6::checkIPv6($ipaddr);
 }
 

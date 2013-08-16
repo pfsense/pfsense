@@ -1639,8 +1639,18 @@ function services_dnsmasq_configure() {
 		if(isset($config['dnsmasq']['interface'])) {
 			$interfaces = explode(",", $config['dnsmasq']['interface']);
 			foreach ($interfaces as $interface) {
-				if (is_ipaddr($interface)) {
+				if (is_ipaddrv4($interface)) {
 					$listen_addresses .= " --listen-address={$interface} ";
+				} else if (is_ipaddrv6($interface)) {
+					/*
+					* XXX: Since dnsmasq does not support link-local address
+					* with scope specified. These checks are being done.
+					*/
+					if (is_linklocal($interface) && strstr($interface, "%")) {
+						$tmpaddrll6 = explode("%", $interface);
+						$listen_addresses .= " --listen-address={$tmpaddrll6[0]} ";
+					} else 
+						$listen_addresses .= " --listen-address={$interface} ";
 				} else {
 					$if = get_real_interface($interface);
 					if (does_interface_exist($if)) {
@@ -1648,8 +1658,17 @@ function services_dnsmasq_configure() {
 						if (is_ipaddrv4($laddr))
 							$listen_addresses .= " --listen-address={$laddr} ";
 						$laddr6 = find_interface_ipv6($if);
-						if (is_ipaddrv6($laddr6) && !isset($config['dnsmasq']['strictbind']))
-							$listen_addresses .= " --listen-address={$laddr6} ";
+						if (is_ipaddrv6($laddr6) && !isset($config['dnsmasq']['strictbind'])) {
+							/*
+							* XXX: Since dnsmasq does not support link-local address
+							* with scope specified. These checks are being done.
+							*/
+							if (is_linklocal($laddr6) && strstr($laddr6, "%")) {
+								$tmpaddrll6 = explode("%", $laddr6);
+								$listen_addresses .= " --listen-address={$tmpaddrll6[0]} ";
+							} else 
+								$listen_addresses .= " --listen-address={$laddr6} ";
+						}
 					}
 				}
 			}

@@ -1341,6 +1341,12 @@ function filter_nat_rules_generate_if($if, $src = "any", $srcport = "", $dst = "
 			$protocol = " proto {$proto}";
 	} else
 		$protocol = "";
+	/* Set tgt for IPv6 */ 
+	if ($proto == "ipv6") {
+		$natip = get_interface_ipv6($if);
+		if(is_ipaddrv6($natip))
+			$tgt = "{$natip}/128";
+	}
 	/* Add the hard set source port (useful for ISAKMP) */
 	if($natport != "")
 		$tgt .= " port {$natport}";

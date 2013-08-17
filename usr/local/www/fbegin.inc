@@ -253,6 +253,11 @@ if(! $g['disablehelpmenu']) {
 
 ?>
 
+<!-- import twitter css & js -->
+<link href="/css/bootstrap.min.css" rel="stylesheet">
+<?php echo "\t<script type=\"text/javascript\" src=\"javascript/bootstrap.min.js\"></script>\n"; ?>
+<!-- end of twitter code here -->
+
 <div id="wrapper">
 	<div id="header">
 		<div id="header-left"><a href="/index.php" id="status-link"><img src="/themes/<?= $g['theme']; ?>/images/transparent.gif" border="0" alt="transparent" /></a></div>

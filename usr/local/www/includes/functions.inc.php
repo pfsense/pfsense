@@ -71,7 +71,7 @@ function get_gatewaystats() {
 			$bgcolor = "#ADD8E6";  // lightblue
 		}
 		$data .= ($online == "Pending") ? "{$online},{$online}," : "{$gws['delay']},{$gws['loss']},";
-		$data .= "<table><tr><td bgcolor=\"$bgcolor\">&nbsp;$online&nbsp;</td></td></tr></table>";
+		$data .= "<table border=\"0\" cellpadding=\"0\" cellspacing=\"2\" summary=\"status\"><tr><td bgcolor=\"$bgcolor\">&nbsp;$online&nbsp;</td></tr></table>";
 	}
 	return $data;
 }

@@ -79,6 +79,7 @@ foreach ($rawdata as $line) {
 function _getHostName($mac,$ip)
 {       
 	if(is_ipaddr($ip)) {
+		list($ip, $scope) = explode("%", $ip);
 		if(gethostbyaddr($ip) <> "" and gethostbyaddr($ip) <> $ip)
 			return gethostbyaddr($ip);
 		else

@@ -191,6 +191,8 @@ function parse_filter_line($line) {
 		/* If it's still 'Options', then just ignore it. */
 		if ($flent['proto'] == "Options")
 			$flent['proto'] = "none";
+	} elseif (($flent['proto'] == "unknown") && (!(strpos($line, ':  pfsync') === FALSE))) {
+		$flent['proto'] = "PFSYNC";
 	}
 
 	/* If there is a src, a dst, and a time, then the line should be usable/good */

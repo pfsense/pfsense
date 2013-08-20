@@ -503,6 +503,14 @@ function is_linklocal($ipaddr) {
 	return (substr($ipaddr, 0, 5) == "fe80:");
 }
 
+/* returns scope of a linklocal address */
+function get_ll_scope($addr) {
+	if (!is_linklocal($addr) || !strstr($addr, "%"))
+		return "";
+	list ($ll, $scope) = explode("%", $addr);
+	return $scope;
+}
+
 /* returns true if $ipaddr is a valid literal IPv6 address */
 function is_literalipaddrv6($ipaddr) {
 	if(preg_match("/\[([0-9a-f:]+)\]/i", $ipaddr, $match))

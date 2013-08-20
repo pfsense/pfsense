@@ -199,7 +199,7 @@ outputJavaScriptFileInline("javascript/base64.js");
 <!-- file viewer/editor -->
 <table width="100%">
 	<tr>
-		<td valign="top" class="label">
+		<td valign="top">
 			<div style="background:#eeeeee;" id="fileOutput">
 				<textarea id="fileContent" name="fileContent" style="width:100%;" rows="30" wrap="off"></textarea>
 			</div>

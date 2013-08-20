@@ -47,9 +47,21 @@ exec("ls /dev | grep '^\(ad\|da\|ada\)[0-9]\{1,2\}$'", $devs); ## From SMART sta
 if(count($devs) > 0)  {
 	foreach($devs as $dev)  {	## for each found drive do
 		$dev_ident = exec("diskinfo -v /dev/$dev | grep ident   | awk '{print $1}'"); ## get identifier from drive
-		$dev_state = exec("smartctl -H /dev/$dev | grep result: | awk '{print $6}'"); ## get SMART state from drive
-		# Use light green color for passed, light coral otherwise.
-		$color = ($dev_state == "PASSED") ? "#90EE90" : "#F08080";
+		$dev_state = trim(exec("smartctl -H /dev/$dev | awk -F: '/^SMART overall-health self-assessment test result/ {print $2;exit}
+/^SMART Health Status/ {print $2;exit}'")); ## get SMART state from drive
+		switch ($dev_state) {
+		case "PASSED":
+		case "OK":
+			$color = "#90EE90";
+			break;
+		case "":
+			$dev_state = "Unknown";
+			$color = "#C0B788";
+			break;
+		default:
+			$color = "#F08080";
+			break;
+		}
 ?>
 		<tr>
 			<td class="listlr"><?php echo $dev; ?></td>

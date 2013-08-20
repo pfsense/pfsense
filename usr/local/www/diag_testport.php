@@ -200,7 +200,12 @@ include("head.inc"); ?>
 				$ifaddr = ($sourceip == "any") ? "" : get_interface_ip($sourceip);
 				$nc_args .= " -4";
 			} elseif (is_ipaddrv6($host)) {
-				$ifaddr = ($sourceip == "any") ? "" : get_interface_ipv6($sourceip);
+				if ($sourceip == "any")
+					$ifaddr = "";
+				else if (is_linklocal($sourceip))
+					$ifaddr = $sourceip;
+				else
+					$ifaddr = get_interface_ipv6($sourceip);
 				$nc_args .= " -6";
 			} else {
 				switch ($ipprotocol) {
@@ -209,14 +214,14 @@ include("head.inc"); ?>
 						$nc_ipproto = " -4";
 						break;
 					case "ipv6":
-						$ifaddr = get_interface_ipv6($sourceip);
+						$ifaddr = (is_linklocal($sourceip) ? $sourceip : get_interface_ipv6($sourceip));
 						$nc_ipproto = " -6";
 						break;
 					case "any":
 						$ifaddr = get_interface_ip($sourceip);
 						$nc_ipproto = (!empty($ifaddr)) ? " -4" : "";
 						if (empty($ifaddr)) {
-							$ifaddr = get_interface_ipv6($sourceip);
+							$ifaddr = (is_linklocal($sourceip) ? $sourceip : get_interface_ipv6($sourceip));
 							$nc_ipproto = (!empty($ifaddr)) ? " -6" : "";
 						}
 						break;
@@ -237,8 +242,12 @@ include("head.inc"); ?>
 				}
 			}
 			/* Only add on the interface IP if we managed to find one. */
-			if (!empty($ifaddr))
+			if (!empty($ifaddr)) {
 				$nc_args .= " -s " . escapeshellarg($ifaddr) . " ";
+				$scope = get_ll_scope($ifaddr);
+				if (!empty($scope) && !strstr($host, "%"))
+					$host .= "%{$scope}";
+			}
 
 			$nc_cmd = "{$nc_base_cmd} {$nc_args} " . escapeshellarg($host) . " " . escapeshellarg($port) . " 2>&1";
 			exec($nc_cmd, $result, $retval);

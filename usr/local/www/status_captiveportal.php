@@ -101,7 +101,6 @@ $mac_man = load_mac_manufacturer_table();
 ?>
 
 <?php if (!empty($cpzone) && isset($config['voucher'][$cpzone]['enable'])): ?>
-<form action="status_captiveportal.php" method="post" enctype="multipart/form-data" name="iform" id="iform">
 <table width="100%" border="0" cellpadding="0" cellspacing="0" summary="tab pane">
 <tr><td class="tabnavtbl">
 <?php 
@@ -186,7 +185,6 @@ $mac_man = load_mac_manufacturer_table();
 </td>
 </tr>
 </table>
-</form>
 <?php endif; ?>
 
 <form action="status_captiveportal.php" method="get" style="margin: 14px;">

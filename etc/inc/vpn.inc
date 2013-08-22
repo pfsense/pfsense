@@ -1926,6 +1926,9 @@ function reload_tunnel_spd_policy($phase1, $phase2, $old_phase1, $old_phase2) {
 	/* generate temporary spd.conf */
 	@file_put_contents($spdfile, $spdconf);
 	unset($spdconf);
+	/* remove static route to old gw */
+	if (is_ipaddr($old_gw))
+		mwexec("/sbin/route delete {$old_gw}", true);
 	return true;
 }
 

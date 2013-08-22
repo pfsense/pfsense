@@ -182,7 +182,7 @@ function enable_change(enable_over) {
                         <td width="78%" class="vtable">
                           <input name="server" type="text" class="formfld unknown" id="server" size="20" value="<?=htmlspecialchars($pconfig['server']);?>">
                           <br>
-			  <?=gettext("This is the IPv6 address of the server to which DHCPv6 requests are relayed. You can enter multiple server IPv6 addresses, separated by commas. Select \"Proxy requests to DHCPv6 server on WAN subnet\" to relay DHCPv6 packets to the server that was used on the WAN interface.");?>
+			  <?=gettext("This is the IPv6 address of the server to which DHCPv6 requests are relayed. You can enter multiple server IPv6 addresses, separated by commas. ");?>
                         </td>
 		</tr>
 		<tr>

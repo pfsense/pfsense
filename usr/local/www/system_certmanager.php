@@ -107,8 +107,9 @@ if ($act == "del") {
 if ($act == "new") {
 	$pconfig['method'] = $_GET['method'];
 	$pconfig['keylen'] = "2048";
-	$pconfig['csr_keylen'] = "2048";
 	$pconfig['digest_alg'] = "sha256";
+	$pconfig['csr_keylen'] = "2048";
+	$pconfig['csr_digest_alg'] = "sha256";
 	$pconfig['type'] = "user";
 	$pconfig['lifetime'] = "3650";
 }
@@ -295,11 +296,15 @@ if ($_POST) {
 				}else if (($reqdfields[$i] != "descr") && preg_match("/[\!\@\#\$\%\^\(\)\~\?\>\<\&\/\\\,\.\"\']/", $_POST["$reqdfields[$i]"]))
 					array_push($input_errors, "The field '" . $reqdfieldsn[$i] . "' contains invalid characters.");
 			}
+			
 			if (isset($_POST["keylen"]) && !in_array($_POST["keylen"], $cert_keylens))
 				array_push($input_errors, gettext("Please select a valid Key Length."));
+			if (!in_array($_POST["digest_alg"], $openssl_digest_algs))
+				array_push($input_errors, gettext("Please select a valid Digest Algorithm."));
+				
 			if (isset($_POST["csr_keylen"]) && !in_array($_POST["csr_keylen"], $cert_keylens))
 				array_push($input_errors, gettext("Please select a valid Key Length."));
-			if (!in_array($_POST["digest_alg"], $openssl_digest_algs))
+			if (!in_array($_POST["csr_digest_alg"], $openssl_digest_algs))
 				array_push($input_errors, gettext("Please select a valid Digest Algorithm."));
 		}
 
@@ -368,7 +373,7 @@ if ($_POST) {
 						}
 						$dn['subjectAltName'] = implode(",", $altnames_tmp);
 					}
-					if(!csr_generate($cert, $pconfig['csr_keylen'], $dn, $pconfig['digest_alg'])){
+					if(!csr_generate($cert, $pconfig['csr_keylen'], $dn, $pconfig['csr_digest_alg'])){
 						while($ssl_err = openssl_error_string()){
 							$input_errors = array();
 							array_push($input_errors, "openssl library returns: " . $ssl_err);
@@ -866,14 +871,14 @@ function internalca_change() {
 						<tr>
 							<td width="22%" valign="top" class="vncellreq"><?=gettext("Digest Algorithm");?></td>
 							<td width="78%" class="vtable">
-								<select name='digest_alg' id='digest_alg' class="formselect">
+								<select name='csr_digest_alg' id='csr_digest_alg' class="formselect">
 								<?php
-									foreach( $openssl_digest_algs as $digest_alg):
+									foreach( $openssl_digest_algs as $csr_digest_alg):
 									$selected = "";
-									if ($pconfig['digest_alg'] == $digest_alg)
+									if ($pconfig['csr_digest_alg'] == $csr_digest_alg)
 										$selected = " selected=\"selected\"";
 								?>
-									<option value="<?=$digest_alg;?>"<?=$selected;?>><?=strtoupper($digest_alg);?></option>
+									<option value="<?=$csr_digest_alg;?>"<?=$selected;?>><?=strtoupper($csr_digest_alg);?></option>
 								<?php endforeach; ?>
 								</select>
 								<br/><?= gettext("NOTE: It is recommended to use an algorithm stronger than SHA1 when possible.") ?>

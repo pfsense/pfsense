@@ -38,6 +38,8 @@
 	pfSense_MODULE:	filter
 */
 
+include_once("util.inc");
+
 /* DISABLE_PHP_LINT_CHECKING */
 
 /* holds the items that will be executed *AFTER* the filter is fully loaded */
@@ -1535,8 +1537,20 @@ function filter_nat_rules_generate() {
 						continue;
 					if ($remote_subnet == "0.0.0.0/0")
 						$remote_subnet = "any";
-					if (is_ipaddr($natlocal_subnet) && !is_ipaddr($local_subnet) )
+					if (subnet_size($natlocal_subnet) != subnet_size($local_subnet)) {
+						if (is_subnet($natlocal_subnet)) {
+							// if traffic needs to be natted to a subnet, the network-id .0 and broadcast-address .255 should not be used for natting.
+							list ($ip, $bits) = explode("/", $natlocal_subnet);
+							$usable = get_subnet_usable_range($ip, $bits);
+							$usable_subnets = ip_range_to_subnet_array($usable[0],$usable[1]);
+							$natlocal_subnet = "";
+							foreach($usable_subnets as $subnet) {
+								$natlocal_subnet .= " , " . $subnet;
+							}
+							$natlocal_subnet = '{ ' . substr($natlocal_subnet, 3) . ' }';
+						}
 						$nattype = "nat";
+					}
 					else
 						$nattype = "binat";
 					$natrules .= "{$nattype} on enc0 from {$local_subnet} to {$remote_subnet} -> {$natlocal_subnet}\n";

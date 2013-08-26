@@ -554,15 +554,8 @@ display_top_tabs($tab_array);
 			<td width="22%" valign="top" class="vncellreq"><?=gettext("Available range");?></td>
 			<td width="78%" class="vtable">
 			<?php
-				$range_from = gen_subnetv6($ifcfgip, $ifcfgsn);
-				$range_from++;
-				echo $range_from;
-
-			?>
-			-
-			<?php
-				$range_to = gen_subnetv6_max($ifcfgip, $ifcfgsn);
-				echo $range_to;
+				$usable = get_subnet_usable_range($ifcfgip, $ifcfgsn);
+				echo "{$usable[0]} - {$usable[1]}";
 			?>
 			</td>
 			</tr>

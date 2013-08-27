@@ -431,14 +431,14 @@ function ip_range_to_subnet_array($startip, $endip) {
 		if (ip_greater_than($targetsub_min, $startip) && ip_less_than($targetsub_max, $endip)) {
 			break;
 		}
-	}
+		}
 
 	// Some logic that will recursivly search from $startip to the first IP before the start of the subnet we just found.
 	// NOTE: This may never be hit, the way the above algo turned out, but is left for completeness.
 	if ($startip != $targetsub_min) {
 		$rangesubnets = array_merge($rangesubnets, ip_range_to_subnet_array($startip, ip_before($targetsub_min)));
-	}
-
+		}
+		 
 	// Add in the subnet we found before, to preserve ordering
 	$rangesubnets[] = "{$targetsub_min}/{$cidr}";
 
@@ -1304,6 +1304,31 @@ function check_subnetsv6_overlap($subnet1, $bits1, $subnet2, $bits2) {
 	$sub2_max = gen_subnetv6_max($subnet2, $bits2);
 
 	return (is_inrange_v6($sub1_min, $sub2_min, $sub2_max) || is_inrange_v6($sub1_max, $sub2_min, $sub2_max) || is_inrange_v6($sub2_min, $sub1_min, $sub1_max));
+}
+
+function get_subnet_usable_range($ip, $bits) {
+	if (is_ipaddrv4($ip)) {
+		$range_from = ip2long(long2ip32(ip2long($ip) & gen_subnet_mask_long($bits)));
+		$range_from++;
+		$range_to = ip2long(long2ip32(ip2long($ip) | (~gen_subnet_mask_long($bits))));
+		$range_to--;
+		$result = array();
+		$result[0] = long2ip32($range_from);
+		$result[1] = long2ip32($range_to);
+		return $result;
+	}
+	else if (is_ipaddrv6($ip)) {
+		$result = array();
+		$range_from = gen_subnetv6($ip, $bits);
+		$range_from++; //TODO fix for some cases.. for example LAN address 1234::1234/100 gets the wrong DHCP available start range "1234::" while it should be "1234::1" the function ip_after() is however also not IPv6 ready..
+		$range_to = gen_subnetv6_max($ip, $bits);
+		$result[0] = $range_from;
+		$result[1] = $range_to;
+		return $result;
+	}
+	else {
+		return null;
+	}
 }
 
 /* compare two IP addresses */

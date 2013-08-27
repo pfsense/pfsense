@@ -431,14 +431,14 @@ function ip_range_to_subnet_array($startip, $endip) {
 		if (ip_greater_than($targetsub_min, $startip) && ip_less_than($targetsub_max, $endip)) {
 			break;
 		}
-		}
+	}
 
 	// Some logic that will recursivly search from $startip to the first IP before the start of the subnet we just found.
 	// NOTE: This may never be hit, the way the above algo turned out, but is left for completeness.
 	if ($startip != $targetsub_min) {
 		$rangesubnets = array_merge($rangesubnets, ip_range_to_subnet_array($startip, ip_before($targetsub_min)));
-		}
-		 
+	}
+
 	// Add in the subnet we found before, to preserve ordering
 	$rangesubnets[] = "{$targetsub_min}/{$cidr}";
 

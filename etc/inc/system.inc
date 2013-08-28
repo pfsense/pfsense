@@ -937,21 +937,21 @@ function system_generate_lighty_config($filename,
 		$lighty_port = $port;
 
 	$memory = get_memory();
-	$avail = $memory[1];
+	$realmem = $memory[1];
 
 	// Determine web GUI process settings and take into account low memory systems
-	if ($avail < 255)
+	if ($realmem < 255)
 		$max_procs = 1;
 	else
 		$max_procs = ($config['system']['webgui']['max_procs']) ? $config['system']['webgui']['max_procs'] : 2;
 
 	// Ramp up captive portal max procs, assuming each PHP process can consume up to 64MB RAM 
 	if ($captive_portal !== false)  {
-		if ($avail > 135 and $avail < 256) {
+		if ($realmem > 135 and $realmem < 256) {
 			$max_procs += 1; // 2 worker processes
-		} else if ($avail > 255 and $avail < 513) {
+		} else if ($realmem > 255 and $realmem < 513) {
 			$max_procs += 2; // 3 worker processes
-		} else if ($avail > 512) {
+		} else if ($realmem > 512) {
 			$max_procs += 4; // 6 worker processes
 		}
 		if ($max_procs > 1)
@@ -960,7 +960,7 @@ function system_generate_lighty_config($filename,
 			$max_php_children = 1;
 
 	} else {
-		if ($avail < 78)
+		if ($realmem < 78)
 			$max_php_children = 0;
 		else
 			$max_php_children = 1;

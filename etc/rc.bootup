@@ -128,7 +128,8 @@ echo ".";
 
 /* get system memory amount */
 $memory = get_memory();
-$avail = $memory[1];
+$physmem = $memory[0];
+$realmem = $memory[1];
 echo " done.\n";
 
 conf_mount_rw();
@@ -295,8 +296,8 @@ echo "Synchronizing user settings...";
 local_sync_accounts();
 echo "done.\n";
 
-if($avail > 0 and $avail < 65) {
-	echo "System has less than 65 megabytes of ram {$avail}.  Delaying webConfigurator startup.\n";
+if($realmem > 0 and $realmem < 65) {
+	echo "System has less than 65 megabytes of ram {$realmem}.  Delaying webConfigurator startup.\n";
 	/* start webConfigurator up on final pass */
 	mwexec("/usr/local/sbin/pfSctl -c 'service restart webgui'");
 } else {
@@ -385,7 +386,7 @@ if($config['system']['afterbootupshellcmd'] <> "") {
 	mwexec($config['system']['afterbootupshellcmd']);
 }
 
-if($avail < $g['minimum_ram_warning']) {
+if($physmem < $g['minimum_ram_warning']) {
 	require_once("/etc/inc/notices.inc");
 	file_notice("{$g['product_name']}MemoryRequirements", "{$g['product_name']} requires at least {$g['minimum_ram_warning_text']} of RAM.  Expect unusual performance.  This platform is not supported.", "Memory", "", 1);
 	mwexec("/sbin/sysctl net.inet.tcp.recvspace=4096");

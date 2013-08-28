@@ -1562,14 +1562,15 @@ function set_sysctl($values) {
  *     get_memory()
  *     returns an array listing the amount of
  *     memory installed in the hardware
- *     [0]real and [1]available
+ *     [0] net memory available for the OS (FreeBSD) after some is taken by BIOS, video or whatever - e.g. 235 MBytes
+ *     [1] real (actual) memory of the system, should be the size of the RAM card/s - e.g. 256 MBytes
  */
 function get_memory() {
 
-	$real = trim(`sysctl -n hw.physmem`, " \n");
-	$avail = trim(`sysctl -n hw.realmem`, " \n");
+	$physmem = trim(`sysctl -n hw.physmem`, " \n");
+	$realmem = trim(`sysctl -n hw.realmem`, " \n");
 	/* convert from bytes to megabytes */
-	return array(($real/1048576),($avail/1048576));
+	return array(($physmem/1048576),($realmem/1048576));
 }
 
 function mute_kernel_msgs() {

@@ -55,7 +55,7 @@ function nat_npt_rules_sort() {
 
 require("guiconfig.inc");
 require_once("interfaces.inc");
-require("filter.inc");
+require_once("filter.inc");
 require("shaper.inc");
 
 $ifdisp = get_configured_interface_with_descr();

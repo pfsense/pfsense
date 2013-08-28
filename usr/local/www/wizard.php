@@ -39,7 +39,7 @@
 require("globals.inc");
 require("guiconfig.inc");
 require("functions.inc");
-require("filter.inc");
+require_once("filter.inc");
 require("shaper.inc");
 require("rrd.inc");
 

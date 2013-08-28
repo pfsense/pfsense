@@ -55,7 +55,7 @@ function nat_1to1_rules_sort() {
 
 require("guiconfig.inc");
 require_once("interfaces.inc");
-require("filter.inc");
+require_once("filter.inc");
 require("shaper.inc");
 
 $specialsrcdst = explode(" ", "any pptp pppoe l2tp openvpn");

@@ -552,9 +552,9 @@ function service_control_start($name, $extras) {
 			vpn_ipsec_force_reload();
 			break;
 		case 'openvpn':
-			$vpnmode = $extras['vpnmode'];
+			$vpnmode = isset($extras['vpnmode']) ? $extras['vpnmode'] : $extras['mode'];
 			if (($vpnmode == "server") || ($vpnmode == "client")) {
-				$id = $extras['id'];
+				$id = isset($extras['vpnid']) ? $extras['vpnid'] : $extras['id'];
 				$configfile = "{$g['varetc_path']}/openvpn/{$vpnmode}{$id}.conf";
 				if (file_exists($configfile))
 					openvpn_restart_by_vpnid($vpnmode, $id);

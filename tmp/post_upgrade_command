@@ -113,3 +113,13 @@ fi
 if [ -f /usr/local/sbin/php ]; then
 	rm /usr/local/sbin/php
 fi
+
+# Fixup permissions on installed files
+if [ "${PFSENSETYPE}" = "nanobsd" ]; then
+	MTREECHKDIR=/tmp/${1}/
+else
+	MTREECHKDIR=/
+fi
+if [ -f ${MTREECHKDIR}etc/pfSense.mtree ]; then
+	/usr/sbin/mtree -U -e -q -f ${MTREECHKDIR}etc/pfSense.mtree -p ${MTREECHKDIR} > /conf/mtree.log;
+fi;

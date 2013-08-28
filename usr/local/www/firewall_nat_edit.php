@@ -41,7 +41,7 @@
 
 require("guiconfig.inc");
 require_once("itemid.inc");
-require("filter.inc");
+require_once("filter.inc");
 require("shaper.inc");
 
 $specialsrcdst = explode(" ", "any pptp pppoe l2tp openvpn");

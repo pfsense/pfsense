@@ -42,7 +42,7 @@ $reserved_keywords = array("pass", "out", "queue", "max", "min", "pptp", "pppoe"
 
 require("guiconfig.inc");
 require_once("util.inc");
-require("filter.inc");
+require_once("filter.inc");
 require("shaper.inc");
 
 $pgtitle = array(gettext("Firewall"),gettext("Aliases"),gettext("Bulk import"));

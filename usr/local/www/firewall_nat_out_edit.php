@@ -42,7 +42,7 @@
 ##|-PRIV
 
 require("guiconfig.inc");
-require("filter.inc");
+require_once("filter.inc");
 require("shaper.inc");
 
 if (!is_array($config['nat']['advancedoutbound']))

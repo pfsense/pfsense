@@ -123,3 +123,8 @@ fi
 if [ -f ${MTREECHKDIR}etc/pfSense.mtree ]; then
 	/usr/sbin/mtree -U -e -q -f ${MTREECHKDIR}etc/pfSense.mtree -p ${MTREECHKDIR} > /conf/mtree.log;
 fi;
+
+# Make sure to preserve existing time zone
+if [ "${PFSENSETYPE}" = "nanobsd" ] && [ -f /etc/localtime ]; then
+	/bin/cp -p /etc/localtime /tmp/${1}/etc/localtime 2>/dev/null
+fi

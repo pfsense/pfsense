@@ -242,6 +242,19 @@ function get_cpufreq() {
 	return $out;
 }
 
+function get_cpu_count($show_detail = false) {
+	$cpucount = "";
+	exec("/sbin/sysctl -n kern.smp.cpus", $cpucount);
+	$cpucount = $cpucount[0];
+
+	if ($show_detail) {
+		$cpudetail = "";
+		exec("/usr/bin/grep 'SMP.*package.*core' /var/log/dmesg.boot | /usr/bin/cut -f2- -d' '", $cpudetail);
+		$cpucount = $cpudetail[0];
+	}
+	return $cpucount;
+}
+
 function get_load_average() {
 	$load_average = "";
 	exec("/usr/bin/uptime | /usr/bin/sed 's/^.*: //'", $load_average);

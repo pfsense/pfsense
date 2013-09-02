@@ -3047,8 +3047,6 @@ class dnpipe_class extends dummynet_class {
 			if (!empty($data["bandwidth{$i}"])) {
 				if (!is_numeric($data["bandwidth{$i}"]))
 					$input_errors[] = sprintf(gettext("Bandwidth for schedule %s must be an integer."), $data["bwsched{$i}"]);
-				else if (!is_numeric($data["burst{$i}"]))
-					$input_errors[] = sprintf(gettext("Burst for schedule %s must be an integer."), $data["bwsched{$i}"]);
 				else
 					$entries++;
 			}
@@ -3165,7 +3163,7 @@ class dnpipe_class extends dummynet_class {
 							if ($bw['bwsched'] == $schedule['name']) {
 								if (filter_get_time_based_rule_status($schedule)) {
 									$pfq_rule .= " bw ".trim($bw['bw']).$bw['bwscale'];
-									if (is_numeric($bw['burst']) && ($bw['burst'] >= 0))
+									if (is_numeric($bw['burst']) && ($bw['burst'] > 0))
 										$pfq_rule .= " burst ".trim($bw['burst']).$bw['bwscale'];
 									$found = true;
 									break;
@@ -3174,13 +3172,12 @@ class dnpipe_class extends dummynet_class {
 						}
 					} else {
 						$pfq_rule .= " bw 0";
-						$pfq_rule .= " burst 0";
 						$found = true;
 						break;
 					}
 				} else {
 					$pfq_rule .= " bw ".trim($bw['bw']).$bw['bwscale'];
-					if (is_numeric($bw['burst']) && ($bw['burst'] >= 0))
+					if (is_numeric($bw['burst']) && ($bw['burst'] > 0))
 						$pfq_rule .= " burst ".trim($bw['burst']).$bw['bwscale'];
 					$found = true;
 					break;

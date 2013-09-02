@@ -3047,6 +3047,8 @@ class dnpipe_class extends dummynet_class {
 			if (!empty($data["bandwidth{$i}"])) {
 				if (!is_numeric($data["bandwidth{$i}"]))
 					$input_errors[] = sprintf(gettext("Bandwidth for schedule %s must be an integer."), $data["bwsched{$i}"]);
+				else if (($data["burst{$i}"] != "") && (!is_numeric($data["burst{$i}"])))
+					$input_errors[] = sprintf(gettext("Burst for schedule %s must be an integer."), $data["bwsched{$i}"]);
 				else
 					$entries++;
 			}

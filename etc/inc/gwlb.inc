@@ -691,7 +691,7 @@ function return_gateway_groups_array() {
 				list($gwname, $tier, $vipname) = explode("|", $item);
 
 				if (is_ipaddr($carplist[$vipname])) {
-					if (!is_array($group['name']))
+					if (!is_array($gwvip_arr[$group['name']]))
 						$gwvip_arr[$group['name']] = array();
 					$gwvip_arr[$group['name']][$gwname] = $vipname;
 				}
@@ -763,8 +763,8 @@ function return_gateway_groups_array() {
 							$groupmember['int']  = $int;
 							$groupmember['gwip']  = $gatewayip;
 							$groupmember['weight']  = isset($gateway['weight']) ? $gateway['weight'] : 1;
-							if (is_array($gwvip_arr[$group['name']])&& !empty($gwvip_arr[$group['name']][$gwname]))
-								$groupmember['vip'] = $gwvip_arr[$group['name']][$gwname];
+							if (is_array($gwvip_arr[$group['name']])&& !empty($gwvip_arr[$group['name']][$member]))
+								$groupmember['vip'] = $gwvip_arr[$group['name']][$member];
 							$gateway_groups_array[$group['name']]['ipprotocol'] = $gateway['ipprotocol'];
 							$gateway_groups_array[$group['name']][] = $groupmember;
 						}

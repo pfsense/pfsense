@@ -3512,6 +3512,9 @@ function interface_dhcpv6_configure($interface = "wan", $wancfg) {
 		if(is_numeric($wancfg['dhcp6-ia-pd-len'])) {
 			/* Setup the prefix delegation */
 			$dhcp6cconf .= "id-assoc pd 0 {\n";
+			$preflen = 64 - $wancfg['dhcp6-ia-pd-len'];
+			if (isset($wancfg['dhcp6-ia-pd-send-hint']))
+				$dhcp6cconf .= "	prefix ::/{$preflen} infinity;\n";
 			$iflist = link_interface_to_track6($interface);
 			foreach ($iflist as $friendly => $ifcfg) {
 				if (is_numeric($ifcfg['track6-prefix-id'])) {
@@ -3524,7 +3527,7 @@ function interface_dhcpv6_configure($interface = "wan", $wancfg) {
 					$dhcp6cconf .= "	};\n";
 				}
 			}
-			unset($iflist, $ifcfg);
+			unset($preflen, $iflist, $ifcfg);
 			$dhcp6cconf .= "};\n";
 		}
 	}

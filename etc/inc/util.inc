@@ -1827,6 +1827,22 @@ function is_file_included($file = "") {
 }
 
 /*
+ * Replace a value on a deep associative array using regex
+ */
+function array_replace_values_recursive($data, $match, $replace) {
+	if (empty($data))
+		return $data;
+
+	if (is_string($data))
+		$data = preg_replace("/{$match}/", $replace, $data);
+	else if (is_array($data))
+		foreach ($data as $k => $v)
+			$data[$k] = array_replace_values_recursive($v, $match, $replace);
+
+	return $data;
+}
+
+/*
 	This function was borrowed from a comment on PHP.net at the following URL:
 	http://www.php.net/manual/en/function.array-merge-recursive.php#73843
  */

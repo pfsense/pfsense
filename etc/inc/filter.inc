@@ -1245,13 +1245,13 @@ function filter_generate_reflection_proxy($rule, $nordr, $rdr_ifs, $srcaddr, $ds
 					$delta = 0;
 
 				if(($inetdport + $delta + 1) - $starting_localhost_port_tmp > 500) {
-					log_error("Not installing nat reflection rules for a port range > 500");
+					log_error("Not installing NAT reflection rules for a port range > 500");
 					$inetdport = $starting_localhost_port;
 					$toadd_array = array();
 					$toomanyports = true;
 					break;
 				} else if(($inetdport + $delta) > 19990) {
-					log_error("Installing partial nat reflection rules. Maximum 1,000 reached.");
+					log_error("Installing partial NAT reflection rules. Maximum 1,000 reached.");
 					$delta = 19990 - $inetdport;
 					$loc_pt[1] = $loc_pt[0] + $delta;
 					if($delta == 0)

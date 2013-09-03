@@ -452,7 +452,7 @@ include("head.inc");
                       </tr>
                       <tr>
 			<td align="center" valign="middle"><a href="firewall_nat_out.php?act=del&amp;id=<?=$i;?>" onclick="return confirm('<?=gettext("Do you really want to delete this rule?");?>')"><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_x.gif" width="17" height="17" border="0" title="<?=gettext("delete rule");?>" alt="delete" /></a></td>
-                        <td><a href="firewall_nat_out_edit.php?dup=<?=$i;?>"><img src="/themes/<?= $g['theme']; ?>/images/icons/icon_plus.gif" title="<?=gettext("add a new nat based on this one");?>" width="17" height="17" border="0" alt="duplicate" /></a></td>
+                        <td><a href="firewall_nat_out_edit.php?dup=<?=$i;?>"><img src="/themes/<?= $g['theme']; ?>/images/icons/icon_plus.gif" title="<?=gettext("add a new NAT based on this one");?>" width="17" height="17" border="0" alt="duplicate" /></a></td>
                       </tr>
                     </table>
               <?php $i++; $nnats++; endforeach; ?>

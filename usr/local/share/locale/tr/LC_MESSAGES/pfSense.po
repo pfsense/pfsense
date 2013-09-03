@@ -15695,7 +15695,7 @@ msgstr "seçili kuralları bu kuralın üstüne taşı"
 #: usr/local/www/firewall_nat_out.php:451
 #: usr/local/www/firewall_nat_out.php:452 usr/local/www/firewall_nat.php:327
 #: usr/local/www/firewall_nat.php:327 usr/local/www/firewall_nat_out.php:449
-msgid "add a new nat based on this one"
+msgid "add a new NAT based on this one"
 msgstr "Bu kuralı temel alan yeni NAT ekle"
 
 #: usr/local/www/firewall_nat_out.php:449
@@ -15825,7 +15825,7 @@ msgstr "Hedef Port girişi için geçerli bir port yada port grubu adı belirtin
 #: usr/local/www/firewall_nat_out_edit.php:143
 #: usr/local/www/firewall_nat_out_edit.php:156
 #: usr/local/www/firewall_nat_out_edit.php:160
-msgid "You must supply a valid port for the nat port entry."
+msgid "You must supply a valid port for the NAT port entry."
 msgstr "NAT port girişi için geçerli bir port belirtmelisiniz."
 
 #: usr/local/www/firewall_nat_out_edit.php:147
@@ -41802,8 +41802,8 @@ msgstr "Paket sayısı için belirtilen değer geçersiz."
 
 #: usr/local/www/vpn_ipsec_phase2.php:148
 #: usr/local/www/vpn_ipsec_phase2.php:152
-msgid "A valid nat local network bit count must be specified."
-msgstr "Geçerli bir nat yerel ağ bit sayısı belirtilmelidir."
+msgid "A valid NAT local network bit count must be specified."
+msgstr "Geçerli bir NAT yerel ağ bit sayısı belirtilmelidir."
 
 #: usr/local/www/vpn_ipsec_phase2.php:150
 #: usr/local/www/vpn_ipsec_phase2.php:154
@@ -41816,8 +41816,8 @@ msgstr ""
 
 #: usr/local/www/vpn_ipsec_phase2.php:153
 #: usr/local/www/vpn_ipsec_phase2.php:157
-msgid "A valid nat local network IP address must be specified."
-msgstr "Geçerli bir nat yerel IP adresi belirtilmelidir."
+msgid "A valid NAT local network IP address must be specified."
+msgstr "Geçerli bir NAT yerel IP adresi belirtilmelidir."
 
 #: usr/local/www/vpn_ipsec_phase2.php:548
 #: usr/local/www/vpn_ipsec_phase2.php:569
@@ -42882,18 +42882,18 @@ msgstr ""
 
 #: usr/local/www/vpn_ipsec_phase2.php:159
 msgid ""
-"A valid nat local network IPv4 address must be specified or you need to "
+"A valid NAT local network IPv4 address must be specified or you need to "
 "change Mode to IPv6"
 msgstr ""
-"Geçerli bir nat yerel IPv4 ağ adresi belirtilmeli yada Kipi IPv6'ya "
+"Geçerli bir NAT yerel IPv4 ağ adresi belirtilmeli yada Kipi IPv6'ya "
 "değiştirmelisiniz"
 
 #: usr/local/www/vpn_ipsec_phase2.php:161
 msgid ""
-"A valid nat local network IPv6 address must be specified or you need to "
+"A valid NAT local network IPv6 address must be specified or you need to "
 "change Mode to IPv4"
 msgstr ""
-"Geçerli bir nat yerel IPv6 ağ adresi belirtilmeli yada Kipi IPv4'e "
+"Geçerli bir NAT yerel IPv6 ağ adresi belirtilmeli yada Kipi IPv4'e "
 "değiştirmelisiniz"
 
 #: usr/local/www/vpn_ipsec_phase2.php:183

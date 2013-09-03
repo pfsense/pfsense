@@ -163,7 +163,7 @@ if ($_POST) {
 		$input_errors[] = gettext("You must supply either a valid port or port alias for the destination port entry.");
 
 	if($protocol_uses_ports && $_POST['natport'] <> "" && !is_port($_POST['natport']) && !isset($_POST['nonat']))
-		$input_errors[] = gettext("You must supply a valid port for the nat port entry.");
+		$input_errors[] = gettext("You must supply a valid port for the NAT port entry.");
 
 	if ($_POST['source_type'] != "any") {
 		if ($_POST['source'] && !is_ipaddroralias($_POST['source']) && $_POST['source'] <> "any") {

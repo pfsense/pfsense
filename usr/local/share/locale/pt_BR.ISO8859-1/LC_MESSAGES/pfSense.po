@@ -16073,8 +16073,8 @@ msgstr "mover as regras selecionada para antes desta regra"
 #: usr/local/www/firewall_nat_out.php:449
 #: usr/local/www/firewall_nat_out.php:456 usr/local/www/firewall_nat.php:330
 #: usr/local/www/firewall_nat_out.php:455
-msgid "add a new nat based on this one"
-msgstr "adicionar um nova regra de nat baseada nesta"
+msgid "add a new NAT based on this one"
+msgstr "adicionar um nova regra de NAT baseada nesta"
 
 #: usr/local/www/firewall_nat_out.php:449
 #: usr/local/www/firewall_nat_out.php:460
@@ -16227,7 +16227,7 @@ msgstr ""
 #: usr/local/www/firewall_nat_out_edit.php:156
 #: usr/local/www/firewall_nat_out_edit.php:160
 #: usr/local/www/firewall_nat_out_edit.php:166
-msgid "You must supply a valid port for the nat port entry."
+msgid "You must supply a valid port for the NAT port entry."
 msgstr "Você deve fornecer uma porta válida para a entrada porta NAT."
 
 #: usr/local/www/firewall_nat_out_edit.php:147
@@ -43330,7 +43330,7 @@ msgstr ""
 
 #: usr/local/www/vpn_ipsec_phase2.php:148
 #: usr/local/www/vpn_ipsec_phase2.php:152
-msgid "A valid nat local network bit count must be specified."
+msgid "A valid NAT local network bit count must be specified."
 msgstr ""
 
 #: usr/local/www/vpn_ipsec_phase2.php:150
@@ -43342,7 +43342,7 @@ msgstr ""
 
 #: usr/local/www/vpn_ipsec_phase2.php:153
 #: usr/local/www/vpn_ipsec_phase2.php:157
-msgid "A valid nat local network IP address must be specified."
+msgid "A valid NAT local network IP address must be specified."
 msgstr ""
 
 #: usr/local/www/vpn_ipsec_phase2.php:548
@@ -44349,13 +44349,13 @@ msgstr ""
 
 #: usr/local/www/vpn_ipsec_phase2.php:159
 msgid ""
-"A valid nat local network IPv4 address must be specified or you need to "
+"A valid NAT local network IPv4 address must be specified or you need to "
 "change Mode to IPv6"
 msgstr ""
 
 #: usr/local/www/vpn_ipsec_phase2.php:161
 msgid ""
-"A valid nat local network IPv6 address must be specified or you need to "
+"A valid NAT local network IPv6 address must be specified or you need to "
 "change Mode to IPv4"
 msgstr ""
 

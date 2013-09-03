@@ -1939,6 +1939,40 @@ function filter_generate_user_rule_arr($rule) {
 	return $ret;
 }
 
+function filter_generate_port(& $rule, $target = "source", $isnat = false) {
+
+	$src = "";
+
+	$rule['protocol'] = strtolower($rule['protocol']);
+	if(in_array($rule['protocol'], array("tcp","udp","tcp/udp"))) {
+		if($rule[$target]['port']) {
+			$srcport = explode("-", $rule[$target]['port']);
+			$srcporta = alias_expand($srcport[0]);
+			if(!$srcporta)
+				log_error(sprintf(gettext("filter_generate_address: %s is not a valid {$target} port."), $srcport[0]));
+			else if((!$srcport[1]) || ($srcport[0] == $srcport[1])) {
+				$src .= " port {$srcporta} ";
+			} else if(($srcport[0] == 1) && ($srcport[1] == 65535)) {
+			/* no need for a port statement here */
+			} else if ($isnat) {
+				$src .= " port {$srcport[0]}:{$srcport[1]}";
+			} else {
+				if(is_port($srcporta) && $srcport[1] == 65535) {
+					$src .= " port >= {$srcporta} ";
+				} else if($srcport[0] == 1) {
+					$src .= " port <= {$srcport[1]} ";
+				} else {
+					$srcport[0]--;
+					$srcport[1]++;
+					$src .= " port {$srcport[0]} >< {$srcport[1]} ";
+				}
+			}
+		}
+	}
+
+	return $src;
+}
+
 function filter_generate_address(& $rule, $target = "source", $isnat = false) {
 	global $FilterIflist, $config;
 	$src = "";
@@ -2074,32 +2108,7 @@ function filter_generate_address(& $rule, $target = "source", $isnat = false) {
 		$src = " {$not} {$expsrc}";
 	}
 
-	$rule['protocol'] = strtolower($rule['protocol']);
-	if(in_array($rule['protocol'], array("tcp","udp","tcp/udp"))) {
-		if($rule[$target]['port']) {
-			$srcport = explode("-", $rule[$target]['port']);
-			$srcporta = alias_expand($srcport[0]);
-			if(!$srcporta)
-				log_error(sprintf(gettext("filter_generate_address: %s is not a valid source port."), $srcport[0]));
-			else if((!$srcport[1]) || ($srcport[0] == $srcport[1])) {
-				$src .= " port {$srcporta} ";
-			} else if(($srcport[0] == 1) && ($srcport[1] == 65535)) {
-			/* no need for a port statement here */
-			} else if ($isnat) {
-				$src .= " port {$srcport[0]}:{$srcport[1]}";
-			} else {
-				if(is_port($srcporta) && $srcport[1] == 65535) {
-					$src .= " port >= {$srcporta} ";
-				} else if($srcport[0] == 1) {
-					$src .= " port <= {$srcport[1]} ";
-				} else {
-					$srcport[0]--;
-					$srcport[1]++;
-					$src .= " port {$srcport[0]} >< {$srcport[1]} ";
-				}
-			}
-		}
-	}
+	$src .= filter_generate_port($rule, $target, $isnat);
 
 	return $src;
 }
@@ -2459,7 +2468,7 @@ function filter_generate_user_rule($rule) {
 	/* rules with a gateway or pool should create another rule for routing to vpns */
 	if((($aline['route'] <> "") && (trim($aline['type']) == "pass") && strstr($dst, "any")) && (!isset($config['system']['disablenegate']))) {
 		/* negate VPN/PPTP/PPPoE/Static Route networks for load balancer/gateway rules */
-		$negate_networks = " to <negate_networks> ";
+		$negate_networks = " to <negate_networks> " . filter_generate_port($rule, "destination");
 		$line .= $aline['type'] . $aline['direction'] . $aline['log'] . $aline['quick'] .
 			$aline['interface'] . $aline['ipprotocol'] . $aline['prot'] . $aline['src'] . $aline['os'] .
 			$negate_networks . $aline['icmp-type'] . $aline['icmp6-type'] . $aline['tag'] . $aline['tagged'] .

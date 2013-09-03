@@ -104,12 +104,17 @@ function leasecmp($a, $b) {
 
 function adjust_gmt($dt) {
 	global $config;
-	$dhcpdv6 = $config['dhcpdv6'];
-	foreach ($dhcpdv6 as $dhcpv6leaseinlocaltime) {
-		$dhcpv6leaseinlocaltime = $dhcpv6leaseinlocaltime['dhcpv6leaseinlocaltime'];
-		if ($dhcpv6leaseinlocaltime == "yes")
-			break;
+
+	$dhcpv6leaseinlocaltime == "no";
+	if (is_array($config['dhcpdv6'])) {
+		$dhcpdv6 = $config['dhcpdv6'];
+		foreach ($dhcpdv6 as $dhcpv6leaseinlocaltime) {
+			$dhcpv6leaseinlocaltime = $dhcpv6leaseinlocaltime['dhcpv6leaseinlocaltime'];
+			if ($dhcpv6leaseinlocaltime == "yes")
+				break;
+		}
 	}
+
 	$timezone = $config['system']['timezone'];
 	$ts = strtotime($dt . " GMT");
 	if ($dhcpv6leaseinlocaltime == "yes") {

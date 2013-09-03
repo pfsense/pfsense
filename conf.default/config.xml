@@ -213,6 +213,7 @@
 		<bogons>
 			<interval>monthly</interval>
 		</bogons>
+		<kill_states/>
 	</system>
 	<interfaces>
 		<wan>

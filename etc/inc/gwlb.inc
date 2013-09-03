@@ -162,6 +162,18 @@ EOD;
 			$gwifip = find_interface_ip($gateway['interface'], true);
 			if (!is_ipaddrv4($gwifip))
 				continue; //Skip this target
+
+			/*
+			 * If the gateway is the same as the monitor we do not add a
+			 * route as this will break the routing table.
+			 * Add static routes for each gateway with their monitor IP
+			 * not strictly necessary but is a added level of protection.
+			 */
+			if (is_ipaddrv4($gateway['gateway']) && $gateway['monitor'] != $gateway['gateway']) {
+				log_error("Removing static route for monitor {$gateway['monitor']} and adding a new route through {$gateway['gateway']}");
+				mwexec("/sbin/route change -host " . escapeshellarg($gateway['monitor']) .
+					" " . escapeshellarg($gateway['gateway']), true);
+			}
 		} else if (is_ipaddrv6($gateway['gateway'])) {
 			/* link locals really need a different src ip */
 			if(is_linklocal($gateway['gateway'])) {
@@ -173,6 +185,18 @@ EOD;
 				$gateway['monitor'] .= "%{$gateway['interface']}";
 			if (!is_ipaddrv6($gwifip))
 				continue; //Skip this target
+
+			/*
+			 * If the gateway is the same as the monitor we do not add a
+			 * route as this will break the routing table.
+			 * Add static routes for each gateway with their monitor IP
+			 * not strictly necessary but is a added level of protection.
+			 */
+			if (is_ipaddrv6($gateway['gateway']) && $gateway['monitor'] != $gateway['gateway']) {
+				log_error("Removing static route for monitor {$gateway['monitor']} and adding a new route through {$gateway['gateway']}");
+				mwexec("/sbin/route change -host -inet6 " . escapeshellarg($gateway['monitor']) .
+					" " . escapeshellarg($gateway['gateway']), true);
+			}
 		} else
 			continue;
 

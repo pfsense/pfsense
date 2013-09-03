@@ -384,8 +384,17 @@ if ($_POST) {
 		$gateway['descr'] = $_POST['descr'];
 		if ($_POST['monitor_disable'] == "yes")
 			$gateway['monitor_disable'] = true;
-		else if (is_ipaddr($_POST['monitor']))
+		else if (is_ipaddr($_POST['monitor'])) {
+			/* NOTE: If monitor ip is changed need to cleanup the old static route */
+			if ($_POST['monitor'] != "dynamic" && !empty($a_gateway_item[$id]) && is_ipaddr($a_gateway_item[$id]['monitor']) &&
+			    $_POST['monitor'] != $a_gateway_item[$id]['monitor'] && $gateway['gateway'] != $a_gateway_item[$id]['monitor']) {
+				if (is_ipaddrv4($a_gateway_item[$id]['monitor']))
+					mwexec("/sbin/route delete " . escapeshellarg($a_gateway_item[$id]['monitor']));
+				else
+					mwexec("/sbin/route delete -inet6 " . escapeshellarg($a_gateway_item[$id]['monitor']));
+			}
 			$gateway['monitor'] = $_POST['monitor'];
+		}
 
 		if ($_POST['defaultgw'] == "yes" || $_POST['defaultgw'] == "on") {
 			$i = 0;

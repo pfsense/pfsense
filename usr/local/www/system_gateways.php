@@ -104,6 +104,15 @@ if ($_GET['act'] == "del") {
 			}
 		}
 		if ($remove == true) {
+			/* NOTE: Cleanup static routes for the monitor ip if any */
+                        if (!empty($a_gateways[$_GET['id']]['monitor']) && $a_gateways[$_GET['id']]['monitor'] != "dynamic" && is_ipaddr($a_gateways[$_GET['id']]['monitor']) &&
+                            $a_gateways[$_GET['id']]['monitor'] != $a_gateways[$_GET['id']]['monitor'] && $a_gateways[$_GET['id']]['gateway'] != $a_gateways[$_GET['id']]['monitor']) {
+                                if (is_ipaddrv4($a_gateways[$_GET['id']]['monitor']))
+                                        mwexec("/sbin/route delete " . escapeshellarg($a_gateways[$_GET['id']]['monitor']));
+                                else
+                                        mwexec("/sbin/route delete -inet6 " . escapeshellarg($a_gateways[$_GET['id']]['monitor']));
+                        }
+
 			if ($config['interfaces'][$a_gateways[$_GET['id']]['friendlyiface']]['gateway'] == $a_gateways[$_GET['id']]['name'])
 				unset($config['interfaces'][$a_gateways[$_GET['id']]['friendlyiface']]['gateway']);
 			$changedesc .= "removed gateway {$realid}";

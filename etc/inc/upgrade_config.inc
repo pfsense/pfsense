@@ -2898,16 +2898,11 @@ function upgrade_085_to_086() {
 		foreach ($config['virtualip']['vip'] as $vip) {
 			if ($vip['mode'] != "carp")
 				continue;
-			$vipchg[] = "s/\\([^_]\\)vip{$vip['vhid']}\\([^0-9]\\)/\\1{$vip['interface']}_vip{$vip['vhid']}\\2/g\n";
-		}
-		if (!empty($vipchg)) {
-			file_put_contents("{$g['tmp_path']}/vipreplace", $vipchg);
-			write_config();
-			mwexec("/usr/bin/sed -I \"\" -f {$g['tmp_path']}/vipreplace {$g['conf_path']}/config.xml");
-			require_once("config.lib.inc");
-			unset($config);
-			$config = parse_config(true);
-			@unlink("{$g['tmp_path']}/vipreplace");
+			$config = array_replace_values_recursive(
+				$config,
+				'^vip' . $vip['vhid'] . '$',
+				"{$vip['interface']}_vip{$vip['vhid']}"
+			);
 		}
 	}
 }

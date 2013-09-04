@@ -80,7 +80,13 @@ if(is_array($config['openvpn']['openvpn-server']) || is_array($config['openvpn']
 } else
 	return;
 
-$openvpnlck = lock('openvpn', LOCK_EX);
+$openvpnlck = try_lock('openvpn', 10);
+if (!$openvpnlck) {
+	log_error(gettext("Could not obtain openvpn lock for executing rc.openvpn for more than 10 seconds continuing..."));
+	unlock_force('openvpn');
+	$openvpnlck = lock('openvpn', LOCK_EX);
+}
+
 $arg_array = explode(",",$argument);
 foreach ($arg_array as $arg_element) {
 	$gwgroups = array();

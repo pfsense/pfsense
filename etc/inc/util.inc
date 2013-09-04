@@ -132,12 +132,45 @@ function lock($lock, $op = LOCK_SH) {
 	}
 }
 
+function try_lock($lock, $timeout = 5) {
+	global $g, $cfglckkeyconsumers;
+	if (!$lock)
+		die(gettext("WARNING: You must give a name as parameter to try_lock() function."));
+	if (!file_exists("{$g['tmp_path']}/{$lock}.lock")) {
+		@touch("{$g['tmp_path']}/{$lock}.lock");
+		@chmod("{$g['tmp_path']}/{$lock}.lock", 0666);
+	}
+	$cfglckkeyconsumers++;
+	if ($fp = fopen("{$g['tmp_path']}/{$lock}.lock", "w")) {
+		$trycounter = 0;
+		while(!flock($fp, LOCK_EX | LOCK_NB)) {
+			if ($trycounter >= $timeout) {
+				fclose($fp);
+				return NULL;
+			}
+			sleep(1);
+			$trycounter++;
+		}
+
+		return $fp;
+	}
+
+	return NULL;
+}
+
 /* unlock configuration file */
 function unlock($cfglckkey = 0) {
 	global $g, $cfglckkeyconsumers;
 	flock($cfglckkey, LOCK_UN);
 	fclose($cfglckkey);
 	return;
+}
+
+/* unlock forcefully configuration file */
+function unlock_force($lock) {
+	global $g;
+
+	@unlink("{$g['tmp_path']}/{$lock}.lock");
 }
 
 function send_event($cmd) {

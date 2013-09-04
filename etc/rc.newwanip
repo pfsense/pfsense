@@ -132,6 +132,10 @@ switch($config['interfaces'][$interface]['ipaddrv6']) {
 	case "6rd":
 		interface_6rd_configure($interface, $config['interfaces'][$interface]);
 		break;
+	case "dhcp6":
+		if (isset($config['interfaces'][$interface]['dhcp6usev4iface']))
+			interface_dhcpv6_configure($interface, $config['interfaces'][$interface]);
+		break;
 }
 
 /* Check Gif tunnels */

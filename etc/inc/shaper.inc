@@ -331,11 +331,11 @@ class altq_root_queue {
                 if ($data['qlimit'] && (!is_numeric($data['qlimit'])))
 			$input_errors[] = gettext("Qlimit must be an integer.");
 	 	if ($data['qlimit'] < 0)
-			$input_errors[] = gettext("Qlimit must be an positive.");
+			$input_errors[] = gettext("Qlimit must be positive.");
                 if ($data['tbrconfig'] && (!is_numeric($data['tbrconfig'])))
 			$input_errors[] = gettext("Tbrsize must be an integer.");
                 if ($data['tbrconfig'] < 0)
-			$input_errors[] = gettext("Tbrsize must be an positive.");
+			$input_errors[] = gettext("Tbrsize must be positive.");
 	}
 
 	/* Implement this to shorten some code on the frontend page */
@@ -1002,14 +1002,10 @@ class priq_queue {
 		$reqdfieldsn[] = gettext("Name");
 		shaper_do_input_validation($data, $reqdfields, $reqdfieldsn, $input_errors);
 
-                if ($data['bandwidth'] && (!is_numeric($data['bandwidth'])))
+		if ($data['bandwidth'] && (!is_numeric($data['bandwidth'])))
 			$input_errors[] = "Bandwidth must be an integer.";
-                if ($data['bandwidth'] < 0)
+		if ($data['bandwidth'] < 0)
 			$input_errors[] = "Bandwidth cannot be negative.";
-                if ($data['qlimit'] && (!is_numeric($data['qlimit'])))
-			$input_errors[] = "Qlimit must be an integer.";
-	 	if ($data['qlimit'] < 0)
-			$input_errors[] = "Qlimit must be an positive.";
 		if ($data['priority'] && (!is_numeric($data['priority'])
 		    || ($data['priority'] < 1) || ($data['priority'] > 15))) {
 			$input_errors[] = gettext("The priority must be an integer between 1 and 15.");
@@ -1196,7 +1192,7 @@ class priq_queue {
 		$form .= "<td width=\"78%\" class=\"vtable\"> <input name=\"qlimit\" type=\"text\" id=\"qlimit\" size=\"8\" value=\"";
 		$form .= htmlspecialchars($this->GetQlimit());
 		$form .= "\" />";
-		$form .= "<br/> <span class=\"vexpl\">" . gettext("Queue limit in packets per second."); 
+		$form .= "<br/> <span class=\"vexpl\">" . gettext("Queue limit in packets."); 
 		$form .= "</span></td></tr>";
 		$form .= "<tr>";
 		$form .= "<td width=\"22%\" valign=\"middle\" class=\"vncell\">" . gettext("Scheduler options") . "</td>";
@@ -1648,7 +1644,7 @@ class hfsc_queue extends priq_queue {
 				$input_errors[] = ("upperlimit m1 cannot be smaller than m2");
 
 			if (get_interface_bandwidth($this) < (0.8 * (floatval($bw_1) + floatval($bw_2))))
-				$input_errors[] = ("upperlimit specification excedd 80% of allowable allocation.");
+				$input_errors[] = ("upperlimit specification exceeds 80% of allowable allocation.");
 		}
 		*/
 		if ($data['linkshare1'] <> "" &&  $data['linkshare2'] == "")
@@ -1674,7 +1670,7 @@ class hfsc_queue extends priq_queue {
                         	$input_errors[] = ("linkshare m1 cannot be smaller than m2");
 
 			if (get_interface_bandwidth($this) < (0.8 * (floatval($bw_1) + floatval($bw_2))))
-                        	$input_errors[] = ("linkshare specification excedd 80% of allowable allocation.");
+                        	$input_errors[] = ("linkshare specification exceeds 80% of allowable allocation.");
 		}
 		*/
 
@@ -1693,7 +1689,7 @@ class hfsc_queue extends priq_queue {
                         	$input_errors[] = ("realtime m1 cannot be smaller than m2");
 
 			if (get_interface_bandwidth($this) < (0.8 * (floatval($bw_1) + floatval($bw_2))))
-				$input_errors[] = ("realtime specification excedd 80% of allowable allocation.");
+				$input_errors[] = ("realtime specification exceeds 80% of allowable allocation.");
 		}
 		*/
 	}
@@ -3047,7 +3043,7 @@ class dnpipe_class extends dummynet_class {
 			if (!empty($data["bandwidth{$i}"])) {
 				if (!is_numeric($data["bandwidth{$i}"]))
 					$input_errors[] = sprintf(gettext("Bandwidth for schedule %s must be an integer."), $data["bwsched{$i}"]);
-				else if (!is_numeric($data["burst{$i}"]))
+				else if (($data["burst{$i}"] != "") && (!is_numeric($data["burst{$i}"])))
 					$input_errors[] = sprintf(gettext("Burst for schedule %s must be an integer."), $data["bwsched{$i}"]);
 				else
 					$entries++;
@@ -3165,7 +3161,7 @@ class dnpipe_class extends dummynet_class {
 							if ($bw['bwsched'] == $schedule['name']) {
 								if (filter_get_time_based_rule_status($schedule)) {
 									$pfq_rule .= " bw ".trim($bw['bw']).$bw['bwscale'];
-									if (is_numeric($bw['burst']) && ($bw['burst'] >= 0))
+									if (is_numeric($bw['burst']) && ($bw['burst'] > 0))
 										$pfq_rule .= " burst ".trim($bw['burst']).$bw['bwscale'];
 									$found = true;
 									break;
@@ -3174,13 +3170,12 @@ class dnpipe_class extends dummynet_class {
 						}
 					} else {
 						$pfq_rule .= " bw 0";
-						$pfq_rule .= " burst 0";
 						$found = true;
 						break;
 					}
 				} else {
 					$pfq_rule .= " bw ".trim($bw['bw']).$bw['bwscale'];
-					if (is_numeric($bw['burst']) && ($bw['burst'] >= 0))
+					if (is_numeric($bw['burst']) && ($bw['burst'] > 0))
 						$pfq_rule .= " burst ".trim($bw['burst']).$bw['bwscale'];
 					$found = true;
 					break;
@@ -4112,7 +4107,7 @@ function layer7_start_l7daemon() {
             $path = "{$g['tmp_path']}/" . $filename;
 
 	    unset($l7pid);
-	    /* Only reread the configuration rather than restart to avoid loosing information. */
+	    /* Only reread the configuration rather than restart to avoid losing information. */
 	    exec("/bin/pgrep -f 'ipfw-classifyd .* -p ". $l7rules->GetRPort() . "'", $l7pid);
 	    if (count($l7pid) > 0) {
 		log_error(sprintf(gettext("Sending HUP signal to %s"), $l7pid[0]));
@@ -4296,7 +4291,7 @@ function read_altq_config() {
 			foreach ($conf['queue'] as $key1 => $q) {
 				array_push($path, $key1);
 				/* 
-				 * XXX: we compeletely ignore errors here but anyway we must have 
+				 * XXX: we completely ignore errors here but anyway we must have 
 				 *	checked them before so no harm should be come from this.
 				 */
 				$root->add_queue($root->GetInterface(), $q, &$path, $input_errors);
@@ -4335,7 +4330,7 @@ function read_dummynet_config() {
 			foreach ($conf['queue'] as $key1 => $q) {
 				array_push($path, $key1);
 				/* 
-				 * XXX: we compeletely ignore errors here but anyway we must have 
+				 * XXX: we completely ignore errors here but anyway we must have 
 				 *	checked them before so no harm should be come from this.
 				 */	
 				$root->add_queue($root->GetQname(), $q, &$path, $input_errors);

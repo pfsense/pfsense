@@ -165,6 +165,11 @@ $curcfg = $config['system']['firmware'];
 				echo (htmlspecialchars($cpumodel));
 			?>
 			<div id="cpufreq"><?= get_cpufreq(); ?></div>
+		<?php	$cpucount = get_cpu_count();
+			if ($cpucount > 1): ?>
+			<div id="cpucount">
+				<?= htmlspecialchars($cpucount) ?> CPUs: <?= htmlspecialchars(get_cpu_count(true)); ?></div>
+		<?php	endif; ?>
 			</td>
 		</tr>
 		<?php if ($hwcrypto): ?>

@@ -1905,7 +1905,7 @@ function reload_tunnel_spd_policy($phase1, $phase2, $old_phase1, $old_phase2) {
 		}
 	}
 	/* add new SPD policies to replace them */
-	if (!isset($phase1['disabled'])) {
+	if (!isset($phase1['disabled']) && !isset($phase2['disabled'])) {
 		$spdconf .= "spdadd {$family} {$local_subnet} " .
 			"{$remote_subnet} any -P out ipsec " .
 			"{$phase2['protocol']}/tunnel/{$ep}-" .

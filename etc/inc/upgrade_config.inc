@@ -2653,6 +2653,14 @@ function upgrade_080_to_081() {
 	$rrddbpath = "/var/db/rrd/";
 	$rrdtool = "/usr/bin/nice -n20 /usr/local/bin/rrdtool";
 
+	if ($g['platform'] != "pfSense") {
+		/* restore the databases, if we have one */
+		if (restore_rrd()) {
+			/* Make sure to move the rrd backup out of the way. We will make a new one after converting. */
+			exec("/bin/mv {$g['cf_conf_path']}/rrd.tgz {$g['cf_conf_path']}/backup");
+		}
+	}
+
 	$rrdinterval = 60;
 	$valid = $rrdinterval * 2;
 
@@ -2782,6 +2790,9 @@ function upgrade_080_to_081() {
 
 	}
 	enable_rrd_graphing();
+	/* Let's save the RRD graphs after we run enable RRD graphing */
+	/* The function will restore the rrd.tgz so we will save it after */
+	exec("cd /; LANG=C NO_REMOUNT=1 RRDDBPATH='{$rrddbpath}' CF_CONF_PATH='{$g['cf_conf_path']}' /etc/rc.backup_rrd.sh");
 	if ($g['booting'])
 		echo "Updating configuration...";
 	foreach($config['filter']['rule'] as & $rule) {
@@ -2887,16 +2898,11 @@ function upgrade_085_to_086() {
 		foreach ($config['virtualip']['vip'] as $vip) {
 			if ($vip['mode'] != "carp")
 				continue;
-			$vipchg[] = "s/\\([^_]\\)vip{$vip['vhid']}\\([^0-9]\\)/\\1{$vip['interface']}_vip{$vip['vhid']}\\2/g\n";
-		}
-		if (!empty($vipchg)) {
-			file_put_contents("{$g['tmp_path']}/vipreplace", $vipchg);
-			write_config();
-			mwexec("/usr/bin/sed -I \"\" -f {$g['tmp_path']}/vipreplace {$g['conf_path']}/config.xml");
-			require_once("config.lib.inc");
-			unset($config);
-			$config = parse_config(true);
-			@unlink("{$g['tmp_path']}/vipreplace");
+			$config = array_replace_values_recursive(
+				$config,
+				'^vip' . $vip['vhid'] . '$',
+				"{$vip['interface']}_vip{$vip['vhid']}"
+			);
 		}
 	}
 }
@@ -3092,6 +3098,14 @@ function upgrade_095_to_096() {
 	$rrddbpath = "/var/db/rrd";
 	$rrdtool = "/usr/local/bin/rrdtool";
 
+	if ($g['platform'] != "pfSense") {
+		/* restore the databases, if we have one */
+		if (restore_rrd()) {
+			/* Make sure to move the rrd backup out of the way. We will make a new one after converting. */
+			exec("/bin/mv {$g['cf_conf_path']}/rrd.tgz {$g['cf_conf_path']}/backup");
+		}
+	}
+
 	/* Assume 2*10GigE for now */
 	$stream = 2500000000;
 
@@ -3109,6 +3123,9 @@ function upgrade_095_to_096() {
 
 	}
 	enable_rrd_graphing();
+	/* Let's save the RRD graphs after we run enable RRD graphing */
+	/* The function will restore the rrd.tgz so we will save it after */
+	exec("cd /; LANG=C NO_REMOUNT=1 RRDDBPATH='{$rrddbpath}' CF_CONF_PATH='{$g['cf_conf_path']}' /etc/rc.backup_rrd.sh");
 }
 
 function upgrade_096_to_097() {

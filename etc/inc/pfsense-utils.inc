@@ -1445,6 +1445,19 @@ function get_cpu_speed() {
 	return exec("sysctl hw.clockrate | awk '{ print $2 }'");
 }
 
+function get_uptime_sec() {
+	$boottime = "";
+	$matches = "";
+	exec("/sbin/sysctl -n kern.boottime", $boottime);
+	preg_match("/sec = (\d+)/", $boottime[0], $matches);
+	$boottime = $matches[1];
+	if(intval($boottime) == 0)
+		return 0;
+
+	$uptime = time() - $boottime;
+	return $uptime;
+}
+
 function add_hostname_to_watch($hostname) {
 	if(!is_dir("/var/db/dnscache")) {
 		mkdir("/var/db/dnscache");

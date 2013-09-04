@@ -573,12 +573,11 @@ function tmpvar_checked(obj) {
 								<td colspan="2" valign="top" class="listtopic"><?=gettext("Gateway Monitoring"); ?></td>
 							</tr>
 							<tr>
-								<td width="22%" valign="top" class="vncell"><?=gettext("States"); ?></td>
+								<td width="22%" valign="top" class="vncell"><?=gettext("State Killing on Gateway Failure"); ?></td>
 								<td width="78%" class="vtable">
 									<input name="kill_states" type="checkbox" id="kill_states" value="yes" <?php if ($pconfig['kill_states']) echo "checked=\"checked\""; ?> />
 									<br />
-									<?=gettext("By default the monitoring process will flush states for a gateway that goes down. ".
-									"This option overrides that behavior by not clearing states for existing connections."); ?>
+									<?=gettext("The monitoring process will flush states for a gateway that goes down if this box is not checked. Check this box to disable this behavior."); ?>
 								</td>
 							</tr>
 							<tr>

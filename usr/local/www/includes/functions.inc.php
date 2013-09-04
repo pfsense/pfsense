@@ -8,6 +8,7 @@ if(Connection_Aborted()) {
 }
 
 require_once("config.inc");
+require_once("pfsense-utils.inc");
 
 function get_stats() {
 	$stats['cpu'] = cpu_usage();
@@ -77,15 +78,8 @@ function get_gatewaystats() {
 }
 
 function get_uptime() {
-	$boottime = "";
-	$matches = "";
-	exec("/sbin/sysctl -n kern.boottime", $boottime);
-	preg_match("/sec = (\d+)/", $boottime[0], $matches);
-	$boottime = $matches[1];
-	$uptime = time() - $boottime;
+	$uptime = get_uptime_sec();
 
-	if(intval($boottime) == 0)
-		return;
 	if(intval($uptime) == 0)
 		return;
 
@@ -240,6 +234,19 @@ function get_cpufreq() {
 	if (($curfreq > 0) && ($curfreq != $maxfreq))
 		$out = "Current: {$curfreq} MHz, Max: {$maxfreq} MHz";
 	return $out;
+}
+
+function get_cpu_count($show_detail = false) {
+	$cpucount = "";
+	exec("/sbin/sysctl -n kern.smp.cpus", $cpucount);
+	$cpucount = $cpucount[0];
+
+	if ($show_detail) {
+		$cpudetail = "";
+		exec("/usr/bin/grep 'SMP.*package.*core' /var/log/dmesg.boot | /usr/bin/cut -f2- -d' '", $cpudetail);
+		$cpucount = $cpudetail[0];
+	}
+	return $cpucount;
 }
 
 function get_load_average() {

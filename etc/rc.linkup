@@ -51,7 +51,7 @@ function handle_argument_group($iface, $argument2) {
 		$staticv4 = is_ipaddrv4($ipaddr);
 	$staticv6 = false;
 	if (empty($ip6addr))
-		$statcv6 = true;
+		$staticv6 = true;
 	else
 		$staticv6 = is_ipaddrv6($ip6addr);
 	if ($staticv4 === true && $staticv6 === true) {

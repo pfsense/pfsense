@@ -34,6 +34,7 @@ ini_set('apc.enabled', '0');
 	POSSIBILITY OF SUCH DAMAGE.
 */
 
+
 function rescue_detect_keypress() {
 	// How long do you want the script to wait before moving on (in seconds)
 	$timeout=9;
@@ -224,7 +225,12 @@ system_setup_sysctl();
 echo "done.\n";
 
 /* enable optional crypto modules */
+echo "Enable optional crypto modules...";
 load_crypto();
+echo "done.\n";
+delay_loop_for_low_mem_systems();
+
+
 
 /* enable optional thermal sensor modules */
 load_thermal_hardware();
@@ -233,28 +239,38 @@ load_thermal_hardware();
 system_do_shell_commands(1);
 
 /* set up our timezone */
+echo "Set Up timezone...";
 system_timezone_configure();
+echo "done.\n";
 
 /* set up our hostname */
+echo "Set Up Hostname and generate hosts file...";
 system_hostname_configure();
 
 /* make hosts file */
 system_hosts_generate();
+echo "done.\n";
 
 /* configure loopback interface */
 interfaces_loopback_configure();
 
 /* start syslogd */
 system_syslogd_start();
+delay_loop_for_low_mem_systems();
+
 
 echo "Starting Secure Shell Services...";
 mwexec_bg("/etc/sshd");
 echo "done.\n";
+delay_loop_for_low_mem_systems();
+
 
 /* setup polling */
 echo "Setting up polling defaults...";
 setup_polling();
 echo "done.\n";
+delay_loop_for_low_mem_systems();
+
 
 /* setup interface microcode which improves tcp/ip speed */
 echo "Setting up interfaces microcode...";
@@ -270,6 +286,7 @@ if(!$debugging)
 
 /* re-make hosts file after configuring interfaces */
 system_hosts_generate();
+delay_loop_for_low_mem_systems();
 
 /* start OpenVPN server & clients */
 echo "Syncing OpenVPN settings...";
@@ -281,28 +298,42 @@ system_resolvconf_generate();
 
 /* setup altq + pf */
 filter_configure_sync();
+delay_loop_for_low_mem_systems();
 
 /* start pflog */
 echo "Starting PFLOG...";
 filter_pflog_start();
 echo "done.\n";
+delay_loop_for_low_mem_systems();
 
 /* reconfigure our gateway monitor */
 echo "Setting up gateway monitors...";
 setup_gateways_monitor();
 echo "done.\n";
+delay_loop_for_low_mem_systems();
+
 
 echo "Synchronizing user settings...";
 local_sync_accounts();
 echo "done.\n";
+delay_loop_for_low_mem_systems();
 
-if($realmem > 0 and $realmem < 65) {
-	echo "System has less than 65 megabytes of ram {$realmem}.  Delaying webConfigurator startup.\n";
+if (isset($config['system']['override_minimum_ram_for_immediate_webgui_start']) &&
+		$config['system']['override_minimum_ram_for_immediate_webgui_start'] != "") {
+	$minimum_ram_for_immediate_webgui_start=$config['system']['override_minimum_ram_for_immediate_webgui_start'];
+} else {
+	$minimum_ram_for_immediate_webgui_start = $g['minimum_ram_for_immediate_webgui_start'];
+}
+	
+if($realmem > 0 and $realmem < $minimum_ram_for_immediate_webgui_start) {
+	echo "System has less than $minimum_ram_for_immediate_webgui_start megabytes of ram {$realmem}.  Delaying webConfigurator startup.\n";
 	/* start webConfigurator up on final pass */
 	mwexec("/usr/local/sbin/pfSctl -c 'service restart webgui'");
 } else {
 	/* start web server */
 	system_webgui_start();
+	delay_loop_for_low_mem_systems();
+	
 }
 
 /* configure cron service */
@@ -311,13 +342,19 @@ configure_cron();
 echo "done.\n";
 
 /* set up static routes */
+echo "Setup and enable routing...";
 system_routing_configure();
 
 /* enable routing */
 system_routing_enable();
+echo "done.\n";
+delay_loop_for_low_mem_systems();
+
 
 /* start dnsmasq service */
 services_dnsmasq_configure();
+delay_loop_for_low_mem_systems();
+
 
 /* Do an initial time sync */
 echo "Starting NTP time client...";
@@ -334,6 +371,8 @@ system_console_configure();
 
 /* start DHCP service */
 services_dhcpd_configure();
+delay_loop_for_low_mem_systems();
+
 
 /* start dhcpleases dhpcp hosts leases program */
 system_dhcpleases_configure();
@@ -349,9 +388,11 @@ send_event("service reload dyndnsall");
 
 /* Run a filter configure now that most all services have started */
 filter_configure_sync();
+delay_loop_for_low_mem_systems();
 
 /* setup pppoe and pptp */
 vpn_setup();
+delay_loop_for_low_mem_systems();
 
 /* start the captive portal */
 captiveportal_configure();
@@ -376,6 +417,8 @@ auto_login();
 
 /* load graphing functions */
 enable_rrd_graphing();
+delay_loop_for_low_mem_systems();
+
 
 /* enable watchdog if supported */
 enable_watchdog();

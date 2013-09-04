@@ -213,10 +213,6 @@ function filter_configure_sync($delete_states_if_needed = true) {
 		return;
 	}
 
-	// Copy rules.debug to rules.debug.old
-	if(file_exists("{$g['tmp_path']}/rules.debug"))
-		@copy("{$g['tmp_path']}/rules.debug", "{$g['tmp_path']}/rules.debug.old");
-
 	$limitrules = "";
 	/* Define the maximum number of tables the system can handle (should be at least aliases*2+some spare) */
 	$maxtables = is_numeric($config['system']['maximumtables']) ? $config['system']['maximumtables'] : "3000";
@@ -272,6 +268,10 @@ function filter_configure_sync($delete_states_if_needed = true) {
 	$rules .= discover_pkg_rules("filter");
 
 	unset($aliases, $gateways, $altq_queues, $natrules, $pfrules);
+
+	// Copy rules.debug to rules.debug.old
+	if(file_exists("{$g['tmp_path']}/rules.debug"))
+		@copy("{$g['tmp_path']}/rules.debug", "{$g['tmp_path']}/rules.debug.old");
 
 	if (!@file_put_contents("{$g['tmp_path']}/rules.debug", $rules, LOCK_EX)) {
 		log_error("WARNING: Could not write new rules!");

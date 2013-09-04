@@ -269,8 +269,9 @@ function filter_configure_sync($delete_states_if_needed = true) {
 	$rules .= "{$altq_queues}\n";
 	$rules .= "{$natrules}\n";
 	$rules .= "{$pfrules}\n";
-
 	$rules .= discover_pkg_rules("filter");
+
+	unset($aliases, $gateways, $altq_queues, $natrules, $pfrules);
 
 	if (!@file_put_contents("{$g['tmp_path']}/rules.debug", $rules, LOCK_EX)) {
 		log_error("WARNING: Could not write new rules!");
@@ -348,9 +349,12 @@ function filter_configure_sync($delete_states_if_needed = true) {
 	/* run items scheduled for after filter configure run */
 	$fda = fopen("{$g['tmp_path']}/commands.txt", "w");
 	if($fda) {
-		if($after_filter_configure_run)
+		if($after_filter_configure_run) {
 			foreach($after_filter_configure_run as $afcr)
 				fwrite($fda, $afcr . "\n");
+			unset($after_filter_configure_run);
+		}
+
 		/*
 		 *      we need a way to let a user run a shell cmd after each
 		 *      filter_configure() call.  run this xml command after
@@ -366,6 +370,7 @@ function filter_configure_sync($delete_states_if_needed = true) {
 		mwexec("sh {$g['tmp_path']}/commands.txt &");
 		unlink("{$g['tmp_path']}/commands.txt");
 	}
+
 	/* if time based rules are enabled then swap in the set */
 	if($time_based_rules == true)
 		filter_tdr_install_cron(true);
@@ -636,6 +641,7 @@ function filter_generate_aliases() {
 	}
 	$result = "{$alias} \n";
 	$result .= "{$aliases}";
+
 	return $result;
 }
 
@@ -2457,6 +2463,7 @@ function filter_generate_user_rule($rule) {
 		$aline['divert'] . $aline['icmp-type'] . $aline['icmp6-type'] . $aline['tag'] . $aline['tagged'] . $aline['dscp'] .
 		$aline['vlanprio'] . $aline['vlanprioset'] . $aline['allowopts'] . $aline['flags'] . $aline['queue'] . $aline['dnpipe'] . $aline['schedlabel'];
 
+	unset($aline);
 
 	return $line;
 }
@@ -2528,15 +2535,9 @@ block quick inet proto { tcp, udp } from any to any port = 0
 block quick inet6 proto { tcp, udp } from any port = 0 to any
 block quick inet6 proto { tcp, udp } from any to any port = 0
 
-
-EOD;
-
-	$ipfrules .= <<<EOD
-
 # Snort package
 block quick from <snort2c> to any label "Block snort2c hosts"
 block quick from any to <snort2c> label "Block snort2c hosts"
-
 
 EOD;
 
@@ -2793,8 +2794,8 @@ EOD;
 	}
 	/*
 	 * NB: The loopback rules are needed here since the antispoof would take precedence then.
-	 *		If you ever add the 'quick' keyword to the antispoof rules above move the looback
-	 *		rules before them.
+	 *	If you ever add the 'quick' keyword to the antispoof rules above move the looback
+	 *	rules before them.
 	 */
 	$ipfrules .= <<<EOD
 
@@ -2812,6 +2813,7 @@ pass out inet all keep state allow-opts label "let out anything IPv4 from firewa
 pass out inet6 all keep state allow-opts label "let out anything IPv6 from firewall host itself"
 
 EOD;
+
 	foreach ($FilterIflist as $ifdescr => $ifcfg) {
 		if(isset($ifcfg['virtual']))
 			continue;
@@ -2840,12 +2842,9 @@ EOD;
 
 	/* add ipsec interfaces */
 	if(isset($config['ipsec']['enable']) || isset($config['ipsec']['client']['enable']))
-		$ipfrules .= <<<EOD
-pass out on \$IPsec all keep state label "IPsec internal host to host"
+		$ipfrules .= "pass out on \$IPsec all keep state label \"IPsec internal host to host\"\n";
 
-EOD;
-
-	if(!isset($config['system']['webgui']['noantilockout'])) {
+	if(is_array($config['system']['webgui']) && !isset($config['system']['webgui']['noantilockout'])) {
 		$alports = filter_get_antilockout_ports();
 
 		if(count($config['interfaces']) > 1 && !empty($FilterIflist['lan']['if'])) {
@@ -2867,7 +2866,9 @@ pass in quick on {$wanif} proto tcp from any to ({$wanif}) port { {$alports} } k
 
 EOD;
 		}
+		unset($alports);
 	}
+
 	/* PPTPd enabled? */
 	if($pptpdcfg['mode'] && ($pptpdcfg['mode'] != "off") && !isset($config['system']['disablevpnrules'])) {
 		if($pptpdcfg['mode'] == "server")
@@ -3021,10 +3022,7 @@ EOD;
 	update_filter_reload_status(gettext("Creating IPsec rules..."));
 	$ipfrules .= filter_generate_ipsec_rules();
 
-	$ipfrules .= <<<EOD
-anchor "tftp-proxy/*"
-
-EOD;
+	$ipfrules .= "\nanchor \"tftp-proxy/*\"\n";
 
 	update_filter_reload_status("Creating uPNP rules...");
 	if (is_array($config['installedpackages']['miniupnpd']) && is_array($config['installedpackages']['miniupnpd']['config'][0])) {

@@ -41,19 +41,22 @@ require_once("openvpn.inc");
 function openvpn_resync_if_needed ($mode, $ovpn_settings, $interface) {
 	global $g, $config;
 
-	$resync_needed = false;
-	if (empty($interface)) {
-		$resync_needed = true;
-	} else {
+	$resync_needed = true;
+	if (!empty($interface)) {
 		$mode_id = $mode . $ovpn_settings['vpnid'];
 		$fpath = "{$g['varetc_path']}/openvpn/{$mode_id}.interface";
-		$current_device = file_get_contents($fpath);
-		$new_device = get_failover_interface($ovpn_settings['interface']);
-		$this_device = $config['interfaces'][$interface]['if'];
-		if (($current_device != $new_device) || ($current_device == $this_device) || ($new_device == $this_device))
-			$resync_needed = true;
+		if (file_exists($fpath)) {
+			$current_device = file_get_contents($fpath);
+			$current_device = trim($current_device, " \t\n");
+			$new_device = get_failover_interface($ovpn_settings['interface']);
+			if (isset($config['interfaces'][$interface])) {
+				$this_device = $config['interfaces'][$interface]['if'];
+				if (($current_device == $new_device) || ($current_device != $this_device) || ($new_device != $this_device))
+					$resync_needed = false;
+			}
+		}
 	}
-	if ($resync_needed) {
+	if ($resync_needed == true) {
 		log_error("OpenVPN: Resync " . $mode_id . " " . $ovpn_settings['description']);
 		openvpn_resync($mode, $ovpn_settings);
 	}
@@ -77,7 +80,13 @@ if(is_array($config['openvpn']['openvpn-server']) || is_array($config['openvpn']
 } else
 	return;
 
-$openvpnlck = lock('openvpn', LOCK_EX);
+$openvpnlck = try_lock('openvpn', 10);
+if (!$openvpnlck) {
+	log_error(gettext("Could not obtain openvpn lock for executing rc.openvpn for more than 10 seconds continuing..."));
+	unlock_force('openvpn');
+	$openvpnlck = lock('openvpn', LOCK_EX);
+}
+
 $arg_array = explode(",",$argument);
 foreach ($arg_array as $arg_element) {
 	$gwgroups = array();

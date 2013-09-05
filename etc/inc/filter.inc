@@ -144,6 +144,7 @@ function filter_delete_states_for_down_gateways() {
 	if (isset($config['system']['kill_states']))
 		return;
 
+	$any_gateway_down = false;
 	$a_gateways = return_gateways_status();
 	if (is_array($GatewaysList)) {
 		foreach ($GatewaysList as $gwname => $gateway) {
@@ -157,20 +158,13 @@ function filter_delete_states_for_down_gateways() {
 				continue;
 			$gwstatus =& $a_gateways[$gateway['monitor']];
 			if (strstr($gwstatus['status'], "down")) {
-				if (!empty($gateway['interface']))
-					$gwiface = $gateway['interface'];
-				else
-					$gwiface = get_real_interface($gateway['friendlyiface']);
-				$cmd = "/sbin/pfctl -i {$gwiface} -Fs";
-				mwexec($cmd);
-				$gwip = $gateway['gateway'];
-				if (is_ipaddr($gwip)) {
-					$cmd = "/sbin/pfctl -i {$gwiface} -Fs -G {$gwip}";
-					mwexec($cmd);
-				}
+				$any_gateway_down = true;
+				break;
 			}
 		}
 	}
+	if ($any_gateway_down == true)
+		mwexec("/sbin/pfctl -Fs");
 }
 
 /* reload filter sync */

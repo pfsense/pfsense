@@ -2897,14 +2897,14 @@ function delay_loop_for_low_mem_systems($max_delay_sec = 0, $min_memory_stabiliz
 		}
 
 		if ($sec_count_of_not_changed_free_mem >= $min_memory_stabilized_sec) {
-			echo "\nThe amount of free memory does not change, so we go ahead!\n";
+			echo "The amount of free memory does not change, so we go ahead!\n\n";
 			return 1;
 		}
 
 		$time_waited++;
 	}
 
-	echo "\nGave up up waiting for free memory. Good Luck!\n";
+	echo "Gave up up waiting for free memory. Good Luck!\n\n";
 	return 2;
 
 }

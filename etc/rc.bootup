@@ -239,9 +239,7 @@ load_thermal_hardware();
 system_do_shell_commands(1);
 
 /* set up our timezone */
-echo "Set Up timezone...";
 system_timezone_configure();
-echo "done.\n";
 
 /* set up our hostname */
 echo "Set Up Hostname and generate hosts file...";
@@ -318,15 +316,10 @@ local_sync_accounts();
 echo "done.\n";
 delay_loop_for_low_mem_systems();
 
-if (isset($config['system']['override_minimum_ram_for_immediate_webgui_start']) &&
-		$config['system']['override_minimum_ram_for_immediate_webgui_start'] != "") {
-	$minimum_ram_for_immediate_webgui_start=$config['system']['override_minimum_ram_for_immediate_webgui_start'];
-} else {
-	$minimum_ram_for_immediate_webgui_start = $g['minimum_ram_for_immediate_webgui_start'];
-}
 	
-if($realmem > 0 and $realmem < $minimum_ram_for_immediate_webgui_start) {
-	echo "System has less than $minimum_ram_for_immediate_webgui_start megabytes of ram {$realmem}.  Delaying webConfigurator startup.\n";
+if(($realmem > 0 and $realmem < $g['minimum_ram_for_immediate_webgui_start']) 
+    || isset($config['system']['override_minimum_ram_for_immediate_webgui_start'])) {
+	echo "Delaying webConfigurator startup.\n";
 	/* start webConfigurator up on final pass */
 	mwexec("/usr/local/sbin/pfSctl -c 'service restart webgui'");
 } else {
@@ -391,7 +384,9 @@ filter_configure_sync();
 delay_loop_for_low_mem_systems();
 
 /* setup pppoe and pptp */
+echo "Setup pppoe and pptp...";
 vpn_setup();
+echo "done.\n";
 delay_loop_for_low_mem_systems();
 
 /* start the captive portal */

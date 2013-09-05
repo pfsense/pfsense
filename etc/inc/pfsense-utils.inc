@@ -2904,7 +2904,7 @@ function delay_loop_for_low_mem_systems($max_delay_sec = 0, $min_memory_stabiliz
 		$time_waited++;
 	}
 
-	echo "Gave up up waiting for free memory. Good Luck!\n\n";
+	echo "Gave up waiting for free memory. Good Luck!\n\n";
 	return 2;
 
 }

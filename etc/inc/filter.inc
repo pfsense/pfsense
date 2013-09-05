@@ -144,7 +144,33 @@ function filter_delete_states_for_down_gateways() {
 	if (isset($config['system']['kill_states']))
 		return;
 
-	filter_flush_state_table();
+	$a_gateways = return_gateways_status();
+	if (is_array($GatewaysList)) {
+		foreach ($GatewaysList as $gwname => $gateway) {
+			if (empty($gateway['monitor']))
+				continue;
+			if (!is_ipaddr($gateway['monitor']))
+				continue;
+			if (strstr($gateway['monitor'], "127.0.0."))
+				continue;
+			if (empty($a_gateways[$gateway['monitor']]))
+				continue;
+			$gwstatus =& $a_gateways[$gateway['monitor']];
+			if (strstr($gwstatus['status'], "down")) {
+				if (!empty($gateway['interface']))
+					$gwiface = $gateway['interface'];
+				else
+					$gwiface = get_real_interface($gateway['friendlyiface']);
+				$cmd = "/sbin/pfctl -i {$gwiface} -Fs";
+				mwexec($cmd);
+				$gwip = $gateway['gateway'];
+				if (is_ipaddr($gwip)) {
+					$cmd = "/sbin/pfctl -i {$gwiface} -Fs -G {$gwip}";
+					mwexec($cmd);
+				}
+			}
+		}
+	}
 }
 
 /* reload filter sync */

@@ -259,7 +259,7 @@ include("head.inc");
 		<td class="vtable">
 			<input id='synchronizedhcpd' type='checkbox' name='synchronizedhcpd' value='on' <?php if ($pconfig['synchronizedhcpd'] === "on") echo "checked='checked'"; ?> />
 			<br />
-			When this option is enabled, this system will automatically sync the DHCP Server settings over to the other HA host when changes are made.
+			When this option is enabled, this system will automatically sync the DHCP Server settings over to the other HA host when changes are made. This only applies to DHCP for IPv4.
 		</td>
 	</tr>
 	<tr valign="top">

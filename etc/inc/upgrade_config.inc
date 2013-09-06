@@ -3136,4 +3136,10 @@ function upgrade_096_to_097() {
 		$config['syslog']['nologprivatenets'] = true;
 	}
 }
+
+function upgrade_097_to_098() {
+	global $config, $g;
+	/* Disable kill_states by default */
+	$config['system']['kill_states'] = true;
+}
 ?>

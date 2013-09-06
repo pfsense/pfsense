@@ -483,9 +483,9 @@ function monitor_change() {
 
 	/* If this is a system gateway we need this var */
 	if(($pconfig['attribute'] == "system") || is_numeric($pconfig['attribute'])) {
-		echo "<input type='hidden' name='attribute' id='attribute' value='" . htmlspecialchars($pconfig['attribute']) . "' />\n";
+		echo "<input type='hidden' name='attribute' id='attribute' value=\"" . htmlspecialchars($pconfig['attribute']) . "\" />\n";
 	}
-	echo "<input type='hidden' name='friendlyiface' id='friendlyiface' value='" . htmlspecialchars($pconfig['friendlyiface']) . "' />\n";
+	echo "<input type='hidden' name='friendlyiface' id='friendlyiface' value=\"" . htmlspecialchars($pconfig['friendlyiface']) . "\" />\n";
 	?>
 		<table width="100%" border="0" cellpadding="6" cellspacing="0" summary="system gateways edit">
 			<tr>

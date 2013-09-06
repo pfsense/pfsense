@@ -1077,9 +1077,6 @@ EOD;
 		}
 		$dhcpdv6conf .= " {\n";
 
-		if($dhcpv6ifconf['failover_peerip'] <> "")
-			$dhcpdv6conf .= "		deny dynamic bootp clients;\n";
-
 		if (isset($dhcpv6ifconf['denyunknown']))
 		   $dhcpdv6conf .= "		deny unknown-clients;\n";
 

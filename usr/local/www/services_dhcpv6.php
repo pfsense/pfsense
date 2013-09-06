@@ -277,11 +277,6 @@ if ($_POST) {
 		$config['dhcpdv6'][$if]['defaultleasetime'] = $_POST['deftime'];
 		$config['dhcpdv6'][$if]['maxleasetime'] = $_POST['maxtime'];
 		$config['dhcpdv6'][$if]['netmask'] = $_POST['netmask'];
-		$previous = $config['dhcpdv6'][$if]['failover_peerip'];
-		if($previous <> $_POST['failover_peerip'])
-			mwexec("/bin/rm -rf /var/dhcpd/var/db/*");
-
-		$config['dhcpdv6'][$if]['failover_peerip'] = $_POST['failover_peerip'];
 
 		unset($config['dhcpdv6'][$if]['winsserver']);
 
@@ -392,7 +387,6 @@ include("head.inc");
 		document.iform.deftime.disabled = endis;
 		document.iform.maxtime.disabled = endis;
 		//document.iform.gateway.disabled = endis;
-		document.iform.failover_peerip.disabled = endis;
 		document.iform.dhcpv6leaseinlocaltime.disabled = endis;
 		document.iform.domain.disabled = endis;
 		document.iform.domainsearchlist.disabled = endis;
@@ -651,13 +645,6 @@ display_top_tabs($tab_array);
 				<?=gettext("This is the maximum lease time for clients that ask".
 				" for a specific expiration time."); ?><br>
 				<?=gettext("The default is 86400 seconds.");?>
-			</td>
-			</tr>
-			<tr>
-			<td width="22%" valign="top" class="vncell"><?=gettext("Failover peer IP:");?></td>
-			<td width="78%" class="vtable">
-				<input name="failover_peerip" type="text" class="formfld host" id="failover_peerip" size="28" value="<?=htmlspecialchars($pconfig['failover_peerip']);?>"><br>
-				<?=gettext("Leave blank to disable.  Enter the interface IP address of the other machine.  Machines must be using CARP.");?>
 			</td>
 			</tr>
 			<tr>

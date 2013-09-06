@@ -389,7 +389,7 @@ function showchange() {
 				if(!$field['dontcombinecells'])
 					echo "<td class=\"vtable\">\n";
 
-				echo "<input class='formfld unknown' id='" . $name . "' name='" . $name . "' value='" . htmlspecialchars($value) . "'";
+				echo "<input class='formfld unknown' id='" . $name . "' name='" . $name . "' value=\"" . htmlspecialchars($value) . "\"";
 				if($field['size'])
 					echo " size='" . $field['size'] . "' ";
 				if($field['validate'])
@@ -420,7 +420,7 @@ function showchange() {
 					echo "<td class=\"vtable\">\n";
 
 				$inputaliases[] = $name;
-				echo "<input class='formfldalias' autocomplete='off' id='" . $name . "' name='" . $name . "' value='" . htmlspecialchars($value) . "'";
+				echo "<input class='formfldalias' autocomplete='off' id='" . $name . "' name='" . $name . "' value=\"" . htmlspecialchars($value) . "\"";
 				if($field['size'])
 					echo " size='" . $field['size'] . "' ";
 				if($field['validate'])
@@ -493,7 +493,7 @@ function showchange() {
 				}
 				if(!$field['dontcombinecells'])
 					echo "<td class=\"vtable\">";
-				echo "<input class='formfld pwd' id='" . $name . "' name='" . $name . "' value='" . htmlspecialchars($value) . "' type='password' ";
+				echo "<input class='formfld pwd' id='" . $name . "' name='" . $name . "' value=\"" . htmlspecialchars($value) . "\" type='password' ";
 				if($field['size'])
 					echo " size='" . $field['size'] . "' ";
 				echo " />\n";
@@ -649,7 +649,7 @@ function showchange() {
 			case "submit":
 				echo "<td>&nbsp;<br/></td></tr>";
 				echo "<tr><td colspan=\"2\" align=\"center\">";
-				echo "<input type='submit' name='" . $name . "' value='" . htmlspecialchars($field['name']) . "' />\n";
+				echo "<input type='submit' name='" . $name . "' value=\"" . htmlspecialchars($field['name']) . "\" />\n";
 
 				if($field['description'] <> "") {
 					echo "<br /> " . $field['description'];
@@ -713,7 +713,7 @@ function showchange() {
 						continue;
 					$SELECTED = "";
 					if ($value == $tz) $SELECTED = " selected=\"selected\"";
-					echo "<option value='" . htmlspecialchars($tz) . "' {$SELECTED}>";
+					echo "<option value=\"" . htmlspecialchars($tz) . "\" {$SELECTED}>";
 					echo htmlspecialchars($tz);
 					echo "</option>\n";
 				}

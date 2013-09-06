@@ -519,7 +519,7 @@ if ($pkg['tabs'] <> "") {
 		switch($pkga['type']){
 			case "input":
 				$size = ($pkga['size'] ? " size='{$pkga['size']}' " : "");
-				$input = "<input {$size} id='{$pkga['fieldname']}' name='{$pkga['fieldname']}' class='formfld unknown' value='" . htmlspecialchars($value) ."' />\n";
+				$input = "<input {$size} id='{$pkga['fieldname']}' name='{$pkga['fieldname']}' class='formfld unknown' value=\"" . htmlspecialchars($value) ."\" />\n";
 				$input .= "<br/>" . fixup_string($pkga['description']) . "\n";
 				if(isset($pkga['advancedfield']) && isset($adv_filed_count)) {
 					$js_array[] = $pkga['fieldname'];
@@ -531,7 +531,7 @@ if ($pkg['tabs'] <> "") {
 
 			case "password":
 				$size = ($pkga['size'] ? " size='{$pkga['size']}' " : "");
-				$input = "<input " . $size . " id='" . $pkga['fieldname'] . "' type='password' name='" . $pkga['fieldname'] . "' class='formfld pwd' value='" . htmlspecialchars($value) . "' />\n";
+				$input = "<input " . $size . " id='" . $pkga['fieldname'] . "' type='password' name='" . $pkga['fieldname'] . "' class='formfld pwd' value=\"" . htmlspecialchars($value) . "\" />\n";
 				$input .= "<br/>" . fixup_string($pkga['description']) . "\n";
 				if(isset($pkga['advancedfield']) && isset($adv_filed_count)) {
 					$js_array[] = $pkga['fieldname'];
@@ -921,8 +921,8 @@ if ($pkg['tabs'] <> "") {
 			echo "<p><span class=\"red\"><strong>" . gettext("Note") . ":</strong></span> {$pkg['note']}</p>";
 			}
 		//if (isset($id) && $a_pkg[$id]) // We'll always have a valid ID in our hands
-		echo "<input name='id' type='hidden' value='" . htmlspecialchars($id) . "' />";
-		echo "<input name='Submit' type='submit' class='formbtn' value='" . htmlspecialchars($savevalue) . "' />\n{$pkg_buttons}\n";
+		echo "<input name='id' type='hidden' value=\"" . htmlspecialchars($id) . "\" />";
+		echo "<input name='Submit' type='submit' class='formbtn' value=\"" . htmlspecialchars($savevalue) . "\" />\n{$pkg_buttons}\n";
 		if (!$only_edit){
 			echo "<input class='formbtn' type='button' value='".gettext("Cancel")."' onclick='history.back()' />";
 			}
@@ -967,13 +967,13 @@ function display_row($trc, $value, $fieldname, $type, $rowhelper, $size) {
 	echo "<td>\n";
 	switch($type){
 		case "input":
-			echo "<input size='{$size}' name='{$fieldname}{$trc}' id='{$fieldname}{$trc}' class='formfld unknown' value='" . htmlspecialchars($value) . "' />\n";
+			echo "<input size='{$size}' name='{$fieldname}{$trc}' id='{$fieldname}{$trc}' class='formfld unknown' value=\"" . htmlspecialchars($value) . "\" />\n";
 			break;
 		case "checkbox":
 			echo "<input size='{$size}' type='checkbox' id='{$fieldname}{$trc}' name='{$fieldname}{$trc}' value='ON' ".($value?"CHECKED":"")." />\n";
 			break;
 		case "password":
-			echo "<input size='{$size}' type='password' id='{$fieldname}{$trc}' name='{$fieldname}{$trc}' class='formfld pwd' value='" . htmlspecialchars($value) . "' />\n";
+			echo "<input size='{$size}' type='password' id='{$fieldname}{$trc}' name='{$fieldname}{$trc}' class='formfld pwd' value=\"" . htmlspecialchars($value) . "\" />\n";
 			break;
 		case "textarea":
 			echo "<textarea rows='2' cols='12' id='{$fieldname}{$trc}' class='formfld unknown' name='{$fieldname}{$trc}'>{$value}</textarea>\n";

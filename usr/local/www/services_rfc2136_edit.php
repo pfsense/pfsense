@@ -144,7 +144,7 @@ include("head.inc");
 						foreach ($grouplist as $name => $group) {
 							if($group['ipprotocol'] != inet)
 								continue;
-							$iflist[$name] = "GW Group: {$name}";
+							$iflist[$name] = "GW Group {$name}";
 						}
 						foreach ($iflist as $if => $ifdesc):?>
 							<option value="<?=$if;?>" <?php if ($pconfig['interface'] == $if) echo "selected";?>><?=$ifdesc;?></option>

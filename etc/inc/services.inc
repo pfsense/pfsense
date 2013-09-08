@@ -1983,6 +1983,13 @@ function services_dnsupdate_process($int = "", $updatehost = "", $forced = false
 
 			/* determine interface name */
 			$if = get_real_interface($dnsupdate['interface']);
+			/* if the real interface is not found then this may be a gateway group. */
+			if ($if == "") {
+				$a_groups = return_gateway_groups_array();
+				if (is_array($a_groups[$dnsupdate['interface']])) {
+					$if = $dnsupdate['interface'];
+				}
+			}
 			$wanip = get_interface_ip($dnsupdate['interface']);
 			$wanipv6 = get_interface_ipv6($dnsupdate['interface']);
 

@@ -137,8 +137,7 @@ if ($_POST) {
 	if ($_POST['test_growl'] == gettext("Test Growl")) {
 		// Send test message via growl
 		if($config['notifications']['growl']['ipaddress'] && 
-			$config['notifications']['growl']['password'] = $_POST['password'] &&
-			!isset($config['notifications']['growl']['disable'])) {
+			$config['notifications']['growl']['password'] = $_POST['password']) {
 			unlink_if_exists($g['vardb_path'] . "/growlnotices_lastmsg.txt");
 			register_via_growl();
 			notify_via_growl(sprintf(gettext("This is a test message from %s.  It is safe to ignore this message."), $g['product_name']), true);

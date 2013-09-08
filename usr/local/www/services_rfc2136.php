@@ -76,7 +76,7 @@ include("head.inc");
 	  <div id="mainarea">
 	  <table class="tabcont" width="100%" border="0" cellpadding="0" cellspacing="0">
 		<tr>
-		  <td width="15%" class="listhdrr"><?=gettext("If");?></td>
+		  <td width="15%" class="listhdrr"><?=gettext("If/GW Group");?></td>
 		  <td width="15%" class="listhdrr"><?=gettext("Server");?></td>
 		  <td width="20%" class="listhdrr"><?=gettext("Hostname");?></td>
 		  <td width="25%" class="listhdrr"><?=gettext("Cached IP");?></td>

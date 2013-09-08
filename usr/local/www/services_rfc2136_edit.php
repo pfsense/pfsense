@@ -1,7 +1,7 @@
 <?php
 /* $Id$ */
 /*
-	Copyright (C) 2008 Ermal Luçi
+	Copyright (C) 2008 Ermal Luï¿½i
 	All rights reserved.
 
 	Redistribution and use in source and binary forms, with or without
@@ -136,11 +136,17 @@ include("head.inc");
 				  </td>
                 </tr>
 				<tr>
-				   <td width="22%" valign="top" class="vncellreq"><?=gettext("Interface to monitor");?></td>  
+				   <td width="22%" valign="top" class="vncellreq"><?=gettext("Monitor");?></td>  
 				   <td width="78%" class="vtable">
 				   <select name="interface" class="formselect" id="interface">
 				   <?php $iflist = get_configured_interface_with_descr();
-				   		foreach ($iflist as $if => $ifdesc):?>
+						$grouplist = return_gateway_groups_array();
+						foreach ($grouplist as $name => $group) {
+							if($group['ipprotocol'] != inet)
+								continue;
+							$iflist[$name] = "GW Group: {$name}";
+						}
+						foreach ($iflist as $if => $ifdesc):?>
 							<option value="<?=$if;?>" <?php if ($pconfig['interface'] == $if) echo "selected";?>><?=$ifdesc;?></option>
 					<?php endforeach; ?>
 					</select>

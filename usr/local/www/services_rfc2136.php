@@ -1,7 +1,7 @@
 <?php
 /* $Id$ */
 /*
-	Copyright (C) 2008 Ermal Luçi
+	Copyright (C) 2008 Ermal Luï¿½i
 	All rights reserved.
 
 	Redistribution and use in source and binary forms, with or without
@@ -76,18 +76,24 @@ include("head.inc");
 	  <div id="mainarea">
 	  <table class="tabcont" width="100%" border="0" cellpadding="0" cellspacing="0">
 		<tr>
-		  <td width="5%"  class="listhdrr"><?=gettext("If");?></td>
+		  <td width="15%" class="listhdrr"><?=gettext("If");?></td>
 		  <td width="15%" class="listhdrr"><?=gettext("Server");?></td>
 		  <td width="20%" class="listhdrr"><?=gettext("Hostname");?></td>
 		  <td width="25%" class="listhdrr"><?=gettext("Cached IP");?></td>
-		  <td width="25%" class="listhdr"><?=gettext("Description");?></td>
-		  <td width="10%" class="list"></td>
+		  <td width="20%" class="listhdr"><?=gettext("Description");?></td>
+		  <td width="5%"  class="list"></td>
 		</tr>
 		<?php $i = 0; foreach ($a_rfc2136 as $rfc2136): ?>
 		<tr ondblclick="document.location='services_rfc2136_edit.php?id=<?=$i;?>'">
 		  <td class="listlr">
 		  <?php
 			$iflist = get_configured_interface_with_descr();
+			$grouplist = return_gateway_groups_array();
+			foreach ($grouplist as $name => $group) {
+				if($group['ipprotocol'] != inet)
+					continue;
+				$iflist[$name] = $name;
+			}
 			foreach ($iflist as $if => $ifdesc) {
 				if ($rfc2136['interface'] == $if) {
 					if (!isset($rfc2136['enable']))

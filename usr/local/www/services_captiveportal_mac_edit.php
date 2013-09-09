@@ -54,7 +54,7 @@ require_once("filter.inc");
 require("shaper.inc");
 require("captiveportal.inc");
 
-$pgtitle = array(gettext("Services"),gettext("Captive portal"),gettext("Edit pass-through MAC address"));
+$pgtitle = array(gettext("Services"),gettext("Captive portal"),gettext("Edit MAC address rules"));
 $shortcut_section = "captiveportal";
 
 $cpzone = $_GET['zone'];
@@ -162,7 +162,7 @@ include("head.inc");
 <form action="services_captiveportal_mac_edit.php" method="post" name="iform" id="iform">
 	<table width="100%" border="0" cellpadding="6" cellspacing="0">
 		<tr>
-			<td colspan="2" valign="top" class="listtopic"><?=gettext("Edit Pass-through MAC address");?></td>
+			<td colspan="2" valign="top" class="listtopic"><?=gettext("Edit MAC address rules");?></td>
 		</tr>
 		<tr>
 			<td width="22%" valign="top" class="vncellreq"><?=gettext("Action"); ?></td>

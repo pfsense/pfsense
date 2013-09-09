@@ -40,6 +40,7 @@ function remove_numbers($string) {
 	return $string;
 }
 
+global $g;
 $g = array(
 	"base_packages" => "siproxd", 
 	"event_address" => "unix:///var/run/check_reload_status",
@@ -146,6 +147,10 @@ $sysctls = array("net.inet.ip.portrange.first" => "1024",
 	"debug.pfftpproxy" => "0",
 	"net.inet.ip.process_options" => 0
 );
+
+/* Include override values for the above if needed. If the file doesn't exist, don't try to load it. */
+if (file_exists("/etc/inc/globals_override.inc"))
+	@include("globals_override.inc");
 
 $config_parsed = false;
 

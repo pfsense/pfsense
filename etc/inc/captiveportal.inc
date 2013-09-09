@@ -959,31 +959,29 @@ function captiveportal_passthrumac_configure_entry($macent) {
 }
 
 function captiveportal_passthrumac_delete_entry($macent) {
-	global $cpzone;
+	$rules = "";
 
 	$ruleno = captiveportal_get_ipfw_passthru_ruleno($macent['mac']);
 
 	if (!$ruleno)
-		return false;
+		return $rules;
 
-	$cmd = "/sbin/ipfw -x {$cpzone} delete {$ruleno}";
+	$rules .= "delete {$ruleno}\n";
 	captiveportal_free_ipfw_ruleno($ruleno, ($macent['action'] == 'block'));
 
 	if ($macent['action'] == 'pass') {
-		$cmd .= "; /sbin/ipfw -x {$cpzone} delete " . ++$ruleno;
+		$rules .= "delete " . ++$ruleno . "\n";
 
 		$pipeno = captiveportal_get_dn_passthru_ruleno($macent['mac']);
 
 		if (!empty($pipeno)) {
 			captiveportal_free_dn_ruleno($pipeno);
-			$cmd .= "; /sbin/ipfw -x {$cpzone} pipe delete " . $pipeno;
-			$cmd .= "; /sbin/ipfw -x {$cpzone} pipe delete " . ++$pipeno;
+			$rules .= "pipe delete " . $pipeno . "\n";
+			$rules .= "pipe delete " . ++$pipeno . "\n";
 		}
 	}
 
-	mwexec($cmd);
-
-	return true;
+	return $rules;
 }
 
 function captiveportal_passthrumac_configure($lock = false) {

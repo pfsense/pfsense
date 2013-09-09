@@ -1791,6 +1791,7 @@ function portal_allow($clientip,$clientmac,$username,$password = null, $attribut
 								$macrules .= "pipe delete {$pipeno}\n";
 							}
 							unset($config['captiveportal'][$cpzone]['passthrumac'][$idx]);
+							$mac['action'] = 'pass';
 							$mac['mac'] = $clientmac;
 							$config['captiveportal'][$cpzone]['passthrumac'][] = $mac;
 							$macrules .= captiveportal_passthrumac_configure_entry($mac);

@@ -952,8 +952,12 @@ function captiveportal_passthrumac_configure_entry($macent) {
 		$rules = "add {$ruleno} pipe {$pipeup} ip from any to any MAC any {$macent['mac']}\n";
 		$ruleno++;
 		$rules .= "add {$ruleno} pipe {$pipedown} ip from any to any MAC {$macent['mac']} any\n";
-	} else
+	} else {
 		$rules = "add {$ruleno} deny ip from any to any MAC {$macent['mac']} any\n";
+		$blockedmacs = captiveportal_read_blockedmacs_db();
+		$blockedmacs[] = $macent['mac'];
+		captiveportal_write_blockedmacs_db($blockedmacs);
+	}
 
 	return $rules;
 }
@@ -979,6 +983,12 @@ function captiveportal_passthrumac_delete_entry($macent) {
 			$rules .= "pipe delete " . $pipeno . "\n";
 			$rules .= "pipe delete " . ++$pipeno . "\n";
 		}
+	} else {
+		$blockedmacs = captiveportal_read_blockedmacs_db();
+		foreach ($blockedmacs as $idx => $blockedmac)
+			if ($blockedmac == $macent['mac'])
+				unset($blockedmacs[$idx]);
+		captiveportal_write_blockedmacs_db($blockedmacs);
 	}
 
 	return $rules;
@@ -2084,6 +2094,29 @@ function captiveportal_write_usedmacs_db($usedmacs) {
 
 	$cpumaclck = lock("captiveusedmacs{$cpzone}", LOCK_EX);
 	@file_put_contents("{$g['vardb_path']}/captiveportal_usedmacs_{$cpzone}.db", implode("\n", $usedmacs));
+	unlock($cpumaclck);
+}
+
+function captiveportal_read_blockedmacs_db() {
+	global $g, $cpzone;
+
+	$cpumaclck = lock("captiveblockedmacs{$cpzone}");
+	if (file_exists("{$g['vardb_path']}/captiveportal_blockedmacs_{$cpzone}.db")) {
+		$blockedmacs = file("{$g['vardb_path']}/captiveportal_blockedmacs_{$cpzone}.db", FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
+		if (!$blockedmacs)
+			$blockedmacs = array();
+	} else
+		$blockedmacs = array();
+
+	unlock($cpumaclck);
+	return $blockedmacs;
+}
+
+function captiveportal_write_blockedmacs_db($blockedmacs) {
+	global $g, $cpzone;
+
+	$cpumaclck = lock("captiveblockedmacs{$cpzone}", LOCK_EX);
+	@file_put_contents("{$g['vardb_path']}/captiveportal_blockedmacs_{$cpzone}.db", implode("\n", $blockedmacs));
 	unlock($cpumaclck);
 }
 

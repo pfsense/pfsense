@@ -79,6 +79,7 @@ if (!is_array($a_cp[$cpzone]['passthrumac']))
 $a_passthrumacs = &$a_cp[$cpzone]['passthrumac'];
 
 if (isset($id) && $a_passthrumacs[$id]) {
+	$pconfig['action'] = $a_passthrumacs[$id]['action'];
 	$pconfig['mac'] = $a_passthrumacs[$id]['mac'];
 	$pconfig['bw_up'] = $a_passthrumacs[$id]['bw_up'];
 	$pconfig['bw_down'] = $a_passthrumacs[$id]['bw_down'];
@@ -92,16 +93,15 @@ if ($_POST) {
 	$pconfig = $_POST;
 
 	/* input validation */
-	$reqdfields = explode(" ", "mac");
-	$reqdfieldsn = array(gettext("MAC address"));
+	$reqdfields = explode(" ", "action mac");
+	$reqdfieldsn = array(gettext("Action"), gettext("MAC address"));
 
-	do_input_validation($_POST, $reqdfields, $reqdfieldsn, &$input_errors);
+	do_input_validation($_POST, $reqdfields, $reqdfieldsn, $input_errors);
 
 	$_POST['mac'] = str_replace("-", ":", $_POST['mac']);
 
-	if (($_POST['mac'] && !is_macaddr($_POST['mac']))) {
+	if (($_POST['mac'] && !is_macaddr($_POST['mac'])))
 		$input_errors[] = sprintf("%s. [%s]", gettext("A valid MAC address must be specified"), $_POST['mac']);
-	}
 	if ($_POST['bw_up'] && !is_numeric($_POST['bw_up']))
 		$input_errors[] = gettext("Upload speed needs to be an integer");
 	if ($_POST['bw_down'] && !is_numeric($_POST['bw_down']))
@@ -112,13 +112,14 @@ if ($_POST) {
 			continue;
 
 		if ($macent['mac'] == $_POST['mac']){
-			$input_errors[] = sprintf("[%s] %s.", $_POST['mac'], gettext("already allowed"));
+			$input_errors[] = sprintf("[%s] %s.", $_POST['mac'], gettext("already exists"));
 			break;
 		}
 	}
 
 	if (!$input_errors) {
 		$mac = array();
+		$mac['action'] = $_POST['action'];
 		$mac['mac'] = $_POST['mac'];
 		if ($_POST['bw_up'])
 			$mac['bw_up'] = $_POST['bw_up'];
@@ -130,10 +131,10 @@ if ($_POST) {
 		$mac['descr'] = $_POST['descr'];
 
 		if (isset($id) && $a_passthrumacs[$id]) {
-			$oldmac = $a_passthrumacs[$id]['mac'];
+			$oldmac = $a_passthrumacs[$id];
 			$a_passthrumacs[$id] = $mac;
 		} else {
-			$oldmac = $mac['mac'];
+			$oldmac = $mac;
 			$a_passthrumacs[] = $mac;
 		}
 		passthrumacs_sort();
@@ -141,21 +142,8 @@ if ($_POST) {
 		write_config();
 
 		if (isset($config['captiveportal'][$cpzone]['enable'])) {
-			$ruleno = captiveportal_get_ipfw_passthru_ruleno($oldmac);
-			if ($ruleno) {
-				captiveportal_free_ipfw_ruleno($ruleno);
-				$pipeno = captiveportal_get_dn_passthru_ruleno($oldmac);
-				if ($pipeno) {
-					captiveportal_free_dn_ruleno($pipeno);
-					$rules .= "pipe delete {$pipeno}\n";
-					++$pipeno;
-					$rules .= "pipe delete {$pipeno}\n";
-				}
-				$rules = "delete {$ruleno}\n";
-				$rules .= "delete " . ++$ruleno . "\n";
-			}
-
-			$rules .= captiveportal_passthrumac_configure_entry($mac);
+			captiveportal_passthrumac_delete_entry($mac);
+			$rules = captiveportal_passthrumac_configure_entry($mac);
 			$uniqid = uniqid("{$cpzone}_macedit");
 			file_put_contents("{$g['tmp_path']}/{$uniqid}_tmp", $rules);
 			mwexec("/sbin/ipfw -x {$cpzone} -q {$g['tmp_path']}/{$uniqid}_tmp");
@@ -175,6 +163,25 @@ include("head.inc");
 	<table width="100%" border="0" cellpadding="6" cellspacing="0">
 		<tr>
 			<td colspan="2" valign="top" class="listtopic"><?=gettext("Edit Pass-through MAC address");?></td>
+		</tr>
+		<tr>
+			<td width="22%" valign="top" class="vncellreq"><?=gettext("Action"); ?></td>
+			<td width="78%" class="vtable">
+				<select name="action" class="formselect">
+<?php
+					$actions = explode(" ", "Pass Block");
+					foreach ($actions as $action):
+?>
+						<option value="<?=strtolower($action);?>"<?php if (strtolower($action) == strtolower($pconfig['action'])) echo "selected=\"selected\""; ?>>
+							<?=htmlspecialchars($action);?>
+						</option>
+<?php
+					endforeach;
+?>
+				</select>
+				<br>
+				<span class="vexpl"><?=gettext("Choose what to do with packets coming from this MAC address"); ?>.</span>
+			</td>
 		</tr>
 		<tr>
 			<td width="22%" valign="top" class="vncellreq"><?=gettext("MAC address"); ?></td>

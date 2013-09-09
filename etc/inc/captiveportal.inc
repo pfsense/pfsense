@@ -940,18 +940,50 @@ function captiveportal_passthrumac_configure_entry($macent) {
 	$bwDown = empty($macent['bw_down']) ? 0 : $macent['bw_down'];
 
 	$ruleno = captiveportal_get_next_ipfw_ruleno();
-	$pipeno = captiveportal_get_next_dn_ruleno();
 
-	$rules = "";
-	$pipeup = $pipeno;
-	$_gb = @pfSense_pipe_action("pipe {$pipeup} config bw {$bwUp}Kbit/s queue 100 buckets 16");
-	$pipedown = $pipeno + 1;
-	$_gb = @pfSense_pipe_action("pipe {$pipedown} config bw {$bwDown}Kbit/s queue 100 buckets 16");
-	$rules .= "add {$ruleno} pipe {$pipeup} ip from any to any MAC any {$macent['mac']}\n";
-	$ruleno++;
-	$rules .= "add {$ruleno} pipe {$pipedown} ip from any to any MAC {$macent['mac']} any\n";
+	if ($macent['action'] == 'pass') {
+		$pipeno = captiveportal_get_next_dn_ruleno();
+
+		$pipeup = $pipeno;
+		$_gb = @pfSense_pipe_action("pipe {$pipeno} config bw {$bwUp}Kbit/s queue 100 buckets 16");
+		$pipedown = $pipeno + 1;
+		$_gb = @pfSense_pipe_action("pipe {$pipedown} config bw {$bwDown}Kbit/s queue 100 buckets 16");
+
+		$rules = "add {$ruleno} pipe {$pipeup} ip from any to any MAC any {$macent['mac']}\n";
+		$ruleno++;
+		$rules .= "add {$ruleno} pipe {$pipedown} ip from any to any MAC {$macent['mac']} any\n";
+	} else
+		$rules = "add {$ruleno} deny ip from any to any MAC {$macent['mac']} any\n";
 
 	return $rules;
+}
+
+function captiveportal_passthrumac_delete_entry($macent) {
+	global $cpzone;
+
+	$ruleno = captiveportal_get_ipfw_passthru_ruleno($macent['mac']);
+
+	if (!$ruleno)
+		return false;
+
+	$cmd = "/sbin/ipfw -x {$cpzone} delete {$ruleno}";
+	captiveportal_free_ipfw_ruleno($ruleno, ($macent['action'] == 'block'));
+
+	if ($macent['action'] == 'pass') {
+		$cmd .= "; /sbin/ipfw -x {$cpzone} delete " . ++$ruleno;
+
+		$pipeno = captiveportal_get_dn_passthru_ruleno($macent['mac']);
+
+		if (!empty($pipeno)) {
+			captiveportal_free_dn_ruleno($pipeno);
+			$cmd .= "; /sbin/ipfw -x {$cpzone} pipe delete " . $pipeno;
+			$cmd .= "; /sbin/ipfw -x {$cpzone} pipe delete " . ++$pipeno;
+		}
+	}
+
+	mwexec($cmd);
+
+	return true;
 }
 
 function captiveportal_passthrumac_configure($lock = false) {
@@ -1468,7 +1500,7 @@ function captiveportal_get_next_ipfw_ruleno($rulenos_start = 2, $rulenos_range_m
 	return $ruleno;
 }
 
-function captiveportal_free_ipfw_ruleno($ruleno) {
+function captiveportal_free_ipfw_ruleno($ruleno, $single_rule = false) {
 	global $config, $g, $cpzone;
 
 	$cpcfg = $config['captiveportal'][$cpzone];
@@ -1479,7 +1511,8 @@ function captiveportal_free_ipfw_ruleno($ruleno) {
 	if (file_exists("{$g['vardb_path']}/captiveportal_{$cpzone}.rules")) {
 		$rules = unserialize(file_get_contents("{$g['vardb_path']}/captiveportal_{$cpzone}.rules"));
 		$rules[$ruleno] = false;
-		$rules[++$ruleno] = false;
+		if (!$single_rule)
+			$rules[++$ruleno] = false;
 		file_put_contents("{$g['vardb_path']}/captiveportal_{$cpzone}.rules", serialize($rules));
 	}
 	unlock($cpruleslck);

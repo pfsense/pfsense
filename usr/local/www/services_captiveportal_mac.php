@@ -102,17 +102,7 @@ if ($_POST) {
 				}
 			}
 			if ($found == true) {
-				$ruleno = captiveportal_get_ipfw_passthru_ruleno($_POST['delmac']);
-				if ($ruleno) {
-					captiveportal_free_ipfw_ruleno($ruleno);
-					$pipeno = captiveportal_get_dn_passthru_ruleno($_POST['delmac']);
-					if ($pipeno)
-						captiveportal_free_dn_ruleno($pipeno);
-					if (!empty($pipeno))
-						mwexec("/sbin/ipfw -x {$cpzone} -q delete {$ruleno}; /sbin/ipfw -x {$cpzone} -q delete " . ++$ruleno . "; /sbin/ipfw -q pipe delete {$pipeno}; /sbin/ipfw -q pipe delete " . (++$pipeno));
-					else
-						mwexec("/sbin/ipfw -x {$cpzone} -q delete {$ruleno}; /sbin/ipfw -x {$cpzone} -q delete " . ++$ruleno);
-				}
+				captiveportal_passthrumac_delete_entry($a_passthrumacs[$idx]);
 				unset($a_passthrumacs[$idx]);
 				write_config();
 				echo gettext("The entry was sucessfully deleted") . "\n";
@@ -126,17 +116,7 @@ if ($_POST) {
 if ($_GET['act'] == "del") {
 	$a_passthrumacs =& $a_cp[$cpzone]['passthrumac'];
 	if ($a_passthrumacs[$_GET['id']]) {
-		$ruleno = captiveportal_get_ipfw_passthru_ruleno($a_passthrumacs[$_GET['id']]['mac']);
-		if ($ruleno) {
-			captiveportal_free_ipfw_ruleno($ruleno);
-			$pipeno = captiveportal_get_dn_passthru_ruleno($a_passthrumacs[$_GET['id']]['mac']);
-			if ($pipeno)
-				captiveportal_free_dn_ruleno($pipeno);
-			if (!empty($pipeno))
-				mwexec("/sbin/ipfw -x {$cpzone} -q delete {$ruleno}; /sbin/ipfw -x {$cpzone} -q delete " . ++$ruleno . "; /sbin/ipfw -q pipe delete {$pipeno}; /sbin/ipfw -q pipe delete " . (++$pipeno));
-			else
-				mwexec("/sbin/ipfw -x {$cpzone} -q delete {$ruleno}; /sbin/ipfw -x {$cpzone} -q delete " . ++$ruleno);
-		}
+		captiveportal_passthrumac_delete_entry($a_passthrumacs[$_GET['id']]);
 		unset($a_passthrumacs[$_GET['id']]);
 		write_config();
 		header("Location: services_captiveportal_mac.php?zone={$cpzone}");
@@ -172,7 +152,8 @@ include("head.inc");
 		<td class="tabcont">
 			<table width="100%" border="0" cellpadding="0" cellspacing="0">
 				<tr>
-					<td width="40%" class="listhdrr"><?=gettext("MAC address"); ?></td>
+					<td width="3%"  class="list"></td>
+					<td width="37%" class="listhdrr"><?=gettext("MAC address"); ?></td>
 					<td width="50%" class="listhdr"><?=gettext("Description"); ?></td>
 					<td width="10%" class="list"></td>
 				</tr>
@@ -182,6 +163,9 @@ include("head.inc");
 				foreach ($a_cp[$cpzone]['passthrumac'] as $mac):
 ?>
 				<tr ondblclick="document.location='services_captiveportal_mac_edit.php?zone=<?=$cpzone;?>&id=<?=$i;?>'">
+					<td valign="middle" nowrap class="list">
+						<img src="./themes/<?= $g['theme']; ?>/images/icons/icon_<?=$mac['action'];?>.gif" width="11" height="11" border="0" alt="icon" />
+					</td>
 					<td class="listlr">
 						<?=strtolower($mac['mac']);?>
 					</td>
@@ -204,7 +188,7 @@ include("head.inc");
 			endif;
 ?>
 				<tr>
-					<td class="list" colspan="2">&nbsp;</td>
+					<td class="list" colspan="3">&nbsp;</td>
 					<td class="list">
 						<a href="services_captiveportal_mac_edit.php?zone=<?=$cpzone;?>">
 							<img src="/themes/<?php echo $g['theme']; ?>/images/icons/icon_plus.gif" title="<?=gettext("add host"); ?>" width="17" height="17" border="0">
@@ -212,10 +196,10 @@ include("head.inc");
 					</td>
 				</tr>
 				<tr>
-					<td colspan="2" class="list">
+					<td colspan="3" class="list">
 						<span class="vexpl">
 							<span class="red"><strong><?=gettext("Note:"); ?><br></strong></span>
-							<?=gettext("Adding MAC addresses as pass-through MACs allows them access through the captive portal automatically without being taken to the portal page."); ?>
+							<?=gettext("Adding MAC addresses as 'pass' MACs allows them access through the captive portal automatically without being taken to the portal page."); ?>
 						</span>
 					</td>
 					<td class="list">&nbsp;</td>

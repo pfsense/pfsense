@@ -1883,6 +1883,7 @@ function portal_allow($clientip,$clientmac,$username,$password = null, $attribut
 
 		if ($passthrumac) {
 			$mac = array();
+			$mac['action'] = 'pass';
 			$mac['mac'] = $clientmac;
 			$mac['ip'] = $clientip; /* Used only for logging */
 			if (isset($config['captiveportal'][$cpzone]['passthrumacaddusername'])) {

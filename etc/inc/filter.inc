@@ -340,7 +340,7 @@ function filter_configure_sync($delete_states_if_needed = true) {
 
 	# If we are not using bogonsv6 then we can remove any bogonsv6 table from the running pf (if the table is not there, the kill is still fine).
 	if (!is_bogonsv6_used())
-		$_grbg = exec("/sbin/pfctl -t bogonsv6 -T kill");
+		$_grbg = exec("/sbin/pfctl -t bogonsv6 -T kill 2>/dev/null");
 
 	update_filter_reload_status(gettext("Starting up layer7 daemon"));
 	layer7_start_l7daemon();

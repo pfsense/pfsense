@@ -99,17 +99,19 @@ $tcpflags = array("syn", "ack", "fin", "rst", "psh", "urg", "ece", "cwr");
 
 if(file_exists("/etc/platform")) {
 	$arch = php_uname("m");
+	$arch = ($arch == "i386") ? "" : '/' . $arch;
+
+	/* Full installs and NanoBSD use the same update directory and manifest in 2.x */
+	$g['update_url']="http://updates.pfsense.org/_updaters{$arch}";
+	$g['update_manifest']="http://updates.pfSense.com/manifest";
+
 	$g['platform'] = trim(file_get_contents("/etc/platform"));
 	if($g['platform'] == "nanobsd") {
-		$g['update_url']="http://snapshots.pfsense.org/FreeBSD_RELENG_8_3/{$arch}/pfSense_RELENG_2_1/.updaters/";
-		$g['update_manifest']="http://updates.pfSense.com/nanobsd/manifest";
 		$g['firmware_update_text']="pfSense-*.img.gz";
 		$g['hidedownloadbackup'] = true;
 		$g['hidebackupbeforeupgrade'] = true;
 
 	} else {
-		$g['update_url']="http://snapshots.pfsense.org/FreeBSD_RELENG_8_3/{$arch}/pfSense_RELENG_2_1/.updaters/";
-		$g['update_manifest']="http://updates.pfSense.com/manifest";
 		$g['firmware_update_text']="pfSense-*.tgz";
 	}
 }

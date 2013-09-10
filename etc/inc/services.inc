@@ -440,7 +440,9 @@ EOD;
 			continue;
 
 		if($dhcpifconf['failover_peerip'] <> "") {
-			$intip = get_interface_ip($dhcpif);
+			$int = guess_interface_from_ip($dhcpifconf['failover_peerip']);
+			$intip = find_interface_ip($int);
+			$real_dhcpif = convert_friendly_interface_to_real_interface_name($dhcpif);
 			/*
 			 *    yep, failover peer is defined.
 			 *    does it match up to a defined vip?
@@ -448,15 +450,10 @@ EOD;
 			$skew = 110;
 			if(is_array($config['virtualip']['vip'])) {
 				foreach ($config['virtualip']['vip'] as $vipent) {
-					if($vipent['interface'] == $dhcpif) {
-						$carp_nw = gen_subnet($vipent['subnet'], $vipent['subnet_bits']);
-						if (ip_in_subnet($dhcpifconf['failover_peerip'], "{$carp_nw}/{$vipent['subnet_bits']}")) {
-							/* this is the interface! */
-							if(is_numeric($vipent['advskew']) && (intval($vipent['advskew']) < 20)) {
-								$skew = 0;
-								break;
-							}
-						}
+					if($vipent['subnet'] == $intip) {
+						/* this is the interface! */
+						if(is_numeric($vipent['advskew']) && ($vipent['advskew'] < "20"))
+							$skew = 0;
 					}
 				}
 			} else {
@@ -474,8 +471,6 @@ EOD;
 				$dhcpdconf_pri  = "split 128;\n";
 				$dhcpdconf_pri .= "  mclt 600;\n";
 			}
-
-			if (is_ipaddrv4($intip)) {
 			$dhcpdconf .= <<<EOPP
 failover peer "dhcp_{$dhcpif}" {
   {$type};
@@ -490,7 +485,6 @@ failover peer "dhcp_{$dhcpif}" {
 }
 
 EOPP;
-			}
 		}
 	}
 

@@ -157,12 +157,18 @@ if ($act == "p12") {
 	}
 
 	$exp_name = urlencode("{$a_cert[$id]['descr']}.p12");
+	$args = array();
+	$args['friendly_name'] = $a_cert[$id]['descr'];
+
+	$ca = lookup_ca($a_cert[$id]['caref']);
+	if ($ca)
+		$args['extracerts'] = openssl_x509_read(base64_decode($ca['crt']));
 
 	$res_crt = openssl_x509_read(base64_decode($a_cert[$id]['crt']));
 	$res_key = openssl_pkey_get_private(array(0 => base64_decode($a_cert[$id]['prv']) , 1 => ""));
 
 	$exp_data = "";
-	openssl_pkcs12_export($res_crt, $exp_data, $res_key, null);
+	openssl_pkcs12_export($res_crt, $exp_data, $res_key, null, $args);
 	$exp_size = strlen($exp_data);
 
 	header("Content-Type: application/octet-stream");
@@ -1174,7 +1180,7 @@ function internalca_change() {
 								<img src="/themes/<?= $g['theme'];?>/images/icons/icon_down.gif" title="<?=gettext("export key");?>" alt="<?=gettext("export ca");?>" width="17" height="17" border="0" />
 							</a>
 							<a href="system_certmanager.php?act=p12&amp;id=<?=$i;?>">
-								<img src="/themes/<?= $g['theme'];?>/images/icons/icon_down.gif" title="<?=gettext("export cert+key in .p12");?>" alt="<?=gettext("export cert+key in .p12");?>" width="17" height="17" border="0" />
+								<img src="/themes/<?= $g['theme'];?>/images/icons/icon_down.gif" title="<?=gettext("export ca cert+user cert+user cert key in .p12 format");?>" alt="<?=gettext("export ca cert+user cert+user cert key in .p12 format");?>" width="17" height="17" border="0" />
 							</a>
 							<?php	if (!cert_in_use($cert['refid'])): ?>
 							<a href="system_certmanager.php?act=del&amp;id=<?=$i;?>" onclick="return confirm('<?=gettext("Do you really want to delete this Certificate?");?>')">

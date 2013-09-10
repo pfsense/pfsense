@@ -1428,8 +1428,8 @@ function handle_pppoe_reset($post_array) {
 	}
 	if (empty($item))
 		return;
-	if (isset($item['ID']))
-		$config['cron']['item'][$item['ID']] = $item;
+	if (isset($itemhash['ID']))
+		$config['cron']['item'][$itemhash['ID']] = $item;
 	else
 		$config['cron']['item'][] = $item;
 }

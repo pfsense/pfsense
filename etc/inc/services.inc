@@ -448,9 +448,10 @@ EOD;
 			 *    does it match up to a defined vip?
 			 */
 			$skew = 110;
-			if(is_array($config['virtualip']['vip'])) {
-				foreach ($config['virtualip']['vip'] as $vipent) {
-					if($vipent['subnet'] == $intip) {
+			$a_vip = &$config['virtualip']['vip'];
+			if(is_array($a_vip)) {
+				foreach ($a_vip as $vipent) {
+					if($int == $real_dhcpif) {
 						/* this is the interface! */
 						if(is_numeric($vipent['advskew']) && ($vipent['advskew'] < "20"))
 							$skew = 0;

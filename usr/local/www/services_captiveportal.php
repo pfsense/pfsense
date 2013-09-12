@@ -105,6 +105,7 @@ if ($a_cp[$cpzone]) {
 	$pconfig['httpslogin_enable'] = isset($a_cp[$cpzone]['httpslogin']);
 	$pconfig['httpsname'] = $a_cp[$cpzone]['httpsname'];
 	$pconfig['preauthurl'] = strtolower($a_cp[$cpzone]['preauthurl']);
+	$pconfig['blockedmacsurl'] = strtolower($a_cp[$cpzone]['blockedmacsurl']);
 	$pconfig['certref'] = $a_cp[$cpzone]['certref'];
 	$pconfig['logoutwin_enable'] = isset($a_cp[$cpzone]['logoutwin_enable']);
 	$pconfig['peruserbw'] = isset($a_cp[$cpzone]['peruserbw']);
@@ -279,6 +280,7 @@ if ($_POST) {
 			unset($newcp['httpslogin']);
 		$newcp['httpsname'] = $_POST['httpsname'];
 		$newcp['preauthurl'] = $_POST['preauthurl'];
+		$newcp['blockedmacsurl'] = $_POST['blockedmacsurl'];
 		$newcp['peruserbw'] = $_POST['peruserbw'] ? true : false;
 		$newcp['bwdefaultdn'] = $_POST['bwdefaultdn'];
 		$newcp['bwdefaultup'] = $_POST['bwdefaultup'];
@@ -375,6 +377,7 @@ function enable_change(enable_change) {
 	document.iform.freelogins_updatetimeouts.disabled = endis;
 	document.iform.timeout.disabled = endis;
 	document.iform.preauthurl.disabled = endis;
+	document.iform.blockedmacsurl.disabled = endis;
 	document.iform.redirurl.disabled = endis;
 	document.iform.localauth_priv.disabled = localauth_endis;
 	document.iform.radiusip.disabled = radius_endis;
@@ -538,6 +541,13 @@ function enable_change(enable_change) {
 		<br>
 <?=gettext("If you provide a URL here, clients will be redirected to that URL instead of the one they initially tried " .
 "to access after they've authenticated."); ?></td>
+	</tr>
+	<tr>
+		<td valign="top" class="vncell"><?=gettext("Blocked MAC address redirect URL"); ?> </td>
+		<td class="vtable">
+			<input name="blockedmacsurl" type="text" class="formfld url" id="blockedmacsurl" size="60" value="<?=htmlspecialchars($pconfig['blockedmacsurl']);?>"><br>
+			<?php printf(gettext("If you provide a URL here, MAC addresses set to be blocked will be redirect to that URL when attempt to access anything."));?>
+		</td>
 	</tr>
 	<tr>
       <td valign="top" class="vncell"><?=gettext("Concurrent user logins"); ?></td>

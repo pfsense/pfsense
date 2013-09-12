@@ -97,7 +97,7 @@ if ($_POST) {
 	
 	do_input_validation($_POST, $reqdfields, $reqdfieldsn, &$input_errors);
 	
-	$_POST['mac'] = str_replace("-", ":", $_POST['mac']);
+	$_POST['mac'] = strtolower(str_replace("-", ":", $_POST['mac']));
 	
 	if (($_POST['mac'] && !is_macaddr($_POST['mac']))) {
 		$input_errors[] = sprintf("%s. [%s]", gettext("A valid MAC address must be specified"), $_POST['mac']);

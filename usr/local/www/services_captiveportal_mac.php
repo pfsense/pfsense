@@ -180,7 +180,7 @@ include("head.inc");
 		$i = 0; foreach ($a_cp[$cpzone]['passthrumac'] as $mac): ?>
 	<tr ondblclick="document.location='services_captiveportal_mac_edit.php?zone=<?=$cpzone;?>&id=<?=$i;?>'">
 	  <td class="listlr">
-		<?=strtolower($mac['mac']);?>
+		<?=$mac['mac'];?>
 	  </td>
 	  <td class="listbg">
 		<?=htmlspecialchars($mac['descr']);?>&nbsp;

@@ -250,7 +250,7 @@ if (!isBlank($_POST['txtPHPCommand'])) {
 ?>
 <div id="niftyOutter">
 <form action="exec.php" method="post" enctype="multipart/form-data" name="frmExecPlus" onSubmit="return frmExecPlus_onSubmit( this );">
-  <table>
+  <table width="100%">
 	<tr>
 	  <td colspan="2" valign="top" class="vnsepcell"><?=gettext("Execute Shell command"); ?></td>
 	</tr>  

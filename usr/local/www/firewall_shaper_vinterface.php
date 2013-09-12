@@ -207,13 +207,13 @@ if ($_GET) {
 			$dnpipe =& new dnpipe_class();
 			
 			$dnpipe->ReadConfig($_POST);
-			$dnpipe->validate_input($_POST, &$input_errors);
+			$dnpipe->validate_input($_POST, $input_errors);
 			if (!$input_errors) {
 				$number = dnpipe_find_nextnumber();
 				$dnpipe->SetNumber($number);
 				unset($tmppath);
 				$tmppath[] = $dnpipe->GetQname();
-				$dnpipe->SetLink(&$tmppath);	
+				$dnpipe->SetLink($tmppath);	
 				$dnpipe->wconfig();
 				if (write_config())
 					mark_subsystem_dirty('shaper');
@@ -231,7 +231,7 @@ if ($_GET) {
 		else if ($dnpipe) {
 			$tmppath =& $dnpipe->GetLink();
 			array_push($tmppath, $qname);
-			$tmp =& $dnpipe->add_queue($pipe, $_POST, $tmppath, &$input_errors);
+			$tmp =& $dnpipe->add_queue($pipe, $_POST, $tmppath, $input_errors);
 			if (!$input_errors) {
 				array_pop($tmppath);
 				$tmp->wconfig();
@@ -272,7 +272,7 @@ if ($_GET) {
 			}
 
 	} else if ($queue) {
-                $queue->validate_input($_POST, &$input_errors);
+                $queue->validate_input($_POST, $input_errors);
                 if (!$input_errors) {
 			$queue->update_dn_data($_POST);
 			$queue->wconfig();

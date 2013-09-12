@@ -225,11 +225,11 @@ if ($_GET) {
 			} 
 		$altq->SetAvailableBandwidth($altq->GetBandwidth() * $factor);
 		$altq->ReadConfig($_POST);
-		$altq->validate_input($_POST, &$input_errors);
+		$altq->validate_input($_POST, $input_errors);
 		if (!$input_errors) {
 			unset($tmppath);
 			$tmppath[] = $altq->GetInterface();
-			$altq->SetLink(&$tmppath);	
+			$altq->SetLink($tmppath);	
 			$altq->wconfig();
 			if (write_config())
 				mark_subsystem_dirty('shaper');
@@ -244,7 +244,7 @@ if ($_GET) {
 		if ($qtmp) {
 			$tmppath =& $qtmp->GetLink();
 			array_push($tmppath, $qname);
-			$tmp =& $qtmp->add_queue($interface, $_POST, $tmppath, &$input_errors);
+			$tmp =& $qtmp->add_queue($interface, $_POST, $tmppath, $input_errors);
 			if (!$input_errors) {
 				array_pop($tmppath);
 				$tmp->wconfig();
@@ -298,7 +298,7 @@ if ($_GET) {
 			}
 
 	} else if ($queue) {
-                $queue->validate_input($_POST, &$input_errors);
+                $queue->validate_input($_POST, $input_errors);
                 if (!$input_errors) {
                             $queue->update_altq_queue_data($_POST);
                             $queue->wconfig();

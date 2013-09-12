@@ -386,13 +386,13 @@ class altq_root_queue {
 		}
 	}
 
-	function &get_queue_list($q = null) {
+	function &get_queue_list(&$q = null) {
 		$qlist = array();
 
 		//$qlist[$this->GetQname()] = & $this;
 		if (is_array($this->queues)) {
 			foreach ($this->queues as $queue)
-				$queue->get_queue_list(&$qlist);
+				$queue->get_queue_list($qlist);
 		}
 		return $qlist;
 	}
@@ -423,7 +423,7 @@ class altq_root_queue {
 		$q->SetLink($path);
 		$q->SetInterface($this->GetInterface());
 		$q->SetEnabled("on");
-		$q->SetParent(&$this);
+		$q->SetParent($this);
 		$q->ReadConfig($queue);
 		$q->validate_input($queue, $input_errors);
 		if (count($input_errors)) {
@@ -448,7 +448,7 @@ class altq_root_queue {
 		if (is_array($queue['queue'])) {
 			foreach ($queue['queue'] as $key1 => $que) {
 				array_push($path, $key1);
-				$q->add_queue($q->GetInterface(), &$que, &$path, $input_errors);
+				$q->add_queue($q->GetInterface(), $que, $path, $input_errors);
 				array_pop($path);
 			}
 		}
@@ -949,7 +949,7 @@ class priq_queue {
                         $cflinkp['queue'] = array();
                         foreach ($this->subqueues as $q) {
 				 $cflink['queue'][$q->GetQname()] = array();
-                                $q->copy_queue($interface, &$cflink['queue'][$q->GetQname()]);
+                                $q->copy_queue($interface, $cflink['queue'][$q->GetQname()]);
 			}
                 }
 
@@ -1427,7 +1427,7 @@ class hfsc_queue extends priq_queue {
 			$this->subqueues = array();
 		$q =& new hfsc_queue();
 		$q->SetInterface($this->GetInterface());
-		$q->SetParent(&$this);
+		$q->SetParent($this);
 		$q->ReadConfig($qname);
 		$q->validate_input($qname, $input_errors);
 		if (count($input_errors)) {
@@ -1453,7 +1453,7 @@ class hfsc_queue extends priq_queue {
 		if (is_array($qname['queue'])) {
 			foreach ($qname['queue'] as $key1 => $que) {
 				array_push($path, $key1);
-				$q->add_queue($q->GetInterface(), &$que, &$path, $input_errors);
+				$q->add_queue($q->GetInterface(), $que, $path, $input_errors);
 				array_pop($path);
 			}
 		}
@@ -1550,7 +1550,7 @@ class hfsc_queue extends priq_queue {
 			$cflinkp['queue'] = array();
 			foreach ($this->subqueues as $q) {
 				$cflink['queue'][$q->GetQname()] = array();
-				$q->copy_queue($interface, &$cflink['queue'][$q->GetQname()]);
+				$q->copy_queue($interface, $cflink['queue'][$q->GetQname()]);
 			}
 		}
 	}
@@ -1854,7 +1854,7 @@ class hfsc_queue extends priq_queue {
 			}
 			$pfq_rule .= " } \n";
 			foreach ($this->subqueues as $q)
-				$pfq_rule .= $q->build_rules(&$default);
+				$pfq_rule .= $q->build_rules($default);
 		}
 
 		 $pfq_rule .= " \n";
@@ -2137,7 +2137,7 @@ class cbq_queue extends priq_queue {
 			$this->subqueues = array();
 		$q =& new cbq_queue();
 		$q->SetInterface($this->GetInterface());
-		$q->SetParent(&$this);
+		$q->SetParent($this);
 		$q->ReadConfig($qname);
                 $q->validate_input($qname, $input_errors);
                 if (count($input_errors)) {
@@ -2162,7 +2162,7 @@ class cbq_queue extends priq_queue {
 		if (is_array($qname['queue'])) {
 			foreach ($qname['queue'] as $key1 => $que) {
 				array_push($path, $key1);
-				$q->add_queue($q->GetInterface(), &$que, &$path, $input_errors);
+				$q->add_queue($q->GetInterface(), $que, $path, $input_errors);
 				array_pop($path);
 			}
 		}
@@ -2207,7 +2207,7 @@ class cbq_queue extends priq_queue {
 			$cflinkp['queue'] = array();
 			foreach ($this->subqueues as $q) {
 				$cflink['queue'][$q->GetQname()] = array();
-				$q->copy_queue($interface, &$cflink['queue'][$q->GetQname()]);
+				$q->copy_queue($interface, $cflink['queue'][$q->GetQname()]);
 			}
 		}
 	}
@@ -2985,7 +2985,7 @@ class dnpipe_class extends dummynet_class {
 		$q->SetLink($path);
 		$q->SetEnabled("on");
 		$q->SetPipe($this->GetQname());
-		$q->SetParent(&$this);
+		$q->SetParent($this);
 		$q->ReadConfig($queue);
 		$q->validate_input($queue, $input_errors);
 		if (count($input_errors)) {
@@ -2999,13 +2999,13 @@ class dnpipe_class extends dummynet_class {
 		return $q;
 	}
 
-	function &get_queue_list($q = null) {
+	function &get_queue_list(&$q = null) {
 		$qlist = array();
 
 		$qlist[$this->GetQname()] = $this->GetNumber();
 		if (is_array($this->subqueues)) {
 			foreach ($this->subqueues as $queue)
-				$queue->get_queue_list(&$qlist);
+				$queue->get_queue_list($qlist);
 		}
 		return $qlist;
 	}
@@ -4294,7 +4294,7 @@ function read_altq_config() {
 				 * XXX: we completely ignore errors here but anyway we must have 
 				 *	checked them before so no harm should be come from this.
 				 */
-				$root->add_queue($root->GetInterface(), $q, &$path, $input_errors);
+				$root->add_queue($root->GetInterface(), $q, $path, $input_errors);
 				array_pop($path);
 			} 	
 		}
@@ -4333,7 +4333,7 @@ function read_dummynet_config() {
 				 * XXX: we completely ignore errors here but anyway we must have 
 				 *	checked them before so no harm should be come from this.
 				 */	
-				$root->add_queue($root->GetQname(), $q, &$path, $input_errors);
+				$root->add_queue($root->GetQname(), $q, $path, $input_errors);
 				array_pop($path);
 			} 	
 		}

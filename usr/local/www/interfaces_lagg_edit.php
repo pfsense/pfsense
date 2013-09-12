@@ -87,7 +87,7 @@ if ($_POST) {
 	$reqdfields = explode(" ", "members proto");
 	$reqdfieldsn = array(gettext("Member interfaces"), gettext("Lagg protocol"));
 
-	do_input_validation($_POST, $reqdfields, $reqdfieldsn, &$input_errors);
+	do_input_validation($_POST, $reqdfields, $reqdfieldsn, $input_errors);
 
 	if (is_array($_POST['members'])) {
 		foreach ($_POST['members'] as $member) {

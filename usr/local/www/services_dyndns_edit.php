@@ -105,7 +105,7 @@ if ($_POST) {
 		$reqdfieldsn[] = gettext("Update URL");
  	}
 
-	do_input_validation($_POST, $reqdfields, $reqdfieldsn, &$input_errors);
+	do_input_validation($_POST, $reqdfields, $reqdfieldsn, $input_errors);
 
 	if (($_POST['host'] && !is_domain($_POST['host'])))
 		$input_errors[] = gettext("The Hostname contains invalid characters.");

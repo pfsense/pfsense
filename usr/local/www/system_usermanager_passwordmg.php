@@ -48,7 +48,7 @@ if (isset($_POST['save'])) {
 
 	$reqdfields = explode(" ", "passwordfld1");
 	$reqdfieldsn = array(gettext("Password"));
-	do_input_validation($_POST, $reqdfields, $reqdfieldsn, &$input_errors);
+	do_input_validation($_POST, $reqdfields, $reqdfieldsn, $input_errors);
 
 	if ($_POST['passwordfld1'] != $_POST['passwordfld2'])
 		$input_errors[] = gettext("The passwords do not match.");

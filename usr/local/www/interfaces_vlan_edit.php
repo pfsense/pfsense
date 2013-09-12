@@ -74,7 +74,7 @@ if ($_POST) {
 	$reqdfields = explode(" ", "if tag");
 	$reqdfieldsn = array(gettext("Parent interface"),gettext("VLAN tag"));
 
-	do_input_validation($_POST, $reqdfields, $reqdfieldsn, &$input_errors);
+	do_input_validation($_POST, $reqdfields, $reqdfieldsn, $input_errors);
 
 	if ($_POST['tag'] && (!is_numericint($_POST['tag']) || ($_POST['tag'] < '1') || ($_POST['tag'] > '4094'))) {
 		$input_errors[] = gettext("The VLAN tag must be an integer between 1 and 4094.");

@@ -118,7 +118,7 @@ if ($_POST) {
 	$reqdfields = explode(" ", "members");
 	$reqdfieldsn = array(gettext("Member Interfaces"));
 
-	do_input_validation($_POST, $reqdfields, $reqdfieldsn, &$input_errors);
+	do_input_validation($_POST, $reqdfields, $reqdfieldsn, $input_errors);
 
 	if ($_POST['maxage'] && !is_numeric($_POST['maxage']))
 		$input_errors[] = gettext("Maxage needs to be an integer between 6 and 40.");

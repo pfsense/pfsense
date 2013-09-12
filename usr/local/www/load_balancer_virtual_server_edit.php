@@ -79,7 +79,7 @@ if ($_POST) {
     }
   }
 
-	do_input_validation($_POST, $reqdfields, $reqdfieldsn, &$input_errors);
+	do_input_validation($_POST, $reqdfields, $reqdfieldsn, $input_errors);
 
 	for ($i=0; isset($config['load_balancer']['virtual_server'][$i]); $i++)
 		if (($_POST['name'] == $config['load_balancer']['virtual_server'][$i]['name']) && ($i != $id))

@@ -162,7 +162,7 @@ if ($_POST) {
 	$reqdfields[] = 'common_name';
 	$reqdfieldsn[] = 'Common name';
 
-    do_input_validation($_POST, $reqdfields, $reqdfieldsn, &$input_errors);
+    do_input_validation($_POST, $reqdfields, $reqdfieldsn, $input_errors);
 
 	if (!$input_errors) {
 

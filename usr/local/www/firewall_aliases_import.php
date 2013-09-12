@@ -58,7 +58,7 @@ if($_POST['aliasimport'] <> "") {
 	$reqdfields = explode(" ", "name aliasimport");
 	$reqdfieldsn = array(gettext("Name"),gettext("Aliases"));
 
-	do_input_validation($_POST, $reqdfields, $reqdfieldsn, &$input_errors);
+	do_input_validation($_POST, $reqdfields, $reqdfieldsn, $input_errors);
 		
 	if (is_validaliasname($_POST['name']) == false)
 		$input_errors[] = gettext("The alias name may only consist of the characters") . " a-z, A-Z, 0-9, _.";

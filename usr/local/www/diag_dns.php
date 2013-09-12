@@ -92,7 +92,7 @@ if ($_POST) {
 	$reqdfields = explode(" ", "host");
 	$reqdfieldsn = explode(",", "Host");
 
-	do_input_validation($_POST, $reqdfields, $reqdfieldsn, &$input_errors);
+	do_input_validation($_POST, $reqdfields, $reqdfieldsn, $input_errors);
 	$host = trim($_POST['host'], " \t\n\r\0\x0B[]");
 	$host_esc = escapeshellarg($host);
 	

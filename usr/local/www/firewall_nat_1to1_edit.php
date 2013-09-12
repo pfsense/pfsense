@@ -121,7 +121,7 @@ if ($_POST) {
                 $reqdfieldsn[] = gettext("Destination address");
         }
 	
-	do_input_validation($_POST, $reqdfields, $reqdfieldsn, &$input_errors);
+	do_input_validation($_POST, $reqdfields, $reqdfieldsn, $input_errors);
 
 	if ($_POST['external'])
 		$_POST['external'] = trim($_POST['external']);

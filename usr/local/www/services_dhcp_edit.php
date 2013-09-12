@@ -143,7 +143,7 @@ if ($_POST) {
 	$reqdfields = array();
 	$reqdfieldsn = array();
 
-	do_input_validation($_POST, $reqdfields, $reqdfieldsn, &$input_errors);
+	do_input_validation($_POST, $reqdfields, $reqdfieldsn, $input_errors);
 
     /* either MAC or Client-ID must be specified */
     if (empty($_POST['mac']) && empty($_POST['cid']))

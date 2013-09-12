@@ -75,7 +75,7 @@ if ($_POST) {
 	$reqdfields = explode(" ", "name mode port monitor servers");
 	$reqdfieldsn = array(gettext("Name"),gettext("Mode"),gettext("Port"),gettext("Monitor"),gettext("Server List"));
 
-	do_input_validation($_POST, $reqdfields, $reqdfieldsn, &$input_errors);
+	do_input_validation($_POST, $reqdfields, $reqdfieldsn, $input_errors);
 
 	/* Ensure that our pool names are unique */
 	for ($i=0; isset($config['load_balancer']['lbpool'][$i]); $i++)

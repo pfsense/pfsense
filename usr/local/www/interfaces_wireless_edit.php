@@ -85,7 +85,7 @@ if ($_POST) {
 	$reqdfields = explode(" ", "if mode");
 	$reqdfieldsn = array(gettext("Parent interface"),gettext("Mode"));
 
-	do_input_validation($_POST, $reqdfields, $reqdfieldsn, &$input_errors);
+	do_input_validation($_POST, $reqdfields, $reqdfieldsn, $input_errors);
 
 	if (!$input_errors) {
 		$clone = array();

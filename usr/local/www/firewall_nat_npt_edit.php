@@ -107,7 +107,7 @@ if ($_POST) {
         $reqdfields[] = "dst";
         $reqdfieldsn[] = gettext("Destination prefix");
 	
-	do_input_validation($_POST, $reqdfields, $reqdfieldsn, &$input_errors);
+	do_input_validation($_POST, $reqdfields, $reqdfieldsn, $input_errors);
 
 	if (!$input_errors) {
 		$natent = array();

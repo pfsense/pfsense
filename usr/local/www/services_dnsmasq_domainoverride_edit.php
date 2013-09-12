@@ -71,7 +71,7 @@ if ($_POST) {
        $reqdfields = explode(" ", "domain ip");
        $reqdfieldsn = array(gettext("Domain"),gettext("IP address"));
 
-       do_input_validation($_POST, $reqdfields, $reqdfieldsn, &$input_errors);
+       do_input_validation($_POST, $reqdfields, $reqdfieldsn, $input_errors);
 
        function String_Begins_With($needle, $haystack) {
            return (substr($haystack, 0, strlen($needle))==$needle);

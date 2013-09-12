@@ -935,6 +935,7 @@ function captiveportal_radius_stop_all() {
 }
 
 function captiveportal_passthrumac_configure_entry($macent) {
+	global $config, $g, $cpzone;
 
 	$bwUp = empty($macent['bw_up']) ? 0 : $macent['bw_up'];
 	$bwDown = empty($macent['bw_down']) ? 0 : $macent['bw_down'];
@@ -953,7 +954,6 @@ function captiveportal_passthrumac_configure_entry($macent) {
 		$ruleno++;
 		$rules .= "add {$ruleno} pipe {$pipedown} ip from any to any MAC {$macent['mac']} any\n";
 	} else {
-		$rules = "add {$ruleno} deny ip from any to any MAC {$macent['mac']} any\n";
 		$blockedmacs = captiveportal_read_blockedmacs_db();
 		$blockedmacs[] = $macent['mac'];
 		captiveportal_write_blockedmacs_db($blockedmacs);
@@ -965,15 +965,15 @@ function captiveportal_passthrumac_configure_entry($macent) {
 function captiveportal_passthrumac_delete_entry($macent) {
 	$rules = "";
 
-	$ruleno = captiveportal_get_ipfw_passthru_ruleno($macent['mac']);
-
-	if (!$ruleno)
-		return $rules;
-
-	$rules .= "delete {$ruleno}\n";
-	captiveportal_free_ipfw_ruleno($ruleno, ($macent['action'] == 'block'));
-
 	if ($macent['action'] == 'pass') {
+		$ruleno = captiveportal_get_ipfw_passthru_ruleno($macent['mac']);
+
+		if (!$ruleno)
+			return $rules;
+
+		captiveportal_free_ipfw_ruleno($ruleno);
+
+		$rules .= "delete {$ruleno}\n";
 		$rules .= "delete " . ++$ruleno . "\n";
 
 		$pipeno = captiveportal_get_dn_passthru_ruleno($macent['mac']);
@@ -1504,7 +1504,7 @@ function captiveportal_get_next_ipfw_ruleno($rulenos_start = 2, $rulenos_range_m
 	return $ruleno;
 }
 
-function captiveportal_free_ipfw_ruleno($ruleno, $single_rule = false) {
+function captiveportal_free_ipfw_ruleno($ruleno) {
 	global $config, $g, $cpzone;
 
 	$cpcfg = $config['captiveportal'][$cpzone];
@@ -1515,8 +1515,7 @@ function captiveportal_free_ipfw_ruleno($ruleno, $single_rule = false) {
 	if (file_exists("{$g['vardb_path']}/captiveportal_{$cpzone}.rules")) {
 		$rules = unserialize(file_get_contents("{$g['vardb_path']}/captiveportal_{$cpzone}.rules"));
 		$rules[$ruleno] = false;
-		if (!$single_rule)
-			$rules[++$ruleno] = false;
+		$rules[++$ruleno] = false;
 		file_put_contents("{$g['vardb_path']}/captiveportal_{$cpzone}.rules", serialize($rules));
 	}
 	unlock($cpruleslck);

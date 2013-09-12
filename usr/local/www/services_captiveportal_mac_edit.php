@@ -100,8 +100,19 @@ if ($_POST) {
 
 	$_POST['mac'] = str_replace("-", ":", $_POST['mac']);
 
-	if (($_POST['mac'] && !is_macaddr($_POST['mac'])))
-		$input_errors[] = sprintf("%s. [%s]", gettext("A valid MAC address must be specified"), $_POST['mac']);
+	if ($_POST['mac']) {
+		if (is_macaddr($_POST['mac'])) {
+			$iflist = get_interface_list();
+			foreach ($iflist as $if) {
+				if ($_POST['mac'] == strtolower($if['mac'])) {
+					$input_errors[] = sprintf(gettext("The MAC address %s belongs to a local interface, you cannot use it here."), $_POST['mac']);
+					break;
+				}
+			}
+		} else {
+			$input_errors[] = sprintf("%s. [%s]", gettext("A valid MAC address must be specified"), $_POST['mac']);
+		}
+	}
 	if ($_POST['bw_up'] && !is_numeric($_POST['bw_up']))
 		$input_errors[] = gettext("Upload speed needs to be an integer");
 	if ($_POST['bw_down'] && !is_numeric($_POST['bw_down']))

@@ -210,7 +210,7 @@ include("head.inc"); ?>
 ?>
 				<font size="-1">
 
-			<?	} ?>
+			<?php } ?>
 			</td></tr></table>
 		  </td>
 		</tr>

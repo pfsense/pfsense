@@ -98,7 +98,7 @@ if ($_POST) {
 
 	do_input_validation($_POST, $reqdfields, $reqdfieldsn, $input_errors);
 
-	$_POST['mac'] = str_replace("-", ":", $_POST['mac']);
+	$_POST['mac'] = strtolower(str_replace("-", ":", $_POST['mac']));
 
 	if ($_POST['mac']) {
 		if (is_macaddr($_POST['mac'])) {

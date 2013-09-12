@@ -175,7 +175,7 @@ include("head.inc");
 						<img src="./themes/<?= $g['theme']; ?>/images/icons/icon_<?=$mac['action'];?>.gif" width="11" height="11" border="0" alt="icon" />
 					</td>
 					<td class="listlr">
-						<?=strtolower($mac['mac']);?>
+						<?=$mac['mac'];?>
 					</td>
 					<td class="listbg">
 						<?=htmlspecialchars($mac['descr']);?>&nbsp;

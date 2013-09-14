@@ -3142,4 +3142,19 @@ function upgrade_097_to_098() {
 	/* Disable kill_states by default */
 	$config['system']['kill_states'] = true;
 }
+
+function upgrade_098_to_099() {
+	global $config, $g;
+
+	if (!is_array($config['captiveportal']))
+		return;
+
+	foreach ($config['captiveportal'] as $cpzone => $cp) {
+		if (!is_array($cp['passthrumac']))
+			continue;
+
+		foreach ($cp['passthrumac'] as $idx => $passthrumac)
+			$config['captiveportal'][$cpzone]['passthrumac'][$idx]['action'] = 'pass';
+	}
+}
 ?>

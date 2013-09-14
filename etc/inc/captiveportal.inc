@@ -953,10 +953,6 @@ function captiveportal_passthrumac_configure_entry($macent) {
 		$rules = "add {$ruleno} pipe {$pipeup} ip from any to any MAC any {$macent['mac']}\n";
 		$ruleno++;
 		$rules .= "add {$ruleno} pipe {$pipedown} ip from any to any MAC {$macent['mac']} any\n";
-	} else {
-		$blockedmacs = captiveportal_read_blockedmacs_db();
-		$blockedmacs[] = $macent['mac'];
-		captiveportal_write_blockedmacs_db($blockedmacs);
 	}
 
 	return $rules;
@@ -983,12 +979,6 @@ function captiveportal_passthrumac_delete_entry($macent) {
 			$rules .= "pipe delete " . $pipeno . "\n";
 			$rules .= "pipe delete " . ++$pipeno . "\n";
 		}
-	} else {
-		$blockedmacs = captiveportal_read_blockedmacs_db();
-		foreach ($blockedmacs as $idx => $blockedmac)
-			if ($blockedmac == $macent['mac'])
-				unset($blockedmacs[$idx]);
-		captiveportal_write_blockedmacs_db($blockedmacs);
 	}
 
 	return $rules;
@@ -999,7 +989,6 @@ function captiveportal_passthrumac_configure($lock = false) {
 
 	$rules = "";
 
-	captiveportal_zap_blockedmacs_db();
 	if (is_array($config['captiveportal'][$cpzone]['passthrumac']))
 		foreach ($config['captiveportal'][$cpzone]['passthrumac'] as $macent)
 			$rules .= captiveportal_passthrumac_configure_entry($macent);
@@ -2097,33 +2086,22 @@ function captiveportal_write_usedmacs_db($usedmacs) {
 	unlock($cpumaclck);
 }
 
-function captiveportal_read_blockedmacs_db() {
-	global $g, $cpzone;
+function captiveportal_blocked_mac($mac) {
+	global $config, $g, $cpzone;
 
-	$cpumaclck = lock("captiveblockedmacs{$cpzone}");
-	if (file_exists("{$g['vardb_path']}/captiveportal_blockedmacs_{$cpzone}.db")) {
-		$blockedmacs = file("{$g['vardb_path']}/captiveportal_blockedmacs_{$cpzone}.db", FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
-		if (!$blockedmacs)
-			$blockedmacs = array();
-	} else
-		$blockedmacs = array();
+	if (empty($mac) || !is_macaddr($mac))
+		return false;
 
-	unlock($cpumaclck);
-	return $blockedmacs;
-}
+	if (!is_array($config['captiveportal'][$cpzone]['passthrumac']))
+		return false;
 
-function captiveportal_write_blockedmacs_db($blockedmacs) {
-	global $g, $cpzone;
+	foreach ($config['captiveportal'][$cpzone]['passthrumac'] as $passthrumac)
+		if (($passthrumac['action'] == 'block') &&
+		    ($passthrumac['mac'] == strtolower($mac)))
+			return true;
 
-	$cpumaclck = lock("captiveblockedmacs{$cpzone}", LOCK_EX);
-	@file_put_contents("{$g['vardb_path']}/captiveportal_blockedmacs_{$cpzone}.db", implode("\n", $blockedmacs));
-	unlock($cpumaclck);
-}
+	return false;
 
-function captiveportal_zap_blockedmacs_db() {
-	global $g, $cpzone;
-
-	@unlink_if_exists("{$g['vardb_path']}/captiveportal_blockedmacs_{$cpzone}.db");
 }
 
 function captiveportal_send_server_accounting($off = false) {

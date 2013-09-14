@@ -105,9 +105,6 @@ if ($macfilter || $passthrumac) {
 	unset($tmpres);
 }
 
-/* Get blocked macs */
-$blockedmacs = array_flip(captiveportal_read_blockedmacs_db());
-
 /* find out if we need RADIUS + RADIUSMAC or not */
 if (file_exists("{$g['vardb_path']}/captiveportal_radius_{$cpzone}.db")) {
 	$radius_enable = TRUE;
@@ -139,7 +136,7 @@ setTimeout('window.close();',5000) ;
 EOD;
 	captiveportal_disconnect_client($_POST['logout_id']);
 
-} else if ($macfilter && $clientmac && isset($blockedmacs[$clientmac])) {
+} else if ($macfilter && $clientmac && captiveportal_blocked_mac($clientmac)) {
 	captiveportal_logportalauth($clientmac,$clientmac,$clientip,"Blocked MAC address");
 	if (!empty($cpcfg['blockedmacsurl']))
 		portal_reply_page($cpcfg['blockedmacsurl'], "redir");

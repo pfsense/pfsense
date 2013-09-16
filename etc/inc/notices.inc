@@ -310,6 +310,7 @@ function send_smtp_message($message, $subject = "(no subject)") {
 
 	$smtp->direct_delivery = 0;
 	$smtp->ssl = ($config['notifications']['smtp']['ssl'] == "checked") ? 1 : 0;
+	$smtp->tls = ($config['notifications']['smtp']['tls'] == "checked") ? 1 : 0;
 	$smtp->debug = 0;
 	$smtp->html_debug = 0;
 	$smtp->localhost=$config['system']['hostname'].".".$config['system']['domain'];

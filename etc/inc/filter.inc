@@ -1553,6 +1553,8 @@ function filter_nat_rules_generate() {
 		/* advanced outbound rules */
 		if(is_array($config['nat']['advancedoutbound']['rule'])) {
 			foreach ($config['nat']['advancedoutbound']['rule'] as $obent) {
+				if (isset($obent['disabled']))
+					continue;
 				update_filter_reload_status(sprintf(gettext("Creating advanced outbound rule %s"), $obent['descr']));
 				$src = alias_expand($obent['source']['network']);
 				if(!$src)

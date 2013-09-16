@@ -100,6 +100,7 @@ if (isset($id) && $a_out[$id]) {
 	}
 	$pconfig['descr'] = $a_out[$id]['descr'];
 	$pconfig['nonat'] = $a_out[$id]['nonat'];
+	$pconfig['disabled'] = isset($a_out[$id]['disabled']);
 	$pconfig['staticnatport'] = isset($a_out[$id]['staticnatport']);
 	$pconfig['nosync'] = isset($a_out[$id]['nosync']);
 } else {
@@ -260,6 +261,12 @@ if ($_POST) {
 			$natent['staticnatport'] = true;
 		} else {
 			unset($natent['staticnatport']);
+		}
+		
+		if(isset($_POST['disabled'])) {
+			$natent['disabled'] = true;
+		} else {
+			unset($natent['disabled']);
 		}
 
 		/* if user has selected not nat, set it here */
@@ -435,6 +442,14 @@ function poolopts_change() {
 		// Allow extending of the firewall edit page and include custom input validation 
 		pfSense_handle_custom_code("/usr/local/pkg/firewall_rules/htmlphpearly");
 ?>
+			<tr>
+				<td width="22%" valign="top" class="vncellreq"><?=gettext("Disabled");?></td>
+				<td width="78%" class="vtable">
+					<input name="disabled" type="checkbox" id="disabled" value="yes" <?php if ($pconfig['disabled']) echo "checked=\"checked\""; ?> />
+					<strong><?=gettext("Disable this rule");?></strong><br />
+					<span class="vexpl"><?=gettext("Set this option to disable this rule without removing it from the list.");?></span>
+				</td>
+			</tr>
 	        <tr>
                   <td width="22%" valign="top" class="vncell"><?=gettext("Do not NAT");?></td>
                   <td width="78%" class="vtable">

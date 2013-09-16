@@ -249,6 +249,17 @@ if (isset($_POST['del_x'])) {
                 exit;
         }
 
+} else if ($_GET['act'] == "toggle") {
+	if ($a_out[$_GET['id']]) {
+		if(isset($a_out[$_GET['id']]['disabled']))
+			unset($a_out[$_GET['id']]['disabled']);
+		else
+			$a_out[$_GET['id']]['disabled'] = true;
+		if (write_config("Firewall: NAT: Outbound, enable/disable NAT rule"))
+			mark_subsystem_dirty('natconf');
+		header("Location: firewall_nat_out.php");
+		exit;
+	}
 } else {
         /* yuck - IE won't send value attributes for image buttons, while Mozilla does - so we use .x/.y to find move button clicks instead... */
         unset($movebtn);
@@ -376,7 +387,19 @@ include("head.inc");
               <?php $nnats = $i = 0; foreach ($a_out as $natent): ?>
                 <tr valign="top" id="fr<?=$nnats;?>">
                   <td class="listt"><input type="checkbox" id="frc<?=$nnats;?>" name="rule[]" value="<?=$i;?>" onclick="fr_bgcolor('<?=$nnats;?>')" style="margin: 0; padding: 0; width: 15px; height: 15px;" /></td>
-                  <td class="listt" align="center"></td>
+				  <td class="listt" align="center">
+					<?php
+					$iconfn = "pass";
+					if (isset($natent['disabled'])) {
+						$textss = "<span class=\"gray\">";
+						$textse = "</span>";
+						$iconfn .= "_d";
+					} else {
+						$textss = $textse = "";
+					}
+					?>
+					<a href="?act=toggle&amp;id=<?=$i;?>"><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_<?=$iconfn;?>.gif" width="11" height="11" border="0" title="<?=gettext("click to toggle enabled/disabled status");?>" alt="icon" /></a>
+				  </td>
                   <td class="listlr" onclick="fr_toggle(<?=$nnats;?>)" id="frd<?=$nnats;?>" ondblclick="document.location='firewall_nat_out_edit.php?id=<?=$nnats;?>';">
                     <?php echo htmlspecialchars(convert_friendly_interface_to_friendly_descr($natent['interface'])); ?>
                                         &nbsp;

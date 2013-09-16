@@ -20,6 +20,7 @@ class smtp_class
 	var $host_name="";
 	var $host_port=25;
 	var $ssl=0;
+	var $tls=0;
 	var $localhost="";
 	var $timeout=0;
 	var $data_timeout=0;
@@ -213,7 +214,7 @@ class smtp_class
 
 	Function ConnectToHost($domain, $port, $resolve_message)
 	{
-		if($this->ssl)
+		if($this->ssl || $this->tls)
 		{
 			$version=explode(".",function_exists("phpversion") ? phpversion() : "3.0.7");
 			$php_version=intval($version[0])*1000000+intval($version[1])*1000+intval($version[2]);
@@ -461,62 +462,20 @@ class smtp_class
 			socket_set_timeout($this->connection,$timeout,0);
 		if($this->debug)
 			$this->OutputDebug(sprintf(gettext("Connected to SMTP server \"%s\"."), $domain));
-		if(!strcmp($localhost=$this->localhost,"")
-		&& !strcmp($localhost=getenv("SERVER_NAME"),"")
-		&& !strcmp($localhost=getenv("HOST"),"")
-		&& !strcmp($localhost=getenv("HOSTNAME"),"")
-		&& !strcmp($localhost=exec("/bin/hostname"),""))
-			$localhost="localhost";
-		$success=0;
 		if($this->VerifyResultLines("220",$responses)>0)
 		{
-			$fallback=1;
-			if($this->esmtp
-			|| strlen($this->user))
-			{
-				if($this->PutLine("EHLO $localhost"))
-				{
-					if(($success_code=$this->VerifyResultLines("250",$responses))>0)
-					{
-						$this->esmtp_host=$this->Tokenize($responses[0]," ");
-						for($response=1;$response<count($responses);$response++)
-						{
-							$extension=strtoupper($this->Tokenize($responses[$response]," "));
-							$this->esmtp_extensions[$extension]=$this->Tokenize("");
-						}
-						$success=1;
-						$fallback=0;
-					}
-					else
-					{
-						if($success_code==0)
-						{
-							$code=$this->Tokenize($this->error," -");
-							switch($code)
-							{
-								case "421":
-									$fallback=0;
-									break;
-							}
-						}
-					}
-				}
-				else
-					$fallback=0;
-			}
-			if($fallback)
-			{
-				if($this->PutLine("HELO $localhost")
-				&& $this->VerifyResultLines("250",$responses)>0)
-					$success=1;
-			}
+			// Send our HELLO
+			$success = $this->hello($this->hostname());
+			if ($this->tls)
+				$success = $this->startTLS();
+
 			if($success
 			&& strlen($this->user)
 			&& strlen($this->pop3_auth_host)==0)
 			{
 				if(!IsSet($this->esmtp_extensions["AUTH"]))
 				{
-					$this->error=gettext("server does not require authentication");
+					$this->error = gettext("server does not require authentication");
 					$success=0;
 				}
 				else
@@ -597,6 +556,64 @@ class smtp_class
 			$this->connection=0;
 		}
 		return($success);
+	}
+
+	Function hostname() {
+		if(!strcmp($localhost=$this->localhost,"")
+		&& !strcmp($localhost=getenv("SERVER_NAME"),"")
+		&& !strcmp($localhost=getenv("HOST"),"")
+		&& !strcmp($localhost=getenv("HOSTNAME"),"")
+		&& !strcmp($localhost=exec("/bin/hostname"),""))
+			$localhost="localhost";
+
+		return $localhost;
+	}
+
+	Function hello()
+	{
+		$success = 0;
+		$fallback = 1;
+		if ($this->esmtp || strlen($this->user)) {
+			if ($this->PutLine("EHLO ".$this->hostname())) {
+				if (($success_code = $this->VerifyResultLines("250",$responses)) > 0) {
+					$this->esmtp_host = $this->Tokenize($responses[0]," ");
+					for($response=1;$response<count($responses);$response++) {
+						$extension = strtoupper($this->Tokenize($responses[$response]," "));
+						$this->esmtp_extensions[$extension]=$this->Tokenize("");
+					}
+					$success = 1;
+					$fallback = 0;
+				} else {
+					if ($success_code == 0) {
+						$code = $this->Tokenize($this->error," -");
+						switch($code) {
+							case "421":
+								$fallback=0;
+								break;
+						}
+					}
+				}
+			} else
+				$fallback=0;
+		}
+
+		if ($fallback) {
+			if ($this->PutLine("HELO $localhost") && $this->VerifyResultLines("250",$responses)>0)
+				$success=1;
+		}
+		return $success;
+	}
+
+	Function startTLS() {
+		if ($this->PutLine("STARTTLS") && $this->VerifyResultLines("220",$responses)>0) {
+			if (!stream_socket_enable_crypto($this->connection,true,STREAM_CRYPTO_METHOD_TLS_CLIENT)) {
+				return false;
+			} else {
+				// Resend HELO since session has been reset
+				return $this->hello($this->hostname);
+			}
+		} else
+			return false;
 	}
 
 	Function MailFrom($sender)

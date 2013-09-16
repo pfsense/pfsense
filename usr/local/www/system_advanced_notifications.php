@@ -66,6 +66,8 @@ if($config['notifications']['smtp']['port'])
 	$pconfig['smtpport'] = $config['notifications']['smtp']['port'];
 if($config['notifications']['smtp']['ssl'])
 	$pconfig['smtpssl'] = $config['notifications']['smtp']['ssl'];
+if($config['notifications']['smtp']['tls'])
+	$pconfig['smtptls'] = $config['notifications']['smtp']['tls'];
 if($config['notifications']['smtp']['notifyemailaddress']) 
 	$pconfig['smtpnotifyemailaddress'] = $config['notifications']['smtp']['notifyemailaddress'];
 if($config['notifications']['smtp']['username']) 
@@ -113,6 +115,7 @@ if ($_POST) {
 		$config['notifications']['smtp']['ipaddress'] = $_POST['smtpipaddress'];
 		$config['notifications']['smtp']['port'] = $_POST['smtpport'];
 		$config['notifications']['smtp']['ssl'] = isset($_POST['smtpssl']) ? 'checked' : 'unchecked';
+		$config['notifications']['smtp']['tls'] = isset($_POST['smtptls']) ? (isset($_POST['smtpssl']) ? 'unchecked' : 'checked') : 'unchecked';
 		$config['notifications']['smtp']['notifyemailaddress'] = $_POST['smtpnotifyemailaddress'];
 		$config['notifications']['smtp']['username'] = $_POST['smtpusername'];
 		$config['notifications']['smtp']['password'] = $_POST['smtppassword'];
@@ -258,9 +261,15 @@ include("head.inc");
 						<tr>
 							<td width="22%" valign="top" class="vncell"><?=gettext("SMTP Port of E-Mail server"); ?></td>
 							<td width="78%" class="vtable">
-								<input name='smtpport' value='<?php echo $pconfig['smtpport']; ?>' />
-								<input type='checkbox' name='smtpssl' <?php echo $pconfig['smtpssl']; ?> />Enable SSL/TLS Authentication<br/>
-								<?=gettext("This is the port of the SMTP E-Mail server, typically 25, 587 (submission) or 465 (smtps, tick ssl/tls checkbox)"); ?>
+								<input name='smtpport' value='<?php echo $pconfig['smtpport']; ?>' /><br/>
+								<?=gettext("This is the port of the SMTP E-Mail server, typically 25, 587 (submission) or 465 (smtps)"); ?>
+							</td>
+						</tr>
+						<tr>
+							<td width="22%" valign="top" class="vncell"><?=gettext("Secure SMTP Connection"); ?></td>
+							<td width="78%" class="vtable">
+								<input type='checkbox' id='smtpssl' name='smtpssl' <?php echo $pconfig['smtpssl']; ?> />Enable SMTP over SSL/TLS<br/>
+								<input type='checkbox' id='smtptls' name='smtptls' <?php echo $pconfig['smtptls']; ?> />Enable STARTTLS<br/>
 							</td>
 						</tr>
 						<tr>
@@ -333,6 +342,21 @@ include("head.inc");
 			</td>
 		</tr>
 	</table>
+<script type="text/javascript">
+	jQuery(document).ready(function() {
+		if (jQuery('#smtpssl').is(':checked')) {
+			jQuery('#smtptls').prop('disabled', true);
+		} else if  (jQuery('#smtptls').is(':checked')) {
+			jQuery('#smtpssl').prop('disabled', true);
+		}
+	});
+	jQuery('#smtpssl').change( function() {
+		jQuery('#smtptls').prop('disabled', this.checked);
+	});
+	jQuery('#smtptls').change( function() {
+		jQuery('#smtpssl').prop('disabled', this.checked);
+	});
+</script>
 <?php include("fend.inc"); ?>
 </body>
 </html>

@@ -2046,6 +2046,8 @@ EOD;
 				// 25 Days
 				$maxCacheAgeSecs = 25 * 24 * 60 * 60;
 				$need_update = false;
+
+				conf_mount_rw();
 				/* Update IPv4 if we have it. */
 				if (is_ipaddrv4($wanip)) {
 					if (($wanip != $cachedipv4) || (($currentTime - $cacheTimev4) > $maxCacheAgeSecs) || $forced) {
@@ -2078,6 +2080,7 @@ EOD;
 					}
 				} else
 					@unlink("{$cacheFile}.ipv6");
+				conf_mount_ro();
 
 				$upinst .= "\n";	/* mind that trailing newline! */
 

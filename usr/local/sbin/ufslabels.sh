@@ -53,9 +53,10 @@ find_fs_device(){
 }
 
 FSTAB=/etc/fstab
+NEED_CHANGES=false
 cp ${FSTAB} ${FSTAB}.tmp
 
-ALL_FILESYSTEMS=`/bin/cat /etc/fstab | /usr/bin/grep ufs | /usr/bin/awk '{print $2;}'`
+ALL_FILESYSTEMS=`/bin/cat /etc/fstab | /usr/bin/awk '/ufs/ && !(/dev\/mirror\// || /dev\/ufsid\// || /dev\/label\// || /dev\/geom\//) {print $2;}'`
 
 for FS in ${ALL_FILESYSTEMS}
 do
@@ -67,6 +68,7 @@ do
 			echo "Invalid UFS ID for FS ${FS} ($UFSID), skipping"
 		else
 			/usr/bin/sed -i'' -e "s/${DEV}/ufsid\/${UFSID}/g" ${FSTAB}.tmp
+			NEED_CHANGES=true
 		fi
 	else
 		echo "Unable to find device for ${FS}"
@@ -75,12 +77,25 @@ do
 	echo "FS: ${FS} on device ${DEV} with ufsid ${UFSID}"
 done
 
-find_fs_device swap
-SWAPDEV=${DEV}
-echo "FS: Swap on device ${SWAPDEV}"
+ALL_SWAPFS=`/bin/cat /etc/fstab | /usr/bin/awk '/swap/ && !(/dev\/mirror\// || /dev\/ufsid\// || /dev\/label\// || /dev\/geom\//) {print $1;}'`
+SWAPNUM=0
+for SFS in ${ALL_SWAPFS}
+do
+	DEV=${SFS##/dev/}
+	if [ "${DEV}" != "" ]; then
+		SWAPDEV=${DEV}
+		echo "FS: Swap slice ${SWAPNUM} on device ${SWAPDEV}"
+		if [ "${SWAPDEV}" != "" ]; then
+			/usr/bin/sed -i'' -e "s/${SWAPDEV}/label\/swap${SWAPNUM}/g" ${FSTAB}.tmp
+			NEED_CHANGES=true
+		fi
+		SWAPNUM=`expr ${SWAPNUM} + 1`
+	fi
+done
 
-if [ "${SWAPDEV}" != "" ]; then
-	/usr/bin/sed -i'' -e "s/${SWAPDEV}/label\/swap/g" ${FSTAB}.tmp
+if [ "${NEED_CHANGES}" = "false" ]; then
+	echo Nothing to do, all filesystems and swap already use some form of device-independent labels
+	exit
 fi
 
 echo "===================="
@@ -101,8 +116,20 @@ fi
 if [ "${COMMIT}" = "y" ] || [ "${COMMIT}" = "Y" ]; then
 	echo "Disabling swap to apply label"
 	/sbin/swapoff /dev/${SWAPDEV}
+
 	echo "Applying label to swap parition"
-	/sbin/glabel label swap /dev/${SWAPDEV}
+	SWAPNUM=0
+	for SFS in ${ALL_SWAPFS}
+	do
+		find_fs_device ${SFS}
+		if [ "${DEV}" != "" ]; then
+			SWAPDEV=${DEV}
+			if [ "${SWAPDEV}" != "" ]; then
+				/sbin/glabel label swap${SWAPNUM} /dev/${SWAPDEV}
+			fi
+			SWAPNUM=`expr ${SWAPNUM} + 1`
+		fi
+	done
 
 	echo "Activating new fstab"
 	/bin/mv -f ${FSTAB} ${FSTAB}.old

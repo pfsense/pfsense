@@ -272,6 +272,7 @@ switch($wancfg['ipaddrv6']) {
 		if(!isset($wancfg['dhcp6-ia-pd-len']))
 			$wancfg['dhcp6-ia-pd-len'] = "none";
 		$pconfig['dhcp6-ia-pd-len'] = $wancfg['dhcp6-ia-pd-len'];
+		$pconfig['dhcp6-ia-pd-send-hint'] = isset($wancfg['dhcp6-ia-pd-send-hint']);
 		$pconfig['type6'] = "dhcp6";
 		$pconfig['dhcp6prefixonly'] = isset($wancfg['dhcp6prefixonly']);
 		$pconfig['dhcp6usev4iface'] = isset($wancfg['dhcp6usev4iface']);
@@ -802,6 +803,7 @@ if ($_POST['apply']) {
 		unset($wancfg['dhcprejectfrom']);
 		unset($wancfg['dhcp6-duid']);
 		unset($wancfg['dhcp6-ia-pd-len']);
+		unset($wancfg['dhcp6-ia-pd-send-hint']);
 		unset($wancfg['dhcp6prefixonly']);
 		unset($wancfg['dhcp6usev4iface']);
 		unset($wancfg['track6-interface']);
@@ -1013,6 +1015,8 @@ if ($_POST['apply']) {
 				$wancfg['ipaddrv6'] = "dhcp6";
 				$wancfg['dhcp6-duid'] = $_POST['dhcp6-duid'];
 				$wancfg['dhcp6-ia-pd-len'] = $_POST['dhcp6-ia-pd-len'];
+				if($_POST['dhcp6-ia-pd-send-hint'] == "yes")
+					$wancfg['dhcp6-ia-pd-send-hint'] = true;
 				if($_POST['dhcp6prefixonly'] == "yes")
 					$wancfg['dhcp6prefixonly'] = true;
 				if($_POST['dhcp6usev4iface'] == "yes")
@@ -2149,6 +2153,13 @@ $types6 = array("none" => gettext("None"), "staticv6" => gettext("Static IPv6"),
 											<?=gettext("The value in this field is the delegated prefix length provided by the DHCPv6 server. Normally specified by the ISP."); ?>
 										</td>
 									</tr>
+									<tr style='display:none' name="basicdhcp6_show_dhcp6_prefix_send_hint" id="basicdhcp6_show_dhcp6_prefix_send_hint">
+										<td width="22%" valign="top" class="vncell"><?=gettext("Send IPv6 prefix hint"); ?></td>
+										<td width="78%" class="vtable">
+											<input name="dhcp6-ia-pd-send-hint" type="checkbox" id="dhcp6-ia-pd-send-hint" value="yes" <?php if ($pconfig['dhcp6-ia-pd-send-hint'] == true) echo "checked=\"checked\""; ?> />
+											<?=gettext("Send an IPv6 prefix hint to indicate the desired prefix size for delegation"); ?>
+										</td>
+									</tr>
 
 									<tr style='display:none' name="show_adv_dhcp6_interface_statement" id="show_adv_dhcp6_interface_statement">
 										<td width="22%" valign="top" class="vncell">
@@ -2304,6 +2315,7 @@ $types6 = array("none" => gettext("None"), "staticv6" => gettext("Static IPv6"),
 
 											document.getElementById("basicdhcp6_use_pppoeinterface").style.display = basic;
 											document.getElementById("basicdhcp6_show_dhcp6_prefix_delegation_size").style.display = basic;
+											document.getElementById("basicdhcp6_show_dhcp6_prefix_send_hint").style.display = basic;
 											document.getElementById("basicdhcp6_show_dhcp6_prefix_only").style.display = basic;
 
 											document.getElementById("show_adv_dhcp6_interface_statement").style.display = advanced;

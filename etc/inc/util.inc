@@ -285,11 +285,24 @@ function refcount_unreference($reference) {
 
 function refcount_read($reference) {
 	/* This function just reads the current value of the refcount for information. */
-	/* There is no need for locking. */
+	/* There is no need for locking on ordinary reads. */
 	$shmid = @shmop_open($reference, "a", 0, 0);
 	if (!$shmid) {
-		log_error(gettext("Could not open shared memory for read {$reference}"));
-		return -1;
+		/* The shared memory section does not exist yet. */
+		/* Take out a lock across the shared memory creation and initialisation to make it atomic. */
+		$shm_lck = lock("shm{$reference}", LOCK_EX);
+		try {
+			refcount_init($reference);
+			unlock($shm_lck);
+		} catch (Exception $e) {
+			log_error($e->getMessage());
+			unlock($shm_lck);
+		}
+		$shmid = @shmop_open($reference, "a", 0, 0);
+		if (!$shmid) {
+			log_error(gettext("Could not open shared memory for read {$reference}"));
+			return -1;
+		}
 	}
 	$shm_data = @shmop_read($shmid, 0, 10);
 	@shmop_close($shmid);

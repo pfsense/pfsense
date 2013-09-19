@@ -120,8 +120,8 @@ if [ "${PFSENSETYPE}" = "nanobsd" ]; then
 else
 	MTREECHKDIR=/
 fi
-if [ -f ${MTREECHKDIR}etc/pfSense.mtree ]; then
-	/usr/sbin/mtree -U -e -q -f ${MTREECHKDIR}etc/pfSense.mtree -p ${MTREECHKDIR} > /conf/mtree.log;
+if [ -f ${MTREECHKDIR}etc/installed_filesystem.mtree ]; then
+	/usr/sbin/mtree -U -e -q -f ${MTREECHKDIR}etc/installed_filesystem.mtree -p ${MTREECHKDIR} > /conf/mtree.log;
 fi;
 
 # Make sure to preserve existing time zone

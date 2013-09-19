@@ -115,6 +115,11 @@ if ($_POST['setrw']) {
 		$config['system']['nanobsd_force_rw'] = true;
 	} else {
 		unset($config['system']['nanobsd_force_rw']);
+		if (refcount_read(1000) == 0) {
+			/* The refcount has not been maintained while in force RW mode. */
+			/* Increment to indicate the file system is currently RW. */
+			refcount_reference(1000);
+		}
 	}
 
 	write_config("Changed Permanent Read/Write Setting");

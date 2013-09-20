@@ -976,21 +976,24 @@ function interface_gateway_group_member($interface) {
 		return false;
 
 	$gateways_arr = return_gateways_array(false, true);
+	$members = array();
 	foreach($groups as $group) {
 		if(is_array($group['item'])) {
 			foreach($group['item'] as $item) {
 				$elements = explode("|", $item);
 				$gwname = $elements[0];
-				if ($interface == $gateways_arr[$gwname]['interface']) {
+				if ($interface == $gateways_arr[$gwname]['friendlyiface']) {
 					unset($gateways_arr);
-					return true;
+					$members[] = $group['name'];
 				}
 			}
 		}
 	}
 	unset($gateways_arr);
-
-	return false;
+	if (empty($members))
+		return false;
+	else
+		return $members;
 }
 
 function gateway_is_gwgroup_member($name) {
@@ -1012,7 +1015,9 @@ function gateway_is_gwgroup_member($name) {
 			}
 		}
 	}
-
-	return $members;
+	if (empty($members))
+		return false;
+	else
+		return $members;
 }
 ?>

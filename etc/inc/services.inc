@@ -1975,16 +1975,26 @@ function services_dnsupdate_process($int = "", $updatehost = "", $forced = false
 	/* Dynamic DNS updating active? */
 	if (is_array($config['dnsupdates']['dnsupdate'])) {
 		$notify_text = "";
+		$gwgroups = interface_gateway_group_member($int);
 		foreach ($config['dnsupdates']['dnsupdate'] as $i => $dnsupdate) {
 			if (!isset($dnsupdate['enable']))
 				continue;
-			if (!empty($int) && $int != $dnsupdate['interface'])
+			if (!empty($int) && $int != $dnsupdate['interface'] && !gwgroups)
 				continue;
 			if (!empty($updatehost) && ($updatehost != $dnsupdate['host']))
+				continue;
+			if ($gwgroups && !empty($int) && !in_array($dnsupdate['interface'], $gwgroups))
 				continue;
 
 			/* determine interface name */
 			$if = get_real_interface($dnsupdate['interface']);
+			/* if the real interface is not found then this may be a gateway group. */
+			if ($if == "") {
+				$a_groups = return_gateway_groups_array();
+				if (is_array($a_groups[$dnsupdate['interface']])) {
+					$if = $dnsupdate['interface'];
+				}
+			}
 			$wanip = get_interface_ip($dnsupdate['interface']);
 			$wanipv6 = get_interface_ipv6($dnsupdate['interface']);
 

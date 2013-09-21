@@ -45,6 +45,7 @@
 ##|-PRIV
 
 require("guiconfig.inc");
+require_once("filter.inc");
 
 if(!$g['services_dhcp_server_enable']) {
 	Header("Location: /");
@@ -147,6 +148,10 @@ if(is_array($dhcrelaycfg)) {
 if ($_POST) {
 
 	unset($input_errors);
+
+	$old_dhcpdv6_enable = ($pconfig['enable'] == true);
+	$new_dhcpdv6_enable = ($_POST['enable'] ? true : false);
+	$dhcpdv6_enable_changed = ($old_dhcpdv6_enable != $new_dhcpdv6_enable);
 
 	$pconfig = $_POST;
 
@@ -334,7 +339,9 @@ if ($_POST) {
 			if ($retvaldhcp == 0)
 				clear_subsystem_dirty('staticmaps');
 		}
-		if($retvaldhcp == 1 || $retvaldns == 1)
+		if ($dhcpdv6_enable_changed)
+			$retvalfc = filter_configure();
+		if($retvaldhcp == 1 || $retvaldns == 1 || $retvalfc == 1)
 			$retval = 1;
 		$savemsg = get_std_save_message($retval);
 	}

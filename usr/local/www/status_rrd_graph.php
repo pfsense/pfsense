@@ -453,6 +453,9 @@ function get_dates($curperiod, $graph) {
 				<tr>
                                         <td colspan="2" class="list">
 					<?=gettext("Graphs:");?>
+					<?php if (!empty($curzone)): ?>
+					<input type="hidden" name="zone" value="<?= htmlspecialchars($curzone) ?>">
+					<?php endif; ?>
 					<select name="option" class="formselect" style="z-index: -10;" onchange="document.form1.submit()">
 					<?php
 

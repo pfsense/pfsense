@@ -55,6 +55,7 @@ if(empty($type))
 
 /* echo the rrd required syntax */
 echo "N:";
+$result = "NaN";
 
 if ($type == "loggedin") {
 
@@ -101,7 +102,7 @@ if ($type == "loggedin") {
 	else {
 		$result = $current_user_count;
 	}
-} else
+} elseif ($type == "concurrent")
 	$result = $no_users;
 
 echo "$result";

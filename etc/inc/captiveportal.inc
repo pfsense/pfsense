@@ -1584,6 +1584,7 @@ function getVolume($ip) {
  *
  */
 
+if (!function_exists('getNasIP')) {
 function getNasIP()
 {
 	global $config, $cpzone;
@@ -1601,6 +1602,7 @@ function getNasIP()
 		$nasIp = "0.0.0.0";
 
 	return $nasIp;
+}
 }
 
 function portal_ip_from_client_ip($cliip) {

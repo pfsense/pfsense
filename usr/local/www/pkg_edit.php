@@ -992,7 +992,7 @@ function display_row($trc, $value, $fieldname, $type, $rowhelper, $size) {
 			$multiple = '';
 			if (isset($rowhelper['multiple'])) {
 				$fieldname .= '[]';
-				$multiple = 'multiple="multiple';
+				$multiple = "multiple=\"multiple\"";
 			}
 			echo "<select style='height:22px;' id='{$fieldname}{$trc}' name='{$fieldname}{$trc}' {$size} {$multiple}>\n";
 			$ifaces = get_configured_interface_with_descr();
@@ -1006,7 +1006,7 @@ function display_row($trc, $value, $fieldname, $type, $rowhelper, $size) {
 			$ifaces["lo0"] = "loopback";
 			echo "<option><name></name><value></value></option>/n";
 			foreach($ifaces as $ifname => $iface) {
-				$text .="<option value=\\\"$ifname\\\">$iface</option>";
+				$text .="<option value=\"{$ifname}\">$iface</option>";
 				echo "<option value=\"{$ifname}\" ".(in_array($ifname, $values) ? 'selected="selected"' : '').">{$iface}</option>\n";
 				}
 			echo "</select>\n";

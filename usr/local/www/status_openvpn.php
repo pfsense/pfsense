@@ -280,11 +280,11 @@ include("head.inc"); ?>
 		</tr>
 
 <?php foreach ($sk_servers as $sk_server): ?>
-		<tr name='<?php echo "r:{$client['port']}:{$conn['remote_host']}"; ?>'>
+		<tr name='<?php echo "r:{$sk_server['port']}:{$sk_server['vpnid']}"; ?>'>
 			<td class="listlr">
 				<?=$sk_server['name'];?>
 			</td>
-			<td class="listlr">
+			<td class="listr">
 				<?=$sk_server['status'];?>
 			</td>
 			<td class="listr">
@@ -341,11 +341,11 @@ include("head.inc"); ?>
 		</tr>
 
 <?php foreach ($clients as $client): ?>
-		<tr name='<?php echo "r:{$client['port']}:{$conn['remote_host']}"; ?>'>
+		<tr name='<?php echo "r:{$client['port']}:{$client['vpnid']}"; ?>'>
 			<td class="listlr">
 				<?=$client['name'];?>
 			</td>
-			<td class="listlr">
+			<td class="listr">
 				<?=$client['status'];?>
 			</td>
 			<td class="listr">

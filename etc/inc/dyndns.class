@@ -28,6 +28,7 @@
 	 *    - Custom DDNS IPv6 (any URL)
 	 *    - CloudFlare (www.cloudflare.com)
  	 *    - Eurodns (eurodns.com)
+ 	 *    - GratisDNS (gratisdns.dk)
 	 * +----------------------------------------------------+
 	 *  Requirements:
 	 *    - PHP version 4.0.2 or higher with the CURL Library and the PCRE Library
@@ -66,7 +67,8 @@
 	 *  Amazon Route 53 - Last tested: 01 April 2012
 	 *  DNS-O-Matic	   - Last Tested: 9 September 2010
 	 *  CloudFlare     - Last Tested: 30 May 2013
-  	 *  Eurodns	   		- Last Tested : 27 June 2013
+  	 *  Eurodns	   - Last Tested: 27 June 2013
+  	 *  GratisDNS      - Last Tested: 15 August 2012
 	 * +====================================================+
 	 *
 	 * @author 	E.Kristensen
@@ -233,6 +235,7 @@
 				case 'route53':
 				case 'cloudflare':
 				case 'eurodns':
+				case 'gratisdns':
 					$this->_update();
 					if($this->_dnsDummyUpdateDone == true) {
 						// If a dummy update was needed, then sleep a while and do the update again to put the proper address back.
@@ -627,7 +630,16 @@
 					if($this->_dnsPort)
 						$port = ":" . $this->_dnsPort;
 					curl_setopt($ch, CURLOPT_URL, $server .$port . '?hostname=' . $this->_dnsHost . '&myip=' . $this->_dnsIP);
-					break;	
+					break;
+				case 'gratisdns':
+					$needsIP = FALSE;
+					if ($this->_dnsVerboseLog)
+						log_error("GratisDNS.dk ({$this->_dnsHost}): DNS update() starting.");
+					$server = "https://ssl.gratisdns.dk/ddns.phtml";
+					curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, FALSE);
+					list($hostname, $domain) = explode(".", $this->_dnsHost, 2);
+					curl_setopt($ch, CURLOPT_URL, $server . '?u=' . $this->_dnsUser . '&p=' . $this->_dnsPass . '&h=' . $this->_dnsHost . '&d=' . $domain);
+					break;
 				default:
 					break;
 			}
@@ -1099,6 +1111,24 @@
 						$status = "phpDynDNS: (Unknown Response)";
 						log_error("phpDynDNS: PAYLOAD: {$data}");
 						$this->_debug($data);
+					}
+					break;
+				case 'gratisdns':
+					if (preg_match('/Forkerte værdier/i', $data)) {
+					        $status = "phpDynDNS: (Error) Wrong values - Update could not be completed.";
+					} else if (preg_match('/Bruger login: Bruger eksistere ikke/i', $data)) {
+					        $status = "phpDynDNS: (Error) Unknown username - User does not exist.";
+					} else if (preg_match('/Bruger login: 1Fejl i kodeord/i', $data)) {
+					        $status = "phpDynDNS: (Error) Wrong password - Remember password is case sensitive.";
+					} else if (preg_match('/Domæne kan IKKE administreres af bruger/i', $data)) {
+					        $status = "phpDynDNS: (Error) User unable to administer the selected domain.";
+					} else if (preg_match('/OK/i', $data)) {
+					        $status = "phpDynDNS: (Success) IP Address Updated Successfully!";
+					        $successful_update = true;
+					} else {
+					        $status = "phpDynDNS: (Unknown Response)";
+					        log_error("phpDynDNS: PAYLOAD: {$data}");
+					        $this->_debug($data);
 					}
 					break;
 			}

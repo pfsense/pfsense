@@ -2046,6 +2046,9 @@ class hfsc_queue extends priq_queue {
 		$cflink['ecn'] = trim($this->GetEcn());
 		if (empty($cflink['ecn']))
 			unset($cflink['ecn']);
+		$cflink['codel'] = trim($this->GetCodel());
+		if (empty($cflink['codel']))
+			unset($cflink['codel']);
 		if ($this->GetLinkshare() <> "") {
 			if ($this->GetL_m1() <> "") {
 				$cflink['linkshare1'] = $this->GetL_m1();
@@ -2465,6 +2468,9 @@ class cbq_queue extends priq_queue {
 		$cflink['ecn'] = trim($this->GetEcn());
 		if (empty($cflink['ecn']))
 			unset($cflink['ecn']);
+		$cflink['codel'] = trim($this->GetCodel());
+		if (empty($cflink['codel']))
+			unset($cflink['codel']);
 		$cflink['borrow'] = trim($this->GetBorrow());
 		if (empty($cflink['borrow']))
 			unset($cflink['borrow']);
@@ -2743,6 +2749,9 @@ class fairq_queue extends priq_queue {
 		$cflink['ecn'] = trim($this->GetEcn());
 		if (empty($cflink['ecn']))
 			unset($cflink['ecn']);
+		$cflink['codel'] = trim($this->GetCodel());
+		if (empty($cflink['codel']))
+			unset($cflink['codel']);
 		$cflink['buckets'] = trim($this->GetBuckets());
 		if (empty($cflink['buckets']))
 			unset($cflink['buckets']);

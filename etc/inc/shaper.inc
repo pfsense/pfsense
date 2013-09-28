@@ -1225,7 +1225,7 @@ class priq_queue {
 		$tmpvalue = $this->GetCodel();
 		if(!empty($tmpvalue)) 
 			$form .=  " checked=\"checked\"";
-		$form .= " /> <a target=\"_new\" href=\"http://http://www.bufferbloat.net/projects/codel/wiki\">" . gettext("Codel Active Queue") . "</a><br/>";
+		$form .= " /> <a target=\"_new\" href=\"http://www.bufferbloat.net/projects/codel/wiki\">" . gettext("Codel Active Queue") . "</a><br/>";
 		$form .= "<span class=\"vexpl\"><br/>" . gettext("Select options for this queue");
 		$form .= "</span></td></tr><tr>";
 		$form .= "<td width=\"22%\" class=\"vncellreq\">" . gettext("Description") . "</td>";

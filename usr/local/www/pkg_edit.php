@@ -719,7 +719,9 @@ if ($pkg['tabs'] <> "") {
 				if (is_array($config['interfaces']))
 					foreach ($config['interfaces'] as $iface_key=>$iface_value){
 						if (isset($iface_value['enable']) && ! preg_match("/$interface_regex/",$iface_key)){
-							$iface_description=(isset($pkga['showips']) ? strtoupper($iface_key)." address" : strtoupper($iface_key));
+							$iface_description=($iface_value['descr'] !="" ? strtoupper($iface_value['descr']) : strtoupper($iface_key));
+							if (isset($pkga['showips']))
+								$iface_description .= " address";
 							$ips[]=array('ip'=> $iface_key, 'description'=> $iface_description);
 							}
 					}

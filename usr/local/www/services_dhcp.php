@@ -94,6 +94,7 @@ function dhcp_clean_leases() {
 	fclose($fd);
 }
 
+
 $if = $_GET['if'];
 if (!empty($_POST['if']))
 	$if = $_POST['if'];
@@ -168,6 +169,9 @@ if (is_array($dhcpdconf)) {
 	} else {
 		// Options that exist only in pools
 		$pconfig['descr'] = $dhcpdconf['descr'];
+		$pconfig['disablepool'] = $dhcpdconf['disablepool'];
+		$pconfig['custom_subnet'] = $dhcpdconf['custom_subnet'];
+		$pconfig['custom_subnet_mask'] = $dhcpdconf['custom_subnet_mask'];
 	}
 
 	// Options that can be global or per-pool.
@@ -239,18 +243,23 @@ if ($_POST) {
 
 		if (($_POST['range_from'] && !is_ipaddrv4($_POST['range_from'])))
 			$input_errors[] = gettext("A valid range must be specified.");
+		if (($_POST['custom_subnet'] && !is_ipaddrv4($_POST['custom_subnet'])))
+			$input_errors[] = gettext("A valid custom subnet must be specified.");
+		if (($_POST['custom_subnet_mask'] && is_validmask_v4($_POST['custom_subnet_mask']) !=1))
+			$input_errors[] = gettext("A valid custom subnet maks must be specified.");
 		if (($_POST['range_to'] && !is_ipaddrv4($_POST['range_to'])))
 			$input_errors[] = gettext("A valid range must be specified.");
 		if (($_POST['gateway'] && !is_ipaddrv4($_POST['gateway'])))
 			$input_errors[] = gettext("A valid IP address must be specified for the gateway.");
 		if (($_POST['wins1'] && !is_ipaddrv4($_POST['wins1'])) || ($_POST['wins2'] && !is_ipaddrv4($_POST['wins2'])))
 			$input_errors[] = gettext("A valid IP address must be specified for the primary/secondary WINS servers.");
-		$parent_ip = get_interface_ip($_POST['if']);
+		$parent_ip = (is_ipaddrv4($_POST['custom_subnet'])?$_POST['custom_subnet'] :get_interface_ip($_POST['if']));
+		$parent_sn =(is_validmask_v4($_POST['custom_subnet_mask'])?mask2cidr_v4($_POST['custom_subnet_mask']):get_interface_subnet($_POST['if']));
 		if (is_ipaddrv4($parent_ip) && $_POST['gateway']) {
-			$parent_sn = get_interface_subnet($_POST['if']);
 			if(!ip_in_subnet($_POST['gateway'], gen_subnet($parent_ip, $parent_sn) . "/" . $parent_sn) && !ip_in_interface_alias_subnet($_POST['if'], $_POST['gateway']))
 				$input_errors[] = sprintf(gettext("The gateway address %s does not lie within the chosen interface's subnet."), $_POST['gateway']);
 		}
+
 		if (($_POST['dns1'] && !is_ipaddrv4($_POST['dns1'])) || ($_POST['dns2'] && !is_ipaddrv4($_POST['dns2'])))
 			$input_errors[] = gettext("A valid IP address must be specified for the primary/secondary DNS servers.");
 
@@ -295,7 +304,6 @@ if ($_POST) {
 			$input_errors[] = gettext("If you specify a mac allow list, it must contain only valid partial MAC addresses.");
 		if (!empty($_POST['mac_deny']) && !validate_partial_mac_list($_POST['mac_deny']))
 			$input_errors[] = gettext("If you specify a mac deny list, it must contain only valid partial MAC addresses.");
-
 		if (($_POST['ntp1'] && !is_ipaddrv4($_POST['ntp1'])) || ($_POST['ntp2'] && !is_ipaddrv4($_POST['ntp2'])))
 			$input_errors[] = gettext("A valid IP address must be specified for the primary/secondary NTP servers.");
 		if (($_POST['domain'] && !is_domain($_POST['domain'])))
@@ -304,12 +312,11 @@ if ($_POST) {
 			$input_errors[] = gettext("A valid IP address or hostname must be specified for the TFTP server.");
 		if (($_POST['nextserver'] && !is_ipaddrv4($_POST['nextserver'])))
 			$input_errors[] = gettext("A valid IP address must be specified for the network boot server.");
-
-		if(gen_subnet($ifcfgip, $ifcfgsn) == $_POST['range_from'])
+		if(gen_subnet($parent_ip, $parent_sn) == $_POST['range_from'])
 			$input_errors[] = gettext("You cannot use the network address in the starting subnet range.");
-		if(gen_subnet_max($ifcfgip, $ifcfgsn) == $_POST['range_to'])
+		if(gen_subnet_max($parent_ip, $parent_sn) == $_POST['range_to'])
 			$input_errors[] = gettext("You cannot use the broadcast address in the ending subnet range.");
-
+		
 		// Disallow a range that includes the virtualip
 		if (is_array($config['virtualip']['vip'])) {
 			foreach($config['virtualip']['vip'] as $vip) {
@@ -351,16 +358,15 @@ if ($_POST) {
 					$input_errors[] = gettext("IP address or host type must be an IP address or host name.");
 			}
 		}
-
 		if (!$input_errors) {
 			/* make sure the range lies within the current subnet */
-			$subnet_start = ip2ulong(long2ip32(ip2long($ifcfgip) & gen_subnet_mask_long($ifcfgsn)));
-			$subnet_end = ip2ulong(long2ip32(ip2long($ifcfgip) | (~gen_subnet_mask_long($ifcfgsn))));
+			$subnet_start = ip2ulong(long2ip32(ip2long($parent_ip) & gen_subnet_mask_long($parent_sn)));
+			$subnet_end = ip2ulong(long2ip32(ip2long($parent_ip) | (~gen_subnet_mask_long($parent_sn))));
 
-			if ((ip2ulong($_POST['range_from']) < $subnet_start) || (ip2ulong($_POST['range_from']) > $subnet_end) ||
-			    (ip2ulong($_POST['range_to']) < $subnet_start) || (ip2ulong($_POST['range_to']) > $subnet_end)) {
-				$input_errors[] = gettext("The specified range lies outside of the current subnet.");
-			}
+			$parent_ip2=long2ip32(ip2long($parent_ip) & gen_subnet_mask_long($parent_sn));
+			if (!is_innet_v4("{$parent_ip}/{$parent_sn}",$_POST['range_from']) ||
+				!is_innet_v4("{$parent_ip}/{$parent_sn}",$_POST['range_to']))
+				$input_errors[] = gettext("Ip range overlaps network range({$parent_ip2}/{$parent_sn}).");
 
 			if (ip2ulong($_POST['range_from']) > ip2ulong($_POST['range_to']))
 				$input_errors[] = gettext("The range is invalid (first element higher than second element).");
@@ -390,17 +396,6 @@ if ($_POST) {
 
 			$dynsubnet_start = ip2ulong($_POST['range_from']);
 			$dynsubnet_end = ip2ulong($_POST['range_to']);
-			if (is_array($a_maps)) {
-				foreach ($a_maps as $map) {
-					if (empty($map['ipaddr']))
-						continue;
-					if ((ip2ulong($map['ipaddr']) > $dynsubnet_start) &&
-						(ip2ulong($map['ipaddr']) < $dynsubnet_end)) {
-						$input_errors[] = sprintf(gettext("The DHCP range cannot overlap any static DHCP mappings."));
-						break;
-					}
-				}
-			}
 		}
 	}
 
@@ -445,6 +440,9 @@ if ($_POST) {
 		} else {
 			// Options that exist only in pools
 			$dhcpdconf['descr'] = $_POST['descr'];
+			$dhcpdconf['disablepool'] = $_POST['disablepool'];
+			$dhcpdconf['custom_subnet'] = $_POST['custom_subnet'];
+			$dhcpdconf['custom_subnet_mask'] = $_POST['custom_subnet_mask'];
 		}
 
 		// Options that can be global or per-pool.
@@ -596,6 +594,9 @@ include("head.inc");
 		endis = !(document.iform.enable.checked || enable_over);
 		<?php if (is_numeric($pool) || ($act == "newpool")): ?>
 			document.iform.descr.disabled = endis;
+			document.iform.disablepool.disabled = endis;
+			document.iform.custom_subnet.disabled = endis;
+			document.iform.custom_subnet_mask.disabled = endis;
 		<?php endif; ?>
 		document.iform.range_from.disabled = endis;
 		document.iform.range_to.disabled = endis;
@@ -741,22 +742,36 @@ include("head.inc");
 				<?=gettext("If this is checked, only the clients defined below will get DHCP leases from this server. ");?></td>
 			</tr>
 			<?php if (is_numeric($pool) || ($act == "newpool")): ?>
+			<td width="22%" valign="top" class="vtable">&nbsp;</td>
+			<td width="78%" class="vtable">
+				<input name="disablepool" id="disablepool" type="checkbox" value="yes" <?php if ($pconfig['disablepool']) echo "checked"; ?>>
+				<strong><?=gettext("Disable this pool");?></strong><br>
+				<?=gettext("If this is checked, this pool will not be included on DHCP server config file. ");?></td>
+			</tr>
 				<tr>
 				<td width="22%" valign="top" class="vncell"><?=gettext("Pool Description");?></td>
 				<td width="78%" class="vtable">
 					<input name="descr" type="text" class="formfld unknown" id="descr" size="20" value="<?=htmlspecialchars($pconfig['descr']);?>">
 				</td>
-				</tr>
 			<?php endif; ?>
 			<tr>
-			<td width="22%" valign="top" class="vncellreq"><?=gettext("Subnet");?></td>
+			<td width="22%" valign="top" class="vncell"><?=gettext("Subnet");?></td>
 			<td width="78%" class="vtable">
+			<?php if (is_numeric($pool) || $act == "newpool"): ?>
+			<input name="custom_subnet" type="text" class="formfld unknown" id="custom_subnet" size="20" value="<?=htmlspecialchars($pconfig['custom_subnet']);?>"><br>
+				Leave empty to use default subnet for <?=htmlspecialchars($iflist[$if])?>:&nbsp;
+				<?php endif;?>
 				<?=gen_subnet($ifcfgip, $ifcfgsn);?>
 			</td>
 			</tr>
 			<tr>
-			<td width="22%" valign="top" class="vncellreq"><?=gettext("Subnet mask");?></td>
+			<td width="22%" valign="top" class="vncell"><?=gettext("Subnet mask");?></td>
 			<td width="78%" class="vtable">
+			<?php if (is_numeric($pool) || $act == "newpool"): ?>
+			<input name="custom_subnet_mask" type="text" class="formfld unknown" id="custom_subnet_mask" size="20" value="<?=htmlspecialchars($pconfig['custom_subnet_mask']);?>"><br>
+				Leave empty to use default subnet mask for <?=htmlspecialchars($iflist[$if])?>:&nbsp;
+				
+				<?php endif;?>
 				<?=gen_subnet_mask($ifcfgsn);?>
 			</td>
 			</tr>
@@ -774,9 +789,9 @@ include("head.inc");
 				$range_to--;
 				echo long2ip32($range_to);
 			?>
-			<?php if (is_numeric($pool) || ($act == "newpool")): ?>
+			<?php if (is_array($config['dhcpd'][$if]) && (is_numeric($pool) || ($act == "newpool"))): ?>
 				<br/>In-use DHCP Pool Ranges:
-				<?php if (is_array($config['dhcpd'][$if]['range'])): ?>
+				<?php if ( is_array($config['dhcpd'][$if]['range'])): ?>
 					<br/><?php echo $config['dhcpd'][$if]['range']['from']; ?>-<?php echo $config['dhcpd'][$if]['range']['to']; ?>
 				<?php endif; ?>
 				<?php foreach ($a_pools as $p): ?>
@@ -816,12 +831,13 @@ include("head.inc");
 			<tr>
 			<td width="22%" valign="top" class="vncell"><?=gettext("Additional Pools");?></td>
 			<td width="78%" class="vtable">
-				<?php echo gettext("If you need additional pools of addresses inside of this subnet outside the above Range, they may be specified here."); ?>
+				<?php echo gettext("If you need additional pools of addresses on this interface, they may be specified here."); ?>
 				<table class="tabcont" width="100%" border="0" cellpadding="0" cellspacing="0">
 				<tr>
-					<td width="35%" class="listhdrr"><?=gettext("Pool Start");?></td>
-					<td width="35%" class="listhdrr"><?=gettext("Pool End");?></td>
-					<td width="20%" class="listhdrr"><?=gettext("Description");?></td>
+					<td width="10%" class="listhdrr"><?=gettext("Status");?></td>
+					<td width="25%" class="listhdrr"><?=gettext("Pool Start");?></td>
+					<td width="25%" class="listhdrr"><?=gettext("Pool End");?></td>
+					<td width="30%" class="listhdrr"><?=gettext("Description");?></td>
 					<td width="10%" class="list">
 					<table border="0" cellspacing="0" cellpadding="1">
 					<tr>
@@ -836,12 +852,15 @@ include("head.inc");
 					<?php if(!empty($poolent['range']['from']) && !empty($poolent['range']['to'])): ?>
 				<tr>
 				<td class="listlr" ondblclick="document.location='services_dhcp.php?if=<?=htmlspecialchars($if);?>&pool=<?=$i;?>';">
+					<?=htmlspecialchars(($poolent['disablepool']=="yes"?"Disabled":"Enabled"));?>
+				</td>
+				<td class="listlr" ondblclick="document.location='services_dhcp.php?if=<?=htmlspecialchars($if);?>&pool=<?=$i;?>';">
 					<?=htmlspecialchars($poolent['range']['from']);?>
 				</td>
 				<td class="listr" ondblclick="document.location='services_dhcp.php?if=<?=htmlspecialchars($if);?>&pool=<?=$i;?>';">
 					<?=htmlspecialchars($poolent['range']['to']);?>&nbsp;
 				</td>
-				<td class="listr" ondblclick="document.location='services_dhcp.php?if=<?=htmlspecialchars($if);?>&pool=<?=$i;?>';">
+				<td class="listbg" ondblclick="document.location='services_dhcp.php?if=<?=htmlspecialchars($if);?>&pool=<?=$i;?>';">
 					<?=htmlspecialchars($poolent['descr']);?>&nbsp;
 				</td>
 				<td valign="middle" nowrap class="list">
@@ -857,7 +876,7 @@ include("head.inc");
 				<?php $i++; endforeach; ?>
 				<?php endif; ?>
 				<tr>
-				<td class="list" colspan="3"></td>
+				<td class="list" colspan="4"></td>
 				<td class="list">
 					<table border="0" cellspacing="0" cellpadding="1">
 					<tr>

@@ -94,7 +94,7 @@ if (!$nentries)
 		<table border="0" cellpadding="0" cellspacing="2" summary="status">
 		<?php
 		foreach ($a_pool as $pool) {
-			if ($pool['name'] == $vsent['pool']) {
+			if ($pool['name'] == $vsent['poolname']) {
 				$pool_hosts=array();
 				foreach ((array) $pool['servers'] as $server) {
 					$svr['ip']['addr']=$server;

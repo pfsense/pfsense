@@ -93,7 +93,7 @@ include("head.inc");
 			<table border="0" cellpadding="0" cellspacing="2">
                         <?php
 			foreach ($a_pool as $vipent) {
-				if ($vipent['name'] == $vsent['pool']) {
+				if ($vipent['name'] == $vsent['poolname']) {
 					foreach ((array) $vipent['servers'] as $server) {
 						print "<tr><td> {$server} </td></tr>";
 					}

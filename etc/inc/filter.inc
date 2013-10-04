@@ -2576,7 +2576,7 @@ EOD;
 
 	$ipfrules .= "\n# SSH lockout\n";
 	if(is_array($config['system']['ssh']) && !empty($config['system']['ssh']['port'])) {
-		$ipfrules .= "block in log quick proto tcp from <sshlockout> to any port ";
+		$ipfrules .= "block in log quick proto tcp from <sshlockout> to (self) port ";
 		$ipfrules .= $config['system']['ssh']['port'];
 		$ipfrules .= " label \"sshlockout\"\n";
 	} else {
@@ -2585,7 +2585,7 @@ EOD;
 		else
 			$sshport = 22;
 		if($sshport)
-			$ipfrules .= "block in log quick proto tcp from <sshlockout> to any port {$sshport} label \"sshlockout\"\n";
+			$ipfrules .= "block in log quick proto tcp from <sshlockout> to (self) port {$sshport} label \"sshlockout\"\n";
 	}
 
 	$ipfrules .= "\n# webConfigurator lockout\n";

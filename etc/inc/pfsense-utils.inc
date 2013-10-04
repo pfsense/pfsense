@@ -2848,4 +2848,65 @@ function get_pppoes_child_interfaces($ifpattern) {
 
 }
 
+/**
+ * @param integer $max_delay_sec - max time for the delay, if 0 or not set $config['system']['max_startup_delay_sec'] will be taken
+ * @param integer $min_memory_stabilized_sec - seconds the free memory has to be stable before the function exits,
+ * 					if 0 or not set ,$config['system']['min_memory_stabilized_sec'] will be taken.
+ * 					if $config['system']['min_memory_stabilized_sec'] is zero or not set $min_memory_stabilized_sec will be 1/2 of $max_delay_sec
+ *
+ * @return integer <ul>
+ * 					<li> 0 - no delay configured</li>
+ * 					<li> 1 - if amount of free memory didn't change</li>
+ * 					<li> 2 - if we waited too long without any significant change</li>
+ * </ul>
+ */
+
+function delay_loop_for_low_mem_systems($max_delay_sec = 0, $min_memory_stabilized_sec = 0) {
+	require_once("/etc/inc/config.inc");
+	require_once("/etc/inc/util.inc");
+
+	global $config;
+
+	$max_delay_sec = (int)$max_delay_sec;
+	$min_memory_stabilized_sec = (int) $min_memory_stabilized_sec;
+	if ($max_delay_sec <= 0)
+		$max_delay_sec = (int)$config['system']['max_startup_delay_sec'];
+	if ($max_delay_sec <= 0)
+		return 0;
+
+	if ($min_memory_stabilized_sec <=0)
+		$min_memory_stabilized_sec = (int)$config['system']['min_memory_stabilized_sec'];
+	if ($min_memory_stabilized_sec <=0)
+		$min_memory_stabilized_sec = $max_delay_sec / 2;
+
+	$current_free_mem = get_free_mem_pages();
+	$time_waited = 0;
+	$sec_count_of_not_changed_free_mem=0;
+	echo "Sleeping and waiting for free memory\n";
+	while ($time_waited <= $max_delay_sec) {
+		sleep(1);
+		$free_mem_last_round = $current_free_mem;
+		$current_free_mem = get_free_mem_pages();
+		echo "Free memory pages: $current_free_mem \n";
+
+		if ( $current_free_mem >= ($free_mem_last_round*0.98) && $current_free_mem <= ($free_mem_last_round*1.03)) {
+			$sec_count_of_not_changed_free_mem++;
+		} else {
+			$sec_count_of_not_changed_free_mem=0;
+
+		}
+
+		if ($sec_count_of_not_changed_free_mem >= $min_memory_stabilized_sec) {
+			echo "The amount of free memory does not change, so we go ahead!\n\n";
+			return 1;
+		}
+
+		$time_waited++;
+	}
+
+	echo "Gave up waiting for free memory. Good Luck!\n\n";
+	return 2;
+
+}
+
 ?>

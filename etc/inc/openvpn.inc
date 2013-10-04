@@ -943,11 +943,14 @@ function openvpn_resync_all($interface = "") {
 	else
 		log_error("Resyncing OpenVPN instances."); 
 
+	echo "\n";
 	if (is_array($config['openvpn']['openvpn-server'])) {
 		foreach ($config['openvpn']['openvpn-server'] as & $settings) {
 			if ($interface <> "" && $interface != $settings['interface'])
 				continue;
 			openvpn_resync('server', $settings);
+			delay_loop_for_low_mem_systems();
+				
 		}
 	}
 
@@ -956,12 +959,17 @@ function openvpn_resync_all($interface = "") {
 			if ($interface <> "" && $interface != $settings['interface'])
 				continue;
 			openvpn_resync('client', $settings);
+			delay_loop_for_low_mem_systems();
+				
 		}
 	}
 
 	if (is_array($config['openvpn']['openvpn-csc']))
-		foreach ($config['openvpn']['openvpn-csc'] as & $settings)
+		foreach ($config['openvpn']['openvpn-csc'] as & $settings) {
 			openvpn_resync_csc($settings);
+			delay_loop_for_low_mem_systems();
+		}
+	
 
 }
 

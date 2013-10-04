@@ -1606,6 +1606,20 @@ function get_memory() {
 	return array(($physmem/1048576),($realmem/1048576));
 }
 
+/**
+ *
+ * @return integer count of free mem pages
+ */
+function get_free_mem_pages() {
+	$memory = "";
+	exec("/sbin/sysctl -n vm.stats.vm.v_inactive_count " .
+			"vm.stats.vm.v_cache_count vm.stats.vm.v_free_count", $memory);
+
+	$availMem = $memory[0] + $memory[1] + $memory[2];
+
+	return (int)$availMem;
+}
+
 function mute_kernel_msgs() {
 	global $config;
 	// Do not mute serial console.  The kernel gets very very cranky

@@ -76,6 +76,7 @@ $g = array(
 	"nopkg_platforms" => array("cdrom"),
 	"minimum_ram_warning" => "101",
 	"minimum_ram_warning_text" => "128 MB",
+	"minimum_ram_for_immediate_webgui_start" => "65",
 	"minimum_nic_count" => "1",
 	"minimum_nic_count_text" => "*AT LEAST* 1",	
 	"wan_interface_name" => "wan", 
@@ -153,7 +154,8 @@ $sysctls = array("net.inet.ip.portrange.first" => "1024",
 	"kern.random.sys.harvest.point_to_point" => 0,
 	"kern.random.sys.harvest.ethernet" => 0,
 	"net.route.netisr_maxqlen" => 1024,
-	"net.inet.udp.checksum" => 1
+	"net.inet.udp.checksum" => 1,
+	""
 );
 
 /* Include override values for the above if needed. If the file doesn't exist, don't try to load it. */

@@ -74,6 +74,10 @@ $pconfig['use_mfs_tmpvar'] = isset($config['system']['use_mfs_tmpvar']);
 $pconfig['use_mfs_tmp_size'] = $config['system']['use_mfs_tmp_size'];
 $pconfig['use_mfs_var_size'] = $config['system']['use_mfs_var_size'];
 
+$pconfig['max_startup_delay_sec'] = $config['system']['max_startup_delay_sec'];
+$pconfig['min_memory_stabilized_sec'] = $config['system']['min_memory_stabilized_sec'];
+$pconfig['override_minimum_ram_for_immediate_webgui_start'] = isset($config['system']['override_minimum_ram_for_immediate_webgui_start']);
+
 $pconfig['powerd_ac_mode'] = "hadp";
 if (!empty($config['system']['powerd_ac_mode']))
 	$pconfig['powerd_ac_mode'] = $config['system']['powerd_ac_mode'];
@@ -226,7 +230,16 @@ if ($_POST) {
 
 		$config['system']['use_mfs_tmp_size'] = $_POST['use_mfs_tmp_size'];
 		$config['system']['use_mfs_var_size'] = $_POST['use_mfs_var_size'];
-
+		$config['system']['max_startup_delay_sec'] = (int)$_POST['max_startup_delay_sec'];
+		$config['system']['min_memory_stabilized_sec'] = (int)$_POST['min_memory_stabilized_sec'];
+		
+		if($_POST['override_minimum_ram_for_immediate_webgui_start'] == "yes")
+			$config['system']['override_minimum_ram_for_immediate_webgui_start'] = true;
+		elseif (isset($config['system']['override_minimum_ram_for_immediate_webgui_start']))
+			unset($config['system']['override_minimum_ram_for_immediate_webgui_start']);
+		
+		
+		
 		if (isset($_POST['rrdbackup'])) {
 			$config['system']['rrdbackup'] = $_POST['rrdbackup'];
 			install_cron_job("/etc/rc.backup_rrd.sh", ($config['system']['rrdbackup'] > 0), $minute="0", "*/{$config['system']['rrdbackup']}");
@@ -678,6 +691,38 @@ function tmpvar_checked(obj) {
 							</tr>
 							<?php endif; ?>
 
+							
+							<tr>
+								<td colspan="2" valign="top" class="listtopic"><?=gettext("Setup for delayed startup on low memory hardware"); ?></td>
+							</tr>
+							<tr>
+								<td width="22%" valign="top" class="vncell"><?=gettext("Maximum delay time"); ?></td>
+								<td width="78%" class="vtable">
+									<input name="max_startup_delay_sec" id="max_startup_delay_sec" value="<?php if ($pconfig['max_startup_delay_sec'] <> "") echo $pconfig['max_startup_delay_sec']; ?>" class="formfld unknown" /> sec
+									<br />
+									<?=gettext("Maximum time to spend on every delay point. Set the maximum time that should be spent at every delay point. " .
+									"Leave blank for no delay."); ?>
+								</td>
+							</tr>
+							<tr>
+								<td width="22%" valign="top" class="vncell"><?=gettext("Memory stabilized time"); ?></td>
+								<td width="78%" class="vtable">
+									<input name="min_memory_stabilized_sec" id="min_memory_stabilized_sec" value="<?php if ($pconfig['min_memory_stabilized_sec'] <> "") echo $pconfig['min_memory_stabilized_sec']; ?>" class="formfld unknown" /> sec
+									<br />
+									<?=gettext("Minimum time the amount of free memory must be stabilized before the startup continues. " .
+									"Leave blank for half of 'Maximum delay time'."); ?>
+								</td>
+							</tr>													
+							<tr>
+								<td width="22%" valign="top" class="vncell"><?=gettext("Delay the start of the WebGUI"); ?></td>
+								<td width="78%" class="vtable">
+									
+									<input name="override_minimum_ram_for_immediate_webgui_start" type="checkbox" id="override_minimum_ram_for_immediate_webgui_start" value="yes" <?php if ($pconfig['override_minimum_ram_for_immediate_webgui_start']) echo "checked=\"checked\""; ?> />
+									<br />
+									<?=gettext("Can help systems with small RAM configurations. ");?>
+								</td>
+							</tr>	
+							
 							<tr>
 								<td width="22%" valign="top">&nbsp;</td>
 								<td width="78%">

@@ -247,15 +247,15 @@ if ($savemsg)
 						<td width="22%" valign="top" class="vncell"><?=gettext("View previous upgrade log");?></td>
 						<td width="78%" class="vtable">
 						<?php
-							if($_POST['viewupgradelog']) {
+							if ($_POST['viewupgradelog']) {
 								echo "<textarea name='log' cols='80' rows='40'>";
-								echo file_get_contents("/conf/upgrade_log.txt");
+								echo str_ireplace("pfsense", $g['product_name'], file_get_contents("/conf/upgrade_log.txt"));
 								echo "\nFile list:\n";
-								echo file_get_contents("/conf/file_upgrade_log.txt");
+								echo str_ireplace("pfsense", $g['product_name'], file_get_contents("/conf/file_upgrade_log.txt"));
 								echo "\nMisc log:\n";
-								echo file_get_contents("/conf/firmware_update_misc_log.txt");
+								echo str_ireplace("pfsense", $g['product_name'], file_get_contents("/conf/firmware_update_misc_log.txt"));
 								echo "\nfdisk/bsdlabel log:\n";
-								echo file_get_contents("/conf/fdisk_upgrade_log.txt");
+								echo str_ireplace("pfsense", $g['product_name'], file_get_contents("/conf/fdisk_upgrade_log.txt"));
 								echo "</textarea>";
 							} else {
 								echo "<form action='diag_nanobsd.php' method='post' name='iform'>";

@@ -495,6 +495,16 @@ function cert_get_dates($str_crt, $decode = true) {
 	return array($start, $end);
 }
 
+function cert_get_serial($str_crt, $decode = true) {
+	if ($decode)
+		$str_crt = base64_decode($str_crt);
+	$crt_details = openssl_x509_parse($str_crt);
+	if (isset($crt_details['serialNumber']) && !empty($crt_details['serialNumber']))
+		return $crt_details['serialNumber'];
+	else
+		return NULL;
+}
+
 function prv_get_modulus($str_crt, $decode = true){
 	return cert_get_modulus($str_crt, $decode, "prv");
 }
@@ -645,6 +655,22 @@ function cert_unrevoke($cert, & $crl) {
 	return false;
 }
 
+/* Compare two certificates to see if they match. */
+function cert_compare($cert1, $cert2) {
+	/* Ensure two certs are identical by first checking that their issuers match, then
+		subjects, then serial numbers, and finally the moduli. Anything less strict
+		could accidentally count two similar, but different, certificates as
+		being identical. */
+	$c1 = base64_decode($cert1['crt']);
+	$c2 = base64_decode($cert2['crt']);
+	if ((cert_get_issuer($c1, false) == cert_get_issuer($c2, false))
+		&& (cert_get_subject($c1, false) == cert_get_subject($c2, false))
+		&& (cert_get_serial($c1, false) == cert_get_serial($c2, false))
+		&& (cert_get_modulus($c1, false) == cert_get_modulus($c2, false)))
+		return true;
+	return false;
+}
+
 function is_cert_revoked($cert, $crlref = "") {
 	global $config;
 	if (!is_array($config['crl']))
@@ -655,7 +681,7 @@ function is_cert_revoked($cert, $crlref = "") {
 		if (!is_array($crl['cert']))
 			return false;
 		foreach ($crl['cert'] as $rcert) {
-			if (($rcert['refid'] == $cert['refid']) || ($rcert['descr'] == $cert['descr']))
+			if (cert_compare($rcert, $cert))
 				return true;
 		}
 	} else {
@@ -663,7 +689,7 @@ function is_cert_revoked($cert, $crlref = "") {
 			if (!is_array($crl['cert']))
 				continue;
 			foreach ($crl['cert'] as $rcert) {
-				if (($rcert['refid'] == $cert['refid']) || ($rcert['descr'] == $cert['descr']))
+				if (cert_compare($rcert, $cert))
 					return true;
 			}
 		}

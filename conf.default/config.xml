@@ -644,15 +644,6 @@
 	</proxyarp>
 	<cron>
 		<item>
-			<minute>0</minute>
-			<hour>*</hour>
-			<mday>*</mday>
-			<month>*</month>
-			<wday>*</wday>
-			<who>root</who>
-			<command>/usr/bin/nice -n20 newsyslog</command>
-		</item>
-		<item>
 			<minute>1,31</minute>
 			<hour>0-5</hour>
 			<mday>*</mday>

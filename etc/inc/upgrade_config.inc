@@ -3146,6 +3146,21 @@ function upgrade_097_to_098() {
 }
 
 function upgrade_098_to_099() {
+	global $config;
+	foreach ($config['dhcpd'] as & $dhcpifconf) {
+		if (isset($dhcpifconf['next-server'])) {
+			$dhcpifconf['nextserver'] = $dhcpifconf['next-server'];
+			unset $dhcpifconf['next-server'];
+		}
+	}
+}
+
+function upgrade_099_to_100() {
+	require_once("/etc/inc/services.inc");
+	install_cron_job("/usr/bin/nice -n20 newsyslog", false);
+}
+
+function upgrade_100_to_101() {
 	global $config, $g;
 
 	if (!is_array($config['captiveportal']))
@@ -3158,10 +3173,5 @@ function upgrade_098_to_099() {
 		foreach ($cp['passthrumac'] as $idx => $passthrumac)
 			$config['captiveportal'][$cpzone]['passthrumac'][$idx]['action'] = 'pass';
 	}
-}
-
-function upgrade_099_to_100() {
-	require_once("/etc/inc/services.inc");
-	install_cron_job("/usr/bin/nice -n20 newsyslog", false);
 }
 ?>

@@ -3154,4 +3154,9 @@ function upgrade_098_to_099() {
 		}
 	}
 }
+
+function upgrade_099_to_100() {
+	require_once("/etc/inc/services.inc");
+	install_cron_job("/usr/bin/nice -n20 newsyslog", false);
+}
 ?>

@@ -3144,4 +3144,14 @@ function upgrade_097_to_098() {
 	/* Disable kill_states by default */
 	$config['system']['kill_states'] = true;
 }
+
+function upgrade_098_to_099() {
+	global $config;
+	foreach ($config['dhcpd'] as & $dhcpifconf) {
+		if (isset($dhcpifconf['next-server'])) {
+			$dhcpifconf['nextserver'] = $dhcpifconf['next-server'];
+			unset $dhcpifconf['next-server'];
+		}
+	}
+}
 ?>

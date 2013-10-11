@@ -234,6 +234,7 @@ function dump_xml_config_sub($arr, $indent) {
 							$xmlconfig .= "<$ent/>\n";
 						} else if ((substr($ent, 0, 5) == "descr")
 							|| (substr($ent, 0, 6) == "detail")
+							|| (substr($ent, 0, 12) == "login_banner")
 							|| (substr($ent, 0, 9) == "ldap_attr")
 							|| (substr($ent, 0, 9) == "ldap_bind")
 							|| (substr($ent, 0, 11) == "ldap_basedn")
@@ -264,6 +265,7 @@ function dump_xml_config_sub($arr, $indent) {
 				$xmlconfig .= str_repeat("\t", $indent);
 				if ((substr($ent, 0, 5) == "descr")
 				|| (substr($ent, 0, 6) == "detail")
+				|| (substr($ent, 0, 12) == "login_banner")
 				|| (substr($ent, 0, 9) == "ldap_attr")
 				|| (substr($ent, 0, 9) == "ldap_bind")
 				|| (substr($ent, 0, 11) == "ldap_basedn")

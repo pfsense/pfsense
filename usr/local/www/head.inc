@@ -15,6 +15,7 @@ $pagetitle = gentitle( $pgtitle );
 	<title><?php echo($config['system']['hostname'] . "." . $config['system']['domain'] . " - " . $pagetitle); ?></title>
 	<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
 	<link rel="apple-touch-icon" href="/themes/<?php echo $g['theme']; ?>/apple-touch-icon.png"/>
+	<link rel="shortcut icon" href="/themes/<?php echo $g['theme']; ?>/images/icons/favicon.ico"/>
 		<?php 
 		if (file_exists("{$g['www_path']}/themes/{$g['theme']}/table.css")):
 			echo "<link type=\"text/css\" rel=\"stylesheet\" href=\"/themes/{$g['theme']}/table.css\" />";

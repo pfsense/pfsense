@@ -364,8 +364,8 @@ if ($_POST) {
 			$subnet_end = ip2ulong(long2ip32(ip2long($parent_ip) | (~gen_subnet_mask_long($parent_sn))));
 
 			$parent_ip2=long2ip32(ip2long($parent_ip) & gen_subnet_mask_long($parent_sn));
-			if (!ip_in_subnet($_POST['range_from'],"{$parent_ip}/{$parent_sn}") ||
-				!ip_in_subnet($_POST['range_to'],"{$parent_ip}/{$parent_sn}"))
+			if (!is_innet_v4("{$parent_ip}/{$parent_sn}",$_POST['range_from']) ||
+				!is_innet_v4("{$parent_ip}/{$parent_sn}",$_POST['range_to']))
 				$input_errors[] = gettext("Ip range overlaps network range({$parent_ip2}/{$parent_sn}).");
 
 			if (ip2ulong($_POST['range_from']) > ip2ulong($_POST['range_to']))

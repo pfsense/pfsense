@@ -203,7 +203,7 @@ if ($_POST) {
 			}
 		//check pool subnets
 		foreach ($a_pools as $pidx => $p) {
-			if (ip_in_subnet($_POST['ipaddr'],$p['custom_subnet']."/".mask2cidr_v4($p['custom_subnet_mask'])))
+			if (is_innet_v4($p['custom_subnet']."/".mask2cidr_v4($p['custom_subnet_mask']),$_POST['ipaddr']))
 				$range_match++;
      		}
 

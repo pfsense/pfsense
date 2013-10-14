@@ -5,7 +5,8 @@ var entrance    = '';
 var cond        = '';
 
 // BROWSER?
-if (browser == '') {
+if (browser == '')
+{
 	if (navigator.appName.indexOf('Microsoft') != -1)
 		browser = 'IE'
 	else if (navigator.appName.indexOf('Netscape') != -1)
@@ -13,18 +14,18 @@ if (browser == '') {
 	else
 		browser = 'IE';
 }
-if (version == '') {
+if (version == '')
+{
 	version= navigator.appVersion;
 	paren = version.indexOf('(');
 	whole_version = navigator.appVersion.substring(0,paren-1);
 	version = parseInt(whole_version);
 }
 
-if (browser == 'IE' && version < 7) {
+if (browser == 'IE' && version < 7)
 	document.write('<script type="text/javascript" src="/themes/pfsense_ng/javascript/ie7/ie7-standard-p.js"></script>');
-}
 
-document.write('<script type="text/javascript" src="/themes/pfsense_ng/javascript/niftyjsCode.js"></script>'); 
+document.write('<script type="text/javascript" src="/themes/pfsense_ng/javascript/niftyjsCode.js"></script>');
 
 ///////////////////////////////////////////
 // jQuery code for columns / widgets part 1
@@ -48,13 +49,13 @@ var specifiedColWidth = 350; // width of columns for resizing
 // jQuery Widget functions
 ///////////////////////////////////////////
 
-// function to connect all columns to each other to allow jQuery interaction (drag and droppable) 
+// function to connect all columns to each other to allow jQuery interaction (drag and droppable)
 function connectColumns()
 {
 	jQuery('.ui-sortable').sortable({connectWith: '.ui-sortable', dropOnEmpty: true, handle: '.widgetheader', change: showSave});
 }
 
-// function to add columns due to a window resize 
+// function to add columns due to a window resize
 function resizeAddColumns()
 {
 	if(noColsOnLoad > noCols) // if a column has previously been deleted
@@ -136,7 +137,8 @@ function maxColsToDisplay()
 }
 
 // function to amend the widget width  
-function correctWidgetDisplay(noCols){
+function correctWidgetDisplay(noCols)
+{
 	var percent = ( 100 / noCols ) - 0.1;
 	var percentStr = percent.toString() + '%';
 
@@ -145,8 +147,10 @@ function correctWidgetDisplay(noCols){
 }
 
 // function to insert a new column we can place content into (from saved state)
-function printColumn(newNum){
-	if(newNum > noCols){
+function printColumn(newNum)
+{
+	if(newNum > noCols)
+        {
 		noCols = newNum;
 		noColsOnLoad = noCols;
 	}
@@ -157,7 +161,8 @@ function printColumn(newNum){
 }
 
 // function to create the columns
-function createColumn(colPos){
+function createColumn(colPos)
+{
 	if (colpos == "col3" && printed3 == false){
 		printColumn(3);
 		printed3=true;
@@ -213,7 +218,8 @@ function finishedResizing()
 ///////////////// end widget code part 1 /////////////////////////
 
 // jQuery function to define dropdown menu size
-jQuery(document).ready(function () {
+jQuery(document).ready(function ()
+{
     var hwindow  = '';
     hwindow = (jQuery(window).height()-35);
     // Force the size dropdown menu 
@@ -239,9 +245,11 @@ jQuery(document).ready(function () {
     finishedResizing(); // on page load correct display of columns to fit
     
     // on click add a new column and change column widths
-    jQuery('#addCol').click(function(){
+    jQuery('#addCol').click(function()
+    {
 	var maxCols = maxColsToDisplay();
-	if( (noCols < maxCols) && (noCols < 10) ){
+	if( (noCols < maxCols) && (noCols < 10) )
+        {
 		var colAfter = noCols;
 		noCols++;
 
@@ -256,8 +264,10 @@ jQuery(document).ready(function () {
     });
 
     // on click delete a columns and change column widths
-    jQuery('#delCol').click(function(){
-	if( noCols > 1 ){
+    jQuery('#delCol').click(function()
+    {
+	if( noCols > 1 )
+        {
 		var colToDel = noCols;
 		noCols -= 1;
 
@@ -271,8 +281,8 @@ jQuery(document).ready(function () {
 
 		// append deleted columns content to preceeding column
 		jQuery(colContent).appendTo('#col' + noCols );
-			
-		showSave();           
+
+		showSave();
 	}
 	else
 		jQuery('#columnWarningText').html('<b>Minimum number of columns reached for the current window size</b>').show().delay(1000).fadeOut(1000);

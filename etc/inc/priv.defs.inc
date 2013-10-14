@@ -752,6 +752,12 @@ $priv_list['page-services-captiveportal-voucher-edit']['descr'] = "Allow access 
 $priv_list['page-services-captiveportal-voucher-edit']['match'] = array();
 $priv_list['page-services-captiveportal-voucher-edit']['match'][] = "services_captiveportal_vouchers_edit.php*";
 
+$priv_list['page-services-captiveportal-zones'] = array();
+$priv_list['page-services-captiveportal-zones']['name'] = gettext("WebCfg - Services: Captiveprotal Zones page");
+$priv_list['page-services-captiveportal-zones']['descr'] = gettext("Allow access to the 'Services: CaptivePortal Zones' page.");
+$priv_list['page-services-captiveportal-zones']['match'] = array();
+$priv_list['page-services-captiveportal-zones']['match'][] = "services_captiveportal_zones.php*";
+
 $priv_list['page-services-dhcpserver'] = array();
 $priv_list['page-services-dhcpserver']['name'] = gettext("WebCfg - Services: DHCP server page");
 $priv_list['page-services-dhcpserver']['descr'] = gettext("Allow access to the 'Services: DHCP server' page.");

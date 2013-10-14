@@ -375,17 +375,12 @@ foreach ($leases as $data) {
 			}
 		} else {
 			foreach ($config['dhcpd'] as $dhcpif => $dhcpifconf) {
-				if (is_array($dhcpifconf['range']) && ($lip >= ip2ulong($dhcpifconf['range']['from'])) && ($lip <= ip2ulong($dhcpifconf['range']['to']))) {
- 					$data['if'] = $dhcpif;
-						break;
+				if (!is_array($dhcpifconf['range']))
+					continue;
+                        	if (($lip >= ip2ulong($dhcpifconf['range']['from'])) && ($lip <= ip2ulong($dhcpifconf['range']['to']))) {
+                                	$data['if'] = $dhcpif;
+                                	break;
                         	}
-                if(is_array($dhcpifconf['pool'])){
-                	foreach ($dhcpifconf['pool'] as $iface_pool){
-                	if (is_ipaddrv4($iface_pool['custom_subnet']) && is_validmask_v4($iface_pool['custom_subnet_mask']) &&
-                		is_innet_v4($iface_pool['custom_subnet']."/".mask2cidr_v4($iface_pool['custom_subnet_mask']),$data['ip']))
-							$data['if'] = $dhcpif;
-                	}	
-                }                  
 			}
                 }		
 		echo "<tr>\n";
@@ -417,7 +412,7 @@ foreach ($leases as $data) {
                 echo "<td class=\"listr\">{$fspans}{$data['act']}{$fspane}&nbsp;</td>\n";
 		
 		if ($data['type'] == "dynamic") {
-			echo "<td valign=\"middle\"><a href=\"services_dhcp_edit.php?if={$data['if']}&mac={$data['mac']}&hostname={$data['hostname']}&ipaddr={$data['ip']}\">";
+			echo "<td valign=\"middle\"><a href=\"services_dhcp_edit.php?if={$data['if']}&mac={$data['mac']}&hostname={$data['hostname']}\">";
 			echo "<img src=\"/themes/{$g['theme']}/images/icons/icon_plus.gif\" width=\"17\" height=\"17\" border=\"0\" title=\"" . gettext("add a static mapping for this MAC address") ."\"></a></td>\n";
 		} else {
                 	echo "<td class=\"list\" valign=\"middle\">";

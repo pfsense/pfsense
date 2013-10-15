@@ -69,6 +69,7 @@
 	 *  CloudFlare     - Last Tested: 30 May 2013
   	 *  Eurodns	   - Last Tested: 27 June 2013
   	 *  GratisDNS      - Last Tested: 15 August 2012
+	 *  OVH DynHOST	   - Last Tested: NEVER
 	 * +====================================================+
 	 *
 	 * @author 	E.Kristensen
@@ -236,6 +237,7 @@
 				case 'cloudflare':
 				case 'eurodns':
 				case 'gratisdns':
+				case 'ovh-dynhost':
 					$this->_update();
 					if($this->_dnsDummyUpdateDone == true) {
 						// If a dummy update was needed, then sleep a while and do the update again to put the proper address back.
@@ -640,6 +642,21 @@
 					list($hostname, $domain) = explode(".", $this->_dnsHost, 2);
 					curl_setopt($ch, CURLOPT_URL, $server . '?u=' . $this->_dnsUser . '&p=' . $this->_dnsPass . '&h=' . $this->_dnsHost . '&d=' . $domain);
 					break;
+				case 'ovh-dynhost':
+					$needsIP = FALSE;
+					if ($this->_dnsVerboseLog)
+						log_error("OVH DynHOST: ({$this->_dnsHost}) DNS update() starting.");
+					if (isset($this->_dnsWildcard) && $this->_dnsWildcard != "OFF") $this->_dnsWildcard = "ON";
+					curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, FALSE);
+					curl_setopt($ch, CURLOPT_USERPWD, $this->_dnsUser.':'.$this->_dnsPass);
+					$server = "https://www.ovh.com/nic/update";
+					$port = "";
+					if($this->_dnsServer)
+						$server = $this->_dnsServer;
+					if($this->_dnsPort)
+						$port = ":" . $this->_dnsPort;
+					curl_setopt($ch, CURLOPT_URL, $server .$port . '?system=dyndns&hostname=' . $this->_dnsHost . '&myip=' . $this->_dnsIP . '&wildcard='.$this->_dnsWildcard . '&mx=' . $this->_dnsMX . '&backmx=NO');
+					break;
 				default:
 					break;
 			}
@@ -689,6 +706,7 @@
 						$this->_debug($data);
 					}
 					break;
+				case 'ovh-dynhost':
 				case 'dyndns':
 					if (preg_match('/notfqdn/i', $data)) {
 						$status = "phpDynDNS ({$this->_dnsHost}): (Error) Not A FQDN!";

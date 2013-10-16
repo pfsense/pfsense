@@ -58,6 +58,18 @@ $filterdns = array();
 /* Used for aliases and interface macros */
 $aliases = "";
 
+/* Reserved table names to avoid colision */
+$reserved_table_names = array(
+	"bogons",
+	"bogonsv6",
+	"negate_networks",
+	"snort2c",
+	"sshlockout",
+	"tonatsubnets",
+	"virusprot",
+	"vpn_networks",
+	"webConfiguratorlockout");
+
 function is_bogonsv6_used() {
 	global $config, $g;
 	# Only use bogonsv6 table if IPv6 Allow is on, and at least 1 enabled interface also has "blockbogons" enabled.

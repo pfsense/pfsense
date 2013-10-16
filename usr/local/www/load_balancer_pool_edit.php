@@ -40,6 +40,8 @@
 ##|-PRIV
 
 require("guiconfig.inc");
+require_once("filter.inc");
+require_once("util.inc");
 
 if (!is_array($config['load_balancer']['lbpool'])) {
 	$config['load_balancer']['lbpool'] = array();
@@ -84,6 +86,12 @@ if ($_POST) {
 
 	if (strpos($_POST['name'], " ") !== false)
 		$input_errors[] = gettext("You cannot use spaces in the 'name' field.");
+
+	if (in_array($_POST['name'], $reserved_table_names))
+		$input_errors[] = sprintf(gettext("The name '%s' is a reserved word and cannot be used."), $_POST['name']);
+
+	if (is_alias($_POST['name']))
+		$input_errors[] = sprintf(gettext("Sorry, an alias is already named %s."), $_POST['name']);
 
 	if (!is_portoralias($_POST['port']))
 		$input_errors[] = gettext("The port must be an integer between 1 and 65535, or a port alias.");

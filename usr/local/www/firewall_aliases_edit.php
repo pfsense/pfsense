@@ -44,10 +44,6 @@
 ##|*MATCH=firewall_aliases_edit.php*
 ##|-PRIV
 
-
-// Keywords not allowed in names
-$reserved_keywords = array("all", "pass", "block", "out", "queue", "max", "min", "pptp", "pppoe", "L2TP", "OpenVPN", "IPsec");
-
 require("guiconfig.inc");
 require_once("functions.inc");
 require_once("filter.inc");
@@ -55,8 +51,16 @@ require_once("shaper.inc");
 
 $pgtitle = array(gettext("Firewall"),gettext("Aliases"),gettext("Edit"));
 
+// Keywords not allowed in names
+$reserved_keywords = array("all", "pass", "block", "out", "queue", "max", "min", "pptp", "pppoe", "L2TP", "OpenVPN", "IPsec");
+
+// Add all Load balance names to resrved_keywords
+if (is_array($config['load_balancer']['lbpool']))
+	foreach ($config['load_balancer']['lbpool'] as $lbpool)
+		$reserved_keywords[] = $lbpool['name'];
+
 $reserved_ifs = get_configured_interface_list(false, true);
-$reserved_keywords = array_merge($reserved_keywords, $reserved_ifs);
+$reserved_keywords = array_merge($reserved_keywords, $reserved_ifs, $reserved_table_names);
 
 if (!is_array($config['aliases']['alias']))
 	$config['aliases']['alias'] = array();

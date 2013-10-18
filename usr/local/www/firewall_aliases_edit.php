@@ -685,30 +685,24 @@ if (empty($tab)) {
 
 					<?php
 					$counter = 0;
-					$address = $pconfig['address'];
-					if ($address <> "") {
-						$item = explode(" ", $address);
-						$item3 = explode("||", $pconfig['detail']);
-						foreach($item as $ww) {
-							$address = $item[$counter];
-							$address_subnet = "";
-							$item2 = explode("/", $address);
-							foreach($item2 as $current) {
-								if($item2[1] <> "") {
-									$address = $item2[0];
-									$address_subnet = $item2[1];
-								}
-
+					if ($pconfig['address'] <> ""):
+						$addresses = explode(" ", $pconfig['address']);
+						$details = explode("||", $pconfig['detail']);
+						while ($counter < count($addresses)):
+							if (is_subnet($addresses[$counter])) {
+								list($address, $address_subnet) = explode("/", $addresses[$counter]);
+							} else {
+								$address = $addresses[$counter];
+								$address_subnet = "";
 							}
-							$item4 = $item3[$counter];
-							$tracker = $counter;
+							$detail = $details[$counter];
 					?>
 					<tr>
 						<td>
-							<input autocomplete="off" name="address<?php echo $tracker; ?>" type="text" class="formfldalias ipv4v6" id="address<?php echo $tracker; ?>" size="30" value="<?=htmlspecialchars($address);?>" />
+							<input autocomplete="off" name="address<?php echo $counter; ?>" type="text" class="formfldalias ipv4v6" id="address<?php echo $counter; ?>" size="30" value="<?=htmlspecialchars($address);?>" />
 						</td>
 						<td>
-							<select name="address_subnet<?php echo $tracker; ?>" class="formselect ipv4v6" id="address_subnet<?php echo $tracker; ?>">
+							<select name="address_subnet<?php echo $counter; ?>" class="formselect ipv4v6" id="address_subnet<?php echo $counter; ?>">
 								<option></option>
 								<?php for ($i = 128; $i >= 1; $i--): ?>
 									<option value="<?=$i;?>" <?php if (($i == $address_subnet) || ($i == $pconfig['updatefreq'])) echo "selected=\"selected\""; ?>><?=$i;?></option>
@@ -716,7 +710,7 @@ if (empty($tab)) {
 							</select>
 						</td>
 						<td>
-							<input name="detail<?php echo $tracker; ?>" type="text" class="formfld unknown" id="detail<?php echo $tracker; ?>" size="50" value="<?=$item4;?>" />
+							<input name="detail<?php echo $counter; ?>" type="text" class="formfld unknown" id="detail<?php echo $counter; ?>" size="50" value="<?=$detail;?>" />
 						</td>
 						<td>
 							<a onclick="removeRow(this); return false;" href="#"><img border="0" src="/themes/<?echo $g['theme'];?>/images/icons/icon_x.gif" alt="" title="<?=gettext("remove this entry"); ?>" /></a>
@@ -725,8 +719,8 @@ if (empty($tab)) {
 					<?php
 						$counter++;
 
-						} // end foreach
-					} // end if
+						endwhile;
+					endif;
 					?>
 				</tbody>
 			</table>

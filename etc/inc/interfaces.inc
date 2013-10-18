@@ -2803,6 +2803,18 @@ function interface_configure($interface = "wan", $reloadall = false, $linkupeven
 	// Need code to handle MLPPP if we ever use $realhwif for MLPPP handling
 	$realhwif = $realhwif_array[0];
 
+	if (!does_interface_exist($realif)) {
+		$matches = array();
+		if (preg_match('/^(.*)_vlan([0-9]+)$/', $realif, $matches))
+			if (is_array($config['vlans']['vlan']))
+				foreach ($config['vlans']['vlan'] as $vlan)
+					if ($vlan['if'] == $matches[1] && $vlan['tag'] == $matches[2]) {
+						interface_vlan_configure($vlan);
+						break;
+					}
+		unset($matches);
+	}
+
 	/* Disable Accepting router advertisements unless specifically requested */
 	if ($g['debug'])
 		log_error("Deny router advertisements for interface {$interface}");

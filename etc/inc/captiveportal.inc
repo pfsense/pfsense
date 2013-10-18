@@ -726,8 +726,9 @@ function captiveportal_prune_old() {
 					else
 						$interval = 0;
 					$past_interval_min = ($session_time > $interval);
-					$within_interval = ($session_time % $interval >= 0 && $session_time % $interval <= 59);
-					if (($interval > 0 && $past_interval_min && $within_interval) || $interval === 0) {
+					if ($interval != 0)
+						$within_interval = ($session_time % $interval >= 0 && $session_time % $interval <= 59);
+					if ($interval === 0 || ($interval > 0 && $past_interval_min && $within_interval)) {
 						RADIUS_ACCOUNTING_STOP($cpentry[1], // ruleno
 							$cpentry[4], // username
 							$cpentry[5], // sessionid

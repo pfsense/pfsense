@@ -67,10 +67,9 @@ if ($_GET['act'] == "del") {
 	/* check if still in use */
 	else if (vlan_inuse($_GET['id'])) {
 		$input_errors[] = gettext("This VLAN cannot be deleted because it is still being used as an interface.");
-	} elseif (!does_interface_exist($a_vlans[$_GET['id']]['vlanif'])) {
-		$input_errors[] = gettext("Invalid VLAN interface.");
 	} else {
-		mwexec("/sbin/ifconfig " . $a_vlans[$_GET['id']]['vlanif'] . " destroy");
+		if (does_interface_exist($a_vlans[$_GET['id']]['vlanif']))
+			pfSense_interface_destroy($a_vlans[$_GET['id']]['vlanif']);
 		unset($a_vlans[$_GET['id']]);
 
 		write_config();

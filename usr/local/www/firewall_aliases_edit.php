@@ -421,68 +421,35 @@ $jscriptstr = <<<EOD
 //<![CDATA[
 var objAlias = new Array(4999);
 function typesel_change() {
+	var field_disabled = 0;
+	var field_value = "";
+	var set_value = false;
 	switch (document.iform.type.selectedIndex) {
 		case 0:	/* host */
-			var cmd;
-
-			newrows = totalrows;
-			for(i=0; i<newrows; i++) {
-				comd = 'document.iform.address_subnet' + i + '.disabled = 1;';
-				eval(comd);
-				comd = 'document.iform.address_subnet' + i + '.value = "";';
-				eval(comd);
-			}
+			field_disabled = 1;
+			field_value = "";
+			set_value = true;
 			break;
 		case 1:	/* network */
-			var cmd;
-
-			newrows = totalrows;
-			for(i=0; i<newrows; i++) {
-				comd = 'document.iform.address_subnet' + i + '.disabled = 0;';
-				eval(comd);
-			}
+			field_disabled = 0;
 			break;
 		case 2:	/* port */
-			var cmd;
-
-			newrows = totalrows;
-			for(i=0; i<newrows; i++) {
-				comd = 'document.iform.address_subnet' + i + '.disabled = 1;';
-				eval(comd);
-				comd = 'document.iform.address_subnet' + i + '.value = "128";';
-				eval(comd);
-			}
+			field_disabled = 1;
+			field_value = "128";
+			set_value = true;
 			break;
-/*		case 3:	// OpenVPN Users
-			var cmd;
-
-			newrows = totalrows;
-			for(i=0; i<newrows; i++) {
-				comd = 'document.iform.address_subnet' + i + '.disabled = 1;';
-				eval(comd);
-				comd = 'document.iform.address_subnet' + i + '.value = "";';
-				eval(comd);
-			}
-			break;
-*/
 		case 3:	/* url */
-			var cmd;
-			newrows = totalrows;
-			for(i=0; i<newrows; i++) {
-				comd = 'document.iform.address_subnet' + i + '.disabled = 1;';
-				eval(comd);
-			}
+			field_disabled = 1;
 			break;
 
 		case 4:	/* urltable */
-			var cmd;
-			newrows = totalrows;
-			for(i=0; i<newrows; i++) {
-				comd = 'document.iform.address_subnet' + i + '.disabled = 0;';
-				eval(comd);
-			}
+			field_disabled = 0;
 			break;
 	}
+
+	jQuery("select[id^='address_subnet']").prop("disabled", field_disabled);
+	if (set_value == true);
+		jQuery("select[id^='address_subnet']").prop("value", field_value);
 }
 
 function add_alias_control() {

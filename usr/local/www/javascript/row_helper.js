@@ -39,21 +39,21 @@ var addRowTo = (function() {
 			for (cidr = 128; cidr>= 1; cidr--) {
 				str=str + "<option value=\"" + cidr + "\" >" + cidr + "</option>";
 			}
-			td.innerHTML="<INPUT type='hidden' value='" + totalrows +"' name='" + rowname[i] + "_row-" + totalrows + "'></input><select size='1' name='" + rowname[i] + totalrows + "'>" + str + "</select> ";
+			td.innerHTML="<INPUT type='hidden' value='" + totalrows +"' name='" + rowname[i] + "_row-" + totalrows + "'></input><select size='1' name='" + rowname[i] + totalrows + "' id='" + rowname[i] + totalrows + "'>" + str + "</select> ";
 		} else if(rowtype[i] == 'select,ipv4v6') {
                         var cidr;
 			var str;
 			for (cidr = 128; cidr>= 1; cidr--) {
 				str=str + "<option value=\"" + cidr + "\" >" + cidr + "</option>";
 			}
-			td.innerHTML="<INPUT type='hidden' value='" + totalrows +"' name='" + rowname[i] + "_row-" + totalrows + "'></input><select class='ipv4v6' size='1' name='" + rowname[i] + totalrows + "'>" + str + "</select> ";
+			td.innerHTML="<INPUT type='hidden' value='" + totalrows +"' name='" + rowname[i] + "_row-" + totalrows + "'></input><select class='ipv4v6' size='1' name='" + rowname[i] + totalrows + "' id='" + rowname[i] + totalrows + "'>" + str + "</select> ";
 		} else if(rowtype[i] == 'select_source') {
                         var cidr;
 			var str;
 			for (cidr = 128; cidr>= 1; cidr--) {
 				str=str + "<option value=\"" + cidr + "\" >" + cidr + "</option>";
 			}
-			td.innerHTML="<INPUT type='hidden' value='" + totalrows +"' name='" + rowname[i] + "_row-" + totalrows + "'></input><select size='1' name='" + rowname[i] + totalrows + "'>" + str + "</select> ";
+			td.innerHTML="<INPUT type='hidden' value='" + totalrows +"' name='" + rowname[i] + "_row-" + totalrows + "'></input><select size='1' name='" + rowname[i] + totalrows + "' id='" + rowname[i] + totalrows + "'>" + str + "</select> ";
 		} else {
 			td.innerHTML="<INPUT type='hidden' value='" + totalrows +"' name='" + rowname[i] + "_row-" + totalrows + "'></input><input type='checkbox' name='" + rowname[i] + totalrows + "'></input> ";
 		}

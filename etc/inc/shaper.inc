@@ -3571,6 +3571,14 @@ class dnqueue_class extends dummynet_class {
 		else
 			$maskbitsv6 = "";
 		$this->SetMask(array("type" => $masktype, "bits" => $maskbits, "bitsv6" => $maskbitsv6));
+		if (isset($q['buckets']) && $q['buckets'] <> "")
+			$this->SetBuckets($q['buckets']);
+		else
+			$this->SetBuckets("");
+		if (isset($q['plr']) && $q['plr'] <> "")
+			$this->SetPlr($q['plr']);
+		else
+			$this->SetPlr("");
        		if (isset($q['weight']) && $q['weight'] <> "")
             		$this->SetWeight($q['weight']);
 		else

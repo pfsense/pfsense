@@ -453,7 +453,7 @@ $url_str = gettext("URL (IPs)");
 $url_ports_str = gettext("URL (Ports)");
 $urltable_str = gettext("URL Table (IPs)");
 $urltable_ports_str = gettext("URL Table (Ports)");
-$update_freq_str = gettext("Update Freq.");
+$update_freq_str = gettext("Update Freq. (days)");
 
 $networks_help = gettext("Networks are specified in CIDR format.  Select the CIDR mask that pertains to each entry. /32 specifies a single IPv4 host, /128 specifies a single IPv6 host, /24 specifies 255.255.255.0, /64 specifies a normal IPv6 network, etc. Hostnames (FQDNs) may also be specified, using a /32 mask for IPv4 or /128 for IPv6. You may also enter an IP range such as 192.168.1.1-192.168.1.254 and a list of CIDR networks will be derived to fill the range.");
 $hosts_help = gettext("Enter as many hosts as you would like.  Hosts must be specified by their IP address or fully qualified domain name (FQDN). FQDN hostnames are periodically re-resolved and updated. If multiple IPs are returned by a DNS query, all are used.");

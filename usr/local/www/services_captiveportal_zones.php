@@ -4,7 +4,7 @@
 */
 
 ##|+PRIV
-##|*IDENT=page-services-captiveportalserver-zones
+##|*IDENT=page-services-captiveportal-zones
 ##|*NAME=Services: Captiveprotal Zones page
 ##|*DESCR=Allow access to the 'Services: CaptivePortal Zones' page.
 ##|*MATCH=services_captiveportal_zones.php*

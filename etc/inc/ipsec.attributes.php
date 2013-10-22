@@ -76,7 +76,7 @@ function parse_cisco_acl($attribs) {
 			} else if (strstr($rule[0], "route")) {
 				if (!is_array($attributes['routes']))
 					$attributes['routes'] = array();
-				$attributes['routes'][] = $route[1];
+				$attributes['routes'][] = $rule[1];
 				continue;
 			}	
 			$rindex = cisco_extract_index($rule[0]);

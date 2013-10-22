@@ -1109,7 +1109,7 @@ $priv_list['page-system-groupmanager-addprivs']['match'] = array();
 $priv_list['page-system-groupmanager-addprivs']['match'][] = "system_groupmanager_addprivs.php*";
 
 $priv_list['page-system-staticroutes'] = array();
-$priv_list['page-system-staticroutes']['name'] =gettext("WebCfg - System: Static Routes page"); 
+$priv_list['page-system-staticroutes']['name'] = gettext("WebCfg - System: Static Routes page");
 $priv_list['page-system-staticroutes']['descr'] = gettext("Allow access to the 'System: Static Routes' page.");
 $priv_list['page-system-staticroutes']['match'] = array();
 $priv_list['page-system-staticroutes']['match'][] = "system_routes.php*";
@@ -1240,11 +1240,11 @@ $priv_list['page-services-pppoeserver']['descr'] = gettext("Allow access to the 
 $priv_list['page-services-pppoeserver']['match'] = array();
 $priv_list['page-services-pppoeserver']['match'][] = "vpn_pppoe.php*";
 
-$priv_list['page-services-pppoeserver-eidt'] = array();
-$priv_list['page-services-pppoeserver-eidt']['name'] = gettext("WebCfg - Services: PPPoE Server: Edit page");
-$priv_list['page-services-pppoeserver-eidt']['descr'] = gettext("Allow access to the 'Services: PPPoE Server: Edit' page.");
-$priv_list['page-services-pppoeserver-eidt']['match'] = array();
-$priv_list['page-services-pppoeserver-eidt']['match'][] = "vpn_pppoe_edit.php*";
+$priv_list['page-services-pppoeserver-edit'] = array();
+$priv_list['page-services-pppoeserver-edit']['name'] = gettext("WebCfg - Services: PPPoE Server: Edit page");
+$priv_list['page-services-pppoeserver-edit']['descr'] = gettext("Allow access to the 'Services: PPPoE Server: Edit' page.");
+$priv_list['page-services-pppoeserver-edit']['match'] = array();
+$priv_list['page-services-pppoeserver-edit']['match'][] = "vpn_pppoe_edit.php*";
 
 $priv_list['page-vpn-vpnpptp'] = array();
 $priv_list['page-vpn-vpnpptp']['name'] = gettext("WebCfg - VPN: VPN PPTP page");
@@ -1275,7 +1275,6 @@ $priv_list['page-xmlrpclibrary']['name'] = gettext("WebCfg - XMLRPC Library page
 $priv_list['page-xmlrpclibrary']['descr'] = gettext("Allow access to the 'XMLRPC Library' page.");
 $priv_list['page-xmlrpclibrary']['match'] = array();
 $priv_list['page-xmlrpclibrary']['match'][] = "xmlrpc.php*";
-
 
 $priv_rmvd = array();
 

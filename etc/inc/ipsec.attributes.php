@@ -176,9 +176,9 @@ function parse_cisco_acl($attribs) {
 $rules = parse_cisco_acl($attributes);
 if (!empty($rules)) {
 	$pid = posix_getpid();
-	@file_put_contents("/tmp/{$pid}{$common_name}.rules", $rules);
-	mwexec("/sbin/pfctl -a \"ipsec/{$common_name}\" -f {$g['tmp_path']}/{$pid}{$common_name}.rules");
-	@unlink("{$g['tmp_path']}/{$pid}{$common_name}.rules");
+	@file_put_contents("/tmp/ipsec_{$pid}{$common_name}.rules", $rules);
+	mwexec("/sbin/pfctl -a \"ipsec/{$common_name}\" -f {$g['tmp_path']}/ipsec_{$pid}{$common_name}.rules");
+	@unlink("{$g['tmp_path']}/ipsec_{$pid}{$common_name}.rules");
 }
 
 ?>

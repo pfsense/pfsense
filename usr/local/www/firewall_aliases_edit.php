@@ -184,10 +184,8 @@ if ($_POST) {
 			$alias['updatefreq'] = $_POST['address_subnet0'] ? $_POST['address_subnet0'] : 7;
 			if (!is_URL($alias['url']) || empty($alias['url'])) {
 				$input_errors[] = gettext("You must provide a valid URL.");
-				$dont_update = true;
 			} elseif (! process_alias_urltable($alias['name'], $alias['url'], 0, true)) {
 				$input_errors[] = gettext("Unable to fetch usable data.");
-				$dont_update = true;
 			}
 			if ($_POST["detail0"] <> "")
 				$final_address_details[] = $_POST["detail0"];
@@ -246,12 +244,10 @@ if ($_POST) {
 					if($isfirst == 0) {
 						/* nothing was found */
 						$input_errors[] = sprintf(gettext("You must provide a valid URL. Could not fetch usable data from '%s'."), $_POST['address' . $x]);
-						$dont_update = true;
 					}
 					mwexec("/bin/rm -rf {$temp_filename}");
 				} else {
 					$input_errors[] = sprintf(gettext("URL '%s' is not valid."), $_POST['address' . $x]);
-					$dont_update = true;
 				}
 			}
 		}

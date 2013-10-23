@@ -42,17 +42,21 @@ function openvpn_resync_if_needed ($mode, $ovpn_settings, $interface) {
 	global $g, $config;
 
 	$resync_needed = true;
-	if (!empty($interface)) {
-		$mode_id = $mode . $ovpn_settings['vpnid'];
-		$fpath = "{$g['varetc_path']}/openvpn/{$mode_id}.interface";
-		if (file_exists($fpath)) {
-			$current_device = file_get_contents($fpath);
-			$current_device = trim($current_device, " \t\n");
-			$new_device = get_failover_interface($ovpn_settings['interface']);
-			if (isset($config['interfaces'][$interface])) {
-				$this_device = $config['interfaces'][$interface]['if'];
-				if (($current_device == $new_device) || ($current_device != $this_device) || ($new_device != $this_device))
-					$resync_needed = false;
+	if (isset($ovpn_settings['disable'])) {
+		$resync_needed = false;
+	} else {
+		if (!empty($interface)) {
+			$mode_id = $mode . $ovpn_settings['vpnid'];
+			$fpath = "{$g['varetc_path']}/openvpn/{$mode_id}.interface";
+			if (file_exists($fpath)) {
+				$current_device = file_get_contents($fpath);
+				$current_device = trim($current_device, " \t\n");
+				$new_device = get_failover_interface($ovpn_settings['interface']);
+				if (isset($config['interfaces'][$interface])) {
+					$this_device = $config['interfaces'][$interface]['if'];
+					if (($current_device == $new_device) && ($current_device != $this_device))
+						$resync_needed = false;
+				}
 			}
 		}
 	}

@@ -70,6 +70,14 @@ $reserved_table_names = array(
 	"vpn_networks",
 	"webConfiguratorlockout");
 
+function fix_rule_label($descr) {
+	$descr = str_replace('"', '', $descr);
+	if (strlen($descr) > 63)
+		return substr($descr, 0, 60) . "...";
+	else
+		return $descr;
+}
+
 function is_bogonsv6_used() {
 	global $config, $g;
 	# Only use bogonsv6 table if IPv6 Allow is on, and at least 1 enabled interface also has "blockbogons" enabled.
@@ -1946,7 +1954,7 @@ function filter_generate_user_rule_arr($rule) {
 	$ret['rule'] = $line;
 	$ret['interface'] = $rule['interface'];
 	if($rule['descr'] != "" and $line != "")
-		$ret['descr'] = "label \"USER_RULE: " . str_replace('"', '', substr($rule['descr'], 0, 52)) . "\"";
+		$ret['descr'] = "label \"" . fix_rule_label("USER_RULE: {$rule['descr']}") . "\"";
 	else
 		$ret['descr'] = "label \"USER_RULE\"";
 
@@ -2505,6 +2513,8 @@ function filter_generate_user_rule($rule) {
 function filter_rules_generate() {
 	global $config, $g, $FilterIflist, $time_based_rules, $GatewaysList;
 
+	$fix_rule_label = 'fix_rule_label';
+
 	update_filter_reload_status(gettext("Creating default rules"));
 	if(isset($config['system']['developerspew'])) {
 		$mt = microtime();
@@ -2667,12 +2677,12 @@ EOD;
 # block bogon networks
 # http://www.cymru.com/Documents/bogon-bn-nonagg.txt
 # http://www.team-cymru.org/Services/Bogons/fullbogons-ipv6.txt
-block in $bogonlog quick on \${$oc['descr']} from <bogons> to any label "block bogon IPv4 networks from {$oc['descr']}"
+block in $bogonlog quick on \${$oc['descr']} from <bogons> to any label "{$fix_rule_label("block bogon IPv4 networks from {$oc['descr']}")}"
 
 EOD;
 			if(isset($config['system']['ipv6allow'])) {
 				$ipfrules .= <<<EOD
-block in $bogonlog quick on \${$oc['descr']} from <bogonsv6> to any label "block bogon IPv6 networks from {$oc['descr']}"
+block in $bogonlog quick on \${$oc['descr']} from <bogonsv6> to any label "{$fix_rule_label("block bogon IPv6 networks from {$oc['descr']}")}"
 
 EOD;
 			}
@@ -2699,12 +2709,12 @@ EOD;
 				$ipfrules .= <<<EOD
 # block anything from private networks on interfaces with the option set
 antispoof for \${$oc['descr']}
-block in $privnetlog quick on \${$oc['descr']} from 10.0.0.0/8 to any label "Block private networks from {$oc['descr']} block 10/8"
-block in $privnetlog quick on \${$oc['descr']} from 127.0.0.0/8 to any label "Block private networks from {$oc['descr']} block 127/8"
-block in $privnetlog quick on \${$oc['descr']} from 100.64.0.0/10 to any label "Block private networks from {$oc['descr']} block 100.64/10"
-block in $privnetlog quick on \${$oc['descr']} from 172.16.0.0/12 to any label "Block private networks from {$oc['descr']} block 172.16/12"
-block in $privnetlog quick on \${$oc['descr']} from 192.168.0.0/16 to any label "Block private networks from {$oc['descr']} block 192.168/16"
-block in $privnetlog quick on \${$oc['descr']} from fc00::/7 to any label "Block ULA networks from {$oc['descr']} block fc00::/7"
+block in $privnetlog quick on \${$oc['descr']} from 10.0.0.0/8 to any label "{$fix_rule_label("Block private networks from {$oc['descr']} block 10/8")}"
+block in $privnetlog quick on \${$oc['descr']} from 127.0.0.0/8 to any label "{$fix_rule_label("Block private networks from {$oc['descr']} block 127/8")}"
+block in $privnetlog quick on \${$oc['descr']} from 100.64.0.0/10 to any label "{$fix_rule_label("Block private networks from {$oc['descr']} block 100.64/10")}"
+block in $privnetlog quick on \${$oc['descr']} from 172.16.0.0/12 to any label "{$fix_rule_label("Block private networks from {$oc['descr']} block 172.16/12")}"
+block in $privnetlog quick on \${$oc['descr']} from 192.168.0.0/16 to any label "{$fix_rule_label("Block private networks from {$oc['descr']} block 192.168/16")}"
+block in $privnetlog quick on \${$oc['descr']} from fc00::/7 to any label "{$fix_rule_label("Block ULA networks from {$oc['descr']} block fc00::/7")}"
 
 EOD;
 			}
@@ -2713,16 +2723,16 @@ EOD;
 		case "pptp":
 				$ipfrules .= <<<EOD
 # allow PPTP client
-pass in on \${$oc['descr']} proto tcp from any to any port = 1723 flags S/SA modulate state label "allow PPTP client on {$oc['descr']}"
-pass in on \${$oc['descr']} proto gre from any to any keep state label "allow PPTP client on {$oc['descr']}"
+pass in on \${$oc['descr']} proto tcp from any to any port = 1723 flags S/SA modulate state label "{$fix_rule_label("allow PPTP client on {$oc['descr']}")}"
+pass in on \${$oc['descr']} proto gre from any to any keep state label "{$fix_rule_label("allow PPTP client on {$oc['descr']}")}"
 
 EOD;
 			break;
 		case "dhcp":
 			$ipfrules .= <<<EOD
 # allow our DHCP client out to the {$oc['descr']}
-pass in on \${$oc['descr']} proto udp from any port = 67 to any port = 68 label "allow dhcp client out {$oc['descr']}"
-pass out on \${$oc['descr']} proto udp from any port = 68 to any port = 67 label "allow dhcp client out {$oc['descr']}"
+pass in on \${$oc['descr']} proto udp from any port = 67 to any port = 68 label "{$fix_rule_label("allow dhcp client out {$oc['descr']}")}"
+pass out on \${$oc['descr']} proto udp from any port = 68 to any port = 67 label "{$fix_rule_label("allow dhcp client out {$oc['descr']}")}"
 # Not installing DHCP server firewall rules for {$oc['descr']} which is configured for DHCP.
 
 EOD;
@@ -2765,23 +2775,23 @@ EOD;
 		case "dhcp6":
 			$ipfrules .= <<<EOD
 # allow our DHCPv6 client out to the {$oc['descr']}
-pass in quick on \${$oc['descr']} proto udp from fe80::/10 port = 546 to fe80::/10 port = 546 label "allow dhcpv6 client in {$oc['descr']}"
-pass in quick on \${$oc['descr']} proto udp from any port = 547 to any port = 546 label "allow dhcpv6 client in {$oc['descr']}"
-pass out quick on \${$oc['descr']} proto udp from any port = 546 to any port = 547 label "allow dhcpv6 client out {$oc['descr']}"
+pass in quick on \${$oc['descr']} proto udp from fe80::/10 port = 546 to fe80::/10 port = 546 label "{$fix_rule_label("allow dhcpv6 client in {$oc['descr']}")}"
+pass in quick on \${$oc['descr']} proto udp from any port = 547 to any port = 546 label "{$fix_rule_label("allow dhcpv6 client in {$oc['descr']}")}"
+pass out quick on \${$oc['descr']} proto udp from any port = 546 to any port = 547 label "{$fix_rule_label("allow dhcpv6 client out {$oc['descr']}")}"
 
 EOD;
 			break;
 		case "6rd":
 			$ipfrules .= <<<EOD
 # allow our proto 41 traffic from the 6RD border relay in
-pass in on \${$oc['descr']} proto 41 from {$config['interfaces'][$on]['gateway-6rd']} to any label "Allow 6in4 traffic in for 6rd on {$oc['descr']}"
-pass out on \${$oc['descr']} proto 41 from any to {$config['interfaces'][$on]['gateway-6rd']} label "Allow 6in4 traffic out for 6rd on {$oc['descr']}"
+pass in on \${$oc['descr']} proto 41 from {$config['interfaces'][$on]['gateway-6rd']} to any label "{$fix_rule_label("Allow 6in4 traffic in for 6rd on {$oc['descr']}")}"
+pass out on \${$oc['descr']} proto 41 from any to {$config['interfaces'][$on]['gateway-6rd']} label "{$fix_rule_label("Allow 6in4 traffic out for 6rd on {$oc['descr']}")}"
 
 EOD;
 		if (is_ipaddrv6($oc['ipv6'])) {
 			$ipfrules .= <<<EOD
-pass in on \${$oc['descr']} inet6 from any to {$oc['ipv6']}/{$oc['snv6']} label "Allow 6rd traffic in for 6rd on {$oc['descr']}"
-pass out on \${$oc['descr']} inet6 from {$oc['ipv6']}/{$oc['snv6']} to any label "Allow 6rd traffic out for 6rd on {$oc['descr']}"
+pass in on \${$oc['descr']} inet6 from any to {$oc['ipv6']}/{$oc['snv6']} label "{$fix_rule_label("Allow 6rd traffic in for 6rd on {$oc['descr']}")}"
+pass out on \${$oc['descr']} inet6 from {$oc['ipv6']}/{$oc['snv6']} to any label "{$fix_rule_label("Allow 6rd traffic out for 6rd on {$oc['descr']}")}"
 
 EOD;
 		}
@@ -2790,15 +2800,15 @@ EOD;
 			if (is_ipaddrv4($oc['ip'])) {
 			$ipfrules .= <<<EOD
 # allow our proto 41 traffic from the 6to4 border relay in
-pass in on \${$oc['descr']} proto 41 from any to {$oc['ip']} label "Allow 6in4 traffic in for 6to4 on {$oc['descr']}"
-pass out on \${$oc['descr']} proto 41 from {$oc['ip']} to any label "Allow 6in4 traffic out for 6to4 on {$oc['descr']}"
+pass in on \${$oc['descr']} proto 41 from any to {$oc['ip']} label "{$fix_rule_label("Allow 6in4 traffic in for 6to4 on {$oc['descr']}")}"
+pass out on \${$oc['descr']} proto 41 from {$oc['ip']} to any label "{$fix_rule_label("Allow 6in4 traffic out for 6to4 on {$oc['descr']}")}"
 
 EOD;
 		}
 		if (is_ipaddrv6($oc['ipv6'])) {
 			$ipfrules .= <<<EOD
-pass in on \${$oc['descr']} inet6 from any to {$oc['ipv6']}/{$oc['snv6']} label "Allow 6in4 traffic in for 6to4 on {$oc['descr']}"
-pass out on \${$oc['descr']} inet6 from {$oc['ipv6']}/{$oc['snv6']} to any label "Allow 6in4 traffic out for 6to4 on {$oc['descr']}"
+pass in on \${$oc['descr']} inet6 from any to {$oc['ipv6']}/{$oc['snv6']} label "{$fix_rule_label("Allow 6in4 traffic in for 6to4 on {$oc['descr']}")}"
+pass out on \${$oc['descr']} inet6 from {$oc['ipv6']}/{$oc['snv6']} to any label "{$fix_rule_label("Allow 6in4 traffic out for 6to4 on {$oc['descr']}")}"
 
 EOD;
 		}
@@ -2912,7 +2922,7 @@ EOD;
 		if(is_ipaddr($pptpdtarget) and is_array($FilterIflist['wan'])) {
 			$ipfrules .= <<<EOD
 # PPTPd rules
-pass in on \${$FilterIflist['wan']['descr']} proto tcp from any to $pptpdtarget port = 1723 modulate state label "allow pptpd {$pptpdtarget}"
+pass in on \${$FilterIflist['wan']['descr']} proto tcp from any to $pptpdtarget port = 1723 modulate state label "{$fix_rule_label("allow pptpd {$pptpdtarget}")}"
 pass in on \${$FilterIflist['wan']['descr']} proto gre from any to any keep state label "allow gre pptpd"
 
 EOD;

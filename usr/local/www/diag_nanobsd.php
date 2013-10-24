@@ -108,14 +108,11 @@ if ($_POST['changero']) {
 }
 
 if ($_POST['setrw']) {
-	if (isset($_POST['nanobsd_force_rw'])) {
-		if (!is_writable("/")) {
-			conf_mount_rw();
-		}
+	conf_mount_rw();
+	if (isset($_POST['nanobsd_force_rw']))
 		$config['system']['nanobsd_force_rw'] = true;
-	} else {
+	else
 		unset($config['system']['nanobsd_force_rw']);
-	}
 
 	write_config("Changed Permanent Read/Write Setting");
 	conf_mount_ro();
@@ -175,7 +172,8 @@ if ($savemsg)
 							<form action="diag_nanobsd.php" method="post" name="iform">
 							<?php if (is_writable("/")) {
 								$refcount = refcount_read(1000);
-								if ($refcount == 1) {
+								/* refcount_read returns -1 when shared memory section does not exist */
+								if ($refcount == 1 || $refcount == -1) {
 									$refdisplay = "";
 								} else {
 									$refdisplay = " (reference count " . $refcount . ")";

@@ -308,10 +308,7 @@ function conf_mount_rw() {
 	if($g['platform'] == "cdrom" or $g['platform'] == "pfSense")
 		return;
 
-	if (!isset($config['system']['nanobsd_force_rw']) && (refcount_reference(1000) > 1))
-		return;
-
-	if (isset($config['system']['nanobsd_force_rw']) && is_writable("/"))
+	if ((refcount_reference(1000) > 1) && is_writable("/"))
 		return;
 
 	$status = mwexec("/sbin/mount -u -w -o sync,noatime {$g['cf_path']}");
@@ -348,10 +345,13 @@ function conf_mount_ro() {
 	/* Do not trust $g['platform'] since this can be clobbered during factory reset. */
 	$platform = trim(file_get_contents("/etc/platform"));
 	/* do not umount on cdrom or pfSense platforms */
-	if($platform == "cdrom" or $platform == "pfSense" or isset($config['system']['nanobsd_force_rw']))
+	if($platform == "cdrom" or $platform == "pfSense")
 		return;
 
 	if (refcount_unreference(1000) > 0)
+		return;
+
+	if(isset($config['system']['nanobsd_force_rw']))
 		return;
 
 	if($g['booting'])

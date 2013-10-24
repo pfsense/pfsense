@@ -52,6 +52,8 @@ $pconfig['nentries'] = $config['syslog']['nentries'];
 $pconfig['remoteserver'] = $config['syslog']['remoteserver'];
 $pconfig['remoteserver2'] = $config['syslog']['remoteserver2'];
 $pconfig['remoteserver3'] = $config['syslog']['remoteserver3'];
+$pconfig['sourceip'] = $config['syslog']['sourceip'];
+$pconfig['ipproto'] = $config['syslog']['ipproto'];
 $pconfig['filter'] = isset($config['syslog']['filter']);
 $pconfig['dhcp'] = isset($config['syslog']['dhcp']);
 $pconfig['portalauth'] = isset($config['syslog']['portalauth']);
@@ -106,6 +108,8 @@ if ($_POST) {
 		$config['syslog']['remoteserver'] = $_POST['remoteserver'];
 		$config['syslog']['remoteserver2'] = $_POST['remoteserver2'];
 		$config['syslog']['remoteserver3'] = $_POST['remoteserver3'];
+		$config['syslog']['sourceip'] = $_POST['sourceip'];
+		$config['syslog']['ipproto'] = $_POST['ipproto'];
 		$config['syslog']['filter'] = $_POST['filter'] ? true : false;
 		$config['syslog']['dhcp'] = $_POST['dhcp'] ? true : false;
 		$config['syslog']['portalauth'] = $_POST['portalauth'] ? true : false;
@@ -323,6 +327,40 @@ function check_everything() {
 		</tr>
 		<tr>
 			<td colspan="2" valign="top" class="listtopic"><?=gettext("Remote Logging Options");?></td>
+		</tr>
+		<tr>
+			<td width="22%" valign="top" class="vncell"><?=gettext("Source Address"); ?></td>
+			<td width="78%" class="vtable">
+				<select name="sourceip" class="formselect">
+					<option value="">Default (any)</option>
+				<?php $sourceips = get_possible_traffic_source_addresses(false);
+					foreach ($sourceips as $sip):
+						$selected = "";
+						if (!link_interface_to_bridge($sip['value']) && ($sip['value'] == $pconfig['sourceip']))
+							$selected = 'selected="selected"';
+				?>
+					<option value="<?=$sip['value'];?>" <?=$selected;?>>
+						<?=htmlspecialchars($sip['name']);?>
+					</option>
+					<?php endforeach; ?>
+				</select>
+				<br/>
+				<?= gettext("This option will allow the logging daemon to bind to a single IP address, rather than all IP addresses."); ?>
+				<?= gettext("If you pick a single IP, remote syslog severs must all be of that IP type. If you wish to mix IPv4 and IPv6 remote syslog servers, you must bind to all interfaces."); ?>
+				<br/><br/>
+				<?= gettext("NOTE: If an IP address cannot be located on the chosen interface, the daemon will bind to all addresses."); ?>
+			</td>
+		</tr>
+		<tr>
+			<td width="22%" valign="top" class="vncell"><?=gettext("IP Protocol"); ?></td>
+			<td width="78%" class="vtable">
+				<select name="ipproto" class="formselect">
+					<option value="ipv4" <?php if ($ipproto == "ipv4") echo 'selected="selected"' ?>>IPv4</option>
+					<option value="ipv6" <?php if ($ipproto == "ipv6") echo 'selected="selected"' ?>>IPv6</option>
+				</select>
+				<br/>
+				<?= gettext("This option is only used when a non-default address is chosen as the source above. This option only expresses a preference; If an IP address of the selected type is not found on the chosen interface, the other type will be tried."); ?>
+			</td>
 		</tr>
 		<tr>
 			<td width="22%" valign="top" class="vncell"><?=gettext("Enable Remote Logging");?></td>

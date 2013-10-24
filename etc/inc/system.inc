@@ -710,7 +710,23 @@ EOD;
 		if (!is_dir("{$g['dhcpd_chroot_path']}/var/run"))
 			exec("/bin/mkdir -p {$g['dhcpd_chroot_path']}/var/run");
 
-		$retval = mwexec_bg("/usr/sbin/syslogd -s -c -c -l {$g['dhcpd_chroot_path']}/var/run/log -f {$g['varetc_path']}/syslog.conf");
+		$sourceip = "";
+		if (!empty($syslogcfg['sourceip'])) {
+			if ($syslogcfg['ipproto'] == "ipv6") {
+				$ifaddr = is_ipaddr($syslogcfg['sourceip']) ? $syslogcfg['sourceip'] : get_interface_ipv6($syslogcfg['sourceip']);
+				if (!is_ipaddr($ifaddr))
+					$ifaddr = get_interface_ip($syslogcfg['sourceip']);
+			} else {
+				$ifaddr = is_ipaddr($syslogcfg['sourceip']) ? $syslogcfg['sourceip'] : get_interface_ip($syslogcfg['sourceip']);
+				if (!is_ipaddr($ifaddr))
+					$ifaddr = get_interface_ipv6($syslogcfg['sourceip']);
+			}
+			if (is_ipaddr($ifaddr)) {
+				$sourceip = "-b {$ifaddr}";
+			}
+		}
+
+		$retval = mwexec_bg("/usr/sbin/syslogd -s -c -c -l {$g['dhcpd_chroot_path']}/var/run/log -f {$g['varetc_path']}/syslog.conf {$sourceip}");
 
 	} else {
 		$retval = mwexec_bg("/usr/sbin/syslogd -s -c -c -l {$g['dhcpd_chroot_path']}/var/run/log");

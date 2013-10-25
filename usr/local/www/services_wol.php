@@ -143,9 +143,23 @@ include("head.inc");
                 <tr>
 				  <td width="22%" valign="top" class="vncellreq"><?=gettext("MAC address");?></td>
 				  <td width="78%" class="vtable">
-                      <input name="mac" type="text" class="formfld unknown" id="mac" size="20" value="<?=htmlspecialchars($mac);?>">
+                      <input name="mac" type="text" class="formfld unknown" id="mac" size="20" value="<?=htmlspecialchars($mac);?>" maxlength = 17>
+                      <script type='text/javascript'>
+                        length=1;
+			jQuery("#mac").focusin(function (evt) {
+
+			  jQuery(this).keypress(function () {
+			    content=jQuery(this).val();
+			    content1 = content.replace(/\:/g, '');
+			    length=content1.length;
+			    if(((length % 2) == 0) && length < 12 && length > 1){
+			      jQuery('#mac').val(jQuery('#mac').val() + ':');
+			    }
+			  });
+			});
+		      </script>
                       <br>
-                      <?=gettext("Enter a MAC address ");?><span class="vexpl"> <?=gettext("in the following format: xx:xx:xx:xx:xx:xx");?></span></td></tr>
+                      <?=gettext("Enter a 12 digit MAC address, colons are automatically added");?></td></tr>
 				<tr>
 				  <td width="22%" valign="top">&nbsp;</td>
 				  <td width="78%">

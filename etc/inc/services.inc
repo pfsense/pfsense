@@ -1358,8 +1358,7 @@ function services_dhcrelay_configure() {
 			if (is_array($config['gateways']['gateway_item'])) {
 				foreach ($config['gateways']['gateway_item'] as $gateway) {
 					if (isset($gateway['defaultgw'])) {
-						$a_gateways = return_gateways_array(true);
-                                        	$destif = $a_gateways[$rtent['gateway']]['interface'];
+						$destif = $gateway['interface'];
 						break;
 					}
 				}
@@ -1477,8 +1476,7 @@ function services_dhcrelay6_configure() {
 			if (is_array($config['gateways']['gateway_item'])) {
 				foreach ($config['gateways']['gateway_item'] as $gateway) {
 					if (isset($gateway['defaultgw'])) {
-						$a_gateways = return_gateways_array(true);
-                                        	$destif = $a_gateways[$rtent['gateway']]['interface'];
+						$destif = $gateway['interface'];
 						break;
 					}
 				}

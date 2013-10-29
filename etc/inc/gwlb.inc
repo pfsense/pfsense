@@ -483,8 +483,6 @@ function return_gateways_array($disabled = false, $localhost = false) {
 			default:
 				if (substr($ifcfg['if'], 0, 4) ==  "ovpn")
 					$ctype = "VPNv4";
-				else if (substr($ifcfg['if'], 0, 3) == "gre")
-					$ctype = "GREv4";
 				break;
 		}
 		$ctype = "_". strtoupper($ctype);
@@ -555,8 +553,6 @@ function return_gateways_array($disabled = false, $localhost = false) {
 			default:
 				if (substr($ifcfg['if'], 0, 4) ==  "ovpn")
 					$ctype = "VPNv6";
-				else if (substr($ifcfg['if'], 0, 3) == "gre")
-					$ctype = "GREv6";
 				break;
 		}
 		$ctype = "_". strtoupper($ctype);

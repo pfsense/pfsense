@@ -8430,7 +8430,7 @@ msgstr "adicionar outra entrada"
 #: usr/local/www/firewall_shaper_vinterface.php:102
 msgid ""
 "This pipe/queue is referenced in filter rules, please remove references from "
-"there before deleteing."
+"there before deleting."
 msgstr ""
 "O pipe/fila é referenciado em regras de firewall, por favor remova estas "
 "referências antes de apagar."

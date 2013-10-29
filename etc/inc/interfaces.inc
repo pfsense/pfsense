@@ -4622,7 +4622,7 @@ function get_interfaces_with_gateway() {
 				$ints[$ifdescr] = $ifdescr;
 			break;
 			default:
-				if (substr($ifname['if'], 0, 4) ==  "ovpn" ||
+				if (preg_match('/^(ovpn|gre)/', $ifname['if']) ||
 				    !empty($ifname['gateway']))
 					$ints[$ifdescr] = $ifdescr;
 			break;
@@ -4648,6 +4648,15 @@ function interface_has_gateway($friendly) {
 			default:
 				if (substr($ifname['if'], 0, 4) ==  "ovpn")
 					return true;
+				if (substr($ifname['if'], 0, 3) == "gre" &&
+				    is_array($config['gres']['gre'])) {
+					foreach ($config['gres']['gre'] as $gre) {
+						if ($gre['greif'] != $ifname['if'])
+							continue;
+						if (is_ipaddrv4($gre['tunnel-remote-addr']))
+							return true;
+					}
+				}
 				if (!empty($ifname['gateway']))
 					return true;
 			break;
@@ -4673,6 +4682,15 @@ function interface_has_gatewayv6($friendly) {
 			default:
 				if (substr($ifname['if'], 0, 4) ==  "ovpn")
 					return true;
+				if (substr($ifname['if'], 0, 3) == "gre" &&
+				    is_array($config['gres']['gre'])) {
+					foreach ($config['gres']['gre'] as $gre) {
+						if ($gre['greif'] != $ifname['if'])
+							continue;
+						if (is_ipaddrv6($gre['tunnel-remote-addr']))
+							return true;
+					}
+				}
 				if (!empty($ifname['gatewayv6']))
 					return true;
 				break;

@@ -8536,7 +8536,7 @@ msgstr "başka giriş ekle"
 #: usr/local/www/firewall_shaper_vinterface.php:102
 msgid ""
 "This pipe/queue is referenced in filter rules, please remove references from "
-"there before deleteing."
+"there before deleting."
 msgstr ""
 "Bu kuyruk / boru filitre kurallarında kullanımda, lütfen silmeden önce "
 "kullanımda olan kuralı kaldırınız."

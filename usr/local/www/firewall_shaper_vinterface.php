@@ -99,7 +99,7 @@ if ($_GET) {
 			if (is_array($config['filter']['rule'])) {
 				foreach ($config['filter']['rule'] as $rule) {
 					if ($rule['dnpipe'] == $queue->GetQname() || $rule['pdnpipe'] == $queue->GetQname())
-						$input_errors[] = gettext("This pipe/queue is referenced in filter rules, please remove references from there before deleteing.");
+						$input_errors[] = gettext("This pipe/queue is referenced in filter rules, please remove references from there before deleting.");
 				}
 			}
 			if (!$input_errors) {

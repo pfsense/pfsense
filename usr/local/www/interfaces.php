@@ -458,6 +458,11 @@ if ($_POST['apply']) {
 } else if ($_POST) {
 
 	unset($input_errors);
+
+	if (substr($wancfg['if'], 0, 3) == "gre" &&
+	   ($_POST['type'] != "none" || $_POST['type'] != "none"))
+		$input_errors[] = gettext("You cannot set an IPv4 or IPv6 address to a GRE interface");
+
 	$pconfig = $_POST;
 	if (is_numeric("0x" . $_POST['track6-prefix-id--hex']))
 		$pconfig['track6-prefix-id'] = intval($_POST['track6-prefix-id--hex'], 16);

@@ -202,6 +202,20 @@ function openvpn_get_cipherlist() {
 	return $ciphers;
 }
 
+function openvpn_get_digestlist() {
+
+	$digests = array();
+	$digest_out = shell_exec('/usr/local/sbin/openvpn --show-digests | /usr/bin/grep "digest size" | /usr/bin/awk \'{print $1, "(" $2 "-" $3 ")";}\'');
+	$digest_lines = explode("\n", trim($digest_out));
+	sort($digest_lines);
+	foreach ($digest_lines as $line) {
+		$words = explode(' ', $line);
+		$digests[$words[0]] = "{$words[0]} {$words[1]}";
+	}
+	$digests["none"] = gettext("None (No Authentication)");
+	return $digests;
+}
+
 function openvpn_get_engines() {
 	$openssl_engines = array('none' => 'No Hardware Crypto Acceleration');
 	exec("/usr/local/bin/openssl engine -t -c", $openssl_engine_output);
@@ -414,6 +428,8 @@ function openvpn_reconfigure($mode, $settings) {
 			$proto = "{$proto}-{$mode}";
 	$dev_mode = $settings['dev_mode'];
 	$cipher = $settings['crypto'];
+	// OpenVPN defaults to SHA1, so use it when unset to maintain compatibility.
+	$digest = !empty($settings['digest']) ? $settings['digest'] : "SHA1";
 
 	$interface = get_failover_interface($settings['interface']);
 	$ipaddr = $settings['ipaddr'];
@@ -456,6 +472,7 @@ function openvpn_reconfigure($mode, $settings) {
 	$conf .= "persist-key\n";
 	$conf .= "proto {$proto}\n";
 	$conf .= "cipher {$cipher}\n";
+	$conf .= "auth {$digest}\n";
 	$conf .= "up /usr/local/sbin/ovpn-linkup\n";
 	$conf .= "down /usr/local/sbin/ovpn-linkdown\n";
 	if (file_exists("/usr/local/sbin/openvpn.attributes.sh")) {

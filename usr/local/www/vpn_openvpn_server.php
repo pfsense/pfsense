@@ -97,6 +97,8 @@ if($_GET['act']=="new"){
 	$pconfig['local_port'] = openvpn_port_next('UDP');
 	$pconfig['pool_enable'] = "yes";
 	$pconfig['cert_depth'] = 1;
+	// OpenVPN Defaults to SHA1
+	$pconfig['digest'] = "SHA1";
 }
 
 if($_GET['act']=="edit"){
@@ -133,6 +135,8 @@ if($_GET['act']=="edit"){
 		} else
 			$pconfig['shared_key'] = base64_decode($a_server[$id]['shared_key']);
 		$pconfig['crypto'] = $a_server[$id]['crypto'];
+		// OpenVPN Defaults to SHA1 if unset
+		$pconfig['digest'] = !empty($a_server[$id]['digest']) ? $a_server[$id]['digest'] : "SHA1";
 		$pconfig['engine'] = $a_server[$id]['engine'];
 
 		$pconfig['tunnel_network'] = $a_server[$id]['tunnel_network'];
@@ -381,6 +385,7 @@ if ($_POST) {
 			$server['shared_key'] = base64_encode($pconfig['shared_key']);
 		}
 		$server['crypto'] = $pconfig['crypto'];
+		$server['digest'] = $pconfig['digest'];
 		$server['engine'] = $pconfig['engine'];
 
 		$server['tunnel_network'] = $pconfig['tunnel_network'];
@@ -1051,6 +1056,24 @@ if ($savemsg)
 									foreach ($cipherlist as $name => $desc):
 									$selected = '';
 									if ($name == $pconfig['crypto'])
+										$selected = ' selected';
+								?>
+								<option value="<?=$name;?>"<?=$selected?>>
+									<?=htmlspecialchars($desc);?>
+								</option>
+								<?php endforeach; ?>
+							</select>
+						</td>
+					</tr>
+					<tr>
+						<td width="22%" valign="top" class="vncellreq"><?=gettext("Auth Digest Algorithm"); ?></td>
+						<td width="78%" class="vtable">
+							<select name="digest" class="formselect">
+								<?php
+									$digestlist = openvpn_get_digestlist();
+									foreach ($digestlist as $name => $desc):
+									$selected = '';
+									if ($name == $pconfig['digest'])
 										$selected = ' selected';
 								?>
 								<option value="<?=$name;?>"<?=$selected?>>

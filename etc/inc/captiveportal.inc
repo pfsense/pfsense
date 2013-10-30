@@ -1869,11 +1869,11 @@ function portal_allow($clientip,$clientmac,$username,$password = null, $attribut
 			$writecfg = true;
 		} else {
 			/* See if a pipeno is passed, if not start sessions because this means there isn't one atm */
-			if (is_null($pipeno))
+			if (empty($pipeno))
 				$pipeno = captiveportal_get_next_dn_ruleno();
 
 			/* if the pool is empty, return appropriate message and exit */
-			if (is_null($pipeno)) {
+			if (empty($pipeno)) {
 				portal_reply_page($redirurl, "error", "System reached maximum login capacity");
 				log_error("WARNING!  Captive portal has reached maximum login capacity");
 				unlock($cpdblck);

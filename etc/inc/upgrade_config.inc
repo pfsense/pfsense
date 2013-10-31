@@ -3176,4 +3176,25 @@ function upgrade_100_to_101() {
 			$config['captiveportal'][$cpzone]['passthrumac'][$idx]['action'] = 'pass';
 	}
 }
+
+/* Convert OpenVPN Compression option to the new style */
+function upgrade_101_to_102() {
+	global $config;
+	// Nothing to do if there is no OpenVPN tag
+	if (!isset($config['openvpn']) || !is_array($config['openvpn']))
+		return;
+
+	if (is_array($config['openvpn']['openvpn-server'])) {
+		foreach ($config['openvpn']['openvpn-server'] as &$vpn) {
+			if (!empty($vpn['compression']))
+				$vpn['compression'] = "adaptive";
+		}
+	}
+	if (is_array($config['openvpn']['openvpn-client'])) {
+		foreach ($config['openvpn']['openvpn-client'] as &$vpn) {
+			if (!empty($vpn['compression']))
+				$vpn['compression'] = "adaptive";
+		}
+	}
+}
 ?>

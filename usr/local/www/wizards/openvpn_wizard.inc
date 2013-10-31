@@ -335,6 +335,15 @@ function step10_stepbeforeformdisplay() {
 				$opt['value'] = $name;
 			$pkg['step'][$stepid]['fields']['field'][$idx]['options']['option'][] = $opt;
 			}
+		} else if ($field['name'] == "compression") {
+			global $openvpn_compression_modes;
+			$pkg['step'][$stepid]['fields']['field'][$idx]['options']['option'] = array();
+			foreach ($openvpn_compression_modes as $name => $desc) {
+				$opt = array();
+				$opt['name'] = $desc;
+				$opt['value'] = $name;
+			$pkg['step'][$stepid]['fields']['field'][$idx]['options']['option'][] = $opt;
+			}
 		} else if ($field['name'] == "engine") {
 			$pkg['step'][$stepid]['fields']['field'][$idx]['options']['option'] = array();
 			$engines = openvpn_get_engines();

@@ -879,19 +879,18 @@ if ($savemsg)
 					<tr>
 						<td width="22%" valign="top" class="vncell"><?=gettext("Compression"); ?></td>
 						<td width="78%" class="vtable">
-							<table border="0" cellpadding="2" cellspacing="0">
-								<tr>
-									<td>
-										<?php set_checked($pconfig['compression'],$chk); ?>
-										<input name="compression" type="checkbox" value="yes" <?=$chk;?>>
-									</td>
-									<td>
-										<span class="vexpl">
-											<?=gettext("Compress tunnel packets using the LZO algorithm"); ?>.
-										</span>
-									</td>
-								</tr>
-							</table>
+							<select name="compression" class="formselect">
+								<?php
+									foreach ($openvpn_compression_modes as $cmode => $cmodedesc):
+									$selected = '';
+									if ($cmode == $pconfig['compression'])
+										$selected = ' selected';
+								?>
+								<option value="<?= $cmode ?>" <?= $selected ?>><?= $cmodedesc ?></option>
+								<?php endforeach; ?>
+							</select>
+							<br/>
+							<?=gettext("Compress tunnel packets using the LZO algorithm. Adaptive compression will dynamically disable compression for a period of time if OpenVPN detects that the data in the packets is not being compressed efficiently."); ?>.
 						</td>
 					</tr>
 					<tr>

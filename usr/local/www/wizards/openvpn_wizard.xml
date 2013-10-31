@@ -756,9 +756,15 @@
 		<field>
 			<displayname>Compression</displayname>
 			<name>compression</name>
-			<type>checkbox</type>
-			<description>Compress tunnel packets using the LZO algorithm.</description>
+			<description>&lt;br/&gt;Compress tunnel packets using the LZO algorithm. Adaptive compression will dynamically disable compression for a period of time if OpenVPN detects that the data in the packets is not being compressed efficiently.</description>
 			<bindstofield>ovpnserver->step10->compression</bindstofield>
+			<type>select</type>
+			<options>
+				<option>
+					<name>dummy</name>
+					<value>dummy</value>
+				</option>
+			</options>
 		</field>
 		<field>
 			<displayname>Type-of-Service</displayname>

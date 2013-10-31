@@ -94,6 +94,13 @@ $openvpn_client_modes = array(
 	'p2p_tls' => gettext("Peer to Peer ( SSL/TLS )"),
 	'p2p_shared_key' => gettext("Peer to Peer ( Shared Key )") );
 
+global $openvpn_compression_modes;
+$openvpn_compression_modes = array(
+	'none' =>	gettext("No Preference"),
+	'no' =>		gettext("Disabled - No Compression"),
+	'adaptive' =>	gettext("Enabled with Adaptive Compression"),
+	'yes' =>	gettext("Enabled without Adaptive Compression"));
+
 function openvpn_create_key() {
 
 	$fp = popen("/usr/local/sbin/openvpn --genkey --secret /dev/stdout 2>/dev/null", "r");
@@ -743,8 +750,8 @@ function openvpn_reconfigure($mode, $settings) {
 			break;
 	}
 
-	if ($settings['compression'])
-		$conf .= "comp-lzo\n";
+	if (!empty($settings['compression']))
+		$conf .= "comp-lzo {$settings['compression']}\n";
 
 	if ($settings['passtos'])
 		$conf .= "passtos\n";

@@ -96,7 +96,7 @@ $openvpn_client_modes = array(
 
 global $openvpn_compression_modes;
 $openvpn_compression_modes = array(
-	'none' =>	gettext("No Preference"),
+	'' =>	gettext("No Preference"),
 	'no' =>		gettext("Disabled - No Compression"),
 	'adaptive' =>	gettext("Enabled with Adaptive Compression"),
 	'yes' =>	gettext("Enabled without Adaptive Compression"));

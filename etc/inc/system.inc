@@ -1273,7 +1273,17 @@ function system_timezone_configure() {
 
 	/* extract appropriate timezone file */
 	$timezone = $syscfg['timezone'];
-	if (!$timezone)
+	if ($timezone) {
+		exec('/usr/bin/tar -tvzf /usr/share/zoneinfo.tgz', $tzs);
+		foreach ($tzs as $tz) {
+			if (preg_match(",{$timezone}$,", $tz))
+				break;
+			if (preg_match(",{$timezone} link to *(.*)$,", $tz, $matches)) {
+				$timezone = $matches[1];
+				break;
+			}
+		}
+	} else
 		$timezone = "Etc/UTC";
 
 	conf_mount_rw();

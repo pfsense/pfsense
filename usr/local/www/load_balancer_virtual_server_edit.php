@@ -96,6 +96,9 @@ if ($_POST) {
 	else if (is_subnetv4($_POST['ipaddr']) && subnet_size($_POST['ipaddr']) > 64)
 		$input_errors[] = sprintf(gettext("%s is a subnet containing more than 64 IP addresses."), $_POST['ipaddr']);
 
+	if ((strtolower($_POST['relay_protocol']) == "dns") && !empty($_POST['sitedown']))
+		$input_errors[] = gettext("You cannot select a Fall Back Pool when using the DNS relay protocol.");
+
 	if (!$input_errors) {
 		$vsent = array();
 		if(isset($id) && $a_vs[$id])
@@ -232,7 +235,8 @@ include("head.inc");
             				}
             			?>
             			</select>
-				<br><b><?=gettext("NOTE:"); ?></b> <?=gettext("This is the server that clients will be redirected to if *ALL* servers in the pool are offline."); ?>
+				<br><?=gettext("The server pool to which clients will be redirected if *ALL* servers in the Virtual Server Pool are offline."); ?>
+				<br><?=gettext("This option is NOT compatible with the DNS relay protocol."); ?>
 				  <?php endif; ?>
                   </td>
 				</tr>

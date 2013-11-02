@@ -485,8 +485,6 @@ function local_user_set(& $user) {
 function local_user_del($user) {
 	global $debug;
 
-	conf_mount_rw();
-
 	/* remove all memberships */
 	local_user_set_groups($user);
 
@@ -514,8 +512,6 @@ function local_user_del($user) {
 
 	/* Delete user from groups needs a call to write_config() */
 	local_group_del_user($user);
-
-	conf_mount_ro();
 }
 
 function local_user_set_password(& $user, $password) {
@@ -621,8 +617,6 @@ function local_group_del_user($user) {
 function local_group_set($group, $reset = false) {
 	global $debug;
 
-	conf_mount_rw();
-
 	$group_name = $group['name'];
 	$group_gid = $group['gid'];
 	$group_members = "''";
@@ -647,14 +641,10 @@ function local_group_set($group, $reset = false) {
 		log_error(sprintf(gettext("Running: %s"), $cmd));
 	mwexec($cmd);
 
-	conf_mount_ro();
-
 }
 
 function local_group_del($group) {
 	global $debug;
-
-	conf_mount_rw();
 
 	/* delete from group db */
 	$cmd = "/usr/sbin/pw groupdel {$group['name']}";
@@ -662,8 +652,6 @@ function local_group_del($group) {
 	if($debug)
 		log_error(sprintf(gettext("Running: %s"), $cmd));
 	mwexec($cmd);
-
-	conf_mount_ro();
 }
 
 function ldap_test_connection($authcfg) {

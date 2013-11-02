@@ -82,7 +82,9 @@ if ($_GET['act'] == "deluser") {
 		exit;
 	}
 
+	conf_mount_rw();
 	local_user_del($a_user[$id]);
+	conf_mount_ro();
 	$userdeleted = $a_user[$id]['name'];
 	unset($a_user[$id]);
 	write_config();

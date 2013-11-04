@@ -60,7 +60,7 @@ include("head.inc");
 
 <body link="#0000CC" vlink="#0000CC" alink="#0000CC">
 <?php include("fbegin.inc"); ?>
-<table width="100%" border="0" cellpadding="0" cellspacing="0">
+<table width="100%" border="0" cellpadding="0" cellspacing="0" summary="load balancer">
   <tr><td>
 <?php
 	$tab_array = array();
@@ -81,17 +81,16 @@ include("head.inc");
   <tr>
     <td>
 	<div id="mainarea">
-		<table class="tabcont" width="100%" border="0" cellspacing="0" cellpadding="0">
+		<table class="tabcont" width="100%" border="0" cellspacing="0" cellpadding="0" summary="main area">
 		  <tr>
 			<td colspan="2" class="listtopic">
 			  <?php printf(gettext("Last %s Load Balancer log entries"),$nentries);?></td>
 		  </tr>
 		  <?php dump_clog($relayd_logfile, $nentries); ?>
-		<tr><td><br><form action="diag_logs_relayd.php" method="post">
-<input name="clear" type="submit" class="formbtn" value="<?=gettext("Clear log"); ?>"></td></tr>
+		<tr><td><br/><form action="diag_logs_relayd.php" method="post">
+<input name="clear" type="submit" class="formbtn" value="<?=gettext("Clear log"); ?>" /></form></td></tr>
 		</table>
 	</div>
-</form>
 	</td>
   </tr>
 </table>

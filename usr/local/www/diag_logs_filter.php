@@ -114,7 +114,7 @@ include("head.inc");
 <body link="#0000CC" vlink="#0000CC" alink="#0000CC">
 <script src="/javascript/filter_log.js" type="text/javascript"></script>
 <?php include("fbegin.inc"); ?>
-<table width="100%" border="0" cellpadding="0" cellspacing="0">
+<table width="100%" border="0" cellpadding="0" cellspacing="0" summary="logs filter">
   <tr><td>
 <?php
 	$tab_array = array();
@@ -132,90 +132,100 @@ include("head.inc");
 	display_top_tabs($tab_array);
 ?>
  </td></tr>
+  <tr><td class="tabnavtbl">
+<?php
+	$tab_array = array();
+	$tab_array[] = array(gettext("Normal View"), true, "/diag_logs_filter.php");
+	$tab_array[] = array(gettext("Dynamic View"), false, "/diag_logs_filter_dynamic.php");
+	$tab_array[] = array(gettext("Summary View"), false, "/diag_logs_filter_summary.php");
+	display_top_tabs($tab_array);
+?>
+		</td>
+	</tr>
   <tr>
     <td>
 	<div id="mainarea">
-		<table class="tabcont sortable" width="100%" border="0" cellpadding="0" cellspacing="0" sortableMultirow="<?=$config['syslog']['filterdescriptions'] === "2"?2:1?>">
+		<table class="tabcont sortable" width="100%" border="0" cellpadding="0" cellspacing="0" sortableMultirow="<?=$config['syslog']['filterdescriptions'] === "2"?2:1?>" summary="main area">
 			<thead>
 			<tr>
 				<td colspan="<?=(!isset($config['syslog']['rawfilter']))?7:2?>" align="left" valign="middle">
-				<div id="filterlogentries_show" name="filterlogentries_show" class="widgetconfigdiv" style=<?=(!isset($config['syslog']['rawfilter']))?"":"display:none"?>>
+				<div id="filterlogentries_show" class="widgetconfigdiv" style=<?=(!isset($config['syslog']['rawfilter']))?"":"display:none"?>>
 					<form id="filterlogentries" name="filterlogentries" action="diag_logs_filter.php" method="post">
 						<?php 
 							$Include_Act = explode(",", str_replace(" ", ",", $filterfieldsarray['act']));
 							if ($filterfieldsarray['interface'] == "All") $interface = "";
 						?>
-					<table width="100%" border="0" cellpadding="0" cellspacing="0">
+					<table width="100%" border="0" cellpadding="0" cellspacing="0" summary="action">
 					<tr>
-						<td rowspan=2>
-							<div align=center><?=gettext("Action");?></div>
-							<div align=left>
-							<input id="actpass"   name="actpass"   type="checkbox" value="Pass"   <?php if (in_arrayi('Pass',   $Include_Act)) echo "checked"; ?> /> Pass<br>
-							<input id="actblock"  name="actblock"  type="checkbox" value="Block"  <?php if (in_arrayi('Block',  $Include_Act)) echo "checked"; ?> /> Block<br>
-							<input id="actreject" name="actreject" type="checkbox" value="Reject" <?php if (in_arrayi('Reject', $Include_Act)) echo "checked"; ?> /> Reject<br>
+						<td rowspan="2">
+							<div align="center"><?=gettext("Action");?></div>
+							<div align="left">
+							<input id="actpass"   name="actpass"   type="checkbox" value="Pass"   <?php if (in_arrayi('Pass',   $Include_Act)) echo "checked=\"checked\""; ?> /> Pass<br/>
+							<input id="actblock"  name="actblock"  type="checkbox" value="Block"  <?php if (in_arrayi('Block',  $Include_Act)) echo "checked=\"checked\""; ?> /> Block<br/>
+							<input id="actreject" name="actreject" type="checkbox" value="Reject" <?php if (in_arrayi('Reject', $Include_Act)) echo "checked=\"checked\""; ?> /> Reject<br/>
 							</div>
 						</td>
 						<td>
-							<div align=center><?=gettext("Time");?></div>
-							<div align=center><input id="filterlogentries_time" name="filterlogentries_time" class="formfld search" type="text" size="12" value="<?= $filterfieldsarray['time'] ?>" /></div>
+							<div align="center"><?=gettext("Time");?></div>
+							<div align="center"><input id="filterlogentries_time" name="filterlogentries_time" class="formfld search" type="text" size="12" value="<?= $filterfieldsarray['time'] ?>" /></div>
 						</td>
 						<td>
-							<div align=center><?=gettext("Source IP Address");?></div>
-							<div align=center><input id="filterlogentries_sourceipaddress" name="filterlogentries_sourceipaddress" class="formfld search" type="text" size="35" value="<?= $filterfieldsarray['srcip'] ?>" /></div>
+							<div align="center"><?=gettext("Source IP Address");?></div>
+							<div align="center"><input id="filterlogentries_sourceipaddress" name="filterlogentries_sourceipaddress" class="formfld search" type="text" size="35" value="<?= $filterfieldsarray['srcip'] ?>" /></div>
 						</td>
 						<td>
-							<div align=center><?=gettext("Source Port");?></div>
-							<div align=center><input id="filterlogentries_sourceport" name="filterlogentries_sourceport" class="formfld search" type="text" size="10" value="<?= $filterfieldsarray['srcport'] ?>" /></div>
+							<div align="center"><?=gettext("Source Port");?></div>
+							<div align="center"><input id="filterlogentries_sourceport" name="filterlogentries_sourceport" class="formfld search" type="text" size="10" value="<?= $filterfieldsarray['srcport'] ?>" /></div>
 						</td>
 						<td>
-							<div align=center><?=gettext("Protocol");?></div>
-							<div align=center><input id="filterlogentries_protocol" name="filterlogentries_protocol" class="formfld search" type="text" size="5" value="<?= $filterfieldsarray['proto'] ?>" /></div>
+							<div align="center"><?=gettext("Protocol");?></div>
+							<div align="center"><input id="filterlogentries_protocol" name="filterlogentries_protocol" class="formfld search" type="text" size="5" value="<?= $filterfieldsarray['proto'] ?>" /></div>
 						</td>
 						<td>
-							<div align=center valign=top><?=gettext("Quantity");?></div>
-							<div align=center valign=top><input id="filterlogentries_qty" name="filterlogentries_qty" class="" type="text" size="6" value="<?= $filterlogentries_qty ?>" /></div>
+							<div align="center" style="vertical-align:top;"><?=gettext("Quantity");?></div>
+							<div align="center" style="vertical-align:top;"><input id="filterlogentries_qty" name="filterlogentries_qty" class="" type="text" size="6" value="<?= $filterlogentries_qty ?>" /></div>
 						</td>
 					</tr>
 					<tr>
-						<td valign=top>
-							<div align=center><?=gettext("Interface");?></div>
-							<div align=center><input id="filterlogentries_interfaces" name="filterlogentries_interfaces" class="formfld search" type="text" size="12" value="<?= $filterfieldsarray['interface'] ?>" /></div>
+						<td valign="top">
+							<div align="center"><?=gettext("Interface");?></div>
+							<div align="center"><input id="filterlogentries_interfaces" name="filterlogentries_interfaces" class="formfld search" type="text" size="12" value="<?= $filterfieldsarray['interface'] ?>" /></div>
 						</td>
-						<td valign=top>
-							<div align=center><?=gettext("Destination IP Address");?></div>
-							<div align=center><input id="filterlogentries_destinationipaddress" name="filterlogentries_destinationipaddress" class="formfld search" type="text" size="35" value="<?= $filterfieldsarray['dstip'] ?>" /></div>
+						<td valign="top">
+							<div align="center"><?=gettext("Destination IP Address");?></div>
+							<div align="center"><input id="filterlogentries_destinationipaddress" name="filterlogentries_destinationipaddress" class="formfld search" type="text" size="35" value="<?= $filterfieldsarray['dstip'] ?>" /></div>
 						</td>
-						<td valign=top>
-							<div align=center><?=gettext("Destination Port");?></div>
-							<div align=center><input id="filterlogentries_destinationport" name="filterlogentries_destinationport" class="formfld search" type="text" size="10" value="<?= $filterfieldsarray['dstport'] ?>" /></div>
+						<td valign="top">
+							<div align="center"><?=gettext("Destination Port");?></div>
+							<div align="center"><input id="filterlogentries_destinationport" name="filterlogentries_destinationport" class="formfld search" type="text" size="10" value="<?= $filterfieldsarray['dstport'] ?>" /></div>
 						</td>
-						<td valign=top>
-							<div align=center><?=gettext("Protocol Flags");?></div>
-							<div align=center><input id="filterlogentries_protocolflags" name="filterlogentries_protocolflags" class="formfld search" type="text" size="5" value="<?= $filterfieldsarray['tcpflags'] ?>" /></div>
+						<td valign="top">
+							<div align="center"><?=gettext("Protocol Flags");?></div>
+							<div align="center"><input id="filterlogentries_protocolflags" name="filterlogentries_protocolflags" class="formfld search" type="text" size="5" value="<?= $filterfieldsarray['tcpflags'] ?>" /></div>
 						</td>
-						<td valign=bottom>
-							<div align=center><input id="filterlogentries_submit" name="filterlogentries_submit" type="submit" class="formbtn" value="<?=gettext("Filter");?>" /></div>
+						<td valign="bottom">
+							<div align="center"><input id="filterlogentries_submit" name="filterlogentries_submit" type="submit" class="formbtn" value="<?=gettext("Filter");?>" /></div>
 						</td>
 					</tr>
 					<tr>
 						<td></td>
-						<td colspan=5>
-							<?printf(gettext('Matches %1$s regular expression%2$s.'), '<a target="_blank" href="http://www.php.net/manual/en/book.pcre.php">', '</a>');?>&nbsp&nbsp
-							<?=gettext("Precede with exclamation (!) as first character to exclude match.");?>&nbsp&nbsp
+						<td colspan="5">
+							<?printf(gettext('Matches %1$s regular expression%2$s.'), '<a target="_blank" href="http://www.php.net/manual/en/book.pcre.php">', '</a>');?>&nbsp;&nbsp;
+							<?=gettext("Precede with exclamation (!) as first character to exclude match.");?>&nbsp;&nbsp;
 						</td>
 					</tr>
 					</table>
 					</form>
 				</div>
-				<div id="filterform_show" name="filterform_show" class="widgetconfigdiv" style=<?=(!isset($config['syslog']['rawfilter']))?"display:none":""?>>
+				<div id="filterform_show" class="widgetconfigdiv" style=<?=(!isset($config['syslog']['rawfilter']))?"display:none":""?>>
 					<form id="filterform" name="filterform" action="diag_logs_filter.php" method="post">
-					<table width="0%" border="0" cellpadding="0" cellspacing="0">
+					<table width="0%" border="0" cellpadding="0" cellspacing="0" summary="firewall log">
 					<tr>
 						<td>
-							<div align=center valign=top><?=gettext("Interface");?></div>
-							<div align=center valign=top>
+							<div align="center" style="vertical-align:top;"><?=gettext("Interface");?></div>
+							<div align="center" style="vertical-align:top;">
 							<select name="interface" onChange="dst_change(this.value,iface_old,document.iform.dsttype.value);iface_old = document.iform.interface.value;typesel_change();">
-							<option value="" <?=$interfacefilter?"":"selected"?>>*Any interface</option>
+							<option value="" <?=$interfacefilter?"":"selected=\"selected\""?>>*Any interface</option>
 							<?php						
 							$iflist = get_configured_interface_with_descr(false, true);
 							//$iflist = get_interface_list();
@@ -242,39 +252,35 @@ include("head.inc");
 								$interfaces["openvpn"] = "OpenVPN";
 
 							foreach ($interfaces as $iface => $ifacename): ?>
-							<option value="<?=$iface;?>" <?=($iface==$interfacefilter)?"selected":"";?>><?=htmlspecialchars($ifacename);?></option>
+							<option value="<?=$iface;?>" <?=($iface==$interfacefilter)?"selected=\"selected\"":"";?>><?=htmlspecialchars($ifacename);?></option>
 							<?php endforeach; ?>
 							</select>
 							</div>
 						</td>
 						<td>
-							<div align=center valign=top><?=gettext("Filter expression");?></div>
-							<div align=center valign=top><input id="filtertext" name="filtertext" class="formfld search" style="vertical-align:top;" type="text" size="35" value="<?=$filtertext?>" /></div>
+							<div align="center" style="vertical-align:top;"><?=gettext("Filter expression");?></div>
+							<div align="center" style="vertical-align:top;"><input id="filtertext" name="filtertext" class="formfld search" style="vertical-align:top;" type="text" size="35" value="<?=$filtertext?>" /></div>
 						</td>
 						<td>
-							<div align=center valign=top><?=gettext("Quantity");?></div>
-							<div align=center valign=top><input id="filterlogentries_qty" name="filterlogentries_qty" class="" style="vertical-align:top;" type="text" size="6" value="<?= $filterlogentries_qty ?>" /></div>
+							<div align="center" style="vertical-align:top;"><?=gettext("Quantity");?></div>
+							<div align="center" style="vertical-align:top;"><input id="filterlogentries_qty" name="filterlogentries_qty" class="" style="vertical-align:top;" type="text" size="6" value="<?= $filterlogentries_qty ?>" /></div>
 						</td>
 						<td>
-							<div align=center valign=top>&nbsp</div>
-							<div align=center valign=top><input id="filtersubmit" name="filtersubmit" type="submit" class="formbtn" style="vertical-align:top;" value="<?=gettext("Filter");?>" /></div>
+							<div align="center" style="vertical-align:top;">&nbsp;</div>
+							<div align="center" style="vertical-align:top;"><input id="filtersubmit" name="filtersubmit" type="submit" class="formbtn" style="vertical-align:top;" value="<?=gettext("Filter");?>" /></div>
 						</td>
 					</tr>
 					<tr>
 						<td></td>
-						<td colspan=2>
-							<?printf(gettext('Matches %1$s regular expression%2$s.'), '<a target="_blank" href="http://www.php.net/manual/en/book.pcre.php">', '</a>');?>&nbsp&nbsp
+						<td colspan="2">
+							<?printf(gettext('Matches %1$s regular expression%2$s.'), '<a target="_blank" href="http://www.php.net/manual/en/book.pcre.php">', '</a>');?>&nbsp;&nbsp;
 						</td>
 					</tr>
 					</table>
 					</form>
 				</div>
-				<div style="float: left;">
-					<br>
-					<?=gettext("Normal View");?> | <a href="diag_logs_filter_dynamic.php"><?=gettext("Dynamic View");?></a> | <a href="diag_logs_filter_summary.php"><?=gettext("Summary View");?></a>
-				</div>
 				<div style="float: right; vertical-align:middle">
-					<br>
+					<br/>
 					<?php if (!isset($config['syslog']['rawfilter']) && (isset($config['syslog']['filterdescriptions']) && $config['syslog']['filterdescriptions'] === "2")):?>
 					<a href="#" onclick="toggleListDescriptions()">Show/hide rule descriptions</a>
 					<?php endif;?>
@@ -319,7 +325,7 @@ include("head.inc");
 			$evenRowClass = $rowIndex % 2 ? " listMReven" : " listMRodd";
 			$rowIndex++;?>
 			<tr class="<?=$evenRowClass?>">
-			  <td class="listMRlr" nowrap="nowrap" align="center" sorttable_customkey="<?=$filterent['act']?>">
+			  <td class="listMRlr nowrap" align="center" sorttable_customkey="<?=$filterent['act']?>">
 			  <center>
 			  <a onclick="javascript:getURL('diag_logs_filter.php?getrulenum=<?php echo "{$filterent['rulenum']},{$filterent['act']}"; ?>', outputrule);">
 			  <img border="0" src="<?php echo find_action_image($filterent['act']);?>" width="11" height="11" align="middle" alt="<?php echo $filterent['act'];?>" title="<?php echo $filterent['act'];?>" />
@@ -332,7 +338,7 @@ include("head.inc");
 				<?php echo htmlspecialchars($filterent['interface']);?></td>
 			  <?php 
 			  if ($config['syslog']['filterdescriptions'] === "1")
-				echo("<td class=\"listMRr\" nowrap=\"nowrap\">".find_rule_by_number_buffer($filterent['rulenum'],$filterent['act'])."</td>");
+				echo("<td class=\"listMRr nowrap\">".find_rule_by_number_buffer($filterent['rulenum'],$filterent['act'])."</td>");
 				
 			  $int = strtolower($filterent['interface']);
 			  $proto = strtolower($filterent['proto']);
@@ -347,8 +353,8 @@ include("head.inc");
 			  $srcstr = $filterent['srcip'] . get_port_with_service($filterent['srcport'], $proto);
 			  $dststr = $filterent['dstip'] . get_port_with_service($filterent['dstport'], $proto);
 			  ?>
-			  <td class="listMRr" nowrap="nowrap">
-				<a onclick="javascript:getURL('diag_dns.php?host=<?php echo "{$filterent['srcip']}"; ?>&dialog_output=true', outputrule);" title="<?=gettext("Reverse Resolve with DNS");?>">
+			  <td class="listMRr nowrap">
+				<a onclick="javascript:getURL('diag_dns.php?host=<?php echo "{$filterent['srcip']}"; ?>&amp;dialog_output=true', outputrule);" title="<?=gettext("Reverse Resolve with DNS");?>">
 				<img border="0" src="/themes/<?= $g['theme']; ?>/images/icons/icon_log_d.gif" alt="Icon Reverse Resolve with DNS"/></a>
 				<a href="diag_dns.php?host=<?php echo $filterent['srcip']; ?>" title="<?=gettext("Reverse Resolve with DNS");?>">
 				<img border="0" src="/themes/<?= $g['theme']; ?>/images/icons/icon_log.gif" alt="Icon Reverse Resolve with DNS"/></a>
@@ -356,8 +362,8 @@ include("head.inc");
 				<img border="0" src="/themes/<?= $g['theme']; ?>/images/icons/icon_block_add.gif" alt="Icon Easy Rule: Add to Block List" /></a>
 				<?php echo $srcstr;?>
 			  </td>
-			  <td class="listMRr" nowrap="nowrap">
-				<a onclick="javascript:getURL('diag_dns.php?host=<?php echo "{$filterent['dstip']}"; ?>&dialog_output=true', outputrule);" title="<?=gettext("Reverse Resolve with DNS");?>">
+			  <td class="listMRr nowrap">
+				<a onclick="javascript:getURL('diag_dns.php?host=<?php echo "{$filterent['dstip']}"; ?>&amp;dialog_output=true', outputrule);" title="<?=gettext("Reverse Resolve with DNS");?>">
 				<img border="0" src="/themes/<?= $g['theme']; ?>/images/icons/icon_log_d.gif" alt="Icon Reverse Resolve with DNS" /></a>
 				<a href="diag_dns.php?host=<?php echo $filterent['dstip']; ?>" title="<?=gettext("Reverse Resolve with DNS");?>">
 				<img border="0" src="/themes/<?= $g['theme']; ?>/images/icons/icon_log.gif" alt="Icon Reverse Resolve with DNS" /></a>
@@ -374,7 +380,7 @@ include("head.inc");
 			<?php if (isset($config['syslog']['filterdescriptions']) && $config['syslog']['filterdescriptions'] === "2"):?>
 			<tr class="<?=$evenRowClass?>">
 			  <td colspan="2" class="listMRDescriptionL listMRlr" />
-			  <td colspan="4" class="listMRDescriptionR listMRr" nowrap="nowrap"><?=find_rule_by_number_buffer($filterent['rulenum'],$filterent['act']);?></td>
+			  <td colspan="4" class="listMRDescriptionR listMRr nowrap"><?=find_rule_by_number_buffer($filterent['rulenum'],$filterent['act']);?></td>
 			</tr>
 			<?php endif;
 			endforeach; 

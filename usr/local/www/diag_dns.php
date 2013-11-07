@@ -150,15 +150,22 @@ if( ($_POST['host']) && ($_POST['dialog_output']) ) {
 }
 
 function display_host_results ($address,$hostname,$dns_speeds) {
+	$map_lengths = function($element) { return strlen($element[0]); };
+
 	echo gettext("IP Address") . ": {$address} \n";
 	echo gettext("Host Name") . ": {$hostname} \n";
 	echo "\n";
-	echo gettext("Server") . "\t" . gettext("Query Time") . "\n";
-	if(is_array($dns_speeds)) 
-		foreach($dns_speeds as $qt){
-			echo trim($qt['dns_server']) . "\t" . trim($qt['query_time']);
-			echo "\n";
+	$text_table = array();
+	$text_table[] = array(gettext("Server"), gettext("Query Time"));
+	if (is_array($dns_speeds)) {
+		foreach ($dns_speeds as $qt) {
+			$text_table[] = array(trim($qt['dns_server']), trim($qt['query_time']));
 		}
+	}
+	$col0_padlength = max(array_map($map_lengths, $text_table)) + 4;
+	foreach ($text_table as $text_row) {
+		echo str_pad($text_row[0], $col0_padlength) . $text_row[1] . "\n";
+	}
 }
 
 include("head.inc"); ?>

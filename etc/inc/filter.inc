@@ -3403,6 +3403,8 @@ function filter_generate_ipsec_rules() {
 				$ipfrules .= "# Could not locate interface for IPsec: {$descr}\n";
 				continue;
 			}
+
+			unset($gateway);
 			/* add endpoint routes to correct gateway on interface */
 			if((is_ipaddrv4($rgip)) && (interface_has_gateway($parentinterface))) {
 				$gateway = get_interface_gateway($parentinterface);

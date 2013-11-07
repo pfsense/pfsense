@@ -150,8 +150,7 @@ if( ($_POST['host']) && ($_POST['dialog_output']) ) {
 }
 
 function display_host_results ($address,$hostname,$dns_speeds) {
-	$map_lengths = function($element) { return array(strlen($element[0]), strlen($element[1])); };
-	$map_column0 = function($element) { return $element[0]; };
+	$map_lengths = function($element) { return strlen($element[0]); };
 
 	echo gettext("IP Address") . ": {$address} \n";
 	echo gettext("Host Name") . ": {$hostname} \n";
@@ -163,10 +162,9 @@ function display_host_results ($address,$hostname,$dns_speeds) {
 			$text_table[] = array(trim($qt['dns_server']), trim($qt['query_time']));
 		}
 	}
-	$length_table = array_map($map_lengths, $text_table);
-	$col0_padlength = max(array_map($map_column0, $length_table));
+	$col0_padlength = max(array_map($map_lengths, $text_table)) + 4;
 	foreach ($text_table as $text_row) {
-		echo str_pad($text_row[0], $col0_padlength + 4) . $text_row[1] . "\n";
+		echo str_pad($text_row[0], $col0_padlength) . $text_row[1] . "\n";
 	}
 }
 

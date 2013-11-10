@@ -1939,9 +1939,9 @@ function interfaces_carp_setup() {
 		mwexec("/sbin/ifconfig pfsync0 -syncdev -syncpeer down", false);
 	}
 
-	if($config['virtualip']['vip'])
+	if($config['virtualip']['vip'] && !isset($config["virtualip_carp_disabled"])) {
 		mwexec("/sbin/sysctl net.inet.carp.allow=1", true);
-	else
+	} else
 		mwexec("/sbin/sysctl net.inet.carp.allow=0", true);
 
 	if ($g['booting']) {

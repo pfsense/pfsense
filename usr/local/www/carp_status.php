@@ -39,6 +39,7 @@
 */
 
 require_once("guiconfig.inc");
+require_once("globals.inc");
 
 function gentitle_pkg($pgname) {
 	global $config;
@@ -50,6 +51,24 @@ unset($carp_interface_count_cache);
 unset($interface_ip_arr_cache);
 
 $status = get_carp_status();
+
+
+if($_POST['disablecarppermanently'] <> "") {
+	if (isset($config["virtualip_carp_disabled"])) {
+		unset($config["virtualip_carp_disabled"]);
+		$desc = "CARP enabled";
+	} else {
+		$config["virtualip_carp_disabled"] = true;
+		$desc = "CARP disabled";
+	}
+	write_config($desc);
+	
+	if(isset($config["virtualip_carp_disabled"])) {
+		mwexec("/sbin/sysctl net.inet.carp.allow=0");
+	} else {
+		mwexec("/sbin/sysctl net.inet.carp.allow=1");
+	}
+}
 if($_POST['disablecarp'] <> "") {
 	if($status == true) {
 		mwexec("/sbin/sysctl net.inet.carp.allow=0");
@@ -115,12 +134,16 @@ include("head.inc");
 				}
 			}
 			if($carpcount > 0) {
-				if($status == false) {
-					$carp_enabled = false;
-					echo "<input type=\"submit\" name=\"disablecarp\" id=\"disablecarp\" value=\"" . gettext("Enable Carp") . "\">";
+				$carp_enabled = $status;
+				if(isset($config["virtualip_carp_disabled"])) {
+					echo "<input type=\"submit\" name=\"disablecarppermanently\" id=\"disablecarppermanently\" value=\"" . gettext("Enable Carp now and on reboot") . "\">";
 				} else {
-					$carp_enabled = true;
-					echo "<input type=\"submit\" name=\"disablecarp\" id=\"disablecarp\" value=\"" . gettext("Disable Carp") . "\">";
+					echo "<input type=\"submit\" name=\"disablecarppermanently\" id=\"disablecarppermanently\" value=\"" . gettext("Disable Carp now and on reboot") . "\">";
+					if($status == false) {
+						echo "<input type=\"submit\" name=\"disablecarp\" id=\"disablecarp\" value=\"" . gettext("Enable Carp") . "\">";
+					} else {
+						echo "<input type=\"submit\" name=\"disablecarp\" id=\"disablecarp\" value=\"" . gettext("Disable Carp temporarily") . "\">";
+					}
 				}
 			}
 ?>

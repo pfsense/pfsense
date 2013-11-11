@@ -82,7 +82,7 @@ else {
 	$curwanip = find_interface_ip($interface_real, true);
 	if($curwanip == "")
 		$curwanip = get_interface_ip($interface);
-	if (($curwanip == "") && !(isset($config['interfaces'][$interface]['ipaddr']))) {
+	if (($curwanip == "") && !isset($config['interfaces'][$interface]['ipaddr']) && !empty($config['interfaces'][$interface]['ipaddr'])) {
 		log_error("Interface does not have an IP address, nothing to do.");
 		return;
 	}

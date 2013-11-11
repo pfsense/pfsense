@@ -1336,9 +1336,9 @@ function stop_packages() {
 		}
 	}
 
-	$shell = @popen("/bin/sh", "w");
-	if ($shell) {
-		foreach ($rcfiles as $rcfile => $number) {
+	foreach ($rcfiles as $rcfile => $number) {
+		$shell = @popen("/bin/sh", "w");
+		if ($shell) {
 			echo " Stopping {$rcfile}...";
 			if (!@fwrite($shell, "{$rcfile} stop >>/tmp/bootup_messages 2>&1")) {
 				if ($shell)
@@ -1346,9 +1346,8 @@ function stop_packages() {
 				$shell = @popen("/bin/sh", "w");
 			}
 			echo "done.\n";
+			pclose($shell);
 		}
-
-		pclose($shell);
 	}
 }
 

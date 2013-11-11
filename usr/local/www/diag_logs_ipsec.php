@@ -95,7 +95,7 @@ include("head.inc");
 ?>
 <body link="#0000CC" vlink="#0000CC" alink="#0000CC">
 <?php include("fbegin.inc"); ?>
-<table width="100%" border="0" cellpadding="0" cellspacing="0">
+<table width="100%" border="0" cellpadding="0" cellspacing="0" summary="logs ipsec">
  	<tr>
 		<td>
 <?php
@@ -118,7 +118,7 @@ include("head.inc");
 	<tr>
     	<td>
 			<div id="mainarea">
-			<table class="tabcont" width="100%" border="0" cellspacing="0" cellpadding="0">
+			<table class="tabcont" width="100%" border="0" cellspacing="0" cellpadding="0" summary="main area">
 		  		<tr>
 					<td colspan="2" class="listtopic"><?php printf(gettext("Last %s  IPsec log entries"),$nentries);?></td>
 		  		</tr>
@@ -133,7 +133,7 @@ include("head.inc");
 						$logent = preg_replace($search, $replace, $logent);
 					} else {
 						$searchs = "/(racoon: )([A-Z:].*?)([0-9].+\.[0-9].+.[0-9].+.[0-9].+\[[0-9].+\])(.*)/i";
-						$replaces = "$1<strong><font color=red>[".gettext("Unknown Gateway/Dynamic")."]</font></strong>: $2$3$4";
+						$replaces = "$1<strong><font color=\"red\">[".gettext("Unknown Gateway/Dynamic")."]</font></strong>: $2$3$4";
 						$logent = preg_replace($searchs, $replaces, $logent);
 					}
 					$logent = preg_split("/\s+/", $logent, 6);
@@ -146,9 +146,9 @@ include("head.inc");
 				?>
 				<tr>
 					<td>
-						<br>
+						<br/>
 						<form action="diag_logs_ipsec.php" method="post">
-						<input name="clear" type="submit" class="formbtn" value="<?=gettext("Clear log"); ?>">
+						<input name="clear" type="submit" class="formbtn" value="<?=gettext("Clear log"); ?>" />
 						</form>
 					</td>
 				</tr>

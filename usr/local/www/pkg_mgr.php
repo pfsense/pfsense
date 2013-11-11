@@ -120,17 +120,17 @@ include("head.inc");
 ?>
 <table width="100%" border="0" cellpadding="0" cellspacing="0" summary="package manager">
 	<tr><td>
-	<?php
+<?php
 	$version = rtrim(file_get_contents("/etc/version"));
 
 	$tab_array = array();
 	$tab_array[] = array(gettext("Available Packages"), $requested_version <> "" ? false : true, "pkg_mgr.php");
 	$tab_array[] = array(gettext("Installed Packages"), false, "pkg_mgr_installed.php");
 	display_top_tabs($tab_array);
-	?>
+?>
 	</td></tr>
 	<tr><td>
-	<?php
+<?php
 	$version = rtrim(file_get_contents("/etc/version"));
 	if($pkg_info) {
 		$pkg_keys = array_keys($pkg_info);
@@ -148,45 +148,51 @@ include("head.inc");
 		$cm_count=0;
 		$tab_array = array();
 		$visible_categories=array();
-		$categories_min_count=($g[$pkg_categories_min_count] ? $g[$pkg_categories_min_count] : 3);
-		$categories_max_display=($g[$pkg_categories_max_display] ? $g[$pkg_categories_max_display] : 6);
+		$categories_min_count=($g['pkg_categories_min_count'] ? $g['pkg_categories_min_count'] : 3);
+		$categories_max_display=($g['pkg_categories_max_display'] ? $g['pkg_categories_max_display'] : 6);
 
-		//check selected category or define defaul category to show
-		if (isset($_REQUEST['category'])) {
-			$menu_category=$_REQUEST['category'];
-		} else {
-			$menu_category=($g[$pkg_default_category] ? $g[$pkg_default_category] : "Services");
-		}
+		/* check selected category or define default category to show */
+		if (isset($_REQUEST['category']))
+			$menu_category = $_REQUEST['category'];
+		else if (isset($g['pkg_default_category']))
+			$menu_category = $g['pkg_default_category'];
+		else
+			$menu_category = "All";
 
+		$menu_category = (isset($_REQUEST['category']) ? $_REQUEST['category'] : "All");
+		$show_category = ($menu_category == "Other" || $menu_category == "All");
+
+		$tab_array[] = array(gettext("All"), $menu_category=="All" ? true : false, "pkg_mgr.php?category=All");
 		foreach ($categories as $category => $c_count) {
 			if ($c_count >= $categories_min_count && $cm_count <= $categories_max_display) {
 				$tab_array[] = array(gettext($category) , $menu_category==$category ? true : false, "pkg_mgr.php?category={$category}");
 				$visible_categories[]=$category;
 				$cm_count++;
-				}
 			}
+		}
 		$tab_array[] = array(gettext("Other Categories"), $menu_category=="Other" ? true : false, "pkg_mgr.php?category=Other");
 		if (count($categories) > 1)
 			display_top_tabs($tab_array);
-	}?>
+	}
+?>
 	</td></tr>
 	<tr><td>
 	<div id="mainarea">
 		<table class="tabcont sortable" width="100%" border="0" cellpadding="6" cellspacing="0" summary="main area">
-		<tr><td width="<? print $menu_category=="Other" ? "10%" : "20%"; ?>" class="listhdrr"><?=gettext("Name"); ?></td>
-		<?php
-		if ($menu_category== "Other")
-			print '<td width="18%" class="listhdrr">'.gettext("Category").'</td>'."\n";
-		?>
-		<td width="<? print $menu_category=="Other" ? "15%" : "20%"; ?>" class="listhdr"><?=gettext("Status"); ?></td>
-		<td width="<? print $menu_category=="Other" ? "58%" : "60%"; ?>" class="listhdr"><?=gettext("Description"); ?></td>
+		<tr><td width="10%" class="listhdrr"><?=gettext("Name"); ?></td>
+<?php
+		if ($show_category)
+			print '<td width="18%" class="listhdr">'.gettext("Category").'</td>'."\n";
+?>
+		<td width="<?php print $show_category ? "15%" : "20%"; ?>" class="listhdr"><?=gettext("Status"); ?></td>
+		<td width="<?php print $show_category ? "58%" : "70%"; ?>" class="listhdr"><?=gettext("Description"); ?></td>
 		<td width="17">&nbsp;</td></tr>
-		<?php
+<?php
 		if(!$pkg_info) {
 			echo "<tr><td colspan=\"5\"><center>" . gettext("There are currently no packages available for installation.") . "</td></tr>";
 		} else {
 			if(is_array($pkg_keys)) {
-				foreach($pkg_keys as $key) {
+				foreach($pkg_keys as $key):
 					$index = &$pkg_info[$key];
 					if(get_pkg_id($index['name']) >= 0 )
 						continue;
@@ -206,14 +212,16 @@ include("head.inc");
 						$pkginfolink = "http://forum.pfsense.org/index.php/board,15.0.html";
 						$pkginfo=gettext("No package info, check the forum");
 					}
-					if ($index['category'] == $menu_category || ($menu_category == "Other" && !in_array($index['category'],$visible_categories)) ) {?>
+
+					if ($menu_category == "All" || $index['category'] == $menu_category || ($menu_category == "Other" && !in_array($index['category'],$visible_categories)) ):
+?>
 						<tr valign="top" class="<?= $index['category'] ?>">
 						<td class="listlr" <?=domTT_title(gettext("Click on package name to access its website."))?>>
 							<a target="_blank" href="<?= $index['website'] ?>"><?= $index['name'] ?></a>
 						</td>
-						<?php
-						if ($menu_category== "Other")
-							print '<td class="listlr">'.gettext($index['category']).'</td>'."\n";
+<?php
+						if ($show_category)
+							print '<td class="listr">'.gettext($index['category']).'</td>'."\n";
 
 						if ($g['disablepackagehistory']) {
 							print '<td class="listr">'."\n";
@@ -229,7 +237,7 @@ include("head.inc");
 							echo"<a>{$index['version']}</a>";
 						else
 							echo "<a target='_blank' href='{$changeloglink}'>{$index['version']}</a>";
-						?>
+?>
 						<br/>
 						<?=gettext("platform") .": ". $index['required_version'] ?>
 						<br/>
@@ -237,21 +245,26 @@ include("head.inc");
 						</td>
 						<td class="listbg" style="overflow:hidden; text-align:justify;" <?=domTT_title(gettext("Click package info for more details about ".ucfirst($index['name'])." package."))?>>
 						<?= $index['descr'] ?>
-						<?php if (! $g['disablepackageinfo']): ?>
-						<br/><br/>
-						<a target='_blank' href='<?=$pkginfolink?>' style='align:center;color:#ffffff; filter:Glow(color=#ff0000, strength=12);'><?=$pkginfo?></a>
-						<?php endif; ?>
+<?php
+						if (! $g['disablepackageinfo']):
+?>
+							<br/><br/>
+							<a target='_blank' href='<?=$pkginfolink?>' style='align:center;color:#ffffff; filter:Glow(color=#ff0000, strength=12);'><?=$pkginfo?></a>
+<?php
+						endif;
+?>
 						</td>
 						<td valign="middle" class="list nowrap" width="17">
 							<a onclick="return confirm('<?=gettext("Do you really want to install ".ucfirst($index['name'])." package?"); ?>')" href="pkg_mgr_install.php?id=<?=$index['name'];?>"><img <?=domTT_title(gettext("Install ".ucfirst($index['name'])." package."))?> src="./themes/<?= $g['theme']; ?>/images/icons/icon_plus.gif" width="17" height="17" border="0" alt="add" /></a>
 						</td></tr>
-					<?php
-						}
-					}
-				} else {
-					echo "<tr><td colspan='5' align='center'>" . gettext("There are currently no packages available for installation.") . "</td></tr>";
-				}
-			}?>
+<?php
+					endif;
+				endforeach;
+			} else {
+				echo "<tr><td colspan='5' align='center'>" . gettext("There are currently no packages available for installation.") . "</td></tr>";
+			} /* if(is_array($pkg_keys)) */
+		} /* if(!$pkg_info) */
+?>
 		</table>
 	</div>
 	</td></tr>

@@ -60,7 +60,7 @@ include("head.inc");
 ?>
 <body link="#0000CC" vlink="#0000CC" alink="#0000CC">
 <?php include("fbegin.inc"); ?>
-<table width="100%" border="0" cellpadding="0" cellspacing="0">
+<table width="100%" border="0" cellpadding="0" cellspacing="0" summary="logs ppp">
  	<tr>
 		<td>
 <?php
@@ -83,16 +83,16 @@ include("head.inc");
 	<tr>
     	<td>
 			<div id="mainarea">
-			<table class="tabcont" width="100%" border="0" cellspacing="0" cellpadding="0">
+			<table class="tabcont" width="100%" border="0" cellspacing="0" cellpadding="0" summary="main area">
 		  		<tr>
 					<td colspan="2" class="listtopic"><?php printf(gettext("Last %s PPP log entries"),$nentries);?></td>
 		  		</tr>
 				<?php dump_clog($ppp_logfile, $nentries); ?>
 				<tr>
 					<td>
-						<br>
+						<br/>
 						<form action="diag_logs_ppp.php" method="post">
-						<input name="clear" type="submit" class="formbtn" value="<?=gettext("Clear log"); ?>">
+						<input name="clear" type="submit" class="formbtn" value="<?=gettext("Clear log"); ?>" />
 						</form>
 					</td>
 				</tr>

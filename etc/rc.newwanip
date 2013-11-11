@@ -70,6 +70,12 @@ if(empty($argument)) {
 	$interface_real = $argument;
 }
 
+/* If the interface is configured and not enabled, bail. We do not need to change settings for disabled interfaces. #3313 */
+if (is_array($config['interfaces'][$interface]) && !isset($config['interfaces'][$interface]['enable'])) {
+	log_error("Interface is disabled, nothing to do.");
+	return;
+}
+
 if(empty($argument))
 	$curwanip = get_interface_ip();
 else {

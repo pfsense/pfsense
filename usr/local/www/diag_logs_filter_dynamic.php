@@ -65,7 +65,8 @@ include("head.inc");
 ?>
 <body link="#0000CC" vlink="#0000CC" alink="#0000CC">
 <?php include("fbegin.inc"); ?>
-<script language="javascript">
+<script type="text/javascript">
+//<![CDATA[
 	lastsawtime = '<?php echo time(); ?>;';
 	var lines = Array();
 	var timer;
@@ -82,15 +83,16 @@ include("head.inc");
 	/* Called by the AJAX updater */
 	function format_log_line(row) {
 		var i = 0;
-		var line = '<td class="listMRlr" nowrap="nowrap" align="center">' + row[i++] + '</td>';
+		var line = '<td class="listMRlr nowrap" align="center">' + row[i++] + '<\/td>';
 		while (i < 6) {
-			line += '<td class="listMRr" nowrap="nowrap">' + row[i++] + '</td>';
+			line += '<td class="listMRr nowrap">' + row[i++] + '<\/td>';
 		}
 		return line;
 	}
+//]]>
 </script>
 <script src="/javascript/filter_log.js" type="text/javascript"></script>
-<table width="100%" border="0" cellpadding="0" cellspacing="0">
+<table width="100%" border="0" cellpadding="0" cellspacing="0" summary="logs filter dynamic">
   <tr><td>
 <?php
 	$tab_array = array();
@@ -108,20 +110,24 @@ include("head.inc");
 	display_top_tabs($tab_array);
 ?>
  </td></tr>
+  <tr><td class="tabnavtbl">
+<?php
+	$tab_array = array();
+	$tab_array[] = array(gettext("Normal View"), false, "/diag_logs_filter.php");
+	$tab_array[] = array(gettext("Dynamic View"), true, "/diag_logs_filter_dynamic.php");
+	$tab_array[] = array(gettext("Summary View"), false, "/diag_logs_filter_summary.php");
+	display_top_tabs($tab_array);
+?>
+		</td>
+	</tr>
   <tr>
      <td>
 	<div id="mainarea">
-		<table class="tabcont" width="100%" border="0" cellpadding="0" cellspacing="0">
+		<table class="tabcont" width="100%" border="0" cellpadding="0" cellspacing="0" summary="main area">
 			<thead>
 			<tr>
-				<td colspan="6" align"left" valign="middle">
-				<a href="diag_logs_filter.php"><?=gettext("Normal View");?></a> | <?=gettext("Dynamic View");?> | <a href="diag_logs_filter_summary.php"><?=gettext("Summary View");?></a>
-				<br/><br/>
-				</td>
-			</tr>
-			<tr>
 				<td colspan="6" class="listtopic">
-				<?php printf(gettext("Last %s records"),$nentries);?>;   <?=gettext("Pause:");?><input valign="middle" type="checkbox" onClick="javascript:toggle_pause();">
+				<?php printf(gettext("Last %s records"),$nentries);?>;   <?=gettext("Pause:");?><input style="vertical-align:middle;" type="checkbox" onClick="javascript:toggle_pause();" />
 				</td>
 			</tr>
 			<tr>
@@ -140,20 +146,20 @@ include("head.inc");
 			$evenRowClass = $rowIndex % 2 ? " listMReven" : " listMRodd";
 			$rowIndex++;?>
 			<tr class="<?=$evenRowClass?>">
-				<td class="listMRlr" nowrap="nowrap" align="center">
+				<td class="listMRlr nowrap" align="center">
 				<a href="#" onclick="javascript:getURL('diag_logs_filter.php?getrulenum=<?php echo "{$filterent['rulenum']},{$filterent['act']}"; ?>', outputrule);">
 				<img border="0" src="<?php echo find_action_image($filterent['act']);?>" width="11" height="11" alt="<?php echo $filterent['act'];?>" title="<?php echo $filterent['act'];?>" />
 				</a>
 				</td>
-				<td class="listMRr" nowrap="nowrap"><?php echo htmlspecialchars($filterent['time']);?></td>
-				<td class="listMRr" nowrap="nowrap"><?php echo htmlspecialchars($filterent['interface']);?></td>
-				<td class="listMRr" nowrap="nowrap"><?php echo htmlspecialchars($filterent['src']);?></td>
-				<td class="listMRr" nowrap="nowrap"><?php echo htmlspecialchars($filterent['dst']);?></td>
+				<td class="listMRr nowrap"><?php echo htmlspecialchars($filterent['time']);?></td>
+				<td class="listMRr nowrap"><?php echo htmlspecialchars($filterent['interface']);?></td>
+				<td class="listMRr nowrap"><?php echo htmlspecialchars($filterent['src']);?></td>
+				<td class="listMRr nowrap"><?php echo htmlspecialchars($filterent['dst']);?></td>
 				<?php
 					if ($filterent['proto'] == "TCP")
 						$filterent['proto'] .= ":{$filterent['tcpflags']}";
 				?>
-				<td class="listMRr" nowrap="nowrap"><?php echo htmlspecialchars($filterent['proto']);?></td>
+				<td class="listMRr nowrap"><?php echo htmlspecialchars($filterent['proto']);?></td>
 			</tr>
 			<?php endforeach; ?>
 			</tbody>

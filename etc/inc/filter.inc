@@ -2409,6 +2409,9 @@ function filter_generate_user_rule($rule) {
 		} else
 			$aline['flags'] .= "keep state ";
 
+		if ($noadvoptions == false && isset($rule['nopfsync']))
+			$rule['nopfsync'] = true;
+
 		if ($noadvoptions == false || $l7_present)
 			if ((isset($rule['source-track']) and $rule['source-track'] <> "") or
 			    (isset($rule['max']) and $rule['max'] <> "") or
@@ -2419,10 +2422,12 @@ function filter_generate_user_rule($rule) {
 			      (isset($rule['max-src-conn']) and $rule['max-src-conn'] <> "") or
 			      (isset($rule['max-src-conn-rate']) and $rule['max-src-conn-rate'] <> "") or
 			      (isset($rule['max-src-conn-rates']) and $rule['max-src-conn-rates'] <> ""))) or
-			    isset($rule['sloppy']) or $l7_present) {
+			    isset($rule['sloppy']) or isset($rule['nopfsync']) or $l7_present) {
 					$aline['flags'] .= "( ";
 					if (isset($rule['sloppy']))
 						$aline['flags'] .= "sloppy ";
+					if (isset($rule['nopfsync']))
+						$aline['flags'] .= "no-sync ";
 					if (isset($rule['source-track']) and $rule['source-track'] <> "")
 						$aline['flags'] .= "source-track rule ";
 					if (isset($rule['max']) and $rule['max'] <> "")

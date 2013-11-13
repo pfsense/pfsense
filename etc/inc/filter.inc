@@ -1624,8 +1624,6 @@ function filter_nat_rules_generate() {
 			$netip = explode("/", $route['network']);
 			if (isset($GatewaysList[$route['gateway']])) {
 				$gateway =& $GatewaysList[$route['gateway']];
-				$gatewayip = $gateway['gateway'];
-				$interfacegw = $gateway['interface'];
 				if(!interface_has_gateway($gateway['interface']) && is_private_ip($netip[0])) {
 					$numberofnathosts++;
 					$tonathosts .= "{$route['network']} ";
@@ -1636,10 +1634,8 @@ function filter_nat_rules_generate() {
 		foreach($FilterIflist as $ocname => $oc) {
 			if(!interface_has_gateway($ocname)) {
 				if(is_ipaddr($oc['alias-address'])) {
-					$aliastarget = $oc['alias-address'];
-					$aliassubnet = $oc['alias-subnet'];
 					$numberofnathosts++;
-					$tonathosts .= "{$oc['sa']}/{$oc['sn']} ";
+					$tonathosts .= "{$oc['alias-address']}/{$oc['alias-subnet']} ";
 				}
 				if($oc['sa']) {
 					$tonathosts .= "{$oc['sa']}/{$oc['sn']} ";

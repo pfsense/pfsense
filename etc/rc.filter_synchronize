@@ -149,12 +149,12 @@ function carp_sync_xml($url, $username, $password, $sections, $port = 80, $metho
 	$config_copy = $config;
 
 	/* strip out nosync items */
-	if (is_array($config_copy['nat']['advancedoutbound']['rule'])) {
-		$rulescnt = count($config_copy['nat']['advancedoutbound']['rule']);
+	if (is_array($config_copy['nat']['outbound']['rule'])) {
+		$rulescnt = count($config_copy['nat']['outbound']['rule']);
 		for ($x = 0; $x < $rulescnt; $x++) {
-			$config_copy['nat']['advancedoutbound']['rule'][$x]['descr'] = remove_special_characters($config_copy['nat']['advancedoutbound']['rule'][$x]['descr']);
-			if (isset ($config_copy['nat']['advancedoutbound']['rule'][$x]['nosync']))
-				unset ($config_copy['nat']['advancedoutbound']['rule'][$x]);
+			$config_copy['nat']['outbound']['rule'][$x]['descr'] = remove_special_characters($config_copy['nat']['outbound']['rule'][$x]['descr']);
+			if (isset ($config_copy['nat']['outbound']['rule'][$x]['nosync']))
+				unset ($config_copy['nat']['outbound']['rule'][$x]);
 		}
 	}
 	if (is_array($config_copy['nat']['rule'])) {

@@ -46,13 +46,13 @@ require_once("functions.inc");
 require_once("filter.inc");
 require_once("shaper.inc");
 
-if (!is_array($config['nat']['advancedoutbound']))
-	$config['nat']['advancedoutbound'] = array();
+if (!is_array($config['nat']['outbound']))
+	$config['nat']['outbound'] = array();
 
-if (!is_array($config['nat']['advancedoutbound']['rule']))
-	$config['nat']['advancedoutbound']['rule'] = array();
+if (!is_array($config['nat']['outbound']['rule']))
+	$config['nat']['outbound']['rule'] = array();
 
-$a_out = &$config['nat']['advancedoutbound']['rule'];
+$a_out = &$config['nat']['outbound']['rule'];
 
 if ($_POST['apply']) {
 	write_config();
@@ -73,52 +73,71 @@ if ($_POST['apply']) {
 
 if (isset($_POST['save']) && $_POST['save'] == "Save") {
 	/* mutually exclusive settings - if user wants advanced NAT, we don't generate automatic rules */
-	switch ($_POST['advancedoripsec']) {
-	case "ipsecpassthru":
-		$config['nat']['ipsecpassthru']['enable'] = true;
-		unset($config['nat']['advancedoutbound']['enable']);
-		break;
-	case "advancedoutboundnat":
-		if (!isset($config['nat']['advancedoutbound']['enable'])) {
-			$config['nat']['advancedoutbound']['enable'] = true;
-			// if there are already AON rules configured, don't generate default ones
-			if(!empty($a_out))
+	if ($_POST['mode'] == "advanced" && $config['nat']['outbound']['mode'] != "advanced" && empty($a_out)) {
+		/*
+		 *    user has enabled advanced outbound NAT and doesn't have rules
+		 *    lets automatically create entries
+		 *    for all of the interfaces to make life easier on the pip-o-chap
+		 */
+		$ifdescrs = get_configured_interface_with_descr();
+
+		foreach($ifdescrs as $if => $ifdesc) {
+			if (!interface_has_gateway($if))
 				continue;
-			/*
-			 *    user has enabled advanced outbound NAT and doesn't have rules
-			 *    lets automatically create entries
-			 *    for all of the interfaces to make life easier on the pip-o-chap
-			 */
-			$ifdescrs = get_configured_interface_with_descr();
-
-			foreach($ifdescrs as $if => $ifdesc) {
-				if (!interface_has_gateway($if))
+			foreach ($ifdescrs as $if2 => $ifdesc2) {
+				if (interface_has_gateway($if2))
 					continue;
-				foreach ($ifdescrs as $if2 => $ifdesc2) {
-					if (interface_has_gateway($if2))
-						continue;
 
-					$osipaddr = get_interface_ip($if2);
-					$ossubnet = get_interface_subnet($if2);
-					if (!is_ipaddr($osipaddr) || empty($ossubnet))
-						continue;
-					$osn = gen_subnet($osipaddr, $ossubnet);
+				$osipaddr = get_interface_ip($if2);
+				$ossubnet = get_interface_subnet($if2);
+				if (!is_ipaddr($osipaddr) || empty($ossubnet))
+					continue;
+				$osn = gen_subnet($osipaddr, $ossubnet);
 
+				$natent = array();
+				$natent['source']['network'] = "{$osn}/{$ossubnet}";
+				$natent['dstport'] = "500";
+				$natent['descr'] = sprintf(gettext('Auto created rule for ISAKMP - %1$s to %2$s'),$ifdesc2,$ifdesc);
+				$natent['target'] = "";
+				$natent['interface'] = $if;
+				$natent['destination']['any'] = true;
+				$natent['staticnatport'] = true;
+				$natent['created'] = make_config_revision_entry(null, gettext("Manual Outbound NAT Switch"));
+				$a_out[] = $natent;
+
+				$natent = array();
+				$natent['source']['network'] = "{$osn}/{$ossubnet}";
+				$natent['sourceport'] = "";
+				$natent['descr'] = sprintf(gettext('Auto created rule for %1$s to %2$s'),$ifdesc2,$ifdesc);
+				$natent['target'] = "";
+				$natent['interface'] = $if;
+				$natent['destination']['any'] = true;
+				$natent['natport'] = "";
+				$natent['created'] = make_config_revision_entry(null, gettext("Manual Outbound NAT Switch"));
+				$a_out[] = $natent;
+			}
+			/* Localhost */
+			$natent = array();
+			$natent['source']['network'] = "127.0.0.0/8";
+			$natent['dstport'] = "";
+			$natent['descr'] = sprintf(gettext('Auto created rule for localhost to %1$s'),$ifdesc);
+			$natent['target'] = "";
+			$natent['interface'] = $if;
+			$natent['destination']['any'] = true;
+			$natent['staticnatport'] = false;
+			$natent['natport'] = "1024:65535";
+			$natent['created'] = make_config_revision_entry(null, gettext("Manual Outbound NAT Switch"));
+			$a_out[] = $natent;
+			/* PPTP subnet */
+			if (($config['pptpd']['mode'] == "server") && is_private_ip($config['pptpd']['remoteip'])) {
+				$pptp_size = empty($config['pptpd']['n_pptp_units']) ? 16 : $config['pptpd']['n_pptp_units'];
+				$pptptopip = $pptp_size - 1;
+				$pptp_subnets = ip_range_to_subnet_array($config['pptpd']['remoteip'], long2ip32(ip2long($config['pptpd']['remoteip'])+$pptptopip));
+				foreach ($pptp_subnets as $pptpsn) {
 					$natent = array();
-					$natent['source']['network'] = "{$osn}/{$ossubnet}";
-					$natent['dstport'] = "500";
-					$natent['descr'] = sprintf(gettext('Auto created rule for ISAKMP - %1$s to %2$s'),$ifdesc2,$ifdesc);
-					$natent['target'] = "";
-					$natent['interface'] = $if;
-					$natent['destination']['any'] = true;
-					$natent['staticnatport'] = true;
-					$natent['created'] = make_config_revision_entry(null, gettext("Manual Outbound NAT Switch"));
-					$a_out[] = $natent;
-
-					$natent = array();
-					$natent['source']['network'] = "{$osn}/{$ossubnet}";
+					$natent['source']['network'] = $pptpsn;
 					$natent['sourceport'] = "";
-					$natent['descr'] = sprintf(gettext('Auto created rule for %1$s to %2$s'),$ifdesc2,$ifdesc);
+					$natent['descr'] = gettext("Auto created rule for PPTP server");
 					$natent['target'] = "";
 					$natent['interface'] = $if;
 					$natent['destination']['any'] = true;
@@ -126,85 +145,20 @@ if (isset($_POST['save']) && $_POST['save'] == "Save") {
 					$natent['created'] = make_config_revision_entry(null, gettext("Manual Outbound NAT Switch"));
 					$a_out[] = $natent;
 				}
-				/* Localhost */
-				$natent = array();
-				$natent['source']['network'] = "127.0.0.0/8";
-				$natent['dstport'] = "";
-				$natent['descr'] = sprintf(gettext('Auto created rule for localhost to %1$s'),$ifdesc);
-				$natent['target'] = "";
-				$natent['interface'] = $if;
-				$natent['destination']['any'] = true;
-				$natent['staticnatport'] = false;
-				$natent['natport'] = "1024:65535";
-				$natent['created'] = make_config_revision_entry(null, gettext("Manual Outbound NAT Switch"));
-				$a_out[] = $natent;
-				/* PPTP subnet */
-				if (($config['pptpd']['mode'] == "server") && is_private_ip($config['pptpd']['remoteip'])) {
-					$pptp_size = empty($config['pptpd']['n_pptp_units']) ? 16 : $config['pptpd']['n_pptp_units'];
-					$pptptopip = $pptp_size - 1;
-					$pptp_subnets = ip_range_to_subnet_array($config['pptpd']['remoteip'], long2ip32(ip2long($config['pptpd']['remoteip'])+$pptptopip));
-					foreach ($pptp_subnets as $pptpsn) {
-						$natent = array();
-						$natent['source']['network'] = $pptpsn;
-						$natent['sourceport'] = "";
-						$natent['descr'] = gettext("Auto created rule for PPTP server");
-						$natent['target'] = "";
-						$natent['interface'] = $if;
-						$natent['destination']['any'] = true;
-						$natent['natport'] = "";
-						$natent['created'] = make_config_revision_entry(null, gettext("Manual Outbound NAT Switch"));
-						$a_out[] = $natent;
-					}
-				}
-				/* PPPoE subnet */
-				if (is_pppoe_server_enabled() && have_ruleint_access("pppoe")) {
-					foreach ($config['pppoes']['pppoe'] as $pppoes) {
-						if (($pppoes['mode'] == "server") && is_ipaddr($pppoes['localip'])) {
-							if($pppoes['pppoe_subnet'] <> "")
-								$ossubnet = $pppoes['pppoe_subnet'];
-							else
-								$ossubnet = "32";
-							$osn = gen_subnet($pppoes['localip'], $ossubnet);
-							$natent = array();
-							$natent['source']['network'] = "{$osn}/{$ossubnet}";
-							$natent['sourceport'] = "";
-							$natent['descr'] = gettext("Auto created rule for PPPoE server");
-							$natent['target'] = "";
-							$natent['interface'] = $if;
-							$natent['destination']['any'] = true;
-							$natent['natport'] = "";
-							$natent['created'] = make_config_revision_entry(null, gettext("Manual Outbound NAT Switch"));
-							$a_out[] = $natent;
-						}
-					}
-				}
-				/* L2TP subnet */
-				if($config['l2tp']['mode'] == "server") {
-					if (is_ipaddr($config['l2tp']['localip'])) {
-						if($config['l2tp']['l2tp_subnet'] <> "")
-							$ossubnet = $config['l2tp']['l2tp_subnet'];
+			}
+			/* PPPoE subnet */
+			if (is_pppoe_server_enabled() && have_ruleint_access("pppoe")) {
+				foreach ($config['pppoes']['pppoe'] as $pppoes) {
+					if (($pppoes['mode'] == "server") && is_ipaddr($pppoes['localip'])) {
+						if($pppoes['pppoe_subnet'] <> "")
+							$ossubnet = $pppoes['pppoe_subnet'];
 						else
 							$ossubnet = "32";
-						$osn = gen_subnet($config['l2tp']['localip'], $ossubnet);
+						$osn = gen_subnet($pppoes['localip'], $ossubnet);
 						$natent = array();
 						$natent['source']['network'] = "{$osn}/{$ossubnet}";
 						$natent['sourceport'] = "";
-						$natent['descr'] = gettext("Auto created rule for L2TP server");
-						$natent['target'] = "";
-						$natent['interface'] = $if;
-						$natent['destination']['any'] = true;
-						$natent['natport'] = "";
-						$natent['created'] = make_config_revision_entry(null, gettext("Manual Outbound NAT Switch"));
-						$a_out[] = $natent;
-					}
-				}
-				/* add openvpn interfaces */
-				if($config['openvpn']['openvpn-server']) {
-					foreach ($config['openvpn']['openvpn-server'] as $ovpnsrv) {
-						$natent = array();
-						$natent['source']['network'] = $ovpnsrv['tunnel_network'];
-						$natent['sourceport'] = "";
-						$natent['descr'] = gettext("Auto created rule for OpenVPN server");
+						$natent['descr'] = gettext("Auto created rule for PPPoE server");
 						$natent['target'] = "";
 						$natent['interface'] = $if;
 						$natent['destination']['any'] = true;
@@ -214,11 +168,47 @@ if (isset($_POST['save']) && $_POST['save'] == "Save") {
 					}
 				}
 			}
-
-			$savemsg = gettext("Default rules for each interface have been created.");
+			/* L2TP subnet */
+			if($config['l2tp']['mode'] == "server") {
+				if (is_ipaddr($config['l2tp']['localip'])) {
+					if($config['l2tp']['l2tp_subnet'] <> "")
+						$ossubnet = $config['l2tp']['l2tp_subnet'];
+					else
+						$ossubnet = "32";
+					$osn = gen_subnet($config['l2tp']['localip'], $ossubnet);
+					$natent = array();
+					$natent['source']['network'] = "{$osn}/{$ossubnet}";
+					$natent['sourceport'] = "";
+					$natent['descr'] = gettext("Auto created rule for L2TP server");
+					$natent['target'] = "";
+					$natent['interface'] = $if;
+					$natent['destination']['any'] = true;
+					$natent['natport'] = "";
+					$natent['created'] = make_config_revision_entry(null, gettext("Manual Outbound NAT Switch"));
+					$a_out[] = $natent;
+				}
+			}
+			/* add openvpn interfaces */
+			if($config['openvpn']['openvpn-server']) {
+				foreach ($config['openvpn']['openvpn-server'] as $ovpnsrv) {
+					$natent = array();
+					$natent['source']['network'] = $ovpnsrv['tunnel_network'];
+					$natent['sourceport'] = "";
+					$natent['descr'] = gettext("Auto created rule for OpenVPN server");
+					$natent['target'] = "";
+					$natent['interface'] = $if;
+					$natent['destination']['any'] = true;
+					$natent['natport'] = "";
+					$natent['created'] = make_config_revision_entry(null, gettext("Manual Outbound NAT Switch"));
+					$a_out[] = $natent;
+				}
+			}
 		}
-		break;
+		$savemsg = gettext("Default rules for each interface have been created.");
 	}
+
+	$config['nat']['outbound']['mode'] = $_POST['mode'];
+
 	if (write_config())
 		mark_subsystem_dirty('natconf');
 	header("Location: firewall_nat_out.php");
@@ -296,8 +286,6 @@ if (isset($_POST['del_x'])) {
 		}
 		if (count($a_out_new) > 0)
 			$a_out = $a_out_new;
-		else
-			unset($config['nat']['advancedoutbound']);
 
 		if (write_config())
 			mark_subsystem_dirty('natconf');
@@ -337,35 +325,56 @@ if (is_subsystem_dirty('natconf'))
 			<div id="mainarea">
 			<table class="tabcont" width="100%" border="0" cellpadding="0" cellspacing="0" summary="main area">
 				<tr>
-					<td align="right"><b><?=gettext("Mode:"); ?></b></td>
+					<td rowspan="3" align="right" valign="middle"><b><?=gettext("Mode:"); ?></b></td>
 					<td>
-						&nbsp;&nbsp;
-						<input name="advancedoripsec" type="radio" id="ipsecpassthru" value="ipsecpassthru" <?php if (isset($config['nat']['ipsecpassthru']['enable'])) echo "checked=\"checked\"";?> />
+						<input name="mode" type="radio" id="automatic" value="automatic" <?php if ($config['nat']['outbound']['mode'] == "automatic") echo "checked=\"checked\"";?> />
+					</td>
+					<td>
 						<strong>
 							<?=gettext("Automatic outbound NAT rule generation"); ?><br/>
-							&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<?=gettext("(IPsec passthrough included)");?>
+							<?=gettext("(IPsec passthrough included)");?>
 						</strong>
 					</td>
 					<td>
-						&nbsp;&nbsp;
-						<input name="advancedoripsec" type="radio" id="advancedoutbound" value="advancedoutboundnat" <?php if (isset($config['nat']['advancedoutbound']['enable'])) echo "checked=\"checked\"";?> />
+						<input name="mode" type="radio" id="hybrid" value="hybrid" <?php if ($config['nat']['outbound']['mode'] == "hybrid") echo "checked=\"checked\"";?> />
+					</td>
+					<td>
 						<strong>
-							<?=gettext("Manual Outbound NAT rule generation"); ?><br/>
-							&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<?=gettext("(AON - Advanced Outbound NAT)");?>
+							<?=gettext("Hybrid Outbound NAT rule generation"); ?><br/>
+							<?=gettext("(Automatic Outbound NAT + rules below)");?>
 						</strong>
 					</td>
-					<td valign="middle" align="left">
+					<td rowspan="3" valign="middle" align="left">
 						<input name="save" type="submit" class="formbtn" value="<?=gettext("Save");?>" />
-						&nbsp;<br/>&nbsp;
 					</td>
 				</tr>
 				<tr>
-					<td colspan="5">
+					<td colspan="4">
 						&nbsp;
 					</td>
 				</tr>
 				<tr>
-					<td  class="vtable" colspan="5">
+					<td>
+						<input name="mode" type="radio" id="advanced" value="advanced" <?php if ($config['nat']['outbound']['mode'] == "advanced") echo "checked=\"checked\"";?> />
+					</td>
+					<td>
+						<strong>
+							<?=gettext("Manual Outbound NAT rule generation"); ?><br/>
+							<?=gettext("(AON - Advanced Outbound NAT)");?>
+						</strong>
+					</td>
+					<td>
+						<input name="mode" type="radio" id="disabled" value="disabled" <?php if ($config['nat']['outbound']['mode'] == "disabled") echo "checked=\"checked\"";?> />
+					</td>
+					<td>
+						<strong>
+							<?=gettext("Disable Outbound NAT rule generation"); ?><br/>
+							<?=gettext("(No Outbound NAT rules)");?>
+						</strong>
+					</td>
+				</tr>
+				<tr>
+					<td colspan="6">
 						&nbsp;
 					</td>
 				</tr>

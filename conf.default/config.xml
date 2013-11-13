@@ -401,9 +401,25 @@
 	</captiveportal>
 	-->
 	<nat>
-		<ipsecpassthru>
-			<enable/>
-		</ipsecpassthru>
+		<outbound>
+			<mode>automatic</mode>
+			<!--
+			<rule>
+				<interface></interface>
+				<source>
+					<network>xxx.xxx.xxx.xxx/xx</network>
+				</source>
+				<destination>
+					<not/>
+					<any/>
+					*or*
+					<network>xxx.xxx.xxx.xxx/xx</network>
+				</destination>
+				<target>xxx.xxx.xxx.xxx</target>
+				<descr></descr>
+			</rule>
+			-->
+		</outbound>
 		<!--
 		<rule>
 			<interface></interface>
@@ -423,25 +439,6 @@
 			<subnet></subnet>
 			<descr></descr>
 		</onetoone>
-		-->
-		<!--
-		<advancedoutbound>
-			<enable/>
-			<rule>
-				<interface></interface>
-				<source>
-					<network>xxx.xxx.xxx.xxx/xx</network>
-				</source>
-				<destination>
-					<not/>
-					<any/>
-					*or*
-					<network>xxx.xxx.xxx.xxx/xx</network>
-				</destination>
-				<target>xxx.xxx.xxx.xxx</target>
-				<descr></descr>
-			</rule>
-		</advancedoutbound>
 		-->
 		<!--
 		<servernat>

@@ -45,14 +45,14 @@ require("guiconfig.inc");
 require_once("filter.inc");
 require("shaper.inc");
 
-if (!is_array($config['nat']['advancedoutbound']))
-	$config['nat']['advancedoutbound'] = array();
+if (!is_array($config['nat']['outbound']))
+	$config['nat']['outbound'] = array();
 
-if (!is_array($config['nat']['advancedoutbound']['rule'])) {
-	$config['nat']['advancedoutbound']['rule'] = array();
+if (!is_array($config['nat']['outbound']['rule'])) {
+	$config['nat']['outbound']['rule'] = array();
 }
 
-$a_out = &$config['nat']['advancedoutbound']['rule'];
+$a_out = &$config['nat']['outbound']['rule'];
 
 if (!is_array($config['aliases']['alias']))
 	$config['aliases']['alias'] = array();

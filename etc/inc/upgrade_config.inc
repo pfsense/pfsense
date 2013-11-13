@@ -3197,4 +3197,20 @@ function upgrade_101_to_102() {
 		}
 	}
 }
+
+function upgrade_102_to_103() {
+	global $config;
+
+	if (isset($config['nat']['advancedoutbound']['enable'])) {
+		$config['nat']['advancedoutbound']['mode'] = "advanced";
+		unset($config['nat']['advancedoutbound']['enable']);
+	} else
+		$config['nat']['advancedoutbound']['mode'] = "automatic";
+
+	$config['nat']['outbound'] = $config['nat']['advancedoutbound'];
+
+	unset($config['nat']['ipsecpassthru']);
+	unset($config['nat']['advancedoutbound']);
+}
+
 ?>

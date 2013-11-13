@@ -1570,12 +1570,14 @@ function filter_nat_rules_generate() {
 		}
 	}
 
-	$natrules .= "\n# Outbound NAT rules\n";
-	/* outbound rules - advanced or standard */
-	if(isset($config['nat']['advancedoutbound']['enable'])) {
+	if ($config['nat']['outbound']['mode'] == "disabled")
+		$natrules .= "\n# Outbound NAT rules are disabled\n";
+
+	if ($config['nat']['outbound']['mode'] == "advanced" || $config['nat']['outbound']['mode'] == "hybrid") {
+		$natrules .= "\n# Outbound NAT rules (manual)\n";
 		/* advanced outbound rules */
-		if(is_array($config['nat']['advancedoutbound']['rule'])) {
-			foreach ($config['nat']['advancedoutbound']['rule'] as $obent) {
+		if(is_array($config['nat']['outbound']['rule'])) {
+			foreach ($config['nat']['outbound']['rule'] as $obent) {
 				if (isset($obent['disabled']))
 					continue;
 				update_filter_reload_status(sprintf(gettext("Creating advanced outbound rule %s"), $obent['descr']));
@@ -1608,7 +1610,11 @@ function filter_nat_rules_generate() {
 				);
 			}
 		}
-	} else {
+	}
+
+	/* outbound rules */
+	if ($config['nat']['outbound']['mode'] == "automatic" || $config['nat']['outbound']['mode'] == "hybrid") {
+		$natrules .= "\n# Outbound NAT rules (automatic)\n";
 		/* standard outbound rules (one for each interface) */
 		update_filter_reload_status(gettext("Creating outbound NAT rules"));
 		$tonathosts = "";
@@ -1699,7 +1705,7 @@ function filter_nat_rules_generate() {
 			$natrules .= "tonatsubnets	= \"{ {$tonathosts} }\"\n";
 			$macroortable = "\$tonatsubnets";
 		}
-		if($numberofnathosts > 0):
+		if($numberofnathosts > 0) {
 			foreach ($FilterIflist as $if => $ifcfg) {
 				if (substr($ifcfg['if'], 0, 4) == "ovpn")
 					continue;
@@ -1711,10 +1717,9 @@ function filter_nat_rules_generate() {
 						"{$macroortable}", 500, "", 500, $target, 500, false);
 					$natrules .= filter_nat_rules_generate_if($if,
 						"{$macroortable}", null, "", null, $target, null, isset($ifcfg['nonat']));
-					$natrules .= "\n";
 				}
 			}
-		endif;
+		}
 	}
 
 	/* load balancer anchor */

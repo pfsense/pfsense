@@ -1680,6 +1680,7 @@ function filter_nat_rules_generate() {
 			!empty($config['ipsec']['client']['pool_address']) &&
 			!empty($config['ipsec']['client']['pool_netbits'])) {
 			$tonathosts .= "{$config['ipsec']['client']['pool_address']}/{$config['ipsec']['client']['pool_netbits']} ";
+			$numberofnathosts++;
 		}
 		$natrules .= "\n# Subnets to NAT \n";
 		$tonathosts .= "127.0.0.0/8 0.0.0.0 ";

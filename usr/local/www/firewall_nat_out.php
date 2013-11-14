@@ -54,6 +54,11 @@ if (!is_array($config['nat']['outbound']['rule']))
 
 $a_out = &$config['nat']['outbound']['rule'];
 
+if (!isset($config['nat']['outbound']['mode']))
+	$config['nat']['outbound']['mode'] = "automatic";
+
+$mode = $config['nat']['outbound']['mode'];
+
 if ($_POST['apply']) {
 	write_config();
 
@@ -73,7 +78,7 @@ if ($_POST['apply']) {
 
 if (isset($_POST['save']) && $_POST['save'] == "Save") {
 	/* mutually exclusive settings - if user wants advanced NAT, we don't generate automatic rules */
-	if ($_POST['mode'] == "advanced" && $config['nat']['outbound']['mode'] != "advanced" && empty($a_out)) {
+	if ($_POST['mode'] == "advanced" && $mode != "advanced" && empty($a_out)) {
 		/*
 		 *    user has enabled advanced outbound NAT and doesn't have rules
 		 *    lets automatically create entries
@@ -327,7 +332,7 @@ if (is_subsystem_dirty('natconf'))
 				<tr>
 					<td rowspan="3" align="right" valign="middle"><b><?=gettext("Mode:"); ?></b></td>
 					<td>
-						<input name="mode" type="radio" id="automatic" value="automatic" <?php if ($config['nat']['outbound']['mode'] == "automatic") echo "checked=\"checked\"";?> />
+						<input name="mode" type="radio" id="automatic" value="automatic" <?php if ($mode == "automatic") echo "checked=\"checked\"";?> />
 					</td>
 					<td>
 						<strong>
@@ -336,7 +341,7 @@ if (is_subsystem_dirty('natconf'))
 						</strong>
 					</td>
 					<td>
-						<input name="mode" type="radio" id="hybrid" value="hybrid" <?php if ($config['nat']['outbound']['mode'] == "hybrid") echo "checked=\"checked\"";?> />
+						<input name="mode" type="radio" id="hybrid" value="hybrid" <?php if ($mode == "hybrid") echo "checked=\"checked\"";?> />
 					</td>
 					<td>
 						<strong>
@@ -355,7 +360,7 @@ if (is_subsystem_dirty('natconf'))
 				</tr>
 				<tr>
 					<td>
-						<input name="mode" type="radio" id="advanced" value="advanced" <?php if ($config['nat']['outbound']['mode'] == "advanced") echo "checked=\"checked\"";?> />
+						<input name="mode" type="radio" id="advanced" value="advanced" <?php if ($mode == "advanced") echo "checked=\"checked\"";?> />
 					</td>
 					<td>
 						<strong>
@@ -364,7 +369,7 @@ if (is_subsystem_dirty('natconf'))
 						</strong>
 					</td>
 					<td>
-						<input name="mode" type="radio" id="disabled" value="disabled" <?php if ($config['nat']['outbound']['mode'] == "disabled") echo "checked=\"checked\"";?> />
+						<input name="mode" type="radio" id="disabled" value="disabled" <?php if ($mode == "disabled") echo "checked=\"checked\"";?> />
 					</td>
 					<td>
 						<strong>
@@ -418,17 +423,26 @@ if (is_subsystem_dirty('natconf'))
 					<td class="listt" align="center">
 <?php
 						$iconfn = "pass";
-						if (isset($natent['disabled'])) {
+						if ($mode == "disabled" || $mode == "automatic" || isset($natent['disabled'])) {
 							$textss = "<span class=\"gray\">";
 							$textse = "</span>";
 							$iconfn .= "_d";
 						} else {
 							$textss = $textse = "";
 						}
+
+						if ($mode == "disabled" || $mode == "automatic"):
 ?>
-						<a href="?act=toggle&amp;id=<?=$i;?>">
-							<img src="./themes/<?= $g['theme']; ?>/images/icons/icon_<?=$iconfn;?>.gif" width="11" height="11" border="0" title="<?=gettext("click to toggle enabled/disabled status");?>" alt="icon" />
-						</a>
+							<img src="./themes/<?= $g['theme']; ?>/images/icons/icon_<?=$iconfn;?>.gif" width="11" height="11" border="0" title="<?=gettext("This rule is being ignored");?>" alt="icon" />
+<?php
+						else:
+?>
+							<a href="?act=toggle&amp;id=<?=$i;?>">
+								<img src="./themes/<?= $g['theme']; ?>/images/icons/icon_<?=$iconfn;?>.gif" width="11" height="11" border="0" title="<?=gettext("click to toggle enabled/disabled status");?>" alt="icon" />
+							</a>
+<?php
+						endif;
+?>
 					</td>
 					<td class="listlr" onclick="fr_toggle(<?=$nnats;?>)" id="frd<?=$nnats;?>" ondblclick="document.location='firewall_nat_out_edit.php?id=<?=$nnats;?>';">
 						<?php echo htmlspecialchars(convert_friendly_interface_to_friendly_descr($natent['interface'])); ?>
@@ -526,6 +540,93 @@ if (is_subsystem_dirty('natconf'))
 				$i++;
 				$nnats++;
 			endforeach;
+
+			if ($mode == "automatic" || $mode == "hybrid"):
+				global $FilterIflist;
+				if(empty($FilterIflist))
+					filter_generate_optcfg_array();
+				$automatic_rules = filter_nat_rules_outbound_automatic(implode(" ", filter_nat_rules_automatic_tonathosts()));
+				$i = 0;
+				foreach ($automatic_rules as $natent):
+?>
+					<tr valign="top" id="frautomatic<?=$i;?>">
+						<td class="list">&nbsp;</td>
+						<td class="listt" align="center">
+							<img src="./themes/<?= $g['theme']; ?>/images/icons/icon_pass.gif" width="11" height="11" border="0" title="<?=gettext("automatic outbound nat");?>" alt="icon" />
+						</td>
+						<td class="listlr" style="background-color: #E0E0E0">
+							<?php echo htmlspecialchars(convert_friendly_interface_to_friendly_descr($natent['interface'])); ?>
+							&nbsp;
+						</td>
+						<td class="listr" style="background-color: #E0E0E0">
+							<?=$natent['source']['network'];?>
+						</td>
+						<td class="listr" style="background-color: #E0E0E0">
+<?php
+							echo ($natent['protocol']) ? $natent['protocol'] . '/' : "" ;
+							if (!$natent['sourceport'])
+								echo "*";
+							else
+								echo $natent['sourceport'];
+?>
+						</td>
+						<td class="listr" style="background-color: #E0E0E0">
+<?php
+							if (isset($natent['destination']['any']))
+								echo "*";
+							else {
+								if (isset($natent['destination']['not']))
+									echo "!&nbsp;";
+								echo $natent['destination']['address'];
+							}
+?>
+						</td>
+						<td class="listr" style="background-color: #E0E0E0">
+<?php
+							echo ($natent['protocol']) ? $natent['protocol'] . '/' : "" ;
+							if (!$natent['dstport'])
+								echo "*";
+							else
+								echo $natent['dstport'];
+?>
+						</td>
+						<td class="listr" style="background-color: #E0E0E0">
+<?php
+							if (isset($natent['nonat']))
+								echo '<I>NO NAT</I>';
+							elseif (!$natent['target'])
+								echo htmlspecialchars(convert_friendly_interface_to_friendly_descr($natent['interface'])) . " address";
+							elseif ($natent['target'] == "other-subnet")
+								echo $natent['targetip'] . '/' . $natent['targetip_subnet'];
+							else
+								echo $natent['target'];
+?>
+						</td>
+						<td class="listr" style="background-color: #E0E0E0">
+<?php
+							if (!$natent['natport'])
+								echo "*";
+							else
+								echo $natent['natport'];
+?>
+						</td>
+						<td class="listr" style="background-color: #E0E0E0">
+<?php
+							if(isset($natent['staticnatport']))
+								echo gettext("YES");
+							else
+								echo gettext("NO");
+?>
+						</td>
+						<td class="listbg">
+							<?=htmlspecialchars($natent['descr']);?>&nbsp;
+						</td>
+						<td class="list">&nbsp;</td>
+					</tr>
+<?php
+					$i++;
+				endforeach;
+			endif;
 ?>
 				<tr>
 					<td class="list" colspan="11"></td>

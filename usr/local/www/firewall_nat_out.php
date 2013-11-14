@@ -540,13 +540,74 @@ if (is_subsystem_dirty('natconf'))
 				$i++;
 				$nnats++;
 			endforeach;
-
+?>
+				<tr>
+					<td class="list" colspan="11"></td>
+					<td class="list nowrap" valign="middle">
+						<table border="0" cellspacing="0" cellpadding="1" summary="edit">
+							<tr>
+								<td>
+<?php
+								if ($nnats == 0):
+?>
+									<img src="/themes/<?= $g['theme']; ?>/images/icons/icon_left_d.gif" width="17" height="17" title="<?=gettext("move selected mappings to end");?>" border="0" alt="move" />
+<?php
+								else:
+?>
+									<input name="move_<?=$i;?>" type="image" src="/themes/<?= $g['theme']; ?>/images/icons/icon_left.gif" style="width:17;height:17;border:0" title="<?=gettext("move selected mappings to end");?>" />
+<?php
+								endif;
+?>
+								</td>
+								<td>
+									<a href="firewall_nat_out_edit.php">
+										<img src="/themes/<?= $g['theme']; ?>/images/icons/icon_plus.gif" width="17" height="17" border="0" title="<?=gettext("add new mapping");?>" alt="add" />
+									</a>
+								</td>
+							</tr>
+							<tr>
+								<td>
+<?php
+								if ($nnats == 0):
+?>
+									<img src="/themes/<?= $g['theme']; ?>/images/icons/icon_x_d.gif" width="17" height="17" title="<?=gettext("delete selected rules");?>" border="0" alt="delete" />
+<?php
+								else:
+?>
+									<input name="del" type="image" src="/themes/<?= $g['theme']; ?>/images/icons/icon_x.gif" style="width:17;height:17" title="<?=gettext("delete selected mappings");?>" onclick="return confirm('<?=gettext("Do you really want to delete the selected mappings?");?>')" />
+<?php
+								endif;
+?>
+								</td>
+							</tr>
+						</table>
+					</td>
+				</tr>
+<?php
 			if ($mode == "automatic" || $mode == "hybrid"):
 				global $FilterIflist;
 				if(empty($FilterIflist))
 					filter_generate_optcfg_array();
 				$automatic_rules = filter_nat_rules_outbound_automatic(implode(" ", filter_nat_rules_automatic_tonathosts()));
 				$i = 0;
+?>
+				<tr><td colspan="5"><b>&nbsp;<?=gettext("Automatic rules:"); ?></b></td></tr>
+				<tr><td>&nbsp;</td></tr>
+				<tr id="frheader">
+					<td width="3%" class="list">&nbsp;</td>
+					<td width="3%" class="list">&nbsp;</td>
+					<td width="10%" class="listhdrr"><?=gettext("Interface");?></td>
+					<td width="15%" class="listhdrr"><?=gettext("Source");?></td>
+					<td width="10%" class="listhdrr"><?=gettext("Source Port");?></td>
+					<td width="15%" class="listhdrr"><?=gettext("Destination");?></td>
+					<td width="10%" class="listhdrr"><?=gettext("Destination Port");?></td>
+					<td width="15%" class="listhdrr"><?=gettext("NAT Address");?></td>
+					<td width="10%" class="listhdrr"><?=gettext("NAT Port");?></td>
+					<td width="10%" class="listhdrr"><?=gettext("Static Port");?></td>
+					<td width="25%" class="listhdr"><?=gettext("Description");?></td>
+					<td width="5%" class="list">&nbsp;</td>
+				</tr>
+<?php
 				foreach ($automatic_rules as $natent):
 ?>
 					<tr valign="top" id="frautomatic<?=$i;?>">
@@ -628,48 +689,6 @@ if (is_subsystem_dirty('natconf'))
 				endforeach;
 			endif;
 ?>
-				<tr>
-					<td class="list" colspan="11"></td>
-					<td class="list nowrap" valign="middle">
-						<table border="0" cellspacing="0" cellpadding="1" summary="edit">
-							<tr>
-								<td>
-<?php
-								if ($nnats == 0):
-?>
-									<img src="/themes/<?= $g['theme']; ?>/images/icons/icon_left_d.gif" width="17" height="17" title="<?=gettext("move selected mappings to end");?>" border="0" alt="move" />
-<?php
-								else:
-?>
-									<input name="move_<?=$i;?>" type="image" src="/themes/<?= $g['theme']; ?>/images/icons/icon_left.gif" style="width:17;height:17;border:0" title="<?=gettext("move selected mappings to end");?>" />
-<?php
-								endif;
-?>
-								</td>
-								<td>
-									<a href="firewall_nat_out_edit.php">
-										<img src="/themes/<?= $g['theme']; ?>/images/icons/icon_plus.gif" width="17" height="17" border="0" title="<?=gettext("add new mapping");?>" alt="add" />
-									</a>
-								</td>
-							</tr>
-							<tr>
-								<td>
-<?php
-								if ($nnats == 0):
-?>
-									<img src="/themes/<?= $g['theme']; ?>/images/icons/icon_x_d.gif" width="17" height="17" title="<?=gettext("delete selected rules");?>" border="0" alt="delete" />
-<?php
-								else:
-?>
-									<input name="del" type="image" src="/themes/<?= $g['theme']; ?>/images/icons/icon_x.gif" style="width:17;height:17" title="<?=gettext("delete selected mappings");?>" onclick="return confirm('<?=gettext("Do you really want to delete the selected mappings?");?>')" />
-<?php
-								endif;
-?>
-								</td>
-							</tr>
-						</table>
-					</td>
-				</tr>
 				<tr>
 					<td colspan="12">
 						<p><span class="vexpl">

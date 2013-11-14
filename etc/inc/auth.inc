@@ -329,6 +329,11 @@ function local_sync_accounts() {
 			$line = explode(":",fgets($fd));
 			if (((!strncmp($line[0], "_", 1)) || ($line[2] < 2000) || ($line[2] > 65000)) && ($line[0] != "admin"))
 				continue;
+			/*
+			 * If a crontab was created to user, pw userdel will be interactive and
+			 * can cause issues. Just remove crontab before run it when necessary
+			 */
+			unlink_if_exists("/var/cron/tabs/{$line[0]}");
 			$cmd = "/usr/sbin/pw userdel -n '{$line[0]}'";
 			if($debug)
 				log_error(sprintf(gettext("Running: %s"), $cmd));

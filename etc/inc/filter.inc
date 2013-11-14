@@ -1345,6 +1345,112 @@ function filter_generate_reflection_proxy($rule, $nordr, $rdr_ifs, $srcaddr, $ds
 	return $natrules;
 }
 
+function filter_nat_rules_automatic_tonathosts() {
+	global $config, $FilterIflist, $GatewaysList;
+
+	$tonathosts = array("127.0.0.0/8", "0.0.0.0");
+
+	foreach (get_staticroutes() as $route) {
+		$netip = explode("/", $route['network']);
+		if (isset($GatewaysList[$route['gateway']])) {
+			$gateway =& $GatewaysList[$route['gateway']];
+			if(!interface_has_gateway($gateway['interface']) && is_private_ip($netip[0]))
+				$tonathosts[] = $route['network'];
+		}
+	}
+
+	/* create outbound nat entries for all local networks */
+	foreach($FilterIflist as $ocname => $oc) {
+		if(interface_has_gateway($ocname))
+			continue;
+		if(is_ipaddr($oc['alias-address']))
+			$tonathosts[] = "{$oc['alias-address']}/{$oc['alias-subnet']}";
+		if($oc['sa'])
+			$tonathosts[] = "{$oc['sa']}/{$oc['sn']}";
+	}
+
+	/* PPTP subnet */
+	if(($config['pptpd']['mode'] == "server" ) && is_private_ip($config['pptpd']['remoteip'])) {
+		if (isset($config['pptpd']['n_pptp_units']) && is_numeric($config['pptpd']['n_pptp_units']))
+			$pptp_subnets = ip_range_to_subnet_array($config['pptpd']['remoteip'],
+				long2ip32(ip2long($config['pptpd']['remoteip'])+($config['pptpd']['n_pptp_units']-1)));
+		else
+			$pptp_subnets = ip_range_to_subnet_array($config['pptpd']['remoteip'],
+				long2ip32(ip2long($config['pptpd']['remoteip'])));
+
+		$tonathosts = array_merge($tonathosts, $pptp_subnets);
+	}
+
+	/* PPPoE subnet */
+	if (is_array($FilterIflist['pppoe']))
+		foreach ($FilterIflist['pppoe'] as $pppoe)
+			if(is_private_ip($pppoe['ip']))
+				$tonathosts[] = "{$pppoe['sa']}/{$pppoe['sn']}";
+
+	/* L2TP subnet */
+	if(isset($FilterIflist['l2tp']) && $FilterIflist['l2tp']['mode'] == "server") {
+		$l2tp_sa = $FilterIflist['l2tp']['sa'];
+		$l2tp_sn = $FilterIflist['l2tp']['sn'];
+		if(is_private_ip($l2tp_sa) && !empty($l2tp_sn))
+			$tonathosts[] = "{$l2tp_sa}/{$l2tp_sn}";
+	}
+
+	/* add openvpn interfaces */
+	if(is_array($config['openvpn']['openvpn-server']))
+		foreach ($config['openvpn']['openvpn-server'] as $ovpnsrv)
+			if (!empty($ovpnsrv['tunnel_network']))
+				$tonathosts[] = $ovpnsrv['tunnel_network'];
+
+	if(is_array($config['openvpn']['openvpn-client']))
+		foreach ($config['openvpn']['openvpn-client'] as $ovpncli)
+			if (!empty($ovpncli['tunnel_network']))
+				$tonathosts[] = $ovpncli['tunnel_network'];
+
+	/* IPsec mode_cfg subnet */
+	if (isset($config['ipsec']['client']['enable']) &&
+	    !empty($config['ipsec']['client']['pool_address']) &&
+	    !empty($config['ipsec']['client']['pool_netbits']))
+		$tonathosts[] = "{$config['ipsec']['client']['pool_address']}/{$config['ipsec']['client']['pool_netbits']}";
+
+	return $tonathosts;
+}
+
+function filter_nat_rules_outbound_automatic($src) {
+	global $config, $FilterIflist;
+
+	$rules = array();
+	foreach ($FilterIflist as $if => $ifcfg) {
+		if (substr($ifcfg['if'], 0, 4) == "ovpn")
+			continue;
+		if (!interface_has_gateway($if))
+			continue;
+
+		$natent = array();
+		$natent['interface'] = $if;
+		$natent['source']['network'] = $src;
+		$natent['dstport'] = "500";
+		$natent['target'] = $ifcfg['ip'];
+		$natent['destination']['any'] = true;
+		$natent['staticnatport'] = true;
+		$natent['descr'] = gettext('Auto created rule for ISAKMP');
+		$rules[] = $natent;
+
+		$natent = array();
+		$natent['interface'] = $if;
+		$natent['source']['network'] = $src;
+		$natent['sourceport'] = "";
+		$natent['target'] = $ifcfg['ip'];
+		$natent['destination']['any'] = true;
+		$natent['natport'] = "";
+		$natent['descr'] = gettext('Auto created rule');
+		if (isset($ifcfg['nonat']))
+			$natent['nonat'] = true;
+		$rules[] = $natent;
+	}
+
+	return $rules;
+}
+
 /* Generate a 'nat on' or 'no nat on' rule for given interface */
 function filter_nat_rules_generate_if($if, $src = "any", $srcport = "", $dst = "any", $dstport = "", $natip = "", $natport = "", $nonat = false, $staticnatport = false, $proto = "", $poolopts = "") {
 	global $config, $FilterIflist;
@@ -1617,105 +1723,36 @@ function filter_nat_rules_generate() {
 		$natrules .= "\n# Outbound NAT rules (automatic)\n";
 		/* standard outbound rules (one for each interface) */
 		update_filter_reload_status(gettext("Creating outbound NAT rules"));
-		$tonathosts = "";
-		$numberofnathosts = 0;
+		$tonathosts_array = filter_nat_rules_automatic_tonathosts();
+		$tonathosts = implode(" ", $tonathosts_array);
+		$numberofnathosts = count($tonathosts_array);
 
-		foreach (get_staticroutes() as $route) {
-			$netip = explode("/", $route['network']);
-			if (isset($GatewaysList[$route['gateway']])) {
-				$gateway =& $GatewaysList[$route['gateway']];
-				if(!interface_has_gateway($gateway['interface']) && is_private_ip($netip[0])) {
-					$numberofnathosts++;
-					$tonathosts .= "{$route['network']} ";
-				}
-			}
-		}
-		/* create outbound nat entries for all local networks */
-		foreach($FilterIflist as $ocname => $oc) {
-			if(!interface_has_gateway($ocname)) {
-				if(is_ipaddr($oc['alias-address'])) {
-					$numberofnathosts++;
-					$tonathosts .= "{$oc['alias-address']}/{$oc['alias-subnet']} ";
-				}
-				if($oc['sa']) {
-					$tonathosts .= "{$oc['sa']}/{$oc['sn']} ";
-					$numberofnathosts++;
-				}
-			}
-		}
-		/* PPTP subnet */
-		if(($config['pptpd']['mode'] == "server" ) && is_private_ip($config['pptpd']['remoteip'])) {
-			if (isset($config['pptpd']['n_pptp_units']) && is_numeric($config['pptpd']['n_pptp_units']))
-				$pptp_subnets = ip_range_to_subnet_array($config['pptpd']['remoteip'], long2ip32(ip2long($config['pptpd']['remoteip'])+($config['pptpd']['n_pptp_units']-1)));
-			else
-				$pptp_subnets = ip_range_to_subnet_array($config['pptpd']['remoteip'], long2ip32(ip2long($config['pptpd']['remoteip'])));
-			$numberofnathosts += count($pptp_subnets);
-			$tonathosts .= implode(" ", $pptp_subnets) . " ";
-		}
-		/* PPPoE subnet */
-		if (is_array($FilterIflist['pppoe'])) {
-			foreach ($FilterIflist['pppoe'] as $pppoe) {
-				if(is_private_ip($pppoe['ip'])) {
-					$numberofnathosts++;
-					$tonathosts .= "{$pppoe['sa']}/{$pppoe['sn']} ";
-				}
-			}
-		}
-		/* L2TP subnet */
-		if(isset($FilterIflist['l2tp']) && $FilterIflist['l2tp']['mode'] == "server") {
-			$l2tp_subnet = $FilterIflist['l2tp']['sn'];
-			if(is_private_ip($FilterIflist['l2tp']['sa']) && !empty($l2tp_subnet)) {
-				$numberofnathosts++;
-				$tonathosts .= "{$FilterIflist['l2tp']['sa']}/{$l2tp_subnet} ";
-			}
-		}
-		/* add openvpn interfaces */
-		if(is_array($config['openvpn']['openvpn-server'])) {
-			foreach ($config['openvpn']['openvpn-server'] as $ovpnsrv) {
-				if (!empty($ovpnsrv['tunnel_network'])) {
-					$numberofnathosts++;
-					$tonathosts .= "{$ovpnsrv['tunnel_network']} ";
-				}
-			}
-		}
-		if(is_array($config['openvpn']['openvpn-client'])) {
-			foreach ($config['openvpn']['openvpn-client'] as $ovpnsrv) {
-				if (!empty($ovpnsrv['tunnel_network'])) {
-					$numberofnathosts++;
-					$tonathosts .= "{$ovpnsrv['tunnel_network']} ";
-				}
-			}
-		}
-		/* IPsec mode_cfg subnet */
-		if (isset($config['ipsec']['client']['enable']) &&
-			!empty($config['ipsec']['client']['pool_address']) &&
-			!empty($config['ipsec']['client']['pool_netbits'])) {
-			$tonathosts .= "{$config['ipsec']['client']['pool_address']}/{$config['ipsec']['client']['pool_netbits']} ";
-		}
 		$natrules .= "\n# Subnets to NAT \n";
-		$tonathosts .= "127.0.0.0/8 0.0.0.0 ";
-		if($numberofnathosts > 4) {
-			$natrules .= "table <tonatsubnets> { {$tonathosts} }\n";
-			$macroortable = "<tonatsubnets>";
-		} else if($numberofnathosts > 0) {
-			$natrules .= "tonatsubnets	= \"{ {$tonathosts} }\"\n";
-			$macroortable = "\$tonatsubnets";
-		}
-		if($numberofnathosts > 0) {
-			foreach ($FilterIflist as $if => $ifcfg) {
-				if (substr($ifcfg['if'], 0, 4) == "ovpn")
-					continue;
-				update_filter_reload_status(sprintf(gettext('Creating outbound rules %1$s - (%2$s)'), $if, $ifcfg['descr']));
-				if(interface_has_gateway($if)) {
-					$target = $ifcfg['ip'];
-					/* create outbound nat entries for all local networks */
-					$natrules .= filter_nat_rules_generate_if($if,
-						"{$macroortable}", 500, "", 500, $target, 500, false);
-					$natrules .= filter_nat_rules_generate_if($if,
-						"{$macroortable}", null, "", null, $target, null, isset($ifcfg['nonat']));
-				}
+		if ($numberofnathosts > 0) {
+			update_filter_reload_status(gettext('Creating automatic outbound rules'));
+
+			if ($numberofnathosts > 4) {
+				$natrules .= "table <tonatsubnets> { {$tonathosts} }\n";
+				$macroortable = "<tonatsubnets>";
+			} else {
+				$natrules .= "tonatsubnets	= \"{ {$tonathosts} }\"\n";
+				$macroortable = "\$tonatsubnets";
+			}
+
+			$a_outs = filter_nat_rules_outbound_automatic($macroortable);
+			foreach ($a_outs as $a_out) {
+				$natrules .= filter_nat_rules_generate_if($a_out['interface'],
+					$a_out['source']['network'],
+					$a_out['sourceport'],
+					$a_out['destination']['address'],
+					$a_out['dstport'],
+					$a_out['target'],
+					$a_out['natport'],
+					isset($a_out['nonat']),
+					isset($a_out['staticnatport']));
 			}
 		}
+		unset($tonathosts, $tonathosts_array, $numberofnathosts);
 	}
 
 	/* load balancer anchor */

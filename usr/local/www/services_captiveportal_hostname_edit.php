@@ -36,8 +36,8 @@
 
 ##|+PRIV
 ##|*IDENT=page-services-captiveportal-editallowedhostnames
-##|*NAME=Services: Captive portal: Edit Allowed IPs page
-##|*DESCR=Allow access to the 'Services: Captive portal: Edit Allowed IPs' page.
+##|*NAME=Services: Captive portal: Edit Allowed Hostnames page
+##|*DESCR=Allow access to the 'Services: Captive portal: Edit Allowed Hostnames' page.
 ##|*MATCH=services_captiveportal_hostname_edit.php*
 ##|-PRIV
 

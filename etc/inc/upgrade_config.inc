@@ -3213,4 +3213,38 @@ function upgrade_102_to_103() {
 	unset($config['nat']['advancedoutbound']);
 }
 
+function upgrade_103_to_104() {
+	global $config;
+
+	$changed_privs = array(
+		"page-diag-system-activity" => "page-diagnostics-system-activity",
+		"page-interfacess-groups" => "page-interfaces-groups",
+		"page-interfacess-lagg" => "page-interfaces-lagg",
+		"page-interfacess-qinq" => "page-interfaces-qinq"
+	);
+
+	/* update user privileges */
+	foreach ($config['system']['user'] as & $user) {
+		if (!is_array($user['priv']))
+			continue;
+		foreach ($user['priv'] as & $priv) {
+			if (array_key_exists($priv, $changed_privs))
+				$priv = $changed_privs[$priv];
+		}
+	}
+
+	/* update group privileges */
+	foreach ($config['system']['group'] as & $group) {
+		if (!is_array($group['priv']))
+			continue;
+		foreach ($group['priv'] as & $priv) {
+			if (array_key_exists($priv, $changed_privs))
+				$priv = $changed_privs[$priv];
+		}
+	}
+
+	/* sync all local account information */
+	local_sync_accounts();
+}
+
 ?>

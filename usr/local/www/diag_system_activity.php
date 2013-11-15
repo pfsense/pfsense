@@ -33,10 +33,10 @@
 */
 
 ##|+PRIV
-##|*IDENT=page-diag-system-activity
+##|*IDENT=page-diagnostics-system-activity
 ##|*NAME=Diagnostics: System Activity
 ##|*DESCR=Allows access to the 'Diagnostics: System Activity' page
-##|*MATCH=diag_system_activity*
+##|*MATCH=diag_system_activity.php*
 ##|-PRIV
 
 require("guiconfig.inc");

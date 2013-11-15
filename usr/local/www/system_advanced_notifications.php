@@ -32,9 +32,9 @@
 
 ##|+PRIV
 ##|*IDENT=page-system-advanced-notifications
-##|*NAME=System: Advanced: Tunables page
-##|*DESCR=Allow access to the 'System: Advanced: Tunables' page.
-##|*MATCH=system_advanced-sysctrl.php*
+##|*NAME=System: Advanced: Notifications page
+##|*DESCR=Allow access to the 'System: Advanced: Notifications' page.
+##|*MATCH=system_advanced_notifications.php*
 ##|-PRIV
 
 require("guiconfig.inc");

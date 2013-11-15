@@ -40,7 +40,7 @@
 ##|*IDENT=page-system-advanced-firewall
 ##|*NAME=System: Advanced: Firewall and NAT page
 ##|*DESCR=Allow access to the 'System: Advanced: Firewall and NAT' page.
-##|*MATCH=system_advanced.php*
+##|*MATCH=system_advanced_firewall.php*
 ##|-PRIV
 
 require("guiconfig.inc");

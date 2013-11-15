@@ -33,7 +33,7 @@
 ##|+PRIV
 ##|*IDENT=page-interfacess-groups
 ##|*NAME=Interfaces: Groups: Edit page
-##|*DESCR=Edit Interface groups
+##|*DESCR=Allow access to the 'Interfaces: Groups: Edit' page.
 ##|*MATCH=interfaces_groups_edit.php*
 ##|-PRIV
 

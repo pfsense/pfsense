@@ -37,9 +37,9 @@
 */
 
 ##|+PRIV
-##|*IDENT=page-services-igmpproxy
+##|*IDENT=page-services-igmpproxy-edit
 ##|*NAME=Firewall: Igmpproxy: Edit page
-##|*DESCR=Allow access to the 'Firewall: Igmpproxy' page.
+##|*DESCR=Allow access to the 'Services: Igmpproxy: Edit' page.
 ##|*MATCH=services_igmpproxy_edit.php*
 ##|-PRIV
 

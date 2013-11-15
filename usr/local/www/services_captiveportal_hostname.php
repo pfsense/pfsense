@@ -36,9 +36,9 @@
 
 ##|+PRIV
 ##|*IDENT=page-services-captiveportal-allowedhostnames
-##|*NAME=Services: Captive portal: Allowed IPs page
-##|*DESCR=Allow access to the 'Services: Captive portal: Allowed IPs' page.
-##|*MATCH=services_captiveportal_ip.php*
+##|*NAME=Services: Captive portal: Allowed Hostnames page
+##|*DESCR=Allow access to the 'Services: Captive portal: Allowed Hostnames' page.
+##|*MATCH=services_captiveportal_hostname.php*
 ##|-PRIV
 
 require("guiconfig.inc");

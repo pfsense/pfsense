@@ -32,9 +32,9 @@
 */
 
 ##|+PRIV
-##|*IDENT=page-diag-system-activity
-##|*NAME=Diagnostics: System Activity
-##|*DESCR=Allows access to the 'Diagnostics: System Activity' page
+##|*IDENT=page-diagnostics-system-pftop
+##|*NAME=Diagnostics: pfTop
+##|*DESCR=Allows access to the 'Diagnostics: pfTop' page
 ##|*MATCH=diag_system_pftop.php*
 ##|-PRIV
 

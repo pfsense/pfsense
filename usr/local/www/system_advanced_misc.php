@@ -40,7 +40,7 @@
 ##|*IDENT=page-system-advanced-misc
 ##|*NAME=System: Advanced: Miscellaneous page
 ##|*DESCR=Allow access to the 'System: Advanced: Miscellaneous' page.
-##|*MATCH=system_advanced.php*
+##|*MATCH=system_advanced_misc.php*
 ##|-PRIV
 
 require("guiconfig.inc");

@@ -39,7 +39,7 @@
 ##|*IDENT=page-system-advanced-network
 ##|*NAME=System: Advanced: Network page
 ##|*DESCR=Allow access to the 'System: Advanced: Networking' page.
-##|*MATCH=system_advanced-network.php*
+##|*MATCH=system_advanced_network.php*
 ##|-PRIV
 
 require("guiconfig.inc");

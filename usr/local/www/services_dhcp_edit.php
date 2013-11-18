@@ -297,7 +297,7 @@ if ($_POST) {
 
 		if(isset($config['dhcpd'][$if]['enable'])) {
 			mark_subsystem_dirty('staticmaps');
-			if (isset($config['dnsmasq']['enable']) && isset($config['dnsmasq']['regdhcpstatic']))
+			if (is_dns_enabled() && is_dns_option_set('regdhcpstatic'))
 				mark_subsystem_dirty('hosts');
 		}
 

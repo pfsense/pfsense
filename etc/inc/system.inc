@@ -103,7 +103,7 @@ function system_resolvconf_generate($dynupdate = false) {
 	if($syscfg['domain'])
 		$resolvconf = "domain {$syscfg['domain']}\n";
 
-	if (isset($config['dnsmasq']['enable']) && !isset($config['system']['dnslocalhost']))
+	if (is_dns_enabled() && !isset($config['system']['dnslocalhost']))
 		$resolvconf .= "nameserver 127.0.0.1\n";
 
 	if (isset($syscfg['dnsallowoverride'])) {
@@ -242,15 +242,21 @@ function system_hosts_generate() {
 		$cfgip = get_interface_ip("lan");
 		if (is_ipaddr($cfgip))
 			$hosts .= "{$cfgip}	{$syscfg['hostname']}.{$syscfg['domain']} {$syscfg['hostname']}\n";
+		$cfgip6 = get_interface_ipv6("lan");
+		if (is_ipaddrv6($cfgip6))
+			$hosts .= "{$cfgip6}	{$syscfg['hostname']}.{$syscfg['domain']} {$syscfg['hostname']}\n";
 	} else {
 		$sysiflist = get_configured_interface_list();
 		foreach ($sysiflist as $sysif) {
 			if (!interface_has_gateway($sysif)) {
 				$cfgip = get_interface_ip($sysif);
-				if (is_ipaddr($cfgip)) {
+				if (is_ipaddr($cfgip))
 					$hosts .= "{$cfgip}	{$syscfg['hostname']}.{$syscfg['domain']} {$syscfg['hostname']}\n";
+				$cfgip6 = get_interface_ipv6($sysif);
+				if (is_ipaddrv6($cfgip6))
+					$hosts .= "{$cfgip6}	{$syscfg['hostname']}.{$syscfg['domain']} {$syscfg['hostname']}\n";
+				if (is_ipaddr($cfgip) || is_ipaddrv6($cfgip6))
 					break;
-				}
 			}
 		}
 	}
@@ -329,7 +335,7 @@ function system_dhcpleases_configure() {
 	if ($g['platform'] == 'jail')
 		return;
 	/* Start the monitoring process for dynamic dhcpclients. */
-	if (isset($config['dnsmasq']['enable']) && isset($config['dnsmasq']['regdhcp'])) {
+	if (is_dns_enabled() && is_dns_option_set('regdhcp')) {
 		/* Make sure we do not error out */
 		mwexec("/bin/mkdir -p {$g['dhcpd_chroot_path']}/var/db");
 		if (!file_exists("{$g['dhcpd_chroot_path']}/var/db/dhcpd.leases"))

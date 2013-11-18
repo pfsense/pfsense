@@ -106,7 +106,7 @@ if ($_POST) {
 			else
 				$a_domainOverrides[] = $doment;
 
-			$retval = services_dnsmasq_configure();
+			$retval = services_dns_configure();
 
 			write_config();
 

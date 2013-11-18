@@ -1345,17 +1345,20 @@ function filter_generate_reflection_proxy($rule, $nordr, $rdr_ifs, $srcaddr, $ds
 	return $natrules;
 }
 
-function filter_nat_rules_automatic_tonathosts() {
+function filter_nat_rules_automatic_tonathosts($with_descr = false) {
 	global $config, $FilterIflist, $GatewaysList;
 
 	$tonathosts = array("127.0.0.0/8", "0.0.0.0/0");
+	$descriptions = array("localhost", "localhost");
 
 	foreach (get_staticroutes() as $route) {
 		$netip = explode("/", $route['network']);
 		if (isset($GatewaysList[$route['gateway']])) {
 			$gateway =& $GatewaysList[$route['gateway']];
-			if(!interface_has_gateway($gateway['interface']) && is_private_ip($netip[0]))
+			if(!interface_has_gateway($gateway['interface']) && is_private_ip($netip[0])) {
 				$tonathosts[] = $route['network'];
+				$descriptions[] = "static route";
+			}
 		}
 	}
 
@@ -1363,10 +1366,14 @@ function filter_nat_rules_automatic_tonathosts() {
 	foreach($FilterIflist as $ocname => $oc) {
 		if(interface_has_gateway($ocname))
 			continue;
-		if(is_ipaddr($oc['alias-address']))
+		if(is_ipaddr($oc['alias-address'])) {
 			$tonathosts[] = "{$oc['alias-address']}/{$oc['alias-subnet']}";
-		if($oc['sa'])
+			$descriptions[] = "{$oc['descr']} DHCP alias address";
+		}
+		if($oc['sa']) {
 			$tonathosts[] = "{$oc['sa']}/{$oc['sn']}";
+			$descriptions[] = $oc['descr'];
+		}
 	}
 
 	/* PPTP subnet */
@@ -1378,41 +1385,64 @@ function filter_nat_rules_automatic_tonathosts() {
 			$pptp_subnets = ip_range_to_subnet_array($config['pptpd']['remoteip'],
 				long2ip32(ip2long($config['pptpd']['remoteip'])));
 
-		$tonathosts = array_merge($tonathosts, $pptp_subnets);
+		foreach ($pptp_subnets as $subnet) {
+			$tonathosts[] = $subnet;
+			$descriptions[] = "PPTP server";
+		}
 	}
 
 	/* PPPoE subnet */
 	if (is_array($FilterIflist['pppoe']))
 		foreach ($FilterIflist['pppoe'] as $pppoe)
-			if(is_private_ip($pppoe['ip']))
+			if(is_private_ip($pppoe['ip'])) {
 				$tonathosts[] = "{$pppoe['sa']}/{$pppoe['sn']}";
+				$descriptions[] = "PPPoE server";
+			}
 
 	/* L2TP subnet */
 	if(isset($FilterIflist['l2tp']) && $FilterIflist['l2tp']['mode'] == "server") {
 		$l2tp_sa = $FilterIflist['l2tp']['sa'];
 		$l2tp_sn = $FilterIflist['l2tp']['sn'];
-		if(is_private_ip($l2tp_sa) && !empty($l2tp_sn))
+		if(is_private_ip($l2tp_sa) && !empty($l2tp_sn)) {
 			$tonathosts[] = "{$l2tp_sa}/{$l2tp_sn}";
+			$descriptions[] = "L2TP server";
+		}
 	}
 
 	/* add openvpn interfaces */
 	if(is_array($config['openvpn']['openvpn-server']))
 		foreach ($config['openvpn']['openvpn-server'] as $ovpnsrv)
-			if (!empty($ovpnsrv['tunnel_network']))
+			if (!empty($ovpnsrv['tunnel_network'])) {
 				$tonathosts[] = $ovpnsrv['tunnel_network'];
+				$descriptions[] = "OpenVPN server";
+			}
 
 	if(is_array($config['openvpn']['openvpn-client']))
 		foreach ($config['openvpn']['openvpn-client'] as $ovpncli)
-			if (!empty($ovpncli['tunnel_network']))
+			if (!empty($ovpncli['tunnel_network'])) {
 				$tonathosts[] = $ovpncli['tunnel_network'];
+				$descriptions[] = "OpenVPN client";
+			}
 
 	/* IPsec mode_cfg subnet */
 	if (isset($config['ipsec']['client']['enable']) &&
 	    !empty($config['ipsec']['client']['pool_address']) &&
-	    !empty($config['ipsec']['client']['pool_netbits']))
+	    !empty($config['ipsec']['client']['pool_netbits'])) {
 		$tonathosts[] = "{$config['ipsec']['client']['pool_address']}/{$config['ipsec']['client']['pool_netbits']}";
+		$descriptions[] = "IPsec client";
+	}
 
-	return $tonathosts;
+	if ($with_descr) {
+		$combined = array();
+		foreach ($tonathosts as $idx => $subnet) {
+			$combined[] = array(
+				"subnet" => $subnet,
+				"descr" => $descriptions[$idx]);
+		}
+
+		return $combined;
+	} else
+		return $tonathosts;
 }
 
 function filter_nat_rules_outbound_automatic($src) {

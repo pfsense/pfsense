@@ -1348,7 +1348,7 @@ function filter_generate_reflection_proxy($rule, $nordr, $rdr_ifs, $srcaddr, $ds
 function filter_nat_rules_automatic_tonathosts() {
 	global $config, $FilterIflist, $GatewaysList;
 
-	$tonathosts = array("127.0.0.0/8", "0.0.0.0");
+	$tonathosts = array("127.0.0.0/8", "0.0.0.0/0");
 
 	foreach (get_staticroutes() as $route) {
 		$netip = explode("/", $route['network']);

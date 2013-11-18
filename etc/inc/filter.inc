@@ -1719,7 +1719,9 @@ function filter_nat_rules_generate() {
 	}
 
 	/* outbound rules */
-	if ($config['nat']['outbound']['mode'] == "automatic" || $config['nat']['outbound']['mode'] == "hybrid") {
+	if (!isset($config['nat']['outbound']['mode']) ||
+	    $config['nat']['outbound']['mode'] == "automatic" ||
+	    $config['nat']['outbound']['mode'] == "hybrid") {
 		$natrules .= "\n# Outbound NAT rules (automatic)\n";
 		/* standard outbound rules (one for each interface) */
 		update_filter_reload_status(gettext("Creating outbound NAT rules"));

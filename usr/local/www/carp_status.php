@@ -53,21 +53,8 @@ unset($interface_ip_arr_cache);
 $status = get_carp_status();
 
 
-if($_POST['disablecarppermanently'] <> "") {
-	if (isset($config["virtualip_carp_disabled"])) {
-		unset($config["virtualip_carp_disabled"]);
-		$desc = "CARP enabled";
-	} else {
-		$config["virtualip_carp_disabled"] = true;
-		$desc = "CARP disabled";
-	}
-	write_config($desc);
-	
-	if(isset($config["virtualip_carp_disabled"])) {
-		mwexec("/sbin/sysctl net.inet.carp.allow=0");
-	} else {
-		mwexec("/sbin/sysctl net.inet.carp.allow=1");
-	}
+if($_POST['carp_maintenancemode'] <> "") {
+	interfaces_carp_set_maintenancemode(!isset($config["virtualip_carp_maintenancemode"]));
 }
 if($_POST['disablecarp'] <> "") {
 	if($status == true) {
@@ -134,16 +121,17 @@ include("head.inc");
 				}
 			}
 			if($carpcount > 0) {
-				$carp_enabled = $status;
-				if(isset($config["virtualip_carp_disabled"])) {
-					echo "<input type=\"submit\" name=\"disablecarppermanently\" id=\"disablecarppermanently\" value=\"" . gettext("Enable Carp now and on reboot") . "\">";
+				if($status == false) {
+					$carp_enabled = false;
+					echo "<input type=\"submit\" name=\"disablecarp\" id=\"disablecarp\" value=\"" . gettext("Enable Carp") . "\">";
 				} else {
-					echo "<input type=\"submit\" name=\"disablecarppermanently\" id=\"disablecarppermanently\" value=\"" . gettext("Disable Carp now and on reboot") . "\">";
-					if($status == false) {
-						echo "<input type=\"submit\" name=\"disablecarp\" id=\"disablecarp\" value=\"" . gettext("Enable Carp") . "\">";
-					} else {
-						echo "<input type=\"submit\" name=\"disablecarp\" id=\"disablecarp\" value=\"" . gettext("Disable Carp temporarily") . "\">";
-					}
+					$carp_enabled = true;
+					echo "<input type=\"submit\" name=\"disablecarp\" id=\"disablecarp\" value=\"" . gettext("Disable Carptemporarily") . "\">";
+				}
+				if(isset($config["virtualip_carp_maintenancemode"])) {
+					echo "<input type=\"submit\" name=\"carp_maintenancemode\" id=\"carp_maintenancemode\" value=\"" . gettext("Leave Carp maintenance mode now and on reboot") . "\">";
+				} else {
+					echo "<input type=\"submit\" name=\"carp_maintenancemode\" id=\"carp_maintenancemode\" value=\"" . gettext("Enter Carp maintenance mode now and on reboot") . "\">";
 				}
 			}
 ?>

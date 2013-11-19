@@ -99,7 +99,6 @@ if (isset($_POST['save']) && $_POST['save'] == "Save") {
 					convert_real_interface_to_friendly_descr($natent['interface']));
 				$natent['created'] = make_config_revision_entry(null, gettext("Manual Outbound NAT Switch"));
 
-				}
 				/* Try to detect already auto created rules and avoid duplicate them */
 				$found = false;
 				foreach ($a_out as $rule) {

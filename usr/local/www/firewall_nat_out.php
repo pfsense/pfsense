@@ -80,7 +80,7 @@ if ($_POST['apply']) {
 
 if (isset($_POST['save']) && $_POST['save'] == "Save") {
 	/* mutually exclusive settings - if user wants advanced NAT, we don't generate automatic rules */
-	if ($_POST['mode'] == "advanced" && $mode != "advanced" && empty($a_out)) {
+	if ($_POST['mode'] == "advanced" && ($mode == "automatic" || $mode == "hybrid")) {
 		/*
 		 *    user has enabled advanced outbound NAT and doesn't have rules
 		 *    lets automatically create entries
@@ -98,7 +98,23 @@ if (isset($_POST['save']) && $_POST['save'] == "Save") {
 					$tonathost['descr'],
 					convert_real_interface_to_friendly_descr($natent['interface']));
 				$natent['created'] = make_config_revision_entry(null, gettext("Manual Outbound NAT Switch"));
-				$a_out[] = $natent;
+
+				}
+				/* Try to detect already auto created rules and avoid duplicate them */
+				$found = false;
+				foreach ($a_out as $rule) {
+					if ($rule['interface'] == $natent['interface'] &&
+					    $rule['source']['network'] == $natent['source']['network'] &&
+					    $rule['dstport'] == $natent['dstport'] &&
+					    $rule['target'] == $natent['target'] &&
+					    $rule['descr'] == $natent['descr']) {
+						$found = true;
+						break;
+					}
+				}
+
+				if ($found === false)
+					$a_out[] = $natent;
 			}
 		}
 		$savemsg = gettext("Default rules for each interface have been created.");

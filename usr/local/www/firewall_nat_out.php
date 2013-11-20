@@ -320,12 +320,12 @@ if (is_subsystem_dirty('natconf'))
 					</td>
 				</tr>
 <?php
-			$nnats = $i = 0;
+			$i = 0;
 			foreach ($a_out as $natent):
 ?>
-				<tr valign="top" id="fr<?=$nnats;?>">
+				<tr valign="top" id="fr<?=$i;?>">
 					<td class="listt">
-						<input type="checkbox" id="frc<?=$nnats;?>" name="rule[]" value="<?=$i;?>" onclick="fr_bgcolor('<?=$nnats;?>')" style="margin: 0; padding: 0; width: 15px; height: 15px;" />
+						<input type="checkbox" id="frc<?=$i;?>" name="rule[]" value="<?=$i;?>" onclick="fr_bgcolor('<?=$i;?>')" style="margin: 0; padding: 0; width: 15px; height: 15px;" />
 					</td>
 					<td class="listt" align="center">
 <?php
@@ -351,14 +351,14 @@ if (is_subsystem_dirty('natconf'))
 						endif;
 ?>
 					</td>
-					<td class="listlr" onclick="fr_toggle(<?=$nnats;?>)" id="frd<?=$nnats;?>" ondblclick="document.location='firewall_nat_out_edit.php?id=<?=$nnats;?>';">
+					<td class="listlr" onclick="fr_toggle(<?=$i;?>)" id="frd<?=$i;?>" ondblclick="document.location='firewall_nat_out_edit.php?id=<?=$i;?>';">
 						<?php echo htmlspecialchars(convert_friendly_interface_to_friendly_descr($natent['interface'])); ?>
 						&nbsp;
 					</td>
-					<td class="listr" onclick="fr_toggle(<?=$nnats;?>)" id="frd<?=$nnats;?>" ondblclick="document.location='firewall_nat_out_edit.php?id=<?=$nnats;?>';">
+					<td class="listr" onclick="fr_toggle(<?=$i;?>)" id="frd<?=$i;?>" ondblclick="document.location='firewall_nat_out_edit.php?id=<?=$i;?>';">
 						<?=$natent['source']['network'];?>
 					</td>
-					<td class="listr" onclick="fr_toggle(<?=$nnats;?>)" id="frd<?=$nnats;?>" ondblclick="document.location='firewall_nat_out_edit.php?id=<?=$nnats;?>';">
+					<td class="listr" onclick="fr_toggle(<?=$i;?>)" id="frd<?=$i;?>" ondblclick="document.location='firewall_nat_out_edit.php?id=<?=$i;?>';">
 <?php
 						echo ($natent['protocol']) ? $natent['protocol'] . '/' : "" ;
 						if (!$natent['sourceport'])
@@ -367,7 +367,7 @@ if (is_subsystem_dirty('natconf'))
 							echo $natent['sourceport'];
 ?>
 					</td>
-					<td class="listr" onclick="fr_toggle(<?=$nnats;?>)" id="frd<?=$nnats;?>" ondblclick="document.location='firewall_nat_out_edit.php?id=<?=$nnats;?>';">
+					<td class="listr" onclick="fr_toggle(<?=$i;?>)" id="frd<?=$i;?>" ondblclick="document.location='firewall_nat_out_edit.php?id=<?=$i;?>';">
 <?php
 						if (isset($natent['destination']['any']))
 							echo "*";
@@ -378,7 +378,7 @@ if (is_subsystem_dirty('natconf'))
 						}
 ?>
 					</td>
-					<td class="listr" onclick="fr_toggle(<?=$nnats;?>)" id="frd<?=$nnats;?>" ondblclick="document.location='firewall_nat_out_edit.php?id=<?=$nnats;?>';">
+					<td class="listr" onclick="fr_toggle(<?=$i;?>)" id="frd<?=$i;?>" ondblclick="document.location='firewall_nat_out_edit.php?id=<?=$i;?>';">
 <?php
 						echo ($natent['protocol']) ? $natent['protocol'] . '/' : "" ;
 						if (!$natent['dstport'])
@@ -387,7 +387,7 @@ if (is_subsystem_dirty('natconf'))
 							echo $natent['dstport'];
 ?>
 					</td>
-					<td class="listr" onclick="fr_toggle(<?=$nnats;?>)" id="frd<?=$nnats;?>" ondblclick="document.location='firewall_nat_out_edit.php?id=<?=$nnats;?>';">
+					<td class="listr" onclick="fr_toggle(<?=$i;?>)" id="frd<?=$i;?>" ondblclick="document.location='firewall_nat_out_edit.php?id=<?=$i;?>';">
 <?php
 						if (isset($natent['nonat']))
 							echo '<I>NO NAT</I>';
@@ -399,7 +399,7 @@ if (is_subsystem_dirty('natconf'))
 							echo $natent['target'];
 ?>
 					</td>
-					<td class="listr" onclick="fr_toggle(<?=$nnats;?>)" id="frd<?=$nnats;?>" ondblclick="document.location='firewall_nat_out_edit.php?id=<?=$nnats;?>';">
+					<td class="listr" onclick="fr_toggle(<?=$i;?>)" id="frd<?=$i;?>" ondblclick="document.location='firewall_nat_out_edit.php?id=<?=$i;?>';">
 <?php
 						if (!$natent['natport'])
 							echo "*";
@@ -407,7 +407,7 @@ if (is_subsystem_dirty('natconf'))
 							echo $natent['natport'];
 ?>
 					</td>
-					<td class="listr" onclick="fr_toggle(<?=$nnats;?>)" id="frd<?=$nnats;?>" ondblclick="document.location='firewall_nat_out_edit.php?id=<?=$nnats;?>';" align="center">
+					<td class="listr" onclick="fr_toggle(<?=$i;?>)" id="frd<?=$i;?>" ondblclick="document.location='firewall_nat_out_edit.php?id=<?=$i;?>';" align="center">
 <?php
 						if(isset($natent['staticnatport']))
 							echo gettext("YES");
@@ -415,13 +415,13 @@ if (is_subsystem_dirty('natconf'))
 							echo gettext("NO");
 ?>
 					</td>
-					<td class="listbg" onclick="fr_toggle(<?=$nnats;?>)" ondblclick="document.location='firewall_nat_out_edit.php?id=<?=$nnats;?>';">
+					<td class="listbg" onclick="fr_toggle(<?=$i;?>)" ondblclick="document.location='firewall_nat_out_edit.php?id=<?=$i;?>';">
 						<?=htmlspecialchars($natent['descr']);?>&nbsp;
 					</td>
 					<td class="list nowrap" valign="middle">
 						<table border="0" cellspacing="0" cellpadding="1" summary="move">
 							<tr>
-								<td><input onmouseover="fr_insline(<?=$nnats;?>, true)" onmouseout="fr_insline(<?=$nnats;?>, false)" name="move_<?=$i;?>" src="/themes/<?= $g['theme']; ?>/images/icons/icon_left.gif" title="<?=gettext("move selected rules before this rule");?>" type="image" style="height:17;width:17;border:0" /></td>
+								<td><input onmouseover="fr_insline(<?=$i;?>, true)" onmouseout="fr_insline(<?=$i;?>, false)" name="move_<?=$i;?>" src="/themes/<?= $g['theme']; ?>/images/icons/icon_left.gif" title="<?=gettext("move selected rules before this rule");?>" type="image" style="height:17;width:17;border:0" /></td>
 								<td>
 									<a href="firewall_nat_out_edit.php?id=<?=$i;?>">
 										<img src="/themes/<?= $g['theme']; ?>/images/icons/icon_e.gif" width="17" height="17" border="0" title="<?=gettext("edit mapping");?>" alt="edit" />
@@ -445,7 +445,6 @@ if (is_subsystem_dirty('natconf'))
 				</tr>
 <?php
 				$i++;
-				$nnats++;
 			endforeach;
 ?>
 				<tr>
@@ -455,7 +454,7 @@ if (is_subsystem_dirty('natconf'))
 							<tr>
 								<td>
 <?php
-								if ($nnats == 0):
+								if ($i == 0):
 ?>
 									<img src="/themes/<?= $g['theme']; ?>/images/icons/icon_left_d.gif" width="17" height="17" title="<?=gettext("move selected mappings to end");?>" border="0" alt="move" />
 <?php
@@ -475,7 +474,7 @@ if (is_subsystem_dirty('natconf'))
 							<tr>
 								<td>
 <?php
-								if ($nnats == 0):
+								if ($i == 0):
 ?>
 									<img src="/themes/<?= $g['theme']; ?>/images/icons/icon_x_d.gif" width="17" height="17" title="<?=gettext("delete selected rules");?>" border="0" alt="delete" />
 <?php
@@ -495,7 +494,6 @@ if (is_subsystem_dirty('natconf'))
 				if(empty($FilterIflist))
 					filter_generate_optcfg_array();
 				$automatic_rules = filter_nat_rules_outbound_automatic(implode(" ", filter_nat_rules_automatic_tonathosts()));
-				$i = 0;
 ?>
 				<tr><td colspan="5"><b>&nbsp;<?=gettext("Automatic rules:"); ?></b></td></tr>
 				<tr><td>&nbsp;</td></tr>
@@ -516,7 +514,7 @@ if (is_subsystem_dirty('natconf'))
 <?php
 				foreach ($automatic_rules as $natent):
 ?>
-					<tr valign="top" id="frautomatic<?=$i;?>">
+					<tr valign="top">
 						<td class="list">&nbsp;</td>
 						<td class="listt" align="center">
 							<img src="./themes/<?= $g['theme']; ?>/images/icons/icon_pass.gif" width="11" height="11" border="0" title="<?=gettext("automatic outbound nat");?>" alt="icon" />
@@ -591,7 +589,6 @@ if (is_subsystem_dirty('natconf'))
 						<td class="list">&nbsp;</td>
 					</tr>
 <?php
-					$i++;
 				endforeach;
 			endif;
 ?>

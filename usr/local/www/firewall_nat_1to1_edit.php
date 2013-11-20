@@ -73,6 +73,15 @@ $id = $_GET['id'];
 if (isset($_POST['id']))
 	$id = $_POST['id'];
 
+$after = $_GET['after'];
+if (isset($_POST['after']))
+	$after = $_POST['after'];
+
+if (isset($_GET['dup']))  {
+	$id = $_GET['dup'];
+	$after = $_GET['dup'];
+}
+
 if (isset($id) && $a_1to1[$id]) {
 	$pconfig['disabled'] = isset($a_1to1[$id]['disabled']);
 
@@ -93,6 +102,9 @@ if (isset($id) && $a_1to1[$id]) {
 	$pconfig['natreflection'] = $a_1to1[$id]['natreflection'];
 } else
 	$pconfig['interface'] = "wan";
+
+if (isset($_GET['dup']))
+	unset($id);
 
 if ($_POST) {
 
@@ -206,8 +218,12 @@ if ($_POST) {
 
 		if (isset($id) && $a_1to1[$id])
 			$a_1to1[$id] = $natent;
-		else
-			$a_1to1[] = $natent;
+		else {
+			if (is_numeric($after))
+				array_splice($a_1to1, $after+1, 0, array($natent));
+			else
+				$a_1to1[] = $natent;
+		}
 		nat_1to1_rules_sort();
 
 		if (write_config())

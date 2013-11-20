@@ -367,6 +367,8 @@ function return_gateways_array($disabled = false, $localhost = false) {
 	$found_defaultv4 = 0;
 	$found_defaultv6 = 0;
 
+	// Ensure the interface cache is up to date first
+	$interfaces = get_interface_arr(true);
 	$interfaces_v4 = array();
 	$interfaces_v6 = array();
 
@@ -422,10 +424,10 @@ function return_gateways_array($disabled = false, $localhost = false) {
 
 			/* special treatment for tunnel interfaces */
 			if ($gateway['ipprotocol'] == "inet6") {
-				$gateway['interface'] = get_real_interface($gateway['interface'], "inet6");
+				$gateway['interface'] = get_real_interface($gateway['interface'], "inet6", false, false);
 				$interfaces_v6[$gateway['friendlyiface']] = $gateway['friendlyiface'];
 			} else {
-				$gateway['interface'] = get_real_interface($gateway['interface']);
+				$gateway['interface'] = get_real_interface($gateway['interface'], "all", false, false);
 				$interfaces_v4[$gateway['friendlyiface']] = $gateway['friendlyiface'];
 			}
 

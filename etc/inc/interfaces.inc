@@ -72,13 +72,13 @@ function get_interface_arr($flush = false) {
  * does_interface_exist($interface): return true or false if a interface is
  * detected.
  */
-function does_interface_exist($interface) {
+function does_interface_exist($interface, $flush = true) {
 	global $config;
 
 	if(!$interface)
 		return false;
 
-	$ints = get_interface_arr(true);
+	$ints = get_interface_arr($flush);
 	if (in_array($interface, $ints))
 		return true;
 	else
@@ -3924,7 +3924,7 @@ function interface_get_wireless_clone($wlif) {
 	}
 }
 
-function get_real_interface($interface = "wan", $family = "all", $realv6iface = false) {
+function get_real_interface($interface = "wan", $family = "all", $realv6iface = false, $flush = true) {
 	global $config, $g;
 
 	$wanif = NULL;
@@ -3954,7 +3954,7 @@ function get_real_interface($interface = "wan", $family = "all", $realv6iface = 
 		// pass the real interface back.  This encourages
 		// the usage of this function in more cases so that
 		// we can combine logic for more flexibility.
-		if(does_interface_exist($interface)) {
+		if(does_interface_exist($interface, $flush)) {
 			$wanif = $interface;
 			break;
 		}

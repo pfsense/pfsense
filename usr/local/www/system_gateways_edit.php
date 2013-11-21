@@ -75,11 +75,11 @@ if (isset($id) && $a_gateways[$id]) {
 		$pconfig['dynamic'] = true;
 	$pconfig['gateway'] = $a_gateways[$id]['gateway'];
 	$pconfig['defaultgw'] = isset($a_gateways[$id]['defaultgw']);
-	$pconfig['latencylow'] = $a_gateway_item[$id]['latencylow'];
-	$pconfig['latencyhigh'] = $a_gateway_item[$id]['latencyhigh'];
-	$pconfig['losslow'] = $a_gateway_item[$id]['losslow'];
-	$pconfig['losshigh'] = $a_gateway_item[$id]['losshigh'];
-	$pconfig['down'] = $a_gateway_item[$id]['down'];
+	$pconfig['latencylow'] = $a_gateways[$id]['latencylow'];
+	$pconfig['latencyhigh'] = $a_gateways[$id]['latencyhigh'];
+	$pconfig['losslow'] = $a_gateways[$id]['losslow'];
+	$pconfig['losshigh'] = $a_gateways[$id]['losshigh'];
+	$pconfig['down'] = $a_gateways[$id]['down'];
 	$pconfig['monitor'] = $a_gateways[$id]['monitor'];
 	$pconfig['monitor_disable'] = isset($a_gateways[$id]['monitor_disable']);
 	$pconfig['descr'] = $a_gateways[$id]['descr'];
@@ -90,6 +90,9 @@ if (isset($_GET['dup'])) {
 	unset($id);
 	unset($pconfig['attribute']);
 }
+
+if (isset($id) && $a_gateways[$id])
+	$realid = $a_gateways[$id]['attribute'];
 
 if ($_POST) {
 
@@ -386,12 +389,12 @@ if ($_POST) {
 			$gateway['monitor_disable'] = true;
 		else if (is_ipaddr($_POST['monitor'])) {
 			/* NOTE: If monitor ip is changed need to cleanup the old static route */
-			if ($_POST['monitor'] != "dynamic" && !empty($a_gateway_item[$id]) && is_ipaddr($a_gateway_item[$id]['monitor']) &&
-			    $_POST['monitor'] != $a_gateway_item[$id]['monitor'] && $gateway['gateway'] != $a_gateway_item[$id]['monitor']) {
-				if (is_ipaddrv4($a_gateway_item[$id]['monitor']))
-					mwexec("/sbin/route delete " . escapeshellarg($a_gateway_item[$id]['monitor']));
+			if ($_POST['monitor'] != "dynamic" && !empty($a_gateway_item[$realid]) && is_ipaddr($a_gateway_item[$realid]['monitor']) &&
+			    $_POST['monitor'] != $a_gateway_item[$realid]['monitor'] && $gateway['gateway'] != $a_gateway_item[$realid]['monitor']) {
+				if (is_ipaddrv4($a_gateway_item[$realid]['monitor']))
+					mwexec("/sbin/route delete " . escapeshellarg($a_gateway_item[$realid]['monitor']));
 				else
-					mwexec("/sbin/route delete -inet6 " . escapeshellarg($a_gateway_item[$id]['monitor']));
+					mwexec("/sbin/route delete -inet6 " . escapeshellarg($a_gateway_item[$realid]['monitor']));
 			}
 			$gateway['monitor'] = $_POST['monitor'];
 		}
@@ -422,8 +425,8 @@ if ($_POST) {
 			$gateway['down'] = $_POST['down'];
 
 		/* when saving the manual gateway we use the attribute which has the corresponding id */
-		if (isset($id) && $a_gateway_item[$id])
-			$a_gateway_item[$id] = $gateway;
+		if (isset($realid) && $a_gateway_item[$realid])
+			$a_gateway_item[$realid] = $gateway;
 		else
 			$a_gateway_item[] = $gateway;
 

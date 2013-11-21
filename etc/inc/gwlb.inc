@@ -372,10 +372,13 @@ function return_gateways_array($disabled = false, $localhost = false) {
 	$interfaces_v4 = array();
 	$interfaces_v6 = array();
 
-	$i = 0;
+	$i = -1;
 	/* Process/add all the configured gateways. */
 	if (is_array($config['gateways']['gateway_item'])) {
 		foreach ($config['gateways']['gateway_item'] as $gateway) {
+			/* Increment it here to do not skip items */
+			$i++;
+
 			if (empty($config['interfaces'][$gateway['interface']]))
 				continue;
 			$wancfg = $config['interfaces'][$gateway['interface']];
@@ -445,7 +448,6 @@ function return_gateways_array($disabled = false, $localhost = false) {
 			$gateway['attribute'] = $i;
 
 			$gateways_arr[$gateway['name']] = $gateway;
-			$i++;
 		}
 	}
 	unset($gateway);

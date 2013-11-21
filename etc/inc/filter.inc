@@ -2867,7 +2867,10 @@ EOD;
 			$ipfrules .= "pass out route-to ( {$ifcfg['if']} {$gw} ) from {$ifcfg['ip']} to !{$ifcfg['sa']}/{$ifcfg['sn']} keep state allow-opts label \"let out anything from firewall host itself\"\n";
 			if (is_array($ifcfg['vips'])) {
 				foreach ($ifcfg['vips'] as $vip)
-					$ipfrules .= "pass out route-to ( {$ifcfg['if']} {$gw} ) from {$vip['ip']} to !{$vip['ip']}/{$vip['sn']} keep state allow-opts label \"let out anything from firewall host itself\"\n";
+					if (ip_in_subnet($vip['ip'], "{$ifcfg['sa']}/{$ifcfg['sn']}"))
+						$ipfrules .= "pass out route-to ( {$ifcfg['if']} {$gw} ) from {$vip['ip']} to !{$ifcfg['sa']}/{$ifcfg['sn']} keep state allow-opts label \"let out anything from firewall host itself\"\n";
+					else
+						$ipfrules .= "pass out route-to ( {$ifcfg['if']} {$gw} ) from {$vip['ip']} to !" . gen_subnet($vip['ip'], $vip['sn']) . "/{$vip['sn']} keep state allow-opts label \"let out anything from firewall host itself\"\n";
 			}
 		}
 

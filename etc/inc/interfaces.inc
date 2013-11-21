@@ -1125,10 +1125,6 @@ function interfaces_configure() {
 
 		/* restart dnsmasq */
 		services_dnsmasq_configure();
-
-		/* reload captive portal */
-		if (function_exists('captiveportal_init_rules'))
-			captiveportal_init_rules();
 	}
 
 	return 0;
@@ -3143,6 +3139,7 @@ function interface_configure($interface = "wan", $reloadall = false, $linkupeven
 			/* update dyndns */
 			send_event("service reload dyndns {$interface}");
 
+			/* XXX: which CPZONE? Needed? */
 			/* reload captive portal */
 			captiveportal_init_rules();
 		}

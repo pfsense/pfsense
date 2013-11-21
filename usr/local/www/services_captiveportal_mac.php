@@ -44,6 +44,9 @@ require_once("filter.inc");
 require("shaper.inc");
 require("captiveportal.inc");
 
+global $cpzone;
+global $cpzoneid;
+
 $cpzone = $_GET['zone'];
 if (isset($_POST['zone']))
 	$cpzone = $_POST['zone'];
@@ -102,10 +105,11 @@ if ($_POST) {
 				}
 			}
 			if ($found == true) {
+				$cpzoneid = $a_cp[$cpzone]['zoneid'];
 				$rules = captiveportal_passthrumac_delete_entry($a_passthrumacs[$idx]);
 				$uniqid = uniqid("{$cpzone}_mac");
 				file_put_contents("{$g['tmp_path']}/{$uniqid}_tmp", $rules);
-				mwexec("/sbin/ipfw -x {$cpzone} -q {$g['tmp_path']}/{$uniqid}_tmp");
+				mwexec("/sbin/ipfw -x {$cpzoneid} -q {$g['tmp_path']}/{$uniqid}_tmp");
 				@unlink("{$g['tmp_path']}/{$uniqid}_tmp");
 				unset($a_passthrumacs[$idx]);
 				write_config();
@@ -120,10 +124,11 @@ if ($_POST) {
 if ($_GET['act'] == "del") {
 	$a_passthrumacs =& $a_cp[$cpzone]['passthrumac'];
 	if ($a_passthrumacs[$_GET['id']]) {
+		$cpzoneid = $a_cp[$cpzone]['zoneid'];
 		$rules = captiveportal_passthrumac_delete_entry($a_passthrumacs[$_GET['id']]);
 		$uniqid = uniqid("{$cpzone}_mac");
 		file_put_contents("{$g['tmp_path']}/{$uniqid}_tmp", $rules);
-		mwexec("/sbin/ipfw -x {$cpzone} -q {$g['tmp_path']}/{$uniqid}_tmp");
+		mwexec("/sbin/ipfw -x {$cpzoneid} -q {$g['tmp_path']}/{$uniqid}_tmp");
 		@unlink("{$g['tmp_path']}/{$uniqid}_tmp");
 		unset($a_passthrumacs[$_GET['id']]);
 		write_config();

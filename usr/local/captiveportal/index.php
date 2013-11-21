@@ -44,7 +44,7 @@ header("Cache-Control: post-check=0, pre-check=0", false);
 header("Pragma: no-cache");
 header("Connection: close");
 
-global $cpzone;
+global $cpzone, $cpzoneid;
 
 $cpzone = $_REQUEST['zone'];
 $cpcfg = $config['captiveportal'][$cpzone];
@@ -54,6 +54,8 @@ if (empty($cpcfg)) {
 	ob_flush();
 	return;
 }
+
+$cpzoneid = $cpcfg['zoneid'];
 
 $orig_host = $_ENV['HTTP_HOST'];
 /* NOTE: IE 8/9 is buggy and that is why this is needed */

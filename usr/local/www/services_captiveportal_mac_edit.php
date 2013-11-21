@@ -54,6 +54,9 @@ require_once("filter.inc");
 require("shaper.inc");
 require("captiveportal.inc");
 
+global $cpzone;
+global $cpzoneid;
+
 $pgtitle = array(gettext("Services"),gettext("Captive portal"),gettext("Edit MAC address rules"));
 $shortcut_section = "captiveportal";
 
@@ -153,12 +156,14 @@ if ($_POST) {
 		write_config();
 
 		if (isset($config['captiveportal'][$cpzone]['enable'])) {
+			$cpzoneid = $config['captiveportal'][$cpzone]['zoneid'];
 			$rules = captiveportal_passthrumac_delete_entry($oldmac);
 			$rules .= captiveportal_passthrumac_configure_entry($mac);
 			$uniqid = uniqid("{$cpzone}_macedit");
 			file_put_contents("{$g['tmp_path']}/{$uniqid}_tmp", $rules);
-			mwexec("/sbin/ipfw -x {$cpzone} -q {$g['tmp_path']}/{$uniqid}_tmp");
+			mwexec("/sbin/ipfw -x {$cpzoneid} -q {$g['tmp_path']}/{$uniqid}_tmp");
 			@unlink("{$g['tmp_path']}/{$uniqid}_tmp");
+			unset($cpzoneid);
 		}
 
 		header("Location: services_captiveportal_mac.php?zone={$cpzone}");

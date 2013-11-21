@@ -44,6 +44,10 @@ require_once("filter.inc");
 require_once("shaper.inc");
 require_once("captiveportal.inc");
 
+global $cpzone;
+global $cpzoneid;
+
+$cpzoneid = 1; /* Just a default */
 $cpzone = $_GET['zone'];
 if (isset($_POST['zone']))
 	$cpzone = $_POST['zone'];
@@ -85,7 +89,7 @@ if (!is_array($config['cert']))
 $a_cert =& $config['cert'];
 
 if ($a_cp[$cpzone]) {
-	$pconfig['zoneid'] = $a_cp[$cpzone]['zoneid'];
+	$cpzoneid = $pconfig['zoneid'] = $a_cp[$cpzone]['zoneid'];
 	$pconfig['cinterface'] = $a_cp[$cpzone]['interface'];
 	$pconfig['maxproc'] = $a_cp[$cpzone]['maxproc'];
 	$pconfig['maxprocperip'] = $a_cp[$cpzone]['maxprocperip'];
@@ -248,10 +252,12 @@ if ($_POST) {
 		$newcp =& $a_cp[$cpzone];
 		//$newcp['zoneid'] = $a_cp[$cpzone]['zoneid'];
 		if (empty($newcp['zoneid'])) {
-			$newcp['zoneid'] = 8000;
-			foreach ($a_cp as $keycpzone => $cp)
+			$newcp['zoneid'] = 1;
+			foreach ($a_cp as $keycpzone => $cp) {
 				if ($cp['zoneid'] == $newcp['zoneid'] && $keycpzone != $cpzone)
 					$newcp['zoneid'] += 2; /* Resreve space for SSL config if needed */
+			}
+			$cpzoneid = $newcp['zoneid'];
 		}
 		$oldifaces = explode(",", $newcp['interface']);
 		if (is_array($_POST['cinterface']))
@@ -344,7 +350,7 @@ if ($_POST) {
 		if (!empty($toremove)) {
 			foreach ($toremove as $removeif) {
 				$removeif = get_real_interface($removeif);
-				mwexec("/usr/local/sbin/ipfw_context -d {$cpzone} -x {$removeif}");
+				mwexec("/usr/local/sbin/ipfw zone {$cpzone} mdel {$removeif}");
 			}
 		}
 		captiveportal_configure_zone($newcp);

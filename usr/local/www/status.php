@@ -138,10 +138,12 @@ defCmdT("top | head -n5", "/usr/bin/top | /usr/bin/head -n5");
 
 defCmdT("sysctl hw.physmem","/sbin/sysctl hw.physmem");
 
-if (isset($config['captiveportal']) && is_array($config['captiveportal']))
-	foreach ($config['captiveportal'] as $cpZone => $cpdata)
+if (isset($config['captiveportal']) && is_array($config['captiveportal'])) {
+	foreach ($config['captiveportal'] as $cpZone => $cpdata) {
 		if (isset($cpdata['enable']))
-			defCmdT("ipfw -x {$cpZone} show", "/sbin/ipfw -x {$cpZone} show");
+			defCmdT("ipfw -x {$cpdata['zoneid']} show", "/sbin/ipfw -x {$cpdata['zoneid']} show");
+	}
+}
 
 defCmdT("pfctl -sn", "/sbin/pfctl -sn");
 defCmdT("pfctl -sr", "/sbin/pfctl -sr");

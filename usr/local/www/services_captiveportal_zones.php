@@ -16,6 +16,9 @@ require_once("filter.inc");
 require("shaper.inc");
 require("captiveportal.inc");
 
+global $cpzone;
+global $cpzoneid;
+
 if (!is_array($config['captiveportal']))
 	$config['captiveportal'] = array();
 $a_cp = &$config['captiveportal'];
@@ -23,6 +26,7 @@ $a_cp = &$config['captiveportal'];
 if ($_GET['act'] == "del" && !empty($_GET['zone'])) {
 	$cpzone = $_GET['zone'];
 	if ($a_cp[$cpzone]) {
+		$cpzoneid = $a_cp[$cpzone]['zoneid'];
 		unset($a_cp[$cpzone]['enable']);
 		captiveportal_configure_zone($a_cp[$cpzone]);
 		unset($a_cp[$cpzone]);

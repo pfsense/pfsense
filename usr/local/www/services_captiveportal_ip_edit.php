@@ -147,9 +147,10 @@ if ($_POST) {
 
 		if (isset($a_cp[$cpzone]['enable']) && is_module_loaded("ipfw.ko")) {
 			$rules = "";
+			$cpzoneid = $a_cp[$cpzone]['zoneid'];
 			unset($ipfw);
 			if (isset($oldip) && isset($oldmask)) {
-				$ipfw = pfSense_ipfw_getTablestats($cpzone, 3, $oldip, $oldmask);
+				$ipfw = pfSense_ipfw_getTablestats($cpzoneid, 3, $oldip, $oldmask);
 				$rules .= "table 3 delete {$oldip}/{$oldmask}\n";
 				$rules .= "table 4 delete {$oldip}/{$oldmask}\n";
 				if (is_array($ipfw)) {
@@ -163,7 +164,7 @@ if ($_POST) {
 			}
 			$uniqid = uniqid("{$cpzone}_allowed");
 			@file_put_contents("{$g['tmp_path']}/{$uniqid}_tmp", $rules);
-			mwexec("/sbin/ipfw -x {$cpzone} -q {$g['tmp_path']}/{$uniqid}_tmp");
+			mwexec("/sbin/ipfw -x {$cpzoneid} -q {$g['tmp_path']}/{$uniqid}_tmp");
 			@unlink("{$g['tmp_path']}/{$uniqid}_tmp");
 		}
 		

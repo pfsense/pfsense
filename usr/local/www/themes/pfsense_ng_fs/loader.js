@@ -213,7 +213,7 @@ function finishedResizing()
 		resizeRmColumns(); // Check if we can delete any columns
 	else if( colWidth > specifiedColWidth ) // Columns width COULD display more columns properly    
 		resizeAddColumns(); // Check if we can add any columns
-};
+}
 
 ///////////////// end widget code part 1 /////////////////////////
 

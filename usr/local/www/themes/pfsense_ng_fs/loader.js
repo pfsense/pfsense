@@ -213,7 +213,7 @@ function finishedResizing()
 		resizeRmColumns(); // Check if we can delete any columns
 	else if( colWidth > specifiedColWidth ) // Columns width COULD display more columns properly    
 		resizeAddColumns(); // Check if we can add any columns
-};
+}
 
 ///////////////// end widget code part 1 /////////////////////////
 
@@ -228,21 +228,24 @@ jQuery(document).ready(function ()
     ///////////////////////////////////////////
     // jQuery code for columns / widgets part 2    
     ///////////////////////////////////////////
-
-    // correct the css for column 2
-    jQuery('#col2').css("float","left");
-
+    
     // insert add/delete column buttons
     jQuery('<br/><br/><div id=\"columnModifier\"><div style=\"float:left\"><div id =\"addCol\" style=\"float:left\"><img src=\"./themes/pfsense_ng_fs/images/icons/icon_plus.gif\" style=\"cursor:pointer\" alt=\"Click here to add a column\"/></div>&nbsp;Add column&nbsp;</div><div style=\"float:left\"><div id =\"delCol\" style=\"float:left\"><img src=\"./themes/pfsense_ng_fs/images/icons/icon_x.gif\" style=\"cursor:pointer\" alt=\"Click here to delete a column\"/></div>&nbsp;Delete column</div><div id=\"columnWarningText\" style=\"float:left; margin-left:5em\"></div><br/><br/>').insertBefore('#niftyOutter.fakeClass');
-	
-    // Make a copy of the current state of columns on page load
-    for ( var i = 1; i <= noCols; i = i + 1 )
-    {
-	var contents = jQuery('#col' + i ).html();
-	existing.push( contents );
-    }  
     
-    finishedResizing(); // on page load correct display of columns to fit
+    if ( jQuery('#columnModifier').length > 0 ) // only perform resizing on the dashboard page
+    {
+        // correct the css for column 2
+        jQuery('#col2').css("float","left");
+
+        // Make a copy of the current state of columns on page load
+        for ( var i = 1; i <= noCols; i = i + 1 )
+        {
+	    var contents = jQuery('#col' + i ).html();
+	    existing.push( contents );
+        }  
+    
+        finishedResizing(); // on page load correct display of columns to fit
+    }
     
     // on click add a new column and change column widths
     jQuery('#addCol').click(function()

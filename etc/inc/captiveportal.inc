@@ -556,7 +556,6 @@ EOD;
 		$listenporthttp = $$config['captiveportal'][$cpzone]['listenporthttp'];
 	else
 		$listenporthttp = 8000 + $$config['captiveportal'][$cpzone]['zoneid'];
-	$cprules .= "add 65530 fwd 127.0.0.1,{$listenporthttp} tcp from any to any dst-port 80 in\n";
 
 	if (isset($config['captiveportal'][$cpzone]['httpslogin'])) {
 		if (!empty($config['captiveportal'][$cpzone]['listenporthttps']))

@@ -322,6 +322,13 @@ if (is_subsystem_dirty('natconf'))
 <?php
 			$i = 0;
 			foreach ($a_out as $natent):
+				$iconfn = "pass";
+				$textss = $textse = "";
+				if ($mode == "disabled" || $mode == "automatic" || isset($natent['disabled'])) {
+					$textss = "<span class=\"gray\">";
+					$textse = "</span>";
+					$iconfn .= "_d";
+				}
 ?>
 				<tr valign="top" id="fr<?=$i;?>">
 					<td class="listt">
@@ -329,46 +336,42 @@ if (is_subsystem_dirty('natconf'))
 					</td>
 					<td class="listt" align="center">
 <?php
-						$iconfn = "pass";
-						if ($mode == "disabled" || $mode == "automatic" || isset($natent['disabled'])) {
-							$textss = "<span class=\"gray\">";
-							$textse = "</span>";
-							$iconfn .= "_d";
-						} else {
-							$textss = $textse = "";
-						}
-
-						if ($mode == "disabled" || $mode == "automatic"):
+					if ($mode == "disabled" || $mode == "automatic"):
 ?>
-							<img src="./themes/<?= $g['theme']; ?>/images/icons/icon_<?=$iconfn;?>.gif" width="11" height="11" border="0" title="<?=gettext("This rule is being ignored");?>" alt="icon" />
+						<img src="./themes/<?= $g['theme']; ?>/images/icons/icon_<?=$iconfn;?>.gif" width="11" height="11" border="0"
+							title="<?=gettext("This rule is being ignored");?>" alt="icon" />
 <?php
-						else:
+					else:
 ?>
-							<a href="?act=toggle&amp;id=<?=$i;?>">
-								<img src="./themes/<?= $g['theme']; ?>/images/icons/icon_<?=$iconfn;?>.gif" width="11" height="11" border="0" title="<?=gettext("click to toggle enabled/disabled status");?>" alt="icon" />
-							</a>
+						<a href="?act=toggle&amp;id=<?=$i;?>">
+							<img src="./themes/<?= $g['theme']; ?>/images/icons/icon_<?=$iconfn;?>.gif" width="11" height="11" border="0"
+								title="<?=gettext("click to toggle enabled/disabled status");?>" alt="icon" />
+						</a>
 <?php
 						endif;
 ?>
 					</td>
 					<td class="listlr" onclick="fr_toggle(<?=$i;?>)" id="frd<?=$i;?>" ondblclick="document.location='firewall_nat_out_edit.php?id=<?=$i;?>';">
-						<?php echo htmlspecialchars(convert_friendly_interface_to_friendly_descr($natent['interface'])); ?>
+						<?php echo $textss . htmlspecialchars(convert_friendly_interface_to_friendly_descr($natent['interface'])) . $textse; ?>
 						&nbsp;
 					</td>
 					<td class="listr" onclick="fr_toggle(<?=$i;?>)" id="frd<?=$i;?>" ondblclick="document.location='firewall_nat_out_edit.php?id=<?=$i;?>';">
-						<?=$natent['source']['network'];?>
+						<?php echo $textss . $natent['source']['network'] . $textse;?>
 					</td>
 					<td class="listr" onclick="fr_toggle(<?=$i;?>)" id="frd<?=$i;?>" ondblclick="document.location='firewall_nat_out_edit.php?id=<?=$i;?>';">
 <?php
+						echo $textss;
 						echo ($natent['protocol']) ? $natent['protocol'] . '/' : "" ;
 						if (!$natent['sourceport'])
 							echo "*";
 						else
 							echo $natent['sourceport'];
+						echo $textse;
 ?>
 					</td>
 					<td class="listr" onclick="fr_toggle(<?=$i;?>)" id="frd<?=$i;?>" ondblclick="document.location='firewall_nat_out_edit.php?id=<?=$i;?>';">
 <?php
+						echo $textss;
 						if (isset($natent['destination']['any']))
 							echo "*";
 						else {
@@ -376,19 +379,23 @@ if (is_subsystem_dirty('natconf'))
 								echo "!&nbsp;";
 							echo $natent['destination']['address'];
 						}
+						echo $textse;
 ?>
 					</td>
 					<td class="listr" onclick="fr_toggle(<?=$i;?>)" id="frd<?=$i;?>" ondblclick="document.location='firewall_nat_out_edit.php?id=<?=$i;?>';">
 <?php
+						echo $textss;
 						echo ($natent['protocol']) ? $natent['protocol'] . '/' : "" ;
 						if (!$natent['dstport'])
 							echo "*";
 						else
 							echo $natent['dstport'];
+						echo $textse;
 ?>
 					</td>
 					<td class="listr" onclick="fr_toggle(<?=$i;?>)" id="frd<?=$i;?>" ondblclick="document.location='firewall_nat_out_edit.php?id=<?=$i;?>';">
 <?php
+						echo $textss;
 						if (isset($natent['nonat']))
 							echo '<I>NO NAT</I>';
 						elseif (!$natent['target'])
@@ -397,22 +404,27 @@ if (is_subsystem_dirty('natconf'))
 							echo $natent['targetip'] . '/' . $natent['targetip_subnet'];
 						else
 							echo $natent['target'];
+						echo $textse;
 ?>
 					</td>
 					<td class="listr" onclick="fr_toggle(<?=$i;?>)" id="frd<?=$i;?>" ondblclick="document.location='firewall_nat_out_edit.php?id=<?=$i;?>';">
 <?php
+						echo $textss;
 						if (!$natent['natport'])
 							echo "*";
 						else
 							echo $natent['natport'];
+						echo $textse;
 ?>
 					</td>
 					<td class="listr" onclick="fr_toggle(<?=$i;?>)" id="frd<?=$i;?>" ondblclick="document.location='firewall_nat_out_edit.php?id=<?=$i;?>';" align="center">
 <?php
+						echo $textss;
 						if(isset($natent['staticnatport']))
 							echo gettext("YES");
 						else
 							echo gettext("NO");
+						echo $textse;
 ?>
 					</td>
 					<td class="listbg" onclick="fr_toggle(<?=$i;?>)" ondblclick="document.location='firewall_nat_out_edit.php?id=<?=$i;?>';">

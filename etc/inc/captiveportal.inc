@@ -426,7 +426,10 @@ function captiveportal_init_webgui_zone($cpcfg) {
 		$ca = ca_chain($cert);
 
 		/* generate lighttpd configuration */
-		$listenporthttps = $cpcfg['listenporthttps'] ? $cpcfg['listenporthttps'] : ($cpcfg['zoneid'] + 1);
+		if (!empty($cpcfg['listenporthttps']))
+			$listenporthttps = $cpcfg['listenporthttps'];
+		else
+			$listenporthttps = 8001 + $cpcfg['zoneid'];
 		system_generate_lighty_config("{$g['varetc_path']}/lighty-{$cpzone}-CaptivePortal-SSL.conf",
 			$crt, $key, $ca, "lighty-{$cpzone}-CaptivePortal-SSL.pid", $listenporthttps, "/usr/local/captiveportal",
 			"cert-{$cpzone}-portal.pem", "ca-{$cpzone}-portal.pem", $cpzone);
@@ -434,6 +437,10 @@ function captiveportal_init_webgui_zone($cpcfg) {
 
 	/* generate lighttpd configuration */
 	$listenporthttp = $cpcfg['listenporthttp'] ? $cpcfg['listenporthttp'] : $cpcfg['zoneid'];
+	if (!empty($cpcfg['listenporthttp']))
+		$listenporthttp = $cpcfg['listenporthttp'];
+	else
+		$listenporthttp = 8000 + $cpcfg['zoneid'];
 	system_generate_lighty_config("{$g['varetc_path']}/lighty-{$cpzone}-CaptivePortal.conf",
 		"", "", "", "lighty-{$cpzone}-CaptivePortal.pid", $listenporthttp, "/usr/local/captiveportal",
 		"", "", $cpzone);
@@ -545,13 +552,17 @@ EOD;
 	$cprules .= "add {$rulenum} pipe tablearg ip from any to table(2) out\n";
 	$rulenum++;
 
-	$listenporthttp =
-		$config['captiveportal'][$cpzone]['listenporthttp'] ?
-		$config['captiveportal'][$cpzone]['listenporthttp'] :
-		$config['captiveportal'][$cpzone]['zoneid'];
+	if (!empty($$config['captiveportal'][$cpzone]['listenporthttp']))
+		$listenporthttp = $$config['captiveportal'][$cpzone]['listenporthttp'];
+	else
+		$listenporthttp = 8000 + $$config['captiveportal'][$cpzone]['zoneid'];
+	$cprules .= "add 65530 fwd 127.0.0.1,{$listenporthttp} tcp from any to any dst-port 80 in\n";
 
 	if (isset($config['captiveportal'][$cpzone]['httpslogin'])) {
-		$listenporthttps = $listenporthttp + 1;
+		if (!empty($config['captiveportal'][$cpzone]['listenporthttps']))
+			$listenporthttps = $config['captiveportal'][$cpzone]['listenporthttps'];
+		else
+			$listenporthttps = 8001 + $$config['captiveportal'][$cpzone]['zoneid'];
 		$cprules .= "add 65531 fwd 127.0.0.1,{$listenporthttps} tcp from any to any dst-port 443 in\n";
 	}
 	

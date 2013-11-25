@@ -252,7 +252,7 @@ if ($_POST) {
 		$newcp =& $a_cp[$cpzone];
 		//$newcp['zoneid'] = $a_cp[$cpzone]['zoneid'];
 		if (empty($newcp['zoneid'])) {
-			$newcp['zoneid'] = 1;
+			$newcp['zoneid'] = 2;
 			foreach ($a_cp as $keycpzone => $cp) {
 				if ($cp['zoneid'] == $newcp['zoneid'] && $keycpzone != $cpzone)
 					$newcp['zoneid'] += 2; /* Resreve space for SSL config if needed */

@@ -616,7 +616,7 @@ EOPP;
 			if (isset($poolconf['denyunknown']))
 			   $dhcpdconf .= "		deny unknown-clients;\n";
 
-			if ($poolconf['gateway'] && ($poolconf['gateway'] != $dhcpifconf['gateway']))
+			if ($poolconf['gateway'] && $poolconf['gateway'] != "none" && ($poolconf['gateway'] != $dhcpifconf['gateway']))
 				$dhcpdconf .= "		option routers {$poolconf['gateway']};\n";
 
 			if($dhcpifconf['failover_peerip'] <> "") {
@@ -687,9 +687,11 @@ EOPP;
 		}
 // End of settings inside pools
 
-		if ($dhcpifconf['gateway']) {
+		if ($dhcpifconf['gateway'] && $dhcpifconf['gateway'] != "none") {
 			$routers = $dhcpifconf['gateway'];
 			$add_routers = true;
+		} elseif ($dhcpifconf['gateway'] == "none") {
+			$add_routers = false;
 		} else {
 			$routers = $ifcfgip;
 		}

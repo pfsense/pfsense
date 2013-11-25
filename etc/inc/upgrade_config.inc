@@ -3247,4 +3247,21 @@ function upgrade_103_to_104() {
 	local_sync_accounts();
 }
 
+function upgrade_104_to_105() {
+	global $config;
+
+	if (is_array($config['captiveportal'])) {
+		$zoneid = 2;
+		foreach ($config['captiveportal'] as $cpzone => $cpcfg) {
+			if (empty($cpfg['zoneid'])) {
+				$config['captiveportal'][$cpzone]['zoneid'] = $zoneid;
+				$zoneid += 2;
+			} else if ($cpcfg['zoneid'] > 4000) {
+				$config['captiveportal'][$cpzone]['zoneid'] = $zoneid;
+				$zoneid += 2;
+			}
+		}
+	}
+}
+
 ?>

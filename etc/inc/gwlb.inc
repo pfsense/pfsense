@@ -359,7 +359,7 @@ function return_gateways_status($byname = false) {
 }
 
 /* Return all configured gateways on the system */
-function return_gateways_array($disabled = false, $localhost = false) {
+function return_gateways_array($disabled = false, $localhost = false, $inactive = false) {
 	global $config, $g;
 
 	$gateways_arr = array();
@@ -379,12 +379,16 @@ function return_gateways_array($disabled = false, $localhost = false) {
 			/* Increment it here to do not skip items */
 			$i++;
 
-			if (empty($config['interfaces'][$gateway['interface']]))
-				continue;
+			if (empty($config['interfaces'][$gateway['interface']])) {
+				if ($inactive === false)
+					continue;
+				else
+					$gateway['inactive'] = true;
+			}
 			$wancfg = $config['interfaces'][$gateway['interface']];
 
 			/* skip disabled interfaces */
-			if ($disabled === false && !isset($wancfg['enable']))
+			if ($disabled === false && (!isset($wancfg['enable']) || !isset($gateway['disabled'])))
 				continue;
 
 			/* if the gateway is dynamic and we can find the IPv4, Great! */

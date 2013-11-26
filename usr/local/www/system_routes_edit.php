@@ -39,19 +39,6 @@
 ##|*MATCH=system_routes_edit.php*
 ##|-PRIV
 
-function staticroutecmp($a, $b) {
-	return strcmp($a['network'], $b['network']);
-}
-
-function staticroutes_sort() {
-	global $g, $config;
-
-	if (!is_array($config['staticroutes']['route']))
-		return;
-
-	usort($config['staticroutes']['route'], "staticroutecmp");
-}
-
 require_once("guiconfig.inc");
 require_once("filter.inc");
 require_once("util.inc");
@@ -209,7 +196,6 @@ if ($_POST) {
 				}
 		}
 		file_put_contents("{$g['tmp_path']}/.system_routes.apply", serialize($toapplylist));
-		staticroutes_sort();
 
 		mark_subsystem_dirty('staticroutes');
 

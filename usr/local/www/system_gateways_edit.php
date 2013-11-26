@@ -42,7 +42,7 @@
 require("guiconfig.inc");
 require("pkg-utils.inc");
 
-$a_gateways = return_gateways_array(true);
+$a_gateways = return_gateways_array(true, false, true);
 $a_gateways_arr = array();
 foreach($a_gateways as $gw) {
 	$a_gateways_arr[] = $gw;
@@ -84,6 +84,7 @@ if (isset($id) && $a_gateways[$id]) {
 	$pconfig['monitor_disable'] = isset($a_gateways[$id]['monitor_disable']);
 	$pconfig['descr'] = $a_gateways[$id]['descr'];
 	$pconfig['attribute'] = $a_gateways[$id]['attribute'];
+	$pconfig['disabled'] = isset($a_gateways[$id]['disabled']);
 }
 
 if (isset($_GET['dup'])) {
@@ -424,6 +425,11 @@ if ($_POST) {
 		if ($_POST['down'])
 			$gateway['down'] = $_POST['down'];
 
+		if(isset($_POST['disabled']))
+			$gateway['disabled'] = true;
+		else
+			unset($gateway['disabled']);
+
 		/* when saving the manual gateway we use the attribute which has the corresponding id */
 		if (isset($realid) && $a_gateway_item[$realid])
 			$a_gateway_item[$realid] = $gateway;
@@ -493,6 +499,14 @@ function monitor_change() {
 		<table width="100%" border="0" cellpadding="6" cellspacing="0" summary="system gateways edit">
 			<tr>
 				<td colspan="2" valign="top" class="listtopic"><?=gettext("Edit gateway"); ?></td>
+			</tr>
+			<tr>
+				<td width="22%" valign="top" class="vncellreq"><?=gettext("Disabled");?></td>
+				<td width="78%" class="vtable">
+					<input name="disabled" type="checkbox" id="disabled" value="yes" <?php if ($pconfig['disabled']) echo "checked=\"checked\""; ?> />
+					<strong><?=gettext("Disable this gateway");?></strong><br />
+					<span class="vexpl"><?=gettext("Set this option to disable this gateway without removing it from the list.");?></span>
+				</td>
 			</tr>
 			<tr>
 				<td width="22%" valign="top" class="vncellreq"><?=gettext("Interface"); ?></td>

@@ -39,19 +39,6 @@
 ##|*MATCH=firewall_nat_1to1_edit.php*
 ##|-PRIV
 
-function nat1to1cmp($a, $b) {
-	return ipcmp($a['external'], $b['external']);
-}
-
-function nat_1to1_rules_sort() {
-	global $g, $config;
-
-	if (!is_array($config['nat']['onetoone']))
-		return;
-
-	usort($config['nat']['onetoone'], "nat1to1cmp");
-}
-
 require("guiconfig.inc");
 require_once("interfaces.inc");
 require_once("filter.inc");
@@ -224,7 +211,6 @@ if ($_POST) {
 			else
 				$a_1to1[] = $natent;
 		}
-		nat_1to1_rules_sort();
 
 		if (write_config())
 			mark_subsystem_dirty('natconf');

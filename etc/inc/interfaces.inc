@@ -1318,6 +1318,32 @@ function interface_bring_down($interface = "wan", $destroy = false, $ifacecfg = 
 	return;
 }
 
+function interfaces_carp_set_maintenancemode($carp_maintenancemode){
+	global $config;
+	if (isset($config["virtualip_carp_maintenancemode"]) && $carp_maintenancemode == false) {
+		unset($config["virtualip_carp_maintenancemode"]);
+		write_config("Leave CARP maintenance mode");
+	} else
+	if (!isset($config["virtualip_carp_maintenancemode"]) && $carp_maintenancemode == true) {
+		$config["virtualip_carp_maintenancemode"] = true;
+		write_config("Enter CARP maintenance mode");
+	}
+
+	$viparr = &$config['virtualip']['vip'];
+	foreach ($viparr as $vip) {
+		switch ($vip['mode']) {
+			case "carp":
+				$vipif = "{$vip['interface']}_vip{$vip['vhid']}";
+				if ($carp_maintenancemode == true){
+					`ifconfig {$vipif} advskew 254`;
+				} else {
+					`ifconfig {$vipif} advskew {$vip['advskew']}`;
+				}
+			break;
+		}
+	}
+}
+
 function interfaces_ptpid_used($ptpid) {
 	global $config;
 
@@ -2172,13 +2198,19 @@ function interface_carp_configure(&$vip) {
 	if (!empty($vip['advbase']))
 		$advbase = "advbase {$vip['advbase']}";
 
+	$carp_maintenancemode = isset($config["virtualip_carp_maintenancemode"]);
+	if ($carp_maintenancemode)
+		$advskew = "advskew 254";
+	else
+		$advskew = "advskew {$vip['advskew']}";
+	
 	if(is_ipaddrv4($vip['subnet'])) {
 		$broadcast_address = gen_subnet_max($vip['subnet'], $vip['subnet_bits']);
-		mwexec("/sbin/ifconfig {$vipif} {$vip['subnet']}/{$vip['subnet_bits']} vhid {$vip['vhid']} advskew {$vip['advskew']} {$advbase} {$password}");
+		mwexec("/sbin/ifconfig {$vipif} {$vip['subnet']}/{$vip['subnet_bits']} vhid {$vip['vhid']} {$advskew} {$advbase} {$password}");
 	}
 	if(is_ipaddrv6($vip['subnet'])) {
 		$broadcast_address = gen_subnet_max($vip['subnet'], $vip['subnet_bits']);
-		mwexec("/sbin/ifconfig {$vipif} inet6 {$vip['subnet']} prefixlen {$vip['subnet_bits']} vhid {$vip['vhid']} advskew {$vip['advskew']} {$advbase} {$password}");
+		mwexec("/sbin/ifconfig {$vipif} inet6 {$vip['subnet']} prefixlen {$vip['subnet_bits']} vhid {$vip['vhid']} {$advskew} {$advbase} {$password}");
 	}
 
 	interfaces_bring_up($vipif);

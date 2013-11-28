@@ -1679,7 +1679,7 @@ function filter_nat_rules_generate() {
 			$numberofnathosts++;
 		}
 		$natrules .= "\n# Subnets to NAT \n";
-		$tonathosts .= "127.0.0.0/8 0.0.0.0/0 ";
+		$tonathosts .= "127.0.0.0/8 0.0.0.0/32 ";
 		if($numberofnathosts > 4) {
 			$natrules .= "table <tonatsubnets> { {$tonathosts} }\n";
 			$macroortable = "<tonatsubnets>";

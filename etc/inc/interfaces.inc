@@ -98,11 +98,6 @@ function does_vip_exist($vip) {
 
 	switch ($vip['mode']) {
 	case "carp":
-		$realif = "{$vip['interface']}_vip{$vip['vhid']}";
-		if (!does_interface_exist($realif)) {
-			return false;
-		}
-		break;
 	case "ipalias":
 		$realif = get_real_interface($vip['interface']);
 		if (!does_interface_exist($realif)) {
@@ -434,8 +429,6 @@ function interfaces_bridge_configure($checkmember = 0) {
 			if ($checkmember == 1) {
 				$members = explode(',', $bridge['members']);
 				foreach ($members as $member) {
-					if (strstr($bridge['if'], "_vip"))
-						continue 2;
 					if (!empty($config['interfaces'][$bridge['if']]) && $config['interfaces'][$bridge['if']]['ipaddrv6'] == "track6")
 						continue 2;
 				}
@@ -443,8 +436,6 @@ function interfaces_bridge_configure($checkmember = 0) {
 			else if ($checkmember == 2) {
 				$members = explode(',', $bridge['members']);
 				foreach ($members as $member) {
-					if (!strstr($bridge['if'], "_vip"))
-						continue 2;
 					if (empty($config['interfaces'][$bridge['if']]) || $config['interfaces'][$bridge['if']]['ipaddrv6'] != "track6")
 						continue 2;
 				}
@@ -819,14 +810,10 @@ function interfaces_gre_configure($checkparent = 0) {
 			if(empty($gre['greif']))
 				$gre['greif'] = "gre{$i}";
 			if ($checkparent == 1) {
-				if (strstr($gre['if'], "_vip"))
-					continue;
 				if (!empty($config['interfaces'][$gre['if']]) && $config['interfaces'][$gre['if']]['ipaddrv6'] == "track6")
 					continue;
 			}
 			else if ($checkparent == 2) {
-				if (!strstr($gre['if'], "_vip"))
-					continue;
 				if (empty($config['interfaces'][$gre['if']]) || $config['interfaces'][$gre['if']]['ipaddrv6'] != "track6")
 					continue;
 			}
@@ -893,14 +880,10 @@ function interfaces_gif_configure($checkparent = 0) {
 			if(empty($gif['gifif']))
 				$gre['gifif'] = "gif{$i}";
 			if ($checkparent == 1) {
-				if (strstr($gif['if'], "_vip"))
-					continue;
 				if (!empty($config['interfaces'][$gif['if']]) && $config['interfaces'][$gif['if']]['ipaddrv6'] == "track6")
 					continue;
 			}
 			else if ($checkparent == 2) {
-				if (!strstr($gre['if'], "_vip"))
-					continue;
 				if (empty($config['interfaces'][$gif['if']]) || $config['interfaces'][$gif['if']]['ipaddrv6'] != "track6")
 					continue;
 			}
@@ -1138,14 +1121,13 @@ function interface_reconfigure($interface = "wan", $reloadall = false) {
 function interface_vip_bring_down($vip) {
 	global $g;
 
+	$vipif = get_real_interface($vip['interface']);
 	switch ($vip['mode']) {
 	case "proxyarp":
-		$vipif = get_real_interface($vip['interface']);
 		if (file_exists("{$g['varrun_path']}/choparp_{$vipif}.pid"))
 			killbypid("{$g['varrun_path']}/choparp_{$vipif}.pid");
 		break;
 	case "ipalias":
-		$vipif = get_real_interface($vip['interface']);
 		if (does_interface_exist($vipif)) {
 			if (is_ipaddrv6($vip['subnet']))
 				mwexec("/sbin/ifconfig {$vipif} inet6 {$vip['subnet']} -alias");
@@ -1154,9 +1136,8 @@ function interface_vip_bring_down($vip) {
 		}
 		break;
 	case "carp":
-		$vipif = "{$vip['interface']}_vip{$vip['vhid']}";
 		if (does_interface_exist($vipif))
-			pfSense_interface_destroy($vipif);
+			pfSense_interface_deladdress($vipif, $vip['subnet']);
 		break;
 	}
 }
@@ -1311,7 +1292,7 @@ function interface_bring_down($interface = "wan", $destroy = false, $ifacecfg = 
 	}
 
 	if ($destroy == true) {
-		if (preg_match("/^[a-z0-9]+_vip|^tun|^ovpn|^gif|^gre|^lagg|^bridge|vlan|_stf$/i", $realif))
+		if (preg_match("/^[a-z0-9]+^tun|^ovpn|^gif|^gre|^lagg|^bridge|vlan|_stf$/i", $realif))
 			pfSense_interface_destroy($realif);
 	}
 
@@ -2147,21 +2128,6 @@ function interface_carp_configure(&$vip) {
 		}
 	}
 
-	// set the vip interface to the vhid
-	$vipif = "{$vip['interface']}_vip{$vip['vhid']}";
-
-	/* create the carp interface and setup */
-	if (does_interface_exist($vipif)) {
-		pfSense_interface_flags($vipif, -IFF_UP);
-	} else {
-		$carpif = pfSense_interface_create("carp");
-		pfSense_interface_rename($carpif, $vipif);
-		pfSense_ngctl_name("{$carpif}:", $vipif);
-	}
-
-	/* invalidate interface cache */
-	get_interface_arr(true);
-
 	$vip_password = $vip['password'];
 	$vip_password = escapeshellarg(addslashes(str_replace(" ", "", $vip_password)));
 	if ($vip['password'] != "")
@@ -2174,16 +2140,14 @@ function interface_carp_configure(&$vip) {
 
 	if(is_ipaddrv4($vip['subnet'])) {
 		$broadcast_address = gen_subnet_max($vip['subnet'], $vip['subnet_bits']);
-		mwexec("/sbin/ifconfig {$vipif} {$vip['subnet']}/{$vip['subnet_bits']} vhid {$vip['vhid']} advskew {$vip['advskew']} {$advbase} {$password}");
+		mwexec("/sbin/ifconfig {$realif} {$vip['subnet']}/{$vip['subnet_bits']} vhid {$vip['vhid']} advskew {$vip['advskew']} {$advbase} {$password}");
 	}
 	if(is_ipaddrv6($vip['subnet'])) {
 		$broadcast_address = gen_subnet_max($vip['subnet'], $vip['subnet_bits']);
-		mwexec("/sbin/ifconfig {$vipif} inet6 {$vip['subnet']} prefixlen {$vip['subnet_bits']} vhid {$vip['vhid']} advskew {$vip['advskew']} {$advbase} {$password}");
+		mwexec("/sbin/ifconfig {$realif} inet6 {$vip['subnet']} prefixlen {$vip['subnet_bits']} vhid {$vip['vhid']} advskew {$vip['advskew']} {$advbase} {$password}");
 	}
 
-	interfaces_bring_up($vipif);
-
-	return $vipif;
+	return $realif;
 }
 
 function interface_wireless_clone($realif, $wlcfg) {
@@ -4040,15 +4004,6 @@ function get_current_wan_address($interface = "wan") {
 function convert_real_interface_to_friendly_interface_name($interface = "wan") {
 	global $config;
 
-	if (stristr($interface, "_vip")) {
-		foreach ($config['virtualip']['vip'] as $counter => $vip) {
-			if ($vip['mode'] == "carp")  {
-				if ($interface == "{$vip['interface']}_vip{$vip['vhid']}")
-					return $vip['interface'];
-			}
-		}
-	}
-
 	/* XXX: For speed reasons reference directly the interface array */
 	$ifdescrs = &$config['interfaces'];
 	//$ifdescrs = get_configured_interface_list(false, true);
@@ -4100,15 +4055,6 @@ function convert_friendly_interface_to_friendly_descr($interface) {
 			else
 				$ifdesc = strtoupper($config['interfaces'][$interface]['descr']);
 			break;
-		} else if (stristr($interface, "_vip")) {
-			if (is_array($config['virtualip']['vip'])) {
-				foreach ($config['virtualip']['vip'] as $counter => $vip) {
-					if ($vip['mode'] == "carp")  {
-						if ($interface == "{$vip['interface']}_vip{$vip['vhid']}")
-							return "{$vip['subnet']} - {$vip['descr']}";
-					}
-				}
-			}
 		} else {
 			/* if list */
 			$ifdescrs = get_configured_interface_with_descr(false, true);
@@ -4526,7 +4472,7 @@ function link_ip_to_carp_interface($ip) {
 				$carp_sn = $vip['subnet_bits'];
 				$carp_nw = gen_subnet($carp_ip, $carp_sn);
 				if (ip_in_subnet($ip, "{$carp_nw}/{$carp_sn}")) {
-					$carp_int[] = "{$vip['interface']}_vip{$vip['vhid']}";
+					$carp_int[] = get_real_interface($vip['interface']);
 				}
 			}
 		}
@@ -4794,8 +4740,6 @@ function get_interface_ip($interface = "wan") {
 	if (!$realif) {
 		if (preg_match("/^carp/i", $interface))
 			$realif = $interface;
-		else if (preg_match("/^[a-z0-9]+_vip/i", $interface))
-			$realif = $interface;
 		else
 			return null;
 	}
@@ -4811,12 +4755,8 @@ function get_interface_ipv6($interface = "wan", $flush = false) {
 	global $config;
 
 	$realif = get_failover_interface($interface, "inet6");
-	if (!$realif) {
-		if (preg_match("/^[a-z0-9]+_vip/i", $interface))
-			$realif = $interface;
-		else
-			return null;
-	}
+	if (!$realif)
+		return null;
 
 	/*
 	 * NOTE: On the case when only the prefix is requested,
@@ -4852,8 +4792,6 @@ function get_interface_linklocal($interface = "wan") {
 	if (!$realif) {
 		if (preg_match("/^carp/i", $interface))
 			$realif = $interface;
-		else if (preg_match("/^[a-z0-9]+_vip/i", $interface))
-			$realif = $interface;
 		else
 			return null;
 	}
@@ -4870,8 +4808,6 @@ function get_interface_subnet($interface = "wan") {
 	if (!$realif) {
 		if (preg_match("/^carp/i", $interface))
 			$realif = $interface;
-		else if (preg_match("/^[a-z0-9]+_vip/i", $interface))
-			$realif = $interface;
 		else
 			return null;
 	}
@@ -4887,12 +4823,8 @@ function get_interface_subnetv6($interface = "wan") {
 	global $config;
 
 	$realif = get_real_interface($interface, "inet6");
-	if (!$realif) {
-		if (preg_match("/^[a-z0-9]+_vip/i", $interface))
-			$realif = $interface;
-		else
-			return null;
-	}
+	if (!$realif)
+		return null;
 
 	$cursn = find_interface_subnetv6($realif);
 	if (!empty($cursn))

@@ -794,7 +794,7 @@ function is_inrange_v6($test, $start, $end) {
 		return false;
 }
 
-/* return the configured carp interface list */
+/* XXX: return the configured carp interface list */
 function get_configured_carp_interface_list() {
 	global $config;
 

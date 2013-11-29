@@ -256,7 +256,7 @@ if ($_POST) {
 					$altnames[$entry][$field] = $value;
 				}
 			}
-			$pconfig['aliases']['item'] = $aliases;
+			$pconfig['altnames']['item'] = $altnames;
 
 			/* Input validation for subjectAltNames */
 			foreach ($altnames as $idx => $altname) {

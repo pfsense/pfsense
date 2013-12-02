@@ -221,7 +221,7 @@ if (is_subsystem_dirty('natconf'))
 	print_info_box_np(gettext("The NAT configuration has been changed.")."<br/>".gettext("You must apply the changes in order for them to take effect."));
 ?>
 <br/>
-<table width="100%" border="0" cellpadding="0" cellspacing="0" summary="firwall nat outbound">
+<table width="100%" border="0" cellpadding="0" cellspacing="0" summary="firewall nat outbound">
 	<tr><td>
 <?php
 		$tab_array = array();

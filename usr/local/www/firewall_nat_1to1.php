@@ -160,7 +160,7 @@ if (is_subsystem_dirty('natconf'))
 		gettext("You must apply the changes in order for them to take effect."));
 ?>
 <br/>
-<table width="100%" border="0" cellpadding="0" cellspacing="0" summary="fireall nat 1to1">
+<table width="100%" border="0" cellpadding="0" cellspacing="0" summary="firewall nat 1to1">
 	<tr><td>
 <?php
 		$tab_array = array();

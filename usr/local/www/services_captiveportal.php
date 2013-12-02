@@ -38,11 +38,15 @@
 ##|*MATCH=services_captiveportal.php*
 ##|-PRIV
 
-require_once("guiconfig.inc");
 require_once("functions.inc");
 require_once("filter.inc");
 require_once("shaper.inc");
 require_once("captiveportal.inc");
+
+if (substr($_GET['act'], 0, 3) == "get")
+	$nocsrf = true;
+
+require_once("guiconfig.inc");
 
 global $cpzone;
 global $cpzoneid;
@@ -68,13 +72,44 @@ if ($_GET['act'] == "viewhtml") {
 	if ($a_cp[$cpzone] && $a_cp[$cpzone]['page']['htmltext'])
 		echo base64_decode($a_cp[$cpzone]['page']['htmltext']);
 	exit;
+} else if ($_GET['act'] == "gethtmlhtml" && $a_cp[$cpzone] && $a_cp[$cpzone]['page']['htmltext']) {
+	$file_data = base64_decode($a_cp[$cpzone]['page']['htmltext']);
+	$file_size = strlen($file_data);
+
+	header("Content-Type: text/html");
+	header("Content-Disposition: attachment; filename=portal.html");
+	header("Content-Length: $file_size");
+	echo $file_data;
+
+	exit;
 } else if ($_GET['act'] == "viewerrhtml") {
 	if ($a_cp[$cpzone] && $a_cp[$cpzone]['page']['errtext'])
 		echo base64_decode($a_cp[$cpzone]['page']['errtext']);
 	exit;
+} else if ($_GET['act'] == "geterrhtml" && $a_cp[$cpzone] && $a_cp[$cpzone]['page']['errtext']) {
+	$file_data = base64_decode($a_cp[$cpzone]['page']['errtext']);
+	$file_size = strlen($file_data);
+
+	header("Content-Type: text/html");
+	header("Content-Disposition: attachment; filename=err.html");
+	header("Content-Length: $file_size");
+	echo $file_data;
+
+	exit;
 } else if ($_GET['act'] == "viewlogouthtml") {
 	if ($a_cp[$cpzone] && $a_cp[$cpzone]['page']['logouttext'])
 		echo base64_decode($a_cp[$cpzone]['page']['logouttext']);
+	exit;
+} else if ($_GET['act'] == "getlogouthtml" && $a_cp[$cpzone] && $a_cp[$cpzone]['page']['logouttext']) {
+	$file_data = base64_decode($a_cp[$cpzone]['page']['logouttext']);
+	$file_size = strlen($file_data);
+	file_put_contents("/tmp/lala", $file_data);
+
+	header("Content-Type: text/html");
+	header("Content-Disposition: attachment; filename=logout.html");
+	header("Content-Length: $file_size");
+	echo $file_data;
+
 	exit;
 }
 
@@ -938,6 +973,8 @@ function enable_change(enable_change) {
 		?>
 		<?php if ($pconfig['page']['htmltext']): ?>
 		<a href="<?=$href?>" target="_new"><?=gettext("View current page"); ?></a>
+		<br />
+		<a href="?zone=<?=$cpzone?>&amp;act=gethtmlhtml" target="_blank"><?=gettext("Download current page"); ?></a>
 		  <br>
 		  <br>
 		<?php endif; ?>
@@ -972,6 +1009,8 @@ function enable_change(enable_change) {
 		<input name="errfile" type="file" class="formfld file" id="errfile"><br>
 		<?php if ($pconfig['page']['errtext']): ?>
 		<a href="?zone=<?=$cpzone?>&amp;act=viewerrhtml" target="_blank"><?=gettext("View current page"); ?></a>
+		<br />
+		<a href="?zone=<?=$cpzone?>&amp;act=geterrhtml" target="_blank"><?=gettext("Download current page"); ?></a>
 		  <br>
 		  <br>
 		<?php endif; ?>
@@ -986,6 +1025,8 @@ function enable_change(enable_change) {
 		<input name="logoutfile" type="file" class="formfld file" id="logoutfile"><br>
 		<?php if ($pconfig['page']['logouttext']): ?>
 		<a href="?zone=<?=$cpzone?>&amp;act=viewlogouthtml" target="_blank"><?=gettext("View current page"); ?></a>
+		<br />
+		<a href="?zone=<?=$cpzone?>&amp;act=getlogouthtml" target="_blank"><?=gettext("Download current page"); ?></a>
 		  <br>
 		  <br>
 		<?php endif; ?>

@@ -329,6 +329,24 @@ if (is_subsystem_dirty('natconf'))
 					$textse = "</span>";
 					$iconfn .= "_d";
 				}
+
+				//build Alias popup box
+				$alias_src_span_begin = "";
+				$alias_src_port_span_begin = "";
+				$alias_dst_span_begin = "";
+				$alias_dst_port_span_begin = "";
+
+				$alias_popup = rule_popup($natent['source']['network'],pprint_port($natent['sourceport']),$natent['destination']['address'],pprint_port($natent['dstport']));
+
+				$alias_src_span_begin = $alias_popup["src"];
+				$alias_src_port_span_begin = $alias_popup["srcport"];
+				$alias_dst_span_begin = $alias_popup["dst"];
+				$alias_dst_port_span_begin = $alias_popup["dstport"];
+
+				$alias_src_span_end = $alias_popup["src_end"];
+				$alias_src_port_span_end = $alias_popup["srcport_end"];
+				$alias_dst_span_end = $alias_popup["dst_end"];
+				$alias_dst_port_span_end = $alias_popup["dstport_end"];
 ?>
 				<tr valign="top" id="fr<?=$i;?>">
 					<td class="listt">
@@ -356,7 +374,7 @@ if (is_subsystem_dirty('natconf'))
 						&nbsp;
 					</td>
 					<td class="listr" onclick="fr_toggle(<?=$i;?>)" id="frd<?=$i;?>" ondblclick="document.location='firewall_nat_out_edit.php?id=<?=$i;?>';">
-						<?php echo $textss . $natent['source']['network'] . $textse;?>
+						<?php echo $textss . $alias_src_span_begin . $natent['source']['network'] . $alias_src_span_end . $textse;?>
 					</td>
 					<td class="listr" onclick="fr_toggle(<?=$i;?>)" id="frd<?=$i;?>" ondblclick="document.location='firewall_nat_out_edit.php?id=<?=$i;?>';">
 <?php
@@ -365,7 +383,7 @@ if (is_subsystem_dirty('natconf'))
 						if (!$natent['sourceport'])
 							echo "*";
 						else
-							echo $natent['sourceport'];
+							echo $alias_src_port_span_begin . $natent['sourceport'] . $alias_src_port_span_end;
 						echo $textse;
 ?>
 					</td>
@@ -377,7 +395,7 @@ if (is_subsystem_dirty('natconf'))
 						else {
 							if (isset($natent['destination']['not']))
 								echo "!&nbsp;";
-							echo $natent['destination']['address'];
+							echo $alias_dst_span_begin . $natent['destination']['address'] . $alias_dst_span_end;
 						}
 						echo $textse;
 ?>
@@ -389,7 +407,7 @@ if (is_subsystem_dirty('natconf'))
 						if (!$natent['dstport'])
 							echo "*";
 						else
-							echo $natent['dstport'];
+							echo $alias_dst_port_span_begin . $natent['dstport'] . $alias_dst_port_span_end;
 						echo $textse;
 ?>
 					</td>

@@ -108,6 +108,8 @@ function can_delete_gateway_item($id) {
 }
 
 function delete_gateway_item($id) {
+	global $config, $a_gateways;
+
 	if (!isset($a_gateways[$id]))
 		return;
 

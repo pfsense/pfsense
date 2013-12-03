@@ -103,7 +103,6 @@ if ($_GET['act'] == "viewhtml") {
 } else if ($_GET['act'] == "getlogouthtml" && $a_cp[$cpzone] && $a_cp[$cpzone]['page']['logouttext']) {
 	$file_data = base64_decode($a_cp[$cpzone]['page']['logouttext']);
 	$file_size = strlen($file_data);
-	file_put_contents("/tmp/lala", $file_data);
 
 	header("Content-Type: text/html");
 	header("Content-Disposition: attachment; filename=logout.html");

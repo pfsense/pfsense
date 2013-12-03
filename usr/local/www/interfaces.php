@@ -413,11 +413,9 @@ if ($_POST['apply']) {
 		if (file_exists("{$g['tmp_path']}/.interfaces.apply")) {
 			$toapplylist = unserialize(file_get_contents("{$g['tmp_path']}/.interfaces.apply"));
 			foreach ($toapplylist as $ifapply => $ifcfgo) {
-				if (isset($config['interfaces'][$ifapply]['enable'])) {
-					interface_bring_down($ifapply, false, $ifcfgo);
+				interface_bring_down($ifapply, false, $ifcfgo);
+				if (isset($config['interfaces'][$ifapply]['enable']))
 					interface_configure($ifapply, true);
-				} else
-					interface_bring_down($ifapply, true, $ifcfgo);
 			}
 		}
 		/* restart snmp so that it binds to correct address */

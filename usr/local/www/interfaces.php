@@ -611,6 +611,14 @@ if ($_POST['apply']) {
 			if (is_ipaddr_configured($_POST['ipaddr'], $if, true))
 				$input_errors[] = gettext("This IPv4 address is being used by another interface or VIP.");
 
+			/* Do not accept network or broadcast address, except if subnet is 31 or 32 */
+			if ($_POST['subnet'] < 31) {
+				if ($_POST['ipaddr'] == gen_subnet($_POST['ipaddr'], $_POST['subnet']))
+					$input_errors[] = gettext("This IPv4 address is the network address and cannot be used");
+				else if ($_POST['ipaddr'] == gen_subnet_max($_POST['ipaddr'], $_POST['subnet']))
+					$input_errors[] = gettext("This IPv4 address is the broadcast address and cannot be used");
+			}
+
 			foreach ($staticroutes as $route_subnet) {
 				list($network, $subnet) = explode("/", $route_subnet);
 				if ($_POST['subnet'] == $subnet && $network == gen_subnet($_POST['ipaddr'], $_POST['subnet'])) {

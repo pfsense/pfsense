@@ -283,8 +283,19 @@ function console_configure_ip_address($version) {
 				echo "\n" . sprintf(gettext("Enter the new %s %s subnet bit count:"),
 				                    $upperifname, $label_IPvX) . "\n> ";
 				$intbits = chop(fgets($fp));
+				$intbits_ok = is_numeric($intbits) && (($intbits >= 1) || ($intbits <= $maxbits));
 				$restart_dhcpd = true;
-			} while (!is_numeric($intbits) || ($intbits < 1) || ($intbits > $maxbits));
+
+				if ($version === 4 && $intbits < $maxbits) {
+					if ($intip == gen_subnet($intip, $intbits)) {
+						echo gettext("You cannot set network address to an interface");
+						$intbits_ok = false;
+					} else if ($intip == gen_subnet_max($intip, $intbits)) {
+						echo gettext("You cannot set broadcast address to an interface");
+						$intbits_ok = false;
+					}
+				}
+			} while (!$intbits_ok);
 
 			if ($version === 6) {
 				$subnet = gen_subnetv6($intip, $intbits);

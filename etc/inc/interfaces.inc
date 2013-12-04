@@ -2109,7 +2109,7 @@ function interface_carp_configure(&$vip) {
 		return;
 	}
 
-	if(is_ipaddrv4($vip['subnet'])) {
+	if (is_ipaddrv4($vip['subnet'])) {
 		/* Ensure CARP IP really exists prior to loading up. */
 		$ww_subnet_ip = find_interface_ip($realif);
 		$ww_subnet_bits = find_interface_subnet($realif);
@@ -2117,8 +2117,7 @@ function interface_carp_configure(&$vip) {
 			file_notice("CARP", sprintf(gettext("Sorry but we could not find a matching real interface subnet for the virtual IP address %s."), $vip['subnet']), "Firewall: Virtual IP", "");
 			return;
 		}
-	}
-	if(is_ipaddrv6($vip['subnet'])) {
+	} else if (is_ipaddrv6($vip['subnet'])) {
 		/* Ensure CARP IP really exists prior to loading up. */
 		$ww_subnet_ip = find_interface_ipv6($realif);
 		$ww_subnet_bits = find_interface_subnetv6($realif);
@@ -2138,11 +2137,10 @@ function interface_carp_configure(&$vip) {
 	if (!empty($vip['advbase']))
 		$advbase = "advbase {$vip['advbase']}";
 
-	if(is_ipaddrv4($vip['subnet'])) {
+	if (is_ipaddrv4($vip['subnet'])) {
 		$broadcast_address = gen_subnet_max($vip['subnet'], $vip['subnet_bits']);
 		mwexec("/sbin/ifconfig {$realif} {$vip['subnet']}/{$vip['subnet_bits']} vhid {$vip['vhid']} advskew {$vip['advskew']} {$advbase} {$password}");
-	}
-	if(is_ipaddrv6($vip['subnet'])) {
+	} else if (is_ipaddrv6($vip['subnet'])) {
 		$broadcast_address = gen_subnet_max($vip['subnet'], $vip['subnet_bits']);
 		mwexec("/sbin/ifconfig {$realif} inet6 {$vip['subnet']} prefixlen {$vip['subnet_bits']} vhid {$vip['vhid']} advskew {$vip['advskew']} {$advbase} {$password}");
 	}

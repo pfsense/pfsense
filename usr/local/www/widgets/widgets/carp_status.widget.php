@@ -49,7 +49,7 @@ $carp_enabled = get_carp_status();
 			$netmask = $carp['subnet_bits'];
 			$vhid = $carp['vhid'];
 			$advskew = $carp['advskew'];
-			$carp_int = get_real_interface($carp['interface']);
+			$carp_int = get_real_interface($carp['interface']) . "@{$carp['vhid']}";
 			$status = get_carp_interface_status($carp_int);
 ?>
 <tr>

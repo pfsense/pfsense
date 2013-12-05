@@ -148,7 +148,7 @@ include("head.inc");
 						$vhid = $carp['vhid'];
 						$advskew = $carp['advskew'];
 						$advbase = $carp['advbase'];
-						$carp_int = get_real_interface($carp['interface']);
+						$carp_int = get_real_interface($carp['interface']) . "@{$carp['vhid']}";
 						$status = get_carp_interface_status($carp_int);
 						echo "<tr>";
 						$align = "valign='middle'";

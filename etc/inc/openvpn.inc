@@ -811,7 +811,7 @@ function openvpn_restart($mode, $settings) {
 		return;
 
 	/* Do not start a client if we are a CARP backup on this vip! */
-	if (($mode == "client") && (get_carp_interface_status($settings['interface']) == "BACKUP"))
+	if (($mode == "client") && (strstr($settings['interface'], "@") && get_carp_interface_status($settings['interface']) == "BACKUP"))
 		return;
 		
 	/* Check if client is bound to a gateway group */    

@@ -92,7 +92,7 @@ if (isset($a_config["refreshinterval"])) {
 if (isset($a_config["scale_type"])) {
         $scale_type = $a_config["scale_type"];
 } else {
-        $scale_type = up;
+        $scale_type = "up";
 }
 
 ?>

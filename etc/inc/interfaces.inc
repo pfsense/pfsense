@@ -2099,10 +2099,7 @@ function interface_carp_configure(&$vip) {
 	if ($vip['mode'] != "carp")
 		return;
 
-	/*
-	 * ensure the interface containing the VIP really exists
-	 * prevents a panic if the interface is missing or invalid
-	 */
+	/* NOTE: Maybe its useless nowdays */
 	$realif = get_real_interface($vip['interface']);
 	if (!does_interface_exist($realif)) {
 		file_notice("CARP", sprintf(gettext("Interface specified for the virtual IP address %s does not exist. Skipping this VIP."), $vip['subnet']), "Firewall: Virtual IP", "");

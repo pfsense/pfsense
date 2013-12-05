@@ -183,7 +183,7 @@ function updateInterfaces(x){
 
 function widgetActive(x) {
 	var widget = jQuery('#' + x + '-container');
-	if ((widget != null) && (widget.css('display') != "none"))
+	if ((widget != null) && (widget.css('display') != null) && (widget.css('display') != "none"))
 		return true;
 	else
 		return false;

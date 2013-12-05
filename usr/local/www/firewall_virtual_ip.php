@@ -239,9 +239,6 @@ include("head.inc");
 		</tr>
 		<?php
 			$interfaces = get_configured_interface_with_descr(false, true);
-			$carplist = get_configured_carp_interface_list();
-			foreach ($carplist as $cif => $carpip)
-				$interfaces[$cif] = $carpip." (".get_vip_descr($carpip).")";
 			$interfaces['lo0'] = "Localhost";
 		?>
 			  <?php $i = 0; foreach ($a_vip as $vipent): ?>

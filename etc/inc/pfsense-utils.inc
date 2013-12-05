@@ -324,7 +324,10 @@ function convert_ip_to_network_format($ip, $subnet) {
  */
 function get_carp_interface_status($carpinterface) {
 	$carp_query = "";
-	exec("/sbin/ifconfig $carpinterface | /usr/bin/grep -v grep | /usr/bin/grep carp:", $carp_query);
+
+	/* XXX: Need to fidn a better way for this! */
+	list ($interface, $vhid) = explode('@', $carpinterface);
+	exec("/sbin/ifconfig $interface | /usr/bin/grep -v grep | /usr/bin/grep carp: | /usr/bin/grep 'vhid {$vhid}'", $carp_query);
 	foreach($carp_query as $int) {
 		if(stristr($int, "MASTER"))
 			return gettext("MASTER");

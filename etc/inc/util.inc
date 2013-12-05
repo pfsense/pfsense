@@ -805,7 +805,7 @@ function get_configured_carp_interface_list() {
 		foreach ($viparr as $vip) {
 			switch ($vip['mode']) {
 			case "carp":
-				$vipif = get_real_interface($vip['interface']);
+				$vipif = get_real_interface($vip['interface']) "@{$vip['vhid']}";
 				$iflist[$vipif] = $vip['subnet'];
 				break;
 			}

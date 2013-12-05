@@ -427,6 +427,8 @@ function interfaces_bridge_configure($checkmember = 0) {
 			if(empty($bridge['bridgeif']))
 				$bridge['bridgeif'] = "bridge{$i}";
 			if ($checkmember == 1) {
+				if (strstr($bridge['if'], "@"))
+					continue;
 				$members = explode(',', $bridge['members']);
 				foreach ($members as $member) {
 					if (!empty($config['interfaces'][$bridge['if']]) && $config['interfaces'][$bridge['if']]['ipaddrv6'] == "track6")
@@ -434,6 +436,8 @@ function interfaces_bridge_configure($checkmember = 0) {
 				}
 			}
 			else if ($checkmember == 2) {
+				if (strstr($bridge['if'], "@"))
+					continue;
 				$members = explode(',', $bridge['members']);
 				foreach ($members as $member) {
 					if (empty($config['interfaces'][$bridge['if']]) || $config['interfaces'][$bridge['if']]['ipaddrv6'] != "track6")
@@ -810,10 +814,14 @@ function interfaces_gre_configure($checkparent = 0) {
 			if(empty($gre['greif']))
 				$gre['greif'] = "gre{$i}";
 			if ($checkparent == 1) {
+				if (strstr($gre['if'], "@"))
+					continue;
 				if (!empty($config['interfaces'][$gre['if']]) && $config['interfaces'][$gre['if']]['ipaddrv6'] == "track6")
 					continue;
 			}
 			else if ($checkparent == 2) {
+				if (strstr($gre['if'], "@"))
+					continue;
 				if (empty($config['interfaces'][$gre['if']]) || $config['interfaces'][$gre['if']]['ipaddrv6'] != "track6")
 					continue;
 			}
@@ -880,10 +888,14 @@ function interfaces_gif_configure($checkparent = 0) {
 			if(empty($gif['gifif']))
 				$gre['gifif'] = "gif{$i}";
 			if ($checkparent == 1) {
+				if (strstr($gif['if'], "@"))
+					continue;
 				if (!empty($config['interfaces'][$gif['if']]) && $config['interfaces'][$gif['if']]['ipaddrv6'] == "track6")
 					continue;
 			}
 			else if ($checkparent == 2) {
+				if (strstr($gif['if'], "@"))
+					continue;
 				if (empty($config['interfaces'][$gif['if']]) || $config['interfaces'][$gif['if']]['ipaddrv6'] != "track6")
 					continue;
 			}
@@ -3999,6 +4011,16 @@ function get_current_wan_address($interface = "wan") {
 function convert_real_interface_to_friendly_interface_name($interface = "wan") {
 	global $config;
 
+	if (stristr($interface, "@")) {
+		foreach ($config['virtualip']['vip'] as $counter => $vip) {
+			if ($vip['mode'] == "carp")  {
+				$carpif = get_real_interface($vip['interface']) . "@{$vip['vhid']}";
+				if ($interface == $carpif)
+					return $vip['interface'];
+			}
+		}
+	}
+
 	/* XXX: For speed reasons reference directly the interface array */
 	$ifdescrs = &$config['interfaces'];
 	//$ifdescrs = get_configured_interface_list(false, true);
@@ -4050,6 +4072,16 @@ function convert_friendly_interface_to_friendly_descr($interface) {
 			else
 				$ifdesc = strtoupper($config['interfaces'][$interface]['descr']);
 			break;
+		} else if (stristr($interface, "@")) {
+			if (is_array($config['virtualip']['vip'])) {
+				foreach ($config['virtualip']['vip'] as $counter => $vip) {
+					if ($vip['mode'] == "carp")  {
+						$carpif = get_real_interface($vip['interface']) . "@{$vip['vhid']}";
+						if ($interface == $carpif)
+							return "{$vip['subnet']} - {$vip['descr']}";
+					}
+				}
+			}
 		} else {
 			/* if list */
 			$ifdescrs = get_configured_interface_with_descr(false, true);

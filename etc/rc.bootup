@@ -409,6 +409,9 @@ upnp_start();
 /* If powerd is enabled, lets launch it */
 activate_powerd();
 
+/* Set preferred protocol */
+prefer_ipv4_or_ipv6();
+
 /* Remove the old shutdown binary if we kept it. */
 if (file_exists("/sbin/shutdown.old"))
 	@unlink("/sbin/shutdown.old");

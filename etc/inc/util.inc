@@ -2064,4 +2064,14 @@ function get_current_theme() {
 	return $theme;
 }
 
+/* Define what is preferred, IPv4 or IPv6 */
+function prefer_ipv4_or_ipv6() {
+	global $config;
+
+	if (isset($config['system']['prefer_ipv4']))
+		mwexec("/etc/rc.d/ip6addrctl prefer_ipv4");
+	else
+		mwexec("/etc/rc.d/ip6addrctl prefer_ipv6");
+}
+
 ?>

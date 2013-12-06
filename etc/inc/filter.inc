@@ -320,7 +320,7 @@ function filter_configure_sync($delete_states_if_needed = true) {
 	}
 
 	@file_put_contents("{$g['tmp_path']}/rules.limits", $limitrules);
-	mwexec("/sbin/pfctl -f {$g['tmp_path']}/rules.limits");
+	mwexec("/sbin/pfctl -Of {$g['tmp_path']}/rules.limits");
 	unset($rules, $limitrules);
 
 	if(isset($config['system']['developerspew'])) {

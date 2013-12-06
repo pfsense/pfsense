@@ -800,7 +800,7 @@ function is_inrange($test, $start, $end) {
 }
 
 /* XXX: return the configured carp interface list */
-function get_configured_carp_interface_list() {
+function get_configured_carp_interface_list($carpinterface = "", $family = "inet") {
 	global $config;
 
 	$iflist = array();
@@ -810,8 +810,16 @@ function get_configured_carp_interface_list() {
 		foreach ($viparr as $vip) {
 			switch ($vip['mode']) {
 			case "carp":
-				$vipif = get_real_interface($vip['interface']) . "@{$vip['vhid']}";
-				$iflist[$vipif] = $vip['subnet'];
+				if (!empty($carpinterface)) {
+					if ($carpinterface == "{$vip['interface']}_vip{$vip['vhid']}") {
+						if ($family == "inet" && is_ipaddrv4($vip['subnet']))
+							return $vip['subnet'];
+						else if ($family == "inet6" && is_ipaddrv6($vip['subnet']))
+							return $vip['subnet'];
+					}
+				} else {
+					$iflist["{$vip['interface']}_vip{$vip['vhid']}"] = $vip['subnet'];
+				}
 				break;
 			}
 		}
@@ -849,8 +857,11 @@ function get_configured_vips_list() {
 
 	if(is_array($config['virtualip']['vip'])) {
 		$viparr = &$config['virtualip']['vip'];
-		foreach ($viparr as $vip)
-			$alias_list[] = array("ipaddr" => $vip['subnet'], "if" => $vip['interface']);
+		foreach ($viparr as $vip) {
+			if ($vip['mode'] == "carp")
+				$alias_list[] = array("ipaddr" => $vip['subnet'], "if" => "$vip['interface']}_vip{$vip['vhid']}");
+			else
+				$alias_list[] = array("ipaddr" => $vip['subnet'], "if" => $vip['interface']);
 	}
 
 	return $alias_list;

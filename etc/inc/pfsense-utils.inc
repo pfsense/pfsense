@@ -326,7 +326,8 @@ function get_carp_interface_status($carpinterface) {
 	$carp_query = "";
 
 	/* XXX: Need to fidn a better way for this! */
-	list ($interface, $vhid) = explode('@', $carpinterface);
+	list ($interface, $vhid) = explode("_vip", $carpinterface);
+	$interface = get_real_interface($interface);
 	exec("/sbin/ifconfig $interface | /usr/bin/grep -v grep | /usr/bin/grep carp: | /usr/bin/grep 'vhid {$vhid}'", $carp_query);
 	foreach($carp_query as $int) {
 		if(stristr($int, "MASTER"))
@@ -2534,17 +2535,16 @@ function is_ipaddr_configured($ipaddr, $ignore_if = "", $check_localip = false, 
 
 		foreach($interface_list_ips as $if => $ilips) {
 			/* Also ignore CARP interfaces, it'll be checked below */
-			if ($ignore_if == $if)
+			if ($ignore_if == $if || strstr($ignore_if, "_vip"))
 				continue;
 			if (strcasecmp($ipaddr, $ilips) == 0)
 				return true;
 		}
 	}
 
-	/* XXX: Need to correct this! */
 	$interface_list_vips = get_configured_vips_list(true);
 	foreach ($interface_list_vips as $id => $vip) {
-		if ($ignore_if == "vip_{$id}")
+		if ($ignore_if == $vip['if'])
 			continue;
 		if (strcasecmp($ipaddr, $vip['ipaddr']) == 0)
 			return true;

@@ -3481,7 +3481,10 @@ function filter_generate_ipsec_rules() {
 				}
 			}
 
-			$parentinterface = $ph1ent['interface'];
+			if (strstr($ph1ent['interface'], "_vip"))
+				list($parentinterface, $vhid) = explode("_vhid", $ph1ent['interface']);
+			else
+				$parentinterface = $ph1ent['interface'];
 			if (empty($FilterIflist[$parentinterface]['descr'])) {
 				$ipfrules .= "# Could not locate interface for IPsec: {$descr}\n";
 				continue;

@@ -905,6 +905,7 @@ EOD;
 				}
 
 				/* static route needed? */
+				$vip = "";
 				if (is_ipaddr($ph1ent['interface'])) {
 					$vip = find_virtual_ip_alias($ph1ent['interface']);
 					$parentinterface = $vip['interface'];
@@ -915,7 +916,10 @@ EOD;
 					/* add endpoint routes to correct gateway on interface */
 					if (interface_has_gateway($parentinterface)) {
 						$gatewayip = get_interface_gateway("$parentinterface");
-						$interfaceip = get_interface_ip($parentinterface);
+						if (empty($vip))
+							$interfaceip = get_interface_ip($parentinterface);
+						else
+							$interfaceip = $vip['subnet'];
 						$subnet_bits = get_interface_subnet($parentinterface);
 						$subnet_ip = gen_subnet("{$interfaceip}", "{$subnet_bits}");
 						/* if the remote gateway is in the local subnet, then don't add a route */

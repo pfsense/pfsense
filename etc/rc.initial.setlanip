@@ -349,7 +349,7 @@ $config['interfaces'][$interface]['gatewayv6'] = $gwname6;
 $config['interfaces'][$interface]['enable']    = true;
 
 function console_configure_dhcpd($version = 4) {
-	global $g, $config, $restart_dhcpd, $fp, $interface, $dry_run;
+	global $g, $config, $restart_dhcpd, $fp, $interface, $dry_run, $intip, $intbits;
 
 	$label_IPvX = ($version === 6) ? "IPv6"    : "IPv4";
 	$dhcpd      = ($version === 6) ? "dhcpdv6" : "dhcpd";
@@ -357,6 +357,8 @@ function console_configure_dhcpd($version = 4) {
 	if($g['services_dhcp_server_enable'])
 		$yn = prompt_for_enable_dhcp_server($version);
 	if ($yn == "y") {
+		$subnet_start = ($version === 6) ? gen_subnetv6($intip, $intbits) : gen_subnet($intip, $intbits);
+		$subnet_end = ($version === 6) ? gen_subnetv6_max($intip, $intbits) : gen_subnet_max($intip, $intbits);
 		do {
 			echo sprintf(gettext("Enter the start address of the %s client address range:"), $label_IPvX) . " ";
 			$dhcpstartip = chop(fgets($fp));
@@ -365,7 +367,10 @@ function console_configure_dhcpd($version = 4) {
 				exit(0);
 			}
 			$is_ipaddr = ($version === 6) ? is_ipaddrv6($dhcpstartip) : is_ipaddrv4($dhcpstartip);
-		} while (!$is_ipaddr);
+			$is_inrange = is_inrange($dhcpstartip, $subnet_start, $subnet_end);
+			if (!$is_inrange)
+				echo gettext("This IP address must be in the interface's subnet") . "\n";
+		} while (!$is_ipaddr || !$is_inrange);
 
 		do {
 			echo sprintf(gettext("Enter the end address of the %s client address range:"), $label_IPvX) . " ";
@@ -375,7 +380,10 @@ function console_configure_dhcpd($version = 4) {
 				exit(0);
 			}
 			$is_ipaddr = ($version === 6) ? is_ipaddrv6($dhcpendip) : is_ipaddrv4($dhcpendip);
-		} while (!$is_ipaddr);
+			$is_inrange = is_inrange($dhcpstartip, $subnet_start, $subnet_end);
+			if (!$is_inrange)
+				echo gettext("This IP address must be in the interface's subnet") . "\n";
+		} while (!$is_ipaddr || !$is_inrange);
 		$restart_dhcpd = true;
 		$config[$dhcpd][$interface]['enable'] = true;
 		$config[$dhcpd][$interface]['range']['from'] = $dhcpstartip;

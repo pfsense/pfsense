@@ -1,3 +1,4 @@
+s_ipaddr_configured
 <?php
 /* $Id$ */
 /*
@@ -113,7 +114,7 @@ if ($_POST) {
 	if ($_POST['subnet']) {
 		if (!is_ipaddr($_POST['subnet']))
 			$input_errors[] = gettext("A valid IP address must be specified.");
-		else if (is_ipaddr_configured($_POST['subnet'], "vip_" . $id))
+		else if (is_ipaddr_configured($_POST['subnet'], "{$_POST['interface']}_vip{$id}"))
 			$input_errors[] = gettext("This IP address is being used by another interface or VIP.");
 	}
 
@@ -121,15 +122,6 @@ if ($_POST) {
 	foreach ($natiflist as $natif => $natdescr) {
 		if ($_POST['interface'] == $natif && (empty($config['interfaces'][$natif]['ipaddr']) && empty($config['interfaces'][$natif]['ipaddrv6'])))
 			$input_errors[] = gettext("The interface chosen for the VIP has no IPv4 or IPv6 address configured so it cannot be used as a parent for the VIP.");
-	}
-
-	if(is_ipaddrv4($_POST['subnet'])) {
-		if(($_POST['subnet_bits'] == "31" or $_POST['subnet_bits'] == "32") and $_POST['mode'] == "carp")
-		 	$input_errors[] = gettext("The /31 and /32 subnet mask are invalid for CARP IPs.");
-	}
-	if(is_ipaddrv6($_POST['subnet'])) {
-		if(($_POST['subnet_bits'] == "127" or $_POST['subnet_bits'] == "128")  and $_POST['mode'] == "carp")
-		 	$input_errors[] = gettext("The /127 and /128 subnet mask are invalid for CARP IPs.");
 	}
 
 	/* ipalias and carp should not use network or broadcast address */

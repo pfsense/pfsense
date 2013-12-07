@@ -2150,7 +2150,7 @@ function interface_carp_configure(&$vip) {
 
 	if (is_ipaddrv4($vip['subnet'])) {
 		$broadcast_address = gen_subnet_max($vip['subnet'], $vip['subnet_bits']);
-		mwexec("/sbin/ifconfig {$realif} {$vip['subnet']}/{$vip['subnet_bits']} vhid {$vip['vhid']} advskew {$vip['advskew']} {$advbase} {$password}");
+		mwexec("/sbin/ifconfig {$realif} {$vip['subnet']}/{$vip['subnet_bits']} alias vhid {$vip['vhid']} advskew {$vip['advskew']} {$advbase} {$password}");
 	} else if (is_ipaddrv6($vip['subnet'])) {
 		$broadcast_address = gen_subnet_max($vip['subnet'], $vip['subnet_bits']);
 		mwexec("/sbin/ifconfig {$realif} inet6 {$vip['subnet']} prefixlen {$vip['subnet_bits']} vhid {$vip['vhid']} advskew {$vip['advskew']} {$advbase} {$password}");

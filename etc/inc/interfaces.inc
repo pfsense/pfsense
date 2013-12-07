@@ -2143,18 +2143,16 @@ function interface_carp_configure(&$vip) {
 	if ($vip['password'] != "")
 		$password = " pass {$vip_password}";
 
-	$broadcast_address = gen_subnet_max($vip['subnet'], $vip['subnet_bits']);
 	$advbase = "";
 	if (!empty($vip['advbase']))
 		$advbase = "advbase {$vip['advbase']}";
 
-	if (is_ipaddrv4($vip['subnet'])) {
-		$broadcast_address = gen_subnet_max($vip['subnet'], $vip['subnet_bits']);
-		mwexec("/sbin/ifconfig {$realif} {$vip['subnet']}/{$vip['subnet_bits']} alias vhid {$vip['vhid']} advskew {$vip['advskew']} {$advbase} {$password}");
-	} else if (is_ipaddrv6($vip['subnet'])) {
-		$broadcast_address = gen_subnet_max($vip['subnet'], $vip['subnet_bits']);
-		mwexec("/sbin/ifconfig {$realif} inet6 {$vip['subnet']} prefixlen {$vip['subnet_bits']} vhid {$vip['vhid']} advskew {$vip['advskew']} {$advbase} {$password}");
-	}
+	if (is_ipaddrv4($vip['subnet']))
+		mwexec("/sbin/ifconfig {$realif} {$vip['subnet']}/{$vip['subnet_bits']} alias");
+	else if (is_ipaddrv6($vip['subnet']))
+		mwexec("/sbin/ifconfig {$realif} inet6 {$vip['subnet']} prefixlen {$vip['subnet_bits']}");
+
+	mwexec("/sbin/ifconfig {$realif} vhid {$vip['vhid']} advskew {$vip['advskew']} {$advbase} {$password}");
 
 	return $realif;
 }

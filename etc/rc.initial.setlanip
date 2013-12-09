@@ -380,7 +380,7 @@ function console_configure_dhcpd($version = 4) {
 				exit(0);
 			}
 			$is_ipaddr = ($version === 6) ? is_ipaddrv6($dhcpendip) : is_ipaddrv4($dhcpendip);
-			$is_inrange = is_inrange($dhcpstartip, $subnet_start, $subnet_end);
+			$is_inrange = is_inrange($dhcpendip, $subnet_start, $subnet_end);
 			if (!$is_inrange)
 				echo gettext("This IP address must be in the interface's subnet") . "\n";
 		} while (!$is_ipaddr || !$is_inrange);

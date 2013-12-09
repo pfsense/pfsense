@@ -43,9 +43,9 @@ function vpn_pppoe_get_id() {
 	global $config;
 
 	$vpnid = 1;
-	if (!is_array($config['pppoes']['pppoe'])) {
+	if (is_array($config['pppoes']['pppoe'])) {
 		foreach ($config['pppoes']['pppoe'] as $pppoe) {
-			if ($vpnid == $pppoe['id'])
+			if ($vpnid == $pppoe['pppoeid'])
 				$vpnid++;
 			else
 				return $vpnid;

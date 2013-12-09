@@ -249,6 +249,7 @@ include("head.inc");
 <input type='hidden' name='ip' value='textbox' />
 
 <script type="text/javascript">
+	//<![CDATA[
 	rowname[0] = "username";
 	rowtype[0] = "textbox";
 	rowsize[0] = "20";
@@ -260,10 +261,11 @@ include("head.inc");
 	rowname[2] = "ip";
 	rowtype[2] = "textbox";
 	rowsize[2] = "10";
+	//]]>
 </script>
 
-<script language="JavaScript">
-<!--
+<script type="text/javascript">
+//<![CDATA[
 function get_radio_value(obj)
 {
 	for (i = 0; i < obj.length; i++) {
@@ -344,7 +346,7 @@ function enable_change(enable_over) {
 		document.iform.radius_acct_update.disabled = 1;
 	}
 }
-//-->
+//]]>
 </script>
 <form action="vpn_pppoe_edit.php" method="post" name="iform" id="iform">
 <?php
@@ -364,15 +366,14 @@ if ($savemsg)
 					<tr>
 						<td width="22%" valign="top" class="vtable">&nbsp;</td>
 						<td width="78%" class="vtable">
-							<input name="mode" type="radio" onclick="enable_change(false)" value="off"
-							<?php if ($pconfig['mode'] != "server") echo "checked";?>>
+							<input name="mode" type="radio" onclick="enable_change(false)" value="off" <?php if ($pconfig['mode'] != "server") echo "checked=\"checked\"";?> />
 							<?=gettext("Off"); ?>
 						</td>
 					</tr>
 					<tr>
 						<td width="22%" valign="top" class="vtable">&nbsp;</td>
 						<td width="78%" class="vtable">
-							<input type="radio" name="mode" value="server" onclick="enable_change(false)" <?php if ($pconfig['mode'] == "server") echo "checked"; ?>>
+							<input type="radio" name="mode" value="server" onclick="enable_change(false)" <?php if ($pconfig['mode'] == "server") echo "checked=\"checked\""; ?> />
 							<?=gettext("Enable PPPoE server"); ?></td>
 					</tr>
 
@@ -385,13 +386,13 @@ if ($savemsg)
 							$interfaces = get_configured_interface_with_descr();
 							foreach ($interfaces as $iface => $ifacename):
 ?>
-								<option value="<?=$iface;?>" <?php if ($iface == $pconfig['interface']) echo "selected"; ?>>
+								<option value="<?=$iface;?>" <?php if ($iface == $pconfig['interface']) echo "selected=\"selected\""; ?>>
 									<?=htmlspecialchars($ifacename);?>
 								</option>
 <?php
 							endforeach;
 ?>
-							</select> <br>
+							</select> <br />
 
 						</td>
 					</tr>
@@ -402,14 +403,14 @@ if ($savemsg)
 <?php
 							for($x=0; $x<33; $x++) {
 								if($x == $pconfig['pppoe_subnet'])
-									$SELECTED = " SELECTED";
+									$selected = "selected=\"selected\"";
 								else
-									$SELECTED = "";
-								echo "<option value=\"{$x}\"{$SELECTED}>{$x}</option>\n";
+									$selected = "";
+								echo "<option value=\"{$x}\" {$selected}>{$x}</option>\n";
 							}
 ?>
 							</select>
-							<br><?=gettext("Hint"); ?>: 24 <?=gettext("is"); ?> 255.255.255.0
+							<br /><?=gettext("Hint"); ?>: 24 <?=gettext("is"); ?> 255.255.255.0
 						</td>
 					</tr>
 					<tr>
@@ -419,20 +420,20 @@ if ($savemsg)
 <?php
 							for($x=0; $x<255; $x++) {
 								if($x == $pconfig['n_pppoe_units'])
-									$SELECTED = " SELECTED";
+									$selected = "selected=\"selected\"";
 								else
-									$SELECTED = "";
-								echo "<option value=\"{$x}\"{$SELECTED}>{$x}</option>\n";
+									$selected = "";
+								echo "<option value=\"{$x}\" {$selected}>{$x}</option>\n";
 							}
 ?>
 							</select>
-							<br><?=gettext("Hint: 10 is ten PPPoE clients"); ?>
+							<br /><?=gettext("Hint: 10 is ten PPPoE clients"); ?>
 						</td>
 					</tr>
 					<tr>
 						<td width="22%" valign="top" class="vncellreq"><?=gettext("Server address"); ?></td>
 						<td width="78%" class="vtable">
-							<?=$mandfldhtml;?><input name="localip" type="text" class="formfld unknown" id="localip" size="20" value="<?=htmlspecialchars($pconfig['localip']);?>">
+							<?=$mandfldhtml;?><input name="localip" type="text" class="formfld unknown" id="localip" size="20" value="<?=htmlspecialchars($pconfig['localip']);?>" />
 							<br/>
 							<?=gettext("Enter the IP address the PPPoE server should give to clients for use as their \"gateway\""); ?>.
 							<br/>
@@ -444,95 +445,95 @@ if ($savemsg)
 					<tr>
 						<td width="22%" valign="top" class="vncellreq"><?=gettext("Remote address range"); ?></td>
 						<td width="78%" class="vtable">
-							<?=$mandfldhtml;?><input name="remoteip" type="text" class="formfld unknown" id="remoteip" size="20" value="<?=htmlspecialchars($pconfig['remoteip']);?>">
-							<br>
-							<?=gettext("Specify the starting address for the client IP address subnet"); ?>.<br>
+							<?=$mandfldhtml;?><input name="remoteip" type="text" class="formfld unknown" id="remoteip" size="20" value="<?=htmlspecialchars($pconfig['remoteip']);?>" />
+							<br />
+							<?=gettext("Specify the starting address for the client IP address subnet"); ?>.<br />
 						</td>
 					</tr>
 					<tr>
 						<td width="22%" valign="top" class="vncell"><?=gettext("Description"); ?></td>
 						<td width="78%" class="vtable">
-							<?=$mandfldhtml;?><input name="descr" type="text" class="formfld unknown" id="descr" size="40" value="<?=htmlspecialchars($pconfig['descr']);?>">
+							<?=$mandfldhtml;?><input name="descr" type="text" class="formfld unknown" id="descr" size="40" value="<?=htmlspecialchars($pconfig['descr']);?>" />
 							<br/>
 						</td>
 					</tr>
 					<tr>
 						<td width="22%" valign="top" class="vncell"><?=gettext("DNS servers"); ?></td>
 						<td width="78%" class="vtable">
-							<?=$mandfldhtml;?><input name="pppoe_dns1" type="text" class="formfld unknown" id="pppoe_dns1" size="20" value="<?=htmlspecialchars($pconfig['pppoe_dns1']);?>">
-							<br>
-							<input name="pppoe_dns2" type="text" class="formfld unknown" id="pppoe_dns2" size="20" value="<?=htmlspecialchars($pconfig['pppoe_dns2']);?>">
-							<br>
-							<?=gettext("If entered they will be given to all PPPoE clients, else LAN DNS and one WAN DNS will go to all clients"); ?><br>
+							<?=$mandfldhtml;?><input name="pppoe_dns1" type="text" class="formfld unknown" id="pppoe_dns1" size="20" value="<?=htmlspecialchars($pconfig['pppoe_dns1']);?>" />
+							<br />
+							<input name="pppoe_dns2" type="text" class="formfld unknown" id="pppoe_dns2" size="20" value="<?=htmlspecialchars($pconfig['pppoe_dns2']);?>" />
+							<br />
+							<?=gettext("If entered they will be given to all PPPoE clients, else LAN DNS and one WAN DNS will go to all clients"); ?><br />
 						</td>
 					</tr>
 					<tr>
 						<td width="22%" valign="top" class="vncell"><?=gettext("RADIUS"); ?></td>
 						<td width="78%" class="vtable">
-							<input name="radiusenable" type="checkbox" id="radiusenable" onclick="enable_change(false)" value="yes" <?php if ($pconfig['radiusenable']) echo "checked"; ?>>
-							<strong><?=gettext("Use a RADIUS server for authentication"); ?><br>
+							<input name="radiusenable" type="checkbox" id="radiusenable" onclick="enable_change(false)" value="yes" <?php if ($pconfig['radiusenable']) echo "checked=\"checked\""; ?> />
+							<strong><?=gettext("Use a RADIUS server for authentication"); ?><br />
 							</strong><?=gettext("When set, all users will be authenticated using " .
 							"the RADIUS server specified below. The local user database " .
-							"will not be used"); ?>.<br>
-							<br>
-							<input name="radacct_enable" type="checkbox" id="radacct_enable" onclick="enable_change(false)" value="yes" <?php if ($pconfig['radacct_enable']) echo "checked"; ?>>
-							<strong><?=gettext("Enable RADIUS accounting"); ?> <br>
-								<br>
-							</strong><?=gettext("Sends accounting packets to the RADIUS server"); ?>.<br>
-							<input name="radiussecenable" type="checkbox" id="radiussecenable" onclick="enable_change(false)" value="yes" <?php if ($pconfig['radiussecenable']) echo "checked"; ?>>
-							<strong><?=gettext("Use Backup RADIUS Server"); ?></strong><br>
+							"will not be used"); ?>.<br />
+							<br />
+							<input name="radacct_enable" type="checkbox" id="radacct_enable" onclick="enable_change(false)" value="yes" <?php if ($pconfig['radacct_enable']) echo "checked=\"checked\""; ?> />
+							<strong><?=gettext("Enable RADIUS accounting"); ?> <br />
+								<br />
+							</strong><?=gettext("Sends accounting packets to the RADIUS server"); ?>.<br />
+							<input name="radiussecenable" type="checkbox" id="radiussecenable" onclick="enable_change(false)" value="yes" <?php if ($pconfig['radiussecenable']) echo "checked=\"checked\""; ?> />
+							<strong><?=gettext("Use Backup RADIUS Server"); ?></strong><br />
 							<?=gettext("When set, if primary server fails all requests will be sent via backup server"); ?></td>
 					</tr>
 					<tr>
 						<td width="22%" valign="top" class="vncellreq"><?=gettext("NAS IP Address"); ?></td>
 						<td width="78%" class="vtable">
-							<?=$mandfldhtml;?><input name="radius_nasip" type="text" class="formfld unknown" id="radius_nasip" size="20" value="<?=htmlspecialchars($pconfig['radius_nasip']);?>">
-							<br><?=gettext("RADIUS server NAS IP Address"); ?><br>
+							<?=$mandfldhtml;?><input name="radius_nasip" type="text" class="formfld unknown" id="radius_nasip" size="20" value="<?=htmlspecialchars($pconfig['radius_nasip']);?>" />
+							<br /><?=gettext("RADIUS server NAS IP Address"); ?><br />
 						</td>
 					</tr>
 					<tr>
 						<td width="22%" valign="top" class="vncellreq"><?=gettext("RADIUS Accounting Update"); ?></td>
 						<td width="78%" class="vtable">
-							<?=$mandfldhtml;?><input name="radius_acct_update" type="text" class="formfld unknown" id="radius_acct_update" size="20" value="<?=htmlspecialchars($pconfig['radius_acct_update']);?>">
-							<br><?=gettext("RADIUS accounting update period in seconds"); ?>
+							<?=$mandfldhtml;?><input name="radius_acct_update" type="text" class="formfld unknown" id="radius_acct_update" size="20" value="<?=htmlspecialchars($pconfig['radius_acct_update']);?>" />
+							<br /><?=gettext("RADIUS accounting update period in seconds"); ?>
 						</td>
 					</tr>
 					<tr>
 						<td width="22%" valign="top" class="vncell"><?=gettext("RADIUS issued IPs"); ?></td>
 						<td width="78%" valign="top" class="vtable">
-							<input name="radiusissueips" value="yes" type="checkbox" class="formfld" id="radiusissueips"<?php if($pconfig['radiusissueips']) echo " CHECKED"; ?>>
-							<br><?=gettext("Issue IP Addresses via RADIUS server"); ?>.</td>
+							<input name="radiusissueips" value="yes" type="checkbox" class="formfld" id="radiusissueips" <?php if($pconfig['radiusissueips']) echo "checked=\"checked\""; ?> />
+							<br /><?=gettext("Issue IP Addresses via RADIUS server"); ?>.</td>
 					</tr>
 					<tr>
 						<td width="22%" valign="top" class="vncell"><?=gettext("RADIUS server Primary"); ?></td>
 						<td width="78%" class="vtable">
-							<input name="radiusserver" type="text" class="formfld unknown" id="radiusserver" size="20" value="<?=htmlspecialchars($pconfig['radiusserver']);?>">
-							<input name="radiusserverport" type="text" class="formfld unknown" id="radiusserverport" size="4" value="<?=htmlspecialchars($pconfig['radiusserverport']);?>">
-							<input name="radiusserveracctport" type="text" class="formfld unknown" id="radiusserveracctport" size="4" value="<?=htmlspecialchars($pconfig['radiusserveracctport']);?>">
-							<br><?=gettext("Enter the IP address, authentication port and accounting port (optional) of the RADIUS server."); ?><br>
-							<br> <?=gettext("standard port 1812 and 1813 accounting"); ?></td>
+							<input name="radiusserver" type="text" class="formfld unknown" id="radiusserver" size="20" value="<?=htmlspecialchars($pconfig['radiusserver']);?>" />
+							<input name="radiusserverport" type="text" class="formfld unknown" id="radiusserverport" size="4" value="<?=htmlspecialchars($pconfig['radiusserverport']);?>" />
+							<input name="radiusserveracctport" type="text" class="formfld unknown" id="radiusserveracctport" size="4" value="<?=htmlspecialchars($pconfig['radiusserveracctport']);?>" />
+							<br /><?=gettext("Enter the IP address, authentication port and accounting port (optional) of the RADIUS server."); ?><br />
+							<br /> <?=gettext("standard port 1812 and 1813 accounting"); ?></td>
 					</tr>
 					<tr>
 						<td width="22%" valign="top" class="vncell"><?=gettext("RADIUS primary shared secret"); ?></td>
 						<td width="78%" valign="top" class="vtable">
-							<input name="radiussecret" type="password" class="formfld pwd" id="radiussecret" size="20" value="<?=htmlspecialchars($pconfig['radiussecret']);?>">
-							<br><?=gettext("Enter the shared secret that will be used to authenticate " .
+							<input name="radiussecret" type="password" class="formfld pwd" id="radiussecret" size="20" value="<?=htmlspecialchars($pconfig['radiussecret']);?>" />
+							<br /><?=gettext("Enter the shared secret that will be used to authenticate " .
 							"to the RADIUS server"); ?>.</td>
 					</tr>
 					<tr>
 						<td width="22%" valign="top" class="vncell"><?=gettext("RADIUS server Secondary"); ?></td>
 						<td width="78%" class="vtable">
-							<input name="radiusserver2" type="text" class="formfld unknown" id="radiusserver2" size="20" value="<?=htmlspecialchars($pconfig['radiusserver2']);?>">
-							<input name="radiusserver2port" type="text" class="formfld unknown" id="radiusserver2port" size="4" value="<?=htmlspecialchars($pconfig['radiusserver2port']);?>">
-							<input name="radiusserver2acctport" type="text" class="formfld unknown" id="radiusserver2acctport" size="4" value="<?=htmlspecialchars($pconfig['radiusserver2acctport']);?>">
-							<br><?=gettext("Enter the IP address, authentication port and accounting port (optional) of the backup RADIUS server."); ?><br>
-							<br> <?=gettext("standard port 1812 and 1813 accounting"); ?></td>
+							<input name="radiusserver2" type="text" class="formfld unknown" id="radiusserver2" size="20" value="<?=htmlspecialchars($pconfig['radiusserver2']);?>" />
+							<input name="radiusserver2port" type="text" class="formfld unknown" id="radiusserver2port" size="4" value="<?=htmlspecialchars($pconfig['radiusserver2port']);?>" />
+							<input name="radiusserver2acctport" type="text" class="formfld unknown" id="radiusserver2acctport" size="4" value="<?=htmlspecialchars($pconfig['radiusserver2acctport']);?>" />
+							<br /><?=gettext("Enter the IP address, authentication port and accounting port (optional) of the backup RADIUS server."); ?><br />
+							<br /> <?=gettext("standard port 1812 and 1813 accounting"); ?></td>
 					</tr>
 					<tr>
 						<td width="22%" valign="top" class="vncell"><?=gettext("RADIUS secondary shared secret"); ?></td>
 						<td width="78%" valign="top" class="vtable">
-							<input name="radiussecret2" type="password" class="formfld pwd" id="radiussecret2" size="20" value="<?=htmlspecialchars($pconfig['radiussecret2']);?>">
-							<br>
+							<input name="radiussecret2" type="password" class="formfld pwd" id="radiussecret2" size="20" value="<?=htmlspecialchars($pconfig['radiussecret2']);?>" />
+							<br />
 							<?=gettext("Enter the shared secret that will be used to authenticate " .
 							"to the RADIUS server"); ?>.</td>
 					</tr>
@@ -592,19 +593,19 @@ if ($savemsg)
 						<td width="78%">
 <?php
 						if (isset($id))
-							echo "<input type='hidden' name='id' id='id' value='{$id}' >";
+							echo "<input type='hidden' name='id' id='id' value='{$id}' />";
 ?>
 <?php
 						if (isset($pconfig['pppoeid']))
-							echo "<input type='hidden' name='pppoeid' id='pppoeid' value='{$pppoeid}' >";
+							echo "<input type='hidden' name='pppoeid' id='pppoeid' value='{$pppoeid}' />";
 ?>
-							<input name="Submit" type="submit" class="formbtn" value="<?=gettext("Save"); ?>"  onclick="enable_change(true)"/>
-							<a href="vpn_pppoe.php"><input name="Cancel" type="button" class="formbtn" value="<?=gettext("Cancel"); ?>"></a>
+							<input name="Submit" type="submit" class="formbtn" value="<?=gettext("Save"); ?>"  onclick="enable_change(true)" />
+							<a href="vpn_pppoe.php"><input name="Cancel" type="button" class="formbtn" value="<?=gettext("Cancel"); ?>" /></a>
 						</td>
 					</tr>
 					<tr>
 						<td width="22%" valign="top">&nbsp;</td>
-						<td width="78%"><span class="vexpl"><span class="red"><strong><?=gettext("Note"); ?>:<br>
+						<td width="78%"><span class="vexpl"><span class="red"><strong><?=gettext("Note"); ?>:<br />
 								</strong></span><?=gettext("don't forget to add a firewall rule to permit " .
 								"traffic from PPPoE clients"); ?>!</span></td>
 					</tr>
@@ -615,13 +616,14 @@ if ($savemsg)
 </table>
 </form>
 <script type="text/javascript">
+	//<![CDATA[
 	enable_change(false);
 
 	field_counter_js = 3;
 	rows = 1;
 	totalrows = <?php echo $counter; ?>;
 	loaded = <?php echo $counter; ?>;
-
+	//]]>
 </script>
 <?php include("fend.inc"); ?>
 </body>

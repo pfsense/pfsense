@@ -360,30 +360,36 @@ function console_configure_dhcpd($version = 4) {
 		$subnet_start = ($version === 6) ? gen_subnetv6($intip6, $intbits6) : gen_subnet($intip, $intbits);
 		$subnet_end = ($version === 6) ? gen_subnetv6_max($intip6, $intbits6) : gen_subnet_max($intip, $intbits);
 		do {
-			echo sprintf(gettext("Enter the start address of the %s client address range:"), $label_IPvX) . " ";
-			$dhcpstartip = chop(fgets($fp));
-			if ($dhcpstartip === "") {
-				fclose($fp);
-				exit(0);
-			}
-			$is_ipaddr = ($version === 6) ? is_ipaddrv6($dhcpstartip) : is_ipaddrv4($dhcpstartip);
-			$is_inrange = is_inrange($dhcpstartip, $subnet_start, $subnet_end);
-			if (!$is_inrange)
-				echo gettext("This IP address must be in the interface's subnet") . "\n";
-		} while (!$is_ipaddr || !$is_inrange);
+			do {
+				echo sprintf(gettext("Enter the start address of the %s client address range:"), $label_IPvX) . " ";
+				$dhcpstartip = chop(fgets($fp));
+				if ($dhcpstartip === "") {
+					fclose($fp);
+					exit(0);
+				}
+				$is_ipaddr = ($version === 6) ? is_ipaddrv6($dhcpstartip) : is_ipaddrv4($dhcpstartip);
+				$is_inrange = is_inrange($dhcpstartip, $subnet_start, $subnet_end);
+				if (!$is_inrange)
+					echo gettext("This IP address must be in the interface's subnet") . "\n";
+			} while (!$is_ipaddr || !$is_inrange);
 
-		do {
-			echo sprintf(gettext("Enter the end address of the %s client address range:"), $label_IPvX) . " ";
-			$dhcpendip = chop(fgets($fp));
-			if ($dhcpendip === "") {
-				fclose($fp);
-				exit(0);
-			}
-			$is_ipaddr = ($version === 6) ? is_ipaddrv6($dhcpendip) : is_ipaddrv4($dhcpendip);
-			$is_inrange = is_inrange($dhcpendip, $subnet_start, $subnet_end);
-			if (!$is_inrange)
-				echo gettext("This IP address must be in the interface's subnet") . "\n";
-		} while (!$is_ipaddr || !$is_inrange);
+			do {
+				echo sprintf(gettext("Enter the end address of the %s client address range:"), $label_IPvX) . " ";
+				$dhcpendip = chop(fgets($fp));
+				if ($dhcpendip === "") {
+					fclose($fp);
+					exit(0);
+				}
+				$is_ipaddr = ($version === 6) ? is_ipaddrv6($dhcpendip) : is_ipaddrv4($dhcpendip);
+				$is_inrange = is_inrange($dhcpendip, $subnet_start, $subnet_end);
+				if (!$is_inrange)
+					echo gettext("This IP address must be in the interface's subnet") . "\n";
+				$not_inorder = ($version === 6) ? (inet_pton($dhcpendip) < inet_pton($dhcpstartip)) : ip_less_than($dhcpendip, $dhcpstartip);
+				if ($not_inorder) {
+					echo gettext("The end address of the DHCP range must be >= the start address") . "\n";
+				}
+			} while (!$is_ipaddr || !$is_inrange);
+		} while ($not_inorder);
 		$restart_dhcpd = true;
 		$config[$dhcpd][$interface]['enable'] = true;
 		$config[$dhcpd][$interface]['range']['from'] = $dhcpstartip;

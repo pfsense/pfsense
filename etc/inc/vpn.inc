@@ -613,9 +613,10 @@ function vpn_ipsec_configure($ipchg = false)
 
 					$racoonconf .=<<<EOD
 
-remote {$rgip}
+remote "{$rgip}"
 {
 	ph1id {$ikeid};
+	remote_address {$rgip};
 	exchange_mode {$ph1ent['mode']};
 	my_identifier {$myid_type} {$myid_data};
 	{$peerid_spec}

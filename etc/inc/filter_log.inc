@@ -154,7 +154,9 @@ function parse_filter_line($line) {
 	$flent['interface']  = convert_real_interface_to_friendly_descr($flent['realint']);
 
 	$tmp = explode("/", $rule);
-	$flent['rulenum'] = $tmp[0];
+	// Format of the rule number in FreeBSD 9.x and later seems to be X..Y where X is the matched rule and Y is the maximum possible rule number.
+	$rulenum_parts = explode("..", $tmp[0]);
+	$flent['rulenum'] = $rulenum_parts[0];
 
 	$proto = array(" ", "(?)");
 	/* Attempt to determine the protocol, based on several possible patterns.

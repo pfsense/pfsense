@@ -155,6 +155,9 @@ if ($_POST) {
 	if (($t < 0) || (($t > 0) && ($t < 6)) || ($t > 1440)) {
 		$input_errors[] = gettext("The time update interval must be either 0 (disabled) or between 6 and 1440.");
 	}
+	# it's easy to have a little too much whitespace in the field, clean it up for the user before processing.
+	$_POST['timeservers'] = preg_replace('/[[:blank:]]+/', ' ', $_POST['timeservers']);
+	$_POST['timeservers'] = trim($_POST['timeservers']);
 	foreach (explode(' ', $_POST['timeservers']) as $ts) {
 		if (!is_domain($ts)) {
 			$input_errors[] = gettext("A NTP Time Server name may only contain the characters a-z, 0-9, '-' and '.'.");

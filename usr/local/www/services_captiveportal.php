@@ -82,6 +82,11 @@ if ($_GET['act'] == "viewhtml") {
 	echo $file_data;
 
 	exit;
+} else if ($_GET['act'] == "delhtmlhtml" && $a_cp[$cpzone] && $a_cp[$cpzone]['page']['htmltext']) {
+	unset($a_cp[$cpzone]['page']['htmltext']);
+	write_config(sprintf(gettext("Captive Portal: zone %s: Restore default portal page"), $cpzone));
+	header("Location: services_captiveportal.php?zone={$cpzone}");
+	exit;
 } else if ($_GET['act'] == "viewerrhtml") {
 	if ($a_cp[$cpzone] && $a_cp[$cpzone]['page']['errtext'])
 		echo base64_decode($a_cp[$cpzone]['page']['errtext']);
@@ -96,6 +101,11 @@ if ($_GET['act'] == "viewhtml") {
 	echo $file_data;
 
 	exit;
+} else if ($_GET['act'] == "delerrhtml" && $a_cp[$cpzone] && $a_cp[$cpzone]['page']['errtext']) {
+	unset($a_cp[$cpzone]['page']['errtext']);
+	write_config(sprintf(gettext("Captive Portal: zone %s: Restore default error page"), $cpzone));
+	header("Location: services_captiveportal.php?zone={$cpzone}");
+	exit;
 } else if ($_GET['act'] == "viewlogouthtml") {
 	if ($a_cp[$cpzone] && $a_cp[$cpzone]['page']['logouttext'])
 		echo base64_decode($a_cp[$cpzone]['page']['logouttext']);
@@ -109,6 +119,11 @@ if ($_GET['act'] == "viewhtml") {
 	header("Content-Length: $file_size");
 	echo $file_data;
 
+	exit;
+} else if ($_GET['act'] == "dellogouthtml" && $a_cp[$cpzone] && $a_cp[$cpzone]['page']['logouttext']) {
+	unset($a_cp[$cpzone]['page']['logouttext']);
+	write_config(sprintf(gettext("Captive Portal: zone %s: Restore default logout page"), $cpzone));
+	header("Location: services_captiveportal.php?zone={$cpzone}");
 	exit;
 }
 
@@ -974,6 +989,10 @@ function enable_change(enable_change) {
 		<a href="<?=$href?>" target="_new"><?=gettext("View current page"); ?></a>
 		<br />
 		<a href="?zone=<?=$cpzone?>&amp;act=gethtmlhtml" target="_blank"><?=gettext("Download current page"); ?></a>
+		<br />
+		<a href="?zone=<?=$cpzone?>&amp;act=delhtmlhtml" onclick="return confirm('Do you really want to restore default page?')" target="_blank">
+			<?=gettext("Restore default portal page"); ?>
+		</a>
 		  <br>
 		  <br>
 		<?php endif; ?>
@@ -1010,6 +1029,10 @@ function enable_change(enable_change) {
 		<a href="?zone=<?=$cpzone?>&amp;act=viewerrhtml" target="_blank"><?=gettext("View current page"); ?></a>
 		<br />
 		<a href="?zone=<?=$cpzone?>&amp;act=geterrhtml" target="_blank"><?=gettext("Download current page"); ?></a>
+		<br />
+		<a href="?zone=<?=$cpzone?>&amp;act=delerrhtml" onclick="return confirm('Do you really want to restore default page?')" target="_blank">
+			<?=gettext("Restore default error page"); ?>
+		</a>
 		  <br>
 		  <br>
 		<?php endif; ?>
@@ -1026,6 +1049,10 @@ function enable_change(enable_change) {
 		<a href="?zone=<?=$cpzone?>&amp;act=viewlogouthtml" target="_blank"><?=gettext("View current page"); ?></a>
 		<br />
 		<a href="?zone=<?=$cpzone?>&amp;act=getlogouthtml" target="_blank"><?=gettext("Download current page"); ?></a>
+		<br />
+		<a href="?zone=<?=$cpzone?>&amp;act=dellogouthtml" onclick="return confirm('Do you really want to restore default page?')" target="_blank">
+			<?=gettext("Restore default logout page"); ?>
+		</a>
 		  <br>
 		  <br>
 		<?php endif; ?>

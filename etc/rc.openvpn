@@ -71,7 +71,10 @@ if (file_exists("{$g['varrun_path']}/booting"))
 	return;
 
 /* Input argument is a comma-separated list of gateway names, blank or "all". */
-$argument = trim($argv[1], " \n");
+if (isset($_GET))
+	$argument = $_GET['interface'];
+else
+	$argument = trim($argv[1], " \n");
 
 if(is_array($config['openvpn']['openvpn-server']) || is_array($config['openvpn']['openvpn-client'])) {
 	if (empty($argument) || $argument == "all") {

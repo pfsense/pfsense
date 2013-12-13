@@ -84,6 +84,10 @@ function handle_argument_group($iface, $argument2) {
 
 global $g;
 if (!file_exists("{$g['varrun_path']}/booting") && empty($g['booting'])) {
+if (isset($_GET)) {
+	if (!empty($_GET['interface']))
+		handle_argument_group($_GET['interface'], $_GET['action']);
+} else {
 	if ($argc < 3) {
 		log_error("HOTPLUG event: The number of required parameters not passed!");
 		exit;
@@ -102,6 +106,7 @@ if (!file_exists("{$g['varrun_path']}/booting") && empty($g['booting'])) {
 	$interface = convert_real_interface_to_friendly_interface_name($argv[2]);
 	if (!empty($interface))
 		handle_argument_group($interface, $action);
+}
 }
 
 ?>

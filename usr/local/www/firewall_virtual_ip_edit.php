@@ -1,4 +1,3 @@
-s_ipaddr_configured
 <?php
 /* $Id$ */
 /*

@@ -81,9 +81,9 @@ function activate_sysctls() {
 		foreach($config['sysctl']['item'] as $tunable) {
 			if($tunable['value'] == "default") {
 				$value = get_default_sysctl_value($tunable['tunable']);
-				mwexec("/sbin/sysctl " . $tunable['tunable'] . "=\"" . $value .  "\"");
+				mwexec("/sbin/sysctl " . $tunable['tunable'] . "=\"" . $value .  "\"", true);
 			} else { 
-				mwexec("/sbin/sysctl " . $tunable['tunable'] . "=\"" . $tunable['value'] .  "\"");
+				mwexec("/sbin/sysctl " . $tunable['tunable'] . "=\"" . $tunable['value'] .  "\"", true);
 			}
 		}
 	}

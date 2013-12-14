@@ -309,7 +309,7 @@ fi
 pid = run/php-fpm.pid
 error_log=syslog
 syslog.facility = daemon
-syslog.ident = php-fpm
+syslog.ident = system
 log_level = notice
 daemonize = yes
 events.mechanism = kqueue

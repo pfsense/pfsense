@@ -6,11 +6,6 @@
 	<theme>pfsense_ng</theme>
 	<sysctl>
 		<item>
-			<descr><![CDATA[Enable mounting the FS read only with more checks.]]></descr>
-			<tunable>vfs.forcesync</tunable>
-			<value>default</value>
-		</item>
-		<item>
 			<descr><![CDATA[Disable the pf ftp proxy handler.]]></descr>
 			<tunable>debug.pfftpproxy</tunable>
 			<value>default</value>
@@ -128,11 +123,6 @@
 		<item>
 			<descr><![CDATA[Disable CTRL+ALT+Delete reboot from keyboard.]]></descr>
 			<tunable>hw.syscons.kbd_reboot</tunable>
-			<value>default</value>
-		</item>
-		<item>
-			<descr><![CDATA[Enable TCP Inflight mode]]></descr>
-			<tunable>net.inet.tcp.inflight.enable</tunable>
 			<value>default</value>
 		</item>
 		<item>

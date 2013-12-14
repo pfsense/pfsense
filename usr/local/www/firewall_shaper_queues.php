@@ -46,7 +46,7 @@ require_once("shaper.inc");
 require_once("rrd.inc");
 
 if($_GET['reset'] <> "") {
-	mwexec("killall -9 pfctl php");
+	mwexec("killall -9 pfctl");
 	exit;
 }
 

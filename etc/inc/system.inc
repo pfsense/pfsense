@@ -982,11 +982,6 @@ function system_generate_lighty_config($filename,
 			$max_php_children = 1;
 	}
 
-	if ($captive_portal !== false)
-		$fast_cgi_path = "{$g['tmp_path']}/php-fastcgi-{$captive_portal}.socket";
-	else
-		$fast_cgi_path = "{$g['tmp_path']}/php-fastcgi.socket";
-
 	if(!isset($config['syslog']['nologlighttpd'])) {
 		$lighty_use_syslog = <<<EOD
 ## where to send error-messages to
@@ -995,7 +990,9 @@ EOD;
 	}
 
 
-	$fastcgi_config = <<<EOD
+	if ($captive_portal !== false) {
+		$fast_cgi_path = "{$g['tmp_path']}/php-fastcgi-{$captive_portal}.socket";
+		$fastcgi_config = <<<EOD
 #### fastcgi module
 ## read fastcgi.txt for more info
 fastcgi.server = ( ".php" =>
@@ -1013,6 +1010,23 @@ fastcgi.server = ( ".php" =>
 )
 
 EOD;
+	} else {
+		$fast_cgi_path = "{$g['varrun_path']}/php-fpm.socket";
+		$fastcgi_config = <<<EOD
+#### fastcgi module
+## read fastcgi.txt for more info
+fastcgi.server = ( ".php" =>
+	( "localhost" =>
+		(
+			"socket" => "{$fast_cgi_path}",
+			"broken-scriptfilename" => "enable"
+		)
+	)
+)
+
+EOD;
+	}
+
 
 	$lighty_config = <<<EOD
 #

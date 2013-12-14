@@ -369,6 +369,7 @@ fi
 # Run the php.ini setup file and populate
 # /usr/local/etc/php.ini and /usr/local/lib/php.ini
 /etc/rc.php_ini_setup 2>/tmp/php_errors.txt
+/usr/local/sbin/php-fpm -c /usr/local/lib/php.ini -y /usr/local/lib/php-fpm.conf -RD 2>&1 >/dev/null
 
 # Launch external configuration loader for supported platforms
 if [ "$PLATFORM" = "embedded" ]; then
@@ -391,6 +392,7 @@ if [ -f /etc/rc.custom_boot_early ]; then
 	echo "Done"
 fi
 
+export fcgipath=/var/run/php-fpm.socket
 /usr/bin/nice -n20 /usr/local/sbin/check_reload_status
 
 # let the PHP-based configuration subsystem set up the system now

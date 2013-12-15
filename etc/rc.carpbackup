@@ -35,7 +35,10 @@ require_once("notices.inc");
 require_once("openvpn.inc");
 require_once("interfaces.inc");
 
-$argument = str_replace("\n", "", $argv[1]);
+if (isset($_GET)) {
+        $argument = $_GET['interface'];
+else
+	$argument = str_replace("\n", "", $argv[1]);
 if (!strstr($argument, "@"))
         log_error("Carp MASTER event triggered from wrong source {$argument}");
 

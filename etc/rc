@@ -373,17 +373,17 @@ fi
 
 # Launch external configuration loader for supported platforms
 if [ "$PLATFORM" = "embedded" ]; then
-	/usr/local/bin/php -q /etc/ecl.php
+	/usr/local/sbin/fcgicli -f /etc/ecl.php
 fi
 
 # Launch external configuration loader for supported platforms
 if [ "$PLATFORM" = "nanobsd" ]; then
-	/usr/local/bin/php -q /etc/ecl.php
+	/usr/local/sbin/fcgicli -f /etc/ecl.php
 fi
 
 # Launch external configuration loader for supported platforms
 if [ "$PLATFORM" = "pfSense" ]; then
-	/usr/local/bin/php -q /etc/ecl.php
+	/usr/local/sbin/fcgicli -f /etc/ecl.php
 fi
 
 if [ -f /etc/rc.custom_boot_early ]; then
@@ -414,7 +414,7 @@ cd /tmp && /usr/sbin/cron -s 2>/dev/null
 echo "done."
 
 # Start packages
-/etc/rc.start_packages
+/usr/local/sbin/fcgicli -f /etc/rc.start_packages
 
 /bin/rm -rf /usr/local/pkg/pf/CVS
 
@@ -422,10 +422,10 @@ echo "done."
 /usr/local/bin/minicron 240 $varrunpath/ping_hosts.pid /usr/local/bin/ping_hosts.sh
 
 # Start account expire handler every hour
-/usr/local/bin/minicron 3600 $varrunpath/expire_accounts.pid /etc/rc.expireaccounts
+/usr/local/bin/minicron 3600 $varrunpath/expire_accounts.pid '/usr/local/sbin/fcgicli -f /etc/rc.expireaccounts'
 
 # Start alias url updater every 24 hours
-/usr/local/bin/minicron 86400 $varrunpath/update_alias_url_data.pid /etc/rc.update_alias_url_data
+/usr/local/bin/minicron 86400 $varrunpath/update_alias_url_data.pid '/usr/local/sbin/fcgicli -f /etc/rc.update_alias_url_data'
 
 /bin/chmod a+rw /tmp/.
 

@@ -296,9 +296,9 @@ suhosin.memory_limit = 512435456
 EOF
 
 
-PHPFPMMAX=2
+PHPFPMMAX=3
 if [ "$LOWMEM" = "TRUE" ]; then
-	PHPFPMMAX=1
+	PHPFPMMAX=2
 elif [ ${REALMEM} -gt 1000 ]; then
 	PHPFPMMAX=4
 fi
@@ -334,7 +334,7 @@ if [ "$LOWMEM" = "TRUE" ]; then
 
 pm = ondemand
 pm.process_idle_timeout = 5
-pm.max_children = 1
+pm.max_children = $PHPFPMMAX
 pm.max_requests = 500
 
 EOF
@@ -344,7 +344,7 @@ elif [ $REALMEM -gt 1000 ]; then
 
 pm = dynamic
 pm.process_idle_timeout = 5
-pm.max_children = 3
+pm.max_children = $PHPFPMMAX
 pm.start_servers = 1
 pm.max_requests = 500
 pm.min_spare_servers=1
@@ -356,7 +356,7 @@ else
 	/bin/cat >> /usr/local/lib/php-fpm.conf <<EOF
 
 pm = static
-pm.max_children = 2
+pm.max_children = $PHPFPMMAX
 pm.max_requests = 500
 
 EOF

@@ -248,7 +248,7 @@ interfaces_loopback_configure();
 system_syslogd_start();
 
 echo "Starting Secure Shell Services...";
-mwexec_bg("/etc/sshd");
+send_event("service reload sshd");
 echo "done.\n";
 
 /* setup polling */

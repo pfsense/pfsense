@@ -99,22 +99,24 @@ function leasecmp($a, $b) {
 function adjust_gmt($dt) {
 	global $config; 
 	$dhcpd = $config['dhcpd'];
-	foreach ($dhcpd as $dhcpleaseinlocaltime) {
-		$dhcpleaseinlocaltime = $dhcpleaseinlocaltime['dhcpleaseinlocaltime'];
+	foreach ($dhcpd as $dhcpditem) {
+		$dhcpleaseinlocaltime = $dhcpditem['dhcpleaseinlocaltime'];
 		if ($dhcpleaseinlocaltime == "yes") 
 			break;
 	}
 	$timezone = $config['system']['timezone'];
 	$ts = strtotime($dt . " GMT");
 	if ($dhcpleaseinlocaltime == "yes") {
+		/* The lease data comes with time in local by default. So nothing to do here. */
+		return strftime("%Y/%m/%d %H:%M:%S", $ts);
+	} else {
+		/* Adjust the time back to UTC by subtracting the time zone offset. */
 		$this_tz = new DateTimeZone($timezone); 
 		$dhcp_lt = new DateTime(strftime("%I:%M:%S%p", $ts), $this_tz); 
 		$offset = $this_tz->getOffset($dhcp_lt);
-		$ts = $ts + $offset;
+		$ts = $ts - $offset;
 		return strftime("%Y/%m/%d %I:%M:%S%p", $ts);
 	}
-	else
-		return strftime("%Y/%m/%d %H:%M:%S", $ts);
 }
 
 function remove_duplicate($array, $field)

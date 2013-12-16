@@ -329,7 +329,7 @@ security.limit_extensions =
 
 EOF
 
-if [ "$LOWMEM" = "TRUE" ]; then
+if [ $REALMEM -lt 350 ]; then
 	/bin/cat >> /usr/local/lib/php-fpm.conf <<EOF
 
 pm = ondemand

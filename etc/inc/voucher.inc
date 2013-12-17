@@ -438,7 +438,7 @@ function voucher_auth($voucher_received, $test = 0) {
 	// If we did a XMLRPC sync earlier check the timeleft
 	if (!empty($config['voucher'][$cpzone]['vouchersyncdbip'])) 
 		if($remote_time_used < $total_minutes) 
-			$total_minutes = $remote_time_used;
+			$total_minutes -= $remote_time_used;
 
 	// All given vouchers were valid and this isn't simply a test.
 	// Write back the used DB's

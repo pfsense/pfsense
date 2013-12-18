@@ -416,7 +416,7 @@ function openvpn_reconfigure($mode, $settings) {
 		$devname = "ovpnc{$vpnid}";
 
 	/* is our device already configured */
-	if (mwexec("/sbin/ifconfig {$devname}", true)) {
+	if (does_interface_exist($devname)) {
 
 		/* create the tap device if required */
 		if (!file_exists("/dev/{$tunname}"))

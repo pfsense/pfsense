@@ -2826,9 +2826,9 @@ function interface_configure($interface = "wan", $reloadall = false, $linkupeven
 		if (is_array($tmpifaces)) {
 			foreach ($tmpifaces as $tmpiface) {
 				if (strstr($iface, ":"))
-					mwexec("/sbin/ifconfig " . escapeshellarg($realif) . " inet6 {$iface} delete");
+					mwexec("/sbin/ifconfig " . escapeshellarg($realif) . " inet6 {$tmpiface} delete");
 				else
-					mwexec("/sbin/ifconfig " . escapeshellarg($realif) . " inet {$iface} delete");
+					pfSense_interface_deladdress($realif, $tmpiface);
 			}
 		}
 

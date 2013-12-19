@@ -585,22 +585,17 @@ function openvpn_reconfigure($mode, $settings) {
 					$strictusercn = "false";
 					if ($settings['strictusercn'])
 						$strictusercn = "true";
-					mwexec("/bin/cat /etc/inc/openvpn.auth-user.php | /usr/bin/sed 's/\/\/<template>/{$sed}/g' >  {$g['varetc_path']}/openvpn/{$mode_id}.php");
-					$conf .= "auth-user-pass-verify /usr/local/sbin/ovpn_auth_verify '{$settings['authmode']}' {$strictusercn} {$mode_id} via-env\n";
+					$conf .= "auth-user-pass-verify /usr/local/sbin/ovpn_auth_verify user '{$settings['authmode']}' {$strictusercn} {$mode_id} via-env\n";
 				}
 				break;
 		}
 		if (!isset($settings['cert_depth']) && (strstr($settings['mode'], 'tls')))
 			$settings['cert_depth'] = 1;
 		if (is_numeric($settings['cert_depth'])) {
-			$sed = "";
 			$cert = lookup_cert($settings['certref']);
-			$servercn = cert_get_cn($cert['crt']);
-			$sed .= "\$server_cn = \"{$servercn}\";\\\n";
-			$sed .= "\$allowed_depth = {$settings['cert_depth']};\\\n";
-			mwexec("/bin/cat /etc/inc/openvpn.tls-verify.php | /usr/bin/sed 's/\/\/<template>/{$sed}/g' >  {$g['varetc_path']}/openvpn/{$mode_id}.tls-verify.php");
-			mwexec("/bin/chmod a+x {$g['varetc_path']}/openvpn/{$mode_id}.tls-verify.php");
-			$conf .= "tls-verify {$g['varetc_path']}/openvpn/{$mode_id}.tls-verify.php\n";
+			/* XXX: Seems not used at all! */
+			$servercn = urlencode(cert_get_cn($cert['crt']));
+			$conf .= "tls-verify /usr/local/sbin/ovpn_auth_verify tls '{$servercn}' {$settings['cert_depth']} via-env\n";
 		}
 
 		// The local port to listen on

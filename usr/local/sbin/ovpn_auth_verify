@@ -1,0 +1,9 @@
+#!/bin/sh
+
+password = $(echo '$password' | /usr/bin/sed 's/&/%26/g')
+RESULT = $(/usr/local/sbin/fcgicli -f /etc/inc/openvpn.auth-user.php -d "username=$username&password=$password&cn=$common_name&strictcn=$2&authcfg=$1&modeid=$3")
+if [ "${RESULT} = "OK" ]; then
+	exit 0
+fi
+
+exit 1

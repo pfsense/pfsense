@@ -582,22 +582,11 @@ function openvpn_reconfigure($mode, $settings) {
 				if (stristr($conf, "server-bridge") === false)
 					$conf .= "username-as-common-name\n";
 				if (!empty($settings['authmode'])) {
-					$authcfgs = explode(",", $settings['authmode']);
-					$sed = "\$authmodes=array(";
-					$firstsed = 0;
-					foreach ($authcfgs as $authcfg) {
-						if ($firstsed > 0)
-							$sed .= ",";
-						$firstsed = 1;
-						$sed .= "\"{$authcfg}\"";
-					}
-					$sed .= ");\\\n";
+					$strictusercn = "false";
 					if ($settings['strictusercn'])
-						$sed .= "\$strictusercn = true;";
-					$sed .= " \$modeid = \"{$mode_id}\";";
+						$strictusercn = "true";
 					mwexec("/bin/cat /etc/inc/openvpn.auth-user.php | /usr/bin/sed 's/\/\/<template>/{$sed}/g' >  {$g['varetc_path']}/openvpn/{$mode_id}.php");
-					mwexec("/bin/chmod a+x {$g['varetc_path']}/openvpn/{$mode_id}.php");
-					$conf .= "auth-user-pass-verify {$g['varetc_path']}/openvpn/{$mode_id}.php via-env\n";
+					$conf .= "auth-user-pass-verify /usr/local/sbin/ovpn_auth_verify '{$settings['authmode']}' {$strictusercn} {$mode_id} via-env\n";
 				}
 				break;
 		}

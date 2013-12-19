@@ -101,9 +101,12 @@ if (!$username || !$password) {
 	syslog(LOG_ERR, "invalid user authentication environment");
 	if (isset($_GET)) {
 		echo "FAILED";
+		closelog();
 		return;
-	} else
+	} else {
+		closelog();
 		exit(-1);
+	}
 }
 
 /* Replaced by a sed with propper variables used below(ldap parameters). */
@@ -120,18 +123,24 @@ if (($strictusercn === true) && ($common_name != $username)) {
 	syslog(LOG_WARNING, "Username does not match certificate common name ({$username} != {$common_name}), access denied.\n");
 	if (isset($_GET)) {
 		echo "FAILED";
+		closelog();
 		return;
-	} else
+	} else {
+		closelog();
 		exit(1);
+	}
 }
 
 if (!is_array($authmodes)) {
 	syslog(LOG_WARNING, "No authentication server has been selected to authenticate against. Denying authentication for user {$username}");
 	if (isset($_GET)) {
 		echo "FAILED";
+		closelog();
 		return;
-	} else
+	} else {
+		closelog();
 		exit(1);
+	}
 }
 
 $attributes = array();
@@ -149,9 +158,12 @@ if ($authenticated == false) {
 	syslog(LOG_WARNING, "user '{$username}' could not authenticate.\n");
 	if (isset($_GET)) {
 		echo "FAILED";
+		closelog();
 		return;
-	} else
+	} else {
+		closelog();
 		exit(-1);
+	}
 }
 
 if (file_exists("/etc/inc/openvpn.attributes.php"))
@@ -185,6 +197,7 @@ if (!empty($content))
         @file_put_contents("{$g['tmp_path']}/{$username}", $content);
 
 syslog(LOG_NOTICE, "user '{$username}' authenticated\n");
+closelog();
 
 if (isset($_GET))
 	echo "OK";

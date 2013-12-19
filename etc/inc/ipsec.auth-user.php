@@ -82,14 +82,28 @@ function getNasIP()
 /* setup syslog logging */
 openlog("racoon", LOG_ODELAY, LOG_AUTH);
 
-/* read data from environment */
-$username = getenv("username");
-$password = getenv("password");
-$common_name = getenv("common_name");
+if (isset($_GET)) {
+	$authmodes = explode(",", $_GET['authcfg']);
+	$username = $_GET['username'];
+	$password = $_GET['password'];
+	$common_name = $_GET['cn'];
+} else {
+	/* read data from environment */
+	$username = getenv("username");
+	$password = getenv("password");
+	$common_name = getenv("common_name");
+}
 
 if (!$username || !$password) {
 	syslog(LOG_ERR, "invalid user authentication environment");
-	exit(-1);
+	if (isset($_GET)) {
+		echo "FAILED";
+		closelog();
+		return;
+	} else {
+		closelog();
+		exit(-1);
+	}
 }
 
 /* Replaced by a sed with propper variables used below(ldap parameters). */
@@ -105,7 +119,14 @@ $authenticated = false;
 
 if (($strictusercn === true) && ($common_name != $username)) {
 	syslog(LOG_WARNING, "Username does not match certificate common name ({$username} != {$common_name}), access denied.\n");
-	exit(1);
+	if (isset($_GET)) {
+		echo "FAILED";
+		closelog();
+		return;
+	} else {
+		closelog();
+		exit(1);
+	}
 }
 
 $attributes = array();
@@ -130,14 +151,25 @@ foreach ($authmodes as $authmode) {
 
 if ($authenticated == false) {
 	syslog(LOG_WARNING, "user '{$username}' could not authenticate.\n");
-	exit(-1);
+	if (isset($_GET)) {
+		echo "FAILED";
+		closelog();
+		return;
+	} else {
+		closelog();
+		exit(-1);
+	}
 }
 
 if (file_exists("/etc/inc/ipsec.attributes.php"))
         include_once("/etc/inc/ipsec.attributes.php");
         
 syslog(LOG_NOTICE, "user '{$username}' authenticated\n");
+closelog();
 
-exit(0);
+if (isset($_GET))
+	echo "OK";
+else
+	exit(0);
 
 ?>

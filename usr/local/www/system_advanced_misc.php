@@ -73,6 +73,7 @@ $pconfig['skip_rules_gw_down'] = isset($config['system']['skip_rules_gw_down']);
 $pconfig['use_mfs_tmpvar'] = isset($config['system']['use_mfs_tmpvar']);
 $pconfig['use_mfs_tmp_size'] = $config['system']['use_mfs_tmp_size'];
 $pconfig['use_mfs_var_size'] = $config['system']['use_mfs_var_size'];
+$pconfig['noinstalllanspd'] = $config['system']['noinstalllanspd'];
 
 $pconfig['powerd_ac_mode'] = "hadp";
 if (!empty($config['system']['powerd_ac_mode']))
@@ -176,6 +177,15 @@ if ($_POST) {
 				unset($config['ipsec']['racoondebug']);
 				$need_racoon_restart = true;
 			}
+		}
+		if($_POST['noinstalllanspd'] == "yes") {
+			if (!isset($pconfig['noinstalllanspd']))
+				$need_racoon_restart = true;
+			$config['system']['noinstalllanspd'] = true;
+		} else {
+			if (isset($config['system']['noinstalllanspd']))
+				$need_racoon_restart = true;
+			unset($config['system']['noinstalllanspd']);
 		}
 
 		if($_POST['maxmss_enable'] == "yes") {
@@ -495,6 +505,16 @@ function tmpvar_checked(obj) {
 							</tr>
 							<tr>
 								<td colspan="2" valign="top" class="listtopic"><?=gettext("IP Security"); ?></td>
+							</tr>
+							<tr>
+								<td width="22%" valign="top" class="vncell"><?=gettext("LAN security associsations"); ?></td>
+								<td width="78%" class="vtable">
+									<input name="noinstalllanspd" type="checkbox" id="noinstalllanspd" value="yes" <?php if ($pconfig['noinstalllanspd']) echo "checked=\"checked\""; ?> />
+									<strong><?=gettext("Do not install LAN SPD"); ?></strong>
+									<br />
+									<?=gettext("By default, if IPSec is enabled negating SPD are inserted to provide protection. " .
+									"This behaviour can be changed by enabling this setting which will prevent installing these SPDs."); ?>
+								</td>
 							</tr>
 							<tr>
 								<td width="22%" valign="top" class="vncell"><?=gettext("Security Associations"); ?></td>

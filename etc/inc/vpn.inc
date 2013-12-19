@@ -828,7 +828,7 @@ EOD;
 		$natfilterrules = false;
 		if (is_array($a_phase2) && count($a_phase2)) {
 			/* Try to prevent people from locking themselves out of webgui. Just in case. */
-			if ($config['interfaces']['lan']) {
+			if (!isset($config['system']['noinstalllanspd']) && $config['interfaces']['lan']) {
 				$lanip = get_interface_ip("lan");
 				if (!empty($lanip) && is_ipaddrv4($lanip)) {
 					$lansn = get_interface_subnet("lan");

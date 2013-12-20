@@ -54,9 +54,12 @@ if (isset($_POST['save'])) {
 		$input_errors[] = gettext("The passwords do not match.");
 
 	if (!$input_errors) {
+		if (!session_id())
+			session_start();
 		// all values are okay --> saving changes
-		$config['system']['user'][$userindex[$HTTP_SERVER_VARS['AUTH_USER']]]['password'] = crypt(trim($_POST['passwordfld1']));
-		local_user_set($config['system']['user'][$userindex[$HTTP_SERVER_VARS['AUTH_USER']]]);
+		$config['system']['user'][$userindex[$_SESSION['Username']]]['password'] = crypt(trim($_POST['passwordfld1']));
+		local_user_set($config['system']['user'][$userindex[$_SESSION['Username']]]);
+		session_commit();
 
 		write_config();
 
@@ -101,7 +104,11 @@ if ($islocal == false) {
                 <form action="system_usermanager_passwordmg.php" method="post" name="iform" id="iform">
                         <table width="100%" border="0" cellpadding="6" cellspacing="0" summary="main area">
                                 <tr>
-                                        <td colspan="2" valign="top" class="listtopic"><?=$HTTP_SERVER_VARS['AUTH_USER']?>'s <?=gettext("Password"); ?></td>
+<?php if (!session_id())
+		session_start();
+?>
+                                        <td colspan="2" valign="top" class="listtopic"><?=$_SESSION['Username']?>'s <?=gettext("Password"); ?></td>
+<?php session_commit(); ?>
                                 </tr>
                                 <tr>
                                         <td width="22%" valign="top" class="vncell" rowspan="2"><?=gettext("Password"); ?></td>

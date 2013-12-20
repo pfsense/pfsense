@@ -1344,7 +1344,7 @@ function authenticate_user($username, $password, $authcfg = NULL, &$attributes =
 }
 
 function session_auth() {
-	global $HTTP_SERVER_VARS, $config, $_SESSION, $page;
+	global $config, $_SESSION, $page;
 
 	// Handle HTTPS httponly and secure flags
 	if($config['system']['webgui']['protocol'] == "https") {
@@ -1372,7 +1372,6 @@ function session_auth() {
 			if(! isset($config['system']['webgui']['quietlogin'])) {
 				log_auth(sprintf(gettext("Successful login for user '%1\$s' from: %2\$s"), $_POST['usernamefld'], $_SERVER['REMOTE_ADDR']));
 			}
-			$HTTP_SERVER_VARS['AUTH_USER'] = $_SESSION['Username'];
 			if (isset($_POST['postafterlogin']))
 				return true;
 			else {
@@ -1464,7 +1463,6 @@ function session_auth() {
 	if ($_GET['enable_ajax'])
 		unset($_SESSION['NO_AJAX']);
 
-	$HTTP_SERVER_VARS['AUTH_USER'] = $_SESSION['Username'];
 	return true;
 }
 

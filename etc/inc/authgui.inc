@@ -51,7 +51,7 @@ if (!session_auth()) {
  * We give them access only to the appropriate pages based on
  * the user or group privileges.
  */
-$allowedpages = getAllowedPages($HTTP_SERVER_VARS['AUTH_USER']);
+$allowedpages = getAllowedPages($_SESSION['Username']);
 
 /*
  * redirect to first allowed page if requesting a wrong url

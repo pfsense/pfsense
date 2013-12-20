@@ -911,7 +911,6 @@ function echo_array($array,$return_me=false){
  *   null
  ******/
 function display_top_tabs(& $tab_array, $no_drop_down = false) {
-	global $HTTP_SERVER_VARS;
 	global $config;
 	global $g;
 	global $tab_array_indent;

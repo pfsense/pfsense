@@ -45,7 +45,7 @@ require_once("rrd.inc");
 
 // Do not process while booting
 if($g['booting'])
-	exit;
+	return;
 
 function restart_packages() {
 	global $oldip, $curwanip, $g;
@@ -96,13 +96,13 @@ log_error("rc.newwanip: on (IP address: {$curwanip}) (interface: {$interface}) (
 if($curwanip == "0.0.0.0" || !is_ipaddr($curwanip)) {
 	log_error("rc.newwanip: Failed to update {$interface} IP, restarting...");
 	send_event("interface reconfigure {$interface}");
-	exit;
+	return;
 }
 
 if (empty($interface)) {
 	filter_configure();
 	restart_packages();
-	exit;
+	return;
 }
 
 $oldip = "0.0.0.0";

@@ -85,8 +85,9 @@ if (empty($curwanipv6) || !is_ipaddrv6($curwanipv6)) {
         exit;
 }
 
-if (!empty($_ENV['new_domain_name_servers'])) {
-	$name_servers = explode(" ", $_ENV['new_domain_name_servers']);
+$new_domain_name_servers = getenv("new_domain_name_servers");
+if (!empty($new_domain_name_servers)) {
+	$name_servers = explode(" ", $new_domain_name_servers);
 	$valid_ns = array();
 	foreach($name_servers as $ns) {
 		if (is_ipaddrv6(trim($ns)))
@@ -96,8 +97,9 @@ if (!empty($_ENV['new_domain_name_servers'])) {
 	if (count($valid_ns > 0))
 		file_put_contents("{$g['varetc_path']}/nameserver_v6{$interface}", implode("\n", $valid_ns));
 }
-if (!empty($_ENV['new_domain_name']))
-	file_put_contents("{$g['varetc_path']}/searchdomain_v6{$interface}", $_ENV['new_domain_name']);
+$new_domain_name = getenv("new_domain_name");
+if (!empty($new_domain_name))
+	file_put_contents("{$g['varetc_path']}/searchdomain_v6{$interface}", $new_domain_name);
 
 /* write current WAN IPv6 to file */
 file_put_contents("{$g['vardb_path']}/{$interface}_ipv6", $curwanipv6);

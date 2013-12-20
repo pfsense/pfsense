@@ -876,10 +876,9 @@ function set_device_perms() {
 
 function get_config_user() {
 	if (empty($_SESSION["Username"])) {
-		if (empty($_ENV['USER']) || $_ENV['USER'] == "root")
+		$username = getenv("USER");
+		if (empty($conuser) || $conuser == "root")
 			$username = "(system)";
-		else
-			$username = $_ENV['USER'];
 	} else
 		$username = $_SESSION["Username"];
 

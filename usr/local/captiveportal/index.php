@@ -57,7 +57,7 @@ if (empty($cpcfg)) {
 
 $cpzoneid = $cpcfg['zoneid'];
 
-$orig_host = $_ENV['HTTP_HOST'];
+$orig_host = $_SERVER['HTTP_HOST'];
 /* NOTE: IE 8/9 is buggy and that is why this is needed */
 $orig_request = trim($_REQUEST['redirurl'], " /");
 $clientip = $_SERVER['REMOTE_ADDR'];

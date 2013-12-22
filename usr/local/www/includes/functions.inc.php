@@ -152,7 +152,10 @@ function get_pfstate($percent=false) {
 		$curentries = $matches[1];
 	}
 	if ($percent)
-		return round(($curentries / $maxstates) * 100, 0);
+		if ($maxstates > 0)
+			return round(($curentries / $maxstates) * 100, 0);
+		else
+			return "NA";
 	else
 		return $curentries . "/" . $maxstates;
 }
@@ -172,7 +175,10 @@ function get_mbuf($percent=false) {
 	$mbufs_output=trim(`/usr/bin/netstat -mb | /usr/bin/grep "mbuf clusters in use" | /usr/bin/awk '{ print $1 }'`);
 	list( $mbufs_current, $mbufs_cache, $mbufs_total, $mbufs_max ) = explode( "/", $mbufs_output);
 	if ($percent)
-		return round(($mbufs_total / $mbufs_max) * 100, 0);
+		if ($mbufs_max > 0)
+			return round(($mbufs_total / $mbufs_max) * 100, 0);
+		else
+			return "NA";
 	else
 		return "{$mbufs_total}/{$mbufs_max}";
 }
@@ -217,7 +223,10 @@ function mem_usage() {
 	$totalMem = $memory[0];
 	$availMem = $memory[1] + $memory[2] + $memory[3];
 	$usedMem = $totalMem - $availMem;
-	$memUsage = round(($usedMem * 100) / $totalMem, 0);
+	if ($totalMem > 0)
+		$memUsage = round(($usedMem * 100) / $totalMem, 0);
+	else
+		$memUsage = "NA";
 
 	return $memUsage;
 }

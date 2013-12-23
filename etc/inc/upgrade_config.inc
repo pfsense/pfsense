@@ -2818,6 +2818,7 @@ function upgrade_082_to_083() {
 		$config['captiveportal']['cpzone'] = array();
 		$config['captiveportal']['cpzone'] = $tmpcp;
 		$config['captiveportal']['cpzone']['zoneid'] = 8000;
+		$config['captiveportal']['cpzone']['zone'] = "cpzone";
 		if ($config['captiveportal']['cpzone']['auth_method'] == "radius")
 			$config['captiveportal']['cpzone']['radius_protocol'] = "PAP";
 	}

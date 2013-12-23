@@ -1617,8 +1617,13 @@ function set_sysctl($values) {
  */
 function get_memory() {
 
-	$physmem = trim(`sysctl -n hw.physmem`, " \n");
-	$realmem = trim(`sysctl -n hw.realmem`, " \n");
+	$output = "";
+	$_gb = exec("/sbin/sysctl -n hw.physmem", $output);
+	$physmem = trim($output[0], " \n");
+	unset($output);
+	$_gb = exec("/sbin/sysctl -n hw.physmem", $output);
+	$realmem = trim($output[0], " \n");
+	unset($output, $_gb);
 	/* convert from bytes to megabytes */
 	return array(($physmem/1048576),($realmem/1048576));
 }

@@ -145,8 +145,10 @@ function get_pfstate($percent=false) {
 	if (preg_match("/([0-9]+)/", $curentries, $matches)) {
 		$curentries = $matches[1];
 	}
+	if (!is_number($curentries))
+		$curentries = 0;
 	if ($percent)
-		if ($maxstates > 0)
+		if (intval($maxstates) > 0)
 			return round(($curentries / $maxstates) * 100, 0);
 		else
 			return "NA";

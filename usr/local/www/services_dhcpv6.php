@@ -108,7 +108,6 @@ if (is_array($config['dhcpdv6'][$if])){
 	list($pconfig['wins1'],$pconfig['wins2']) = $config['dhcpdv6'][$if]['winsserver'];
 	list($pconfig['dns1'],$pconfig['dns2']) = $config['dhcpdv6'][$if]['dnsserver'];
 	$pconfig['enable'] = isset($config['dhcpdv6'][$if]['enable']);
-	$pconfig['denyunknown'] = isset($config['dhcpdv6'][$if]['denyunknown']);
 	$pconfig['ddnsdomain'] = $config['dhcpdv6'][$if]['ddnsdomain'];
 	$pconfig['ddnsupdate'] = isset($config['dhcpdv6'][$if]['ddnsupdate']);
 	list($pconfig['ntp1'],$pconfig['ntp2']) = $config['dhcpdv6'][$if]['ntpserver'];
@@ -293,7 +292,6 @@ if ($_POST) {
 
 		$config['dhcpdv6'][$if]['domain'] = $_POST['domain'];
 		$config['dhcpdv6'][$if]['domainsearchlist'] = $_POST['domainsearchlist'];
-		$config['dhcpdv6'][$if]['denyunknown'] = ($_POST['denyunknown']) ? true : false;
 		$config['dhcpdv6'][$if]['enable'] = ($_POST['enable']) ? true : false;
 		$config['dhcpdv6'][$if]['ddnsdomain'] = $_POST['ddnsdomain'];
 		$config['dhcpdv6'][$if]['ddnsupdate'] = ($_POST['ddnsupdate']) ? true : false;
@@ -407,7 +405,6 @@ include("head.inc");
 		document.iform.nextserver.disabled = endis;
 		document.iform.filename.disabled = endis;
 		document.iform.rootpath.disabled = endis;
-		document.iform.denyunknown.disabled = endis;
 	}
 
 	function show_shownumbervalue() {
@@ -527,13 +524,6 @@ display_top_tabs($tab_array);
 			<strong><?php printf(gettext("Enable DHCPv6 server on " .
 			"%s " .
 			"interface"),htmlspecialchars($iflist[$if]));?></strong></td>
-			</tr>
-			<tr>
-			<td width="22%" valign="top" class="vtable">&nbsp;</td>
-			<td width="78%" class="vtable">
-				<input name="denyunknown" id="denyunknown" type="checkbox" value="yes" <?php if ($pconfig['denyunknown']) echo "checked"; ?>>
-				<strong><?=gettext("Deny unknown clients");?></strong><br>
-				<?=gettext("If this is checked, only the clients defined below will get DHCP leases from this server. ");?></td>
 			</tr>
 			<tr>
 			<?php

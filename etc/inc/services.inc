@@ -1086,9 +1086,6 @@ EOD;
 		}
 		$dhcpdv6conf .= " {\n";
 
-		if (isset($dhcpv6ifconf['denyunknown']))
-		   $dhcpdv6conf .= "		deny unknown-clients;\n";
-
 		$dhcpdv6conf .= <<<EOD
 	range6 {$dhcpv6ifconf['range']['from']} {$dhcpv6ifconf['range']['to']};
 $dnscfgv6

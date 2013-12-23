@@ -99,22 +99,16 @@ function leasecmp($a, $b) {
 function adjust_gmt($dt) {
 	global $config; 
 	$dhcpd = $config['dhcpd'];
-	foreach ($dhcpd as $dhcpleaseinlocaltime) {
-		$dhcpleaseinlocaltime = $dhcpleaseinlocaltime['dhcpleaseinlocaltime'];
+	foreach ($dhcpd as $dhcpditem) {
+		$dhcpleaseinlocaltime = $dhcpditem['dhcpleaseinlocaltime'];
 		if ($dhcpleaseinlocaltime == "yes") 
 			break;
 	}
-	$timezone = $config['system']['timezone'];
-	$ts = strtotime($dt . " GMT");
 	if ($dhcpleaseinlocaltime == "yes") {
-		$this_tz = new DateTimeZone($timezone); 
-		$dhcp_lt = new DateTime(strftime("%I:%M:%S%p", $ts), $this_tz); 
-		$offset = $this_tz->getOffset($dhcp_lt);
-		$ts = $ts + $offset;
+		$ts = strtotime($dt . " GMT");
 		return strftime("%Y/%m/%d %I:%M:%S%p", $ts);
-	}
-	else
-		return strftime("%Y/%m/%d %H:%M:%S", $ts);
+	} else
+		return $dt;
 }
 
 function remove_duplicate($array, $field)

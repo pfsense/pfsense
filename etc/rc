@@ -402,6 +402,10 @@ echo -n "Launching the init system..."
 /usr/bin/touch $varrunpath/booting
 /etc/rc.bootup
 
+# /etc/rc.bootup unset $g['booting'], remove file right now to be
+# consistent
+/bin/rm $varrunpath/booting
+
 # If a shell was selected from recovery 
 # console then just drop to the shell now.
 if [ -f "/tmp/donotbootup" ]; then
@@ -430,7 +434,6 @@ echo "done."
 /bin/chmod a+rw /tmp/.
 
 echo "Bootup complete"
-/bin/rm $varrunpath/booting
 
 /usr/local/bin/beep.sh start 2>&1 >/dev/null
 

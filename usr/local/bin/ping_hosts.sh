@@ -75,12 +75,15 @@ for TOPING in $PINGHOSTS ; do
 	fi
 	echo Processing $DSTIP
 	# Look for a service being down
+	# Read in previous status
+	PREVIOUSSTATUS=""
+	if [ -f "/var/db/pingstatus/${DSTIP}" ]; then
+		PREVIOUSSTATUS=`cat /var/db/pingstatus/$DSTIP`
+	fi
 	$PINGCMD -c $COUNT -S $SRCIP $DSTIP
 	if [ $? -eq 0 ]; then
 		# Host is up
-		# Read in previous status
-		PREVIOUSSTATUS=`cat /var/db/pingstatus/$DSTIP`
-		if [ "$PREVIOUSSTATUS" = "DOWN" ]; then
+		if [ "$PREVIOUSSTATUS" != "UP" ]; then
 			# Service restored
 			if [ "$SERVICERESTOREDSCRIPT" != "" ]; then
 				echo "$DSTIP is UP, previous state was DOWN .. Running $SERVICERESTOREDSCRIPT"
@@ -91,8 +94,7 @@ for TOPING in $PINGHOSTS ; do
 		fi
 	else
 		# Host is down
-		PREVIOUSSTATUS=`cat /var/db/pingstatus/$DSTIP`
-		if [ "$PREVIOUSSTATUS" = "UP" ]; then
+		if [ "$PREVIOUSSTATUS" != "DOWN" ]; then
 			# Service is down
 			if [ "$FAILURESCRIPT" != "" ]; then
 				echo "$DSTIP is DOWN, previous state was UP ..  Running $FAILURESCRIPT"

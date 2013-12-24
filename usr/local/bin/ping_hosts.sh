@@ -120,7 +120,7 @@ for TOPING in $PINGHOSTS ; do
 	#WANTIME=`rrdtool fetch /var/db/rrd/wan-quality.rrd AVERAGE -r 120 -s -1min -e -1min | grep ":" | cut -f3 -d" " | cut -d"e" -f1`
 	echo "Checking wan ping time $WANTIME"
 	echo $WANTIME > /var/db/wanaverage
-	if [ "$WANTHRESHOLD" != "" ]; then
+	if [ "$WANTHRESHOLD" != "" -a "$WANTIME" != "" ]; then
 		if [ $(echo "${WANTIME} > ${WANTHRESHOLD}" | /usr/bin/bc) -eq 1 ]; then
 			echo "$DSTIP has exceeded wan ping threshold $WANTIME / $WANTHRESHOLD .. Running $FAILURESCRIPT"
 			echo "$DSTIP has exceeded wan ping threshold $WANTIME / $WANTHRESHOLD .. Running $FAILURESCRIPT" | logger -p daemon.info -i -t PingMonitor

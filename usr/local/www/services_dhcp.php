@@ -184,6 +184,9 @@ if (is_array($dhcpdconf)) {
 	list($pconfig['dns1'],$pconfig['dns2']) = $dhcpdconf['dnsserver'];
 	$pconfig['denyunknown'] = isset($dhcpdconf['denyunknown']);
 	$pconfig['ddnsdomain'] = $dhcpdconf['ddnsdomain'];
+	$pconfig['ddnsdomainprimary'] = $dhcpdconf['ddnsdomainprimary'];
+	$pconfig['ddnsdomainkeyname'] = $dhcpdconf['ddnsdomainkeyname'];
+	$pconfig['ddnsdomainkey'] = $dhcpdconf['ddnsdomainkey'];
 	$pconfig['ddnsupdate'] = isset($dhcpdconf['ddnsupdate']);
 	$pconfig['mac_allow'] = $dhcpdconf['mac_allow'];
 	$pconfig['mac_deny'] = $dhcpdconf['mac_deny'];
@@ -280,6 +283,11 @@ if ($_POST) {
 			$input_errors[] = gettext("The maximum lease time must be at least 60 seconds and higher than the default lease time.");
 		if (($_POST['ddnsdomain'] && !is_domain($_POST['ddnsdomain'])))
 			$input_errors[] = gettext("A valid domain name must be specified for the dynamic DNS registration.");
+		if (($_POST['ddnsdomain'] && !is_ipaddrv4($_POST['ddnsdomainprimary'])))
+			$input_errors[] = gettext("A valid primary domain name server IP address must be specified for the dynamic domain name.");
+		if (($_POST['ddnsdomainkey'] && !$_POST['ddnsdomainkeyname']) ||
+			($_POST['ddnsdomainkeyname'] && !$_POST['ddnsdomainkey']))
+			$input_errors[] = gettext("You must specify both a valid domain key and key name.");
 		if ($_POST['domainsearchlist']) {
 			$domain_array=preg_split("/[ ;]+/",$_POST['domainsearchlist']);
 			foreach ($domain_array as $curdomain) {
@@ -471,6 +479,9 @@ if ($_POST) {
 		$dhcpdconf['domainsearchlist'] = $_POST['domainsearchlist'];
 		$dhcpdconf['denyunknown'] = ($_POST['denyunknown']) ? true : false;
 		$dhcpdconf['ddnsdomain'] = $_POST['ddnsdomain'];
+		$dhcpdconf['ddnsdomainprimary'] = $_POST['ddnsdomainprimary'];
+		$dhcpdconf['ddnsdomainkeyname'] = $_POST['ddnsdomainkeyname'];
+		$dhcpdconf['ddnsdomainkey'] = $_POST['ddnsdomainkey'];
 		$dhcpdconf['ddnsupdate'] = ($_POST['ddnsupdate']) ? true : false;
 		$dhcpdconf['mac_allow'] = $_POST['mac_allow'];
 		$dhcpdconf['mac_deny'] = $_POST['mac_deny'];
@@ -612,6 +623,9 @@ include("head.inc");
 		document.iform.staticarp.disabled = endis;
 		document.iform.dhcpleaseinlocaltime.disabled = endis;
 		document.iform.ddnsdomain.disabled = endis;
+		document.iform.ddnsdomainprimary.disabled = endis;
+		document.iform.ddnsdomainkeyname.disabled = endis;
+		document.iform.ddnsdomainkey.disabled = endis;
 		document.iform.ddnsupdate.disabled = endis;
 		document.iform.mac_allow.disabled = endis;
 		document.iform.mac_deny.disabled = endis;
@@ -890,14 +904,14 @@ include("head.inc");
 			<td width="22%" valign="top" class="vncell"><?=gettext("Gateway");?></td>
 			<td width="78%" class="vtable">
 				<input name="gateway" type="text" class="formfld host" id="gateway" size="20" value="<?=htmlspecialchars($pconfig['gateway']);?>"><br>
-				 <?=gettext("The default is to use the IP on this interface of the firewall as the gateway. Specify an alternate gateway here if this is not the correct gateway for your network. Type \"none\" for no gateway assignment.");?>
+				<?=gettext("The default is to use the IP on this interface of the firewall as the gateway. Specify an alternate gateway here if this is not the correct gateway for your network. Type \"none\" for no gateway assignment.");?>
 			</td>
 			</tr>
 			<tr>
 			<td width="22%" valign="top" class="vncell"><?=gettext("Domain name");?></td>
 			<td width="78%" class="vtable">
 				<input name="domain" type="text" class="formfld unknown" id="domain" size="20" value="<?=htmlspecialchars($pconfig['domain']);?>"><br>
-				 <?=gettext("The default is to use the domain name of this system as the default domain name provided by DHCP. You may specify an alternate domain name here.");?>
+				<?=gettext("The default is to use the domain name of this system as the default domain name provided by DHCP. You may specify an alternate domain name here.");?>
 			</td>
 			</tr>
 			<tr>
@@ -996,6 +1010,12 @@ include("head.inc");
 					<input name="ddnsdomain" type="text" class="formfld unknown" id="ddnsdomain" size="20" value="<?=htmlspecialchars($pconfig['ddnsdomain']);?>"><br />
 					<?=gettext("Note: Leave blank to disable dynamic DNS registration.");?><br />
 					<?=gettext("Enter the dynamic DNS domain which will be used to register client names in the DNS server.");?>
+					<input name="ddnsdomainprimary" type="text" class="formfld unknown" id="ddnsdomainprimary" size="20" value="<?=htmlspecialchars($pconfig['ddnsdomainprimary']);?>"><br>
+					<?=gettext("Enter the primary domain name server IP address for the dynamic domain name.");?><br />
+					<input name="ddnsdomainkeyname" type="text" class="formfld unknown" id="ddnsdomainkeyname" size="20" value="<?=htmlspecialchars($pconfig['ddnsdomainkeyname']);?>"><br />
+					<?=gettext("Enter the dynamic DNS domain key name which will be used to register client names in the DNS server.");?>
+					<input name="ddnsdomainkey" type="text" class="formfld unknown" id="ddnsdomainkey" size="20" value="<?=htmlspecialchars($pconfig['ddnsdomainkey']);?>"><br />
+					<?=gettext("Enter the dynamic DNS domain key secret which will be used to register client names in the DNS server.");?>
 				</div>
 			</td>
 			</tr>

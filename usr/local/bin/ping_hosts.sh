@@ -110,7 +110,7 @@ for TOPING in $PINGHOSTS ; do
 	echo "Ping returned $?"
 	echo $PINGTIME > /var/db/pingmsstatus/$DSTIP
 	if [ "$THRESHOLD" != "" ]; then
-		if [ "$PINGTIME" -gt "$THRESHOLD" ]; then
+		if [ $(echo "${PINGTIME} > ${THRESHOLD}" | /usr/bin/bc) -eq 1 ]; then
 			echo "$DSTIP has exceeded ping threshold $PINGTIME / $THRESHOLD .. Running $FAILURESCRIPT"
 			echo "$DSTIP has exceeded ping threshold $PINGTIME / $THRESHOLD .. Running $FAILURESCRIPT" | logger -p daemon.info -i -t PingMonitor
 			sh -c $FAILURESCRIPT
@@ -121,7 +121,7 @@ for TOPING in $PINGHOSTS ; do
 	echo "Checking wan ping time $WANTIME"
 	echo $WANTIME > /var/db/wanaverage
 	if [ "$WANTHRESHOLD" != "" ]; then
-		if [ "$WANTIME" -gt "$WANTHRESHOLD" ]; then
+		if [ $(echo "${WANTIME} > ${WANTHRESHOLD}" | /usr/bin/bc) -eq 1 ]; then
 			echo "$DSTIP has exceeded wan ping threshold $WANTIME / $WANTHRESHOLD .. Running $FAILURESCRIPT"
 			echo "$DSTIP has exceeded wan ping threshold $WANTIME / $WANTHRESHOLD .. Running $FAILURESCRIPT" | logger -p daemon.info -i -t PingMonitor
 			sh -c $FAILURESCRIPT

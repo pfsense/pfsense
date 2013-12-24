@@ -1192,7 +1192,9 @@ function mwexec($command, $mute = false, $clearsigmask = false) {
 	if(($retval <> 0) && ($mute === false)) {
 		$output = implode(" ", $oarr);
 		log_error(sprintf(gettext("The command '%1\$s' returned exit code '%2\$d', the output was '%3\$s' "), $command, $retval, $output));
+		unset($output);
 	}
+	unset($oarr);
 	return $retval;
 }
 

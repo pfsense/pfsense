@@ -1344,15 +1344,18 @@ function captiveportal_free_dnrules($rulenos_start = 2000, $rulenos_range_max = 
 	$cpruleslck = lock("captiveportalrulesdn", LOCK_EX);
 	if (file_exists("{$g['vardb_path']}/captiveportaldn.rules")) {
 		$rules = unserialize(file_get_contents("{$g['vardb_path']}/captiveportaldn.rules"));
-		for ($ridx = $rulenos_start; $ridx < $rulenos_range_max; $ridx++) {
+		while ($ridx < $rulenos_range_max) {
 			if ($rules[$ridx] == $cpzone) {
 				$rules[$ridx] = false;
 				$ridx++;
 				$rules[$ridx] = false;
-			}
+				$ridx++;
+			} else
+				$ridx += 2;
 		}
+		file_put_contents("{$g['vardb_path']}/captiveportaldn.rules", serialize($rules));
+		unset($rules);
 	}
-	file_put_contents("{$g['vardb_path']}/captiveportaldn.rules", serialize($rules));
 	unlock($cpruleslck);
 }
 
@@ -1363,24 +1366,28 @@ function captiveportal_get_next_dn_ruleno($rulenos_start = 2000, $rulenos_range_
 	$ruleno = 0;
 	if (file_exists("{$g['vardb_path']}/captiveportaldn.rules")) {
 		$rules = unserialize(file_get_contents("{$g['vardb_path']}/captiveportaldn.rules"));
-		for ($ridx = $rulenos_start; $ridx < $rulenos_range_max; $ridx++) {
-			if ($rules[$ridx]) {
+		$ridx = $rulenos_start;
+		while ($ridx < $rulenos_range_max) {
+			if ($rules[$ridx] === false) {
+				$ridx += 2;
+			} else {
+				$ruleno = $ridx;
+				$rules[$ridx] = $cpzone;
 				$ridx++;
-				continue;
+				$rules[$ridx] = $cpzone;
+				break;
 			}
-			$ruleno = $ridx;
-			$rules[$ridx] = $cpzone;
-			$rules[++$ridx] = $cpzone;
-			break;
 		}
 	} else {
 		$rules = array_pad(array(), $rulenos_range_max, false);
 		$ruleno = $rulenos_start;
 		$rules[$rulenos_start] = $cpzone;
-		$rules[++$rulenos_start] = $cpzone;
+		$rulenos_start++;
+		$rules[$rulenos_start] = $cpzone;
 	}
 	file_put_contents("{$g['vardb_path']}/captiveportaldn.rules", serialize($rules));
 	unlock($cpruleslck);
+	unset($rules);
 
 	return $ruleno;
 }
@@ -1395,6 +1402,7 @@ function captiveportal_free_dn_ruleno($ruleno) {
 		$ruleno++;
 		$rules[$ruleno] = false;
 		file_put_contents("{$g['vardb_path']}/captiveportaldn.rules", serialize($rules));
+		unset($rules);
 	}
 	unlock($cpruleslck);
 }
@@ -1407,17 +1415,19 @@ function captiveportal_get_dn_passthru_ruleno($value) {
 		return NULL;
 
 	$cpruleslck = lock("captiveportalrulesdn", LOCK_EX);
+	$ruleno = NULL;
 	if (file_exists("{$g['vardb_path']}/captiveportaldn.rules")) {
 		$rules = unserialize(file_get_contents("{$g['vardb_path']}/captiveportaldn.rules"));
-		$ruleno = intval(`/sbin/ipfw -x {$cpzone} show | /usr/bin/grep {$value} |  /usr/bin/grep -v grep | /usr/bin/cut -d " " -f 5 | /usr/bin/head -n 1`);
-		if ($rules[$ruleno]) {
-			unlock($cpruleslck);
-			return $ruleno;
-		}
+		unset($output);
+		$_gb = exec("/sbin/ipfw -x {$cpzone} show | /usr/bin/grep {$value} |  /usr/bin/grep -v grep | /usr/bin/cut -d \" \" -f 5 | /usr/bin/head -n 1", $output);
+		$ruleno = intval($output[0]);
+		if (!$rules[$ruleno])
+			$ruleno = NULL;
+		unset($rules);
 	}
-
 	unlock($cpruleslck);
-	return NULL;
+
+	return $ruleno;
 }
 
 /*
@@ -1436,28 +1446,33 @@ function captiveportal_get_next_ipfw_ruleno($rulenos_start = 2, $rulenos_range_m
 	$ruleno = 0;
 	if (file_exists("{$g['vardb_path']}/captiveportal_{$cpzone}.rules")) {
 		$rules = unserialize(file_get_contents("{$g['vardb_path']}/captiveportal_{$cpzone}.rules"));
-		for ($ridx = 2; $ridx < ($rulenos_range_max - $rulenos_start); $ridx++) {
+		$ridx = $rulenos_start;
+		while ($ridx < $rulenos_range_max) {
 			if ($rules[$ridx]) {
 				/* 
 				 * This allows our traffic shaping pipes to be the in pipe the same as ruleno 
 				 * and the out pipe ruleno + 1.
 				 */
+				$ridx += 2;
+			} else {
+				$ruleno = $ridx;
+				$rules[$ridx] = $cpzone;
 				$ridx++;
-				continue;
+				$rules[$ridx] = $cpzone;
+				break;
 			}
-			$ruleno = $ridx;
-			$rules[$ridx] = "used";
-			$rules[++$ridx] = "used";
-			break;
 		}
 	} else {
 		$rules = array_pad(array(), $rulenos_range_max, false);
-		$rules[$rulenos_start] = "used";
-		$rules[++$rulenos_start] = "used";
-		$ruleno = 2;
+		$ruleno = $rulenos_start;
+		$rules[$rulenos_start] = $cpzone;
+		$rulenos_start++;
+		$rules[$rulenos_start] = $cpzone;
 	}
 	file_put_contents("{$g['vardb_path']}/captiveportal_{$cpzone}.rules", serialize($rules));
 	unlock($cpruleslck);
+	unset($rules);
+
 	return $ruleno;
 }
 
@@ -1472,10 +1487,12 @@ function captiveportal_free_ipfw_ruleno($ruleno) {
 	if (file_exists("{$g['vardb_path']}/captiveportal_{$cpzone}.rules")) {
 		$rules = unserialize(file_get_contents("{$g['vardb_path']}/captiveportal_{$cpzone}.rules"));
 		$rules[$ruleno] = false;
-		$rules[++$ruleno] = false;
+		$ruleno++;
+		$rules[$ruleno] = false;
 		file_put_contents("{$g['vardb_path']}/captiveportal_{$cpzone}.rules", serialize($rules));
 	}
 	unlock($cpruleslck);
+	unset($rules);
 }
 
 function captiveportal_get_ipfw_passthru_ruleno($value) {
@@ -1486,17 +1503,19 @@ function captiveportal_get_ipfw_passthru_ruleno($value) {
 		return NULL;
 
 	$cpruleslck = lock("captiveportalrules{$cpzone}", LOCK_EX);
+	$ruleno = NULL;
 	if (file_exists("{$g['vardb_path']}/captiveportal_{$cpzone}.rules")) {
 		$rules = unserialize(file_get_contents("{$g['vardb_path']}/captiveportal_{$cpzone}.rules"));
-		$ruleno = intval(`/sbin/ipfw -x {$cpzone} show | /usr/bin/grep {$value} |  /usr/bin/grep -v grep | /usr/bin/cut -d " " -f 1 | /usr/bin/head -n 1`);
-		if ($rules[$ruleno]) {
-			unlock($cpruleslck);
-			return $ruleno;
-		}
+		unset($output);
+		$_gb = exec("/sbin/ipfw -x {$cpzone} show | /usr/bin/grep {$value} |  /usr/bin/grep -v grep | /usr/bin/cut -d \" \" -f 5 | /usr/bin/head -n 1", $output);
+		$ruleno = intval($output[0]);
+		if (!$rules[$ruleno])
+			$ruleno = NULL;
 	}
-
 	unlock($cpruleslck);
-	return NULL;
+	unset($rules);
+
+	return $ruleno;
 }
 
 /**

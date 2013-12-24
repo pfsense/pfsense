@@ -1344,6 +1344,7 @@ function captiveportal_free_dnrules($rulenos_start = 2000, $rulenos_range_max = 
 	$cpruleslck = lock("captiveportalrulesdn", LOCK_EX);
 	if (file_exists("{$g['vardb_path']}/captiveportaldn.rules")) {
 		$rules = unserialize(file_get_contents("{$g['vardb_path']}/captiveportaldn.rules"));
+		$ridx = $rulenos_start;
 		while ($ridx < $rulenos_range_max) {
 			if ($rules[$ridx] == $cpzone) {
 				$rules[$ridx] = false;

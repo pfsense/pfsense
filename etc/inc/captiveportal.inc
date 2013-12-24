@@ -1939,6 +1939,7 @@ function portal_allow($clientip,$clientmac,$username,$password = null, $attribut
 			/* store information to database */
 			captiveportal_write_db($insertquery);
 			unlock($cpdblck);
+			unset($insertquery, $bpassword);
 
 			if (isset($config['captiveportal'][$cpzone]['radacct_enable']) && !empty($radiusservers[$radiusctx])) {
 				$acct_val = RADIUS_ACCOUNTING_START($pipeno, $username, $sessionid, $radiusservers[$radiusctx], $clientip, $clientmac);

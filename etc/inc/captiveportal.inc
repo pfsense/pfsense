@@ -716,13 +716,13 @@ function captiveportal_prune_old() {
 				} else if ($cpcfg['reauthenticateacct'] == "interimupdate") {
 					$session_time = $pruning_time - $cpentry[0];
 					if (!empty($cpentry[10]) && $cpentry[10] > 60)
-						$interval = $cpentry[10];
+						$interval = intval($cpentry[10]);
 					else
 						$interval = 0;
 					$past_interval_min = ($session_time > $interval);
-					if ($interval != 0)
+					if (!empty($interval))
 						$within_interval = ($session_time % $interval >= 0 && $session_time % $interval <= 59);
-					if ($interval === 0 || ($interval > 0 && $past_interval_min && $within_interval)) {
+					if (empty($interval) || ($interval > 0 && $past_interval_min && $within_interval)) {
 						RADIUS_ACCOUNTING_STOP($cpentry[1], // ruleno
 							$cpentry[4], // username
 							$cpentry[5], // sessionid

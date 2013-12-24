@@ -715,7 +715,7 @@ function captiveportal_prune_old() {
 						$cpentry[3]); // clientmac
 				} else if ($cpcfg['reauthenticateacct'] == "interimupdate") {
 					$session_time = $pruning_time - $cpentry[0];
-					if (!empty($cpentry[10]) && $cpentry[10] > 60)
+					if (!empty($cpentry[10]) && intval($cpentry[10]) > 60)
 						$interval = intval($cpentry[10]);
 					else
 						$interval = 0;

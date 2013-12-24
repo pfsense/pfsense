@@ -632,12 +632,6 @@ function captiveportal_prune_old() {
 	/* NOTE: while this can be simplified in non radius case keep as is for now */
 	$cpdb = captiveportal_read_db();
 
-	/*
-	 * To make sure we iterate over ALL accounts on every run the count($cpdb) is moved
-	 * outside of the loop. Otherwise the loop would evaluate count() on every iteration
-	 * and since $i would increase and count() would decrement they would meet before we
-	 * had a chance to iterate over all accounts.
-	 */
 	$unsetindexes = array();
 	$voucher_needs_sync = false;
 	/* 
@@ -1437,7 +1431,8 @@ function captiveportal_free_dn_ruleno($ruleno) {
 	if (file_exists("{$g['vardb_path']}/captiveportaldn.rules")) {
 		$rules = unserialize(file_get_contents("{$g['vardb_path']}/captiveportaldn.rules"));
 		$rules[$ruleno] = false;
-		$rules[++$ruleno] = false;
+		$ruleno++;
+		$rules[$ruleno] = false;
 		file_put_contents("{$g['vardb_path']}/captiveportaldn.rules", serialize($rules));
 	}
 	unlock($cpruleslck);

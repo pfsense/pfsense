@@ -41,10 +41,6 @@ require_once("service-utils.inc");
 log_error("Restarting/Starting all packages.");
 setup_library_paths();
 
-/* Detect if we are booting */
-if (file_exists("{$g['varrun_path']}/booting"))
-	$g['booting'] = true;
-
 $rcfiles = glob(RCFILEPREFIX . "*.sh");
 if (!$rcfiles)
 	$rcfiles = array();
@@ -75,8 +71,5 @@ if ($shell) {
 
 	pclose($shell);
 }
-
-/* done */
-unset($g['booting']);
 
 ?>

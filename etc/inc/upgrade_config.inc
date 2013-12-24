@@ -3270,11 +3270,11 @@ function upgrade_105_to_106() {
 
 	if (is_array($config['virtualip']) && is_array($config['virtualip']['vip'])) {
 		foreach ($config['virtualip']['vip'] as $vipidx => $vip) {
-			if ($vip['mode'] == "ipalias" && strstr("$vip['interface'], "_vip")) {
+			if ($vip['mode'] == "ipalias" && strstr($vip['interface'], "_vip")) {
 				/* Convert to a carp with same properties as its carp version */
 				$converted = false;
 				foreach ($config['virtualip']['vip'] as $bvip) {
-					if ($bvip['mode'] == "carp" && "{$bvip['interface']}_vip{$bvip['vhid']} == $vip['interface']) {
+					if ($bvip['mode'] == "carp" && "{$bvip['interface']}_vip{$bvip['vhid']}" == $vip['interface']) {
 						$ipaaddr = $vip['subnet'];
 						$ipamask = $vip['subnet_bits'];
 						$config['virtualip']['vip'][$vipidx] = $bvip;

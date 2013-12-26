@@ -71,6 +71,7 @@ $pconfig['loglighttpd'] = !isset($config['syslog']['nologlighttpd']);
 $pconfig['rawfilter'] = isset($config['syslog']['rawfilter']);
 $pconfig['filterdescriptions'] = $config['syslog']['filterdescriptions'];
 $pconfig['disablelocallogging'] = isset($config['syslog']['disablelocallogging']);
+$pconfig['logfilesize'] = $config['syslog']['logfilesize'];
 
 if (!$pconfig['nentries'])
 	$pconfig['nentries'] = 50;
@@ -82,7 +83,9 @@ function is_valid_syslog_server($target) {
 		|| is_hostnamewithport($target));
 }
 
-if ($_POST) {
+if ($_POST['resetlogs'] == gettext("Reset Log Files")) {
+	clear_all_log_files();
+} elseif ($_POST) {
 
 	unset($input_errors);
 	$pconfig = $_POST;
@@ -102,9 +105,15 @@ if ($_POST) {
 		$input_errors[] = gettext("Number of log entries to show must be between 5 and 2000.");
 	}
 
+	if (isset($_POST['logfilesize']) && (strlen($_POST['logfilesize']) > 0)) {
+		if (!is_numeric($_POST['logfilesize']) || ($_POST['logfilesize'] < 5120)) {
+			$input_errors[] = gettext("Log file size must be a positive integer greater than 5120.");
+		}
+	}
 	if (!$input_errors) {
 		$config['syslog']['reverse'] = $_POST['reverse'] ? true : false;
 		$config['syslog']['nentries'] = (int)$_POST['nentries'];
+		$config['syslog']['logfilesize'] = (int)$_POST['logfilesize'];
 		$config['syslog']['remoteserver'] = $_POST['remoteserver'];
 		$config['syslog']['remoteserver2'] = $_POST['remoteserver2'];
 		$config['syslog']['remoteserver3'] = $_POST['remoteserver3'];
@@ -276,6 +285,18 @@ function check_everything() {
 			<?=gettext("Hint: This is only the number of log entries displayed in the GUI. It does not affect how many entries are contained in the actual log files.") ?></td>
 		</tr>
 		<tr>
+			<td width="22%" valign="top" class="vtable">Log File Size</td>
+			<td width="78%" class="vtable">
+			<input name="logfilesize" id="logfilesize" type="text" class="formfld unknown" size="8" value="<?=htmlspecialchars($pconfig['logfilesize']);?>" /><br/>
+			<?=gettext("Logs are held in constant-size circular log files. This field controls how large each log file is, and thus how many entries may exist inside the log By default this is approximately 500KB per log file, and there are nearly 20 such log files.") ?>
+			<br/><br/>
+			<?=gettext("NOTE: Log sizes are changed the next time a log file is cleared or deleted. To immediately increase the size of the log files, you must clear all logs using the \"Reset Log Files\" option farther down this page. "); ?>
+			<?=gettext("Be aware that increasing this value increases every log file size, so disk usage will increase significantly."); ?>
+			<?=gettext("Disk space currently used by log files: ") ?><?= exec("/usr/bin/du -sh /var/log | /usr/bin/awk '{print $1;}'"); ?>.
+			<?=gettext("Remaining disk space for log files: ") ?><?= exec("/bin/df -h /var/log | /usr/bin/awk '{print $4;}'"); ?>.
+			</td>
+		</tr>
+		<tr>
 			<td valign="top" class="vtable">Log Firewall Default Blocks</td>
 			<td class="vtable">
 				<input name="logdefaultblock" type="checkbox" id="logdefaultblock" value="yes" <?php if ($pconfig['logdefaultblock']) echo "checked=\"checked\""; ?> />
@@ -322,6 +343,14 @@ function check_everything() {
 			<?php else: ?>
 			<strong><?=gettext("Disable writing log files to the local RAM disk");?></strong></td>
 			<?php endif; ?>
+		</tr>
+		<tr>
+			<td width="22%" valign="top">Reset Logs</td>
+			<td width="78%">
+				<input name="resetlogs" type="submit" class="formbtn" value="<?=gettext("Reset Log Files"); ?>"  onclick="return confirm('<?=gettext('Do you really want to reset the log files? This will erase all local log data.');?>')" />
+				<br/><br/>
+				<?= gettext("Note: Clears all local log files and reinitializes them as empty logs. This also restarts the DHCP daemon."); ?>
+			</td>
 		</tr>
 		<tr>
 			<td colspan="2" valign="top">&nbsp;</td>

@@ -301,6 +301,12 @@ echo -n "."
 DISABLESYSLOGCLOG=`/usr/bin/grep -c disablesyslogclog /cf/conf/config.xml`
 ENABLEFIFOLOG=`/usr/bin/grep -c usefifolog /cf/conf/config.xml`
 LOG_FILES="system filter dhcpd vpn pptps poes l2tps openvpn portalauth ipsec ppp relayd wireless lighttpd ntpd gateways resolver routing"
+
+DEFAULT_LOG_FILE_SIZE=`/usr/local/bin/xmllint --xpath 'string(//pfsense/syslog/logfilesize)' /conf/config.xml`
+if [ ! ${DEFAULT_LOG_FILE_SIZE} ]; then
+	DEFAULT_LOG_FILE_SIZE=511488
+fi
+
 for logfile in $LOG_FILES; do
 	if [ "$DISABLESYSLOGCLOG" -gt "0" ]; then 
 		/usr/bin/touch /var/log/$logfile.log
@@ -308,9 +314,9 @@ for logfile in $LOG_FILES; do
 		if [ ! -f /var/log/$logfile.log ]; then
 			if [ "$ENABLEFIFOLOG" -gt "0" ]; then
 				# generate fifolog files
-				/usr/sbin/fifolog_create -s 511488 /var/log/$logfile.log
+				/usr/sbin/fifolog_create -s ${DEFAULT_LOG_FILE_SIZE} /var/log/$logfile.log
 			else 
-				/usr/sbin/clog -i -s 512144 /var/log/$logfile.log
+				/usr/sbin/clog -i -s ${DEFAULT_LOG_FILE_SIZE} /var/log/$logfile.log
 			fi
 		fi
 	fi 

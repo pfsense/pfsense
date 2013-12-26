@@ -543,19 +543,37 @@ function update_changedesc($update) {
 	$changecount++;
 }
 
-function clear_log_file($logfile = "/var/log/system.log") {
+function clear_log_file($logfile = "/var/log/system.log", $restart_syslogd = true) {
 	global $config, $g;
-	exec("/usr/bin/killall syslogd");
+	if ($restart_syslogd)
+		exec("/usr/bin/killall syslogd");
 	if(isset($config['system']['disablesyslogclog'])) {
 		unlink($logfile);
 		touch($logfile);
 	} else {
+		$log_size = isset($config['syslog']['logfilesize']) ? $config['syslog']['logfilesize'] : "511488";
 		if(isset($config['system']['usefifolog']))
-			exec("/usr/sbin/fifolog_create -s 511488 {$logfile}");
+			exec("/usr/sbin/fifolog_create -s {$log_size} {$logfile}");
 		else
-			exec("/usr/sbin/clog -i -s 511488 {$logfile}");
+			exec("/usr/sbin/clog -i -s {$log_size} {$logfile}");
 	}
+	if ($restart_syslogd)
+		system_syslogd_start();
+}
+
+function clear_all_log_files() {
+	global $g;
+	exec("/usr/bin/killall syslogd");
+
+	$log_files = array("system", "filter", "dhcpd", "vpn", "pptps", "poes", "l2tps", "openvpn", "portalauth", "ipsec", "ppp", "relayd", "wireless", "lighttpd", "ntpd", "gateways", "resolver", "routing");
+	foreach ($log_files as $lfile) {
+		clear_log_file("{$g['varlog_path']}/{$lfile}.log", false);
+	}
+
 	system_syslogd_start();
+	killbyname("dhcpd");
+	services_dhcpd_configure();
+	return;
 }
 
 function dump_clog($logfile, $tail, $withorig = true, $grepfor = "", $grepinvert = "") {

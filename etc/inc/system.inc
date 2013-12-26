@@ -627,11 +627,11 @@ function system_syslogd_start() {
 		$log_size = "";
 	} else if (isset($config['system']['usefifolog'])) {
 		$log_directive = "|/usr/sbin/fifolog_writer ";
-		$log_size = "10240";
+		$log_size = isset($config['syslog']['logfilesize']) ? $config['syslog']['logfilesize'] : "10240";
 		$log_create_directive = "/usr/sbin/fifolog_create -s ";
 	} else { // Defaults to CLOG
 		$log_directive = "%";
-		$log_size = "10240";
+		$log_size = isset($config['syslog']['logfilesize']) ? $config['syslog']['logfilesize'] : "10240";
 		$log_create_directive = "/usr/sbin/clog -i -s ";
 	}
 	

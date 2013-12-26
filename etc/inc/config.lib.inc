@@ -747,7 +747,8 @@ function cleanup_backupcache($revisions = 30, $lock = false) {
 	$tocache = array();
 
 	foreach($bakfiles as $backup) { // Check for backups in the directory not represented in the cache.
-		if(filesize($backup) == 0) {
+		$backupsize = filesize($backup);
+		if($backupsize == 0) {
 			unlink($backup);
 			continue;
 		}
@@ -767,7 +768,7 @@ function cleanup_backupcache($revisions = 30, $lock = false) {
 				$newxml['revision']['description'] = "Unknown";
 			if($newxml['version'] == "")
 				$newxml['version'] = "?";
-			$tocache[$tocheck] = array('description' => $newxml['revision']['description'], 'version' => $newxml['version']);
+			$tocache[$tocheck] = array('description' => $newxml['revision']['description'], 'version' => $newxml['version'], 'filesize' => $backupsize);
 		}
 	}
 	foreach($backups as $checkbak) {
@@ -778,7 +779,7 @@ function cleanup_backupcache($revisions = 30, $lock = false) {
 			if($g['booting']) print " " . $tocheck . "r";
 		}
 	}
-	foreach($newbaks as $todo) $tocache[$todo['time']] = array('description' => $todo['description'], 'version' => $todo['version']);
+	foreach($newbaks as $todo) $tocache[$todo['time']] = array('description' => $todo['description'], 'version' => $todo['version'], 'filesize' => $todo['filesize']);
 	if(is_int($revisions) and (count($tocache) > $revisions)) {
 		$toslice = array_slice(array_keys($tocache), 0, $revisions);
 		foreach($toslice as $sliced)
@@ -809,7 +810,7 @@ function get_backups() {
 		sort($bakvers);
 		// 	$bakvers = array_reverse($bakvers);
 		foreach(array_reverse($bakvers) as $bakver)
-			$toreturn[] = array('time' => $bakver, 'description' => $confvers[$bakver]['description'], 'version' => $confvers[$bakver]['version']);
+			$toreturn[] = array('time' => $bakver, 'description' => $confvers[$bakver]['description'], 'version' => $confvers[$bakver]['version'], 'filesize' => $confvers[$bakver]['filesize']);
 	} else {
 		return false;
 	}
@@ -840,14 +841,14 @@ function backup_config() {
     }
 
 	$bakver = ($config['version'] == "") ? "?" : $config['version'];
-
-    copy($g['cf_conf_path'] . '/config.xml', $g['cf_conf_path'] . '/backup/config-' . $baktime . '.xml');
+	$bakfilename = $g['cf_conf_path'] . '/backup/config-' . $baktime . '.xml';
+	copy($g['cf_conf_path'] . '/config.xml', $bakfilename);
     if(file_exists($g['cf_conf_path'] . '/backup/backup.cache')) {
             $backupcache = unserialize(file_get_contents($g['cf_conf_path'] . '/backup/backup.cache'));
     } else {
             $backupcache = array();
     }
-    $backupcache[$baktime] = array('description' => $bakdesc, 'version' => $bakver);
+	$backupcache[$baktime] = array('description' => $bakdesc, 'version' => $bakver, 'filesize' => filesize($bakfilename));
     $bakout = fopen($g['cf_conf_path'] . '/backup/backup.cache', "w");
     fwrite($bakout, serialize($backupcache));
     fclose($bakout);

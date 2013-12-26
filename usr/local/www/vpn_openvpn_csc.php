@@ -416,6 +416,8 @@ function netbios_change() {
 							<br>
 							<?=gettext("These are the IPv4 networks that will be accessible " .
 							"from this particular client. Expressed as a comma-separated list of one or more CIDR ranges."); ?>
+							<br/><?=gettext("NOTE: You do not need to specify networks here if they have " .
+							"already been defined on the main server configuration.");?>
 						</td>
 					</tr>
 					<tr id="local_optsv6">
@@ -425,6 +427,8 @@ function netbios_change() {
 							<br>
 							<?=gettext("These are the IPv6 networks that will be accessible " .
 							"from this particular client. Expressed as a comma-separated list of one or more IP/PREFIX networks."); ?>
+							<br/><?=gettext("NOTE: You do not need to specify networks here if they have " .
+							"already been defined on the main server configuration.");?>
 						</td>
 					</tr>
 					<tr id="remote_optsv4">
@@ -436,7 +440,7 @@ function netbios_change() {
 							"to this client specifically using iroute, so that a site-to-site " .
 							"VPN can be established. " .
 							"Expressed as a comma-separated list of one or more CIDR ranges. " .
-							"You may leave this blank if there are no client-side networks to" .
+							"You may leave this blank if there are no client-side networks to " .
 							"be routed"); ?>.
 							<br/><?=gettext("NOTE: Remember to add these subnets to the " .
 							"IPv4 Remote Networks list on the correspding OpenVPN server settings.");?>
@@ -451,7 +455,7 @@ function netbios_change() {
 							"to this client specifically using iroute, so that a site-to-site " .
 							"VPN can be established. " .
 							"Expressed as a comma-separated list of one or more IP/PREFIX networks. " .
-							"You may leave this blank if there are no client-side networks to" .
+							"You may leave this blank if there are no client-side networks to " .
 							"be routed"); ?>.
 							<br/><?=gettext("NOTE: Remember to add these subnets to the " .
 							"IPv6 Remote Networks list on the correspding OpenVPN server settings.");?>

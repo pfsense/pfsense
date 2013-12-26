@@ -2881,7 +2881,7 @@ function interface_configure($interface = "wan", $reloadall = false, $linkupeven
 	}
 
 	/* media */
-	if ($wancfg['media'] || $wancfg['mediaopt']) {
+	if (!empty($wancfg['media']) || !empty($wancfg['mediaopt'])) {
 		$cmd = "/sbin/ifconfig " . escapeshellarg($realhwif);
 		if ($wancfg['media'])
 			$cmd .= " media " . escapeshellarg($wancfg['media']);

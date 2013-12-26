@@ -2849,7 +2849,7 @@ function interface_configure($interface = "wan", $reloadall = false, $linkupeven
 	 * the interface config again, which attempts to spoof the MAC again,
 	 * which cycles the link again...
 	 */
-	if ($wancfg['spoofmac'] && ($wancfg['spoofmac'] != $mac)) {
+	if (!empty($wancfg['spoofmac']) && ($wancfg['spoofmac'] != $mac)) {
 		mwexec("/sbin/ifconfig " . escapeshellarg($realhwif) .
 			" link " . escapeshellarg($wancfg['spoofmac']));
 

@@ -533,11 +533,7 @@ function write_config($desc="Unknown", $backup = true) {
 		return -1;
 	}
 	
-	if($g['platform'] == "embedded" or $g['platform'] == "nanobsd") {
-		cleanup_backupcache(5, true);
-	} else {
-		cleanup_backupcache(30, true);
-	}
+	cleanup_backupcache(true);
 
 	/* re-read configuration */
 	/* NOTE: We assume that the file can be parsed since we wrote it. */
@@ -725,10 +721,12 @@ function config_validate($conffile) {
 	return true;
 }
 
-function cleanup_backupcache($revisions = 30, $lock = false) {
+function cleanup_backupcache($lock = false) {
 	global $g;
 	$i = false;
-	
+
+	$revisions = get_config_backup_count();
+
 	if (!$lock)
 		$lockkey = lock('config');
 
@@ -907,6 +905,17 @@ function make_config_revision_entry($desc = null, $override_user = null) {
 		$revision['description'] = "{$username}: " . $desc;
 	$revision['username'] = $username;
 	return $revision;
+}
+
+function get_config_backup_count() {
+	global $config, $g;
+	if (isset($config['system']['backupcount']) && is_numeric($config['system']['backupcount']) && ($config['system']['backupcount'] >= 0)) {
+		return intval($config['system']['backupcount']);
+	} elseif ($g['platform'] == "embedded" or $g['platform'] == "nanobsd") {
+		return 5;
+	} else {
+		return 30;
+	}
 }
 
 function pfSense_clear_globals() {

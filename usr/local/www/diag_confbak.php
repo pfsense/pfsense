@@ -41,6 +41,17 @@
 
 require("guiconfig.inc");
 
+if (isset($_POST['backupcount'])) {
+	if (is_numeric($_POST['backupcount']) && ($_POST['backupcount'] >= 0)) {
+		$config['system']['backupcount'] = $_POST['backupcount'];
+		$changedescr = $config['system']['backupcount'];
+	} else {
+		unset($config['system']['backupcount']);
+		$changedescr = "(platform default)";
+	}
+	write_config("Changed backup revision count to {$changedescr}");
+}
+
 if($_GET['newver'] != "") {
 	conf_mount_rw();
 	$confvers = unserialize(file_get_contents($g['cf_conf_path'] . '/backup/backup.cache'));
@@ -91,7 +102,7 @@ if (($_GET['diff'] == 'Diff') && isset($_GET['oldtime']) && isset($_GET['newtime
 	}
 }
 
-cleanup_backupcache();
+cleanup_backupcache(false);
 $confvers = get_backups();
 unset($confvers['versions']);
 
@@ -145,9 +156,36 @@ include("head.inc");
 		<tr>
 			<td>
 				<div id="mainarea">
+					<form action="diag_confbak.php" method="post">
+					<table class="tabcont" align="center" width="100%" border="0" cellpadding="6" cellspacing="0">
+						<tr>
+							<td width="10%">&nbsp;</td>
+							<td width="15%" valign="top"><?=gettext("Backup Count");?></td>
+							<td width="10%" align="top">
+							<input name="backupcount" type="text" class="formfld unknown" size="5" value="<?=htmlspecialchars($config['system']['backupcount']);?>"/>
+							</td>
+							<td width="60%">
+							<?= gettext("Enter the number of older configurations to keep in the local backup cache. By default this is 30 for a full install or 5 on NanoBSD."); ?>
+							</td>
+							<td width= "5%"><input name="save" type="submit" class="formbtn" value="<?=gettext("Save"); ?>"></td>
+						</tr>
+						<tr>
+							<td class="vncell">&nbsp;</td>
+							<td colspan="4" class="vncell">
+							<?= gettext("NOTE: Be aware of how much space is consumed by backups before adjusting this value. Current space used by backups: "); ?> <?= exec("/usr/bin/du -sh /conf/backup | /usr/bin/awk '{print $1;}'") ?>
+							</td>
+						</tr>
+					</table>
+					</form>
 					<form action="diag_confbak.php" method="get">
 					<table class="tabcont" align="center" width="100%" border="0" cellpadding="6" cellspacing="0">
 						<?php if (is_array($confvers)): ?>
+						<tr>
+							<td colspan="7" class="list">
+							<?= gettext("To view the differences between an older configuration and a newer configuration, select the older configuration using the left column of radio options and select the newer configuration in the right colomn, then press the Diff button."); ?>
+							<br/><br/>
+							</td>
+						</tr>
 						<tr>
 							<td width="5%" colspan="2" valign="middle" align="center" class="list" nowrap><input type="submit" name="diff" value="<?=gettext("Diff"); ?>"></td>
 							<td width="20%" class="listhdrr"><?=gettext("Date");?></td>

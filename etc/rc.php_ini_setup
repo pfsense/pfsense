@@ -299,7 +299,7 @@ EOF
 
 
 PHPFPMMAX=3
-if [ "$LOWMEM" = "TRUE" ]; then
+if [ $REALMEM -lt 250 ]; then
 	PHPFPMMAX=2
 elif [ ${REALMEM} -gt 1000 ]; then
 	PHPFPMMAX=4

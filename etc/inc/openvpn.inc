@@ -894,6 +894,22 @@ function openvpn_resync_csc(& $settings) {
 			$conf .= "ifconfig-push {$clientip} {$mask}\n";
 	}
 
+	if ($settings['local_network']) {
+		$conf .= openvpn_gen_routes($settings['local_network'], "ipv4", true);
+	}
+	if ($settings['local_networkv6']) {
+		$conf .= openvpn_gen_routes($settings['local_networkv6'], "ipv6", true);
+	}
+
+	// Add a remote network iroute if set
+	if (openvpn_validate_cidr($settings['remote_network'], "", true, "ipv4") === FALSE) {
+		$conf .= openvpn_gen_routes($settings['remote_network'], "ipv4", false, true);
+	}
+	// Add a remote network iroute if set
+	if (openvpn_validate_cidr($settings['remote_networkv6'], "", true, "ipv6") === FALSE) {
+		$conf .= openvpn_gen_routes($settings['remote_networkv6'], "ipv6", false, true);
+	}
+
 	openvpn_add_dhcpopts($settings, $conf);
 
 	if ($settings['gwredir'])
@@ -1306,7 +1322,7 @@ function openvpn_clear_route($mode, $settings) {
 	}
 }
 
-function openvpn_gen_routes($value, $ipproto = "ipv4", $push = false) {
+function openvpn_gen_routes($value, $ipproto = "ipv4", $push = false, $iroute = false) {
 	$routes = "";
 	if (empty($value))
 		return "";
@@ -1314,9 +1330,9 @@ function openvpn_gen_routes($value, $ipproto = "ipv4", $push = false) {
 
 	foreach ($networks as $network) {
 		if ($ipproto == "ipv4")
-			$route = openvpn_gen_route_ipv4($network);
+			$route = openvpn_gen_route_ipv4($network, $iroute);
 		else
-			$route = openvpn_gen_route_ipv6($network);
+			$route = openvpn_gen_route_ipv6($network, $iroute);
 
 		if ($push)
 			$routes .= "push \"{$route}\"\n";
@@ -1326,17 +1342,19 @@ function openvpn_gen_routes($value, $ipproto = "ipv4", $push = false) {
 	return $routes;
 }
 
-function openvpn_gen_route_ipv4($network) {
+function openvpn_gen_route_ipv4($network, $iroute = false) {
+	$i = ($iroute) ? "i" : "";
 	list($ip, $mask) = explode('/', trim($network));
 	$mask = gen_subnet_mask($mask);
-	return "route $ip $mask";
+	return "{$i}route $ip $mask";
 }
 
-function openvpn_gen_route_ipv6($network) {
+function openvpn_gen_route_ipv6($network, $iroute = false) {
+	$i = ($iroute) ? "i" : "";
 	list($ipv6, $prefix) = explode('/', trim($network));
 	if (empty($prefix))
 		$prefix = "128";
-	return "route-ipv6 ${ipv6}/${prefix}";
+	return "{$i}route-ipv6 ${ipv6}/${prefix}";
 }
 
 function openvpn_get_settings($mode, $vpnid) {

@@ -76,6 +76,10 @@ if($_GET['act']=="edit"){
 		$pconfig['description'] = $a_csc[$id]['description'];
 
 		$pconfig['tunnel_network'] = $a_csc[$id]['tunnel_network'];
+		$pconfig['local_network'] = $a_csc[$id]['local_network'];
+		$pconfig['local_networkv6'] = $a_csc[$id]['local_networkv6'];
+		$pconfig['remote_network'] = $a_csc[$id]['remote_network'];
+		$pconfig['remote_networkv6'] = $a_csc[$id]['remote_networkv6'];
 		$pconfig['gwredir'] = $a_csc[$id]['gwredir'];
 
 		$pconfig['push_reset'] = $a_csc[$id]['push_reset'];
@@ -123,6 +127,18 @@ if ($_POST) {
 
 	/* input validation */
 	if ($result = openvpn_validate_cidr($pconfig['tunnel_network'], 'Tunnel network'))
+		$input_errors[] = $result;
+
+	if ($result = openvpn_validate_cidr($pconfig['local_network'], 'IPv4 Local Network', true, "ipv4"))
+		$input_errors[] = $result;
+
+	if ($result = openvpn_validate_cidr($pconfig['local_networkv6'], 'IPv6 Local Network', true, "ipv6"))
+		$input_errors[] = $result;
+
+	if ($result = openvpn_validate_cidr($pconfig['remote_network'], 'IPv4 Remote Network', true, "ipv4"))
+		$input_errors[] = $result;
+
+	if ($result = openvpn_validate_cidr($pconfig['remote_networkv6'], 'IPv6 Remote Network', true, "ipv6"))
 		$input_errors[] = $result;
 
 	if ($pconfig['dns_server_enable']) {
@@ -176,6 +192,10 @@ if ($_POST) {
 		$csc['description'] = $pconfig['description'];
 
 		$csc['tunnel_network'] = $pconfig['tunnel_network'];
+		$csc['local_network'] = $pconfig['local_network'];
+		$csc['local_networkv6'] = $pconfig['local_networkv6'];
+		$csc['remote_network'] = $pconfig['remote_network'];
+		$csc['remote_networkv6'] = $pconfig['remote_networkv6'];
 		$csc['gwredir'] = $pconfig['gwredir'];
 
 		$csc['push_reset'] = $pconfig['push_reset'];
@@ -387,6 +407,54 @@ function netbios_change() {
 							"server address and the second network address " .
 							"will be assigned to the client virtual " .
 							"interface"); ?>.
+						</td>
+					</tr>
+					<tr id="local_optsv4">
+						<td width="22%" valign="top" class="vncell"><?=gettext("IPv4 Local Network/s"); ?></td>
+						<td width="78%" class="vtable">
+							<input name="local_network" type="text" class="formfld unknown" size="40" value="<?=htmlspecialchars($pconfig['local_network']);?>">
+							<br>
+							<?=gettext("These are the IPv4 networks that will be accessible " .
+							"from this particular client. Expressed as a comma-separated list of one or more CIDR ranges."); ?>
+						</td>
+					</tr>
+					<tr id="local_optsv6">
+						<td width="22%" valign="top" class="vncell"><?=gettext("IPv6 Local Network/s"); ?></td>
+						<td width="78%" class="vtable">
+							<input name="local_networkv6" type="text" class="formfld unknown" size="40" value="<?=htmlspecialchars($pconfig['local_networkv6']);?>">
+							<br>
+							<?=gettext("These are the IPv6 networks that will be accessible " .
+							"from this particular client. Expressed as a comma-separated list of one or more IP/PREFIX networks."); ?>
+						</td>
+					</tr>
+					<tr id="remote_optsv4">
+						<td width="22%" valign="top" class="vncell"><?=gettext("IPv4 Remote Network/s"); ?></td>
+						<td width="78%" class="vtable">
+							<input name="remote_network" type="text" class="formfld unknown" size="40" value="<?=htmlspecialchars($pconfig['remote_network']);?>">
+							<br>
+							<?=gettext("These are the IPv4 networks that will be routed " .
+							"to this client specifically using iroute, so that a site-to-site " .
+							"VPN can be established. " .
+							"Expressed as a comma-separated list of one or more CIDR ranges. " .
+							"You may leave this blank if there are no client-side networks to" .
+							"be routed"); ?>.
+							<br/><?=gettext("NOTE: Remember to add these subnets to the " .
+							"IPv4 Remote Networks list on the correspding OpenVPN server settings.");?>
+						</td>
+					</tr>
+					<tr id="remote_optsv6">
+						<td width="22%" valign="top" class="vncell"><?=gettext("IPv6 Remote Network/s"); ?></td>
+						<td width="78%" class="vtable">
+							<input name="remote_networkv6" type="text" class="formfld unknown" size="40" value="<?=htmlspecialchars($pconfig['remote_networkv6']);?>">
+							<br>
+							<?=gettext("These are the IPv6 networks that will be routed " .
+							"to this client specifically using iroute, so that a site-to-site " .
+							"VPN can be established. " .
+							"Expressed as a comma-separated list of one or more IP/PREFIX networks. " .
+							"You may leave this blank if there are no client-side networks to" .
+							"be routed"); ?>.
+							<br/><?=gettext("NOTE: Remember to add these subnets to the " .
+							"IPv6 Remote Networks list on the correspding OpenVPN server settings.");?>
 						</td>
 					</tr>
 					<tr>

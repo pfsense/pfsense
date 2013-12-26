@@ -646,7 +646,7 @@ function netbios_change() {
 							<table border="0" cellpadding="2" cellspacing="0">
 								<tr>
 									<td>
-										<textarea rows="6" cols="78" name="custom_options" id="custom_options"><?=$pconfig['custom_options'];?></textarea><br/>
+										<textarea rows="6" cols="70" name="custom_options" id="custom_options"><?=$pconfig['custom_options'];?></textarea><br/>
 										<?=gettext("Enter any additional options you would like to add for this client specific override, separated by a semicolon"); ?><br/>
 										<?=gettext("EXAMPLE: push \"route 10.0.0.0 255.255.255.0\""); ?>;
 									</td>

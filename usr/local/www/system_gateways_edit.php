@@ -387,16 +387,16 @@ if ($_POST) {
 		$gateway['descr'] = $_POST['descr'];
 		if ($_POST['monitor_disable'] == "yes")
 			$gateway['monitor_disable'] = true;
-		else if (is_ipaddr($_POST['monitor'])) {
-			/* NOTE: If monitor ip is changed need to cleanup the old static route */
-			if ($_POST['monitor'] != "dynamic" && !empty($a_gateway_item[$realid]) && is_ipaddr($a_gateway_item[$realid]['monitor']) &&
-			    $_POST['monitor'] != $a_gateway_item[$realid]['monitor'] && $gateway['gateway'] != $a_gateway_item[$realid]['monitor']) {
-				if (is_ipaddrv4($a_gateway_item[$realid]['monitor']))
-					mwexec("/sbin/route delete " . escapeshellarg($a_gateway_item[$realid]['monitor']));
-				else
-					mwexec("/sbin/route delete -inet6 " . escapeshellarg($a_gateway_item[$realid]['monitor']));
-			}
+		if (is_ipaddr($_POST['monitor']))
 			$gateway['monitor'] = $_POST['monitor'];
+
+		/* NOTE: If monitor ip is changed need to cleanup the old static route */
+		if ($_POST['monitor'] != "dynamic" && !empty($a_gateway_item[$realid]) && is_ipaddr($a_gateway_item[$realid]['monitor']) &&
+		    $_POST['monitor'] != $a_gateway_item[$realid]['monitor'] && $gateway['gateway'] != $a_gateway_item[$realid]['monitor']) {
+			if (is_ipaddrv4($a_gateway_item[$realid]['monitor']))
+				mwexec("/sbin/route delete " . escapeshellarg($a_gateway_item[$realid]['monitor']));
+			else
+				mwexec("/sbin/route delete -inet6 " . escapeshellarg($a_gateway_item[$realid]['monitor']));
 		}
 
 		if ($_POST['defaultgw'] == "yes" || $_POST['defaultgw'] == "on") {

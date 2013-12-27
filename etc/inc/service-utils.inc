@@ -348,6 +348,13 @@ function get_services() {
 		$services[] = $pconfig;
 	}
 
+	if (isset($config['system']['enablesshd'])) {
+		$pconfig = array();
+		$pconfig['name'] = "sshd";
+		$pconfig['description'] = gettext("Secure Shell Daemon");
+		$services[] = $pconfig;
+	}
+
 	foreach (array('server', 'client') as $mode) {
 		if (is_array($config['openvpn']["openvpn-{$mode}"])) {
 			foreach ($config['openvpn']["openvpn-{$mode}"] as $id => $setting) {
@@ -547,6 +554,9 @@ function service_control_start($name, $extras) {
 		case 'racoon':
 			vpn_ipsec_force_reload();
 			break;
+		case 'sshd':
+			send_event("service restart sshd");
+			break;
 		case 'openvpn':
 			$vpnmode = isset($extras['vpnmode']) ? $extras['vpnmode'] : $extras['mode'];
 			if (($vpnmode == "server") || ($vpnmode == "client")) {
@@ -675,6 +685,9 @@ function service_control_restart($name, $extras) {
 			break;
 		case 'racoon':
 			vpn_ipsec_force_reload();
+			break;
+		case 'sshd':
+			send_event("service restart sshd");
 			break;
 		case 'openvpn':
 			$vpnmode = $extras['vpnmode'];

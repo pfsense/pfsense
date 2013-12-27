@@ -650,8 +650,6 @@ if ($_POST['apply']) {
 			$parent_realhwif = $realhwif_array[0];
 			$parent_if = convert_real_interface_to_friendly_interface_name($parent_realhwif);
 			if (!empty($parent_if) && !empty($config['interfaces'][$parent_if]['mtu'])) {
-				$parent_mtu = $config['interfaces'][$parent_if]['mtu'];
-
 				if ($_POST['mtu'] > intval($config['interfaces'][$parent_if]['mtu']))
 					$input_errors[] = gettext("MTU of a vlan should not be bigger than parent interface.");
 			}

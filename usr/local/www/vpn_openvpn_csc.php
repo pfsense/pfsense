@@ -443,7 +443,7 @@ function netbios_change() {
 							"You may leave this blank if there are no client-side networks to " .
 							"be routed"); ?>.
 							<br/><?=gettext("NOTE: Remember to add these subnets to the " .
-							"IPv4 Remote Networks list on the correspding OpenVPN server settings.");?>
+							"IPv4 Remote Networks list on the corresponding OpenVPN server settings.");?>
 						</td>
 					</tr>
 					<tr id="remote_optsv6">
@@ -458,7 +458,7 @@ function netbios_change() {
 							"You may leave this blank if there are no client-side networks to " .
 							"be routed"); ?>.
 							<br/><?=gettext("NOTE: Remember to add these subnets to the " .
-							"IPv6 Remote Networks list on the correspding OpenVPN server settings.");?>
+							"IPv6 Remote Networks list on the corresponding OpenVPN server settings.");?>
 						</td>
 					</tr>
 					<tr>

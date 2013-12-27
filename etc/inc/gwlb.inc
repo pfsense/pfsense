@@ -395,7 +395,6 @@ function return_gateways_array($disabled = false, $localhost = false, $inactive 
 			if (empty($gateway['gateway']) || $gateway['gateway'] == "dynamic" || $gateway['gateway'] == "dynamic6") {
 				if ($gateway['ipprotocol'] == "inet") {
 					/* we know which interfaces is dynamic, this should be made a function */
-					$gateway['ipprotocol'] = "inet";
 					$gateway['gateway'] = get_interface_gateway($gateway['interface']);
 					/* no IP address found, set to dynamic */
 					if (!is_ipaddrv4($gateway['gateway']))
@@ -406,7 +405,6 @@ function return_gateways_array($disabled = false, $localhost = false, $inactive 
 				/* if the gateway is dynamic6 and we can find the IPv6, Great! */
 				else if ($gateway['ipprotocol'] == "inet6") {
 					/* we know which interfaces is dynamic, this should be made a function, and for v6 too */
-					$gateway['ipprotocol'] = "inet6";
 					$gateway['gateway'] = get_interface_gateway_v6($gateway['interface']);
 					/* no IPv6 address found, set to dynamic6 */
 					if (!is_ipaddrv6($gateway['gateway']))

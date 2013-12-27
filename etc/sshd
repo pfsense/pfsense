@@ -34,12 +34,8 @@
 	require_once("functions.inc");
 	require_once("shaper.inc");
 
-	if(isset($config['system']['enablesshd'])) {
-		/* do nothing, we're enabled */
-	} else {
-		if($g['booting'])
-			echo "SSHD is disabled.";
-		exit;
+	if !(isset($config['system']['enablesshd'])) {
+		return;
 	}
 
 	/* are we already running?  if not, do conf_mount_rw(), otherwise it should already be rw */

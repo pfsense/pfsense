@@ -388,7 +388,7 @@ function return_gateways_array($disabled = false, $localhost = false, $inactive 
 			$wancfg = $config['interfaces'][$gateway['interface']];
 
 			/* skip disabled interfaces */
-			if ($disabled === false && (!isset($wancfg['enable']) || !isset($gateway['disabled'])))
+			if ($disabled === false && (!isset($wancfg['enable']) || isset($gateway['disabled'])))
 				continue;
 
 			/* if the gateway is dynamic and we can find the IPv4, Great! */

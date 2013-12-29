@@ -1,7 +1,7 @@
 <?php
 /* $Id$ */
 /*
-	firewall_aliases_edit.php
+	firewall_aliases_import.php
 	Copyright (C) 2005 Scott Ullrich
 	All rights reserved.
 
@@ -89,7 +89,7 @@ if($_POST['aliasimport'] <> "") {
 			if (is_iprange($impip)) {
 				list($startip, $endip) = explode('-', $impip);
 				$rangesubnets = ip_range_to_subnet_array($startip, $endip);
-				$address .= implode(" ", $rangesubnets);
+				$imported = array_merge($imported, $rangesubnets);
 			} else if (!is_ipaddr($impip) && !is_subnet($impip) && !empty($impip)) {
 				$input_errors[] = sprintf(gettext("%s is not an IP address. Please correct the error to continue"), $impip);
 			} elseif (!empty($impip)) {

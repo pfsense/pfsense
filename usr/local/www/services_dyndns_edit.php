@@ -267,13 +267,25 @@ function _onTypeChange(type){
 					</td>
 				</tr>	
 				<tr id="_requestiftr">
-				   <td width="22%" valign="top" class="vncellreq"><?=gettext("Interface to send update from");?></td>  
-				   <td width="78%" class="vtable">
-				   <select name="requestif" class="formselect" id="requestif">
-				   <?php $iflist = get_configured_interface_with_descr();
-				   		foreach ($iflist as $if => $ifdesc):?>
-							<option value="<?=$if;?>" <?php if ($pconfig['requestif'] == $if) echo "selected";?>><?=$ifdesc;?></option>
-					<?php endforeach; ?>
+					<td width="22%" valign="top" class="vncellreq"><?=gettext("Interface to send update from");?></td>  
+					<td width="78%" class="vtable">
+					<select name="requestif" class="formselect" id="requestif">
+				<?php
+					$iflist = get_configured_interface_with_descr();					
+					foreach ($iflist as $if => $ifdesc) {
+						echo "<option value=\"{$if}\"";
+						if ($pconfig['requestif'] == $if)
+							echo "selected";
+						echo ">{$ifdesc}</option>\n";
+					}
+					$grouplist = return_gateway_groups_array();
+					foreach ($grouplist as $name => $group) {
+						echo "<option value=\"{$name}\"";
+						if ($pconfig['requestif'] == $name)
+							echo "selected";
+						echo ">GW Group {$name}</option>\n";
+					}
+				?>
 					</select>
 					<br/><?= gettext("Note: This is almost always the same as the Interface to Monitor.");?>
 					</td>

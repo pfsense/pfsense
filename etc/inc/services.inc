@@ -408,6 +408,7 @@ log-facility local7;
 one-lease-per-client true;
 deny duplicates;
 ping-check true;
+update-conflict-detection false;
 
 EOD;
 
@@ -837,48 +838,20 @@ EOD;
 
 		$dhcpdifs[] = get_real_interface($dhcpif);
 		if ($newzone['domain-name'])
+		{
+			if ($need_ddns_updates)
+			{
+				$newzone['dns-servers'] = array($dhcpifconf['ddnsdomainprimary']);
+			}
 			$ddns_zones[] = $newzone;
+		}
 	}
 
 	if ($need_ddns_updates) {
 		$dhcpdconf .= "ddns-update-style interim;\n";
-		$dhcpdconf .= "update-static-leases on;\n";
-		
-		if (is_array($ddns_zones)) {
-			$added_zones = array();
-			foreach ($ddns_zones as $zone) {
-				if (!is_array($zone) || empty($zone) || !is_array($zone['dns-servers']))
-					continue;
-				$primary = $zone['dns-servers'][0];
-				$secondary = empty($zone['dns-servers'][1]) ? "" : $zone['dns-servers'][1];
-				// Make sure we aren't using any invalid or IPv6 DNS servers.
-				if (!is_ipaddrv4($primary)) {
-					if (is_ipaddrv4($secondary)) {
-						$primary = $secondary;
-						$secondary = "";
-					} else {
-						continue;
-					}
-				}
-				// We don't need to add zones multiple times.
-				if (!in_array($zone['domain-name'], $added_zones)) {
-					$dhcpdconf .= "zone {$zone['domain-name']} {\n";
-					$dhcpdconf .= "	primary {$primary};\n";
-					if (is_ipaddrv4($secondary))
-						$dhcpdconf .= "	secondary {$secondary};\n";
-					$dhcpdconf .= "}\n";
-					$added_zones[] = $zone['domain-name'];
-				}
-				if (!in_array($zone['ptr-domain'], $added_zones)) {
-					$dhcpdconf .= "zone {$zone['ptr-domain']} {\n";
-					$dhcpdconf .= "	primary {$primary};\n";
-					if (is_ipaddrv4($secondary))
-						$dhcpdconf .= "	secondary {$secondary};\n";
-					$dhcpdconf .= "}\n";
-					$added_zones[] = $zone['ptr-domain'];
-				}
-			}
-		}
+
+		$dhcpdconf .= dhcpdkey($dhcpifconf);
+		$dhcpdconf .= dhcpdzones($ddns_zones, $dhcpifconf);
 	}
 
 	/* write dhcpd.conf */
@@ -903,6 +876,69 @@ EOD;
 		print "done.\n";
 
 	return 0;
+}
+
+function dhcpdkey($dhcpifconf)
+{
+	$dhcpdconf = "";
+	if ($dhcpifconf['ddnsdomainkeyname'] <> "" && $dhcpifconf['ddnsdomainkey'] <> "")
+	{
+		$dhcpdconf .= "key {$dhcpifconf['ddnsdomainkeyname']} {\n";
+		$dhcpdconf .= "	algorithm hmac-md5;\n";
+		$dhcpdconf .= "	secret {$dhcpifconf['ddnsdomainkey']};\n";
+		$dhcpdconf .= "}\n";
+	}
+
+	return $dhcpdconf;
+}
+
+function dhcpdzones($ddns_zones, $dhcpifconf)
+{
+	$dhcpdconf = "";
+
+	if (is_array($ddns_zones)) {
+		$added_zones = array();
+		foreach ($ddns_zones as $zone) {
+			if (!is_array($zone) || empty($zone) || !is_array($zone['dns-servers']))
+				continue;
+			$primary = $zone['dns-servers'][0];
+			$secondary = empty($zone['dns-servers'][1]) ? "" : $zone['dns-servers'][1];
+
+			// Make sure we aren't using any invalid or IPv6 DNS servers.
+			if (!is_ipaddrv4($primary)) {
+				if (is_ipaddrv4($secondary)) {
+					$primary = $secondary;
+					$secondary = "";
+				} else {
+					continue;
+				}
+			}
+
+			// We don't need to add zones multiple times.
+			if ($zone['domain-name'] && !in_array($zone['domain-name'], $added_zones)) {
+				$dhcpdconf .= "zone {$zone['domain-name']}. {\n";
+				$dhcpdconf .= "	primary {$primary};\n";
+				if (is_ipaddrv4($secondary))
+					$dhcpdconf .= "	secondary {$secondary};\n";
+				if($dhcpifconf['ddnsdomainkeyname'] <> "" && $dhcpifconf['ddnsdomainkey'] <> "")
+                    $dhcpdconf .= "	key {$dhcpifconf['ddnsdomainkeyname']};\n";
+				$dhcpdconf .= "}\n";
+				$added_zones[] = $zone['domain-name'];
+			}
+			if ($zone['ptr-domain'] && !in_array($zone['ptr-domain'], $added_zones)) {
+				$dhcpdconf .= "zone {$zone['ptr-domain']} {\n";
+				$dhcpdconf .= "	primary {$primary};\n";
+				if (is_ipaddrv4($secondary))
+					$dhcpdconf .= "	secondary {$secondary};\n";
+				if($dhcpifconf['ddnsdomainkeyname'] <> "" && $dhcpifconf['ddnsdomainkey'] <> "")
+                    $dhcpdconf .= "	key {$dhcpifconf['ddnsdomainkeyname']};\n";
+				$dhcpdconf .= "}\n";
+				$added_zones[] = $zone['ptr-domain'];
+			}
+		}
+	}
+
+	return $dhcpdconf;
 }
 
 function services_dhcpdv6_configure() {
@@ -1015,10 +1051,10 @@ option domain-search-list code 119 = text;
 default-lease-time 7200;
 max-lease-time 86400;
 log-facility local7;
-ddns-update-style none;
 one-lease-per-client true;
 deny duplicates;
 ping-check true;
+update-conflict-detection false;
 
 EOD;
 
@@ -1031,7 +1067,11 @@ EOD;
 	$dhcpdv6ifs = array();
 
 	$dhcpv6num = 0;
+	$nsupdate = false;
+
 	foreach ($dhcpdv6cfg as $dhcpv6if => $dhcpv6ifconf) {
+
+		$ddns_zones = array();
 
 		$ifcfgv6 = $config['interfaces'][$dhcpv6if];
 
@@ -1052,15 +1092,16 @@ EOD;
 			$dnscfgv6 .= "	option domain-name \"{$dhcpv6ifconf['domain']}\";\n";
 		}
 
-    		if ($dhcpv6ifconf['domainsearchlist'] <> "") {
+    	if ($dhcpv6ifconf['domainsearchlist'] <> "") {
 			$dnscfgv6 .= "	option domain-search \"" . join("\",\"", preg_split("/[ ;]+/", $dhcpv6ifconf['domainsearchlist'])) . "\";\n";
-    		}
+    	}
 
 		if (isset($dhcpv6ifconf['ddnsupdate'])) {
 			if($dhcpv6ifconf['ddnsdomain'] <> "") {
 				$dnscfgv6 .= "	ddns-domainname \"{$dhcpv6ifconf['ddnsdomain']}\";\n";
 			}
 			$dnscfgv6 .= "	ddns-update-style interim;\n";
+			$nsupdate = true;
 		}
 
 		if (is_array($dhcpv6ifconf['dnsserver']) && ($dhcpv6ifconf['dnsserver'][0])) {
@@ -1076,6 +1117,13 @@ EOD;
 			}
 			if(!empty($dns_arrv6))
 				$dnscfgv6 .= "	option dhcp6.name-servers " . join(",", $dns_arrv6) . ";";
+		}
+
+		if ($dhcpv6ifconf['domain']) {
+			$newzone = array();
+			$newzone['domain-name'] = $dhcpv6ifconf['domain']; 
+			$newzone['dns-servers'][] = $dhcpv6ifconf['ddnsdomainprimary'];
+			$ddns_zones[] = $newzone;
 		}
 
 		if (is_ipaddrv6($ifcfgipv6)) {
@@ -1178,6 +1226,12 @@ EOD;
 			}
 		}
 
+		if ($dhcpv6ifconf['domain'])
+		{
+			$dhcpdv6conf .= dhcpdkey($dhcpv6ifconf);
+			$dhcpdv6conf .= dhcpdzones($ddns_zones, $dhcpv6ifconf);
+		}
+
 		if ($config['dhcpdv6'][$dhcpv6if]['ramode'] <> "unmanaged") {
 			if(preg_match("/poes/si", $dhcpv6if)) {
 				/* magic here */
@@ -1194,6 +1248,15 @@ EOD;
 				$dhcpdv6ifs[] = $realif;
 			}
 		}
+	}
+
+	if ($nsupdate)
+	{
+		$dhcpdv6conf .= "ddns-update-style interim;\n";
+	}
+	else
+	{
+		$dhcpdv6conf .= "ddns-update-style none;\n";
 	}
 
 	/* write dhcpdv6.conf */

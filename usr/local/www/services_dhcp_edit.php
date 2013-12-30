@@ -107,6 +107,9 @@ if (isset($id) && $a_maps[$id]) {
 	list($pconfig['wins1'],$pconfig['wins2']) = $a_maps[$id]['winsserver'];
 	list($pconfig['dns1'],$pconfig['dns2']) = $a_maps[$id]['dnsserver'];
 	$pconfig['ddnsdomain'] = $a_maps[$id]['ddnsdomain'];
+	$pconfig['ddnsdomainprimary'] = $a_maps[$id]['ddnsdomainprimary'];
+	$pconfig['ddnsdomainkeyname'] = $a_maps[$id]['ddnsdomainkeyname'];
+	$pconfig['ddnsdomainkey'] = $a_maps[$id]['ddnsdomainkey'];
 	$pconfig['ddnsupdate'] = isset($a_maps[$id]['ddnsupdate']);
 	list($pconfig['ntp1'],$pconfig['ntp2']) = $a_maps[$id]['ntpserver'];
 	$pconfig['tftp'] = $a_maps[$id]['tftp'];
@@ -128,6 +131,9 @@ if (isset($id) && $a_maps[$id]) {
 	$pconfig['dns1'] = $_GET['dns1'];
 	$pconfig['dns2'] = $_GET['dns2'];
 	$pconfig['ddnsdomain'] = $_GET['ddnsdomain'];
+	$pconfig['ddnsdomainprimary'] = $_GET['ddnsdomainprimary'];
+	$pconfig['ddnsdomainkeyname'] = $_GET['ddnsdomainkeyname'];
+	$pconfig['ddnsdomainkey'] = $_GET['ddnsdomainkey'];
 	$pconfig['ddnsupdate'] = isset($_GET['ddnsupdate']);
 	$pconfig['ntp1'] = $_GET['ntp1'];
 	$pconfig['ntp2'] = $_GET['ntp2'];
@@ -180,7 +186,6 @@ if ($_POST) {
 			continue;
 
 		if ((($mapent['hostname'] == $_POST['hostname']) && $mapent['hostname'])  || (($mapent['mac'] == $_POST['mac']) && $mapent['mac']) || (($mapent['ipaddr'] == $_POST['ipaddr']) && $mapent['ipaddr'] ) || (($mapent['cid'] == $_POST['cid']) && $mapent['cid'])) {
-					
 			$input_errors[] = gettext("This Hostname, IP, MAC address or Client identifier already exists.");
 			break;
 		}
@@ -230,6 +235,11 @@ if ($_POST) {
 		$input_errors[] = gettext("The maximum lease time must be at least 60 seconds and higher than the default lease time.");
 	if (($_POST['ddnsdomain'] && !is_domain($_POST['ddnsdomain'])))
 		$input_errors[] = gettext("A valid domain name must be specified for the dynamic DNS registration.");
+	if (($_POST['ddnsdomain'] && !is_ipaddrv4($_POST['ddnsdomainprimary'])))
+		$input_errors[] = gettext("A valid primary domain name server IP address must be specified for the dynamic domain name.");
+	if (($_POST['ddnsdomainkey'] && !$_POST['ddnsdomainkeyname']) ||
+		($_POST['ddnsdomainkeyname'] && !$_POST['ddnsdomainkey']))
+		$input_errors[] = gettext("You must specify both a valid domain key and key name.");
 	if ($_POST['domainsearchlist']) {
 		$domain_array=preg_split("/[ ;]+/",$_POST['domainsearchlist']);
 		foreach ($domain_array as $curdomain) {
@@ -276,6 +286,9 @@ if ($_POST) {
 		$mapent['domain'] = $_POST['domain'];
 		$mapent['domainsearchlist'] = $_POST['domainsearchlist'];
 		$mapent['ddnsdomain'] = $_POST['ddnsdomain'];
+		$mapent['ddnsdomainprimary'] = $_POST['ddnsdomainprimary'];
+		$mapent['ddnsdomainkeyname'] = $_POST['ddnsdomainkeyname'];
+		$mapent['ddnsdomainkey'] = $_POST['ddnsdomainkey'];
 		$mapent['ddnsupdate'] = ($_POST['ddnsupdate']) ? true : false;
 
 		unset($mapent['ntpserver']);
@@ -473,6 +486,12 @@ include("head.inc");
 				<input name="ddnsdomain" type="text" class="formfld unknown" id="ddnsdomain" size="20" value="<?=htmlspecialchars($pconfig['ddnsdomain']);?>"><br />
 				<?=gettext("Note: Leave blank to disable dynamic DNS registration.");?><br />
 				<?=gettext("Enter the dynamic DNS domain which will be used to register client names in the DNS server.");?>
+				<input name="ddnsdomainprimary" type="text" class="formfld unknown" id="ddnsdomainprimary" size="20" value="<?=htmlspecialchars($pconfig['ddnsdomainprimary']);?>"><br>
+				<?=gettext("Enter the primary domain name server IP address for the dynamic domain name.");?><br />
+				<input name="ddnsdomainkeyname" type="text" class="formfld unknown" id="ddnsdomainkeyname" size="20" value="<?=htmlspecialchars($pconfig['ddnsdomainkeyname']);?>"><br />
+				<?=gettext("Enter the dynamic DNS domain key name which will be used to register client names in the DNS server.");?>
+				<input name="ddnsdomainkey" type="text" class="formfld unknown" id="ddnsdomainkey" size="20" value="<?=htmlspecialchars($pconfig['ddnsdomainkey']);?>"><br />
+				<?=gettext("Enter the dynamic DNS domain key secret which will be used to register client names in the DNS server.");?>
 			</div>
 		</td>
 		</tr>

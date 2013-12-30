@@ -109,6 +109,9 @@ if (is_array($config['dhcpdv6'][$if])){
 	list($pconfig['dns1'],$pconfig['dns2']) = $config['dhcpdv6'][$if]['dnsserver'];
 	$pconfig['enable'] = isset($config['dhcpdv6'][$if]['enable']);
 	$pconfig['ddnsdomain'] = $config['dhcpdv6'][$if]['ddnsdomain'];
+	$pconfig['ddnsdomainprimary'] = $config['dhcpdv6'][$if]['ddnsdomainprimary'];
+	$pconfig['ddnsdomainkeyname'] = $config['dhcpdv6'][$if]['ddnsdomainkeyname'];
+	$pconfig['ddnsdomainkey'] = $config['dhcpdv6'][$if]['ddnsdomainkey'];
 	$pconfig['ddnsupdate'] = isset($config['dhcpdv6'][$if]['ddnsupdate']);
 	list($pconfig['ntp1'],$pconfig['ntp2']) = $config['dhcpdv6'][$if]['ntpserver'];
 	$pconfig['tftp'] = $config['dhcpdv6'][$if]['tftp'];
@@ -192,6 +195,11 @@ if ($_POST) {
 			$input_errors[] = gettext("The maximum lease time must be at least 60 seconds and higher than the default lease time.");
 		if (($_POST['ddnsdomain'] && !is_domain($_POST['ddnsdomain'])))
 			$input_errors[] = gettext("A valid domain name must be specified for the dynamic DNS registration.");
+		if (($_POST['ddnsdomain'] && !is_ipaddrv4($_POST['ddnsdomainprimary'])))
+			$input_errors[] = gettext("A valid primary domain name server IPv4 address must be specified for the dynamic domain name.");
+		if (($_POST['ddnsdomainkey'] && !$_POST['ddnsdomainkeyname']) ||
+			($_POST['ddnsdomainkeyname'] && !$_POST['ddnsdomainkey']))
+			$input_errors[] = gettext("You must specify both a valid domain key and key name.");
 		if ($_POST['domainsearchlist']) {
 			$domain_array=preg_split("/[ ;]+/",$_POST['domainsearchlist']);
 			foreach ($domain_array as $curdomain) {
@@ -294,6 +302,9 @@ if ($_POST) {
 		$config['dhcpdv6'][$if]['domainsearchlist'] = $_POST['domainsearchlist'];
 		$config['dhcpdv6'][$if]['enable'] = ($_POST['enable']) ? true : false;
 		$config['dhcpdv6'][$if]['ddnsdomain'] = $_POST['ddnsdomain'];
+		$config['dhcpdv6'][$if]['ddnsdomainprimary'] = $_POST['ddnsdomainprimary'];
+		$config['dhcpdv6'][$if]['ddnsdomainkeyname'] = $_POST['ddnsdomainkeyname'];
+		$config['dhcpdv6'][$if]['ddnsdomainkey'] = $_POST['ddnsdomainkey'];
 		$config['dhcpdv6'][$if]['ddnsupdate'] = ($_POST['ddnsupdate']) ? true : false;
 
 		unset($config['dhcpdv6'][$if]['ntpserver']);
@@ -396,6 +407,9 @@ include("head.inc");
 		document.iform.domain.disabled = endis;
 		document.iform.domainsearchlist.disabled = endis;
 		document.iform.ddnsdomain.disabled = endis;
+		document.iform.ddnsdomainprimary.disabled = endis;
+		document.iform.ddnsdomainkeyname.disabled = endis;
+		document.iform.ddnsdomainkey.disabled = endis;
 		document.iform.ddnsupdate.disabled = endis;
 		document.iform.ntp1.disabled = endis;
 		document.iform.ntp2.disabled = endis;
@@ -682,6 +696,12 @@ display_top_tabs($tab_array);
 					<input name="ddnsdomain" type="text" class="formfld unknown" id="ddnsdomain" size="28" value="<?=htmlspecialchars($pconfig['ddnsdomain']);?>"><br />
 					<?=gettext("Note: Leave blank to disable dynamic DNS registration.");?><br />
 					<?=gettext("Enter the dynamic DNS domain which will be used to register client names in the DNS server.");?>
+					<input name="ddnsdomainprimary" type="text" class="formfld unknown" id="ddnsdomainprimary" size="20" value="<?=htmlspecialchars($pconfig['ddnsdomainprimary']);?>"><br>
+					<?=gettext("Enter the primary domain name server IP address for the dynamic domain name.");?><br />
+					<input name="ddnsdomainkeyname" type="text" class="formfld unknown" id="ddnsdomainkeyname" size="20" value="<?=htmlspecialchars($pconfig['ddnsdomainkeyname']);?>"><br />
+					<?=gettext("Enter the dynamic DNS domain key name which will be used to register client names in the DNS server.");?>
+					<input name="ddnsdomainkey" type="text" class="formfld unknown" id="ddnsdomainkey" size="20" value="<?=htmlspecialchars($pconfig['ddnsdomainkey']);?>"><br />
+					<?=gettext("Enter the dynamic DNS domain key secret which will be used to register client names in the DNS server.");?>
 				</div>
 			</td>
 			</tr>

@@ -256,29 +256,54 @@ function get_port_with_service($port, $proto) {
 }
 
 function find_rule_by_number($rulenum, $type="rules") {
+	global $g;
+
 	/* Passing arbitrary input to grep could be a Very Bad Thing(tm) */
 	if (!(is_numeric($rulenum)))
 		return;
 	/* At the moment, miniupnpd is the only thing I know of that
 	   generates logging rdr rules */
+	unset($buffer);
 	if ($type == "rdr")
-		return `pfctl -vvsn -a "miniupnpd" | grep '^@{$rulenum} '`;
-	else
-		return `pfctl -vvsr | grep '^@{$rulenum} '`;
+		$_gb = exec("/sbin/pfctl -vvPsn -a \"miniupnpd\" | grep '^@'", $buffer);
+	else {
+		if (file_exists("{$g['tmp_path']}/rules.debug"))
+			$_gb = exec("/sbin/pfctl -vvPnf {$g['tmp_path']}/rules.debug 2>/dev/null | /usr/bin/egrep '^@{$rulenum} [^nat|rdr|binat]'", $buffer);
+		else
+			$_gb = exec("/sbin/pfctl -vvPsr | grep '^@{$rulenum}'", $buffer);
+	}
+	if (is_array($buffer))
+		return $buffer[0];
+
+	return "";
 }
 
 function buffer_rules_load() {
-    global $buffer_rules_rdr, $buffer_rules_normal;
-	$buffer = explode("\n",`pfctl -vvsn -a "miniupnpd" | grep '^@'`);
-	foreach ($buffer as $line) {
-		list($key, $value) = explode (" ", $line, 2);
-		$buffer_rules_rdr[$key] = $value;
-	}	
-	$buffer = explode("\n",`pfctl -vvsr | grep '^@'`);
-	foreach ($buffer as $line) {
-		list($key, $value) = explode (" ", $line, 2);
-		$buffer_rules_normal[$key] = $value;
-	}	
+    global $g, $buffer_rules_rdr, $buffer_rules_normal;
+
+	unset($buffer, $buffer_rules_rdr, $buffer_rules_normal);
+	$buffer_rules_rdr = array();
+	$buffer_rules_normal = array();
+
+	$_gb = exec("/sbin/pfctl -vvPsn -a \"miniupnpd\" | grep '^@'", $buffer);
+	if (is_array($buffer)) {
+		foreach ($buffer as $line) {
+			list($key, $value) = explode (" ", $line, 2);
+			$buffer_rules_rdr[$key] = $value;
+		}
+	}
+	unset($buffer, $_gb);
+	if (file_exists("{$g['tmp_path']}/rules.debug"))
+		$_gb = exec("/sbin/pfctl -vvPnf {$g['tmp_path']}/rules.debug 2>/dev/null | /usr/bin/egrep '^@[0-9]+ [^nat|rdr|binat]'", $buffer);
+	else
+		$_gb = exec("/sbin/pfctl -vvPsr | grep '^@'", $buffer);
+	if (is_array($buffer)) {
+		foreach ($buffer as $line) {
+			list($key, $value) = explode (" ", $line, 2);
+			$buffer_rules_normal[$key] = $value;
+		}
+	}
+	unset($_gb, $buffer);
 }
 
 function buffer_rules_clear() {

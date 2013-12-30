@@ -268,7 +268,7 @@ function find_rule_by_number($rulenum, $type="rules") {
 		$_gb = exec("/sbin/pfctl -vvPsn -a \"miniupnpd\" | grep '^@'", $buffer);
 	else {
 		if (file_exists("{$g['tmp_path']}/rules.debug"))
-			$_gb = exec("/sbin/pfctl -vvPnf {$g['tmp_path']}/rules.debug 2>/dev/null | /usr/bin/egrep '^@{$rulenum} [^nat|rdr|binat]'", $buffer);
+			$_gb = exec("/sbin/pfctl -vvPnf {$g['tmp_path']}/rules.debug 2>/dev/null | /usr/bin/egrep '^@{$rulenum} {$type}'", $buffer);
 		else
 			$_gb = exec("/sbin/pfctl -vvPsr | grep '^@{$rulenum}'", $buffer);
 	}

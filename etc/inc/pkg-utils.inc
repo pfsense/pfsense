@@ -778,6 +778,8 @@ function install_package_xml($pkg) {
 			$static_output .= gettext("Additional files... ");
 			$static_orig = $static_output;
 			update_output_window($static_output);
+
+			$arch = php_uname("m");
 			foreach($pkg_config['additional_files_needed'] as $afn) {
 				$filename = get_filename_from_url($afn['item'][0]);
 				if($afn['chmod'] <> "")
@@ -794,7 +796,8 @@ function install_package_xml($pkg) {
 					safe_mkdir($prefix);
  				$static_output .= $filename . " ";
 				update_output_window($static_output);
-				if (download_file_with_progress_bar($afn['item'][0], $prefix . $filename) !== true) {
+				$dload_url = str_replace("%arch%", $arch, $afn['item'][0]);
+				if (download_file_with_progress_bar($dload_url, $prefix . $filename) !== true) {
 					$static_output .= "failed.\n";
 					@unlink($prefix . $filename);
 					update_output_window($static_output);

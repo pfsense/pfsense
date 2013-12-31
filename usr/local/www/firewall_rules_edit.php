@@ -531,6 +531,10 @@ if ($_POST) {
 	if (!$input_errors) {
 		$filterent = array();
 		$filterent['id'] = $_POST['ruleid']>0?$_POST['ruleid']:'';
+		if (empty($_POST['tracker']))
+			$filterent['tracker'] = (int)microtime(true);
+		else
+			$filterent['tracker'] = $_POST['tracker'];
 		$filterent['type'] = $_POST['type'];
 		if (isset($_POST['interface'] ))
 			$filterent['interface'] = $_POST['interface'];

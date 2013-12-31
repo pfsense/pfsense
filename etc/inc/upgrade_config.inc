@@ -3292,4 +3292,30 @@ function upgrade_105_to_106() {
 	}
 }
 
+function upgrade_106_to_107() {
+	global $config;
+
+	if (is_array($config['filter']) && is_array($config['filter']['rule'])) {
+		$tracker = (int)microtime(true);
+		foreach ($config['filter']['rule'] as $ridx => $rule) {
+			if (empty($rule['tracker'])) {
+				$config['filter']['rule'][$ridx]['tracker'] = $tracker;
+				$tracker++;
+			}
+		}
+		unset($tracker, $ridx);
+	}
+	if (is_array($config['nat']) && is_array($config['nat']['rule'])) {
+		$tracker = (int)microtime(true);
+		foreach ($config['nat']['rule'] as $ridx => $rule) {
+			if (empty($rule['tracker'])) {
+				$config['nat']['rule'][$ridx]['tracker'] = $tracker;
+				$tracker++;
+			}
+
+		}
+		unset($tracker, $ridx);
+	}
+}
+
 ?>

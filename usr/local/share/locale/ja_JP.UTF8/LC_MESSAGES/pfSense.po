@@ -144,13 +144,13 @@ msgstr "エラー! ldap_get_groups() サーバー%sのに接続できません�
 #: etc/inc/auth.inc:930
 #, php-format
 msgid "ERROR! ldap_get_groups() could not bind anonymously to server %s."
-msgstr ""
+msgstr "エラー! ldap_get_groups() サーバ%sのに匿名でバインドできませんでした。"
 
 #: etc/inc/auth.inc:923 etc/inc/auth.inc:932 etc/inc/auth.inc:935
 #: etc/inc/auth.inc:935
 #, php-format
 msgid "ERROR! ldap_get_groups() could not bind to server %s."
-msgstr ""
+msgstr "エラー! ldap_get_groups() サーバ%sをバインドできませんでした。"
 
 #: etc/inc/auth.inc:1020 etc/inc/auth.inc:1029 etc/inc/auth.inc:1033
 #: etc/inc/auth.inc:1036 etc/inc/auth.inc:1036
@@ -158,46 +158,49 @@ msgid ""
 "ERROR! ldap_backed() called with no LDAP authentication server defined.  "
 "Defaulting to local user database. Visit System -> User Manager."
 msgstr ""
+"エラー! ldap_backed() はLDAP認証サーバーの定義なく呼び出されました。" 
+"ローカルユーザデータベースにデフォルト設定。"
+"へ システム -> ユーザーマネージャ"
 
 #: etc/inc/auth.inc:1023 etc/inc/auth.inc:1032 etc/inc/auth.inc:1036
 #: etc/inc/auth.inc:1039 etc/inc/auth.inc:1039
 msgid "ERROR! ldap_backed() called with no LDAP authentication server defined."
-msgstr ""
+msgstr "エラー! ldap_backed() はLDAP認証サーバーの定義なく呼び出されました。" 
 
 #: etc/inc/auth.inc:1054 etc/inc/auth.inc:1063 etc/inc/auth.inc:1067
 #: etc/inc/auth.inc:1071 etc/inc/auth.inc:1071
 #, php-format
 msgid "ERROR! Could not bind to server %s."
-msgstr ""
+msgstr "エラー! サーバー%sにバインドできませんでした。"
 
 #: etc/inc/auth.inc:1071 etc/inc/auth.inc:1080 etc/inc/auth.inc:1084
 #: etc/inc/auth.inc:1085 etc/inc/auth.inc:1089 etc/inc/auth.inc:1089
 #, php-format
 msgid "Now Searching for %s in directory."
-msgstr ""
+msgstr "ディレクトリ内で%sを検索中。"
 
 #: etc/inc/auth.inc:1075 etc/inc/auth.inc:1084 etc/inc/auth.inc:1088
 #: etc/inc/auth.inc:1090 etc/inc/auth.inc:1094 etc/inc/auth.inc:1094
 #, php-format
 msgid "Now Searching in server %1$s, container %2$s with filter %3$s."
-msgstr ""
+msgstr "サーバー%1$sとコンテナ%2$s内をフィルター%3$sで検索中。"
 
 #: etc/inc/auth.inc:1086 etc/inc/auth.inc:1095 etc/inc/auth.inc:1099
 #: etc/inc/auth.inc:1101 etc/inc/auth.inc:1105 etc/inc/auth.inc:1105
 #, php-format
 msgid "Search resulted in error: %s"
-msgstr ""
+msgstr "検索結果エラー：%s"
 
 #: etc/inc/auth.inc:1102 etc/inc/auth.inc:1111 etc/inc/auth.inc:1115
 #: etc/inc/auth.inc:1117 etc/inc/auth.inc:1121 etc/inc/auth.inc:1121
 msgid "ERROR! Either LDAP search failed, or multiple users were found."
-msgstr ""
+msgstr "エラー! LDAP検索に失敗しました、または複数のユーザーが見つかりました。"
 
 #: etc/inc/auth.inc:1108 etc/inc/auth.inc:1117 etc/inc/auth.inc:1121
 #: etc/inc/auth.inc:1123
 #, php-format
 msgid "ERROR! Could not login to server %1$s as user %2$s."
-msgstr ""
+msgstr "エラー! ユーザー名%2$sはサーバ%1$sにログインできませんでした。"
 
 #: etc/inc/auth.inc:1113 etc/inc/auth.inc:1122 etc/inc/auth.inc:1126
 #: etc/inc/auth.inc:1129 etc/inc/auth.inc:1133 etc/inc/auth.inc:1133

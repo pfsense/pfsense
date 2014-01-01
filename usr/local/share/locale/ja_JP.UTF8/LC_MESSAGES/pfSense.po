@@ -29,11 +29,11 @@ msgstr "と呼ばれるPEARのデストラクタ、クラス="
 
 #: etc/inc/PEAR.inc:337 etc/inc/PEAR.inc:595 etc/inc/PEAR.inc:632
 msgid "invalid error callback"
-msgstr "無効なエラー·コールバック"
+msgstr "エラー·コールバック無効"
 
 #: etc/inc/PEAR.inc:342 etc/inc/PEAR.inc:600 etc/inc/PEAR.inc:637
 msgid "invalid error mode"
-msgstr "無効なエラーモード"
+msgstr "エラーモード無効"
 
 #: etc/inc/PEAR.inc:445 etc/inc/PEAR.inc:451
 msgid "The expected error you submitted does not exist"

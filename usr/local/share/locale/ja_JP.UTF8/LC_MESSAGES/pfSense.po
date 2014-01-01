@@ -34077,76 +34077,76 @@ msgstr ""
 #: usr/local/www/exec.php:91 usr/local/www/exec.php:93
 #: usr/local/www/exec.php:93
 msgid "Execute command"
-msgstr ""
+msgstr "コマンドを実行"
 
 #: usr/local/www/exec.php:153 usr/local/www/exec.php:155
 #: usr/local/www/exec.php:155
 msgid "Nothing to recall"
-msgstr ""
+msgstr "なし"
 
 #: usr/local/www/exec.php:222 usr/local/www/exec.php:224
 #: usr/local/www/exec.php:224
 msgid "Note: this function is unsupported. Use it on your own risk"
-msgstr ""
+msgstr "注意： この機能は、サポートされていません。個人の責任でご使用ください。"
 
 #: usr/local/www/exec.php:253 usr/local/www/exec.php:255
 #: usr/local/www/exec.php:255
 msgid "Execute Shell command"
-msgstr ""
+msgstr "シェルコマンドを実行します。"
 
 #: usr/local/www/exec.php:256 usr/local/www/exec.php:309
 #: usr/local/www/exec.php:258 usr/local/www/exec.php:311
 #: usr/local/www/exec.php:258 usr/local/www/exec.php:311
 msgid "Command"
-msgstr ""
+msgstr "コマンド"
 
 #: usr/local/www/exec.php:264 usr/local/www/exec.php:315
 #: usr/local/www/exec.php:266 usr/local/www/exec.php:317
 #: usr/local/www/exec.php:266 usr/local/www/exec.php:317
 msgid "Execute"
-msgstr ""
+msgstr "実行"
 
 #: usr/local/www/exec.php:266 usr/local/www/status_upnp.php:77
 #: usr/local/www/exec.php:268 usr/local/www/status_upnp.php:78
 #: usr/local/www/exec.php:268 usr/local/www/status_upnp.php:78
 msgid "Clear"
-msgstr ""
+msgstr "クリアー"
 
 #: usr/local/www/exec.php:276 usr/local/www/exec.php:278
 #: usr/local/www/exec.php:278
 msgid "File to download"
-msgstr ""
+msgstr "ダウンロードするファイル"
 
 #: usr/local/www/exec.php:293 usr/local/www/exec.php:295
 #: usr/local/www/exec.php:295
 msgid "File to upload"
-msgstr ""
+msgstr "アップロードするファイル"
 
 #: usr/local/www/exec.php:306 usr/local/www/exec.php:308
 #: usr/local/www/exec.php:308
 msgid "PHP Execute"
-msgstr ""
+msgstr "PHP実行"
 
 #: usr/local/www/exec.php:317 usr/local/www/exec.php:319
 #: usr/local/www/exec.php:319
 msgid "Example"
-msgstr ""
+msgstr "例"
 
 #: usr/local/www/exec_raw.php:47
 msgid "Nothing specified.  Cannot continue."
-msgstr ""
+msgstr "指定された何もない。続行できません。"
 
 #: usr/local/www/fbegin.inc:88 usr/local/www/fbegin.inc:105
 #: usr/local/www/fbegin.inc:114 usr/local/www/fbegin.inc:106
 #: usr/local/www/fbegin.inc:106
 msgid "Packages"
-msgstr ""
+msgstr "パッケージ"
 
 #: usr/local/www/fbegin.inc:89 usr/local/www/fbegin.inc:106
 #: usr/local/www/fbegin.inc:115 usr/local/www/fbegin.inc:107
 #: usr/local/www/fbegin.inc:107
 msgid "Setup Wizard"
-msgstr ""
+msgstr "セットアップウィザード"
 
 #: usr/local/www/fbegin.inc:90 usr/local/www/diag_logs_routing.php:54
 #: usr/local/www/diag_logs_routing.php:84 usr/local/www/fbegin.inc:107
@@ -34163,20 +34163,20 @@ msgstr ""
 #: usr/local/www/diag_logs_wireless.php:87
 #: usr/local/www/diag_logs_resolver.php:99
 msgid "Routing"
-msgstr ""
+msgstr "ルーティング"
 
 #: usr/local/www/fbegin.inc:91 usr/local/www/fbegin.inc:108
 #: usr/local/www/fbegin.inc:117 usr/local/www/fbegin.inc:109
 #: usr/local/www/fbegin.inc:109
 msgid "Cert Manager"
-msgstr ""
+msgstr "サティフィケートマネージャー"
 
 #: usr/local/www/fbegin.inc:123 usr/local/www/services_dhcpv6_relay.php:101
 #: usr/local/www/fbegin.inc:140 usr/local/www/fbegin.inc:149
 #: usr/local/www/fbegin.inc:141 usr/local/www/services_dhcpv6_relay.php:101
 #: usr/local/www/fbegin.inc:141
 msgid "DHCPv6 Relay"
-msgstr ""
+msgstr "DHCPv6 リレー"
 
 #: usr/local/www/fbegin.inc:126 usr/local/www/fbegin.inc:143
 #: usr/local/www/services_dhcpv6.php:581
@@ -34187,7 +34187,7 @@ msgstr ""
 #: usr/local/www/services_router_advertisements.php:255
 #: usr/local/www/services_dhcpv6.php:513 usr/local/www/services_dhcpv6.php:523
 msgid "DHCPv6 Server"
-msgstr ""
+msgstr "DHCPv6 サーバー"
 
 #: usr/local/www/fbegin.inc:129 usr/local/www/status_services.php:316
 #: usr/local/www/widgets/widgets/services_status.widget.php:121
@@ -34196,23 +34196,23 @@ msgstr ""
 #: etc/inc/service-utils.inc:298 etc/inc/service-utils.inc:315
 #: usr/local/www/fbegin.inc:147 etc/inc/service-utils.inc:315
 msgid "IGMP proxy"
-msgstr ""
+msgstr "IGMP プロキシ"
 
 #: usr/local/www/fbegin.inc:131 usr/local/www/fbegin.inc:149
 msgid "OLSR"
-msgstr ""
+msgstr "OSLR"
 
 #: usr/local/www/fbegin.inc:132 usr/local/www/vpn_pppoe_edit.php:234
 #: usr/local/www/fbegin.inc:150 usr/local/www/fbegin.inc:158
 #: usr/local/www/vpn_pppoe_edit.php:237 usr/local/www/vpn_pppoe_edit.php:237
 #: usr/local/www/fbegin.inc:150
 msgid "PPPoE Server"
-msgstr ""
+msgstr "PPPoE サーバー"
 
 #: usr/local/www/fbegin.inc:133 usr/local/www/fbegin.inc:151
 #: usr/local/www/fbegin.inc:159
 msgid "RIP"
-msgstr ""
+msgstr "RIP"
 
 #: usr/local/www/fbegin.inc:139 usr/local/www/fbegin.inc:175
 #: usr/local/www/fbegin.inc:157 usr/local/www/fbegin.inc:193
@@ -34220,31 +34220,31 @@ msgstr ""
 #: usr/local/www/fbegin.inc:156 usr/local/www/fbegin.inc:192
 #: usr/local/www/fbegin.inc:156 usr/local/www/fbegin.inc:192
 msgid "UPnP &amp; NAT-PMP"
-msgstr ""
+msgstr "UPnP &amp; NAT-PMP"
 
 #: usr/local/www/fbegin.inc:157 usr/local/www/fbegin.inc:174
 #: usr/local/www/fbegin.inc:182 usr/local/www/fbegin.inc:173
 #: usr/local/www/fbegin.inc:173
 msgid "CARP (failover)"
-msgstr ""
+msgstr "CARP (フェイルオーバー)"
 
 #: usr/local/www/fbegin.inc:158 usr/local/www/fbegin.inc:175
 #: usr/local/www/fbegin.inc:183 usr/local/www/fbegin.inc:174
 #: usr/local/www/fbegin.inc:174
 msgid "Dashboard"
-msgstr ""
+msgstr "ダッシュボード"
 
 #: usr/local/www/fbegin.inc:160 usr/local/www/fbegin.inc:177
 #: usr/local/www/fbegin.inc:185 usr/local/www/fbegin.inc:176
 #: usr/local/www/fbegin.inc:176
 msgid "DHCP Leases"
-msgstr ""
+msgstr "DHCP リース"
 
 #: usr/local/www/fbegin.inc:161 usr/local/www/fbegin.inc:178
 #: usr/local/www/fbegin.inc:186 usr/local/www/fbegin.inc:177
 #: usr/local/www/fbegin.inc:177
 msgid "DHCPv6 Leases"
-msgstr ""
+msgstr "DHCPv6 リース"
 
 #: usr/local/www/fbegin.inc:162 usr/local/www/fbegin.inc:179
 #: usr/local/www/fbegin.inc:187 usr/local/www/fbegin.inc:178

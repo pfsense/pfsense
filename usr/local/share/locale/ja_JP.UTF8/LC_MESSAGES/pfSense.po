@@ -48636,100 +48636,100 @@ msgstr ""
 
 #: etc/inc/pfsense-utils.inc:2575
 msgid "Albanian"
-msgstr ""
+msgstr "アルバニア人"
 
 #: etc/inc/pfsense-utils.inc:2576
 msgid "Bulgarian"
-msgstr ""
+msgstr "ブルガリア語"
 
 #: etc/inc/pfsense-utils.inc:2577
 msgid "Chinese (Simplified)"
-msgstr ""
+msgstr "中国語（簡体字）"
 
 #: etc/inc/pfsense-utils.inc:2578
 msgid "Chinese (Traditional)"
-msgstr ""
+msgstr "中国語（繁体字）"
 
 #: etc/inc/pfsense-utils.inc:2579
 msgid "Dutch"
-msgstr ""
+msgstr "オランダ語"
 
 #: etc/inc/pfsense-utils.inc:2580
 msgid "Danish"
-msgstr ""
+msgstr "デンマーク語"
 
 #: etc/inc/pfsense-utils.inc:2582
 msgid "Finnish"
-msgstr ""
+msgstr "フィンランド語"
 
 #: etc/inc/pfsense-utils.inc:2583
 msgid "French"
-msgstr ""
+msgstr "フランス語"
 
 #: etc/inc/pfsense-utils.inc:2584
 msgid "German"
-msgstr ""
+msgstr "ドイツ語"
 
 #: etc/inc/pfsense-utils.inc:2585
 msgid "Greek"
-msgstr ""
+msgstr "ギリシャ語"
 
 #: etc/inc/pfsense-utils.inc:2586
 msgid "Hungarian"
-msgstr ""
+msgstr "ハンガリー語"
 
 #: etc/inc/pfsense-utils.inc:2587
 msgid "Italian"
-msgstr ""
+msgstr "イタリア語"
 
 #: etc/inc/pfsense-utils.inc:2588
 msgid "Japanese"
-msgstr ""
+msgstr "日本語"
 
 #: etc/inc/pfsense-utils.inc:2589
 msgid "Korean"
-msgstr ""
+msgstr "韓国語"
 
 #: etc/inc/pfsense-utils.inc:2590
 msgid "Latvian"
-msgstr ""
+msgstr "ラトビア語"
 
 #: etc/inc/pfsense-utils.inc:2591
 msgid "Norwegian (Bokmal)"
-msgstr ""
+msgstr "ノルウェー語（ブークモール）"
 
 #: etc/inc/pfsense-utils.inc:2592
 msgid "Polish"
-msgstr ""
+msgstr "ポーランド語"
 
 #: etc/inc/pfsense-utils.inc:2594
 msgid "Portuguese (Portugal)"
-msgstr ""
+msgstr "ポルトガル語（ポルトガル）"
 
 #: etc/inc/pfsense-utils.inc:2595
 msgid "Romanian"
-msgstr ""
+msgstr "ルーマニア語"
 
 #: etc/inc/pfsense-utils.inc:2596
 msgid "Russian"
-msgstr ""
+msgstr "ロシア語"
 
 #: etc/inc/pfsense-utils.inc:2597
 msgid "Slovenian"
-msgstr ""
+msgstr "スロベニア語"
 
 #: etc/inc/pfsense-utils.inc:2599
 msgid "Spanish"
-msgstr ""
+msgstr "スペイン語"
 
 #: etc/inc/pfsense-utils.inc:2600
 msgid "Swedish"
-msgstr ""
+msgstr "スウェーデン語"
 
 #: etc/inc/pfsense-utils.inc:2601
 msgid "Slovak"
-msgstr ""
+msgstr "スロバキア語"
 
 #: etc/inc/pfsense-utils.inc:2602
 msgid "Czech"
-msgstr ""
+msgstr "チェコ語"

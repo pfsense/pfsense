@@ -254,6 +254,7 @@ function _onTypeChange(type){
 							echo "selected";
 						echo ">{$ifdesc}</option>\n";
 					}
+					unset($iflist);
 					$grouplist = return_gateway_groups_array();
 				   	foreach ($grouplist as $name => $group) {
 						echo "<option value=\"{$name}\"";
@@ -261,6 +262,7 @@ function _onTypeChange(type){
 							echo "selected";
 						echo ">GW Group {$name}</option>\n";
 					}
+					unset($grouplist);
 				?>
 					</select>
 					</td>
@@ -278,6 +280,7 @@ function _onTypeChange(type){
 							echo "selected";
 						echo ">{$ifdesc}</option>\n";
 					}
+					unset($iflist);
 					$grouplist = return_gateway_groups_array();
 					foreach ($grouplist as $name => $group) {
 						echo "<option value=\"{$name}\"";
@@ -285,6 +288,7 @@ function _onTypeChange(type){
 							echo "selected";
 						echo ">GW Group {$name}</option>\n";
 					}
+					unset($grouplist);
 				?>
 					</select>
 					<br/><?= gettext("Note: This is almost always the same as the Interface to Monitor.");?>

@@ -1391,26 +1391,26 @@ msgstr ""
 #: etc/inc/pkg-utils.inc:766 etc/inc/pkg-utils.inc:1122
 #: etc/inc/pkg-utils.inc:766 etc/inc/pkg-utils.inc:1122
 msgid "System files... "
-msgstr ""
+msgstr "システムファイル..."
 
 #: etc/inc/pkg-utils.inc:716 etc/inc/pkg-utils.inc:742
 #: etc/inc/pkg-utils.inc:743 etc/inc/pkg-utils.inc:778
 #: etc/inc/pkg-utils.inc:778
 msgid "Additional files... "
-msgstr ""
+msgstr "追加ファイル..."
 
 #: etc/inc/pkg-utils.inc:742 etc/inc/pkg-utils.inc:768
 #: etc/inc/pkg-utils.inc:769 etc/inc/pkg-utils.inc:804
 #: etc/inc/pkg-utils.inc:804
 msgid "Extracting tarball to -C for "
-msgstr ""
+msgstr "のために -C へのtarballを解凍"
 
 #: etc/inc/pkg-utils.inc:748 etc/inc/pkg-utils.inc:774
 #: etc/inc/pkg-utils.inc:775 etc/inc/pkg-utils.inc:810
 #: etc/inc/pkg-utils.inc:810
 #, php-format
 msgid "Changing file mode to %1$s for %2$s%3$s%4$s"
-msgstr ""
+msgstr "%2$s%3$s%4$sをするために%1$sにファイルモードを変更する"
 
 #: etc/inc/pkg-utils.inc:764 etc/inc/pkg-utils.inc:1025
 #: etc/inc/pkg-utils.inc:790 etc/inc/pkg-utils.inc:1062
@@ -1418,13 +1418,13 @@ msgstr ""
 #: etc/inc/pkg-utils.inc:826 etc/inc/pkg-utils.inc:1098
 #: etc/inc/pkg-utils.inc:826 etc/inc/pkg-utils.inc:1098
 msgid "Loading package instructions..."
-msgstr ""
+msgstr "ローディングパッケージの説明書..."
 
 #: etc/inc/pkg-utils.inc:779 etc/inc/pkg-utils.inc:805
 #: etc/inc/pkg-utils.inc:806 etc/inc/pkg-utils.inc:841
 #: etc/inc/pkg-utils.inc:841
 msgid "Custom commands..."
-msgstr ""
+msgstr "カスタムコマンド..."
 
 #: etc/inc/pkg-utils.inc:783 etc/inc/pkg-utils.inc:809
 #: etc/inc/pkg-utils.inc:810 etc/inc/pkg-utils.inc:845
@@ -34038,7 +34038,7 @@ msgstr ""
 #: usr/local/www/status_interfaces.php:429
 #: usr/local/www/status_interfaces.php:429
 msgid "Collisions"
-msgstr ""
+msgstr "衝突"
 
 #: usr/local/www/status_interfaces.php:338
 #: usr/local/www/status_interfaces.php:435
@@ -34046,21 +34046,21 @@ msgstr ""
 #: usr/local/www/status_interfaces.php:438
 #, php-format
 msgid "Bridge (%s)"
-msgstr ""
+msgstr "ブリッジ (%s)"
 
 #: usr/local/www/status_interfaces.php:360
 #: usr/local/www/status_interfaces.php:457
 #: usr/local/www/status_interfaces.php:460
 #: usr/local/www/status_interfaces.php:460
 msgid "Interrupts/Second"
-msgstr ""
+msgstr "割り込み/秒"
 
 #: usr/local/www/status_interfaces.php:363
 #: usr/local/www/status_interfaces.php:460
 #: usr/local/www/status_interfaces.php:463
 #: usr/local/www/status_interfaces.php:463
 msgid "total"
-msgstr ""
+msgstr "総計"
 
 #: usr/local/www/status_interfaces.php:376
 #: usr/local/www/status_interfaces.php:473

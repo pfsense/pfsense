@@ -8,5 +8,5 @@ $config['system']['enablesshd'] = true;
 echo ".";
 write_config("pfSsh.php enabled sshd");
 echo "\nEnabling SSHD, please wait...";
-exec("/etc/sshd");
+send_event("service reload sshd");
 echo "\n\n";

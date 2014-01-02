@@ -66,17 +66,32 @@ switch ($svc_name) {
 		break;
 }
 
-echo "Attempting to issue {$action} to {$svc_name} service...\n";
-
 switch ($action) {
 	case "restart":
+		echo "Attempting to issue {$action} to {$svc_name} service...\n";
 		$savemsg = service_control_restart($svc_name, $extras);
 		break;
 	case "start":
+		echo "Attempting to issue {$action} to {$svc_name} service...\n";
 		$savemsg = service_control_start($svc_name, $extras);
 		break;
 	case "stop":
+		echo "Attempting to issue {$action} to {$svc_name} service...\n";
 		$savemsg = service_control_stop($svc_name, $extras);
+		break;
+	case "status":
+		switch ($svc_name) {
+			case "openvpn":
+				$service = $vpnsvc;
+				break;
+			case "captiveportal":
+				$service = $cpzone;
+				break;
+			default:
+				$service = find_service_by_name($svc_name);
+				break;
+		}
+		$savemsg = get_service_status($service) ? "Service {$svc_name} is running." : "Service {$svc_name} is stopped.";
 		break;
 }
 

@@ -76,6 +76,10 @@ if($_GET['act']=="edit"){
 		$pconfig['description'] = $a_csc[$id]['description'];
 
 		$pconfig['tunnel_network'] = $a_csc[$id]['tunnel_network'];
+		$pconfig['local_network'] = $a_csc[$id]['local_network'];
+		$pconfig['local_networkv6'] = $a_csc[$id]['local_networkv6'];
+		$pconfig['remote_network'] = $a_csc[$id]['remote_network'];
+		$pconfig['remote_networkv6'] = $a_csc[$id]['remote_networkv6'];
 		$pconfig['gwredir'] = $a_csc[$id]['gwredir'];
 
 		$pconfig['push_reset'] = $a_csc[$id]['push_reset'];
@@ -125,6 +129,18 @@ if ($_POST) {
 	if ($result = openvpn_validate_cidr($pconfig['tunnel_network'], 'Tunnel network'))
 		$input_errors[] = $result;
 
+	if ($result = openvpn_validate_cidr($pconfig['local_network'], 'IPv4 Local Network', true, "ipv4"))
+		$input_errors[] = $result;
+
+	if ($result = openvpn_validate_cidr($pconfig['local_networkv6'], 'IPv6 Local Network', true, "ipv6"))
+		$input_errors[] = $result;
+
+	if ($result = openvpn_validate_cidr($pconfig['remote_network'], 'IPv4 Remote Network', true, "ipv4"))
+		$input_errors[] = $result;
+
+	if ($result = openvpn_validate_cidr($pconfig['remote_networkv6'], 'IPv6 Remote Network', true, "ipv6"))
+		$input_errors[] = $result;
+
 	if ($pconfig['dns_server_enable']) {
 		if (!empty($pconfig['dns_server1']) && !is_ipaddr(trim($pconfig['dns_server1'])))
 			$input_errors[] = gettext("The field 'DNS Server #1' must contain a valid IP address");
@@ -162,7 +178,7 @@ if ($_POST) {
 	$reqdfields[] = 'common_name';
 	$reqdfieldsn[] = 'Common name';
 
-    do_input_validation($_POST, $reqdfields, $reqdfieldsn, &$input_errors);
+    do_input_validation($_POST, $reqdfields, $reqdfieldsn, $input_errors);
 
 	if (!$input_errors) {
 
@@ -176,6 +192,10 @@ if ($_POST) {
 		$csc['description'] = $pconfig['description'];
 
 		$csc['tunnel_network'] = $pconfig['tunnel_network'];
+		$csc['local_network'] = $pconfig['local_network'];
+		$csc['local_networkv6'] = $pconfig['local_networkv6'];
+		$csc['remote_network'] = $pconfig['remote_network'];
+		$csc['remote_networkv6'] = $pconfig['remote_networkv6'];
 		$csc['gwredir'] = $pconfig['gwredir'];
 
 		$csc['push_reset'] = $pconfig['push_reset'];
@@ -210,11 +230,14 @@ if ($_POST) {
 				$csc['nbdd_server1'] = $pconfig['nbdd_server1'];
 		}
 	
-		if (isset($id) && $a_csc[$id])
+		if (isset($id) && $a_csc[$id]) {
+			$old_csc_cn = $a_csc[$id]['common_name'];
 			$a_csc[$id] = $csc;
-		else
+		} else
 			$a_csc[] = $csc;
 
+		if (!empty($old_csc_cn))
+			openvpn_cleanup_csc($old_csc_cn);
 		openvpn_resync_csc($csc);
 		write_config();
 		
@@ -384,6 +407,58 @@ function netbios_change() {
 							"server address and the second network address " .
 							"will be assigned to the client virtual " .
 							"interface"); ?>.
+						</td>
+					</tr>
+					<tr id="local_optsv4">
+						<td width="22%" valign="top" class="vncell"><?=gettext("IPv4 Local Network/s"); ?></td>
+						<td width="78%" class="vtable">
+							<input name="local_network" type="text" class="formfld unknown" size="40" value="<?=htmlspecialchars($pconfig['local_network']);?>">
+							<br>
+							<?=gettext("These are the IPv4 networks that will be accessible " .
+							"from this particular client. Expressed as a comma-separated list of one or more CIDR ranges."); ?>
+							<br/><?=gettext("NOTE: You do not need to specify networks here if they have " .
+							"already been defined on the main server configuration.");?>
+						</td>
+					</tr>
+					<tr id="local_optsv6">
+						<td width="22%" valign="top" class="vncell"><?=gettext("IPv6 Local Network/s"); ?></td>
+						<td width="78%" class="vtable">
+							<input name="local_networkv6" type="text" class="formfld unknown" size="40" value="<?=htmlspecialchars($pconfig['local_networkv6']);?>">
+							<br>
+							<?=gettext("These are the IPv6 networks that will be accessible " .
+							"from this particular client. Expressed as a comma-separated list of one or more IP/PREFIX networks."); ?>
+							<br/><?=gettext("NOTE: You do not need to specify networks here if they have " .
+							"already been defined on the main server configuration.");?>
+						</td>
+					</tr>
+					<tr id="remote_optsv4">
+						<td width="22%" valign="top" class="vncell"><?=gettext("IPv4 Remote Network/s"); ?></td>
+						<td width="78%" class="vtable">
+							<input name="remote_network" type="text" class="formfld unknown" size="40" value="<?=htmlspecialchars($pconfig['remote_network']);?>">
+							<br>
+							<?=gettext("These are the IPv4 networks that will be routed " .
+							"to this client specifically using iroute, so that a site-to-site " .
+							"VPN can be established. " .
+							"Expressed as a comma-separated list of one or more CIDR ranges. " .
+							"You may leave this blank if there are no client-side networks to " .
+							"be routed"); ?>.
+							<br/><?=gettext("NOTE: Remember to add these subnets to the " .
+							"IPv4 Remote Networks list on the corresponding OpenVPN server settings.");?>
+						</td>
+					</tr>
+					<tr id="remote_optsv6">
+						<td width="22%" valign="top" class="vncell"><?=gettext("IPv6 Remote Network/s"); ?></td>
+						<td width="78%" class="vtable">
+							<input name="remote_networkv6" type="text" class="formfld unknown" size="40" value="<?=htmlspecialchars($pconfig['remote_networkv6']);?>">
+							<br>
+							<?=gettext("These are the IPv6 networks that will be routed " .
+							"to this client specifically using iroute, so that a site-to-site " .
+							"VPN can be established. " .
+							"Expressed as a comma-separated list of one or more IP/PREFIX networks. " .
+							"You may leave this blank if there are no client-side networks to " .
+							"be routed"); ?>.
+							<br/><?=gettext("NOTE: Remember to add these subnets to the " .
+							"IPv6 Remote Networks list on the corresponding OpenVPN server settings.");?>
 						</td>
 					</tr>
 					<tr>
@@ -643,7 +718,7 @@ function netbios_change() {
 							<table border="0" cellpadding="2" cellspacing="0">
 								<tr>
 									<td>
-										<textarea rows="6" cols="78" name="custom_options" id="custom_options"><?=$pconfig['custom_options'];?></textarea><br/>
+										<textarea rows="6" cols="70" name="custom_options" id="custom_options"><?=$pconfig['custom_options'];?></textarea><br/>
 										<?=gettext("Enter any additional options you would like to add for this client specific override, separated by a semicolon"); ?><br/>
 										<?=gettext("EXAMPLE: push \"route 10.0.0.0 255.255.255.0\""); ?>;
 									</td>
@@ -680,7 +755,7 @@ function netbios_change() {
 						if (isset($csc['disable']))
 							$disabled = "YES";
 				?>
-				<tr>
+				<tr ondblclick="document.location='vpn_openvpn_csc.php?act=edit&id=<?=$i;?>'">
 					<td class="listlr">
 						<?=$disabled;?>
 					</td>

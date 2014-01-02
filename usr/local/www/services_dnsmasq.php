@@ -51,7 +51,14 @@ $pconfig['dhcpfirst'] = isset($config['dnsmasq']['dhcpfirst']);
 $pconfig['strict_order'] = isset($config['dnsmasq']['strict_order']);
 $pconfig['domain_needed'] = isset($config['dnsmasq']['domain_needed']);
 $pconfig['no_private_reverse'] = isset($config['dnsmasq']['no_private_reverse']);
+$pconfig['port'] = $config['dnsmasq']['port'];
 $pconfig['custom_options'] = $config['dnsmasq']['custom_options'];
+
+$pconfig['strictbind'] = isset($config['dnsmasq']['strictbind']);
+if (!empty($config['dnsmasq']['interface']))
+	$pconfig['interface'] = explode(",", $config['dnsmasq']['interface']);
+else
+	$pconfig['interface'] = array();
 
 if (!is_array($config['dnsmasq']['hosts']))
 	$config['dnsmasq']['hosts'] = array();
@@ -76,6 +83,20 @@ if ($_POST) {
 	$config['dnsmasq']['domain_needed'] = ($_POST['domain_needed']) ? true : false;
 	$config['dnsmasq']['no_private_reverse'] = ($_POST['no_private_reverse']) ? true : false;
 	$config['dnsmasq']['custom_options'] = str_replace("\r\n", "\n", $_POST['custom_options']);
+	$config['dnsmasq']['strictbind'] = ($_POST['strictbind']) ? true : false;
+
+	if ($_POST['port'])
+		if(is_port($_POST['port']))
+			$config['dnsmasq']['port'] = $_POST['port'];
+		else
+			$input_errors[] = gettext("You must specify a valid port number");
+	else if (isset($config['dnsmasq']['port']))
+		unset($config['dnsmasq']['port']);
+
+	if (is_array($_POST['interface']))
+		$config['dnsmasq']['interface'] = implode(",", $_POST['interface']);
+	elseif (isset($config['dnsmasq']['interface']))
+		unset($config['dnsmasq']['interface']);
 
 	if ($config['dnsmasq']['custom_options']) {
 		$args = '';
@@ -227,6 +248,49 @@ function show_advanced_dns() {
 					"Any entries in the Domain Overrides section forwarding private \"n.n.n.in-addr.arpa\" names to a specific server are still forwarded. ".
 					"If the IP to name is not known from /etc/hosts, DHCP or a specific domain override then a \"not found\" answer is immediately returned. ".
 					""), $g['product_name']); ?></p>
+		</td>
+	</tr>
+	<tr>
+		<td width="22%" valign="top" class="vncellreq"><?=gettext("Listen Port");?></td>
+		<td width="78%" class="vtable"><p>
+			<input name="port" type="text" id="port" size="6" <?php if ($pconfig['port']) echo "value=\"{$pconfig['port']}\"";?>>
+			<br /><br />
+			<?=gettext("The port used for responding to DNS queries. It should normally be left blank unless another service needs to bind to TCP/UDP port 53.");?></p>
+		</td>
+	</tr>
+	<tr>
+		<td width="22%" valign="top" rowspan="2" class="vncellreq"><?=gettext("Interfaces"); ?></td>
+		<td width="78%" class="vtable">
+		<?php
+			$interface_addresses = get_possible_listen_ips(true);
+			$size=count($interface_addresses)+1;
+		?>
+			<?=gettext("Interface IPs used by the DNS Forwarder for responding to queries from clients. If an interface has both IPv4 and IPv6 IPs, both are used. Queries to other interface IPs not selected below are discarded. The default behavior is to respond to queries on every available IPv4 and IPv6 address.");?>
+			<br /><br />
+			<select id="interface" name="interface[]" multiple="true" class="formselect" size="<?php echo $size; ?>">
+				<option value="" <?php if (empty($pconfig['interface'])) echo 'selected="selected"'; ?>>All</option>
+			<?php  foreach ($interface_addresses as $laddr):
+					$selected = "";
+					if (in_array($laddr['value'], $pconfig['interface']))
+						$selected = 'selected="selected"';
+			?>
+				<option value="<?=$laddr['value'];?>" <?=$selected;?>>
+					<?=htmlspecialchars($laddr['name']);?>
+				</option>
+			<?php endforeach; ?>
+			</select>
+			<br /><br />
+		</td>
+	</tr>
+	<tr>
+		<td width="78%" class="vtable"><p>
+			<input name="strictbind" type="checkbox" id="strictbind" value="yes" <?php if ($pconfig['strictbind'] == "yes") echo "checked";?>>
+			<strong><?=gettext("Strict Interface Binding");?></strong>
+			<br />
+			<?= gettext("If this option is set, the DNS forwarder will only bind to the interfaces containing the IP addresses selected above, rather than binding to all interfaces and discarding queries to other addresses."); ?>
+			<br /><br />
+			<?= gettext("NOTE: This option does NOT work with IPv6. If set, dnsmasq will not bind to IPv6 addresses."); ?>
+			</p>
 		</td>
 	</tr>
 	<tr>

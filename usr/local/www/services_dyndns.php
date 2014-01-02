@@ -26,7 +26,7 @@
 	POSSIBILITY OF SUCH DAMAGE.
 */
 /*
-	pfSense_BUILDER_BINARIES:	/usr/bin/host	
+	pfSense_BUILDER_BINARIES:	/usr/bin/host
 	pfSense_MODULE:	dyndns
 */
 
@@ -118,7 +118,7 @@ include("head.inc");
 		  <?php
 			$types = explode(",", DYNDNS_PROVIDER_DESCRIPTIONS);
 			$vals = explode(" ", DYNDNS_PROVIDER_VALUES);
-			for ($j = 0; $j < count($vals); $j++) 
+			for ($j = 0; $j < count($vals); $j++)
 				if ($vals[$j] == $dyndns['type']) {
 					if (!isset($dyndns['enable']))
 						echo "<span class=\"gray\">".htmlspecialchars($types[$j])."</span>";
@@ -139,15 +139,26 @@ include("head.inc");
 		  <td class="listr">
 		  <?php
 			$filename = "{$g['conf_path']}/dyndns_{$dyndns['interface']}{$dyndns['type']}" . escapeshellarg($dyndns['host']) . "{$dyndns['id']}.cache";
+			$filename_v6 = "{$g['conf_path']}/dyndns_{$dyndns['interface']}{$dyndns['type']}" . escapeshellarg($dyndns['host']) . "{$dyndns['id']}_v6.cache";
 			if (file_exists($filename)) {
 				$ipaddr = dyndnsCheckIP($dyndns['interface']);
 				$cached_ip_s = explode(":", file_get_contents($filename));
 				$cached_ip = $cached_ip_s[0];
-				if ($ipaddr <> $cached_ip) 
+				if ($ipaddr <> $cached_ip)
 					echo "<font color='red'>";
-				else 
+				else
 					echo "<font color='green'>";
 				echo htmlspecialchars($cached_ip);
+				echo "</font>";
+			} else if (file_exists($filename_v6)) {
+				$ipv6addr = get_interface_ipv6($dyndns['interface']);
+				$cached_ipv6_s = explode("|", file_get_contents($filename_v6));
+				$cached_ipv6 = $cached_ipv6_s[0];
+				if ($ipv6addr <> $cached_ipv6)
+					echo "<font color='red'>";
+				else
+					echo "<font color='green'>";
+				echo htmlspecialchars($cached_ipv6);
 				echo "</font>";
 			} else {
 				echo "N/A";
@@ -173,7 +184,7 @@ include("head.inc");
 		  <td class="list"> <a href="services_dyndns_edit.php"><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_plus.gif" width="17" height="17" border="0"></a></td>
 		</tr>
 		<tr>
-		  <td colspan="3" class="list"><p class="vexpl"><span class="red"><strong>
+		  <td colspan="5" class="list"><p class="vexpl"><span class="red"><strong>
 			<?=gettext("Note:");?><br>
 			</strong></span>
 			<?=gettext("IP addresses appearing in green are up to date with Dynamic DNS provider.");?><br>

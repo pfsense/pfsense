@@ -308,10 +308,7 @@ function conf_mount_rw() {
 	if($g['platform'] == "cdrom" or $g['platform'] == "pfSense")
 		return;
 
-	if (!isset($config['system']['nanobsd_force_rw']) && (refcount_reference(1000) > 1))
-		return;
-
-	if (isset($config['system']['nanobsd_force_rw']) && is_writable("/"))
+	if ((refcount_reference(1000) > 1) && is_writable("/"))
 		return;
 
 	$status = mwexec("/sbin/mount -u -w -o sync,noatime {$g['cf_path']}");
@@ -348,10 +345,13 @@ function conf_mount_ro() {
 	/* Do not trust $g['platform'] since this can be clobbered during factory reset. */
 	$platform = trim(file_get_contents("/etc/platform"));
 	/* do not umount on cdrom or pfSense platforms */
-	if($platform == "cdrom" or $platform == "pfSense" or isset($config['system']['nanobsd_force_rw']))
+	if($platform == "cdrom" or $platform == "pfSense")
 		return;
 
 	if (refcount_unreference(1000) > 0)
+		return;
+
+	if(isset($config['system']['nanobsd_force_rw']))
 		return;
 
 	if($g['booting'])
@@ -384,14 +384,16 @@ function convert_config() {
 
 	/* special case upgrades */
 	/* fix every minute crontab bogons entry */
-	$cron_item_count = count($config['cron']['item']);
-	for($x=0; $x<$cron_item_count; $x++) {
-		if(stristr($config['cron']['item'][$x]['command'], "rc.update_bogons.sh")) {
-			if($config['cron']['item'][$x]['hour'] == "*" ) {
-		        $config['cron']['item'][$x]['hour'] = "3";
-		 		write_config(gettext("Updated bogon update frequency to 3am"));
-		 		log_error(gettext("Updated bogon update frequency to 3am"));
-		 	}       
+	if (is_array($config['cron'])) {
+		$cron_item_count = count($config['cron']['item']);
+		for($x=0; $x<$cron_item_count; $x++) {
+			if(stristr($config['cron']['item'][$x]['command'], "rc.update_bogons.sh")) {
+				if($config['cron']['item'][$x]['hour'] == "*" ) {
+				$config['cron']['item'][$x]['hour'] = "3";
+					write_config(gettext("Updated bogon update frequency to 3am"));
+					log_error(gettext("Updated bogon update frequency to 3am"));
+				}       
+			}
 		}
 	}
 	if ($config['version'] == $g['latest_config'])
@@ -531,11 +533,7 @@ function write_config($desc="Unknown", $backup = true) {
 		return -1;
 	}
 	
-	if($g['platform'] == "embedded" or $g['platform'] == "nanobsd") {
-		cleanup_backupcache(5, true);
-	} else {
-		cleanup_backupcache(30, true);
-	}
+	cleanup_backupcache(true);
 
 	/* re-read configuration */
 	/* NOTE: We assume that the file can be parsed since we wrote it. */
@@ -723,10 +721,12 @@ function config_validate($conffile) {
 	return true;
 }
 
-function cleanup_backupcache($revisions = 30, $lock = false) {
+function cleanup_backupcache($lock = false) {
 	global $g;
 	$i = false;
-	
+
+	$revisions = get_config_backup_count();
+
 	if (!$lock)
 		$lockkey = lock('config');
 
@@ -745,7 +745,8 @@ function cleanup_backupcache($revisions = 30, $lock = false) {
 	$tocache = array();
 
 	foreach($bakfiles as $backup) { // Check for backups in the directory not represented in the cache.
-		if(filesize($backup) == 0) {
+		$backupsize = filesize($backup);
+		if($backupsize == 0) {
 			unlink($backup);
 			continue;
 		}
@@ -765,7 +766,7 @@ function cleanup_backupcache($revisions = 30, $lock = false) {
 				$newxml['revision']['description'] = "Unknown";
 			if($newxml['version'] == "")
 				$newxml['version'] = "?";
-			$tocache[$tocheck] = array('description' => $newxml['revision']['description'], 'version' => $newxml['version']);
+			$tocache[$tocheck] = array('description' => $newxml['revision']['description'], 'version' => $newxml['version'], 'filesize' => $backupsize);
 		}
 	}
 	foreach($backups as $checkbak) {
@@ -776,7 +777,7 @@ function cleanup_backupcache($revisions = 30, $lock = false) {
 			if($g['booting']) print " " . $tocheck . "r";
 		}
 	}
-	foreach($newbaks as $todo) $tocache[$todo['time']] = array('description' => $todo['description'], 'version' => $todo['version']);
+	foreach($newbaks as $todo) $tocache[$todo['time']] = array('description' => $todo['description'], 'version' => $todo['version'], 'filesize' => $todo['filesize']);
 	if(is_int($revisions) and (count($tocache) > $revisions)) {
 		$toslice = array_slice(array_keys($tocache), 0, $revisions);
 		foreach($toslice as $sliced)
@@ -807,7 +808,7 @@ function get_backups() {
 		sort($bakvers);
 		// 	$bakvers = array_reverse($bakvers);
 		foreach(array_reverse($bakvers) as $bakver)
-			$toreturn[] = array('time' => $bakver, 'description' => $confvers[$bakver]['description'], 'version' => $confvers[$bakver]['version']);
+			$toreturn[] = array('time' => $bakver, 'description' => $confvers[$bakver]['description'], 'version' => $confvers[$bakver]['version'], 'filesize' => $confvers[$bakver]['filesize']);
 	} else {
 		return false;
 	}
@@ -838,14 +839,14 @@ function backup_config() {
     }
 
 	$bakver = ($config['version'] == "") ? "?" : $config['version'];
-
-    copy($g['cf_conf_path'] . '/config.xml', $g['cf_conf_path'] . '/backup/config-' . $baktime . '.xml');
+	$bakfilename = $g['cf_conf_path'] . '/backup/config-' . $baktime . '.xml';
+	copy($g['cf_conf_path'] . '/config.xml', $bakfilename);
     if(file_exists($g['cf_conf_path'] . '/backup/backup.cache')) {
             $backupcache = unserialize(file_get_contents($g['cf_conf_path'] . '/backup/backup.cache'));
     } else {
             $backupcache = array();
     }
-    $backupcache[$baktime] = array('description' => $bakdesc, 'version' => $bakver);
+	$backupcache[$baktime] = array('description' => $bakdesc, 'version' => $bakver, 'filesize' => filesize($bakfilename));
     $bakout = fopen($g['cf_conf_path'] . '/backup/backup.cache', "w");
     fwrite($bakout, serialize($backupcache));
     fclose($bakout);
@@ -874,10 +875,9 @@ function set_device_perms() {
 
 function get_config_user() {
 	if (empty($_SESSION["Username"])) {
-		if (empty($_ENV['USER']) || $_ENV['USER'] == "root")
+		$username = getenv("USER");
+		if (empty($conuser) || $conuser == "root")
 			$username = "(system)";
-		else
-			$username = $_ENV['USER'];
 	} else
 		$username = $_SESSION["Username"];
 
@@ -906,5 +906,40 @@ function make_config_revision_entry($desc = null, $override_user = null) {
 	$revision['username'] = $username;
 	return $revision;
 }
+
+function get_config_backup_count() {
+	global $config, $g;
+	if (isset($config['system']['backupcount']) && is_numeric($config['system']['backupcount']) && ($config['system']['backupcount'] >= 0)) {
+		return intval($config['system']['backupcount']);
+	} elseif ($g['platform'] == "embedded" or $g['platform'] == "nanobsd") {
+		return 5;
+	} else {
+		return 30;
+	}
+}
+
+function pfSense_clear_globals() {
+	global $config, $FilterIfList, $GatewaysList, $filterdns, $aliases, $aliastable;
+
+	if (isset($FilterIfList))
+		unset($FilterIfList);
+
+	if (isset($GatewaysList))
+		unset($GatewaysList);
+
+	/* Used for the hostname dns resolver */
+	if (isset($filterdns))
+		unset($filterdns);
+
+	/* Used for aliases and interface macros */
+	if (isset($aliases))
+		unset($aliases);
+	if (isset($aliastable))
+		unset($aliastable);
+
+	unset($config);
+}
+
+register_shutdown_function('pfSense_clear_globals');
 
 ?>

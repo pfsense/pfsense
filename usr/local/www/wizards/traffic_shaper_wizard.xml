@@ -2,33 +2,33 @@
 <pfsensewizard>
 	<copyright><![CDATA[
 	/*
-		traffic_shaper_wizard.xml
-        part of pfSense (http://www.pfsense.org/)
+	traffic_shaper_wizard.xml
+	part of pfSense (http://www.pfsense.org/)
 
-        Copyright (C) 2005 Bill Marquette - bill.marquette@gmail.com.
-      	Copyright (C) 2008-2010 Ermal Luci
-        All rights reserved.
+	Copyright (C) 2005 Bill Marquette - bill.marquette@gmail.com.
+	Copyright (C) 2008-2010 Ermal Luci
+	All rights reserved.
 
-        Redistribution and use in source and binary forms, with or without
-        modification, are permitted provided that the following conditions are met:
+	Redistribution and use in source and binary forms, with or without
+	modification, are permitted provided that the following conditions are met:
 
-        1. Redistributions of source code must retain the above copyright notice,
-           this list of conditions and the following disclaimer.
+	1. Redistributions of source code must retain the above copyright notice,
+	   this list of conditions and the following disclaimer.
 
-        2. Redistributions in binary form must reproduce the above copyright
-           notice, this list of conditions and the following disclaimer in the
-           documentation and/or other materials provided with the distribution.
+	2. Redistributions in binary form must reproduce the above copyright
+	   notice, this list of conditions and the following disclaimer in the
+	   documentation and/or other materials provided with the distribution.
 
-        THIS SOFTWARE IS PROVIDED ``AS IS'' AND ANY EXPRESS OR IMPLIED WARRANTIES,
-        INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY
-        AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE
-        AUTHOR BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY,
-        OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
-        SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
-        INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
-        CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
-        ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
-        POSSIBILITY OF SUCH DAMAGE.
+	THIS SOFTWARE IS PROVIDED ``AS IS'' AND ANY EXPRESS OR IMPLIED WARRANTIES,
+	INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY
+	AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE
+	AUTHOR BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY,
+	OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+	SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+	INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+	CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+	ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+	POSSIBILITY OF SUCH DAMAGE.
 	*/]]></copyright>
 	<totalsteps>9</totalsteps>
 	<step>
@@ -180,33 +180,33 @@
 				<dontdisplayname>true</dontdisplayname>
 				<dontcombinecells>true</dontcombinecells>
 				<donotdisable>true</donotdisable>
-                                <name>BandwidthSpeed</name>
+				<name>BandwidthSpeed</name>
 				<description>The limit you want to apply.</description>
-                                <type>select</type>
+				<type>select</type>
 				<options>
-				<option>
-                                        <name>%</name>
-                                        <value>%</value>
-                                </option>
-				<option>
-					<name>bit/s</name>
-					<value>b</value>
-				</option>
-				<option>
-					<name>Kilobit/s</name>
-					<value>Kb</value>
-				</option>
-				<option>
-					<name>Megabit/s</name>
-					<value>Mb</value>
-				</option>
-				<option>
-					<name>Gigabit/s</name>
-					<value>Gb</value>
-				</option>
+					<option>
+						<name>%</name>
+						<value>%</value>
+					</option>
+					<option>
+						<name>bit/s</name>
+						<value>b</value>
+					</option>
+					<option>
+						<name>Kilobit/s</name>
+						<value>Kb</value>
+					</option>
+					<option>
+						<name>Megabit/s</name>
+						<value>Mb</value>
+					</option>
+					<option>
+						<name>Gigabit/s</name>
+						<value>Gb</value>
+					</option>
 				</options>
-                                <bindstofield>ezshaper->step4->bandwidthunit</bindstofield>
-                        </field>
+				<bindstofield>ezshaper->step4->bandwidthunit</bindstofield>
+			</field>
 			<field>
 				<name>Next</name>
 				<type>submit</type>
@@ -253,37 +253,37 @@
 				<combinefieldsbegin>true</combinefieldsbegin>
 			</field>
 			<field>
-                                <combinefieldsend>true</combinefieldsend>
-                                <dontdisplayname>true</dontdisplayname>
-                                <dontcombinecells>true</dontcombinecells>
+				<combinefieldsend>true</combinefieldsend>
+				<dontdisplayname>true</dontdisplayname>
+				<dontcombinecells>true</dontcombinecells>
 				<donotdisable>true</donotdisable>
-                                <name>BandwidthSpeed</name>
-                                <description>The limit you want to apply.</description>
-                                <type>select</type>
-                                <options>
-				<option>
-                                        <name>%</name>
-                                        <value>%</value>
-                                </option>
-                                <option>
-                                        <name>bit/s</name>
-					<value>b</value>
-                                </option>
-                                <option>
-                                        <name>Kilobit/s</name>
-					<value>Kb</value>
-                                </option>
-                                <option>
-                                        <name>Megabit/s</name>
-					<value>Mb</value>
-                                </option>
-                                <option>
-                                        <name>Gigabit/s</name>
-					<value>Gb</value>
-                                </option>
-                                </options>
-                                <bindstofield>ezshaper->step5->bandwidthunit</bindstofield>
-                        </field>
+				<name>BandwidthSpeed</name>
+				<description>The limit you want to apply.</description>
+				<type>select</type>
+				<options>
+					<option>
+						<name>%</name>
+						<value>%</value>
+					</option>
+					<option>
+						<name>bit/s</name>
+						<value>b</value>
+					</option>
+					<option>
+						<name>Kilobit/s</name>
+						<value>Kb</value>
+					</option>
+					<option>
+						<name>Megabit/s</name>
+						<value>Mb</value>
+					</option>
+					<option>
+						<name>Gigabit/s</name>
+						<value>Gb</value>
+					</option>
+				</options>
+				<bindstofield>ezshaper->step5->bandwidthunit</bindstofield>
+			</field>
 			<field>
 				<name>Enable/Disable specific P2P protocols</name>
 				<type>listtopic</type>
@@ -1260,45 +1260,45 @@
 				<typehint>CVSUP</typehint>
 			</field>
 			<field>
-        <name>Slingbox</name>
-        <bindstofield>ezshaper-&gt;step7-&gt;slingbox</bindstofield>
-        <type>select</type>
-        <options>
-          <option>
-            <name>Default priority</name>
-            <value>D</value>
-          </option>
-          <option>
-            <name>Higher priority</name>
-            <value>H</value>
-          </option>
-          <option>
-            <name>Lower priority</name>
-            <value>L</value>
-          </option>
-        </options>
-        <typehint>Slingbox</typehint>
-      </field>
-      <field>
-        <name>HBCI</name>
-        <bindstofield>ezshaper-&gt;step7-&gt;hbci</bindstofield>
-        <type>select</type>
-        <options>
-          <option>
-            <name>Default priority</name>
-            <value>D</value>
-          </option>
-          <option>
-            <name>Higher priority</name>
-            <value>H</value>
-          </option>
-          <option>
-            <name>Lower priority</name>
-            <value>L</value>
-          </option>
-        </options>
-        <typehint>HBCI</typehint>
-      </field>
+				<name>Slingbox</name>
+				<bindstofield>ezshaper-&gt;step7-&gt;slingbox</bindstofield>
+				<type>select</type>
+				<options>
+					<option>
+						<name>Default priority</name>
+						<value>D</value>
+					</option>
+					<option>
+						<name>Higher priority</name>
+						<value>H</value>
+					</option>
+					<option>
+						<name>Lower priority</name>
+						<value>L</value>
+					</option>
+				</options>
+				<typehint>Slingbox</typehint>
+			</field>
+			<field>
+				<name>HBCI</name>
+				<bindstofield>ezshaper-&gt;step7-&gt;hbci</bindstofield>
+				<type>select</type>
+				<options>
+					<option>
+						<name>Default priority</name>
+						<value>D</value>
+					</option>
+					<option>
+						<name>Higher priority</name>
+						<value>H</value>
+					</option>
+					<option>
+						<name>Lower priority</name>
+						<value>L</value>
+					</option>
+				</options>
+				<typehint>HBCI</typehint>
+			</field>
 			<field>
 				<name>Next</name>
 				<type>submit</type>

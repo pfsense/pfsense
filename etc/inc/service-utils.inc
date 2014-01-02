@@ -43,6 +43,7 @@ require_once("openvpn.inc");
 require_once("ipsec.inc");
 require_once("vpn.inc");
 require_once("vslb.inc");
+require_once("gwlb.inc");
 
 define("RCFILEPREFIX", "/usr/local/etc/rc.d/");
 function write_rcfile($params) {
@@ -282,16 +283,18 @@ function get_services() {
 		if ($oc['if'] && (!link_interface_to_bridge($if)))
 			$iflist[$if] = $if;
 	}
-	$show_dhcprelay = false;
-	foreach($iflist as $if) {
-		if(isset($config['dhcrelay'][$if]['enable']))
-			$show_dhcprelay = true;
-	}
 
-	if($show_dhcprelay == true) {
+	if(isset($config['dhcrelay']['enable'])) {
 		$pconfig = array();
 		$pconfig['name'] = "dhcrelay";
 		$pconfig['description'] = gettext("DHCP Relay");
+		$services[] = $pconfig;
+	}
+
+	if(isset($config['dhcrelay6']['enable'])) {
+		$pconfig = array();
+		$pconfig['name'] = "dhcrelay6";
+		$pconfig['description'] = gettext("DHCPv6 Relay");
 		$services[] = $pconfig;
 	}
 
@@ -299,6 +302,14 @@ function get_services() {
 		$pconfig = array();
 		$pconfig['name'] = "dhcpd";
 		$pconfig['description'] = gettext("DHCP Service");
+		$services[] = $pconfig;
+	}
+
+	$gateways_arr = return_gateways_array();
+	if (is_array($gateways_arr)) {
+		$pconfig = array();
+		$pconfig['name'] = "apinger";
+		$pconfig['description'] = gettext("Gateway Monitoring Daemon");
 		$services[] = $pconfig;
 	}
 
@@ -334,6 +345,13 @@ function get_services() {
 		$pconfig = array();
 		$pconfig['name'] = "racoon";
 		$pconfig['description'] = gettext("IPsec VPN");
+		$services[] = $pconfig;
+	}
+
+	if (isset($config['system']['enablesshd'])) {
+		$pconfig = array();
+		$pconfig['name'] = "sshd";
+		$pconfig['description'] = gettext("Secure Shell Daemon");
 		$services[] = $pconfig;
 	}
 
@@ -414,6 +432,12 @@ function get_service_status($service) {
 			if (isset($config['captiveportal'][$service['zone']]['httpslogin']))
 				$running = $running && is_pid_running("{$g['varrun_path']}/lighty-{$service['zone']}-CaptivePortal-SSL.pid");
 			break;
+		case "vhosts-http":
+			$running = is_pid_running("{$g['varrun_path']}/vhosts-http.pid");
+			break;
+		case "dhcrelay6":
+			$running = is_pid_running("{$g['varrun_path']}/dhcrelay6.pid");
+			break;
 		default:
 			$running = is_service_running($service['name']);
 	}
@@ -425,23 +449,19 @@ function get_service_status_icon($service, $withtext = true, $smallicon = false)
 	$output = "";
 	if(get_service_status($service)) {
 		$statustext = gettext("Running");
-		$output .= '<td class="listr" align="center">' . "\n";
 		$output .= "<img style=\"vertical-align:middle\" title=\"" . sprintf(gettext("%s Service is"),$service["name"]) . " {$statustext}\" src=\"/themes/" . $g["theme"] . "/images/icons/";
 		$output .= ($smallicon) ? "icon_pass.gif" : "icon_service_running.gif";
-		$output .= "\" alt=\"status\" />";
+		$output .= "\" alt=\"status\" />&nbsp;";
 		if ($withtext)
-			$output .= "&nbsp;&nbsp;" . $statustext;
-		$output .= "</td>\n";
+			$output .= "&nbsp;" . $statustext;
 	} else {
 		$service_enabled = is_service_enabled($service['name']);
 		$statustext = ($service_enabled) ? gettext("Stopped") : gettext("Disabled");
-		$output .= '<td class="listbg" align="center">' . "\n";
 		$output .= "<img style=\"vertical-align:middle\" title=\"" . sprintf(gettext("%s Service is"),$service["name"]) . " {$statustext}\" src=\"/themes/" . $g["theme"] . "/images/icons/";
 		$output .= ($smallicon) ? "icon_block.gif" : "icon_service_stopped.gif";
-		$output .= "\" alt=\"status\" />";
+		$output .= "\" alt=\"status\" />&nbsp;";
 		if ($withtext)
-			$output .= "&nbsp;&nbsp;" . "<font color=\"white\">{$statustext}</font>";
-		$output .= "</td>\n";
+			$output .= "&nbsp;<font color=\"white\">{$statustext}</font>";
 	}
 	return $output;
 }
@@ -507,8 +527,17 @@ function service_control_start($name, $extras) {
 		case 'openntpd':
 			system_ntp_configure();
 			break;
+		case 'apinger':
+			setup_gateways_monitor();
+			break;
 		case 'bsnmpd':
 			services_snmpd_configure();
+			break;
+		case 'dhcrelay':
+			services_dhcrelay_configure();
+			break;
+		case 'dhcrelay6':
+			services_dhcrelay6_configure();
 			break;
 		case 'dnsmasq':
 			services_dnsmasq_configure();
@@ -525,10 +554,13 @@ function service_control_start($name, $extras) {
 		case 'racoon':
 			vpn_ipsec_force_reload();
 			break;
+		case 'sshd':
+			send_event("service restart sshd");
+			break;
 		case 'openvpn':
-			$vpnmode = $extras['vpnmode'];
+			$vpnmode = isset($extras['vpnmode']) ? $extras['vpnmode'] : $extras['mode'];
 			if (($vpnmode == "server") || ($vpnmode == "client")) {
-				$id = $extras['id'];
+				$id = isset($extras['vpnid']) ? $extras['vpnid'] : $extras['id'];
 				$configfile = "{$g['varetc_path']}/openvpn/{$vpnmode}{$id}.conf";
 				if (file_exists($configfile))
 					openvpn_restart_by_vpnid($vpnmode, $id);
@@ -560,6 +592,9 @@ function service_control_stop($name, $extras) {
 		case 'openntpd':
 			killbyname("openntpd");
 			break;
+		case 'apinger':
+			killbypid("{$g['varrun_path']}/apinger.pid");
+			break;
 		case 'bsnmpd':
 			killbypid("{$g['varrun_path']}/snmpd.pid");
 			break;
@@ -571,6 +606,9 @@ function service_control_stop($name, $extras) {
 			break;
 		case 'dhcrelay':
 			killbypid("{$g['varrun_path']}/dhcrelay.pid");
+			break;
+		case 'dhcrelay6':
+			killbypid("{$g['varrun_path']}/dhcrelay6.pid");
 			break;
 		case 'dnsmasq':
 			killbypid("{$g['varrun_path']}/dnsmasq.pid");
@@ -620,8 +658,18 @@ function service_control_restart($name, $extras) {
 		case 'openntpd':
 			system_ntp_configure();
 			break;
+		case 'apinger':
+			killbypid("{$g['varrun_path']}/apinger.pid");
+			setup_gateways_monitor();
+			break;
 		case 'bsnmpd':
 			services_snmpd_configure();
+			break;
+		case 'dhcrelay':
+			services_dhcrelay_configure();
+			break;
+		case 'dhcrelay6':
+			services_dhcrelay6_configure();
 			break;
 		case 'dnsmasq':
 			services_dnsmasq_configure();
@@ -637,6 +685,9 @@ function service_control_restart($name, $extras) {
 			break;
 		case 'racoon':
 			vpn_ipsec_force_reload();
+			break;
+		case 'sshd':
+			send_event("service restart sshd");
 			break;
 		case 'openvpn':
 			$vpnmode = $extras['vpnmode'];

@@ -45,7 +45,7 @@ if (isset($config['system']['enablesshd'])) {
 		write_config();
 		echo " done.\n";
 		echo "\nDisabling SSHD...";
-		exec("/etc/sshd");
+		send_event("service reload sshd");
 		echo " done.\n";
 		exec("ps awux | grep '/usr/sbin/sshd' | grep -v grep | awk '{print $2}' | xargs kill");
 	}
@@ -59,7 +59,7 @@ if (isset($config['system']['enablesshd'])) {
 		write_config();
 		echo " done.\n";
 		echo "\nEnabling SSHD...";
-		exec("/etc/sshd");
+		send_event("service reload sshd");
 		echo " done.\n\n";
 	}	
 }

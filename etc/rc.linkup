@@ -51,7 +51,7 @@ function handle_argument_group($iface, $argument2) {
 		$staticv4 = is_ipaddrv4($ipaddr);
 	$staticv6 = false;
 	if (empty($ip6addr))
-		$statcv6 = true;
+		$staticv6 = true;
 	else
 		$staticv6 = is_ipaddrv6($ip6addr);
 	if ($staticv4 === true && $staticv6 === true) {
@@ -73,16 +73,20 @@ function handle_argument_group($iface, $argument2) {
 		case "up":
 			log_error("DEVD Ethernet attached event for {$iface}");
 			log_error("HOTPLUG: Configuring interface {$iface}");
+			require_once("vpn.inc");
+			require_once("captiveportal.inc");
 			// Do not try to readd to bridge otherwise em(4) has problems
-			interface_configure($iface, false, true); 
+			interface_configure($iface, true, true); 
 			break;
 		}
 	}
 }
 
 global $g;
-if (file_exists("{$g['varrun_path']}/booting")) {
-	/* ignore all linkup events */
+if (!file_exists("{$g['varrun_path']}/booting") && empty($g['booting'])) {
+if (isset($_GET)) {
+	if (!empty($_GET['interface']))
+		handle_argument_group($_GET['interface'], $_GET['action']);
 } else {
 	if ($argc < 3) {
 		log_error("HOTPLUG event: The number of required parameters not passed!");
@@ -102,6 +106,7 @@ if (file_exists("{$g['varrun_path']}/booting")) {
 	$interface = convert_real_interface_to_friendly_interface_name($argv[2]);
 	if (!empty($interface))
 		handle_argument_group($interface, $action);
+}
 }
 
 ?>

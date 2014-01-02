@@ -87,6 +87,9 @@ if (($_GET['deleteip']) && (is_ipaddr($_GET['deleteip']))) {
 	header("Location: status_dhcpv6_leases.php?all={$_GET['all']}");
 }
 
+// Load MAC-Manufacturer table
+$mac_man = load_mac_manufacturer_table();
+
 include("head.inc");
 
 ?>
@@ -101,12 +104,17 @@ function leasecmp($a, $b) {
 
 function adjust_gmt($dt) {
 	global $config;
-	$dhcpdv6 = $config['dhcpdv6'];
-	foreach ($dhcpdv6 as $dhcpv6leaseinlocaltime) {
-		$dhcpv6leaseinlocaltime = $dhcpv6leaseinlocaltime['dhcpv6leaseinlocaltime'];
-		if ($dhcpv6leaseinlocaltime == "yes")
-			break;
+
+	$dhcpv6leaseinlocaltime == "no";
+	if (is_array($config['dhcpdv6'])) {
+		$dhcpdv6 = $config['dhcpdv6'];
+		foreach ($dhcpdv6 as $dhcpv6leaseinlocaltime) {
+			$dhcpv6leaseinlocaltime = $dhcpv6leaseinlocaltime['dhcpv6leaseinlocaltime'];
+			if ($dhcpv6leaseinlocaltime == "yes")
+				break;
+		}
 	}
+
 	$timezone = $config['system']['timezone'];
 	$ts = strtotime($dt . " GMT");
 	if ($dhcpv6leaseinlocaltime == "yes") {
@@ -448,7 +456,14 @@ foreach ($leases as $data) {
 		if (!empty($data['hostname'])) {
 			echo htmlentities($data['hostname']) . "<br/>";
 		}
-		echo htmlentities($ndpdata[$data['ip']]['mac']);
+
+		$mac=trim($ndpdata[$data['ip']]['mac']);
+		if (!empty($mac)) {
+			$mac_hi = strtoupper($mac[0] . $mac[1] . $mac[3] . $mac[4] . $mac[6] . $mac[7]);
+			print htmlentities($mac);
+			if(isset($mac_man[$mac_hi])){ print "<br/><font size=\"-2\"><i>{$mac_man[$mac_hi]}</i></font>"; }
+		}
+
 		echo "{$fspane}&nbsp;</td>\n";
 		if ($data['type'] != "static") {
 			echo "<td class=\"listr\">{$fspans}" . adjust_gmt($data['start']) . "{$fspane}&nbsp;</td>\n";

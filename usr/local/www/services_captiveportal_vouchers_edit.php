@@ -37,7 +37,7 @@
 
 require("guiconfig.inc");
 require("functions.inc");
-require("filter.inc");
+require_once("filter.inc");
 require("shaper.inc");
 require("captiveportal.inc");
 require_once("voucher.inc");
@@ -91,7 +91,7 @@ if ($_POST) {
     $reqdfields = explode(" ", "number count minutes");
     $reqdfieldsn = array(gettext("Number"),gettext("Count"),gettext("minutes"));
 
-    do_input_validation($_POST, $reqdfields, $reqdfieldsn, &$input_errors);
+    do_input_validation($_POST, $reqdfields, $reqdfieldsn, $input_errors);
 
 	// Look for duplicate roll #
 	foreach($a_roll as $re) {

@@ -44,7 +44,7 @@ header("Cache-Control: post-check=0, pre-check=0", false);
 header("Pragma: no-cache");
 header("Connection: close");
 
-global $cpzone;
+global $cpzone, $cpzoneid;
 
 $cpzone = $_REQUEST['zone'];
 $cpcfg = $config['captiveportal'][$cpzone];
@@ -55,14 +55,16 @@ if (empty($cpcfg)) {
 	return;
 }
 
-$orig_host = $_ENV['HTTP_HOST'];
+$cpzoneid = $cpcfg['zoneid'];
+
+$orig_host = $_SERVER['HTTP_HOST'];
 /* NOTE: IE 8/9 is buggy and that is why this is needed */
 $orig_request = trim($_REQUEST['redirurl'], " /");
 $clientip = $_SERVER['REMOTE_ADDR'];
 
 if (!$clientip) {
 	/* not good - bail out */
-	log_error("Captive portal could not determine client's IP address.");
+	log_error("Zone: {$cpzone} - Captive portal could not determine client's IP address.");
 	$error_message = "An error occurred.  Please check the system logs for more information.";
 	portal_reply_page($redirurl, "error", $errormsg);
 	ob_flush();
@@ -97,7 +99,7 @@ if ($macfilter || $passthrumac) {
 		/* unable to find MAC address - shouldn't happen! - bail out */
 		captiveportal_logportalauth("unauthenticated","noclientmac",$clientip,"ERROR");
 		echo "An error occurred.  Please check the system logs for more information.";
-		log_error("Captive portal could not determine client's MAC address.  Disable MAC address filtering in captive portal if you do not need this functionality.");
+		log_error("Zone: {$cpzone} - Captive portal could not determine client's MAC address.  Disable MAC address filtering in captive portal if you do not need this functionality.");
 		ob_flush();
 		return;
 	}
@@ -135,6 +137,13 @@ setTimeout('window.close();',5000) ;
 
 EOD;
 	captiveportal_disconnect_client($_POST['logout_id']);
+
+} else if ($macfilter && $clientmac && captiveportal_blocked_mac($clientmac)) {
+	captiveportal_logportalauth($clientmac,$clientmac,$clientip,"Blocked MAC address");
+	if (!empty($cpcfg['blockedmacsurl']))
+		portal_reply_page($cpcfg['blockedmacsurl'], "redir");
+	else
+		portal_reply_page($redirurl, "error", "This MAC address has been blocked");
 
 } else if ($clientmac && $radmac_enable && portal_mac_radius($clientmac,$clientip, $radiusctx)) {
 	/* radius functions handle everything so we exit here since we're done */

@@ -92,7 +92,7 @@ if ($_POST) {
 	$reqdfields = explode(" ", "host");
 	$reqdfieldsn = explode(",", "Host");
 
-	do_input_validation($_POST, $reqdfields, $reqdfieldsn, &$input_errors);
+	do_input_validation($_POST, $reqdfields, $reqdfieldsn, $input_errors);
 	$host = trim($_POST['host'], " \t\n\r\0\x0B[]");
 	$host_esc = escapeshellarg($host);
 	
@@ -150,15 +150,22 @@ if( ($_POST['host']) && ($_POST['dialog_output']) ) {
 }
 
 function display_host_results ($address,$hostname,$dns_speeds) {
+	$map_lengths = function($element) { return strlen($element[0]); };
+
 	echo gettext("IP Address") . ": {$address} \n";
 	echo gettext("Host Name") . ": {$hostname} \n";
 	echo "\n";
-	echo gettext("Server") . "\t" . gettext("Query Time") . "\n";
-	if(is_array($dns_speeds)) 
-		foreach($dns_speeds as $qt){
-			echo trim($qt['dns_server']) . "\t" . trim($qt['query_time']);
-			echo "\n";
+	$text_table = array();
+	$text_table[] = array(gettext("Server"), gettext("Query Time"));
+	if (is_array($dns_speeds)) {
+		foreach ($dns_speeds as $qt) {
+			$text_table[] = array(trim($qt['dns_server']), trim($qt['query_time']));
 		}
+	}
+	$col0_padlength = max(array_map($map_lengths, $text_table)) + 4;
+	foreach ($text_table as $text_row) {
+		echo str_pad($text_row[0], $col0_padlength) . $text_row[1] . "\n";
+	}
 }
 
 include("head.inc"); ?>
@@ -208,9 +215,9 @@ include("head.inc"); ?>
 					}
 				}
 ?>
-				<font size="-1>">
+				<font size="-1">
 
-			<?	} ?>
+			<?php } ?>
 			</td></tr></table>
 		  </td>
 		</tr>

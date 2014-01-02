@@ -107,6 +107,7 @@ if ($act == "new") {
 }
 
 if ($act == "exp") {
+	crl_update($thiscrl);
 	$exp_name = urlencode("{$thiscrl['descr']}.crl");
 	$exp_data = base64_decode($thiscrl['text']);
 	$exp_size = strlen($exp_data);
@@ -200,7 +201,7 @@ if ($_POST) {
 				gettext("Certificate Authority"));
 	}
 
-	do_input_validation($_POST, $reqdfields, $reqdfieldsn, &$input_errors);
+	do_input_validation($_POST, $reqdfields, $reqdfieldsn, $input_errors);
 
 	/* if this is an AJAX caller then handle via JSON */
 	if (isAjax() && is_array($input_errors)) {
@@ -588,11 +589,9 @@ function method_change() {
 						<td class="listr"><?php echo ($internal) ? count($tmpcrl['cert']) : "Unknown (imported)"; ?></td>
 						<td class="listr"><?php echo ($inuse) ? "YES" : "NO"; ?></td>
 						<td valign="middle" class="list nowrap">
-							<?php if (!$internal || count($tmpcrl['cert'])): ?>
 							<a href="system_crlmanager.php?act=exp&amp;id=<?=$tmpcrl['refid'];?>">
 								<img src="/themes/<?= $g['theme'];?>/images/icons/icon_down.gif" title="<?=gettext("Export CRL") . " " . htmlspecialchars($tmpcrl['descr']);?>" alt="<?=gettext("Export CRL") . " " . htmlspecialchars($tmpcrl['descr']);?>" width="17" height="17" border="0" />
 							</a>
-							<?php endif; ?>
 							<?php if ($internal): ?>
 							<a href="system_crlmanager.php?act=edit&amp;id=<?=$tmpcrl['refid'];?>">
 								<img src="/themes/<?= $g['theme'];?>/images/icons/icon_e.gif" title="<?=gettext("Edit CRL") . " " . htmlspecialchars($tmpcrl['descr']);?>" alt="<?=gettext("Edit CRL") . " " . htmlspecialchars($tmpcrl['descr']);?>" width="17" height="17" border="0" />

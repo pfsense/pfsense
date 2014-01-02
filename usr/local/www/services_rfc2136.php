@@ -76,13 +76,15 @@ include("head.inc");
 	  <div id="mainarea">
 	  <table class="tabcont" width="100%" border="0" cellpadding="0" cellspacing="0">
 		<tr>
-		  <td width="5%"  class="listhdrr"></td>
-		  <td width="25%" class="listhdrr"><?=gettext("Hostname");?></td>
-		  <td width="60%" class="listhdr"><?=gettext("Description");?></td>
+		  <td width="5%"  class="listhdrr"><?=gettext("If");?></td>
+		  <td width="15%" class="listhdrr"><?=gettext("Server");?></td>
+		  <td width="20%" class="listhdrr"><?=gettext("Hostname");?></td>
+		  <td width="25%" class="listhdrr"><?=gettext("Cached IP");?></td>
+		  <td width="25%" class="listhdr"><?=gettext("Description");?></td>
 		  <td width="10%" class="list"></td>
 		</tr>
 		<?php $i = 0; foreach ($a_rfc2136 as $rfc2136): ?>
-		<tr>
+		<tr ondblclick="document.location='services_rfc2136_edit.php?id=<?=$i;?>'">
 		  <td class="listlr">
 		  <?php
 			$iflist = get_configured_interface_with_descr();
@@ -100,9 +102,54 @@ include("head.inc");
 		  <td class="listr">
 		  <?php
 			if (!isset($rfc2136['enable']))
+				echo "<span class=\"gray\">".htmlspecialchars($rfc2136['server'])."</span>";
+			else
+				echo htmlspecialchars($rfc2136['server']);
+		  ?>
+		  </td>
+		  <td class="listr">
+		  <?php
+			if (!isset($rfc2136['enable']))
 				echo "<span class=\"gray\">".htmlspecialchars($rfc2136['host'])."</span>";
 			else
 				echo htmlspecialchars($rfc2136['host']);
+		  ?>
+		  </td>
+		  <td class="listr">
+		  <?php
+			$filename = "{$g['conf_path']}/dyndns_{$rfc2136['interface']}_rfc2136_" . escapeshellarg($rfc2136['host']) . "_{$rfc2136['server']}.cache";
+			if (file_exists($filename)) {
+				echo "IPv4: ";
+				if (isset($rfc2136['usepublicip']))
+					$ipaddr = dyndnsCheckIP($rfc2136['interface']);
+				else
+					$ipaddr = get_interface_ip($rfc2136['interface']);
+				$cached_ip_s = explode("|", file_get_contents($filename));
+				$cached_ip = $cached_ip_s[0];
+				if ($ipaddr <> $cached_ip)
+					echo "<font color='red'>";
+				else
+					echo "<font color='green'>";
+				echo htmlspecialchars($cached_ip);
+				echo "</font>";
+			} else {
+				echo "IPv4: N/A";
+			}
+			echo "<br />";
+			if (file_exists("{$filename}.ipv6")) {
+				echo "IPv6: ";
+				$ipaddr = get_interface_ipv6($rfc2136['interface']);
+				$cached_ip_s = explode("|", file_get_contents("{$filename}.ipv6"));
+				$cached_ip = $cached_ip_s[0];
+				if ($ipaddr <> $cached_ip)
+					echo "<font color='red'>";
+				else
+					echo "<font color='green'>";
+				echo htmlspecialchars($cached_ip);
+				echo "</font>";
+			} else {
+				echo "IPv6: N/A";
+			}
 		  ?>
 		  </td>
 		  <td class="listbg">
@@ -120,7 +167,7 @@ include("head.inc");
 		</tr>
 		<?php $i++; endforeach; ?>
 		<tr>
-		  <td class="list" colspan="3">&nbsp;</td>
+		  <td class="list" colspan="5">&nbsp;</td>
 		  <td class="list"> <a href="services_rfc2136_edit.php"><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_plus.gif" width="17" height="17" border="0"></a></td>
 		</tr>
 		<tr>

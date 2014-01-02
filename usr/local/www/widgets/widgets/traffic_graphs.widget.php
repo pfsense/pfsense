@@ -59,6 +59,9 @@ if ($_POST) {
 	if (isset($_POST["refreshinterval"])) {
 		$a_config["refreshinterval"] = $_POST["refreshinterval"];
 	}
+	if (isset($_POST["scale_type"])) {
+		$a_config["scale_type"] = $_POST["scale_type"];
+	}
 	$a_config["shown"]["item"] = array();
 	foreach ($ifdescrs as $ifname => $ifdescr) {
 		$state = $_POST["shown"][$ifname];
@@ -86,6 +89,12 @@ if (isset($a_config["refreshinterval"])) {
 	$refreshinterval = 10;
 }
 
+if (isset($a_config["scale_type"])) {
+        $scale_type = $a_config["scale_type"];
+} else {
+        $scale_type = "up";
+}
+
 ?>
 <input type="hidden" id="traffic_graphs-config" name="traffic_graphs-config" value="">
 
@@ -100,6 +109,22 @@ if (isset($a_config["refreshinterval"])) {
 	<?php foreach ($ifdescrs as $ifname => $ifdescr) { ?>
 		<input type="hidden" name="shown[<?= $ifname ?>]" value="<?= $shown[$ifname] ? "show" : "hide" ?>" />
 	<?php } ?>
+	Default AutoScale:
+		<?php 
+			$scale_type_up="checked";
+			$scale_type_follow="unchecked";
+			if (isset($config["widgets"]["trafficgraphs"]["scale_type"])) {
+				$selected_radio = $config["widgets"]["trafficgraphs"]["scale_type"];
+				if ($selected_radio == "up") {
+					$scale_type_up = "checked";
+				}
+				else if ($selected_radio == "follow") {
+					$scale_type_follow = "checked";
+				}
+			}
+		?>
+	<input name="scale_type" class="radio" type="radio" id="scale_type" value="up" <?php echo $scale_type_up; ?> onchange="updateGraphDisplays();" /> <span>up</span>
+	<input name="scale_type" class="radio" type="radio" id="scale_type" value="follow" <?php echo $scale_type_follow; ?> onchange="updateGraphDisplays();" /> <span>follow</span><br><br>
 	Refresh Interval:
 	<select name="refreshinterval" class="formfld" id="refreshinterval" onchange="updateGraphDisplays();">
 		<?php for ($i = 1; $i <= 10; $i += 1) { ?>
@@ -146,7 +171,7 @@ foreach ($ifdescrs as $ifname => $ifdescr) {
 				<div style="clear:both;"></div>
 			</div>
 			<div id="<?=$ifname;?>graphdiv" style="display:<?php echo $graphdisplay;?>">
-				<embed id="graph" src="graph.php?ifnum=<?=$ifname;?>&ifname=<?=rawurlencode($ifname);?>&timeint=<?=$refreshinterval;?>&initdelay=<?=($graphcounter+1) * 2;?>" type="image/svg+xml" width="<?php echo $width; ?>" height="<?php echo $height; ?>" pluginspage="http://www.adobe.com/svg/viewer/install/auto" />
+				<embed id="graph" src="graph.php?ifnum=<?=$ifname;?>&ifname=<?=rawurlencode($ifdescr);?>&timeint=<?=$refreshinterval;?>&initdelay=<?=($graphcounter+1) * 2;?>" type="image/svg+xml" width="100%" height="100%" pluginspage="http://www.adobe.com/svg/viewer/install/auto" />
 			</div>
 		</div>
 	<?php }

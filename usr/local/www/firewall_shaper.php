@@ -225,11 +225,11 @@ if ($_GET) {
 			} 
 		$altq->SetAvailableBandwidth($altq->GetBandwidth() * $factor);
 		$altq->ReadConfig($_POST);
-		$altq->validate_input($_POST, &$input_errors);
+		$altq->validate_input($_POST, $input_errors);
 		if (!$input_errors) {
 			unset($tmppath);
 			$tmppath[] = $altq->GetInterface();
-			$altq->SetLink(&$tmppath);	
+			$altq->SetLink($tmppath);	
 			$altq->wconfig();
 			if (write_config())
 				mark_subsystem_dirty('shaper');
@@ -244,7 +244,7 @@ if ($_GET) {
 		if ($qtmp) {
 			$tmppath =& $qtmp->GetLink();
 			array_push($tmppath, $qname);
-			$tmp =& $qtmp->add_queue($interface, $_POST, $tmppath, &$input_errors);
+			$tmp =& $qtmp->add_queue($interface, $_POST, $tmppath, $input_errors);
 			if (!$input_errors) {
 				array_pop($tmppath);
 				$tmp->wconfig();
@@ -298,7 +298,7 @@ if ($_GET) {
 			}
 
 	} else if ($queue) {
-                $queue->validate_input($_POST, &$input_errors);
+                $queue->validate_input($_POST, $input_errors);
                 if (!$input_errors) {
                             $queue->update_altq_queue_data($_POST);
                             $queue->wconfig();
@@ -357,19 +357,19 @@ if ($can_add || $addnewaltq) {
 	$output_form .= "&amp;action=add\">";
 	$output_form .= "<input type=\"button\" class=\"formbtn\" name=\"add\" value=\"" . gettext("Add new queue") . "\" />";
 	$output_form .= "</a>";
-	$output_form .= "<a href=\"firewall_shaper.php?interface=";
-	$output_form .= $interface . "&amp;queue=";
-	if ($queue) {
-		$output_form .= "&amp;queue=" . $queue->GetQname();
-	}
-	$output_form .= "&amp;action=delete\">";
-	$output_form .= "<input type=\"button\" class=\"formbtn\" name=\"delete\"";
-	if ($queue)
-		$output_form .= " value=\"" . gettext("Delete this queue") . "\" />";
-	else
-		$output_form .= " value=\"" . gettext("Disable shaper on interface") . "\" />";
-	$output_form .= "</a>";  
 }
+$output_form .= "<a href=\"firewall_shaper.php?interface=";
+$output_form .= $interface . "&amp;queue=";
+if ($queue) {
+	$output_form .= "&amp;queue=" . $queue->GetQname();
+}
+$output_form .= "&amp;action=delete\">";
+$output_form .= "<input type=\"button\" class=\"formbtn\" name=\"delete\"";
+if ($queue)
+	$output_form .= " value=\"" . gettext("Delete this queue") . "\" />";
+else
+	$output_form .= " value=\"" . gettext("Disable shaper on interface") . "\" />";
+$output_form .= "</a>";
 $output_form .= "<br /></td></tr>";
 $output_form .= "</table>";
 }

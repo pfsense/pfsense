@@ -21,9 +21,9 @@ if (version == '') {
 }
 
 if (browser == 'IE' && version < 7) {
-	document.write('<script type="text/javascript" src="/themes/nervecenter/javascript/ie7/ie7-standard-p.js"></scr'+'ipt>');
+	document.write('<script type="text/javascript" src="/themes/nervecenter/javascript/ie7/ie7-standard-p.js"></script>');
 }
 
-document.write('<script type="text/javascript" src="/themes/nervecenter/javascript/niftyjsCode.js"></scr'+'ipt>'); 
+document.write('<script type="text/javascript" src="/themes/nervecenter/javascript/niftyjsCode.js"></script>'); 
 
 //]]>

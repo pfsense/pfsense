@@ -35,7 +35,7 @@
     POSSIBILITY OF SUCH DAMAGE.
 */
 /*
-	pfSense_BUILDER_BINARIES:	
+	pfSense_BUILDER_BINARIES:
 	pfSense_MODULE:	auth
 */
 
@@ -57,7 +57,7 @@ $id = $_GET['id'];
 if (isset($_POST['id']))
 	$id = $_POST['id'];
 
-if (!is_array($config['system']['user'])) 
+if (!is_array($config['system']['user']))
 	$config['system']['user'] = array();
 
 $a_user = &$config['system']['user'];
@@ -82,7 +82,9 @@ if ($_GET['act'] == "deluser") {
 		exit;
 	}
 
+	conf_mount_rw();
 	local_user_del($a_user[$id]);
+	conf_mount_ro();
 	$userdeleted = $a_user[$id]['name'];
 	unset($a_user[$id]);
 	write_config();
@@ -193,7 +195,7 @@ if ($_POST) {
 		}
 	}
 
-	do_input_validation($_POST, $reqdfields, $reqdfieldsn, &$input_errors);
+	do_input_validation($_POST, $reqdfields, $reqdfieldsn, $input_errors);
 
 	if (preg_match("/[^a-zA-Z0-9\.\-_]/", $_POST['usernamefld']))
 		$input_errors[] = gettext("The username contains invalid characters.");
@@ -282,10 +284,10 @@ if ($_POST) {
 		$userent['expires'] = $_POST['expires'];
 		$userent['authorizedkeys'] = base64_encode($_POST['authorizedkeys']);
 		$userent['ipsecpsk'] = $_POST['ipsecpsk'];
-		
+
 		if($_POST['disabled'])
 			$userent['disabled'] = true;
-		else 
+		else
 			unset($userent['disabled']);
 
 		if (isset($id) && $a_user[$id])
@@ -338,7 +340,7 @@ if ($_POST) {
 			run_plugins("/etc/inc/privhooks");
 
 		conf_mount_ro();
-		
+
 		pfSenseHeader("system_usermanager.php");
 	}
 }
@@ -346,14 +348,18 @@ if ($_POST) {
 include("head.inc");
 ?>
 
+<link rel="stylesheet" type="text/css" href="/javascript/jquery-ui-timepicker-addon/css/jquery-ui-timepicker-addon.css" />
+<link rel="stylesheet" type="text/css" href="/javascript/jquery/jquery-ui.custom.css" />
+
+<script>
+	jQuery(function() {
+		jQuery( "#expires" ).datepicker( { dateFormat: 'mm/dd/yy', changeYear: true, yearRange: "+0:+100" } );
+	});
+</script>
+
 <body link="#000000" vlink="#000000" alink="#000000" onload="<?= $jsevents["body"]["onload"] ?>">
 <?php include("fbegin.inc"); ?>
-<!--
-//Date Time Picker script- by TengYong Ng of http://www.rainforestnet.com
-//Script featured on JavaScript Kit (http://www.javascriptkit.com)
-//For this script, visit http://www.javascriptkit.com
-// -->
-<script type="text/javascript" src="javascript/datetimepicker.js"></script>
+
 <script type="text/javascript">
 //<![CDATA[
 
@@ -499,9 +505,6 @@ function sshkeyClicked(obj) {
 							<td width="22%" valign="top" class="vncell"><?=gettext("Expiration date"); ?></td>
 							<td width="78%" class="vtable">
 								<input name="expires" type="text" class="formfld unknown" id="expires" size="10" value="<?=htmlspecialchars($pconfig['expires']);?>" />
-								<a href="javascript:NewCal('expires','mmddyyyy')">
-									<img src="/themes/<?php echo $g['theme']; ?>/images/icons/icon_cal.gif" width="16" height="16" border="0" alt="<?=gettext("Pick a date");?>" />
-								</a>
 								<br/>
 								<span class="vexpl"><?=gettext("Leave blank if the account shouldn't expire, otherwise enter the expiration date in the following format: mm/dd/yyyy"); ?></span></td>
 						</tr>
@@ -577,7 +580,7 @@ function sshkeyClicked(obj) {
 										<td class="list"></td>
 									</tr>
 									<?php
-											
+
 										$privdesc = get_user_privdesc($a_user[$id]);
 										if(is_array($privdesc)):
 											$i = 0;
@@ -630,7 +633,7 @@ function sshkeyClicked(obj) {
 										<td class="list"></td>
 									</tr>
 									<?php
-										
+
 										$a_cert = $a_user[$id]['cert'];
 										if(is_array($a_cert)):
 											$i = 0;
@@ -746,13 +749,13 @@ function sshkeyClicked(obj) {
 						<?php 	endif; endif; ?>
 						<?php endif; ?>
 
-						<tr id="sshkeychck">
+						<tr id="sshkeychck" <?php if(!empty($pconfig['authorizedkeys'])) echo 'style="display:none"'; ?>>
                                                         <td width="22%" valign="top" class="vncell"><?=gettext("Authorized keys");?></td>
                                                         <td width="78%" class="vtable">
                                                         <input type="checkbox" onclick="javascript:sshkeyClicked(this)" /> <?=gettext("Click to paste an authorized key."); ?>
                                                         </td>
                                                 </tr>
-						<tr id="sshkey" style="display:none">
+						<tr id="sshkey" <?php if(empty($pconfig['authorizedkeys'])) echo 'style="display:none"'; ?>>
 							<td width="22%" valign="top" class="vncell"><?=gettext("Authorized keys");?></td>
 							<td width="78%" class="vtable">
 								<textarea name="authorizedkeys" cols="65" rows="7" id="authorizedkeys" class="formfld_cert" wrap="off"><?=htmlspecialchars($pconfig['authorizedkeys']);?></textarea>
@@ -871,3 +874,4 @@ function sshkeyClicked(obj) {
 <?php include("fend.inc");?>
 </body>
 </html>
+

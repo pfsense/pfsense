@@ -55,7 +55,7 @@ if ($_POST || $_REQUEST['host']) {
 	/* input validation */
 	$reqdfields = explode(" ", "host count");
 	$reqdfieldsn = array(gettext("Host"),gettext("Count"));
-	do_input_validation($_REQUEST, $reqdfields, $reqdfieldsn, &$input_errors);
+	do_input_validation($_REQUEST, $reqdfields, $reqdfieldsn, $input_errors);
 
 	if (($_REQUEST['count'] < 1) || ($_REQUEST['count'] > MAX_COUNT)) {
 		$input_errors[] = sprintf(gettext("Count must be between 1 and %s"), MAX_COUNT);
@@ -112,7 +112,7 @@ include("head.inc"); ?>
 	<td width="78%" class="vtable">
 		<select name="sourceip" class="formselect">
 			<option value="">Default</option>
-		<?php $sourceips = get_possible_traffic_source_addresses();
+		<?php $sourceips = get_possible_traffic_source_addresses(true);
 			foreach ($sourceips as $sip):
 				$selected = "";
 				if (!link_interface_to_bridge($sip['value']) && ($sip['value'] == $sourceip))
@@ -147,15 +147,21 @@ include("head.inc"); ?>
 		echo "<font face='terminal' size='2'>";
 		echo "<strong>" . gettext("Ping output") . ":</strong><br>";
 		echo('<pre>');
+		$ifscope = '';
 		$command = "/sbin/ping";
 		if ($ipproto == "ipv6") {
 			$command .= "6";
 			$ifaddr = is_ipaddr($sourceip) ? $sourceip : get_interface_ipv6($sourceip);
+			if (is_linklocal($ifaddr))
+				$ifscope = get_ll_scope($ifaddr);
 		} else {
 			$ifaddr = is_ipaddr($sourceip) ? $sourceip : get_interface_ip($sourceip);
 		}
-		if ($ifaddr && (is_ipaddr($host) || is_hostname($host)))
+		if ($ifaddr && (is_ipaddr($host) || is_hostname($host))) {
 			$srcip = "-S" . escapeshellarg($ifaddr);
+			if (is_linklocal($host) && !strstr($host, "%") && !empty($ifscope))
+				$host .= "%{$ifscope}";
+		}
 
 		$cmd = "{$command} {$srcip} -c" . escapeshellarg($count) . " " . escapeshellarg($host);
 		//echo "Ping command: {$cmd}\n";

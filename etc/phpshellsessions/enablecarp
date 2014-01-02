@@ -11,10 +11,6 @@ if(is_array($config['virtualip']['vip'])) {
 				interface_carp_configure($vip);
 				sleep(1);
 			break;
-			case "ipalias":
-				if (strstr($vip['interface'], "_vip"))
-					interface_ipalias_configure($vip);
-			break;
 		}
 	}
 }

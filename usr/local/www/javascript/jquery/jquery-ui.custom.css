@@ -58,7 +58,7 @@
 .ui-widget input, .ui-widget select, .ui-widget textarea, .ui-widget button { font-family: Trebuchet MS, Helvetica, Arial, sans-serif; font-size: 1em; }
 .ui-widget-content { border: 1px solid #aaaaaa; background: #c9c9c9 url(images/ui-bg_inset-soft_50_c9c9c9_1x100.png) 50% bottom repeat-x; color: #333333; }
 .ui-widget-content a { color: #333333; }
-.ui-widget-header { border: 1px solid #bbbbbb; background: #dddddd url(images/ui-bg_glass_35_dddddd_1x400.png) 50% 50% repeat-x; color: #444444; font-weight: bold; }
+.ui-widget-header { border: 1px solid #bbbbbb; color: #444444; font-weight: bold; }
 .ui-widget-header a { color: #444444; }
 
 /* Interaction states
@@ -561,5 +561,5 @@ button.ui-button::-moz-focus-inner { border: 0; padding: 0; } /* reset extra pad
  *
  * http://docs.jquery.com/UI/Progressbar#theming
  */
-.ui-progressbar { height:2em; text-align: left; overflow: hidden; }
-.ui-progressbar .ui-progressbar-value {margin: -1px; height:100%; }
+.ui-progressbar { height:1em; text-align: left; overflow: hidden; }
+.ui-progressbar .ui-progressbar-value {margin: -1px; height:100%; background-color:#990000; }

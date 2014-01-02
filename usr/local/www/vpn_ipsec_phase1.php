@@ -171,7 +171,7 @@ if ($_POST) {
 		$reqdfieldsn[] = gettext("Remote gateway");
 	}
 
-	do_input_validation($pconfig, $reqdfields, $reqdfieldsn, &$input_errors);
+	do_input_validation($pconfig, $reqdfields, $reqdfieldsn, $input_errors);
 
 	if (($pconfig['lifetime'] && !is_numeric($pconfig['lifetime'])))
 		$input_errors[] = gettext("The P1 lifetime must be an integer.");

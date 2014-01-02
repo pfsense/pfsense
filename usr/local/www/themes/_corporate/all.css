@@ -35,7 +35,7 @@ div.niceTitle
 	font-weight: bold;
 	font-size: 13px;
 	font-family: "Trebuchet MS", sans-serif;
-	width: 220px;
+	width: 250px;
 	left: 0;
 	top: 0;
 	padding: 4px;
@@ -943,7 +943,7 @@ div#log div.log-entry {
 div#log div.log-entry span,
 div#log div.log-header span {
 	padding: 3px 2px 3px 2px;
-	padding-left: 8px;
+	padding-left: 6px;
 }
 
 div#log div.log-entry span.log-action {
@@ -1104,10 +1104,11 @@ div#log div.log-entry-mini {
 
 div#log div.log-entry-mini span {
 	padding: 2px 2px 2px 2px;
-	padding-left: 8px;
+	padding-left: 6px;
 }
 
 div#log span.log-action-mini-header,
+div#log span.log-time-mini-header,
 div#log span.log-interface-mini-header,
 div#log span.log-source-mini-header,
 div#log span.log-destination-mini-header,
@@ -1139,14 +1140,22 @@ div#log span.log-action-mini-header {
 	width: 6%;
 }
 
+div#log span.log-time-mini,
+div#log span.log-time-mini-header {
+	width: 19%;
+}
+
 div#log span.log-interface-mini,
 div#log span.log-interface-mini-header {
 	width: 8%;
 }
 
 div#log span.log-source-mini,
+div#log span.log-source-mini-header {
+	width: 23%;
+}
+
 div#log span.log-destination-mini,
-div#log span.log-source-mini-header,
 div#log span.log-destination-mini-header {
 	width: 31%;
 }
@@ -1157,3 +1166,43 @@ div#log span.log-protocol-mini-header {
 	border-right: 1px solid #999;
 }
 
+/*thermal_sensors widget styles*/
+
+.thermalSensorRow		{ width: 100%; border: 0px solid #ddd; padding: 1px; border-radius: 3px; }
+.thermalSensorBarShell	{ position: relative; width: 100%; height: 5px; border: 1px solid lightgray; border-radius: 3px; }
+.thermalSensorBar		{ position: absolute; width:   0%; height: 1px; z-index: 1; border-style: solid; border-radius: 3px; 
+						  background-color: LimeGreen; 
+						  border-top-width: 2px; border-top-color: Lime; 
+						  border-left-width: 0px;   
+						  border-right-width: 0px; 
+						  border-bottom-width: 2px; border-bottom-color: Green; 
+}
+.thermalSensorTextShell	{ height: 20px; width: 100%; top: 3px; }
+.thermalSensorText		{ float: left; height: 20px; top: 3px; }
+.thermalSensorValue		{ float: left; height: 20px; top: 3px; font-weight: bold; margin-left: 10px;}
+
+.thermalSensorWarnThresh	{ position: absolute; background-color: orange; height: 16px; width: 2px; z-index: 2; margin-top: -8px; }
+.thermalSensorCritThresh	{ position: absolute; background-color:    red; height: 16px; width: 2px; z-index: 2; margin-top: -8px; }
+
+.thermal_sensors_widget_scale000 { position: absolute; height: 5px; width: 1px; left: -1px; margin-top: -4px; background-color: lightgray; z-index: 0; font-size: 0; }
+.thermal_sensors_widget_scale020 { position: absolute; height: 3px; width: 1px; left:  10%; margin-top: -4px; background-color: lightgray; z-index: 0; font-size: 0; }
+.thermal_sensors_widget_scale010 { position: absolute; height: 3px; width: 1px; left:  20%; margin-top: -4px; background-color: lightgray; z-index: 0; font-size: 0; }
+.thermal_sensors_widget_scale030 { position: absolute; height: 3px; width: 1px; left:  30%; margin-top: -4px; background-color: lightgray; z-index: 0; font-size: 0; }
+.thermal_sensors_widget_scale040 { position: absolute; height: 3px; width: 1px; left:  40%; margin-top: -4px; background-color: lightgray; z-index: 0; font-size: 0; }
+.thermal_sensors_widget_scale050 { position: absolute; height: 3px; width: 1px; left:  50%; margin-top: -4px; background-color: lightgray; z-index: 0; font-size: 0; }
+.thermal_sensors_widget_scale060 { position: absolute; height: 3px; width: 1px; left:  60%; margin-top: -4px; background-color: lightgray; z-index: 0; font-size: 0; }
+.thermal_sensors_widget_scale070 { position: absolute; height: 3px; width: 1px; left:  70%; margin-top: -4px; background-color: lightgray; z-index: 0; font-size: 0; }
+.thermal_sensors_widget_scale080 { position: absolute; height: 3px; width: 1px; left:  80%; margin-top: -4px; background-color: lightgray; z-index: 0; font-size: 0; }
+.thermal_sensors_widget_scale090 { position: absolute; height: 3px; width: 1px; left:  90%; margin-top: -4px; background-color: lightgray; z-index: 0; font-size: 0; }
+.thermal_sensors_widget_scale100 { position: absolute; height: 9px; width: 1px; left: 100%; margin-top: -6px; background-color: lightgray; z-index: 0; font-size: 0; }
+
+.thermal_sensors_widget_mark100 { position: absolute; width: 15px; left: 96%; margin-top: -12px; font: 6pt Arial, sans-serif; text-align: left; color: #575757; }
+
+/* widget textarea styles - full width */
+.textarea_widget { 
+	width: 100%; 
+	resize:vertical;
+	-webkit-box-sizing: border-box; /* Safari/Chrome, other WebKit */
+	-moz-box-sizing: border-box;    /* Firefox, other Gecko */
+	box-sizing: border-box;         /* IE 8+ */
+}

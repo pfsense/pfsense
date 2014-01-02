@@ -1,5 +1,7 @@
 #!/usr/local/bin/php -f
 <?php
+ini_set('apc.enabled', '0');
+
 /* $Id$ */
 /*
 	rc.bootup
@@ -126,7 +128,8 @@ echo ".";
 
 /* get system memory amount */
 $memory = get_memory();
-$avail = $memory[1];
+$physmem = $memory[0];
+$realmem = $memory[1];
 echo " done.\n";
 
 conf_mount_rw();
@@ -245,7 +248,7 @@ interfaces_loopback_configure();
 system_syslogd_start();
 
 echo "Starting Secure Shell Services...";
-mwexec_bg("/etc/sshd");
+send_event("service reload sshd");
 echo "done.\n";
 
 /* setup polling */
@@ -293,8 +296,8 @@ echo "Synchronizing user settings...";
 local_sync_accounts();
 echo "done.\n";
 
-if($avail > 0 and $avail < 65) {
-	echo "System has less than 65 megabytes of ram {$avail}.  Delaying webConfigurator startup.\n";
+if($realmem > 0 and $realmem < 65) {
+	echo "System has less than 65 megabytes of ram {$realmem}.  Delaying webConfigurator startup.\n";
 	/* start webConfigurator up on final pass */
 	mwexec("/usr/local/sbin/pfSctl -c 'service restart webgui'");
 } else {
@@ -338,6 +341,9 @@ system_dhcpleases_configure();
 /* start DHCP relay */
 services_dhcrelay_configure();
 
+/* start DHCP6 relay */
+services_dhcrelay6_configure();
+
 /* dyndns service updates */
 send_event("service reload dyndnsall");
 
@@ -357,9 +363,7 @@ voucher_configure();
 system_do_shell_commands();
 
 /* start IPsec tunnels */
-vpn_ipsec_configure();
-/* Reload dynamic hostname tunnels after bootup finishes */
-send_event("service reload ipsecdns");
+$ipsec_dynamic_hosts = vpn_ipsec_configure();
 
 /* start SNMP service */
 services_snmpd_configure();
@@ -382,7 +386,7 @@ if($config['system']['afterbootupshellcmd'] <> "") {
 	mwexec($config['system']['afterbootupshellcmd']);
 }
 
-if($avail < $g['minimum_ram_warning']) {
+if($physmem < $g['minimum_ram_warning']) {
 	require_once("/etc/inc/notices.inc");
 	file_notice("{$g['product_name']}MemoryRequirements", "{$g['product_name']} requires at least {$g['minimum_ram_warning_text']} of RAM.  Expect unusual performance.  This platform is not supported.", "Memory", "", 1);
 	mwexec("/sbin/sysctl net.inet.tcp.recvspace=4096");
@@ -404,6 +408,9 @@ upnp_start();
 
 /* If powerd is enabled, lets launch it */
 activate_powerd();
+
+/* Set preferred protocol */
+prefer_ipv4_or_ipv6();
 
 /* Remove the old shutdown binary if we kept it. */
 if (file_exists("/sbin/shutdown.old"))
@@ -428,6 +435,13 @@ system_syslogd_start();
 
 /* done */
 unset($g['booting']);
+
+/* If there are ipsec dynamic hosts try again to reload the tunnels as rc.newipsecdns does */
+if ($ipsec_dynamic_hosts) {
+	vpn_ipsec_refresh_policies();
+	vpn_ipsec_configure();
+	filter_configure();
+}
 
 led_normalize();
 

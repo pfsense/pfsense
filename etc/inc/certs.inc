@@ -34,7 +34,20 @@ define("OPEN_SSL_CONF_PATH", "/etc/ssl/openssl.cnf");
 
 require_once("functions.inc");
 
+global $openssl_digest_algs;
 $openssl_digest_algs = array("sha1", "sha224", "sha256", "sha384", "sha512");
+
+global $openssl_crl_status;
+$openssl_crl_status = array(
+	OCSP_REVOKED_STATUS_NOSTATUS              => "No Status (default)",
+	OCSP_REVOKED_STATUS_UNSPECIFIED           => "Unspecified",
+	OCSP_REVOKED_STATUS_KEYCOMPROMISE         => "Key Compromise",
+	OCSP_REVOKED_STATUS_CACOMPROMISE          => "CA Compromise",
+	OCSP_REVOKED_STATUS_AFFILIATIONCHANGED    => "Affiliation Changed",
+	OCSP_REVOKED_STATUS_SUPERSEDED            => "Superseded",
+	OCSP_REVOKED_STATUS_CESSATIONOFOPERATION  => "Cessation of Operation",
+	OCSP_REVOKED_STATUS_CERTIFICATEHOLD       => "Certificate Hold"
+);
 
 function & lookup_ca($refid) {
 	global $config;
@@ -482,6 +495,16 @@ function cert_get_dates($str_crt, $decode = true) {
 	return array($start, $end);
 }
 
+function cert_get_serial($str_crt, $decode = true) {
+	if ($decode)
+		$str_crt = base64_decode($str_crt);
+	$crt_details = openssl_x509_parse($str_crt);
+	if (isset($crt_details['serialNumber']) && !empty($crt_details['serialNumber']))
+		return $crt_details['serialNumber'];
+	else
+		return NULL;
+}
+
 function prv_get_modulus($str_crt, $decode = true){
 	return cert_get_modulus($str_crt, $decode, "prv");
 }
@@ -561,32 +584,6 @@ function cert_in_use($certref) {
 		is_captiveportal_cert($certref));
 }
 
-/*
-CRL code is a *WORK IN PROGRESS* do not try to use these functions yet.
-
-OpenSSL CRL status code constants.
-OCSP_REVOKED_STATUS_NOSTATUS
-OCSP_REVOKED_STATUS_UNSPECIFIED
-OCSP_REVOKED_STATUS_KEYCOMPROMISE
-OCSP_REVOKED_STATUS_CACOMPROMISE
-OCSP_REVOKED_STATUS_AFFILIATIONCHANGED
-OCSP_REVOKED_STATUS_SUPERSEDED
-OCSP_REVOKED_STATUS_CESSATIONOFOPERATION
-OCSP_REVOKED_STATUS_CERTIFICATEHOLD
-OCSP_REVOKED_STATUS_REMOVEFROMCRL
-*/
-
-$openssl_crl_status = array(
-	OCSP_REVOKED_STATUS_NOSTATUS              => "No Status (default)",
-	OCSP_REVOKED_STATUS_UNSPECIFIED           => "Unspecified",
-	OCSP_REVOKED_STATUS_KEYCOMPROMISE         => "Key Compromise",
-	OCSP_REVOKED_STATUS_CACOMPROMISE          => "CA Compromise",
-	OCSP_REVOKED_STATUS_AFFILIATIONCHANGED    => "Affiliation Changed",
-	OCSP_REVOKED_STATUS_SUPERSEDED            => "Superseded",
-	OCSP_REVOKED_STATUS_CESSATIONOFOPERATION  => "Cessation of Operation",
-	OCSP_REVOKED_STATUS_CERTIFICATEHOLD       => "Certificate Hold"
-);
-
 function crl_create(& $crl, $caref, $name, $serial=0, $lifetime=9999) {
 	global $config;
 	$ca =& lookup_ca($caref);
@@ -658,6 +655,22 @@ function cert_unrevoke($cert, & $crl) {
 	return false;
 }
 
+/* Compare two certificates to see if they match. */
+function cert_compare($cert1, $cert2) {
+	/* Ensure two certs are identical by first checking that their issuers match, then
+		subjects, then serial numbers, and finally the moduli. Anything less strict
+		could accidentally count two similar, but different, certificates as
+		being identical. */
+	$c1 = base64_decode($cert1['crt']);
+	$c2 = base64_decode($cert2['crt']);
+	if ((cert_get_issuer($c1, false) == cert_get_issuer($c2, false))
+		&& (cert_get_subject($c1, false) == cert_get_subject($c2, false))
+		&& (cert_get_serial($c1, false) == cert_get_serial($c2, false))
+		&& (cert_get_modulus($c1, false) == cert_get_modulus($c2, false)))
+		return true;
+	return false;
+}
+
 function is_cert_revoked($cert, $crlref = "") {
 	global $config;
 	if (!is_array($config['crl']))
@@ -668,7 +681,7 @@ function is_cert_revoked($cert, $crlref = "") {
 		if (!is_array($crl['cert']))
 			return false;
 		foreach ($crl['cert'] as $rcert) {
-			if (($rcert['refid'] == $cert['refid']) || ($rcert['descr'] == $cert['descr']))
+			if (cert_compare($rcert, $cert))
 				return true;
 		}
 	} else {
@@ -676,7 +689,7 @@ function is_cert_revoked($cert, $crlref = "") {
 			if (!is_array($crl['cert']))
 				continue;
 			foreach ($crl['cert'] as $rcert) {
-				if (($rcert['refid'] == $cert['refid']) || ($rcert['descr'] == $cert['descr']))
+				if (cert_compare($rcert, $cert))
 					return true;
 			}
 		}

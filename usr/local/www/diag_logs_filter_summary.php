@@ -68,8 +68,8 @@ function cmp($a, $b) {
 function stat_block($summary, $stat, $num) {
 	global $gotlines, $fields;
 	uasort($summary[$stat] , 'cmp');
-	print '<table width="200px" cellpadding="3" cellspacing="0" border="1">';
-	print "<tr><th colspan='2'>{$fields[$stat]} ".gettext("data")."</th></tr>";
+	print "<table width=\"200\" cellpadding=\"3\" cellspacing=\"0\" border=\"1\" summary=\"source destination ip\">";
+	print "<tr><th colspan=\"2\">{$fields[$stat]} ".gettext("data")."</th></tr>";
 	$k = array_keys($summary[$stat]);
 	$total = 0;
 	$numentries = 0;
@@ -79,21 +79,21 @@ function stat_block($summary, $stat, $num) {
 			$numentries++;
 			$outstr = $k[$i];
 			if (is_ipaddr($outstr)) {
-				$outstr = "<a href=\"diag_dns.php?host={$outstr}\" title=\"".gettext("Reverse Resolve with DNS")."\"><img border=\"0\" src=\"/themes/nervecenter/images/icons/icon_log.gif\"></a> {$outstr}";
+				$outstr = "<a href=\"diag_dns.php?host={$outstr}\" title=\"".gettext("Reverse Resolve with DNS")."\"><img border=\"0\" src=\"/themes/{$g['theme']}/images/icons/icon_log.gif\" alt=\"log\" /></a> {$outstr}";
 			} elseif (substr_count($outstr, '/') == 1) {
 				list($proto, $port) = explode('/', $outstr);
 				$service = getservbyport($port, strtolower($proto));
 				if ($service)
 					$outstr .= ": {$service}";
 			}
-			print "<tr><td>{$outstr}</td><td width='50px' align='right'>{$summary[$stat][$k[$i]]}</td></tr>\n";
+			print "<tr><td>{$outstr}</td><td width=\"50\" align=\"right\">{$summary[$stat][$k[$i]]}</td></tr>";
 		}
 	}
 	$leftover = $gotlines - $total;
 	if ($leftover > 0) {
-		print "<tr><td>Other</td><td width='50px' align='right'>{$leftover}</td></tr>\n";
+		print "<tr><td>Other</td><td width=\"50\" align=\"right\">{$leftover}</td></tr>";
 	}
-	print '</table>';
+	print "</table>";
 }
 
 function pie_block($summary, $stat, $num) {
@@ -103,6 +103,7 @@ function pie_block($summary, $stat, $num) {
 	$total = 0;
 	$numentries = 0;
 	print "\n<script language=\"javascript\" type=\"text/javascript\">\n";
+	print "//<![CDATA[\n";
 	for ($i=0; $i < $num; $i++) {
 		if ($k[$i]) {
 			$total += $summary[$stat][$k[$i]];
@@ -118,11 +119,11 @@ function pie_block($summary, $stat, $num) {
 	}
 
 	print "Event.observe(window, 'load', function() {\n";
-	print "	new Proto.Chart($('piechart{$stat}'),           \n";
-	print "			[\n";
+	print "	new Proto.Chart($('piechart{$stat}'),\n";
+	print "	[\n";
 	for ($i=0; $i < $num; $i++) {
 		if ($k[$i]) {
-			print "			{ data: d{$stat}{$i}, label: \"{$k[$i]}\"}";
+			print "		{ data: d{$stat}{$i}, label: \"{$k[$i]}\"}";
 			if (!(($i == ($numentries - 1)) && ($leftover <= 0)))
 				print ",\n";
 			else
@@ -130,19 +131,19 @@ function pie_block($summary, $stat, $num) {
 		}
 	}
 	if ($leftover > 0)
-		print "			{ data: d{$stat}{$i}, label: \"Other\"}\n";
-	print "			],\n";
-	print "			{\n";
-	print "				pies: {show: true, autoScale: true},\n";
-	print "				legend: {show: true, labelFormatter: lblfmt}\n";
-	print "			});\n";
+		print "		{ data: d{$stat}{$i}, label: \"Other\"}\n";
+	print "	],\n";
+	print "	{\n";
+	print "		pies: {show: true, autoScale: true},\n";
+	print "		legend: {show: true, labelFormatter: lblfmt}\n";
+	print "	});\n";
 	print "});\n";
-
-	print "</script>";
-	print "<table cellpadding=\"3\" cellspacing=\"0\" border=\"0\">";
+	print "//]]>\n";
+	print "</script>\n";
+	print "<table cellpadding=\"3\" cellspacing=\"0\" border=\"0\" summary=\"pie chart\">";
 	print "<tr><th><font size=\"+1\">{$fields[$stat]}</font></th></tr>";
-	print "<tr><td><div id=\"piechart{$stat}\" style=\"width:450px;height:300px\"></div>\n";
-	print "</table>";
+	print "<tr><td><div id=\"piechart{$stat}\" style=\"width:450px;height:300px\"></div>";
+	print "</table>\n";
 }
 
 foreach ($filterlog as $fe) {
@@ -172,13 +173,15 @@ include("head.inc"); ?>
 </script>
 <![endif]-->
 <script language="javascript" type="text/javascript">
+//<![CDATA[
 	function lblfmt(lbl) {
-		return '<font size=\"-2\">' + lbl + '</font>'
+		return '<font size=\"-2\">' + lbl + '<\/font>'
 	}
+//]]>
 </script>
 
 <?php include("fbegin.inc"); ?>
-<table width="100%" border="0" cellpadding="0" cellspacing="0">
+<table width="100%" border="0" cellpadding="0" cellspacing="0" summary="logs filter summary">
   <tr><td>
 <?php
 	$tab_array = array();
@@ -196,13 +199,20 @@ include("head.inc"); ?>
 	display_top_tabs($tab_array);
 ?>
  </td></tr>
+  <tr><td class="tabnavtbl">
+<?php
+	$tab_array = array();
+	$tab_array[] = array(gettext("Normal View"), false, "/diag_logs_filter.php");
+	$tab_array[] = array(gettext("Dynamic View"), false, "/diag_logs_filter_dynamic.php");
+	$tab_array[] = array(gettext("Summary View"), true, "/diag_logs_filter_summary.php");
+	display_top_tabs($tab_array);
+?>
+		</td>
+	</tr>
   <tr>
     <td>
 	<div id="mainarea">
-		<table class="tabcont" width="100%" border="0" cellpadding="0" cellspacing="0" align="center">
-		<tr><td colspan="6" align="left">
-			<a href="diag_logs_filter.php"><?=gettext("Normal View");?></a> | <a href="diag_logs_filter_dynamic.php"><?=gettext("Dynamic View");?></a> | <?=gettext("Summary View");?><br/><br/>
-		</td></tr>
+		<table class="tabcont" width="100%" border="0" cellpadding="0" cellspacing="0" align="center" summary="main area">
 		<tr><td align="center">
 
 <?php printf (gettext('This is a firewall log summary, of the last %1$s lines of the firewall log (Max %2$s).'), $gotlines, $lines)?><br />
@@ -222,3 +232,5 @@ foreach(array_keys($fields) as $field) {
   </tr>
 </table>
 <?php include("fend.inc"); ?>
+</body>
+</html>

@@ -113,3 +113,18 @@ fi
 if [ -f /usr/local/sbin/php ]; then
 	rm /usr/local/sbin/php
 fi
+
+# Fixup permissions on installed files
+if [ "${PFSENSETYPE}" = "nanobsd" ]; then
+	MTREECHKDIR=/tmp/${1}/
+else
+	MTREECHKDIR=/
+fi
+if [ -f ${MTREECHKDIR}etc/installed_filesystem.mtree ]; then
+	/usr/sbin/mtree -U -e -q -f ${MTREECHKDIR}etc/installed_filesystem.mtree -p ${MTREECHKDIR} > /conf/mtree.log;
+fi;
+
+# Make sure to preserve existing time zone
+if [ "${PFSENSETYPE}" = "nanobsd" ] && [ -f /etc/localtime ]; then
+	/bin/cp -p /etc/localtime /tmp/${1}/etc/localtime 2>/dev/null
+fi

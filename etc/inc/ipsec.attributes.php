@@ -76,7 +76,7 @@ function parse_cisco_acl($attribs) {
 			} else if (strstr($rule[0], "route")) {
 				if (!is_array($attributes['routes']))
 					$attributes['routes'] = array();
-				$attributes['routes'][] = $route[1];
+				$attributes['routes'][] = $rule[1];
 				continue;
 			}	
 			$rindex = cisco_extract_index($rule[0]);
@@ -175,9 +175,10 @@ function parse_cisco_acl($attribs) {
 
 $rules = parse_cisco_acl($attributes);
 if (!empty($rules)) {
-	@file_put_contents("/tmp/{$common_name}.rules", $rules);
-	mwexec("/sbin/pfctl -a \"ipsec/{$common_name}\" -f {$g['tmp_path']}/{$common_name}.rules");
-	@unlink("{$g['tmp_path']}/{$common_name}.rules");
+	$pid = posix_getpid();
+	@file_put_contents("/tmp/ipsec_{$pid}{$common_name}.rules", $rules);
+	mwexec("/sbin/pfctl -a \"ipsec/{$common_name}\" -f {$g['tmp_path']}/ipsec_{$pid}{$common_name}.rules");
+	@unlink("{$g['tmp_path']}/ipsec_{$pid}{$common_name}.rules");
 }
 
 ?>

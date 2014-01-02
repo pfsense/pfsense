@@ -45,6 +45,7 @@
 ##|-PRIV
 
 require("guiconfig.inc");
+require_once("filter.inc");
 
 if(!$g['services_dhcp_server_enable']) {
 	Header("Location: /");
@@ -81,8 +82,8 @@ $iflist = array_merge($iflist, get_configured_pppoe_server_interfaces());
 if (!$if || !isset($iflist[$if])) {
 	foreach ($iflist as $ifent => $ifname) {
 		$oc = $config['interfaces'][$ifent];
-		if ((is_array($config['dhcpdv6'][$ifent]) && !isset($config['dhcpdv6'][$ifent]['enable']) && !(is_ipaddrv6($oc['ipaddrv6']) && (!preg_match("/fe80::/", $oc['ipaddrv6'])))) ||
-			(!is_array($config['dhcpdv6'][$ifent]) && !(is_ipaddrv6($oc['ipaddrv6']) && (!preg_match("/fe80::/", $oc['ipaddrv6'])))))
+		if ((is_array($config['dhcpdv6'][$ifent]) && !isset($config['dhcpdv6'][$ifent]['enable']) && !(is_ipaddrv6($oc['ipaddrv6']) && (!is_linklocal($oc['ipaddrv6'])))) ||
+			(!is_array($config['dhcpdv6'][$ifent]) && !(is_ipaddrv6($oc['ipaddrv6']) && (!is_linklocal($oc['ipaddrv6'])))))
 			continue;
 		$if = $ifent;
 		break;
@@ -107,8 +108,10 @@ if (is_array($config['dhcpdv6'][$if])){
 	list($pconfig['wins1'],$pconfig['wins2']) = $config['dhcpdv6'][$if]['winsserver'];
 	list($pconfig['dns1'],$pconfig['dns2']) = $config['dhcpdv6'][$if]['dnsserver'];
 	$pconfig['enable'] = isset($config['dhcpdv6'][$if]['enable']);
-	$pconfig['denyunknown'] = isset($config['dhcpdv6'][$if]['denyunknown']);
 	$pconfig['ddnsdomain'] = $config['dhcpdv6'][$if]['ddnsdomain'];
+	$pconfig['ddnsdomainprimary'] = $config['dhcpdv6'][$if]['ddnsdomainprimary'];
+	$pconfig['ddnsdomainkeyname'] = $config['dhcpdv6'][$if]['ddnsdomainkeyname'];
+	$pconfig['ddnsdomainkey'] = $config['dhcpdv6'][$if]['ddnsdomainkey'];
 	$pconfig['ddnsupdate'] = isset($config['dhcpdv6'][$if]['ddnsupdate']);
 	list($pconfig['ntp1'],$pconfig['ntp2']) = $config['dhcpdv6'][$if]['ntpserver'];
 	$pconfig['tftp'] = $config['dhcpdv6'][$if]['tftp'];
@@ -148,6 +151,10 @@ if ($_POST) {
 
 	unset($input_errors);
 
+	$old_dhcpdv6_enable = ($pconfig['enable'] == true);
+	$new_dhcpdv6_enable = ($_POST['enable'] ? true : false);
+	$dhcpdv6_enable_changed = ($old_dhcpdv6_enable != $new_dhcpdv6_enable);
+
 	$pconfig = $_POST;
 
 	$numberoptions = array();
@@ -167,7 +174,7 @@ if ($_POST) {
 		$reqdfields = explode(" ", "range_from range_to");
 		$reqdfieldsn = array(gettext("Range begin"),gettext("Range end"));
 
-		do_input_validation($_POST, $reqdfields, $reqdfieldsn, &$input_errors);
+		do_input_validation($_POST, $reqdfields, $reqdfieldsn, $input_errors);
 
 		if (($_POST['prefixrange_from'] && !is_ipaddrv6($_POST['prefixrange_from'])))
 			$input_errors[] = gettext("A valid range must be specified.");
@@ -188,6 +195,11 @@ if ($_POST) {
 			$input_errors[] = gettext("The maximum lease time must be at least 60 seconds and higher than the default lease time.");
 		if (($_POST['ddnsdomain'] && !is_domain($_POST['ddnsdomain'])))
 			$input_errors[] = gettext("A valid domain name must be specified for the dynamic DNS registration.");
+		if (($_POST['ddnsdomain'] && !is_ipaddrv4($_POST['ddnsdomainprimary'])))
+			$input_errors[] = gettext("A valid primary domain name server IPv4 address must be specified for the dynamic domain name.");
+		if (($_POST['ddnsdomainkey'] && !$_POST['ddnsdomainkeyname']) ||
+			($_POST['ddnsdomainkeyname'] && !$_POST['ddnsdomainkey']))
+			$input_errors[] = gettext("You must specify both a valid domain key and key name.");
 		if ($_POST['domainsearchlist']) {
 			$domain_array=preg_split("/[ ;]+/",$_POST['domainsearchlist']);
 			foreach ($domain_array as $curdomain) {
@@ -277,11 +289,6 @@ if ($_POST) {
 		$config['dhcpdv6'][$if]['defaultleasetime'] = $_POST['deftime'];
 		$config['dhcpdv6'][$if]['maxleasetime'] = $_POST['maxtime'];
 		$config['dhcpdv6'][$if]['netmask'] = $_POST['netmask'];
-		$previous = $config['dhcpdv6'][$if]['failover_peerip'];
-		if($previous <> $_POST['failover_peerip'])
-			mwexec("/bin/rm -rf /var/dhcpd/var/db/*");
-
-		$config['dhcpdv6'][$if]['failover_peerip'] = $_POST['failover_peerip'];
 
 		unset($config['dhcpdv6'][$if]['winsserver']);
 
@@ -293,9 +300,11 @@ if ($_POST) {
 
 		$config['dhcpdv6'][$if]['domain'] = $_POST['domain'];
 		$config['dhcpdv6'][$if]['domainsearchlist'] = $_POST['domainsearchlist'];
-		$config['dhcpdv6'][$if]['denyunknown'] = ($_POST['denyunknown']) ? true : false;
 		$config['dhcpdv6'][$if]['enable'] = ($_POST['enable']) ? true : false;
 		$config['dhcpdv6'][$if]['ddnsdomain'] = $_POST['ddnsdomain'];
+		$config['dhcpdv6'][$if]['ddnsdomainprimary'] = $_POST['ddnsdomainprimary'];
+		$config['dhcpdv6'][$if]['ddnsdomainkeyname'] = $_POST['ddnsdomainkeyname'];
+		$config['dhcpdv6'][$if]['ddnsdomainkey'] = $_POST['ddnsdomainkey'];
 		$config['dhcpdv6'][$if]['ddnsupdate'] = ($_POST['ddnsupdate']) ? true : false;
 
 		unset($config['dhcpdv6'][$if]['ntpserver']);
@@ -328,7 +337,7 @@ if ($_POST) {
 		// dhcp_clean_leases();
 		/* dnsmasq_configure calls dhcpd_configure */
 		/* no need to restart dhcpd twice */
-		if (isset($config['dnsmasq']['regdhcpstatic']))	{
+		if (isset($config['dnsmasq']['enable']) && isset($config['dnsmasq']['regdhcpstatic']))	{
 			$retvaldns = services_dnsmasq_configure();
 			if ($retvaldns == 0) {
 				clear_subsystem_dirty('hosts');
@@ -339,7 +348,9 @@ if ($_POST) {
 			if ($retvaldhcp == 0)
 				clear_subsystem_dirty('staticmaps');
 		}
-		if($retvaldhcp == 1 || $retvaldns == 1)
+		if ($dhcpdv6_enable_changed)
+			$retvalfc = filter_configure();
+		if($retvaldhcp == 1 || $retvaldns == 1 || $retvalfc == 1)
 			$retval = 1;
 		$savemsg = get_std_save_message($retval);
 	}
@@ -351,7 +362,7 @@ if ($_GET['act'] == "del") {
 		write_config();
 		if(isset($config['dhcpdv6'][$if]['enable'])) {
 			mark_subsystem_dirty('staticmapsv6');
-			if (isset($config['dnsmasq']['regdhcpstaticv6']))
+			if (isset($config['dnsmasq']['enable']) && isset($config['dnsmasq']['regdhcpstaticv6']))
 				mark_subsystem_dirty('hosts');
 		}
 		header("Location: services_dhcpv6.php?if={$if}");
@@ -392,11 +403,13 @@ include("head.inc");
 		document.iform.deftime.disabled = endis;
 		document.iform.maxtime.disabled = endis;
 		//document.iform.gateway.disabled = endis;
-		document.iform.failover_peerip.disabled = endis;
 		document.iform.dhcpv6leaseinlocaltime.disabled = endis;
 		document.iform.domain.disabled = endis;
 		document.iform.domainsearchlist.disabled = endis;
 		document.iform.ddnsdomain.disabled = endis;
+		document.iform.ddnsdomainprimary.disabled = endis;
+		document.iform.ddnsdomainkeyname.disabled = endis;
+		document.iform.ddnsdomainkey.disabled = endis;
 		document.iform.ddnsupdate.disabled = endis;
 		document.iform.ntp1.disabled = endis;
 		document.iform.ntp2.disabled = endis;
@@ -406,7 +419,6 @@ include("head.inc");
 		document.iform.nextserver.disabled = endis;
 		document.iform.filename.disabled = endis;
 		document.iform.rootpath.disabled = endis;
-		document.iform.denyunknown.disabled = endis;
 	}
 
 	function show_shownumbervalue() {
@@ -471,8 +483,8 @@ include("head.inc");
 	$i = 0;
 	foreach ($iflist as $ifent => $ifname) {
 		$oc = $config['interfaces'][$ifent];
-		if ((is_array($config['dhcpdv6'][$ifent]) && !isset($config['dhcpdv6'][$ifent]['enable']) && !(is_ipaddrv6($oc['ipaddrv6']) && (!preg_match("/fe80::/", $oc['ipaddrv6'])))) ||
-			(!is_array($config['dhcpdv6'][$ifent]) && !(is_ipaddrv6($oc['ipaddrv6']) && (!preg_match("/fe80::/", $oc['ipaddrv6'])))))
+		if ((is_array($config['dhcpdv6'][$ifent]) && !isset($config['dhcpdv6'][$ifent]['enable']) && !(is_ipaddrv6($oc['ipaddrv6']) && (!is_linklocal($oc['ipaddrv6'])))) ||
+			(!is_array($config['dhcpdv6'][$ifent]) && !(is_ipaddrv6($oc['ipaddrv6']) && (!is_linklocal($oc['ipaddrv6'])))))
 			continue;
 		if ($ifent == $if)
 			$active = true;
@@ -526,13 +538,6 @@ display_top_tabs($tab_array);
 			<strong><?php printf(gettext("Enable DHCPv6 server on " .
 			"%s " .
 			"interface"),htmlspecialchars($iflist[$if]));?></strong></td>
-			</tr>
-			<tr>
-			<td width="22%" valign="top" class="vtable">&nbsp;</td>
-			<td width="78%" class="vtable">
-				<input name="denyunknown" id="denyunknown" type="checkbox" value="yes" <?php if ($pconfig['denyunknown']) echo "checked"; ?>>
-				<strong><?=gettext("Deny unknown clients");?></strong><br>
-				<?=gettext("If this is checked, only the clients defined below will get DHCP leases from this server. ");?></td>
 			</tr>
 			<tr>
 			<?php
@@ -630,7 +635,7 @@ display_top_tabs($tab_array);
 			<td width="22%" valign="top" class="vncell"><?=gettext("Domain search list");?></td>
 			<td width="78%" class="vtable">
 				<input name="domainsearchlist" type="text" class="formfld unknown" id="domainsearchlist" size="28" value="<?=htmlspecialchars($pconfig['domainsearchlist']);?>"><br>
-				<?=gettext("The DHCP server can optionally provide a domain search list. Use the semicolon character as seperator");?>
+				<?=gettext("The DHCP server can optionally provide a domain search list. Use the semicolon character as separator");?>
 			</td>
 			</tr>
 			<tr>
@@ -651,13 +656,6 @@ display_top_tabs($tab_array);
 				<?=gettext("This is the maximum lease time for clients that ask".
 				" for a specific expiration time."); ?><br>
 				<?=gettext("The default is 86400 seconds.");?>
-			</td>
-			</tr>
-			<tr>
-			<td width="22%" valign="top" class="vncell"><?=gettext("Failover peer IP:");?></td>
-			<td width="78%" class="vtable">
-				<input name="failover_peerip" type="text" class="formfld host" id="failover_peerip" size="28" value="<?=htmlspecialchars($pconfig['failover_peerip']);?>"><br>
-				<?=gettext("Leave blank to disable.  Enter the interface IP address of the other machine.  Machines must be using CARP.");?>
 			</td>
 			</tr>
 			<tr>
@@ -698,6 +696,12 @@ display_top_tabs($tab_array);
 					<input name="ddnsdomain" type="text" class="formfld unknown" id="ddnsdomain" size="28" value="<?=htmlspecialchars($pconfig['ddnsdomain']);?>"><br />
 					<?=gettext("Note: Leave blank to disable dynamic DNS registration.");?><br />
 					<?=gettext("Enter the dynamic DNS domain which will be used to register client names in the DNS server.");?>
+					<input name="ddnsdomainprimary" type="text" class="formfld unknown" id="ddnsdomainprimary" size="20" value="<?=htmlspecialchars($pconfig['ddnsdomainprimary']);?>"><br>
+					<?=gettext("Enter the primary domain name server IP address for the dynamic domain name.");?><br />
+					<input name="ddnsdomainkeyname" type="text" class="formfld unknown" id="ddnsdomainkeyname" size="20" value="<?=htmlspecialchars($pconfig['ddnsdomainkeyname']);?>"><br />
+					<?=gettext("Enter the dynamic DNS domain key name which will be used to register client names in the DNS server.");?>
+					<input name="ddnsdomainkey" type="text" class="formfld unknown" id="ddnsdomainkey" size="20" value="<?=htmlspecialchars($pconfig['ddnsdomainkey']);?>"><br />
+					<?=gettext("Enter the dynamic DNS domain key secret which will be used to register client names in the DNS server.");?>
 				</div>
 			</td>
 			</tr>

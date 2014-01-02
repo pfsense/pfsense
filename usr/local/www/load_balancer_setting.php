@@ -151,7 +151,7 @@ include("head.inc");
                  <td width="78%" class="vtable">
                    <input name="prefork" id="prefork" value="<?php if ($lbsetting['prefork'] <> "") echo $lbsetting['prefork']; ?>" class="formfld unknown">
                    <br />
-                   <?=gettext("Number of processes used by relayd. Leave blank to use the default value of 5 processes"); ?>
+                   <?=gettext("Number of processes used by relayd for dns protocol. Leave blank to use the default value of 5 processes"); ?>
                 </td>
              </tr>
              <tr>

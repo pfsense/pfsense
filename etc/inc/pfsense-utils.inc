@@ -44,7 +44,7 @@
  * NAME
  *   have_natpfruleint_access
  * INPUTS
- *	 none
+ *	none
  * RESULT
  *   returns true if user has access to edit a specific firewall nat port forward interface
  ******/
@@ -59,7 +59,7 @@ function have_natpfruleint_access($if) {
  * NAME
  *   have_ruleint_access
  * INPUTS
- *	 none
+ *	none
  * RESULT
  *   returns true if user has access to edit a specific firewall interface
  ******/
@@ -74,7 +74,7 @@ function have_ruleint_access($if) {
  * NAME
  *   does_url_exist
  * INPUTS
- *	 none
+ *	none
  * RESULT
  *   returns true if a url is available
  ******/
@@ -92,7 +92,7 @@ function does_url_exist($url) {
  * NAME
  *   is_private_ip
  * INPUTS
- *	 none
+ *	none
  * RESULT
  *   returns true if an ip address is in a private range
  ******/
@@ -115,7 +115,7 @@ function is_private_ip($iptocheck) {
  * NAME
  *   get_tmp_file
  * INPUTS
- *	 none
+ *	none
  * RESULT
  *   returns a temporary filename
  ******/
@@ -324,7 +324,11 @@ function convert_ip_to_network_format($ip, $subnet) {
  */
 function get_carp_interface_status($carpinterface) {
 	$carp_query = "";
-	exec("/sbin/ifconfig $carpinterface | /usr/bin/grep -v grep | /usr/bin/grep carp:", $carp_query);
+
+	/* XXX: Need to fidn a better way for this! */
+	list ($interface, $vhid) = explode("_vip", $carpinterface);
+	$interface = get_real_interface($interface);
+	exec("/sbin/ifconfig $interface | /usr/bin/grep -v grep | /usr/bin/grep carp: | /usr/bin/grep 'vhid {$vhid}'", $carp_query);
 	foreach($carp_query as $int) {
 		if(stristr($int, "MASTER"))
 			return gettext("MASTER");
@@ -1445,10 +1449,24 @@ function get_cpu_speed() {
 	return exec("sysctl hw.clockrate | awk '{ print $2 }'");
 }
 
+function get_uptime_sec() {
+	$boottime = "";
+	$matches = "";
+	exec("/sbin/sysctl -n kern.boottime", $boottime);
+	preg_match("/sec = (\d+)/", $boottime[0], $matches);
+	$boottime = $matches[1];
+	if(intval($boottime) == 0)
+		return 0;
+
+	$uptime = time() - $boottime;
+	return $uptime;
+}
+
 function add_hostname_to_watch($hostname) {
 	if(!is_dir("/var/db/dnscache")) {
 		mkdir("/var/db/dnscache");
 	}
+	$result = array();
 	if((is_fqdn($hostname)) && (!is_ipaddr($hostname))) {
 		$domrecords = array();
 		$domips = array();
@@ -1471,7 +1489,10 @@ function add_hostname_to_watch($hostname) {
 			}
 		}
 		file_put_contents("/var/db/dnscache/$hostname", $contents);
+		/* Remove empty elements */
+		$result = array_filter(explode("\n", $contents), 'strlen');
 	}
+	return $result;
 }
 
 function is_fqdn($fqdn) {
@@ -1494,9 +1515,9 @@ function is_fqdn($fqdn) {
 function pfsense_default_state_size() {
 	/* get system memory amount */
 	$memory = get_memory();
-	$avail = $memory[1];
+	$physmem = $memory[0];
 	/* Be cautious and only allocate 10% of system memory to the state table */
-	$max_states = (int) ($avail/10)*1000;
+	$max_states = (int) ($physmem/10)*1000;
 	return $max_states;
 }
 
@@ -1512,7 +1533,7 @@ function pfsense_default_table_entries_size() {
 
 /* Compare the current hostname DNS to the DNS cache we made
  * if it has changed we return the old records
- * if no change we return true */
+ * if no change we return false */
 function compare_hostname_to_dnscache($hostname) {
 	if(!is_dir("/var/db/dnscache")) {
 		mkdir("/var/db/dnscache");
@@ -1592,22 +1613,58 @@ function load_thermal_hardware() {
  * NAME
  *   isvm
  * INPUTS
- *	 none
+ *	none
  * RESULT
  *   returns true if machine is running under a virtual environment
  ******/
 function isvm() {
 	$virtualenvs = array("vmware", "parallels", "qemu", "bochs", "plex86");
-	$bios_vendor = strtolower(`/bin/kenv | /usr/bin/awk -F= '/smbios.bios.vendor/ {print $2}'`);
-	if(in_array($bios_vendor, $virtualenvs))
-		return true;
-	else
-		return false;
+	$bios_product = trim(`/bin/kenv | /usr/bin/awk -F= '/smbios.system.product/ {print $2}'`);
+	foreach ($virtualenvs as $virtualenv)
+		if (stripos($bios_product, $virtualenv) !== false)
+			return true;
+
+	return false;
 }
 
 function get_freebsd_version() {
 	$version = php_uname("r");
 	return $version[0];
+}
+
+function download_file($url, $destination, $verify_ssl = false, $connect_timeout = 60, $timeout = 0) {
+	global $config, $g;
+
+	$fp = fopen($destination, "wb");
+
+	if (!$fp)
+		return false;
+
+	$ch = curl_init();
+	curl_setopt($ch, CURLOPT_URL, $url);
+	curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, $verify_ssl);
+	curl_setopt($ch, CURLOPT_FILE, $fp);
+	curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, $connect_timeout);
+	curl_setopt($ch, CURLOPT_TIMEOUT, $timeout);
+	curl_setopt($ch, CURLOPT_HEADER, false);
+	curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true);
+	curl_setopt($ch, CURLOPT_USERAGENT, $g['product_name'] . '/' . rtrim(file_get_contents("/etc/version")));
+
+	if (!empty($config['system']['proxyurl'])) {
+		curl_setopt($ch, CURLOPT_PROXY, $config['system']['proxyurl']);
+		if (!empty($config['system']['proxyport']))
+			curl_setopt($ch, CURLOPT_PROXYPORT, $config['system']['proxyport']);
+		if (!empty($config['system']['proxyuser']) && !empty($config['system']['proxypass'])) {
+			@curl_setopt($ch, CURLOPT_PROXYAUTH, CURLAUTH_ANY | CURLAUTH_ANYSAFE);
+			curl_setopt($ch, CURLOPT_PROXYUSERPWD, "{$config['system']['proxyuser']}:{$config['system']['proxypass']}");
+		}
+	}
+
+	@curl_exec($ch);
+	$http_code = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+	fclose($fp);
+	curl_close($ch);
+	return ($http_code == 200) ? true : $http_code;
 }
 
 function download_file_with_progress_bar($url_file, $destination_file, $readbody = 'read_body', $connect_timeout=60, $timeout=0) {
@@ -1771,9 +1828,9 @@ function update_progress_bar($percent, $first_time) {
 
 /* Split() is being DEPRECATED as of PHP 5.3.0 and REMOVED as of PHP 6.0.0. Relying on this feature is highly discouraged. */
 if(!function_exists("split")) {
-	function split($seperator, $haystack, $limit = null) {
-		log_error("deprecated split() call with seperator '{$seperator}'");
-		return preg_split($seperator, $haystack, $limit);
+	function split($separator, $haystack, $limit = null) {
+		log_error("deprecated split() call with separator '{$separator}'");
+		return preg_split($separator, $haystack, $limit);
 	}
 }
 
@@ -1834,11 +1891,10 @@ function update_alias_url_data() {
 				/* fetch down and add in */
 				$temp_filename = tempnam("{$g['tmp_path']}/", "alias_import");
 				unlink($temp_filename);
-				$fda = fopen("{$g['tmp_path']}/tmpfetch","w");
-				fwrite($fda, "/usr/bin/fetch -T 5 -q -o \"{$temp_filename}/aliases\" \"" . $alias_url . "\"");
-				fclose($fda);
+				$verify_ssl = isset($config['system']['checkaliasesurlcert']);
 				mwexec("/bin/mkdir -p {$temp_filename}");
-				mwexec("/usr/bin/fetch -T 5 -q -o \"{$temp_filename}/aliases\" \"" . $alias_url . "\"");
+				download_file($alias_url, $temp_filename . "/aliases", $verify_ssl);
+
 				/* if the item is tar gzipped then extract */
 				if (stristr($alias_url, ".tgz"))
 					process_alias_tgz($temp_filename);
@@ -1952,10 +2008,10 @@ function version_get_string_value($a) {
 function version_compare_string($a, $b) {
 	// Only compare string parts if both versions give a specific release
 	// (If either version lacks a string part, assume intended to match all release levels)
-	if (isset($a) && isset($b)) 
-        	return version_compare_numeric(version_get_string_value($a), version_get_string_value($b));
-        else
-        	return 0;
+	if (isset($a) && isset($b))
+		return version_compare_numeric(version_get_string_value($a), version_get_string_value($b));
+	else
+		return 0;
 }
 function version_compare_numeric($a, $b) {
 	$a_arr = explode('.', rtrim($a, '.0'));
@@ -2002,6 +2058,8 @@ function pfs_version_compare($cur_time, $cur_text, $remote) {
 	return $v;
 }
 function process_alias_urltable($name, $url, $freq, $forceupdate=false) {
+	global $config;
+
 	$urltable_prefix = "/var/db/aliastables/";
 	$urltable_filename = $urltable_prefix . $name . ".txt";
 
@@ -2021,11 +2079,14 @@ function process_alias_urltable($name, $url, $freq, $forceupdate=false) {
 		// Try to fetch the URL supplied
 		conf_mount_rw();
 		unlink_if_exists($urltable_filename . ".tmp");
-		// Use fetch to grab data since these may be large files, we don't want to process them through PHP if we can help it.
-		mwexec("/usr/bin/fetch -T 5 -q -o " . escapeshellarg($urltable_filename . ".tmp") . " " . escapeshellarg($url));
-		// Remove comments. Might need some grep-fu to only allow lines that look like IPs/subnets
-		if (file_exists($urltable_filename . ".tmp")) {
-			mwexec("/usr/bin/sed 's/\;.*//g' ". escapeshellarg($urltable_filename . ".tmp") . "| /usr/bin/egrep -v '^[[:space:]]*$|^#' > " . escapeshellarg($urltable_filename));
+		$verify_ssl = isset($config['system']['checkaliasesurlcert']);
+		if (download_file($url, $urltable_filename . ".tmp", $verify_ssl)) {
+			mwexec("/usr/bin/sed -E 's/\;.*//g; /^[[:space:]]*($|#)/d' ". escapeshellarg($urltable_filename . ".tmp") . " > " . escapeshellarg($urltable_filename));
+			if (alias_get_type($name) == "urltable_ports") {
+				$ports = explode("\n", file_get_contents($urltable_filename));
+				$ports = group_ports($ports);
+				file_put_contents($urltable_filename, implode("\n", $ports));
+			}
 			unlink_if_exists($urltable_filename . ".tmp");
 		} else
 			mwexec("/usr/bin/touch {$urltable_filename}");
@@ -2336,8 +2397,8 @@ function get_country_name($country_code) {
 	if($country_code == "ALL") {
 		$country_list = array();
 		foreach($country_names['ISO_3166-1_List_en']['ISO_3166-1_Entry'] as $country) {
-			$country_list[] = array( "code" => $country['ISO_3166-1_Alpha-2_Code_element'],
-						 "name" => ucwords(strtolower($country['ISO_3166-1_Country_name'])) );
+			$country_list[] = array("code" => $country['ISO_3166-1_Alpha-2_Code_element'],
+						"name" => ucwords(strtolower($country['ISO_3166-1_Country_name'])) );
 		}
 		return $country_list;
 	}
@@ -2474,7 +2535,7 @@ function is_ipaddr_configured($ipaddr, $ignore_if = "", $check_localip = false, 
 
 		foreach($interface_list_ips as $if => $ilips) {
 			/* Also ignore CARP interfaces, it'll be checked below */
-			if (($ignore_if == $if) || preg_match('/_vip[0-9]/', $if))
+			if ($ignore_if == $if || strstr($ignore_if, "_vip"))
 				continue;
 			if (strcasecmp($ipaddr, $ilips) == 0)
 				return true;
@@ -2483,7 +2544,7 @@ function is_ipaddr_configured($ipaddr, $ignore_if = "", $check_localip = false, 
 
 	$interface_list_vips = get_configured_vips_list(true);
 	foreach ($interface_list_vips as $id => $vip) {
-		if ($ignore_if == "vip_{$id}")
+		if ($ignore_if == $vip['if'])
 			continue;
 		if (strcasecmp($ipaddr, $vip['ipaddr']) == 0)
 			return true;
@@ -2533,10 +2594,69 @@ function get_locale_list() {
 	$locales = array(
 		"en_US" => gettext("English"),
 		"pt_BR" => gettext("Portuguese (Brazil)"),
+		"tr" => gettext("Turkish"),
 	);
 	asort($locales);
 	return $locales;
 }
+
+function system_get_language_code() {
+	global $config, $g_languages;
+
+	// a language code, as per [RFC3066]
+	$language = $config['system']['language'];
+	//$code = $g_languages[$language]['code'];
+	$code = str_replace("_", "-", $language);
+
+	if (empty($code))
+		$code = "en-US"; // Set default code.
+
+	return $code;
+}
+
+function system_get_language_codeset() {
+	global $config, $g_languages;
+
+	$language = $config['system']['language'];
+	$codeset = $g_languages[$language]['codeset'];
+
+	if (empty($codeset))
+		$codeset = "UTF-8"; // Set default codeset.
+
+	return $codeset;
+}
+
+/* Available languages/locales */
+$g_languages = array (
+	"sq"    => array("codeset" => "UTF-8", "desc" => gettext("Albanian")),
+	"bg"    => array("codeset" => "UTF-8", "desc" => gettext("Bulgarian")),
+	"zh_CN" => array("codeset" => "UTF-8", "desc" => gettext("Chinese (Simplified)")),
+	"zh_TW" => array("codeset" => "UTF-8", "desc" => gettext("Chinese (Traditional)")),
+	"nl"    => array("codeset" => "UTF-8", "desc" => gettext("Dutch")),
+	"da"    => array("codeset" => "UTF-8", "desc" => gettext("Danish")),
+	"en_US" => array("codeset" => "ISO-8859-1", "desc" => gettext("English")),
+	"fi"    => array("codeset" => "UTF-8", "desc" => gettext("Finnish")),
+	"fr"    => array("codeset" => "UTF-8", "desc" => gettext("French")),
+	"de"    => array("codeset" => "UTF-8", "desc" => gettext("German")),
+	"el"    => array("codeset" => "UTF-8", "desc" => gettext("Greek")),
+	"hu"    => array("codeset" => "UTF-8", "desc" => gettext("Hungarian")),
+	"it"    => array("codeset" => "UTF-8", "desc" => gettext("Italian")),
+	"ja"    => array("codeset" => "UTF-8", "desc" => gettext("Japanese")),
+	"ko"    => array("codeset" => "UTF-8", "desc" => gettext("Korean")),
+	"lv"    => array("codeset" => "UTF-8", "desc" => gettext("Latvian")),
+	"nb"    => array("codeset" => "UTF-8", "desc" => gettext("Norwegian (Bokmal)")),
+	"pl"    => array("codeset" => "UTF-8", "desc" => gettext("Polish")),
+	"pt_BR" => array("codeset" => "ISO-8859-1", "desc" => gettext("Portuguese (Brazil)")),
+	"pt"    => array("codeset" => "UTF-8", "desc" => gettext("Portuguese (Portugal)")),
+	"ro"    => array("codeset" => "UTF-8", "desc" => gettext("Romanian")),
+	"ru"    => array("codeset" => "UTF-8", "desc" => gettext("Russian")),
+	"sl"    => array("codeset" => "UTF-8", "desc" => gettext("Slovenian")),
+	"tr"    => array("codeset" => "UTF-8", "desc" => gettext("Turkish")),
+	"es"    => array("codeset" => "UTF-8", "desc" => gettext("Spanish")),
+	"sv"    => array("codeset" => "UTF-8", "desc" => gettext("Swedish")),
+	"sk"    => array("codeset" => "UTF-8", "desc" => gettext("Slovak")),
+	"cs"    => array("codeset" => "UTF-8", "desc" => gettext("Czech"))
+);
 
 function return_hex_ipv4($ipv4) {
 	if(!is_ipaddrv4($ipv4))

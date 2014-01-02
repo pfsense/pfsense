@@ -75,10 +75,6 @@ if($_POST['disablecarp'] <> "") {
 						interface_carp_configure($vip);
 						sleep(1);
 					break;
-					case "ipalias":
-						if (strstr($vip['interface'], "_vip"))
-							interface_ipalias_configure($vip);
-					break;
                                 }
                         }
                 }
@@ -152,8 +148,7 @@ include("head.inc");
 						$vhid = $carp['vhid'];
 						$advskew = $carp['advskew'];
 						$advbase = $carp['advbase'];
-						$carp_int = "{$carp['interface']}_vip{$vhid}";
-						$status = get_carp_interface_status($carp_int);
+						$status = get_carp_interface_status("{$carp['interface']}_vip{$carp['vhid']}");
 						echo "<tr>";
 						$align = "valign='middle'";
 						if($carp_enabled == false) {
@@ -168,7 +163,7 @@ include("head.inc");
 								$icon = "<img {$align} src='/themes/".$g['theme']."/images/icons/icon_log.gif'>";
 							}
 						}
-						echo "<td class=\"listlr\"><center>" . $carp_int . "&nbsp;</td>";
+						echo "<td class=\"listlr\"><center>" . convert_friendly_interface_to_friendly_descr($carp['interface']) . "@{$vhid} &nbsp;</td>";
 						echo "<td class=\"listlr\"><center>" . $ipaddress . "&nbsp;</td>";
 						echo "<td class=\"listlr\"><center>{$icon}&nbsp;&nbsp;" . $status . "&nbsp;</td>";
 						echo "</tr>";

@@ -1,34 +1,34 @@
 <?php
 /* $Id$ */
 /*
-    index.php
-    Copyright (C) 2004-2012 Scott Ullrich
-    All rights reserved.
+	index.php
+	Copyright (C) 2004-2012 Scott Ullrich
+	All rights reserved.
 
-    Originally part of m0n0wall (http://m0n0.ch/wall)
-    Copyright (C) 2003-2004 Manuel Kasper <mk@neon1.net>.
-    All rights reserved.
+	Originally part of m0n0wall (http://m0n0.ch/wall)
+	Copyright (C) 2003-2004 Manuel Kasper <mk@neon1.net>.
+	All rights reserved.
 
-    Redistribution and use in source and binary forms, with or without
-    modification, are permitted provided that the following conditions are met:
+	Redistribution and use in source and binary forms, with or without
+	modification, are permitted provided that the following conditions are met:
 
-    1. Redistributions of source code must retain the above copyright notice,
-       this list of conditions and the following disclaimer.
+	1. Redistributions of source code must retain the above copyright notice,
+	   this list of conditions and the following disclaimer.
 
-    2. Redistributions in binary form must reproduce the above copyright
-       notice, this list of conditions and the following disclaimer in the
-       documentation and/or other materials provided with the distribution.
+	2. Redistributions in binary form must reproduce the above copyright
+	   notice, this list of conditions and the following disclaimer in the
+	   documentation and/or other materials provided with the distribution.
 
-    THIS SOFTWARE IS PROVIDED ``AS IS'' AND ANY EXPRESS OR IMPLIED WARRANTIES,
-    INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY
-    AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE
-    AUTHOR BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY,
-    oR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
-    SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
-    INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
-    CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
-    ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
-    POSSIBILITY OF SUCH DAMAGE.
+	THIS SOFTWARE IS PROVIDED ``AS IS'' AND ANY EXPRESS OR IMPLIED WARRANTIES,
+	INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY
+	AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE
+	AUTHOR BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY,
+	oR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+	SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+	INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+	CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+	ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+	POSSIBILITY OF SUCH DAMAGE.
 */
 /*
 	pfSense_BUILDER_BINARIES:	/sbin/ifconfig
@@ -69,7 +69,7 @@ if($g['disablecrashreporter'] != true) {
 	$x = 0;
 	if(file_exists("/tmp/PHP_errors.log")) {
 		$total = `/usr/bin/grep -vi warning /tmp/PHP_errors.log | /usr/bin/wc -l | /usr/bin/awk '{ print $1 }'`;
-		if($total > 0) 
+		if($total > 0)
 			$x++;
 	}
 	$crash = glob("/var/crash/*");
@@ -79,7 +79,7 @@ if($g['disablecrashreporter'] != true) {
 			if (!in_array(basename($c), $skip_files))
 				$x++;
 		}
-		if($x > 0) 
+		if($x > 0)
 			$savemsg = "{$g['product_name']} has detected a crash report or programming bug.  Click <a href='crash_reporter.php'>here</a> for more information.";
 	}
 }
@@ -130,7 +130,7 @@ if (!is_array($config['widgets'])) {
 
 	## Load Functions Files
 	require_once('includes/functions.inc.php');
-	
+
 	## Check to see if we have a swap space,
 	## if true, display, if false, hide it ...
 	if(file_exists("/usr/sbin/swapinfo")) {
@@ -159,21 +159,21 @@ if (!is_array($config['widgets'])) {
 		echo <<<EOF
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="<?=system_get_language_code();?>" xml:lang="<?=system_get_language_code();?>">
 <head>
 	<title>{$g['product_name']}.localdomain - {$g['product_name']} first time setup</title>
-	<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+	<meta http-equiv="Content-Type" content="text/html; charset=<?=system_get_language_codeset();?>" />
 	<link rel="stylesheet" type="text/css" href="/niftycssprintCode.css" media="print" />
-	<script type="text/javascript">var theme = "nervecenter"</script>
-	<script type="text/javascript" src="/themes/nervecenter/loader.js"></script>
-		
+	<script type="text/javascript">var theme = "{$g['theme']}"</script>
+	<script type="text/javascript" src="/themes/{$g['theme']}/loader.js"></script>
+
 EOF;
 
 		echo "<body link=\"#0000CC\" vlink=\"#0000CC\" alink=\"#0000CC\">\n";
 
-		if(file_exists("/usr/local/www/themes/{$g['theme']}/wizard.css")) 
+		if(file_exists("/usr/local/www/themes/{$g['theme']}/wizard.css"))
 			echo "<link type=\"text/css\" rel=\"stylesheet\" href=\"/themes/{$g['theme']}/wizard.css\" media=\"all\" />\n";
-		else 
+		else
 			echo "<link type=\"text/css\" rel=\"stylesheet\" href=\"/themes/{$g['theme']}/all.css\" media=\"all\" />";
 
 		echo "<form>\n";
@@ -219,39 +219,39 @@ EOF;
 ##build widget saved list information
 if ($config['widgets'] && $config['widgets']['sequence'] != "") {
 	$pconfig['sequence'] = $config['widgets']['sequence'];
-	
+
 	$widgetlist = $pconfig['sequence'];
 	$colpos = array();
 	$savedwidgetfiles = array();
 	$widgetname = "";
 	$widgetlist = explode(",",$widgetlist);
-	
+
 	##read the widget position and display information
 	foreach ($widgetlist as $widget){
-		$dashpos = strpos($widget, "-");		
+		$dashpos = strpos($widget, "-");
 		$widgetname = substr($widget, 0, $dashpos);
-		$colposition = strpos($widget, ":");		
+		$colposition = strpos($widget, ":");
 		$displayposition = strrpos($widget, ":");
 		$colpos[] = substr($widget,$colposition+1, $displayposition - $colposition-1);
 		$displayarray[] = substr($widget,$displayposition+1);
 		$savedwidgetfiles[] = $widgetname . ".widget.php";
 	}
-	
+
 	##add widgets that may not be in the saved configuration, in case they are to be displayed later
-    foreach ($widgetfiles as $defaultwidgets){         
-         if (!in_array($defaultwidgets, $savedwidgetfiles)){
-             $savedwidgetfiles[] = $defaultwidgets;
-         }
-     }   
-	
+	foreach ($widgetfiles as $defaultwidgets){
+		if (!in_array($defaultwidgets, $savedwidgetfiles)){
+			$savedwidgetfiles[] = $defaultwidgets;
+		}
+	}
+
 	##find custom configurations of a particular widget and load its info to $pconfig
 	foreach ($widgetnames as $widget){
-        if ($config['widgets'][$widget . '-config']){
-            $pconfig[$widget . '-config'] = $config['widgets'][$widget . '-config'];
-        }
-    }   
-	
-	$widgetlist = $savedwidgetfiles;	
+		if ($config['widgets'][$widget . '-config']){
+			$pconfig[$widget . '-config'] = $config['widgets'][$widget . '-config'];
+		}
+	}
+
+	$widgetlist = $savedwidgetfiles;
 } else{
 	// no saved widget sequence found, build default list.
 	$widgetlist = $widgetfiles;
@@ -267,7 +267,7 @@ while (false !== ($filename = readdir($dirhandle))) {
 }
 foreach($phpincludefiles as $includename) {
 	if(!stristr($includename, ".inc"))
-		continue;	
+		continue;
 	include($directory . $includename);
 }
 
@@ -279,26 +279,26 @@ $jscriptstr = <<<EOD
 function widgetAjax(widget) {
 	uri = "widgets/widgets/" + widget + ".widget.php";
 	var opt = {
-	    // Use GET
-	    type: 'get',
-	    async: true,
-	    // Handle 404
-	    statusCode: {
-	        404: function(t) {
-	            alert('Error 404: location "' + t.statusText + '" was not found.');
-	        }
-	    },
-	    // Handle other errors
-	    error: function(t) {
-	        alert('Error ' + t.status + ' -- ' + t.statusText);
-	    },
+		// Use GET
+		type: 'get',
+		async: true,
+		// Handle 404
+		statusCode: {
+		404: function(t) {
+			alert('Error 404: location "' + t.statusText + '" was not found.');
+		}
+		},
+		// Handle other errors
+		error: function(t) {
+			alert('Error ' + t.status + ' -- ' + t.statusText);
+		},
 		success: function(data) {
 			widget2 = '#' + widget + "-loader";
 			jQuery(widget2).fadeOut(1000,function(){
 				jQuery('#' + widget).show();
 			});
 			jQuery('#' + widget).html(data);
-	    }
+		}
 	}
 	jQuery.ajax(uri, opt);
 }
@@ -330,44 +330,44 @@ function configureWidget(selectedDiv){
 
 function showWidget(selectedDiv,swapButtons){
 	//appear element
-    jQuery('#' + selectedDiv).show('blind');
-    showSave();    
+	jQuery('#' + selectedDiv).show('blind');
+	showSave();
 	d = document;
-    if (swapButtons){
-	    selectIntLink = selectedDiv + "-min";
+	if (swapButtons){
+		selectIntLink = selectedDiv + "-min";
 		textlink = d.getElementById(selectIntLink);
 		textlink.style.display = "inline";
-	    
-	    
-	    selectIntLink = selectedDiv + "-open";
+
+
+		selectIntLink = selectedDiv + "-open";
 		textlink = d.getElementById(selectIntLink);
 		textlink.style.display = "none";
 
-    }
+	}
 	selectIntLink = selectedDiv + "-container-input";
 	textlink = d.getElementById(selectIntLink);
 	textlink.value = "show";
-    
+
 }
 
 function minimizeWidget(selectedDiv,swapButtons){
 	//fade element
-    jQuery('#' + selectedDiv).hide('blind');
-    showSave();
+	jQuery('#' + selectedDiv).hide('blind');
+	showSave();
 	d = document;
-    if (swapButtons){
-	    selectIntLink = selectedDiv + "-open";
+	if (swapButtons){
+		selectIntLink = selectedDiv + "-open";
 		textlink = d.getElementById(selectIntLink);
-		textlink.style.display = "inline";	    
-	    
-	    selectIntLink = selectedDiv + "-min";
+		textlink.style.display = "inline";
+
+		selectIntLink = selectedDiv + "-min";
 		textlink = d.getElementById(selectIntLink);
 		textlink.style.display = "none";
-    }
+	}
 	selectIntLink = selectedDiv + "-container-input";
 	textlink = d.getElementById(selectIntLink);
-	textlink.value = "hide";	  
-    
+	textlink.value = "hide";
+
 }
 
 function closeWidget(selectedDiv){
@@ -421,7 +421,7 @@ function changeTabDIV(selectedDiv){
 	d = document;
 
 	//get deactive tabs first
-	tabclass = tabclass + "-class-tabdeactive"; 
+	tabclass = tabclass + "-class-tabdeactive";
 	var tabs = document.getElementsByClassName(tabclass);
 	var incTabSelected = selectedDiv + "-deactive";
 	for (i=0; i<tabs.length; i++){
@@ -471,7 +471,7 @@ include("head.inc");
 
 <script type="text/javascript">
 //<![CDATA[
-columns = ['col1','col2'];
+columns = ['col1','col2','col3','col4', 'col5','col6','col7','col8','col9','col10'];
 //]]>
 </script>
 
@@ -481,8 +481,8 @@ echo $jscriptstr;
 	if(!file_exists("/usr/local/www/themes/{$g['theme']}/no_big_logo"))
 		echo "<center><img src=\"./themes/".$g['theme']."/images/logobig.jpg\" alt=\"big logo\" /></center><br />";
 
-if ($savemsg) 
-	print_info_box($savemsg); 
+if ($savemsg)
+	print_info_box($savemsg);
 
 pfSense_handle_custom_code("/usr/local/pkg/dashboard/pre_dashboard");
 
@@ -491,26 +491,26 @@ pfSense_handle_custom_code("/usr/local/pkg/dashboard/pre_dashboard");
 		<div id="content1"><h1><?=gettext("Available Widgets"); ?></h1><p><?php
 			$widgetfiles_add = $widgetfiles;
 			sort($widgetfiles_add);
-			foreach($widgetfiles_add as $widget) {	
+			foreach($widgetfiles_add as $widget) {
 				if(!stristr($widget, "widget.php"))
-					continue;		
-				
+					continue;
+
 				$periodpos = strpos($widget, ".");
 				$widgetname = substr($widget, 0, $periodpos);
 				$nicename = $widgetname;
 				$nicename = str_replace("_", " ", $nicename);
 				//make the title look nice
 				$nicename = ucwords($nicename);
-				
+
 				$widgettitle = $widgetname . "_title";
 				$widgettitlelink = $widgetname . "_title_link";
 					if ($$widgettitle != "")
 					{
-						//echo widget title 
+						//echo widget title
 						?>
 						<span style="cursor: pointer;" onclick='return addWidget("<?php echo $widgetname; ?>")'>
 						<u><?php echo $$widgettitle; ?></u></span><br />
-						<?php 
+						<?php
 					}
 					else {?>
 						<span style="cursor: pointer;" onclick='return addWidget("<?php echo $widgetname; ?>")'>
@@ -524,18 +524,18 @@ pfSense_handle_custom_code("/usr/local/pkg/dashboard/pre_dashboard");
 
 <div id="welcomecontainer" style="display:none">
 		<div id="welcome-container">
-			<div style="float:left;width:80%;padding: 2px">
+			<div style="float:left;width:100%;padding: 2px">
 				<h1><?=gettext("Welcome to the Dashboard page"); ?>!</h1>
 			</div>
-			<div onclick="domTT_close(this);showAllWidgets();" style="float:right;width:8%; cursor:pointer;padding: 5px;" >
-				<img src="./themes/<?= $g['theme']; ?>/images/icons/icon_close.gif" alt="close" />
+			<div onclick="domTT_close(this);showAllWidgets();" style="width:87%; position: absolute; cursor:pointer; padding: 10px;" >
+				<img src="./themes/<?= $g['theme']; ?>/images/icons/icon_close.gif" alt="close" style="float:right" />
 			</div>
 			<div style="clear:both;"></div>
 			<p>
 			<?=gettext("This page allows you to customize the information you want to be displayed!");?><br/>
 			<?=gettext("To get started click the");?> <img src="./themes/<?= $g['theme']; ?>/images/icons/icon_plus.gif" alt="plus" /> <?=gettext("icon to add widgets.");?><br/>
 			<br/>
-			<?=gettext("You can move any widget around by clicking and dragging the title.");?>			
+			<?=gettext("You can move any widget around by clicking and dragging the title.");?>
 			</p>
 	</div>
 </div>
@@ -550,7 +550,8 @@ pfSense_handle_custom_code("/usr/local/pkg/dashboard/pre_dashboard");
 &nbsp;&nbsp;&nbsp;
 		<input id="submit" name="submit" type="submit" style="display:none" onclick="return updatePref();" class="formbtn" value="<?=gettext("Save Settings");?>" />
 </form>
-<div id="niftyOutter">
+<!-- fakeClass contains no CSS but is used as an identifier in theme pfsense_ng_fs - loader.js -->
+<div id="niftyOutter" class="fakeClass">
 	<?php
 	$totalwidgets = count($widgetfiles);
 	$halftotal = $totalwidgets / 2 - 2;
@@ -558,44 +559,44 @@ pfSense_handle_custom_code("/usr/local/pkg/dashboard/pre_dashboard");
 	$directory = "/usr/local/www/widgets/widgets/";
 	$printed = false;
 	$firstprint = false;
-	?> 
-	<div id="col1" style="float:left;width:49%;padding-bottom:40px">		
-	<?php	
-		
+	?>
+	<div id="col1" style="float:left;width:49%;padding-bottom:40px" class="ui-sortable">
+	<?php
+
 	foreach($widgetlist as $widget) {
-		
+
 		if(!stristr($widget, "widget.php"))
 					continue;
 		$periodpos = strpos($widget, ".");
-		$widgetname = substr($widget, 0, $periodpos);	
+		$widgetname = substr($widget, 0, $periodpos);
 		if ($widgetname != ""){
 			$nicename = $widgetname;
 			$nicename = str_replace("_", " ", $nicename);
-			
+
 			//make the title look nice
 			$nicename = ucwords($nicename);
 		}
-		
+
 		if ($config['widgets'] && $pconfig['sequence'] != ""){
 			switch($displayarray[$widgetcounter]){
 				case "show":
 					$divdisplay = "block";
 					$display = "block";
-					$inputdisplay = "show";					
+					$inputdisplay = "show";
 					$showWidget = "none";
 					$mindiv = "inline";
 					break;
 				case "hide":
 					$divdisplay = "block";
 					$display = "none";
-					$inputdisplay = "hide";		
+					$inputdisplay = "hide";
 					$showWidget = "inline";
 					$mindiv = "none";
 					break;
 				case "close":
 					$divdisplay = "none";
 					$display = "block";
-					$inputdisplay = "close";			
+					$inputdisplay = "close";
 					$showWidget = "none";
 					$mindiv = "inline";
 					break;
@@ -635,59 +636,79 @@ pfSense_handle_custom_code("/usr/local/pkg/dashboard/pre_dashboard");
 				}
 			}
 		}
-		
-		if ($config['widgets'] && $pconfig['sequence'] != ""){
-			if ($colpos[$widgetcounter] == "col2" && $printed == false)
-			{
+
+		if( substr($g['theme'], -3) != "_fs") {
+			if ($config['widgets'] && $pconfig['sequence'] != ""){
+				if ($colpos[$widgetcounter] == "col2" && $printed == false)
+				{
+					$printed = true;
+					?>
+					</div>
+					<div id="col2" style="float:right;width:49%;padding-bottom:40px" class="ui-sortable">
+					<?php
+				}
+			}
+			else if ($widgetcounter >= $halftotal && $printed == false){
 				$printed = true;
 				?>
 				</div>
-				<div id="col2" style="float:right;width:49%;padding-bottom:40px">		
+				<div id="col2" style="float:right;width:49%;padding-bottom:40px" class="ui-sortable">
 				<?php
 			}
 		}
-		else if ($widgetcounter >= $halftotal && $printed == false){
-			$printed = true;
-			?>
-			</div>
-			<div id="col2" style="float:right;width:49%;padding-bottom:40px">		
-			<?php
+		else {
+			if ($config['widgets'] && $pconfig['sequence'] != "") {
+				if ($colpos[$widgetcounter] == "col2" && $printed == false)
+				{
+					$printed = true;
+					?>
+					</div>
+					<div id="col2" style="float:right;width:49%;padding-bottom:40px" class="ui-sortable">
+					<?php
+				}
+				else { ?>
+					<script language="javascript" type="text/javascript">
+					var colpos = "<?=$colpos[$widgetcounter]?>";
+					createColumn(colpos);					
+					</script>
+				<?php }
+			}		
 		}
-		
+
 		?>
 		<div style="clear:both;"></div>
 		<div  id="<?php echo $widgetname;?>-container" class="widgetdiv" style="display:<?php echo $divdisplay; ?>;">
 			<input type="hidden" value="<?php echo $inputdisplay;?>" id="<?php echo $widgetname;?>-container-input" name="<?php echo $widgetname;?>-container-input" />
 			<div id="<?php echo $widgetname;?>-topic" class="widgetheader" style="cursor:move">
 				<div style="float:left;">
-					<?php 
-					
+					<?php
+
 					$widgettitle = $widgetname . "_title";
 					$widgettitlelink = $widgetname . "_title_link";
 					if ($$widgettitle != "")
 					{
 						//only show link if defined
-						if ($$widgettitlelink != "") {?>						
+						if ($$widgettitlelink != "") {?>
 						<u><span onclick="location.href='/<?php echo $$widgettitlelink;?>'" style="cursor:pointer">
 						<?php }
 							//echo widget title
-							echo $$widgettitle; 
+							echo $$widgettitle;
 						if ($$widgettitlelink != "") { ?>
-						</span></u>						
+						</span></u>
 						<?php }
 					}
-					else{		
-						if ($$widgettitlelink != "") {?>						
+					else{
+						if ($$widgettitlelink != "") {?>
 						<u><span onclick="location.href='/<?php echo $$widgettitlelink;?>'" style="cursor:pointer">
 						<?php }
 						echo $nicename;
 							if ($$widgettitlelink != "") { ?>
-						</span></u>						
+						</span></u>
 						<?php }
 					}
 					?>
 				</div>
-				<div align="right" style="float:right;">	
+				<div align="right" style="float:right;">
 					<div id="<?php echo $widgetname;?>-configure" onclick='return configureWidget("<?php echo $widgetname;?>")' style="display:none; cursor:pointer" ><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_configure.gif" alt="configure" /></div>
 					<div id="<?php echo $widgetname;?>-open" onclick='return showWidget("<?php echo $widgetname;?>",true)' style="display:<?php echo $showWidget;?>; cursor:pointer" ><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_open.gif" alt="open" /></div>
 					<div id="<?php echo $widgetname;?>-min" onclick='return minimizeWidget("<?php echo $widgetname;?>",true)' style="display:<?php echo $mindiv;?>; cursor:pointer" ><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_minus.gif" alt="minimize" /></div>
@@ -700,38 +721,37 @@ pfSense_handle_custom_code("/usr/local/pkg/dashboard/pre_dashboard");
 				<br />
 					<img src="./themes/<?= $g['theme']; ?>/images/misc/widget_loader.gif" width="25" height="25" alt="<?=gettext("Loading selected widget"); ?>..." />
 				<br />
-			</div> <?php } if ($divdisplay != "block") $display = none; ?>
-			<div id="<?php echo $widgetname;?>" style="display:<?php echo $display; ?>;">				
-				<?php 
+			</div> <?php $display = "none"; } ?>
+			<div id="<?php echo $widgetname;?>" style="display:<?php echo $display; ?>;">
+				<?php
 					if ($divdisplay == "block")
 					{
 						include($directory . $widget);
-					}	
-				 ?>
+					}
+				?>
 			</div>
 			<div style="clear:both;"></div>
 		</div>
-		<?php 	
+		<?php
 	$widgetcounter++;
-		
-	}//end foreach	
-	?>			
+
+	}//end foreach
+	?>
 		</div>
 	<div style="clear:both;"></div>
 </div>
 
 <?php include("fend.inc"); ?>
-	    
+
 <script type="text/javascript">
 //<![CDATA[
 	jQuery(document).ready(function(in_event)
-	{		
-			jQuery('#col1').sortable({connectWith: '#col2', dropOnEmpty: true, handle: '.widgetheader', change: showSave});
-			jQuery('#col2').sortable({connectWith: '#col1', dropOnEmpty: true, handle: '.widgetheader', change: showSave});
+	{
+			jQuery('.ui-sortable').sortable({connectWith: '.ui-sortable', dropOnEmpty: true, handle: '.widgetheader', change: showSave});
 
 	<?php if (!$config['widgets']  && $pconfig['sequence'] != ""){ ?>
-			hideAllWidgets();		    
-			domTT_activate('welcome1', null, 'x', 287, 'y', 107, 'content', document.getElementById('welcome-container'), 'type', 'sticky', 'closeLink', '','delay', 1000, 'fade', 'both', 'fadeMax', 100, 'styleClass', 'niceTitle');		
+			hideAllWidgets();
+			domTT_activate('welcome1', null, 'x', 287, 'y', 107, 'content', document.getElementById('welcome-container'), 'type', 'sticky', 'closeLink', '','delay', 1000, 'fade', 'both', 'fadeMax', 100, 'styleClass', 'niceTitle');
 	<?php } ?>
 	});
 //]]>
@@ -743,12 +763,12 @@ pfSense_handle_custom_code("/usr/local/pkg/dashboard/pre_dashboard");
 	$dirhandle  = opendir($directory);
 	$filename = "";
 	while (false !== ($filename = readdir($dirhandle))) {
-   		$jsincludefiles[] = $filename;
+		$jsincludefiles[] = $filename;
 	}
 	foreach($jsincludefiles as $jsincludename) {
 		if(!stristr($jsincludename, ".js"))
 			continue;
-		echo "<script src='{$directory}{$jsincludename}' type='text/javascript'></script>\n";	
+		echo "<script src='{$directory}{$jsincludename}' type='text/javascript'></script>\n";
 	}
 ?>
 

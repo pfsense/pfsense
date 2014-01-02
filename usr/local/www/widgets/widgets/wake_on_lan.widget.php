@@ -2,17 +2,17 @@
 /*
 	wake_on_lan.widget.php
 	Copyright (C) 2010 Yehuda Katz
-	
+
 	Redistribution and use in source and binary forms, with or without
 	modification, are permitted provided that the following conditions are met:
-	
+
 	1. Redistributions of source code must retain the above copyright notice,
 	this list of conditions and the following disclaimer.
-	
+
 	2. Redistributions in binary form must reproduce the above copyright
 	notice, this list of conditions and the following disclaimer in the
 	documentation and/or other materials provided with the distribution.
-	
+
 	THIS SOFTWARE IS PROVIDED ``AS IS'' AND ANY EXPRESS OR IMPLIED WARRANTIES,
 	INClUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY
 	AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE
@@ -50,7 +50,7 @@ if (count($wolcomputers) > 0) {
 	foreach($wolcomputers as $wolent) {
 		echo '<tr><td class="listlr">' . $wolent['descr'] . '<br />' . $wolent['mac'] . '</td>' . "\n";
 		echo '<td class="listr">' . convert_friendly_interface_to_friendly_descr($wolent['interface']) . '</td>' . "\n";
-		
+
 		$is_active = exec("/usr/sbin/arp -an |/usr/bin/grep {$wolent['mac']}| /usr/bin/wc -l|/usr/bin/awk '{print $1;}'");
 		if($is_active == 1) {
 			echo '<td class="listr" align="center">' . "\n";

@@ -36,14 +36,14 @@
 
 ##|+PRIV
 ##|*IDENT=page-services-captiveportal-allowedhostnames
-##|*NAME=Services: Captive portal: Allowed IPs page
-##|*DESCR=Allow access to the 'Services: Captive portal: Allowed IPs' page.
-##|*MATCH=services_captiveportal_ip.php*
+##|*NAME=Services: Captive portal: Allowed Hostnames page
+##|*DESCR=Allow access to the 'Services: Captive portal: Allowed Hostnames' page.
+##|*MATCH=services_captiveportal_hostname.php*
 ##|-PRIV
 
 require("guiconfig.inc");
 require("functions.inc");
-require("filter.inc");
+require_once("filter.inc");
 require("shaper.inc");
 require("captiveportal.inc");
 
@@ -104,8 +104,8 @@ include("head.inc");
   <tr><td class="tabnavtbl">
 <?php
 	$tab_array = array();
-	$tab_array[] = array(gettext("Captive portal"), false, "services_captiveportal.php?zone={$cpzone}");
-	$tab_array[] = array(gettext("Pass-through MAC"), false, "services_captiveportal_mac.php?zone={$cpzone}");
+	$tab_array[] = array(gettext("Captive portal(s)"), false, "services_captiveportal.php?zone={$cpzone}");
+	$tab_array[] = array(gettext("MAC"), false, "services_captiveportal_mac.php?zone={$cpzone}");
 	$tab_array[] = array(gettext("Allowed IP Addresses"), false, "services_captiveportal_ip.php?zone={$cpzone}");
 	$tab_array[] = array(gettext("Allowed Hostnames"), true, "services_captiveportal_hostname.php?zone={$cpzone}");
 	$tab_array[] = array(gettext("Vouchers"), false, "services_captiveportal_vouchers.php?zone={$cpzone}");
@@ -122,7 +122,7 @@ include("head.inc");
 	  <td width="10%" class="list">
 		<table border="0" cellspacing="0" cellpadding="1">
 		   <tr>
-			<td width="17" heigth="17"></td>
+			<td width="17" height="17"></td>
 			<td><a href="services_captiveportal_hostname_edit.php?zone=<?=$cpzone;?>"><img src="/themes/<?php echo $g['theme']; ?>/images/icons/icon_plus.gif" title="<?=gettext("add address"); ?>" width="17" height="17" border="0"></a></td>
 		   </tr>
 		</table>
@@ -158,7 +158,7 @@ include("head.inc");
 	  <td class="list">
 		<table border="0" cellspacing="0" cellpadding="1">
 		   <tr>
-			<td width="17" heigth="17"></td>
+			<td width="17" height="17"></td>
 			<td><a href="services_captiveportal_hostname_edit.php?zone=<?=$cpzone;?>"><img src="/themes/<?php echo $g['theme']; ?>/images/icons/icon_plus.gif" title="<?=gettext("add address"); ?>" width="17" height="17" border="0"></a></td>
 		   </tr>
 		</table>

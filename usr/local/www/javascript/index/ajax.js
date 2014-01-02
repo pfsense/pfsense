@@ -43,24 +43,35 @@ function stats(x) {
         updateGatewayStats(values[8]);
         updateCpuFreq(values[9]);
         updateLoadAverage(values[10]);
+        updateMbuf(values[11]);
+        updateMbufMeter(values[12]);
+        updateStateMeter(values[13]);
 }
 
 function updateMemory(x) {
 	if(jQuery('#memusagemeter'))
 		jQuery("#memusagemeter").html(x + '%');
-	if(jQuery('#memwidtha'))
-		jQuery("#memwidtha").css('width',x + 'px');
-	if(jQuery('#memwidthb'))
-		jQuery("#memwidthb").css('width', (100 - x) + 'px');
+	if(jQuery('#memUsagePB'))
+		jQuery('#memUsagePB').progressbar( { value: parseInt(x) } );
+}
+
+function updateMbuf(x) {
+	if(jQuery('#mbuf'))
+		jQuery("#mbuf").html(x);
+}
+
+function updateMbufMeter(x) {
+	if(jQuery('#mbufusagemeter'))
+		jQuery("#mbufusagemeter").html(x + '%');
+	if(jQuery('#mbufPB'))
+		jQuery('#mbufPB').progressbar( { value: parseInt(x) } );
 }
 
 function updateCPU(x) {
 	if(jQuery('#cpumeter'))
 		jQuery("#cpumeter").html(x + '%');
-	if(jQuery('#cpuwidtha'))
-		jQuery("#cpuwidtha").css('width',x + 'px');
-	if(jQuery('#cpuwidthb'))
-		jQuery("#cpuwidthb").css('width',(100 - x) + 'px');
+	if(jQuery('#cpuPB'))
+		jQuery('#cpuPB').progressbar( { value: parseInt(x) } );
 	/* Load CPU Graph widget if enabled */
 	if(widgetActive('cpu_graphs')) {
 		GraphValue(graph[0], x);
@@ -70,10 +81,8 @@ function updateCPU(x) {
 function updateTemp(x) {
 	if(jQuery("#tempmeter"))
 		jQuery("#tempmeter").html(x + '\u00B0' + 'C');
-        if(jQuery('#tempwidtha'))
-		jQuery("#tempwidtha").css('width',x + 'px');
-        if(jQuery('#tempwidthb'))
-		jQuery("#tempwidthb").css('width',(100 - x) + 'px');
+        if(jQuery('#tempPB'))
+		jQuery("#tempPB").progressbar( { value: parseInt(x) } );
 }
 
 function updateDateTime(x) {
@@ -89,6 +98,13 @@ function updateUptime(x) {
 function updateState(x) {
 	if(jQuery('#pfstate'))
 		jQuery("#pfstate").html(x);
+}
+
+function updateStateMeter(x) {
+	if(jQuery('#pfstateusagemeter'))
+		jQuery("#pfstateusagemeter").html(x + '%');
+	if(jQuery('#statePB'))
+		jQuery('#statePB').progressbar( { value: parseInt(x) } );
 }
 
 function updateGatewayStats(x){
@@ -157,7 +173,7 @@ function updateInterfaces(x){
 
 function widgetActive(x) {
 	var widget = jQuery('#' + x + '-container');
-	if ((widget != null) && (widget.css('display') != "none"))
+	if ((widget != null) && (widget.css('display') != null) && (widget.css('display') != "none"))
 		return true;
 	else
 		return false;
@@ -167,3 +183,4 @@ function widgetActive(x) {
 jQuery(document).ready(function(){
 	setTimer();
 });
+

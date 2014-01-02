@@ -138,6 +138,12 @@ function proto_change() {
 		document.getElementById("sprtable").style.display = 'none';
 		document.getElementById("dprtr").style.display = 'none';
 		document.getElementById("lprtr").style.display = 'none';
+		document.getElementById("dstbeginport").selectedIndex = 0;
+		document.getElementById("dstbeginport_cust").value = "";
+		document.getElementById("dstendport").selectedIndex = 0;
+		document.getElementById("dstendport_cust").value = "";
+		document.getElementById("localbeginport").selectedIndex = 0;
+		document.getElementById("localbeginport_cust").value = "";
 	}
 }
 

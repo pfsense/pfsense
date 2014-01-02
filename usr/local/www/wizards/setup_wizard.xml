@@ -36,7 +36,7 @@
 	<id>1</id>
 	<title>pfSense Setup Wizard</title>
 	<disableheader>true</disableheader>
-	<description>This wizard will guide you through the initial configuration of pfSense.</description>
+	<description>This wizard will guide you through the initial configuration of pfSense.&lt;br/&gt;&lt;br/&gt; The wizard may be stopped at any time by clicking the logo image at the top of the screen.</description>
 	<fields>
 		<field>
 			<name>Next</name>
@@ -138,8 +138,6 @@
 			<description>Enter the hostname (FQDN) of the time server.</description>
 			<type>input</type>
 			<bindstofield>system->timeservers</bindstofield>
-			<validate>^[a-z0-9.|-]+$</validate>
-			<message>Invalid Time Server Field</message>
 		</field>
 		<field>
 			<name>Timezone</name>
@@ -153,9 +151,11 @@
 	</fields>
 	<stepsubmitphpaction>
 		<![CDATA[
-		if(!empty($_POST['timeserverhostname']) && !(is_hostname($_POST['timeserverhostname']) || is_ipaddr($_POST['timeserverhostname']))) {
-			print_info_box_np("Invalid Time Server. Please press back in your browser window and correct.");
-			die;
+		foreach (explode(' ', $_POST['timeserverhostname']) as $ts) {
+			if (!is_domain($ts)) {
+				print_info_box_np(gettext("NTP Time Server names may only contain the characters a-z, 0-9, '-' and '.'. Entries may be separated by spaces. Please press back in your browser window and correct."));
+				die;
+			}
 		}
 		]]>
 	</stepsubmitphpaction>
@@ -231,7 +231,14 @@
 			<name>MTU</name>
 			<type>input</type>
 			<bindstofield>interfaces->wan->mtu</bindstofield>
-			<description> If you enter a value in this field, then MSS clamping for TCP connections to the value entered above minus 40 (TCP/IP header size) will be in effect. If you leave this field blank, an MTU of 1492 bytes for PPPoE and 1500 bytes for all other connection types will be assumed.</description>
+			<description> Set the MTU of the WAN interface. If you leave this field blank, an MTU of 1492 bytes for PPPoE and 1500 bytes for all other connection types will be assumed.</description>
+		</field>
+		<field>
+			<donotdisable>true</donotdisable>
+			<name>MSS</name>
+			<type>input</type>
+			<bindstofield>interfaces->wan->mss</bindstofield>
+			<description> If you enter a value in this field, then MSS clamping for TCP connections to the value entered above minus 40 (TCP/IP header size) will be in effect. If you leave this field blank, an MSS of 1492 bytes for PPPoE and 1500 bytes for all other connection types will be assumed. This should match the above MTU value in most all cases.</description>
 		</field>
 		<field>
 			<name>Static IP Configuration</name>
@@ -388,7 +395,7 @@
 		<![CDATA[
 		if (is_array($config['gateways']['gateway_item']))
 			foreach ($config['gateways']['gateway_item'] as $gw)
-				if ($gw['name'] == 'WANGW')
+				if ($gw['name'] == 'WANGW' || (!empty($config['wizardtemp']['wangateway']) && $gw['gateway'] == $config['wizardtemp']['wangateway']))
 					$config['wizardtemp']['wangateway'] = $gw['gateway'];
 		]]>
 	</stepbeforeformdisplay>
@@ -402,9 +409,17 @@
 			print_info_box_np("Invalid MAC Address. Please press back in your browser window and correct.");
 			die;
 		}
-		if(!empty($_POST['ipaddress']) && ($_POST['selectedtype'] == "Static") && (!is_ipaddr($_POST['ipaddress']))) {
-			print_info_box_np("Invalid WAN IP Address. Please press back in your browser window and correct.");
-			die;
+		if(!empty($_POST['ipaddress']) && ($_POST['selectedtype'] == "Static")) {
+			if (!is_ipaddr($_POST['ipaddress'])) {
+				print_info_box_np("Invalid WAN IP Address. Please press back in your browser window and correct.");
+				die;
+			}
+			if ($_POST['subnetmask'] < 31 &&
+			    ($_POST['ipaddress'] == gen_subnet($_POST['ipaddress'], $_POST['subnetmask']) ||
+			     $_POST['ipaddress'] == gen_subnet_max($_POST['ipaddress'], $_POST['subnetmask']))) {
+				print_info_box_np("Invalid WAN IP Address. Please press back in your browser window and correct.");
+				die;
+			}
 		}
 		if(!empty($_POST['dhcphostname']) && !is_hostname($_POST['dhcphostname'])) {
 			print_info_box_np("Invalid DHCP Hostname. Please press back in your browser window and correct.");
@@ -502,6 +517,12 @@
 			print_info_box_np("Invalid LAN IP Address. Please press back in your browser window and correct.");
 			die;
 		}
+		if ($_POST['subnetmask'] < 31 &&
+		    ($_POST['lanipaddress'] == gen_subnet($_POST['lanipaddress'], $_POST['subnetmask']) ||
+		     $_POST['lanipaddress'] == gen_subnet_max($_POST['lanipaddress'], $_POST['subnetmask']))) {
+			print_info_box_np("Invalid LAN IP Address. Please press back in your browser window and correct.");
+			die;
+		}
 		$ft = explode(".", $_POST['lanipaddress']);
 		$ft_ip = $ft[0] . "." . $ft[1] . "." . $ft[2] . ".";
 		$config['dhcpd']['lan']['range']['from'] = $ft_ip . "10";
@@ -548,7 +569,7 @@
 	<id>7</id>
 	<title>Reload configuration</title>
 	<disableheader>true</disableheader>
-	<description>Click 'Reload' to reload pfSense with new changes.  If you changed the password, pfSense will ask you to log in again.</description>
+	<description>Click 'Reload' to reload pfSense with new changes.</description>
 	<fields>
 		<field>
 			<name>Reload</name>
@@ -573,10 +594,16 @@
 			if (!is_array($config['gateways']['gateway_item']))
 				$config['gateways']['gateway_item'] = array();
 			$found = false;
+			$defaultgw_found = false;
 			foreach ($config['gateways']['gateway_item'] as & $gw) {
-				if ($gw['name'] == 'WANGW') {
+				if ($gw['interface'] != "wan")
+					continue;
+				if (isset($gw['defaultgw']))
+					$defaultgw_found = true;
+				if ($gw['name'] == 'WANGW' || (!empty($config['wizardtemp']['wangateway']) && $gw['gateway'] == $config['wizardtemp']['wangateway'])) {
 					$found = true;
 					$gw['gateway'] = $config['wizardtemp']['wangateway'];
+					$config['interfaces']['wan']['gateway'] = $gw['name'];
 				}
 			}
 			if (!$found) {
@@ -586,10 +613,10 @@
 				$newgw['name'] = "WANGW";
 				$newgw['weight'] = 1;
 				$newgw['descr'] = "WAN Gateway";
-				$newgw['defaultgw'] = true;
+				$newgw['defaultgw'] = !$defaultgw_found;
 				$config['gateways']['gateway_item'][] = $newgw;
+				$config['interfaces']['wan']['gateway'] = "WANGW";
 			}
-			$config['interfaces']['wan']['gateway'] = "WANGW";
 		}
 		unset($config['wizardtemp']);
 		write_config();
@@ -614,7 +641,7 @@
 	<description>
 	<![CDATA[
 		Congratulations!  pfSense is now configured.<p/>
-		Please consider donating to the project to help us with our overheads costs.<p/>
+		Please consider donating to the project to help us with our overhead costs.<p/>
 		Click <a target='_new' href='http://www.pfsense.org/j.php?jumpto=donate'>here</a> to donate or purchase services offered by the pfSense team.<p/>
 		Click <a href='$myurl'>here</a> to continue on to pfSense webConfigurator.
 	]]>

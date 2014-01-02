@@ -86,6 +86,13 @@ if (function_exists("display_error_form") && !isset($config['system']['webgui'][
 				break;
 			}
 
+	if(is_array($config['dnsupdates']['dnsupdate']) && !$found_host)
+		foreach($config['dnsupdates']['dnsupdate'] as $rfc2136)
+			if(strcasecmp($rfc2136['host'], $http_host) == 0) {
+				$found_host = true;
+				break;
+			}
+
 	if(!empty($config['system']['webgui']['althostnames']) && !$found_host) {
 		$althosts = explode(" ", $config['system']['webgui']['althostnames']);
 		foreach ($althosts as $ah)
@@ -123,6 +130,7 @@ if(function_exists("display_error_form") && !isset($config['system']['webgui']['
 			if(strcasecmp($referrer_host, $config['system']['hostname'] . "." . $config['system']['domain']) == 0
 					|| strcasecmp($referrer_host, $config['system']['hostname']) == 0)
 				$found_host = true;
+
 			if(!empty($config['system']['webgui']['althostnames']) && !$found_host) {
 				$althosts = explode(" ", $config['system']['webgui']['althostnames']);
 				foreach ($althosts as $ah) {
@@ -132,6 +140,21 @@ if(function_exists("display_error_form") && !isset($config['system']['webgui']['
 					}
 				}
 			}
+
+			if(is_array($config['dyndnses']['dyndns']) && !$found_host)
+				foreach($config['dyndnses']['dyndns'] as $dyndns)
+					if(strcasecmp($dyndns['host'], $referrer_host) == 0) {
+						$found_host = true;
+						break;
+					}
+
+			if(is_array($config['dnsupdates']['dnsupdate']) && !$found_host)
+				foreach($config['dnsupdates']['dnsupdate'] as $rfc2136)
+					if(strcasecmp($rfc2136['host'], $referrer_host) == 0) {
+						$found_host = true;
+						break;
+					}
+
 			if(!$found_host) {
 				$interface_list_ips = get_configured_ip_addresses();
 				foreach($interface_list_ips as $ilips) {
@@ -306,6 +329,11 @@ function local_sync_accounts() {
 			$line = explode(":",fgets($fd));
 			if (((!strncmp($line[0], "_", 1)) || ($line[2] < 2000) || ($line[2] > 65000)) && ($line[0] != "admin"))
 				continue;
+			/*
+			 * If a crontab was created to user, pw userdel will be interactive and
+			 * can cause issues. Just remove crontab before run it when necessary
+			 */
+			unlink_if_exists("/var/cron/tabs/{$line[0]}");
 			$cmd = "/usr/sbin/pw userdel -n '{$line[0]}'";
 			if($debug)
 				log_error(sprintf(gettext("Running: %s"), $cmd));
@@ -438,18 +466,18 @@ function local_user_set(& $user) {
 		mkdir($user_home, 0700);
 		mwexec("/bin/cp /root/.* {$home_base}/", true);
 	}
-	chown($user_home, $user_name);
-	chgrp($user_home, $user_group);
+	@chown($user_home, $user_name);
+	@chgrp($user_home, $user_group);
 
 	/* write out ssh authorized key file */
 	if($user['authorizedkeys']) {
 		if (!is_dir("{$user_home}/.ssh")) {
-			mkdir("{$user_home}/.ssh", 0700);
-			chown("{$user_home}/.ssh", $user_name);
+			@mkdir("{$user_home}/.ssh", 0700);
+			@chown("{$user_home}/.ssh", $user_name);
 		}
 		$keys = base64_decode($user['authorizedkeys']);
-		file_put_contents("{$user_home}/.ssh/authorized_keys", $keys);
-		chown("{$user_home}/.ssh/authorized_keys", $user_name);
+		@file_put_contents("{$user_home}/.ssh/authorized_keys", $keys);
+		@chown("{$user_home}/.ssh/authorized_keys", $user_name);
 	} else
 		unlink_if_exists("{$user_home}/.ssh/authorized_keys");
 
@@ -742,6 +770,8 @@ function ldap_test_bind($authcfg) {
 	ldap_set_option($ldap, LDAP_OPT_DEREF, LDAP_DEREF_SEARCHING);
 	ldap_set_option($ldap, LDAP_OPT_PROTOCOL_VERSION, (int)$ldapver);
  
+	$ldapbindun = isset($authcfg['ldap_utf8']) ? utf8_encode($ldapbindun) : $ldapbindun;
+	$ldapbindpw = isset($authcfg['ldap_utf8']) ? utf8_encode($ldapbindpw) : $ldapbindpw;
 	if ($ldapanon == true) {
 		if (!($res = @ldap_bind($ldap))) {
 			@ldap_close($ldap);
@@ -813,6 +843,8 @@ function ldap_get_user_ous($show_complete_ou=true, $authcfg) {
 	ldap_set_option($ldap, LDAP_OPT_DEREF, LDAP_DEREF_SEARCHING);
 	ldap_set_option($ldap, LDAP_OPT_PROTOCOL_VERSION, (int)$ldapver);
 
+	$ldapbindun = isset($authcfg['ldap_utf8']) ? utf8_encode($ldapbindun) : $ldapbindun;
+	$ldapbindpw = isset($authcfg['ldap_utf8']) ? utf8_encode($ldapbindpw) : $ldapbindpw;
 	if ($ldapanon == true) {
                 if (!($res = @ldap_bind($ldap))) {
 			log_error(sprintf(gettext("ERROR! ldap_get_user_ous() could not bind anonymously to server %s."), $ldapname));
@@ -862,7 +894,7 @@ function ldap_get_groups($username, $authcfg) {
 	if(!$username) 
 		return false;
 
-	if(stristr($username, "@")) {
+	if(!isset($authcfg['ldap_nostrip_at']) && stristr($username, "@")) {
 		$username_split = explode("@", $username);
 		$username = $username_split[0];		
 	}
@@ -925,6 +957,8 @@ function ldap_get_groups($username, $authcfg) {
 	ldap_set_option($ldap, LDAP_OPT_PROTOCOL_VERSION, (int)$ldapver);
 
 	/* bind as user that has rights to read group attributes */
+	$ldapbindun = isset($authcfg['ldap_utf8']) ? utf8_encode($ldapbindun) : $ldapbindun;
+	$ldapbindpw = isset($authcfg['ldap_utf8']) ? utf8_encode($ldapbindpw) : $ldapbindpw;
 	if ($ldapanon == true) {
                 if (!($res = @ldap_bind($ldap))) {
 			log_error(sprintf(gettext("ERROR! ldap_get_groups() could not bind anonymously to server %s."), $ldapname));
@@ -984,7 +1018,7 @@ function ldap_backed($username, $passwd, $authcfg) {
 	if(!function_exists("ldap_connect"))
 		return;
 
-	if(stristr($username, "@")) {
+	if(!isset($authcfg['ldap_nostrip_at']) && stristr($username, "@")) {
 		$username_split = explode("@", $username);
 		$username = $username_split[0];        
 	}
@@ -1060,6 +1094,8 @@ function ldap_backed($username, $passwd, $authcfg) {
 
 	/* ok, its up.  now, lets bind as the bind user so we can search it */
 	$error = false;
+	$ldapbindun = isset($authcfg['ldap_utf8']) ? utf8_encode($ldapbindun) : $ldapbindun;
+	$ldapbindpw = isset($authcfg['ldap_utf8']) ? utf8_encode($ldapbindpw) : $ldapbindpw;
 	if ($ldapanon == true) {
                 if (!($res = @ldap_bind($ldap)))
                         $error = true;
@@ -1089,9 +1125,12 @@ function ldap_backed($username, $passwd, $authcfg) {
 		log_auth(sprintf(gettext("Now Searching for %s in directory."), $username));
 	/* Iterate through the user containers for search */
 	foreach ($ldac_splits as $i => $ldac_split) {
+		$ldac_split = isset($authcfg['ldap_utf8']) ? utf8_encode($ldac_split) : $ldac_split;
+		$ldapfilter = isset($authcfg['ldap_utf8']) ? utf8_encode($ldapfilter) : $ldapfilter;
+		$ldapsearchbasedn = isset($authcfg['ldap_utf8']) ? utf8_encode("{$ldac_split},{$ldapbasedn}") : "{$ldac_split},{$ldapbasedn}";
 		/* Make sure we just use the first user we find */
 		if ($debug)
-			log_auth(sprintf(gettext('Now Searching in server %1$s, container %2$s with filter %3$s.'), $ldapname, $ldac_split, $ldapfilter));
+			log_auth(sprintf(gettext('Now Searching in server %1$s, container %2$s with filter %3$s.'), $ldapname, utf8_decode($ldac_split), utf8_decode($ldapfilter)));
 		if ($ldapscope == "one")
 			$ldapfunc = "ldap_list";
 		else
@@ -1100,7 +1139,7 @@ function ldap_backed($username, $passwd, $authcfg) {
 		if (stristr($ldac_split, "DC=") || empty($ldapbasedn))
 			$search	 = @$ldapfunc($ldap,$ldac_split,$ldapfilter);
 		else
-			$search  = @$ldapfunc($ldap,"{$ldac_split},{$ldapbasedn}",$ldapfilter);
+			$search  = @$ldapfunc($ldap,$ldapsearchbasedn,$ldapfilter);
 		if (!$search) {
 			log_error(sprintf(gettext("Search resulted in error: %s"), ldap_error($ldap)));
 			continue;
@@ -1123,14 +1162,17 @@ function ldap_backed($username, $passwd, $authcfg) {
 	}
 
 	/* Now lets bind as the user we found */
+	$passwd = isset($authcfg['ldap_utf8']) ? utf8_encode($passwd) : $passwd;
 	if (!($res = @ldap_bind($ldap, $userdn, $passwd))) {
 		log_error(sprintf(gettext('ERROR! Could not login to server %1$s as user %2$s: %3$s'), $ldapname, $username, ldap_error($ldap)));
 		@ldap_unbind($ldap);
 		return false;
 	}
 
-	if ($debug)
+	if ($debug) {
+		$userdn = isset($authcfg['ldap_utf8']) ? utf8_decode($userdn) : $userdn;
 		log_auth(sprintf(gettext('Logged in successfully as %1$s via LDAP server %2$s with DN = %3$s.'), $username, $ldapname, $userdn));
+	}
 
 	/* At this point we are bound to LDAP so the user was auth'd okay. Close connection. */
 	@ldap_unbind($ldap);
@@ -1302,7 +1344,7 @@ function authenticate_user($username, $password, $authcfg = NULL, &$attributes =
 }
 
 function session_auth() {
-	global $HTTP_SERVER_VARS, $config, $_SESSION, $page;
+	global $config, $_SESSION, $page;
 
 	// Handle HTTPS httponly and secure flags
 	if($config['system']['webgui']['protocol'] == "https") {
@@ -1330,7 +1372,6 @@ function session_auth() {
 			if(! isset($config['system']['webgui']['quietlogin'])) {
 				log_auth(sprintf(gettext("Successful login for user '%1\$s' from: %2\$s"), $_POST['usernamefld'], $_SERVER['REMOTE_ADDR']));
 			}
-			$HTTP_SERVER_VARS['AUTH_USER'] = $_SESSION['Username'];
 			if (isset($_POST['postafterlogin']))
 				return true;
 			else {
@@ -1422,7 +1463,6 @@ function session_auth() {
 	if ($_GET['enable_ajax'])
 		unset($_SESSION['NO_AJAX']);
 
-	$HTTP_SERVER_VARS['AUTH_USER'] = $_SESSION['Username'];
 	return true;
 }
 

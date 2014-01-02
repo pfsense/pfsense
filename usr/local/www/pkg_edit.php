@@ -137,7 +137,7 @@ if ($_POST) {
 				$reqfieldsn[] = $field['fielddescr'];
 		}
 	}
-	do_input_validation($_POST, $reqfields, $reqfieldsn, &$input_errors);
+	do_input_validation($_POST, $reqfields, $reqfieldsn, $input_errors);
 
 	if ($pkg['custom_php_validation_command'])
 		eval($pkg['custom_php_validation_command']);
@@ -267,11 +267,14 @@ if ($pkg['custom_php_after_head_command'])
 
 <body link="#0000CC" vlink="#0000CC" alink="#0000CC">
 
+<?php include("fbegin.inc"); ?>
+
 <script type="text/javascript" src="/javascript/autosuggest.js"></script>
 <script type="text/javascript" src="/javascript/suggestions.js"></script>
 
 <?php if($pkg['fields']['field'] <> "") { ?>
-<script type="text/javascript" language="javascript">
+<script type="text/javascript">
+//<![CDATA[
 	//Everything inside it will load as soon as the DOM is loaded and before the page contents are loaded
 	jQuery(document).ready(function() {
 		
@@ -302,7 +305,7 @@ if ($pkg['custom_php_after_head_command'])
 			var c_id=jQuery("#maintable tr").length;
 			var new_row=jQuery("table#maintable tr:last").html().replace(/(name|id)="(\w+)(\d+)"/g,"$1='$2"+c_id+"'");
 			//apply new id to created line rowhelperid
-			jQuery("table#maintable tr:last").after("<tr>"+new_row+"</tr>");
+			jQuery("table#maintable tr:last").after("<tr>"+new_row+"<\/tr>");
 	    });
 		// Call enablechange function
 		enablechange();
@@ -353,21 +356,20 @@ if ($pkg['custom_php_after_head_command'])
 	}
 	?>
 }
-//-->
+//]]>
 </script>
 <?php } ?>
 <script type="text/javascript" src="javascript/domTT/domLib.js"></script>
 <script type="text/javascript" src="javascript/domTT/domTT.js"></script>
 <script type="text/javascript" src="javascript/domTT/behaviour.js"></script>
 <script type="text/javascript" src="javascript/domTT/fadomatic.js"></script>
-<script type="text/javascript" language="javascript" src="/javascript/row_helper_dynamic.js"></script>
+<script type="text/javascript" src="/javascript/row_helper_dynamic.js"></script>
 
-<?php include("fbegin.inc"); ?>
 <?php if (!empty($input_errors)) print_input_errors($input_errors); ?>
 <form name="iform" action="pkg_edit.php" method="post">
-<input type="hidden" name="xml" value="<?= htmlspecialchars($xml) ?>">
+<input type="hidden" name="xml" value="<?= htmlspecialchars($xml) ?>" />
 <?php if ($savemsg) print_info_box($savemsg); ?>
-<table width="100%" border="0" cellpadding="0" cellspacing="0">
+<table width="100%" border="0" cellpadding="0" cellspacing="0" summary="package edit">
 <?php
 if ($pkg['tabs'] <> "") {
 	$tab_array = array();
@@ -414,7 +416,7 @@ if ($pkg['tabs'] <> "") {
 }
 
 ?>
-<tr><td><div id="mainarea"><table id="t" class="tabcont" width="100%" border="0" cellpadding="6" cellspacing="0">
+<tr><td><div id="mainarea"><table id="t" class="tabcont" width="100%" border="0" cellpadding="6" cellspacing="0" summary="main area">
 <?php
 	$cols = 0;
 	$savevalue = gettext("Save");
@@ -436,7 +438,7 @@ if ($pkg['tabs'] <> "") {
 
 		if ($pkga['type'] == "listtopic") {
 			$input = "<tr id='td_{$pkga['fieldname']}'><td>&nbsp;</td></tr>";
-			$input .= "<tr id='tr_{$pkga['fieldname']}'><td colspan=\"2\" class=\"listtopic\">{$pkga['name']}<br></td></tr>\n";
+			$input .= "<tr id='tr_{$pkga['fieldname']}'><td colspan=\"2\" class=\"listtopic\">{$pkga['name']}<br/></td></tr>\n";
 			if(isset($pkga['advancedfield']) && isset($adv_filed_count)) {
 				$advanced .= $input;
 				$adv_filed_count++;
@@ -474,7 +476,7 @@ if ($pkg['tabs'] <> "") {
 			unset($req);
 			if (isset($pkga['required']))
 				$req = 'req';
-			$input= "<td valign='top' width=\"22%\" class=\"vncell{$req}\">";
+			$input= "<tr><td valign='top' width=\"22%\" class=\"vncell{$req}\">";
 			$input .= fixup_string($pkga['fielddescr']);
 			$input .= "</td>";
 			if(isset($pkga['advancedfield']) && isset($adv_filed_count)) {
@@ -485,7 +487,7 @@ if ($pkg['tabs'] <> "") {
 				echo $input;
 		}
 		if($pkga['combinefields']=="begin"){
-			$input="<td class=\"vncell\"><table>";
+			$input="<td class=\"vncell\"><table summary=\"advanced\">";
 			if(isset($pkga['advancedfield']) && isset($adv_filed_count))
 				$advanced .= $input;
 			else
@@ -517,8 +519,8 @@ if ($pkg['tabs'] <> "") {
 		switch($pkga['type']){
 			case "input":
 				$size = ($pkga['size'] ? " size='{$pkga['size']}' " : "");
-				$input = "<input {$size} id='{$pkga['fieldname']}' name='{$pkga['fieldname']}' class='formfld unknown' value='" . htmlspecialchars($value) ."'>\n";
-				$input .= "<br>" . fixup_string($pkga['description']) . "\n";
+				$input = "<input {$size} id='{$pkga['fieldname']}' name='{$pkga['fieldname']}' class='formfld unknown' value=\"" . htmlspecialchars($value) ."\" />\n";
+				$input .= "<br/>" . fixup_string($pkga['description']) . "\n";
 				if(isset($pkga['advancedfield']) && isset($adv_filed_count)) {
 					$js_array[] = $pkga['fieldname'];
 					$advanced .= display_advanced_field($pkga['fieldname']).$input ."</div>\n";
@@ -529,8 +531,8 @@ if ($pkg['tabs'] <> "") {
 
 			case "password":
 				$size = ($pkga['size'] ? " size='{$pkga['size']}' " : "");
-				$input = "<input " . $size . " id='" . $pkga['fieldname'] . "' type='password' " . $size . " name='" . $pkga['fieldname'] . "' class='formfld pwd' value='" . htmlspecialchars($value) . "'>\n";
-				$input .= "<br>" . fixup_string($pkga['description']) . "\n";
+				$input = "<input " . $size . " id='" . $pkga['fieldname'] . "' type='password' name='" . $pkga['fieldname'] . "' class='formfld pwd' value=\"" . htmlspecialchars($value) . "\" />\n";
+				$input .= "<br/>" . fixup_string($pkga['description']) . "\n";
 				if(isset($pkga['advancedfield']) && isset($adv_filed_count)) {
 					$js_array[] = $pkga['fieldname'];
 					$advanced .= display_advanced_field($pkga['fieldname']).$input ."</div>\n";
@@ -561,10 +563,10 @@ if ($pkg['tabs'] <> "") {
 				}
 				$size = ($pkga['size'] ? " size='{$pkga['size']}' " : "");
 				$onchange = (isset($pkga['onchange']) ? "onchange=\"{$pkga['onchange']}\"" : '');
-				$input = "<select id='" . $pkga['fieldname'] . "' $multiple $size $onchange id=\"$fieldname\" name=\"$fieldname\">\n";
+				$input = "<select id='" . $pkga['fieldname'] . "' $multiple $size $onchange name=\"$fieldname\">\n";
 				foreach ($pkga['options']['option'] as $opt) {
 					$selected = (in_array($opt['value'], $items) ? 'selected="selected"' : '');
-					$input .= "\t<option name=\"{$opt['name']}\" value=\"{$opt['value']}\" {$selected}>{$opt['name']}</option>\n";
+					$input .= "\t<option value=\"{$opt['value']}\" {$selected}>{$opt['name']}</option>\n";
 					}
 				$input .= "</select>\n<br />\n" . fixup_string($pkga['description']) . "\n";
                 if(isset($pkga['advancedfield']) && isset($adv_filed_count)) {
@@ -588,7 +590,7 @@ if ($pkg['tabs'] <> "") {
 				}
 				$size = (isset($pkga['size']) ? "size=\"{$pkga['size']}\"" : '');
 				$onchange = (isset($pkga['onchange']) ? "onchange=\"{$pkga['onchange']}\"" : '');
-				$input = "<select id='{$pkga['fieldname']}' {$multiple} {$size} {$onchange} id=\"{$fieldname}\" name=\"{$fieldname}\">\n";
+				$input = "<select id='{$pkga['fieldname']}' {$multiple} {$size} {$onchange} name=\"{$fieldname}\">\n";
 
 				if(isset($pkga['advancedfield']) && isset($adv_filed_count)) {
 					$js_array[] = $pkga['fieldname'];
@@ -609,7 +611,7 @@ if ($pkg['tabs'] <> "") {
 					$source_name =($pkga['source_name']? $opt[$pkga['source_name']] : $opt[$pkga['name']]);
 					$source_value =($pkga['source_value'] ? $opt[$pkga['source_value']] : $opt[$pkga['value']]);
 					$selected = (in_array($source_value, $items)? 'selected="selected"' : '' );
-					$input  .= "\t<option name=\"{$source_name}\" value=\"{$source_value}\" $selected>{$source_name}</option>\n";
+					$input  .= "\t<option value=\"{$source_value}\" $selected>{$source_name}</option>\n";
 					}
 				$input .= "</select>\n<br />\n" . fixup_string($pkga['description']) . "\n";
 				if(isset($pkga['advancedfield']) && isset($adv_filed_count))
@@ -624,7 +626,7 @@ if ($pkg['tabs'] <> "") {
 					$input .= "\t<option value=\"{$vpn['descr']}\">{$vpn['descr']}</option>\n";
 					}
 				$input .= "</select>\n";
-				$input .= "<br>" . fixup_string($pkga['description']) . "\n";
+				$input .= "<br/>" . fixup_string($pkga['description']) . "\n";
 
 				if(isset($pkga['advancedfield']) && isset($adv_filed_count)) {
 					$js_array[] = $pkga['fieldname'];
@@ -636,12 +638,12 @@ if ($pkg['tabs'] <> "") {
 				break;
 
 			case "checkbox":
-				$checkboxchecked =($value == "on" ? " CHECKED" : "");
+				$checkboxchecked =($value == "on" ? " checked=\"checked\"" : "");
 				$onchange = (isset($pkga['onchange']) ? "onchange=\"{$pkga['onchange']}\"" : '');
 				if (isset($pkga['enablefields']) || isset($pkga['checkenablefields']))
 					$onclick = ' onclick="javascript:enablechange();"';
-				$input = "<input id='{$pkga['fieldname']}' type='checkbox' name='{$pkga['fieldname']}' {$checkboxchecked} {$onclick} {$onchange}>\n";
-				$input .= "<br>" . fixup_string($pkga['description']) . "\n";
+				$input = "<input id='{$pkga['fieldname']}' type='checkbox' name='{$pkga['fieldname']}' {$checkboxchecked} {$onclick} {$onchange} />\n";
+				$input .= "<br/>" . fixup_string($pkga['description']) . "\n";
 
 				if(isset($pkga['advancedfield']) && isset($adv_filed_count)) {
 					$js_array[] = $pkga['fieldname'];
@@ -661,7 +663,7 @@ if ($pkg['tabs'] <> "") {
 					$value = base64_decode($value);
 				$wrap =($pkga['wrap'] == "off" ? 'wrap="off" style="white-space:nowrap;"' : '');		  
 				$input = "<textarea {$rows} {$cols} name='{$pkga['fieldname']}'{$wrap}>{$value}</textarea>\n";
-				$input .= "<br>" . fixup_string($pkga['description']) . "\n";
+				$input .= "<br/>" . fixup_string($pkga['description']) . "\n";
 				if(isset($pkga['advancedfield']) && isset($adv_filed_count)) {
 					$js_array[] = $pkga['fieldname'];
 					$advanced .= display_advanced_field($pkga['fieldname']).$input;
@@ -697,12 +699,14 @@ if ($pkg['tabs'] <> "") {
 					}
 				}
 
-				$input = "<input name='{$fieldname}' type='text' class='formfldalias' id='{$fieldname}' {$size} {$value}>\n<br />";
+				$input = "<input name='{$fieldname}' type='text' class='formfldalias' id='{$fieldname}' {$size} {$value} />\n<br />";
 				$input .= fixup_string($pkga['description']) . "\n";
 
 				$script = "<script type='text/javascript'>\n";
+				$script .= "//<![CDATA[\n";
 				$script .= "var aliasarray = new Array({$aliasesaddr})\n";
 				$script .= "var oTextbox1 = new AutoSuggestControl(document.getElementById('{$fieldname}'), new StateSuggestions(aliasarray))\n";
+				$script .= "//]]>\n";
 				$script .= "</script>";
 
 				echo $input;
@@ -715,7 +719,9 @@ if ($pkg['tabs'] <> "") {
 				if (is_array($config['interfaces']))
 					foreach ($config['interfaces'] as $iface_key=>$iface_value){
 						if (isset($iface_value['enable']) && ! preg_match("/$interface_regex/",$iface_key)){
-							$iface_description=(isset($pkga['showips']) ? strtoupper($iface_key)." address" : strtoupper($iface_key));
+							$iface_description=($iface_value['descr'] !="" ? strtoupper($iface_value['descr']) : strtoupper($iface_key));
+							if (isset($pkga['showips']))
+								$iface_description .= " address";
 							$ips[]=array('ip'=> $iface_key, 'description'=> $iface_description);
 							}
 					}
@@ -756,7 +762,7 @@ if ($pkg['tabs'] <> "") {
 				$fieldname = $pkga['fieldname'];
 				if (isset($pkga['multiple'])) {
 					$fieldname .= '[]';
-					$multiple = 'multiple';
+					$multiple = 'multiple="multiple"';
 					}
 				$input = "<select id='{$pkga['fieldname']}' name=\"{$fieldname}\" {$size} {$multiple}>\n";
 				if(is_array($value))
@@ -764,7 +770,7 @@ if ($pkg['tabs'] <> "") {
 				else
 					$values  =  explode(',',  $value);
 				foreach($ips as $iface){
-					$selected = (in_array($iface['ip'], $values) ? 'selected' : '');
+					$selected = (in_array($iface['ip'], $values) ? 'selected="selected"' : '');
 					$input .= "<option value=\"{$iface['ip']}\" {$selected}>{$iface['description']}</option>\n";
 					}
 				$input .= "</select>\n<br />" . fixup_string($pkga['description']) . "\n";
@@ -775,7 +781,7 @@ if ($pkg['tabs'] <> "") {
 				break;
 
 			case "radio":
-				$input = "<input type='radio' id='{$pkga['fieldname']}' name='{$pkga['fieldname']}' value='{$value}'>";
+				$input = "<input type='radio' id='{$pkga['fieldname']}' name='{$pkga['fieldname']}' value='{$value}' />";
 				if(isset($pkga['advancedfield']) && isset($adv_filed_count))
 					$advanced .= $input;
 				else
@@ -783,19 +789,19 @@ if ($pkg['tabs'] <> "") {
 					break;
 
 			case "button":
-				$input = "<input type='submit' id='{$pkga['fieldname']}' name='{$pkga['fieldname']}' class='formbtn' value='{$pkga['fieldname']}'>\n";
+				$input = "<input type='submit' id='{$pkga['fieldname']}' name='{$pkga['fieldname']}' class='formbtn' value='{$pkga['fieldname']}' />\n";
 				if(isset($pkga['placeonbottom']))
 					$pkg_buttons .= $input;
 				else
-					echo $input ."\n<br>" . fixup_string($pkga['description']) . "\n";;
+					echo $input ."\n<br/>" . fixup_string($pkga['description']) . "\n";;
 				break;
 
 			case "rowhelper":
 				#$rowhelpername=($fields['fieldname'] ? $fields['fieldname'] : "row");
 				$rowhelpername="row";
 				?>
-				<script type="text/javascript" language='javascript'>
-				<!--
+				<script type="text/javascript">
+				//<![CDATA[
 				<?php
 					$rowcounter = 0;
 					$fieldcounter = 0;
@@ -806,13 +812,13 @@ if ($pkg['tabs'] <> "") {
 						$fieldcounter++;
 					}
 				?>
-				-->
+				//]]>
 				</script>
-				<table name="maintable" id="maintable">
+				<table id="maintable" summary="main table">
 				<tr id='<?="tr_{$pkga['fieldname']}";?>'>
 				<?php
 					foreach($pkga['rowhelper']['rowhelperfield'] as $rowhelper) {
-					  echo "<td ".domTT_title($rowhelper['description'])."><b>" . fixup_string($rowhelper['fielddescr']) . "</td>\n";
+					  echo "<td ".domTT_title($rowhelper['description'])."><b>" . fixup_string($rowhelper['fielddescr']) . "</b></td>\n";
 					}
 
 					$rowcounter = 0;
@@ -853,26 +859,26 @@ if ($pkg['tabs'] <> "") {
 							}
 						$rowcounter++;
 						echo "<td>";
-						#echo "<a onclick=\"removeRow(this); return false;\" href=\"#\"><img border=\"0\" src=\"./themes/".$g['theme']."/images/icons/icon_x.gif\" /></a>";
-						echo "<a class='delete' href=\"#\"><img border='0' src='./themes/{$g['theme']}/images/icons/icon_x.gif' /></a>";
+						#echo "<a onclick=\"removeRow(this); return false;\" href=\"#\"><img border=\"0\" src=\"./themes/".$g['theme']."/images/icons/icon_x.gif\" alt=\"remove\" /></a>";
+						echo "<a class='delete' href=\"#\"><img border='0' src='./themes/{$g['theme']}/images/icons/icon_x.gif' alt='delete' /></a>";
 						echo "</td>\n";
-						echo "</tr>\n";
 						}
 				?>
+				</tr>
 				<tbody></tbody>
 				</table>
 	
-				<!-- <br><a onClick="javascript:addRowTo('maintable'); return false;" href="#"><img border="0" src="./themes/<?#= $g['theme']; ?>/images/icons/icon_plus.gif"></a>-->
-				<br><a class="add" href="#"><img border="0" src="./themes/<?= $g['theme']; ?>/images/icons/icon_plus.gif"></a>
-				<br><?php if($pkga['description'] != "") echo $pkga['description']; ?>
-				<script language="JavaScript">
-				<!--
+				<!-- <br/><a onclick="javascript:addRowTo('maintable'); return false;" href="#"><img border="0" src="./themes/<?#= $g['theme']; ?>/images/icons/icon_plus.gif" alt="add" /></a>-->
+				<br/><a class="add" href="#"><img border="0" src="./themes/<?= $g['theme']; ?>/images/icons/icon_plus.gif" alt="add" /></a>
+				<br/><?php if($pkga['description'] != "") echo $pkga['description']; ?>
+				<script type="text/javascript">
+				//<![CDATA[
 				field_counter_js = <?= $fieldcounter ?>;
 				rows = <?= $rowcounter ?>;
 				totalrows = <?php echo $rowcounter; ?>;
 				loaded = <?php echo $rowcounter; ?>;
 				//typesel_change();
-				//-->
+				//]]>
 				</script>
 		
 				<?php
@@ -890,7 +896,7 @@ if ($pkg['tabs'] <> "") {
      	else{
 			$input= "</td></tr>";
 			if($pkga['usecolspan2'])
-				$input.= "</tr><br>";
+				$input.= "</tr><br/>";
 	     	}
    	 	if(isset($pkga['advancedfield']) && isset($adv_filed_count))
 			$advanced .= "{$input}\n";
@@ -911,16 +917,16 @@ if ($pkg['tabs'] <> "") {
   <tr>
     <td width="22%" valign="top">&nbsp;</td>
     <td width="78%">
-    <div id=buttons>
+    <div id="buttons">
 		<?php
 		if($pkg['note'] != ""){
 			echo "<p><span class=\"red\"><strong>" . gettext("Note") . ":</strong></span> {$pkg['note']}</p>";
 			}
 		//if (isset($id) && $a_pkg[$id]) // We'll always have a valid ID in our hands
-		echo "<input name='id' type='hidden' value='" . htmlspecialchars($id) . "'>";
-		echo "<input name='Submit' type='submit' class='formbtn' value='" . htmlspecialchars($savevalue) . "'>\n{$pkg_buttons}\n";
+		echo "<input name='id' type='hidden' value=\"" . htmlspecialchars($id) . "\" />";
+		echo "<input name='Submit' type='submit' class='formbtn' value=\"" . htmlspecialchars($savevalue) . "\" />\n{$pkg_buttons}\n";
 		if (!$only_edit){
-			echo "<input class='formbtn' type='button' value='".gettext("Cancel")."' onclick='history.back()'>";
+			echo "<input class='formbtn' type='button' value='".gettext("Cancel")."' onclick='history.back()' />";
 			}
 		?>
 	</div>
@@ -938,12 +944,14 @@ if ($pkg['tabs'] <> "") {
 	/* JavaScript to handle the advanced fields. */
 	if ($pkg['advanced_options'] == "enabled") {
 		echo "<script type=\"text/javascript\">\n";
+		echo "//<![CDATA[\n";
 		foreach($js_array as $advfieldname) {
 			echo "function show_" . $advfieldname . "() {\n";
 			echo "\tjQuery('#showadv_{$advfieldname}').empty();\n";
 			echo "\tjQuery('#show_{$advfieldname}').css('display', 'block');\n";
 			echo "}\n\n";
 		}
+		echo "//]]>\n";
 		echo "</script>\n";
 	}
 ?>
@@ -961,13 +969,13 @@ function display_row($trc, $value, $fieldname, $type, $rowhelper, $size) {
 	echo "<td>\n";
 	switch($type){
 		case "input":
-			echo "<input size='{$size}' name='{$fieldname}{$trc}' id='{$fieldname}{$trc}' class='formfld unknown' value='" . htmlspecialchars($value) . "'>\n";
+			echo "<input size='{$size}' name='{$fieldname}{$trc}' id='{$fieldname}{$trc}' class='formfld unknown' value=\"" . htmlspecialchars($value) . "\" />\n";
 			break;
 		case "checkbox":
-			echo "<input size='{$size}' type='checkbox' id='{$fieldname}{$trc}' name='{$fieldname}{$trc}' value='ON' ".($value?"CHECKED":"").">\n";
+			echo "<input size='{$size}' type='checkbox' id='{$fieldname}{$trc}' name='{$fieldname}{$trc}' value='ON' ".($value?"CHECKED":"")." />\n";
 			break;
 		case "password":
-			echo "<input size='{$size}' type='password' id='{$fieldname}{$trc}' name='{$fieldname}{$trc}' class='formfld pwd' value='" . htmlspecialchars($value) . "'>\n";
+			echo "<input size='{$size}' type='password' id='{$fieldname}{$trc}' name='{$fieldname}{$trc}' class='formfld pwd' value=\"" . htmlspecialchars($value) . "\" />\n";
 			break;
 		case "textarea":
 			echo "<textarea rows='2' cols='12' id='{$fieldname}{$trc}' class='formfld unknown' name='{$fieldname}{$trc}'>{$value}</textarea>\n";
@@ -975,7 +983,7 @@ function display_row($trc, $value, $fieldname, $type, $rowhelper, $size) {
 			echo "<select style='height:22px;'  id='{$fieldname}{$trc}' name='{$fieldname}{$trc}' {$title}>\n";
 			foreach($rowhelper['options']['option'] as $rowopt) {
 				$text .= "<option value='{$rowopt['value']}'>{$rowopt['name']}</option>";
-				echo "<option value='{$rowopt['value']}'".($rowopt['value'] == $value?" SELECTED":"").">{$rowopt['name']}</option>\n";
+				echo "<option value='{$rowopt['value']}'".($rowopt['value'] == $value?" selected=\"selected\"":"").">{$rowopt['name']}</option>\n";
 				}
 			echo "</select>\n";
 			break;
@@ -984,7 +992,7 @@ function display_row($trc, $value, $fieldname, $type, $rowhelper, $size) {
 			$multiple = '';
 			if (isset($rowhelper['multiple'])) {
 				$fieldname .= '[]';
-				$multiple = 'multiple';
+				$multiple = "multiple=\"multiple\"";
 			}
 			echo "<select style='height:22px;' id='{$fieldname}{$trc}' name='{$fieldname}{$trc}' {$size} {$multiple}>\n";
 			$ifaces = get_configured_interface_with_descr();
@@ -998,8 +1006,8 @@ function display_row($trc, $value, $fieldname, $type, $rowhelper, $size) {
 			$ifaces["lo0"] = "loopback";
 			echo "<option><name></name><value></value></option>/n";
 			foreach($ifaces as $ifname => $iface) {
-				$text .="<option value=\\\"$ifname\\\">$iface</option>";
-				echo "<option value=\"{$ifname}\" ".(in_array($ifname, $values) ? 'selected' : '').">{$iface}</option>\n";
+				$text .="<option value=\"{$ifname}\">$iface</option>";
+				echo "<option value=\"{$ifname}\" ".(in_array($ifname, $values) ? 'selected="selected"' : '').">{$iface}</option>\n";
 				}
 			echo "</select>\n";
 			break;
@@ -1013,11 +1021,12 @@ function display_row($trc, $value, $fieldname, $type, $rowhelper, $size) {
 				$source_name = ($rowhelper['source_name'] ? $opt[$rowhelper['source_name']] : $opt[$rowhelper['name']]);
 				$source_value = ($rowhelper['source_value'] ? $opt[$rowhelper['source_value']] : $opt[$rowhelper['value']]);
 				$text .= "<option value='{$source_value}'>{$source_name}</option>";
-				echo "<option value='{$source_value}'".($source_value == $value?" SELECTED":"").">{$source_name}</option>\n";
+				echo "<option value='{$source_value}'".($source_value == $value?" selected=\"selected\"":"").">{$source_name}</option>\n";
 				}
 			echo "</select>\n";
 			break;		
 		}
+	echo "</td>\n";
 }
 
 function fixup_string($string) {
@@ -1073,10 +1082,10 @@ function parse_package_templates() {
 								$row_helper_data .= $value;
 								$sep = "";
 								ereg($rowhelperfield['fieldname'] . "_fieldvalue\[(.*)\]", $template_text, $sep);
-								foreach ($sep as $se) $seperator = $se;
-								if($seperator <> "") {
-							    	$row_helper_data = ereg_replace("  ", $seperator, $row_helper_data);
-							    	$template_text = ereg_replace("\[{$seperator}\]", "", $template_text);
+								foreach ($sep as $se) $separator = $se;
+								if($separator <> "") {
+							    	$row_helper_data = ereg_replace("  ", $separator, $row_helper_data);
+							    	$template_text = ereg_replace("\[{$separator}\]", "", $template_text);
 									}
 								$template_text = str_replace($rowhelperfield['fieldname'] . "_fieldvalue", $row_helper_data, $template_text);
 								}
@@ -1104,7 +1113,7 @@ function parse_package_templates() {
 /* Return html div fields */
 function display_advanced_field($fieldname) {
 	$div = "<div id='showadv_{$fieldname}'>\n";
-	$div .= "<input type='button' onClick='show_{$fieldname}()' value='" . gettext("Advanced") . "'></input> - " . gettext("Show advanced option") ."</div>\n";
+	$div .= "<input type='button' onclick='show_{$fieldname}()' value='" . gettext("Advanced") . "' /> - " . gettext("Show advanced option") ."</div>\n";
 	$div .= "<div id='show_{$fieldname}' style='display:none'>\n";
 	return $div;
 }

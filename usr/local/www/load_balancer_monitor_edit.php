@@ -87,7 +87,7 @@ if ($_POST) {
 	$reqdfields = explode(" ", "name type descr");
 	$reqdfieldsn = array(gettext("Name"),gettext("Type"),gettext("Description"));
 
-	do_input_validation($_POST, $reqdfields, $reqdfieldsn, &$input_errors);
+	do_input_validation($_POST, $reqdfields, $reqdfieldsn, $input_errors);
 
 	/* Ensure that our monitor names are unique */
 	for ($i=0; isset($config['load_balancer']['monitor_type'][$i]); $i++)

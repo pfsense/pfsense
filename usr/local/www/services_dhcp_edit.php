@@ -92,6 +92,7 @@ if (isset($_POST['id']))
 
 if (isset($id) && $a_maps[$id]) {
 	$pconfig['mac'] = $a_maps[$id]['mac'];
+	$pconfig['cid'] = $a_maps[$id]['cid'];
 	$pconfig['hostname'] = $a_maps[$id]['hostname'];
 	$pconfig['ipaddr'] = $a_maps[$id]['ipaddr'];
 	$pconfig['filename'] = $a_maps[$id]['filename'];
@@ -106,11 +107,15 @@ if (isset($id) && $a_maps[$id]) {
 	list($pconfig['wins1'],$pconfig['wins2']) = $a_maps[$id]['winsserver'];
 	list($pconfig['dns1'],$pconfig['dns2']) = $a_maps[$id]['dnsserver'];
 	$pconfig['ddnsdomain'] = $a_maps[$id]['ddnsdomain'];
+	$pconfig['ddnsdomainprimary'] = $a_maps[$id]['ddnsdomainprimary'];
+	$pconfig['ddnsdomainkeyname'] = $a_maps[$id]['ddnsdomainkeyname'];
+	$pconfig['ddnsdomainkey'] = $a_maps[$id]['ddnsdomainkey'];
 	$pconfig['ddnsupdate'] = isset($a_maps[$id]['ddnsupdate']);
 	list($pconfig['ntp1'],$pconfig['ntp2']) = $a_maps[$id]['ntpserver'];
 	$pconfig['tftp'] = $a_maps[$id]['tftp'];
 } else {
 	$pconfig['mac'] = $_GET['mac'];
+	$pconfig['cid'] = $_GET['cid'];
 	$pconfig['hostname'] = $_GET['hostname'];
 	$pconfig['filename'] = $_GET['filename'];
 	$pconfig['rootpath'] = $_GET['rootpath'];
@@ -126,6 +131,9 @@ if (isset($id) && $a_maps[$id]) {
 	$pconfig['dns1'] = $_GET['dns1'];
 	$pconfig['dns2'] = $_GET['dns2'];
 	$pconfig['ddnsdomain'] = $_GET['ddnsdomain'];
+	$pconfig['ddnsdomainprimary'] = $_GET['ddnsdomainprimary'];
+	$pconfig['ddnsdomainkeyname'] = $_GET['ddnsdomainkeyname'];
+	$pconfig['ddnsdomainkey'] = $_GET['ddnsdomainkey'];
 	$pconfig['ddnsupdate'] = isset($_GET['ddnsupdate']);
 	$pconfig['ntp1'] = $_GET['ntp1'];
 	$pconfig['ntp2'] = $_GET['ntp2'];
@@ -138,10 +146,14 @@ if ($_POST) {
 	$pconfig = $_POST;
 
 	/* input validation */
-	$reqdfields = explode(" ", "mac");
-	$reqdfieldsn = array(gettext("MAC address"));
+	$reqdfields = array();
+	$reqdfieldsn = array();
 
-	do_input_validation($_POST, $reqdfields, $reqdfieldsn, &$input_errors);
+	do_input_validation($_POST, $reqdfields, $reqdfieldsn, $input_errors);
+
+    /* either MAC or Client-ID must be specified */
+    if (empty($_POST['mac']) && empty($_POST['cid']))
+        $input_errors[] = gettext("Either MAC address or Client identifier must be specified");
 
 	/* normalize MAC addresses - lowercase and convert Windows-ized hyphenated MACs to colon delimited */
 	$_POST['mac'] = strtolower(str_replace("-", ":", $_POST['mac']));
@@ -173,8 +185,8 @@ if ($_POST) {
 		if (isset($id) && ($a_maps[$id]) && ($a_maps[$id] === $mapent))
 			continue;
 
-		if ((($mapent['hostname'] == $_POST['hostname']) && $mapent['hostname'])  || ($mapent['mac'] == $_POST['mac'])) {
-			$input_errors[] = gettext("This Hostname, IP or MAC address already exists.");
+		if ((($mapent['hostname'] == $_POST['hostname']) && $mapent['hostname'])  || (($mapent['mac'] == $_POST['mac']) && $mapent['mac']) || (($mapent['ipaddr'] == $_POST['ipaddr']) && $mapent['ipaddr'] ) || (($mapent['cid'] == $_POST['cid']) && $mapent['cid'])) {
+			$input_errors[] = gettext("This Hostname, IP, MAC address or Client identifier already exists.");
 			break;
 		}
 	}
@@ -188,7 +200,7 @@ if ($_POST) {
 			$input_errors[] = sprintf(gettext("The IP address must not be within the DHCP range for this interface."));
 		}
 
-		foreach ($a_pools as $id => $p) {
+		foreach ($a_pools as $pidx => $p) {
 			if (is_inrange_v4($_POST['ipaddr'], $p['range']['from'], $p['range']['to'])) {
 				$input_errors[] = gettext("The IP address must not be within the range configured on a DHCP pool for this interface.");
 				break;
@@ -223,6 +235,11 @@ if ($_POST) {
 		$input_errors[] = gettext("The maximum lease time must be at least 60 seconds and higher than the default lease time.");
 	if (($_POST['ddnsdomain'] && !is_domain($_POST['ddnsdomain'])))
 		$input_errors[] = gettext("A valid domain name must be specified for the dynamic DNS registration.");
+	if (($_POST['ddnsdomain'] && !is_ipaddrv4($_POST['ddnsdomainprimary'])))
+		$input_errors[] = gettext("A valid primary domain name server IP address must be specified for the dynamic domain name.");
+	if (($_POST['ddnsdomainkey'] && !$_POST['ddnsdomainkeyname']) ||
+		($_POST['ddnsdomainkeyname'] && !$_POST['ddnsdomainkey']))
+		$input_errors[] = gettext("You must specify both a valid domain key and key name.");
 	if ($_POST['domainsearchlist']) {
 		$domain_array=preg_split("/[ ;]+/",$_POST['domainsearchlist']);
 		foreach ($domain_array as $curdomain) {
@@ -243,6 +260,7 @@ if ($_POST) {
 	if (!$input_errors) {
 		$mapent = array();
 		$mapent['mac'] = $_POST['mac'];
+		$mapent['cid'] = $_POST['cid'];
 		$mapent['ipaddr'] = $_POST['ipaddr'];
 		$mapent['hostname'] = $_POST['hostname'];
 		$mapent['descr'] = $_POST['descr'];
@@ -268,6 +286,9 @@ if ($_POST) {
 		$mapent['domain'] = $_POST['domain'];
 		$mapent['domainsearchlist'] = $_POST['domainsearchlist'];
 		$mapent['ddnsdomain'] = $_POST['ddnsdomain'];
+		$mapent['ddnsdomainprimary'] = $_POST['ddnsdomainprimary'];
+		$mapent['ddnsdomainkeyname'] = $_POST['ddnsdomainkeyname'];
+		$mapent['ddnsdomainkey'] = $_POST['ddnsdomainkey'];
 		$mapent['ddnsupdate'] = ($_POST['ddnsupdate']) ? true : false;
 
 		unset($mapent['ntpserver']);
@@ -289,7 +310,7 @@ if ($_POST) {
 
 		if(isset($config['dhcpd'][$if]['enable'])) {
 			mark_subsystem_dirty('staticmaps');
-			if (isset($config['dnsmasq']['regdhcpstatic']))
+			if (isset($config['dnsmasq']['enable']) && isset($config['dnsmasq']['regdhcpstatic']))
 				mark_subsystem_dirty('hosts');
 		}
 
@@ -334,7 +355,7 @@ include("head.inc");
 					<td colspan="2" valign="top" class="listtopic"><?=gettext("Static DHCP Mapping");?></td>
 				</tr>
                 <tr>
-                  <td width="22%" valign="top" class="vncellreq"><?=gettext("MAC address");?></td>
+                  <td width="22%" valign="top" class="vncell"><?=gettext("MAC address");?></td>
                   <td width="78%" class="vtable">
                     <input name="mac" type="text" class="formfld unknown" id="mac" size="30" value="<?=htmlspecialchars($pconfig['mac']);?>">
 		    <?php
@@ -346,6 +367,11 @@ include("head.inc");
                     <br>
                     <span class="vexpl"><?=gettext("Enter a MAC address in the following format: ".
                     "xx:xx:xx:xx:xx:xx");?></span></td>
+                </tr>
+                  <td width="22%" valign="top" class="vncell"><?=gettext("Client identifier");?></td>
+                  <td width="78%" class="vtable">
+                    <input name="cid" type="text" class="formfld unknown" id="cid" size="30" value="<?=htmlspecialchars($pconfig['cid']);?>">
+                    <span class="vexpl"><?=gettext("");?></span></td>
                 </tr>
                 <tr>
                   <td width="22%" valign="top" class="vncell"><?=gettext("IP address");?></td>
@@ -424,7 +450,7 @@ include("head.inc");
 		<td width="22%" valign="top" class="vncell"><?=gettext("Domain search list");?></td>
 		<td width="78%" class="vtable">
 			<input name="domainsearchlist" type="text" class="formfld unknown" id="domainsearchlist" size="20" value="<?=htmlspecialchars($pconfig['domainsearchlist']);?>"><br>
-			<?=gettext("The DHCP server can optionally provide a domain search list. Use the semicolon character as seperator ");?>
+			<?=gettext("The DHCP server can optionally provide a domain search list. Use the semicolon character as separator ");?>
 		</td>
 		</tr>
 		<tr>
@@ -460,6 +486,12 @@ include("head.inc");
 				<input name="ddnsdomain" type="text" class="formfld unknown" id="ddnsdomain" size="20" value="<?=htmlspecialchars($pconfig['ddnsdomain']);?>"><br />
 				<?=gettext("Note: Leave blank to disable dynamic DNS registration.");?><br />
 				<?=gettext("Enter the dynamic DNS domain which will be used to register client names in the DNS server.");?>
+				<input name="ddnsdomainprimary" type="text" class="formfld unknown" id="ddnsdomainprimary" size="20" value="<?=htmlspecialchars($pconfig['ddnsdomainprimary']);?>"><br>
+				<?=gettext("Enter the primary domain name server IP address for the dynamic domain name.");?><br />
+				<input name="ddnsdomainkeyname" type="text" class="formfld unknown" id="ddnsdomainkeyname" size="20" value="<?=htmlspecialchars($pconfig['ddnsdomainkeyname']);?>"><br />
+				<?=gettext("Enter the dynamic DNS domain key name which will be used to register client names in the DNS server.");?>
+				<input name="ddnsdomainkey" type="text" class="formfld unknown" id="ddnsdomainkey" size="20" value="<?=htmlspecialchars($pconfig['ddnsdomainkey']);?>"><br />
+				<?=gettext("Enter the dynamic DNS domain key secret which will be used to register client names in the DNS server.");?>
 			</div>
 		</td>
 		</tr>

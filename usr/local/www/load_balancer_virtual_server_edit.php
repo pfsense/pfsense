@@ -79,7 +79,7 @@ if ($_POST) {
     }
   }
 
-	do_input_validation($_POST, $reqdfields, $reqdfieldsn, &$input_errors);
+	do_input_validation($_POST, $reqdfields, $reqdfieldsn, $input_errors);
 
 	for ($i=0; isset($config['load_balancer']['virtual_server'][$i]); $i++)
 		if (($_POST['name'] == $config['load_balancer']['virtual_server'][$i]['name']) && ($i != $id))
@@ -95,6 +95,9 @@ if ($_POST) {
 		$input_errors[] = sprintf(gettext("%s is not a valid IP address, IPv4 subnet, or alias."), $_POST['ipaddr']);
 	else if (is_subnetv4($_POST['ipaddr']) && subnet_size($_POST['ipaddr']) > 64)
 		$input_errors[] = sprintf(gettext("%s is a subnet containing more than 64 IP addresses."), $_POST['ipaddr']);
+
+	if ((strtolower($_POST['relay_protocol']) == "dns") && !empty($_POST['sitedown']))
+		$input_errors[] = gettext("You cannot select a Fall Back Pool when using the DNS relay protocol.");
 
 	if (!$input_errors) {
 		$vsent = array();
@@ -117,9 +120,13 @@ if ($_POST) {
 		if($_POST['sitedown'] == "")
 			unset($vsent['sitedown']);
 
-		if (isset($id) && $a_vs[$id])
+		if (isset($id) && $a_vs[$id]) {
+			if ($a_vs[$id]['name'] != $_POST['name']) {
+				/* Because the VS name changed, mark the old name for cleanup. */
+				cleanup_lb_mark_anchor($a_vs[$id]['name']);
+			}
 			$a_vs[$id] = $vsent;
-		else
+		} else
 			$a_vs[] = $vsent;
 
 		if ($changecount > 0) {
@@ -186,7 +193,7 @@ include("head.inc");
 					<br><?=gettext("You may also specify a port alias listed in Firewall -&gt; Aliases here."); ?>
 					<script type="text/javascript">
 					//<![CDATA[
-						var port_aliases = <?= json_encode(get_alias_list("port")) ?>;
+						var port_aliases = <?= json_encode(get_alias_list(array("port", "url_ports", "urltable_ports"))) ?>;
 						var oTextbox2 = new AutoSuggestControl(document.getElementById("port"), new StateSuggestions(port_aliases));
 					//]]>
 					</script>
@@ -228,7 +235,8 @@ include("head.inc");
             				}
             			?>
             			</select>
-				<br><b><?=gettext("NOTE:"); ?></b> <?=gettext("This is the server that clients will be redirected to if *ALL* servers in the pool are offline."); ?>
+				<br><?=gettext("The server pool to which clients will be redirected if *ALL* servers in the Virtual Server Pool are offline."); ?>
+				<br><?=gettext("This option is NOT compatible with the DNS relay protocol."); ?>
 				  <?php endif; ?>
                   </td>
 				</tr>

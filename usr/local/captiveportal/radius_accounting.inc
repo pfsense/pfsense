@@ -44,33 +44,6 @@
 
 define('GIGAWORDS_RIGHT_OPERAND', '4294967296'); // 2^32
 
-/**
- * Get the NAS-IP-Address based on the current wan address
- *
- * Use functions in interfaces.inc to find this out
- *
- */
-if (!function_exists('getNasIP')) {
-	function getNasIP()
-	{
-		global $config, $cpzone;
-
-		if (empty($config['captiveportal'][$cpzone]['radiussrcip_attribute'])) {
-				$nasIp = get_interface_ip();
-		} else {
-			if (is_ipaddr($config['captiveportal'][$cpzone]['radiussrcip_attribute']))
-				$nasIp = $config['captiveportal'][$cpzone]['radiussrcip_attribute'];
-			else
-				$nasIp = get_interface_ip($config['captiveportal'][$cpzone]['radiussrcip_attribute']);
-		}
-
-		if(!is_ipaddr($nasIp))
-			$nasIp = "0.0.0.0";
-
-		return $nasIp;
-	}
-}
-
 /*
 RADIUS ACCOUNTING START 
 -----------------------
@@ -96,6 +69,8 @@ function RADIUS_ACCOUNTING_START($ruleno, $username, $sessionid, $radiusservers,
         break;
 
         default:
+            if (!function_exists('getNasIP'))
+                require_once("captiveportal.inc");
 	$calledstationid = getNasIP();
         $callingstationid = $clientmac;
 	break;
@@ -201,7 +176,7 @@ function RADIUS_ACCOUNTING_STOP($ruleno,$username,$sessionid,$start_time,$radius
     $radiusvendor = $config['captiveportal'][$cpzone]['radiusvendor'] ? $config['captiveportal'][$cpzone]['radiusvendor'] : null;
     $stop_time = (empty($stop_time)) ? time() : $stop_time;
     $session_time = $stop_time - $start_time;
-    $volume = getVolume($clientip);
+    $volume = getVolume($clientip, $clientmac);
     $volume['input_bytes_radius'] = remainder($volume['input_bytes']);
     $volume['input_gigawords'] = gigawords($volume['input_bytes']);
     $volume['output_bytes_radius'] = remainder($volume['output_bytes']);

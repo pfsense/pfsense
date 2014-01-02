@@ -112,7 +112,7 @@ if ($_POST['apply']) {
 	$retval = 0;
 	$retval = vpn_ipsec_configure();
 	$savemsg = get_std_save_message($retval);
-	if ($retval == 0)
+	if ($retval >= 0)
 		if (is_subsystem_dirty('ipsec'))
 			clear_subsystem_dirty('ipsec');
 }
@@ -131,7 +131,7 @@ if ($_POST['submit']) {
 	$reqdfields = explode(" ", "user_source group_source");
 	$reqdfieldsn =  array(gettext("User Authentication Source"),gettext("Group Authentication Source"));
 
-    do_input_validation($_POST, $reqdfields, $reqdfieldsn, &$input_errors);
+    do_input_validation($_POST, $reqdfields, $reqdfieldsn, $input_errors);
 
 	if ($pconfig['pool_enable'])
 		if (!is_ipaddr($pconfig['pool_address']))

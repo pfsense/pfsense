@@ -69,7 +69,7 @@ include("head.inc");
 <body link="#0000CC" vlink="#0000CC" alink="#0000CC">
 <?php include("fbegin.inc"); ?>
 
-<table width="100%" border="0" cellpadding="0" cellspacing="0">
+<table width="100%" border="0" cellpadding="0" cellspacing="0" summary="interfaces groups">
   <tr><td>
 <?php
 	$tab_array = array();
@@ -89,7 +89,7 @@ include("head.inc");
 <tr>
     <td>
         <div id="mainarea">
-        <table class="tabcont" width="100%" border="0" cellpadding="0" cellspacing="0">
+        <table class="tabcont" width="100%" border="0" cellpadding="0" cellspacing="0" summary="main area">
 
 <tr>
   <td width="15%" class="listhdrr"><?=gettext("Name");?></td>
@@ -122,11 +122,11 @@ include("head.inc");
   <td class="listbg" ondblclick="document.location='interfaces_groups_edit.php?id=<?=$i;?>';">
     <?=htmlspecialchars($ifgroupentry['descr']);?>&nbsp;
   </td>
-  <td valign="middle" nowrap class="list">
-    <table border="0" cellspacing="0" cellpadding="1">
+  <td valign="middle" class="list nowrap">
+    <table border="0" cellspacing="0" cellpadding="1" summary="icons">
       <tr>
-        <td valign="middle"><a href="interfaces_groups_edit.php?id=<?=$i;?>"><img src="/themes/<?= $g['theme']; ?>/images/icons/icon_e.gif" width="17" height="17" border="0" title="<?=gettext("edit group");?>"></a></td>
-        <td><a href="interfaces_groups.php?act=del&id=<?=$i;?>" onclick="return confirm('<?=gettext("Do you really want to delete this group? All elements that still use it will become invalid (e.g. filter rules)!");?>')"><img src="/themes/<?= $g['theme']; ?>/images/icons/icon_x.gif" width="17" height="17" border="0" title="<?=gettext("delete ifgroupentry");?>"></a></td>
+        <td valign="middle"><a href="interfaces_groups_edit.php?id=<?=$i;?>"><img src="/themes/<?= $g['theme']; ?>/images/icons/icon_e.gif" width="17" height="17" border="0" title="<?=gettext("edit group");?>" alt="edit" /></a></td>
+        <td><a href="interfaces_groups.php?act=del&amp;id=<?=$i;?>" onclick="return confirm('<?=gettext("Do you really want to delete this group? All elements that still use it will become invalid (e.g. filter rules)!");?>')"><img src="/themes/<?= $g['theme']; ?>/images/icons/icon_x.gif" width="17" height="17" border="0" title="<?=gettext("delete ifgroupentry");?>" alt="delete" /></a></td>
       </tr>
     </table>
   </td>
@@ -135,18 +135,17 @@ include("head.inc");
 <tr>
   <td class="list" colspan="3"></td>
   <td class="list">
-    <table border="0" cellspacing="0" cellpadding="1">
+    <table border="0" cellspacing="0" cellpadding="1" summary="add">
       <tr>
 	<td valign="middle" width="17">&nbsp;</td>
-        <td valign="middle"><a href="interfaces_groups_edit.php"><img src="/themes/<?= $g['theme']; ?>/images/icons/icon_plus.gif" width="17" height="17" border="0" title="<?=gettext("add a new group");?>"></a></td>
-        </td>
+        <td valign="middle"><a href="interfaces_groups_edit.php"><img src="/themes/<?= $g['theme']; ?>/images/icons/icon_plus.gif" width="17" height="17" border="0" title="<?=gettext("add a new group");?>" alt="add" /></a></td>
       </tr>
     </table>
   </td>
 </tr>
 <tr>
   <td class="tabcont" colspan="3">
-	<p><span class="vexpl"><span class="red"><strong><?=gettext("Note:");?><br></strong></span><?=gettext("Interface Groups allow you to create rules that apply to multiple interfaces without duplicating the rules. If you remove members from an interface group, the group rules no longer apply to that interface.");?></span></p>
+	<p><span class="vexpl"><span class="red"><strong><?=gettext("Note:");?><br/></strong></span><?=gettext("Interface Groups allow you to create rules that apply to multiple interfaces without duplicating the rules. If you remove members from an interface group, the group rules no longer apply to that interface.");?></span></p>
 	</td>
 </tr>
 	</table>

@@ -40,6 +40,8 @@
 ##|-PRIV
 
 require("guiconfig.inc");
+require_once("filter.inc");
+require_once("util.inc");
 
 if (!is_array($config['load_balancer']['lbpool'])) {
 	$config['load_balancer']['lbpool'] = array();
@@ -75,7 +77,7 @@ if ($_POST) {
 	$reqdfields = explode(" ", "name mode port monitor servers");
 	$reqdfieldsn = array(gettext("Name"),gettext("Mode"),gettext("Port"),gettext("Monitor"),gettext("Server List"));
 
-	do_input_validation($_POST, $reqdfields, $reqdfieldsn, &$input_errors);
+	do_input_validation($_POST, $reqdfields, $reqdfieldsn, $input_errors);
 
 	/* Ensure that our pool names are unique */
 	for ($i=0; isset($config['load_balancer']['lbpool'][$i]); $i++)
@@ -84,6 +86,12 @@ if ($_POST) {
 
 	if (strpos($_POST['name'], " ") !== false)
 		$input_errors[] = gettext("You cannot use spaces in the 'name' field.");
+
+	if (in_array($_POST['name'], $reserved_table_names))
+		$input_errors[] = sprintf(gettext("The name '%s' is a reserved word and cannot be used."), $_POST['name']);
+
+	if (is_alias($_POST['name']))
+		$input_errors[] = sprintf(gettext("Sorry, an alias is already named %s."), $_POST['name']);
 
 	if (!is_portoralias($_POST['port']))
 		$input_errors[] = gettext("The port must be an integer between 1 and 65535, or a port alias.");
@@ -215,7 +223,7 @@ function clearcombo(){
 				</div>
 				<script type="text/javascript">
 				//<![CDATA[
-					var addressarray = <?= json_encode(get_alias_list("port")) ?>;
+					var addressarray = <?= json_encode(get_alias_list(array("port", "url_ports", "urltable_ports"))) ?>;
 					var oTextbox1 = new AutoSuggestControl(document.getElementById("port"), new StateSuggestions(addressarray));
 				//]]>
 				</script>

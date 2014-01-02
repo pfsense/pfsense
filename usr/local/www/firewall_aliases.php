@@ -102,6 +102,8 @@ if ($_GET['act'] == "del") {
 		// Load Balancer
 		find_alias_reference(array('load_balancer', 'lbpool'),         array('port'), $alias_name, $is_alias_referenced, $referenced_by);
 		find_alias_reference(array('load_balancer', 'virtual_server'), array('port'), $alias_name, $is_alias_referenced, $referenced_by);
+		// Static routes
+		find_alias_reference(array('staticroutes', 'route'), array('network'), $alias_name, $is_alias_referenced, $referenced_by);
 		if($is_alias_referenced == true) {
 			$savemsg = sprintf(gettext("Cannot delete alias. Currently in use by %s"), $referenced_by);
 		} else {
@@ -173,7 +175,7 @@ include("head.inc");
 				$tab_array = array();
 				$tab_array[] = array(gettext("IP"),($tab=="ip" ? true : ($tab=="host" ? true : ($tab == "network" ? true : false))), "/firewall_aliases.php?tab=ip");
 				$tab_array[] = array(gettext("Ports"), ($tab=="port"? true : false), "/firewall_aliases.php?tab=port");
-				$tab_array[] = array(gettext("Urls"), ($tab=="url"? true : false), "/firewall_aliases.php?tab=url");
+				$tab_array[] = array(gettext("URLs"), ($tab=="url"? true : false), "/firewall_aliases.php?tab=url");
 				$tab_array[] = array(gettext("All"), ($tab=="all"? true : false), "/firewall_aliases.php?tab=all");
 				display_top_tabs($tab_array);
 			?>
@@ -230,20 +232,21 @@ include("head.inc");
 						<?php
 						if ($alias["url"]) {
 							echo $alias["url"] . "<br/>";
-						}
-						if(is_array($alias["aliasurl"])) {
-							$aliasurls = implode(", ", array_slice($alias["aliasurl"], 0, 10));
-							echo $aliasurls;
-							if(count($aliasurls) > 10) {
-								echo "...<br/>";
+						} else {
+							if(is_array($alias["aliasurl"])) {
+								$aliasurls = implode(", ", array_slice($alias["aliasurl"], 0, 10));
+								echo $aliasurls;
+								if(count($aliasurls) > 10) {
+									echo "...<br/>";
+								}
+								echo "<br/>\n";
 							}
-							echo "<br/>\n";
-						}
-						$tmpaddr = explode(" ", $alias['address']);
-						$addresses = implode(", ", array_slice($tmpaddr, 0, 10));
-						echo $addresses;
-						if(count($tmpaddr) > 10) {
-							echo "...";
+							$tmpaddr = explode(" ", $alias['address']);
+							$addresses = implode(", ", array_slice($tmpaddr, 0, 10));
+							echo $addresses;
+							if(count($tmpaddr) > 10) {
+								echo "...";
+							}
 						}
 						?>
 						</td>

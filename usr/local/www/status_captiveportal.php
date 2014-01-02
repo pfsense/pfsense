@@ -41,7 +41,7 @@
 
 require("guiconfig.inc");
 require("functions.inc");
-require("filter.inc");
+require_once("filter.inc");
 require("shaper.inc");
 require("captiveportal.inc");
 
@@ -95,10 +95,12 @@ if (!empty($cpzone)) {
 	}
 }
 
+// Load MAC-Manufacturer table
+$mac_man = load_mac_manufacturer_table();
+
 ?>
 
 <?php if (!empty($cpzone) && isset($config['voucher'][$cpzone]['enable'])): ?>
-<form action="status_captiveportal.php" method="post" enctype="multipart/form-data" name="iform" id="iform">
 <table width="100%" border="0" cellpadding="0" cellspacing="0" summary="tab pane">
 <tr><td class="tabnavtbl">
 <?php 
@@ -143,25 +145,34 @@ if (!empty($cpzone)) {
 	<td colspan="5" valign="top" class="listtopic"><?=gettext("Captiveportal status");?></td>
   </tr>
   <tr>
-    <td class="listhdrr"><a href="?order=ip&amp;showact=<?=htmlspecialchars($_GET['showact']);?>"><?=gettext("IP address");?></a></td>
-    <td class="listhdrr"><a href="?order=mac&amp;showact=<?=htmlspecialchars($_GET['showact']);?>"><?=gettext("MAC address");?></a></td>
-    <td class="listhdrr"><a href="?order=user&amp;showact=<?=htmlspecialchars($_GET['showact']);?>"><?=gettext("Username");?></a></td>
+    <td class="listhdrr"><a href="?zone=<?=$cpzone?>&amp;order=ip&amp;showact=<?=htmlspecialchars($_GET['showact']);?>"><?=gettext("IP address");?></a></td>
+    <td class="listhdrr"><a href="?zone=<?=$cpzone?>&amp;order=mac&amp;showact=<?=htmlspecialchars($_GET['showact']);?>"><?=gettext("MAC address");?></a></td>
+    <td class="listhdrr"><a href="?zone=<?=$cpzone?>&amp;order=user&amp;showact=<?=htmlspecialchars($_GET['showact']);?>"><?=gettext("Username");?></a></td>
 	<?php if ($_GET['showact']): ?>
-    <td class="listhdrr"><a href="?order=start&amp;showact=<?=htmlspecialchars($_GET['showact']);?>"><?=gettext("Session start");?></a></td>
-    <td class="listhdr"><a href="?order=lastact&amp;showact=<?=htmlspecialchars($_GET['showact']);?>"><?=gettext("Last activity");?></a></td>
+    <td class="listhdrr"><a href="?zone=<?=$cpzone?>&amp;order=start&amp;showact=<?=htmlspecialchars($_GET['showact']);?>"><?=gettext("Session start");?></a></td>
+    <td class="listhdr"><a href="?zone=<?=$cpzone?>&amp;order=lastact&amp;showact=<?=htmlspecialchars($_GET['showact']);?>"><?=gettext("Last activity");?></a></td>
 	<?php else: ?>
-    <td class="listhdr"><a href="?order=start&amp;showact=<?=htmlspecialchars($_GET['showact']);?>"><?=gettext("Session start");?></a></td>
+    <td class="listhdr"><a href="?zone=<?=$cpzone?>&amp;order=start&amp;showact=<?=htmlspecialchars($_GET['showact']);?>"><?=gettext("Session start");?></a></td>
 	<?php endif; ?>
     <td class="list sort_ignore"></td>
   </tr>
 <?php foreach ($cpdb as $cpent): ?>
   <tr>
     <td class="listlr"><?=$cpent[2];?></td>
-    <td class="listr"><?=$cpent[3];?>&nbsp;</td>
+	<td class="listr">
+		<?php
+		$mac=trim($cpent[3]);
+		if (!empty($mac)) {
+			$mac_hi = strtoupper($mac[0] . $mac[1] . $mac[3] . $mac[4] . $mac[6] . $mac[7]);
+			print htmlentities($mac);
+			if(isset($mac_man[$mac_hi])){ print "<br/><font size=\"-2\"><i>{$mac_man[$mac_hi]}</i></font>"; }
+		}
+		?>&nbsp;
+	</td>
     <td class="listr"><?=$cpent[4];?>&nbsp;</td>
     <td class="listr"><?=htmlspecialchars(date("m/d/Y H:i:s", $cpent[0]));?></td>
 	<?php if ($_GET['showact']):
-	$last_act = captiveportal_get_last_activity($cpent[2]); ?>
+	$last_act = captiveportal_get_last_activity($cpent[2], $cpent[3]); ?>
     <td class="listr"><?php if ($last_act != 0) echo htmlspecialchars(date("m/d/Y H:i:s", $last_act));?></td>
 	<?php endif; ?>
 	<td valign="middle" class="list" nowrap>
@@ -174,7 +185,6 @@ if (!empty($cpzone)) {
 </td>
 </tr>
 </table>
-</form>
 <?php endif; ?>
 
 <form action="status_captiveportal.php" method="get" style="margin: 14px;">

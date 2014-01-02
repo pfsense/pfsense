@@ -50,7 +50,7 @@
 ##|-PRIV
 
 require("guiconfig.inc");
-require("filter.inc");
+require_once("filter.inc");
 require("shaper.inc");
 
 if (!is_array($config['virtualip']['vip'])) {
@@ -113,7 +113,7 @@ if ($_POST) {
 	if ($_POST['subnet']) {
 		if (!is_ipaddr($_POST['subnet']))
 			$input_errors[] = gettext("A valid IP address must be specified.");
-		else if (is_ipaddr_configured($_POST['subnet'], "vip_" . $id))
+		else if (is_ipaddr_configured($_POST['subnet'], "{$_POST['interface']}_vip{$id}"))
 			$input_errors[] = gettext("This IP address is being used by another interface or VIP.");
 	}
 
@@ -121,15 +121,6 @@ if ($_POST) {
 	foreach ($natiflist as $natif => $natdescr) {
 		if ($_POST['interface'] == $natif && (empty($config['interfaces'][$natif]['ipaddr']) && empty($config['interfaces'][$natif]['ipaddrv6'])))
 			$input_errors[] = gettext("The interface chosen for the VIP has no IPv4 or IPv6 address configured so it cannot be used as a parent for the VIP.");
-	}
-
-	if(is_ipaddrv4($_POST['subnet'])) {
-		if(($_POST['subnet_bits'] == "31" or $_POST['subnet_bits'] == "32") and $_POST['mode'] == "carp")
-		 	$input_errors[] = gettext("The /31 and /32 subnet mask are invalid for CARP IPs.");
-	}
-	if(is_ipaddrv6($_POST['subnet'])) {
-		if(($_POST['subnet_bits'] == "127" or $_POST['subnet_bits'] == "128")  and $_POST['mode'] == "carp")
-		 	$input_errors[] = gettext("The /127 and /128 subnet mask are invalid for CARP IPs.");
 	}
 
 	/* ipalias and carp should not use network or broadcast address */
@@ -178,29 +169,12 @@ if ($_POST) {
 			$input_errors[] = sprintf(gettext("Sorry, we could not locate an interface with a matching subnet for %s.  Please add an IP alias in this subnet on this interface."),$cannot_find);
 		}
 
-		if (strstr($_POST['interface'], "_vip"))
-                        $input_errors[] = gettext("For this type of vip a carp parent is not allowed.");
-		break;
-	case "ipalias":
-		if (strstr($_POST['interface'], "_vip")) {
-			if (is_ipaddrv4($_POST['subnet'])) {
-				$parent_ip = get_interface_ip($_POST['interface']);
-				$parent_sn = get_interface_subnet($_POST['interface']);
-				$subnet = gen_subnet($parent_ip, $parent_sn);
-			} else if (is_ipaddrv6($_POST['subnet'])) {
-				$parent_ip = get_interface_ipv6($_POST['interface']);
-				$parent_sn = get_interface_subnetv6($_POST['interface']);
-				$subnet = gen_subnetv6($parent_ip, $parent_sn);
-			}
-			if (isset($parent_ip) && !ip_in_subnet($_POST['subnet'], "{$subnet}/{$parent_sn}") && !ip_in_interface_alias_subnet($_POST['interface'], $_POST['subnet'])) {
-				$cannot_find = $_POST['subnet'] . "/" . $_POST['subnet_bits'] ;
-				$input_errors[] = sprintf(gettext("Sorry, we could not locate an interface with a matching subnet for %s.  Please add an IP alias in this subnet on this interface."),$cannot_find);
-			}
-		}
+		if ($_POST['interface'] == "lo0")
+			$input_errors[] = gettext("For this type of vip localhost is not allowed.");
 		break;
 	default:
-		if (strstr($_POST['interface'], "_vip"))
-			$input_errors[] = gettext("For this type of VIP, a CARP parent is not allowed.");
+		if ($_POST['interface'] == "lo0")
+			$input_errors[] = gettext("For this type of vip localhost is not allowed.");
 		break;
 	}
 
@@ -381,11 +355,9 @@ function typesel_change() {
 				  <td width="78%" class="vtable">
 					<select name="interface" class="formselect">
 					<?php 
-					  $interfaces = get_configured_interface_with_descr(false, true);
-					  $carplist = get_configured_carp_interface_list();
-                                          foreach ($carplist as $cif => $carpip)
-                                          	$interfaces[$cif] = $carpip." (".get_vip_descr($carpip).")";
-					  foreach ($interfaces as $iface => $ifacename): ?>
+					$interfaces = get_configured_interface_with_descr(false, true);
+					$interfaces['lo0'] = "Localhost";
+					foreach ($interfaces as $iface => $ifacename): ?>
 						<option value="<?=$iface;?>" <?php if ($iface == $pconfig['interface']) echo "selected=\"selected\""; ?>>
 						<?=htmlspecialchars($ifacename);?>
 						</option>

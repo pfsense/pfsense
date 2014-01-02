@@ -55,18 +55,18 @@ function backup_vip_config_section() {
 	$temp = array();
 	$temp['vip'] = array();
 	foreach($config['virtualip']['vip'] as $section) {
-		if(($section['mode'] == "proxyarp" || $section['mode'] == "ipalias") && !strstr($section['interface'], "_vip"))
+		if ($section['mode'] != "carp")
 			continue;
-		if($section['advskew'] <> "") {
+		if ($section['advskew'] <> "") {
 			$section_val = intval($section['advskew']);
 			$section_val=$section_val+100;
-			if($section_val > 254)
+			if ($section_val > 254)
 				$section_val = 254;
 			$section['advskew'] = $section_val;
 		}
-		if($section['advbase'] <> "") {
+		if ($section['advbase'] <> "") {
 			$section_val = intval($section['advbase']);
-			if($section_val > 254)
+			if ($section_val > 254)
 				$section_val = 254;
 			$section['advbase'] = $section_val;
 		}
@@ -107,7 +107,7 @@ function carp_check_version($url, $username, $password, $port = 80, $method = 'p
 		/* send our XMLRPC message and timeout after 240 seconds */
 		$resp = $cli->send($msg, "240");
 		if(!is_object($resp)) {
-			$error = "A communications error occured while attempting XMLRPC sync with username {$username} {$url}:{$port}.";
+			$error = "A communications error occurred while attempting XMLRPC sync with username {$username} {$url}:{$port}.";
 		} elseif($resp->faultCode()) {
 			$error = "An error code was received while attempting XMLRPC sync with username {$username} {$url}:{$port} - Code " . $resp->faultCode() . ": " . $resp->faultString();
 		} else {
@@ -149,12 +149,12 @@ function carp_sync_xml($url, $username, $password, $sections, $port = 80, $metho
 	$config_copy = $config;
 
 	/* strip out nosync items */
-	if (is_array($config_copy['nat']['advancedoutbound']['rule'])) {
-		$rulescnt = count($config_copy['nat']['advancedoutbound']['rule']);
+	if (is_array($config_copy['nat']['outbound']['rule'])) {
+		$rulescnt = count($config_copy['nat']['outbound']['rule']);
 		for ($x = 0; $x < $rulescnt; $x++) {
-			$config_copy['nat']['advancedoutbound']['rule'][$x]['descr'] = remove_special_characters($config_copy['nat']['advancedoutbound']['rule'][$x]['descr']);
-			if (isset ($config_copy['nat']['advancedoutbound']['rule'][$x]['nosync']))
-				unset ($config_copy['nat']['advancedoutbound']['rule'][$x]);
+			$config_copy['nat']['outbound']['rule'][$x]['descr'] = remove_special_characters($config_copy['nat']['outbound']['rule'][$x]['descr']);
+			if (isset ($config_copy['nat']['outbound']['rule'][$x]['nosync']))
+				unset ($config_copy['nat']['outbound']['rule'][$x]);
 		}
 	}
 	if (is_array($config_copy['nat']['rule'])) {
@@ -224,6 +224,8 @@ function carp_sync_xml($url, $username, $password, $sections, $port = 80, $metho
 				$xml['system'][$section] = $config_copy['system'][$section];
 				$xml['system']['nextgid'] = $config_copy['system']['nextgid'];
 				break;
+			case 'authserver':
+				$xml['system'][$section] = $config_copy['system'][$section];
 			default:
 				$xml[$section] = $config_copy[$section];
 		}
@@ -245,7 +247,7 @@ function carp_sync_xml($url, $username, $password, $sections, $port = 80, $metho
 		/* send our XMLRPC message and timeout after 240 seconds */
 		$resp = $cli->send($msg, "240");
 		if(!is_object($resp)) {
-			$error = "A communications error occured while attempting XMLRPC sync with username {$username} {$url}:{$port}.";
+			$error = "A communications error occurred while attempting XMLRPC sync with username {$username} {$url}:{$port}.";
 			log_error($error);
 			file_notice("sync_settings", $error, "Settings Sync", "");
 		} elseif($resp->faultCode()) {
@@ -378,6 +380,9 @@ if (is_array($config['hasync'])) {
 		$sections[] = 'user';
 		$sections[] = 'group';
 	} 
+	if ($hasync['synchronizeauthservers'] != "") {
+		$sections[] = 'authserver';
+	}
 	if ($hasync['synchronizednsforwarder'] != "" and is_array($config['dnsmasq']))
 		$sections[] = 'dnsmasq';
 	if ($hasync['synchronizeschedules'] != "" || $hasync['synchronizerules'] != "") {
@@ -415,7 +420,7 @@ if (is_array($config['hasync'])) {
 	$resp = $cli->send($msg, "900");
 
 	if (!is_object($resp)) {
-		$error = "A communications error occured while attempting Filter sync with username {$username} {$synchronizetoip}:{$port}.";
+		$error = "A communications error occurred while attempting Filter sync with username {$username} {$synchronizetoip}:{$port}.";
 		log_error($error);
 		file_notice("sync_settings", $error, "Settings Sync", "");
 	} elseif($resp->faultCode()) {

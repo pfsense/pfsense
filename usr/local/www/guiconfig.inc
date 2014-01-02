@@ -108,9 +108,16 @@ $firewall_rules_dscp_types = array("af11",
 				"af42",
 				"af43",
 				"EF",
-				"1-64",
-				"0x10",
-				"0x04-0xfc");
+				"cs1",
+				"cs2",
+				"cs3",
+				"cs4",
+				"cs5",
+				"cs6",
+				"cs7",
+				"0x01 (reliability, ToS 0x04)",
+				"0x02 (throughput, ToS 0x08)",
+				"0x04 (lowdelay, ToS 0x10)");
 
 $auth_server_types = array(
 	'ldap' => "LDAP",
@@ -228,7 +235,7 @@ $wlan_modes = array("bss" => "Infrastructure (BSS)", "adhoc" => "Ad-hoc (IBSS)",
 /* platforms that support firmware updating */
 $fwupplatforms = array('pfSense', 'net45xx', 'net48xx', 'generic-pc', 'embedded', 'wrap', 'nanobsd');
 
-function do_input_validation($postdata, $reqdfields, $reqdfieldsn, $input_errors) {
+function do_input_validation($postdata, $reqdfields, $reqdfieldsn, &$input_errors) {
 
 	/* check for bad control characters */
 	foreach ($postdata as $pn => $pd) {
@@ -249,15 +256,13 @@ function print_input_errors($input_errors) {
 
 	print <<<EOF
 	<div id="inputerrorsdiv">
-	<p>
 	<table border="0" cellspacing="0" cellpadding="4" width="100%" summary="input errors">
 	<tr>
 		<td class="inputerrorsleft">
 			<img src="/themes/{$g['theme']}/images/icons/icon_error.gif" alt="errors" />
 		</td>
-		<td class="inputerrorsright">
-			<span class="errmsg"><p>
-				The following input errors were detected:
+		<td class="inputerrorsright errmsg">
+			<p>The following input errors were detected:</p>
 				<ul>
 EOF;
 		foreach ($input_errors as $ierr) {
@@ -266,11 +271,10 @@ EOF;
 
 	print <<<EOF2
 				</ul>
-			</p></span>
 		</td></tr>
 	</table>
 	</div>
-	</p>&nbsp;<br />
+	&nbsp;<br />
 EOF2;
 
 }
@@ -539,19 +543,37 @@ function update_changedesc($update) {
 	$changecount++;
 }
 
-function clear_log_file($logfile = "/var/log/system.log") {
+function clear_log_file($logfile = "/var/log/system.log", $restart_syslogd = true) {
 	global $config, $g;
-	exec("/usr/bin/killall syslogd");
+	if ($restart_syslogd)
+		exec("/usr/bin/killall syslogd");
 	if(isset($config['system']['disablesyslogclog'])) {
 		unlink($logfile);
 		touch($logfile);
 	} else {
+		$log_size = isset($config['syslog']['logfilesize']) ? $config['syslog']['logfilesize'] : "511488";
 		if(isset($config['system']['usefifolog']))
-			exec("/usr/sbin/fifolog_create -s 511488 {$logfile}");
+			exec("/usr/sbin/fifolog_create -s {$log_size} {$logfile}");
 		else
-			exec("/usr/sbin/clog -i -s 511488 {$logfile}");
+			exec("/usr/sbin/clog -i -s {$log_size} {$logfile}");
 	}
+	if ($restart_syslogd)
+		system_syslogd_start();
+}
+
+function clear_all_log_files() {
+	global $g;
+	exec("/usr/bin/killall syslogd");
+
+	$log_files = array("system", "filter", "dhcpd", "vpn", "pptps", "poes", "l2tps", "openvpn", "portalauth", "ipsec", "ppp", "relayd", "wireless", "lighttpd", "ntpd", "gateways", "resolver", "routing");
+	foreach ($log_files as $lfile) {
+		clear_log_file("{$g['varlog_path']}/{$lfile}.log", false);
+	}
+
 	system_syslogd_start();
+	killbyname("dhcpd");
+	services_dhcpd_configure();
+	return;
 }
 
 function dump_clog($logfile, $tail, $withorig = true, $grepfor = "", $grepinvert = "") {
@@ -907,7 +929,6 @@ function echo_array($array,$return_me=false){
  *   null
  ******/
 function display_top_tabs(& $tab_array, $no_drop_down = false) {
-	global $HTTP_SERVER_VARS;
 	global $config;
 	global $g;
 	global $tab_array_indent;
@@ -1026,9 +1047,16 @@ function alias_info_popup($alias_id){
 		$alias_name=$config['aliases']['alias'][$alias_id];
 		$alias_objects_with_details = "<table width=\"100%\" border=\"0\" cellpadding=\"2\" cellspacing=\"0\" summary=\"alias info popup\">";
 		if ($alias_name['url']) {
-			exec("/sbin/pfctl -t {$alias_name['name']} -T show | wc -l", $total_entries);
-			$counter=preg_replace("/\D/","",$total_entries[0]);
-			exec("/sbin/pfctl -t {$alias_name['name']} -T show | head -10002", $alias_addresses);
+			// TODO: Change it when pf supports tables with ports
+			if ($alias_name['type'] == "urltable") {
+				exec("/sbin/pfctl -t {$alias_name['name']} -T show | wc -l", $total_entries);
+				$counter=preg_replace("/\D/","",$total_entries[0]);
+				exec("/sbin/pfctl -t {$alias_name['name']} -T show | head -10002", $alias_addresses);
+			} else {
+				$urlfn = alias_expand_urltable($alias_name['name']);
+				$alias_addresses = explode("\n", file_get_contents($urlfn));
+				$counter = count($alias_addresses);
+			}
 			$alias_objects_with_details .= "<tr><td colspan=\"3\" $close_title class=\"vncell\">{$alias_name['url']}</td></tr>";
 			$x=0;
 			foreach ($alias_addresses as $alias_ports_address ) {

@@ -40,7 +40,7 @@
 ##|*IDENT=page-system-advanced-firewall
 ##|*NAME=System: Advanced: Firewall and NAT page
 ##|*DESCR=Allow access to the 'System: Advanced: Firewall and NAT' page.
-##|*MATCH=system_advanced.php*
+##|*MATCH=system_advanced_firewall.php*
 ##|-PRIV
 
 require("guiconfig.inc");
@@ -57,7 +57,9 @@ $pconfig['optimization'] = $config['filter']['optimization'];
 $pconfig['adaptivestart'] = $config['system']['adaptivestart'];
 $pconfig['adaptiveend'] = $config['system']['adaptiveend'];
 $pconfig['maximumstates'] = $config['system']['maximumstates'];
-$pconfig['maximumtables'] = $config['system']['maximumtables'];
+$pconfig['aliasesresolveinterval'] = $config['system']['aliasesresolveinterval'];
+$old_aliasesresolveinterval = $config['system']['aliasesresolveinterval'];
+$pconfig['checkaliasesurlcert'] = isset($config['system']['checkaliasesurlcert']);
 $pconfig['maximumtableentries'] = $config['system']['maximumtableentries'];
 $pconfig['disablereplyto'] = isset($config['system']['disablereplyto']);
 $pconfig['disablenegate'] = isset($config['system']['disablenegate']);
@@ -73,7 +75,7 @@ $pconfig['disablevpnrules'] = isset($config['system']['disablevpnrules']);
 if ($_POST) {
 
 	unset($input_errors);
-	$pconfig = array_merge($pconfig, $_POST);
+	$pconfig = $_POST;
 
 	/* input validation */
 	if ((empty($_POST['adaptivestart']) && !empty($_POST['adaptiveend'])) || (!empty($_POST['adaptivestart']) && empty($_POST['adaptiveend'])))
@@ -87,8 +89,8 @@ if ($_POST) {
 	if ($_POST['maximumstates'] && !is_numericint($_POST['maximumstates'])) {
 		$input_errors[] = gettext("The Firewall Maximum States value must be an integer.");
 	}
-	if ($_POST['maximumtables'] && !is_numericint($_POST['maximumtables'])) {
-		$input_errors[] = gettext("The Firewall Maximum Tables value must be an integer.");
+	if ($_POST['aliasesresolveinterval'] && !is_numericint($_POST['aliasesresolveinterval'])) {
+		$input_errors[] = gettext("The Aliases Hostname Resolve Interval value must be an integer.");
 	}
 	if ($_POST['maximumtableentries'] && !is_numericint($_POST['maximumtableentries'])) {
 		$input_errors[] = gettext("The Firewall Maximum Table Entries value must be an integer.");
@@ -100,8 +102,8 @@ if ($_POST) {
 		$input_errors[] = gettext("The Reflection timeout must be an integer.");
 	}
 
-    ob_flush();
-    flush();
+	ob_flush();
+	flush();
 
 	if (!$input_errors) {
 
@@ -125,22 +127,27 @@ if ($_POST) {
 			unset($config['system']['scrubnodf']);
 
 		if($_POST['scrubrnid'] == "yes")
-                        $config['system']['scrubrnid'] = "enabled";
-                else
-                        unset($config['system']['scrubrnid']);
+			$config['system']['scrubrnid'] = "enabled";
+		else
+			unset($config['system']['scrubrnid']);
 
 		if (!empty($_POST['adaptiveend']))
 			$config['system']['adaptiveend'] = $_POST['adaptiveend'];
-                else
-                        unset($config['system']['adaptiveend']);
+		else
+			unset($config['system']['adaptiveend']);
 		if (!empty($_POST['adaptivestart']))
 			$config['system']['adaptivestart'] = $_POST['adaptivestart'];
-                else
-                        unset($config['system']['adaptivestart']);
+		else
+			unset($config['system']['adaptivestart']);
+
+		if ($_POST['checkaliasesurlcert'] == "yes")
+			$config['system']['checkaliasesurlcert'] = true;
+		else
+			unset($config['system']['checkaliasesurlcert']);
 
 		$config['system']['optimization'] = $_POST['optimization'];
 		$config['system']['maximumstates'] = $_POST['maximumstates'];
-		$config['system']['maximumtables'] = $_POST['maximumtables'];
+		$config['system']['aliasesresolveinterval'] = $_POST['aliasesresolveinterval'];
 		$config['system']['maximumtableentries'] = $_POST['maximumtableentries'];
 
 		if($_POST['natreflection'] == "proxy") {
@@ -160,14 +167,14 @@ if ($_POST) {
 			unset($config['system']['enablebinatreflection']);
 
 		if($_POST['disablereplyto'] == "yes")
-                        $config['system']['disablereplyto'] = $_POST['disablereplyto'];
-                else
-                        unset($config['system']['disablereplyto']);
+			$config['system']['disablereplyto'] = $_POST['disablereplyto'];
+		else
+			unset($config['system']['disablereplyto']);
 
 		if($_POST['disablenegate'] == "yes")
-                        $config['system']['disablenegate'] = $_POST['disablenegate'];
-                else
-                        unset($config['system']['disablenegate']);
+			$config['system']['disablenegate'] = $_POST['disablenegate'];
+		else
+			unset($config['system']['disablenegate']);
 
 		if($_POST['enablenatreflectionhelper'] == "yes")
 			$config['system']['enablenatreflectionhelper'] = "yes";
@@ -190,7 +197,7 @@ if ($_POST) {
 			$config['system']['tftpinterface'] = implode(",", $_POST['tftpinterface']);
 		else
 			unset($config['system']['tftpinterface']);
-		
+
 		if ($_POST['bogonsinterval'] != $config['system']['bogons']['interval']) {
 			switch ($_POST['bogonsinterval']) {
 				case 'daily':
@@ -206,15 +213,20 @@ if ($_POST) {
 			}
 			$config['system']['bogons']['interval'] = $_POST['bogonsinterval'];
 		}
-	
+
 		write_config();
+
+		// Kill filterdns when value changes, filter_configure() will restart it
+		if (($old_aliasesresolveinterval != $config['system']['aliasesresolveinterval']) &&
+		    isvalidpid("{$g['varrun_path']}/filterdns.pid"))
+			killbypid("{$g['varrun_path']}/filterdns.pid");
 
 		$retval = 0;
 		$retval = filter_configure();
 		if(stristr($retval, "error") <> true)
-		    $savemsg = get_std_save_message($retval);
+			$savemsg = get_std_save_message($retval);
 		else
-		    $savemsg = $retval;
+			$savemsg = $retval;
 	}
 }
 
@@ -236,7 +248,7 @@ descs[2]="<?=gettext("expires idle connections quicker. More efficient use of CP
 descs[3]="<?=gettext("tries to avoid dropping any legitimate idle connections at the expense of increased memory usage and CPU utilization.");?>";
 
 function update_description(itemnum) {
-        document.forms[0].info.value=descs[itemnum];
+	document.forms[0].info.value=descs[itemnum];
 
 }
 
@@ -349,7 +361,7 @@ function update_description(itemnum) {
 									<br/>
 									<input name="adaptivestart" type="text" id="adaptivestart" value="<?php echo $pconfig['adaptivestart']; ?>" />
 									<br/><?=gettext("When the number of state entries exceeds this value, adaptive scaling begins.  All timeout values are scaled linearly with factor (adaptive.end - number of states) / (adaptive.end - adaptive.start).");?>
-									
+
 									<br/>
 									<input name="adaptiveend" type="text" id="adaptiveend" value="<?php echo $pconfig['adaptiveend']; ?>" />
 									<br/><?=gettext("When reaching this number of state entries, all timeout values become zero, effectively purging all state entries immediately.  This value is used to define the scale factor, it should not actually be reached (set a lower state limit, see below).");?>
@@ -365,22 +377,6 @@ function update_description(itemnum) {
 									<strong><?=gettext("Maximum number of connections to hold in the firewall state table.");?></strong>
 									<br/>
 									<span class="vexpl"><?=gettext("Note:  Leave this blank for the default.  On your system the default size is:");?> <?= pfsense_default_state_size() ?></span>
-								</td>
-							</tr>
-							<tr>
-								<td width="22%" valign="top" class="vncell"><?=gettext("Firewall Maximum Tables");?></td>
-								<td width="78%" class="vtable">
-									<input name="maximumtables" type="text" id="maximumtables" value="<?php echo $pconfig['maximumtables']; ?>" />
-									<br/>
-									<strong><?=gettext("Maximum number of tables for systems such as aliases, sshlockout, snort, etc, combined.");?></strong>
-									<br/><?php echo gettext("This is the actual number of tables, not the number of entries inside the tables (see below)");?>
-									<br/>
-									<span class="vexpl">
-										<?=gettext("Note:  Leave this blank for the default.");?>
-										<?php if (empty($pconfig['maximumtables'])): ?>
-											<?= gettext("On your system the default size is:");?> <?= pfsense_default_tables_size(); ?>
-										<?php endif; ?>
-									</span>
 								</td>
 							</tr>
 							<tr>
@@ -405,7 +401,7 @@ function update_description(itemnum) {
 									<strong><?=gettext("Bypass firewall rules for traffic on the same interface");?></strong>
 									<br/>
 									<?=gettext("This option only applies if you have defined one or more static routes. If it is enabled, traffic that enters and " .
-					 				"leaves through the same interface will not be checked by the firewall. This may be desirable in some situations where " .
+									"leaves through the same interface will not be checked by the firewall. This may be desirable in some situations where " .
 									"multiple subnets are connected to the same interface.");?>
 									<br/>
 								</td>
@@ -416,7 +412,7 @@ function update_description(itemnum) {
 									<input name="disablevpnrules" type="checkbox" id="disablevpnrules" value="yes" <?php if (isset($config['system']['disablevpnrules'])) echo "checked=\"checked\""; ?> />
 									<strong><?=gettext("Disable all auto-added VPN rules.");?></strong>
 									<br />
-									<span class="vexpl"><?=gettext("Note: This disables automatically added rules for IPsec, PPTP.");?> 
+									<span class="vexpl"><?=gettext("Note: This disables automatically added rules for IPsec, PPTP.");?>
 									</span>
 								</td>
 							</tr>
@@ -432,7 +428,7 @@ function update_description(itemnum) {
 								</td>
 							</tr>
 							<tr>
-								<td width="22%" valign="top" class="vncell">Disable Negate rules</td> 
+								<td width="22%" valign="top" class="vncell">Disable Negate rules</td>
 								<td width="78%" class="vtable">
 									<input name="disablenegate" type="checkbox" id="disablenegate" value="yes" <?php if ($pconfig['disablenegate']) echo "checked=\"checked\""; ?> />
 									<strong><?=gettext("Disable Negate rule on policy routing rules");?></strong>
@@ -442,11 +438,31 @@ function update_description(itemnum) {
 								</td>
 							</tr>
 							<tr>
+								<td width="22%" valign="top" class="vncell"><?=gettext("Aliases Hostnames Resolve Interval");?></td>
+								<td width="78%" class="vtable">
+									<input name="aliasesresolveinterval" type="text" id="aliasesresolveinterval" value="<?php echo $pconfig['aliasesresolveinterval']; ?>" />
+									<br/>
+									<strong><?=gettext("Interval, in seconds, that will be used to resolve hostnames configured on aliases.");?></strong>
+									<br/>
+									<span class="vexpl"><?=gettext("Note:  Leave this blank for the default (300s).");?></span>
+								</td>
+							</tr>
+							<tr>
+							<td width="22%" valign="top" class="vncell"><?=gettext("Check certificate of aliases URLs");?></td>
+								<td width="78%" class="vtable">
+									<input name="checkaliasesurlcert" type="checkbox" id="checkaliasesurlcert" value="yes" <?php if ($pconfig['checkaliasesurlcert']) echo "checked=\"checked\""; ?> />
+									<strong><?=gettext("Verify HTTPS certificates when downloading alias URLs");?></strong>
+									<br />
+									<?=gettext("Make sure the certificate is valid for all HTTPS addresses on aliases. If it's not valid or is revoked, do not download it.");?>
+									<br />
+								</td>
+							</tr>
+							<tr>
 								<td colspan="2" class="list" height="12">&nbsp;</td>
 							</tr>
 							<tr>
 								<td colspan="2" valign="top" class="listtopic"><?=gettext("Bogon Networks");?></td>
-							</tr>		
+							</tr>
 							<tr>
 								<td width="22%" valign="top" class="vncell"><?=gettext("Update Frequency");?></td>
 								<td width="78%" class="vtable">
@@ -465,7 +481,7 @@ function update_description(itemnum) {
 							<?php if(count($config['interfaces']) > 1): ?>
 							<tr>
 								<td colspan="2" valign="top" class="listtopic"><?=gettext("Network Address Translation");?></td>
-							</tr>		
+							</tr>
 							<tr>
 								<td width="22%" valign="top" class="vncell"><?=gettext("NAT Reflection mode for port forwards");?></td>
 								<td width="78%" class="vtable">

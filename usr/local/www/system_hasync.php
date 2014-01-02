@@ -48,6 +48,7 @@ $a_hasync = &$config['hasync'];
 
 $checkbox_names = array('pfsyncenabled',
 			'synchronizeusers',
+			'synchronizeauthservers',
 			'synchronizecerts',
 			'synchronizerules',
 			'synchronizeschedules',
@@ -190,6 +191,14 @@ include("head.inc");
 		</td>
 	</tr>
 	<tr valign="top">
+		<td width="22%" class="vncell">Synchronize Auth Servers</td>
+		<td class="vtable">
+			<input id='synchronizeauthservers' type='checkbox' name='synchronizeauthservers' value='on' <?php if ($pconfig['synchronizeauthservers'] === "on") echo "checked='checked'"; ?> />
+			<br />
+			When this option is enabled, this system will automatically sync the authentication servers (e.g. LDAP, RADIUS) over to the other HA host when changes are made.
+		</td>
+	</tr>
+	<tr valign="top">
 		<td width="22%" class="vncell">Synchronize Certificates</td>
 		<td class="vtable">
 			<input id='synchronizecerts' type='checkbox' name='synchronizecerts' value='on' <?php if ($pconfig['synchronizecerts'] === "on") echo "checked='checked'"; ?> />
@@ -250,7 +259,7 @@ include("head.inc");
 		<td class="vtable">
 			<input id='synchronizedhcpd' type='checkbox' name='synchronizedhcpd' value='on' <?php if ($pconfig['synchronizedhcpd'] === "on") echo "checked='checked'"; ?> />
 			<br />
-			When this option is enabled, this system will automatically sync the DHCP Server settings over to the other HA host when changes are made.
+			When this option is enabled, this system will automatically sync the DHCP Server settings over to the other HA host when changes are made. This only applies to DHCP for IPv4.
 		</td>
 	</tr>
 	<tr valign="top">

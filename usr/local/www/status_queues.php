@@ -78,19 +78,33 @@ $fd = @fsockopen("unix://{$g['varrun_path']}/qstats");
 }
 if ($_REQUEST['getactivity']) {	
 	$statistics = array();
-	$bigger_packets = 0;
+	$bigger_stat = 0;
+	$stat_type = $_REQUEST['stats'];
 	/* build the queue stats. */
 	foreach($altqstats['queue'] as $q) {
 		statsQueues($q);
 	}
-	/* calculate the bigger amount of packets being moved through all queues. */
-	foreach($statistics as $q) {
-		if ($bigger_packets < $q->pps)
-			$bigger_packets = $q->pps;
+	/* calculate the bigger amount of packets or bandwidth being moved through all queues. */
+	if ($stat_type == "0")
+	{
+		foreach($statistics as $q) {
+			if ($bigger_stat < $q->pps)
+				$bigger_stat = $q->pps;
+		}
 	}
+	else
+	{
+		foreach($statistics as $q) {
+			if ($bigger_stat < $q->bandwidth)
+				$bigger_stat = $q->bandwidth;
+		}
+	}	
 	$finscript = "";
 	foreach($statistics as $q) {
-		$packet_s = round(150 * (1 - $q->pps / $bigger_packets), 0);
+		if ($stat_type == "0")
+			$packet_s = round(150 * (1 - $q->pps / $bigger_stat), 0);
+		else
+			$packet_s = round(150 * (1 - $q->bandwidth / $bigger_stat), 0);
 		if ($packet_s < 0) {$packet_s = 0;}
 		$finscript .= "jQuery('#queue{$q->queuename}widthb').width('{$packet_s}');";
 		$finscript .= "jQuery('#queue{$q->queuename}widtha').width('" . (150 - $packet_s) . "');";
@@ -121,9 +135,10 @@ if(!is_array($config['shaper']['queue']) || count($config['shaper']['queue']) < 
 <?php if (!$error): ?>
 <form action="status_queues.php" method="post">
 <script type="text/javascript">
+	/*<![CDATA[*/
 	function getqueueactivity() {
 		var url = "/status_queues.php";
-		var pars = 'getactivity=yes';
+		var pars = "getactivity=yes&stats=" + jQuery("#selStatistic").val();
 		jQuery.ajax(
 			url,
 			{
@@ -138,6 +153,7 @@ if(!is_array($config['shaper']['queue']) || count($config['shaper']['queue']) < 
 	jQuery(document).ready(function(){
 		setTimeout('getqueueactivity()', 150);
 	});
+	/*]]>*/
 </script>
 <?php endif; ?>
 <table width="100%" border="1" cellpadding="0" cellspacing="0">
@@ -146,7 +162,13 @@ if(!is_array($config['shaper']['queue']) || count($config['shaper']['queue']) < 
 <?php else: ?>
 	<tr>
 		<td class="listhdr"><?=gettext("Queue"); ?></td>
-		<td class="listhdr"><?=gettext("Statistics"); ?></td>
+		<td class="listhdr">
+			<?=gettext("Statistics"); ?>
+			<select id="selStatistic">
+				<option value="0">PPS</option>
+				<option value="1">Bandwidth</option>
+			</select>
+		</td>
 		<td class="listhdr" width="1%"><?=gettext("PPS"); ?></td>
 		<td class="listhdr" width="1%"><?=gettext("Bandwidth"); ?></td>
 		<td class="listhdr" width="1%"><?=gettext("Borrows"); ?></td>

@@ -337,7 +337,7 @@ function relayd_configure($kill_first=false) {
 
 						$conf .= "  forward to <{$vs_a[$i]['poolname']}> port {$dest_port} {$lbmode} {$check_a[$pools[$vs_a[$i]['poolname']]['monitor']]} \n";
 
-						if (isset($vs_a[$i]['sitedown']) &&  strlen($vs_a[$i]['sitedown']) > 0)
+						if (isset($vs_a[$i]['sitedown']) &&  strlen($vs_a[$i]['sitedown']) > 0 && ($vs_a[$i]['relay_protocol'] != 'dns'))
 							$conf .= "  forward to <{$vs_a[$i]['sitedown']}> port {$dest_port} {$lbmode} {$check_a[$pools[$vs_a[$i]['poolname']]['monitor']]} \n";
 						$conf .= "}\n";
 					} else  {
@@ -349,7 +349,7 @@ function relayd_configure($kill_first=false) {
 							$conf .= "  sticky-address\n";
 
 						/* sitedown MUST use the same port as the primary pool - sucks, but it's a relayd thing */
-						if (isset($vs_a[$i]['sitedown']) && strlen($vs_a[$i]['sitedown']) > 0)
+						if (isset($vs_a[$i]['sitedown']) && strlen($vs_a[$i]['sitedown']) > 0 && ($vs_a[$i]['relay_protocol'] != 'dns'))
 							$conf .= "  forward to <{$vs_a[$i]['sitedown']}> port {$dest_port} {$check_a[$pools[$vs_a[$i]['sitedown']]['monitor']]} \n";
 
 						$conf .= "}\n";
@@ -365,6 +365,8 @@ function relayd_configure($kill_first=false) {
 		if (! empty($vs_a)) {
 			if ($kill_first) {
 				mwexec('pkill relayd');
+				/* Remove all active relayd anchors now that relayd is no longer running. */
+				cleanup_lb_anchor("*");
 				mwexec("/usr/local/sbin/relayd -f {$g['varetc_path']}/relayd.conf");
 			} else {
 				// it's running and there is a config, just reload
@@ -379,10 +381,14 @@ function relayd_configure($kill_first=false) {
 			 *  returns "command failed"
 			 */
 			mwexec('pkill relayd');
+			/* Remove all active relayd anchors now that relayd is no longer running. */
+			cleanup_lb_anchor("*");
 		}
 	} else {
 		if (! empty($vs_a)) {
 			// not running and there is a config, start it
+			/* Remove all active relayd anchors so it can start fresh. */
+			cleanup_lb_anchor("*");
 			mwexec("/usr/local/sbin/relayd -f {$g['varetc_path']}/relayd.conf");
 		}
 	}
@@ -480,6 +486,75 @@ function get_lb_summary() {
 		}
 	}
 	return $relay_hosts;
+}
+
+/* Get a list of all relayd virtual server anchors */
+function get_lb_anchors() {
+	/* NOTE: These names come back prepended with "relayd/" e.g. "relayd/MyVSName" */
+	return explode("\n", trim(`/sbin/pfctl -sA -a relayd | /usr/bin/awk '{print $1;}'`));
+}
+
+/* Remove NAT rules from a relayd anchor that is no longer in use.
+	$anchorname can either be * to clear all anchors or a specific anchor name.*/
+function cleanup_lb_anchor($anchorname = "*") {
+	$lbanchors = get_lb_anchors();
+	foreach ($lbanchors as $lba) {
+		if (($anchorname == "*") || ($lba == "relayd/{$anchorname}")) {
+			/* Flush both the NAT and the Table for the anchor, so it will be completely removed by pf. */
+			mwexec("/sbin/pfctl -a " . escapeshellarg($lba) . " -F nat");
+			mwexec("/sbin/pfctl -a " . escapeshellarg($lba) . " -F Tables");
+		}
+	}
+}
+
+/* Mark an anchor for later cleanup. This will allow us to remove an old VS name */
+function cleanup_lb_mark_anchor($name) {
+	global $g;
+	/* Nothing to do! */
+	if (empty($name))
+		return;
+	$filename = "{$g['tmp_path']}/relayd_anchors_remove";
+	$cleanup_anchors = array();
+	/* Read in any currently unapplied name changes */
+	if (file_exists($filename))
+		$cleanup_anchors = explode("\n", file_get_contents($filename));
+	/* Only add the anchor to the list if it's not already there. */
+	if (!in_array($name, $cleanup_anchors))
+		$cleanup_anchors[] = $name;
+	file_put_contents($filename, implode("\n", $cleanup_anchors));
+}
+
+/* Cleanup relayd anchors that have been marked for cleanup. */
+function cleanup_lb_marked() {
+	global $g, $config;
+	$filename = "{$g['tmp_path']}/relayd_anchors_remove";
+	$cleanup_anchors = array();
+	/* Nothing to do! */
+	if (!file_exists($filename)) {
+		return;
+	} else {
+		$cleanup_anchors = explode("\n", file_get_contents($filename));
+		/* Nothing to do! */
+		if (empty($cleanup_anchors))
+			return;
+	}
+
+	/* Load current names so we can make sure we don't remove an anchor that is still in use. */
+	$vs_a = $config['load_balancer']['virtual_server'];
+	$active_vsnames = array();
+	if(is_array($vs_a)) {
+		foreach ($vs_a as $vs) {
+			$active_vsnames[] = $vs['name'];
+		}
+	}
+
+	foreach ($cleanup_anchors as $anchor) {
+		/* Only cleanup an anchor if it is not still active. */
+		if (!in_array($anchor, $active_vsnames)) {
+			cleanup_lb_anchor($anchor);
+		}
+	}
+	unlink_if_exists($filename);
 }
 
 ?>

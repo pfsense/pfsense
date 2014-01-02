@@ -67,7 +67,7 @@ $height=100;  // SVG internal height : do not modify
 $width=200;   // SVG internal width  : do not modify
 
 /********* Graph DATA **************/
-print('<?xml version="1.0" encoding="iso-8859-1"?>' . "\n");?>
+print('<?xml version="1.0" ?>' . "\n");?>
 <svg width="100%" height="100%" viewBox="0 0 <?=$width?> <?=$height?>" preserveAspectRatio="none" xml:space="preserve" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" onload="init(evt);">
   <g id="graph">
     <rect id="bg" x1="0" y1="0" width="100%" height="100%" fill="white"/>

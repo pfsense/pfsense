@@ -61,7 +61,7 @@ if ($_POST || $_REQUEST['host']) {
 	/* input validation */
 	$reqdfields = explode(" ", "host ttl");
 	$reqdfieldsn = array(gettext("Host"),gettext("ttl"));
-	do_input_validation($_REQUEST, $reqdfields, $reqdfieldsn, &$input_errors);
+	do_input_validation($_REQUEST, $reqdfields, $reqdfieldsn, $input_errors);
 
 	if (($_REQUEST['ttl'] < 1) || ($_REQUEST['ttl'] > MAX_TTL)) {
 		$input_errors[] = sprintf(gettext("Maximum number of hops must be between 1 and %s"), MAX_TTL);
@@ -114,7 +114,7 @@ if (!isset($do_traceroute)) {
 	<td width="78%" class="vtable">
 		<select name="sourceip" class="formselect">
 			<option value="">Any</option>
-		<?php   $sourceips = get_possible_traffic_source_addresses();
+		<?php   $sourceips = get_possible_traffic_source_addresses(true);
 			foreach ($sourceips as $sip):
 				$selected = "";
 				if (!link_interface_to_bridge($sip['value']) && ($sip['value'] == $sourceip))
@@ -187,7 +187,7 @@ if ($do_traceroute) {
 	if ($ifaddr && (is_ipaddr($host) || is_hostname($host)))
 		$srcip = "-s " . escapeshellarg($ifaddr);
 
-	$cmd = "{$command} {$n} {$srcip} -w 2 -m " . escapeshellarg($ttl) . " " . escapeshellarg($host);
+	$cmd = "{$command} {$n} {$srcip} -w 2 {$useicmp} -m " . escapeshellarg($ttl) . " " . escapeshellarg($host);
 
 	//echo "Traceroute command: {$cmd}\n";
 	system($cmd);

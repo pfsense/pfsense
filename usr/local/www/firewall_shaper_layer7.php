@@ -137,7 +137,7 @@ else if ($_POST) {
 			$_POST['l7rules'][$i]['structure'] = $_POST['structure'][$i];
 			$_POST['l7rules'][$i]['behaviour'] = $_POST['behaviour'][$i];
 		}
-		$l7r->validate_input($_POST,&$input_errors);
+		$l7r->validate_input($_POST,$input_errors);
 		$l7r->ReadConfig($_POST['container'], $_POST);
 		//Before writing the results, we need to test for repeated protocols
 		$non_dupes = array();

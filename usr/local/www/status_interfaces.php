@@ -81,7 +81,7 @@ include("head.inc");
 <?php endif; ?>
 	<tr>
 		<td colspan="2" class="listtopic">
-			<?=htmlspecialchars($ifname);?> <?=gettext("interface"); ?> (<?=htmlspecialchars($ifinfo['hwif']);?>)
+			<?=htmlspecialchars($ifname);?> <?=gettext("interface"); ?> (<?=htmlspecialchars($ifdescr);?>, <?=htmlspecialchars($ifinfo['hwif']);?>)
 		</td>
 	</tr>
 	<tr>

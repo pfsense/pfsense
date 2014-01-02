@@ -37,7 +37,7 @@
 require_once("guiconfig.inc");
 
 function getHeadJS() {
-  global $_SERVER, $HTTP_SERVER_VARS, $g, $use_loader_tab_gif;
+  global $g, $use_loader_tab_gif;
 
   if(!$use_loader_tab_gif)
     $loader_gif = "/themes/{$g['theme']}/images/misc/loader.gif";

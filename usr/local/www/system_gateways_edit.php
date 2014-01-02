@@ -42,7 +42,7 @@
 require("guiconfig.inc");
 require("pkg-utils.inc");
 
-$a_gateways = return_gateways_array(true);
+$a_gateways = return_gateways_array(true, false, true);
 $a_gateways_arr = array();
 foreach($a_gateways as $gw) {
 	$a_gateways_arr[] = $gw;
@@ -75,21 +75,25 @@ if (isset($id) && $a_gateways[$id]) {
 		$pconfig['dynamic'] = true;
 	$pconfig['gateway'] = $a_gateways[$id]['gateway'];
 	$pconfig['defaultgw'] = isset($a_gateways[$id]['defaultgw']);
-	$pconfig['latencylow'] = $a_gateway_item[$id]['latencylow'];
-	$pconfig['latencyhigh'] = $a_gateway_item[$id]['latencyhigh'];
-	$pconfig['losslow'] = $a_gateway_item[$id]['losslow'];
-	$pconfig['losshigh'] = $a_gateway_item[$id]['losshigh'];
-	$pconfig['down'] = $a_gateway_item[$id]['down'];
+	$pconfig['latencylow'] = $a_gateways[$id]['latencylow'];
+	$pconfig['latencyhigh'] = $a_gateways[$id]['latencyhigh'];
+	$pconfig['losslow'] = $a_gateways[$id]['losslow'];
+	$pconfig['losshigh'] = $a_gateways[$id]['losshigh'];
+	$pconfig['down'] = $a_gateways[$id]['down'];
 	$pconfig['monitor'] = $a_gateways[$id]['monitor'];
 	$pconfig['monitor_disable'] = isset($a_gateways[$id]['monitor_disable']);
 	$pconfig['descr'] = $a_gateways[$id]['descr'];
 	$pconfig['attribute'] = $a_gateways[$id]['attribute'];
+	$pconfig['disabled'] = isset($a_gateways[$id]['disabled']);
 }
 
 if (isset($_GET['dup'])) {
 	unset($id);
 	unset($pconfig['attribute']);
 }
+
+if (isset($id) && $a_gateways[$id])
+	$realid = $a_gateways[$id]['attribute'];
 
 if ($_POST) {
 
@@ -99,7 +103,7 @@ if ($_POST) {
 	$reqdfields = explode(" ", "name interface");
 	$reqdfieldsn = array(gettext("Name"), gettext("Interface"));
 
-	do_input_validation($_POST, $reqdfields, $reqdfieldsn, &$input_errors);
+	do_input_validation($_POST, $reqdfields, $reqdfieldsn, $input_errors);
 
 	if (! isset($_POST['name'])) {
 		$input_errors[] = "A valid gateway name must be specified.";
@@ -117,24 +121,54 @@ if ($_POST) {
 			$parent_ip = get_interface_ip($_POST['interface']);
 			$parent_sn = get_interface_subnet($_POST['interface']);
 			if(empty($parent_ip) || empty($parent_sn)) {
-				$input_errors[] = gettext("You can not use a IPv4 Gateway Address on a IPv6 only interface.");
+				$input_errors[] = gettext("Cannot add IPv4 Gateway Address because no IPv4 address could be found on the interface.");
 			} else {
-				$subnet = gen_subnet($parent_ip, $parent_sn) . "/" . $parent_sn;
-				if(!ip_in_subnet($_POST['gateway'], $subnet))
-					$input_errors[] = sprintf(gettext("The gateway address %1\$s does not lie within the chosen interface's subnet '%2\$s'."), $_POST['gateway'],$subnet);
+				$subnets = array(gen_subnet($parent_ip, $parent_sn) . "/" . $parent_sn);
+				$vips = link_interface_to_vips($_POST['interface']);
+				if (is_array($vips))
+					foreach($vips as $vip) {
+						if (!is_ipaddrv4($vip['subnet']))
+							continue;
+						$subnets[] = gen_subnet($vip['subnet'], $vip['subnet_bits']) . "/" . $vip['subnet_bits'];
+					}
+
+				$found = false;
+				foreach($subnets as $subnet)
+					if(ip_in_subnet($_POST['gateway'], $subnet)) {
+						$found = true;
+						break;
+					}
+
+				if ($found === false)
+					$input_errors[] = sprintf(gettext("The gateway address %1\$s does not lie within one of the chosen interface's subnets."), $_POST['gateway']);
 			}
 		}
 		else if(is_ipaddrv6($_POST['gateway'])) {
 			/* do not do a subnet match on a link local address, it's valid */
-			if(! preg_match("/fe80::/", $_POST['gateway'])) {
+			if(!is_linklocal($_POST['gateway'])) {
 				$parent_ip = get_interface_ipv6($_POST['interface']);
 				$parent_sn = get_interface_subnetv6($_POST['interface']);
 				if(empty($parent_ip) || empty($parent_sn)) {
-					$input_errors[] = gettext("You can not use a IPv6 Gateway Address on a IPv4 only interface.");
+					$input_errors[] = gettext("Cannot add IPv6 Gateway Address because no IPv6 address could be found on the interface.");
 				} else {
-					$subnet = gen_subnetv6($parent_ip, $parent_sn) . "/" . $parent_sn;
-					if(!ip_in_subnet($_POST['gateway'], $subnet))
-						$input_errors[] = sprintf(gettext("The gateway address %1\$s does not lie within the chosen interface's subnet '%2\$s'."), $_POST['gateway'],$subnet);
+					$subnets = array(gen_subnetv6($parent_ip, $parent_sn) . "/" . $parent_sn);
+					$vips = link_interface_to_vips($_POST['interface']);
+					if (is_array($vips))
+						foreach($vips as $vip) {
+							if (!is_ipaddrv6($vip['subnet']))
+								continue;
+							$subnets[] = gen_subnetv6($vip['subnet'], $vip['subnet_bits']) . "/" . $vip['subnet_bits'];
+						}
+
+					$found = false;
+					foreach($subnets as $subnet)
+						if(ip_in_subnet($_POST['gateway'], $subnet)) {
+							$found = true;
+							break;
+						}
+
+					if ($found === false)
+						$input_errors[] = sprintf(gettext("The gateway address %1\$s does not lie within one of the chosen interface's subnets."), $_POST['gateway']);
 				}
 			}
 		}
@@ -294,10 +328,10 @@ if ($_POST) {
 
 	if($_POST['interval']) {
 		if (! is_numeric($_POST['interval'])) {
-			$input_errors[] = gettext("The frequency probe interval needs to be a numeric value.");
+			$input_errors[] = gettext("The probe interval needs to be a numeric value.");
 		} else {
 			if ($_POST['interval'] < 1) {
-				$input_errors[] = gettext("The frequency probe interval needs to be positive.");
+				$input_errors[] = gettext("The probe interval needs to be positive.");
 			}
 		}
 	}
@@ -315,21 +349,21 @@ if ($_POST) {
 	if(($_POST['interval']) && ($_POST['down'])){
 		if ((is_numeric($_POST['interval'])) && (is_numeric($_POST['down']))) {
 			if($_POST['interval'] > $_POST['down']) {
-				$input_errors[] = gettext("The Frequency Probe interval needs to be less than the down time setting.");
+				$input_errors[] = gettext("The probe interval needs to be less than the down time setting.");
 			}
 		}
 	} else {
 		if($_POST['interval']){
 			if (is_numeric($_POST['interval'])) {
 				if($_POST['interval'] > $apinger_default['down']) {
-					$input_errors[] = gettext(sprintf("The Frequency Probe interval needs to be less than the default down time setting (%d)", $apinger_default['down']));
+					$input_errors[] = gettext(sprintf("The probe interval needs to be less than the default down time setting (%d)", $apinger_default['down']));
 				}
 			}
 		}
 		if($_POST['down']){
 			if (is_numeric($_POST['down'])) {
 				if($_POST['down'] < $apinger_default['interval']) {
-					$input_errors[] = gettext(sprintf("The down time setting needs to be higher than the default Frequency Probe interval (%d)", $apinger_default['interval']));
+					$input_errors[] = gettext(sprintf("The down time setting needs to be higher than the default probe interval (%d)", $apinger_default['interval']));
 				}
 			}
 		}
@@ -354,19 +388,23 @@ if ($_POST) {
 		$gateway['descr'] = $_POST['descr'];
 		if ($_POST['monitor_disable'] == "yes")
 			$gateway['monitor_disable'] = true;
-		else if (is_ipaddr($_POST['monitor']))
+		if (is_ipaddr($_POST['monitor']))
 			$gateway['monitor'] = $_POST['monitor'];
+
+		/* NOTE: If monitor ip is changed need to cleanup the old static route */
+		if ($_POST['monitor'] != "dynamic" && !empty($a_gateway_item[$realid]) && is_ipaddr($a_gateway_item[$realid]['monitor']) &&
+		    $_POST['monitor'] != $a_gateway_item[$realid]['monitor'] && $gateway['gateway'] != $a_gateway_item[$realid]['monitor']) {
+			if (is_ipaddrv4($a_gateway_item[$realid]['monitor']))
+				mwexec("/sbin/route delete " . escapeshellarg($a_gateway_item[$realid]['monitor']));
+			else
+				mwexec("/sbin/route delete -inet6 " . escapeshellarg($a_gateway_item[$realid]['monitor']));
+		}
 
 		if ($_POST['defaultgw'] == "yes" || $_POST['defaultgw'] == "on") {
 			$i = 0;
 			/* remove the default gateway bits for all gateways with the same address family */
 			foreach($a_gateway_item as $gw) {
-				if(is_ipaddrv4($gateway['gateway']) && is_ipaddrv4($gw['gateway'])) {
-					unset($config['gateways']['gateway_item'][$i]['defaultgw']);
-					if ($gw['interface'] != $_POST['interface'] && $gw['defaultgw'])
-						$reloadif = $gw['interface'];
-				}
-				if(is_ipaddrv6($gateway['gateway']) && is_ipaddrv6($gw['gateway'])) {
+				if ($gateway['ipprotocol'] == $gw['ipprotocol']) {
 					unset($config['gateways']['gateway_item'][$i]['defaultgw']);
 					if ($gw['interface'] != $_POST['interface'] && $gw['defaultgw'])
 						$reloadif = $gw['interface'];
@@ -387,9 +425,14 @@ if ($_POST) {
 		if ($_POST['down'])
 			$gateway['down'] = $_POST['down'];
 
+		if(isset($_POST['disabled']))
+			$gateway['disabled'] = true;
+		else
+			unset($gateway['disabled']);
+
 		/* when saving the manual gateway we use the attribute which has the corresponding id */
-		if (isset($id) && $a_gateway_item[$id])
-			$a_gateway_item[$id] = $gateway;
+		if (isset($realid) && $a_gateway_item[$realid])
+			$a_gateway_item[$realid] = $gateway;
 		else
 			$a_gateway_item[] = $gateway;
 
@@ -449,13 +492,21 @@ function monitor_change() {
 
 	/* If this is a system gateway we need this var */
 	if(($pconfig['attribute'] == "system") || is_numeric($pconfig['attribute'])) {
-		echo "<input type='hidden' name='attribute' id='attribute' value='" . htmlspecialchars($pconfig['attribute']) . "' />\n";
+		echo "<input type='hidden' name='attribute' id='attribute' value=\"" . htmlspecialchars($pconfig['attribute']) . "\" />\n";
 	}
-	echo "<input type='hidden' name='friendlyiface' id='friendlyiface' value='" . htmlspecialchars($pconfig['friendlyiface']) . "' />\n";
+	echo "<input type='hidden' name='friendlyiface' id='friendlyiface' value=\"" . htmlspecialchars($pconfig['friendlyiface']) . "\" />\n";
 	?>
 		<table width="100%" border="0" cellpadding="6" cellspacing="0" summary="system gateways edit">
 			<tr>
 				<td colspan="2" valign="top" class="listtopic"><?=gettext("Edit gateway"); ?></td>
+			</tr>
+			<tr>
+				<td width="22%" valign="top" class="vncellreq"><?=gettext("Disabled");?></td>
+				<td width="78%" class="vtable">
+					<input name="disabled" type="checkbox" id="disabled" value="yes" <?php if ($pconfig['disabled']) echo "checked=\"checked\""; ?> />
+					<strong><?=gettext("Disable this gateway");?></strong><br />
+					<span class="vexpl"><?=gettext("Set this option to disable this gateway without removing it from the list.");?></span>
+				</td>
 			</tr>
 			<tr>
 				<td width="22%" valign="top" class="vncellreq"><?=gettext("Interface"); ?></td>
@@ -594,13 +645,13 @@ function monitor_change() {
 								</td>
 							</tr>
 							<tr>
-								<td width="22%" valign="top" class="vncellreq"><?=gettext("Frequency Probe");?></td>
+								<td width="22%" valign="top" class="vncellreq"><?=gettext("Probe Interval");?></td>
 								<td width="78%" class="vtable">
 									<input name="interval" type="text" class="formfld unknown" id="interval" size="2"
 										value="<?=htmlspecialchars($pconfig['interval']);?>" />
 									<br/><span class="vexpl">
 										<?=gettext(sprintf("How often that an ICMP probe will be sent in seconds. Default is %d.", $apinger_default['interval']));?><br/><br/>
-										<?=gettext("NOTE: The quality graph is averaged over seconds, not intervals, so as the frequency probe is increased the accuracy of the quality graph is decreased.");?>
+										<?=gettext("NOTE: The quality graph is averaged over seconds, not intervals, so as the probe interval is increased the accuracy of the quality graph is decreased.");?>
 									</span>
 								</td>
 							</tr>
@@ -614,7 +665,8 @@ function monitor_change() {
 							</tr>
 							<tr>
 								<td colspan="2">
-									<?= gettext("NOTE: The Frequency Probe interval must be less than the Down time, otherwise the gateway will seem to go down then come up again at the next probe."); ?><br/>
+									<?= gettext("The probe interval must be less than the down time, otherwise the gateway will seem to go down then come up again at the next probe."); ?><br/><br/>
+									<?= gettext("The down time defines the length of time before the gateway is marked as down, but the accuracy is controlled by the probe interval. For example, if your down time is 40 seconds but on a 30 second probe interval, only one probe would have to fail before the gateway is marked down at the 40 second mark. By default, the gateway is considered down after 10 seconds, and the probe interval is 1 second, so 10 probes would have to fail before the gateway is marked down."); ?><br/>
 								</td>
 							</tr>
 						</table>

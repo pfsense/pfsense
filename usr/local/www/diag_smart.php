@@ -277,7 +277,7 @@ switch($action) {
 	default:
 	{
 		// Get all AD* and DA* (IDE and SCSI) devices currently installed and stores them in the $devs array
-		exec("ls /dev | grep '^[ad][da][0-9]\{1,2\}$'", $devs);
+		exec("ls /dev | grep '^\(ad\|da\|ada\)[0-9]\{1,2\}$'", $devs);
 		?>
 		<table width="100%" border="0" cellpadding="0" cellspacing="0">
 			<tr>

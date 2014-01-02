@@ -38,12 +38,20 @@
 ##|*MATCH=services_captiveportal.php*
 ##|-PRIV
 
-require_once("guiconfig.inc");
 require_once("functions.inc");
 require_once("filter.inc");
 require_once("shaper.inc");
 require_once("captiveportal.inc");
 
+if (substr($_GET['act'], 0, 3) == "get")
+	$nocsrf = true;
+
+require_once("guiconfig.inc");
+
+global $cpzone;
+global $cpzoneid;
+
+$cpzoneid = 1; /* Just a default */
 $cpzone = $_GET['zone'];
 if (isset($_POST['zone']))
 	$cpzone = $_POST['zone'];
@@ -64,13 +72,58 @@ if ($_GET['act'] == "viewhtml") {
 	if ($a_cp[$cpzone] && $a_cp[$cpzone]['page']['htmltext'])
 		echo base64_decode($a_cp[$cpzone]['page']['htmltext']);
 	exit;
+} else if ($_GET['act'] == "gethtmlhtml" && $a_cp[$cpzone] && $a_cp[$cpzone]['page']['htmltext']) {
+	$file_data = base64_decode($a_cp[$cpzone]['page']['htmltext']);
+	$file_size = strlen($file_data);
+
+	header("Content-Type: text/html");
+	header("Content-Disposition: attachment; filename=portal.html");
+	header("Content-Length: $file_size");
+	echo $file_data;
+
+	exit;
+} else if ($_GET['act'] == "delhtmlhtml" && $a_cp[$cpzone] && $a_cp[$cpzone]['page']['htmltext']) {
+	unset($a_cp[$cpzone]['page']['htmltext']);
+	write_config(sprintf(gettext("Captive Portal: zone %s: Restore default portal page"), $cpzone));
+	header("Location: services_captiveportal.php?zone={$cpzone}");
+	exit;
 } else if ($_GET['act'] == "viewerrhtml") {
 	if ($a_cp[$cpzone] && $a_cp[$cpzone]['page']['errtext'])
 		echo base64_decode($a_cp[$cpzone]['page']['errtext']);
 	exit;
+} else if ($_GET['act'] == "geterrhtml" && $a_cp[$cpzone] && $a_cp[$cpzone]['page']['errtext']) {
+	$file_data = base64_decode($a_cp[$cpzone]['page']['errtext']);
+	$file_size = strlen($file_data);
+
+	header("Content-Type: text/html");
+	header("Content-Disposition: attachment; filename=err.html");
+	header("Content-Length: $file_size");
+	echo $file_data;
+
+	exit;
+} else if ($_GET['act'] == "delerrhtml" && $a_cp[$cpzone] && $a_cp[$cpzone]['page']['errtext']) {
+	unset($a_cp[$cpzone]['page']['errtext']);
+	write_config(sprintf(gettext("Captive Portal: zone %s: Restore default error page"), $cpzone));
+	header("Location: services_captiveportal.php?zone={$cpzone}");
+	exit;
 } else if ($_GET['act'] == "viewlogouthtml") {
 	if ($a_cp[$cpzone] && $a_cp[$cpzone]['page']['logouttext'])
 		echo base64_decode($a_cp[$cpzone]['page']['logouttext']);
+	exit;
+} else if ($_GET['act'] == "getlogouthtml" && $a_cp[$cpzone] && $a_cp[$cpzone]['page']['logouttext']) {
+	$file_data = base64_decode($a_cp[$cpzone]['page']['logouttext']);
+	$file_size = strlen($file_data);
+
+	header("Content-Type: text/html");
+	header("Content-Disposition: attachment; filename=logout.html");
+	header("Content-Length: $file_size");
+	echo $file_data;
+
+	exit;
+} else if ($_GET['act'] == "dellogouthtml" && $a_cp[$cpzone] && $a_cp[$cpzone]['page']['logouttext']) {
+	unset($a_cp[$cpzone]['page']['logouttext']);
+	write_config(sprintf(gettext("Captive Portal: zone %s: Restore default logout page"), $cpzone));
+	header("Location: services_captiveportal.php?zone={$cpzone}");
 	exit;
 }
 
@@ -85,7 +138,7 @@ if (!is_array($config['cert']))
 $a_cert =& $config['cert'];
 
 if ($a_cp[$cpzone]) {
-	$pconfig['zoneid'] = $a_cp[$cpzone]['zoneid'];
+	$cpzoneid = $pconfig['zoneid'] = $a_cp[$cpzone]['zoneid'];
 	$pconfig['cinterface'] = $a_cp[$cpzone]['interface'];
 	$pconfig['maxproc'] = $a_cp[$cpzone]['maxproc'];
 	$pconfig['maxprocperip'] = $a_cp[$cpzone]['maxprocperip'];
@@ -105,6 +158,7 @@ if ($a_cp[$cpzone]) {
 	$pconfig['httpslogin_enable'] = isset($a_cp[$cpzone]['httpslogin']);
 	$pconfig['httpsname'] = $a_cp[$cpzone]['httpsname'];
 	$pconfig['preauthurl'] = strtolower($a_cp[$cpzone]['preauthurl']);
+	$pconfig['blockedmacsurl'] = strtolower($a_cp[$cpzone]['blockedmacsurl']);
 	$pconfig['certref'] = $a_cp[$cpzone]['certref'];
 	$pconfig['logoutwin_enable'] = isset($a_cp[$cpzone]['logoutwin_enable']);
 	$pconfig['peruserbw'] = isset($a_cp[$cpzone]['peruserbw']);
@@ -154,7 +208,7 @@ if ($_POST) {
 		$reqdfields = explode(" ", "zone cinterface");
 		$reqdfieldsn = array(gettext("Zone name"), gettext("Interface"));
 
-		do_input_validation($_POST, $reqdfields, $reqdfieldsn, &$input_errors);
+		do_input_validation($_POST, $reqdfields, $reqdfieldsn, $input_errors);
 
 		/* make sure no interfaces are bridged or used on other zones */
 		if (is_array($_POST['cinterface'])) {
@@ -247,10 +301,12 @@ if ($_POST) {
 		$newcp =& $a_cp[$cpzone];
 		//$newcp['zoneid'] = $a_cp[$cpzone]['zoneid'];
 		if (empty($newcp['zoneid'])) {
-			$newcp['zoneid'] = 8000;
-			foreach ($a_cp as $keycpzone => $cp)
+			$newcp['zoneid'] = 2;
+			foreach ($a_cp as $keycpzone => $cp) {
 				if ($cp['zoneid'] == $newcp['zoneid'] && $keycpzone != $cpzone)
 					$newcp['zoneid'] += 2; /* Resreve space for SSL config if needed */
+			}
+			$cpzoneid = $newcp['zoneid'];
 		}
 		$oldifaces = explode(",", $newcp['interface']);
 		if (is_array($_POST['cinterface']))
@@ -279,6 +335,7 @@ if ($_POST) {
 			unset($newcp['httpslogin']);
 		$newcp['httpsname'] = $_POST['httpsname'];
 		$newcp['preauthurl'] = $_POST['preauthurl'];
+		$newcp['blockedmacsurl'] = $_POST['blockedmacsurl'];
 		$newcp['peruserbw'] = $_POST['peruserbw'] ? true : false;
 		$newcp['bwdefaultdn'] = $_POST['bwdefaultdn'];
 		$newcp['bwdefaultup'] = $_POST['bwdefaultup'];
@@ -342,7 +399,7 @@ if ($_POST) {
 		if (!empty($toremove)) {
 			foreach ($toremove as $removeif) {
 				$removeif = get_real_interface($removeif);
-				mwexec("/usr/local/sbin/ipfw_context -d {$cpzone} -x {$removeif}");
+				mwexec("/usr/local/sbin/ipfw zone {$cpzone} mdel {$removeif}");
 			}
 		}
 		captiveportal_configure_zone($newcp);
@@ -375,6 +432,7 @@ function enable_change(enable_change) {
 	document.iform.freelogins_updatetimeouts.disabled = endis;
 	document.iform.timeout.disabled = endis;
 	document.iform.preauthurl.disabled = endis;
+	document.iform.blockedmacsurl.disabled = endis;
 	document.iform.redirurl.disabled = endis;
 	document.iform.localauth_priv.disabled = localauth_endis;
 	document.iform.radiusip.disabled = radius_endis;
@@ -439,7 +497,7 @@ function enable_change(enable_change) {
 <?php
 	$tab_array = array();
 	$tab_array[] = array(gettext("Captive portal(s)"), true, "services_captiveportal.php?zone={$cpzone}");
-	$tab_array[] = array(gettext("Pass-through MAC"), false, "services_captiveportal_mac.php?zone={$cpzone}");
+	$tab_array[] = array(gettext("MAC"), false, "services_captiveportal_mac.php?zone={$cpzone}");
 	$tab_array[] = array(gettext("Allowed IP addresses"), false, "services_captiveportal_ip.php?zone={$cpzone}");
 	$tab_array[] = array(gettext("Allowed Hostnames"), false, "services_captiveportal_hostname.php?zone={$cpzone}");
 	$tab_array[] = array(gettext("Vouchers"), false, "services_captiveportal_vouchers.php?zone={$cpzone}");
@@ -540,6 +598,13 @@ function enable_change(enable_change) {
 "to access after they've authenticated."); ?></td>
 	</tr>
 	<tr>
+		<td valign="top" class="vncell"><?=gettext("Blocked MAC address redirect URL"); ?> </td>
+		<td class="vtable">
+			<input name="blockedmacsurl" type="text" class="formfld url" id="blockedmacsurl" size="60" value="<?=htmlspecialchars($pconfig['blockedmacsurl']);?>"><br>
+			<?php printf(gettext("If you provide a URL here, MAC addresses set to be blocked will be redirect to that URL when attempt to access anything."));?>
+		</td>
+	</tr>
+	<tr>
       <td valign="top" class="vncell"><?=gettext("Concurrent user logins"); ?></td>
       <td class="vtable">
 	<input name="noconcurrentlogins" type="checkbox" class="formfld" id="noconcurrentlogins" value="yes" <?php if ($pconfig['noconcurrentlogins']) echo "checked"; ?>>
@@ -561,13 +626,13 @@ function enable_change(enable_change) {
         <input name="passthrumacadd" type="checkbox" class="formfld" id="passthrumacadd" value="yes" <?php if ($pconfig['passthrumacadd']) echo "checked"; ?>>
         <strong><?=gettext("Enable Pass-through MAC automatic additions"); ?></strong><br>
     <?=gettext("If this option is set, a MAC passthrough entry is automatically added after the user has successfully authenticated. Users of that MAC address will never have to authenticate again."); ?>
-    <?=gettext("To remove the passthrough MAC entry you either have to log in and remove it manually from the"); ?> <a href="services_captiveportal_mac.php"><?=gettext("Pass-through MAC tab"); ?></a> <?=gettext("or send a POST from another system to remove it."); ?>
+    <?=gettext("To remove the passthrough MAC entry you either have to log in and remove it manually from the"); ?> <a href="services_captiveportal_mac.php"><?=gettext("MAC tab"); ?></a> <?=gettext("or send a POST from another system to remove it."); ?>
     <?=gettext("If this is enabled, RADIUS MAC authentication cannot be used. Also, the logout window will not be shown."); ?>
 	<br/><br/>
         <input name="passthrumacaddusername" type="checkbox" class="formfld" id="passthrumacaddusername" value="yes" <?php if ($pconfig['passthrumacaddusername']) echo "checked"; ?>>
         <strong><?=gettext("Enable Pass-through MAC automatic addition with username"); ?></strong><br>
     <?=gettext("If this option is set, with the automatically MAC passthrough entry created the username, used during authentication, will be saved."); ?>
-    <?=gettext("To remove the passthrough MAC entry you either have to log in and remove it manually from the"); ?> <a href="services_captiveportal_mac.php"><?=gettext("Pass-through MAC tab"); ?></a> <?=gettext("or send a POST from another system to remove it."); ?>
+    <?=gettext("To remove the passthrough MAC entry you either have to log in and remove it manually from the"); ?> <a href="services_captiveportal_mac.php"><?=gettext("MAC tab"); ?></a> <?=gettext("or send a POST from another system to remove it."); ?>
 	</td>
 	</tr>
 	<tr>
@@ -922,6 +987,12 @@ function enable_change(enable_change) {
 		?>
 		<?php if ($pconfig['page']['htmltext']): ?>
 		<a href="<?=$href?>" target="_new"><?=gettext("View current page"); ?></a>
+		<br />
+		<a href="?zone=<?=$cpzone?>&amp;act=gethtmlhtml" target="_blank"><?=gettext("Download current page"); ?></a>
+		<br />
+		<a href="?zone=<?=$cpzone?>&amp;act=delhtmlhtml" onclick="return confirm('Do you really want to restore default page?')" target="_blank">
+			<?=gettext("Restore default portal page"); ?>
+		</a>
 		  <br>
 		  <br>
 		<?php endif; ?>
@@ -956,6 +1027,12 @@ function enable_change(enable_change) {
 		<input name="errfile" type="file" class="formfld file" id="errfile"><br>
 		<?php if ($pconfig['page']['errtext']): ?>
 		<a href="?zone=<?=$cpzone?>&amp;act=viewerrhtml" target="_blank"><?=gettext("View current page"); ?></a>
+		<br />
+		<a href="?zone=<?=$cpzone?>&amp;act=geterrhtml" target="_blank"><?=gettext("Download current page"); ?></a>
+		<br />
+		<a href="?zone=<?=$cpzone?>&amp;act=delerrhtml" onclick="return confirm('Do you really want to restore default page?')" target="_blank">
+			<?=gettext("Restore default error page"); ?>
+		</a>
 		  <br>
 		  <br>
 		<?php endif; ?>
@@ -970,6 +1047,12 @@ function enable_change(enable_change) {
 		<input name="logoutfile" type="file" class="formfld file" id="logoutfile"><br>
 		<?php if ($pconfig['page']['logouttext']): ?>
 		<a href="?zone=<?=$cpzone?>&amp;act=viewlogouthtml" target="_blank"><?=gettext("View current page"); ?></a>
+		<br />
+		<a href="?zone=<?=$cpzone?>&amp;act=getlogouthtml" target="_blank"><?=gettext("Download current page"); ?></a>
+		<br />
+		<a href="?zone=<?=$cpzone?>&amp;act=dellogouthtml" onclick="return confirm('Do you really want to restore default page?')" target="_blank">
+			<?=gettext("Restore default logout page"); ?>
+		</a>
 		  <br>
 		  <br>
 		<?php endif; ?>

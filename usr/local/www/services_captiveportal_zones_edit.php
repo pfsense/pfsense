@@ -38,7 +38,7 @@
 
 require("guiconfig.inc");
 require("functions.inc");
-require("filter.inc");
+require_once("filter.inc");
 require("shaper.inc");
 require("captiveportal.inc");
 
@@ -58,7 +58,7 @@ if ($_POST) {
 	$reqdfields = explode(" ", "zone");
 	$reqdfieldsn = array(gettext("Zone name"));
 
-	do_input_validation($_POST, $reqdfields, $reqdfieldsn, &$input_errors);
+	do_input_validation($_POST, $reqdfields, $reqdfieldsn, $input_errors);
 
 	if (preg_match('/[^A-Za-z0-9_]/', $_POST['zone'])) {
 		$input_errors[] = gettext("The zone name can only contain letters, digits, and underscores (_).");

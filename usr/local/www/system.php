@@ -106,7 +106,7 @@ if ($_POST) {
 	$reqdfields = explode(" ", "hostname domain");
 	$reqdfieldsn = array(gettext("Hostname"),gettext("Domain"));
 
-	do_input_validation($_POST, $reqdfields, $reqdfieldsn, &$input_errors);
+	do_input_validation($_POST, $reqdfields, $reqdfieldsn, $input_errors);
 
 	if ($_POST['hostname'] && !is_hostname($_POST['hostname'])) {
 		$input_errors[] = gettext("The hostname may only contain the characters a-z, 0-9 and '-'.");
@@ -155,6 +155,9 @@ if ($_POST) {
 	if (($t < 0) || (($t > 0) && ($t < 6)) || ($t > 1440)) {
 		$input_errors[] = gettext("The time update interval must be either 0 (disabled) or between 6 and 1440.");
 	}
+	# it's easy to have a little too much whitespace in the field, clean it up for the user before processing.
+	$_POST['timeservers'] = preg_replace('/[[:blank:]]+/', ' ', $_POST['timeservers']);
+	$_POST['timeservers'] = trim($_POST['timeservers']);
 	foreach (explode(' ', $_POST['timeservers']) as $ts) {
 		if (!is_domain($ts)) {
 			$input_errors[] = gettext("A NTP Time Server name may only contain the characters a-z, 0-9, '-' and '.'.");
@@ -331,7 +334,7 @@ include("head.inc");
 						</table>
 						<br />
 						<span class="vexpl">
-							<?=gettext("Enter IP addresses to by used by the system for DNS resolution." .
+							<?=gettext("Enter IP addresses to be used by the system for DNS resolution. " .
 							"These are also used for the DHCP service, DNS forwarder and for PPTP VPN clients."); ?>
 							<br/>
 							<?php if($multiwan): ?>

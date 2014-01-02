@@ -51,7 +51,7 @@ function cpelements_sort() {
 
 require("guiconfig.inc");
 require("functions.inc");
-require("filter.inc");
+require_once("filter.inc");
 require("shaper.inc");
 require("captiveportal.inc");
 
@@ -123,11 +123,11 @@ if ($_POST) {
     }
 } else if (($_GET['act'] == "del") && !empty($cpzone) && $a_element[$_GET['id']]) {
 	conf_mount_rw();
-	unlink_if_exists($g['captiveportal_path'] . "/" . $a_element[$id]['name']);
+	@unlink("{$g['captiveportal_element_path']}/" . $a_element[$_GET['id']]['name']);
+	@unlink("{$g['captiveportal_path']}/" . $a_element[$_GET['id']]['name']);
+	conf_mount_ro();
 	unset($a_element[$_GET['id']]);
 	write_config();
-	captiveportal_write_elements();
-	conf_mount_ro();
 	header("Location: services_captiveportal_filemanager.php?zone={$cpzone}");
 	exit;
 }
@@ -144,8 +144,8 @@ include("head.inc");
   <tr><td class="tabnavtbl">
 <?php
 	$tab_array = array();
-	$tab_array[] = array(gettext("Captive portal"), false, "services_captiveportal.php?zone={$cpzone}");
-	$tab_array[] = array(gettext("Pass-through MAC"), false, "services_captiveportal_mac.php?zone={$cpzone}");
+	$tab_array[] = array(gettext("Captive portal(s)"), false, "services_captiveportal.php?zone={$cpzone}");
+	$tab_array[] = array(gettext("MAC"), false, "services_captiveportal_mac.php?zone={$cpzone}");
 	$tab_array[] = array(gettext("Allowed IP addresses"), false, "services_captiveportal_ip.php?zone={$cpzone}");
 	$tab_array[] = array(gettext("Allowed Hostnames"), false, "services_captiveportal_hostname.php?zone={$cpzone}");
 	$tab_array[] = array(gettext("Vouchers"), false, "services_captiveportal_vouchers.php?zone={$cpzone}");
@@ -161,7 +161,7 @@ include("head.inc");
         <td width="10%" class="list">
 		<table border="0" cellspacing="0" cellpadding="1">
 		    <tr>
-			<td width="17" heigth="17"></td>
+			<td width="17" height="17"></td>
 			<td><a href="services_captiveportal_filemanager.php?zone=<?=$cpzone;?>&act=add"><img src="/themes/<?php echo $g['theme']; ?>/images/icons/icon_plus.gif" title="<?=gettext("add file"); ?>" width="17" height="17" border="0"></a></td>
 		    </tr>
 		</table>
@@ -200,7 +200,7 @@ include("head.inc");
 		<td class="list">
 			<table border="0" cellspacing="0" cellpadding="1">
 			    <tr>
-				<td width="17" heigth="17"></td>
+				<td width="17" height="17"></td>
 				<td><a href="services_captiveportal_filemanager.php?zone=<?=$cpzone;?>&act=add"><img src="/themes/<?php echo $g['theme']; ?>/images/icons/icon_plus.gif" title="<?=gettext("add file"); ?>" width="17" height="17" border="0"></a></td>
 			    </tr>
 			</table>

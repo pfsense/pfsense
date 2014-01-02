@@ -1,6 +1,6 @@
 <?php
 /*
-        $Id: interface_statistics.widget.php 
+        $Id: interface_statistics.widget.php
         Copyright 2007 Scott Dale
         Part of pfSense widgets (www.pfsense.com)
         originally based on m0n0wall (http://m0n0.ch/wall)
@@ -39,7 +39,7 @@ require_once("functions.inc");
 require_once("/usr/local/www/widgets/include/interface_statistics.inc");
 
 		$ifdescrs = get_configured_interface_with_descr();
-		
+
 		$array_in_packets = array();
 		$array_out_packets = array();
 		$array_in_bytes = array();
@@ -49,12 +49,12 @@ require_once("/usr/local/www/widgets/include/interface_statistics.inc");
 		$array_collisions = array();
 		$array_interrupt = array();
 		$interfacecounter = 0;
-		
+
 		//build data arrays
 		foreach ($ifdescrs as $ifdescr => $ifname){
 			$ifinfo = get_interface_info($ifdescr);
 			$interfacecounter++;
-			if ($ifinfo['status'] != "down"){ 		
+			if ($ifinfo['status'] != "down"){
 				$array_in_packets[] = $ifinfo['inpkts'];
 				$array_out_packets[] = $ifinfo['outpkts'];
 				$array_in_bytes[] = format_bytes($ifinfo['inbytes']);
@@ -72,84 +72,83 @@ require_once("/usr/local/www/widgets/include/interface_statistics.inc");
 				else
 					$array_collisions[] = "n/a";
 			}
-					
-			
+
+
 		}//end for
-		
-	
-		
-		
+
+
+
+
 		?>
-		<div style="padding: 5px">			
               <div id="int_labels" style="float:left;width:32%">
 				<table width="100%" border="0" cellspacing="0" cellpadding="0" summary="interfaces statistics">
-					<tr><td class="widgetsubheader" style="height:25px">&nbsp;&nbsp;&nbsp;</td></tr>	
+					<tr><td class="widgetsubheader" style="height:25px">&nbsp;&nbsp;&nbsp;</td></tr>
 					<tr>
 	                	<td class="vncellt" style="height:25px">Packets In</td>
-					</tr>	              
+					</tr>
 		            <tr>
 		                <td class="vncellt" style="height:25px">Packets Out</td>
-		           </tr>	              
+		           </tr>
 	               <tr>
 	                <td class="vncellt" style="height:25px">Bytes In</td>
-				    </tr>	              
+				    </tr>
 	              <tr>
 	                <td class="vncellt" style="height:25px">Bytes Out</td>
-				  </tr>	              
+				  </tr>
 	              <tr>
 	                <td class="vncellt" style="height:25px">Errors In</td>
-				 </tr>	              
+				 </tr>
 	              <tr>
 	                <td class="vncellt" style="height:25px">Errors Out</td>
-				</tr>              
+				</tr>
 	              <tr>
 	                <td class="vncellt" style="height:25px">Collisions</td>
-				 </tr>	              
+				 </tr>
 	              </table>
 	          </div>
 	          <div id="interfacestats" style="float:right;overflow: auto; width:68%">
-	                   
+
 	          <table width="100%" border="0" cellspacing="0" cellpadding="0" summary="the stats">
 	              <tr>
-		                <?php 
+		                <?php
 		               		$interface_names = array();
-		                	foreach ($ifdescrs as $ifdescr => $ifname): 
+		                	foreach ($ifdescrs as $ifdescr => $ifname):
 		                	$ifinfo = get_interface_info($ifdescr);
 		                	if ($ifinfo['status'] != "down"){ ?>
 			                	<td class="widgetsubheader nowrap" style="height:25px">
 			                  		<?=htmlspecialchars($ifname);?>
 								</td>
-							<?php 							
+							<?php
 							//build array of interface names
 							$interface_names[] = $ifname;
-							} 
+							}
 							endforeach; ?>
 		              </tr>
-		              
+
 		              <tr>
-			                <?php 
+			                <?php
 			                $counter = 1;
 			                foreach ($array_in_packets as $data): ?>
 							<td class="listr nowrap" id="stat<?php echo $counter?>" style="height:25px">
 								<?=htmlspecialchars($data);?>
 			                </td>
-			                <?php 
+			                <?php
 			                $counter = $counter + 7;
 			                endforeach; ?>
 	              		</tr>
-	              		
+
 	              		<tr>
-			                <?php 
+			                <?php
 			                $counter = 2;
 			                foreach ($array_out_packets as $data): ?>
 							<td class="listr nowrap" id="stat<?php echo $counter;?>" style="height:25px">
 								<?=htmlspecialchars($data);?>
 			                </td>
-			                <?php 
+			                <?php
 			                $counter = $counter + 7;
 			                endforeach; ?>
 	              		</tr>
-			               
+
 			            <tr>
 			                <?php 
 			                $counter = 3;
@@ -157,23 +156,23 @@ require_once("/usr/local/www/widgets/include/interface_statistics.inc");
 							<td class="listr nowrap" id="stat<?php echo $counter;?>" style="height:25px">
 								<?=htmlspecialchars($data);?>
 			                </td>
-			                <?php 
+			                <?php
 			                $counter = $counter + 7;
 			                endforeach; ?>
 	          			</tr>
-	          			
+
 	          			<tr>
-			                <?php 
+			                <?php
 			                $counter = 4;
 			                foreach ($array_out_bytes as $data): ?>
 							<td class="listr nowrap" id="stat<?php echo $counter;?>" style="height:25px">
 								<?=htmlspecialchars($data);?>
 			                </td>
-			                <?php 
+			                <?php
 			                $counter = $counter + 7;
 			                endforeach; ?>
 	            		</tr>
-	            		
+
 	            		<tr>
 			                <?php
 			                $counter = 5;
@@ -181,34 +180,33 @@ require_once("/usr/local/www/widgets/include/interface_statistics.inc");
 									<td class="listr nowrap" id="stat<?php echo $counter;?>" style="height:25px">
 										<?=htmlspecialchars($data);?>
 					                </td>
-				                <?php 
+				                <?php
 				                $counter = $counter + 7;
 				                endforeach; ?>
 	              		</tr>
-		                	
+
 		                <tr>
-		                	<?php 
+		                	<?php
 		                	$counter = 6;
 			               foreach ($array_out_errors as $data): ?>
 								<td class="listr nowrap" id="stat<?php echo $counter;?>" style="height:25px">
 									<?=htmlspecialchars($data);?>
 				                </td>
-			                <?php 
+			                <?php
 			                $counter = $counter + 7;
 			                endforeach; ?>
 	             		</tr>
-		                	
-		                <tr>	
-		                	<?php  
+
+		                <tr>
+		                	<?php
 		                	$counter = 7;
 				                foreach ($array_collisions as $data): ?>
 								<td class="listr nowrap" id="stat<?php echo $counter;?>" style="height:25px">
 									<?=htmlspecialchars($data);?>
 				                </td>
-			                <?php 
+			                <?php
 			                $counter = $counter + 7;
 			                endforeach; ?>
 						</tr>
 	             </table>
 			</div>
-	</div>

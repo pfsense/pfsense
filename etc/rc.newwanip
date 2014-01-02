@@ -40,11 +40,12 @@ require_once("shaper.inc");
 require_once("ipsec.inc");
 require_once("vpn.inc");
 require_once("openvpn.inc");
+require_once("IPv6.inc");
 require_once("rrd.inc");
 
 // Do not process while booting
 if($g['booting'])
-	exit;
+	return;
 
 function restart_packages() {
 	global $oldip, $curwanip, $g;
@@ -57,20 +58,37 @@ function restart_packages() {
 }
 
 /* Interface IP address has changed */
-$argument = str_replace("\n", "", $argv[1]);
+if (isset($_GET['interface']))
+	$argument = $_GET['interface'];
+else
+	$argument = str_replace("\n", "", $argv[1]);
 
 log_error("rc.newwanip: Informational is starting {$argument}.");
 
 if(empty($argument)) {
-	$curwanip = get_interface_ip();
 	$interface = "wan";
 	$interface_real = get_real_interface();
 } else {
 	$interface = convert_real_interface_to_friendly_interface_name($argument);
 	$interface_real = $argument;
+}
+
+/* If the interface is configured and not enabled, bail. We do not need to change settings for disabled interfaces. #3313 */
+if (is_array($config['interfaces'][$interface]) && !isset($config['interfaces'][$interface]['enable'])) {
+	log_error("Interface is disabled, nothing to do.");
+	return;
+}
+
+if(empty($argument))
+	$curwanip = get_interface_ip();
+else {
 	$curwanip = find_interface_ip($interface_real, true);
 	if($curwanip == "")
 		$curwanip = get_interface_ip($interface);
+	if (($curwanip == "") && empty($config['interfaces'][$interface]['ipaddr'])) {
+		log_error("Interface does not have an IP address, nothing to do.");
+		return;
+	}
 }
 
 log_error("rc.newwanip: on (IP address: {$curwanip}) (interface: {$interface}) (real interface: {$interface_real}).");
@@ -78,13 +96,13 @@ log_error("rc.newwanip: on (IP address: {$curwanip}) (interface: {$interface}) (
 if($curwanip == "0.0.0.0" || !is_ipaddr($curwanip)) {
 	log_error("rc.newwanip: Failed to update {$interface} IP, restarting...");
 	send_event("interface reconfigure {$interface}");
-	exit;
+	return;
 }
 
 if (empty($interface)) {
 	filter_configure();
 	restart_packages();
-	exit;
+	return;
 }
 
 $oldip = "0.0.0.0";
@@ -112,28 +130,25 @@ $grouptmp = link_interface_to_group($interface);
 if (!empty($grouptmp))
 	array_walk($grouptmp, 'interface_group_add_member');
 
-if ($linkupevent == false || substr($interface_real, 0, 4) == "ovpn") {
-	unset($bridgetmp);
-	$bridgetmp = link_interface_to_bridge($interface);
-	if (!empty($bridgetmp))
-		interface_bridge_add_member($bridgetmp, $interface_real);
-}
+unset($bridgetmp);
+$bridgetmp = link_interface_to_bridge($interface);
+if (!empty($bridgetmp))
+	interface_bridge_add_member($bridgetmp, $interface_real);
 
 /* make new hosts file */
-if ($interface == "lan")
-	system_hosts_generate();
+system_hosts_generate();
 
 /* check tunneled IPv6 interface tracking */
 switch($config['interfaces'][$interface]['ipaddrv6']) {
-	case "slaac":
-	case "dhcp6":
-		interface_dhcpv6_configure($interface, $config['interfaces'][$interface]);
-		break;
 	case "6to4":
 		interface_6to4_configure($interface, $config['interfaces'][$interface]);
 		break;
 	case "6rd":
 		interface_6rd_configure($interface, $config['interfaces'][$interface]);
+		break;
+	case "dhcp6":
+		if (isset($config['interfaces'][$interface]['dhcp6usev4iface']))
+			interface_dhcpv6_configure($interface, $config['interfaces'][$interface]);
 		break;
 }
 
@@ -156,19 +171,25 @@ if(is_array($config['gifs']['gif'])){
 	}
 }
 
-/* reconfigure static routes (kernel may have deleted them) */
-system_routing_configure($interface);
+/*
+ * We need to force sync VPNs on such even when the IP is the same for dynamic interfaces.
+ * Even with the same IP the VPN software is unhappy with the IP disappearing, and we
+ * could be failing back in which case we need to switch IPs back anyhow.
+ */
+if (!is_ipaddr($oldip) || $curwanip != $oldip || !is_ipaddrv4($config['interfaces'][$interface]['ipaddr'])) {
+	/* reconfigure static routes (kernel may have deleted them) */
+	system_routing_configure($interface);
 
-/* reconfigure our gateway monitor */
-setup_gateways_monitor();
+	/* reconfigure our gateway monitor */
+	setup_gateways_monitor();
 
-/* signal filter reload */
-filter_configure();
+	file_put_contents("{$g['vardb_path']}/{$interface}_cacheip", $curwanip);
 
-if (is_ipaddr($oldip) && $curwanip == $oldip) {
-	/* We need to force sync VPNs on such even when the IP is the same. Even with
-	 * the same IP the VPN software is unhappy with the IP disappearing, and we
-	 * could be failing back in which case we need to switch IPs back anyhow. */
+	/* perform RFC 2136 DNS update */
+	services_dnsupdate_process($interface);
+
+	/* signal dyndns update */
+	services_dyndns_configure($interface);
 
 	/* reconfigure IPsec tunnels */
 	vpn_ipsec_force_reload($interface);
@@ -177,38 +198,19 @@ if (is_ipaddr($oldip) && $curwanip == $oldip) {
 	if (substr($interface_real, 0, 4) != "ovpn")
 		openvpn_resync_all($interface);
 
-	/* perform RFC 2136 DNS update */
-	services_dnsupdate_process($interface);
+	/* reload graphing functions */
+	enable_rrd_graphing();
 
-	/* signal dyndns update */
-	services_dyndns_configure($interface);
-	exit;
+	/* reload igmpproxy */
+	services_igmpproxy_configure();
+
+	/* restart snmp */
+	services_snmpd_configure();
+
+	restart_packages();
 }
 
-file_put_contents("{$g['vardb_path']}/{$interface}_cacheip", $curwanip);
-
-/* perform RFC 2136 DNS update */
-services_dnsupdate_process($interface);
-
-/* signal dyndns update */
-services_dyndns_configure($interface);
-
-/* reconfigure IPsec tunnels */
-vpn_ipsec_force_reload($interface);
-
-/* start OpenVPN server & clients */
-if (substr($interface_real, 0, 4) != "ovpn")
-	openvpn_resync_all($interface);
-
-/* reload graphing functions */
-enable_rrd_graphing();
-
-/* reload igmpproxy */
-services_igmpproxy_configure();
-
-/* restart snmp */
-services_snmpd_configure();
-
-restart_packages();
+/* signal filter reload */
+filter_configure();
 
 ?>

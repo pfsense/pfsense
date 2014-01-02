@@ -51,7 +51,7 @@ if (!session_auth()) {
  * We give them access only to the appropriate pages based on
  * the user or group privileges.
  */
-$allowedpages = getAllowedPages($HTTP_SERVER_VARS['AUTH_USER']);
+$allowedpages = getAllowedPages($_SESSION['Username']);
 
 /*
  * redirect to first allowed page if requesting a wrong url
@@ -258,7 +258,7 @@ $have_cookies = isset($_COOKIE["cookie_test"]);
 	<body onload="page_load()">
 		<div id="login">
 			<?php 
-				if(is_ipaddr($http_host) && !$local_ip) {
+				if(is_ipaddr($http_host) && !$local_ip && !isset($config['system']['webgui']['nohttpreferercheck'])) {
 					$nifty_background = "#999";
 					print_info_box(gettext("You are accessing this router by an IP address not configured locally, which may be forwarded by NAT or other means. <br/><br/>If you did not setup this forwarding, you may be the target of a man-in-the-middle attack.")); 
 				}

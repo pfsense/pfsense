@@ -83,7 +83,7 @@ if ($_POST) {
 	$reqdfields = explode(" ", "sysprivs");
 	$reqdfieldsn = array(gettext("Selected priveleges"));
 
-	do_input_validation($_POST, $reqdfields, $reqdfieldsn, &$input_errors);
+	do_input_validation($_POST, $reqdfields, $reqdfieldsn, $input_errors);
 
 	/* if this is an AJAX caller then handle via JSON */
 	if(isAjax() && is_array($input_errors)) {
@@ -136,7 +136,7 @@ if (is_array($priv_list)) {
 	foreach($priv_list as $pname => $pdata) {
 		if (in_array($pname, $a_user['priv']))
 			continue;
-		$desc = addslashes($pdata['descr']);
+		$desc = addslashes(preg_replace("/pfSense/i", $g['product_name'], $pdata['descr']));
 		$jdescs .= "descs[{$id}] = '{$desc}';\n";
 		$id++;
 	}

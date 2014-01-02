@@ -2029,7 +2029,7 @@ jQuery.fn.extend({
 					classNames = value.split( rspace );
 
 				while ( (className = classNames[ i++ ]) ) {
-					// check each className given, space seperated list
+					// check each className given, space separated list
 					state = isBool ? state : !self.hasClass( className );
 					self[ state ? "addClass" : "removeClass" ]( className );
 				}
@@ -7878,7 +7878,7 @@ if ( jQuery.support.ajax ) {
 							xml;
 
 						// Firefox throws exceptions when accessing properties
-						// of an xhr when a network error occured
+						// of an xhr when a network error occurred
 						// http://helpful.knobs-dials.com/index.php/Component_returned_failure_code:_0x80040111_(NS_ERROR_NOT_AVAILABLE)
 						try {
 

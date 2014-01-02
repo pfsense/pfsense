@@ -107,6 +107,8 @@ if ($act == "edit") {
 			$pconfig['ldap_attr_user'] = $a_server[$id]['ldap_attr_user'];
 			$pconfig['ldap_attr_group'] = $a_server[$id]['ldap_attr_group'];
 			$pconfig['ldap_attr_member'] = $a_server[$id]['ldap_attr_member'];
+			$pconfig['ldap_utf8'] = isset($a_server[$id]['ldap_utf8']);
+			$pconfig['ldap_nostrip_at'] = isset($a_server[$id]['ldap_nostrip_at']);
 
 			if (!$pconfig['ldap_binddn'] || !$pconfig['ldap_bindpw'])
 				$pconfig['ldap_anon'] = true;
@@ -205,7 +207,7 @@ if ($_POST) {
 		}
 	}
 
-	do_input_validation($_POST, $reqdfields, $reqdfieldsn, &$input_errors);
+	do_input_validation($_POST, $reqdfields, $reqdfieldsn, $input_errors);
 
 	if (preg_match("/[^a-zA-Z0-9\.\-_]/", $_POST['host']))
 		$input_errors[] = gettext("The host name contains invalid characters.");
@@ -213,7 +215,7 @@ if ($_POST) {
 	if (auth_get_authserver($pconfig['name']) && !isset($id))
 		$input_errors[] = gettext("An authentication server with the same name already exists.");
 
-	if (($pconfig['type'] == "radius") && isset($_POST['radius_timeout']) && (!is_numeric($_POST['radius_timeout']) || (is_numeric($_POST['radius_timeout']) && ($_POST['radius_timeout'] <= 0))))
+	if (($pconfig['type'] == "radius") && isset($_POST['radius_timeout']) && !empty($_POST['radius_timeout']) && (!is_numeric($_POST['radius_timeout']) || (is_numeric($_POST['radius_timeout']) && ($_POST['radius_timeout'] <= 0))))
 		$input_errors[] = gettext("RADIUS Timeout value must be numeric and positive.");
 
 	/* if this is an AJAX caller then handle via JSON */
@@ -247,6 +249,15 @@ if ($_POST) {
 			$server['ldap_attr_user'] = $pconfig['ldap_attr_user'];
 			$server['ldap_attr_group'] = $pconfig['ldap_attr_group'];
 			$server['ldap_attr_member'] = $pconfig['ldap_attr_member'];
+			if ($pconfig['ldap_utf8'] == "yes")
+				$server['ldap_utf8'] = true;
+			else
+				unset($server['ldap_utf8']);
+			if ($pconfig['ldap_nostrip_at'] == "yes")
+				$server['ldap_nostrip_at'] = true;
+			else
+				unset($server['ldap_nostrip_at']);
+
 
 			if (!$pconfig['ldap_anon']) {
 				$server['ldap_binddn'] = $pconfig['ldap_binddn'];
@@ -266,6 +277,8 @@ if ($_POST) {
 
 			if ($pconfig['radius_timeout'])
 				$server['radius_timeout'] = $pconfig['radius_timeout'];
+			else
+				$server['radius_timeout'] = 5;
 
 			if ($pconfig['radius_srvcs'] == "both") {
 				$server['radius_auth_port'] = $pconfig['radius_auth_port'];
@@ -490,6 +503,7 @@ function select_clicked() {
 							<td width="22%" valign="top" class="vncellreq"><?=gettext("Hostname or IP address");?></td>
 							<td width="78%" class="vtable">
 								<input name="ldap_host" type="text" class="formfld unknown" id="ldap_host" size="20" value="<?=htmlspecialchars($pconfig['ldap_host']);?>"/>
+								<br /><?= gettext("NOTE: When using SSL, this hostname MUST match the Common Name (CN) of the LDAP server's SSL Certificate."); ?>
 							</td>
 						</tr>
 						<tr>
@@ -677,6 +691,36 @@ function select_clicked() {
 							<td width="22%" valign="top" class="vncell"><?=gettext("Group member attribute");?></td>
 							<td width="78%" class="vtable">
 								<input name="ldap_attr_member" type="text" class="formfld unknown" id="ldap_attr_member" size="20" value="<?=htmlspecialchars($pconfig['ldap_attr_member']);?>"/>
+							</td>
+						</tr>
+						<tr>
+							<td width="22%" valign="top" class="vncell"><?=gettext("UTF8 Encode");?></td>
+							<td width="78%" class="vtable">
+								<table border="0" cellspacing="0" cellpadding="2" summary="utf8 encoding">
+									<tr>
+										<td>
+											<input name="ldap_utf8" type="checkbox" id="ldap_utf8" value="yes" <?php if ($pconfig['ldap_utf8']) echo "checked=\"checked\""; ?> />
+										</td>
+										<td>
+											<?=gettext("UTF8 encode LDAP parameters before sending them to the server. Required to support international characters, but may not be supported by every LDAP server.");?>
+										</td>
+									</tr>
+								</table>
+							</td>
+						</tr>
+						<tr>
+							<td width="22%" valign="top" class="vncell"><?=gettext("Username Alterations");?></td>
+							<td width="78%" class="vtable">
+								<table border="0" cellspacing="0" cellpadding="2" summary="username alterations">
+									<tr>
+										<td>
+											<input name="ldap_nostrip_at" type="checkbox" id="ldap_nostrip_at" value="yes" <?php if ($pconfig['ldap_nostrip_at']) echo "checked=\"checked\""; ?> />
+										</td>
+										<td>
+											<?=gettext("Do not strip away parts of the username after the @ symbol, e.g. user@host becomes user when unchecked.");?>
+										</td>
+									</tr>
+								</table>
 							</td>
 						</tr>
 					</table>

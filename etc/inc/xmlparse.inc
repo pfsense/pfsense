@@ -232,7 +232,14 @@ function dump_xml_config_sub($arr, $indent) {
 						$xmlconfig .= str_repeat("\t", $indent);
 						if((is_bool($cval) && $cval == true) || ($cval === "")) {
 							$xmlconfig .= "<$ent/>\n";
-						} else if ((substr($ent, 0, 5) == "descr") || (substr($ent, 0, 6) == "detail")) {
+						} else if ((substr($ent, 0, 5) == "descr")
+							|| (substr($ent, 0, 6) == "detail")
+							|| (substr($ent, 0, 12) == "login_banner")
+							|| (substr($ent, 0, 9) == "ldap_attr")
+							|| (substr($ent, 0, 9) == "ldap_bind")
+							|| (substr($ent, 0, 11) == "ldap_basedn")
+							|| (substr($ent, 0, 18) == "ldap_authcn")
+							|| (substr($ent, 0, 19) == "ldap_extended_query")) {
 							$xmlconfig .= "<$ent><![CDATA[" . htmlentities($cval) . "]]></$ent>\n";
 						} else {
 							$xmlconfig .= "<$ent>" . htmlentities($cval) . "</$ent>\n";
@@ -256,7 +263,14 @@ function dump_xml_config_sub($arr, $indent) {
 				$xmlconfig .= "<$ent/>\n";
 			} else if (!is_bool($val)) {
 				$xmlconfig .= str_repeat("\t", $indent);
-				if ((substr($ent, 0, 5) == "descr") || (substr($ent, 0, 6) == "detail"))
+				if ((substr($ent, 0, 5) == "descr")
+				|| (substr($ent, 0, 6) == "detail")
+				|| (substr($ent, 0, 12) == "login_banner")
+				|| (substr($ent, 0, 9) == "ldap_attr")
+				|| (substr($ent, 0, 9) == "ldap_bind")
+				|| (substr($ent, 0, 11) == "ldap_basedn")
+				|| (substr($ent, 0, 18) == "ldap_authcn")
+				|| (substr($ent, 0, 19) == "ldap_extended_query"))
 					$xmlconfig .= "<$ent><![CDATA[" . htmlentities($val) . "]]></$ent>\n";
 				else
 					$xmlconfig .= "<$ent>" . htmlentities($val) . "</$ent>\n";

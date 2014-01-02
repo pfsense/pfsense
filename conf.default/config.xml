@@ -1,15 +1,10 @@
 <?xml version="1.0"?>
 <!-- pfSense default system configuration -->
 <pfsense>
-	<version>9.4</version>
+	<version>9.9</version>
 	<lastchange></lastchange>
 	<theme>pfsense_ng</theme>
 	<sysctl>
-		<item>
-			<descr><![CDATA[Enable mounting the FS read only with more checks.]]></descr>
-			<tunable>vfs.forcesync</tunable>
-			<value>default</value>
-		</item>
 		<item>
 			<descr><![CDATA[Disable the pf ftp proxy handler.]]></descr>
 			<tunable>debug.pfftpproxy</tunable>
@@ -131,11 +126,6 @@
 			<value>default</value>
 		</item>
 		<item>
-			<descr><![CDATA[Enable TCP Inflight mode]]></descr>
-			<tunable>net.inet.tcp.inflight.enable</tunable>
-			<value>default</value>
-		</item>
-		<item>
 			<descr><![CDATA[Enable TCP extended debugging]]></descr>
 			<tunable>net.inet.tcp.log_debug</tunable>
 			<value>default</value>
@@ -148,6 +138,11 @@
 		<item>
 			<descr><![CDATA[TCP Offload Engine]]></descr>
 			<tunable>net.inet.tcp.tso</tunable>
+			<value>default</value>
+		</item>
+		<item>
+			<descr><![CDATA[UDP Checksums]]></descr>
+			<tunable>net.inet.udp.checksum</tunable>
 			<value>default</value>
 		</item>
 		<item>
@@ -208,6 +203,7 @@
 		<bogons>
 			<interval>monthly</interval>
 		</bogons>
+		<kill_states/>
 	</system>
 	<interfaces>
 		<wan>
@@ -395,9 +391,25 @@
 	</captiveportal>
 	-->
 	<nat>
-		<ipsecpassthru>
-			<enable/>
-		</ipsecpassthru>
+		<outbound>
+			<mode>automatic</mode>
+			<!--
+			<rule>
+				<interface></interface>
+				<source>
+					<network>xxx.xxx.xxx.xxx/xx</network>
+				</source>
+				<destination>
+					<not/>
+					<any/>
+					*or*
+					<network>xxx.xxx.xxx.xxx/xx</network>
+				</destination>
+				<target>xxx.xxx.xxx.xxx</target>
+				<descr></descr>
+			</rule>
+			-->
+		</outbound>
 		<!--
 		<rule>
 			<interface></interface>
@@ -417,25 +429,6 @@
 			<subnet></subnet>
 			<descr></descr>
 		</onetoone>
-		-->
-		<!--
-		<advancedoutbound>
-			<enable/>
-			<rule>
-				<interface></interface>
-				<source>
-					<network>xxx.xxx.xxx.xxx/xx</network>
-				</source>
-				<destination>
-					<not/>
-					<any/>
-					*or*
-					<network>xxx.xxx.xxx.xxx/xx</network>
-				</destination>
-				<target>xxx.xxx.xxx.xxx</target>
-				<descr></descr>
-			</rule>
-		</advancedoutbound>
 		-->
 		<!--
 		<servernat>
@@ -637,15 +630,6 @@
 		-->
 	</proxyarp>
 	<cron>
-		<item>
-			<minute>0</minute>
-			<hour>*</hour>
-			<mday>*</mday>
-			<month>*</month>
-			<wday>*</wday>
-			<who>root</who>
-			<command>/usr/bin/nice -n20 newsyslog</command>
-		</item>
 		<item>
 			<minute>1,31</minute>
 			<hour>0-5</hour>

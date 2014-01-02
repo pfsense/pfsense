@@ -67,7 +67,7 @@ foreach ($a_cp as $cpzone => $cp) {
 	foreach ($cpdb as $cpent) {
 		$cpent[10] = $cpzone;
 		if ($_GET['showact'])
-			$cpent[11] = captiveportal_get_last_activity($cpent[2]);
+			$cpent[11] = captiveportal_get_last_activity($cpent[2], $cpentry[3]);
 		$cpdb_all[] = $cpent;
 	}
 }

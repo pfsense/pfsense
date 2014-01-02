@@ -28,7 +28,7 @@
     POSSIBILITY OF SUCH DAMAGE.
 */
 /*
-	pfSense_BUILDER_BINARIES:	/usr/bin/host	
+	pfSense_BUILDER_BINARIES:	/usr/bin/host
 	pfSense_MODULE:	dyndns
 */
 
@@ -109,8 +109,8 @@ if($_REQUEST['getdyndnsstatus']) {
 		<?php
 		$types = explode(",", DYNDNS_PROVIDER_DESCRIPTIONS);
 		$vals = explode(" ", DYNDNS_PROVIDER_VALUES);
-		for ($j = 0; $j < count($vals); $j++) 
-			if ($vals[$j] == $dyndns['type']) { 
+		for ($j = 0; $j < count($vals); $j++)
+			if ($vals[$j] == $dyndns['type']) {
 				if (!isset($dyndns['enable']))
 					echo "<span class=\"gray\">".htmlspecialchars($types[$j])."</span>";
 				else

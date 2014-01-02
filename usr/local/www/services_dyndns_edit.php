@@ -70,8 +70,10 @@ if (isset($id) && isset($a_dyndns[$id])) {
 	$pconfig['interface'] = $a_dyndns[$id]['interface'];
 	$pconfig['wildcard'] = isset($a_dyndns[$id]['wildcard']);
 	$pconfig['verboselog'] = isset($a_dyndns[$id]['verboselog']);
+	$pconfig['curl_ipresolve_v4'] = isset($a_dyndns[$id]['curl_ipresolve_v4']);
+	$pconfig['curl_ssl_verifypeer'] = isset($a_dyndns[$id]['curl_ssl_verifypeer']);
 	$pconfig['zoneid'] = $a_dyndns[$id]['zoneid'];
-	$pconfig['ttl'] = isset($a_dyndns[$id]['ttl']);
+	$pconfig['ttl'] = $a_dyndns[$id]['ttl'];
 	$pconfig['updateurl'] = $a_dyndns[$id]['updateurl'];
 	$pconfig['resultmatch'] = $a_dyndns[$id]['resultmatch'];
 	$pconfig['requestif'] = $a_dyndns[$id]['requestif'];
@@ -91,7 +93,7 @@ if ($_POST) {
 	$reqdfieldsn = array();
 	$reqdfields = array("type");
 	$reqdfieldsn = array(gettext("Service type"));
-	if ($pconfig['type'] != "custom") {
+	if ($pconfig['type'] != "custom" && $pconfig['type'] != "custom-v6") {
 		$reqdfields[] = "host";
 		$reqdfieldsn[] = gettext("Hostname");
 		$reqdfields[] = "password";
@@ -103,8 +105,10 @@ if ($_POST) {
 		$reqdfieldsn[] = gettext("Update URL");
  	}
 
-	do_input_validation($_POST, $reqdfields, $reqdfieldsn, &$input_errors);
+	do_input_validation($_POST, $reqdfields, $reqdfieldsn, $input_errors);
 
+	if (($_POST['host'] && !is_domain($_POST['host'])))
+		$input_errors[] = gettext("The Hostname contains invalid characters.");
 	if (($_POST['mx'] && !is_domain($_POST['mx']))) 
 		$input_errors[] = gettext("The MX contains invalid characters.");
 	if ((in_array("username", $reqdfields) && $_POST['username'] && !is_dyndns_username($_POST['username'])) || ((in_array("username", $reqdfields)) && ($_POST['username'] == ""))) 
@@ -119,6 +123,8 @@ if ($_POST) {
 		$dyndns['mx'] = $_POST['mx'];
 		$dyndns['wildcard'] = $_POST['wildcard'] ? true : false;
 		$dyndns['verboselog'] = $_POST['verboselog'] ? true : false;
+		$dyndns['curl_ipresolve_v4'] = $_POST['curl_ipresolve_v4'] ? true : false;
+		$dyndns['curl_ssl_verifypeer'] = $_POST['curl_ssl_verifypeer'] ? true : false;
 		/* In this place enable means disabled */
 		if ($_POST['enable'])
 			unset($dyndns['enable']);
@@ -130,7 +136,7 @@ if ($_POST) {
 		$dyndns['updateurl'] = $_POST['updateurl'];
 		// Trim hard-to-type but sometimes returned characters
 		$dyndns['resultmatch'] = trim($_POST['resultmatch'], "\t\n\r");
-		$dyndns['type'] == "custom" ? $dyndns['requestif'] = $_POST['requestif'] : $dyndns['requestif'] = $_POST['interface'];
+		($dyndns['type'] == "custom" || $dyndns['type'] == "custom-v6") ? $dyndns['requestif'] = $_POST['requestif'] : $dyndns['requestif'] = $_POST['interface'];
 		$dyndns['descr'] = $_POST['descr'];
 		$dyndns['force'] = isset($_POST['force']);
 		
@@ -172,9 +178,11 @@ include("head.inc");
 function _onTypeChange(type){ 
 	switch(type) {
 		case "custom":
+		case "custom-v6":
 			document.getElementById("_resulttr").style.display = '';
 			document.getElementById("_urltr").style.display = '';
 			document.getElementById("_requestiftr").style.display = '';
+			document.getElementById("_curloptions").style.display = '';
 			document.getElementById("_hostnametr").style.display = 'none';
 			document.getElementById("_mxtr").style.display = 'none';
 			document.getElementById("_wildcardtr").style.display = 'none';
@@ -185,6 +193,7 @@ function _onTypeChange(type){
 			document.getElementById("_resulttr").style.display = 'none';
 			document.getElementById("_urltr").style.display = 'none';
 			document.getElementById("_requestiftr").style.display = 'none';
+			document.getElementById("_curloptions").style.display = 'none';
 			document.getElementById("_hostnametr").style.display = '';
 			document.getElementById("_mxtr").style.display = '';
 			document.getElementById("_wildcardtr").style.display = '';
@@ -195,6 +204,7 @@ function _onTypeChange(type){
 			document.getElementById("_resulttr").style.display = 'none';
 			document.getElementById("_urltr").style.display = 'none';
 			document.getElementById("_requestiftr").style.display = 'none';
+			document.getElementById("_curloptions").style.display = 'none';
 			document.getElementById("_hostnametr").style.display = '';
 			document.getElementById("_mxtr").style.display = '';
 			document.getElementById("_wildcardtr").style.display = '';
@@ -304,6 +314,15 @@ function _onTypeChange(type){
                     <input name="verboselog" type="checkbox" id="verboselog" value="yes" <?php if ($pconfig['verboselog']) echo "checked"; ?>>
                     <?=gettext("Enable ");?><?=gettext("verbose logging"); ?></td>
 				</tr>
+				<tr id="_curloptions">
+                  <td width="22%" valign="top" class="vncell"><?=gettext("CURL options"); ?></td>
+                  <td width="78%" class="vtable">
+                    <input name="curl_ipresolve_v4" type="checkbox" id="curl_ipresolve_v4" value="yes" <?php if ($pconfig['curl_ipresolve_v4']) echo "checked"; ?>>
+                    <?=gettext("Force IPv4 resolving"); ?><br/>
+					<input name="curl_ssl_verifypeer" type="checkbox" id="curl_ssl_verifypeer" value="yes" <?php if ($pconfig['curl_ssl_verifypeer']) echo "checked"; ?>>
+                    <?=gettext("Verify SSL peer"); ?>
+				  </td>
+				</tr>
                 <tr id="_usernametr">
                   <td width="22%" valign="top" class="vncellreq"><?=gettext("Username");?></td>
                   <td width="78%" class="vtable">
@@ -349,7 +368,7 @@ function _onTypeChange(type){
 			<br/>
 			<?= gettext("If you need the new IP to be included in the request, put %IP% in its place.");?>
 			<br/>
-			<?= gettext("If you need to include multiple possible values, sperate them with a |.  If your provider includes a |, escape it with \\|");?>
+			<?= gettext("If you need to include multiple possible values, separate them with a |.  If your provider includes a |, escape it with \\|");?>
 			<br/>
 			<?= gettext("Tabs (\\t), newlines (\\n) and carriage returns (\\r) at the beginning or end of the returned results are removed before comparison.");?>
                   </td>

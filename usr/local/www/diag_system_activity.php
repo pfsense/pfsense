@@ -33,10 +33,10 @@
 */
 
 ##|+PRIV
-##|*IDENT=page-diag-system-activity
+##|*IDENT=page-diagnostics-system-activity
 ##|*NAME=Diagnostics: System Activity
 ##|*DESCR=Allows access to the 'Diagnostics: System Activity' page
-##|*MATCH=diag_system_activity*
+##|*MATCH=diag_system_activity.php*
 ##|-PRIV
 
 require("guiconfig.inc");
@@ -46,7 +46,7 @@ $pfSversion = str_replace("\n", "", file_get_contents("/etc/version"));
 $pgtitle = gettext("Diagnostics: System Activity");
 
 if($_REQUEST['getactivity']) {
-	$text = `/usr/bin/top -HS`;
+	$text = `/usr/bin/top -aHS | /usr/bin/cut -c1-105`;
 	echo $text;
 	exit;
 }

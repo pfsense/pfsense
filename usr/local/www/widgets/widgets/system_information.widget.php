@@ -47,7 +47,11 @@ if($_REQUEST['getupdatestatus']) {
 
 	$nanosize = "";
 	if ($g['platform'] == "nanobsd") {
-		$nanosize = "-nanobsd-" . strtolower(trim(file_get_contents("/etc/nanosize.txt")));
+		if (file_exists("/etc/nano_use_vga.txt"))
+			$nanosize = "-nanobsd-vga-";
+		else
+			$nanosize = "-nanobsd-";
+		$nanosize .= strtolower(trim(file_get_contents("/etc/nanosize.txt")));
 	}
 
 	@unlink("/tmp/{$g['product_name']}_version");
@@ -81,22 +85,41 @@ if($_REQUEST['getupdatestatus']) {
 $curcfg = $config['system']['firmware'];
 
 ?>
+<script>
+	jQuery(function() { 
+		jQuery("#statePB").progressbar( { value: <?php echo get_pfstate(true); ?> } );
+		jQuery("#mbufPB").progressbar( { value: <?php echo get_mbuf(true); ?> } );
+		jQuery("#cpuPB").progressbar( { value:false } );
+		jQuery("#memUsagePB").progressbar( { value: <?php echo mem_usage(); ?> } );
+		jQuery("#diskUsagePB").progressbar( { value: <?php echo disk_usage(); ?> } );
+
+		<?php if($showswap == true): ?>
+			jQuery("#swapUsagePB").progressbar( { value: <?php echo swap_usage(); ?> } );
+		<?php endif; ?>
+		<?php if (get_temp() != ""): ?>
+                	jQuery("#tempPB").progressbar( { value: <?php echo get_temp(); ?> } );
+		<?php endif; ?>
+	});
+</script>
+<link rel="stylesheet" href="javascript/jquery/jquery-ui.custom.css" />
 
 <table width="100%" border="0" cellspacing="0" cellpadding="0" summary="system information">
 	<tbody>
 		<tr>
-			<td width="25%" class="vncellt">Name</td>
+			<td width="25%" class="vncellt"><?=gettext("Name");?></td>
 			<td width="75%" class="listr"><?php echo $config['system']['hostname'] . "." . $config['system']['domain']; ?></td>
 		</tr>
 		<tr>
-			<td width="25%" valign="top" class="vncellt">Version</td>
+			<td width="25%" valign="top" class="vncellt"><?=gettext("Version");?></td>
 			<td width="75%" class="listr">
 				<strong><?php readfile("/etc/version"); ?></strong>
 				(<?php echo php_uname("m"); ?>)
 				<br />
 				built on <?php readfile("/etc/version.buildtime"); ?>
+		<?php if(!$g['hideuname']): ?>
 		<br />
 		<div id="uname"><a href="#" onclick='swapuname(); return false;'><?php echo php_uname("s") . " " . php_uname("r"); ?></a></div>
+		<?php endif; ?>
 		<?php if(!isset($config['system']['firmware']['disablecheck'])): ?>
 		<div id='updatestatus'><br/><?php echo gettext("Obtaining update status"); ?> ...</div>
 		<?php endif; ?>
@@ -104,7 +127,7 @@ $curcfg = $config['system']['firmware'];
 		</tr>
 		<?php if(!$g['hideplatform']): ?>
 		<tr>
-			<td width="25%" class="vncellt">Platform</td>
+			<td width="25%" class="vncellt"><?=gettext("Platform");?></td>
 			<td width="75%" class="listr">
 				<?=htmlspecialchars($g['platform']);?>
 				<?php if (($g['platform'] == "nanobsd") && (file_exists("/etc/nanosize.txt"))) {
@@ -122,7 +145,7 @@ $curcfg = $config['system']['firmware'];
 			$rw = is_writable("/") ? "(rw)" : "(ro)";
 			?>
 		<tr>
-			<td width="25%" class="vncellt">NanoBSD Boot Slice</td>
+			<td width="25%" class="vncellt"><?=gettext("NanoBSD Boot Slice");?></td>
 			<td width="75%" class="listr">
 				<?=htmlspecialchars(nanobsd_friendly_slice_name($BOOT_DEVICE));?> / <?=htmlspecialchars($BOOTFLASH);?> <?php echo $rw; ?>
 				<?php if ($BOOTFLASH != $ACTIVE_SLICE): ?>
@@ -133,7 +156,7 @@ $curcfg = $config['system']['firmware'];
 		</tr>
 		<?php endif; ?>
 		<tr>
-			<td width="25%" class="vncellt">CPU Type</td>
+			<td width="25%" class="vncellt"><?=gettext("CPU Type");?></td>
 			<td width="75%" class="listr">
 			<?php 
 				$cpumodel = "";
@@ -142,16 +165,21 @@ $curcfg = $config['system']['firmware'];
 				echo (htmlspecialchars($cpumodel));
 			?>
 			<div id="cpufreq"><?= get_cpufreq(); ?></div>
+		<?php	$cpucount = get_cpu_count();
+			if ($cpucount > 1): ?>
+			<div id="cpucount">
+				<?= htmlspecialchars($cpucount) ?> CPUs: <?= htmlspecialchars(get_cpu_count(true)); ?></div>
+		<?php	endif; ?>
 			</td>
 		</tr>
 		<?php if ($hwcrypto): ?>
 		<tr>
-			<td width="25%" class="vncellt">Hardware crypto</td>
+			<td width="25%" class="vncellt"><?=gettext("Hardware crypto");?></td>
 			<td width="75%" class="listr"><?=htmlspecialchars($hwcrypto);?></td>
 		</tr>
 		<?php endif; ?>
 		<tr>
-			<td width="25%" class="vncellt">Uptime</td>
+			<td width="25%" class="vncellt"><?=gettext("Uptime");?></td>
 			<td width="75%" class="listr" id="uptime"><?= htmlspecialchars(get_uptime()); ?></td>
 		</tr>
         <tr>
@@ -159,9 +187,9 @@ $curcfg = $config['system']['firmware'];
             <td width="75%" class="listr">
                 <div id="datetime"><?= date("D M j G:i:s T Y"); ?></div>
             </td>
-        </tr>			
+        </tr>
 		 <tr>
-             <td width="30%" class="vncellt">DNS server(s)</td>
+             <td width="30%" class="vncellt"><?=gettext("DNS server(s)");?></td>
              <td width="70%" class="listr">
 					<?php
 						$dns_servers = get_dns_servers();
@@ -173,81 +201,80 @@ $curcfg = $config['system']['firmware'];
 		</tr>	
 		<?php if ($config['revision']): ?>
 		<tr>
-			<td width="25%" class="vncellt">Last config change</td>
+			<td width="25%" class="vncellt"><?=gettext("Last config change");?></td>
 			<td width="75%" class="listr"><?= htmlspecialchars(date("D M j G:i:s T Y", intval($config['revision']['time'])));?></td>
 		</tr>
 		<?php endif; ?>
 		<tr>
-			<td width="25%" class="vncellt">State table size</td>
+			<td width="25%" class="vncellt"><?=gettext("State table size");?></td>
 			<td width="75%" class="listr">
-				<span id="pfstate"><?= htmlspecialchars(get_pfstate()); ?></span>
+				<?php	$pfstatetext = get_pfstate();
+					$pfstateusage = get_pfstate(true);
+				?>
+				<div id="statePB"></div>
+				<span id="pfstateusagemeter"><?= $pfstateusage.'%'; ?></span> (<span id="pfstate"><?= htmlspecialchars($pfstatetext); ?></span>)
 		    	<br />
-		    	<a href="diag_dump_states.php">Show states</a>
+		    	<a href="diag_dump_states.php"><?=gettext("Show states");?></a>
 			</td>
 		</tr>
 		<tr>
-			<td width="25%" class="vncellt">MBUF Usage</td>
+			<td width="25%" class="vncellt"><?=gettext("MBUF Usage");?></td>
 			<td width="75%" class="listr">
 				<?php
-					$mbufs_output=`netstat -mb | grep "mbuf clusters in use" | awk '{ print $1 }'`;
-					list( $mbufs_current, $mbufs_cache, $mbufs_total, $mbufs_max ) = explode( "/", $mbufs_output);
+					$mbufstext = get_mbuf();
+					$mbufusage = get_mbuf(true);
 				?>
-				<?= $mbufs_total ?>/<?= $mbufs_max ?>
+				<div id="mbufPB"></div>
+				<span id="mbufusagemeter"><?= $mbufusage.'%'; ?></span> (<span id="mbuf"><?= $mbufstext ?></span>)
 			</td>
 		</tr>
                 <?php if (get_temp() != ""): ?>
                 <tr>
-                        <td width="25%" class="vncellt">Temperature</td>
+                        <td width="25%" class="vncellt"><?=gettext("Temperature");?></td>
 			<td width="75%" class="listr">
 				<?php $TempMeter = $temp = get_temp(); ?>
-				<img src="./themes/<?= $g['theme']; ?>/images/misc/bar_left.gif" height="15" width="4" border="0" align="middle" alt="left bar" /><img src="./themes/<?= $g['theme']; ?>/images/misc/bar_blue.gif" height="15" name="tempwidtha" id="tempwidtha" width="<?= round($TempMeter); ?>" border="0" align="middle" alt="red bar" /><img src="./themes/<?= $g['theme']; ?>/images/misc/bar_gray.gif" height="15" name="tempwidthb" id="tempwidthb" width="<?= (100 - $TempMeter); ?>" border="0" align="middle" alt="gray bar" /><img src="./themes/<?= $g['theme']; ?>/images/misc/bar_right.gif" height="15" width="5" border="0" align="middle" alt="right bar" />
-				&nbsp;
+				<div id="tempPB"></div>
 				<span id="tempmeter"><?= $temp."&#176;C"; ?></span>
 			</td>
                 </tr>
                 <?php endif; ?>
 		<tr>
-			<td width="25%" class="vncellt">Load average</td>
+			<td width="25%" class="vncellt"><?=gettext("Load average");?></td>
 			<td width="75%" class="listr">
 			<div id="load_average" title="Last 1, 5 and 15 minutes"><?= get_load_average(); ?></div>
 			</td>
 		</tr>
 		<tr>
-			<td width="25%" class="vncellt">CPU usage</td>
+			<td width="25%" class="vncellt"><?=gettext("CPU usage");?></td>
 			<td width="75%" class="listr">
-				<?php $cpuUsage = "0"; ?>
-				<img src="./themes/<?= $g['theme']; ?>/images/misc/bar_left.gif" height="15" width="4" border="0" align="middle" alt="left bar" /><img src="./themes/<?= $g['theme']; ?>/images/misc/bar_blue.gif" height="15" name="cpuwidtha" id="cpuwidtha" width="<?= $cpuUsage; ?>" border="0" align="middle" alt="red bar" /><img src="./themes/<?= $g['theme']; ?>/images/misc/bar_gray.gif" height="15" name="cpuwidthb" id="cpuwidthb" width="<?= (100 - $cpuUsage); ?>" border="0" align="middle" alt="gray bar" /><img src="./themes/<?= $g['theme']; ?>/images/misc/bar_right.gif" height="15" width="5" border="0" align="middle" alt="right bar" />
-				&nbsp;
-				<br/><span id="cpumeter">(Updating in 10 seconds)</span>
+				<div id="cpuPB"></div>
+				<span id="cpumeter">(Updating in 10 seconds)</span>
 			</td>
 		</tr>
 		<tr>
-			<td width="25%" class="vncellt">Memory usage</td>
+			<td width="25%" class="vncellt"><?=gettext("Memory usage");?></td>
 			<td width="75%" class="listr">
 				<?php $memUsage = mem_usage(); ?>
-				<img src="./themes/<?= $g['theme']; ?>/images/misc/bar_left.gif" height="15" width="4" border="0" align="middle" alt="left bar" /><img src="./themes/<?= $g['theme']; ?>/images/misc/bar_blue.gif" height="15" name="memwidtha" id="memwidtha" width="<?= $memUsage; ?>" border="0" align="middle" alt="red bar" /><img src="./themes/<?= $g['theme']; ?>/images/misc/bar_gray.gif" height="15" name="memwidthb" id="memwidthb" width="<?= (100 - $memUsage); ?>" border="0" align="middle" alt="gray bar" /><img src="./themes/<?= $g['theme']; ?>/images/misc/bar_right.gif" height="15" width="5" border="0" align="middle" alt="right bar" />
-				&nbsp;
-				<br/><span id="memusagemeter"><?= $memUsage.'%'; ?></span>
+				<div id="memUsagePB"></div>
+				<span id="memusagemeter"><?= $memUsage.'%'; ?></span> of <?= sprintf("%.0f", `/sbin/sysctl -n hw.physmem` / (1024*1024)) ?> MB
 			</td>
 		</tr>
 		<?php if($showswap == true): ?>
 		<tr>
-			<td width="25%" class="vncellt">SWAP usage</td>
+			<td width="25%" class="vncellt"><?=gettext("SWAP usage");?></td>
 			<td width="75%" class="listr">
 				<?php $swapusage = swap_usage(); ?>
-				<img src="./themes/<?= $g['theme']; ?>/images/misc/bar_left.gif" height="15" width="4" border="0" align="middle" alt="left bar" /><img src="./themes/<?= $g['theme']; ?>/images/misc/bar_blue.gif" height="15" width="<?= $swapusage; ?>" border="0" align="middle" alt="red bar" /><img src="./themes/<?= $g['theme']; ?>/images/misc/bar_gray.gif" height="15" width="<?= (100 - $swapusage); ?>" border="0" align="middle" alt="gray bar" /><img src="./themes/<?= $g['theme']; ?>/images/misc/bar_right.gif" height="15" width="5" border="0" align="middle" alt="right bar" />
-				&nbsp;
-				<br/><span id="swapusagemeter"><?= $swapusage.'%'; ?></span>
+				<div id="swapUsagePB"></div>
+				<span id="swapusagemeter"><?= $swapusage.'%'; ?></span> of <?= sprintf("%.0f", `/usr/sbin/swapinfo -m | /usr/bin/grep -v Device | /usr/bin/awk '{ print $2;}'`) ?> MB
 			</td>
 		</tr>
 		<?php endif; ?>
 		<tr>
-			<td width="25%" class="vncellt">Disk usage</td>
+			<td width="25%" class="vncellt"><?=gettext("Disk usage");?></td>
 			<td width="75%" class="listr">
 				<?php $diskusage = disk_usage(); ?>
-				<img src="./themes/<?= $g["theme"]; ?>/images/misc/bar_left.gif" height="15" width="4" border="0" align="middle" alt="left bar" /><img src="./themes/<?= $g["theme"]; ?>/images/misc/bar_blue.gif" height="15" width="<?= $diskusage; ?>" border="0" align="middle" alt="red bar" /><img src="./themes/<?= $g["theme"]; ?>/images/misc/bar_gray.gif" height="15" width="<?= (100 - $diskusage); ?>" border="0" align="middle" alt="gray bar" /><img src="./themes/<?= $g["theme"]; ?>/images/misc/bar_right.gif" height="15" width="5" border="0" align="middle" alt="right bar" />
-				&nbsp;
-				<br/><span id="diskusagemeter"><?= $diskusage.'%'; ?></span>
+				<div id="diskUsagePB"></div>
+				<span id="diskusagemeter"><?= $diskusage.'%'; ?></span> of <?= `/bin/df -h / | /usr/bin/grep -v 'Size' | /usr/bin/awk '{ print $2 }'` ?>
 			</td>
 		</tr>
 	</tbody>

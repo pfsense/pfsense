@@ -18,7 +18,7 @@ dhcp
 # Let's break that down:
 #
 # (\x01|\x02) is for BOOTREQUEST or BOOTREPLY
-# Is there a demand for doing these seperately?  The Packeteer does.
+# Is there a demand for doing these separately?  The Packeteer does.
 #
 # [\x01-\x20] is for any of the hardware address types listed at
 # (http://www.iana.org/assignments/arp-parameters) and hopefully faster 

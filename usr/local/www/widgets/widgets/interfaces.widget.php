@@ -38,70 +38,52 @@ require_once("pfsense-utils.inc");
 require_once("functions.inc");
 require_once("/usr/local/www/widgets/include/interfaces.inc");
 
-		$i = 0; 
+		$i = 0;
 		$ifdescrs = get_configured_interface_with_descr();
 ?>
-			
+
 	         <table bgcolor="#990000" width="100%" border="0" cellspacing="0" cellpadding="0" summary="interfaces">
-				<?php 
+				<?php
 				foreach ($ifdescrs as $ifdescr => $ifname) {
 					$ifinfo = get_interface_info($ifdescr);
 					$iswireless = is_interface_wireless($ifdescr);
 				?>
-				<tr> 
+				<tr>
 				<td class="vncellt" width="40%">
-				<?php 
+				<?php
 				if($ifinfo['ppplink']) {
 					echo "<img src='./themes/{$g['theme']}/images/icons/icon_3g.gif' alt='3g' />";
 				} else if($iswireless) {
-					if($ifinfo['status'] == "associated") { ?> 
+					if($ifinfo['status'] == "associated") { ?>
 						<img src="./themes/<?= $g['theme']; ?>/images/icons/icon_wlan.gif" alt="wlan" />
 					<?php } else { ?>
 						<img src="./themes/<?= $g['theme']; ?>/images/icons/icon_wlan_d.gif" alt="wlan_d" />
 					<?php } ?>
 				<?php } else { ?>
 						<img src="./themes/<?= $g['theme']; ?>/images/icons/icon_cablenic.gif" alt="cablenic" />
-				<?php } ?>&nbsp; 
+				<?php } ?>&nbsp;
 				<strong><u>
 				<span onclick="location.href='/interfaces.php?if=<?=$ifdescr; ?>'" style="cursor:pointer">
 				<?=htmlspecialchars($ifname);?></span></u></strong>
-				<?php 
-					if ($ifinfo['dhcplink']) 
+				<?php
+					if ($ifinfo['dhcplink'])
 						echo "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(DHCP)";
 				?>
 				</td>
 				<td width="60%"  class="listr">
 	                 		<table width="100%" border="0" cellspacing="0" cellpadding="0" summary="status">
 						<tr>
-		                 <?php if($ifinfo['status'] == "up" || $ifinfo['status'] == "associated") { ?> 
+		                 <?php if($ifinfo['status'] == "up" || $ifinfo['status'] == "associated") { ?>
 							<td>
 								<div id="<?php echo $ifname;?>-up" style="display:inline" ><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_interface_up.gif" title="<?=$ifname;?> is up" alt="up" /></div>
-							</td>
-							<td>
-								<div id="<?php echo $ifname;?>-down" style="display:none" ><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_interface_down.gif" title="<?=$ifname;?> is down" alt="down" /></div>
-							</td>
-							<td>
-								<div id="<?php echo $ifname;?>-block" style="display:none" ><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_block.gif" title="<?=$ifname;?> is disabled" alt="disabled" /></div>
 							</td>
 		                <?php } else if ($ifinfo['status'] == "no carrier") { ?>
 							<td>
 								<div id="<?php echo $ifname;?>-down" style="display:inline" ><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_interface_down.gif" title="<?=$ifname;?> is down" alt="down" /></div>
 							</td>
-							<td>
-								<div id="<?php echo $ifname;?>-block" style="display:none" ><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_block.gif" title="<?=$ifname;?> is disabled" alt="disabled" /></div>
-							</td>
-							<td>
-								<div id="<?php echo $ifname;?>-up" style="display:none" ><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_interface_up.gif" title="<?=$ifname;?> is up" alt="up" /></div>
-							</td>
 				<?php }  else if ($ifinfo['status'] == "down") { ?>
 							<td>
 								<div id="<?php echo $ifname;?>-block" style="display:inline" ><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_block.gif" title="<?=$ifname;?> is disabled" alt="disabled" /></div>
-							</td>
-							<td>
-								<div id="<?php echo $ifname;?>-up" style="display:none" ><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_interface_up.gif" title="<?=$ifname;?> is up" alt="up" /></div>
-							</td>
-							<td>
-								<div id="<?php echo $ifname;?>-down" style="display:none" ><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_interface_down.gif" title="<?=$ifname;?> is down" alt="down" /></div>
 							</td>
 		                <?php } else { ?><?=htmlspecialchars($ifinfo['status']); }?>
 							<td>

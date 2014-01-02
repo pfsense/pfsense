@@ -80,8 +80,8 @@ $iflist = get_configured_interface_with_descr();
 if (!$if || !isset($iflist[$if])) {
 	foreach ($iflist as $ifent => $ifname) {
 		$oc = $config['interfaces'][$ifent];
-		if ((is_array($config['dhcpdv6'][$ifent]) && !isset($config['dhcpdv6'][$ifent]['enable']) && !(is_ipaddrv6($oc['ipaddrv6']) && (!preg_match("/fe80::/", $oc['ipaddrv6'])))) ||
-			(!is_array($config['dhcpdv6'][$ifent]) && !(is_ipaddrv6($oc['ipaddrv6']) && (!preg_match("/fe80::/", $oc['ipaddrv6'])))))
+		if ((is_array($config['dhcpdv6'][$ifent]) && !isset($config['dhcpdv6'][$ifent]['enable']) && !(is_ipaddrv6($oc['ipaddrv6']) && (!is_linklocal($oc['ipaddrv6'])))) ||
+			(!is_array($config['dhcpdv6'][$ifent]) && !(is_ipaddrv6($oc['ipaddrv6']) && (!is_linklocal($oc['ipaddrv6'])))))
 			continue;
 		$if = $ifent;
 		break;
@@ -229,8 +229,8 @@ include("head.inc");
 	$i = 0;
 	foreach ($iflist as $ifent => $ifname) {
 		$oc = $config['interfaces'][$ifent];
-		if ((is_array($config['dhcpdv6'][$ifent]) && !isset($config['dhcpdv6'][$ifent]['enable']) && !(is_ipaddrv6($oc['ipaddrv6']) && (!preg_match("/fe80::/", $oc['ipaddrv6'])))) ||
-			(!is_array($config['dhcpdv6'][$ifent]) && !(is_ipaddrv6($oc['ipaddrv6']) && (!preg_match("/fe80::/", $oc['ipaddrv6'])))))
+		if ((is_array($config['dhcpdv6'][$ifent]) && !isset($config['dhcpdv6'][$ifent]['enable']) && !(is_ipaddrv6($oc['ipaddrv6']) && (!is_linklocal($oc['ipaddrv6'])))) ||
+			(!is_array($config['dhcpdv6'][$ifent]) && !(is_ipaddrv6($oc['ipaddrv6']) && (!is_linklocal($oc['ipaddrv6'])))))
 			continue;
 		if ($ifent == $if)
 			$active = true;
@@ -376,7 +376,7 @@ display_top_tabs($tab_array);
 			<td width="22%" valign="top" class="vncell"><?=gettext("Domain search list");?></td>
 			<td width="78%" class="vtable">
 				<input name="radomainsearchlist" type="text" class="formfld unknown" id="radomainsearchlist" size="28" value="<?=htmlspecialchars($pconfig['radomainsearchlist']);?>"><br>
-				<?=gettext("The RA server can optionally provide a domain search list. Use the semicolon character as seperator");?>
+				<?=gettext("The RA server can optionally provide a domain search list. Use the semicolon character as separator");?>
 			</td>
 			</tr>
 

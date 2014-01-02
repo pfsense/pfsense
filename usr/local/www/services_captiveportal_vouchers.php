@@ -41,7 +41,7 @@ if ($_POST['postafterlogin'])
 
 require("guiconfig.inc");
 require("functions.inc");
-require("filter.inc");
+require_once("filter.inc");
 require("shaper.inc");
 require("captiveportal.inc");
 require_once("voucher.inc");
@@ -213,7 +213,7 @@ if ($_POST) {
 			$reqdfieldsn = array(gettext("Synchronize Voucher Database IP"),gettext("Sync port"),gettext("Sync password"),gettext("Sync username"));
 		}
 		
-		do_input_validation($_POST, $reqdfields, $reqdfieldsn, &$input_errors);
+		do_input_validation($_POST, $reqdfields, $reqdfieldsn, $input_errors);
 	}
 	
 	if (!$_POST['vouchersyncusername']) { 
@@ -274,7 +274,12 @@ if ($_POST) {
 			   $newvoucher['vouchersyncport'] && $newvoucher['vouchersyncdbip']) {
 				// Synchronize the voucher DB from the master node
 				require_once("xmlrpc.inc");
-				if($newvoucher['vouchersyncport'] == "443") 
+
+				$protocol = "http";
+				if (is_array($config['system']) && is_array($config['system']['webgui']) && !empty($config['system']['webgui']['protocol']) &&
+				    $config['system']['webgui']['protocol'] == "https")
+					$protocol = "https";
+				if ($protocol == "https" || $newvoucher['vouchersyncport'] == "443")
 					$url = "https://{$newvoucher['vouchersyncdbip']}";
 				else 
 					$url = "http://{$newvoucher['vouchersyncdbip']}";
@@ -319,29 +324,30 @@ EOF;
 					} else {				
 						// If we received back the voucher roll and other information then store it.
 						if($toreturn['voucher']['roll'])
-							$config['voucher'][$cpzone]['roll'] = $toreturn['voucher']['roll'];
+							$newvoucher['roll'] = $toreturn['voucher']['roll'];
 						if($toreturn['voucher']['rollbits'])
-							$config['voucher'][$cpzone]['rollbits'] = $toreturn['voucher']['rollbits'];
+							$newvoucher['rollbits'] = $toreturn['voucher']['rollbits'];
 						if($toreturn['voucher']['ticketbits'])
-							$config['voucher'][$cpzone]['ticketbits'] = $toreturn['voucher']['ticketbits'];
+							$newvoucher['ticketbits'] = $toreturn['voucher']['ticketbits'];
 						if($toreturn['voucher']['checksumbits'])
-							$config['voucher'][$cpzone]['checksumbits'] = $toreturn['voucher']['checksumbits'];
+							$newvoucher['checksumbits'] = $toreturn['voucher']['checksumbits'];
 						if($toreturn['voucher']['magic'])
-							$config['voucher'][$cpzone]['magic'] = $toreturn['voucher']['magic'];
+							$newvoucher['magic'] = $toreturn['voucher']['magic'];
 						if($toreturn['voucher']['exponent'])
-							$config['voucher'][$cpzone]['exponent'] = $toreturn['voucher']['exponent'];
+							$newvoucher['exponent'] = $toreturn['voucher']['exponent'];
 						if($toreturn['voucher']['publickey'])
-							$config['voucher'][$cpzone]['publickey'] = $toreturn['voucher']['publickey'];
+							$newvoucher['publickey'] = $toreturn['voucher']['publickey'];
 						if($toreturn['voucher']['privatekey'])
-							$config['voucher'][$cpzone]['privatekey'] = $toreturn['voucher']['privatekey'];
+							$newvoucher['privatekey'] = $toreturn['voucher']['privatekey'];
 						if($toreturn['voucher']['msgnoaccess'])
-							$config['voucher'][$cpzone]['msgnoaccess'] = $toreturn['voucher']['msgnoaccess'];
+							$newvoucher['msgnoaccess'] = $toreturn['voucher']['msgnoaccess'];
 						if($toreturn['voucher']['msgexpired'])
-							$config['voucher'][$cpzone]['msgexpired'] = $toreturn['voucher']['msgexpired'];
+							$newvoucher['msgexpired'] = $toreturn['voucher']['msgexpired'];
 						if($toreturn['voucher']['msgnoaccess'])
-							$config['voucher'][$cpzone]['msgnoaccess'] = $toreturn['voucher']['msgnoaccess'];
+							$newvoucher['msgnoaccess'] = $toreturn['voucher']['msgnoaccess'];
 						$savemsg = gettext("Voucher database has been synchronized from {$url}:{$port}");
 
+						$config['voucher'][$cpzone] = $newvoucher;
 						write_config();
 						voucher_configure_zone(true);
 					}
@@ -429,8 +435,8 @@ function enable_change(enable_change) {
 			<ul id="tabnav">
 <?php 
 	$tab_array = array();
-	$tab_array[] = array(gettext("Captive portal"), false, "services_captiveportal.php?zone={$cpzone}");
-	$tab_array[] = array(gettext("Pass-through MAC"), false, "services_captiveportal_mac.php?zone={$cpzone}");
+	$tab_array[] = array(gettext("Captive portal(s)"), false, "services_captiveportal.php?zone={$cpzone}");
+	$tab_array[] = array(gettext("MAC"), false, "services_captiveportal_mac.php?zone={$cpzone}");
 	$tab_array[] = array(gettext("Allowed IP addresses"), false, "services_captiveportal_ip.php?zone={$cpzone}");
 	$tab_array[] = array(gettext("Allowed Hostnames"), false, "services_captiveportal_hostname.php?zone={$cpzone}");
 	$tab_array[] = array(gettext("Vouchers"), true, "services_captiveportal_vouchers.php?zone={$cpzone}");

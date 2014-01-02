@@ -64,7 +64,7 @@ include("head.inc");
 
 <body link="#0000CC" vlink="#0000CC" alink="#0000CC">
 <?php include("fbegin.inc"); ?>
-<table width="100%" border="0" cellpadding="0" cellspacing="0">
+<table width="100%" border="0" cellpadding="0" cellspacing="0" summary="logs dhcp">
   <tr><td>
 <?php
 	$tab_array = array();
@@ -85,18 +85,17 @@ include("head.inc");
   <tr>
     <td>
 	<div id="mainarea">
-		<table class="tabcont" width="100%" border="0" cellspacing="0" cellpadding="0">
+		<table class="tabcont" width="100%" border="0" cellspacing="0" cellpadding="0" summary="main area">
 		  <tr>
 			<td colspan="2" class="listtopic">
 			  <?php printf(gettext("Last %s DHCP service log entries"), $nentries);?></td>
 		  </tr>
 		  <?php dump_clog($dhcpd_logfile, $nentries); ?>
-		<tr><td><br><form action="diag_logs_dhcp.php" method="post">
-			<input name="clear" type="submit" class="formbtn" value="<?= gettext("Clear log");?>"></td>
+		<tr><td><br/><form action="diag_logs_dhcp.php" method="post">
+			<input name="clear" type="submit" class="formbtn" value="<?= gettext("Clear log");?>" /></form</td>
 			<td>NOTE: Clearing the log file will restart the DHCP daemon.</td></tr>
 		</table>
 	</div>
-</form>
 	</td>
   </tr>
 </table>

@@ -55,7 +55,11 @@ $ifnum = get_real_interface($ifnum);
 $ifname=@$_GET["ifname"]?$_GET["ifname"]:"Interface $ifnum";  //Interface name that will be showed on top right of graph
 
 /********* Other conf *******/
-$scale_type="up";               //Autoscale default setup : "up" = only increase scale; "follow" = increase and decrease scale according to current graphed datas
+if (isset($config["widgets"]["trafficgraphs"]["scale_type"]))
+	$scale_type = $config["widgets"]["trafficgraphs"]["scale_type"];
+else
+	$scale_type = "up";
+
 $nb_plot=120;                   //NB plot in graph
 if ($_GET["timeint"])
 	$time_interval = $_GET["timeint"];		//Refresh time Interval
@@ -97,7 +101,7 @@ if(file_exists("/usr/local/www/themes/{$g['theme']}/graph.php")) {
 } 
 
 /********* Graph DATA **************/
-print('<?xml version="1.0" encoding="iso-8859-1"?>' . "\n");?>
+print('<?xml version="1.0" ?>' . "\n");?>
 <svg width="100%" height="100%" viewBox="0 0 <?=$width?> <?=$height?>" preserveAspectRatio="none" xml:space="preserve" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" onload="init(evt)">
   <g id="graph">
     <rect id="bg" x1="0" y1="0" width="100%" height="100%" fill="white"/>
@@ -116,7 +120,8 @@ print('<?xml version="1.0" encoding="iso-8859-1"?>' . "\n");?>
     <text id="ifname" x="<?=$width?>" y="8" <?=$attribs['graphname']?> text-anchor="end"><?=htmlspecialchars($ifname)?></text>
     <text id="switch_unit" x="<?=$width*0.55?>" y="5" <?=$attribs['switch_unit']?>><?=gettext("Switch to bytes/s"); ?></text>
     <text id="switch_scale" x="<?=$width*0.55?>" y="11" <?=$attribs['switch_scale']?>><?=gettext("AutoScale"); ?> (<?=$scale_type?>)</text>
-    <text id="datetime" x="<?=$width*0.33?>" y="5" <?=$attribs['legend']?>> </text>
+    <text id="date" x="<?=$width*0.33?>" y="5" <?=$attribs['legend']?>> </text>
+    <text id="time" x="<?=$width*0.33?>" y="11" <?=$attribs['legend']?>> </text>
     <text id="graphlast" x="<?=$width*0.55?>" y="17" <?=$attribs['legend']?>><?=gettext("Graph shows last"); ?> <?=$time_interval*$nb_plot?> <?=gettext("seconds"); ?></text>
     <polygon id="axis_arrow_x" <?=$attribs['axis']?> points="<?=($width) . "," . ($height)?> <?=($width-2) . "," . ($height-2)?> <?=($width-2) . "," . $height?>"/>
     <text id="error" x="<?=$width*0.5?>" y="<?=$height*0.5?>"  visibility="hidden" <?=$attribs['error']?> text-anchor="middle"><?=$error_text?></text>
@@ -209,9 +214,10 @@ function fetch_data() {
 function plot_data(obj) {
   // Show datetimelegend
   var now = new Date();
-  var datetime = (now.getMonth()+1) + "/" + now.getDate() + "/" + now.getFullYear() + ' ' + 
-    LZ(now.getHours()) + ":" + LZ(now.getMinutes()) + ":" + LZ(now.getSeconds());
-  SVGDoc.getElementById('datetime').firstChild.data = datetime;
+  var time = LZ(now.getHours()) + ":" + LZ(now.getMinutes()) + ":" + LZ(now.getSeconds());
+  SVGDoc.getElementById('time').firstChild.data = time;
+  var date = (now.getMonth()+1) + "/" + now.getDate() + "/" + now.getFullYear();
+  SVGDoc.getElementById('date').firstChild.data = date;
 
   if (!obj.success)
     return handle_error();  // getURL failed to get data

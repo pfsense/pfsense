@@ -58,6 +58,7 @@ $pconfig['disableconsolemenu'] = isset($config['system']['disableconsolemenu']);
 $pconfig['noantilockout'] = isset($config['system']['webgui']['noantilockout']);
 $pconfig['nodnsrebindcheck'] = isset($config['system']['webgui']['nodnsrebindcheck']);
 $pconfig['nohttpreferercheck'] = isset($config['system']['webgui']['nohttpreferercheck']);
+$pconfig['beast_protection'] = isset($config['system']['webgui']['beast_protection']);
 $pconfig['noautocomplete'] = isset($config['system']['webgui']['noautocomplete']);
 $pconfig['althostnames'] = $config['system']['webgui']['althostnames'];
 $pconfig['enableserial'] = $config['system']['enableserial'];
@@ -166,6 +167,11 @@ if ($_POST) {
 		else
 			unset($config['system']['webgui']['nohttpreferercheck']);
 
+		if ($_POST['beast_protection'] == "yes")
+			$config['system']['webgui']['beast_protection'] = true;
+		else
+			unset($config['system']['webgui']['beast_protection']);
+
 		if ($_POST['noautocomplete'] == "yes")
 			$config['system']['webgui']['noautocomplete'] = true;
 		else
@@ -237,6 +243,21 @@ if ($_POST) {
 		services_dnsmasq_configure();
 		conf_mount_ro();
 	}
+}
+
+unset($hwcrypto);
+$fd = @fopen("{$g['varlog_path']}/dmesg.boot", "r");
+if ($fd) {
+	while (!feof($fd)) {
+		$dmesgl = fgets($fd);
+		if (preg_match("/^hifn.: (.*?),/", $dmesgl, $matches)) {
+				unset($pconfig['beast_protection']);
+				$disable_beast_option = "disabled";
+				$hwcrypto = $matches[1];
+			break;
+		}
+	}
+	fclose($fd);
 }
 
 $pgtitle = array(gettext("System"),gettext("Advanced: Admin Access"));
@@ -451,6 +472,22 @@ function prot_change() {
 								</td>
 							</tr>
 							<tr>
+								<td width="22%" valign="top" class="vncell"><?=gettext("BEAST Attack Protection"); ?></td>
+								<td width="78%" class="vtable">
+									<input name="beast_protection" type="checkbox" id="beast_protection" value="yes" <?php if ($pconfig['beast_protection']) echo "checked=\"checked\""; ?> <?= $disable_beast_option ?>/>
+									<strong><?=gettext("Mitigate the BEAST SSL Attack"); ?></strong>
+									<br/>
+									<?php echo gettext("When this is checked, the webConfigurator can mitigate BEAST SSL attacks. ") ?>
+									<br/>
+									<?php 	if ($disable_beast_option) {
+											echo "<br/>" . sprintf(gettext("This option has been automatically disabled because a conflicting cryptographic accelerator card has been detected (%s)."), $hwcrypto) . "<br/><br/>";
+										} ?>
+									<?php echo gettext("This option is off by default because Hifn accelerators do NOT work with this option, and the GUI will not function. " .
+									"It is possible that other accelerators have a similar problem that is not yet known/documented. " .
+									"More information on BEAST is available from <a target='_blank' href='https://en.wikipedia.org/wiki/Transport_Layer_Security#BEAST_attack'>Wikipedia</a>."); ?>
+								</td>
+							</tr>
+							<tr>
 								<td colspan="2" class="list" height="12">&nbsp;</td>
 							</tr>
 							<tr>
@@ -486,7 +523,7 @@ function prot_change() {
 								<td colspan="2" class="list" height="12">&nbsp;</td>
 							</tr>
 							<tr>
-								<td colspan="2" valign="top" class="listtopic"><?=gettext("Serial Communcations"); ?></td>
+								<td colspan="2" valign="top" class="listtopic"><?=gettext("Serial Communications"); ?></td>
 							</tr>
 							<?php if($g['platform'] == "pfSense" || $g['platform'] == "cdrom"): ?>
 							<tr>

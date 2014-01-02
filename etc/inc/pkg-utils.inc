@@ -1264,26 +1264,41 @@ function pkg_reinstall_all() {
 
 	@unlink('/conf/needs_package_sync');
 	if (is_array($config['installedpackages']['package'])) {
-		echo "One moment please, reinstalling packages...\n";
-		echo " >>> Trying to fetch package info...";
+		echo gettext("One moment please, reinstalling packages...\n");
+		echo gettext(" >>> Trying to fetch package info...");
+		log_error(gettext("Attempting to reinstall all packages"));
 		$pkg_info = get_pkg_info();
 		if ($pkg_info) {
 			echo " Done.\n";
 		} else {
 			$xmlrpc_base_url = isset($config['system']['altpkgrepo']['enable']) ? $config['system']['altpkgrepo']['xmlrpcbaseurl'] : $g['xmlrpcbaseurl'];
-			echo "\n" . sprintf(gettext(' >>> Unable to communicate with %1$s. Please verify DNS and interface configuration, and that %2$s has functional Internet connectivity.'), $xmlrpc_base_url, $g['product_name']) . "\n";
+			$error = sprintf(gettext(' >>> Unable to communicate with %1$s. Please verify DNS and interface configuration, and that %2$s has functional Internet connectivity.'), $xmlrpc_base_url, $g['product_name']);
+			echo "\n{$error}\n";
+			log_error(gettext("Cannot reinstall packages: ") . $error);
 			return;
 		}
 		$todo = array();
-		foreach($config['installedpackages']['package'] as $package)
+		$all_names = array();
+		foreach($config['installedpackages']['package'] as $package) {
 			$todo[] = array('name' => $package['name'], 'version' => $package['version']);
+			$all_names[] = $package['name'];
+		}
+		$package_name_list = gettext("List of packages to reinstall: ") . implode(", ", $all_names);
+		echo " >>> {$package_name_list}\n";
+		log_error($package_name_list);
+
 		foreach($todo as $pkgtodo) {
 			$static_output = "";
 			if($pkgtodo['name']) {
+				log_error(gettext("Uninstalling package") . " {$pkgtodo['name']}");
 				uninstall_package($pkgtodo['name']);
+				log_error(gettext("Finished uninstalling package") . " {$pkgtodo['name']}");
+				log_error(gettext("Reinstalling package") . " {$pkgtodo['name']}");
 				install_package($pkgtodo['name']);
+				log_error(gettext("Finished installing package") . " {$pkgtodo['name']}");
 			}
 		}
+		log_error(gettext("Finished reinstalling all packages."));
 	} else
 		echo "No packages are installed.";
 }
@@ -1321,16 +1336,68 @@ function stop_packages() {
 		}
 	}
 
-	$shell = @popen("/bin/sh", "w");
-	if ($shell) {
-		foreach ($rcfiles as $rcfile => $number) {
+	foreach ($rcfiles as $rcfile => $number) {
+		$shell = @popen("/bin/sh", "w");
+		if ($shell) {
 			echo " Stopping {$rcfile}...";
-			fwrite($shell, "{$rcfile} stop >>/tmp/bootup_messages 2>&1");
+			if (!@fwrite($shell, "{$rcfile} stop >>/tmp/bootup_messages 2>&1")) {
+				if ($shell)
+					pclose($shell);
+				$shell = @popen("/bin/sh", "w");
+			}
 			echo "done.\n";
+			pclose($shell);
 		}
-
-		pclose($shell);
 	}
 }
 
+function package_skip_tests($index,$requested_version){
+	global $config, $g;
+
+	/* Get pfsense version*/
+	$version = rtrim(file_get_contents("/etc/version"));
+	
+	if($g['platform'] == "nanobsd")
+		if($index['noembedded']) 
+			return true;
+						
+	/* If we are on not on HEAD, and the package wants it, skip */
+	if ($version <> "HEAD" && $index['required_version'] == "HEAD" && $requested_version <> "other")
+		return true;
+							
+	/* If there is no required version, and the requested package version is not 'none', then skip */
+	if (empty($index['required_version']) && $requested_version <> "none")
+		return true;
+							
+	/* If the requested version is not 'other', and the required version is newer than what we have, skip. */
+	if($requested_version <> "other" && (pfs_version_compare("", $version, $index['required_version']) < 0))
+		return true;
+							
+	/* If the requestion version is 'other' and we are on the version requested, skip. */
+	if($requested_version == "other" && (pfs_version_compare("", $version, $index['required_version']) == 0))
+		return true;
+							
+	/* Package is only for an older version, lets skip */
+	if($index['maximum_version'] && (pfs_version_compare("", $version, $index['maximum_version']) > 0))
+		return true;
+		
+	/* Do not skip package list */	
+	return false;
+}
+
+function get_pkg_interfaces_select_source($include_localhost=false) {
+	$interfaces = get_configured_interface_with_descr();
+	$ssifs = array();
+	foreach ($interfaces as $iface => $ifacename) {
+		$tmp["name"]  = $ifacename;
+		$tmp["value"] = $iface;
+		$ssifs[] = $tmp;
+	}
+	if ($include_localhost) {
+		$tmp["name"]  = "Localhost";
+		$tmp["value"] = "lo0";
+		$ssifs[] = $tmp;
+	}
+	return $ssifs;
+}
 ?>

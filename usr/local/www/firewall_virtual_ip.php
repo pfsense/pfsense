@@ -107,6 +107,38 @@ if ($_GET['act'] == "del") {
 			}
 		}
 
+		if (is_ipaddrv6($a_vip[$_GET['id']]['subnet'])) {
+			$is_ipv6 = true;
+			$subnet = gen_subnetv6($a_vip[$_GET['id']]['subnet'], $a_vip[$_GET['id']]['subnet_bits']);
+			$if_subnet_bits = get_interface_subnetv6($a_vip[$_GET['id']]['interface']);
+			$if_subnet = gen_subnetv6(get_interface_ipv6($a_vip[$_GET['id']]['interface']), $if_subnet_bits);
+		} else {
+			$is_ipv6 = false;
+			$subnet = gen_subnet($a_vip[$_GET['id']]['subnet'], $a_vip[$_GET['id']]['subnet_bits']);
+			$if_subnet_bits = get_interface_subnet($a_vip[$_GET['id']]['interface']);
+			$if_subnet = gen_subnet(get_interface_ip($a_vip[$_GET['id']]['interface']), $if_subnet_bits);
+		}
+
+		$subnet .= "/" . $a_vip[$_GET['id']]['subnet_bits'];
+		$if_subnet .= "/" . $if_subnet_bits;
+
+		if (is_array($config['gateways']['gateway_item']))
+			foreach($config['gateways']['gateway_item'] as $gateway) {
+				if ($a_vip[$_GET['id']]['interface'] != $gateway['interface'])
+					continue;
+				if ($is_ipv6 && $gateway['ipprotocol'] == 'inet')
+					continue;
+				if (!$is_ipv6 && $gateway['ipprotocol'] == 'inet6')
+					continue;
+				if (ip_in_subnet($gateway['gateway'], $if_subnet))
+					continue;
+
+				if (ip_in_subnet($gateway['gateway'], $subnet)) {
+					$input_errors[] = gettext("This entry cannot be deleted because it is still referenced by at least one Gateway.");
+					break;
+				}
+			}
+
 		if ($a_vip[$_GET['id']]['mode'] == "ipalias") {
 			$found_carp = false;
 			$found_other_alias = false;
@@ -125,14 +157,7 @@ if ($_GET['act'] == "del") {
 
 			if ($found_carp === true && $found_other_alias === false)
 				$input_errors[] = gettext("This entry cannot be deleted because it is still referenced by a CARP IP with the description") . " {$vip['descr']}.";
-		} else if ($a_vip[$_GET['id']]['mode'] == "carp") {
-			$vipiface = "{$a_vip[$_GET['id']]['interface']}_vip{$a_vip[$_GET['id']]['vhid']}";
-			foreach ($a_vip as $vip) {
-				if ($vipiface == $vip['interface'] && $vip['mode'] == "ipalias")
-					$input_errors[] = gettext("This entry cannot be deleted because it is still referenced by an IP alias entry with the description") . " {$vip['descr']}.";
-			}
 		}
-
 		
 		if (!$input_errors) {
 			if (!session_id())
@@ -214,9 +239,7 @@ include("head.inc");
 		</tr>
 		<?php
 			$interfaces = get_configured_interface_with_descr(false, true);
-			$carplist = get_configured_carp_interface_list();
-			foreach ($carplist as $cif => $carpip)
-				$interfaces[$cif] = $carpip." (".get_vip_descr($carpip).")";
+			$interfaces['lo0'] = "Localhost";
 		?>
 			  <?php $i = 0; foreach ($a_vip as $vipent): ?>
 			  <?php if($vipent['subnet'] <> "" or $vipent['range'] <> "" or

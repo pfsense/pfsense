@@ -80,9 +80,12 @@
 		if($post['enable'] && (!$post['enable_upnp'] && !$post['enable_natpmp']))
 			$input_errors[] = 'At least one of \'UPnP\' or \'NAT-PMP\' must be allowed';
 		if($post['iface_array'])
-			foreach($post['iface_array'] as $iface)
+			foreach($post['iface_array'] as $iface) {
 				if($iface == 'wan')
 					$input_errors[] = 'It is a security risk to specify WAN in the \'Interface\' field';
+				elseif ($iface == $post['ext_iface'])
+					$input_errors[] = 'You cannot select the external interface as an internal interface.';
+			}
 		if($post['overridewanip'] && !upnp_validate_ip($post['overridewanip'],false))
 			$input_errors[] = 'You must specify a valid ip address in the \'Override WAN address\' field';
 		if(($post['download'] && !$post['upload']) || ($post['upload'] && !$post['download']))
@@ -124,7 +127,19 @@
 		$upnp_config = $config['installedpackages']['miniupnpd']['config'][0];
 		$config_file = '/var/etc/miniupnpd.conf';
 
-		$config_text = "ext_ifname=".get_real_interface()."\n";
+		if (!isset($upnp_config['ext_iface']) || empty($upnp_config['ext_iface']))
+			$ext_ifname = get_real_interface();
+		else {
+			$if = convert_friendly_interface_to_real_interface_name($upnp_config['ext_iface']);
+			if ($if != $upnp_config['ext_iface'])
+				$ext_ifname = $if;
+			else {
+				$ext_ifname = get_real_interface();
+				upnp_warn("Could not resolve real interface for {$upnp_config['ext_iface']}, defaulting to WAN");
+			}
+		}
+
+		$config_text = "ext_ifname={$ext_ifname}\n";
 		$config_text .= "port=2189\n";
 
 		$ifaces_active = '';
@@ -134,6 +149,9 @@
 			$iface_array = explode(',', $upnp_config['iface_array']);
 
 			foreach($iface_array as $iface) {
+				/* Setting the same internal and external interface is not allowed. */
+				if ($iface == $upnp_config['ext_iface'])
+					continue;
 				$if = convert_friendly_interface_to_real_interface_name($iface);
 				/* above function returns iface if fail */
 				if($if!=$iface) {

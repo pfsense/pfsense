@@ -107,9 +107,9 @@ $clients = openvpn_get_active_clients();
 				<td class="listhdrr">Real/Virtual IP</td>
 			</tr>
 			<?php $rowIndex = 0;
-			foreach ($server['conns'] as $conn): 
+			foreach ($server['conns'] as $conn):
 			$evenRowClass = $rowIndex % 2 ? " listMReven" : " listMRodd";
-			$rowIndex++;			
+			$rowIndex++;
 			?>
 			<tr name='<?php echo "r:{$server['mgmt']}:{$conn['remote_host']}"; ?>' class="<?=$evenRowClass?>">
 				<td class="listMRlr">

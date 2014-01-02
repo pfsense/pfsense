@@ -71,7 +71,7 @@ function easyrule_find_rule_interface($int) {
 	return false;
 }
 
-function easyrule_block_rule_exists($int = 'wan') {
+function easyrule_block_rule_exists($int = 'wan', $ipproto = "inet") {
 	global $blockaliasname, $config;
 	/* No rules, we we know it doesn't exist */
 	if (!is_array($config['filter']['rule'])) {
@@ -82,7 +82,8 @@ function easyrule_block_rule_exists($int = 'wan') {
 	foreach ($config['filter']['rule'] as $rule) {
 		if (!is_array($rule) || !is_array($rule['source']))
 			continue;
-		if ($rule['source']['address'] == $blockaliasname . strtoupper($int) && ($rule['interface'] == $int) && ($rule['ipprotocol'] == $ipproto))
+		$checkproto = isset($rule['ipprotocol']) ? $rule['ipprotocol'] : "inet";
+		if ($rule['source']['address'] == $blockaliasname . strtoupper($int) && ($rule['interface'] == $int) && ($checkproto == $ipproto))
 			return true;
 	}
 	return false;

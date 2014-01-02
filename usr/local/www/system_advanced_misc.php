@@ -40,7 +40,7 @@
 ##|*IDENT=page-system-advanced-misc
 ##|*NAME=System: Advanced: Miscellaneous page
 ##|*DESCR=Allow access to the 'System: Advanced: Miscellaneous' page.
-##|*MATCH=system_advanced.php*
+##|*MATCH=system_advanced_misc.php*
 ##|-PRIV
 
 require("guiconfig.inc");
@@ -61,6 +61,7 @@ $pconfig['srctrack'] = $config['system']['srctrack'];
 $pconfig['gw_switch_default'] = isset($config['system']['gw_switch_default']);
 $pconfig['preferoldsa_enable'] = isset($config['ipsec']['preferoldsa']);
 $pconfig['racoondebug_enable'] = isset($config['ipsec']['racoondebug']);
+$pconfig['failoverforcereload'] = isset($config['ipsec']['failoverforcereload']);
 $pconfig['maxmss_enable'] = isset($config['system']['maxmss_enable']);
 $pconfig['maxmss'] = $config['system']['maxmss'];
 $pconfig['powerd_enable'] = isset($config['system']['powerd_enable']);
@@ -72,6 +73,7 @@ $pconfig['skip_rules_gw_down'] = isset($config['system']['skip_rules_gw_down']);
 $pconfig['use_mfs_tmpvar'] = isset($config['system']['use_mfs_tmpvar']);
 $pconfig['use_mfs_tmp_size'] = $config['system']['use_mfs_tmp_size'];
 $pconfig['use_mfs_var_size'] = $config['system']['use_mfs_var_size'];
+$pconfig['noinstalllanspd'] = $config['system']['noinstalllanspd'];
 
 $pconfig['powerd_ac_mode'] = "hadp";
 if (!empty($config['system']['powerd_ac_mode']))
@@ -159,6 +161,11 @@ if ($_POST) {
 		elseif (isset($config['ipsec']['preferoldsa']))
 			unset($config['ipsec']['preferoldsa']);
 
+		if($_POST['failoverforcereload'] == "yes")
+			$config['ipsec']['failoverforcereload'] = true;
+		elseif (isset($config['ipsec']['failoverforcereload']))
+			unset($config['ipsec']['failoverforcereload']);
+
 		$need_racoon_restart = false;
 		if($_POST['racoondebug_enable'] == "yes") {
 			if (!isset($config['ipsec']['racoondebug'])) {
@@ -170,6 +177,15 @@ if ($_POST) {
 				unset($config['ipsec']['racoondebug']);
 				$need_racoon_restart = true;
 			}
+		}
+		if($_POST['noinstalllanspd'] == "yes") {
+			if (!isset($pconfig['noinstalllanspd']))
+				$need_racoon_restart = true;
+			$config['system']['noinstalllanspd'] = true;
+		} else {
+			if (isset($config['system']['noinstalllanspd']))
+				$need_racoon_restart = true;
+			unset($config['system']['noinstalllanspd']);
 		}
 
 		if($_POST['maxmss_enable'] == "yes") {
@@ -427,8 +443,8 @@ function tmpvar_checked(obj) {
 									"the system appears idle and increasing it when the system is busy.  It " .
 									"offers a good balance between a small performance loss for greatly " .
 									"increased power savings.  Hiadaptive mode is alike adaptive mode, but " .
-									"tuned for systems where performance and interactivity are more important" .
-									"than power consumption.  It rises frequency faster, drops slower and" .
+									"tuned for systems where performance and interactivity are more important " .
+									"than power consumption.  It raises frequency faster, drops slower and " .
 									"keeps twice lower CPU load."); ?>
 								</td>
 							</tr>
@@ -491,6 +507,16 @@ function tmpvar_checked(obj) {
 								<td colspan="2" valign="top" class="listtopic"><?=gettext("IP Security"); ?></td>
 							</tr>
 							<tr>
+								<td width="22%" valign="top" class="vncell"><?=gettext("LAN security associsations"); ?></td>
+								<td width="78%" class="vtable">
+									<input name="noinstalllanspd" type="checkbox" id="noinstalllanspd" value="yes" <?php if ($pconfig['noinstalllanspd']) echo "checked=\"checked\""; ?> />
+									<strong><?=gettext("Do not install LAN SPD"); ?></strong>
+									<br />
+									<?=gettext("By default, if IPSec is enabled negating SPD are inserted to provide protection. " .
+									"This behaviour can be changed by enabling this setting which will prevent installing these SPDs."); ?>
+								</td>
+							</tr>
+							<tr>
 								<td width="22%" valign="top" class="vncell"><?=gettext("Security Associations"); ?></td>
 								<td width="78%" class="vtable">
 									<input name="preferoldsa_enable" type="checkbox" id="preferoldsa_enable" value="yes" <?php if ($pconfig['preferoldsa_enable']) echo "checked=\"checked\""; ?> />
@@ -510,6 +536,18 @@ function tmpvar_checked(obj) {
 									<?=gettext("Launches racoon in debug mode so that more verbose logs " .
 									"will be generated to aid in troubleshooting."); ?><br/>
 									<?=gettext("NOTE: Changing this setting will restart racoon."); ?>
+								</td>
+							</tr>
+							<tr>
+								<td width="22%" valign="top" class="vncell"><?=gettext("IPsec Reload on Failover"); ?></td>
+								<td width="78%" class="vtable">
+									<input name="failoverforcereload" type="checkbox" id="failoverforcereload" value="yes" <?php if ($pconfig['failoverforcereload']) echo "checked=\"checked\""; ?> />
+									<strong><?=gettext("Force IPsec Reload on Failover"); ?></strong>
+									<br />
+									<?=gettext("In some circumstances using a gateway group as the interface for " .
+									"an IPsec tunnel does not function properly, and IPsec must be forcefully reloaded " .
+									"when a failover occurs. Because this will disrupt all IPsec tunnels, this behavior" .
+									" is disabled by default. Check this box to force IPsec to fully reload on failover."); ?>
 								</td>
 							</tr>
 							<tr>
@@ -546,12 +584,11 @@ function tmpvar_checked(obj) {
 								<td colspan="2" valign="top" class="listtopic"><?=gettext("Gateway Monitoring"); ?></td>
 							</tr>
 							<tr>
-								<td width="22%" valign="top" class="vncell"><?=gettext("States"); ?></td>
+								<td width="22%" valign="top" class="vncell"><?=gettext("State Killing on Gateway Failure"); ?></td>
 								<td width="78%" class="vtable">
 									<input name="kill_states" type="checkbox" id="kill_states" value="yes" <?php if ($pconfig['kill_states']) echo "checked=\"checked\""; ?> />
 									<br />
-									<?=gettext("By default the monitoring process will flush states for a gateway that goes down. ".
-									"This option overrides that behavior by not clearing states for existing connections."); ?>
+									<?=gettext("The monitoring process will flush states for a gateway that goes down if this box is not checked. Check this box to disable this behavior."); ?>
 								</td>
 							</tr>
 							<tr>

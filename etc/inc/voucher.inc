@@ -40,7 +40,12 @@ if(!function_exists('captiveportal_syslog'))
 function xmlrpc_sync_voucher_expire($vouchers, $syncip, $port, $password, $username) {
 	global $g, $config, $cpzone;
 	require_once("xmlrpc.inc");
-	if ($port == "443") 
+
+	$protocol = "http";
+	if (is_array($config['system']) && is_array($config['system']['webgui']) && !empty($config['system']['webgui']['protocol']) &&
+	    $config['system']['webgui']['protocol'] == "https")
+		$protocol = "https";
+	if ($protocol == "https" || $port == "443")
 		$url = "https://{$syncip}";
 	else
 		$url = "http://{$syncip}";
@@ -88,7 +93,12 @@ EOF;
 function xmlrpc_sync_voucher_disconnect($dbent, $syncip, $port, $password, $username, $term_cause = 1, $stop_time = null) {
 	global $g, $config, $cpzone;
 	require_once("xmlrpc.inc");
-	if ($port == "443") 
+
+	$protocol = "http";
+	if (is_array($config['system']) && is_array($config['system']['webgui']) && !empty($config['system']['webgui']['protocol']) &&
+	    $config['system']['webgui']['protocol'] == "https")
+		$protocol = "https";
+	if ($protocol == "https" || $port == "443")
 		$url = "https://{$syncip}";
 	else
 		$url = "http://{$syncip}";
@@ -140,7 +150,12 @@ EOF;
 function xmlrpc_sync_used_voucher($voucher_received, $syncip, $port, $password, $username) {
 	global $g, $config, $cpzone;
 	require_once("xmlrpc.inc");
-	if ($port == "443") 
+
+	$protocol = "http";
+	if (is_array($config['system']) && is_array($config['system']['webgui']) && !empty($config['system']['webgui']['protocol']) &&
+	    $config['system']['webgui']['protocol'] == "https")
+		$protocol = "https";
+	if ($protocol == "https" || $port == "443")
 		$url = "https://{$syncip}";
 	else
 		$url = "http://{$syncip}";
@@ -230,8 +245,9 @@ function voucher_expire($voucher_received) {
 		if (strlen($voucher) < 3)
 			continue;   // seems too short to be a voucher!
 
-		$result = exec("/usr/local/bin/voucher -c {$g['varetc_path']}/voucher_{$cpzone}.cfg -k {$g['varetc_path']}/voucher_{$cpzone}.public -- $v");
-		list($status, $roll, $nr) = explode(" ", $result);
+		unset($output);
+		$_gb = exec("/usr/local/bin/voucher -c {$g['varetc_path']}/voucher_{$cpzone}.cfg -k {$g['varetc_path']}/voucher_{$cpzone}.public -- $v", $output);
+		list($status, $roll, $nr) = explode(" ", $output[0]);
 		if ($status == "OK") {
 			// check if we have this ticket on a registered roll for this ticket 
 			if ($tickets_per_roll[$roll] && ($nr <= $tickets_per_roll[$roll])) {
@@ -264,13 +280,14 @@ function voucher_expire($voucher_received) {
 				captiveportal_syslog("$voucher ($roll/$nr): not found on any registererd Roll");
 		} else
 			// hmm, thats weird ... not what I expected
-			captiveportal_syslog("$voucher invalid: $result !!");
+			captiveportal_syslog("$voucher invalid: {$output[0]}!!");
 	}
 
 	// Refresh active DBs
 	if ($active_dirty == true) {
 		foreach ($active_vouchers as $roll => $active)
 			voucher_write_active_db($roll, $active);
+		unset($active_vouchers);
 
 		/* Triger a sync of the vouchers on config */
 		send_event("service sync vouchers");
@@ -286,6 +303,7 @@ function voucher_expire($voucher_received) {
 				voucher_write_used_db($roll, base64_encode($used));
 			}
 		}
+		unset($bitstring);
 	}
 
 	unlock($voucherlck);
@@ -423,7 +441,7 @@ function voucher_auth($voucher_received, $test = 0) {
 	// If we did a XMLRPC sync earlier check the timeleft
 	if (!empty($config['voucher'][$cpzone]['vouchersyncdbip'])) 
 		if($remote_time_used < $total_minutes) 
-			$total_minutes = $remote_time_used;
+			$total_minutes -= $remote_time_used;
 
 	// All given vouchers were valid and this isn't simply a test.
 	// Write back the used DB's
@@ -620,7 +638,9 @@ function voucher_used_count($roll) {
         $mask = 1 << ($i % 8);  // mask to test bit in octet
         if (ord($bitstring[$pos]) & $mask)
             $used++;
-    }   
+    }
+    unset($bitstring);
+
     return $used;
 }
 
@@ -700,6 +720,7 @@ function voucher_save_db_to_config_zone() {
 	    $dbi++;
         }
         $rollent['active'] = $db;
+	unset($active_vouchers);
     }
 
     unlock($voucherlck);

@@ -1,7 +1,7 @@
 <?php
 /* $Id$ */
 /*
-	firewall_aliases_edit.php
+	firewall_aliases_import.php
 	Copyright (C) 2005 Scott Ullrich
 	All rights reserved.
 
@@ -42,7 +42,7 @@ $reserved_keywords = array("pass", "out", "queue", "max", "min", "pptp", "pppoe"
 
 require("guiconfig.inc");
 require_once("util.inc");
-require("filter.inc");
+require_once("filter.inc");
 require("shaper.inc");
 
 $pgtitle = array(gettext("Firewall"),gettext("Aliases"),gettext("Bulk import"));
@@ -58,7 +58,7 @@ if($_POST['aliasimport'] <> "") {
 	$reqdfields = explode(" ", "name aliasimport");
 	$reqdfieldsn = array(gettext("Name"),gettext("Aliases"));
 
-	do_input_validation($_POST, $reqdfields, $reqdfieldsn, &$input_errors);
+	do_input_validation($_POST, $reqdfields, $reqdfieldsn, $input_errors);
 		
 	if (is_validaliasname($_POST['name']) == false)
 		$input_errors[] = gettext("The alias name may only consist of the characters") . " a-z, A-Z, 0-9, _.";
@@ -89,7 +89,7 @@ if($_POST['aliasimport'] <> "") {
 			if (is_iprange($impip)) {
 				list($startip, $endip) = explode('-', $impip);
 				$rangesubnets = ip_range_to_subnet_array($startip, $endip);
-				$address .= implode(" ", $rangesubnets);
+				$imported = array_merge($imported, $rangesubnets);
 			} else if (!is_ipaddr($impip) && !is_subnet($impip) && !empty($impip)) {
 				$input_errors[] = sprintf(gettext("%s is not an IP address. Please correct the error to continue"), $impip);
 			} elseif (!empty($impip)) {

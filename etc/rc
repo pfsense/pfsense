@@ -33,9 +33,9 @@ fi
 
 if [ -e /root/force_fsck ]; then
 	echo "Forcing filesystem check..."
-	/sbin/fsck -fy -t ufs /
+	/sbin/fsck -y -t ufs /
 	if [ "$PLATFORM" = "nanobsd" ]; then
-		/sbin/fsck -fy -t ufs /cf
+		/sbin/fsck -y -t ufs /cf
 	fi
 fi
 
@@ -68,9 +68,9 @@ echo "Mounting filesystems..."
 # Handle ZFS read-only case
 if [ "$PLATFORM" = "pfSense" ]; then
 	if [ -f /usr/bin/grep ]; then
-		WHEREISROOT=`/sbin/mount | /usr/bin/grep " / " | /usr/bin/grep "tank" | /usr/bin/cut -d' ' -f1`
-		if [ "$WHEREISROOT" != "" ]; then
-			/sbin/zfs set readonly=off $WHEREISROOT
+		ZFSROOT=`/sbin/zfs mount | /usr/bin/grep ' /$' | /usr/bin/cut -d ' ' -f 1`
+		if [ "$ZFSROOT" != "" ]; then
+			/sbin/zfs set readonly=off $ZFSROOT
 		fi
 	fi
 fi
@@ -81,9 +81,9 @@ else
 	# Mount /. If it fails run a fsck.
 	if [ "$PLATFORM" = "nanobsd" ]; then
 		export PKG_TMPDIR=/root/
-		/sbin/mount -uw / || (/sbin/fsck -fy; /sbin/mount -uw /)
+		/sbin/mount -uw / || (/sbin/fsck -y /; /sbin/fsck -y /cf; /sbin/mount -uw /)
 	else 
-		/sbin/mount -a || (/sbin/fsck -fy; /sbin/mount -a)
+		/sbin/mount -a || (/sbin/fsck -y /; /sbin/mount -a)
 	fi
 
 	# If /conf is a directory, convert it to a symlink to /cf/conf
@@ -98,11 +98,11 @@ else
 
 	if [ ! "$PLATFORM" = "jail" ]; then
 		# Check to see if a compact flash mountpoint exists
-		# If it fails to mount then run a fsck -fy
+		# If it fails to mount then run a fsck -y
 		if grep -q cf /etc/fstab; then
 			/sbin/mount -w /cf 2>/dev/null
 			/sbin/mount -uw /cf || \
-				(/sbin/umount /cf; /sbin/fsck -fy /cf; /sbin/mount -w /cf)
+				(/sbin/umount /cf; /sbin/fsck -y /cf; /sbin/mount -w /cf)
 		fi
 	fi
 
@@ -255,7 +255,7 @@ fi
 # Setup compatibility link for packages that
 # have trouble overriding the PREFIX configure
 # argument since we build our packages in a
-# seperated PREFIX area
+# separated PREFIX area
 # Only create if symlink does not exist. 
 if [ ! -h /tmp/tmp ]; then
     /bin/ln -hfs / /tmp/tmp
@@ -301,6 +301,12 @@ echo -n "."
 DISABLESYSLOGCLOG=`/usr/bin/grep -c disablesyslogclog /cf/conf/config.xml`
 ENABLEFIFOLOG=`/usr/bin/grep -c usefifolog /cf/conf/config.xml`
 LOG_FILES="system filter dhcpd vpn pptps poes l2tps openvpn portalauth ipsec ppp relayd wireless lighttpd ntpd gateways resolver routing"
+
+DEFAULT_LOG_FILE_SIZE=`/usr/local/bin/xmllint --xpath 'string(//pfsense/syslog/logfilesize)' /conf/config.xml`
+if [ ! ${DEFAULT_LOG_FILE_SIZE} ]; then
+	DEFAULT_LOG_FILE_SIZE=511488
+fi
+
 for logfile in $LOG_FILES; do
 	if [ "$DISABLESYSLOGCLOG" -gt "0" ]; then 
 		/usr/bin/touch /var/log/$logfile.log
@@ -308,9 +314,9 @@ for logfile in $LOG_FILES; do
 		if [ ! -f /var/log/$logfile.log ]; then
 			if [ "$ENABLEFIFOLOG" -gt "0" ]; then
 				# generate fifolog files
-				/usr/sbin/fifolog_create -s 511488 /var/log/$logfile.log
+				/usr/sbin/fifolog_create -s ${DEFAULT_LOG_FILE_SIZE} /var/log/$logfile.log
 			else 
-				/usr/sbin/clog -i -s 512144 /var/log/$logfile.log
+				/usr/sbin/clog -i -s ${DEFAULT_LOG_FILE_SIZE} /var/log/$logfile.log
 			fi
 		fi
 	fi 
@@ -369,20 +375,21 @@ fi
 # Run the php.ini setup file and populate
 # /usr/local/etc/php.ini and /usr/local/lib/php.ini
 /etc/rc.php_ini_setup 2>/tmp/php_errors.txt
+/usr/local/sbin/php-fpm -c /usr/local/lib/php.ini -y /usr/local/lib/php-fpm.conf -RD 2>&1 >/dev/null
 
 # Launch external configuration loader for supported platforms
 if [ "$PLATFORM" = "embedded" ]; then
-	/usr/local/bin/php -q /etc/ecl.php
+	/usr/local/sbin/fcgicli -f /etc/ecl.php
 fi
 
 # Launch external configuration loader for supported platforms
 if [ "$PLATFORM" = "nanobsd" ]; then
-	/usr/local/bin/php -q /etc/ecl.php
+	/usr/local/sbin/fcgicli -f /etc/ecl.php
 fi
 
 # Launch external configuration loader for supported platforms
 if [ "$PLATFORM" = "pfSense" ]; then
-	/usr/local/bin/php -q /etc/ecl.php
+	/usr/local/sbin/fcgicli -f /etc/ecl.php
 fi
 
 if [ -f /etc/rc.custom_boot_early ]; then
@@ -391,6 +398,7 @@ if [ -f /etc/rc.custom_boot_early ]; then
 	echo "Done"
 fi
 
+export fcgipath=/var/run/php-fpm.socket
 /usr/bin/nice -n20 /usr/local/sbin/check_reload_status
 
 # let the PHP-based configuration subsystem set up the system now
@@ -399,6 +407,10 @@ echo -n "Launching the init system..."
 /bin/rm -f /root/lighttpd*
 /usr/bin/touch $varrunpath/booting
 /etc/rc.bootup
+
+# /etc/rc.bootup unset $g['booting'], remove file right now to be
+# consistent
+/bin/rm $varrunpath/booting
 
 # If a shell was selected from recovery 
 # console then just drop to the shell now.
@@ -412,7 +424,7 @@ cd /tmp && /usr/sbin/cron -s 2>/dev/null
 echo "done."
 
 # Start packages
-/etc/rc.start_packages
+/usr/local/sbin/fcgicli -f /etc/rc.start_packages
 
 /bin/rm -rf /usr/local/pkg/pf/CVS
 
@@ -420,15 +432,14 @@ echo "done."
 /usr/local/bin/minicron 240 $varrunpath/ping_hosts.pid /usr/local/bin/ping_hosts.sh
 
 # Start account expire handler every hour
-/usr/local/bin/minicron 3600 $varrunpath/expire_accounts.pid /etc/rc.expireaccounts
+/usr/local/bin/minicron 3600 $varrunpath/expire_accounts.pid '/usr/local/sbin/fcgicli -f /etc/rc.expireaccounts'
 
 # Start alias url updater every 24 hours
-/usr/local/bin/minicron 86400 $varrunpath/update_alias_url_data.pid /etc/rc.update_alias_url_data
+/usr/local/bin/minicron 86400 $varrunpath/update_alias_url_data.pid '/usr/local/sbin/fcgicli -f /etc/rc.update_alias_url_data'
 
 /bin/chmod a+rw /tmp/.
 
 echo "Bootup complete"
-/bin/rm $varrunpath/booting
 
 /usr/local/bin/beep.sh start 2>&1 >/dev/null
 

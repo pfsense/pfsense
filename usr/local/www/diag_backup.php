@@ -182,6 +182,7 @@ function spit_out_select_items($name, $showall) {
 		       "voucher" => gettext("Captive Portal Vouchers"),
 		       "dnsmasq" => gettext("DNS Forwarder"),
 		       "dhcpd" => gettext("DHCP Server"),
+		       "dhcpdv6" => gettext("DHCPv6 Server"),
 		       "filter" => gettext("Firewall Rules"),
 		       "interfaces" => gettext("Interfaces"),
 		       "ipsec" => gettext("IPSEC"),
@@ -708,7 +709,7 @@ function backuparea_change(obj) {
 						<?=gettext("Open a"); ?> <?=$g['[product_name']?> <?=gettext("configuration XML file and click the button below to restore the configuration."); ?>
 						<br /><br />
 						<?=gettext("Restore area:"); ?> <?php spit_out_select_items("restorearea", true); ?>
-						<p><input name="conffile" type="file" class="formfld unknown" id="conffile" size="40"></p>
+						<p><input name="conffile" type="file" class="formbtn" id="conffile" size="40"></p>
 						<table>
 							<tr>
 								<td>

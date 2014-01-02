@@ -3,16 +3,27 @@
 NOTSYNCED="true"
 MAX_ATTEMPTS=3
 SERVER=`/bin/cat /cf/conf/config.xml | /usr/bin/grep timeservers | /usr/bin/cut -d">" -f2 | /usr/bin/cut -d"<" -f1`
+if [ "${SERVER}" = "" ]; then
+	exit
+fi
+
 /bin/pkill -f ntpdate_sync_once.sh
 
 ATTEMPT=1
 # Loop until we're synchronized, but for a set number of attempts so we don't get stuck here forever.
 while [ "$NOTSYNCED" = "true" ] && [ ${ATTEMPT} -le ${MAX_ATTEMPTS} ]; do
 	# Ensure that ntpd and ntpdate are not running so that the socket we want will be free.
-	/usr/bin/killall ntpd 2>/dev/null
-	/usr/bin/killall ntpdate 2>/dev/null
+	while [ true ]; do
+		/usr/bin/killall ntpdate 2>/dev/null
+		/bin/pgrep ntpd
+		if [ $? -eq 0 ]; then
+			/usr/bin/killall ntpd 2>/dev/null
+		else
+			break
+		fi
+	done
 	sleep 1
-	/usr/sbin/ntpdate -s -t 5 ${SERVER}
+	/usr/local/bin/ntpdate -s -t 5 ${SERVER}
 	if [ "$?" = "0" ]; then
 		NOTSYNCED="false"
 	else

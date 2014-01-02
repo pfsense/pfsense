@@ -4,7 +4,7 @@
 	Description: Thermal Sensors Widget.
 		NOTE: depends on proper cofing in System >> Advanced >> Miscellaneous tab >> Thermal Sensors section.
 
-	File location: 
+	File location:
 		\usr\local\www\widgets\widgets\
 	Depends on:
 		\usr\local\www\widgets\javascript\thermal_sensors.js
@@ -143,7 +143,8 @@ function getBoolValueFromConfig(&$configArray, $valueKey, $defaultValue) {
 //=========================================================================
 ?>
 
-<script language="javascript" type="text/javascript">
+<script type="text/javascript">
+//<![CDATA[
 	//set Thresholds, to be used in thermal_sensors.js
 	var thermal_sensors_widget_zoneWarningTempThreshold = <?= $thermal_sensors_widget_zoneWarningTempThreshold; ?>;
 	var thermal_sensors_widget_zoneCriticalTempThreshold = <?= $thermal_sensors_widget_zoneCriticalTempThreshold; ?>;
@@ -161,49 +162,13 @@ function getBoolValueFromConfig(&$configArray, $valueKey, $defaultValue) {
 	jQuery(document).ready(function() {
 		showThermalSensorsData();
 	});
-
+//]]>
 </script>
 
-<style type="text/css">
-	/*thermal_sensors widget styles*/
-
-	.thermalSensorRow		{ width: 100%; border: 0px solid #ddd; padding: 1px; border-radius: 3px; }
-	.thermalSensorBarShell	{ position: relative; width: 100%; height: 5px; border: 1px solid lightgray; border-radius: 3px; }
-	.thermalSensorBar		{ position: absolute; width:   0%; height: 1px; z-index: 1; border-style: solid; border-radius: 3px; 
-							  background-color: LimeGreen; 
-							  border-top-width: 2px; border-top-color: Lime; 
-							  border-left-width: 0px;   
-							  border-right-width: 0px; 
-							  border-bottom-width: 2px; border-bottom-color: Green; 
-	}
-	.thermalSensorTextShell	{ height: 20px; width: 100%; top: 3px; }
-	.thermalSensorText		{ float: left; height: 20px; top: 3px; }
-	.thermalSensorValue		{ float: left; height: 20px; top: 3px; font-weight: bold; margin-left: 10px;}
-
-	.thermalSensorWarnThresh	{ position: absolute; background-color: orange; height: 16px; width: 2px; z-index: 2; margin-top: -8px; }
-	.thermalSensorCritThresh	{ position: absolute; background-color:    red; height: 16px; width: 2px; z-index: 2; margin-top: -8px; }
-
-	.thermal_sensors_widget_scale000 { position: absolute; height: 5px; width: 1px; left: -1px; margin-top: -4px; background-color: lightgray; z-index: 0; font-size: 0; }
-	.thermal_sensors_widget_scale020 { position: absolute; height: 3px; width: 1px; left:  10%; margin-top: -4px; background-color: lightgray; z-index: 0; font-size: 0; }
-	.thermal_sensors_widget_scale010 { position: absolute; height: 3px; width: 1px; left:  20%; margin-top: -4px; background-color: lightgray; z-index: 0; font-size: 0; }
-	.thermal_sensors_widget_scale030 { position: absolute; height: 3px; width: 1px; left:  30%; margin-top: -4px; background-color: lightgray; z-index: 0; font-size: 0; }
-	.thermal_sensors_widget_scale040 { position: absolute; height: 3px; width: 1px; left:  40%; margin-top: -4px; background-color: lightgray; z-index: 0; font-size: 0; }
-	.thermal_sensors_widget_scale050 { position: absolute; height: 3px; width: 1px; left:  50%; margin-top: -4px; background-color: lightgray; z-index: 0; font-size: 0; }
-	.thermal_sensors_widget_scale060 { position: absolute; height: 3px; width: 1px; left:  60%; margin-top: -4px; background-color: lightgray; z-index: 0; font-size: 0; }
-	.thermal_sensors_widget_scale070 { position: absolute; height: 3px; width: 1px; left:  70%; margin-top: -4px; background-color: lightgray; z-index: 0; font-size: 0; }
-	.thermal_sensors_widget_scale080 { position: absolute; height: 3px; width: 1px; left:  80%; margin-top: -4px; background-color: lightgray; z-index: 0; font-size: 0; }
-	.thermal_sensors_widget_scale090 { position: absolute; height: 3px; width: 1px; left:  90%; margin-top: -4px; background-color: lightgray; z-index: 0; font-size: 0; }
-	.thermal_sensors_widget_scale100 { position: absolute; height: 9px; width: 1px; left: 100%; margin-top: -6px; background-color: lightgray; z-index: 0; font-size: 0; }
-
-	.thermal_sensors_widget_mark100 { position: absolute; width: 15px; left: 96%; margin-top: -12px; font: 6pt Arial, sans-serif; text-align: left; color: #575757; }
-
-</style>
-
-
-<input type="hidden" id="thermal_sensors-config" name="thermal_sensors-config" value="">
-<div id="thermal_sensors-settings" name="thermal_sensors-settings" class="widgetconfigdiv" style="display:none;">
+<input type="hidden" id="thermal_sensors-config" name="thermal_sensors-config" value="" />
+<div id="thermal_sensors-settings" class="widgetconfigdiv" style="display:none;">
 	<form action="/widgets/widgets/thermal_sensors.widget.php" method="post" id="iform_thermal_sensors_settings" name="iform_thermal_sensors_settings">
-	<table width="100%" border="0">
+	<table width="100%" border="0" summary="thermal sensors widget">
 		<tr>
 		<td align="left" colspan="2">
 			<span style="font-weight: bold" >Thresholds in &deg;C (1 to 100):</span>
@@ -214,73 +179,73 @@ function getBoolValueFromConfig(&$configArray, $valueKey, $defaultValue) {
 		</tr>
 		<tr>
 		<td align="right">
-			Zone Warning: 
+			Zone Warning:
 		</td>
 		<td>
-			<input type="text" maxlength="3" size="3" class="formfld unknown" 
-			   name="thermal_sensors_widget_zone_warning_threshold" 
-			   id="thermal_sensors_widget_zone_warning_threshold" 
+			<input type="text" maxlength="3" size="3" class="formfld unknown"
+			   name="thermal_sensors_widget_zone_warning_threshold"
+			   id="thermal_sensors_widget_zone_warning_threshold"
 			   value="<?= $thermal_sensors_widget_zoneWarningTempThreshold; ?>" />
 		</td>
 		<td align="right">
 			<label for="thermal_sensors_widget_show_raw_output">Show raw output (no graph): </label>
-			<input type="checkbox" 
-			   id="thermal_sensors_widget_show_raw_output" 
-			   name="thermal_sensors_widget_show_raw_output" 
+			<input type="checkbox"
+			   id="thermal_sensors_widget_show_raw_output"
+			   name="thermal_sensors_widget_show_raw_output"
 			   value="<?= $thermal_sensors_widget_showRawOutput; ?>" <?= ($thermal_sensors_widget_showRawOutput) ? " checked='checked'" : ""; ?> />
 		</td>
 		</tr>
 		<tr>
 		<td align="right">
-			Zone Critical: 
+			Zone Critical:
 		</td>
 		<td>
-			<input type="text" maxlength="3" size="3" class="formfld unknown" 
-			   name="thermal_sensors_widget_zone_critical_threshold" 
-			   id="thermal_sensors_widget_zone_critical_threshold" 
+			<input type="text" maxlength="3" size="3" class="formfld unknown"
+			   name="thermal_sensors_widget_zone_critical_threshold"
+			   id="thermal_sensors_widget_zone_critical_threshold"
 			   value="<?= $thermal_sensors_widget_zoneCriticalTempThreshold; ?>" />
 		</td>
 		<td align="right">
 			<label for="thermal_sensors_widget_show_full_sensor_name">Show full sensor name: </label>
-			<input type="checkbox" 
-			   id="thermal_sensors_widget_show_full_sensor_name" 
-			   name="thermal_sensors_widget_show_full_sensor_name" 
+			<input type="checkbox"
+			   id="thermal_sensors_widget_show_full_sensor_name"
+			   name="thermal_sensors_widget_show_full_sensor_name"
 			   value="<?= $thermal_sensors_widget_showFullSensorName; ?>" <?= ($thermal_sensors_widget_showFullSensorName) ? " checked='checked'" : ""; ?> />
 		</td>
 		</tr>
 		<tr>
 		<td align="right">
-			Core Warning: 
+			Core Warning:
 		</td>
 		<td>
-			<input type="text" maxlength="3" size="3" class="formfld unknown" 
-			   name="thermal_sensors_widget_core_warning_threshold" 
-			   id="thermal_sensors_widget_core_warning_threshold" 
+			<input type="text" maxlength="3" size="3" class="formfld unknown"
+			   name="thermal_sensors_widget_core_warning_threshold"
+			   id="thermal_sensors_widget_core_warning_threshold"
 			   value="<?= $thermal_sensors_widget_coreWarningTempThreshold ?>" />
 		</td>
 		<td align="right">
 			<label for="thermal_sensors_widget_pulsate_warning">Pulsate Warning: </label>
-			<input type="checkbox" 
-			   id="thermal_sensors_widget_pulsate_warning" 
-			   name="thermal_sensors_widget_pulsate_warning" 
+			<input type="checkbox"
+			   id="thermal_sensors_widget_pulsate_warning"
+			   name="thermal_sensors_widget_pulsate_warning"
 			   value="<?= $thermal_sensors_widget_pulsateWarning; ?>" <?= ($thermal_sensors_widget_pulsateWarning) ? " checked='checked'" : ""; ?> />
 		</td>
 		</tr>
 		<tr>
 		<td align="right">
-			Core Critical: 
+			Core Critical:
 		</td>
 		<td>
-			<input type="text" maxlength="3" size="3" class="formfld unknown" 
-			   name="thermal_sensors_widget_core_critical_threshold" 
-			   id="thermal_sensors_widget_core_critical_threshold" 
+			<input type="text" maxlength="3" size="3" class="formfld unknown"
+			   name="thermal_sensors_widget_core_critical_threshold"
+			   id="thermal_sensors_widget_core_critical_threshold"
 			   value="<?= $thermal_sensors_widget_coreCriticalTempThreshold ?>" />
 		</td>
 		<td align="right">
 			<label for="thermal_sensors_widget_pulsate_critical">Pulsate Critical: </label>
-			<input type="checkbox" 
-			   id="thermal_sensors_widget_pulsate_critical" 
-			   name="thermal_sensors_widget_pulsate_critical" 
+			<input type="checkbox"
+			   id="thermal_sensors_widget_pulsate_critical"
+			   name="thermal_sensors_widget_pulsate_critical"
 			   value="<?= $thermal_sensors_widget_pulsateCritical; ?>" <?= ($thermal_sensors_widget_pulsateCritical) ? " checked='checked'" : ""; ?> />
 		</td>
 		</tr>

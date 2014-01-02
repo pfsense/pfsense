@@ -53,7 +53,7 @@ function allowedips_sort() {
 
 require("guiconfig.inc");
 require("functions.inc");
-require("filter.inc");
+require_once("filter.inc");
 require("shaper.inc");
 require("captiveportal.inc");
 
@@ -98,7 +98,7 @@ if ($_POST) {
 	$reqdfields = explode(" ", "ip sn");
 	$reqdfieldsn = array(gettext("Allowed IP address"), gettext("Subnet mask"));
 	
-	do_input_validation($_POST, $reqdfields, $reqdfieldsn, &$input_errors);
+	do_input_validation($_POST, $reqdfields, $reqdfieldsn, $input_errors);
 	
 	if ($_POST['ip'] && !is_ipaddr($_POST['ip']))
 		$input_errors[] = sprintf(gettext("A valid IP address must be specified. [%s]"), $_POST['ip']);
@@ -147,9 +147,10 @@ if ($_POST) {
 
 		if (isset($a_cp[$cpzone]['enable']) && is_module_loaded("ipfw.ko")) {
 			$rules = "";
+			$cpzoneid = $a_cp[$cpzone]['zoneid'];
 			unset($ipfw);
 			if (isset($oldip) && isset($oldmask)) {
-				$ipfw = pfSense_ipfw_getTablestats($cpzone, 3, $oldip, $oldmask);
+				$ipfw = pfSense_ipfw_getTablestats($cpzoneid, 3, $oldip, $oldmask);
 				$rules .= "table 3 delete {$oldip}/{$oldmask}\n";
 				$rules .= "table 4 delete {$oldip}/{$oldmask}\n";
 				if (is_array($ipfw)) {
@@ -163,7 +164,7 @@ if ($_POST) {
 			}
 			$uniqid = uniqid("{$cpzone}_allowed");
 			@file_put_contents("{$g['tmp_path']}/{$uniqid}_tmp", $rules);
-			mwexec("/sbin/ipfw -x {$cpzone} -q {$g['tmp_path']}/{$uniqid}_tmp");
+			mwexec("/sbin/ipfw -x {$cpzoneid} -q {$g['tmp_path']}/{$uniqid}_tmp");
 			@unlink("{$g['tmp_path']}/{$uniqid}_tmp");
 		}
 		

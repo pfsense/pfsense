@@ -1817,7 +1817,7 @@ function embed_wmedia(width, height, link) {
 	}
 
 	/**
-	 * Return the error message for the occured error
+	 * Return the error message for the occurred error
 	 *
 	 * @access public
 	 * @return string Error message
@@ -10738,7 +10738,7 @@ class SimplePie_Misc
 		return (bool) preg_match('/^([A-Za-z0-9\-._~\x{A0}-\x{D7FF}\x{F900}-\x{FDCF}\x{FDF0}-\x{FFEF}\x{10000}-\x{1FFFD}\x{20000}-\x{2FFFD}\x{30000}-\x{3FFFD}\x{40000}-\x{4FFFD}\x{50000}-\x{5FFFD}\x{60000}-\x{6FFFD}\x{70000}-\x{7FFFD}\x{80000}-\x{8FFFD}\x{90000}-\x{9FFFD}\x{A0000}-\x{AFFFD}\x{B0000}-\x{BFFFD}\x{C0000}-\x{CFFFD}\x{D0000}-\x{DFFFD}\x{E1000}-\x{EFFFD}!$&\'()*+,;=@]|(%[0-9ABCDEF]{2}))+$/u', $string);
 	}
 
-	function space_seperated_tokens($string)
+	function space_separated_tokens($string)
 	{
 		$space_characters = "\x20\x09\x0A\x0B\x0C\x0D";
 		$string_length = strlen($string);
@@ -11830,7 +11830,7 @@ class SimplePie_Parse_Date
 	/**
 	 * Parse a superset of W3C-DTF (allows hyphens and colons to be omitted, as
 	 * well as allowing any of upper or lower case "T", horizontal tabs, or
-	 * spaces to be used as the time seperator (including more than one))
+	 * spaces to be used as the time separator (including more than one))
 	 *
 	 * @access protected
 	 * @return int Timestamp
@@ -12904,7 +12904,7 @@ class SimplePie_Locator
 			}
 			if (isset($link['attribs']['href']['data']) && isset($link['attribs']['rel']['data']))
 			{
-				$rel = array_unique(SimplePie_Misc::space_seperated_tokens(strtolower($link['attribs']['rel']['data'])));
+				$rel = array_unique(SimplePie_Misc::space_separated_tokens(strtolower($link['attribs']['rel']['data'])));
 
 				if ($this->base_location < $link['offset'])
 				{

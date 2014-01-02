@@ -39,7 +39,7 @@
 ##|*IDENT=page-system-advanced-network
 ##|*NAME=System: Advanced: Network page
 ##|*DESCR=Allow access to the 'System: Advanced: Networking' page.
-##|*MATCH=system_advanced-network.php*
+##|*MATCH=system_advanced_network.php*
 ##|-PRIV
 
 require("guiconfig.inc");
@@ -51,24 +51,24 @@ require_once("shaper.inc");
 $pconfig['ipv6nat_enable'] = isset($config['diag']['ipv6nat']['enable']);
 $pconfig['ipv6nat_ipaddr'] = $config['diag']['ipv6nat']['ipaddr'];
 $pconfig['ipv6allow'] = isset($config['system']['ipv6allow']);
+$pconfig['prefer_ipv4'] = isset($config['system']['prefer_ipv4']);
 $pconfig['polling_enable'] = isset($config['system']['polling']);
 $pconfig['sharednet'] = $config['system']['sharednet'];
 $pconfig['disablechecksumoffloading'] = isset($config['system']['disablechecksumoffloading']);
 $pconfig['disablesegmentationoffloading'] = isset($config['system']['disablesegmentationoffloading']);
 $pconfig['disablelargereceiveoffloading'] = isset($config['system']['disablelargereceiveoffloading']);
-$pconfig['flowtable'] = false;
 $pconfig['flowtable'] = isset($config['system']['flowtable']);
 
 if ($_POST) {
 
-    unset($input_errors);
-    $pconfig = $_POST;
+	unset($input_errors);
+	$pconfig = $_POST;
 
 	if ($_POST['ipv6nat_enable'] && !is_ipaddr($_POST['ipv6nat_ipaddr']))
 		$input_errors[] = gettext("You must specify an IP address to NAT IPv6 packets.");
 
-    ob_flush();
-    flush();
+	ob_flush();
+	flush();
 	if (!$input_errors) {
 
 		if($_POST['ipv6nat_enable'] == "yes") {
@@ -78,15 +78,21 @@ if ($_POST) {
 			if($config['diag']) {
 				if($config['diag']['ipv6nat']) {
 					unset($config['diag']['ipv6nat']['enable']);
-					unset($config['diag']['ipv6nat']['ipaddr']);				
+					unset($config['diag']['ipv6nat']['ipaddr']);
 				}
 			}
 		}
-		
+
 		if($_POST['ipv6allow'] == "yes") {
-		    $config['system']['ipv6allow'] = true;
+			$config['system']['ipv6allow'] = true;
 		} else {
-		    unset($config['system']['ipv6allow']);
+			unset($config['system']['ipv6allow']);
+		}
+
+		if($_POST['prefer_ipv4'] == "yes") {
+			$config['system']['prefer_ipv4'] = true;
+		} else {
+			unset($config['system']['prefer_ipv4']);
 		}
 
 		if($_POST['sharednet'] == "yes") {
@@ -137,11 +143,14 @@ if ($_POST) {
 		// Configure flowtable support from filter.inc
 		flowtable_configure();
 
+		// Set preferred protocol
+		prefer_ipv4_or_ipv6();
+
 		$retval = filter_configure();
 		if(stristr($retval, "error") <> true)
-		    $savemsg = get_std_save_message(gettext($retval));
+			$savemsg = get_std_save_message(gettext($retval));
 		else
-		    $savemsg = gettext($retval);
+			$savemsg = gettext($retval);
 	}
 }
 
@@ -184,7 +193,7 @@ function enable_change(enable_over) {
 						$tab_array[] = array(gettext("Networking"), true, "system_advanced_network.php");
 						$tab_array[] = array(gettext("Miscellaneous"), false, "system_advanced_misc.php");
 						$tab_array[] = array(gettext("System Tunables"), false, "system_advanced_sysctl.php");
-						$tab_array[] = array(gettext("Notifications"), false, "system_advanced_notifications.php");						
+						$tab_array[] = array(gettext("Notifications"), false, "system_advanced_notifications.php");
 						display_top_tabs($tab_array);
 					?>
 				</td>
@@ -193,7 +202,7 @@ function enable_change(enable_over) {
 				<td id="mainarea">
 					<div class="tabcont">
 						<span class="vexpl">
-		    	        	<span class="red">
+						<span class="red">
 								<strong><?=gettext("NOTE:"); ?>&nbsp;</strong>
 							</span>
 							<?=gettext("The options on this page are intended for use by advanced users only."); ?>
@@ -229,6 +238,16 @@ function enable_change(enable_over) {
 								</td>
 							</tr>
 							<tr>
+								<td width="22%" valign="top" class="vncell"><?=gettext("Prefer IPv4 over IPv6"); ?></td>
+								<td width="78%" class="vtable">
+									<input name="prefer_ipv4" type="checkbox" id="prefer_ipv4" value="yes" <?php if ($pconfig['prefer_ipv4']) echo "checked=\"checked\""; ?> />
+									<strong><?=gettext("Prefer to use IPv4 even if IPv6 is available"); ?></strong><br/>
+									<?=gettext("By default, if a hostname resolves IPv6 and IPv4 addresses ".
+									"IPv6 will be used, if you check this option, IPv4 will be " .
+									"used instead of IPv6."); ?><br />
+								</td>
+							</tr>
+							<tr>
 								<td colspan="2" class="list" height="12">&nbsp;</td>
 							</tr>
 							<tr>
@@ -248,6 +267,9 @@ function enable_change(enable_over) {
 									<input name="disablechecksumoffloading" type="checkbox" id="disablechecksumoffloading" value="yes" <?php if (isset($config['system']['disablechecksumoffloading'])) echo "checked=\"checked\""; ?> />
 									<strong><?=gettext("Disable hardware checksum offload"); ?></strong><br />
 									<?=gettext("Checking this option will disable hardware checksum offloading. Checksum offloading is broken in some hardware, particularly some Realtek cards. Rarely, drivers may have problems with checksum offloading and some specific NICs."); ?>
+									<br/>
+									<span class="red"><strong><?=gettext("Note:");?>&nbsp;</strong></span>
+									<?=gettext("This will take effect after you reboot the machine or re-configure each interface.");?>
 								</td>
 							</tr>
 							<tr>
@@ -256,6 +278,9 @@ function enable_change(enable_over) {
 									<input name="disablesegmentationoffloading" type="checkbox" id="disablesegmentationoffloading" value="yes" <?php if (isset($config['system']['disablesegmentationoffloading'])) echo "checked=\"checked\""; ?> />
 									<strong><?=gettext("Disable hardware TCP segmentation offload"); ?></strong><br />
 									<?=gettext("Checking this option will disable hardware TCP segmentation offloading (TSO, TSO4, TSO6). This offloading is broken in some hardware drivers, and may impact performance with some specific NICs."); ?>
+									<br/>
+									<span class="red"><strong><?=gettext("Note:");?>&nbsp;</strong></span>
+									<?=gettext("This will take effect after you reboot the machine or re-configure each interface.");?>
 								</td>
 							</tr>
 							<tr>
@@ -264,6 +289,9 @@ function enable_change(enable_over) {
 									<input name="disablelargereceiveoffloading" type="checkbox" id="disablelargereceiveoffloading" value="yes" <?php if (isset($config['system']['disablelargereceiveoffloading'])) echo "checked=\"checked\""; ?> />
 									<strong><?=gettext("Disable hardware large receive offload"); ?></strong><br />
 									<?=gettext("Checking this option will disable hardware large receive offloading (LRO). This offloading is broken in some hardware drivers, and may impact performance with some specific NICs."); ?>
+									<br/>
+									<span class="red"><strong><?=gettext("Note:");?>&nbsp;</strong></span>
+									<?=gettext("This will take effect after you reboot the machine or re-configure each interface.");?>
 								</td>
 							</tr>
 							<tr>
@@ -274,7 +302,7 @@ function enable_change(enable_over) {
 									<?=gettext("This option will suppress ARP log messages when multiple interfaces reside on the same broadcast domain"); ?>
 								</td>
 							</tr>
-<?php 
+<?php
 /*
 	$version = get_freebsd_version();
 	if($version == "8"):
@@ -290,8 +318,8 @@ function enable_change(enable_over) {
 								<td width="78%" class="vtable">
 									<input name="flowtable" type="checkbox" id="polling_enable" value="yes" <?php if ($pconfig['flowtable']) echo "checked=\"checked\""; ?> />
 									<strong>Enable flowtable support</strong><br />
-									 Enables infrastructure for caching flows as a means of accelerating L3 and L2 lookups 
-									 as well as providing stateful load balancing when used with RADIX_MPATH.<br/>
+									Enables infrastructure for caching flows as a means of accelerating L3 and L2 lookups
+									as well as providing stateful load balancing when used with RADIX_MPATH.<br/>
 								</td>
 							</tr>
 <?php endif; ?>
@@ -299,7 +327,7 @@ function enable_change(enable_over) {
 ?>
 							<tr>
 								<td colspan="2" class="list" height="12">&nbsp;</td>
-							</tr>							
+							</tr>
 							<tr>
 								<td width="22%" valign="top">&nbsp;</td>
 								<td width="78%"><input name="Submit" type="submit" class="formbtn" value="<?=gettext("Save");?>" /></td>

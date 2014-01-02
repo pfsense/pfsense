@@ -60,7 +60,7 @@ msgstr ""
 #: etc/inc/PEAR.inc:1041
 #, php-format
 msgid "[%s: message=\"%s\" code=%d mode=%s level=%s prefix=\"%s\" info=\"%s\"]"
-msgstr ""
+msgstr "[%s: message=\"%s\" code=%d mode=%s level=%s prefix=\"%s\" info=\"%s\"]"
 
 #: etc/inc/array_intersect_key.inc:37 etc/inc/array_intersect_key.inc:37
 msgid "Wrong parameter count for array_intersect_key()"
@@ -214,62 +214,62 @@ msgstr "DN = %3$sとLDAPサーバー%2$s経由%1$sとして正常にログイン
 #: etc/inc/auth.inc:1163 etc/inc/auth.inc:1167 etc/inc/auth.inc:1167
 #, php-format
 msgid "Radius start: %s<br>\n"
-msgstr ""
+msgstr "RADIUSスタート: "
 
 #: etc/inc/auth.inc:1155 etc/inc/auth.inc:1164 etc/inc/auth.inc:1168
 #: etc/inc/auth.inc:1174 etc/inc/auth.inc:1178 etc/inc/auth.inc:1178
 #, php-format
 msgid "Radius send failed: %s<br>\n"
-msgstr ""
+msgstr "RADIUS送信に失敗しました: %s<br>\n"
 
 #: etc/inc/auth.inc:1159 etc/inc/auth.inc:1170 etc/inc/auth.inc:1174
 #: etc/inc/auth.inc:1180 etc/inc/auth.inc:1184 etc/inc/auth.inc:1184
 #, php-format
 msgid "Radius Auth succeeded"
-msgstr ""
+msgstr "RADIUS認証が成功しました"
 
 #: etc/inc/auth.inc:1164 etc/inc/auth.inc:1175 etc/inc/auth.inc:1179
 #: etc/inc/auth.inc:1185 etc/inc/auth.inc:1189 etc/inc/auth.inc:1189
 #, php-format
 msgid "Radius Auth rejected"
-msgstr ""
+msgstr "RADIUS認証は拒否"
 
 #: etc/inc/auth.inc:1207 etc/inc/auth.inc:1222 etc/inc/auth.inc:1218
 #: etc/inc/auth.inc:1233 etc/inc/auth.inc:1237 etc/inc/auth.inc:1228
 #: etc/inc/auth.inc:1243 etc/inc/auth.inc:1232 etc/inc/auth.inc:1247
 #: etc/inc/auth.inc:1232 etc/inc/auth.inc:1247
 msgid "Local Database"
-msgstr ""
+msgstr "ローカルデータベース"
 
 #: etc/inc/auth.inc:1207 etc/inc/auth.inc:1222 etc/inc/auth.inc:1218
 #: etc/inc/auth.inc:1233 etc/inc/auth.inc:1237
 msgid "Local Auth"
-msgstr ""
+msgstr "ローカル認証"
 
 #: etc/inc/auth.inc:1293 etc/inc/auth.inc:1317 etc/inc/auth.inc:1321
 #: etc/inc/auth.inc:1327 etc/inc/auth.inc:1331 etc/inc/auth.inc:1331
 #, php-format
 msgid "Successful login for user '%1$s' from: %2$s"
-msgstr ""
+msgstr "%2$sからユーザー'%1$s'ためのログインに成功"
 
 #: etc/inc/auth.inc:1347 etc/inc/auth.inc:1371 etc/inc/auth.inc:1375
 #: etc/inc/auth.inc:1381 etc/inc/auth.inc:1385 etc/inc/auth.inc:1385
 #, php-format
 msgid "Session timed out for user '%1$s' from: %2$s"
-msgstr ""
+msgstr "セッションは%2$sからユーザー'%1$s'ためタイムアウトしました"
 
 #: etc/inc/auth.inc:1349 etc/inc/auth.inc:1373 etc/inc/auth.inc:1377
 #: etc/inc/auth.inc:1383 etc/inc/auth.inc:1387 etc/inc/auth.inc:1387
 #, php-format
 msgid "User logged out for user '%1$s' from: %2$s"
-msgstr ""
+msgstr "ユーザーは%2$sからユーザー'%1$s'がログアウトする"
 
 #: etc/inc/captiveportal.inc:1374 etc/inc/captiveportal.inc:1383
 #: etc/inc/captiveportal.inc:1420 etc/inc/captiveportal.inc:1335
 #: etc/inc/captiveportal.inc:1338 etc/inc/captiveportal.inc:1338
 #, php-format
 msgid "Error: cannot open '%s' in captiveportal_write_elements()%s"
-msgstr ""
+msgstr "エラー: captiveportal_write_elements()%s を処理'%s'を開くことができません"
 
 #: etc/inc/config.inc:100 etc/inc/config.inc:100
 msgid "Upgrading m0n0wall configuration to pfSense... "

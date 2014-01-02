@@ -273,30 +273,30 @@ msgstr "エラー: captiveportal_write_elements()%s を処理'%s'を開くこと
 
 #: etc/inc/config.inc:100 etc/inc/config.inc:100
 msgid "Upgrading m0n0wall configuration to pfSense... "
-msgstr ""
+msgstr "pfSenseにm0n0wallの構成のアップグレード... "
 
 #: etc/inc/config.inc:103 etc/inc/config.inc:103
 msgid "ERROR!  Could not convert m0n0wall -> pfsense in config.xml"
-msgstr ""
+msgstr "エラー! m0n0wallのはconfig.xmlにpfsenseに変換することができませんでした"
 
 #: etc/inc/config.inc:133 etc/inc/config.inc:133
 msgid "CDROM build"
-msgstr ""
+msgstr "CD-ROMのビルド"
 
 #: etc/inc/config.inc:134 etc/inc/config.inc:135 etc/inc/config.inc:134
 #: etc/inc/config.inc:135
 msgid "CFG:"
-msgstr ""
+msgstr "CFG:"
 
 #: etc/inc/config.inc:136 etc/inc/config.inc:136
 msgid "TYPE:"
-msgstr ""
+msgstr "タイプ:"
 
 #: etc/inc/config.inc:151 etc/inc/config.inc:166 etc/inc/config.inc:151
 #: etc/inc/config.inc:166
 #, php-format
 msgid "Found configuration on %s.%s"
-msgstr ""
+msgstr "%s.%sのタブの設定"
 
 #: etc/inc/config.inc:180 etc/inc/config.inc:181 etc/inc/config.lib.inc:105
 #: etc/inc/config.lib.inc:106 etc/inc/config.lib.inc:245
@@ -305,61 +305,61 @@ msgstr ""
 #: etc/inc/config.lib.inc:106 etc/inc/config.lib.inc:245
 #: etc/inc/config.lib.inc:266 etc/inc/config.lib.inc:267
 msgid "No config.xml found, attempting last known config restore."
-msgstr ""
+msgstr "いいえconfig.xmlには最後の既知の設定の復元を試みて、見つからなかった。"
 
 #: etc/inc/config.inc:184 etc/inc/config.inc:184
 msgid "No config.xml or config backups found, resetting to factory defaults."
-msgstr ""
+msgstr "全くのconfig.xmlや設定のバックアップ工場出荷時設定へのリセット、見つかりませんでした。"
 
 #: etc/inc/filter.inc:197 etc/inc/filter.inc:194 etc/inc/filter.inc:193
 #: etc/inc/filter.inc:168 etc/inc/filter.inc:168
 msgid "Initializing"
-msgstr ""
+msgstr "イニシャライズ"
 
 #: etc/inc/filter.inc:209 etc/inc/filter.inc:206 etc/inc/filter.inc:205
 #: etc/inc/filter.inc:180 etc/inc/filter.inc:180
 msgid "Configuring firewall"
-msgstr ""
+msgstr "設定ファイアウォール"
 
 #: etc/inc/filter.inc:214 etc/inc/filter.inc:211 etc/inc/filter.inc:210
 #: etc/inc/filter.inc:185 etc/inc/filter.inc:185
 msgid "Creating aliases"
-msgstr ""
+msgstr "エイリアスの作成"
 
 #: etc/inc/filter.inc:219 etc/inc/filter.inc:218 etc/inc/filter.inc:193
 #: etc/inc/filter.inc:193
 msgid "Generating NAT rules"
-msgstr ""
+msgstr "NATのルールを生成する"
 
 #: etc/inc/filter.inc:224 etc/inc/filter.inc:223 etc/inc/filter.inc:198
 #: etc/inc/filter.inc:198
 msgid "Generating filter rules"
-msgstr ""
+msgstr "フィルタルールを生成する"
 
 #: etc/inc/filter.inc:230 etc/inc/filter.inc:229 etc/inc/filter.inc:204
 #: etc/inc/filter.inc:204
 msgid "Generating ALTQ queues"
-msgstr ""
+msgstr "ALTQキューを生成する"
 
 #: etc/inc/filter.inc:232 etc/inc/filter.inc:216 etc/inc/filter.inc:215
 #: etc/inc/filter.inc:190 etc/inc/filter.inc:190
 msgid "Generating Limiter rules"
-msgstr ""
+msgstr "リミッタールールを生成する"
 
 #: etc/inc/filter.inc:234 etc/inc/filter.inc:232 etc/inc/filter.inc:231
 #: etc/inc/filter.inc:206 etc/inc/filter.inc:206
 msgid "Generating Layer7 rules"
-msgstr ""
+msgstr "生成レイヤ7ルール"
 
 #: etc/inc/filter.inc:238 etc/inc/filter.inc:236 etc/inc/filter.inc:235
 #: etc/inc/filter.inc:210 etc/inc/filter.inc:210
 msgid "Loading filter rules"
-msgstr ""
+msgstr "フィルタルールのロード"
 
 #: etc/inc/filter.inc:245 etc/inc/filter.inc:243 etc/inc/filter.inc:242
 #: etc/inc/filter.inc:217 etc/inc/filter.inc:217
 msgid "Filter is disabled.  Not loading rules."
-msgstr ""
+msgstr "フィルタが無効になっています。ルールをロードしていない。"
 
 #: etc/inc/filter.inc:247 etc/inc/filter.inc:418 etc/inc/interfaces.inc:217
 #: etc/inc/interfaces.inc:234 etc/inc/interfaces.inc:360
@@ -464,60 +464,60 @@ msgstr ""
 #: etc/inc/system.inc:874 etc/inc/system.inc:1237 etc/inc/system.inc:1377
 #: etc/inc/system.inc:1516 etc/inc/rrd.inc:834
 msgid "done."
-msgstr ""
+msgstr "行わ。"
 
 #: etc/inc/filter.inc:259 etc/inc/filter.inc:265 etc/inc/filter.inc:289
 #: etc/inc/filter.inc:269 etc/inc/filter.inc:269
 msgid "Setting up logging information"
-msgstr ""
+msgstr "ログ情報の設定"
 
 #: etc/inc/filter.inc:290 etc/inc/filter.inc:294 etc/inc/filter.inc:274
 #: etc/inc/filter.inc:274
 msgid "Setting up SCRUB information"
-msgstr ""
+msgstr "SCRUB情報を設定する"
 
 #: etc/inc/filter.inc:336 etc/inc/filter.inc:338 etc/inc/filter.inc:341
 #: etc/inc/filter.inc:313 etc/inc/filter.inc:313
 #, php-format
 msgid "The line in question reads [%1$d]: %2$s"
-msgstr ""
+msgstr "%2$s：問題の行は[%1$d]を読み込み"
 
 #: etc/inc/filter.inc:338 etc/inc/filter.inc:340 etc/inc/filter.inc:342
 #: etc/inc/filter.inc:343 etc/inc/filter.inc:345 etc/inc/filter.inc:316
 #: etc/inc/filter.inc:317 etc/inc/filter.inc:316 etc/inc/filter.inc:317
 #, php-format
 msgid "There were error(s) loading the rules: %1$s - %2$s"
-msgstr ""
+msgstr "ルールのロード中にエラー（S）がありました：%1$s - %2$s"
 
 #: etc/inc/filter.inc:349 etc/inc/filter.inc:351 etc/inc/filter.inc:354
 #: etc/inc/filter.inc:324 etc/inc/filter.inc:324
 msgid "PF was wedged/busy and has been reset."
-msgstr ""
+msgstr "PFは忙しい/押し込まれ、リセットされました。"
 
 #: etc/inc/filter.inc:355 etc/inc/filter.inc:357 etc/inc/filter.inc:360
 #: etc/inc/filter.inc:329 etc/inc/filter.inc:333 etc/inc/filter.inc:333
 msgid "Starting up layer7 daemon"
-msgstr ""
+msgstr "レイヤ7デーモンを起動"
 
 #: etc/inc/filter.inc:403 etc/inc/filter.inc:405 etc/inc/filter.inc:408
 #: etc/inc/filter.inc:380 etc/inc/filter.inc:384 etc/inc/filter.inc:384
 msgid "Processing down interface states"
-msgstr ""
+msgstr "界面準位を下処理"
 
 #: etc/inc/filter.inc:407 etc/inc/filter.inc:409 etc/inc/filter.inc:412
 #: etc/inc/filter.inc:384 etc/inc/filter.inc:388 etc/inc/filter.inc:388
 msgid "Running plugins"
-msgstr ""
+msgstr "プラグインを実行している"
 
 #: etc/inc/filter.inc:411 etc/inc/filter.inc:413 etc/inc/filter.inc:416
 #: etc/inc/filter.inc:388 etc/inc/filter.inc:392 etc/inc/filter.inc:392
 msgid "Running plugins (pf)"
-msgstr ""
+msgstr "実行されているプラグイン（PF）"
 
 #: etc/inc/filter.inc:413 etc/inc/filter.inc:415 etc/inc/filter.inc:418
 #: etc/inc/filter.inc:390 etc/inc/filter.inc:394 etc/inc/filter.inc:394
 msgid "Plugins completed."
-msgstr ""
+msgstr "プラグイン完了"
 
 #: etc/inc/filter.inc:416 usr/local/www/restart_httpd.php:52
 #: usr/local/www/restart_httpd.php:55 usr/local/www/restart_httpd.php:58
@@ -527,19 +527,20 @@ msgstr ""
 #: usr/local/www/restart_httpd.php:58 usr/local/www/restart_httpd.php:61
 #: etc/inc/filter.inc:397
 msgid "Done"
-msgstr ""
+msgstr "行う"
+# ikenote: TODO - this may not be the right way to say it
 
 #: etc/inc/filter.inc:636 etc/inc/filter.inc:649 etc/inc/filter.inc:652
 #: etc/inc/filter.inc:641 etc/inc/filter.inc:657 etc/inc/filter.inc:652
 msgid "Creating gateway group item..."
-msgstr ""
+msgstr "ゲートウェイ·グループ項目を作成しています..."
 
 #: etc/inc/filter.inc:666 etc/inc/filter.inc:681 etc/inc/filter.inc:684
 #: etc/inc/filter.inc:673 etc/inc/filter.inc:687 etc/inc/filter.inc:692
 #: etc/inc/filter.inc:687
 #, php-format
 msgid "Setting up route with %1$s on %2$s"
-msgstr ""
+msgstr "%2$sの上の%1$sでルートを設定する"
 
 #: etc/inc/filter.inc:673 etc/inc/filter.inc:688 etc/inc/filter.inc:691
 #: etc/inc/filter.inc:680 etc/inc/filter.inc:694 etc/inc/filter.inc:699
@@ -549,106 +550,108 @@ msgid ""
 "An error occurred while trying to find the interface got %s .  The rule has "
 "not been added."
 msgstr ""
+"インタフェースは%sを持っ見つけようとしているときにエラーが発生しました。"
+"ルールが追加されていません。"
 
 #: etc/inc/filter.inc:937 etc/inc/filter.inc:987 etc/inc/filter.inc:975
 #: etc/inc/filter.inc:1009 etc/inc/filter.inc:1027 etc/inc/filter.inc:1032
 #: etc/inc/filter.inc:1027
 #, php-format
 msgid "Creating reflection NAT rule for %s..."
-msgstr ""
+msgstr "%sのための反射NATルールを作成しています..."
 
 #: etc/inc/filter.inc:991 etc/inc/filter.inc:1076 etc/inc/filter.inc:1064
 #: etc/inc/filter.inc:1098 etc/inc/filter.inc:1116 etc/inc/filter.inc:1121
 #: etc/inc/filter.inc:1116
 #, php-format
 msgid "Creating reflection rule for %s..."
-msgstr ""
+msgstr "%sのための反射のルールを作成しています..."
 
 #: etc/inc/filter.inc:1251 etc/inc/filter.inc:1338 etc/inc/filter.inc:1326
 #: etc/inc/filter.inc:1360 etc/inc/filter.inc:1378 etc/inc/filter.inc:1383
 #: etc/inc/filter.inc:1378
 msgid "Creating 1:1 rules..."
-msgstr ""
+msgstr "1:1のルールを作成しています..."
 
 #: etc/inc/filter.inc:1350 etc/inc/filter.inc:1437 etc/inc/filter.inc:1454
 #: etc/inc/filter.inc:1501 etc/inc/filter.inc:1519 etc/inc/filter.inc:1524
 #: etc/inc/filter.inc:1519
 #, php-format
 msgid "Creating advanced outbound rule %s"
-msgstr ""
+msgstr "高度なアウトバウンドルール%sを作成"
 
 #: etc/inc/filter.inc:1386 etc/inc/filter.inc:1473 etc/inc/filter.inc:1490
 #: etc/inc/filter.inc:1533 etc/inc/filter.inc:1551 etc/inc/filter.inc:1556
 #: etc/inc/filter.inc:1551
 msgid "Creating outbound NAT rules"
-msgstr ""
+msgstr "アウトバウンドNATルールを作成する"
 
 #: etc/inc/filter.inc:1481 etc/inc/filter.inc:1566 etc/inc/filter.inc:1583
 #: etc/inc/filter.inc:1626 etc/inc/filter.inc:1644 etc/inc/filter.inc:1649
 #: etc/inc/filter.inc:1644
 #, php-format
 msgid "Creating outbound rules %1$s - (%2$s)"
-msgstr ""
+msgstr "%1$s - (%2$s) をアウトバウンドルールの作成"
 
 #: etc/inc/filter.inc:1499 etc/inc/filter.inc:1584 etc/inc/filter.inc:1601
 #: etc/inc/filter.inc:1644 etc/inc/filter.inc:1662 etc/inc/filter.inc:1667
 #: etc/inc/filter.inc:1662
 msgid "Setting up TFTP helper"
-msgstr ""
+msgstr "TFTPヘルパーの設定"
 
 #: etc/inc/filter.inc:1545 etc/inc/filter.inc:1630 etc/inc/filter.inc:1644
 #: etc/inc/filter.inc:1676 etc/inc/filter.inc:1694 etc/inc/filter.inc:1699
 #: etc/inc/filter.inc:1694
 #, php-format
 msgid "Creating NAT rule %s"
-msgstr ""
+msgstr "NATルール%sは作成"
 
 #: etc/inc/filter.inc:1689 etc/inc/filter.inc:1837 etc/inc/filter.inc:1850
 #: etc/inc/filter.inc:1882 etc/inc/filter.inc:1900 etc/inc/filter.inc:1905
 #: etc/inc/filter.inc:1900
 #, php-format
 msgid "Creating filter rule %s ..."
-msgstr ""
+msgstr "フィルタルール%sは作成..."
 
 #: etc/inc/filter.inc:1827 etc/inc/filter.inc:1975 etc/inc/filter.inc:1988
 #: etc/inc/filter.inc:2024 etc/inc/filter.inc:2054 etc/inc/filter.inc:2059
 #: etc/inc/filter.inc:2054
 #, php-format
 msgid "filter_generate_address: %s is not a valid source port."
-msgstr ""
+msgstr "filter_generate_address：%sを、有効な送信元ポートではありません。"
 
 #: etc/inc/filter.inc:1943 etc/inc/filter.inc:2094 etc/inc/filter.inc:2107
 #: etc/inc/filter.inc:2142 etc/inc/filter.inc:2172 etc/inc/filter.inc:2177
 #: etc/inc/filter.inc:2172
 #, php-format
 msgid "Setting up pass/block rules %s"
-msgstr ""
+msgstr "パス/ブロックルール%sはの設定"
 
 #: etc/inc/filter.inc:1962 etc/inc/filter.inc:2113 etc/inc/filter.inc:2126
 #: etc/inc/filter.inc:2157 etc/inc/filter.inc:2187 etc/inc/filter.inc:2192
 #: etc/inc/filter.inc:2187
 #, php-format
 msgid "Could not find IPv4 gateway for interface (%s)."
-msgstr ""
+msgstr "インターフェイスのIPv4ゲートウェイ(%s)を見つけることができませんでした。"
 
 #: etc/inc/filter.inc:1989 etc/inc/filter.inc:2140 etc/inc/filter.inc:2153
 #: etc/inc/filter.inc:2182 etc/inc/filter.inc:2214 etc/inc/filter.inc:2219
 #: etc/inc/filter.inc:2214
 #, php-format
 msgid "Creating rule %s"
-msgstr ""
+msgstr "ルール%sを作成"
 
 #: etc/inc/filter.inc:2198 etc/inc/filter.inc:2355 etc/inc/filter.inc:2378
 #: etc/inc/filter.inc:2407 etc/inc/filter.inc:2439 etc/inc/filter.inc:2444
 #: etc/inc/filter.inc:2439
 msgid "Creating default rules"
-msgstr ""
+msgstr "デフォルトのルールの作成"
 
 #: etc/inc/filter.inc:2649 etc/inc/filter.inc:2862 etc/inc/filter.inc:2887
 #: etc/inc/filter.inc:2976 etc/inc/filter.inc:3000 etc/inc/filter.inc:3005
 #: etc/inc/filter.inc:3000
 msgid "Creating IPsec rules..."
-msgstr ""
+msgstr "IPsecの規則を作成しています..."
 
 #: etc/inc/filter.inc:2702 etc/inc/filter.inc:2915 etc/inc/filter.inc:2940
 #: etc/inc/filter.inc:3026 etc/inc/filter.inc:3050 etc/inc/filter.inc:3055
@@ -657,60 +660,61 @@ msgid ""
 "Please use filter_tdr_install_cron() function tdr_install_cron will be "
 "deprecated!"
 msgstr ""
+"filter_tdr_install_cron() を使用してください機能tdr_install_cronはは廃止されます！"
 
 #: etc/inc/filter.inc:2747 etc/inc/filter.inc:2960 etc/inc/filter.inc:2986
 #: etc/inc/filter.inc:3072 etc/inc/filter.inc:3096 etc/inc/filter.inc:3101
 #: etc/inc/filter.inc:3096
 msgid "Installed 15 minute filter reload for Time Based Rules"
-msgstr ""
+msgstr "時間ベースのルールのためにインストールさ15分のフィルターリロード"
 
 #: etc/inc/filter.inc:3102 etc/inc/filter.inc:3313 etc/inc/filter.inc:3293
 #: etc/inc/filter.inc:3389 etc/inc/filter.inc:3413 etc/inc/filter.inc:3418
 #: etc/inc/filter.inc:3412
 #, php-format
 msgid "Checking for %1$s PF hooks in package %2$s"
-msgstr ""
+msgstr "パッケージ%2$sを処理%1$s PFフックのチェック"
 
 #: etc/inc/filter.inc:3107 etc/inc/filter.inc:3318 etc/inc/filter.inc:3299
 #: etc/inc/filter.inc:3395 etc/inc/filter.inc:3419 etc/inc/filter.inc:3424
 #: etc/inc/filter.inc:3418
 #, php-format
 msgid "Processing early %1$s rules for package %2$s"
-msgstr ""
+msgstr "パッケージ%2$sを早期%1$sのルールの処理"
 
 #: etc/inc/filter.inc:3112 etc/inc/filter.inc:3323 etc/inc/filter.inc:3304
 #: etc/inc/filter.inc:3400 etc/inc/filter.inc:3424 etc/inc/filter.inc:3429
 #: etc/inc/filter.inc:3423
 #, php-format
 msgid "There was an error while parsing the package filter rules for %s."
-msgstr ""
+msgstr "%sのためのパッケージフィルタルールの解析中にエラーが発生しました。"
 
 #: etc/inc/interfaces.inc:51 etc/inc/interfaces.inc:53
 #: etc/inc/interfaces.inc:51
 msgid "interfaces_bring_up() was called but no variable defined."
-msgstr ""
+msgstr "interfaces_bring_up() が呼び出さしかし、誰変数が定義されていなかった。"
 
 #: etc/inc/interfaces.inc:213 etc/inc/interfaces.inc:215
 #: etc/inc/interfaces.inc:214 etc/inc/interfaces.inc:212
 #: etc/inc/interfaces.inc:212
 msgid "Configuring loopback interface..."
-msgstr ""
+msgstr "ループバックインターフェイスの設定..."
 
 #: etc/inc/interfaces.inc:224 etc/inc/interfaces.inc:226
 #: etc/inc/interfaces.inc:225 etc/inc/interfaces.inc:223
 #: etc/inc/interfaces.inc:223
 msgid "Configuring VLAN interfaces..."
-msgstr ""
+msgstr "VLANインターフェイスの設定..."
 
 #: etc/inc/interfaces.inc:241 etc/inc/interfaces.inc:243
 #: etc/inc/interfaces.inc:242 etc/inc/interfaces.inc:240
 #: etc/inc/interfaces.inc:240
 msgid "VLAN: called with wrong options. Problems with config!"
-msgstr ""
+msgstr "VLAN：間違ったオプションを使用して呼び出さ。設定に問題が！"
 
 #: etc/inc/interfaces.inc:249
 msgid "interface_vlan_confgure called with if undefined."
-msgstr ""
+msgstr "定義されていない場合で呼び出されinterface_vlan_confgure。"
 
 #: etc/inc/interfaces.inc:283 etc/inc/interfaces.inc:367
 #: etc/inc/interfaces.inc:285 etc/inc/interfaces.inc:369
@@ -719,54 +723,54 @@ msgstr ""
 #: etc/inc/interfaces.inc:282 etc/inc/interfaces.inc:372
 #, php-format
 msgid "QinQ compat VLAN: called with wrong options. Problems with config!%s"
-msgstr ""
+msgstr "QinQの互換VLAN：間違ったオプションを使用して呼び出さ。設定に問題が！%s"
 
 #: etc/inc/interfaces.inc:290 etc/inc/interfaces.inc:375
 #, php-format
 msgid "interface_qinq_confgure called with if undefined.%s"
-msgstr ""
+msgstr "と呼ばinterface_qinq_confgure場合undefined.%s"
 
 #: etc/inc/interfaces.inc:352 etc/inc/interfaces.inc:354
 #: etc/inc/interfaces.inc:353 etc/inc/interfaces.inc:357
 #: etc/inc/interfaces.inc:357
 msgid "Configuring QinQ interfaces..."
-msgstr ""
+msgstr "QinQサブインターフェイスの設定..."
 
 #: etc/inc/interfaces.inc:396 etc/inc/interfaces.inc:398
 #: etc/inc/interfaces.inc:397
 msgid "Creating other wireless clone interfaces..."
-msgstr ""
+msgstr "他のワイヤレスクローン·インターフェースを作成しています..."
 
 #: etc/inc/interfaces.inc:439 etc/inc/interfaces.inc:438
 #: etc/inc/interfaces.inc:437 etc/inc/interfaces.inc:466
 #: etc/inc/interfaces.inc:466
 #, php-format
 msgid "No members found on %s"
-msgstr ""
+msgstr "いいえメンバーは%sを見つけることができません"
 
 #: etc/inc/interfaces.inc:505 etc/inc/interfaces.inc:512
 #: etc/inc/interfaces.inc:511 etc/inc/interfaces.inc:541
 #: etc/inc/interfaces.inc:541
 msgid "realif not defined in interfaces bridge - up"
-msgstr ""
+msgstr "realifインターフェースブリッジで定義されていません - アップ"
 
 #: etc/inc/interfaces.inc:618 etc/inc/interfaces.inc:625
 #: etc/inc/interfaces.inc:624 etc/inc/interfaces.inc:654
 #: etc/inc/interfaces.inc:654
 msgid "bridgeif not defined -- could not bring interface up"
-msgstr ""
+msgstr "bridgeif定義されていない - インタフェースを持ち出すことができませんでした"
 
 #: etc/inc/interfaces.inc:652 etc/inc/interfaces.inc:659
 #: etc/inc/interfaces.inc:658 etc/inc/interfaces.inc:685
 #: etc/inc/interfaces.inc:685
 msgid "Configuring LAGG interfaces..."
-msgstr ""
+msgstr "LAGGインターフェイスの設定..."
 
 #: etc/inc/interfaces.inc:790 etc/inc/interfaces.inc:801
 #: etc/inc/interfaces.inc:800 etc/inc/interfaces.inc:835
 #: etc/inc/interfaces.inc:835
 msgid "Could not bring greif up -- variable not defined."
-msgstr ""
+msgstr "変数定義されていません - 最大グライフなれなかった。"
 
 #: etc/inc/interfaces.inc:833 etc/inc/interfaces.inc:851
 #: etc/inc/interfaces.inc:850 etc/inc/interfaces.inc:899
@@ -775,12 +779,14 @@ msgid ""
 "could not bring realif up -- variable not defined -- "
 "interface_gif_configure()"
 msgstr ""
+"変数に定義されていない - - interface_gif_configure()"
+"を最大realifなれなかった"
 
 #: etc/inc/interfaces.inc:856 etc/inc/interfaces.inc:874
 #: etc/inc/interfaces.inc:873 etc/inc/interfaces.inc:922
 #: etc/inc/interfaces.inc:922
 msgid "could not bring gifif up -- variable not defined"
-msgstr ""
+msgstr "変数定義されていません - 最大gififなれなかった"
 
 #: etc/inc/interfaces.inc:919 etc/inc/interfaces.inc:957
 #: etc/inc/interfaces.inc:972 etc/inc/interfaces.inc:945
@@ -792,7 +798,7 @@ msgstr ""
 #: etc/inc/interfaces.inc:1047 etc/inc/interfaces.inc:1062
 #, php-format
 msgid "Configuring %s interface..."
-msgstr ""
+msgstr "%sのインターフェイスの設定..."
 
 #: etc/inc/interfaces.inc:921 etc/inc/interfaces.inc:959
 #: etc/inc/interfaces.inc:974 etc/inc/interfaces.inc:948
@@ -805,14 +811,14 @@ msgstr ""
 #: etc/inc/interfaces.inc:1064
 #, php-format
 msgid "Configuring %s"
-msgstr ""
+msgstr "設定 %s"
 
 #: etc/inc/interfaces.inc:1299 etc/inc/interfaces.inc:1339
 #: etc/inc/interfaces.inc:1338 etc/inc/interfaces.inc:1407
 #: etc/inc/interfaces.inc:1412 etc/inc/interfaces.inc:1412
 #, php-format
 msgid "Can't find PPP config for %s in interface_ppps_configure()."
-msgstr ""
+msgstr "interface_ppps_configure() を処理%sのPPP設定を見つけることができません。"
 
 #: etc/inc/interfaces.inc:1362 etc/inc/interfaces.inc:1402
 #: etc/inc/interfaces.inc:1401 etc/inc/interfaces.inc:1464
@@ -822,6 +828,8 @@ msgid ""
 "Could not get a PPTP/L2TP Remote IP address from %1$s for %2$s in "
 "interfaces_ppps_configure."
 msgstr ""
+"interfaces_ppps_configure中%2$sをため%1$sからPPTP/L2TPリモート"
+"IPアドレスを取得できませんでした。"
 
 #: etc/inc/interfaces.inc:1369 etc/inc/interfaces.inc:1409
 #: etc/inc/interfaces.inc:1408 etc/inc/interfaces.inc:1471
@@ -830,76 +838,77 @@ msgstr ""
 msgid ""
 "Device %s does not exist. PPP link cannot start without the modem device."
 msgstr ""
+"デバイス%sは存在しません。 PPPリンクは、モデム装置なしで開始することはできません。"
 
 #: etc/inc/interfaces.inc:1374 etc/inc/interfaces.inc:1414
 #: etc/inc/interfaces.inc:1413 etc/inc/interfaces.inc:1476
 #: etc/inc/interfaces.inc:1481 etc/inc/interfaces.inc:1481
 #, php-format
 msgid "Unkown %s configured as ppp interface."
-msgstr ""
+msgstr "UNKOWN %sは、PPPインターフェイスとして設定。"
 
 #: etc/inc/interfaces.inc:1641 etc/inc/interfaces.inc:1686
 #: etc/inc/interfaces.inc:1685 etc/inc/interfaces.inc:1748
 #: etc/inc/interfaces.inc:1753 etc/inc/interfaces.inc:1753
 #, php-format
 msgid "Error: cannot open mpd_%s.conf in interface_ppps_configure().%s"
-msgstr ""
+msgstr "エラー：interface_ppps_configure().%s を処理mpd_%s.conf開くことができません。"
 
 #: etc/inc/interfaces.inc:1702 etc/inc/interfaces.inc:1771
 #: etc/inc/interfaces.inc:1770 etc/inc/interfaces.inc:1828
 #: etc/inc/interfaces.inc:1833 etc/inc/interfaces.inc:1833
 msgid "Configuring CARP settings..."
-msgstr ""
+msgstr "設定CARPの設定..."
 
 #: etc/inc/interfaces.inc:1723 etc/inc/interfaces.inc:1788
 #: etc/inc/interfaces.inc:1787
 msgid "Enable CARP ARP-balancing"
-msgstr ""
+msgstr "CARP ARP分散を可能にする"
 
 #: etc/inc/interfaces.inc:1724 etc/inc/interfaces.inc:1789
 #: etc/inc/interfaces.inc:1788
 msgid "Disallow CARP preemption"
-msgstr ""
+msgstr "CARPプリエンプションを禁止"
 
 #: etc/inc/interfaces.inc:1726 etc/inc/interfaces.inc:1791
 #: etc/inc/interfaces.inc:1790
 msgid "Enable CARP preemption"
-msgstr ""
+msgstr "CARPプリエンプションを有効にする"
 
 #: etc/inc/interfaces.inc:1728 etc/inc/interfaces.inc:1793
 #: etc/inc/interfaces.inc:1792
 msgid "Enable CARP logging"
-msgstr ""
+msgstr "CARPのログを有効に"
 
 #: etc/inc/interfaces.inc:1744 etc/inc/interfaces.inc:1809
 #: etc/inc/interfaces.inc:1808
 msgid "Could not create rules.boot file!"
-msgstr ""
+msgstr "rules.bootファイルを作成できませんでした！"
 
 #: etc/inc/interfaces.inc:1750 etc/inc/interfaces.inc:1815
 #: etc/inc/interfaces.inc:1814
 msgid "Bring up pfsync0 syncpeer"
-msgstr ""
+msgstr "pfsync0のsyncpeerを持ち出す"
 
 #: etc/inc/interfaces.inc:1752 etc/inc/interfaces.inc:1817
 #: etc/inc/interfaces.inc:1816
 msgid "Bring up pfsync0 syncdev"
-msgstr ""
+msgstr "pfsync0のsyncdevを持ち出す"
 
 #: etc/inc/interfaces.inc:1754 etc/inc/interfaces.inc:1819
 #: etc/inc/interfaces.inc:1818
 msgid "Bring up pfsync0"
-msgstr ""
+msgstr "pfsync0を持ち出す"
 
 #: etc/inc/interfaces.inc:1768 etc/inc/interfaces.inc:1833
 #: etc/inc/interfaces.inc:1837
 msgid "Allow CARP."
-msgstr ""
+msgstr "CARPを許可します。"
 
 #: etc/inc/interfaces.inc:1770 etc/inc/interfaces.inc:1835
 #: etc/inc/interfaces.inc:1839
 msgid "Disallow CARP."
-msgstr ""
+msgstr "CARPを禁止。"
 
 #: etc/inc/interfaces.inc:1963 etc/inc/interfaces.inc:2038
 #: etc/inc/interfaces.inc:2020 etc/inc/interfaces.inc:2099
@@ -910,6 +919,7 @@ msgid ""
 "Interface specified for the virtual IP address %s does not exist. Skipping "
 "this VIP."
 msgstr ""
+"仮想IPアドレス%sに指定されたインタフェースが存在しません。このVIPをスキップする。"
 
 #: etc/inc/interfaces.inc:1972 etc/inc/interfaces.inc:2029
 #: etc/inc/interfaces.inc:2025 etc/inc/interfaces.inc:2065
@@ -919,6 +929,8 @@ msgid ""
 "Sorry but we could not find a matching real interface subnet for the virtual "
 "IP address %s."
 msgstr ""
+"申し訳ありませんが、我々は仮想IPv4アドレス%sのマッチング実際"
+"のインターフェイスのサブネットを見つけられませんでした。"
 
 #: etc/inc/interfaces.inc:1981 etc/inc/interfaces.inc:2038
 #: etc/inc/interfaces.inc:2034 etc/inc/interfaces.inc:2074
@@ -928,6 +940,8 @@ msgid ""
 "Sorry but we could not find a matching real interface subnet for the virtual "
 "IPv6 address %s."
 msgstr ""
+"申し訳ありませんが、我々は仮想IPv6アドレス%sのマッチング実際"
+"のインターフェイスのサブネットを見つけられませんでした。"
 
 #: etc/inc/interfaces.inc:2084
 #, php-format
@@ -935,13 +949,14 @@ msgid ""
 "Error: cannot open dhclient_%s.conf in interfaces_carpdev_configure() for "
 "writing.%s"
 msgstr ""
+"エラー：writing.%s用interfaces_carpdev_configure()を処理dhclient_%s.confを開くことはできません"
 
 #: etc/inc/interfaces.inc:2117 etc/inc/interfaces.inc:2185
 #: etc/inc/interfaces.inc:2104 etc/inc/interfaces.inc:2144
 #: etc/inc/interfaces.inc:2149 etc/inc/interfaces.inc:2149
 #, php-format
 msgid "Interface %s changed to hostap mode"
-msgstr ""
+msgstr "インターフェース%sはのhostapモードに変更"
 
 #: etc/inc/interfaces.inc:2121 etc/inc/interfaces.inc:2189
 #: etc/inc/interfaces.inc:2108 etc/inc/interfaces.inc:2148
@@ -955,14 +970,14 @@ msgstr ""
 #: etc/inc/interfaces.inc:2157 etc/inc/interfaces.inc:2157
 #, php-format
 msgid "Interface %s changed to infrastructure mode"
-msgstr ""
+msgstr "インターフェース%sアドホックモードに変更"
 
 #: etc/inc/interfaces.inc:2137 etc/inc/interfaces.inc:2205
 #: etc/inc/interfaces.inc:2124 etc/inc/interfaces.inc:2164
 #: etc/inc/interfaces.inc:2169 etc/inc/interfaces.inc:2169
 #, php-format
 msgid "Cloning new wireless interface %s"
-msgstr ""
+msgstr "新しい無線インタフェース%sのクローン作成"
 
 #: etc/inc/interfaces.inc:2142 etc/inc/interfaces.inc:2210
 #: etc/inc/interfaces.inc:2129 etc/inc/interfaces.inc:2169

@@ -2570,7 +2570,7 @@ function filter_generate_user_rule($rule) {
 	}
 
 	if (!empty($rule['tracker']))
-		$aline['tracker'] = "tracker $rule['tracker'] ";
+		$aline['tracker'] = "tracker {$rule['tracker']} ";
 
 	$line = "";
 	/* exception(s) to a user rules can go here. */

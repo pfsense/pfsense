@@ -14,7 +14,7 @@ msgstr ""
 "Language-Team: JAPANESE <foof@blackskyresearch.net>\n"
 "Language: \n"
 "MIME-Version: 1.0\n"
-"Content-Type: text/plain; charset=ISO-8859-1\n"
+"Content-Type: text/plain; charset=UTF8\n"
 "Content-Transfer-Encoding: 8bit\n"
 
 #: etc/inc/PEAR.inc:161
@@ -54,6 +54,8 @@ msgid ""
 "[%s: message=\"%s\" code=%d mode=callback callback=%s prefix=\"%s\" info=\"%s"
 "\"]"
 msgstr ""
+"[%s: message=\"%s\" code=%d mode=callback callback=%s prefix=\"%s\" info=\"%s"
+"\"]"
 
 #: etc/inc/PEAR.inc:1041
 #, php-format
@@ -206,7 +208,7 @@ msgstr "エラー! ユーザー名%2$sはサーバ%1$sにログインできま�
 #: etc/inc/auth.inc:1129 etc/inc/auth.inc:1133 etc/inc/auth.inc:1133
 #, php-format
 msgid "Logged in successfully as %1$s via LDAP server %2$s with DN = %3$s."
-msgstr ""
+msgstr "DN = %3$sとLDAPサーバー%2$s経由%1$sとして正常にログインし"
 
 #: etc/inc/auth.inc:1144 etc/inc/auth.inc:1153 etc/inc/auth.inc:1157
 #: etc/inc/auth.inc:1163 etc/inc/auth.inc:1167 etc/inc/auth.inc:1167

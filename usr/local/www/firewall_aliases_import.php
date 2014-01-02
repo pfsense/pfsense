@@ -86,10 +86,9 @@ if($_POST['aliasimport'] <> "") {
 		$imported_ips = array();
 		$imported_descs = array();
 		foreach ($tocheck as $impline) {
-			$impline = ltrim($impline);
-			$impip = trim(strtok($impline, " "));
-			$impdesc = trim(strtok("")); /* Remainder of impline var */
-
+			$implinea = explode(" ",trim($impline),2);
+			$impip = $implinea[0];
+			$impdesc = trim($implinea[1]);
 			if (is_iprange($impip)) {
 				list($startip, $endip) = explode('-', $impip);
 				$rangesubnets = ip_range_to_subnet_array($startip, $endip);

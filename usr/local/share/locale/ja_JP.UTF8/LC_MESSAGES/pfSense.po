@@ -1626,7 +1626,7 @@ msgstr "DHCPリースは%1$sで終了しました復元に失敗しました、�
 #: etc/inc/services.inc:275 etc/inc/services.inc:346 etc/inc/services.inc:373
 #: etc/inc/services.inc:382 etc/inc/services.inc:387 etc/inc/services.inc:389
 msgid "Starting DHCP service..."
-msgstr ""
+msgstr "DHCPサービスを開始..."
 
 #: etc/inc/services.inc:282 etc/inc/services.inc:353 etc/inc/services.inc:380
 #: etc/inc/services.inc:820 etc/inc/services.inc:825 etc/inc/services.inc:877
@@ -1637,17 +1637,17 @@ msgstr "エラー：services_dhcpdv4_configure().%s を処理dhcpd.confの開く
 #: etc/inc/services.inc:353 etc/inc/services.inc:434 etc/inc/services.inc:461
 #: etc/inc/services.inc:463 etc/inc/services.inc:468 etc/inc/services.inc:469
 msgid "Warning!  DHCP Failover setup and no CARP virtual IP's defined!"
-msgstr ""
+msgstr "警告！DHCPフェールオーバーの設定なしCARP仮想IPの定義された！"
 
 #: etc/inc/services.inc:949 etc/inc/services.inc:1078
 #: etc/inc/services.inc:1210 etc/inc/services.inc:1203
 #: etc/inc/services.inc:1209 etc/inc/services.inc:1261
 msgid "Could not write Igmpproxy configuration file!"
-msgstr ""
+msgstr "Igmpproxy設定ファイルを書き込むことができませんでした！"
 
 #: etc/inc/services.inc:956
 msgid "Started Igmpproxy service sucsesfully."
-msgstr ""
+msgstr "首尾Igmpproxyサービスを開始しました。"
 
 #: etc/inc/services.inc:980 etc/inc/services.inc:1109
 #: etc/inc/services.inc:1241 etc/inc/services.inc:1235

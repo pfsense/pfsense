@@ -963,7 +963,7 @@ msgstr "インターフェース%sはのhostapモードに変更"
 #: etc/inc/interfaces.inc:2153 etc/inc/interfaces.inc:2153
 #, php-format
 msgid "Interface %s changed to adhoc mode"
-msgstr ""
+msgstr "インターフェース%sはアドホックモードに変更"
 
 #: etc/inc/interfaces.inc:2125 etc/inc/interfaces.inc:2193
 #: etc/inc/interfaces.inc:2112 etc/inc/interfaces.inc:2152
@@ -984,13 +984,13 @@ msgstr "新しい無線インタフェース%sのクローン作成"
 #: etc/inc/interfaces.inc:2174 etc/inc/interfaces.inc:2174
 #, php-format
 msgid "Failed to clone interface %1$s with error code %2$s, output %3$s"
-msgstr ""
+msgstr "エラーコード%2$s、出力%3$sとのインタフェースは%1$sのクローンを作成できませんでした"
 
 #: etc/inc/interfaces.inc:2715 etc/inc/interfaces.inc:2790
 #: etc/inc/interfaces.inc:2709 etc/inc/interfaces.inc:2761
 #: etc/inc/interfaces.inc:2784 etc/inc/interfaces.inc:2784
 msgid "Generating new MAC address."
-msgstr ""
+msgstr "新しいMACアドレスを生成する。"
 
 #: etc/inc/interfaces.inc:2721 etc/inc/interfaces.inc:2796
 #: etc/inc/interfaces.inc:2715 etc/inc/interfaces.inc:2767
@@ -1000,10 +1000,12 @@ msgid ""
 "The INVALID MAC address (ff:ff:ff:ff:ff:ff) on interface %1$s has been "
 "automatically replaced with %2$s"
 msgstr ""
+"無効なMACアドレスのインタフェースは%1$s上(ff:ff:ff:ff:ff:ff)"
+"が自動的%2$sに置き換えられました"
 
 #: etc/inc/interfaces.inc:2910
 msgid "Could not bring wanif up in terface_carpdev_dhcp_configure()"
-msgstr ""
+msgstr "terface_carpdev_dhcp_configure() を処理wanifを持ち出すことができませんでした"
 
 #: etc/inc/interfaces.inc:3016
 #, php-format
@@ -1011,6 +1013,9 @@ msgid ""
 "Error: cannot open dhclient_%s.conf in interfaces_wan_dhcp_configure() for "
 "writing.%s"
 msgstr ""
+"エラー：writing.%sため interfaces_wan_dhcp_configure() にdhclient_%s.conf"
+"を開くことはできません"
+
 
 #: etc/inc/interfaces.inc:3029 etc/inc/interfaces.inc:3513
 #: etc/inc/interfaces.inc:3373 etc/inc/interfaces.inc:3466
@@ -1018,7 +1023,7 @@ msgstr ""
 #: etc/inc/interfaces.inc:3538
 #, php-format
 msgid "Invalid interface \"%s\" in interface_dhcp_configure()"
-msgstr ""
+msgstr "interface_dhcp_configure() 内の無効なインターフェイス\"%s\""
 
 #: etc/inc/interfaces.inc:3064 etc/inc/interfaces.inc:3548
 #: etc/inc/interfaces.inc:3408 etc/inc/interfaces.inc:3501
@@ -1026,129 +1031,131 @@ msgstr ""
 #: etc/inc/interfaces.inc:3573
 #, php-format
 msgid "Could not bring up %s interface in interface_dhcp_configure()"
-msgstr ""
+msgstr "interface_dhcp_configure() で%sはインターフェイスを起動できませんでした"
 
 #: etc/inc/notices.inc:76 etc/inc/notices.inc:76
 #, php-format
 msgid "Could not open %s for writing"
-msgstr ""
+msgstr "書き込み用%sを開くことができませんでした"
 
 #: etc/inc/notices.inc:327 etc/inc/notices.inc:327
 #, php-format
 msgid "Message sent to %s OK"
-msgstr ""
+msgstr "[OK]を%sはに送信されたメッセージ"
 
 #: etc/inc/notices.inc:330 etc/inc/notices.inc:331 etc/inc/notices.inc:330
 #: etc/inc/notices.inc:331
 #, php-format
 msgid "Could not send the message to %1$s -- Error: %2$s"
-msgstr ""
+msgstr "%1$sにメッセージを送信できませんでした - エラー：%2$s"
 
 #: etc/inc/openvpn.inc:83 etc/inc/openvpn.inc:90 etc/inc/openvpn.inc:81
 #: etc/inc/openvpn.inc:88 etc/inc/openvpn.inc:81 etc/inc/openvpn.inc:88
 msgid "Peer to Peer ( SSL/TLS )"
-msgstr ""
+msgstr "ピア·ツー·ピア（SSL / TLS）"
 
 #: etc/inc/openvpn.inc:84 etc/inc/openvpn.inc:91 etc/inc/openvpn.inc:82
 #: etc/inc/openvpn.inc:89 etc/inc/openvpn.inc:82 etc/inc/openvpn.inc:89
 msgid "Peer to Peer ( Shared Key )"
-msgstr ""
+msgstr "ピアツーピア（共有鍵）"
 
 #: etc/inc/openvpn.inc:85 etc/inc/openvpn.inc:83 etc/inc/openvpn.inc:83
 msgid "Remote Access ( SSL/TLS )"
-msgstr ""
+msgstr "リモートアクセス ( SSL/TLS )"
 
 #: etc/inc/openvpn.inc:86 etc/inc/openvpn.inc:84 etc/inc/openvpn.inc:84
 msgid "Remote Access ( User Auth )"
-msgstr ""
+msgstr "リモートアクセス（ユーザ認証）"
 
 #: etc/inc/openvpn.inc:87 etc/inc/openvpn.inc:85 etc/inc/openvpn.inc:85
 msgid "Remote Access ( SSL/TLS + User Auth )"
-msgstr ""
+msgstr "リモートアクセス ( SSL/TLS + ユーザ認証)"
 
 #: etc/inc/openvpn.inc:179 etc/inc/openvpn.inc:177 etc/inc/openvpn.inc:195
 #: etc/inc/openvpn.inc:195
 msgid "None (No Encryption)"
-msgstr ""
+msgstr "なし（暗号化なし）"
 
 #: etc/inc/openvpn.inc:203 etc/inc/openvpn.inc:201 etc/inc/openvpn.inc:238
 #: etc/inc/openvpn.inc:238
 #, php-format
 msgid "The field '%s' must contain a valid IP address or domain name."
-msgstr ""
+msgstr "フィールドが '%s'は有効なIPアドレスまたはドメイン名が含まれている必要があります。"
 
 #: etc/inc/openvpn.inc:210 etc/inc/openvpn.inc:208 etc/inc/openvpn.inc:245
 #: etc/inc/openvpn.inc:245
 #, php-format
 msgid "The field '%s' must contain a valid port, ranging from 0 to 65535."
-msgstr ""
+msgstr "フィールドが '%s'は0〜65535の範囲、有効なポートが含まれている必要があります。"
 
 #: etc/inc/openvpn.inc:219 etc/inc/openvpn.inc:217
 #, php-format
 msgid "The field '%s' must contain a valid CIDR range."
-msgstr ""
+msgstr "フィールドが '%s'は有効なCIDR範囲が含まれている必要があります。"
 
 #: etc/inc/pfsense-utils.inc:345 etc/inc/pfsense-utils.inc:330
 #: etc/inc/pfsense-utils.inc:330
 msgid "MASTER"
-msgstr ""
+msgstr "マスター"
+# ikenote: not sure if this is the best word to use?
 
 #: etc/inc/pfsense-utils.inc:347 etc/inc/pfsense-utils.inc:332
 #: etc/inc/pfsense-utils.inc:332
 msgid "BACKUP"
-msgstr ""
+msgstr "バックアップ"
 
 #: etc/inc/pfsense-utils.inc:349 etc/inc/pfsense-utils.inc:334
 #: etc/inc/pfsense-utils.inc:334
 msgid "INIT"
-msgstr ""
+msgstr "イニシャライズ"
+# ikenote: not sure if this is the best word to use?
 
 #: etc/inc/pfsense-utils.inc:417 etc/inc/pfsense-utils.inc:402
 #: etc/inc/pfsense-utils.inc:402
 msgid "After synch increase advertising skew"
-msgstr ""
+msgstr "後の同期の増加広告スキュー"
 
 #: etc/inc/pfsense-utils.inc:462 etc/inc/pfsense-utils.inc:447
 #: etc/inc/pfsense-utils.inc:447
 msgid "Error creating socket!"
-msgstr ""
+msgstr "エラーソケットを作成する！"
 
 #: etc/inc/pfsense-utils.inc:463 etc/inc/pfsense-utils.inc:448
 #: etc/inc/pfsense-utils.inc:448
 #, php-format
 msgid "Error code is '%1$s' - %2$s"
-msgstr ""
+msgstr "'%2$s' - エラーコードは'%1$s'です"
 
 #: etc/inc/pfsense-utils.inc:468 etc/inc/pfsense-utils.inc:453
 #: etc/inc/pfsense-utils.inc:453
 #, php-format
 msgid "setsockopt() failed, error: %s"
-msgstr ""
+msgstr "%s ：setsockopt() 、エラー、障害が発生した"
 
 #: etc/inc/pfsense-utils.inc:471 etc/inc/pfsense-utils.inc:456
 #: etc/inc/pfsense-utils.inc:456
 #, php-format
 msgid "Magic Packet sent (%1$s) to {%2$s} MAC=%3$s"
-msgstr ""
+msgstr "マジックパケットは、MAC=%3$sを{%2$s}するは(%1$s)を送った"
 
 #: etc/inc/pfsense-utils.inc:518 etc/inc/pfsense-utils.inc:540
 #: etc/inc/pfsense-utils.inc:533 etc/inc/pfsense-utils.inc:555
 #: etc/inc/pfsense-utils.inc:518 etc/inc/pfsense-utils.inc:540
 #, php-format
 msgid "Restored %s of config file (maybe from CARP partner)"
-msgstr ""
+msgstr "configファイルの復元%sは（多分CARPパートナーから）"
 
 #: etc/inc/pfsense-utils.inc:699 etc/inc/pfsense-utils.inc:714
 #: etc/inc/pfsense-utils.inc:699
 #, php-format
 msgid "XMLRPC communication error: %s"
-msgstr ""
+msgstr "XMLRPC通信エラー：%s"
 
 #: etc/inc/pfsense-utils.inc:702 etc/inc/pfsense-utils.inc:717
 #: etc/inc/pfsense-utils.inc:702
 #, php-format
 msgid "XMLRPC request failed with error %1$s: %2$s"
-msgstr ""
+msgstr "XMLRPC要求は、エラーは%1$sで失敗しました：%2$s"
 
 #: etc/inc/pfsense-utils.inc:795 etc/inc/pfsense-utils.inc:810
 #: etc/inc/pfsense-utils.inc:795

@@ -1160,88 +1160,88 @@ msgstr "XMLRPC要求は、エラーは%1$sで失敗しました：%2$s"
 #: etc/inc/pfsense-utils.inc:795 etc/inc/pfsense-utils.inc:810
 #: etc/inc/pfsense-utils.inc:795
 msgid "reload_interfaces_sync() is starting."
-msgstr ""
+msgstr "reload_interfaces_sync() 開始しています。"
 
 #: etc/inc/pfsense-utils.inc:803 etc/inc/pfsense-utils.inc:818
 #: etc/inc/pfsense-utils.inc:803
 msgid "Enabling system routing"
-msgstr ""
+msgstr "システムルーティングを有効にする"
 
 #: etc/inc/pfsense-utils.inc:806 etc/inc/pfsense-utils.inc:821
 #: etc/inc/pfsense-utils.inc:806
 msgid "Cleaning up Interfaces"
-msgstr ""
+msgstr "インタフェースのクリーンアップ"
 
 #: etc/inc/pfsense-utils.inc:912 etc/inc/pfsense-utils.inc:927
 #: etc/inc/pfsense-utils.inc:936 etc/inc/pfsense-utils.inc:936
 msgid "Enabling auto login was not possible."
-msgstr ""
+msgstr "自動ログインを有効にすることはできませんでした。"
 
 #: etc/inc/pfsense-utils.inc:1100 etc/inc/pfsense-utils.inc:1137
 #: etc/inc/pfsense-utils.inc:1191 etc/inc/pfsense-utils.inc:1196
 #: etc/inc/pfsense-utils.inc:1196
 msgid "No history data found!"
-msgstr ""
+msgstr "履歴はありませんデータ発見！"
 
 #: etc/inc/pfsense-utils.inc:1222 etc/inc/pfsense-utils.inc:1260
 #: etc/inc/pfsense-utils.inc:1313 etc/inc/pfsense-utils.inc:1318
 #: etc/inc/pfsense-utils.inc:1318
 msgid "device not present! Is the modem attached to the system?"
-msgstr ""
+msgstr "デバイスが存在しません！モデムがシステムに接続されていませんか？"
 
 #: etc/inc/pfsense-utils.inc:1262 etc/inc/pfsense-utils.inc:1327
 #: etc/inc/pfsense-utils.inc:1380 etc/inc/pfsense-utils.inc:1385
 #: etc/inc/pfsense-utils.inc:1385
 msgid "running"
-msgstr ""
+msgstr "ランニング"
 
 #: etc/inc/pfsense-utils.inc:1263 usr/local/www/graph.php:201
 #: etc/inc/pfsense-utils.inc:1328 etc/inc/pfsense-utils.inc:1381
 #: etc/inc/pfsense-utils.inc:1386 usr/local/www/graph.php:201
 #: etc/inc/pfsense-utils.inc:1386
 msgid "up"
-msgstr ""
+msgstr "アップ"
 
 #: etc/inc/pfsense-utils.inc:1300 etc/inc/pfsense-utils.inc:1371
 #: etc/inc/pfsense-utils.inc:1424 etc/inc/pfsense-utils.inc:1429
 #: etc/inc/pfsense-utils.inc:1429
 msgid "blocking"
-msgstr ""
+msgstr "ブロッキング"
 
 #: etc/inc/pfsense-utils.inc:1300 etc/inc/pfsense-utils.inc:1371
 #: etc/inc/pfsense-utils.inc:1424 etc/inc/pfsense-utils.inc:1429
 #: etc/inc/pfsense-utils.inc:1429
 msgid "check for ethernet loops"
-msgstr ""
+msgstr "イーサネットループの有無を調べる"
 
 #: etc/inc/pfsense-utils.inc:1303 etc/inc/pfsense-utils.inc:1374
 #: etc/inc/pfsense-utils.inc:1427 etc/inc/pfsense-utils.inc:1432
 #: etc/inc/pfsense-utils.inc:1432
 msgid "learning"
-msgstr ""
+msgstr "ラーニング"
 
 #: etc/inc/pfsense-utils.inc:1306 etc/inc/pfsense-utils.inc:1377
 #: etc/inc/pfsense-utils.inc:1430 etc/inc/pfsense-utils.inc:1435
 #: etc/inc/pfsense-utils.inc:1435
 msgid "forwarding"
-msgstr ""
+msgstr "転送"
 
 #: etc/inc/pfsense-utils.inc:1417 etc/inc/pfsense-utils.inc:1493
 #: etc/inc/pfsense-utils.inc:1546 etc/inc/pfsense-utils.inc:1551
 #: etc/inc/pfsense-utils.inc:1555
 #, php-format
 msgid "DNSCACHE: Found old IP %1$s and new IP %2$s"
-msgstr ""
+msgstr "DNSCACHE：実測古いIPは%1$sと新しいIP %2$s"
 
 #: etc/inc/pkg-utils.inc:211 etc/inc/pkg-utils.inc:226
 #: etc/inc/pkg-utils.inc:244 etc/inc/pkg-utils.inc:244
 msgid "Resyncing configuration for all packages."
-msgstr ""
+msgstr "すべてのパッケージの構成を再同期。"
 
 #: etc/inc/pkg-utils.inc:231 etc/inc/pkg-utils.inc:246
 #: etc/inc/pkg-utils.inc:264 etc/inc/pkg-utils.inc:264
 msgid "Syncing packages:"
-msgstr ""
+msgstr "パッケージを同期する："
 
 #: etc/inc/pkg-utils.inc:273 etc/inc/pkg-utils.inc:288
 #: etc/inc/pkg-utils.inc:306 etc/inc/pkg-utils.inc:306
@@ -1250,6 +1250,8 @@ msgid ""
 "The %1$s package is missing required dependencies and must be reinstalled. "
 "%2$s"
 msgstr ""
+"%1$sパッケージには、必要な依存関係が欠落して、再インストールする必要があります。"
+"%2$s"
 
 #: etc/inc/pkg-utils.inc:297 etc/inc/pkg-utils.inc:437
 #: etc/inc/pkg-utils.inc:312 etc/inc/pkg-utils.inc:462
@@ -1260,6 +1262,7 @@ msgstr ""
 msgid ""
 "The %s package is missing required dependencies and must be reinstalled."
 msgstr ""
+"%sパッケージには、必要な依存関係が欠落して、再インストールする必要があります。"
 
 #: etc/inc/pkg-utils.inc:404 etc/inc/pkg-utils.inc:429
 #: etc/inc/pkg-utils.inc:431 etc/inc/pkg-utils.inc:448
@@ -1268,6 +1271,7 @@ msgstr ""
 msgid ""
 "The %s package is missing its configuration file and must be reinstalled."
 msgstr ""
+"%sパッケージには、その設定ファイルが欠落して、再インストールする必要があります。"
 
 #: etc/inc/pkg-utils.inc:563 usr/local/www/pkg_mgr_install.php:101
 #: etc/inc/pkg-utils.inc:589 etc/inc/pkg-utils.inc:590
@@ -1275,7 +1279,7 @@ msgstr ""
 #: usr/local/www/pkg_mgr_install.php:97 usr/local/www/pkg_mgr_install.php:97
 #: etc/inc/pkg-utils.inc:625
 msgid "Beginning package installation."
-msgstr ""
+msgstr "パッケージのインストールを開始する。"
 
 #: etc/inc/pkg-utils.inc:564 etc/inc/pkg-utils.inc:565
 #: etc/inc/pkg-utils.inc:590 etc/inc/pkg-utils.inc:591
@@ -1284,19 +1288,19 @@ msgstr ""
 #: etc/inc/pkg-utils.inc:627
 #, php-format
 msgid "Beginning package installation for %s ."
-msgstr ""
+msgstr "%sために開始するパッケージのインストール。"
 
 #: etc/inc/pkg-utils.inc:569 etc/inc/pkg-utils.inc:595
 #: etc/inc/pkg-utils.inc:596 etc/inc/pkg-utils.inc:631
 #: etc/inc/pkg-utils.inc:631
 msgid "Downloading package configuration file... "
-msgstr ""
+msgstr "パッケージ構成ファイルのダウンロード... "
 
 #: etc/inc/pkg-utils.inc:571 etc/inc/pkg-utils.inc:597
 #: etc/inc/pkg-utils.inc:598 etc/inc/pkg-utils.inc:633
 #: etc/inc/pkg-utils.inc:633
 msgid "Downloading package configuration file..."
-msgstr ""
+msgstr "パッケージ構成ファイルのダウンロード..."
 
 #: etc/inc/pkg-utils.inc:575 etc/inc/pkg-utils.inc:601
 #: etc/inc/pkg-utils.inc:602 etc/inc/pkg-utils.inc:637
@@ -1304,6 +1308,7 @@ msgstr ""
 msgid ""
 "ERROR! Unable to fetch package configuration file. Aborting installation."
 msgstr ""
+"エラー！パッケージ構成ファイルを取得することができません。インストールを中止しています。"
 
 #: etc/inc/pkg-utils.inc:577 etc/inc/pkg-utils.inc:603
 #: etc/inc/pkg-utils.inc:604 etc/inc/pkg-utils.inc:639
@@ -1312,6 +1317,8 @@ msgid ""
 "ERROR! Unable to fetch package configuration file. Aborting package "
 "installation."
 msgstr ""
+"エラー！パッケージ構成ファイルを取得することができません。"
+"パッケージのインストールを中止しています。"
 
 #: etc/inc/pkg-utils.inc:579 etc/inc/pkg-utils.inc:605
 #: etc/inc/pkg-utils.inc:606 etc/inc/pkg-utils.inc:641
@@ -1321,93 +1328,96 @@ msgid ""
 "\n"
 "Installation aborted.\n"
 msgstr ""
+"失敗しました！\n"
+"\n"
+"インストールが中止されました。\n"
 
 #: etc/inc/pkg-utils.inc:591 etc/inc/pkg-utils.inc:617
 #: etc/inc/pkg-utils.inc:618 etc/inc/pkg-utils.inc:653
 #: etc/inc/pkg-utils.inc:653
 msgid "Saving updated package information..."
-msgstr ""
+msgstr "更新されたパッケージ情報の保存..."
 
 #: etc/inc/pkg-utils.inc:595 etc/inc/pkg-utils.inc:621
 #: etc/inc/pkg-utils.inc:622 etc/inc/pkg-utils.inc:657
 #: etc/inc/pkg-utils.inc:657
 #, php-format
 msgid "Installed %s package."
-msgstr ""
+msgstr "インストールされてパッケージ。"
 
 #: etc/inc/pkg-utils.inc:599 etc/inc/pkg-utils.inc:625
 #: etc/inc/pkg-utils.inc:626 etc/inc/pkg-utils.inc:661
 #: etc/inc/pkg-utils.inc:661
 #, php-format
 msgid "Overwrote previous installation of %s."
-msgstr ""
+msgstr "%sの上書き以前のインストール。"
 
 #: etc/inc/pkg-utils.inc:600 etc/inc/pkg-utils.inc:626
 #: etc/inc/pkg-utils.inc:627 etc/inc/pkg-utils.inc:662
 #: etc/inc/pkg-utils.inc:662
 msgid "overwrite!"
-msgstr ""
+msgstr "オーバーライトする!"
 
 #: etc/inc/pkg-utils.inc:612 etc/inc/pkg-utils.inc:638
 #: etc/inc/pkg-utils.inc:639 etc/inc/pkg-utils.inc:674
 #: etc/inc/pkg-utils.inc:674
 msgid "Failed to install package."
-msgstr ""
+msgstr "パッケージのインストールに失敗しました。"
 
 #: etc/inc/pkg-utils.inc:616 etc/inc/pkg-utils.inc:642
 #: etc/inc/pkg-utils.inc:643 etc/inc/pkg-utils.inc:678
 #: etc/inc/pkg-utils.inc:678
 msgid "Writing configuration... "
-msgstr ""
+msgstr "設定を書いて... "
 
 #: etc/inc/pkg-utils.inc:652 etc/inc/pkg-utils.inc:678
 #: etc/inc/pkg-utils.inc:679 etc/inc/pkg-utils.inc:714
 #: etc/inc/pkg-utils.inc:714
 #, php-format
 msgid "The %s package is not installed.%sInstallation aborted."
-msgstr ""
+msgstr "%sパッケージがインストールされていません。%sインストールが中止されました。"
 
 #: etc/inc/pkg-utils.inc:667 etc/inc/pkg-utils.inc:693
 #: etc/inc/pkg-utils.inc:694 etc/inc/pkg-utils.inc:729
 #: etc/inc/pkg-utils.inc:729
 msgid "Installing"
-msgstr ""
+msgstr "インストール"
 
 #: etc/inc/pkg-utils.inc:667 etc/inc/pkg-utils.inc:693
 #: etc/inc/pkg-utils.inc:694 etc/inc/pkg-utils.inc:729
 #: etc/inc/pkg-utils.inc:729
 msgid "and its dependencies."
-msgstr ""
+msgstr "とその依存関係。"
 
 #: etc/inc/pkg-utils.inc:668 etc/inc/pkg-utils.inc:694
 #: etc/inc/pkg-utils.inc:695 etc/inc/pkg-utils.inc:730
 #: etc/inc/pkg-utils.inc:730
 msgid "Downloading"
-msgstr ""
+msgstr "ダウンロード"
 
 #: etc/inc/pkg-utils.inc:668 etc/inc/pkg-utils.inc:694
 #: etc/inc/pkg-utils.inc:695 etc/inc/pkg-utils.inc:730
 #: etc/inc/pkg-utils.inc:730
 msgid "and its dependencies... "
-msgstr ""
+msgstr "とその依存関係... "
 
 #: etc/inc/pkg-utils.inc:680 etc/inc/pkg-utils.inc:706
 #: etc/inc/pkg-utils.inc:707 etc/inc/pkg-utils.inc:742
 #: etc/inc/pkg-utils.inc:742
 msgid "Package WAS NOT installed properly."
-msgstr ""
+msgstr "パッケージが正しくインストールされていません。"
 
 #: etc/inc/pkg-utils.inc:693 etc/inc/pkg-utils.inc:719
 #: etc/inc/pkg-utils.inc:720 etc/inc/pkg-utils.inc:755
 #: etc/inc/pkg-utils.inc:755
 msgid "Loading package configuration... "
-msgstr ""
+msgstr "パッケージ構成を読み込んでいます... "
 
 #: etc/inc/pkg-utils.inc:698 etc/inc/pkg-utils.inc:724
 #: etc/inc/pkg-utils.inc:725 etc/inc/pkg-utils.inc:760
 #: etc/inc/pkg-utils.inc:760
 msgid "Configuring package components...\n"
-msgstr ""
+msgstr "パッケージコンポーネントの設定...\n"
 
 #: etc/inc/pkg-utils.inc:704 etc/inc/pkg-utils.inc:1049
 #: etc/inc/pkg-utils.inc:730 etc/inc/pkg-utils.inc:1086
@@ -1454,19 +1464,19 @@ msgstr "カスタムコマンド..."
 #: etc/inc/pkg-utils.inc:810 etc/inc/pkg-utils.inc:845
 #: etc/inc/pkg-utils.inc:845
 msgid "Executing custom_php_global_functions()..."
-msgstr ""
+msgstr "custom_php_global_functions() を実行..."
 
 #: etc/inc/pkg-utils.inc:790 etc/inc/pkg-utils.inc:816
 #: etc/inc/pkg-utils.inc:817 etc/inc/pkg-utils.inc:852
 #: etc/inc/pkg-utils.inc:852
 msgid "Executing custom_php_install_command()..."
-msgstr ""
+msgstr "custom_php_global_functions() を実行..."
 
 #: etc/inc/pkg-utils.inc:809 etc/inc/pkg-utils.inc:845
 #: etc/inc/pkg-utils.inc:846 etc/inc/pkg-utils.inc:881
 #: etc/inc/pkg-utils.inc:881
 msgid "Executing custom_php_resync_config_command()..."
-msgstr ""
+msgstr "custom_php_global_functions() を実行..."
 
 #: etc/inc/pkg-utils.inc:818 etc/inc/pkg-utils.inc:972
 #: etc/inc/pkg-utils.inc:854 etc/inc/pkg-utils.inc:1009
@@ -1474,13 +1484,13 @@ msgstr ""
 #: etc/inc/pkg-utils.inc:890 etc/inc/pkg-utils.inc:1045
 #: etc/inc/pkg-utils.inc:890 etc/inc/pkg-utils.inc:1045
 msgid "Menu items... "
-msgstr ""
+msgstr "メニュー項目..."
 
 #: etc/inc/pkg-utils.inc:834 etc/inc/pkg-utils.inc:870
 #: etc/inc/pkg-utils.inc:871 etc/inc/pkg-utils.inc:906
 #: etc/inc/pkg-utils.inc:906
 msgid "Integrated Tab items... "
-msgstr ""
+msgstr "統合されたタブ項目..."
 
 #: etc/inc/pkg-utils.inc:850 etc/inc/pkg-utils.inc:989
 #: etc/inc/pkg-utils.inc:886 etc/inc/pkg-utils.inc:1026
@@ -1488,96 +1498,96 @@ msgstr ""
 #: etc/inc/pkg-utils.inc:922 etc/inc/pkg-utils.inc:1062
 #: etc/inc/pkg-utils.inc:922 etc/inc/pkg-utils.inc:1062
 msgid "Services... "
-msgstr ""
+msgstr "サービス..."
 
 #: etc/inc/pkg-utils.inc:865 etc/inc/pkg-utils.inc:901
 #: etc/inc/pkg-utils.inc:902 etc/inc/pkg-utils.inc:937
 #: etc/inc/pkg-utils.inc:937
 msgid "Loading package configuration... failed!"
-msgstr ""
+msgstr "パッケージ構成を読み込んでいます...失敗しました！"
 
 #: etc/inc/pkg-utils.inc:865 etc/inc/pkg-utils.inc:901
 #: etc/inc/pkg-utils.inc:902 etc/inc/pkg-utils.inc:937
 #: etc/inc/pkg-utils.inc:937
 msgid "Installation aborted."
-msgstr ""
+msgstr "インストールが中止されました。"
 
 #: etc/inc/pkg-utils.inc:867 etc/inc/pkg-utils.inc:903
 #: etc/inc/pkg-utils.inc:904 etc/inc/pkg-utils.inc:939
 #: etc/inc/pkg-utils.inc:939
 msgid "Unable to load package configuration. Installation aborted."
-msgstr ""
+msgstr "パッケージ構成を読み込むことができません。インストールが中止されました。"
 
 #: etc/inc/pkg-utils.inc:911 etc/inc/pkg-utils.inc:948
 #: etc/inc/pkg-utils.inc:949 etc/inc/pkg-utils.inc:984
 #: etc/inc/pkg-utils.inc:984
 #, php-format
 msgid "Starting package deletion for %s..."
-msgstr ""
+msgstr "%sのパッケージの削除を開始する..."
 
 #: etc/inc/pkg-utils.inc:931 etc/inc/pkg-utils.inc:968
 #: etc/inc/pkg-utils.inc:969 etc/inc/pkg-utils.inc:1004
 #: etc/inc/pkg-utils.inc:1004
 #, php-format
 msgid "The %s package is not installed.%sDeletion aborted."
-msgstr ""
+msgstr "%sのパッケージがインストールされていません。%sを削除は中止されました。"
 
 #: etc/inc/pkg-utils.inc:942 etc/inc/pkg-utils.inc:979
 #: etc/inc/pkg-utils.inc:980 etc/inc/pkg-utils.inc:1015
 #: etc/inc/pkg-utils.inc:1015
 #, php-format
 msgid "Removing %s package... "
-msgstr ""
+msgstr "%sのパッケージを削除しています..."
 
 #: etc/inc/pkg-utils.inc:943 etc/inc/pkg-utils.inc:980
 #: etc/inc/pkg-utils.inc:981 etc/inc/pkg-utils.inc:1016
 #: etc/inc/pkg-utils.inc:1016
 #, php-format
 msgid "Removing %s components..."
-msgstr ""
+msgstr "%sのコンポーネントを削除しています..."
 
 #: etc/inc/pkg-utils.inc:955 etc/inc/pkg-utils.inc:992
 #: etc/inc/pkg-utils.inc:993 etc/inc/pkg-utils.inc:1028
 #: etc/inc/pkg-utils.inc:1028
 msgid "Tabs items... "
-msgstr ""
+msgstr "タブ項目... "
 
 #: etc/inc/pkg-utils.inc:1059 etc/inc/pkg-utils.inc:1096
 #: etc/inc/pkg-utils.inc:1097 etc/inc/pkg-utils.inc:1132
 #: etc/inc/pkg-utils.inc:1132
 msgid "Deinstall commands... "
-msgstr ""
+msgstr "アンインストールコマンド... "
 
 #: etc/inc/pkg-utils.inc:1069 etc/inc/pkg-utils.inc:1106
 #: etc/inc/pkg-utils.inc:1107 etc/inc/pkg-utils.inc:1142
 #: etc/inc/pkg-utils.inc:1142
 msgid "Removing package instructions..."
-msgstr ""
+msgstr "パッケージの指示に従って削除しています..."
 
 #: etc/inc/pkg-utils.inc:1071 etc/inc/pkg-utils.inc:1108
 #: etc/inc/pkg-utils.inc:1109 etc/inc/pkg-utils.inc:1144
 #: etc/inc/pkg-utils.inc:1144
 #, php-format
 msgid "Remove '%s'"
-msgstr ""
+msgstr "'%s'をを削除"
 
 #: etc/inc/pkg-utils.inc:1078 etc/inc/pkg-utils.inc:1115
 #: etc/inc/pkg-utils.inc:1116 etc/inc/pkg-utils.inc:1151
 #: etc/inc/pkg-utils.inc:1151
 msgid "Auxiliary files... "
-msgstr ""
+msgstr "補助ファイル... "
 
 #: etc/inc/pkg-utils.inc:1092 etc/inc/pkg-utils.inc:1129
 #: etc/inc/pkg-utils.inc:1130 etc/inc/pkg-utils.inc:1165
 #: etc/inc/pkg-utils.inc:1165
 msgid "Package XML... "
-msgstr ""
+msgstr "パッケージXML... "
 
 #: etc/inc/pkg-utils.inc:1111 etc/inc/pkg-utils.inc:1148
 #: etc/inc/pkg-utils.inc:1149 etc/inc/pkg-utils.inc:1184
 #: etc/inc/pkg-utils.inc:1184
 msgid "Configuration... "
-msgstr ""
+msgstr "コンフィギュレーション··· "
 
 #: etc/inc/pkg-utils.inc:1205 etc/inc/pkg-utils.inc:1242
 #: etc/inc/pkg-utils.inc:1243 etc/inc/pkg-utils.inc:1274
@@ -1587,29 +1597,31 @@ msgid ""
 " >>> Unable to communicate with %1$s. Please verify DNS and interface "
 "configuration, and that %2$s has functional Internet connectivity."
 msgstr ""
+"%1$sと通信できません。DNSとインターフェイスの設定を確認してください、"
+"その%2$s、機能、インターネット接続を持っています。"
 
 #: etc/inc/radius.inc:404 etc/inc/radius.inc:406 etc/inc/radius.inc:406
 msgid "Error sending request:"
-msgstr ""
+msgstr "リクエストを送信するエラー："
 
 #: etc/inc/radius.inc:410 etc/inc/radius.inc:412 etc/inc/radius.inc:412
 msgid "RADIUS_ACCESS_ACCEPT is unexpected for accounting"
-msgstr ""
+msgstr "RADIUS_ACCESS_ACCEPTは、会計のために予想外である"
 
 #: etc/inc/radius.inc:419 etc/inc/radius.inc:421 etc/inc/radius.inc:421
 msgid "RADIUS_ACCOUNTING_RESPONSE is unexpected for authentication"
-msgstr ""
+msgstr "RADIUS_ACCOUNTING_RESPONSEは、認証のために予想外である"
 
 #: etc/inc/radius.inc:424 etc/inc/radius.inc:426 etc/inc/radius.inc:426
 #, php-format
 msgid "Unexpected return value: %s"
-msgstr ""
+msgstr "予期しない戻り値：%s"
 
 #: etc/inc/services.inc:262 etc/inc/services.inc:333 etc/inc/services.inc:360
 #: etc/inc/services.inc:369 etc/inc/services.inc:371 etc/inc/services.inc:373
 #, php-format
 msgid "DHCP leases restore failed exited with %1$s, the error is: %2$s%3$s"
-msgstr ""
+msgstr "DHCPリースは%1$sで終了しました復元に失敗しました、エラー：%2$s%3$s"
 
 #: etc/inc/services.inc:275 etc/inc/services.inc:346 etc/inc/services.inc:373
 #: etc/inc/services.inc:382 etc/inc/services.inc:387 etc/inc/services.inc:389
@@ -1620,7 +1632,7 @@ msgstr ""
 #: etc/inc/services.inc:820 etc/inc/services.inc:825 etc/inc/services.inc:877
 #, php-format
 msgid "Error: cannot open dhcpd.conf in services_dhcpdv4_configure().%s"
-msgstr ""
+msgstr "エラー：services_dhcpdv4_configure().%s を処理dhcpd.confの開くことができません。"
 
 #: etc/inc/services.inc:353 etc/inc/services.inc:434 etc/inc/services.inc:461
 #: etc/inc/services.inc:463 etc/inc/services.inc:468 etc/inc/services.inc:469

@@ -1409,13 +1409,13 @@ function captiveportal_get_next_dn_ruleno($rulenos_start = 2000, $rulenos_range_
 		$ridx = $rulenos_start;
 		while ($ridx < $rulenos_range_max) {
 			if (empty($rules[$ridx])) {
-				$ridx += 2;
-			} else {
 				$ruleno = $ridx;
 				$rules[$ridx] = $cpzone;
 				$ridx++;
 				$rules[$ridx] = $cpzone;
 				break;
+			} else {
+				$ridx += 2;
 			}
 		}
 	} else {
@@ -1488,18 +1488,18 @@ function captiveportal_get_next_ipfw_ruleno($rulenos_start = 2, $rulenos_range_m
 		$rules = unserialize(file_get_contents("{$g['vardb_path']}/captiveportal_{$cpzone}.rules"));
 		$ridx = $rulenos_start;
 		while ($ridx < $rulenos_range_max) {
-			if ($rules[$ridx]) {
-				/* 
-				 * This allows our traffic shaping pipes to be the in pipe the same as ruleno 
-				 * and the out pipe ruleno + 1.
-				 */
-				$ridx += 2;
-			} else {
+			if (empty($rules[$ridx])) {
 				$ruleno = $ridx;
 				$rules[$ridx] = $cpzone;
 				$ridx++;
 				$rules[$ridx] = $cpzone;
 				break;
+			} else {
+				/* 
+				 * This allows our traffic shaping pipes to be the in pipe the same as ruleno 
+				 * and the out pipe ruleno + 1.
+				 */
+				$ridx += 2;
 			}
 		}
 	} else {

@@ -1479,7 +1479,7 @@ msgid "Could not write Igmpproxy configuration file!"
 msgstr "Igmpproxy yapılandırma dosyasına yazılamıyor!"
 
 #: etc/inc/services.inc:956
-msgid "Started Igmpproxy service sucsesfully."
+msgid "Started Igmpproxy service successfully."
 msgstr "Igmpproxy servisi başarıyla çalıştırıldı."
 
 #: etc/inc/services.inc:980 etc/inc/services.inc:1109

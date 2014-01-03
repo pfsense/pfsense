@@ -2993,7 +2993,7 @@ msgstr "ここに参照用の説明文を入力することもできます（構
 #: usr/local/www/interfaces_bridge_edit.php:294 etc/inc/shaper.inc:3390
 #: etc/inc/shaper.inc:3663
 msgid "Show advanced options"
-msgstr ""
+msgstr "高度なオプションを表示する"
 
 #: etc/inc/shaper.inc:3085 etc/inc/shaper.inc:3093
 #: usr/local/www/status_ntpd.php:115 etc/inc/shaper.inc:3241
@@ -3002,7 +3002,7 @@ msgstr ""
 #: etc/inc/shaper.inc:3317 usr/local/www/status_ntpd.php:137
 #: etc/inc/shaper.inc:3394
 msgid "Delay"
-msgstr ""
+msgstr "ディレイ"
 
 #: etc/inc/shaper.inc:3089 etc/inc/shaper.inc:3097 etc/inc/shaper.inc:3245
 #: etc/inc/shaper.inc:3246 etc/inc/shaper.inc:3253 etc/inc/shaper.inc:3321
@@ -3010,6 +3010,7 @@ msgstr ""
 msgid ""
 "Hint: in most cases, you should specify 0 here (or leave the field empty)"
 msgstr ""
+"ヒント：ほとんどの場合、あなたはここに0を指定する必要があります（かフィールドを空にしておく）"
 
 #: etc/inc/shaper.inc:3093 etc/inc/shaper.inc:3329 etc/inc/shaper.inc:3101
 #: etc/inc/shaper.inc:3341 etc/inc/shaper.inc:3249 etc/inc/shaper.inc:3496
@@ -3017,7 +3018,7 @@ msgstr ""
 #: etc/inc/shaper.inc:3504 etc/inc/shaper.inc:3325 etc/inc/shaper.inc:3572
 #: etc/inc/shaper.inc:3402 etc/inc/shaper.inc:3674
 msgid "Packet loss rate"
-msgstr ""
+msgstr "パケット損失率"
 
 #: etc/inc/shaper.inc:3097 etc/inc/shaper.inc:3333 etc/inc/shaper.inc:3105
 #: etc/inc/shaper.inc:3345 etc/inc/shaper.inc:3253 etc/inc/shaper.inc:3500
@@ -3028,6 +3029,8 @@ msgid ""
 "Hint: in most cases, you should specify 0 here (or leave the field empty). A "
 "value of 0.001 means one packet in 1000 gets dropped"
 msgstr ""
+"ヒント：ほとんどの場合、あなたはここに0を指定する（かフィールドを空にしておく）必要があります。"
+"0.001の値は、1000年における1パケットはドロップされますことを意味"
 
 #: etc/inc/shaper.inc:3102 etc/inc/shaper.inc:3338 etc/inc/shaper.inc:3110
 #: etc/inc/shaper.inc:3350 etc/inc/shaper.inc:3258 etc/inc/shaper.inc:3505
@@ -3035,7 +3038,7 @@ msgstr ""
 #: etc/inc/shaper.inc:3513 etc/inc/shaper.inc:3334 etc/inc/shaper.inc:3581
 #: etc/inc/shaper.inc:3411 etc/inc/shaper.inc:3683
 msgid "Queue Size"
-msgstr ""
+msgstr "キューサイズ"
 
 #: etc/inc/shaper.inc:3107 etc/inc/shaper.inc:3343 etc/inc/shaper.inc:3115
 #: etc/inc/shaper.inc:3355 etc/inc/shaper.inc:3263 etc/inc/shaper.inc:3510
@@ -3048,6 +3051,10 @@ msgid ""
 "value specified in the Delay field, and then they are delivered to their "
 "destination."
 msgstr ""
+"ヒント：ほとんどの場合、空のフィールドを残してください。"
+"この配管内のすべてのパケットは、最初に固定サイズのキューに配置されている"
+"そしてそれらは、Delayフィールドで指定された値遅れで表示されています"
+"そして、彼らは、その送信先に配信されます。"
 
 #: etc/inc/shaper.inc:3113 etc/inc/shaper.inc:3349 etc/inc/shaper.inc:3121
 #: etc/inc/shaper.inc:3361 etc/inc/shaper.inc:3269 etc/inc/shaper.inc:3516
@@ -3055,7 +3062,7 @@ msgstr ""
 #: etc/inc/shaper.inc:3524 etc/inc/shaper.inc:3345 etc/inc/shaper.inc:3592
 #: etc/inc/shaper.inc:3422 etc/inc/shaper.inc:3694
 msgid "Bucket Size"
-msgstr ""
+msgstr "バケットサイズ"
 
 #: etc/inc/shaper.inc:3118 etc/inc/shaper.inc:3354 etc/inc/shaper.inc:3126
 #: etc/inc/shaper.inc:3366 etc/inc/shaper.inc:3274 etc/inc/shaper.inc:3521
@@ -3066,18 +3073,21 @@ msgid ""
 "Hint: in most cases, you should leave the field empty. It increases the hash "
 "size set."
 msgstr ""
+"ヒント：ほとんどの場合、空のフィールドを残してください。"
+"これは、ハッシュ·サイズのセットが増加します。"
+
 
 #: etc/inc/shaper.inc:3176 etc/inc/shaper.inc:3184 etc/inc/shaper.inc:3339
 #: etc/inc/shaper.inc:3340 etc/inc/shaper.inc:3347 etc/inc/shaper.inc:3415
 #: etc/inc/shaper.inc:3495
 msgid "Weight must be an integer between 1 and 100."
-msgstr ""
+msgstr "重量は1から100までの整数でなければなりません。"
 
 #: etc/inc/shaper.inc:3274 etc/inc/shaper.inc:3282 etc/inc/shaper.inc:3437
 #: etc/inc/shaper.inc:3438 etc/inc/shaper.inc:3445 etc/inc/shaper.inc:3513
 #: etc/inc/shaper.inc:3594
 msgid "Enable/Disable queue"
-msgstr ""
+msgstr "キューを有効または無効にする"
 
 #: etc/inc/shaper.inc:3289 usr/local/www/firewall_rules.php:760
 #: usr/local/www/firewall_rules_edit.php:1224
@@ -3114,7 +3124,7 @@ msgstr ""
 #: usr/local/www/firewall_rules.php:749 usr/local/www/vpn_ipsec_mobile.php:403
 #: etc/inc/shaper.inc:3614
 msgid "none"
-msgstr ""
+msgstr "なし"
 
 #: etc/inc/shaper.inc:3321 usr/local/www/system_gateways_edit.php:424
 #: etc/inc/shaper.inc:3333 usr/local/www/system_gateways_edit.php:445
@@ -3124,7 +3134,7 @@ msgstr ""
 #: usr/local/www/system_gateways_edit.php:587 etc/inc/shaper.inc:3564
 #: usr/local/www/system_gateways_edit.php:587 etc/inc/shaper.inc:3666
 msgid "Weight"
-msgstr ""
+msgstr "ウエート"
 
 #: etc/inc/shaper.inc:3325 etc/inc/shaper.inc:3337 etc/inc/shaper.inc:3492
 #: etc/inc/shaper.inc:3493 etc/inc/shaper.inc:3500 etc/inc/shaper.inc:3568
@@ -3133,25 +3143,27 @@ msgid ""
 "Hint: For queues under the same parent this specifies the share that a queue "
 "gets(values range from 1 to 100, you can leave it blank otherwise)"
 msgstr ""
+"ヒント：同じ親の下にキューの場合、これはキューが取得する共有を指定"
+"（値は1から100の範囲には、そうでない場合、空白のままにすることができます）"
 
 #: etc/inc/shaper.inc:3353 etc/inc/shaper.inc:3365 etc/inc/shaper.inc:3520
 #: etc/inc/shaper.inc:3521 etc/inc/shaper.inc:3528 etc/inc/shaper.inc:3596
 #: etc/inc/shaper.inc:3698
 msgid "slots"
-msgstr ""
+msgstr "スロット"
 
 #: etc/inc/shaper.inc:3494 etc/inc/shaper.inc:3506 etc/inc/shaper.inc:3661
 #: etc/inc/shaper.inc:3662 etc/inc/shaper.inc:3669 etc/inc/shaper.inc:3737
 #: etc/inc/shaper.inc:3842
 msgid "Enable/Disable layer7 Container"
-msgstr ""
+msgstr "レイヤ7コンテナを有効または無効にします"
 
 #: etc/inc/shaper.inc:3744 etc/inc/shaper.inc:3756 etc/inc/shaper.inc:3911
 #: etc/inc/shaper.inc:3912 etc/inc/shaper.inc:3919 etc/inc/shaper.inc:3987
 #: etc/inc/shaper.inc:4092
 #, php-format
 msgid "Sending HUP signal to %s"
-msgstr ""
+msgstr "%sにHUPシグナルを送る"
 
 #: etc/inc/shaper.inc:4052 etc/inc/shaper.inc:4112 etc/inc/shaper.inc:4269
 #: etc/inc/shaper.inc:4270 etc/inc/shaper.inc:4277 etc/inc/shaper.inc:4345

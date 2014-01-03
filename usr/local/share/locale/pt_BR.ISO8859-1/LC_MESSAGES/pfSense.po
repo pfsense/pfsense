@@ -1514,7 +1514,7 @@ msgid "Could not write Igmpproxy configuration file!"
 msgstr "O arquivo de configuração do Igmpproxy não pôde ser escrito!"
 
 #: etc/inc/services.inc:956
-msgid "Started Igmpproxy service sucsesfully."
+msgid "Started Igmpproxy service successfully."
 msgstr "Serviço Igmpproxy iniciado com sucesso."
 
 #: etc/inc/services.inc:980 etc/inc/services.inc:1109

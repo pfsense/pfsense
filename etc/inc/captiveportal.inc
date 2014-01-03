@@ -1408,7 +1408,7 @@ function captiveportal_get_next_dn_ruleno($rulenos_start = 2000, $rulenos_range_
 		$rules = unserialize(file_get_contents("{$g['vardb_path']}/captiveportaldn.rules"));
 		$ridx = $rulenos_start;
 		while ($ridx < $rulenos_range_max) {
-			if ($rules[$ridx] === false) {
+			if (empty($rules[$ridx])) {
 				$ridx += 2;
 			} else {
 				$ruleno = $ridx;

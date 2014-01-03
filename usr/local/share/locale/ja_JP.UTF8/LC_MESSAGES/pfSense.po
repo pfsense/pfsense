@@ -1646,39 +1646,39 @@ msgid "Could not write Igmpproxy configuration file!"
 msgstr "Igmpproxy設定ファイルを書き込むことができませんでした！"
 
 #: etc/inc/services.inc:956
-msgid "Started Igmpproxy service sucsesfully."
+msgid "Started Igmpproxy service successfully."
 msgstr "首尾Igmpproxyサービスを開始しました。"
 
 #: etc/inc/services.inc:980 etc/inc/services.inc:1109
 #: etc/inc/services.inc:1241 etc/inc/services.inc:1235
 #: etc/inc/services.inc:1242 etc/inc/services.inc:1294
 msgid "Starting DHCP relay service..."
-msgstr ""
+msgstr "DHCPリレーサービスを開始..."
 
 #: etc/inc/services.inc:1096 etc/inc/services.inc:1223
 #: etc/inc/services.inc:1355 etc/inc/services.inc:1350
 #: etc/inc/services.inc:1365 etc/inc/services.inc:1417
 msgid "Starting DHCPv6 relay service..."
-msgstr ""
+msgstr "DHCPv6リレーサービスを開始..."
 
 #: etc/inc/services.inc:1222 etc/inc/services.inc:1358
 #: etc/inc/services.inc:1493 etc/inc/services.inc:1489
 #: etc/inc/services.inc:1505 etc/inc/services.inc:1557
 msgid "Starting DynDNS clients..."
-msgstr ""
+msgstr "ダイナミックDNSクライアントの起動..."
 
 #: etc/inc/services.inc:1255 etc/inc/services.inc:1392
 #: etc/inc/services.inc:1531 etc/inc/services.inc:1545
 #: etc/inc/services.inc:1562 etc/inc/services.inc:1622
 msgid "Starting DNS forwarder..."
-msgstr ""
+msgstr "DNSフォワーダを開始..."
 
 #: etc/inc/services.inc:1324 etc/inc/services.inc:1507
 #: etc/inc/services.inc:1646 etc/inc/services.inc:1623
 #: etc/inc/services.inc:1655 etc/inc/services.inc:1686
 #: etc/inc/services.inc:1750
 msgid "Starting SNMP daemon... "
-msgstr ""
+msgstr "SNMPデーモンを起動する... "
 
 #: etc/inc/services.inc:1329 etc/inc/services.inc:1512
 #: etc/inc/services.inc:1651 etc/inc/services.inc:1628
@@ -1686,28 +1686,28 @@ msgstr ""
 #: etc/inc/services.inc:1755
 #, php-format
 msgid "Error: cannot open snmpd.conf in services_snmpd_configure().%s"
-msgstr ""
+msgstr "エラー：services_snmpd_configure().%sを処理のsnmpd.confを開くことはできません"
 
 #: etc/inc/services.inc:1875 etc/inc/services.inc:2067
 #: etc/inc/services.inc:1919 etc/inc/services.inc:1908
 #: etc/inc/services.inc:1948 etc/inc/services.inc:1979
 #: etc/inc/services.inc:2043
 msgid "pfSense specific crontab entries"
-msgstr ""
+msgstr "pfSense特定のcrontabのエントリ"
 
 #: etc/inc/services.inc:1876 etc/inc/services.inc:2068
 #: etc/inc/services.inc:1920 etc/inc/services.inc:1909
 #: etc/inc/services.inc:1949 etc/inc/services.inc:1980
 #: etc/inc/services.inc:2044
 msgid "Created:"
-msgstr ""
+msgstr "作成："
 
 #: etc/inc/services.inc:1890 etc/inc/services.inc:2082
 #: etc/inc/services.inc:1934 etc/inc/services.inc:1923
 #: etc/inc/services.inc:1963 etc/inc/services.inc:1994
 #: etc/inc/services.inc:2058
 msgid "If possible do not add items to this file manually."
-msgstr ""
+msgstr "If possible do not add items to this file manually."
 
 #: etc/inc/services.inc:1891 etc/inc/services.inc:2083
 #: etc/inc/services.inc:1935 etc/inc/services.inc:1924
@@ -1716,13 +1716,14 @@ msgstr ""
 msgid ""
 "If you do so, this file must be terminated with a blank line (e.g. new line)"
 msgstr ""
+"その場合、このファイルには、空白行（例えば新しい行）で終了する必要があります"
 
 #: etc/inc/services.inc:1934 etc/inc/services.inc:2126
 #: etc/inc/services.inc:1978 etc/inc/services.inc:1968
 #: etc/inc/services.inc:2008 etc/inc/services.inc:2039
 #: etc/inc/services.inc:2103
 msgid "Starting UPnP service... "
-msgstr ""
+msgstr "UPnPサービスを開始... "
 
 #: etc/inc/services.inc:1969 etc/inc/services.inc:2161
 #: etc/inc/services.inc:2013 etc/inc/services.inc:2005
@@ -1730,7 +1731,7 @@ msgstr ""
 #: etc/inc/services.inc:2140
 #, php-format
 msgid "Installed cron job for %s"
-msgstr ""
+msgstr "%sのためにインストールcronジョブ"
 
 #: etc/inc/services.inc:1972 etc/inc/services.inc:2164
 #: etc/inc/services.inc:2016 etc/inc/services.inc:2008
@@ -1738,23 +1739,23 @@ msgstr ""
 #: etc/inc/services.inc:2143
 #, php-format
 msgid "Updated cron job for %s"
-msgstr ""
+msgstr "%sのための更新されたcronジョブ"
 
 #: etc/inc/services.inc:1977 etc/inc/services.inc:2169
 #: etc/inc/services.inc:2021
 #, php-format
 msgid "Remvoed cron job for %s"
-msgstr ""
+msgstr "%sのために取り外さcronジョブ"
 
 #: etc/inc/shaper.inc:189 etc/inc/shaper.inc:190 etc/inc/shaper.inc:190
 #, php-format
 msgid "The field '%s' contains invalid characters."
-msgstr ""
+msgstr "フィールドが '%s'は無効な文字が含まれています。"
 
 #: etc/inc/shaper.inc:195 etc/inc/shaper.inc:196 etc/inc/shaper.inc:196
 #, php-format
 msgid "The field '%s' is required."
-msgstr ""
+msgstr "フィールドが '%s'が必要です。"
 
 #: etc/inc/shaper.inc:317 etc/inc/shaper.inc:651 etc/inc/shaper.inc:1544
 #: etc/inc/shaper.inc:1850 etc/inc/shaper.inc:2192 etc/inc/shaper.inc:2327
@@ -1782,7 +1783,7 @@ msgstr ""
 #: etc/inc/shaper.inc:2258 etc/inc/shaper.inc:2398 etc/inc/shaper.inc:2538
 #: etc/inc/shaper.inc:2669 etc/inc/shaper.inc:2882 etc/inc/shaper.inc:3293
 msgid "Bandwidth"
-msgstr ""
+msgstr "帯域幅"
 
 #: etc/inc/shaper.inc:319 etc/inc/shaper.inc:1546 etc/inc/shaper.inc:2194
 #: etc/inc/shaper.inc:2469 etc/inc/shaper.inc:2789 etc/inc/shaper.inc:320
@@ -1795,7 +1796,7 @@ msgstr ""
 #: etc/inc/shaper.inc:1603 etc/inc/shaper.inc:2260 etc/inc/shaper.inc:2540
 #: etc/inc/shaper.inc:2884
 msgid "Bandwidthtype"
-msgstr ""
+msgstr "帯域幅タイプ"
 
 #: etc/inc/shaper.inc:324 etc/inc/shaper.inc:1552 etc/inc/shaper.inc:2199
 #: etc/inc/shaper.inc:2474 etc/inc/shaper.inc:2900 etc/inc/shaper.inc:325
@@ -1806,7 +1807,7 @@ msgstr ""
 #: etc/inc/shaper.inc:2265 etc/inc/shaper.inc:2545 etc/inc/shaper.inc:328
 #: etc/inc/shaper.inc:1609 etc/inc/shaper.inc:2265 etc/inc/shaper.inc:2545
 msgid "Bandwidth must be an integer."
-msgstr ""
+msgstr "帯域幅は、整数でなければなりません。"
 
 #: etc/inc/shaper.inc:326 etc/inc/shaper.inc:1555 etc/inc/shaper.inc:2203
 #: etc/inc/shaper.inc:2478 etc/inc/shaper.inc:327 etc/inc/shaper.inc:1557
@@ -1817,27 +1818,27 @@ msgstr ""
 #: etc/inc/shaper.inc:330 etc/inc/shaper.inc:1612 etc/inc/shaper.inc:2269
 #: etc/inc/shaper.inc:2549
 msgid "Bandwidth cannot be negative."
-msgstr ""
+msgstr "帯域幅は、負にすることはできません。"
 
 #: etc/inc/shaper.inc:328 etc/inc/shaper.inc:329 etc/inc/shaper.inc:332
 #: etc/inc/shaper.inc:332
 msgid "Qlimit must be an integer."
-msgstr ""
+msgstr "Qlimitは整数でなければなりません。"
 
 #: etc/inc/shaper.inc:330 etc/inc/shaper.inc:331 etc/inc/shaper.inc:334
 #: etc/inc/shaper.inc:334
 msgid "Qlimit must be an positive."
-msgstr ""
+msgstr "Qlimitは正でなければなりません。"
 
 #: etc/inc/shaper.inc:332 etc/inc/shaper.inc:333 etc/inc/shaper.inc:336
 #: etc/inc/shaper.inc:336
 msgid "Tbrsize must be an integer."
-msgstr ""
+msgstr "Tbrsizeは整数でなければなりません。"
 
 #: etc/inc/shaper.inc:334 etc/inc/shaper.inc:335 etc/inc/shaper.inc:338
 #: etc/inc/shaper.inc:338
 msgid "Tbrsize must be an positive."
-msgstr ""
+msgstr "Tbrsizeは正でなければなりません。"
 
 #: etc/inc/shaper.inc:614 etc/inc/shaper.inc:1120 etc/inc/shaper.inc:3269
 #: etc/inc/shaper.inc:3488 etc/inc/shaper.inc:615 etc/inc/shaper.inc:1121
@@ -1849,12 +1850,12 @@ msgstr ""
 #: etc/inc/shaper.inc:637 etc/inc/shaper.inc:1169 etc/inc/shaper.inc:3589
 #: etc/inc/shaper.inc:3836
 msgid "Enable/Disable"
-msgstr ""
+msgstr "有効/無効"
 
 #: etc/inc/shaper.inc:619 etc/inc/shaper.inc:620 etc/inc/shaper.inc:622
 #: etc/inc/shaper.inc:642 etc/inc/shaper.inc:642
 msgid "Enable/disable discipline and its children"
-msgstr ""
+msgstr "規律とその子を有効または無効にする"
 
 #: etc/inc/shaper.inc:621 etc/inc/shaper.inc:965 etc/inc/shaper.inc:2791
 #: etc/inc/shaper.inc:3016 etc/inc/shaper.inc:3276 etc/inc/shaper.inc:3496
@@ -1986,22 +1987,22 @@ msgstr ""
 #: etc/inc/shaper.inc:3282 etc/inc/shaper.inc:3596 etc/inc/shaper.inc:3844
 #: etc/inc/shaper.inc:3916
 msgid "Name"
-msgstr ""
+msgstr "ネーム"
 
 #: etc/inc/shaper.inc:625 etc/inc/shaper.inc:626 etc/inc/shaper.inc:628
 #: etc/inc/shaper.inc:648 etc/inc/shaper.inc:648
 msgid "Scheduler Type "
-msgstr ""
+msgstr "スケジューラの種類 "
 
 #: etc/inc/shaper.inc:647 etc/inc/shaper.inc:648 etc/inc/shaper.inc:650
 #: etc/inc/shaper.inc:674 etc/inc/shaper.inc:674
 msgid "NOTE: Changing this changes all child queues!"
-msgstr ""
+msgstr "注：これは、すべての子のキューを変更する変更！"
 
 #: etc/inc/shaper.inc:648 etc/inc/shaper.inc:649 etc/inc/shaper.inc:651
 #: etc/inc/shaper.inc:675 etc/inc/shaper.inc:675
 msgid " Beware you can lose information."
-msgstr ""
+msgstr " あなたは情報を失う可能性があります注意してください。"
 
 #: etc/inc/shaper.inc:686 etc/inc/shaper.inc:687 etc/inc/shaper.inc:689
 #: etc/inc/shaper.inc:713 etc/inc/shaper.inc:713
@@ -2009,23 +2010,26 @@ msgid ""
 "Adjusts the size, in bytes, of the token bucket regulator. If not specified, "
 "heuristics based on the interface bandwidth are used to determine the size."
 msgstr ""
+"トークンバケットレギュレータのサイズをバイト単位で、調整します。"
+"指定しない場合、ヒューリスティックは、インターフェイスの帯域幅に基づいて"
+"サイズを決定するために使用される。"
 
 #: etc/inc/shaper.inc:978 etc/inc/shaper.inc:979 etc/inc/shaper.inc:983
 #: etc/inc/shaper.inc:1015 etc/inc/shaper.inc:1015
 msgid "The priority must be an integer between 1 and 15."
-msgstr ""
+msgstr "優先度は1から15までの整数でなければなりません。"
 
 #: etc/inc/shaper.inc:981 etc/inc/shaper.inc:2802 etc/inc/shaper.inc:982
 #: etc/inc/shaper.inc:2804 etc/inc/shaper.inc:2805 etc/inc/shaper.inc:986
 #: etc/inc/shaper.inc:2810 etc/inc/shaper.inc:1018 etc/inc/shaper.inc:2878
 #: etc/inc/shaper.inc:1018 etc/inc/shaper.inc:2897
 msgid "Queue limit must be an integer"
-msgstr ""
+msgstr "キュー制限は、整数でなければなりません"
 
 #: etc/inc/shaper.inc:983 etc/inc/shaper.inc:984 etc/inc/shaper.inc:988
 #: etc/inc/shaper.inc:1020 etc/inc/shaper.inc:1020
 msgid "Queue limit must be positive"
-msgstr ""
+msgstr "キュー制限は正でなければなりません"
 
 #: etc/inc/shaper.inc:985 etc/inc/shaper.inc:987 etc/inc/shaper.inc:2804
 #: etc/inc/shaper.inc:2806 etc/inc/shaper.inc:3573 etc/inc/shaper.inc:986
@@ -2038,22 +2042,22 @@ msgstr ""
 #: etc/inc/shaper.inc:1024 etc/inc/shaper.inc:2899 etc/inc/shaper.inc:2901
 #: etc/inc/shaper.inc:3921
 msgid "Queue names must be alphanumeric and _ or - only."
-msgstr ""
+msgstr "キュー名は英数字でと '_'または必要があります' - 'のみ。"
 
 #: etc/inc/shaper.inc:989 etc/inc/shaper.inc:990 etc/inc/shaper.inc:991
 #: etc/inc/shaper.inc:995 etc/inc/shaper.inc:1027 etc/inc/shaper.inc:1027
 msgid "Only one default queue per interface is allowed."
-msgstr ""
+msgstr "インターフェイスごとに1つだけのデフォルトのキューが許可されています。"
 
 #: etc/inc/shaper.inc:1125 etc/inc/shaper.inc:1126 etc/inc/shaper.inc:1127
 #: etc/inc/shaper.inc:1131 etc/inc/shaper.inc:1174 etc/inc/shaper.inc:1174
 msgid "Enable/Disable queue and its children"
-msgstr ""
+msgstr "キューとその子を有効または無効にする"
 
 #: etc/inc/shaper.inc:1129 etc/inc/shaper.inc:1130 etc/inc/shaper.inc:1131
 #: etc/inc/shaper.inc:1135 etc/inc/shaper.inc:1178 etc/inc/shaper.inc:1178
 msgid "Queue Name"
-msgstr ""
+msgstr "キュー名"
 
 #: etc/inc/shaper.inc:1136 etc/inc/shaper.inc:1137 etc/inc/shaper.inc:1138
 #: etc/inc/shaper.inc:1142 etc/inc/shaper.inc:1185 etc/inc/shaper.inc:1185
@@ -2061,6 +2065,8 @@ msgid ""
 "Enter the name of the queue here.  Do not use spaces and limit the size to "
 "15 characters."
 msgstr ""
+"ここにキューの名前を入力します。"
+"スペースを使用し、15文字までのサイズを限定するものではない。"
 
 #: etc/inc/shaper.inc:1139 usr/local/www/interfaces_bridge_edit.php:354
 #: usr/local/www/interfaces_bridge_edit.php:373
@@ -2079,7 +2085,7 @@ msgstr ""
 #: usr/local/www/interfaces_bridge_edit.php:386
 #: usr/local/www/system_gateway_groups.php:132 etc/inc/shaper.inc:1188
 msgid "Priority"
-msgstr ""
+msgstr "プライオリティ"
 
 #: etc/inc/shaper.inc:1143 etc/inc/shaper.inc:1144 etc/inc/shaper.inc:1145
 #: etc/inc/shaper.inc:1149 etc/inc/shaper.inc:1192 etc/inc/shaper.inc:1192
@@ -2087,48 +2093,51 @@ msgid ""
 "For hfsc, the range is 0 to 7. The default is 1.  Hfsc queues with a higher "
 "priority are preferred in the case of overload."
 msgstr ""
+"HFSCの場合、範囲は0〜7です。デフォルトは1です。"
+"優先度の高いキューはHFSC過負荷の場合に好ましい。"
 
 #: etc/inc/shaper.inc:1146 etc/inc/shaper.inc:1147 etc/inc/shaper.inc:1148
 #: etc/inc/shaper.inc:1152 etc/inc/shaper.inc:1195 etc/inc/shaper.inc:1195
 msgid "Queue limit"
-msgstr ""
+msgstr "キュー制限"
 
 #: etc/inc/shaper.inc:1150 etc/inc/shaper.inc:1151 etc/inc/shaper.inc:1152
 #: etc/inc/shaper.inc:1156 etc/inc/shaper.inc:1199 etc/inc/shaper.inc:1199
 msgid "Queue limit in packets per second."
-msgstr ""
+msgstr "1秒あたりのパケット数、キュー制限。"
 
 #: etc/inc/shaper.inc:1153 etc/inc/shaper.inc:1154 etc/inc/shaper.inc:1155
 #: etc/inc/shaper.inc:1159 etc/inc/shaper.inc:1202 etc/inc/shaper.inc:1202
 msgid "Scheduler options"
-msgstr ""
+msgstr "スケジューラオプション"
 
 #: etc/inc/shaper.inc:1158 etc/inc/shaper.inc:1161 etc/inc/shaper.inc:1159
 #: etc/inc/shaper.inc:1162 etc/inc/shaper.inc:1160 etc/inc/shaper.inc:1163
 #: etc/inc/shaper.inc:1164 etc/inc/shaper.inc:1167 etc/inc/shaper.inc:1207
 #: etc/inc/shaper.inc:1210 etc/inc/shaper.inc:1207 etc/inc/shaper.inc:1210
 msgid "Default queue"
-msgstr ""
+msgstr "デフォルトのキュー"
 
 #: etc/inc/shaper.inc:1168 etc/inc/shaper.inc:1169 etc/inc/shaper.inc:1170
 #: etc/inc/shaper.inc:1174 etc/inc/shaper.inc:1217 etc/inc/shaper.inc:1217
 msgid "Random Early Detection"
-msgstr ""
+msgstr "ランダム早期検出"
 
 #: etc/inc/shaper.inc:1173 etc/inc/shaper.inc:1174 etc/inc/shaper.inc:1175
 #: etc/inc/shaper.inc:1179 etc/inc/shaper.inc:1222 etc/inc/shaper.inc:1222
 msgid "Random Early Detection In and Out"
-msgstr ""
+msgstr "ランダム早期検出InとOut"
+# msgstr "ランダム早期検出出入"
 
 #: etc/inc/shaper.inc:1178 etc/inc/shaper.inc:1179 etc/inc/shaper.inc:1180
 #: etc/inc/shaper.inc:1184 etc/inc/shaper.inc:1227 etc/inc/shaper.inc:1227
 msgid "Explicit Congestion Notification"
-msgstr ""
+msgstr "明示的輻輳通知"
 
 #: etc/inc/shaper.inc:1179 etc/inc/shaper.inc:1180 etc/inc/shaper.inc:1181
 #: etc/inc/shaper.inc:1185 etc/inc/shaper.inc:1233 etc/inc/shaper.inc:1233
 msgid "Select options for this queue"
-msgstr ""
+msgstr "このキューの[オプション]を選択します"
 
 #: etc/inc/shaper.inc:1181 etc/inc/shaper.inc:3069 etc/inc/shaper.inc:3501
 #: usr/local/www/load_balancer_virtual_server.php:134
@@ -2527,29 +2536,29 @@ msgstr ""
 #: usr/local/www/interfaces.php:1386 etc/inc/shaper.inc:1235
 #: etc/inc/shaper.inc:3378 etc/inc/shaper.inc:3651 etc/inc/shaper.inc:3849
 msgid "Description"
-msgstr ""
+msgstr "デスクリプション"
 
 #: etc/inc/shaper.inc:1207 etc/inc/shaper.inc:1209 etc/inc/shaper.inc:1210
 #: etc/inc/shaper.inc:1214 etc/inc/shaper.inc:1262 etc/inc/shaper.inc:1262
 msgid "Bandwidth:"
-msgstr ""
+msgstr "帯域幅："
 
 #: etc/inc/shaper.inc:1212 etc/inc/shaper.inc:1214 etc/inc/shaper.inc:1215
 #: etc/inc/shaper.inc:1218 etc/inc/shaper.inc:1266 etc/inc/shaper.inc:1266
 msgid "Priority: on"
-msgstr ""
+msgstr "優先：オン"
 
 #: etc/inc/shaper.inc:1215 etc/inc/shaper.inc:1217 etc/inc/shaper.inc:1218
 #: etc/inc/shaper.inc:1221 etc/inc/shaper.inc:1269 etc/inc/shaper.inc:1269
 msgid "Default: on"
-msgstr ""
+msgstr "デフォルト：オン"
 
 #: etc/inc/shaper.inc:1222 etc/inc/shaper.inc:1223 etc/inc/shaper.inc:1224
 #: etc/inc/shaper.inc:1225 etc/inc/shaper.inc:1226 etc/inc/shaper.inc:1228
 #: etc/inc/shaper.inc:1229 etc/inc/shaper.inc:1276 etc/inc/shaper.inc:1277
 #: etc/inc/shaper.inc:1276 etc/inc/shaper.inc:1277
 msgid "Delete queue from interface"
-msgstr ""
+msgstr "インターフェイスからキューを削除"
 
 #: etc/inc/shaper.inc:1559 etc/inc/shaper.inc:2207 etc/inc/shaper.inc:2483
 #: etc/inc/shaper.inc:1561 etc/inc/shaper.inc:2209 etc/inc/shaper.inc:2485
@@ -2558,84 +2567,85 @@ msgstr ""
 #: etc/inc/shaper.inc:1616 etc/inc/shaper.inc:2273 etc/inc/shaper.inc:2554
 #: etc/inc/shaper.inc:1616 etc/inc/shaper.inc:2273 etc/inc/shaper.inc:2554
 msgid "Bandwidth in percentage should be between 1 and 100 bounds."
-msgstr ""
+msgstr "割合の帯域幅は1と100の境界の間でなければなりません。"
 
 #: etc/inc/shaper.inc:1576 etc/inc/shaper.inc:1578 etc/inc/shaper.inc:1579
 #: etc/inc/shaper.inc:1582 etc/inc/shaper.inc:1633 etc/inc/shaper.inc:1633
 msgid "upperlimit service curve defined but missing (d) value"
-msgstr ""
+msgstr "UPPERLIMITサービスカーブが定義されていますが、不足している（d）の値"
 
 #: etc/inc/shaper.inc:1578 etc/inc/shaper.inc:1580 etc/inc/shaper.inc:1581
 #: etc/inc/shaper.inc:1584 etc/inc/shaper.inc:1635 etc/inc/shaper.inc:1635
 msgid ""
 "upperlimit service curve defined but missing initial bandwidth (m1) value"
-msgstr ""
+msgstr "UPPERLIMITサービス曲線が不足している初期の帯域幅（M1）の値を定義されていますが、"
 
 #: etc/inc/shaper.inc:1580 etc/inc/shaper.inc:1582 etc/inc/shaper.inc:1583
 #: etc/inc/shaper.inc:1586 etc/inc/shaper.inc:1637 etc/inc/shaper.inc:1637
 msgid "upperlimit m1 value needs to be Kb, Mb, Gb, or %"
-msgstr ""
+msgstr "upperlimit m1の値はKB、MB、GB、または％である必要がある"
 
 #: etc/inc/shaper.inc:1582 etc/inc/shaper.inc:1584 etc/inc/shaper.inc:1585
 #: etc/inc/shaper.inc:1588 etc/inc/shaper.inc:1639 etc/inc/shaper.inc:1639
 msgid "upperlimit d value needs to be numeric"
-msgstr ""
+msgstr "upperlimit d値は数値でなければなり"
 
 #: etc/inc/shaper.inc:1584 etc/inc/shaper.inc:1586 etc/inc/shaper.inc:1587
 #: etc/inc/shaper.inc:1590 etc/inc/shaper.inc:1641 etc/inc/shaper.inc:1641
 msgid "upperlimit m2 value needs to be Kb, Mb, Gb, or %"
-msgstr ""
+msgstr "upperlimit m2 値はKB、MB、GB、または％である必要がある"
 
 #: etc/inc/shaper.inc:1598 etc/inc/shaper.inc:1600 etc/inc/shaper.inc:1601
 #: etc/inc/shaper.inc:1604 etc/inc/shaper.inc:1655 etc/inc/shaper.inc:1655
 msgid "linkshare service curve defined but missing (d) value"
-msgstr ""
+msgstr "リンクシェア·サービス曲線定義されているが、不足している（d）の値"
 
 #: etc/inc/shaper.inc:1600 etc/inc/shaper.inc:1602 etc/inc/shaper.inc:1603
 #: etc/inc/shaper.inc:1606 etc/inc/shaper.inc:1657 etc/inc/shaper.inc:1657
 msgid ""
 "linkshare service curve defined but missing initial bandwidth (m1) value"
 msgstr ""
+"リンクシェア·サービス曲線定義されているが、不足している初期の帯域幅（m1）の値"
 
 #: etc/inc/shaper.inc:1602 etc/inc/shaper.inc:1604 etc/inc/shaper.inc:1605
 #: etc/inc/shaper.inc:1608 etc/inc/shaper.inc:1659 etc/inc/shaper.inc:1659
 msgid "linkshare m1 value needs to be Kb, Mb, Gb, or %"
-msgstr ""
+msgstr "リンクシェアのm1の値はKB、MB、GB、または％である必要がある"
 
 #: etc/inc/shaper.inc:1604 etc/inc/shaper.inc:1606 etc/inc/shaper.inc:1607
 #: etc/inc/shaper.inc:1610 etc/inc/shaper.inc:1661 etc/inc/shaper.inc:1661
 msgid "linkshare d value needs to be numeric"
-msgstr ""
+msgstr "リンクシェアのd値は数値でなければなり"
 
 #: etc/inc/shaper.inc:1606 etc/inc/shaper.inc:1608 etc/inc/shaper.inc:1609
 #: etc/inc/shaper.inc:1612 etc/inc/shaper.inc:1663 etc/inc/shaper.inc:1663
 msgid "linkshare m2 value needs to be Kb, Mb, Gb, or %"
-msgstr ""
+msgstr "リンクシェアのm2の値はKB、MB、GB、または％である必要がある"
 
 #: etc/inc/shaper.inc:1608 etc/inc/shaper.inc:1610 etc/inc/shaper.inc:1611
 #: etc/inc/shaper.inc:1614 etc/inc/shaper.inc:1665 etc/inc/shaper.inc:1665
 msgid "realtime service curve defined but missing (d) value"
-msgstr ""
+msgstr "リアルタイムサービス曲線定義されているが、不足している（d）の値"
 
 #: etc/inc/shaper.inc:1610 etc/inc/shaper.inc:1612 etc/inc/shaper.inc:1613
 #: etc/inc/shaper.inc:1616 etc/inc/shaper.inc:1667 etc/inc/shaper.inc:1667
 msgid "realtime service curve defined but missing initial bandwidth (m1) value"
-msgstr ""
+msgstr "リアルタイムサービス曲線定義されているが、不足している初期の帯域幅（m1）の値"
 
 #: etc/inc/shaper.inc:1625 etc/inc/shaper.inc:1627 etc/inc/shaper.inc:1628
 #: etc/inc/shaper.inc:1631 etc/inc/shaper.inc:1682 etc/inc/shaper.inc:1682
 msgid "realtime m1 value needs to be Kb, Mb, Gb, or %"
-msgstr ""
+msgstr "リアルタイムm1の値はKB、MB、GB、または％である必要がある"
 
 #: etc/inc/shaper.inc:1627 etc/inc/shaper.inc:1629 etc/inc/shaper.inc:1630
 #: etc/inc/shaper.inc:1633 etc/inc/shaper.inc:1684 etc/inc/shaper.inc:1684
 msgid "realtime d value needs to be numeric"
-msgstr ""
+msgstr "リアルタイムD値は数値でなければなり"
 
 #: etc/inc/shaper.inc:1629 etc/inc/shaper.inc:1631 etc/inc/shaper.inc:1632
 #: etc/inc/shaper.inc:1635 etc/inc/shaper.inc:1686 etc/inc/shaper.inc:1686
 msgid "realtime m2 value needs to be Kb, Mb, Gb, or %"
-msgstr ""
+msgstr "リアルタイムのm2値はKB、MB、GB、または％である必要がある"
 
 #: etc/inc/shaper.inc:1858 etc/inc/shaper.inc:2336 etc/inc/shaper.inc:2602
 #: etc/inc/shaper.inc:3039 etc/inc/shaper.inc:1860 etc/inc/shaper.inc:2338
@@ -2645,7 +2655,7 @@ msgstr ""
 #: etc/inc/shaper.inc:2407 etc/inc/shaper.inc:2678 etc/inc/shaper.inc:1924
 #: etc/inc/shaper.inc:2407 etc/inc/shaper.inc:2678
 msgid "Gbit/s"
-msgstr ""
+msgstr "Gビット/秒"
 
 #: etc/inc/shaper.inc:1862 etc/inc/shaper.inc:2340 etc/inc/shaper.inc:2606
 #: etc/inc/shaper.inc:3035 etc/inc/shaper.inc:1864 etc/inc/shaper.inc:2342
@@ -2655,7 +2665,7 @@ msgstr ""
 #: etc/inc/shaper.inc:2411 etc/inc/shaper.inc:2682 etc/inc/shaper.inc:1928
 #: etc/inc/shaper.inc:2411 etc/inc/shaper.inc:2682
 msgid "Mbit/s"
-msgstr ""
+msgstr "Mビット/秒"
 
 #: etc/inc/shaper.inc:1866 etc/inc/shaper.inc:2344 etc/inc/shaper.inc:2610
 #: etc/inc/shaper.inc:3031 usr/local/www/services_captiveportal.php:560
@@ -2674,7 +2684,7 @@ msgstr ""
 #: usr/local/www/services_captiveportal.php:585 etc/inc/shaper.inc:1932
 #: etc/inc/shaper.inc:2415 etc/inc/shaper.inc:2686
 msgid "Kbit/s"
-msgstr ""
+msgstr "Kビット/秒"
 
 #: etc/inc/shaper.inc:1870 etc/inc/shaper.inc:2348 etc/inc/shaper.inc:2614
 #: etc/inc/shaper.inc:3043 etc/inc/shaper.inc:1872 etc/inc/shaper.inc:2350
@@ -2684,7 +2694,7 @@ msgstr ""
 #: etc/inc/shaper.inc:2419 etc/inc/shaper.inc:2690 etc/inc/shaper.inc:1936
 #: etc/inc/shaper.inc:2419 etc/inc/shaper.inc:2690
 msgid "Bit/s"
-msgstr ""
+msgstr "ビット/秒"
 
 #: etc/inc/shaper.inc:1876 etc/inc/shaper.inc:2354 etc/inc/shaper.inc:2620
 #: etc/inc/shaper.inc:1878 etc/inc/shaper.inc:2356 etc/inc/shaper.inc:2622
@@ -2693,42 +2703,42 @@ msgstr ""
 #: etc/inc/shaper.inc:1942 etc/inc/shaper.inc:2425 etc/inc/shaper.inc:2696
 #: etc/inc/shaper.inc:1942 etc/inc/shaper.inc:2425 etc/inc/shaper.inc:2696
 msgid "Choose the amount of bandwidth for this queue"
-msgstr ""
+msgstr "このキューの帯域幅の量を選択してください"
 
 #: etc/inc/shaper.inc:1879 etc/inc/shaper.inc:1881 etc/inc/shaper.inc:1882
 #: etc/inc/shaper.inc:1887 etc/inc/shaper.inc:1945 etc/inc/shaper.inc:1945
 msgid "Service Curve (sc)"
-msgstr ""
+msgstr "サービス曲線（SC）"
 
 #: etc/inc/shaper.inc:1886 etc/inc/shaper.inc:1888 etc/inc/shaper.inc:1889
 #: etc/inc/shaper.inc:1894 etc/inc/shaper.inc:1952 etc/inc/shaper.inc:1952
 msgid "Upperlimit:"
-msgstr ""
+msgstr "上限："
 
 #: etc/inc/shaper.inc:1901 etc/inc/shaper.inc:1903 etc/inc/shaper.inc:1904
 #: etc/inc/shaper.inc:1909 etc/inc/shaper.inc:1967 etc/inc/shaper.inc:1967
 msgid "The maximum allowed bandwidth for the queue."
-msgstr ""
+msgstr "最大値は、キューの帯域幅を可能にした。"
 
 #: etc/inc/shaper.inc:1905 etc/inc/shaper.inc:1907 etc/inc/shaper.inc:1908
 #: etc/inc/shaper.inc:1913 etc/inc/shaper.inc:1971 etc/inc/shaper.inc:1971
 msgid "Real time:"
-msgstr ""
+msgstr "リアルタイム："
 
 #: etc/inc/shaper.inc:1920 etc/inc/shaper.inc:1922 etc/inc/shaper.inc:1923
 #: etc/inc/shaper.inc:1928 etc/inc/shaper.inc:1986 etc/inc/shaper.inc:1986
 msgid "The minimum required bandwidth for the queue."
-msgstr ""
+msgstr "最小値は、キューの帯域を必要とした。"
 
 #: etc/inc/shaper.inc:1924 etc/inc/shaper.inc:1926 etc/inc/shaper.inc:1927
 #: etc/inc/shaper.inc:1932 etc/inc/shaper.inc:1990 etc/inc/shaper.inc:1990
 msgid "Link share:"
-msgstr ""
+msgstr "共有リンク："
 
 #: etc/inc/shaper.inc:1939 etc/inc/shaper.inc:1941 etc/inc/shaper.inc:1942
 #: etc/inc/shaper.inc:1947 etc/inc/shaper.inc:2005 etc/inc/shaper.inc:2005
 msgid "The bandwidth share of a backlogged queue - this overrides priority."
-msgstr ""
+msgstr "バックログキューの帯域幅の共有 - これは、優先度を上書きする。"
 
 #: etc/inc/shaper.inc:1941 etc/inc/shaper.inc:1943 etc/inc/shaper.inc:1944
 #: etc/inc/shaper.inc:1949 etc/inc/shaper.inc:2007 etc/inc/shaper.inc:2007
@@ -2738,54 +2748,57 @@ msgid ""
 "control the initial bandwidth assignment.  For the first d milliseconds the "
 "queue gets the bandwidth given as m1, afterwards the value given in m2."
 msgstr ""
+"サービスカーブ仕様の形式は、（m1、d、m2）。 m2はキューに割り当てられた帯域幅を制御します。"
+"m1およびdは任意であり、最初の帯域幅の割り当てを制御するために使用することができる。"
+"最初のdミリ秒待ち、その後m1、m2で与えられた値として与えられた帯域幅を取得します。"
 
 #: etc/inc/shaper.inc:2190 etc/inc/shaper.inc:2192 etc/inc/shaper.inc:2193
 #: etc/inc/shaper.inc:2198 etc/inc/shaper.inc:2256 etc/inc/shaper.inc:2256
 msgid "Priority must be an integer between 1 and 7."
-msgstr ""
+msgstr "優先順位は1から7までの整数でなければなりません。"
 
 #: etc/inc/shaper.inc:2356 etc/inc/shaper.inc:2622 etc/inc/shaper.inc:2358
 #: etc/inc/shaper.inc:2624 etc/inc/shaper.inc:2359 etc/inc/shaper.inc:2625
 #: etc/inc/shaper.inc:2364 etc/inc/shaper.inc:2630 etc/inc/shaper.inc:2427
 #: etc/inc/shaper.inc:2698 etc/inc/shaper.inc:2427 etc/inc/shaper.inc:2698
 msgid "Scheduler specific options"
-msgstr ""
+msgstr "スケジューラ固有のオプション"
 
 #: etc/inc/shaper.inc:2360 etc/inc/shaper.inc:2362 etc/inc/shaper.inc:2363
 #: etc/inc/shaper.inc:2368 etc/inc/shaper.inc:2431 etc/inc/shaper.inc:2431
 msgid "Borrow from other queues when available"
-msgstr ""
+msgstr "他のキューから借りる際に利用できる"
 
 #: etc/inc/shaper.inc:2465 etc/inc/shaper.inc:2467 etc/inc/shaper.inc:2468
 #: etc/inc/shaper.inc:2473 etc/inc/shaper.inc:2536 etc/inc/shaper.inc:2536
 msgid "Priority must be an integer between 1 and 255."
-msgstr ""
+msgstr "優先順位は1から255までの整数でなければなりません。"
 
 #: etc/inc/shaper.inc:2628 etc/inc/shaper.inc:2630 etc/inc/shaper.inc:2631
 #: etc/inc/shaper.inc:2636 etc/inc/shaper.inc:2704 etc/inc/shaper.inc:2704
 msgid "Number of buckets available."
-msgstr ""
+msgstr "利用可能なバケット数。"
 
 #: etc/inc/shaper.inc:2633 etc/inc/shaper.inc:2635 etc/inc/shaper.inc:2636
 #: etc/inc/shaper.inc:2641 etc/inc/shaper.inc:2709 etc/inc/shaper.inc:2709
 msgid "Bandwidth limit for hosts to not saturate link."
-msgstr ""
+msgstr "ホストがリンクを飽和しないようにするための帯域幅制限。"
 
 #: etc/inc/shaper.inc:2797 etc/inc/shaper.inc:2799 etc/inc/shaper.inc:2800
 #: etc/inc/shaper.inc:2805 etc/inc/shaper.inc:2873 etc/inc/shaper.inc:2892
 msgid "Plr must be an integer between 1 and 100."
-msgstr ""
+msgstr "Plr 1〜100の整数でなければなりません"
 
 #: etc/inc/shaper.inc:2800 etc/inc/shaper.inc:2802 etc/inc/shaper.inc:2803
 #: etc/inc/shaper.inc:2808 etc/inc/shaper.inc:2876 etc/inc/shaper.inc:2895
 msgid "Buckets must be an integer between 16 and 65535."
-msgstr ""
+msgstr "バケットは、16〜65535の間の整数でなければなりません"
 
 #: etc/inc/shaper.inc:2902 etc/inc/shaper.inc:2906 etc/inc/shaper.inc:2921
 #: etc/inc/shaper.inc:2922 etc/inc/shaper.inc:2927 etc/inc/shaper.inc:2995
 #: etc/inc/shaper.inc:3053
 msgid "Delay must be an integer."
-msgstr ""
+msgstr "遅延は整数でなければなりません。"
 
 #: etc/inc/shaper.inc:3009 usr/local/www/services_snmp.php:276
 #: usr/local/www/services_snmp.php:336 usr/local/www/interfaces.php:1234
@@ -2815,13 +2828,13 @@ msgstr ""
 #: usr/local/www/services_snmp.php:345 usr/local/www/interfaces.php:1376
 #: etc/inc/shaper.inc:3275
 msgid "Enable"
-msgstr ""
+msgstr "有効にする"
 
 #: etc/inc/shaper.inc:3014 etc/inc/shaper.inc:3018 etc/inc/shaper.inc:3148
 #: etc/inc/shaper.inc:3149 etc/inc/shaper.inc:3156 etc/inc/shaper.inc:3224
 #: etc/inc/shaper.inc:3280
 msgid "Enable limiter and its children"
-msgstr ""
+msgstr "リミッターとその子を有効にする"
 
 #: etc/inc/shaper.inc:3046 etc/inc/shaper.inc:3283 etc/inc/shaper.inc:3054
 #: etc/inc/shaper.inc:3295 etc/inc/shaper.inc:3202 etc/inc/shaper.inc:3450
@@ -2829,7 +2842,7 @@ msgstr ""
 #: etc/inc/shaper.inc:3458 etc/inc/shaper.inc:3278 etc/inc/shaper.inc:3526
 #: etc/inc/shaper.inc:3334 etc/inc/shaper.inc:3607
 msgid "Mask"
-msgstr ""
+msgstr "マスク"
 
 #: etc/inc/shaper.inc:3056 etc/inc/shaper.inc:3293 etc/inc/shaper.inc:3064
 #: etc/inc/shaper.inc:3305 etc/inc/shaper.inc:3212 etc/inc/shaper.inc:3460
@@ -2837,7 +2850,7 @@ msgstr ""
 #: etc/inc/shaper.inc:3468 etc/inc/shaper.inc:3288 etc/inc/shaper.inc:3536
 #: etc/inc/shaper.inc:3345 etc/inc/shaper.inc:3618
 msgid "Source addresses"
-msgstr ""
+msgstr "送信元アドレス"
 
 #: etc/inc/shaper.inc:3060 etc/inc/shaper.inc:3297 etc/inc/shaper.inc:3068
 #: etc/inc/shaper.inc:3309 etc/inc/shaper.inc:3216 etc/inc/shaper.inc:3464
@@ -2845,7 +2858,7 @@ msgstr ""
 #: etc/inc/shaper.inc:3472 etc/inc/shaper.inc:3292 etc/inc/shaper.inc:3540
 #: etc/inc/shaper.inc:3349 etc/inc/shaper.inc:3622
 msgid "Destination addresses"
-msgstr ""
+msgstr "宛先アドレス"
 
 #: etc/inc/shaper.inc:3063 etc/inc/shaper.inc:3300 etc/inc/shaper.inc:3071
 #: etc/inc/shaper.inc:3312 etc/inc/shaper.inc:3219 etc/inc/shaper.inc:3467
@@ -2859,6 +2872,9 @@ msgid ""
 "respectively. This makes it possible to easily specify bandwidth \n"
 "limits per host."
 msgstr ""
+"「ソース」または「先」が選択された場合、前記所定の帯域幅、遅延、パケット損失、"
+"キューサイズの動的パイプはそれぞれ、遭遇した各送信元/宛先IPアドレスが作成されます。"
+"これにより、簡単にホストごとに帯域幅制限を指定することができます。"
 
 #: etc/inc/shaper.inc:3075 etc/inc/shaper.inc:3312 etc/inc/shaper.inc:3507
 #: usr/local/www/services_dnsmasq_domainoverride_edit.php:124
@@ -2959,7 +2975,7 @@ msgstr ""
 #: usr/local/www/interfaces_qinq_edit.php:346 etc/inc/shaper.inc:3384
 #: etc/inc/shaper.inc:3657 etc/inc/shaper.inc:3855
 msgid "You may enter a description here for your reference (not parsed)."
-msgstr ""
+msgstr "ここに参照用の説明文を入力することもできます（構文解析されません）。"
 
 #: etc/inc/shaper.inc:3081 etc/inc/shaper.inc:3318
 #: usr/local/www/interfaces_bridge_edit.php:281
@@ -9410,7 +9426,7 @@ msgstr ""
 #: usr/local/www/vpn_openvpn_server.php:854
 #: usr/local/www/vpn_ipsec_phase2.php:651
 msgid "You may enter a description here for your reference (not parsed)"
-msgstr ""
+msgstr "ここに参照用の説明文を入力することもできます（構文解析されません）"
 
 #: usr/local/www/firewall_aliases_import.php:146
 #: usr/local/www/firewall_aliases_import.php:146
@@ -19860,7 +19876,7 @@ msgstr ""
 #: usr/local/www/firewall_rules_edit.php:1119
 #: usr/local/www/firewall_rules_edit.php:1119
 msgid "You may enter a description here for your reference."
-msgstr ""
+msgstr "ここに参照用の説明文を入力することもできます。"
 
 #: usr/local/www/firewall_rules_edit.php:1080
 #: usr/local/www/firewall_rules_edit.php:1115
@@ -26833,6 +26849,8 @@ msgid ""
 "You may enter a description here for your reference. Description will appear "
 "in the \"Interfaces Assign\" select lists."
 msgstr ""
+"ここに参照用の説明文を入力することもできます。"
+"説明「インターフェイスは、割り当て」選択リストに表示されます。"
 
 #: usr/local/www/interfaces_ppps_edit.php:526
 #: usr/local/www/interfaces_ppps_edit.php:527
@@ -26840,7 +26858,7 @@ msgstr ""
 #: usr/local/www/interfaces_ppps_edit.php:531
 #: usr/local/www/interfaces_ppps_edit.php:531
 msgid "Note: Typically *99# for GSM networks and #777 for CDMA networks"
-msgstr ""
+msgstr "注意：GSMネットワークとCDMAネットワークのための#777ため通常*99"
 
 #: usr/local/www/interfaces_ppps_edit.php:540
 #: usr/local/www/interfaces_ppps_edit.php:541
@@ -26848,7 +26866,7 @@ msgstr ""
 #: usr/local/www/interfaces_ppps_edit.php:545
 #: usr/local/www/interfaces_ppps_edit.php:545
 msgid "APN number (optional)"
-msgstr ""
+msgstr "APN番号（オプション）"
 
 #: usr/local/www/interfaces_ppps_edit.php:543
 #: usr/local/www/interfaces_ppps_edit.php:544

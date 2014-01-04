@@ -1,7 +1,7 @@
 # Language translation for pfSense project.
 # Copyright (C) 2011 BSD Perimeter
 # This file is distributed under the same license as the pfSense package.
-# The foof and Isaac (.ike) Levy, 2013.
+# Kiyo Takami and Isaac (.ike) Levy, 2013.
 #
 #, fuzzy
 msgid ""
@@ -3168,7 +3168,7 @@ msgstr "%sにHUPシグナルを送る"
 #: etc/inc/shaper.inc:4270 etc/inc/shaper.inc:4277 etc/inc/shaper.inc:4345
 #: etc/inc/shaper.inc:4450
 msgid " Clone shaper/queue on this interface"
-msgstr ""
+msgstr " Clone shaper/queue on this interface"
 
 #: etc/inc/shaper.inc:4060 etc/inc/shaper.inc:4067 etc/inc/shaper.inc:4120
 #: etc/inc/shaper.inc:4127 etc/inc/shaper.inc:4277 etc/inc/shaper.inc:4284
@@ -3177,7 +3177,7 @@ msgstr ""
 #: etc/inc/shaper.inc:4465
 #, php-format
 msgid "Welcome to the %s Traffic Shaper."
-msgstr ""
+msgstr "%sのトラフィック·シェーパにようこそ。"
 
 #: etc/inc/shaper.inc:4061 etc/inc/shaper.inc:4068 etc/inc/shaper.inc:4121
 #: etc/inc/shaper.inc:4128 etc/inc/shaper.inc:4278 etc/inc/shaper.inc:4285
@@ -3188,28 +3188,30 @@ msgid ""
 "The tree on the left helps you navigate through the queues <br />buttons at "
 "the bottom represent queue actions and are activated accordingly."
 msgstr ""
+"左側のツリーでは、キューの動作を表しており、それに応じて<br />起動される下部"
+"にキューボタンをナビゲートするのに役立ちます。"
 
 #: etc/inc/system.inc:430 etc/inc/system.inc:449 etc/inc/system.inc:457
 #: etc/inc/system.inc:467
 #, php-format
 msgid "Static Routes: Gateway IP could not be found for %s"
-msgstr ""
+msgstr "静的ルート：ゲートウェイのIPは%sを見つかりませんでした"
 
 #: etc/inc/system.inc:497 etc/inc/system.inc:529 etc/inc/system.inc:533
 #: etc/inc/system.inc:547 etc/inc/system.inc:606
 msgid "Starting syslog..."
-msgstr ""
+msgstr "syslogを開始..."
 
 #: etc/inc/system.inc:536 etc/inc/system.inc:568 etc/inc/system.inc:572
 #: etc/inc/system.inc:695 etc/inc/system.inc:754
 #, php-format
 msgid "Error: cannot open syslog.conf in system_syslogd_start().%s"
-msgstr ""
+msgstr "エラー：system_syslogd_start().%s 処理のsyslog.confを開くことはできません"
 
 #: etc/inc/system.inc:664 etc/inc/system.inc:712 etc/inc/system.inc:716
 #: etc/inc/system.inc:725 etc/inc/system.inc:784
 msgid "Initializing PCMCIA..."
-msgstr ""
+msgstr "PCMCIAの初期化..."
 
 #: etc/inc/system.inc:676 etc/inc/system.inc:761 etc/inc/system.inc:1412
 #: etc/inc/system.inc:1415 etc/inc/system.inc:724 etc/inc/system.inc:808
@@ -3219,76 +3221,76 @@ msgstr ""
 #: etc/inc/system.inc:1463 etc/inc/system.inc:796 etc/inc/system.inc:876
 #: etc/inc/system.inc:1519 etc/inc/system.inc:1522
 msgid "failed!"
-msgstr ""
+msgstr "フェイル"
 
 #: etc/inc/system.inc:687 etc/inc/system.inc:735 etc/inc/system.inc:739
 #: etc/inc/system.inc:748 etc/inc/system.inc:807
 msgid "Starting webConfigurator..."
-msgstr ""
+msgstr "webConfiguratorを開始..."
 
 #: etc/inc/system.inc:719 etc/inc/system.inc:767 etc/inc/system.inc:771
 #: etc/inc/system.inc:775 etc/inc/system.inc:834
 msgid "webConfigurator default"
-msgstr ""
+msgstr "webConfiguratorデフォルト"
 
 #: etc/inc/system.inc:729 etc/inc/system.inc:777 etc/inc/system.inc:781
 #: etc/inc/system.inc:785 etc/inc/system.inc:844
 msgid "Importing HTTPS certificate"
-msgstr ""
+msgstr "HTTPS証明書のインポート"
 
 #: etc/inc/system.inc:1115 etc/inc/system.inc:1167 etc/inc/system.inc:1147
 #: etc/inc/system.inc:1096 etc/inc/system.inc:1155
 #, php-format
 msgid "Error: cannot open cert.pem in system_webgui_start().%s"
-msgstr ""
+msgstr "エラー：system_webgui_start().%s 処理cert.pemに開くことはできません"
 
 #: etc/inc/system.inc:1126 etc/inc/system.inc:1178 etc/inc/system.inc:1158
 #: etc/inc/system.inc:1107 etc/inc/system.inc:1166
 #, php-format
 msgid "Error: cannot open ca.pem in system_webgui_start().%s"
-msgstr ""
+msgstr "エラー：system_webgui_start().%s 処理ca.pemを開くことはできません"
 
 #: etc/inc/system.inc:1134 etc/inc/system.inc:1186 etc/inc/system.inc:1166
 #: etc/inc/system.inc:1115 etc/inc/system.inc:1174
 msgid "ssl configuration"
-msgstr ""
+msgstr "SSL設定"
 
 #: etc/inc/system.inc:1161 etc/inc/system.inc:1213 etc/inc/system.inc:1193
 #: etc/inc/system.inc:1142 etc/inc/system.inc:1201
 #, php-format
 msgid "Error: cannot open %s in system_generate_lighty_config().%s"
-msgstr ""
+msgstr "エラー：system_generate_lighty_config().%s 処理%sを開くことはできません"
 
 #: etc/inc/system.inc:1181 etc/inc/system.inc:1233 etc/inc/system.inc:1213
 #: etc/inc/system.inc:1162 etc/inc/system.inc:1221
 msgid "Setting timezone..."
-msgstr ""
+msgstr "タイムゾーンの設定..."
 
 #: etc/inc/system.inc:1270 etc/inc/system.inc:1326 etc/inc/system.inc:1368
 #: etc/inc/system.inc:1310 etc/inc/system.inc:1369
 msgid "Syncing system time before startup..."
-msgstr ""
+msgstr "起動する前に、システムの時刻を同期させる..."
 
 #: etc/inc/system.inc:1376 etc/inc/system.inc:1433 etc/inc/system.inc:1475
 #: etc/inc/system.inc:1424 etc/inc/system.inc:1483
 #, php-format
 msgid "Error: cannot open dmesg.boot in system_dmesg_save().%s"
-msgstr ""
+msgstr "エラー：system_dmesg_save().%s 処理dmesg.boot開くことができません。"
 
 #: etc/inc/system.inc:1397 etc/inc/system.inc:1454 etc/inc/system.inc:1496
 #: etc/inc/system.inc:1445 etc/inc/system.inc:1504
 msgid "Setting hard disk standby... "
-msgstr ""
+msgstr "ハードディスクのスタンバイの設定... "
 
 #: etc/inc/system.inc:1514 etc/inc/system.inc:1571 etc/inc/system.inc:1613
 #: etc/inc/system.inc:1562 etc/inc/system.inc:1621
 msgid "Generic PC"
-msgstr ""
+msgstr "一般的なPC"
 
 #: etc/inc/system.inc:1517 etc/inc/system.inc:1574 etc/inc/system.inc:1616
 #: etc/inc/system.inc:1565 etc/inc/system.inc:1624
 msgid "Generic PC (CD-ROM)"
-msgstr ""
+msgstr "一般的なPC (シーディーロム)"
 
 #: etc/inc/system.inc:1526 etc/inc/system.inc:1583 etc/inc/system.inc:1625
 #: etc/inc/system.inc:1574 etc/inc/system.inc:1633
@@ -3303,44 +3305,45 @@ msgstr ""
 #: etc/inc/system.inc:1541 etc/inc/system.inc:1598 etc/inc/system.inc:1640
 #: etc/inc/system.inc:1589 etc/inc/system.inc:1648
 msgid "embedded (unknown)"
-msgstr ""
+msgstr "埋め込み（不明）"
+
 
 #: etc/inc/util.inc:99 etc/inc/util.inc:101 etc/inc/util.inc:101
 #, php-format
 msgid "WARNING: Could not mark subsystem: %s dirty"
-msgstr ""
+msgstr "警告：サブシステムをマークできませんでした：汚い%s"
 
 #: etc/inc/util.inc:119 etc/inc/util.inc:121 etc/inc/util.inc:121
 msgid "WARNING: You must give a name as parameter to lock() function."
-msgstr ""
+msgstr "警告：あなたが機能を lock() パラメータとして名前を付ける必要があります。"
 
 #: etc/inc/util.inc:213 etc/inc/util.inc:208 etc/inc/util.inc:238
 #: etc/inc/util.inc:240 etc/inc/util.inc:240
 #, php-format
 msgid "Reference %s is going negative, not doing unreference."
-msgstr ""
+msgstr "参照%sはは、負方向の非参照を実行していません。"
 
 #: etc/inc/util.inc:980 etc/inc/util.inc:981 etc/inc/util.inc:1026
 #: etc/inc/util.inc:1076 etc/inc/util.inc:1080 etc/inc/util.inc:1080
 #, php-format
 msgid "The command '%1$s' returned exit code '%2$d', the output was '%3$s' "
-msgstr ""
+msgstr "コマンドは「%1$s」が終了コード'%2$d」を返されると、出力は「%3$s」だった"
 
 #: etc/inc/vpn.inc:126 etc/inc/vpn.inc:134 etc/inc/vpn.inc:133
 msgid "Configuring IPsec VPN... "
-msgstr ""
+msgstr "IPsecのVPNを設定... "
 
 #: etc/inc/vpn.inc:229 etc/inc/vpn.inc:228 etc/inc/vpn.inc:238
 #: etc/inc/vpn.inc:237 etc/inc/vpn.inc:236
 #, php-format
 msgid "Error: Invalid certificate info for %s"
-msgstr ""
+msgstr "エラー：%s無効な証明書情報"
 
 #: etc/inc/vpn.inc:235 etc/inc/vpn.inc:234 etc/inc/vpn.inc:244
 #: etc/inc/vpn.inc:243 etc/inc/vpn.inc:242
 #, php-format
 msgid "Error: Invalid certificate hash info for %s"
-msgstr ""
+msgstr "エラー：%s無効な証明書のハッシュ情報"
 
 #: etc/inc/vpn.inc:240 etc/inc/vpn.inc:239 etc/inc/vpn.inc:249
 #: etc/inc/vpn.inc:248 etc/inc/vpn.inc:247

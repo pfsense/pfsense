@@ -16,6 +16,7 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF8\n"
 "Content-Transfer-Encoding: 8bit\n"
+"X-Generator: vim(1), awk(1), sed(1)\n"
 
 #: etc/inc/PEAR.inc:161
 #, php-format

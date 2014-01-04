@@ -140,13 +140,13 @@ msgstr "エラー! ldap_get_user_ous() サーバ%sをバインドできません
 #: etc/inc/auth.inc:919
 #, php-format
 msgid "ERROR! ldap_get_groups() Could not connect to server %s."
-msgstr "エラー! ldap_get_groups() サーバー%sのに接続できませんでした。"
+msgstr "エラー! ldap_get_groups() サーバー%sに接続できませんでした。"
 
 #: etc/inc/auth.inc:918 etc/inc/auth.inc:927 etc/inc/auth.inc:930
 #: etc/inc/auth.inc:930
 #, php-format
 msgid "ERROR! ldap_get_groups() could not bind anonymously to server %s."
-msgstr "エラー! ldap_get_groups() サーバ%sのに匿名でバインドできませんでした。"
+msgstr "エラー! ldap_get_groups() サーバ%sに匿名でバインドできませんでした。"
 
 #: etc/inc/auth.inc:923 etc/inc/auth.inc:932 etc/inc/auth.inc:935
 #: etc/inc/auth.inc:935
@@ -273,11 +273,11 @@ msgstr "エラー: captiveportal_write_elements()%s を処理'%s'を開くこと
 
 #: etc/inc/config.inc:100 etc/inc/config.inc:100
 msgid "Upgrading m0n0wall configuration to pfSense... "
-msgstr "pfSenseにm0n0wallの構成のアップグレード... "
+msgstr "pfSenseにm0n0wall構成のアップグレード... "
 
 #: etc/inc/config.inc:103 etc/inc/config.inc:103
 msgid "ERROR!  Could not convert m0n0wall -> pfsense in config.xml"
-msgstr "エラー! m0n0wallのはconfig.xmlにpfsenseに変換することができませんでした"
+msgstr "エラー! m0n0wallはconfig.xmlにpfsenseに変換することができませんでした"
 
 #: etc/inc/config.inc:133 etc/inc/config.inc:133
 msgid "CDROM build"
@@ -296,7 +296,7 @@ msgstr "タイプ:"
 #: etc/inc/config.inc:166
 #, php-format
 msgid "Found configuration on %s.%s"
-msgstr "%s.%sのタブの設定"
+msgstr "%s.%sタブの設定"
 
 #: etc/inc/config.inc:180 etc/inc/config.inc:181 etc/inc/config.lib.inc:105
 #: etc/inc/config.lib.inc:106 etc/inc/config.lib.inc:245
@@ -309,7 +309,7 @@ msgstr "いいえconfig.xmlには最後の既知の設定の復元を試みて�
 
 #: etc/inc/config.inc:184 etc/inc/config.inc:184
 msgid "No config.xml or config backups found, resetting to factory defaults."
-msgstr "全くのconfig.xmlや設定のバックアップ工場出荷時設定へのリセット、見つかりませんでした。"
+msgstr "全くconfig.xmlや設定のバックアップ工場出荷時設定へのリセット、見つかりませんでした。"
 
 #: etc/inc/filter.inc:197 etc/inc/filter.inc:194 etc/inc/filter.inc:193
 #: etc/inc/filter.inc:168 etc/inc/filter.inc:168
@@ -464,7 +464,7 @@ msgstr "フィルタが無効になっています。ルールをロードして
 #: etc/inc/system.inc:874 etc/inc/system.inc:1237 etc/inc/system.inc:1377
 #: etc/inc/system.inc:1516 etc/inc/rrd.inc:834
 msgid "done."
-msgstr "行わ。"
+msgstr "完了。"
 
 #: etc/inc/filter.inc:259 etc/inc/filter.inc:265 etc/inc/filter.inc:289
 #: etc/inc/filter.inc:269 etc/inc/filter.inc:269
@@ -625,7 +625,7 @@ msgstr "filter_generate_address：%sを、有効な送信元ポートではあ�
 #: etc/inc/filter.inc:2172
 #, php-format
 msgid "Setting up pass/block rules %s"
-msgstr "パス/ブロックルール%sはの設定"
+msgstr "パス/ブロックルール%sの設定"
 
 #: etc/inc/filter.inc:1962 etc/inc/filter.inc:2113 etc/inc/filter.inc:2126
 #: etc/inc/filter.inc:2157 etc/inc/filter.inc:2187 etc/inc/filter.inc:2192
@@ -639,19 +639,19 @@ msgstr "インターフェイスのIPv4ゲートウェイ(%s)を見つけるこ�
 #: etc/inc/filter.inc:2214
 #, php-format
 msgid "Creating rule %s"
-msgstr "ルール%sを作成"
+msgstr "ルール%sを作成中"
 
 #: etc/inc/filter.inc:2198 etc/inc/filter.inc:2355 etc/inc/filter.inc:2378
 #: etc/inc/filter.inc:2407 etc/inc/filter.inc:2439 etc/inc/filter.inc:2444
 #: etc/inc/filter.inc:2439
 msgid "Creating default rules"
-msgstr "デフォルトのルールの作成"
+msgstr "デフォルトのルールを作成中"
 
 #: etc/inc/filter.inc:2649 etc/inc/filter.inc:2862 etc/inc/filter.inc:2887
 #: etc/inc/filter.inc:2976 etc/inc/filter.inc:3000 etc/inc/filter.inc:3005
 #: etc/inc/filter.inc:3000
 msgid "Creating IPsec rules..."
-msgstr "IPsecの規則を作成しています..."
+msgstr "IPsecのルールを作成中..."
 
 #: etc/inc/filter.inc:2702 etc/inc/filter.inc:2915 etc/inc/filter.inc:2940
 #: etc/inc/filter.inc:3026 etc/inc/filter.inc:3050 etc/inc/filter.inc:3055
@@ -687,7 +687,7 @@ msgstr "パッケージ%2$sを早期%1$sのルールの処理"
 #: etc/inc/filter.inc:3423
 #, php-format
 msgid "There was an error while parsing the package filter rules for %s."
-msgstr "%sのためのパッケージフィルタルールの解析中にエラーが発生しました。"
+msgstr "%sのパッケージフィルタルール解析中にエラーが発生しました。"
 
 #: etc/inc/interfaces.inc:51 etc/inc/interfaces.inc:53
 #: etc/inc/interfaces.inc:51
@@ -698,13 +698,13 @@ msgstr "interfaces_bring_up() が呼び出さしかし、誰変数が定義さ�
 #: etc/inc/interfaces.inc:214 etc/inc/interfaces.inc:212
 #: etc/inc/interfaces.inc:212
 msgid "Configuring loopback interface..."
-msgstr "ループバックインターフェイスの設定..."
+msgstr "ループバックインターフェイスを設定中..."
 
 #: etc/inc/interfaces.inc:224 etc/inc/interfaces.inc:226
 #: etc/inc/interfaces.inc:225 etc/inc/interfaces.inc:223
 #: etc/inc/interfaces.inc:223
 msgid "Configuring VLAN interfaces..."
-msgstr "VLANインターフェイスの設定..."
+msgstr "VLANインターフェイスを設定中..."
 
 #: etc/inc/interfaces.inc:241 etc/inc/interfaces.inc:243
 #: etc/inc/interfaces.inc:242 etc/inc/interfaces.inc:240
@@ -739,14 +739,14 @@ msgstr "QinQサブインターフェイスの設定..."
 #: etc/inc/interfaces.inc:396 etc/inc/interfaces.inc:398
 #: etc/inc/interfaces.inc:397
 msgid "Creating other wireless clone interfaces..."
-msgstr "他のワイヤレスクローン·インターフェースを作成しています..."
+msgstr "他のワイヤレスクローン·インターフェースを作成中..."
 
 #: etc/inc/interfaces.inc:439 etc/inc/interfaces.inc:438
 #: etc/inc/interfaces.inc:437 etc/inc/interfaces.inc:466
 #: etc/inc/interfaces.inc:466
 #, php-format
 msgid "No members found on %s"
-msgstr "いいえメンバーは%sを見つけることができません"
+msgstr "%sにはメンバーが見つかりませんでした"
 
 #: etc/inc/interfaces.inc:505 etc/inc/interfaces.inc:512
 #: etc/inc/interfaces.inc:511 etc/inc/interfaces.inc:541
@@ -798,7 +798,7 @@ msgstr "変数定義されていません - 最大gififなれなかった"
 #: etc/inc/interfaces.inc:1047 etc/inc/interfaces.inc:1062
 #, php-format
 msgid "Configuring %s interface..."
-msgstr "%sのインターフェイスの設定..."
+msgstr "%sのインターフェイスを設定中..."
 
 #: etc/inc/interfaces.inc:921 etc/inc/interfaces.inc:959
 #: etc/inc/interfaces.inc:974 etc/inc/interfaces.inc:948
@@ -811,7 +811,7 @@ msgstr "%sのインターフェイスの設定..."
 #: etc/inc/interfaces.inc:1064
 #, php-format
 msgid "Configuring %s"
-msgstr "設定 %s"
+msgstr "%s を設定中"
 
 #: etc/inc/interfaces.inc:1299 etc/inc/interfaces.inc:1339
 #: etc/inc/interfaces.inc:1338 etc/inc/interfaces.inc:1407
@@ -858,17 +858,17 @@ msgstr "エラー：interface_ppps_configure().%s を処理mpd_%s.conf開くこ�
 #: etc/inc/interfaces.inc:1770 etc/inc/interfaces.inc:1828
 #: etc/inc/interfaces.inc:1833 etc/inc/interfaces.inc:1833
 msgid "Configuring CARP settings..."
-msgstr "設定CARPの設定..."
+msgstr "CARPを設定中..."
 
 #: etc/inc/interfaces.inc:1723 etc/inc/interfaces.inc:1788
 #: etc/inc/interfaces.inc:1787
 msgid "Enable CARP ARP-balancing"
-msgstr "CARP ARP分散を可能にする"
+msgstr "CARP ARPバランスを有効にする"
 
 #: etc/inc/interfaces.inc:1724 etc/inc/interfaces.inc:1789
 #: etc/inc/interfaces.inc:1788
 msgid "Disallow CARP preemption"
-msgstr "CARPプリエンプションを禁止"
+msgstr "CARPプリエンプションを禁止する"
 
 #: etc/inc/interfaces.inc:1726 etc/inc/interfaces.inc:1791
 #: etc/inc/interfaces.inc:1790
@@ -878,7 +878,7 @@ msgstr "CARPプリエンプションを有効にする"
 #: etc/inc/interfaces.inc:1728 etc/inc/interfaces.inc:1793
 #: etc/inc/interfaces.inc:1792
 msgid "Enable CARP logging"
-msgstr "CARPのログを有効に"
+msgstr "CARPのログを有効にする"
 
 #: etc/inc/interfaces.inc:1744 etc/inc/interfaces.inc:1809
 #: etc/inc/interfaces.inc:1808
@@ -956,7 +956,7 @@ msgstr ""
 #: etc/inc/interfaces.inc:2149 etc/inc/interfaces.inc:2149
 #, php-format
 msgid "Interface %s changed to hostap mode"
-msgstr "インターフェース%sはのhostapモードに変更"
+msgstr "インターフェース%sをhostapモードに変更"
 
 #: etc/inc/interfaces.inc:2121 etc/inc/interfaces.inc:2189
 #: etc/inc/interfaces.inc:2108 etc/inc/interfaces.inc:2148
@@ -1086,7 +1086,7 @@ msgstr "フィールドが '%s'は有効なIPアドレスまたはドメイン�
 #: etc/inc/openvpn.inc:245
 #, php-format
 msgid "The field '%s' must contain a valid port, ranging from 0 to 65535."
-msgstr "フィールドが '%s'は0〜65535の範囲、有効なポートが含まれている必要があります。"
+msgstr "フィールドが '%s'は0〜65535範囲、有効なポートが含まれている必要があります。"
 
 #: etc/inc/openvpn.inc:219 etc/inc/openvpn.inc:217
 #, php-format
@@ -1356,7 +1356,7 @@ msgstr "%sの上書き以前のインストール。"
 #: etc/inc/pkg-utils.inc:627 etc/inc/pkg-utils.inc:662
 #: etc/inc/pkg-utils.inc:662
 msgid "overwrite!"
-msgstr "オーバーライトする!"
+msgstr "オーバーライト!"
 
 #: etc/inc/pkg-utils.inc:612 etc/inc/pkg-utils.inc:638
 #: etc/inc/pkg-utils.inc:639 etc/inc/pkg-utils.inc:674
@@ -1368,7 +1368,7 @@ msgstr "パッケージのインストールに失敗しました。"
 #: etc/inc/pkg-utils.inc:643 etc/inc/pkg-utils.inc:678
 #: etc/inc/pkg-utils.inc:678
 msgid "Writing configuration... "
-msgstr "設定を書いて... "
+msgstr "設定を書き込み中... "
 
 #: etc/inc/pkg-utils.inc:652 etc/inc/pkg-utils.inc:678
 #: etc/inc/pkg-utils.inc:679 etc/inc/pkg-utils.inc:714
@@ -1393,7 +1393,7 @@ msgstr "とその依存関係。"
 #: etc/inc/pkg-utils.inc:695 etc/inc/pkg-utils.inc:730
 #: etc/inc/pkg-utils.inc:730
 msgid "Downloading"
-msgstr "ダウンロード"
+msgstr "ダウンロード中"
 
 #: etc/inc/pkg-utils.inc:668 etc/inc/pkg-utils.inc:694
 #: etc/inc/pkg-utils.inc:695 etc/inc/pkg-utils.inc:730
@@ -1602,7 +1602,7 @@ msgstr ""
 
 #: etc/inc/radius.inc:404 etc/inc/radius.inc:406 etc/inc/radius.inc:406
 msgid "Error sending request:"
-msgstr "リクエストを送信するエラー："
+msgstr "リクエスト送信エラー："
 
 #: etc/inc/radius.inc:410 etc/inc/radius.inc:412 etc/inc/radius.inc:412
 msgid "RADIUS_ACCESS_ACCEPT is unexpected for accounting"
@@ -1665,7 +1665,7 @@ msgstr "DHCPv6リレーサービスを開始..."
 #: etc/inc/services.inc:1493 etc/inc/services.inc:1489
 #: etc/inc/services.inc:1505 etc/inc/services.inc:1557
 msgid "Starting DynDNS clients..."
-msgstr "ダイナミックDNSクライアントの起動..."
+msgstr "DynDNSクライアント起動中..."
 
 #: etc/inc/services.inc:1255 etc/inc/services.inc:1392
 #: etc/inc/services.inc:1531 etc/inc/services.inc:1545
@@ -1693,7 +1693,7 @@ msgstr "エラー：services_snmpd_configure().%sを処理のsnmpd.confを開く
 #: etc/inc/services.inc:1948 etc/inc/services.inc:1979
 #: etc/inc/services.inc:2043
 msgid "pfSense specific crontab entries"
-msgstr "pfSense特定のcrontabのエントリ"
+msgstr "pfSense特定crontabのエントリ"
 
 #: etc/inc/services.inc:1876 etc/inc/services.inc:2068
 #: etc/inc/services.inc:1920 etc/inc/services.inc:1909
@@ -1707,7 +1707,7 @@ msgstr "作成："
 #: etc/inc/services.inc:1963 etc/inc/services.inc:1994
 #: etc/inc/services.inc:2058
 msgid "If possible do not add items to this file manually."
-msgstr "If possible do not add items to this file manually."
+msgstr "できればこのファイルに項目を手動で追加しないでください。"
 
 #: etc/inc/services.inc:1891 etc/inc/services.inc:2083
 #: etc/inc/services.inc:1935 etc/inc/services.inc:1924
@@ -2002,7 +2002,7 @@ msgstr "注：これは、すべての子のキューを変更する変更！"
 #: etc/inc/shaper.inc:648 etc/inc/shaper.inc:649 etc/inc/shaper.inc:651
 #: etc/inc/shaper.inc:675 etc/inc/shaper.inc:675
 msgid " Beware you can lose information."
-msgstr " あなたは情報を失う可能性があります注意してください。"
+msgstr " 情報を失う可能性があります注意してください。"
 
 #: etc/inc/shaper.inc:686 etc/inc/shaper.inc:687 etc/inc/shaper.inc:689
 #: etc/inc/shaper.inc:713 etc/inc/shaper.inc:713
@@ -2127,7 +2127,6 @@ msgstr "ランダム早期検出"
 #: etc/inc/shaper.inc:1179 etc/inc/shaper.inc:1222 etc/inc/shaper.inc:1222
 msgid "Random Early Detection In and Out"
 msgstr "ランダム早期検出InとOut"
-# msgstr "ランダム早期検出出入"
 
 #: etc/inc/shaper.inc:1178 etc/inc/shaper.inc:1179 etc/inc/shaper.inc:1180
 #: etc/inc/shaper.inc:1184 etc/inc/shaper.inc:1227 etc/inc/shaper.inc:1227
@@ -2572,13 +2571,13 @@ msgstr "割合の帯域幅は1と100の境界の間でなければなりませ�
 #: etc/inc/shaper.inc:1576 etc/inc/shaper.inc:1578 etc/inc/shaper.inc:1579
 #: etc/inc/shaper.inc:1582 etc/inc/shaper.inc:1633 etc/inc/shaper.inc:1633
 msgid "upperlimit service curve defined but missing (d) value"
-msgstr "UPPERLIMITサービスカーブが定義されていますが、不足している（d）の値"
+msgstr "UPPERLIMITサービスカーブが定義されていますが、不足している(d)の値"
 
 #: etc/inc/shaper.inc:1578 etc/inc/shaper.inc:1580 etc/inc/shaper.inc:1581
 #: etc/inc/shaper.inc:1584 etc/inc/shaper.inc:1635 etc/inc/shaper.inc:1635
 msgid ""
 "upperlimit service curve defined but missing initial bandwidth (m1) value"
-msgstr "UPPERLIMITサービス曲線が不足している初期の帯域幅（M1）の値を定義されていますが、"
+msgstr "UPPERLIMITサービス曲線が不足している初期の帯域幅(m1)の値を定義されていますが、"
 
 #: etc/inc/shaper.inc:1580 etc/inc/shaper.inc:1582 etc/inc/shaper.inc:1583
 #: etc/inc/shaper.inc:1586 etc/inc/shaper.inc:1637 etc/inc/shaper.inc:1637
@@ -2588,7 +2587,7 @@ msgstr "upperlimit m1の値はKB、MB、GB、または％である必要があ�
 #: etc/inc/shaper.inc:1582 etc/inc/shaper.inc:1584 etc/inc/shaper.inc:1585
 #: etc/inc/shaper.inc:1588 etc/inc/shaper.inc:1639 etc/inc/shaper.inc:1639
 msgid "upperlimit d value needs to be numeric"
-msgstr "upperlimit d値は数値でなければなり"
+msgstr "upperlimit d値は数値でなければなりません"
 
 #: etc/inc/shaper.inc:1584 etc/inc/shaper.inc:1586 etc/inc/shaper.inc:1587
 #: etc/inc/shaper.inc:1590 etc/inc/shaper.inc:1641 etc/inc/shaper.inc:1641
@@ -2615,7 +2614,7 @@ msgstr "リンクシェアのm1の値はKB、MB、GB、または％である必�
 #: etc/inc/shaper.inc:1604 etc/inc/shaper.inc:1606 etc/inc/shaper.inc:1607
 #: etc/inc/shaper.inc:1610 etc/inc/shaper.inc:1661 etc/inc/shaper.inc:1661
 msgid "linkshare d value needs to be numeric"
-msgstr "リンクシェアのd値は数値でなければなり"
+msgstr "リンクシェアのd値は数値でなければなりません"
 
 #: etc/inc/shaper.inc:1606 etc/inc/shaper.inc:1608 etc/inc/shaper.inc:1609
 #: etc/inc/shaper.inc:1612 etc/inc/shaper.inc:1663 etc/inc/shaper.inc:1663
@@ -2640,7 +2639,7 @@ msgstr "リアルタイムm1の値はKB、MB、GB、または％である必要�
 #: etc/inc/shaper.inc:1627 etc/inc/shaper.inc:1629 etc/inc/shaper.inc:1630
 #: etc/inc/shaper.inc:1633 etc/inc/shaper.inc:1684 etc/inc/shaper.inc:1684
 msgid "realtime d value needs to be numeric"
-msgstr "リアルタイムD値は数値でなければなり"
+msgstr "リアルタイムD値は数値でなければなりません"
 
 #: etc/inc/shaper.inc:1629 etc/inc/shaper.inc:1631 etc/inc/shaper.inc:1632
 #: etc/inc/shaper.inc:1635 etc/inc/shaper.inc:1686 etc/inc/shaper.inc:1686
@@ -2872,7 +2871,7 @@ msgid ""
 "respectively. This makes it possible to easily specify bandwidth \n"
 "limits per host."
 msgstr ""
-"「ソース」または「先」が選択された場合、前記所定の帯域幅、遅延、パケット損失、"
+"「ソース」または「送信先」が選択された場合、前記所定の帯域幅、遅延、パケット損失、"
 "キューサイズの動的パイプはそれぞれ、遭遇した各送信元/宛先IPアドレスが作成されます。"
 "これにより、簡単にホストごとに帯域幅制限を指定することができます。"
 

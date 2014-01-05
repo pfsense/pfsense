@@ -2058,44 +2058,95 @@ function pfs_version_compare($cur_time, $cur_text, $remote) {
 	return $v;
 }
 function process_alias_urltable($name, $url, $freq, $forceupdate=false) {
-	global $config;
+        global $config;
 
-	$urltable_prefix = "/var/db/aliastables/";
-	$urltable_filename = $urltable_prefix . $name . ".txt";
+        $urltable_prefix = "/var/db/aliastables/";
+        $urltable_filename = $urltable_prefix . $name . ".txt";
 
-	// Make the aliases directory if it doesn't exist
-	if (!file_exists($urltable_prefix)) {
-		mkdir($urltable_prefix);
-	} elseif (!is_dir($urltable_prefix)) {
-		unlink($urltable_prefix);
-		mkdir($urltable_prefix);
-	}
+        // Make the aliases directory if it doesn't exist
+        if (!file_exists($urltable_prefix)) {
+                mkdir($urltable_prefix);
+        } elseif (!is_dir($urltable_prefix)) {
+                unlink($urltable_prefix);
+                mkdir($urltable_prefix);
+        }
 
-	// If the file doesn't exist or is older than update_freq days, fetch a new copy.
-	if (!file_exists($urltable_filename)
-		|| ((time() - filemtime($urltable_filename)) > ($freq * 86400))
-		|| $forceupdate) {
+        // If the file doesn't exist or is older than update_freq days, fetch a new copy.
+        if (!file_exists($urltable_filename)
+                || ((time() - filemtime($urltable_filename)) > ($freq * 86400))
+                || $forceupdate) {
 
-		// Try to fetch the URL supplied
-		conf_mount_rw();
-		unlink_if_exists($urltable_filename . ".tmp");
-		$verify_ssl = isset($config['system']['checkaliasesurlcert']);
-		if (download_file($url, $urltable_filename . ".tmp", $verify_ssl)) {
-			mwexec("/usr/bin/sed -E 's/\;.*//g; /^[[:space:]]*($|#)/d' ". escapeshellarg($urltable_filename . ".tmp") . " > " . escapeshellarg($urltable_filename));
-			if (alias_get_type($name) == "urltable_ports") {
-				$ports = explode("\n", file_get_contents($urltable_filename));
-				$ports = group_ports($ports);
-				file_put_contents($urltable_filename, implode("\n", $ports));
+                // Try to fetch the URL supplied
+                conf_mount_rw();
+                unlink_if_exists($urltable_filename . ".tmp");
+                $verify_ssl = isset($config['system']['checkaliasesurlcert']);
+                if (download_file($url, $urltable_filename . ".tmp", $verify_ssl)) {                   
+			$fileoutput="";
+			$handle = fopen($urltable_filename . ".tmp", "rw");
+			while (($line = fgets($handle)) !== false) {
+				$origline=$line;
+				$line=trim($line);
+				$negate=false;
+
+				// Skip lines begining with comments
+				if (preg_match("/^[[:space:]]*#/",$line))
+					continue;
+	
+				// strip out <br> tags
+				$line=trim(preg_replace('/^(.*)\<br(\s*)?\/?\>$/i', '\1', $line));
+
+				// Strip out comments from end of line
+				$line=trim(preg_replace('/^(.*)(#|;).*$/', '\1', $line));
+	
+				// Is negated?
+				if (preg_match("/^!/",$line)) {
+					$line=trim(preg_replace('/^!(.*)$/', '\1', $line));
+					$negate=true;
+				}
+
+				if (alias_get_type($name) == "urltable") {	
+					if(strpos($line,'/')) {
+						if(!is_subnet($line)) {
+							log_error("process_alias_urltable: Invalid entry for alias ({$name}). See line containing (\"{$origline}\")");
+							continue;
+						}
+					}
+
+					if (!is_ipaddr(preg_replace('/^(.*)\/[0-9]+$/', '\1', $line))) {
+						log_error("process_alias_urltable: Invalid entry for alias ({$name}). See line containing (\"{$origline}\")");
+						continue;
+					}
+				} elseif (alias_get_type($name) == "urltable_ports") {
+		
+					if (!preg_match('/^\d+$/',$line) && !preg_match("/^[0-9]+[\s]*(\:|\-)[\s]*[0-9]+$/",$line)) {
+						log_error("process_alias_urltable: Invalid entry for alias ({$name}). See line containing (\"{$origline}\")");
+						continue;
+					}
+
+					if(preg_match("/^[0-9]+[\s]*(\:|\-)[\s]*[0-9]+$/",$line))
+						$line=trim(preg_replace('/^([0-9]+)[\s]*(\:|\-)[\s]*([0-9]+)$/', '\1:\3', $line));
+						
+		
+				}
+				$fileoutput .= (($negate) ? '!' . $line : $line) . "\n";
 			}
-			unlink_if_exists($urltable_filename . ".tmp");
-		} else
-			mwexec("/usr/bin/touch {$urltable_filename}");
-		conf_mount_ro();
-		return true;
-	} else {
-		// File exists, and it doesn't need updated.
-		return -1;
-	}
+			fclose($handle);
+			file_put_contents($urltable_filename, $fileoutput);
+			
+                        if (alias_get_type($name) == "urltable_ports") {
+                                $ports = explode("\n", file_get_contents($urltable_filename));
+                                $ports = group_ports($ports);
+                                file_put_contents($urltable_filename, implode("\n", $ports));
+                        }
+                        unlink_if_exists($urltable_filename . ".tmp");
+                } else
+                        mwexec("/usr/bin/touch {$urltable_filename}");
+                conf_mount_ro();
+                return true;
+        } else {
+                // File exists, and it doesn't need updated.
+                return -1;
+        }
 }
 function get_real_slice_from_glabel($label) {
 	$label = escapeshellarg($label);

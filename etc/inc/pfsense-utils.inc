@@ -2081,7 +2081,58 @@ function process_alias_urltable($name, $url, $freq, $forceupdate=false) {
 		unlink_if_exists($urltable_filename . ".tmp");
 		$verify_ssl = isset($config['system']['checkaliasesurlcert']);
 		if (download_file($url, $urltable_filename . ".tmp", $verify_ssl)) {
-			mwexec("/usr/bin/sed -E 's/\;.*//g; /^[[:space:]]*($|#)/d' ". escapeshellarg($urltable_filename . ".tmp") . " > " . escapeshellarg($urltable_filename));
+			$fileoutput="";
+			$handle = fopen($urltable_filename . ".tmp", "rw");
+			while (($line = fgets($handle)) !== false) {
+				$origline=$line;
+				$line=trim($line);
+				$negate=false;
+
+				// Skip lines begining with comments
+				if (preg_match("/^[[:space:]]*#/",$line))
+					continue;
+	
+				// strip out <br> tags
+				$line=trim(preg_replace('/^(.*)\<br(\s*)?\/?\>$/i', '\1', $line));
+
+				// Strip out comments from end of line
+				$line=trim(preg_replace('/^(.*)(#|;).*$/', '\1', $line));
+	
+				// Is negated?
+				if (preg_match("/^!/",$line)) {
+					$line=trim(preg_replace('/^!(.*)$/', '\1', $line));
+					$negate=true;
+				}
+
+				if (alias_get_type($name) == "urltable") {	
+					if(strpos($line,'/')) {
+						if(!is_subnet($line)) {
+							log_error("process_alias_urltable: Invalid entry for alias ({$name}). See line containing (\"{$origline}\")");
+							continue;
+						}
+					}
+
+					if (!is_ipaddr(preg_replace('/^(.*)\/[0-9]+$/', '\1', $line))) {
+						log_error("process_alias_urltable: Invalid entry for alias ({$name}). See line containing (\"{$origline}\")");
+						continue;
+					}
+				} elseif (alias_get_type($name) == "urltable_ports") {
+		
+					if (!preg_match('/^\d+$/',$line) && !preg_match("/^[0-9]+[\s]*(\:|\-)[\s]*[0-9]+$/",$line)) {
+						log_error("process_alias_urltable: Invalid entry for alias ({$name}). See line containing (\"{$origline}\")");
+						continue;
+					}
+
+					if(preg_match("/^[0-9]+[\s]*(\:|\-)[\s]*[0-9]+$/",$line))
+						$line=trim(preg_replace('/^([0-9]+)[\s]*(\:|\-)[\s]*([0-9]+)$/', '\1:\3', $line));
+						
+		
+				}
+				$fileoutput .= (($negate) ? '!' . $line : $line) . "\n";
+			}
+			fclose($handle);
+			file_put_contents($urltable_filename, $fileoutput);
+
 			if (alias_get_type($name) == "urltable_ports") {
 				$ports = explode("\n", file_get_contents($urltable_filename));
 				$ports = group_ports($ports);

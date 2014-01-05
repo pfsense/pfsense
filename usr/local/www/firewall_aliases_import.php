@@ -85,32 +85,44 @@ if($_POST['aliasimport'] <> "") {
 		$tocheck = explode("\n", $_POST['aliasimport']);
 		$imported_ips = array();
 		$imported_descs = array();
-		$desc_err_found = false;
+		$desc_len_err_found = false;
+		$desc_fmt_err_found = false;
 		foreach ($tocheck as $impline) {
 			$implinea = explode(" ",trim($impline),2);
 			$impip = $implinea[0];
 			$impdesc = trim($implinea[1]);
-			if (strpos($impdesc, "||") === false) {
-				if (is_iprange($impip)) {
-					list($startip, $endip) = explode('-', $impip);
-					$rangesubnets = ip_range_to_subnet_array($startip, $endip);
-					$imported_ips = array_merge($imported_ips, $rangesubnets);
-					$rangedescs = array_fill(0, count($rangesubnets), $impdesc);
-					$imported_descs = array_merge($imported_descs, $rangedescs);
-				} else if (!is_ipaddr($impip) && !is_subnet($impip) && !empty($impip)) {
-					$input_errors[] = sprintf(gettext("%s is not an IP address. Please correct the error to continue"), $impip);
-				} elseif (!empty($impip)) {
-					$imported_ips[] = $impip;
-					$imported_descs[] = $impdesc;
+			if (strlen($impdesc) < 200) {
+				if (strpos($impdesc, "||") === false) {
+					if (is_iprange($impip)) {
+						list($startip, $endip) = explode('-', $impip);
+						$rangesubnets = ip_range_to_subnet_array($startip, $endip);
+						$imported_ips = array_merge($imported_ips, $rangesubnets);
+						$rangedescs = array_fill(0, count($rangesubnets), $impdesc);
+						$imported_descs = array_merge($imported_descs, $rangedescs);
+					} else if (!is_ipaddr($impip) && !is_subnet($impip) && !empty($impip)) {
+						$input_errors[] = sprintf(gettext("%s is not an IP address. Please correct the error to continue"), $impip);
+					} elseif (!empty($impip)) {
+						$imported_ips[] = $impip;
+						$imported_descs[] = $impdesc;
+					}
+				}
+				else {
+					if (!$desc_fmt_err_found) {
+						$input_errors[] = gettext("Descriptions may not contain double vertical bar ||.");
+						$desc_fmt_err_found = true;
+					}
 				}
 			}
 			else {
-				if (!$desc_err_found) {
-					$input_errors[] = gettext("Descriptions may not contain double vertical bar ||. Please correct the error to continue");
-					$desc_err_found = true;
+				if (!$desc_len_err_found) {
+					/* Note: The 200 character limit is just a practical check to avoid accidents */
+					/* if the user pastes a large number of IP addresses without line breaks.     */
+					$input_errors[] = gettext("Descriptions must be less than 200 characters long.");
+					$desc_fmt_err_found = true;
 				}
 			}
 		}
+		unset($desc_len_err_found, $desc_fmt_err_found);
 	}
 
 	if (!$input_errors && is_array($imported_ips)) {
@@ -120,6 +132,7 @@ if($_POST['aliasimport'] <> "") {
 		$alias['name'] = $_POST['name'];
 		$alias['type'] = "network";
 		$alias['descr'] = $_POST['descr'];
+		unset($imported_ips, $imported_descs);
 		$a_aliases[] = $alias;
 
 		// Sort list

@@ -2079,28 +2079,26 @@ function process_alias_urltable($name, $url, $freq, $forceupdate=false) {
 		// Try to fetch the URL supplied
 		conf_mount_rw();
 		unlink_if_exists($urltable_filename . ".tmp");
+		unlink_if_exists($urltable_filename . ".tmp2");
 		$verify_ssl = isset($config['system']['checkaliasesurlcert']);
 		if (download_file($url, $urltable_filename . ".tmp", $verify_ssl)) {
-			$fileoutput="";
-			$handle = fopen($urltable_filename . ".tmp", "rw");
-			while (($line = fgets($handle)) !== false) {
+			$handle_r = fopen($urltable_filename . ".tmp", "r");
+			$handle_w = fopen($urltable_filename . ".tmp2", "w");
+			while (($line = fgetss($handle_r)) !== false) {
 				$origline=$line;
 				$line=trim($line);
 				$negate=false;
 
-				// Skip lines begining with comments
-				if (preg_match("/^[[:space:]]*#/",$line))
+				// Skip blank lines and lines beginning with comments
+				if ( $line == "" || $line[0] == "#")
 					continue;
-	
-				// strip out <br> tags
-				$line=trim(preg_replace('/^(.*)\<br(\s*)?\/?\>$/i', '\1', $line));
 
 				// Strip out comments from end of line
 				$line=trim(preg_replace('/^(.*)(#|;).*$/', '\1', $line));
 	
 				// Is negated?
-				if (preg_match("/^!/",$line)) {
-					$line=trim(preg_replace('/^!(.*)$/', '\1', $line));
+				if ($line[0] == "!" ) {
+					$line=ltrim($line,"!");
 					$negate=true;
 				}
 
@@ -2128,17 +2126,19 @@ function process_alias_urltable($name, $url, $freq, $forceupdate=false) {
 						
 		
 				}
-				$fileoutput .= (($negate) ? '!' . $line : $line) . "\n";
+				fputs($handle_w, (($negate) ? '!' . $line : $line) . "\n");
 			}
-			fclose($handle);
-			file_put_contents($urltable_filename, $fileoutput);
-
+			fclose($handle_r);
+			fclose($handle_w);
+			unlink_if_exists($urltable_filename . ".tmp");
+			
 			if (alias_get_type($name) == "urltable_ports") {
-				$ports = explode("\n", file_get_contents($urltable_filename));
+				$ports = explode("\n", file_get_contents($urltable_filename . ".tmp2"));
 				$ports = group_ports($ports);
 				file_put_contents($urltable_filename, implode("\n", $ports));
-			}
-			unlink_if_exists($urltable_filename . ".tmp");
+			} else {
+				mwexec("/bin/mv {$urltable_filename}.tmp2 {$urltable_filename}");
+			}	
 		} else
 			mwexec("/usr/bin/touch {$urltable_filename}");
 		conf_mount_ro();

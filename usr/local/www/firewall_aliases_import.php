@@ -118,7 +118,7 @@ if($_POST['aliasimport'] <> "") {
 					/* Note: The 200 character limit is just a practical check to avoid accidents */
 					/* if the user pastes a large number of IP addresses without line breaks.     */
 					$input_errors[] = gettext("Descriptions must be less than 200 characters long.");
-					$desc_fmt_err_found = true;
+					$desc_len_err_found = true;
 				}
 			}
 		}

@@ -2127,6 +2127,7 @@ function process_alias_urltable($name, $url, $freq, $forceupdate=false) {
 		
 				}
 				fputs($handle_w, (($negate) ? '!' . $line : $line) . "\n");
+				unset($line);
 			}
 			fclose($handle_r);
 			fclose($handle_w);
@@ -2136,11 +2137,12 @@ function process_alias_urltable($name, $url, $freq, $forceupdate=false) {
 				$ports = explode("\n", file_get_contents($urltable_filename . ".tmp2"));
 				$ports = group_ports($ports);
 				file_put_contents($urltable_filename, implode("\n", $ports));
+				unset($ports);
 			} else {
-				mwexec("/bin/mv {$urltable_filename}.tmp2 {$urltable_filename}");
+				@rename("{$urltable_filename}.tmp2", $urltable_filename);
 			}	
 		} else
-			mwexec("/usr/bin/touch {$urltable_filename}");
+			@touch($urltable_filename);
 		conf_mount_ro();
 		return true;
 	} else {

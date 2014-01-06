@@ -254,6 +254,9 @@ EOD;
 		if ($override == true)
 			$apingercfg .= "\talarms override {$alarms};\n";
 
+		if (isset($gateway['force_down']))
+			$apingercfg .= "\tforce_down on\n";
+
 		$apingercfg .= "	rrd file \"{$g['vardb_path']}/rrd/{$gateway['name']}-quality.rrd\"\n";
 		$apingercfg .= "}\n";
 		$apingercfg .= "\n";

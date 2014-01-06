@@ -109,7 +109,10 @@ $counter = 1;
 			<table border="0" cellpadding="0" cellspacing="2" style="table-layout: fixed;" summary="status">
 			<?php
 				if ($gateways_status[$gname]) {
-					if (stristr($gateways_status[$gname]['status'], "down")) {
+					if (stristr($gateways_status[$gname]['status'], "force_down")) {
+						$online = "Offline (forced)";
+						$bgcolor = "#F08080";  // lightcoral
+					} elseif (stristr($gateways_status[$gname]['status'], "down")) {
 						$online = "Offline";
 						$bgcolor = "#F08080";  // lightcoral
 					} elseif (stristr($gateways_status[$gname]['status'], "loss")) {

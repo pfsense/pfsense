@@ -115,7 +115,10 @@ include("head.inc");
                         <?php
 				if ($gateways_status[$gname]) {
 					$status = $gateways_status[$gname];
-					if (stristr($status['status'], "down")) {
+					if (stristr($status['status'], "force_down")) {
+						$online = gettext("Offline (forced)");
+						$bgcolor = "#F08080";  // lightcoral
+					} elseif (stristr($status['status'], "down")) {
 						$online = gettext("Offline");
 						$bgcolor = "#F08080";  // lightcoral
 					} elseif (stristr($status['status'], "loss")) {

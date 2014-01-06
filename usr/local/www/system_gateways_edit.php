@@ -75,6 +75,7 @@ if (isset($id) && $a_gateways[$id]) {
 		$pconfig['dynamic'] = true;
 	$pconfig['gateway'] = $a_gateways[$id]['gateway'];
 	$pconfig['defaultgw'] = isset($a_gateways[$id]['defaultgw']);
+	$pconfig['force_down'] = isset($a_gateways[$id]['force_down']);
 	$pconfig['latencylow'] = $a_gateways[$id]['latencylow'];
 	$pconfig['latencyhigh'] = $a_gateways[$id]['latencyhigh'];
 	$pconfig['losslow'] = $a_gateways[$id]['losslow'];
@@ -388,6 +389,8 @@ if ($_POST) {
 		$gateway['descr'] = $_POST['descr'];
 		if ($_POST['monitor_disable'] == "yes")
 			$gateway['monitor_disable'] = true;
+		if ($_POST['force_down'] == "yes")
+			$gateway['force_down'] = true;
 		if (is_ipaddr($_POST['monitor']))
 			$gateway['monitor'] = $_POST['monitor'];
 
@@ -593,6 +596,14 @@ function monitor_change() {
 					"quality RRD graphs as well as the load balancer entries. Use this if the gateway does not respond " .
 					"to ICMP echo requests (pings)"); ?>.
 					<br />
+				</td>
+			</tr>
+			<tr>
+				<td width="22%" valign="top" class="vncell"><?=gettext("Mark Gateway as Down"); ?></td>
+				<td width="78%" class="vtable">
+					<input name="force_down" type="checkbox" id="force_down" value="yes" <?php if ($pconfig['force_down'] == true) echo "checked=\"checked\""; ?> />
+					<strong><?=gettext("Mark Gateway as Down"); ?></strong><br />
+					<?=gettext("This will force this gateway to be considered Down"); ?>
 				</td>
 			</tr>
 			<tr>

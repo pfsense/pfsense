@@ -2137,6 +2137,7 @@ function process_alias_urltable($name, $url, $freq, $forceupdate=false) {
 				$ports = explode("\n", file_get_contents($urltable_filename . ".tmp2"));
 				$ports = group_ports($ports);
 				file_put_contents($urltable_filename, implode("\n", $ports));
+				unlink_if_exists($urltable_filename . ".tmp2");
 				unset($ports);
 			} else {
 				@rename("{$urltable_filename}.tmp2", $urltable_filename);

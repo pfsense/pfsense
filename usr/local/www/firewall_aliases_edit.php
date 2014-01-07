@@ -54,7 +54,7 @@ $pgtitle = array(gettext("Firewall"),gettext("Aliases"),gettext("Edit"));
 // Keywords not allowed in names
 $reserved_keywords = array("all", "pass", "block", "out", "queue", "max", "min", "pptp", "pppoe", "L2TP", "OpenVPN", "IPsec");
 
-// Add all Load balance names to resrved_keywords
+// Add all Load balance names to reserved_keywords
 if (is_array($config['load_balancer']['lbpool']))
 	foreach ($config['load_balancer']['lbpool'] as $lbpool)
 		$reserved_keywords[] = $lbpool['name'];
@@ -124,6 +124,7 @@ if (isset($id) && $a_aliases[$id]) {
 
 if ($_POST) {
 	unset($input_errors);
+	$vertical_bar_err_text = gettext("Vertical bars (|) at start or end, or double in the middle of descriptions not allowed. Descriptions have been cleaned. Check and save again.");
 
 	/* input validation */
 
@@ -173,7 +174,7 @@ if ($_POST) {
 		$address = "";
 		$isfirst = 0;
 
-		/* item is a url type */
+		/* item is a url table type */
 		if ($_POST['address0']) {
 			/* fetch down and add in */
 			$_POST['address0'] = trim($_POST['address0']);
@@ -186,14 +187,22 @@ if ($_POST) {
 			} elseif (! process_alias_urltable($alias['name'], $alias['url'], 0, true)) {
 				$input_errors[] = gettext("Unable to fetch usable data.");
 			}
-			if ($_POST["detail0"] <> "")
-				$final_address_details[] = $_POST["detail0"];
-			else
+			if ($_POST["detail0"] <> "") {
+				if ((strpos($_POST["detail0"], "||") === false) && (substr($_POST["detail0"], 0, 1) != "|") && (substr($_POST["detail0"], -1, 1) != "|")) {
+					$final_address_details[] = $_POST["detail0"];
+				} else {
+					/* Remove leading and trailing vertical bars and replace multiple vertical bars with single, */
+					/* and put in the output array so the text is at least redisplayed for the user. */
+					$final_address_details[] = preg_replace('/\|\|+/', '|', trim($_POST["detail0"], "|"));
+					$input_errors[] = $vertical_bar_err_text;
+				}
+			} else
 				$final_address_details[] = sprintf(gettext("Entry added %s"), date('r'));
 		}
 	} else if ($_POST['type'] == "url" || $_POST['type'] == "url_ports") {
 		$isfirst = 0;
 		$address_count = 2;
+		$desc_fmt_err_found = false;
 
 		/* item is a url type */
 		for($x=0; $x<4999; $x++) {
@@ -217,9 +226,19 @@ if ($_POST) {
 					$alias['aliasurl'] = array();
 
 				$alias['aliasurl'][] = $_POST['address' . $x];
-				if ($_POST["detail{$x}"] <> "")
-					$final_address_details[] = $_POST["detail{$x}"];
-				else
+				if ($_POST["detail{$x}"] <> "") {
+					if ((strpos($_POST["detail{$x}"], "||") === false) && (substr($_POST["detail{$x}"], 0, 1) != "|") && (substr($_POST["detail{$x}"], -1, 1) != "|")) {
+						$final_address_details[] = $_POST["detail{$x}"];
+					} else {
+						/* Remove leading and trailing vertical bars and replace multiple vertical bars with single, */
+						/* and put in the output array so the text is at least redisplayed for the user. */
+						$final_address_details[] = preg_replace('/\|\|+/', '|', trim($_POST["detail{$x}"], "|"));
+						if (!$desc_fmt_err_found) {
+							$input_errors[] = $vertical_bar_err_text;
+							$desc_fmt_err_found = true;
+						}
+					}
+				} else
 					$final_address_details[] = sprintf(gettext("Entry added %s"), date('r'));
 
 				if(file_exists("{$temp_filename}/aliases")) {
@@ -257,11 +276,13 @@ if ($_POST) {
 				}
 			}
 		}
+		unset($desc_fmt_err_found);
 		if ($_POST['type'] == "url_ports")
 			$address = group_ports($address);
 	} else {
 		/* item is a normal alias type */
 		$wrongaliases = "";
+		$desc_fmt_err_found = false;
 		for($x=0; $x<4999; $x++) {
 			if($_POST["address{$x}"] <> "") {
 				$_POST["address{$x}"] = trim($_POST["address{$x}"]);
@@ -290,15 +311,28 @@ if ($_POST) {
 						$tmpaddress .= "/" . $_POST["address_subnet{$x}"];
 					$address[] = $tmpaddress;
 				}
-				if ($_POST["detail{$x}"] <> "")
-					$final_address_details[] = $_POST["detail{$x}"];
-				else
+				if ($_POST["detail{$x}"] <> "") {
+					if ((strpos($_POST["detail{$x}"], "||") === false) && (substr($_POST["detail{$x}"], 0, 1) != "|") && (substr($_POST["detail{$x}"], -1, 1) != "|")) {
+						$final_address_details[] = $_POST["detail{$x}"];
+					} else {
+						/* Remove leading and trailing vertical bars and replace multiple vertical bars with single, */
+						/* and put in the output array so the text is at least redisplayed for the user. */
+						$final_address_details[] = preg_replace('/\|\|+/', '|', trim($_POST["detail{$x}"], "|"));
+						if (!$desc_fmt_err_found) {
+							$input_errors[] = $vertical_bar_err_text;
+							$desc_fmt_err_found = true;
+						}
+					}
+				} else
 					$final_address_details[] = sprintf(gettext("Entry added %s"), date('r'));
 			}
 		}
+		unset($desc_fmt_err_found);
 		if ($wrongaliases <> "")
 			$input_errors[] = sprintf(gettext('The alias(es): %s cannot be nested because they are not of the same type.'), $wrongaliases);
 	}
+
+	unset($vertical_bar_err_text);
 
 	// Allow extending of the firewall edit page and include custom input validation
 	pfSense_handle_custom_code("/usr/local/pkg/firewall_aliases_edit/input_validation");

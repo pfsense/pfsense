@@ -98,7 +98,7 @@ if($_POST['aliasimport'] <> "") {
 			$impip = $implinea[0];
 			$impdesc = trim($implinea[1]);
 			if (strlen($impdesc) < 200) {
-				if (strpos($impdesc, "||") === false) {
+				if ((strpos($impdesc, "||") === false) && (substr($impdesc, 0, 1) != "|") && (substr($impdesc, -1, 1) != "|")) {
 					if (is_iprange($impip)) {
 						list($startip, $endip) = explode('-', $impip);
 						$rangesubnets = ip_range_to_subnet_array($startip, $endip);
@@ -114,7 +114,7 @@ if($_POST['aliasimport'] <> "") {
 				}
 				else {
 					if (!$desc_fmt_err_found) {
-						$input_errors[] = gettext("Descriptions may not contain double vertical bar ||.");
+						$input_errors[] = gettext("Descriptions may not start or end with vertical bar (|) or contain double vertical bar ||.");
 						$desc_fmt_err_found = true;
 					}
 				}

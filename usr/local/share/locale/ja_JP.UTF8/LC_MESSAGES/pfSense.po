@@ -4969,61 +4969,61 @@ msgstr ""
 #: etc/inc/priv.defs.inc:394 etc/inc/priv.defs.inc:390
 #: etc/inc/priv.defs.inc:390
 msgid "WebCfg - Firewall: Virtual IP Addresses page"
-msgstr ""
+msgstr "WebCfg - ファイアウォール：仮想IPアドレス]ページ"
 
 #: etc/inc/priv.defs.inc:371 etc/inc/priv.defs.inc:389
 #: etc/inc/priv.defs.inc:395 etc/inc/priv.defs.inc:391
 #: etc/inc/priv.defs.inc:391
 msgid "Allow access to the 'Firewall: Virtual IP Addresses' page."
-msgstr ""
+msgstr "ページ：「仮想IPアドレスファイアウォール」へのアクセスを許可します。"
 
 #: etc/inc/priv.defs.inc:376 etc/inc/priv.defs.inc:394
 #: etc/inc/priv.defs.inc:400 etc/inc/priv.defs.inc:396
 #: etc/inc/priv.defs.inc:396
 msgid "WebCfg - Firewall: Virtual IP Address: Edit page"
-msgstr ""
+msgstr "WebCfg - ファイアウォール：仮想IPアドレス：Editページ"
 
 #: etc/inc/priv.defs.inc:377 etc/inc/priv.defs.inc:395
 #: etc/inc/priv.defs.inc:401 etc/inc/priv.defs.inc:397
 #: etc/inc/priv.defs.inc:397
 msgid "Allow access to the 'Firewall: Virtual IP Address: Edit' page."
-msgstr ""
+msgstr "ページ'：仮想IPアドレスを編集ファイアウォール」へのアクセスを許可します。"
 
 #: etc/inc/priv.defs.inc:382 etc/inc/priv.defs.inc:400
 #: etc/inc/priv.defs.inc:406 etc/inc/priv.defs.inc:402
 #: etc/inc/priv.defs.inc:402
 msgid "WebCfg - AJAX: Get Service Providers"
-msgstr ""
+msgstr "WebCfg - AJAX：サービスプロバイダを取得する"
 
 #: etc/inc/priv.defs.inc:383 etc/inc/priv.defs.inc:401
 #: etc/inc/priv.defs.inc:407 etc/inc/priv.defs.inc:403
 #: etc/inc/priv.defs.inc:403
 msgid "Allow access to the 'AJAX: Service Providers' page."
-msgstr ""
+msgstr "ページ：「サービスプロバイダAJAX」へのアクセスを許可します。"
 
 #: etc/inc/priv.defs.inc:388 etc/inc/priv.defs.inc:406
 #: etc/inc/priv.defs.inc:412 etc/inc/priv.defs.inc:408
 #: etc/inc/priv.defs.inc:408
 msgid "WebCfg - AJAX: Get Stats"
-msgstr ""
+msgstr "WebCfg - AJAX：ゲット統計"
 
 #: etc/inc/priv.defs.inc:389 etc/inc/priv.defs.inc:407
 #: etc/inc/priv.defs.inc:413 etc/inc/priv.defs.inc:409
 #: etc/inc/priv.defs.inc:409
 msgid "Allow access to the 'AJAX: Get Stats' page."
-msgstr ""
+msgstr "へのアクセスを許可します。ページ'、Ajaxを統計取得]を。"
 
 #: etc/inc/priv.defs.inc:394 etc/inc/priv.defs.inc:412
 #: etc/inc/priv.defs.inc:418 etc/inc/priv.defs.inc:414
 #: etc/inc/priv.defs.inc:414
 msgid "WebCfg - Diagnostics: Interface Traffic page"
-msgstr ""
+msgstr "WebCfg - 診断：インターフェイストラフィックページ"
 
 #: etc/inc/priv.defs.inc:395 etc/inc/priv.defs.inc:413
 #: etc/inc/priv.defs.inc:419 etc/inc/priv.defs.inc:415
 #: etc/inc/priv.defs.inc:415
 msgid "Allow access to the 'Diagnostics: Interface Traffic' page."
-msgstr ""
+msgstr "ページ：「インターフェーストラフィック診断」へのアクセスを許可します。"
 
 #: etc/inc/priv.defs.inc:400 etc/inc/priv.defs.inc:814
 #: etc/inc/priv.defs.inc:418 etc/inc/priv.defs.inc:832
@@ -5031,7 +5031,7 @@ msgstr ""
 #: etc/inc/priv.defs.inc:420 etc/inc/priv.defs.inc:846
 #: etc/inc/priv.defs.inc:420 etc/inc/priv.defs.inc:846
 msgid "WebCfg - Diagnostics: CPU Utilization page"
-msgstr ""
+msgstr "WebCfg - 診断：CPU使用率ページ"
 
 #: etc/inc/priv.defs.inc:401 etc/inc/priv.defs.inc:815
 #: etc/inc/priv.defs.inc:419 etc/inc/priv.defs.inc:833
@@ -5039,25 +5039,25 @@ msgstr ""
 #: etc/inc/priv.defs.inc:421 etc/inc/priv.defs.inc:847
 #: etc/inc/priv.defs.inc:421 etc/inc/priv.defs.inc:847
 msgid "Allow access to the 'Diagnostics: CPU Utilization' page."
-msgstr ""
+msgstr "ページ：「CPU使用率の診断」へのアクセスを許可します。"
 
 #: etc/inc/priv.defs.inc:406 etc/inc/priv.defs.inc:424
 #: etc/inc/priv.defs.inc:430 etc/inc/priv.defs.inc:426
 #: etc/inc/priv.defs.inc:426
 msgid "WebCfg - Diagnostics: Halt system page"
-msgstr ""
+msgstr "WebCfg - 診断：停止システムページ"
 
 #: etc/inc/priv.defs.inc:407 etc/inc/priv.defs.inc:425
 #: etc/inc/priv.defs.inc:431 etc/inc/priv.defs.inc:427
 #: etc/inc/priv.defs.inc:427
 msgid "Allow access to the 'Diagnostics: Halt system' page."
-msgstr ""
+msgstr "ページ：'ホルトシステム診断プログラム」へのアクセスを許可します。"
 
 #: etc/inc/priv.defs.inc:412 etc/inc/priv.defs.inc:430
 #: etc/inc/priv.defs.inc:436 etc/inc/priv.defs.inc:432
 #: etc/inc/priv.defs.inc:432
 msgid "WebCfg - Required for javascript page"
-msgstr ""
+msgstr "WebCfg - javascriptのページに必要な"
 
 #: etc/inc/priv.defs.inc:413 etc/inc/priv.defs.inc:431
 #: etc/inc/priv.defs.inc:437 etc/inc/priv.defs.inc:433
@@ -5189,7 +5189,7 @@ msgstr ""
 #: etc/inc/priv.defs.inc:502 etc/inc/priv.defs.inc:498
 #: etc/inc/priv.defs.inc:498
 msgid "WebCfg - Interfaces: Groups page"
-msgstr ""
+msgstr "WebCfg - インターフェース：グループ]ページ"
 
 #: etc/inc/priv.defs.inc:479 etc/inc/priv.defs.inc:497
 #: etc/inc/priv.defs.inc:503 etc/inc/priv.defs.inc:499
@@ -5201,7 +5201,7 @@ msgstr ""
 #: etc/inc/priv.defs.inc:508 etc/inc/priv.defs.inc:504
 #: etc/inc/priv.defs.inc:504
 msgid "WebCfg - Interfaces: Groups: Edit page"
-msgstr ""
+msgstr "WebCfg - インターフェース：グループ：Editページ"
 
 #: etc/inc/priv.defs.inc:485 etc/inc/priv.defs.inc:503
 #: etc/inc/priv.defs.inc:509 etc/inc/priv.defs.inc:505
@@ -5213,7 +5213,7 @@ msgstr ""
 #: etc/inc/priv.defs.inc:514 etc/inc/priv.defs.inc:510
 #: etc/inc/priv.defs.inc:510
 msgid "WebCfg - Interfaces: LAGG: page"
-msgstr ""
+msgstr "WebCfg - インターフェース：LAGG：ページ"
 
 #: etc/inc/priv.defs.inc:491 etc/inc/priv.defs.inc:497
 #: etc/inc/priv.defs.inc:509 etc/inc/priv.defs.inc:515
@@ -5227,49 +5227,49 @@ msgstr ""
 #: etc/inc/priv.defs.inc:520 etc/inc/priv.defs.inc:516
 #: etc/inc/priv.defs.inc:516
 msgid "WebCfg - Interfaces: LAGG: Edit page"
-msgstr ""
+msgstr "WebCfg - インターフェース：LAGG：Editページ"
 
 #: etc/inc/priv.defs.inc:502 etc/inc/priv.defs.inc:520
 #: etc/inc/priv.defs.inc:526 etc/inc/priv.defs.inc:522
 #: etc/inc/priv.defs.inc:522
 msgid "WebCfg - Interfaces: ppps page"
-msgstr ""
+msgstr "WebCfg - インターフェース：購買力平価ページ"
 
 #: etc/inc/priv.defs.inc:503 etc/inc/priv.defs.inc:521
 #: etc/inc/priv.defs.inc:527 etc/inc/priv.defs.inc:523
 #: etc/inc/priv.defs.inc:523
 msgid "Allow access to the 'Interfaces: ppps' page."
-msgstr ""
+msgstr "ページ： 'のPPPインタフェース」へのアクセスを許可します。"
 
 #: etc/inc/priv.defs.inc:508 etc/inc/priv.defs.inc:526
 #: etc/inc/priv.defs.inc:532 etc/inc/priv.defs.inc:528
 #: etc/inc/priv.defs.inc:528
 msgid "WebCfg - Interfaces: PPPs: Edit page"
-msgstr ""
+msgstr "WebCfg - インターフェース：購買力平価：Editページ"
 
 #: etc/inc/priv.defs.inc:509 etc/inc/priv.defs.inc:527
 #: etc/inc/priv.defs.inc:533 etc/inc/priv.defs.inc:529
 #: etc/inc/priv.defs.inc:529
 msgid "Allow access to the 'Interfaces: PPPs: Edit' page."
-msgstr ""
+msgstr "ページ'：PPPの編集インタフェース」へのアクセスを許可します。"
 
 #: etc/inc/priv.defs.inc:514 etc/inc/priv.defs.inc:532
 #: etc/inc/priv.defs.inc:538 etc/inc/priv.defs.inc:534
 #: etc/inc/priv.defs.inc:534
 msgid "WebCfg - Interfaces: QinQ page"
-msgstr ""
+msgstr "WebCfg - インターフェース：QinQサブページ"
 
 #: etc/inc/priv.defs.inc:515 etc/inc/priv.defs.inc:533
 #: etc/inc/priv.defs.inc:539 etc/inc/priv.defs.inc:535
 #: etc/inc/priv.defs.inc:535
 msgid "Allow access to the 'Interfaces: QinQ' page."
-msgstr ""
+msgstr "ページ： 'のQinQインターフェイス」へのアクセスを許可します。"
 
 #: etc/inc/priv.defs.inc:520 etc/inc/priv.defs.inc:538
 #: etc/inc/priv.defs.inc:544 etc/inc/priv.defs.inc:540
 #: etc/inc/priv.defs.inc:540
 msgid "WebCfg - Interfaces: QinQ: Edit page"
-msgstr ""
+msgstr "WebCfg - インターフェース：のQinQ：Editページ""
 
 #: etc/inc/priv.defs.inc:521 etc/inc/priv.defs.inc:539
 #: etc/inc/priv.defs.inc:545 etc/inc/priv.defs.inc:541
@@ -5281,67 +5281,67 @@ msgstr ""
 #: etc/inc/priv.defs.inc:550 etc/inc/priv.defs.inc:546
 #: etc/inc/priv.defs.inc:546
 msgid "WebCfg - Interfaces: VLAN page"
-msgstr ""
+msgstr "WebCfg - インターフェース：VLANのページ"
 
 #: etc/inc/priv.defs.inc:527 etc/inc/priv.defs.inc:545
 #: etc/inc/priv.defs.inc:551 etc/inc/priv.defs.inc:547
 #: etc/inc/priv.defs.inc:547
 msgid "Allow access to the 'Interfaces: VLAN' page."
-msgstr ""
+msgstr "Allow access to the 'Interfaces: VLAN' page."
 
 #: etc/inc/priv.defs.inc:532 etc/inc/priv.defs.inc:550
 #: etc/inc/priv.defs.inc:556 etc/inc/priv.defs.inc:552
 #: etc/inc/priv.defs.inc:552
 msgid "WebCfg - Interfaces: VLAN: Edit page"
-msgstr ""
+msgstr "WebCfg - インターフェース：VLAN：Editページ"
 
 #: etc/inc/priv.defs.inc:533 etc/inc/priv.defs.inc:551
 #: etc/inc/priv.defs.inc:557 etc/inc/priv.defs.inc:553
 #: etc/inc/priv.defs.inc:553
 msgid "Allow access to the 'Interfaces: VLAN: Edit' page."
-msgstr ""
+msgstr "ページ'：VLANの編集インタフェース」へのアクセスを許可します。"
 
 #: etc/inc/priv.defs.inc:538 etc/inc/priv.defs.inc:556
 #: etc/inc/priv.defs.inc:562 etc/inc/priv.defs.inc:558
 #: etc/inc/priv.defs.inc:558
 msgid "WebCfg - Interfaces: Wireless page"
-msgstr ""
+msgstr "WebCfg - インターフェース：ワイヤレスページ"
 
 #: etc/inc/priv.defs.inc:539 etc/inc/priv.defs.inc:557
 #: etc/inc/priv.defs.inc:563 etc/inc/priv.defs.inc:559
 #: etc/inc/priv.defs.inc:559
 msgid "Allow access to the 'Interfaces: Wireless' page."
-msgstr ""
+msgstr "ページ：「ワイヤレスインターフェース」へのアクセスを許可します。"
 
 #: etc/inc/priv.defs.inc:544 etc/inc/priv.defs.inc:562
 #: etc/inc/priv.defs.inc:568 etc/inc/priv.defs.inc:564
 #: etc/inc/priv.defs.inc:564
 msgid "WebCfg - Interfaces: Wireless edit page"
-msgstr ""
+msgstr "WebCfg - インターフェース：ワイヤレスEditページ"
 
 #: etc/inc/priv.defs.inc:545 etc/inc/priv.defs.inc:563
 #: etc/inc/priv.defs.inc:569 etc/inc/priv.defs.inc:565
 #: etc/inc/priv.defs.inc:565
 msgid "Allow access to the 'Interfaces: Wireless : Edit' page."
-msgstr ""
+msgstr "ページ'：ワイヤレス編集インタフェース」へのアクセスを許可します。"
 
 #: etc/inc/priv.defs.inc:550 etc/inc/priv.defs.inc:568
 #: etc/inc/priv.defs.inc:574 etc/inc/priv.defs.inc:570
 #: etc/inc/priv.defs.inc:570
 msgid "WebCfg - System: License page"
-msgstr ""
+msgstr "WebCfg - システム：ライセンスページ"
 
 #: etc/inc/priv.defs.inc:551 etc/inc/priv.defs.inc:569
 #: etc/inc/priv.defs.inc:575 etc/inc/priv.defs.inc:571
 #: etc/inc/priv.defs.inc:571
 msgid "Allow access to the 'System: License' page."
-msgstr ""
+msgstr "ページ：「ライセンスシステム」へのアクセスを許可します。"
 
 #: etc/inc/priv.defs.inc:556 etc/inc/priv.defs.inc:574
 #: etc/inc/priv.defs.inc:580 etc/inc/priv.defs.inc:576
 #: etc/inc/priv.defs.inc:576
 msgid "WebCfg - Services: Load Balancer: Monitors page"
-msgstr ""
+msgstr "WebCfg - サービス：監視]ページ：ロードバランサ"
 
 #: etc/inc/priv.defs.inc:557 etc/inc/priv.defs.inc:575
 #: etc/inc/priv.defs.inc:581 etc/inc/priv.defs.inc:577
@@ -5353,19 +5353,19 @@ msgstr ""
 #: etc/inc/priv.defs.inc:586 etc/inc/priv.defs.inc:582
 #: etc/inc/priv.defs.inc:582
 msgid "WebCfg - Services: Load Balancer: Monitor: Edit page"
-msgstr ""
+msgstr "WebCfg - サービス：モニタ：Editページロードバランサ"
 
 #: etc/inc/priv.defs.inc:563 etc/inc/priv.defs.inc:581
 #: etc/inc/priv.defs.inc:587 etc/inc/priv.defs.inc:583
 #: etc/inc/priv.defs.inc:583
 msgid "Allow access to the 'Services: Load Balancer: Monitor: Edit' page."
-msgstr ""
+msgstr "Allow access to the 'Services: Load Balancer: Monitor: Edit' page."
 
 #: etc/inc/priv.defs.inc:568 etc/inc/priv.defs.inc:586
 #: etc/inc/priv.defs.inc:592 etc/inc/priv.defs.inc:588
 #: etc/inc/priv.defs.inc:588
 msgid "WebCfg - Load Balancer: Pool page"
-msgstr ""
+msgstr "WebCfg - ロード·バランサ：プールページを"
 
 #: etc/inc/priv.defs.inc:569 etc/inc/priv.defs.inc:587
 #: etc/inc/priv.defs.inc:593 etc/inc/priv.defs.inc:589
@@ -5377,7 +5377,7 @@ msgstr ""
 #: etc/inc/priv.defs.inc:598 etc/inc/priv.defs.inc:594
 #: etc/inc/priv.defs.inc:594
 msgid "WebCfg - Load Balancer: Pool: Edit page"
-msgstr ""
+msgstr "WebCfg - ロード·バランサ：プール：Editページ"
 
 #: etc/inc/priv.defs.inc:575 etc/inc/priv.defs.inc:593
 #: etc/inc/priv.defs.inc:599 etc/inc/priv.defs.inc:595
@@ -5389,7 +5389,7 @@ msgstr ""
 #: etc/inc/priv.defs.inc:604 etc/inc/priv.defs.inc:600
 #: etc/inc/priv.defs.inc:600
 msgid "WebCfg - Services: Load Balancer: Relay Actions page"
-msgstr ""
+msgstr "WebCfg - サービス：リレーアクション]ページ：ロードバランサ"
 
 #: etc/inc/priv.defs.inc:581 etc/inc/priv.defs.inc:599
 #: etc/inc/priv.defs.inc:605 etc/inc/priv.defs.inc:601
@@ -5401,7 +5401,7 @@ msgstr ""
 #: etc/inc/priv.defs.inc:610 etc/inc/priv.defs.inc:606
 #: etc/inc/priv.defs.inc:606
 msgid "WebCfg - Services: Load Balancer: Relay Action: Edit page"
-msgstr ""
+msgstr "WebCfg - サービス：リレー動作：Editページバランサをロード"
 
 #: etc/inc/priv.defs.inc:587 etc/inc/priv.defs.inc:605
 #: etc/inc/priv.defs.inc:611 etc/inc/priv.defs.inc:607
@@ -5413,19 +5413,19 @@ msgstr ""
 #: etc/inc/priv.defs.inc:616 etc/inc/priv.defs.inc:612
 #: etc/inc/priv.defs.inc:612
 msgid "WebCfg - Services: Load Balancer: Relay Protocols page"
-msgstr ""
+msgstr "WebCfg - サービス：ロード·バランサ：リレープロトコル]ページを"
 
 #: etc/inc/priv.defs.inc:593 etc/inc/priv.defs.inc:611
 #: etc/inc/priv.defs.inc:617 etc/inc/priv.defs.inc:613
 #: etc/inc/priv.defs.inc:613
 msgid "Allow access to the 'Services: Load Balancer: Relay Protocols' page."
-msgstr ""
+msgstr "へのアクセスを許可する'サービス：ロード·バランサ：リレー·プロトコル」のページを。"
 
 #: etc/inc/priv.defs.inc:598 etc/inc/priv.defs.inc:616
 #: etc/inc/priv.defs.inc:622 etc/inc/priv.defs.inc:618
 #: etc/inc/priv.defs.inc:618
 msgid "WebCfg - Services: Load Balancer: Relay Protocol: Edit page"
-msgstr ""
+msgstr "WebCfg - サービス：リレープロトコル：：Editページバランサをロード"
 
 #: etc/inc/priv.defs.inc:599 etc/inc/priv.defs.inc:617
 #: etc/inc/priv.defs.inc:623 etc/inc/priv.defs.inc:619
@@ -5433,12 +5433,13 @@ msgstr ""
 msgid ""
 "Allow access to the 'Services: Load Balancer: Relay Protocol: Edit' page."
 msgstr ""
+"へのアクセスを許可する'サービス：ロード·バランサ：リレープロトコル：編集'ページ。"
 
 #: etc/inc/priv.defs.inc:604 etc/inc/priv.defs.inc:622
 #: etc/inc/priv.defs.inc:628 etc/inc/priv.defs.inc:624
 #: etc/inc/priv.defs.inc:624
 msgid "WebCfg - Services: Load Balancer: Virtual Servers page"
-msgstr ""
+msgstr "WebCfg - サービス：ロード·バランサ：仮想サーバーのページを"
 
 #: etc/inc/priv.defs.inc:605 etc/inc/priv.defs.inc:623
 #: etc/inc/priv.defs.inc:629 etc/inc/priv.defs.inc:625
@@ -5450,7 +5451,7 @@ msgstr ""
 #: etc/inc/priv.defs.inc:634 etc/inc/priv.defs.inc:630
 #: etc/inc/priv.defs.inc:630
 msgid "WebCfg - Load Balancer: Virtual Server: Edit page"
-msgstr ""
+msgstr "WebCfg - ロード·バランサ：仮想サーバー：Editページ"
 
 #: etc/inc/priv.defs.inc:611 etc/inc/priv.defs.inc:629
 #: etc/inc/priv.defs.inc:635 etc/inc/priv.defs.inc:631
@@ -5486,19 +5487,19 @@ msgstr ""
 #: etc/inc/priv.defs.inc:652 etc/inc/priv.defs.inc:648
 #: etc/inc/priv.defs.inc:648
 msgid "WebCfg - System: Package Manager page"
-msgstr ""
+msgstr "WebCfg - システム：パッケージマネージャ]ページ"
 
 #: etc/inc/priv.defs.inc:629 etc/inc/priv.defs.inc:647
 #: etc/inc/priv.defs.inc:653 etc/inc/priv.defs.inc:649
 #: etc/inc/priv.defs.inc:649
 msgid "Allow access to the 'System: Package Manager' page."
-msgstr ""
+msgstr "ページ：'パッケージマネージャシステム」へのアクセスを可能にする。"
 
 #: etc/inc/priv.defs.inc:634 etc/inc/priv.defs.inc:652
 #: etc/inc/priv.defs.inc:658 etc/inc/priv.defs.inc:654
 #: etc/inc/priv.defs.inc:654
 msgid "WebCfg - System: Package Manager: Install Package page"
-msgstr ""
+msgstr "WebCfg - システム：パッケージマネージャ：パッケージのインストール]ページ"
 
 #: etc/inc/priv.defs.inc:635 etc/inc/priv.defs.inc:653
 #: etc/inc/priv.defs.inc:659 etc/inc/priv.defs.inc:655
@@ -5510,7 +5511,7 @@ msgstr ""
 #: etc/inc/priv.defs.inc:664 etc/inc/priv.defs.inc:660
 #: etc/inc/priv.defs.inc:660
 msgid "WebCfg - System: Package Manager: Installed page"
-msgstr ""
+msgstr "WebCfg - システム：パッケージマネージャ：インストールページ"
 
 #: etc/inc/priv.defs.inc:641 etc/inc/priv.defs.inc:659
 #: etc/inc/priv.defs.inc:665 etc/inc/priv.defs.inc:661
@@ -5522,7 +5523,7 @@ msgstr ""
 #: etc/inc/priv.defs.inc:670 etc/inc/priv.defs.inc:666
 #: etc/inc/priv.defs.inc:666
 msgid "WebCfg - Packages: Settings page"
-msgstr ""
+msgstr "WebCfg - パッケージ：Settingsページ"
 
 #: etc/inc/priv.defs.inc:647 etc/inc/priv.defs.inc:665
 #: etc/inc/priv.defs.inc:671 etc/inc/priv.defs.inc:667
@@ -5534,7 +5535,7 @@ msgstr ""
 #: etc/inc/priv.defs.inc:676 etc/inc/priv.defs.inc:672
 #: etc/inc/priv.defs.inc:672
 msgid "WebCfg - Diagnostics: Reboot System page"
-msgstr ""
+msgstr "WebCfg - 診断：再起動システムページ"
 
 #: etc/inc/priv.defs.inc:653 etc/inc/priv.defs.inc:671
 #: etc/inc/priv.defs.inc:677 etc/inc/priv.defs.inc:673
@@ -5546,7 +5547,7 @@ msgstr ""
 #: etc/inc/priv.defs.inc:682 etc/inc/priv.defs.inc:678
 #: etc/inc/priv.defs.inc:678
 msgid "WebCfg - Diagnostics: Restart HTTPD : System page"
-msgstr ""
+msgstr "WebCfg - 診断：再起動HTTPD：システムページ"
 
 #: etc/inc/priv.defs.inc:659 etc/inc/priv.defs.inc:677
 #: etc/inc/priv.defs.inc:683 etc/inc/priv.defs.inc:679
@@ -5558,7 +5559,7 @@ msgstr ""
 #: etc/inc/priv.defs.inc:688 etc/inc/priv.defs.inc:684
 #: etc/inc/priv.defs.inc:684
 msgid "WebCfg - Services: Captive portal page"
-msgstr ""
+msgstr "WebCfg - サービス：キャプティブポータルページ"
 
 #: etc/inc/priv.defs.inc:665 etc/inc/priv.defs.inc:683
 #: etc/inc/priv.defs.inc:689 etc/inc/priv.defs.inc:685
@@ -5570,13 +5571,13 @@ msgstr ""
 #: etc/inc/priv.defs.inc:694 etc/inc/priv.defs.inc:690
 #: etc/inc/priv.defs.inc:690
 msgid "WebCfg - Services: Captive portal: File Manager page"
-msgstr ""
+msgstr "WebCfg - サービス：キャプティブポータル：ファイルマネージャページ"
 
 #: etc/inc/priv.defs.inc:671 etc/inc/priv.defs.inc:689
 #: etc/inc/priv.defs.inc:695 etc/inc/priv.defs.inc:691
 #: etc/inc/priv.defs.inc:691
 msgid "Allow access to the 'Services: Captive portal: File Manager' page."
-msgstr ""
+msgstr "ページ'：キャプティブポータルファイルマネージャサービス」へのアクセスを許可します。"
 
 #: etc/inc/priv.defs.inc:676 etc/inc/priv.defs.inc:688
 #: etc/inc/priv.defs.inc:694 etc/inc/priv.defs.inc:706
@@ -5584,7 +5585,7 @@ msgstr ""
 #: etc/inc/priv.defs.inc:696 etc/inc/priv.defs.inc:708
 #: etc/inc/priv.defs.inc:696 etc/inc/priv.defs.inc:708
 msgid "WebCfg - Services: Captive portal: Allowed IPs page"
-msgstr ""
+msgstr "WebCfg - サービス：キャプティブポータル：可IPアドレスページ"
 
 #: etc/inc/priv.defs.inc:677 etc/inc/priv.defs.inc:689
 #: etc/inc/priv.defs.inc:695 etc/inc/priv.defs.inc:707
@@ -5592,7 +5593,7 @@ msgstr ""
 #: etc/inc/priv.defs.inc:697 etc/inc/priv.defs.inc:709
 #: etc/inc/priv.defs.inc:697 etc/inc/priv.defs.inc:709
 msgid "Allow access to the 'Services: Captive portal: Allowed IPs' page."
-msgstr ""
+msgstr "ページ'：キャプティブポータル可のIPサービス」へのアクセスを許可します。"
 
 #: etc/inc/priv.defs.inc:682 etc/inc/priv.defs.inc:694
 #: etc/inc/priv.defs.inc:700 etc/inc/priv.defs.inc:712
@@ -5600,7 +5601,7 @@ msgstr ""
 #: etc/inc/priv.defs.inc:702 etc/inc/priv.defs.inc:714
 #: etc/inc/priv.defs.inc:702 etc/inc/priv.defs.inc:714
 msgid "WebCfg - Services: Captive portal: Edit Allowed IPs page"
-msgstr ""
+msgstr "WebCfg - サービス：キャプティブポータル：編集可のIPページ"
 
 #: etc/inc/priv.defs.inc:683 etc/inc/priv.defs.inc:695
 #: etc/inc/priv.defs.inc:701 etc/inc/priv.defs.inc:713
@@ -5614,7 +5615,7 @@ msgstr ""
 #: etc/inc/priv.defs.inc:724 etc/inc/priv.defs.inc:720
 #: etc/inc/priv.defs.inc:720
 msgid "WebCfg - Services: Captive portal: Mac Addresses page"
-msgstr ""
+msgstr "WebCfg - サービス：キャプティブポータル：MACアドレスのページ"
 
 #: etc/inc/priv.defs.inc:701 etc/inc/priv.defs.inc:719
 #: etc/inc/priv.defs.inc:725 etc/inc/priv.defs.inc:721
@@ -5626,7 +5627,7 @@ msgstr ""
 #: etc/inc/priv.defs.inc:730 etc/inc/priv.defs.inc:726
 #: etc/inc/priv.defs.inc:726
 msgid "WebCfg - Services: Captive portal: Edit MAC Addresses page"
-msgstr ""
+msgstr "WebCfg - サービス：キャプティブポータル：編集のMACアドレス]ページ"
 
 #: etc/inc/priv.defs.inc:707 etc/inc/priv.defs.inc:725
 #: etc/inc/priv.defs.inc:731 etc/inc/priv.defs.inc:727
@@ -5639,7 +5640,7 @@ msgstr ""
 #: etc/inc/priv.defs.inc:736 etc/inc/priv.defs.inc:744
 #: etc/inc/priv.defs.inc:744
 msgid "WebCfg - Services: Captive portal Vouchers page"
-msgstr ""
+msgstr "WebCfg - サービス：キャプティブポータルバウチャーページ"
 
 #: etc/inc/priv.defs.inc:713 etc/inc/priv.defs.inc:731
 #: etc/inc/priv.defs.inc:737 etc/inc/priv.defs.inc:745
@@ -5651,19 +5652,19 @@ msgstr ""
 #: etc/inc/priv.defs.inc:748 etc/inc/priv.defs.inc:756
 #: etc/inc/priv.defs.inc:756
 msgid "WebCfg - Services: DHCP server page"
-msgstr ""
+msgstr "WebCfg - サービス：DHCP Serverページ"
 
 #: etc/inc/priv.defs.inc:725 etc/inc/priv.defs.inc:743
 #: etc/inc/priv.defs.inc:749 etc/inc/priv.defs.inc:757
 #: etc/inc/priv.defs.inc:757
 msgid "Allow access to the 'Services: DHCP server' page."
-msgstr ""
+msgstr "ページ：「DHCPサーバサービス」へのアクセスを許可します。"
 
 #: etc/inc/priv.defs.inc:730 etc/inc/priv.defs.inc:748
 #: etc/inc/priv.defs.inc:754 etc/inc/priv.defs.inc:762
 #: etc/inc/priv.defs.inc:762
 msgid "WebCfg - Services: DHCP Server : Edit static mapping page"
-msgstr ""
+msgstr "WebCfg - サービス：DHCPサーバ：静的マッピングページを編集"
 
 #: etc/inc/priv.defs.inc:731 etc/inc/priv.defs.inc:749
 #: etc/inc/priv.defs.inc:755 etc/inc/priv.defs.inc:763
@@ -5675,7 +5676,7 @@ msgstr ""
 #: etc/inc/priv.defs.inc:760 etc/inc/priv.defs.inc:768
 #: etc/inc/priv.defs.inc:768
 msgid "WebCfg - Services: DHCP Relay page"
-msgstr ""
+msgstr "WebCfg - サービス：DHCPリレーページ"
 
 #: etc/inc/priv.defs.inc:737 etc/inc/priv.defs.inc:755
 #: etc/inc/priv.defs.inc:761 etc/inc/priv.defs.inc:769
@@ -5687,7 +5688,7 @@ msgstr ""
 #: etc/inc/priv.defs.inc:766 etc/inc/priv.defs.inc:774
 #: etc/inc/priv.defs.inc:774
 msgid "WebCfg - Services: DHCPv6 Relay page"
-msgstr ""
+msgstr "WebCfg - Services: DHCPv6 Relay page"
 
 #: etc/inc/priv.defs.inc:743 etc/inc/priv.defs.inc:761
 #: etc/inc/priv.defs.inc:767 etc/inc/priv.defs.inc:775

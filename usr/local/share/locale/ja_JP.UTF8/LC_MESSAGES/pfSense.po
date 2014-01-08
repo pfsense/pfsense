@@ -4600,7 +4600,7 @@ msgstr ""
 #: etc/inc/priv.defs.inc:154 etc/inc/priv.defs.inc:172
 #: etc/inc/priv.defs.inc:178 etc/inc/priv.defs.inc:178
 msgid "WebCfg - Diagnostics: Logs: Settings page"
-msgstr ""
+msgstr "WebCfg - 診断：ログ：[設定]ページ"
 
 #: etc/inc/priv.defs.inc:155 etc/inc/priv.defs.inc:173
 #: etc/inc/priv.defs.inc:179 etc/inc/priv.defs.inc:179
@@ -4690,32 +4690,32 @@ msgstr ""
 #: etc/inc/priv.defs.inc:214 etc/inc/priv.defs.inc:232
 #: etc/inc/priv.defs.inc:238 etc/inc/priv.defs.inc:238
 msgid "WebCfg - Diagnostics: States Summary page"
-msgstr ""
+msgstr "WebCfg - 診断：米国の概要]ページ"
 
 #: etc/inc/priv.defs.inc:215 etc/inc/priv.defs.inc:233
 #: etc/inc/priv.defs.inc:239 etc/inc/priv.defs.inc:239
 msgid "Allow access to the 'Diagnostics: States Summary' page."
-msgstr ""
+msgstr "へのアクセスを許可する「診断：米国概略]ページ。"
 
 #: etc/inc/priv.defs.inc:232 etc/inc/priv.defs.inc:250
 #: etc/inc/priv.defs.inc:256 etc/inc/priv.defs.inc:256
 msgid "WebCfg - Diagnostics: PF Table IP addresses"
-msgstr ""
+msgstr "WebCfg - 診断：PF表のIPアドレス"
 
 #: etc/inc/priv.defs.inc:233 etc/inc/priv.defs.inc:251
 #: etc/inc/priv.defs.inc:257 etc/inc/priv.defs.inc:257
 msgid "Allow access to the 'Diagnostics: Tables' page."
-msgstr ""
+msgstr "ページ：「表の診断」へのアクセスを許可します。"
 
 #: etc/inc/priv.defs.inc:238 etc/inc/priv.defs.inc:256
 #: etc/inc/priv.defs.inc:262 etc/inc/priv.defs.inc:262
 msgid "WebCfg - Diagnostics: Traceroute page"
-msgstr ""
+msgstr "WebCfg - 診断：tracerouteのページ"
 
 #: etc/inc/priv.defs.inc:239 etc/inc/priv.defs.inc:257
 #: etc/inc/priv.defs.inc:263 etc/inc/priv.defs.inc:263
 msgid "Allow access to the 'Diagnostics: Traceroute' page."
-msgstr ""
+msgstr "ページ：「トレースルート診断」へのアクセスを許可します。"
 
 #: etc/inc/priv.defs.inc:244 etc/inc/priv.defs.inc:262
 #: etc/inc/priv.defs.inc:268 etc/inc/priv.defs.inc:268

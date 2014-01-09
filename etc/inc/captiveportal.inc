@@ -551,9 +551,7 @@ EOD;
 
 	if (isset($config['captiveportal'][$cpzone]['httpslogin'])) {
 		$listenporthttps = $listenporthttp + 1;
-		if (!isset($config['captiveportal'][$cpzone]['nohttpsforwards'])) {
-			$cprules .= "add 65531 fwd 127.0.0.1,{$listenporthttps} tcp from any to any dst-port 443 in\n";
-		}
+		$cprules .= "add 65531 fwd 127.0.0.1,{$listenporthttps} tcp from any to any dst-port 443 in\n";
 	}
 	
 	$cprules .= <<<EOD

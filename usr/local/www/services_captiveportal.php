@@ -106,7 +106,6 @@ if ($a_cp[$cpzone]) {
 	$pconfig['httpsname'] = $a_cp[$cpzone]['httpsname'];
 	$pconfig['preauthurl'] = strtolower($a_cp[$cpzone]['preauthurl']);
 	$pconfig['certref'] = $a_cp[$cpzone]['certref'];
-	$pconfig['nohttpsforwards'] = isset($a_cp[$cpzone]['nohttpsforwards']);
 	$pconfig['logoutwin_enable'] = isset($a_cp[$cpzone]['logoutwin_enable']);
 	$pconfig['peruserbw'] = isset($a_cp[$cpzone]['peruserbw']);
 	$pconfig['bwdefaultdn'] = $a_cp[$cpzone]['bwdefaultdn'];
@@ -284,7 +283,6 @@ if ($_POST) {
 		$newcp['bwdefaultdn'] = $_POST['bwdefaultdn'];
 		$newcp['bwdefaultup'] = $_POST['bwdefaultup'];
 		$newcp['certref'] = $_POST['certref'];
-		$newcp['nohttpsforwards'] = $_POST['nohttpsforwards'] ? true : false;
 		$newcp['logoutwin_enable'] = $_POST['logoutwin_enable'] ? true : false;
 		$newcp['nomacfilter'] = $_POST['nomacfilter'] ? true : false;
 		$newcp['noconcurrentlogins'] = $_POST['noconcurrentlogins'] ? true : false;
@@ -408,7 +406,6 @@ function enable_change(enable_change) {
 	document.iform.radmac_format.disabled = radius_endis;
 	document.iform.httpsname.disabled = https_endis;
 	document.iform.certref.disabled = https_endis;
-	document.iform.nohttpsforwards.disabled = https_endis;
 	document.iform.logoutwin_enable.disabled = endis;
 	document.iform.nomacfilter.disabled = endis;
 	document.iform.noconcurrentlogins.disabled = endis;
@@ -907,13 +904,6 @@ function enable_change(enable_change) {
 				<b><?=gettext("No Certificates defined."); ?></b> <br/>Create one under <a href="system_certmanager.php">System &gt; Cert Manager</a>.
 			<?php endif; ?>
 		</td>
-	</tr>
-	<tr>
-      <td valign="top" class="vncell"><?=gettext("Disable HTTPS forwards"); ?></td>
-      <td class="vtable">
-	<input name="nohttpsforwards" type="checkbox" class="formfld" id="nohttpsforwards" value="yes" <?php if ($pconfig['nohttpsforwards']) echo "checked"; ?>>
-	<strong><?=gettext("Disable HTTPS forwards"); ?></strong><br>
-	<?=gettext("If this option is set, attempts to connect to SSL/HTTPS (Port 443) sites will not be forwarded to the captive portal.  This prevents certificate errors from being presented to the user even if HTTPS logins are enabled.  Users must attempt a connecton to an HTTP (Port 80) site to get forwarded to the captive portal. If HTTPS logins are enabled, the user will be redirected to the HTTPS login page."); ?></td>
 	</tr>
 	<tr>
 		<td width="22%" valign="top" class="vncell"><?=gettext("Portal page contents"); ?></td>

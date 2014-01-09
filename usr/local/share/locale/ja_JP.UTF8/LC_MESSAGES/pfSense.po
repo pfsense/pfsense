@@ -521,7 +521,6 @@ msgstr "プラグイン完了"
 #: usr/local/www/restart_httpd.php:58 usr/local/www/restart_httpd.php:61
 #: etc/inc/filter.inc:397
 msgid "Done"
-# ikenote: TODO - this may not be the right way to say it
 msgstr "行う"
 
 #: etc/inc/filter.inc:636 etc/inc/filter.inc:649 etc/inc/filter.inc:652
@@ -5734,7 +5733,7 @@ msgstr "ページ：' 、RFC 2136のクライアント·サービス」へのア
 #: etc/inc/priv.defs.inc:820 etc/inc/priv.defs.inc:828
 #: etc/inc/priv.defs.inc:828
 msgid "WebCfg - Services: SNMP page"
-msgstr "TODO: machine translation failed"
+msgstr "WebCfg - サービス：SNMP]ページ"
 
 #: etc/inc/priv.defs.inc:797 etc/inc/priv.defs.inc:815
 #: etc/inc/priv.defs.inc:821 etc/inc/priv.defs.inc:829
@@ -5854,7 +5853,7 @@ msgstr "へのアクセスを許可します。ページ「ステータスをリ
 #: etc/inc/priv.defs.inc:886 etc/inc/priv.defs.inc:894
 #: etc/inc/priv.defs.inc:894
 msgid "WebCfg - Status: Gateway Groups page"
-msgstr "TODO: machine translation failed"
+msgstr "WebCfg - ステータス：ゲートウェイグループ]"
 
 #: etc/inc/priv.defs.inc:863 etc/inc/priv.defs.inc:881
 #: etc/inc/priv.defs.inc:887 etc/inc/priv.defs.inc:895
@@ -6194,7 +6193,7 @@ msgstr "ページ'：ファームウェアの設定システム」へのアク�
 #: etc/inc/priv.defs.inc:1062 etc/inc/priv.defs.inc:1070
 #: etc/inc/priv.defs.inc:1070
 msgid "WebCfg - System: Gateway Groups page"
-msgstr "TODO: machine translation failed"
+msgstr "WebCfg - システム：ゲートウェイグループ]"
 
 #: etc/inc/priv.defs.inc:1039 etc/inc/priv.defs.inc:1057
 #: etc/inc/priv.defs.inc:1063 etc/inc/priv.defs.inc:1071
@@ -6206,7 +6205,7 @@ msgstr "ページ：'ゲートウェイグループシステム」へのアク�
 #: etc/inc/priv.defs.inc:1068 etc/inc/priv.defs.inc:1076
 #: etc/inc/priv.defs.inc:1076
 msgid "WebCfg - System: Gateways: Edit Gateway Groups page"
-msgstr "TODO: machine translation failed"
+msgstr "WebCfg - システム：ゲートウェイ：編集ゲートウェイグループ]"
 
 #: etc/inc/priv.defs.inc:1045 etc/inc/priv.defs.inc:1063
 #: etc/inc/priv.defs.inc:1069 etc/inc/priv.defs.inc:1077
@@ -6266,7 +6265,7 @@ msgstr "へのアクセスを許可する」 ：グループ·マネージャー
 #: etc/inc/priv.defs.inc:1098 etc/inc/priv.defs.inc:1106
 #: etc/inc/priv.defs.inc:1106
 msgid "WebCfg - System: Static Routes page"
-msgstr "TODO: machine translation failed"
+msgstr "WebCfg - システム：静的ルート]ページ"
 
 #: etc/inc/priv.defs.inc:1075 etc/inc/priv.defs.inc:1093
 #: etc/inc/priv.defs.inc:1099 etc/inc/priv.defs.inc:1107
@@ -6302,7 +6301,7 @@ msgstr "ページ： 「ユーザーマネージャシステム」へのアク�
 #: etc/inc/priv.defs.inc:1116 etc/inc/priv.defs.inc:1124
 #: etc/inc/priv.defs.inc:1124
 msgid "WebCfg - System: User Manager: Add Privileges page"
-msgstr "TODO: machine translation failed"
+msgstr "WebCfg - システム：ユーザーマネージャ：権限]ページを追加する"
 
 #: etc/inc/priv.defs.inc:1093 etc/inc/priv.defs.inc:1111
 #: etc/inc/priv.defs.inc:1117 etc/inc/priv.defs.inc:1125
@@ -6314,7 +6313,7 @@ msgstr "ページ'：ユーザーマネージャの権限の追加システム�
 #: etc/inc/priv.defs.inc:1122 etc/inc/priv.defs.inc:1130
 #: etc/inc/priv.defs.inc:1130
 msgid "WebCfg - System: User Password Manager page"
-msgstr "TODO: machine translation failed"
+msgstr "WebCfg - システム：ユーザーパスワードマネージャ]ページ"
 
 #: etc/inc/priv.defs.inc:1099 etc/inc/priv.defs.inc:1117
 #: etc/inc/priv.defs.inc:1123 etc/inc/priv.defs.inc:1131
@@ -6361,7 +6360,7 @@ msgstr "ページ"' ：ファームウェア：手動アップデートプログ
 #: etc/inc/priv.defs.inc:1146 etc/inc/priv.defs.inc:1154
 #: etc/inc/priv.defs.inc:1154
 msgid "WebCfg - Hidden: Upload Configuration page"
-msgstr "TODO: machine translation failed"
+msgstr "WebCfg - 非表示：アップロード設定]ページが"
 
 #: etc/inc/priv.defs.inc:1123 etc/inc/priv.defs.inc:1141
 #: etc/inc/priv.defs.inc:1147 etc/inc/priv.defs.inc:1155
@@ -9021,7 +9020,7 @@ msgstr "ルールを"これは主に追加するときにエラーを表示す�
 msgid ""
 "This page is meant to be called from the block/pass buttons on the Firewall "
 "Logs page"
-msgstr "TODO: machine translation failed"
+msgstr "このページは、ファイアウォールのログページ上のブロック/パスボタンから呼び出されることを意図して"
 
 #: usr/local/www/easyrule.php:75 usr/local/www/diag_logs.php:65
 #: usr/local/www/diag_logs_auth.php:54 usr/local/www/diag_logs_dhcp.php:59
@@ -11584,7 +11583,7 @@ msgstr "ワイヤレス"
 #: usr/local/www/diag_logs_resolver.php:89
 #: usr/local/www/diag_logs_filter_summary.php:195
 msgid "Settings"
-msgstr "TODO: machine translation failed"
+msgstr "セッティング"
 
 #: usr/local/www/diag_logs.php:98 usr/local/www/diag_logs_resolver.php:110
 #: usr/local/www/diag_logs.php:109 usr/local/www/diag_logs_gateways.php:110
@@ -13235,7 +13234,7 @@ msgstr "検査のために開発者は「あなたはpfSenseにプログラミ�
 msgid ""
 "Please double check the contents to ensure you are comfortable sending this "
 "information before clicking Yes."
-msgstr "TODO: machine translation failed"
+msgstr "[はい]をクリックする前にこの情報を送信することで快適であることを確認するために内容を再確認してください。"
 
 #: usr/local/www/crash_reporter.php:73 usr/local/www/crash_reporter.php:73
 msgid "Contents of crash reports"
@@ -19600,7 +19599,7 @@ msgstr "NATルールを表示する"
 #: usr/local/www/firewall_rules_edit.php:817
 #: usr/local/www/firewall_rules_edit.php:817
 msgid "Choose on which interface packets must come in to match this rule."
-msgstr "TODO: machine translation failed"
+msgstr "たインターフェイスパケットがこのルールに一致するには来なければなりません]を選択します。"
 
 #: usr/local/www/firewall_rules_edit.php:774
 #: usr/local/www/services_captiveportal_ip_edit.php:178
@@ -23543,7 +23542,7 @@ msgstr "再起動が必要になる。再起動するために設定を適用し
 msgid ""
 "Interface mismatch detected. Please resolve the mismatch and click Save. "
 "The firewall will reboot afterwards."
-msgstr "TODO: machine translation failed"
+msgstr "ファイアウォールは、その後再起動します。"
 
 #: usr/local/www/interfaces_assign.php:390
 #: usr/local/www/interfaces_assign.php:384
@@ -25723,7 +25722,7 @@ msgstr "ERR設定を保存できませんでした。"
 
 #: usr/local/www/uploadconfig.php:54 usr/local/www/uploadconfig.php:54
 msgid "OK"
-msgstr "TODO: machine translation failed"
+msgstr "[OK]"
 
 #: usr/local/www/uploadconfig.php:57 usr/local/www/uploadconfig.php:57
 msgid "ERR Could not install configuration."
@@ -26186,7 +26185,7 @@ msgstr "「 DNSのデフォルトドメイン」の有効な値を指定する�
 #: usr/local/www/vpn_ipsec_mobile.php:159
 msgid ""
 "At least one DNS server must be specified to enable the DNS Server option."
-msgstr "TODO: machine translation failed"
+msgstr "At least one DNS server must be specified to enable the DNS Server option."
 
 #: usr/local/www/vpn_ipsec_mobile.php:145
 #: usr/local/www/vpn_ipsec_mobile.php:161
@@ -26217,7 +26216,7 @@ msgstr "「 DNSサーバーの有効なIPアドレス"
 #: usr/local/www/vpn_ipsec_mobile.php:172
 msgid ""
 "At least one WINS server must be specified to enable the DNS Server option."
-msgstr "TODO: machine translation failed"
+msgstr "少なくとも1 WINSサーバは、DNSサーバー]オプションを有効にするために指定する必要があります。"
 
 #: usr/local/www/vpn_ipsec_mobile.php:158
 #: usr/local/www/vpn_ipsec_mobile.php:174
@@ -26255,7 +26254,7 @@ msgstr "「 IPsecのモバイル·クライアントのサポートが有効に�
 #: usr/local/www/vpn_ipsec_mobile.php:335
 #: usr/local/www/vpn_ipsec_mobile.php:335
 msgid "Please click Create to define one."
-msgstr "TODO: machine translation failed"
+msgstr "これらのいずれかを定義するために作成]をクリックしてください。"
 
 #: usr/local/www/vpn_ipsec_mobile.php:308
 #: usr/local/www/vpn_ipsec_mobile.php:335
@@ -27301,7 +27300,7 @@ msgstr "「あなたは、既存のエントリを編集して、インターフ
 #: usr/local/www/interfaces_qinq_edit.php:93
 #: usr/local/www/interfaces_qinq_edit.php:93
 msgid "QinQ level already exists for this interface, edit it!"
-msgstr "TODO: machine translation failed"
+msgstr "このインターフェイスは、それを編集するためにQinQのレベルがすでに存在しています！"
 
 #: usr/local/www/interfaces_qinq_edit.php:96
 #: usr/local/www/interfaces_qinq_edit.php:97
@@ -27796,7 +27795,7 @@ msgstr "プールに項目を追加する"
 msgid ""
 "Please add a monitor IP address on the monitors tab if you wish to use this "
 "feature."
-msgstr "TODO: machine translation failed"
+msgstr "この機能を使用する場合のモニタ]タブで監視IPアドレスを追加してください。"
 
 #: usr/local/www/load_balancer_pool_edit.php:244
 #: usr/local/www/load_balancer_pool_edit.php:261
@@ -27941,7 +27940,7 @@ msgstr "仮想サーバー·プール"
 #: usr/local/www/load_balancer_virtual_server_edit.php:199
 #: usr/local/www/load_balancer_virtual_server_edit.php:218
 msgid "Please add a pool on the Pools tab to use this feature."
-msgstr "TODO: machine translation failed"
+msgstr "この機能を使用するには、プール]タブの[プールを追加してください。"
 
 #: usr/local/www/load_balancer_virtual_server_edit.php:244
 #: usr/local/www/load_balancer_virtual_server_edit.php:233
@@ -31878,7 +31877,7 @@ msgid ""
 "requesting a DHCP lease will be registered in the DNS forwarder, so that "
 "their name can be resolved. You should also set the domain in %sSystem: "
 "General setup%s to the proper value."
-msgstr "「このオプションが設定されている場合は、とき彼らのホスト名を指定してマシン""自分の名前を入手し%sSystemドメインを設定する必要が解決することができます。 ： "ようにDHCPリースを要求するには、 DNSフォワーダに登録されます一般setupfooを。適切な値にね。"
+msgstr "「このオプションが設定されている場合は、とき彼らのホスト名を指定してマシン""自分の名前を入手し%sSystemドメインを設定する必要が解決することができます。 ： "ようにDHCPリースを要求するには、 DNSフォワーダに登録されます一般setup%sを。適切な値にね。"
 
 #: usr/local/www/services_dnsmasq.php:173
 #: usr/local/www/services_unbound.php:223
@@ -31973,7 +31972,7 @@ msgid ""
 "WAN&quot; is checked. If you don't use that option (or if you use a static "
 "IP address on WAN), you must manually specify at least one DNS server on the "
 "%sSystem:General setup%s page."
-msgstr "「 DNSフォワーダが有効になっている場合は、 DHCPサービス（有効な場合）がします」が自動的ので、「彼らはフォワーダを使用します。 DNSフォワーダは、 DNSサーバーを使用します"DHCPクライアントにDNSサーバーとしてLAN IPアドレスを提供するのfooに入力された。 ■システム：一般setup%sまたは許可されているDNSサーバリスト「WAN」でのDHCP / PPPによって無効にされるように「IF WAN 」がチェックされている上でのDHCPやPPPを介して得られたもの。あなたはそのオプションを使用しない（または静的使用する場合%sSystem 「WAN上のIPアドレス）は、手動で少なくとも1つのDNSサーバを指定する必要があります」とします。全般setup%sページ。"
+msgstr "「 DNSフォワーダが有効になっている場合は、 DHCPサービス（有効な場合）がします」が自動的ので、「彼らはフォワーダを使用します。 DNSフォワーダは、 DNSサーバーを使用します"DHCPクライアントにDNSサーバーとしてLAN IPアドレスを提供するの%sに入力された。 ■システム：一般setup%sまたは許可されているDNSサーバリスト「WAN」でのDHCP / PPPによって無効にされるように「IF WAN 」がチェックされている上でのDHCPやPPPを介して得られたもの。あなたはそのオプションを使用しない（または静的使用する場合%sSystem 「WAN上のIPアドレス）は、手動で少なくとも1つのDNSサーバを指定する必要があります」とします。全般setup%sページ。"
 
 #: usr/local/www/services_dnsmasq.php:231
 #: usr/local/www/services_unbound.php:267
@@ -33009,7 +33008,7 @@ msgid ""
 "You will need to recreate any existing Voucher Rolls due to the public and "
 "private key changes. Click cancel if you do not wish to recreate the "
 "vouchers."
-msgstr "TODO: machine translation failed"
+msgstr "あなたは、公開鍵と秘密鍵の変更による既存のバウチャーロールを再作成する必要があります。あなたが伝票を再作成したくない場合は、[キャンセル]をクリックします。"
 
 #: usr/local/www/services_captiveportal_vouchers.php:114
 #: usr/local/www/services_captiveportal_vouchers.php:123
@@ -33766,12 +33765,12 @@ msgstr "ショー"
 msgid ""
 "By enabling name resolution, the query should take a bit longer. You can "
 "stop it at any time by clicking the Stop button in your browser"
-msgstr "TODO: machine translation failed"
+msgstr "名前解決を可能にすることにより、クエリは少し時間がかかるはずです。お使いのブラウザで、[停止]ボタンをクリックすると、いつでもそれを停止することができます"
 
 #: usr/local/www/diag_traceroute.php:62 usr/local/www/diag_traceroute.php:63
 #: usr/local/www/diag_traceroute.php:63
 msgid "ttl"
-msgstr "TTL"
+msgstr "ttl"
 
 #: usr/local/www/diag_traceroute.php:66 usr/local/www/diag_traceroute.php:67
 #: usr/local/www/diag_traceroute.php:67
@@ -33794,7 +33793,7 @@ msgstr "使用ICMP"
 msgid ""
 "Traceroute may take a while to complete. You may hit the Stop button on your "
 "browser at any time to see the progress of failed traceroutes."
-msgstr "TODO: machine translation failed"
+msgstr "tracerouteは、完了に時間がかかる場合があります。あなたが失敗したトレースルートの進行状況を確認するために、いつでもお使いのブラウザの[停止]ボタンを押すことがあります。"
 
 #: usr/local/www/diag_traceroute.php:120 usr/local/www/diag_traceroute.php:144
 #: usr/local/www/diag_traceroute.php:173 usr/local/www/diag_traceroute.php:173
@@ -36176,7 +36175,7 @@ msgstr "コンソールオプション"
 #: usr/local/www/system_advanced_admin.php:522
 #: usr/local/www/system_advanced_admin.php:522
 msgid "Console menu"
-msgstr "TODO: machine translation failed"
+msgstr "[コンソール]メニュー"
 
 #: usr/local/www/system_advanced_admin.php:525
 #: usr/local/www/system_advanced_admin.php:525
@@ -40013,7 +40012,7 @@ msgstr "認証キー"
 #: usr/local/www/system_usermanager.php:752
 #: usr/local/www/system_usermanager.php:752
 msgid "Click to paste an authorized key."
-msgstr "TODO: machine translation failed"
+msgstr "許可されたキーを貼り付け]をクリックします。"
 
 #: usr/local/www/system_usermanager.php:762
 #: usr/local/www/system_usermanager.php:760
@@ -43364,7 +43363,7 @@ msgstr "クリック"
 #: usr/local/www/pkg_mgr_installed.php:201 usr/local/www/pkg_mgr.php:235
 #: usr/local/www/pkg_mgr_installed.php:201 usr/local/www/pkg_mgr.php:239
 msgid "Click package info for more details about "
-msgstr "TODO: machine translation failed"
+msgstr "の詳細については、パッケージ情報]をクリックします "
 
 #: usr/local/www/pkg_mgr.php:237 usr/local/www/pkg_mgr.php:240
 #: usr/local/www/pkg_mgr.php:243 usr/local/www/pkg_mgr.php:247
@@ -43394,7 +43393,7 @@ msgstr "一般設定"
 #: usr/local/www/services_unbound.php:137
 #: usr/local/www/services_unbound_advanced.php:124
 msgid "Advanced settings"
-msgstr "TODO: machine translation failed"
+msgstr "[詳細設定]"
 
 #: usr/local/www/services_unbound_acls.php:183
 #: usr/local/www/services_unbound.php:138
@@ -44127,7 +44126,7 @@ msgid ""
 "requesting a DHCP lease will be registered in the DNS Resolver, so that "
 "their name can be resolved. You should also set the domain in %sSystem: "
 "General setup%s to the proper value."
-msgstr "「このオプションが設定されている場合は、とき彼らのホスト名を指定してマシン""自分の名前を入手し%sSystemドメインを設定する必要が解決することができます。 ： "ようにDHCPリースを要求するには、 DNSリゾルバに登録されます一般setupfooを。適切な値にね。"
+msgstr "「このオプションが設定されている場合は、とき彼らのホスト名を指定してマシン""自分の名前を入手し%sSystemドメインを設定する必要が解決することができます。 ： "ようにDHCPリースを要求するには、 DNSリゾルバに登録されます一般setup%sを。適切な値にね。"
 
 #: usr/local/www/services_unbound.php:226
 msgid "Register DHCP static mappings in the DNS Resolver"
@@ -44807,7 +44806,7 @@ msgstr "あなたは、親リミッタと同じ名前の子キューに名前を
 msgid ""
 "By enabling name resolution, the query should take a bit longer. You can "
 "stop it at any time by clicking the Stop button in your browser."
-msgstr "TODO: machine translation failed"
+msgstr "名前解決を可能にすることにより、クエリは少し時間がかかるはずです。お使いのブラウザで、[停止]ボタンをクリックすると、いつでもそれを停止することができます。"
 
 #: usr/local/www/status_dhcpv6_leases.php:481
 #: usr/local/www/status_dhcpv6_leases.php:482
@@ -45628,7 +45627,7 @@ msgstr "すべての通知を認める"
 
 #: etc/inc/functions.inc:95 etc/inc/functions.inc:95
 msgid "Click to Acknowledge"
-msgstr "TODO: machine translation failed"
+msgstr "確認する]をクリックします"
 
 #: etc/inc/functions.inc:113 etc/inc/functions.inc:113
 msgid "unread notice"
@@ -46269,7 +46268,7 @@ msgstr "アドレスは「あなたはMacが拒否リストを指定すると、
 msgid ""
 "Editing Pool-Specific Options. To return to the Interface, click its tab "
 "above."
-msgstr "TODO: machine translation failed"
+msgstr "プール固有のオプションを編集。インターフェイスに戻るには、上記のタブをクリックします。"
 
 #: usr/local/www/services_dhcp.php:775 usr/local/www/services_dhcp.php:785
 #: usr/local/www/services_dhcp.php:805 usr/local/www/services_dhcp.php:805
@@ -47817,7 +47816,7 @@ msgstr "有効にコンソールの自動ログインは、コンソールメニ
 
 #: etc/inc/pfsense-utils.inc:958 etc/inc/pfsense-utils.inc:958
 msgid "Disabled console auto login, console menu is password protected."
-msgstr "TODO: machine translation failed"
+msgstr "[無効]コンソールの自動ログイン、コンソールメニューのパスワードは保護されています。"
 
 #: usr/local/www/system_gateways_edit.php:552
 #: usr/local/www/system_gateways_edit.php:582
@@ -48353,7 +48352,7 @@ msgstr "これらのオプションはに移転してきた"
 
 #: usr/local/www/diag_nanobsd.php:236 usr/local/www/diag_nanobsd.php:236
 msgid "System > Advanced, Miscellaneous tab"
-msgstr "TODO: machine translation failed"
+msgstr "[システム]> [詳細設定、[その他]タブ"
 
 #: usr/local/www/services_dnsmasq_domainoverride_edit.php:90
 #: usr/local/www/services_dnsmasq_domainoverride_edit.php:90

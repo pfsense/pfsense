@@ -1382,7 +1382,7 @@ function system_ntp_configure($start_ntpd=true) {
 	foreach (explode(' ', $config['system']['timeservers']) as $ts)
 		$ntpcfg .= "server {$ts} iburst maxpoll 9\n";
 
-	$ntpcfg .= "enable monitor\n";
+	$ntpcfg .= "disable monitor\n";
 	$ntpcfg .= "enable stats\n";
 	$ntpcfg .= "statistics clockstats\n";
 	$ntpcfg .= "statsdir {$statsdir}\n";

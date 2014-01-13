@@ -47,7 +47,7 @@ include("head.inc");
             <p><strong><?=$g['product_name'];?> <?=gettext("is Copyright");?> &copy; <?=$g['product_copyright_years'];?> <?=gettext("by");?> <?=$g['product_copyright'];?><br>
               <?=gettext("All rights reserved");?>.</strong></p>
 
-            <p><strong><?=gettext("m0n0wall is Copyright ");?>&copy; <?=gettext("2002-2007 by Manuel Kasper");?>
+            <p><strong><?=gettext("m0n0wall is Copyright ");?>&copy; <?=gettext("2002-2014 by Manuel Kasper");?>
               (<a href="mailto:mk@neon1.net">mk@neon1.net</a>).<br>
               <?=gettext("All rights reserved");?>.</strong></p>
             <p> <?=gettext("Redistribution and use in source and binary forms, with or without");?><br>
@@ -81,84 +81,15 @@ include("head.inc");
               "OF THE");?><br>
               <?=gettext("POSSIBILITY OF SUCH DAMAGE");?></strong>.</p>
             <hr size="1">
-            <p><?=gettext("The following persons have contributed code to m0n0wall");?>:</p>
-            <p>Bob Zoller (<a href="mailto:bob@kludgebox.com">bob@kludgebox.com</a>)<br>
-              &nbsp;&nbsp;&nbsp;&nbsp;<em><font color="#666666"><?=gettext("Diagnostics: Ping ".
-              "function; WLAN channel auto-select; DNS forwarder");?></font></em><br>
-              <br>
-              Michael Mee (<a href="mailto:mikemee2002@pobox.com">mikemee2002@pobox.com</a>)<br>
-              &nbsp;&nbsp;&nbsp;&nbsp;<em><font color="#666666"><?=gettext("Timezone and NTP ".
-              "client support");?></font></em><br>
-              <br>
-              Magne Andreassen (<a href="mailto:magne.andreassen@bluezone.no">magne.andreassen@bluezone.no</a>)<br>
-              &nbsp;&nbsp;&nbsp;&nbsp;<em><font color="#666666"><?=gettext("Remote syslog'ing; ".
-              "some code bits for DHCP server on optional interfaces");?></font></em><br>
-              <br>
-              Rob Whyte (<a href="mailto:rob@g-labs.com">rob@g-labs.com</a>)<br>
-              &nbsp;&nbsp;&nbsp;&nbsp;<em><font color="#666666"><?=gettext("Idea/code bits ".
-              "for encrypted webConfigurator passwords; minimalized SNMP agent");?></font></em><br>
-              <br>
-              Petr Verner (<a href="mailto:verner@ipps.cz">verner@ipps.cz</a>)<br>
-              &nbsp;&nbsp;&nbsp;&nbsp;<em><font color="#666666"><?=gettext("Advanced outbound ".
-              "NAT: destination selection");?></font></em><br>
-              <br>
-              Bruce A. Mah (<a href="mailto:bmah@acm.org">bmah@acm.org</a>)<br>
-              &nbsp;&nbsp;&nbsp;&nbsp;<em><font color="#666666"><?=gettext("Filtering bridge ".
-              "patches ");?></font></em><br>
-              <br>
-              Jim McBeath (<a href="mailto:monowall@j.jimmc.org">monowall@j.jimmc.org</a>)<br>
-              &nbsp;&nbsp;&nbsp;&nbsp;<em><font color="#666666"><?=gettext("Filter rule patches ".
-              "(ordering, block/pass, disabled); better status page;");?><br>
-              &nbsp;&nbsp;&nbsp;&nbsp;<?=gettext("webConfigurator assign network ports page ");?></font></em><br>
-              <br>
-              Chris Olive (<a href="mailto:chris@technologEase.com">chris@technologEase.com</a>)<br>
-              &nbsp;&nbsp;&nbsp;&nbsp;<em><font color="#666666"><?=gettext("enhanced ");?>&quot;<?=gettext("execute ".
-              "command");?>&quot;<?=gettext(" page");?></font></em><br>
-              <br>
-              Pauline Middelink (<a href="mailto:middelink@polyware.nl">middelink@polyware.nl</a>)<br>
-              &nbsp;&nbsp;&nbsp;&nbsp;<em><font color="#666666"><?=gettext("DHCP client: send hostname patch");?></font></em><br>
-              <br>
-              Björn Pålsson (<a href="mailto:bjorn@networksab.com">bjorn@networksab.com</a>)<br>
-              &nbsp;&nbsp;&nbsp;&nbsp;<em><font color="#666666"><?=gettext("DHCP lease list page");?></font></em><br>
-              <br>
-              Peter Allgeyer (<a href="mailto:allgeyer@web.de">allgeyer@web.de</a>)<br>
-              &nbsp;&nbsp;&nbsp;&nbsp;<em><font color="#666666">&quot;<?=gettext("reject");?>&quot; <?=gettext("type filter rules; dial-on-demand");?></font></em><br>
-              <br>
-              Thierry Lechat (<a href="mailto:dev@lechat.org">dev@lechat.org</a>)<br>
-              &nbsp;&nbsp;&nbsp;&nbsp;<em><font color="#666666"><?=gettext("SVG-based traffic grapher");?></font></em><br>
-              <br>
-              Steven Honson (<a href="mailto:steven@honson.org">steven@honson.org</a>)<br>
-              &nbsp;&nbsp;&nbsp;&nbsp;<em><font color="#666666"><?=gettext("per-user IP address assignments for PPTP VPN");?></font></em><br>
-              <br>
-              Kurt Inge Smådal (<a href="mailto:kurt@emsp.no">kurt@emsp.no</a>)<br>
-              &nbsp;&nbsp;&nbsp;&nbsp;<em><font color="#666666"><?=gettext("NAT on optional interfaces");?></font></em><br>
-              <br>
-              Dinesh Nair (<a href="mailto:dinesh@alphaque.com">dinesh@alphaque.com</a>)<br>
-              &nbsp;&nbsp;&nbsp;&nbsp;<em><font color="#666666"><?=gettext("captive portal: pass-through MAC/IP addresses, RADIUS authentication");?> &amp; <?=gettext("accounting;");?><br>
-              &nbsp;&nbsp;&nbsp;&nbsp;<em><font color="#666666"></font></em><?=gettext("HTTP server concurrency limit");?></font></em><br>
-              <br>
-              Justin Ellison (<a href="mailto:justin@techadvise.com">justin@techadvise.com</a>)<br>
-              &nbsp;&nbsp;&nbsp;&nbsp;<em><font color="#666666"><?=gettext("traffic shaper TOS matching; magic shaper; DHCP deny unknown clients;");?><br>
-			  &nbsp;&nbsp;&nbsp;&nbsp;<?=gettext("IPsec user FQDNs; DHCP relay");?></font></em><br>
-			  <br>
-              Michael Hanselmann (<a href="mailto:m0n0@hansmi.ch">m0n0@hansmi.ch</a>)<br>
-              &nbsp;&nbsp;&nbsp;&nbsp;<em><font color="#666666"><?=gettext("IDE hard disk standby");?></font></em><br>
-			  <br>
-              Audun Larsen (<a href="mailto:larsen@xqus.com">larsen@xqus.com</a>)<br>
-              &nbsp;&nbsp;&nbsp;&nbsp;<em><font color="#666666"><?=gettext("CPU/memory usage display");?></font></em><br>
-			  <br>
-              Peter Curran (<a href="mailto:peter@closeconsultants.com">peter@closeconsultants.com</a>)<br>
-              &nbsp;&nbsp;&nbsp;&nbsp;<em><font color="#666666"><?=gettext("OpenVPN support");?></font></em></p>
-            <hr size="1">
             <p><?= "{$g['product_name']} " . gettext("is based upon/includes various free software packages, ".
               "listed below.");?><br>
-              <?php printf(gettext("The author of %s would like to thank the authors of these " .
+              <?php printf(gettext("The authors of %s would like to thank the authors of these " .
               "software packages for their efforts"),$g['product_name']);?>.</p>
             <p>FreeBSD (<a href="http://www.freebsd.org" target="_blank">http://www.freebsd.org</a>)<br>
-              <?=gettext("Copyright");?> &copy;<?=gettext("1992-2012 The FreeBSD Project. All rights reserved");?>.<br>
+              <?=gettext("Copyright");?> &copy;<?=gettext("1992-2014 The FreeBSD Project. All rights reserved");?>.<br>
               <br>
               <?=gettext("This product includes PHP, freely available from");?> <a href="http://www.php.net/" target="_blank">http://www.php.net</a>.<br>
-              <?=gettext("Copyright"); ?> &copy; <?=gettext("1999-2010 The PHP Group. All rights reserved.");?>.<br>
+              <?=gettext("Copyright"); ?> &copy; <?=gettext("1999-2014 The PHP Group. All rights reserved.");?>.<br>
               <br>
               <?=gettext("LightTPD"); ?> (<a href="http://www.lighttpd.net" target="_blank">http://www.lighttpd.net)</a><br>
               <?=gettext("Copyright"); ?> &copy;<?=gettext("2004, Jan Knescke, incremental");?><jan@kneschke.de>
@@ -174,13 +105,13 @@ include("head.inc");
               <?=gettext("Copyright"); ?> &copy; 2003-2004, Archie L. Cobbs, Michael Bretterklieber, Alexander Motin<br>
 			  <?=gettext("All rights reserved.");?><br>
               <br>
-              <?=gettext("Circular log support for FreeBSD syslogd ");?>(<a href="http://software.wwwi.com/syslogd/" target="_blank">http://software.wwwi.com/syslogd</a>)<br>
+              <?=gettext("Circular log support for FreeBSD syslogd ");?>(<a href="http://software.wheelhouse.org/syslogd/" target="_blank">http://software.wheelhouse.org/syslogd/</a>)<br>
               <?=gettext("Copyright"); ?> &copy; 2001 Jeff Wheelhouse (jdw@wwwi.com)<br>
               <br>
               <?=gettext("Dnsmasq - a DNS forwarder for NAT firewalls");?> (<a href="http://www.thekelleys.org.uk" target="_blank">http://www.thekelleys.org.uk</a>)<br>
               <?=gettext("Copyright"); ?> &copy; 2000-2012 Simon Kelley.<br>
               <br>
-              <?=gettext("Racoon"); ?> (<a href="http://www.kame.net/racoon" target="_blank">http://www.kame.net/racoon</a>)<br>
+              <?=gettext("IPsec-Tools"); ?> (<a href="http://ipsec-tools.sourceforge.net/" target="_blank">http://ipsec-tools.sourceforge.net/</a>)<br>
               <?=gettext("Copyright"); ?> &copy; <?=gettext("1995-2002 WIDE Project. All rights reserved.");?><br>
               <br>
               <?=gettext("msntp"); ?> (<a href="http://www.hpcf.cam.ac.uk/export" target="_blank">http://www.hpcf.cam.ac.uk/export</a>)<br>
@@ -200,9 +131,6 @@ include("head.inc");
               <?=gettext("Copyright"); ?> &copy; 1997 Takamichi Tateoka (tree@mma.club.uec.ac.jp)<br>
 			 <?=gettext("Copyright"); ?> &copy; 2002 Thomas Quinot (thomas@cuivre.fr.eu.org)<br>
               <br>
-              <?=gettext("BPALogin"); ?> (<a href="http://bpalogin.sourceforge.net/" target="_blank">http://bpalogin.sourceforge.net</a>) - <?=gettext("lightweight portable BIDS2 login client");?><br>
-              <?=gettext("Copyright"); ?> &copy;<?=gettext(" 2001-3 Shane Hyde, and others.");?><br>
-              <br>
               <?=gettext("php-radius"); ?> (<a href="http://www.mavetju.org/programming/php.php" target="_blank">http://www.mavetju.org/programming/php.php</a>)<br>
               <?=gettext("Copyright 2000, 2001, 2002 by Edwin Groothuis. All rights reserved.");?><br>
 			  <?=gettext("This product includes software developed by Edwin Groothuis.");?><br>
@@ -211,7 +139,7 @@ include("head.inc");
 			  <?=gettext("Copyright"); ?> &copy; 2000,2001,2002,2003,2004 Thomas Krennwallner &lt;krennwallner@aon.at&gt;
 			  <br>
 			  <?=gettext("OpenVPN"); ?> (<a href="http://openvpn.net/" target="_blank">http://openvpn.net/</a>)
-			  <?=gettext("Copyright (C) 2002-2005 OpenVPN Solutions LLC ");?><info@openvpn.net>
+			  <?=gettext("Copyright (C) 2002-2005 OpenVPN Solutions LLC ");?>
 			  <?php include("fend.inc"); ?>
 </body>
 </html>

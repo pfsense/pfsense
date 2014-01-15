@@ -23,7 +23,7 @@ while [ "$NOTSYNCED" = "true" ] && [ ${ATTEMPT} -le ${MAX_ATTEMPTS} ]; do
 		fi
 	done
 	sleep 1
-	/usr/local/bin/ntpdate -s -t 5 ${SERVER}
+	/usr/local/sbin/ntpdate -s -t 5 ${SERVER}
 	if [ "$?" = "0" ]; then
 		NOTSYNCED="false"
 	else
@@ -40,7 +40,7 @@ fi
 
 if [ -f /var/etc/ntpd.conf ]; then
 	echo "Starting NTP Daemon." | /usr/bin/logger -t ntp;
-	/usr/local/bin/ntpd -g -c /var/etc/ntpd.conf -p /var/run/ntpd.pid
+	/usr/local/sbin/ntpd -g -c /var/etc/ntpd.conf -p /var/run/ntpd.pid
 else
 	echo "NTP configuration file missing, not starting daemon." | /usr/bin/logger -t ntp;
 fi

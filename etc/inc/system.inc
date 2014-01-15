@@ -33,7 +33,7 @@
 	pfSense_BUILDER_BINARIES:	/usr/sbin/powerd	/usr/bin/killall	/sbin/sysctl	/sbin/route
 	pfSense_BUILDER_BINARIES:	/bin/hostname	/bin/ls	/usr/sbin/syslogd	
 	pfSense_BUILDER_BINARIES:	/usr/sbin/pccardd	/usr/local/sbin/lighttpd	/bin/chmod 	/bin/mkdir
-	pfSense_BUILDER_BINARIES:	/usr/bin/tar		/usr/local/bin/ntpd	/usr/local/bin/ntpdate
+	pfSense_BUILDER_BINARIES:	/usr/bin/tar		/usr/local/sbin/ntpd	/usr/local/sbin/ntpdate
 	pfSense_BUILDER_BINARIES:	/usr/bin/nohup	/sbin/dmesg	/usr/local/sbin/atareinit	/sbin/kldload
 	pfSense_BUILDER_BINARIES:	/usr/local/sbin/filterdns
 	pfSense_MODULE:	utils
@@ -1430,7 +1430,7 @@ function system_ntp_configure($start_ntpd=true) {
 		exec("/bin/mkdir -p /var/empty && chmod ug+rw /var/empty/.");
 
 	/* start opentpd, set time now and use /var/etc/ntpd.conf */
-	mwexec("/usr/local/bin/ntpd -g -c {$g['varetc_path']}/ntpd.conf -p {$g['varrun_path']}/ntpd.pid", false, true);
+	mwexec("/usr/local/sbin/ntpd -g -c {$g['varetc_path']}/ntpd.conf -p {$g['varrun_path']}/ntpd.pid", false, true);
 	
 	// Note that we are starting up
 	log_error("NTPD is starting up.");
@@ -1445,7 +1445,7 @@ function sync_system_time() {
 
 	/* foreach through servers and write out to ntpd.conf */
 	foreach (explode(' ', $config['system']['timeservers']) as $ts) {
-		mwexec("/usr/local/bin/ntpdate -s $ts");
+		mwexec("/usr/local/sbin/ntpdate -s $ts");
 	}
 	
 	if ($g['booting'])

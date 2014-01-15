@@ -29,7 +29,7 @@
 	POSSIBILITY OF SUCH DAMAGE.
 */
 /*
-	pfSense_BUILDER_BINARIES:	/usr/local/bin/ntpd	/usr/local/bin/ntpq
+	pfSense_BUILDER_BINARIES:	/usr/local/sbin/ntpd	/usr/local/sbin/ntpq
 	pfSense_MODULE:	ntpd
 */
 
@@ -42,7 +42,7 @@
 
 require_once("guiconfig.inc");
 
-exec("/usr/local/bin/ntpq -pn | /usr/bin/tail +3", $ntpq_output);
+exec("/usr/local/sbin/ntpq -pn | /usr/bin/tail +3", $ntpq_output);
 
 $ntpq_servers = array();
 foreach ($ntpq_output as $line) {
@@ -92,7 +92,7 @@ foreach ($ntpq_output as $line) {
 	$ntpq_servers[] = $server;
 }
 
-exec("/usr/local/bin/ntpq -c clockvar", $ntpq_clockvar_output);
+exec("/usr/local/sbin/ntpq -c clockvar", $ntpq_clockvar_output);
 foreach ($ntpq_clockvar_output as $line) {
 	if (substr($line, 0, 9) == "timecode=") {
 		$tmp = explode('"', $line);

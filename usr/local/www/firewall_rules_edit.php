@@ -183,6 +183,8 @@ if (isset($id) && $a_filter[$id]) {
 	if (!isset($_GET['dup']))
 		$pconfig['associated-rule-id'] = $a_filter[$id]['associated-rule-id'];
 
+	$pconfig['tracker'] = $a_filter[$id]['tracker'];
+
 } else {
 	/* defaults */
 	if ($_GET['if'])
@@ -531,10 +533,9 @@ if ($_POST) {
 	if (!$input_errors) {
 		$filterent = array();
 		$filterent['id'] = $_POST['ruleid']>0?$_POST['ruleid']:'';
-		if (empty($_POST['tracker']))
-			$filterent['tracker'] = (int)microtime(true);
-		else
-			$filterent['tracker'] = $_POST['tracker'];
+
+		$filterent['tracker'] = empty($_POST['tracker']) ? (int)microtime(true) : $_POST['tracker'];
+
 		$filterent['type'] = $_POST['type'];
 		if (isset($_POST['interface'] ))
 			$filterent['interface'] = $_POST['interface'];
@@ -1669,6 +1670,7 @@ $has_updated_time = (isset($a_filter[$id]['updated']) && is_array($a_filter[$id]
 				<input name="Submit" type="submit" class="formbtn" value="<?=gettext("Save"); ?>" />  <input type="button" class="formbtn" value="<?=gettext("Cancel"); ?>" onclick="history.back()" />
 <?php			if (isset($id) && $a_filter[$id]): ?>
 					<input name="id" type="hidden" value="<?=htmlspecialchars($id);?>" />
+					<input name="tracker" type="hidden" value="<?=htmlspecialchars($pconfig['tracker']);?>">
 <?php 			endif; ?>
 				<input name="after" type="hidden" value="<?=htmlspecialchars($after);?>" />
 			</td>

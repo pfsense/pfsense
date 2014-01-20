@@ -118,7 +118,7 @@ function stop_service($name) {
 	if (empty($name))
 		return;
 
-	if (is_aray($config['installedpackages']) && is_array($config['installedpackages']['service'])) {
+	if (is_array($config['installedpackages']) && is_array($config['installedpackages']['service'])) {
 		foreach($config['installedpackages']['service'] as $service) {
 			if(strtolower($service['name']) == strtolower($name)) {
 				if($service['rcfile']) {
@@ -149,7 +149,7 @@ function restart_service($name) {
 	stop_service($name);
 	start_service($name);
 
-	if (is_aray($config['installedpackages']) && is_array($config['installedpackages']['service'])) {
+	if (is_array($config['installedpackages']) && is_array($config['installedpackages']['service'])) {
 		foreach($config['installedpackages']['service'] as $service) {
 			if(strtolower($service['name']) == strtolower($name)) {
 				if($service['restartcmd']) {

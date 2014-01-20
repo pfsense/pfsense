@@ -62,3 +62,12 @@
 /usr/sbin/ntptime
 /usr/sbin/ntp-keygen
 /usr/bin/ntpq
+/usr/local/bin/ntp-wait
+/usr/local/bin/ntpd
+/usr/local/bin/ntpdate
+/usr/local/bin/ntpdc
+/usr/local/bin/ntpq
+/usr/local/bin/ntptime
+/usr/local/bin/ntptrace
+/usr/local/bin/sntp
+/usr/local/bin/tickadj

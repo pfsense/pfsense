@@ -79,7 +79,8 @@ function write_rcfile($params) {
 	/* begin rcfile logic */
 	$towrite .= "case \$1 in\n\tstart)\n\t\trc_start\n\t\t;;\n\tstop)\n\t\trc_stop\n\t\t;;\n\trestart)\n\t\trc_stop\n\t\trc_start\n\t\t;;\nesac\n\n";
 
-	file_put_contents($rcfile_fullname, $towrite);
+	@file_put_contents($rcfile_fullname, $towrite);
+	unset($towrite);
 	@chmod("{$rcfile_fullname}", 0755);
 
 	return;
@@ -91,16 +92,7 @@ function start_service($name) {
 	if (empty($name))
 		return;
 
-	/* make sure service is stopped before starting */
-	stop_service($name);
-	sleep(2);
-
-	$rcfile_fullname = RCFILEPREFIX . $name . '.sh';
-	if(file_exists($rcfile_fullname)) {
-		mwexec_bg("/bin/sh {$rcfile_fullname} start");
-		return;
-	}
-	if($config['installedpackages']['service']) {
+	if (is_array($config['installedpackages']) && is_array($config['installedpackages']['service'])) {
 		foreach($config['installedpackages']['service'] as $service) {
 			if(strtolower($service['name']) == strtolower($name)) {
 				if($service['rcfile']) {
@@ -126,7 +118,7 @@ function stop_service($name) {
 	if (empty($name))
 		return;
 
-	if ($config['installedpackages']['service']) {
+	if (is_aray($config['installedpackages']) && is_array($config['installedpackages']['service'])) {
 		foreach($config['installedpackages']['service'] as $service) {
 			if(strtolower($service['name']) == strtolower($name)) {
 				if($service['rcfile']) {
@@ -142,18 +134,10 @@ function stop_service($name) {
 				if (!empty($service['stopcmd']))
 					eval($service['stopcmd']);
 
-				if(!($service['rcfile'] or $service['stopcmd'])) {
-					if(is_process_running("{$service['executable']}"))
-						mwexec("/usr/bin/killall {$service['executable']}");
-					return;
-				}
 				break;
 			}
 		}
 	}
-	/* finally if we get here lets simply kill the service name */
-	if(is_process_running("{$name}"))
-		mwexec("/usr/bin/killall {$name}");
 }
 
 function restart_service($name) {
@@ -165,7 +149,7 @@ function restart_service($name) {
 	stop_service($name);
 	start_service($name);
 
-	if($config['installedpackages']['service']) {
+	if (is_aray($config['installedpackages']) && is_array($config['installedpackages']['service'])) {
 		foreach($config['installedpackages']['service'] as $service) {
 			if(strtolower($service['name']) == strtolower($name)) {
 				if($service['restartcmd']) {

@@ -198,12 +198,11 @@ function get_pkg_internal_name($package) {
 function get_pkg_info($pkgs = 'all', $info = 'all') {
 	global $g;
 
-	$freebsd_version = php_uname("r");
 	$freebsd_machine = php_uname("m");
 	$params = array(
 		"pkg" => $pkgs, 
 		"info" => $info, 
-		"freebsd_version" => $freebsd_version[0],
+		"freebsd_version" => get_freebsd_version(),
 		"freebsd_machine" => $freebsd_machine
 	);
 	$resp = call_pfsense_method('pfsense.get_pkgs', $params, 10);
@@ -213,11 +212,10 @@ function get_pkg_info($pkgs = 'all', $info = 'all') {
 function get_pkg_sizes($pkgs = 'all') {
 	global $config, $g;
 
-	$freebsd_version = php_uname("r");
 	$freebsd_machine = php_uname("m");
 	$params = array(
 		"pkg" => $pkgs, 
-		"freebsd_version" => $freebsd_version,
+		"freebsd_version" => get_freebsd_version(),
 		"freebsd_machine" => $freebsd_machine
 	);
 	$msg = new XML_RPC_Message('pfsense.get_pkg_sizes', array(php_value_to_xmlrpc($params)));

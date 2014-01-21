@@ -1897,16 +1897,16 @@ function interfaces_carp_setup() {
 	/* suck in configuration items */
 	if ($config['hasync']) {
 		$pfsyncenabled = $config['hasync']['pfsyncenabled'];
-		$balanacing = $config['hasync']['balancing'];
+		$balancing = $config['hasync']['balancing'];
 		$pfsyncinterface = $config['hasync']['pfsyncinterface'];
 		$pfsyncpeerip = $config['hasync']['pfsyncpeerip'];
 	} else {
 		unset($pfsyncinterface);
-		unset($balanacing);
+		unset($balancing);
 		unset($pfsyncenabled);
 	}
 
-	if ($balanacing) {
+	if ($balancing) {
 		mwexec("/sbin/sysctl net.inet.carp.arpbalance=1", true);
 		mwexec("/sbin/sysctl net.inet.carp.preempt=0", true);
 	} else

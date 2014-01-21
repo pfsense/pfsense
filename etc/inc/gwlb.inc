@@ -254,6 +254,11 @@ EOD;
 
 		$apingerconfig .= $alarmscfg;
 		$apingerconfig .= $apingercfg;
+
+		# Create gateway quality RRD with settings more suitable for pfSense graph set, 
+		# since apinger uses default step (300; 5 minutes) and other settings that don't 
+		# match the pfSense gateway quality graph set.
+		create_gateway_quality_rrd("{$g['vardb_path']}/rrd/{$gateway['name']}-quality.rrd");
 	}
 	fwrite($fd, $apingerconfig);
 	fclose($fd);
@@ -266,11 +271,6 @@ EOD;
 		mkdir("{$g['vardb_path']}/rrd", 0775);
 
 	@chown("{$g['vardb_path']}/rrd", "nobody");
-
-	# Create gateway quality RRD with settings more suitable for pfSense graph set, 
-	# since apinger uses default step (300) and other settings that are not so good 
-	# for the pfSense graph set.
-	create_gateway_quality_rrd("{$g['vardb_path']}/rrd/{$gateway['name']}-quality.rrd");
 
 	/* start a new apinger process */
 	@unlink("{$g['varrun_path']}/apinger.status");

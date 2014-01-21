@@ -1628,7 +1628,8 @@ function isvm() {
 }
 
 function get_freebsd_version() {
-	return preg_replace('/\..*$/', '', php_uname("r"));
+	$version = explode(".", php_uname("r"));
+	return $version[0];
 }
 
 function download_file($url, $destination, $verify_ssl = false, $connect_timeout = 60, $timeout = 0) {

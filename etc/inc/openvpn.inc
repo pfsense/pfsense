@@ -40,7 +40,7 @@
 	
 	DISABLE_PHP_LINT_CHECKING
 	
-	pfSense_BUILDER_BINARIES:	/usr/local/sbin/openvpn	/usr/local/bin/openssl	/sbin/ifconfig
+	pfSense_BUILDER_BINARIES:	/usr/local/sbin/openvpn	/usr/bin/openssl	/sbin/ifconfig
 	pfSense_MODULE:	openvpn
 
 */
@@ -115,7 +115,7 @@ function openvpn_create_key() {
 
 function openvpn_create_dhparams($bits) {
 
-	$fp = popen("/usr/local/bin/openssl dhparam {$bits} 2>/dev/null", "r");
+	$fp = popen("/usr/bin/openssl dhparam {$bits} 2>/dev/null", "r");
 	if (!$fp)
 		return false;
 
@@ -225,7 +225,7 @@ function openvpn_get_digestlist() {
 
 function openvpn_get_engines() {
 	$openssl_engines = array('none' => 'No Hardware Crypto Acceleration');
-	exec("/usr/local/bin/openssl engine -t -c", $openssl_engine_output);
+	exec("/usr/bin/openssl engine -t -c", $openssl_engine_output);
 	$openssl_engine_output = implode("\n", $openssl_engine_output);
 	$openssl_engine_output = preg_replace("/\\n\\s+/", "|", $openssl_engine_output);
 	$openssl_engine_output = explode("\n", $openssl_engine_output);

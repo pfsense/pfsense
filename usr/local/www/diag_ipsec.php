@@ -141,7 +141,7 @@ $mobile = ipsec_dump_mobile();
 						<td class="listr">
 							<?php echo ipsec_idinfo_to_text($ph2ent['remoteid']); ?>
 						</td>
-						<td class="listr"><?php echo htmlspecialchars($ph2ent['descr']);?></td>
+						<td class="listr"><?php echo htmlspecialchars($ph2ent['descr']==""?$ph1ent['descr']:$ph2ent['descr']);?></td>
 						<td class="listr">
 							<center>
 								<img src ="/themes/<?php echo $g['theme']; ?>/images/icons/icon_<?php echo $icon; ?>.gif" title="<?php echo $status; ?>">

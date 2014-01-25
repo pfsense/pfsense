@@ -537,7 +537,8 @@ function monitor_change() {
 	document.iform.monitor.disabled = document.iform.monitor_disable.checked;
 }
 
-function interval_change() {
+function interval_change(interval_obj) {
+	valid_value(interval_obj, 1, 86400);
 	calculate_state_change();
 
 	calculated_change(document.iform.avg_delay_samples_calculated, document.iform.avg_delay_samples);
@@ -579,6 +580,8 @@ function calculated_change(calculated_obj, samples_obj) {
 		break;
 	default:
 	}
+
+	calculate_state_change();
 }
 
 function valid_value(object, min, max) {
@@ -595,13 +598,31 @@ function calculate_state_change() {
 		document.iform.avg_delay_samples_calculated.disabled = false;
 		document.iform.avg_loss_samples_calculated.disabled = false;
 		document.iform.avg_loss_delay_samples_calculated.disabled = false;
+
+		document.iform.avg_delay_samples.disabled = document.iform.avg_delay_samples_calculated.checked;
+		document.iform.avg_loss_samples.disabled = document.iform.avg_loss_samples_calculated.checked;
+		document.iform.avg_loss_delay_samples.disabled = document.iform.avg_loss_delay_samples_calculated.checked;
 	}
 	else {
 		document.iform.avg_delay_samples_calculated.disabled = true;
 		document.iform.avg_loss_samples_calculated.disabled = true;
 		document.iform.avg_loss_delay_samples_calculated.disabled = true;
 		document.iform.interval.value = '';
+
+		document.iform.avg_delay_samples.disabled = false;
+		document.iform.avg_loss_samples.disabled = false;
+		document.iform.avg_loss_delay_samples.disabled = false;
+
+		document.iform.avg_delay_samples_calculated.checked = false;
+		document.iform.avg_loss_samples_calculated.checked = false;
+		document.iform.avg_loss_delay_samples_calculated.checked = false;
 	}
+}
+
+function enable_change() {
+	document.iform.avg_delay_samples.disabled = false;
+	document.iform.avg_loss_samples.disabled = false;
+	document.iform.avg_loss_delay_samples.disabled = false;
 }
 //]]>
 </script>
@@ -775,7 +796,7 @@ function calculate_state_change() {
 								<td width="22%" valign="top" class="vncellreq"><?=gettext("Probe Interval");?></td>
 								<td width="78%" class="vtable">
 									<input name="interval" type="text" class="formfld unknown" id="interval" size="2"
-										value="<?=htmlspecialchars($pconfig['interval']);?>" onchange="interval_change()" />
+										value="<?=htmlspecialchars($pconfig['interval']);?>" onchange="interval_change(this)" />
 									<br/><span class="vexpl">
 										<?=gettext(sprintf("How often that an ICMP probe will be sent in seconds. Default is %d.", $apinger_default['interval']));?><br/><br/>
 										<?=gettext("NOTE: The quality graph is averaged over seconds, not intervals, so as the probe interval is increased the accuracy of the quality graph is decreased.");?>
@@ -840,7 +861,7 @@ function calculate_state_change() {
 			<tr>
 				<td width="22%" valign="top">&nbsp;</td>
 				<td width="78%">
-					<input name="Submit" type="submit" class="formbtn" value="<?=gettext("Save");?>" /> <input type="button" value="<?=gettext("Cancel");?>" class="formbtn"  onclick="history.back()" />
+					<input name="Submit" type="submit" class="formbtn" value="<?=gettext("Save");?>" onclick="enable_change()" /> <input type="button" value="<?=gettext("Cancel");?>" class="formbtn"  onclick="history.back()" />
 					<?php if (isset($id) && $a_gateways[$id]): ?>
 					<input name="id" type="hidden" value="<?=htmlspecialchars($id);?>" />
 					<?php endif; ?>

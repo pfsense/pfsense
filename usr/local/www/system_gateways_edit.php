@@ -68,6 +68,12 @@ if (isset($id) && $a_gateways[$id]) {
 	$pconfig['name'] = $a_gateways[$id]['name'];
 	$pconfig['weight'] = $a_gateways[$id]['weight'];
 	$pconfig['interval'] = $a_gateways[$id]['interval'];
+	$pconfig['avg_delay_samples'] = $a_gateways[$id]['avg_delay_samples'];
+	$pconfig['avg_delay_samples_calculated'] = isset($a_gateways[$id]['avg_delay_samples_calculated']);
+	$pconfig['avg_loss_samples'] = $a_gateways[$id]['avg_loss_samples'];
+	$pconfig['avg_loss_samples_calculated'] = isset($a_gateways[$id]['avg_loss_samples_calculated']);
+	$pconfig['avg_loss_delay_samples'] = $a_gateways[$id]['avg_loss_delay_samples'];
+	$pconfig['avg_loss_delay_samples_calculated'] = isset($a_gateways[$id]['avg_loss_delay_samples_calculated']);
 	$pconfig['interface'] = $a_gateways[$id]['interface'];
 	$pconfig['friendlyiface'] = $a_gateways[$id]['friendlyiface'];
 	$pconfig['ipprotocol'] = $a_gateways[$id]['ipprotocol'];
@@ -370,6 +376,36 @@ if ($_POST) {
 		}
 	}
 
+	if($_POST['avg_delay_samples']) {
+		if (! is_numeric($_POST['avg_delay_samples'])) {
+			$input_errors[] = gettext("The average delay replies qty needs to be a numeric value.");
+		} else {
+			if ($_POST['avg_delay_samples'] < 1) {
+				$input_errors[] = gettext("The average delay replies qty needs to be positive.");
+			}
+		}
+	}
+
+	if($_POST['avg_loss_samples']) {
+		if (! is_numeric($_POST['avg_loss_samples'])) {
+			$input_errors[] = gettext("The average packet loss probes qty needs to be a numeric value.");
+		} else {
+			if ($_POST['avg_loss_samples'] < 1) {
+				$input_errors[] = gettext("The average packet loss probes qty needs to be positive.");
+			}
+		}
+	}
+
+	if($_POST['avg_loss_delay_samples']) {
+		if (! is_numeric($_POST['avg_loss_delay_samples'])) {
+			$input_errors[] = gettext("The lost probe delay needs to be a numeric value.");
+		} else {
+			if ($_POST['avg_loss_delay_samples'] < 1) {
+				$input_errors[] = gettext("The lost probe delay needs to be positive.");
+			}
+		}
+	}
+
 	if (!$input_errors) {
 		$reloadif = "";
 		$gateway = array();
@@ -386,6 +422,19 @@ if ($_POST) {
 		$gateway['weight'] = $_POST['weight'];
 		$gateway['ipprotocol'] = $_POST['ipprotocol'];
 		$gateway['interval'] = $_POST['interval'];
+
+		$gateway['avg_delay_samples'] = $_POST['avg_delay_samples'];
+		if ($_POST['avg_delay_samples_calculated'] == "yes" || $_POST['avg_delay_samples_calculated'] == "on")
+			$gateway['avg_delay_samples_calculated'] = true;
+
+		$gateway['avg_loss_samples'] = $_POST['avg_loss_samples'];
+		if ($_POST['avg_loss_samples_calculated'] == "yes" || $_POST['avg_loss_samples_calculated'] == "on")
+			$gateway['avg_loss_samples_calculated'] = true;
+
+		$gateway['avg_loss_delay_samples'] = $_POST['avg_loss_delay_samples'];
+		if ($_POST['avg_loss_delay_samples_calculated'] == "yes" || $_POST['avg_loss_delay_samples_calculated'] == "on")
+			$gateway['avg_loss_delay_samples_calculated'] = true;
+
 		$gateway['descr'] = $_POST['descr'];
 		if ($_POST['monitor_disable'] == "yes")
 			$gateway['monitor_disable'] = true;
@@ -486,6 +535,73 @@ function show_advanced_gateway() {
 }
 function monitor_change() {
 	document.iform.monitor.disabled = document.iform.monitor_disable.checked;
+}
+
+function interval_change() {
+	calculate_state_change();
+
+	calculated_change(document.iform.avg_delay_samples_calculated, document.iform.avg_delay_samples);
+	calculated_change(document.iform.avg_loss_samples_calculated, document.iform.avg_loss_samples);
+	calculated_change(document.iform.avg_loss_delay_samples_calculated, document.iform.avg_loss_delay_samples);
+}
+
+function samples_change(calculated_obj, samples_obj) {
+	calculated_change(calculated_obj, samples_obj);
+}
+
+function calculated_change(calculated_obj, samples_obj) {
+	switch (samples_obj.name) {
+
+	case 'avg_delay_samples':
+		// How many replies should be used to compute average delay 
+		// for controlling "delay" alarms.
+		// Calculate a reasonable value based on gateway probe interval and RRD 1 minute average graph step size (60).
+		if (calculated_obj.checked && (document.iform.interval.value > 0))
+			samples_obj.value = 60 * (1/6) / Math.pow(document.iform.interval.value, 0.333);	// Calculate & Round to Integer
+		valid_value(samples_obj, 1, 100);
+		break;
+
+	case 'avg_loss_samples':
+		// How many probes should be used to compute average loss.
+		// Calculate a reasonable value based on gateway probe interval and RRD 1 minute average graph step size (60).
+		if (calculated_obj.checked && (document.iform.interval.value > 0))
+			samples_obj.value = 60 / document.iform.interval.value;	// Calculate & Round to Integer
+		valid_value(samples_obj, 1, 1000);
+		break;
+
+	case 'avg_loss_delay_samples':
+		// The delay (in samples) after which loss is computed
+		// without this delays larger than interval would be treated as loss.
+		// Calculate a reasonable value based on gateway probe interval and RRD 1 minute average graph step size (60).
+		if (calculated_obj.checked && (document.iform.interval.value > 0))
+			samples_obj.value = 60 * (1/3) / document.iform.interval.value;	// Calculate & Round to Integer
+		valid_value(samples_obj, 1, 200);
+		break;
+	default:
+	}
+}
+
+function valid_value(object, min, max) {
+	if (object.value) {
+		object.value = Math.round(object.value);		// Round to integer
+		if (object.value < min)  object.value = min;	// Min Value
+		if (object.value > max)  object.value = max;	// Max Value
+		if (isNaN(object.value)) object.value =  '';	// Empty Value
+	}
+}
+
+function calculate_state_change() {
+	if (document.iform.interval.value > 0) {
+		document.iform.avg_delay_samples_calculated.disabled = false;
+		document.iform.avg_loss_samples_calculated.disabled = false;
+		document.iform.avg_loss_delay_samples_calculated.disabled = false;
+	}
+	else {
+		document.iform.avg_delay_samples_calculated.disabled = true;
+		document.iform.avg_loss_samples_calculated.disabled = true;
+		document.iform.avg_loss_delay_samples_calculated.disabled = true;
+		document.iform.interval.value = '';
+	}
 }
 //]]>
 </script>
@@ -659,7 +775,7 @@ function monitor_change() {
 								<td width="22%" valign="top" class="vncellreq"><?=gettext("Probe Interval");?></td>
 								<td width="78%" class="vtable">
 									<input name="interval" type="text" class="formfld unknown" id="interval" size="2"
-										value="<?=htmlspecialchars($pconfig['interval']);?>" />
+										value="<?=htmlspecialchars($pconfig['interval']);?>" onchange="interval_change()" />
 									<br/><span class="vexpl">
 										<?=gettext(sprintf("How often that an ICMP probe will be sent in seconds. Default is %d.", $apinger_default['interval']));?><br/><br/>
 										<?=gettext("NOTE: The quality graph is averaged over seconds, not intervals, so as the probe interval is increased the accuracy of the quality graph is decreased.");?>
@@ -672,6 +788,36 @@ function monitor_change() {
 									<input name="down" type="text" class="formfld unknown" id="down" size="2"
 										value="<?=htmlspecialchars($pconfig['down']);?>" />
 									<br/><span class="vexpl"><?=gettext(sprintf("The number of seconds of failed probes before the alarm will fire. Default is %d.", $apinger_default['down']));?></span>
+								</td>
+							</tr>
+							<tr>
+								<td width="22%" valign="top" class="vncellreq"><?=gettext("Average Delay Replies Qty");?></td>
+								<td width="78%" class="vtable">
+									<input name="avg_delay_samples" type="text" class="formfld unknown" id="avg_delay_samples" size="2"
+										value="<?=htmlspecialchars($pconfig['avg_delay_samples']);?>" onchange="samples_change(document.iform.avg_delay_samples_calculated, this)" /> 
+									<input name="avg_delay_samples_calculated" type="checkbox" id="avg_delay_samples_calculated" value="yes" <?php if ($pconfig['avg_delay_samples_calculated'] == true) echo "checked=\"checked\""; ?> onclick="calculated_change(this, document.iform.avg_delay_samples)" />
+										<?=gettext("Use calculated value."); ?>
+									<br/><span class="vexpl"><?=gettext(sprintf("How many replies should be used to compute average delay for controlling \"delay\" alarms?  Default is %d.", $apinger_default['avg_delay_samples']));?><br/><br/></span>
+								</td>
+							</tr>
+							<tr>
+								<td width="22%" valign="top" class="vncellreq"><?=gettext("Average Packet Loss Probes Qty");?></td>
+								<td width="78%" class="vtable">
+									<input name="avg_loss_samples" type="text" class="formfld unknown" id="avg_loss_samples" size="2"
+										value="<?=htmlspecialchars($pconfig['avg_loss_samples']);?>" onchange="samples_change(document.iform.avg_loss_samples_calculated, this)" />
+									<input name="avg_loss_samples_calculated" type="checkbox" id="avg_loss_samples_calculated" value="yes" <?php if ($pconfig['avg_loss_samples_calculated'] == true) echo "checked=\"checked\""; ?> onclick="calculated_change(this, document.iform.avg_loss_samples)" />
+										<?=gettext("Use calculated value."); ?>
+									<br/><span class="vexpl"><?=gettext(sprintf("How many probes should be useds to compute average packet loss?  Default is %d.", $apinger_default['avg_loss_samples']));?><br/><br/></span>
+								</td>
+							</tr>
+							<tr>
+								<td width="22%" valign="top" class="vncellreq"><?=gettext("Lost Probe Delay");?></td>
+								<td width="78%" class="vtable">
+									<input name="avg_loss_delay_samples" type="text" class="formfld unknown" id="avg_loss_delay_samples" size="2"
+										value="<?=htmlspecialchars($pconfig['avg_loss_delay_samples']);?>" onchange="samples_change(document.iform.avg_loss_delay_samples_calculated, this)" />
+									<input name="avg_loss_delay_samples_calculated" type="checkbox" id="avg_loss_delay_samples_calculated" value="yes" <?php if ($pconfig['avg_loss_delay_samples_calculated'] == true) echo "checked=\"checked\""; ?> onclick="calculated_change(this, document.iform.avg_loss_delay_samples)" />
+										<?=gettext("Use calculated value."); ?>
+									<br/><span class="vexpl"><?=gettext(sprintf("The delay (in qty of probe samples) after which loss is computed.  Without this, delays longer than the probe interval would be treated as packet loss.  Default is %d.", $apinger_default['avg_loss_delay_samples']));?><br/><br/></span>
 								</td>
 							</tr>
 							<tr>
@@ -706,6 +852,7 @@ function monitor_change() {
 <script type="text/javascript">
 //<![CDATA[
 monitor_change();
+calculate_state_change();
 //]]>
 </script>
 </body>

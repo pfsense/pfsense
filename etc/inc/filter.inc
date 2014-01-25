@@ -2633,6 +2633,8 @@ EOD;
 	 */
 	if(is_array($config['captiveportal'])) {
 		foreach ($config['captiveportal'] as $cpcfg) {
+			if(!isset($cpcfg['enable']))
+				continue;
 			$cpinterfaces = explode(",", $cpcfg['interface']);
 			$cpiflist = array();
 			$cpiplist = array();

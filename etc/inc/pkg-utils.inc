@@ -821,7 +821,7 @@ function install_package_xml($pkg) {
 		 */
 		$missing_include = false;
 		if($pkg_config['include_file'] <> "") {
-			$static_output = gettext("Loading package instructions...") . "\n";
+			$static_output .= gettext("Loading package instructions...") . "\n";
 			update_output_window($static_output);
 			pkg_debug("require_once('{$pkg_config['include_file']}')\n");
 			if (file_exists($pkg_config['include_file']))

@@ -134,7 +134,7 @@ function format_log_line(row) {
 		Number of lines to display: 
 		<select name="filterlogentries" class="formfld unknown" id="filterlogentries">
 		<?php for ($i = 1; $i <= 20; $i++) { ?>
-			<option value="<?php echo $i;?>" <?php if ($nentries == $i) echo "SELECTED";?>><?php echo $i;?></option>
+			<option value="<?php echo $i;?>" <?php if ($nentries == $i) echo "selected=\"selected\"";?>><?php echo $i;?></option>
 		<?php } ?>
 		</select>
 

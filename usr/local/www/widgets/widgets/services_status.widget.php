@@ -75,7 +75,9 @@ if (count($services) > 0) {
 		$service_desc = explode(".",$service['description']);
 		echo '<tr><td class="listlr">' . $service['name'] . '</td>' . "\n";
 		echo '<td class="listr">' . $service_desc[0] . '</td>' . "\n";
+		echo '<td class="listr" align="center">' . "\n";
 		echo get_service_status_icon($service, false, true);
+		echo "</td>\n";
 		echo '<td valign="middle" class="list nowrap">';
 		echo get_service_control_links($service);
 		echo "</td></tr>\n";

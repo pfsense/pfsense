@@ -195,7 +195,9 @@ include("head.inc"); ?>
 				<table>
 				<tr>
 				<?php $ssvc = find_service_by_openvpn_vpnid($server['vpnid']); ?>
+				<td class="listr" align="center">
 				<?= get_service_status_icon($ssvc, true, true); ?>
+				</td>
 				<td><?= get_service_control_links($ssvc, true); ?></td>
 				</tr>
 				</table>
@@ -308,7 +310,9 @@ include("head.inc"); ?>
 				<table>
 				<tr>
 				<?php $ssvc = find_service_by_openvpn_vpnid($sk_server['vpnid']); ?>
+				<td class="listr" align="center">
 				<?= get_service_status_icon($ssvc, false, true); ?>
+				</td>
 				<td><?= get_service_control_links($ssvc, true); ?></td>
 				</tr>
 				</table>
@@ -371,7 +375,9 @@ include("head.inc"); ?>
 				<table>
 				<tr>
 				<?php $ssvc = find_service_by_openvpn_vpnid($client['vpnid']); ?>
+				<td class="listr" align="center">
 				<?= get_service_status_icon($ssvc, false, true); ?>
+				</td>
 				<td><?= get_service_control_links($ssvc, true); ?></td>
 				</tr>
 				</table>

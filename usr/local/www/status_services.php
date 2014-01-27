@@ -95,7 +95,9 @@ if (count($services) > 0) {
 			$service['description'] = get_pkg_descr($service['name']);
 		echo '<tr><td class="listlr" width="20%">' . $service['name'] . '</td>' . "\n";
 		echo '<td class="listr" width="55%">' . $service['description'] . '</td>' . "\n";
+		echo '<td class="listr" align="center">' . "\n";
 		echo get_service_status_icon($service, true, true);
+		echo "</td>\n";
 		echo '<td valign="middle" class="list nowrap">';
 		echo get_service_control_links($service);
 		$scut = get_shortcut_by_service_name($service['name']);

@@ -178,8 +178,8 @@ function get_searchdomains() {
 	
 	// Read in dhclient nameservers
 	$search_list = glob("/var/etc/searchdomain_*");
-	if (is_array($search_lists)) {
-		foreach($search_lists as $fdns) {
+	if (is_array($search_list)) {
+		foreach($search_list as $fdns) {
 			$contents = file($fdns, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
 			if (!is_array($contents))
 				continue;

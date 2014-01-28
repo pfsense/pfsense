@@ -461,9 +461,9 @@ function typesel_change() {
 			break;
 	}
 
-	jQuery("select[id='address_subnet']").prop("disabled", field_disabled);
-	if (set_value == true);
-		jQuery("select[id='address_subnet']").prop("value", field_value);
+	jQuery("select[id^='address_subnet']").prop("disabled", field_disabled);
+	if (set_value == true)
+		jQuery("select[id^='address_subnet']").prop("value", field_value);
 }
 
 function add_alias_control() {

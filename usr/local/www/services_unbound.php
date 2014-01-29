@@ -134,7 +134,7 @@ function show_advanced_dns() {
 <?php if (is_subsystem_dirty('hosts')): ?><p>
 <?php print_info_box_np(gettext("The configuration for the DNS Resolver, has been changed") . ".<br>" . gettext("You must apply the changes in order for them to take effect."));?><br>
 <?php endif; ?>
-<table width="100%" border="0" cellpadding="0" cellspacing="0" summary="system unbound services">
+<table width="100%" border="0" cellpadding="0" cellspacing="0" summary="services unbound">
 	<tbody>
 		<tr>
 			<td class="tabnavtbl">

@@ -133,13 +133,16 @@ EOF;
     }
 
     // Configure static Host entries
-    $host_entries = unbound_add_host_entries();
+    unbound_add_host_entries();
 
     // Configure Domain Overrides
-    $domain_overrides = unbound_add_domain_overrides();
+    unbound_add_domain_overrides();
 
     // Configure Unbound statistics
     $statistics = unbound_statistics();
+
+    // Configure Unbound access-lists
+    unbound_acls_config();
 
     // Add custom Unbound options
     if ($config['unbound']['custom_options']) {
@@ -322,8 +325,8 @@ function sync_unbound_service() {
 function unbound_acl_id_used($id) {
     global $config;
 
-    if (is_array($config['installedpackages']['unboundacls']['config']))
-        foreach ($config['installedpackages']['unboundacls']['config'] as & $acls)
+    if (is_array($config['unbound']['acls']))
+        foreach($config['unbound']['acls'] as & $acls)
             if ($id == $acls['aclid'])
                 return true;
 
@@ -583,6 +586,27 @@ statistics-cumulative: yes
 EOF;
 
     return $stats;
+}
+
+// Unbound Access lists
+function unbound_acls_config() {
+    global $config;
+
+    // Configure the ACLs
+    if (is_array($config['unbound']['acls'])) {
+        $unboundcfg = "";
+        foreach($config['unbound']['acls'] as $unbound_acl) {
+            $unboundcfg .= "#{$unbound_acl['aclname']}\n";
+            foreach($unbound_acl['row'] as $network) {
+                if ($unbound_acl['aclaction'] == "allow snoop")
+                    $unbound_acl['aclaction'] = "allow_snoop";
+                $unboundcfg .= "access-control: {$network['acl_network']}/{$network['mask']} {$unbound_acl['aclaction']}\n";
+            }
+        }
+        // Write out Access list
+        file_put_contents("{$g['unbound_chroot_path']}/access_lists.conf", $unboundcfg);
+    } else
+        return;
 }
 
 ?>

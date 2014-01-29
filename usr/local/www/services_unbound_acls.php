@@ -97,31 +97,35 @@ if ($_POST) {
 	}
 	
 	if (!$input_errors) {
-
 		if ($pconfig['Submit'] == gettext("Save")) {
-			if (!$a_acls[$id])
-				$a_acls[$id]['aclid'] = $id;
+			$acl_entry = array();
+			$acl_entry['aclid'] = $pconfig['aclid'];
+			$acl_entry['aclname'] = $pconfig['aclname'];
+			$acl_entry['aclaction'] = $pconfig['aclaction'];
+			$acl_entry['description'] = $pconfig['description'];
+			$acl_entry['aclid'] = $pconfig['aclid'];
+			$acl_entry['row'] = array();
+			foreach ($networkacl as $acl)
+				$acl_entry['row'][] = $acl;
 
-			if (isset($id) && $a_acls[$id]) {
-				$a_acls[$id]['aclid'] = $pconfig['aclid'];
-				$a_acls[$id]['aclname'] = $pconfig['aclname'];
-				$a_acls[$id]['aclaction'] = $pconfig['aclaction'];
-				$a_acls[$id]['description'] = $pconfig['description'];
-				$a_acls[$id]['row'] = array();
-				foreach ($networkacl as $acl)
-					$a_acls[$id]['row'][] = $acl;
-				write_config();
-				mark_subsystem_dirty("unbound");
-			}
+			if (isset($id) && $a_acls[$id])
+				$a_acls[$id] = $acl_entry;
+			else
+				$a_acls[] = $acl_entry;
+
+
+			mark_subsystem_dirty("unbound");
+			write_config();
+
 			pfSenseHeader("/services_unbound_acls.php");
 			exit;
 		}
 
 		if ($pconfig['apply']) {
-				clear_subsystem_dirty("unbound");
-				$retval = 0;
-				$retval = services_unbound_configure();
-				$savemsg = get_std_save_message($retval);
+			clear_subsystem_dirty("unbound");
+			$retval = 0;
+			$retval = services_unbound_configure();
+			$savemsg = get_std_save_message($retval);
 		}
 	}
 }

@@ -319,6 +319,9 @@ system_routing_enable();
 /* start dnsmasq service */
 services_dnsmasq_configure();
 
+/* start unbound service */
+services_unbound_configure();
+
 /* Do an initial time sync */
 echo "Starting NTP time client...";
 /* At bootup this will just write the config, ntpd will launch from ntpdate_sync_once.sh */

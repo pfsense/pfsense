@@ -53,7 +53,7 @@ if ($act == "del") {
 
 	unset($a_acls[$id]);
 	write_config();
-	unbound_reconfigure();
+	services_unbound_configure();
 	$savemsg = gettext("Access List successfully deleted")."<br/>";
 }
 
@@ -73,9 +73,9 @@ if ($_POST) {
 	unset($input_errors);
 	$pconfig = $_POST;
 
-	/* input validation - only allow 50 entries in a single ACL*/
+	// input validation - only allow 50 entries in a single ACL
 	for($x=0; $x<50; $x++) {
-		if(isset($pconfig["acl_network{$x}"])) {
+		if (isset($pconfig["acl_network{$x}"])) {
 			$networkacl[$x] = array();
 			$networkacl[$x]['acl_network'] = $pconfig["acl_network{$x}"];
 			$networkacl[$x]['mask'] = $pconfig["mask{$x}"];
@@ -99,7 +99,7 @@ if ($_POST) {
 	if (!$input_errors) {
 
 		if ($pconfig['Submit'] == gettext("Save")) {
-			if(!$a_acls[$id])
+			if (!$a_acls[$id])
 				$a_acls[$id]['aclid'] = $id;
 
 			if (isset($id) && $a_acls[$id]) {
@@ -112,7 +112,6 @@ if ($_POST) {
 					$a_acls[$id]['row'][] = $acl;
 				write_config();
 				mark_subsystem_dirty("unbound");
-				//unbound_reconfigure();
 			}
 			pfSenseHeader("/services_unbound_acls.php");
 			exit;
@@ -121,7 +120,7 @@ if ($_POST) {
 		if ($pconfig['apply']) {
 				clear_subsystem_dirty("unbound");
 				$retval = 0;
-				$retval = unbound_reconfigure();
+				$retval = services_unbound_configure();
 				$savemsg = get_std_save_message($retval);
 		}
 	}
@@ -176,7 +175,6 @@ if (is_subsystem_dirty("unbound"))
 	<tbody>
 		<tr>
 			<td class="tabnavtbl">
-				<ul id="tabnav">
 				<?php
 					$tab_array = array();
 					$tab_array[] = array(gettext("General Settings"), false, "/services_unbound.php");
@@ -184,7 +182,6 @@ if (is_subsystem_dirty("unbound"))
 					$tab_array[] = array(gettext("Access Lists"), true, "/services_unbound_acls.php");
 					display_top_tabs($tab_array, true);
 				?>
-				</ul>
 			</td>
 		</tr>
 		<tr>

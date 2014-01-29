@@ -15,6 +15,7 @@ smmsp:*:25:
 mailnull:*:26:
 guest:*:31:root
 bind:*:53:
+unbound:*:59:
 proxy:*:62:
 _pflogd:*:64:
 _dhcp:*:65:

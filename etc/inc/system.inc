@@ -103,7 +103,7 @@ function system_resolvconf_generate($dynupdate = false) {
 	if($syscfg['domain'])
 		$resolvconf = "domain {$syscfg['domain']}\n";
 
-	if (isset($config['dnsmasq']['enable']) && !isset($config['system']['dnslocalhost']))
+	if ((isset($config['dnsmasq']['enable']) || isset($config['unbound']['enable'])) && !isset($config['system']['dnslocalhost']))
 		$resolvconf .= "nameserver 127.0.0.1\n";
 
 	if (isset($syscfg['dnsallowoverride'])) {
@@ -125,6 +125,10 @@ function system_resolvconf_generate($dynupdate = false) {
 				$resolvconf .= "nameserver $ns\n";
 		}
 	}
+
+	// Add EDNS support
+	if (isset($config['unbound']['enable']) && isset($config['unbound']['edns']))
+		$resolvconf .= "options edns0\n";
 
 	$dnslock = lock('resolvconf', LOCK_EX);
 

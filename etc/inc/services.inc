@@ -1696,10 +1696,6 @@ function services_dnsmasq_configure() {
 		else
 			sleep(1);
 
-		/* generate hosts file */
-		if(system_hosts_generate()!=0)
-			$return = 1;
-
 		$args = "";
 
 		if (isset($config['dnsmasq']['regdhcp'])) {
@@ -1819,6 +1815,39 @@ function services_dnsmasq_configure() {
 
 	if (!$g['booting']) {
 		if(services_dhcpd_configure()!=0)
+			$return = 1;
+	}
+
+	return $return;
+}
+
+function services_unbound_configure() {
+	global $config, $g;
+	$return = 0;
+
+	if (isset($config['system']['developerspew'])) {
+		$mt = microtime();
+		echo "services_unbound_configure() being called $mt\n";
+	}
+
+	// kill any running Unbound instance
+	if (file_exists("{$g['varrun_path']}/unbound.pid"))
+		sigkillbypid("{$g['varrun_path']}/unbound.pid", "TERM");
+
+	if (isset($config['unbound']['enable'])) {
+		if ($g['booting'])
+			echo gettext("Starting Unbound DNS forwarder...");
+		else
+			sleep(1);
+
+		require_once('/etc/inc/unbound.inc');
+		sync_unbound_service();
+		if ($g['booting'])
+			echo gettext("done.") . "\n";
+	}
+
+	if (!$g['booting']) {
+		if (services_dhcpd_configure()!=0)
 			$return = 1;
 	}
 

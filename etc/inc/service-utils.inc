@@ -229,17 +229,24 @@ function get_services() {
 	/*    Add services that are in the base.
 	 *
 	 */
-	if(is_radvd_enabled()) {
+	if (is_radvd_enabled()) {
 		$pconfig = array();
 		$pconfig['name'] = "radvd";
 		$pconfig['description'] = gettext("Router Advertisement Daemon");
 		$services[] = $pconfig;
 	}
 
-	if(isset($config['dnsmasq']['enable'])) {
+	if (isset($config['dnsmasq']['enable'])) {
 		$pconfig = array();
 		$pconfig['name'] = "dnsmasq";
 		$pconfig['description'] = gettext("DNS Forwarder");
+		$services[] = $pconfig;
+	}
+
+	if (isset($config['unbound']['enable'])) {
+		$pconfig = array();
+		$pconfig['name'] = "unbound";
+		$pconfig['description'] = gettext("Unbound DNS Forwarder");
 		$services[] = $pconfig;
 	}
 
@@ -268,21 +275,21 @@ function get_services() {
 			$iflist[$if] = $if;
 	}
 
-	if(isset($config['dhcrelay']['enable'])) {
+	if (isset($config['dhcrelay']['enable'])) {
 		$pconfig = array();
 		$pconfig['name'] = "dhcrelay";
 		$pconfig['description'] = gettext("DHCP Relay");
 		$services[] = $pconfig;
 	}
 
-	if(isset($config['dhcrelay6']['enable'])) {
+	if (isset($config['dhcrelay6']['enable'])) {
 		$pconfig = array();
 		$pconfig['name'] = "dhcrelay6";
 		$pconfig['description'] = gettext("DHCPv6 Relay");
 		$services[] = $pconfig;
 	}
 
-	if(is_dhcp_server_enabled()) {
+	if (is_dhcp_server_enabled()) {
 		$pconfig = array();
 		$pconfig['name'] = "dhcpd";
 		$pconfig['description'] = gettext("DHCP Service");
@@ -297,7 +304,7 @@ function get_services() {
 		$services[] = $pconfig;
 	}
 
-	if(isset($config['snmpd']['enable'])) {
+	if (isset($config['snmpd']['enable'])) {
 		$pconfig = array();
 		$pconfig['name'] = "bsnmpd";
 		$pconfig['description'] = gettext("SNMP Service");
@@ -597,6 +604,9 @@ function service_control_stop($name, $extras) {
 		case 'dnsmasq':
 			killbypid("{$g['varrun_path']}/dnsmasq.pid");
 			break;
+		case 'unbound':
+			killbypid("{$g['varrun_path']}/unbound.pid");
+			break;
 		case 'igmpproxy':
 			killbyname("igmpproxy");
 			break;
@@ -626,6 +636,7 @@ function service_control_stop($name, $extras) {
 	}
 	return sprintf(gettext("%s has been stopped."), htmlspecialchars($name));
 }
+
 function service_control_restart($name, $extras) {
 	global $g;
 	switch($name) {
@@ -657,6 +668,9 @@ function service_control_restart($name, $extras) {
 			break;
 		case 'dnsmasq':
 			services_dnsmasq_configure();
+			break;
+		case 'unbound':
+			services_unbound_configure();
 			break;
 		case 'dhcpd':
 			services_dhcpd_configure();

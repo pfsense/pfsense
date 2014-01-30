@@ -343,7 +343,7 @@ function enable_change(enable_over) {
 											<option value="40000000">40 million</option>
 											<option value="50000000">50 million</option>
 										</select><br/>
-										<?=gettext("If enabled, a total number of unwanted replies is kept track of in every thread. When it reaches the threshold, a defensive action is taken and a warning is printed to the log file. This defensive action is to clear the RRSet and message caches, hopefully flushing away any poison. The default is disabled, but if enabled a a value of 10 million is suggested.");?>
+										<?=gettext("If enabled, a total number of unwanted replies is kept track of in every thread. When it reaches the threshold, a defensive action is taken and a warning is printed to the log file. This defensive action is to clear the RRSet and message caches, hopefully flushing away any poison. The default is disabled, but if enabled a value of 10 million is suggested.");?>
 									</p>
 								</td>
 							</tr>

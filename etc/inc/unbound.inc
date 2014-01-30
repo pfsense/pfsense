@@ -346,7 +346,7 @@ function do_as_unbound_user($cmd) {
 
     switch ($cmd) {
         case "start":
-            exec("echo '/usr/sbin/unbound-control -c{$g['unbound_chroot_path']}/unbound.conf start' | /usr/bin/su -m unbound");
+            mwexec("/usr/sbin/unbound -c{$g['unbound_chroot_path']}/unbound.conf");
             break;
         case "stop":
             mwexec("echo '/usr/sbin/unbound-control stop' | /usr/bin/su -m unbound", true);

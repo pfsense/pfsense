@@ -47,8 +47,8 @@ if($_GET['createalias'] == "true") {
 	$resolved = gethostbyname($host);
 	if($resolved) {
 		$host = trim($_POST['host']);
-		$dig=`dig "$host" A | grep "$host" | grep -v ";" | awk '{ print $5 }'`;
-		$resolved = explode("\n", $dig);
+		$drill=`/usr/bin/drill "$host" A | grep "$host" | grep -v ";" | awk '{ print $5 }'`;
+		$resolved = explode("\n", $drill);
 		$isfirst = true;
 		foreach($resolved as $re) {
 			if($re <> "") {
@@ -104,7 +104,7 @@ if ($_POST) {
 		$resolvconf_servers = `grep nameserver /etc/resolv.conf | cut -f2 -d' '`;
 		$dns_servers = explode("\n", trim($resolvconf_servers));
 		foreach ($dns_servers as $dns_server) {
-			$query_time = `dig {$host_esc} @{$dns_server} | grep Query | cut -d':' -f2`;
+			$query_time = `/usr/bin/drill {$host_esc} @{$dns_server} | grep Query | cut -d':' -f2`;
 			if($query_time == "")
 				$query_time = gettext("No response");
 			$new_qt = array();
@@ -130,8 +130,8 @@ if ($_POST) {
 			$type = "hostname";
 			$resolved = gethostbyname($host);
 			if($resolved) {
-				$dig=`dig $host_esc A | grep $host_esc | grep -v ";" | awk '{ print $5 }'`;
-				$resolved = explode("\n", $dig);
+				$drill=`/usr/bin/drill $host_esc A | grep $host_esc | grep -v ";" | awk '{ print $5 }'`;
+				$resolved = explode("\n", $drill);
 			}
 			$hostname = $host;
 			if ($host != $resolved)

@@ -175,8 +175,8 @@ include("head.inc");
 							<div align="center"><input id="filterlogentries_protocol" name="filterlogentries_protocol" class="formfld search" type="text" size="5" value="<?= $filterfieldsarray['proto'] ?>" /></div>
 						</td>
 						<td>
-							<div style="align:center; valign:top"><?=gettext("Quantity");?></div>
-							<div style="align:center; valign:top"><input id="filterlogentries_qty" name="filterlogentries_qty" class="" type="text" size="6" value="<?= $filterlogentries_qty ?>" /></div>
+							<div style="align:center; vertical-align:top"><?=gettext("Quantity");?></div>
+							<div style="align:center; vertical-align:top"><input id="filterlogentries_qty" name="filterlogentries_qty" class="" type="text" size="6" value="<?= $filterlogentries_qty ?>" /></div>
 						</td>
 					</tr>
 					<tr>
@@ -215,8 +215,8 @@ include("head.inc");
 					<table width="0%" border="0" cellpadding="0" cellspacing="0">
 					<tr>
 						<td>
-							<div style="align:center; valign:top"><?=gettext("Interface");?></div>
-							<div style="align:center; valign:top">
+							<div style="align:center; vertical-align:top"><?=gettext("Interface");?></div>
+							<div style="align:center; vertical-align:top">
 							<select name="interface" onchange="dst_change(this.value,iface_old,document.iform.dsttype.value);iface_old = document.iform.interface.value;typesel_change();">
 							<option value="" <?=$interfacefilter?"":"selected=\"selected\""?>>*Any interface</option>
 							<?php						
@@ -251,16 +251,16 @@ include("head.inc");
 							</div>
 						</td>
 						<td>
-							<div style="align:center; valign:top"><?=gettext("Filter expression");?></div>
-							<div style="align:center; valign:top"><input id="filtertext" name="filtertext" class="formfld search" style="vertical-align:top;" type="text" size="35" value="<?=$filtertext?>" /></div>
+							<div style="align:center; vertical-align:top"><?=gettext("Filter expression");?></div>
+							<div style="align:center; vertical-align:top"><input id="filtertext" name="filtertext" class="formfld search" style="vertical-align:top;" type="text" size="35" value="<?=$filtertext?>" /></div>
 						</td>
 						<td>
-							<div style="align:center; valign:top"><?=gettext("Quantity");?></div>
-							<div style="align:center; valign:top"><input id="filter_qty" name="filter_qty" class="" style="vertical-align:top;" type="text" size="6" value="<?= $filter_qty ?>" /></div>
+							<div style="align:center; vertical-align:top"><?=gettext("Quantity");?></div>
+							<div style="align:center; vertical-align:top"><input id="filter_qty" name="filter_qty" class="" style="vertical-align:top;" type="text" size="6" value="<?= $filter_qty ?>" /></div>
 						</td>
 						<td>
-							<div style="align:center; valign:top">&nbsp;</div>
-							<div style="align:center; valign:top"><input id="filtersubmit" name="filtersubmit" type="submit" class="formbtn" style="vertical-align:top;" value="<?=gettext("Filter");?>" /></div>
+							<div style="align:center; vertical-align:top">&nbsp;</div>
+							<div style="align:center; vertical-align:top"><input id="filtersubmit" name="filtersubmit" type="submit" class="formbtn" style="vertical-align:top;" value="<?=gettext("Filter");?>" /></div>
 						</td>
 					</tr>
 					<tr>

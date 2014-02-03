@@ -52,7 +52,7 @@ function isvalidpid($pidfile) {
 
 function is_process_running($process) {
 	$output = "";
-	exec("/bin/pgrep -anx {$process}", $output, $retval);
+	exec("/bin/pgrep -anx " . escapeshellarg($process), $output, $retval);
 
 	return (intval($retval) == 0);
 }
@@ -65,7 +65,7 @@ function isvalidproc($proc) {
 /* return 1 for success and 0 for a failure */
 function sigkillbypid($pidfile, $sig) {
 	if (file_exists($pidfile))
-		return mwexec("/bin/pkill -{$sig} -F {$pidfile}", true);
+		return mwexec("/bin/pkill " . escapeshellarg("-{$sig}") . " -F {$pidfile}", true);
 
 	return 0;
 }
@@ -73,7 +73,7 @@ function sigkillbypid($pidfile, $sig) {
 /* kill a process by name */
 function sigkillbyname($procname, $sig) {
 	if(isvalidproc($procname))
-		return mwexec("/usr/bin/killall -{$sig} " . escapeshellarg($procname), true);
+		return mwexec("/usr/bin/killall " . escapeshellarg("-{$sig}") . " " . escapeshellarg($procname), true);
 }
 
 /* kill a process by name */
@@ -1163,7 +1163,7 @@ function log_auth($error) {
  ******/
 function exec_command($command) {
 	$output = array();
-	exec($command . ' 2>&1 ', $output);
+	exec($command . ' 2>&1', $output);
 	return(implode("\n", $output));
 }
 
@@ -1391,9 +1391,9 @@ function verify_digital_signature($fname) {
 
 /* obtain MAC address given an IP address by looking at the ARP table */
 function arp_get_mac_by_ip($ip) {
-	mwexec("/sbin/ping -c 1 -t 1 {$ip}", true);
+	mwexec("/sbin/ping -c 1 -t 1 " . escapeshellarg($ip), true);
 	$arpoutput = "";
-	exec("/usr/sbin/arp -n {$ip}", $arpoutput);
+	exec("/usr/sbin/arp -n " . escapeshellarg($ip), $arpoutput);
 
 	if ($arpoutput[0]) {
 		$arpi = explode(" ", $arpoutput[0]);

@@ -67,7 +67,7 @@ function write_rcfile($params) {
 		$tokill =& $params['stop'];
 	} else if(!empty($params['executable'])) {
 		/* just nuke the executable */
-		$tokill = "/usr/bin/killall {$params['executable']}";
+		$tokill = "/usr/bin/killall " . escapeshellarg($params['executable']);
 	} else {
 		/* make an educated guess (bad) */
 		$tokill = array_pop(explode('/', array_shift(explode(' ', $params['start']))));

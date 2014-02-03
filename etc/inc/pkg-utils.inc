@@ -103,7 +103,7 @@ function remove_freebsd_package($packagestring) {
 	// as displayed by the pbi_info utility. e.g. "package-1.2.3_4-i386" 
 	// It must NOT have ".pbi" on the end.
 	putenv("PATH=/bin:/sbin:/usr/bin:/usr/sbin:/usr/local/bin:/usr/local/sbin");
-	exec("/usr/local/sbin/pbi_info {$packagestring} | /usr/bin/awk '/Prefix/ {print $2}'",$pbidir);
+	exec("/usr/local/sbin/pbi_info " . escapeshellarg($packagestring) . " | /usr/bin/awk '/Prefix/ {print $2}'",$pbidir);
 	$pbidir = $pbidir[0];
 	if ($pbidir == "") {
 		log_error("PBI dir for {$packagestring} was not found - cannot cleanup PBI files");
@@ -128,7 +128,7 @@ function remove_freebsd_package($packagestring) {
 			}
 		}
 
-		exec("/usr/local/sbin/pbi_delete {$packagestring} 2>>/tmp/pbi_delete_errors.txt");
+		exec("/usr/local/sbin/pbi_delete " . escapeshellarg($packagestring) . " 2>>/tmp/pbi_delete_errors.txt");
 	}
 }
 
@@ -279,7 +279,7 @@ function is_freebsd_pkg_installed($pkg) {
 		return;
 	$output = "";
 	putenv("PATH=/bin:/sbin:/usr/bin:/usr/sbin:/usr/local/bin:/usr/local/sbin");
-	exec("/usr/local/sbin/pbi_info \"{$pkg}\"", $output, $retval);
+	exec("/usr/local/sbin/pbi_info \"" . escapeshellarg($pkg) . "\"", $output, $retval);
 
 	return (intval($retval) == 0);
 }
@@ -566,10 +566,10 @@ function pkg_fetch_recursive($pkgname, $filename, $dependlevel = 0, $base_url = 
 		$pkgaddout = "";
 
 		putenv("PATH=/bin:/sbin:/usr/bin:/usr/sbin:/usr/local/bin:/usr/local/sbin");
-		exec("/usr/local/sbin/pbi_add {$pkgstaging} -f -v --no-checksig {$fetchto} 2>&1", $pkgaddout);
+		exec("/usr/local/sbin/pbi_add " . escapeshellarg($pkgstaging) . " -f -v --no-checksig " . escapeshellarg($fetchto) . " 2>&1", $pkgaddout);
 		pkg_debug($pkgname . " " . print_r($pkgaddout, true) . "\npbi_add successfully completed.\n");
 		setup_library_paths();
-		exec("/usr/local/sbin/pbi_info " . preg_replace('/\.pbi$/','',$filename) . " | /usr/bin/awk '/Prefix/ {print $2}'",$pbidir);
+		exec("/usr/local/sbin/pbi_info " . escapeshellarg(preg_replace('/\.pbi$/','',$filename)) . " | /usr/bin/awk '/Prefix/ {print $2}'",$pbidir);
 		$pbidir = $pbidir[0];
 		$linkdirs = array('bin','sbin');
 		foreach($linkdirs as $dir) {
@@ -802,7 +802,7 @@ function install_package_xml($pkg) {
 				if(stristr($filename, ".tgz") <> "") {
 					pkg_debug(gettext("Extracting tarball to -C for ") . $filename . "...\n");
 					$tarout = "";
-					exec("/usr/bin/tar xvzf " . $prefix . $filename . " -C / 2>&1", $tarout);
+					exec("/usr/bin/tar xvzf " . escapeshellarg($prefix . $filename) . " -C / 2>&1", $tarout);
 					pkg_debug(print_r($tarout, true) . "\n");
 				}
 				if($pkg_chmod <> "") {
@@ -861,7 +861,7 @@ function install_package_xml($pkg) {
 				putenv("PATH=/bin:/sbin:/usr/bin:/usr/sbin:/usr/local/bin:/usr/local/sbin");
 				exec("/usr/local/sbin/pbi_info | grep '^{$pkg_name_for_pbi_match}' | xargs /usr/local/sbin/pbi_info | awk '/Prefix/ {print $2}'",$pbidirarray);
 				$pbidir0 = $pbidirarray[0];
-				exec("find /usr/local/etc/ -name *.conf | grep \"{$pkg}\"",$files);
+				exec("find /usr/local/etc/ -name *.conf | grep '" . escapeshellarg($pkg) . "'",$files);
 				foreach($files as $f) {
 					$pbiconf = str_replace('/usr/local',$pbidir0,$f);
 					if(is_file($pbiconf) || is_link($pbiconf)) {

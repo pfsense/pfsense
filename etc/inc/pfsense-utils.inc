@@ -354,7 +354,7 @@ function get_pfsync_interface_status($pfsyncinterface) {
  * add_rule_to_anchor($anchor, $rule): adds the specified rule to an anchor
  */
 function add_rule_to_anchor($anchor, $rule, $label) {
-	mwexec("echo " . $rule . " | /sbin/pfctl -a " . $anchor . ":" . $label . " -f -");
+	mwexec("echo " . escapeshellarg($rule) . " | /sbin/pfctl -a " . escapeshellarg($anchor) . ":" . escapeshellarg($label) . " -f -");
 }
 
 /*
@@ -623,7 +623,7 @@ if (!function_exists('php_check_syntax')){
 if (!function_exists('php_check_syntax')){
 	function php_check_syntax($code_to_check, &$errormessage){
 		return false;
-		$command = "/usr/local/bin/php -l " . $code_to_check;
+		$command = "/usr/local/bin/php -l " . escapeshellarg($code_to_check);
 		$output = exec_command($command);
 		if (stristr($output, "Errors parsing") == false) {
 			echo "false\n";
@@ -1470,7 +1470,7 @@ function add_hostname_to_watch($hostname) {
 	if((is_fqdn($hostname)) && (!is_ipaddr($hostname))) {
 		$domrecords = array();
 		$domips = array();
-		exec("host -t A $hostname", $domrecords, $rethost);
+		exec("host -t A " . escapeshellarg($hostname), $domrecords, $rethost);
 		if($rethost == 0) {
 			foreach($domrecords as $domr) {
 				$doml = explode(" ", $domr);
@@ -1547,7 +1547,7 @@ function compare_hostname_to_dnscache($hostname) {
 	if((is_fqdn($hostname)) && (!is_ipaddr($hostname))) {
 		$domrecords = array();
 		$domips = array();
-		exec("host -t A $hostname", $domrecords, $rethost);
+		exec("host -t A " . escapeshellarg($hostname), $domrecords, $rethost);
 		if($rethost == 0) {
 			foreach($domrecords as $domr) {
 				$doml = explode(" ", $domr);
@@ -1892,7 +1892,7 @@ function update_alias_url_data() {
 				$temp_filename = tempnam("{$g['tmp_path']}/", "alias_import");
 				unlink($temp_filename);
 				$verify_ssl = isset($config['system']['checkaliasesurlcert']);
-				mwexec("/bin/mkdir -p {$temp_filename}");
+				mkdir($temp_filename);
 				download_file($alias_url, $temp_filename . "/aliases", $verify_ssl);
 
 				/* if the item is tar gzipped then extract */
@@ -1934,7 +1934,7 @@ function update_alias_url_data() {
 function process_alias_unzip($temp_filename) {
 	if(!file_exists("/usr/local/bin/unzip"))
 		return;
-	mwexec("/bin/mv {$temp_filename}/aliases {$temp_filename}/aliases.zip");
+	rename("{$temp_filename}/aliases", "{$temp_filename}/aliases.zip");
 	mwexec("/usr/local/bin/unzip {$temp_filename}/aliases.tgz -d {$temp_filename}/aliases/");
 	unlink("{$temp_filename}/aliases.zip");
 	$files_to_process = return_dir_as_array("{$temp_filename}/");
@@ -1951,7 +1951,7 @@ function process_alias_unzip($temp_filename) {
 function process_alias_tgz($temp_filename) {
 	if(!file_exists("/usr/bin/tar"))
 		return;
-	mwexec("/bin/mv {$temp_filename}/aliases {$temp_filename}/aliases.tgz");
+	rename("{$temp_filename}/aliases", "{$temp_filename}/aliases.tgz");
 	mwexec("/usr/bin/tar xzf {$temp_filename}/aliases.tgz -C {$temp_filename}/aliases/");
 	unlink("{$temp_filename}/aliases.tgz");
 	$files_to_process = return_dir_as_array("{$temp_filename}/");
@@ -2089,7 +2089,7 @@ function process_alias_urltable($name, $url, $freq, $forceupdate=false) {
 			}
 			unlink_if_exists($urltable_filename . ".tmp");
 		} else
-			mwexec("/usr/bin/touch {$urltable_filename}");
+			touch($urltable_filename);
 		conf_mount_ro();
 		return true;
 	} else {
@@ -2182,10 +2182,10 @@ function nanobsd_update_fstab($gslice, $complete_path, $oldufs, $newufs) {
 	$tmppath = "/tmp/{$gslice}";
 	$fstabpath = "/tmp/{$gslice}/etc/fstab";
 
-	exec("/bin/mkdir {$tmppath}");
+	mkdir($tmppath);
 	exec("/sbin/fsck_ufs -y /dev/{$complete_path}");
 	exec("/sbin/mount /dev/ufs/{$gslice} {$tmppath}");
-	exec("/bin/cp /etc/fstab {$fstabpath}");
+	copy("/etc/fstab", $fstabpath);
 
 	if (!file_exists($fstabpath)) {
 		$fstab = <<<EOF
@@ -2200,7 +2200,7 @@ EOF;
 		$status = exec("sed -i \"\" \"s/pfsense{$oldufs}/pfsense{$newufs}/g\" {$fstabpath}");
 	}
 	exec("/sbin/umount {$tmppath}");
-	exec("/bin/rmdir {$tmppath}");
+	rmdir($tmppath);
 
 	return $status;
 }

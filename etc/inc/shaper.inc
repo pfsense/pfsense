@@ -4093,7 +4093,7 @@ function generate_layer7_files() {
 	if (!is_module_loaded("ipdivert.ko"))
 		mwexec("/sbin/kldload ipdivert.ko");
 
-	mwexec("rm -f {$g['tmp_path']}/*.l7");
+	array_map('unlink', glob("{$g['tmp_path']}/*.l7"));
     }
     
     foreach($layer7_rules_list as $l7rules) {

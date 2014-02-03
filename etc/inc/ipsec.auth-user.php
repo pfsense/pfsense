@@ -56,11 +56,10 @@ function getNasID()
 {
     global $g;
 
-    $nasId = "";
-    exec("/bin/hostname", $nasId);
-    if(!$nasId[0])
-        $nasId[0] = "{$g['product_name']}";
-    return $nasId[0];
+    $nasId = gethostname();
+    if(empty($nasId))
+        $nasId = $g['product_name'];
+    return $nasId;
 }
 }
 

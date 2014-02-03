@@ -122,7 +122,7 @@ function parse_cisco_acl($attribs) {
 				$tmprule .= "from any";
 				$index++;
 			} else {
-				$tmprule .= "from $rule[$index]";
+				$tmprule .= "from {$rule[$index]}";
 				$index++;
 				$netmask = cisco_to_cidr($rule[$index]);
 				$tmprule .= "/{$netmask} ";
@@ -141,7 +141,7 @@ function parse_cisco_acl($attribs) {
 				$index++;
 				$tmprule .= "to any";
 			} else {
-				$tmprule .= "to $rule[$index]";
+				$tmprule .= "to {$rule[$index]}";
 				$index++;
 				$netmask = cisco_to_cidr($rule[$index]);
 				$tmprule .= "/{$netmask} ";

@@ -1446,7 +1446,7 @@ function get_interface_info($ifdescr) {
 
 //returns cpu speed of processor. Good for determining capabilities of machine
 function get_cpu_speed() {
-	return exec("sysctl hw.clockrate | awk '{ print $2 }'");
+	return exec("/sbin/sysctl -n hw.clockrate");
 }
 
 function get_uptime_sec() {

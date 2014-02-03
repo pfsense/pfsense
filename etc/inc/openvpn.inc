@@ -399,13 +399,13 @@ function openvpn_reconfigure($mode, $settings) {
 
 		/* create the tap device if required */
 		if (!file_exists("/dev/{$tunname}"))
-			exec("/sbin/ifconfig {$tunname} create");
+			exec("/sbin/ifconfig " . escapeshellarg($tunname) . " create");
 
 		/* rename the device */
-		mwexec("/sbin/ifconfig {$tunname} name {$devname}");
+		mwexec("/sbin/ifconfig " . escapeshellarg($tunname) . " name " . escapeshellarg($devname));
 
 		/* add the device to the openvpn group */
-		mwexec("/sbin/ifconfig {$devname} group openvpn");
+		mwexec("/sbin/ifconfig " . escapeshellarg($devname) . " group openvpn");
 	}
 
 	$pfile = $g['varrun_path'] . "/openvpn_{$mode_id}.pid";
@@ -801,7 +801,7 @@ function openvpn_restart($mode, $settings) {
 	/* start the new process */
 	$fpath = $g['varetc_path']."/openvpn/{$mode_id}.conf";
 	openvpn_clear_route($mode, $settings);
-	mwexec_bg("/usr/local/sbin/openvpn --config {$fpath}");
+	mwexec_bg("/usr/local/sbin/openvpn --config " . escapeshellarg($fpath));
 
 	if (!$g['booting'])
 		send_event("filter reload");
@@ -837,13 +837,13 @@ function openvpn_delete($mode, & $settings) {
 	}
 
 	/* remove the device from the openvpn group */
-	mwexec("/sbin/ifconfig {$devname} -group openvpn");
+	mwexec("/sbin/ifconfig " . escapeshellarg($devname) . " -group openvpn");
 
 	/* restore the original adapter name */
-	mwexec("/sbin/ifconfig {$devname} name {$tunname}");
+	mwexec("/sbin/ifconfig " . escapeshellarg($devname) . " name " . escapeshellarg($tunname));
 
 	/* remove the configuration files */
-	mwexec("/bin/rm {$g['varetc_path']}/openvpn/{$mode_id}.*");
+	array_map('unlink', glob("{$g['varetc_path']}/openvpn/{$mode_id}.*"));
 }
 
 function openvpn_cleanup_csc($common_name) {

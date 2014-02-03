@@ -379,7 +379,7 @@ function system_routing_configure($interface = "") {
 	$foundgwv6 = false;
 	/* tack on all the hard defined gateways as well */
 	if (is_array($config['gateways']['gateway_item'])) {
-		mwexec("/bin/rm -f {$g['tmp_path']}/*_defaultgw {$g['tmp_path']}/*_defaultgwv6", true);
+		array_map('unlink', glob("{$g['tmp_path']}/*_defaultgw{,v6}", GLOB_BRACE));
 		foreach	($config['gateways']['gateway_item'] as $gateway) {
 			if (isset($gateway['defaultgw'])) {
 				if ($gateway['ipprotocol'] != "inet6" && (is_ipaddrv4($gateway['gateway']) || $gateway['gateway'] == "dynamic")) {
@@ -875,8 +875,7 @@ function system_generate_lighty_config($filename,
 		$captive_portal_mod_evasive = "evasive.max-conns-per-ip = {$maxprocperip}";
 
 		$server_upload_dirs = "server.upload-dirs = ( \"{$g['tmp_path']}/captiveportal/\" )\n";
-		exec("mkdir -p {$g['tmp_path']}/captiveportal");
-		exec("chmod a-w {$g['tmp_path']}/captiveportal");
+		mkdir("{$g['tmp_path']}/captiveportal", 0555);
 		$server_max_request_size = "server.max-request-size    = 384";
 		$cgi_config = "";
 	} else {
@@ -1354,7 +1353,7 @@ function system_ntp_configure($start_ntpd=true) {
 
 	/* if /var/empty does not exist, create it */
 	if(!is_dir("/var/empty"))
-		exec("/bin/mkdir -p /var/empty && chmod ug+rw /var/empty/.");
+		mkdir("/var/empty", 0775, true);
 
 	/* start opentpd, set time now and use /var/etc/ntpd.conf */
 	mwexec("/usr/local/sbin/ntpd -g -c {$g['varetc_path']}/ntpd.conf -p {$g['varrun_path']}/ntpd.pid", false, true);

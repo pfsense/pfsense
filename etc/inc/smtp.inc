@@ -563,7 +563,7 @@ class smtp_class
 		&& !strcmp($localhost=getenv("SERVER_NAME"),"")
 		&& !strcmp($localhost=getenv("HOST"),"")
 		&& !strcmp($localhost=getenv("HOSTNAME"),"")
-		&& !strcmp($localhost=exec("/bin/hostname"),""))
+		&& !strcmp($localhost=gethostname(),""))
 			$localhost="localhost";
 
 		return $localhost;

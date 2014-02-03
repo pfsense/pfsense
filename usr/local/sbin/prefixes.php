@@ -67,7 +67,7 @@ if(count($routes) > 0) {
 /* get clog from dhcpd */
 $dhcpdlogfile = "/var/log/dhcpd.log";
 $clog = array();
-if(file_exists(dhcpdlogfile))
+if(file_exists($dhcpdlogfile))
 	exec("clog $dhcpdlogfile", $clog, $ret);
 
 if($ret > 0)

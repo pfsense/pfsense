@@ -74,8 +74,8 @@ sorttable = {
 		if (headrow == undefined)
 			return;
 		
-		if (table.getAttribute("sortableMultirow") != undefined)
-			sortableMultirow = parseInt(table.getAttribute("sortableMultirow"));
+		if (table.style.sortableMultirow != undefined)
+			sortableMultirow = parseInt(table.style.sortableMultirow);
 		else
 			sortableMultirow = 1;
 		
@@ -247,8 +247,8 @@ sorttable = {
 		hasInputs = (typeof node.getElementsByTagName == 'function') &&
 			node.getElementsByTagName('input').length;
 		
-		if (node.getAttribute("sorttable_customkey") != null) {
-			return node.getAttribute("sorttable_customkey");
+		if (node.style.sorttable_customkey != null) {
+			return node.style.sorttable_customkey;
 		}
 		else if (typeof node.textContent != 'undefined' && !hasInputs) {
 			return node.textContent.replace(/^\s+|\s+$/g, '');

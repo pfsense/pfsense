@@ -344,10 +344,10 @@ function get_carp_interface_status($carpinterface) {
  * get_pfsync_interface_status($pfsyncinterface): returns the status of a pfsync
  */
 function get_pfsync_interface_status($pfsyncinterface) {
-	$result = does_interface_exist($pfsyncinterface);
-	if($result <> true) return;
-	$status = exec_command("/sbin/ifconfig {$pfsyncinterface} | /usr/bin/awk '/pfsync:/ {print \$5}'");
-	return $status;
+	if (!does_interface_exist($pfsyncinterface))
+		return;
+
+	return exec_command("/sbin/ifconfig {$pfsyncinterface} | /usr/bin/awk '/pfsync:/ {print \$5}'");
 }
 
 /*

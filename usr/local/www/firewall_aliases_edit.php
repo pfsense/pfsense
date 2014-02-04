@@ -73,7 +73,7 @@ if($_POST)
 
 // Debugging
 if($debug)
-	unlink("{$g['tmp_path']}/alias_rename_log.txt");
+	unlink_if_exists("{$g['tmp_path']}/alias_rename_log.txt");
 
 function alias_same_type($name, $type) {
 	global $config;
@@ -203,7 +203,7 @@ if ($_POST) {
 				/* fetch down and add in */
 				$isfirst = 0;
 				$temp_filename = tempnam("{$g['tmp_path']}/", "alias_import");
-				unlink($temp_filename);
+				unlink_if_exists($temp_filename);
 				mwexec("/bin/mkdir -p {$temp_filename}");
 				mwexec("/usr/bin/fetch -q -o \"{$temp_filename}/aliases\" " . escapeshellarg($_POST['address' . $x]));
 				/* if the item is tar gzipped then extract */

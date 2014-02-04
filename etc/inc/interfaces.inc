@@ -1823,7 +1823,7 @@ EOD;
 	} else {
 		if (file_exists("/conf/{$pppif}.log")) {
 			conf_mount_rw();
-			unlink("/conf/{$pppif}.log");
+			@unlink("/conf/{$pppif}.log");
 			conf_mount_ro();
 		}
 	}

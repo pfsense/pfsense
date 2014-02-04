@@ -36,8 +36,7 @@
 
 function dump_rrd_to_xml($rrddatabase, $xmldumpfile) {
 	$rrdtool = "/usr/bin/nice -n20 /usr/local/bin/rrdtool";
-	if(file_exists($xmldumpfile))
-		unlink($xmldumpfile);
+	unlink_if_exists($xmldumpfile);
 
 	exec("$rrdtool dump " . escapeshellarg($rrddatabase) . " {$xmldumpfile} 2>&1", $dumpout, $dumpret);
 	if ($dumpret <> 0) {

@@ -73,7 +73,7 @@ if($_POST)
 
 // Debugging
 if($debug)
-	unlink("{$g['tmp_path']}/alias_rename_log.txt");
+	unlink_if_exists("{$g['tmp_path']}/alias_rename_log.txt");
 
 function alias_same_type($name, $type) {
 	global $config;
@@ -211,7 +211,7 @@ if ($_POST) {
 				/* fetch down and add in */
 				$isfirst = 0;
 				$temp_filename = tempnam("{$g['tmp_path']}/", "alias_import");
-				unlink($temp_filename);
+				unlink_if_exists($temp_filename);
 				$verify_ssl = isset($config['system']['checkaliasesurlcert']);
 				mkdir($temp_filename);
 				download_file($_POST['address' . $x], $temp_filename . "/aliases", $verify_ssl);

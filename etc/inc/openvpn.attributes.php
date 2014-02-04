@@ -179,7 +179,7 @@ $rules = parse_cisco_acl($attributes);
 if (!empty($rules)) {
 	$pid = posix_getpid();
 	@file_put_contents("/tmp/ovpn_{$pid}{$common_name}.rules", $rules);
-	mwexec("/sbin/pfctl -a \"openvpn/" . escapeshellarg($common_name) . "\" -f {$g['tmp_path']}/ovpn_{$pid}" . escapeshellarg($common_name) . ".rules");
+	mwexec("/sbin/pfctl -a " . escapeshellarg("openvpn/{$common_name}") . " -f {$g['tmp_path']}/ovpn_{$pid}" . escapeshellarg($common_name) . ".rules");
 	@unlink("{$g['tmp_path']}/ovpn_{$pid}{$common_name}.rules");
 }
 

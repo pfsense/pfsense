@@ -565,11 +565,9 @@ function dump_clog($logfile, $tail, $withorig = true, $grepfor = "", $grepinvert
 	$logarr = "";
 	$grepline = "  ";
 	if(is_array($grepfor))
-		foreach($grepfor as $agrep)
-			$grepline .= " | grep " . escapeshellarg($agrep);
+		$grepline .= " | /usr/bin/egrep " . escapeshellarg(implode("|", $grepfor));
 	if(is_array($grepinvert))
-		foreach($grepinvert as $agrep)
-			$grepline .= " | grep -v " . escapeshellarg($agrep);
+		$grepline .= " | /usr/bin/egrep -v " . escapeshellarg(implode("|", $grepinvert));
 	if(file_exists($logfile) && filesize($logfile) == 0) {
 		$logarr = array("Log file started.");
 	} else {
@@ -610,11 +608,9 @@ function return_clog($logfile, $tail, $withorig = true, $grepfor = "", $grepinve
 	$logarr = "";
 	$grepline = "  ";
 	if(is_array($grepfor))
-		foreach($grepfor as $agrep)
-			$grepline .= " | grep " . escapeshellarg($agrep);
+		$grepline .= " | /usr/bin/egrep " . escapeshellarg(implode("|", $grepfor));
 	if(is_array($grepinvert))
-		foreach($grepinvert as $agrep)
-			$grepline .= " | grep -v " . escapeshellarg($agrep);
+		$grepline .= " | /usr/bin/egrep -v " . escapeshellarg(implode("|", $grepinvert));
 	if($config['system']['disablesyslogclog']) {
 		exec("cat " . escapeshellarg($logfile) . "{$grepline} | /usr/bin/tail {$sor} -n " . escapeshellarg($tail), $logarr);
 	} else {

@@ -73,7 +73,7 @@ if($_POST)
 
 // Debugging
 if($debug)
-	exec("rm -f {$g['tmp_path']}/alias_rename_log.txt");
+	unlink("{$g['tmp_path']}/alias_rename_log.txt");
 
 function alias_same_type($name, $type) {
 	global $config;
@@ -213,7 +213,7 @@ if ($_POST) {
 				$temp_filename = tempnam("{$g['tmp_path']}/", "alias_import");
 				unlink($temp_filename);
 				$verify_ssl = isset($config['system']['checkaliasesurlcert']);
-				mwexec("/bin/mkdir -p {$temp_filename}");
+				mkdir($temp_filename);
 				download_file($_POST['address' . $x], $temp_filename . "/aliases", $verify_ssl);
 
 				/* if the item is tar gzipped then extract */
@@ -270,7 +270,7 @@ if ($_POST) {
 						/* nothing was found */
 						$input_errors[] = sprintf(gettext("You must provide a valid URL. Could not fetch usable data from '%s'."), $_POST['address' . $x]);
 					}
-					mwexec("/bin/rm -rf {$temp_filename}");
+					mwexec("/bin/rm -rf " . escapeshellarg($temp_filename));
 				} else {
 					$input_errors[] = sprintf(gettext("URL '%s' is not valid."), $_POST['address' . $x]);
 				}

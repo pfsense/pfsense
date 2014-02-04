@@ -90,9 +90,9 @@ function dump_clog_vpn($logfile, $tail) {
 	$logarr = "";
 	
 	if(isset($config['system']['usefifolog'])) 
-		exec("/usr/sbin/fifolog_reader " . $logfile . " | tail {$sor} -n " . $tail, $logarr);
+		exec("/usr/sbin/fifolog_reader " . escapeshellarg($logfile) . " | tail {$sor} -n " . $tail, $logarr);
 	else 
-		exec("/usr/sbin/clog " . $logfile . " | tail {$sor} -n " . $tail, $logarr);
+		exec("/usr/sbin/clog " . escapeshellarg($logfile) . " | tail {$sor} -n " . $tail, $logarr);
 
 	foreach ($logarr as $logent) {
 		$logent = preg_split("/\s+/", $logent, 6);

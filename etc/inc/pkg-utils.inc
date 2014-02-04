@@ -279,7 +279,7 @@ function is_freebsd_pkg_installed($pkg) {
 	if(!$pkg) 
 		return;
 	$output = "";
-	exec("/usr/local/sbin/pbi_info \"" . escapeshellarg($pkg) . "\"", $output, $retval);
+	exec("/usr/local/sbin/pbi_info " . escapeshellarg($pkg), $output, $retval);
 
 	return (intval($retval) == 0);
 }
@@ -861,7 +861,7 @@ function install_package_xml($pkg) {
 				$pkg_name_for_pbi_match = strtolower($pkg) . "-";
 				exec("/usr/local/sbin/pbi_info | grep '^{$pkg_name_for_pbi_match}' | xargs /usr/local/sbin/pbi_info | awk '/Prefix/ {print $2}'",$pbidirarray);
 				$pbidir0 = $pbidirarray[0];
-				exec("find /usr/local/etc/ -name *.conf | grep '" . escapeshellarg($pkg) . "'",$files);
+				exec("find /usr/local/etc/ -name *.conf | grep " . escapeshellarg($pkg),$files);
 				foreach($files as $f) {
 					$pbiconf = str_replace('/usr/local',$pbidir0,$f);
 					if(is_file($pbiconf) || is_link($pbiconf)) {

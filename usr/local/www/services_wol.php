@@ -95,7 +95,7 @@ if ($_POST || $_GET['mac']) {
 		else {
 			$bcip = gen_subnet_max($ipaddr, get_interface_subnet($if));
 			/* Execute wol command and check return code. */
-			if(!mwexec("/usr/local/bin/wol -i {$bcip} {$mac}"))
+			if(!mwexec("/usr/local/bin/wol -i {$bcip} " . escapeshellarg($mac)))
 				$savemsg .= sprintf(gettext("Sent magic packet to %s."),$mac);
 			else
 				$savemsg .= sprintf(gettext('Please check the %1$ssystem log%2$s, the wol command for %3$s did not complete successfully%4$s'),'<a href="/diag_logs.php">', '</a>', $mac, ".<br>");

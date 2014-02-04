@@ -551,9 +551,9 @@ function clear_log_file($logfile = "/var/log/system.log") {
 		touch($logfile);
 	} else {
 		if(isset($config['system']['usefifolog']))
-			exec("/usr/sbin/fifolog_create -s 511488 {$logfile}");
+			exec("/usr/sbin/fifolog_create -s 511488 " . escapeshellarg($logfile));
 		else
-			exec("/usr/sbin/clog -i -s 511488 {$logfile}");
+			exec("/usr/sbin/clog -i -s 511488 " . escapeshellarg($logfile));
 	}
 	system_syslogd_start();
 }
@@ -565,20 +565,20 @@ function dump_clog($logfile, $tail, $withorig = true, $grepfor = "", $grepinvert
 	$grepline = "  ";
 	if(is_array($grepfor))
 		foreach($grepfor as $agrep)
-			$grepline .= " | grep \"$agrep\"";
+			$grepline .= " | grep " . escapeshellarg($agrep);
 	if(is_array($grepinvert))
 		foreach($grepinvert as $agrep)
-			$grepline .= " | grep -v \"$agrep\"";
+			$grepline .= " | grep -v " . escapeshellarg($agrep);
 	if(file_exists($logfile) && filesize($logfile) == 0) {
 		$logarr = array("Log file started.");
 	} else {
 		if($config['system']['disablesyslogclog']) {
-			exec("cat {$logfile}{$grepline} | /usr/bin/tail {$sor} -n {$tail}", $logarr);
+			exec("cat " . escapeshellarg($logfile) . "{$grepline} | /usr/bin/tail {$sor} -n " . escapeshellarg($tail), $logarr);
 		} else {
 			if(isset($config['system']['usefifolog']))
-				exec("/usr/sbin/fifolog_reader {$logfile}{$grepline} | /usr/bin/tail {$sor} -n {$tail}", $logarr);
+				exec("/usr/sbin/fifolog_reader " . escapeshellarg($logfile) . "{$grepline} | /usr/bin/tail {$sor} -n " . escapeshellarg($tail), $logarr);
 			else
-				exec("/usr/sbin/clog {$logfile}{$grepline}| grep -v \"CLOG\" | grep -v \"\033\" | /usr/bin/tail {$sor} -n {$tail}", $logarr);
+				exec("/usr/sbin/clog " . escapeshellarg($logfile) . "{$grepline}| grep -v \"CLOG\" | grep -v \"\033\" | /usr/bin/tail {$sor} -n " . escapeshellarg($tail), $logarr);
 		}
 	}
 	foreach ($logarr as $logent) {
@@ -610,17 +610,17 @@ function return_clog($logfile, $tail, $withorig = true, $grepfor = "", $grepinve
 	$grepline = "  ";
 	if(is_array($grepfor))
 		foreach($grepfor as $agrep)
-			$grepline .= " | grep \"$agrep\"";
+			$grepline .= " | grep " . escapeshellarg($agrep);
 	if(is_array($grepinvert))
 		foreach($grepinvert as $agrep)
-			$grepline .= " | grep -v \"$agrep\"";
+			$grepline .= " | grep -v " . escapeshellarg($agrep);
 	if($config['system']['disablesyslogclog']) {
-		exec("cat {$logfile}{$grepline} | /usr/bin/tail {$sor} -n {$tail}", $logarr);
+		exec("cat " . escapeshellarg($logfile) . "{$grepline} | /usr/bin/tail {$sor} -n " . escapeshellarg($tail), $logarr);
 	} else {
 		if(isset($config['system']['usefifolog'])) {
-			exec("/usr/sbin/fifolog_reader {$logfile}{$grepline} | /usr/bin/tail {$sor} -n {$tail}", $logarr);
+			exec("/usr/sbin/fifolog_reader " . escapeshellarg($logfile) . "{$grepline} | /usr/bin/tail {$sor} -n " . escapeshellarg($tail), $logarr);
 		} else {
-			exec("/usr/sbin/clog {$logfile}{$grepline}| grep -v \"CLOG\" | grep -v \"\033\" | /usr/bin/tail {$sor} -n {$tail}", $logarr);
+			exec("/usr/sbin/clog " . escapeshellarg($logfile) . "{$grepline}| grep -v \"CLOG\" | grep -v \"\033\" | /usr/bin/tail {$sor} -n " . escapeshellarg($tail), $logarr);
 		}
 	}
 	return($logarr);

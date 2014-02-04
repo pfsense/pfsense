@@ -1151,7 +1151,7 @@ function check_wireless_mode() {
 		if (!interface_wireless_clone("{$wlanif}_", $wancfg)) {
 			$input_errors[] = sprintf(gettext("Unable to change mode to %s.  You may already have the maximum number of wireless clones supported in this mode."), $wlan_modes[$wancfg['wireless']['mode']]);
 		} else {
-			mwexec("/sbin/ifconfig {$wlanif}_ destroy");
+			mwexec("/sbin/ifconfig " . escapeshellarg($wlanif) . "_ destroy");
 		}
 		$wancfg['wireless']['mode'] = $old_wireless_mode;
 	}

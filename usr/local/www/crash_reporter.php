@@ -102,10 +102,10 @@ exec("/usr/bin/grep -vi warning /tmp/PHP_errors.log", $php_errors);
 	if (gettext($_POST['Submit']) == "Yes") {
 		echo gettext("Processing...");
 		if (!is_dir("/var/crash"))
-			mwexec("/bin/mkdir -p /var/crash");
+			mkdir("/var/crash", 0750, true);
 		@file_put_contents("/var/crash/crashreport_header.txt", $crash_report_header);
 		if(file_exists("/tmp/PHP_errors.log"))
-			exec("cp /tmp/PHP_errors.log /var/crash/");
+			copy("/tmp/PHP_errors.log", "/var/crash/");
 		exec("/usr/bin/gzip /var/crash/*");
 		$files_to_upload = glob("/var/crash/*");
 		echo "<p/>";
@@ -114,7 +114,7 @@ exec("/usr/bin/grep -vi warning /tmp/PHP_errors.log", $php_errors);
 		flush();
 		if(is_array($files_to_upload)) {
 			$resp = upload_crash_report($files_to_upload);
-			exec("rm /var/crash/*");
+			array_map('unlink', glob("/var/crash/*"));
 			// Erase the contents of the PHP error log
 			fclose(fopen("/tmp/PHP_errors.log", 'w'));
 			echo "<p/>";
@@ -124,7 +124,7 @@ exec("/usr/bin/grep -vi warning /tmp/PHP_errors.log", $php_errors);
 			echo "Could not find any crash files.";
 		}
 	} else if(gettext($_POST['Submit']) == "No") {
-		exec("rm /var/crash/*");
+		array_map('unlink', glob("rm /var/crash/*"));
 		// Erase the contents of the PHP error log
 		fclose(fopen("/tmp/PHP_errors.log", 'w'));
 		Header("Location: /");

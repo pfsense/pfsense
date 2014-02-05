@@ -102,7 +102,6 @@ function remove_freebsd_package($packagestring) {
 	// The packagestring passed in must be the full PBI package name, 
 	// as displayed by the pbi_info utility. e.g. "package-1.2.3_4-i386" 
 	// It must NOT have ".pbi" on the end.
-	putenv("PATH=/bin:/sbin:/usr/bin:/usr/sbin:/usr/local/bin:/usr/local/sbin");
 	exec("/usr/local/sbin/pbi_info " . escapeshellarg($packagestring) . " | /usr/bin/awk '/Prefix/ {print $2}'",$pbidir);
 	$pbidir = $pbidir[0];
 	if ($pbidir == "") {
@@ -278,7 +277,6 @@ function is_freebsd_pkg_installed($pkg) {
 	if(!$pkg) 
 		return;
 	$output = "";
-	putenv("PATH=/bin:/sbin:/usr/bin:/usr/sbin:/usr/local/bin:/usr/local/sbin");
 	exec("/usr/local/sbin/pbi_info " . escapeshellarg($pkg), $output, $retval);
 
 	return (intval($retval) == 0);
@@ -565,7 +563,6 @@ function pkg_fetch_recursive($pkgname, $filename, $dependlevel = 0, $base_url = 
 
 		$pkgaddout = "";
 
-		putenv("PATH=/bin:/sbin:/usr/bin:/usr/sbin:/usr/local/bin:/usr/local/sbin");
 		exec("/usr/local/sbin/pbi_add " . escapeshellarg($pkgstaging) . " -f -v --no-checksig " . escapeshellarg($fetchto) . " 2>&1", $pkgaddout);
 		pkg_debug($pkgname . " " . print_r($pkgaddout, true) . "\npbi_add successfully completed.\n");
 		setup_library_paths();
@@ -858,7 +855,6 @@ function install_package_xml($pkg) {
 				// e.g. "squidguard-1.4_4-i386" so feed lowercase to pbi_info below.
 				// Also add the "-" so that examples like "squid-" do not match "squidguard-".
 				$pkg_name_for_pbi_match = strtolower($pkg) . "-";
-				putenv("PATH=/bin:/sbin:/usr/bin:/usr/sbin:/usr/local/bin:/usr/local/sbin");
 				exec("/usr/local/sbin/pbi_info | grep '^{$pkg_name_for_pbi_match}' | xargs /usr/local/sbin/pbi_info | awk '/Prefix/ {print $2}'",$pbidirarray);
 				$pbidir0 = $pbidirarray[0];
 				exec("find /usr/local/etc/ -name *.conf | grep " . escapeshellarg($pkg),$files);

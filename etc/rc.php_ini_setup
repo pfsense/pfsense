@@ -329,6 +329,9 @@ listen.mode = 0600
 
 security.limit_extensions =
 
+; Pass environment variables
+env[PATH] = /bin:/sbin:/usr/bin:/usr/sbin:/usr/local/bin:/usr/local/sbin
+
 EOF
 
 if [ $REALMEM -lt 350 ]; then

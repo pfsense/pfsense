@@ -563,7 +563,7 @@ function pkg_fetch_recursive($pkgname, $filename, $dependlevel = 0, $base_url = 
 
 		$pkgaddout = "";
 
-		exec("/usr/local/sbin/pbi_add " . escapeshellarg($pkgstaging) . " -f -v --no-checksig " . escapeshellarg($fetchto) . " 2>&1", $pkgaddout);
+		exec("/usr/local/sbin/pbi_add " . $pkgstaging . " -f -v --no-checksig " . escapeshellarg($fetchto) . " 2>&1", $pkgaddout);
 		pkg_debug($pkgname . " " . print_r($pkgaddout, true) . "\npbi_add successfully completed.\n");
 		setup_library_paths();
 		exec("/usr/local/sbin/pbi_info " . escapeshellarg(preg_replace('/\.pbi$/','',$filename)) . " | /usr/bin/awk '/Prefix/ {print $2}'",$pbidir);

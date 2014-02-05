@@ -84,6 +84,10 @@ if($end < $start) {
         $end = $now;
 }
 
+$graphbegintime = date("M j H\\\:i\\\:s Y", $start);
+$graphendtime = date("M j H\\\:i\\\:s Y", $end);
+$graphrange = $graphbegintime . ' - ' . $graphendtime;
+
 $seconds = $end - $start;
 
 $scales = array();
@@ -95,12 +99,6 @@ $scales[2764800] = "DAY:1:WEEK:1:WEEK:1:0:Week %W";
 $scales[16070400] = "WEEK:1:MONTH:1:MONTH:1:0:%b";
 $scales[42854400] = "MONTH:1:MONTH:1:MONTH:1:0:%b";
 
-$archives = array();
-$archives[1] = 1200;
-$archives[5] = 720;
-$archives[60] = 1860;
-$archives[1440] = 2284;
-
 $defOptions = array(
 	'to' => 1,
 	'parts' => 1,
@@ -109,14 +107,33 @@ $defOptions = array(
 	'separator' => ', '
 );
 
-/* always set the average to the highest value as a fallback */
-$average = 1440 * 60;
-foreach($archives as $rra => $value) {
-        $archivestart = $now - ($rra * 60 * $value);
-        if($archivestart <= $start) {
-                $average = $rra * 60;
-                break;
-        }
+/* Set the 'average' granularity to be used for each graph length. */
+switch($curgraph) {
+	case "8hour":	$average =    1 * 60;	break;
+	case "day":		$average =    5 * 60;	break;
+	case "week":	$average =   60 * 60;	break;
+	case "month":	$average =   60 * 60;	break;
+	case "quarter":	$average = 1440 * 60;	break;
+	case "year":	$average = 1440 * 60;	break;
+	case "4year":	$average = 1440 * 60;	break;
+	case "custom": 
+		$archives = array();
+		$archives[1] = 1200;
+		$archives[5] = 720;
+		$archives[60] = 1860;
+		$archives[1440] = 2284;
+
+		/* always set the average to the highest value as a fallback */
+		$average = 1440 * 60;
+		foreach($archives as $rra => $value) {
+			$archivestart = $now - ($rra * 60 * $value);
+			if($archivestart <= $start) {
+				$average = $rra * 60;
+				break;
+			}
+		}
+		break;
+	default:		$average = 1440 * 60;	break;	// always set the average to the highest value as a fallback
 }
 
 foreach($scales as $scalelength => $value) {
@@ -474,7 +491,7 @@ if((strstr($curdatabase, "-traffic.rrd")) && (file_exists("$rrddbpath$curdatabas
 	$graphcmd .= "GPRINT:\"$curif-out6_bits_block:LAST:%7.2lf %Sb/s\" ";
 	$graphcmd .= "GPRINT:\"$curif-bytes_out6_t_block:AVERAGE:%7.2lf %sB o\" ";
 	$graphcmd .= "COMMENT:\"\\n\" ";
-	$graphcmd .= "COMMENT:\"\t\t\t\t\t\t\t\t\t\t\t\t\t`date +\"%b %d %H\:%M\:%S %Y\"`\" ";
+	$graphcmd .= "COMMENT:\"\t\t\t\t\t\t\t\t\t  {$graphrange}\" ";
 }
 elseif(strstr($curdatabase, "-throughput.rrd")) {
 	/* define graphcmd for throughput stats */
@@ -602,7 +619,7 @@ elseif(strstr($curdatabase, "-throughput.rrd")) {
 	$graphcmd .= "GPRINT:\"tput-out_bits_block:LAST:%7.2lf %Sb/s\" ";
 	$graphcmd .= "GPRINT:\"tput-bytes_out_t_block:AVERAGE:%7.2lf %sB o\" ";
 	$graphcmd .= "COMMENT:\"\\n\" ";
-	$graphcmd .= "COMMENT:\"\t\t\t\t\t\t\t\t\t\t\t\t\t`date +\"%b %d %H\:%M\:%S %Y\"`\" ";
+	$graphcmd .= "COMMENT:\"\t\t\t\t\t\t\t\t\t  {$graphrange}\" ";
 }
 elseif((strstr($curdatabase, "-packets.rrd")) && (file_exists("$rrddbpath$curdatabase"))) {
 	/* define graphcmd for packets stats */
@@ -728,7 +745,7 @@ elseif((strstr($curdatabase, "-packets.rrd")) && (file_exists("$rrddbpath$curdat
 	$graphcmd .= "GPRINT:\"$curif-out6_pps_block:LAST:%7.2lf %S pps\" ";
 	$graphcmd .= "GPRINT:\"$curif-pps_out6_t_block:AVERAGE:%7.2lf %s pkts\" ";
 	$graphcmd .= "COMMENT:\"\\n\" ";
-	$graphcmd .= "COMMENT:\"\t\t\t\t\t\t\t\t\t\t\t\t\t`date +\"%b %d %H\:%M\:%S %Y\"`\" ";
+	$graphcmd .= "COMMENT:\"\t\t\t\t\t\t\t\t\t  {$graphrange}\" ";
 }
 elseif((strstr($curdatabase, "-wireless.rrd")) && (file_exists("$rrddbpath$curdatabase"))) {
 	/* define graphcmd for packets stats */
@@ -761,7 +778,7 @@ elseif((strstr($curdatabase, "-wireless.rrd")) && (file_exists("$rrddbpath$curda
 	$graphcmd .= "GPRINT:\"$curif-channel:AVERAGE:%7.2lf      \" ";
 	$graphcmd .= "GPRINT:\"$curif-channel:LAST:%7.2lf\" ";
 	$graphcmd .= "COMMENT:\"\\n\" ";
-	$graphcmd .= "COMMENT:\"\t\t\t\t\t\t\t\t\t\t\t\t\t`date +\"%b %d %H\:%M\:%S %Y\"`\" ";
+	$graphcmd .= "COMMENT:\"\t\t\t\t\t\t\t\t\t  {$graphrange}\" ";
 }
 elseif((strstr($curdatabase, "-vpnusers.rrd")) && (file_exists("$rrddbpath$curdatabase"))) {
 	/* define graphcmd for vpn users stats */
@@ -780,7 +797,7 @@ elseif((strstr($curdatabase, "-vpnusers.rrd")) && (file_exists("$rrddbpath$curda
 	$graphcmd .= "GPRINT:\"$curif-users:AVERAGE:%7.2lf      \" ";
 	$graphcmd .= "GPRINT:\"$curif-users:LAST:%7.2lf \" ";
 	$graphcmd .= "COMMENT:\"\\n\" ";
-	$graphcmd .= "COMMENT:\"\t\t\t\t\t\t\t\t\t\t\t\t\t`date +\"%b %d %H\:%M\:%S %Y\"`\" ";
+	$graphcmd .= "COMMENT:\"\t\t\t\t\t\t\t\t\t  {$graphrange}\" ";
 }
 elseif((strstr($curdatabase, "-states.rrd")) && (file_exists("$rrddbpath$curdatabase"))) {
 	/* define graphcmd for states stats */
@@ -834,7 +851,7 @@ elseif((strstr($curdatabase, "-states.rrd")) && (file_exists("$rrddbpath$curdata
 	$graphcmd .= "GPRINT:\"$curif-dstip:MAX:%7.2lf %s    \" ";
 	$graphcmd .= "GPRINT:\"$curif-dstip:LAST:%7.2lf %s    \" ";
 	$graphcmd .= "COMMENT:\"\\n\" ";
-	$graphcmd .= "COMMENT:\"\t\t\t\t\t\t\t\t\t\t\t\t\t`date +\"%b %d %H\:%M\:%S %Y\"`\" ";
+	$graphcmd .= "COMMENT:\"\t\t\t\t\t\t\t\t\t  {$graphrange}\" ";
 }
 elseif((strstr($curdatabase, "-processor.rrd")) && (file_exists("$rrddbpath$curdatabase"))) {
 	/* define graphcmd for processor stats */
@@ -886,7 +903,7 @@ elseif((strstr($curdatabase, "-processor.rrd")) && (file_exists("$rrddbpath$curd
 	$graphcmd .= "GPRINT:\"processes:MAX:%7.2lf %s    \" ";
 	$graphcmd .= "GPRINT:\"processes:LAST:%7.2lf %s    \" ";
 	$graphcmd .= "COMMENT:\"\\n\" ";
-	$graphcmd .= "COMMENT:\"\t\t\t\t\t\t\t\t\t\t\t\t\t`date +\"%b %d %H\:%M\:%S %Y\"`\" ";
+	$graphcmd .= "COMMENT:\"\t\t\t\t\t\t\t\t\t  {$graphrange}\" ";
 }
 elseif((strstr($curdatabase, "-memory.rrd")) && (file_exists("$rrddbpath$curdatabase"))) {
 	/* define graphcmd for memory usage stats */
@@ -938,7 +955,7 @@ elseif((strstr($curdatabase, "-memory.rrd")) && (file_exists("$rrddbpath$curdata
 	$graphcmd .= "GPRINT:\"wire:MAX:%7.2lf %s    \" ";
 	$graphcmd .= "GPRINT:\"wire:LAST:%7.2lf %S    \" ";
 	$graphcmd .= "COMMENT:\"\\n\" ";
-	$graphcmd .= "COMMENT:\"\t\t\t\t\t\t\t\t\t\t\t\t\t`date +\"%b %d %H\:%M\:%S %Y\"`\" ";
+	$graphcmd .= "COMMENT:\"\t\t\t\t\t\t\t\t\t  {$graphrange}\" ";
 }
 elseif((strstr($curdatabase, "-mbuf.rrd")) && (file_exists("$rrddbpath$curdatabase"))) {
 	/* define graphcmd for mbuf usage stats */
@@ -1011,7 +1028,7 @@ elseif((strstr($curdatabase, "-queues.rrd")) && (file_exists("$rrddbpath$curdata
 		if($t > 7) { $t = 0; }
 	}
 	$graphcmd .= "COMMENT:\"\\n\" ";
-	$graphcmd .= "COMMENT:\"\t\t\t\t\t\t\t\t\t\t\t\t\t`date +\"%b %d %H\:%M\:%S %Y\"`\" ";
+	$graphcmd .= "COMMENT:\"\t\t\t\t\t\t\t\t\t  {$graphrange}\" ";
 }
 elseif((strstr($curdatabase, "-queuedrops.rrd")) && (file_exists("$rrddbpath$curdatabase"))) {
 	/* define graphcmd for queuedrop stats */
@@ -1041,7 +1058,7 @@ elseif((strstr($curdatabase, "-queuedrops.rrd")) && (file_exists("$rrddbpath$cur
 		if($t > 7) { $t = 0; }
 	}
 	$graphcmd .= "COMMENT:\"\\n\" ";
-	$graphcmd .= "COMMENT:\"\t\t\t\t\t\t\t\t\t\t\t\t\t`date +\"%b %d %H\:%M\:%S %Y\"`\" ";
+	$graphcmd .= "COMMENT:\"\t\t\t\t\t\t\t\t\t  {$graphrange}\" ";
 }
 elseif((strstr($curdatabase, "-quality.rrd")) && (file_exists("$rrddbpath$curdatabase"))) {
 	/* make a link quality graphcmd, we only have WAN for now, others too follow */
@@ -1077,7 +1094,7 @@ elseif((strstr($curdatabase, "-quality.rrd")) && (file_exists("$rrddbpath$curdat
 		GPRINT:loss:LAST:\"\tLast\: %3.1lf %%\\n\" \\
 		AREA:loss10#$colorqualityloss:\"Packet loss\\n\" \\
 		LINE1:delay#$colorqualityrtt[5]:\"Delay average\\n\" \\
-		COMMENT:\"\t\t\t\t\t\t\t\t\t\t\t\t\t`date +\"%b %d %H\:%M\:%S %Y\"`\"";
+		COMMENT:\"\t\t\t\t\t\t\t\t\t  {$graphrange}\"";
 }
 elseif((strstr($curdatabase, "spamd.rrd")) && (file_exists("$rrddbpath$curdatabase"))) {
 	/* graph a spamd statistics graph */
@@ -1116,7 +1133,7 @@ elseif((strstr($curdatabase, "spamd.rrd")) && (file_exists("$rrddbpath$curdataba
 		GPRINT:consmin:MIN:\"Min\\:%6.2lf\\t\" \\
 		GPRINT:consavg:AVERAGE:\"Avg\\:%6.2lf\\t\" \\
 		GPRINT:consmax:MAX:\"Max\\:%6.2lf\\n\" \\
-		COMMENT:\"\t\t\t\t\t\t\t\t\t\t\t\t\t`date +\"%b %d %H\:%M\:%S %Y\"`\" ";
+		COMMENT:\"\t\t\t\t\t\t\t\t\t  {$graphrange}\"";
 }
 elseif((strstr($curdatabase, "-cellular.rrd")) && (file_exists("$rrddbpath$curdatabase"))) {
 	$graphcmd = "$rrdtool graph $rrdtmppath$curdatabase-$curgraph.png ";
@@ -1134,7 +1151,7 @@ elseif((strstr($curdatabase, "-cellular.rrd")) && (file_exists("$rrddbpath$curda
 	$graphcmd .= "GPRINT:\"$curif-rssi:AVERAGE:%7.2lf     \" ";
 	$graphcmd .= "GPRINT:\"$curif-rssi:LAST:%7.2lf \" ";
 	$graphcmd .= "COMMENT:\"\\n\" ";
-	$graphcmd .= "COMMENT:\"\t\t\t\t\t\t\t\t\t\t\t\t\t`date +\"%b %d %H\:%M\:%S %Y\"`\" ";
+	$graphcmd .= "COMMENT:\"\t\t\t\t\t\t\t\t\t  {$graphrange}\" ";
 }
 elseif((strstr($curdatabase, "-loggedin.rrd")) && (file_exists("$rrddbpath$curdatabase"))) {
 	/* define graphcmd for online Captive Portal users stats */
@@ -1153,7 +1170,7 @@ elseif((strstr($curdatabase, "-loggedin.rrd")) && (file_exists("$rrddbpath$curda
 	$graphcmd .= "AREA:\"$curif-totalusers_d#{$colorcaptiveportalusers[0]}:Total logged in users\" ";
 	$graphcmd .= "GPRINT:\"$curif-totalusers_d:MAX:%8.0lf \\n\" ";
 	$graphcmd .= "COMMENT:\"\\n\" ";
-	$graphcmd .= "COMMENT:\"\t\t\t\t\t\t\t\t\t\t\t\t\t`date +\"%b %d %H\:%M\:%S %Y\"`\" ";	
+	$graphcmd .= "COMMENT:\"\t\t\t\t\t\t\t\t\t  {$graphrange}\" ";
 }
 elseif((strstr($curdatabase, "-concurrent.rrd")) && (file_exists("$rrddbpath$curdatabase"))) {
 	/* define graphcmd for online Captive Portal users stats */
@@ -1175,7 +1192,7 @@ elseif((strstr($curdatabase, "-concurrent.rrd")) && (file_exists("$rrddbpath$cur
 	$graphcmd .= "GPRINT:\"$curif-concurrentusers:AVERAGE:%8.0lf      \" ";
 	$graphcmd .= "GPRINT:\"$curif-concurrentusers:MAX:%8.0lf \" ";
 	$graphcmd .= "COMMENT:\"\\n\" ";
-	$graphcmd .= "COMMENT:\"\t\t\t\t\t\t\t\t\t\t\t\t\t`date +\"%b %d %H\:%M\:%S %Y\"`\" ";	
+	$graphcmd .= "COMMENT:\"\t\t\t\t\t\t\t\t\t  {$graphrange}\" ";
 }
 else {
 	$data = false;

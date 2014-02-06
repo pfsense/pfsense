@@ -301,7 +301,6 @@ if ($_POST) {
 			ipsec_lookup_phase1($ph2ent, $ph1ent);
 			$old_ph1ent = $ph1ent;
 			$old_ph1ent['remote-gateway'] = resolve_retry($old_ph1ent['remote-gateway']);
-			reload_tunnel_spd_policy ($ph1ent, $ph2ent, $old_ph1ent, $old_ph2ent);
 		}
 
 		write_config();

@@ -58,7 +58,6 @@ if ($_POST) {
 
 	if ($_POST['apply']) {
 		$retval = 0;
-		$retval = vpn_ipsec_refresh_policies();
 		$retval = vpn_ipsec_configure();
 		/* reload the filter in the background */
 		filter_configure();

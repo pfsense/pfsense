@@ -51,7 +51,7 @@ function choose_backup() {
 	echo gettext("Which configuration would you like to restore?") . "\n";
 	echo " 1-" . count($confvers) . " : ";
 	$number = strtoupper(chop(fgets($fp)));
-	if (is_numeric($number) && ($number > 0) && ($number < count($confvers))) {
+	if (is_numeric($number) && ($number > 0) && ($number <= count($confvers))) {
 		return $number;
 	} else {
 		echo gettext("That is not a valid backup number.\n");
@@ -61,7 +61,7 @@ function choose_backup() {
 
 function restore_history_backup($number) {
 	global $g, $fp, $confvers;
-	if (is_numeric($number) && ($number > 0) && ($number < count($confvers))) {
+	if (is_numeric($number) && ($number > 0) && ($number <= count($confvers))) {
 		$realnumber = $number - 1;
 		echo "\n" . gettext("Is this the backup you wish to restore?") . "\n";
 		list_backups($realnumber);

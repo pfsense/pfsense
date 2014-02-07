@@ -381,7 +381,7 @@ if ($input_errors)
 								if(have_ruleint_access($ifent)):
 ?>
 									<option value="<?=$ifent;?>" <?php if ($pconfig['src'] == $ifent) { echo "selected=\"selected\""; } ?>>
-										<?=htmlspecialchars($ifdesc);?> <?=gettext("subnet"); ?>
+										<?=htmlspecialchars($ifdesc);?> <?=gettext("net"); ?>
 									</option>
 									<option value="<?=$ifent;?>ip"<?php if ($pconfig['src'] ==  $ifent . "ip") { echo "selected=\"selected\""; } ?>>
 										<?=$ifdesc?> <?=gettext("address");?>
@@ -463,7 +463,7 @@ if ($input_errors)
 								if(have_ruleint_access($if)):
 ?>
 									<option value="<?=$if;?>" <?php if ($pconfig['dst'] == $if) { echo "selected=\"selected\""; } ?>><?=htmlspecialchars($ifdesc);?>
-										<?=gettext("subnet"); ?>
+										<?=gettext("net"); ?>
 									</option>
 									<option value="<?=$if;?>ip"<?php if ($pconfig['dst'] == $if . "ip") { echo "selected=\"selected\""; } ?>>
 										<?=$ifdesc;?> <?=gettext("address");?>

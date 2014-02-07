@@ -193,7 +193,7 @@
 				<option>
 					<name>Static</name>
 					<value>Static</value>
-					<enablefields>ipaddress,subnetmask,gateway</enablefields>
+					<enablefields>ipaddress,subnetmask,upstreamgateway</enablefields>
 				</option>
 				<option>
 					<name>DHCP</name>
@@ -262,7 +262,7 @@
 			<type>subnet_select</type>
 		</field>
 		<field>
-			<name>Gateway</name>
+			<name>Upstream Gateway</name>
 			<bindstofield>wizardtemp->wangateway</bindstofield>
 			<type>input</type>
 			<validate>^(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$</validate>

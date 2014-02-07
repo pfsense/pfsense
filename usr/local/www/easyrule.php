@@ -31,7 +31,14 @@
 	pfSense_MODULE:	filter
 */
 
-$pgtitle = gettext("Status : EasyRule");
+##|+PRIV
+##|*IDENT=page-firewall-easyrule
+##|*NAME=Firewall: Easy Rule add/status page
+##|*DESCR=Allow access to the 'Firewall: Easy Rule' add/status page.
+##|*MATCH=easyrule.php*
+##|-PRIV
+
+$pgtitle = gettext("Firewall: EasyRule");
 require_once("guiconfig.inc");
 require_once("easyrule.inc");
 require_once("filter.inc");

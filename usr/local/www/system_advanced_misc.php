@@ -74,6 +74,7 @@ $pconfig['use_mfs_tmpvar'] = isset($config['system']['use_mfs_tmpvar']);
 $pconfig['use_mfs_tmp_size'] = $config['system']['use_mfs_tmp_size'];
 $pconfig['use_mfs_var_size'] = $config['system']['use_mfs_var_size'];
 $pconfig['noinstalllanspd'] = $config['system']['noinstalllanspd'];
+$pconfig['pkg_nochecksig'] = $config['system']['pkg_nochecksig'];
 
 $pconfig['powerd_ac_mode'] = "hadp";
 if (!empty($config['system']['powerd_ac_mode']))
@@ -187,6 +188,11 @@ if ($_POST) {
 				$need_racoon_restart = true;
 			unset($config['system']['noinstalllanspd']);
 		}
+
+		if($_POST['pkg_nochecksig'] == "yes")
+			$config['system']['pkg_nochecksig'] = true;
+		else
+			unset($config['system']['pkg_nochecksig']);
 
 		if($_POST['maxmss_enable'] == "yes") {
 			$config['system']['maxmss_enable'] = true;
@@ -697,6 +703,18 @@ function tmpvar_checked(obj) {
 								<td colspan="2" class="list" height="12">&nbsp;</td>
 							</tr>
 							<?php endif; ?>
+
+							<tr>
+								<td colspan="2" valign="top" class="listtopic"><?=gettext("Packages settings"); ?></td>
+							</tr>
+							<tr>
+								<td width="22%" valign="top" class="vncell"><?=gettext("Packages signature"); ?></td>
+								<td width="78%" class="vtable">
+									<input name="pkg_nochecksig" type="checkbox" id="pkg_nochecksig" value="yes" <?php if ($pconfig['pkg_nochecksig']) echo "checked=\"checked\""; ?> onclick="tmpvar_checked(this)" />
+									<strong><?=gettext("Do NOT check packages signature"); ?></strong><br/>
+									<?=gettext("Enable this option will make pfSense install any packages without check its signature."); ?>
+								</td>
+							</tr>
 
 							<tr>
 								<td width="22%" valign="top">&nbsp;</td>

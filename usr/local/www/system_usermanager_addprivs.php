@@ -42,15 +42,6 @@ function admusercmp($a, $b) {
 	return strcasecmp($a['name'], $b['name']);
 }
 
-function admin_users_sort() {
-        global $g, $config;
-
-        if (!is_array($config['system']['user']))
-                return;
-
-        usort($config['system']['user'], "admusercmp");
-}
-
 require("guiconfig.inc");
 
 $pgtitle = array("System","User manager","Add privileges");
@@ -102,7 +93,6 @@ if ($_POST) {
 			$a_user['priv'] = array_merge($a_user['priv'], $pconfig['sysprivs']);
 
 		$a_user['priv'] = sort_user_privs($a_user['priv']);
-		admin_users_sort();
 		local_user_set($a_user);
 		$retval = write_config();
 		$savemsg = get_std_save_message($retval);

@@ -1360,6 +1360,12 @@ $priv_list['page-xmlrpclibrary']['descr'] = gettext("Allow access to the 'XMLRPC
 $priv_list['page-xmlrpclibrary']['match'] = array();
 $priv_list['page-xmlrpclibrary']['match'][] = "xmlrpc.php*";
 
+$priv_list['page-firewall-easyrule'] = array();
+$priv_list['page-firewall-easyrule']['name'] = gettext("WebCfg - Firewall: Easy Rule add/status page");
+$priv_list['page-firewall-easyrule']['descr'] = gettext("Allow access to the 'Firewall: Easy Rule' add/status page.");
+$priv_list['page-firewall-easyrule']['match'] = array();
+$priv_list['page-firewall-easyrule']['match'][] = "easyrule.php*";
+
 $priv_rmvd = array();
 
 ?>

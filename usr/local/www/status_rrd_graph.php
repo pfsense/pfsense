@@ -234,16 +234,16 @@ foreach($databases as $database) {
 $ui_databases = array_merge($dbheader, $databases);
 $custom_databases = array_merge($dbheader_custom, $databases);
 
-$graphs = array("8hour", "day", "week", "month", "quarter", "year", "4year");
+$graphs = array("eight_hour", "day", "week", "month", "quarter", "year", "four_year");
 $periods = array("absolute" => gettext("Absolute Timespans"), "current" => gettext("Current Period"), "previous" => gettext("Previous Period"));
 $graph_length = array(
-	"8hour" => 28800,
+	"eight_hour" => 28800,
 	"day" => 86400,
 	"week" => 604800,
 	"month" => 2678400,
 	"quarter" => 7948800,
 	"year" => 31622400,
-	"4year" => 126230400);
+	"four_year" => 126230400);
 
 $pgtitle = array(gettext("Status"),gettext("RRD Graphs"));
 
@@ -291,8 +291,10 @@ include("head.inc");
 			$("#endDateTime").datetimepicker(options);
 		});
 	</script>
-	</head>
-<?php } ?>
+<?php }
+if (isset($closehead))
+	echo "</head>";
+?>
 
 <?php
 
@@ -319,7 +321,7 @@ function get_dates($curperiod, $graph) {
 				$offset = 0;
 		}
 		switch($graph) {
-			case "8hour":
+			case "eight_hour":
 				if($curhour < 24)
 					$starthour = 16;
 				if($curhour < 16)
@@ -373,7 +375,7 @@ function get_dates($curperiod, $graph) {
 				if($offset != 0)
 					$end = mktime(0, 0, 0, 1, 0, (($curyear + $offset) +1));
 				break;
-			case "4year":
+			case "four_year":
 				$start = mktime(0, 0, 0, 1, 0, (($curyear - 3) + $offset));
 				if($offset != 0)
 					$end = mktime(0, 0, 0, 1, 0, (($curyear + $offset) +1));
@@ -391,11 +393,11 @@ function get_dates($curperiod, $graph) {
 <body link="#0000CC" vlink="#0000CC" alink="#0000CC">
 <?php include("fbegin.inc"); ?>
 <?php if ($input_errors && count($input_errors)) { print_input_errors($input_errors); } ?>
-<table width="100%" border="0" cellpadding="0" cellspacing="0">
+<form name="form1" action="status_rrd_graph.php" method="get">
+	<table width="100%" border="0" cellpadding="0" cellspacing="0">
         <tr>
-                <td>
-			<form name="form1" action="status_rrd_graph.php" method="get">
-			<input type="hidden" name="cat" value="<?php echo "$curcat"; ?>">
+			<td>
+				<input type="hidden" name="cat" value="<?php echo "$curcat"; ?>"/>
 			<?php
 			        $tab_array = array();
 				if($curcat == "system") { $tabactive = True; } else { $tabactive = False; }
@@ -467,7 +469,7 @@ function get_dates($curperiod, $graph) {
 							echo "<option value=\"{$database}\"";
 							$prettyprint = ucwords(str_replace($search, $replace, $database));
 							if($curoption == $database) {
-								echo " selected";
+								echo " selected=\"selected\"";
 							}
 							echo ">" . htmlspecialchars($prettyprint) . "</option>\n";
 						}
@@ -507,7 +509,7 @@ function get_dates($curperiod, $graph) {
 								$prettyprint = ucwords(str_replace($search, $replace, $friendly));
 						}
 						if($curoption == $optionc) {
-							echo " selected";
+							echo " selected=\"selected\"";
 						}
 						echo ">" . htmlspecialchars($prettyprint) . "</option>\n";
 					}
@@ -520,7 +522,7 @@ function get_dates($curperiod, $graph) {
 					<?php
 					foreach ($styles as $style => $styled) {
 						echo "<option value=\"$style\"";
-						if ($style == $curstyle) echo " selected";
+						if ($style == $curstyle) echo " selected=\"selected\"";
 						echo ">" . htmlspecialchars($styled) . "</option>\n";
 					}
 					?>
@@ -534,14 +536,16 @@ function get_dates($curperiod, $graph) {
 						<?php
 						foreach ($periods as $period => $value) {
 							echo "<option value=\"$period\"";
-							if ($period == $curperiod) echo " selected";
+							if ($period == $curperiod) echo " selected=\"selected\"";
 							echo ">" . htmlspecialchars($value) . "</option>\n";
 						}
+						?>
+						</select>
+					<?php
 					}
 					?>
-					</select>
-					<?php
 
+					<?php
 					if($curcat == "custom") {
 						$tz = date_default_timezone_get();
 						$tz_msg = gettext("Enter date and/or time. Current timezone:") . " $tz";
@@ -549,10 +553,10 @@ function get_dates($curperiod, $graph) {
 						$end_fmt   = strftime("%m/%d/%Y %H:%M:%S", $end);
 						?>
 						<?=gettext("Start:");?>
-						<input id="startDateTime" title="<?= htmlentities($tz_msg); ?>." type="text" name="start" class="formfldunknown" size="24" length="32" value="<?= htmlentities($start_fmt); ?>">
+						<input id="startDateTime" title="<?= htmlentities($tz_msg); ?>." type="text" name="start" class="formfldunknown" size="24" maxlength="32" value="<?= htmlentities($start_fmt); ?>"/>
 						<?=gettext("End:");?>
-						<input id="endDateTime" title="<?= htmlentities($tz_msg); ?>." type="text" name="end" class="formfldunknown" size="24" length="32" value="<?= htmlentities($end_fmt); ?>">
-						<input type="submit" name="Submit" value="<?=gettext("Go"); ?>">
+						<input id="endDateTime" title="<?= htmlentities($tz_msg); ?>." type="text" name="end" class="formfldunknown" size="24" maxlength="32" value="<?= htmlentities($end_fmt); ?>"/>
+						<input type="submit" name="Submit" value="<?=gettext("Go"); ?>"/>
 						<?php
 						$curdatabase = $curoption;
 						$graph = "custom-$curdatabase";
@@ -560,12 +564,12 @@ function get_dates($curperiod, $graph) {
 							$id = "{$graph}-{$curoption}-{$curdatabase}";
 							$id = preg_replace('/\./', '_', $id);
 
-							echo "<tr><td colspan=2 class=\"list\">\n";
-							echo "<IMG BORDER='0' name='{$id}' ";
-							echo "id='{$id}' ALT=\"$prettydb Graph\" ";
-							echo "SRC=\"status_rrd_graph_img.php?start={$start}&amp;end={$end}&amp;database={$curdatabase}&amp;style={$curstyle}&amp;graph={$graph}\" />\n";
-							echo "<br /><hr><br />\n";								
-							echo "</td></tr>\n";
+							echo "<table><tr><td colspan=\"2\" class=\"list\">\n";
+							echo "<img border='0' name='{$id}' ";
+							echo "id='{$id}' alt=\"$prettydb Graph\" ";
+							echo "src=\"status_rrd_graph_img.php?start={$start}&amp;end={$end}&amp;database={$curdatabase}&amp;style={$curstyle}&amp;graph={$graph}\" />\n";
+							echo "<br /><hr /><br />\n";								
+							echo "</td></tr></table>\n";
 						}
 					} else {
 						foreach($graphs as $graph) {
@@ -629,12 +633,12 @@ function get_dates($curperiod, $graph) {
 									$dates = get_dates($curperiod, $graph);
 									$start = $dates['start'];
 									$end = $dates['end'];
-									echo "<tr><td colspan=2 class=\"list\">\n";
-									echo "<IMG BORDER='0' name='{$id}' ";
-									echo "id='{$id}' ALT=\"$prettydb Graph\" ";
-									echo "SRC=\"status_rrd_graph_img.php?start={$start}&amp;end={$end}&amp;database={$curdatabase}&amp;style={$curstyle}&amp;graph={$graph}\" />\n";
-									echo "<br /><hr><br />\n";								
-									echo "</td></tr>\n";
+									echo "<table><tr><td colspan=\"2\" class=\"list\">\n";
+									echo "<img border='0' name='{$id}' ";
+									echo "id='{$id}' alt=\"$prettydb Graph\" ";
+									echo "src=\"status_rrd_graph_img.php?start={$start}&amp;end={$end}&amp;database={$curdatabase}&amp;style={$curstyle}&amp;graph={$graph}\" />\n";
+									echo "<br /><hr /><br />\n";								
+									echo "</td></tr></table>\n";
 								}
 							}
 						}
@@ -643,10 +647,11 @@ function get_dates($curperiod, $graph) {
 					</td>
 				</tr>
 				<tr>
-					<td colspan=2 class="list">
-					<script language="javascript">
+					<td colspan="2" class="list">
+					<script type="text/javascript">
 						function update_graph_images() {
 							//alert('updating');
+							var amp = decodeURIComponent("%26");
 							var randomid = Math.floor(Math.random()*11);
 							<?php
 							foreach($graphs as $graph) {
@@ -709,7 +714,7 @@ function get_dates($curperiod, $graph) {
 									$id = preg_replace('/\./', '_', $id);
 
 									echo "\n";
-									echo "\t\tjQuery('#{$id}').attr('src','status_rrd_graph_img.php?start={$start}&graph={$graph}&database={$curdatabase}&style={$curstyle}&tmp=' + randomid);\n";
+									echo "\t\tjQuery('#{$id}').attr('src','status_rrd_graph_img.php?start={$start}' + amp + 'graph={$graph}' + amp + 'database={$curdatabase}' + amp + 'style={$curstyle}' + amp + 'tmp=' + randomid);\n";
 									}
 								}
 							?>
@@ -717,7 +722,6 @@ function get_dates($curperiod, $graph) {
 						}
 						window.setTimeout('update_graph_images()', 355000);
 					</script>
-					</form>
 					</td>
 				</tr>
 			</table>
@@ -725,6 +729,7 @@ function get_dates($curperiod, $graph) {
 		</td>
 	</tr>
 </table>
+</form>
 
 <?php include("fend.inc"); ?>
 </body>

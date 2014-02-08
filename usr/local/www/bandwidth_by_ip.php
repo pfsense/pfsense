@@ -24,18 +24,30 @@ if (!does_interface_exist($real_interface)) {
 	echo gettext("Wrong Interface");
 	return;
 }
+
 $intip = find_interface_ip($real_interface);
 //get interface subnet
 $netmask = find_interface_subnet($real_interface);
 $intsubnet = gen_subnet($intip, $netmask) . "/$netmask";
+
+// see if they want all, local or remote IPs returned
+$filter = $_GET['filter'];
+
+if ($filter == "local") {
+	$ratesubnet = "-c " . $intsubnet;
+} else {
+	// Tell the rate utility to consider the whole internet (0.0.0.0/0)
+	// and to consider local "l" traffic - i.e. traffic within the whole internet
+	// then we can filter the resulting output as we wish below.
+	$ratesubnet = "-lc 0.0.0.0/0";
+}
+
 //get the sort method
 $sort = $_GET['sort'];
 if ($sort == "out") 
 	{$sort_method = "-T";}
 else
 	{$sort_method = "-R";}
-
-$filter = $_GET['filter'];
 
 // get the desired format for displaying the host name or IP
 $hostipformat = $_GET['hostipformat'];
@@ -56,7 +68,7 @@ if (($hostipformat != "") && (!isset($config['dnsmasq']['enable']) || !isset($co
 	}
 }
 
-$_grb = exec("/usr/local/bin/rate -i {$real_interface} -nlq 1 -Aba 20 {$sort_method} -c {$intsubnet} | tr \"|\" \" \" | awk '{ printf \"%s:%s:%s:%s:%s\\n\", $1,  $2,  $4,  $6,  $8 }'", $listedIPs);
+$_grb = exec("/usr/local/bin/rate -i {$real_interface} -nlq 1 -Aba 20 {$sort_method} {$ratesubnet} | tr \"|\" \" \" | awk '{ printf \"%s:%s:%s:%s:%s\\n\", $1,  $2,  $4,  $6,  $8 }'", $listedIPs);
 
 $someinfo = false;
 for ($x=2; $x<12; $x++){
@@ -68,8 +80,8 @@ for ($x=2; $x<12; $x++){
     if ($bandwidthinfo != "") {
         $infoarray = explode (":",$bandwidthinfo);
 		if (($filter == "") ||
-			(($filter == "local") && (ip_in_subnet($infoarray[0], $intsubnet))) ||
-			(($filter == "remote") && (!ip_in_subnet($infoarray[0], $intsubnet)))) {
+		    (($filter == "local") && (ip_in_subnet($infoarray[0], $intsubnet))) ||
+		    (($filter == "remote") && (!ip_in_subnet($infoarray[0], $intsubnet)))) {
 			if ($hostipformat == "") {
 				$addrdata = $infoarray[0];
 			} else {
@@ -93,7 +105,7 @@ for ($x=2; $x<12; $x++){
 			//mark that we collected information
 			$someinfo = true;
 		}
-    }
+	}
 }
 unset($bandwidthinfo, $_grb);
 unset($listedIPs);

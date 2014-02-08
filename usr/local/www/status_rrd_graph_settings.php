@@ -171,7 +171,7 @@ include("head.inc");
 			<tr>
 				<td width="22%" valign="top" class="vtable"><?=gettext("RRD Graphs");?></td>
 				<td width="78%" class="vtable">
-					<input name="enable" type="checkbox" id="enable" value="yes" <?php if ($pconfig['enable']) echo "checked" ?> onClick="enable_change(false)">
+					<input name="enable" type="checkbox" id="enable" value="yes" <?php if ($pconfig['enable']) echo "checked=\"checked\"" ?> onclick="enable_change(false)"/>
 					<b><?=gettext("Enables the RRD graphing backend.");?></b>
 				</td>
 			</tr>
@@ -182,7 +182,7 @@ include("head.inc");
 					<?php
 					foreach ($categories as $category => $categoryd) {
 						echo "<option value=\"$category\"";
-						if ($category == $pconfig['category']) echo " selected";
+						if ($category == $pconfig['category']) echo " selected=\"selected\"";
 						echo ">" . htmlspecialchars($categoryd) . "</option>\n";
 					}
 					?>
@@ -197,7 +197,7 @@ include("head.inc");
 					<?php
 					foreach ($styles as $style => $styled) {
 						echo "<option value=\"$style\"";
-						if ($style == $pconfig['style']) echo " selected";
+						if ($style == $pconfig['style']) echo " selected=\"selected\"";
 						echo ">" . htmlspecialchars($styled) . "</option>\n";
 					}
 					?>
@@ -212,7 +212,7 @@ include("head.inc");
 					<?php
 					foreach ($periods as $period => $periodd) {
 						echo "<option value=\"$period\"";
-						if ($period == $pconfig['period']) echo " selected";
+						if ($period == $pconfig['period']) echo " selected=\"selected\"";
 						echo ">" . htmlspecialchars($periodd) . "</option>\n";
 					}
 					?>
@@ -223,18 +223,18 @@ include("head.inc");
 			<tr>
 				<td width="22%" valign="top">&nbsp;</td>
 				<td width="78%">
-					<input name="Submit" type="submit" class="formbtn" value="<?=gettext("Save");?>" onclick="enable_change(true)">
+					<input name="Submit" type="submit" class="formbtn" value="<?=gettext("Save");?>" onclick="enable_change(true)"/>
 				</td>
 			</tr>
 			<tr>
 				<td width="22%" valign="top">&nbsp;</td>
 				<td width="78%">
-					<input name="ResetRRD" type="submit" class="formbtn" value="<?=gettext("Reset RRD Data");?>" onclick="return confirm('<?=gettext('Do you really want to reset the RRD graphs? This will erase all graph data.');?>')">
+					<input name="ResetRRD" type="submit" class="formbtn" value="<?=gettext("Reset RRD Data");?>" onclick="return confirm('<?=gettext('Do you really want to reset the RRD graphs? This will erase all graph data.');?>')"/>
 				</td>
 			</tr>
 			<tr>
 				<td width="22%" height="53" valign="top">&nbsp;</td>
-				<td width="78%"><strong><span class="red"><?=gettext("Note:");?></span></strong><br>
+				<td width="78%"><strong><span class="red"><?=gettext("Note:");?></span></strong><br />
 					<?=gettext("Graphs will not be allowed to be recreated within a 1 minute interval, please " .
 					"take this into account after changing the style.");?>
 				</td>

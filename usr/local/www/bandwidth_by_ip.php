@@ -30,8 +30,11 @@ $intip = find_interface_ip($real_interface);
 $netmask = find_interface_subnet($real_interface);
 $intsubnet = gen_subnet($intip, $netmask) . "/$netmask";
 
-// see if they want all, local or remote IPs returned
+// see if they want local, remote or all IPs returned
 $filter = $_GET['filter'];
+
+if ($filter == "")
+	$filter = "local";
 
 if ($filter == "local") {
 	$ratesubnet = "-c " . $intsubnet;
@@ -79,7 +82,7 @@ for ($x=2; $x<12; $x++){
     $emptyinfocounter = 1;
     if ($bandwidthinfo != "") {
         $infoarray = explode (":",$bandwidthinfo);
-		if (($filter == "") ||
+		if (($filter == "all") ||
 		    (($filter == "local") && (ip_in_subnet($infoarray[0], $intsubnet))) ||
 		    (($filter == "remote") && (!ip_in_subnet($infoarray[0], $intsubnet)))) {
 			if ($hostipformat == "") {

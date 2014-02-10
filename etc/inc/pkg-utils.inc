@@ -514,7 +514,7 @@ function sync_package($pkg_name, $sync_depends = true, $show_message = false) {
  * 			a progress bar and output window.
  */
 function pkg_fetch_recursive($pkgname, $filename, $dependlevel = 0, $base_url = "") {
-	global $static_output, $g;
+	global $static_output, $g, $config;
 
 	// Clean up incoming filenames
 	$filename = str_replace("  ", " ", $filename);

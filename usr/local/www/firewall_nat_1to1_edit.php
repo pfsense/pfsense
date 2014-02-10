@@ -361,7 +361,7 @@ function typesel_change() {
 <?php
                                                                 foreach ($ifdisp as $ifent => $ifdesc): ?>
                                                                 <?php if(have_ruleint_access($ifent)): ?>
-                                                                        <option value="<?=$ifent;?>" <?php if ($pconfig['src'] == $ifent) { echo "selected=\"selected\""; } ?>><?=htmlspecialchars($ifdesc);?> <?=gettext("subnet"); ?></option>
+                                                                        <option value="<?=$ifent;?>" <?php if ($pconfig['src'] == $ifent) { echo "selected=\"selected\""; } ?>><?=htmlspecialchars($ifdesc);?> <?=gettext("net"); ?></option>
                                                                         <option value="<?=$ifent;?>ip"<?php if ($pconfig['src'] ==  $ifent . "ip") { echo "selected=\"selected\""; } ?>>
                                                                                 <?=$ifdesc?> <?=gettext("address");?>
                                                                         </option>
@@ -416,7 +416,7 @@ function typesel_change() {
 
 <?php                                                   foreach ($ifdisp as $if => $ifdesc): ?>
                                                                 <?php if(have_ruleint_access($if)): ?>
-                                                                        <option value="<?=$if;?>" <?php if ($pconfig['dst'] == $if) { echo "selected=\"selected\""; } ?>><?=htmlspecialchars($ifdesc);?> <?=gettext("subnet"); ?></option>
+                                                                        <option value="<?=$if;?>" <?php if ($pconfig['dst'] == $if) { echo "selected=\"selected\""; } ?>><?=htmlspecialchars($ifdesc);?> <?=gettext("net"); ?></option>
                                                                         <option value="<?=$if;?>ip"<?php if ($pconfig['dst'] == $if . "ip") { echo "selected=\"selected\""; } ?>>
                                                                                 <?=$ifdesc;?> <?=gettext("address");?>
                                                                         </option>

@@ -30,7 +30,7 @@ function show_advanced(hide){
 			advanced = "#advanced_" + j.toString();
 			jQuery(advanced).show();
 		}
-		jQuery('#adv_show').html = "1";
+		jQuery('#adv_show').html("1");
 		show_hide_linkfields(select_list);
 	} else {
 		jQuery('#advanced_').show();

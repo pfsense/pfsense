@@ -1459,7 +1459,7 @@ function interface_ppps_configure($interface) {
 	}
 	// mpd5 modem chat script expected in the same directory as the mpd_xxx.conf files
 	if (!file_exists("{$g['varetc_path']}/mpd.script"))
-		@symlink("/usr/local/sbin/mpd.script", "{$g['varetc_path']}/.");
+		@symlink("/usr/local/sbin/mpd.script", "{$g['varetc_path']}/mpd.script");
 
 	if (is_array($config['ppps']['ppp']) && count($config['ppps']['ppp'])) {
 		foreach ($config['ppps']['ppp'] as $pppid => $ppp) {
@@ -1805,7 +1805,7 @@ EOD;
 
 	/* Generate mpd.conf. If mpd_[interface].conf exists in the conf path, then link to it instead of generating a fresh conf file. */
 	if (file_exists("{$g['conf_path']}/mpd_{$interface}.conf"))
-		@symlink("{$g['conf_path']}/mpd_{$interface}.conf", "{$g['varetc_path']}/.");
+		@symlink("{$g['conf_path']}/mpd_{$interface}.conf", "{$g['varetc_path']}/mpd_{$interface}.conf");
 	else {
 		$fd = fopen("{$g['varetc_path']}/mpd_{$interface}.conf", "w");
 		if (!$fd) {

@@ -4418,7 +4418,7 @@ function find_carp_interface($ip) {
 function link_carp_interface_to_parent($interface) {
 	global $config;
 
-	if ($interface == "")
+	if (empty($interface))
 		return;
 
 	$carp_ip = get_interface_ip($interface);

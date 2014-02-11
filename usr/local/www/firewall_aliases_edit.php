@@ -296,9 +296,9 @@ if ($_POST) {
 					if (!is_port($_POST["address{$x}"]))
 						$input_errors[] = $_POST["address{$x}"] . " " . gettext("is not a valid port or alias.");
 				} else if ($_POST['type'] == "host" || $_POST['type'] == "network") {
-					if (!is_ipaddr($_POST["address{$x}"])
+					if (is_subnet($_POST["address{$x}"]) || (!is_ipaddr($_POST["address{$x}"])
 					 && !is_hostname($_POST["address{$x}"])
-					 && !is_iprange($_POST["address{$x}"]))
+					 && !is_iprange($_POST["address{$x}"])))
 						$input_errors[] = sprintf(gettext('%1$s is not a valid %2$s alias.'), $_POST["address{$x}"], $_POST['type']);
 				}
 				if (is_iprange($_POST["address{$x}"])) {

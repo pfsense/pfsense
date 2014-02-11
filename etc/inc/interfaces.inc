@@ -2558,8 +2558,8 @@ auth_server_port={$auth_server_port2}
 auth_server_shared_secret={$wlcfg['auth_server_shared_secret2']}
 
 EOD;
-				} else {
-					$wpa .= "ieee8021x={$wlcfg['wpa']['ieee8021x']}\n";
+				} else if (isset($wlcfg['wpa']['ieee8021x'])) {
+					$wpa .= "ieee8021x=1\n";
 				}
 
 				$fd = fopen("{$g['varetc_path']}/hostapd_{$if}.conf", "w");

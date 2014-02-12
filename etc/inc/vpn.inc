@@ -248,7 +248,7 @@ function vpn_ipsec_configure($ipchg = false)
 
 		$strongswan = <<<EOD
 
-#Automatically generated please do not modify\n";
+#Automatically generated please do not modify
 starter {
     load_warning = no
 }

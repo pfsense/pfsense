@@ -255,6 +255,20 @@ charon {
         # number of worker threads in charon
         threads = 16
 
+	# And two loggers using syslog. The subsections define the facility to log
+	# to, currently one of: daemon, auth.
+	syslog {
+
+		identifier = charon
+		# default level to the LOG_DAEMON facility
+		daemon {
+		}
+		# very minimalistic IKE auditing logs to LOG_AUTHPRIV
+		auth {
+		    default = -1
+		    ike = 1
+		}
+	}
 EOD;
 
 		if (is_array($a_client) && isset($a_client['enable']) && !empty($a_client['net_list']))
@@ -811,9 +825,11 @@ EOD;
 	/* generate IPsec policies */
 	$natfilterrules = false;
 	/* mange process */
-	if (is_process_running("charon")) {
-		sleep("0.1");
-		mwexec("/usr/local/sbin/ipsec reloadall", false);
+	if (isvalidpid("{$g['varrun_path']/charon.pid")) {
+		/* Read secrets */
+		mwexec("/usr/local/sbin/ipsec rereadall", false);
+		/* Update configuration changes */
+		mwexec("/usr/local/sbin/ipsec update", false);
 	} else {
 		/* start racoon */
 		$ipsecdebug = isset($config['ipsec']['racoondebug']) ? "-d -v" : "";

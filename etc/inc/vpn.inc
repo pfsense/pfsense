@@ -343,6 +343,22 @@ EOD;
 				$strongswan .= "\t\t28679 = {$a_client['pfs_group']}\n";
 			$strongswan .= "\t\t}\n";
 
+			if ($a_client['user_source'] != "none") {
+				$strongswan .= "\txauth-generic {\n";
+				$strongswan .= "\t\tscript = /etc/inc/ipsec.auth.php";
+				$strongswan .= "\t\tauthcfg = ";
+				$firstsed = 0;
+				foreach ($authcfgs as $authcfg) {
+					if ($firstsed > 0)
+						$strongswan .= ",";
+					if ($authcfg == "system")
+						$authcfg = "Local Database";
+					$strongswan .= $authcfg;
+					$firstsed = 1;
+				}
+				$strongswan .= "\n";
+				$strongswan .= "\t}\n";
+			}
 		}
 
 		$strongswan .= "\t}\n}\n";

@@ -36,7 +36,7 @@
 /*
 	pfSense_BUILDER_BINARIES:	/usr/bin/killall	/usr/local/sbin/sasyncd	/sbin/ifconfig	/sbin/sysctl
 	pfSense_BUILDER_BINARIES:	/usr/local/sbin/setkey	/sbin/route	/bin/mkdir
-	pfSense_BUILDER_BINARIES:	/usr/local/sbin/racoonctl	/usr/local/sbin/racoon
+	pfSense_BUILDER_BINARIES:	/usr/local/sbin/ipsec	/usr/local/libexec/ipsec/charon /usr/local/libexec/ipsec/starter
 	pfSense_BUILDER_BINARIES:	/usr/local/sbin/filterdns	/usr/local/sbin/mpd4
 	pfSense_MODULE:	vpn
 */
@@ -98,21 +98,18 @@ function vpn_ipsec_configure($ipchg = false)
 	$a_client = $config['ipsec']['client'];
 
 	if (!isset($ipseccfg['enable'])) {
-		/* try to stop racoon*/
-		killbypid("{$g['varrun_path']}/charon.pid");
+		/* try to stop charon */
+		mwexec("/usr/local/sbin/ipsec stop");
 		/* Stop dynamic monitoring */
 		killbypid("{$g['varrun_path']}/filterdns-ipsec.pid");
 
-		/* kill racoon forcefully */
-		if (is_process_running("charon"))
-			mwexec("/usr/bin/killall -9 charon", true);
-
-		/* wait for racoon process to die */
+		/* wait for process to die */
 		sleep(2);
 
-		/* flush SPD and SAD */
+		/* flush SPD and SAD 
 		mwexec("/usr/local/sbin/setkey -F");
 		mwexec("/usr/local/sbin/setkey -FP");
+		*/
 
 		/* disallow IPSEC, it is off */
 		mwexec("/sbin/ifconfig enc0 down");
@@ -645,7 +642,7 @@ EOD;
 							if ($localid_type != "address") {
 								$localid_type = "subnet";
 							}
-							// Don't let an empty subnet into racoon.conf, it can cause parse errors. Ticket #2201.
+							// Don't let an empty subnet into config, it can cause parse errors. Ticket #2201.
 							if (!is_ipaddr($localid_data) && !is_subnet($localid_data) && ($localid_data != "0.0.0.0/0")) {
 								log_error("Invalid IPsec Phase 2 \"{$ph2ent['descr']}\" - {$ph2ent['localid']['type']} has no subnet.");
 								continue;
@@ -809,18 +806,18 @@ EOD;
 	}
 	@file_put_contents("{$g['varetc_path']}/ipsec/ipsec.conf", $ipsecconf);
 	unset($ipsecconf);
-	/* end racoon.conf */
+	/* end ipsec.conf */
 
 	/* generate IPsec policies */
 	$natfilterrules = false;
-	/* mange racoon process */
+	/* mange process */
 	if (is_process_running("charon")) {
 		sleep("0.1");
 		mwexec("/usr/local/sbin/ipsec reloadall", false);
 	} else {
 		/* start racoon */
 		$ipsecdebug = isset($config['ipsec']['racoondebug']) ? "-d -v" : "";
-		mwexec("/usr/local/sbin/ipsec restart". false); 
+		mwexec("/usr/local/sbin/ipsec restart", false); 
 	}
 	if ($natfilterrules == true)
 		filter_configure();

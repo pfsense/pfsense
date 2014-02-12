@@ -91,6 +91,7 @@ if (isset($_GET)) {
 	$username = getenv("username");
 	$password = getenv("password");
 	$common_name = getenv("common_name");
+	$authmodes = explode(",", getenv("authcfg"));
 }
 
 if (!$username || !$password) {

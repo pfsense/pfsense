@@ -690,11 +690,11 @@ EOD;
 					switch ($ph1ent['authentication_method']) {
 					case 'xauth_rsa_server':
 						$authentication = "leftauth = pubkey\n\trightauth = pubkey";
-						$authentication .= "\n\leftauth2 = xauth";
+						$authentication .= "\n\leftauth2 = xauth-generic";
 						break;
 					case 'xauth_psk_server':
 						$authentication = "leftauth = psk\n\trightauth = psk";
-						$authentication .= "\n\tleftauth2 = xauth";
+						$authentication .= "\n\tleftauth2 = xauth-generic";
 						break;
 					case 'pre_shared_key':
 						$authentication = "leftauth = psk\n\trightauth = psk";
@@ -703,7 +703,7 @@ EOD;
 						$authentication = "leftauth = pubkey\n\trightauth = pubkey";
 						break;
 					case 'hybrid_rsa_server':
-						$authentication = "leftauth = xauth\n\trightauth = pubkey";
+						$authentication = "leftauth = xauth-generic\n\trightauth = pubkey";
 						$authentication .= "\n\trightauth2 = xauth";
 						break;
 					}

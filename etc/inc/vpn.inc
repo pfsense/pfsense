@@ -342,7 +342,7 @@ EOD;
 
 			if ($a_client['user_source'] != "none") {
 				$strongswan .= "\txauth-generic {\n";
-				$strongswan .= "\t\tscript = /etc/inc/ipsec.auth.php";
+				$strongswan .= "\t\tscript = /etc/inc/ipsec.auth-user.php";
 				$strongswan .= "\t\tauthcfg = ";
 				$firstsed = 0;
 				foreach ($authcfgs as $authcfg) {

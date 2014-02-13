@@ -57,7 +57,11 @@ $counter = 1;
 		</table>
 	</td>
 	</tr>
-	<?php foreach ($a_gateways as $gname => $gateway) { ?>
+		<?php 
+			foreach ($a_gateways as $gname => $gateway) {
+				if ($gateway['no_dashboard_display'])
+					continue;
+		?>
 	<tr>
 	<td class="vncellt" width="30%" id="gateway<?php echo $counter; ?>">
 		<strong>

@@ -479,7 +479,7 @@ if ($_POST) {
 		if (!empty($_POST['max-src-conn']))
 			$input_errors[] = gettext("You can only specify the maximum number of established connections per host (advanced option) for TCP protocol.");
 		if (!empty($_POST['max-src-conn-rate']) || !empty($_POST['max-src-conn-rates']))
-			$input_errors[] = gettext("You can only specify the maximum new connections / per second(s) (advanced option) for TCP protocol.");
+			$input_errors[] = gettext("You can only specify the maximum new connections per host / per second(s) (advanced option) for TCP protocol.");
 		if (!empty($_POST['statetimeout']))
 			$input_errors[] = gettext("You can only specify the state timeout (advanced option) for TCP protocol.");
 	}
@@ -494,7 +494,7 @@ if ($_POST) {
 		if (!empty($_POST['max-src-states']))
 			$input_errors[] = gettext("You can only specify the maximum state entries per host (advanced option) for Pass type rules.");
 		if (!empty($_POST['max-src-conn-rate']) || !empty($_POST['max-src-conn-rates']))
-			$input_errors[] = gettext("You can only specify the maximum new connections / per second(s) (advanced option) for Pass type rules.");
+			$input_errors[] = gettext("You can only specify the maximum new connections per host / per second(s) (advanced option) for Pass type rules.");
 		if (!empty($_POST['statetimeout']))
 			$input_errors[] = gettext("You can only specify the state timeout (advanced option) for Pass type rules.");
 	}
@@ -509,7 +509,7 @@ if ($_POST) {
 		if (!empty($_POST['max-src-states']))
 			$input_errors[] = gettext("You cannot specify the maximum state entries per host (advanced option) if statetype is none and no L7 container is selected.");
 		if (!empty($_POST['max-src-conn-rate']) || !empty($_POST['max-src-conn-rates']))
-			$input_errors[] = gettext("You cannot specify the maximum new connections / per second(s) (advanced option) if statetype is none and no L7 container is selected.");
+			$input_errors[] = gettext("You cannot specify the maximum new connections per host / per second(s) (advanced option) if statetype is none and no L7 container is selected.");
 		if (!empty($_POST['statetimeout']))
 			$input_errors[] = gettext("You cannot specify the state timeout (advanced option) if statetype is none and no L7 container is selected.");
 	}
@@ -1268,7 +1268,7 @@ $i--): ?>
 						echo "<option value=\"{$x}\"{$selected}>{$x}</option>\n";
 					} ?>
 				</select><br />
-				<?=gettext("Maximum new connections / per second(s) (TCP only)");?>
+				<?=gettext("Maximum new connections per host / per second(s) (TCP only)");?>
 				</p><p>
 				<input name="statetimeout" value="<?php echo htmlspecialchars($pconfig['statetimeout']) ?>" /><br/>
 				<?=gettext("State Timeout in seconds (TCP only)");?>

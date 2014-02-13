@@ -423,6 +423,9 @@ function return_gateways_array($disabled = false, $localhost = false, $inactive 
 					$gateway['ipprotocol'] = "inet6";
 			}
 
+			if (isset($gateway['no_dashboard_display']))
+				$gateway['no_dashboard_display'] = true;
+
 			if (isset($gateway['monitor_disable']))
 				$gateway['monitor_disable'] = true;
 			else if (empty($gateway['monitor']))

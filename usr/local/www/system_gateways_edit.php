@@ -76,6 +76,7 @@ if (isset($id) && $a_gateways[$id]) {
 	$pconfig['gateway'] = $a_gateways[$id]['gateway'];
 	$pconfig['defaultgw'] = isset($a_gateways[$id]['defaultgw']);
 	$pconfig['force_down'] = isset($a_gateways[$id]['force_down']);
+	$pconfig['no_dashboard_display'] = isset($a_gateways[$id]['no_dashboard_display']);
 	$pconfig['latencylow'] = $a_gateways[$id]['latencylow'];
 	$pconfig['latencyhigh'] = $a_gateways[$id]['latencyhigh'];
 	$pconfig['losslow'] = $a_gateways[$id]['losslow'];
@@ -391,6 +392,8 @@ if ($_POST) {
 			$gateway['monitor_disable'] = true;
 		if ($_POST['force_down'] == "yes")
 			$gateway['force_down'] = true;
+		if ($_POST['no_dashboard_display'] == "yes")
+			$gateway['no_dashboard_display'] = true;
 		if (is_ipaddr($_POST['monitor']))
 			$gateway['monitor'] = $_POST['monitor'];
 
@@ -604,6 +607,14 @@ function monitor_change() {
 					<input name="force_down" type="checkbox" id="force_down" value="yes" <?php if ($pconfig['force_down'] == true) echo "checked=\"checked\""; ?> />
 					<strong><?=gettext("Mark Gateway as Down"); ?></strong><br />
 					<?=gettext("This will force this gateway to be considered Down"); ?>
+				</td>
+			</tr>
+			<tr>
+				<td width="22%" valign="top" class="vncell"><?=gettext("Dashboard Display"); ?></td>
+				<td width="78%" class="vtable">
+					<input name="no_dashboard_display" type="checkbox" id="no_dashboard_display" value="yes" <?php if ($pconfig['no_dashboard_display'] == true) echo "checked=\"checked\""; ?> />
+					<strong><?=gettext("Do not display on dashboard"); ?></strong><br />
+					<?=gettext("This will stop this gateway from being displayed on the Gateways widget on the dashboard"); ?>
 				</td>
 			</tr>
 			<tr>

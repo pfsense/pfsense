@@ -36,6 +36,8 @@ function get_gatewaystats() {
 	$data = "";
 	$isfirst = true;
 	foreach($a_gateways as $gname => $gw) {
+		if ($gw['no_dashboard_display'])
+			continue;
 		if(!$isfirst)
 			$data .= ",";
 		$isfirst = false;

@@ -391,6 +391,11 @@ include("head.inc");
 			</tr>
 			<?php endif;
 			endforeach; 
+			if ($rowIndex == 0) {
+			?>
+			<tr><td></td></tr>
+			<?php
+			}
 			buffer_rules_clear(); ?>
 			</tbody>
 <?php else: ?>

@@ -197,7 +197,14 @@ function format_log_line(row) {
 					$filterent['proto'] .= ":{$filterent['tcpflags']}";
 			?>
 		</tr>
-	<?php endforeach; ?>
+	<?php
+	endforeach;
+	if ($rowIndex == 0) {
+	?>
+		<tr><td></td></tr>
+	<?php
+	}
+	?>
 	</tbody>
 </table>
 

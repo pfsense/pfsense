@@ -1020,7 +1020,15 @@ function setup_serial_port($when="save", $path="") {
 				$new_boot_config[] = 'boot_multicons="YES"';
 				$new_boot_config[] = 'boot_serial="YES"';
 				$new_boot_config[] = 'comconsole_speed="' . $serialspeed . '"';
-				$new_boot_config[] = 'console="comconsole,vidconsole"';
+				$primaryconsole = isset($g['primaryconsole_force']) ? $g['primaryconsole_force'] : $config['system']['primaryconsole'];
+				switch ($primaryconsole) {
+					case "video":
+						$new_boot_config[] = 'console="vidconsole,comconsole"';
+						break;
+					case "serial":
+					default:
+						$new_boot_config[] = 'console="comconsole,vidconsole"';
+				}
 			} elseif ($g['platform'] == "nanobsd") {
 				$new_boot_config[] = 'comconsole_speed="' . $serialspeed . '"';
 			}

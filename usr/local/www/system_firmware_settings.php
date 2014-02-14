@@ -80,9 +80,9 @@ $pgtitle = array(gettext("System"),gettext("Firmware"),gettext("Settings"));
 $closehead = false;
 include("head.inc");
 
-exec("/usr/bin/fetch -q -o /tmp/manifest \"{$g['update_manifest']}\"");
-if(file_exists("/tmp/manifest")) {
-	$preset_urls_split = explode("\n", file_get_contents("/tmp/manifest"));
+exec("/usr/bin/fetch -q -o {$g['tmp_path']}/manifest \"{$g['update_manifest']}\"");
+if(file_exists("{$g['tmp_path']}/manifest")) {
+	$preset_urls_split = explode("\n", file_get_contents("{$g['tmp_path']}/manifest"));
 }
 
 ?>

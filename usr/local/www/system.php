@@ -119,14 +119,21 @@ if ($_POST) {
 		$dnsname="dns{$dnscounter}";
 		$dnsgwname="dns{$dnscounter}gw";
 		if (($_POST[$dnsname] && !is_ipaddr($_POST[$dnsname]))) {
-			$input_errors[] = gettext("A valid IP address must be specified for the DNS server $dnscounter.");
-		}
-		if(($_POST[$dnsgwname] <> "") && (is_ipaddr($_POST[$dnsname]))) {
-			if (($_POST[$dnsgwname] <> "none") && (is_ipaddrv4($_POST[$dnsname])) && (validate_address_family($_POST[$dnsname], $_POST[$dnsgwname]) === false )) {
-				$input_errors[] = gettext("You can not specify a IPv6 gateway '{$_POST[$dnsgwname]}'for a IPv4 DNS server '{$_POST[$dnsname]}'");
-			}
-			if (($_POST[$dnsgwname] <> "none") && (is_ipaddrv6($_POST[$dnsname])) && (validate_address_family($_POST[$dnsname], $_POST[$dnsgwname]) === false )) {
-				$input_errors[] = gettext("You can not specify a IPv4 gateway '{$_POST[$dnsgwname]}'for a IPv6 DNS server '{$_POST[$dnsname]}'");
+			$input_errors[] = gettext("A valid IP address must be specified for DNS server $dnscounter.");
+		} else {
+			if(($_POST[$dnsgwname] <> "") && ($_POST[$dnsgwname] <> "none")) {
+				// A real gateway has been selected.
+				if (is_ipaddr($_POST[$dnsname])) {
+					if ((is_ipaddrv4($_POST[$dnsname])) && (validate_address_family($_POST[$dnsname], $_POST[$dnsgwname]) === false )) {
+						$input_errors[] = gettext("You can not specify IPv6 gateway '{$_POST[$dnsgwname]}' for IPv4 DNS server '{$_POST[$dnsname]}'");
+					}
+					if ((is_ipaddrv6($_POST[$dnsname])) && (validate_address_family($_POST[$dnsname], $_POST[$dnsgwname]) === false )) {
+						$input_errors[] = gettext("You can not specify IPv4 gateway '{$_POST[$dnsgwname]}' for IPv6 DNS server '{$_POST[$dnsname]}'");
+					}
+				} else {
+					// The user selected a gateway but did not provide a DNS address.
+					$input_errors[] = gettext("A valid IP address must be specified for DNS server $dnscounter when a gateway is selected.");
+				}
 			}
 		}
 	}
@@ -183,6 +190,7 @@ if ($_POST) {
 		}
 
 		/* XXX - billm: these still need updating after figuring out how to check if they actually changed */
+		$olddnsservers = $config['system']['dnsserver'];
 		unset($config['system']['dnsserver']);
 		if ($_POST['dns1'])
 			$config['system']['dnsserver'][] = $_POST['dns1'];
@@ -207,10 +215,21 @@ if ($_POST) {
 		for ($dnscounter=1; $dnscounter<5; $dnscounter++) {
 			$dnsname="dns{$dnscounter}";
 			$dnsgwname="dns{$dnscounter}gw";
+			$olddnsgwname = $config['system'][$dnsgwname];
 			if($_POST[$dnsgwname]) {
 				$config['system'][$dnsgwname] = $pconfig[$dnsgwname];
 			} else {
+				// Note: when no DNS GW name is chosen, the entry is set to "none", so actually this case never happens.
 				unset($config['system'][$dnsgwname]);
+			}
+			if (($olddnsgwname != "") && ($olddnsgwname != "none") && (($olddnsgwname != $config['system'][$dnsgwname]) || ($olddnsservers[$dnscounter-1] != $dnsname))) {
+				// A previous DNS GW name was specified. It has now gone or changed, or the DNS server address has changed.
+				// Remove the route. Later calls will add the correct new route if needed.
+				if (is_ipaddrv4($olddnsservers[$dnscounter-1]))
+					mwexec("/sbin/route delete " . escapeshellarg($olddnsservers[$dnscounter-1]));
+				else
+					if (is_ipaddrv6($olddnsservers[$dnscounter-1]))
+						mwexec("/sbin/route delete -inet6 " . escapeshellarg($olddnsservers[$dnscounter-1]));
 			}
 		}
 

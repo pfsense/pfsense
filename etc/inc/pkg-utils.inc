@@ -567,21 +567,32 @@ function pkg_fetch_recursive($pkgname, $filename, $dependlevel = 0, $base_url = 
 
 		$pkgaddout = "";
 
-		exec("/usr/local/sbin/pbi_add " . $pkgstaging . " -f -v --no-checksig " . escapeshellarg($fetchto) . " 2>&1", $pkgaddout);
-		pkg_debug($pkgname . " " . print_r($pkgaddout, true) . "\npbi_add successfully completed.\n");
-		setup_library_paths();
-		exec("/usr/local/sbin/pbi_info " . escapeshellarg(preg_replace('/\.pbi$/','',$filename)) . " | /usr/bin/awk '/Prefix/ {print $2}'",$pbidir);
-		$pbidir = $pbidir[0];
-		$linkdirs = array('bin','sbin');
-		foreach($linkdirs as $dir) {
-			if(is_dir("{$pbidir}/{$dir}")) {
-				$files = scandir("{$pbidir}/{$dir}");
-				foreach($files as $f) {
-					if(!file_exists("/usr/local/{$dir}/{$f}")) {
-						symlink("{$pbidir}/{$dir}/{$f}","/usr/local/{$dir}/{$f}");
+		exec("/usr/local/sbin/pbi_add " . $pkgstaging . " -f -v --no-checksig " . escapeshellarg($fetchto) . " 2>&1", $pkgaddout, $rc);
+		pkg_debug($pkgname . " " . print_r($pkgaddout, true) . "\n");
+		if ($rc == 0) {
+			setup_library_paths();
+			exec("/usr/local/sbin/pbi_info " . escapeshellarg(preg_replace('/\.pbi$/','',$filename)) . " | /usr/bin/awk '/Prefix/ {print $2}'",$pbidir);
+			$pbidir = $pbidir[0];
+			$linkdirs = array('bin','sbin');
+			foreach($linkdirs as $dir) {
+				if(is_dir("{$pbidir}/{$dir}")) {
+					$files = scandir("{$pbidir}/{$dir}");
+					foreach($files as $f) {
+						if(!file_exists("/usr/local/{$dir}/{$f}")) {
+							@symlink("{$pbidir}/{$dir}/{$f}","/usr/local/{$dir}/{$f}");
+						}
 					}
 				}
 			}
+			pkg_debug("pbi_add successfully completed.\n");
+		} else {
+			if (is_array($pkgaddout))
+				foreach ($pkgaddout as $line)
+					$static_output .= " " . $line .= "\n";
+
+			update_output_window($static_output);
+			pkg_debug("pbi_add failed.\n");
+			return false;
 		}
 	}
 	return true;

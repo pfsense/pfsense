@@ -408,7 +408,6 @@ foreach ($pools as $data) {
 }
 ?>
 
-<p>
 
 <table class="tabcont sortable" width="100%" border="0" cellpadding="0" cellspacing="0">
   <tr>
@@ -493,7 +492,7 @@ foreach ($leases as $data) {
 }
 ?>
 </table>
-<p>
+
 <h3>Delegated Prefixes</h3>
 <table class="tabcont sortable" width="100%" border="0" cellpadding="0" cellspacing="0">
 	<tr>
@@ -551,15 +550,15 @@ foreach ($prefixes as $data) {
 }
 ?>
 </table>
-<p>
-<form action="status_dhcpv6_leases.php" method="GET">
-<input type="hidden" name="order" value="<?=htmlspecialchars($_GET['order']);?>">
+
+<form action="status_dhcpv6_leases.php" method="get">
+<input type="hidden" name="order" value="<?=htmlspecialchars($_GET['order']);?>"/>
 <?php if ($_GET['all']): ?>
-<input type="hidden" name="all" value="0">
-<input type="submit" class="formbtn" value="<?=gettext("Show active and static leases only"); ?>">
+<input type="hidden" name="all" value="0"/>
+<input type="submit" class="formbtn" value="<?=gettext("Show active and static leases only"); ?>"/>
 <?php else: ?>
-<input type="hidden" name="all" value="1">
-<input type="submit" class="formbtn" value="<?=gettext("Show all configured leases"); ?>">
+<input type="hidden" name="all" value="1"/>
+<input type="submit" class="formbtn" value="<?=gettext("Show all configured leases"); ?>"/>
 <?php endif; ?>
 </form>
 <?php if($leases == 0): ?>

@@ -987,7 +987,7 @@ function setup_serial_port($when="save", $path="") {
 						fwrite($fd, "{$bcs}\n");
 				}
 			}
-			if(isset($config['system']['enableserial'])) {
+			if(isset($config['system']['enableserial']) || $g['enableserial_force']) {
 				fwrite($fd, "-D");
 			}
 			fclose($fd);
@@ -1012,7 +1012,7 @@ function setup_serial_port($when="save", $path="") {
 					$new_boot_config[] = $bcs;
 
 			$serialspeed = (is_numeric($config['system']['serialspeed'])) ? $config['system']['serialspeed'] : "9600";
-			if(isset($config['system']['enableserial'])) {
+			if(isset($config['system']['enableserial']) || $g['enableserial_force']) {
 				$new_boot_config[] = 'boot_multicons="YES"';
 				$new_boot_config[] = 'boot_serial="YES"';
 				$new_boot_config[] = 'comconsole_speed="' . $serialspeed . '"';
@@ -1031,7 +1031,7 @@ function setup_serial_port($when="save", $path="") {
 	$fd = fopen("/etc/ttys", "w");
 	foreach($ttys_split as $tty) {
 		if(stristr($tty, "ttyd0") or stristr($tty, "ttyu0")) {
-			if(isset($config['system']['enableserial'])) {
+			if(isset($config['system']['enableserial']) || $g['enableserial_force']) {
 				fwrite($fd, "ttyu0	\"/usr/libexec/getty bootupcli\"	cons25	on	secure\n");
 			} else {
 				fwrite($fd, "ttyu0	\"/usr/libexec/getty bootupcli\"	cons25	off	secure\n");

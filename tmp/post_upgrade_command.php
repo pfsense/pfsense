@@ -13,7 +13,7 @@
 			system("pfSsh.php playback gitsync " . escapeshellarg($config['system']['gitsync']['branch']) . " --upgrading");
 	}
 
-	if($g['platform'] == "embedded") {
+	if($g['platform'] == "embedded" || $g['enableserial_force']) {
 		$config['system']['enableserial'] = true;
 		write_config();
 	}

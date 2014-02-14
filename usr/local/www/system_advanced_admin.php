@@ -147,7 +147,7 @@ if ($_POST) {
 		else
 			unset($config['system']['webgui']['noantilockout']);
 
-		if ($_POST['enableserial'] == "yes")
+		if ($_POST['enableserial'] == "yes" || $g['enableserial_force'])
 			$config['system']['enableserial'] = true;
 		else
 			unset($config['system']['enableserial']);
@@ -525,7 +525,7 @@ function prot_change() {
 							<tr>
 								<td colspan="2" valign="top" class="listtopic"><?=gettext("Serial Communications"); ?></td>
 							</tr>
-							<?php if($g['platform'] == "pfSense" || $g['platform'] == "cdrom"): ?>
+							<?php if (!$g['enableserial_force'] && ($g['platform'] == "pfSense" || $g['platform'] == "cdrom" || file_exists("/etc/nano_use_vga.txt"))): ?>
 							<tr>
 								<td width="22%" valign="top" class="vncell"><?=gettext("Serial Terminal"); ?></td>
 								<td width="78%" class="vtable">

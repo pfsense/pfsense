@@ -100,11 +100,10 @@ include("head.inc");
 			  <?php printf(gettext("Wireless (hostapd) log entries"),$nentries);?></td>
 		  </tr>
 		  <?php dump_clog($wireless_logfile, $nentries); ?>
-		<tr><td><br><form action="diag_logs_wireless.php" method="post">
-<input name="clear" type="submit" class="formbtn" value="<?=gettext("Clear log"); ?>"></td></tr>
+		<tr><td><br /><form action="diag_logs_wireless.php" method="post">
+<input name="clear" type="submit" class="formbtn" value="<?=gettext("Clear log"); ?>"/></form></td></tr>
 		</table>
 	</div>
-</form>
 	</td>
   </tr>
 </table>

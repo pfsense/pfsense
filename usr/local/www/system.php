@@ -115,18 +115,27 @@ if ($_POST) {
 		$input_errors[] = gettext("The domain may only contain the characters a-z, 0-9, '-' and '.'.");
 	}
 
+	$ignore_posted_dnsgw = array();
+
 	for ($dnscounter=1; $dnscounter<5; $dnscounter++){
 		$dnsname="dns{$dnscounter}";
 		$dnsgwname="dns{$dnscounter}gw";
 		if (($_POST[$dnsname] && !is_ipaddr($_POST[$dnsname]))) {
-			$input_errors[] = gettext("A valid IP address must be specified for the DNS server $dnscounter.");
-		}
-		if(($_POST[$dnsgwname] <> "") && (is_ipaddr($_POST[$dnsname]))) {
-			if (($_POST[$dnsgwname] <> "none") && (is_ipaddrv4($_POST[$dnsname])) && (validate_address_family($_POST[$dnsname], $_POST[$dnsgwname]) === false )) {
-				$input_errors[] = gettext("You can not specify a IPv6 gateway '{$_POST[$dnsgwname]}'for a IPv4 DNS server '{$_POST[$dnsname]}'");
-			}
-			if (($_POST[$dnsgwname] <> "none") && (is_ipaddrv6($_POST[$dnsname])) && (validate_address_family($_POST[$dnsname], $_POST[$dnsgwname]) === false )) {
-				$input_errors[] = gettext("You can not specify a IPv4 gateway '{$_POST[$dnsgwname]}'for a IPv6 DNS server '{$_POST[$dnsname]}'");
+			$input_errors[] = gettext("A valid IP address must be specified for DNS server $dnscounter.");
+		} else {
+			if(($_POST[$dnsgwname] <> "") && ($_POST[$dnsgwname] <> "none")) {
+				// A real gateway has been selected.
+				if (is_ipaddr($_POST[$dnsname])) {
+					if ((is_ipaddrv4($_POST[$dnsname])) && (validate_address_family($_POST[$dnsname], $_POST[$dnsgwname]) === false )) {
+						$input_errors[] = gettext("You can not specify IPv6 gateway '{$_POST[$dnsgwname]}' for IPv4 DNS server '{$_POST[$dnsname]}'");
+					}
+					if ((is_ipaddrv6($_POST[$dnsname])) && (validate_address_family($_POST[$dnsname], $_POST[$dnsgwname]) === false )) {
+						$input_errors[] = gettext("You can not specify IPv4 gateway '{$_POST[$dnsgwname]}' for IPv6 DNS server '{$_POST[$dnsname]}'");
+					}
+				} else {
+					// The user selected a gateway but did not provide a DNS address. Be nice and set the gateway back to "none".
+					$ignore_posted_dnsgw[$dnsgwname] = true;
+				}
 			}
 		}
 	}
@@ -155,6 +164,9 @@ if ($_POST) {
 	if (($t < 0) || (($t > 0) && ($t < 6)) || ($t > 1440)) {
 		$input_errors[] = gettext("The time update interval must be either 0 (disabled) or between 6 and 1440.");
 	}
+	# it's easy to have a little too much whitespace in the field, clean it up for the user before processing.
+	$_POST['timeservers'] = preg_replace('/[[:blank:]]+/', ' ', $_POST['timeservers']);
+	$_POST['timeservers'] = trim($_POST['timeservers']);
 	foreach (explode(' ', $_POST['timeservers']) as $ts) {
 		if (!is_domain($ts)) {
 			$input_errors[] = gettext("A NTP Time Server name may only contain the characters a-z, 0-9, '-' and '.'.");
@@ -180,6 +192,7 @@ if ($_POST) {
 		}
 
 		/* XXX - billm: these still need updating after figuring out how to check if they actually changed */
+		$olddnsservers = $config['system']['dnsserver'];
 		unset($config['system']['dnsserver']);
 		if ($_POST['dns1'])
 			$config['system']['dnsserver'][] = $_POST['dns1'];
@@ -201,13 +214,47 @@ if ($_POST) {
 			unset($config['system']['dnslocalhost']);
 
 		/* which interface should the dns servers resolve through? */
+		$outdnscounter = 0;
 		for ($dnscounter=1; $dnscounter<5; $dnscounter++) {
 			$dnsname="dns{$dnscounter}";
 			$dnsgwname="dns{$dnscounter}gw";
-			if($_POST[$dnsgwname]) {
-				$config['system'][$dnsgwname] = $pconfig[$dnsgwname];
-			} else {
-				unset($config['system'][$dnsgwname]);
+			$olddnsgwname = $config['system'][$dnsgwname];
+
+			if ($ignore_posted_dnsgw[$dnsgwname])
+				$thisdnsgwname = "none";
+			else
+				$thisdnsgwname = $pconfig[$dnsgwname];
+
+			// "Blank" out the settings for this index, then we set them below using the "outdnscounter" index.
+			$config['system'][$dnsgwname] = "none";
+			$pconfig[$dnsgwname] = "none";
+			$pconfig[$dnsname] = "";
+
+			if ($_POST[$dnsname]) {
+				// Only the non-blank DNS servers were put into the config above.
+				// So we similarly only add the corresponding gateways sequentially to the config (and to pconfig), as we find non-blank DNS servers.
+				// This keeps the DNS server IP and corresponding gateway "lined up" when the user blanks out a DNS server IP in the middle of the list.
+				$outdnscounter++;
+				$outdnsname="dns{$outdnscounter}";
+				$outdnsgwname="dns{$outdnscounter}gw";
+				$pconfig[$outdnsname] = $_POST[$dnsname];
+				if($_POST[$dnsgwname]) {
+					$config['system'][$outdnsgwname] = $thisdnsgwname;
+					$pconfig[$outdnsgwname] = $thisdnsgwname;
+				} else {
+					// Note: when no DNS GW name is chosen, the entry is set to "none", so actually this case never happens.
+					unset($config['system'][$outdnsgwname]);
+					$pconfig[$outdnsgwname] = "";
+				}
+			}
+			if (($olddnsgwname != "") && ($olddnsgwname != "none") && (($olddnsgwname != $thisdnsgwname) || ($olddnsservers[$dnscounter-1] != $_POST[$dnsname]))) {
+				// A previous DNS GW name was specified. It has now gone or changed, or the DNS server address has changed.
+				// Remove the route. Later calls will add the correct new route if needed.
+				if (is_ipaddrv4($olddnsservers[$dnscounter-1]))
+					mwexec("/sbin/route delete " . escapeshellarg($olddnsservers[$dnscounter-1]));
+				else
+					if (is_ipaddrv6($olddnsservers[$dnscounter-1]))
+						mwexec("/sbin/route delete -inet6 " . escapeshellarg($olddnsservers[$dnscounter-1]));
 			}
 		}
 
@@ -230,6 +277,8 @@ if ($_POST) {
 		
 		$savemsg = get_std_save_message($retval);
 	}
+
+	unset($ignore_posted_dnsgw);
 }
 
 $pgtitle = array(gettext("System"),gettext("General Setup"));

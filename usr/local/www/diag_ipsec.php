@@ -102,21 +102,23 @@ $mobile = ipsec_dump_mobile();
 				<table width="100%" border="0" cellpadding="6" cellspacing="0" class="tabcont sortable">
 					<thead>
 					<tr>
-						<th nowrap class="listhdrr"><?php echo gettext("Local IP");?></th>
-						<th nowrap class="listhdrr"><?php echo gettext("Remote IP");?></a></th>
-						<th nowrap class="listhdrr"><?php echo gettext("Local Network");?></th>
-						<th nowrap class="listhdrr"><?php echo gettext("Remote Network");?></a></th>
-						<th nowrap class="listhdrr"><?php echo gettext("Description");?></a></th>
-						<th nowrap class="listhdrr"><?php echo gettext("Status");?></th>
+						<th nowrap="nowrap" class="listhdrr"><?php echo gettext("Local IP");?></th>
+						<th nowrap="nowrap" class="listhdrr"><?php echo gettext("Remote IP");?></th>
+						<th nowrap="nowrap" class="listhdrr"><?php echo gettext("Local Network");?></th>
+						<th nowrap="nowrap" class="listhdrr"><?php echo gettext("Remote Network");?></th>
+						<th nowrap="nowrap" class="listhdrr"><?php echo gettext("Description");?></th>
+						<th nowrap="nowrap" class="listhdrr"><?php echo gettext("Status");?></th>
 					</tr>
 					</thead>
 					<tbody>
 					<?php
+						$rowIndex = 0;
 						foreach ($a_phase2 as $ph2ent) {
 							if ($ph2ent['remoteid']['type'] == "mobile")
 								continue;
 							ipsec_lookup_phase1($ph2ent,$ph1ent);
 							if (!isset($ph2ent['disabled']) && !isset($ph1ent['disabled'])) {
+								$rowIndex++;
 								if(ipsec_phase2_status($spd,$sad,$ph1ent,$ph2ent)) {
 									$icon = "pass";
 									$status = "Active";
@@ -144,7 +146,7 @@ $mobile = ipsec_dump_mobile();
 						<td class="listr"><?php echo htmlspecialchars($ph2ent['descr']);?></td>
 						<td class="listr">
 							<center>
-								<img src ="/themes/<?php echo $g['theme']; ?>/images/icons/icon_<?php echo $icon; ?>.gif" title="<?php echo $status; ?>">
+								<img src ="/themes/<?php echo $g['theme']; ?>/images/icons/icon_<?php echo $icon; ?>.gif" title="<?php echo $status; ?>" alt=""/>
 							</center>
 						</td>
 						<td class="list">
@@ -173,7 +175,7 @@ $mobile = ipsec_dump_mobile();
 							<?php if (($ph2ent['remoteid']['type'] != "mobile") && ($icon != "pass") && ($source != "")): ?>
 							<center>
 								<a href="diag_ipsec.php?act=connect&amp;remoteid=<?php echo $remoteid; ?>&amp;source=<?php echo $source; ?>">
-								<img src ="/themes/<?php echo $g['theme']; ?>/images/icons/icon_service_start.gif" alt="Connect VPN" title="Connect VPN" border="0">
+								<img src ="/themes/<?php echo $g['theme']; ?>/images/icons/icon_service_start.gif" alt="Connect VPN" title="Connect VPN" border="0"/>
 								</a>
 							</center>
 							<?php else: ?>
@@ -184,6 +186,11 @@ $mobile = ipsec_dump_mobile();
 					<?php
 							}
 						}
+						if ($rowIndex == 0) {
+					?>
+					<tr><td></td></tr>
+					<?php
+						}
 					?>
 					</tbody>
 				</table>
@@ -191,11 +198,11 @@ $mobile = ipsec_dump_mobile();
 				<table width="100%" border="0" cellpadding="6" cellspacing="0" class="tabcont sortable">
 					<thead>
 					<tr>
-						<th nowrap class="listhdrr"><?php echo gettext("Mobile User");?></th>
-						<th nowrap class="listhdrr"><?php echo gettext("Login Time");?></a></th>
-						<th nowrap class="listhdrr"><?php echo gettext("Local");?></th>
-						<th nowrap class="listhdrr"><?php echo gettext("Remote");?></a></th>
-						<th nowrap class="list">&nbsp;</th>
+						<th nowrap="nowrap" class="listhdrr"><?php echo gettext("Mobile User");?></th>
+						<th nowrap="nowrap" class="listhdrr"><?php echo gettext("Login Time");?></th>
+						<th nowrap="nowrap" class="listhdrr"><?php echo gettext("Local");?></th>
+						<th nowrap="nowrap" class="listhdrr"><?php echo gettext("Remote");?></th>
+						<th nowrap="nowrap" class="list">&nbsp;</th>
 					</tr>
 					</thead>
 					<tbody>
@@ -205,7 +212,7 @@ $mobile = ipsec_dump_mobile();
 						<td class="listr" align="center"><?php echo $muser['logintime']; ?></td>
 						<td class="listr" align="center"><?php echo $muser['local']; ?></td>
 						<td class="listr" align="center"><?php echo $muser['remote']; ?></td>
-						<td class="list" align="center"><a href="diag_ipsec.php?act=disconnect&user=<?php echo $muser['username']; ?>"><img src='/themes/<?php echo $g['theme']; ?>/images/icons/icon_x.gif' height='17' width='17' border='0'/></a></td>
+						<td class="list" align="center"><a href="diag_ipsec.php?act=disconnect&user=<?php echo $muser['username']; ?>"><img src='/themes/<?php echo $g['theme']; ?>/images/icons/icon_x.gif' height='17' width='17' border='0' alt=''/></a></td>
 					</tr>
 					<?php	endforeach; ?>
 					</tbody>

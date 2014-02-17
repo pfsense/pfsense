@@ -84,46 +84,46 @@ $spd = ipsec_dump_spd();
 					<table class="tabcont sortable" width="100%" border="0" cellpadding="6" cellspacing="0">
 						<?php if (count($spd)): ?>
 						<tr>
-							<td nowrap class="listhdrr"><?= gettext("Source"); ?></td>
-							<td nowrap class="listhdrr"><?= gettext("Destination"); ?></td>
-							<td nowrap class="listhdrr"><?= gettext("Direction"); ?></td>
-							<td nowrap class="listhdrr"><?= gettext("Protocol"); ?></td>
-							<td nowrap class="listhdrr"><?= gettext("Tunnel endpoints"); ?></td>
-							<td nowrap class="list"></td>
+							<td nowrap="nowrap" class="listhdrr"><?= gettext("Source"); ?></td>
+							<td nowrap="nowrap" class="listhdrr"><?= gettext("Destination"); ?></td>
+							<td nowrap="nowrap" class="listhdrr"><?= gettext("Direction"); ?></td>
+							<td nowrap="nowrap" class="listhdrr"><?= gettext("Protocol"); ?></td>
+							<td nowrap="nowrap" class="listhdrr"><?= gettext("Tunnel endpoints"); ?></td>
+							<td nowrap="nowrap" class="list"></td>
 						</tr>
 						<?php foreach ($spd as $sp): ?>
 						<tr>
 							<td class="listlr" valign="top"><?=htmlspecialchars($sp['srcid']);?></td>
 							<td class="listr" valign="top"><?=htmlspecialchars($sp['dstid']);?></td>
 							<td class="listr" valign="top">
-								<img src="/themes/<?= $g['theme']; ?>/images/icons/icon_<?=$sp['dir'];?>.gif" width="11" height="11" style="margin-top: 2px">
+								<img src="/themes/<?= $g['theme']; ?>/images/icons/icon_<?=$sp['dir'];?>.gif" width="11" height="11" style="margin-top: 2px" alt=""/>
 							</td>
 							<td class="listr" valign="top"><?=htmlspecialchars(strtoupper($sp['proto']));?></td>
 							<td class="listr" valign="top"><?=htmlspecialchars($sp['src']);?> -> <?=htmlspecialchars($sp['dst']);?></td>
-							<td class="list" nowrap>
+							<td class="list" nowrap="nowrap">
 								<?php
 									$args = "srcid=".rawurlencode($sp['srcid']);
 									$args .= "&dstid=".rawurlencode($sp['dstid']);
 									$args .= "&dir=".rawurlencode($sp['dir']);
 								?>
 								<a href="diag_ipsec_spd.php?act=del&<?=$args;?>" onclick="return confirm('<?= gettext("Do you really want to delete this security policy?"); ?>')">
-									<img src="/themes/<?= $g['theme']; ?>/images/icons/icon_x.gif" width="17" height="17" border="0">
+									<img src="/themes/<?= $g['theme']; ?>/images/icons/icon_x.gif" width="17" height="17" border="0" alt=""/>
 								</a>
 							</td>
 						</tr>
 						<?php endforeach; ?>
 					</table>
-					<br>
+					<br />
 					<table class="tabcont" border="0" cellspacing="0" cellpadding="6">
 						<tr>
-							<td width="16"><img src="/themes/<?= $g['theme']; ?>/images/icons/icon_in.gif" width="11" height="11"></td>
+							<td width="16"><img src="/themes/<?= $g['theme']; ?>/images/icons/icon_in.gif" width="11" height="11" alt=""/></td>
 							<td><?= gettext("incoming (as seen by firewall)"); ?></td>
 						</tr>
 						<tr>
 							<td colspan="5" height="4"></td>
 						</tr>
 						<tr>
-							<td><img src="/themes/<?= $g['theme']; ?>/images/icons/icon_out.gif" width="11" height="11"></td>
+							<td><img src="/themes/<?= $g['theme']; ?>/images/icons/icon_out.gif" width="11" height="11" alt=""/></td>
 							<td><?= gettext("outgoing (as seen by firewall)"); ?></td>
 						</tr>
 						<?php else: ?>
@@ -139,9 +139,10 @@ $spd = ipsec_dump_spd();
 		</tr>
 	</table>
 
-<p>
+<p/>
+
 <span class="vexpl">
-<span class="red"><strong><?= gettext("Note:"); ?><br></strong></span>
+<span class="red"><strong><?= gettext("Note:"); ?><br /></strong></span>
 <?= gettext("You can configure your IPsec"); ?> <a href="vpn_ipsec.php"><?= gettext("here."); ?></a>
 </span>
 

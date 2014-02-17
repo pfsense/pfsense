@@ -775,27 +775,29 @@ function captiveportal_prune_old_automac() {
 		$writecfg = false;
 		foreach ($config['captiveportal'][$cpzone]['passthrumac'] as $eid => $emac) {
 			if ($emac['logintype'] == "voucher") {
-				if (isset($tmpvoucherdb[$emac['username']])) {
-					$temac = $config['captiveportal'][$cpzone]['passthrumac'][$tmpvoucherdb[$emac['username']]];
-					$ruleno = captiveportal_get_ipfw_passthru_ruleno($temac['mac']);
-					$pipeno = captiveportal_get_dn_passthru_ruleno($temac['mac']);
-					if ($ruleno) {
-						captiveportal_free_ipfw_ruleno($ruleno);
-						$macrules .= "delete {$ruleno}";
-						++$ruleno;
-						$macrules .= "delete {$ruleno}";
+				if (isset($config['captiveportal'][$cpzone]['noconcurrentlogins'])) {
+					if (isset($tmpvoucherdb[$emac['username']])) {
+						$temac = $config['captiveportal'][$cpzone]['passthrumac'][$tmpvoucherdb[$emac['username']]];
+						$ruleno = captiveportal_get_ipfw_passthru_ruleno($temac['mac']);
+						$pipeno = captiveportal_get_dn_passthru_ruleno($temac['mac']);
+						if ($ruleno) {
+							captiveportal_free_ipfw_ruleno($ruleno);
+							$macrules .= "delete {$ruleno}";
+							++$ruleno;
+							$macrules .= "delete {$ruleno}";
+						}
+						if ($pipeno) {
+							captiveportal_free_dn_ruleno($pipeno);
+							$macrules .= "pipe delete {$pipeno}\n";
+							++$pipeno;
+							$macrules .= "pipe delete {$pipeno}\n";
+						}
+						$writecfg = true;
+						captiveportal_logportalauth($temac['username'], $temac['mac'], $temac['ip'], "DUPLICATE {$temac['username']} LOGIN - TERMINATING OLD SESSION");
+						unset($config['captiveportal'][$cpzone]['passthrumac'][$tmpvoucherdb[$emac['username']]]);
 					}
-					if ($pipeno) {
-						captiveportal_free_dn_ruleno($pipeno);
-						$macrules .= "pipe delete {$pipeno}\n";
-						++$pipeno;
-						$macrules .= "pipe delete {$pipeno}\n";
-					}
-					$writecfg = true;
-					captiveportal_logportalauth($temac['username'], $temac['mac'], $temac['ip'], "DUPLICATE {$temac['username']} LOGIN - TERMINATING OLD SESSION");
-					unset($config['captiveportal'][$cpzone]['passthrumac'][$tmpvoucherdb[$emac['username']]]);
+					$tmpvoucherdb[$emac['username']] = $eid;
 				}
-				$tmpvoucherdb[$emac['username']] = $eid;
 				if (voucher_auth($emac['username']) <= 0) {
 					$ruleno = captiveportal_get_ipfw_passthru_ruleno($emac['mac']);
 					$pipeno = captiveportal_get_dn_passthru_ruleno($emac['mac']);
@@ -817,6 +819,7 @@ function captiveportal_prune_old_automac() {
 				}
 			}
 		}
+		unset($tmpvoucherdb);
 		if (!empty($macrules)) {
 			@file_put_contents("{$g['tmp_path']}/macentry.prunerules.tmp", $macrules);
 			unset($macrules);

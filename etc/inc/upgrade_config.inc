@@ -3163,7 +3163,7 @@ function upgrade_099_to_100() {
 	install_cron_job("/usr/bin/nice -n20 newsyslog", false);
 }
 
-function upgrade_100_to_101() {
+function upgrade_101_to_102() {
 	global $config, $g;
 
 	if (!is_array($config['captiveportal']))
@@ -3176,11 +3176,8 @@ function upgrade_100_to_101() {
 		foreach ($cp['passthrumac'] as $idx => $passthrumac)
 			$config['captiveportal'][$cpzone]['passthrumac'][$idx]['action'] = 'pass';
 	}
-}
 
-/* Convert OpenVPN Compression option to the new style */
-function upgrade_101_to_102() {
-	global $config;
+	/* Convert OpenVPN Compression option to the new style */
 	// Nothing to do if there is no OpenVPN tag
 	if (!isset($config['openvpn']) || !is_array($config['openvpn']))
 		return;

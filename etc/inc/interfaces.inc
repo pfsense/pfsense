@@ -882,6 +882,8 @@ function interface_gre_configure(&$gre, $grekey = "") {
 	if(is_ipaddrv6($gre['tunnel-remote-addr']))
 		file_put_contents("{$g['tmp_path']}/{$greif}_routerv6", $gre['tunnel-remote-addr']);
 
+	interfaces_bring_up($laggif);
+
 	return $greif;
 }
 
@@ -988,6 +990,8 @@ function interface_gif_configure(&$gif, $gifkey = "") {
 	if (is_ipaddrv6($realifgw)) {
 		mwexec("/sbin/route change -host -inet6 " . escapeshellarg($gif['remote-addr']) . " {$realifgw}");
 	}
+
+	interfaces_bring_up($laggif);
 
 	return $gifif;
 }

@@ -1042,6 +1042,9 @@ function services_dhcpdv6_configure() {
 		}
 	}
 
+	if(isset($dhcpv6ifconf['netboot']) && !empty($dhcpv6ifconf['bootfile_url']))
+		$custoptionsv6 .= "option dhcp6.bootfile-url code 59 = string;\n";
+
 	$dhcpdv6conf = <<<EOD
 
 option domain-name "{$syscfg['domain']}";
@@ -1184,14 +1187,8 @@ EOD;
 
 		// net boot information
 		if(isset($dhcpv6ifconf['netboot'])) {
-			if ($dhcpv6ifconf['nextserver'] <> "") {
-				$dhcpdv6conf .= "	next-server {$dhcpv6ifconf['nextserver']};\n";
-			}
-			if ($dhcpv6ifconf['filename'] <> "") {
-				$dhcpdv6conf .= "	filename \"{$dhcpv6ifconf['filename']}\";\n";
-			}
-			if ($dhcpv6ifconf['rootpath'] <> "") {
-				$dhcpdv6conf .= "	option root-path \"{$dhcpv6ifconf['rootpath']}\";\n";
+			if (!empty($dhcpv6ifconf['bootfile_url'])) {
+				$dhcpdv6conf .= "	option dhcp6.bootfile-url \"{$dhcpv6ifconf['bootfile_url']}\";\n";
 			}
 		}
 

@@ -70,27 +70,27 @@ include("head.inc");
 <?php include("fbegin.inc"); ?>
 <br/>
 <form action="status_filter_reload.php" method="post" name="filter">
-<input type="submit" value="Reload Filter" name="reloadfilter" id="reloadfilter">
+<input type="submit" value="Reload Filter" name="reloadfilter" id="reloadfilter"/>
 <?php if ($config['hasync'] && $config['hasync']["synchronizetoip"] != ""): ?>
 &nbsp;&nbsp;&nbsp;&nbsp;
-<input type="submit" value="Force Config Sync" name="syncfilter" id="syncfilter">
+<input type="submit" value="Force Config Sync" name="syncfilter" id="syncfilter"/>
 <?php endif; ?>
 </form>
 <br/><br/><br/>
-<div id="status" name="status" style="padding:5px; border:1px dashed #990000; background-color: #ffffff; color: #000000;">
+<div id="status" style="padding:5px; border:1px dashed #990000; background-color: #ffffff; color: #000000;">
 	<?php echo $status; ?>
 </div>
 
-<div id="doneurl" name="doneurl">
+<div id="doneurl">
 </div>
 
-<p>
 
-<div id="reloadinfo" name="reloadinfo"><?=gettext("This page will automatically refresh every 3 seconds until the filter is done reloading"); ?>.</div>
-
+<div id="reloadinfo"><?=gettext("This page will automatically refresh every 3 seconds until the filter is done reloading"); ?>.</div>
 
 
-<script language="javascript">
+
+<script type="text/javascript">
+//<![CDATA[
 /* init update "thread */
 function update_status_thread() {
 	getURL('status_filter_reload.php?getstatus=true', update_data);
@@ -102,12 +102,12 @@ function update_data(obj) {
 	result_text = result_text.replace("\n","");
 	result_text = result_text.replace("\r","");
 	if (result_text) {
-		jQuery('#status').html('<img src="/themes/<?=$g['theme'];?>/images/misc/loader.gif"> ' + result_text + '...');
+		jQuery('#status').html('<img src="/themes/<?=$g['theme'];?>/images/misc/loader.gif" alt="" /> ' + result_text + '...');
 	} else {
-		jQuery('#status').html('<img src="/themes/<?=$g['theme'];?>/images/misc/loader.gif"> Obtaining filter status...');
+		jQuery('#status').html('<img src="/themes/<?=$g['theme'];?>/images/misc/loader.gif" alt="" /> Obtaining filter status...');
 	}
 	if(result_text == "Initializing") {
-		jQuery('#status').html('<img src="/themes/<?=$g['theme'];?>/images/misc/loader.gif"> Initializing...');
+		jQuery('#status').html('<img src="/themes/<?=$g['theme'];?>/images/misc/loader.gif" alt="" /> Initializing...');
 	} else if(result_text == "Done") {
 		jQuery('#status').effect('highlight');
 		jQuery('#status').html('Done.  The filter rules have been reloaded.');
@@ -117,9 +117,10 @@ function update_data(obj) {
 	}
 	window.setTimeout('update_status_thread()', 2500);
 }
+//]]>
 </script>
 
-<script language="javascript">
+<script type="text/javascript">
 /*
  * getURL is a proprietary Adobe function, but it's simplicity has made it very
  * popular. If getURL is undefined we spin our own by wrapping XMLHttpRequest.

@@ -3162,4 +3162,20 @@ function upgrade_099_to_100() {
 	require_once("/etc/inc/services.inc");
 	install_cron_job("/usr/bin/nice -n20 newsyslog", false);
 }
+
+function upgrade_100_to_101() {
+	global $config, $g;
+
+	if (!is_array($config['voucher']))
+		return;
+
+	foreach ($config['voucher'] as $cpzone => $cp) {
+		if (!is_array($cp['roll']))
+			continue;
+		foreach ($cp['roll'] as $ridx => $rcfg) {
+			if (!empty($rcfg['comment']))
+				$config['voucher'][$cpzone]['roll'][$ridx]['descr'] = $rcfg['comment'];
+		}
+	}
+}
 ?>

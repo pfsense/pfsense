@@ -139,16 +139,16 @@ include("head.inc");
 					$logent = preg_split("/\s+/", $logent, 6);
 					echo "<tr valign=\"top\">\n";
 					$entry_date_time = htmlspecialchars(join(" ", array_slice($logent, 0, 3)));
-					echo "<td class=\"listlr\" nowrap>" . $entry_date_time  . "</td>\n";
+					echo "<td class=\"listlr\" nowrap=\"nowrap\">" . $entry_date_time  . "</td>\n";
 					echo "<td class=\"listr\">" . $logent[4] . " " . $logent[5] . "</td>\n";
 					echo "</tr>\n";
 				}
 				?>
 				<tr>
 					<td>
-						<br>
+						<br />
 						<form action="diag_logs_ipsec.php" method="post">
-						<input name="clear" type="submit" class="formbtn" value="<?=gettext("Clear log"); ?>">
+						<input name="clear" type="submit" class="formbtn" value="<?=gettext("Clear log"); ?>"/>
 						</form>
 					</td>
 				</tr>

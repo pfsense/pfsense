@@ -85,14 +85,14 @@ if ($_GET['act'] == "del") {
 					<table class="tabcont sortable" width="100%" border="0" cellpadding="6" cellspacing="0">
 						<?php if (count($sad)): ?>
 						<tr>
-							<td nowrap class="listhdrr"><?=gettext("Source");?></td>
-							<td nowrap class="listhdrr"><?=gettext("Destination");?></td>
-							<td nowrap class="listhdrr"><?=gettext("Protocol");?></td>
-							<td nowrap class="listhdrr"><?=gettext("SPI");?></td>
-							<td nowrap class="listhdrr"><?=gettext("Enc. alg.");?></td>
-							<td nowrap class="listhdr"><?=gettext("Auth. alg.");?></td>
-							<td nowrap class="listhdr"><?=gettext("Data");?></td>
-							<td nowrap class="list"></td>
+							<td nowrap="nowrap" class="listhdrr"><?=gettext("Source");?></td>
+							<td nowrap="nowrap" class="listhdrr"><?=gettext("Destination");?></td>
+							<td nowrap="nowrap" class="listhdrr"><?=gettext("Protocol");?></td>
+							<td nowrap="nowrap" class="listhdrr"><?=gettext("SPI");?></td>
+							<td nowrap="nowrap" class="listhdrr"><?=gettext("Enc. alg.");?></td>
+							<td nowrap="nowrap" class="listhdr"><?=gettext("Auth. alg.");?></td>
+							<td nowrap="nowrap" class="listhdr"><?=gettext("Data");?></td>
+							<td nowrap="nowrap" class="list"></td>
 						</tr>
 						<?php foreach ($sad as $sa): ?>
 						<tr>
@@ -103,7 +103,7 @@ if ($_GET['act'] == "del") {
 							<td class="listr"><?=htmlspecialchars($sa['ealgo']);?></td>
 							<td class="listr"><?=htmlspecialchars($sa['aalgo']);?></td>
 							<td class="listr"><?=htmlspecialchars($sa['data']);?></td>
-							<td class="list" nowrap>
+							<td class="list" nowrap="nowrap">
 								<?php
 									$args = "src=" . rawurlencode($sa['src']);
 									$args .= "&dst=" . rawurlencode($sa['dst']);
@@ -111,7 +111,7 @@ if ($_GET['act'] == "del") {
 									$args .= "&spi=" . rawurlencode("0x" . $sa['spi']);
 								?>
 								<a href="diag_ipsec_sad.php?act=del&<?=$args;?>" onclick="return confirm('<?=gettext("Do you really want to delete this security association?"); ?>')">
-									<img src="/themes/<?= $g['theme']; ?>/images/icons/icon_x.gif" width="17" height="17" border="0">
+									<img src="/themes/<?= $g['theme']; ?>/images/icons/icon_x.gif" width="17" height="17" border="0" alt=""/>
 								</a>
 							</td>
 						</tr>
@@ -132,7 +132,7 @@ if ($_GET['act'] == "del") {
 <p/>
 
 <span class="vexpl">
-<span class="red"><strong><?=gettext("Note:");?><br></strong></span>
+<span class="red"><strong><?=gettext("Note:");?><br /></strong></span>
 <?=gettext("You can configure your IPsec");?> <a href="vpn_ipsec.php"><?=gettext("here.");?></a>
 </span>
 

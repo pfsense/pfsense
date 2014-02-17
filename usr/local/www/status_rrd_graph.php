@@ -649,9 +649,9 @@ function get_dates($curperiod, $graph) {
 				<tr>
 					<td colspan="2" class="list">
 					<script type="text/javascript">
+//					<![CDATA[
 						function update_graph_images() {
 							//alert('updating');
-							var amp = decodeURIComponent("%26");
 							var randomid = Math.floor(Math.random()*11);
 							<?php
 							foreach($graphs as $graph) {
@@ -714,13 +714,14 @@ function get_dates($curperiod, $graph) {
 									$id = preg_replace('/\./', '_', $id);
 
 									echo "\n";
-									echo "\t\tjQuery('#{$id}').attr('src','status_rrd_graph_img.php?start={$start}' + amp + 'graph={$graph}' + amp + 'database={$curdatabase}' + amp + 'style={$curstyle}' + amp + 'tmp=' + randomid);\n";
+									echo "\t\tjQuery('#{$id}').attr('src','status_rrd_graph_img.php?start={$start}&graph={$graph}&database={$curdatabase}&style={$curstyle}&tmp=' + randomid);\n";
 									}
 								}
 							?>
 							window.setTimeout('update_graph_images()', 355000);
 						}
 						window.setTimeout('update_graph_images()', 355000);
+//					]]>
 					</script>
 					</td>
 				</tr>

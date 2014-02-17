@@ -90,33 +90,34 @@ include("head.inc");
 
 
 <script type="text/javascript">
+//<![CDATA[
 /* init update "thread */
 function update_status_thread() {
 	getURL('status_filter_reload.php?getstatus=true', update_data);
 }
 function update_data(obj) {
-	var lt = decodeURIComponent("%3C");
 	var result_text = obj.content;
 	var result_text_split = result_text.split("|");
 	result_text = result_text_split[1];
 	result_text = result_text.replace("\n","");
 	result_text = result_text.replace("\r","");
 	if (result_text) {
-		jQuery('#status').html(lt+'img src="/themes/<?=$g['theme'];?>/images/misc/loader.gif" alt=""/> ' + result_text + '...');
+		jQuery('#status').html('<img src="/themes/<?=$g['theme'];?>/images/misc/loader.gif" alt="" /> ' + result_text + '...');
 	} else {
-		jQuery('#status').html(lt+'img src="/themes/<?=$g['theme'];?>/images/misc/loader.gif" alt=""/> Obtaining filter status...');
+		jQuery('#status').html('<img src="/themes/<?=$g['theme'];?>/images/misc/loader.gif" alt="" /> Obtaining filter status...');
 	}
 	if(result_text == "Initializing") {
-		jQuery('#status').html(lt+'img src="/themes/<?=$g['theme'];?>/images/misc/loader.gif" alt=""/> Initializing...');
+		jQuery('#status').html('<img src="/themes/<?=$g['theme'];?>/images/misc/loader.gif" alt="" /> Initializing...');
 	} else if(result_text == "Done") {
 		jQuery('#status').effect('highlight');
 		jQuery('#status').html('Done.  The filter rules have been reloaded.');
 		jQuery('#reloadinfo').css("visibility","hidden");
 		jQuery('#doneurl').css("visibility","visible");
-		jQuery('#doneurl').html(lt+"p/>"+lt+"a href='status_queues.php'>Queue Status"+lt+"/a>");
+		jQuery('#doneurl').html("<p/><a href='status_queues.php'>Queue Status</a>");
 	}
 	window.setTimeout('update_status_thread()', 2500);
 }
+//]]>
 </script>
 
 <script type="text/javascript">

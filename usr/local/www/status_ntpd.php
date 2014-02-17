@@ -147,7 +147,7 @@ include("head.inc");
 	<?php else: ?>
 	<?php $i = 0; foreach ($ntpq_servers as $server): ?>
 	<tr>
-	<td class="listlr" nowrap>
+	<td class="listlr" nowrap="nowrap">
 		<?=$server['status'];?>
 	</td>
 	<td class="listlr">

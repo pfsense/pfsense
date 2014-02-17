@@ -999,7 +999,7 @@ function services_dhcpdv6_configure() {
 option domain-name "{$syscfg['domain']}";
 option ldap-server code 95 = text;
 option domain-search-list code 119 = text;
-{$custoptions}
+{$custoptionsv6}
 default-lease-time 7200;
 max-lease-time 86400;
 log-facility local7;

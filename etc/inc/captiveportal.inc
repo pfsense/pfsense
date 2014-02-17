@@ -633,9 +633,9 @@ function captiveportal_prune_old() {
 
 		$timedout = false;
 		$term_cause = 1;
-		if (empty($cpentry[10]))
-			$cpentry[10] = 'first';
-		$radiusservers = $radiussrvs[$cpentry[10]];
+		if (empty($cpentry[11]))
+			$cpentry[11] = 'first';
+		$radiusservers = $radiussrvs[$cpentry[11]];
 
 		/* hard timeout? */
 		if ($timeout) {
@@ -893,9 +893,9 @@ function captiveportal_disconnect_client($sessionid, $term_cause = 1, $logoutRea
 		captiveportal_write_db("DELETE FROM captiveportal WHERE sessionid = '{$sessionid}'");
 
 		foreach ($result as $cpentry) {
-			if (empty($cpentry[10]))
-				$cpentry[10] = 'first';
-			captiveportal_disconnect($cpentry, $radiusservers[$cpentry[10]], $term_cause);
+			if (empty($cpentry[11]))
+				$cpentry[11] = 'first';
+			captiveportal_disconnect($cpentry, $radiusservers[$cpentry[11]], $term_cause);
 			captiveportal_logportalauth($cpentry[4], $cpentry[3], $cpentry[2], "DISCONNECT");
 		}
 		unset($result);
@@ -913,14 +913,14 @@ function captiveportal_radius_stop_all() {
 	if (!empty($radiusservers)) {
 		$cpdb = captiveportal_read_db();
 		foreach ($cpdb as $cpentry) {
-			if (empty($cpentry[10]))
-				$cpentry[10] = 'first';
-			if (!empty($radiusservers[$cpentry[10]])) {
+			if (empty($cpentry[11]))
+				$cpentry[11] = 'first';
+			if (!empty($radiusservers[$cpentry[11]])) {
 				RADIUS_ACCOUNTING_STOP($cpentry[1], // ruleno
 					$cpentry[4], // username
 					$cpentry[5], // sessionid
 					$cpentry[0], // start time
-					$radiusservers[$cpentry[10]],
+					$radiusservers[$cpentry[11]],
 					$cpentry[2], // clientip
 					$cpentry[3], // clientmac
 					7); // Admin Reboot
@@ -1241,7 +1241,7 @@ function captiveportal_opendb() {
 	else {
 		$errormsg = "";
 		$DB = @sqlite_open("{$g['vardb_path']}/captiveportal{$cpzone}.db");
-		if (@sqlite_exec($DB, "CREATE TABLE captiveportal (allow_time INTEGER, pipeno INTEGER, ip TEXT, mac TEXT, username TEXT, sessionid TEXT, bpassword TEXT, session_timeout INTEGER, idle_timeout INTEGER, session_terminate_time INTEGER, interim_interval INTEGER) ", $errormsg)) {
+		if (@sqlite_exec($DB, "CREATE TABLE captiveportal (allow_time INTEGER, pipeno INTEGER, ip TEXT, mac TEXT, username TEXT, sessionid TEXT, bpassword TEXT, session_timeout INTEGER, idle_timeout INTEGER, session_terminate_time INTEGER, interim_interval INTEGER, radiusctx TEXT) ", $errormsg)) {
 			@sqlite_exec($DB, "CREATE UNIQUE INDEX idx_active ON captiveportal (sessionid, username)");
 			@sqlite_exec($DB, "CREATE INDEX user ON captiveportal (username)");
 			@sqlite_exec($DB, "CREATE INDEX ip ON captiveportal (ip)");
@@ -1813,8 +1813,9 @@ function portal_allow($clientip,$clientmac,$username,$password = null, $attribut
 		$radiusctx = 'first';
 
 	foreach ($cpdb as $cpentry) {
-		if (empty($cpentry[10]))
-			$cpentry[10] = 'first';
+		if (empty($cpentry[11])) {
+			$cpentry[11] = 'first';
+		}
 		/* on the same ip */
 		if ($cpentry[2] == $clientip) {
 			if (isset($config['captiveportal'][$cpzone]['nomacfilter']) || $cpentry[3] == $clientmac)
@@ -1832,7 +1833,7 @@ function portal_allow($clientip,$clientmac,$username,$password = null, $attribut
 				$remaining_time = 0;
 
 			/* This user was already logged in so we disconnect the old one */
-			captiveportal_disconnect($cpentry,$radiusservers[$cpentry[10]],13);
+			captiveportal_disconnect($cpentry,$radiusservers[$cpentry[11]],13);
 			captiveportal_logportalauth($cpentry[4],$cpentry[3],$cpentry[2],"CONCURRENT LOGIN - TERMINATING OLD SESSION");
 			$unsetindexes[] = $cpentry[5];
 			break;
@@ -1841,7 +1842,7 @@ function portal_allow($clientip,$clientmac,$username,$password = null, $attribut
 			/* on the same username */
 			if (strcasecmp($cpentry[4], $username) == 0) {
 				/* This user was already logged in so we disconnect the old one */
-				captiveportal_disconnect($cpentry,$radiusservers[$cpentry[10]],13);
+				captiveportal_disconnect($cpentry,$radiusservers[$cpentry[11]],13);
 				captiveportal_logportalauth($cpentry[4],$cpentry[3],$cpentry[2],"CONCURRENT LOGIN - TERMINATING OLD SESSION");
 				$unsetindexes[] = $cpentry[5];
 				break;
@@ -1932,9 +1933,9 @@ function portal_allow($clientip,$clientmac,$username,$password = null, $attribut
 
 			/* encode password in Base64 just in case it contains commas */
 			$bpassword = base64_encode($password);
-			$insertquery  = "INSERT INTO captiveportal (allow_time, pipeno, ip, mac, username, sessionid, bpassword, session_timeout, idle_timeout, session_terminate_time, interim_interval) ";
+			$insertquery  = "INSERT INTO captiveportal (allow_time, pipeno, ip, mac, username, sessionid, bpassword, session_timeout, idle_timeout, session_terminate_time, interim_interval, radiusctx) ";
 			$insertquery .= "VALUES ({$allow_time}, {$pipeno}, '{$clientip}', '{$clientmac}', '{$safe_username}', '{$sessionid}', '{$bpassword}', ";
-			$insertquery .= "{$session_timeout}, {$idle_timeout}, {$session_terminate_time}, {$interim_interval})";
+			$insertquery .= "{$session_timeout}, {$idle_timeout}, {$session_terminate_time}, {$interim_interval}, {$radiusctx})";
 
 			/* store information to database */
 			captiveportal_write_db($insertquery);

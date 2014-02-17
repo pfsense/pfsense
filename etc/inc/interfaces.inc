@@ -2984,48 +2984,48 @@ function interface_configure($interface = "wan", $reloadall = false, $linkupeven
 
 	$tunnelif = substr($realif, 0, 3);
 	switch ($wancfg['ipaddr']) {
-		case 'dhcp':
-			interface_dhcp_configure($interface);
-			break;
-		case 'pppoe':
-		case 'l2tp':
-		case 'pptp':
-		case 'ppp':
-			interface_ppps_configure($interface);
-			break;
-		default:
-			/* XXX: Kludge for now related to #3280 */
-			if (!in_array($tunnelif, array("gif", "gre", "ovp"))) {
-				if (is_ipaddrv4($wancfg['ipaddr']) && $wancfg['subnet'] <> "")
-					pfSense_interface_setaddress($realif, "{$wancfg['ipaddr']}/{$wancfg['subnet']}");
-			}
-			break;
+	case 'dhcp':
+		interface_dhcp_configure($interface);
+		break;
+	case 'pppoe':
+	case 'l2tp':
+	case 'pptp':
+	case 'ppp':
+		interface_ppps_configure($interface);
+		break;
+	default:
+		/* XXX: Kludge for now related to #3280 */
+		if (!in_array($tunnelif, array("gif", "gre", "ovp"))) {
+			if (is_ipaddrv4($wancfg['ipaddr']) && $wancfg['subnet'] <> "")
+				pfSense_interface_setaddress($realif, "{$wancfg['ipaddr']}/{$wancfg['subnet']}");
+		}
+		break;
 	}
 
 	switch ($wancfg['ipaddrv6']) {
-		case 'slaac':
-		case 'dhcp6':
-			interface_dhcpv6_configure($interface, $wancfg);
-			break;
-		case '6rd':
-			interface_6rd_configure($interface, $wancfg);
-			break;
-		case '6to4':
-			interface_6to4_configure($interface, $wancfg);
-			break;
-		case 'track6':
-			interface_track6_configure($interface, $wancfg);
-			break;
-		default:
-			/* XXX: Kludge for now related to #3280 */
-			if (!in_array($tunnelif, array("gif", "gre", "ovp"))) {
-				if (is_ipaddrv6($wancfg['ipaddrv6']) && $wancfg['subnetv6'] <> "") {
-					//pfSense_interface_setaddress($realif, "{$wancfg['ipaddrv6']}/{$wancfg['subnetv6']}");
-					// FIXME: Add IPv6 Support to the pfSense module
-					mwexec("/sbin/ifconfig " . escapeshellarg($realif) . " inet6 {$wancfg['ipaddrv6']} prefixlen " . escapeshellarg($wancfg['subnetv6']));
-				}
+	case 'slaac':
+	case 'dhcp6':
+		interface_dhcpv6_configure($interface, $wancfg);
+		break;
+	case '6rd':
+		interface_6rd_configure($interface, $wancfg);
+		break;
+	case '6to4':
+		interface_6to4_configure($interface, $wancfg);
+		break;
+	case 'track6':
+		interface_track6_configure($interface, $wancfg);
+		break;
+	default:
+		/* XXX: Kludge for now related to #3280 */
+		if (!in_array($tunnelif, array("gif", "gre", "ovp"))) {
+			if (is_ipaddrv6($wancfg['ipaddrv6']) && $wancfg['subnetv6'] <> "") {
+				//pfSense_interface_setaddress($realif, "{$wancfg['ipaddrv6']}/{$wancfg['subnetv6']}");
+				// FIXME: Add IPv6 Support to the pfSense module
+				mwexec("/sbin/ifconfig " . escapeshellarg($realif) . " inet6 {$wancfg['ipaddrv6']} prefixlen " . escapeshellarg($wancfg['subnetv6']));
 			}
-			break;
+		}
+		break;
 	}
 
 	if (!empty($wancfg['mtu'])) {

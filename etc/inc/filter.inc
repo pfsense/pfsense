@@ -58,18 +58,6 @@ $filterdns = array();
 /* Used for aliases and interface macros */
 $aliases = "";
 
-/* Reserved table names to avoid colision */
-$reserved_table_names = array(
-	"bogons",
-	"bogonsv6",
-	"negate_networks",
-	"snort2c",
-	"sshlockout",
-	"tonatsubnets",
-	"virusprot",
-	"vpn_networks",
-	"webConfiguratorlockout");
-
 function fix_rule_label($descr) {
 	$descr = str_replace('"', '', $descr);
 	if (strlen($descr) > 63)

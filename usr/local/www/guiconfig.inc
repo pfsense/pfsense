@@ -95,6 +95,19 @@ if(!$ignorefirmwarelock) {
 	}
 }
 
+/* Reserved table names to avoid colision */
+$reserved_table_names = array(
+        "bogons",
+        "bogonsv6",
+        "negate_networks",
+        "snort2c",
+        "sshlockout",
+        "tonatsubnets",
+        "virusprot",
+        "vpn_networks",
+        "webConfiguratorlockout"
+);
+
 $firewall_rules_dscp_types = array("af11",
 				"af12",
 				"af13",

@@ -76,7 +76,7 @@ if (isset($id) && $a_roll[$id]) {
 	$pconfig['number'] = $a_roll[$id]['number'];
 	$pconfig['count'] = $a_roll[$id]['count'];
 	$pconfig['minutes'] = $a_roll[$id]['minutes'];
-	$pconfig['comment'] = $a_roll[$id]['comment'];
+	$pconfig['descr'] = $a_roll[$id]['descr'];
 }
 
 $maxnumber = (1<<$config['voucher'][$cpzone]['rollbits']) -1;    // Highest Roll#
@@ -118,7 +118,7 @@ if ($_POST) {
         $rollent['zone']  = $_POST['zone'];
         $rollent['number']  = $_POST['number'];
         $rollent['minutes'] = $_POST['minutes'];
-        $rollent['comment'] = $_POST['comment'];
+        $rollent['descr'] = $_POST['descr'];
 
         /* New Roll or modified voucher count: create bitmask */
 	$voucherlck = lock("voucher{$cpzone}");
@@ -194,7 +194,7 @@ include("head.inc");
 	<tr> 
 	  <td width="22%" valign="top" class="vncell"><?=gettext("Comment"); ?></td>
 	  <td width="78%" class="vtable"> 
-		<?=$mandfldhtml;?><input name="comment" type="text" class="formfld" id="comment" size="60" value="<?=htmlspecialchars($pconfig['comment']);?>"> 
+		<?=$mandfldhtml;?><input name="descr" type="text" class="formfld" id="descr" size="60" value="<?=htmlspecialchars($pconfig['descr']);?>"> 
         <br>
         <span class="vexpl"><?=gettext("Can be used to further identify this roll. Ignored by the system"); ?>.</span>
 		</td>

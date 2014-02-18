@@ -359,19 +359,6 @@ function uninstall_package($pkg_name) {
 	global $config, $static_output;
 	global $builder_package_install;
 
-	// Back up /usr/local/lib libraries first if
-	// not running from the builder code.
-	// also take into account rrd binaries
-	if(!$builder_package_install) {
-		if(!file_exists("/tmp/pkg_libs.tgz")) {
-			$static_output .= "Backing up libraries... ";
-			update_output_window($static_output);
-			mwexec("/usr/bin/tar czPf /tmp/pkg_libs.tgz `/bin/cat /etc/pfSense_md5.txt | /usr/bin/grep 'local/lib' | /usr/bin/awk '{ print $2 }' | /usr/bin/cut -d'(' -f2 | /usr/bin/cut -d')' -f1`", true);
-			mwexec("/usr/bin/tar czPf /tmp/pkg_bins.tgz `/bin/cat /etc/pfSense_md5.txt | /usr/bin/grep 'rrd' | /usr/bin/awk '{ print $2 }' | /usr/bin/cut -d'(' -f2 | /usr/bin/cut -d')' -f1`", true);
-			$static_output .= "\n";
-		}
-	}
-
 	$id = get_pkg_id($pkg_name);
 	if ($id >= 0) {
 		stop_service(get_pkg_internal_name($config['installedpackages']['package'][$id]));
@@ -397,18 +384,8 @@ function uninstall_package($pkg_name) {
 	}
 	delete_package_xml($pkg_name);
 
-	// Restore libraries that we backed up if not 
-	// running from the builder code.
-	if(!$builder_package_install) {
-		$static_output .= "Cleaning up... ";
-		update_output_window($static_output);
-		mwexec("/usr/bin/tar xzPfk /tmp/pkg_libs.tgz -C /", true);
-		mwexec("/usr/bin/tar xzPfk /tmp/pkg_bins.tgz -C /", true);
-		@unlink("/tmp/pkg_libs.tgz");
-		@unlink("/tmp/pkg_bins.tgz");
-		$static_output .= gettext("done.") . "\n";
-		update_output_window($static_output);
-	}
+	$static_output .= gettext("done.") . "\n";
+	update_output_window($static_output);
 }
 
 function force_remove_package($pkg_name) {

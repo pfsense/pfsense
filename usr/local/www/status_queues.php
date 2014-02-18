@@ -130,6 +130,7 @@ include("head.inc");
 if(!is_array($config['shaper']['queue']) || count($config['shaper']['queue']) < 1) {
 	echo gettext("Traffic shaping is not configured.");
 	include("fend.inc");
+	echo '</body></html>';
 	exit;}
 ?>
 <?php if (!$error): ?>

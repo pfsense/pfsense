@@ -54,7 +54,8 @@ if [ "${2}" == "inet6" ]; then
 		/usr/local/sbin/pfSctl -c 'service reload dns'
 		/bin/sleep 1
 	fi
+else
+	/usr/local/sbin/pfSctl -c "interface newip ${1}"
 fi
 
-/usr/local/sbin/pfSctl -c "interface newip ${1}"
 exit 0

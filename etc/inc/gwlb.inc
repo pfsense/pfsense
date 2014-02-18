@@ -914,7 +914,7 @@ function get_interface_gateway_v6($interface, &$dynamic = false) {
 
 	// for dynamic interfaces we handle them through the $interface_router file.
 	if (!is_ipaddrv6($gw) && !is_ipaddrv6($gwcfg['ipaddrv6'])) {
-			$realif = get_real_interface($interface, "inet6");
+			$realif = get_real_interface($interface);
 			if (file_exists("{$g['tmp_path']}/{$realif}_routerv6")) {
 				$gw = trim(file_get_contents("{$g['tmp_path']}/{$realif}_routerv6"), " \n");
 				$dynamic = true;

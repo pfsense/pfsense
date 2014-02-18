@@ -45,7 +45,7 @@ require_once("guiconfig.inc");
 
 if(!isset($config['ntpd']['noquery'])) {
 
-	exec("/usr/local/sbin/ntpq -pn | /usr/sbin/tail +3", $ntpq_output);
+	exec("/usr/local/sbin/ntpq -pn | /usr/bin/tail +3", $ntpq_output);
 
 	$ntpq_servers = array();
 	foreach ($ntpq_output as $line) {

@@ -181,7 +181,7 @@ Rounded("div#mainareapkg","bl br","#FFF","#eeeeee","smooth");
 ob_flush();
 
 if ($_GET) {
-	$pkgname = str_replace(array("<", ">", ";", "&", "'"), "", htmlspecialchars_decode($_GET['pkg']));
+	$pkgname = str_replace(array("<", ">", ";", "&", "'", '"'), "", htmlspecialchars_decode($_GET['pkg'], ENT_QUOTES | ENT_HTML401));
 	switch($_GET['mode']) {
 	case 'showlog':
 		if (strpos($pkgname, ".")) {

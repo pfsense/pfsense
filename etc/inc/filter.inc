@@ -2751,19 +2751,32 @@ EOD;
 
 		if(isset($config['interfaces'][$on]['blockbogons'])) {
 			$ipfrules .= <<<EOD
-# block bogon networks
+# block bogon networks (IPv4)
 # http://www.cymru.com/Documents/bogon-bn-nonagg.txt
-# http://www.team-cymru.org/Services/Bogons/fullbogons-ipv6.txt
 block in $bogonlog quick on \${$oc['descr']} from <bogons> to any label "{$fix_rule_label("block bogon IPv4 networks from {$oc['descr']}")}"
 
 EOD;
-			if(isset($config['system']['ipv6allow'])) {
-				$ipfrules .= <<<EOD
+		}
+
+		if($oc['type6'] == "slaac" || $oc['type6'] == "dhcp6") {
+			$ipfrules .= <<<EOD
+# allow our DHCPv6 client out to the {$oc['descr']}
+pass in quick on \${$oc['descr']} proto udp from fe80::/10 port = 546 to fe80::/10 port = 546 label "{$fix_rule_label("allow dhcpv6 client in {$oc['descr']}")}"
+pass in quick on \${$oc['descr']} proto udp from any port = 547 to any port = 546 label "{$fix_rule_label("allow dhcpv6 client in {$oc['descr']}")}"
+pass out quick on \${$oc['descr']} proto udp from any port = 546 to any port = 547 label "{$fix_rule_label("allow dhcpv6 client out {$oc['descr']}")}"
+
+EOD;
+		}
+
+		if(isset($config['interfaces'][$on]['blockbogons']) && isset($config['system']['ipv6allow'])) {
+			$ipfrules .= <<<EOD
+# block bogon networks (IPv6)
+# http://www.team-cymru.org/Services/Bogons/fullbogons-ipv6.txt
 block in $bogonlog quick on \${$oc['descr']} from <bogonsv6> to any label "{$fix_rule_label("block bogon IPv6 networks from {$oc['descr']}")}"
 
 EOD;
-			}
 		}
+
 		$isbridged = false;
 		if(is_array($config['bridges']['bridged'])) {
 			foreach ($config['bridges']['bridged'] as $oc2) {
@@ -2848,16 +2861,6 @@ EOD;
 			break;
 		}
 		switch($oc['type6']) {
-		case "slaac":
-		case "dhcp6":
-			$ipfrules .= <<<EOD
-# allow our DHCPv6 client out to the {$oc['descr']}
-pass in quick on \${$oc['descr']} proto udp from fe80::/10 port = 546 to fe80::/10 port = 546 label "{$fix_rule_label("allow dhcpv6 client in {$oc['descr']}")}"
-pass in quick on \${$oc['descr']} proto udp from any port = 547 to any port = 546 label "{$fix_rule_label("allow dhcpv6 client in {$oc['descr']}")}"
-pass out quick on \${$oc['descr']} proto udp from any port = 546 to any port = 547 label "{$fix_rule_label("allow dhcpv6 client out {$oc['descr']}")}"
-
-EOD;
-			break;
 		case "6rd":
 			$ipfrules .= <<<EOD
 # allow our proto 41 traffic from the 6RD border relay in

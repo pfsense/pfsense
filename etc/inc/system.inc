@@ -401,7 +401,7 @@ function system_routing_configure($interface = "") {
 					$gatewayipv6 = $gateway['gateway'];
 					$interfacegwv6 = $gateway['interface'];
 					if (!empty($gateway['interface'])) {
-						$defaultifv6 = get_real_interface($gateway['interface'], "inet6");
+						$defaultifv6 = get_real_interface($gateway['interface']);
 						if ($defaultifv6)
 							@file_put_contents("{$g['tmp_path']}/{$defaultifv6}_defaultgwv6", $gateway['gateway']);
 					}
@@ -419,7 +419,7 @@ function system_routing_configure($interface = "") {
 		@touch("{$g['tmp_path']}/{$defaultif}_defaultgw");
 	}	
 	if ($foundgwv6 == false) {
-		$defaultifv6 = get_real_interface("wan", "inet6");
+		$defaultifv6 = get_real_interface("wan");
 		$interfacegwv6 = "wan";
 		$gatewayipv6 = get_interface_gateway_v6("wan");
 		@touch("{$g['tmp_path']}/{$defaultif}_defaultgwv6");

@@ -90,8 +90,9 @@ include("head.inc");
     <?php
 	if($pkgwithlogging == false) {
 		print_info_box(gettext("No packages with logging facilities are currently installed."));
-		echo '</ul></td></tr></table>';
+		echo '</td></tr></table>';
 		include("fend.inc");
+		echo '</body></html>';
 		exit;
 	}
 	$tab_array = array();

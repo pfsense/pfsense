@@ -384,7 +384,8 @@ function uninstall_package($pkg_name) {
 			}
 		}
 	}
-	delete_package_xml($pkg_name);
+	if (is_package_installed($pkg_name))
+		delete_package_xml($pkg_name);
 
 	$static_output .= gettext("done.") . "\n";
 	update_output_window($static_output);
@@ -578,7 +579,7 @@ function pkg_fetch_recursive($pkgname, $filename, $dependlevel = 0, $base_url = 
 function install_package($package, $pkg_info = "", $force_install = false) {
 	global $g, $config, $static_output, $pkg_interface;
 
-	/* safe side. Write config below will send to ro again. */
+	/* safe side. */
 	conf_mount_rw();
 
 	if($pkg_interface == "console") 	

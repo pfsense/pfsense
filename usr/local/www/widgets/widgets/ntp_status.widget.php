@@ -41,7 +41,7 @@ require_once("/usr/local/www/widgets/include/ntp_status.inc");
 
 if($_REQUEST['updateme']) {
 //this block displays only on ajax refresh
-	exec("/usr/local/bin/ntpq -pn | /usr/bin/tail +3", $ntpq_output);
+	exec("/usr/local/sbin/ntpq -pn | /usr/sbin/tail +3", $ntpq_output);
 	$ntpq_counter = 0;
 	foreach ($ntpq_output as $line) {
 		if (substr($line, 0, 1) == "*") {
@@ -63,7 +63,7 @@ if($_REQUEST['updateme']) {
 		}
 	}
 
-	exec("/usr/local/bin/ntpq -c clockvar", $ntpq_clockvar_output);
+	exec("/usr/local/sbin/ntpq -c clockvar", $ntpq_clockvar_output);
 	foreach ($ntpq_clockvar_output as $line) {
 		if (substr($line, 0, 9) == "timecode=") {
 			$tmp = explode('"', $line);

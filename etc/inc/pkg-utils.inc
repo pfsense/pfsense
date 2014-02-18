@@ -57,7 +57,7 @@ if(!function_exists("update_status")) {
 }
 if(!function_exists("update_output_window")) {
 	function update_output_window($status) {
-		echo $status . "\n";
+		echo htmlspecialchars($status) . "\n";
 	}
 }
 

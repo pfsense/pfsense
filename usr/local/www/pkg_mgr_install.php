@@ -114,6 +114,7 @@ Rounded("div#mainareapkg","bl br","#FFF","#eeeeee","smooth");
 
 ob_flush();
 
+$pkgname = str_replace(array("<", ">", ";", "&", "'"), "", htmlspecialchars_decode($_GET['pkg']));
 switch($_GET['mode']) {
 	case "showlog":
 	case "installedinfo":
@@ -131,22 +132,22 @@ switch($_GET['mode']) {
 
 switch($_GET['mode']) {
 	case "delete":
-		uninstall_package($_GET['pkg']);
+		uninstall_package($pkgname);
 		update_status(gettext("Package deleted."));
 		$static_output .= "\n" . gettext("Package deleted.");
 		update_output_window($static_output);
 		filter_configure();
 		break;
 	case "showlog":
-		$id = htmlspecialchars($_GET['pkg']);
+		$id = htmlspecialchars($pkgname);
 		if(strpos($id, "."))
 			exit;
 		update_output_window(file_get_contents("/tmp/pkg_mgr_{$id}.log"));
 		break;
 	case "reinstallxml":
 	case "reinstallpkg":
-		delete_package_xml(htmlspecialchars($_GET['pkg']));
-		if (install_package(htmlspecialchars($_GET['pkg'])) < 0) {
+		delete_package_xml($pkgname);
+		if (install_package($pkgname) < 0) {
 			update_status(gettext("Package reinstallation failed."));
 			$static_output .= "\n" . gettext("Package reinstallation failed.");
 			update_output_window($static_output);
@@ -156,17 +157,17 @@ switch($_GET['mode']) {
 			update_output_window($static_output);
 			filter_configure();
 		}
-		file_put_contents("/tmp/{$_GET['pkg']}.info", $static_output);
-		echo "<script type='text/javascript'>document.location=\"pkg_mgr_install.php?mode=installedinfo&pkg={$_GET['pkg']}\";</script>";
+		file_put_contents("/tmp/{$pkgname}.info", $static_output);
+		echo "<script type='text/javascript'>document.location=\"pkg_mgr_install.php?mode=installedinfo&pkg={$pkgname}\";</script>";
 		break;
 	case "installedinfo":
-		if(file_exists("/tmp/{$_GET['pkg']}.info")) {
-			$filename = escapeshellcmd("/tmp/" . $_GET['pkg']  . ".info");
+		if(file_exists("/tmp/{$pkgname}.info")) {
+			$filename = escapeshellcmd("/tmp/{$pkgname}.info");
 			$status = file_get_contents($filename);
-			update_status($_GET['pkg']  . " " . gettext("installation completed."));
+			update_status("{$pkgname} " . gettext("installation completed."));
 			update_output_window($status);
 		} else
-			update_output_window(sprintf(gettext("Could not find %s."), htmlspecialchars($_GET['pkg'])));
+			update_output_window(sprintf(gettext("Could not find %s."), $pkgname));
 		break;
 	case "reinstallall":
 		if (is_array($config['installedpackages']['package'])) {

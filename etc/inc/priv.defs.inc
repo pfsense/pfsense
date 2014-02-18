@@ -680,6 +680,18 @@ $priv_list['page-services-ntpd']['descr'] = gettext("Allow access to the 'Servic
 $priv_list['page-services-ntpd']['match'] = array();
 $priv_list['page-services-ntpd']['match'][] = "services_ntpd.php*";
 
+$priv_list['page-services-ntp-gps'] = array();
+$priv_list['page-services-ntp-gps']['name'] = gettext("Webcfg - Status: NTP GPS page");
+$priv_list['page-services-ntp-gps']['descr'] = gettext("Allow access to the 'Status: NTP Serial GPS' page.");
+$priv_list['page-services-ntp-gps']['match'] = array();
+$priv_list['page-services-ntp-gps']['match'][] = "status_ntpd_gps.php*";
+
+$priv_list['page-services-ntp-pps'] = array();
+$priv_list['page-services-ntp-pps']['name'] = gettext("Webcfg - Status: NTP PPS page");
+$priv_list['page-services-ntp-pps']['descr'] = gettext("Allow access to the 'Status: NTP PPS' page.");
+$priv_list['page-services-ntp-pps']['match'] = array();
+$priv_list['page-services-ntp-pps']['match'][] = "status_ntpd_pps.php*";
+
 $priv_list['page-loadbalancer-virtualserver-edit'] = array();
 $priv_list['page-loadbalancer-virtualserver-edit']['name'] = gettext("WebCfg - Load Balancer: Virtual Server: Edit page");
 $priv_list['page-loadbalancer-virtualserver-edit']['descr'] = gettext("Allow access to the 'Load Balancer: Virtual Server: Edit' page.");

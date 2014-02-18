@@ -4,6 +4,7 @@
 	status_ntpd.php
 	part of pfSense (http://www.pfsense.com/)
 
+	Copyright (C) 2013 Dagorlad
 	Copyright (C) 2012 Jim Pingle
 	All rights reserved.
 
@@ -42,72 +43,115 @@
 
 require_once("guiconfig.inc");
 
-exec("/usr/local/sbin/ntpq -pn | /usr/bin/tail +3", $ntpq_output);
+if(!isset($config['ntpd']['noquery'])) {
 
-$ntpq_servers = array();
-foreach ($ntpq_output as $line) {
-	$server = array();
+	exec("/usr/local/sbin/ntpq -pn | /usr/sbin/tail +3", $ntpq_output);
 
-	switch (substr($line, 0, 1)) {
-		case " ":
-			$server['status'] = "Unreach/Pending";
-			break;
-		case "*":
-			$server['status'] = "Active Peer";
-			break;
-		case "+":
-			$server['status'] = "Candidate";
-			break;
-		case "o":
-			$server['status'] = "PPS Peer";
-			break;
-		case "#":
-			$server['status'] = "Selected";
-			break;
-		case ".":
-			$server['status'] = "Excess Peer";
-			break;
-		case "x":
-			$server['status'] = "False Ticker";
-			break;
-		case "-":
-			$server['status'] = "Outlier";
-			break;
+	$ntpq_servers = array();
+	foreach ($ntpq_output as $line) {
+		$server = array();
+
+		switch (substr($line, 0, 1)) {
+			case " ":
+				$server['status'] = "Unreach/Pending";
+				break;
+			case "*":
+				$server['status'] = "Active Peer";
+				break;
+			case "+":
+				$server['status'] = "Candidate";
+				break;
+			case "o":
+				$server['status'] = "PPS Peer";
+				break;
+			case "#":
+				$server['status'] = "Selected";
+				break;
+			case ".":
+				$server['status'] = "Excess Peer";
+				break;
+			case "x":
+				$server['status'] = "False Ticker";
+				break;
+			case "-":
+				$server['status'] = "Outlier";
+				break;
+		}
+
+		$line = substr($line, 1);
+		$peerinfo = preg_split("/[\s\t]+/", $line);
+
+		$server['server'] = $peerinfo[0];
+		$server['refid'] = $peerinfo[1];
+		$server['stratum'] = $peerinfo[2];
+		$server['type'] = $peerinfo[3];
+		$server['when'] = $peerinfo[4];
+		$server['poll'] = $peerinfo[5];
+		$server['reach'] = $peerinfo[6];
+		$server['delay'] = $peerinfo[7];
+		$server['offset'] = $peerinfo[8];
+		$server['jitter'] = $peerinfo[9];
+
+		$ntpq_servers[] = $server;
 	}
 
-	$line = substr($line, 1);
-	$peerinfo = preg_split("/[\s\t]+/", $line);
+	exec("/usr/local/sbin/ntpq -c clockvar", $ntpq_clockvar_output);
+	foreach ($ntpq_clockvar_output as $line) {
+		if (substr($line, 0, 9) == "timecode=") {
+			$tmp = explode('"', $line);
+			$tmp = $tmp[1];
+			if (substr($tmp, 0, 6) == '$GPRMC') {
+				$gps_vars = explode(",", $tmp);
+				$gps_ok  = ($gps_vars[2] == "A");
+				$gps_lat_deg = substr($gps_vars[3], 0, 2);
+				$gps_lat_min = substr($gps_vars[3], 2) / 60.0;
+				$gps_lon_deg = substr($gps_vars[5], 0, 3);
+				$gps_lon_min = substr($gps_vars[5], 3) / 60.0;
+				$gps_lat = $gps_lat_deg + $gps_lat_min;
+				$gps_lat = $gps_lat * (($gps_vars[4] == "N") ? 1 : -1);
+				$gps_lon = $gps_lon_deg + $gps_lon_min;
+				$gps_lon = $gps_lon * (($gps_vars[6] == "E") ? 1 : -1);
+			}elseif (substr($tmp, 0, 6) == '$GPGGA') {
+				$gps_vars = explode(",", $tmp);
+				$gps_ok  = $gps_vars[6];
+				$gps_lat_deg = substr($gps_vars[2], 0, 2);
+				$gps_lat_min = substr($gps_vars[2], 2) / 60.0;
+				$gps_lon_deg = substr($gps_vars[4], 0, 3);
+				$gps_lon_min = substr($gps_vars[4], 3) / 60.0;
+				$gps_lat = $gps_lat_deg + $gps_lat_min;
+				$gps_lat = $gps_lat * (($gps_vars[3] == "N") ? 1 : -1);
+				$gps_lon = $gps_lon_deg + $gps_lon_min;
+				$gps_lon = $gps_lon * (($gps_vars[5] == "E") ? 1 : -1);
+				$gps_alt = $gps_vars[9];
+				$gps_alt_unit = $gps_vars[10];
+				$gps_sat = $gps_vars[7];
+			}elseif (substr($tmp, 0, 6) == '$GPGLL') {
+				$gps_vars = explode(",", $tmp);
+				$gps_ok  = ($gps_vars[6] == "A");
+				$gps_lat_deg = substr($gps_vars[1], 0, 2);
+				$gps_lat_min = substr($gps_vars[1], 2) / 60.0;
+				$gps_lon_deg = substr($gps_vars[3], 0, 3);
+				$gps_lon_min = substr($gps_vars[3], 3) / 60.0;
+				$gps_lat = $gps_lat_deg + $gps_lat_min;
+				$gps_lat = $gps_lat * (($gps_vars[2] == "N") ? 1 : -1);
+				$gps_lon = $gps_lon_deg + $gps_lon_min;
+				$gps_lon = $gps_lon * (($gps_vars[4] == "E") ? 1 : -1);
+			}
+		}
+	}
 
-	$server['server'] = $peerinfo[0];
-	$server['refid'] = $peerinfo[1];
-	$server['stratum'] = $peerinfo[2];
-	$server['type'] = $peerinfo[3];
-	$server['when'] = $peerinfo[4];
-	$server['poll'] = $peerinfo[5];
-	$server['reach'] = $peerinfo[6];
-	$server['delay'] = $peerinfo[7];
-	$server['offset'] = $peerinfo[8];
-	$server['jitter'] = $peerinfo[9];
-
-	$ntpq_servers[] = $server;
 }
 
-exec("/usr/local/sbin/ntpq -c clockvar", $ntpq_clockvar_output);
-foreach ($ntpq_clockvar_output as $line) {
-	if (substr($line, 0, 9) == "timecode=") {
-		$tmp = explode('"', $line);
-		$tmp = $tmp[1];
-		if (substr($tmp, 0, 6) == '$GPRMC') {
-			$gps_vars = explode(",", $tmp);
-			$gps_ok  = ($gps_vars[2] == "A");
-			$gps_lat_deg = substr($gps_vars[3], 0, 2);
-			$gps_lat_min = substr($gps_vars[3], 2) / 60.0;
-			$gps_lon_deg = substr($gps_vars[5], 0, 3);
-			$gps_lon_min = substr($gps_vars[5], 3) / 60.0;
-			$gps_lat = $gps_lat_deg + $gps_lat_min;
-			$gps_lat = $gps_lat * (($gps_vars[4] == "N") ? 1 : -1);
-			$gps_lon = $gps_lon_deg + $gps_lon_min;
-			$gps_lon = $gps_lon * (($gps_vars[6] == "E") ? 1 : -1);
+if (isset($config['ntpd']['gps']['type']) && ($config['ntpd']['gps']['type'] == 'SureGPS') && (isset($gps_ok))) {
+	//GSV message is only enabled by init commands in services_ntpd_gps.php for SureGPS board
+	$gpsport = fopen("/dev/gps0", "r+");
+	while($gpsport){
+		$buffer = fgets($gpsport);
+		if(substr($buffer, 0, 6)=='$GPGSV'){
+			//echo $buffer."\n";
+			$gpgsv = explode(',',$buffer);
+			$gps_satview = $gpgsv[3];
+			break;
 		}
 	}
 }
@@ -140,7 +184,11 @@ include("head.inc");
 	</tr>
 	</thead>
 	<tbody>
-	<?php if (count($ntpq_servers) == 0): ?>
+	<?php if (isset($config['ntpd']['noquery'])): ?>
+	<tr><td class="listlr" colspan="11" align="center">
+		Statistics unavailable because ntpq and ntpdc queries are disabled in the <a href="services_ntpd.php">NTP service settings</a>.
+	</td></tr>
+	<?php elseif (count($ntpq_servers) == 0): ?>
 	<tr><td class="listlr" colspan="11" align="center">
 		No peers found, <a href="status_services.php">is the ntp service running?</a>.
 	</td></tr>
@@ -185,20 +233,31 @@ include("head.inc");
 	</tbody>
 	</table>
 <?php if (($gps_ok) && ($gps_lat) && ($gps_lon)): ?>
+	<?php $gps_goo_lnk = 2; ?>
 	<table class="tabcont sortable" width="100%" border="0" cellpadding="0" cellspacing="0">
 	<thead>
 	<tr>
 		<th class="listhdrr"><?=gettext("Clock Latitude"); ?></th>
 		<th class="listhdrr"><?=gettext("Clock Longitude"); ?></th>
+		<?php if (isset($gps_alt)) { echo '<th class="listhdrr">'.gettext("Clock Altitude").'</th>'; $gps_goo_lnk++;}?>
+		<?php if (isset($gps_sat) || isset($gps_satview)) { echo '<th class="listhdrr">'.gettext("Satellites").'</th>'; $gps_goo_lnk++;}?>
 	</tr>
 	</thead>
 	<tbody>
 		<tr>
 			<td class="listlr" align="center"><?php echo sprintf("%.5f", $gps_lat); ?> (<?php echo sprintf("%d", $gps_lat_deg); ?>&deg; <?php echo sprintf("%.5f", $gps_lat_min*60); ?><?php echo $gps_vars[4]; ?>)</td>
 			<td class="listlr" align="center"><?php echo sprintf("%.5f", $gps_lon); ?> (<?php echo sprintf("%d", $gps_lon_deg); ?>&deg; <?php echo sprintf("%.5f", $gps_lon_min*60); ?><?php echo $gps_vars[6]; ?>)</td>
+			<?php if (isset($gps_alt)) { echo '<td class="listlr" align="center">'.$gps_alt.' '.$gps_alt_unit.'</td>';}?>
+			<td class="listr" align="center">
+			<?php 
+			if (isset($gps_satview)) {echo 'in view ' . intval($gps_satview);}
+			if (isset($gps_sat) && isset($gps_satview)) {echo ', ';}
+			if (isset($gps_sat)) {echo 'in use ' . $gps_sat;} 
+			?>
+			</td>
 		</tr>
 		<tr>
-			<td class="listlr" colspan="2" align="center"><a href="http://maps.google.com/?q=<?php echo $gps_lat; ?>,<?php echo $gps_lon; ?>">Google Maps Link</a></td>
+			<td class="listlr" colspan="<?php echo $gps_goo_lnk; ?>" align="center"><a target="_gmaps" href="http://maps.google.com/?q=<?php echo $gps_lat; ?>,<?php echo $gps_lon; ?>">Google Maps Link</a></td>
 		</tr>
 	</tbody>
 	</table>

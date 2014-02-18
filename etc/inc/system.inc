@@ -1645,10 +1645,10 @@ function system_ntp_configure($start_ntpd=true) {
 
 	/* if /var/empty does not exist, create it */
 	if(!is_dir("/var/empty"))
-		exec("/bin/mkdir -p /var/empty && chmod ug+rw /var/empty/.");
+		mkdir("/var/empty", 0775, true);
 
 	/* start opentpd, set time now and use /var/etc/ntpd.conf */
-	mwexec("/usr/local/bin/ntpd -g -c {$g['varetc_path']}/ntpd.conf -p {$g['varrun_path']}/ntpd.pid", false, true);
+	mwexec("/usr/local/sbin/ntpd -g -c {$g['varetc_path']}/ntpd.conf -p {$g['varrun_path']}/ntpd.pid", false, true);
 	
 	// Note that we are starting up
 	log_error("NTPD is starting up.");

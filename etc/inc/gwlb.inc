@@ -39,7 +39,10 @@ function return_apinger_defaults() {
 		"losslow" => "10",
 		"losshigh" => "20",
 		"interval" => "1",
-		"down" => "10");
+		"down" => "10",
+		"avg_delay_samples" => "10",
+		"avg_loss_samples" => "50",
+		"avg_loss_delay_samples" => "20");
 	}
 
 /*
@@ -123,14 +126,14 @@ target default {
 
 	## How many replies should be used to compute average delay
 	## for controlling "delay" alarms
-	avg_delay_samples 10
+	avg_delay_samples {$apinger_default['avg_delay_samples']}
 
 	## How many probes should be used to compute average loss
-	avg_loss_samples 50
+	avg_loss_samples {$apinger_default['avg_loss_samples']}
 
 	## The delay (in samples) after which loss is computed
 	## without this delays larger than interval would be treated as loss
-	avg_loss_delay_samples 20
+	avg_loss_delay_samples {$apinger_default['avg_loss_delay_samples']}
 
 	## Names of the alarms that may be generated for the target
 	alarms "down","delay","loss"
@@ -204,8 +207,41 @@ EOD;
 		$apingercfg = "target \"{$gateway['monitor']}\" {\n";
 		$apingercfg .= "	description \"{$name}\"\n";
 		$apingercfg .= "	srcip \"{$gwifip}\"\n";
-		if (!empty($gateway['interval']) && intval($gateway['interval']) > 1)
-			$apingercfg .= "	interval " . intval($gateway['interval']) . "s\n";
+
+		## How often the probe should be sent
+		if (!empty($gateway['interval']) &&  is_numeric($gateway['interval'])) {
+			$interval = intval($gateway['interval']);	# Restrict to Integer
+			if ($interval <  1) $interval =  1;	# Minimum
+			if ($interval != $apinger_default['interval'])	# If not default value
+				$apingercfg .= "	interval " . $interval . "s\n";
+		}
+
+		## How many replies should be used to compute average delay 
+		## for controlling "delay" alarms
+		if (!empty($gateway['avg_delay_samples']) && is_numeric($gateway['avg_delay_samples'])) {
+			$avg_delay_samples = intval($gateway['avg_delay_samples']);	# Restrict to Integer
+			if ($avg_delay_samples <  1) $avg_delay_samples =  1;	# Minimum
+			if ($avg_delay_samples != $apinger_default['avg_delay_samples'])	# If not default value
+				$apingercfg .= "	avg_delay_samples " . $avg_delay_samples . "\n";
+		}
+
+		## How many probes should be used to compute average loss
+		if (!empty($gateway['avg_loss_samples']) && is_numeric($gateway['avg_loss_samples'])) {
+			$avg_loss_samples = intval($gateway['avg_loss_samples']);	# Restrict to Integer
+			if ($avg_loss_samples < 1) $avg_loss_samples = 1;	# Minimum
+			if ($avg_loss_samples != $apinger_default['avg_loss_samples'])	# If not default value
+				$apingercfg .= "	avg_loss_samples " . $avg_loss_samples . "\n";
+		}
+
+		## The delay (in samples) after which loss is computed
+		## without this delays larger than interval would be treated as loss
+		if (!empty($gateway['avg_loss_delay_samples']) && is_numeric($gateway['avg_loss_delay_samples'])) {
+			$avg_loss_delay_samples = intval($gateway['avg_loss_delay_samples']);	# Restrict to Integer
+			if ($avg_loss_delay_samples < 1) $avg_loss_delay_samples = 1;	# Minimum
+			if ($avg_loss_delay_samples != $apinger_default['avg_loss_delay_samples'])	# If not default value
+				$apingercfg .= "	avg_loss_delay_samples " . $avg_loss_delay_samples . "\n";
+		}
+
 		$alarms = "";
 		$alarmscfg = "";
 		$override = false;

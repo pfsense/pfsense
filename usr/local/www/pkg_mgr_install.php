@@ -60,6 +60,7 @@ include("head.inc");
 if ($_POST) {
 	if (isset($_POST['pkgcancel']) || (empty($_POST['id']) && $_POST['mode'] != 'reinstallall')) {
 		header("Location: pkg_mgr_installed.php");
+		ob_flush();
 		return;
 	}
 } else if ($_GET) {
@@ -72,12 +73,14 @@ if ($_POST) {
 	case 'delete':
 		if (empty($_GET['pkg'])) {
 			header("Location: pkg_mgr_installed.php");
+			ob_flush();
 			return;
 		}
 		break;
 	default:
 		if (empty($_GET['id'])) {
 			header("Location: pkg_mgr_installed.php");
+			ob_flush();
 			return;
 		}
 		break;

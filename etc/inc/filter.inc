@@ -2671,7 +2671,7 @@ block in $bogonlog quick on \${$oc['descr']} from <bogons> to any label "{$fix_r
 EOD;
 		}
 
-		if($oc['type6'] == "slaac" || $oc['type6'] == "dhcp6") {
+		if(isset($config['system']['ipv6allow']) && ($oc['type6'] == "slaac" || $oc['type6'] == "dhcp6")) {
 			$ipfrules .= <<<EOD
 # allow our DHCPv6 client out to the {$oc['descr']}
 pass in quick on \${$oc['descr']} proto udp from fe80::/10 port = 546 to fe80::/10 port = 546 label "{$fix_rule_label("allow dhcpv6 client in {$oc['descr']}")}"

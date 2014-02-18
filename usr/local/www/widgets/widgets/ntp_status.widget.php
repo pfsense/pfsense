@@ -41,7 +41,7 @@ require_once("/usr/local/www/widgets/include/ntp_status.inc");
 
 if($_REQUEST['updateme']) {
 //this block displays only on ajax refresh
-	exec("/usr/local/sbin/ntpq -pn | /usr/sbin/tail +3", $ntpq_output);
+	exec("/usr/local/sbin/ntpq -pn | /usr/bin/tail +3", $ntpq_output);
 	$ntpq_counter = 0;
 	foreach ($ntpq_output as $line) {
 		if (substr($line, 0, 1) == "*") {

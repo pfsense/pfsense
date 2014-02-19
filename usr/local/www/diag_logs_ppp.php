@@ -90,9 +90,9 @@ include("head.inc");
 				<?php dump_clog($ppp_logfile, $nentries); ?>
 				<tr>
 					<td>
-						<br>
+						<br/>
 						<form action="diag_logs_ppp.php" method="post">
-						<input name="clear" type="submit" class="formbtn" value="<?=gettext("Clear log"); ?>">
+						<input name="clear" type="submit" class="formbtn" value="<?=gettext("Clear log"); ?>" />
 						</form>
 					</td>
 				</tr>

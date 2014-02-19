@@ -140,11 +140,6 @@ if ($_POST) {
 		}
 	}
 
-	if ($_POST['webguiport'] && (!is_numericint($_POST['webguiport']) ||
-			($_POST['webguiport'] < 1) || ($_POST['webguiport'] > 65535))) {
-		$input_errors[] = gettext("A valid TCP/IP port must be specified for the webConfigurator port.");
-	}
-
 	$direct_networks_list = explode(" ", filter_get_direct_networks_list());
 	for ($dnscounter=1; $dnscounter<5; $dnscounter++) {
 		$dnsitem = "dns{$dnscounter}";

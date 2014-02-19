@@ -40,7 +40,7 @@ if (count($todo) > 0) {
 			exec("/sbin/pfctl -t " . escapeshellarg($t['name']) . " -T replace -f /var/db/aliastables/" . escapeshellarg($t['name']) . ".txt 2>&1", $result);
 			log_error("{$argv[0]}: Updated {$t['name']} content from {$t['url']}: {$result[0]}");
 		} elseif ($r == -1) {
-			log_error("{$argv[0]}: {$t['name']} does not need updated.");
+			log_error("{$argv[0]}: {$t['name']} does not need updating.");
 		} else {
 			log_error("{$argv[0]}: ERROR: could not update {$t['name']} content from {$t['url']}");
 		}

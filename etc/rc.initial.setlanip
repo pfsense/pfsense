@@ -306,8 +306,8 @@ function console_configure_ip_address($version) {
 					$subnet = gen_subnet($intip, $intbits);
 				}
 				do {
-					echo "\n" . sprintf(gettext("Enter the new %s %s gateway address.  Press <ENTER> for none:"),
-							    $upperifname, $label_IPvX) . "\n> ";
+					echo "\n" . sprintf(gettext("For a WAN, enter the new %s %s upstream gateway address."), $upperifname, $label_IPvX) . "\n" .
+								gettext("For a LAN, press <ENTER> for none:") . "\n> ";
 					$gwip = chop(fgets($fp));
 					$is_ipaddr = ($version === 6) ? is_ipaddrv6($gwip) : is_ipaddrv4($gwip);
 					$is_in_subnet = $is_ipaddr && ip_in_subnet($gwip, $subnet . "/" . $intbits);

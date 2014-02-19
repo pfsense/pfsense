@@ -1712,7 +1712,7 @@ $types6 = array("none" => gettext("None"), "staticv6" => gettext("Static IPv6"),
 										</td>
 									</tr>
 									<tr>
-										<td width="22%" valign="top" class="vncell"><?=gettext("Gateway"); ?></td>
+										<td width="22%" valign="top" class="vncell"><?=gettext("IPv4 Upstream Gateway"); ?></td>
 										<td width="78%" class="vtable">
 											<select name="gateway" class="formselect" id="gateway">
 												<option value="none" selected="selected"><?=gettext("None"); ?></option>
@@ -1733,7 +1733,8 @@ $types6 = array("none" => gettext("None"), "staticv6" => gettext("Static IPv6"),
 											- or  <strong><a onclick="show_add_gateway();" href="#gatewaysection"><?=gettext("add a new one."); ?></a></strong>
 											<br/>
 											<div id='addgwbox'>
-												<?=gettext("If this interface is an Internet connection, select an existing Gateway from the list or add one using the link above"); ?>
+												<?=gettext("If this interface is an Internet connection, select an existing Gateway from the list or add a new one using the link above."); ?><br/>
+												<?=gettext("On local LANs the upstream gateway should be \"none\"."); ?>
 											</div>
 											<div id='notebox'>
 											</div>
@@ -1817,7 +1818,7 @@ $types6 = array("none" => gettext("None"), "staticv6" => gettext("Static IPv6"),
 										</td>
 									</tr>
 									<tr>
-										<td width="22%" valign="top" class="vncell"><?=gettext("Gateway IPv6"); ?></td>
+										<td width="22%" valign="top" class="vncell"><?=gettext("IPv6 Upstream Gateway"); ?></td>
 										<td width="78%" class="vtable">
 											<select name="gatewayv6" class="formselect" id="gatewayv6">
 												<option value="none" selected="selected"><?=gettext("None"); ?></option>
@@ -1838,7 +1839,8 @@ $types6 = array("none" => gettext("None"), "staticv6" => gettext("Static IPv6"),
 											- or <strong><a onclick="show_add_gateway_v6();" href="#gatewayv6section"><?=gettext("add a new one."); ?></a></strong>
 											<br/>
 											<div id='addgwboxv6'>
-											<?=gettext("If this interface is an Internet connection, select an existing Gateway from the list or add a new one using the link above"); ?>
+												<?=gettext("If this interface is an Internet connection, select an existing Gateway from the list or add a new one using the link above."); ?><br/>
+												<?=gettext("On local LANs the upstream gateway should be \"none\"."); ?>
 											</div>
 											<div id='noteboxv6'>
 											</div>

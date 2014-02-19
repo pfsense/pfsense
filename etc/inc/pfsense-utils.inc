@@ -2081,7 +2081,7 @@ function process_alias_urltable($name, $url, $freq, $forceupdate=false) {
 
 	// If the file doesn't exist or is older than update_freq days, fetch a new copy.
 	if (!file_exists($urltable_filename)
-		|| ((time() - filemtime($urltable_filename)) > ($freq * 86400))
+		|| ((time() - filemtime($urltable_filename)) > ($freq * 86400 - 90))
 		|| $forceupdate) {
 
 		// Try to fetch the URL supplied

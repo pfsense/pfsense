@@ -1330,18 +1330,20 @@ function system_ntp_setup_gps($serialport) {
 	symlink($serialport, $gps_device);
 
 	/* Send the following to the GPS port to initialize the GPS */
-	if (isset($config['ntpd']['gps']['type'])) {
+	if (is_array($config['ntpd']) && is_array($config['ntpd']['gps']) && !empty($config['ntpd']['gps']['type'])) {
 		$gps_init = base64_decode($config['ntpd']['gps']['initcmd']);
 	}else{
 		$gps_init = base64_decode('JFBVQlgsNDAsR1NWLDAsMCwwLDAqNTkNCiRQVUJYLDQwLEdMTCwwLDAsMCwwKjVDDQokUFVCWCw0MCxaREEsMCwwLDAsMCo0NA0KJFBVQlgsNDAsVlRHLDAsMCwwLDAqNUUNCiRQVUJYLDQwLEdTViwwLDAsMCwwKjU5DQokUFVCWCw0MCxHU0EsMCwwLDAsMCo0RQ0KJFBVQlgsNDAsR0dBLDAsMCwwLDANCiRQVUJYLDQwLFRYVCwwLDAsMCwwDQokUFVCWCw0MCxSTUMsMCwwLDAsMCo0Ng0KJFBVQlgsNDEsMSwwMDA3LDAwMDMsNDgwMCwwDQokUFVCWCw0MCxaREEsMSwxLDEsMQ==');
 	}
-	file_put_contents('/tmp/gps.init', $gps_init);
+
+	/* XXX: Why not file_put_contents to the device */
+	@file_put_contents('/tmp/gps.init', $gps_init);
 	`cat /tmp/gps.init > $serialport`;
 
 	/* Add /etc/remote entry in case we need to read from the GPS with tip */
-	if (intval(`grep -c '^gps0' /etc/remote`) == 0)
+	if (intval(`grep -c '^gps0' /etc/remote`) == 0) {
 		$gpsbaud = '4800';
-		if (!empty($config['ntpd']['gps']['speed'])) {
+		if (is_array($config['ntpd']) && is_array($config['ntpd']['gps']) && !empty($config['ntpd']['gps']['speed'])) {
 			switch($config['ntpd']['gps']['speed']) {
 				case '16':
 					$gpsbaud = '9600';
@@ -1360,7 +1362,8 @@ function system_ntp_setup_gps($serialport) {
 					break;
 			}
 		}
-		`echo "gps0:dv={$serialport}:br#{$gpsbaud}:pa=none:" >> /etc/remote`;
+		@file_put_contents("/etc/remote", "gps0:dv={$serialport}:br#{$gpsbaud}:pa=none:", FILE_APPEND);
+	}
 
 	conf_mount_ro();
 
@@ -1369,6 +1372,7 @@ function system_ntp_setup_gps($serialport) {
 
 function system_ntp_setup_pps($serialport) {
 	global $config, $g;
+
 	$pps_device = '/dev/pps0';
 	$serialport = '/dev/'.$serialport;
 
@@ -1378,7 +1382,7 @@ function system_ntp_setup_pps($serialport) {
 	conf_mount_rw();
 	// Create symlink that ntpd requires
 	unlink_if_exists($pps_device);
-	symlink($serialport, $pps_device);
+	@symlink($serialport, $pps_device);
 
 	conf_mount_ro();
 
@@ -1388,6 +1392,7 @@ function system_ntp_setup_pps($serialport) {
 
 function system_ntp_configure($start_ntpd=true) {
 	global $config, $g;
+
 	$driftfile = "/var/db/ntpd.drift";
 	$statsdir = "/var/log/ntp";
 	$gps_device = '/dev/gps0';
@@ -1396,6 +1401,9 @@ function system_ntp_configure($start_ntpd=true) {
 		return;
 
 	safe_mkdir($statsdir);
+
+	if (!is_array($config['ntpd']))
+		$config['ntpd'] = array();
 
 	$ntpcfg = "# \n";
 	$ntpcfg .= "# pfSense ntp configuration file \n";

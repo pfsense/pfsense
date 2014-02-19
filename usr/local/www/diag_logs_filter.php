@@ -365,9 +365,9 @@ include("head.inc");
 			  }
 
 			  $srcstr = $filterent['srcip'] . get_port_with_service($filterent['srcport'], $proto);
-			  $src_htmlclass = str_replace('.', '-', $filterent['srcip']);
+			  $src_htmlclass = preg_replace('/[.:]/', '-', $filterent['srcip']);
 			  $dststr = $filterent['dstip'] . get_port_with_service($filterent['dstport'], $proto);
-			  $dst_htmlclass = str_replace('.', '-', $filterent['dstip']);
+			  $dst_htmlclass = preg_replace('/[.:]/', '-', $filterent['dstip']);
 			  ?>
 			  <td class="listMRr nowrap">
 				<img onclick="javascript:resolve_with_ajax('<?php echo "{$filterent['srcip']}"; ?>');" title="<?=gettext("Click to resolve");?>" class="ICON-<?= $src_htmlclass; ?>" border="0" src="/themes/<?= $g['theme']; ?>/images/icons/icon_log.gif" alt="Icon Reverse Resolve with DNS"/>
@@ -447,7 +447,7 @@ function resolve_with_ajax(ip_to_resolve) {
 
 function resolve_ip_callback(transport) {
 	var response = jQuery.parseJSON(transport.responseText);
-	var resolve_class = htmlspecialchars(response.resolve_ip.replace(/\./g, '-'));
+	var resolve_class = htmlspecialchars(response.resolve_ip.replace(/[.:]/g, '-'));
 	var resolve_text = '<small><br/>' + htmlspecialchars(response.resolve_text) + '</small>';
 	
 	jQuery('span.RESOLVE-' + resolve_class).html(resolve_text);

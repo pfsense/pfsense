@@ -125,16 +125,16 @@ include("head.inc");
 			}
 ?>
 
-			<p>
+			<p/>
 			<table class="tabcont sortable" width="100%" border="0" cellpadding="6" cellspacing="0">
 				<tr>
-					<td class="listhdrr"><b><center><?=gettext("CARP Interface"); ?></center></b></td>
-					<td class="listhdrr"><b><center><?=gettext("Virtual IP"); ?></center></b></td>
-					<td class="listhdrr"><b><center><?=gettext("Status"); ?></center></b></td>
+					<td class="listhdrr" style="text-align:center"><b><?=gettext("CARP Interface"); ?></b></td>
+					<td class="listhdrr" style="text-align:center"><b><?=gettext("Virtual IP"); ?></b></td>
+					<td class="listhdrr" style="text-align:center"><b><?=gettext("Status"); ?></b></td>
 				</tr>
 <?php
 				if ($carpcount == 0) {
-					echo "</td></tr></table></table></div><center><br>" . gettext("Could not locate any defined CARP interfaces.");
+					echo "</table></td></tr></table></div></form><center><br/>" . gettext("Could not locate any defined CARP interfaces.");
 					echo "</center>";
 
 					include("fend.inc");
@@ -168,9 +168,9 @@ include("head.inc");
 								$icon = "<img {$align} src='/themes/".$g['theme']."/images/icons/icon_log.gif'>";
 							}
 						}
-						echo "<td class=\"listlr\"><center>" . $carp_int . "&nbsp;</td>";
-						echo "<td class=\"listlr\"><center>" . $ipaddress . "&nbsp;</td>";
-						echo "<td class=\"listlr\"><center>{$icon}&nbsp;&nbsp;" . $status . "&nbsp;</td>";
+						echo "<td class=\"listlr\" style=\"text-align:center\">" . $carp_int . "&nbsp;</td>";
+						echo "<td class=\"listlr\" style=\"text-align:center\">" . $ipaddress . "&nbsp;</td>";
+						echo "<td class=\"listlr\" style=\"text-align:center\">{$icon}&nbsp;&nbsp;" . $status . "&nbsp;</td>";
 						echo "</tr>";
 					}
 				}
@@ -180,7 +180,7 @@ include("head.inc");
 		</tr>
 	</table>
 </div>
-
+</form>
 <p/>
 
 <span class="vexpl">
@@ -192,7 +192,7 @@ include("head.inc");
 <p/>
 
 <?php
-	echo "<br>" . gettext("pfSync nodes") . ":<br>";
+	echo "<br />" . gettext("pfSync nodes") . ":<br />";
 	echo "<pre>";
 	system("/sbin/pfctl -vvss | /usr/bin/grep creator | /usr/bin/cut -d\" \" -f7 | /usr/bin/sort -u");
 	echo "</pre>";

@@ -42,13 +42,18 @@ require("guiconfig.inc");
 require_once('rrd.inc');
 require_once("shaper.inc");
 
-if (empty($config['ntpd']['interface']))
-	if ($config['installedpackages']['openntpd'] && empty($config['installedpackages']['openntpd']['config'][0]['interface'])) {
+if (!is_array($config['ntpd']))
+	$config['ntpd'] = array();
+
+if (empty($config['ntpd']['interface'])) {
+	if (is_array($config['installedpackages']['openntpd']) && is_array($config['installedpackages']['openntpd']['config']) &&
+	    is_array($config['installedpackages']['openntpd']['config'][0]) && !empty($config['installedpackages']['openntpd']['config'][0]['interface'])) {
 		$pconfig['interface'] = explode(",", $config['installedpackages']['openntpd']['config'][0]['interface']);
 		unset($config['installedpackages']['openntpd']);
+		write_config("Upgraded settings from openttpd");
 	} else
 		$pconfig['interface'] = array();
-else
+} else
 	$pconfig['interface'] = explode(",", $config['ntpd']['interface']);
 
 if ($_POST) {
@@ -71,7 +76,7 @@ if ($_POST) {
 		unset($config['ntpd']['noselect']);
 		$timeservers = '';
 		for ($i = 0; $i < 10; $i++) {
-			$tserver = trim($_POST["server{$i}"]); ;
+			$tserver = trim($_POST["server{$i}"]);
 			if (!empty($tserver)) {
 				$timeservers .= "{$tserver} ";
 				if (!empty($_POST["servprefer{$i}"])) $config['ntpd']['prefer'] .= "{$tserver} ";
@@ -249,7 +254,7 @@ include("head.inc");
 		$interfaces[$aliasip] = $aliasip." (".get_vip_descr($aliasip).")";
 	$size = (count($interfaces) < 10) ? count($interfaces) : 10;
 ?>
-					<select id="interface" name="interface[]" multiple="true" class="formselect" size="<?php echo $size; ?>">
+			<select id="interface" name="interface[]" multiple="true" class="formselect" size="<?php echo $size; ?>">
 <?php	
 	foreach ($interfaces as $iface => $ifacename) {
 		if (!is_ipaddr(get_interface_ip($iface)) && !is_ipaddr($iface))
@@ -405,4 +410,3 @@ include("head.inc");
 <?php include("fend.inc"); ?>
 </body>
 </html>
-

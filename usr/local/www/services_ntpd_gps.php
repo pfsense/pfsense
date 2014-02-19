@@ -37,18 +37,27 @@
 ##|*MATCH=services_ntpd_gps.php*
 ##|-PRIV
 
-require("guiconfig.inc");
+require_once("guiconfig.inc");
 
 function set_default_gps() {
-	unset($config['ntpd']['gps']);
+	global $config;
+
+	if (!is_array($config['ntpd']))
+		$config['ntpd'] = array();
+	 if (is_array($config['ntpd']['gps']))
+		unset($config['ntpd']['gps']);
+
+	$config['ntpd']['gps'] = array();
 	$config['ntpd']['gps']['type'] = 'Default';
 	/* copy an existing configured GPS port if it exists, the unset may be uncommented post production */
-	if (!empty($config['ntpd']['gpsport']) && empty($config['ntpd']['gps']['port'])){
+	if (!empty($config['ntpd']['gpsport']) && empty($config['ntpd']['gps']['port'])) {
 		$config['ntpd']['gps']['port'] = $config['ntpd']['gpsport'];
-/*		unset($config['ntpd']['gpsport']); */ /* this removes the original port config from config.xml */
-	$config['ntpd']['gps']['speed'] = 0;
-	$config['ntpd']['gps']['nmea'] = 0;
+		unset($config['ntpd']['gpsport']); /* this removes the original port config from config.xml */
+		$config['ntpd']['gps']['speed'] = 0;
+		$config['ntpd']['gps']['nmea'] = 0;
 	}
+
+	write_config("Setting default NTPd settings");
 }
 
 if ($_POST) {
@@ -142,9 +151,9 @@ if ($_POST) {
 		$retval = system_ntp_configure();
 		$savemsg = get_std_save_message($retval);
 	}
-}else{
+} else {
 	/* set defaults if they do not already exist */
-	if (empty($config['ntpd']['gps']['type'])) {
+	if (!is_array($config['ntpd']) || !is_array($config['ntpd']['gps']) || empty($config['ntpd']['gps']['type'])) {
 		set_default_gps();
 	}
 }

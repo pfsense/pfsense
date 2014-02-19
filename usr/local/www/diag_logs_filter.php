@@ -365,9 +365,9 @@ include("head.inc");
 			  }
 
 			  $srcstr = $filterent['srcip'] . get_port_with_service($filterent['srcport'], $proto);
-			  $src_htmlclass = preg_replace('/[.:]/', '-', $filterent['srcip']);
+			  $src_htmlclass = str_replace(array('.', ':'), '-', $filterent['srcip']);
 			  $dststr = $filterent['dstip'] . get_port_with_service($filterent['dstport'], $proto);
-			  $dst_htmlclass = preg_replace('/[.:]/', '-', $filterent['dstip']);
+			  $dst_htmlclass = str_replace(array('.', ':'), '-', $filterent['dstip']);
 			  ?>
 			  <td class="listMRr nowrap">
 				<img onclick="javascript:resolve_with_ajax('<?php echo "{$filterent['srcip']}"; ?>');" title="<?=gettext("Click to resolve");?>" class="ICON-<?= $src_htmlclass; ?>" border="0" src="/themes/<?= $g['theme']; ?>/images/icons/icon_log.gif" alt="Icon Reverse Resolve with DNS"/>

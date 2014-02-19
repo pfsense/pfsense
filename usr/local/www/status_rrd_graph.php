@@ -132,6 +132,14 @@ if ($_GET['option']) {
 		case "captiveportal":
 			$curoption = "allgraphs";
 			break;
+		case "ntpd":
+			if(isset($config['ntpd']['statsgraph'])) {
+				$curoption = "allgraphs";
+			} else {
+				$curoption = "processor";
+				$curcat = "system";
+			}
+			break;
 		default:
 			$curoption = "wan";
 			break;
@@ -228,6 +236,9 @@ foreach($databases as $database) {
 	}
 	if(stristr($database, "captiveportal-") && is_array($config['captiveportal'])) {
 		$captiveportal = true;
+	}
+	if(stristr($database, "ntpd") && isset($config['ntpd']['statsgraph'])) {
+		$ntpd = true;
 	}
 }
 /* append the existing array to the header */
@@ -429,6 +440,10 @@ function get_dates($curperiod, $graph) {
 				if($captiveportal) {
 					if($curcat == "captiveportal") { $tabactive = True; } else { $tabactive = False; }
 				        $tab_array[] = array("Captive Portal", $tabactive, "status_rrd_graph.php?cat=captiveportal");
+				}
+				if($ntpd) {
+					if($curcat == "ntpd") { $tabactive = True; } else { $tabactive = False; }
+				        $tab_array[] = array("NTP", $tabactive, "status_rrd_graph.php?cat=ntpd");
 				}
 				if($curcat == "custom") { $tabactive = True; } else { $tabactive = False; }
 			        $tab_array[] = array(gettext("Custom"), $tabactive, "status_rrd_graph.php?cat=custom");

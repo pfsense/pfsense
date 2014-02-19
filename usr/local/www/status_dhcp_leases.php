@@ -343,9 +343,17 @@ foreach ($leases as $data) {
 		if ($data['act'] != "active" && $data['act'] != "static") {
 			$fspans = "<span class=\"gray\">";
 			$fspane = "</span>";
-		} else {
+		} else
 			$fspans = $fspane = "";
-		}
+		if ($data['online'] == "online")
+			$fspans2 = 'style="background-color:#00ff00"';
+		else
+			$fspans2 = "";
+		if ($data['act'] == "active")
+			$fspans3 = 'style="background-color:#00ff00"';
+		else
+			$fspans3 = "";
+
                 $lip = ip2ulong($data['ip']);
 		if ($data['act'] == "static") {
 			foreach ($config['dhcpd'] as $dhcpif => $dhcpifconf) {
@@ -396,8 +404,8 @@ foreach ($leases as $data) {
 					echo "<td class=\"listr\">{$fspans} n/a {$fspane}&nbsp;</td>\n";
 					echo "<td class=\"listr\">{$fspans} n/a {$fspane}&nbsp;</td>\n";
 				}
-                echo "<td class=\"listr\">{$fspans}{$data['online']}{$fspane}&nbsp;</td>\n";
-                echo "<td class=\"listr\">{$fspans}{$data['act']}{$fspane}&nbsp;</td>\n";
+                echo "<td class=\"listr\" {$fspans2}>{$data['online']}&nbsp;</td>\n";
+                echo "<td class=\"listr\" {$fspans3}>{$data['act']}&nbsp;</td>\n";
 		
 		if ($data['type'] == "dynamic") {
 			echo "<td valign=\"middle\"><a href=\"services_dhcp_edit.php?if={$data['if']}&mac={$data['mac']}&hostname={$data['hostname']}\">";

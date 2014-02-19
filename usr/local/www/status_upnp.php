@@ -67,6 +67,7 @@ if(!$config['installedpackages'] || !$config['installedpackages']['miniupnpd']['
 	!$config['installedpackages']['miniupnpd']['config'][0]['enable']) {
 	echo gettext("UPnP is currently disabled.");
 	include("fend.inc");
+	echo '</body></html>';
 	exit;
 }
 ?>

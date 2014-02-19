@@ -254,6 +254,9 @@ $colorspamdconn		= array('AA00BB', 'FFFFFF', '660088', 'FFFF88', '006600');
 /* OpenVPN Users		Online Users */
 $colorvpnusers		= array('990000');
 
+/* NTPD stats			offset, clk jit,   sys jit,   wander */
+$colorntpd		= array('0080FF','00E344','FF0000','000000');
+
 /* Captive Portal Total Users	Total Users */
 /* Captive Portal Concurrent	Concurrent Users */
 $colorcaptiveportalusers = array('990000');
@@ -1176,6 +1179,50 @@ elseif((strstr($curdatabase, "-concurrent.rrd")) && (file_exists("$rrddbpath$cur
 	$graphcmd .= "GPRINT:\"$curif-concurrentusers:MAX:%8.0lf \" ";
 	$graphcmd .= "COMMENT:\"\\n\" ";
 	$graphcmd .= "COMMENT:\"\t\t\t\t\t\t\t\t\t\t\t\t\t`date +\"%b %d %H\:%M\:%S %Y\"`\" ";	
+}
+elseif((strstr($curdatabase, "ntpd.rrd")) && (file_exists("$rrddbpath$curdatabase"))) {
+	/* define graphcmd for ntpd (was: mbuf) usage stats */
+	$graphcmd = "$rrdtool graph $rrdtmppath$curdatabase-$curgraph.png ";
+	$graphcmd .= "--start $start --end $end --step $step ";
+	$graphcmd .= "--vertical-label \"time\" ";
+	$graphcmd .= "--color SHADEA#eeeeee --color SHADEB#eeeeee ";
+	$graphcmd .= "--title \"`hostname` - {$prettydb} - {$hperiod} - {$havg} average\" ";
+	$graphcmd .= "--height 200 --width 620 ";
+	$graphcmd .= "DEF:\"offset=$rrddbpath$curdatabase:offset:AVERAGE:step=$step\" ";
+	$graphcmd .= "DEF:\"sjit=$rrddbpath$curdatabase:sjit:AVERAGE:step=$step\" ";
+	$graphcmd .= "DEF:\"cjit=$rrddbpath$curdatabase:cjit:AVERAGE:step=$step\" ";
+	$graphcmd .= "DEF:\"wander=$rrddbpath$curdatabase:wander:AVERAGE:step=$step\" ";
+	$graphcmd .= "LINE2:\"offset#{$colorntpd[0]}:offset\" ";
+	$graphcmd .= "LINE2:\"sjit#{$colorntpd[1]}:sjit\" ";
+	$graphcmd .= "LINE2:\"cjit#{$colorntpd[2]}:cjit\" ";
+	$graphcmd .= "LINE2:\"wander#{$colorntpd[3]}:wander\" ";
+	$graphcmd .= "COMMENT:\"\\n\" ";
+	$graphcmd .= "COMMENT:\"\t\t        minimum        average        maximum        current\\n\" ";
+	$graphcmd .= "COMMENT:\"Offset         \" ";
+	$graphcmd .= "GPRINT:\"offset:MIN:%7.2lf %s    \" ";
+	$graphcmd .= "GPRINT:\"offset:AVERAGE:%7.2lf %s    \" ";
+	$graphcmd .= "GPRINT:\"offset:MAX:%7.2lf %s    \" ";
+	$graphcmd .= "GPRINT:\"offset:LAST:%7.2lf %S    \" ";
+	$graphcmd .= "COMMENT:\"\\n\" ";
+	$graphcmd .= "COMMENT:\"System jitter  \" ";
+	$graphcmd .= "GPRINT:\"sjit:MIN:%7.2lf %s    \" ";
+	$graphcmd .= "GPRINT:\"sjit:AVERAGE:%7.2lf %s    \" ";
+	$graphcmd .= "GPRINT:\"sjit:MAX:%7.2lf %s    \" ";
+	$graphcmd .= "GPRINT:\"sjit:LAST:%7.2lf %S    \" ";
+	$graphcmd .= "COMMENT:\"\\n\" ";
+	$graphcmd .= "COMMENT:\"Clock jitter   \" ";
+	$graphcmd .= "GPRINT:\"cjit:MIN:%7.2lf %s    \" ";
+	$graphcmd .= "GPRINT:\"cjit:AVERAGE:%7.2lf %s    \" ";
+	$graphcmd .= "GPRINT:\"cjit:MAX:%7.2lf %s    \" ";
+	$graphcmd .= "GPRINT:\"cjit:LAST:%7.2lf %S    \" ";
+	$graphcmd .= "COMMENT:\"\\n\" ";
+	$graphcmd .= "COMMENT:\"Clk freq wander\" ";
+	$graphcmd .= "GPRINT:\"wander:MIN:%7.2lf %s    \" ";
+	$graphcmd .= "GPRINT:\"wander:AVERAGE:%7.2lf %s    \" ";
+	$graphcmd .= "GPRINT:\"wander:MAX:%7.2lf %s    \" ";
+	$graphcmd .= "GPRINT:\"wander:LAST:%7.2lf %S    \" ";
+	$graphcmd .= "COMMENT:\"\\n\" ";
+	$graphcmd .= "COMMENT:\"\t\t\t\t\t\t\t\t\t\t\t\t\t`date +\"%b %d %H\:%M\:%S %Y\"`\" ";
 }
 else {
 	$data = false;

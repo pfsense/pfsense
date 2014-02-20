@@ -2499,9 +2499,9 @@ function interface_wireless_configure($if, &$wl, &$wlcfg) {
 	conf_mount_rw();
 
 	switch ($wlcfg['mode']) {
-		case 'bss':
-			if (isset($wlcfg['wpa']['enable'])) {
-				$wpa .= <<<EOD
+	case 'bss':
+		if (isset($wlcfg['wpa']['enable'])) {
+			$wpa .= <<<EOD
 ctrl_interface={$g['varrun_path']}/wpa_supplicant
 ctrl_interface_group=0
 ap_scan=1
@@ -2517,18 +2517,17 @@ group={$wlcfg['wpa']['wpa_pairwise']}
 }
 EOD;
 
-				$fd = fopen("{$g['varetc_path']}/wpa_supplicant_{$if}.conf", "w");
-				fwrite($fd, "{$wpa}");
-				fclose($fd);
-			}
-			break;
-		case 'hostap':
-			if($wlcfg['wpa']['passphrase'])
-				$wpa_passphrase = "wpa_passphrase={$wlcfg['wpa']['passphrase']}\n";
-			else
-				$wpa_passphrase = "";
-			if (isset($wlcfg['wpa']['enable'])) {
-				$wpa .= <<<EOD
+			@file_put_contents("{$g['varetc_path']}/wpa_supplicant_{$if}.conf", $wpa);
+			unset($wpa);
+		}
+		break;
+	case 'hostap':
+		if (!empty($wlcfg['wpa']['passphrase']))
+			$wpa_passphrase = "wpa_passphrase={$wlcfg['wpa']['passphrase']}\n";
+		else
+			$wpa_passphrase = "";
+		if (isset($wlcfg['wpa']['enable'])) {
+			$wpa .= <<<EOD
 interface={$if}
 driver=bsd
 logger_syslog=-1
@@ -2554,43 +2553,47 @@ wpa_strict_rekey={$wlcfg['wpa']['wpa_strict_rekey']}
 
 EOD;
 
-if (isset($wlcfg['wpa']['rsn_preauth'])) {
-	$wpa .= <<<EOD
+			if (isset($wlcfg['wpa']['rsn_preauth'])) {
+				$wpa .= <<<EOD
 # Enable the next lines for preauth when roaming. Interface = wired or wireless interface talking to the AP you want to roam from/to
 rsn_preauth=1
 rsn_preauth_interfaces={$if}
 
 EOD;
+			}
+			if (isset($wlcfg['wpa']['ieee8021x'])) {
+				$wpa .= "ieee8021x=1\n";
 
-}
-				if($wlcfg['auth_server_addr'] && $wlcfg['auth_server_shared_secret']) {
-					$auth_server_port = "1812";
-					if($wlcfg['auth_server_port'])
-						$auth_server_port = $wlcfg['auth_server_port'];
-					$auth_server_port2 = "1812";
-					if($wlcfg['auth_server_port2'])
-						$auth_server_port2 = $wlcfg['auth_server_port2'];
-					$wpa .= <<<EOD
+			if (!empty($wlcfg['auth_server_addr']) && !empty($wlcfg['auth_server_shared_secret'])) {
+				$auth_server_port = "1812";
+				if (!empty($wlcfg['auth_server_port']) && is_numeric($wlcfg['auth_server_port']))
+					$auth_server_port = intval($wlcfg['auth_server_port']);
+				$wpa .= <<<EOD
 
-ieee8021x=1
 auth_server_addr={$wlcfg['auth_server_addr']}
 auth_server_port={$auth_server_port}
 auth_server_shared_secret={$wlcfg['auth_server_shared_secret']}
+
+EOD;
+				if (!empty($wlcfg['auth_server_addr2']) && !empty($wlcfg['auth_server_shared_secret2'])) {
+					$auth_server_port2 = "1812";
+					if (!empty($wlcfg['auth_server_port2']) && is_numeric($wlcfg['auth_server_port2']))
+						$auth_server_port2 = intval($wlcfg['auth_server_port2']);
+
+					$wpa .= <<<EOD
 auth_server_addr={$wlcfg['auth_server_addr2']}
 auth_server_port={$auth_server_port2}
 auth_server_shared_secret={$wlcfg['auth_server_shared_secret2']}
 
 EOD;
-				} else if (isset($wlcfg['wpa']['ieee8021x'])) {
-					$wpa .= "ieee8021x=1\n";
+					}
 				}
-
-				$fd = fopen("{$g['varetc_path']}/hostapd_{$if}.conf", "w");
-				fwrite($fd, "{$wpa}");
-				fclose($fd);
-
 			}
-			break;
+
+			@file_put_contents("{$g['varetc_path']}/hostapd_{$if}.conf", $wpa);
+			unset($wpa);
+		}
+		break;
 	}
 
 	/*
@@ -2732,6 +2735,7 @@ EOD;
 	/* configure wireless */
 	$wlcmd_args = implode(" ", $wlcmd);
 	mwexec("/sbin/ifconfig " . escapeshellarg($if) . " " . $wlcmd_args, false);
+	unset($wlcmd_args, $wlcmd);
 
 
 	sleep(1);

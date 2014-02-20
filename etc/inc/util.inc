@@ -304,6 +304,11 @@ function is_module_loaded($module_name) {
 		return false;
 }
 
+/* validate non-negative numeric string, or equivalent numeric variable */
+function is_numericint($arg) {
+	return (((is_int($arg) && $arg >= 0) || (is_string($arg) && strlen($arg) > 0 && ctype_digit($arg))) ? true : false);  
+}
+
 /* return the subnet address given a host address and a subnet bit count */
 function gen_subnet($ipaddr, $bits) {
 	if (!is_ipaddr($ipaddr) || !is_numeric($bits))
@@ -489,11 +494,6 @@ function is_iprange($range) {
 	list($ip1, $ip2) = explode ('-', $range);
 	return (is_ipaddr($ip1) && is_ipaddr($ip2));
 }
-
-function is_numericint($arg) {
-	return (preg_match("/[^0-9]/", $arg) ? false : true);
-}
-
 
 /* returns true if $ipaddr is a valid dotted IPv4 address or a IPv6 */
 function is_ipaddr($ipaddr) {

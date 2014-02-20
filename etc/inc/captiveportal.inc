@@ -1038,8 +1038,16 @@ function captiveportal_allowedip_configure_entry($ipent, $ishostname = false) {
 
 	$rules = "";
 	$cp_filterdns_conf = "";
-	$enBwup = empty($ipent['bw_up']) ? 0 : intval($ipent['bw_up']);
-	$enBwdown = empty($ipent['bw_down']) ? 0 : intval($ipent['bw_down']);
+	$enBwup = 0;
+	if (!empty($ipent['bw_up']))
+		$enBwup = iintval($ipent['bw_up']);
+	else if (isset($config['captiveportal'][$cpzone]['bwdefaultup']))
+		$enBwup = $config['captiveportal'][$cpzone]['bwdefaultup'];
+	$enBwdown = 0;
+	if (!empty($ipent['bw_down']))
+		$enBwdown = intval($ipent['bw_down']);
+	else if (isset($config['captiveportal'][$cpzone]['bwdefaultdn']))
+		$enBwdown = $config['captiveportal'][$cpzone]['bwdefaultdn'];
 
 	$pipeno = captiveportal_get_next_dn_ruleno();
 	$_gb = @pfSense_pipe_action("pipe {$pipeno} config bw {$enBwup}Kbit/s queue 100 buckets 16");

@@ -874,7 +874,7 @@ class Net_IPv6
     
         $ip = $elements[0];
 
-        if('' != $elements[1] && ( !is_numeric($elements[1]) || 0 > $elements || 128 < $elements[1])) {
+        if('' != $elements[1] && ( !is_numeric($elements[1]) || 0 > $elements[1] || 128 < $elements[1])) {
 
             return false;
 

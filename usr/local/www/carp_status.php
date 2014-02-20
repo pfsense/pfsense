@@ -39,6 +39,7 @@
 */
 
 require_once("guiconfig.inc");
+require_once("globals.inc");
 
 function gentitle_pkg($pgname) {
 	global $config;
@@ -50,6 +51,11 @@ unset($carp_interface_count_cache);
 unset($interface_ip_arr_cache);
 
 $status = get_carp_status();
+
+
+if($_POST['carp_maintenancemode'] <> "") {
+	interfaces_carp_set_maintenancemode(!isset($config["virtualip_carp_maintenancemode"]));
+}
 if($_POST['disablecarp'] <> "") {
 	if($status == true) {
 		mwexec("/sbin/sysctl net.inet.carp.allow=0");
@@ -120,7 +126,12 @@ include("head.inc");
 					echo "<input type=\"submit\" name=\"disablecarp\" id=\"disablecarp\" value=\"" . gettext("Enable Carp") . "\">";
 				} else {
 					$carp_enabled = true;
-					echo "<input type=\"submit\" name=\"disablecarp\" id=\"disablecarp\" value=\"" . gettext("Disable Carp") . "\">";
+					echo "<input type=\"submit\" name=\"disablecarp\" id=\"disablecarp\" value=\"" . gettext("Disable Carptemporarily") . "\">";
+				}
+				if(isset($config["virtualip_carp_maintenancemode"])) {
+					echo "<input type=\"submit\" name=\"carp_maintenancemode\" id=\"carp_maintenancemode\" value=\"" . gettext("Leave Carp maintenance mode now and on reboot") . "\">";
+				} else {
+					echo "<input type=\"submit\" name=\"carp_maintenancemode\" id=\"carp_maintenancemode\" value=\"" . gettext("Enter Carp maintenance mode now and on reboot") . "\">";
 				}
 			}
 ?>

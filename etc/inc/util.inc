@@ -369,14 +369,18 @@ function long2ip32($ip) {
 	return long2ip($ip & 0xFFFFFFFF);
 }
 
-/* Convert IP address to long int, truncated to 32-bits to avoid sign extension on 64-bit platforms. */
+/* Convert IP address to long int, truncated to 32-bits to avoid sign extension on 64-bit platforms. 
+   Returns '' if not valid IPv4. */
 function ip2long32($ip) {
-	return ( ip2long($ip) & 0xFFFFFFFF );
+	$a = ip2long($ip);
+	return ($a === False ? '' : $a & 0xFFFFFFFF);
 }
 
-/* Convert IP address to unsigned long int. */
+/* Convert IP address to unsigned long int.  
+   Returns '' if not valid IPv4. */
 function ip2ulong($ip) {
-	return sprintf("%u", ip2long32($ip));
+	$a = ip2long32($ip);
+	return ($a === '' ? '' : sprintf("%u", $a));
 }
 
 /* Find out how many IPs are contained within a given IP range
@@ -412,18 +416,55 @@ function ip_after($ip) {
 	return long2ip32(ip2long($ip)+1);
 }
 
-/* Return true if the first IP is 'before' the second */
+/* Compare two IPv4 or IPv6 IPs. Return true if the first IP is 'before' the second */
 function ip_less_than($ip1, $ip2) {
-	// Compare as unsigned long because otherwise it wouldn't work when
-	//   crossing over from 127.255.255.255 / 128.0.0.0 barrier
-	return ip2ulong($ip1) < ip2ulong($ip2);
+	return (ip_compare($ip1, $ip2) == -1);
 }
 
-/* Return true if the first IP is 'after' the second */
+/* Compare two IPv4 or IPv6 IPs. Return true if the first IP is 'after' the second */
 function ip_greater_than($ip1, $ip2) {
-	// Compare as unsigned long because otherwise it wouldn't work
-	//   when crossing over from 127.255.255.255 / 128.0.0.0 barrier
-	return ip2ulong($ip1) > ip2ulong($ip2);
+	return (ip_compare($ip1, $ip2) == 1);
+}
+
+// Alias to ensure we don't break old code
+function ipcmp($ip1, $ip2) {
+	return ip_compare($ip1, $ip2);
+}
+
+/* 	Compare two IPv4 or IPv6 IPs (ip1, ip2) and returns:
+	1 	(ip1 > ip2)  
+	0	(ip1 == ip2)
+	-1	(ip1 < ip2)
+	empty string 	(invalid args, eg compare ipv4 + ipv6 or not an ip) 
+	
+	IPv6 NOTE: - generally we test for 'pure IPv6, such as '1:2::3' (as opposed to embedded IPv4 etc).
+	For future compatibility '$allow_extended_ip6' relaxes this condition to allows validation of any possible IPv6 format.
+	    (Net_IPv6::checkIPv6() may validate a number of other IPv6 formats, usually we don't want that)
+	*/
+
+function ip_compare($ip1, $ip2, $allow_extended_ip6 = False) {
+	if (strpos($ip1, ':') !== False && strpos($ip2, ':') !== False) {
+		// try IPv6 first as ':' in the IP would be definitive
+		if (strlen($ip1) < 3 || strlen($ip2) < 3 || (!$allow_extended_ip6 && preg_match('/[^0-9a-z:]/i', $ip1 . $ip2)) || !Net_IPv6::checkIPv6($ip1) || !Net_IPv6::checkIPv6($ip2))
+			return '';
+		$s1 = Net_IPv6::_Ip2Bin($ip1); // from v1.21 we can use Net_IPv6::uncompress($ip1, true)
+		$s2 = Net_IPv6::_Ip2Bin($ip2);
+	} else {
+		// try IPv4 and return 'bad data' if that fails
+		// Compare as unsigned long because otherwise it wouldn't work
+		// when crossing over from 127.255.255.255 / 128.0.0.0 barrier
+		$s1 = ip2ulong($ip1);
+		$s2 = ip2ulong($ip2);
+		if ($s1 == '' || $s2 == '')
+			return '';
+	}
+	if (strlen($s1) != strlen($s2))
+		return '';	// Should never happen but trapped anyway to double-check no invalid comparison
+	if ($s1 > $s2)
+		return 1;
+	if ($s1 == $s2)
+		return 0;
+	return -1;
 }
 
 /* Convert a range of IPs to an array of subnets which can contain the range. */
@@ -1356,16 +1397,6 @@ function check_subnetsv6_overlap($subnet1, $bits1, $subnet2, $bits2) {
 	$sub2_max = gen_subnetv6_max($subnet2, $bits2);
 
 	return (is_inrange_v6($sub1_min, $sub2_min, $sub2_max) || is_inrange_v6($sub1_max, $sub2_min, $sub2_max) || is_inrange_v6($sub2_min, $sub1_min, $sub1_max));
-}
-
-/* compare two IP addresses */
-function ipcmp($a, $b) {
-	if (ip_less_than($a, $b))
-		return -1;
-	else if (ip_greater_than($a, $b))
-		return 1;
-	else
-		return 0;
 }
 
 /* return true if $addr is in $subnet, false if not */

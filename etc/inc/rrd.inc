@@ -929,6 +929,7 @@ function enable_rrd_graphing() {
 
 # Create gateway quality RRD with settings suitable for pfSense graph set.
 function create_gateway_quality_rrd($rrd_file) {
+	global $g;
 	$rrdinterval = 60;
 	$valid = $rrdinterval * 2;
 	$rrdtool = "/usr/bin/nice -n20 /usr/local/bin/rrdtool";

@@ -220,11 +220,13 @@ function services_radvd_configure() {
 			continue;
 
 		$ifcfgipv6 = get_interface_ipv6($if);
-		if(!is_ipaddrv6($ifcfgipv6))
-			continue;
-
-		$ifcfgsnv6 = get_interface_subnetv6($if);
-		$subnetv6 = gen_subnetv6($ifcfgipv6, $ifcfgsnv6);
+		if(!is_ipaddrv6($ifcfgipv6)) {
+			$subnetv6 = "::";
+			$ifcfgsnv6 = "64";
+		} else {
+			$ifcfgsnv6 = get_interface_subnetv6($if);
+			$subnetv6 = gen_subnetv6($ifcfgipv6, $ifcfgsnv6);
+		}
 		$radvdifs[$realif] = $realif;
 
 		$autotype = $config['interfaces'][$trackif]['ipaddrv6'];

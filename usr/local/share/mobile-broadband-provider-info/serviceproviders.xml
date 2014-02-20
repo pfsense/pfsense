@@ -206,13 +206,22 @@ conceived.
 		<name>Personal</name>
 		<gsm>
 			<network-id mcc="722" mnc="341"/>
+			<network-id mcc="722" mnc="34"/>
 			<apn value="gprs.personal.com">
 				<plan type="postpaid"/>
 				<usage type="internet"/>
+				<name>GPRS</name>
 				<username>gprs</username>
 				<password>adgj</password>
 				<dns>172.25.7.6</dns>
 				<dns>172.25.7.7</dns>
+			</apn>
+			<apn value="datos.personal.com">
+				<plan type="postpaid"/>
+				<usage type="internet"/>
+				<name>DATOS</name>
+				<username>datos</username>
+				<password>datos</password>
 			</apn>
 		</gsm>
 	</provider>
@@ -260,8 +269,16 @@ conceived.
 			<apn value="internet.gprs.unifon.com.ar">
 				<plan type="postpaid"/>
 				<usage type="internet"/>
+				<name>WAP</name>
 				<username>wap</username>
 				<password>wap</password>
+			</apn>
+			<apn value="internet.gprs.unifon.com.ar">
+				<plan type="postpaid"/>
+				<usage type="internet"/>
+				<name>Internet</name>
+				<username>Internet</username>
+				<password>Internet</password>
 			</apn>
 		</gsm>
 	</provider>
@@ -1761,6 +1778,11 @@ conceived.
 		<gsm>
 			<network-id mcc="302" mnc="500"/>
 			<network-id mcc="302" mnc="510"/>
+			<apn value="media.videotron">
+				<plan type="postpaid"/>
+				<usage type="internet"/>
+				<name>Telephony data</name>
+			</apn>
 			<apn value="ihvm.videotron">
 				<plan type="postpaid"/>
 				<usage type="internet"/>
@@ -2246,6 +2268,9 @@ conceived.
 		<name>Vodafone</name>
 		<gsm>
 			<network-id mcc="230" mnc="03"/>
+			<balance-check>
+				<ussd>*22#</ussd>
+			</balance-check>
 			<apn value="internet">
 				<plan type="postpaid"/>
 				<usage type="internet"/>
@@ -2269,6 +2294,11 @@ conceived.
 				<usage type="internet"/>
 				<dns>160.218.10.200</dns>
 				<dns>160.218.43.200</dns>
+			</apn>
+			<apn value="internet">
+				<plan type="prepaid"/>
+				<usage type="internet"/>
+				<name>Prepaid</name>
 			</apn>
 		</gsm>
 	</provider>
@@ -3239,9 +3269,15 @@ conceived.
 		<name>Pepephone</name>
 		<gsm>
 			<network-id mcc="214" mnc="06"/>
-			<apn value="gprs.pepephone.com" >
+			<apn value="gprs.pepephone.com">
 				<plan type="postpaid"/>
 				<usage type="internet"/>
+				<name>Pepephone</name>
+			</apn>
+			<apn value="gprsmov.pepephone.com">
+				<plan type="postpaid"/>
+				<usage type="internet"/>
+				<name>Pepephone (Mobile)</name>
 			</apn>
 		</gsm>
 	</provider>
@@ -3468,6 +3504,36 @@ conceived.
 				<name>dna internet</name>
 				<dns>217.78.192.22</dns>
 				<dns>217.78.192.78</dns>
+			</apn>
+		</gsm>
+	</provider>
+	<provider>
+		<name>Dna</name>
+		<gsm>
+			<network-id mcc="244" mnc="04"/>
+			<apn value="internet">
+				<usage type="internet"/>
+				<name>dna internet</name>
+			</apn>
+		</gsm>
+	</provider>
+	<provider>
+		<name>Dna</name>
+		<gsm>
+			<network-id mcc="244" mnc="12"/>
+			<apn value="internet">
+				<usage type="internet"/>
+				<name>dna internet</name>
+			</apn>
+		</gsm>
+	</provider>
+	<provider>
+		<name>Dna</name>
+		<gsm>
+			<network-id mcc="244" mnc="13"/>
+			<apn value="internet">
+				<usage type="internet"/>
+				<name>dna internet</name>
 			</apn>
 		</gsm>
 	</provider>
@@ -4243,6 +4309,19 @@ conceived.
 			<password>evdo</password>
 		</cdma>
 	</provider>
+</country>
+
+<!-- Greenland -->
+<country code="gl">
+    <!-- http://www.tele.gl/da-DK/Privat/Info/Selvbetjening/Mobilopsaetning/Sider/ManuelOpsaetning.aspx -->
+    <provider>
+        <name>Tele Greenland A/S</name>
+        <gsm>
+             <apn value="internet">
+				<usage type="internet"/>
+             </apn>
+        </gsm>
+    </provider>
 </country>
 
 <!-- Greece -->
@@ -5305,6 +5384,16 @@ conceived.
 		<gsm>
 			<network-id mcc="404" mnc="68"/>
 			<network-id mcc="404" mnc="69"/>
+			<apn value="mtnl.net">
+				<usage type="internet"/>
+				<name>Delhi (3G Prepaid / Postpaid)</name>
+				<username>mtnl</username>
+				<password>mtnl123</password>
+			</apn>
+			<apn value="mtnl.net">
+				<usage type="internet"/>
+				<name>Mumbai (3G Prepaid / Postpaid)</name>
+			</apn>
 			<apn value="gprsmtnldel">
 				<plan type="postpaid"/>
 				<usage type="internet"/>
@@ -6199,7 +6288,14 @@ conceived.
 		</cdma>
 	</provider>
 	<provider>
-		<name>LGTelecom</name>
+		<name>LGUPlus</name>
+		<gsm>
+			<network-id mcc="450" mnc="06"/>
+			<apn value="internet.lguplus.co.kr">
+				<plan type="postpaid"/>
+				<usage type="internet"/>
+			</apn>
+		</gsm>
 		<cdma>
 			<!-- cid: "109" -->
 			<!--
@@ -6740,13 +6836,22 @@ conceived.
 		</gsm>
 	</provider>
 	<provider>
-		<name>Eventis</name>
+		<name>Unité</name>
 		<gsm>
-			<network-id mcc="259" mnc="04"/>
-			<apn value="internet.md">
+			<network-id mcc="259" mnc="05"/>
+			<apn value="internet.unite.md">
 				<plan type="postpaid"/>
 				<usage type="internet"/>
-				<name>Internet</name>
+				<name>Internet cu abonament</name>
+				<username>gprs</username>
+				<password>gprs</password>
+			</apn>
+			<apn value="internet3g.unite.md">
+				<plan type="prepaid"/>
+				<usage type="internet"/>
+				<name>Internet fără abonament</name>
+				<username>gprs</username>
+				<password>gprs</password>
 			</apn>
 		</gsm>
 	</provider>
@@ -6758,6 +6863,8 @@ conceived.
 				<plan type="postpaid"/>
 				<usage type="internet"/>
 				<name>Internet</name>
+				<username>gprs</username>
+				<password>gprs</password>
 			</apn>
 		</gsm>
 	</provider>
@@ -9708,6 +9815,12 @@ conceived.
 		<name>Zain</name>
 		<gsm>
 			<network-id mcc="634" mnc="01"/>
+			<balance-check>
+				<ussd>*888#</ussd>
+			</balance-check>
+			<balance-top-up>
+				<ussd replacement="CODE">*888*CODE#</ussd>
+			</balance-top-up>
 			<apn value="internet">
 				<plan type="postpaid"/>
 				<usage type="internet"/>
@@ -10353,6 +10466,11 @@ conceived.
 				<usage type="internet"/>
 				<name>Data Connect (old)</name>
 			</apn>
+			<apn value="pta">
+				<plan type="postpaid"/>
+				<usage type="internet"/>
+				<name>LTE</name>
+			</apn>
 		</gsm>
 	</provider>
 	<provider>
@@ -10375,6 +10493,11 @@ conceived.
 			<network-id mcc="310" mnc="800"/>
 
 			<voicemail>123</voicemail>
+			<apn value="fast.t-mobile.com">
+				<plan type="postpaid"/>
+				<usage type="internet"/>
+				<name>LTE</name>
+			</apn>
 			<apn value="epc.tmobile.com">
 				<plan type="postpaid"/>
 				<usage type="internet"/>
@@ -11097,6 +11220,17 @@ conceived.
 		<cdma>
 			<sid value="3102"/>
 		</cdma>
+	</provider>
+	<provider>
+		<!-- MVNO operating on AT&T's network -->
+		<name>Straight Talk</name>
+		<gsm>
+			<network-id mcc="310" mnc="410"/>
+			<apn value="att.mvno">
+				<plan type="prepaid"/>
+				<usage type="internet"/>
+			</apn>
+		</gsm>
 	</provider>
 </country>
 

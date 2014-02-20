@@ -933,9 +933,18 @@ function captiveportal_radius_stop_all() {
 }
 
 function captiveportal_passthrumac_configure_entry($macent) {
+	global $cpzone, $config;
 
-	$bwUp = empty($macent['bw_up']) ? 0 : $macent['bw_up'];
-	$bwDown = empty($macent['bw_down']) ? 0 : $macent['bw_down'];
+	$bwUp = 0;
+	if (!empty($macent['bw_up']))
+		$bwUp = $macent['bw_up'];
+	else if (isset($config['captiveportal'][$cpzone]['bwdefaultup']))
+		$bwUp = $config['captiveportal'][$cpzone]['bwdefaultup'];
+	$bwDown = 0;
+	if (!empty($macent['bw_down']))
+		$bwDown = $macent['bw_down'];
+	else if (isset($config['captiveportal'][$cpzone]['bwdefaultdn']))
+		$bwDown = $config['captiveportal'][$cpzone]['bwdefaultdn'];
 
 	$ruleno = captiveportal_get_next_ipfw_ruleno();
 	$pipeno = captiveportal_get_next_dn_ruleno();

@@ -407,18 +407,40 @@ function ip_after($ip) {
 	return long2ip32(ip2long($ip)+1);
 }
 
-/* Return true if the first IP is 'before' the second */
+/* Compare two IPv4 or IPv6 IPs.  Return true if the first IP is 'before' the second */
 function ip_less_than($ip1, $ip2) {
-	// Compare as unsigned long because otherwise it wouldn't work when
-	//   crossing over from 127.255.255.255 / 128.0.0.0 barrier
-	return ip2ulong($ip1) < ip2ulong($ip2);
+	return (ip_compare($ip1, $ip2) == -1);
 }
 
-/* Return true if the first IP is 'after' the second */
+/* Compare two IPv4 or IPv6 IPs. Return true if the first IP is 'after' the second */
 function ip_greater_than($ip1, $ip2) {
-	// Compare as unsigned long because otherwise it wouldn't work
-	//   when crossing over from 127.255.255.255 / 128.0.0.0 barrier
-	return ip2ulong($ip1) > ip2ulong($ip2);
+	return (ip_compare($ip1, $ip2) == 1);
+}
+
+// Alias to ensure we don't break old code
+function ipcmp($ip1, $ip2) {
+	return ip_compare($ip1, $ip2);
+}
+
+/* 	Compare two IPv4 or IPv6 IPs (ip1, ip2) and returns:
+	1 	(ip1 > ip2)  
+	0	(ip1 == ip2)
+	-1	(ip1 < ip2)
+	empty string 	(invalid args, eg compare ipv4 + ipv6 or not an ip) */
+	
+function ip_compare($ip1, $ip2) {
+	$n1 = inet_pton($ip1); // works on IPv4 or IPv6
+	if ($n1 !== false) {
+		$n2 = inet_pton($ip2);
+		if ($n2 !== false && strlen($n1) == strlen($n2)) {
+			if ($n1 > $n2)
+				return 1;
+			if ($n1 == $n2)
+				return 0;
+			return -1;
+		}
+	}
+	return '';
 }
 
 /* Convert a range of IPs to an array of subnets which can contain the range. */
@@ -1356,16 +1378,6 @@ function check_subnetsv6_overlap($subnet1, $bits1, $subnet2, $bits2) {
 	$sub2_max = gen_subnetv6_max($subnet2, $bits2);
 
 	return (is_inrange_v6($sub1_min, $sub2_min, $sub2_max) || is_inrange_v6($sub1_max, $sub2_min, $sub2_max) || is_inrange_v6($sub2_min, $sub1_min, $sub1_max));
-}
-
-/* compare two IP addresses */
-function ipcmp($a, $b) {
-	if (ip_less_than($a, $b))
-		return -1;
-	else if (ip_greater_than($a, $b))
-		return 1;
-	else
-		return 0;
 }
 
 /* return true if $addr is in $subnet, false if not */

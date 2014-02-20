@@ -939,7 +939,7 @@ function system_generate_lighty_config($filename,
 
 		$server_upload_dirs = "server.upload-dirs = ( \"{$g['tmp_path']}/captiveportal/\" )\n";
 		if(!is_dir("{$g['tmp_path']}/captiveportal"))
-			mkdir("{$g['tmp_path']}/captiveportal", 0555);
+			@mkdir("{$g['tmp_path']}/captiveportal", 0555);
 		$server_max_request_size = "server.max-request-size    = 384";
 		$cgi_config = "";
 	} else {

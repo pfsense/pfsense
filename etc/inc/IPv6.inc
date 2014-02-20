@@ -309,7 +309,7 @@ class Net_IPv6
 
             } else {
 
-                include_once 'PEAR.php';
+                include_once 'PEAR.inc';
 
                 return PEAR::raiseError(NET_IPV6_NO_NETMASK_MSG,
                                         NET_IPV6_NO_NETMASK);
@@ -372,7 +372,7 @@ class Net_IPv6
 
                 if (null == $bits) {
 
-                    include_once 'PEAR.php';
+                    include_once 'PEAR.inc';
                     return PEAR::raiseError(NET_IPV6_NO_NETMASK_MSG,
                                             NET_IPV6_NO_NETMASK);
 
@@ -995,7 +995,7 @@ class Net_IPv6
 
             } else {
 
-                include_once 'PEAR.php';
+                include_once 'PEAR.inc';
 
                 return PEAR::raiseError(NET_IPV6_NO_NETMASK_MSG,
                                         NET_IPV6_NO_NETMASK);

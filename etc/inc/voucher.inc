@@ -200,7 +200,7 @@ EOF;
 	$toreturn =  XML_RPC_Decode($resp->value());
 	if (!is_array($config['voucher']))
 		$config['voucher'] = array();
-	if (is_array($toreturn['voucher']) && (count($toreturn['voucher'][$cpzone]['roll']) <> count($config['voucher'][$cpzone]['roll']))) {
+	if (is_array($toreturn['voucher']) && (count($toreturn['voucher']['roll']) <> count($config['voucher'][$cpzone]['roll']))) {
 		$config['voucher'][$cpzone]['roll'] = $toreturn['voucher']['roll'];
 		write_config("Captive Portal Voucher database synchronized with {$url}");
 		voucher_configure_zone(true);

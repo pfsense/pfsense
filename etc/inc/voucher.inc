@@ -204,6 +204,7 @@ EOF;
 		$config['voucher'][$cpzone]['roll'] = $toreturn['voucher']['roll'];
 		write_config("Captive Portal Voucher database synchronized with {$url}");
 		voucher_configure_zone(true);
+		unset($toreturn['voucher']);
 	}
 
 	return $toreturn['timeleft'];

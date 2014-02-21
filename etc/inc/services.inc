@@ -42,7 +42,7 @@ define('DYNDNS_PROVIDER_VALUES', 'dnsomatic dyndns dyndns-static dyndns-custom d
 define('DYNDNS_PROVIDER_DESCRIPTIONS', 'DNS-O-Matic,DynDNS (dynamic),DynDNS (static),DynDNS (custom),DHS,DyNS,easyDNS,No-IP,No-IP (free),ODS.org,ZoneEdit,Loopia,freeDNS,DNSexit,OpenDNS,Namecheap,HE.net,HE.net (v6),HE.net Tunnelbroker,SelfHost,Route 53,Custom,Custom (v6)');
 
 /* implement ipv6 route advertising deamon */
-function services_radvd_configure() {
+function services_radvd_configure($blacklist = array()) {
 	global $config, $g;
 	
 	if ($g['platform'] == 'jail') 
@@ -72,6 +72,9 @@ function services_radvd_configure() {
 		if (!isset($config['interfaces'][$dhcpv6if]['enable']))
 			continue;
 
+		/* Do not put in the config an interface which is down */
+		if (isset($blacklist[$dhcpv6if]))
+			continue;
 		if (!isset($dhcpv6ifconf['ramode']))
 			$dhcpv6ifconf['ramode'] = $dhcpv6ifconf['mode'];
 
@@ -210,6 +213,9 @@ function services_radvd_configure() {
 			continue;
 		if(!isset($config['interfaces'][$if]['enable']))
 			continue;
+		/* Do not put in the config an interface which is down */
+		if (isset($blacklist[$if]))
+			continue;
 		$trackif = $config['interfaces'][$if]['track6-interface'];
 		if (empty($config['interfaces'][$trackif]))
 			continue;
@@ -297,7 +303,7 @@ function services_radvd_configure() {
 	return 0;
 }
 
-function services_dhcpd_configure($family = "all") {
+function services_dhcpd_configure($family = "all", $blacklist = array()) {
 	global $config, $g;
 
 	/* configure DHCPD chroot once */
@@ -325,8 +331,8 @@ function services_dhcpd_configure($family = "all") {
 	if ($family == "all" || $family == "inet")
 		services_dhcpdv4_configure();
 	if ($family == "all" || $family == "inet6") {
-		services_dhcpdv6_configure();
-		services_radvd_configure();
+		services_dhcpdv6_configure($blacklist);
+		services_radvd_configure($blacklist);
 	}
 }
 
@@ -895,7 +901,7 @@ EOD;
 	return 0;
 }
 
-function services_dhcpdv6_configure() {
+function services_dhcpdv6_configure($blacklist = array()) {
 	global $config, $g;
 
 	if($g['services_dhcp_server_enable'] == false)
@@ -946,6 +952,9 @@ function services_dhcpdv6_configure() {
 
 	/* we add a fake entry for interfaces that are set to track6 another WAN */
 	foreach ($Iflist as $ifname) {
+		/* Do not put in the config an interface which is down */
+		if (isset($blacklist[$ifname]))
+			continue;
 		if (!empty($config['interfaces'][$ifname]['track6-interface'])) {
 			$realif = get_real_interface($ifname, "inet6");
 			$ifcfgipv6 = get_interface_ipv6($ifname);

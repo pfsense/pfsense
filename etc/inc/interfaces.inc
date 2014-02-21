@@ -1304,12 +1304,10 @@ function interface_bring_down($interface = "wan", $destroy = false, $ifacecfg = 
 	}
 
 	if (!empty($track6) && is_array($track6)) {
-		foreach ($track6 as $trackif) {
-			if (!function_exists('services_dhcp_configure'))
-				require_once('services.inc');
-			/* Bring down radvd and dhcp6 on these interfaces */
-			services_dhcpd_configure('inet6', $track6);
-		}
+		if (!function_exists('services_dhcp_configure'))
+			require_once('services.inc');
+		/* Bring down radvd and dhcp6 on these interfaces */
+		services_dhcpd_configure('inet6', $track6);
 	}
 
 	if (file_exists("{$g['tmp_path']}/{$realif}_router"))

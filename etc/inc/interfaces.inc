@@ -4017,19 +4017,19 @@ function convert_real_interface_to_friendly_interface_name($interface = "wan") {
 	//$ifdescrs = get_configured_interface_list(false, true);
 
 	foreach ($ifdescrs as $if => $ifname) {
-		if ($if == $interface || $config['interfaces'][$if]['if'] == $interface)
+		if ($if == $interface || $ifname['if'] == $interface)
 			return $if;
 
 		if (get_real_interface($if) == $interface)
 			return $if;
 
-		// XXX: This case doesn't work anymore (segfaults - recursion?) - should be replaced with something else or just removed.
-		//      Not to be replaced with get_real_interface - causes slow interface listings here because of recursion!
-		/*
-		$int = get_parent_interface($if);
-		if ($int[0] == $interface)
-			return $ifname;
-		*/
+		$int = get_parent_interface($if, true);
+		if (is_array($int)) {
+			foreach ($int as $iface) {
+				if ($iface == $interface)
+					return $if;
+			}
+		}
 	}
 
 	return NULL;
@@ -4108,7 +4108,7 @@ function convert_real_interface_to_friendly_descr($interface) {
  *			-- returns empty array if an invalid interface is passed
  *	(Only handles ppps and vlans now.)
  */
-function get_parent_interface($interface) {
+function get_parent_interface($interface, $avoidrecurse = false) {
 	global $config;
 
 	$parents = array();
@@ -4118,7 +4118,7 @@ function get_parent_interface($interface) {
 		return $parents;
 
 	// If we got a real interface, find it's friendly assigned name
-	if ($interface == $realif)
+	if ($interface == $realif && $avoidrecurse == false)
 		$interface = convert_real_interface_to_friendly_interface_name($interface);
 
 	if (!empty($interface) && isset($config['interfaces'][$interface])) {

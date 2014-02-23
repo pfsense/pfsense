@@ -1188,6 +1188,7 @@ $types6 = array("none" => gettext("None"), "staticv6" => gettext("Static IPv6"),
 <link href="/javascript/datepicker/css/datepicker.css" rel="stylesheet" type="text/css"/>
 
 <script type="text/javascript">
+//<![CDATA[
 	function updateType(t) {
 		switch(t) {
 			case "none": {
@@ -1222,33 +1223,34 @@ $types6 = array("none" => gettext("None"), "staticv6" => gettext("Static IPv6"),
 			jQuery('#'+t).show();
 	}
 	function updateTypeSix(t) {
+		if (!isNaN(t[0])) t = '_' + t;
 		switch(t) {
 			case "none": {
-				jQuery('#staticv6, #dhcp6, #6rd, #6to4, #track6, #slaac').hide();
+				jQuery('#staticv6, #dhcp6, #_6rd, #_6to4, #track6, #slaac').hide();
 				break;
 			}
 			case "staticv6": {
-				jQuery('#none, #dhcp6, #6rd, #6to4, #track6, #slaac').hide();
+				jQuery('#none, #dhcp6, #_6rd, #_6to4, #track6, #slaac').hide();
 				break;
 			}
 			case "slaac": {
-				jQuery('#none, #staticv6, #6rd, #6to4, #track6, #dhcp6').hide();
+				jQuery('#none, #staticv6, #6_rd, #_6to4, #track6, #dhcp6').hide();
 				break;
 			}
 			case "dhcp6": {
-				jQuery('#none, #staticv6, #6rd, #6to4, #track6, #slaac').hide();
+				jQuery('#none, #staticv6, #_6rd, #_6to4, #track6, #slaac').hide();
 				break;
 			}
-			case "6rd": {
-				jQuery('#none, #dhcp6, #staticv6, #6to4, #track6, #slaac').hide();
+			case "_6rd": {
+				jQuery('#none, #dhcp6, #staticv6, #_6to4, #track6, #slaac').hide();
 				break;
 			}
-			case "6to4": {
-				jQuery('#none, #dhcp6, #staticv6, #6rd, #track6, #slaac').hide();
+			case "_6to4": {
+				jQuery('#none, #dhcp6, #staticv6, #_6rd, #track6, #slaac').hide();
 				break;
 			}
 			case "track6": {
-				jQuery('#none, #dhcp6, #staticv6, #6rd, #6to4, #slaac').hide();
+				jQuery('#none, #dhcp6, #staticv6, #_6rd, #_6to4, #slaac').hide();
 				break;
 			}
 		}
@@ -1290,7 +1292,7 @@ $types6 = array("none" => gettext("None"), "staticv6" => gettext("Static IPv6"),
 	}
 	function country_list() {
 		jQuery('#country').children().remove();
-		jQuery('#provider').children().remove();
+		jQuery('#provider_list').children().remove();
 		jQuery('#providerplan').children().remove();
 		jQuery.ajax("getserviceproviders.php",{
 			success: function(response) {
@@ -1309,7 +1311,7 @@ $types6 = array("none" => gettext("None"), "staticv6" => gettext("Static IPv6"),
 	}
 
 	function providers_list() {
-		jQuery('#provider').children().remove();
+		jQuery('#provider_list').children().remove();
 		jQuery('#providerplan').children().remove();
 		jQuery.ajax("getserviceproviders.php",{
 			type: 'post',
@@ -1321,7 +1323,7 @@ $types6 = array("none" => gettext("None"), "staticv6" => gettext("Static IPv6"),
 					var option = new Element('option');
 					option.text = value;
 					option.value = value;
-					jQuery('#provider').append(option);
+					jQuery('#provider_list').append(option);
 				});
 			}
 		});
@@ -1334,7 +1336,7 @@ $types6 = array("none" => gettext("None"), "staticv6" => gettext("Static IPv6"),
 		jQuery('#providerplan').append( new Element('option') );
 		jQuery.ajax("getserviceproviders.php",{
 			type: 'post',
-			data: {country : jQuery('#country').val(), provider : jQuery('#provider').val()},
+			data: {country : jQuery('#country').val(), provider : jQuery('#provider_list').val()},
 			success: function(response) {
 				var responseTextArr = response.split("\n");
 				responseTextArr.sort();
@@ -1356,7 +1358,7 @@ $types6 = array("none" => gettext("None"), "staticv6" => gettext("Static IPv6"),
 	function prefill_provider() {
 		jQuery.ajax("getserviceproviders.php",{
 			type: 'post',
-			data: {country : jQuery('#country').val(), provider : jQuery('#provider').val(), plan : jQuery('#providerplan').val()},
+			data: {country : jQuery('#country').val(), provider : jQuery('#provider_list').val(), plan : jQuery('#providerplan').val()},
 			success: function(data,textStatus,response) {
 				var xmldoc = response.responseXML;
 				var provider = xmldoc.getElementsByTagName('connection')[0];
@@ -1377,6 +1379,7 @@ $types6 = array("none" => gettext("None"), "staticv6" => gettext("Static IPv6"),
 		});
 	}
 
+//]]>
 </script>
 </head>
 	<body link="#0000CC" vlink="#0000CC" alink="#0000CC">
@@ -1403,7 +1406,7 @@ $types6 = array("none" => gettext("None"), "staticv6" => gettext("Static IPv6"),
 							</td>
 						</tr>
 					</table>
-					<div style="display:none;" name="allcfg" id="allcfg">
+					<div style="display:none;" id="allcfg">
 					<table width="100%" border="0" cellpadding="6" cellspacing="0" summary="allcfg">
 						<tr>
 							<td width="22%" valign="top" class="vncell"><?=gettext("Description"); ?></td>
@@ -1519,8 +1522,8 @@ $types6 = array("none" => gettext("None"), "staticv6" => gettext("Static IPv6"),
 						<tr>
 							<td colspan="2" valign="top" height="16"></td>
 						</tr>
-						<tr style="display:none;" name="none" id="none"><td style="display:none;"></td></tr>
-						<tr style="display:none;" name="staticv4" id="staticv4">
+						<tr style="display:none;" id="none"><td style="display:none;"></td></tr>
+						<tr style="display:none;" id="staticv4">
 							<td colspan="2" style="padding:0px;">
 								<a name="gatewaysection"></a>
 								<table width="100%" border="0" cellpadding="6" cellspacing="0" summary="staticv4">
@@ -1574,7 +1577,7 @@ $types6 = array("none" => gettext("None"), "staticv6" => gettext("Static IPv6"),
 											</div>
 											<div id="status">
 											</div>
-											<div style="display:none" id="addgateway" name="addgateway">
+											<div style="display:none" id="addgateway">
 												<p>&nbsp;</p>
 												<table border="1" class="addgatewaybox" summary="addgateway">
 													<tr>
@@ -1626,7 +1629,7 @@ $types6 = array("none" => gettext("None"), "staticv6" => gettext("Static IPv6"),
 								</table>
 							</td>
 						</tr>
-						<tr style="display:none;" name="staticv6" id="staticv6">
+						<tr style="display:none;" id="staticv6">
 							<td colspan="2" style="padding:0px;">
 								<a name="gatewayv6section"></a>
 								<table width="100%" border="0" cellpadding="6" cellspacing="0" summary="staticv6">
@@ -1680,7 +1683,7 @@ $types6 = array("none" => gettext("None"), "staticv6" => gettext("Static IPv6"),
 											</div>
 											<div id="statusv6">
 											</div>
-											<div style="display:none" id="addgatewayv6" name="addgatewayv6">
+											<div style="display:none" id="addgatewayv6">
 												<p>&nbsp;</p>
 												<table border="1" class="addgatewaybox" summary="addgatewayv6">
 													<tr>
@@ -1732,7 +1735,7 @@ $types6 = array("none" => gettext("None"), "staticv6" => gettext("Static IPv6"),
 								</table>
 							</td>
 						</tr>
-						<tr style="display:none;" name="dhcp" id="dhcp">
+						<tr style="display:none;" id="dhcp">
 							<td colspan="2" style="padding: 0px;">
 								<table width="100%" border="0" cellpadding="6" cellspacing="0" summary="dhcp">
 									<tr>
@@ -1793,7 +1796,7 @@ $types6 = array("none" => gettext("None"), "staticv6" => gettext("Static IPv6"),
 								</table>
 							</td>
 						</tr>
-						<tr style="display:none;" name="dhcp6" id="dhcp6">
+						<tr style="display:none;" id="dhcp6">
 							<td colspan="2" style="padding: 0px;">
 								<table width="100%" border="0" cellpadding="6" cellspacing="0" summary="dhcp6">
 									<tr>
@@ -1860,7 +1863,7 @@ $types6 = array("none" => gettext("None"), "staticv6" => gettext("Static IPv6"),
 								</table>
 							</td>
 						</tr>
-						<tr style="display:none;" name="6rd" id="6rd">
+						<tr style="display:none;" id="_6rd">
 							<td colspan="2" style="padding: 0px;">
 								<table width="100%" border="0" cellpadding="6" cellspacing="0" summary="6rd">
 									<tr>
@@ -1904,7 +1907,7 @@ $types6 = array("none" => gettext("None"), "staticv6" => gettext("Static IPv6"),
 								</table>
 							</td>
 						</tr>
-						<tr style="display:none;" name="track6" id="track6">
+						<tr style="display:none;" id="track6">
 							<td colspan="2" style="padding: 0px;">
 								<table width="100%" border="0" cellpadding="6" cellspacing="0" summary="track6">
 									<tr>
@@ -1928,12 +1931,16 @@ $types6 = array("none" => gettext("None"), "staticv6" => gettext("Static IPv6"),
 														continue;
 												}
 											}
+											$rowIndex = 0;
 											foreach($dynv6ifs as $iface => $ifacename) {
+												$rowIndex++;
 												echo "<option value=\"{$iface}\"";
 												if ($iface == $pconfig['track6-interface'])
 													echo " selected=\"selected\"";
 												echo ">" . htmlspecialchars($ifacename) . "</option>";
 											}
+											if ($rowIndex == 0)
+												echo "<option></option>";
 										?>
 										</select> <br/>
 											<br/>
@@ -1961,13 +1968,13 @@ $types6 = array("none" => gettext("None"), "staticv6" => gettext("Static IPv6"),
 								</table>
 							</td>
 						</tr>
-						<tr style="display:none;" name="ppp" id="ppp">
+						<tr style="display:none;" id="ppp">
 							<td colspan="2" style="padding: 0px;">
 								<table width="100%" border="0" cellpadding="6" cellspacing="0" summary="ppp">
 									<tr>
 										<td colspan="2" valign="top" class="listtopic"><?=gettext("PPP configuration"); ?></td>
 									</tr>
-									<tr name="ppp_provider" id="ppp_provider">
+									<tr id="ppp_provider">
 										<td width="22%" valign="top" class="vncell"><?=gettext("Service Provider"); ?></td>
 										<td width="78%" class="vtable">
 											<table border="0" cellpadding="0" cellspacing="0" summary="service provider">
@@ -1982,7 +1989,7 @@ $types6 = array("none" => gettext("None"), "staticv6" => gettext("Static IPv6"),
 												<tr id="trprovider" style="display:none">
 													<td><?=gettext("Provider:"); ?> &nbsp;&nbsp;</td>
 													<td>
-														<select class="formselect" name="provider" id="provider" onchange="providerplan_list()">
+														<select class="formselect" name="provider_list" id="provider_list" onchange="providerplan_list()">
 															<option></option>
 														</select>
 													</td>
@@ -2011,19 +2018,19 @@ $types6 = array("none" => gettext("None"), "staticv6" => gettext("Static IPv6"),
 										<input name="password" type="password" class="formfld pwd" id="password" size="20" value="<?=htmlspecialchars($pconfig['password']);?>" />
 										</td>
 									</tr>
-									<tr name="phone_num" id="phone_num">
+									<tr id="phone_num">
 										<td width="22%" valign="top" class="vncellreq"><?=gettext("Phone Number"); ?></td>
 										<td width="78%" class="vtable">
 											<input name="phone" type="text" class="formfld unknown" id="phone" size="12" value="<?=htmlspecialchars($pconfig['phone']);?>" />
 										</td>
 									</tr>
-									<tr name="apn_" id="apn_">
+									<tr id="apn_">
 										<td width="22%" valign="top" class="vncell"><?=gettext("Access Point Name (APN)"); ?></td>
 										<td width="78%" class="vtable">
 											<input name="apn" type="text" class="formfld unknown" id="apn" size="40" value="<?=htmlspecialchars($pconfig['apn']);?>" />
 										</td>
 									</tr>
-									<tr name="interface" id="interface" >
+									<tr id="interface" >
 										<td width="22%" valign="top" class="vncellreq"><?=gettext("Modem Port"); ?></td>
 										<td width="78%" class="vtable">
 											<select name="port" id="port" class="formselect">
@@ -2031,14 +2038,19 @@ $types6 = array("none" => gettext("None"), "staticv6" => gettext("Static IPv6"),
 												$portlist = glob("/dev/cua*");
 												$modems = glob("/dev/modem*");
 												$portlist = array_merge($portlist, $modems);
+												$rowIndex = 0;
 												foreach ($portlist as $port) {
 													if(preg_match("/\.(lock|init)$/", $port))
 														continue;
+													$rowIndex++;
 													echo "<option value=\"".trim($port)."\"";
 													if ($pconfig['port'] == $port)
 														echo " selected=\"selected\"";
 													echo ">{$port}</option>";
-												}?>
+												}
+												if ($rowIndex == 0)
+													echo "<option></option>";
+											?>
 											</select>
 										</td>
 									</tr>
@@ -2062,7 +2074,7 @@ $types6 = array("none" => gettext("None"), "staticv6" => gettext("Static IPv6"),
 								</table>
 							</td>
 						</tr>
-						<tr style="display:none;" name="pppoe" id="pppoe">
+						<tr style="display:none;" id="pppoe">
 							<td colspan="2" style="padding:0px;">
 								<table width="100%" border="0" cellpadding="6" cellspacing="0" summary="pppoe">
 									<tr>
@@ -2171,7 +2183,7 @@ $types6 = array("none" => gettext("None"), "staticv6" => gettext("Static IPv6"),
 								</table>
 							</td>
 						</tr>
-						<tr style="display:none;" name="pptp" id="pptp">
+						<tr style="display:none;" id="pptp">
 							<td colspan="2" style="padding:0px;">
 								<table width="100%" border="0" cellpadding="6" cellspacing="0" summary="pptp">
 									<tr>

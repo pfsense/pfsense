@@ -164,7 +164,7 @@ function show_reset_settings(reset_type) {
 
 function country_list() {
 	jQuery('#country option').remove();
-	jQuery('#provider option').remove();
+	jQuery('#provider_list option').remove();
 	jQuery('#providerplan option').remove();
 	jQuery('#country').append(new Option('', ''));
 	jQuery.ajax("getserviceproviders.php",{
@@ -185,9 +185,9 @@ function country_list() {
 }
 
 function providers_list() {
-	jQuery('#provider option').remove();
+	jQuery('#provider_list option').remove();
 	jQuery('#providerplan option').remove();
-	jQuery('#provider').append(new Option('', ''));
+	jQuery('#provider_list').append(new Option('', ''));
 	jQuery.ajax("getserviceproviders.php",{
 		type: 'POST',
 		data: {country : jQuery('#country').val()},
@@ -198,7 +198,7 @@ function providers_list() {
 			for (i = 0; i < responseTextArr.length; i += 1) {
 				value = responseTextArr[i];
 				if (/\S/.test(value)) {
-					jQuery('#provider').append(new Option(value, value));
+					jQuery('#provider_list').append(new Option(value, value));
 				}
 			}
 		}
@@ -212,7 +212,7 @@ function providerplan_list() {
 	jQuery('#providerplan').append( new Option('','') );
 	jQuery.ajax("getserviceproviders.php",{
 		type: 'POST',
-		data: {country : jQuery('#country').val(), provider : jQuery('#provider').val()},
+		data: {country : jQuery('#country').val(), provider : jQuery('#provider_list').val()},
 		success: function(responseText) {
 			var responseTextArr = responseText.split("\n");
 			var value, providerplan, i;
@@ -233,7 +233,7 @@ function providerplan_list() {
 function prefill_provider() {
 	jQuery.ajax("getserviceproviders.php",{
 		type: "POST",
-		data: {country : jQuery('#country').val(), provider : jQuery('#provider').val(), plan : jQuery('#providerplan').val()},
+		data: {country : jQuery('#country').val(), provider : jQuery('#provider_list').val(), plan : jQuery('#providerplan').val()},
 		success: function(responseXML) {
 			var xmldoc = responseXML;
 			var provider = xmldoc.getElementsByTagName('connection')[0];

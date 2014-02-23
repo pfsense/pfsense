@@ -1477,7 +1477,7 @@ $types6 = array("none" => gettext("None"), "staticv6" => gettext("Static IPv6"),
 	}
 
 	function providers_list() {
-		jQuery('#provider').children().remove();
+		jQuery('#provider_list').children().remove();
 		jQuery('#providerplan').children().remove();
 		jQuery.ajax("getserviceproviders.php",{
 			type: 'post',
@@ -1489,7 +1489,7 @@ $types6 = array("none" => gettext("None"), "staticv6" => gettext("Static IPv6"),
 					var option = new Element('option');
 					option.text = value;
 					option.value = value;
-					jQuery('#provider').append(option);
+					jQuery('#provider_list').append(option);
 				});
 			}
 		});
@@ -1502,7 +1502,7 @@ $types6 = array("none" => gettext("None"), "staticv6" => gettext("Static IPv6"),
 		jQuery('#providerplan').append( new Element('option') );
 		jQuery.ajax("getserviceproviders.php",{
 			type: 'post',
-			data: {country : jQuery('#country').val(), provider : jQuery('#provider').val()},
+			data: {country : jQuery('#country').val(), provider : jQuery('#provider_list').val()},
 			success: function(response) {
 				var responseTextArr = response.split("\n");
 				responseTextArr.sort();
@@ -1524,7 +1524,7 @@ $types6 = array("none" => gettext("None"), "staticv6" => gettext("Static IPv6"),
 	function prefill_provider() {
 		jQuery.ajax("getserviceproviders.php",{
 			type: 'post',
-			data: {country : jQuery('#country').val(), provider : jQuery('#provider').val(), plan : jQuery('#providerplan').val()},
+			data: {country : jQuery('#country').val(), provider : jQuery('#provider_list').val(), plan : jQuery('#providerplan').val()},
 			success: function(data,textStatus,response) {
 				var xmldoc = response.responseXML;
 				var provider = xmldoc.getElementsByTagName('connection')[0];
@@ -2511,7 +2511,7 @@ $types6 = array("none" => gettext("None"), "staticv6" => gettext("Static IPv6"),
 												<tr id="trprovider" style="display:none">
 													<td><?=gettext("Provider:"); ?> &nbsp;&nbsp;</td>
 													<td>
-														<select class="formselect" name="provider" id="provider" onchange="providerplan_list()">
+														<select class="formselect" name="provider_list" id="provider_list" onchange="providerplan_list()">
 															<option></option>
 														</select>
 													</td>

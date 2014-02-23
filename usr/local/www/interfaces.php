@@ -1389,6 +1389,7 @@ $types6 = array("none" => gettext("None"), "staticv6" => gettext("Static IPv6"),
 			jQuery('#'+t).show();
 	}
 	function updateTypeSix(t) {
+		if (!isNaN(t[0])) t = '_' + t;
 		switch(t) {
 			case "none": {
 				jQuery('#staticv6, #dhcp6, #_6rd, #_6to4, #track6, #slaac').hide();
@@ -1602,7 +1603,6 @@ $types6 = array("none" => gettext("None"), "staticv6" => gettext("Static IPv6"),
 								<select name="type6" onchange="updateTypeSix(this.value);" class="formselect" id="type6">
 								<?php
 									foreach ($types6 as $key => $opt) {
-										if (is_numeric($key[0])) $key = '_' . $key;
 										echo "<option onclick=\"updateTypeSix('{$key}');\"";
 										if ($key == $pconfig['type6'])
 											echo " selected=\"selected\"";

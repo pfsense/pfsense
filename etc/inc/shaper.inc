@@ -4068,12 +4068,12 @@ function unset_l7_object_by_reference(&$name) {
 function read_layer7_config() {
 	global $layer7_rules_list, $config;
 
+	if (!is_array($config['l7shaper']['container']) || !count($config['l7shaper']['container']))
+		return;
+
 	$l7cs = &$config['l7shaper']['container'];
 
 	$layer7_rules_list = array();
-
-	if (!is_array($config['l7shaper']['container']) || !count($config['l7shaper']['container']))
-		return;
 
 	foreach ($l7cs as $conf) {
 		if (empty($conf['name']))

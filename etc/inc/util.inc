@@ -593,49 +593,28 @@ function is_ipaddroralias($ipaddr) {
 
 }
 
-/* returns true if $subnet is a valid IPv4 or IPv6 subnet in CIDR format */
+/* returns true if $subnet is a valid IPv4 or IPv6 subnet in CIDR format
+   	false - if not a valid subnet
+   	true (numeric 4 or 6) - if valid, gives type of subnet */
 function is_subnet($subnet) {
-	if(is_subnetv4($subnet)) {
-		return true;
-	}
-	if(is_subnetv6($subnet)) {
-		return true;
+	if (is_string($subnet) && preg_match('/^(?:([0-9.]{7,15})|([0-9a-f:]{2,39}))\/(\d{1,3})$/i', $subnet, $parts)) {
+		if (is_ipaddrv4($parts[1]) && $parts[3] <= 32)
+			return 4;
+		if (is_ipaddrv6($parts[2]) && $parts[3] <= 128)
+			return 6;
 	}
 	return false;
 }
 
-/* returns true if $subnet is a valid IPv4 subnet in CIDR format */
+/* same as is_subnet() but accepts IPv4 only */
 function is_subnetv4($subnet) {
-	if (!is_string($subnet))
-		return false;
-
-	list($hp,$np) = explode('/', $subnet);
-
-	if (!is_ipaddrv4($hp))
-		return false;
-
-	if (!is_numeric($np) || ($np < 1) || ($np > 32))
-		return false;
-
-	return true;
+	return (is_subnet($subnet) == 4);
 }
 
-/* returns true if $subnet is a valid IPv6 subnet in CIDR format */
+/* same as is_subnet() but accepts IPv6 only */
 function is_subnetv6($subnet) {
-	if (!is_string($subnet))
-		return false;
-
-	list($hp,$np) = explode('/', $subnet);
-
-	if (!is_ipaddrv6($hp))
-		return false;
-
-	if (!is_numeric($np) || ($np < 1) || ($np > 128))
-		return false;
-
-	return true;
+	return (is_subnet($subnet) == 6);
 }
-
 
 /* returns true if $subnet is a valid subnet in CIDR format or an alias thereof */
 function is_subnetoralias($subnet) {

@@ -500,7 +500,7 @@ function is_ipaddrv4($ipaddr) {
 
 /* returns true if $ipaddr is a valid linklocal address */
 function is_linklocal($ipaddr) {
-	return (substr($ipaddr, 0, 5) == "fe80:");
+	return (strtolower(substr($ipaddr, 0, 5)) == "fe80:");
 }
 
 /* returns scope of a linklocal address */

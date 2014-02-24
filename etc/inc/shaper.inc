@@ -38,11 +38,11 @@ require_once("notices.inc");
 /*
  * I admit :) this is derived from xmplparse.inc StartElement()
  */
-function &get_reference_to_me_in_config(&$mypath) 
+function &get_reference_to_me_in_config(&$mypath)
 {
 	global $config;
 
-	 $ptr =& $config['shaper'];
+	$ptr =& $config['shaper'];
 	foreach ($mypath as $indeks) {
 		$ptr =& $ptr['queue'][$indeks];
 	}
@@ -50,7 +50,7 @@ function &get_reference_to_me_in_config(&$mypath)
 	return $ptr;
 }
 
-function unset_object_by_reference(&$mypath) 
+function unset_object_by_reference(&$mypath)
 {
 	global $config;
 
@@ -61,7 +61,7 @@ function unset_object_by_reference(&$mypath)
 	unset($ptr['queue'][$mypath[$i]]);
 }
 
-function &get_dn_reference_to_me_in_config(&$mypath) 
+function &get_dn_reference_to_me_in_config(&$mypath)
 {
 	global $config;
 
@@ -73,7 +73,7 @@ function &get_dn_reference_to_me_in_config(&$mypath)
 	return $ptr;
 }
 
-function unset_dn_object_by_reference(&$mypath) 
+function unset_dn_object_by_reference(&$mypath)
 {
 	global $config;
 
@@ -84,26 +84,26 @@ function unset_dn_object_by_reference(&$mypath)
 	unset($ptr['queue'][$mypath[$i]]);
 }
 
-function clean_child_queues($type, $mypath) 
+function clean_child_queues($type, $mypath)
 {
 	$ref = &get_reference_to_me_in_config($mypath);
 
 	switch ($type) {
 	case 'HFSC':
-		if (isset($ref['borrow'])) unset($ref['borrow']);		
+		if (isset($ref['borrow'])) unset($ref['borrow']);
 		if (isset($ref['hogs'])) unset($ref['hogs']);
 		if (isset($ref['buckets'])) unset($ref['buckets']);
 		break;
 	case 'PRIQ':
-		if (isset($ref['borrow'])) unset($ref['borrow']);		
+		if (isset($ref['borrow'])) unset($ref['borrow']);
 		if (isset($ref['bandwidth'])) unset($ref['bandwidth']);
 		if (isset($ref['bandwidthtype'])) unset($ref['bandwidthtype']);
 		/* fall through */
 	case 'FAIRQ':
-		if (isset($ref['borrow'])) unset($ref['borrow']);		
+		if (isset($ref['borrow'])) unset($ref['borrow']);
 		/* fall through */
 	case 'CBQ':
-		if (isset($ref['realtime'])) unset($ref['realtime']);	
+		if (isset($ref['realtime'])) unset($ref['realtime']);
 		if (isset($ref['realtime1'])) unset($ref['realtime1']);
 		if (isset($ref['realtime2'])) unset($ref['realtime2']);
 		if (isset($ref['realtime3'])) unset($ref['realtime3']);
@@ -114,66 +114,66 @@ function clean_child_queues($type, $mypath)
 		if (isset($ref['linkshare'])) unset($ref['linkshare']);
 		if (isset($ref['linkshare1'])) unset($ref['linkshare1']);
 		if (isset($ref['linkshare2'])) unset($ref['linkshare2']);
-		if (isset($ref['linkshare3'])) unset($ref['linkshare3']);	
+		if (isset($ref['linkshare3'])) unset($ref['linkshare3']);
 		if (isset($ref['hogs'])) unset($ref['hogs']);
 		if (isset($ref['buckets'])) unset($ref['buckets']);
 		break;
 	}
 }
 
-function get_bandwidthtype_scale($type) 
+function get_bandwidthtype_scale($type)
 {
-        switch ($type) {
-        case "Gb":
-                $factor = 1024 * 1024 * 1024;
-        	break;
-        case "Mb":
-                $factor = 1024 * 1024;
-        	break;
-        case "Kb":
-                $factor = 1024;
-        	break;
-        case "b":
-        default:
-                $factor = 1;
-        	break;
-        }
-        return intval($factor);
+	switch ($type) {
+	case "Gb":
+		$factor = 1024 * 1024 * 1024;
+		break;
+	case "Mb":
+		$factor = 1024 * 1024;
+		break;
+	case "Kb":
+		$factor = 1024;
+		break;
+	case "b":
+	default:
+		$factor = 1;
+		break;
+	}
+	return intval($factor);
 }
 
-function get_hfsc_bandwidth($object, $bw) 
+function get_hfsc_bandwidth($object, $bw)
 {
 	$pattern= "/[0-9]+/";
-        if (preg_match($pattern, $bw, $match))
-                $bw_1 = $match[1];
-        else
-                return 0;
-        $pattern= "/(b|Kb|Mb|Gb|%)/";
-        if (preg_match($pattern, $bw, $match)) {
-                switch ($match[1]) {
-                case '%':
-                        $bw_1 = $bw_1 / 100 * get_interface_bandwidth($object);
-                        break;
-                default:
-                        $bw_1 = $bw_1 * get_bandwidthtype_scale($match[0]);
-                        break;
-                }
+	if (preg_match($pattern, $bw, $match))
+		$bw_1 = $match[1];
+	else
+		return 0;
+	$pattern= "/(b|Kb|Mb|Gb|%)/";
+	if (preg_match($pattern, $bw, $match)) {
+		switch ($match[1]) {
+		case '%':
+			$bw_1 = $bw_1 / 100 * get_interface_bandwidth($object);
+			break;
+		default:
+			$bw_1 = $bw_1 * get_bandwidthtype_scale($match[0]);
+			break;
+		}
 		return floatval($bw_1);
-        } else
-                return 0;
+	} else
+		return 0;
 }
 
-function get_interface_bandwidth($object) 
+function get_interface_bandwidth($object)
 {
 	global $altq_list_queues;
 
-        $int = $object->GetInterface();
-        $altq =& $altq_list_queues[$int];
-        if ($altq) {
-                $bw_3 = $altq->GetBandwidth();
-                $bw_3 = $bw_3 *  get_bandwidthtype_scale($altq->GetBwscale());
+	$int = $object->GetInterface();
+	$altq =& $altq_list_queues[$int];
+	if ($altq) {
+		$bw_3 = $altq->GetBandwidth();
+		$bw_3 = $bw_3 *  get_bandwidthtype_scale($altq->GetBwscale());
 		return floatval($bw_3);
-        } else
+	} else
 		return 0;
 }
 
@@ -181,24 +181,24 @@ function get_interface_bandwidth($object)
  * This is duplicated here since we cannot include guiconfig.inc.
  * Including it makes all stuff break.
  */
-function shaper_do_input_validation($postdata, $reqdfields, $reqdfieldsn, $input_errors) 
+function shaper_do_input_validation($postdata, $reqdfields, $reqdfieldsn, $input_errors)
 {
 
-        /* check for bad control characters */
-        foreach ($postdata as $pn => $pd) {
-                if (is_string($pd) && preg_match("/[\\x00-\\x08\\x0b\\x0c\\x0e-\\x1f]/", $pd)) {
-                        $input_errors[] = sprintf(gettext("The field '%s' contains invalid characters."), $pn);
-                }
-        }
+	/* check for bad control characters */
+	foreach ($postdata as $pn => $pd) {
+		if (is_string($pd) && preg_match("/[\\x00-\\x08\\x0b\\x0c\\x0e-\\x1f]/", $pd)) {
+			$input_errors[] = sprintf(gettext("The field '%s' contains invalid characters."), $pn);
+		}
+	}
 
-        for ($i = 0; $i < count($reqdfields); $i++) {
-                if ($postdata[$reqdfields[$i]] == "") {
-                        $input_errors[] = sprintf(gettext("The field '%s' is required."), $reqdfieldsn[$i]);
-                }
-        }
+	for ($i = 0; $i < count($reqdfields); $i++) {
+		if ($postdata[$reqdfields[$i]] == "") {
+			$input_errors[] = sprintf(gettext("The field '%s' is required."), $reqdfieldsn[$i]);
+		}
+	}
 }
 
-function cleanup_queue_from_rules($queue) 
+function cleanup_queue_from_rules($queue)
 {
 	global $config;
 
@@ -210,7 +210,7 @@ function cleanup_queue_from_rules($queue)
 	}
 }
 
-function cleanup_dnqueue_from_rules($queue) 
+function cleanup_dnqueue_from_rules($queue)
 {
 	global $config;
 
@@ -256,7 +256,7 @@ class altq_root_queue {
 	}
 	function GetLink() {
 		return $this->link;
-	}	
+	}
 	function GetEnabled() {
 		return $this->qenabled;
 	}
@@ -324,17 +324,17 @@ class altq_root_queue {
 
 		shaper_do_input_validation($data, $reqdfields, $reqdfieldsn, $input_errors);
 
-                if ($data['bandwidth'] && (!is_numeric($data['bandwidth'])))
+		if ($data['bandwidth'] && (!is_numeric($data['bandwidth'])))
 			$input_errors[] = gettext("Bandwidth must be an integer.");
-                if ($data['bandwidth'] < 0)
+		if ($data['bandwidth'] < 0)
 			$input_errors[] = gettext("Bandwidth cannot be negative.");
-                if ($data['qlimit'] && (!is_numeric($data['qlimit'])))
+		if ($data['qlimit'] && (!is_numeric($data['qlimit'])))
 			$input_errors[] = gettext("Qlimit must be an integer.");
-	 	if ($data['qlimit'] < 0)
+		if ($data['qlimit'] < 0)
 			$input_errors[] = gettext("Qlimit must be positive.");
-                if ($data['tbrconfig'] && (!is_numeric($data['tbrconfig'])))
+		if ($data['tbrconfig'] && (!is_numeric($data['tbrconfig'])))
 			$input_errors[] = gettext("Tbrsize must be an integer.");
-                if ($data['tbrconfig'] < 0)
+		if ($data['tbrconfig'] < 0)
 			$input_errors[] = gettext("Tbrsize must be positive.");
 	}
 
@@ -361,7 +361,7 @@ class altq_root_queue {
 		else
 			$this->SetQlimit("");
 		if (isset($conf['name']))
-			$this->SetQname($conf['name']);		
+			$this->SetQname($conf['name']);
 		if (!empty($conf['enabled']))
 			$this->SetEnabled($conf['enabled']);
 		else
@@ -369,14 +369,14 @@ class altq_root_queue {
 	}
 
 	function copy_queue($interface, &$cflink) {
-                $cflink['interface'] = $interface;
-                $cflink['name'] = $interface;
-                $cflink['scheduler'] = $this->GetScheduler();
-                $cflink['bandwidth'] = $this->GetBandwidth();
-                $cflink['bandwidthtype'] = $this->GetBwscale();
-                $cflink['qlimit'] = $this->GetQlimit();
-                $cflink['tbrconfig'] = $this->GetTbrConfig();
-                $cflink['enabled'] = $this->GetEnabled();
+		$cflink['interface'] = $interface;
+		$cflink['name'] = $interface;
+		$cflink['scheduler'] = $this->GetScheduler();
+		$cflink['bandwidth'] = $this->GetBandwidth();
+		$cflink['bandwidthtype'] = $this->GetBwscale();
+		$cflink['qlimit'] = $this->GetQlimit();
+		$cflink['tbrconfig'] = $this->GetTbrConfig();
+		$cflink['enabled'] = $this->GetEnabled();
 		if (is_array($this->queues)) {
 			$cflink['queue'] = array();
 			foreach ($this->queues as $q) {
@@ -416,7 +416,7 @@ class altq_root_queue {
 			$q =& new fairq_queue();
 			break;
 		default:
-			/* XXX: but should not happen anyway */ 
+			/* XXX: but should not happen anyway */
 			return;
 			break;
 		}
@@ -443,7 +443,7 @@ class altq_root_queue {
 		}
 		$q->SetAvailableBandwidth($myBw);
 		$this->SetAvailableBandwidth($this->GetAvailableBandwidth() - $myBw);
-		$this->queues[$q->GetQname()] = &$q; 
+		$this->queues[$q->GetQname()] = &$q;
 		ref_on_altq_queue_list($this->GetQname(), $q->GetQname());
 		if (is_array($queue['queue'])) {
 			foreach ($queue['queue'] as $key1 => $que) {
@@ -460,7 +460,7 @@ class altq_root_queue {
 	function &find_queue($interface, $qname) {
 		if ($qname == $this->GetQname()) {
 			return $this;
-		} 
+		}
 		foreach ($this->queues as $q) {
 			$result =& $q->find_queue("", $qname);
 			if ($result)
@@ -471,7 +471,7 @@ class altq_root_queue {
 	function &find_parentqueue($interface, $qname) {
 		if ($qname == $interface) {
 			$result =  NULL;
-		} else if ($this->queues[$qname])	 {
+		} else if ($this->queues[$qname]) {
 			$result = $this;
 		} else if ($this->GetScheduler() <> "PRIQ") {
 			foreach ($this->queues as $q) {
@@ -485,7 +485,7 @@ class altq_root_queue {
 	function build_tree() {
 		global $shaperIFlist;
 
-		$tree = " <li><a href=\"firewall_shaper.php?interface=".$this->GetInterface()."&amp;queue=". $this->GetInterface()."&amp;action=show"; 
+		$tree = " <li><a href=\"firewall_shaper.php?interface=".$this->GetInterface()."&amp;queue=". $this->GetInterface()."&amp;action=show";
 		$tree .= "\">" . $shaperIFlist[$this->GetInterface()] . "</a>";
 		if (is_array($this->queues)) {
 			$tree .= "<ul>";
@@ -498,24 +498,24 @@ class altq_root_queue {
 		return $tree;
 	}
 
-	function delete_queue() { 
+	function delete_queue() {
 		foreach ($this->queues as $q) {
 		$this->SetAvailableBandwidth($this->GetAvailableBandwidth() + $q->GetAvailableBandwidth());
-			$q->delete_queue();			
+			$q->delete_queue();
 		}
 		unset_object_by_reference($this->GetLink());
-	 }
+	}
 
 	function delete_all() {
-                if (count($this->queues)) {
-                        foreach ($this->queues as $q) {
-                        	$q->delete_all();
-                        	unset_object_by_reference($q->GetLink());
-                                unset($q);
-               		}
-        	        unset($this->queues);
-                }
-        }
+		if (count($this->queues)) {
+			foreach ($this->queues as $q) {
+				$q->delete_all();
+				unset_object_by_reference($q->GetLink());
+				unset($q);
+			}
+			unset($this->queues);
+		}
+	}
 
 	/*
 	 * First it spits:
@@ -558,7 +558,7 @@ class altq_root_queue {
 				file_notice("Shaper", $error, "Error occurred", "");
 				unset($error);
 				return "\n";
-			} 
+			}
 			$frule .= $rules;
 		} else if ($this->GetEnabled() == "on" && $this->GetScheduler() == "CODELQ") {
 			$rules = " altq on  " . get_real_interface($this->GetInterface());
@@ -632,13 +632,13 @@ class altq_root_queue {
 	 * For requesting the parameters of the root queues
 	 * to the user like the traffic wizard does.
 	 */
-	function build_form() { 
+	function build_form() {
 		$form = "<tr><td valign=\"middle\" class=\"vncellreq\"><br/>";
 		$form .= gettext("Enable/Disable");
 		$form .= "<br/></td><td class=\"vncellreq\">";
 		$form .= " <input type=\"checkbox\" id=\"enabled\" name=\"enabled\" value=\"on\"";
-                if ($this->GetEnabled() == "on")
-                        $form .=  " checked=\"checked\"";
+		if ($this->GetEnabled() == "on")
+			$form .=  " checked=\"checked\"";
 		$form .= " /><span class=\"vexpl\"> " . gettext("Enable/disable discipline and its children") . "</span>";
 		$form .= "</td></tr>";
 		$form .= "<tr><td valign=\"middle\" class=\"vncellreq\"><br/><span class=\"vexpl\">" . gettext("Name") . "</span></td>";
@@ -658,13 +658,13 @@ class altq_root_queue {
 			$form .= " selected=\"selected\"";
 		$form .= ">CBQ</option>";
 		$form .= "<option value=\"FAIRQ\"";
-                if ($this->GetScheduler() == "FAIRQ")
-                	$form .= " selected=\"selected\"";
-                $form .= ">FAIRQ</option>";
+		if ($this->GetScheduler() == "FAIRQ")
+			$form .= " selected=\"selected\"";
+		$form .= ">FAIRQ</option>";
 		$form .= "<option value=\"CODELQ\"";
-                if ($this->GetScheduler() == "CODELQ")
-                	$form .= " selected=\"selected\"";
-                $form .= ">CODELQ</option>";
+		if ($this->GetScheduler() == "CODELQ")
+			$form .= " selected=\"selected\"";
+		$form .= ">CODELQ</option>";
 		$form .= "<option value=\"PRIQ\"";
 		if ($this->GetScheduler() == "PRIQ")
 			$form .= " selected=\"selected\"";
@@ -678,7 +678,7 @@ class altq_root_queue {
 		$form .= "<tr><td valign=\"middle\" class=\"vncellreq\">" . gettext("Bandwidth");
 		$form .= "</td><td class=\"vncellreq\">";
 		$form .= "<input type=\"text\" id=\"bandwidth\" name=\"bandwidth\" value=\"";
-		$form .= $this->GetBandwidth() . "\" />"; 
+		$form .= $this->GetBandwidth() . "\" />";
 		$form .= "<select id=\"bandwidthtype\" name=\"bandwidthtype\" class=\"formselect\">";
 		$form .= "<option value=\"Kb\"";
 		if ($this->GetBwscale() == "Kb")
@@ -691,7 +691,7 @@ class altq_root_queue {
 		$form .= "<option value=\"Gb\"";
 		if ($this->GetBwscale() == "Gb")
 			$form .= " selected=\"selected\"";
-		$form .= ">Gbit/s</option>";		
+		$form .= ">Gbit/s</option>";
 		$form .= "<option value=\"b\"";
 		if ($this->GetBwscale() == "b")
 			$form .= " selected=\"selected\"";
@@ -722,7 +722,7 @@ class altq_root_queue {
 		return $form;
 	}
 
-	function update_altq_queue_data(&$data) { 
+	function update_altq_queue_data(&$data) {
 		$this->ReadConfig($data);
 	}
 
@@ -730,11 +730,11 @@ class altq_root_queue {
 	 * Should call on each of it queues and subqueues
 	 * the same function much like build_rules();
 	 */
-	function wconfig() { 
+	function wconfig() {
 		$cflink = &get_reference_to_me_in_config($this->GetLink());
 		if (!is_array($cflink))
 			$cflink = array();
-		$cflink['interface'] = $this->GetInterface();	
+		$cflink['interface'] = $this->GetInterface();
 		$cflink['name'] = $this->GetQname();
 		$cflink['scheduler'] = $this->GetScheduler();
 		$cflink['bandwidth'] = $this->GetBandwidth();
@@ -754,7 +754,7 @@ class altq_root_queue {
 
 class priq_queue {
 	var $qname;
-	var $qinterface; 
+	var $qinterface;
 	var $qlimit;
 	var $qpriority;
 	var $description;
@@ -927,33 +927,33 @@ class priq_queue {
 
 	function &add_queue($interface, &$qname, &$path, &$input_errors) { return; }
 
-	/* 
-	 * Currently this will not be called unless we decide to clone a whole 
+	/*
+	 * Currently this will not be called unless we decide to clone a whole
 	 * queue tree on the 'By Queues' view or support drag&drop on the tree/list
 	 */
-	 function copy_queue($interface, &$cflink) {
+	function copy_queue($interface, &$cflink) {
 
- 		$cflink['name'] = $this->GetQname();
-                $cflink['interface'] = $interface;
-                $cflink['qlimit'] = $this->GetQlimit();
-                $cflink['priority'] = $this->GetQpriority();
-                $cflink['description'] = $this->GetDescription();
-                $cflink['enabled'] = $this->GetEnabled();
-                $cflink['default'] = $this->GetDefault();
-                $cflink['red'] = $this->GetRed();
-                $cflink['codel'] = $this->GetCodel();
-                $cflink['rio'] = $this->GetRio();
-                $cflink['ecn'] = $this->GetEcn();
+		$cflink['name'] = $this->GetQname();
+		$cflink['interface'] = $interface;
+		$cflink['qlimit'] = $this->GetQlimit();
+		$cflink['priority'] = $this->GetQpriority();
+		$cflink['description'] = $this->GetDescription();
+		$cflink['enabled'] = $this->GetEnabled();
+		$cflink['default'] = $this->GetDefault();
+		$cflink['red'] = $this->GetRed();
+		$cflink['codel'] = $this->GetCodel();
+		$cflink['rio'] = $this->GetRio();
+		$cflink['ecn'] = $this->GetEcn();
 
-                if (is_array($this->subqueues)) {
-                        $cflinkp['queue'] = array();
-                        foreach ($this->subqueues as $q) {
-				 $cflink['queue'][$q->GetQname()] = array();
-                                $q->copy_queue($interface, $cflink['queue'][$q->GetQname()]);
+		if (is_array($this->subqueues)) {
+			$cflinkp['queue'] = array();
+			foreach ($this->subqueues as $q) {
+				$cflink['queue'][$q->GetQname()] = array();
+				$q->copy_queue($interface, $cflink['queue'][$q->GetQname()]);
 			}
-                }
+		}
 
-	 }
+	}
 
 	function clean_queue($sched) {
 		clean_child_queues($sched, $this->GetLink());
@@ -963,7 +963,7 @@ class priq_queue {
 		}
 	}
 
-        function &get_queue_list(&$qlist) {
+	function &get_queue_list(&$qlist) {
 
 		$qlist[$this->GetQname()] = & $this;
 		if (is_array($this->subqueues)) {
@@ -979,19 +979,19 @@ class priq_queue {
 	}
 
 	function delete_all() {
-                if (count($this->subqueues)) {
-                        foreach ($this->subqueues as $q) {
-                                $q->delete_all();
-                                unset_object_by_reference($q->GetLink());
-                                unset($q);
-                        }
-                        unset($this->subqueues);
-                }
-        }
+		if (count($this->subqueues)) {
+			foreach ($this->subqueues as $q) {
+				$q->delete_all();
+				unset_object_by_reference($q->GetLink());
+				unset($q);
+			}
+			unset($this->subqueues);
+		}
+	}
 
-	 function &find_queue($interface, $qname) { 
+	function &find_queue($interface, $qname) {
 		if ($qname == $this->GetQname())
-			return $this; 
+			return $this;
 	}
 
 	function find_parentqueue($interface, $qname) { return; }
@@ -1010,14 +1010,14 @@ class priq_queue {
 		    || ($data['priority'] < 1) || ($data['priority'] > 15))) {
 			$input_errors[] = gettext("The priority must be an integer between 1 and 15.");
 		}
-		if ($data['qlimit'] && (!is_numeric($data['qlimit']))) 
+		if ($data['qlimit'] && (!is_numeric($data['qlimit'])))
 				$input_errors[] = gettext("Queue limit must be an integer");
 		if ($data['qlimit'] < 0)
 				$input_errors[] = gettext("Queue limit must be positive");
 		if (!empty($data['newname']) && !preg_match("/^[a-zA-Z0-9_-]*$/", $data['newname']))
-			 $input_errors[] = gettext("Queue names must be alphanumeric and _ or - only.");
+			$input_errors[] = gettext("Queue names must be alphanumeric and _ or - only.");
 		if (!empty($data['name']) && !preg_match("/^[a-zA-Z0-9_-]*$/", $data['name']))
-			 $input_errors[] = gettext("Queue names must be alphanumeric and _ or - only.");
+			$input_errors[] = gettext("Queue names must be alphanumeric and _ or - only.");
 		$default = $this->GetDefault();
 		if (!empty($data['default']) && altq_get_default_queue($data['interface']) && empty($default))
 			$input_errors[] = gettext("Only one default queue per interface is allowed.");
@@ -1075,24 +1075,24 @@ class priq_queue {
 	}
 
 	function build_tree() {
-		$tree = " <li><a href=\"firewall_shaper.php?interface=". $this->GetInterface()."&amp;queue=". $this->GetQname()."&amp;action=show"; 
+		$tree = " <li><a href=\"firewall_shaper.php?interface=". $this->GetInterface()."&amp;queue=". $this->GetQname()."&amp;action=show";
 		$tree .= "\" ";
 		$tmpvalue = $this->GetDefault();
 		if (!empty($tmpvalue))
 			$tree .= " class=\"navlnk\"";
 		$tree .= " >" . $this->GetQname() . "</a>";
-		/* 
+		/*
 		 * Not needed here!
 		 * if (is_array($queues) {
 		 *	  $tree .= "<ul>";
-		 *	  foreach ($q as $queues) 
+		 *	  foreach ($q as $queues)
 		 *		  $tree .= $queues['$q->GetName()']->build_tree();
-		 *	  endforeach	
+		 *	  endforeach
 		 *	  $tree .= "</ul>";
 		 * }
 		 */
 
-		$tree .= "</li>"; 
+		$tree .= "</li>";
 
 		return $tree;
 	}
@@ -1119,21 +1119,21 @@ class priq_queue {
 			}
 			$tmpvalue = $this->GetRio();
 			if (!empty($tmpvalue)) {
-				if ($comma) 
+				if ($comma)
 					$pfq_rule .= " ,";
 				$comma = 1;
 				$pfq_rule .= " rio ";
 			}
 			$tmpvalue = $this->GetEcn();
 			if (!empty($tmpvalue)) {
-				if ($comma) 
+				if ($comma)
 					$pfq_rule .= " ,";
 				$comma = 1;
 				$pfq_rule .= " ecn ";
 			}
 			$tmpvalue = $this->GetCodel();
 			if (!empty($tmpvalue)) {
-				if ($comma) 
+				if ($comma)
 					$pfq_rule .= " ,";
 				$comma = 1;
 				$pfq_rule .= " codel ";
@@ -1162,13 +1162,13 @@ class priq_queue {
 	 */
 	function build_form() {
 		$form = "<tr><td valign=\"middle\" class=\"vncellreq\"><br/>";
-                $form .= gettext("Enable/Disable");
-                $form .= "<br/></td><td class=\"vncellreq\">";
-                $form .= " <input type=\"checkbox\" id=\"enabled\" name=\"enabled\" value=\"on\"";
-                if ($this->GetEnabled() == "on")
-                        $form .=  " checked=\"checked\"";
-                $form .= " /><span class=\"vexpl\"> " . gettext("Enable/Disable queue and its children") . "</span>";
-                $form .= "</td></tr>";
+		$form .= gettext("Enable/Disable");
+		$form .= "<br/></td><td class=\"vncellreq\">";
+		$form .= " <input type=\"checkbox\" id=\"enabled\" name=\"enabled\" value=\"on\"";
+		if ($this->GetEnabled() == "on")
+			$form .=  " checked=\"checked\"";
+		$form .= " /><span class=\"vexpl\"> " . gettext("Enable/Disable queue and its children") . "</span>";
+		$form .= "</td></tr>";
 		$form .= "<tr>";
 		$form .= "<td width=\"22%\" valign=\"middle\" class=\"vncellreq\">";
 		$form .= gettext("Queue Name") . "</td><td width=\"78%\" class=\"vtable\">";
@@ -1192,13 +1192,13 @@ class priq_queue {
 		$form .= "<td width=\"78%\" class=\"vtable\"> <input name=\"qlimit\" type=\"text\" id=\"qlimit\" size=\"8\" value=\"";
 		$form .= htmlspecialchars($this->GetQlimit());
 		$form .= "\" />";
-		$form .= "<br/> <span class=\"vexpl\">" . gettext("Queue limit in packets."); 
+		$form .= "<br/> <span class=\"vexpl\">" . gettext("Queue limit in packets.");
 		$form .= "</span></td></tr>";
 		$form .= "<tr>";
 		$form .= "<td width=\"22%\" valign=\"middle\" class=\"vncell\">" . gettext("Scheduler options") . "</td>";
 		$form .= "<td width=\"78%\" class=\"vtable\">";
 		if (empty($this->subqueues)) {
-			if ($this->GetDefault()) { 
+			if ($this->GetDefault()) {
 				$form .= "<input type=\"checkbox\" id=\"default\" checked=\"checked\" name=\"default\" value=\"default\"";
 				$form .= " /> " . gettext("Default queue") . "<br/>";
 			} else {
@@ -1208,22 +1208,22 @@ class priq_queue {
 		}
 		$form .= "<input type=\"checkbox\" id=\"red\" name=\"red\" value=\"red\" ";
 		$tmpvalue = $this->GetRed();
-		if(!empty($tmpvalue)) 
+		if(!empty($tmpvalue))
 			$form .=  " checked=\"checked\"";
 		$form .= " /> <a target=\"_new\" href=\"http://www.openbsd.org/faq/pf/queueing.html#red\">" . gettext("Random Early Detection") . "</a><br/>";
 		$form .= "<input type=\"checkbox\" id=\"rio\" name=\"rio\" value=\"rio\"";
 		$tmpvalue = $this->GetRio();
-		if(!empty($tmpvalue)) 
+		if(!empty($tmpvalue))
 			$form .=  " checked=\"checked\"";
 		$form .= " /> <a target=\"_new\" href=\"http://www.openbsd.org/faq/pf/queueing.html#rio\">" . gettext("Random Early Detection In and Out") . "</a><br/>";
 		$form .= "<input type=\"checkbox\" id=\"ecn\" name=\"ecn\" value=\"ecn\"";
 		$tmpvalue = $this->GetEcn();
-		if(!empty($tmpvalue)) 
+		if(!empty($tmpvalue))
 			$form .=  " checked=\"checked\"";
 		$form .= " /> <a target=\"_new\" href=\"http://www.openbsd.org/faq/pf/queueing.html#ecn\">" . gettext("Explicit Congestion Notification") . "</a><br/>";
 		$form .= "<input type=\"checkbox\" id=\"codel\" name=\"codel\" value=\"codel\"";
 		$tmpvalue = $this->GetCodel();
-		if(!empty($tmpvalue)) 
+		if(!empty($tmpvalue))
 			$form .=  " checked=\"checked\"";
 		$form .= " /> <a target=\"_new\" href=\"http://www.bufferbloat.net/projects/codel/wiki\">" . gettext("Codel Active Queue") . "</a><br/>";
 		$form .= "<span class=\"vexpl\"><br/>" . gettext("Select options for this queue");
@@ -1249,7 +1249,7 @@ class priq_queue {
 		$form = "<tr><td width=\"20%\" class=\"vtable\">";
 		$form .= "<a href=\"firewall_shaper.php?interface=" . $this->GetInterface() . "&amp;queue=" . $this->GetQname()."&amp;action=show\">". $shaperIFlist[$this->GetInterface()] .$scheduler."</a>";
 		$form .= "</td></tr>";
-		/* 
+		/*
 		 * XXX: Hack in sight maybe fix with a class that wraps all
 		 * of this layer violations
 		 */
@@ -1276,7 +1276,7 @@ class priq_queue {
 
 	}
 
-		function update_altq_queue_data(&$q) { 
+		function update_altq_queue_data(&$q) {
 		$this->ReadConfig($q);
 	}
 
@@ -1340,7 +1340,7 @@ class hfsc_queue extends priq_queue {
 		return true;
 	}
 	function GetRealtime() {
-           return $this->realtime;
+		return $this->realtime;
 	}
 	function GetR_m1() {
 		return $this->r_m1;
@@ -1461,7 +1461,7 @@ class hfsc_queue extends priq_queue {
 		return $q;
 	}
 
-        function copy_queue($interface, &$cflink) {
+	function copy_queue($interface, &$cflink) {
 
 		$cflink['name'] = $this->GetQname();
 		$cflink['interface'] = $interface;
@@ -1516,8 +1516,8 @@ class hfsc_queue extends priq_queue {
 				$cflink['realtime'] = "on";
 			} else {
 				unset($cflink['realtime1']);
-                                unset($cflink['realtime2']);
-                                unset($cflink['realtime']);
+				unset($cflink['realtime2']);
+				unset($cflink['realtime']);
 			}
 			if ($this->GetR_m2() <> "") {
 				$cflink['realtime3'] = $this->GetR_m2();
@@ -1555,7 +1555,7 @@ class hfsc_queue extends priq_queue {
 		}
 	}
 
-	function delete_queue() { 
+	function delete_queue() {
 		unref_on_altq_queue_list($this->GetQname());
 		cleanup_queue_from_rules($this->GetQname());
 		$parent =& $this->GetParent();
@@ -1570,7 +1570,7 @@ class hfsc_queue extends priq_queue {
 	 * Should search even its children
 	 */
 	function &find_queue($interface, $qname) {
-		if ($qname == $this->GetQname()) 
+		if ($qname == $this->GetQname())
 			return $this;
 
 		foreach ($this->subqueues as $q) {
@@ -1581,7 +1581,7 @@ class hfsc_queue extends priq_queue {
 	}
 
 	function &find_parentqueue($interface, $qname) {
-		if ($this->subqueues[$qname]) 
+		if ($this->subqueues[$qname])
 			return $this;
 		foreach ($this->subqueues as $q) {
 			$result = $q->find_parentqueue("", $qname);
@@ -1640,7 +1640,7 @@ class hfsc_queue extends priq_queue {
 		if (isset($data['upperlimit']) && $data['upperlimit3'] <> "" && $data['upperlimit1'] <> "") {
 			$bw_1 = get_hfsc_bandwidth($this, $data['upperlimit1']);
 			$bw_2 = get_hfsc_bandwidth($this, $data['upperlimit3']);
-			if (floatval($bw_1) < floatval($bw_2)) 
+			if (floatval($bw_1) < floatval($bw_2))
 				$input_errors[] = ("upperlimit m1 cannot be smaller than m2");
 
 			if (get_interface_bandwidth($this) < (0.8 * (floatval($bw_1) + floatval($bw_2))))
@@ -1665,12 +1665,12 @@ class hfsc_queue extends priq_queue {
 		/*
 		if (isset($data['linkshare']) && $data['linkshare3'] <> "" && $data['linkshare1'] <> "" && 0) {
 			$bw_1 = get_hfsc_bandwidth($this, $data['linkshare1']);
-                	$bw_2 = get_hfsc_bandwidth($this, $data['linkshare3']);
-                	if (floatval($bw_1) < floatval($bw_2))
-                        	$input_errors[] = ("linkshare m1 cannot be smaller than m2");
+			$bw_2 = get_hfsc_bandwidth($this, $data['linkshare3']);
+			if (floatval($bw_1) < floatval($bw_2))
+				$input_errors[] = ("linkshare m1 cannot be smaller than m2");
 
 			if (get_interface_bandwidth($this) < (0.8 * (floatval($bw_1) + floatval($bw_2))))
-                        	$input_errors[] = ("linkshare specification exceeds 80% of allowable allocation.");
+				$input_errors[] = ("linkshare specification exceeds 80% of allowable allocation.");
 		}
 		*/
 
@@ -1684,9 +1684,9 @@ class hfsc_queue extends priq_queue {
 		/*
 		if (isset($data['realtime']) && $data['realtime3'] <> "" && $data['realtime1'] <> "" && 0) {
 			$bw_1 = get_hfsc_bandwidth($this, $data['realtime1']);
-                	$bw_2 = get_hfsc_bandwidth($this, $data['realtime3']);
-                	if (floatval($bw_1) < floatval($bw_2))
-                        	$input_errors[] = ("realtime m1 cannot be smaller than m2");
+			$bw_2 = get_hfsc_bandwidth($this, $data['realtime3']);
+			if (floatval($bw_1) < floatval($bw_2))
+				$input_errors[] = ("realtime m1 cannot be smaller than m2");
 
 			if (get_interface_bandwidth($this) < (0.8 * (floatval($bw_1) + floatval($bw_2))))
 				$input_errors[] = ("realtime specification exceeds 80% of allowable allocation.");
@@ -1698,47 +1698,47 @@ class hfsc_queue extends priq_queue {
 		if (!empty($cflink['linkshare'])) {
 			if (!empty($cflink['linkshare1'])) {
 				$this->SetL_m1($cflink['linkshare1']);
-                                $this->SetL_d($cflink['linkshare2']);
+				$this->SetL_d($cflink['linkshare2']);
 				$this->SetLinkshare();
 			} else {
 				$this->SetL_m1("");
-                                $this->SetL_d("");
+				$this->SetL_d("");
 				$this->DisableLinkshare();
 			}
 			if (!empty($cflink['linkshare3'])) {
-                                $this->SetL_m2($cflink['linkshare3']);
+				$this->SetL_m2($cflink['linkshare3']);
 				$this->SetLinkshare();
 			}
 		} else
 			$this->DisableLinkshare();
 		if (!empty($cflink['realtime'])) {
-                        if (!empty($cflink['realtime1'])) {
-                                $this->SetR_m1($cflink['realtime1']);
-                                $this->SetR_d($cflink['realtime2']);
+			if (!empty($cflink['realtime1'])) {
+				$this->SetR_m1($cflink['realtime1']);
+				$this->SetR_d($cflink['realtime2']);
 				$this->SetRealtime();
 			} else {
-                                $this->SetR_m1("");
-                                $this->SetR_d("");
+				$this->SetR_m1("");
+				$this->SetR_d("");
 				$this->DisableRealtime();
 			}
-                        if (!empty($cflink['realtime3'])) {
-                                $this->SetR_m2($cflink['realtime3']);
+			if (!empty($cflink['realtime3'])) {
+				$this->SetR_m2($cflink['realtime3']);
 				$this->SetRealtime();
 			}
 		} else
-			$this->DisableRealtime(); 
+			$this->DisableRealtime();
 		if (!empty($cflink['upperlimit'])) {
-                        if (!empty($cflink['upperlimit1'])) {
-                                $this->SetU_m1($cflink['upperlimit1']);
-                                $this->SetU_d($cflink['upperlimit2']);
+			if (!empty($cflink['upperlimit1'])) {
+				$this->SetU_m1($cflink['upperlimit1']);
+				$this->SetU_d($cflink['upperlimit2']);
 				$this->SetUpperlimit();
 			} else {
-                                $this->SetU_m1("");
-                                $this->SetU_d("");
+				$this->SetU_m1("");
+				$this->SetU_d("");
 				$this->DisableUpperlimit();
 			}
-                        if (!empty($cflink['upperlimit3'])) {
-                                $this->SetU_m2($cflink['upperlimit3']);
+			if (!empty($cflink['upperlimit3'])) {
+				$this->SetU_m2($cflink['upperlimit3']);
 				$this->SetUpperlimit();
 			}
 		} else
@@ -1747,7 +1747,7 @@ class hfsc_queue extends priq_queue {
 	}
 
 	function build_tree() {
-		$tree = " <li><a href=\"firewall_shaper.php?interface=" . $this->GetInterface() ."&amp;queue=" . $this->GetQname()."&amp;action=show"; 
+		$tree = " <li><a href=\"firewall_shaper.php?interface=" . $this->GetInterface() ."&amp;queue=" . $this->GetQname()."&amp;action=show";
 		$tree .= "\" ";
 		$tmpvalue = $this->GetDefault();
 		if (!empty($tmpvalue))
@@ -1757,7 +1757,7 @@ class hfsc_queue extends priq_queue {
 			$tree .= "<ul>";
 			foreach ($this->subqueues as $q)  {
 				$tree .= $q->build_tree();
-			}	
+			}
 			$tree .= "</ul>";
 		}
 		$tree .= "</li>";
@@ -1786,21 +1786,21 @@ class hfsc_queue extends priq_queue {
 
 			$tmpvalue = $this->GetRio();
 			if (!empty($tmpvalue)) {
-				if ($comma) 
+				if ($comma)
 					$pfq_rule .= " ,";
 				$comma = 1;
 				$pfq_rule .= " rio ";
 			}
 			$tmpvalue = $this->GetEcn();
 			if (!empty($tmpvalue)) {
-				if ($comma) 
+				if ($comma)
 					$pfq_rule .= " ,";
 				$comma = 1;
 				$pfq_rule .= " ecn ";
 			}
 			$tmpvalue = $this->GetCodel();
 			if (!empty($tmpvalue)) {
-				if ($comma) 
+				if ($comma)
 					$pfq_rule .= " ,";
 				$comma = 1;
 				$pfq_rule .= " codel ";
@@ -1815,7 +1815,7 @@ class hfsc_queue extends priq_queue {
 			}
 
 			if ($this->GetRealtime() <> "")  {
-				if ($comma) 
+				if ($comma)
 					$pfq_rule .= " , ";
 				if ($this->GetR_m1()  <> "" && $this->GetR_d() <> "" && $this->GetR_m2() <> "")
 					$pfq_rule .= " realtime (".$this->GetR_m1() . ", " . $this->GetR_d().", ". $this->GetR_m2() .") ";
@@ -1857,7 +1857,7 @@ class hfsc_queue extends priq_queue {
 				$pfq_rule .= $q->build_rules($default);
 		}
 
-		 $pfq_rule .= " \n";
+		$pfq_rule .= " \n";
 
 		return $pfq_rule;
 	}
@@ -1943,7 +1943,7 @@ class hfsc_queue extends priq_queue {
 		$form .= "<table>";
 		$form .= "<tr><td>&nbsp;</td><td><center>m1</center></td><td><center>d</center></td><td><center><b>m2</b></center></td></tr>";
 		$form .= "<tr><td><input type=\"checkbox\" id=\"upperlimit\" name=\"upperlimit\"";
-		if($this->GetUpperlimit()<> "") 
+		if($this->GetUpperlimit()<> "")
 			$form .=  " checked=\"checked\" ";
 		$form .= "onchange=\"enable_upperlimit()\" /> " . gettext("Upperlimit:") . "</td><td><input size=\"6\" value=\"";
 		$form .= htmlspecialchars($this->GetU_m1());
@@ -1962,7 +1962,7 @@ class hfsc_queue extends priq_queue {
 			$form .= " disabled=\"disabled\"";
 		$form .= " /></td><td>" . gettext("The maximum allowed bandwidth for the queue.") . "</td></tr>";
 		$form .= "<tr><td><input type=\"checkbox\" id=\"realtime\" name=\"realtime\"";
-		if($this->GetRealtime() <> "") 
+		if($this->GetRealtime() <> "")
 			$form .=  " checked=\"checked\" ";
 		$form .= "onchange=\"enable_realtime()\" /> " . gettext("Real time:") . "</td><td><input size=\"6\" value=\"";
 		$form .= htmlspecialchars($this->GetR_m1());
@@ -1981,7 +1981,7 @@ class hfsc_queue extends priq_queue {
 			$form .= " disabled=\"disabled\"";
 		$form .= " /></td><td>" . gettext("The minimum required bandwidth for the queue.") . "</td></tr>";
 		$form .= "<tr><td><input type=\"checkbox\" id=\"linkshare\" name=\"linkshare\"";
-		if($this->GetLinkshare() <> "") 
+		if($this->GetLinkshare() <> "")
 			$form .=  " checked=\"checked\" ";
 		$form .= "onchange=\"enable_linkshare()\" /> " . gettext("Link share:") . "</td><td><input size=\"6\" value=\"";
 		$form .= htmlspecialchars($this->GetL_m1());
@@ -2010,7 +2010,7 @@ class hfsc_queue extends priq_queue {
 		return $form;
 	}
 
-	function update_altq_queue_data(&$data) { 
+	function update_altq_queue_data(&$data) {
 		$this->ReadConfig($data);
 	}
 
@@ -2142,21 +2142,21 @@ class cbq_queue extends priq_queue {
 		$q->SetInterface($this->GetInterface());
 		$q->SetParent($this);
 		$q->ReadConfig($qname);
-                $q->validate_input($qname, $input_errors);
-                if (count($input_errors)) {
+		$q->validate_input($qname, $input_errors);
+		if (count($input_errors)) {
 			log_error("SHAPER: could not create queue " . $q->GetQname() . " on interface {$interface} because: " . print_r($input_errors, true));
-                        return $q;
-                }
-                switch ($q->GetBwscale()) {
-                case "%":
-                	$myBw = $this->GetAvailableBandwidth() * $qname['bandwidth'] / 100;
-                        break;
-                default:
-                	$myBw = $qname['bandwidth'] * get_bandwidthtype_scale($q->GetBwscale());
-                        break;
-                }
-                $q->SetAvailableBandwidth($myBw);
-                $this->SetAvailableBandwidth($this->GetAvailableBandwidth() - $myBw);
+			return $q;
+		}
+		switch ($q->GetBwscale()) {
+		case "%":
+			$myBw = $this->GetAvailableBandwidth() * $qname['bandwidth'] / 100;
+			break;
+		default:
+			$myBw = $qname['bandwidth'] * get_bandwidthtype_scale($q->GetBwscale());
+			break;
+		}
+		$q->SetAvailableBandwidth($myBw);
+		$this->SetAvailableBandwidth($this->GetAvailableBandwidth() - $myBw);
 
 		$q->SetEnabled("on");
 		$q->SetLink($path);
@@ -2265,7 +2265,7 @@ class cbq_queue extends priq_queue {
 
 
 		if ($data['bandwidth'] < 0)
-                       $input_errors[] = gettext("Bandwidth cannot be negative.");
+			$input_errors[] = gettext("Bandwidth cannot be negative.");
 
 		if ($data['bandwidthtype'] == "%") {
 			if ($data['bandwidth'] > 100 || $data['bandwidth'] < 0)
@@ -2282,9 +2282,9 @@ class cbq_queue extends priq_queue {
 			$mybw = floatval($data['bandwidth']) * get_bandwidthtype_scale($data['bandwidthtype']);
 			break;
 		}
-                if ($parent->GetAvailableBandwidth() < floatval($myBw))
-                        $input_errors[] = "The sum of the children bandwidth exceeds that of the parent.";
-*/
+		if ($parent->GetAvailableBandwidth() < floatval($myBw))
+			$input_errors[] = "The sum of the children bandwidth exceeds that of the parent.";
+ */
 	}
 
 	function ReadConfig(&$q) {
@@ -2300,7 +2300,7 @@ class cbq_queue extends priq_queue {
 	}
 
 	function build_tree() {
-		$tree = " <li><a href=\"firewall_shaper.php?interface=" . $this->GetInterface()."&amp;queue=" . $this->GetQname()."&amp;action=show"; 
+		$tree = " <li><a href=\"firewall_shaper.php?interface=" . $this->GetInterface()."&amp;queue=" . $this->GetQname()."&amp;action=show";
 		$tree .= "\" ";
 		$tmpvalue = trim($this->GetDefault());
 		if (!empty($tmpvalue))
@@ -2310,7 +2310,7 @@ class cbq_queue extends priq_queue {
 			$tree .= "<ul>";
 			foreach ($this->subqueues as $q)  {
 				$tree .= $q->build_tree();
-			}	
+			}
 			$tree .= "</ul>";
 		}
 		$tree .= "</li>";
@@ -2344,14 +2344,14 @@ class cbq_queue extends priq_queue {
 			}
 			$tmpvalue = trim($this->GetRio());
 			if (!empty($tmpvalue)) {
-				if ($comma) 
+				if ($comma)
 					$pfq_rule .= " ,";
 				$comma = 1;
 				$pfq_rule .= " rio ";
 			}
 			$tmpvalue = trim($this->GetEcn());
 			if (!empty($tmpvalue)) {
-				if ($comma) 
+				if ($comma)
 					$pfq_rule .= " ,";
 				$comma = 1;
 				$pfq_rule .= " ecn ";
@@ -2371,7 +2371,7 @@ class cbq_queue extends priq_queue {
 				$pfq_rule .= " borrow ";
 			}
 			$pfq_rule .= " ) ";
-		} 
+		}
 		if (count($this->subqueues)) {
 			$i = count($this->subqueues);
 			$pfq_rule .= " { ";
@@ -2425,14 +2425,14 @@ class cbq_queue extends priq_queue {
 		$form .= "</span></td></tr>";
 		$form .= "<tr><td class=\"vncellreq\">" . gettext("Scheduler specific options") . "</td>";
 		$form .= "<td class=\"vtable\"><input type=\"checkbox\" id=\"borrow\" name=\"borrow\"";
-		if($this->GetBorrow() == "on") 
+		if($this->GetBorrow() == "on")
 			$form .=  " checked=\"checked\" ";
 		$form .= " /> " . gettext("Borrow from other queues when available") . "<br/></td></tr>";
 
 		return $form;
 	}
 
-	function update_altq_queue_data(&$data) { 
+	function update_altq_queue_data(&$data) {
 		$this->ReadConfig($data);
 	}
 
@@ -2499,19 +2499,19 @@ class fairq_queue extends priq_queue {
 
 
 	function copy_queue($interface, &$cflink) {
-                $cflink['interface'] = $interface;
-                $cflink['qlimit'] = $this->GetQlimit();
-                $cflink['priority'] = $this->GetQpriority();
-                $cflink['name'] = $this->GetQname();
-                $cflink['description'] = $this->GetDescription();
-                $cflink['bandwidth'] = $this->GetBandwidth();
-                $cflink['bandwidthtype'] = $this->GetBwscale();
-                $cflink['enabled'] = $this->GetEnabled();
-                $cflink['default'] = $this->GetDefault();
-                $cflink['red'] = $this->GetRed();
-                $cflink['rio'] = $this->GetRio();
-                $cflink['ecn'] = $this->GetEcn();
-                $cflink['buckets'] = $this->GetBuckets();
+		$cflink['interface'] = $interface;
+		$cflink['qlimit'] = $this->GetQlimit();
+		$cflink['priority'] = $this->GetQpriority();
+		$cflink['name'] = $this->GetQname();
+		$cflink['description'] = $this->GetDescription();
+		$cflink['bandwidth'] = $this->GetBandwidth();
+		$cflink['bandwidthtype'] = $this->GetBwscale();
+		$cflink['enabled'] = $this->GetEnabled();
+		$cflink['default'] = $this->GetDefault();
+		$cflink['red'] = $this->GetRed();
+		$cflink['rio'] = $this->GetRio();
+		$cflink['ecn'] = $this->GetEcn();
+		$cflink['buckets'] = $this->GetBuckets();
 		$cflink['hogs'] = $this->GetHogs();
 	}
 
@@ -2557,16 +2557,16 @@ class fairq_queue extends priq_queue {
 		}
 
 /*
-           	$parent =& $this->GetParent();
-           	switch ($data['bandwidthtype']) {
-                       case "%":
-                             $myBw = $parent->GetAvailableBandwidth() * floatval($data['bandwidth']) / 100;
-                       default:
-                             $mybw = floatval($data['bandwidth']) * get_bandwidthtype_scale($data['bandwidthtype']);
-                             break;
-           	}
-                if ($parent->GetAvailableBandwidth() < floatval($myBw))
-                        $input_errors[] = "The sum of children bandwidth exceeds that of the parent.";
+		$parent =& $this->GetParent();
+		switch ($data['bandwidthtype']) {
+		case "%":
+			$myBw = $parent->GetAvailableBandwidth() * floatval($data['bandwidth']) / 100;
+		default:
+			$mybw = floatval($data['bandwidth']) * get_bandwidthtype_scale($data['bandwidthtype']);
+			break;
+		}
+		if ($parent->GetAvailableBandwidth() < floatval($myBw))
+			$input_errors[] = "The sum of children bandwidth exceeds that of the parent.";
 */
 	}
 
@@ -2587,8 +2587,8 @@ class fairq_queue extends priq_queue {
 	}
 
 	function build_tree() {
-		$tree = " <li><a href=\"firewall_shaper.php?interface=" . 
-		$this->GetInterface()."&amp;queue=" . $this->GetQname()."&amp;action=show"; 
+		$tree = " <li><a href=\"firewall_shaper.php?interface=" .
+		$this->GetInterface()."&amp;queue=" . $this->GetQname()."&amp;action=show";
 		$tree .= "\" ";
 		$tmpvalue = trim($this->GetDefault());
 		if (!empty($tmpvalue))
@@ -2611,7 +2611,7 @@ class fairq_queue extends priq_queue {
 		$tmpvalue = trim($this->GetQlimit());
 		if (!empty($tmpvalue))
 			$pfq_rule .= " qlimit " . $this->GetQlimit();
-		if ($this->GetDefault() || $this->GetRed() || $this->GetRio() 
+		if ($this->GetDefault() || $this->GetRed() || $this->GetRio()
 			|| $this->GetEcn() || $this->GetBuckets() || $this->GetHogs() || $this->GetCodel()) {
 			$pfq_rule .= " fairq ( ";
 			$tmpvalue = trim($this->GetRed());
@@ -2626,14 +2626,14 @@ class fairq_queue extends priq_queue {
 			}
 			$tmpvalue = trim($this->GetRio());
 			if (!empty($tmpvalue)) {
-				if ($comma) 
+				if ($comma)
 					$pfq_rule .= " ,";
 				$comma = 1;
 				$pfq_rule .= " rio ";
 			}
 			$tmpvalue = trim($this->GetEcn());
 			if (!empty($tmpvalue)) {
-				if ($comma) 
+				if ($comma)
 					$pfq_rule .= " ,";
 				$comma = 1;
 				$pfq_rule .= " ecn ";
@@ -2659,7 +2659,7 @@ class fairq_queue extends priq_queue {
 				$pfq_rule .= " hogs " . $this->GetHogs() . " ";
 			}
 				$pfq_rule .= " ) ";
-		} 
+		}
 
 		$pfq_rule .= " \n";
 		return $pfq_rule;
@@ -2701,19 +2701,19 @@ class fairq_queue extends priq_queue {
 		$form .= "<td class=\"vtable\"><table><tr><td>";
 		$form .= "<input id=\"buckets\" name=\"buckets\" value=\"";
 		$tmpvalue = trim($this->GetBuckets());
-		if(!empty($tmpvalue)) 
+		if(!empty($tmpvalue))
 			$form .=  $this->GetBuckets();
 		$form .= "\" /> " . gettext("Number of buckets available.") . "<br/></td></tr>";
 		$form .= "<tr><td class=\"vtable\"><input id=\"hogs\" name=\"hogs\" value=\"";
 		$tmpvalue = trim($this->GetHogs());
-		if(!empty($tmpvalue)) 
+		if(!empty($tmpvalue))
 			$form .=  $this->GetHogs();
 		$form .= "\" /> " . gettext("Bandwidth limit for hosts to not saturate link.") . "<br/></td></tr>";
 		$form .= "</table></td></tr>";
 		return $form;
 	}
 
-	function update_altq_queue_data(&$data) { 
+	function update_altq_queue_data(&$data) {
 		$this->ReadConfig($data);
 	}
 
@@ -2773,27 +2773,27 @@ class fairq_queue extends priq_queue {
 $dummynet_pipe_list = array();
 
 class dummynet_class {
-        var $qname;
+	var $qname;
 	var $qnumber; /* dummynet(4) uses numbers instead of names; maybe integrate with pf the same as altq does?! */
-        var $qlimit;
-        var $description;
+	var $qlimit;
+	var $description;
 	var $qenabled;
 	var $link;
 	var $qparent; /* link to upper class so we do things easily on WF2Q+ rule creation */
-        var $plr;
+	var $plr;
 
-        var $buckets;
-        /* mask parameters */
-        var $mask;
-        var $noerror;
-        
-        /* Accessor functions */
-        function SetLink($link) {
-                $this->link = $link;
-        }
-        function GetLink() {
-                return $this->link;
-        }
+	var $buckets;
+	/* mask parameters */
+	var $mask;
+	var $noerror;
+
+	/* Accessor functions */
+	function SetLink($link) {
+		$this->link = $link;
+	}
+	function GetLink() {
+		return $this->link;
+	}
 	function GetMask() {
 		if (!isset($this->mask["type"]))
 			$this->mask["type"] = "none";
@@ -2808,60 +2808,60 @@ class dummynet_class {
 	function SetParent(&$parent) {
 		$this->qparent = &$parent;
 	}
-        function GetEnabled() {
-                return $this->qenabled;
-        }
-        function SetEnabled($value) {
-                $this->qenabled = $value;
-        }
+	function GetEnabled() {
+		return $this->qenabled;
+	}
+	function SetEnabled($value) {
+		$this->qenabled = $value;
+	}
 	function CanHaveChildren() {
 		return false;
-        }
+	}
 	function CanBeDeleted() {
-                return true;
-        }
-        function GetQname() {
-                return $this->qname;
-        }
-        function SetQname($name) {
-                $this->qname = trim($name);
-        }
-        function GetQlimit() {
-                return $this->qlimit;
-        }
-        function SetQlimit($limit) {
-               	$this->qlimit = $limit;
-        }
-        function GetDescription() {
-                return $this->description;
-        }
-        function SetDescription($str) {
-                $this->description = trim($str);
-        }
-        function GetFirstime() {
-                return $this->firsttime;
-        }
-        function SetFirsttime($number) {
-                $this->firsttime = $number;
-        }
-        function GetBuckets() {
-                return $this->buckets;
-        }
-        function SetBuckets($buckets) {
-                $this->buckets = $buckets;
-        }
+		return true;
+	}
+	function GetQname() {
+		return $this->qname;
+	}
+	function SetQname($name) {
+		$this->qname = trim($name);
+	}
+	function GetQlimit() {
+		return $this->qlimit;
+	}
+	function SetQlimit($limit) {
+		$this->qlimit = $limit;
+	}
+	function GetDescription() {
+		return $this->description;
+	}
+	function SetDescription($str) {
+		$this->description = trim($str);
+	}
+	function GetFirstime() {
+		return $this->firsttime;
+	}
+	function SetFirsttime($number) {
+		$this->firsttime = $number;
+	}
+	function GetBuckets() {
+		return $this->buckets;
+	}
+	function SetBuckets($buckets) {
+		$this->buckets = $buckets;
+	}
 	function SetNumber($number) {
 		$this->qnumber = $number;
 	}
 	function GetNumber() {
 		return $this->qnumber;
 	}
-        function GetPlr() {
-                return $this->plr;
-        }
-        function SetPlr($plr) {
-                $this->plr = $plr;
-        }
+	function GetPlr() {
+		return $this->plr;
+	}
+	function SetPlr($plr) {
+		$this->plr = $plr;
+	}
 
 	function build_javascript() {
 		$javascript .= "<script type=\"text/javascript\">\n";
@@ -2875,7 +2875,7 @@ class dummynet_class {
 		$javascript .= "document.iform.maskbitsv6.value = \"\";\n";
 		$javascript .= "} else {\n";
 		$javascript .= "document.iform.maskbits.disabled = 0;\n";
-                $javascript .= "document.iform.maskbitsv6.disabled = 0;\n";
+		$javascript .= "document.iform.maskbitsv6.disabled = 0;\n";
 		$javascript .= "}}\n";
 		$javascript .= "//]]>\n";
 		$javascript .= "</script>\n";
@@ -2895,25 +2895,25 @@ class dummynet_class {
 		shaper_do_input_validation($data, $reqdfields, $reqdfieldsn, $input_errors);
 
 		if ($data['plr'] && (!is_numeric($data['plr']) ||
-			($data['plr'] < 0) || ($data['plr'] > 1))) 
+			($data['plr'] < 0) || ($data['plr'] > 1)))
 				$input_errors[] = gettext("Plr must be a value between 0 and 1.");
 		if ($data['buckets'] && (!is_numeric($data['buckets']) ||
 			($data['buckets'] < 16) || ($data['buckets'] > 65535)))
 				$input_errors[] = gettext("Buckets must be an integer between 16 and 65535.");
-		if ($data['qlimit'] && (!is_numeric($data['qlimit']))) 
-            		$input_errors[] = gettext("Queue limit must be an integer");
-        	if (!empty($data['newname']) && !preg_match("/^[a-zA-Z0-9_-]+$/", $data['newname']))
+		if ($data['qlimit'] && (!is_numeric($data['qlimit'])))
+			$input_errors[] = gettext("Queue limit must be an integer");
+		if (!empty($data['newname']) && !preg_match("/^[a-zA-Z0-9_-]+$/", $data['newname']))
 			$input_errors[] = gettext("Queue names must be alphanumeric and _ or - only.");
-        	if (!empty($data['name']) && !preg_match("/^[a-zA-Z0-9_-]+$/", $data['name']))
+		if (!empty($data['name']) && !preg_match("/^[a-zA-Z0-9_-]+$/", $data['name']))
 			$input_errors[] = gettext("Queue names must be alphanumeric and _ or - only.");
-                if (isset($data['maskbits']) && ($data['maskbits'] <> ""))
+		if (isset($data['maskbits']) && ($data['maskbits'] <> ""))
 			if ((!is_numeric($data['maskbits'])) || ($data['maskbits'] <= 0) || ($data['maskbits'] > 32))
 				$input_errors[] = gettext("IPV4 bit mask must be blank or numeric value between 1 and 32.");
 		if (isset($data['maskbitsv6']) && ($data['maskbitsv6'] <> ""))
 			if ((!is_numeric($data['maskbitsv6'])) || ($data['maskbitsv6'] <= 0) || ($data['maskbitsv6'] > 128))
 				$input_errors[] = gettext("IPV6 bit mask must be blank or numeric value between 1 and 128.");
 	}
-	
+
 	function build_mask_rules(&$pfq_rule) {
 		$mask = $this->GetMask();
 		if (!empty($mask['type'])) {
@@ -2925,9 +2925,9 @@ class dummynet_class {
 					$pfq_rule .= " src-ip6 /" . $mask['bitsv6'];
 				else
 					$pfq_rule .= " src-ip6 /128";
-                                if (!empty($mask['bits']) && ($mask['bits'] <> ""))
-                                        $pfq_rule .= sprintf(" src-ip 0x%x", gen_subnet_mask_long($mask['bits']));
-                                else
+				if (!empty($mask['bits']) && ($mask['bits'] <> ""))
+					$pfq_rule .= sprintf(" src-ip 0x%x", gen_subnet_mask_long($mask['bits']));
+				else
 					$pfq_rule .= " src-ip 0xffffffff";
 				break;
 			case 'dstaddress':
@@ -2935,30 +2935,30 @@ class dummynet_class {
 					$pfq_rule .= " dst-ip6 /" . $mask['bitsv6'];
 				else
 					$pfq_rule .= " dst-ip6 /128";
-                                if (!empty($mask['bits']) && ($mask['bits'] <> ""))
-                                        $pfq_rule .= sprintf(" dst-ip 0x%x", gen_subnet_mask_long($mask['bits']));
-                                else
+				if (!empty($mask['bits']) && ($mask['bits'] <> ""))
+					$pfq_rule .= sprintf(" dst-ip 0x%x", gen_subnet_mask_long($mask['bits']));
+				else
 					$pfq_rule .= " dst-ip 0xffffffff";
 				break;
 			default:
 				break;
 			}
-		}            
+		}
 	}
-        
+
 }
 
 class dnpipe_class extends dummynet_class {
-        var $delay;
+	var $delay;
 	var $qbandwidth = array();
 	var $qbandwidthtype;
 
 		/* This is here to help on form building and building rules/lists */
-        var $subqueues = array();
+	var $subqueues = array();
 
 	function CanHaveChildren() {
-	        return true;
-        }
+		return true;
+	}
 	function SetDelay($delay) {
 		$this->delay = $delay;
 	}
@@ -2971,13 +2971,13 @@ class dnpipe_class extends dummynet_class {
 			$q->delete_queue();
 		unset_dn_object_by_reference($this->GetLink());
 		mwexec("/sbin/ipfw pipe delete " . $this->GetNumber());
-        }
-        function GetBandwidth() {
-                return $this->qbandwidth;
-        }
-        function SetBandwidth($bandwidth) {
-                $this->qbandwidth = $bandwidth;
-        }
+	}
+	function GetBandwidth() {
+		return $this->qbandwidth;
+	}
+	function SetBandwidth($bandwidth) {
+		$this->qbandwidth = $bandwidth;
+	}
 		function GetBurst() {
 				return $this->qburst;
 		}
@@ -3004,7 +3004,7 @@ class dnpipe_class extends dummynet_class {
 		$number = dnqueue_find_nextnumber();
 		$q->SetNumber($number);
 		$this->subqueues[$q->GetQname()] = &$q;
-            
+
 		return $q;
 	}
 
@@ -3019,22 +3019,22 @@ class dnpipe_class extends dummynet_class {
 		return $qlist;
 	}
 
-        /*
-         * Should search even its children
-         */
-        function &find_queue($pipe, $qname) {
-                if ($qname == $this->GetQname()) 
-                        return $this;
-               	foreach ($this->subqueues as $q) {
-                       	$result =& $q->find_queue("", $qname);
-						if ($result)
-                       	        return $result;
-               	}
-        }
+	/*
+	 * Should search even its children
+	 */
+	function &find_queue($pipe, $qname) {
+		if ($qname == $this->GetQname())
+			return $this;
+		foreach ($this->subqueues as $q) {
+			$result =& $q->find_queue("", $qname);
+			if ($result)
+				return $result;
+		}
+	}
 
 	function &find_parentqueue($pipe, $qname) {
 		return NULL;
-       	}
+	}
 
 	function validate_input($data, &$input_errors) {
 		parent::validate_input($data, $input_errors);
@@ -3081,7 +3081,7 @@ class dnpipe_class extends dummynet_class {
 		if (!empty($_POST)) {
 			$bandwidth = array();
 			for ($i = 0; $i < 30; $i++) {
-				if (isset($q["bandwidth{$i}"]) && $q["bandwidth{$i}"] <> "") { 
+				if (isset($q["bandwidth{$i}"]) && $q["bandwidth{$i}"] <> "") {
 					$bw = array();
 					$bw['bw'] = $q["bandwidth{$i}"];
 					$bw['burst'] = $q["burst{$i}"];
@@ -3094,16 +3094,16 @@ class dnpipe_class extends dummynet_class {
 			}
 			$this->SetBandwidth($bandwidth);
 		}
-		
+
 		if (is_array($q['bandwidth']) && is_array($q['bandwidth']['item'])) {
 			$this->SetBandwidth($q['bandwidth']['item']);
 			$this->SetBurst($q['burst']['item']);
 		}
-			
+
 		if (isset($q['qlimit']) && $q['qlimit'] <> "")
-              		$this->SetQlimit($q['qlimit']);
+			$this->SetQlimit($q['qlimit']);
 		else
-              		$this->SetQlimit("");
+			$this->SetQlimit("");
 		if (isset($q['mask']) && $q['mask'] <> "")
 			$masktype = $q['mask'];
 		else
@@ -3118,33 +3118,33 @@ class dnpipe_class extends dummynet_class {
 			$maskbitsv6 = "";
 		$this->SetMask(array("type" => $masktype, "bits" => $maskbits, "bitsv6" => $maskbitsv6));
 		if (isset($q['buckets']) && $q['buckets'] <> "")
-              		$this->SetBuckets($q['buckets']);
+			$this->SetBuckets($q['buckets']);
 		else
-              		$this->SetBuckets("");
-            	if (isset($q['plr']) && $q['plr'] <> "")
-            		$this->SetPlr($q['plr']);
+			$this->SetBuckets("");
+		if (isset($q['plr']) && $q['plr'] <> "")
+			$this->SetPlr($q['plr']);
 		else
-            		$this->SetPlr("");
+			$this->SetPlr("");
 		if (isset($q['delay']) && $q['delay'] <> "")
-            		$this->SetDelay($q['delay']);
+			$this->SetDelay($q['delay']);
 		else
 			$this->SetDelay(0);
-            	if (isset($q['description']) && $q['description'] <> "")
+		if (isset($q['description']) && $q['description'] <> "")
 			$this->SetDescription($q['description']);
 		else
 			$this->SetDescription("");
 		$this->SetEnabled($q['enabled']);
 
-        }
+	}
 
 	function build_tree() {
-		$tree = " <li><a href=\"firewall_shaper_vinterface.php?pipe=" . $this->GetQname() ."&amp;queue=".$this->GetQname() ."&amp;action=show\">"; 
+		$tree = " <li><a href=\"firewall_shaper_vinterface.php?pipe=" . $this->GetQname() ."&amp;queue=".$this->GetQname() ."&amp;action=show\">";
 		$tree .= $this->GetQname() . "</a>";
 		if (is_array($this->subqueues)) {
 			$tree .= "<ul>";
 			foreach ($this->subqueues as $q)  {
 				$tree .= $q->build_tree();
-			}	
+			}
 			$tree .= "</ul>";
 		}
 		$tree .= "</li>";
@@ -3152,7 +3152,7 @@ class dnpipe_class extends dummynet_class {
 		return $tree;
 	}
 
-        function build_rules() {
+	function build_rules() {
 		global $config, $time_based_rules;
 
 		if ($this->GetEnabled() == "")
@@ -3214,9 +3214,9 @@ class dnpipe_class extends dummynet_class {
 		$pfq_rule .= " \n";
 
 		return $pfq_rule;
-        }
+	}
 
-	function update_dn_data(&$data) { 
+	function update_dn_data(&$data) {
 		$this->ReadConfig($data);
 	}
 
@@ -3224,7 +3224,7 @@ class dnpipe_class extends dummynet_class {
 		global $g, $config;
 
 		$javasr = parent::build_javascript();
-		
+
 		//build list of schedules
 		$schedules = "<option value='none'>none</option>";
 		if (is_array($config['schedules']) && is_array($config['schedules']['schedule'])) {
@@ -3270,7 +3270,7 @@ var addBwRowTo = (function() {
 function removeBwRow(el) {
 	var cel;
 	while (el && el.nodeName.toLowerCase() != "tr")
-	    el = el.parentNode;
+		el = el.parentNode;
 		if (el && el.parentNode) {
 			cel = el.getElementsByTagName("td").item(0);
 			el.parentNode.removeChild(el);
@@ -3281,10 +3281,10 @@ function removeBwRow(el) {
 
 EOD;
 
-	       return $javasr;
+		return $javasr;
 	}
 
-        function build_form() { 
+	function build_form() {
 		global $g, $config;
 
 		//build list of schedules
@@ -3298,13 +3298,13 @@ EOD;
 		}
 
 		$form = "<tr><td valign=\"middle\" class=\"vncellreq\"><br/>";
-                $form .= gettext("Enable");
-                $form .= "</td><td class=\"vncellreq\">";
-                $form .= " <input type=\"checkbox\" id=\"enabled\" name=\"enabled\" value=\"on\"";
-                if ($this->GetEnabled() == "on")
-                        $form .=  " checked=\"checked\"";
-                $form .= " /><span class=\"vexpl\"> " . gettext("Enable limiter and its children") . "</span>";
-                $form .= "</td></tr>";
+		$form .= gettext("Enable");
+		$form .= "</td><td class=\"vncellreq\">";
+		$form .= " <input type=\"checkbox\" id=\"enabled\" name=\"enabled\" value=\"on\"";
+		if ($this->GetEnabled() == "on")
+			$form .=  " checked=\"checked\"";
+		$form .= " /><span class=\"vexpl\"> " . gettext("Enable limiter and its children") . "</span>";
+		$form .= "</td></tr>";
 		$form .= "<tr><td valign=\"middle\" class=\"vncellreq\"><br/><span class=\"vexpl\">" . gettext("Name") . "</span></td>";
 		$form .= "<td class=\"vncellreq\">";
 		$form .= "<input type=\"text\" id=\"newname\" name=\"newname\" value=\"";
@@ -3413,28 +3413,28 @@ EOD;
 		$form .= "<br/> <span class=\"vexpl\">";
 		$form .= gettext("You may enter a description here for your reference (not parsed).") . "</span>";
 		$form .= "</td></tr>";
-      		$form .= "<tr id=\"sprtable4\">";
+		$form .= "<tr id=\"sprtable4\">";
 		$form .= "<td></td>";
-                $form .= "<td><div id=\"showadvancedboxspr\">";
-                $form .= "<p><input type=\"button\" onclick=\"show_source_port_range()\"";
+		$form .= "<td><div id=\"showadvancedboxspr\">";
+		$form .= "<p><input type=\"button\" onclick=\"show_source_port_range()\"";
 		$form .= " value=\"" . gettext("Show advanced options") . "\" />";
-                $form .= "</p></div></td></tr>";
-                $form .= "<tr style=\"display:none\" id=\"sprtable\">";
+		$form .= "</p></div></td></tr>";
+		$form .= "<tr style=\"display:none\" id=\"sprtable\">";
 
 		$form .= "<td valign=\"middle\" class=\"vncellreq\">" . gettext("Delay") . "</td>";
 		$form .= "<td valign=\"middle\" class=\"vncellreq\">";
 		$form .= "<input name=\"delay\" type=\"text\" id=\"delay\" size=\"5\" value=\"";
 		$form .= $this->GetDelay() . "\" />";
 		$form .= "&nbsp;ms<br/> <span class=\"vexpl\">" . gettext("Hint: in most cases, you "
-			  .  "should specify 0 here (or leave the field empty)") . "</span><br/>";
+		      .  "should specify 0 here (or leave the field empty)") . "</span><br/>";
 		$form .= "</td></tr>";
-      		$form .= "<tr style=\"display:none\" id=\"sprtable1\">";
+		$form .= "<tr style=\"display:none\" id=\"sprtable1\">";
 		$form .= "<td valign=\"middle\" class=\"vncellreq\">" . gettext("Packet loss rate") . "</td>";
 		$form .= "<td valign=\"middle\" class=\"vncellreq\">";
 		$form .= "<input name=\"plr\" type=\"text\" id=\"plr\" size=\"5\" value=\"";
 		$form .= $this->GetPlr() . "\" />";
 		$form .= "&nbsp;<br/> <span class=\"vexpl\">" . gettext("Hint: in most cases, you "
-			  .  "should specify 0 here (or leave the field empty). "
+		      .  "should specify 0 here (or leave the field empty). "
 		      .  "A value of 0.001 means one packet in 1000 gets dropped") . "</span>";
 		$form .= "</td></tr>";
 		$form .= "<tr style=\"display:none\" id=\"sprtable2\">";
@@ -3445,18 +3445,18 @@ EOD;
 		$form .= "&nbsp;slots<br/>";
 		$form .= "<span class=\"vexpl\">" . gettext("Hint: in most cases, you "
 		      .  "should leave the field empty. All packets in this pipe are placed into a fixed-size queue first, "
-	              .  "then they are delayed by value specified in the Delay field, and then they "
+		      .  "then they are delayed by value specified in the Delay field, and then they "
 		      .  "are delivered to their destination.") . "</span>";
 		$form .= "</td></tr>";
 		$form .= "<tr style=\"display:none\" id=\"sprtable5\">";
-                $form .= "<td valign=\"middle\" class=\"vncellreq\">" . gettext("Bucket Size") . "</td>";
-                $form .= "<td class=\"vncellreq\">";
-                $form .= "<input type=\"text\" id=\"buckets\" name=\"buckets\" value=\"";
-                $form .= $this->GetBuckets() . "\" />";
-                $form .= "&nbsp;slots<br/>";
-                $form .= "<span class=\"vexpl\">" . gettext("Hint: in most cases, you "
-                      .  "should leave the field empty. It increases the hash size set.");
-                $form .= "</span></td></tr>";
+		$form .= "<td valign=\"middle\" class=\"vncellreq\">" . gettext("Bucket Size") . "</td>";
+		$form .= "<td class=\"vncellreq\">";
+		$form .= "<input type=\"text\" id=\"buckets\" name=\"buckets\" value=\"";
+		$form .= $this->GetBuckets() . "\" />";
+		$form .= "&nbsp;slots<br/>";
+		$form .= "<span class=\"vexpl\">" . gettext("Hint: in most cases, you "
+			.  "should leave the field empty. It increases the hash size set.");
+		$form .= "</span></td></tr>";
 
 		return $form;
 
@@ -3464,14 +3464,14 @@ EOD;
 
 	function wconfig() {
 		$cflink =& get_dn_reference_to_me_in_config($this->GetLink());
-            	if (!is_array($cflink))
-            		$cflink = array();
+		if (!is_array($cflink))
+			$cflink = array();
 		$cflink['name'] = $this->GetQname();
 		$cflink['number'] = $this->GetNumber();
-            	$cflink['qlimit'] = $this->GetQlimit();
-            	$cflink['plr'] = $this->GetPlr();
-            	$cflink['description'] = $this->GetDescription();
-               
+		$cflink['qlimit'] = $this->GetQlimit();
+		$cflink['plr'] = $this->GetPlr();
+		$cflink['description'] = $this->GetDescription();
+
 		$bandwidth = $this->GetBandwidth();
 		if (is_array($bandwidth)) {
 			$cflink['bandwidth'] = array();
@@ -3485,22 +3485,22 @@ EOD;
 		$mask = $this->GetMask();
 		$cflink['mask'] = $mask['type'];
 		$cflink['maskbits'] = $mask['bits'];
-                $cflink['maskbitsv6'] = $mask['bitsv6'];
+		$cflink['maskbitsv6'] = $mask['bitsv6'];
 		$cflink['delay'] = $this->GetDelay();
 	}
 
 }
 
 class dnqueue_class extends dummynet_class {
-        var $pipeparent;
-        var $weight;
+	var $pipeparent;
+	var $weight;
 
-        function GetWeight() {
-                return $this->weight;
-        }
-        function SetWeight($weight) {
-                $this->weight = $weight;
-        }
+	function GetWeight() {
+		return $this->weight;
+	}
+	function SetWeight($weight) {
+		$this->weight = $weight;
+	}
 	function GetPipe() {
 		return $this->pipeparent;
 	}
@@ -3515,35 +3515,35 @@ class dnqueue_class extends dummynet_class {
 		cleanup_dnqueue_from_rules($this->GetQname());
 		unset_dn_object_by_reference($this->GetLink());
 		mwexec("/sbin/ipfw queue delete " . $this->GetNumber());
-        }
+	}
 
 	function validate_input($data, &$input_errors) {
 		parent::validate_input($data, $input_errors);
 
 		if ($data['weight'] && ((!is_numeric($data['weight'])) ||
-			($data['weight'] < 1 && $data['weight'] > 100))) 
-				$input_errors[] = gettext("Weight must be an integer between 1 and 100.");
+			($data['weight'] < 1 && $data['weight'] > 100)))
+			$input_errors[] = gettext("Weight must be an integer between 1 and 100.");
 	}
 
-        /*
-         * Should search even its children
-         */
-        function &find_queue($pipe, $qname) {
-                if ($qname == $this->GetQname()) 
-                	return $this;
+	/*
+	 * Should search even its children
+	 */
+	function &find_queue($pipe, $qname) {
+		if ($qname == $this->GetQname())
+			return $this;
 		else
 			return NULL;
-        }
+	}
 
 	function &find_parentqueue($pipe, $qname) {
 		return $this->qparent;
-        }
+	}
 
-        function &get_queue_list(&$qlist) {
+	function &get_queue_list(&$qlist) {
 		if ($this->GetEnabled() == "")
 			return;
-        	$qlist[$this->GetQname()] = "?" .$this->GetNumber();
-        }		
+		$qlist[$this->GetQname()] = "?" .$this->GetNumber();
+	}
 
 	function ReadConfig(&$q) {
 		if (!empty($q['name']) && !empty($q['newname']) && $q['name'] != $q['newname']) {
@@ -3555,9 +3555,9 @@ class dnqueue_class extends dummynet_class {
 		}
 		$this->SetNumber($q['number']);
 		if (isset($q['qlimit']) && $q['qlimit'] <> "")
-       		       	$this->SetQlimit($q['qlimit']);
+			$this->SetQlimit($q['qlimit']);
 		else
-       		       	$this->SetQlimit("");
+			$this->SetQlimit("");
 		if (isset($q['mask']) && $q['mask'] <> "")
 			$masktype = $q['mask'];
 		else
@@ -3579,34 +3579,34 @@ class dnqueue_class extends dummynet_class {
 			$this->SetPlr($q['plr']);
 		else
 			$this->SetPlr("");
-       		if (isset($q['weight']) && $q['weight'] <> "")
-            		$this->SetWeight($q['weight']);
+		if (isset($q['weight']) && $q['weight'] <> "")
+			$this->SetWeight($q['weight']);
 		else
-            		$this->SetWeight("");
-            	if (isset($q['description']) && $q['description'] <> "")
+			$this->SetWeight("");
+		if (isset($q['description']) && $q['description'] <> "")
 			$this->SetDescription($q['description']);
 		else
 			$this->SetDescription("");
 		$this->SetEnabled($q['enabled']);
-        }
+	}
 
 	function build_tree() {
 		$parent =& $this->GetParent();
-		$tree = " <li><a href=\"firewall_shaper_vinterface.php?pipe=" . $parent->GetQname() ."&amp;queue=" . $this->GetQname() ."&amp;action=show\">"; 
+		$tree = " <li><a href=\"firewall_shaper_vinterface.php?pipe=" . $parent->GetQname() ."&amp;queue=" . $this->GetQname() ."&amp;action=show\">";
 		$tree .= $this->GetQname() . "</a>";
 		$tree .= "</li>";
 
 		return $tree;
 	}
 
-        function build_rules() {
+	function build_rules() {
 		if ($this->GetEnabled() == "")
-			return; 
+			return;
 
 		$parent =& $this->GetParent();
-            	$pfq_rule = "queue ". $this->GetNumber() . " config pipe " . $parent->GetNumber();
+		$pfq_rule = "queue ". $this->GetNumber() . " config pipe " . $parent->GetNumber();
 		if ($this->GetQlimit())
-                    	$pfq_rule .= " queue " . $this->GetQlimit();
+			$pfq_rule .= " queue " . $this->GetQlimit();
 		if ($this->GetWeight())
 			$pfq_rule .= " weight " . $this->GetWeight();
 		if ($this->GetBuckets())
@@ -3617,20 +3617,20 @@ class dnqueue_class extends dummynet_class {
 		return $pfq_rule;
 	}
 
-        function build_javascript() {
+	function build_javascript() {
 		return parent::build_javascript();
 	}
 
 
-        function build_form() { 
+	function build_form() {
 		$form = "<tr><td valign=\"middle\" class=\"vncellreq\"><br/>";
-                $form .= gettext("Enable/Disable");
-                $form .= "</td><td class=\"vncellreq\">";
-                $form .= " <input type=\"checkbox\" id=\"enabled\" name=\"enabled\" value=\"on\"";
-                if ($this->GetEnabled() == "on")
-                        $form .=  " checked=\"checked\"";
-                $form .= " /><span class=\"vexpl\"> " . gettext("Enable/Disable queue") . "</span>";
-                $form .= "</td></tr>";
+		$form .= gettext("Enable/Disable");
+		$form .= "</td><td class=\"vncellreq\">";
+		$form .= " <input type=\"checkbox\" id=\"enabled\" name=\"enabled\" value=\"on\"";
+		if ($this->GetEnabled() == "on")
+			$form .=  " checked=\"checked\"";
+		$form .= " /><span class=\"vexpl\"> " . gettext("Enable/Disable queue") . "</span>";
+		$form .= "</td></tr>";
 		$form .= "<tr><td valign=\"middle\" class=\"vncellreq\"><br/><span class=\"vexpl\">" . gettext("Name") . "</span></td>";
 		$form .= "<td class=\"vncellreq\">";
 		$form .= "<input type=\"text\" id=\"newname\" name=\"newname\" value=\"";
@@ -3661,13 +3661,13 @@ class dnqueue_class extends dummynet_class {
 		$form .= "</select>";
 		$form .= "&nbsp;slots<br/>";
 		$form .= "<span class=\"vexpl\">" . gettext("If 'source' or 'destination' slots is chosen, \n"
-		      .  "a dynamic pipe with the bandwidth, delay, packet loss and queue size given above will \n"
-		      .  "be created for each source/destination IP address encountered, \n"
-		      .  "respectively. This makes it possible to easily specify bandwidth \n"
-		      .  "limits per host.") . "</span><br/>";
+			.  "a dynamic pipe with the bandwidth, delay, packet loss and queue size given above will \n"
+			.  "be created for each source/destination IP address encountered, \n"
+			.  "respectively. This makes it possible to easily specify bandwidth \n"
+			.  "limits per host.") . "</span><br/>";
 		$form .= "255.255.255.255/&nbsp;<input type=\"text\" class=\"formfld unknown\" size=\"2\" id=\"maskbits\" name=\"maskbits\" value=\"";
 		if ($mask['type'] <> "none")
-		$form .= $mask['bits'];
+			$form .= $mask['bits'];
 		$form .= "\"";
 		if ($mask['type'] == "none")
 			$form .= " disabled";
@@ -3675,16 +3675,16 @@ class dnqueue_class extends dummynet_class {
 		$form .= "&nbsp; IPV4 mask bits (1-32)<br/>";
 		$form .= "ffff:ffff:ffff:ffff:ffff:ffff:ffff:ffff/&nbsp;<input type=\"text\" class=\"formfld unknown\" size=\"2\" id=\"maskbitsv6\" name=\"maskbitsv6\" value=\"";
 		if ($mask['type'] <> "none")
-		$form .= $mask['bitsv6'];
+			$form .= $mask['bitsv6'];
 		$form .= "\"";
 		if ($mask['type'] == "none")
 			$form .= " disabled";
 		$form .= " />";
 		$form .= "&nbsp; IPV6 mask bits (1-128)<br/>";
 		$form .= "<span class=\"vexpl\">" . gettext("If 'source' or 'destination' slots is chosen, \n"
-		      .  "leaving the mask bits blank will create one pipe per host. Otherwise specify \n"
-		      .  "the number of 'one' bits in the subnet mask used to group multiple hosts \n"
-		      .  "per queue.") . "</span>";
+			.  "leaving the mask bits blank will create one pipe per host. Otherwise specify \n"
+			.  "the number of 'one' bits in the subnet mask used to group multiple hosts \n"
+			.  "per queue.") . "</span>";
 		$form .= "</td></tr>";
 		$form .= "<tr><td valign=\"middle\" class=\"vncellreq\">" . gettext("Description") . "</td>";
 		$form .= "<td class=\"vncellreq\">";
@@ -3696,17 +3696,17 @@ class dnqueue_class extends dummynet_class {
 		$form .= "</td></tr>";
 		$form .= "<tr id=\"sprtable4\">";
 		$form .= "<td></td>";
-                $form .= "<td><div id=\"showadvancedboxspr\">";
-                $form .= "<p><input type=\"button\" onclick=\"show_source_port_range()\"";
+		$form .= "<td><div id=\"showadvancedboxspr\">";
+		$form .= "<p><input type=\"button\" onclick=\"show_source_port_range()\"";
 		$form .= " value=\"" . gettext("Show advanced options") . "\" />";
-                $form .= "</p></div></td></tr>";
+		$form .= "</p></div></td></tr>";
 		$form .= "<tr style=\"display:none\" id=\"sprtable\">";
 		$form .= "<td valign=\"middle\" class=\"vncellreq\">" . gettext("Weight") . "</td>";
 		$form .= "<td valign=\"middle\" class=\"vncellreq\">";
 		$form .= "<input name=\"weight\" type=\"text\" id=\"weight\" size=\"5\" value=\"";
 		$form .= $this->GetWeight() . "\" />";
 		$form .= "&nbsp;<br/> <span class=\"vexpl\">" . gettext("Hint: For queues under the same parent "
-		      .  "this specifies the share that a queue gets(values range from 1 to 100, you can leave it blank otherwise)") . "</span>";
+			.  "this specifies the share that a queue gets(values range from 1 to 100, you can leave it blank otherwise)") . "</span>";
 		$form .= "</td></tr>";
 		$form .= "<tr style=\"display:none\" id=\"sprtable1\">";
 		$form .= "<td valign=\"middle\" class=\"vncellreq\">" . gettext("Packet loss rate") . "</td>";
@@ -3714,8 +3714,8 @@ class dnqueue_class extends dummynet_class {
 		$form .= "<input name=\"plr\" type=\"text\" id=\"plr\" size=\"5\" value=\"";
 		$form .= $this->GetPlr() . "\" />";
 		$form .= "&nbsp;<br/> <span class=\"vexpl\">" . gettext("Hint: in most cases, you "
-			  .  "should specify 0 here (or leave the field empty). "
-			  .  "A value of 0.001 means one packet in 1000 gets dropped") . "</span>";
+			.  "should specify 0 here (or leave the field empty). "
+			.  "A value of 0.001 means one packet in 1000 gets dropped") . "</span>";
 		$form .= "</td></tr>";
 		$form .= "<tr style=\"display:none\" id=\"sprtable2\">";
 		$form .= "<td valign=\"middle\" class=\"vncellreq\">" . gettext("Queue Size") . "</td>";
@@ -3724,19 +3724,19 @@ class dnqueue_class extends dummynet_class {
 		$form .= $this->GetQlimit() . "\" />";
 		$form .= "&nbsp;slots<br/>";
 		$form .= "<span class=\"vexpl\">" . gettext("Hint: in most cases, you "
-			  .  "should leave the field empty. All packets in this pipe are placed into a fixed-size queue first, "
-			  .  "then they are delayed by value specified in the Delay field, and then they "
-			  .  "are delivered to their destination.") . "</span>";
+			.  "should leave the field empty. All packets in this pipe are placed into a fixed-size queue first, "
+			.  "then they are delayed by value specified in the Delay field, and then they "
+			.  "are delivered to their destination.") . "</span>";
 		$form .= "</td></tr>";
 		$form .= "<tr style=\"display:none\" id=\"sprtable5\">";
-                $form .= "<td valign=\"middle\" class=\"vncellreq\">" . gettext("Bucket Size") . "</td>";
-                $form .= "<td class=\"vncellreq\">";
-                $form .= "<input type=\"text\" id=\"buckets\" name=\"buckets\" value=\"";
-                $form .= $this->GetBuckets() . "\" />";
-                $form .= "&nbsp;" . gettext("slots") . "<br/>";
-                $form .= "<span class=\"vexpl\">" . gettext("Hint: in most cases, you "
-                      .  "should leave the field empty. It increases the hash size set.");
-                $form .= "</span></td></tr>";
+		$form .= "<td valign=\"middle\" class=\"vncellreq\">" . gettext("Bucket Size") . "</td>";
+		$form .= "<td class=\"vncellreq\">";
+		$form .= "<input type=\"text\" id=\"buckets\" name=\"buckets\" value=\"";
+		$form .= $this->GetBuckets() . "\" />";
+		$form .= "&nbsp;" . gettext("slots") . "<br/>";
+		$form .= "<span class=\"vexpl\">" . gettext("Hint: in most cases, you "
+			.  "should leave the field empty. It increases the hash size set.");
+		$form .= "</span></td></tr>";
 
 		$form .= "<input type=\"hidden\" id=\"pipe\" name=\"pipe\"";
 		$form .= " value=\"" . $this->GetPipe() . "\" />";
@@ -3745,25 +3745,25 @@ class dnqueue_class extends dummynet_class {
 
 	}
 
-        function update_dn_data(&$data) { 
+	function update_dn_data(&$data) {
 		$this->ReadConfig($data);
 	}
 
 	function wconfig() {
 		$cflink =& get_dn_reference_to_me_in_config($this->GetLink());
-            	if (!is_array($cflink))
-            		$cflink = array();
+		if (!is_array($cflink))
+			$cflink = array();
 		$cflink['name'] = $this->GetQname();
 		$cflink['number'] = $this->GetNumber();
-            	$cflink['qlimit'] = $this->GetQlimit();
-            	$cflink['description'] = $this->GetDescription();
+		$cflink['qlimit'] = $this->GetQlimit();
+		$cflink['description'] = $this->GetDescription();
 		$cflink['weight'] = $this->GetWeight();
 		$cflink['enabled'] = $this->GetEnabled();
 		$cflink['buckets'] = $this->GetBuckets();
 		$mask = $this->GetMask();
 		$cflink['mask'] = $mask['type'];
 		$cflink['maskbits'] = $mask['bits'];
-                $cflink['maskbitsv6'] = $mask['bitsv6'];
+		$cflink['maskbitsv6'] = $mask['bitsv6'];
 	}
 }
 
@@ -3771,232 +3771,232 @@ class dnqueue_class extends dummynet_class {
 $layer7_rules_list = array();
 
 class layer7 {
-    
-    var $rname; //alias
-    var $rdescription; //alias description
-    var $rport; //divert port
-    var $renabled; //rule enabled
-    var $rsets = array(); //array of l7 associations
-    
-    // Auxiliary functions
-    
-    function GetRName() {
-        return $this->rname;
-    }
-    function SetRName($rname) {
-        $this->rname = $rname;
-    }
-    function GetRDescription() {
-        return $this->rdescription;
-    }
-    function SetRDescription($rdescription) {
-        $this->rdescription = $rdescription;
-    }
-    function GetRPort() {
-        return $this->rport;
-    }
-    function SetRPort($rport) {
-        $this->rport = $rport;
-    }
-    function GetREnabled() {
-        return $this->renabled;
-    }
-    function SetREnabled($value) {
-        $this->renabled = $value;
-    }
-    function GetRl7() {
-        return $this->rsets;
-    }
-    function SetRl7($rsets) {
-        $this->rsets = $rsets;
-    }
-    
-    //Add a tuple (rule,sctructure,element) to the $rsets
-    
-    function add_rule($l7set) {
-       	$this->rsets[] = $l7set;
-    }
-    
-    // Build the layer7 rules
-    function build_l7_rules() {
-        if($this->GetREnabled() == "") {
-            return;
-        }
-        //$l7rules = "#" . $this->rdescription . "\n";
-        foreach ($this->rsets as $rl7) {
-            $l7rules .= $rl7->build_rules();
-        }
-        return $l7rules;
-    }
-    
-    // Read the config from array
-    function ReadConfig(&$qname, &$q) {
-        $this->SetRName($qname);
-        $this->SetREnabled($q['enabled']);
-        $this->SetRPort($q['divert_port']);
-        if(isset($q['description']) && $q['description'] <> "")
-            $this->SetRDescription($q['description']);
-        $rsets = $q['l7rules'];
-        //Put individual rules in the array
-	if(is_array($rsets)) {
-	    $this->rsets = array(); // XXX: ugly hack
-	    foreach($rsets as $l7r) {
-	        $l7obj = new l7rule();
-	        $l7obj->SetRProtocol($l7r['protocol']);
-	        $l7obj->SetRStructure($l7r['structure']);
-	        $l7obj->SetRBehaviour($l7r['behaviour']);
-	        $this->add_rule($l7obj);
-	    }
-	}
-    }
-    
-    //Generate a random port for the divert socket
-    function gen_divert_port() {
-        $dports = get_divert_ports(); //array of used ports
-	$divert_port = 1; // Initialize
-	while (($divert_port % 2) != 0 || in_array($divert_port, $dports)) {
-		$divert_port = rand(40000, 60000);
-	}
-        return $divert_port;
-    }
-    
-    //Helps building the left tree
-    function build_tree() {
-        $tree = " <li><a href=\"firewall_shaper_layer7.php?container=" . $this->GetRName() ."&amp;action=show\">"; 
-        $tree .= $this->GetRName() . "</a>";
-	$tree .= "</li>";
 
-	return $tree;
-    }
-    
-    function build_form() {
-        $form = "<tr><td valign=\"middle\" class=\"vncellreq\"><br/>";
-	$form .= gettext("Enable/Disable");
-	$form .= "</td><td class=\"vncellreq\">";
-	$form .= " <input type=\"checkbox\" id=\"enabled\" name=\"enabled\" value=\"on\" ";
-	if ($this->GetREnabled() == "on") {
-       	    $form .=  "checked=\"checked\"";
-	}
-	$form .= " /><span class=\"vexpl\"> " . gettext("Enable/Disable layer7 Container") . "</span>";
-	$form .= "</td></tr>";
-        $form .= "<tr><td valign=\"middle\" class=\"vncellreq\"><br/><span class=\"vexpl\">" . gettext("Name") . "</span></td>";
-	$form .= "<td class=\"vncellreq\">";
-	$form .= "<input type=\"text\" id=\"container\" name=\"container\" value=\"";
-	$form .= $this->GetRName()."\" />";
-	$form .= "</td></tr>";
-	$form .= "<tr><td valign=\"middle\" class=\"vncellreq\">" . gettext("Description") . "</td>";
-	$form .= "<td class=\"vncellreq\">";
-	$form .= "<input type=\"text\" class=\"formfld unknown\" size=\"40\" id=\"description\" name=\"description\" value=\"";
-	$form .= $this->GetRDescription();
-	$form .= "\" />";
-	$form .= "<br/> <span class=\"vexpl\">";
-	$form .= gettext("You may enter a description here for your reference (not parsed).") . "</span>";
-	$form .= "</td></tr>";
+	var $rname; //alias
+	var $rdescription; //alias description
+	var $rport; //divert port
+	var $renabled; //rule enabled
+	var $rsets = array(); //array of l7 associations
 
-	return $form;
-    }
-    
-    //Write the setting to the $config array
-    function wconfig() {
-	global $config;
+	// Auxiliary functions
 
-	if(!is_array($config['l7shaper']['container'])) {
-		$config['l7shaper']['container'] = array();
+	function GetRName() {
+		return $this->rname;
 	}
-        //
-        $cflink =& get_l7c_reference_to_me_in_config($this->GetRName());
-	// Test if this rule does exists already
-	if(!$cflink) {
-		$cflink =& $config['l7shaper']['container'][];
+	function SetRName($rname) {
+		$this->rname = $rname;
 	}
-	$cflink['name'] = $this->GetRName();
-        $cflink['enabled'] = $this->GetREnabled();
-        $cflink['description'] = $this->GetRDescription();
-        $cflink['divert_port'] = $this->GetRPort();
-        
-	//Destroy previously existent rules
-	if(is_array($cflink['rules'])) {
-		unset($cflink['l7rules']);
+	function GetRDescription() {
+		return $this->rdescription;
+	}
+	function SetRDescription($rdescription) {
+		$this->rdescription = $rdescription;
+	}
+	function GetRPort() {
+		return $this->rport;
+	}
+	function SetRPort($rport) {
+		$this->rport = $rport;
+	}
+	function GetREnabled() {
+		return $this->renabled;
+	}
+	function SetREnabled($value) {
+		$this->renabled = $value;
+	}
+	function GetRl7() {
+		return $this->rsets;
+	}
+	function SetRl7($rsets) {
+		$this->rsets = $rsets;
 	}
 
-        $cflink['l7rules'] = array();
+	//Add a tuple (rule,sctructure,element) to the $rsets
 
-        $i = 0;
-        foreach($this->rsets as $rulel7) {
-            $cflink['l7rules'][$i]['protocol'] = $rulel7->GetRProtocol();
-            $cflink['l7rules'][$i]['structure'] = $rulel7->GetRStructure();
-            $cflink['l7rules'][$i]['behaviour'] = $rulel7->GetRBehaviour();
-            $i++;
-        }
-    }
-    
-    //This function is necessary to help producing the overload options for keep state
-    function get_unique_structures() {
-        
-        $unique_structures = array("action" => false, "dummynet" => false, "altq" => false);
-        foreach($this->rsets as $l7rule) {
-		if($l7rule->GetRStructure() == "action")
-			$unique_structures['action'] = true;
-		else if($l7rule->GetRStructure() == "limiter")
-			$unique_structures['dummynet'] = true;
-		else
-			$unique_structures['altq'] = true;
-        }
-	//Delete non used structures so we don't have to check this in filter.inc
-	foreach($unique_structures as $key => $value)
-		if(!$value)
-			unset($unique_structures[$key]);
-        return $unique_structures;
-    }
-    
-    function validate_input($data, &$input_errors) {
-	$reqdfields[] = "container";
-	$reqdfieldsn[] = gettext("Name");
+	function add_rule($l7set) {
+		$this->rsets[] = $l7set;
+	}
 
-	shaper_do_input_validation($data, $reqdfields, $reqdfieldsn, $input_errors);
-        
-        if (!preg_match("/^[a-zA-Z0-9_-]+$/", $data['container']))
-            $input_errors[] = gettext("Queue names must be alphanumeric and _ or - only.");
-    }
-    
-    function delete_l7c() {
-	mwexec("/bin/pkill -f 'ipfw-classifyd .* -p ". $this->GetRPort() . "'", true);
-	unset_l7_object_by_reference($this->GetRName());
-	cleanup_l7_from_rules($this->GetRName());
-    }
+	// Build the layer7 rules
+	function build_l7_rules() {
+		if($this->GetREnabled() == "") {
+			return;
+		}
+		//$l7rules = "#" . $this->rdescription . "\n";
+		foreach ($this->rsets as $rl7) {
+			$l7rules .= $rl7->build_rules();
+		}
+		return $l7rules;
+	}
+
+	// Read the config from array
+	function ReadConfig(&$qname, &$q) {
+		$this->SetRName($qname);
+		$this->SetREnabled($q['enabled']);
+		$this->SetRPort($q['divert_port']);
+		if(isset($q['description']) && $q['description'] <> "")
+			$this->SetRDescription($q['description']);
+		$rsets = $q['l7rules'];
+		//Put individual rules in the array
+		if(is_array($rsets)) {
+			$this->rsets = array(); // XXX: ugly hack
+			foreach($rsets as $l7r) {
+				$l7obj = new l7rule();
+				$l7obj->SetRProtocol($l7r['protocol']);
+				$l7obj->SetRStructure($l7r['structure']);
+				$l7obj->SetRBehaviour($l7r['behaviour']);
+				$this->add_rule($l7obj);
+			}
+		}
+	}
+
+	//Generate a random port for the divert socket
+	function gen_divert_port() {
+		$dports = get_divert_ports(); //array of used ports
+		$divert_port = 1; // Initialize
+		while (($divert_port % 2) != 0 || in_array($divert_port, $dports)) {
+			$divert_port = rand(40000, 60000);
+		}
+		return $divert_port;
+	}
+
+	//Helps building the left tree
+	function build_tree() {
+		$tree = " <li><a href=\"firewall_shaper_layer7.php?container=" . $this->GetRName() ."&amp;action=show\">";
+		$tree .= $this->GetRName() . "</a>";
+		$tree .= "</li>";
+
+		return $tree;
+	}
+
+	function build_form() {
+		$form = "<tr><td valign=\"middle\" class=\"vncellreq\"><br/>";
+		$form .= gettext("Enable/Disable");
+		$form .= "</td><td class=\"vncellreq\">";
+		$form .= " <input type=\"checkbox\" id=\"enabled\" name=\"enabled\" value=\"on\" ";
+		if ($this->GetREnabled() == "on") {
+			$form .=  "checked=\"checked\"";
+		}
+		$form .= " /><span class=\"vexpl\"> " . gettext("Enable/Disable layer7 Container") . "</span>";
+		$form .= "</td></tr>";
+		$form .= "<tr><td valign=\"middle\" class=\"vncellreq\"><br/><span class=\"vexpl\">" . gettext("Name") . "</span></td>";
+		$form .= "<td class=\"vncellreq\">";
+		$form .= "<input type=\"text\" id=\"container\" name=\"container\" value=\"";
+		$form .= $this->GetRName()."\" />";
+		$form .= "</td></tr>";
+		$form .= "<tr><td valign=\"middle\" class=\"vncellreq\">" . gettext("Description") . "</td>";
+		$form .= "<td class=\"vncellreq\">";
+		$form .= "<input type=\"text\" class=\"formfld unknown\" size=\"40\" id=\"description\" name=\"description\" value=\"";
+		$form .= $this->GetRDescription();
+		$form .= "\" />";
+		$form .= "<br/> <span class=\"vexpl\">";
+		$form .= gettext("You may enter a description here for your reference (not parsed).") . "</span>";
+		$form .= "</td></tr>";
+
+		return $form;
+	}
+
+	//Write the setting to the $config array
+	function wconfig() {
+		global $config;
+
+		if(!is_array($config['l7shaper']['container'])) {
+			$config['l7shaper']['container'] = array();
+		}
+		//
+		$cflink =& get_l7c_reference_to_me_in_config($this->GetRName());
+		// Test if this rule does exists already
+		if(!$cflink) {
+			$cflink =& $config['l7shaper']['container'][];
+		}
+		$cflink['name'] = $this->GetRName();
+		$cflink['enabled'] = $this->GetREnabled();
+		$cflink['description'] = $this->GetRDescription();
+		$cflink['divert_port'] = $this->GetRPort();
+
+		//Destroy previously existent rules
+		if(is_array($cflink['rules'])) {
+			unset($cflink['l7rules']);
+		}
+
+		$cflink['l7rules'] = array();
+
+		$i = 0;
+		foreach($this->rsets as $rulel7) {
+			$cflink['l7rules'][$i]['protocol'] = $rulel7->GetRProtocol();
+			$cflink['l7rules'][$i]['structure'] = $rulel7->GetRStructure();
+			$cflink['l7rules'][$i]['behaviour'] = $rulel7->GetRBehaviour();
+			$i++;
+		}
+	}
+
+	//This function is necessary to help producing the overload options for keep state
+	function get_unique_structures() {
+
+		$unique_structures = array("action" => false, "dummynet" => false, "altq" => false);
+		foreach($this->rsets as $l7rule) {
+			if($l7rule->GetRStructure() == "action")
+				$unique_structures['action'] = true;
+			else if($l7rule->GetRStructure() == "limiter")
+				$unique_structures['dummynet'] = true;
+			else
+				$unique_structures['altq'] = true;
+		}
+		//Delete non used structures so we don't have to check this in filter.inc
+		foreach($unique_structures as $key => $value)
+			if(!$value)
+				unset($unique_structures[$key]);
+		return $unique_structures;
+	}
+
+	function validate_input($data, &$input_errors) {
+		$reqdfields[] = "container";
+		$reqdfieldsn[] = gettext("Name");
+
+		shaper_do_input_validation($data, $reqdfields, $reqdfieldsn, $input_errors);
+
+		if (!preg_match("/^[a-zA-Z0-9_-]+$/", $data['container']))
+			$input_errors[] = gettext("Queue names must be alphanumeric and _ or - only.");
+	}
+
+	function delete_l7c() {
+		mwexec("/bin/pkill -f 'ipfw-classifyd .* -p ". $this->GetRPort() . "'", true);
+		unset_l7_object_by_reference($this->GetRName());
+		cleanup_l7_from_rules($this->GetRName());
+	}
 }
 
 class l7rule {
-    
-    var $rprotocol; //protocol
-    var $rstructure; //action, limiter, queue
-    var $rbehaviour; //allow, block, queue_name, pipe_number ...
-    
-    //Auxiliary Functions
-    
-    function GetRProtocol() {
-        return $this->rprotocol;
-    }
-    function SetRProtocol($rprotocol) {
-        $this->rprotocol = $rprotocol;
-    }
-    function GetRStructure() {
-        return $this->rstructure;
-    }
-    function SetRStructure($rstructure) {
-        $this->rstructure = $rstructure;
-    }
-    function GetRBehaviour() {
-        return $this->rbehaviour;
-    }
-    function SetRBehaviour($rbehaviour) {
-        $this->rbehaviour = $rbehaviour;
-    }
-    
-    //XXX Do we need to test any particularity for AltQ queues?
-    function build_rules() {
-	global $dummynet_pipe_list;
-	switch ($this->GetRStructure()) {
+
+	var $rprotocol; //protocol
+	var $rstructure; //action, limiter, queue
+	var $rbehaviour; //allow, block, queue_name, pipe_number ...
+
+	//Auxiliary Functions
+
+	function GetRProtocol() {
+		return $this->rprotocol;
+	}
+	function SetRProtocol($rprotocol) {
+		$this->rprotocol = $rprotocol;
+	}
+	function GetRStructure() {
+		return $this->rstructure;
+	}
+	function SetRStructure($rstructure) {
+		$this->rstructure = $rstructure;
+	}
+	function GetRBehaviour() {
+		return $this->rbehaviour;
+	}
+	function SetRBehaviour($rbehaviour) {
+		$this->rbehaviour = $rbehaviour;
+	}
+
+	//XXX Do we need to test any particularity for AltQ queues?
+	function build_rules() {
+		global $dummynet_pipe_list;
+		switch ($this->GetRStructure()) {
 		case "limiter":
 			read_dummynet_config();
 			$dn_list =& get_unique_dnqueue_list();
@@ -4018,22 +4018,22 @@ class l7rule {
 		default: //This is for action and for altq
 			$l7rule = $this->GetRProtocol() . " = " . $this->GetRStructure() . " " . $this->GetRBehaviour() . "\n";
 			break;
+		}
+		return $l7rule;
 	}
-        return $l7rule;
-    }
 }
 
 /*
  * This function allows to return an array with all the used divert socket ports
  */
 function get_divert_ports() {
-    global $layer7_rules_list;
-    $dports = array();
-    
-    foreach($layer7_rules_list as $l7r)
-        $dports[] = $l7r->GetRPort();
-    
-    return $dports;
+	global $layer7_rules_list;
+	$dports = array();
+
+	foreach($layer7_rules_list as $l7r)
+		$dports[] = $l7r->GetRPort();
+
+	return $dports;
 }
 
 function &get_l7c_reference_to_me_in_config(&$name) {
@@ -4046,14 +4046,14 @@ function &get_l7c_reference_to_me_in_config(&$name) {
 			if($value['name'] == $name)
 				$ptr =& $config['l7shaper']['container'][$key];
 		}
-	}	
+	}
 	return $ptr;
-// $ptr can be null. has to be checked later
+	// $ptr can be null. has to be checked later
 }
 
 function unset_l7_object_by_reference(&$name) {
 	global $config;
-        
+
 	if(is_array($config['l7shaper']['container'])) {
 		foreach($config['l7shaper']['container'] as $key => $value) {
 			if($value['name'] == $name) {
@@ -4066,76 +4066,76 @@ function unset_l7_object_by_reference(&$name) {
 }
 
 function read_layer7_config() {
-    global $layer7_rules_list, $config;
-    
-    $l7cs = &$config['l7shaper']['container'];
-    
-    $layer7_rules_list = array();
-    
-    if (!is_array($config['l7shaper']['container']) || !count($config['l7shaper']['container']))
-	return;
-    
-    foreach ($l7cs as $conf) {
-	if (empty($conf['name']))
-		continue; /* XXX: grrrrrr at php */ 
-        $root =& new layer7();
-        $root->ReadConfig($conf['name'],$conf);
-        $layer7_rules_list[$root->GetRName()] = &$root;
-    }
+	global $layer7_rules_list, $config;
+
+	$l7cs = &$config['l7shaper']['container'];
+
+	$layer7_rules_list = array();
+
+	if (!is_array($config['l7shaper']['container']) || !count($config['l7shaper']['container']))
+		return;
+
+	foreach ($l7cs as $conf) {
+		if (empty($conf['name']))
+			continue; /* XXX: grrrrrr at php */
+		$root =& new layer7();
+		$root->ReadConfig($conf['name'],$conf);
+		$layer7_rules_list[$root->GetRName()] = &$root;
+	}
 }
 
 function generate_layer7_files() {
-    global $layer7_rules_list, $g;
-    
-    read_layer7_config();
-    
-    if (!empty($layer7_rules_list)) {
-	if (!is_module_loaded("ipdivert.ko"))
-		mwexec("/sbin/kldload ipdivert.ko");
+	global $layer7_rules_list, $g;
 
-	array_map('unlink', glob("{$g['tmp_path']}/*.l7"));
-    }
-    
-    foreach($layer7_rules_list as $l7rules) {
-        if($l7rules->GetREnabled()) {
-            $filename = $l7rules->GetRName() . ".l7";
-            $path = "{$g['tmp_path']}/" . $filename;
-        
-            $rules = $l7rules->build_l7_rules();
-        
-            $fp = fopen($path,'w');
-            fwrite($fp,$rules);
-            fclose($fp);
-        }
-    }
+	read_layer7_config();
+
+	if (!empty($layer7_rules_list)) {
+		if (!is_module_loaded("ipdivert.ko"))
+			mwexec("/sbin/kldload ipdivert.ko");
+
+		array_map('unlink', glob("{$g['tmp_path']}/*.l7"));
+	}
+
+	foreach($layer7_rules_list as $l7rules) {
+		if($l7rules->GetREnabled()) {
+			$filename = $l7rules->GetRName() . ".l7";
+			$path = "{$g['tmp_path']}/" . $filename;
+
+			$rules = $l7rules->build_l7_rules();
+
+			$fp = fopen($path,'w');
+			fwrite($fp,$rules);
+			fclose($fp);
+		}
+	}
 }
 
 function layer7_start_l7daemon() {
-    global $layer7_rules_list, $g;
+	global $layer7_rules_list, $g;
 
-    /*
-     * XXX: ermal - Needed ?!
-     * read_layer7_config();
-     */
+	/*
+	 * XXX: ermal - Needed ?!
+	 * read_layer7_config();
+	 */
 
-    foreach($layer7_rules_list as $l7rules) {
-        if($l7rules->GetREnabled()) {
-            $filename = $l7rules->GetRName() . ".l7";
-            $path = "{$g['tmp_path']}/" . $filename;
+	foreach($layer7_rules_list as $l7rules) {
+		if($l7rules->GetREnabled()) {
+			$filename = $l7rules->GetRName() . ".l7";
+			$path = "{$g['tmp_path']}/" . $filename;
 
-	    unset($l7pid);
-	    /* Only reread the configuration rather than restart to avoid losing information. */
-	    exec("/bin/pgrep -f 'ipfw-classifyd .* -p ". $l7rules->GetRPort() . "'", $l7pid);
-	    if (count($l7pid) > 0) {
-		log_error(sprintf(gettext("Sending HUP signal to %s"), $l7pid[0]));
-		mwexec("/bin/kill -HUP {$l7pid[0]}");
-	    } else {
-		// XXX: Hardcoded number of packets to garbage collect and queue length..
-		$ipfw_classifyd_init = "/usr/local/sbin/ipfw-classifyd -n 8 -q 700 -c {$path} -p " . $l7rules->GetRPort() . " -P /usr/local/share/protocols";
-		mwexec_bg($ipfw_classifyd_init);
-	    }
-        }
-    }
+			unset($l7pid);
+			/* Only reread the configuration rather than restart to avoid losing information. */
+			exec("/bin/pgrep -f 'ipfw-classifyd .* -p ". $l7rules->GetRPort() . "'", $l7pid);
+			if (count($l7pid) > 0) {
+				log_error(sprintf(gettext("Sending HUP signal to %s"), $l7pid[0]));
+				mwexec("/bin/kill -HUP {$l7pid[0]}");
+			} else {
+				// XXX: Hardcoded number of packets to garbage collect and queue length..
+				$ipfw_classifyd_init = "/usr/local/sbin/ipfw-classifyd -n 8 -q 700 -c {$path} -p " . $l7rules->GetRPort() . " -P /usr/local/share/protocols";
+				mwexec_bg($ipfw_classifyd_init);
+			}
+		}
+	}
 }
 
 // This function uses /usr/local/share/protocols as a default directory for searching .pat files
@@ -4148,7 +4148,7 @@ function generate_protocols_array() {
 				$protocols_new[$key] =& str_replace(".pat", "", $proto);
 		}
 		sort($protocols_new);
-	}		
+	}
 	return $protocols_new;
 }
 
@@ -4156,7 +4156,7 @@ function get_l7_unique_list() {
 	global $layer7_rules_list;
 
 	$l7list = array();
-	if(is_array($layer7_rules_list)) 
+	if(is_array($layer7_rules_list))
 		foreach($layer7_rules_list as $l7c)
 			if($l7c->GetREnabled())
 				$l7list[] = $l7c->GetRName();
@@ -4202,8 +4202,8 @@ function get_altq_name_list() {
  * from the global namespace.
  */
 
-/* 
- * This is a layer violation but for now there is no way 
+/*
+ * This is a layer violation but for now there is no way
  * i can find to properly do this with PHP.
  */
 function altq_get_default_queue($interface) {
@@ -4211,7 +4211,7 @@ function altq_get_default_queue($interface) {
 
 	$altq_tmp = $altq_list_queues[$interface];
 	if ($altq_tmp)
-		return $altq_tmp->GetDefaultQueuePresent(); 
+		return $altq_tmp->GetDefaultQueuePresent();
 	else
 		return false;
 }
@@ -4242,7 +4242,7 @@ function &get_unique_queue_list() {
 			$tmplist =& $altq->get_queue_list();
 			foreach ($tmplist as $qname => $link) {
 				if ($link->GetEnabled() <> "")
-					$qlist[$qname] = $link;	
+					$qlist[$qname] = $link;
 			}
 		}
 	}
@@ -4259,7 +4259,7 @@ function &get_unique_dnqueue_list() {
 				continue;
 			$tmplist =& $dn->get_queue_list();
 			foreach ($tmplist as $qname => $link) {
-				$qlist[$qname] = $link;	
+				$qlist[$qname] = $link;
 			}
 		}
 	}
@@ -4278,7 +4278,7 @@ function ref_on_altq_queue_list($parent, $qname) {
 function unref_on_altq_queue_list($qname) {
 	$GLOBALS['queue_list'][$qname]--;
 	if ($GLOBALS['queue_list'][$qname] <= 1)
-		unset($GLOBALS['queue_list'][$qname]);	
+		unset($GLOBALS['queue_list'][$qname]);
 }
 
 function read_altq_config() {
@@ -4307,13 +4307,13 @@ function read_altq_config() {
 		if (is_array($conf['queue'])) {
 			foreach ($conf['queue'] as $key1 => $q) {
 				array_push($path, $key1);
-				/* 
-				 * XXX: we completely ignore errors here but anyway we must have 
+				/*
+				 * XXX: we completely ignore errors here but anyway we must have
 				 *	checked them before so no harm should be come from this.
 				 */
 				$root->add_queue($root->GetInterface(), $q, $path, $input_errors);
 				array_pop($path);
-			} 	
+			}
 		}
 		array_pop($path);
 	}
@@ -4337,7 +4337,7 @@ function read_dummynet_config() {
 
 	foreach ($a_int as $key => $conf) {
 		if (empty($conf['name']))
-			continue; /* XXX: grrrrrr at php */ 
+			continue; /* XXX: grrrrrr at php */
 		$root =& new dnpipe_class();
 		$root->ReadConfig($conf);
 		$dummynet_pipe_list[$root->GetQname()] = &$root;
@@ -4346,13 +4346,13 @@ function read_dummynet_config() {
 		if (is_array($conf['queue'])) {
 			foreach ($conf['queue'] as $key1 => $q) {
 				array_push($path, $key1);
-				/* 
-				 * XXX: we completely ignore errors here but anyway we must have 
+				/*
+				 * XXX: we completely ignore errors here but anyway we must have
 				 *	checked them before so no harm should be come from this.
-				 */	
+				 */
 				$root->add_queue($root->GetQname(), $q, $path, $input_errors);
 				array_pop($path);
-			} 	
+			}
 		}
 		array_pop($path);
 	}
@@ -4382,7 +4382,7 @@ function filter_generate_altq_queues() {
 	read_altq_config();
 
 	$altq_rules = "";
-	foreach ($altq_list_queues as $altq) 
+	foreach ($altq_list_queues as $altq)
 		$altq_rules .= $altq->build_rules();
 
 	return $altq_rules;
@@ -4460,7 +4460,7 @@ function filter_generate_dummynet_rules() {
 	}
 
 	$dn_rules = "";
-	foreach ($dummynet_pipe_list as $dn) 
+	foreach ($dummynet_pipe_list as $dn)
 		$dn_rules .= $dn->build_rules();
 
 	if (!empty($dn_rules)) {
@@ -4495,14 +4495,14 @@ function build_iface_without_this_queue($iface, $qname) {
 $default_shaper_msg =  "<tr><td align=\"center\" width=\"80%\">";
 $default_shaper_msg .= "<span class=\"vexpl\"><strong><b>" . sprintf(gettext("Welcome to the %s Traffic Shaper."), $g['product_name']) . "</b><br />";
 $default_shaper_msg .= gettext("The tree on the left helps you navigate through the queues <br />"
-                    .  "buttons at the bottom represent queue actions and are activated accordingly.");
+	.  "buttons at the bottom represent queue actions and are activated accordingly.");
 $default_shaper_msg .= "</strong></span>";
 $default_shaper_msg .= "</td></tr>";
 
 $dn_default_shaper_msg =  "<tr><td align=\"center\" width=\"80%\">";
 $dn_default_shaper_msg .= "<span class=\"vexpl\"><strong><b>" . sprintf(gettext("Welcome to the %s Traffic Shaper."), $g['product_name']) . "</b><br />";
 $dn_default_shaper_msg .= gettext("The tree on the left helps you navigate through the queues <br />"
-                       .  "buttons at the bottom represent queue actions and are activated accordingly.");
+	.  "buttons at the bottom represent queue actions and are activated accordingly.");
 $dn_default_shaper_msg .= "</strong></span>";
 $dn_default_shaper_msg .= "</td></tr>";
 

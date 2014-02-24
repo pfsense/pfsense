@@ -1995,7 +1995,7 @@ function portal_allow($clientip,$clientmac,$username,$password = null, $attribut
 			$bpassword = base64_encode($password);
 			$insertquery  = "INSERT INTO captiveportal (allow_time, pipeno, ip, mac, username, sessionid, bpassword, session_timeout, idle_timeout, session_terminate_time, interim_interval, radiusctx) ";
 			$insertquery .= "VALUES ({$allow_time}, {$pipeno}, '{$clientip}', '{$clientmac}', '{$safe_username}', '{$sessionid}', '{$bpassword}', ";
-			$insertquery .= "{$session_timeout}, {$idle_timeout}, {$session_terminate_time}, {$interim_interval}, {$radiusctx})";
+			$insertquery .= "{$session_timeout}, {$idle_timeout}, {$session_terminate_time}, {$interim_interval}, '{$radiusctx}')";
 
 			/* store information to database */
 			captiveportal_write_db($insertquery);
@@ -2017,10 +2017,10 @@ function portal_allow($clientip,$clientmac,$username,$password = null, $attribut
 	/* redirect user to desired destination */
 	if (!empty($attributes['url_redirection']))
 		$my_redirurl = $attributes['url_redirection'];
+	else if (!empty($redirurl))
+		$my_redirurl = $redirurl;
 	else if (!empty($config['captiveportal'][$cpzone]['redirurl']))
 		$my_redirurl = $config['captiveportal'][$cpzone]['redirurl'];
-	else
-		$my_redirurl = $redirurl;
 
 	if(isset($config['captiveportal'][$cpzone]['logoutwin_enable']) && !$passthrumac) {
 		$ourhostname = portal_hostname_from_client_ip($clientip);
@@ -2035,7 +2035,7 @@ function portal_allow($clientip,$clientmac,$username,$password = null, $attribut
 		include("{$g['varetc_path']}/captiveportal-{$cpzone}-logout.html");
 
 	} else {
-		header("Location: " . $my_redirurl);
+		portal_reply_page($redirurl, "redir", "Just redirect the user.");
 	}
 
 	return $sessionid;

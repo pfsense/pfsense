@@ -4084,6 +4084,17 @@ function read_layer7_config() {
 	}
 }
 
+function update_layer7_custom_patterns() {
+	global $config;
+
+	if (!is_array($config['l7shaper']['custom_pat']))
+		return;
+
+	foreach ($config['l7shaper']['custom_pat'] as $filename => $filecontent)
+		if (!file_exists("/usr/local/share/protocols/" . $filename))
+			@file_put_contents("/usr/local/share/protocols/" . $filename, base64_decode($filecontent));
+}
+
 function generate_layer7_files() {
 	global $layer7_rules_list, $g;
 
@@ -4095,6 +4106,8 @@ function generate_layer7_files() {
 
 		array_map('unlink', glob("{$g['tmp_path']}/*.l7"));
 	}
+
+	update_layer7_custom_patterns();
 
 	foreach($layer7_rules_list as $l7rules) {
 		if($l7rules->GetREnabled()) {
@@ -4140,6 +4153,9 @@ function layer7_start_l7daemon() {
 
 // This function uses /usr/local/share/protocols as a default directory for searching .pat files
 function generate_protocols_array() {
+
+	update_layer7_custom_patterns();
+
 	$protocols = return_dir_as_array("/usr/local/share/protocols");
 	$protocols_new = array();
 	if(is_array($protocols)) {

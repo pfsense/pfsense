@@ -2273,12 +2273,16 @@ $types6 = array("none" => gettext("None"), "staticv6" => gettext("Static IPv6"),
 							<td class="vtable">
 							<select name="standard" class="formselect" id="standard">
 								<?php
+								$rowIndex = 0;
 								foreach($wl_modes as $wl_standard => $wl_channels) {
+									$rowIndex++;
 									echo "<option ";
 									if ($pconfig['standard'] == "$wl_standard")
 										echo "selected=\"selected\" ";
 									echo "value=\"$wl_standard\">802.$wl_standard</option>\n";
 								}
+								if ($rowIndex == 0)
+									echo "<option></option>";
 								?>
 							</select>
 							</td>
@@ -2544,7 +2548,7 @@ $types6 = array("none" => gettext("None"), "staticv6" => gettext("Static IPv6"),
 											<input name="key1" type="text" class="formfld unknown" id="key1" size="30" value="<?=htmlspecialchars($pconfig['key1']);?>" />
 										</td>
 										<td align="center">
-											<input name="txkey" type="radio" value="1" <?php if ($pconfig['txkey'] == 1) echo "checked=\"checked\"";?>>
+											<input name="txkey" type="radio" value="1" <?php if ($pconfig['txkey'] == 1) echo "checked=\"checked\"";?> />
 										</td>
 									</tr>
 									<tr>

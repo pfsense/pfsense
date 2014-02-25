@@ -386,6 +386,14 @@ function services_dhcpdv4_configure() {
 	$dhcpdcfg = $config['dhcpd'];
 	$Iflist = get_configured_interface_list();
 
+	/* Only consider DNS servers with IPv4 addresses for the IPv4 DHCP server. */
+	$dns_arrv4 = array();
+	foreach($syscfg['dnsserver'] as $dnsserver) {
+		if (is_ipaddrv4($dnsserver)) {
+			$dns_arrv4[] = $dnsserver;
+		}
+	}
+
 	if ($g['booting'])
 		echo gettext("Starting DHCP service...");
 	else
@@ -565,10 +573,10 @@ EOPP;
 			$dnscfg .= "	option domain-name-servers {$ifcfgip};";
 			if ($newzone['domain-name'] && is_array($syscfg['dnsserver']) && ($syscfg['dnsserver'][0]))
 				$newzone['dns-servers'] = $syscfg['dnsserver'];
-		} else if (is_array($syscfg['dnsserver']) && ($syscfg['dnsserver'][0])) {
-			$dnscfg .= "	option domain-name-servers " . join(",", $syscfg['dnsserver']) . ";";
+		} else if (!empty($dns_arrv4)) {
+			$dnscfg .= "	option domain-name-servers " . join(",", $dns_arrv4) . ";";
 			if ($newzone['domain-name'])
-				$newzone['dns-servers'] = $syscfg['dnsserver'];
+				$newzone['dns-servers'] = $dns_arrv4;
 		}
 
 		/* Create classes - These all contain comma separated lists. Join them into one 

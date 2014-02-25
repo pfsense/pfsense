@@ -1025,7 +1025,7 @@ include("head.inc");
 								<option value="">(<?=gettext("other"); ?>)</option>
 								<option value="any" <?php $bfound = 0; if ($pconfig['srcbeginport'] == "any") { echo "selected=\"selected\""; $bfound = 1; } ?>><?=gettext("any");?></option>
 <?php 							foreach ($wkports as $wkport => $wkportdesc): ?>
-									<option value="<?=$wkport;?>" <?php if ($wkport == $pconfig['srcbeginport']) { echo "selected=\"selected\""; $bfound = 1; } ?>><?=htmlspecialchars($wkportdesc);?></option>
+									<option value="<?=$wkport;?>" <?php if ($wkport == $pconfig['srcbeginport']) { echo "selected=\"selected\""; $bfound = 1; } ?>><?=htmlspecialchars("{$wkportdesc} ({$wkport})");?></option>
 <?php 							endforeach; ?>
 							</select>
 							<input <?=$edit_disabled;?> autocomplete='off' class="formfldalias" name="srcbeginport_cust" id="srcbeginport_cust" type="text" size="5" value="<?php if (!$bfound && $pconfig['srcbeginport']) echo htmlspecialchars($pconfig['srcbeginport']); ?>" />
@@ -1038,7 +1038,7 @@ include("head.inc");
 								<option value="">(<?=gettext("other"); ?>)</option>
 								<option value="any" <?php $bfound = 0; if ($pconfig['srcendport'] == "any") { echo "selected=\"selected\""; $bfound = 1; } ?>><?=gettext("any");?></option>
 <?php							foreach ($wkports as $wkport => $wkportdesc): ?>
-									<option value="<?=$wkport;?>" <?php if ($wkport == $pconfig['srcendport']) { echo "selected=\"selected\""; $bfound = 1; } ?>><?=htmlspecialchars($wkportdesc);?></option>
+									<option value="<?=$wkport;?>" <?php if ($wkport == $pconfig['srcendport']) { echo "selected=\"selected\""; $bfound = 1; } ?>><?=htmlspecialchars("{$wkportdesc} ({$wkport})");?></option>
 <?php							endforeach; ?>
 							</select>
 							<input <?=$edit_disabled;?> autocomplete='off' class="formfldalias" name="srcendport_cust" id="srcendport_cust" type="text" size="5" value="<?php if (!$bfound && $pconfig['srcendport']) echo htmlspecialchars($pconfig['srcendport']); ?>" />
@@ -1123,7 +1123,7 @@ $i--): ?>
 								<option value="">(<?=gettext("other"); ?>)</option>
 								<option value="any" <?php $bfound = 0; if ($pconfig['dstbeginport'] == "any") { echo "selected=\"selected\""; $bfound = 1; } ?>><?=gettext("any");?></option>
 <?php 							foreach ($wkports as $wkport => $wkportdesc): ?>
-									<option value="<?=$wkport;?>" <?php if ($wkport == $pconfig['dstbeginport']) { echo "selected=\"selected\""; $bfound = 1; }?>><?=htmlspecialchars($wkportdesc);?></option>
+									<option value="<?=$wkport;?>" <?php if ($wkport == $pconfig['dstbeginport']) { echo "selected=\"selected\""; $bfound = 1; }?>><?=htmlspecialchars("{$wkportdesc} ({$wkport})");?></option>
 <?php 							endforeach; ?>
 							</select>
 							<input <?=$edit_disabled;?> autocomplete='off' class="formfldalias" name="dstbeginport_cust" id="dstbeginport_cust" type="text" size="5" value="<?php if (!$bfound && $pconfig['dstbeginport']) echo htmlspecialchars($pconfig['dstbeginport']); ?>" />
@@ -1136,7 +1136,7 @@ $i--): ?>
 								<option value="">(<?=gettext("other"); ?>)</option>
 								<option value="any" <?php $bfound = 0; if ($pconfig['dstendport'] == "any") { echo "selected=\"selected\""; $bfound = 1; } ?>><?=gettext("any");?></option>
 <?php							foreach ($wkports as $wkport => $wkportdesc): ?>
-									<option value="<?=$wkport;?>" <?php if ($wkport == $pconfig['dstendport']) { echo "selected=\"selected\""; $bfound = 1; } ?>><?=htmlspecialchars($wkportdesc);?></option>
+									<option value="<?=$wkport;?>" <?php if ($wkport == $pconfig['dstendport']) { echo "selected=\"selected\""; $bfound = 1; } ?>><?=htmlspecialchars("{$wkportdesc} ({$wkport})");?></option>
 <?php 							endforeach; ?>
 							</select>
 								<input <?=$edit_disabled;?> autocomplete='off' class="formfldalias" name="dstendport_cust" id="dstendport_cust" type="text" size="5" value="<?php if (!$bfound && $pconfig['dstendport']) echo htmlspecialchars($pconfig['dstendport']); ?>" />

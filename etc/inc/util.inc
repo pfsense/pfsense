@@ -391,26 +391,20 @@ function ip_range_size($startip, $endip) {
 	return -1;
 }
 
-/* Find the smallest possible subnet mask which can contain a given number of IPs
- *  e.g. 512 IPs can fit in a /23, but 513 IPs need a /22
- */
-function find_smallest_cidr($number) {
-	$smallest = 1;
-	for ($b=32; $b > 0; $b--) {
-		$smallest = ($number <= pow(2,$b)) ? $b : $smallest;
-	}
-	return (32-$smallest);
-}
-
-/* Return the previous IP address before the given address */
-function ip_before($ip) {
-	return long2ip32(ip2long($ip)-1);
-}
-
-/* Return the next IP address after the given address */
-function ip_after($ip) {
-	return long2ip32(ip2long($ip)+1);
-}
+/* 	The following functions were only used for IPv4 range -> subnet calculations under previous algorithm
+	They never handled IPv6, and if ever needed again would probably need rewriting from scratch. 
+	Removed:
+	
+		// Find the smallest possible subnet mask which can contain a given number of IPs
+		//  e.g. 512 IPs can fit in a /23, but 513 IPs need a /22
+		function find_smallest_cidr($number)
+		
+		// Return the previous IP address before the given ipv4 address
+		function ip_before($ip)
+		
+		// Return the next IP address after the given ipv4 address
+		function ip_after($ip)
+*/
 
 /* Return true if the first IP is 'before' the second */
 function ip_less_than($ip1, $ip2) {
@@ -426,66 +420,122 @@ function ip_greater_than($ip1, $ip2) {
 	return ip2ulong($ip1) > ip2ulong($ip2);
 }
 
-/* Convert a range of IPs to an array of subnets which can contain the range. */
-function ip_range_to_subnet_array($startip, $endip) {
-	if (!is_ipaddr($startip) || !is_ipaddr($endip)) {
+/* 	Convert an IPv4 or IPv6 IP range to an array of subnets which can contain the range.
+	Algorithm and embodying code PD'ed by Stilez - enjoy as you like :-)
+
+	Documented on pfsense dev list 19-20 May 2013. Summary:
+
+	Algorithm looks at patterns of 0's and 1's in the least significant bit (or bits). 
+	These are all that needs checking, to identify the (guaranteed) correct, minimal and optimal subnet array.
+	As a result, string/binary, with pattern matching built-in, is very efficient. It uses just 2 pattern-matching rules to chop off subnets at both ends, until nothing's left.
+
+	(a) If any range has low bit 1 (in startip) or 0 (in endip), these endpoints are _always_ optimally represented by their own  
+	'single IP' CIDR; the remaining range then shrinks by one IP up or down. Only one edge case needs checking: if the range 
+	contained exactly 2 adjacent IPs then these CIDRs will now exactly span it, and we're done.
+	
+	(b) Otherwise, if any range has low bits 0 (in ip1) _and_ 1 (in ip2), these low bits can *always* be ignored for subnet 
+	spanning. So provided we remember the bits we've place-shifted, we can _always_ right-shift and chop off those bits, 
+	and loop to span the remaining (place shifted) range as above, until after a few loops, the remaining (place shifted) range 
+	has become just one IP (ip1==ip2).
+
+	PHP BUG NOTE
+
+	This function is affected by http://bugs.php.net/bug.php?id=54547 on currently-used versions of PHP.
+	Comparing long numeric strings produced by Net_IPv6::_ip2Bin() must be done with === or strcmp(), not the usual operators
+*/
+
+function ip_range_to_subnet_array($ip1, $ip2) {
+
+	if (is_ipaddrv4($ip1) && is_ipaddrv4($ip2)) {
+		$proto = 'ipv4';  // for clarity
+		$bits = 32;
+		$ip1bin = decbin(ip2long32($ip1));
+		$ip2bin = decbin(ip2long32($ip2));
+	} elseif (is_ipaddrv6($ip1) && is_ipaddrv6($ip2)) {
+		$proto = 'ipv6';
+		$bits = 128;
+		$ip1bin = Net_IPv6::_ip2Bin($ip1);
+		$ip2bin = Net_IPv6::_ip2Bin($ip2);
+	} else
 		return array();
-	}
 
-	// Container for subnets within this range.
+	// it's *crucial* that binary strings are guaranteed the expected length;  do this for certainty even though for IPv6 it's redundant
+	$ip1bin = str_pad($ip1bin, $bits, '0', STR_PAD_LEFT);
+	$ip2bin = str_pad($ip2bin, $bits, '0', STR_PAD_LEFT);
+
+	if ($ip1bin === $ip2bin)
+		return array($ip1 . '/' . $bits);
+	
+	if (strcmp($ip1bin, $ip2bin) > 0)
+		list ($ip1bin, $ip2bin) = array($ip2bin, $ip1bin);  // swap contents of ip1 <= ip2
+
 	$rangesubnets = array();
+	$netsize = 0;
 
-	// Figure out what the smallest subnet is that holds the number of IPs in the given range.
-	$cidr = find_smallest_cidr(ip_range_size($startip, $endip));
+	do {
+		// at loop start, $ip1 is guaranteed strictly less than $ip2 (important for edge case trapping and preventing accidental binary wrapround)
+		// which means the assignments $ip1 += 1 and $ip2 -= 1 will always be "binary-wrapround-safe"
 
-	// Loop here to reduce subnet size and retest as needed. We need to make sure
-	//   that the target subnet is wholly contained between $startip and $endip.
-	for ($cidr; $cidr <= 32; $cidr++) {
-		// Find the network and broadcast addresses for the subnet being tested.
-		$targetsub_min = gen_subnet($startip, $cidr);
-		$targetsub_max = gen_subnet_max($startip, $cidr);
+		// step #1 if start ip (as shifted) ends in any '1's, then it must have a single cidr to itself (any cidr would include the '0' below it)
+		
+		if (substr($ip1bin, -1, 1) == '1') {
+			// the start ip must be in a separate one-IP cidr range
+			$new_subnet_ip = substr($ip1bin, $netsize, $bits - $netsize) . str_repeat('0', $netsize);
+			$rangesubnets[$new_subnet_ip] = $bits - $netsize;
+			$n = strrpos($ip1bin, '0');  //can't be all 1's
+			$ip1bin = ($n == 0 ? '' : substr($ip1bin, 0, $n)) . '1' . str_repeat('0', $bits - $n - 1);  // BINARY VERSION OF $ip1 += 1
+		} 
 
-		// Check best case where the range is exactly one subnet.
-		if (($targetsub_min == $startip) && ($targetsub_max == $endip)) {
-			// Hooray, the range is exactly this subnet!
-			return array("{$startip}/{$cidr}");
+		// step #2, if end ip (as shifted) ends in any zeros then that must have a cidr to itself (as cidr cant span the 1->0 gap)
+		
+		if (substr($ip2bin, -1, 1) == '0') {
+			// the end ip must be in a separate one-IP cidr range
+			$new_subnet_ip = substr($ip2bin, $netsize, $bits - $netsize) . str_repeat('0', $netsize);
+			$rangesubnets[$new_subnet_ip] = $bits - $netsize;
+			$n = strrpos($ip2bin, '1');  //can't be all 0's
+			$ip2bin = ($n == 0 ? '' : substr($ip2bin, 0, $n)) . '0' . str_repeat('1', $bits - $n - 1);  // BINARY VERSION OF $ip2 -= 1
+			// already checked for the edge case where end = start+1 and start ends in 0x1, above, so it's safe
 		}
 
-		// These remaining scenarios will find a subnet that uses the largest
-		//  chunk possible of the range being tested, and leave the rest to be
-		//  tested recursively after the loop.
+		// this is the only edge case arising from increment/decrement. 
+		// it happens if the range at start of loop is exactly 2 adjacent ips, that spanned the 1->0 gap. (we will have enumerated both by now)
+		
+		if (strcmp($ip2bin, $ip1bin) < 0)
+			continue;
 
-		// Check if the subnet begins with $startip and ends before $endip
-		if (($targetsub_min == $startip) && ip_less_than($targetsub_max, $endip)) {
-			break;
-		}
+		// step #3 the start and end ip MUST now end in '0's and '1's respectively
+		// so we have a non-trivial range AND the last N bits are no longer important for CIDR purposes.
 
-		// Check if the subnet ends at $endip and starts after $startip
-		if (ip_greater_than($targetsub_min, $startip) && ($targetsub_max == $endip)) {
-			break;
+		$shift = $bits - max(strrpos($ip1bin, '0'), strrpos($ip2bin, '1'));  // num of low bits which are '0' in ip1 and '1' in ip2
+		$ip1bin = str_repeat('0', $shift) . substr($ip1bin, 0, $bits - $shift);
+		$ip2bin = str_repeat('0', $shift) . substr($ip2bin, 0, $bits - $shift);
+		$netsize += $shift;
+		if ($ip1bin === $ip2bin) {
+			// we're done.
+			$new_subnet_ip = substr($ip1bin, $netsize, $bits - $netsize) . str_repeat('0', $netsize);
+			$rangesubnets[$new_subnet_ip] = $bits - $netsize;
+			continue;
 		}
+		
+		// at this point there's still a remaining range, and either startip ends with '1', or endip ends with '0'. So repeat cycle.
+	} while (strcmp($ip1bin, $ip2bin) < 0);
 
-		// Check if the subnet is between $startip and $endip
-		if (ip_greater_than($targetsub_min, $startip) && ip_less_than($targetsub_max, $endip)) {
-			break;
-		}
+	// subnets are ordered by bit size. Re sort by IP ("naturally") and convert back to IPv4/IPv6
+
+	ksort($rangesubnets, SORT_STRING);
+	$out = array();
+
+	foreach ($rangesubnets as $ip => $netmask) {
+		if ($proto == 'ipv4') {
+			$i = str_split($ip, 8);
+			$out[] = implode('.', array( bindec($i[0]),bindec($i[1]),bindec($i[2]),bindec($i[3]))) . '/' . $netmask;
+		} else
+			$out[] = Net_IPv6::compress(Net_IPv6::_bin2Ip($ip)) . '/' . $netmask;
 	}
 
-	// Some logic that will recursivly search from $startip to the first IP before the start of the subnet we just found.
-	// NOTE: This may never be hit, the way the above algo turned out, but is left for completeness.
-	if ($startip != $targetsub_min) {
-		$rangesubnets = array_merge($rangesubnets, ip_range_to_subnet_array($startip, ip_before($targetsub_min)));
-	}
-
-	// Add in the subnet we found before, to preserve ordering
-	$rangesubnets[] = "{$targetsub_min}/{$cidr}";
-
-	// And some more logic that will search after the subnet we found to fill in to the end of the range.
-	if ($endip != $targetsub_max) {
-		$rangesubnets = array_merge($rangesubnets, ip_range_to_subnet_array(ip_after($targetsub_max), $endip));
-	}
-	return $rangesubnets;
+	return $out;
 }
+
 
 function is_iprange($range) {
 	if (substr_count($range, '-') != 1) {

@@ -544,9 +544,9 @@ function is_linklocal($ipaddr) {
 		list($local4lo, $local4hi) = array(ip2long32('169.254.1.0'), ip2long32('169.254.254.255'));
 		if ($ip4 >= $local4lo && $ip4 <= $local4hi)
 			return 4;
-	} elseif (preg_match('/^(?:[0-9a-f:]{2,39})(?:%[0-9a-z]+)?$/i', $ipaddr, $ip6)) {
+	} elseif (preg_match('/^([0-9a-f:]{2,39})(%([0-9a-z]+))?$/i', $ipaddr, $ip6)) {
 		// IPv6 ?
-		// not attempting to validate interface part $ip6[2] (if any) at present, as long as it's plausible (%[0-9a-z]+)
+		// not attempting to validate interface part $ip6[3] (if any) at present, as long as it's plausible (%[0-9a-z]+)
 
 		// linklocal requires '1111111010' and 54 zero bits (fe80::), see rfc4291 2.5.6
 		$iptest = substr(Net_IPv6::_Ip2Bin($ip6[1]),0,64);

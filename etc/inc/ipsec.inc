@@ -35,6 +35,12 @@
 */
 
 /* IPsec defines */
+$ipsec_loglevels = array("dmn" => "Daemon", "mgr" => "SA Manager", "ike" => "IKE SA", "chd" => "IKE Child SA",
+	"job" => "Job Processing", "cfg" => "Configuration backend", "knl" => "Kernel Interface",
+	"net" => "Networking", "asn" => "ASN encoding", "enc" => "Message encoding",
+	"imc" => "Integrity checker", "imv" => "Integrity Verifier", "pts" => "Platform Trust Service",
+	"tls" => "TLS handler", "app" => "Not daemon", "esp" => "IPSec traffic", "lib" => "StrongSWAN Lib");
+
 $my_identifier_list = array(
 	'myaddress' => array( 'desc' => gettext('My IP address'), 'mobile' => true ),
 	'address' => array( 'desc' => gettext('IP address'), 'mobile' => true ),

@@ -43,6 +43,19 @@
 
 require_once("ipsec.inc");
 
+function vpn_ipsec_configure_loglevels()
+{
+	global $config;
+
+	foreach ($ipsec_loglevels as $lkey => $ldescr) {
+		if (empty($config['ipsec']["ipsec_{$lkey}"]))
+			mwexec("/usr/local/sbin/ipsec stroke loglevel {$lkey} -1", false);
+		else if (is_numeric($config['ipsec']["ipsec_{$lkey}"]) &&
+		    intval($config['ipsec']["ipsec_{$lkey}"]) >= 1 && intval($config['ipsec']["ipsec_{$lkey}"]) <= 4)
+			mwexec("/usr/local/sbin/ipsec stroke loglevel {$lkey} " . (intval($config['ipsec']["ipsec_{$lkey}"]) - 1) , false);
+	}
+}
+
 /* include all configuration functions */
 function vpn_ipsec_convert_to_modp($index)
 {
@@ -269,6 +282,7 @@ charon {
 		    ike = 1
 		}
 	}
+
 EOD;
 
 		if (is_array($a_client) && isset($a_client['enable']) && !empty($a_client['net_list']))
@@ -356,9 +370,10 @@ EOD;
 
 			if ($a_client['user_source'] != "none") {
 				$strongswan .= "\txauth-generic {\n";
-				$strongswan .= "\t\tscript = /etc/inc/ipsec.auth-user.php";
+				$strongswan .= "\t\tscript = /etc/inc/ipsec.auth-user.php\n";
 				$strongswan .= "\t\tauthcfg = ";
 				$firstsed = 0;
+				$authcfgs = explode(",", $a_client['user_source']);
 				foreach ($authcfgs as $authcfg) {
 					if ($firstsed > 0)
 						$strongswan .= ",";
@@ -468,7 +483,7 @@ EOD;
 					}
 
 					if (!empty($peerid_data) && !empty($ph1ent['pre-shared-key']))
-						$pskconf .= trim($peerid_data) . ": PSK \"" . trim($ph1ent['pre-shared-key']) . "\"\n";
+						$pskconf .= trim($peerid_data) . " : PSK \"" . trim($ph1ent['pre-shared-key']) . "\"\n";
 				}
 			}
 		}
@@ -825,7 +840,7 @@ EOD;
 	/* generate IPsec policies */
 	$natfilterrules = false;
 	/* mange process */
-	if (isvalidpid("{$g['varrun_path']/charon.pid")) {
+	if (isvalidpid("{$g['varrun_path']}/charon.pid")) {
 		/* Read secrets */
 		mwexec("/usr/local/sbin/ipsec rereadall", false);
 		/* Update configuration changes */

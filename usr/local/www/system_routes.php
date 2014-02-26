@@ -80,7 +80,7 @@ if ($_POST) {
 
 if ($_GET['act'] == "del") {
 	if ($a_routes[$_GET['id']]) {
-		$changedesc .= gettext("removed route to") . " " . $a_routes[$_GET['id']]['route'];
+		$changedesc .= gettext("removed route to") . " " . $a_routes[$_GET['id']]['network'];
 
 		$targets = array();
 		if (is_alias($a_routes[$_GET['id']]['network'])) {

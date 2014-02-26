@@ -216,7 +216,7 @@ echo "<script type=\"text/javascript\" language=\"javascript\" src=\"/javascript
 			<?php if (count($a_nat) == 0): ?>
 				<img src="./themes/<?= $g['theme']; ?>/images/icons/icon_x_d.gif" width="17" height="17" title="<?=gettext("delete selected rules");?>" border="0" alt="delete" />
 			<?php else: ?>
-				<input name="del" type="image" src="./themes/<?= $g['theme']; ?>/images/icons/icon_x.gif" title="<?=gettext("delete selected rules"); ?>" onclick="return confirm('<?=gettext("Do you really want to delete the selected rules?");?>')" />
+				<input name="del" type="image" src="./themes/<?= $g['theme']; ?>/images/icons/icon_x.gif" style="width:17; height:17" title="<?=gettext("delete selected rules"); ?>" onclick="return confirm('<?=gettext("Do you really want to delete the selected rules?");?>')" />
 			<?php endif; ?>
 			</td>
                         <td><a href="firewall_nat_edit.php?after=-1"><img src="/themes/<?= $g['theme']; ?>/images/icons/icon_plus.gif" width="17" height="17" border="0" alt="add" /></a></td>
@@ -322,7 +322,7 @@ echo "<script type=\"text/javascript\" language=\"javascript\" src=\"/javascript
                   <td valign="middle" class="list nowrap">
                     <table border="0" cellspacing="0" cellpadding="1" summary="move">
                       <tr>
-			<td><input onmouseover="fr_insline(<?=$nnats;?>, true)" onmouseout="fr_insline(<?=$nnats;?>, false)" name="move_<?=$i;?>" src="/themes/<?= $g['theme']; ?>/images/icons/icon_left.gif" title="<?=gettext("move selected rules before this rule");?>" type="image" /></td>
+			<td><input onmouseover="fr_insline(<?=$nnats;?>, true)" onmouseout="fr_insline(<?=$nnats;?>, false)" name="move_<?=$i;?>" src="/themes/<?= $g['theme']; ?>/images/icons/icon_left.gif" title="<?=gettext("move selected rules before this rule");?>" type="image" style="width:17; height:17; border=0" /></td>
                         <td><a href="firewall_nat_edit.php?id=<?=$i;?>"><img src="/themes/<?= $g['theme']; ?>/images/icons/icon_e.gif" width="17" height="17" border="0" title="<?=gettext("edit rule"); ?>" alt="edit" /></a></td>
                       </tr>
                       <tr>
@@ -348,7 +348,7 @@ echo "<script type=\"text/javascript\" language=\"javascript\" src=\"/javascript
 			<?php if (count($a_nat) == 0): ?>
 				<img src="./themes/<?= $g['theme']; ?>/images/icons/icon_x_d.gif" width="17" height="17" title="<?=gettext("delete selected rules");?>" border="0" alt="delete" />
 			<?php else: ?>
-				<input name="del" type="image" src="./themes/<?= $g['theme']; ?>/images/icons/icon_x.gif" title="<?=gettext("delete selected rules"); ?>" onclick="return confirm('<?=gettext("Do you really want to delete the selected rules?");?>')" />
+				<input name="del" type="image" src="./themes/<?= $g['theme']; ?>/images/icons/icon_x.gif" style="width:17; height:17" title="<?=gettext("delete selected rules"); ?>" onclick="return confirm('<?=gettext("Do you really want to delete the selected rules?");?>')" />
 			<?php endif; ?>
 			</td>
                         <td><a href="firewall_nat_edit.php"><img src="/themes/<?= $g['theme']; ?>/images/icons/icon_plus.gif" width="17" height="17" border="0" alt="add" /></a></td>

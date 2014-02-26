@@ -458,6 +458,38 @@ function ipsec_lookup_ipsec_sa(& $spd,& $sad,$dir,$in_srcip,$in_dstip,$in_srcid,
 	return NULL;
 }
 
+function ipsec_smp_dump_status() {
+	global $config, $g, $custom_listtags;
+
+	if (!file_exists("{$g['varrun_path']}/charon.xml")) {
+		log_error("IPSec daemon seems to have issues or not running!");
+		return;
+	}
+
+	$fd = fopen("{$g['varrun_path']}/charon.xml", "w");
+	if (!$fd) {
+		log_error("Could not read status from ipsec");
+		return;
+	}
+	@fwrite($fd, $query);
+	$response = "";
+	while (!strstr($sread, "</message>")) {
+		$sread = fgets($fd);
+		$response .= $sread;
+	}
+	fclose($fd);
+
+	@file_put_contents("{$g['tmp_path']}/smp_status.xml", $response);
+	unset($response, $sread);
+
+	$custom_listtags = array('ikesa');
+	$response = parse_xml_config("{$g['tmp_path']}/smp_status.xml", "message");
+	@unlink("{$g['tmp_path']}/smp_status.xml");
+	unset($custom_listtags);
+
+	return $response;
+}
+
 /*
  * Return dump of SPD table
  */

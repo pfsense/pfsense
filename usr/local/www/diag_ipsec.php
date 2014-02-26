@@ -74,9 +74,7 @@ if (!is_array($config['ipsec']['phase2']))
 
 $a_phase2 = &$config['ipsec']['phase2'];
 
-$spd = ipsec_dump_spd();
-$sad = ipsec_dump_sad();
-$mobile = ipsec_dump_mobile();
+$status = ipsec_smp_dump_status();
 
 ?>
 

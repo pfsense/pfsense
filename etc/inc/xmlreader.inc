@@ -72,18 +72,39 @@ function add_elements(&$cfgarray, &$parser) {
                         break;
                 case XMLReader::ELEMENT:
                         if (isset($listtags[strtolower($parser->name)])) {
-                        	if (!$parser->isEmptyElement)
-                                        add_elements($cfgarray[$parser->name][], $parser);
+				$cfgref =& $cfgarray[$parser->name][count($cfgarray[$parser->name])];
+                        	if (!$parser->isEmptyElement) {
+                                        add_elements($cfgref, $parser);
+				} else
+					$cfgref = array();
+					
                         } else {
-                        	if ($parser->isEmptyElement)
-					$cfgarray[$parser->name] = "";
-				else
-                        		add_elements($cfgarray[$parser->name], $parser);
+				if (isset($cfgarray[$parser->name]) && (!is_array($cfgarray[$parser->name]) || !isset($cfgarray[$parser->name][0]))) {
+					$nodebkp = $cfgarray[$parser->name];
+					$cfgarray[$parser->name] = array();
+					$cfgarray[$parser->name][] = $nodebkp;
+					$cfgref =& $cfgarray[$parser->name][0];
+					unset($nodebkp);
+				} else
+					$cfgref =& $cfgarray[$parser->name];
+
+                        	if ($parser->isEmptyElement) {
+					if (is_array($cfgref))
+						$cfgref[] = array();
+					else
+						$cfgref = "";
+				} else {
+					if (is_array($cfgref)) {
+						$cfgref =& $cfgarray[$parser->name][count($cfgarray[$parser->name])];
+						add_elements($cfgref, $parser);
+					} else
+						add_elements($cfgref, $parser);
+				}
 			}
 
 			$i = 0;
 			while ($parser->moveToAttributeNo($i)) {
-				$cfgarray[$parser->name] = $parser->value;
+				$cfgref[$parser->name] = $parser->value;
 				$i++;
 			}
                         break;

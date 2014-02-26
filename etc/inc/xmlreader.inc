@@ -80,6 +80,12 @@ function add_elements(&$cfgarray, &$parser) {
 				else
                         		add_elements($cfgarray[$parser->name], $parser);
 			}
+
+			$i = 0;
+			while ($parser->moveToAttributeNo($i)) {
+				$cfgarray[$parser->name] = $parser->value;
+				$i++;
+			}
                         break;
                 case XMLReader::TEXT:
 		case XMLReader::CDATA:

@@ -471,6 +471,9 @@ function ipsec_smp_dump_status() {
 		log_error("Could not read status from ipsec");
 		return;
 	}
+	$query = '<?xml version="1.0"?><message xmlns="http://www.strongswan.org/smp/1.0" type="request" id="1">';
+	$query .= '<query><ikesalist/></query></message>';
+
 	@fwrite($fd, $query);
 	$response = "";
 	while (!strstr($sread, "</message>")) {

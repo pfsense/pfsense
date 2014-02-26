@@ -348,6 +348,7 @@ if($_REQUEST['undodrag']) {
 			<?php
 				pfSense_handle_custom_code("/usr/local/pkg/firewall_rules/before_first_tr");
 			?>
+			<thead>
 			<tr id="frheader">
 			<td width="3%" class="list">&nbsp;</td>
 			<td width="5%" class="list">&nbsp;</td>
@@ -392,6 +393,60 @@ if($_REQUEST['undodrag']) {
 				</table>
 			</td>
 			</tr>
+			</thead>
+			<tfoot>
+<?php if ($nrules == 0): ?>
+			<tr>
+			<td class="listt"></td>
+			<td class="listt"></td>
+			<td class="listlr" colspan="10" align="center" valign="middle">
+			<span class="gray">
+	<?php if ($_REQUEST['if'] == "FloatingRules"): ?>
+				<?=gettext("No floating rules are currently defined."); ?><br/><br/>
+	<?php else: ?>
+				<?=gettext("No rules are currently defined for this interface"); ?><br/>
+				<?=gettext("All incoming connections on this interface will be blocked until you add pass rules."); ?><br/><br/>
+	<?php endif; ?>
+				<?=gettext("Click the"); ?> <a href="firewall_rules_edit.php?if=<?=htmlspecialchars($if);?>"><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_plus.gif" title="<?=gettext("add new rule");?>" border="0" width="17" height="17" align="middle" alt="add" /></a><?=gettext(" button to add a new rule.");?></span>
+			</td>
+			</tr>
+<?php endif; ?>
+			<tr id="fr<?=$nrules;?>">
+			<td class="list"></td>
+			<td class="list"></td>
+			<?php
+				pfSense_handle_custom_code("/usr/local/pkg/firewall_rules/pre_id_tr_belowtable");
+			?>
+			<td class="list">&nbsp;</td>
+			<td class="list">&nbsp;</td>
+			<td class="list">&nbsp;</td>
+			<td class="list">&nbsp;</td>
+			<td class="list">&nbsp;</td>
+			<td class="list">&nbsp;</td>
+			<td class="list">&nbsp;</td>
+			<td class="list">&nbsp;</td>
+			<td class="list">&nbsp;</td>
+			<td class="list">&nbsp;</td>
+			<td class="list">
+				<table border="0" cellspacing="0" cellpadding="1" summary="move rules">
+					<tr>
+					<td>
+						<?php if ($nrules == 0): ?><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_left_d.gif" width="17" height="17" title="<?=gettext("move selected rules to end");?>" border="0" alt="move" /><?php else: ?><input name="move_<?=$i;?>" type="image" src="./themes/<?= $g['theme']; ?>/images/icons/icon_left.gif" style="width:17;height:17" title="<?=gettext("move selected rules to end");?>" onmouseover="fr_insline(<?=$nrules;?>, true)" onmouseout="fr_insline(<?=$nrules;?>, false)" /><?php endif; ?></td>
+					<td></td>
+					</tr>
+					<tr>
+					<td>
+<?php if ($nrules == 0): ?>
+						<img src="./themes/<?= $g['theme']; ?>/images/icons/icon_x_d.gif" width="17" height="17" title="<?=gettext("delete selected rules");?>" border="0" alt="delete" /><?php else: ?>
+						<input name="del" type="image" src="./themes/<?= $g['theme']; ?>/images/icons/icon_x.gif" style="width:17;height:17" title="<?=gettext("delete selected rules");?>" onclick="return confirm('<?=gettext('Do you really want to delete the selected rules?');?>')" />
+<?php endif; ?>
+					</td>
+			                <td><a href="firewall_rules_edit.php?if=<?=htmlspecialchars($if);?>"><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_plus.gif" title="<?=gettext("add new rule");?>" width="17" height="17" border="0" alt="add" /></a></td>
+					</tr>
+				</table>
+			</td>
+			</tr>
+			</tfoot>
 			<?php   // Show the anti-lockout rule if it's enabled, and we are on LAN with an if count > 1, or WAN with an if count of 1.
 				if (!isset($config['system']['webgui']['noantilockout']) &&
 					(((count($config['interfaces']) > 1) && ($if == 'lan'))
@@ -399,6 +454,7 @@ if($_REQUEST['undodrag']) {
 
 					$alports = implode('<br/>', filter_get_antilockout_ports(true));
 			?>
+			<tbody>
 			<tr valign="top" id="antilockout">
 			<td class="list">&nbsp;</td>
 			<td class="listt" align="center"><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_pass.gif" width="11" height="11" border="0" alt="pass" /></td>
@@ -428,10 +484,12 @@ if($_REQUEST['undodrag']) {
 				</table>
 			</td>
 			</tr>
+			</tbody>
 <?php endif; ?>
 
 <?php if (isset($config['interfaces'][$if]['blockpriv'])): ?>
-			<tr valign="top" id="frrfc1918">
+			<tbody>
+			<tr valign="top" id="block_priv_frrfc1918">
 			<td class="list">&nbsp;</td>
 			<td class="listt" align="center"><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_block.gif" width="11" height="11" border="0" alt="block" /></td>
 			<td class="listlr" style="background-color: #E0E0E0">&nbsp;</td>
@@ -457,9 +515,11 @@ if($_REQUEST['undodrag']) {
 				</table>
 			</td>
 			</tr>
+			</tbody>
 <?php endif; ?>
 <?php if (isset($config['interfaces'][$if]['blockbogons'])): ?>
-			<tr valign="top" id="frrfc1918">
+			<tbody>
+			<tr valign="top" id="block_bogons_frrfc1918">
 			<td class="list">&nbsp;</td>
 			<td class="listt" align="center"><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_block.gif" width="11" height="11" border="0" alt="block" /></td>
 			<td class="listlr" style="background-color: #E0E0E0">&nbsp;</td>
@@ -485,6 +545,7 @@ if($_REQUEST['undodrag']) {
 				</table>
 			</td>
 			</tr>
+			</tbody>
 <?php endif; ?>
 			<tbody id="dragtable">
 <?php $nrules = 0; for ($i = 0; isset($a_filter[$i]); $i++):
@@ -684,13 +745,13 @@ if($_REQUEST['undodrag']) {
 					}
 				}
 			?>
-			<td class="listlr" onclick="fr_toggle(<?=$nrules;?>)" id="frd<?=$nrules;?>" ondblclick="document.location='firewall_rules_edit.php?id=<?=$i;?>';">
+			<td class="listlr" onclick="fr_toggle(<?=$nrules;?>)" id="ID_frd<?=$nrules;?>" ondblclick="document.location='firewall_rules_edit.php?id=<?=$i;?>';">
 				<?=$textss;?><?php if (isset($filterent['id'])) echo $filterent['id']."&nbsp;"; else echo "&nbsp;"; ?><?=$textse;?>
 			</td>
 			<?php
 				pfSense_handle_custom_code("/usr/local/pkg/firewall_rules/pre_id_tr");
 			?>
-			<td class="listr" onclick="fr_toggle(<?=$nrules;?>)" id="frd<?=$nrules;?>" ondblclick="document.location='firewall_rules_edit.php?id=<?=$i;?>';">
+			<td class="listr" onclick="fr_toggle(<?=$nrules;?>)" id="Protocol_frd<?=$nrules;?>" ondblclick="document.location='firewall_rules_edit.php?id=<?=$i;?>';">
 			<?=$textss;?>
 			<?php
 				if (isset($filterent['ipprotocol'])) {
@@ -719,22 +780,22 @@ if($_REQUEST['undodrag']) {
 			?>
 			<?=$textse;?>
 			</td>
-			<td class="listr" onclick="fr_toggle(<?=$nrules;?>)" id="frd<?=$nrules;?>" ondblclick="document.location='firewall_rules_edit.php?id=<?=$i;?>';">
+			<td class="listr" onclick="fr_toggle(<?=$nrules;?>)" id="Source_frd<?=$nrules;?>" ondblclick="document.location='firewall_rules_edit.php?id=<?=$i;?>';">
 				<?=$textss;?><?php echo $alias_src_span_begin;?><?php echo htmlspecialchars(pprint_address($filterent['source']));?><?php echo $alias_src_span_end;?><?=$textse;?>
 			</td>
-			<td class="listr" onclick="fr_toggle(<?=$nrules;?>)" id="frd<?=$nrules;?>" ondblclick="document.location='firewall_rules_edit.php?id=<?=$i;?>';">
+			<td class="listr" onclick="fr_toggle(<?=$nrules;?>)" id="Source_Port_frd<?=$nrules;?>" ondblclick="document.location='firewall_rules_edit.php?id=<?=$i;?>';">
 				<?=$textss;?><?php echo $alias_src_port_span_begin;?><?php echo htmlspecialchars(pprint_port($filterent['source']['port'])); ?><?php echo $alias_src_port_span_end;?><?=$textse;?>
 			</td>
-			<td class="listr" onclick="fr_toggle(<?=$nrules;?>)" id="frd<?=$nrules;?>" ondblclick="document.location='firewall_rules_edit.php?id=<?=$i;?>';">
+			<td class="listr" onclick="fr_toggle(<?=$nrules;?>)" id="Destination_frd<?=$nrules;?>" ondblclick="document.location='firewall_rules_edit.php?id=<?=$i;?>';">
 				<?=$textss;?><?php echo $alias_dst_span_begin;?><?php echo htmlspecialchars(pprint_address($filterent['destination'])); ?><?php echo $alias_dst_span_end;?><?=$textse;?>
 			</td>
-			<td class="listr" onclick="fr_toggle(<?=$nrules;?>)" id="frd<?=$nrules;?>" ondblclick="document.location='firewall_rules_edit.php?id=<?=$i;?>';">
+			<td class="listr" onclick="fr_toggle(<?=$nrules;?>)" id="Destination_Port_frd<?=$nrules;?>" ondblclick="document.location='firewall_rules_edit.php?id=<?=$i;?>';">
 				<?=$textss;?><?php echo $alias_dst_port_span_begin;?><?php echo htmlspecialchars(pprint_port($filterent['destination']['port'])); ?><?php echo $alias_dst_port_span_end;?><?=$textse;?>
 			</td>
-			<td class="listr" onclick="fr_toggle(<?=$nrules;?>)" id="frd<?=$nrules;?>" ondblclick="document.location='firewall_rules_edit.php?id=<?=$i;?>';">
+			<td class="listr" onclick="fr_toggle(<?=$nrules;?>)" id="Gateway_frd<?=$nrules;?>" ondblclick="document.location='firewall_rules_edit.php?id=<?=$i;?>';">
 				<?=$textss;?><?php if (isset($config['interfaces'][$filterent['gateway']]['descr'])) echo htmlspecialchars($config['interfaces'][$filterent['gateway']]['descr']); else  echo htmlspecialchars(pprint_port($filterent['gateway'])); ?><?=$textse;?>
 			</td>
-			<td class="listr" onclick="fr_toggle(<?=$nrules;?>)" id="frd<?=$nrules;?>" ondblclick="document.location='firewall_rules_edit.php?id=<?=$i;?>';">
+			<td class="listr" onclick="fr_toggle(<?=$nrules;?>)" id="Queue_frd<?=$nrules;?>" ondblclick="document.location='firewall_rules_edit.php?id=<?=$i;?>';">
 			<?=$textss;?>
 			<?php
 				if (isset($filterent['ackqueue']) && isset($filterent['defaultqueue'])) {
@@ -750,7 +811,7 @@ if($_REQUEST['undodrag']) {
 			?>
 			<?=$textse;?>
 			</td>
-			<td class="listr" onclick="fr_toggle(<?=$nrules;?>)" id="frd<?=$nrules;?>" ondblclick="document.location='firewall_rules_edit.php?id=<?=$i;?>';"><font color="black">
+			<td class="listr" onclick="fr_toggle(<?=$nrules;?>)" id="Schedule_frd<?=$nrules;?>" ondblclick="document.location='firewall_rules_edit.php?id=<?=$i;?>';"><font color="black">
 				<?php if ($printicon) { ?><img src="./themes/<?= $g['theme']; ?>/images/icons/<?php echo $image; ?>.gif" title="<?php echo $alttext;?>" border="0" alt="icon" /><?php } ?><?=$textss;?><?php echo $schedule_span_begin;?><?=htmlspecialchars($filterent['sched']);?>&nbsp;<?php echo $schedule_span_end; ?><?=$textse;?>
 			</font></td>
 			<?php
@@ -774,57 +835,6 @@ if($_REQUEST['undodrag']) {
 			</tr>
 			<?php $nrules++; endfor; ?>
 			  <tr><td></td></tr></tbody>
-<?php if ($nrules == 0): ?>
-			<tr>
-			<td class="listt"></td>
-			<td class="listt"></td>
-			<td class="listlr" colspan="10" align="center" valign="middle">
-			<span class="gray">
-	<?php if ($_REQUEST['if'] == "FloatingRules"): ?>
-				<?=gettext("No floating rules are currently defined."); ?><br/><br/>
-	<?php else: ?>
-				<?=gettext("No rules are currently defined for this interface"); ?><br/>
-				<?=gettext("All incoming connections on this interface will be blocked until you add pass rules."); ?><br/><br/>
-	<?php endif; ?>
-				<?=gettext("Click the"); ?> <a href="firewall_rules_edit.php?if=<?=htmlspecialchars($if);?>"><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_plus.gif" title="<?=gettext("add new rule");?>" border="0" width="17" height="17" align="middle" alt="add" /></a><?=gettext(" button to add a new rule.");?></span>
-			</td>
-			</tr>
-<?php endif; ?>
-			<tr id="fr<?=$nrules;?>">
-			<td class="list"></td>
-			<td class="list"></td>
-			<?php
-				pfSense_handle_custom_code("/usr/local/pkg/firewall_rules/pre_id_tr_belowtable");
-			?>
-			<td class="list">&nbsp;</td>
-			<td class="list">&nbsp;</td>
-			<td class="list">&nbsp;</td>
-			<td class="list">&nbsp;</td>
-			<td class="list">&nbsp;</td>
-			<td class="list">&nbsp;</td>
-			<td class="list">&nbsp;</td>
-			<td class="list">&nbsp;</td>
-			<td class="list">&nbsp;</td>
-			<td class="list">&nbsp;</td>
-			<td class="list">
-				<table border="0" cellspacing="0" cellpadding="1" summary="move rules">
-					<tr>
-					<td>
-						<?php if ($nrules == 0): ?><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_left_d.gif" width="17" height="17" title="<?=gettext("move selected rules to end");?>" border="0" alt="move" /><?php else: ?><input name="move_<?=$i;?>" type="image" src="./themes/<?= $g['theme']; ?>/images/icons/icon_left.gif" style="width:17;height:17" title="<?=gettext("move selected rules to end");?>" onmouseover="fr_insline(<?=$nrules;?>, true)" onmouseout="fr_insline(<?=$nrules;?>, false)" /><?php endif; ?></td>
-					<td></td>
-					</tr>
-					<tr>
-					<td>
-<?php if ($nrules == 0): ?>
-						<img src="./themes/<?= $g['theme']; ?>/images/icons/icon_x_d.gif" width="17" height="17" title="<?=gettext("delete selected rules");?>" border="0" alt="delete" /><?php else: ?>
-						<input name="del" type="image" src="./themes/<?= $g['theme']; ?>/images/icons/icon_x.gif" style="width:17;height:17" title="<?=gettext("delete selected rules");?>" onclick="return confirm('<?=gettext('Do you really want to delete the selected rules?');?>')" />
-<?php endif; ?>
-					</td>
-			                <td><a href="firewall_rules_edit.php?if=<?=htmlspecialchars($if);?>"><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_plus.gif" title="<?=gettext("add new rule");?>" width="17" height="17" border="0" alt="add" /></a></td>
-					</tr>
-				</table>
-			</td>
-			</tr>
 		</table>
 		<table class="tabcont" width="100%" border="0" cellspacing="0" cellpadding="0" summary="icons">
 			<tr>

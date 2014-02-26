@@ -791,7 +791,7 @@ include("head.inc");
 				<?=gettext("You cannot edit the interface, protocol, source, or destination of associated filter rules.");?><br />
 				<br />
 				<?php
-					$edit_disabled = "disabled";
+					$edit_disabled = "disabled=\"disabled\"";
 					if (is_array($config['nat']['rule'])) {
 						foreach( $config['nat']['rule'] as $index => $nat_rule ) {
 							if( isset($nat_rule['associated-rule-id']) && $nat_rule['associated-rule-id']==$pconfig['associated-rule-id'] ) {
@@ -874,7 +874,7 @@ include("head.inc");
 				</select>
 				<input type="hidden" id="floating" name="floating" value="floating" />
 			</td>
-		<tr>
+		</tr>
 <?php endif; ?>
 		<tr>
 			<td width="22%" valign="top" class="vncellreq"><?=gettext("TCP/IP Version");?></td>
@@ -988,7 +988,7 @@ include("head.inc");
 					<tr>
 						<td><?=gettext("Address:");?>&nbsp;&nbsp;</td>
 						<td>
-							<input <?=$edit_disabled;?> autocomplete='off' name="src" type="text" class="formfldalias ipv4v6" id="src" size="20" value="<?php if (!is_specialnet($pconfig['src'])) echo htmlspecialchars($pconfig['src']);?>" /> /
+							<input <?=$edit_disabled;?> style="autocomplete:off" name="src" type="text" class="formfldalias ipv4v6" id="src" size="20" value="<?php if (!is_specialnet($pconfig['src'])) echo htmlspecialchars($pconfig['src']);?>" /> /
 							<select <?=$edit_disabled;?> name="srcmask" class="formselect ipv4v6" id="srcmask">
 <?php						for ($i = 127; $i > 0; $i--): ?>
 								<option value="<?=$i;?>" <?php if ($i == $pconfig['srcmask']) echo "selected=\"selected\""; ?>><?=$i;?></option>
@@ -1018,7 +1018,7 @@ include("head.inc");
 									<option value="<?=$wkport;?>" <?php if ($wkport == $pconfig['srcbeginport']) { echo "selected=\"selected\""; $bfound = 1; } ?>><?=htmlspecialchars($wkportdesc);?></option>
 <?php 							endforeach; ?>
 							</select>
-							<input <?=$edit_disabled;?> autocomplete='off' class="formfldalias" name="srcbeginport_cust" id="srcbeginport_cust" type="text" size="5" value="<?php if (!$bfound && $pconfig['srcbeginport']) echo htmlspecialchars($pconfig['srcbeginport']); ?>" />
+							<input <?=$edit_disabled;?> style="autocomplete:off" class="formfldalias" name="srcbeginport_cust" id="srcbeginport_cust" type="text" size="5" value="<?php if (!$bfound && $pconfig['srcbeginport']) echo htmlspecialchars($pconfig['srcbeginport']); ?>" />
 						</td>
 					</tr>
 					<tr>
@@ -1031,7 +1031,7 @@ include("head.inc");
 									<option value="<?=$wkport;?>" <?php if ($wkport == $pconfig['srcendport']) { echo "selected=\"selected\""; $bfound = 1; } ?>><?=htmlspecialchars($wkportdesc);?></option>
 <?php							endforeach; ?>
 							</select>
-							<input <?=$edit_disabled;?> autocomplete='off' class="formfldalias" name="srcendport_cust" id="srcendport_cust" type="text" size="5" value="<?php if (!$bfound && $pconfig['srcendport']) echo htmlspecialchars($pconfig['srcendport']); ?>" />
+							<input <?=$edit_disabled;?> style="autocomplete:off" class="formfldalias" name="srcendport_cust" id="srcendport_cust" type="text" size="5" value="<?php if (!$bfound && $pconfig['srcendport']) echo htmlspecialchars($pconfig['srcendport']); ?>" />
 						</td>
 					</tr>
 				</table>
@@ -1088,7 +1088,7 @@ include("head.inc");
 					<tr>
 						<td><?=gettext("Address:");?>&nbsp;&nbsp;</td>
 						<td>
-							<input <?=$edit_disabled;?> autocomplete='off' name="dst" type="text" class="formfldalias ipv4v6" id="dst" size="20" value="<?php if (!is_specialnet($pconfig['dst'])) echo htmlspecialchars($pconfig['dst']);?>" />
+							<input <?=$edit_disabled;?> style="autocomplete:off" name="dst" type="text" class="formfldalias ipv4v6" id="dst" size="20" value="<?php if (!is_specialnet($pconfig['dst'])) echo htmlspecialchars($pconfig['dst']);?>" />
 							/
 							<select <?=$edit_disabled;?> name="dstmask" class="formselect ipv4v6" id="dstmask">
 <?php
@@ -1116,7 +1116,7 @@ $i--): ?>
 									<option value="<?=$wkport;?>" <?php if ($wkport == $pconfig['dstbeginport']) { echo "selected=\"selected\""; $bfound = 1; }?>><?=htmlspecialchars($wkportdesc);?></option>
 <?php 							endforeach; ?>
 							</select>
-							<input <?=$edit_disabled;?> autocomplete='off' class="formfldalias" name="dstbeginport_cust" id="dstbeginport_cust" type="text" size="5" value="<?php if (!$bfound && $pconfig['dstbeginport']) echo htmlspecialchars($pconfig['dstbeginport']); ?>" />
+							<input <?=$edit_disabled;?> style="autocomplete:off" class="formfldalias" name="dstbeginport_cust" id="dstbeginport_cust" type="text" size="5" value="<?php if (!$bfound && $pconfig['dstbeginport']) echo htmlspecialchars($pconfig['dstbeginport']); ?>" />
 						</td>
 					</tr>
 					<tr>
@@ -1129,7 +1129,7 @@ $i--): ?>
 									<option value="<?=$wkport;?>" <?php if ($wkport == $pconfig['dstendport']) { echo "selected=\"selected\""; $bfound = 1; } ?>><?=htmlspecialchars($wkportdesc);?></option>
 <?php 							endforeach; ?>
 							</select>
-								<input <?=$edit_disabled;?> autocomplete='off' class="formfldalias" name="dstendport_cust" id="dstendport_cust" type="text" size="5" value="<?php if (!$bfound && $pconfig['dstendport']) echo htmlspecialchars($pconfig['dstendport']); ?>" />
+								<input <?=$edit_disabled;?> style="autocomplete:off" class="formfldalias" name="dstendport_cust" id="dstendport_cust" type="text" size="5" value="<?php if (!$bfound && $pconfig['dstendport']) echo htmlspecialchars($pconfig['dstendport']); ?>" />
 						</td>
 					</tr>
 				</table>
@@ -1274,7 +1274,7 @@ $i--): ?>
 				<input type="button" onclick="show_advanced_tcpflags()" value="<?=gettext("Advanced"); ?>" /> - <?=gettext("Show advanced option");?>
 			</div>
 			<div id="showtcpflagsadv" <?php if (empty($pconfig['tcpflags_any']) && empty($pconfig['tcpflags1']) && empty($pconfig['tcpflags2'])) echo "style='display:none'"; ?>>
-			<div id="tcpheader" align="center">
+			<div id="tcpflagsadv" align="center">
 			<table border="0" cellspacing="0" cellpadding="0">
 			<?php
 				$setflags = explode(",", $pconfig['tcpflags1']);
@@ -1658,6 +1658,15 @@ $has_updated_time = (isset($a_filter[$id]['updated']) && is_array($a_filter[$id]
 		</tr>
 	</table>
 </form>
+<script type="text/javascript">
+//<![CDATA[
+var autocomplete_off = ['src', 'srcbeginport_cust', 'srcendport_cust', 'dst', 'dstbeginport_cust', 'dstendport_cust'];
+for (var i = 0; i < autocomplete_off.length; i++) {
+	var node = document.getElementById(autocomplete_off[i]);
+	node.setAttribute("autocomplete",node.style.autocomplete);
+}
+//]]>
+</script>
 <script type="text/javascript">
 //<![CDATA[
 	ext_change();

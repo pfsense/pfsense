@@ -1203,16 +1203,18 @@ function mwexec_bg($command, $clearsigmask = false) {
 	unset($_gb);
 }
 
-/* unlink a file, if it exists */
+/* unlink a file or array of files, if it exists */
 function unlink_if_exists($fn) {
 	$to_do = glob($fn);
-	if(is_array($to_do)) {
+	if(is_array($to_do))
 		foreach($to_do as $filename)
-			@unlink($filename);
-	} else {
-		@unlink($fn);
-	}
+			if (file_exists($filename))
+				unlink($filename);
+	else
+		if (file_exists($fn))
+			unlink($fn);
 }
+
 /* make a global alias table (for faster lookups) */
 function alias_make_table($config) {
 	global $aliastable;

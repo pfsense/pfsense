@@ -205,6 +205,7 @@ read_dummynet_config(); /* XXX: */
 $dnqlist =& get_unique_dnqueue_list();
 read_layer7_config();
 $l7clist =& get_l7_unique_list();
+$a_gatewaygroups = return_gateway_groups_array();
 
 if ($_POST) {
 	unset($input_errors);
@@ -216,7 +217,6 @@ if ($_POST) {
 	}
 
 	if (($_POST['ipprotocol'] <> "") && ($_POST['gateway'] <> "")) {
-		$a_gatewaygroups = return_gateway_groups_array();
 		if(is_array($config['gateways']['gateway_group'])) {
 			foreach($config['gateways']['gateway_group'] as $gw_group) {
 				if($gw_group['name'] == $_POST['gateway']) {
@@ -1471,23 +1471,20 @@ $i--): ?>
 						echo "<option value=\"{$gwname}\" {$selected}>{$gw['name']} - {$gw['gateway']}</option>\n";
 					}
 					/* add gateway groups to the list */
-					if (is_array($config['gateways']['gateway_group'])) {
-						foreach($config['gateways']['gateway_group'] as $gw_group) {
-							$af = explode("|", $gw_group['item'][0]);
+					if (is_array($a_gatewaygroups)) {
+						foreach($a_gatewaygroups as $gwg_name => $gwg_data) {
 							if(($pconfig['ipprotocol'] == "inet46"))
 								continue;
-							if(($pconfig['ipprotocol'] == "inet6") && !is_ipaddrv6(lookup_gateway_ip_by_name($af[0])))
+							if(($pconfig['ipprotocol'] == "inet6") && ($gwg_data['ipprotocol'] != "inet6"))
 								continue;
-							if(($pconfig['ipprotocol'] == "inet") && !is_ipaddrv4(lookup_gateway_ip_by_name($af[0])))
+							if(($pconfig['ipprotocol'] == "inet") && ($gwg_data['ipprotocol'] != "inet"))
 								continue;
-							if($gw_group['name'] == "")
-								continue;
-							if($pconfig['gateway'] == $gw_group['name']) {
+							if($pconfig['gateway'] == $gwg_name) {
 								$selected = " selected=\"selected\"";
 							} else {
 								$selected = "";
 							}
-							echo "<option value=\"{$gw_group['name']}\" $selected>{$gw_group['name']}</option>\n";
+							echo "<option value=\"{$gwg_name}\" $selected>{$gwg_name}</option>\n";
 						}
 					}
 ?>

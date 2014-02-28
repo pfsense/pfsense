@@ -1450,7 +1450,8 @@ $i--): ?>
 						} else {
 							$selected = "";
 						}
-						echo "<option value=\"{$gwname}\" {$selected}>{$gw['name']} - {$gw['gateway']}</option>\n";
+						$gateway_addr_str = empty($gw['gateway']) ? "" : " - " . $gw[gateway];
+						echo "<option value=\"{$gwname}\" {$selected}>{$gw['name']}{$gateway_addr_str}</option>\n";
 					}
 					/* add gateway groups to the list */
 					if (is_array($a_gatewaygroups)) {

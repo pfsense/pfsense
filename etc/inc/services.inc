@@ -849,6 +849,7 @@ EOD;
 
 	if ($need_ddns_updates) {
 		$dhcpdconf .= "ddns-update-style interim;\n";
+		$dhcpdconf .= "update-static-leases on;\n";
 
 		$dhcpdconf .= dhcpdkey($dhcpifconf);
 		$dhcpdconf .= dhcpdzones($ddns_zones, $dhcpifconf);

@@ -4641,6 +4641,8 @@ function interface_has_gatewayv6($friendly) {
 			default:
 				if (substr($ifname['if'], 0, 4) ==  "ovpn")
 					return true;
+				if (substr($ifname['if'], 0, 3) ==  "gif")
+					return true;
 				if (!empty($ifname['gatewayv6']))
 					return true;
 				break;

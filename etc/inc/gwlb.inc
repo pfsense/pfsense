@@ -555,6 +555,8 @@ function return_gateways_array($disabled = false, $localhost = false) {
 			default:
 				if (substr($ifcfg['if'], 0, 4) ==  "ovpn")
 					$ctype = "VPNv6";
+				else if (substr($ifcfg['if'], 0, 3) ==  "gif")
+					$ctype = "TUNNELv6";
 				break;
 		}
 		$ctype = "_". strtoupper($ctype);
@@ -879,7 +881,7 @@ function get_interface_gateway($interface, &$dynamic = false) {
 	if (!is_ipaddrv4($gw) && !is_ipaddrv4($gwcfg['ipaddr'])) {
 		$realif = get_real_interface($interface);
 		if (file_exists("{$g['tmp_path']}/{$realif}_router")) {
-				$gw = trim(file_get_contents("{$g['tmp_path']}/{$realif}_router"), " \n");
+			$gw = trim(file_get_contents("{$g['tmp_path']}/{$realif}_router"), " \n");
 			$dynamic = true;
 		}
 		if (file_exists("{$g['tmp_path']}/{$realif}_defaultgw"))

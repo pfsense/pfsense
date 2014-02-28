@@ -85,6 +85,7 @@ if (isset($p1index) && $a_phase1[$p1index]) {
 	$pconfig['myid_data'] = $a_phase1[$p1index]['myid_data'];
 	$pconfig['peerid_type'] = $a_phase1[$p1index]['peerid_type'];
 	$pconfig['peerid_data'] = $a_phase1[$p1index]['peerid_data'];
+	$pconfig['verify_identifier'] = isset($a_phase1[$p1index]['verify_identifier']);
 	$pconfig['ealgo'] = $a_phase1[$p1index]['encryption-algorithm'];
 	$pconfig['halgo'] = $a_phase1[$p1index]['hash-algorithm'];
 	$pconfig['dhgroup'] = $a_phase1[$p1index]['dhgroup'];
@@ -327,6 +328,10 @@ if ($_POST) {
 		$ph1ent['myid_data'] = $pconfig['myid_data'];
 		$ph1ent['peerid_type'] = $pconfig['peerid_type'];
 		$ph1ent['peerid_data'] = $pconfig['peerid_data'];
+		if (isset($pconfig['verify_identifier']))
+			$ph1ent['verify_identifier'] = true;
+		else
+			unset($ph1ent['verify_identifier']);
 
 		$ph1ent['encryption-algorithm'] = $pconfig['ealgo'];
 		$ph1ent['hash-algorithm'] = $pconfig['halgo'];
@@ -407,6 +412,11 @@ function peeridsel_change() {
 			document.getElementById('peerid_data').style.visibility = 'hidden';
 	else
 			document.getElementById('peerid_data').style.visibility = 'visible';
+
+	if (value == 'asn1dn')
+		document.getElementById('opt_verify_identifier').style.visibility = 'visible';
+	else
+		document.getElementById('opt_verify_identifier').style.visibility = 'hidden';
 }
 
 function methodsel_change() {
@@ -686,6 +696,10 @@ function dpdchkbox_change() {
 							<?php endforeach; ?>
 							</select>
 							<input name="peerid_data" type="text" class="formfld unknown" id="peerid_data" size="30" value="<?=htmlspecialchars($pconfig['peerid_data']);?>">
+							<span id="opt_verify_identifier">
+								<input id="verify_identifier" name="verify_identifier" type="checkbox" value="yes" <?php if ($pconfig['verify_identifier']) echo "checked=\"checked\""; ?> />
+								<span class="vexpl"><?=gettext("Verify peer's identifier"); ?>.</span>
+							</span>
 						<?php if ($pconfig['mobile']) { ?>
 							<br/><br/><?=gettext("NOTE: This is known as the \"group\" setting on some VPN client implementations"); ?>.
 						<?php } ?>

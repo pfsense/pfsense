@@ -665,7 +665,7 @@ if (empty($tab)) {
 					?>
 					<tr>
 						<td>
-							<input autocomplete="off" name="address<?php echo $counter; ?>" type="text" class="formfldalias ipv4v6" id="address<?php echo $counter; ?>" size="30" value="<?=htmlspecialchars($address);?>" />
+							<input style="autocomplete:off" name="address<?php echo $counter; ?>" type="text" class="formfldalias ipv4v6" id="address<?php echo $counter; ?>" size="30" value="<?=htmlspecialchars($address);?>" />
 						</td>
 						<td>
 							<select name="address_subnet<?php echo $counter; ?>" class="formselect ipv4v6" id="address_subnet<?php echo $counter; ?>">
@@ -706,6 +706,16 @@ if (empty($tab)) {
 	</tr>
 </table>
 </form>
+
+<script type="text/javascript">
+//<![CDATA[
+var autocomplete_off = ['address'];
+for (var i = 0; i < autocomplete_off.length; i++) {
+	var node = document.getElementById(autocomplete_off[i]);
+	node.setAttribute("autocomplete",node.style.autocomplete);
+}
+//]]>
+</script>
 
 <script type="text/javascript">
 //<![CDATA[

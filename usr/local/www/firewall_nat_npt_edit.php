@@ -197,7 +197,7 @@ include("head.inc");
 
 					foreach ($interfaces as $iface => $ifacename): 
 					?>
-					<option value="<?=$iface;?>" <?php if ($iface == $pconfig['interface']) echo "selected=\"selected\""; ?>>
+					<option value="<?=$iface;?>" <?php if ($iface == $pconfig['interface']) echo " selected=\"selected\""; ?>>
 					<?=htmlspecialchars($ifacename);?>
 					</option>
 					<?php endforeach; ?>
@@ -221,7 +221,7 @@ include("head.inc");
                                                         <input name="src" type="text" class="formfldalias" id="src" size="20" value="<?php if (!is_specialnet($pconfig['src'])) echo htmlspecialchars($pconfig['src']);?>" /> /
                                                         <select name="srcmask" class="formselect" id="srcmask">
 <?php                                           for ($i = 128; $i > 0; $i--): ?>
-                                                        <option value="<?=$i;?>" <?php if ($i == $pconfig['srcmask']) echo "selected=\"selected\""; ?>><?=$i;?></option>
+                                                        <option value="<?=$i;?>" <?php if ($i == $pconfig['srcmask']) echo " selected=\"selected\""; ?>><?=$i;?></option>
 <?php                                           endfor; ?>
                                                         </select>
                                                 </td>
@@ -251,7 +251,7 @@ external prefix.");
                                                         <select name="dstmask" class="formselect" id="dstmask">
 <?php
                                                         for ($i = 128; $i > 0; $i--): ?>
-                                                                <option value="<?=$i;?>" <?php if ($i == $pconfig['dstmask']) echo "selected=\"selected\""; ?>><?=$i;?></option>
+                                                                <option value="<?=$i;?>" <?php if ($i == $pconfig['dstmask']) echo " selected=\"selected\""; ?>><?=$i;?></option>
 <?php                                           endfor; ?>
                                                         </select>
                                                 </td>

@@ -466,7 +466,7 @@ function ipsec_smp_dump_status() {
 		return;
 	}
 
-	$fd = fopen("{$g['varrun_path']}/charon.xml", "w");
+	$fd = @fsockopen("unix://{$g['varrun_path']}/charon.xml");
 	if (!$fd) {
 		log_error("Could not read status from ipsec");
 		return;
@@ -485,7 +485,7 @@ function ipsec_smp_dump_status() {
 	@file_put_contents("{$g['tmp_path']}/smp_status.xml", $response);
 	unset($response, $sread);
 
-	$custom_listtags = array('ikesa');
+	$custom_listtags = array('ikesa', 'childsa', 'network');
 	$response = parse_xml_config("{$g['tmp_path']}/smp_status.xml", "message");
 	@unlink("{$g['tmp_path']}/smp_status.xml");
 	unset($custom_listtags);

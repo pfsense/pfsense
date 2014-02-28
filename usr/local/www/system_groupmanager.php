@@ -64,7 +64,9 @@ if ($_GET['act'] == "delgroup") {
 		exit;
 	}
 
+	conf_mount_rw();
 	local_group_del($a_group[$_GET['id']]);
+	conf_mount_ro();
 	$groupdeleted = $a_group[$_GET['id']]['name'];
 	unset($a_group[$_GET['id']]);
 	write_config();
@@ -154,7 +156,9 @@ if ($_POST) {
 			$a_group[] = $group;
 		}
 
+		conf_mount_rw();
 		local_group_set($group);
+		conf_mount_ro();
 
 		/* Refresh users in this group since their privileges may have changed. */
 		if (is_array($group['member'])) {

@@ -124,7 +124,7 @@ exec("/usr/bin/grep -vi warning /tmp/PHP_errors.log", $php_errors);
 			echo "Could not find any crash files.";
 		}
 	} else if(gettext($_POST['Submit']) == "No") {
-		array_map('unlink', glob("rm /var/crash/*"));
+		array_map('unlink', glob("/var/crash/*"));
 		// Erase the contents of the PHP error log
 		fclose(fopen("/tmp/PHP_errors.log", 'w'));
 		Header("Location: /");

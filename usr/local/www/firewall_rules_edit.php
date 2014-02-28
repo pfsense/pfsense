@@ -1474,18 +1474,14 @@ $i--): ?>
 					/* add gateway groups to the list */
 					if (is_array($a_gatewaygroups)) {
 						foreach($a_gatewaygroups as $gwg_name => $gwg_data) {
-							if(($pconfig['ipprotocol'] == "inet46"))
-								continue;
-							if(($pconfig['ipprotocol'] == "inet6") && ($gwg_data['ipprotocol'] != "inet6"))
-								continue;
-							if(($pconfig['ipprotocol'] == "inet") && ($gwg_data['ipprotocol'] != "inet"))
-								continue;
-							if($pconfig['gateway'] == $gwg_name) {
-								$selected = " selected=\"selected\"";
-							} else {
-								$selected = "";
+							if((empty($pconfig['ipprotocol'])) || ($pconfig['ipprotocol'] == $gwg_data['ipprotocol'])) {
+								if($pconfig['gateway'] == $gwg_name) {
+									$selected = " selected=\"selected\"";
+								} else {
+									$selected = "";
+								}
+								echo "<option value=\"{$gwg_name}\" $selected>{$gwg_name}</option>\n";
 							}
-							echo "<option value=\"{$gwg_name}\" $selected>{$gwg_name}</option>\n";
 						}
 					}
 ?>

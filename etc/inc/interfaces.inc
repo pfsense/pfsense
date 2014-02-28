@@ -961,7 +961,9 @@ function interface_gif_configure(&$gif, $gifkey = "") {
 	/* Do not change the order here for more see gif(4) NOTES section. */
 	mwexec("/sbin/ifconfig {$gifif} tunnel {$realifip} " . escapeshellarg($gif['remote-addr']));
 	if((is_ipaddrv6($gif['tunnel-local-addr'])) || (is_ipaddrv6($gif['tunnel-remote-addr']))) {
-		mwexec("/sbin/ifconfig {$gifif} inet6 " . escapeshellarg($gif['tunnel-local-addr']) . " " . escapeshellarg($gif['tunnel-remote-addr']) . " prefixlen /" . escapeshellarg($gif['tunnel-remote-net']));
+		/* XXX: The prefixlen argument for tunnels of ipv6 is useless since it needs to be 128 as enforced by kernel */
+		//mwexec("/sbin/ifconfig {$gifif} inet6 " . escapeshellarg($gif['tunnel-local-addr']) . " " . escapeshellarg($gif['tunnel-remote-addr']) . " prefixlen /" . escapeshellarg($gif['tunnel-remote-net']));
+		mwexec("/sbin/ifconfig {$gifif} inet6 " . escapeshellarg($gif['tunnel-local-addr']) . " " . escapeshellarg($gif['tunnel-remote-addr']));
 	} else {
 		mwexec("/sbin/ifconfig {$gifif} " . escapeshellarg($gif['tunnel-local-addr']) . " " . escapeshellarg($gif['tunnel-remote-addr']) . " netmask " . gen_subnet_mask($gif['tunnel-remote-net']));
 	}

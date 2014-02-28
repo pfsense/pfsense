@@ -598,7 +598,8 @@ function return_gateways_array($disabled = false, $localhost = false, $inactive 
 			default:
 				if (substr($ifcfg['if'], 0, 4) ==  "ovpn")
 					$ctype = "VPNv6";
-				if (substr($ifcfg['if'], 0, 3) ==  "gif")
+				$tunnelif = substr($ifname['if'], 0, 3);
+				if ($tunnelif == "gif" || $tunnelif == "gre")
 					$ctype = "TUNNELv6";
 				break;
 		}

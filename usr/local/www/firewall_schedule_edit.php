@@ -243,11 +243,11 @@ function repeatExistingDays(){
 	}	
 }
 
-function daytogglerepeating(week,daypos,bExists){
+function daytogglerepeating(year,week,daypos,bExists){
 	var tempstr, daycell, dayoriginal = "";
 	for (j=1; j<=53; j++)
 	{						
-		tempstr = 'w' + j + 'p' + daypos;
+		tempstr = 'y' + year +'w' + j + 'p' + daypos;
 		daycell = eval('document.getElementById(tempstr)');
 		dayoriginalpos =  daysSelected.indexOf(tempstr);
 		
@@ -280,8 +280,15 @@ function daytoggle(id) {
 	var bFoundValid = false;
 	
 	iddashpos = id.search("-");
+
+	var tempstryearpos = id.search("y");
+	var tempstrweekpos = id.search("w");
 	var tempstrdaypos = id.search("p");
-	var week = id.substring(1,tempstrdaypos);
+
+	var year = id.substring(tempstryearpos + 1,tempstrweekpos);
+	year = parseInt(year);
+
+	var week = id.substring(tempstrweekpos + 1,tempstrdaypos);
 	week = parseInt(week);
 	
 	if (iddashpos == "-1")
@@ -309,7 +316,7 @@ function daytoggle(id) {
 			}
 			else if (daycell.style.backgroundColor == "#F08080")  // lightcoral
 			{
-				daytogglerepeating(week,daypos,true);
+				daytogglerepeating(year,week,daypos,true);
 			}
 			else //color is white cell
 			{
@@ -320,7 +327,7 @@ function daytoggle(id) {
 				else
 				{
 					daycell.style.backgroundColor = "#F08080";  // lightcoral
-					daytogglerepeating(week,daypos,false);								
+					daytogglerepeating(year,week,daypos,false);								
 				}
 				daysSelected += id + ",";
 			}
@@ -330,7 +337,7 @@ function daytoggle(id) {
 		{
 			//we found an invalid cell when column was clicked, move up to the next week
 			week++;
-			tempstr = "w" + week + "p" + daypos;
+			tempstr = "y" + year + "w" + week + "p" + daypos;
 			idmod = tempstr;			
 		}
 	}
@@ -842,13 +849,13 @@ EOD;
 								<tr><td colspan="7" align="center" class="listbg"><b><?php echo date("F_Y", mktime(0, 0, 0, date($monthcounter), 1, date($yearcounter)));?></b></td>
 								</tr>
 								<tr>	
-									<td align="center" class="listhdrr" style="cursor: pointer;" onclick="daytoggle('w1p1');"><u><b><?=gettext("Mon");?></b></u></td>
-									<td align="center" class="listhdrr" style="cursor: pointer;" onclick="daytoggle('w1p2');"><u><b><?=gettext("Tue");?></b></u></td>
-									<td align="center" class="listhdrr" style="cursor: pointer;" onclick="daytoggle('w1p3');"><u><b><?=gettext("Wed");?></b></u></td>
-									<td align="center" class="listhdrr" style="cursor: pointer;" onclick="daytoggle('w1p4');"><u><b><?=gettext("Thu");?></b></u></td>
-									<td align="center" class="listhdrr" style="cursor: pointer;" onclick="daytoggle('w1p5');"><u><b><?=gettext("Fri");?></b></u></td>
-									<td align="center" class="listhdrr" style="cursor: pointer;" onclick="daytoggle('w1p6');"><u><b><?=gettext("Sat");?></b></u></td>
-									<td align="center" class="listhdrr" style="cursor: pointer;" onclick="daytoggle('w1p7');"><u><b><?=gettext("Sun");?></b></u></td>
+									<td align="center" class="listhdrr" style="cursor: pointer;" onclick="daytoggle('y<?=$yearcounter;?>w1p1');"><u><b><?=gettext("Mon");?></b></u></td>
+									<td align="center" class="listhdrr" style="cursor: pointer;" onclick="daytoggle('y<?=$yearcounter;?>w1p2');"><u><b><?=gettext("Tue");?></b></u></td>
+									<td align="center" class="listhdrr" style="cursor: pointer;" onclick="daytoggle('y<?=$yearcounter;?>w1p3');"><u><b><?=gettext("Wed");?></b></u></td>
+									<td align="center" class="listhdrr" style="cursor: pointer;" onclick="daytoggle('y<?=$yearcounter;?>w1p4');"><u><b><?=gettext("Thu");?></b></u></td>
+									<td align="center" class="listhdrr" style="cursor: pointer;" onclick="daytoggle('y<?=$yearcounter;?>w1p5');"><u><b><?=gettext("Fri");?></b></u></td>
+									<td align="center" class="listhdrr" style="cursor: pointer;" onclick="daytoggle('y<?=$yearcounter;?>w1p6');"><u><b><?=gettext("Sat");?></b></u></td>
+									<td align="center" class="listhdrr" style="cursor: pointer;" onclick="daytoggle('y<?=$yearcounter;?>w1p7');"><u><b><?=gettext("Sun");?></b></u></td>
 								</tr>
 								<?php			
 								$firstmonth = FALSE;				
@@ -860,14 +867,14 @@ EOD;
 										echo "<tr>";
 									}											
 									if ($firstdayofmonth == $positioncounter){?>
-										<td align="center" style="cursor: pointer;" class="listr" id="w<?=$weekcounter;?>p<?=$positioncounter;?>" onclick="daytoggle('w<?=$weekcounter;?>p<?=$positioncounter;?>-m<?=$monthcounter;?>d<?=$daycounter;?>');">
+										<td align="center" style="cursor: pointer;" class="listr" id="y<?=$yearcounter;?>w<?=$weekcounter;?>p<?=$positioncounter;?>" onclick="daytoggle('y<?=$yearcounter;?>w<?=$weekcounter;?>p<?=$positioncounter;?>-m<?=$monthcounter;?>d<?=$daycounter;?>');">
 										<?php echo $daycounter;
 										$daycounter++;
 										$firstdayprinted = TRUE;
 										echo "</td>";
 									}
 									elseif ($firstdayprinted == TRUE && $daycounter <= $numberofdays){?>
-										<td align="center" style="cursor: pointer;" class="listr" id="w<?=$weekcounter;?>p<?=$positioncounter;?>" onclick="daytoggle('w<?=$weekcounter;?>p<?=$positioncounter;?>-m<?=$monthcounter;?>d<?=$daycounter;?>');">
+										<td align="center" style="cursor: pointer;" class="listr" id="y<?=$yearcounter;?>w<?=$weekcounter;?>p<?=$positioncounter;?>" onclick="daytoggle('y<?=$yearcounter;?>w<?=$weekcounter;?>p<?=$positioncounter;?>-m<?=$monthcounter;?>d<?=$daycounter;?>');">
 										<?php echo $daycounter;
 										$daycounter++;
 										echo "</td>";

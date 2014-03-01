@@ -388,9 +388,11 @@ function services_dhcpdv4_configure() {
 
 	/* Only consider DNS servers with IPv4 addresses for the IPv4 DHCP server. */
 	$dns_arrv4 = array();
-	foreach($syscfg['dnsserver'] as $dnsserver) {
-		if (is_ipaddrv4($dnsserver)) {
-			$dns_arrv4[] = $dnsserver;
+	if (is_array($syscfg['dnsserver'])) {
+		foreach($syscfg['dnsserver'] as $dnsserver) {
+			if (is_ipaddrv4($dnsserver)) {
+				$dns_arrv4[] = $dnsserver;
+			}
 		}
 	}
 

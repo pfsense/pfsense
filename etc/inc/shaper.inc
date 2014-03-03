@@ -3389,7 +3389,7 @@ EOD;
 		$form .= $mask['bits'];
 		$form .= "\"";
 		if ($mask['type'] == "none")
-			$form .= " disabled";
+			$form .= " disabled=\"disabled\"";
 		$form .= " />";
 		$form .= "&nbsp; IPV4 mask bits (1-32)<br/>";
 		$form .= "ffff:ffff:ffff:ffff:ffff:ffff:ffff:ffff/&nbsp;<input type=\"text\" class=\"formfld unknown\" size=\"2\" id=\"maskbitsv6\" name=\"maskbitsv6\" value=\"";
@@ -3397,7 +3397,7 @@ EOD;
 		$form .= $mask['bitsv6'];
 		$form .= "\"";
 		if ($mask['type'] == "none")
-			$form .= " disabled";
+			$form .= " disabled=\"disabled\"";
 		$form .= " />";
 		$form .= "&nbsp; IPV6 mask bits (1-128)<br/>";
 		$form .= "<span class=\"vexpl\">" . gettext("If 'source' or 'destination' slots is chosen, \n"
@@ -3670,7 +3670,7 @@ class dnqueue_class extends dummynet_class {
 		$form .= $mask['bits'];
 		$form .= "\"";
 		if ($mask['type'] == "none")
-			$form .= " disabled";
+			$form .= " disabled=\"disabled\"";
 		$form .= " />";
 		$form .= "&nbsp; IPV4 mask bits (1-32)<br/>";
 		$form .= "ffff:ffff:ffff:ffff:ffff:ffff:ffff:ffff/&nbsp;<input type=\"text\" class=\"formfld unknown\" size=\"2\" id=\"maskbitsv6\" name=\"maskbitsv6\" value=\"";
@@ -3678,7 +3678,7 @@ class dnqueue_class extends dummynet_class {
 		$form .= $mask['bitsv6'];
 		$form .= "\"";
 		if ($mask['type'] == "none")
-			$form .= " disabled";
+			$form .= " disabled=\"disabled\"";
 		$form .= " />";
 		$form .= "&nbsp; IPV6 mask bits (1-128)<br/>";
 		$form .= "<span class=\"vexpl\">" . gettext("If 'source' or 'destination' slots is chosen, \n"

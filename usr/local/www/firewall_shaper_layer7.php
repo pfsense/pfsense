@@ -213,11 +213,15 @@ else {
 
 // Builds the left tree
 $tree = "<ul class=\"tree\" >";
+$rowIndex = 0;
 if (is_array($layer7_rules_list)) {
         foreach ($layer7_rules_list as $tmpl7) {
+			$rowIndex++;
                 $tree .= $tmpl7->build_tree();
         }
 }
+if ($rowIndex == 0)
+	$tree .= "<li></li>";
 $tree .= "</ul>";
 
 $output = "<table summary=\"output form\">";

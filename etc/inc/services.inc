@@ -761,7 +761,15 @@ EOD;
 			if ($dhcpifconf['nextserver'] <> "") {
 				$dhcpdconf .= "	next-server {$dhcpifconf['nextserver']};\n";
 			}
-			if ($dhcpifconf['filename'] <> "") {
+			if (($dhcpifconf['filename'] <> "") && ($dhcpifconf['filename32'] <> "") && ($dhcpifconf['filename64'] <> "")) {
+					$dhcpdconf .= "	if option arch = 00:06 {\n";
+					$dhcpdconf .= "		filename \"{$dhcpifconf['filename32']}\";\n";
+					$dhcpdconf .= "	} else if option arch = 00:07 {\n";
+					$dhcpdconf .= "		filename \"{$dhcpifconf['filename64']}\";\n";
+					$dhcpdconf .= "	} else {\n";
+					$dhcpdconf .= "		filename \"{$dhcpifconf['filename']}\";\n";
+					$dhcpdconf .= "	}\n\n";
+			} elseif ($dhcpifconf['filename'] <> "") {
 				$dhcpdconf .= "	filename \"{$dhcpifconf['filename']}\";\n";
 			}
 			if ($dhcpifconf['rootpath'] <> "") {

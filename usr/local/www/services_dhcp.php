@@ -196,6 +196,8 @@ if (is_array($dhcpdconf)) {
 	$pconfig['netboot'] = isset($dhcpdconf['netboot']);
 	$pconfig['nextserver'] = $dhcpdconf['nextserver'];
 	$pconfig['filename'] = $dhcpdconf['filename'];
+	$pconfig['filename32'] = $dhcpdconf['filename32'];
+	$pconfig['filename64'] = $dhcpdconf['filename64'];
 	$pconfig['rootpath'] = $dhcpdconf['rootpath'];
 	$pconfig['netmask'] = $dhcpdconf['netmask'];
 	$pconfig['numberoptions'] = $dhcpdconf['numberoptions'];
@@ -497,6 +499,8 @@ if ($_POST) {
 		$dhcpdconf['netboot'] = ($_POST['netboot']) ? true : false;
 		$dhcpdconf['nextserver'] = $_POST['nextserver'];
 		$dhcpdconf['filename'] = $_POST['filename'];
+		$dhcpdconf['filename32'] = $_POST['filename32'];
+		$dhcpdconf['filename64'] = $_POST['filename64'];
 		$dhcpdconf['rootpath'] = $_POST['rootpath'];
 
 		// Handle the custom options rowhelper
@@ -636,6 +640,8 @@ include("head.inc");
 		document.iform.netboot.disabled = endis;
 		document.iform.nextserver.disabled = endis;
 		document.iform.filename.disabled = endis;
+		document.iform.filename32.disabled = endis;
+		document.iform.filename64.disabled = endis;
 		document.iform.rootpath.disabled = endis;
 		document.iform.denyunknown.disabled = endis;
 	}
@@ -1080,10 +1086,15 @@ include("head.inc");
 					<b><?=gettext("Enables network booting.");?></b>
 					<p>
 					<?=gettext("Enter the IP of the"); ?> <b><?=gettext("next-server"); ?></b>
-					<input name="nextserver" type="text" class="formfld unknown" id="nextserver" size="20" value="<?=htmlspecialchars($pconfig['nextserver']);?>">
-					<?=gettext("and the filename");?>
-					<input name="filename" type="text" class="formfld unknown" id="filename" size="20" value="<?=htmlspecialchars($pconfig['filename']);?>"><br>
+					<input name="nextserver" type="text" class="formfld unknown" id="nextserver" size="20" value="<?=htmlspecialchars($pconfig['nextserver']);?>"><br>
+					<?=gettext("and the default bios filename");?>
+						<input name="filename" type="text" class="formfld unknown" id="filename" size="20" value="<?=htmlspecialchars($pconfig['filename']);?>"><br>
+					<?=gettext("and the UEFI 32bit filename  ");?>
+						<input name="filename32" type="text" class="formfld unknown" id="filename32" size="20" value="<?=htmlspecialchars($pconfig['filename32']);?>"><br>
+					<?=gettext("and the UEFI 64bit filename  ");?>
+						<input name="filename64" type="text" class="formfld unknown" id="filename64" size="20" value="<?=htmlspecialchars($pconfig['filename64']);?>"><br>
 					<?=gettext("Note: You need both a filename and a boot server configured for this to work!");?>
+					<?=gettext("You will need all three filenames and a boot server configured for UEFI to work!");?>
 					<p>
 					<?=gettext("Enter the"); ?> <b><?=gettext("root-path"); ?></b>-<?=gettext("string");?>
 					<input name="rootpath" type="text" class="formfld unknown" id="rootpath" size="90" value="<?=htmlspecialchars($pconfig['rootpath']);?>"><br>

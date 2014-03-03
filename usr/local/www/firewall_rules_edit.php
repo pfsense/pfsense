@@ -420,10 +420,10 @@ if ($_POST) {
 			$input_errors[] = gettext("You can not use IPv6 addresses in IPv4 rules.");
 		if((is_ipaddrv4($_POST['src']) || is_ipaddrv4($_POST['dst'])) && ($_POST['ipprotocol'] == "inet6"))
 			$input_errors[] = gettext("You can not use IPv4 addresses in IPv6 rules.");
-		if((is_ipaddr($_POST['src']) || is_ipaddr($_POST['dst'])) && ($_POST['ipprotocol'] == "inet46"))
-			$input_errors[] = gettext("You can not use a IPv4 or IPv6 address in combined IPv4 + IPv6 rules.");
-
 	}
+
+	if((is_ipaddr($_POST['src']) || is_ipaddr($_POST['dst'])) && ($_POST['ipprotocol'] == "inet46"))
+		$input_errors[] = gettext("You can not use a IPv4 or IPv6 address in combined IPv4 + IPv6 rules.");
 
 	if ($_POST['srcbeginport'] > $_POST['srcendport']) {
 		/* swap */

@@ -419,6 +419,7 @@ function services_dhcpdv4_configure() {
 option domain-name "{$syscfg['domain']}";
 option ldap-server code 95 = text;
 option domain-search-list code 119 = text;
+option arch code 93 = unsigned integer 16; # RFC4578
 {$custoptions}
 default-lease-time 7200;
 max-lease-time 86400;
@@ -763,18 +764,18 @@ EOD;
 			if ($dhcpifconf['nextserver'] <> "") {
 				$dhcpdconf .= "	next-server {$dhcpifconf['nextserver']};\n";
 			}
-			if (($dhcpifconf['filename'] <> "") && ($dhcpifconf['filename32'] <> "") && ($dhcpifconf['filename64'] <> "")) {
-					$dhcpdconf .= "	if option arch = 00:06 {\n";
-					$dhcpdconf .= "		filename \"{$dhcpifconf['filename32']}\";\n";
-					$dhcpdconf .= "	} else if option arch = 00:07 {\n";
-					$dhcpdconf .= "		filename \"{$dhcpifconf['filename64']}\";\n";
-					$dhcpdconf .= "	} else {\n";
-					$dhcpdconf .= "		filename \"{$dhcpifconf['filename']}\";\n";
-					$dhcpdconf .= "	}\n\n";
-			} elseif ($dhcpifconf['filename'] <> "") {
+			if (!empty($dhcpifconf['filename']) && !empty($dhcpifconf['filename32']) && !empty($dhcpifconf['filename64'])) {
+				$dhcpdconf .= "	if option arch = 00:06 {\n";
+				$dhcpdconf .= "		filename \"{$dhcpifconf['filename32']}\";\n";
+				$dhcpdconf .= "	} else if option arch = 00:07 {\n";
+				$dhcpdconf .= "		filename \"{$dhcpifconf['filename64']}\";\n";
+				$dhcpdconf .= "	} else {\n";
+				$dhcpdconf .= "		filename \"{$dhcpifconf['filename']}\";\n";
+				$dhcpdconf .= "	}\n\n";
+			} elseif (!empty($dhcpifconf['filename'])) {
 				$dhcpdconf .= "	filename \"{$dhcpifconf['filename']}\";\n";
 			}
-			if ($dhcpifconf['rootpath'] <> "") {
+			if (!empty($dhcpifconf['rootpath'])) {
 				$dhcpdconf .= "	option root-path \"{$dhcpifconf['rootpath']}\";\n";
 			}
 		}
@@ -1080,7 +1081,6 @@ function services_dhcpdv6_configure($blacklist = array()) {
 option domain-name "{$syscfg['domain']}";
 option ldap-server code 95 = text;
 option domain-search-list code 119 = text;
-option arch code 93 = unsigned integer 16; RFC4578
 {$custoptionsv6}
 default-lease-time 7200;
 max-lease-time 86400;

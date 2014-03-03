@@ -596,7 +596,7 @@ function return_gateways_array($disabled = false, $localhost = false, $inactive 
 				$ctype = strtoupper($ifcfg['ipaddrv6']);
 				break;
 			default:
-				$tunnelif = substr($ifname['if'], 0, 3);
+				$tunnelif = substr($ifcfg['if'], 0, 3);
 				if (substr($ifcfg['if'], 0, 4) ==  "ovpn")
 					$ctype = "VPNv6";
 				else if ($tunnelif == "gif" || $tunnelif == "gre")

@@ -4968,14 +4968,14 @@ function interface_has_gatewayv6($friendly) {
 
 function is_altq_capable($int) {
 	/* Per:
-	 * http://www.freebsd.org/cgi/man.cgi?query=altq&manpath=FreeBSD+7.2-current&format=html
+	 * http://www.freebsd.org/cgi/man.cgi?query=altq&apropos=0&sektion=0&manpath=FreeBSD+8.3-RELEASE&arch=default&format=html
 	 * Only the following drivers have ALTQ support
 	 */
-	$capable = array("age", "alc", "ale", "an", "ath", "aue", "awi", "bce",
-			"bfe", "bge", "bridge", "cas", "dc", "de", "ed", "em", "ep", "fxp", "gem",
-			"hme", "igb", "ipw", "iwi", "jme", "le", "lem", "msk", "mxge", "my", "nfe",
-			"npe", "nve", "ral", "re", "rl", "rum", "run", "bwn", "sf", "sis", "sk",
-			"ste", "stge", "txp", "udav", "ural", "vge", "vr", "wi", "xl",
+	$capable = array("ae", "age", "alc", "ale", "an", "ath", "aue", "axe", "awi", "bce",
+			"bfe", "bge", "bridge", "cas", "dc", "de", "ed", "em", "ep", "epair", "et", "fxp", "gem",
+			"hme", "igb", "ipw", "iwi", "ixgbe", "jme", "le", "lem", "msk", "mxge", "my", "nfe",
+			"nge", "npe", "nve", "ral", "re", "rl", "rum", "run", "bwn", "sf", "sge", "sis", "sk",
+			"ste", "stge", "ti", "txp", "udav", "ural", "vge", "vr", "vte", "wi", "xl",
 			"ndis", "tun", "ovpns", "ovpnc", "vlan", "pppoe", "pptp", "ng",
 			"l2tp", "ppp", "vtnet");
 

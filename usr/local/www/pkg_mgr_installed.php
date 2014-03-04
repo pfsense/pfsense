@@ -206,7 +206,7 @@ include("head.inc");
 							<?php endif; ?>
 							</td>
 							<td valign="middle" class="list nowrap">
-								<a onclick="return confirm('<?=gettext("Do you really want to remove {$pkg['name']} package?"); ?>')" href="pkg_mgr_install.php?mode=delete&amp;pkg=<?= $pkg['name']; ?>">
+								<a href="pkg_mgr_install.php?mode=delete&amp;pkg=<?= $pkg['name']; ?>">
 									<img <?=domTT_title(gettext("Remove ".ucfirst($pkg['name'])." package."))?> src="./themes/<?= $g['theme']; ?>/images/icons/icon_x.gif" width="17" height="17" border="0" alt="delete" />
 								</a>
 								<br/>

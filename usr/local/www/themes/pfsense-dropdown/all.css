@@ -849,7 +849,7 @@ div.suggestions div.current {
 #login #username, #password, #password2 {
 	font-size: small;
 	width: 60%;
-	padding-left:19px
+	padding-left: 19px;
 	padding: 3px;
 	margin: 0em;
 }

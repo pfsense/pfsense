@@ -152,7 +152,7 @@ body {
 a:link{color: #660000;}
 a:visited{color: #660000;}
 a:active{color: #660000;}
-a:hover{color: ##660000;}
+a:hover{color: #660000;}
 
 
 
@@ -1140,7 +1140,7 @@ div#log span.log-protocol {
 #login #username, #password, #password2 {
 	font-size: small;
 	width: 60%;
-	padding-left:19px
+	padding-left: 19px;
 	padding: 3px;
 	margin: 0em;
 }

@@ -830,15 +830,17 @@ function return_gateway_groups_array() {
 						else if (!empty($int))
 							$gatewayip = get_interface_gateway($gateway['friendlyiface']);
 
-						if (!empty($int) && is_ipaddr($gatewayip)) {
-							$groupmember = array();
-							$groupmember['int']  = $int;
-							$groupmember['gwip']  = $gatewayip;
-							$groupmember['weight']  = isset($gateway['weight']) ? $gateway['weight'] : 1;
-							if (is_array($gwvip_arr[$group['name']])&& !empty($gwvip_arr[$group['name']][$member]))
-								$groupmember['vip'] = $gwvip_arr[$group['name']][$member];
+						if (!empty($int)) {
 							$gateway_groups_array[$group['name']]['ipprotocol'] = $gateway['ipprotocol'];
-							$gateway_groups_array[$group['name']][] = $groupmember;
+							if (is_ipaddr($gatewayip)) {
+								$groupmember = array();
+								$groupmember['int']  = $int;
+								$groupmember['gwip']  = $gatewayip;
+								$groupmember['weight']  = isset($gateway['weight']) ? $gateway['weight'] : 1;
+								if (is_array($gwvip_arr[$group['name']])&& !empty($gwvip_arr[$group['name']][$member]))
+									$groupmember['vip'] = $gwvip_arr[$group['name']][$member];
+								$gateway_groups_array[$group['name']][] = $groupmember;
+							}
 						}
 					}
 				}

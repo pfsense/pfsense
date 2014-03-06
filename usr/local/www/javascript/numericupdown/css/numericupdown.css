@@ -14,7 +14,6 @@
         border-left:1px solid #eee;
         border-bottom:1px solid #777;
         border-right:1px solid #777;
-        voice-family: "\"}\"";
         voice-family: inherit;
         height:9px;
         }
@@ -27,7 +26,6 @@ html>body .buttonDec
         {
         margin:9px 0 0 -11px;
         background:#ccc url(../images/down.gif) no-repeat 50% 50%;
-        voice-family: "\"}\"";
         voice-family: inherit;
         margin:10px 0 0 -11px;
         }

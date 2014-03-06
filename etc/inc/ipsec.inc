@@ -35,6 +35,12 @@
 */
 
 /* IPsec defines */
+$ipsec_loglevels = array("dmn" => "Daemon", "mgr" => "SA Manager", "ike" => "IKE SA", "chd" => "IKE Child SA",
+	"job" => "Job Processing", "cfg" => "Configuration backend", "knl" => "Kernel Interface",
+	"net" => "Networking", "asn" => "ASN encoding", "enc" => "Message encoding",
+	"imc" => "Integrity checker", "imv" => "Integrity Verifier", "pts" => "Platform Trust Service",
+	"tls" => "TLS handler", "app" => "Not daemon", "esp" => "IPSec traffic", "lib" => "StrongSWAN Lib");
+
 $my_identifier_list = array(
 	'myaddress' => array( 'desc' => gettext('My IP address'), 'mobile' => true ),
 	'address' => array( 'desc' => gettext('IP address'), 'mobile' => true ),
@@ -54,14 +60,14 @@ $peer_identifier_list = array(
 
 $p1_ealgos = array(
 	'aes' => array( 'name' => 'AES', 'keysel' => array( 'lo' => 128, 'hi' => 256, 'step' => 64 ) ),
-	'blowfish' => array( 'name' => 'Blowfish', 'keysel' => array( 'lo' => 128, 'hi' => 256, 'step' => 8 ) ),
+	'blowfish' => array( 'name' => 'Blowfish', 'keysel' => array( 'lo' => 128, 'hi' => 256, 'step' => 64 ) ),
 	'3des' => array( 'name' => '3DES' ),
 	'cast128' => array( 'name' => 'CAST128' ),
 	'des' => array( 'name' => 'DES' ));
 
 $p2_ealgos = array(
 	'aes' => array( 'name' => 'AES', 'keysel' => array( 'lo' => 128, 'hi' => 256, 'step' => 64 ) ),
-	'blowfish' => array( 'name' => 'Blowfish', 'keysel' => array( 'lo' => 128, 'hi' => 256, 'step' => 8 ) ),
+	'blowfish' => array( 'name' => 'Blowfish', 'keysel' => array( 'lo' => 128, 'hi' => 256, 'step' => 64 ) ),
 	'3des' => array( 'name' => '3DES' ),
 	'cast128' => array( 'name' => 'CAST128' ),
 	'des' => array( 'name' => 'DES' ));
@@ -450,6 +456,41 @@ function ipsec_lookup_ipsec_sa(& $spd,& $sad,$dir,$in_srcip,$in_dstip,$in_srcid,
 	}
 
 	return NULL;
+}
+
+function ipsec_smp_dump_status() {
+	global $config, $g, $custom_listtags;
+
+	if (!file_exists("{$g['varrun_path']}/charon.xml")) {
+		log_error("IPSec daemon seems to have issues or not running!");
+		return;
+	}
+
+	$fd = @fsockopen("unix://{$g['varrun_path']}/charon.xml");
+	if (!$fd) {
+		log_error("Could not read status from ipsec");
+		return;
+	}
+	$query = '<?xml version="1.0"?><message xmlns="http://www.strongswan.org/smp/1.0" type="request" id="1">';
+	$query .= '<query><ikesalist/></query></message>';
+
+	@fwrite($fd, $query);
+	$response = "";
+	while (!strstr($sread, "</message>")) {
+		$sread = fgets($fd);
+		$response .= $sread;
+	}
+	fclose($fd);
+
+	@file_put_contents("{$g['tmp_path']}/smp_status.xml", $response);
+	unset($response, $sread);
+
+	$custom_listtags = array('ikesa', 'childsa', 'network');
+	$response = parse_xml_config("{$g['tmp_path']}/smp_status.xml", "message");
+	@unlink("{$g['tmp_path']}/smp_status.xml");
+	unset($custom_listtags);
+
+	return $response;
 }
 
 /*

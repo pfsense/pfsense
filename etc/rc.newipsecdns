@@ -52,13 +52,6 @@ if (isset($config['ipsec']['enable'])) {
 
 $ipseclck = lock('ipsecdns', LOCK_EX);
 
-/* We will walk the list of hostnames found in the ipsec tunnel
- * configuration. Since we are already triggered by filterdns
- * that a hostname has changed we can proceed to compare the 
- * new IP address with the old address from the DNS cache.
- */
-vpn_ipsec_refresh_policies();
-
 vpn_ipsec_configure();
 
 if (isset($config['ipsec']['failoverforcereload']))

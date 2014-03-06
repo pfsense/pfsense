@@ -705,9 +705,9 @@ function captiveportal_prune_old() {
 
 		$timedout = false;
 		$term_cause = 1;
-		if (empty($cpentry[10]))
-			$cpentry[10] = 'first';
-		$radiusservers = $radiussrvs[$cpentry[10]];
+		if (empty($cpentry[11]))
+			$cpentry[11] = 'first';
+		$radiusservers = $radiussrvs[$cpentry[11]];
 
 		/* hard timeout? */
 		if ($timeout) {
@@ -847,27 +847,29 @@ function captiveportal_prune_old_automac() {
 		$writecfg = false;
 		foreach ($config['captiveportal'][$cpzone]['passthrumac'] as $eid => $emac) {
 			if ($emac['logintype'] == "voucher") {
-				if (isset($tmpvoucherdb[$emac['username']])) {
-					$temac = $config['captiveportal'][$cpzone]['passthrumac'][$tmpvoucherdb[$emac['username']]];
-					$ruleno = captiveportal_get_ipfw_passthru_ruleno($temac['mac']);
-					$pipeno = captiveportal_get_dn_passthru_ruleno($temac['mac']);
-					if ($ruleno) {
-						captiveportal_free_ipfw_ruleno($ruleno);
-						$macrules .= "delete {$ruleno}";
-						++$ruleno;
-						$macrules .= "delete {$ruleno}";
+				if (isset($config['captiveportal'][$cpzone]['noconcurrentlogins'])) {
+					if (isset($tmpvoucherdb[$emac['username']])) {
+						$temac = $config['captiveportal'][$cpzone]['passthrumac'][$tmpvoucherdb[$emac['username']]];
+						$ruleno = captiveportal_get_ipfw_passthru_ruleno($temac['mac']);
+						$pipeno = captiveportal_get_dn_passthru_ruleno($temac['mac']);
+						if ($ruleno) {
+							captiveportal_free_ipfw_ruleno($ruleno);
+							$macrules .= "delete {$ruleno}";
+							++$ruleno;
+							$macrules .= "delete {$ruleno}";
+						}
+						if ($pipeno) {
+							captiveportal_free_dn_ruleno($pipeno);
+							$macrules .= "pipe delete {$pipeno}\n";
+							++$pipeno;
+							$macrules .= "pipe delete {$pipeno}\n";
+						}
+						$writecfg = true;
+						captiveportal_logportalauth($temac['username'], $temac['mac'], $temac['ip'], "DUPLICATE {$temac['username']} LOGIN - TERMINATING OLD SESSION");
+						unset($config['captiveportal'][$cpzone]['passthrumac'][$tmpvoucherdb[$emac['username']]]);
 					}
-					if ($pipeno) {
-						captiveportal_free_dn_ruleno($pipeno);
-						$macrules .= "pipe delete {$pipeno}\n";
-						++$pipeno;
-						$macrules .= "pipe delete {$pipeno}\n";
-					}
-					$writecfg = true;
-					captiveportal_logportalauth($temac['username'], $temac['mac'], $temac['ip'], "DUPLICATE {$temac['username']} LOGIN - TERMINATING OLD SESSION");
-					unset($config['captiveportal'][$cpzone]['passthrumac'][$tmpvoucherdb[$emac['username']]]);
+					$tmpvoucherdb[$emac['username']] = $eid;
 				}
-				$tmpvoucherdb[$emac['username']] = $eid;
 				if (voucher_auth($emac['username']) <= 0) {
 					$ruleno = captiveportal_get_ipfw_passthru_ruleno($emac['mac']);
 					$pipeno = captiveportal_get_dn_passthru_ruleno($emac['mac']);
@@ -889,6 +891,7 @@ function captiveportal_prune_old_automac() {
 				}
 			}
 		}
+		unset($tmpvoucherdb);
 		if (!empty($macrules)) {
 			@file_put_contents("{$g['tmp_path']}/macentry.prunerules.tmp", $macrules);
 			unset($macrules);
@@ -965,9 +968,9 @@ function captiveportal_disconnect_client($sessionid, $term_cause = 1, $logoutRea
 		captiveportal_write_db("DELETE FROM captiveportal WHERE sessionid = '{$sessionid}'");
 
 		foreach ($result as $cpentry) {
-			if (empty($cpentry[10]))
-				$cpentry[10] = 'first';
-			captiveportal_disconnect($cpentry, $radiusservers[$cpentry[10]], $term_cause);
+			if (empty($cpentry[11]))
+				$cpentry[11] = 'first';
+			captiveportal_disconnect($cpentry, $radiusservers[$cpentry[11]], $term_cause);
 			captiveportal_logportalauth($cpentry[4], $cpentry[3], $cpentry[2], "DISCONNECT");
 		}
 		unset($result);
@@ -985,14 +988,14 @@ function captiveportal_radius_stop_all() {
 	if (!empty($radiusservers)) {
 		$cpdb = captiveportal_read_db();
 		foreach ($cpdb as $cpentry) {
-			if (empty($cpentry[10]))
-				$cpentry[10] = 'first';
-			if (!empty($radiusservers[$cpentry[10]])) {
+			if (empty($cpentry[11]))
+				$cpentry[11] = 'first';
+			if (!empty($radiusservers[$cpentry[11]])) {
 				RADIUS_ACCOUNTING_STOP($cpentry[1], // ruleno
 					$cpentry[4], // username
 					$cpentry[5], // sessionid
 					$cpentry[0], // start time
-					$radiusservers[$cpentry[10]],
+					$radiusservers[$cpentry[11]],
 					$cpentry[2], // clientip
 					$cpentry[3], // clientmac
 					7); // Admin Reboot
@@ -1004,8 +1007,16 @@ function captiveportal_radius_stop_all() {
 function captiveportal_passthrumac_configure_entry($macent) {
 	global $config, $g, $cpzone;
 
-	$bwUp = empty($macent['bw_up']) ? 0 : $macent['bw_up'];
-	$bwDown = empty($macent['bw_down']) ? 0 : $macent['bw_down'];
+	$bwUp = 0;
+	if (!empty($macent['bw_up']))
+		$bwUp = $macent['bw_up'];
+	else if (isset($config['captiveportal'][$cpzone]['bwdefaultup']))
+		$bwUp = $config['captiveportal'][$cpzone]['bwdefaultup'];
+	$bwDown = 0;
+	if (!empty($macent['bw_down']))
+		$bwDown = $macent['bw_down'];
+	else if (isset($config['captiveportal'][$cpzone]['bwdefaultdn']))
+		$bwDown = $config['captiveportal'][$cpzone]['bwdefaultdn'];
 
 	$ruleno = captiveportal_get_next_ipfw_ruleno();
 
@@ -1086,18 +1097,26 @@ function captiveportal_allowedip_configure_entry($ipent, $ishostname = false) {
 	 */
 	if ($ishostname === true) {
 		if (!$g['booting']) {
-			$ipaddress = gethostbynamel($ipent['hostname']);
-			if(!is_array($ipaddress) || empty($ipaddress)) 
+			$ipaddress = gethostbyname($ipent['hostname']);
+			if (!is_ipaddr($ipaddress)) 
 				return;
-		} else 
-			$ipaddress = array();
-	} else 
-		$ipaddress = array($ipent['ip']);
+		} else
+			$ipaddress = "";
+	} else
+		$ipaddress = $ipent['ip'];
 
 	$rules = "";
 	$cp_filterdns_conf = "";
-	$enBwup = empty($ipent['bw_up']) ? 0 : intval($ipent['bw_up']);
-	$enBwdown = empty($ipent['bw_down']) ? 0 : intval($ipent['bw_down']);
+	$enBwup = 0;
+	if (!empty($ipent['bw_up']))
+		$enBwup = iintval($ipent['bw_up']);
+	else if (isset($config['captiveportal'][$cpzone]['bwdefaultup']))
+		$enBwup = $config['captiveportal'][$cpzone]['bwdefaultup'];
+	$enBwdown = 0;
+	if (!empty($ipent['bw_down']))
+		$enBwdown = intval($ipent['bw_down']);
+	else if (isset($config['captiveportal'][$cpzone]['bwdefaultdn']))
+		$enBwdown = $config['captiveportal'][$cpzone]['bwdefaultdn'];
 
 	$pipeno = captiveportal_get_next_dn_ruleno();
 	$_gb = @pfSense_pipe_action("pipe {$pipeno} config bw {$enBwup}Kbit/s queue 100 buckets 16");
@@ -1106,17 +1125,15 @@ function captiveportal_allowedip_configure_entry($ipent, $ishostname = false) {
 	if ($ishostname === true) {
 		$cp_filterdns_conf .= "ipfw {$ipent['hostname']} 3 pipe {$pipeno}\n";
 		$cp_filterdns_conf .= "ipfw {$ipent['hostname']} 4 pipe {$pipedown}\n";
-		if (empty($ipaddress))
+		if (!is_ipaddr($ipaddress))
 			return array("", $cp_filterdns_conf);
 	}
 	$subnet = "";
 	if (!empty($ipent['sn']))
 		$subnet = "/{$ipent['sn']}";
-	foreach($ipaddress AS $one_address) {
-		$rules .= "table 3 add {$one_address}{$subnet} {$pipeno}\n";
-		$rules .= "table 4 add {$one_address}{$subnet} {$pipedown}\n";
-	}
-	
+	$rules .= "table 3 add {$ipaddress}{$subnet} {$pipeno}\n";
+	$rules .= "table 4 add {$ipaddress}{$subnet} {$pipedown}\n";
+
 	if ($ishostname === true)
 		return array($rules, $cp_filterdns_conf);
 	else
@@ -1343,7 +1360,7 @@ function captiveportal_opendb() {
 	else {
 		$errormsg = "";
 		$DB = @sqlite_open("{$g['vardb_path']}/captiveportal{$cpzone}.db");
-		if (@sqlite_exec($DB, "CREATE TABLE captiveportal (allow_time INTEGER, pipeno INTEGER, ip TEXT, mac TEXT, username TEXT, sessionid TEXT, bpassword TEXT, session_timeout INTEGER, idle_timeout INTEGER, session_terminate_time INTEGER, interim_interval INTEGER) ", $errormsg)) {
+		if (@sqlite_exec($DB, "CREATE TABLE captiveportal (allow_time INTEGER, pipeno INTEGER, ip TEXT, mac TEXT, username TEXT, sessionid TEXT, bpassword TEXT, session_timeout INTEGER, idle_timeout INTEGER, session_terminate_time INTEGER, interim_interval INTEGER, radiusctx TEXT) ", $errormsg)) {
 			@sqlite_exec($DB, "CREATE UNIQUE INDEX idx_active ON captiveportal (sessionid, username)");
 			@sqlite_exec($DB, "CREATE INDEX user ON captiveportal (username)");
 			@sqlite_exec($DB, "CREATE INDEX ip ON captiveportal (ip)");
@@ -1916,8 +1933,9 @@ function portal_allow($clientip,$clientmac,$username,$password = null, $attribut
 		$radiusctx = 'first';
 
 	foreach ($cpdb as $cpentry) {
-		if (empty($cpentry[10]))
-			$cpentry[10] = 'first';
+		if (empty($cpentry[11])) {
+			$cpentry[11] = 'first';
+		}
 		/* on the same ip */
 		if ($cpentry[2] == $clientip) {
 			if (isset($config['captiveportal'][$cpzone]['nomacfilter']) || $cpentry[3] == $clientmac)
@@ -1935,7 +1953,7 @@ function portal_allow($clientip,$clientmac,$username,$password = null, $attribut
 				$remaining_time = 0;
 
 			/* This user was already logged in so we disconnect the old one */
-			captiveportal_disconnect($cpentry,$radiusservers[$cpentry[10]],13);
+			captiveportal_disconnect($cpentry,$radiusservers[$cpentry[11]],13);
 			captiveportal_logportalauth($cpentry[4],$cpentry[3],$cpentry[2],"CONCURRENT LOGIN - TERMINATING OLD SESSION");
 			$unsetindexes[] = $cpentry[5];
 			break;
@@ -1944,7 +1962,7 @@ function portal_allow($clientip,$clientmac,$username,$password = null, $attribut
 			/* on the same username */
 			if (strcasecmp($cpentry[4], $username) == 0) {
 				/* This user was already logged in so we disconnect the old one */
-				captiveportal_disconnect($cpentry,$radiusservers[$cpentry[10]],13);
+				captiveportal_disconnect($cpentry,$radiusservers[$cpentry[11]],13);
 				captiveportal_logportalauth($cpentry[4],$cpentry[3],$cpentry[2],"CONCURRENT LOGIN - TERMINATING OLD SESSION");
 				$unsetindexes[] = $cpentry[5];
 				break;
@@ -2036,9 +2054,9 @@ function portal_allow($clientip,$clientmac,$username,$password = null, $attribut
 
 			/* encode password in Base64 just in case it contains commas */
 			$bpassword = base64_encode($password);
-			$insertquery  = "INSERT INTO captiveportal (allow_time, pipeno, ip, mac, username, sessionid, bpassword, session_timeout, idle_timeout, session_terminate_time, interim_interval) ";
+			$insertquery  = "INSERT INTO captiveportal (allow_time, pipeno, ip, mac, username, sessionid, bpassword, session_timeout, idle_timeout, session_terminate_time, interim_interval, radiusctx) ";
 			$insertquery .= "VALUES ({$allow_time}, {$pipeno}, '{$clientip}', '{$clientmac}', '{$safe_username}', '{$sessionid}', '{$bpassword}', ";
-			$insertquery .= "{$session_timeout}, {$idle_timeout}, {$session_terminate_time}, {$interim_interval})";
+			$insertquery .= "{$session_timeout}, {$idle_timeout}, {$session_terminate_time}, {$interim_interval}, '{$radiusctx}')";
 
 			/* store information to database */
 			captiveportal_write_db($insertquery);
@@ -2060,10 +2078,10 @@ function portal_allow($clientip,$clientmac,$username,$password = null, $attribut
 	/* redirect user to desired destination */
 	if (!empty($attributes['url_redirection']))
 		$my_redirurl = $attributes['url_redirection'];
+	else if (!empty($redirurl))
+		$my_redirurl = $redirurl;
 	else if (!empty($config['captiveportal'][$cpzone]['redirurl']))
 		$my_redirurl = $config['captiveportal'][$cpzone]['redirurl'];
-	else
-		$my_redirurl = $redirurl;
 
 	if(isset($config['captiveportal'][$cpzone]['logoutwin_enable']) && !$passthrumac) {
 		$ourhostname = portal_hostname_from_client_ip($clientip);
@@ -2078,7 +2096,7 @@ function portal_allow($clientip,$clientmac,$username,$password = null, $attribut
 		include("{$g['varetc_path']}/captiveportal-{$cpzone}-logout.html");
 
 	} else {
-		header("Location: " . $my_redirurl);
+		portal_reply_page($redirurl, "redir", "Just redirect the user.");
 	}
 
 	return $sessionid;

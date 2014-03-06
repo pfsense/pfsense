@@ -201,7 +201,7 @@ if ($altq_list_queues[$curif]) {
 
 $speedlimit = ($upstream + $downstream);
 
-/* Set default colors explicity, the theme can then override them below.
+/* Set default colors explicitly, the theme can then override them below.
    This prevents missing colors in themes from crashing the graphs. */
 /* Traffic Outbound		Out-P-4,  Out-B-4,  Out-P-6,  Out-B-6 */
 $colortrafficup		= array('666666', 'CCCCCC', '2217AA', '625AE7');
@@ -253,6 +253,9 @@ $colorspamdconn		= array('AA00BB', 'FFFFFF', '660088', 'FFFF88', '006600');
 
 /* OpenVPN Users		Online Users */
 $colorvpnusers		= array('990000');
+
+/* NTPD stats			offset, clk jit,   sys jit,   wander */
+$colorntpd		= array('0080FF','00E344','FF0000','000000');
 
 /* Captive Portal Total Users	Total Users */
 /* Captive Portal Concurrent	Concurrent Users */
@@ -397,11 +400,11 @@ if((strstr($curdatabase, "-traffic.rrd")) && (file_exists("$rrddbpath$curdatabas
 
 	$graphcmd .= "CDEF:\"$curif-bytes_t_pass=$curif-bytes_in_t_pass,$curif-bytes_out_t_pass,+\" ";
 	$graphcmd .= "CDEF:\"$curif-bytes_t_block=$curif-bytes_in_t_block,$curif-bytes_out_t_block,+\" ";
-	$graphcmd .= "CDEF:\"$curif-bytes_t=$curif-bytes_in_t_pass,$curif-bytes_out_t_block,+\" ";
+	$graphcmd .= "CDEF:\"$curif-bytes_t=$curif-bytes_t_pass,$curif-bytes_t_block,+\" ";
 
 	$graphcmd .= "CDEF:\"$curif-bytes_t_pass6=$curif-bytes_in6_t_pass,$curif-bytes_out6_t_pass,+\" ";
 	$graphcmd .= "CDEF:\"$curif-bytes_t_block6=$curif-bytes_in6_t_block,$curif-bytes_out6_t_block,+\" ";
-	$graphcmd .= "CDEF:\"$curif-bytes_t6=$curif-bytes_in6_t_pass,$curif-bytes_out6_t_block,+\" ";
+	$graphcmd .= "CDEF:\"$curif-bytes_t6=$curif-bytes_t_pass6,$curif-bytes_t_block6,+\" ";
 	$graphcmd .= "VDEF:\"$curif-in_bits_95=$curif-in_bits,95,PERCENT\" ";
 	$graphcmd .= "CDEF:\"$curif-out_bits_mul=$curif-out_bits,$multiplier,*\" ";
 	$perc = $multiplier > 0 ? "95" : "5";
@@ -516,8 +519,8 @@ elseif(strstr($curdatabase, "-throughput.rrd")) {
 		$graphcmd .= "CDEF:\"{$ifname}-out_bits_pass={$ifname}-out_bytes_pass,8,*\" ";
 		$graphcmd .= "CDEF:\"{$ifname}-bits_io_pass={$ifname}-in_bits_pass,{$ifname}-out_bits_pass,+\" ";
 
-		$graphcmd .= "CDEF:\"{$ifname}-in_bits_block={$ifname}-in_bytes,8,*\" ";
-		$graphcmd .= "CDEF:\"{$ifname}-out_bits_block={$ifname}-out_bytes,8,*\" ";
+		$graphcmd .= "CDEF:\"{$ifname}-in_bits_block={$ifname}-in_bytes_block,8,*\" ";
+		$graphcmd .= "CDEF:\"{$ifname}-out_bits_block={$ifname}-out_bytes_block,8,*\" ";
 		$graphcmd .= "CDEF:\"{$ifname}-bits_io_block={$ifname}-in_bits_block,{$ifname}-out_bits_block,+\" ";
 
 		$graphcmd .= "CDEF:\"{$ifname}-bytes_in_pass={$ifname}-in_bytes_pass,0,$speedlimit,LIMIT,UN,0,{$ifname}-in_bytes_pass,IF,$average,*\" ";
@@ -1176,6 +1179,50 @@ elseif((strstr($curdatabase, "-concurrent.rrd")) && (file_exists("$rrddbpath$cur
 	$graphcmd .= "GPRINT:\"$curif-concurrentusers:MAX:%8.0lf \" ";
 	$graphcmd .= "COMMENT:\"\\n\" ";
 	$graphcmd .= "COMMENT:\"\t\t\t\t\t\t\t\t\t\t\t\t\t`date +\"%b %d %H\:%M\:%S %Y\"`\" ";	
+}
+elseif((strstr($curdatabase, "ntpd.rrd")) && (file_exists("$rrddbpath$curdatabase"))) {
+	/* define graphcmd for ntpd (was: mbuf) usage stats */
+	$graphcmd = "$rrdtool graph $rrdtmppath$curdatabase-$curgraph.png ";
+	$graphcmd .= "--start $start --end $end --step $step ";
+	$graphcmd .= "--vertical-label \"time\" ";
+	$graphcmd .= "--color SHADEA#eeeeee --color SHADEB#eeeeee ";
+	$graphcmd .= "--title \"`hostname` - {$prettydb} - {$hperiod} - {$havg} average\" ";
+	$graphcmd .= "--height 200 --width 620 ";
+	$graphcmd .= "DEF:\"offset=$rrddbpath$curdatabase:offset:AVERAGE:step=$step\" ";
+	$graphcmd .= "DEF:\"sjit=$rrddbpath$curdatabase:sjit:AVERAGE:step=$step\" ";
+	$graphcmd .= "DEF:\"cjit=$rrddbpath$curdatabase:cjit:AVERAGE:step=$step\" ";
+	$graphcmd .= "DEF:\"wander=$rrddbpath$curdatabase:wander:AVERAGE:step=$step\" ";
+	$graphcmd .= "LINE2:\"offset#{$colorntpd[0]}:offset\" ";
+	$graphcmd .= "LINE2:\"sjit#{$colorntpd[1]}:sjit\" ";
+	$graphcmd .= "LINE2:\"cjit#{$colorntpd[2]}:cjit\" ";
+	$graphcmd .= "LINE2:\"wander#{$colorntpd[3]}:wander\" ";
+	$graphcmd .= "COMMENT:\"\\n\" ";
+	$graphcmd .= "COMMENT:\"\t\t        minimum        average        maximum        current\\n\" ";
+	$graphcmd .= "COMMENT:\"Offset         \" ";
+	$graphcmd .= "GPRINT:\"offset:MIN:%7.2lf %s    \" ";
+	$graphcmd .= "GPRINT:\"offset:AVERAGE:%7.2lf %s    \" ";
+	$graphcmd .= "GPRINT:\"offset:MAX:%7.2lf %s    \" ";
+	$graphcmd .= "GPRINT:\"offset:LAST:%7.2lf %S    \" ";
+	$graphcmd .= "COMMENT:\"\\n\" ";
+	$graphcmd .= "COMMENT:\"System jitter  \" ";
+	$graphcmd .= "GPRINT:\"sjit:MIN:%7.2lf %s    \" ";
+	$graphcmd .= "GPRINT:\"sjit:AVERAGE:%7.2lf %s    \" ";
+	$graphcmd .= "GPRINT:\"sjit:MAX:%7.2lf %s    \" ";
+	$graphcmd .= "GPRINT:\"sjit:LAST:%7.2lf %S    \" ";
+	$graphcmd .= "COMMENT:\"\\n\" ";
+	$graphcmd .= "COMMENT:\"Clock jitter   \" ";
+	$graphcmd .= "GPRINT:\"cjit:MIN:%7.2lf %s    \" ";
+	$graphcmd .= "GPRINT:\"cjit:AVERAGE:%7.2lf %s    \" ";
+	$graphcmd .= "GPRINT:\"cjit:MAX:%7.2lf %s    \" ";
+	$graphcmd .= "GPRINT:\"cjit:LAST:%7.2lf %S    \" ";
+	$graphcmd .= "COMMENT:\"\\n\" ";
+	$graphcmd .= "COMMENT:\"Clk freq wander\" ";
+	$graphcmd .= "GPRINT:\"wander:MIN:%7.2lf %s    \" ";
+	$graphcmd .= "GPRINT:\"wander:AVERAGE:%7.2lf %s    \" ";
+	$graphcmd .= "GPRINT:\"wander:MAX:%7.2lf %s    \" ";
+	$graphcmd .= "GPRINT:\"wander:LAST:%7.2lf %S    \" ";
+	$graphcmd .= "COMMENT:\"\\n\" ";
+	$graphcmd .= "COMMENT:\"\t\t\t\t\t\t\t\t\t\t\t\t\t`date +\"%b %d %H\:%M\:%S %Y\"`\" ";
 }
 else {
 	$data = false;

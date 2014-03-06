@@ -19971,7 +19971,7 @@ msgstr ""
 #: usr/local/www/firewall_rules_edit.php:1223
 #: usr/local/www/firewall_rules_edit.php:1222
 #: usr/local/www/firewall_rules_edit.php:1222
-msgid "Maximum new connections / per second(s)"
+msgid "Maximum new connections per host / per second(s)"
 msgstr ""
 
 #: usr/local/www/firewall_rules_edit.php:1164

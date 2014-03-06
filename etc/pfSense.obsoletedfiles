@@ -103,3 +103,8 @@
 /usr/local/lib/libssl.so
 /usr/local/lib/libssl.so.8
 /usr/bin/nsupdate
+/usr/local/lib/libipsec.so
+/usr/local/lib/libipsec.so.0
+/usr/local/sbin/racoon
+/usr/local/sbin/racoonctl
+/usr/local/sbin/setkey

@@ -359,19 +359,6 @@ function uninstall_package($pkg_name) {
 	global $config, $static_output;
 	global $builder_package_install;
 
-	// Back up /usr/local/lib libraries first if
-	// not running from the builder code.
-	// also take into account rrd binaries
-	if(!$builder_package_install) {
-		if(!file_exists("/tmp/pkg_libs.tgz")) {
-			$static_output .= "Backing up libraries... ";
-			update_output_window($static_output);
-			mwexec("/usr/bin/tar czPf /tmp/pkg_libs.tgz `/bin/cat /etc/pfSense_md5.txt | /usr/bin/grep 'local/lib' | /usr/bin/awk '{ print $2 }' | /usr/bin/cut -d'(' -f2 | /usr/bin/cut -d')' -f1`", true);
-			mwexec("/usr/bin/tar czPf /tmp/pkg_bins.tgz `/bin/cat /etc/pfSense_md5.txt | /usr/bin/grep 'rrd' | /usr/bin/awk '{ print $2 }' | /usr/bin/cut -d'(' -f2 | /usr/bin/cut -d')' -f1`", true);
-			$static_output .= "\n";
-		}
-	}
-
 	$id = get_pkg_id($pkg_name);
 	if ($id >= 0) {
 		stop_service(get_pkg_internal_name($config['installedpackages']['package'][$id]));
@@ -397,18 +384,8 @@ function uninstall_package($pkg_name) {
 	}
 	delete_package_xml($pkg_name);
 
-	// Restore libraries that we backed up if not 
-	// running from the builder code.
-	if(!$builder_package_install) {
-		$static_output .= "Cleaning up... ";
-		update_output_window($static_output);
-		mwexec("/usr/bin/tar xzPfk /tmp/pkg_libs.tgz -C /", true);
-		mwexec("/usr/bin/tar xzPfk /tmp/pkg_bins.tgz -C /", true);
-		@unlink("/tmp/pkg_libs.tgz");
-		@unlink("/tmp/pkg_bins.tgz");
-		$static_output .= gettext("done.") . "\n";
-		update_output_window($static_output);
-	}
+	$static_output .= gettext("done.") . "\n";
+	update_output_window($static_output);
 }
 
 function force_remove_package($pkg_name) {
@@ -514,7 +491,7 @@ function sync_package($pkg_name, $sync_depends = true, $show_message = false) {
  * 			a progress bar and output window.
  */
 function pkg_fetch_recursive($pkgname, $filename, $dependlevel = 0, $base_url = "") {
-	global $static_output, $g;
+	global $static_output, $g, $config;
 
 	// Clean up incoming filenames
 	$filename = str_replace("  ", " ", $filename);
@@ -567,21 +544,30 @@ function pkg_fetch_recursive($pkgname, $filename, $dependlevel = 0, $base_url = 
 		if (isset($config['system']['pkg_nochecksig']))
 			$no_checksig = "--no-checksig";
 
-		exec("/usr/local/sbin/pbi_add " . $pkgstaging . " -f -v {$no_checksig} " . escapeshellarg($fetchto) . " 2>&1", $pkgaddout);
-		pkg_debug($pkgname . " " . print_r($pkgaddout, true) . "\npbi_add successfully completed.\n");
-		setup_library_paths();
-		exec("/usr/local/sbin/pbi_info " . escapeshellarg(preg_replace('/\.pbi$/','',$filename)) . " | /usr/bin/awk '/Prefix/ {print $2}'",$pbidir);
-		$pbidir = $pbidir[0];
-		$linkdirs = array('bin','sbin');
-		foreach($linkdirs as $dir) {
-			if(is_dir("{$pbidir}/{$dir}")) {
+		$result = exec("/usr/local/sbin/pbi_add " . $pkgstaging . " -f -v {$no_checksig} " . escapeshellarg($fetchto) . " 2>&1", $pkgaddout, $rc);
+		pkg_debug($pkgname . " " . print_r($pkgaddout, true) . "\n");
+		if ($rc == 0) {
+			setup_library_paths();
+			$result = exec("/usr/local/sbin/pbi_info " . escapeshellarg(preg_replace('/\.pbi$/','',$filename)) . " | /usr/bin/awk '/Prefix/ {print $2}'",$pbidir);
+			$pbidir = $pbidir[0];
+			foreach(array('bin', 'sbin') as $dir) {
+				if(!is_dir("{$pbidir}/{$dir}"))
+					continue;
+
 				$files = scandir("{$pbidir}/{$dir}");
-				foreach($files as $f) {
-					if(!file_exists("/usr/local/{$dir}/{$f}")) {
-						symlink("{$pbidir}/{$dir}/{$f}","/usr/local/{$dir}/{$f}");
-					}
-				}
+				foreach($files as $f)
+					if(!file_exists("/usr/local/{$dir}/{$f}"))
+						@symlink("{$pbidir}/{$dir}/{$f}","/usr/local/{$dir}/{$f}");
 			}
+			pkg_debug("pbi_add successfully completed.\n");
+		} else {
+			if (is_array($pkgaddout))
+				foreach ($pkgaddout as $line)
+					$static_output .= " " . $line .= "\n";
+
+			update_output_window($static_output);
+			pkg_debug("pbi_add failed.\n");
+			return false;
 		}
 	}
 	return true;

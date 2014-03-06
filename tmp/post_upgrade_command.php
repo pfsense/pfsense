@@ -13,14 +13,15 @@
 			system("pfSsh.php playback gitsync " . escapeshellarg($config['system']['gitsync']['branch']) . " --upgrading");
 	}
 
-	if($g['platform'] == "embedded") {
+	$newslicedir = "";
+	if ($argv[1] != "")
+		$newslicedir = '/tmp/' . $argv[1];
+
+	if($g['platform'] == "embedded" || $g['enableserial_force'] || file_exists("{$newslicedir}/enableserial_force")) {
 		$config['system']['enableserial'] = true;
 		write_config();
 	}
 
-	$newslicedir = "";
-	if ($argv[1] != "")
-		$newslicedir = '/tmp/' . $argv[1];
 	system("echo \"Adding serial port settings ({$newslicedir})...\" >> /conf/upgrade_log.txt");
 	setup_serial_port("upgrade", $newslicedir);
 		

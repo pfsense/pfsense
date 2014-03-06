@@ -63,6 +63,7 @@ $pconfig['noautocomplete'] = isset($config['system']['webgui']['noautocomplete']
 $pconfig['althostnames'] = $config['system']['webgui']['althostnames'];
 $pconfig['enableserial'] = $config['system']['enableserial'];
 $pconfig['serialspeed'] = $config['system']['serialspeed'];
+$pconfig['primaryconsole'] = $config['system']['primaryconsole'];
 $pconfig['enablesshd'] = $config['system']['enablesshd'];
 $pconfig['sshport'] = $config['system']['ssh']['port'];
 $pconfig['sshdkeyonly'] = isset($config['system']['ssh']['sshdkeyonly']);
@@ -147,7 +148,7 @@ if ($_POST) {
 		else
 			unset($config['system']['webgui']['noantilockout']);
 
-		if ($_POST['enableserial'] == "yes")
+		if ($_POST['enableserial'] == "yes" || $g['enableserial_force'])
 			$config['system']['enableserial'] = true;
 		else
 			unset($config['system']['enableserial']);
@@ -156,6 +157,11 @@ if ($_POST) {
 			$config['system']['serialspeed'] = $_POST['serialspeed'];
 		else
 			unset($config['system']['serialspeed']);
+
+		if ($_POST['primaryconsole'])
+			$config['system']['primaryconsole'] = $_POST['primaryconsole'];
+		else
+			unset($config['system']['primaryconsole']);
 
 		if ($_POST['nodnsrebindcheck'] == "yes")
 			$config['system']['webgui']['nodnsrebindcheck'] = true;
@@ -525,7 +531,7 @@ function prot_change() {
 							<tr>
 								<td colspan="2" valign="top" class="listtopic"><?=gettext("Serial Communications"); ?></td>
 							</tr>
-							<?php if($g['platform'] == "pfSense" || $g['platform'] == "cdrom"): ?>
+							<?php if (!$g['enableserial_force'] && ($g['platform'] == "pfSense" || $g['platform'] == "cdrom" || file_exists("/etc/nano_use_vga.txt"))): ?>
 							<tr>
 								<td width="22%" valign="top" class="vncell"><?=gettext("Serial Terminal"); ?></td>
 								<td width="78%" class="vtable">
@@ -549,6 +555,18 @@ function prot_change() {
 									<br/><?=gettext("Allows selection of different speeds for the serial console port."); ?>
 								</td>
 							</tr>
+							<?php if (!$g['primaryconsole_force'] && ($g['platform'] == "pfSense" || $g['platform'] == "cdrom" || file_exists("/etc/nano_use_vga.txt"))): ?>
+							<tr>
+								<td width="22%" valign="top" class="vncell"><?=gettext("Primary Console")?></td>
+								<td width="78%" class="vtable">
+									<select name="primaryconsole" id="primaryconsole" class="formselect">
+										<option value="serial"   <?php if ($pconfig['primaryconsole'] == "serial")   echo "selected=\"selected\"";?>>Serial Console</option>
+										<option value="video"  <?php if ($pconfig['primaryconsole'] == "video")  echo "selected=\"selected\"";?>>VGA Console</option>
+									</select>
+									<br/><?=gettext("Select the preferred console if multiple consoles are present. The preferred console will show pfSense boot script output. All consoles display OS boot messages, console messages, and the console menu."); ?>
+								</td>
+							</tr>
+							<?php endif; ?>
 							<tr>
 								<td colspan="2" class="list" height="12">&nbsp;</td>
 							</tr>

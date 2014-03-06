@@ -56,6 +56,11 @@ $categories = array('system' => gettext("System"),
 		'quality' => gettext("Quality"),
 		'queues' => gettext("Queues"),
 		'captiveportal' => gettext("Captive Portal"));
+
+if(isset($config['ntpd']['statsgraph'])) {
+	$categories['ntpd'] = gettext("NTP");
+}
+
 $styles = array('inverse' => gettext("Inverse"),
 		'absolute' => gettext("Absolute"));
 $periods = array("absolute" => gettext("Absolute Timespans"),
@@ -154,6 +159,10 @@ include("head.inc");
 				if($captiveportal) {
 					if($curcat == "captiveportal") { $tabactive = True; } else { $tabactive = False; }
 						$tab_array[] = array(gettext("Captive Portal"), $tabactive, "status_rrd_graph.php?cat=captiveportal");
+				}
+				if(isset($config['ntpd']['statsgraph'])) {
+					if($curcat == "ntpd") { $tabactive = True; } else { $tabactive = False; }
+				        $tab_array[] = array("NTP", $tabactive, "status_rrd_graph.php?cat=ntpd");
 				}
 				if($curcat == "custom") { $tabactive = True; } else { $tabactive = False; }
 			        $tab_array[] = array(gettext("Custom"), $tabactive, "status_rrd_graph.php?cat=custom");

@@ -46,6 +46,20 @@
 require("guiconfig.inc");
 require_once("filter_log.inc");
 
+# --- AJAX RESOLVE ---
+if (isset($_POST['resolve'])) {
+	$ip = strtolower($_POST['resolve']);
+	$res = (is_ipaddr($ip) ? gethostbyaddr($ip) : '');
+	
+	if ($res && $res != $ip)
+		$response = array('resolve_ip' => $ip, 'resolve_text' => $res);
+	else
+		$response = array('resolve_ip' => $ip, 'resolve_text' => gettext("Cannot resolve"));
+	
+	echo json_encode(str_replace("\\","\\\\", $response)); // single escape chars can break JSON decode
+	exit;
+}
+
 function getGETPOSTsettingvalue($settingname, $default)
 {
 	$settingvalue = $default;
@@ -351,25 +365,21 @@ include("head.inc");
 			  }
 
 			  $srcstr = $filterent['srcip'] . get_port_with_service($filterent['srcport'], $proto);
+			  $src_htmlclass = str_replace(array('.', ':'), '-', $filterent['srcip']);
 			  $dststr = $filterent['dstip'] . get_port_with_service($filterent['dstport'], $proto);
+			  $dst_htmlclass = str_replace(array('.', ':'), '-', $filterent['dstip']);
 			  ?>
 			  <td class="listMRr nowrap">
-				<a onclick="javascript:getURL('diag_dns.php?host=<?php echo "{$filterent['srcip']}"; ?>&amp;dialog_output=true', outputrule);" title="<?=gettext("Reverse Resolve with DNS");?>">
-				<img border="0" src="/themes/<?= $g['theme']; ?>/images/icons/icon_log_d.gif" alt="Icon Reverse Resolve with DNS"/></a>
-				<a href="diag_dns.php?host=<?php echo $filterent['srcip']; ?>" title="<?=gettext("Reverse Resolve with DNS");?>">
-				<img border="0" src="/themes/<?= $g['theme']; ?>/images/icons/icon_log.gif" alt="Icon Reverse Resolve with DNS"/></a>
+				<img onclick="javascript:resolve_with_ajax('<?php echo "{$filterent['srcip']}"; ?>');" title="<?=gettext("Click to resolve");?>" class="ICON-<?= $src_htmlclass; ?>" border="0" src="/themes/<?= $g['theme']; ?>/images/icons/icon_log.gif" alt="Icon Reverse Resolve with DNS"/>
 				<a href="easyrule.php?<?php echo "action=block&amp;int={$int}&amp;src={$filterent['srcip']}&amp;ipproto={$ipproto}"; ?>" title="<?=gettext("Easy Rule: Add to Block List");?>" onclick="return confirm('<?=gettext("Do you really want to add this BLOCK rule?")."\n\n".gettext("Easy Rule is still experimental.")."\n".gettext("Continue at risk of your own peril.")."\n".gettext("Backups are also nice.")?>')">
 				<img border="0" src="/themes/<?= $g['theme']; ?>/images/icons/icon_block_add.gif" alt="Icon Easy Rule: Add to Block List" /></a>
-				<?php echo $srcstr;?>
+				<?php echo $srcstr . '<span class="RESOLVE-' . $src_htmlclass . '"></span>';?>
 			  </td>
 			  <td class="listMRr nowrap">
-				<a onclick="javascript:getURL('diag_dns.php?host=<?php echo "{$filterent['dstip']}"; ?>&amp;dialog_output=true', outputrule);" title="<?=gettext("Reverse Resolve with DNS");?>">
-				<img border="0" src="/themes/<?= $g['theme']; ?>/images/icons/icon_log_d.gif" alt="Icon Reverse Resolve with DNS" /></a>
-				<a href="diag_dns.php?host=<?php echo $filterent['dstip']; ?>" title="<?=gettext("Reverse Resolve with DNS");?>">
-				<img border="0" src="/themes/<?= $g['theme']; ?>/images/icons/icon_log.gif" alt="Icon Reverse Resolve with DNS" /></a>
+				<img onclick="javascript:resolve_with_ajax('<?php echo "{$filterent['dstip']}"; ?>');" title="<?=gettext("Click to resolve");?>" class="ICON-<?= $dst_htmlclass; ?>" border="0" src="/themes/<?= $g['theme']; ?>/images/icons/icon_log.gif" alt="Icon Reverse Resolve with DNS"/>
 				<a href="easyrule.php?<?php echo "action=pass&amp;int={$int}&amp;proto={$proto}&amp;src={$filterent['srcip']}&amp;dst={$filterent['dstip']}&amp;dstport={$filterent['dstport']}&amp;ipproto={$ipproto}"; ?>" title="<?=gettext("Easy Rule: Pass this traffic");?>" onclick="return confirm('<?=gettext("Do you really want to add this PASS rule?")."\n\n".gettext("Easy Rule is still experimental.")."\n".gettext("Continue at risk of your own peril.")."\n".gettext("Backups are also nice.");?>')">
 				<img border="0" src="/themes/<?= $g['theme']; ?>/images/icons/icon_pass_add.gif" alt="Icon Easy Rule: Pass this traffic" /></a>
-				<?php echo $dststr;?>
+				<?php echo $dststr . '<span class="RESOLVE-' . $dst_htmlclass . '"></span>';?>
 			  </td>
 			  <?php
 				if ($filterent['proto'] == "TCP")
@@ -415,5 +425,44 @@ include("head.inc");
 <p><span class="vexpl"><a href="https://doc.pfsense.org/index.php/What_are_TCP_Flags%3F">TCP Flags</a>: F - FIN, S - SYN, A or . - ACK, R - RST, P - PSH, U - URG, E - ECE, W - CWR</span></p>
 
 <?php include("fend.inc"); ?>
+
+<!-- AJAXY STUFF -->
+<script type="text/javascript">
+
+function resolve_with_ajax(ip_to_resolve) {
+	var url = "/diag_logs_filter.php";
+
+	jQuery.ajax(
+		url,
+		{
+			type: 'post',
+			dataType: 'json',
+			data: {
+				resolve: ip_to_resolve,
+				},
+			complete: resolve_ip_callback
+		});
+
+}
+
+function resolve_ip_callback(transport) {
+	var response = jQuery.parseJSON(transport.responseText);
+	var resolve_class = htmlspecialchars(response.resolve_ip.replace(/[.:]/g, '-'));
+	var resolve_text = '<small><br/>' + htmlspecialchars(response.resolve_text) + '</small>';
+	
+	jQuery('span.RESOLVE-' + resolve_class).html(resolve_text);
+	jQuery('img.ICON-' + resolve_class).removeAttr('title');
+	jQuery('img.ICON-' + resolve_class).removeAttr('alt');
+	jQuery('img.ICON-' + resolve_class).attr('src', '/themes/<?= $g['theme']; ?>/images/icons/icon_log_d.gif');
+	jQuery('img.ICON-' + resolve_class).prop('onclick', null); 
+	  // jQuery cautions that "removeAttr('onclick')" fails in some versions of IE
+}
+
+// From http://stackoverflow.com/questions/5499078/fastest-method-to-escape-html-tags-as-html-entities
+function htmlspecialchars(str) {
+    return str.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&apos;');
+}
+</script>
+
 </body>
 </html>

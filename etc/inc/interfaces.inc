@@ -866,7 +866,9 @@ function interface_gre_configure(&$gre, $grekey = "") {
 	/* Do not change the order here for more see gre(4) NOTES section. */
 	mwexec("/sbin/ifconfig {$greif} tunnel {$realifip} " . escapeshellarg($gre['remote-addr']));
 	if((is_ipaddrv6($gre['tunnel-local-addr'])) || (is_ipaddrv6($gre['tunnel-remote-addr']))) {
-		mwexec("/sbin/ifconfig {$greif} inet6 " . escapeshellarg($gre['tunnel-local-addr']) . " " . escapeshellarg($gre['tunnel-remote-addr']) . " prefixlen /" . escapeshellarg($gre['tunnel-remote-net']));
+		/* XXX: The prefixlen argument for tunnels of ipv6 is useless since it needs to be 128 as enforced by kernel */
+		//mwexec("/sbin/ifconfig {$greif} inet6 " . escapeshellarg($gre['tunnel-local-addr']) . " " . escapeshellarg($gre['tunnel-remote-addr']) . " prefixlen /" . escapeshellarg($gre['tunnel-remote-net']));
+		mwexec("/sbin/ifconfig {$greif} inet6 " . escapeshellarg($gre['tunnel-local-addr']) . " " . escapeshellarg($gre['tunnel-remote-addr']) . " prefixlen 128");
 	} else {
 		mwexec("/sbin/ifconfig {$greif} " . escapeshellarg($gre['tunnel-local-addr']) . " " . escapeshellarg($gre['tunnel-remote-addr']) . " netmask " . gen_subnet_mask($gre['tunnel-remote-net']));
 	}
@@ -888,6 +890,8 @@ function interface_gre_configure(&$gre, $grekey = "") {
 		file_put_contents("{$g['tmp_path']}/{$greif}_router", $gre['tunnel-remote-addr']);
 	if(is_ipaddrv6($gre['tunnel-remote-addr']))
 		file_put_contents("{$g['tmp_path']}/{$greif}_routerv6", $gre['tunnel-remote-addr']);
+
+	interfaces_bring_up($greif);
 
 	return $greif;
 }
@@ -959,7 +963,9 @@ function interface_gif_configure(&$gif, $gifkey = "") {
 	/* Do not change the order here for more see gif(4) NOTES section. */
 	mwexec("/sbin/ifconfig {$gifif} tunnel {$realifip} " . escapeshellarg($gif['remote-addr']));
 	if((is_ipaddrv6($gif['tunnel-local-addr'])) || (is_ipaddrv6($gif['tunnel-remote-addr']))) {
-		mwexec("/sbin/ifconfig {$gifif} inet6 " . escapeshellarg($gif['tunnel-local-addr']) . " " . escapeshellarg($gif['tunnel-remote-addr']) . " prefixlen /" . escapeshellarg($gif['tunnel-remote-net']));
+		/* XXX: The prefixlen argument for tunnels of ipv6 is useless since it needs to be 128 as enforced by kernel */
+		//mwexec("/sbin/ifconfig {$gifif} inet6 " . escapeshellarg($gif['tunnel-local-addr']) . " " . escapeshellarg($gif['tunnel-remote-addr']) . " prefixlen /" . escapeshellarg($gif['tunnel-remote-net']));
+		mwexec("/sbin/ifconfig {$gifif} inet6 " . escapeshellarg($gif['tunnel-local-addr']) . " " . escapeshellarg($gif['tunnel-remote-addr']) . " prefixlen 128");
 	} else {
 		mwexec("/sbin/ifconfig {$gifif} " . escapeshellarg($gif['tunnel-local-addr']) . " " . escapeshellarg($gif['tunnel-remote-addr']) . " netmask " . gen_subnet_mask($gif['tunnel-remote-net']));
 	}
@@ -998,6 +1004,8 @@ function interface_gif_configure(&$gif, $gifkey = "") {
 	if (is_ipaddrv6($realifgw)) {
 		mwexec("/sbin/route change -host -inet6 " . escapeshellarg($gif['remote-addr']) . " {$realifgw}");
 	}
+
+	interfaces_bring_up($gifif);
 
 	return $gifif;
 }
@@ -1253,6 +1261,7 @@ function interface_bring_down($interface = "wan", $destroy = false, $ifacecfg = 
 		break;
 	}
 
+	$track6 = array();
 	switch ($ifcfg['ipaddrv6']) {
 	case "slaac":
 	case "dhcp6":
@@ -1269,6 +1278,7 @@ function interface_bring_down($interface = "wan", $destroy = false, $ifacecfg = 
 				pfSense_interface_flags($realif, -IFF_UP);
 			mwexec("/usr/sbin/arp -d -i " . escapeshellarg($realif) . " -a");
 		}
+		$track6 = link_interface_to_track6($interface);
 		break;
 	case "6rd":
 	case "6to4":
@@ -1280,6 +1290,7 @@ function interface_bring_down($interface = "wan", $destroy = false, $ifacecfg = 
 			if ($destroy == true)
 				pfSense_interface_flags($realif, -IFF_UP);
 		}
+		$track6 = link_interface_to_track6($interface);
 		break;
 	default:
 		if(does_interface_exist("$realif")) {
@@ -1292,7 +1303,15 @@ function interface_bring_down($interface = "wan", $destroy = false, $ifacecfg = 
 				pfSense_interface_flags($realif, -IFF_UP);
 			mwexec("/usr/sbin/arp -d -i " . escapeshellarg($realif) . " -a");
 		}
+		$track6 = link_interface_to_track6($interface);
 		break;
+	}
+
+	if (!empty($track6) && is_array($track6)) {
+		if (!function_exists('services_dhcp_configure'))
+			require_once('services.inc');
+		/* Bring down radvd and dhcp6 on these interfaces */
+		services_dhcpd_configure('inet6', $track6);
 	}
 
 	if (file_exists("{$g['tmp_path']}/{$realif}_router"))
@@ -1459,7 +1478,7 @@ function interface_ppps_configure($interface) {
 	}
 	// mpd5 modem chat script expected in the same directory as the mpd_xxx.conf files
 	if (!file_exists("{$g['varetc_path']}/mpd.script"))
-		@symlink("/usr/local/sbin/mpd.script", "{$g['varetc_path']}/.");
+		@symlink("/usr/local/sbin/mpd.script", "{$g['varetc_path']}/mpd.script");
 
 	if (is_array($config['ppps']['ppp']) && count($config['ppps']['ppp'])) {
 		foreach ($config['ppps']['ppp'] as $pppid => $ppp) {
@@ -1805,7 +1824,7 @@ EOD;
 
 	/* Generate mpd.conf. If mpd_[interface].conf exists in the conf path, then link to it instead of generating a fresh conf file. */
 	if (file_exists("{$g['conf_path']}/mpd_{$interface}.conf"))
-		@symlink("{$g['conf_path']}/mpd_{$interface}.conf", "{$g['varetc_path']}/.");
+		@symlink("{$g['conf_path']}/mpd_{$interface}.conf", "{$g['varetc_path']}/mpd_{$interface}.conf");
 	else {
 		$fd = fopen("{$g['varetc_path']}/mpd_{$interface}.conf", "w");
 		if (!$fd) {
@@ -2476,9 +2495,9 @@ function interface_wireless_configure($if, &$wl, &$wlcfg) {
 	conf_mount_rw();
 
 	switch ($wlcfg['mode']) {
-		case 'bss':
-			if (isset($wlcfg['wpa']['enable'])) {
-				$wpa .= <<<EOD
+	case 'bss':
+		if (isset($wlcfg['wpa']['enable'])) {
+			$wpa .= <<<EOD
 ctrl_interface={$g['varrun_path']}/wpa_supplicant
 ctrl_interface_group=0
 ap_scan=1
@@ -2494,18 +2513,17 @@ group={$wlcfg['wpa']['wpa_pairwise']}
 }
 EOD;
 
-				$fd = fopen("{$g['varetc_path']}/wpa_supplicant_{$if}.conf", "w");
-				fwrite($fd, "{$wpa}");
-				fclose($fd);
-			}
-			break;
-		case 'hostap':
-			if($wlcfg['wpa']['passphrase'])
-				$wpa_passphrase = "wpa_passphrase={$wlcfg['wpa']['passphrase']}\n";
-			else
-				$wpa_passphrase = "";
-			if (isset($wlcfg['wpa']['enable'])) {
-				$wpa .= <<<EOD
+			@file_put_contents("{$g['varetc_path']}/wpa_supplicant_{$if}.conf", $wpa);
+			unset($wpa);
+		}
+		break;
+	case 'hostap':
+		if (!empty($wlcfg['wpa']['passphrase']))
+			$wpa_passphrase = "wpa_passphrase={$wlcfg['wpa']['passphrase']}\n";
+		else
+			$wpa_passphrase = "";
+		if (isset($wlcfg['wpa']['enable'])) {
+			$wpa .= <<<EOD
 interface={$if}
 driver=bsd
 logger_syslog=-1
@@ -2531,43 +2549,47 @@ wpa_strict_rekey={$wlcfg['wpa']['wpa_strict_rekey']}
 
 EOD;
 
-if (isset($wlcfg['wpa']['rsn_preauth'])) {
-	$wpa .= <<<EOD
+			if (isset($wlcfg['wpa']['rsn_preauth'])) {
+				$wpa .= <<<EOD
 # Enable the next lines for preauth when roaming. Interface = wired or wireless interface talking to the AP you want to roam from/to
 rsn_preauth=1
 rsn_preauth_interfaces={$if}
 
 EOD;
+			}
+			if (isset($wlcfg['wpa']['ieee8021x'])) {
+				$wpa .= "ieee8021x=1\n";
 
-}
-				if($wlcfg['auth_server_addr'] && $wlcfg['auth_server_shared_secret']) {
-					$auth_server_port = "1812";
-					if($wlcfg['auth_server_port'])
-						$auth_server_port = $wlcfg['auth_server_port'];
-					$auth_server_port2 = "1812";
-					if($wlcfg['auth_server_port2'])
-						$auth_server_port2 = $wlcfg['auth_server_port2'];
-					$wpa .= <<<EOD
+			if (!empty($wlcfg['auth_server_addr']) && !empty($wlcfg['auth_server_shared_secret'])) {
+				$auth_server_port = "1812";
+				if (!empty($wlcfg['auth_server_port']) && is_numeric($wlcfg['auth_server_port']))
+					$auth_server_port = intval($wlcfg['auth_server_port']);
+				$wpa .= <<<EOD
 
-ieee8021x=1
 auth_server_addr={$wlcfg['auth_server_addr']}
 auth_server_port={$auth_server_port}
 auth_server_shared_secret={$wlcfg['auth_server_shared_secret']}
+
+EOD;
+				if (!empty($wlcfg['auth_server_addr2']) && !empty($wlcfg['auth_server_shared_secret2'])) {
+					$auth_server_port2 = "1812";
+					if (!empty($wlcfg['auth_server_port2']) && is_numeric($wlcfg['auth_server_port2']))
+						$auth_server_port2 = intval($wlcfg['auth_server_port2']);
+
+					$wpa .= <<<EOD
 auth_server_addr={$wlcfg['auth_server_addr2']}
 auth_server_port={$auth_server_port2}
 auth_server_shared_secret={$wlcfg['auth_server_shared_secret2']}
 
 EOD;
-				} else {
-					$wpa .= "ieee8021x={$wlcfg['wpa']['ieee8021x']}\n";
+					}
 				}
-
-				$fd = fopen("{$g['varetc_path']}/hostapd_{$if}.conf", "w");
-				fwrite($fd, "{$wpa}");
-				fclose($fd);
-
 			}
-			break;
+
+			@file_put_contents("{$g['varetc_path']}/hostapd_{$if}.conf", $wpa);
+			unset($wpa);
+		}
+		break;
 	}
 
 	/*
@@ -2709,6 +2731,7 @@ EOD;
 	/* configure wireless */
 	$wlcmd_args = implode(" ", $wlcmd);
 	mwexec("/sbin/ifconfig " . escapeshellarg($if) . " " . $wlcmd_args, false);
+	unset($wlcmd_args, $wlcmd);
 
 
 	sleep(1);
@@ -2982,43 +3005,50 @@ function interface_configure($interface = "wan", $reloadall = false, $linkupeven
 	unset($interface_ipv6_arr_cache[$realif]);
 	unset($interface_snv6_arr_cache[$realif]);
 
+	$tunnelif = substr($realif, 0, 3);
 	switch ($wancfg['ipaddr']) {
-		case 'dhcp':
-			interface_dhcp_configure($interface);
-			break;
-		case 'pppoe':
-		case 'l2tp':
-		case 'pptp':
-		case 'ppp':
-			interface_ppps_configure($interface);
-			break;
-		default:
+	case 'dhcp':
+		interface_dhcp_configure($interface);
+		break;
+	case 'pppoe':
+	case 'l2tp':
+	case 'pptp':
+	case 'ppp':
+		interface_ppps_configure($interface);
+		break;
+	default:
+		/* XXX: Kludge for now related to #3280 */
+		if (!in_array($tunnelif, array("gif", "gre", "ovp"))) {
 			if (is_ipaddrv4($wancfg['ipaddr']) && $wancfg['subnet'] <> "")
 				pfSense_interface_setaddress($realif, "{$wancfg['ipaddr']}/{$wancfg['subnet']}");
-			break;
+		}
+		break;
 	}
 
 	switch ($wancfg['ipaddrv6']) {
-		case 'slaac':
-		case 'dhcp6':
-			interface_dhcpv6_configure($interface, $wancfg);
-			break;
-		case '6rd':
-			interface_6rd_configure($interface, $wancfg);
-			break;
-		case '6to4':
-			interface_6to4_configure($interface, $wancfg);
-			break;
-		case 'track6':
-			interface_track6_configure($interface, $wancfg);
-			break;
-		default:
+	case 'slaac':
+	case 'dhcp6':
+		interface_dhcpv6_configure($interface, $wancfg);
+		break;
+	case '6rd':
+		interface_6rd_configure($interface, $wancfg);
+		break;
+	case '6to4':
+		interface_6to4_configure($interface, $wancfg);
+		break;
+	case 'track6':
+		interface_track6_configure($interface, $wancfg);
+		break;
+	default:
+		/* XXX: Kludge for now related to #3280 */
+		if (!in_array($tunnelif, array("gif", "gre", "ovp"))) {
 			if (is_ipaddrv6($wancfg['ipaddrv6']) && $wancfg['subnetv6'] <> "") {
 				//pfSense_interface_setaddress($realif, "{$wancfg['ipaddrv6']}/{$wancfg['subnetv6']}");
 				// FIXME: Add IPv6 Support to the pfSense module
 				mwexec("/sbin/ifconfig " . escapeshellarg($realif) . " inet6 {$wancfg['ipaddrv6']} prefixlen " . escapeshellarg($wancfg['subnetv6']));
 			}
-			break;
+		}
+		break;
 	}
 
 	if (!empty($wancfg['mtu'])) {
@@ -4002,19 +4032,19 @@ function convert_real_interface_to_friendly_interface_name($interface = "wan") {
 	//$ifdescrs = get_configured_interface_list(false, true);
 
 	foreach ($ifdescrs as $if => $ifname) {
-		if ($if == $interface || $config['interfaces'][$if]['if'] == $interface)
+		if ($if == $interface || $ifname['if'] == $interface)
 			return $if;
 
 		if (get_real_interface($if) == $interface)
 			return $if;
 
-		// XXX: This case doesn't work anymore (segfaults - recursion?) - should be replaced with something else or just removed.
-		//      Not to be replaced with get_real_interface - causes slow interface listings here because of recursion!
-		/*
-		$int = get_parent_interface($if);
-		if ($int[0] == $interface)
-			return $ifname;
-		*/
+		$int = get_parent_interface($if, true);
+		if (is_array($int)) {
+			foreach ($int as $iface) {
+				if ($iface == $interface)
+					return $if;
+			}
+		}
 	}
 
 	return NULL;
@@ -4093,7 +4123,7 @@ function convert_real_interface_to_friendly_descr($interface) {
  *			-- returns empty array if an invalid interface is passed
  *	(Only handles ppps and vlans now.)
  */
-function get_parent_interface($interface) {
+function get_parent_interface($interface, $avoidrecurse = false) {
 	global $config;
 
 	$parents = array();
@@ -4103,7 +4133,7 @@ function get_parent_interface($interface) {
 		return $parents;
 
 	// If we got a real interface, find it's friendly assigned name
-	if ($interface == $realif)
+	if ($interface == $realif && $avoidrecurse == false)
 		$interface = convert_real_interface_to_friendly_interface_name($interface);
 
 	if (!empty($interface) && isset($config['interfaces'][$interface])) {
@@ -4418,7 +4448,7 @@ function find_carp_interface($ip) {
 function link_carp_interface_to_parent($interface) {
 	global $config;
 
-	if ($interface == "")
+	if (empty($interface))
 		return;
 
 	$carp_ip = get_interface_ip($interface);
@@ -4915,6 +4945,9 @@ function interface_has_gatewayv6($friendly) {
 			default:
 				if (substr($ifname['if'], 0, 4) ==  "ovpn")
 					return true;
+				$tunnelif = substr($ifname['if'], 0, 3);
+				if ($tunnelif == "gif" || $tunnelif == "gre")
+					return true;
 				if (!empty($ifname['gatewayv6']))
 					return true;
 				break;
@@ -4935,14 +4968,14 @@ function interface_has_gatewayv6($friendly) {
 
 function is_altq_capable($int) {
 	/* Per:
-	 * http://www.freebsd.org/cgi/man.cgi?query=altq&manpath=FreeBSD+7.2-current&format=html
+	 * http://www.freebsd.org/cgi/man.cgi?query=altq&apropos=0&sektion=0&manpath=FreeBSD+8.3-RELEASE&arch=default&format=html
 	 * Only the following drivers have ALTQ support
 	 */
-	$capable = array("age", "alc", "ale", "an", "ath", "aue", "awi", "bce",
-			"bfe", "bge", "bridge", "cas", "dc", "de", "ed", "em", "ep", "fxp", "gem",
-			"hme", "igb", "ipw", "iwi", "jme", "le", "lem", "msk", "mxge", "my", "nfe",
-			"npe", "nve", "ral", "re", "rl", "rum", "run", "bwn", "sf", "sis", "sk",
-			"ste", "stge", "txp", "udav", "ural", "vge", "vr", "wi", "xl",
+	$capable = array("ae", "age", "alc", "ale", "an", "ath", "aue", "axe", "awi", "bce",
+			"bfe", "bge", "bridge", "cas", "dc", "de", "ed", "em", "ep", "epair", "et", "fxp", "gem",
+			"hme", "igb", "ipw", "iwi", "ixgbe", "jme", "le", "lem", "msk", "mxge", "my", "nfe",
+			"nge", "npe", "nve", "ral", "re", "rl", "rum", "run", "bwn", "sf", "sge", "sis", "sk",
+			"ste", "stge", "ti", "txp", "udav", "ural", "vge", "vr", "vte", "wi", "xl",
 			"ndis", "tun", "ovpns", "ovpnc", "vlan", "pppoe", "pptp", "ng",
 			"l2tp", "ppp", "vtnet");
 

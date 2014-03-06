@@ -74,9 +74,7 @@ if (!is_array($config['ipsec']['phase2']))
 
 $a_phase2 = &$config['ipsec']['phase2'];
 
-$spd = ipsec_dump_spd();
-$sad = ipsec_dump_sad();
-$mobile = ipsec_dump_mobile();
+$status = ipsec_smp_dump_status();
 
 ?>
 
@@ -98,125 +96,159 @@ $mobile = ipsec_dump_mobile();
 	</tr>
 	<tr>
 	<td>
-			<div id="mainarea">
-				<table width="100%" border="0" cellpadding="6" cellspacing="0" class="tabcont sortable">
-					<thead>
+	<div id="mainarea">
+		<table width="100%" border="0" cellpadding="6" cellspacing="0" class="tabcont sortable">
+		<thead>
+			<tr>
+				<th nowrap class="listhdrr"><?php echo gettext("Description");?></th>
+				<th nowrap class="listhdrr"><?php echo gettext("Local ID");?></th>
+				<th nowrap class="listhdrr"><?php echo gettext("Local IP");?></th>
+				<th nowrap class="listhdrr"><?php echo gettext("Remote ID");?></th>
+				<th nowrap class="listhdrr"><?php echo gettext("Remote IP");?></a></th>
+				<th nowrap class="listhdrr"><?php echo gettext("Role");?></a></th>
+				<th nowrap class="listhdrr"><?php echo gettext("Status");?></a></th>
+		</tr>
+		</thead>
+		<tbody>
+<?php
+	if (is_array($status['query']) && is_array($status['query']['ikesalist']) && is_array($status['query']['ikesalist']['ikesa'])) {
+		foreach ($status['query']['ikesalist']['ikesa'] as $ikeid => $ikesa) {
+?>
+			<tr>
+				<td class="listlr">
+					<?php echo htmlspecialchars($ikesa['peerconfig']);?>
+				</td>
+				<td class="listr">
+			<?php   if (!is_array($ikesa['local']))
+					echo "Unknown";
+				else {
+					if (!empty($ikesa['local']['identification']))
+						echo htmlspecialchars($ikesa['local']['identification']) . '<br/>' . htmlspecialchars($ikesa['local']['spi']);
+					else
+						echo 'Unknown';
+				}
+			?>
+				</td>
+				<td class="listr">
+			<?php   if (!is_array($ikesa['local']))
+					echo "Unknown";
+				else {
+					if (!empty($ikesa['local']['address']))
+						echo htmlspecialchars($ikesa['local']['address']) . ':' . htmlspecialchars($ikesa['local']['port']);
+					else
+						echo 'Unknown';
+					if ($ikesa['local']['nat'])
+						echo " NAT-T";
+				}
+			?>
+				</td>
+				<td class="listr">
+			<?php   if (!is_array($ikesa['remote']))
+					echo "Unknown";
+				else {
+					if (!empty($ikesa['remote']['identification']))
+						echo htmlspecialchars($ikesa['remote']['identification']) . '<br/>' . htmlspecialchars($ikesa['remote']['spi']);
+					else
+						echo 'Unknown';
+				}
+			?>
+				</td>
+				<td class="listr">
+			<?php   if (!is_array($ikesa['remote']))
+					echo "Unknown";
+				else {
+					if (!empty($ikesa['remote']['address']))
+						echo htmlspecialchars($ikesa['remote']['address']) . ':' . htmlspecialchars($ikesa['remote']['port']);
+					else
+						echo 'Unknown';
+					if ($ikesa['remote']['nat'])
+						echo " NAT-T";
+				}
+			?>
+				</td>
+				<td class="listr">
+					<?php echo htmlspecialchars($ikesa['role']);?>
+				</td>
+				<td class="listr">
+					<?php echo htmlspecialchars($ikesa['status']);?>
+				</td>
+				<td class="listbg">
+					<?php ?> &nbsp;
+				</td>
+				<td valign="middle" nowrap class="list">
+					<table border="0" cellspacing="0" cellpadding="1">
+					</table>
+				</td>
+			</tr>
+			<?php if (is_array($ikesa['childsalist'])): ?>
+			<tr>
+				<td class="listrborder" colspan="7">
+				<div id="btnchildsa-<?=$ikeid;?>">
+					<input  type="button" onClick="show_childsa('childsa-<?=$ikeid;?>','btnchildsa-<?=$ikeid;?>');" value="+"></input> - Show child SA entries</a>
+				</div>
+				<table class="tabcont" width="100%" height="100%" border="0" cellspacing="0" cellpadding="0" id="childsa-<?=$ikeid;?>" style="display:none">
+				<thead>
 					<tr>
-						<th nowrap class="listhdrr"><?php echo gettext("Local IP");?></th>
-						<th nowrap class="listhdrr"><?php echo gettext("Remote IP");?></a></th>
-						<th nowrap class="listhdrr"><?php echo gettext("Local Network");?></th>
-						<th nowrap class="listhdrr"><?php echo gettext("Remote Network");?></a></th>
-						<th nowrap class="listhdrr"><?php echo gettext("Description");?></a></th>
-						<th nowrap class="listhdrr"><?php echo gettext("Status");?></th>
+						<th nowrap class="listhdrr"><?php echo gettext("Local subnets");?></th>
+						<th nowrap class="listhdrr"><?php echo gettext("Local SPI");?></th>
+						<th nowrap class="listhdrr"><?php echo gettext("Remote SPI");?></th>
+						<th nowrap class="listhdrr"><?php echo gettext("Remote subnets");?></th>
 					</tr>
-					</thead>
-					<tbody>
-					<?php
-						foreach ($a_phase2 as $ph2ent) {
-							if ($ph2ent['remoteid']['type'] == "mobile")
-								continue;
-							ipsec_lookup_phase1($ph2ent,$ph1ent);
-							if (!isset($ph2ent['disabled']) && !isset($ph1ent['disabled'])) {
-								if(ipsec_phase2_status($spd,$sad,$ph1ent,$ph2ent)) {
-									$icon = "pass";
-									$status = "Active";
-								} elseif(!isset($config['ipsec']['enable'])) {
-									$icon = "block";
-									$status = "Disabled";
-								} else {
-									$icon = "reject";
-									$status = "Error";
-								}
-					?>
-					<tr>
-						<td class="listlr">
-							<?php echo htmlspecialchars(ipsec_get_phase1_src($ph1ent));?>
-						</td>
-						<td class="listr">
-							<?php echo htmlspecialchars($ph1ent['remote-gateway']);?>
-						</td>
-						<td class="listr">
-							<?php echo ipsec_idinfo_to_text($ph2ent['localid']); ?>
-						</td>
-						<td class="listr">
-							<?php echo ipsec_idinfo_to_text($ph2ent['remoteid']); ?>
-						</td>
-						<td class="listr"><?php echo htmlspecialchars($ph2ent['descr']);?></td>
-						<td class="listr">
-							<center>
-								<img src ="/themes/<?php echo $g['theme']; ?>/images/icons/icon_<?php echo $icon; ?>.gif" title="<?php echo $status; ?>">
-							</center>
-						</td>
-						<td class="list">
-							<?php
-							$source = "";
-							$ip_interface = null;
-							$ip_alias = null;
-							$localinfo = ipsec_idinfo_to_cidr($ph2ent['localid'], false, $ph2ent['mode']);
-							list($localip, $localsub) = explode("/", $localinfo);
-							$ip_interface = find_ip_interface($localip, $localsub);
-							if (!$ip_interface)
-								$ip_alias = find_virtual_ip_alias($localip, $localsub);
-							if ($ip_interface) {
-								if (is_ipaddrv6($localip))
-									$source = get_interface_ipv6($ip_interface);
-								else
-									$source = get_interface_ip($ip_interface);
-							} else if ($ip_alias) {
-								$source = $ip_alias['subnet'];
-							}
-							if (!empty($ph2ent['pinghost']))
-								$remoteid = $ph2ent['pinghost'];
-							else
-								$remoteid = $ph2ent['remoteid']['address'];
-							?>
-							<?php if (($ph2ent['remoteid']['type'] != "mobile") && ($icon != "pass") && ($source != "")): ?>
-							<center>
-								<a href="diag_ipsec.php?act=connect&amp;remoteid=<?php echo $remoteid; ?>&amp;source=<?php echo $source; ?>">
-								<img src ="/themes/<?php echo $g['theme']; ?>/images/icons/icon_service_start.gif" alt="Connect VPN" title="Connect VPN" border="0">
-								</a>
-							</center>
-							<?php else: ?>
-								&nbsp;
-							<?php endif; ?>
-						</td>
-					</tr>
-					<?php
-							}
+				</thead>
+				<tbody>
+				<?php
+					if (is_array($ikesa['childsalist']['childsa'])) {
+						foreach ($ikesa['childsalist']['childsa'] as $childsa) {
+				?>
+					<tr valign="top">
+						<td nowrap class="listlr">
+				<?php	if (is_array($childsa['local']) && is_array($childsa['local']['networks']) && is_array($childsa['local']['networks']['network'])) {
+						foreach ($childsa['local']['networks']['network'] as $lnets) {
+							echo htmlspecialchars($lnets) . "<br/>";	
 						}
-					?>
-					</tbody>
-				</table>
-				<?php if (isset($config['ipsec']['client']['enable'])): ?>
-				<table width="100%" border="0" cellpadding="6" cellspacing="0" class="tabcont sortable">
-					<thead>
-					<tr>
-						<th nowrap class="listhdrr"><?php echo gettext("Mobile User");?></th>
-						<th nowrap class="listhdrr"><?php echo gettext("Login Time");?></a></th>
-						<th nowrap class="listhdrr"><?php echo gettext("Local");?></th>
-						<th nowrap class="listhdrr"><?php echo gettext("Remote");?></a></th>
-						<th nowrap class="list">&nbsp;</th>
+					} else
+						echo "Unknown";
+				?>
+						</td>
+						<td nowrap class="listr">
+				<?php	if (is_array($childsa['local']))
+						echo htmlspecialchars($childsa['local']['spi']);
+				?>
+						</td>
+						<td nowrap class="listr">
+				<?php	if (is_array($childsa['remote']))
+						echo htmlspecialchars($childsa['remote']['spi']);
+				?>
+						</td>
+						<td nowrap class="listlr">
+				<?php	if (is_array($childsa['remote']) && is_array($childsa['remote']['networks']) && is_array($childsa['remote']['networks']['network'])) {
+						foreach ($childsa['remote']['networks']['network'] as $rnets) {
+							echo htmlspecialchars($rnets) . "<br/>";	
+						}
+					} else
+						echo "Unknown";
+				?>
+						</td>
+						<td nowrap class="list">
+							&nbsp;
+						</td>
 					</tr>
-					</thead>
-					<tbody>
-					<?php	foreach ($mobile as $muser): ?>
-					<tr>
-						<td class="listlr"><?php echo $muser['username']; ?></td>
-						<td class="listr" align="center"><?php echo $muser['logintime']; ?></td>
-						<td class="listr" align="center"><?php echo $muser['local']; ?></td>
-						<td class="listr" align="center"><?php echo $muser['remote']; ?></td>
-						<td class="list" align="center"><a href="diag_ipsec.php?act=disconnect&user=<?php echo $muser['username']; ?>"><img src='/themes/<?php echo $g['theme']; ?>/images/icons/icon_x.gif' height='17' width='17' border='0'/></a></td>
-					</tr>
-					<?php	endforeach; ?>
-					</tbody>
+				<?php } } ?>
+				</tbody>
 				</table>
-				<?php endif; ?>
-			</div>
-		</td>
+				</td>
+			</tr>
+			<?php endif; 
+		}
+	}
+?>
+		</tbody>
+		</table>
+	</div>
+	</td>
 	</tr>
 </table>
-
-<p/>
+</div>
 
 <span class="vexpl">
 	<span class="red">
@@ -225,7 +257,13 @@ $mobile = ipsec_dump_mobile();
 	<?php echo gettext("You can configure IPsec");?>
 	<a href="vpn_ipsec.php">here</a>.
 </span>
-
-<?php include("fend.inc"); ?>
+<?php unset($status); include("fend.inc"); ?>
+<script type="text/javascript">
+function show_childsa(id, buttonid) {
+	document.getElementById(buttonid).innerHTML='';
+	aodiv = document.getElementById(id);
+	aodiv.style.display = "block";
+}
+</script>
 </body>
 </html>

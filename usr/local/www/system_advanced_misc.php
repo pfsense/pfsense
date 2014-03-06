@@ -60,7 +60,10 @@ $pconfig['lb_use_sticky'] = isset($config['system']['lb_use_sticky']);
 $pconfig['srctrack'] = $config['system']['srctrack'];
 $pconfig['gw_switch_default'] = isset($config['system']['gw_switch_default']);
 $pconfig['preferoldsa_enable'] = isset($config['ipsec']['preferoldsa']);
-$pconfig['racoondebug_enable'] = isset($config['ipsec']['racoondebug']);
+foreach ($ipsec_loglevel as $lkey => $ldescr) {
+	if (!empty($config['ipsec']["ipsec_{$lkey}"]))
+		$pconfig["ipsec_{$lkey}"] = $config['ipsec']["ipsec_{$lkey}"];
+}
 $pconfig['failoverforcereload'] = isset($config['ipsec']['failoverforcereload']);
 $pconfig['maxmss_enable'] = isset($config['system']['maxmss_enable']);
 $pconfig['maxmss'] = $config['system']['maxmss'];
@@ -74,7 +77,7 @@ $pconfig['use_mfs_tmpvar'] = isset($config['system']['use_mfs_tmpvar']);
 $pconfig['use_mfs_tmp_size'] = $config['system']['use_mfs_tmp_size'];
 $pconfig['use_mfs_var_size'] = $config['system']['use_mfs_var_size'];
 $pconfig['noinstalllanspd'] = $config['system']['noinstalllanspd'];
-$pconfig['pkg_nochecksig'] = $config['system']['pkg_nochecksig'];
+$pconfig['pkg_nochecksig'] = isset($config['system']['pkg_nochecksig']);
 
 $pconfig['powerd_ac_mode'] = "hadp";
 if (!empty($config['system']['powerd_ac_mode']))
@@ -167,31 +170,23 @@ if ($_POST) {
 		elseif (isset($config['ipsec']['failoverforcereload']))
 			unset($config['ipsec']['failoverforcereload']);
 
-		$need_racoon_restart = false;
-		if($_POST['racoondebug_enable'] == "yes") {
-			if (!isset($config['ipsec']['racoondebug'])) {
-				$config['ipsec']['racoondebug'] = true;
-				$need_racoon_restart = true;
-			}
-		} else {
-			if (isset($config['ipsec']['racoondebug'])) {
-				unset($config['ipsec']['racoondebug']);
-				$need_racoon_restart = true;
-			}
+		foreach ($ipsec_loglevel as $lkey => $ldescr) {
+			if (empty($_POST["ipsec_{$lkey}"]))
+				unset($config['ipsec']["ipsec_{$lkey}"]);
+			else
+				$config['ipsec']["ipsec_{$lkey}"] = $_POST["ipsec_{$lkey}"];
 		}
 		if($_POST['noinstalllanspd'] == "yes") {
 			if (!isset($pconfig['noinstalllanspd']))
-				$need_racoon_restart = true;
 			$config['system']['noinstalllanspd'] = true;
 		} else {
 			if (isset($config['system']['noinstalllanspd']))
-				$need_racoon_restart = true;
 			unset($config['system']['noinstalllanspd']);
 		}
 
 		if($_POST['pkg_nochecksig'] == "yes")
 			$config['system']['pkg_nochecksig'] = true;
-		else
+		elseif (isset($config['system']['pkg_nochecksig']))
 			unset($config['system']['pkg_nochecksig']);
 
 		if($_POST['maxmss_enable'] == "yes") {
@@ -266,8 +261,8 @@ if ($_POST) {
 		load_crypto();
 		load_thermal_hardware();
 		vpn_ipsec_configure_preferoldsa();
-		if ($need_racoon_restart)
-			vpn_ipsec_force_reload();
+		vpn_ipsec_configure();
+		vpn_ipsec_configure_loglevels();
 		if ($need_relayd_restart)
 			relayd_configure();
 	}
@@ -536,12 +531,28 @@ function tmpvar_checked(obj) {
 							<tr>
 								<td width="22%" valign="top" class="vncell"><?=gettext("IPsec Debug"); ?></td>
 								<td width="78%" class="vtable">
-									<input name="racoondebug_enable" type="checkbox" id="racoondebug_enable" value="yes" <?php if ($pconfig['racoondebug_enable']) echo "checked=\"checked\""; ?> />
-									<strong><?=gettext("Start racoon in debug mode"); ?></strong>
+									<strong><?=gettext("Start IPSec in debug mode based on sections selected"); ?></strong>
 									<br />
-									<?=gettext("Launches racoon in debug mode so that more verbose logs " .
-									"will be generated to aid in troubleshooting."); ?><br/>
-									<?=gettext("NOTE: Changing this setting will restart racoon."); ?>
+									<table>
+								<?php foreach ($ipsec_loglevels as $lkey => $ldescr): ?>
+									<tr>
+										<td width="22%" valign="top" class="vncell"><?=$ldescr;?></td>
+										<td width="78%" valign="top" class="vncell">
+										<?php	echo "<select name=\"ipsec_{$lkey}\" id=\"ipsec_{$lkey}\">\n";
+											foreach (array("Silent", "Audit", "Control", "Diag", "Raw", "Highest") as $lidx => $lvalue) {
+												echo "<option value=\"{$lidx}\" ";
+												 if ($pconfig["ipsec_{$lkey}"] == $lidx)
+													echo "\"selected\"";
+												echo ">{$lvalue}</option>\n";
+											}
+										?> />
+											</select>
+										</td>
+									</tr>
+								<?php endforeach; ?>
+									</table>
+									<br/><?=gettext("Launches IPSec in debug mode so that more verbose logs " .
+									"will be generated to aid in troubleshooting."); ?>
 								</td>
 							</tr>
 							<tr>
@@ -710,7 +721,7 @@ function tmpvar_checked(obj) {
 							<tr>
 								<td width="22%" valign="top" class="vncell"><?=gettext("Packages signature"); ?></td>
 								<td width="78%" class="vtable">
-									<input name="pkg_nochecksig" type="checkbox" id="pkg_nochecksig" value="yes" <?php if ($pconfig['pkg_nochecksig']) echo "checked=\"checked\""; ?> onclick="tmpvar_checked(this)" />
+									<input name="pkg_nochecksig" type="checkbox" id="pkg_nochecksig" value="yes" <?php if ($pconfig['pkg_nochecksig']) echo "checked=\"checked\""; ?> />
 									<strong><?=gettext("Do NOT check packages signature"); ?></strong><br/>
 									<?=gettext("Enable this option will make pfSense install any packages without check its signature."); ?>
 								</td>

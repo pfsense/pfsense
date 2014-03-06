@@ -220,9 +220,9 @@ foreach ($ifdescrs as $ifn => $ifd) {
 </select>
 , Filter: 
 <select id="filter" name="filter" class="formselect" style="z-index: -10;" onchange="document.form1.submit()">
-	<option value="">All</option>
 	<option value="local"<?php if ($curfilter == "local") echo " selected";?>>Local</option>
 	<option value="remote"<?php if ($curfilter == "remote") echo " selected";?>>Remote</option>
+	<option value="all"<?php if ($curfilter == "all") echo " selected";?>>All</option>
 </select>
 , Display: 
 <select id="hostipformat" name="hostipformat" class="formselect" style="z-index: -10;" onchange="document.form1.submit()">

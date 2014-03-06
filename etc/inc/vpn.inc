@@ -36,12 +36,25 @@
 /*
 	pfSense_BUILDER_BINARIES:	/usr/bin/killall	/usr/local/sbin/sasyncd	/sbin/ifconfig	/sbin/sysctl
 	pfSense_BUILDER_BINARIES:	/usr/local/sbin/setkey	/sbin/route	/bin/mkdir
-	pfSense_BUILDER_BINARIES:	/usr/local/sbin/racoonctl	/usr/local/sbin/racoon
+	pfSense_BUILDER_BINARIES:	/usr/local/sbin/ipsec	/usr/local/libexec/ipsec/charon /usr/local/libexec/ipsec/starter
 	pfSense_BUILDER_BINARIES:	/usr/local/sbin/filterdns	/usr/local/sbin/mpd4
 	pfSense_MODULE:	vpn
 */
 
 require_once("ipsec.inc");
+
+function vpn_ipsec_configure_loglevels()
+{
+	global $config;
+
+	foreach ($ipsec_loglevels as $lkey => $ldescr) {
+		if (empty($config['ipsec']["ipsec_{$lkey}"]))
+			mwexec("/usr/local/sbin/ipsec stroke loglevel {$lkey} -1", false);
+		else if (is_numeric($config['ipsec']["ipsec_{$lkey}"]) &&
+		    intval($config['ipsec']["ipsec_{$lkey}"]) >= 1 && intval($config['ipsec']["ipsec_{$lkey}"]) <= 4)
+			mwexec("/usr/local/sbin/ipsec stroke loglevel {$lkey} " . (intval($config['ipsec']["ipsec_{$lkey}"]) - 1) , false);
+	}
+}
 
 /* include all configuration functions */
 function vpn_ipsec_convert_to_modp($index)
@@ -98,21 +111,18 @@ function vpn_ipsec_configure($ipchg = false)
 	$a_client = $config['ipsec']['client'];
 
 	if (!isset($ipseccfg['enable'])) {
-		/* try to stop racoon*/
-		killbypid("{$g['varrun_path']}/charon.pid");
+		/* try to stop charon */
+		mwexec("/usr/local/sbin/ipsec stop");
 		/* Stop dynamic monitoring */
 		killbypid("{$g['varrun_path']}/filterdns-ipsec.pid");
 
-		/* kill racoon forcefully */
-		if (is_process_running("charon"))
-			mwexec("/usr/bin/killall -9 charon", true);
-
-		/* wait for racoon process to die */
+		/* wait for process to die */
 		sleep(2);
 
-		/* flush SPD and SAD */
+		/* flush SPD and SAD 
 		mwexec("/usr/local/sbin/setkey -F");
 		mwexec("/usr/local/sbin/setkey -FP");
+		*/
 
 		/* disallow IPSEC, it is off */
 		mwexec("/sbin/ifconfig enc0 down");
@@ -248,7 +258,7 @@ function vpn_ipsec_configure($ipchg = false)
 
 		$strongswan = <<<EOD
 
-#Automatically generated please do not modify\n";
+#Automatically generated please do not modify
 starter {
     load_warning = no
 }
@@ -257,6 +267,21 @@ charon {
 
         # number of worker threads in charon
         threads = 16
+
+	# And two loggers using syslog. The subsections define the facility to log
+	# to, currently one of: daemon, auth.
+	syslog {
+
+		identifier = charon
+		# default level to the LOG_DAEMON facility
+		daemon {
+		}
+		# very minimalistic IKE auditing logs to LOG_AUTHPRIV
+		auth {
+		    default = -1
+		    ike = 1
+		}
+	}
 
 EOD;
 
@@ -343,6 +368,23 @@ EOD;
 				$strongswan .= "\t\t28679 = {$a_client['pfs_group']}\n";
 			$strongswan .= "\t\t}\n";
 
+			if ($a_client['user_source'] != "none") {
+				$strongswan .= "\txauth-generic {\n";
+				$strongswan .= "\t\tscript = /etc/inc/ipsec.auth-user.php\n";
+				$strongswan .= "\t\tauthcfg = ";
+				$firstsed = 0;
+				$authcfgs = explode(",", $a_client['user_source']);
+				foreach ($authcfgs as $authcfg) {
+					if ($firstsed > 0)
+						$strongswan .= ",";
+					if ($authcfg == "system")
+						$authcfg = "Local Database";
+					$strongswan .= $authcfg;
+					$firstsed = 1;
+				}
+				$strongswan .= "\n";
+				$strongswan .= "\t}\n";
+			}
 		}
 
 		$strongswan .= "\t}\n}\n";
@@ -441,7 +483,7 @@ EOD;
 					}
 
 					if (!empty($peerid_data) && !empty($ph1ent['pre-shared-key']))
-						$pskconf .= trim($peerid_data) . ": PSK \"" . trim($ph1ent['pre-shared-key']) . "\"\n";
+						$pskconf .= trim($peerid_data) . " : PSK \"" . trim($ph1ent['pre-shared-key']) . "\"\n";
 				}
 			}
 		}
@@ -619,22 +661,21 @@ EOD;
 						$localid_type = $ph2ent['localid']['type'];
 						$localid_data = ipsec_idinfo_to_cidr($ph2ent['localid'], false, $ph2ent['mode']);
 						/* Do not print localid in some cases, such as a pure-psk or psk/xauth single phase2 mobile tunnel */
-						if (($localid_type == "none" || $localid_type == "mobile") ||
-							(($ph1ent['authentication_method'] == "xauth_psk_server") ||
-							($ph1ent['authentication_method'] == "pre_shared_key"))
+						if (($localid_type == "none" || $localid_type == "mobile")
 							&& isset($ph1ent['mobile'])
 							&& (ipsec_get_number_of_phase2($ikeid)==1))
-							$localid_spec = "%mobile";
+							$localid_spec = "%any";
 						else {
 							if ($localid_type != "address") {
 								$localid_type = "subnet";
 							}
-							// Don't let an empty subnet into racoon.conf, it can cause parse errors. Ticket #2201.
+							// Don't let an empty subnet into config, it can cause parse errors. Ticket #2201.
 							if (!is_ipaddr($localid_data) && !is_subnet($localid_data) && ($localid_data != "0.0.0.0/0")) {
 								log_error("Invalid IPsec Phase 2 \"{$ph2ent['descr']}\" - {$ph2ent['localid']['type']} has no subnet.");
 								continue;
 							}
 							$localid_spec = $ep;
+							/* XXX: To be finished */
 							if (0 && !empty($ph2ent['natlocalid'])) {
 								$natlocalid_data =  ipsec_idinfo_to_cidr($ph2ent['natlocalid'], false, $ph2ent['mode']);
 								if ($ph2ent['natlocalid']['type'] != "address") {
@@ -677,11 +718,11 @@ EOD;
 					switch ($ph1ent['authentication_method']) {
 					case 'xauth_rsa_server':
 						$authentication = "leftauth = pubkey\n\trightauth = pubkey";
-						$authentication .= "\n\leftauth2 = xauth";
+						$authentication .= "\n\leftauth2 = xauth-generic";
 						break;
 					case 'xauth_psk_server':
 						$authentication = "leftauth = psk\n\trightauth = psk";
-						$authentication .= "\n\tleftauth2 = xauth";
+						$authentication .= "\n\tleftauth2 = xauth-generic";
 						break;
 					case 'pre_shared_key':
 						$authentication = "leftauth = psk\n\trightauth = psk";
@@ -690,7 +731,7 @@ EOD;
 						$authentication = "leftauth = pubkey\n\trightauth = pubkey";
 						break;
 					case 'hybrid_rsa_server':
-						$authentication = "leftauth = xauth\n\trightauth = pubkey";
+						$authentication = "leftauth = xauth-generic\n\trightauth = pubkey";
 						$authentication .= "\n\trightauth2 = xauth";
 						break;
 					}
@@ -793,18 +834,20 @@ EOD;
 	}
 	@file_put_contents("{$g['varetc_path']}/ipsec/ipsec.conf", $ipsecconf);
 	unset($ipsecconf);
-	/* end racoon.conf */
+	/* end ipsec.conf */
 
 	/* generate IPsec policies */
 	$natfilterrules = false;
-	/* mange racoon process */
-	if (is_process_running("charon")) {
-		sleep("0.1");
-		mwexec("/usr/local/sbin/ipsec reloadall", false);
+	/* mange process */
+	if (isvalidpid("{$g['varrun_path']}/charon.pid")) {
+		/* Read secrets */
+		mwexec("/usr/local/sbin/ipsec rereadall", false);
+		/* Update configuration changes */
+		mwexec("/usr/local/sbin/ipsec update", false);
 	} else {
 		/* start racoon */
 		$ipsecdebug = isset($config['ipsec']['racoondebug']) ? "-d -v" : "";
-		mwexec("/usr/local/sbin/ipsec restart". false); 
+		mwexec("/usr/local/sbin/ipsec restart", false); 
 	}
 	if ($natfilterrules == true)
 		filter_configure();

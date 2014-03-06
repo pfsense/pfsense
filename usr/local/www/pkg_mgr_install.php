@@ -48,12 +48,41 @@ require_once("filter.inc");
 require_once("shaper.inc");
 require_once("pkg-utils.inc");
 
+global $static_output;
+
 $static_output = "";
 $static_status = "";
 $sendto = "output";
 
 $pgtitle = array(gettext("System"),gettext("Package Manager"),gettext("Install Package"));
 include("head.inc");
+
+if ($_POST) {
+	if (isset($_POST['pkgcancel']) || (empty($_POST['id']) && $_POST['mode'] != 'reinstallall')) {
+		header("Location: pkg_mgr_installed.php");
+		return;
+	}
+} else if ($_GET) {
+	switch ($_GET['mode']) {
+	case 'showlog':
+		break;
+	case 'installedinfo':
+	case 'reinstallxml':
+        case 'reinstallpkg':
+	case 'delete':
+		if (empty($_GET['pkg'])) {
+			header("Location: pkg_mgr_installed.php");
+			return;
+		}
+		break;
+	default:
+		if (empty($_GET['id'])) {
+			header("Location: pkg_mgr_installed.php");
+			return;
+		}
+		break;
+	}
+}
 
 ?>
 
@@ -65,17 +94,53 @@ include("head.inc");
 				<tr>
 					<td>
 						<?php
-//							$version = file_get_contents("/etc/version");
 							$tab_array = array();
 							$tab_array[] = array(gettext("Available packages"), false, "pkg_mgr.php");
-//							$tab_array[] = array("Packages for any platform", false, "pkg_mgr.php?ver=none");
-//							$tab_array[] = array("Packages for a different platform", $requested_version == "other" ? true : false, "pkg_mgr.php?ver=other");
 							$tab_array[] = array(gettext("Installed packages"), false, "pkg_mgr_installed.php");
 							$tab_array[] = array(gettext("Package Installer"), true, "");
 							display_top_tabs($tab_array);
 						?>
 					</td>
 				</tr>
+<?php if ((empty($_GET['mode']) && $_GET['id']) || (!empty($_GET['mode']) && (!empty($_GET['pkg']) || $_GET['mode'] == 'reinstallall') && ($_GET['mode'] != 'installedinfo' && $_GET['mode'] != 'showlog'))):
+	if (empty($_GET['mode']) && $_GET['id']) {
+		$pkgname = str_replace(array("<", ">", ";", "&", "'", '"'), "", htmlspecialchars_decode($_GET['id'], ENT_QUOTES | ENT_HTML401));
+		$pkgmode = 'installed';
+	} else if (!empty($_GET['mode']) && !empty($_GET['pkg'])) {
+		$pkgname = str_replace(array("<", ">", ";", "&", "'", '"'), "", htmlspecialchars_decode($_GET['pkg'], ENT_QUOTES | ENT_HTML401));
+		$pkgmode = str_replace(array("<", ">", ";", "&", "'", '"'), "", htmlspecialchars_decode($_GET['mode'], ENT_QUOTES | ENT_HTML401));
+	}
+	switch ($pkgmode) {
+	case 'reinstallxml':
+	case 'reinstallpkg':
+		$pkgtxt = 'reinstalled';
+		break;
+	case 'delete':
+		$pkgtxt = 'deleted';
+		break;
+	default:
+		$pkgtxt = $pkgmode;
+		break;
+	}
+?>
+				<tr>
+					<td class="tabcont" align="center">
+						<table style="height:15;colspacing:0" width="420" border="0" cellpadding="0" cellspacing="0" summary="images">
+							<tr>
+								<td class="tabcont" align="center">Package:<b><?=$pkgname;?></b> will be <?=$pkgtxt;?>.<br/>
+								Please confirm the action on this package.<br/>
+								</td>
+								<td class="tabcont" align="center">
+									<input type="hidden" name="id" value="<?=$pkgname;?>" />
+									<input type="hidden" name="mode" value="<?=$pkgmode;?>" />
+									<input type="submit" name="pkgconfirm" id="pkgconfirm" value="Confirm"/>
+									<input type="submit" name="pkgcancel" id="pkgcancel" value="Cancel"/>
+								</td>
+							</tr>
+						</table>
+					</td>
+				</tr>
+<?php endif; if (!empty($_POST['id']) || $_GET['mode'] == 'showlog' || ($_GET['mode'] == 'installedinfo' && !empty($_GET['pkg']))): ?>
 				<tr>
 					<td class="tabcont" align="center">
 						<table style="height:15;colspacing:0" width="420" border="0" cellpadding="0" cellspacing="0" summary="images">
@@ -99,6 +164,7 @@ include("head.inc");
 						<textarea cols="80" rows="35" name="output" id="output" wrap="hard"></textarea>
 					</td>
 				</tr>
+<?php endif; ?>
 			</table>
 		</div>
 	</form>
@@ -114,111 +180,112 @@ Rounded("div#mainareapkg","bl br","#FFF","#eeeeee","smooth");
 
 ob_flush();
 
-switch($_GET['mode']) {
-	case "showlog":
-	case "installedinfo":
-		/* These cases do not make changes. */
-		$fs_mounted_rw = false;
+if ($_GET) {
+	$pkgname = str_replace(array("<", ">", ";", "&", "'", '"'), "", htmlspecialchars_decode($_GET['pkg'], ENT_QUOTES | ENT_HTML401));
+	switch($_GET['mode']) {
+	case 'showlog':
+		if (strpos($pkgname, ".")) {
+			update_output_window(gettext("Something is wrong on the request."));
+		} else if (file_exists("/tmp/pkg_mgr_{$pkgname}.log"))
+			update_output_window(@file_get_contents("/tmp/pkg_mgr_{$pkgname}.log"));
+		else
+			update_output_window(gettext("Log was not retrievable."));
 		break;
-	default:
-		/* All other cases make changes, so mount rw fs */
-		conf_mount_rw();
-		$fs_mounted_rw = true;
-		/* Write out configuration to create a backup prior to pkg install. */
-		write_config(gettext("Creating restore point before package installation."));
-		break;
-}
-
-switch($_GET['mode']) {
-	case "delete":
-		uninstall_package($_GET['pkg']);
-		update_status(gettext("Package deleted."));
-		$static_output .= "\n" . gettext("Package deleted.");
-		update_output_window($static_output);
-		filter_configure();
-		break;
-	case "showlog":
-		$id = htmlspecialchars($_GET['pkg']);
-		if(strpos($id, "."))
-			exit;
-		update_output_window(file_get_contents("/tmp/pkg_mgr_{$id}.log"));
-		break;
-	case "reinstallxml":
-	case "reinstallpkg":
-		delete_package_xml(htmlspecialchars($_GET['pkg']));
-		if (install_package(htmlspecialchars($_GET['pkg'])) < 0) {
-			update_status(gettext("Package reinstallation failed."));
-			$static_output .= "\n" . gettext("Package reinstallation failed.");
-			update_output_window($static_output);
-		} else {
-			update_status(gettext("Package reinstalled."));
-			$static_output .= "\n" . gettext("Package reinstalled.");
-			update_output_window($static_output);
-			filter_configure();
-		}
-		file_put_contents("/tmp/{$_GET['pkg']}.info", $static_output);
-		echo "<script type='text/javascript'>document.location=\"pkg_mgr_install.php?mode=installedinfo&pkg={$_GET['pkg']}\";</script>";
-		break;
-	case "installedinfo":
-		if(file_exists("/tmp/{$_GET['pkg']}.info")) {
-			$filename = escapeshellcmd("/tmp/" . $_GET['pkg']  . ".info");
-			$status = file_get_contents($filename);
-			update_status($_GET['pkg']  . " " . gettext("installation completed."));
+	case 'installedinfo':
+		if (file_exists("/tmp/{$pkgname}.info")) {
+			$status = @file_get_contents("/tmp/{$pkgname}.info");
+			update_status("{$pkgname} " . gettext("installation completed."));
 			update_output_window($status);
 		} else
-			update_output_window(sprintf(gettext("Could not find %s."), htmlspecialchars($_GET['pkg'])));
-		break;
-	case "reinstallall":
-		if (is_array($config['installedpackages']['package'])) {
-			$todo = array();
-			foreach($config['installedpackages']['package'] as $package)
-				$todo[] = array('name' => $package['name'], 'version' => $package['version']);
-			foreach($todo as $pkgtodo) {
-				$static_output = "";
-				if($pkgtodo['name']) {
-					update_output_window($static_output);
-					uninstall_package($pkgtodo['name']);
-					install_package($pkgtodo['name']);
-				}
-			}
-			update_status(gettext("All packages reinstalled."));
-			$static_output .= "\n" . gettext("All packages reinstalled.");
-			update_output_window($static_output);
-			filter_configure();
-		} else
-			update_output_window(gettext("No packages are installed."));
+			update_output_window(sprintf(gettext("Could not find %s."), $pkgname));
 		break;
 	default:
-		$pkgid = htmlspecialchars($_GET['id']);
-		$status = install_package($pkgid);
-		if($status == -1) {
-			update_status(gettext("Installation of") . " {$pkgid} " . gettext("FAILED!"));
-			$static_output .= "\n" . gettext("Installation halted.");
-			update_output_window($static_output);
-		} else {
-			$status_a = gettext("Installation of") . " {$pkgid} " . gettext("completed.");
-			update_status($status_a);
-			$status = get_after_install_info($pkgid);
-			if($status) 
-				$static_output .= "\n" . gettext("Installation completed.") . "\n{$pkgid} " . gettext("setup instructions") . ":\n{$status}";
-			else
-				$static_output .= "\n" . gettext("Installation completed.   Please check to make sure that the package is configured from the respective menu then start the package.");
-		file_put_contents("/tmp/{$pkgid}.info", $static_output);
-		echo "<script type='text/javascript'>document.location=\"pkg_mgr_install.php?mode=installedinfo&pkg={$pkgid}\";</script>";
-		}
-		filter_configure();
 		break;
-}
+	}
+} else if ($_POST) {
+	$pkgid = str_replace(array("<", ">", ";", "&", "'", '"'), "", htmlspecialchars_decode($_POST['id'], ENT_QUOTES | ENT_HTML401));
 
-// Delete all temporary package tarballs and staging areas.
-unlink_if_exists("/tmp/apkg_*");
-rmdir_recursive("/var/tmp/instmp*");
+	/* All other cases make changes, so mount rw fs */
+	conf_mount_rw();
+	/* Write out configuration to create a backup prior to pkg install. */
+	write_config(gettext("Creating restore point before package installation."));
 
-// close log
-if($fd_log)
-	fclose($fd_log);
+	switch ($_POST['mode']) {
+		case 'delete':
+			uninstall_package($pkgid);
+			update_status(gettext("Package deleted."));
+			$static_output .= "\n" . gettext("Package deleted.");
+			update_output_window($static_output);
+			filter_configure();
+			break;
+		case 'reinstallxml':
+		case 'reinstallpkg':
+			delete_package_xml($pkgid);
+			if (install_package($pkgid) < 0) {
+				update_status(gettext("Package reinstallation failed."));
+				$static_output .= "\n" . gettext("Package reinstallation failed.");
+				update_output_window($static_output);
+			} else {
+				update_status(gettext("Package reinstalled."));
+				$static_output .= "\n" . gettext("Package reinstalled.");
+				update_output_window($static_output);
+				filter_configure();
+			}
+			@file_put_contents("/tmp/{$pkgid}.info", $static_output);
+			$pkgid = htmlspecialchars($pkgid);
+			echo "<script type='text/javascript'>document.location=\"pkg_mgr_install.php?mode=installedinfo&pkg={$pkgid}\";</script>";
+			break;
+		case 'reinstallall':
+			if (is_array($config['installedpackages']) && is_array($config['installedpackages']['package'])) {
+				$todo = array();
+				foreach($config['installedpackages']['package'] as $package)
+					$todo[] = array('name' => $package['name'], 'version' => $package['version']);
+				foreach($todo as $pkgtodo) {
+					$static_output = "";
+					if($pkgtodo['name']) {
+						update_output_window($static_output);
+						uninstall_package($pkgtodo['name']);
+						install_package($pkgtodo['name']);
+					}
+				}
+				update_status(gettext("All packages reinstalled."));
+				$static_output .= "\n" . gettext("All packages reinstalled.");
+				update_output_window($static_output);
+				filter_configure();
+			} else
+				update_output_window(gettext("No packages are installed."));
+			break;
+		case 'installed':
+		default:
+			$status = install_package($pkgid);
+			if($status == -1) {
+				update_status(gettext("Installation of") . " {$pkgid} " . gettext("FAILED!"));
+				$static_output .= "\n" . gettext("Installation halted.");
+				update_output_window($static_output);
+			} else {
+				$status_a = gettext(sprintf("Installation of %s completed.", $pkgid));
+				update_status($status_a);
+				$status = get_after_install_info($pkgid);
+				if($status) 
+					$static_output .= "\n" . gettext("Installation completed.") . "\n{$pkgid} " . gettext("setup instructions") . ":\n{$status}";
+				else
+					$static_output .= "\n" . gettext("Installation completed.   Please check to make sure that the package is configured from the respective menu then start the package.");
 
-if($fs_mounted_rw) {
+				@file_put_contents("/tmp/{$pkgid}.info", $static_output);
+				echo "<script type='text/javascript'>document.location=\"pkg_mgr_install.php?mode=installedinfo&pkg={$pkgid}\";</script>";
+			}
+			filter_configure();
+			break;
+	}
+
+	// Delete all temporary package tarballs and staging areas.
+	unlink_if_exists("/tmp/apkg_*");
+	rmdir_recursive("/var/tmp/instmp*");
+
+	// close log
+	if($fd_log)
+		fclose($fd_log);
+
 	/* Restore to read only fs */
 	conf_mount_ro();
 }

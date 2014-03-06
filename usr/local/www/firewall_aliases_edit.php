@@ -296,9 +296,9 @@ if ($_POST) {
 					if (!is_port($_POST["address{$x}"]))
 						$input_errors[] = $_POST["address{$x}"] . " " . gettext("is not a valid port or alias.");
 				} else if ($_POST['type'] == "host" || $_POST['type'] == "network") {
-					if (!is_ipaddr($_POST["address{$x}"])
+					if (is_subnet($_POST["address{$x}"]) || (!is_ipaddr($_POST["address{$x}"])
 					 && !is_hostname($_POST["address{$x}"])
-					 && !is_iprange($_POST["address{$x}"]))
+					 && !is_iprange($_POST["address{$x}"])))
 						$input_errors[] = sprintf(gettext('%1$s is not a valid %2$s alias.'), $_POST["address{$x}"], $_POST['type']);
 				}
 				if (is_iprange($_POST["address{$x}"])) {
@@ -307,8 +307,12 @@ if ($_POST) {
 					$address = array_merge($address, $rangesubnets);
 				} else {
 					$tmpaddress = $_POST["address{$x}"];
-					if(is_ipaddr($_POST["address{$x}"]) && $_POST["address_subnet{$x}"] <> "")
-						$tmpaddress .= "/" . $_POST["address_subnet{$x}"];
+					if($_POST['type'] != "host" && is_ipaddr($_POST["address{$x}"]) && $_POST["address_subnet{$x}"] <> "") {
+						if (!is_subnet($_POST["address{$x}"] . "/" . $_POST["address_subnet{$x}"]))
+							$input_errors[] = sprintf(gettext('%s/%s is not a valid subnet.'), $_POST["address{$x}"], $_POST["address_subnet{$x}"]);
+						else
+							$tmpaddress .= "/" . $_POST["address_subnet{$x}"];
+					}
 					$address[] = $tmpaddress;
 				}
 				if ($_POST["detail{$x}"] <> "") {

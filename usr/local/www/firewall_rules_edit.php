@@ -205,6 +205,7 @@ read_dummynet_config(); /* XXX: */
 $dnqlist =& get_unique_dnqueue_list();
 read_layer7_config();
 $l7clist =& get_l7_unique_list();
+$a_gatewaygroups = return_gateway_groups_array();
 
 if ($_POST) {
 	unset($input_errors);
@@ -216,7 +217,6 @@ if ($_POST) {
 	}
 
 	if (($_POST['ipprotocol'] <> "") && ($_POST['gateway'] <> "")) {
-		$a_gatewaygroups = return_gateway_groups_array();
 		if(is_array($config['gateways']['gateway_group'])) {
 			foreach($config['gateways']['gateway_group'] as $gw_group) {
 				if($gw_group['name'] == $_POST['gateway']) {
@@ -423,10 +423,10 @@ if ($_POST) {
 			$input_errors[] = gettext("You can not use IPv6 addresses in IPv4 rules.");
 		if((is_ipaddrv4($_POST['src']) || is_ipaddrv4($_POST['dst'])) && ($_POST['ipprotocol'] == "inet6"))
 			$input_errors[] = gettext("You can not use IPv4 addresses in IPv6 rules.");
-		if((is_ipaddr($_POST['src']) || is_ipaddr($_POST['dst'])) && ($_POST['ipprotocol'] == "inet46"))
-			$input_errors[] = gettext("You can not use a IPv4 or IPv6 address in combined IPv4 + IPv6 rules.");
-
 	}
+
+	if((is_ipaddr($_POST['src']) || is_ipaddr($_POST['dst'])) && ($_POST['ipprotocol'] == "inet46"))
+		$input_errors[] = gettext("You can not use a IPv4 or IPv6 address in combined IPv4 + IPv6 rules.");
 
 	if ($_POST['srcbeginport'] > $_POST['srcendport']) {
 		/* swap */
@@ -479,7 +479,7 @@ if ($_POST) {
 		if (!empty($_POST['max-src-conn']))
 			$input_errors[] = gettext("You can only specify the maximum number of established connections per host (advanced option) for TCP protocol.");
 		if (!empty($_POST['max-src-conn-rate']) || !empty($_POST['max-src-conn-rates']))
-			$input_errors[] = gettext("You can only specify the maximum new connections / per second(s) (advanced option) for TCP protocol.");
+			$input_errors[] = gettext("You can only specify the maximum new connections per host / per second(s) (advanced option) for TCP protocol.");
 		if (!empty($_POST['statetimeout']))
 			$input_errors[] = gettext("You can only specify the state timeout (advanced option) for TCP protocol.");
 	}
@@ -494,7 +494,7 @@ if ($_POST) {
 		if (!empty($_POST['max-src-states']))
 			$input_errors[] = gettext("You can only specify the maximum state entries per host (advanced option) for Pass type rules.");
 		if (!empty($_POST['max-src-conn-rate']) || !empty($_POST['max-src-conn-rates']))
-			$input_errors[] = gettext("You can only specify the maximum new connections / per second(s) (advanced option) for Pass type rules.");
+			$input_errors[] = gettext("You can only specify the maximum new connections per host / per second(s) (advanced option) for Pass type rules.");
 		if (!empty($_POST['statetimeout']))
 			$input_errors[] = gettext("You can only specify the state timeout (advanced option) for Pass type rules.");
 	}
@@ -509,7 +509,7 @@ if ($_POST) {
 		if (!empty($_POST['max-src-states']))
 			$input_errors[] = gettext("You cannot specify the maximum state entries per host (advanced option) if statetype is none and no L7 container is selected.");
 		if (!empty($_POST['max-src-conn-rate']) || !empty($_POST['max-src-conn-rates']))
-			$input_errors[] = gettext("You cannot specify the maximum new connections / per second(s) (advanced option) if statetype is none and no L7 container is selected.");
+			$input_errors[] = gettext("You cannot specify the maximum new connections per host / per second(s) (advanced option) if statetype is none and no L7 container is selected.");
 		if (!empty($_POST['statetimeout']))
 			$input_errors[] = gettext("You cannot specify the state timeout (advanced option) if statetype is none and no L7 container is selected.");
 	}
@@ -907,7 +907,7 @@ include("head.inc");
 			<td width="78%" class="vtable">
 				<select <?=$edit_disabled;?> name="proto" class="formselect" onchange="proto_change()">
 <?php
-				$protocols = explode(" ", "TCP UDP TCP/UDP ICMP ESP AH GRE IPV6 IGMP OSPF any carp pfsync");
+				$protocols = explode(" ", "TCP UDP TCP/UDP ICMP ESP AH GRE IPV6 IGMP PIM OSPF any carp pfsync");
 				foreach ($protocols as $proto): ?>
 					<option value="<?=strtolower($proto);?>" <?php if (strtolower($proto) == $pconfig['proto']) echo "selected=\"selected\""; ?>><?=htmlspecialchars($proto);?></option>
 <?php 			endforeach; ?>
@@ -1025,7 +1025,7 @@ include("head.inc");
 								<option value="">(<?=gettext("other"); ?>)</option>
 								<option value="any" <?php $bfound = 0; if ($pconfig['srcbeginport'] == "any") { echo "selected=\"selected\""; $bfound = 1; } ?>><?=gettext("any");?></option>
 <?php 							foreach ($wkports as $wkport => $wkportdesc): ?>
-									<option value="<?=$wkport;?>" <?php if ($wkport == $pconfig['srcbeginport']) { echo "selected=\"selected\""; $bfound = 1; } ?>><?=htmlspecialchars($wkportdesc);?></option>
+									<option value="<?=$wkport;?>" <?php if ($wkport == $pconfig['srcbeginport']) { echo "selected=\"selected\""; $bfound = 1; } ?>><?=htmlspecialchars("{$wkportdesc} ({$wkport})");?></option>
 <?php 							endforeach; ?>
 							</select>
 							<input <?=$edit_disabled;?> autocomplete='off' class="formfldalias" name="srcbeginport_cust" id="srcbeginport_cust" type="text" size="5" value="<?php if (!$bfound && $pconfig['srcbeginport']) echo htmlspecialchars($pconfig['srcbeginport']); ?>" />
@@ -1038,7 +1038,7 @@ include("head.inc");
 								<option value="">(<?=gettext("other"); ?>)</option>
 								<option value="any" <?php $bfound = 0; if ($pconfig['srcendport'] == "any") { echo "selected=\"selected\""; $bfound = 1; } ?>><?=gettext("any");?></option>
 <?php							foreach ($wkports as $wkport => $wkportdesc): ?>
-									<option value="<?=$wkport;?>" <?php if ($wkport == $pconfig['srcendport']) { echo "selected=\"selected\""; $bfound = 1; } ?>><?=htmlspecialchars($wkportdesc);?></option>
+									<option value="<?=$wkport;?>" <?php if ($wkport == $pconfig['srcendport']) { echo "selected=\"selected\""; $bfound = 1; } ?>><?=htmlspecialchars("{$wkportdesc} ({$wkport})");?></option>
 <?php							endforeach; ?>
 							</select>
 							<input <?=$edit_disabled;?> autocomplete='off' class="formfldalias" name="srcendport_cust" id="srcendport_cust" type="text" size="5" value="<?php if (!$bfound && $pconfig['srcendport']) echo htmlspecialchars($pconfig['srcendport']); ?>" />
@@ -1123,7 +1123,7 @@ $i--): ?>
 								<option value="">(<?=gettext("other"); ?>)</option>
 								<option value="any" <?php $bfound = 0; if ($pconfig['dstbeginport'] == "any") { echo "selected=\"selected\""; $bfound = 1; } ?>><?=gettext("any");?></option>
 <?php 							foreach ($wkports as $wkport => $wkportdesc): ?>
-									<option value="<?=$wkport;?>" <?php if ($wkport == $pconfig['dstbeginport']) { echo "selected=\"selected\""; $bfound = 1; }?>><?=htmlspecialchars($wkportdesc);?></option>
+									<option value="<?=$wkport;?>" <?php if ($wkport == $pconfig['dstbeginport']) { echo "selected=\"selected\""; $bfound = 1; }?>><?=htmlspecialchars("{$wkportdesc} ({$wkport})");?></option>
 <?php 							endforeach; ?>
 							</select>
 							<input <?=$edit_disabled;?> autocomplete='off' class="formfldalias" name="dstbeginport_cust" id="dstbeginport_cust" type="text" size="5" value="<?php if (!$bfound && $pconfig['dstbeginport']) echo htmlspecialchars($pconfig['dstbeginport']); ?>" />
@@ -1136,7 +1136,7 @@ $i--): ?>
 								<option value="">(<?=gettext("other"); ?>)</option>
 								<option value="any" <?php $bfound = 0; if ($pconfig['dstendport'] == "any") { echo "selected=\"selected\""; $bfound = 1; } ?>><?=gettext("any");?></option>
 <?php							foreach ($wkports as $wkport => $wkportdesc): ?>
-									<option value="<?=$wkport;?>" <?php if ($wkport == $pconfig['dstendport']) { echo "selected=\"selected\""; $bfound = 1; } ?>><?=htmlspecialchars($wkportdesc);?></option>
+									<option value="<?=$wkport;?>" <?php if ($wkport == $pconfig['dstendport']) { echo "selected=\"selected\""; $bfound = 1; } ?>><?=htmlspecialchars("{$wkportdesc} ({$wkport})");?></option>
 <?php 							endforeach; ?>
 							</select>
 								<input <?=$edit_disabled;?> autocomplete='off' class="formfldalias" name="dstendport_cust" id="dstendport_cust" type="text" size="5" value="<?php if (!$bfound && $pconfig['dstendport']) echo htmlspecialchars($pconfig['dstendport']); ?>" />
@@ -1268,7 +1268,7 @@ $i--): ?>
 						echo "<option value=\"{$x}\"{$selected}>{$x}</option>\n";
 					} ?>
 				</select><br />
-				<?=gettext("Maximum new connections / per second(s) (TCP only)");?>
+				<?=gettext("Maximum new connections per host / per second(s) (TCP only)");?>
 				</p><p>
 				<input name="statetimeout" value="<?php echo htmlspecialchars($pconfig['statetimeout']) ?>" /><br/>
 				<?=gettext("State Timeout in seconds (TCP only)");?>
@@ -1468,26 +1468,20 @@ $i--): ?>
 						} else {
 							$selected = "";
 						}
-						echo "<option value=\"{$gwname}\" {$selected}>{$gw['name']} - {$gw['gateway']}</option>\n";
+						$gateway_addr_str = empty($gw['gateway']) ? "" : " - " . $gw[gateway];
+						echo "<option value=\"{$gwname}\" {$selected}>{$gw['name']}{$gateway_addr_str}</option>\n";
 					}
 					/* add gateway groups to the list */
-					if (is_array($config['gateways']['gateway_group'])) {
-						foreach($config['gateways']['gateway_group'] as $gw_group) {
-							$af = explode("|", $gw_group['item'][0]);
-							if(($pconfig['ipprotocol'] == "inet46"))
-								continue;
-							if(($pconfig['ipprotocol'] == "inet6") && !is_ipaddrv6(lookup_gateway_ip_by_name($af[0])))
-								continue;
-							if(($pconfig['ipprotocol'] == "inet") && !is_ipaddrv4(lookup_gateway_ip_by_name($af[0])))
-								continue;
-							if($gw_group['name'] == "")
-								continue;
-							if($pconfig['gateway'] == $gw_group['name']) {
-								$selected = " selected=\"selected\"";
-							} else {
-								$selected = "";
+					if (is_array($a_gatewaygroups)) {
+						foreach($a_gatewaygroups as $gwg_name => $gwg_data) {
+							if((empty($pconfig['ipprotocol'])) || ($pconfig['ipprotocol'] == $gwg_data['ipprotocol'])) {
+								if($pconfig['gateway'] == $gwg_name) {
+									$selected = " selected=\"selected\"";
+								} else {
+									$selected = "";
+								}
+								echo "<option value=\"{$gwg_name}\" $selected>{$gwg_name}</option>\n";
 							}
-							echo "<option value=\"{$gw_group['name']}\" $selected>{$gw_group['name']}</option>\n";
 						}
 					}
 ?>

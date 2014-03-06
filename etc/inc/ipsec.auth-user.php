@@ -91,6 +91,7 @@ if (isset($_GET)) {
 	$username = getenv("username");
 	$password = getenv("password");
 	$common_name = getenv("common_name");
+	$authmodes = explode(",", getenv("authcfg"));
 }
 
 if (!$username || !$password) {
@@ -103,15 +104,6 @@ if (!$username || !$password) {
 		closelog();
 		exit(-1);
 	}
-}
-
-/* Replaced by a sed with propper variables used below(ldap parameters). */
-//<template>
-
-if (file_exists("{$g['varetc_path']}/ipsec/{$modeid}.ca")) {
-	//putenv("LDAPTLS_CACERT={$g['varetc_path']}/ipsec/{$ikeid}.crt");
-	putenv("LDAPTLS_CACERTDIR={$g['varetc_path']}/ipsec");
-	putenv("LDAPTLS_REQCERT=never");
 }
 
 $authenticated = false;

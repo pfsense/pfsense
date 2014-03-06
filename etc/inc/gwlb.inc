@@ -39,7 +39,10 @@ function return_apinger_defaults() {
 		"losslow" => "10",
 		"losshigh" => "20",
 		"interval" => "1",
-		"down" => "10");
+		"down" => "10",
+		"avg_delay_samples" => "10",
+		"avg_loss_samples" => "50",
+		"avg_loss_delay_samples" => "20");
 	}
 
 /*
@@ -123,14 +126,14 @@ target default {
 
 	## How many replies should be used to compute average delay
 	## for controlling "delay" alarms
-	avg_delay_samples 10
+	avg_delay_samples {$apinger_default['avg_delay_samples']}
 
 	## How many probes should be used to compute average loss
-	avg_loss_samples 50
+	avg_loss_samples {$apinger_default['avg_loss_samples']}
 
 	## The delay (in samples) after which loss is computed
 	## without this delays larger than interval would be treated as loss
-	avg_loss_delay_samples 20
+	avg_loss_delay_samples {$apinger_default['avg_loss_delay_samples']}
 
 	## Names of the alarms that may be generated for the target
 	alarms "down","delay","loss"
@@ -204,8 +207,41 @@ EOD;
 		$apingercfg = "target \"{$gateway['monitor']}\" {\n";
 		$apingercfg .= "	description \"{$name}\"\n";
 		$apingercfg .= "	srcip \"{$gwifip}\"\n";
-		if (!empty($gateway['interval']) && intval($gateway['interval']) > 1)
-			$apingercfg .= "	interval " . intval($gateway['interval']) . "s\n";
+
+		## How often the probe should be sent
+		if (!empty($gateway['interval']) &&  is_numeric($gateway['interval'])) {
+			$interval = intval($gateway['interval']);	# Restrict to Integer
+			if ($interval <  1) $interval =  1;	# Minimum
+			if ($interval != $apinger_default['interval'])	# If not default value
+				$apingercfg .= "	interval " . $interval . "s\n";
+		}
+
+		## How many replies should be used to compute average delay 
+		## for controlling "delay" alarms
+		if (!empty($gateway['avg_delay_samples']) && is_numeric($gateway['avg_delay_samples'])) {
+			$avg_delay_samples = intval($gateway['avg_delay_samples']);	# Restrict to Integer
+			if ($avg_delay_samples <  1) $avg_delay_samples =  1;	# Minimum
+			if ($avg_delay_samples != $apinger_default['avg_delay_samples'])	# If not default value
+				$apingercfg .= "	avg_delay_samples " . $avg_delay_samples . "\n";
+		}
+
+		## How many probes should be used to compute average loss
+		if (!empty($gateway['avg_loss_samples']) && is_numeric($gateway['avg_loss_samples'])) {
+			$avg_loss_samples = intval($gateway['avg_loss_samples']);	# Restrict to Integer
+			if ($avg_loss_samples < 1) $avg_loss_samples = 1;	# Minimum
+			if ($avg_loss_samples != $apinger_default['avg_loss_samples'])	# If not default value
+				$apingercfg .= "	avg_loss_samples " . $avg_loss_samples . "\n";
+		}
+
+		## The delay (in samples) after which loss is computed
+		## without this delays larger than interval would be treated as loss
+		if (!empty($gateway['avg_loss_delay_samples']) && is_numeric($gateway['avg_loss_delay_samples'])) {
+			$avg_loss_delay_samples = intval($gateway['avg_loss_delay_samples']);	# Restrict to Integer
+			if ($avg_loss_delay_samples < 1) $avg_loss_delay_samples = 1;	# Minimum
+			if ($avg_loss_delay_samples != $apinger_default['avg_loss_delay_samples'])	# If not default value
+				$apingercfg .= "	avg_loss_delay_samples " . $avg_loss_delay_samples . "\n";
+		}
+
 		$alarms = "";
 		$alarmscfg = "";
 		$override = false;
@@ -395,7 +431,7 @@ function return_gateways_array($disabled = false, $localhost = false, $inactive 
 				continue;
 
 			/* if the gateway is dynamic and we can find the IPv4, Great! */
-			if (empty($gateway['gateway']) || $gateway['gateway'] == "dynamic" || $gateway['gateway'] == "dynamic6") {
+			if (empty($gateway['gateway']) || $gateway['gateway'] == "dynamic") {
 				if ($gateway['ipprotocol'] == "inet") {
 					/* we know which interfaces is dynamic, this should be made a function */
 					$gateway['gateway'] = get_interface_gateway($gateway['interface']);
@@ -405,13 +441,13 @@ function return_gateways_array($disabled = false, $localhost = false, $inactive 
 					$gateway['dynamic'] = true;
 				}
 
-				/* if the gateway is dynamic6 and we can find the IPv6, Great! */
+				/* if the gateway is dynamic and we can find the IPv6, Great! */
 				else if ($gateway['ipprotocol'] == "inet6") {
 					/* we know which interfaces is dynamic, this should be made a function, and for v6 too */
 					$gateway['gateway'] = get_interface_gateway_v6($gateway['interface']);
-					/* no IPv6 address found, set to dynamic6 */
+					/* no IPv6 address found, set to dynamic */
 					if (!is_ipaddrv6($gateway['gateway']))
-						$gateway['gateway'] = "dynamic6";
+						$gateway['gateway'] = "dynamic";
 					$gateway['dynamic'] = true;
 				}
 			} else {
@@ -560,8 +596,11 @@ function return_gateways_array($disabled = false, $localhost = false, $inactive 
 				$ctype = strtoupper($ifcfg['ipaddrv6']);
 				break;
 			default:
+				$tunnelif = substr($ifcfg['if'], 0, 3);
 				if (substr($ifcfg['if'], 0, 4) ==  "ovpn")
 					$ctype = "VPNv6";
+				else if ($tunnelif == "gif" || $tunnelif == "gre")
+					$ctype = "TUNNELv6";
 				break;
 		}
 		$ctype = "_". strtoupper($ctype);
@@ -589,7 +628,7 @@ function return_gateways_array($disabled = false, $localhost = false, $inactive 
 
 		/* Loopback dummy for dynamic interfaces without a IP */
 		if (!is_ipaddrv6($gateway['gateway']) && $gateway['dynamic'] == true)
-			$gateway['gateway'] = "dynamic6";
+			$gateway['gateway'] = "dynamic";
 
 		/* automatically skip known static and dynamic gateways we have a array entry for */
 		foreach($gateways_arr as $gateway_item) {
@@ -674,7 +713,7 @@ function fixup_default_gateway($ipprotocol, $gateways_status, $gateways_arr) {
 			$dfltgwdown = true;
 	}
 	if ($dfltgwdown == true && !empty($upgw)) {
-		if (preg_match("/dynamic/i", $gateways_arr[$upgw]['gateway']))
+		if ($gateways_arr[$upgw]['gateway'] == "dynamic")
 			$gateways_arr[$upgw]['gateway'] = get_interface_gateway($gateways_arr[$upgw]['friendlyiface']);
 		if (is_ipaddr($gateways_arr[$upgw]['gateway'])) {
 			log_error("Default gateway down setting {$upgw} as default!");
@@ -791,15 +830,17 @@ function return_gateway_groups_array() {
 						else if (!empty($int))
 							$gatewayip = get_interface_gateway($gateway['friendlyiface']);
 
-						if (!empty($int) && is_ipaddr($gatewayip)) {
-							$groupmember = array();
-							$groupmember['int']  = $int;
-							$groupmember['gwip']  = $gatewayip;
-							$groupmember['weight']  = isset($gateway['weight']) ? $gateway['weight'] : 1;
-							if (is_array($gwvip_arr[$group['name']])&& !empty($gwvip_arr[$group['name']][$member]))
-								$groupmember['vip'] = $gwvip_arr[$group['name']][$member];
+						if (!empty($int)) {
 							$gateway_groups_array[$group['name']]['ipprotocol'] = $gateway['ipprotocol'];
-							$gateway_groups_array[$group['name']][] = $groupmember;
+							if (is_ipaddr($gatewayip)) {
+								$groupmember = array();
+								$groupmember['int']  = $int;
+								$groupmember['gwip']  = $gatewayip;
+								$groupmember['weight']  = isset($gateway['weight']) ? $gateway['weight'] : 1;
+								if (is_array($gwvip_arr[$group['name']])&& !empty($gwvip_arr[$group['name']][$member]))
+									$groupmember['vip'] = $gwvip_arr[$group['name']][$member];
+								$gateway_groups_array[$group['name']][] = $groupmember;
+							}
 						}
 					}
 				}

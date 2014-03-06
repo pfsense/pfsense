@@ -42,7 +42,7 @@ define('DYNDNS_PROVIDER_VALUES', 'dnsomatic dyndns dyndns-static dyndns-custom d
 define('DYNDNS_PROVIDER_DESCRIPTIONS', 'DNS-O-Matic,DynDNS (dynamic),DynDNS (static),DynDNS (custom),DHS,DyNS,easyDNS,No-IP,No-IP (free),ODS.org,ZoneEdit,Loopia,freeDNS,DNSexit,OpenDNS,Namecheap,HE.net,HE.net (v6),HE.net Tunnelbroker,SelfHost,Route 53,CloudFlare,Custom,Custom (v6),Euro Dns,GratisDNS,OVH DynHOST,City Network');
 
 /* implement ipv6 route advertising deamon */
-function services_radvd_configure() {
+function services_radvd_configure($blacklist = array()) {
 	global $config, $g;
 	
 	if ($g['platform'] == 'jail') 
@@ -72,6 +72,9 @@ function services_radvd_configure() {
 		if (!isset($config['interfaces'][$dhcpv6if]['enable']))
 			continue;
 
+		/* Do not put in the config an interface which is down */
+		if (isset($blacklist[$dhcpv6if]))
+			continue;
 		if (!isset($dhcpv6ifconf['ramode']))
 			$dhcpv6ifconf['ramode'] = $dhcpv6ifconf['mode'];
 
@@ -210,6 +213,9 @@ function services_radvd_configure() {
 			continue;
 		if(!isset($config['interfaces'][$if]['enable']))
 			continue;
+		/* Do not put in the config an interface which is down */
+		if (isset($blacklist[$if]))
+			continue;
 		$trackif = $config['interfaces'][$if]['track6-interface'];
 		if (empty($config['interfaces'][$trackif]))
 			continue;
@@ -220,11 +226,13 @@ function services_radvd_configure() {
 			continue;
 
 		$ifcfgipv6 = get_interface_ipv6($if);
-		if(!is_ipaddrv6($ifcfgipv6))
-			continue;
-
-		$ifcfgsnv6 = get_interface_subnetv6($if);
-		$subnetv6 = gen_subnetv6($ifcfgipv6, $ifcfgsnv6);
+		if(!is_ipaddrv6($ifcfgipv6)) {
+			$subnetv6 = "::";
+			$ifcfgsnv6 = "64";
+		} else {
+			$ifcfgsnv6 = get_interface_subnetv6($if);
+			$subnetv6 = gen_subnetv6($ifcfgipv6, $ifcfgsnv6);
+		}
 		$radvdifs[$realif] = $realif;
 
 		$autotype = $config['interfaces'][$trackif]['ipaddrv6'];
@@ -295,7 +303,7 @@ function services_radvd_configure() {
 	return 0;
 }
 
-function services_dhcpd_configure($family = "all") {
+function services_dhcpd_configure($family = "all", $blacklist = array()) {
 	global $config, $g;
 
 	/* configure DHCPD chroot once */
@@ -323,8 +331,8 @@ function services_dhcpd_configure($family = "all") {
 	if ($family == "all" || $family == "inet")
 		services_dhcpdv4_configure();
 	if ($family == "all" || $family == "inet6") {
-		services_dhcpdv6_configure();
-		services_radvd_configure();
+		services_dhcpdv6_configure($blacklist);
+		services_radvd_configure($blacklist);
 	}
 }
 
@@ -378,6 +386,16 @@ function services_dhcpdv4_configure() {
 	$dhcpdcfg = $config['dhcpd'];
 	$Iflist = get_configured_interface_list();
 
+	/* Only consider DNS servers with IPv4 addresses for the IPv4 DHCP server. */
+	$dns_arrv4 = array();
+	if (is_array($syscfg['dnsserver'])) {
+		foreach($syscfg['dnsserver'] as $dnsserver) {
+			if (is_ipaddrv4($dnsserver)) {
+				$dns_arrv4[] = $dnsserver;
+			}
+		}
+	}
+
 	if ($g['booting'])
 		echo gettext("Starting DHCP service...");
 	else
@@ -401,6 +419,7 @@ function services_dhcpdv4_configure() {
 option domain-name "{$syscfg['domain']}";
 option ldap-server code 95 = text;
 option domain-search-list code 119 = text;
+option arch code 93 = unsigned integer 16; # RFC4578
 {$custoptions}
 default-lease-time 7200;
 max-lease-time 86400;
@@ -557,10 +576,10 @@ EOPP;
 			$dnscfg .= "	option domain-name-servers {$ifcfgip};";
 			if ($newzone['domain-name'] && is_array($syscfg['dnsserver']) && ($syscfg['dnsserver'][0]))
 				$newzone['dns-servers'] = $syscfg['dnsserver'];
-		} else if (is_array($syscfg['dnsserver']) && ($syscfg['dnsserver'][0])) {
-			$dnscfg .= "	option domain-name-servers " . join(",", $syscfg['dnsserver']) . ";";
+		} else if (!empty($dns_arrv4)) {
+			$dnscfg .= "	option domain-name-servers " . join(",", $dns_arrv4) . ";";
 			if ($newzone['domain-name'])
-				$newzone['dns-servers'] = $syscfg['dnsserver'];
+				$newzone['dns-servers'] = $dns_arrv4;
 		}
 
 		/* Create classes - These all contain comma separated lists. Join them into one 
@@ -745,10 +764,18 @@ EOD;
 			if ($dhcpifconf['nextserver'] <> "") {
 				$dhcpdconf .= "	next-server {$dhcpifconf['nextserver']};\n";
 			}
-			if ($dhcpifconf['filename'] <> "") {
+			if (!empty($dhcpifconf['filename']) && !empty($dhcpifconf['filename32']) && !empty($dhcpifconf['filename64'])) {
+				$dhcpdconf .= "	if option arch = 00:06 {\n";
+				$dhcpdconf .= "		filename \"{$dhcpifconf['filename32']}\";\n";
+				$dhcpdconf .= "	} else if option arch = 00:07 {\n";
+				$dhcpdconf .= "		filename \"{$dhcpifconf['filename64']}\";\n";
+				$dhcpdconf .= "	} else {\n";
+				$dhcpdconf .= "		filename \"{$dhcpifconf['filename']}\";\n";
+				$dhcpdconf .= "	}\n\n";
+			} elseif (!empty($dhcpifconf['filename'])) {
 				$dhcpdconf .= "	filename \"{$dhcpifconf['filename']}\";\n";
 			}
-			if ($dhcpifconf['rootpath'] <> "") {
+			if (!empty($dhcpifconf['rootpath'])) {
 				$dhcpdconf .= "	option root-path \"{$dhcpifconf['rootpath']}\";\n";
 			}
 		}
@@ -849,6 +876,7 @@ EOD;
 
 	if ($need_ddns_updates) {
 		$dhcpdconf .= "ddns-update-style interim;\n";
+		$dhcpdconf .= "update-static-leases on;\n";
 
 		$dhcpdconf .= dhcpdkey($dhcpifconf);
 		$dhcpdconf .= dhcpdzones($ddns_zones, $dhcpifconf);
@@ -941,7 +969,7 @@ function dhcpdzones($ddns_zones, $dhcpifconf)
 	return $dhcpdconf;
 }
 
-function services_dhcpdv6_configure() {
+function services_dhcpdv6_configure($blacklist = array()) {
 	global $config, $g;
 
 	if($g['services_dhcp_server_enable'] == false)
@@ -992,6 +1020,9 @@ function services_dhcpdv6_configure() {
 
 	/* we add a fake entry for interfaces that are set to track6 another WAN */
 	foreach ($Iflist as $ifname) {
+		/* Do not put in the config an interface which is down */
+		if (isset($blacklist[$ifname]))
+			continue;
 		if (!empty($config['interfaces'][$ifname]['track6-interface'])) {
 			$realif = get_real_interface($ifname, "inet6");
 			$ifcfgipv6 = get_interface_ipv6($ifname);
@@ -1042,12 +1073,15 @@ function services_dhcpdv6_configure() {
 		}
 	}
 
+	if(isset($dhcpv6ifconf['netboot']) && !empty($dhcpv6ifconf['bootfile_url']))
+		$custoptionsv6 .= "option dhcp6.bootfile-url code 59 = string;\n";
+
 	$dhcpdv6conf = <<<EOD
 
 option domain-name "{$syscfg['domain']}";
 option ldap-server code 95 = text;
 option domain-search-list code 119 = text;
-{$custoptions}
+{$custoptionsv6}
 default-lease-time 7200;
 max-lease-time 86400;
 log-facility local7;
@@ -1184,14 +1218,8 @@ EOD;
 
 		// net boot information
 		if(isset($dhcpv6ifconf['netboot'])) {
-			if ($dhcpv6ifconf['nextserver'] <> "") {
-				$dhcpdv6conf .= "	next-server {$dhcpv6ifconf['nextserver']};\n";
-			}
-			if ($dhcpv6ifconf['filename'] <> "") {
-				$dhcpdv6conf .= "	filename \"{$dhcpv6ifconf['filename']}\";\n";
-			}
-			if ($dhcpv6ifconf['rootpath'] <> "") {
-				$dhcpdv6conf .= "	option root-path \"{$dhcpv6ifconf['rootpath']}\";\n";
+			if (!empty($dhcpv6ifconf['bootfile_url'])) {
+				$dhcpdv6conf .= "	option dhcp6.bootfile-url \"{$dhcpv6ifconf['bootfile_url']}\";\n";
 			}
 		}
 

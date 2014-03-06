@@ -306,6 +306,8 @@
 			<ntpserver>xxx.xxx.xxx.xxx</ntpserver>
 			<next-server></next-server>
 			<filename></filename>
+			<filename32></filename32>
+			<filename64></filename64>
 			-->
 		</lan>
 		<!--

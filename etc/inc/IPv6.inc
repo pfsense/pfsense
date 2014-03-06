@@ -1,7 +1,7 @@
 <?php
 
 /*
-	pfSense_MODULE:	utils
+       pfSense_MODULE: utils
 */
 
 /* vim: set expandtab tabstop=4 shiftwidth=4 softtabstop=4: */
@@ -22,8 +22,8 @@
  * @package   Net_IPv6
  * @author    Alexander Merz <alexander.merz@web.de>
  * @copyright 2003-2005 The PHP Group
- * @license   http://www.opensource.org/licenses/bsd-license.php
- * @version   CVS: $Id: IPv6.inc,v 1.2 2008/11/26 03:54:43 sumacob Exp $
+ * @license   BSD License http://www.opensource.org/licenses/bsd-license.php
+ * @version   CVS: $Id$
  * @link      http://pear.php.net/package/Net_IPv6
  */
 
@@ -97,6 +97,24 @@ define("NET_IPV6_LOCAL_LINK", 42);
 define("NET_IPV6_LOCAL_SITE", 43);
 
 /**
+ * Address Type: Address range to embedded IPv4 ip in an IPv6 address (RFC 4291, Section 2.5.5)
+ * @see getAddressType()
+ */
+define("NET_IPV6_IPV4MAPPING", 51);
+
+/**
+ * Address Type: Unspecified (RFC 4291, Section 2.5.2)
+ * @see getAddressType()
+ */
+define("NET_IPV6_UNSPECIFIED", 52);
+
+/**
+ * Address Type: Unspecified (RFC 4291, Section 2.5.3)
+ * @see getAddressType()
+ */
+define("NET_IPV6_LOOPBACK", 53);
+
+/**
  * Address Type: address can not assigned to a specific type
  * @see getAddressType()
  */
@@ -110,51 +128,112 @@ define("NET_IPV6_UNKNOWN_TYPE", 1001);
  *
  * @category  Net
  * @package   Net_IPv6
- * @copyright 2003-2005 The PHP Group
- * @license   http://www.opensource.org/licenses/bsd-license.php
- * @version   $Release$
- * @link      http://pear.php.net/package/Net_IPv6
  * @author    Alexander Merz <alexander.merz@web.de>
  * @author    <elfrink at introweb dot nl>
  * @author    Josh Peck <jmp at joshpeck dot org>
+ * @copyright 2003-2010 The PHP Group
+ * @license   BSD License http://www.opensource.org/licenses/bsd-license.php
+ * @version   Release: 1.1.0RC5
+ * @link      http://pear.php.net/package/Net_IPv6
  */
-class Net_IPv6 {
+class Net_IPv6
+{
 
-    // {{{ removeNetmaskBits()
+    // {{{ separate()
+    /**
+     * Separates an IPv6 address into the address and a prefix length part
+     *
+     * @param String $ip the (compressed) IP as Hex representation
+     *
+     * @return Array the first element is the IP, the second the prefix length
+     * @since  1.2.0
+     * @access public
+     * @static     
+     */
+    function separate($ip) 
+    {
+        
+        $addr = $ip;
+        $spec = '';
+
+        if(false === strrpos($ip, '/')) {
+
+            return array($addr, $spec);
+
+        }
+
+        $elements = explode('/', $ip);
+
+        if(2 == count($elements)) {
+
+            $addr = $elements[0];
+            $spec = $elements[1];
+
+        }
+
+        return array($addr, $spec);
+
+    }
+    // }}}
+
+    // {{{ removeNetmaskSpec()
 
     /**
-     * Removes a possible existing netmask specification at an IP address.
+     * Removes a possible existing prefix length/ netmask specification at an IP address.
      *
-     * @param  String $ip the (compressed) IP as Hex representation
+     * @param String $ip the (compressed) IP as Hex representation
      *
      * @return String the IP without netmask length
      * @since  1.1.0
      * @access public
      * @static
      */
-    function removeNetmaskSpec($ip) 
+    function removeNetmaskSpec($ip)
     {
-        $addr = $ip;
 
-        if (false !== strpos($ip, '/')) {
+        $elements = Net_IPv6::separate($ip);
 
-            $elements = explode('/', $ip);
+        return $elements[0];
 
-            if (2 == count($elements)) {
+    }
+    // }}}
+    // {{{ removePrefixLength()
 
-                $addr = $elements[0];
+    /**
+     * Tests for a prefix length specification in the address
+     * and removes the prefix length, if exists
+     *
+     * The method is technically identical to removeNetmaskSpec() and 
+     * will be dropped in a future release.
+     *
+     * @param String $ip a valid ipv6 address
+     *
+     * @return String the address without a prefix length
+     * @access public
+     * @static
+     * @see removeNetmaskSpec()
+     * @deprecated
+     */
+    function removePrefixLength($ip)
+    {
+        $pos = strrpos($ip, '/');
 
-            }
+        if (false !== $pos) {
+
+            return substr($ip, 0, $pos);
 
         }
 
-        return $addr;
+        return $ip;
     }
 
+    // }}}
+    // {{{ getNetmaskSpec()
+
     /**
-     * Returns a possible existing netmask specification at an IP address.
+     * Returns a possible existing prefix length/netmask specification on an IP address.
      *
-     * @param  String $ip the (compressed) IP as Hex representation
+     * @param String $ip the (compressed) IP as Hex representation
      *
      * @return String the netmask spec
      * @since  1.1.0
@@ -163,21 +242,43 @@ class Net_IPv6 {
      */
     function getNetmaskSpec($ip) 
     {
-        $spec = '';
 
-        if (false !== strpos($ip, '/')) {
+        $elements = Net_IPv6::separate($ip);
 
-            $elements = explode('/', $ip);
+        return $elements[1];
 
-            if (2 == count($elements)) {
+    }
 
-                $spec = $elements[1];
+    // }}}
+    // {{{ getPrefixLength()
 
-            }
+    /**
+     * Tests for a prefix length specification in the address
+     * and returns the prefix length, if exists
+     *
+     * The method is technically identical to getNetmaskSpec() and 
+     * will be dropped in a future release.
+     *
+     * @param String $ip a valid ipv6 address
+     *
+     * @return Mixed the prefix as String or false, if no prefix was found
+     * @access public
+     * @static
+     * @deprecated
+     */
+    function getPrefixLength($ip) 
+    {
+        if (preg_match("/^([0-9a-fA-F:]{2,39})\/(\d{1,3})*$/", 
+                        $ip, $matches)) {
+
+            return $matches[2];
+
+        } else {
+
+            return false;
 
         }
 
-        return $spec;
     }
 
     // }}}
@@ -186,9 +287,9 @@ class Net_IPv6 {
     /**
      * Calculates the network prefix based on the netmask bits.
      *
-     * @param  String $ip the (compressed) IP in Hex format
-     * @param  int $bits if the number of netmask bits is not part of the IP
-     *                  you must provide the number of bits
+     * @param String $ip   the (compressed) IP in Hex format
+     * @param int    $bits if the number of netmask bits is not part of the IP
+     *                     you must provide the number of bits
      *
      * @return String the network prefix
      * @since  1.1.0
@@ -232,20 +333,20 @@ class Net_IPv6 {
     /**
      * Checks if an (compressed) IP is in a specific address space.
      *
-     * IF the IP does not contain the number of netmask bits (F8000::FFFF/16)
+     * If the IP does not contain the number of netmask bits (F8000::FFFF/16)
      * then you have to use the $bits parameter.
      *
-     * @param  String $ip the IP to check (eg. F800::FFFF)
-     * @param  String $netmask the netmask (eg F800::)
-     * @param  int $bits the number of netmask bits to compare, 
-     *                   if not given in $ip
+     * @param String $ip      the IP to check (eg. F800::FFFF)
+     * @param String $netmask the netmask (eg F800::)
+     * @param int    $bits    the number of netmask bits to compare,
+     *                        if not given in $ip
      *
      * @return boolean true if $ip is in the netmask
      * @since  1.1.0
      * @access public
      * @static
      */
-    function isInNetmask($ip, $netmask, $bits=null) 
+    function isInNetmask($ip, $netmask, $bits=null)
     {
         // try to get the bit count
 
@@ -265,7 +366,7 @@ class Net_IPv6 {
                 if (2 == count($elements)) {
 
                      $netmask = $elements[0];
-                     $bits   = $elements[1];
+                     $bits    = $elements[1];
 
                 }
 
@@ -284,9 +385,9 @@ class Net_IPv6 {
         $binIp      = Net_IPv6::_ip2Bin(Net_IPv6::removeNetmaskSpec($ip));
         $binNetmask = Net_IPv6::_ip2Bin(Net_IPv6::removeNetmaskSpec($netmask));
 
-        if (null != $bits 
-            && "" != $bits 
-            && 0 == strncmp( $binNetmask, $binIp, $bits)) {
+        if (null != $bits
+            && "" != $bits
+            && 0 == strncmp($binNetmask, $binIp, $bits)) {
 
             return true;
 
@@ -301,12 +402,12 @@ class Net_IPv6 {
     /**
      * Returns the type of an IPv6 address.
      *
-     * RFC 1883, Section 2.3 describes several types of addresses in
+     * RFC 2373, Section 2.3 describes several types of addresses in
      * the IPv6 address space.
-     * Several address types are markers for reserved spaces and as 
+     * Several address types are markers for reserved spaces and as
      * a consequence are subject to change.
      *
-     * @param  String $ip the IP address in Hex format, 
+     * @param String $ip the IP address in Hex format,
      *                    compressed IPs are allowed
      *
      * @return int one of the address type constants
@@ -323,6 +424,9 @@ class Net_IPv6 {
      * @see    NET_IPV6_MULTICAST
      * @see    NET_IPV6_LOCAL_LINK
      * @see    NET_IPV6_LOCAL_SITE
+     * @see    NET_IPV6_IPV4MAPPING  
+     * @see    NET_IPV6_UNSPECIFIED  
+     * @see    NET_IPV6_LOOPBACK  
      * @see    NET_IPV6_UNKNOWN_TYPE
      */
     function getAddressType($ip) 
@@ -330,7 +434,19 @@ class Net_IPv6 {
         $ip    = Net_IPv6::removeNetmaskSpec($ip);
         $binip = Net_IPv6::_ip2Bin($ip);
 
-        if (0 == strncmp('1111111010', $binip, 10)) {
+        if(0 == strncmp(str_repeat('0', 128), $binip, 128)) { // ::/128
+
+            return NET_IPV6_UNSPECIFIED;
+
+        } else if(0 == strncmp(str_repeat('0', 127).'1', $binip, 128)) { // ::/128
+
+            return NET_IPV6_LOOPBACK;
+
+        } else if (0 == strncmp(str_repeat('0', 80).str_repeat('1', 16), $binip, 96)) { // ::ffff/96
+
+            return NET_IPV6_IPV4MAPPING; 
+
+        } else if (0 == strncmp('1111111010', $binip, 10)) {
 
             return NET_IPV6_LOCAL_LINK;
 
@@ -346,11 +462,11 @@ class Net_IPv6 {
 
             return NET_IPV6_MULTICAST;
 
-        }  else if (0 == strncmp('00000000', $binip, 8)) {
+        } else if (0 == strncmp('00000000', $binip, 8)) { 
 
             return NET_IPV6_RESERVED;
 
-        } else if (0 == strncmp('00000001', $binip, 8) 
+        } else if (0 == strncmp('00000001', $binip, 8)
                     || 0 == strncmp('1111110', $binip, 7)) {
 
             return NET_IPV6_UNASSIGNED;
@@ -380,7 +496,7 @@ class Net_IPv6 {
 
             return NET_IPV6_UNICAST_PROVIDER;
 
-        }  else if (0 == strncmp('100', $binip, 3)) {
+        } else if (0 == strncmp('100', $binip, 3)) {
 
             return NET_IPV6_RESERVED_UNICAST_GEOGRAPHIC;
 
@@ -402,13 +518,26 @@ class Net_IPv6 {
      * Example:  FF01::101  ->  FF01:0:0:0:0:0:0:101
      *           ::1        ->  0:0:0:0:0:0:0:1
      *
+     * Note: You can also pass an invalid IPv6 address (usually as part of the process
+     * of validation by checkIPv6, which will validate the return string).
+     * This function will insert the "0" between "::" even if this results in too many
+     * numbers in total. It is NOT the purpose of this function to validate your input.
+     *
+     * Example of calling with invalid input: 1::2:3:4:5:6:7:8:9 -> 1:0:2:3:4:5:6:7:8:9
+     *
+     * @param String $ip a (possibly) valid IPv6-address (hex format)
+     * @param Boolean $leadingZeros if true, leading zeros are added to each 
+     *                              block of the address 
+     *                              (FF01::101  ->  
+     *                               FF01:0000:0000:0000:0000:0000:0000:0101) 
+     *
+     * @return String the uncompressed IPv6-address (hex format)
      * @access public
      * @see Compress()
      * @static
-     * @param string $ip    a valid IPv6-address (hex format)
-     * @return string   the uncompressed IPv6-address (hex format)
+     * @author Pascal Uhlmann
      */
-    function uncompress($ip) 
+    function uncompress($ip, $leadingZeros = false)
     {
 
         $prefix = Net_IPv6::getPrefixLength($ip);
@@ -434,7 +563,7 @@ class Net_IPv6 {
 
             list($ip1, $ip2) = explode('::', $uip);
 
-            if("" == $ip1) {
+            if ("" == $ip1) {
 
                 $c1 = -1;
 
@@ -499,6 +628,21 @@ class Net_IPv6 {
 
             }
         }
+
+        if(true == $leadingZeros) {
+            
+            $uipT    = array();
+            $uiparts = explode(':', $uip);
+
+            foreach($uiparts as $p) {
+
+                $uipT[] = sprintf('%04s', $p);
+            
+            }
+
+            $uip = implode(':', $uipT);
+        }
+
         if ('' != $netmask) {
 
                 $uip = $uip.'/'.$netmask;
@@ -521,15 +665,41 @@ class Net_IPv6 {
      * Example:  FF01:0:0:0:0:0:0:101   -> FF01::101
      *           0:0:0:0:0:0:0:1        -> ::1
      *
+     * When $ip is an already compressed address and $force is false, the method returns 
+     * the value as is, even if the address can be compressed further.
+     *
+     * Example: FF01::0:1 -> FF01::0:1
+     *
+     * To enforce maximum compression, you can set the second argument $force to true.
+     *
+     * Example: FF01::0:1 -> FF01::1 
+     *
+     * @param String  $ip    a valid IPv6-address (hex format)
+     * @param boolean $force if true the address will be compressed as best as possible (since 1.2.0)
+     *
+     * @return String the compressed IPv6-address (hex format)
      * @access public
-     * @see Uncompress()
+     * @see    Uncompress()
      * @static
-     * @param string $ip    a valid IPv6-address (hex format)
-     * @return string   the compressed IPv6-address (hex format)
      * @author elfrink at introweb dot nl
      */
-    function compress($ip)  
+    function compress($ip, $force = false)  
     {
+        
+        if(false !== strpos($ip, '::')) { // its already compressed
+
+            if(true == $force) {
+
+                $ip = Net_IPv6::uncompress($ip); 
+
+            } else {
+
+                return $ip;
+
+            }
+
+        }
+
         $prefix = Net_IPv6::getPrefixLength($ip);
 
         if (false === $prefix) {
@@ -546,52 +716,96 @@ class Net_IPv6 {
         $netmask = Net_IPv6::getNetmaskSpec($ip);
         $ip      = Net_IPv6::removeNetmaskSpec($ip);
 
-        if (!strstr($ip, '::')) {
+        $ipp = explode(':', $ip);
 
-            $ipp = explode(':',$ip);
+        for ($i = 0; $i < count($ipp); $i++) {
 
-            for ($i = 0; $i < count($ipp); $i++) {
+            $ipp[$i] = dechex(hexdec($ipp[$i]));
 
-                $ipp[$i] = dechex(hexdec($ipp[$i]));
+        }
 
-            }
+        $cip = ':' . join(':', $ipp) . ':';
 
-            $cip = ':' . join(':',$ipp) . ':';
+        preg_match_all("/(:0)(:0)+/", $cip, $zeros);
 
-            preg_match_all("/(:0)+/", $cip, $zeros);
+        if (count($zeros[0]) > 0) {
 
-            if (count($zeros[0]) > 0) {
+            $match = '';
 
-                $match = '';
+            foreach ($zeros[0] as $zero) {
 
-                foreach($zeros[0] as $zero) {
+                if (strlen($zero) > strlen($match)) {
 
-                    if (strlen($zero) > strlen($match)) {
+                    $match = $zero;
 
-                        $match = $zero;
-
-                    }
                 }
-
-                $cip = preg_replace('/' . $match . '/', ':', $cip, 1);
-
             }
 
-            $cip = preg_replace('/((^:)|(:$))/', '' ,$cip);
-            $cip = preg_replace('/((^:)|(:$))/', '::' ,$cip);
+            $cip = preg_replace('/' . $match . '/', ':', $cip, 1);
 
-         } else {
-            // The input IP appears to be compressed already, give it back as-is to the caller.
-            $cip = $ip;
-         }
-         if ('' != $netmask) {
+        }
 
-                $cip = $cip.'/'.$netmask;
+        $cip = preg_replace('/((^:)|(:$))/', '', $cip);
+        $cip = preg_replace('/((^:)|(:$))/', '::', $cip);
 
-         }
+        if ('' != $netmask) {
 
-         return $cip.$prefix;
+            $cip = $cip.'/'.$netmask;
+
+        }
+
+        return $cip.$prefix;
+
     }
+
+    // }}}
+    // {{{ recommendedFormat()
+    /**
+     * Represent IPv6 address in RFC5952 format.
+     *
+     * @param String  $ip a valid IPv6-address (hex format)
+     *
+     * @return String the recommended representation of IPv6-address (hex format)
+     * @access public
+     * @see    compress()
+     * @static
+     * @author koyama at hoge dot org
+     * @todo This method may become a part of compress() in a further releases
+     */
+    function recommendedFormat($ip)
+    {
+        $compressed = self::compress($ip, true);
+        // RFC5952 4.2.2
+        // The symbol "::" MUST NOT be used to shorten just one
+        // 16-bit 0 field.
+        if ((substr_count($compressed, ':') == 7) &&
+            (strpos($compressed, '::') !== false)) {
+            $compressed = str_replace('::', ':0:', $compressed);
+        }
+        return $compressed;
+    }
+    // }}}
+
+    // {{{ isCompressible()
+
+    /**
+     * Checks, if an IPv6 address can be compressed
+     *
+     * @param String $ip a valid IPv6 address
+     * 
+     * @return Boolean true, if address can be compressed
+     * 
+     * @access public
+     * @since 1.2.0b
+     * @static
+     * @author Manuel Schmitt
+     */
+    function isCompressible($ip) 
+    {
+
+        return (bool)($ip != Net_IPv6::compress($address));
+
+    }    
 
     // }}}
     // {{{ SplitV64()
@@ -605,14 +819,16 @@ class Net_IPv6 {
      * Example:  0:0:0:0:0:0:13.1.68.3
      *           0:0:0:0:0:FFFF:129.144.52.38
      *
-     * @param  string $ip  a valid IPv6-address (hex format)
+     * @param String  $ip         a valid IPv6-address (hex format)
+     * @param Boolean $uncompress if true, the address will be uncompressed 
+     *                            before processing
      *
-     * @return array  [0] contains the IPv6 part, 
+     * @return Array  [0] contains the IPv6 part,
      *                [1] the IPv4 part (hex format)
      * @access public
      * @static
      */
-    function SplitV64($ip, $uncompress = true) 
+    function SplitV64($ip, $uncompress = true)
     {
         $ip = Net_IPv6::removeNetmaskSpec($ip);
 
@@ -645,24 +861,44 @@ class Net_IPv6 {
      *
      * Checks if the given IP is IPv6-compatible
      *
+     * @param String $ip a valid IPv6-address
+     *
+     * @return Boolean true if $ip is an IPv6 address
      * @access public
      * @static
-     * @param string $ip    a valid IPv6-address
-     * @return boolean  true if $ip is an IPv6 address
      */
-    function checkIPv6($ip) 
+    function checkIPv6($ip)
     {
-        $ip = Net_IPv6::removePrefixLength($ip);
-        $ip = Net_IPv6::removeNetmaskSpec($ip);
+
+        $elements = Net_IPv6::separate($ip);
+    
+        $ip = $elements[0];
+
+        if('' != $elements[1] && ( !is_numeric($elements[1]) || 0 > $elements[1] || 128 < $elements[1])) {
+
+            return false;
+
+        } 
 
         $ipPart = Net_IPv6::SplitV64($ip);
         $count  = 0;
 
-        if (!empty($ipPart[0]))
-        {
-            $ipv6 =explode(':', $ipPart[0]);
+        if (!empty($ipPart[0])) {
+            $ipv6 = explode(':', $ipPart[0]);
+
+            foreach($ipv6 as $element) { // made a validate precheck
+                if(!preg_match('/[0-9a-fA-F]*/', $element)) {
+                    return false;
+                }
+            }
 
             for ($i = 0; $i < count($ipv6); $i++) {
+
+                if(4 < strlen($ipv6[$i])) {
+                    
+                    return false;
+
+                }
 
                 $dec = hexdec($ipv6[$i]);
                 $hex = strtoupper(preg_replace("/^[0]{1,3}(.*[0-9a-fA-F])$/",
@@ -684,7 +920,7 @@ class Net_IPv6 {
 
             } else if (6 == $count and !empty($ipPart[1])) {
 
-                $ipv4  = explode('.',$ipPart[1]);
+                $ipv4  = explode('.', $ipPart[1]);
                 $count = 0;
 
                 for ($i = 0; $i < count($ipv4); $i++) {
@@ -719,60 +955,6 @@ class Net_IPv6 {
     }
 
     // }}}
-    // {{{ getPrefixLength()
-
-    /**
-     * Tests for a prefix length specification in the address
-     * and returns the prefix length, if exists
-     *
-     * @param  String $ip a valid ipv6 address
-     *
-     * @return Mixed the prefix as String or false, if no prefix was found
-     * @access public
-     * @static
-     */
-    function getPrefixLength($ip) 
-    {
-        if (preg_match("/^([0-9a-fA-F:]{2,39})\/(\d{1,3})*$/", 
-                        $ip, $matches)) {
-
-            return $matches[2];
-
-        } else {
-
-            return false;
-
-        }
-
-    }
-
-    // }}}
-    // {{{ removePrefixLength()
-
-    /**
-     * Tests for a prefix length specification in the address
-     * and removes the prefix length, if exists
-     *
-     * @param  String $ip a valid ipv6 address
-     *
-     * @return String the address without a prefix length
-     * @access public
-     * @static
-     */
-    function removePrefixLength($ip) 
-    {
-        $pos = strrpos($ip, '/');
-
-        if (false !== $pos) {
-
-            return substr($ip, 0, $pos);
-
-        }
-
-        return $ip;
-    }
-
-    // }}}
 
     // {{{ _parseAddress()
 
@@ -787,8 +969,8 @@ class Net_IPv6 {
      * contains the lowest possible IP address. The key
      * 'end' the highest address.
      *
-     * @param  String $ip the IPv6 address
-     * @param  String $bits the optional count of netmask bits
+     * @param String $ipToParse the IPv6 address
+     * @param String $bits      the optional count of netmask bits
      *
      * @return Array ['start', 'end'] the lowest and highest IPv6 address
      * @access public
@@ -802,43 +984,40 @@ class Net_IPv6 {
         $ip      = null;
         $bitmask = null;
 
-    	if( null == $bits )
-    	{
+        if ( null == $bits ) {  
 
-    		$elements = explode('/', $ipToParse);
+            $elements = explode('/', $ipToParse);
 
-    		if( 2 == count($elements) ) {
+            if ( 2 == count($elements) ) {
 
-    			$ip      = Net_IPv6::uncompress($elements[0]);
-    			$bitmask = $elements[1];
+                $ip      = Net_IPv6::uncompress($elements[0]);
+                $bitmask = $elements[1];
 
-    		} else {
+            } else {
 
-    			include_once 'PEAR.inc';
+                include_once 'PEAR.inc';
 
-    			return PEAR::raiseError(NET_IPV6_NO_NETMASK_MSG,
+                return PEAR::raiseError(NET_IPV6_NO_NETMASK_MSG,
                                         NET_IPV6_NO_NETMASK);
-    		}
-    	}
-    	else
-    	{
+            }
+        } else {
 
-    		$ip      = Net_IPv6::uncompress($ipToParse);
-    		$bitmask = $bits;
+            $ip      = Net_IPv6::uncompress($ipToParse);
+            $bitmask = $bits;
 
-    	}
+        }
 
-    	$binNetmask = str_repeat('1', $bitmask).
+        $binNetmask = str_repeat('1', $bitmask).
                       str_repeat('0', 128 - $bitmask);
-    	$maxNetmask = str_repeat('1', 128);
-    	$netmask    = Net_IPv6::_bin2Ip($binNetmask);
+        $maxNetmask = str_repeat('1', 128);
+        $netmask    = Net_IPv6::_bin2Ip($binNetmask);
 
-    	$startAddress = Net_IPv6::_bin2Ip(Net_IPv6::_ip2Bin($ip) 
-                        & $binNetmask);
-    	$endAddress   = Net_IPv6::_bin2Ip(Net_IPv6::_ip2Bin($ip)
-                        | ($binNetmask ^ $maxNetmask));
+        $startAddress = Net_IPv6::_bin2Ip(Net_IPv6::_ip2Bin($ip)
+                                          & $binNetmask);
+        $endAddress   = Net_IPv6::_bin2Ip(Net_IPv6::_ip2Bin($ip)
+                                          | ($binNetmask ^ $maxNetmask));
 
-    	return array('start' => $startAddress, 'end' => $endAddress);
+        return array('start' => $startAddress, 'end' => $endAddress);
     }
 
     // }}}
@@ -864,7 +1043,7 @@ class Net_IPv6 {
 
         $parts = explode(':', $ip);
 
-        foreach($parts as $v) {
+        foreach ( $parts as $v ) {
 
             $str     = base_convert($v, 16, 2);
             $binstr .= str_pad($str, 16, '0', STR_PAD_LEFT);
@@ -880,7 +1059,7 @@ class Net_IPv6 {
     /**
      * Converts an IPv6 address from Binary into Hex representation.
      *
-     * @param String $ip the IP as binary
+     * @param String $bin the IP address as binary
      *
      * @return String the uncompressed Hex representation
      * @access private
@@ -892,20 +1071,20 @@ class Net_IPv6 {
 
         if (strlen($bin) < 128) {
 
-            $bin = str_pad($str, 128, '0', STR_PAD_LEFT);
+            $bin = str_pad($bin, 128, '0', STR_PAD_LEFT);
 
         }
 
         $parts = str_split($bin, "16");
 
-        foreach($parts as $v) {
+        foreach ( $parts as $v ) {
 
             $str = base_convert($v, 2, 16);
             $ip .= $str.":";
 
         }
 
-        $ip = substr($ip, 0,-1);
+        $ip = substr($ip, 0, -1);
 
         return $ip;
     }

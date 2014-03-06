@@ -105,7 +105,7 @@ exec("/usr/bin/grep -vi warning /tmp/PHP_errors.log", $php_errors);
 			mkdir("/var/crash", 0750, true);
 		@file_put_contents("/var/crash/crashreport_header.txt", $crash_report_header);
 		if(file_exists("/tmp/PHP_errors.log"))
-			copy("/tmp/PHP_errors.log", "/var/crash/");
+			copy("/tmp/PHP_errors.log", "/var/crash/PHP_errors.log");
 		exec("/usr/bin/gzip /var/crash/*");
 		$files_to_upload = glob("/var/crash/*");
 		echo "<p/>";
@@ -124,7 +124,7 @@ exec("/usr/bin/grep -vi warning /tmp/PHP_errors.log", $php_errors);
 			echo "Could not find any crash files.";
 		}
 	} else if(gettext($_POST['Submit']) == "No") {
-		array_map('unlink', glob("rm /var/crash/*"));
+		array_map('unlink', glob("/var/crash/*"));
 		// Erase the contents of the PHP error log
 		fclose(fopen("/tmp/PHP_errors.log", 'w'));
 		Header("Location: /");

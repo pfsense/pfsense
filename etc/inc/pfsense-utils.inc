@@ -991,7 +991,7 @@ function setup_serial_port($when="save", $path="") {
 						fwrite($fd, "{$bcs}\n");
 				}
 			}
-			if(isset($config['system']['enableserial'])) {
+			if(isset($config['system']['enableserial']) || $g['enableserial_force']) {
 				fwrite($fd, "-D");
 			}
 			fclose($fd);
@@ -1016,11 +1016,19 @@ function setup_serial_port($when="save", $path="") {
 					$new_boot_config[] = $bcs;
 
 			$serialspeed = (is_numeric($config['system']['serialspeed'])) ? $config['system']['serialspeed'] : "9600";
-			if(isset($config['system']['enableserial'])) {
+			if(isset($config['system']['enableserial']) || $g['enableserial_force']) {
 				$new_boot_config[] = 'boot_multicons="YES"';
 				$new_boot_config[] = 'boot_serial="YES"';
 				$new_boot_config[] = 'comconsole_speed="' . $serialspeed . '"';
-				$new_boot_config[] = 'console="comconsole,vidconsole"';
+				$primaryconsole = isset($g['primaryconsole_force']) ? $g['primaryconsole_force'] : $config['system']['primaryconsole'];
+				switch ($primaryconsole) {
+					case "video":
+						$new_boot_config[] = 'console="vidconsole,comconsole"';
+						break;
+					case "serial":
+					default:
+						$new_boot_config[] = 'console="comconsole,vidconsole"';
+				}
 			} elseif ($g['platform'] == "nanobsd") {
 				$new_boot_config[] = 'comconsole_speed="' . $serialspeed . '"';
 			}
@@ -1035,7 +1043,7 @@ function setup_serial_port($when="save", $path="") {
 	$fd = fopen("/etc/ttys", "w");
 	foreach($ttys_split as $tty) {
 		if(stristr($tty, "ttyd0") or stristr($tty, "ttyu0")) {
-			if(isset($config['system']['enableserial'])) {
+			if(isset($config['system']['enableserial']) || $g['enableserial_force']) {
 				fwrite($fd, "ttyu0	\"/usr/libexec/getty bootupcli\"	cons25	on	secure\n");
 			} else {
 				fwrite($fd, "ttyu0	\"/usr/libexec/getty bootupcli\"	cons25	off	secure\n");
@@ -2073,7 +2081,7 @@ function process_alias_urltable($name, $url, $freq, $forceupdate=false) {
 
 	// If the file doesn't exist or is older than update_freq days, fetch a new copy.
 	if (!file_exists($urltable_filename)
-		|| ((time() - filemtime($urltable_filename)) > ($freq * 86400))
+		|| ((time() - filemtime($urltable_filename)) > ($freq * 86400 - 90))
 		|| $forceupdate) {
 
 		// Try to fetch the URL supplied

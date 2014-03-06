@@ -30,6 +30,7 @@ if [ "${2}" == "inet" ]; then
 		/usr/local/sbin/pfSctl -c 'service reload dns'
 		/bin/sleep 1
 	fi
+	/usr/local/sbin/pfSctl -c "interface newip ${1}"
 fi
 
 if [ "${2}" == "inet6" ]; then
@@ -54,7 +55,7 @@ if [ "${2}" == "inet6" ]; then
 		/usr/local/sbin/pfSctl -c 'service reload dns'
 		/bin/sleep 1
 	fi
+	/usr/local/sbin/pfSctl -c "interface newipv6 ${1}"
 fi
 
-/usr/local/sbin/pfSctl -c "interface newip ${1}"
 exit 0

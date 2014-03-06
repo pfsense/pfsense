@@ -304,6 +304,11 @@ function is_module_loaded($module_name) {
 		return false;
 }
 
+/* validate non-negative numeric string, or equivalent numeric variable */
+function is_numericint($arg) {
+	return (((is_int($arg) && $arg >= 0) || (is_string($arg) && strlen($arg) > 0 && ctype_digit($arg))) ? true : false);  
+}
+
 /* return the subnet address given a host address and a subnet bit count */
 function gen_subnet($ipaddr, $bits) {
 	if (!is_ipaddr($ipaddr) || !is_numeric($bits))
@@ -490,11 +495,6 @@ function is_iprange($range) {
 	return (is_ipaddr($ip1) && is_ipaddr($ip2));
 }
 
-function is_numericint($arg) {
-	return (preg_match("/[^0-9]/", $arg) ? false : true);
-}
-
-
 /* returns true if $ipaddr is a valid dotted IPv4 address or a IPv6 */
 function is_ipaddr($ipaddr) {
 	if(is_ipaddrv4($ipaddr)) {
@@ -533,7 +533,7 @@ function is_ipaddrv4($ipaddr) {
 
 /* returns true if $ipaddr is a valid linklocal address */
 function is_linklocal($ipaddr) {
-	return (substr($ipaddr, 0, 5) == "fe80:");
+	return (strtolower(substr($ipaddr, 0, 5)) == "fe80:");
 }
 
 /* returns scope of a linklocal address */
@@ -593,49 +593,28 @@ function is_ipaddroralias($ipaddr) {
 
 }
 
-/* returns true if $subnet is a valid IPv4 or IPv6 subnet in CIDR format */
+/* returns true if $subnet is a valid IPv4 or IPv6 subnet in CIDR format
+   	false - if not a valid subnet
+   	true (numeric 4 or 6) - if valid, gives type of subnet */
 function is_subnet($subnet) {
-	if(is_subnetv4($subnet)) {
-		return true;
-	}
-	if(is_subnetv6($subnet)) {
-		return true;
+	if (is_string($subnet) && preg_match('/^(?:([0-9.]{7,15})|([0-9a-f:]{2,39}))\/(\d{1,3})$/i', $subnet, $parts)) {
+		if (is_ipaddrv4($parts[1]) && $parts[3] <= 32)
+			return 4;
+		if (is_ipaddrv6($parts[2]) && $parts[3] <= 128)
+			return 6;
 	}
 	return false;
 }
 
-/* returns true if $subnet is a valid IPv4 subnet in CIDR format */
+/* same as is_subnet() but accepts IPv4 only */
 function is_subnetv4($subnet) {
-	if (!is_string($subnet))
-		return false;
-
-	list($hp,$np) = explode('/', $subnet);
-
-	if (!is_ipaddrv4($hp))
-		return false;
-
-	if (!is_numeric($np) || ($np < 1) || ($np > 32))
-		return false;
-
-	return true;
+	return (is_subnet($subnet) == 4);
 }
 
-/* returns true if $subnet is a valid IPv6 subnet in CIDR format */
+/* same as is_subnet() but accepts IPv6 only */
 function is_subnetv6($subnet) {
-	if (!is_string($subnet))
-		return false;
-
-	list($hp,$np) = explode('/', $subnet);
-
-	if (!is_ipaddrv6($hp))
-		return false;
-
-	if (!is_numeric($np) || ($np < 1) || ($np > 128))
-		return false;
-
-	return true;
+	return (is_subnet($subnet) == 6);
 }
-
 
 /* returns true if $subnet is a valid subnet in CIDR format or an alias thereof */
 function is_subnetoralias($subnet) {
@@ -675,17 +654,23 @@ function is_macaddr($macaddr, $partial=false) {
 	return preg_match('/^[0-9A-F]{2}(?:[:][0-9A-F]{2}){'.$repeat.'}$/i', $macaddr) == 1 ? true : false;
 }
 
-/* returns true if $name is a valid name for an alias */
-/* returns NULL if a reserved word is used */
+/* returns true if $name is a valid name for an alias
+   returns NULL if a reserved word is used
+   returns FALSE for bad chars in the name - this allows calling code to determine what the problem was.
+   aliases cannot be:
+   	bad chars: anything except a-z 0-9 and underscore
+   	bad names: empty string, pure numeric, pure underscore
+   	reserved words: pre-defined service/protocol/port names which should not be ambiguous, and the words "port" and  "pass" */
+
 function is_validaliasname($name) {
 	/* Array of reserved words */
 	$reserved = array("port", "pass");
-	if (in_array($name, $reserved, true))
-		return; /* return NULL */
-	if (!preg_match("/[^a-zA-Z0-9_]/", $name) && (strlen($name) < 32))
-		return true;
-	else
+
+	if (!is_string($name) || strlen($name) >= 32 || preg_match('/(^_*$|^\d*$|[^a-z0-9_])/i', $name))
 		return false;
+	if (in_array($name, $reserved, true) || getservbyname($name, "tcp") || getservbyname($name, "udp") || getprotobyname($name))
+		return; /* return NULL */
+	return true;
 }
 
 /* returns true if $port is a valid TCP/UDP port */

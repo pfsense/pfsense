@@ -92,12 +92,8 @@ if ($_GET['act'] == "delph1")
 				unset($a_phase2[$p2index]);
 			}
 
-		/* needs to guarantee that SPDs will be removed before phase 1 */
-		vpn_ipsec_refresh_policies();
-
 		/* remove the phase1 entry */
 		unset($a_phase1[$_GET['p1index']]);
-		vpn_ipsec_refresh_policies();
 		vpn_ipsec_configure();
 		write_config();
 		filter_configure();
@@ -112,7 +108,6 @@ if ($_GET['act'] == "delph2")
 		remove_tunnel_spd_policy($a_phase1[$_GET['p1index']],$a_phase2[$_GET['p2index']]);
 		/* remove the phase2 entry */
 		unset($a_phase2[$_GET['p2index']]);
-		vpn_ipsec_refresh_policies();
 		vpn_ipsec_configure();
 		filter_configure();
 		write_config();

@@ -35,7 +35,7 @@ require_once("notices.inc");
 require_once("openvpn.inc");
 require_once("interfaces.inc");
 
-if (isset($_GET)) {
+if (isset($_GET))
         $argument = $_GET['interface'];
 else
 	$argument = str_replace("\n", "", $argv[1]);

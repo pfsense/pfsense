@@ -387,13 +387,14 @@ table#marquee div#container div#scroller {
 #navigation ul li ul {
 	display: none;
 	position: absolute; 
-/*	top: 2em;
+    /*	top: 2em;
 	left: -2px; */
 	width: 120px;
 	font-weight: normal;
-/*	background: transparent bottom left no-repeat; /* This is key to making the menu maintain visibility when not on a link */
+        /* background: transparent bottom left no-repeat; */
+        /* This is key to making the menu maintain visibility when not on a link */
 	/* background-color: #202020; */
-	background: url("images/menubgr_footer.png") no-repeat;
+	/* background: url("images/menubgr_footer.png") no-repeat;
 	background-position: bottom;
 	*/
 	padding: 0em 0 0.4em 0;
@@ -1133,7 +1134,7 @@ div#log span.log-protocol {
 #login #username, #password, #password2 {
 	font-size: small;
 	width: 60%;
-	padding-left:19px
+	padding-left: 19px;
 	padding: 3px;
 	margin: 0em;
 }

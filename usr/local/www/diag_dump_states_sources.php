@@ -174,8 +174,8 @@ if(count($sources) > 0) {
 				<td class='listr'><?php echo $rate;?></td>
 				<td class='list'>
 				<img src='/themes/<?php echo $g['theme']; ?>/images/icons/icon_x.gif' height='17' width='17' border='0'
-					onclick="removeSource(<?php echo "'{$srcip}', '{$dstip}'"; ?>);" style='cursor:pointer;
-					name='i:<?php echo "{$srcip}:{$dstip}"; ?>
+					onclick="removeSource(<?php echo "'{$srcip}', '{$dstip}'"; ?>);" style='cursor:pointer;'
+					name='i:<?php echo "{$srcip}:{$dstip}"; ?>'
 					title='<?php echo gettext("Remove all source tracking entries from") . " {$srcip} " . gettext("to") . " {$dstip}";?>' alt='' />
 				</td>
 			  </tr>

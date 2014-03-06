@@ -429,7 +429,7 @@ table#marquee div#container div#scroller {
 	/* Mozilla */
 	-moz-border-radius-bottomright: 0px;
 	-moz-border-radius-bottomleft: 6px;
-	-moz-border-radius-topright: 6px
+	-moz-border-radius-topright: 6px;
 	-moz-border-radius-topleft: 6px;
 	/* WebKit */
 	-webkit-border-bottom-right-radius: 0px;
@@ -490,7 +490,7 @@ table#marquee div#container div#scroller {
 	/* Mozilla */
 	-moz-border-radius-bottomright: 0px;
 	-moz-border-radius-bottomleft: 3px;
-	-moz-border-radius-topright: 3px
+	-moz-border-radius-topright: 3px;
 	-moz-border-radius-topleft: 3px;
 	/* WebKit */
 	-webkit-border-bottom-right-radius: 0px;
@@ -1204,7 +1204,7 @@ div#log span.log-protocol {
 #login #username, #password, #password2 {
 	font-size: small;
 	width: 60%;
-	padding-left:19px
+	padding-left: 19px;
 	padding: 3px;
 	margin: 0em;
 }
@@ -1325,8 +1325,8 @@ div#log span.log-protocol-mini-header {
 
 /* Sortable tables */
 table.sortable thead {
-    cursor: default;
-<!--	background-color: #EEEEEE; this causing light gray rectangles to the right of many tables in gui -->
+        cursor: default;
+//	background-color: #EEEEEE; this causing light gray rectangles to the right of many tables in gui
 	padding-right: 12px;
 	padding-left: 12px;
 	padding-top: 12px;

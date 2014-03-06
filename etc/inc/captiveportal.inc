@@ -393,6 +393,67 @@ EOD;
 	return 0;
 }
 
+/* obtain zone given an IP address */
+function captiveportal_get_zone_by_ip($ip) {
+    global $config;
+
+    $intfnum = count($config['captiveportal']);
+    if ($intfnum == 1) {
+        foreach ($config['captiveportal'] as $zone => $value) {
+            return $zone;
+        }
+    }
+    /* obtain the interface by ip */
+    $routeoutput = "";
+    exec("/sbin/route get {$ip} | grep interface: | cut -d ':' -f2", 
+$routeoutput);
+    $interface = trim($routeoutput[0]);
+
+	/* Check for the wlan0 scenario where, for example, 'ath0_wlan0' 
+is seen by captive portal as 'ath0' */
+    $interface2 = "";
+    $pos = strpos($interface, "_wlan0");
+    if ($pos != FALSE && $pos > 0) {
+        $interface2 = substr($interface, 0, $pos);
+    }
+
+    /* obtain the interface logical name by interface nic name */
+    $found = 0;
+    foreach ($config['interfaces'] as $intf => $value) {
+        if (($config['interfaces'][$intf]['if'] == $interface) || 
+($interface2 != "" && $config['interfaces'][$intf]['if'] == 
+$interface2)) {
+            $found = 1;
+            break;
+        }
+    }
+
+    /* obtain the zone name */
+    if ($found) {
+        foreach ($config['captiveportal'] as $zone => $value) {
+            /* need to support multiple interfaces per cpzone */
+            if (strpos($config['captiveportal'][$zone]['interface'], 
+",") != FALSE) {
+                /* more than one interface for this zone was detected */
+                $ifents = explode(",", 
+$config['captiveportal'][$zone]['interface']);
+                foreach ($ifents as $ifent) {
+                    if ($ifent == $intf) {
+                        return $zone;
+                    }
+                }
+            } else {
+                /* only once interface for this cpzone was detected */
+                if ($config['captiveportal'][$zone]['interface'] == 
+$intf) {
+                    return $zone;
+                }
+            }
+        }
+    }
+    return NULL;
+}
+
 function captiveportal_init_webgui() {
 	global $config, $cpzone;
 

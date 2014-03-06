@@ -661,12 +661,10 @@ EOD;
 						$localid_type = $ph2ent['localid']['type'];
 						$localid_data = ipsec_idinfo_to_cidr($ph2ent['localid'], false, $ph2ent['mode']);
 						/* Do not print localid in some cases, such as a pure-psk or psk/xauth single phase2 mobile tunnel */
-						if (($localid_type == "none" || $localid_type == "mobile") ||
-							(($ph1ent['authentication_method'] == "xauth_psk_server") ||
-							($ph1ent['authentication_method'] == "pre_shared_key"))
+						if (($localid_type == "none" || $localid_type == "mobile")
 							&& isset($ph1ent['mobile'])
 							&& (ipsec_get_number_of_phase2($ikeid)==1))
-							$localid_spec = "%mobile";
+							$localid_spec = "%any";
 						else {
 							if ($localid_type != "address") {
 								$localid_type = "subnet";
@@ -677,6 +675,7 @@ EOD;
 								continue;
 							}
 							$localid_spec = $ep;
+							/* XXX: To be finished */
 							if (0 && !empty($ph2ent['natlocalid'])) {
 								$natlocalid_data =  ipsec_idinfo_to_cidr($ph2ent['natlocalid'], false, $ph2ent['mode']);
 								if ($ph2ent['natlocalid']['type'] != "address") {

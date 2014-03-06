@@ -847,7 +847,7 @@ EOD;
 	} else {
 		/* start racoon */
 		$ipsecdebug = isset($config['ipsec']['racoondebug']) ? "-d -v" : "";
-		mwexec("/usr/local/sbin/ipsec restart", false); 
+		mwexec("/usr/local/sbin/ipsec start", false); 
 	}
 	if ($natfilterrules == true)
 		filter_configure();

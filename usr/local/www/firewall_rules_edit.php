@@ -45,6 +45,23 @@ require("guiconfig.inc");
 require_once("filter.inc");
 require("shaper.inc");
 
+function is_aoadv_used($rule_config) {
+	// Note that the user could set "tag" or "tagged" to the string "0", which is valid but empty().
+	if ((isset($rule_config['allowopts'])) ||
+	    (isset($rule_config['disablereplyto'])) ||
+	    ($rule_config['tag'] != "") ||
+	    ($rule_config['tagged'] != "") ||
+	    (!empty($rule_config['max'])) ||
+	    (!empty($rule_config['max-src-nodes'])) ||
+	    (!empty($rule_config['max-src-conn'])) ||
+	    (!empty($rule_config['max-src-states'])) ||
+	    (!empty($rule_config['max-src-conn-rate'])) ||
+	    (!empty($rule_config['max-src-conn-rates'])) ||
+	    (!empty($rule_config['statetimeout'])))
+		return true;
+	return false;
+}
+
 $specialsrcdst = explode(" ", "any pptp pppoe l2tp openvpn");
 $ifdisp = get_configured_interface_with_descr();
 foreach ($ifdisp as $kif => $kdescr) {
@@ -1240,10 +1257,10 @@ $i--): ?>
 		<tr>
 			<td width="22%" valign="top" class="vncell"><?=gettext("Advanced Options");?></td>
 			<td width="78%" class="vtable">
-			<div id="aoadv">
+			<div id="aoadv" <?php if (is_aoadv_used($pconfig)) echo "style='display:none'"; ?>>
 				<input type="button" onclick="show_aodiv();" value="<?=gettext("Advanced"); ?>" /> - <?=gettext("Show advanced option");?>
 			</div>
-			<div id="aodivmain" style="display:none">
+			<div id="aodivmain" <?php if (!is_aoadv_used($pconfig)) echo "style='display:none'"; ?>>
 				<input type="checkbox" id="allowopts" value="yes" name="allowopts"<?php if($pconfig['allowopts'] == true) echo " checked=\"checked\""; ?> />
 				<br/><span class="vexpl"><?=gettext("This allows packets with IP options to pass. Otherwise they are blocked by default. This is usually only seen with multicast traffic.");?>
 				</span><p>

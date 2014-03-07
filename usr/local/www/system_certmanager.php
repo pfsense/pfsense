@@ -240,7 +240,7 @@ if ($_POST) {
 
 		$altnames = array();
 		do_input_validation($_POST, $reqdfields, $reqdfieldsn, &$input_errors);
-		if ($pconfig['method'] != "import") {
+		if ($pconfig['method'] != "import" && $pconfig['method'] != "existing") {
 			/* subjectAltNames */
 			foreach ($_POST as $key => $value) {
 				$entry = '';

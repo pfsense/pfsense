@@ -254,13 +254,13 @@ function do_input_validation($postdata, $reqdfields, $reqdfieldsn, &$input_error
 	/* check for bad control characters */
 	foreach ($postdata as $pn => $pd) {
 		if (is_string($pd) && preg_match("/[\\x00-\\x08\\x0b\\x0c\\x0e-\\x1f]/", $pd)) {
-			$input_errors[] = "The field '" . $pn . "' contains invalid characters.";
+			$input_errors[] = gettext("The field") . " '" . $pn . "' ". gettext("contains invalid characters.");
 		}
 	}
 
 	for ($i = 0; $i < count($reqdfields); $i++) {
 		if ($_POST[$reqdfields[$i]] == "" && $_REQUEST[$reqdfields[$i]] == "") {
-			$input_errors[] = "The field '" . $reqdfieldsn[$i] . "' is required.";
+			$input_errors[] = gettext("The field") . " '" . $reqdfieldsn[$i] . "' " . gettext("is required.");
 		}
 	}
 }
@@ -275,13 +275,12 @@ function print_input_errors($input_errors) {
 		<td class="inputerrorsleft">
 			<img src="/themes/{$g['theme']}/images/icons/icon_error.gif" alt="errors" />
 		</td>
-		<td class="inputerrorsright errmsg">
-			<p>The following input errors were detected:</p>
-				<ul>
+        <td class="inputerrorsright errmsg">
 EOF;
-		foreach ($input_errors as $ierr) {
-			echo "<li>" . htmlspecialchars($ierr) . "</li>";
-		}
+    echo "<p>" . gettext("The following input errors were detected:") . "</p>\n<ul>";
+	foreach ($input_errors as $ierr) {
+		echo "<li>" . htmlspecialchars($ierr) . "</li>";
+	}
 
 	print <<<EOF2
 				</ul>
@@ -335,7 +334,7 @@ function print_info_box_np($msg, $name="apply",$value="", $showapply=false) {
 	}
 
 	if(!$savebutton) {
-		$savebutton = "<td class=\"infoboxsave\"><input value=\"Close\" type=\"button\" onclick=\"jQuery('#redboxtable').hide();\" /></td>";
+		$savebutton = "<td class=\"infoboxsave\"><input value=\" . gettext("Close") . "\" type=\"button\" onclick=\"jQuery('#redboxtable').hide();\" /></td>";
 	}
 
 	echo <<<EOFnp
@@ -377,7 +376,7 @@ function print_info_box_np_undo($msg, $name="apply",$value="Apply changes", $und
 
 	if(stristr($msg, "apply") != false || stristr($msg, "save") != false || stristr($msg, "create") != false) {
 		$savebutton = "<td class=\"infoboxsave nowrap\">";
-		$savebutton .= "<input type=\"button\" value=\"Undo\" onclick=\"document.location='{$undo}'\" />";
+		$savebutton .= "<input type=\"button\" value=\"". gettext("Undo") . "\" onclick=\"document.location='{$undo}'\" />";
 		$savebutton .= "<input name=\"{$name}\" type=\"submit\" class=\"formbtn\" id=\"${name}\" value=\"{$value}\" />";
 		$savebutton .= "</td>";
 		if($_POST['if'])
@@ -400,7 +399,7 @@ function print_info_box_np_undo($msg, $name="apply",$value="Apply changes", $und
 
 
 	if(!$savebutton) {
-		$savebutton = "<td class=\"infoboxsave\"><input value=\"Close\" type=\"button\" onclick=\"jQuery('#redboxtable').hide();\" /></td>";
+		$savebutton = "<td class=\"infoboxsave\"><input value=\"" . gettext("Close") . "\" type=\"button\" onclick=\"jQuery('#redboxtable').hide();\" /></td>";
 	}
 
 	echo <<<EOFnp
@@ -446,12 +445,12 @@ function get_std_save_message($ok) {
 	global $d_sysrebootreqd_path;
 	$filter_related = false;
 	$filter_pages = array("nat", "filter");
-	$to_return = "The changes have been applied successfully.";
+	$to_return = gettext("The changes have been applied successfully.");
 	foreach($filter_pages as $fp)
 		if(stristr($_SERVER['SCRIPT_FILENAME'], $fp))
 			$filter_related = true;
 	if($filter_related)
-		$to_return .= "<br/>You can also <a href=\"status_filter_reload.php\">monitor</a> the filter reload progress.";
+		$to_return .= "<br/>" . gettext("You can also <a href=\"status_filter_reload.php\">monitor</a> the filter reload progress.");
 	return $to_return;
 }
 
@@ -994,7 +993,7 @@ function display_top_tabs(& $tab_array, $no_drop_down = false) {
 	// If the character count of the tab names is > 670
 	// then show a select item dropdown menubox.
 	if($tabcharcount > $tab_array_char_limit) {
-		echo "Currently viewing: ";
+		echo gettext("Currently viewing: ");
 		echo "<select name=\"TabSelect\" onchange=\"tabs_will_go(this)\">\n";
 		foreach ($tab_array as $ta) {
 			if($ta[1]=="true")
@@ -1092,7 +1091,7 @@ function alias_info_popup($alias_id){
 				$alias_objects_with_details .= "</tr>";
 			}
 			if ($counter > 10002) {
-				$alias_objects_with_details .= "<tr><td colspan=\"3\"> listing only first 10k items</td><tr>";
+				$alias_objects_with_details .= "<tr><td colspan=\"3\"> ". gettext("listing only first 10k items") . "</td><tr>";
 			}
 		}
 		else{

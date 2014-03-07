@@ -294,12 +294,12 @@ if ($_POST) {
 			/* Make sure we do not have invalid characters in the fields for the certificate */
 			for ($i = 0; $i < count($reqdfields); $i++) {
 				if (preg_match('/email/', $reqdfields[$i])){ /* dn_email or csr_dn_name */
-				 	if (preg_match("/[\!\#\$\%\^\(\)\~\?\>\<\&\/\\\,\"\']/", $_POST["$reqdfields[$i]"]))
+					if (preg_match("/[\!\#\$\%\^\(\)\~\?\>\<\&\/\\\,\"\']/", $_POST[$reqdfields[$i]]))
 						array_push($input_errors, "The field 'Distinguished name Email Address' contains invalid characters.");
 				}else if (preg_match('/commonname/', $reqdfields[$i])){ /* dn_commonname or csr_dn_commonname */
-					if (preg_match("/[\!\@\#\$\%\^\(\)\~\?\>\<\&\/\\\,\"\']/", $_POST["$reqdfields[$i]"]))
+					if (preg_match("/[\!\@\#\$\%\^\(\)\~\?\>\<\&\/\\\,\"\']/", $_POST[$reqdfields[$i]]))
 						array_push($input_errors, "The field 'Distinguished name Common Name' contains invalid characters.");
-				}else if (($reqdfields[$i] != "descr") && preg_match("/[\!\@\#\$\%\^\(\)\~\?\>\<\&\/\\\,\.\"\']/", $_POST["$reqdfields[$i]"]))
+				}else if (($reqdfields[$i] != "descr") && preg_match("/[\!\@\#\$\%\^\(\)\~\?\>\<\&\/\\\,\.\"\']/", $_POST[$reqdfields[$i]]))
 					array_push($input_errors, "The field '" . $reqdfieldsn[$i] . "' contains invalid characters.");
 			}
 

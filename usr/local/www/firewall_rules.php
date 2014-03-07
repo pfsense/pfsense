@@ -105,7 +105,7 @@ if($_REQUEST['dragdroporder']) {
 	// Overwrite filter rules with newly created items
 	$config['filter']['rule'] = array_merge($a_filter_before, $a_filter_order, $a_filter_after);
 	// Write configuration
-	$config = write_config("Drag and drop firewall rules ordering update.");
+	$config = write_config(gettext("Drag and drop firewall rules ordering update."));
 	// Redirect back to page
 	mark_subsystem_dirty('filter');
 	$undo = array();
@@ -316,7 +316,7 @@ if($_REQUEST['undodrag']) {
 <br/>
 <?php endif; ?>
 <div id="loading" style="visibity:hidden">
-	<img src="/themes/<?=$g['theme']?>/images/misc/loader.gif" alt="loader" /> Loading, please wait...
+    <img src="/themes/<?=$g['theme']?>/images/misc/loader.gif" alt="loader" /> <?php echo gettext("Loading, please wait..."); ?>
 	<p>&nbsp;</p>
 </div>
 <?php

@@ -285,7 +285,8 @@ if ($_POST) {
 					$url = "http://{$newvoucher['vouchersyncdbip']}";
 
 				$execcmd  = <<<EOF
-				\$toreturn['voucher'] = \$config['voucher'][$cpzone];
+				\$toreturn = array();
+				\$toreturn['voucher'] = \$config['voucher']['$cpzone'];
 				unset(\$toreturn['vouchersyncport'], \$toreturn['vouchersyncpass'], \$toreturn['vouchersyncusername'], \$toreturn['vouchersyncdbip']);
 
 EOF;

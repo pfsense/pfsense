@@ -46,17 +46,18 @@ require_once("filter.inc");
 require("shaper.inc");
 
 function is_aoadv_used($rule_config) {
-	if (($rule_config['allowopts']) ||
-	    ($rule_config['disablereplyto']) ||
+	// Note that the user could set "tag" or "tagged" to the string "0", which is valid but empty().
+	if ((isset($rule_config['allowopts'])) ||
+	    (isset($rule_config['disablereplyto'])) ||
 	    ($rule_config['tag'] != "") ||
 	    ($rule_config['tagged'] != "") ||
-	    ($rule_config['max'] != "") ||
-	    ($rule_config['max-src-nodes'] != "") ||
-	    ($rule_config['max-src-conn'] != "") ||
-	    ($rule_config['max-src-states'] != "") ||
-	    ($rule_config['max-src-conn-rate'] != "") ||
-	    ($rule_config['max-src-conn-rates'] != "") ||
-	    ($rule_config['statetimeout'] != ""))
+	    (!empty($rule_config['max'])) ||
+	    (!empty($rule_config['max-src-nodes'])) ||
+	    (!empty($rule_config['max-src-conn'])) ||
+	    (!empty($rule_config['max-src-states'])) ||
+	    (!empty($rule_config['max-src-conn-rate'])) ||
+	    (!empty($rule_config['max-src-conn-rates'])) ||
+	    (!empty($rule_config['statetimeout'])))
 		return true;
 	return false;
 }

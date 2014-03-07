@@ -254,13 +254,13 @@ function do_input_validation($postdata, $reqdfields, $reqdfieldsn, &$input_error
 	/* check for bad control characters */
 	foreach ($postdata as $pn => $pd) {
 		if (is_string($pd) && preg_match("/[\\x00-\\x08\\x0b\\x0c\\x0e-\\x1f]/", $pd)) {
-			$input_errors[] = gettext("The field") . " '" . $pn . "' ". gettext("contains invalid characters.");
+			$input_errors[] = sprintf(gettext("The field %s contains invalid characters."), $pn);
 		}
 	}
 
 	for ($i = 0; $i < count($reqdfields); $i++) {
 		if ($_POST[$reqdfields[$i]] == "" && $_REQUEST[$reqdfields[$i]] == "") {
-			$input_errors[] = gettext("The field") . " '" . $reqdfieldsn[$i] . "' " . gettext("is required.");
+			$input_errors[] = sprintf(gettext("The field %s is required."), $reqfieldsn[$i]);
 		}
 	}
 }

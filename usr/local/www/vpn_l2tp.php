@@ -313,7 +313,7 @@ function enable_change(enable_over) {
 				$interfaces = get_configured_interface_with_descr();
 				foreach ($interfaces as $iface => $ifacename):
 			  ?>
-			  <option value="<?=$iface;?>" <?php if ($iface == $pconfig['interface']) echo "selected"; ?>>
+			  <option value="<?=$iface;?>" <?php if ($iface == $pconfig['interface']) echo "selected=\"selected\""; ?>>
 			  <?=htmlspecialchars($ifacename);?>
 			  </option>
 			  <?php endforeach; ?>
@@ -348,14 +348,14 @@ function enable_change(enable_over) {
                     <?php
                      for($x=0; $x<33; $x++) {
                         if($x == $pconfig['l2tp_subnet'])
-                                $SELECTED = " SELECTED";
+                                $selected = "selected=\"selected\"";
                         else
-                                $SELECTED = "";
-                        echo "<option value=\"{$x}\"{$SELECTED}>{$x}</option>\n";
+                                $selected = "";
+                        echo "<option value=\"{$x}\" {$selected}>{$x}</option>\n";
                      }
                     ?>
                     </select>
-                    <br><?=gettext("Hint:"); ?> 24 <?=gettext("is"); ?> 255.255.255.0
+                    <br /><?=gettext("Hint:"); ?> 24 <?=gettext("is"); ?> 255.255.255.0
                   </td>
                 </tr>
                 <tr>
@@ -365,20 +365,20 @@ function enable_change(enable_over) {
                     <?php
                      for($x=0; $x<255; $x++) {
                         if($x == $pconfig['n_l2tp_units'])
-                                $SELECTED = " SELECTED";
+                                $selected = "selected=\"selected\"";
                         else
-                                $SELECTED = "";
-                        echo "<option value=\"{$x}\"{$SELECTED}>{$x}</option>\n";
+                                $selected = "";
+                        echo "<option value=\"{$x}\" {$selected}>{$x}</option>\n";
                      }
                     ?>
                     </select>
-                    <br><?=gettext("Hint:"); ?> 10 <?=gettext("is ten L2TP clients"); ?>
+                    <br /><?=gettext("Hint:"); ?> 10 <?=gettext("is ten L2TP clients"); ?>
                   </td>
                 </tr>
 		<tr>
                   <td width="22%" valign="top" class="vncell"><?=gettext("Secret");?></td>
                   <td width="78%" class="vtable">
-			<input type="password" name="secret" id="secret" class="formfld pwd" value="<?php echo htmlspecialchars($pconfig['secret']); ?>">
+			<input type="password" name="secret" id="secret" class="formfld pwd" value="<?php echo htmlspecialchars($pconfig['secret']); ?>" />
                     <br />
                     <?=gettext("Specify optional secret shared between peers. Required on some devices/setups.");?><br />
                     </td>
@@ -387,8 +387,8 @@ function enable_change(enable_over) {
                   <td width="22%" valign="top" class="vncellreq"><?=gettext("Authentication Type");?></td>
                   <td width="78%" class="vtable">
                     <?=$mandfldhtml;?><select name="paporchap" id="paporchap">
-			<option value='chap'<?php if($pconfig['paporchap'] == "chap") echo " SELECTED"; ?>><?=gettext("CHAP"); ?></option>
-			<option value='pap'<?php if($pconfig['paporchap'] == "pap") echo " SELECTED"; ?>><?=gettext("PAP"); ?></option>
+			<option value='chap' <?php if($pconfig['paporchap'] == "chap") echo "selected=\"selected\""; ?>><?=gettext("CHAP"); ?></option>
+			<option value='pap' <?php if($pconfig['paporchap'] == "pap") echo "selected=\"selected\""; ?>><?=gettext("PAP"); ?></option>
 		    </select>
                     <br />
                     <?=gettext("Specifies which protocol to use for authentication.");?><br />
@@ -397,17 +397,17 @@ function enable_change(enable_over) {
 		<tr>
 		  <td width="22%" valign="top" class="vncell"><?=gettext("L2TP DNS Servers"); ?></td>
 		  <td width="78%" class="vtable">
-		    <?=$mandfldhtml;?><input name="l2tp_dns1" type="text" class="formfld unknown" id="l2tp_dns1" size="20" value="<?=htmlspecialchars($pconfig['l2tp_dns1']);?>">
-		   	<br>
-				<input name="l2tp_dns2" type="text" class="formfld unknown" id="l2tp_dns2" size="20" value="<?=htmlspecialchars($pconfig['l2tp_dns2']);?>">
-			<br>
-		   <?=gettext("primary and secondary DNS servers assigned to L2TP clients"); ?><br>
+		    <?=$mandfldhtml;?><input name="l2tp_dns1" type="text" class="formfld unknown" id="l2tp_dns1" size="20" value="<?=htmlspecialchars($pconfig['l2tp_dns1']);?>" />
+		   	<br />
+				<input name="l2tp_dns2" type="text" class="formfld unknown" id="l2tp_dns2" size="20" value="<?=htmlspecialchars($pconfig['l2tp_dns2']);?>" />
+			<br />
+		   <?=gettext("primary and secondary DNS servers assigned to L2TP clients"); ?><br />
 		  </td>
 		</tr>
 		<tr>
 		  <td width="22%" valign="top" class="vncell"><?=gettext("WINS Server"); ?></td>
 		  <td width="78%" valign="top" class="vtable">
-		      <input name="wins" class="formfld unknown" id="wins" size="20" value="<?=htmlspecialchars($pconfig['wins']);?>">
+		      <input name="wins" class="formfld unknown" id="wins" size="20" value="<?=htmlspecialchars($pconfig['wins']);?>" />
 		  </td>
 		</tr>
                 <tr>

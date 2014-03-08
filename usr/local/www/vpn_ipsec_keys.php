@@ -82,7 +82,7 @@ include("head.inc");
 if ($savemsg)
 	print_info_box($savemsg);
 if (is_subsystem_dirty('ipsec'))
-	print_info_box_np(gettext("The IPsec tunnel configuration has been changed") . ".<br>" . gettext("You must apply the changes in order for them to take effect."));
+	print_info_box_np(gettext("The IPsec tunnel configuration has been changed") . ".<br />" . gettext("You must apply the changes in order for them to take effect."));
 
 ?>
 <table width="100%" border="0" cellpadding="0" cellspacing="0">
@@ -105,8 +105,8 @@ if (is_subsystem_dirty('ipsec'))
                   <td class="list">
 			<table border="0" cellspacing="0" cellpadding="1">
 			    <tr>
-			        <td width="20" heigth="17"></td>
-				<td><a href="vpn_ipsec_keys_edit.php"><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_plus.gif" title="<?=gettext("add key"); ?>" width="17" height="17" border="0"></a></td>
+			        <td width="20" height="17"></td>
+				<td><a href="vpn_ipsec_keys_edit.php"><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_plus.gif" title="<?=gettext("add key"); ?>" alt="" width="17" height="17" border="0"/></a></td>
 			    </tr>
 			</table>
 		  </td>
@@ -119,7 +119,7 @@ if (is_subsystem_dirty('ipsec'))
 		<td class="listr gray">
 			<?=htmlspecialchars($secretent['pre-shared-key']);?>
 		</td>
-		<td class="list" nowrap><a href="system_usermanager.php?act=edit&id=<?=$secretent['id'];?>"><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_e.gif" title="<?=gettext("edit key"); ?>" width="17" height="17" border="0"></a>
+		<td class="list" nowrap="nowrap"><a href="system_usermanager.php?act=edit&id=<?=$secretent['id'];?>"><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_e.gif" title="<?=gettext("edit key"); ?>" alt="" width="17" height="17" border="0"/></a>
 		&nbsp;</td>
 				</tr>
 			  <?php $i++; endforeach; ?>
@@ -132,8 +132,8 @@ if (is_subsystem_dirty('ipsec'))
                   <td class="listr">
                     <?=htmlspecialchars($secretent['pre-shared-key']);?>
                   </td>
-                  <td class="list" nowrap> <a href="vpn_ipsec_keys_edit.php?id=<?=$i;?>"><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_e.gif" title="<?=gettext("edit key"); ?>" width="17" height="17" border="0"></a>
-                     &nbsp;<a href="vpn_ipsec_keys.php?act=del&id=<?=$i;?>" onclick="return confirm('<?=gettext("Do you really want to delete this Pre-Shared Key?"); ?>')"><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_x.gif" title="<?=gettext("delete key"); ?>" width="17" height="17" border="0"></a></td>
+                  <td class="list" nowrap="nowrap"> <a href="vpn_ipsec_keys_edit.php?id=<?=$i;?>"><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_e.gif" title="<?=gettext("edit key"); ?>" alt="" width="17" height="17" border="0"/></a>
+                     &nbsp;<a href="vpn_ipsec_keys.php?act=del&id=<?=$i;?>" onclick="return confirm('<?=gettext("Do you really want to delete this Pre-Shared Key?"); ?>')"><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_x.gif" title="<?=gettext("delete key"); ?>" alt="" width="17" height="17" border="0"/></a></td>
 				</tr>
 			  <?php $i++; endforeach; ?>
                 <tr> 
@@ -141,8 +141,8 @@ if (is_subsystem_dirty('ipsec'))
                   <td class="list">
 			<table border="0" cellspacing="0" cellpadding="1">
 			    <tr>
-			        <td width="20" heigth="17"></td>
-				<td><a href="vpn_ipsec_keys_edit.php"><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_plus.gif" title="<?=gettext("add key"); ?>" width="17" height="17" border="0"></a></td>
+			        <td width="20" height="17"></td>
+				<td><a href="vpn_ipsec_keys_edit.php"><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_plus.gif" title="<?=gettext("add key"); ?>" alt="" width="17" height="17" border="0"/></a></td>
 			    </tr>
 			</table>
 		  </td>

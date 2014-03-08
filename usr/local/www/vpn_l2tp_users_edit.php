@@ -156,6 +156,7 @@ include("head.inc");
                   <td width="78%" class="vtable">
 					<?=$mandfldhtml;?><input name="usernamefld" type="text" class="formfld user" id="usernamefld" size="20" value="<?=htmlspecialchars($pconfig['usernamefld']);?>" />
                   </td>
+                </tr>
                 <tr>
                   <td width="22%" valign="top" class="vncellreq"><?=gettext("Password");?></td>
                   <td width="78%" class="vtable">

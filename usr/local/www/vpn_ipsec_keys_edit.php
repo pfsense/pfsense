@@ -126,26 +126,28 @@ include("head.inc");
                 <tr> 
                   <td valign="top" class="vncellreq"><?=gettext("Identifier"); ?></td>
                   <td class="vtable">
-					<?=$mandfldhtml;?><input name="ident" type="text" class="formfld unknown" id="ident" size="30" value="<?=htmlspecialchars($pconfig['ident']);?>">
-                    <br>
+					<?=$mandfldhtml;?><input name="ident" type="text" class="formfld unknown" id="ident" size="30" value="<?=htmlspecialchars($pconfig['ident']);?>"/>
+                    <br />
 <?=gettext("This can be either an IP address, fully qualified domain name or an e-mail address"); ?>.       
                   </td>
                 </tr>
                 <tr> 
                   <td width="22%" valign="top" class="vncellreq"><?=gettext("Pre-Shared Key"); ?></td>
                   <td width="78%" class="vtable"> 
-                    <?=$mandfldhtml;?><input name="psk" type="text" class="formfld unknown" id="psk" size="40" value="<?=htmlspecialchars($pconfig['psk']);?>">
+                    <?=$mandfldhtml;?><input name="psk" type="text" class="formfld unknown" id="psk" size="40" value="<?=htmlspecialchars($pconfig['psk']);?>"/>
                   </td>
                 </tr>
                 <tr> 
                   <td width="22%" valign="top">&nbsp;</td>
                   <td width="78%"> 
-                    <input name="Submit" type="submit" class="formbtn" value="<?=gettext("Save"); ?>"> 
+                    <input name="Submit" type="submit" class="formbtn" value="<?=gettext("Save"); ?>"/> 
                     <?php if (isset($id) && $a_secret[$id]): ?>
-                    <input name="id" type="hidden" value="<?=htmlspecialchars($id);?>">
+                    <input name="id" type="hidden" value="<?=htmlspecialchars($id);?>"/>
                     <?php endif; ?>
                   </td>
                 </tr>
               </table>
 </form>
 <?php include("fend.inc"); ?>
+</body>
+</html>

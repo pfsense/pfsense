@@ -192,7 +192,7 @@ include("fbegin.inc");
 			<?php
 			?>
 			<?php foreach ($interfaces as $iface => $ifacename): ?>
-				<option value="<?=$iface;?>" <?php if ($selectedif == $iface) echo "selected"; ?>>
+				<option value="<?=$iface;?>" <?php if ($selectedif == $iface) echo "selected=\"selected\""; ?>>
 				<?php echo $ifacename;?>
 				</option>
 			<?php endforeach; ?>
@@ -203,7 +203,7 @@ include("fbegin.inc");
 		<tr>
 			<td width="17%" valign="top" class="vncellreq"><?=gettext("Promiscuous");?></td>
 			<td width="51%" class="vtable">
-			<input name="promiscuous" type="checkbox"<?php if($_POST['promiscuous']) echo " CHECKED"; ?>>
+			<input name="promiscuous" type="checkbox" <?php if($_POST['promiscuous']) echo "checked=\"checked\""; ?>/>
 			<br/><?=gettext("If checked, the");?> <a target="_blank" href="http://www.freebsd.org/cgi/man.cgi?query=tcpdump&amp;apropos=0&amp;sektion=0&amp;manpath=FreeBSD+8.3-stable&amp;arch=default&amp;format=html"><?= gettext("packet capture")?></a> <?= gettext("will be performed using promiscuous mode.");?>
 			<br/><b><?=gettext("Note");?>: </b><?=gettext("Some network adapters do not support or work well in promiscuous mode.");?>
 			</td>
@@ -213,8 +213,8 @@ include("fbegin.inc");
 			<td colspan="2" width="83%" class="vtable">
 			<select name="fam">
 				<option value="">Any</option>
-				<option value="ip" <?php if ($fam == "ip") echo "selected"; ?>>IPv4 Only</option>
-				<option value="ip6" <?php if ($fam == "ip6") echo "selected"; ?>>IPv6 Only</option>
+				<option value="ip" <?php if ($fam == "ip") echo "selected=\"selected\""; ?>>IPv4 Only</option>
+				<option value="ip6" <?php if ($fam == "ip6") echo "selected=\"selected\""; ?>>IPv6 Only</option>
 			</select>
 			<br/><?=gettext("Select the type of traffic to be captured, either Any, IPv4 only or IPv6 only.");?>
 			</td>
@@ -224,13 +224,13 @@ include("fbegin.inc");
 			<td colspan="2" width="83%" class="vtable">
 			<select name="proto">
 				<option value="">Any</option>
-				<option value="icmp" <?php if ($proto == "icmp") echo "selected"; ?>>ICMP</option>
-				<option value="icmp6" <?php if ($proto == "icmp6") echo "selected"; ?>>ICMPv6</option>
-				<option value="tcp" <?php if ($proto == "tcp") echo "selected"; ?>>TCP</option>
-				<option value="udp" <?php if ($proto == "udp") echo "selected"; ?>>UDP</option>
-				<option value="arp" <?php if ($proto == "arp") echo "selected"; ?>>ARP</option>
-				<option value="carp" <?php if ($proto == "carp") echo "selected"; ?>>CARP (VRRP)</option>
-				<option value="esp" <?php if ($proto == "esp") echo "selected"; ?>>ESP</option>
+				<option value="icmp" <?php if ($proto == "icmp") echo "selected=\"selected\""; ?>>ICMP</option>
+				<option value="icmp6" <?php if ($proto == "icmp6") echo "selected=\"selected\""; ?>>ICMPv6</option>
+				<option value="tcp" <?php if ($proto == "tcp") echo "selected=\"selected\""; ?>>TCP</option>
+				<option value="udp" <?php if ($proto == "udp") echo "selected=\"selected\""; ?>>UDP</option>
+				<option value="arp" <?php if ($proto == "arp") echo "selected=\"selected\""; ?>>ARP</option>
+				<option value="carp" <?php if ($proto == "carp") echo "selected=\"selected\""; ?>>CARP (VRRP)</option>
+				<option value="esp" <?php if ($proto == "esp") echo "selected=\"selected\""; ?>>ESP</option>
 			</select>
 			<br/><?=gettext("Select the protocol to capture, or Any.");?>
 			</td>
@@ -238,7 +238,7 @@ include("fbegin.inc");
 		<tr>
 			<td width="17%" valign="top" class="vncellreq"><?=gettext("Host Address");?></td>
 			<td colspan="2" width="83%" class="vtable">
-			<input name="host" type="text" class="formfld host" id="host" size="20" value="<?=htmlspecialchars($host);?>">
+			<input name="host" type="text" class="formfld host" id="host" size="20" value="<?=htmlspecialchars($host);?>"/>
 			<br/><?=gettext("This value is either the Source or Destination IP address or subnet in CIDR notation. The packet capture will look for this address in either field.");?>
 			<br/><?=gettext("This value can be a domain name or IP address, or subnet in CIDR notation.");?>
 			<br/><?=gettext("If you leave this field blank, all packets on the specified interface will be captured.");?>
@@ -247,7 +247,7 @@ include("fbegin.inc");
 		<tr>
 			<td width="17%" valign="top" class="vncellreq"><?=gettext("Port");?></td>
 			<td colspan="2" width="83%" class="vtable">
-			<input name="port" type="text" class="formfld unknown" id="port" size="5" value="<?=$port;?>">
+			<input name="port" type="text" class="formfld unknown" id="port" size="5" value="<?=$port;?>"/>
 			<br/><?=gettext("The port can be either the source or destination port. The packet capture will look for this port in either field.");?>
 			<br/><?=gettext("Leave blank if you do not want to filter by port.");?>
 			</td>
@@ -255,25 +255,25 @@ include("fbegin.inc");
 		<tr>
 			<td width="17%" valign="top" class="vncellreq"><?=gettext("Packet Length");?></td>
 			<td colspan="2" width="83%" class="vtable">
-			<input name="snaplen" type="text" class="formfld unknown" id="snaplen" size="5" value="<?=$snaplen;?>">
+			<input name="snaplen" type="text" class="formfld unknown" id="snaplen" size="5" value="<?=$snaplen;?>"/>
 			<br/><?=gettext("The Packet length is the number of bytes of each packet that will be captured. Default value is 0, which will capture the entire frame regardless of its size.");?>
 			</td>
 		</tr>
 		<tr>
 			<td width="17%" valign="top" class="vncellreq"><?=gettext("Count");?></td>
 			<td colspan="2" width="83%" class="vtable">
-			<input name="count" type="text" class="formfld unknown" id="count" size="5" value="<?=$count;?>">
+			<input name="count" type="text" class="formfld unknown" id="count" size="5" value="<?=$count;?>"/>
 			<br/><?=gettext("This is the number of packets the packet capture will grab. Default value is 100.") . "<br/>" . gettext("Enter 0 (zero) for no count limit.");?>
 			</td>
 		</tr>
 		<tr>
 			<td width="17%" valign="top" class="vncellreq"><?=gettext("Level of Detail");?></td>
 			<td colspan="2" width="83%" class="vtable">
-			<select name="detail" type="text" class="formselect" id="detail" size="1">
-				<option value="normal" <?php if ($detail == "normal") echo "selected"; ?>><?=gettext("Normal");?></option>
-				<option value="medium" <?php if ($detail == "medium") echo "selected"; ?>><?=gettext("Medium");?></option>
-				<option value="high"   <?php if ($detail == "high")   echo "selected"; ?>><?=gettext("High");?></option>
-				<option value="full"   <?php if ($detail == "full")   echo "selected"; ?>><?=gettext("Full");?></option>
+			<select name="detail" class="formselect" id="detail" size="1">
+				<option value="normal" <?php if ($detail == "normal") echo "selected=\"selected\""; ?>><?=gettext("Normal");?></option>
+				<option value="medium" <?php if ($detail == "medium") echo "selected=\"selected\""; ?>><?=gettext("Medium");?></option>
+				<option value="high"   <?php if ($detail == "high")   echo "selected=\"selected\""; ?>><?=gettext("High");?></option>
+				<option value="full"   <?php if ($detail == "full")   echo "selected=\"selected\""; ?>><?=gettext("Full");?></option>
 			</select>
 			<br/><?=gettext("This is the level of detail that will be displayed after hitting 'Stop' when the packets have been captured.") .  "<br/><b>" .
 					gettext("Note:") . "</b> " .
@@ -283,7 +283,7 @@ include("fbegin.inc");
 		<tr>
 			<td width="17%" valign="top" class="vncellreq"><?=gettext("Reverse DNS Lookup");?></td>
 			<td colspan="2" width="83%" class="vtable">
-			<input name="dnsquery" type="checkbox"<?php if($_POST['dnsquery']) echo " CHECKED"; ?>>
+			<input name="dnsquery" type="checkbox" <?php if($_POST['dnsquery']) echo "checked=\"checked\""; ?>/>
 			<br/><?=gettext("This check box will cause the packet capture to perform a reverse DNS lookup associated with all IP addresses.");?>
 			<br/><b><?=gettext("Note");?>: </b><?=gettext("This option can cause delays for large packet captures.");?>
 			</td>
@@ -302,13 +302,13 @@ include("fbegin.inc");
 				$processisrunning = false;
 
 			if (($action == gettext("Stop") or $action == "") and $processisrunning != true)
-				echo "<input type=\"submit\" name=\"startbtn\" value=\"" . gettext("Start") . "\">&nbsp;";
+				echo "<input type=\"submit\" name=\"startbtn\" value=\"" . gettext("Start") . "\"/>&nbsp;";
 			else {
-				echo "<input type=\"submit\" name=\"stopbtn\" value=\"" . gettext("Stop") . "\">&nbsp;";
+				echo "<input type=\"submit\" name=\"stopbtn\" value=\"" . gettext("Stop") . "\"/>&nbsp;";
 			}
 			if (file_exists($fp.$fn) and $processisrunning != true) {
-				echo "<input type=\"submit\" name=\"viewbtn\" value=\"" . gettext("View Capture") . "\">&nbsp;";
-				echo "<input type=\"submit\" name=\"downloadbtn\" value=\"" . gettext("Download Capture") . "\">";
+				echo "<input type=\"submit\" name=\"viewbtn\" value=\"" . gettext("View Capture") . "\"/>&nbsp;";
+				echo "<input type=\"submit\" name=\"downloadbtn\" value=\"" . gettext("Download Capture") . "\"/>";
 				echo "<br/>" . gettext("The packet capture file was last updated:") . " " . date("F jS, Y g:i:s a.", filemtime($fp.$fn));
 			}
 ?>
@@ -390,6 +390,7 @@ include("fbegin.inc");
 <?php
 			}
 		}
+		echo "</font>";
 ?>
 		</td>
 		</tr>
@@ -400,3 +401,5 @@ include("fbegin.inc");
 <?php
 include("fend.inc");
 ?>
+</body>
+</html>

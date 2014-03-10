@@ -1,7 +1,7 @@
 <?php
 /* $Id$ */
 /*
-	Copyright (C) 2008 Ermal Luçi
+	Copyright (C) 2008 Ermal Luï¿½i
 	All rights reserved.
 
 	Redistribution and use in source and binary forms, with or without
@@ -126,11 +126,15 @@ include("head.inc");
 					$ipaddr = get_interface_ip($rfc2136['interface']);
 				$cached_ip_s = explode("|", file_get_contents($filename));
 				$cached_ip = $cached_ip_s[0];
-				if ($ipaddr <> $cached_ip)
+				$ip_from_cache = htmlspecialchars($cached_ip);
+				if ($ipaddr <> $ip_from_cache)
 					echo "<font color='red'>";
 				else
 					echo "<font color='green'>";
-				echo htmlspecialchars($cached_ip);
+				
+				echo "Check=" . $ipaddr;
+				echo "<br>";
+				echo "Cache=" . $ip_from_cache;
 				echo "</font>";
 			} else {
 				echo "IPv4: N/A";

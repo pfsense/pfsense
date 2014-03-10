@@ -3043,7 +3043,7 @@ function interface_configure($interface = "wan", $reloadall = false, $linkupeven
 		interface_6to4_configure($interface, $wancfg);
 		break;
 	case 'track6':
-		interface_track6_configure($interface, $wancfg);
+		interface_track6_configure($interface, $wancfg, $linkupevent);
 		break;
 	default:
 		/* XXX: Kludge for now related to #3280 */
@@ -3140,7 +3140,7 @@ function interface_configure($interface = "wan", $reloadall = false, $linkupeven
 	return 0;
 }
 
-function interface_track6_configure($interface = "lan", $wancfg) {
+function interface_track6_configure($interface = "lan", $wancfg, $linkupevent = false) {
 	global $config, $g;
 
 	if (!is_array($wancfg))
@@ -3179,9 +3179,20 @@ function interface_track6_configure($interface = "lan", $wancfg) {
 			log_error("Interface {$interface} configured via {$wancfg['track6-interface']}  type {$type}");
 		interface_track6_6rd_configure($interface, $wancfg);
 		break;
+	case "dhcp6":
+		if ($linkupevent == true) {
+			/* 
+			 * NOTE: Usually come here from rc.linkup calling so just call directly intead of generating event
+			 * 	Instead of disrupting all other v4 configuration just restart DHCPv6 client for now
+			 *
+			 * XXX: Probably DHCPv6 client should handle this autmagically itself?
+			 */
+			interface_dhcpv6_configure($wancfg['track6-interface'], $trackcfg);
+		}
+		break;
 	}
 
-	if (!$g['booting']) {
+	if (!$g['booting'] && $linkupevent == false) {
 		if (!function_exists('services_dhcpd_configure'))
 			require_once("services.inc");
 

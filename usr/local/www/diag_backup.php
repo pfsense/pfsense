@@ -134,7 +134,7 @@ function restore_rrddata() {
 
 function add_base_packages_menu_items() {
 	global $g, $config;
-	$base_packages = explode($g['base_packages'], ",");
+	$base_packages = explode(",", $g['base_packages']);
 	$modified_config = false;
 	foreach($base_packages as $bp) {
 		$basepkg_path = "/usr/local/pkg/{$bp}";

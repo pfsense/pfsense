@@ -2880,8 +2880,14 @@ function interface_configure($interface = "wan", $reloadall = false, $linkupeven
 			foreach ($tmpifaces as $tmpiface) {
 				if (strstr($tmpiface, ":"))
 					mwexec("/sbin/ifconfig " . escapeshellarg($realif) . " inet6 {$tmpiface} delete");
-				else
-					pfSense_interface_deladdress($realif, $tmpiface);
+				else {
+					if (is_subnetv4($tmpiface)) {
+						$tmpip = explode('/', $tmpiface);
+						$tmpip = $tmpip[0];
+					} else
+						$tmpip = $tmpiface;
+					pfSense_interface_deladdress($realif, $tmpip);
+				}
 			}
 		}
 

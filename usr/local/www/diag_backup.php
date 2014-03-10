@@ -187,7 +187,7 @@ function spit_out_select_items($name, $showall) {
 		       "interfaces" => gettext("Interfaces"),
 		       "ipsec" => gettext("IPSEC"),
 		       "nat" => gettext("NAT"),
-		       "ovpn" => gettext("OpenVPN"),
+		       "openvpn" => gettext("OpenVPN"),
 		       "installedpackages" => gettext("Package Manager"),
 		       "pptpd" => gettext("PPTP Server"),
 		       "rrddata" => gettext("RRD Data"),

@@ -182,8 +182,8 @@ if(!is_array($config['shaper']['queue']) || count($config['shaper']['queue']) < 
 <?php endif; ?>
 </table>
 <p>
-	<strong><span class="red"><?=gettext("Note"); ?>:</span></strong><br/>
-	<?=gettext("Queue graphs take 5 seconds to sample data"); ?>.<br/>
+	<strong><span class="red"><?=gettext("Note"); ?>:</span></strong><br />
+	<?=gettext("Queue graphs take 5 seconds to sample data"); ?>.<br />
 	<?=gettext("You can configure the Traffic Shaper"); ?> <a href="/firewall_shaper_wizards.php"><?=gettext("here"); ?></a>.
 </p>
 <script type="text/javascript">

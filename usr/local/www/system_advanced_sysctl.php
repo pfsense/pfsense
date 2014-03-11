@@ -163,9 +163,9 @@ include("head.inc");
 							<strong><?=gettext("NOTE:"); ?>&nbsp;</strong>
 						</span>
 						<?=gettext("The options on this page are intended for use by advanced users only."); ?>
-						<br/>
+						<br />
 					</span>
-					<br/>
+					<br />
 					<table width="100%" border="0" cellpadding="6" cellspacing="0" summary="main area">
 						<tr>
 							<td width="20%" class="listhdrr"><?=gettext("Tunable Name"); ?></td>

@@ -207,7 +207,7 @@ include("head.inc");
 <script type="text/javascript" language="javascript" src="/javascript/row_toggle.js"></script>
 <?php if ($savemsg) print_info_box($savemsg); ?>
 <?php if (is_subsystem_dirty('staticroutes')): ?><p>
-<?php print_info_box_np(sprintf(gettext("The static route configuration has been changed.%sYou must apply the changes in order for them to take effect."), "<br/>"));?><br/></p>
+<?php print_info_box_np(sprintf(gettext("The static route configuration has been changed.%sYou must apply the changes in order for them to take effect."), "<br />"));?><br /></p>
 <?php endif; ?>
 
 <table width="100%" border="0" cellpadding="0" cellspacing="0" summary="system routes">

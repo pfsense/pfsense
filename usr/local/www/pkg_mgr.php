@@ -231,16 +231,16 @@ include("head.inc");
 							print ">\n";
 						}
 
-						print "{$index['status']} <br>\n";
+						print "{$index['status']} <br />\n";
 
 						if ($g['disablepackagehistory'])
 							echo"<a>{$index['version']}</a>";
 						else
 							echo "<a target='_blank' href='{$changeloglink}'>{$index['version']}</a>";
 ?>
-						<br/>
+						<br />
 						<?=gettext("platform") .": ". $index['required_version'] ?>
-						<br/>
+						<br />
 						<?=$index['maximum_version'] ?>
 						</td>
 						<td class="listbg" style="overflow:hidden; text-align:justify;" <?=domTT_title(gettext("Click package info for more details about ".ucfirst($index['name'])." package."))?>>
@@ -248,7 +248,7 @@ include("head.inc");
 <?php
 						if (! $g['disablepackageinfo']):
 ?>
-							<br/><br/>
+							<br /><br />
 							<a target='_blank' href='<?=$pkginfolink?>' style='text-align:center;color:#ffffff; filter:Glow(color=#ff0000, strength=12);'><?=$pkginfo?></a>
 <?php
 						endif;

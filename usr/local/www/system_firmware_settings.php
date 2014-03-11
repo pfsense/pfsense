@@ -150,7 +150,7 @@ function enable_altfirmwareurl(enable_over) {
 					}
 				?>
 			</select>
-		<br/><br/><?php echo sprintf(gettext("Entries denoted by \"Current architecture\" match the architecture of your current installation, such as %s. Changing architectures during an upgrade is not recommended, and may require a manual reboot after the update completes."), php_uname("m")); ?>
+		<br /><br /><?php echo sprintf(gettext("Entries denoted by \"Current architecture\" match the architecture of your current installation, such as %s. Changing architectures during an upgrade is not recommended, and may require a manual reboot after the update completes."), php_uname("m")); ?>
 		</td>
 	</tr>
 <?php endif; ?>
@@ -163,7 +163,7 @@ function enable_altfirmwareurl(enable_over) {
 			</table>
 			<span class="vexpl">
 				<?=gettext("This is where"); ?> <?php echo $g['product_name'] ?> <?=gettext("will check for newer firmware versions when the"); ?> <a href="system_firmware_check.php"><?=gettext("System: Firmware: Auto Update"); ?></a> <?=gettext("page is viewed."); ?>
-				<br/>
+				<br />
 				<b><?=gettext("NOTE:"); ?></b> <?php printf(gettext("When a custom URL is enabled, the system will not verify the digital signature from %s."), $g['product_website']); ?>
 				</span>
 				</td>

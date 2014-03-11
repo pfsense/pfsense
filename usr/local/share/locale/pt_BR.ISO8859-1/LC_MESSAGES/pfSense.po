@@ -72,8 +72,8 @@ msgstr "não é um array"
 
 # só se usa "ao invés", para coisas contrárias. "Dentro ao invés de fora."
 #: etc/inc/auth.inc:100 etc/inc/auth.inc:107
-msgid "Potential DNS Rebind attack detected, see http://en.wikipedia.org/wiki/DNS_rebinding<br/>Try accessing the router by IP address instead of by hostname."
-msgstr "Potencial ataque DNS Rebind detectado, veja http://en.wikipedia.org/wiki/DNS_rebinding<br/> Tente acessar o roteador pelo endereço de IP em lugar do hostname."
+msgid "Potential DNS Rebind attack detected, see http://en.wikipedia.org/wiki/DNS_rebinding<br />Try accessing the router by IP address instead of by hostname."
+msgstr "Potencial ataque DNS Rebind detectado, veja http://en.wikipedia.org/wiki/DNS_rebinding<br /> Tente acessar o roteador pelo endereço de IP em lugar do hostname."
 
 #: etc/inc/auth.inc:115 etc/inc/auth.inc:122
 msgid "Redirecting..."
@@ -3284,8 +3284,8 @@ msgid "Login"
 msgstr "Login"
 
 #: etc/inc/authgui.inc:242 etc/inc/authgui.inc:240 etc/inc/authgui.inc:263
-msgid "You are accessing this router by an IP address not configured locally, which may be forwarded by NAT or other means. <br/><br/>If you did not setup this forwarding, you may be the target of a man-in-the-middle attack."
-msgstr "Você está acessando este roteador através de um endereço IP não configurado localmente, que pode ser encaminhado pelo NAT ou outros meios. <br/><br/>Se você não instalou este encaminhando, você pode estar sendo alvo de um ataque."
+msgid "You are accessing this router by an IP address not configured locally, which may be forwarded by NAT or other means. <br /><br />If you did not setup this forwarding, you may be the target of a man-in-the-middle attack."
+msgstr "Você está acessando este roteador através de um endereço IP não configurado localmente, que pode ser encaminhado pelo NAT ou outros meios. <br /><br />Se você não instalou este encaminhando, você pode estar sendo alvo de um ataque."
 
 #: etc/inc/authgui.inc:251 etc/inc/authgui.inc:249 etc/inc/authgui.inc:272
 msgid "Username:"
@@ -15259,8 +15259,8 @@ msgstr "Você realmente deseja excluir os mapeamentos selecionados?"
 #: usr/local/www/firewall_nat_out.php:470
 #: usr/local/www/firewall_nat_out.php:477
 #: usr/local/www/firewall_nat_out.php:476
-msgid "With automatic outbound NAT enabled, a mapping is automatically created for each interface's subnet (except WAN-type connections) and the rules on this page are ignored.<br/><br/> If manual outbound NAT is enabled, outbound NAT rules will not be automatically generated and only the mappings you specify on this page will be used. <br/><br/> If a target address other than a WAN-type interface's IP address is used, then depending on the way the WAN connection is setup, a "
-msgstr "Com regras automáticas de saída NAT habilitadas, um mapeamento é automaticamente criado para a subrede de cada interface (exceto conexões WAN) e as regras nesta página são ignoradas.<br/><br/> Se geração manual de regras de saída NAT estiver habilitado, regras de saída NAT não serão geradas automaticamente e apenas os mapeamentos nesta página serão utilizados. <br/><br/> Se um endereço alvo diferente de endereços IP WAN são utilizados. dependendo de como a conexão WAN está configurada, um"
+msgid "With automatic outbound NAT enabled, a mapping is automatically created for each interface's subnet (except WAN-type connections) and the rules on this page are ignored.<br /><br /> If manual outbound NAT is enabled, outbound NAT rules will not be automatically generated and only the mappings you specify on this page will be used. <br /><br /> If a target address other than a WAN-type interface's IP address is used, then depending on the way the WAN connection is setup, a "
+msgstr "Com regras automáticas de saída NAT habilitadas, um mapeamento é automaticamente criado para a subrede de cada interface (exceto conexões WAN) e as regras nesta página são ignoradas.<br /><br /> Se geração manual de regras de saída NAT estiver habilitado, regras de saída NAT não serão geradas automaticamente e apenas os mapeamentos nesta página serão utilizados. <br /><br /> Se um endereço alvo diferente de endereços IP WAN são utilizados. dependendo de como a conexão WAN está configurada, um"
 
 #: usr/local/www/firewall_nat_out.php:469
 #: usr/local/www/firewall_nat_out_edit.php:588
@@ -15794,14 +15794,14 @@ msgstr "Resposta de máscara de endereço"
 #: usr/local/www/firewall_rules.php:201 usr/local/www/firewall_rules.php:205
 #: usr/local/www/firewall_rules.php:203
 #, php-format
-msgid "The settings have been applied. The firewall rules are now reloading in the background.<br/>You can also %s monitor %s the reload progress"
-msgstr "As configurações foram aplicadas. As regras de firewall estão recarregando em background agora. <br/>Você também pode %s monitorar %s o progresso."
+msgid "The settings have been applied. The firewall rules are now reloading in the background.<br />You can also %s monitor %s the reload progress"
+msgstr "As configurações foram aplicadas. As regras de firewall estão recarregando em background agora. <br />Você também pode %s monitorar %s o progresso."
 
 #: usr/local/www/firewall_rules.php:315 usr/local/www/firewall_rules.php:317
 #: usr/local/www/firewall_rules.php:319 usr/local/www/firewall_rules.php:321
 #: usr/local/www/firewall_rules.php:312 usr/local/www/firewall_rules.php:314
-msgid "The firewall rule configuration has been changed.<br/>You must apply the changes in order for them to take effect."
-msgstr "A configuração de regra do firewall foi modificada.<br/>Você deve aplicar as modificações para que elas tenham efeito."
+msgid "The firewall rule configuration has been changed.<br />You must apply the changes in order for them to take effect."
+msgstr "A configuração de regra do firewall foi modificada.<br />Você deve aplicar as modificações para que elas tenham efeito."
 
 #: usr/local/www/firewall_rules.php:338 usr/local/www/firewall_rules.php:342
 #: usr/local/www/firewall_rules.php:335 usr/local/www/firewall_rules.php:334
@@ -35673,8 +35673,8 @@ msgstr "Conexões duplicadas"
 #: usr/local/www/vpn_openvpn_server.php:1283
 #: usr/local/www/vpn_openvpn_server.php:1325
 #: usr/local/www/vpn_openvpn_server.php:1352
-msgid "Allow multiple concurrent connections from clients using the same Common Name.<br/>NOTE: This is not generally recommended, but may be needed for some scenarios."
-msgstr "Habilite múltiplas conexões concorrentes para clientes usando um Nome Comum.<br/>NOTA: Isto geralmente não é recomendado, mas pode ser necessário em alguns cenários."
+msgid "Allow multiple concurrent connections from clients using the same Common Name.<br />NOTE: This is not generally recommended, but may be needed for some scenarios."
+msgstr "Habilite múltiplas conexões concorrentes para clientes usando um Nome Comum.<br />NOTA: Isto geralmente não é recomendado, mas pode ser necessário em alguns cenários."
 
 #: usr/local/www/vpn_openvpn_server.php:1158
 #: usr/local/www/vpn_openvpn_server.php:1300
@@ -38757,7 +38757,7 @@ msgid "tries to avoid dropping any legitimate idle connections at the expense of
 msgstr "tenta evitar queda de qualquer conexão legítima às custas do uso de memória e utilização de CPU."
 
 #: usr/local/www/vpn_pptp.php:297 usr/local/www/vpn_pptp.php:300
-msgid "PPTP is no longer considered a secure VPN technology because it relies upon MS-CHAPv2 which has been compromised. If you continue to use PPTP be aware that intercepted traffic can be decrypted by a third party, so it should be considered unencrypted. We advise migrating to another VPN type such as OpenVPN or IPsec.<br/><br/><a href=\"https://isc.sans.edu/diary/End+of+Days+for+MS-CHAPv2/13807\">Read More</a>"
+msgid "PPTP is no longer considered a secure VPN technology because it relies upon MS-CHAPv2 which has been compromised. If you continue to use PPTP be aware that intercepted traffic can be decrypted by a third party, so it should be considered unencrypted. We advise migrating to another VPN type such as OpenVPN or IPsec.<br /><br /><a href=\"https://isc.sans.edu/diary/End+of+Days+for+MS-CHAPv2/13807\">Read More</a>"
 msgstr ""
 
 #: usr/local/www/status_ntpd.php:185 usr/local/www/status_ntpd.php:191

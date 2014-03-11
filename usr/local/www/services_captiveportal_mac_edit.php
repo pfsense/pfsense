@@ -195,7 +195,7 @@ include("head.inc");
 					endforeach;
 ?>
 				</select>
-				<br>
+				<br />
 				<span class="vexpl"><?=gettext("Choose what to do with packets coming from this MAC address"); ?>.</span>
 			</td>
 		</tr>
@@ -209,14 +209,14 @@ include("head.inc");
 				$mac = str_replace("\n","",$mac);
 ?>
 				<a OnClick="document.forms[0].mac.value='<?=$mac?>';" href="#"><?=gettext("Copy my MAC address");?></a>
-				<br>
+				<br />
 				<span class="vexpl"><?=gettext("MAC address (6 hex octets separated by colons)"); ?></span></td>
 		</tr>
 		<tr>
 			<td width="22%" valign="top" class="vncell"><?=gettext("Description"); ?></td>
 			<td width="78%" class="vtable">
 				<input name="descr" type="text" class="formfld unknown" id="descr" size="40" value="<?=htmlspecialchars($pconfig['descr']);?>">
-				<br>
+				<br />
 				<span class="vexpl"><?=gettext("You may enter a description here for your reference (not parsed)"); ?>.</span>
 			</td>
 		</tr>
@@ -224,7 +224,7 @@ include("head.inc");
 			<td width="22%" valign="top" class="vncell"><?=gettext("Bandwidth up"); ?></td>
 			<td width="78%" class="vtable">
 				<input name="bw_up" type="text" class="formfld unknown" id="bw_up" size="10" value="<?=htmlspecialchars($pconfig['bw_up']);?>">
-				<br>
+				<br />
 				<span class="vexpl"><?=gettext("Enter a upload limit to be enforced on this MAC address in Kbit/s"); ?></span>
 			</td>
 		</tr>
@@ -232,7 +232,7 @@ include("head.inc");
 			<td width="22%" valign="top" class="vncell"><?=gettext("Bandwidth down"); ?></td>
 			<td width="78%" class="vtable">
 				<input name="bw_down" type="text" class="formfld unknown" id="bw_down" size="10" value="<?=htmlspecialchars($pconfig['bw_down']);?>">
-				<br>
+				<br />
 				<span class="vexpl"><?=gettext("Enter a download limit to be enforced on this MAC address in Kbit/s"); ?></span>
 			</td>
 		</tr>

@@ -232,7 +232,7 @@ jQuery(function ($) {
                   <td width="22%" valign="top" class="vncellreq"><?=gettext("Group Name"); ?></td>
                   <td width="78%" class="vtable"> 
                     <input name="name" type="text" class="formfld unknown" id="name" size="20" value="<?=htmlspecialchars($pconfig['name']);?>" />
-                    <br/> <span class="vexpl"><?=gettext("Group Name"); ?></span></td>
+                    <br /> <span class="vexpl"><?=gettext("Group Name"); ?></span></td>
                 </tr>
 		<tr>
                   <td width="22%" valign="top" class="vncellreq"><?=gettext("Gateway Priority"); ?></td>
@@ -307,7 +307,7 @@ jQuery(function ($) {
 		 	}
 		?>
 			</table>
-			<br/><span class="vexpl">
+			<br /><span class="vexpl">
 			<strong><?=gettext("Link Priority"); ?></strong> <br />
 			<?=gettext("The priority selected here defines in what order failover and balancing of links will be done. " .
 			"Multiple links of the same priority will balance connections until all links in the priority will be exhausted. " .
@@ -330,13 +330,13 @@ jQuery(function ($) {
 				}
 			?>
 			</select>
-                    <br/> <span class="vexpl"><?=gettext("When to trigger exclusion of a member"); ?></span></td>
+                    <br /> <span class="vexpl"><?=gettext("When to trigger exclusion of a member"); ?></span></td>
                 </tr>
 		<tr>
                   <td width="22%" valign="top" class="vncell"><?=gettext("Description"); ?></td>
                   <td width="78%" class="vtable"> 
                     <input name="descr" type="text" class="formfld unknown" id="descr" size="40" value="<?=htmlspecialchars($pconfig['descr']);?>" />
-                    <br/> <span class="vexpl"><?=gettext("You may enter a description here for your reference (not parsed)."); ?></span></td>
+                    <br /> <span class="vexpl"><?=gettext("You may enter a description here for your reference (not parsed)."); ?></span></td>
                 </tr>
                 <tr>
                   <td width="22%" valign="top">&nbsp;</td>

@@ -95,7 +95,7 @@ require_once("/usr/local/www/widgets/include/interfaces.inc");
 						<tr>
 							<td class="vncellt" width="100%">
 								<div id="<?php echo $ifname;?>-ip" style="display:inline"><?=htmlspecialchars($ifinfo['ipaddr']);?> </div>
-								<br/>
+								<br />
 								<div id="<?php echo $ifname;?>-ipv6" style="display:inline"><?=htmlspecialchars($ifinfo['ipaddrv6']);?> </div>
 							</td>
 						</tr>

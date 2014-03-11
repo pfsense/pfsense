@@ -208,9 +208,9 @@ include("head.inc");
 		print_info_box($savemsg); 
 	else
 	if (is_subsystem_dirty('vip'))
-		print_info_box_np(gettext("The VIP configuration has been changed.")."<br/>".gettext("You must apply the changes in order for them to take effect."));
+		print_info_box_np(gettext("The VIP configuration has been changed.")."<br />".gettext("You must apply the changes in order for them to take effect."));
 ?>
-<br/>
+<br />
 <table width="100%" border="0" cellpadding="0" cellspacing="0" summary="virtual ip">
   <tr><td class="tabnavtbl">
   <?php
@@ -292,8 +292,8 @@ include("head.inc");
                 </tr>
 		<tr>
 		  <td colspan="5">
-		      <p><span class="vexpl"><span class="red"><strong><?=gettext("Note:");?><br/>
-                      </strong></span><?=gettext("The virtual IP addresses defined on this page may be used in");?><a href="firewall_nat.php"> <?=gettext("NAT"); ?> </a><?=gettext("mappings.");?><br/>
+		      <p><span class="vexpl"><span class="red"><strong><?=gettext("Note:");?><br />
+                      </strong></span><?=gettext("The virtual IP addresses defined on this page may be used in");?><a href="firewall_nat.php"> <?=gettext("NAT"); ?> </a><?=gettext("mappings.");?><br />
                       <?=gettext("You can check the status of your CARP Virtual IPs and interfaces ");?><a href="carp_status.php"><?=gettext("here");?></a>.</span></p>
 		  </td>
 		</tr>

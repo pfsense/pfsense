@@ -192,7 +192,7 @@ include("head.inc");
 <script type="text/javascript" language="javascript" src="/javascript/row_toggle.js"></script>
 <?php if ($savemsg) print_info_box($savemsg); ?>
 <?php if (is_subsystem_dirty('staticroutes')): ?><p>
-<?php print_info_box_np(gettext("The gateway configuration has been changed.") . "<br/>" . gettext("You must apply the changes in order for them to take effect."));?><br/></p>
+<?php print_info_box_np(gettext("The gateway configuration has been changed.") . "<br />" . gettext("You must apply the changes in order for them to take effect."));?><br /></p>
 <?php endif; ?>
 	<table width="100%" border="0" cellpadding="0" cellspacing="0" summary="system gatewyas">
 		<tr>

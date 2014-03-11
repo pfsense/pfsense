@@ -218,9 +218,9 @@ include("head.inc");
 if ($savemsg)
 	print_info_box($savemsg);
 if (is_subsystem_dirty('natconf'))
-	print_info_box_np(gettext("The NAT configuration has been changed.")."<br/>".gettext("You must apply the changes in order for them to take effect."));
+	print_info_box_np(gettext("The NAT configuration has been changed.")."<br />".gettext("You must apply the changes in order for them to take effect."));
 ?>
-<br/>
+<br />
 <table width="100%" border="0" cellpadding="0" cellspacing="0" summary="firewall nat outbound">
 	<tr><td>
 <?php
@@ -243,7 +243,7 @@ if (is_subsystem_dirty('natconf'))
 					</td>
 					<td>
 						<strong>
-							<?=gettext("Automatic outbound NAT rule generation"); ?><br/>
+							<?=gettext("Automatic outbound NAT rule generation"); ?><br />
 							<?=gettext("(IPsec passthrough included)");?>
 						</strong>
 					</td>
@@ -252,7 +252,7 @@ if (is_subsystem_dirty('natconf'))
 					</td>
 					<td>
 						<strong>
-							<?=gettext("Hybrid Outbound NAT rule generation"); ?><br/>
+							<?=gettext("Hybrid Outbound NAT rule generation"); ?><br />
 							<?=gettext("(Automatic Outbound NAT + rules below)");?>
 						</strong>
 					</td>
@@ -271,7 +271,7 @@ if (is_subsystem_dirty('natconf'))
 					</td>
 					<td>
 						<strong>
-							<?=gettext("Manual Outbound NAT rule generation"); ?><br/>
+							<?=gettext("Manual Outbound NAT rule generation"); ?><br />
 							<?=gettext("(AON - Advanced Outbound NAT)");?>
 						</strong>
 					</td>
@@ -280,7 +280,7 @@ if (is_subsystem_dirty('natconf'))
 					</td>
 					<td>
 						<strong>
-							<?=gettext("Disable Outbound NAT rule generation"); ?><br/>
+							<?=gettext("Disable Outbound NAT rule generation"); ?><br />
 							<?=gettext("(No Outbound NAT rules)");?>
 						</strong>
 					</td>
@@ -625,16 +625,16 @@ if (is_subsystem_dirty('natconf'))
 				<tr>
 					<td colspan="12">
 						<p><span class="vexpl">
-							<span class="red"><strong><?=gettext("Note:"); ?><br/></strong></span>
+							<span class="red"><strong><?=gettext("Note:"); ?><br /></strong></span>
 							<?=gettext("If automatic outbound NAT selected, a mapping is automatically created " .
 								"for each interface's subnet (except WAN-type connections) and the rules " .
-								"on \"Mappings\" section of this page are ignored.<br/><br/> " .
+								"on \"Mappings\" section of this page are ignored.<br /><br /> " .
 								"If manual outbound NAT is selected, outbound NAT rules will not be " .
 								"automatically generated and only the mappings you specify on this page " .
-								"will be used. <br/><br/> " .
+								"will be used. <br /><br /> " .
 								"If hybrid outbound NAT is selected, mappings you specify on this page will " .
-								"be used, followed by the automatically generated ones. <br/><br/>" .
-								"If disable outbound NAT is selected, no rules will be used. <br/><br/>" .
+								"be used, followed by the automatically generated ones. <br /><br />" .
+								"If disable outbound NAT is selected, no rules will be used. <br /><br />" .
 								"If a target address other than a WAN-type interface's IP address is used, " .
 								"then depending on the way the WAN connection is setup, a "); ?>
 								<a href="firewall_virtual_ip.php"><?=gettext("Virtual IP"); ?></a>

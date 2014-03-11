@@ -180,7 +180,7 @@ echo "<script type=\"text/javascript\" language=\"javascript\" src=\"/javascript
 <script type="text/javascript" language="javascript" src="/javascript/row_toggle.js"></script>
 <?php if ($savemsg) print_info_box($savemsg); ?>
 <?php if (is_subsystem_dirty('natconf')): ?>
-<?php print_info_box_np(gettext("The NAT configuration has been changed") . ".<br/>" . gettext("You must apply the changes in order for them to take effect."));?><br/>
+<?php print_info_box_np(gettext("The NAT configuration has been changed") . ".<br />" . gettext("You must apply the changes in order for them to take effect."));?><br />
 <?php endif; ?>
 <table width="100%" border="0" cellpadding="0" cellspacing="0" summary="firewall nat">
   <tr><td>

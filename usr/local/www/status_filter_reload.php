@@ -68,7 +68,7 @@ include("head.inc");
 <body link="#0000CC" vlink="#0000CC" alink="#0000CC">
 
 <?php include("fbegin.inc"); ?>
-<br/>
+<br />
 <form action="status_filter_reload.php" method="post" name="filter">
 <input type="submit" value="Reload Filter" name="reloadfilter" id="reloadfilter">
 <?php if ($config['hasync'] && $config['hasync']["synchronizetoip"] != ""): ?>
@@ -76,7 +76,7 @@ include("head.inc");
 <input type="submit" value="Force Config Sync" name="syncfilter" id="syncfilter">
 <?php endif; ?>
 </form>
-<br/><br/><br/>
+<br /><br /><br />
 <div id="status" name="status" style="padding:5px; border:1px dashed #990000; background-color: #ffffff; color: #000000;">
 	<?php echo $status; ?>
 </div>

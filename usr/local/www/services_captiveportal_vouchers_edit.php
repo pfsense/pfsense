@@ -171,7 +171,7 @@ include("head.inc");
 	  <td width="22%" valign="top" class="vncellreq"><?=gettext("Roll"); ?>#</td>
 	  <td width="78%" class="vtable"> 
 		<?=$mandfldhtml;?><input name="number" type="text" class="formfld" id="number" size="10" value="<?=htmlspecialchars($pconfig['number']);?>"> 
-        <br>
+        <br />
         <span class="vexpl"><?=gettext("Enter the Roll"); ?># (0..<?=htmlspecialchars($maxnumber);?>) <?=gettext("found on top of the generated/printed vouchers"); ?>.</span>
 		</td>
 	</tr>
@@ -179,7 +179,7 @@ include("head.inc");
 	  <td width="22%" valign="top" class="vncellreq"><?=gettext("Minutes per Ticket"); ?></td>
 	  <td width="78%" class="vtable"> 
 		<?=$mandfldhtml;?><input name="minutes" type="text" class="formfld" id="minutes" size="10" value="<?=htmlspecialchars($pconfig['minutes']);?>"> 
-        <br>
+        <br />
         <span class="vexpl"><?=gettext("Defines the time in minutes that a user is allowed access. The clock starts ticking the first time a voucher is used for authentication"); ?>.</span>
 	   </td>
 	</tr>
@@ -187,7 +187,7 @@ include("head.inc");
 	  <td width="22%" valign="top" class="vncellreq"><?=gettext("Count"); ?></td>
 	  <td width="78%" class="vtable"> 
 		<?=$mandfldhtml;?><input name="count" type="text" class="formfld" id="count" size="10" value="<?=htmlspecialchars($pconfig['count']);?>"> 
-        <br>
+        <br />
         <span class="vexpl"><?=gettext("Enter the number of vouchers"); ?> (1..<?=htmlspecialchars($maxcount);?>) <?=gettext("found on top of the generated/printed vouchers. WARNING: Changing this number for an existing Roll will mark all vouchers as unused again"); ?>.</span>
 		</td>
 	</tr>
@@ -195,7 +195,7 @@ include("head.inc");
 	  <td width="22%" valign="top" class="vncell"><?=gettext("Comment"); ?></td>
 	  <td width="78%" class="vtable"> 
 		<?=$mandfldhtml;?><input name="descr" type="text" class="formfld" id="descr" size="60" value="<?=htmlspecialchars($pconfig['descr']);?>"> 
-        <br>
+        <br />
         <span class="vexpl"><?=gettext("Can be used to further identify this roll. Ignored by the system"); ?>.</span>
 		</td>
 	</tr>

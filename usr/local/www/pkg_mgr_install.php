@@ -157,7 +157,7 @@ if ($_POST) {
 								</td>
 							</tr>
 						</table>
-						<br/>
+						<br />
 						<!-- status box -->
 						<textarea cols="80" rows="1" name="status" id="status" wrap="hard"><?=gettext("Beginning package installation.");?></textarea>
 						<!-- command output box -->

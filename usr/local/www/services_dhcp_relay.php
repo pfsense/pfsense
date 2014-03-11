@@ -3,7 +3,7 @@
 	services_dhcp_relay.php
 
 	Copyright (C) 2003-2004 Justin Ellison <justin@techadvise.com>.
-	Copyright (C) 2010 	Ermal Luçi
+	Copyright (C) 2010 	Ermal Luï¿½i
 	All rights reserved.
 
 	Redistribution and use in source and binary forms, with or without
@@ -173,14 +173,14 @@ function enable_change(enable_over) {
 	              <td width="22%" valign="top" class="vtable">&nbsp;</td>
                       <td width="78%" class="vtable">
 <input name="agentoption" type="checkbox" value="yes" <?php if ($pconfig['agentoption']) echo "checked"; ?>>
-                      <strong><?=gettext("Append circuit ID and agent ID to requests"); ?></strong><br>
+                      <strong><?=gettext("Append circuit ID and agent ID to requests"); ?></strong><br />
                       <?php printf(gettext("If this is checked, the DHCP relay will append the circuit ID (%s interface number) and the agent ID to the DHCP request."), $g['product_name']); ?></td>
 		</tr>
 		<tr>
                         <td width="22%" valign="top" class="vncellreq"><?=gettext("Destination server");?></td>
                         <td width="78%" class="vtable">
                           <input name="server" type="text" class="formfld unknown" id="server" size="20" value="<?=htmlspecialchars($pconfig['server']);?>">
-                          <br>
+                          <br />
 			  <?=gettext("This is the IP address of the server to which DHCP requests are relayed. You can enter multiple server IP addresses, separated by commas. Select \"Proxy requests to DHCP server on WAN subnet\" to relay DHCP packets to the server that was used on the WAN interface.");?>
                         </td>
 		</tr>

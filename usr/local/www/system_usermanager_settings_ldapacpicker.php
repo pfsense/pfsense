@@ -110,7 +110,7 @@ function post_choices() {
 				$CHECKED=" CHECKED";
 			else 
 				$CHECKED="";
-			echo "			<tr><td><input type='checkbox' value='{$ou}' id='ou' name='ou[]'{$CHECKED}> {$ou}<br/></td></tr>\n";
+			echo "			<tr><td><input type='checkbox' value='{$ou}' id='ou' name='ou[]'{$CHECKED}> {$ou}<br /></td></tr>\n";
 		}
 	}
 ?>

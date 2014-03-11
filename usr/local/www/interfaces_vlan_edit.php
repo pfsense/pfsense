@@ -175,21 +175,21 @@ include("head.inc");
 						}
 		      ?>
                     </select>
-			<br/>
+			<br />
 			<span class="vexpl"><?=gettext("Only VLAN capable interfaces will be shown.");?></span></td>
                 </tr>
 				<tr>
                   <td valign="top" class="vncellreq"><?=gettext("VLAN tag ");?></td>
                   <td class="vtable">
                     <input name="tag" type="text" class="formfld unknown" id="tag" size="6" value="<?=htmlspecialchars($pconfig['tag']);?>" />
-                    <br/>
+                    <br />
                     <span class="vexpl"><?=gettext("802.1Q VLAN tag (between 1 and 4094) ");?></span></td>
 			    </tr>
 				<tr>
                   <td width="22%" valign="top" class="vncell"><?=gettext("Description");?></td>
                   <td width="78%" class="vtable">
                     <input name="descr" type="text" class="formfld unknown" id="descr" size="40" value="<?=htmlspecialchars($pconfig['descr']);?>" />
-                    <br/> <span class="vexpl"><?=gettext("You may enter a description here ".
+                    <br /> <span class="vexpl"><?=gettext("You may enter a description here ".
                     "for your reference (not parsed).");?></span></td>
                 </tr>
                 <tr>

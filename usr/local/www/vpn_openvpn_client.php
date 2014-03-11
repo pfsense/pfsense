@@ -83,7 +83,7 @@ if ($_GET['act'] == "del") {
 		openvpn_delete('client', $a_client[$id]);
 	unset($a_client[$id]);
 	write_config();
-	$savemsg = gettext("Client successfully deleted")."<br/>";
+	$savemsg = gettext("Client successfully deleted")."<br />";
 }
 
 if($_GET['act']=="new"){
@@ -430,7 +430,7 @@ if ($savemsg)
 									<td>
 										&nbsp;
 										<span class="vexpl">
-											<strong><?=gettext("Disable this client"); ?></strong><br>
+											<strong><?=gettext("Disable this client"); ?></strong><br />
 										</span>
 									</td>
 								</tr>
@@ -516,14 +516,14 @@ if ($savemsg)
 										<?=htmlspecialchars($ifacename);?>
 									</option>
 								<?php endforeach; ?>
-							</select> <br>
+							</select> <br />
 						</td>
 					</tr>
 					<tr>
 						<td width="22%" valign="top" class="vncell"><?=gettext("Local port");?></td>
 						<td width="78%" class="vtable">
 							<input name="local_port" type="text" class="formfld unknown" size="5" value="<?=htmlspecialchars($pconfig['local_port']);?>"/>
-							<br/>
+							<br />
 							<?=gettext("Set this option if you would like to bind to a specific port. Leave this blank or enter 0 for a random dynamic port."); ?>
 						</td>
 					</tr>
@@ -620,7 +620,7 @@ if ($savemsg)
 						<td width="22%" valign="top" class="vncell"><?=gettext("Description"); ?></td>
 						<td width="78%" class="vtable"> 
 							<input name="description" type="text" class="formfld unknown" size="30" value="<?=htmlspecialchars($pconfig['description']);?>">
-							<br>
+							<br />
 							<?=gettext("You may enter a description here for your reference (not parsed)"); ?>.
 						</td>
 					</tr>
@@ -665,7 +665,7 @@ if ($savemsg)
 								<tr>
 									<td>
 										<textarea name="tls" cols="65" rows="7" class="formpre"><?=htmlspecialchars($pconfig['tls']);?></textarea>
-										<br/>
+										<br />
 										<?=gettext("Paste your shared key here"); ?>.
 									</td>
 								</tr>
@@ -687,7 +687,7 @@ if ($savemsg)
 							<?php endforeach; ?>
 							</select>
 							<?php else: ?>
-								<b>No Certificate Authorities defined.</b> <br/>Create one under <a href="system_camanager.php">System &gt; Cert Manager</a>.
+								<b>No Certificate Authorities defined.</b> <br />Create one under <a href="system_camanager.php">System &gt; Cert Manager</a>.
 							<?php endif; ?>
 							</td>
 					</tr>
@@ -716,7 +716,7 @@ if ($savemsg)
 							<?php endforeach; ?>
 							</select>
 							<?php else: ?>
-								<b>No Certificates defined.</b> <br/>Create one under <a href="system_certmanager.php">System &gt; Cert Manager</a>.
+								<b>No Certificates defined.</b> <br />Create one under <a href="system_certmanager.php">System &gt; Cert Manager</a>.
 							<?php endif; ?>
 						</td>
 					</tr>
@@ -742,7 +742,7 @@ if ($savemsg)
 								<tr>
 									<td>
 										<textarea name="shared_key" cols="65" rows="7" class="formpre"><?=htmlspecialchars($pconfig['shared_key']);?></textarea>
-										<br/>
+										<br />
 										<?=gettext("Paste your shared key here"); ?>.
 									</td>
 								</tr>
@@ -813,7 +813,7 @@ if ($savemsg)
 						<td width="22%" valign="top" class="vncell"><?=gettext("IPv4 Tunnel Network"); ?></td>
 						<td width="78%" class="vtable">
 							<input name="tunnel_network" type="text" class="formfld unknown" size="20" value="<?=htmlspecialchars($pconfig['tunnel_network']);?>">
-							<br>
+							<br />
 							<?=gettext("This is the virtual network used for private " .
 							"communications between this client and the " .
 							"server expressed using CIDR (eg. 10.0.8.0/24). " .
@@ -827,7 +827,7 @@ if ($savemsg)
 						<td width="22%" valign="top" class="vncell"><?=gettext("IPv6 Tunnel Network"); ?></td>
 						<td width="78%" class="vtable">
 							<input name="tunnel_networkv6" type="text" class="formfld unknown" size="20" value="<?=htmlspecialchars($pconfig['tunnel_networkv6']);?>">
-							<br>
+							<br />
 							<?=gettext("This is the IPv6 virtual network used for private " .
 							"communications between this client and the " .
 							"server expressed using CIDR (eg. fe80::/64). " .
@@ -841,7 +841,7 @@ if ($savemsg)
 						<td width="22%" valign="top" class="vncell"><?=gettext("IPv4 Remote Network/s"); ?></td>
 						<td width="78%" class="vtable">
 							<input name="remote_network" type="text" class="formfld unknown" size="40" value="<?=htmlspecialchars($pconfig['remote_network']);?>">
-							<br>
+							<br />
 							<?=gettext("These are the IPv4 networks that will be routed through " .
 							"the tunnel, so that a site-to-site VPN can be " .
 							"established without manually changing the routing tables. " .
@@ -855,7 +855,7 @@ if ($savemsg)
 						<td width="22%" valign="top" class="vncell"><?=gettext("IPv6 Remote Network/s"); ?></td>
 						<td width="78%" class="vtable">
 							<input name="remote_networkv6" type="text" class="formfld unknown" size="40" value="<?=htmlspecialchars($pconfig['remote_networkv6']);?>">
-							<br>
+							<br />
 							<?=gettext("These are the IPv6 networks that will be routed through " .
 							"the tunnel, so that a site-to-site VPN can be " .
 							"established without manually changing the routing tables. " .
@@ -869,7 +869,7 @@ if ($savemsg)
 						<td width="22%" valign="top" class="vncell"><?=gettext("Limit outgoing bandwidth");?></td>
 						<td width="78%" class="vtable">
 							<input name="use_shaper" type="text" class="formfld unknown" size="5" value="<?=htmlspecialchars($pconfig['use_shaper']);?>"/>
-							<br/>
+							<br />
 							<?=gettext("Maximum outgoing bandwidth for this tunnel. " .
 							"Leave empty for no limit. The input value has " .
 							"to be something between 100 bytes/sec and 100 " .
@@ -889,7 +889,7 @@ if ($savemsg)
 								<option value="<?= $cmode ?>" <?= $selected ?>><?= $cmodedesc ?></option>
 								<?php endforeach; ?>
 							</select>
-							<br/>
+							<br />
 							<?=gettext("Compress tunnel packets using the LZO algorithm. Adaptive compression will dynamically disable compression for a period of time if OpenVPN detects that the data in the packets is not being compressed efficiently."); ?>.
 						</td>
 					</tr>
@@ -926,8 +926,8 @@ if ($savemsg)
 							<table border="0" cellpadding="2" cellspacing="0">
 								<tr>
 									<td>
-										<textarea rows="6" cols="78" name="custom_options" id="custom_options"><?=htmlspecialchars($pconfig['custom_options']);?></textarea><br/>
-										<?=gettext("Enter any additional options you would like to add to the OpenVPN client configuration here, separated by a semicolon"); ?><br/>
+										<textarea rows="6" cols="78" name="custom_options" id="custom_options"><?=htmlspecialchars($pconfig['custom_options']);?></textarea><br />
+										<?=gettext("Enter any additional options you would like to add to the OpenVPN client configuration here, separated by a semicolon"); ?><br />
 										<?=gettext("EXAMPLE:"); ?> <strong>remote server.mysite.com 1194;</strong> or <strong>remote 1.2.3.4 1194;</strong>
 									</td>
 								</tr>
@@ -936,7 +936,7 @@ if ($savemsg)
 					</tr>
 				</table>
 
-				<br/>
+				<br />
 				<table width="100%" border="0" cellpadding="6" cellspacing="0">
 					<tr>
 						<td width="22%" valign="top">&nbsp;</td>

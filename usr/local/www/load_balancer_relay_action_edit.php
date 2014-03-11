@@ -498,7 +498,7 @@ jQuery(document).ready(function() {
 	}
 ?>
 				</select>
-<br/>
+<br />
 <table><tr>
 <td><div id="input_action_value"><?=gettext("Value"); ?>&nbsp;<input id="option_action_value" name="option_action_value" type="text" <?if(isset($pconfig['options']['value'])) echo "value=\"{$pconfig['options']['value']}\"";?>size="20"></div></td>
 <td><div id="action_action_value"></div></td>
@@ -559,7 +559,7 @@ jQuery(document).ready(function() {
 		</tr>
 	</table>
 	</form>
-<br>
+<br />
 <?php include("fend.inc"); ?>
 </body>
 </html>

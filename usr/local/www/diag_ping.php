@@ -145,7 +145,7 @@ include("head.inc"); ?>
 	<td valign="top" colspan="2">
 	<?php if ($do_ping) {
 		echo "<font face='terminal' size='2'>";
-		echo "<strong>" . gettext("Ping output") . ":</strong><br>";
+		echo "<strong>" . gettext("Ping output") . ":</strong><br />";
 		echo('<pre>');
 		$ifscope = '';
 		$command = "/sbin/ping";

@@ -133,14 +133,14 @@ include("head.inc");
                       <?=htmlspecialchars($ifacename);?>
                       </option>
                       <?php endforeach; ?>
-                    </select> <br>
+                    </select> <br />
                     <span class="vexpl"><?=gettext("Choose which interface this host is connected to.");?></span></td>
                 </tr>
 				<tr>
                   <td width="22%" valign="top" class="vncellreq"><?=gettext("MAC address");?></td>
                   <td width="78%" class="vtable"> 
                     <input name="mac" type="text" class="formfld" id="mac" size="20" value="<?=htmlspecialchars($pconfig['mac']);?>">
-                    <br> 
+                    <br /> 
                     <span class="vexpl"><?=gettext("Enter a MAC address  in the following format: ".
                     "xx:xx:xx:xx:xx:xx");?><em></em></span></td>
                 </tr>
@@ -148,7 +148,7 @@ include("head.inc");
                   <td width="22%" valign="top" class="vncell"><?=gettext("Description");?></td>
                   <td width="78%" class="vtable"> 
                     <input name="descr" type="text" class="formfld" id="descr" size="40" value="<?=htmlspecialchars($pconfig['descr']);?>">
-                    <br> <span class="vexpl"><?=gettext("You may enter a description here".
+                    <br /> <span class="vexpl"><?=gettext("You may enter a description here".
                    " for your reference (not parsed).");?></span></td>
                 </tr>
                 <tr>

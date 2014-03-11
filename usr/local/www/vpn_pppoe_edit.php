@@ -593,7 +593,7 @@ if ($savemsg)
 						<td width="78%">
 <?php
 						if (isset($id))
-							echo "<input type='hidden' name='id' id='id' value='{$id}' />";
+							echo "<input type='hidden' name='id' id='id' value='" . htmlspecialchars($id, ENT_QUOTES | ENT_HTML401) . "' />";
 ?>
 <?php
 						if (isset($pconfig['pppoeid']))

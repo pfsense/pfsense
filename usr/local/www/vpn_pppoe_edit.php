@@ -4,7 +4,7 @@
 	part of pfSense
 
 	Copyright (C) 2005 Scott Ullrich (sullrich@gmail.com)
-	Copyright (C) 2010 Ermal Lu�i
+	Copyright (C) 2010 Ermal Luçi
 	All rights reserved.
 
 	Redistribution and use in source and binary forms, with or without

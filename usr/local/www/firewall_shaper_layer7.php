@@ -2,7 +2,7 @@
 /* $Id$ */
 /*
 	firewall_shaper_layer7.php
-	Copyright (C) 2008 Helder Pereira, Andr� Ribeiro
+	Copyright (C) 2008 Helder Pereira, André Ribeiro
 	All rights reserved.
 
 	Redistribution and use in source and binary forms, with or without

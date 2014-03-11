@@ -3,7 +3,7 @@
 /*
 	firewall_shaper_wizards.php
 	Copyright (C) 2004, 2005 Scott Ullrich
-	Copyright (C) 2008 Ermal Lu�i
+	Copyright (C) 2008 Ermal Luçi
 	All rights reserved.
 
 	Redistribution and use in source and binary forms, with or without

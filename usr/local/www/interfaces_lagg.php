@@ -3,7 +3,7 @@
 /*
 	interfaces_lagg.php
 
-	Copyright (C) 2008 Ermal Lu�i
+	Copyright (C) 2008 Ermal Luçi
 	All rights reserved.
 
 	Redistribution and use in source and binary forms, with or without

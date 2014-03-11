@@ -1,7 +1,7 @@
 <?php
 /* $Id$ */
 /*
-    Copyright (C) 2011 Ermal Lu�i
+    Copyright (C) 2011 Ermal Luçi
     system_usermanager.php
 
     Redistribution and use in source and binary forms, with or without

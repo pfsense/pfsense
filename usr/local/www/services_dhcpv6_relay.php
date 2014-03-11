@@ -3,7 +3,7 @@
 	services_dhcpv6_relay.php
 
 	Copyright (C) 2003-2004 Justin Ellison <justin@techadvise.com>.
-	Copyright (C) 2010 	Ermal Lu�i
+	Copyright (C) 2010 	Ermal Luçi
 	Copyright (C) 2010 	Seth Mos
 	All rights reserved.
 

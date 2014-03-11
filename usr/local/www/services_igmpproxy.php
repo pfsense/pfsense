@@ -3,7 +3,7 @@
 /*
 	services_igmpproxy.php
 	
-	Copyright (C) 2009 Ermal Lu�i
+	Copyright (C) 2009 Ermal Luçi
 	Copyright (C) 2004 Scott Ullrich
 	All rights reserved.
 

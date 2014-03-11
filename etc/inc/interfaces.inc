@@ -2878,9 +2878,10 @@ function interface_configure($interface = "wan", $reloadall = false, $linkupeven
 		$tmpifaces = pfSense_getall_interface_addresses($realif);
 		if (is_array($tmpifaces)) {
 			foreach ($tmpifaces as $tmpiface) {
-				if (strstr($tmpiface, ":"))
-					mwexec("/sbin/ifconfig " . escapeshellarg($realif) . " inet6 {$tmpiface} delete");
-				else {
+				if (is_ipaddrv6($tmpiface) || is_subnetv6($tmpiface)) {
+					if (!is_linklocal($tmpiface))
+						mwexec("/sbin/ifconfig " . escapeshellarg($realif) . " inet6 {$tmpiface} delete");
+				} else {
 					if (is_subnetv4($tmpiface)) {
 						$tmpip = explode('/', $tmpiface);
 						$tmpip = $tmpip[0];

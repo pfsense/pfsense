@@ -1927,9 +1927,11 @@ function system_identify_specific_platform() {
 	/* the rest of the code only deals with 'embedded' platforms */
 	if ($g['platform'] != 'nanobsd')
 		return array('name' => $g['platform'], 'descr' => $g['platform']);
-	
-	$dmesg = system_get_dmesg_boot();
-	
+
+	unset($dmesg);
+	$_gb = exec('/sbin/sysctl -n hw.model', $output);
+	$dmesg = $dmesg[0];
+
 	if (strpos($dmesg, "PC Engines WRAP") !== false)
 		return array('name' => 'wrap', 'descr' => gettext('PC Engines WRAP'));
 	

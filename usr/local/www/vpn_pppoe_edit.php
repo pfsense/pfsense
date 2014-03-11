@@ -585,7 +585,7 @@ function enable_change(enable_over) {
                   <td width="22%" valign="top">&nbsp;</td>
                   <td width="78%"> 
 		<?php if (isset($id))
-			echo "<input type='hidden' name='id' id='id' value='{$id}' />";
+			echo "<input type='hidden' name='id' id='id' value='" . htmlspecialchars($id, ENT_QUOTES | ENT_HTML401) . "' />";
 		?>
 		<?php if (isset($pconfig['pppoeid']))
 			echo "<input type='hidden' name='pppoeid' id='pppoeid' value='{$pppoeid}' />";

@@ -202,7 +202,7 @@ include("head.inc");
 									<?=$currentvers[$pkg['name']]['descr'];?>
 							<?php if (! $g['disablepackageinfo']): ?>
 							<br/><br/>
-							<a target='_blank' href='<?=$pkginfolink?>' style='align:center;color:#ffffff; filter:Glow(color=#ff0000, strength=12);'><?=$pkginfo?></a>
+							<a target='_blank' href='<?=$pkginfolink?>' style='text-align:center;color:#ffffff; filter:Glow(color=#ff0000, strength=12);'><?=$pkginfo?></a>
 							<?php endif; ?>
 							</td>
 							<td valign="middle" class="list nowrap">

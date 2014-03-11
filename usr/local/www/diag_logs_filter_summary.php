@@ -175,7 +175,7 @@ include("head.inc"); ?>
 <script language="javascript" type="text/javascript">
 //<![CDATA[
 	function lblfmt(lbl) {
-		return '<font size=\"-2\">' + lbl + '<\/font>'
+		return '<font size=\"-2\">' + lbl + '<\/font>';
 	}
 //]]>
 </script>

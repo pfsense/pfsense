@@ -451,7 +451,7 @@ if (is_subsystem_dirty('natconf'))
 					<td class="list nowrap" valign="middle">
 						<table border="0" cellspacing="0" cellpadding="1" summary="move">
 							<tr>
-								<td><input onmouseover="fr_insline(<?=$i;?>, true)" onmouseout="fr_insline(<?=$i;?>, false)" name="move_<?=$i;?>" src="/themes/<?= $g['theme']; ?>/images/icons/icon_left.gif" title="<?=gettext("move selected rules before this rule");?>" type="image" style="height:17;width:17;border:0" /></td>
+								<td><input onmouseover="fr_insline(<?=$i;?>, true)" onmouseout="fr_insline(<?=$i;?>, false)" name="move_<?=$i;?>" src="/themes/<?= $g['theme']; ?>/images/icons/icon_left.gif" title="<?=gettext("move selected rules before this rule");?>" type="image" style="height:17px;width:17px;border:0" /></td>
 								<td>
 									<a href="firewall_nat_out_edit.php?id=<?=$i;?>">
 										<img src="/themes/<?= $g['theme']; ?>/images/icons/icon_e.gif" width="17" height="17" border="0" title="<?=gettext("edit mapping");?>" alt="edit" />
@@ -490,7 +490,7 @@ if (is_subsystem_dirty('natconf'))
 <?php
 								else:
 ?>
-									<input name="move_<?=$i;?>" type="image" src="/themes/<?= $g['theme']; ?>/images/icons/icon_left.gif" style="width:17;height:17;border:0" title="<?=gettext("move selected mappings to end");?>" />
+									<input name="move_<?=$i;?>" type="image" src="/themes/<?= $g['theme']; ?>/images/icons/icon_left.gif" style="width:17px;height:17px;border:0" title="<?=gettext("move selected mappings to end");?>" />
 <?php
 								endif;
 ?>
@@ -510,7 +510,7 @@ if (is_subsystem_dirty('natconf'))
 <?php
 								else:
 ?>
-									<input name="del" type="image" src="/themes/<?= $g['theme']; ?>/images/icons/icon_x.gif" style="width:17;height:17" title="<?=gettext("delete selected mappings");?>" onclick="return confirm('<?=gettext("Do you really want to delete the selected mappings?");?>')" />
+									<input name="del" type="image" src="/themes/<?= $g['theme']; ?>/images/icons/icon_x.gif" style="width:17px;height:17px" title="<?=gettext("delete selected mappings");?>" onclick="return confirm('<?=gettext("Do you really want to delete the selected mappings?");?>')" />
 <?php
 								endif;
 ?>

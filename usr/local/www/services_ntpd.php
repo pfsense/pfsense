@@ -145,7 +145,7 @@ if ($_POST) {
 		elseif (isset($config['ntpd']['notrap']))
 			unset($config['ntpd']['notrap']);
 
-		if ((empty($_POST['statsgraph'])) != (isset($config['ntpd']['statsgraph'])));
+		if ((empty($_POST['statsgraph'])) != (isset($config['ntpd']['statsgraph'])))
 			enable_rrd_graphing();
 		if (!empty($_POST['statsgraph']))
 			$config['ntpd']['statsgraph'] = $_POST['statsgraph'];

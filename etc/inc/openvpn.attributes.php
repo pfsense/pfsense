@@ -54,7 +54,7 @@ function cisco_extract_index($prule) {
 		return intval($index[1]);
 	else
 		syslog(LOG_WARNING, "Error parsing rule {$prule}: Could not extract index");
-	return -1;;
+	return -1;
 }
 
 function parse_cisco_acl($attribs) {

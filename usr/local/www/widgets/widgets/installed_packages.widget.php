@@ -117,7 +117,7 @@ $updateavailable = false;
 			textID = "#updatediv-" + y;
 			jQuery(textID).effect('pulsate');
 		}
-	}
+	};
 //]]>
 </script>
 <?php endif; ?>

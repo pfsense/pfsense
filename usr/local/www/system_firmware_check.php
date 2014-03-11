@@ -76,12 +76,12 @@ include("head.inc");
 				<tr>
 					<td align="center">
 						<!-- progress bar -->
-						<table style="height:15;colspacing:0" width="420" border="0" cellpadding="0" cellspacing="0" summary="images">
+						<table style="height:15px;padding:0" width="420" border="0" cellpadding="0" cellspacing="0" summary="images">
 
 							<tr>
 								<td style="background:url('./themes/<?=$g['theme'];?>/images/misc/bar_left.gif')" height="15" width="5"></td>
 								<td>
-									<table id="progholder" style="height:15;colspacing:0" width="410" border="0" cellpadding="0" cellspacing="0" summary="">
+									<table id="progholder" style="height:15px;padding:0" width="410" border="0" cellpadding="0" cellspacing="0" summary="">
 										<tr><td style="background:url('./themes/<?=$g['theme'];?>/images/misc/bar_gray.gif')" valign="top" align="left">
 										<img src="./themes/<?=$g['theme'];?>/images/misc/bar_blue.gif" width="0" height="15" name="progressbar" id="progressbar" alt="" />
 										</td></tr>
@@ -92,7 +92,7 @@ include("head.inc");
 						</table>
 						<br />
 						<!-- command output box -->
-						<textarea style="border:1;bordercolordark:#000000;bordercolorlight:#000000" cols="90" rows="9" name="output" id="output" wrap="hard"></textarea>
+						<textarea style="border:1px;border-color:#000000" cols="90" rows="9" name="output" id="output" wrap="hard"></textarea>
 						<div id="backupdiv" style="visibility:hidden">
 							<?php if ($g['hidebackupbeforeupgrade'] === false): ?>
 							<br/><input type="checkbox" name="backupbeforeupgrade" id="backupbeforeupgrade" /><?=gettext("Perform full backup prior to upgrade");?>

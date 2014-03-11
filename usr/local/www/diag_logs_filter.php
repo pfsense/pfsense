@@ -438,7 +438,7 @@ function resolve_with_ajax(ip_to_resolve) {
 			type: 'post',
 			dataType: 'json',
 			data: {
-				resolve: ip_to_resolve,
+				resolve: ip_to_resolve
 				},
 			complete: resolve_ip_callback
 		});

@@ -77,7 +77,7 @@ include("head.inc");
 			jQuery(icon).bind("onclick","");
 			jQuery(icon).attr('src',jQuery(icon).attr('src').replace("\.gif", "_d.gif"));
 			jQuery(icon).css("cursor","wait");
-		}
+		};
 
 		jQuery('img[name="i:' + srcip + ":" + dstip + '"]').each(busy);
 

@@ -416,9 +416,7 @@ class altq_root_queue {
 			$q =& new fairq_queue();
 			break;
 		default:
-			/* XXX: but should not happen anyway */
 			return;
-			break;
 		}
 		$q->SetLink($path);
 		$q->SetInterface($this->GetInterface());
@@ -4242,7 +4240,7 @@ function altq_check_default_queues() {
 				$count++;
 		}
 	}
-	else  $count++;;
+	else  $count++;
 
 	return 0;
 }

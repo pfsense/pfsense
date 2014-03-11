@@ -117,16 +117,16 @@ if (isBlank( $_POST['txtRecallBuffer'] )) {
    var intRecallPtr = arrRecallBuffer.length-1;
 
    // Functions to extend String class.
-   function str_encode() { return escape( this ) }
-   function str_decode() { return unescape( this ) }
+   function str_encode() { return escape( this ); }
+   function str_decode() { return unescape( this ); }
 
    // Extend string class to include encode() and decode() functions.
-   String.prototype.encode = str_encode
-   String.prototype.decode = str_decode
+   String.prototype.encode = str_encode;
+   String.prototype.decode = str_decode;
 
    // Function: is Blank
    // Returns boolean true or false if argument is blank.
-   function isBlank( strArg ) { return strArg.match( /^\s*$/ ) }
+   function isBlank( strArg ) { return strArg.match( /^\s*$/ ); }
 
    // Function: frmExecPlus onSubmit (event handler)
    // Builds the recall buffer from the command string on submit.
@@ -134,7 +134,7 @@ if (isBlank( $_POST['txtRecallBuffer'] )) {
 
       if (!isBlank(form.txtCommand.value)) {
 		  // If this command is repeat of last command, then do not store command.
-		  if (form.txtCommand.value.encode() == arrRecallBuffer[arrRecallBuffer.length-1]) { return true }
+		  if (form.txtCommand.value.encode() == arrRecallBuffer[arrRecallBuffer.length-1]) { return true; }
 
 		  // Stuff encoded command string into the recall buffer.
 		  if (isBlank(form.txtRecallBuffer.value))
@@ -162,8 +162,8 @@ if (isBlank( $_POST['txtRecallBuffer'] )) {
       intRecallPtr += n;
 
       // Make sure the buffer stays circular.
-      if (intRecallPtr < 0) { intRecallPtr = arrRecallBuffer.length - 1 }
-      if (intRecallPtr > (arrRecallBuffer.length - 1)) { intRecallPtr = 0 }
+      if (intRecallPtr < 0) { intRecallPtr = arrRecallBuffer.length - 1; }
+      if (intRecallPtr > (arrRecallBuffer.length - 1)) { intRecallPtr = 0; }
 
       // Recall the command.
       form.txtCommand.value = arrRecallBuffer[intRecallPtr].decode();
@@ -334,5 +334,4 @@ document.forms[0].txtCommand.focus();
 
 if($_POST)
 	conf_mount_ro();
-
 ?>

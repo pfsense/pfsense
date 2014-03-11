@@ -67,7 +67,7 @@ $clients = openvpn_get_active_clients();
 			jQuery(icon).bind("onclick","");
 			jQuery(icon).attr('src',jQuery(icon).attr('src').replace("\.gif", "_d.gif"));
 			jQuery(icon).css("cursor","wait");
-		}
+		};
 
 		jQuery('img[name="i:' + mport + ":" + remipp + '"]').each(busy);
 

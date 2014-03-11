@@ -254,8 +254,9 @@ function processQueues($altqstats, $level, $parent_name){
 		<?php
 		if (is_array($q['queue']))
 			processQueues($q, $level + 1, $parent_name);
-	};
+	}
 }
+
 function statsQueues($xml){
 	global $statistics;
 

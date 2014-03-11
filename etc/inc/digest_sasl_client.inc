@@ -130,6 +130,6 @@ class digest_sasl_client_class
 		}
 		return(SASL_CONTINUE);
 	}
-};
+}
 
 ?>

@@ -814,7 +814,7 @@ function showchange() {
 			}
 		?>
 
-	}
+	};
 
 //]]>
 </script>

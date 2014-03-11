@@ -158,10 +158,10 @@ if (typeof getURL == 'undefined') {
                     content : http_request.responseText,
                     contentType : http_request.getResponseHeader("Content-Type") } );
       }
-    }
+    };
     http_request.open('GET', url, true);
     http_request.send(null);
-  }
+  };
 }
 window.setTimeout('update_status_thread()', 2500);
 </script>

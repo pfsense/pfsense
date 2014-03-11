@@ -141,10 +141,10 @@ function bandwidthAjax(hostinterface, sorting, filter, hostipformat) {
 	            alert('Error ' + req.status + ' -- ' + req.statusText + ' -- ' + uri);
 		*/
 	    },
-		success: function(data) {
-			updateBandwidthHosts(data);
+            success: function(data) {
+		updateBandwidthHosts(data);
 	    }
-	}
+	};
 	jQuery.ajax(uri, opt);
 }
 

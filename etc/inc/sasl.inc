@@ -19,7 +19,7 @@ class sasl_interact_class
 	var $prompt;
 	var $default_result;
 	var $result;
-};
+}
 
 /*
 {metadocument}<?xml version="1.0" encoding="ISO-8859-1" ?>
@@ -28,7 +28,7 @@ class sasl_interact_class
 	<package>net.manuellemos.sasl</package>
 
 	<version>@(#) $Id: sasl.php,v 1.11 2005/10/31 18:43:27 mlemos Exp $</version>
-	<copyright>Copyright © (C) Manuel Lemos 2004</copyright>
+	<copyright>Copyright ï¿½ (C) Manuel Lemos 2004</copyright>
 	<title>Simple Authentication and Security Layer client</title>
 	<author>Manuel Lemos</author>
 	<authoraddress>mlemos-at-acm.org</authoraddress>
@@ -409,7 +409,7 @@ class sasl_client_class
 {/metadocument}
 */
 
-};
+}
 
 /*
 

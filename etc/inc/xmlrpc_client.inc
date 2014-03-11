@@ -1406,8 +1406,6 @@ class XML_RPC_Message extends XML_RPC_Base
                 case 'UTF-8':
                 case 'US-ASCII':
                     return $match[1];
-                    break;
-
                 default:
                     return $XML_RPC_defencoding;
             }

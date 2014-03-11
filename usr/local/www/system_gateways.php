@@ -378,7 +378,7 @@ include("head.inc");
 									else:
 ?>
 										<input name="del" type="image" src="/themes/<?= $g['theme']; ?>/images/icons/icon_x.gif"
-											style="width:17;height:17" title="<?=gettext("delete selected items");?>"
+											style="width:17px;height:17px" title="<?=gettext("delete selected items");?>"
 											onclick="return confirm('<?=gettext("Do you really want to delete the selected gateway items?");?>')" />
 <?php
 									endif;

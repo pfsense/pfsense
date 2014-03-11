@@ -178,7 +178,7 @@ include("head.inc");
 							jQuery(this).width(jQuery(this).width());  
 						});
 					return ui;  
-					},
+					}
 				});
 			});
 			function save_changes_to_xml(xml) {

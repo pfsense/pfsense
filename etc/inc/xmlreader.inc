@@ -114,8 +114,7 @@ function add_elements(&$cfgarray, &$parser) {
                         break;
                 case XMLReader::END_ELEMENT:
 			return;
-			break;
-                default:
+		default:
                         break;
                 }
 	}

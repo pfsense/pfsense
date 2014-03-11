@@ -212,14 +212,11 @@ function ipsec_idinfo_to_cidr(& $idinfo, $addrbits = false, $mode = "") {
 					return $idinfo['address']."/32";
 			} else
 				return $idinfo['address'];
-			break; /* NOTREACHED */
 		case "network":
 			return "{$idinfo['address']}/{$idinfo['netbits']}";
-			break; /* NOTREACHED */
 		case "none":
 		case "mobile":
 			return "0.0.0.0/0";
-			break; /* NOTREACHED */
 		default:
 			if (empty($mode) && !empty($idinfo['mode']))
 				$mode = $idinfo['mode'];
@@ -235,7 +232,6 @@ function ipsec_idinfo_to_cidr(& $idinfo, $addrbits = false, $mode = "") {
 				$address = gen_subnet($address,$netbits);
 				return "{$address}/{$netbits}";
 			}
-			break; /* NOTREACHED */
 	}
 }
 
@@ -254,14 +250,11 @@ function ipsec_idinfo_to_subnet(& $idinfo,$addrbits = false) {
 					return $idinfo['address']."/255.255.255.255";
 			} else
 				return $idinfo['address'];
-			break; /* NOTREACHED */
-		case "none":
+			case "none":
 		case "network":
 			return $idinfo['address']."/".gen_subnet_mask($idinfo['netbits']);
-			break; /* NOTREACHED */
 		case "mobile":
 			return "0.0.0.0/0";
-			break; /* NOTREACHED */
 		default:
 			if ($idinfo['mode'] == "tunnel6") {
 				$address = get_interface_ipv6($idinfo['type']);
@@ -274,7 +267,6 @@ function ipsec_idinfo_to_subnet(& $idinfo,$addrbits = false) {
 				$address = gen_subnet($address,$netbits);
 				return $address."/".$netbits;
 			}
-			break; /* NOTREACHED */
 	}
 }
 
@@ -287,22 +279,17 @@ function ipsec_idinfo_to_text(& $idinfo) {
 	switch ($idinfo['type']) {
         case "address":
 		return $idinfo['address'];
-		break; /* NOTREACHED */
         case "network":
 		return $idinfo['address']."/".$idinfo['netbits'];
-		break; /* NOTREACHED */
 	case "mobile":
 		return gettext("Mobile Client");
-		break; /* NOTREACHED */
 	case "none":
 		return gettext("None");
-		break; /* NOTREACHED */
-        default:
+	default:
 		if (!empty($config['interfaces'][$idinfo['type']]))
 			return convert_friendly_interface_to_friendly_descr($idinfo['type']);
 		else
 			return strtoupper($idinfo['type']);
-		break; /* NOTREACHED */
 	}
 }
 

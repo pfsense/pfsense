@@ -54,16 +54,16 @@ if($_GET) {
 ?>
 <html>
 	<head>
-            <STYLE type="text/css">
-                        TABLE {
+            <style type="text/css">
+                        table {
                                 border-width: 1px 1px 1px 1px;
                                 border-spacing: 0px;
                                 border-style: solid solid solid solid;
                                 border-color: gray gray gray gray;
                                 border-collapse: separate;
-                                background-color: collapse;
+                                background-color: white;
                         }
-                        TD {
+                        td {
                                 border-width: 0px 0px 0px 0px;
                                 border-spacing: 0px;
                                 border-style: solid solid solid solid;
@@ -71,7 +71,7 @@ if($_GET) {
                                 border-collapse: collapse;
                                 background-color: white;
                         }
-            </STYLE>
+            </style>
         </head>
 <script language="JavaScript">
 function post_choices() {

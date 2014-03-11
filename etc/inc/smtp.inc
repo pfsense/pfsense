@@ -173,7 +173,7 @@ class smtp_class
 				$this->result_code=$this->Tokenize($line," -");
 				if(GetType($code)=="array")
 				{
-					for($codes=0;$codes<count($code) && strcmp($this->result_code,$code[$codes]);$codes++);
+					for($codes=0;$codes<count($code) && strcmp($this->result_code,$code[$codes]);$codes++)
 					if($codes>=count($code))
 					{
 						$this->error=$line;
@@ -857,6 +857,6 @@ class smtp_class
 		return($success);
 	}
 
-};
+}
 
 ?>

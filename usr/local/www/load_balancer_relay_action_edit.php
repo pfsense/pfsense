@@ -480,7 +480,7 @@ jQuery(document).ready(function() {
     <tr align="left" id="action_row"<?= $pconfig['protocol'] == "http" ? "" : " style=\"display:none;\""?>>
 			<td width="22%" valign="top" class="vncellreq"><?=gettext("Action"); ?></td>
 			<td width="78%" class="vtable" colspan="2">
-				<select id="action" name="action" style=\"display: none;\">
+				<select id="action" name="action" style="display: none;">
 <?
 	foreach ($actions['direction'] as $dir => $dv) {
 		foreach ($actions['direction'][$dir] as $type => $tv) {

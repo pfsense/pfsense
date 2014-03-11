@@ -328,11 +328,11 @@ SureGPS = 		#Sure Electronics SKG16B
 		form.gpsstratum.value = "";
 		form.gpsrefid.value = "";
 		form.gpsspeed.value = gpsdef['speed'];
-		document.getElementById("gpsflag1").checked=true
-		document.getElementById("gpsflag2").checked=false
-		document.getElementById("gpsflag3").checked=true
-		document.getElementById("gpsflag4").checked=false
-		document.getElementById("gpssubsec").checked=false
+		document.getElementById("gpsflag1").checked=true;
+		document.getElementById("gpsflag2").checked=false;
+		document.getElementById("gpsflag3").checked=true;
+		document.getElementById("gpsflag4").checked=false;
+		document.getElementById("gpssubsec").checked=false;
 		form.gpsinitcmd.value = atob(gpsdef['inittxt']);
 	}
 

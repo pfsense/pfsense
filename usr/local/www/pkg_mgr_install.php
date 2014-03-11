@@ -125,16 +125,16 @@ if ($_POST) {
 ?>
 				<tr>
 					<td class="tabcont" align="center">
-						<table style="height:15;colspacing:0" width="420" border="0" cellpadding="0" cellspacing="0" summary="images">
+						<table style="height:15px;padding:0" width="420" border="0" cellpadding="0" cellspacing="0" summary="images">
 							<tr>
-								<td class="tabcont" align="center">Package:<b><?=$pkgname;?></b> will be <?=$pkgtxt;?>.<br/>
-								Please confirm the action on this package.<br/>
+								<td class="tabcont" align="center">Package:<b><?=$pkgname;?></b> will be <?=$pkgtxt;?>.<br />
+								Please confirm the action on this package.<br />
 								</td>
 								<td class="tabcont" align="center">
 									<input type="hidden" name="id" value="<?=$pkgname;?>" />
 									<input type="hidden" name="mode" value="<?=$pkgmode;?>" />
-									<input type="submit" name="pkgconfirm" id="pkgconfirm" value="Confirm"/>
-									<input type="submit" name="pkgcancel" id="pkgcancel" value="Cancel"/>
+									<input type="submit" name="pkgconfirm" id="pkgconfirm" value="Confirm" />
+									<input type="submit" name="pkgcancel" id="pkgcancel" value="Cancel" />
 								</td>
 							</tr>
 						</table>
@@ -143,11 +143,11 @@ if ($_POST) {
 <?php endif; if (!empty($_POST['id']) || $_GET['mode'] == 'showlog' || ($_GET['mode'] == 'installedinfo' && !empty($_GET['pkg']))): ?>
 				<tr>
 					<td class="tabcont" align="center">
-						<table style="height:15;colspacing:0" width="420" border="0" cellpadding="0" cellspacing="0" summary="images">
+						<table style="height:15px;padding:0" width="420" border="0" cellpadding="0" cellspacing="0" summary="images">
 							<tr>
 								<td style="background:url('./themes/<?=$g['theme'];?>/images/misc/bar_left.gif')" height="15" width="5"></td>
 								<td>
-									<table id="progholder" style="height:15;colspacing:0" width="410" border="0" cellpadding="0" cellspacing="0" summary="progress bar">
+									<table id="progholder" style="height:15px;padding:0" width="410" border="0" cellpadding="0" cellspacing="0" summary="progress bar">
 										<tr><td style="background:url('./themes/<?=$g['theme'];?>/images/misc/bar_gray.gif')" valign="top" align="left">
 											<img src='./themes/<?= $g['theme']; ?>/images/misc/bar_blue.gif' width="0" height="15" name="progressbar" id="progressbar" alt="progress bar" />
 										</td></tr>

@@ -1230,7 +1230,6 @@ function filter_generate_reflection_proxy($rule, $nordr, $rdr_ifs, $srcaddr, $ds
 			break;
 		default:
 			return "";
-			break;
 		}
 
 		if(!empty($nordr)) {

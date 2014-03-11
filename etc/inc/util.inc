@@ -412,6 +412,25 @@ function ip_after($ip) {
 	return long2ip32(ip2long($ip)+1);
 }
 
+/* Return the next IPv6 address after the given address */
+function ip_afterv6($ip) {
+	$ipbin = Net_IPv6::_ip2Bin(Net_IPv6::uncompress($ip));
+    $ipbin = str_pad($ipbin, 128, '0', STR_PAD_LEFT);
+	increment_ipv6_bin($ipbin);
+	return Net_IPv6::compress(Net_IPv6::_bin2Ip($ipbin));
+}
+
+function increment_ipv6_bin(&$ipbin) {
+	for ($i = 127; $i >= 0; $i--) {
+		if ($ipbin[$i] == "0"){
+			$ipbin[$i] = "1";
+			break;
+		} else {
+			$ipbin[$i] = "0";
+		}
+	}
+}
+
 /* Return true if the first IP is 'before' the second */
 function ip_less_than($ip1, $ip2) {
 	// Compare as unsigned long because otherwise it wouldn't work when
@@ -1341,6 +1360,31 @@ function check_subnetsv6_overlap($subnet1, $bits1, $subnet2, $bits2) {
 	$sub2_max = gen_subnetv6_max($subnet2, $bits2);
 
 	return (is_inrange_v6($sub1_min, $sub2_min, $sub2_max) || is_inrange_v6($sub1_max, $sub2_min, $sub2_max) || is_inrange_v6($sub2_min, $sub1_min, $sub1_max));
+}
+
+function get_subnet_usable_range($ip, $bits) {
+	if (is_ipaddrv4($ip)) {
+		$range_from = ip2long(long2ip32(ip2long($ip) & gen_subnet_mask_long($bits)));
+		$range_from++;
+		$range_to = ip2long(long2ip32(ip2long($ip) | (~gen_subnet_mask_long($bits))));
+		$range_to--;
+		$result = array();
+		$result[0] = long2ip32($range_from);
+		$result[1] = long2ip32($range_to);
+		return $result;
+	}
+	else if (is_ipaddrv6($ip)) {
+		$result = array();
+		$range_from = gen_subnetv6($ip, $bits);
+		$range_from = ip_afterv6($range_from);
+		$range_to = gen_subnetv6_max($ip, $bits);
+		$result[0] = $range_from;
+		$result[1] = $range_to;
+		return $result;
+	}
+	else {
+		return null;
+	}
 }
 
 /* compare two IP addresses */

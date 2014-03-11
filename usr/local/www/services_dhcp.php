@@ -784,15 +784,8 @@ include("head.inc");
 			<td width="22%" valign="top" class="vncellreq"><?=gettext("Available range");?></td>
 			<td width="78%" class="vtable">
 			<?php
-				$range_from = ip2long(long2ip32(ip2long($ifcfgip) & gen_subnet_mask_long($ifcfgsn)));
-				$range_from++;
-				echo long2ip32($range_from);
-			?>
-			-
-			<?php
-				$range_to = ip2long(long2ip32(ip2long($ifcfgip) | (~gen_subnet_mask_long($ifcfgsn))));
-				$range_to--;
-				echo long2ip32($range_to);
+				$usable = get_subnet_usable_range($ifcfgip, $ifcfgsn);
+				echo "{$usable[0]} - {$usable[1]}";
 			?>
 			<?php if (is_numeric($pool) || ($act == "newpool")): ?>
 				<br/>In-use DHCP Pool Ranges:

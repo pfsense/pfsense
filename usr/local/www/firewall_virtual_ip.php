@@ -140,22 +140,27 @@ if ($_GET['act'] == "del") {
 			}
 
 		if ($a_vip[$_GET['id']]['mode'] == "ipalias") {
+			$subnet = gen_subnet($a_vip[$_GET['id']]['subnet'], $a_vip[$_GET['id']]['subnet_bits']) . "/" . $a_vip[$_GET['id']]['subnet_bits'];
+			$found_if = false;
 			$found_carp = false;
 			$found_other_alias = false;
 
+			if ($subnet == $if_subnet)
+				$found_if = true;
+			
 			$vipiface = $a_vip[$_GET['id']]['interface'];
 			foreach ($a_vip as $vip_id => $vip) {
 				if ($vip_id == $_GET['id'])
 					continue;
 
-				if ($vip['interface'] == $vipiface && ip_in_subnet($vip['subnet'], gen_subnet($a_vip[$_GET['id']]['subnet'], $a_vip[$_GET['id']]['subnet_bits']) . "/" . $a_vip[$_GET['id']]['subnet_bits']))
+				if ($vip['interface'] == $vipiface && ip_in_subnet($vip['subnet'], $subnet))
 					if ($vip['mode'] == "carp")
 						$found_carp = true;
 					else if ($vip['mode'] == "ipalias")
 						$found_other_alias = true;
 			}
 
-			if ($found_carp === true && $found_other_alias === false)
+			if ($found_carp === true && $found_other_alias === false && $found_if === false)
 				$input_errors[] = gettext("This entry cannot be deleted because it is still referenced by a CARP IP with the description") . " {$vip['descr']}.";
 		}
 		

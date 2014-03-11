@@ -309,6 +309,11 @@ function is_numericint($arg) {
 	return (((is_int($arg) && $arg >= 0) || (is_string($arg) && strlen($arg) > 0 && ctype_digit($arg))) ? true : false);  
 }
 
+/* validate positive numeric string, or equivalent numeric variable */
+function is_posnumericint($arg) {
+return (((is_int($arg) && $arg > 0) || (is_string($arg) && ctype_digit($arg) && ($arg[0] <> "0"))) ? true : false);
+}
+
 /* return the subnet address given a host address and a subnet bit count */
 function gen_subnet($ipaddr, $bits) {
 	if (!is_ipaddr($ipaddr) || !is_numeric($bits))

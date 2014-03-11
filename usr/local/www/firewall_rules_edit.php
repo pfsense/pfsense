@@ -47,17 +47,18 @@ require("shaper.inc");
 
 function is_aoadv_used($rule_config) {
 	// Note that the user could set "tag" or "tagged" to the string "0", which is valid but empty().
+	// And if the user enters "0" in other fields, we want to present an error message, and keep the Advanced Options section open.
 	if ((isset($rule_config['allowopts'])) ||
 	    (isset($rule_config['disablereplyto'])) ||
 	    ($rule_config['tag'] != "") ||
 	    ($rule_config['tagged'] != "") ||
-	    (!empty($rule_config['max'])) ||
-	    (!empty($rule_config['max-src-nodes'])) ||
-	    (!empty($rule_config['max-src-conn'])) ||
-	    (!empty($rule_config['max-src-states'])) ||
-	    (!empty($rule_config['max-src-conn-rate'])) ||
-	    (!empty($rule_config['max-src-conn-rates'])) ||
-	    (!empty($rule_config['statetimeout'])))
+	    ($rule_config['max'] != "") ||
+	    ($rule_config['max-src-nodes'] != "") ||
+	    ($rule_config['max-src-conn'] != "") ||
+	    ($rule_config['max-src-states'] != "") ||
+	    ($rule_config['max-src-conn-rate'] != "") ||
+	    ($rule_config['max-src-conn-rates'] != "") ||
+	    ($rule_config['statetimeout'] != ""))
 		return true;
 	return false;
 }
@@ -530,6 +531,28 @@ if ($_POST) {
 		if (!empty($_POST['statetimeout']))
 			$input_errors[] = gettext("You cannot specify the state timeout (advanced option) if statetype is none and no L7 container is selected.");
 	}
+
+	if (($_POST['max'] != "") && !is_posnumericint($_POST['max']))
+		$input_errors[] = gettext("Maximum state entries (advanced option) must be a positive integer");
+
+	if (($_POST['max-src-nodes'] != "") && !is_posnumericint($_POST['max-src-nodes']))
+		$input_errors[] = gettext("Maximum number of unique source hosts (advanced option) must be a positive integer");
+
+	if (($_POST['max-src-conn'] != "") && !is_posnumericint($_POST['max-src-conn']))
+		$input_errors[] = gettext("Maximum number of established connections per host (advanced option) must be a positive integer");
+
+	if (($_POST['max-src-states'] != "") && !is_posnumericint($_POST['max-src-states']))
+		$input_errors[] = gettext("Maximum state entries per host (advanced option) must be a positive integer");
+
+	if (($_POST['max-src-conn-rate'] != "") && !is_posnumericint($_POST['max-src-conn-rate']))
+		$input_errors[] = gettext("Maximum new connections per host / per second(s) (advanced option) must be a positive integer");
+
+	if (($_POST['statetimeout'] != "") && !is_posnumericint($_POST['statetimeout']))
+		$input_errors[] = gettext("State timeout (advanced option) must be a positive integer");
+
+	if ((($_POST['max-src-conn-rate'] <> "" and $_POST['max-src-conn-rates'] == "")) || 
+	    (($_POST['max-src-conn-rate'] == "" and $_POST['max-src-conn-rates'] <> "")))
+		$input_errors[] = gettext("Both maximum new connections per host and the interval (per second(s)) must be specified");
 
 	if (!$_POST['tcpflags_any']) {
 		$settcpflags = array();

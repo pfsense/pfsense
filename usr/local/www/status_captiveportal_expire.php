@@ -88,7 +88,7 @@ include("fbegin.inc");
   <tr>
     <td width="22%" valign="top">&nbsp;</td>
     <td width="78%">
-    <input name="zone" type="hidden" value="<?=$cpzone;?>">
+    <input name="zone" type="hidden" value="<?=htmlspecialchars($cpzone);?>">
     <input name="Submit" type="submit" class="formbtn" value="<?=gettext("Submit"); ?>">
     </td>
   </tr>

@@ -629,7 +629,7 @@ function enable_change(enable_change) {
 						<tr>
 							<td width="22%" valign="top">&nbsp;</td>
 							<td width="78%">
-								<input type="hidden" name="zone" id="zone" value="<?=$cpzone;?>" />
+								<input type="hidden" name="zone" id="zone" value="<?=htmlspecialchars($cpzone);?>" />
 								<input type="hidden" name="exponent" id="exponent" value="<?=$pconfig['exponent'];?>" />
 								<input name="Submit" type="submit" class="formbtn" value="<?=gettext("Save"); ?>" onClick="enable_change(true); before_save();"> 
 								<input type="button" class="formbtn" value="<?=gettext("Cancel"); ?>" onclick="history.back()">

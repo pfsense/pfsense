@@ -45,8 +45,9 @@ if (!is_array($config['openvpn']['openvpn-csc']))
 
 $a_csc = &$config['openvpn']['openvpn-csc'];
 
-$id = $_GET['id'];
-if (isset($_POST['id']))
+if (is_numericint($_GET['id']))
+	$id = $_GET['id'];
+if (isset($_POST['id']) && is_numericint($_POST['id']))
 	$id = $_POST['id'];
 
 $act = $_GET['act'];
@@ -660,7 +661,7 @@ function netbios_change() {
 							<input name="save" type="submit" class="formbtn" value="<?=gettext("Save"); ?>"/> 
 							<input name="act" type="hidden" value="<?=$act;?>"/>
 							<?php if (isset($id) && $a_csc[$id]): ?>
-							<input name="id" type="hidden" value="<?=$id;?>"/>
+							<input name="id" type="hidden" value="<?=htmlspecialchars($id);?>"/>
 							<?php endif; ?>
 						</td>
 					</tr>

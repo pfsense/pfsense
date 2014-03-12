@@ -81,18 +81,19 @@ if (!is_array($config['filter']['rule'])) {
 filter_rules_sort();
 $a_filter = &$config['filter']['rule'];
 
-$id = $_GET['id'];
-if (is_numeric($_POST['id']))
+if (is_numericint($_GET['id']))
+	$id = $_GET['id'];
+if (isset($_POST['id']) && is_numericint($_POST['id']))
 	$id = $_POST['id'];
 
-$after = $_GET['after'];
-
-if (isset($_POST['after']))
+if (is_numericint($_GET['after']))
+	$after = $_GET['after'];
+if (isset($_POST['after']) && is_numericint($_GET['after']))
 	$after = $_POST['after'];
 
-if (isset($_GET['dup'])) {
-	$id = $_GET['dup'];
-	$after = $_GET['dup'];
+if (isset($_GET['dup']) && is_numericint($_GET['dup'])) {
+        $id = $_GET['dup'];
+        $after = $_GET['dup'];
 }
 
 if (isset($id) && $a_filter[$id]) {
@@ -202,7 +203,7 @@ if (isset($id) && $a_filter[$id]) {
 	$pconfig['sched'] = (($a_filter[$id]['sched'] == "none") ? '' : $a_filter[$id]['sched']);
 	$pconfig['vlanprio'] = (($a_filter[$id]['vlanprio'] == "none") ? '' : $a_filter[$id]['vlanprio']);
 	$pconfig['vlanprioset'] = (($a_filter[$id]['vlanprioset'] == "none") ? '' : $a_filter[$id]['vlanprioset']);
-	if (!isset($_GET['dup']))
+	if (!isset($_GET['dup']) || !is_numericint($_GET['dup']))
 		$pconfig['associated-rule-id'] = $a_filter[$id]['associated-rule-id'];
 
 } else {
@@ -216,7 +217,7 @@ if (isset($id) && $a_filter[$id]) {
 /* Allow the FloatingRules to work */
 $if = $pconfig['interface'];
 
-if (isset($_GET['dup']))
+if (isset($_GET['dup']) && is_numericint($_GET['dup']))
 	unset($id);
 
 read_altq_config(); /* XXX: */

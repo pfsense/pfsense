@@ -50,8 +50,9 @@ if (!is_array($config['sysctl']['item']))
 
 $a_tunable = &$config['sysctl']['item'];
 
-$id = $_GET['id'];
-if (isset($_POST['id']))
+if (is_numericint($_GET['id']))
+	$id = $_GET['id'];
+if (isset($_POST['id']) && is_numericint($_POST['id']))
 	$id = $_POST['id'];
 
 $act = $_GET['act'];
@@ -257,7 +258,7 @@ include("head.inc");
 									<input id="submit" name="Submit" type="submit" class="formbtn" value="<?=gettext("Save"); ?>" />
 									<input id="cancelbutton" name="cancelbutton" type="button" class="formbtn" value="<?=gettext("Cancel"); ?>" onclick="history.back()" />
 									<?php if (isset($id) && $a_tunable[$id]): ?>
-									<input name="id" type="hidden" value="<?=$id;?>" />
+									<input name="id" type="hidden" value="<?=htmlspecialchars($id);?>" />
 									<?php endif; ?>
 								</td>
 							</tr>

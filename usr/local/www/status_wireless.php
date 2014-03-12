@@ -89,7 +89,7 @@ display_top_tabs($tab_array);
 </td></tr>
 <tr><td>
 <div id="mainarea" class="tabcont">
-<input type="hidden" name="if" id="if" value="<?php echo $if; ?>">
+<input type="hidden" name="if" id="if" value="<?php echo htmlspecialchars($if); ?>">
 <b><input type="submit" name="rescanwifi" id="rescanwifi" value="Rescan"></b><br/><br/>
 <b><?php echo gettext("Nearby access points or ad-hoc peers"); ?></b>
 <table class="tabcont sortable" colspan="3" cellpadding="3" width="100%">

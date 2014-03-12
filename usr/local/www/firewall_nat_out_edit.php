@@ -58,19 +58,19 @@ if (!is_array($config['aliases']['alias']))
 	$config['aliases']['alias'] = array();
 $a_aliases = &$config['aliases']['alias'];
 
-$id = $_GET['id'];
-if (isset($_POST['id'])) {
+if (is_numericint($_GET['id']))
+	$id = $_GET['id'];
+if (isset($_POST['id']) && is_numericint($_POST['id']))
 	$id = $_POST['id'];
-}
 
-$after = $_GET['after'];
-
-if (isset($_POST['after']))
+if (is_numericint($_GET['after']))
+	$after = $_GET['after'];
+if (isset($_POST['after']) && is_numericint($_GET['after']))
 	$after = $_POST['after'];
 
-if (isset($_GET['dup']))  {
-	$id  =  $_GET['dup'];
-	$after  =  $_GET['dup'];
+if (isset($_GET['dup']) && is_numericint($_GET['dup'])) {
+        $id = $_GET['dup'];
+        $after = $_GET['dup'];
 }
 
 if (isset($id) && $a_out[$id]) {
@@ -109,9 +109,8 @@ if (isset($id) && $a_out[$id]) {
 	$pconfig['interface'] = "wan";
 }
 
-if (isset($_GET['dup'])) {
-        unset($id);
-}
+if (isset($_GET['dup']) && is_numericint($_GET['dup']))
+	unset($id);
 
 if ($_POST) {
 	if ($_POST['destination_type'] == "any") {

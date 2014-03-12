@@ -56,18 +56,21 @@ $openssl_digest_algs = array("sha1", "sha224", "sha256", "sha384", "sha512");
 
 $pgtitle = array(gettext("System"), gettext("Certificate Manager"));
 
-$userid = $_GET['userid'];
-if (isset($_POST['userid']))
+if (is_numericint($_GET['userid']))
+	$userid = $_GET['userid'];
+if (isset($_POST['userid']) && is_numericint($_POST['userid']))
 	$userid = $_POST['userid'];
-if (is_numeric($userid)) {
+
+if (isset($userid)) {
 	$cert_methods["existing"] = gettext("Choose an existing certificate");
 	if (!is_array($config['system']['user']))
 		$config['system']['user'] = array();
 	$a_user =& $config['system']['user'];
 }
 
-$id = $_GET['id'];
-if (isset($_POST['id']))
+if (is_numericint($_GET['id']))
+	$id = $_GET['id'];
+if (isset($_POST['id']) && is_numericint($_POST['id']))
 	$id = $_POST['id'];
 
 if (!is_array($config['ca']))
@@ -969,7 +972,7 @@ function internalca_change() {
 							<td width="22%" valign="top" class="vncellreq"><?=gettext("Existing Certificates");?></td>
 							<td width="78%" class="vtable">
 								<?php if (isset($userid) && $a_user): ?>
-								<input name="userid" type="hidden" value="<?=$userid;?>" />
+								<input name="userid" type="hidden" value="<?=htmlspecialchars($userid);?>" />
 								<?php endif;?>
 								<select name='certref' class="formselect">
 								<?php
@@ -1003,7 +1006,7 @@ function internalca_change() {
 							<td width="78%">
 								<input id="submit" name="save" type="submit" class="formbtn" value="<?=gettext("Save");?>" />
 								<?php if (isset($id) && $a_cert[$id]): ?>
-								<input name="id" type="hidden" value="<?=$id;?>" />
+								<input name="id" type="hidden" value="<?=htmlspecialchars($id);?>" />
 								<?php endif;?>
 							</td>
 						</tr>
@@ -1056,7 +1059,7 @@ function internalca_change() {
 								<?php endif; */ ?>
 								<input id="submit" name="save" type="submit" class="formbtn" value="<?=gettext("Update");?>" />
 								<?php if (isset($id) && $a_cert[$id]): ?>
-								<input name="id" type="hidden" value="<?=$id;?>" />
+								<input name="id" type="hidden" value="<?=htmlspecialchars($id);?>" />
 								<input name="act" type="hidden" value="csr" />
 								<?php endif;?>
 							</td>

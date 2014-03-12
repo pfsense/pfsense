@@ -56,16 +56,17 @@ if (!is_array($config['nat']['rule'])) {
 }
 $a_nat = &$config['nat']['rule'];
 
-$id = $_GET['id'];
-if (isset($_POST['id']))
+if (is_numericint($_GET['id']))
+	$id = $_GET['id'];
+if (isset($_POST['id']) && is_numericint($_POST['id']))
 	$id = $_POST['id'];
 
-$after = $_GET['after'];
-
-if (isset($_POST['after']))
+if (is_numericint($_GET['after']))
+	$after = $_GET['after'];
+if (isset($_POST['after']) && is_numericint($_GET['after']))
 	$after = $_POST['after'];
 
-if (isset($_GET['dup'])) {
+if (isset($_GET['dup']) && is_numericint($_GET['dup'])) {
         $id = $_GET['dup'];
         $after = $_GET['dup'];
 }
@@ -105,7 +106,7 @@ if (isset($id) && $a_nat[$id]) {
 	$pconfig['srcendport'] = "any";
 }
 
-if (isset($_GET['dup']))
+if (isset($_GET['dup']) && is_numericint($_GET['dup']))
 	unset($id);
 
 /*  run through $_POST items encoding HTML entties so that the user
@@ -804,7 +805,7 @@ include("fbegin.inc"); ?>
 						</select>
 					</td>
 				</tr>
-				<?php if (isset($id) && $a_nat[$id] && !isset($_GET['dup'])): ?>
+				<?php if (isset($id) && $a_nat[$id] && (!isset($_GET['dup']) || !is_numericint($_GET['dup']))): ?>
 				<tr id="assoctable">
 					<td width="22%" valign="top" class="vncell"><?=gettext("Filter rule association"); ?></td>
 					<td width="78%" class="vtable">
@@ -835,7 +836,7 @@ include("fbegin.inc"); ?>
 					</td>
 				</tr>
 				<?php endif; ?>
-                <?php if ((!(isset($id) && $a_nat[$id])) || (isset($_GET['dup']))): ?>
+                <?php if ((!(isset($id) && $a_nat[$id])) || (isset($_GET['dup']) && is_numericint($_GET['dup']))): ?>
                 <tr id="assoctable">
                   <td width="22%" valign="top" class="vncell"><?=gettext("Filter rule association"); ?></td>
                   <td width="78%" class="vtable">

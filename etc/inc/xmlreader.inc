@@ -36,23 +36,31 @@
 
 /* The following items will be treated as arrays in config.xml */
 function listtags() {
-  /* Please keep this list alpha sorted and no longer than 80 characters
-   * I know it's a pain, but it's a pain to find stuff too if it's not
-   */
+	/*
+         * Please keep this list alpha sorted and no longer than 80 characters
+         * I know it's a pain, but it's a pain to find stuff too if it's not
+         */
 	$ret = array(
-                'alias', 'aliasurl', 'allowedip', 'authserver', 'bridged', 'ca', 'cacert', 'cert', 'crl', 'clone', 'config',
-                'container', 'columnitem', 'depends_on_package', 'disk', 'dnsserver', 'dnsupdate',
-                'domainoverrides', 'dyndns', 'earlyshellcmd', 'element', 'encryption-algorithm-option',
-                'field', 'fieldname', 'hash-algorithm-option', 'gateway_item', 'gateway_group', 'gif', 'gre',
-                'group', 'hosts', 'member', 'ifgroupentry', 'igmpentry', 'interface_array', 'item', 'key', 'lagg',
-                'lbaction', 'lbpool', 'l7rules', 'lbprotocol',
-                'member', 'menu', 'tab', 'mobilekey', 'monitor_type', 'mount', 'ntpserver', 'onetoone',
-                'openvpn-server', 'openvpn-client', 'openvpn-csc',
-                'option', 'package', 'passthrumac', 'phase1', 'phase2', 'ppp', 'pppoe', 'priv', 'proxyarpnet', 'qinqentry', 'queue',
-                'pages', 'pipe', 'roll', 'route', 'row', 'rrddatafile', 'rule', 'schedule', 'service', 'servernat', 'servers',
-                'serversdisabled', 'earlyshellcmd', 'shellcmd', 'staticmap', 'subqueue', 'timerange',
-                'tunnel', 'user', 'vip', 'virtual_server', 'vlan', 'winsserver', 'wolentry', 'widget', 'npt', 'pool'
-                );
+		'acls', 'alias', 'aliasurl', 'allowedip', 'allowedhostname', 'authserver',
+		'bridged', 'build_port_path',
+		'ca', 'cacert', 'cert', 'crl', 'clone', 'config', 'container', 'columnitem',
+		'depends_on_package', 'disk', 'dnsserver', 'dnsupdate', 'domainoverrides', 'dyndns',
+		'earlyshellcmd', 'element', 'encryption-algorithm-option',
+		'field', 'fieldname',
+		'gateway_item', 'gateway_group', 'gif', 'gre', 'group',
+		'hash-algorithm-option', 'hosts', 'member', 'ifgroupentry', 'igmpentry', 'interface_array', 'item', 'key',
+		'lagg', 'lbaction', 'lbpool', 'l7rules', 'lbprotocol',
+		'member', 'menu', 'tab', 'mobilekey', 'monitor_type', 'mount',
+		'npt', 'ntpserver',
+		'onetoone', 'openvpn-server', 'openvpn-client', 'openvpn-csc', 'option',
+		'package', 'passthrumac', 'phase1', 'phase2', 'ppp', 'pppoe', 'priv', 'proxyarpnet', 'pool',
+		'qinqentry', 'queue',
+		'pages', 'pipe', 'radnsserver', 'roll', 'route', 'row', 'rrddatafile', 'rule',
+		'schedule', 'service', 'servernat', 'servers',
+		'serversdisabled', 'shellcmd', 'staticmap', 'subqueue',
+		'timerange', 'tunnel', 'user', 'vip', 'virtual_server', 'vlan',
+		'winsserver', 'wolentry', 'widget'
+	);
 	return array_flip($ret);
 }
 

@@ -506,6 +506,7 @@ EOD;
 		chmod("{$g['varetc_path']}/ipsec/ipsec.secrets", 0600);
 		unset($pskconf);
 
+		$natfilterrules = false;
 		/* begin ipsec.conf */
 		$ipsecconf = "";
 		if ((is_array($a_phase1) && count($a_phase1)) || (is_array($a_phase2) && count($a_phase2))) {
@@ -675,16 +676,16 @@ EOD;
 								continue;
 							}
 							$localid_spec = $ep;
-							/* XXX: To be finished */
-							if (0 && !empty($ph2ent['natlocalid'])) {
+							if (!empty($ph2ent['natlocalid'])) {
 								$natlocalid_data =  ipsec_idinfo_to_cidr($ph2ent['natlocalid'], false, $ph2ent['mode']);
 								if ($ph2ent['natlocalid']['type'] != "address") {
 									if (is_subnet($natlocalid_data))
-										$localid_spec .= " nat subnet {$natlocalid_data} any";
+										$localid_data = "{$natlocalid_data}|{$localid_data}";
 								} else {
 									if (is_ipaddr($natlocalid_data))
-										$localid_spec .= " nat address {$natlocalid_data} any";
+										$localid_data = "{$natlocalid_data}|{$localid_data}";
 								}
+								$natfilterrules = true;
 							}
 						}
 
@@ -836,8 +837,6 @@ EOD;
 	unset($ipsecconf);
 	/* end ipsec.conf */
 
-	/* generate IPsec policies */
-	$natfilterrules = false;
 	/* mange process */
 	if (isvalidpid("{$g['varrun_path']}/charon.pid")) {
 		/* Read secrets */

@@ -904,19 +904,6 @@ function vpn_ipsec_force_reload($interface = "") {
 		}
 	}
 
-	/* send a SIGKILL to be sure */
-	killbypid("{$g['varrun_path']}/racoon.pid");
-
-	/* wait for process to die */
-	sleep(4);
-
-	/* kill racoon forcefully */
-	if (is_process_running("racoon"))
-		mwexec("/usr/bin/killall -9 racoon", true);
-
-	/* wait for flushing to finish */
-	sleep(1);
-
 	/* if ipsec is enabled, start up again */
 	if (isset($ipseccfg['enable'])) {
 		log_error(gettext("Forcefully reloading IPsec racoon daemon"));

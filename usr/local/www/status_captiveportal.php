@@ -188,7 +188,7 @@ $mac_man = load_mac_manufacturer_table();
 <?php endif; ?>
 
 <form action="status_captiveportal.php" method="get" style="margin: 14px;">
-<input type="hidden" name="order" value="<?=$_GET['order'];?>" />
+<input type="hidden" name="order" value="<?=htmlspecialchars($_GET['order']);?>" />
 <?php if (!empty($cpzone)): ?>
 <?php if ($_GET['showact']): ?>
 <input type="hidden" name="showact" value="0" />
@@ -197,7 +197,7 @@ $mac_man = load_mac_manufacturer_table();
 <input type="hidden" name="showact" value="1" />
 <input type="submit" class="formbtn" value="<?=gettext("Show last activity");?>" />
 <?php endif; ?>
-<input type="hidden" name="zone" value="<?=$cpzone;?>" />
+<input type="hidden" name="zone" value="<?=htmlspecialchars($cpzone);?>" />
 <?php endif; ?>
 </form>
 <?php include("fend.inc"); ?>

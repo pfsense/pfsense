@@ -60,8 +60,9 @@ if (!is_array($config['crl']))
 
 $a_crl =& $config['crl'];
 
-$id = $_GET['id'];
-if (isset($_POST['id']))
+if (is_numericint($_GET['id']))
+	$id = $_GET['id'];
+if (isset($_POST['id']) && is_numericint($_POST['id']))
 	$id = $_POST['id'];
 
 $act = $_GET['act'];
@@ -944,7 +945,7 @@ if ($savemsg)
 							<input name="save" type="submit" class="formbtn" value="<?=gettext("Save"); ?>"> 
 							<input name="act" type="hidden" value="<?=$act;?>">
 							<?php if (isset($id) && $a_client[$id]): ?>
-							<input name="id" type="hidden" value="<?=$id;?>">
+							<input name="id" type="hidden" value="<?=htmlspecialchars($id);?>">
 							<?php endif; ?>
 						</td>
 					</tr>

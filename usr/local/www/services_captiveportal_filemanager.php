@@ -138,7 +138,7 @@ include("head.inc");
 <?php include("fbegin.inc"); ?>
 <body link="#0000CC" vlink="#0000CC" alink="#0000CC">
 <form action="services_captiveportal_filemanager.php" method="post" enctype="multipart/form-data" name="iform" id="iform">
-<input type="hidden" name="zone" id="zone" value="<?=$cpzone;?>" />
+<input type="hidden" name="zone" id="zone" value="<?=htmlspecialchars($cpzone);?>" />
 <?php if ($input_errors) print_input_errors($input_errors); ?>
 <table width="100%" border="0" cellpadding="0" cellspacing="0">
   <tr><td class="tabnavtbl">

@@ -54,8 +54,9 @@ if (is_array($config['laggs']['lagg']) && count($config['laggs']['lagg'])) {
                 $portlist[$lagg['laggif']] = $lagg;
 }
 
-$id = $_GET['id'];
-if (isset($_POST['id']))
+if (is_numericint($_GET['id']))
+	$id = $_GET['id'];
+if (isset($_POST['id']) && is_numericint($_POST['id']))
 	$id = $_POST['id'];
 
 if (isset($id) && $a_vlans[$id]) {

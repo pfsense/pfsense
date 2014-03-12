@@ -50,8 +50,9 @@ $openssl_digest_algs = array("sha1", "sha224", "sha256", "sha384", "sha512");
 
 $pgtitle = array(gettext("System"), gettext("Certificate Authority Manager"));
 
-$id = $_GET['id'];
-if (isset($_POST['id']))
+if (is_numericint($_GET['id']))
+	$id = $_GET['id'];
+if (isset($_POST['id']) && is_numericint($_POST['id']))
 	$id = $_POST['id'];
 
 if (!is_array($config['ca']))
@@ -369,7 +370,7 @@ function method_change() {
 				<form action="system_camanager.php" method="post" name="iform" id="iform">
 					<?php if ($act == "edit"): ?>
 					<input type="hidden" name="edit" value="edit" id="edit" />
-					<input type="hidden" name="id" value="<?php echo $id; ?>" id="id" />
+					<input type="hidden" name="id" value="<?php echo htmlspecialchars($id); ?>" id="id" />
 					<input type="hidden" name="refid" value="<?php echo $pconfig['refid']; ?>" id="refid" />
 					<?php endif; ?>
 					<table width="100%" border="0" cellpadding="6" cellspacing="0" summary="main area">
@@ -577,7 +578,7 @@ function method_change() {
 							<td width="78%">
 								<input id="submit" name="save" type="submit" class="formbtn" value="<?=gettext("Save"); ?>" />
 								<?php if (isset($id) && $a_ca[$id]): ?>
-								<input name="id" type="hidden" value="<?=$id;?>" />
+								<input name="id" type="hidden" value="<?=htmlspecialchars($id);?>" />
 								<?php endif;?>
 							</td>
 						</tr>

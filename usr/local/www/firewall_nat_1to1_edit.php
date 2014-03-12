@@ -56,8 +56,9 @@ if (!is_array($config['nat']['onetoone']))
 
 $a_1to1 = &$config['nat']['onetoone'];
 
-$id = $_GET['id'];
-if (isset($_POST['id']))
+if (is_numericint($_GET['id']))
+	$id = $_GET['id'];
+if (isset($_POST['id']) && is_numericint($_POST['id']))
 	$id = $_POST['id'];
 
 $after = $_GET['after'];

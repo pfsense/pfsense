@@ -46,10 +46,10 @@ if (!is_array($config['load_balancer']['lbprotocol'])) {
 }
 $a_protocol = &$config['load_balancer']['lbprotocol'];
 
-if (isset($_POST['id']))
-	$id = $_POST['id'];
-else
+if (is_numericint($_GET['id']))
 	$id = $_GET['id'];
+if (isset($_POST['id']) && is_numericint($_POST['id']))
+	$id = $_POST['id'];
 
 if (isset($id) && $a_protocol[$id]) {
 	$pconfig = $a_protocol[$id];

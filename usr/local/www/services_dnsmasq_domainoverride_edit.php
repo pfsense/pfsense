@@ -45,9 +45,10 @@ if (!is_array($config['dnsmasq']['domainoverrides'])) {
 }
 $a_domainOverrides = &$config['dnsmasq']['domainoverrides'];
 
-$id = $_GET['id'];
-if (isset($_POST['id']))
-       $id = $_POST['id'];
+if (is_numericint($_GET['id']))
+	$id = $_GET['id'];
+if (isset($_POST['id']) && is_numericint($_POST['id']))
+	$id = $_POST['id'];
 
 if (isset($id) && $a_domainOverrides[$id]) {
        $pconfig['domain'] = $a_domainOverrides[$id]['domain'];

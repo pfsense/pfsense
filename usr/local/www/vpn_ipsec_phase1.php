@@ -50,17 +50,17 @@ if (!is_array($config['ipsec']['phase2']))
 $a_phase1 = &$config['ipsec']['phase1'];
 $a_phase2 = &$config['ipsec']['phase2'];
 
-$p1index = $_GET['p1index'];
-if (isset($_POST['p1index']))
+if (is_numericint($_GET['p1index']))
+	$p1index = $_GET['p1index'];
+if (isset($_POST['p1index']) && is_numericint($_GET['p1index']))
 	$p1index = $_POST['p1index'];
 
-if (isset($_GET['dup'])) {
+if (isset($_GET['dup']) && is_numericint($_GET['dup']))
 	$p1index = $_GET['dup'];
-}
 
 if (isset($p1index) && $a_phase1[$p1index]) {
 	// don't copy the ikeid on dup
-	if (!isset($_GET['dup']))
+	if (!isset($_GET['dup']) || !is_numericint($_GET['dup']))
 		$pconfig['ikeid'] = $a_phase1[$p1index]['ikeid'];
 
 	$old_ph1ent = $a_phase1[$p1index];
@@ -131,7 +131,7 @@ if (isset($p1index) && $a_phase1[$p1index]) {
 		$pconfig['mobile']=true;
 }
 
-if (isset($_GET['dup']))
+if (isset($_GET['dup']) && is_numericint($_GET['dup']))
 	unset($p1index);
 
 if ($_POST) {
@@ -866,7 +866,7 @@ function dpdchkbox_change() {
 						<td width="22%" valign="top">&nbsp;</td>
 						<td width="78%">
 							<?php if (isset($p1index) && $a_phase1[$p1index]): ?>
-							<input name="p1index" type="hidden" value="<?=$p1index;?>">
+							<input name="p1index" type="hidden" value="<?=htmlspecialchars($p1index);?>">
 							<?php endif; ?>
 							<?php if ($pconfig['mobile']): ?>
 							<input name="mobile" type="hidden" value="true">

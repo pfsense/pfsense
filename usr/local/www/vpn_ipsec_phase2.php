@@ -51,11 +51,12 @@ if (!is_array($config['ipsec']['phase2']))
 
 $a_phase2 = &$config['ipsec']['phase2'];
 
-$p2index = $_GET['p2index'];
-if (isset($_POST['p2index']))
+if (is_numericint($_GET['p2index']))
+	$p2index = $_GET['p2index'];
+if (isset($_POST['p2index']) && is_numericint($_GET['p2index']))
 	$p2index = $_POST['p2index'];
 
-if (isset($_GET['dup']))
+if (isset($_GET['dup']) && is_numericint($_GET['dup']))
 	$p2index = $_GET['dup'];
 
 if (isset($p2index) && $a_phase2[$p2index])
@@ -99,7 +100,7 @@ else
         $pconfig['mobile']=true;
 }
 
-if (isset($_GET['dup']))
+if (isset($_GET['dup']) && is_numericint($_GET['dup']))
 	unset($p2index);
 
 if ($_POST) {
@@ -781,7 +782,7 @@ function change_protocol() {
 						<td width="22%" valign="top">&nbsp;</td>
 						<td width="78%">
 						<?php if (isset($p2index) && $a_phase2[$p2index]): ?>
-							<input name="p2index" type="hidden" value="<?=$p2index;?>">
+							<input name="p2index" type="hidden" value="<?=htmlspecialchars($p2index);?>">
 						<?php endif; ?>
 						<?php if ($pconfig['mobile']): ?>
 							<input name="mobile" type="hidden" value="true">

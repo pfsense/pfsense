@@ -55,13 +55,13 @@ if (!is_array($config['gateways']['gateway_item']))
 $a_gateway_item = &$config['gateways']['gateway_item'];
 $apinger_default = return_apinger_defaults();
 
-$id = $_GET['id'];
-if (isset($_POST['id']))
+if (is_numericint($_GET['id']))
+	$id = $_GET['id'];
+if (isset($_POST['id']) && is_numericint($_POST['id']))
 	$id = $_POST['id'];
 
-if (isset($_GET['dup'])) {
+if (isset($_GET['dup']) && is_numericint($_GET['dup']))
 	$id = $_GET['dup'];
-}
 
 if (isset($id) && $a_gateways[$id]) {
 	$pconfig = array();
@@ -94,7 +94,7 @@ if (isset($id) && $a_gateways[$id]) {
 	$pconfig['disabled'] = isset($a_gateways[$id]['disabled']);
 }
 
-if (isset($_GET['dup'])) {
+if (isset($_GET['dup']) && is_numericint($_GET['dup'])) {
 	unset($id);
 	unset($pconfig['attribute']);
 }

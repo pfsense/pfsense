@@ -3188,7 +3188,10 @@ function interface_track6_configure($interface = "lan", $wancfg, $linkupevent = 
 			 *
 			 * XXX: Probably DHCPv6 client should handle this autmagically itself?
 			 */
-			interface_dhcpv6_configure($wancfg['track6-interface'], $trackcfg);
+			$parentrealif = get_real_interface($wancfg['track6-interface']);
+			$pidv6 = find_dhcp6c_process($parentrealif);
+			if($pidv6)
+				posix_kill($pidv6, SIGHUP);
 		}
 		break;
 	}

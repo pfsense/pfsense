@@ -72,4 +72,10 @@ if (is_array($config['openvpn']) && is_array($config['openvpn']['openvpn-server'
 	}
 }
 
+$pluginparams = array();
+$pluginparams['type'] = 'carp';
+$pluginparams['event'] = 'rc.carpmaster';
+$pluginparams['interface'] = $argv[1];
+pkg_call_plugins('plugin_carp', $pluginparams);
+
 ?>

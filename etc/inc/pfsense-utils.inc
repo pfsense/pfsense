@@ -2860,4 +2860,40 @@ function get_pppoes_child_interfaces($ifpattern) {
 
 }
 
+/****f* pfsense-utils/pkg_call_plugins
+ * NAME
+ *   pkg_call_plugins
+ * INPUTS
+ *   $plugin_type value used to search in package configuration if the plugin is used, also used to create the function name
+ *   $plugin_params parameters to pass to the plugin function for passing multiple parameters a array can be used.
+ * RESULT
+ *   returns associative array results from the plugin calls for each package
+ * NOTES
+ *   This generic function can be used to notify or retrieve results from functions that are defined in packages.
+ ******/
+function pkg_call_plugins($plugin_type, $plugin_params) {
+	global $g, $config;
+	$results = array();
+	if (!is_array($config['installedpackages']['package']))
+		return $results;
+	foreach ($config['installedpackages']['package'] as $package) {
+		if(!file_exists("/usr/local/pkg/" . $package['configurationfile']))
+			continue;
+		$pkg_config = parse_xml_config_pkg("/usr/local/pkg/" . $package['configurationfile'], 'packagegui');
+		$pkgname = substr(reverse_strrchr($package['configurationfile'], "."),0,-1);
+		if (is_array($pkg_config['plugins']))
+			foreach ($pkg_config['plugins'] as $plugin) {
+				if ($plugin['type'] == $plugin_type) {
+					if (file_exists($pkg_config['include_file']))
+						require_once($pkg_config['include_file']);
+					else
+						continue;
+					$plugin_function = $pkgname . '_'. $plugin_type;
+					$results[$pkgname] = @eval($plugin_function($plugin_params));
+				}
+			}
+	}
+	return $results;
+}
+
 ?>

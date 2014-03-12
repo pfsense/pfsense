@@ -334,7 +334,7 @@ function get_services() {
 
 	if (isset($config['ipsec']['enable'])) {
 		$pconfig = array();
-		$pconfig['name'] = "racoon";
+		$pconfig['name'] = "ipsec";
 		$pconfig['description'] = gettext("IPsec VPN");
 		$services[] = $pconfig;
 	}
@@ -542,7 +542,7 @@ function service_control_start($name, $extras) {
 		case 'miniupnpd':
 			upnp_action('start');
 			break;
-		case 'racoon':
+		case 'ipsec':
 			vpn_ipsec_force_reload();
 			break;
 		case 'sshd':
@@ -616,8 +616,8 @@ function service_control_stop($name, $extras) {
 		case 'sshd':
 			killbyname("sshd");
 			break;
-		case 'racoon':
-			exec("killall -9 racoon");
+		case 'ipsec':
+			exec("/usr/local/sbin/ipsec stop");
 			break;
 		case 'openvpn':
 			$vpnmode = $extras['vpnmode'];
@@ -681,7 +681,7 @@ function service_control_restart($name, $extras) {
 		case 'miniupnpd':
 			upnp_action('restart');
 			break;
-		case 'racoon':
+		case 'ipsec':
 			vpn_ipsec_force_reload();
 			break;
 		case 'sshd':

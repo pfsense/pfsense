@@ -132,7 +132,6 @@ function vpn_ipsec_configure($ipchg = false)
 	} else {
 		mwexec("/sbin/ifconfig enc0 up");
 		mwexec("/sbin/sysctl net.inet.ip.ipsec_in_use=1");
-		/* needed for racoonctl admin socket */
 		/* needed for config files */
 		if (!is_dir("{$g['varetc_path']}/ipsec"))
 			mkdir("{$g['varetc_path']}/ipsec");
@@ -844,8 +843,6 @@ EOD;
 		/* Update configuration changes */
 		mwexec("/usr/local/sbin/ipsec update", false);
 	} else {
-		/* start racoon */
-		$ipsecdebug = isset($config['ipsec']['racoondebug']) ? "-d -v" : "";
 		mwexec("/usr/local/sbin/ipsec start", false); 
 	}
 	if ($natfilterrules == true)
@@ -899,14 +896,14 @@ function vpn_ipsec_force_reload($interface = "") {
 			}
 		}
 		if (!$found) {
-			log_error(sprintf(gettext("Ignoring IPsec racoon daemon reload since there are no tunnels on interface %s"), $interface));
+			log_error(sprintf(gettext("Ignoring IPsec reload since there are no tunnels on interface %s"), $interface));
 			return;
 		}
 	}
 
 	/* if ipsec is enabled, start up again */
 	if (isset($ipseccfg['enable'])) {
-		log_error(gettext("Forcefully reloading IPsec racoon daemon"));
+		log_error(gettext("Forcefully reloading IPsec"));
 		vpn_ipsec_configure();
 	}
 }

@@ -126,10 +126,10 @@ if (!isset($config['voucher'][$cpzone]['publickey'])) {
 }
 
 // Check for invalid or expired vouchers
-if (!isset($config['voucher'][$cpzone]['msgnoaccess'])) 
-	$config['voucher'][$cpzone]['msgnoaccess'] = gettext("Voucher invalid");
-if (!isset($config['voucher'][$cpzone]['msgexpired'])) 
-	$config['voucher'][$cpzone]['msgexpired'] = gettext("Voucher expired");
+if (!isset($config['voucher'][$cpzone]['descrmsgnoaccess'])) 
+	$config['voucher'][$cpzone]['descrmsgnoaccess'] = gettext("Voucher invalid");
+if (!isset($config['voucher'][$cpzone]['descrmsgexpired'])) 
+	$config['voucher'][$cpzone]['descrmsgexpired'] = gettext("Voucher expired");
 
 $a_roll = &$config['voucher'][$cpzone]['roll'];
 
@@ -185,8 +185,8 @@ $pconfig['magic'] = $config['voucher'][$cpzone]['magic'];
 $pconfig['exponent'] = $config['voucher'][$cpzone]['exponent'];
 $pconfig['publickey'] = base64_decode($config['voucher'][$cpzone]['publickey']);
 $pconfig['privatekey'] = base64_decode($config['voucher'][$cpzone]['privatekey']);
-$pconfig['msgnoaccess'] = $config['voucher'][$cpzone]['msgnoaccess'];
-$pconfig['msgexpired'] = $config['voucher'][$cpzone]['msgexpired'];
+$pconfig['msgnoaccess'] = $config['voucher'][$cpzone]['descrmsgnoaccess'];
+$pconfig['msgexpired'] = $config['voucher'][$cpzone]['descrmsgexpired'];
 $pconfig['vouchersyncdbip'] = $config['voucher'][$cpzone]['vouchersyncdbip'];
 $pconfig['vouchersyncport'] = $config['voucher'][$cpzone]['vouchersyncport'];
 $pconfig['vouchersyncpass'] = $config['voucher'][$cpzone]['vouchersyncpass'];
@@ -260,8 +260,8 @@ if ($_POST) {
 			$newvoucher['exponent'] = $_POST['exponent'];
 			$newvoucher['publickey'] = base64_encode($_POST['publickey']);
 			$newvoucher['privatekey'] = base64_encode($_POST['privatekey']);
-			$newvoucher['msgnoaccess'] = $_POST['msgnoaccess'];
-			$newvoucher['msgexpired'] = $_POST['msgexpired'];
+			$newvoucher['descrmsgnoaccess'] = $_POST['msgnoaccess'];
+			$newvoucher['descrmsgexpired'] = $_POST['msgexpired'];
 			$config['voucher'][$cpzone] = $newvoucher;
 			write_config();
 			voucher_configure_zone();
@@ -340,12 +340,10 @@ EOF;
 							$newvoucher['publickey'] = $toreturn['voucher']['publickey'];
 						if($toreturn['voucher']['privatekey'])
 							$newvoucher['privatekey'] = $toreturn['voucher']['privatekey'];
-						if($toreturn['voucher']['msgnoaccess'])
-							$newvoucher['msgnoaccess'] = $toreturn['voucher']['msgnoaccess'];
-						if($toreturn['voucher']['msgexpired'])
-							$newvoucher['msgexpired'] = $toreturn['voucher']['msgexpired'];
-						if($toreturn['voucher']['msgnoaccess'])
-							$newvoucher['msgnoaccess'] = $toreturn['voucher']['msgnoaccess'];
+						if($toreturn['voucher']['descrmsgnoaccess'])
+							$newvoucher['descrmsgnoaccess'] = $toreturn['voucher']['descrmsgnoaccess'];
+						if($toreturn['voucher']['descrmsgexpired'])
+							$newvoucher['descrmsgexpired'] = $toreturn['voucher']['descrmsgexpired'];
 						$savemsg = gettext("Voucher database has been synchronized from {$url}:{$port}");
 
 						$config['voucher'][$cpzone] = $newvoucher;

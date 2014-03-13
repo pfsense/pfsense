@@ -661,13 +661,13 @@ function rmdir_recursive($path,$follow_links=false) {
 }
 
 /*
- * call_pfsense_method(): Call a method exposed by the pfsense.com XMLRPC server.
+ * call_pfsense_method(): Call a method exposed by the pfsense.org XMLRPC server.
  */
 function call_pfsense_method($method, $params, $timeout = 0) {
 	global $g, $config;
 
-	$ip = gethostbyname($g['product_website']);
-	if($ip == $g['product_website'])
+	$ip = gethostbyname($g['xmlrpcbaseurl']);
+	if($ip == $g['xmlrpcbaseurl'])
 		return false;
 
 	$xmlrpc_base_url = isset($config['system']['altpkgrepo']['enable']) ? $config['system']['altpkgrepo']['xmlrpcbaseurl'] : $g['xmlrpcbaseurl'];

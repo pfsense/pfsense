@@ -2885,8 +2885,8 @@ function pkg_call_plugins($plugin_type, $plugin_params) {
 			continue;
 		$pkg_config = parse_xml_config_pkg("/usr/local/pkg/" . $package['configurationfile'], 'packagegui');
 		$pkgname = substr(reverse_strrchr($package['configurationfile'], "."),0,-1);
-		if (is_array($pkg_config['plugins']))
-			foreach ($pkg_config['plugins'] as $plugin) {
+		if (is_array($pkg_config['plugins']['item']))
+			foreach ($pkg_config['plugins']['item'] as $plugin) {
 				if ($plugin['type'] == $plugin_type) {
 					if (file_exists($pkg_config['include_file']))
 						require_once($pkg_config['include_file']);

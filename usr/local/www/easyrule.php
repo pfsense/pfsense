@@ -72,13 +72,13 @@ include("head.inc"); ?>
 <?php if ($input_errors) print_input_errors($input_errors); ?>
 
 <?php if ($message) { ?>
-<br/>
+<br />
 <?=gettext("Message"); ?>: <?php echo $message; ?>
-<br/>
+<br />
 <?php } else { ?>
 <?=gettext("This is the Easy Rule status page, mainly used to display errors when adding rules. " .
 "If you are seeing this, there apparently was not an error, and you navigated to the " .
-"page directly without telling it what to do"); ?>.<br/><br/>
+"page directly without telling it what to do"); ?>.<br /><br />
 <?=gettext("This page is meant to be called from the block/pass buttons on the Firewall Logs page"); ?>, <a href="diag_logs_filter.php"><?=gettext("Status"); ?> &gt; <?=gettext("System Logs, " .
 "Firewall Tab"); ?></a>.
 <br />

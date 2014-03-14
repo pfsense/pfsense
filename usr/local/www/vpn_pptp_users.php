@@ -81,7 +81,7 @@ include("head.inc");
 <?php if (isset($config['pptpd']['radius']['enable']))
 	print_info_box(gettext("Warning: RADIUS is enabled. The local user database will not be used.")); ?>
 <?php if (is_subsystem_dirty('pptpusers')): ?><p>
-<?php print_info_box_np(gettext("The PPTP user list has been modified").".<br>".gettext("You must apply the changes in order for them to take effect").".<br><b>".gettext("Warning: this will terminate all current PPTP sessions")."!</b>");?><br>
+<?php print_info_box_np(gettext("The PPTP user list has been modified").".<br />".gettext("You must apply the changes in order for them to take effect").".<br /><b>".gettext("Warning: this will terminate all current PPTP sessions")."!</b>");?><br />
 <?php endif; ?>
 <table width="100%" border="0" cellpadding="0" cellspacing="0">
   <tr><td class="tabnavtbl">

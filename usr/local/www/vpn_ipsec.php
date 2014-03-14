@@ -130,7 +130,7 @@ include("head.inc");
 	if ($savemsg)
 		print_info_box($savemsg);
 	if ($pconfig['enable'] && is_subsystem_dirty('ipsec'))
-		print_info_box_np(gettext("The IPsec tunnel configuration has been changed") . ".<br>" . gettext("You must apply the changes in order for them to take effect."));
+		print_info_box_np(gettext("The IPsec tunnel configuration has been changed") . ".<br />" . gettext("You must apply the changes in order for them to take effect."));
 ?>
 <table width="100%" border="0" cellpadding="0" cellspacing="0">
 	<tr>
@@ -211,9 +211,9 @@ include("head.inc");
 									$if = "WAN";
 
 								if (!isset($ph1ent['mobile']))
-									echo $if."<br>".$ph1ent['remote-gateway'];
+									echo $if."<br />".$ph1ent['remote-gateway'];
 								else
-									echo $if."<br><strong>" . gettext("Mobile Client") . "</strong>";
+									echo $if."<br /><strong>" . gettext("Mobile Client") . "</strong>";
 							?>
 							<?=$spane;?>
 						</td>
@@ -429,10 +429,10 @@ include("head.inc");
 							<p>
 								<span class="vexpl">
 									<span class="red">
-										<strong><?=gettext("Note"); ?>:<br></strong>
+										<strong><?=gettext("Note"); ?>:<br /></strong>
 									</span>
-								<?=gettext("You can check your IPsec status at"); ?> <a href="diag_ipsec.php"><?=gettext("Status:IPsec"); ?></a>.<br/>
-									<?=gettext("IPsec Debug Mode can be enabled at"); ?> <a href="system_advanced_misc.php"><?=gettext("System:Advanced:Miscellaneous"); ?></a>.<br/>
+								<?=gettext("You can check your IPsec status at"); ?> <a href="diag_ipsec.php"><?=gettext("Status:IPsec"); ?></a>.<br />
+									<?=gettext("IPsec Debug Mode can be enabled at"); ?> <a href="system_advanced_misc.php"><?=gettext("System:Advanced:Miscellaneous"); ?></a>.<br />
 									<?=gettext("IPsec can be set to prefer older SAs at"); ?> <a href="system_advanced_misc.php"><?=gettext("System:Advanced:Miscellaneous"); ?></a>.
 								</span>
 							</p>

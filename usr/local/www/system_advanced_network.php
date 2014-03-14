@@ -206,9 +206,9 @@ function enable_change(enable_over) {
 								<strong><?=gettext("NOTE:"); ?>&nbsp;</strong>
 							</span>
 							<?=gettext("The options on this page are intended for use by advanced users only."); ?>
-							<br/>
+							<br />
 						</span>
-						<br/>
+						<br />
 						<table width="100%" border="0" cellpadding="6" cellspacing="0" summary="main area">
 							<tr>
 								<td colspan="2" valign="top" class="listtopic"><?=gettext("IPv6 Options"); ?></td>
@@ -217,22 +217,22 @@ function enable_change(enable_over) {
 								<td width="22%" valign="top" class="vncell"><?=gettext("Allow IPv6"); ?></td>
 								<td width="78%" class="vtable">
 									<input name="ipv6allow" type="checkbox" id="ipv6allow" value="yes" <?php if ($pconfig['ipv6allow']) echo "checked=\"checked\""; ?> onclick="enable_change(false)" />
-									<strong><?=gettext("Allow IPv6"); ?></strong><br/>
-									<?=gettext("All IPv6 traffic will be blocked by the firewall unless this box is checked."); ?><br/>
-									<?=gettext("NOTE: This does not disable any IPv6 features on the firewall, it only blocks traffic."); ?><br/>
-									<br/>
+									<strong><?=gettext("Allow IPv6"); ?></strong><br />
+									<?=gettext("All IPv6 traffic will be blocked by the firewall unless this box is checked."); ?><br />
+									<?=gettext("NOTE: This does not disable any IPv6 features on the firewall, it only blocks traffic."); ?><br />
+									<br />
 								</td>
 							</tr>
 							<tr>
 								<td width="22%" valign="top" class="vncell"><?=gettext("IPv6 over IPv4 Tunneling"); ?></td>
 								<td width="78%" class="vtable">
 									<input name="ipv6nat_enable" type="checkbox" id="ipv6nat_enable" value="yes" <?php if ($pconfig['ipv6nat_enable']) echo "checked=\"checked\""; ?> onclick="enable_change(false)" />
-									<strong><?=gettext("Enable IPv4 NAT encapsulation of IPv6 packets"); ?></strong><br/>
+									<strong><?=gettext("Enable IPv4 NAT encapsulation of IPv6 packets"); ?></strong><br />
 									<?=gettext("This provides an RFC 2893 compatibility mechanism ".
 									"that can be used to tunneling IPv6 packets over IPv4 ".
 									"routing infrastructures. If enabled, don't forget to ".
-									"add a firewall rule to permit IPv6 packets."); ?><br/>
-									<br/>
+									"add a firewall rule to permit IPv6 packets."); ?><br />
+									<br />
 									<?=gettext("IP address"); ?>&nbsp;:&nbsp;
 									<input name="ipv6nat_ipaddr" type="text" class="formfld unknown" id="ipv6nat_ipaddr" size="20" value="<?=htmlspecialchars($pconfig['ipv6nat_ipaddr']);?>" />
 								</td>
@@ -241,7 +241,7 @@ function enable_change(enable_over) {
 								<td width="22%" valign="top" class="vncell"><?=gettext("Prefer IPv4 over IPv6"); ?></td>
 								<td width="78%" class="vtable">
 									<input name="prefer_ipv4" type="checkbox" id="prefer_ipv4" value="yes" <?php if ($pconfig['prefer_ipv4']) echo "checked=\"checked\""; ?> />
-									<strong><?=gettext("Prefer to use IPv4 even if IPv6 is available"); ?></strong><br/>
+									<strong><?=gettext("Prefer to use IPv4 even if IPv6 is available"); ?></strong><br />
 									<?=gettext("By default, if a hostname resolves IPv6 and IPv4 addresses ".
 									"IPv6 will be used, if you check this option, IPv4 will be " .
 									"used instead of IPv6."); ?><br />
@@ -267,7 +267,7 @@ function enable_change(enable_over) {
 									<input name="disablechecksumoffloading" type="checkbox" id="disablechecksumoffloading" value="yes" <?php if (isset($config['system']['disablechecksumoffloading'])) echo "checked=\"checked\""; ?> />
 									<strong><?=gettext("Disable hardware checksum offload"); ?></strong><br />
 									<?=gettext("Checking this option will disable hardware checksum offloading. Checksum offloading is broken in some hardware, particularly some Realtek cards. Rarely, drivers may have problems with checksum offloading and some specific NICs."); ?>
-									<br/>
+									<br />
 									<span class="red"><strong><?=gettext("Note:");?>&nbsp;</strong></span>
 									<?=gettext("This will take effect after you reboot the machine or re-configure each interface.");?>
 								</td>
@@ -278,7 +278,7 @@ function enable_change(enable_over) {
 									<input name="disablesegmentationoffloading" type="checkbox" id="disablesegmentationoffloading" value="yes" <?php if (isset($config['system']['disablesegmentationoffloading'])) echo "checked=\"checked\""; ?> />
 									<strong><?=gettext("Disable hardware TCP segmentation offload"); ?></strong><br />
 									<?=gettext("Checking this option will disable hardware TCP segmentation offloading (TSO, TSO4, TSO6). This offloading is broken in some hardware drivers, and may impact performance with some specific NICs."); ?>
-									<br/>
+									<br />
 									<span class="red"><strong><?=gettext("Note:");?>&nbsp;</strong></span>
 									<?=gettext("This will take effect after you reboot the machine or re-configure each interface.");?>
 								</td>
@@ -289,7 +289,7 @@ function enable_change(enable_over) {
 									<input name="disablelargereceiveoffloading" type="checkbox" id="disablelargereceiveoffloading" value="yes" <?php if (isset($config['system']['disablelargereceiveoffloading'])) echo "checked=\"checked\""; ?> />
 									<strong><?=gettext("Disable hardware large receive offload"); ?></strong><br />
 									<?=gettext("Checking this option will disable hardware large receive offloading (LRO). This offloading is broken in some hardware drivers, and may impact performance with some specific NICs."); ?>
-									<br/>
+									<br />
 									<span class="red"><strong><?=gettext("Note:");?>&nbsp;</strong></span>
 									<?=gettext("This will take effect after you reboot the machine or re-configure each interface.");?>
 								</td>
@@ -319,7 +319,7 @@ function enable_change(enable_over) {
 									<input name="flowtable" type="checkbox" id="polling_enable" value="yes" <?php if ($pconfig['flowtable']) echo "checked=\"checked\""; ?> />
 									<strong>Enable flowtable support</strong><br />
 									Enables infrastructure for caching flows as a means of accelerating L3 and L2 lookups
-									as well as providing stateful load balancing when used with RADIX_MPATH.<br/>
+									as well as providing stateful load balancing when used with RADIX_MPATH.<br />
 								</td>
 							</tr>
 <?php endif; ?>

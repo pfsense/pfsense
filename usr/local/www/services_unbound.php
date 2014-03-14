@@ -132,7 +132,7 @@ function show_advanced_dns() {
 <?php if ($input_errors) print_input_errors($input_errors); ?>
 <?php if ($savemsg) print_info_box($savemsg); ?>
 <?php if (is_subsystem_dirty('hosts')): ?><p>
-<?php print_info_box_np(gettext("The configuration for the DNS Resolver, has been changed") . ".<br>" . gettext("You must apply the changes in order for them to take effect."));?><br>
+<?php print_info_box_np(gettext("The configuration for the DNS Resolver, has been changed") . ".<br />" . gettext("You must apply the changes in order for them to take effect."));?><br />
 <?php endif; ?>
 <table width="100%" border="0" cellpadding="0" cellspacing="0" summary="services unbound">
 	<tbody>
@@ -159,7 +159,7 @@ function show_advanced_dns() {
 								<td width="22%" valign="top" class="vncellreq"><?=gettext("Enable");?></td>
 								<td width="78%" class="vtable"><p>
 									<input name="enable" type="checkbox" id="enable" value="yes" <?php if ($pconfig['enable'] == "yes") echo "checked";?> onClick="enable_change(false)">
-									<strong><?=gettext("Enable DNS Resolver");?><br>
+									<strong><?=gettext("Enable DNS Resolver");?><br />
 									</strong></p></td>
 								</td>
 							</tr>
@@ -215,7 +215,7 @@ function show_advanced_dns() {
 								<td width="22%" valign="top" class="vncellreq"><?=gettext("DNSSEC");?></td>
 								<td width="78%" class="vtable"><p>
 									<input name="dnssec" type="checkbox" id="dnssec" value="yes" <?php if ($pconfig['dnssec'] === true) echo "checked";?>/>
-									<strong><?=gettext("Enable DNSSEC Support");?><br>
+									<strong><?=gettext("Enable DNSSEC Support");?><br />
 									</strong></p>
 								</td>
 							</tr>
@@ -223,14 +223,14 @@ function show_advanced_dns() {
 								<td width="22%" valign="top" class="vncellreq"><?=gettext("DNS Query Forwarding");?></td>
 								<td width="78%" class="vtable"><p>
 									<input name="forwarding" type="checkbox" id="forwarding" value="yes" <?php if ($pconfig['forwarding'] == "yes") echo "checked";?>>
-									<strong><?=gettext("Enable Forwarding Mode");?></strong><br></p>
+									<strong><?=gettext("Enable Forwarding Mode");?></strong><br /></p>
 								</td>
 							</tr>
 							<tr>
 								<td width="22%" valign="top" class="vncellreq"><?=gettext("DHCP Registration");?></td>
 								<td width="78%" class="vtable"><p>
 									<input name="regdhcp" type="checkbox" id="regdhcp" value="yes" <?php if ($pconfig['regdhcp'] === true) echo "checked";?>>
-									<strong><?=gettext("Register DHCP leases in the DNS Resolver");?><br>
+									<strong><?=gettext("Register DHCP leases in the DNS Resolver");?><br />
 									</strong><?php printf(gettext("If this option is set, then machines that specify".
 									" their hostname when requesting a DHCP lease will be registered".
 									" in the DNS Resolver, so that their name can be resolved.".
@@ -242,7 +242,7 @@ function show_advanced_dns() {
 								<td width="22%" valign="top" class="vncellreq"><?=gettext("Static DHCP");?></td>
 								<td width="78%" class="vtable"><p>
 									<input name="regdhcpstatic" type="checkbox" id="regdhcpstatic" value="yes" <?php if ($pconfig['regdhcpstatic'] === true) echo "checked";?>>
-									<strong><?=gettext("Register DHCP static mappings in the DNS Resolver");?><br>
+									<strong><?=gettext("Register DHCP static mappings in the DNS Resolver");?><br />
 									</strong><?php printf(gettext("If this option is set, then DHCP static mappings will ".
 											"be registered in the DNS Resolver, so that their name can be ".
 											"resolved. You should also set the domain in %s".
@@ -253,7 +253,7 @@ function show_advanced_dns() {
 								<td width="22%" valign="top" class="vncellreq"><?=gettext("Prefer DHCP");?></td>
 								<td width="78%" class="vtable"><p>
 									<input name="dhcpfirst" type="checkbox" id="dhcpfirst" value="yes" <?php if ($pconfig['dhcpfirst'] === true) echo "checked";?>>
-									<strong><?=gettext("Resolve DHCP mappings first");?><br>
+									<strong><?=gettext("Resolve DHCP mappings first");?><br />
 									</strong><?php printf(gettext("If this option is set, then DHCP mappings will ".
 											"be resolved before the manual list of names below. This only ".
 											"affects the name given for a reverse lookup (PTR)."));?></p>
@@ -274,9 +274,9 @@ function show_advanced_dns() {
 										<input type="button" onClick="show_advanced_dns()" value="<?=gettext("Advanced"); ?>"></input> - <?=gettext("Show advanced option");?></a>
 									</div>
 									<div id="showadv" <?php if (empty($pconfig['custom_options'])) echo "style='display:none'"; ?>>
-										<strong><?=gettext("Advanced");?><br></strong>
-										<textarea rows="6" cols="78" name="custom_options" id="custom_options"><?=htmlspecialchars($pconfig['custom_options']);?></textarea><br/>
-										<?=gettext("Enter any additional options you would like to add to the DNS Resolver configuration here, separated by a space or newline"); ?><br/>
+										<strong><?=gettext("Advanced");?><br /></strong>
+										<textarea rows="6" cols="78" name="custom_options" id="custom_options"><?=htmlspecialchars($pconfig['custom_options']);?></textarea><br />
+										<?=gettext("Enter any additional options you would like to add to the DNS Resolver configuration here, separated by a space or newline"); ?><br />
 									</div>
 									</p>
 								</td>
@@ -295,7 +295,7 @@ function show_advanced_dns() {
 </table>
 
 
-<p><span class="vexpl"><span class="red"><strong><?=gettext("Note:");?><br>
+<p><span class="vexpl"><span class="red"><strong><?=gettext("Note:");?><br />
 </strong></span><?php printf(gettext("If the DNS Resolver is enabled, the DHCP".
 " service (if enabled) will automatically serve the LAN IP".
 " address as a DNS server to DHCP clients so they will use".
@@ -303,16 +303,16 @@ function show_advanced_dns() {
 " entered in %sSystem: General setup%s".
 " or those obtained via DHCP or PPP on WAN if the &quot;Allow".
 " DNS server list to be overridden by DHCP/PPP on WAN&quot;".
-" is checked."),'<a href="system.php">','</a>');?><br>
+" is checked."),'<a href="system.php">','</a>');?><br />
 </span></p>
 
-&nbsp;<br>
+&nbsp;<br />
 <table width="100%" border="0" cellpadding="0" cellspacing="0" class="tabcont">
 <tr>
 	<td colspan="5" valign="top" class="listtopic"><?=gettext("Host Overrides");?></td>
 </tr>
 <tr>
-	<td><br/>
+	<td><br />
 	<?=gettext("Entries in this section override individual results from the forwarders.");?>
 	<?=gettext("Use these for changing DNS results or for adding custom DNS records.");?>
 	</td>
@@ -374,7 +374,7 @@ function show_advanced_dns() {
 	</tr>
 	</tfoot>
 </table>
-<br/>
+<br />
 <table width="100%" border="0" cellpadding="0" cellspacing="0" class="tabcont">
 <tr>
 	<td colspan="5" valign="top" class="listtopic"><?=gettext("Domain Overrides");?></td>

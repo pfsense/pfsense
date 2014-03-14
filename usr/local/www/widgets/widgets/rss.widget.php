@@ -81,7 +81,7 @@ else
 <div id="rss-settings" class="widgetconfigdiv" style="display:none;">
 	<form action="/widgets/widgets/rss.widget.php" method="post" name="iformc">
 		<textarea name="rssfeed" class="formfld unknown textarea_widget" id="rssfeed" cols="40" rows="3"><?=$textarea_txt;?></textarea>
-		<br/>
+		<br />
 		<table summary="rss widget">
 			<tr>
 				<td align="right">
@@ -161,11 +161,11 @@ else
 	foreach($feed->get_items() as $item) {
 		$feed = $item->get_feed();
 		$feed->strip_htmltags();
-		echo "<a target='blank' href='" . $item->get_permalink() . "'>" . $item->get_title() . "</a><br/>";
+		echo "<a target='blank' href='" . $item->get_permalink() . "'>" . $item->get_title() . "</a><br />";
 		$content = $item->get_content();
 		$content = strip_tags($content);
-		echo textLimit($content, $rsswidgettextlength) . "<br/>";
-		echo "Source: <a target='_blank' href='" . $item->get_permalink() . "'><img src='" . $feed->get_favicon() . "' alt='" . $feed->get_title() . "' title='" . $feed->get_title() . "' border='0' width='16' height='16' /></a><br/>";
+		echo textLimit($content, $rsswidgettextlength) . "<br />";
+		echo "Source: <a target='_blank' href='" . $item->get_permalink() . "'><img src='" . $feed->get_favicon() . "' alt='" . $feed->get_title() . "' title='" . $feed->get_title() . "' border='0' width='16' height='16' /></a><br />";
 		$counter++;
 		if($counter > $max_items)
 			break;

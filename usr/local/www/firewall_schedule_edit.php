@@ -781,7 +781,7 @@ EOD;
 						        <span class="vexpl"><?=gettext("NOTE: This schedule is in use so the name may not be modified!");?></span>
 						      </p>
 				<?php else: ?>
-				  <input name="name" type="text" id="name" size="40" maxlength="40" class="formfld unknown" value="<?=htmlspecialchars($pconfig['name']);?>" /><br/>
+				  <input name="name" type="text" id="name" size="40" maxlength="40" class="formfld unknown" value="<?=htmlspecialchars($pconfig['name']);?>" /><br />
 				      	<span class="vexpl">
      					   <?=gettext("The name of the alias may only consist of the characters a-z, A-Z and 0-9");?>
       					</span>
@@ -790,7 +790,7 @@ EOD;
 				</tr>
 				<tr>
 					<td width="15%" valign="top" class="vncell"><?=gettext("Description");?></td>
-					<td width="85%" class="vtable"><input name="descr" type="text" id="descr" size="40" maxlength="40" class="formfld unknown" value="<?=htmlspecialchars($pconfig['descr']);?>" /><br/>
+					<td width="85%" class="vtable"><input name="descr" type="text" id="descr" size="40" maxlength="40" class="formfld unknown" value="<?=htmlspecialchars($pconfig['descr']);?>" /><br />
  						<span class="vexpl">
 				        	<?=gettext("You may enter a description here for your reference (not parsed).");?>
 				      	</span>
@@ -820,7 +820,7 @@ EOD;
 								$monthcounter++;
 							}	
 						} ?>      	
-                    </select><br/><br/>
+                    </select><br /><br />
             		<?php
             		$firstmonth = TRUE;
             		$monthcounter = date("n");
@@ -901,7 +901,7 @@ EOD;
 						}					
 					} //end for loop
 					?>
-							<br/>
+							<br />
 					<?=gettext("Click individual date to select that date only. Click the appropriate weekday Header to select all occurences of that weekday.");?>
 	                 </td>
 				</tr>
@@ -958,13 +958,13 @@ EOD;
 				  				</select>&nbsp;<?=gettext("Min");?>
 				  			</td>
 				  		</tr>
-				  	</table><br/>
+				  	</table><br />
                    <?=gettext("Select the time range for the day(s) selected on the Month(s) above. A full day is 0:00-23:59.")?>
 					</td>
 				</tr>
 				<tr>
 					<td width="15%" valign="top" class="vncell"><?=gettext("Time Range Description")?></td>
-					<td width="85%" class="vtable"><input name="timerangedescr" type="text" class="formfld unknown" id="timerangedescr" size="40" maxlength="40" /><br/>
+					<td width="85%" class="vtable"><input name="timerangedescr" type="text" class="formfld unknown" id="timerangedescr" size="40" maxlength="40" /><br />
  						<span class="vexpl">
 				        	<?=gettext("You may enter a description here for your reference (not parsed).")?>
 				      	</span>     

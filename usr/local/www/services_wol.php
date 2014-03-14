@@ -60,9 +60,9 @@ if($_GET['wakeall'] <> "") {
 		$bcip = gen_subnet_max($ipaddr, get_interface_subnet($if));
 		/* Execute wol command and check return code. */
 		if (!mwexec("/usr/local/bin/wol -i {$bcip} {$mac}"))
-			$savemsg .= sprintf(gettext('Sent magic packet to %1$s (%2$s)%3$s'),$mac, $description, ".<br>");
+			$savemsg .= sprintf(gettext('Sent magic packet to %1$s (%2$s)%3$s'),$mac, $description, ".<br />");
 		else
-			$savemsg .= sprintf(gettext('Please check the %1$ssystem log%2$s, the wol command for %3$s (%4$s) did not complete successfully%5$s'),'<a href="/diag_logs.php">','</a>',$description,$mac,".<br>");
+			$savemsg .= sprintf(gettext('Please check the %1$ssystem log%2$s, the wol command for %3$s (%4$s) did not complete successfully%5$s'),'<a href="/diag_logs.php">','</a>',$description,$mac,".<br />");
 	}
 }
 
@@ -98,7 +98,7 @@ if ($_POST || $_GET['mac']) {
 			if(!mwexec("/usr/local/bin/wol -i {$bcip} " . escapeshellarg($mac)))
 				$savemsg .= sprintf(gettext("Sent magic packet to %s."),$mac);
 			else
-				$savemsg .= sprintf(gettext('Please check the %1$ssystem log%2$s, the wol command for %3$s did not complete successfully%4$s'),'<a href="/diag_logs.php">', '</a>', $mac, ".<br>");
+				$savemsg .= sprintf(gettext('Please check the %1$ssystem log%2$s, the wol command for %3$s did not complete successfully%4$s'),'<a href="/diag_logs.php">', '</a>', $mac, ".<br />");
 		}
 	}
 }
@@ -137,14 +137,14 @@ include("head.inc");
                       <?=htmlspecialchars($ifacename);?>
                       </option>
                       <?php endforeach; ?>
-                    </select> <br>
+                    </select> <br />
                     <span class="vexpl"><?=gettext("Choose which interface the host to be woken up is connected to.");?></span></td>
                 </tr>
                 <tr>
 				  <td width="22%" valign="top" class="vncellreq"><?=gettext("MAC address");?></td>
 				  <td width="78%" class="vtable">
                       <input name="mac" type="text" class="formfld unknown" id="mac" size="20" value="<?=htmlspecialchars($mac);?>">
-                      <br>
+                      <br />
                       <?=gettext("Enter a MAC address ");?><span class="vexpl"> <?=gettext("in the following format: xx:xx:xx:xx:xx:xx");?></span></td></tr>
 				<tr>
 				  <td width="22%" valign="top">&nbsp;</td>
@@ -153,7 +153,7 @@ include("head.inc");
 				</td>
 				</tr>
 			</table>
-			&nbsp;<br>
+			&nbsp;<br />
 			<?=gettext("Wake all clients at once: ");?><a href="services_wol.php?wakeall=true"><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_wol_all.gif" width="17" height="17" border="0"></a><p/>
 			<?=gettext("Or Click the MAC address to wake up an individual device:");?>
 			<table width="100%" border="0" cellpadding="0" cellspacing="0" class="tabcont">
@@ -207,7 +207,7 @@ include("head.inc");
 			<span class="vexpl">
 					<span class="red">
 						<strong>
-							<?=gettext("Note:");?><br>
+							<?=gettext("Note:");?><br />
             			</strong>
 					</span><?=gettext("This service can be used to wake up (power on) computers by sending special"); ?> &quot;<?=gettext("Magic Packets"); ?>&quot;. <?=gettext("The NIC in the computer that is to be woken up must support Wake on LAN and has to be configured properly (WOL cable, BIOS settings). ");?>
 			</span>

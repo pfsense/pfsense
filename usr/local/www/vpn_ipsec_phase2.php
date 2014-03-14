@@ -508,7 +508,7 @@ function change_protocol() {
 						<td width="78%" class="vtable">
 							<input name="disabled" type="checkbox" id="disabled" value="yes" <?php if ($pconfig['disabled']) echo "checked"; ?>>
 							<strong><?=gettext("Disable this phase2 entry"); ?></strong>
-							<br>
+							<br />
 							<span class="vexpl"><?=gettext("Set this option to disable this phase2 entry without " .
 							  "removing it from the list"); ?>.
 							</span>
@@ -565,7 +565,7 @@ function change_protocol() {
 									</td>
 								</tr>
 								<tr> <td colspan="3">
-								<br/>
+								<br />
 								<?php echo gettext("In case you need NAT/BINAT on this network specify the address to be translated"); ?>
 								</td></tr>
 								<tr>
@@ -646,7 +646,7 @@ function change_protocol() {
 						<td width="22%" valign="top" class="vncell"><?=gettext("Description"); ?></td>
 						<td width="78%" class="vtable">
 							<input name="descr" type="text" class="formfld unknown" id="descr" size="40" value="<?=htmlspecialchars($pconfig['descr']);?>">
-							<br>
+							<br />
 							<span class="vexpl">
 								<?=gettext("You may enter a description here " .
 								"for your reference (not parsed)"); ?>.
@@ -671,7 +671,7 @@ function change_protocol() {
 								</option>
 							<?php endforeach; ?>
 							</select>
-							<br>
+							<br />
 							<span class="vexpl">
 								<?=gettext("ESP is encryption, AH is authentication only"); ?>
 							</span>
@@ -719,7 +719,7 @@ function change_protocol() {
 								<?php endforeach; ?>
 								
 							</table>
-							<br>
+							<br />
 							<?=gettext("Hint: use 3DES for best compatibility or if you have a hardware " . 
 							"crypto accelerator card. Blowfish is usually the fastest in " .
 							"software encryption"); ?>.
@@ -731,7 +731,7 @@ function change_protocol() {
 						<?php foreach ($p2_halgos as $algo => $algoname): ?>
 							<input type="checkbox" name="halgos[]" value="<?=$algo;?>" <?php if (in_array($algo, $pconfig['halgos'])) echo "checked"; ?>>
 							<?=htmlspecialchars($algoname);?>
-							<br>
+							<br />
 						<?php endforeach; ?>
 						</td>
 					</tr>
@@ -746,14 +746,14 @@ function change_protocol() {
 								</option>
 							<?php endforeach; ?>
 							</select>
-							<br>
+							<br />
 							<?php else: ?>
 
 							<select class="formselect" disabled>
 								<option selected><?=$p2_pfskeygroups[$a_client['pfs_group']];?></option>
 							</select>
 							<input name="pfsgroup" type="hidden" value="<?=htmlspecialchars($pconfig['pfsgroup']);?>">
-							<br>
+							<br />
 							<span class="vexpl"><em><?=gettext("Set globally in mobile client options"); ?></em></span>
 						<?php endif; ?>
 						</td>

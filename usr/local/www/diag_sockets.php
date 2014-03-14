@@ -114,14 +114,14 @@ $showAllOption = $showAll ? "" : "?showAll";
 	} 
 ?>
 </table>
-<br/>
+<br />
 <a name="about"></a>
 <table class="tabcont" width="100%" border="0" cellpadding="0" cellspacing="0" border="1">
 	<tr><td colspan="2" class="listtopic" >Socket information explanation</td></tr>
 <tr><td colspan="2"  class="">
-This page show the output for the commands: "sockstat -4lL" and "sockstat -6lL".<br/>
-Or in case of showing all sockets the output for: "sockstat -4" and "sockstat -6".<br/>
-<br/>
+This page show the output for the commands: "sockstat -4lL" and "sockstat -6lL".<br />
+Or in case of showing all sockets the output for: "sockstat -4" and "sockstat -6".<br />
+<br />
 The information listed for each socket is:</td></tr>
 	<tr><td class="listlr">USER	      </td><td class="listr">The user who owns the socket.</td></tr>
 	<tr><td class="listlr">COMMAND	      </td><td class="listr">The command which holds the socket.</td></tr>

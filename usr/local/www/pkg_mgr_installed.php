@@ -141,18 +141,18 @@ include("head.inc");
 										if(strcmp($pkg['version'], $latest_package) > 0) {
 											$tdclass = "listbggrey";
 											if ($g['disablepackagehistory'])
-												$pkgver  = "<a>".gettext("Available") .": ". $latest_package . "<br/>";
+												$pkgver  = "<a>".gettext("Available") .": ". $latest_package . "<br />";
 											else
-												$pkgver  = "<a target='_blank' href='$changeloglink'>".gettext("Available") .": ". $latest_package . "<br/>";
+												$pkgver  = "<a target='_blank' href='$changeloglink'>".gettext("Available") .": ". $latest_package . "<br />";
 											$pkgver .= gettext("Installed") .": ". $pkg['version']. "</a>";
 										}
 										// we're running an older version of the package
 										if(strcmp($pkg['version'], $latest_package) < 0) {
 											$tdclass = "listbg";
 											if ($g['disablepackagehistory'])
-												$pkgver  = "<a><font color='#ffffff'>" . gettext("Available") .": ". $latest_package . "</font><br/>";
+												$pkgver  = "<a><font color='#ffffff'>" . gettext("Available") .": ". $latest_package . "</font><br />";
 											else
-												$pkgver  = "<a target='_blank' href='$changeloglink'><font color='#ffffff'>" . gettext("Available") .": ". $latest_package . "<br/>";
+												$pkgver  = "<a target='_blank' href='$changeloglink'><font color='#ffffff'>" . gettext("Available") .": ". $latest_package . "<br />";
 											$pkgver .= gettext("Installed") .": ". $pkg['version']."</font></a>";
 										}
 										// we're running the current version
@@ -201,7 +201,7 @@ include("head.inc");
 							<td class="listbg" style="overflow:hidden; text-align:justify;" <?=domTT_title(gettext("Click package info for more details about ".ucfirst($pkg['name'])." package."))?>>
 									<?=$currentvers[$pkg['name']]['descr'];?>
 							<?php if (! $g['disablepackageinfo']): ?>
-							<br/><br/>
+							<br /><br />
 							<a target='_blank' href='<?=$pkginfolink?>' style='align:center;color:#ffffff; filter:Glow(color=#ff0000, strength=12);'><?=$pkginfo?></a>
 							<?php endif; ?>
 							</td>
@@ -209,7 +209,7 @@ include("head.inc");
 								<a href="pkg_mgr_install.php?mode=delete&amp;pkg=<?= $pkg['name']; ?>">
 									<img <?=domTT_title(gettext("Remove ".ucfirst($pkg['name'])." package."))?> src="./themes/<?= $g['theme']; ?>/images/icons/icon_x.gif" width="17" height="17" border="0" alt="delete" />
 								</a>
-								<br/>
+								<br />
 								<a href="pkg_mgr_install.php?mode=reinstallpkg&amp;pkg=<?= $pkg['name']; ?>">
 									<img <?=domTT_title(gettext("Reinstall ".ucfirst($pkg['name'])." package."));?> src="./themes/<?= $g['theme']; ?>/images/icons/icon_reinstall_pkg.gif" width="17" height="17" border="0" alt="reinstall" />
 								</a>

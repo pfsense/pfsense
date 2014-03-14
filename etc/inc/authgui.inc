@@ -260,7 +260,7 @@ $have_cookies = isset($_COOKIE["cookie_test"]);
 			<?php 
 				if(is_ipaddr($http_host) && !$local_ip && !isset($config['system']['webgui']['nohttpreferercheck'])) {
 					$nifty_background = "#999";
-					print_info_box(gettext("You are accessing this router by an IP address not configured locally, which may be forwarded by NAT or other means. <br/><br/>If you did not setup this forwarding, you may be the target of a man-in-the-middle attack.")); 
+					print_info_box(gettext("You are accessing this router by an IP address not configured locally, which may be forwarded by NAT or other means. <br /><br />If you did not setup this forwarding, you may be the target of a man-in-the-middle attack.")); 
 				}
 				$noautocomplete = isset($config['system']['webgui']['noautocomplete']) ? 'autocomplete="off"' : '';
 			?>
@@ -287,7 +287,7 @@ $have_cookies = isset($_COOKIE["cookie_test"]);
 					</span>
 
 					<?php if (!$have_cookies && isset($_POST['login'])): ?>
-					<br/><br/>
+					<br /><br />
 					<span style="text-align:center; font-weight: normal ; font-style: italic; color: #ff0000">
 						<?= gettext("Your browser must support cookies to login."); ?>
 					</span>

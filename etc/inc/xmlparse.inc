@@ -57,7 +57,7 @@ function listtags() {
 		'timerange', 'tunnel', 'user', 'vip', 'virtual_server', 'vlan',
 		'winsserver', 'wolentry', 'widget'
 	);
-	return array_flip($ret);
+	return $ret;
 }
 
 /* Package XML tags that should be treat as a list not as a traditional array */

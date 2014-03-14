@@ -47,22 +47,17 @@ function conv_log_filter($logfile, $nentries, $tail = 50, $filtertext = "", $fil
 	if ($filtertext)
 		$tail = 5000;
 
-	/* FreeBSD 8 splits pf log lines into two lines, so we need to at least
-	 * tail twice as many, plus some extra to account for unparseable lines */
-	$tail = $tail * 2 + 50;
-
 	/* Always do a reverse tail, to be sure we're grabbing the 'end' of the log. */
 	$logarr = "";
 
 	if(isset($config['system']['usefifolog']))
-		exec("/usr/sbin/fifolog_reader " . escapeshellarg($logfile) . " | /usr/bin/tail -r -n {$tail}", $logarr);
+		exec("/usr/sbin/fifolog_reader " . escapeshellarg($logfile) . " | /usr/bin/grep 'filterlog:' | /usr/bin/tail -r -n {$tail}", $logarr);
 	else
-		exec("/usr/sbin/clog " . escapeshellarg($logfile) . " | grep -v \"CLOG\" | grep -v \"\033\" | /usr/bin/tail -r -n {$tail}", $logarr);
+		exec("/usr/sbin/clog " . escapeshellarg($logfile) . " | grep -v \"CLOG\" | grep -v \"\033\" | /usr/bin/grep 'filterlog:' | /usr/bin/tail -r -n {$tail}", $logarr);
 
 	$filterlog = array();
 	$counter = 0;
 
-	$logarr = array_reverse(collapse_filter_lines(array_reverse($logarr)));
 	$filterinterface = strtoupper($filterinterface);
 	foreach ($logarr as $logent) {
 		if($counter >= $nentries)
@@ -109,92 +104,84 @@ function match_filter_field($flent, $fields) {
 
 // Case Insensitive in_array function
 function in_arrayi($needle, $haystack) {
-    return in_array(strtolower($needle), array_map('strtolower', $haystack));
-}
-
-function collapse_filter_lines($logarr) {
-	$lastline = "";
-	$collapsed = array();
-	/* Stick a blank entry at the end to be sure we always fully parse the last entry */
-	$logarr[] = "";
-	foreach ($logarr as $logent) {
-		$line_split = "";
-		preg_match("/.*\spf:\s(.*)/", $logent, $line_split);
-		if (substr($line_split[1], 0, 4) != "    ") {
-			if (($lastline != "") && (substr($lastline, 0, 1) != " ")) {
-				$collapsed[] = $lastline;
-			}
-			$lastline = $logent;
-		} else {
-			$lastline .= substr($line_split[1], 3);
-		}
-	}
-	//print_r($collapsed);
-	return $collapsed;
+	return in_array(strtolower($needle), array_map('strtolower', $haystack));
 }
 
 function parse_filter_line($line) {
 	global $config, $g;
+
+	$flent = array();
 	$log_split = "";
-	preg_match("/(.*)\s(.*)\spf:\s.*\srule\s(.*)\(match\)\:\s(.*)\s(\w+)\son\s(\w+)\:\s\((.*)\)\s(.*)\s>\s(.*)\:\s(.*)/", $line, $log_split);
 
-	list($all, $flent['time'], $host, $rule, $flent['act'], $flent['direction'], $flent['realint'], $details, $src, $dst, $leftovers) = $log_split;
+	if (!preg_match("/(.*)\s(.*)\sfilterlog:\s(.*)$/", $line, $log_split))
+		return "";
 
-	list($flent['srcip'], $flent['srcport']) = parse_ipport($src);
-	list($flent['dstip'], $flent['dstport']) = parse_ipport($dst);
+	list($all, $flent['time'], $host, $rule) = $log_split;
 
-	$flent['src'] = $flent['srcip'];
-	$flent['dst'] = $flent['dstip'];
+	$rule_data = explode(",", $rule);
+	$field = 0;
 
-	if ($flent['srcport'])
-		$flent['src'] .= ':' . $flent['srcport'];
-	if ($flent['dstport'])
-		$flent['dst'] .= ':' . $flent['dstport'];
-
+	$flent['rulenum'] = $rule_data[$field++];
+	$flent['subrulenum'] = $rule_data[$field++];
+	$flent['anchor'] = $rule_data[$field++];
+	$flent['tracker'] = $rule_data[$field++];
+	$flent['realint'] = $rule_data[$field++];
 	$flent['interface']  = convert_real_interface_to_friendly_descr($flent['realint']);
+	$flent['reason'] = $rule_data[$field++];
+	$flent['act'] = $rule_data[$field++];
+	$flent['direction'] = $rule_data[$field++];
+	$flent['version'] = $rule_data[$field++];
 
-	$tmp = explode("/", $rule);
-	// Format of the rule number in FreeBSD 9.x and later seems to be X..Y where X is the matched rule and Y is the maximum possible rule number.
-	$rulenum_parts = explode("..", $tmp[0]);
-	$flent['rulenum'] = $rulenum_parts[0];
-
-	$proto = array(" ", "(?)");
-	/* Attempt to determine the protocol, based on several possible patterns.
-	 * The value returned by strpos() must be strictly checkeded against the
-	 * boolean FALSE because it could return a valid answer of 0 upon success. */
-	if (!(strpos($details, 'proto ') === FALSE)) {
-		preg_match("/.*\sproto\s(.*)\s\(/", $details, $proto);
-	} elseif (!(strpos($details, 'next-header ') === FALSE)) {
-		preg_match("/.*\snext-header\s(.*)\s\(/", $details, $proto);
-	} elseif (!(strpos($details, 'proto: ') === FALSE)) {
-		preg_match("/.*\sproto\:(.*)\s\(/", $details, $proto);
-	} elseif (!(strpos($leftovers, 'sum ok] ') === FALSE)) {
-		preg_match("/.*\ssum ok]\s(.*)\,\s.*/", $leftovers, $proto);
-	} elseif (!(strpos($line, 'sum ok] ') === FALSE)) {
-		preg_match("/.*\ssum ok]\s(.*)\,\s.*/", $line, $proto);
-	}
-	$proto = explode(" ", trim($proto[1]));
-	$flent['proto'] = rtrim($proto[0], ",");
-
-	/* If we're dealing with TCP, try to determine the flags/control bits */
-	$flent['tcpflags'] = "";
-	if ($flent['proto'] == "TCP") {
-		$flags = preg_split('/[, ]/', $leftovers);
-		$flent['tcpflags'] = str_replace(".", "A", substr($flags[1], 1, -1));
-	} elseif ($flent['proto'] == "Options") {
-		/* Then there must be some info we missed */
-		if (!(strpos($leftovers, 'sum ok] ') === FALSE)) {
-			preg_match("/.*\ssum ok]\s(.*)\,\s.*/", $leftovers, $proto);
-		} elseif (!(strpos($line, 'sum ok] ') === FALSE)) {
-			preg_match("/.*\ssum ok]\s(.*)\,\s.*/", $line, $proto);
+	if ($flent['version'] == '4' || $flent['version'] == '6') {
+		if ($flent['version'] == '4') {
+			$flent['tos'] = $rule_data[$field++];
+			$flent['ecn'] = $rule_data[$field++];
+			$flent['ttl'] = $rule_data[$field++];
+			$flent['id'] = $rule_data[$field++];
+			$flent['offset'] = $rule_data[$field++];
+			$flent['flags'] = $rule_data[$field++];
+			$flent['protoid'] = $rule_data[$field++];
+			$flent['proto'] = strtoupper($rule_data[$field++]);
+		} else {
+			$flent['class'] = $rule_data[$field++];
+			$flent['flowlabel'] = $rule_data[$field++];
+			$flent['hlim'] = $rule_data[$field++];
+			$flent['proto'] = $rule_data[$field++];
+			$flent['protoid'] = $rule_data[$field++];
 		}
-		$proto = explode(" ", trim($proto[1]));
-		$flent['proto'] = rtrim($proto[0], ",");
-		/* If it's still 'Options', then just ignore it. */
-		if ($flent['proto'] == "Options")
-			$flent['proto'] = "none";
-	} elseif (($flent['proto'] == "unknown") && (!(strpos($line, ':  pfsync') === FALSE))) {
-		$flent['proto'] = "PFSYNC";
+
+		$flent['length'] = $rule_data[$field++];
+		$flent['srcip'] = $rule_data[$field++];
+		$flent['dstip'] = $rule_data[$field++];
+
+		if ($flent['protoid'] == '6' || $flent['protoid'] == '17') { // TCP or UDP
+			$flent['srcport'] = $rule_data[$field++];
+			$flent['dstport'] = $rule_data[$field++];
+
+			$flent['src'] = $flent['srcip'] . ':' . $flent['srcport'];
+			$flent['dst'] = $flent['dstip'] . ':' . $flent['dstport'];
+
+			$flent['datalen'] = $rule_data[$field++];
+			if ($flent['protoid'] == '6') { // TCP
+				$flent['tcpflags'] = $rule_data[$field++];
+				$flent['seq'] = $rule_data[$field++];
+				$flent['ack'] = $rule_data[$field++];
+				$flent['window'] = $rule_data[$field++];
+				$flent['urg'] = $rule_data[$field++];
+				$flent['options'] = explode(";",$rule_data[$field++]);
+			}
+		} else if ($flent['protoid'] == '112') { // CARP
+			$flent['type'] = $rule_data[$field++];
+			$flent['ttl'] = $rule_data[$field++];
+			$flent['vhid'] = $rule_data[$field++];
+			$flent['version'] = $rule_data[$field++];
+			$flent['advskew'] = $rule_data[$field++];
+			$flent['advbase'] = $rule_data[$field++];
+		}
+	} else {
+		if($g['debug'])
+			log_error(sprintf(gettext("There was a error parsing rule number: %s.   Please report to mailing list or forum."), $flent['rulenum']));
+		return "";
 	}
 
 	/* If there is a src, a dst, and a time, then the line should be usable/good */
@@ -206,39 +193,6 @@ function parse_filter_line($line) {
 		}
 		return "";
 	}
-}
-
-function parse_ipport($addr) {
-	$addr = trim(rtrim($addr, ":"));
-	if (substr($addr, 0, 4) == "kip ")
-		$addr = substr($addr, 4);
-	$port = '';
-	if (substr_count($addr, '.') > 1) {
-		/* IPv4 */
-		$addr_split = explode(".", $addr);
-		$ip = "{$addr_split[0]}.{$addr_split[1]}.{$addr_split[2]}.{$addr_split[3]}";
-
-		if ($ip == "...")
-			return array($addr, '');
-
-		if($addr_split[4] != "") {
-			$port_split = explode(":", $addr_split[4]);
-			$port = $port_split[0];
-		}
-	} else {
-		/* IPv6 */
-		$addr = explode(" ", $addr);
-		$addr = rtrim($addr[0], ":");
-		$addr_split = explode(".", $addr);
-		if (count($addr_split) > 1) {
-			$ip   = $addr_split[0];
-			$port = $addr_split[1];
-		} else {
-			$ip   = $addr;
-		}
-	}
-
-	return array($ip, $port);
 }
 
 function get_port_with_service($port, $proto) {
@@ -279,7 +233,7 @@ function find_rule_by_number($rulenum, $type="rules") {
 }
 
 function buffer_rules_load() {
-    global $g, $buffer_rules_rdr, $buffer_rules_normal;
+	global $g, $buffer_rules_rdr, $buffer_rules_normal;
 
 	unset($buffer, $buffer_rules_rdr, $buffer_rules_normal);
 	$buffer_rules_rdr = array();
@@ -312,7 +266,7 @@ function buffer_rules_clear() {
 }
 
 function find_rule_by_number_buffer($rulenum, $type){
-    global $g, $buffer_rules_rdr, $buffer_rules_normal;
+	global $g, $buffer_rules_rdr, $buffer_rules_normal;
 	
 	if ($type == "rdr")	{
 		$ruleString = $buffer_rules_rdr["@".$rulenum];
@@ -336,20 +290,6 @@ function find_action_image($action) {
 		return "/themes/{$g['theme']}/images/icons/icon_block.gif";
 }
 
-function is_first_row($rownum, $totalrows) {
-	global $config;
-	if(isset($config['syslog']['reverse'])) {
-		/* Honor reverse logging setting */
-		if($rownum == 0)
-			return " id=\"firstrow\"";
-	} else {
-		/* non-reverse logging */
-		if($rownum == $totalrows - 1)
-			return " id=\"firstrow\"";
-	}
-	return "";
-}
-
 /* AJAX specific handlers */
 function handle_ajax($nentries, $tail = 50) {
 	global $config;
@@ -361,7 +301,7 @@ function handle_ajax($nentries, $tail = 50) {
 			$lastsawtime = $_POST['lastsawtime'];
 		/*  compare lastsawrule's time stamp to filter logs.
 		 *  afterwards return the newer records so that client
-                 *  can update AJAX interface screen.
+		 *  can update AJAX interface screen.
 		 */
 		$new_rules = "";
 		$filterlog = conv_log_filter($filter_logfile, $nentries, $tail);

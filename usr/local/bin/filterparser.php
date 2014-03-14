@@ -47,34 +47,9 @@ $lastline = "";
 while(!feof($log)) { 
 	$line = fgets($log);
 	$line = rtrim($line);
-	$line_split = "";
-	preg_match("/.*\spf:\s(.*)/", $line, $line_split);
-	if (substr($line_split[1], 0, 4) != "    ") {
-		$flent = "";
-		if (($lastline != "") && (substr($lastline, 0, 1) != " ")) {
-			$flent = parse_filter_line(trim($lastline));
-		}
-		$lastline = $line;
-	} else {
-		$lastline .= substr($line_split[1], 3);
-	}
-	/* Available fields:
-	 time       - Time the packet was seen
-	 rulenum    - Rule number matched
-	 act        - Action (pass/block)
-	 interface  - Friendly interface name (WAN, LAN, etc)
-	 realint    - Real interface name (fxp0, em0, vr0, etc)
-	 proto      - Protocol (e.g. TCP, UDP, ICMP, etc)
-	 tcpflags   - TCP flags/control bits
-	 src        - Source address with port
-	 srcip      - Source IP
-	 srcport    - Source Port
-	 dst        - Destination address with port
-	 dstip      - Destination IP
-	 dstport    - Destination Port
-	*/
-	$flags = (($flent['proto'] == "TCP") && !empty($flent['tcpflags'])) ? ":" . $flent['tcpflags'] : "";
+	$flent = parse_filter_line(trim($line));
 	if ($flent != "") {
+		$flags = (($flent['proto'] == "TCP") && !empty($flent['tcpflags'])) ? ":" . $flent['tcpflags'] : "";
 		echo "{$flent['time']} {$flent['act']} {$flent['realint']} {$flent['proto']}{$flags} {$flent['src']} {$flent['dst']}\n";
 		$flent = "";
 	}

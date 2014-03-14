@@ -356,7 +356,7 @@ include("head.inc");
 				
 			  $int = strtolower($filterent['interface']);
 			  $proto = strtolower($filterent['proto']);
-			  if(is_ipaddrv6($filterent['srcip'])) {
+			  if($filterent['version'] == '6') {
 				$ipproto = "inet6";
 				$filterent['srcip'] = "[{$filterent['srcip']}]";
 				$filterent['dstip'] = "[{$filterent['dstip']}]";

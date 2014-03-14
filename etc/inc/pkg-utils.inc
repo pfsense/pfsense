@@ -626,7 +626,7 @@ function install_package($package, $pkg_info = "", $force_install = false) {
 			else {
 				$static_output .= gettext("failed!\n\nInstallation aborted.\n");
 				update_output_window($static_output);
-				echo "<br>Show <a href=\"pkg_mgr_install.php?showlog=true\">install log</a></center>";
+				echo "<br />Show <a href=\"pkg_mgr_install.php?showlog=true\">install log</a></center>";
 			}
 			conf_mount_ro();
 			return -1;

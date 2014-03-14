@@ -141,7 +141,7 @@ include("head.inc");
 				echo "<tr><td><table width='100%'><tr><td bgcolor=\"$bgcolor\">&nbsp;$online&nbsp;</td></tr><tr><td>";
 				$lastchange = $gateways_status[$gname]['lastcheck'];
 				if(!empty($lastchange)) {
-					echo gettext("Last check:") . '<br/>' . $lastchange;
+					echo gettext("Last check:") . '<br />' . $lastchange;
 				}
 				echo "</td></tr></table></td></tr>";
                         ?>

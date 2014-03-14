@@ -113,7 +113,7 @@ include("head.inc");
 <?php if (is_subsystem_dirty('restore')): ?><p>
 <form action="reboot.php" method="post">
 <input name="Submit" type="hidden" value="Yes" />
-<?php print_info_box(gettext("The firewall configuration has been changed.") . "<br/>" . gettext("The firewall is now rebooting."));?><br/>
+<?php print_info_box(gettext("The firewall configuration has been changed.") . "<br />" . gettext("The firewall is now rebooting."));?><br />
 </form>
 <?php endif; ?>
 <form action="system_firmware_restorefullbackup.php" method="post">
@@ -178,9 +178,9 @@ include("head.inc");
 ?>
 				<tr>
 					<td width="78%" colspan="3">
-						&nbsp;<br/>
+						&nbsp;<br />
 						<input type="checkbox" name="overwriteconfigxml" id="overwriteconfigxml" checked="checked" /> <?=gettext("do not restore config.xml."); ?>
-						<br/>
+						<br />
 						<input name="Restore" type="submit" class="formbtn" id="restore" value="<?=gettext("Restore"); ?>" />
 					</td>
 				</tr>

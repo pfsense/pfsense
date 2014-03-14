@@ -324,7 +324,7 @@ $mac_man = load_mac_manufacturer_table();
 						$mac=trim($entry['mac']);
 						$mac_hi = strtoupper($mac[0] . $mac[1] . $mac[3] . $mac[4] . $mac[6] . $mac[7]);
 						print $mac;
-						if(isset($mac_man[$mac_hi])){ print "<br/><font size=\"-2\"><i>{$mac_man[$mac_hi]}</i></font>"; }
+						if(isset($mac_man[$mac_hi])){ print "<br /><font size=\"-2\"><i>{$mac_man[$mac_hi]}</i></font>"; }
 						?>
 						</td>
 						<td class="listr">
@@ -339,7 +339,7 @@ $mac_man = load_mac_manufacturer_table();
 		</td>
 	</tr>
 	<tr>
-		<td><br/><?= gettext("NOTE: Local IPv6 peers use") ?> <a href="diag_ndp.php"><?= gettext("NDP") ?></a> <?= gettext("instead of ARP") ?>.</td>
+		<td><br /><?= gettext("NOTE: Local IPv6 peers use") ?> <a href="diag_ndp.php"><?= gettext("NDP") ?></a> <?= gettext("instead of ARP") ?>.</td>
 	</tr>
 </table>
 

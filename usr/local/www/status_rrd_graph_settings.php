@@ -243,7 +243,7 @@ include("head.inc");
 			</tr>
 			<tr>
 				<td width="22%" height="53" valign="top">&nbsp;</td>
-				<td width="78%"><strong><span class="red"><?=gettext("Note:");?></span></strong><br/>
+				<td width="78%"><strong><span class="red"><?=gettext("Note:");?></span></strong><br />
 					<?=gettext("Graphs will not be allowed to be recreated within a 1 minute interval, please " .
 					"take this into account after changing the style.");?>
 				</td>

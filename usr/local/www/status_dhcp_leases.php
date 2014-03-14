@@ -377,13 +377,13 @@ foreach ($leases as $data) {
 		$mac_hi = strtoupper($mac[0] . $mac[1] . $mac[3] . $mac[4] . $mac[6] . $mac[7]);
                 if ($data['online'] != "online") {
 			if(isset($mac_man[$mac_hi])){ // Manufacturer for this MAC is defined
-	                        echo "<td class=\"listr\">{$fspans}<a href=\"services_wol.php?if={$data['if']}&mac=$mac\" title=\"" . gettext("$mac - send Wake on LAN packet to this MAC address") ."\">{$mac}</a><br/><font size=\"-2\"><i>{$mac_man[$mac_hi]}</i></font>{$fspane}&nbsp;</td>\n";
+	                        echo "<td class=\"listr\">{$fspans}<a href=\"services_wol.php?if={$data['if']}&mac=$mac\" title=\"" . gettext("$mac - send Wake on LAN packet to this MAC address") ."\">{$mac}</a><br /><font size=\"-2\"><i>{$mac_man[$mac_hi]}</i></font>{$fspane}&nbsp;</td>\n";
 			}else{	
                         	echo "<td class=\"listr\">{$fspans}<a href=\"services_wol.php?if={$data['if']}&mac={$data['mac']}\" title=\"" . gettext("send Wake on LAN packet to this MAC address") ."\">{$data['mac']}</a>{$fspane}&nbsp;</td>\n";
 			}
                 }else{
 			if(isset($mac_man[$mac_hi])){ // Manufacturer for this MAC is defined
-				echo "<td class=\"listr\">{$fspans}{$mac}<br/><font size=\"-2\"><i>{$mac_man[$mac_hi]}</i></font>{$fspane}&nbsp;</td>\n";
+				echo "<td class=\"listr\">{$fspans}{$mac}<br /><font size=\"-2\"><i>{$mac_man[$mac_hi]}</i></font>{$fspane}&nbsp;</td>\n";
 	                }else{
                 		echo "<td class=\"listr\">{$fspans}{$data['mac']}{$fspane}&nbsp;</td>\n";
 			}

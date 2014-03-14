@@ -113,7 +113,7 @@ $spd = ipsec_dump_spd();
 						</tr>
 						<?php endforeach; ?>
 					</table>
-					<br>
+					<br />
 					<table class="tabcont" border="0" cellspacing="0" cellpadding="6">
 						<tr>
 							<td width="16"><img src="/themes/<?= $g['theme']; ?>/images/icons/icon_in.gif" width="11" height="11"></td>
@@ -141,7 +141,7 @@ $spd = ipsec_dump_spd();
 
 <p>
 <span class="vexpl">
-<span class="red"><strong><?= gettext("Note:"); ?><br></strong></span>
+<span class="red"><strong><?= gettext("Note:"); ?><br /></strong></span>
 <?= gettext("You can configure your IPsec"); ?> <a href="vpn_ipsec.php"><?= gettext("here."); ?></a>
 </span>
 

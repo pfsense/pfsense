@@ -134,7 +134,7 @@ include("head.inc");
 								<td width="78%" class="vtable">
 									<input name="session_timeout" id="session_timeout" type="text" size="8" value="<?=htmlspecialchars($pconfig['session_timeout']);?>" />
 									<br />
-									<?=gettext("Time in minutes to expire idle management sessions. The default is 4 hours (240 minutes).");?><br/>
+									<?=gettext("Time in minutes to expire idle management sessions. The default is 4 hours (240 minutes).");?><br />
 									<?=gettext("Enter 0 to never expire sessions. NOTE: This is a security risk!");?><br />
 								</td>
 							</tr>

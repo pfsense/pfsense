@@ -392,7 +392,7 @@ function get_dates($curperiod, $graph) {
 				break;
 		}
 	}
-	// echo "start $start ". date('l jS \of F Y h:i:s A', $start) .", end $end ". date('l jS \of F Y h:i:s A', $end) ."<br>";
+	// echo "start $start ". date('l jS \of F Y h:i:s A', $start) .", end $end ". date('l jS \of F Y h:i:s A', $end) ."<br />";
 	$dates = array();
 	$dates['start'] = $start;
 	$dates['end'] = $end;

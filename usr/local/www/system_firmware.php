@@ -227,10 +227,10 @@ include("head.inc");
 <?php if ($fwinfo <> "") print_info_box($fwinfo); ?>
 <?php if ($sig_warning && !$input_errors): ?>
 <?php
-	$sig_warning = "<strong>" . $sig_warning . "</strong><br/>" . gettext("This means that the image you uploaded " .
+	$sig_warning = "<strong>" . $sig_warning . "</strong><br />" . gettext("This means that the image you uploaded " .
 		"is not an official/supported image and may lead to unexpected behavior or security " .
 		"compromises. Only install images that come from sources that you trust, and make sure ".
-		"that the image has not been tampered with.") . "<br/><br/>".
+		"that the image has not been tampered with.") . "<br /><br />".
 		gettext("Do you want to install this image anyway (on your own risk)?");
 print_info_box($sig_warning);
 if(stristr($_FILES['ulfile']['name'],"nanobsd"))
@@ -267,9 +267,9 @@ if(stristr($_FILES['ulfile']['name'],"nanobsd"))
 						<?php if (!is_subsystem_dirty('rebootreq')): ?>
 						<?php if (!is_subsystem_dirty('firmware')): ?>
 						<input name="Submit" type="submit" class="formbtn" value="<?=gettext("Enable firmware upload");?>" />
-						<br/>
+						<br />
 							<?php printf(gettext('Click "Enable firmware upload" to begin.'),$g['firmware_update_text']);?>
-						<br/>
+						<br />
 						<?php else: ?>
 							<input name="Submit" type="submit" class="formbtn" value="<?=gettext("Disable firmware upload");?>" />
 					</td>
@@ -295,13 +295,13 @@ if(stristr($_FILES['ulfile']['name'],"nanobsd"))
 											echo "<option value='{$kerntype}'>{$kerndescr}</option>";
 										}
 										echo "</select>";
-										echo "<br/>";
+										echo "<br />";
 									}
 								}
 							?>
 							<?php if ($g['hidebackupbeforeupgrade'] === false): ?>
 							<input type="checkbox" name='backupbeforeupgrade' id='backupbeforeupgrade' /> <?=gettext("Perform full backup prior to upgrade");?>
-							<br/>
+							<br />
 							<?php endif; ?>
 							<input name="Submit" type="submit" class="formbtn" value="<?=gettext("Upgrade firmware");?>" />
 							<?=gettext('Click "Upgrade firmware" to start the upgrade process.');?>
@@ -317,7 +317,7 @@ if(stristr($_FILES['ulfile']['name'],"nanobsd"))
 					<span class="vexpl">
 						<span class="red">
 							<strong>
-								<?=gettext("Warning:");?><br/>
+								<?=gettext("Warning:");?><br />
 							</strong>
 						</span>
 						<?=gettext("DO NOT abort the firmware upgrade once it " .

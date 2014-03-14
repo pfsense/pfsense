@@ -114,7 +114,7 @@ function RADIUS_ACCOUNTING_START($ruleno, $username, $sessionid, $radiusservers,
          * $status = $racct->start();
          * if(PEAR::isError($status)) {
          *    if ($debug)
-         *        printf("Radius start: %s<br>\n", $status->getMessage());
+         *        printf("Radius start: %s<br />\n", $status->getMessage());
          *        exit;
          * }
          */

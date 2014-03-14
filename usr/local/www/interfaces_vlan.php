@@ -137,7 +137,7 @@ include("head.inc");
 				</tr>
 				<tr>
 				<td colspan="3" class="list"><p class="vexpl"><span class="red"><strong>
-				  <?=gettext("Note:");?><br/>
+				  <?=gettext("Note:");?><br />
 				  </strong></span>
 				  <?php printf(gettext("Not all drivers/NICs support 802.1Q VLAN tagging properly. On cards that do not explicitly support it, VLAN tagging will still work, but the reduced MTU may cause problems. See the %s handbook for information on supported cards."),$g['product_name']);?> </p>
 				  </td>

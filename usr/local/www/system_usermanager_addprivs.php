@@ -180,7 +180,7 @@ function update_description() {
 									<option value="<?=$pname;?>"><?=$pdata['name'];?></option>
 									<?php endforeach; ?>
 								</select>
-								<br/>
+								<br />
 								<?=gettext("Hold down CTRL (pc)/COMMAND (mac) key to select multiple items");?>
 							</td>
 						</tr>

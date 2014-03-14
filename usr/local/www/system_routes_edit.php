@@ -234,7 +234,7 @@ include("head.inc");
 						</option>
 					<?php endfor; ?>
 					</select>
-					<br/><span class="vexpl"><?=gettext("Destination network for this static route"); ?></span>
+					<br /><span class="vexpl"><?=gettext("Destination network for this static route"); ?></span>
 				</td>
 			</tr>
 			<tr>
@@ -320,7 +320,7 @@ include("head.inc");
 				<td width="22%" valign="top" class="vncell"><?=gettext("Description"); ?></td>
 				<td width="78%" class="vtable">
 					<input name="descr" type="text" class="formfld unknown" id="descr" size="40" value="<?=htmlspecialchars($pconfig['descr']);?>" />
-					<br/><span class="vexpl"><?=gettext("You may enter a description here for your reference (not parsed)."); ?></span>
+					<br /><span class="vexpl"><?=gettext("You may enter a description here for your reference (not parsed)."); ?></span>
 				</td>
 			</tr>
 			<tr>

@@ -86,7 +86,7 @@ include("head.inc");
 			  <?php printf(gettext("Last %s NTP log entries"), $nentries);?></td>
 		  </tr>
 		  <?php dump_clog($ntpd_logfile, $nentries); ?>
-		<tr><td><br/>
+		<tr><td><br />
 		<form action="diag_logs_ntpd.php" method="post">
 			<input name="clear" type="submit" class="formbtn" value="<?=gettext("Clear log"); ?>" />
 </form>

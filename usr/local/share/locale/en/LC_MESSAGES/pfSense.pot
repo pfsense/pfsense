@@ -75,7 +75,7 @@ msgstr ""
 #: etc/inc/auth.inc:100 etc/inc/auth.inc:100
 msgid ""
 "Potential DNS Rebind attack detected, see http://en.wikipedia.org/wiki/"
-"DNS_rebinding<br/>Try accessing the router by IP address instead of by "
+"DNS_rebinding<br />Try accessing the router by IP address instead of by "
 "hostname."
 msgstr ""
 
@@ -205,13 +205,13 @@ msgstr ""
 #: etc/inc/auth.inc:1144 etc/inc/auth.inc:1153 etc/inc/auth.inc:1157
 #: etc/inc/auth.inc:1163 etc/inc/auth.inc:1167 etc/inc/auth.inc:1167
 #, php-format
-msgid "Radius start: %s<br>\n"
+msgid "Radius start: %s<br />\n"
 msgstr ""
 
 #: etc/inc/auth.inc:1155 etc/inc/auth.inc:1164 etc/inc/auth.inc:1168
 #: etc/inc/auth.inc:1174 etc/inc/auth.inc:1178 etc/inc/auth.inc:1178
 #, php-format
-msgid "Radius send failed: %s<br>\n"
+msgid "Radius send failed: %s<br />\n"
 msgstr ""
 
 #: etc/inc/auth.inc:1159 etc/inc/auth.inc:1170 etc/inc/auth.inc:1174
@@ -3613,7 +3613,7 @@ msgstr ""
 #: etc/inc/authgui.inc:263
 msgid ""
 "You are accessing this router by an IP address not configured locally, which "
-"may be forwarded by NAT or other means. <br/><br/>If you did not setup this "
+"may be forwarded by NAT or other means. <br /><br />If you did not setup this "
 "forwarding, you may be the target of a man-in-the-middle attack."
 msgstr ""
 
@@ -10878,7 +10878,7 @@ msgstr ""
 #: usr/local/www/load_balancer_relay_action.php:116
 #: usr/local/www/load_balancer_relay_action.php:116
 msgid ""
-"The load balancer configuration has been changed.<br>You must apply the "
+"The load balancer configuration has been changed.<br />You must apply the "
 "changes in order for them to take effect."
 msgstr ""
 
@@ -18116,9 +18116,9 @@ msgstr ""
 msgid ""
 "With automatic outbound NAT enabled, a mapping is automatically created for "
 "each interface's subnet (except WAN-type connections) and the rules on this "
-"page are ignored.<br/><br/> If manual outbound NAT is enabled, outbound NAT "
+"page are ignored.<br /><br /> If manual outbound NAT is enabled, outbound NAT "
 "rules will not be automatically generated and only the mappings you specify "
-"on this page will be used. <br/><br/> If a target address other than a WAN-"
+"on this page will be used. <br /><br /> If a target address other than a WAN-"
 "type interface's IP address is used, then depending on the way the WAN "
 "connection is setup, a "
 msgstr ""
@@ -18742,14 +18742,14 @@ msgstr ""
 #, php-format
 msgid ""
 "The settings have been applied. The firewall rules are now reloading in the "
-"background.<br/>You can also %s monitor %s the reload progress"
+"background.<br />You can also %s monitor %s the reload progress"
 msgstr ""
 
 #: usr/local/www/firewall_rules.php:315 usr/local/www/firewall_rules.php:317
 #: usr/local/www/firewall_rules.php:319 usr/local/www/firewall_rules.php:321
 #: usr/local/www/firewall_rules.php:312 usr/local/www/firewall_rules.php:314
 msgid ""
-"The firewall rule configuration has been changed.<br>You must apply the "
+"The firewall rule configuration has been changed.<br />You must apply the "
 "changes in order for them to take effect."
 msgstr ""
 
@@ -23538,7 +23538,7 @@ msgstr ""
 #: usr/local/www/interfaces_assign.php:384
 #: usr/local/www/interfaces_assign.php:390
 msgid ""
-"The interface configuration has been changed.<br>You must apply the changes "
+"The interface configuration has been changed.<br />You must apply the changes "
 "in order for them to take effect."
 msgstr ""
 
@@ -30478,7 +30478,7 @@ msgstr ""
 #: usr/local/www/services_captiveportal_mac.php:156
 #: usr/local/www/services_captiveportal_mac.php:156
 msgid ""
-"The captive portal MAC address configuration has been changed.<br>You must "
+"The captive portal MAC address configuration has been changed.<br />You must "
 "apply the changes in order for them to take effect."
 msgstr ""
 
@@ -42207,7 +42207,7 @@ msgstr ""
 #: usr/local/www/vpn_openvpn_server.php:1352
 msgid ""
 "Allow multiple concurrent connections from clients using the same Common "
-"Name.<br/>NOTE: This is not generally recommended, but may be needed for "
+"Name.<br />NOTE: This is not generally recommended, but may be needed for "
 "some scenarios."
 msgstr ""
 
@@ -45896,7 +45896,7 @@ msgid ""
 "MS-CHAPv2 which has been compromised. If you continue to use PPTP be aware "
 "that intercepted traffic can be decrypted by a third party, so it should be "
 "considered unencrypted. We advise migrating to another VPN type such as "
-"OpenVPN or IPsec.<br/><br/><a href=\"https://isc.sans.edu/diary/End+of+Days"
+"OpenVPN or IPsec.<br /><br /><a href=\"https://isc.sans.edu/diary/End+of+Days"
 "+for+MS-CHAPv2/13807\">Read More</a>"
 msgstr ""
 
@@ -48233,7 +48233,7 @@ msgstr ""
 #: usr/local/www/firewall_rules.php:311 usr/local/www/firewall_rules.php:313
 #: usr/local/www/firewall_rules.php:311 usr/local/www/firewall_rules.php:313
 msgid ""
-"The firewall rule configuration has been changed.<br/>You must apply the "
+"The firewall rule configuration has been changed.<br />You must apply the "
 "changes in order for them to take effect."
 msgstr ""
 

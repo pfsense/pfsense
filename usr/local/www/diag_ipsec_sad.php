@@ -132,7 +132,7 @@ if ($_GET['act'] == "del") {
 <p/>
 
 <span class="vexpl">
-<span class="red"><strong><?=gettext("Note:");?><br></strong></span>
+<span class="red"><strong><?=gettext("Note:");?><br /></strong></span>
 <?=gettext("You can configure your IPsec");?> <a href="vpn_ipsec.php"><?=gettext("here.");?></a>
 </span>
 

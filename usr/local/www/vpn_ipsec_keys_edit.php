@@ -128,7 +128,7 @@ include("head.inc");
                   <td valign="top" class="vncellreq"><?=gettext("Identifier"); ?></td>
                   <td class="vtable">
 					<?=$mandfldhtml;?><input name="ident" type="text" class="formfld unknown" id="ident" size="30" value="<?=htmlspecialchars($pconfig['ident']);?>">
-                    <br>
+                    <br />
 <?=gettext("This can be either an IP address, fully qualified domain name or an e-mail address"); ?>.       
                   </td>
                 </tr>

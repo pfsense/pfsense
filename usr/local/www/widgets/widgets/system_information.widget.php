@@ -70,7 +70,7 @@ if($_REQUEST['getupdatestatus']) {
 		else {
 			$needs_system_upgrade = false;
 			if (pfs_version_compare($current_installed_buildtime, $current_installed_version, $remote_version) == -1) {
-				echo "<br/><span class=\"red\" id=\"updatealert\"><b>Update available. </b></span><a href=\"/system_firmware_check.php\">Click Here</a> to view update.";
+				echo "<br /><span class=\"red\" id=\"updatealert\"><b>Update available. </b></span><a href=\"/system_firmware_check.php\">Click Here</a> to view update.";
 				echo "<script type=\"text/javascript\">";
 				echo "jQuery('#updatealert').effect('pulsate',{times: 30},10000);";
 
@@ -121,7 +121,7 @@ $curcfg = $config['system']['firmware'];
 		<div id="uname"><a href="#" onclick='swapuname(); return false;'><?php echo php_uname("s") . " " . php_uname("r"); ?></a></div>
 		<?php endif; ?>
 		<?php if(!isset($config['system']['firmware']['disablecheck'])): ?>
-		<div id='updatestatus'><br/><?php echo gettext("Obtaining update status"); ?> ...</div>
+		<div id='updatestatus'><br /><?php echo gettext("Obtaining update status"); ?> ...</div>
 		<?php endif; ?>
 			</td>
 		</tr>
@@ -149,7 +149,7 @@ $curcfg = $config['system']['firmware'];
 			<td width="75%" class="listr">
 				<?=htmlspecialchars(nanobsd_friendly_slice_name($BOOT_DEVICE));?> / <?=htmlspecialchars($BOOTFLASH);?> <?php echo $rw; ?>
 				<?php if ($BOOTFLASH != $ACTIVE_SLICE): ?>
-				<br/><br/>Next Boot:<br/>
+				<br /><br />Next Boot:<br />
 				<?=htmlspecialchars(nanobsd_friendly_slice_name($GLABEL_SLICE));?> / <?=htmlspecialchars($ACTIVE_SLICE);?>
 				<?php endif; ?>
 			</td>
@@ -194,7 +194,7 @@ $curcfg = $config['system']['firmware'];
 					<?php
 						$dns_servers = get_dns_servers();
 						foreach($dns_servers as $dns) {
-							echo "{$dns}<br/>";
+							echo "{$dns}<br />";
 						}
 					?>
 			</td>

@@ -165,7 +165,7 @@ include("head.inc");
 <form action="firewall_aliases.php" method="post">
 <?php if ($savemsg) print_info_box($savemsg); ?>
 <?php if (is_subsystem_dirty('aliases')): ?><p>
-<?php print_info_box_np(gettext("The alias list has been changed.") . "<br/>" . gettext("You must apply the changes in order for them to take effect."));?>
+<?php print_info_box_np(gettext("The alias list has been changed.") . "<br />" . gettext("You must apply the changes in order for them to take effect."));?>
 <?php endif; ?>
 <?php pfSense_handle_custom_code("/usr/local/pkg/firewall_aliases/pre_table"); ?>
 <table width="100%" border="0" cellpadding="0" cellspacing="0" summary="firewall aliases">
@@ -231,15 +231,15 @@ include("head.inc");
 						<td class="listr" ondblclick="document.location='firewall_aliases_edit.php?id=<?=$i;?>';">
 						<?php
 						if ($alias["url"]) {
-							echo $alias["url"] . "<br/>";
+							echo $alias["url"] . "<br />";
 						} else {
 							if(is_array($alias["aliasurl"])) {
 								$aliasurls = implode(", ", array_slice($alias["aliasurl"], 0, 10));
 								echo $aliasurls;
 								if(count($aliasurls) > 10) {
-									echo "...<br/>";
+									echo "...<br />";
 								}
-								echo "<br/>\n";
+								echo "<br />\n";
 							}
 							$tmpaddr = explode(" ", $alias['address']);
 							$addresses = implode(", ", array_slice($tmpaddr, 0, 10));
@@ -287,7 +287,7 @@ include("head.inc");
 
 					<tr>
 						<td class="tabcont" colspan="3">
-							<p><span class="vexpl"><span class="red"><strong><?=gettext("Note:"); ?><br/></strong></span></span></p><div style="overflow:hidden; text-align:justify;"><p><span class="vexpl"><?=gettext("Aliases act as placeholders for real hosts, networks or ports. They can be used to minimize the number of changes that have to be made if a host, network or port changes. You can enter the name of an alias instead of the host, network or port in all fields that have a red background. The alias will be resolved according to the list above. If an alias cannot be resolved (e.g. because you deleted it), the corresponding element (e.g. filter/NAT/shaper rule) will be considered invalid and skipped."); ?></span></p></div>
+							<p><span class="vexpl"><span class="red"><strong><?=gettext("Note:"); ?><br /></strong></span></span></p><div style="overflow:hidden; text-align:justify;"><p><span class="vexpl"><?=gettext("Aliases act as placeholders for real hosts, networks or ports. They can be used to minimize the number of changes that have to be made if a host, network or port changes. You can enter the name of an alias instead of the host, network or port in all fields that have a red background. The alias will be resolved according to the list above. If an alias cannot be resolved (e.g. because you deleted it), the corresponding element (e.g. filter/NAT/shaper rule) will be considered invalid and skipped."); ?></span></p></div>
 						</td>
 					</tr>
 				</table>

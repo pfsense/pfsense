@@ -316,9 +316,9 @@ function prot_change() {
 								<strong><?=gettext("NOTE:"); ?>&nbsp;</strong>
 							</span>
 							<?=gettext("The options on this page are intended for use by advanced users only."); ?>
-							<br/>
+							<br />
 						</span>
-						<br/>
+						<br />
 						<table width="100%" border="0" cellpadding="6" cellspacing="0" summary="main area">
 							<tr>
 								<td colspan="2" valign="top" class="listtopic"><?=gettext("webConfigurator"); ?></td>
@@ -340,7 +340,7 @@ function prot_change() {
 									<input name="webguiproto" id="https_proto" type="radio" value="https" <?=$https_chk;?> <?=$https_disabled;?> onclick="prot_change()" />
 									<?=gettext("HTTPS"); ?>
 									<?php if (!$certs_available): ?>
-									<br/>
+									<br />
 									<?=gettext("No Certificates have been defined. You must"); ?>
 									<a href="system_certmanager.php"><?=gettext("Create or Import"); ?></a>
 									<?=gettext("a Certificate before SSL can be enabled."); ?>
@@ -391,7 +391,7 @@ function prot_change() {
 								<td width="78%" class="vtable">
 									<input name="disablehttpredirect" type="checkbox" id="disablehttpredirect" value="yes" <?php if ($pconfig['disablehttpredirect']) echo "checked=\"checked\""; ?> />
 									<strong><?=gettext("Disable webConfigurator redirect rule"); ?></strong>
-									<br/>
+									<br />
 									<?php echo gettext("When this is unchecked, access to the webConfigurator " .
 									"is always permitted even on port 80, regardless of the listening port configured. " .
 									"Check this box to disable this automatically added redirect rule. ");
@@ -403,7 +403,7 @@ function prot_change() {
 								<td width="78%" class="vtable">
 									<input name="noautocomplete" type="checkbox" id="noautocomplete" value="yes" <?php if ($pconfig['noautocomplete']) echo "checked=\"checked\""; ?> />
 									<strong><?=gettext("Disable webConfigurator login autocomplete"); ?></strong>
-									<br/>
+									<br />
 									<?php echo gettext("When this is unchecked, login credentials for the webConfigurator " .
 									"may be saved by the browser. While convenient, some security standards require this to be disabled. " .
 									"Check this box to disable autocomplete on the login form so that browsers will not prompt to save credentials (NOTE: Some browsers do not respect this option). ");
@@ -415,7 +415,7 @@ function prot_change() {
 								<td width="78%" class="vtable">
 									<input name="quietlogin" type="checkbox" id="quietlogin" value="yes" <?php if ($pconfig['quietlogin']) echo "checked=\"checked\""; ?> />
 									<strong><?=gettext("Disable logging of webConfigurator successful logins"); ?></strong>
-									<br/>
+									<br />
 									<?php echo gettext("When this is checked, successful logins to the webConfigurator " .
 									"will not be logged.");
 									?>
@@ -432,7 +432,7 @@ function prot_change() {
 									?>
 									<input name="noantilockout" type="checkbox" id="noantilockout" value="yes" <?php if ($pconfig['noantilockout']) echo "checked=\"checked\""; ?> />
 									<strong><?=gettext("Disable webConfigurator anti-lockout rule"); ?></strong>
-									<br/>
+									<br />
 									<?php printf(gettext("When this is unchecked, access to the webConfigurator " .
 									"on the %s interface is always permitted, regardless of the user-defined firewall " .
 									"rule set. Check this box to disable this automatically added rule, so access " .
@@ -447,7 +447,7 @@ function prot_change() {
 								<td width="78%" class="vtable">
 									<input name="nodnsrebindcheck" type="checkbox" id="nodnsrebindcheck" value="yes" <?php if ($pconfig['nodnsrebindcheck']) echo "checked=\"checked\""; ?> />
 									<strong><?=gettext("Disable DNS Rebinding Checks"); ?></strong>
-									<br/>
+									<br />
 									<?php echo gettext("When this is unchecked, your system " .
 									"is protected against <a href=\"http://en.wikipedia.org/wiki/DNS_rebinding\">DNS Rebinding attacks</a>. " .
 									"This blocks private IP responses from your configured DNS servers. Check this box to disable this protection if it interferes with " .
@@ -458,9 +458,9 @@ function prot_change() {
 								<td width="22%" valign="top" class="vncell"><?=gettext("Alternate Hostnames"); ?></td>
 								<td width="78%" class="vtable">
 									<input name="althostnames" type="text" class="formfld unknown" id="althostnames" size="75" value="<?=htmlspecialchars($pconfig['althostnames']);?>"/>
-									<br/>
+									<br />
 									<strong><?=gettext("Alternate Hostnames for DNS Rebinding and HTTP_REFERER Checks"); ?></strong>
-									<br/>
+									<br />
 									<?php echo gettext("Here you can specify alternate hostnames by which the router may be queried, to " . 
 									"bypass the DNS Rebinding Attack checks. Separate hostnames with spaces."); ?>
 								</td>
@@ -470,7 +470,7 @@ function prot_change() {
 								<td width="78%" class="vtable">
 									<input name="nohttpreferercheck" type="checkbox" id="nohttpreferercheck" value="yes" <?php if ($pconfig['nohttpreferercheck']) echo "checked=\"checked\""; ?> />
 									<strong><?=gettext("Disable HTTP_REFERER enforcement check"); ?></strong>
-									<br/>
+									<br />
 									<?php echo gettext("When this is unchecked, access to the webConfigurator " .
 									"is protected against HTTP_REFERER redirection attempts. " .
 									"Check this box to disable this protection if you find that it interferes with " .
@@ -482,11 +482,11 @@ function prot_change() {
 								<td width="78%" class="vtable">
 									<input name="beast_protection" type="checkbox" id="beast_protection" value="yes" <?php if ($pconfig['beast_protection']) echo "checked=\"checked\""; ?> <?= $disable_beast_option ?>/>
 									<strong><?=gettext("Mitigate the BEAST SSL Attack"); ?></strong>
-									<br/>
+									<br />
 									<?php echo gettext("When this is checked, the webConfigurator can mitigate BEAST SSL attacks. ") ?>
-									<br/>
+									<br />
 									<?php 	if ($disable_beast_option) {
-											echo "<br/>" . sprintf(gettext("This option has been automatically disabled because a conflicting cryptographic accelerator card has been detected (%s)."), $hwcrypto) . "<br/><br/>";
+											echo "<br />" . sprintf(gettext("This option has been automatically disabled because a conflicting cryptographic accelerator card has been detected (%s)."), $hwcrypto) . "<br /><br />";
 										} ?>
 									<?php echo gettext("This option is off by default because Hifn accelerators do NOT work with this option, and the GUI will not function. " .
 									"It is possible that other accelerators have a similar problem that is not yet known/documented. " .
@@ -511,7 +511,7 @@ function prot_change() {
 								<td width="78%" class="vtable">
 									<input name="sshdkeyonly" type="checkbox" id="sshdkeyonly" value="yes" <?php if ($pconfig['sshdkeyonly']) echo "checked=\"checked\""; ?> />
 									<strong><?=gettext("Disable password login for Secure Shell (RSA/DSA key only)"); ?></strong>
-									<br/>
+									<br />
 									<?=gettext("When enabled, authorized keys need to be configured for each"); ?>
 									<a href="system_usermanager.php"><?=gettext("user"); ?></a>
 									<?=gettext("that has been granted secure shell access."); ?>
@@ -521,7 +521,7 @@ function prot_change() {
 								<td width="22%" valign="top" class="vncell"><?=gettext("SSH port"); ?></td>
 								<td width="78%" class="vtable">
 									<input name="sshport" type="text" id="sshport" value="<?php echo $pconfig['sshport']; ?>" />
-									<br/>
+									<br />
 									<span class="vexpl"><?=gettext("Note: Leave this blank for the default of 22."); ?></span>
 								</td>
 							</tr>
@@ -552,7 +552,7 @@ function prot_change() {
 										<option value="57600"  <?php if ($pconfig['serialspeed'] == "57600")  echo "selected=\"selected\"";?>>57600</option>
 										<option value="115200" <?php if ($pconfig['serialspeed'] == "115200") echo "selected=\"selected\"";?>>115200</option>
 									</select> bps
-									<br/><?=gettext("Allows selection of different speeds for the serial console port."); ?>
+									<br /><?=gettext("Allows selection of different speeds for the serial console port."); ?>
 								</td>
 							</tr>
 							<?php if (!$g['primaryconsole_force'] && ($g['platform'] == "pfSense" || $g['platform'] == "cdrom" || file_exists("/etc/nano_use_vga.txt"))): ?>
@@ -563,7 +563,7 @@ function prot_change() {
 										<option value="serial"   <?php if ($pconfig['primaryconsole'] == "serial")   echo "selected=\"selected\"";?>>Serial Console</option>
 										<option value="video"  <?php if ($pconfig['primaryconsole'] == "video")  echo "selected=\"selected\"";?>>VGA Console</option>
 									</select>
-									<br/><?=gettext("Select the preferred console if multiple consoles are present. The preferred console will show pfSense boot script output. All consoles display OS boot messages, console messages, and the console menu."); ?>
+									<br /><?=gettext("Select the preferred console if multiple consoles are present. The preferred console will show pfSense boot script output. All consoles display OS boot messages, console messages, and the console menu."); ?>
 								</td>
 							</tr>
 							<?php endif; ?>
@@ -578,7 +578,7 @@ function prot_change() {
 								<td width="78%" class="vtable">
 									<input name="disableconsolemenu" type="checkbox" id="disableconsolemenu" value="yes" <?php if ($pconfig['disableconsolemenu']) echo "checked=\"checked\""; ?>  />
 									<strong><?=gettext("Password protect the console menu"); ?></strong>
-									<br/>
+									<br />
 									<span class="vexpl"><?=gettext("Changes to this option will take effect after a reboot."); ?></span>
 								</td>
 							</tr>

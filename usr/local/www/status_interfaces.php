@@ -325,7 +325,7 @@ include("head.inc");
 		<?php
 			$dns_servers = get_dns_servers();
 			foreach($dns_servers as $dns) {
-				echo "{$dns}<br/>";
+				echo "{$dns}<br />";
 			}
 		?>
 		</td>
@@ -349,7 +349,7 @@ include("head.inc");
 		<td width="22%" class="vncellt"><?=gettext("LAGG Ports");?></td>
 		<td width="78%" class="listr">
 			<?php 	foreach ($ifinfo['laggport'] as $laggport) { ?>
-					<?php echo htmlspecialchars($laggport); ?><br/>
+					<?php echo htmlspecialchars($laggport); ?><br />
 			<?php	} ?>
 		</td>
 	</tr>
@@ -461,7 +461,7 @@ include("head.inc");
 		<td width="78%" class="listr">
 			<?php
 				echo $interrupt_total . " " . gettext("total");
-				echo "<br/>";
+				echo "<br />";
 				echo $interrupt_sec . " " . gettext("rate");
 			?>
 		</td>
@@ -471,7 +471,7 @@ include("head.inc");
 <?php $i++; endforeach; ?>
 </table>
 
-<br/>
+<br />
 
 <?php printf(gettext("Using dial-on-demand will bring the connection up again if any packet ".
 "triggers it. To substantiate this point: disconnecting manually ".

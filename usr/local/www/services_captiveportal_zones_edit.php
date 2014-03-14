@@ -97,7 +97,7 @@ include("head.inc");
 				<td width="22%" valign="top" class="vncellreq"><?=gettext("Zone name"); ?></td>
 				<td width="78%" class="vtable">
 					<input name="zone" type="text" class="formfld unknown" id="zone" size="64">
-					<br>
+					<br />
 					<span class="vexpl"><?=gettext("Zone name. Can only contain letters, digits, and underscores (_)."); ?></span>
 				</td>
 			</tr>
@@ -105,7 +105,7 @@ include("head.inc");
 				<td width="22%" valign="top" class="vncell"><?=gettext("Description"); ?></td>
 				<td width="78%" class="vtable">
 					<input name="descr" type="text" class="formfld unknown" id="descr" size="40" >
-					<br>
+					<br />
 					<span class="vexpl"><?=gettext("You may enter a description here for your reference (not parsed)"); ?>.</span>
 				</td>
 			</tr>

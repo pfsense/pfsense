@@ -430,7 +430,7 @@ if ($pkg['tabs'] <> "") {
 	if ($pkg['advanced_options'] == "enabled") {
 		$adv_filed_count = 0;
 		$advanced = "<td>&nbsp;</td>";
-		$advanced .= "<tr><td colspan=\"2\" class=\"listtopic\">". gettext("Advanced features") . "<br/></td></tr>\n";
+		$advanced .= "<tr><td colspan=\"2\" class=\"listtopic\">". gettext("Advanced features") . "<br /></td></tr>\n";
 		}		
 	foreach ($pkg['fields']['field'] as $pkga) {
 		if ($pkga['type'] == "sorting") 
@@ -438,7 +438,7 @@ if ($pkg['tabs'] <> "") {
 
 		if ($pkga['type'] == "listtopic") {
 			$input = "<tr id='td_{$pkga['fieldname']}'><td>&nbsp;</td></tr>";
-			$input .= "<tr id='tr_{$pkga['fieldname']}'><td colspan=\"2\" class=\"listtopic\">{$pkga['name']}<br/></td></tr>\n";
+			$input .= "<tr id='tr_{$pkga['fieldname']}'><td colspan=\"2\" class=\"listtopic\">{$pkga['name']}<br /></td></tr>\n";
 			if(isset($pkga['advancedfield']) && isset($adv_filed_count)) {
 				$advanced .= $input;
 				$adv_filed_count++;
@@ -520,7 +520,7 @@ if ($pkg['tabs'] <> "") {
 			case "input":
 				$size = ($pkga['size'] ? " size='{$pkga['size']}' " : "");
 				$input = "<input {$size} id='{$pkga['fieldname']}' name='{$pkga['fieldname']}' class='formfld unknown' value=\"" . htmlspecialchars($value) ."\" />\n";
-				$input .= "<br/>" . fixup_string($pkga['description']) . "\n";
+				$input .= "<br />" . fixup_string($pkga['description']) . "\n";
 				if(isset($pkga['advancedfield']) && isset($adv_filed_count)) {
 					$js_array[] = $pkga['fieldname'];
 					$advanced .= display_advanced_field($pkga['fieldname']).$input ."</div>\n";
@@ -532,7 +532,7 @@ if ($pkg['tabs'] <> "") {
 			case "password":
 				$size = ($pkga['size'] ? " size='{$pkga['size']}' " : "");
 				$input = "<input " . $size . " id='" . $pkga['fieldname'] . "' type='password' name='" . $pkga['fieldname'] . "' class='formfld pwd' value=\"" . htmlspecialchars($value) . "\" />\n";
-				$input .= "<br/>" . fixup_string($pkga['description']) . "\n";
+				$input .= "<br />" . fixup_string($pkga['description']) . "\n";
 				if(isset($pkga['advancedfield']) && isset($adv_filed_count)) {
 					$js_array[] = $pkga['fieldname'];
 					$advanced .= display_advanced_field($pkga['fieldname']).$input ."</div>\n";
@@ -626,7 +626,7 @@ if ($pkg['tabs'] <> "") {
 					$input .= "\t<option value=\"{$vpn['descr']}\">{$vpn['descr']}</option>\n";
 					}
 				$input .= "</select>\n";
-				$input .= "<br/>" . fixup_string($pkga['description']) . "\n";
+				$input .= "<br />" . fixup_string($pkga['description']) . "\n";
 
 				if(isset($pkga['advancedfield']) && isset($adv_filed_count)) {
 					$js_array[] = $pkga['fieldname'];
@@ -643,7 +643,7 @@ if ($pkg['tabs'] <> "") {
 				if (isset($pkga['enablefields']) || isset($pkga['checkenablefields']))
 					$onclick = ' onclick="javascript:enablechange();"';
 				$input = "<input id='{$pkga['fieldname']}' type='checkbox' name='{$pkga['fieldname']}' {$checkboxchecked} {$onclick} {$onchange} />\n";
-				$input .= "<br/>" . fixup_string($pkga['description']) . "\n";
+				$input .= "<br />" . fixup_string($pkga['description']) . "\n";
 
 				if(isset($pkga['advancedfield']) && isset($adv_filed_count)) {
 					$js_array[] = $pkga['fieldname'];
@@ -663,7 +663,7 @@ if ($pkg['tabs'] <> "") {
 					$value = base64_decode($value);
 				$wrap =($pkga['wrap'] == "off" ? 'wrap="off" style="white-space:nowrap;"' : '');		  
 				$input = "<textarea {$rows} {$cols} name='{$pkga['fieldname']}'{$wrap}>{$value}</textarea>\n";
-				$input .= "<br/>" . fixup_string($pkga['description']) . "\n";
+				$input .= "<br />" . fixup_string($pkga['description']) . "\n";
 				if(isset($pkga['advancedfield']) && isset($adv_filed_count)) {
 					$js_array[] = $pkga['fieldname'];
 					$advanced .= display_advanced_field($pkga['fieldname']).$input;
@@ -793,7 +793,7 @@ if ($pkg['tabs'] <> "") {
 				if(isset($pkga['placeonbottom']))
 					$pkg_buttons .= $input;
 				else
-					echo $input ."\n<br/>" . fixup_string($pkga['description']) . "\n";;
+					echo $input ."\n<br />" . fixup_string($pkga['description']) . "\n";;
 				break;
 
 			case "rowhelper":
@@ -868,9 +868,9 @@ if ($pkg['tabs'] <> "") {
 				<tbody></tbody>
 				</table>
 	
-				<!-- <br/><a onclick="javascript:addRowTo('maintable'); return false;" href="#"><img border="0" src="./themes/<?#= $g['theme']; ?>/images/icons/icon_plus.gif" alt="add" /></a>-->
-				<br/><a class="add" href="#"><img border="0" src="./themes/<?= $g['theme']; ?>/images/icons/icon_plus.gif" alt="add" /></a>
-				<br/><?php if($pkga['description'] != "") echo $pkga['description']; ?>
+				<!-- <br /><a onclick="javascript:addRowTo('maintable'); return false;" href="#"><img border="0" src="./themes/<?#= $g['theme']; ?>/images/icons/icon_plus.gif" alt="add" /></a>-->
+				<br /><a class="add" href="#"><img border="0" src="./themes/<?= $g['theme']; ?>/images/icons/icon_plus.gif" alt="add" /></a>
+				<br /><?php if($pkga['description'] != "") echo $pkga['description']; ?>
 				<script type="text/javascript">
 				//<![CDATA[
 				field_counter_js = <?= $fieldcounter ?>;
@@ -896,7 +896,7 @@ if ($pkg['tabs'] <> "") {
      	else{
 			$input= "</td></tr>";
 			if($pkga['usecolspan2'])
-				$input.= "</tr><br/>";
+				$input.= "</tr><br />";
 	     	}
    	 	if(isset($pkga['advancedfield']) && isset($adv_filed_count))
 			$advanced .= "{$input}\n";

@@ -130,7 +130,7 @@ include("head.inc");
 				</tr>
 <?php
 				if ($carpcount == 0) {
-					echo "</td></tr></table></table></div><center><br>" . gettext("Could not locate any defined CARP interfaces.");
+					echo "</td></tr></table></table></div><center><br />" . gettext("Could not locate any defined CARP interfaces.");
 					echo "</center>";
 
 					include("fend.inc");
@@ -187,7 +187,7 @@ include("head.inc");
 <p/>
 
 <?php
-	echo "<br>" . gettext("pfSync nodes") . ":<br>";
+	echo "<br />" . gettext("pfSync nodes") . ":<br />";
 	echo "<pre>";
 	system("/sbin/pfctl -vvss | /usr/bin/grep creator | /usr/bin/cut -d\" \" -f7 | /usr/bin/sort -u");
 	echo "</pre>";

@@ -166,7 +166,7 @@ include("head.inc");
 	</tr>
 	<tr>
 	<td colspan="2" class="list"><p class="vexpl"><span class="red"><strong>
-	  <?=gettext("Note:"); ?><br>
+	  <?=gettext("Note:"); ?><br />
 	  </strong></span>
 	  <?=gettext("Adding allowed Hostnames will allow a DNS hostname access to/from access through the captive portal without being taken to the portal page. This can be used for a web server serving images for the portal page or a DNS server on another network, for example. By specifying <em>from</em> addresses, it may be used to always allow pass-through access from a client behind the captive portal."); ?></p>
 	  <table border="0" cellspacing="0" cellpadding="0">

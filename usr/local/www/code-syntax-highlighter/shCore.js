@@ -204,17 +204,17 @@ dp.sh.Highlighter.prototype.AddBit = function(str, css)
 	str = str.replace(/&/g, '&amp;');
 	str = str.replace(/ /g, '&nbsp;');
 	str = str.replace(/</g, '&lt;');
-	str = str.replace(/\n/gm, '&nbsp;<br>');
+	str = str.replace(/\n/gm, '&nbsp;<br />');
 
 	// when adding a piece of code, check to see if it has line breaks in it 
 	// and if it does, wrap individual line breaks with span tags
 	if(css != null)
 	{
-		var regex = new RegExp('<br>', 'gi');
+		var regex = new RegExp('<br />', 'gi');
 		
 		if(regex.test(str))
 		{
-			var lines = str.split('&nbsp;<br>');
+			var lines = str.split('&nbsp;<br />');
 			
 			str = '';
 			
@@ -339,7 +339,7 @@ dp.sh.Highlighter.prototype.ProcessSmartTabs = function(code)
 
 dp.sh.Highlighter.prototype.SwitchToTable = function()
 {
-	// Safari fix: for some reason lowercase <br> isn't getting picked up, even though 'i' is set
+	// Safari fix: for some reason lowercase <br /> isn't getting picked up, even though 'i' is set
 	var lines	= this.div.innerHTML.split(/<BR>/gi);
 	var row		= null;
 	var cell	= null;

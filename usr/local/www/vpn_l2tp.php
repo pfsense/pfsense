@@ -325,12 +325,12 @@ function enable_change(enable_over) {
                   <td width="22%" valign="top" class="vncellreq"><?=gettext("Server Address");?></td>
                   <td width="78%" class="vtable">
                     <?=$mandfldhtml;?><input name="localip" type="text" class="formfld unknown" id="localip" size="20" value="<?=htmlspecialchars($pconfig['localip']);?>" />
-			<br/>
+			<br />
 			<?=gettext("Enter the IP address the L2TP server should give to clients for use as their \"gateway\""); ?>.
-			<br/>
+			<br />
 			<?=gettext("Typically this is set to an unused IP just outside of the client range"); ?>.
-			<br/>
-			<br/>
+			<br />
+			<br />
 			<?=gettext("NOTE: This should NOT be set to any IP address currently in use on this firewall"); ?>.</td>
                 </tr>
                 <tr>
@@ -355,7 +355,7 @@ function enable_change(enable_over) {
                      }
                     ?>
                     </select>
-                    <br><?=gettext("Hint:"); ?> 24 <?=gettext("is"); ?> 255.255.255.0
+                    <br /><?=gettext("Hint:"); ?> 24 <?=gettext("is"); ?> 255.255.255.0
                   </td>
                 </tr>
                 <tr>
@@ -372,7 +372,7 @@ function enable_change(enable_over) {
                      }
                     ?>
                     </select>
-                    <br><?=gettext("Hint:"); ?> 10 <?=gettext("is ten L2TP clients"); ?>
+                    <br /><?=gettext("Hint:"); ?> 10 <?=gettext("is ten L2TP clients"); ?>
                   </td>
                 </tr>
 		<tr>
@@ -398,10 +398,10 @@ function enable_change(enable_over) {
 		  <td width="22%" valign="top" class="vncell"><?=gettext("L2TP DNS Servers"); ?></td>
 		  <td width="78%" class="vtable">
 		    <?=$mandfldhtml;?><input name="l2tp_dns1" type="text" class="formfld unknown" id="l2tp_dns1" size="20" value="<?=htmlspecialchars($pconfig['l2tp_dns1']);?>">
-		   	<br>
+		   	<br />
 				<input name="l2tp_dns2" type="text" class="formfld unknown" id="l2tp_dns2" size="20" value="<?=htmlspecialchars($pconfig['l2tp_dns2']);?>">
-			<br>
-		   <?=gettext("primary and secondary DNS servers assigned to L2TP clients"); ?><br>
+			<br />
+		   <?=gettext("primary and secondary DNS servers assigned to L2TP clients"); ?><br />
 		  </td>
 		</tr>
 		<tr>

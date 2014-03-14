@@ -49,16 +49,16 @@ include("head.inc");
 
 <?=gettext("Mounting file systems read/write");?>...
 <?php flush(); sleep(1); conf_mount_rw(); ?>
-<?=gettext("Done");?>.<br>
+<?=gettext("Done");?>.<br />
 <?=gettext("Forcing all PHP file permissions to 0755");?>...
 <?php flush(); sleep(1); system('/bin/chmod -R 0755 /usr/local/www/*.php'); ?>
-<?=gettext("Done");?>.<br>
+<?=gettext("Done");?>.<br />
 <?=gettext("Mounting file systems read only");?>...
 <?php flush(); sleep(1); conf_mount_ro(); ?>
-<?=gettext("Done");?>.<br>
+<?=gettext("Done");?>.<br />
 <?=gettext("Restarting mini_httpd");?>...
 <?php flush(); sleep(1); system_webgui_start(); ?>
-<?=gettext("Done");?>.<br>
+<?=gettext("Done");?>.<br />
 
 <?php
 include("fend.inc");

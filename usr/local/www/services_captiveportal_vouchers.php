@@ -484,7 +484,7 @@ function enable_change(enable_change) {
 									<?=htmlspecialchars($rollent['count']);?>&nbsp;
 								</td>
 								<td class="listr">
-									<?=htmlspecialchars($rollent['comment']); ?>&nbsp;
+									<?=htmlspecialchars($rollent['descr']); ?>&nbsp;
 								</td>
 								<td valign="middle" nowrap class="list"> 
 									<div id='addeditdelete<?=$i?>'>

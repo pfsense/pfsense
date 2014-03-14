@@ -2,8 +2,8 @@
 /* $Id$ */
 /*
     globals.inc
-    part of pfSense (www.pfsense.com)
-    Copyright (C) 2004-2010 Scott Ullrich
+    part of pfSense (www.pfsense.org)
+    Copyright (C) 2004-2014 Electric Sheep Fencing LLC 
 
     Originally Part of m0n0wall
     Copyright (C) 2003-2004 Manuel Kasper <mk@neon1.net>.
@@ -61,7 +61,7 @@ $g = array(
 	"product_copyright_url" => "http://www.electricsheepfencing.com",
 	"product_copyright_years" => "2004 - 2014",
 	"product_website" => "www.pfsense.org",
-	"product_website_footer" => "http://www.pfsense.org/?gui211",
+	"product_website_footer" => "https://www.pfsense.org/?gui211",
 	"product_email" => "coreteam@pfsense.org",
 	"hideplatform" => false,
 	"hidedownloadbackup" => false,

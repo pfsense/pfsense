@@ -1,7 +1,7 @@
 <?php
 /* $Id$ */
 /*
-    part of pfSense (http://www.pfsense.org/)
+    part of pfSense (https://www.pfsense.org/)
 
 	Copyright (C) 2007 Scott Ullrich <sullrich@gmail.com>
 	All rights reserved.

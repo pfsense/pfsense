@@ -57,7 +57,7 @@ function listtags() {
 		'timerange', 'tunnel', 'user', 'vip', 'virtual_server', 'vlan',
 		'winsserver', 'wolentry', 'widget'
 	);
-	return $ret;
+	return array_flip($ret);
 }
 
 /* Package XML tags that should be treat as a list not as a traditional array */
@@ -78,7 +78,7 @@ function startElement($parser, $name, $attrs) {
 	}
 
 	/* is it an element that belongs to a list? */
-	if (in_array(strtolower($name), $listtags)) {
+	if (isset($listtags[strtolower($name)])) {
 
 		/* is there an array already? */
 		if (!is_array($ptr)) {
@@ -112,7 +112,7 @@ function endElement($parser, $name) {
 
 	array_pop($curpath);
 
-	if (in_array(strtolower($name), $listtags))
+	if (isset($listtags[strtolower($name)]))
 		array_pop($curpath);
 
 	$depth--;
@@ -222,7 +222,7 @@ function dump_xml_config_sub($arr, $indent) {
 	foreach ($arr as $ent => $val) {
 		if (is_array($val)) {
 			/* is it just a list of multiple values? */
-			if (in_array(strtolower($ent), $listtags)) {
+			if (isset($listtags[strtolower($ent)])) {
 				foreach ($val as $cval) {
 					if (is_array($cval)) {
 						if (empty($cval)) {

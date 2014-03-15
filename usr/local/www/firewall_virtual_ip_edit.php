@@ -3,7 +3,7 @@
 /*
 
     firewall_virtual_ip_edit.php
-    part of pfSense (http://www.pfsense.com/)
+    part of pfSense (https://www.pfsense.org/)
 
     Copyright (C) 2005 Bill Marquette <bill.marquette@gmail.com>.
     All rights reserved.

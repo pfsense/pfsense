@@ -1,7 +1,7 @@
 <?php 
 /*
 	zeromq.inc
-	part of the pfSense project (http://www.pfsense.com)
+	part of the pfSense project (https://www.pfsense.org)
 	Copyright 2010 Scott Ullrich <sullrich@gmail.com>
 	All rights reserved.
 

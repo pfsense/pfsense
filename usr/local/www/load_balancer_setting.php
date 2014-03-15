@@ -2,7 +2,7 @@
 /* $Id$ */
 /*
 	load_balancer_setting.php
-	part of pfSense (http://www.pfsense.com/)
+	part of pfSense (https://www.pfsense.org/)
 
 	Copyright (C) 2008 Bill Marquette <bill.marquette@gmail.com>.
 	Copyright (C) 2012 Pierre POMES <pierre.pomes@gmail.com>.

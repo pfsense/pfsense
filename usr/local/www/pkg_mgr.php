@@ -209,7 +209,7 @@ include("head.inc");
 						$pkginfolink = $index['pkginfolink'];
 						$pkginfo=gettext("Package info");
 					} else {
-						$pkginfolink = "http://forum.pfsense.org/index.php/board,15.0.html";
+						$pkginfolink = "https://forum.pfsense.org/index.php/board,15.0.html";
 						$pkginfo=gettext("No package info, check the forum");
 					}
 

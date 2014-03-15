@@ -2,7 +2,7 @@
 /* $Id$ */
 /*
 	firewall_nat_npt.php
-	part of pfSense (http://pfsense.org)
+	part of pfSense (https://www.pfsense.org)
 
 	Copyright (C) 2011 Seth Mos <seth.mos@dds.nl>.
 	All rights reserved.

@@ -1542,7 +1542,7 @@ function system_ntp_configure($start_ntpd=true) {
 	unset($ts);
 
 	$ntpcfg .= "\n\n";
-	$ntpcfg .= "disable monitor\n"; //prevent NTP reflection attack, see http://forum.pfsense.org/index.php/topic,67189.msg389132.html#msg389132
+	$ntpcfg .= "disable monitor\n"; //prevent NTP reflection attack, see https://forum.pfsense.org/index.php/topic,67189.msg389132.html#msg389132
 	if (!empty($config['ntpd']['clockstats']) || !empty($config['ntpd']['loopstats']) || !empty($config['ntpd']['peerstats'])) {
 		$ntpcfg .= "enable stats\n";
 		$ntpcfg .= 'statistics';
@@ -1769,7 +1769,7 @@ function system_dmesg_save() {
 	}
 
 	$dmesg = "";
-	exec("/sbin/dmesg", $dmesg);
+	$_gb = exec("/sbin/dmesg", $dmesg);
 
 	/* find last copyright line (output from previous boots may be present) */
 	$lastcpline = 0;
@@ -1789,6 +1789,7 @@ function system_dmesg_save() {
 		fwrite($fd, $dmesg[$i] . "\n");
 
 	fclose($fd);
+	unset($dmesg);
 
 	return 0;
 }
@@ -1928,9 +1929,9 @@ function system_identify_specific_platform() {
 	if ($g['platform'] != 'nanobsd')
 		return array('name' => $g['platform'], 'descr' => $g['platform']);
 
-	unset($dmesg);
+	unset($output);
 	$_gb = exec('/sbin/sysctl -n hw.model', $output);
-	$dmesg = $dmesg[0];
+	$dmesg = $output[0];
 
 	if (strpos($dmesg, "PC Engines WRAP") !== false)
 		return array('name' => 'wrap', 'descr' => gettext('PC Engines WRAP'));

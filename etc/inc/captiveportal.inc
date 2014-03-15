@@ -1,7 +1,7 @@
 <?php
 /*
 	captiveportal.inc
-	part of pfSense (http://www.pfSense.org)
+	part of pfSense (https://www.pfsense.org)
 	Copyright (C) 2004-2011 Scott Ullrich <sullrich@gmail.com>
 	Copyright (C) 2009-2012 Ermal Lu�i <eri@pfsense.org>
 	Copyright (C) 2003-2006 Manuel Kasper <mk@neon1.net>.

@@ -2,7 +2,7 @@
 /* $Id$ */
 /*
 	services_unbound_advanced.php
-	part of the pfSense project (http://www.pfsense.com)
+	part of the pfSense project (https://www.pfsense.org)
 	Copyright (C) 2011	Warren Baker (warren@pfsense.org)
 	All rights reserved.
 

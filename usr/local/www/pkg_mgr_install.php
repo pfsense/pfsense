@@ -2,7 +2,7 @@
 /* $Id$ */
 /*
 	pkg_mgr_install.php
-	part of pfSense (http://www.pfSense.com)
+	part of pfSense (https://www.pfsense.org)
 	Copyright (C) 2004-2010 Scott Ullrich <sullrich@gmail.com>
  	Copyright (C) 2005 Colin Smith
 	All rights reserved.

@@ -78,7 +78,7 @@ function startElement($parser, $name, $attrs) {
 	}
 
 	/* is it an element that belongs to a list? */
-	if (in_array(strtolower($name), $listtags)) {
+	if (isset($listtags[strtolower($name)])) {
 
 		/* is there an array already? */
 		if (!is_array($ptr)) {
@@ -112,7 +112,7 @@ function endElement($parser, $name) {
 
 	array_pop($curpath);
 
-	if (in_array(strtolower($name), $listtags))
+	if (isset($listtags[strtolower($name)]))
 		array_pop($curpath);
 
 	$depth--;
@@ -145,7 +145,7 @@ function parse_xml_config($cffile, $rootobj, $isstring = "false") {
 	$listtags = listtags();
         if (isset($GLOBALS['custom_listtags'])) {
           foreach($GLOBALS['custom_listtags'] as $tag) {
-            $listtags[] = $tag;
+            $listtags[$tag] = $tag;
           }
         }
 	return parse_xml_config_raw($cffile, $rootobj, $isstring);
@@ -156,7 +156,7 @@ function parse_xml_config_pkg($cffile, $rootobj, $isstring = "false") {
 	$listtags = listtags_pkg();
         if (isset($GLOBALS['custom_listtags_pkg'])) {
           foreach($GLOBALS['custom_listtags_pkg'] as $tag) {
-            $listtags[] = $tag;
+            $listtags[$tag] = $tag;
           }
         }
 	$cfg =parse_xml_config_raw($cffile, $rootobj, $isstring);
@@ -222,7 +222,7 @@ function dump_xml_config_sub($arr, $indent) {
 	foreach ($arr as $ent => $val) {
 		if (is_array($val)) {
 			/* is it just a list of multiple values? */
-			if (in_array(strtolower($ent), $listtags)) {
+			if (isset($listtags[strtolower($ent)])) {
 				foreach ($val as $cval) {
 					if (is_array($cval)) {
 						if (empty($cval)) {
@@ -294,7 +294,7 @@ function dump_xml_config($arr, $rootobj) {
 	$listtags = listtags();
         if (isset($GLOBALS['custom_listtags'])) {
           foreach($GLOBALS['custom_listtags'] as $tag) {
-            $listtags[] = $tag;
+            $listtags[$tag] = $tag;
           }
         }
 	return dump_xml_config_raw($arr, $rootobj);
@@ -305,7 +305,7 @@ function dump_xml_config_pkg($arr, $rootobj) {
 	$listtags = listtags_pkg();
         if (isset($GLOBALS['custom_listtags_pkg'])) {
           foreach($GLOBALS['custom_listtags_pkg'] as $tag) {
-            $listtags[] = $tag;
+            $listtags[$tag] = $tag;
           }
         }
 	return dump_xml_config_raw($arr, $rootobj);

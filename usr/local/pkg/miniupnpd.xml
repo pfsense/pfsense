@@ -12,19 +12,19 @@
 		<url>/pkg_edit.php?xml=miniupnpd.xml&amp;id=0</url>
 	</menu>
 	<additional_files_needed>
-		<item>http://www.pfsense.org/packages/config/miniupnpd/miniupnpd.inc</item>
+		<item>https://packages.pfsense.org/packages/config/miniupnpd/miniupnpd.inc</item>
 	    <prefix>/usr/local/pkg/</prefix>
 	    <chmod>0755</chmod>
 	</additional_files_needed>
 	<additional_files_needed>
-		<item>http://www.pfsense.org/packages/config/miniupnpd/status_upnp.php</item>
+		<item>https://packages.pfsense.org/packages/config/miniupnpd/status_upnp.php</item>
 	    <prefix>/usr/local/www/</prefix>
 	    <chmod>0755</chmod>
 	</additional_files_needed>
 	<additional_files_needed>
 		<prefix>/usr/local/sbin/</prefix>
 		<chmod>0755</chmod>
-		<item>http://www.pfsense.com/packages/config/miniupnpd/sbin/miniupnpd</item>
+		<item>https://packages.pfsense.org/packages/config/miniupnpd/sbin/miniupnpd</item>
 	</additional_files_needed>
 	<service>
 		<name>miniupnpd</name>

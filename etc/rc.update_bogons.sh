@@ -2,7 +2,7 @@
 
 # Update bogons file
 # Part of the pfSense project
-# www.pfsense.com
+# https://www.pfsense.org
 
 # Global variables
 proc_error=""

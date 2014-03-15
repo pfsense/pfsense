@@ -188,7 +188,7 @@ function get_pkg_internal_name($package) {
 
 /****f* pkg-utils/get_pkg_info
  * NAME
- *   get_pkg_info - Retrieve package information from pfsense.com.
+ *   get_pkg_info - Retrieve package information from package server.
  * INPUTS
  *   $pkgs - 'all' to retrieve all packages, an array containing package names otherwise
  *   $info - 'all' to retrieve all information, an array containing keys otherwise

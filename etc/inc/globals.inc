@@ -2,7 +2,7 @@
 /* $Id$ */
 /*
     globals.inc
-    part of pfSense (www.pfsense.com)
+    part of pfSense (https://www.pfsense.org)
     Copyright (C) 2004-2010 Scott Ullrich
 
     Originally Part of m0n0wall

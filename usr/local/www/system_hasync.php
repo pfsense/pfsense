@@ -2,7 +2,7 @@
 /* $Id$ */
 /*
 	system_hasync.php
-	part of pfSense (http://www.pfsense.org/)
+	part of pfSense (https://www.pfsense.org/)
 
 	Copyright (C) 2012 Darren Embry <dse@webonastick.com>.
 	All rights reserved.

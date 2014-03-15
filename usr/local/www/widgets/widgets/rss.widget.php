@@ -56,8 +56,8 @@ if($config['widgets']['rsswidgettextlength'])
 
 // Set a default feed if none exists
 if(!$rss_feed_s) {
-	$rss_feed_s = "http://blog.pfsense.org";
-	$config['widgets']['rssfeed'] = "http://blog.pfsense.org";
+	$rss_feed_s = "https://blog.pfsense.org";
+	$config['widgets']['rssfeed'] = "https://blog.pfsense.org";
 }
 	
 if(!$max_items)

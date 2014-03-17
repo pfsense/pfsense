@@ -3,7 +3,7 @@
 /*
 	services_igmpproxy.php
 	
-	Copyright (C) 2009 Ermal Luçi
+	Copyright (C) 2009 Ermal LuÃ§i
 	Copyright (C) 2004 Scott Ullrich
 	All rights reserved.
 
@@ -87,7 +87,7 @@ include("head.inc");
 <form action="services_igmpproxy.php" method="post">
 <?php if ($savemsg) print_info_box($savemsg); ?>
 <?php if (is_subsystem_dirty('igmpproxy')): ?><p>
-<?php print_info_box_np(gettext("The IGMP entry list has been changed") . ".<br>" . gettext("You must apply the changes in order for them to take effect."));?>
+<?php print_info_box_np(gettext("The IGMP entry list has been changed") . ".<br />" . gettext("You must apply the changes in order for them to take effect."));?>
 <?php endif; ?>
 
 <table class="tabcont" width="100%" border="0" cellpadding="0" cellspacing="0">
@@ -158,7 +158,7 @@ include("head.inc");
   </tr>
 <tr>
   <td class="tabcont" colspan="4">
-   <p><span class="vexpl"><span class="red"><strong><?=gettext("Note:");?><br></strong></span><?=gettext("Please add the interface for upstream, the allowed subnets, and the downstream interfaces you would like the proxy to allow. Only one 'upstream' interface can be configured.");?></span></p>
+   <p><span class="vexpl"><span class="red"><strong><?=gettext("Note:");?><br /></strong></span><?=gettext("Please add the interface for upstream, the allowed subnets, and the downstream interfaces you would like the proxy to allow. Only one 'upstream' interface can be configured.");?></span></p>
   </td>
 </tr>
 </table>

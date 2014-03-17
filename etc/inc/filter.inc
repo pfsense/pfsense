@@ -2868,7 +2868,8 @@ pass in on \${$oc['descr']} proto 41 from {$config['interfaces'][$on]['gateway-6
 pass out on \${$oc['descr']} proto 41 from any to {$config['interfaces'][$on]['gateway-6rd']} label "{$fix_rule_label("Allow 6in4 traffic out for 6rd on {$oc['descr']}")}"
 
 EOD;
-		if (is_ipaddrv6($oc['ipv6'])) {
+		/* XXX: Really need to allow 6rd traffic coming in for v6 this is against default behaviour! */
+		if (0 && is_ipaddrv6($oc['ipv6'])) {
 			$ipfrules .= <<<EOD
 pass in on \${$oc['descr']} inet6 from any to {$oc['ipv6']}/{$oc['snv6']} label "{$fix_rule_label("Allow 6rd traffic in for 6rd on {$oc['descr']}")}"
 pass out on \${$oc['descr']} inet6 from {$oc['ipv6']}/{$oc['snv6']} to any label "{$fix_rule_label("Allow 6rd traffic out for 6rd on {$oc['descr']}")}"
@@ -2885,7 +2886,8 @@ pass out on \${$oc['descr']} proto 41 from {$oc['ip']} to any label "{$fix_rule_
 
 EOD;
 		}
-		if (is_ipaddrv6($oc['ipv6'])) {
+		/* XXX: Really need to allow 6to4 traffic coming in for v6 this is against default behaviour! */
+		if (0 && is_ipaddrv6($oc['ipv6'])) {
 			$ipfrules .= <<<EOD
 pass in on \${$oc['descr']} inet6 from any to {$oc['ipv6']}/{$oc['snv6']} label "{$fix_rule_label("Allow 6in4 traffic in for 6to4 on {$oc['descr']}")}"
 pass out on \${$oc['descr']} inet6 from {$oc['ipv6']}/{$oc['snv6']} to any label "{$fix_rule_label("Allow 6in4 traffic out for 6to4 on {$oc['descr']}")}"

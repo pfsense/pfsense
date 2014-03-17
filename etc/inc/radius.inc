@@ -255,7 +255,7 @@ class Auth_RADIUS extends PEAR {
     function dumpAttributes()
     {
         foreach ($this->attributes as $name => $data) {
-            echo "$name:$data<br>\n";
+            echo "$name:$data<br />\n";
         }
     }
 

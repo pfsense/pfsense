@@ -146,7 +146,7 @@ include("head.inc");
 <input type="hidden" name="zone" id="zone" value="<?=htmlspecialchars($cpzone);?>"/>
 <?php if ($savemsg) print_info_box($savemsg); ?>
 <?php if (is_subsystem_dirty('passthrumac')): ?><p>
-<?php print_info_box_np(gettext("The captive portal MAC address configuration has been changed.<br>You must apply the changes in order for them to take effect."));?><br>
+<?php print_info_box_np(gettext("The captive portal MAC address configuration has been changed.<br />You must apply the changes in order for them to take effect."));?><br />
 <?php endif; ?>
 <table width="100%" border="0" cellpadding="0" cellspacing="0">
 	<tr><td class="tabnavtbl">
@@ -211,7 +211,7 @@ include("head.inc");
 				<tr>
 					<td colspan="3" class="list">
 						<span class="vexpl">
-							<span class="red"><strong><?=gettext("Note:"); ?><br></strong></span>
+							<span class="red"><strong><?=gettext("Note:"); ?><br /></strong></span>
 							<?=gettext("Adding MAC addresses as 'pass' MACs allows them access through the captive portal automatically without being taken to the portal page."); ?>
 						</span>
 					</td>

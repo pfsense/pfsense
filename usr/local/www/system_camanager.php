@@ -94,7 +94,7 @@ if ($act == "del") {
 	$name = $a_ca[$id]['descr'];
 	unset($a_ca[$id]);
 	write_config();
-	$savemsg = sprintf(gettext("Certificate Authority %s and its CRLs (if any) successfully deleted"), $name) . "<br/>";
+	$savemsg = sprintf(gettext("Certificate Authority %s and its CRLs (if any) successfully deleted"), $name) . "<br />";
 	pfSenseHeader("system_camanager.php");
 	exit;
 }
@@ -411,15 +411,15 @@ function method_change() {
 							<td width="22%" valign="top" class="vncellreq"><?=gettext("Certificate data");?></td>
 							<td width="78%" class="vtable">
 								<textarea name="cert" id="cert" cols="65" rows="7" class="formfld_cert"><?=htmlspecialchars($pconfig['cert']);?></textarea>
-								<br/>
+								<br />
 								<?=gettext("Paste a certificate in X.509 PEM format here.");?>
 							</td>
 						</tr>
 						<tr>
-							<td width="22%" valign="top" class="vncellreq"><?=gettext("Certificate Private Key");?><br/><?=gettext("(optional)");?></td>
+							<td width="22%" valign="top" class="vncellreq"><?=gettext("Certificate Private Key");?><br /><?=gettext("(optional)");?></td>
 							<td width="78%" class="vtable">
 								<textarea name="key" id="key" cols="65" rows="7" class="formfld_cert"><?=htmlspecialchars($pconfig['key']);?></textarea>
-								<br/>
+								<br />
 								<?=gettext("Paste the private key for the above certificate here. This is optional in most cases, but required if you need to generate a Certificate Revocation List (CRL).");?>
 							</td>
 						</tr>
@@ -429,7 +429,7 @@ function method_change() {
 							<td width="22%" valign="top" class="vncellreq"><?=gettext("Serial for next certificate");?></td>
 							<td width="78%" class="vtable">
 								<input name="serial" type="text" class="formfld unknown" id="serial" size="20" value="<?=htmlspecialchars($pconfig['serial']);?>"/>
-								<br/><?=gettext("Enter a decimal number to be used as the serial number for the next certificate to be created using this CA.");?>
+								<br /><?=gettext("Enter a decimal number to be used as the serial number for the next certificate to be created using this CA.");?>
 							</td>
 						</tr>
 					<?php endif; ?>
@@ -488,7 +488,7 @@ function method_change() {
 									<option value="<?=$digest_alg;?>"<?=$selected;?>><?=strtoupper($digest_alg);?></option>
 								<?php endforeach; ?>
 								</select>
-								<br/><?= gettext("NOTE: It is recommended to use an algorithm stronger than SHA1 when possible.") ?>
+								<br /><?= gettext("NOTE: It is recommended to use an algorithm stronger than SHA1 when possible.") ?>
 							</td>
 						</tr>
 						<tr>

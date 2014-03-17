@@ -460,7 +460,7 @@ function enable_change(enable_change) {
 						<?=gettext("Voucher Rolls"); ?>
 						<?php 
 							if($pconfig['vouchersyncdbip']) 
-								echo "<br/>(Synchronized from {$pconfig['vouchersyncdbip']})";
+								echo "<br />(Synchronized from {$pconfig['vouchersyncdbip']})";
 						?>
 					</td>
 					<td class="vtable">
@@ -521,14 +521,14 @@ function enable_change(enable_change) {
 						</td>
 						<td class="vtable">
 							<textarea name="publickey" cols="65" rows="4" id="publickey" class="formpre"><?=htmlspecialchars($pconfig['publickey']);?></textarea>
-							<br>
+							<br />
 								<?=gettext("Paste an RSA public key (64 Bit or smaller) in PEM format here. This key is used to decrypt vouchers."); ?> <a href='#' onClick='generatenewkey();'><?=gettext('Generate');?></a> <?=gettext('new key');?>.</td>
 						</tr>
 						<tr>
 							<td valign="top" class="vncell"><?=gettext("Voucher private key"); ?></td>
 							<td class="vtable">
 								<textarea name="privatekey" cols="65" rows="5" id="privatekey" class="formpre"><?=htmlspecialchars($pconfig['privatekey']);?></textarea>
-								<br>
+								<br />
 								<?=gettext("Paste an RSA private key (64 Bit or smaller) in PEM format here. This key is only used to generate encrypted vouchers and doesn't need to be available if the vouchers have been generated offline."); ?> <a href='#' onClick='generatenewkey();'> <?=gettext('Generate');?></a> <?=gettext('new key');?>.</td>
 							</td>
 						</tr>
@@ -536,7 +536,7 @@ function enable_change(enable_change) {
 							<td width="22%" valign="top" class="vncellreq"><?=gettext("Character set"); ?></td>
 							<td width="78%" class="vtable">
 								<input name="charset" type="text" class="formfld" id="charset" size="80" value="<?=htmlspecialchars($pconfig['charset']);?>">
-								<br>
+								<br />
 								<?=gettext("Tickets are generated with the specified character set. It should contain printable characters (numbers, lower case and upper case letters) that are hard to confuse with others. Avoid e.g. 0/O and l/1."); ?>
 							</td>
 						</tr>
@@ -544,7 +544,7 @@ function enable_change(enable_change) {
 							<td width="22%" valign="top" class="vncellreq"># <?=gettext("of Roll Bits"); ?></td>
 							<td width="78%" class="vtable">
 								<input name="rollbits" type="text" class="formfld" id="rollbits" size="2" value="<?=htmlspecialchars($pconfig['rollbits']);?>">
-								<br>
+								<br />
 								<?=gettext("Reserves a range in each voucher to store the Roll # it belongs to. Allowed range: 1..31. Sum of Roll+Ticket+Checksum bits must be one Bit less than the RSA key size."); ?>
 							</td>
 						</tr>
@@ -552,7 +552,7 @@ function enable_change(enable_change) {
 							<td width="22%" valign="top" class="vncellreq"># <?=gettext("of Ticket Bits"); ?></td>
 							<td width="78%" class="vtable">
 								<input name="ticketbits" type="text" class="formfld" id="ticketbits" size="2" value="<?=htmlspecialchars($pconfig['ticketbits']);?>">
-								<br>
+								<br />
 								<?=gettext("Reserves a range in each voucher to store the Ticket# it belongs to. Allowed range: 1..16. Using 16 bits allows a roll to have up to 65535 vouchers. A bit array, stored in RAM and in the config, is used to mark if a voucher has been used. A bit array for 65535 vouchers requires 8 KB of storage."); ?>
 							</td>
 						</tr>
@@ -560,7 +560,7 @@ function enable_change(enable_change) {
 							<td width="22%" valign="top" class="vncellreq"># <?=gettext("of Checksum Bits"); ?></td>
 							<td width="78%" class="vtable">
 								<input name="checksumbits" type="text" class="formfld" id="checksumbits" size="2" value="<?=htmlspecialchars($pconfig['checksumbits']);?>">
-								<br>
+								<br />
 								<?=gettext("Reserves a range in each voucher to store a simple checksum over Roll # and Ticket#. Allowed range is 0..31."); ?>
 							</td>
 						</tr>
@@ -568,7 +568,7 @@ function enable_change(enable_change) {
 							<td width="22%" valign="top" class="vncellreq"><?=gettext("Magic Number"); ?></td>
 							<td width="78%" class="vtable">
 								<input name="magic" type="text" class="formfld" id="magic" size="20" value="<?=htmlspecialchars($pconfig['magic']);?>">
-								<br>
+								<br />
 								<?=gettext("Magic number stored in every voucher. Verified during voucher check. Size depends on how many bits are left by Roll+Ticket+Checksum bits. If all bits are used, no magic number will be used and checked."); ?>
 							</td>
 						</tr>
@@ -576,14 +576,14 @@ function enable_change(enable_change) {
 							<td width="22%" valign="top" class="vncellreq"><?=gettext("Invalid Voucher Message"); ?></td>
 							<td width="78%" class="vtable">
 								<input name="msgnoaccess" type="text" class="formfld" id="msgnoaccess" size="80" value="<?=htmlspecialchars($pconfig['msgnoaccess']);?>">
-								<br><?=gettext("Error message displayed for invalid vouchers on captive portal error page"); ?> ($PORTAL_MESSAGE$).
+								<br /><?=gettext("Error message displayed for invalid vouchers on captive portal error page"); ?> ($PORTAL_MESSAGE$).
 							</td>
 						</tr>
 						<tr> 
 							<td width="22%" valign="top" class="vncellreq"><?=gettext("Expired Voucher Message"); ?></td>
 							<td width="78%" class="vtable">
 								<input name="msgexpired" type="text" class="formfld" id="msgexpired" size="80" value="<?=htmlspecialchars($pconfig['msgexpired']);?>">
-								<br><?=gettext("Error message displayed for expired vouchers on captive portal error page"); ?> ($PORTAL_MESSAGE$).
+								<br /><?=gettext("Error message displayed for expired vouchers on captive portal error page"); ?> ($PORTAL_MESSAGE$).
 							</td>
 						</tr>
 						<tr>
@@ -599,29 +599,29 @@ function enable_change(enable_change) {
 							<td width="22%" valign="top" class="vncellreq"><?=gettext("Synchronize Voucher Database IP"); ?></td>
 							<td width="78%" class="vtable">
 								<input name="vouchersyncdbip" type="text" class="formfld" id="vouchersyncdbip" size="17" value="<?=htmlspecialchars($pconfig['vouchersyncdbip']);?>">
-								<br/><?=gettext("IP address of master nodes webConfigurator to synchronize voucher database and used vouchers from."); ?>
-								<br/><?=gettext("NOTE: this should be setup on the slave nodes and not the primary node!"); ?>
+								<br /><?=gettext("IP address of master nodes webConfigurator to synchronize voucher database and used vouchers from."); ?>
+								<br /><?=gettext("NOTE: this should be setup on the slave nodes and not the primary node!"); ?>
 							</td>
 						</tr>
 						<tr> 
 							<td width="22%" valign="top" class="vncellreq"><?=gettext("Voucher sync port"); ?></td>
 							<td width="78%" class="vtable">
 								<input name="vouchersyncport" type="text" class="formfld" id="vouchersyncport" size="7" value="<?=htmlspecialchars($pconfig['vouchersyncport']);?>">
-								<br><?=gettext("This is the port of the master voucher nodes webConfigurator.  Example: 443"); ?>
+								<br /><?=gettext("This is the port of the master voucher nodes webConfigurator.  Example: 443"); ?>
 							</td>
 						</tr>
 						<tr> 
 							<td width="22%" valign="top" class="vncellreq"><?=gettext("Voucher sync username"); ?></td>
 							<td width="78%" class="vtable">
 								<input name="vouchersyncusername" type="text" class="formfld" id="vouchersyncusername" size="25" value="<?=htmlspecialchars($pconfig['vouchersyncusername']);?>" autocomplete="off">
-								<br><?=gettext("This is the username of the master voucher nodes webConfigurator."); ?>
+								<br /><?=gettext("This is the username of the master voucher nodes webConfigurator."); ?>
 							</td>
 						</tr>
 						<tr> 
 							<td width="22%" valign="top" class="vncellreq"><?=gettext("Voucher sync password"); ?></td>
 							<td width="78%" class="vtable">
 								<input name="vouchersyncpass" type="password" class="formfld" id="vouchersyncpass" size="25" value="<?=htmlspecialchars($pconfig['vouchersyncpass']);?>"  autocomplete="off">
-								<br><?=gettext("This is the password of the master voucher nodes webConfigurator."); ?>
+								<br /><?=gettext("This is the password of the master voucher nodes webConfigurator."); ?>
 							</td>
 						</tr>
 						<tr>
@@ -635,9 +635,9 @@ function enable_change(enable_change) {
 						</tr>
 						<tr>
 							<td colspan="2" class="list"><p class="vexpl">
-								<span class="red"><strong> <?=gettext("Note:"); ?><br>   </strong></span>
+								<span class="red"><strong> <?=gettext("Note:"); ?><br />   </strong></span>
 							<?=gettext("Changing any Voucher parameter (apart from managing the list of Rolls) on this page will render existing vouchers useless if they were generated with different settings."); ?>
-							<br/>
+							<br />
 							<?=gettext("Specifying the Voucher Database Synchronization options will not record any other value from the other options. They will be retrieved/synced from the master."); ?>
 						</p>
 					</td>

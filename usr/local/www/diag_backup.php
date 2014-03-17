@@ -622,7 +622,7 @@ function backuparea_change(obj) {
 <?php if (is_subsystem_dirty('restore')): ?><p>
 <form action="reboot.php" method="post">
 <input name="Submit" type="hidden" value=" Yes ">
-<?php print_info_box(gettext("The firewall configuration has been changed.") . "<br/>" . gettext("The firewall is now rebooting."));?><br>
+<?php print_info_box(gettext("The firewall configuration has been changed.") . "<br />" . gettext("The firewall is now rebooting."));?><br />
 </form>
 <?php endif; ?>
 <form action="diag_backup.php" method="post" name="iform" enctype="multipart/form-data">
@@ -755,8 +755,8 @@ function backuparea_change(obj) {
 						<?php if ($config['installedpackages']['package'] != "") { ?>
 							<p><?=gettext("Click this button to reinstall all system packages.  This may take a while."); ?> <br /><br />
 							<input name="Submit" type="submit" class="formbtn" id="reinstallpackages" value="<?=gettext("Reinstall packages"); ?>">
-							<br/>
-							<br/>
+							<br />
+							<br />
 						<?php } ?>
 						<?php if (is_subsystem_dirty("packagelock")) { ?>
 							<p><?=gettext("Click this button to clear the package lock if a package fails to reinstall properly after an upgrade."); ?> <br /><br />

@@ -91,7 +91,7 @@ include("head.inc");
 			  <?php printf(gettext("Last %s DHCP service log entries"), $nentries);?></td>
 		  </tr>
 		  <?php dump_clog($dhcpd_logfile, $nentries); ?>
-		<tr><td><br/><form action="diag_logs_dhcp.php" method="post">
+		<tr><td><br /><form action="diag_logs_dhcp.php" method="post">
 			<input name="clear" type="submit" class="formbtn" value="<?= gettext("Clear log");?>" /></form</td>
 			<td>NOTE: Clearing the log file will restart the DHCP daemon.</td></tr>
 		</table>

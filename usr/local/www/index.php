@@ -532,9 +532,9 @@ pfSense_handle_custom_code("/usr/local/pkg/dashboard/pre_dashboard");
 			</div>
 			<div style="clear:both;"></div>
 			<p>
-			<?=gettext("This page allows you to customize the information you want to be displayed!");?><br/>
-			<?=gettext("To get started click the");?> <img src="./themes/<?= $g['theme']; ?>/images/icons/icon_plus.gif" alt="plus" /> <?=gettext("icon to add widgets.");?><br/>
-			<br/>
+			<?=gettext("This page allows you to customize the information you want to be displayed!");?><br />
+			<?=gettext("To get started click the");?> <img src="./themes/<?= $g['theme']; ?>/images/icons/icon_plus.gif" alt="plus" /> <?=gettext("icon to add widgets.");?><br />
+			<br />
 			<?=gettext("You can move any widget around by clicking and dragging the title.");?>
 			</p>
 	</div>

@@ -127,8 +127,8 @@ if ($_POST) {
 					<td class="tabcont" align="center">
 						<table style="height:15;colspacing:0" width="420" border="0" cellpadding="0" cellspacing="0" summary="images">
 							<tr>
-								<td class="tabcont" align="center">Package:<b><?=$pkgname;?></b> will be <?=$pkgtxt;?>.<br/>
-								Please confirm the action on this package.<br/>
+								<td class="tabcont" align="center">Package:<b><?=$pkgname;?></b> will be <?=$pkgtxt;?>.<br />
+								Please confirm the action on this package.<br />
 								</td>
 								<td class="tabcont" align="center">
 									<input type="hidden" name="id" value="<?=$pkgname;?>" />
@@ -157,7 +157,7 @@ if ($_POST) {
 								</td>
 							</tr>
 						</table>
-						<br/>
+						<br />
 						<!-- status box -->
 						<textarea cols="80" rows="1" name="status" id="status" wrap="hard"><?=gettext("Beginning package installation.");?></textarea>
 						<!-- command output box -->

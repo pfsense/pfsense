@@ -185,9 +185,9 @@ include("head.inc");
 		</tr>
 		<tr>
 		  <td colspan="5" class="list"><p class="vexpl"><span class="red"><strong>
-			<?=gettext("Note:");?><br>
+			<?=gettext("Note:");?><br />
 			</strong></span>
-			<?=gettext("IP addresses appearing in green are up to date with Dynamic DNS provider.");?><br>
+			<?=gettext("IP addresses appearing in green are up to date with Dynamic DNS provider.");?><br />
 			<?=gettext("You can force an update for an IP address on the edit page for that service.");?>
 		  </td>
 		  <td class="list">&nbsp;</td>

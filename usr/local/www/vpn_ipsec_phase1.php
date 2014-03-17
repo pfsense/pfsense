@@ -521,7 +521,7 @@ function dpdchkbox_change() {
 						<td width="22%" valign="top" class="vncellreq"><?=gettext("Disabled"); ?></td>
 						<td width="78%" class="vtable">
 							<input name="disabled" type="checkbox" id="disabled" value="yes" <?php if ($pconfig['disabled']) echo "checked"; ?>>
-							<strong><?=gettext("Disable this phase1 entry"); ?></strong><br>
+							<strong><?=gettext("Disable this phase1 entry"); ?></strong><br />
 							<span class="vexpl">
 								<?=gettext("Set this option to disable this phase1 without " .
 								"removing it from the list"); ?>.
@@ -540,7 +540,7 @@ function dpdchkbox_change() {
 									<?=htmlspecialchars($name);?>
 								</option>
 							<?php endforeach; ?>
-							</select> <br> <span class="vexpl"><?=gettext("Select the Internet Protocol family from this dropdown"); ?>.</span>
+							</select> <br /> <span class="vexpl"><?=gettext("Select the Internet Protocol family from this dropdown"); ?>.</span>
 						</td>
 					</tr>
 					<tr>
@@ -575,7 +575,7 @@ function dpdchkbox_change() {
 								</option>
 							<?php endforeach; ?>
 							</select>
-							<br>
+							<br />
 							<span class="vexpl"><?=gettext("Select the interface for the local endpoint of this phase1 entry"); ?>.</span>
 						</td>
 					</tr>
@@ -586,7 +586,7 @@ function dpdchkbox_change() {
 						<td width="22%" valign="top" class="vncellreq"><?=gettext("Remote gateway"); ?></td>
 						<td width="78%" class="vtable">
 							<?=$mandfldhtml;?><input name="remotegw" type="text" class="formfld unknown" id="remotegw" size="28" value="<?=htmlspecialchars($pconfig['remotegw']);?>">
-							<br>
+							<br />
 							<?=gettext("Enter the public IP address or host name of the remote gateway"); ?>
 						</td>
 					</tr>
@@ -597,7 +597,7 @@ function dpdchkbox_change() {
 						<td width="22%" valign="top" class="vncell"><?=gettext("Description"); ?></td>
 						<td width="78%" class="vtable">
 							<input name="descr" type="text" class="formfld unknown" id="descr" size="40" value="<?=htmlspecialchars($pconfig['descr']);?>">
-							<br>
+							<br />
 							<span class="vexpl">
 								<?=gettext("You may enter a description here " .
 								"for your reference (not parsed)"); ?>.
@@ -626,7 +626,7 @@ function dpdchkbox_change() {
 								</option>
 							<?php endforeach; ?>
 							</select>
-							<br>
+							<br />
 							<span class="vexpl">
 								<?=gettext("Must match the setting chosen on the remote side"); ?>.
 							</span>
@@ -644,7 +644,7 @@ function dpdchkbox_change() {
 									<?=htmlspecialchars($mode);?>
 								</option>
 							<?php endforeach; ?>
-							</select> <br> <span class="vexpl"><?=gettext("Aggressive is more flexible, but less secure"); ?>.</span>
+							</select> <br /> <span class="vexpl"><?=gettext("Aggressive is more flexible, but less secure"); ?>.</span>
 						</td>
 					</tr>
 					<tr>
@@ -676,7 +676,7 @@ function dpdchkbox_change() {
 							</select>
 							<input name="peerid_data" type="text" class="formfld unknown" id="peerid_data" size="30" value="<?=htmlspecialchars($pconfig['peerid_data']);?>">
 						<?php if ($pconfig['mobile']) { ?>
-							<br/><br/><?=gettext("NOTE: This is known as the \"group\" setting on some VPN client implementations"); ?>.
+							<br /><br /><?=gettext("NOTE: This is known as the \"group\" setting on some VPN client implementations"); ?>.
 						<?php } ?>
 						</td>
 					</tr>
@@ -686,7 +686,7 @@ function dpdchkbox_change() {
 							<?=$mandfldhtml;?>
 							<input name="pskey" type="text" class="formfld unknown" id="pskey" size="40" value="<?=htmlspecialchars($pconfig['pskey']);?>">
 							<span class="vexpl">
-							<br>
+							<br />
 								<?=gettext("Input your Pre-Shared Key string"); ?>.
 							</span>
 						</td>
@@ -701,7 +701,7 @@ function dpdchkbox_change() {
 								<option value="require" <?php if ($pconfig['generate_policy'] == "require") echo "selected"; ?>>Require</option>
 								<option value="unique" <?php if ($pconfig['generate_policy'] == "unique") echo "selected"; ?>>Unique</option>
 							</select>
-							<br>
+							<br />
 							<span class="vexpl">
 								<?=gettext("When working as a responder (as with mobile clients), this controls how policies are generated based on SA proposals."); ?>
 							</span>
@@ -717,7 +717,7 @@ function dpdchkbox_change() {
 								<option value="claim" <?php if ($pconfig['proposal_check'] == "claim") echo "selected"; ?>>Claim</option>
 								<option value="exact" <?php if ($pconfig['proposal_check'] == "exact") echo "selected"; ?>>Exact</option>
 							</select>
-							<br>
+							<br />
 							<span class="vexpl">
 								<?=gettext("Specifies the action of lifetime length, key length, and PFS of the phase 2 selection on the responder side, and the action of lifetime check in phase 1."); ?>
 							</span>
@@ -752,7 +752,7 @@ function dpdchkbox_change() {
 								</option>
 							<?php endforeach; ?>
 							</select>
-							<br>
+							<br />
 							<span class="vexpl">
 								<?=gettext("Must match the setting chosen on the remote side"); ?>.
 							</span>
@@ -768,7 +768,7 @@ function dpdchkbox_change() {
 								</option>
 							<?php endforeach; ?>
 							</select>
-							<br>
+							<br />
 							<span class="vexpl">
 								<?=gettext("Must match the setting chosen on the remote side"); ?>.
 							</span>
@@ -794,7 +794,7 @@ function dpdchkbox_change() {
 								<option value="<?=$cert['refid'];?>" <?=$selected;?>><?=$cert['descr'];?></option>
 							<?php endforeach; ?>
 							</select>
-							<br>
+							<br />
 							<span class="vexpl">
 								<?=gettext("Select a certificate previously configured in the Certificate Manager"); ?>.
 							</span>
@@ -813,7 +813,7 @@ function dpdchkbox_change() {
 								<option value="<?=$ca['refid'];?>" <?=$selected;?>><?=$ca['descr'];?></option>
 							<?php endforeach; ?>
 							</select>
-							<br>
+							<br />
 							<span class="vexpl">
 								<?=gettext("Select a certificate authority previously configured in the Certificate Manager"); ?>.
 							</span>
@@ -833,7 +833,7 @@ function dpdchkbox_change() {
 								<option value="on" <?php if ($pconfig['nat_traversal'] == "on") echo "selected"; ?>><?=gettext("Enable"); ?></option>
 								<option value="force" <?php if ($pconfig['nat_traversal'] == "force") echo "selected"; ?>><?=gettext("Force"); ?></option>
 							</select>
-							<br/>
+							<br />
 							<span class="vexpl">
 								<?=gettext("Set this option to enable the use of NAT-T (i.e. the encapsulation of ESP in UDP packets) if needed, " .
 								"which can help with clients that are behind restrictive firewalls"); ?>.
@@ -844,21 +844,21 @@ function dpdchkbox_change() {
 						<td width="22%" valign="top" class="vncell"><?=gettext("Dead Peer Detection"); ?></td>
 						<td width="78%" class="vtable">
 							<input name="dpd_enable" type="checkbox" id="dpd_enable" value="yes" <?php if (isset($pconfig['dpd_enable'])) echo "checked"; ?> onClick="dpdchkbox_change()">
-							<?=gettext("Enable DPD"); ?><br>
+							<?=gettext("Enable DPD"); ?><br />
 							<div id="opt_dpd">
-								<br>
+								<br />
 								<input name="dpd_delay" type="text" class="formfld unknown" id="dpd_delay" size="5" value="<?=htmlspecialchars($pconfig['dpd_delay']);?>">
-								<?=gettext("seconds"); ?><br>
+								<?=gettext("seconds"); ?><br />
 								<span class="vexpl">
 									<?=gettext("Delay between requesting peer acknowledgement"); ?>.
-								</span><br>
-								<br>
+								</span><br />
+								<br />
 								<input name="dpd_maxfail" type="text" class="formfld unknown" id="dpd_maxfail" size="5" value="<?=htmlspecialchars($pconfig['dpd_maxfail']);?>">
-								<?=gettext("retries"); ?><br>
+								<?=gettext("retries"); ?><br />
 								<span class="vexpl">
 									<?=gettext("Number of consecutive failures allowed before disconnect"); ?>.
 								</span>
-								<br>
+								<br />
 							</div>
 						</td>
 					</tr>

@@ -811,9 +811,9 @@ include("head.inc");
 					<option value="match" <?php if ("match" == strtolower($pconfig['type'])) echo "selected=\"selected\""; ?>>Match</option>
 <?php endif; ?>
 				</select>
-				<br/>
+				<br />
 				<span class="vexpl">
-					<?=gettext("Choose what to do with packets that match the criteria specified below.");?> <br/>
+					<?=gettext("Choose what to do with packets that match the criteria specified below.");?> <br />
 					<?=gettext("Hint: the difference between block and reject is that with reject, a packet (TCP RST or ICMP port unreachable for UDP) is returned to the sender, whereas with block the packet is dropped silently. In either case, the original packet is discarded.");?>
 				</span>
 			</td>
@@ -851,7 +851,7 @@ include("head.inc");
 					if (is_array($config['nat']['rule'])) {
 						foreach( $config['nat']['rule'] as $index => $nat_rule ) {
 							if( isset($nat_rule['associated-rule-id']) && $nat_rule['associated-rule-id']==$pconfig['associated-rule-id'] ) {
-								echo "<a href=\"firewall_nat_edit.php?id={$index}\">" . gettext("View the NAT rule") . "</a><br/>";
+								echo "<a href=\"firewall_nat_edit.php?id={$index}\">" . gettext("View the NAT rule") . "</a><br />";
 								break;
 							}
 						}
@@ -1092,7 +1092,7 @@ include("head.inc");
 					</tr>
 				</table>
 				<br />
-				<span class="vexpl"><?=gettext("Specify the source port or port range for this rule."); ?> <b><?=gettext("This is usually"); ?> <em><?=gettext("random"); ?></em> <?=gettext("and almost never equal to the destination port range (and should usually be"); ?> &quot;<?=gettext("any"); ?>&quot;).</b><br /><?=gettext("Hint: you can leave the"); ?> <em><?=gettext("'to'"); ?></em> <?=gettext("field empty if you only want to filter a single port.");?></span><br/>
+				<span class="vexpl"><?=gettext("Specify the source port or port range for this rule."); ?> <b><?=gettext("This is usually"); ?> <em><?=gettext("random"); ?></em> <?=gettext("and almost never equal to the destination port range (and should usually be"); ?> &quot;<?=gettext("any"); ?>&quot;).</b><br /><?=gettext("Hint: you can leave the"); ?> <em><?=gettext("'to'"); ?></em> <?=gettext("field empty if you only want to filter a single port.");?></span><br />
 			</td>
 		</tr>
 		<tr>
@@ -1218,7 +1218,7 @@ $i--): ?>
 		<tr>
 			<td width="22%" valign="top">&nbsp;</td>
 			<td width="78%">
-				&nbsp;<br/>&nbsp;
+				&nbsp;<br />&nbsp;
 				<input name="Submit" type="submit" class="formbtn" value="<?=gettext("Save"); ?>" />  <input type="button" class="formbtn" value="<?=gettext("Cancel"); ?>" onclick="history.back()" />
 <?php			if (isset($id) && $a_filter[$id]): ?>
 					<input name="id" type="hidden" value="<?=htmlspecialchars($id);?>" />
@@ -1291,10 +1291,10 @@ $i--): ?>
 			</div>
 			<div id="aodivmain" <?php if (!is_aoadv_used($pconfig)) echo "style='display:none'"; ?>>
 				<input type="checkbox" id="allowopts" value="yes" name="allowopts"<?php if($pconfig['allowopts'] == true) echo " checked=\"checked\""; ?> />
-				<br/><span class="vexpl"><?=gettext("This allows packets with IP options to pass. Otherwise they are blocked by default. This is usually only seen with multicast traffic.");?>
+				<br /><span class="vexpl"><?=gettext("This allows packets with IP options to pass. Otherwise they are blocked by default. This is usually only seen with multicast traffic.");?>
 				</span><p>
 				<input type="checkbox" id="disablereplyto" value="yes" name="disablereplyto"<?php if($pconfig['disablereplyto'] == true) echo " checked=\"checked\""; ?> />
-				<br/><span class="vexpl"><?=gettext("This will disable auto generated reply-to for this rule.");?>
+				<br /><span class="vexpl"><?=gettext("This will disable auto generated reply-to for this rule.");?>
 				</span></p><p>
 				<input name="tag" id="tag" value="<?=htmlspecialchars($pconfig['tag']);?>" />
 				<br /><span class="vexpl"><?=gettext("You can mark a packet matching this rule and use this mark to match on other NAT/filter rules. It is called"); ?> <b><?=gettext("Policy filtering"); ?></b>
@@ -1302,10 +1302,10 @@ $i--): ?>
 				<input name="tagged" id="tagged" value="<?=htmlspecialchars($pconfig['tagged']);?>" />
 				<br /><span class="vexpl"><?=gettext("You can match packet on a mark placed before on another rule.")?>
 				</span></p><p>
-				<input name="max" id="max" value="<?php echo htmlspecialchars($pconfig['max']) ?>" /><br/><?=gettext(" Maximum state entries this rule can create");?></p><p>
-				<input name="max-src-nodes" id="max-src-nodes" value="<?php echo htmlspecialchars($pconfig['max-src-nodes']) ?>" /><br/><?=gettext(" Maximum number of unique source hosts");?></p><p>
-				<input name="max-src-conn" id="max-src-conn" value="<?php echo htmlspecialchars($pconfig['max-src-conn']) ?>" /><br/><?=gettext(" Maximum number of established connections per host (TCP only)");?></p><p>
-				<input name="max-src-states" id="max-src-states" value="<?php echo htmlspecialchars($pconfig['max-src-states']) ?>" /><br/><?=gettext(" Maximum state entries per host");?></p><p>
+				<input name="max" id="max" value="<?php echo htmlspecialchars($pconfig['max']) ?>" /><br /><?=gettext(" Maximum state entries this rule can create");?></p><p>
+				<input name="max-src-nodes" id="max-src-nodes" value="<?php echo htmlspecialchars($pconfig['max-src-nodes']) ?>" /><br /><?=gettext(" Maximum number of unique source hosts");?></p><p>
+				<input name="max-src-conn" id="max-src-conn" value="<?php echo htmlspecialchars($pconfig['max-src-conn']) ?>" /><br /><?=gettext(" Maximum number of established connections per host (TCP only)");?></p><p>
+				<input name="max-src-states" id="max-src-states" value="<?php echo htmlspecialchars($pconfig['max-src-states']) ?>" /><br /><?=gettext(" Maximum state entries per host");?></p><p>
 				<input name="max-src-conn-rate" id="max-src-conn-rate" value="<?php echo htmlspecialchars($pconfig['max-src-conn-rate']) ?>" /> /
 				<select name="max-src-conn-rates" id="max-src-conn-rates">
 					<option value=""<?php if(intval($pconfig['max-src-conn-rates']) < 1) echo " selected=\"selected\""; ?>></option>
@@ -1316,7 +1316,7 @@ $i--): ?>
 				</select><br />
 				<?=gettext("Maximum new connections per host / per second(s) (TCP only)");?>
 				</p><p>
-				<input name="statetimeout" value="<?php echo htmlspecialchars($pconfig['statetimeout']) ?>" /><br/>
+				<input name="statetimeout" value="<?php echo htmlspecialchars($pconfig['statetimeout']) ?>" /><br />
 				<?=gettext("State Timeout in seconds (TCP only)");?>
 				</p>
 				<p><strong><?=gettext("Note: Leave fields blank to disable that feature.");?></strong></p>
@@ -1355,9 +1355,9 @@ $i--): ?>
 			?>
 			</table>
 			</div>
-			<br/><center>
-			<input onclick='tcpflags_anyclick(this);' type='checkbox' name='tcpflags_any' value='on' <?php if ($pconfig['tcpflags_any']) echo "checked=\"checked\""; ?> /><strong><?=gettext("Any flags.");?></strong><br/></center>
-			<br/>
+			<br /><center>
+			<input onclick='tcpflags_anyclick(this);' type='checkbox' name='tcpflags_any' value='on' <?php if ($pconfig['tcpflags_any']) echo "checked=\"checked\""; ?> /><strong><?=gettext("Any flags.");?></strong><br /></center>
+			<br />
 			<span class="vexpl"><?=gettext("Use this to choose TCP flags that must ".
 			"be set or cleared for this rule to match.");?></span>
 			</div>
@@ -1372,15 +1372,15 @@ $i--): ?>
 				<div id="showstateadv" <?php if (empty($pconfig['nopfsync']) && (empty($pconfig['statetype']) || $pconfig['statetype'] == "keep state")) echo "style='display:none'"; ?>>
 					<input name="nopfsync" type="checkbox" id="nopfsync" value="yes" <?php if ($pconfig['nopfsync']) echo "checked=\"checked\""; ?> />
 					<span class="vexpl">
-						NO pfsync<br/>
-						<?=gettext("Hint: This prevents states created by this rule to be sync'ed over pfsync.");?><br/>
-					</span><br/>
+						NO pfsync<br />
+						<?=gettext("Hint: This prevents states created by this rule to be sync'ed over pfsync.");?><br />
+					</span><br />
 					<select name="statetype">
 						<option value="keep state" <?php if(!isset($pconfig['statetype']) or $pconfig['statetype'] == "keep state") echo "selected=\"selected\""; ?>><?=gettext("keep state");?></option>
 						<option value="sloppy state" <?php if($pconfig['statetype'] == "sloppy state") echo "selected=\"selected\""; ?>><?=gettext("sloppy state");?></option>
 						<option value="synproxy state"<?php if($pconfig['statetype'] == "synproxy state")  echo "selected=\"selected\""; ?>><?=gettext("synproxy state");?></option>
 						<option value="none"<?php if($pconfig['statetype'] == "none") echo "selected=\"selected\""; ?>><?=gettext("none");?></option>
-					</select><br/>
+					</select><br />
 					<span class="vexpl">
 						<?=gettext("Hint: Select which type of state tracking mechanism you would like to use.  If in doubt, use keep state.");?>
 					</span>
@@ -1400,7 +1400,7 @@ $i--): ?>
 					<input type="button" onclick="show_advanced_noxmlrpc()" value="<?=gettext("Advanced"); ?>" /> - <?=gettext("Show advanced option");?>
 				</div>
 				<div id="shownoxmlrpcadv" <?php if (empty($pconfig['nosync'])) echo "style='display:none'"; ?>>
-					<input type="checkbox" name="nosync"<?php if($pconfig['nosync']) echo " checked=\"checked\""; ?> /><br/>
+					<input type="checkbox" name="nosync"<?php if($pconfig['nosync']) echo " checked=\"checked\""; ?> /><br />
 					<?=gettext("Hint: This prevents the rule on Master from automatically syncing to other CARP members. This does NOT prevent the rule from being overwritten on Slave.");?>
 				</div>
 			</td>
@@ -1581,7 +1581,7 @@ $i--): ?>
 ?>
 				</select>
 				<br />
-				<span class="vexpl"><?=gettext("Choose the Out queue/Virtual interface only if you have also selected In.")."<br/>".gettext("The Out selection is applied to traffic leaving the interface where the rule is created, In is applied to traffic coming into the chosen interface.")."<br/>".gettext("If you are creating a floating rule, if the direction is In then the same rules apply, if the direction is out the selections are reverted Out is for incoming and In is for outgoing.");?></span>
+				<span class="vexpl"><?=gettext("Choose the Out queue/Virtual interface only if you have also selected In.")."<br />".gettext("The Out selection is applied to traffic leaving the interface where the rule is created, In is applied to traffic coming into the chosen interface.")."<br />".gettext("If you are creating a floating rule, if the direction is In then the same rules apply, if the direction is out the selections are reverted Out is for incoming and In is for outgoing.");?></span>
 				</div>
 			</td>
 		</tr>
@@ -1663,7 +1663,7 @@ $i--): ?>
 						}
 ?>
 						</select>
-						<br/>
+						<br />
 						<span class="vexpl">
 							<?=gettext("Choose a Layer7 container to apply application protocol inspection rules. " .
 							"These are valid for TCP and UDP protocols only.");?>
@@ -1706,7 +1706,7 @@ $has_updated_time = (isset($a_filter[$id]['updated']) && is_array($a_filter[$id]
 		<tr>
 			<td width="22%" valign="top">&nbsp;</td>
 			<td width="78%">
-				&nbsp;<br/>&nbsp;
+				&nbsp;<br />&nbsp;
 				<input name="Submit" type="submit" class="formbtn" value="<?=gettext("Save"); ?>" />  <input type="button" class="formbtn" value="<?=gettext("Cancel"); ?>" onclick="history.back()" />
 <?php			if (isset($id) && $a_filter[$id]): ?>
 					<input name="id" type="hidden" value="<?=htmlspecialchars($id);?>" />

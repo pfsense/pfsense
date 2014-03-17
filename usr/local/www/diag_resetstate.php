@@ -56,7 +56,7 @@ if ($_POST) {
 	if ($_POST['sourcetracking']) {
 		mwexec("/sbin/pfctl -F Sources");
 		if ($savemsg)
-			$savemsg .= " <br/>";
+			$savemsg .= " <br />";
 		$savemsg .= gettext("The source tracking table has been flushed successfully.");
 	}
 }
@@ -88,18 +88,18 @@ include("head.inc");
                   <td width="22%" valign="top" class="vtable">&nbsp;</td>
                   <td width="78%" class="vtable"> <p>
                       <input name="statetable" type="checkbox" id="statetable" value="yes" checked>
-                      <strong><?= gettext("Firewall state table"); ?></strong><br>
-                      <span class="vexpl"><br>
+                      <strong><?= gettext("Firewall state table"); ?></strong><br />
+                      <span class="vexpl"><br />
                       <?=gettext("Resetting the state tables will remove all entries from " .
                       "the corresponding tables. This means that all open connections " .
                       "will be broken and will have to be re-established. This " . 
                       "may be necessary after making substantial changes to the " .
                       "firewall and/or NAT rules, especially if there are IP protocol " .
-                      "mappings (e.g. for PPTP or IPv6) with open connections."); ?><br>
-                      <br>
+                      "mappings (e.g. for PPTP or IPv6) with open connections."); ?><br />
+                      <br />
                       </span><span class="vexpl"><?=gettext("The firewall will normally leave " .
-                      "the state tables intact when changing rules."); ?><br>
-                      <br>
+                      "the state tables intact when changing rules."); ?><br />
+                      <br />
                       <?=gettext("NOTE: If you reset the firewall state table, the browser " .
                       "session may appear to be hung after clicking &quot;Reset&quot;. " .
                       "Simply refresh the page to continue."); ?></span></p>
@@ -110,13 +110,13 @@ include("head.inc");
 			<td width="22%" valign="top" class="vtable">&nbsp;</td>
 			<td width="78%" class="vtable"><p>
 			<input name="sourcetracking" type="checkbox" id="sourcetracking" value="yes" checked>
-			<strong><?= gettext("Firewall Source Tracking"); ?></strong><br>
-			<span class="vexpl"><br>
+			<strong><?= gettext("Firewall Source Tracking"); ?></strong><br />
+			<span class="vexpl"><br />
 			<?=gettext("Resetting the source tracking table will remove all source/destination associations. " .
 			"This means that the \"sticky\" source/destination association " .
-			"will be cleared for all clients."); ?><br>
-			<br>
-			</span><span class="vexpl"><?=gettext("This does not clear active connection states, only source tracking."); ?><br>
+			"will be cleared for all clients."); ?><br />
+			<br />
+			</span><span class="vexpl"><?=gettext("This does not clear active connection states, only source tracking."); ?><br />
 			</p>
 			</td>
 		</tr>

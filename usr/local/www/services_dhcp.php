@@ -704,7 +704,7 @@ include("head.inc");
 	}
 ?>
 <?php if (is_subsystem_dirty('staticmaps')): ?><p>
-<?php print_info_box_np(gettext("The static mapping configuration has been changed") . ".<br>" . gettext("You must apply the changes in order for them to take effect."));?><br>
+<?php print_info_box_np(gettext("The static mapping configuration has been changed") . ".<br />" . gettext("You must apply the changes in order for them to take effect."));?><br />
 <?php endif; ?>
 <table width="100%" border="0" cellpadding="0" cellspacing="0">
 <tr><td>
@@ -757,7 +757,7 @@ include("head.inc");
 			<td width="22%" valign="top" class="vtable">&nbsp;</td>
 			<td width="78%" class="vtable">
 				<input name="denyunknown" id="denyunknown" type="checkbox" value="yes" <?php if ($pconfig['denyunknown']) echo "checked"; ?>>
-				<strong><?=gettext("Deny unknown clients");?></strong><br>
+				<strong><?=gettext("Deny unknown clients");?></strong><br />
 				<?=gettext("If this is checked, only the clients defined below will get DHCP leases from this server. ");?></td>
 			</tr>
 			<?php if (is_numeric($pool) || ($act == "newpool")): ?>
@@ -795,13 +795,13 @@ include("head.inc");
 				echo long2ip32($range_to);
 			?>
 			<?php if (is_numeric($pool) || ($act == "newpool")): ?>
-				<br/>In-use DHCP Pool Ranges:
+				<br />In-use DHCP Pool Ranges:
 				<?php if (is_array($config['dhcpd'][$if]['range'])): ?>
-					<br/><?php echo $config['dhcpd'][$if]['range']['from']; ?>-<?php echo $config['dhcpd'][$if]['range']['to']; ?>
+					<br /><?php echo $config['dhcpd'][$if]['range']['from']; ?>-<?php echo $config['dhcpd'][$if]['range']['to']; ?>
 				<?php endif; ?>
 				<?php foreach ($a_pools as $p): ?>
 					<?php if (is_array($p['range'])): ?>
-					<br/><?php echo $p['range']['from']; ?>-<?php echo $p['range']['to']; ?>
+					<br /><?php echo $p['range']['from']; ?>-<?php echo $p['range']['to']; ?>
 					<?php endif; ?>
 				<?php endforeach; ?>
 			<?php endif; ?>
@@ -894,36 +894,36 @@ include("head.inc");
 			<tr>
 			<td width="22%" valign="top" class="vncell"><?=gettext("WINS servers");?></td>
 			<td width="78%" class="vtable">
-				<input name="wins1" type="text" class="formfld unknown" id="wins1" size="20" value="<?=htmlspecialchars($pconfig['wins1']);?>"><br>
+				<input name="wins1" type="text" class="formfld unknown" id="wins1" size="20" value="<?=htmlspecialchars($pconfig['wins1']);?>"><br />
 				<input name="wins2" type="text" class="formfld unknown" id="wins2" size="20" value="<?=htmlspecialchars($pconfig['wins2']);?>">
 			</td>
 			</tr>
 			<tr>
 			<td width="22%" valign="top" class="vncell"><?=gettext("DNS servers");?></td>
 			<td width="78%" class="vtable">
-				<input name="dns1" type="text" class="formfld unknown" id="dns1" size="20" value="<?=htmlspecialchars($pconfig['dns1']);?>"><br>
-				<input name="dns2" type="text" class="formfld unknown" id="dns2" size="20" value="<?=htmlspecialchars($pconfig['dns2']);?>"><br>
+				<input name="dns1" type="text" class="formfld unknown" id="dns1" size="20" value="<?=htmlspecialchars($pconfig['dns1']);?>"><br />
+				<input name="dns2" type="text" class="formfld unknown" id="dns2" size="20" value="<?=htmlspecialchars($pconfig['dns2']);?>"><br />
 				<?=gettext("NOTE: leave blank to use the system default DNS servers - this interface's IP if DNS forwarder is enabled, otherwise the servers configured on the General page.");?>
 			</td>
 			</tr>
 			<tr>
 			<td width="22%" valign="top" class="vncell"><?=gettext("Gateway");?></td>
 			<td width="78%" class="vtable">
-				<input name="gateway" type="text" class="formfld host" id="gateway" size="20" value="<?=htmlspecialchars($pconfig['gateway']);?>"><br>
+				<input name="gateway" type="text" class="formfld host" id="gateway" size="20" value="<?=htmlspecialchars($pconfig['gateway']);?>"><br />
 				<?=gettext("The default is to use the IP on this interface of the firewall as the gateway. Specify an alternate gateway here if this is not the correct gateway for your network. Type \"none\" for no gateway assignment.");?>
 			</td>
 			</tr>
 			<tr>
 			<td width="22%" valign="top" class="vncell"><?=gettext("Domain name");?></td>
 			<td width="78%" class="vtable">
-				<input name="domain" type="text" class="formfld unknown" id="domain" size="20" value="<?=htmlspecialchars($pconfig['domain']);?>"><br>
+				<input name="domain" type="text" class="formfld unknown" id="domain" size="20" value="<?=htmlspecialchars($pconfig['domain']);?>"><br />
 				<?=gettext("The default is to use the domain name of this system as the default domain name provided by DHCP. You may specify an alternate domain name here.");?>
 			</td>
 			</tr>
 			<tr>
 			<td width="22%" valign="top" class="vncell"><?=gettext("Domain search list");?></td>
 			<td width="78%" class="vtable">
-				<input name="domainsearchlist" type="text" class="formfld unknown" id="domainsearchlist" size="20" value="<?=htmlspecialchars($pconfig['domainsearchlist']);?>"><br>
+				<input name="domainsearchlist" type="text" class="formfld unknown" id="domainsearchlist" size="20" value="<?=htmlspecialchars($pconfig['domainsearchlist']);?>"><br />
 				<?=gettext("The DHCP server can optionally provide a domain search list. Use the semicolon character as separator ");?>
 			</td>
 			</tr>
@@ -931,9 +931,9 @@ include("head.inc");
 			<td width="22%" valign="top" class="vncell"><?=gettext("Default lease time");?></td>
 			<td width="78%" class="vtable">
 				<input name="deftime" type="text" class="formfld unknown" id="deftime" size="10" value="<?=htmlspecialchars($pconfig['deftime']);?>">
-				<?=gettext("seconds");?><br>
+				<?=gettext("seconds");?><br />
 				<?=gettext("This is used for clients that do not ask for a specific " .
-				"expiration time."); ?><br>
+				"expiration time."); ?><br />
 				<?=gettext("The default is 7200 seconds.");?>
 			</td>
 			</tr>
@@ -941,9 +941,9 @@ include("head.inc");
 			<td width="22%" valign="top" class="vncell"><?=gettext("Maximum lease time");?></td>
 			<td width="78%" class="vtable">
 				<input name="maxtime" type="text" class="formfld unknown" id="maxtime" size="10" value="<?=htmlspecialchars($pconfig['maxtime']);?>">
-				<?=gettext("seconds");?><br>
+				<?=gettext("seconds");?><br />
 				<?=gettext("This is the maximum lease time for clients that ask".
-				" for a specific expiration time."); ?><br>
+				" for a specific expiration time."); ?><br />
 				<?=gettext("The default is 86400 seconds.");?>
 			</td>
 			</tr>
@@ -951,7 +951,7 @@ include("head.inc");
 			<tr>
 			<td width="22%" valign="top" class="vncell"><?=gettext("Failover peer IP:");?></td>
 			<td width="78%" class="vtable">
-				<input name="failover_peerip" type="text" class="formfld host" id="failover_peerip" size="20" value="<?=htmlspecialchars($pconfig['failover_peerip']);?>"><br>
+				<input name="failover_peerip" type="text" class="formfld host" id="failover_peerip" size="20" value="<?=htmlspecialchars($pconfig['failover_peerip']);?>"><br />
 				<?=gettext("Leave blank to disable.  Enter the interface IP address of the other machine.  Machines must be using CARP. Interface's advskew determines whether the DHCPd process is Primary or Secondary. Ensure one machine's advskew<20 (and the other is >20).");?>
 			</td>
 			</tr>
@@ -1016,7 +1016,7 @@ include("head.inc");
 					<input name="ddnsdomain" type="text" class="formfld unknown" id="ddnsdomain" size="20" value="<?=htmlspecialchars($pconfig['ddnsdomain']);?>"><br />
 					<?=gettext("Note: Leave blank to disable dynamic DNS registration.");?><br />
 					<?=gettext("Enter the dynamic DNS domain which will be used to register client names in the DNS server.");?>
-					<input name="ddnsdomainprimary" type="text" class="formfld unknown" id="ddnsdomainprimary" size="20" value="<?=htmlspecialchars($pconfig['ddnsdomainprimary']);?>"><br>
+					<input name="ddnsdomainprimary" type="text" class="formfld unknown" id="ddnsdomainprimary" size="20" value="<?=htmlspecialchars($pconfig['ddnsdomainprimary']);?>"><br />
 					<?=gettext("Enter the primary domain name server IP address for the dynamic domain name.");?><br />
 					<input name="ddnsdomainkeyname" type="text" class="formfld unknown" id="ddnsdomainkeyname" size="20" value="<?=htmlspecialchars($pconfig['ddnsdomainkeyname']);?>"><br />
 					<?=gettext("Enter the dynamic DNS domain key name which will be used to register client names in the DNS server.");?>
@@ -1046,7 +1046,7 @@ include("head.inc");
 					<input type="button" onClick="show_ntp_config()" value="<?=gettext("Advanced");?>"></input> - <?=gettext("Show NTP configuration");?></a>
 				</div>
 				<div id="showntp" style="display:none">
-					<input name="ntp1" type="text" class="formfld unknown" id="ntp1" size="20" value="<?=htmlspecialchars($pconfig['ntp1']);?>"><br>
+					<input name="ntp1" type="text" class="formfld unknown" id="ntp1" size="20" value="<?=htmlspecialchars($pconfig['ntp1']);?>"><br />
 					<input name="ntp2" type="text" class="formfld unknown" id="ntp2" size="20" value="<?=htmlspecialchars($pconfig['ntp2']);?>">
 				</div>
 			</td>
@@ -1058,7 +1058,7 @@ include("head.inc");
 				<input type="button" onClick="show_tftp_config()" value="<?=gettext("Advanced");?>"></input> - <?=gettext("Show TFTP configuration");?></a>
 			</div>
 			<div id="showtftp" style="display:none">
-				<input name="tftp" type="text" class="formfld unknown" id="tftp" size="50" value="<?=htmlspecialchars($pconfig['tftp']);?>"><br>
+				<input name="tftp" type="text" class="formfld unknown" id="tftp" size="50" value="<?=htmlspecialchars($pconfig['tftp']);?>"><br />
 				<?=gettext("Leave blank to disable.  Enter a full hostname or IP for the TFTP server.");?>
 			</div>
 			</td>
@@ -1070,7 +1070,7 @@ include("head.inc");
 					<input type="button" onClick="show_ldap_config()" value="<?=gettext("Advanced");?>"></input> - <?=gettext("Show LDAP configuration");?></a>
 				</div>
 				<div id="showldap" style="display:none">
-					<input name="ldap" type="text" class="formfld unknown" id="ldap" size="80" value="<?=htmlspecialchars($pconfig['ldap']);?>"><br>
+					<input name="ldap" type="text" class="formfld unknown" id="ldap" size="80" value="<?=htmlspecialchars($pconfig['ldap']);?>"><br />
 					<?=gettext("Leave blank to disable.  Enter a full URI for the LDAP server in the form ldap://ldap.example.com/dc=example,dc=com");?>
 				</div>
 			</td>
@@ -1086,18 +1086,18 @@ include("head.inc");
 					<b><?=gettext("Enables network booting.");?></b>
 					<p>
 					<?=gettext("Enter the IP of the"); ?> <b><?=gettext("next-server"); ?></b>
-					<input name="nextserver" type="text" class="formfld unknown" id="nextserver" size="20" value="<?=htmlspecialchars($pconfig['nextserver']);?>"><br>
+					<input name="nextserver" type="text" class="formfld unknown" id="nextserver" size="20" value="<?=htmlspecialchars($pconfig['nextserver']);?>"><br />
 					<?=gettext("and the default bios filename");?>
-						<input name="filename" type="text" class="formfld unknown" id="filename" size="20" value="<?=htmlspecialchars($pconfig['filename']);?>"><br>
+						<input name="filename" type="text" class="formfld unknown" id="filename" size="20" value="<?=htmlspecialchars($pconfig['filename']);?>"><br />
 					<?=gettext("and the UEFI 32bit filename  ");?>
-						<input name="filename32" type="text" class="formfld unknown" id="filename32" size="20" value="<?=htmlspecialchars($pconfig['filename32']);?>"><br>
+						<input name="filename32" type="text" class="formfld unknown" id="filename32" size="20" value="<?=htmlspecialchars($pconfig['filename32']);?>"><br />
 					<?=gettext("and the UEFI 64bit filename  ");?>
-						<input name="filename64" type="text" class="formfld unknown" id="filename64" size="20" value="<?=htmlspecialchars($pconfig['filename64']);?>"><br>
+						<input name="filename64" type="text" class="formfld unknown" id="filename64" size="20" value="<?=htmlspecialchars($pconfig['filename64']);?>"><br />
 					<?=gettext("Note: You need both a filename and a boot server configured for this to work!");?>
 					<?=gettext("You will need all three filenames and a boot server configured for UEFI to work!");?>
 					<p>
 					<?=gettext("Enter the"); ?> <b><?=gettext("root-path"); ?></b>-<?=gettext("string");?>
-					<input name="rootpath" type="text" class="formfld unknown" id="rootpath" size="90" value="<?=htmlspecialchars($pconfig['rootpath']);?>"><br>
+					<input name="rootpath" type="text" class="formfld unknown" id="rootpath" size="90" value="<?=htmlspecialchars($pconfig['rootpath']);?>"><br />
 					<?=gettext("Note: string-format: iscsi:(servername):(protocol):(port):(LUN):targetname");?>
 				</div>
 			</td>
@@ -1191,14 +1191,14 @@ include("head.inc");
 			</tr>
 			<tr>
 			<td width="22%" valign="top">&nbsp;</td>
-			<td width="78%"> <p><span class="vexpl"><span class="red"><strong><?=gettext("Note:");?><br>
+			<td width="78%"> <p><span class="vexpl"><span class="red"><strong><?=gettext("Note:");?><br />
 				</strong></span><?=gettext("The DNS servers entered in"); ?> <a href="system.php"><?=gettext("System: " .
 				"General setup"); ?></a> <?=gettext("(or the"); ?> <a href="services_dnsmasq.php"><?=gettext("DNS " .
 				"forwarder"); ?></a>, <?=gettext("if enabled)"); ?> </span><span class="vexpl"><?=gettext("will " .
-				"be assigned to clients by the DHCP server."); ?><br>
-				<br>
+				"be assigned to clients by the DHCP server."); ?><br />
+				<br />
 				<?=gettext("The DHCP lease table can be viewed on the"); ?> <a href="status_dhcp_leases.php"><?=gettext("Status: " .
-				"DHCP leases"); ?></a> <?=gettext("page."); ?><br>
+				"DHCP leases"); ?></a> <?=gettext("page."); ?><br />
 				</span></p>
 			</td>
 			</tr>

@@ -275,7 +275,7 @@ function updateType(t){
 					<tr align="left">
 						<td valign="top"  align="right" class="vtable"><?=gettext("Host"); ?></td>
 						<td class="vtable" colspan="2">
-							<input name="http_options_host" type="text" <?if(isset($pconfig['options']['host'])) echo "value=\"" . htmlspecialchars($pconfig['options']['host']) . "\"";?>size="64"><br/><?=gettext("Hostname for Host: header if needed."); ?>
+							<input name="http_options_host" type="text" <?if(isset($pconfig['options']['host'])) echo "value=\"" . htmlspecialchars($pconfig['options']['host']) . "\"";?>size="64"><br /><?=gettext("Hostname for Host: header if needed."); ?>
 						</td>
 					</td>
 					<tr align="left">
@@ -308,7 +308,7 @@ function updateType(t){
 					<tr align="left">
 						<td valign="top"  align="right" class="vtable"><?=gettext("Host"); ?></td>
 						<td class="vtable" colspan="2">
-							<input name="https_options_host" type="text" <?if(isset($pconfig['options']['host'])) echo "value=\"" . htmlspecialchars($pconfig['options']['host']) . "\"";?>size="64"><br/><?=gettext("Hostname for Host: header if needed."); ?>
+							<input name="https_options_host" type="text" <?if(isset($pconfig['options']['host'])) echo "value=\"" . htmlspecialchars($pconfig['options']['host']) . "\"";?>size="64"><br /><?=gettext("Hostname for Host: header if needed."); ?>
 						</td>
 					</td>
 					<tr align="left">
@@ -359,7 +359,7 @@ function updateType(t){
 		</tr>
 	</table>
 	</form>
-<br>
+<br />
 <?php include("fend.inc"); ?>
 </body>
 </html>

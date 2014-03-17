@@ -91,7 +91,7 @@ function get_default_captive_portal_html() {
 									</b>
 									</font>
 								</div>
-								<br/>
+								<br />
 								<div id='loginbox'>
 								<table>
 									<tr><td colspan="2"><center>Welcome to the {$g['product_name']} Captive Portal!</td></tr>

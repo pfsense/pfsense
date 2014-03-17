@@ -200,7 +200,7 @@ if ($_POST) {
 
 		pfSense_handle_custom_code("/usr/local/pkg/firewall_rules/apply");
 
-		$savemsg = sprintf(gettext("The settings have been applied. The firewall rules are now reloading in the background.<br/>You can also %s monitor %s the reload progress"),"<a href='status_filter_reload.php'>","</a>");
+		$savemsg = sprintf(gettext("The settings have been applied. The firewall rules are now reloading in the background.<br />You can also %s monitor %s the reload progress"),"<a href='status_filter_reload.php'>","</a>");
 	}
 }
 
@@ -308,12 +308,12 @@ include("head.inc");
 if($_REQUEST['undodrag']) {
 	foreach($_REQUEST['dragtable'] as $dt)
 		$dragtable .= "&dragtable[]={$dt}";
-	print_info_box_np_undo(gettext("The firewall rule configuration has been changed.<br/>You must apply the changes in order for them to take effect."), "apply" , gettext("Apply changes") , "firewall_rules.php?if={$_REQUEST['if']}&dragdroporder=true&{$dragtable}");
+	print_info_box_np_undo(gettext("The firewall rule configuration has been changed.<br />You must apply the changes in order for them to take effect."), "apply" , gettext("Apply changes") , "firewall_rules.php?if={$_REQUEST['if']}&dragdroporder=true&{$dragtable}");
 } else {
-	print_info_box_np(gettext("The firewall rule configuration has been changed.<br/>You must apply the changes in order for them to take effect."));
+	print_info_box_np(gettext("The firewall rule configuration has been changed.<br />You must apply the changes in order for them to take effect."));
 }
 ?>
-<br/>
+<br />
 <?php endif; ?>
 <div id="loading" style="visibity:hidden">
     <img src="/themes/<?=$g['theme']?>/images/misc/loader.gif" alt="loader" /> <?php echo gettext("Loading, please wait..."); ?>
@@ -397,7 +397,7 @@ if($_REQUEST['undodrag']) {
 					(((count($config['interfaces']) > 1) && ($if == 'lan'))
 					|| ((count($config['interfaces']) == 1) && ($if == 'wan')))):
 
-					$alports = implode('<br/>', filter_get_antilockout_ports(true));
+					$alports = implode('<br />', filter_get_antilockout_ports(true));
 			?>
 			<tr valign="top" id="antilockout">
 			<td class="list">&nbsp;</td>
@@ -528,7 +528,7 @@ if($_REQUEST['undodrag']) {
 				if (isset($filterent['disabled']))
 					$iconfnlog .= "_d";
 			?>
-			<br/><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_<?=$iconfnlog;?>.gif" width="11" height="15" border="0" alt="icon" />
+			<br /><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_<?=$iconfnlog;?>.gif" width="11" height="15" border="0" alt="icon" />
 <?php endif; ?>
 			</td>
 			<?php
@@ -652,7 +652,7 @@ if($_REQUEST['undodrag']) {
 									}
 									$timeFriendly = $starttime . " - " . $stoptime;
 									$description = $timerange['rangedescr'];
-									$sched_content .= $dayFriendly . "; " . $timeFriendly . "<br/>";
+									$sched_content .= $dayFriendly . "; " . $timeFriendly . "<br />";
 								}
 							}
 							$sched_caption_escaped = str_replace("'", "\'", $schedule['descr']);
@@ -781,10 +781,10 @@ if($_REQUEST['undodrag']) {
 			<td class="listlr" colspan="10" align="center" valign="middle">
 			<span class="gray">
 	<?php if ($_REQUEST['if'] == "FloatingRules"): ?>
-				<?=gettext("No floating rules are currently defined."); ?><br/><br/>
+				<?=gettext("No floating rules are currently defined."); ?><br /><br />
 	<?php else: ?>
-				<?=gettext("No rules are currently defined for this interface"); ?><br/>
-				<?=gettext("All incoming connections on this interface will be blocked until you add pass rules."); ?><br/><br/>
+				<?=gettext("No rules are currently defined for this interface"); ?><br />
+				<?=gettext("All incoming connections on this interface will be blocked until you add pass rules."); ?><br /><br />
 	<?php endif; ?>
 				<?=gettext("Click the"); ?> <a href="firewall_rules_edit.php?if=<?=htmlspecialchars($if);?>"><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_plus.gif" title="<?=gettext("add new rule");?>" border="0" width="17" height="17" align="middle" alt="add" /></a><?=gettext(" button to add a new rule.");?></span>
 			</td>
@@ -858,7 +858,7 @@ if($_REQUEST['undodrag']) {
 					<p>&nbsp;</p>
 					<strong>
 						<span class="red"><?=gettext("Hint:");?></span>
-					</strong><br/>
+					</strong><br />
 					<ul>
 					<?php if ("FloatingRules" != $if): ?>
 						<li><?=gettext("Rules are evaluated on a first-match basis (i.e. " .

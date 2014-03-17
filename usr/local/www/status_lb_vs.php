@@ -125,9 +125,9 @@ include("head.inc");
 			if (!empty($rdr_a[$vsent['name']]['total']))
 				echo "Total Sessions: {$rdr_a[$vsent['name']]['total']}\n";
 			if (!empty($rdr_a[$vsent['name']]['last']))
-				echo "<br/>Last: {$rdr_a[$vsent['name']]['last']}\n";
+				echo "<br />Last: {$rdr_a[$vsent['name']]['last']}\n";
 			if (!empty($rdr_a[$vsent['name']]['average']))
-				echo "<br/>Average: {$rdr_a[$vsent['name']]['average']}\n";
+				echo "<br />Average: {$rdr_a[$vsent['name']]['average']}\n";
 			?>
                   </td>
                   <td class="listbg" >

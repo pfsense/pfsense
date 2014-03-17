@@ -90,13 +90,13 @@ if (!$thiscrl && (($act != "") && ($act != "new"))) {
 if ($act == "del") {
 	$name = $thiscrl['descr'];
 	if (crl_in_use($id)) {
-		$savemsg = sprintf(gettext("Certificate Revocation List %s is in use and cannot be deleted"), $name) . "<br/>";
+		$savemsg = sprintf(gettext("Certificate Revocation List %s is in use and cannot be deleted"), $name) . "<br />";
 	} else {
 		foreach ($a_crl as $cid => $acrl)
 			if ($acrl['refid'] == $thiscrl['refid'])
 				unset($a_crl[$cid]);
 		write_config("Deleted CRL {$name}.");
-		$savemsg = sprintf(gettext("Certificate Revocation List %s successfully deleted"), $name) . "<br/>";
+		$savemsg = sprintf(gettext("Certificate Revocation List %s successfully deleted"), $name) . "<br />";
 	}
 }
 
@@ -174,11 +174,11 @@ if ($act == "delcert") {
 	}
 	$name = $thiscert['descr'];
 	if (cert_unrevoke($thiscert, $thiscrl)) {
-		$savemsg = sprintf(gettext("Deleted Certificate %s from CRL %s"), $name, $thiscrl['descr']) . "<br/>";
+		$savemsg = sprintf(gettext("Deleted Certificate %s from CRL %s"), $name, $thiscrl['descr']) . "<br />";
 		openvpn_refresh_crls();
 		write_config(sprintf(gettext("Deleted Certificate %s from CRL %s"), $name, $thiscrl['descr']));
 	} else {
-		$savemsg = sprintf(gettext("Failed to delete Certificate %s from CRL %s"), $name, $thiscrl['descr']) . "<br/>";
+		$savemsg = sprintf(gettext("Failed to delete Certificate %s from CRL %s"), $name, $thiscrl['descr']) . "<br />";
 	}
 	$act="edit";
 }
@@ -352,7 +352,7 @@ function method_change() {
 							<td width="22%" valign="top" class="vncellreq"><?=gettext("CRL data");?></td>
 							<td width="78%" class="vtable">
 								<textarea name="crltext" id="crltext" cols="65" rows="7" class="formfld_crl"><?=$pconfig['crltext'];?></textarea>
-								<br/>
+								<br />
 								<?=gettext("Paste a Certificate Revocation List in X.509 CRL format here.");?>
 							</td>
 						</tr>
@@ -369,7 +369,7 @@ function method_change() {
 							<td width="22%" valign="top" class="vncellreq"><?=gettext("Lifetime");?></td>
 							<td width="78%" class="vtable">
 								<input name="lifetime" type="text" class="formfld unknown" id="lifetime" size="5" value="<?=htmlspecialchars($pconfig['lifetime']);?>"/>
-								<?=gettext("days");?><br/>
+								<?=gettext("days");?><br />
 								<?=gettext("Default: 9999");?>
 							</td>
 						</tr>
@@ -377,7 +377,7 @@ function method_change() {
 							<td width="22%" valign="top" class="vncellreq"><?=gettext("Serial");?></td>
 							<td width="78%" class="vtable">
 								<input name="serial" type="text" class="formfld unknown" id="serial" size="5" value="<?=htmlspecialchars($pconfig['serial']);?>"/>
-								<br/>
+								<br />
 								<?=gettext("Default: 0");?>
 							</td>
 						</tr>
@@ -412,7 +412,7 @@ function method_change() {
 							<td width="22%" valign="top" class="vncellreq"><?=gettext("CRL data");?></td>
 							<td width="78%" class="vtable">
 								<textarea name="crltext" id="crltext" cols="65" rows="7" class="formfld_crl"><?=base64_decode($crl['text']);?></textarea>
-								<br/>
+								<br />
 								<?=gettext("Paste a Certificate Revocation List in X.509 CRL format here.");?></td>
 							</td>
 						</tr>

@@ -54,7 +54,7 @@ if ($act == "del") {
 	unset($a_acls[$id]);
 	write_config();
 	services_unbound_configure();
-	$savemsg = gettext("Access List successfully deleted")."<br/>";
+	$savemsg = gettext("Access List successfully deleted")."<br />";
 }
 
 if ($act == "new") {
@@ -217,13 +217,13 @@ if (is_subsystem_dirty("unbound"))
 									</option>
 									<?php endforeach; ?>
 								</select>
-								<br/>
+								<br />
 								<span class="vexpl">
-									<?=gettext("Choose what to do with DNS requests that match the criteria specified below.");?> <br/>
-									<?=gettext("<b>Deny:</b> This action stops queries from hosts within the netblock defined below.");?> <br/>
-									<?=gettext("<b>Refuse:</b> This action also stops queries from hosts within the netblock defined below, but sends a DNS rcode REFUSED error message back to the client.");?> <br/>
-									<?=gettext("<b>Allow:</b> This action allows queries from hosts within the netblock defined below.");?> <br/>
-									<?=gettext("<b>Allow Snoop:</b> This action allows recursive and nonrecursive access from hosts within the netblock defined below. Used for cache snooping and ideally should only be configured for your administrative host.");?> <br/>
+									<?=gettext("Choose what to do with DNS requests that match the criteria specified below.");?> <br />
+									<?=gettext("<b>Deny:</b> This action stops queries from hosts within the netblock defined below.");?> <br />
+									<?=gettext("<b>Refuse:</b> This action also stops queries from hosts within the netblock defined below, but sends a DNS rcode REFUSED error message back to the client.");?> <br />
+									<?=gettext("<b>Allow:</b> This action allows queries from hosts within the netblock defined below.");?> <br />
+									<?=gettext("<b>Allow Snoop:</b> This action allows recursive and nonrecursive access from hosts within the netblock defined below. Used for cache snooping and ideally should only be configured for your administrative host.");?> <br />
 								</span>
 							</td>
 						</tr>
@@ -302,7 +302,7 @@ if (is_subsystem_dirty("unbound"))
 						<tr>
 							<td width="22%" valign="top">&nbsp;</td>
 							<td width="78%">
-								&nbsp;<br>&nbsp;
+								&nbsp;<br />&nbsp;
 								<input name="Submit" type="submit" class="formbtn" value="<?=gettext("Save"); ?>">  <input type="button" class="formbtn" value="<?=gettext("Cancel"); ?>" onclick="history.back()">
 							</td>
 						</tr>

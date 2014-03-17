@@ -28,7 +28,7 @@ class sasl_interact_class
 	<package>net.manuellemos.sasl</package>
 
 	<version>@(#) $Id: sasl.php,v 1.11 2005/10/31 18:43:27 mlemos Exp $</version>
-	<copyright>Copyright © (C) Manuel Lemos 2004</copyright>
+	<copyright>Copyright Â© (C) Manuel Lemos 2004</copyright>
 	<title>Simple Authentication and Security Layer client</title>
 	<author>Manuel Lemos</author>
 	<authoraddress>mlemos-at-acm.org</authoraddress>

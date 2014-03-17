@@ -1,7 +1,7 @@
 <?php
 /* $Id$ */
 /*
-	Copyright (C) 2008 Ermal Luçi
+	Copyright (C) 2008 Ermal LuÃ§i
 	All rights reserved.
 
 	Redistribution and use in source and binary forms, with or without
@@ -172,7 +172,7 @@ include("head.inc");
 		</tr>
 		<tr>
 		  <td colspan="3" class="list">
-			<p class="vexpl"><span class="red"><strong><br></strong></span></p>
+			<p class="vexpl"><span class="red"><strong><br /></strong></span></p>
 		  </td>
 		  <td class="list">&nbsp;</td>
 		</tr>

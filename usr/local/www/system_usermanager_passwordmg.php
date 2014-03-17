@@ -1,7 +1,7 @@
 <?php
 /* $Id$ */
 /*
-    Copyright (C) 2011 Ermal Luçi
+    Copyright (C) 2011 Ermal LuÃ§i
     system_usermanager.php
 
     Redistribution and use in source and binary forms, with or without
@@ -120,7 +120,7 @@ if ($islocal == false) {
                                         <td width="78%" class="vtable">
                                                 <input name="passwordfld2" type="password" class="formfld pwd" id="passwordfld2" size="20" />
                                                 &nbsp;<?=gettext("(confirmation)");?>
-                                                <br/>
+                                                <br />
                                                 <span class="vexpl">
                                                         <?=gettext("Select a new password");?>
                                                 </span>

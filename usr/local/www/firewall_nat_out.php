@@ -94,6 +94,8 @@ if (isset($_POST['save']) && $_POST['save'] == "Save") {
 			$ifdescrs = get_configured_interface_with_descr();
 				
 			foreach($ifdescrs as $if => $ifdesc) {
+				if (substr(get_real_interface($if), 0, 4) == "ovpn")
+					continue;
 				if (!interface_has_gateway($if))
 					continue;
 				foreach ($ifdescrs as $if2 => $ifdesc2) {

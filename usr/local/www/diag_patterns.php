@@ -2,7 +2,7 @@
 /* $Id$ */
 /*
 	Exec+ v1.02-000 - Copyright 2001-2003, All rights reserved
-	Created by André Ribeiro and Hélder Pereira
+	Created by AndrÃ© Ribeiro and HÃ©lder Pereira
 
 	Redistribution and use in source and binary forms, with or without
 	modification, are permitted provided that the following conditions are met:

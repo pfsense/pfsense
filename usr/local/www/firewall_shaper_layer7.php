@@ -2,7 +2,7 @@
 /* $Id$ */
 /*
 	firewall_shaper_layer7.php
-	Copyright (C) 2008 Helder Pereira, André Ribeiro
+	Copyright (C) 2008 Helder Pereira, AndrÃ© Ribeiro
 	All rights reserved.
 
 	Redistribution and use in source and binary forms, with or without
@@ -62,8 +62,8 @@ $shortcut_section = "trafficshaper";
 $output_form = "";
 
 $default_layer7shaper_msg = "<tr><td colspan=\"4\">";
-$default_layer7shaper_msg .= "<span class=\"vexpl\"><span class=\"red\"><strong>" . gettext("Note") . ":<br/>";
-$default_layer7shaper_msg .= "</strong></span>" . gettext("You can add new layer7 protocol patterns by simply uploading the file") . " <a href=\"diag_patterns.php\">" . gettext("here") . ".</a></span><br/>";
+$default_layer7shaper_msg .= "<span class=\"vexpl\"><span class=\"red\"><strong>" . gettext("Note") . ":<br />";
+$default_layer7shaper_msg .= "</strong></span>" . gettext("You can add new layer7 protocol patterns by simply uploading the file") . " <a href=\"diag_patterns.php\">" . gettext("here") . ".</a></span><br />";
 $default_layer7shaper_msg .= "</td></tr>";
 
 
@@ -398,7 +398,7 @@ function removeRow(tbl,row) {
 
 <?php if ($savemsg) print_info_box($savemsg); ?>
 <?php if (is_subsystem_dirty('shaper')): ?><p>
-<?php print_info_box_np(gettext("The traffic shaper configuration has been changed")  .  ".<br/>" . gettext("You must apply the changes in order for them to take effect."));?><br/></p>
+<?php print_info_box_np(gettext("The traffic shaper configuration has been changed")  .  ".<br />" . gettext("You must apply the changes in order for them to take effect."));?><br /></p>
 <?php endif; ?>
 <table width="100%" border="0" cellpadding="0" cellspacing="0" summary="traffic shaper layer7">
   <tr><td>
@@ -427,10 +427,10 @@ function removeRow(tbl,row) {
 			<?php
 				echo $tree;
 			?>
-			<br/><br/>
+			<br /><br />
 			<a href="firewall_shaper_layer7.php?action=add">
 			<img src="./themes/<?=$g['theme']; ?>/images/icons/icon_plus.gif" title="<?=gettext("Create new l7 rules group"); ?>" width="17" height="17" border="0" alt="add" />  <?=gettext("Create new l7 rules group"); ?>
-			</a><br/>
+			</a><br />
 			</td>
 			<td width="75%" valign="top" align="center">
 			<div id="shaperarea" style="position:relative">

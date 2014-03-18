@@ -2,7 +2,7 @@
 /*
 	diag_authentication.php
 	part of the pfSense project	(https://www.pfsense.org)
-	Copyright (C) 2010 Ermal Luçi
+	Copyright (C) 2010 Ermal LuÃ§i
 
 	All rights reserved.
 

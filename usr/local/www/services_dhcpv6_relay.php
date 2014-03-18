@@ -3,7 +3,7 @@
 	services_dhcpv6_relay.php
 
 	Copyright (C) 2003-2004 Justin Ellison <justin@techadvise.com>.
-	Copyright (C) 2010 	Ermal Luçi
+	Copyright (C) 2010 	Ermal LuÃ§i
 	Copyright (C) 2010 	Seth Mos
 	All rights reserved.
 
@@ -174,14 +174,14 @@ function enable_change(enable_over) {
 	              <td width="22%" valign="top" class="vtable">&nbsp;</td>
                       <td width="78%" class="vtable">
 <input name="agentoption" type="checkbox" value="yes" <?php if ($pconfig['agentoption']) echo "checked"; ?>>
-                      <strong><?=gettext("Append circuit ID and agent ID to requests"); ?></strong><br>
+                      <strong><?=gettext("Append circuit ID and agent ID to requests"); ?></strong><br />
                       <?php printf(gettext("If this is checked, the DHCPv6 relay will append the circuit ID (%s interface number) and the agent ID to the DHCPv6 request."), $g['product_name']); ?></td>
 		</tr>
 		<tr>
                         <td width="22%" valign="top" class="vncell"><?=gettext("Destination server");?></td>
                         <td width="78%" class="vtable">
                           <input name="server" type="text" class="formfld unknown" id="server" size="20" value="<?=htmlspecialchars($pconfig['server']);?>">
-                          <br>
+                          <br />
 			  <?=gettext("This is the IPv6 address of the server to which DHCPv6 requests are relayed. You can enter multiple server IPv6 addresses, separated by commas. ");?>
                         </td>
 		</tr>

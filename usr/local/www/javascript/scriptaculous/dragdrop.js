@@ -822,7 +822,7 @@ var Sortable = {
 
     if(!Sortable._marker) {
       Sortable._marker =
-        ($('dropmarker') || Element.extend(document.CreateElement('div'))).
+        ($('dropmarker') || Element.extend(document.createElement('div'))).
           hide().addClassName('dropmarker').setStyle({position:'absolute'});
       document.getElementsByTagName("body").item(0).appendChild(Sortable._marker);
     }

@@ -98,7 +98,7 @@ dp.sh.Utils.PrintSource = function(sender)
 {
 	var td		= sender.parentNode;
 	var code	= td.processedCode;
-	var iframe	= document.CreateElement('iframe');
+	var iframe	= document.createElement('iframe');
 	var doc		= null;
 	var wnd		= 
 
@@ -430,8 +430,8 @@ dp.sh.Highlighter.prototype.Highlight = function(code)
 	
 	this.originalCode	= code;
 	this.code			= Trim(code);
-	this.div			= document.CreateElement('div');
-	this.table			= document.CreateElement('table');
+	this.div			= document.createElement('div');
+	this.table			= document.createElement('table');
 	this.matches		= new Array();
 	
 	if(this.CssClass != null)
@@ -579,7 +579,7 @@ dp.sh.HighlightAll = function(name, showGutter /* optional */, showControls /* o
 		highlighter.Highlight(element[propertyName]);
 
 		// place the result table inside a div
-		var div = document.CreateElement('div');
+		var div = document.createElement('div');
 		
 		div.className = 'dp-highlighter';
 		div.appendChild(highlighter.table);

@@ -155,7 +155,7 @@ function domTT_activate(in_this, in_event)
 		if (typeof(in_this) != 'object' && !(owner = domTT_tooltips.get(in_this)))
 		{
 			// NOTE: two steps to avoid "flashing" in gecko
-			var embryo = document.CreateElement('div');
+			var embryo = document.createElement('div');
 			owner = document.body.appendChild(embryo);
 			owner.style.display = 'none';
 			owner.id = in_this;
@@ -299,7 +299,7 @@ function domTT_create(in_options)
 
 	// create the tooltip and hide it
 	// NOTE: two steps to avoid "flashing" in gecko
-	var embryo = parentDoc.CreateElement('div');
+	var embryo = parentDoc.createElement('div');
 	var tipObj = parentObj.appendChild(embryo);
 	tipObj.style.position = 'absolute';
 	tipObj.style.left = '0px';
@@ -315,7 +315,7 @@ function domTT_create(in_options)
 	{
 		tableLayout = true;
 		// layout the tip with a hidden formatting table
-		var tipLayoutTable = tipObj.appendChild(parentDoc.CreateElement('table'));
+		var tipLayoutTable = tipObj.appendChild(parentDoc.createElement('table'));
 		tipLayoutTable.style.borderCollapse = 'collapse';
 		if (domLib_isKHTML)
 		{
@@ -328,7 +328,7 @@ function domTT_create(in_options)
 		var captionRow = tipLayoutTbody.appendChild(parentDoc.createElement('tr'));
 		var captionCell = captionRow.appendChild(parentDoc.createElement('td'));
 		captionCell.style.padding = '0px';
-		var caption = captionCell.appendChild(parentDoc.CreateElement('div'));
+		var caption = captionCell.appendChild(parentDoc.createElement('div'));
 		caption.className = 'caption';
 		if (domLib_isIE50)
 		{
@@ -349,7 +349,7 @@ function domTT_create(in_options)
 			var numCaptionCells = 2;
 			var closeLinkCell = captionRow.appendChild(parentDoc.createElement('td'));
 			closeLinkCell.style.padding = '0px';
-			var closeLink = closeLinkCell.appendChild(parentDoc.CreateElement('div'));
+			var closeLink = closeLinkCell.appendChild(parentDoc.createElement('div'));
 			closeLink.className = 'caption';
 			if (domLib_isIE50)
 			{
@@ -408,7 +408,7 @@ function domTT_create(in_options)
 			}
 		}
 
-		contentBlock = contentCell.appendChild(parentDoc.CreateElement('div'));
+		contentBlock = contentCell.appendChild(parentDoc.createElement('div'));
 		if (domLib_isIE50)
 		{
 			contentBlock.style.height = '100%';
@@ -416,7 +416,7 @@ function domTT_create(in_options)
 	}
 	else
 	{
-		contentBlock = tipObj.appendChild(parentDoc.CreateElement('div'));
+		contentBlock = tipObj.appendChild(parentDoc.createElement('div'));
 	}
 
 	contentBlock.className = 'contents';

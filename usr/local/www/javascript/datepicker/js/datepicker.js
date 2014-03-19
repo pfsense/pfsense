@@ -468,7 +468,7 @@ function datePicker(options) {
                                         };
                                 };
 
-                                o.iePopUp = document.CreateElement('iframe');
+                                o.iePopUp = document.createElement('iframe');
                                 o.iePopUp.src = loc;
                                 o.iePopUp.setAttribute('className','iehack');
                                 o.iePopUp.scrolling="no";
@@ -489,14 +489,14 @@ function datePicker(options) {
                         if(fdLocale.firstDayOfWeek) o.firstDayOfWeek = o.defaults.firstDayOfWeek = fdLocale.firstDayOfWeek;
                 };
                 
-                o.div = document.CreateElement('div');
+                o.div = document.createElement('div');
                 o.div.style.zIndex = 9999;
                 o.div.id = "fd-"+o.id;
                 var tableBody = document.createElement('tbody');
                 var tableHead = document.createElement('thead');
                 var nbsp = String.fromCharCode( 160 );
                 
-                o.table = document.CreateElement('table');
+                o.table = document.createElement('table');
                 o.div.className = "datePicker";
 
                 var tr = document.createElement('tr');

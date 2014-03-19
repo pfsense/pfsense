@@ -278,7 +278,7 @@ if (!window.CanvasRenderingContext2D) {
     this.globalAlpha = 1;
     this.canvas = surfaceElement;
 
-    var el = surfaceElement.ownerDocument.CreateElement('div');
+    var el = surfaceElement.ownerDocument.createElement('div');
     el.style.width =  surfaceElement.clientWidth + 'px';
     el.style.height = surfaceElement.clientHeight + 'px';
     el.style.overflow = 'hidden';

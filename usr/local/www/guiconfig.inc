@@ -334,7 +334,7 @@ function print_info_box_np($msg, $name="apply",$value="", $showapply=false) {
 	}
 
 	if(!$savebutton) {
-		$savebutton = "<td class=\"infoboxsave\"><input value=\" . gettext("Close") . "\" type=\"button\" onclick=\"jQuery('#redboxtable').hide();\" /></td>";
+		$savebutton = "<td class=\"infoboxsave\"><input value=\"" . gettext("Close") . "\" type=\"button\" onclick=\"jQuery('#redboxtable').hide();\" /></td>";
 	}
 
 	echo <<<EOFnp

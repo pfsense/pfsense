@@ -90,7 +90,7 @@ include("head.inc");
 
 
 
-<script language="javascript">
+<script type="text/javascript">
 /* init update "thread */
 function update_status_thread() {
 	getURL('status_filter_reload.php?getstatus=true', update_data);
@@ -119,7 +119,7 @@ function update_data(obj) {
 }
 </script>
 
-<script language="javascript">
+<script type="text/javascript">
 /*
  * getURL is a proprietary Adobe function, but it's simplicity has made it very
  * popular. If getURL is undefined we spin our own by wrapping XMLHttpRequest.

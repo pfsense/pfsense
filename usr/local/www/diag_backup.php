@@ -586,7 +586,7 @@ include("head.inc");
 
 <body link="#0000CC" vlink="#0000CC" alink="#0000CC">
 <?php include("fbegin.inc"); ?>
-<script language="JavaScript">
+<script type="text/javascript">
 <!--
 
 function encrypt_change() {
@@ -772,7 +772,7 @@ function backuparea_change(obj) {
 </table>
 </form>
 
-<script language="JavaScript">
+<script type="text/javascript">
 <!--
 encrypt_change();
 decrypt_change();

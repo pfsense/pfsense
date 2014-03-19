@@ -246,7 +246,7 @@ include("head.inc");
 <body link="#0000CC" vlink="#0000CC" alink="#0000CC">
 <?php include("fbegin.inc"); ?>
 
-<script language="JavaScript">
+<script type="text/javascript">
 <!--
 
 function pool_change() {
@@ -663,7 +663,7 @@ function login_banner_change() {
 	</tr>
 </table>
 </form>
-<script language="JavaScript">
+<script type="text/javascript">
 pool_change();
 dns_domain_change();
 dns_split_change();

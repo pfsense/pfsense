@@ -336,7 +336,7 @@ include("head.inc");
 				<td width="22%" valign="top" class="vncellreq">Statistics logging</td>
 				<td width="78%" class="vtable">
 					<div id="showstatisticsbox">
-					<input type="button" onClick="show_advanced('showstatisticsbox', 'showstatistics')" value="<?=gettext("Advanced");?>"></input> - <?=gettext("Show statistics logging options");?></a>
+					<input type="button" onClick="show_advanced('showstatisticsbox', 'showstatistics')" value="<?=gettext("Advanced");?>" /> - <?=gettext("Show statistics logging options");?></a>
 					</div>
 					<div id="showstatistics" style="display:none">
 					<strong><?php echo gettext("Warning: ")?></strong><?php echo gettext("these options will create persistant daily log files in /var/log/ntp."); ?>
@@ -356,7 +356,7 @@ include("head.inc");
 				<td width="22%" valign="top" class="vncellreq">Access restrictions</td>
 				<td width="78%" class="vtable">
 					<div id="showrestrictbox">
-					<input type="button" onClick="show_advanced('showrestrictbox', 'showrestrict')" value="<?=gettext("Advanced");?>"></input> - <?=gettext("Show access restriction options");?></a>
+					<input type="button" onClick="show_advanced('showrestrictbox', 'showrestrict')" value="<?=gettext("Advanced");?>" /> - <?=gettext("Show access restriction options");?></a>
 					</div>
 					<div id="showrestrict" style="display:none">
 					<?php echo gettext("these options control access to NTP from the WAN."); ?>
@@ -385,7 +385,7 @@ include("head.inc");
 				<td width="22%" valign="top" class="vncellreq">Leap seconds</td>
 				<td width="78%" class="vtable">
 					<div id="showleapsecbox">
-					<input type="button" onClick="show_advanced('showleapsecbox', 'showleapsec')" value="<?=gettext("Advanced");?>"></input> - <?=gettext("Show Leap second configuration");?></a>
+					<input type="button" onClick="show_advanced('showleapsecbox', 'showleapsec')" value="<?=gettext("Advanced");?>" /> - <?=gettext("Show Leap second configuration");?></a>
 					</div>
 					<div id="showleapsec" style="display:none">
 					<?php echo gettext("A leap second file allows NTP to advertize an upcoming leap second addition or subtraction.");?>

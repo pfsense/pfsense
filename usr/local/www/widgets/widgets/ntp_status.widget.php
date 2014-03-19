@@ -207,7 +207,7 @@ function clockTimeString($inDate, $showSeconds) {
 /*** Clock -- end of server-side support code ***/
 ?>
 
-<script language="JavaScript" type="text/javascript">
+<script type="text/javascript">
 <!--
 /* set up variables used to init clock in BODY's onLoad handler;
    should be done as early as possible */
@@ -222,7 +222,7 @@ function clockInit() {
 </script>
 
 
-<script language="JavaScript1.2" type="text/javascript">
+<script type="text/javascript">
 <!--
 /*** simpleFindObj, by Andrew Shearer
 

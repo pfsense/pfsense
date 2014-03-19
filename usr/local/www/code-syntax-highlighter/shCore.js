@@ -19,8 +19,8 @@
  **
  * Usage example:
  *
- * <script src="shCore.js" language="javascript"></script>
- * <script src="shBrushXml.js" language="javascript"></script>
+ * <script src="shCore.js" type="text/javascript"></script>
+ * <script src="shBrushXml.js" type="text/javascript"></script>
  *
  * <textarea name="code" language="html">
  * <img src="myimage.gif" border="0">
@@ -98,7 +98,7 @@ dp.sh.Utils.PrintSource = function(sender)
 {
 	var td		= sender.parentNode;
 	var code	= td.processedCode;
-	var iframe	= document.createElement('IFRAME');
+	var iframe	= document.createElement('iframe');
 	var doc		= null;
 	var wnd		= 
 
@@ -430,8 +430,8 @@ dp.sh.Highlighter.prototype.Highlight = function(code)
 	
 	this.originalCode	= code;
 	this.code			= Trim(code);
-	this.div			= document.createElement('DIV');
-	this.table			= document.createElement('TABLE');
+	this.div			= document.createElement('div');
+	this.table			= document.createElement('table');
 	this.matches		= new Array();
 	
 	if(this.CssClass != null)
@@ -579,7 +579,7 @@ dp.sh.HighlightAll = function(name, showGutter /* optional */, showControls /* o
 		highlighter.Highlight(element[propertyName]);
 
 		// place the result table inside a div
-		var div = document.createElement('DIV');
+		var div = document.createElement('div');
 		
 		div.className = 'dp-highlighter';
 		div.appendChild(highlighter.table);

@@ -477,7 +477,7 @@ class Net_IPv6
 
         } else if (0 == strncmp('0000010', $binip, 7)) {
 
-            return NET_IPV6_RESERVED_IPX;;
+            return NET_IPV6_RESERVED_IPX;
 
         } else if (0 == strncmp('0000011', $binip, 7) ||
                     0 == strncmp('111110', $binip, 6) ||

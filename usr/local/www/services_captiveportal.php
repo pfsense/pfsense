@@ -414,7 +414,7 @@ if ($_POST) {
 }
 include("head.inc");
 ?>
-<script language="JavaScript">
+<script type="text/javascript">
 <!--
 function enable_change(enable_change) {
 	var endis, radius_endis;
@@ -1076,7 +1076,7 @@ function enable_change(enable_change) {
   </tr>
   </table>
 </form>
-<script language="JavaScript">
+<script type="text/javascript">
 <!--
 enable_change(false);
 //-->

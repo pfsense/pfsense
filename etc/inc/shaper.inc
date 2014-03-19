@@ -4242,7 +4242,7 @@ function altq_check_default_queues() {
 				$count++;
 		}
 	}
-	else  $count++;;
+	else  $count++;
 
 	return 0;
 }

@@ -331,7 +331,7 @@
 			);
 		},
 		"update":function(_value){
-				["TEXTAREA","INPUT"].indexOf(this.environment.getName())>-1?
+				["textarea","input"].indexOf(this.environment.getName())>-1?
 				(this.environment.getElement().value = _value):
 				(this.environment.getElement().innerHTML = _value);
 				return this;

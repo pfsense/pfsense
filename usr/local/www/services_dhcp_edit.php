@@ -327,7 +327,7 @@ include("head.inc");
 
 ?>
 
-<script type="text/javascript" language="JavaScript">
+<script type="text/javascript">
 	function show_ddns_config() {
 		document.getElementById("showddnsbox").innerHTML='';
 		aodiv = document.getElementById('showddns');
@@ -478,7 +478,7 @@ include("head.inc");
 		<td width="22%" valign="top" class="vncell"><?=gettext("Dynamic DNS");?></td>
 		<td width="78%" class="vtable">
 			<div id="showddnsbox">
-				<input type="button" onClick="show_ddns_config()" value="<?=gettext("Advanced");?>"></input> - <?=gettext("Show Dynamic DNS");?></a>
+				<input type="button" onClick="show_ddns_config()" value="<?=gettext("Advanced");?>" /> - <?=gettext("Show Dynamic DNS");?></a>
 			</div>
 			<div id="showddns" style="display:none">
 				<input valign="middle" type="checkbox" value="yes" name="ddnsupdate" id="ddnsupdate" <?php if($pconfig['ddnsupdate']) echo " checked"; ?>>&nbsp;
@@ -500,7 +500,7 @@ include("head.inc");
 		<td width="22%" valign="top" class="vncell"><?=gettext("NTP servers");?></td>
 		<td width="78%" class="vtable">
 			<div id="showntpbox">
-				<input type="button" onClick="show_ntp_config()" value="<?=gettext("Advanced");?>"></input> - <?=gettext("Show NTP configuration");?></a>
+				<input type="button" onClick="show_ntp_config()" value="<?=gettext("Advanced");?>" /> - <?=gettext("Show NTP configuration");?></a>
 			</div>
 			<div id="showntp" style="display:none">
 				<input name="ntp1" type="text" class="formfld unknown" id="ntp1" size="20" value="<?=htmlspecialchars($pconfig['ntp1']);?>"><br />
@@ -512,7 +512,7 @@ include("head.inc");
 		<td width="22%" valign="top" class="vncell"><?=gettext("TFTP server");?></td>
 		<td width="78%" class="vtable">
 		<div id="showtftpbox">
-			<input type="button" onClick="show_tftp_config()" value="<?=gettext("Advanced");?>"></input> - <?=gettext("Show TFTP configuration");?></a>
+			<input type="button" onClick="show_tftp_config()" value="<?=gettext("Advanced");?>" /> - <?=gettext("Show TFTP configuration");?></a>
 		</div>
 		<div id="showtftp" style="display:none">
 			<input name="tftp" type="text" class="formfld unknown" id="tftp" size="50" value="<?=htmlspecialchars($pconfig['tftp']);?>"><br />

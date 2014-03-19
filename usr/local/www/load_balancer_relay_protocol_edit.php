@@ -142,7 +142,7 @@ include("head.inc");
 $types = array("http" => gettext("HTTP"), "tcp" => gettext("TCP"), "dns" => gettext("DNS"));
 ?>
 <body link="#0000CC" vlink="#0000CC" alink="#0000CC">
-<script language="javascript">
+<script type="text/javascript">
 function updateType(t){
 	switch(t) {
 <?php

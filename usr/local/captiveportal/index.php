@@ -127,7 +127,7 @@ if ($_POST['logout_id']) {
 <span style="color: #ffffff; font-family: Tahoma, Verdana, Arial, Helvetica, sans-serif; font-size: 11px;">
 <b>You have been disconnected.</b>
 </span>
-<script language="JavaScript">
+<script type="text/javascript">
 <!--
 setTimeout('window.close();',5000) ;
 -->

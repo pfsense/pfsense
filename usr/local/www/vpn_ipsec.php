@@ -286,7 +286,7 @@ include("head.inc");
 										$phase2count++;
 									}
 								?>								
-								<input  type="button" onClick="show_phase2('tdph2-<?=$i?>','shph2but-<?=$i?>')" value="+"></input> - <?php printf(gettext("Show %s Phase-2 entries"), $phase2count); ?></a>
+								<input  type="button" onClick="show_phase2('tdph2-<?=$i?>','shph2but-<?=$i?>')" value="+" /> - <?php printf(gettext("Show %s Phase-2 entries"), $phase2count); ?></a>
 							</div>
 							<table class="tabcont" width="100%" height="100%" border="0" cellspacing="0" cellpadding="0" id="tdph2-<?=$i?>" style="display:none">
 								<tr>

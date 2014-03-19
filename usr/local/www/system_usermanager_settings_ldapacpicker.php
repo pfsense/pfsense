@@ -73,7 +73,7 @@ if($_GET) {
                         }
             </STYLE>
         </head>
-<script language="JavaScript">
+<script type="text/javascript">
 function post_choices() {
 
 	var ous = <?php echo count($ous); ?>;

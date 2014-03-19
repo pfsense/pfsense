@@ -38,7 +38,7 @@ function initTree(el) {
 			spanA.appendChild(spanB);
 			spanB.appendChild(spanC);
 			spanA.className = 'a ' + li.className.replace('closed','spanClosed');
-			spanA.onMouseOver = function() {}
+			spanA.onMouseOver = function() {};
 			spanB.className = 'b';
 			spanB.onclick = treeToggle;
 			spanC.className = 'c';
@@ -109,10 +109,10 @@ function treeToggle(el, force) {
 	if( force != null ){
 		
 		if( force == "open"){
-			treeOpen( topSpan, el )
+			treeOpen( topSpan, el );
 		}
 		else if( force == "close" ){
-			treeClose( topSpan, el )
+			treeClose( topSpan, el );
 		}
 		
 	}
@@ -120,10 +120,10 @@ function treeToggle(el, force) {
 	else if( childSet != null) {
 		// Is open, close it
 		if(!el.className.match(/(^| )closed($| )/)) {		
-			treeClose( topSpan, el )
+			treeClose( topSpan, el );
 		// Is closed, open it
 		} else {			
-			treeOpen( topSpan, el )
+			treeOpen( topSpan, el );
 		}
 	}
 }

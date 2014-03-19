@@ -80,7 +80,7 @@ dp.sh.Toolbar.Commands = {
 		label: 'print',
 		func: function(sender, highlighter)
 		{
-			var iframe = document.createElement('IFRAME');
+			var iframe = document.createElement('iframe');
 			var doc = null;
 
 			// this hides the iframe
@@ -121,7 +121,7 @@ dp.sh.Toolbar.Commands = {
 // creates a <div /> with all toolbar links
 dp.sh.Toolbar.Create = function(highlighter)
 {
-	var div = document.createElement('DIV');
+	var div = document.createElement('div');
 	
 	div.className = 'tools';
 	
@@ -214,7 +214,7 @@ dp.sh.Highlighter.SortCallback = function(m1, m2)
 	return 0;
 }
 
-dp.sh.Highlighter.prototype.CreateElement = function(name)
+dp.sh.Highlighter.prototype.createElement = function(name)
 {
 	var result = document.createElement(name);
 	result.highlighter = this;
@@ -236,7 +236,7 @@ dp.sh.Highlighter.prototype.AddBit = function(str, css)
 	if(str == null || str.length == 0)
 		return;
 
-	var span = this.CreateElement('SPAN');
+	var span = this.createElement('span');
 	
 	str = str.replace(/&/g, '&amp;');
 	str = str.replace(/ /g, '&nbsp;');
@@ -257,15 +257,15 @@ dp.sh.Highlighter.prototype.AddBit = function(str, css)
 			
 			for(var i = 0; i < lines.length; i++)
 			{
-				span = this.CreateElement('SPAN');
+				span = this.createElement('span');
 				span.className = css;
 				span.innerHTML = lines[i];
 				
 				this.div.appendChild(span);
 				
-				// don't add a <BR> for the last line
+				// don't add a <br /> for the last line
 				if(i + 1 < lines.length)
-					this.div.appendChild(this.CreateElement('BR'));
+					this.div.appendChild(this.createElement('br'));
 			}
 		}
 		else
@@ -369,8 +369,8 @@ dp.sh.Highlighter.prototype.SwitchToList = function()
 	// add columns ruler
 	if(this.showColumns)
 	{
-		var div = this.CreateElement('div');
-		var columns = this.CreateElement('div');
+		var div = this.createElement('div');
+		var columns = this.createElement('div');
 		var showEvery = 10;
 		var i = 1;
 		
@@ -395,8 +395,8 @@ dp.sh.Highlighter.prototype.SwitchToList = function()
 
 	for(var i = 0, lineIndex = this.firstLine; i < lines.length - 1; i++, lineIndex++)
 	{
-		var li = this.CreateElement('LI');
-		var span = this.CreateElement('SPAN');
+		var li = this.createElement('li');
+		var span = this.createElement('span');
 		
 		// uses .line1 and .line2 css styles for alternating lines
 		li.className = (i % 2 == 0) ? 'alt' : '';
@@ -458,9 +458,9 @@ dp.sh.Highlighter.prototype.Highlight = function(code)
 	
 	this.originalCode = code;
 	this.code = Chop(Unindent(code));
-	this.div = this.CreateElement('DIV');
-	this.bar = this.CreateElement('DIV');
-	this.ol = this.CreateElement('OL');
+	this.div = this.createElement('div');
+	this.bar = this.createElement('div');
+	this.ol = this.createElement('ol');
 	this.matches = new Array();
 
 	this.div.className = 'dp-highlighter';

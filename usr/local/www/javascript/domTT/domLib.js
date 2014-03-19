@@ -529,7 +529,7 @@ function domLib_clearTimeout(in_id)
 	{
 		if (domLib_timeoutStates.has(in_id))
 		{
-			clearTimeout(domLib_timeoutStates.get(in_id).get('timeoutId'))
+			clearTimeout(domLib_timeoutStates.get(in_id).get('timeoutId'));
 			domLib_timeoutStates.remove(in_id);
 		}
 	}

@@ -276,28 +276,28 @@ function captiveportal_configure_zone($cpcfg) {
 		else {
 			/* example page */
 			$logouttext = <<<EOD
-<HTML>
-<HEAD><TITLE>Redirecting...</TITLE></HEAD>
-<BODY>
-<SPAN STYLE="font-family: Tahoma, Verdana, Arial, Helvetica, sans-serif; font-size: 11px;">
-<B>Redirecting to <A HREF="<?=\$my_redirurl;?>"><?=\$my_redirurl;?></A>...</B>
-</SPAN>
-<SCRIPT LANGUAGE="JavaScript">
+<html>
+<head><title>Redirecting...</title></head>
+<body>
+<span style="font-family: Tahoma, Verdana, Arial, Helvetica, sans-serif; font-size: 11px;">
+<b>Redirecting to <a href="<?=\$my_redirurl;?>"><?=\$my_redirurl;?></a>...</b>
+</span>
+<script type="text/javascript">
 <!--
 LogoutWin = window.open('', 'Logout', 'toolbar=0,scrollbars=0,location=0,statusbar=0,menubar=0,resizable=0,width=256,height=64');
 if (LogoutWin) {
-	LogoutWin.document.write('<HTML>');
-	LogoutWin.document.write('<HEAD><TITLE>Logout</TITLE></HEAD>') ;
-	LogoutWin.document.write('<BODY BGCOLOR="#435370">');
-	LogoutWin.document.write('<DIV ALIGN="center" STYLE="color: #ffffff; font-family: Tahoma, Verdana, Arial, Helvetica, sans-serif; font-size: 11px;">') ;
-	LogoutWin.document.write('<B>Click the button below to disconnect</B><P>');
-	LogoutWin.document.write('<FORM METHOD="POST" ACTION="<?=\$logouturl;?>">');
-	LogoutWin.document.write('<INPUT NAME="logout_id" TYPE="hidden" VALUE="<?=\$sessionid;?>">');
-	LogoutWin.document.write('<INPUT NAME="zone" TYPE="hidden" VALUE="<?=\$cpzone;?>">');
-	LogoutWin.document.write('<INPUT NAME="logout" TYPE="submit" VALUE="Logout">');
-	LogoutWin.document.write('</FORM>');
-	LogoutWin.document.write('</DIV></BODY>');
-	LogoutWin.document.write('</HTML>');
+	LogoutWin.document.write('<html>');
+	LogoutWin.document.write('<head><title>Logout</title></head>') ;
+	LogoutWin.document.write('<body bgcolor="#435370">');
+	LogoutWin.document.write('<div align="center" style="color: #ffffff; font-family: Tahoma, Verdana, Arial, Helvetica, sans-serif; font-size: 11px;">') ;
+	LogoutWin.document.write('<b>Click the button below to disconnect</b><p>');
+	LogoutWin.document.write('<form method="POST" action="<?=\$logouturl;?>">');
+	LogoutWin.document.write('<input name="logout_id" type="hidden" value="<?=\$sessionid;?>" />');
+	LogoutWin.document.write('<input name="zone" type="hidden" value="<?=\$cpzone;?>" />');
+	LogoutWin.document.write('<input name="logout" type="submit" value="Logout" />');
+	LogoutWin.document.write('</form>');
+	LogoutWin.document.write('</div></body>');
+	LogoutWin.document.write('</html>');
 	LogoutWin.document.close();
 }
 

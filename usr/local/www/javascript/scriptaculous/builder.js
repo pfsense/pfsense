@@ -120,12 +120,12 @@ var Builder = {
   dump: function(scope) {
     if(typeof scope != 'object' && typeof scope != 'function') scope = window; //global scope
 
-    var tags = ("A ABBR ACRONYM ADDRESS APPLET AREA B BASE BASEFONT BDO BIG BLOCKQUOTE BODY " +
-      "BR BUTTON CAPTION CENTER CITE CODE COL COLGROUP DD DEL DFN DIR DIV DL DT EM FIELDSET " +
-      "FONT FORM FRAME FRAMESET H1 H2 H3 H4 H5 H6 HEAD HR HTML I IFRAME IMG INPUT INS ISINDEX "+
-      "KBD LABEL LEGEND LI LINK MAP MENU META NOFRAMES NOSCRIPT OBJECT OL OPTGROUP OPTION P "+
-      "PARAM PRE Q S SAMP SCRIPT SELECT SMALL SPAN STRIKE STRONG STYLE SUB SUP TABLE TBODY TD "+
-      "TEXTAREA TFOOT TH THEAD TITLE TR TT U UL VAR").split(/\s+/);
+    var tags = ("a abbr acronym address applet area b base basefont bdo big blockquote body " +
+      "br button caption center cite code col colgroup dd del dfn dir div dl dt em fieldset " +
+      "font form frame frameset h1 h2 h3 h4 h5 h6 head hr html i iframe img input ins isindex "+
+      "kbd label legend li link map menu meta noframes noscript object ol optgroup option p "+
+      "param pre q s samp script select small span strike strong style sub sup table tbody td "+
+      "textarea tfoot th thead title tr tt u ul var").split(/\s+/);
 
     tags.each( function(tag){
       scope[tag] = function() {

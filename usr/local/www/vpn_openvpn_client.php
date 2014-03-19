@@ -97,10 +97,15 @@ if($_GET['act']=="new"){
 	$pconfig['digest'] = "SHA1";
 }
 
+global $simplefields;
+$simplefields = array('auth_user','auth_pass');
+
 if($_GET['act']=="edit"){
 
 	if (isset($id) && $a_client[$id]) {
-
+		foreach($simplefields as $stat)
+			$pconfig[$stat] = $a_client[$id][$stat];
+	
 		$pconfig['disable'] = isset($a_client[$id]['disable']);
 		$pconfig['mode'] = $a_client[$id]['mode'];
 		$pconfig['protocol'] = $a_client[$id]['protocol'];
@@ -252,7 +257,10 @@ if ($_POST) {
 	if (!$input_errors) {
 
 		$client = array();
-
+		
+		foreach($simplefields as $stat)
+			update_if_changed($stat, $client[$stat], $_POST[$stat]);
+			
 		if ($vpnid)
 			$client['vpnid'] = $vpnid;
 		else
@@ -627,6 +635,38 @@ if ($savemsg)
 					</tr>
 					<tr>
 						<td colspan="2" class="list" height="12"></td>
+					</tr>
+					<tr>
+						<td colspan="2" valign="top" class="listtopic"><?=gettext("User Authentication Settings"); ?></td>
+					</tr>
+					<tr>
+						<td width="22%" valign="top" class="vncell"><?=gettext("User name/pass"); ?></td>
+						<td width="78%" class="vtable">
+							<?=gettext("Leave empty when no user name and password are needed."); ?>
+							<br>
+							<table border="0" cellpadding="2" cellspacing="0">
+								<tr>
+									<td align="right" width="25%">
+									<span class="vexpl">
+									&nbsp;<?=gettext("Username"); ?> :&nbsp;
+									</span>
+									</td>
+									<td>
+									<input name="auth_user" id="auth_user" class="formfld unknown" size="20" value="<?=htmlspecialchars($pconfig['auth_user']);?>" />
+									</td>
+								</tr>
+								<tr>
+									<td align="right" width="25%">
+									<span class="vexpl">
+									&nbsp;<?=gettext("Password"); ?> :&nbsp;
+									</span>
+									</td>
+									<td>
+									<input name="auth_pass" id="auth_pass" type="password" class="formfld pwd" size="20" value="<?=htmlspecialchars($pconfig['auth_pass']);?>" />
+									</td>
+								</tr>
+							</table>
+						</td>
 					</tr>
 					<tr>
 						<td colspan="2" valign="top" class="listtopic"><?=gettext("Cryptographic Settings"); ?></td>

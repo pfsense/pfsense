@@ -220,16 +220,16 @@ dp.sh.Highlighter.prototype.AddBit = function(str, css)
 			
 			for(var i = 0; i < lines.length; i++)
 			{
-				span			= document.createElement('SPAN');
+				span			= document.createElement('span');
 				span.className	= css;
 				span.innerHTML	= lines[i];
 				
 				this.div.appendChild(span);
 				
-				// don't add a <BR> for the last line
+				// don't add a <br /> for the last line
 				if(i + 1 < lines.length)
 				{
-					this.div.appendChild(document.createElement('BR'));
+					this.div.appendChild(document.createElement('br'));
 				}
 			}
 		}
@@ -340,7 +340,7 @@ dp.sh.Highlighter.prototype.ProcessSmartTabs = function(code)
 dp.sh.Highlighter.prototype.SwitchToTable = function()
 {
 	// Safari fix: for some reason lowercase <br /> isn't getting picked up, even though 'i' is set
-	var lines	= this.div.innerHTML.split(/<BR>/gi);
+	var lines	= this.div.innerHTML.split(/<br \/>/gi);
 	var row		= null;
 	var cell	= null;
 	var html	= '';

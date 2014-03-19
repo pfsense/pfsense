@@ -236,7 +236,7 @@ dp.sh.Highlighter.prototype.AddBit = function(str, css)
 	if(str == null || str.length == 0)
 		return;
 
-	var span = this.CreateElement('SPAN');
+	var span = this.CreateElement('span');
 	
 	str = str.replace(/&/g, '&amp;');
 	str = str.replace(/ /g, '&nbsp;');
@@ -257,15 +257,15 @@ dp.sh.Highlighter.prototype.AddBit = function(str, css)
 			
 			for(var i = 0; i < lines.length; i++)
 			{
-				span = this.CreateElement('SPAN');
+				span = this.CreateElement('span');
 				span.className = css;
 				span.innerHTML = lines[i];
 				
 				this.div.appendChild(span);
 				
-				// don't add a <BR> for the last line
+				// don't add a <br /> for the last line
 				if(i + 1 < lines.length)
-					this.div.appendChild(this.CreateElement('BR'));
+					this.div.appendChild(this.CreateElement('br'));
 			}
 		}
 		else

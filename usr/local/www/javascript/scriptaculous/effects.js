@@ -1045,7 +1045,7 @@ Element.CSS_PROPERTIES = $w(
 
 Element.CSS_LENGTH = /^(([\+\-]?[0-9\.]+)(em|ex|px|in|cm|mm|pt|pc|\%))|0$/;
 
-String.__parseStyleElement = document.createElement('div');
+String.__parseStyleElement = document.CreateElement('div');
 String.prototype.parseStyle = function(){
   var style, styleRules = $H();
   if (Prototype.Browser.WebKit)

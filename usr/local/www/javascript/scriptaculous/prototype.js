@@ -35,7 +35,7 @@ var Prototype = {
       if (typeof window.HTMLDivElement !== 'undefined')
         return true;
 
-      var div = document.createElement('div'),
+      var div = document.CreateElement('div'),
           form = document.createElement('form'),
           isSupported = false;
 
@@ -1973,7 +1973,7 @@ Element.Methods = {
 
     var LINK_ELEMENT_INNERHTML_BUGGY = (function() {
       try {
-        var el = document.createElement('div');
+        var el = document.CreateElement('div');
         el.innerHTML = "<link>";
         var isBuggy = (el.childNodes.length === 0);
         el = null;
@@ -2581,7 +2581,7 @@ else if (Prototype.Browser.IE) {
 
     var classProp = 'className',
         forProp = 'for',
-        el = document.createElement('div');
+        el = document.CreateElement('div');
 
     el.setAttribute(classProp, 'x');
 
@@ -2624,7 +2624,7 @@ else if (Prototype.Browser.IE) {
           },
           _getEv: (function(){
 
-            var el = document.createElement('div'), f;
+            var el = document.CreateElement('div'), f;
             el.onclick = Prototype.emptyFunction;
             var value = el.getAttribute('onclick');
 
@@ -2879,7 +2879,7 @@ Object.extend(Element, Element.Methods);
 
   div = null;
 
-})(document.createElement('div'));
+})(document.CreateElement('div'));
 
 Element.extend = (function() {
 

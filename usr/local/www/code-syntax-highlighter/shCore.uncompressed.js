@@ -80,7 +80,7 @@ dp.sh.Toolbar.Commands = {
 		label: 'print',
 		func: function(sender, highlighter)
 		{
-			var iframe = document.createElement('IFRAME');
+			var iframe = document.CreateElement('iframe');
 			var doc = null;
 
 			// this hides the iframe
@@ -121,7 +121,7 @@ dp.sh.Toolbar.Commands = {
 // creates a <div /> with all toolbar links
 dp.sh.Toolbar.Create = function(highlighter)
 {
-	var div = document.createElement('DIV');
+	var div = document.CreateElement('div');
 	
 	div.className = 'tools';
 	
@@ -236,7 +236,7 @@ dp.sh.Highlighter.prototype.AddBit = function(str, css)
 	if(str == null || str.length == 0)
 		return;
 
-	var span = this.CreateElement('SPAN');
+	var span = this.CreateElement('span');
 	
 	str = str.replace(/&/g, '&amp;');
 	str = str.replace(/ /g, '&nbsp;');
@@ -257,15 +257,15 @@ dp.sh.Highlighter.prototype.AddBit = function(str, css)
 			
 			for(var i = 0; i < lines.length; i++)
 			{
-				span = this.CreateElement('SPAN');
+				span = this.CreateElement('span');
 				span.className = css;
 				span.innerHTML = lines[i];
 				
 				this.div.appendChild(span);
 				
-				// don't add a <BR> for the last line
+				// don't add a <br /> for the last line
 				if(i + 1 < lines.length)
-					this.div.appendChild(this.CreateElement('BR'));
+					this.div.appendChild(this.CreateElement('br'));
 			}
 		}
 		else
@@ -395,8 +395,8 @@ dp.sh.Highlighter.prototype.SwitchToList = function()
 
 	for(var i = 0, lineIndex = this.firstLine; i < lines.length - 1; i++, lineIndex++)
 	{
-		var li = this.CreateElement('LI');
-		var span = this.CreateElement('SPAN');
+		var li = this.CreateElement('li');
+		var span = this.CreateElement('span');
 		
 		// uses .line1 and .line2 css styles for alternating lines
 		li.className = (i % 2 == 0) ? 'alt' : '';
@@ -458,9 +458,9 @@ dp.sh.Highlighter.prototype.Highlight = function(code)
 	
 	this.originalCode = code;
 	this.code = Chop(Unindent(code));
-	this.div = this.CreateElement('DIV');
-	this.bar = this.CreateElement('DIV');
-	this.ol = this.CreateElement('OL');
+	this.div = this.CreateElement('div');
+	this.bar = this.CreateElement('div');
+	this.ol = this.CreateElement('ol');
 	this.matches = new Array();
 
 	this.div.className = 'dp-highlighter';

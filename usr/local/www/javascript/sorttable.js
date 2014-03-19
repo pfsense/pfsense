@@ -210,13 +210,13 @@ sorttable = {
       				if (text.match(/^\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}(\:[0-9]{1,5})?\b/)) {
       					return sorttable.sort_ipaddr;
       				}
-				if (text.match(/^-?[£$¤]?[\d,.]+%?$/)) {
+				if (text.match(/^-?[Â£$Â¤]?[\d,.]+%?$/)) {
 					return sorttable.sort_numeric;
 				}
 				// check for a date: dd/mm/yyyy or dd/mm/yy 
 				// can have / or . or - as separator
 				// can be mm/dd as well
-				possdate = text.match(sorttable.DATE_RE)
+				possdate = text.match(sorttable.DATE_RE);
 				if (possdate) {
 					// looks like a date
 					first = parseInt(possdate[1]);
@@ -406,7 +406,7 @@ sorttable = {
 
 		} // while(swap)
 	}  
-}
+};
 
 /* ******************************************************************
    Supporting functions: bundled here to avoid depending on a library
@@ -526,7 +526,7 @@ fixEvent.preventDefault = function() {
 };
 fixEvent.stopPropagation = function() {
 	this.cancelBubble = true;
-}
+};
 
 // Dean's forEach: http://dean.edwards.name/base/forEach.js
 /*

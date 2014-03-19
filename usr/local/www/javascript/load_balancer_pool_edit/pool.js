@@ -120,7 +120,7 @@ function checkPoolControls() {
 			jQuery("#moveToEnabled").prop("disabled",false);
 		}
 	} else {
-		jQuery("#moveToEnabled").prop("disabled",false);;
+		jQuery("#moveToEnabled").prop("disabled",false);
 	}
 }
 

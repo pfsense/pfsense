@@ -24,7 +24,7 @@ Event.simulateMouse = function(element, eventName) {
     options.ctrlKey, options.altKey, options.shiftKey, options.metaKey, 0, $(element));
   
   if(this.mark) Element.remove(this.mark);
-  this.mark = document.createElement('div');
+  this.mark = document.CreateElement('div');
   this.mark.appendChild(document.createTextNode(" "));
   document.body.appendChild(this.mark);
   this.mark.style.position = 'absolute';

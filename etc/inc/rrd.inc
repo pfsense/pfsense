@@ -927,6 +927,34 @@ function enable_rrd_graphing() {
 
 }
 
+# Create gateway quality RRD with settings suitable for pfSense graph set.
+function create_gateway_quality_rrd($rrd_file) {
+	global $g;
+	$rrdinterval = 60;
+	$valid = $rrdinterval * 2;
+	$rrdtool = "/usr/bin/nice -n20 /usr/local/bin/rrdtool";
+
+	/* GATEWAY QUALITY, set up the rrd file */
+	if (!file_exists("$rrd_file")) {
+		$rrdcreate = "$rrdtool create $rrd_file --step $rrdinterval ";
+		$rrdcreate .= "DS:loss:GAUGE:$valid:0:100 ";
+		$rrdcreate .= "DS:delay:GAUGE:$valid:0:100000 ";
+		$rrdcreate .= "RRA:AVERAGE:0.5:1:1200 ";
+		$rrdcreate .= "RRA:AVERAGE:0.5:5:720 ";
+		$rrdcreate .= "RRA:AVERAGE:0.5:60:1860 ";
+		$rrdcreate .= "RRA:AVERAGE:0.5:1440:2284 ";
+
+		create_new_rrd($rrdcreate);
+		unset($rrdcreate);
+	}
+
+	/* enter UNKNOWN values in the RRD so it knows we rebooted. */
+	if($g['booting']) {
+		mwexec("$rrdtool update $rrd_file N:U:U");
+	}
+	unset($rrdtool, $rrdinterval, $valid, $rrd_file);
+}
+
 function kill_traffic_collector() {
 	global $g;
 

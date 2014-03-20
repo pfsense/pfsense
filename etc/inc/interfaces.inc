@@ -1916,22 +1916,16 @@ function interfaces_carp_setup() {
 	/* suck in configuration items */
 	if ($config['hasync']) {
 		$pfsyncenabled = $config['hasync']['pfsyncenabled'];
-		$balancing = $config['hasync']['balancing'];
 		$pfsyncinterface = $config['hasync']['pfsyncinterface'];
 		$pfsyncpeerip = $config['hasync']['pfsyncpeerip'];
 	} else {
 		unset($pfsyncinterface);
-		unset($balancing);
 		unset($pfsyncenabled);
 	}
 
-	if ($balancing) {
-		mwexec("/sbin/sysctl net.inet.carp.arpbalance=1", true);
-		mwexec("/sbin/sysctl net.inet.carp.preempt=0", true);
-	} else
-		mwexec("/sbin/sysctl net.inet.carp.preempt=1", true);
+	mwexec("/sbin/sysctl net.inet.carp.preempt=1", true);
+	mwexec("/sbin/sysctl net.inet.carp.log=1", true);
 
-	mwexec("sbin/sysctl net.inet.carp.log=1", true);
 	if (!empty($pfsyncinterface))
 		$carp_sync_int = get_real_interface($pfsyncinterface);
 	else

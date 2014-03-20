@@ -2174,12 +2174,12 @@ function interface_carp_configure(&$vip) {
 	if (!empty($vip['advbase']))
 		$advbase = "advbase " . escapeshellarg($vip['advbase']);
 
-	if (is_ipaddrv4($vip['subnet']))
-		mwexec("/sbin/ifconfig {$realif} " . escapeshellarg($vip['subnet']) . "/" . escapeshellarg($vip['subnet_bits']) . " alias");
-	else if (is_ipaddrv6($vip['subnet']))
-		mwexec("/sbin/ifconfig {$realif} inet6 " . escapeshellarg($vip['subnet']) . " prefixlen " . escapeshellarg($vip['subnet_bits']));
-
 	mwexec("/sbin/ifconfig {$realif} vhid " . escapeshellarg($vip['vhid']) . " advskew " . escapeshellarg($vip['advskew']) . " {$advbase} {$password}");
+
+	if (is_ipaddrv4($vip['subnet']))
+		mwexec("/sbin/ifconfig {$realif} " . escapeshellarg($vip['subnet']) . "/" . escapeshellarg($vip['subnet_bits']) . " alias vhid " . escapeshellarg($vip['vhid']));
+	else if (is_ipaddrv6($vip['subnet']))
+		mwexec("/sbin/ifconfig {$realif} inet6 " . escapeshellarg($vip['subnet']) . " prefixlen " . escapeshellarg($vip['subnet_bits']) . " vhid " . escapeshellarg($vip['vhid']));
 
 	return $realif;
 }

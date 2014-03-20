@@ -3,14 +3,11 @@
 /*
 	services_unbound.php
 	part of the pfSense project (https://www.pfsense.org)
-	Copyright (C) 2011	Warren Baker (warren@pfsense.org)
+	Copyright (C) 2014	Warren Baker (warren@pfsense.org)
 	All rights reserved.
 
-	Copyright (C) 2003-2004 Bob Zoller <bob@kludgebox.com> and Manuel Kasper <mk@neon1.net>.
-	All rights reserved.
-    
 	Redistribution and use in source and binary forms, with or without
-    modification, are permitted provided that the following conditions are met:
+	modification, are permitted provided that the following conditions are met:
 
     1. Redistributions of source code must retain the above copyright notice,
        this list of conditions and the following disclaimer.
@@ -45,14 +42,13 @@ require_once("guiconfig.inc");
 require_once("unbound.inc");
 
 $pconfig['enable'] = isset($config['unbound']['enable']);
+$pconfig['port'] = isset($config['unbound']['port']);
 $pconfig['active_interface'] = $config['unbound']['active_interface'];
 $pconfig['outgoing_interface'] = $config['unbound']['outgoing_interface'];
 $pconfig['dnssec'] = isset($config['unbound']['dnssec']);
 $pconfig['forwarding'] = isset($config['unbound']['forwarding']);
 $pconfig['regdhcp'] = isset($config['unbound']['regdhcp']);
 $pconfig['regdhcpstatic'] = isset($config['unbound']['regdhcpstatic']);
-$pconfig['dhcpfirst'] = isset($config['unbound']['dhcpfirst']);
-$pconfig['port'] = isset($config['unbound']['port']);
 
 if(!is_array($config['unbound']))
 	$config['unbound'] = array();
@@ -76,6 +72,9 @@ if ($_POST) {
 	if (empty($_POST['active_interface']))
 		$input_errors[] = "A single network interface needs to be selected for the DNS Resolver to bind to.";
 
+	if (empty($_POST['outgoing_interface']))
+		$input_errors[] = "A single outgoing network interface needs to be selected for the DNS Resolver to use for outgoing DNS requests.";
+
 	if ($_POST['port'])
 		if (is_port($_POST['port']))
 			$a_unboundcfg['port'] = $_POST['port'];
@@ -89,7 +88,6 @@ if ($_POST) {
 	$a_unboundcfg['forwarding'] = ($_POST['forwarding']) ? true : false;
 	$a_unboundcfg['regdhcp'] = ($_POST['regdhcp']) ? true : false;
 	$a_unboundcfg['regdhcpstatic'] = ($_POST['regdhcpstatic']) ? true : false;
-	$a_unboundcfg['dhcpfirst'] = ($_POST['dhcpfirst']) ? true : false;
 	if (is_array($_POST['active_interface']))
 		$a_unboundcfg['active_interface'] = implode(",", $_POST['active_interface']);
 	else
@@ -112,7 +110,7 @@ include_once("head.inc");
 
 ?>
 
-<script language="JavaScript">
+<script type="text/javascript">
 <!--
 function enable_change(enable_over) {
 	var endis;
@@ -140,8 +138,8 @@ function show_advanced_dns() {
 			<td class="tabnavtbl">
 				<?php
 					$tab_array = array();
-					$tab_array[] = array(gettext("General settings"), true, "services_unbound.php");
-					$tab_array[] = array(gettext("Advanced settings"), false, "services_unbound_advanced.php");
+	$tab_array[] = array(gettext("General settings"), true, "services_unbound.php");
+		$tab_array[] = array(gettext("Advanced settings"), false, "services_unbound_advanced.php");
 					$tab_array[] = array(gettext("Access Lists"), false, "/services_unbound_acls.php");
 					display_top_tabs($tab_array, true);
 				?>
@@ -161,6 +159,16 @@ function show_advanced_dns() {
 									<input name="enable" type="checkbox" id="enable" value="yes" <?php if ($pconfig['enable'] == "yes") echo "checked";?> onClick="enable_change(false)">
 									<strong><?=gettext("Enable DNS Resolver");?><br />
 									</strong></p></td>
+								</td>
+							</tr>
+							<tr>
+								<td width="22%" valign="top" class="vncellreq"><?=gettext("Listen Port");?></td>
+								<td width="78%" class="vtable">
+									<p>
+										<input name="port" type="text" id="port" size="6" <?php if ($pconfig['port']) echo "value=\"{$pconfig['port']}\"";?>>
+										<br /><br />
+										<?=gettext("The port used for responding to DNS queries. It should normally be left blank unless another service needs to bind to TCP/UDP port 53.");?>
+									</p>
 								</td>
 							</tr>
 							<tr>
@@ -247,24 +255,6 @@ function show_advanced_dns() {
 											"be registered in the DNS Resolver, so that their name can be ".
 											"resolved. You should also set the domain in %s".
 											"System: General setup%s to the proper value."),'<a href="system.php">','</a>');?></p>
-								</td>
-							</tr>
-							<tr>
-								<td width="22%" valign="top" class="vncellreq"><?=gettext("Prefer DHCP");?></td>
-								<td width="78%" class="vtable"><p>
-									<input name="dhcpfirst" type="checkbox" id="dhcpfirst" value="yes" <?php if ($pconfig['dhcpfirst'] === true) echo "checked";?>>
-									<strong><?=gettext("Resolve DHCP mappings first");?><br />
-									</strong><?php printf(gettext("If this option is set, then DHCP mappings will ".
-											"be resolved before the manual list of names below. This only ".
-											"affects the name given for a reverse lookup (PTR)."));?></p>
-								</td>
-							</tr>	
-							<tr>
-								<td width="22%" valign="top" class="vncellreq"><?=gettext("Listen Port");?></td>
-								<td width="78%" class="vtable"><p>
-									<input name="port" type="text" id="port" size="6" <?php if ($pconfig['port']) echo "value=\"{$pconfig['port']}\"";?>>
-									<br /><br />
-									<?=gettext("The port used for responding to DNS queries. It should normally be left blank unless another service needs to bind to TCP/UDP port 53.");?></p>
 								</td>
 							</tr>
 							<tr>
@@ -434,7 +424,7 @@ function show_advanced_dns() {
 	</tfoot>
 </table>
 </form>
-<script language="JavaScript">
+<script type="text/javascript">
 <!--
 enable_change(false);
 //-->

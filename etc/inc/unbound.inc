@@ -4,7 +4,7 @@
     part of the pfSense project (https://www.pfsense.org)
 
     originally part of m0n0wall (http://m0n0.ch/wall)
-    Copyright (C) 2014  Warren Baker <warren@decoy.co.za>
+    Copyright (C) 2014 Warren Baker <warren@decoy.co.za>
     All rights reserved.
 
     Redistribution and use in source and binary forms, with or without
@@ -152,6 +152,7 @@ EOF;
     }
 
     // Server configuration variables
+    $port = (is_port($config['unbound']['port'])) ? $config['unbound']['port'] : "53";
     $hide_id = ($config['unbound']['hide_id'] == "on") ? "yes" : "no";
     $hide_version = ($config['unbound']['hide_version'] == "on") ? "yes" : "no";
     $harden_glue = ($config['unbound']['harden_glue'] == "on") ? "yes" : "no";
@@ -185,7 +186,7 @@ username: "unbound"
 directory: "{$g['unbound_chroot_path']}"
 pidfile: "/var/run/unbound.pid"
 use-syslog: yes
-port: 53
+port: {$port}
 verbosity: {$verbosity}
 harden-referral-path: no
 do-ip4: yes

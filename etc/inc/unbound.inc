@@ -191,6 +191,7 @@ EOF;
 
         if (!empty($dnsservers)) {
             $forward_conf .=<<<EOD
+# Forwarding
 forward-zone:
     name: "."
 
@@ -262,9 +263,7 @@ interface: ::0
 include: {$g['unbound_chroot_path']}/host_entries.conf
 
 # Domain overrides
-include: {$g['unbound_chroot_path']}/domainoverrides.conf
-
-# Forwarding
+include: {$g['unbound_chroot_path']}/domainove
 {$forward_conf}
 
 {$custom_options}

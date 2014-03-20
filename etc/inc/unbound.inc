@@ -172,6 +172,35 @@ EOF;
     $unwanted_reply_threshold = (!empty($config['unbound']['unwanted_reply_threshold'])) ? $config['unbound']['unwanted_reply_threshold'] : "0";
     $verbosity = isset($config['unbound']['loglevel']) ? $config['unbound']['loglevel'] : 1;
 
+    // Set up forwarding if it configured
+    if (isset($config['unbound']['forwarding'])) {
+        $dnsservers = array();
+        if (isset($config['system']['dnsallowoverride'])) {
+            $ns = array_unique(get_nameservers());
+            foreach($ns as $nameserver) {
+                if ($nameserver)
+                    $dnsservers[] = $nameserver;
+            }
+        } else {
+            $ns = array_unique(get_dns_servers());
+            foreach($ns as $nameserver) {
+                if ($nameserver)
+                    $dnsservers[] = $nameserver;
+            }
+        }
+
+        if (!empty($dnsservers)) {
+            $forward_conf .=<<<EOD
+forward-zone:
+    name: "."
+
+EOD;
+            foreach($dnsservers as $dnsserver)
+                $forward_conf .= "\tforward-addr: $dnsserver\n";
+        }
+    } else
+        $forward_conf = "";
+
     $unboundconf = <<<EOD
 ##########################
 # Unbound Configuration
@@ -234,6 +263,9 @@ include: {$g['unbound_chroot_path']}/host_entries.conf
 
 # Domain overrides
 include: {$g['unbound_chroot_path']}/domainoverrides.conf
+
+# Forwarding
+{$forward_conf}
 
 {$custom_options}
 
@@ -316,10 +348,8 @@ function sync_unbound_service() {
     unbound_generate_config();
     do_as_unbound_user("start");
     require_once("service-utils.inc");
-    if (is_service_running("unbound")) {
-        do_as_unbound_user("forward");
+    if (is_service_running("unbound"))
         do_as_unbound_user("restore_cache");
-    }
 
 }
 
@@ -506,32 +536,6 @@ function unbound_control($action) {
     $cache_dumpfile = "/var/tmp/unbound_cache";
 
     switch ($action) {
-        case "forward":
-            if ($config['unbound']['forwarding_mode'] == "on") {
-               // Get configured DNS servers and add them as forwarders
-                if (!isset($config['system']['dnsallowoverride'])) {
-                    $ns = array_unique(get_nameservers());
-                    foreach($ns as $nameserver) {
-                        if($nameserver)
-                            $dns_servers .= " $nameserver";
-                    }
-                } else {
-                    $ns = array_unique(get_dns_servers());
-                    foreach($ns as $nameserver) {
-                        if($nameserver)
-                            $dns_servers .= " $nameserver";
-                    }
-                }
-
-                if(is_service_running("unbound")) {
-                    unbound_ctl_exec("forward $dns_servers");
-                } else {
-                    unbound_control("start");
-                    sleep(1);
-                    unbound_control("forward");
-                }
-            }
-            break;
         case "start":
             // Start Unbound
             if ($config['unbound']['enable'] == "on") {

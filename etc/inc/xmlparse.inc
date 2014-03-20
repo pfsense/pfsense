@@ -64,7 +64,7 @@ function listtags() {
 function listtags_pkg() {
 	$ret = array('build_port_path', 'depends_on_package', 'onetoone', 'queue', 'rule', 'servernat', 'alias', 'additional_files_needed', 'tab', 'template', 'menu', 'rowhelperfield', 'service', 'step', 'package', 'columnitem', 'option', 'item', 'field', 'package', 'file');
 
-	return $ret;
+	return array_flip($ret);
 }
 
 function startElement($parser, $name, $attrs) {

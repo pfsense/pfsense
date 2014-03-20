@@ -50,7 +50,7 @@ require("shaper.inc");
 require("ipsec.inc");
 require("vpn.inc");
 require("captiveportal.inc");
-require("rrd.inc");
+require_once("rrd.inc");
 
 /*
 	In this file, "port" refers to the physical port name,

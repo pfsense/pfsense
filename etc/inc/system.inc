@@ -1631,7 +1631,8 @@ function system_ntp_configure($start_ntpd=true) {
 			if (!is_ipaddr($interface)) {
 				$interface = get_real_interface($interface);
 			}
-			$ntpcfg .= "interface listen {$interface}\n";
+			if (!empty($interface))
+				$ntpcfg .= "interface listen {$interface}\n";
 		}
 	}
 

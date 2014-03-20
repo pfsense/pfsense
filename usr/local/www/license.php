@@ -44,7 +44,7 @@ include("head.inc");
 <?php include("fbegin.inc"); ?>
 <p class="pgtitle"><?=gettext("License");?></p>
 
-            <p><strong><?=$g['product_name'];?> <?=gettext("is Copyright");?> &copy; <?=$g['product_copyright_years'];?> <?=gettext("by");?> <?=$g['product_copyright'];?><br />
+            <p><strong><?=$g['product_name'];?> <?=gettext("is Copyright");?> &copy; <?=$g['product_copyright_years'];?> <?=gettext("by");?> <?=$g['product_copyright_name'];?><br />
               <?=gettext("All rights reserved");?>.</strong></p>
 
             <p><strong><?=gettext("m0n0wall is Copyright ");?>&copy; <?=gettext("2002-2014 by Manuel Kasper");?>

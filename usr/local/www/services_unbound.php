@@ -64,6 +64,7 @@ $a_domainOverrides = &$config['unbound']['domainoverrides'];
 
 if ($_POST) {
 
+	$pconfig = $_POST;
 	unset($input_errors);
 
 	if ($_POST['enable'] == "yes" && isset($config['dnsmasq']['enable']))

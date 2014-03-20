@@ -326,6 +326,7 @@ function filter_configure_sync($delete_states_if_needed = true) {
 	 * then output the contents of the error to the caller
 	 */
 	if($rules_loading <> 0) {
+		$saved_line_error = $rules_error[0];
 		$line_error = explode(":", $rules_error[0]);
 		$line_number = $line_error[1];
 		$line_split = file("{$g['tmp_path']}/rules.debug");
@@ -339,13 +340,13 @@ function filter_configure_sync($delete_states_if_needed = true) {
 			$error_msg = gettext("PF was wedged/busy and has been reset.");
 			file_notice("pf_busy", $error_msg, "pf_busy", "");
 		} else {
-			$_grbg = exec("/sbin/pfctl -o basic -f {$g['tmp_path']}/rules.debug.old 2>&1", $rules_error, $rules_loading);
+			$_grbg = exec("/sbin/pfctl -o basic -f {$g['tmp_path']}/rules.debug.old 2>&1");
 		}
 		unset($rules_loading, $rules_error);
 
 		if ($line_error and $line_number) {
-			file_notice("filter_load", sprintf(gettext('There were error(s) loading the rules: %1$s - %2$s'), $rules_error[0], $line_error), "Filter Reload", "");
-			update_filter_reload_status(sprintf(gettext('There were error(s) loading the rules: %1$s - %2$s'), $rules_error[0], $line_error));
+			file_notice("filter_load", sprintf(gettext('There were error(s) loading the rules: %1$s - %2$s'), $saved_line_error, $line_error), "Filter Reload", "");
+			update_filter_reload_status(sprintf(gettext('There were error(s) loading the rules: %1$s - %2$s'), $saved_line_error, $line_error));
 			unlock($filterlck);
 			return;
 		}

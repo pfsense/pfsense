@@ -42,7 +42,7 @@ require_once("guiconfig.inc");
 require_once("unbound.inc");
 
 $pconfig['enable'] = isset($config['unbound']['enable']);
-$pconfig['port'] = isset($config['unbound']['port']);
+$pconfig['port'] = $config['unbound']['port'];
 $pconfig['active_interface'] = $config['unbound']['active_interface'];
 $pconfig['outgoing_interface'] = $config['unbound']['outgoing_interface'];
 $pconfig['dnssec'] = isset($config['unbound']['dnssec']);

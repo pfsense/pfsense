@@ -108,7 +108,7 @@ function unbound_generate_config() {
     // Setup DNSSEC support
     if (isset($config['unbound']['dnssec'])) {
         $module_config = "validator iterator";
-        $anchor_file = "auto-trust-anchor-file: {$g['unbound_chroot_path']}/root-trust-anchor";
+        $anchor_file = "auto-trust-anchor-file: {$g['unbound_chroot_path']}/root.key";
     } else
         $module_config = "iterator";
 
@@ -263,7 +263,7 @@ interface: ::0
 include: {$g['unbound_chroot_path']}/host_entries.conf
 
 # Domain overrides
-include: {$g['unbound_chroot_path']}/domainove
+include: {$g['unbound_chroot_path']}/domainoverrides.conf
 {$forward_conf}
 
 {$custom_options}

@@ -259,6 +259,14 @@ function show_advanced_dns() {
 								</td>
 							</tr>
 							<tr>
+								<td width="22%" valign="top" class="vncellreq"><?=gettext("TXT Comment Support");?></td>
+								<td width="78%" class="vtable"><p>
+									<input name="txtsupport" type="checkbox" id="txtsupport" value="yes" <?php echo (isset($pconfig['txtsupport']) ? "checked" : "");?>/>
+									<strong><?=gettext("If this option is set, then any descriptions associated with Host entries and DHCP Static mappings will create a corresponding TXT record.");?><br />
+									</strong></p>
+								</td>
+							</tr>
+							<tr>
 								<td width="22%" valign="top" class="vncellreq"><?=gettext("Advanced");?></td>
 								<td width="78%" class="vtable"><p>
 									<div id="showadvbox" <?php if ($pconfig['custom_options']) echo "style='display:none'"; ?>>

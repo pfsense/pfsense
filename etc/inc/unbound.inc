@@ -106,7 +106,7 @@ function unbound_generate_config() {
     $optimization = unbound_optimization();
 
     // Setup DNSSEC support
-    if (isset($config['unbound']['dnssec_status'])) {
+    if (isset($config['unbound']['dnssec'])) {
         $module_config = "validator iterator";
         $anchor_file = "auto-trust-anchor-file: {$g['unbound_chroot_path']}/root-trust-anchor";
     } else

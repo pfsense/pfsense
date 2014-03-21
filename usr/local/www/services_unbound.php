@@ -223,7 +223,7 @@ function show_advanced_dns() {
 							<tr>
 								<td width="22%" valign="top" class="vncellreq"><?=gettext("DNSSEC");?></td>
 								<td width="78%" class="vtable"><p>
-									<input name="dnssec" type="checkbox" id="dnssec" value="yes" <?php if ($pconfig['dnssec'] === true) echo "checked";?>/>
+									<input name="dnssec" type="checkbox" id="dnssec" value="yes" <?php echo (isset($pconfig['dnssec']) ? "checked" : "");?>/>
 									<strong><?=gettext("Enable DNSSEC Support");?><br />
 									</strong></p>
 								</td>
@@ -231,7 +231,7 @@ function show_advanced_dns() {
 							<tr>
 								<td width="22%" valign="top" class="vncellreq"><?=gettext("DNS Query Forwarding");?></td>
 								<td width="78%" class="vtable"><p>
-									<input name="forwarding" type="checkbox" id="forwarding" value="yes" <?php if ($pconfig['forwarding'] == "yes") echo "checked";?>>
+									<input name="forwarding" type="checkbox" id="forwarding" value="yes" <?php echo (isset($pconfig['forwarding']) ? "checked" : "");?>/>
 									<strong><?=gettext("Enable Forwarding Mode");?></strong><br /></p>
 								</td>
 							</tr>

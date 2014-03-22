@@ -147,6 +147,10 @@ function services_radvd_configure($blacklist = array()) {
 				$radvdconf .= "\tAdvManagedFlag on;\n";
 				$radvdconf .= "\tAdvOtherConfigFlag on;\n";
 				break;
+			case "stateless_dhcp":
+				$radvdconf .= "\tAdvManagedFlag off;\n";
+				$radvdconf .= "\tAdvOtherConfigFlag on;\n";
+				break;
 		}
 		$radvdconf .= "\tprefix {$subnetv6}/{$ifcfgsnv6} {\n";
 		if($carpif == true) {
@@ -165,6 +169,7 @@ function services_radvd_configure($blacklist = array()) {
 				$radvdconf .= "\t\tAdvAutonomous off;\n";
 				$radvdconf .= "\t\tAdvRouterAddr on;\n";
 				break;
+			case "stateless_dhcp":
 			case "assist":
 				$radvdconf .= "\t\tAdvOnLink on;\n";
 				$radvdconf .= "\t\tAdvAutonomous on;\n";

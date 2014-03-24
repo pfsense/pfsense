@@ -367,7 +367,7 @@ EOD;
 		/* Release allocated pipes for this zone */
 		captiveportal_free_dnrules();
 
-		mwexec("/usr/local/sbin/ipfw zone {$cpzoneid} destory", true);
+		mwexec("/sbin/ipfw zone {$cpzoneid} destory", true);
 
 		if (empty($config['captiveportal']))
 			mwexec("/sbin/sysctl net.link.ether.ipfw=0");
@@ -464,7 +464,7 @@ function captiveportal_init_rules($reinit = false) {
 		return;
 
 	captiveportal_load_modules();
-	mwexec("/usr/local/sbin/ipfw zone {$cpzoneid} create", true);
+	mwexec("/sbin/ipfw zone {$cpzoneid} create", true);
 
 	$cpips = array();
 	$ifaces = get_configured_interface_list();
@@ -481,7 +481,7 @@ function captiveportal_init_rules($reinit = false) {
 				if (!empty($carpif)) {
 					$carpsif = explode(" ", $carpif);
 					foreach ($carpsif as $cpcarp) {
-						mwexec("/usr/local/sbin/ipfw zone {$cpzoneid} madd {$cpcarp}", true);
+						mwexec("/sbin/ipfw zone {$cpzoneid} madd {$cpcarp}", true);
 						$carpip = find_interface_ip($cpcarp);
 						if (is_ipaddr($carpip))
 							$cpips[] = $carpip;
@@ -489,7 +489,7 @@ function captiveportal_init_rules($reinit = false) {
 				}
 				$cpips[] = $cpipm;
 			}
-			mwexec("/usr/local/sbin/ipfw zone {$cpzoneid} madd {$tmpif}", true);
+			mwexec("/sbin/ipfw zone {$cpzoneid} madd {$tmpif}", true);
 		}
 	}
 	if (count($cpips) > 0) {

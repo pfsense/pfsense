@@ -279,6 +279,7 @@ charon {
 		auth {
 		    default = -1
 		    ike = 1
+		    ike_name = yes
 		}
 	}
 

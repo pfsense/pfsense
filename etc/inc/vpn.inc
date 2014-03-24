@@ -846,6 +846,7 @@ EOD;
 	} else {
 		mwexec("/usr/local/sbin/ipsec start", false); 
 	}
+	vpn_ipsec_configure_loglevels();
 	if ($natfilterrules == true)
 		filter_configure();
 	/* start filterdns, if necessary */

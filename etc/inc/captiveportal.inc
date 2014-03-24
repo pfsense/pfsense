@@ -367,7 +367,7 @@ EOD;
 		/* Release allocated pipes for this zone */
 		captiveportal_free_dnrules();
 
-		mwexec("/sbin/ipfw zone {$cpzoneid} destory", true);
+		mwexec("/sbin/ipfw zone {$cpzoneid} destroy", true);
 
 		if (empty($config['captiveportal']))
 			mwexec("/sbin/sysctl net.link.ether.ipfw=0");

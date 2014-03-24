@@ -336,7 +336,7 @@ $output_form .= "<input type=\"button\" class=\"formbtn\" name=\"delete\"";
 if ($queue)
 	$output_form .= " value=\"" . gettext("Delete this queue") ."\" />";
 else
-	$output_form .= " value=\"" . gettext("Delete virtual interface") ."\" />";
+	$output_form .= " value=\"" . gettext("Delete Limiter") ."\" />";
 $output_form .= "</a>";  
 $output_form .= "</td></tr>";
 $output_form .= "</table>";

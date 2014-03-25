@@ -352,7 +352,7 @@ include("head.inc");
 <link rel="stylesheet" type="text/css" href="/javascript/jquery-ui-timepicker-addon/css/jquery-ui-timepicker-addon.css" />
 <link rel="stylesheet" type="text/css" href="/javascript/jquery/jquery-ui.custom.css" />
 
-<script>
+<script type="text/javascript">
 	jQuery(function() {
 		jQuery( "#expires" ).datepicker( { dateFormat: 'mm/dd/yy', changeYear: true, yearRange: "+0:+100" } );
 	});

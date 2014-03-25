@@ -150,7 +150,7 @@ include("head.inc");
 <body link="#0000CC" vlink="#0000CC" alink="#0000CC">
 <?php include("fbegin.inc"); ?>
 <form action="firewall_nat_1to1.php" method="post">
-<script type="text/javascript" type="text/javascript" src="/javascript/row_toggle.js"></script>
+<script type="text/javascript" src="/javascript/row_toggle.js"></script>
 <?php
 if ($savemsg)
 	print_info_box($savemsg);

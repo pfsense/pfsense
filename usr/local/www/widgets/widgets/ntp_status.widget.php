@@ -444,9 +444,6 @@ function clockUpdate()
 
 /*** End of Clock ***/
 //-->
-</script>
-
-<script>
   window.onload=clockInit(clockLocalStartTime, clockServerStartTime);clockOnLoad();
   window.onunload=clockOnUnload()
   clockUpdate();

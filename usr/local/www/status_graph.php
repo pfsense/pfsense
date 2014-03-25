@@ -116,7 +116,7 @@ include("head.inc");
 
 <body link="#0000CC" vlink="#0000CC" alink="#0000CC">
 
-<script type="text/javascript" type="text/javascript">
+<script type="text/javascript">
 
 function updateBandwidth(){
     var hostinterface = jQuery("#if").val();

@@ -667,7 +667,7 @@ pfSense_handle_custom_code("/usr/local/pkg/dashboard/pre_dashboard");
 					<?php
 				}
 				else { ?>
-					<script type="text/javascript" type="text/javascript">
+					<script type="text/javascript">
 					var colpos = "<?=$colpos[$widgetcounter]?>";
 					createColumn(colpos);					
 					</script>

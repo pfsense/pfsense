@@ -177,7 +177,7 @@ echo "<script type=\"text/javascript\" src=\"/javascript/domTT/fadomatic.js\"></
 <body link="#000000" vlink="#000000" alink="#000000">
 <?php include("fbegin.inc"); ?>
 <form action="firewall_nat.php" method="post" name="iform">
-<script type="text/javascript" type="text/javascript" src="/javascript/row_toggle.js"></script>
+<script type="text/javascript" src="/javascript/row_toggle.js"></script>
 <?php if ($savemsg) print_info_box($savemsg); ?>
 <?php if (is_subsystem_dirty('natconf')): ?>
 <?php print_info_box_np(gettext("The NAT configuration has been changed") . ".<br />" . gettext("You must apply the changes in order for them to take effect."));?><br />

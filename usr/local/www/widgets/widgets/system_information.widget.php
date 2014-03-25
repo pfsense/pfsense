@@ -85,7 +85,7 @@ if($_REQUEST['getupdatestatus']) {
 $curcfg = $config['system']['firmware'];
 
 ?>
-<script>
+<script type="text/javascript">
 	jQuery(function() { 
 		jQuery("#statePB").progressbar( { value: <?php echo get_pfstate(true); ?> } );
 		jQuery("#mbufPB").progressbar( { value: <?php echo get_mbuf(true); ?> } );

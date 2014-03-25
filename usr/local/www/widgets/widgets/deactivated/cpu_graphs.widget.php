@@ -58,7 +58,7 @@ require_once("functions.inc");
     last_val_span = new Array();
 </script>
 <div style='display: block; margin-left: auto; margin-right: auto' class="GraphLink" id="GraphOutput"></div>
-<script type="text/javascript" type="text/javascript">
+<script type="text/javascript">
 
     // Graph 1
     graph[0]         = GraphInitialize('GraphOutput', 200, 50, 4);

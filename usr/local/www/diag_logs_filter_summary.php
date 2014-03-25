@@ -166,13 +166,13 @@ foreach ($filterlog as $fe) {
 include("head.inc"); ?>
 <body link="#000000" vlink="#000000" alink="#000000">
 <script src="/javascript/filter_log.js" type="text/javascript"></script>
-<script type="text/javascript" type="text/javascript" src="/protochart/prototype.js"></script>
-<script type="text/javascript" type="text/javascript" src="/protochart/ProtoChart.js"></script>
+<script type="text/javascript" src="/protochart/prototype.js"></script>
+<script type="text/javascript" src="/protochart/ProtoChart.js"></script>
 <!--[if IE]>
-<script type="text/javascript" type="text/javascript" src="/protochart/excanvas.js">
+<script type="text/javascript" src="/protochart/excanvas.js">
 </script>
 <![endif]-->
-<script type="text/javascript" type="text/javascript">
+<script type="text/javascript">
 //<![CDATA[
 	function lblfmt(lbl) {
 		return '<font size=\"-2\">' + lbl + '<\/font>'

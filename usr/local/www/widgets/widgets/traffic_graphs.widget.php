@@ -135,7 +135,7 @@ if (isset($a_config["scale_type"])) {
 </form>
 </div>
 
-<script type="text/javascript" type="text/javascript">
+<script type="text/javascript">
 	d = document;
 	selectIntLink = "traffic_graphs-configure";
 	textlink = d.getElementById(selectIntLink);

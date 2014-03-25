@@ -51,11 +51,12 @@ if (!is_array($config['ipsec']['phase2']))
 
 $a_phase2 = &$config['ipsec']['phase2'];
 
-$p2index = $_GET['p2index'];
-if (isset($_POST['p2index']))
+if (is_numericint($_GET['p2index']))
+	$p2index = $_GET['p2index'];
+if (isset($_POST['p2index']) && is_numericint($_GET['p2index']))
 	$p2index = $_POST['p2index'];
 
-if (isset($_GET['dup']))
+if (isset($_GET['dup']) && is_numericint($_GET['dup']))
 	$p2index = $_GET['dup'];
 
 if (isset($p2index) && $a_phase2[$p2index])
@@ -99,7 +100,7 @@ else
         $pconfig['mobile']=true;
 }
 
-if (isset($_GET['dup']))
+if (isset($_GET['dup']) && is_numericint($_GET['dup']))
 	unset($p2index);
 
 if ($_POST) {
@@ -326,7 +327,7 @@ include("head.inc");
 <body link="#0000CC" vlink="#0000CC" alink="#0000CC">
 <script type="text/javascript" src="/javascript/jquery.ipv4v6ify.js"></script>
 <?php include("fbegin.inc"); ?>
-<script language="JavaScript">
+<script type="text/JavaScript">
 <!--
 
 function change_mode() {
@@ -506,9 +507,9 @@ function change_protocol() {
 					<tr>
 						<td width="22%" valign="top" class="vncellreq"><?=gettext("Disabled"); ?></td>
 						<td width="78%" class="vtable">
-							<input name="disabled" type="checkbox" id="disabled" value="yes" <?php if ($pconfig['disabled']) echo "checked"; ?>>
+							<input name="disabled" type="checkbox" id="disabled" value="yes" <?php if ($pconfig['disabled']) echo "checked=\"checked\""; ?>/>
 							<strong><?=gettext("Disable this phase2 entry"); ?></strong>
-							<br>
+							<br />
 							<span class="vexpl"><?=gettext("Set this option to disable this phase2 entry without " .
 							  "removing it from the list"); ?>.
 							</span>
@@ -517,12 +518,12 @@ function change_protocol() {
 					<tr>
 						<td width="22%" valign="top" class="vncellreq"><?=gettext("Mode"); ?></td>
 						<td width="78%" class="vtable">
-							<select name="mode" class="formselect" onChange="change_mode()">
+							<select name="mode" class="formselect" onchange="change_mode()">
 								<?php
 									foreach($p2_modes as $name => $value):
 										$selected = "";
 										if ($name == $pconfig['mode'])
-											$selected = "selected";
+											$selected = "selected=\"selected\"";
 								?>
 								<option value="<?=$name;?>" <?=$selected;?>><?=$value;?></option>
 								<?php endforeach; ?>
@@ -537,14 +538,14 @@ function change_protocol() {
 									<td><?=gettext("Type"); ?>:&nbsp;&nbsp;</td>
 									<td></td>
 									<td>
-										<select name="localid_type" class="formselect" onChange="typesel_change_local()">
-											<option value="address" <?php if ($pconfig['localid_type'] == "address") echo "selected";?>><?=gettext("Address"); ?></option>
-											<option value="network" <?php if ($pconfig['localid_type'] == "network") echo "selected";?>><?=gettext("Network"); ?></option>
+										<select name="localid_type" class="formselect" onchange="typesel_change_local()">
+											<option value="address" <?php if ($pconfig['localid_type'] == "address") echo "selected=\"selected\"";?>><?=gettext("Address"); ?></option>
+											<option value="network" <?php if ($pconfig['localid_type'] == "network") echo "selected=\"selected\"";?>><?=gettext("Network"); ?></option>
 											<?php
 												$iflist = get_configured_interface_with_descr();
 												foreach ($iflist as $ifname => $ifdescr):
 											?>
-											<option value="<?=$ifname; ?>" <?php if ($pconfig['localid_type'] == $ifname ) echo "selected";?>><?=sprintf(gettext("%s subnet"), $ifdescr); ?></option>
+											<option value="<?=$ifname; ?>" <?php if ($pconfig['localid_type'] == $ifname ) echo "selected=\"selected\"";?>><?=sprintf(gettext("%s subnet"), $ifdescr); ?></option>
 											<?php endforeach; ?>
 										</select>
 									</td>
@@ -553,11 +554,11 @@ function change_protocol() {
 									<td><?=gettext("Address:");?>&nbsp;&nbsp;</td>
 									<td><?=$mandfldhtmlspc;?></td>
 									<td>
-										<input name="localid_address" type="text" class="formfld unknown ipv4v6" id="localid_address" size="28" value="<?=htmlspecialchars($pconfig['localid_address']);?>">
+										<input name="localid_address" type="text" class="formfld unknown ipv4v6" id="localid_address" size="28" value="<?=htmlspecialchars($pconfig['localid_address']);?>"/>
 										/
 										<select name="localid_netbits" class="formselect ipv4v6" id="localid_netbits">
 										<?php for ($i = 128; $i >= 0; $i--): ?>
-											<option value="<?=$i;?>" <?php if (isset($pconfig['localid_netbits']) && $i == $pconfig['localid_netbits']) echo "selected"; ?>>
+											<option value="<?=$i;?>" <?php if (isset($pconfig['localid_netbits']) && $i == $pconfig['localid_netbits']) echo "selected=\"selected\""; ?>>
 												<?=$i;?>
 											</option>
 										<?php endfor; ?>
@@ -572,16 +573,16 @@ function change_protocol() {
 									<td><?=gettext("Type"); ?>:&nbsp;&nbsp;</td>
 									<td></td>
 									<td>
-										<select name="natlocalid_type" class="formselect" onChange="typesel_change_natlocal()">
-											<option value="address" <?php if ($pconfig['natlocalid_type'] == "address") echo "selected";?>><?=gettext("Address"); ?></option>
-											<option value="network" <?php if ($pconfig['natlocalid_type'] == "network") echo "selected";?>><?=gettext("Network"); ?></option>
+										<select name="natlocalid_type" class="formselect" onchange="typesel_change_natlocal()">
+											<option value="address" <?php if ($pconfig['natlocalid_type'] == "address") echo "selected=\"selected\"";?>><?=gettext("Address"); ?></option>
+											<option value="network" <?php if ($pconfig['natlocalid_type'] == "network") echo "selected=\"selected\"";?>><?=gettext("Network"); ?></option>
 											<?php
 												$iflist = get_configured_interface_with_descr();
 												foreach ($iflist as $ifname => $ifdescr):
 											?>
-											<option value="<?=$ifname; ?>" <?php if ($pconfig['natlocalid_type'] == $ifname ) echo "selected";?>><?=sprintf(gettext("%s subnet"), $ifdescr); ?></option>
+											<option value="<?=$ifname; ?>" <?php if ($pconfig['natlocalid_type'] == $ifname ) echo "selected=\"selected\"";?>><?=sprintf(gettext("%s subnet"), $ifdescr); ?></option>
 											<?php endforeach; ?>
-											<option value="none" <?php if (empty($pconfig['natlocalid_type']) || $pconfig['natlocalid_type'] == "none" ) echo "selected";?>><?=gettext("None"); ?></option>
+											<option value="none" <?php if (empty($pconfig['natlocalid_type']) || $pconfig['natlocalid_type'] == "none" ) echo "selected=\"selected\"";?>><?=gettext("None"); ?></option>
 										</select>
 									</td>
 								</tr>
@@ -589,11 +590,11 @@ function change_protocol() {
 									<td><?=gettext("Address:");?>&nbsp;&nbsp;</td>
 									<td><?=$mandfldhtmlspc;?></td>
 									<td>
-										<input name="natlocalid_address" type="text" class="formfld unknown ipv4v6" id="natlocalid_address" size="28" value="<?=htmlspecialchars($pconfig['natlocalid_address']);?>">
+										<input name="natlocalid_address" type="text" class="formfld unknown ipv4v6" id="natlocalid_address" size="28" value="<?=htmlspecialchars($pconfig['natlocalid_address']);?>"/>
 										/
 										<select name="natlocalid_netbits" class="formselect ipv4v6" id="natlocalid_netbits">
 										<?php for ($i = 128; $i >= 0; $i--): ?>
-											<option value="<?=$i;?>" <?php if (isset($pconfig['natlocalid_netbits']) && $i == $pconfig['natlocalid_netbits']) echo "selected"; ?>>
+											<option value="<?=$i;?>" <?php if (isset($pconfig['natlocalid_netbits']) && $i == $pconfig['natlocalid_netbits']) echo "selected=\"selected\""; ?>>
 												<?=$i;?>
 											</option>
 										<?php endfor; ?>
@@ -614,9 +615,9 @@ function change_protocol() {
 									<td><?=gettext("Type"); ?>:&nbsp;&nbsp;</td>
 									<td></td>
 									<td>
-										<select name="remoteid_type" class="formselect" onChange="typesel_change_remote()">
-											<option value="address" <?php if ($pconfig['remoteid_type'] == "address") echo "selected"; ?>><?=gettext("Address"); ?></option>
-											<option value="network" <?php if ($pconfig['remoteid_type'] == "network") echo "selected"; ?>><?=gettext("Network"); ?></option>
+										<select name="remoteid_type" class="formselect" onchange="typesel_change_remote()">
+											<option value="address" <?php if ($pconfig['remoteid_type'] == "address") echo "selected=\"selected\""; ?>><?=gettext("Address"); ?></option>
+											<option value="network" <?php if ($pconfig['remoteid_type'] == "network") echo "selected=\"selected\""; ?>><?=gettext("Network"); ?></option>
 										</select>
 									</td>
 								</tr>
@@ -624,13 +625,13 @@ function change_protocol() {
 									<td><?=gettext("Address"); ?>:&nbsp;&nbsp;</td>
 									<td><?=$mandfldhtmlspc;?></td>
 									<td>
-										<input name="remoteid_address" type="text" class="formfld unknown ipv4v6" id="remoteid_address" size="28" value="<?=htmlspecialchars($pconfig['remoteid_address']);?>">
+										<input name="remoteid_address" type="text" class="formfld unknown ipv4v6" id="remoteid_address" size="28" value="<?=htmlspecialchars($pconfig['remoteid_address']);?>"/>
 										/
 										<select name="remoteid_netbits" class="formselect ipv4v6" id="remoteid_netbits">
 										<?php for ($i = 128; $i >= 0; $i--) { 
 											
-											echo "<option value=\"{$i}\"";
-											if (isset($pconfig['remoteid_netbits']) && $i == $pconfig['remoteid_netbits']) echo " selected";
+											echo "<option value=\"{$i}\" ";
+											if (isset($pconfig['remoteid_netbits']) && $i == $pconfig['remoteid_netbits']) echo "selected=\"selected\"";
 											echo ">{$i}</option>\n";
 											} ?>
 										</select>
@@ -645,8 +646,8 @@ function change_protocol() {
 					<tr>
 						<td width="22%" valign="top" class="vncell"><?=gettext("Description"); ?></td>
 						<td width="78%" class="vtable">
-							<input name="descr" type="text" class="formfld unknown" id="descr" size="40" value="<?=htmlspecialchars($pconfig['descr']);?>">
-							<br>
+							<input name="descr" type="text" class="formfld unknown" id="descr" size="40" value="<?=htmlspecialchars($pconfig['descr']);?>"/>
+							<br />
 							<span class="vexpl">
 								<?=gettext("You may enter a description here " .
 								"for your reference (not parsed)"); ?>.
@@ -664,14 +665,14 @@ function change_protocol() {
 					<tr>
 						<td width="22%" valign="top" class="vncellreq"><?=gettext("Protocol"); ?></td>
 						<td width="78%" class="vtable">
-							<select name="proto" class="formselect" onChange="change_protocol()">
+							<select name="proto" class="formselect" onchange="change_protocol()">
 							<?php foreach ($p2_protos as $proto => $protoname): ?>
-								<option value="<?=$proto;?>" <?php if ($proto == $pconfig['proto']) echo "selected"; ?>>
+								<option value="<?=$proto;?>" <?php if ($proto == $pconfig['proto']) echo "selected=\"selected\""; ?>>
 									<?=htmlspecialchars($protoname);?>
 								</option>
 							<?php endforeach; ?>
 							</select>
-							<br>
+							<br />
 							<span class="vexpl">
 								<?=gettext("ESP is encryption, AH is authentication only"); ?>
 							</span>
@@ -685,11 +686,11 @@ function change_protocol() {
 								foreach ($p2_ealgos as $algo => $algodata):
 									$checked = '';
 									if (is_array($pconfig['ealgos']) && in_array($algo,$pconfig['ealgos']))
-										$checked = " checked";
+										$checked = "checked=\"checked\"";
 								?>
 								<tr>
 									<td>
-										<input type="checkbox" name="ealgos[]" value="<?=$algo;?>"<?=$checked?>>
+										<input type="checkbox" name="ealgos[]" value="<?=$algo;?>" <?=$checked?>/>
 									</td>
 									<td>
 										<?=htmlspecialchars($algodata['name']);?>
@@ -707,9 +708,9 @@ function change_protocol() {
 													$selected = '';
 				//									if ($checked && in_array("keylen_".$algo,$pconfig))
 													if ($keylen == $pconfig["keylen_".$algo])
-														$selected = " selected";
+														$selected = "selected=\"selected\"";
 											?>
-											<option value="<?=$keylen;?>"<?=$selected;?>><?=$keylen;?> <?=gettext("bits"); ?></option>
+											<option value="<?=$keylen;?>" <?=$selected;?>><?=$keylen;?> <?=gettext("bits"); ?></option>
 											<?php endfor; ?>
 										</select>
 										<?php endif; ?>
@@ -719,7 +720,7 @@ function change_protocol() {
 								<?php endforeach; ?>
 								
 							</table>
-							<br>
+							<br />
 							<?=gettext("Hint: use 3DES for best compatibility or if you have a hardware " . 
 							"crypto accelerator card. Blowfish is usually the fastest in " .
 							"software encryption"); ?>.
@@ -729,9 +730,9 @@ function change_protocol() {
 						<td width="22%" valign="top" class="vncellreq"><?=gettext("Hash algorithms"); ?></td>
 						<td width="78%" class="vtable">
 						<?php foreach ($p2_halgos as $algo => $algoname): ?>
-							<input type="checkbox" name="halgos[]" value="<?=$algo;?>" <?php if (in_array($algo, $pconfig['halgos'])) echo "checked"; ?>>
+							<input type="checkbox" name="halgos[]" value="<?=$algo;?>" <?php if (in_array($algo, $pconfig['halgos'])) echo "checked=\"checked\""; ?>/>
 							<?=htmlspecialchars($algoname);?>
-							<br>
+							<br />
 						<?php endforeach; ?>
 						</td>
 					</tr>
@@ -741,19 +742,19 @@ function change_protocol() {
 						<?php if (!isset($pconfig['mobile']) || !isset($a_client['pfs_group'])): ?>
 							<select name="pfsgroup" class="formselect">
 							<?php foreach ($p2_pfskeygroups as $keygroup => $keygroupname): ?>
-								<option value="<?=$keygroup;?>" <?php if ($keygroup == $pconfig['pfsgroup']) echo "selected"; ?>>
+								<option value="<?=$keygroup;?>" <?php if ($keygroup == $pconfig['pfsgroup']) echo "selected=\"selected\""; ?>>
 									<?=htmlspecialchars($keygroupname);?>
 								</option>
 							<?php endforeach; ?>
 							</select>
-							<br>
+							<br />
 							<?php else: ?>
 
 							<select class="formselect" disabled>
-								<option selected><?=$p2_pfskeygroups[$a_client['pfs_group']];?></option>
+								<option selected="selected"><?=$p2_pfskeygroups[$a_client['pfs_group']];?></option>
 							</select>
-							<input name="pfsgroup" type="hidden" value="<?=htmlspecialchars($pconfig['pfsgroup']);?>">
-							<br>
+							<input name="pfsgroup" type="hidden" value="<?=htmlspecialchars($pconfig['pfsgroup']);?>"/>
+							<br />
 							<span class="vexpl"><em><?=gettext("Set globally in mobile client options"); ?></em></span>
 						<?php endif; ?>
 						</td>
@@ -761,7 +762,7 @@ function change_protocol() {
 					<tr>
 						<td width="22%" valign="top" class="vncell"><?=gettext("Lifetime"); ?></td>
 						<td width="78%" class="vtable">
-							<input name="lifetime" type="text" class="formfld unknown" id="lifetime" size="20" value="<?=htmlspecialchars($pconfig['lifetime']);?>">
+							<input name="lifetime" type="text" class="formfld unknown" id="lifetime" size="20" value="<?=htmlspecialchars($pconfig['lifetime']);?>"/>
 							<?=gettext("seconds"); ?>
 						</td>
 					</tr>
@@ -774,7 +775,7 @@ function change_protocol() {
 					<tr>
 						<td width="22%" valign="top" class="vncell"><?=gettext("Automatically ping host"); ?></td>
 						<td width="78%" class="vtable">
-							<input name="pinghost" type="text" class="formfld unknown" id="pinghost" size="28" value="<?=htmlspecialchars($pconfig['pinghost']);?>">
+							<input name="pinghost" type="text" class="formfld unknown" id="pinghost" size="28" value="<?=htmlspecialchars($pconfig['pinghost']);?>"/>
 							<?=gettext("IP address"); ?>
 						</td>
 					</tr>
@@ -782,14 +783,14 @@ function change_protocol() {
 						<td width="22%" valign="top">&nbsp;</td>
 						<td width="78%">
 						<?php if (isset($p2index) && $a_phase2[$p2index]): ?>
-							<input name="p2index" type="hidden" value="<?=$p2index;?>">
+							<input name="p2index" type="hidden" value="<?=htmlspecialchars($p2index);?>"/>
 						<?php endif; ?>
 						<?php if ($pconfig['mobile']): ?>
-							<input name="mobile" type="hidden" value="true">
-							<input name="remoteid_type" type="hidden" value="mobile">
+							<input name="mobile" type="hidden" value="true"/>
+							<input name="remoteid_type" type="hidden" value="mobile"/>
 						<?php endif; ?>
-							<input name="Submit" type="submit" class="formbtn" value="<?=gettext("Save"); ?>">
-							<input name="ikeid" type="hidden" value="<?=htmlspecialchars($pconfig['ikeid']);?>">
+							<input name="Submit" type="submit" class="formbtn" value="<?=gettext("Save"); ?>"/>
+							<input name="ikeid" type="hidden" value="<?=htmlspecialchars($pconfig['ikeid']);?>"/>
 						</td>
 					</tr>
 				</table>
@@ -798,7 +799,7 @@ function change_protocol() {
 	</tr>
 </table>
 </form>
-<script lannguage="JavaScript">
+<script type="text/JavaScript">
 <!--
 change_mode('<?=htmlspecialchars($pconfig['mode'])?>');
 change_protocol('<?=htmlspecialchars($pconfig['proto'])?>');

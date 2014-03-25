@@ -2,7 +2,7 @@
 /*
         $Id$
         Copyright 2008 Seth Mos
-        Part of pfSense widgets (www.pfsense.com)
+        Part of pfSense widgets (https://www.pfsense.org)
         originally based on m0n0wall (http://m0n0.ch/wall)
 
         Redistribution and use in source and binary forms, with or without

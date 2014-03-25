@@ -59,8 +59,9 @@ if (!is_array($config['l2tp']['user'])) {
 }
 $a_secret = &$config['l2tp']['user'];
 
-$id = $_GET['id'];
-if (isset($_POST['id']))
+if (is_numericint($_GET['id']))
+	$id = $_GET['id'];
+if (isset($_POST['id']) && is_numericint($_POST['id']))
 	$id = $_POST['id'];
 
 if (isset($id) && $a_secret[$id]) {
@@ -156,6 +157,7 @@ include("head.inc");
                   <td width="78%" class="vtable">
 					<?=$mandfldhtml;?><input name="usernamefld" type="text" class="formfld user" id="usernamefld" size="20" value="<?=htmlspecialchars($pconfig['usernamefld']);?>" />
                   </td>
+                </tr>
                 <tr>
                   <td width="22%" valign="top" class="vncellreq"><?=gettext("Password");?></td>
                   <td width="78%" class="vtable">

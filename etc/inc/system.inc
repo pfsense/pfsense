@@ -395,8 +395,8 @@ function system_routing_configure($interface = "") {
 							@file_put_contents("{$g['tmp_path']}/{$defaultif}_defaultgw", $gateway['gateway']);
 					}
 					$foundgw = true;
-				} else if ($gateway['ipprotocol'] == "inet6" && (is_ipaddrv6($gateway['gateway']) || $gateway['gateway'] == "dynamic6")) {
-					if ($gateway['gateway'] == "dynamic6")
+				} else if ($gateway['ipprotocol'] == "inet6" && (is_ipaddrv6($gateway['gateway']) || $gateway['gateway'] == "dynamic")) {
+					if ($gateway['gateway'] == "dynamic")
 						$gateway['gateway'] = get_interface_gateway_v6($gateway['interface']);
 					$gatewayipv6 = $gateway['gateway'];
 					$interfacegwv6 = $gateway['interface'];
@@ -1332,7 +1332,8 @@ function system_ntp_configure($start_ntpd=true) {
 			if (!is_ipaddr($interface)) {
 				$interface = get_real_interface($interface);
 			}
-			$ntpcfg .= "interface listen {$interface}\n";
+			if (!empty($interface))
+				$ntpcfg .= "interface listen {$interface}\n";
 		}
 	}
 

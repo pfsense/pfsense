@@ -60,8 +60,9 @@ if (!is_array($config['crl']))
 
 $a_crl =& $config['crl'];
 
-$id = $_GET['id'];
-if (isset($_POST['id']))
+if (is_numericint($_GET['id']))
+	$id = $_GET['id'];
+if (isset($_POST['id']) && is_numericint($_POST['id']))
 	$id = $_POST['id'];
 
 $act = $_GET['act'];
@@ -312,7 +313,7 @@ include("head.inc");
 
 <body link="#000000" vlink="#000000" alink="#000000" onload="<?= $jsevents["body"]["onload"] ?>">
 <?php include("fbegin.inc"); ?>
-<script language="JavaScript">
+<script type="text/JavaScript">
 <!--
 
 function mode_change() {
@@ -390,7 +391,7 @@ if ($savemsg)
 <table width="100%" border="0" cellpadding="0" cellspacing="0">
  	<tr>
 		<td class="tabnavtbl">
-			<ul id="tabnav">
+			<ul id="tabnav"><li>
 			<?php 
 				$tab_array = array();
 				$tab_array[] = array(gettext("Server"), false, "vpn_openvpn_server.php");
@@ -400,7 +401,7 @@ if ($savemsg)
 				add_package_tabs("OpenVPN", $tab_array);
 				display_top_tabs($tab_array);
 			?>
-			</ul>
+			</li></ul>
 		</td>
 	</tr>    
 	<tr>
@@ -425,7 +426,7 @@ if ($savemsg)
 									<td>
 										&nbsp;
 										<span class="vexpl">
-											<strong><?=gettext("Disable this client"); ?></strong><br>
+											<strong><?=gettext("Disable this client"); ?></strong><br />
 										</span>
 									</td>
 								</tr>
@@ -441,7 +442,7 @@ if ($savemsg)
 								foreach ($openvpn_client_modes as $name => $desc):
 									$selected = "";
 									if ($pconfig['mode'] == $name)
-										$selected = "selected";
+										$selected = "selected=\"selected\"";
 							?>
 								<option value="<?=$name;?>" <?=$selected;?>><?=$desc;?></option>
 							<?php endforeach; ?>
@@ -456,7 +457,7 @@ if ($savemsg)
 								foreach ($openvpn_prots as $prot):
 									$selected = "";
 									if ($pconfig['protocol'] == $prot)
-										$selected = "selected";
+										$selected = "selected=\"selected\"";
 							?>
 								<option value="<?=$prot;?>" <?=$selected;?>><?=$prot;?></option>
 							<?php endforeach; ?>
@@ -471,7 +472,7 @@ if ($savemsg)
                                                                 foreach ($openvpn_dev_mode as $mode):
                                                                         $selected = "";
                                                                         if ($pconfig['dev_mode'] == $mode)
-                                                                                $selected = "selected";
+                                                                                $selected = "selected=\"selected\"";
                                                         ?>
                                                                 <option value="<?=$mode;?>" <?=$selected;?>><?=$mode;?></option>
                                                         <?php endforeach; ?>
@@ -505,13 +506,13 @@ if ($savemsg)
 									foreach ($interfaces as $iface => $ifacename):
 										$selected = "";
 										if ($iface == $pconfig['interface'])
-											$selected = "selected";
+											$selected = "selected=\"selected\"";
 								?>
 									<option value="<?=$iface;?>" <?=$selected;?>>
 										<?=htmlspecialchars($ifacename);?>
 									</option>
 								<?php endforeach; ?>
-							</select> <br>
+							</select> <br />
 						</td>
 					</tr>
 					<tr>
@@ -557,10 +558,10 @@ if ($savemsg)
                                                                                 </span>
                                                                         </td>
                                                                         <td>
-										<select name="proxy_authtype" id="proxy_authtype" class="formfld select" onChange="useproxy_changed()">
-											<option value="none" <?php if ($pconfig['proxy_authtype'] == "none") echo "selected"; ?>><?=gettext("none"); ?></option>
-											<option value="basic" <?php if ($pconfig['proxy_authtype'] == "basic") echo "selected"; ?>><?=gettext("basic"); ?></option>
-											<option value="ntlm" <?php if ($pconfig['proxy_authtype'] == "ntlm") echo "selected"; ?>><?=gettext("ntlm"); ?></option>
+										<select name="proxy_authtype" id="proxy_authtype" class="formfld select" onchange="useproxy_changed()">
+											<option value="none" <?php if ($pconfig['proxy_authtype'] == "none") echo "selected=\"selected\""; ?>><?=gettext("none"); ?></option>
+											<option value="basic" <?php if ($pconfig['proxy_authtype'] == "basic") echo "selected=\"selected\""; ?>><?=gettext("basic"); ?></option>
+											<option value="ntlm" <?php if ($pconfig['proxy_authtype'] == "ntlm") echo "selected=\"selected\""; ?>><?=gettext("ntlm"); ?></option>
 										</select>
 									</td>
 								</tr>
@@ -597,7 +598,7 @@ if ($savemsg)
 								<tr>
 									<td>
 										<?php set_checked($pconfig['resolve_retry'],$chk); ?>
-										<input name="resolve_retry" type="checkbox" value="yes" <?=$chk;?>>
+										<input name="resolve_retry" type="checkbox" value="yes" <?=$chk;?>/>
 									</td>
 									<td>
 										<span class="vexpl">
@@ -614,8 +615,8 @@ if ($savemsg)
 					<tr> 
 						<td width="22%" valign="top" class="vncell"><?=gettext("Description"); ?></td>
 						<td width="78%" class="vtable"> 
-							<input name="description" type="text" class="formfld unknown" size="30" value="<?=htmlspecialchars($pconfig['description']);?>">
-							<br>
+							<input name="description" type="text" class="formfld unknown" size="30" value="<?=htmlspecialchars($pconfig['description']);?>"/>
+							<br />
 							<?=gettext("You may enter a description here for your reference (not parsed)"); ?>.
 						</td>
 					</tr>
@@ -632,7 +633,7 @@ if ($savemsg)
 								<tr>
 									<td>
 										<?php set_checked($pconfig['tlsauth_enable'],$chk); ?>
-										<input name="tlsauth_enable" id="tlsauth_enable" type="checkbox" value="yes" <?=$chk;?> onClick="tlsauth_change()">
+										<input name="tlsauth_enable" id="tlsauth_enable" type="checkbox" value="yes" <?=$chk;?> onclick="tlsauth_change()"/>
 									</td>
 									<td>
 										<span class="vexpl">
@@ -646,7 +647,7 @@ if ($savemsg)
 								<tr>
 									<td>
 										<?php set_checked($pconfig['autotls_enable'],$chk); ?>
-										<input name="autotls_enable" id="autotls_enable" type="checkbox" value="yes" <?=$chk;?> onClick="autotls_change()">
+										<input name="autotls_enable" id="autotls_enable" type="checkbox" value="yes" <?=$chk;?> onclick="autotls_change()"/>
 									</td>
 									<td>
 										<span class="vexpl">
@@ -676,7 +677,7 @@ if ($savemsg)
 								foreach ($a_ca as $ca):
 									$selected = "";
 									if ($pconfig['caref'] == $ca['refid'])
-										$selected = "selected";
+										$selected = "selected=\"selected\"";
 							?>
 								<option value="<?=$ca['refid'];?>" <?=$selected;?>><?=$ca['descr'];?></option>
 							<?php endforeach; ?>
@@ -701,7 +702,7 @@ if ($savemsg)
 								if ($ca)
 									$caname = " (CA: {$ca['descr']})";
 								if ($pconfig['certref'] == $cert['refid'])
-									$selected = "selected";
+									$selected = "selected=\"selected\"";
 								if (cert_in_use($cert['refid']))
 									$inuse = " *In Use";
 								if (is_cert_revoked($cert))
@@ -723,7 +724,7 @@ if ($savemsg)
 								<tr>
 									<td>
 										<?php set_checked($pconfig['autokey_enable'],$chk); ?>
-										<input name="autokey_enable" type="checkbox" value="yes" <?=$chk;?> onClick="autokey_change()">
+										<input name="autokey_enable" type="checkbox" value="yes" <?=$chk;?> onclick="autokey_change()"/>
 									</td>
 									<td>
 										<span class="vexpl">
@@ -753,9 +754,9 @@ if ($savemsg)
 									foreach ($cipherlist as $name => $desc):
 									$selected = '';
 									if ($name == $pconfig['crypto'])
-										$selected = ' selected';
+										$selected = 'selected="selected"';
 								?>
-								<option value="<?=$name;?>"<?=$selected?>>
+								<option value="<?=$name;?>" <?=$selected?>>
 									<?=htmlspecialchars($desc);?>
 								</option>
 								<?php endforeach; ?>
@@ -771,9 +772,9 @@ if ($savemsg)
 									foreach ($engines as $name => $desc):
 									$selected = '';
 									if ($name == $pconfig['engine'])
-										$selected = ' selected';
+										$selected = 'selected="selected"';
 								?>
-								<option value="<?=$name;?>"<?=$selected?>>
+								<option value="<?=$name;?>" <?=$selected?>>
 									<?=htmlspecialchars($desc);?>
 								</option>
 								<?php endforeach; ?>
@@ -789,8 +790,8 @@ if ($savemsg)
 					<tr>
 						<td width="22%" valign="top" class="vncell"><?=gettext("IPv4 Tunnel Network"); ?></td>
 						<td width="78%" class="vtable">
-							<input name="tunnel_network" type="text" class="formfld unknown" size="20" value="<?=htmlspecialchars($pconfig['tunnel_network']);?>">
-							<br>
+							<input name="tunnel_network" type="text" class="formfld unknown" size="20" value="<?=htmlspecialchars($pconfig['tunnel_network']);?>"/>
+							<br />
 							<?=gettext("This is the virtual network used for private " .
 							"communications between this client and the " .
 							"server expressed using CIDR (eg. 10.0.8.0/24). " .
@@ -803,8 +804,8 @@ if ($savemsg)
 					<tr>
 						<td width="22%" valign="top" class="vncell"><?=gettext("IPv6 Tunnel Network"); ?></td>
 						<td width="78%" class="vtable">
-							<input name="tunnel_networkv6" type="text" class="formfld unknown" size="20" value="<?=htmlspecialchars($pconfig['tunnel_networkv6']);?>">
-							<br>
+							<input name="tunnel_networkv6" type="text" class="formfld unknown" size="20" value="<?=htmlspecialchars($pconfig['tunnel_networkv6']);?>"/>
+							<br />
 							<?=gettext("This is the IPv6 virtual network used for private " .
 							"communications between this client and the " .
 							"server expressed using CIDR (eg. fe80::/64). " .
@@ -817,8 +818,8 @@ if ($savemsg)
 					<tr>
 						<td width="22%" valign="top" class="vncell"><?=gettext("IPv4 Remote Network/s"); ?></td>
 						<td width="78%" class="vtable">
-							<input name="remote_network" type="text" class="formfld unknown" size="40" value="<?=htmlspecialchars($pconfig['remote_network']);?>">
-							<br>
+							<input name="remote_network" type="text" class="formfld unknown" size="40" value="<?=htmlspecialchars($pconfig['remote_network']);?>"/>
+							<br />
 							<?=gettext("These are the IPv4 networks that will be routed through " .
 							"the tunnel, so that a site-to-site VPN can be " .
 							"established without manually changing the routing tables. " .
@@ -831,8 +832,8 @@ if ($savemsg)
 					<tr>
 						<td width="22%" valign="top" class="vncell"><?=gettext("IPv6 Remote Network/s"); ?></td>
 						<td width="78%" class="vtable">
-							<input name="remote_networkv6" type="text" class="formfld unknown" size="40" value="<?=htmlspecialchars($pconfig['remote_networkv6']);?>">
-							<br>
+							<input name="remote_networkv6" type="text" class="formfld unknown" size="40" value="<?=htmlspecialchars($pconfig['remote_networkv6']);?>"/>
+							<br />
 							<?=gettext("These are the IPv6 networks that will be routed through " .
 							"the tunnel, so that a site-to-site VPN can be " .
 							"established without manually changing the routing tables. " .
@@ -860,7 +861,7 @@ if ($savemsg)
 								<tr>
 									<td>
 										<?php set_checked($pconfig['compression'],$chk); ?>
-										<input name="compression" type="checkbox" value="yes" <?=$chk;?>>
+										<input name="compression" type="checkbox" value="yes" <?=$chk;?>/>
 									</td>
 									<td>
 										<span class="vexpl">
@@ -878,7 +879,7 @@ if ($savemsg)
 								<tr>
 									<td>
 										<?php set_checked($pconfig['passtos'],$chk); ?>
-										<input name="passtos" type="checkbox" value="yes" <?=$chk;?>>
+										<input name="passtos" type="checkbox" value="yes" <?=$chk;?>/>
 									</td>
 									<td>
 										<span class="vexpl">
@@ -891,7 +892,7 @@ if ($savemsg)
 					</tr>
 				</table>
 
-				<table width="100%" border="0" cellpadding="6" cellspacing="0" id="client_opts">
+				<table width="100%" border="0" cellpadding="6" cellspacing="0" id="avd_config">
 					<tr>
 						<td colspan="2" class="list" height="12"></td>
 					</tr>
@@ -919,10 +920,10 @@ if ($savemsg)
 					<tr>
 						<td width="22%" valign="top">&nbsp;</td>
 						<td width="78%"> 
-							<input name="save" type="submit" class="formbtn" value="<?=gettext("Save"); ?>"> 
-							<input name="act" type="hidden" value="<?=$act;?>">
+							<input name="save" type="submit" class="formbtn" value="<?=gettext("Save"); ?>"/> 
+							<input name="act" type="hidden" value="<?=$act;?>"/>
 							<?php if (isset($id) && $a_client[$id]): ?>
-							<input name="id" type="hidden" value="<?=$id;?>">
+							<input name="id" type="hidden" value="<?=htmlspecialchars($id);?>"/>
 							<?php endif; ?>
 						</td>
 					</tr>
@@ -941,6 +942,22 @@ if ($savemsg)
 					<td width="10%" class="list"></td>
 				</tr>
 				</thead>
+				<tfoot>
+				<tr>
+					<td class="list" colspan="4"></td>
+					<td class="list">
+						<a href="vpn_openvpn_client.php?act=new"><img src="./themes/<?=$g['theme'];?>/images/icons/icon_plus.gif" title="<?=gettext("add client"); ?>" alt="" width="17" height="17" border="0"/>
+						</a>
+					</td>
+				</tr>
+				<tr>
+					<td colspan="4">
+						<p>
+							<?=gettext("Additional OpenVPN clients can be added here.");?>
+						</p>
+					</td>
+				</tr>
+				</tfoot>
 				<tbody>
 				<?php
 					$i = 0;
@@ -950,7 +967,7 @@ if ($savemsg)
 							$disabled = "YES";
 						$server = "{$client['server_addr']}:{$client['server_port']}";
 				?>
-				<tr ondblclick="document.location='vpn_openvpn_client.php?act=edit&id=<?=$i;?>'">
+				<tr ondblclick="document.location='vpn_openvpn_client.php?act=edit&amp;id=<?=$i;?>'">
 					<td class="listlr">
 						<?=$disabled;?>
 					</td>
@@ -963,37 +980,23 @@ if ($savemsg)
 					<td class="listbg">
 						<?=htmlspecialchars($client['description']);?>
 					</td>
-					<td valign="middle" nowrap class="list">
-						<a href="vpn_openvpn_client.php?act=edit&id=<?=$i;?>">
-							<img src="./themes/<?=$g['theme'];?>/images/icons/icon_e.gif" title="<?=gettext("edit client"); ?>" width="17" height="17" border="0">
+					<td valign="middle" nowrap="nowrap" class="list">
+						<a href="vpn_openvpn_client.php?act=edit&amp;id=<?=$i;?>">
+							<img src="./themes/<?=$g['theme'];?>/images/icons/icon_e.gif" title="<?=gettext("edit client"); ?>" alt="" width="17" height="17" border="0"/>
 						</a>
 						&nbsp;
-						<a href="vpn_openvpn_client.php?act=del&id=<?=$i;?>" onclick="return confirm('<?=gettext("Do you really want to delete this client?"); ?>')">
-							<img src="/themes/<?=$g['theme'];?>/images/icons/icon_x.gif" title="<?=gettext("delete client"); ?>" width="17" height="17" border="0">
+						<a href="vpn_openvpn_client.php?act=del&amp;id=<?=$i;?>" onclick="return confirm('<?=gettext("Do you really want to delete this client?"); ?>')">
+							<img src="/themes/<?=$g['theme'];?>/images/icons/icon_x.gif" title="<?=gettext("delete client"); ?>" alt="" width="17" height="17" border="0"/>
 						</a>
 					</td>
 				</tr>
 				<?php
 					$i++;
 					endforeach;
+					if ($i == 0)
+						echo "<tr><td></td></tr>";
 				?>
 				</tbody>
-				<tfoot>
-				<tr>
-					<td class="list" colspan="4"></td>
-					<td class="list">
-						<a href="vpn_openvpn_client.php?act=new"><img src="./themes/<?=$g['theme'];?>/images/icons/icon_plus.gif" title="<?=gettext("add client"); ?>" width="17" height="17" border="0">
-						</a>
-					</td>
-				</tr>
-				<tr>
-					<td colspan="4">
-						<p>
-							<?=gettext("Additional OpenVPN clients can be added here.");?>
-						</p>
-					</td>
-				</tr>
-				</tfoot>
 			</table>
 
 			<?php endif; ?>
@@ -1001,7 +1004,7 @@ if ($savemsg)
 		</td>
 	</tr>
 </table>
-<script language="JavaScript">
+<script type="text/JavaScript">
 <!--
 mode_change();
 autokey_change();
@@ -1009,7 +1012,6 @@ tlsauth_change();
 useproxy_changed();
 //-->
 </script>
-</body>
 <?php include("fend.inc"); ?>
 
 <?php
@@ -1018,9 +1020,11 @@ useproxy_changed();
 
 function set_checked($var,& $chk) {
     if($var)
-        $chk = 'checked';
+        $chk = 'checked="checked"';
     else
         $chk = '';
 }
 
 ?>
+</body>
+</html>

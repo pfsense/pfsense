@@ -1,6 +1,6 @@
 <?php
 /*
-        part of pfSense (http://www.pfsense.org/)
+        part of pfSense (https://www.pfsense.org/)
 
         Copyright (C) 2006 Bill Marquette - bill.marquette@gmail.com.
         Copyright (C) 2006 Scott Ullrich - sullrich@pfsense.com.

@@ -859,7 +859,9 @@ function interface_gre_configure(&$gre, $grekey = "") {
 	/* Do not change the order here for more see gre(4) NOTES section. */
 	mwexec("/sbin/ifconfig {$greif} tunnel {$realifip} " . escapeshellarg($gre['remote-addr']));
 	if((is_ipaddrv6($gre['tunnel-local-addr'])) || (is_ipaddrv6($gre['tunnel-remote-addr']))) {
-		mwexec("/sbin/ifconfig {$greif} inet6 " . escapeshellarg($gre['tunnel-local-addr']) . " " . escapeshellarg($gre['tunnel-remote-addr']) . " prefixlen /" . escapeshellarg($gre['tunnel-remote-net']));
+		/* XXX: The prefixlen argument for tunnels of ipv6 is useless since it needs to be 128 as enforced by kernel */
+		//mwexec("/sbin/ifconfig {$greif} inet6 " . escapeshellarg($gre['tunnel-local-addr']) . " " . escapeshellarg($gre['tunnel-remote-addr']) . " prefixlen /" . escapeshellarg($gre['tunnel-remote-net']));
+		mwexec("/sbin/ifconfig {$greif} inet6 " . escapeshellarg($gre['tunnel-local-addr']) . " " . escapeshellarg($gre['tunnel-remote-addr']) . " prefixlen 128");
 	} else {
 		mwexec("/sbin/ifconfig {$greif} " . escapeshellarg($gre['tunnel-local-addr']) . " " . escapeshellarg($gre['tunnel-remote-addr']) . " netmask " . gen_subnet_mask($gre['tunnel-remote-net']));
 	}
@@ -882,7 +884,7 @@ function interface_gre_configure(&$gre, $grekey = "") {
 	if(is_ipaddrv6($gre['tunnel-remote-addr']))
 		file_put_contents("{$g['tmp_path']}/{$greif}_routerv6", $gre['tunnel-remote-addr']);
 
-	interfaces_bring_up($laggif);
+	interfaces_bring_up($greif);
 
 	return $greif;
 }
@@ -951,7 +953,9 @@ function interface_gif_configure(&$gif, $gifkey = "") {
 	/* Do not change the order here for more see gif(4) NOTES section. */
 	mwexec("/sbin/ifconfig {$gifif} tunnel {$realifip} " . escapeshellarg($gif['remote-addr']));
 	if((is_ipaddrv6($gif['tunnel-local-addr'])) || (is_ipaddrv6($gif['tunnel-remote-addr']))) {
-		mwexec("/sbin/ifconfig {$gifif} inet6 " . escapeshellarg($gif['tunnel-local-addr']) . " " . escapeshellarg($gif['tunnel-remote-addr']) . " prefixlen /" . escapeshellarg($gif['tunnel-remote-net']));
+		/* XXX: The prefixlen argument for tunnels of ipv6 is useless since it needs to be 128 as enforced by kernel */
+		//mwexec("/sbin/ifconfig {$gifif} inet6 " . escapeshellarg($gif['tunnel-local-addr']) . " " . escapeshellarg($gif['tunnel-remote-addr']) . " prefixlen /" . escapeshellarg($gif['tunnel-remote-net']));
+		mwexec("/sbin/ifconfig {$gifif} inet6 " . escapeshellarg($gif['tunnel-local-addr']) . " " . escapeshellarg($gif['tunnel-remote-addr']) . " prefixlen 128");
 	} else {
 		mwexec("/sbin/ifconfig {$gifif} " . escapeshellarg($gif['tunnel-local-addr']) . " " . escapeshellarg($gif['tunnel-remote-addr']) . " netmask " . gen_subnet_mask($gif['tunnel-remote-net']));
 	}
@@ -991,7 +995,7 @@ function interface_gif_configure(&$gif, $gifkey = "") {
 		mwexec("/sbin/route change -host -inet6 " . escapeshellarg($gif['remote-addr']) . " {$realifgw}");
 	}
 
-	interfaces_bring_up($laggif);
+	interfaces_bring_up($gifif);
 
 	return $gifif;
 }
@@ -2870,10 +2874,17 @@ function interface_configure($interface = "wan", $reloadall = false, $linkupeven
 		$tmpifaces = pfSense_getall_interface_addresses($realif);
 		if (is_array($tmpifaces)) {
 			foreach ($tmpifaces as $tmpiface) {
-				if (strstr($iface, ":"))
-					mwexec("/sbin/ifconfig " . escapeshellarg($realif) . " inet6 {$tmpiface} delete");
-				else
-					pfSense_interface_deladdress($realif, $tmpiface);
+				if (is_ipaddrv6($tmpiface) || is_subnetv6($tmpiface)) {
+					if (!is_linklocal($tmpiface))
+						mwexec("/sbin/ifconfig " . escapeshellarg($realif) . " inet6 {$tmpiface} delete");
+				} else {
+					if (is_subnetv4($tmpiface)) {
+						$tmpip = explode('/', $tmpiface);
+						$tmpip = $tmpip[0];
+					} else
+						$tmpip = $tmpiface;
+					pfSense_interface_deladdress($realif, $tmpip);
+				}
 			}
 		}
 
@@ -3023,7 +3034,7 @@ function interface_configure($interface = "wan", $reloadall = false, $linkupeven
 			interface_6to4_configure($interface, $wancfg);
 			break;
 		case 'track6':
-			interface_track6_configure($interface, $wancfg);
+			interface_track6_configure($interface, $wancfg, $linkupevent);
 			break;
 		default:
 			if (!in_array($tunnelif, array("gif", "gre", "ovp"))) {
@@ -3118,7 +3129,7 @@ function interface_configure($interface = "wan", $reloadall = false, $linkupeven
 	return 0;
 }
 
-function interface_track6_configure($interface = "lan", $wancfg) {
+function interface_track6_configure($interface = "lan", $wancfg, $linkupevent = false) {
 	global $config, $g;
 
 	if (!is_array($wancfg))
@@ -3157,9 +3168,23 @@ function interface_track6_configure($interface = "lan", $wancfg) {
 			log_error("Interface {$interface} configured via {$wancfg['track6-interface']}  type {$type}");
 		interface_track6_6rd_configure($interface, $wancfg);
 		break;
+	case "dhcp6":
+		if ($linkupevent == true) {
+			/* 
+			 * NOTE: Usually come here from rc.linkup calling so just call directly intead of generating event
+			 *      Instead of disrupting all other v4 configuration just restart DHCPv6 client for now
+			 *
+			 * XXX: Probably DHCPv6 client should handle this autmagically itself?
+			 */
+			$parentrealif = get_real_interface($wancfg['track6-interface']);
+			$pidv6 = find_dhcp6c_process($parentrealif);
+			if($pidv6)
+				posix_kill($pidv6, SIGHUP);
+		}
+		break;
 	}
 
-	if (!$g['booting']) {
+	if (!$g['booting'] && $linkupevent == false) {
 		if (!function_exists('services_dhcpd_configure'))
 			require_once("services.inc");
 
@@ -4639,6 +4664,9 @@ function interface_has_gatewayv6($friendly) {
 			default:
 				if (substr($ifname['if'], 0, 4) ==  "ovpn")
 					return true;
+				$tunnelif = substr($ifname['if'], 0, 3);
+				if ($tunnelif == "gif" || $tunnelif == "gre")
+					return true;
 				if (!empty($ifname['gatewayv6']))
 					return true;
 				break;
@@ -4659,14 +4687,14 @@ function interface_has_gatewayv6($friendly) {
 
 function is_altq_capable($int) {
 	/* Per:
-	 * http://www.freebsd.org/cgi/man.cgi?query=altq&manpath=FreeBSD+7.2-current&format=html
+	 * http://www.freebsd.org/cgi/man.cgi?query=altq&apropos=0&sektion=0&manpath=FreeBSD+8.3-RELEASE&arch=default&format=html
 	 * Only the following drivers have ALTQ support
 	 */
-	$capable = array("age", "alc", "ale", "an", "ath", "aue", "awi", "bce",
-			"bfe", "bge", "bridge", "cas", "dc", "de", "ed", "em", "ep", "fxp", "gem",
-			"hme", "igb", "ipw", "iwi", "jme", "le", "lem", "msk", "mxge", "my", "nfe",
-			"npe", "nve", "ral", "re", "rl", "rum", "run", "bwn", "sf", "sis", "sk",
-			"ste", "stge", "txp", "udav", "ural", "vge", "vr", "wi", "xl",
+	$capable = array("ae", "age", "alc", "ale", "an", "ath", "aue", "axe", "awi", "bce",
+			"bfe", "bge", "bridge", "cas", "dc", "de", "ed", "em", "ep", "epair", "et", "fxp", "gem",
+			"hme", "igb", "ipw", "iwi", "ixgbe", "jme", "le", "lem", "msk", "mxge", "my", "nfe",
+			"nge", "npe", "nve", "ral", "re", "rl", "rum", "run", "bwn", "sf", "sge", "sis", "sk",
+			"ste", "stge", "ti", "txp", "udav", "ural", "vge", "vr", "vte", "wi", "xl",
 			"ndis", "tun", "ovpns", "ovpnc", "vlan", "pppoe", "pptp", "ng",
 			"l2tp", "ppp", "vtnet");
 

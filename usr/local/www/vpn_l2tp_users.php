@@ -112,7 +112,7 @@ include("head.inc");
               <?php if($secretent['ip'] == "") $secretent['ip'] = "Dynamic"; ?>
                     <?=htmlspecialchars($secretent['ip']);?>&nbsp;
                   </td>
-                  <td class="list" nowrap> <a href="vpn_l2tp_users_edit.php?id=<?=$i;?>"><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_e.gif" title="edit user" width="17" height="17" border="0" alt="" /></a>
+                  <td class="list" nowrap="nowrap"> <a href="vpn_l2tp_users_edit.php?id=<?=$i;?>"><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_e.gif" title="edit user" width="17" height="17" border="0" alt="" /></a>
                      &nbsp;<a href="vpn_l2tp_users.php?act=del&id=<?=$i;?>" onclick="return confirm('<?=gettext("Do you really want to delete this user?");?>')"><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_x.gif" title="<?=gettext("delete user"); ?>" width="17" height="17" border="0" alt="" /></a></td>
 				</tr>
 			  <?php $i++; endforeach; ?>

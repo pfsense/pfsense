@@ -2788,8 +2788,8 @@ function upgrade_080_to_081() {
 		mwexec("$rrdtool restore -f {$g['tmp_path']}/{$xmldumpnew} {$rrddbpath}/{$database} 2>&1");
 		unset($xml);
 		# Default /tmp tmpfs is ~40mb, do not leave temp files around
-		unlink("{$g['tmp_path']}/{$xmldump}");
-		unlink("{$g['tmp_path']}/{$xmldumpnew}");
+		unlink_if_exists("{$g['tmp_path']}/{$xmldump}");
+		unlink_if_exists("{$g['tmp_path']}/{$xmldumpnew}");
 	}
 	enable_rrd_graphing();
 	/* Let's save the RRD graphs after we run enable RRD graphing */

@@ -134,7 +134,7 @@ function restore_rrddata() {
 
 function add_base_packages_menu_items() {
 	global $g, $config;
-	$base_packages = explode($g['base_packages'], ",");
+	$base_packages = explode(",", $g['base_packages']);
 	$modified_config = false;
 	foreach($base_packages as $bp) {
 		$basepkg_path = "/usr/local/pkg/{$bp}";
@@ -187,7 +187,7 @@ function spit_out_select_items($name, $showall) {
 		       "interfaces" => gettext("Interfaces"),
 		       "ipsec" => gettext("IPSEC"),
 		       "nat" => gettext("NAT"),
-		       "ovpn" => gettext("OpenVPN"),
+		       "openvpn" => gettext("OpenVPN"),
 		       "installedpackages" => gettext("Package Manager"),
 		       "pptpd" => gettext("PPTP Server"),
 		       "rrddata" => gettext("RRD Data"),

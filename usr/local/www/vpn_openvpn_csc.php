@@ -45,8 +45,9 @@ if (!is_array($config['openvpn']['openvpn-csc']))
 
 $a_csc = &$config['openvpn']['openvpn-csc'];
 
-$id = $_GET['id'];
-if (isset($_POST['id']))
+if (is_numericint($_GET['id']))
+	$id = $_GET['id'];
+if (isset($_POST['id']) && is_numericint($_POST['id']))
 	$id = $_POST['id'];
 
 $act = $_GET['act'];
@@ -232,7 +233,7 @@ include("head.inc");
 
 <body link="#000000" vlink="#000000" alink="#000000" onload="<?= $jsevents["body"]["onload"] ?>">
 <?php include("fbegin.inc"); ?>
-<script language="JavaScript">
+<script type="text/JavaScript">
 <!--
 
 function dns_domain_change() {
@@ -289,7 +290,7 @@ function netbios_change() {
 <table width="100%" border="0" cellpadding="0" cellspacing="0">
  	<tr>
 		<td class="tabnavtbl">
-			<ul id="tabnav">
+			<ul id="tabnav"><li>
 			<?php 
 				$tab_array = array();
 				$tab_array[] = array(gettext("Server"), false, "vpn_openvpn_server.php");
@@ -299,7 +300,7 @@ function netbios_change() {
 				add_package_tabs("OpenVPN", $tab_array);
 				display_top_tabs($tab_array);
 			?>
-			</ul>
+			</li></ul>
 		</td>
 	</tr>    
 	<tr>
@@ -324,7 +325,7 @@ function netbios_change() {
 									<td>
 										&nbsp;
 										<span class="vexpl">
-											<strong><?=gettext("Disable this override"); ?></strong><br>
+											<strong><?=gettext("Disable this override"); ?></strong><br />
 										</span>
 									</td>
 								</tr>
@@ -335,16 +336,16 @@ function netbios_change() {
 					<tr> 
 						<td width="22%" valign="top" class="vncellreq"><?=gettext("Common name"); ?></td>
 						<td width="78%" class="vtable"> 
-							<input name="common_name" type="text" class="formfld unknown" size="30" value="<?=htmlspecialchars($pconfig['common_name']);?>">
-							<br>
+							<input name="common_name" type="text" class="formfld unknown" size="30" value="<?=htmlspecialchars($pconfig['common_name']);?>"/>
+							<br />
 							<?=gettext("Enter the client's X.509 common name here"); ?>.
 						</td>
 					</tr>
 					<tr> 
 						<td width="22%" valign="top" class="vncell"><?=gettext("Description"); ?></td>
 						<td width="78%" class="vtable"> 
-							<input name="description" type="text" class="formfld unknown" size="30" value="<?=htmlspecialchars($pconfig['description']);?>">
-							<br>
+							<input name="description" type="text" class="formfld unknown" size="30" value="<?=htmlspecialchars($pconfig['description']);?>"/>
+							<br />
 							<?=gettext("You may enter a description here for your reference (not parsed)"); ?>.
 						</td>
 					</tr>
@@ -378,8 +379,8 @@ function netbios_change() {
 					<tr>
 						<td width="22%" valign="top" class="vncell"><?=gettext("Tunnel Network"); ?></td>
 						<td width="78%" class="vtable">
-							<input name="tunnel_network" type="text" class="formfld unknown" size="20" value="<?=htmlspecialchars($pconfig['tunnel_network']);?>">
-							<br>
+							<input name="tunnel_network" type="text" class="formfld unknown" size="20" value="<?=htmlspecialchars($pconfig['tunnel_network']);?>"/>
+							<br />
 							<?=gettext("This is the virtual network used for private " .
 							"communications between this client and the " .
 							"server expressed using CIDR (eg. 10.0.8.0/24). " .
@@ -438,11 +439,11 @@ function netbios_change() {
 								<tr>
 									<td>
 										<?php set_checked($pconfig['dns_domain_enable'],$chk); ?>
-										<input name="dns_domain_enable" type="checkbox" id="dns_domain_enable" value="yes" <?=$chk;?> onClick="dns_domain_change()">
+										<input name="dns_domain_enable" type="checkbox" id="dns_domain_enable" value="yes" <?=$chk;?> onclick="dns_domain_change()"/>
 									</td>
 									<td>
 										<span class="vexpl">
-	                                        <?=gettext("Provide a default domain name to clients"); ?><br>
+	                                        <?=gettext("Provide a default domain name to clients"); ?><br />
 										</span>
 									</td>
 								</tr>
@@ -450,7 +451,7 @@ function netbios_change() {
 							<table border="0" cellpadding="2" cellspacing="0" id="dns_domain_data">
 								<tr>
 									<td>
-										<input name="dns_domain" type="text" class="formfld unknown" id="dns_domain" size="30" value="<?=htmlspecialchars($pconfig['dns_domain']);?>">
+										<input name="dns_domain" type="text" class="formfld unknown" id="dns_domain" size="30" value="<?=htmlspecialchars($pconfig['dns_domain']);?>"/>
 									</td>
 								</tr>
 							</table>
@@ -463,11 +464,11 @@ function netbios_change() {
 								<tr>
 									<td>
 										<?php set_checked($pconfig['dns_server_enable'],$chk); ?>
-										<input name="dns_server_enable" type="checkbox" id="dns_server_enable" value="yes" <?=$chk;?> onClick="dns_server_change()">
+										<input name="dns_server_enable" type="checkbox" id="dns_server_enable" value="yes" <?=$chk;?> onclick="dns_server_change()"/>
 									</td>
 									<td>
 										<span class="vexpl">
-											<?=gettext("Provide a DNS server list to clients"); ?><br>
+											<?=gettext("Provide a DNS server list to clients"); ?><br />
 										</span>
 									</td>
 								</tr>
@@ -478,7 +479,7 @@ function netbios_change() {
 										<span class="vexpl">
 											<?=gettext("Server"); ?> #1:&nbsp;
 										</span>
-										<input name="dns_server1" type="text" class="formfld unknown" id="dns_server1" size="20" value="<?=htmlspecialchars($pconfig['dns_server1']);?>">
+										<input name="dns_server1" type="text" class="formfld unknown" id="dns_server1" size="20" value="<?=htmlspecialchars($pconfig['dns_server1']);?>"/>
 									</td>
 								</tr>
 								<tr>
@@ -486,7 +487,7 @@ function netbios_change() {
 										<span class="vexpl">
 											<?=gettext("Server"); ?> #2:&nbsp;
 										</span>
-										<input name="dns_server2" type="text" class="formfld unknown" id="dns_server2" size="20" value="<?=htmlspecialchars($pconfig['dns_server2']);?>">
+										<input name="dns_server2" type="text" class="formfld unknown" id="dns_server2" size="20" value="<?=htmlspecialchars($pconfig['dns_server2']);?>"/>
 									</td>
 								</tr>
 								<tr>
@@ -494,7 +495,7 @@ function netbios_change() {
 										<span class="vexpl">
 											<?=gettext("Server"); ?> #3:&nbsp;
 										</span>
-										<input name="dns_server3" type="text" class="formfld unknown" id="dns_server3" size="20" value="<?=htmlspecialchars($pconfig['dns_server3']);?>">
+										<input name="dns_server3" type="text" class="formfld unknown" id="dns_server3" size="20" value="<?=htmlspecialchars($pconfig['dns_server3']);?>"/>
 									</td>
 								</tr>
 								<tr>
@@ -502,7 +503,7 @@ function netbios_change() {
 										<span class="vexpl">
 											<?=gettext("Server"); ?> #4:&nbsp;
 										</span>
-										<input name="dns_server4" type="text" class="formfld unknown" id="dns_server4" size="20" value="<?=htmlspecialchars($pconfig['dns_server4']);?>">
+										<input name="dns_server4" type="text" class="formfld unknown" id="dns_server4" size="20" value="<?=htmlspecialchars($pconfig['dns_server4']);?>"/>
 									</td>
 								</tr>
 							</table>
@@ -515,11 +516,11 @@ function netbios_change() {
 								<tr>
 									<td>
 										<?php set_checked($pconfig['ntp_server_enable'],$chk); ?>
-										<input name="ntp_server_enable" type="checkbox" id="ntp_server_enable" value="yes" <?=$chk;?> onClick="ntp_server_change()">
+										<input name="ntp_server_enable" type="checkbox" id="ntp_server_enable" value="yes" <?=$chk;?> onclick="ntp_server_change()"/>
 									</td>
 									<td>
 										<span class="vexpl">
-											<?=gettext("Provide a NTP server list to clients"); ?><br>
+											<?=gettext("Provide a NTP server list to clients"); ?><br />
 										</span>
 									</td>
 								</tr>
@@ -530,7 +531,7 @@ function netbios_change() {
 										<span class="vexpl">
 											<?=gettext("Server"); ?> #1:&nbsp;
 										</span>
-										<input name="ntp_server1" type="text" class="formfld unknown" id="ntp_server1" size="20" value="<?=$pconfig['ntp_server1'];?>">
+										<input name="ntp_server1" type="text" class="formfld unknown" id="ntp_server1" size="20" value="<?=$pconfig['ntp_server1'];?>"/>
 									</td>
 								</tr>
 								<tr>
@@ -538,7 +539,7 @@ function netbios_change() {
 										<span class="vexpl">
 											<?=gettext("Server"); ?> #2:&nbsp;
 										</span>
-										<input name="ntp_server2" type="text" class="formfld unknown" id="ntp_server2" size="20" value="<?=$pconfig['ntp_server2'];?>">
+										<input name="ntp_server2" type="text" class="formfld unknown" id="ntp_server2" size="20" value="<?=$pconfig['ntp_server2'];?>"/>
 									</td>
 								</tr>
 							</table>
@@ -551,11 +552,11 @@ function netbios_change() {
 								<tr>
 									<td>
 										<?php set_checked($pconfig['netbios_enable'],$chk); ?>
-										<input name="netbios_enable" type="checkbox" id="netbios_enable" value="yes" <?=$chk;?> onClick="netbios_change()">
+										<input name="netbios_enable" type="checkbox" id="netbios_enable" value="yes" <?=$chk;?> onclick="netbios_change()"/>
 									</td>
 									<td>
 										<span class="vexpl">
-											<?=gettext("Enable NetBIOS over TCP/IP"); ?><br>
+											<?=gettext("Enable NetBIOS over TCP/IP"); ?><br />
 										</span>
 									</td>
 								</tr>
@@ -574,7 +575,7 @@ function netbios_change() {
 											foreach ($netbios_nodetypes as $type => $name):
 												$selected = "";
 												if ($pconfig['netbios_ntype'] == $type)
-													$selected = "selected";
+													$selected = "selected=\"selected\"";
 										?>
 											<option value="<?=$type;?>" <?=$selected;?>><?=$name;?></option>
 										<?php endforeach; ?>
@@ -592,7 +593,7 @@ function netbios_change() {
 										<span class="vexpl">
 											Scope ID:&nbsp;
 										</span>
-										<input name="netbios_scope" type="text" class="formfld unknown" id="netbios_scope" size="30" value="<?=htmlspecialchars($pconfig['netbios_scope']);?>">
+										<input name="netbios_scope" type="text" class="formfld unknown" id="netbios_scope" size="30" value="<?=htmlspecialchars($pconfig['netbios_scope']);?>"/>
 										<br/>
 										<?=gettext("A NetBIOS Scope	ID provides an extended naming " .
 										"service for	NetBIOS over TCP/IP. The NetBIOS " .
@@ -611,11 +612,11 @@ function netbios_change() {
 								<tr>
 									<td>
 										<?php set_checked($pconfig['wins_server_enable'],$chk); ?>
-										<input name="wins_server_enable" type="checkbox" id="wins_server_enable" value="yes" <?=$chk;?> onClick="wins_server_change()">
+										<input name="wins_server_enable" type="checkbox" id="wins_server_enable" value="yes" <?=$chk;?> onclick="wins_server_change()"/>
 									</td>
 									<td>
 										<span class="vexpl">
-											<?=gettext("Provide a WINS server list to clients"); ?><br>
+											<?=gettext("Provide a WINS server list to clients"); ?><br />
 										</span>
 									</td>
 								</tr>
@@ -626,7 +627,7 @@ function netbios_change() {
 										<span class="vexpl">
 											<?=gettext("Server"); ?> #1:&nbsp;
 										</span>
-										<input name="wins_server1" type="text" class="formfld unknown" id="wins_server1" size="20" value="<?=$pconfig['wins_server1'];?>">
+										<input name="wins_server1" type="text" class="formfld unknown" id="wins_server1" size="20" value="<?=$pconfig['wins_server1'];?>"/>
 									</td>
 								</tr>
 								<tr>
@@ -634,7 +635,7 @@ function netbios_change() {
 										<span class="vexpl">
 											<?=gettext("Server"); ?> #2:&nbsp;
 										</span>
-										<input name="wins_server2" type="text" class="formfld unknown" id="wins_server2" size="20" value="<?=$pconfig['wins_server2'];?>">
+										<input name="wins_server2" type="text" class="formfld unknown" id="wins_server2" size="20" value="<?=$pconfig['wins_server2'];?>"/>
 									</td>
 								</tr>
 							</table>
@@ -657,10 +658,10 @@ function netbios_change() {
 					<tr>
 						<td width="22%" valign="top">&nbsp;</td>
 						<td width="78%"> 
-							<input name="save" type="submit" class="formbtn" value="<?=gettext("Save"); ?>"> 
-							<input name="act" type="hidden" value="<?=$act;?>">
+							<input name="save" type="submit" class="formbtn" value="<?=gettext("Save"); ?>"/> 
+							<input name="act" type="hidden" value="<?=$act;?>"/>
 							<?php if (isset($id) && $a_csc[$id]): ?>
-							<input name="id" type="hidden" value="<?=$id;?>">
+							<input name="id" type="hidden" value="<?=htmlspecialchars($id);?>"/>
 							<?php endif; ?>
 						</td>
 					</tr>
@@ -683,7 +684,7 @@ function netbios_change() {
 						if (isset($csc['disable']))
 							$disabled = "YES";
 				?>
-				<tr ondblclick="document.location='vpn_openvpn_csc.php?act=edit&id=<?=$i;?>'">
+				<tr ondblclick="document.location='vpn_openvpn_csc.php?act=edit&amp;id=<?=$i;?>'">
 					<td class="listlr">
 						<?=$disabled;?>
 					</td>
@@ -693,24 +694,26 @@ function netbios_change() {
 					<td class="listbg">
 						<?=htmlspecialchars($csc['description']);?>
 					</td>
-					<td valign="middle" nowrap class="list">
-						<a href="vpn_openvpn_csc.php?act=edit&id=<?=$i;?>">
-							<img src="./themes/<?=$g['theme'];?>/images/icons/icon_e.gif" title="<?=gettext("edit csc"); ?>" width="17" height="17" border="0">
+					<td valign="middle" nowrap="nowrap" class="list">
+						<a href="vpn_openvpn_csc.php?act=edit&amp;id=<?=$i;?>">
+							<img src="./themes/<?=$g['theme'];?>/images/icons/icon_e.gif" title="<?=gettext("edit csc"); ?>" alt="" width="17" height="17" border="0"/>
 						</a>
 						&nbsp;
-						<a href="vpn_openvpn_csc.php?act=del&id=<?=$i;?>" onclick="return confirm('<?=gettext("Do you really want to delete this csc?"); ?>')">
-							<img src="/themes/<?=$g['theme'];?>/images/icons/icon_x.gif" title="<?=gettext("delete csc"); ?>" width="17" height="17" border="0">
+						<a href="vpn_openvpn_csc.php?act=del&amp;id=<?=$i;?>" onclick="return confirm('<?=gettext("Do you really want to delete this csc?"); ?>')">
+							<img src="/themes/<?=$g['theme'];?>/images/icons/icon_x.gif" title="<?=gettext("delete csc"); ?>" alt="" width="17" height="17" border="0"/>
 						</a>
 					</td>
 				</tr>
 				<?php
 					$i++;
 					endforeach;
+					if ($i == 0)
+						echo "<tr><td></td></tr>";
 				?>
 				<tr>
 					<td class="list" colspan="3"></td>
 					<td class="list">
-						<a href="vpn_openvpn_csc.php?act=new"><img src="./themes/<?=$g['theme'];?>/images/icons/icon_plus.gif" title="<?=gettext("add csc"); ?>" width="17" height="17" border="0">
+						<a href="vpn_openvpn_csc.php?act=new"><img src="./themes/<?=$g['theme'];?>/images/icons/icon_plus.gif" title="<?=gettext("add csc"); ?>" alt="" width="17" height="17" border="0"/>
 						</a>
 					</td>
 				</tr>
@@ -728,7 +731,7 @@ function netbios_change() {
 		</td>
 	</tr>
 </table>
-<script language="JavaScript">
+<script type="text/JavaScript">
 <!--
 dns_domain_change();
 dns_server_change();
@@ -737,7 +740,6 @@ ntp_server_change();
 netbios_change();
 //-->
 </script>
-</body>
 <?php include("fend.inc"); ?>
 
 <?php
@@ -746,10 +748,11 @@ netbios_change();
 
 function set_checked($var,& $chk) {
     if($var)
-        $chk = 'checked';
+        $chk = 'checked="checked"';
     else
         $chk = '';
 }
 
 ?>
-
+</body>
+</html>

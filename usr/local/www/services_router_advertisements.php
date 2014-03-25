@@ -7,7 +7,7 @@
 	Copyright (C) 2003-2004 Manuel Kasper <mk@neon1.net>.
 	All rights reserved.
 
-	part of pfSense (http://www.pfsense.org)
+	part of pfSense (https://www.pfsense.org)
 	Copyright (C) 2010 Seth Mos <seth.mos@dds.nl>.
 	All rights reserved.
 

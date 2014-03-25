@@ -388,7 +388,7 @@ function return_gateways_array($disabled = false, $localhost = false) {
 				continue;
 
 			/* if the gateway is dynamic and we can find the IPv4, Great! */
-			if (empty($gateway['gateway']) || $gateway['gateway'] == "dynamic" || $gateway['gateway'] == "dynamic6") {
+			if (empty($gateway['gateway']) || $gateway['gateway'] == "dynamic") {
 				if ($gateway['ipprotocol'] == "inet") {
 					/* we know which interfaces is dynamic, this should be made a function */
 					$gateway['gateway'] = get_interface_gateway($gateway['interface']);
@@ -398,13 +398,13 @@ function return_gateways_array($disabled = false, $localhost = false) {
 					$gateway['dynamic'] = true;
 				}
 
-				/* if the gateway is dynamic6 and we can find the IPv6, Great! */
+				/* if the gateway is dynamic and we can find the IPv6, Great! */
 				else if ($gateway['ipprotocol'] == "inet6") {
 					/* we know which interfaces is dynamic, this should be made a function, and for v6 too */
 					$gateway['gateway'] = get_interface_gateway_v6($gateway['interface']);
-					/* no IPv6 address found, set to dynamic6 */
+					/* no IPv6 address found, set to dynamic */
 					if (!is_ipaddrv6($gateway['gateway']))
-						$gateway['gateway'] = "dynamic6";
+						$gateway['gateway'] = "dynamic";
 					$gateway['dynamic'] = true;
 				}
 			} else {
@@ -553,8 +553,11 @@ function return_gateways_array($disabled = false, $localhost = false) {
 				$ctype = strtoupper($ifcfg['ipaddrv6']);
 				break;
 			default:
+				$tunnelif = substr($ifcfg['if'], 0, 3);
 				if (substr($ifcfg['if'], 0, 4) ==  "ovpn")
 					$ctype = "VPNv6";
+				else if ($tunnelif == "gif" || $tunnelif == "gre")
+					$ctype = "TUNNELv6";
 				break;
 		}
 		$ctype = "_". strtoupper($ctype);
@@ -582,7 +585,7 @@ function return_gateways_array($disabled = false, $localhost = false) {
 
 		/* Loopback dummy for dynamic interfaces without a IP */
 		if (!is_ipaddrv6($gateway['gateway']) && $gateway['dynamic'] == true)
-			$gateway['gateway'] = "dynamic6";
+			$gateway['gateway'] = "dynamic";
 
 		/* automatically skip known static and dynamic gateways we have a array entry for */
 		foreach($gateways_arr as $gateway_item) {
@@ -667,7 +670,7 @@ function fixup_default_gateway($ipprotocol, $gateways_status, $gateways_arr) {
 			$dfltgwdown = true;
 	}
 	if ($dfltgwdown == true && !empty($upgw)) {
-		if (preg_match("/dynamic/i", $gateways_arr[$upgw]['gateway']))
+		if ($gateways_arr[$upgw]['gateway'] == "dynamic")
 			$gateways_arr[$upgw]['gateway'] = get_interface_gateway($gateways_arr[$upgw]['friendlyiface']);
 		if (is_ipaddr($gateways_arr[$upgw]['gateway'])) {
 			log_error("Default gateway down setting {$upgw} as default!");
@@ -784,15 +787,17 @@ function return_gateway_groups_array() {
 						else if (!empty($int))
 							$gatewayip = get_interface_gateway($gateway['friendlyiface']);
 
-						if (!empty($int) && is_ipaddr($gatewayip)) {
-							$groupmember = array();
-							$groupmember['int']  = $int;
-							$groupmember['gwip']  = $gatewayip;
-							$groupmember['weight']  = isset($gateway['weight']) ? $gateway['weight'] : 1;
-							if (is_array($gwvip_arr[$group['name']])&& !empty($gwvip_arr[$group['name']][$member]))
-								$groupmember['vip'] = $gwvip_arr[$group['name']][$member];
+						if (!empty($int)) {
 							$gateway_groups_array[$group['name']]['ipprotocol'] = $gateway['ipprotocol'];
-							$gateway_groups_array[$group['name']][] = $groupmember;
+							if (is_ipaddr($gatewayip)) {
+								$groupmember = array();
+								$groupmember['int']  = $int;
+								$groupmember['gwip']  = $gatewayip;
+								$groupmember['weight']  = isset($gateway['weight']) ? $gateway['weight'] : 1;
+								if (is_array($gwvip_arr[$group['name']])&& !empty($gwvip_arr[$group['name']][$member]))
+									$groupmember['vip'] = $gwvip_arr[$group['name']][$member];
+								$gateway_groups_array[$group['name']][] = $groupmember;
+							}
 						}
 					}
 				}
@@ -879,7 +884,7 @@ function get_interface_gateway($interface, &$dynamic = false) {
 	if (!is_ipaddrv4($gw) && !is_ipaddrv4($gwcfg['ipaddr'])) {
 		$realif = get_real_interface($interface);
 		if (file_exists("{$g['tmp_path']}/{$realif}_router")) {
-				$gw = trim(file_get_contents("{$g['tmp_path']}/{$realif}_router"), " \n");
+			$gw = trim(file_get_contents("{$g['tmp_path']}/{$realif}_router"), " \n");
 			$dynamic = true;
 		}
 		if (file_exists("{$g['tmp_path']}/{$realif}_defaultgw"))

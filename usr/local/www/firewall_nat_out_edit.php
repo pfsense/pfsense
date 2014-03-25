@@ -58,19 +58,19 @@ if (!is_array($config['aliases']['alias']))
 	$config['aliases']['alias'] = array();
 $a_aliases = &$config['aliases']['alias'];
 
-$id = $_GET['id'];
-if (isset($_POST['id'])) {
+if (is_numericint($_GET['id']))
+	$id = $_GET['id'];
+if (isset($_POST['id']) && is_numericint($_POST['id']))
 	$id = $_POST['id'];
-}
 
-$after = $_GET['after'];
-
-if (isset($_POST['after']))
+if (is_numericint($_GET['after']))
+	$after = $_GET['after'];
+if (isset($_POST['after']) && is_numericint($_GET['after']))
 	$after = $_POST['after'];
 
-if (isset($_GET['dup']))  {
-	$id  =  $_GET['dup'];
-	$after  =  $_GET['dup'];
+if (isset($_GET['dup']) && is_numericint($_GET['dup'])) {
+        $id = $_GET['dup'];
+        $after = $_GET['dup'];
 }
 
 if (isset($id) && $a_out[$id]) {
@@ -109,9 +109,8 @@ if (isset($id) && $a_out[$id]) {
 	$pconfig['interface'] = "wan";
 }
 
-if (isset($_GET['dup'])) {
-        unset($id);
-}
+if (isset($_GET['dup']) && is_numericint($_GET['dup']))
+	unset($id);
 
 if ($_POST) {
 	if ($_POST['destination_type'] == "any") {
@@ -473,7 +472,7 @@ function poolopts_change() {
 					$interfaces["openvpn"] = "OpenVPN";
 
 				foreach ($interfaces as $iface => $ifacename): ?>
-				<option value="<?=$iface;?>" <?php if ($iface == $pconfig['interface']) echo "selected=\"selected\""; ?>>
+				<option value="<?=$iface;?>" <?php if ($iface == $pconfig['interface']) echo " selected=\"selected\""; ?>>
 				<?=htmlspecialchars($ifacename);?>
 				</option>
 				<?php endforeach; ?>
@@ -487,7 +486,7 @@ function poolopts_change() {
 				<select name="protocol" class="formselect" onchange="proto_change();">
 				<?php $protocols = explode(" ", "any TCP UDP TCP/UDP ICMP ESP AH GRE IPV6 IGMP carp pfsync");
                                 foreach ($protocols as $proto): ?>
-                                        <option value="<?=strtolower($proto);?>" <?php if (strtolower($proto) == $pconfig['protocol']) echo "selected=\"selected\""; ?>><?=htmlspecialchars($proto);?></option>
+                                        <option value="<?=strtolower($proto);?>" <?php if (strtolower($proto) == $pconfig['protocol']) echo " selected=\"selected\""; ?>><?=htmlspecialchars($proto);?></option>
 				<?php endforeach; ?>
 				 </select> <br/> <span class="vexpl"><?=gettext("Choose which protocol this rule should match.");?><br />
 				 <?php printf(gettext("Hint: in most cases, you should specify %s any %s here."),"<em>","</em>&nbsp;");?></span>
@@ -501,14 +500,14 @@ function poolopts_change() {
 		        <td><?=gettext("Type:");?>&nbsp;&nbsp;</td>
 			<td>
 			    <select name="source_type" class="formselect" onchange="sourcesel_change()">
-                              <option value="any" <?php if ($pconfig['source'] == "any") echo "selected=\"selected\""; ?>><?=gettext("any");?></option>
-                              <option value="network" <?php if ($pconfig['source'] != "any") echo "selected=\"selected\""; ?>><?=gettext("Network");?></option>
+                              <option value="any" <?php if ($pconfig['source'] == "any") echo " selected=\"selected\""; ?>><?=gettext("any");?></option>
+                              <option value="network" <?php if ($pconfig['source'] != "any") echo " selected=\"selected\""; ?>><?=gettext("Network");?></option>
                             </select>
 			</td>
                       </tr>
                       <tr>
                         <td><?=gettext("Address:");?>&nbsp;&nbsp;</td>
-                        <td><input name="source" type="text" autocomplete="off" class="formfldalias" id="source" size="20" value="<?=htmlspecialchars($pconfig['source']);?>" />/<select name="source_subnet" class="formfld" id="source_subnet">
+                        <td><input name="source" type="text" style="autocomplete:off" class="formfldalias" id="source" size="20" value="<?=htmlspecialchars($pconfig['source']);?>" />/<select name="source_subnet" class="formfld" id="source_subnet">
 <?php for ($i = 32; $i >= 0; $i--): ?>
                           <option value="<?=$i;?>"<?php if ($i == $pconfig['source_subnet']) echo " selected=\"selected\""; ?>><?=$i;?></option>
 <?php endfor; ?>
@@ -518,9 +517,9 @@ function poolopts_change() {
                         <td>&nbsp;</td>
                         <td><span class="vexpl"><?=gettext("Enter the source network for the outbound NAT mapping.");?></span></td>
                       </tr>
-                      <tr name="sport_tr" id="sport_tr">
+                      <tr id="sport_tr">
                         <td><?=gettext("Source port:");?>&nbsp;&nbsp;</td>
-                        <td><input name="sourceport" type="text" autocomplete="off" class="formfldalias" id="sourceport" size="5" value="<?=htmlspecialchars($pconfig['sourceport']);?>" /> <?=gettext("(leave blank for any)");?></td>
+                        <td><input name="sourceport" type="text" style="autocomplete:off" class="formfldalias" id="sourceport" size="5" value="<?=htmlspecialchars($pconfig['sourceport']);?>" /> <?=gettext("(leave blank for any)");?></td>
                       </tr>
                     </table></td>
                 </tr>
@@ -543,7 +542,7 @@ function poolopts_change() {
                       </tr>
                       <tr>
                         <td><?=gettext("Address:");?>&nbsp;&nbsp;</td>
-                        <td><input name="destination" type="text" autocomplete="off" class="formfldalias" id="destination" size="20" value="<?=htmlspecialchars($pconfig['destination']);?>" />
+                        <td><input name="destination" type="text" style="autocomplete:off" class="formfldalias" id="destination" size="20" value="<?=htmlspecialchars($pconfig['destination']);?>" />
                           /
                           <select name="destination_subnet" class="formselect" id="destination_subnet">
 <?php for ($i = 32; $i >= 0; $i--): ?>
@@ -556,14 +555,14 @@ function poolopts_change() {
                         <td><span class="vexpl"><?=gettext("Enter the destination network for ".
                           "the outbound NAT mapping.");?></span></td>
                       </tr>
-                      <tr name="dport_tr" id="dport_tr">
+                      <tr id="dport_tr">
                         <td><?=gettext("Destination port:");?>&nbsp;&nbsp;</td>
-                        <td><input name="dstport" type="text" autocomplete="off" class="formfldalias" id="dstport" size="5" value="<?=htmlspecialchars($pconfig['dstport']);?>" /> <?=gettext("(leave blank for any)");?></td>
+                        <td><input name="dstport" type="text" style="autocomplete:off" class="formfldalias" id="dstport" size="5" value="<?=htmlspecialchars($pconfig['dstport']);?>" /> <?=gettext("(leave blank for any)");?></td>
                       </tr>
                     </table>
 		  </td>
                 </tr>
-                <tr name="transtable" id="transtable">
+                <tr id="transtable">
                   <td width="22%" valign="top" class="vncell"><?=gettext("Translation");?></td>
                   <td width="78%" class="vtable">
 			<table border="0" cellspacing="1" cellpadding="1" summary="translation">
@@ -579,20 +578,20 @@ function poolopts_change() {
 				$start = ip2long32(gen_subnet($sn['subnet'], $sn['subnet_bits']));
 				$end = ip2long32(gen_subnet_max($sn['subnet'], $sn['subnet_bits']));
 				$len = $end - $start; ?>
-				<option value="<?=$sn['subnet'].'/'.$sn['subnet_bits'];?>" <?php if ($sn['subnet'].'/'.$sn['subnet_bits'] == $pconfig['target']) echo "selected=\"selected\""; ?>><?=htmlspecialchars("Subnet: {$sn['subnet']}/{$sn['subnet_bits']} ({$sn['descr']})");?></option>
+				<option value="<?=$sn['subnet'].'/'.$sn['subnet_bits'];?>" <?php if ($sn['subnet'].'/'.$sn['subnet_bits'] == $pconfig['target']) echo " selected=\"selected\""; ?>><?=htmlspecialchars("Subnet: {$sn['subnet']}/{$sn['subnet_bits']} ({$sn['descr']})");?></option>
 			<?php	for ($i = 0; $i <= $len; $i++):
 					$snip = long2ip32($start+$i);
 ?>
 				<option value="<?=$snip;?>" <?php if ($snip == $pconfig['target']) echo "selected"; ?>><?=htmlspecialchars("{$snip} ({$sn['descr']})");?></option>
 				<?php endfor; ?>
 			<?php else: ?>
-				<option value="<?=$sn['subnet'];?>" <?php if ($sn['subnet'] == $pconfig['target']) echo "selected=\"selected\""; ?>><?=htmlspecialchars("{$sn['subnet']} ({$sn['descr']})");?></option>
+				<option value="<?=$sn['subnet'];?>" <?php if ($sn['subnet'] == $pconfig['target']) echo " selected=\"selected\""; ?>><?=htmlspecialchars("{$sn['subnet']} ({$sn['descr']})");?></option>
 <?php 		endif; endforeach;
 	endif;
 	foreach ($a_aliases as $alias):
 		if ($alias['type'] != "host")
 			continue; ?>
-				<option value="<?=$alias['name'];?>" <?php if ($alias['name'] == $pconfig['target']) echo "selected=\"selected\""; ?>><?=htmlspecialchars("Host Alias: {$alias['name']} ({$alias['descr']})");?></option>
+				<option value="<?=$alias['name'];?>" <?php if ($alias['name'] == $pconfig['target']) echo " selected=\"selected\""; ?>><?=htmlspecialchars("Host Alias: {$alias['name']} ({$alias['descr']})");?></option>
 <?php	endforeach; ?>
 				<option value="other-subnet"<?php if($pconfig['target'] == "other-subnet") echo " selected=\"selected\""; ?>><?=gettext("Other Subnet (Enter Below)");?></option>
 			  </select>
@@ -620,13 +619,13 @@ function poolopts_change() {
 				<td valign="top">Pool Options</td>
 				<td>
 				<select name="poolopts" id="poolopts">
-					<option value=""                           <?php if ($pconfig['poolopts'] == ""                          ) echo "selected=\"selected\""; ?>><?=htmlspecialchars("Default"                        );?></option>
-					<option value="round-robin"                <?php if ($pconfig['poolopts'] == "round-robin"               ) echo "selected=\"selected\""; ?>><?=htmlspecialchars("Round Robin"                    );?></option>
-					<option value="round-robin sticky-address" <?php if ($pconfig['poolopts'] == "round-robin sticky-address") echo "selected=\"selected\""; ?>><?=htmlspecialchars("Round Robin with Sticky Address");?></option>
-					<option value="random"                     <?php if ($pconfig['poolopts'] == "random"                    ) echo "selected=\"selected\""; ?>><?=htmlspecialchars("Random"                         );?></option>
-					<option value="random sticky-address"      <?php if ($pconfig['poolopts'] == "random sticky-address"     ) echo "selected=\"selected\""; ?>><?=htmlspecialchars("Random with Sticky Address"     );?></option>
-					<option value="source-hash"                <?php if ($pconfig['poolopts'] == "source-hash"               ) echo "selected=\"selected\""; ?>><?=htmlspecialchars("Source Hash"                    );?></option>
-					<option value="bitmask"                    <?php if ($pconfig['poolopts'] == "bitmask"                   ) echo "selected=\"selected\""; ?>><?=htmlspecialchars("Bitmask"                        );?></option>
+					<option value=""                           <?php if ($pconfig['poolopts'] == ""                          ) echo " selected=\"selected\""; ?>><?=htmlspecialchars("Default"                        );?></option>
+					<option value="round-robin"                <?php if ($pconfig['poolopts'] == "round-robin"               ) echo " selected=\"selected\""; ?>><?=htmlspecialchars("Round Robin"                    );?></option>
+					<option value="round-robin sticky-address" <?php if ($pconfig['poolopts'] == "round-robin sticky-address") echo " selected=\"selected\""; ?>><?=htmlspecialchars("Round Robin with Sticky Address");?></option>
+					<option value="random"                     <?php if ($pconfig['poolopts'] == "random"                    ) echo " selected=\"selected\""; ?>><?=htmlspecialchars("Random"                         );?></option>
+					<option value="random sticky-address"      <?php if ($pconfig['poolopts'] == "random sticky-address"     ) echo " selected=\"selected\""; ?>><?=htmlspecialchars("Random with Sticky Address"     );?></option>
+					<option value="source-hash"                <?php if ($pconfig['poolopts'] == "source-hash"               ) echo " selected=\"selected\""; ?>><?=htmlspecialchars("Source Hash"                    );?></option>
+					<option value="bitmask"                    <?php if ($pconfig['poolopts'] == "bitmask"                   ) echo " selected=\"selected\""; ?>><?=htmlspecialchars("Bitmask"                        );?></option>
 				</select><br/>
 				<span class="vexpl">
 					<?=gettext("Only Round Robin types work with Host Aliases. Any type can be used with a Subnet.");?><br/>
@@ -638,14 +637,14 @@ function poolopts_change() {
 				</span><br/>
 				</td>
 			</tr>
-			<tr name="tport_tr" id="tport_tr">
+			<tr id="tport_tr">
                           <td><?=gettext("Port:");?>&nbsp;&nbsp;</td>
                           <td><input name="natport" type="text" class="formfld unknown" id="natport" size="5" value="<?=htmlspecialchars($pconfig['natport']);?>" /></td>
 			</tr>
-			<tr name="tporttext_tr" id="tporttext_tr"><td>&nbsp;</td><td>
+			<tr id="tporttext_tr"><td>&nbsp;</td><td>
                         <span class="vexpl"><?=gettext("Enter the source port for the outbound NAT mapping.");?></span>
 			</td></tr>
-                        <tr name="tportstatic_tr" id="tportstatic_tr">
+                        <tr id="tportstatic_tr">
                           <td><?=gettext("Static-port:");?>&nbsp;&nbsp;</td>
                           <td><input onchange="staticportchange();" name="staticnatport" type="checkbox" class="formfld" id="staticnatport" size="5"<?php if($pconfig['staticnatport']) echo " checked=\"checked\"";?> /></td>
 			</tr>
@@ -710,6 +709,15 @@ $has_updated_time = (isset($a_out[$id]['updated']) && is_array($a_out[$id]['upda
                 </tr>
               </table>
 </form>
+<script type="text/javascript">
+//<![CDATA[
+var autocomplete_off = ['source', 'sourceport', 'destination', 'dstport''];
+for (var i = 0; i < autocomplete_off.length; i++) {
+	var node = document.getElementById(autocomplete_off[i]);
+	node.setAttribute("autocomplete",node.style.autocomplete);
+}
+//]]>
+</script>
 <script type="text/javascript">
 //<![CDATA[
 	sourcesel_change();

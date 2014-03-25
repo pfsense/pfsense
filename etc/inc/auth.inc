@@ -55,7 +55,7 @@ $security_passed = true;
 /* If this function doesn't exist, we're being called from Captive Portal or 
    another internal subsystem which does not include authgui.inc */
 if (function_exists("display_error_form") && !isset($config['system']['webgui']['nodnsrebindcheck'])) {
-	/* DNS ReBinding attack prevention.  http://redmine.pfsense.org/issues/708 */
+	/* DNS ReBinding attack prevention.  https://redmine.pfsense.org/issues/708 */
 	$found_host = false;
 
 	/* Either a IPv6 address with or without a alternate port */

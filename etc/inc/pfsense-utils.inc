@@ -661,17 +661,19 @@ function rmdir_recursive($path,$follow_links=false) {
 }
 
 /*
- * call_pfsense_method(): Call a method exposed by the pfsense.com XMLRPC server.
+ * call_pfsense_method(): Call a method exposed by the pfsense.org XMLRPC server.
  */
 function call_pfsense_method($method, $params, $timeout = 0) {
 	global $g, $config;
 
-	$ip = gethostbyname($g['product_website']);
-	if($ip == $g['product_website'])
-		return false;
-
 	$xmlrpc_base_url = isset($config['system']['altpkgrepo']['enable']) ? $config['system']['altpkgrepo']['xmlrpcbaseurl'] : $g['xmlrpcbaseurl'];
 	$xmlrpc_path = $g['xmlrpcpath'];
+	
+	$xmlrpcfqdn = preg_replace("(https?://)", "", $xmlrpc_base_url);
+	$ip = gethostbyname($xmlrpcfqdn);
+	if($ip == $xmlrpcfqdn)
+		return false;
+
 	$msg = new XML_RPC_Message($method, array(XML_RPC_Encode($params)));
 	$port = 0;
 	$proxyurl = "";
@@ -711,9 +713,11 @@ function call_pfsense_method($method, $params, $timeout = 0) {
  */
 function check_firmware_version($tocheck = "all", $return_php = true) {
 	global $g, $config;
-
-	$ip = gethostbyname($g['product_website']);
-	if($ip == $g['product_website'])
+	
+	$xmlrpc_base_url = isset($config['system']['altpkgrepo']['enable']) ? $config['system']['altpkgrepo']['xmlrpcbaseurl'] : $g['xmlrpcbaseurl'];
+	$xmlrpcfqdn = preg_replace("(https?://)", "", $xmlrpc_base_url);
+	$ip = gethostbyname($xmlrpcfqdn);
+	if($ip == $xmlrpcfqdn)
 		return false;
 
 	$rawparams = array("firmware" => array("version" => trim(file_get_contents('/etc/version'))),

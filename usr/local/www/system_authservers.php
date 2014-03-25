@@ -44,8 +44,9 @@ require_once("auth.inc");
 $pgtitle = array(gettext("System"), gettext("Authentication Servers"));
 $shortcut_section = "authentication";
 
-$id = $_GET['id'];
-if (isset($_POST['id']))
+if (is_numericint($_GET['id']))
+	$id = $_GET['id'];
+if (isset($_POST['id']) && is_numericint($_POST['id']))
 	$id = $_POST['id'];
 
 if (!is_array($config['system']['authserver']))
@@ -788,7 +789,7 @@ function select_clicked() {
 							<td width="78%">
 								<input id="submit" name="save" type="submit" class="formbtn" value="<?=gettext("Save");?>" />
 								<?php if (isset($id) && $a_server[$id]): ?>
-								<input name="id" type="hidden" value="<?=$id;?>" />
+								<input name="id" type="hidden" value="<?=htmlspecialchars($id);?>" />
 								<?php endif;?>
 							</td>
 						</tr>

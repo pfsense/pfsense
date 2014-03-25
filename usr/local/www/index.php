@@ -741,7 +741,7 @@ pfSense_handle_custom_code("/usr/local/pkg/dashboard/pre_dashboard");
 		$jsincludefiles[] = $filename;
 	}
 	foreach($jsincludefiles as $jsincludename) {
-		if(!stristr($jsincludename, ".js"))
+		if(!preg_match('/\.js$/', $jsincludename))
 			continue;
 		echo "<script src='{$directory}{$jsincludename}' type='text/javascript'></script>\n";
 	}

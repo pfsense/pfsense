@@ -1,7 +1,7 @@
 <?php
 /*
 	services.inc
-	part of the pfSense project (http://www.pfsense.com)
+	part of the pfSense project (https://www.pfsense.org)
 
 	originally part of m0n0wall (http://m0n0.ch/wall)
 	Copyright (C) 2003-2004 Manuel Kasper <mk@neon1.net>.
@@ -388,9 +388,11 @@ function services_dhcpdv4_configure() {
 
 	/* Only consider DNS servers with IPv4 addresses for the IPv4 DHCP server. */
 	$dns_arrv4 = array();
-	foreach($syscfg['dnsserver'] as $dnsserver) {
-		if (is_ipaddrv4($dnsserver)) {
-			$dns_arrv4[] = $dnsserver;
+	if (is_array($syscfg['dnsserver'])) {
+		foreach($syscfg['dnsserver'] as $dnsserver) {
+			if (is_ipaddrv4($dnsserver)) {
+				$dns_arrv4[] = $dnsserver;
+			}
 		}
 	}
 

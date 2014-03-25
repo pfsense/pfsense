@@ -70,8 +70,9 @@ if (!is_array($config['nat']['onetoone'])) {
 }
 $a_1to1 = &$config['nat']['onetoone'];
 
-$id = $_GET['id'];
-if (isset($_POST['id']))
+if (is_numericint($_GET['id']))
+	$id = $_GET['id'];
+if (isset($_POST['id']) && is_numericint($_POST['id']))
 	$id = $_POST['id'];
 
 if (isset($id) && $a_1to1[$id]) {
@@ -313,7 +314,7 @@ function typesel_change() {
 
 					foreach ($interfaces as $iface => $ifacename): 
 					?>
-					<option value="<?=$iface;?>" <?php if ($iface == $pconfig['interface']) echo "selected=\"selected\""; ?>>
+					<option value="<?=$iface;?>" <?php if ($iface == $pconfig['interface']) echo " selected=\"selected\""; ?>>
 					<?=htmlspecialchars($ifacename);?>
 					</option>
 					<?php endforeach; ?>
@@ -346,23 +347,23 @@ function typesel_change() {
                                                         <select name="srctype" class="formselect" onchange="typesel_change()">
 <?php
                                                                 $sel = is_specialnet($pconfig['src']); ?>
-                                                                <option value="any"     <?php if ($pconfig['src'] == "any") { echo "selected=\"selected\""; } ?>><?=gettext("any"); ?></option>
-                                                                <option value="single"  <?php if ((($pconfig['srcmask'] == 32) || !isset($pconfig['srcmask'])) && !$sel) { echo "selected=\"selected\""; $sel = 1; } ?>><?=gettext("Single host"); ?></option>
-                                                                <option value="network" <?php if (!$sel) echo "selected=\"selected\""; ?>><?=gettext("Network"); ?></option>
+                                                                <option value="any"     <?php if ($pconfig['src'] == "any") { echo " selected=\"selected\""; } ?>><?=gettext("any"); ?></option>
+                                                                <option value="single"  <?php if ((($pconfig['srcmask'] == 32) || !isset($pconfig['srcmask'])) && !$sel) { echo " selected=\"selected\""; $sel = 1; } ?>><?=gettext("Single host"); ?></option>
+                                                                <option value="network" <?php if (!$sel) echo " selected=\"selected\""; ?>><?=gettext("Network"); ?></option>
                                                                 <?php if(have_ruleint_access("pptp")): ?>
-                                                                <option value="pptp"    <?php if ($pconfig['src'] == "pptp") { echo "selected=\"selected\""; } ?>><?=gettext("PPTP clients"); ?></option>
+                                                                <option value="pptp"    <?php if ($pconfig['src'] == "pptp") { echo " selected=\"selected\""; } ?>><?=gettext("PPTP clients"); ?></option>
                                                                 <?php endif; ?>
                                                                 <?php if(have_ruleint_access("pppoe")): ?>
-                                                                <option value="pppoe"   <?php if ($pconfig['src'] == "pppoe") { echo "selected=\"selected\""; } ?>><?=gettext("PPPoE clients"); ?></option>
+                                                                <option value="pppoe"   <?php if ($pconfig['src'] == "pppoe") { echo " selected=\"selected\""; } ?>><?=gettext("PPPoE clients"); ?></option>
                                                                 <?php endif; ?>
                                                                  <?php if(have_ruleint_access("l2tp")): ?>
-                                                                <option value="l2tp"   <?php if ($pconfig['src'] == "l2tp") { echo "selected=\"selected\""; } ?>><?=gettext("L2TP clients"); ?></option>
+                                                                <option value="l2tp"   <?php if ($pconfig['src'] == "l2tp") { echo " selected=\"selected\""; } ?>><?=gettext("L2TP clients"); ?></option>
                                  <?php endif; ?>
 <?php
                                                                 foreach ($ifdisp as $ifent => $ifdesc): ?>
                                                                 <?php if(have_ruleint_access($ifent)): ?>
-                                                                        <option value="<?=$ifent;?>" <?php if ($pconfig['src'] == $ifent) { echo "selected=\"selected\""; } ?>><?=htmlspecialchars($ifdesc);?> <?=gettext("net"); ?></option>
-                                                                        <option value="<?=$ifent;?>ip"<?php if ($pconfig['src'] ==  $ifent . "ip") { echo "selected=\"selected\""; } ?>>
+                                                                        <option value="<?=$ifent;?>" <?php if ($pconfig['src'] == $ifent) { echo " selected=\"selected\""; } ?>><?=htmlspecialchars($ifdesc);?> <?=gettext("net"); ?></option>
+                                                                        <option value="<?=$ifent;?>ip"<?php if ($pconfig['src'] ==  $ifent . "ip") { echo " selected=\"selected\""; } ?>>
                                                                                 <?=$ifdesc?> <?=gettext("address");?>
                                                                         </option>
                                                                 <?php endif; endforeach; ?>
@@ -375,7 +376,7 @@ function typesel_change() {
                                                         <input name="src" type="text" class="formfld" id="src" size="20" value="<?php if (!is_specialnet($pconfig['src'])) echo htmlspecialchars($pconfig['src']);?>" /> /
                                                         <select name="srcmask" class="formselect" id="srcmask">
 <?php                                           for ($i = 31; $i > 0; $i--): ?>
-                                                        <option value="<?=$i;?>" <?php if ($i == $pconfig['srcmask']) echo "selected=\"selected\""; ?>><?=$i;?></option>
+                                                        <option value="<?=$i;?>" <?php if ($i == $pconfig['srcmask']) echo " selected=\"selected\""; ?>><?=$i;?></option>
 <?php                                           endfor; ?>
                                                         </select>
                                                 </td>
@@ -401,23 +402,23 @@ function typesel_change() {
                                                         <select name="dsttype" class="formselect" onchange="typesel_change()">
 <?php
                                                                 $sel = is_specialnet($pconfig['dst']); ?>
-                                                                <option value="any" <?php if (empty($pconfig['dst']) || $pconfig['dst'] == "any") { echo "selected=\"selected\""; } ?>><?=gettext("any"); ?></option>
-                                                                <option value="single" <?php if (($pconfig['dstmask'] == 32) && !$sel) { echo "selected=\"selected\""; $sel = 1; } ?>><?=gettext("Single host or alias"); ?></option>
-                                                                <option value="network" <?php if (!$sel && !empty($pconfig['dst'])) echo "selected=\"selected\""; ?>><?=gettext("Network"); ?></option>
+                                                                <option value="any" <?php if (empty($pconfig['dst']) || $pconfig['dst'] == "any") { echo " selected=\"selected\""; } ?>><?=gettext("any"); ?></option>
+                                                                <option value="single" <?php if (($pconfig['dstmask'] == 32) && !$sel) { echo " selected=\"selected\""; $sel = 1; } ?>><?=gettext("Single host or alias"); ?></option>
+                                                                <option value="network" <?php if (!$sel && !empty($pconfig['dst'])) echo " selected=\"selected\""; ?>><?=gettext("Network"); ?></option>
                                                                 <?php if(have_ruleint_access("pptp")): ?>
-                                                                <option value="pptp" <?php if ($pconfig['dst'] == "pptp") { echo "selected=\"selected\""; } ?>><?=gettext("PPTP clients"); ?></option>
+                                                                <option value="pptp" <?php if ($pconfig['dst'] == "pptp") { echo " selected=\"selected\""; } ?>><?=gettext("PPTP clients"); ?></option>
                                                                 <?php endif; ?>
                                                                 <?php if(have_ruleint_access("pppoe")): ?>
-                                                                <option value="pppoe" <?php if ($pconfig['dst'] == "pppoe") { echo "selected=\"selected\""; } ?>><?=gettext("PPPoE clients"); ?></option>
+                                                                <option value="pppoe" <?php if ($pconfig['dst'] == "pppoe") { echo " selected=\"selected\""; } ?>><?=gettext("PPPoE clients"); ?></option>
                                                                 <?php endif; ?>
                                                                 <?php if(have_ruleint_access("l2tp")): ?>
-                                                                <option value="l2tp" <?php if ($pconfig['dst'] == "l2tp") { echo "selected=\"selected\""; } ?>><?=gettext("L2TP clients"); ?></option>
+                                                                <option value="l2tp" <?php if ($pconfig['dst'] == "l2tp") { echo " selected=\"selected\""; } ?>><?=gettext("L2TP clients"); ?></option>
                                                                 <?php endif; ?>
 
 <?php                                                   foreach ($ifdisp as $if => $ifdesc): ?>
                                                                 <?php if(have_ruleint_access($if)): ?>
-                                                                        <option value="<?=$if;?>" <?php if ($pconfig['dst'] == $if) { echo "selected=\"selected\""; } ?>><?=htmlspecialchars($ifdesc);?> <?=gettext("net"); ?></option>
-                                                                        <option value="<?=$if;?>ip"<?php if ($pconfig['dst'] == $if . "ip") { echo "selected=\"selected\""; } ?>>
+                                                                        <option value="<?=$if;?>" <?php if ($pconfig['dst'] == $if) { echo " selected=\"selected\""; } ?>><?=htmlspecialchars($ifdesc);?> <?=gettext("net"); ?></option>
+                                                                        <option value="<?=$if;?>ip"<?php if ($pconfig['dst'] == $if . "ip") { echo " selected=\"selected\""; } ?>>
                                                                                 <?=$ifdesc;?> <?=gettext("address");?>
                                                                         </option>
 <?php							endif; endforeach; ?>
@@ -427,12 +428,12 @@ function typesel_change() {
                                         <tr>
                                                 <td><?=gettext("Address:"); ?>&nbsp;&nbsp;</td>
                                                 <td>
-                                                        <input name="dst" type="text" autocomplete="off" class="formfldalias" id="dst" size="20" value="<?php if (!is_specialnet($pconfig['dst'])) echo htmlspecialchars($pconfig['dst']);?>" />
+                                                        <input name="dst" type="text" style="autocomplete:off" class="formfldalias" id="dst" size="20" value="<?php if (!is_specialnet($pconfig['dst'])) echo htmlspecialchars($pconfig['dst']);?>" />
                                                         /
                                                         <select name="dstmask" class="formselect" id="dstmask">
 <?php
                                                         for ($i = 31; $i > 0; $i--): ?>
-                                                                <option value="<?=$i;?>" <?php if ($i == $pconfig['dstmask']) echo "selected=\"selected\""; ?>><?=$i;?></option>
+                                                                <option value="<?=$i;?>" <?php if ($i == $pconfig['dstmask']) echo " selected=\"selected\""; ?>><?=$i;?></option>
 <?php                                           endfor; ?>
                                                         </select>
                                                 </td>
@@ -454,9 +455,9 @@ function typesel_change() {
 			<td width="22%" valign="top" class="vncell"><?=gettext("NAT reflection"); ?></td>
 			<td width="78%" class="vtable">
 				<select name="natreflection" class="formselect">
-					<option value="default" <?php if ($pconfig['natreflection'] != "enable" && $pconfig['natreflection'] != "disable") echo "selected=\"selected\""; ?>><?=gettext("use system default"); ?></option>
-					<option value="enable" <?php if ($pconfig['natreflection'] == "enable") echo "selected=\"selected\""; ?>><?=gettext("enable"); ?></option>
-					<option value="disable" <?php if ($pconfig['natreflection'] == "disable") echo "selected=\"selected\""; ?>><?=gettext("disable"); ?></option>
+					<option value="default" <?php if ($pconfig['natreflection'] != "enable" && $pconfig['natreflection'] != "disable") echo " selected=\"selected\""; ?>><?=gettext("use system default"); ?></option>
+					<option value="enable" <?php if ($pconfig['natreflection'] == "enable") echo " selected=\"selected\""; ?>><?=gettext("enable"); ?></option>
+					<option value="disable" <?php if ($pconfig['natreflection'] == "disable") echo " selected=\"selected\""; ?>><?=gettext("disable"); ?></option>
 				</select>
 			</td>
 		</tr>
@@ -471,6 +472,15 @@ function typesel_change() {
                 </tr>
               </table>
 </form>
+<script type="text/javascript">
+//<![CDATA[
+var autocomplete_off = ['dst'];
+for (var i = 0; i < autocomplete_off.length; i++) {
+	var node = document.getElementById(autocomplete_off[i]);
+	node.setAttribute("autocomplete",node.style.autocomplete);
+}
+//]]>
+</script>
 <script type="text/javascript">
 //<![CDATA[
         typesel_change();

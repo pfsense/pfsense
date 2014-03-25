@@ -2,7 +2,7 @@
 /* $Id$ */
 /*
 	system_gateway_groups_edit.php
-	part of pfSense (http://pfsense.com)
+	part of pfSense (https://www.pfsense.org)
 	
 	Copyright (C) 2010 Seth Mos <seth.mos@dds.nl>.
 	All rights reserved.
@@ -55,13 +55,13 @@ $categories = array('down' => gettext("Member Down"),
                     'downlatency' => gettext("High Latency"),
                     'downlosslatency' => gettext("Packet Loss or High Latency"));
 
-$id = $_GET['id'];
-if (isset($_POST['id']))
+if (is_numericint($_GET['id']))
+	$id = $_GET['id'];
+if (isset($_POST['id']) && is_numericint($_POST['id']))
 	$id = $_POST['id'];
 
-if (isset($_GET['dup'])) {
+if (isset($_GET['dup']) && is_numericint($_GET['dup']))
 	$id = $_GET['dup'];
-}
 
 if (isset($id) && $a_gateway_groups[$id]) {
 	$pconfig['name'] = $a_gateway_groups[$id]['name'];
@@ -70,7 +70,7 @@ if (isset($id) && $a_gateway_groups[$id]) {
 	$pconfig['trigger'] = $a_gateway_groups[$id]['trigger'];
 }
 
-if (isset($_GET['dup']))
+if (isset($_GET['dup']) && is_numericint($_GET['dup']))
 	unset($id);
 
 if ($_POST) {

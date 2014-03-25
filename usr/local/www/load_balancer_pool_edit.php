@@ -2,7 +2,7 @@
 /* $Id$ */
 /*
         load_balancer_pool_edit.php
-        part of pfSense (http://www.pfsense.com/)
+        part of pfSense (https://www.pfsense.org/)
 
         Copyright (C) 2005-2008 Bill Marquette <bill.marquette@gmail.com>.
         All rights reserved.
@@ -48,10 +48,10 @@ if (!is_array($config['load_balancer']['lbpool'])) {
 }
 $a_pool = &$config['load_balancer']['lbpool'];
 
-if (isset($_POST['id']))
-	$id = $_POST['id'];
-else
+if (is_numericint($_GET['id']))
 	$id = $_GET['id'];
+if (isset($_POST['id']) && is_numericint($_POST['id']))
+	$id = $_POST['id'];
 
 if (isset($id) && $a_pool[$id]) {
 	$pconfig['name'] = $a_pool[$id]['name'];

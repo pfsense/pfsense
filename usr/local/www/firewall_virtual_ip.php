@@ -2,7 +2,7 @@
 /* $Id$ */
 /*
 	firewall_virtual_ip.php
-	part of pfSense (http://www.pfsense.com/)
+	part of pfSense (https://www.pfsense.org/)
 
 	Copyright (C) 2005 Bill Marquette <bill.marquette@gmail.com>.
 	All rights reserved.
@@ -192,7 +192,7 @@ if ($_GET['act'] == "del") {
 			exit;
 		}
 	}
-} else if ($_GET['changes'] == "mods")
+} else if ($_GET['changes'] == "mods" && is_numericint($_GET['id']))
 	$id = $_GET['id'];
 
 $pgtitle = array(gettext("Firewall"),gettext("Virtual IP Addresses"));
@@ -224,7 +224,7 @@ include("head.inc");
   ?>
   </td></tr>
   <tr>
-	<td><input type="hidden" id="id" name="id" value="<?php echo $id; ?>" /></td>
+	<td><input type="hidden" id="id" name="id" value="<?php echo htmlspecialchars($id); ?>" /></td>
   </tr>
   <tr>
     <td>

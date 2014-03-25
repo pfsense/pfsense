@@ -1090,7 +1090,7 @@
 		/*
 		 * Private Function (added 12 July 05) [beta]
 		 *   - Detect whether or not IP needs to be updated.
-		 *      | Written Specifically for pfSense (pfsense.com) may
+		 *      | Written Specifically for pfSense (https://www.pfsense.org) may
 		 *      | work with other systems. pfSense base is FreeBSD.
 		 */
 		function _detectChange() {

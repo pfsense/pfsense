@@ -56,8 +56,9 @@ if (!is_array($config['pptpd']['user'])) {
 }
 $a_secret = &$config['pptpd']['user'];
 
-$id = $_GET['id'];
-if (isset($_POST['id']))
+if (is_numericint($_GET['id']))
+	$id = $_GET['id'];
+if (isset($_POST['id']) && is_numericint($_POST['id']))
 	$id = $_POST['id'];
 
 if (isset($id) && $a_secret[$id]) {
@@ -146,29 +147,30 @@ include("head.inc");
                 <tr>
                   <td width="22%" valign="top" class="vncellreq"><?=gettext("Username");?></td>
                   <td width="78%" class="vtable">
-					<?=$mandfldhtml;?><input name="username" type="text" class="formfld user" id="username" size="20" value="<?=htmlspecialchars($pconfig['username']);?>">
+					<?=$mandfldhtml;?><input name="username" type="text" class="formfld user" id="username" size="20" value="<?=htmlspecialchars($pconfig['username']);?>"/>
                   </td>
+                </tr>
                 <tr>
                   <td width="22%" valign="top" class="vncellreq"><?=gettext("Password");?></td>
                   <td width="78%" class="vtable">
-                    <?=$mandfldhtml;?><input name="password" type="password" class="formfld pwd" id="password" size="20">
-                    <br><?=$mandfldhtml;?><input name="password2" type="password" class="formfld pwd" id="password2" size="20">
-                    &nbsp;(<?=gettext("confirmation");?>)<?php if (isset($id) && $a_secret[$id]): ?><br>
+                    <?=$mandfldhtml;?><input name="password" type="password" class="formfld pwd" id="password" size="20"/>
+                    <br /><?=$mandfldhtml;?><input name="password2" type="password" class="formfld pwd" id="password2" size="20"/>
+                    &nbsp;(<?=gettext("confirmation");?>)<?php if (isset($id) && $a_secret[$id]): ?><br />
                     <span class="vexpl"><?=gettext("If you want to change the users' password, ".
                     "enter it here twice.");?></span><?php endif; ?></td>
                 </tr>
                 <tr>
                   <td width="22%" valign="top" class="vncell"><?=gettext("IP address");?></td>
                   <td width="78%" class="vtable">
-                    <input name="ip" type="text" class="formfld unknown" id="ip" size="20" value="<?=htmlspecialchars($pconfig['ip']);?>">
-                    <br><span class="vexpl"><?=gettext("If you want the user to be assigned a specific IP address, enter it here.");?></span></td>
+                    <input name="ip" type="text" class="formfld unknown" id="ip" size="20" value="<?=htmlspecialchars($pconfig['ip']);?>"/>
+                    <br /><span class="vexpl"><?=gettext("If you want the user to be assigned a specific IP address, enter it here.");?></span></td>
                 </tr>
                 <tr>
                   <td class="vncell" width="22%" valign="top">&nbsp;</td>
                   <td class="vncell" width="78%">
-                    <input name="Submit" type="submit" class="formbtn" value="<?=gettext("Save");?>">
+                    <input name="Submit" type="submit" class="formbtn" value="<?=gettext("Save");?>"/>
                     <?php if (isset($id) && $a_secret[$id]): ?>
-                    <input name="id" type="hidden" value="<?=htmlspecialchars($id);?>">
+                    <input name="id" type="hidden" value="<?=htmlspecialchars($id);?>"/>
                     <?php endif; ?>
                   </td>
                 </tr>

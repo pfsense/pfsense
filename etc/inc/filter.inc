@@ -326,23 +326,29 @@ function filter_configure_sync($delete_states_if_needed = true) {
 	 * then output the contents of the error to the caller
 	 */
 	if($rules_loading <> 0) {
+		$saved_line_error = $rules_error[0];
 		$line_error = explode(":", $rules_error[0]);
 		$line_number = $line_error[1];
 		$line_split = file("{$g['tmp_path']}/rules.debug");
 		if(is_array($line_split))
 			$line_error = sprintf(gettext('The line in question reads [%1$d]: %2$s'), $line_number, $line_split[$line_number-1]);
 		unset($line_split);
-		if ($line_error and $line_number) {
-			file_notice("filter_load", sprintf(gettext('There were error(s) loading the rules: %1$s - %2$s'), $rules_error[0], $line_error), "Filter Reload", "");
-			update_filter_reload_status(sprintf(gettext('There were error(s) loading the rules: %1$s - %2$s'), $rules_error[0], $line_error));
-			unlock($filterlck);
-			return;
-		}
+
 		/* Brutal ugly hack but required -- PF is stuck, unwedge */
 		if (strstr("$rules_error[0]", "busy")) {
 			exec("/sbin/pfctl -d; /sbin/pfctl -e; /sbin/pfctl -f {$g['tmp_path']}/rules.debug");
 			$error_msg = gettext("PF was wedged/busy and has been reset.");
 			file_notice("pf_busy", $error_msg, "pf_busy", "");
+		} else {
+			$_grbg = exec("/sbin/pfctl -o basic -f {$g['tmp_path']}/rules.debug.old 2>&1");
+		}
+		unset($rules_loading, $rules_error);
+
+		if ($line_error and $line_number) {
+			file_notice("filter_load", sprintf(gettext('There were error(s) loading the rules: %1$s - %2$s'), $saved_line_error, $line_error), "Filter Reload", "");
+			update_filter_reload_status(sprintf(gettext('There were error(s) loading the rules: %1$s - %2$s'), $saved_line_error, $line_error));
+			unlock($filterlck);
+			return;
 		}
 	}
 
@@ -2781,7 +2787,8 @@ pass in on \${$oc['descr']} proto 41 from {$config['interfaces'][$on]['gateway-6
 pass out on \${$oc['descr']} proto 41 from any to {$config['interfaces'][$on]['gateway-6rd']} label "{$fix_rule_label("Allow 6in4 traffic out for 6rd on {$oc['descr']}")}"
 
 EOD;
-		if (is_ipaddrv6($oc['ipv6'])) {
+		/* XXX: Really need to allow 6rd traffic coming in for v6 this is against default behaviour! */
+		if (0 && is_ipaddrv6($oc['ipv6'])) {
 			$ipfrules .= <<<EOD
 pass in on \${$oc['descr']} inet6 from any to {$oc['ipv6']}/{$oc['snv6']} label "{$fix_rule_label("Allow 6rd traffic in for 6rd on {$oc['descr']}")}"
 pass out on \${$oc['descr']} inet6 from {$oc['ipv6']}/{$oc['snv6']} to any label "{$fix_rule_label("Allow 6rd traffic out for 6rd on {$oc['descr']}")}"
@@ -2798,7 +2805,8 @@ pass out on \${$oc['descr']} proto 41 from {$oc['ip']} to any label "{$fix_rule_
 
 EOD;
 		}
-		if (is_ipaddrv6($oc['ipv6'])) {
+		/* XXX: Really need to allow 6to4 traffic coming in for v6 this is against default behaviour! */
+		if (0 && is_ipaddrv6($oc['ipv6'])) {
 			$ipfrules .= <<<EOD
 pass in on \${$oc['descr']} inet6 from any to {$oc['ipv6']}/{$oc['snv6']} label "{$fix_rule_label("Allow 6in4 traffic in for 6to4 on {$oc['descr']}")}"
 pass out on \${$oc['descr']} inet6 from {$oc['ipv6']}/{$oc['snv6']} to any label "{$fix_rule_label("Allow 6in4 traffic out for 6to4 on {$oc['descr']}")}"

@@ -69,7 +69,7 @@ function domTT_title($title_msg){
 		echo "onmouseout=\"this.style.color = ''; domTT_mouseout(this, event);\" onmouseover=\"domTT_activate(this, event, 'content', '{$title_msg}', 'trail', true, 'delay', 0, 'fade', 'both', 'fadeMax', 93, 'styleClass', 'niceTitle');\"";
 	}
 }
-$pkg_info = get_pkg_info('all', array("noembedded", "name", "category", "website", "version", "status", "descr", "maintainer", "required_version", "maximum_version", "pkginfolink", "supportedbybsdperimeter","config_file"));
+$pkg_info = get_pkg_info('all', array("noembedded", "name", "category", "website", "version", "status", "descr", "maintainer", "required_version", "maximum_version", "pkginfolink", "config_file"));
 if($pkg_info) {
 	$fout = fopen("{$g['tmp_path']}/pkg_info.cache", "w");
 	fwrite($fout, serialize($pkg_info));
@@ -188,7 +188,7 @@ include("head.inc");
 										$pkginfo=gettext("Package info");
 										}
 									else{
-										$pkginfolink = "http://forum.pfsense.org/index.php/board,15.0.html";
+										$pkginfolink = "https://forum.pfsense.org/index.php/board,15.0.html";
 										$pkginfo=gettext("No package info, check the forum");
 										}
 					?>

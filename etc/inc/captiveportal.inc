@@ -1,7 +1,7 @@
 <?php
 /*
 	captiveportal.inc
-	part of pfSense (http://www.pfSense.org)
+	part of pfSense (https://www.pfsense.org)
 	Copyright (C) 2004-2011 Scott Ullrich <sullrich@gmail.com>
 	Copyright (C) 2009-2012 Ermal Lu�i <eri@pfsense.org>
 	Copyright (C) 2003-2006 Manuel Kasper <mk@neon1.net>.
@@ -1440,7 +1440,7 @@ function captiveportal_get_dn_passthru_ruleno($value) {
 	if (file_exists("{$g['vardb_path']}/captiveportaldn.rules")) {
 		$rules = unserialize(file_get_contents("{$g['vardb_path']}/captiveportaldn.rules"));
 		unset($output);
-		$_gb = exec("/sbin/ipfw -x {$cpzone} show | /usr/bin/grep {$value} |  /usr/bin/grep -v grep | /usr/bin/cut -d \" \" -f 5 | /usr/bin/head -n 1", $output);
+		$_gb = exec("/sbin/ipfw -x {$cpzone} show | /usr/bin/grep {$value} | /usr/bin/grep -v grep | /usr/bin/awk '{print $5}' | /usr/bin/head -n 1", $output);
 		$ruleno = intval($output[0]);
 		if (!$rules[$ruleno])
 			$ruleno = NULL;
@@ -1528,7 +1528,7 @@ function captiveportal_get_ipfw_passthru_ruleno($value) {
 	if (file_exists("{$g['vardb_path']}/captiveportal_{$cpzone}.rules")) {
 		$rules = unserialize(file_get_contents("{$g['vardb_path']}/captiveportal_{$cpzone}.rules"));
 		unset($output);
-		$_gb = exec("/sbin/ipfw -x {$cpzone} show | /usr/bin/grep {$value} |  /usr/bin/grep -v grep | /usr/bin/cut -d \" \" -f 5 | /usr/bin/head -n 1", $output);
+		$_gb = exec("/sbin/ipfw -x {$cpzone} show | /usr/bin/grep {$value} | /usr/bin/grep -v grep | /usr/bin/awk '{print $1}' | /usr/bin/head -n 1", $output);
 		$ruleno = intval($output[0]);
 		if (!$rules[$ruleno])
 			$ruleno = NULL;

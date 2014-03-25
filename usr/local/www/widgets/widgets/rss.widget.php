@@ -2,7 +2,7 @@
 /*
         $Id$
         Copyright 2009 Scott Ullrich
-        Part of pfSense widgets (www.pfsense.com)
+        Part of pfSense widgets (https://www.pfsense.org)
 
         Redistribution and use in source and binary forms, with or without
         modification, are permitted provided that the following conditions are met:
@@ -56,8 +56,8 @@ if($config['widgets']['rsswidgettextlength'])
 
 // Set a default feed if none exists
 if(!$rss_feed_s) {
-	$rss_feed_s = "http://blog.pfsense.org";
-	$config['widgets']['rssfeed'] = "http://blog.pfsense.org";
+	$rss_feed_s = "https://blog.pfsense.org";
+	$config['widgets']['rssfeed'] = "https://blog.pfsense.org";
 }
 	
 if(!$max_items)

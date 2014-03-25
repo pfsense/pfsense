@@ -58,13 +58,17 @@ if (!is_array($qlist))
 	$qlist = array();
 
 $tree = "<ul class=\"tree\" >";
+$rowIndex = 0;
 foreach ($qlist as $queue => $qkey) {
+	$rowIndex++;
 	$tree .= "<li><a href=\"firewall_shaper_queues.php?queue={$queue}&amp;action=show\" >";
 	if (isset($shaperIFlist[$queue]))
 		$tree .= $shaperIFlist[$queue] . "</a></li>";
 	else	
 		$tree .= $queue . "</a></li>";
 }
+if ($rowIndex == 0)
+	$tree .= "<li></li>";
 $tree .= "</ul>";
 
 if ($_GET) {

@@ -215,7 +215,15 @@ var month_array = ['January','February','March','April','May','June','July','Aug
 var day_array = ['Mon','Tues','Wed','Thur','Fri','Sat','Sun'];
 var schCounter = 0;
 
-
+function rgb2hex(rgb) {
+	var parts = rgb.match(/^rgb\((\d+),\s*(\d+),\s*(\d+)\)$/);
+	if (parts == null)
+		return;
+	function hex(x) {
+		return ("0" + parseInt(x).toString(16)).slice(-2);
+	}
+	return ("#" + hex(parts[1]) + hex(parts[2]) + hex(parts[3])).toUpperCase();
+}
 
 function repeatExistingDays(){
 	var tempstr, tempstrdaypos, week, daypos, dayposdone = "";
@@ -234,7 +242,7 @@ function repeatExistingDays(){
 		tempstr = 'w' + week + 'p' + daypos;
 		daycell = eval('document.getElementById(tempstr)');
 		if (daydone == "-1"){
-			if (daycell.style.backgroundColor == "#F08080")  // lightcoral
+			if (rgb2hex(daycell.style.backgroundColor) == "#F08080")  // lightcoral
 				daytogglerepeating(week,daypos,true);
 			else
 				daytogglerepeating(week,daypos,false);
@@ -274,7 +282,7 @@ function daytogglerepeating(week,daypos,bExists){
 		}			
 	}	
 }
-	
+
 function daytoggle(id) {
 	var runrepeat, tempstr = "";
 	var bFoundValid = false;
@@ -302,12 +310,12 @@ function daytoggle(id) {
 		var daycell = document.getElementById(idmod);		
 	
 		if (daycell != null){
-			if (daycell.style.backgroundColor == "#FF0000"){  // red
+			if (rgb2hex(daycell.style.backgroundColor) == "#FF0000"){  // red
 				daycell.style.backgroundColor = "#FFFFFF";  // white
 				str = id + ",";
 				daysSelected = daysSelected.replace(str, "");
 			}
-			else if (daycell.style.backgroundColor == "#F08080")  // lightcoral
+			else if (rgb2hex(daycell.style.backgroundColor) == "#F08080")  // lightcoral
 			{
 				daytogglerepeating(week,daypos,true);
 			}

@@ -167,7 +167,7 @@ include('head.inc');
 <tr>
 <td class="vncellreq" width="22%"><?=gettext("Name resolution");?></td>
 <td class="vtable" width="78%">
-<input type="checkbox" class="formfld" id="resolve" name="resolve" value="yes" <?php if ($_POST['resolve'] == 'yes') echo 'checked'; ?>><?=gettext("Enable");?></input>
+<input type="checkbox" class="formfld" id="resolve" name="resolve" value="yes" <?php if ($_POST['resolve'] == 'yes') echo 'checked'; ?> /><?=gettext("Enable");?>
 <br />
 <span class="expl"><?=gettext("Enable this to attempt to resolve names when displaying the tables.");?></span>
 </td>

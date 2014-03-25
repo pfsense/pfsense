@@ -172,7 +172,7 @@ include("head.inc");
 ?>
 
 <body link="#0000CC" vlink="#0000CC" alink="#0000CC">
-<script language="javascript">
+<script type="text/javascript">
 function clearcombo(){
   for (var i=document.iform.serversSelect.options.length-1; i>=0; i--){
     document.iform.serversSelect.options[i] = null;

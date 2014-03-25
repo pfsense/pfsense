@@ -793,7 +793,7 @@ if ($pkg['tabs'] <> "") {
 				if(isset($pkga['placeonbottom']))
 					$pkg_buttons .= $input;
 				else
-					echo $input ."\n<br />" . fixup_string($pkga['description']) . "\n";;
+					echo $input ."\n<br />" . fixup_string($pkga['description']) . "\n";
 				break;
 
 			case "rowhelper":

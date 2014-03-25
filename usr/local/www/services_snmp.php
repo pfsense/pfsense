@@ -167,7 +167,7 @@ $shortcut_section = "snmp";
 include("head.inc");
 
 ?>
-<script language="JavaScript">
+<script type="text/javascript">
 <!--
 function check_deps() {
 	if (jQuery('#hostres').prop('checked') == true) {
@@ -432,7 +432,7 @@ function enable_change(whichone) {
 		 </tr>
 		</table>
 </form>
-<script language="JavaScript">
+<script type="text/javascript">
 <!--
 enable_change(this);
 //-->

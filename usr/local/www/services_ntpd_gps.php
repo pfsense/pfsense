@@ -550,7 +550,7 @@ SureGPS = 		#Sure Electronics SKG16B
 			<td width="22%" valign="top" class="vncellreq">GPS Initialization</td>
 			<td width="78%" class="vtable">
 				<div id="showgpsinitbox">
-					<input type="button" onClick="show_advanced('showgpsinitbox', 'showgpsinit')" value="<?=gettext("Advanced");?>"></input> - <?=gettext("Show GPS Initialization commands");?></a>
+					<input type="button" onClick="show_advanced('showgpsinitbox', 'showgpsinit')" value="<?=gettext("Advanced");?>" /> - <?=gettext("Show GPS Initialization commands");?></a>
 				</div>
 				<div id="showgpsinit" style="display:none">
 					<p>
@@ -559,7 +559,7 @@ SureGPS = 		#Sure Electronics SKG16B
 					<strong><?php echo gettext("NMEA checksum calculator");?>:</strong>
 					<br />
 					<?php echo gettext("Enter the text between &quot;$&quot; and &quot;*&quot; of a NMEA command string:");?><br /> $<input name="nmeastring" type="text" class="formfld unknown" id="nmeastring" size="30" value="">*<span id="nmeachecksum"><?php echo gettext("checksum");?></span>&nbsp&nbsp
-					<input type="button" onClick="NMEAChecksum(nmeastring.value)" value="<?=gettext("Calculate NMEA checksum");?>"></input><br />
+					<input type="button" onClick="NMEAChecksum(nmeastring.value)" value="<?=gettext("Calculate NMEA checksum");?>" /><br />
 				</div>
 			</td>
 		</tr>
@@ -574,7 +574,7 @@ SureGPS = 		#Sure Electronics SKG16B
 	</td>
   </tr>
 </table>
-<script language="JavaScript"><!-- set_gps_default(this.form); --></script>
+<script type="text/javascript"><!-- set_gps_default(this.form); --></script>
 </form>
 <?php include("fend.inc"); ?>
 </body>

@@ -103,7 +103,7 @@ include("head.inc");
 
 ?>
 
-<script language="JavaScript">
+<script type="text/javascript">
 <!--
 function enable_change(enable_over) {
 	if (document.iform.enable.checked || enable_over) {
@@ -196,7 +196,7 @@ function enable_change(enable_over) {
   </tr>
 </table>
 </form>
-<script language="JavaScript">
+<script type="text/javascript">
 <!--
 enable_change(false);
 //-->

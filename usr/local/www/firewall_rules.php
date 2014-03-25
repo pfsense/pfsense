@@ -301,7 +301,7 @@ include("head.inc");
 <?php include("fbegin.inc"); ?>
 <form action="firewall_rules.php" method="post">
 
-<script type="text/javascript" language="javascript" src="/javascript/row_toggle.js"></script>
+<script type="text/javascript" type="text/javascript" src="/javascript/row_toggle.js"></script>
 <?php if ($savemsg) print_info_box($savemsg); ?>
 <?php if (is_subsystem_dirty('filter')): ?><p>
 <?php

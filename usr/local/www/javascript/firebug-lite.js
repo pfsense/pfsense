@@ -38,7 +38,7 @@ var firebug = {
 			el.button.inspect = new pi.element("A").attribute.addClass("Button").event.addListener("click",d.inspector.toggle).update("Inspect").insert(el.button.container);
 			el.button.maximize = new pi.element("A").attribute.addClass("Button Maximize").event.addListener("click",win.maximize).insert(el.button.container);
 			el.button.minimize = new pi.element("A").attribute.addClass("Button Minimize").event.addListener("click",win.minimize).insert(el.button.container);
-			el.button.close = new pi.element("A").attribute.addClass("Button Close").event.addListener("click",win.close).insert(el.button.container);;
+			el.button.close = new pi.element("A").attribute.addClass("Button Close").event.addListener("click",win.close).insert(el.button.container);
 			
 			if(pi.env.ie||pi.env.webkit){
 				el.button.container.environment.addStyle({ "paddingTop":"12px" });

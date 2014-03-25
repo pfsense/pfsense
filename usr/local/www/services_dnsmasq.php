@@ -149,7 +149,7 @@ include("head.inc");
 
 ?>
 
-<script language="JavaScript">
+<script type="text/javascript">
 <!--
 function enable_change(enable_over) {
 	var endis;
@@ -297,7 +297,7 @@ function show_advanced_dns() {
 		<td width="22%" valign="top" class="vncellreq"><?=gettext("Advanced");?></td>
 		<td width="78%" class="vtable"><p>
 			<div id="showadvbox" <?php if ($pconfig['custom_options']) echo "style='display:none'"; ?>>
-				<input type="button" onClick="show_advanced_dns()" value="<?=gettext("Advanced"); ?>"></input> - <?=gettext("Show advanced option");?></a>
+				<input type="button" onClick="show_advanced_dns()" value="<?=gettext("Advanced"); ?>" /> - <?=gettext("Show advanced option");?></a>
 			</div>
 			<div id="showadv" <?php if (empty($pconfig['custom_options'])) echo "style='display:none'"; ?>>
 				<strong><?=gettext("Advanced");?><br /></strong>
@@ -477,7 +477,7 @@ function show_advanced_dns() {
 	</tfoot>
 </table>
 </form>
-<script language="JavaScript">
+<script type="text/javascript">
 <!--
 enable_change(false);
 //-->

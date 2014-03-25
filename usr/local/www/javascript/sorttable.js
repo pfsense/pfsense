@@ -210,7 +210,7 @@ sorttable = {
       				if (text.match(/^\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}(\:[0-9]{1,5})?\b/)) {
       					return sorttable.sort_ipaddr;
       				}
-				if (text.match(/^-?[£$¤]?[\d,.]+%?$/)) {
+				if (text.match(/^-?[Â£$Â¤]?[\d,.]+%?$/)) {
 					return sorttable.sort_numeric;
 				}
 				// check for a date: dd/mm/yyyy or dd/mm/yy 

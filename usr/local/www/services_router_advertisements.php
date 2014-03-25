@@ -402,7 +402,7 @@ display_top_tabs($tab_array);
 </table>
 </form>
 
-<script language="JavaScript">
+<script type="text/javascript">
 //<![CDATA[
 	jQuery(function ($) {
 		var $rasamednsasdhcp6 = $("#rasamednsasdhcp6");

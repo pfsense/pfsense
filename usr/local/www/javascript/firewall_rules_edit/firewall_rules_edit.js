@@ -1,4 +1,4 @@
-<!--
+//<![CDATA[
 var portsenabled = 1;
 var editenabled = 1;
 
@@ -218,4 +218,4 @@ function tcpflags_anyclick(obj) {
 		document.getElementById('tcpheader').style.display= "";
 	}
 }
-//-->
+//]]>

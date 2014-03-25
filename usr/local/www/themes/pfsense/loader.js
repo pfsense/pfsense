@@ -7,9 +7,9 @@ var cond        = '';
 // BROWSER?
 if (browser == '') {
 	if (navigator.appName.indexOf('Microsoft') != -1)
-		browser = 'IE'
+		browser = 'IE';
 	else if (navigator.appName.indexOf('Netscape') != -1)
-		browser = 'Netscape'
+		browser = 'Netscape';
 	else
 		browser = 'IE';
 }

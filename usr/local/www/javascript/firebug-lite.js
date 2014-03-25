@@ -386,7 +386,7 @@ var firebug = {
 						d.css.index=d.css.index<0?i:d.css.index;
 						el.button.css.selectbox.child.add(
 							new pi.element("OPTION").attribute.set("value",i).update(uri)
-						)
+						);
 					};
 					d.css.open(d.css.index);
 				}
@@ -563,7 +563,7 @@ var firebug = {
 							
 							d.html.current = [_element,link];
 							
-							return;t
+							return t;
 						}
 						parentLayer = d.html.openHtmlTree(map[t],parentLayer,map[t+1]);
 						t++;

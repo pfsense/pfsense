@@ -21,7 +21,7 @@ function removeEvent(obj, evType, fn, useCapture){
         return false;
 }
 
-if(!String.prototype.trim) String.prototype.trim = function() { return this.replace(/^\s*/,'').replace(/\s*$/, ''); }
+if(!String.prototype.trim) String.prototype.trim = function() { return this.replace(/^\s*/,'').replace(/\s*$/, ''); };
 
 var incrementalInputController;
 
@@ -183,7 +183,7 @@ function incrementalInput(inp, range, increment, classInc, classDec) {
 
                 self._timer.setPauseTime(self._timerInc);
                 if(!stop) self._timer.start();
-        }
+        };
 
         this.construct = function() {
                 var h = self._inp.offsetHeight;
@@ -226,7 +226,7 @@ function incrementalInput(inp, range, increment, classInc, classDec) {
 
         var self = this;
 
-        self._timer.ontimer = function() { self.updateValue(); }
+        self._timer.ontimer = function() { self.updateValue(); };
         self.construct();
 }
 
@@ -279,7 +279,7 @@ incremetalInputController = {
                         }
                 }
         }
-}
+};
 
 // Close and call anonymous function
 })();

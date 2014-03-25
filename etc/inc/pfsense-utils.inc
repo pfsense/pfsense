@@ -2594,7 +2594,7 @@ function pfSense_handle_custom_code($src_dir) {
 	}
 }
 
-function set_language($lang = 'en_US', $encoding = "ISO8859-1") {
+function set_language($lang = 'en_US', $encoding = "UTF-8") {
 	putenv("LANG={$lang}.{$encoding}");
 	setlocale(LC_ALL, "{$lang}.{$encoding}");
 	textdomain("pfSense");
@@ -2646,7 +2646,7 @@ $g_languages = array (
 	"zh_TW" => array("codeset" => "UTF-8", "desc" => gettext("Chinese (Traditional)")),
 	"nl"    => array("codeset" => "UTF-8", "desc" => gettext("Dutch")),
 	"da"    => array("codeset" => "UTF-8", "desc" => gettext("Danish")),
-	"en_US" => array("codeset" => "ISO-8859-1", "desc" => gettext("English")),
+	"en_US" => array("codeset" => "UTF-8", "desc" => gettext("English")),
 	"fi"    => array("codeset" => "UTF-8", "desc" => gettext("Finnish")),
 	"fr"    => array("codeset" => "UTF-8", "desc" => gettext("French")),
 	"de"    => array("codeset" => "UTF-8", "desc" => gettext("German")),

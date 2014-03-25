@@ -112,7 +112,7 @@ function display_error_form($http_code, $desc) {
 	<head>
 		<script type="text/javascript" src="/javascript/jquery.js"></script>
 		<title><?=$http_code?></title>
-		<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+		<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 		<link rel="shortcut icon" href="/themes/<?= $g['theme'] ?>/images/icons/favicon.ico" />
 		<?php if (file_exists("{$g['www_path']}/themes/{$g['theme']}/login.css")): ?>
 		<link rel="stylesheet" type="text/css" href="/themes/<?= $g['theme'] ?>/login.css" media="all" />
@@ -233,7 +233,7 @@ $have_cookies = isset($_COOKIE["cookie_test"]);
 		</script>
 
 		<title><?=gettext("Login"); ?></title>
-		<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+		<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 		<link rel="shortcut icon" href="/themes/<?= $g['theme'] ?>/images/icons/favicon.ico" />
 		<?php if (file_exists("{$g['www_path']}/themes/{$g['theme']}/login.css")): ?>
 		<link rel="stylesheet" type="text/css" href="/themes/<?= $g['theme'] ?>/login.css" media="all" />

@@ -45,7 +45,7 @@ require_once("ipsec.inc");
 
 function vpn_ipsec_configure_loglevels()
 {
-	global $config;
+	global $config, $ipsec_loglevels;
 
 	foreach ($ipsec_loglevels as $lkey => $ldescr) {
 		if (empty($config['ipsec']["ipsec_{$lkey}"]))

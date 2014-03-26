@@ -1,7 +1,7 @@
 #!/usr/local/bin/php -f
 <?php
 /*
-        Copyright (C) 2010 Ermal Luçi
+        Copyright (C) 2010 Ermal LuÃ§i
         All rights reserved.
 
         Redistribution and use in source and binary forms, with or without
@@ -26,9 +26,9 @@
         POSSIBILITY OF SUCH DAMAGE.
 */
 
-require_once("globals.inc");
-require_once("config.inc");
-require_once("functions.inc");
+require_once 'globals.inc';
+require_once 'config.inc';
+require_once 'functions.inc';
 
 system_resolvconf_generate(true);
 

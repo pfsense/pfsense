@@ -156,12 +156,12 @@ function find_alias_reference($section, $field, $origname, &$is_alias_referenced
 $pgtitle = array(gettext("Firewall"),gettext("Aliases"));
 $shortcut_section = "aliases";
 
-include("head.inc");
+include 'head.inc';
 
 ?>
 
 <body link="#0000CC" vlink="#0000CC" alink="#0000CC">
-<?php include("fbegin.inc"); ?>
+<?php include 'fbegin.inc'; ?>
 <form action="firewall_aliases.php" method="post">
 <?php if ($savemsg) print_info_box($savemsg); ?>
 <?php if (is_subsystem_dirty('aliases')): ?><p>
@@ -296,6 +296,6 @@ include("head.inc");
 	</tr>
 </table>
 </form>
-<?php include("fend.inc"); ?>
+<?php include 'fend.inc'; ?>
 </body>
 </html>

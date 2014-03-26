@@ -99,7 +99,7 @@ if ($_POST) {
 
 $pgtitle = array(gettext("Services"),gettext("DHCP Relay"));
 $shortcut_section = "dhcp";
-include("head.inc");
+include 'head.inc';
 
 ?>
 
@@ -121,7 +121,7 @@ function enable_change(enable_over) {
 
 
 <body link="#0000CC" vlink="#0000CC" alink="#0000CC">
-<?php include("fbegin.inc"); ?>
+<?php include 'fbegin.inc'; ?>
 <form action="services_dhcp_relay.php" method="post" name="iform" id="iform">
 <?php if ($input_errors) print_input_errors($input_errors); ?>
 <?php if ($savemsg) print_info_box($savemsg); ?>
@@ -137,7 +137,7 @@ function enable_change(enable_over) {
 		echo "<td>DHCP Server is currently enabled. Cannot enable the DHCP Relay service while the DHCP Server is enabled on any interface.";
 			echo "</td></tr></table></div></td></tr></table></body>";
 			echo "</html>";
-			include("fend.inc"); 
+			include 'fend.inc'; 
 			exit;
 		}
 ?>
@@ -201,6 +201,6 @@ function enable_change(enable_over) {
 enable_change(false);
 //-->
 </script>
-<?php include("fend.inc"); ?>
+<?php include 'fend.inc'; ?>
 </body>
 </html>

@@ -381,7 +381,7 @@ $output .= $output_form;
 
 //$pgtitle = "Firewall: Shaper: By Interface View";
 $closehead = false;
-include("head.inc");
+include 'head.inc';
 ?>
 <link rel="stylesheet" type="text/css" media="all" href="./tree/tree.css" />
 <script type="text/javascript" src="./tree/tree.js"></script>
@@ -393,7 +393,7 @@ if ($queue)
         echo $queue->build_javascript();
 echo $newjavascript;
 
-include("fbegin.inc"); 
+include 'fbegin.inc'; 
 ?>
 <div id="inputerrors"></div>
 <?php if ($input_errors) print_input_errors($input_errors); ?>
@@ -447,6 +447,6 @@ include("fbegin.inc");
 	</tr>
 </table>
             </form>
-<?php include("fend.inc"); ?>
+<?php include 'fend.inc'; ?>
 </body>
 </html>

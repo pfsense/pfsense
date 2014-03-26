@@ -49,7 +49,7 @@ $pgtitle = array(gettext("Status"),gettext("IPsec"));
 $shortcut_section = "ipsec";
 
 require("guiconfig.inc");
-include("head.inc");
+include 'head.inc';
 require("ipsec.inc");
 
 if ($_GET['act'] == "connect") {
@@ -79,7 +79,7 @@ $status = ipsec_smp_dump_status();
 ?>
 
 <body link="#0000CC" vlink="#0000CC" alink="#0000CC" onload="<?php echo $jsevents["body"]["onload"]; ?>">
-<?php include("fbegin.inc"); ?>
+<?php include 'fbegin.inc'; ?>
 <div id="inputerrors"></div>
 <table width="100%" border="0" cellpadding="0" cellspacing="0">
 	<tr>
@@ -257,7 +257,7 @@ $status = ipsec_smp_dump_status();
 	<?php echo gettext("You can configure IPsec");?>
 	<a href="vpn_ipsec.php">here</a>.
 </span>
-<?php unset($status); include("fend.inc"); ?>
+<?php unset($status); include 'fend.inc'; ?>
 <script type="text/javascript">
 function show_childsa(id, buttonid) {
 	document.getElementById(buttonid).innerHTML='';

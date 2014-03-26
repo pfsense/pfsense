@@ -90,12 +90,12 @@ if (($_GET['deleteip']) && (is_ipaddr($_GET['deleteip']))) {
 // Load MAC-Manufacturer table
 $mac_man = load_mac_manufacturer_table();
 
-include("head.inc");
+include 'head.inc';
 
 ?>
 
 <body link="#0000CC" vlink="#0000CC" alink="#0000CC">
-<?php include("fbegin.inc"); ?>
+<?php include 'fbegin.inc'; ?>
 <?php
 
 function leasecmp($a, $b) {
@@ -566,6 +566,6 @@ foreach ($prefixes as $data) {
 <p><strong><?=gettext("No leases file found. Is the DHCP server active"); ?>?</strong></p>
 <?php endif; ?>
 
-<?php include("fend.inc"); ?>
+<?php include 'fend.inc'; ?>
 </body>
 </html>

@@ -88,11 +88,11 @@ if ($_GET['act'] == "del") {
 $pgtitle = array(gettext("Services"),gettext("Load Balancer"),gettext("Monitor"));
 $shortcut_section = "relayd";
 
-include("head.inc");
+include 'head.inc';
 
 ?>
 <body link="#0000CC" vlink="#0000CC" alink="#0000CC">
-<?php include("fbegin.inc"); ?>
+<?php include 'fbegin.inc'; ?>
 <form action="load_balancer_monitor.php" method="post">
 <?php if ($input_errors) print_input_errors($input_errors); ?>
 <?php if ($savemsg) print_info_box($savemsg); ?>
@@ -132,6 +132,6 @@ include("head.inc");
   </tr>
 </table>
 </form>
-<?php include("fend.inc"); ?>
+<?php include 'fend.inc'; ?>
 </body>
 </html>

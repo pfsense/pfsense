@@ -137,7 +137,7 @@ if ($_POST) {
 $pgtitle = array(gettext("Services"), gettext("Load Balancer"),gettext("Relay Protocol"),gettext("Edit"));
 $shortcut_section = "relayd";
 
-include("head.inc");
+include 'head.inc';
 
 $types = array("http" => gettext("HTTP"), "tcp" => gettext("TCP"), "dns" => gettext("DNS"));
 ?>
@@ -182,7 +182,7 @@ jQuery(document).ready(function(){
 */
 </script>
 
-<?php include("fbegin.inc"); ?>
+<?php include 'fbegin.inc'; ?>
 <?php if ($input_errors) print_input_errors($input_errors); ?>
 	<form action="load_balancer_relay_protocol_edit.php" method="post" name="iform" id="iform">
 	<table width="100%" border="0" cellpadding="6" cellspacing="0">
@@ -284,6 +284,6 @@ echo "</select>";
 	</table>
 	</form>
 <br />
-<?php include("fend.inc"); ?>
+<?php include 'fend.inc'; ?>
 </body>
 </html>

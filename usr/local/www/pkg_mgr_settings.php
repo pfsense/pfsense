@@ -60,7 +60,7 @@ if ($_POST) {
 $curcfg = $config['system']['altpkgrepo'];
 $closehead = false;
 $pgtitle = array(gettext("System"),gettext("Package Settings"));
-include("head.inc");
+include 'head.inc';
 ?>
 <script type="text/javascript">
 //<![CDATA[
@@ -77,7 +77,7 @@ function enable_altpkgrepourl(enable_over) {
 </script>
 </head>
 <body link="#0000CC" vlink="#0000CC" alink="#0000CC">
-<?php include("fbegin.inc");?>
+<?php include 'fbegin.inc';?>
 <?php if ($input_errors) print_input_errors($input_errors); ?>
 
 <form action="pkg_mgr_settings.php" method="post" name="iform" id="iform">
@@ -125,6 +125,6 @@ function enable_altpkgrepourl(enable_over) {
                 </tr>
               </table></div></td></tr></table>
 </form>
-<?php include("fend.inc"); ?>
+<?php include 'fend.inc'; ?>
 </body>
 </html>

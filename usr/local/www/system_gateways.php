@@ -181,12 +181,12 @@ if (isset($_POST['del_x'])) {
 $pgtitle = array(gettext("System"),gettext("Gateways"));
 $shortcut_section = "gateways";
 
-include("head.inc");
+include 'head.inc';
 
 ?>
 
 <body link="#0000CC" vlink="#0000CC" alink="#0000CC">
-<?php include("fbegin.inc"); ?>
+<?php include 'fbegin.inc'; ?>
 <?php if ($input_errors) print_input_errors($input_errors); ?>
 <form action="system_gateways.php" method="post">
 <script type="text/javascript" src="/javascript/row_toggle.js"></script>
@@ -399,6 +399,6 @@ include("head.inc");
 		</tr>
 	</table>
 </form>
-<?php include("fend.inc"); ?>
+<?php include 'fend.inc'; ?>
 </body>
 </html>

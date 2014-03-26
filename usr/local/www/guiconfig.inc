@@ -816,7 +816,7 @@ function display_widget_tabs(& $tab_array) {
 function outputJavaScriptFileInline($javascript) {
 	if(file_exists($javascript)) {
 		echo "\n<script type=\"text/javascript\">\n";
-		include($javascript);
+		include "$javascript";
 		echo "\n</script>\n";
 	} else {
 		echo "\n\n<!-- Could not location file:  {$javascript} -->\n\n";
@@ -828,7 +828,7 @@ function outputJavaScriptFileInline($javascript) {
 function outputCSSPrintFileInline($css) {
 	if(file_exists($css)) {
 		echo "\n<style media=\"print\" type=\"text/css\">\n";
-		include($css);
+		include "$css";
 		echo "\n</style>\n";
 	} else {
 		echo "\n\n<!-- Could not location file:  {$css} -->\n\n";
@@ -839,7 +839,7 @@ function outputCSSPrintFileInline($css) {
 function outputCSSFileInline($css) {
 	if(file_exists($css)) {
 		echo "\n<style type=\"text/css\">\n";
-		include($css);
+		include "$css";
 		echo "\n</style>\n";
 	} else {
 		echo "\n\n<!-- Could not location file:  {$css} -->\n\n";

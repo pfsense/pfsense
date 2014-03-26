@@ -174,7 +174,7 @@ if ($_POST['resetlogs'] == gettext("Reset Log Files")) {
 
 $pgtitle = array(gettext("Status"), gettext("System logs"), gettext("Settings"));
 $closehead = false;
-include("head.inc");
+include 'head.inc';
 
 ?>
 
@@ -244,7 +244,7 @@ function check_everything() {
 </script>
 </head>
 <body link="#0000CC" vlink="#0000CC" alink="#0000CC">
-<?php include("fbegin.inc"); ?>
+<?php include 'fbegin.inc'; ?>
 <form action="diag_logs_settings.php" method="post" name="iform" id="iform">
 <?php if ($input_errors) print_input_errors($input_errors); ?>
 <?php if ($savemsg) print_info_box($savemsg); ?>
@@ -465,6 +465,6 @@ function check_everything() {
 enable_change(false);
 //]]>
 </script>
-<?php include("fend.inc"); ?>
+<?php include 'fend.inc'; ?>
 </body>
 </html>

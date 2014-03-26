@@ -62,12 +62,12 @@ if (!is_array($config['captiveportal']))
         $config['captiveportal'] = array();
 $a_cp =& $config['captiveportal'];
 
-include("head.inc");
+include 'head.inc';
 
 ?>
 
 <body link="#0000CC" vlink="#0000CC" alink="#0000CC">
-<?php include("fbegin.inc"); ?>
+<?php include 'fbegin.inc'; ?>
 <?php
 
 flush();
@@ -200,7 +200,7 @@ $mac_man = load_mac_manufacturer_table();
 <input type="hidden" name="zone" value="<?=htmlspecialchars($cpzone);?>" />
 <?php endif; ?>
 </form>
-<?php include("fend.inc"); ?>
+<?php include 'fend.inc'; ?>
 
 </body>
 </html>

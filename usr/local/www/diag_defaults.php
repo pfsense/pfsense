@@ -50,12 +50,12 @@ if ($_POST['Submit'] == " " . gettext("No") . " ") {
 }
 
 $pgtitle = array(gettext("Diagnostics"),gettext("Factory defaults"));
-include("head.inc");
+include 'head.inc';
 
 ?>
 
 <body link="#0000CC" vlink="#0000CC" alink="#0000CC">
-<?php include("fbegin.inc"); ?>
+<?php include 'fbegin.inc'; ?>
 
 <?php if ($_POST['Submit'] == " " . gettext("Yes") . " "):
 	print_info_box(gettext("The system has been reset to factory defaults and is now rebooting. This may take a few minutes, depending on your hardware.")); ?>
@@ -84,6 +84,6 @@ include("head.inc");
 	</p>
 </form>
 <?php endif; ?>
-<?php include("fend.inc"); ?>
+<?php include 'fend.inc'; ?>
 </body>
 </html>

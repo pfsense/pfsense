@@ -40,12 +40,12 @@ if ($_GET['act'] == "del" && !empty($_GET['zone'])) {
 
 $pgtitle = array(gettext("Captiveportal"),gettext("Zones"));
 $shortcut_section = "captiveportal";
-include("head.inc");
+include 'head.inc';
 
 ?>
 
 <body link="#0000CC" vlink="#0000CC" alink="#0000CC">
-<?php include("fbegin.inc"); ?>
+<?php include 'fbegin.inc'; ?>
 <form action="services_captiveportal_zones.php" method="post">
 <?php if ($savemsg) print_info_box($savemsg); ?>
 <?php if (is_subsystem_dirty('captiveportal')): ?><p>
@@ -113,6 +113,6 @@ include("head.inc");
 </tr>
 </table>
 </form>
-<?php include("fend.inc"); ?>
+<?php include 'fend.inc'; ?>
 </body>
 </html>

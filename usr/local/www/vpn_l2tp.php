@@ -180,11 +180,11 @@ if ($_POST) {
 	}
 }
 
-include("head.inc");
+include 'head.inc';
 ?>
 
 <body link="#0000CC" vlink="#0000CC" alink="#0000CC" onload="<?= $jsevents["body"]["onload"] ?>">
-<?php include("fbegin.inc"); ?>
+<?php include 'fbegin.inc'; ?>
 
 <script type="text/javascript">
 <!--
@@ -468,6 +468,6 @@ function enable_change(enable_over) {
 	enable_change(false);
 </script>
 
-<?php include("fend.inc"); ?>
+<?php include 'fend.inc'; ?>
 </body>
 </html>

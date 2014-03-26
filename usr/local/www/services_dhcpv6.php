@@ -369,7 +369,7 @@ if ($_GET['act'] == "del") {
 $pgtitle = array(gettext("Services"),gettext("DHCPv6 server"));
 $shortcut_section = "dhcp6";
 
-include("head.inc");
+include 'head.inc';
 
 ?>
 
@@ -452,14 +452,14 @@ include("head.inc");
 </script>
 
 <body link="#0000CC" vlink="#0000CC" alink="#0000CC">
-<?php include("fbegin.inc"); ?>
+<?php include 'fbegin.inc'; ?>
 <form action="services_dhcpv6.php" method="post" name="iform" id="iform">
 <?php if ($input_errors) print_input_errors($input_errors); ?>
 <?php if ($savemsg) print_info_box($savemsg); ?>
 <?php
 	if ($dhcrelay_enabled) {
 		echo gettext("DHCP Relay is currently enabled. Cannot enable the DHCP Server service while the DHCP Relay is enabled on any interface.");
-		include("fend.inc");
+		include 'fend.inc';
 		echo "</body>";
 		echo "</html>";
 		exit;
@@ -505,7 +505,7 @@ include("head.inc");
 	}
 	if ($tabscounter == 0) {
 		echo "</td></tr></table></form>";
-		include("fend.inc");
+		include 'fend.inc';
 		echo "</body>";
 		echo "</html>";
 		exit;
@@ -901,6 +901,6 @@ display_top_tabs($tab_array);
 enable_change(false);
 //-->
 </script>
-<?php include("fend.inc"); ?>
+<?php include 'fend.inc'; ?>
 </body>
 </html>

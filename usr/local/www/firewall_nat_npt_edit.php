@@ -143,7 +143,7 @@ if ($_POST) {
 }
 
 $pgtitle = array(gettext("Firewall"),gettext("NAT"),gettext("NPt"),gettext("Edit"));
-include("head.inc");
+include 'head.inc';
 
 ?>
 
@@ -151,7 +151,7 @@ include("head.inc");
 <script type="text/javascript" src="/javascript/suggestions.js"></script>
 <script type="text/javascript" src="/javascript/autosuggest.js"></script>
 
-<?php include("fbegin.inc"); ?>
+<?php include 'fbegin.inc'; ?>
 <?php if ($input_errors) print_input_errors($input_errors); ?>
             <form action="firewall_nat_npt_edit.php" method="post" name="iform" id="iform">
               <table width="100%" border="0" cellpadding="6" cellspacing="0" summary="firewall nat npt edit">
@@ -280,6 +280,6 @@ external prefix.");
                 </tr>
               </table>
 </form>
-<?php include("fend.inc"); ?>
+<?php include 'fend.inc'; ?>
 </body>
 </html>

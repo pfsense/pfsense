@@ -280,7 +280,7 @@ if ($captiveportal && is_array($config['captiveportal'])) {
 	}
 }
 
-include("head.inc");
+include 'head.inc';
 ?>
 
 <?php if ($curcat === "custom") { ?>
@@ -402,7 +402,7 @@ function get_dates($curperiod, $graph) {
 ?>
 </head>
 <body link="#0000CC" vlink="#0000CC" alink="#0000CC">
-<?php include("fbegin.inc"); ?>
+<?php include 'fbegin.inc'; ?>
 <?php if ($input_errors && count($input_errors)) { print_input_errors($input_errors); } ?>
 <form name="form1" action="status_rrd_graph.php" method="get">
 <table width="100%" border="0" cellpadding="0" cellspacing="0" summary="rrd graphs">
@@ -744,6 +744,6 @@ function get_dates($curperiod, $graph) {
 	</tr>
 </table>
 </form>
-<?php include("fend.inc"); ?>
+<?php include 'fend.inc'; ?>
 </body>
 </html>

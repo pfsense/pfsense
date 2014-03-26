@@ -48,7 +48,7 @@ require("ipsec.inc");
 
 $pgtitle = array(gettext("Status"),gettext("IPsec"),gettext("SAD"));
 $shortcut_section = "ipsec";
-include("head.inc");
+include 'head.inc';
 
 $sad = ipsec_dump_sad();
 
@@ -65,7 +65,7 @@ if ($_GET['act'] == "del") {
 ?>
 
 <body link="#0000CC" vlink="#0000CC" alink="#0000CC">
-	<?php include("fbegin.inc"); ?>
+	<?php include 'fbegin.inc'; ?>
 	<table width="100%" border="0" cellpadding="0" cellspacing="0">
 		<tr>
 			<td>
@@ -136,6 +136,6 @@ if ($_GET['act'] == "del") {
 <?=gettext("You can configure your IPsec");?> <a href="vpn_ipsec.php"><?=gettext("here.");?></a>
 </span>
 
-<?php include("fend.inc"); ?>
+<?php include 'fend.inc'; ?>
 </body>
 </html>

@@ -150,10 +150,10 @@ if ($_POST) {
 	}
 }
 
-include("head.inc");
+include 'head.inc';
 
 ?>
-<?php include("fbegin.inc"); ?>
+<?php include 'fbegin.inc'; ?>
 <body link="#0000CC" vlink="#0000CC" alink="#0000CC">
 <?php if ($input_errors) print_input_errors($input_errors); ?>
 		<form action="services_captiveportal_hostname_edit.php" method="post" name="iform" id="iform">
@@ -211,6 +211,6 @@ include("head.inc");
 		</tr>
 	</table>
 </form>
-<?php include("fend.inc"); ?>
+<?php include 'fend.inc'; ?>
 </body>
 </html>

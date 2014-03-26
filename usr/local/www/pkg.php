@@ -147,12 +147,12 @@ if($pkg['custom_php_command_before_form'] <> "")
 	eval($pkg['custom_php_command_before_form']);
 
 $pgtitle = array($title);
-include("head.inc");
+include 'head.inc';
 
 ?>
 
 <body link="#0000CC" vlink="#0000CC" alink="#0000CC">
-<?php include("fbegin.inc"); ?>
+<?php include 'fbegin.inc'; ?>
 <script type="text/javascript" src="javascript/domTT/domLib.js"></script>
 <script type="text/javascript" src="javascript/domTT/domTT.js"></script>
 <script type="text/javascript" src="javascript/domTT/behaviour.js"></script>
@@ -527,7 +527,7 @@ if ($pkg['tabs'] <> "") {
 </div></td></tr></table>
 
 </form>
-<?php include("fend.inc"); ?>
+<?php include 'fend.inc'; ?>
 
 <?php
 	echo "<!-- filter_fieldname: {$filter_fieldname} -->";

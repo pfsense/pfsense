@@ -52,11 +52,11 @@ if ($_POST['Submit'] == " " . gettext("No") . " ") {
 }
 
 $pgtitle = array(gettext("Diagnostics"),gettext("Halt system"));
-include('head.inc');
+include 'head.inc';
 ?>
 
 <body link="#0000CC" vlink="#0000CC" alink="#0000CC">
-<?php include("fbegin.inc"); ?>
+<?php include 'fbegin.inc'; ?>
 <?php if ($_POST['Submit'] == " " . gettext("Yes") . " "):
 	print_info_box(gettext("The system is halting now. This may take one minute.")); ?>
 <pre>
@@ -71,6 +71,6 @@ include('head.inc');
 	</p>
 </form>
 <?php endif; ?>
-<?php include("fend.inc"); ?>
+<?php include 'fend.inc'; ?>
 </body>
 </html>

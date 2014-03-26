@@ -160,9 +160,9 @@ if ($_POST) {
 			if($pkg['donotsave'] <> "" or $pkg['preoutput'] <> "") {
 			?>
 
-<?php include("head.inc"); ?>
+<?php include 'head.inc'; ?>
 <body link="#0000CC" vlink="#0000CC" alink="#0000CC">
-<?php include("fbegin.inc"); ?>
+<?php include 'fbegin.inc'; ?>
 <?php
 			}
 			if($pkg['preoutput']) echo "<pre>";
@@ -258,7 +258,7 @@ else
 	$title = gettext("Package Editor");
 
 $pgtitle = $title;
-include("head.inc");
+include 'head.inc';
 
 if ($pkg['custom_php_after_head_command'])
 	eval($pkg['custom_php_after_head_command']);
@@ -267,7 +267,7 @@ if ($pkg['custom_php_after_head_command'])
 
 <body link="#0000CC" vlink="#0000CC" alink="#0000CC">
 
-<?php include("fbegin.inc"); ?>
+<?php include 'fbegin.inc'; ?>
 
 <script type="text/javascript" src="/javascript/autosuggest.js"></script>
 <script type="text/javascript" src="/javascript/suggestions.js"></script>
@@ -956,7 +956,7 @@ if ($pkg['tabs'] <> "") {
 	}
 ?>
 
-<?php include("fend.inc"); ?>
+<?php include 'fend.inc'; ?>
 </body>
 </html>
 

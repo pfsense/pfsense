@@ -158,7 +158,7 @@ function build_gateway_protocol_map (&$a_gateways) {
 	return $result;
 }
 
-include("head.inc");
+include 'head.inc';
 
 ?>
 
@@ -221,7 +221,7 @@ jQuery(function ($) {
 //]]>
 </script>
 
-<?php include("fbegin.inc"); ?>
+<?php include 'fbegin.inc'; ?>
 <?php if ($input_errors) print_input_errors($input_errors); ?>
             <form action="system_gateway_groups_edit.php" method="post" name="iform" id="iform">
               <table width="100%" border="0" cellpadding="6" cellspacing="0" summary="system groups edit">
@@ -349,6 +349,6 @@ jQuery(function ($) {
                 </tr>
               </table>
 </form>
-<?php include("fend.inc"); ?>
+<?php include 'fend.inc'; ?>
 </body>
 </html>

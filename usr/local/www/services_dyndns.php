@@ -58,12 +58,12 @@ if ($_GET['act'] == "del") {
 }
 
 $pgtitle = array(gettext("Services"), gettext("Dynamic DNS clients"));
-include("head.inc");
+include 'head.inc';
 
 ?>
 
 <body link="#0000CC" vlink="#0000CC" alink="#0000CC">
-<?php include("fbegin.inc"); ?>
+<?php include 'fbegin.inc'; ?>
 <form action="services_dyndns.php" method="post" name="iform" id="iform">
 <?php if ($input_errors) print_input_errors($input_errors); ?>
 <table width="100%" border="0" cellpadding="0" cellspacing="0">
@@ -198,6 +198,6 @@ include("head.inc");
   </tr>
 </table>
 </form>
-<?php include("fend.inc"); ?>
+<?php include 'fend.inc'; ?>
 </body>
 </html>

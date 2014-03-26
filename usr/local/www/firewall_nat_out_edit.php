@@ -334,7 +334,7 @@ if ($_POST) {
 
 $pgtitle = array(gettext("Firewall"),gettext("NAT"),gettext("Outbound"),gettext("Edit"));
 $closehead = false;
-include("head.inc");
+include 'head.inc';
 
 ?>
 
@@ -430,7 +430,7 @@ function poolopts_change() {
 </head>
 
 <body link="#0000CC" vlink="#0000CC" alink="#0000CC">
-<?php include("fbegin.inc"); ?>
+<?php include 'fbegin.inc'; ?>
 <?php if ($input_errors) print_input_errors($input_errors); ?>
 <form action="firewall_nat_out_edit.php" method="post" name="iform" id="iform">
 	<table width="100%" border="0" cellpadding="6" cellspacing="1" summary="firewall nat outbound edit">
@@ -847,6 +847,6 @@ function poolopts_change() {
 	var oTextbox4 = new AutoSuggestControl(document.getElementById("dstport"), new StateSuggestions(customarray));
 //]]>
 </script>
-<?php include("fend.inc"); ?>
+<?php include 'fend.inc'; ?>
 </body>
 </html>

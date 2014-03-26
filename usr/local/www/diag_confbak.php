@@ -107,13 +107,13 @@ $confvers = get_backups();
 unset($confvers['versions']);
 
 $pgtitle = array(gettext("Diagnostics"),gettext("Configuration History"));
-include("head.inc");
+include 'head.inc';
 
 ?>
 
 <body link="#0000CC" vlink="#0000CC" alink="#0000CC">
 	<?php
-		include("fbegin.inc");
+		include 'fbegin.inc';
 		if($savemsg)
 			print_info_box($savemsg);
 	?>
@@ -260,6 +260,6 @@ include("head.inc");
 		</tr>
 	</table>
 </form>
-<?php include("fend.inc"); ?>
+<?php include 'fend.inc'; ?>
 </body>
 </html>

@@ -97,10 +97,10 @@ $ifaces["lo0"] = "loopback";
 
 $pgtitle = array(gettext("System"),gettext("High Availability Sync"));
 $shortcut_section = "carp";
-include("head.inc");
+include 'head.inc';
 ?>
 <body link="#0000CC" vlink="#0000CC" alink="#0000CC">
-<?php include("fbegin.inc"); ?>
+<?php include 'fbegin.inc'; ?>
 
 <form action="system_hasync.php" method="post" name="iform" id="iform">
 <table width="100%" border="0" cellspacing="0" cellpadding="0" summary="high availability sync">
@@ -352,6 +352,6 @@ include("head.inc");
 </tr>
 </table>
 </form>
-<?php include("fend.inc"); ?>
+<?php include 'fend.inc'; ?>
 </body>
 </html>

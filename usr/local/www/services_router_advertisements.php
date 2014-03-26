@@ -188,12 +188,12 @@ if ($_POST) {
 
 $pgtitle = array(gettext("Services"),gettext("Router advertisements"));
 
-include("head.inc");
+include 'head.inc';
 
 ?>
 
 <body link="#0000CC" vlink="#0000CC" alink="#0000CC">
-<?php include("fbegin.inc"); ?>
+<?php include 'fbegin.inc'; ?>
 
 <script type="text/javascript" src="/javascript/row_helper.js">
 </script>
@@ -241,7 +241,7 @@ include("head.inc");
 	}
 	if ($tabscounter == 0) {
 		echo "</td></tr></table></form>";
-		include("fend.inc");
+		include 'fend.inc';
 		echo "</body>";
 		echo "</html>";
 		exit;
@@ -433,6 +433,6 @@ display_top_tabs($tab_array);
 //]]>
 </script>
 
-<?php include("fend.inc"); ?>
+<?php include 'fend.inc'; ?>
 </body>
 </html>

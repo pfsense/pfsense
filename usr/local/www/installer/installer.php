@@ -408,7 +408,7 @@ function body_html() {
 	if(strstr($pfSversion, "1.2")) 
 		$one_two = true;
 	$pgtitle = array("{$g['product_name']}", gettext("Installer"));
-	include("head.inc");
+	include 'head.inc';
 	echo <<<EOF
 	<body link="#0000CC" vlink="#0000CC" alink="#0000CC">
 	<script type="text/javascript" src="/javascript/jquery.js"></script>

@@ -59,7 +59,7 @@ if($_POST['backupbeforeupgrade'])
 
 $closehead = false;
 $pgtitle = array(gettext("Diagnostics"),gettext("Firmware"),gettext("Auto Update"));
-include("head.inc");
+include 'head.inc';
 
 ?>
 
@@ -69,7 +69,7 @@ include("head.inc");
 
 <body link="#0000CC" vlink="#0000CC" alink="#0000CC">
 
-<?php include("fbegin.inc"); ?>
+<?php include 'fbegin.inc'; ?>
 
 <form action="system_firmware_auto.php" method="post">
 <table width="100%" border="0" cellpadding="6" cellspacing="0" summary="firmware auto-check">
@@ -124,7 +124,7 @@ include("head.inc");
 </table>
 </form>
 
-<?php include("fend.inc"); ?>
+<?php include 'fend.inc'; ?>
 
 <?php
 

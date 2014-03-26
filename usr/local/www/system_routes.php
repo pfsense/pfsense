@@ -197,12 +197,12 @@ if (isset($_POST['del_x'])) {
 $pgtitle = array(gettext("System"),gettext("Static Routes"));
 $shortcut_section = "routing";
 
-include("head.inc");
+include 'head.inc';
 
 ?>
 
 <body link="#0000CC" vlink="#0000CC" alink="#0000CC">
-<?php include("fbegin.inc"); ?>
+<?php include 'fbegin.inc'; ?>
 <form action="system_routes.php" method="post">
 <script type="text/javascript" src="/javascript/row_toggle.js"></script>
 <?php if ($savemsg) print_info_box($savemsg); ?>
@@ -368,6 +368,6 @@ include("head.inc");
 </table>
 </form>
 <p><b><?=gettext("Note:");?></b>  <?=gettext("Do not enter static routes for networks assigned on any interface of this firewall.  Static routes are only used for networks reachable via a different router, and not reachable via your default gateway.");?></p>
-<?php include("fend.inc"); ?>
+<?php include 'fend.inc'; ?>
 </body>
 </html>

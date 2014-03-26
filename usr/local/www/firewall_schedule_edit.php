@@ -203,7 +203,7 @@ if ($_POST) {
 	}	
 
 }
-include("head.inc");
+include 'head.inc';
 
 /* put your custom HTML head content here        */
 /* using some of the $pfSenseHead function calls */
@@ -767,7 +767,7 @@ EOD;
 <body link="#0000CC" vlink="#0000CC" alink="#0000CC" onload="<?= $jsevents["body"]["onload"] ?>">
 
 
-<?php include("fbegin.inc");	echo $jscriptstr; ?>
+<?php include 'fbegin.inc';	echo $jscriptstr; ?>
 <?php if ($input_errors) print_input_errors($input_errors); ?>
 <div id="inputerrors"></div>
 
@@ -1170,6 +1170,6 @@ EOD;
 			 </table>
 		
 </td></tr></table></form>
-<?php include("fend.inc"); ?>
+<?php include 'fend.inc'; ?>
 </body>
 </html>

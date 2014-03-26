@@ -172,14 +172,14 @@ if ($_POST['apply']) {
 $pgtitle = gettext("Firewall: Shaper: By Queues View");
 $shortcut_section = "trafficshaper";
 $closehead = false;
-include("head.inc");
+include 'head.inc';
 ?>
 <link rel="stylesheet" type="text/css" media="all" href="./tree/tree.css" />
 <script type="text/javascript" src="./tree/tree.js"></script>
 </head>
 
 <body link="#0000CC" vlink="#0000CC" alink="#0000CC">
-<?php include("fbegin.inc"); ?>
+<?php include 'fbegin.inc'; ?>
 <div id="inputerrors"></div>
 <?php if ($input_errors) print_input_errors($input_errors); ?>
 <form action="firewall_shaper_queues.php" method="post" name="iform" id="iform">
@@ -224,6 +224,6 @@ include("head.inc");
 	</tr>
 </table>
             </form>
-<?php include("fend.inc"); ?>
+<?php include 'fend.inc'; ?>
 </body>
 </html>

@@ -39,15 +39,15 @@
 ##|*MATCH=diag_sockets.php*
 ##|-PRIV
 
-include('guiconfig.inc');
+include 'guiconfig.inc';
 
 $pgtitle = array(gettext("Diagnostics"),gettext("Sockets"));
 
-include('head.inc');
+include 'head.inc';
 
 ?>
 <body link="#000000" vlink="#000000" alink="#000000">
-<?php include("fbegin.inc");
+<?php include 'fbegin.inc';
 
 $showAll = isset($_GET['showAll']);
 $showAllText = $showAll ? "Show only listening sockets" : "Show all socket connections";
@@ -134,5 +134,5 @@ The information listed for each socket is:</td></tr>
 </table>
 </div>
 <?php
-include('fend.inc');
+include 'fend.inc';
 ?>

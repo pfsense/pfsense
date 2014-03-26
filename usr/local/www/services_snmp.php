@@ -164,7 +164,7 @@ if ($_POST) {
 
 $pgtitle = array(gettext("Services"),gettext("SNMP"));
 $shortcut_section = "snmp";
-include("head.inc");
+include 'head.inc';
 
 ?>
 <script type="text/javascript">
@@ -272,7 +272,7 @@ function enable_change(whichone) {
 //-->
 </script>
 <body link="#0000CC" vlink="#0000CC" alink="#0000CC">
-<?php include("fbegin.inc"); ?>
+<?php include 'fbegin.inc'; ?>
 <?php if ($input_errors) print_input_errors($input_errors); ?>
 <?php if ($savemsg) print_info_box($savemsg); ?>
             <form action="services_snmp.php" method="post" name="iform" id="iform">
@@ -437,6 +437,6 @@ function enable_change(whichone) {
 enable_change(this);
 //-->
 </script>
-<?php include("fend.inc"); ?>
+<?php include 'fend.inc'; ?>
 </body>
 </html>

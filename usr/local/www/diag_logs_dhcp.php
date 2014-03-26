@@ -58,12 +58,12 @@ if ($_POST['clear']) {
 
 $pgtitle = array(gettext("Status"),gettext("System logs"),gettext("DHCP"));
 $shortcut_section = "dhcp";
-include("head.inc");
+include 'head.inc';
 
 ?>
 
 <body link="#0000CC" vlink="#0000CC" alink="#0000CC">
-<?php include("fbegin.inc"); ?>
+<?php include 'fbegin.inc'; ?>
 <table width="100%" border="0" cellpadding="0" cellspacing="0" summary="logs dhcp">
   <tr><td>
 <?php
@@ -99,6 +99,6 @@ include("head.inc");
 	</td>
   </tr>
 </table>
-<?php include("fend.inc"); ?>
+<?php include 'fend.inc'; ?>
 </body>
 </html>

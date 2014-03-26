@@ -62,8 +62,8 @@ if (!is_array($config['voucher'][$cpzone]['roll'])) {
 }
 $a_roll = &$config['voucher'][$cpzone]['roll'];
 
-include("head.inc");
-include("fbegin.inc");
+include 'head.inc';
+include 'fbegin.inc';
 ?>
 
 <form action="status_captiveportal_voucher_rolls.php" method="post" enctype="multipart/form-data" name="iform" id="iform">
@@ -131,4 +131,4 @@ include("fbegin.inc");
 	</tr>
 </table>
 </form>
-<?php include("fend.inc"); ?>
+<?php include 'fend.inc'; ?>

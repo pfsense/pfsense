@@ -36,12 +36,12 @@
 ##|-PRIV
 
 require("guiconfig.inc");
-include("head.inc");
+include 'head.inc';
 
 ?>
 
 <body link="#0000CC" vlink="#0000CC" alink="#0000CC">
-<?php include("fbegin.inc"); ?>
+<?php include 'fbegin.inc'; ?>
 <p class="pgtitle"><?=gettext("License");?></p>
 
             <p><strong><?=$g['product_name'];?> <?=gettext("is Copyright");?> &copy; <?=$g['product_copyright_years'];?> <?=gettext("by");?> <?=$g['product_copyright'];?><br />
@@ -140,6 +140,6 @@ include("head.inc");
 			  <br />
 			  <?=gettext("OpenVPN"); ?> (<a href="http://openvpn.net/" target="_blank">http://openvpn.net/</a>)
 			  <?=gettext("Copyright (C) 2002-2005 OpenVPN Solutions LLC ");?>
-			  <?php include("fend.inc"); ?>
+			  <?php include 'fend.inc'; ?>
 </body>
 </html>

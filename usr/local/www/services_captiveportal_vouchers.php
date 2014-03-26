@@ -359,9 +359,9 @@ EOF;
 		}
 	}
 }
-include("head.inc");
+include 'head.inc';
 ?>
-<?php include("fbegin.inc"); ?>
+<?php include 'fbegin.inc'; ?>
 <script type="text/javascript">
 <!--
 function generatenewkey() {
@@ -652,4 +652,4 @@ function enable_change(enable_change) {
 enable_change(false);
 //-->
 </script>
-<?php include("fend.inc"); ?>
+<?php include 'fend.inc'; ?>

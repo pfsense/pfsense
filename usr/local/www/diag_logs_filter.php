@@ -122,12 +122,12 @@ if ($_POST['clear'])
 
 $pgtitle = array(gettext("Status"),gettext("System logs"),gettext("Firewall"));
 $shortcut_section = "firewall";
-include("head.inc");
+include 'head.inc';
 
 ?>
 <body link="#0000CC" vlink="#0000CC" alink="#0000CC">
 <script src="/javascript/filter_log.js" type="text/javascript"></script>
-<?php include("fbegin.inc"); ?>
+<?php include 'fbegin.inc'; ?>
 <table width="100%" border="0" cellpadding="0" cellspacing="0" summary="logs filter">
   <tr><td>
 <?php
@@ -424,7 +424,7 @@ include("head.inc");
 
 <p><span class="vexpl"><a href="https://doc.pfsense.org/index.php/What_are_TCP_Flags%3F">TCP Flags</a>: F - FIN, S - SYN, A or . - ACK, R - RST, P - PSH, U - URG, E - ECE, W - CWR</span></p>
 
-<?php include("fend.inc"); ?>
+<?php include 'fend.inc'; ?>
 
 <!-- AJAXY STUFF -->
 <script type="text/javascript">

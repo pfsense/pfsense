@@ -168,12 +168,12 @@ if ($_POST) {
 	$do_tcpdump = false;
 }
 
-include("head.inc"); ?>
+include 'head.inc'; ?>
 
 <body link="#000000" vlink="#0000CC" alink="#0000CC">
 
 <?php
-include("fbegin.inc");
+include 'fbegin.inc';
 ?>
 
 <?php if ($input_errors) print_input_errors($input_errors); ?>
@@ -398,5 +398,5 @@ include("fbegin.inc");
 </table>
 
 <?php
-include("fend.inc");
+include 'fend.inc';
 ?>

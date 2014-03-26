@@ -135,11 +135,11 @@ if ($_POST) {
 
 $pgtitle = array(gettext("VPN"),gettext("VPN PPTP"),gettext("User"),gettext("Edit"));
 $shortcut_section = "pptps";
-include("head.inc");
+include 'head.inc';
 
 ?>
 <body link="#0000CC" vlink="#0000CC" alink="#0000CC">
-<?php include("fbegin.inc"); ?>
+<?php include 'fbegin.inc'; ?>
 <?php if ($input_errors) print_input_errors($input_errors); ?>
             <form action="vpn_pptp_users_edit.php" method="post" name="iform" id="iform">
               <div id="mainarea">
@@ -176,7 +176,7 @@ include("head.inc");
               </table>
 	      </div>
 </form>
-<?php include("fend.inc"); ?>
+<?php include 'fend.inc'; ?>
 </body>
 </html>
 

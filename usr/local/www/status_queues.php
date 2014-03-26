@@ -122,14 +122,14 @@ if ($_REQUEST['getactivity']) {
 }
 $pgtitle = array(gettext("Status"),gettext("Traffic shaper"),gettext("Queues"));
 $shortcut_section = "trafficshaper";
-include("head.inc");
+include 'head.inc';
 ?>
 <body link="#0000CC" vlink="#0000CC" alink="#0000CC">
-<?php include("fbegin.inc"); ?>
+<?php include 'fbegin.inc'; ?>
 <?php
 if(!is_array($config['shaper']['queue']) || count($config['shaper']['queue']) < 1) {
 	echo gettext("Traffic shaping is not configured.");
-	include("fend.inc");
+	include 'fend.inc';
 	exit;}
 ?>
 <?php if (!$error): ?>
@@ -196,7 +196,7 @@ if(!is_array($config['shaper']['queue']) || count($config['shaper']['queue']) < 
 	}
 </script>
 </form>
-<?php include("fend.inc"); ?>
+<?php include 'fend.inc'; ?>
 </body>
 </html>
 <?php 

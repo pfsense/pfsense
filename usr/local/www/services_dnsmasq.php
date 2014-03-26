@@ -145,7 +145,7 @@ if ($_GET['act'] == "del") {
 
 $pgtitle = array(gettext("Services"),gettext("DNS forwarder"));
 $shortcut_section = "resolver";
-include("head.inc");
+include 'head.inc';
 
 ?>
 
@@ -167,7 +167,7 @@ function show_advanced_dns() {
 </script>
 
 <body link="#0000CC" vlink="#0000CC" alink="#0000CC">
-<?php include("fbegin.inc"); ?>
+<?php include 'fbegin.inc'; ?>
 <form action="services_dnsmasq.php" method="post" name="iform" id="iform">
 <?php if ($input_errors) print_input_errors($input_errors); ?>
 <?php if ($savemsg) print_info_box($savemsg); ?>
@@ -482,6 +482,6 @@ function show_advanced_dns() {
 enable_change(false);
 //-->
 </script>
-<?php include("fend.inc"); ?>
+<?php include 'fend.inc'; ?>
 </body>
 </html>

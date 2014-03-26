@@ -152,11 +152,11 @@ if($_POST['aliasimport'] <> "") {
 	}
 }
 
-include("head.inc");
+include 'head.inc';
 
 ?>
 <body link="#0000CC" vlink="#0000CC" alink="#0000CC">
-<?php include("fbegin.inc"); ?>
+<?php include 'fbegin.inc'; ?>
 <?php if ($input_errors) print_input_errors($input_errors); ?>
 <div id="niftyOutter">
 <form action="firewall_aliases_import.php" method="post" name="iform" id="iform">
@@ -201,7 +201,7 @@ include("head.inc");
 </form>
 </div>
 
-<?php include("fend.inc"); ?>
+<?php include 'fend.inc'; ?>
 	    
 <script type="text/javascript">
 //<![CDATA[

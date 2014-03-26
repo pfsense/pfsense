@@ -80,7 +80,7 @@ function output_crash_reporter_html($crash_reports) {
 }
 
 $pgtitle = array(gettext("Diagnostics"),gettext("Crash reporter"));
-include('head.inc');
+include 'head.inc';
 
 $crash_report_header = "Crash report begins.  Anonymous machine information:\n\n";
 $crash_report_header .= php_uname("m") . "\n";
@@ -94,7 +94,7 @@ exec("/usr/bin/grep -vi warning /tmp/PHP_errors.log", $php_errors);
 
 <body link="#0000CC" vlink="#0000CC" alink="#0000CC">
 
-<?php include("fbegin.inc"); ?>
+<?php include 'fbegin.inc'; ?>
 
 	<form action="crash_reporter.php" method="post">
 
@@ -150,7 +150,7 @@ exec("/usr/bin/grep -vi warning /tmp/PHP_errors.log", $php_errors);
 	}
 ?>
 
-<?php include("fend.inc"); ?>
+<?php include 'fend.inc'; ?>
 
 </body>
 </html>

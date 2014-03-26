@@ -93,9 +93,9 @@ if ($_GET['act'] == "del" && !empty($cpzone)) {
 }
 
 
-include("head.inc");
+include 'head.inc';
 ?>
-<?php include("fbegin.inc"); ?>
+<?php include 'fbegin.inc'; ?>
 <body link="#0000CC" vlink="#0000CC" alink="#0000CC">
 <form action="services_captiveportal_hostname.php" method="post">
 <input type="hidden" name="zone" id="zone" value="<?=htmlspecialchars($cpzone);?>" />
@@ -193,6 +193,6 @@ include("head.inc");
   </tr>
   </table>
 </form>
-<?php include("fend.inc"); ?>
+<?php include 'fend.inc'; ?>
 </body>
 </html>

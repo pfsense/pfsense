@@ -2032,7 +2032,7 @@ function portal_allow($clientip,$clientmac,$username,$password = null, $attribut
 		else
 			$message = 0;
 
-		include("{$g['varetc_path']}/captiveportal-{$cpzone}-logout.html");
+		include "{$g['varetc_path']}/captiveportal-{$cpzone}-logout.html";
 
 	} else {
 		portal_reply_page($redirurl, "redir", "Just redirect the user.");

@@ -65,12 +65,12 @@ if ($_GET['filter'] && ($_GET['killfilter'] == "Kill")) {
 }
 
 $pgtitle = array(gettext("Diagnostics"),gettext("Show States"));
-include("head.inc");
+include 'head.inc';
 
 ?>
 
 <body link="#0000CC" vlink="#0000CC" alink="#0000CC" onload="<?=$jsevents["body"]["onload"];?>">
-<?php include("fbegin.inc"); ?>
+<?php include 'fbegin.inc'; ?>
 <form action="diag_dump_states.php" method="get" name="iform">
 
 <script type="text/javascript">

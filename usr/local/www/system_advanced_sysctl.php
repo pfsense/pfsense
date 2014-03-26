@@ -124,12 +124,12 @@ if ($_POST) {
 }
 
 $pgtitle = array(gettext("System"),gettext("Advanced: System Tunables"));
-include("head.inc");
+include 'head.inc';
 
 ?>
 
 <body link="#0000CC" vlink="#0000CC" alink="#0000CC">
-<?php include("fbegin.inc"); ?>
+<?php include 'fbegin.inc'; ?>
 	<form action="system_advanced_sysctl.php" method="post">
 		<?php
 			if ($input_errors)
@@ -269,6 +269,6 @@ include("head.inc");
 		</tr>
 		<?php endif; ?>
 	</table>
-<?php include("fend.inc"); ?>
+<?php include 'fend.inc'; ?>
 </body>
 </html>

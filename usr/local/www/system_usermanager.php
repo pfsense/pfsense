@@ -346,7 +346,7 @@ if ($_POST) {
 	}
 }
 
-include("head.inc");
+include 'head.inc';
 ?>
 
 <link rel="stylesheet" type="text/css" href="/javascript/jquery-ui-timepicker-addon/css/jquery-ui-timepicker-addon.css" />
@@ -359,7 +359,7 @@ include("head.inc");
 </script>
 
 <body link="#000000" vlink="#000000" alink="#000000" onload="<?= $jsevents["body"]["onload"] ?>">
-<?php include("fbegin.inc"); ?>
+<?php include 'fbegin.inc'; ?>
 
 <script type="text/javascript">
 //<![CDATA[
@@ -872,7 +872,7 @@ function sshkeyClicked(obj) {
 		</td>
 	</tr>
 </table>
-<?php include("fend.inc");?>
+<?php include 'fend.inc';?>
 </body>
 </html>
 

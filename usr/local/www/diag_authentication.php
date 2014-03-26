@@ -68,13 +68,13 @@ if ($_POST) {
 }
 $pgtitle = array(gettext("Diagnostics"),gettext("Authentication"));
 $shortcut_section = "authentication";
-include("head.inc");
+include 'head.inc';
 
 ?>
 
 <body link="#000000" vlink="#000000" alink="#000000">
 
-<?php include("fbegin.inc"); ?>
+<?php include 'fbegin.inc'; ?>
 <?php if ($input_errors) print_input_errors($input_errors);?>
 <?php if ($savemsg) print_info_box($savemsg);?>
 
@@ -125,4 +125,4 @@ include("head.inc");
 	</td></tr>
 </table>
 
-<?php include("fend.inc"); ?>
+<?php include 'fend.inc'; ?>

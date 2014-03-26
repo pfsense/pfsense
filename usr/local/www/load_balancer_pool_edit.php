@@ -167,7 +167,7 @@ if ($_POST) {
 $pgtitle = array(gettext("Services"), gettext("Load Balancer"),gettext("Pool"),gettext("Edit"));
 $shortcut_section = "relayd";
 
-include("head.inc");
+include 'head.inc';
 
 ?>
 
@@ -183,7 +183,7 @@ function clearcombo(){
 
 <script type="text/javascript" src="/javascript/autosuggest.js"></script>
 <script type="text/javascript" src="/javascript/suggestions.js"></script>
-<?php include("fbegin.inc"); ?>
+<?php include 'fbegin.inc'; ?>
 <?php if ($input_errors) print_input_errors($input_errors); ?>
 
 	<form action="load_balancer_pool_edit.php" method="post" name="iform" id="iform">
@@ -341,6 +341,6 @@ echo "</select>";
 	</table>
 	</form>
 <br />
-<?php include("fend.inc"); ?>
+<?php include 'fend.inc'; ?>
 </body>
 </html>

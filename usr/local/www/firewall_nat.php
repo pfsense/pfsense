@@ -164,7 +164,7 @@ if (isset($_POST['del_x'])) {
 
 $closehead = false;
 $pgtitle = array(gettext("Firewall"),gettext("NAT"),gettext("Port Forward"));
-include("head.inc");
+include 'head.inc';
 
 echo "<script type=\"text/javascript\" src=\"/javascript/domTT/domLib.js\"></script>";
 echo "<script type=\"text/javascript\" src=\"/javascript/domTT/domTT.js\"></script>";
@@ -175,7 +175,7 @@ echo "<script type=\"text/javascript\" src=\"/javascript/domTT/fadomatic.js\"></
 </head>
 
 <body link="#000000" vlink="#000000" alink="#000000">
-<?php include("fbegin.inc"); ?>
+<?php include 'fbegin.inc'; ?>
 <form action="firewall_nat.php" method="post" name="iform">
 <script type="text/javascript" src="/javascript/row_toggle.js"></script>
 <?php if ($savemsg) print_info_box($savemsg); ?>
@@ -377,6 +377,6 @@ if ($pkg['tabs'] <> "") {
 ?>
 
 </form>
-<?php include("fend.inc"); ?>
+<?php include 'fend.inc'; ?>
 </body>
 </html>

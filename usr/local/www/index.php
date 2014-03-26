@@ -252,7 +252,7 @@ if ($config['widgets'] && $config['widgets']['sequence'] != "") {
 	}
 
 	$widgetlist = $savedwidgetfiles;
-} else{
+} else {
 	// no saved widget sequence found, build default list.
 	$widgetlist = $widgetfiles;
 }
@@ -268,10 +268,10 @@ while (false !== ($filename = readdir($dirhandle))) {
 foreach($phpincludefiles as $includename) {
 	if(!stristr($includename, ".inc"))
 		continue;
-	include($directory . $includename);
+	include "$directory"."$includename";
 }
 
-##begin AJAX
+//begin AJAX
 $jscriptstr = <<<EOD
 <script type="text/javascript">
 //<![CDATA[
@@ -463,7 +463,7 @@ EOD;
 
 ## Set Page Title and Include Header
 $pgtitle = array(gettext("Status: Dashboard"));
-include("head.inc");
+include 'head.inc';
 
 ?>
 
@@ -476,7 +476,7 @@ columns = ['col1','col2','col3','col4', 'col5','col6','col7','col8','col9','col1
 </script>
 
 <?php
-include("fbegin.inc");
+include 'fbegin.inc';
 echo $jscriptstr;
 	if(!file_exists("/usr/local/www/themes/{$g['theme']}/no_big_logo"))
 		echo "<center><img src=\"./themes/".$g['theme']."/images/logobig.jpg\" alt=\"big logo\" /></center><br />";
@@ -726,7 +726,7 @@ pfSense_handle_custom_code("/usr/local/pkg/dashboard/pre_dashboard");
 				<?php
 					if ($divdisplay == "block")
 					{
-						include($directory . $widget);
+						include "$directory"."$widget";
 					}
 				?>
 			</div>
@@ -741,7 +741,7 @@ pfSense_handle_custom_code("/usr/local/pkg/dashboard/pre_dashboard");
 	<div style="clear:both;"></div>
 </div>
 
-<?php include("fend.inc"); ?>
+<?php include 'fend.inc'; ?>
 
 <script type="text/javascript">
 //<![CDATA[

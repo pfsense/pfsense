@@ -55,11 +55,11 @@ date_default_timezone_set($timezone);
 /* if upgrade in progress, alert user */
 if(is_subsystem_dirty('packagelock')) {
 	$pgtitle = array(gettext("System"),gettext("Package Manager"));
-	include("head.inc");
+	include 'head.inc';
 	echo "<body link=\"#0000CC\" vlink=\"#0000CC\" alink=\"#0000CC\">\n";
-	include("fbegin.inc");
+	include 'fbegin.inc';
 	echo "Please wait while packages are reinstalled in the background.";
-	include("fend.inc");
+	include 'fend.inc';
 	echo "</body>";
 	echo "</html>";
 	exit;
@@ -102,7 +102,7 @@ if (! empty($_GET))
 
 $closehead = false;
 $pgtitle = array(gettext("System"),gettext("Package Manager"));
-include("head.inc");
+include 'head.inc';
 
 ?>
 <script type="text/javascript" src="javascript/domTT/domLib.js"></script>
@@ -114,7 +114,7 @@ include("head.inc");
 
 <body link="#0000CC" vlink="#0000CC" alink="#0000CC">
 <?php
-	include("fbegin.inc");
+	include 'fbegin.inc';
 	if ($savemsg)
 		print_info_box($savemsg);
 ?>
@@ -269,6 +269,6 @@ include("head.inc");
 	</div>
 	</td></tr>
 </table>
-<?php include("fend.inc"); ?>
+<?php include 'fend.inc'; ?>
 </body>
 </html>

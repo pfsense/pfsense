@@ -171,7 +171,7 @@ do {
 
 $closehead = false;
 $pgtitle = array($title);
-include("head.inc");
+include 'head.inc';
 
 if(file_exists("/usr/local/www/themes/{$g['theme']}/wizard.css"))
 	echo "<link type=\"text/css\" rel=\"stylesheet\" href=\"/themes/{$g['theme']}/wizard.css\" media=\"all\" />\n";

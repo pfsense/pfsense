@@ -221,7 +221,7 @@ if ($_POST) {
 }
 
 $pgtitle = array(gettext("Firewall"),gettext("NAT"),gettext("1:1"),gettext("Edit"));
-include("head.inc");
+include 'head.inc';
 
 ?>
 
@@ -270,7 +270,7 @@ function typesel_change() {
 </script>
 
 <?php
-include("fbegin.inc");
+include 'fbegin.inc';
 if ($input_errors)
 	print_input_errors($input_errors);
 ?>
@@ -548,6 +548,6 @@ if ($input_errors)
 	var oTextbox1 = new AutoSuggestControl(document.getElementById("dst"), new StateSuggestions(addressarray));
 //]]>
 </script>
-<?php include("fend.inc"); ?>
+<?php include 'fend.inc'; ?>
 </body>
 </html>

@@ -105,10 +105,10 @@ $servers = openvpn_get_active_servers();
 $sk_servers = openvpn_get_active_servers("p2p");
 $clients = openvpn_get_active_clients();
 
-include("head.inc"); ?>
+include 'head.inc'; ?>
 
 <body link="#0000CC" vlink="#0000CC" alink="#0000CC" onload="<?=$jsevents["body"]["onload"];?>">
-<?php include("fbegin.inc"); ?>
+<?php include 'fbegin.inc'; ?>
 <form action="status_openvpn.php" method="get" name="iform">
 <script type="text/javascript">
 	function killClient(mport, remipp) {
@@ -396,7 +396,7 @@ if ((empty($clients)) && (empty($servers)) && (empty($sk_servers))) {
 ?>
 
 
-<?php include("fend.inc"); ?>
+<?php include 'fend.inc'; ?>
 <script type="text/javascript">
 function show_routes(id, buttonid) {
 	document.getElementById(buttonid).innerHTML='';

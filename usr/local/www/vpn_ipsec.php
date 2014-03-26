@@ -119,12 +119,12 @@ if ($_GET['act'] == "delph2")
 $pgtitle = array(gettext("VPN"),gettext("IPsec"));
 $shortcut_section = "ipsec";
 
-include("head.inc");
+include 'head.inc';
 
 ?>
 
 <body link="#0000CC" vlink="#0000CC" alink="#0000CC">
-<?php include("fbegin.inc"); ?>
+<?php include 'fbegin.inc'; ?>
 <form action="vpn_ipsec.php" method="post">
 <?php
 	if ($savemsg)
@@ -444,7 +444,7 @@ include("head.inc");
 	</tr>
 </table>
 </form>
-<?php include("fend.inc"); ?>
+<?php include 'fend.inc'; ?>
 <script type="text/javascript">
 function show_phase2(id, buttonid) {
 	document.getElementById(buttonid).innerHTML='';

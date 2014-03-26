@@ -271,13 +271,13 @@ if ($_POST) {
 }
 
 $pgtitle = array(gettext("System"),gettext("Advanced: Miscellaneous"));
-include("head.inc");
+include 'head.inc';
 
 ?>
 
 <body link="#0000CC" vlink="#0000CC" alink="#0000CC">
 <?php
-	include("fbegin.inc");
+	include 'fbegin.inc';
 	if ($input_errors)
 		print_input_errors($input_errors);
 	if ($savemsg)
@@ -742,6 +742,6 @@ function tmpvar_checked(obj) {
 		</table>
 	</form>
 
-<?php include("fend.inc"); ?>
+<?php include 'fend.inc'; ?>
 </body>
 </html>

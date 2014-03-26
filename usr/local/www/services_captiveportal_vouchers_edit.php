@@ -161,9 +161,9 @@ if ($_POST) {
     }
 }
 
-include("head.inc");
+include 'head.inc';
 ?>
-<?php include("fbegin.inc"); ?>
+<?php include 'fbegin.inc'; ?>
 <?php if ($input_errors) print_input_errors($input_errors); ?>
 <?php if ($savemsg) print_info_box($savemsg); ?>
 <form action="services_captiveportal_vouchers_edit.php" method="post" name="iform" id="iform">
@@ -212,4 +212,4 @@ include("head.inc");
 	</tr>
   </table>
  </form>
-<?php include("fend.inc"); ?>
+<?php include 'fend.inc'; ?>

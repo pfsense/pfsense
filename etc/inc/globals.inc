@@ -158,7 +158,7 @@ $sysctls = array("net.inet.ip.portrange.first" => "1024",
 
 /* Include override values for the above if needed. If the file doesn't exist, don't try to load it. */
 if (file_exists("/etc/inc/globals_override.inc"))
-	@include("globals_override.inc");
+	@include 'globals_override.inc';
 
 $config_parsed = false;
 

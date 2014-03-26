@@ -91,7 +91,7 @@ $arrDT   = localtime();
 $intYear = $arrDT[5] + 1900;
 
 $pgtitle = array(gettext("Diagnostics"),gettext("Execute command"));
-include("head.inc");
+include 'head.inc';
 ?>
 
 <script type="text/javascript">
@@ -219,7 +219,7 @@ pre {
 </style>
 </head>
 <body link="#0000CC" vlink="#0000CC" alink="#0000CC">
-<?php include("fbegin.inc"); ?>
+<?php include 'fbegin.inc'; ?>
 <?php if (isBlank($_POST['txtCommand'])): ?>
 <p class="red"><strong><?=gettext("Note: this function is unsupported. Use it " .
 "on your own risk"); ?>!</strong></p>
@@ -322,7 +322,7 @@ if (!isBlank($_POST['txtPHPCommand'])) {
     
   </table>
 </div>
-<?php include("fend.inc"); ?>
+<?php include 'fend.inc'; ?>
 </form>
 <script language="Javascript">
 document.forms[0].txtCommand.focus();

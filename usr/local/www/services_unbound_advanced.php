@@ -109,7 +109,7 @@ function enable_change(enable_over) {
 </script>
 	
 <body>
-<?php include("fbegin.inc"); ?>
+<?php include 'fbegin.inc'; ?>
 <form action="services_unbound_advanced.php" method="post" name="iform" id="iform">
 <?php if ($input_errors) print_input_errors($input_errors); ?>
 <?php if ($savemsg) print_info_box($savemsg); ?>
@@ -380,6 +380,6 @@ function enable_change(enable_over) {
 	</tbody>
 </table>
 </form>
-<?php include("fend.inc"); ?>
+<?php include 'fend.inc'; ?>
 </body>
 </html>

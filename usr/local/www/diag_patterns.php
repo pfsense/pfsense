@@ -61,11 +61,11 @@ function fileExtension($nameFile) {
 }
 
 $pgtitle = array(gettext("Diagnostics"), gettext("Add layer7 pattern"));
-include("head.inc");
+include 'head.inc';
 ?>
 
 <body link="#0000CC" vlink="#0000CC" alink="#0000CC">
-<?php include("fbegin.inc"); ?>
+<?php include 'fbegin.inc'; ?>
 <?php if ($ulmsg) echo "<p class=\"red\"><strong>" . $ulmsg . "</strong></p>\n"; ?>
 <div id="mainarea">
 <form action="diag_patterns.php" method="post" enctype="multipart/form-data" name="frmPattern">
@@ -91,6 +91,6 @@ include("head.inc");
 </table>
 </form>
 </div>
-<?php include("fend.inc"); ?>
+<?php include 'fend.inc'; ?>
 </body>
 </html>

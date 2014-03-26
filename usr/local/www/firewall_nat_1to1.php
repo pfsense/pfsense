@@ -144,11 +144,11 @@ if (isset($_POST['del_x'])) {
 }
 
 $pgtitle = array(gettext("Firewall"),gettext("NAT"),gettext("1:1"));
-include("head.inc");
+include 'head.inc';
 
 ?>
 <body link="#0000CC" vlink="#0000CC" alink="#0000CC">
-<?php include("fbegin.inc"); ?>
+<?php include 'fbegin.inc'; ?>
 <form action="firewall_nat_1to1.php" method="post">
 <script type="text/javascript" src="/javascript/row_toggle.js"></script>
 <?php
@@ -349,6 +349,6 @@ if (is_subsystem_dirty('natconf'))
 	</td></tr>
 </table>
 </form>
-<?php include("fend.inc"); ?>
+<?php include 'fend.inc'; ?>
 </body>
 </html>

@@ -143,7 +143,7 @@ if ($_POST) {
 $pgtitle = array(gettext("Services"),gettext("Load Balancer"),gettext("Virtual Server"),gettext("Edit"));
 $shortcut_section = "relayd-virtualservers";
 
-include("head.inc");
+include 'head.inc';
 
 ?>
 
@@ -151,7 +151,7 @@ include("head.inc");
 <script type="text/javascript" src="/javascript/autosuggest.js"></script>
 <script type="text/javascript" src="/javascript/suggestions.js"></script>
 
-<?php include("fbegin.inc"); ?>
+<?php include 'fbegin.inc'; ?>
 <?php if ($input_errors) print_input_errors($input_errors); ?>
             <form action="load_balancer_virtual_server_edit.php" method="post" name="iform" id="iform">
               <table width="100%" border="0" cellpadding="6" cellspacing="0">
@@ -282,6 +282,6 @@ include("head.inc");
 	</form>
 	<br />
 	<span class="red"><strong><?=gettext("Note:"); ?></strong></span> <?=gettext("Don't forget to add a firewall rule for the virtual server/pool after you're finished setting it up."); ?>
-<?php include("fend.inc"); ?>
+<?php include 'fend.inc'; ?>
 </body>
 </html>

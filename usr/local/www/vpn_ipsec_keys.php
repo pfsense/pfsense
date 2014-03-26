@@ -71,12 +71,12 @@ if ($_GET['act'] == "del") {
 $pgtitle = gettext("VPN: IPsec: Keys");
 $shortcut_section = "ipsec";
 
-include("head.inc");
+include 'head.inc';
 
 ?>
 
 <body link="#0000CC" vlink="#0000CC" alink="#0000CC">
-<?php include("fbegin.inc"); ?>
+<?php include 'fbegin.inc'; ?>
 <form action="vpn_ipsec.php" method="post">
 <?php 
 if ($savemsg)
@@ -153,6 +153,6 @@ if (is_subsystem_dirty('ipsec'))
     </tr>
 </table>
 </form>
-<?php include("fend.inc"); ?>
+<?php include 'fend.inc'; ?>
 </body>
 </html>

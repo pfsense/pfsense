@@ -580,12 +580,12 @@ $mth = ini_get('upload_progress_meter.store_method');
 $dir = ini_get('upload_progress_meter.file.filename_template');
 
 $pgtitle = array(gettext("Diagnostics"),gettext("Backup/restore"));
-include("head.inc");
+include 'head.inc';
 
 ?>
 
 <body link="#0000CC" vlink="#0000CC" alink="#0000CC">
-<?php include("fbegin.inc"); ?>
+<?php include 'fbegin.inc'; ?>
 <script type="text/javascript">
 <!--
 
@@ -779,7 +779,7 @@ decrypt_change();
 //-->
 </script>
 
-<?php include("fend.inc"); ?>
+<?php include 'fend.inc'; ?>
 </body>
 </html>
 <?php

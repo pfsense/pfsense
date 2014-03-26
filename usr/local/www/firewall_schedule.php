@@ -84,11 +84,11 @@ if ($_GET['act'] == "del") {
 	}
 }
 
-include("head.inc");
+include 'head.inc';
 ?>
 
 <body link="#0000CC" vlink="#0000CC" alink="#0000CC">
-<?php include("fbegin.inc"); ?>
+<?php include 'fbegin.inc'; ?>
 <?php if ($savemsg) print_info_box($savemsg); ?>
 <form action="firewall_schedule.php" method="post">
 	<table class="tabcont" width="100%" border="0" cellpadding="0" cellspacing="0" summary="firewall schedule">
@@ -242,6 +242,6 @@ include("head.inc");
 </tr>
 </table>
 </form>
-<?php include("fend.inc"); ?>
+<?php include 'fend.inc'; ?>
 </body>
 </html>

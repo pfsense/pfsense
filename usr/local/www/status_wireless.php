@@ -40,7 +40,7 @@ require_once("guiconfig.inc");
 
 $pgtitle = array(gettext("Status"),gettext("Wireless"));
 $shortcut_section = "wireless";
-include("head.inc");
+include 'head.inc';
 
 $if = $_POST['if'];
 if($_GET['if'] <> "")
@@ -61,7 +61,7 @@ if(empty($if)) {
 
 <body link="#0000CC" vlink="#0000CC" alink="#0000CC">
 <?php
-include("fbegin.inc");
+include 'fbegin.inc';
 ?>
 <form action="status_wireless.php" method="post">
 <?php if ($savemsg) print_info_box($savemsg); ?>
@@ -191,6 +191,6 @@ display_top_tabs($tab_array);
 </td></tr>
 </table>
 
-<?php include("fend.inc"); ?>
+<?php include 'fend.inc'; ?>
 </body>
 </html>

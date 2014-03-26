@@ -63,12 +63,12 @@ else {
 }
 
 $pgtitle = array(gettext("Diagnostics"),gettext("Show Source Tracking"));
-include("head.inc");
+include 'head.inc';
 
 ?>
 
 <body link="#0000CC" vlink="#0000CC" alink="#0000CC" onload="<?=$jsevents["body"]["onload"];?>">
-<?php include("fbegin.inc"); ?>
+<?php include 'fbegin.inc'; ?>
 <form action="diag_dump_states_sources.php" method="get" name="iform">
 
 <script type="text/javascript">

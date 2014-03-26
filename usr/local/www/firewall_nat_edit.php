@@ -451,7 +451,7 @@ if ($_POST) {
 
 $closehead = false;
 $pgtitle = array(gettext("Firewall"),gettext("NAT"),gettext("Port Forward"),gettext("Edit"));
-include("head.inc");
+include 'head.inc';
 
 ?>
 <link type="text/css" rel="stylesheet" href="/javascript/chosen/chosen.css" />
@@ -460,7 +460,7 @@ include("head.inc");
 <body link="#0000CC" vlink="#0000CC" alink="#0000CC">
 <script src="/javascript/chosen/chosen.jquery.js" type="text/javascript"></script>
 <?php
-include("fbegin.inc"); ?>
+include 'fbegin.inc'; ?>
 <?php if ($input_errors) print_input_errors($input_errors); ?>
             <form action="firewall_nat_edit.php" method="post" name="iform" id="iform">
               <table width="100%" border="0" cellpadding="6" cellspacing="0" summary="firewall nat edit">
@@ -925,6 +925,6 @@ $has_updated_time = (isset($a_nat[$id]['updated']) && is_array($a_nat[$id]['upda
 	var oTextbox8 = new AutoSuggestControl(document.getElementById("localbeginport_cust"), new StateSuggestions(customarray));
 //]]>
 </script>
-<?php include("fend.inc"); ?>
+<?php include 'fend.inc'; ?>
 </body>
 </html>

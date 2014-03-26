@@ -240,11 +240,11 @@ if ($_POST['submit']) {
 $pgtitle = array(gettext("VPN"),gettext("IPsec"),gettext("Mobile"));
 $shortcut_section = "ipsec";
 
-include("head.inc");
+include 'head.inc';
 ?>
 
 <body link="#0000CC" vlink="#0000CC" alink="#0000CC">
-<?php include("fbegin.inc"); ?>
+<?php include 'fbegin.inc'; ?>
 
 <script type="text/javascript">
 <!--
@@ -673,7 +673,7 @@ pfs_group_change();
 login_banner_change();
 //-->
 </script>
-<?php include("fend.inc"); ?>
+<?php include 'fend.inc'; ?>
 </body>
 </html>
 

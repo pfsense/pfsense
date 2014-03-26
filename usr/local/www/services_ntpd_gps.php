@@ -161,7 +161,7 @@ $pconfig = &$config['ntpd']['gps'];
 
 $pgtitle = array(gettext("Services"),gettext("NTP GPS"));
 $shortcut_section = "ntp";
-include("head.inc");
+include 'head.inc';
 ?>
 
 <script type="text/javascript">
@@ -355,7 +355,7 @@ SureGPS = 		#Sure Electronics SKG16B
 </script>
 
 <body link="#0000CC" vlink="#0000CC" alink="#0000CC">
-<?php include("fbegin.inc"); ?>
+<?php include 'fbegin.inc'; ?>
 <form action="services_ntpd_gps.php" method="post" name="iform" id="iform" accept-charset="utf-8">
 <?php if ($input_errors) print_input_errors($input_errors); ?>
 <?php if ($savemsg) print_info_box($savemsg); ?>
@@ -576,6 +576,6 @@ SureGPS = 		#Sure Electronics SKG16B
 </table>
 <script type="text/javascript"><!-- set_gps_default(this.form); --></script>
 </form>
-<?php include("fend.inc"); ?>
+<?php include 'fend.inc'; ?>
 </body>
 </html>

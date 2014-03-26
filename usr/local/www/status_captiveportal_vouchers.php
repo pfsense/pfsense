@@ -96,8 +96,8 @@ if ($_GET['order']) {
 	usort($db, "clientcmp");
 }
 
-include("head.inc");
-include("fbegin.inc");
+include 'head.inc';
+include 'fbegin.inc';
 ?>
 
 <form action="status_captiveportal_vouchers.php" method="post" enctype="multipart/form-data" name="iform" id="iform">
@@ -140,4 +140,4 @@ include("fbegin.inc");
 </tr>
 </table>
 </form>
-<?php include("fend.inc"); ?>
+<?php include 'fend.inc'; ?>

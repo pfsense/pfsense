@@ -774,7 +774,7 @@ $shortcut_section = "firewall";
 $closehead = false;
 
 $page_filename = "firewall_rules_edit.php";
-include("head.inc");
+include 'head.inc';
 
 ?>
 <link rel="stylesheet" href="/javascript/chosen/chosen.css" />
@@ -783,7 +783,7 @@ include("head.inc");
 <body link="#0000CC" vlink="#0000CC" alink="#0000CC">
 <script type="text/javascript" src="/javascript/jquery.ipv4v6ify.js"></script>
 <script src="/javascript/chosen/chosen.jquery.js" type="text/javascript"></script>
-<?php include("fbegin.inc"); ?>
+<?php include 'fbegin.inc'; ?>
 <?php pfSense_handle_custom_code("/usr/local/pkg/firewall_rules/pre_input_errors"); ?>
 <?php if ($input_errors) print_input_errors($input_errors); ?>
 
@@ -1737,6 +1737,6 @@ $has_updated_time = (isset($a_filter[$id]['updated']) && is_array($a_filter[$id]
 	var oTextbox6 = new AutoSuggestControl(document.getElementById("dstendport_cust"), new StateSuggestions(customarray));
 //]]>
 </script>
-<?php include("fend.inc"); ?>
+<?php include 'fend.inc'; ?>
 </body>
 </html>

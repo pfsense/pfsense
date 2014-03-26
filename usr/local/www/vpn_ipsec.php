@@ -88,7 +88,6 @@ if ($_GET['act'] == "delph1")
 		$ikeid = $a_phase1[$_GET['p1index']]['ikeid'];
 		foreach ($a_phase2 as $p2index => $ph2tmp)
 			if ($ph2tmp['ikeid'] == $ikeid) {
-				remove_tunnel_spd_policy($a_phase1[$_GET['p1index']],$a_phase2[$p2index]);
 				unset($a_phase2[$p2index]);
 			}
 
@@ -105,7 +104,6 @@ if ($_GET['act'] == "delph1")
 if ($_GET['act'] == "delph2")
 {
 	if ($a_phase1[$_GET['p1index']] && $a_phase2[$_GET['p2index']]) {
-		remove_tunnel_spd_policy($a_phase1[$_GET['p1index']],$a_phase2[$_GET['p2index']]);
 		/* remove the phase2 entry */
 		unset($a_phase2[$_GET['p2index']]);
 		vpn_ipsec_configure();

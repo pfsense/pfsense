@@ -2646,10 +2646,10 @@ function filter_rules_generate() {
 #---------------------------------------------------------------------------
 # default deny rules
 #---------------------------------------------------------------------------
-block in $log inet all tracker {$increment_tracker($tracker)} label "Default deny rule IPv4"
-block out $log inet all tracker {$increment_tracker($tracker)} label "Default deny rule IPv4"
-block in $log inet6 all tracker {$increment_tracker($tracker)} label "Default deny rule IPv6"
-block out $log inet6 all tracker {$increment_tracker($tracker)} label "Default deny rule IPv6"
+block in {$log} inet all tracker {$increment_tracker($tracker)} label "Default deny rule IPv4"
+block out {$log} inet all tracker {$increment_tracker($tracker)} label "Default deny rule IPv4"
+block in {$log} inet6 all tracker {$increment_tracker($tracker)} label "Default deny rule IPv6"
+block out {$log} inet6 all tracker {$increment_tracker($tracker)} label "Default deny rule IPv6"
 
 # IPv6 ICMP is not auxilary, it is required for operation
 # See man icmp6(4)
@@ -2661,24 +2661,24 @@ block out $log inet6 all tracker {$increment_tracker($tracker)} label "Default d
 # 134  routeradv       Router advertisement
 # 135  neighbrsol      Neighbor solicitation
 # 136  neighbradv      Neighbor advertisement
-pass quick inet6 proto ipv6-icmp from any to any icmp6-type {1,2,135,136} tracker {$increment_tracker($tracker)} keep state
+pass {$log} quick inet6 proto ipv6-icmp from any to any icmp6-type {1,2,135,136} tracker {$increment_tracker($tracker)} keep state
 
 # Allow only bare essential icmpv6 packets (NS, NA, and RA, echoreq, echorep)
-pass out quick inet6 proto ipv6-icmp from fe80::/10 to fe80::/10 icmp6-type {129,133,134,135,136} tracker {$increment_tracker($tracker)} keep state
-pass out quick inet6 proto ipv6-icmp from fe80::/10 to ff02::/16 icmp6-type {129,133,134,135,136} tracker {$increment_tracker($tracker)} keep state
-pass in quick inet6 proto ipv6-icmp from fe80::/10 to fe80::/10 icmp6-type {128,133,134,135,136} tracker {$increment_tracker($tracker)} keep state
-pass in quick inet6 proto ipv6-icmp from ff02::/16 to fe80::/10 icmp6-type {128,133,134,135,136} tracker {$increment_tracker($tracker)} keep state
-pass in quick inet6 proto ipv6-icmp from fe80::/10 to ff02::/16 icmp6-type {128,133,134,135,136} tracker {$increment_tracker($tracker)} keep state
+pass out {$log} quick inet6 proto ipv6-icmp from fe80::/10 to fe80::/10 icmp6-type {129,133,134,135,136} tracker {$increment_tracker($tracker)} keep state
+pass out {$log} quick inet6 proto ipv6-icmp from fe80::/10 to ff02::/16 icmp6-type {129,133,134,135,136} tracker {$increment_tracker($tracker)} keep state
+pass in {$log} quick inet6 proto ipv6-icmp from fe80::/10 to fe80::/10 icmp6-type {128,133,134,135,136} tracker {$increment_tracker($tracker)} keep state
+pass in {$log} quick inet6 proto ipv6-icmp from ff02::/16 to fe80::/10 icmp6-type {128,133,134,135,136} tracker {$increment_tracker($tracker)} keep state
+pass in {$log} quick inet6 proto ipv6-icmp from fe80::/10 to ff02::/16 icmp6-type {128,133,134,135,136} tracker {$increment_tracker($tracker)} keep state
 
 # We use the mighty pf, we cannot be fooled.
-block quick inet proto { tcp, udp } from any port = 0 to any tracker {$increment_tracker($tracker)}
-block quick inet proto { tcp, udp } from any to any port = 0 tracker {$increment_tracker($tracker)}
-block quick inet6 proto { tcp, udp } from any port = 0 to any tracker {$increment_tracker($tracker)}
-block quick inet6 proto { tcp, udp } from any to any port = 0 tracker {$increment_tracker($tracker)}
+block {$log} quick inet proto { tcp, udp } from any port = 0 to any tracker {$increment_tracker($tracker)}
+block {$log} quick inet proto { tcp, udp } from any to any port = 0 tracker {$increment_tracker($tracker)}
+block {$log} quick inet6 proto { tcp, udp } from any port = 0 to any tracker {$increment_tracker($tracker)}
+block {$log} quick inet6 proto { tcp, udp } from any to any port = 0 tracker {$increment_tracker($tracker)}
 
 # Snort package
-block quick from <snort2c> to any tracker {$increment_tracker($tracker)} label "Block snort2c hosts"
-block quick from any to <snort2c> tracker {$increment_tracker($tracker)} label "Block snort2c hosts"
+block {$log} quick from <snort2c> to any tracker {$increment_tracker($tracker)} label "Block snort2c hosts"
+block {$log} quick from any to <snort2c> tracker {$increment_tracker($tracker)} label "Block snort2c hosts"
 
 EOD;
 
@@ -2726,7 +2726,7 @@ EOD;
 	 * Support for allow limiting of TCP connections by establishment rate
 	 * Useful for protecting against sudden outburts, etc.
 	 */
-	$ipfrules .= "block in quick from <virusprot> to any tracker 1000000400 label \"virusprot overload table\"\n";
+	$ipfrules .= "block in {$log} quick from <virusprot> to any tracker 1000000400 label \"virusprot overload table\"\n";
 
 	$saved_tracker += 100;
 	$tracker = $saved_tracker;
@@ -2770,8 +2770,8 @@ EOD;
 				$listenporthttp  = $cpcfg['listenporthttp']  ? $cpcfg['listenporthttp']  : $cpcfg['zoneid'];
 				$portalias = $listenporthttps;
 				$portalias .= " {$listenporthttp}";
-				$ipfrules .= "pass in quick on { {$cpinterface} } proto tcp from any to { {$cpaddresses} } port { {$portalias} } tracker {$increment_tracker($tracker)} keep state(sloppy)\n";
-				$ipfrules .= "pass out quick on { {$cpinterface} } proto tcp from any to any flags any tracker {$increment_tracker($tracker)} keep state(sloppy)\n";
+				$ipfrules .= "pass in {$log} quick on { {$cpinterface} } proto tcp from any to { {$cpaddresses} } port { {$portalias} } tracker {$increment_tracker($tracker)} keep state(sloppy)\n";
+				$ipfrules .= "pass out {$log} quick on { {$cpinterface} } proto tcp from any to any flags any tracker {$increment_tracker($tracker)} keep state(sloppy)\n";
 			}
 		}
 	}
@@ -2797,7 +2797,17 @@ EOD;
 block in $bogonlog quick on \${$oc['descr']} from <bogons> to any tracker {$increment_tracker($tracker)} label "{$fix_rule_label("block bogon IPv4 networks from {$oc['descr']}")}"
 
 EOD;
+
+			if(isset($config['system']['ipv6allow'])) {
+				$ipfrules .= <<<EOD
+# block bogon networks (IPv6)
+# http://www.team-cymru.org/Services/Bogons/fullbogons-ipv6.txt
+block in $bogonlog quick on \${$oc['descr']} from <bogonsv6> to any tracker {$increment_tracker($tracker)} label "{$fix_rule_label("block bogon IPv6 networks from {$oc['descr']}")}"
+
+EOD;
+			}
 		}
+
 
 		$saved_tracker += 10;
 		$tracker = $saved_tracker;
@@ -2805,24 +2815,15 @@ EOD;
 		if(isset($config['system']['ipv6allow']) && ($oc['type6'] == "slaac" || $oc['type6'] == "dhcp6")) {
 			$ipfrules .= <<<EOD
 # allow our DHCPv6 client out to the {$oc['descr']}
-pass in quick on \${$oc['descr']} proto udp from fe80::/10 port = 546 to fe80::/10 port = 546 tracker {$increment_tracker($tracker)} label "{$fix_rule_label("allow dhcpv6 client in {$oc['descr']}")}"
-pass in quick on \${$oc['descr']} proto udp from any port = 547 to any port = 546 tracker {$increment_tracker($tracker)} label "{$fix_rule_label("allow dhcpv6 client in {$oc['descr']}")}"
-pass out quick on \${$oc['descr']} proto udp from any port = 546 to any port = 547 tracker {$increment_tracker($tracker)} label "{$fix_rule_label("allow dhcpv6 client out {$oc['descr']}")}"
+pass in {$log} quick on \${$oc['descr']} proto udp from fe80::/10 port = 546 to fe80::/10 port = 546 tracker {$increment_tracker($tracker)} label "{$fix_rule_label("allow dhcpv6 client in {$oc['descr']}")}"
+pass in {$log} quick on \${$oc['descr']} proto udp from any port = 547 to any port = 546 tracker {$increment_tracker($tracker)} label "{$fix_rule_label("allow dhcpv6 client in {$oc['descr']}")}"
+pass out {$log} quick on \${$oc['descr']} proto udp from any port = 546 to any port = 547 tracker {$increment_tracker($tracker)} label "{$fix_rule_label("allow dhcpv6 client out {$oc['descr']}")}"
 
 EOD;
 		}
 
 		$saved_tracker += 10;
 		$tracker = $saved_tracker;
-
-		if(isset($config['interfaces'][$on]['blockbogons']) && isset($config['system']['ipv6allow'])) {
-			$ipfrules .= <<<EOD
-# block bogon networks (IPv6)
-# http://www.team-cymru.org/Services/Bogons/fullbogons-ipv6.txt
-block in $bogonlog quick on \${$oc['descr']} from <bogonsv6> to any tracker {$increment_tracker($tracker)} label "{$fix_rule_label("block bogon IPv6 networks from {$oc['descr']}")}"
-
-EOD;
-		}
 
 		$isbridged = false;
 		if(is_array($config['bridges']['bridged'])) {
@@ -2868,16 +2869,16 @@ EOD;
 		case "pptp":
 				$ipfrules .= <<<EOD
 # allow PPTP client
-pass in on \${$oc['descr']} proto tcp from any to any port = 1723 flags S/SA modulate state tracker {$increment_tracker($tracker)} label "{$fix_rule_label("allow PPTP client on {$oc['descr']}")}"
-pass in on \${$oc['descr']} proto gre from any to any keep state tracker {$increment_tracker($tracker)} label "{$fix_rule_label("allow PPTP client on {$oc['descr']}")}"
+pass in {$log} on \${$oc['descr']} proto tcp from any to any port = 1723 flags S/SA modulate state tracker {$increment_tracker($tracker)} label "{$fix_rule_label("allow PPTP client on {$oc['descr']}")}"
+pass in {$log} on \${$oc['descr']} proto gre from any to any keep state tracker {$increment_tracker($tracker)} label "{$fix_rule_label("allow PPTP client on {$oc['descr']}")}"
 
 EOD;
 			break;
 		case "dhcp":
 			$ipfrules .= <<<EOD
 # allow our DHCP client out to the {$oc['descr']}
-pass in on \${$oc['descr']} proto udp from any port = 67 to any port = 68 tracker {$increment_tracker($tracker)} label "{$fix_rule_label("allow dhcp client out {$oc['descr']}")}"
-pass out on \${$oc['descr']} proto udp from any port = 68 to any port = 67 tracker {$increment_tracker($tracker)} label "{$fix_rule_label("allow dhcp client out {$oc['descr']}")}"
+pass in {$log} on \${$oc['descr']} proto udp from any port = 67 to any port = 68 tracker {$increment_tracker($tracker)} label "{$fix_rule_label("allow dhcp client out {$oc['descr']}")}"
+pass out {$log} on \${$oc['descr']} proto udp from any port = 68 to any port = 67 tracker {$increment_tracker($tracker)} label "{$fix_rule_label("allow dhcp client out {$oc['descr']}")}"
 # Not installing DHCP server firewall rules for {$oc['descr']} which is configured for DHCP.
 
 EOD;
@@ -2892,13 +2893,13 @@ EOD;
 			if(isset($config['dhcpd'][$on]['enable'])) {
 				$ipfrules .= <<<EOD
 # allow access to DHCP server on {$oc['descr']}
-pass in quick on \${$oc['descr']} proto udp from any port = 68 to 255.255.255.255 port = 67 tracker {$increment_tracker($tracker)} label "allow access to DHCP server"
+pass in {$log} quick on \${$oc['descr']} proto udp from any port = 68 to 255.255.255.255 port = 67 tracker {$increment_tracker($tracker)} label "allow access to DHCP server"
 
 EOD;
 				if (is_ipaddrv4($oc['ip'])) {
 					$ipfrules .= <<<EOD
-pass in quick on \${$oc['descr']} proto udp from any port = 68 to {$oc['ip']} port = 67 tracker {$increment_tracker($tracker)} label "allow access to DHCP server"
-pass out quick on \${$oc['descr']} proto udp from {$oc['ip']} port = 67 to any port = 68 tracker {$increment_tracker($tracker)} label "allow access to DHCP server"
+pass in {$log} quick on \${$oc['descr']} proto udp from any port = 68 to {$oc['ip']} port = 67 tracker {$increment_tracker($tracker)} label "allow access to DHCP server"
+pass out {$log} quick on \${$oc['descr']} proto udp from {$oc['ip']} port = 67 to any port = 68 tracker {$increment_tracker($tracker)} label "allow access to DHCP server"
 
 EOD;
 				}
@@ -2906,8 +2907,8 @@ EOD;
 				if(is_ipaddrv4($oc['ip']) && $config['dhcpd'][$on]['failover_peerip'] <> "") {
 					$ipfrules .= <<<EOD
 # allow access to DHCP failover on {$oc['descr']} from {$config['dhcpd'][$on]['failover_peerip']}
-pass in quick on \${$oc['descr']} proto { tcp udp } from {$config['dhcpd'][$on]['failover_peerip']} to {$oc['ip']} port = 519 tracker {$increment_tracker($tracker)} label "allow access to DHCP failover"
-pass in quick on \${$oc['descr']} proto { tcp udp } from {$config['dhcpd'][$on]['failover_peerip']} to {$oc['ip']} port = 520 tracker {$increment_tracker($tracker)} label "allow access to DHCP failover"
+pass in {$log} quick on \${$oc['descr']} proto { tcp udp } from {$config['dhcpd'][$on]['failover_peerip']} to {$oc['ip']} port = 519 tracker {$increment_tracker($tracker)} label "allow access to DHCP failover"
+pass in {$log} quick on \${$oc['descr']} proto { tcp udp } from {$config['dhcpd'][$on]['failover_peerip']} to {$oc['ip']} port = 520 tracker {$increment_tracker($tracker)} label "allow access to DHCP failover"
 
 EOD;
 				}
@@ -2922,15 +2923,15 @@ EOD;
 		case "6rd":
 			$ipfrules .= <<<EOD
 # allow our proto 41 traffic from the 6RD border relay in
-pass in on \${$oc['descr']} proto 41 from {$config['interfaces'][$on]['gateway-6rd']} to any tracker {$increment_tracker($tracker)} label "{$fix_rule_label("Allow 6in4 traffic in for 6rd on {$oc['descr']}")}"
-pass out on \${$oc['descr']} proto 41 from any to {$config['interfaces'][$on]['gateway-6rd']} tracker {$increment_tracker($tracker)} label "{$fix_rule_label("Allow 6in4 traffic out for 6rd on {$oc['descr']}")}"
+pass in {$log} on \${$oc['descr']} proto 41 from {$config['interfaces'][$on]['gateway-6rd']} to any tracker {$increment_tracker($tracker)} label "{$fix_rule_label("Allow 6in4 traffic in for 6rd on {$oc['descr']}")}"
+pass out {$log} on \${$oc['descr']} proto 41 from any to {$config['interfaces'][$on]['gateway-6rd']} tracker {$increment_tracker($tracker)} label "{$fix_rule_label("Allow 6in4 traffic out for 6rd on {$oc['descr']}")}"
 
 EOD;
 		/* XXX: Really need to allow 6rd traffic coming in for v6 this is against default behaviour! */
 		if (0 && is_ipaddrv6($oc['ipv6'])) {
 			$ipfrules .= <<<EOD
-pass in on \${$oc['descr']} inet6 from any to {$oc['ipv6']}/{$oc['snv6']} tracker {$increment_tracker($tracker)} label "{$fix_rule_label("Allow 6rd traffic in for 6rd on {$oc['descr']}")}"
-pass out on \${$oc['descr']} inet6 from {$oc['ipv6']}/{$oc['snv6']} to any tracker {$increment_tracker($tracker)} label "{$fix_rule_label("Allow 6rd traffic out for 6rd on {$oc['descr']}")}"
+pass in {$log} on \${$oc['descr']} inet6 from any to {$oc['ipv6']}/{$oc['snv6']} tracker {$increment_tracker($tracker)} label "{$fix_rule_label("Allow 6rd traffic in for 6rd on {$oc['descr']}")}"
+pass out {$log} on \${$oc['descr']} inet6 from {$oc['ipv6']}/{$oc['snv6']} to any tracker {$increment_tracker($tracker)} label "{$fix_rule_label("Allow 6rd traffic out for 6rd on {$oc['descr']}")}"
 
 EOD;
 		}
@@ -2939,16 +2940,16 @@ EOD;
 			if (is_ipaddrv4($oc['ip'])) {
 			$ipfrules .= <<<EOD
 # allow our proto 41 traffic from the 6to4 border relay in
-pass in on \${$oc['descr']} proto 41 from any to {$oc['ip']} tracker {$increment_tracker($tracker)} label "{$fix_rule_label("Allow 6in4 traffic in for 6to4 on {$oc['descr']}")}"
-pass out on \${$oc['descr']} proto 41 from {$oc['ip']} to any tracker {$increment_tracker($tracker)} label "{$fix_rule_label("Allow 6in4 traffic out for 6to4 on {$oc['descr']}")}"
+pass in {$log} on \${$oc['descr']} proto 41 from any to {$oc['ip']} tracker {$increment_tracker($tracker)} label "{$fix_rule_label("Allow 6in4 traffic in for 6to4 on {$oc['descr']}")}"
+pass out {$log} on \${$oc['descr']} proto 41 from {$oc['ip']} to any tracker {$increment_tracker($tracker)} label "{$fix_rule_label("Allow 6in4 traffic out for 6to4 on {$oc['descr']}")}"
 
 EOD;
 		}
 		/* XXX: Really need to allow 6to4 traffic coming in for v6 this is against default behaviour! */
 		if (0 && is_ipaddrv6($oc['ipv6'])) {
 			$ipfrules .= <<<EOD
-pass in on \${$oc['descr']} inet6 from any to {$oc['ipv6']}/{$oc['snv6']} tracker {$increment_tracker($tracker)} label "{$fix_rule_label("Allow 6in4 traffic in for 6to4 on {$oc['descr']}")}"
-pass out on \${$oc['descr']} inet6 from {$oc['ipv6']}/{$oc['snv6']} to any tracker {$increment_tracker($tracker)} label "{$fix_rule_label("Allow 6in4 traffic out for 6to4 on {$oc['descr']}")}"
+pass in {$log} on \${$oc['descr']} inet6 from any to {$oc['ipv6']}/{$oc['snv6']} tracker {$increment_tracker($tracker)} label "{$fix_rule_label("Allow 6in4 traffic in for 6to4 on {$oc['descr']}")}"
+pass out {$log} on \${$oc['descr']} inet6 from {$oc['ipv6']}/{$oc['snv6']} to any tracker {$increment_tracker($tracker)} label "{$fix_rule_label("Allow 6in4 traffic out for 6to4 on {$oc['descr']}")}"
 
 EOD;
 		}
@@ -2959,16 +2960,16 @@ EOD;
 				$ipfrules .= <<<EOD
 # allow access to DHCPv6 server on {$oc['descr']}
 # We need inet6 icmp for stateless autoconfig and dhcpv6
-pass quick on \${$oc['descr']} inet6 proto udp from fe80::/10 to fe80::/10 port = 546 tracker {$increment_tracker($tracker)} label "allow access to DHCPv6 server"
-pass quick on \${$oc['descr']} inet6 proto udp from fe80::/10 to ff02::/16 port = 546 tracker {$increment_tracker($tracker)} label "allow access to DHCPv6 server"
-pass quick on \${$oc['descr']} inet6 proto udp from fe80::/10 to ff02::/16 port = 547 tracker {$increment_tracker($tracker)} label "allow access to DHCPv6 server"
-pass quick on \${$oc['descr']} inet6 proto udp from ff02::/16 to fe80::/10 port = 547 tracker {$increment_tracker($tracker)} label "allow access to DHCPv6 server"
+pass {$log} quick on \${$oc['descr']} inet6 proto udp from fe80::/10 to fe80::/10 port = 546 tracker {$increment_tracker($tracker)} label "allow access to DHCPv6 server"
+pass {$log} quick on \${$oc['descr']} inet6 proto udp from fe80::/10 to ff02::/16 port = 546 tracker {$increment_tracker($tracker)} label "allow access to DHCPv6 server"
+pass {$log} quick on \${$oc['descr']} inet6 proto udp from fe80::/10 to ff02::/16 port = 547 tracker {$increment_tracker($tracker)} label "allow access to DHCPv6 server"
+pass {$log} quick on \${$oc['descr']} inet6 proto udp from ff02::/16 to fe80::/10 port = 547 tracker {$increment_tracker($tracker)} label "allow access to DHCPv6 server"
 
 EOD;
 				if (is_ipaddrv6($oc['ipv6'])) {
 					$ipfrules .= <<<EOD
-pass in quick on \${$oc['descr']} inet6 proto udp from fe80::/10 to {$oc['ipv6']} port = 546 tracker {$increment_tracker($tracker)} label "allow access to DHCPv6 server"
-pass out quick on \${$oc['descr']} inet6 proto udp from {$oc['ipv6']} port = 547 to fe80::/10 tracker {$increment_tracker($tracker)} label "allow access to DHCPv6 server"
+pass in {$log} quick on \${$oc['descr']} inet6 proto udp from fe80::/10 to {$oc['ipv6']} port = 546 tracker {$increment_tracker($tracker)} label "allow access to DHCPv6 server"
+pass out {$log} quick on \${$oc['descr']} inet6 proto udp from {$oc['ipv6']} port = 547 to fe80::/10 tracker {$increment_tracker($tracker)} label "allow access to DHCPv6 server"
 
 EOD;
 				}
@@ -2988,14 +2989,13 @@ EOD;
 	$ipfrules .= <<<EOD
 
 # loopback
-pass in on \$loopback inet all tracker {$increment_tracker($tracker)} label "pass IPv4 loopback"
-pass out on \$loopback inet all tracker {$increment_tracker($tracker)} label "pass IPv4 loopback"
-pass in on \$loopback inet6 all tracker {$increment_tracker($tracker)} label "pass IPv6 loopback"
-pass out on \$loopback inet6 all tracker {$increment_tracker($tracker)} label "pass IPv6 loopback"
-
+pass in {$log} on \$loopback inet all tracker {$increment_tracker($tracker)} label "pass IPv4 loopback"
+pass out {$log} on \$loopback inet all tracker {$increment_tracker($tracker)} label "pass IPv4 loopback"
+pass in {$log} on \$loopback inet6 all tracker {$increment_tracker($tracker)} label "pass IPv6 loopback"
+pass out {$log} on \$loopback inet6 all tracker {$increment_tracker($tracker)} label "pass IPv6 loopback"
 # let out anything from the firewall host itself and decrypted IPsec traffic
-pass out inet all keep state allow-opts tracker {$increment_tracker($tracker)} label "let out anything IPv4 from firewall host itself"
-pass out inet6 all keep state allow-opts tracker {$increment_tracker($tracker)} label "let out anything IPv6 from firewall host itself"
+pass out {$log} inet all keep state allow-opts tracker {$increment_tracker($tracker)} label "let out anything IPv4 from firewall host itself"
+pass out {$log} inet6 all keep state allow-opts tracker {$increment_tracker($tracker)} label "let out anything IPv6 from firewall host itself"
 
 EOD;
 
@@ -3007,13 +3007,13 @@ EOD;
 
 		$gw = get_interface_gateway($ifdescr);
 		if (is_ipaddrv4($gw) && is_ipaddrv4($ifcfg['ip'])) {
-			$ipfrules .= "pass out route-to ( {$ifcfg['if']} {$gw} ) from {$ifcfg['ip']} to !{$ifcfg['sa']}/{$ifcfg['sn']} tracker {$increment_tracker($tracker)} keep state allow-opts label \"let out anything from firewall host itself\"\n";
+			$ipfrules .= "pass out {$log} route-to ( {$ifcfg['if']} {$gw} ) from {$ifcfg['ip']} to !{$ifcfg['sa']}/{$ifcfg['sn']} tracker {$increment_tracker($tracker)} keep state allow-opts label \"let out anything from firewall host itself\"\n";
 			if (is_array($ifcfg['vips'])) {
 				foreach ($ifcfg['vips'] as $vip)
 					if (ip_in_subnet($vip['ip'], "{$ifcfg['sa']}/{$ifcfg['sn']}"))
-						$ipfrules .= "pass out route-to ( {$ifcfg['if']} {$gw} ) from {$vip['ip']} to !{$ifcfg['sa']}/{$ifcfg['sn']} tracker {$increment_tracker($tracker)} keep state allow-opts label \"let out anything from firewall host itself\"\n";
+						$ipfrules .= "pass out {$log} route-to ( {$ifcfg['if']} {$gw} ) from {$vip['ip']} to !{$ifcfg['sa']}/{$ifcfg['sn']} tracker {$increment_tracker($tracker)} keep state allow-opts label \"let out anything from firewall host itself\"\n";
 					else
-						$ipfrules .= "pass out route-to ( {$ifcfg['if']} {$gw} ) from {$vip['ip']} to !" . gen_subnet($vip['ip'], $vip['sn']) . "/{$vip['sn']} tracker {$increment_tracker($tracker)} keep state allow-opts label \"let out anything from firewall host itself\"\n";
+						$ipfrules .= "pass out {$log} route-to ( {$ifcfg['if']} {$gw} ) from {$vip['ip']} to !" . gen_subnet($vip['ip'], $vip['sn']) . "/{$vip['sn']} tracker {$increment_tracker($tracker)} keep state allow-opts label \"let out anything from firewall host itself\"\n";
 			}
 		}
 
@@ -3021,10 +3021,10 @@ EOD;
 		$stf = get_real_interface($ifdescr, "inet6");
 		$pdlen = 64 - calculate_ipv6_delegation_length($ifdescr);
 		if (is_ipaddrv6($gwv6) && is_ipaddrv6($ifcfg['ipv6'])) {
-			$ipfrules .= "pass out route-to ( {$stf} {$gwv6} ) inet6 from {$ifcfg['ipv6']} to !{$ifcfg['ipv6']}/{$pdlen} tracker {$increment_tracker($tracker)} keep state allow-opts label \"let out anything from firewall host itself\"\n";
+			$ipfrules .= "pass out {$log} route-to ( {$stf} {$gwv6} ) inet6 from {$ifcfg['ipv6']} to !{$ifcfg['ipv6']}/{$pdlen} tracker {$increment_tracker($tracker)} keep state allow-opts label \"let out anything from firewall host itself\"\n";
 			if (is_array($ifcfg['vips6'])) {
 				foreach ($ifcfg['vips6'] as $vip)
-					$ipfrules .= "pass out route-to ( {$stf} {$gwv6} ) inet6 from {$vip['ip']} to !{$vip['ip']}/{$pdlen} tracker {$increment_tracker($tracker)} keep state allow-opts label \"let out anything from firewall host itself\"\n";
+					$ipfrules .= "pass out {$log} route-to ( {$stf} {$gwv6} ) inet6 from {$vip['ip']} to !{$vip['ip']}/{$pdlen} tracker {$increment_tracker($tracker)} keep state allow-opts label \"let out anything from firewall host itself\"\n";
 			}
 		}
 	}
@@ -3034,7 +3034,7 @@ EOD;
 	$tracker = $saved_tracker;
 	/* add ipsec interfaces */
 	if(isset($config['ipsec']['enable']) || isset($config['ipsec']['client']['enable']))
-		$ipfrules .= "pass out on \$IPsec all tracker {$increment_tracker($tracker)} tracker {$increment_tracker($tracker)} keep state label \"IPsec internal host to host\"\n";
+		$ipfrules .= "pass out {$log} on \$IPsec all tracker {$increment_tracker($tracker)} tracker {$increment_tracker($tracker)} keep state label \"IPsec internal host to host\"\n";
 
 	$saved_tracker += 10;
 	$tracker = $saved_tracker;
@@ -3048,7 +3048,7 @@ EOD;
 				$lanif = $FilterIflist['lan']['if'];
 				$ipfrules .= <<<EOD
 # make sure the user cannot lock himself out of the webConfigurator or SSH
-pass in quick on {$lanif} proto tcp from any to ({$lanif}) port { {$alports} } tracker {$increment_tracker($tracker)} keep state label "anti-lockout rule"
+pass in {$log} quick on {$lanif} proto tcp from any to ({$lanif}) port { {$alports} } tracker {$increment_tracker($tracker)} keep state label "anti-lockout rule"
 
 EOD;
 		} else if (count($config['interfaces']) == 1) {
@@ -3056,7 +3056,7 @@ EOD;
 			$wanif = $FilterIflist["wan"]['if'];
 			$ipfrules .= <<<EOD
 # make sure the user cannot lock himself out of the webConfigurator or SSH
-pass in quick on {$wanif} proto tcp from any to ({$wanif}) port { {$alports} } tracker {$increment_tracker($tracker)} keep state label "anti-lockout rule"
+pass in {$log} quick on {$wanif} proto tcp from any to ({$wanif}) port { {$alports} } tracker {$increment_tracker($tracker)} keep state label "anti-lockout rule"
 
 EOD;
 		}
@@ -3074,8 +3074,8 @@ EOD;
 		if(is_ipaddr($pptpdtarget) and is_array($FilterIflist['wan'])) {
 			$ipfrules .= <<<EOD
 # PPTPd rules
-pass in on \${$FilterIflist['wan']['descr']} proto tcp from any to $pptpdtarget port = 1723 tracker {$increment_tracker($tracker)} modulate state label "{$fix_rule_label("allow pptpd {$pptpdtarget}")}"
-pass in on \${$FilterIflist['wan']['descr']} proto gre from any to any tracker {$increment_tracker($tracker)} keep state label "allow gre pptpd"
+pass in {$log} on \${$FilterIflist['wan']['descr']} proto tcp from any to $pptpdtarget port = 1723 tracker {$increment_tracker($tracker)} modulate state label "{$fix_rule_label("allow pptpd {$pptpdtarget}")}"
+pass in {$log} on \${$FilterIflist['wan']['descr']} proto gre from any to any tracker {$increment_tracker($tracker)} keep state label "allow gre pptpd"
 
 EOD;
 
@@ -3095,7 +3095,7 @@ EOD;
 			   && $rule['natreflection'] != "disable") {
 				$ipfrules .= "# NAT Reflection rules\n";
 				$ipfrules .= <<<EOD
-pass in inet tagged PFREFLECT tracker {$increment_tracker($tracker)} keep state label "NAT REFLECT: Allow traffic to localhost"
+pass in {$log} inet tagged PFREFLECT tracker {$increment_tracker($tracker)} keep state label "NAT REFLECT: Allow traffic to localhost"
 
 EOD;
 				break;
@@ -3195,10 +3195,10 @@ EOD;
 				}
 				if ($sa && is_ipaddrv4($routeent[0])) {
 					$ipfrules .= <<<EOD
-pass quick on \${$oc['descr']} proto tcp from {$sa}/{$sn} to {$route['network']} flags any tracker {$increment_tracker($tracker)} keep state(sloppy) label "pass traffic between statically routed subnets"
-pass quick on \${$oc['descr']} from {$sa}/{$sn} to {$route['network']} tracker {$increment_tracker($tracker)} keep state(sloppy) label "pass traffic between statically routed subnets"
-pass quick on \${$oc['descr']} proto tcp from {$route['network']} to {$sa}/{$sn} flags any tracker {$increment_tracker($tracker)} keep state(sloppy) label "pass traffic between statically routed subnets"
-pass quick on \${$oc['descr']} from {$route['network']} to {$sa}/{$sn} tracker {$increment_tracker($tracker)} keep state(sloppy) label "pass traffic between statically routed subnets"
+pass {$log} quick on \${$oc['descr']} proto tcp from {$sa}/{$sn} to {$route['network']} flags any tracker {$increment_tracker($tracker)} keep state(sloppy) label "pass traffic between statically routed subnets"
+pass {$log} quick on \${$oc['descr']} from {$sa}/{$sn} to {$route['network']} tracker {$increment_tracker($tracker)} keep state(sloppy) label "pass traffic between statically routed subnets"
+pass {$log} quick on \${$oc['descr']} proto tcp from {$route['network']} to {$sa}/{$sn} flags any tracker {$increment_tracker($tracker)} keep state(sloppy) label "pass traffic between statically routed subnets"
+pass {$log} quick on \${$oc['descr']} from {$route['network']} to {$sa}/{$sn} tracker {$increment_tracker($tracker)} keep state(sloppy) label "pass traffic between statically routed subnets"
 
 EOD;
 				}
@@ -3209,10 +3209,10 @@ EOD;
 				}
 				if ($sa && is_ipaddrv6($routeent[0])) {
 					$ipfrules .= <<<EOD
-pass quick on \${$oc['descr']} inet6 proto tcp from {$sa}/{$sn} to {$route['network']} flags any tracker {$increment_tracker($tracker)} keep state(sloppy) label "pass traffic between statically routed subnets"
-pass quick on \${$oc['descr']} inet6 from {$sa}/{$sn} to {$route['network']} tracker {$increment_tracker($tracker)} keep state(sloppy) label "pass traffic between statically routed subnets"
-pass quick on \${$oc['descr']} inet6 proto tcp from {$route['network']} to {$sa}/{$sn} flags any tracker {$increment_tracker($tracker)} keep state(sloppy) label "pass traffic between statically routed subnets"
-pass quick on \${$oc['descr']} inet6 from {$route['network']} to {$sa}/{$sn} tracker {$increment_tracker($tracker)} keep state(sloppy) label "pass traffic between statically routed subnets"
+pass {$log} quick on \${$oc['descr']} inet6 proto tcp from {$sa}/{$sn} to {$route['network']} flags any tracker {$increment_tracker($tracker)} keep state(sloppy) label "pass traffic between statically routed subnets"
+pass {$log} quick on \${$oc['descr']} inet6 from {$sa}/{$sn} to {$route['network']} tracker {$increment_tracker($tracker)} keep state(sloppy) label "pass traffic between statically routed subnets"
+pass {$log} quick on \${$oc['descr']} inet6 proto tcp from {$route['network']} to {$sa}/{$sn} flags any tracker {$increment_tracker($tracker)} keep state(sloppy) label "pass traffic between statically routed subnets"
+pass {$log} quick on \${$oc['descr']} inet6 from {$route['network']} to {$sa}/{$sn} tracker {$increment_tracker($tracker)} keep state(sloppy) label "pass traffic between statically routed subnets"
 
 EOD;
 				}
@@ -3223,7 +3223,7 @@ EOD;
 	update_filter_reload_status(gettext("Creating IPsec rules..."));
 	$saved_tracker += 100000;
 	$tracker = $saved_tracker;
-	$ipfrules .= filter_generate_ipsec_rules();
+	$ipfrules .= filter_generate_ipsec_rules($log);
 
 	$ipfrules .= "\nanchor \"tftp-proxy/*\"\n";
 
@@ -3246,7 +3246,7 @@ EOD;
 					}
 					if($sa) {
 						$ipfrules .= <<<EOD
-pass in on \${$oc['descr']} proto tcp from {$sa}/{$sn} to 239.255.255.250/32 port 1900 tracker {$increment_tracker($tracker)} keep state label "pass multicast traffic to miniupnpd"
+pass in {$log} on \${$oc['descr']} proto tcp from {$sa}/{$sn} to 239.255.255.250/32 port 1900 tracker {$increment_tracker($tracker)} keep state label "pass multicast traffic to miniupnpd"
 
 EOD;
 					}
@@ -3494,14 +3494,14 @@ function filter_process_carp_rules($log) {
 	$lines = "";
 	/* return if there are no carp configured items */
 	if (!empty($config['hasync']) or !empty($config['virtualip']['vip'])) {
-		$lines .= "block in $log quick proto carp from (self) to any tracker {$increment_tracker($tracker)}\n";
-		$lines .= "pass quick proto carp tracker {$increment_tracker($tracker)}\n";
+		$lines .= "block in {$log} quick proto carp from (self) to any tracker {$increment_tracker($tracker)}\n";
+		$lines .= "pass {$log} quick proto carp tracker {$increment_tracker($tracker)}\n";
 	}
 	return $lines;
 }
 
 /* Generate IPSEC Filter Items */
-function filter_generate_ipsec_rules() {
+function filter_generate_ipsec_rules($log = "") {
 	global $config, $g, $FilterIflist, $tracker;
 
 	if(isset($config['system']['developerspew'])) {
@@ -3599,30 +3599,30 @@ function filter_generate_ipsec_rules() {
 			/* Add rules to allow IKE to pass */
 			$shorttunneldescr = substr($descr, 0, 35);
 				$ipfrules .= <<<EOD
-pass out on \${$FilterIflist[$parentinterface]['descr']} $route_to proto udp from any to {$rgip} port = 500 tracker {$increment_tracker($tracker)} keep state label "IPsec: {$shorttunneldescr} - outbound isakmp"
-pass in on \${$FilterIflist[$parentinterface]['descr']} $reply_to proto udp from {$rgip} to any port = 500 tracker {$increment_tracker($tracker)} keep state label "IPsec: {$shorttunneldescr} - inbound isakmp"
+pass out {$log} on \${$FilterIflist[$parentinterface]['descr']} $route_to proto udp from any to {$rgip} port = 500 tracker {$increment_tracker($tracker)} keep state label "IPsec: {$shorttunneldescr} - outbound isakmp"
+pass in {$log} on \${$FilterIflist[$parentinterface]['descr']} $reply_to proto udp from {$rgip} to any port = 500 tracker {$increment_tracker($tracker)} keep state label "IPsec: {$shorttunneldescr} - inbound isakmp"
 
 EOD;
 			/* If NAT-T is enabled, add additional rules */
 			if($ph1ent['nat_traversal'] != "off" ) {
 				$ipfrules .= <<<EOD
-pass out on \${$FilterIflist[$parentinterface]['descr']} $route_to proto udp from any to {$rgip} port = 4500 tracker {$increment_tracker($tracker)} keep state label "IPsec: {$shorttunneldescr} - outbound nat-t"
-pass in on \${$FilterIflist[$parentinterface]['descr']} $reply_to proto udp from {$rgip} to any port = 4500 tracker {$increment_tracker($tracker)} keep state label "IPsec: {$shorttunneldescr} - inbound nat-t"
+pass out {$log} on \${$FilterIflist[$parentinterface]['descr']} $route_to proto udp from any to {$rgip} port = 4500 tracker {$increment_tracker($tracker)} keep state label "IPsec: {$shorttunneldescr} - outbound nat-t"
+pass in {$log} on \${$FilterIflist[$parentinterface]['descr']} $reply_to proto udp from {$rgip} to any port = 4500 tracker {$increment_tracker($tracker)} keep state label "IPsec: {$shorttunneldescr} - inbound nat-t"
 
 EOD;
 			}
 			/* Add rules to allow the protocols in use */
 			if($prot_used_esp == true) {
 				$ipfrules .= <<<EOD
-pass out on \${$FilterIflist[$parentinterface]['descr']} $route_to proto esp from any to {$rgip} tracker {$increment_tracker($tracker)} keep state label "IPsec: {$shorttunneldescr} - outbound esp proto"
-pass in on \${$FilterIflist[$parentinterface]['descr']} $reply_to proto esp from {$rgip} to any tracker {$increment_tracker($tracker)} keep state label "IPsec: {$shorttunneldescr} - inbound esp proto"
+pass out {$log} on \${$FilterIflist[$parentinterface]['descr']} $route_to proto esp from any to {$rgip} tracker {$increment_tracker($tracker)} keep state label "IPsec: {$shorttunneldescr} - outbound esp proto"
+pass in {$log} on \${$FilterIflist[$parentinterface]['descr']} $reply_to proto esp from {$rgip} to any tracker {$increment_tracker($tracker)} keep state label "IPsec: {$shorttunneldescr} - inbound esp proto"
 
 EOD;
 			}
 			if($prot_used_ah == true) {
 				$ipfrules .= <<<EOD
-pass out on \${$FilterIflist[$parentinterface]['descr']} $route_to proto ah from any to {$rgip} tracker {$increment_tracker($tracker)} keep state label "IPsec: {$shorttunneldescr} - outbound ah proto"
-pass in on \${$FilterIflist[$parentinterface]['descr']} $reply_to proto ah from {$rgip} to any tracker {$increment_tracker($tracker)} keep state label "IPsec: {$shorttunneldescr} - inbound ah proto"
+pass out {$log} on \${$FilterIflist[$parentinterface]['descr']} $route_to proto ah from any to {$rgip} tracker {$increment_tracker($tracker)} keep state label "IPsec: {$shorttunneldescr} - outbound ah proto"
+pass in {$log} on \${$FilterIflist[$parentinterface]['descr']} $reply_to proto ah from {$rgip} to any tracker {$increment_tracker($tracker)} keep state label "IPsec: {$shorttunneldescr} - inbound ah proto"
 
 EOD;
 			}

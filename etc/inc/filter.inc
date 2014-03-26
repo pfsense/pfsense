@@ -2835,7 +2835,7 @@ EOD;
 		}
 
 		if($oc['ip'] && !($isbridged) && isset($oc['spoofcheck']))
-			$ipfrules .= filter_rules_spoofcheck_generate($on, $oc['if'], $oc['sa'], $oc['sn'], $log);
+			$ipfrules .= filter_rules_spoofcheck_generate($on, $oc, $log);
 
 		/* block private networks ? */
 		if(!isset($config['syslog']['nologprivatenets']))
@@ -2850,7 +2850,6 @@ EOD;
 			if($isbridged == false) {
 				$ipfrules .= <<<EOD
 # block anything from private networks on interfaces with the option set
-antispoof for \${$oc['descr']}
 block in $privnetlog quick on \${$oc['descr']} from 10.0.0.0/8 to any tracker {$increment_tracker($tracker)} label "{$fix_rule_label("Block private networks from {$oc['descr']} block 10/8")}"
 block in $privnetlog quick on \${$oc['descr']} from 127.0.0.0/8 to any tracker {$increment_tracker($tracker)} label "{$fix_rule_label("Block private networks from {$oc['descr']} block 127/8")}"
 block in $privnetlog quick on \${$oc['descr']} from 100.64.0.0/10 to any tracker {$increment_tracker($tracker)} label "{$fix_rule_label("Block private networks from {$oc['descr']} block 100.64/10")}"
@@ -3260,13 +3259,13 @@ EOD;
 	return $ipfrules;
 }
 
-function filter_rules_spoofcheck_generate($ifname, $if, $sa, $sn, $log) {
+function filter_rules_spoofcheck_generate($ifname, $ifcfg, $log) {
 	global $g, $config, $tracker;
 	if(isset($config['system']['developerspew'])) {
 		$mt = microtime();
 		echo "filter_rules_spoofcheck_generate() being called $mt\n";
 	}
-	$ipfrules = "antispoof for {$if}\n";
+	$ipfrules = "antispoof {$log} for \${$oc['descr']} tracker {$tracker}\n";
 	$tracker++;
 
 	return $ipfrules;

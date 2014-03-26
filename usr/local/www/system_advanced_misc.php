@@ -44,12 +44,12 @@
 ##|-PRIV
 
 require 'guiconfig.inc';
-require_once("functions.inc");
-require_once("filter.inc");
-require_once("shaper.inc");
-require_once("ipsec.inc");
-require_once("vpn.inc");
-require_once("vslb.inc");
+require_once 'functions.inc';
+require_once 'filter.inc';
+require_once 'shaper.inc';
+require_once 'ipsec.inc';
+require_once 'vpn.inc';
+require_once 'vslb.inc';
 
 $pconfig['proxyurl'] = $config['system']['proxyurl'];
 $pconfig['proxyport'] = $config['system']['proxyport'];

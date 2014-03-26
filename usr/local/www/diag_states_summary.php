@@ -174,7 +174,7 @@ function print_summary_table($label, $iparr, $sort = TRUE) { ?>
 }
 
 $pgtitle = array(gettext("Diagnostics"),gettext("State Table Summary"));
-require_once("guiconfig.inc");
+require_once 'guiconfig.inc';
 include 'head.inc';
 include 'fbegin.inc';
 

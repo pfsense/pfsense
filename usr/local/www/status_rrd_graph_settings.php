@@ -40,9 +40,9 @@
 ##|-PRIV
 
 require 'guiconfig.inc';
-require_once("filter.inc");
+require_once 'filter.inc';
 require 'shaper.inc';
-require_once("rrd.inc");
+require_once 'rrd.inc';
 
 $pconfig['enable'] = isset($config['rrd']['enable']);
 $pconfig['category'] = $config['rrd']['category'];

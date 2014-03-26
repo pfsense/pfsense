@@ -43,7 +43,7 @@
 
 $d_isfwfile = 1;
 require 'guiconfig.inc';
-require_once("pfsense-utils.inc");
+require_once 'pfsense-utils.inc';
 
 $curcfg = $config['system']['firmware'];
 $pgtitle=array(gettext("System"), gettext("Firmware"), gettext("Auto Update"));

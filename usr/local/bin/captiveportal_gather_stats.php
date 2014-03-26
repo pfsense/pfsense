@@ -28,9 +28,9 @@
         POSSIBILITY OF SUCH DAMAGE.
 */
 
-require_once("functions.inc");
-require_once("captiveportal.inc");
-require_once("util.inc");
+require_once 'functions.inc';
+require_once 'captiveportal.inc';
+require_once 'util.inc';
 
 global $cpzone;
 

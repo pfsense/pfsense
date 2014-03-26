@@ -37,7 +37,7 @@
 ##|*MATCH=restart_httpd.php*
 ##|-PRIV
 
-require_once("guiconfig.inc");
+require_once 'guiconfig.inc';
 
 $pgtitle = array(gettext("Restarting httpd"));
 include 'head.inc';

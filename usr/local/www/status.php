@@ -46,8 +46,8 @@
  */
 
 /* include all configuration functions */
-require_once("guiconfig.inc");
-require_once("functions.inc");
+require_once 'guiconfig.inc';
+require_once 'functions.inc';
 
 function doCmdT($title, $command) {
 	$rubbish = array('|', '-', '/', '.', ' ');  /* fixes the <a> tag to be W3C compliant */

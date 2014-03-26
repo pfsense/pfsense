@@ -39,7 +39,7 @@
 ##|*MATCH=graph_cpu.php*
 ##|-PRIV
 
-require_once("guiconfig.inc");
+require_once 'guiconfig.inc';
 
 header("Last-Modified: " . gmdate( "D, j M Y H:i:s" ) . " GMT" );
 header("Expires: " . gmdate( "D, j M Y H:i:s", time() ) . " GMT" );

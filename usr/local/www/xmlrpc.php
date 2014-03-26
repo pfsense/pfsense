@@ -38,7 +38,7 @@
 
 require 'config.inc';
 require 'functions.inc';
-require_once("filter.inc");
+require_once 'filter.inc';
 require 'ipsec.inc';
 require 'vpn.inc';
 require 'shaper.inc';
@@ -368,7 +368,7 @@ function filter_configure_xmlrpc($raw_params) {
 	system_routing_configure();
 	setup_gateways_monitor();
 	relayd_configure();
-	require_once("openvpn.inc");
+	require_once 'openvpn.inc';
 	openvpn_resync_all();
 	services_dhcpd_configure();
 	services_dnsmasq_configure();

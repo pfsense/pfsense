@@ -35,18 +35,18 @@
 
 */
 
-require_once("globals.inc");
-require_once("config.inc");
-require_once("functions.inc");
-require_once("filter.inc");
-require_once("shaper.inc");
-require_once("xmlrpc.inc");
-require_once("interfaces.inc");
+require_once 'globals.inc';
+require_once 'config.inc';
+require_once 'functions.inc';
+require_once 'filter.inc';
+require_once 'shaper.inc';
+require_once 'xmlrpc.inc';
+require_once 'interfaces.inc';
 
 system_routing_configure();
 setup_gateways_monitor();
 relayd_configure();
-require_once("openvpn.inc");
+require_once 'openvpn.inc';
 openvpn_resync_all();
 services_dhcpd_configure();
 

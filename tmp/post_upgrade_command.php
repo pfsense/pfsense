@@ -2,9 +2,9 @@
 <?php
 
 	/* upgrade embedded users serial console */
-	require_once("globals.inc");
-	require_once("config.inc");
-	require_once("functions.inc");
+	require_once 'globals.inc';
+	require_once 'config.inc';
+	require_once 'functions.inc';
 
 	if(file_exists("/usr/local/bin/git") && isset($config['system']['gitsync']['synconupgrade'])) {
 		if(!empty($config['system']['gitsync']['repositoryurl']))

@@ -39,8 +39,8 @@
 	pfSense_MODULE:	notifications
 */
 
-require_once("globals.inc");
-require_once("led.inc");
+require_once 'globals.inc';
+require_once 'led.inc';
 
 $notice_path = $g['tmp_path'] . '/notices';
 
@@ -128,7 +128,7 @@ function get_notices($category = "all") {
  ******/
 function close_notice($id) {
 	global $notice_path;
-	require_once("util.inc");
+	require_once 'util.inc';
 	/* soekris */
 	if(file_exists("/dev/led/error"))
 		exec("/bin/echo 0 > /dev/led/error");
@@ -176,9 +176,9 @@ function close_notice($id) {
  ******/
 function dump_xml_notices() {
 	if(file_exists("/cf/conf/use_xmlreader"))
-		require_once("xmlreader.inc");
+		require_once 'xmlreader.inc';
 	else
-		require_once("xmlparse.inc");
+		require_once 'xmlparse.inc';
 	global $notice_path, $listtags;
 	$listtags[] = 'notice';
 	if(!$notices = get_notices()) return;
@@ -291,10 +291,10 @@ function notify_via_smtp($message, $force = false) {
 
 function send_smtp_message($message, $subject = "(no subject)") {
 	global $config, $g;
-	require_once("sasl.inc");
-	require_once("smtp.inc");
+	require_once 'sasl.inc';
+    require_once 'smtp.inc';
 
-	if(!$config['notifications']['smtp']['ipaddress'])
+    if(!$config['notifications']['smtp']['ipaddress'])
 		return;
 
 	if(!$config['notifications']['smtp']['notifyemailaddress'])
@@ -351,8 +351,8 @@ function send_smtp_message($message, $subject = "(no subject)") {
  *   returns true if message was sent
  ******/
 function notify_via_growl($message, $force=false) {
-	require_once("growl.class");
-	global $config,$g;
+	require_once 'growl.class';
+    global $config,$g;
 
 	if (isset($config['notifications']['growl']['disable']) && !$force)
 		return;
@@ -390,8 +390,8 @@ function notify_via_growl($message, $force=false) {
  *   none
  ******/
 function register_via_growl() {
-	require_once("growl.class");
-	global $config;
+	require_once 'growl.class';
+    global $config;
 	$growl_ip = $config['notifications']['growl']['ipaddress'];
 	$growl_password = $config['notifications']['growl']['password'];
 	$growl_name = $config['notifications']['growl']['name'];

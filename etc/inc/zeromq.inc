@@ -257,7 +257,7 @@ function filter_configure_zeromq($raw_params) {
 	system_routing_configure();
 	setup_gateways_monitor();
 	relayd_configure();
-	require_once("openvpn.inc");
+	require_once 'openvpn.inc';
 	openvpn_resync_all();
 	services_dhcpd_configure();
 	services_dnsmasq_configure();

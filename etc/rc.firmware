@@ -29,8 +29,8 @@ fi
 file_notice() {
 	/usr/local/bin/php -q -d auto_prepend_file=config.inc <<ENDOFF
 	<?php
-		require_once("globals.inc");		
-		require_once("functions.inc");
+		require_once 'globals.inc';		
+		require_once 'functions.inc';
 		file_notice("$1", "$2", "$1", "");
 	?>
 ENDOFF

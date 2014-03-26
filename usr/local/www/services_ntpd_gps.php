@@ -37,7 +37,7 @@
 ##|*MATCH=services_ntpd_gps.php*
 ##|-PRIV
 
-require_once("guiconfig.inc");
+require_once 'guiconfig.inc';
 
 function set_default_gps() {
 	global $config;

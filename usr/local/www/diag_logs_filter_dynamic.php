@@ -43,7 +43,7 @@
 ##|-PRIV
 
 require 'guiconfig.inc';
-require_once("filter_log.inc");
+require_once 'filter_log.inc';
 
 $filter_logfile = "{$g['varlog_path']}/filter.log";
 

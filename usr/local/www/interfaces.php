@@ -44,15 +44,15 @@
 ##|*MATCH=interfaces.php*
 ##|-PRIV
 
-require_once("guiconfig.inc");
-require_once("ipsec.inc");
-require_once("functions.inc");
-require_once("captiveportal.inc");
-require_once("filter.inc");
-require_once("shaper.inc");
-require_once("rrd.inc");
-require_once("vpn.inc");
-require_once("xmlparse_attr.inc");
+require_once 'guiconfig.inc';
+require_once 'ipsec.inc';
+require_once 'functions.inc';
+require_once 'captiveportal.inc';
+require_once 'filter.inc';
+require_once 'shaper.inc';
+require_once 'rrd.inc';
+require_once 'vpn.inc';
+require_once 'xmlparse_attr.inc';
 
 // Get configured interface list
 $ifdescrs = get_configured_interface_with_descr(false, true);

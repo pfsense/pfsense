@@ -36,7 +36,7 @@
 ##|-PRIV
 
 require 'guiconfig.inc';
-require_once("vpn.inc");
+require_once 'vpn.inc';
 
 if (!is_array($config['pptpd']['user'])) {
 	$config['pptpd']['user'] = array();

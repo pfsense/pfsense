@@ -44,7 +44,7 @@
 ##|-PRIV
 
 require 'guiconfig.inc';
-require_once("config.inc");
+require_once 'config.inc';
 
 $pgtitle = array(gettext("Status"),gettext("DHCP leases"));
 $shortcut_section = "dhcp";

@@ -41,10 +41,10 @@
 ini_set('max_execution_time', '0');
 
 require 'guiconfig.inc';
-require_once("functions.inc");
-require_once("filter.inc");
-require_once("shaper.inc");
-require_once("pkg-utils.inc");
+require_once 'functions.inc';
+require_once 'filter.inc';
+require_once 'shaper.inc';
+require_once 'pkg-utils.inc';
 
 /* dummy stubs needed by some code that was MFC'd */
 function pfSenseHeader($location) { header("Location: " . $location); }
@@ -73,7 +73,7 @@ if($xml == "") {
 }
 
 if($pkg['include_file'] <> "") {
-	require_once($pkg['include_file']);
+	require_once $pkg['include_file'];
 }
 
 if (!isset($pkg['adddeleteeditpagefields']))

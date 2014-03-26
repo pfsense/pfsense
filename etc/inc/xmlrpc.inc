@@ -33,8 +33,8 @@
 	pfSense_MODULE:	utils
 */
 
-require_once("auth.inc");
-require_once("xmlrpc_client.inc");
+require_once 'auth.inc';
+require_once 'xmlrpc_client.inc';
 
 /*
  *   xmlrpc_params_to_php: Convert params array passed from XMLRPC server into a PHP array and return it.

@@ -42,9 +42,9 @@
 */
 
 /* include all configuration functions */
-require_once("globals.inc");
-require_once("util.inc");
-require_once("gwlb.inc");
+require_once 'globals.inc';
+require_once 'util.inc';
+require_once 'gwlb.inc';
 
 function interfaces_bring_up($interface) {
 	if(!$interface) {
@@ -1309,8 +1309,8 @@ function interface_bring_down($interface = "wan", $destroy = false, $ifacecfg = 
 
 	if (!empty($track6) && is_array($track6)) {
 		if (!function_exists('services_dhcp_configure'))
-			require_once('services.inc');
-		/* Bring down radvd and dhcp6 on these interfaces */
+			require_once 'services.inc';
+        /* Bring down radvd and dhcp6 on these interfaces */
 		services_dhcpd_configure('inet6', $track6);
 	}
 
@@ -2799,7 +2799,7 @@ function interface_virtual_create($interface) {
 			foreach ($config['openvpn']['openvpn-server'] as $server) {
 				if ($interface == "ovpns{$server['vpnid']}") {
 					if (!function_exists('openvpn_resync'))
-						require_once('openvpn.inc');
+						require_once 'openvpn.inc';
 					log_error("OpenVPN: Resync server {$server['description']}");
 					openvpn_resync('server', $server);
 				}
@@ -2811,7 +2811,7 @@ function interface_virtual_create($interface) {
 			foreach ($config['openvpn']['openvpn-client'] as $client) {
 				if ($interface == "ovpnc{$client['vpnid']}") {
 					if (!function_exists('openvpn_resync'))
-						require_once('openvpn.inc');
+						require_once 'openvpn.inc';
 					log_error("OpenVPN: Resync server {$client['description']}");
 					openvpn_resync('client', $client);
 				}
@@ -3192,7 +3192,7 @@ function interface_track6_configure($interface = "lan", $wancfg, $linkupevent = 
 
 	if (!$g['booting'] && $linkupevent == false) {
 		if (!function_exists('services_dhcpd_configure'))
-			require_once("services.inc");
+			require_once 'services.inc';
 
 		services_dhcpd_configure("inet6");
 	}

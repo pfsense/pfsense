@@ -63,8 +63,8 @@ function nervecenterTransmenuGetHeadJS() {
 EOD;
 
   if (empty($rootmenu)) {
-    require_once("menudef.inc");
-  }
+    require_once 'menudef.inc';
+    }
 
   $childJScript = "";
   foreach ($rootmenu->getChildren() as $component) {

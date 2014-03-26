@@ -33,8 +33,8 @@
 
 $pgtitle = gettext("Status").": ".gettext("System logs").": ".gettext("Firewall Log Summary");
 $shortcut_section = "firewall";
-require_once("guiconfig.inc");
-include_once("filter_log.inc");
+require_once 'guiconfig.inc';
+include_once 'filter_log.inc';
 
 $filter_logfile = "{$g['varlog_path']}/filter.log";
 $lines = 5000;

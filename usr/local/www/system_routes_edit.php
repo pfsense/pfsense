@@ -39,10 +39,10 @@
 ##|*MATCH=system_routes_edit.php*
 ##|-PRIV
 
-require_once("guiconfig.inc");
-require_once("filter.inc");
-require_once("util.inc");
-require_once("gwlb.inc");
+require_once 'guiconfig.inc';
+require_once 'filter.inc';
+require_once 'util.inc';
+require_once 'gwlb.inc';
 
 if (!is_array($config['staticroutes']['route']))
 	$config['staticroutes']['route'] = array();

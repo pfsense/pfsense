@@ -38,7 +38,7 @@
 	pfSense_MODULE:	carp
 */
 
-require_once("guiconfig.inc");
+require_once 'guiconfig.inc';
 
 function gentitle_pkg($pgname) {
 	global $config;

@@ -47,7 +47,7 @@
  * file courtesy of Michael Retterklieber.
  */
 if(!$do_not_include_config_gui_inc)
-	require_once("config.gui.inc");
+	require_once 'config.gui.inc';
 
 // Will be changed to false if security checks fail
 $security_passed = true;
@@ -699,7 +699,7 @@ function ldap_test_connection($authcfg) {
 
 function ldap_setup_caenv($authcfg) {
 	global $g;
-	require_once("certs.inc");
+	require_once 'certs.inc';
 
 	unset($caref);
 	if (empty($authcfg['ldap_caref']) || !strstr($authcfg['ldap_urltype'], "SSL")) {
@@ -1184,7 +1184,7 @@ function radius_backed($username, $passwd, $authcfg, &$attributes = array()) {
 	global $debug, $config;
 	$ret = false;
 
-	require_once("radius.inc");
+	require_once 'radius.inc';
 
 	$rauth = new Auth_RADIUS_PAP($username, $passwd);
 	if ($authcfg) {

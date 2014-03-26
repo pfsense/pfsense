@@ -37,9 +37,9 @@
 ##|*MATCH=status_filter_reload.php*
 ##|-PRIV
 
-require_once("globals.inc");
-require_once("guiconfig.inc");
-require_once("functions.inc");
+require_once 'globals.inc';
+require_once 'guiconfig.inc';
+require_once 'functions.inc';
 
 $pgtitle = array(gettext("Status"),gettext("Filter Reload Status"));
 $shortcut_section = "firewall";

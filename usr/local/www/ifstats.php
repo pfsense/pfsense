@@ -40,10 +40,10 @@
 ##|*MATCH=ifstats.php*
 ##|-PRIV
 
-	require_once('guiconfig.inc');
-	require_once("interfaces.inc");
+	require_once 'guiconfig.inc';
+        require_once 'interfaces.inc';
 
-	$if = $_GET['if'];
+$if = $_GET['if'];
 
 	$realif = get_real_interface($if);
 	if(!$realif)

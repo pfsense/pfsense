@@ -770,7 +770,7 @@ function filter_get_vpns_list() {
 			foreach ($config['ipsec']['phase2'] as $ph2ent) {
 				if ((!$ph2ent['mobile']) && ($ph2ent['mode'] != 'transport')) {
 					if (!function_exists('ipsec_idinfo_to_cidr'))
-						require_once("ipsec.inc");
+						require_once 'ipsec.inc';
 					if (!is_array($ph2ent['remoteid']))
 						continue;
 					$ph2ent['remoteid']['mode'] = $ph2ent['mode'];
@@ -1660,7 +1660,7 @@ function filter_nat_rules_generate() {
 			foreach ($config['ipsec']['phase2'] as $ph2ent) {
 				if ($ph2ent['mode'] != 'transport' && !empty($ph2ent['natlocalid'])) {
 					if (!function_exists('ipsec_idinfo_to_cidr'))
-						require_once("ipsec.inc");
+						require_once 'ipsec.inc';
 					if (!is_array($ph2ent['localid']))
 						$ph2ent['localid'] = array();
 					$ph2ent['localid']['mode'] = $ph2ent['mode'];
@@ -3454,7 +3454,7 @@ function filter_generate_ipsec_rules() {
 			/* determine local and remote peer addresses */
 			if(!isset($ph1ent['mobile'])) {
 				if (!function_exists('ipsec_get_phase1_dst'))
-					require_once("ipsec.inc");
+					require_once 'ipsec.inc';
 				$rgip = ipsec_get_phase1_dst($ph1ent);
 				if(!$rgip) {
 					$ipfrules .= "# ERROR! Unable to determine remote IPsec peer address for {$ph1ent['remote-gateway']}\n";
@@ -3568,8 +3568,8 @@ function discover_pkg_rules($ruletype) {
 		$pkg = basename($pkg_inc, ".inc");
 		$pkg_generate_rules = "{$pkg}_generate_rules";
 		if (!function_exists($pkg_generate_rules))
-			require_once($pkg_inc);
-		if(function_exists($pkg_generate_rules)) {
+			require_once "$pkg_inc";
+        if(function_exists($pkg_generate_rules)) {
 			update_filter_reload_status(sprintf(gettext('Processing early %1$s rules for package %2$s'), $ruletype, $pkg_inc));
 			$tmprules = $pkg_generate_rules("$ruletype");
 			file_put_contents("{$g['tmp_path']}/rules.test.packages", $aliases . $tmprules);

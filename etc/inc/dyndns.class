@@ -552,7 +552,7 @@
 					$NewTTL=$this->_dnsTTL;
 
 					/* Include Route 53 Library Class */
-					require_once('/etc/inc/r53.class');
+					require_once '/etc/inc/r53.class';
 
 					/* Set Amazon AWS Credentials for this record */
 					$r53 = new Route53($AccessKeyId, $SecretAccessKey);

@@ -29,10 +29,10 @@
 	POSSIBILITY OF SUCH DAMAGE.
 */
 
-	require_once("globals.inc");
-	require_once("config.inc");
-	require_once("functions.inc");
-	require_once("shaper.inc");
+	require_once 'globals.inc';
+	require_once 'config.inc';
+	require_once 'functions.inc';
+	require_once 'shaper.inc';
 
 	if (!isset($config['system']['enablesshd'])) {
 		return;

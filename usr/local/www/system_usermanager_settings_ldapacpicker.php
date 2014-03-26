@@ -32,7 +32,7 @@
 */
 
 require 'guiconfig.inc';
-require_once("auth.inc");
+require_once 'auth.inc';
 
 $ous = array();
 

@@ -51,7 +51,7 @@ function staticmaps_sort($ifgui) {
         usort($config['dhcpdv6'][$ifgui]['staticmap'], "staticmapcmp");
 }
 
-require_once('globals.inc');
+require_once 'globals.inc';
 
 if(!$g['services_dhcp_server_enable']) {
 	Header("Location: /");

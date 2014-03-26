@@ -37,8 +37,8 @@
 
 require 'functions.inc';
 require 'guiconfig.inc';
-require_once("ipsec.inc");
-require_once("vpn.inc");
+require_once 'ipsec.inc';
+require_once 'vpn.inc';
 
 if (!is_array($config['ipsec']['mobilekey'])) {
 	$config['ipsec']['mobilekey'] = array();

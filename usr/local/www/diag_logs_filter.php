@@ -44,7 +44,7 @@
 ##|-PRIV
 
 require 'guiconfig.inc';
-require_once("filter_log.inc");
+require_once 'filter_log.inc';
 
 # --- AJAX RESOLVE ---
 if (isset($_POST['resolve'])) {

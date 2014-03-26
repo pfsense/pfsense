@@ -40,8 +40,8 @@
 ##|-PRIV
 
 require 'guiconfig.inc';
-require_once("filter.inc");
-require_once("util.inc");
+require_once 'filter.inc';
+require_once 'util.inc';
 
 if (!is_array($config['load_balancer']['lbpool'])) {
 	$config['load_balancer']['lbpool'] = array();

@@ -42,9 +42,9 @@
 
 ini_set('max_execution_time', '0');
 
-require_once("globals.inc");
-require_once("guiconfig.inc");
-require_once("pkg-utils.inc");
+require_once 'globals.inc';
+require_once 'guiconfig.inc';
+require_once 'pkg-utils.inc';
 
 $timezone = $config['system']['timezone'];
 if (!$timezone)

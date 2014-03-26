@@ -35,7 +35,7 @@
 ##|-PRIV
 
 require 'guiconfig.inc';
-require_once("openvpn.inc");
+require_once 'openvpn.inc';
 
 if (!is_array($config['openvpn']['openvpn-server']))
 	$config['openvpn']['openvpn-server'] = array();

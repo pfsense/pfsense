@@ -41,10 +41,10 @@ if ($_POST['postafterlogin'])
 
 require 'guiconfig.inc';
 require 'functions.inc';
-require_once("filter.inc");
+require_once 'filter.inc';
 require 'shaper.inc';
 require 'captiveportal.inc';
-require_once("voucher.inc");
+require_once 'voucher.inc';
 
 $cpzone = $_GET['zone'];
 if (isset($_POST['zone']))
@@ -273,7 +273,7 @@ if ($_POST) {
 			if($newvoucher['vouchersyncpass'] && $newvoucher['vouchersyncusername'] && 
 			   $newvoucher['vouchersyncport'] && $newvoucher['vouchersyncdbip']) {
 				// Synchronize the voucher DB from the master node
-				require_once("xmlrpc.inc");
+				require_once 'xmlrpc.inc';
 
 				$protocol = "http";
 				if (is_array($config['system']) && is_array($config['system']['webgui']) && !empty($config['system']['webgui']['protocol']) &&

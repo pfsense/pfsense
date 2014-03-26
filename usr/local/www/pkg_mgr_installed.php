@@ -37,8 +37,8 @@
 ##|*MATCH=pkg_mgr_installed.php*
 ##|-PRIV
 
-require_once("guiconfig.inc");
-require_once("pkg-utils.inc");
+require_once 'guiconfig.inc';
+require_once 'pkg-utils.inc';
 
 $timezone = $config['system']['timezone'];
 if (!$timezone)

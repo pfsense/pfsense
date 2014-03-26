@@ -31,9 +31,9 @@
 */
 
 	/* parse the configuration and include all functions used below */
-	require_once("util.inc");
-	require_once("config.lib.inc");
-	require_once("functions.inc");
+	require_once 'util.inc';
+	require_once 'config.lib.inc';
+	require_once 'functions.inc';
 
 	$fp = fopen('php://stdin', 'r');
 

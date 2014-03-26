@@ -39,7 +39,7 @@
 ##|-PRIV
 
 require 'guiconfig.inc';
-require_once("auth.inc");
+require_once 'auth.inc';
 
 $pgtitle = array(gettext("System"), gettext("Authentication Servers"));
 $shortcut_section = "authentication";

@@ -35,9 +35,9 @@
 ##|*MATCH=vpn_pppoe.php*
 ##|-PRIV
 
-require_once("guiconfig.inc");
-require_once("filter.inc");
-require_once("vpn.inc");
+require_once 'guiconfig.inc';
+require_once 'filter.inc';
+require_once 'vpn.inc';
 
 if (!is_array($config['pppoes']['pppoe']))
 	$config['pppoes']['pppoe'] = array();

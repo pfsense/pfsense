@@ -47,10 +47,10 @@
 ini_set('max_execution_time', '0');
 ini_set('max_input_time', '0');
 
-require_once("functions.inc");
+require_once 'functions.inc';
 require 'guiconfig.inc';
-require_once("filter.inc");
-require_once("shaper.inc");
+require_once 'filter.inc';
+require_once 'shaper.inc';
 
 if($_POST['overwriteconfigxml'])
 	touch("/tmp/do_not_restore_config.xml");

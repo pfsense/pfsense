@@ -40,15 +40,15 @@
 	pfSense_MODULE:	pkg
 */
 
-require_once("globals.inc");
-require_once("xmlrpc.inc");
-require_once("service-utils.inc");
+require_once 'globals.inc';
+require_once 'xmlrpc.inc';
+require_once 'service-utils.inc';
 if(file_exists("/cf/conf/use_xmlreader"))
-	require_once("xmlreader.inc");
+	require_once 'xmlreader.inc';
 else
-	require_once("xmlparse.inc");
-require_once("service-utils.inc");
-require_once("pfsense-utils.inc");
+	require_once 'xmlparse.inc';
+    require_once 'service-utils.inc';
+require_once 'pfsense-utils.inc';
 
 if(!function_exists("update_status")) {
 	function update_status($status) {
@@ -431,8 +431,8 @@ function sync_package($pkg_name, $sync_depends = true, $show_message = false) {
 	if (!empty($pkg_config['include_file'])) {
 		$include_file = $pkg_config['include_file'];
 		if (file_exists($include_file))
-			require_once($include_file);
-		else {
+			require_once "$include_file";
+        else {
 			/* XXX: What the heck is this?! */
 			log_error("Reinstalling package {$package['name']} because its include file({$include_file}) is missing!");
 			uninstall_package($package['name']);
@@ -452,7 +452,7 @@ function sync_package($pkg_name, $sync_depends = true, $show_message = false) {
 		if(is_array($depends)) {
 			foreach($depends as $item) {
 				if(!file_exists($item)) {
-					require_once("notices.inc");
+					require_once 'notices.inc';
 					file_notice($package['name'], sprintf(gettext("The %s package is missing required dependencies and must be reinstalled."), $package['name']), "Packages", "/pkg_mgr_install.php?mode=reinstallpkg&pkg={$package['name']}", 1);
 					log_error("Could not find {$item}. Reinstalling package.");
 					uninstall_package($pkg_name);
@@ -468,8 +468,8 @@ function sync_package($pkg_name, $sync_depends = true, $show_message = false) {
 						continue;
 					if (!empty($item_config['include_file'])) {
 						if (file_exists($item_config['include_file']))	
-							require_once($item_config['include_file']);
-						else {
+							require_once $item_config['include_file'];
+                        else {
 							log_error("Not calling package sync code for dependency {$item_config['name']} of {$package['name']} because some include files are missing.");
 							continue;
 						}
@@ -811,10 +811,10 @@ function install_package_xml($pkg) {
 		if($pkg_config['include_file'] <> "") {
 			$static_output .= gettext("Loading package instructions...") . "\n";
 			update_output_window($static_output);
-			pkg_debug("require_once('{$pkg_config['include_file']}')\n");
-			if (file_exists($pkg_config['include_file']))
-				require_once($pkg_config['include_file']);
-			else {
+			pkg_debug("require_once '{$pkg_config['include_file']}' \n");
+            if (file_exists($pkg_config['include_file']))
+				require_once $pkg_config['include_file'];
+            else {
 				$missing_include = true;
 				$static_output .= "Include " . basename($pkg_config['include_file']) . " is missing!\n";
 				update_output_window($static_output);
@@ -1083,10 +1083,10 @@ function delete_package_xml($pkg) {
 		if($pkg_config['include_file'] <> "") {
 			$static_output .= gettext("Loading package instructions...") . "\n";
 			update_output_window($static_output);
-			pkg_debug("require_once(\"{$pkg_config['include_file']}\")\n");
-			if (file_exists($pkg_config['include_file']))
-				require_once($pkg_config['include_file']);
-			else {
+			pkg_debug("require_once \"{$pkg_config['include_file']}\" \n");
+            if (file_exists($pkg_config['include_file']))
+				require_once $pkg_config['include_file'];
+            else {
 				$missing_include = true;
 				update_output_window($static_output);
 				$static_output .= "Include file " . basename($pkg_config['include_file']) . " could not be found for inclusion.\n";
@@ -1290,16 +1290,16 @@ function pkg_reinstall_all() {
 }
 
 function stop_packages() {
-	require_once("config.inc");
-	require_once("functions.inc");
-	require_once("filter.inc");
-	require_once("shaper.inc");
-	require_once("captiveportal.inc");
-	require_once("pkg-utils.inc");
-	require_once("pfsense-utils.inc");
-	require_once("service-utils.inc");
+	require_once 'config.inc';
+	require_once 'functions.inc';
+	require_once 'filter.inc';
+	require_once 'shaper.inc';
+	require_once 'captiveportal.inc';
+	require_once 'pkg-utils.inc';
+	require_once 'pfsense-utils.inc';
+	require_once 'service-utils.inc';
 
-	global $config, $g;
+    global $config, $g;
 
 	log_error("Stopping all packages.");
 

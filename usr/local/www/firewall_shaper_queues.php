@@ -40,10 +40,10 @@
 ##|-PRIV
 
 require 'guiconfig.inc';
-require_once("functions.inc");
-require_once("filter.inc");
-require_once("shaper.inc");
-require_once("rrd.inc");
+require_once 'functions.inc';
+require_once 'filter.inc';
+require_once 'shaper.inc';
+require_once 'rrd.inc';
 
 if($_GET['reset'] <> "") {
 	mwexec("killall -9 pfctl");

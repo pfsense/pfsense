@@ -1,8 +1,8 @@
 #!/usr/local/bin/php -q
 <?php
-require_once("config.inc");
-require_once("globals.inc");
-require_once("notices.inc");
+require_once 'config.inc';
+require_once 'globals.inc';
+require_once 'notices.inc';
 $options = getopt("s::");
 
 $message = "";

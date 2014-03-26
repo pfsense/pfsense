@@ -36,7 +36,7 @@
 ##|*MATCH=status_wireless.php*
 ##|-PRIV
 
-require_once("guiconfig.inc");
+require_once 'guiconfig.inc';
 
 $pgtitle = array(gettext("Status"),gettext("Wireless"));
 $shortcut_section = "wireless";

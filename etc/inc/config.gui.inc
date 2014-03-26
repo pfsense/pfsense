@@ -42,7 +42,7 @@
 	pfSense_MODULE:	config
 */
 
-require_once("globals.inc");
+require_once 'globals.inc';
 
 /* do not load this file twice. */
 if($config_parsed == true)
@@ -51,15 +51,15 @@ else
 	$config_parsed = true;
 
 /* include globals from notices.inc /utility/XML parser files */
-require_once('config.lib.inc');
-require_once("notices.inc");
-require_once("util.inc");
-require_once("IPv6.inc");
+require_once 'config.lib.inc';
+require_once 'notices.inc';
+require_once 'util.inc';
+require_once 'IPv6.inc';
 if(file_exists("/cf/conf/use_xmlreader"))
-	require_once("xmlreader.inc");
+	require_once 'xmlreader.inc';
 else
-	require_once("xmlparse.inc");
-require_once("crypt.inc");
+	require_once 'xmlparse.inc';
+require_once 'crypt.inc';
 
 /* read platform */
 if (file_exists("{$g['etc_path']}/platform")) {

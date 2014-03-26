@@ -43,8 +43,8 @@ ini_set('zlib.output_compression', 0);
 ini_set('implicit_flush', 1);
 ini_set('max_input_time', '9999');
 
-require_once("guiconfig.inc");
-require_once("config.inc");
+require_once 'guiconfig.inc';
+require_once 'config.inc';
 
 $pgtitle = array(gettext("Diagnostics"), gettext("NanoBSD"));
 include 'head.inc';

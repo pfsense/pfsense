@@ -38,7 +38,7 @@
 ##|-PRIV
 
 require 'guiconfig.inc';
-require_once("certs.inc");
+require_once 'certs.inc';
 
 $cert_methods = array(
 	"import" => gettext("Import an existing Certificate"),

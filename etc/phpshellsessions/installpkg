@@ -1,6 +1,6 @@
-require_once("config.inc");
-require_once("util.inc");
-require_once("pkg-utils.inc");
+require_once 'config.inc';
+require_once 'util.inc';
+require_once 'pkg-utils.inc';
 
 global $g, $config, $argv, $command_split;
 

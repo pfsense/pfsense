@@ -39,9 +39,9 @@
 require 'globals.inc';
 require 'guiconfig.inc';
 require 'functions.inc';
-require_once("filter.inc");
+require_once 'filter.inc';
 require 'shaper.inc';
-require_once("rrd.inc");
+require_once 'rrd.inc';
 
 function gentitle_pkg($pgname) {
 	global $config;
@@ -83,10 +83,10 @@ $description = preg_replace("/pfSense/i", $g['product_name'], $pkg['step'][$step
 $totalsteps  = $pkg['totalsteps'];
 
 if ($pkg['includefile'])
-	require_once($pkg['includefile']);
+	require_once $pkg['includefile'];
 
 if ($pkg['step'][$stepid]['includefile'])
-	require_once($pkg['step'][$stepid]['includefile']);
+	require_once $pkg['step'][$stepid]['includefile'];
 
 if($pkg['step'][$stepid]['stepsubmitbeforesave']) {
 	eval($pkg['step'][$stepid]['stepsubmitbeforesave']);

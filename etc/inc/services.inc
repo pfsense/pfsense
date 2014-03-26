@@ -1618,9 +1618,9 @@ function services_dyndns_configure_client($conf) {
 		return;
 
 	/* load up the dyndns.class */
-	require_once("dyndns.class");
+	require_once 'dyndns.class';
 
-	$dns = new updatedns($dnsService = $conf['type'],
+    $dns = new updatedns($dnsService = $conf['type'],
 		$dnsHost = $conf['host'],
 		$dnsUser = $conf['username'],
 		$dnsPass = $conf['password'],
@@ -1870,8 +1870,8 @@ function services_unbound_configure() {
 		else
 			sleep(1);
 
-		require_once('/etc/inc/unbound.inc');
-		sync_unbound_service();
+		require_once '/etc/inc/unbound.inc';
+        sync_unbound_service();
 		if ($g['booting'])
 			echo gettext("done.") . "\n";
 	}
@@ -2310,8 +2310,8 @@ function upnp_start() {
 
 	if($config['installedpackages']['miniupnpd']['config'][0]['enable']) {
 		echo gettext("Starting UPnP service... ");
-		require_once('/usr/local/pkg/miniupnpd.inc');
-		sync_package_miniupnpd();
+		require_once '/usr/local/pkg/miniupnpd.inc';
+        sync_package_miniupnpd();
 		echo "done.\n";
 	}
 }

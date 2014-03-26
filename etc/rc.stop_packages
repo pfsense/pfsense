@@ -1,5 +1,5 @@
 #!/usr/local/bin/php -f
 <?php
-require_once("pkg-utils.inc");
+require_once 'pkg-utils.inc';
 stop_packages();
 ?>

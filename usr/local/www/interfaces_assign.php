@@ -45,12 +45,12 @@ $shortcut_section = "interfaces";
 
 require 'guiconfig.inc';
 require 'functions.inc';
-require_once("filter.inc");
+require_once 'filter.inc';
 require 'shaper.inc';
 require 'ipsec.inc';
 require 'vpn.inc';
 require 'captiveportal.inc';
-require_once("rrd.inc");
+require_once 'rrd.inc';
 
 /*
 	In this file, "port" refers to the physical port name,

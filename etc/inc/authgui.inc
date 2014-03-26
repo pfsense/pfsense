@@ -60,7 +60,7 @@ if (!isAllowedPage($_SERVER['REQUEST_URI'])) {
 	if (count($allowedpages) > 0) {
 		$page = str_replace('*', '', $allowedpages[0]);
 		$_SESSION['Post_Login'] = true;
-		require_once("functions.inc");
+		require_once 'functions.inc';
 		pfSenseHeader("/{$page}");
 
 		$username = empty($_SESSION["Username"]) ? "(system)" : $_SESSION['Username'];
@@ -82,7 +82,7 @@ if (!isAllowedPage($_SERVER['REQUEST_URI'])) {
  */
 if (!$_SESSION['Post_Login']) {
 	$_SESSION['Post_Login'] = true;
-	require_once("functions.inc");
+	require_once 'functions.inc';
 	pfSenseHeader($_SERVER['REQUEST_URI']);
 	exit;
 }
@@ -153,7 +153,7 @@ function display_error_form($http_code, $desc) {
 
 
 function display_login_form() {
-	require_once("globals.inc");
+	require_once 'globals.inc';
 	global $config, $g;
 	$g['theme'] = get_current_theme();
 
@@ -185,8 +185,8 @@ if(strstr($_SERVER['HTTP_HOST'], ":")) {
 	$http_host = $_SERVER['HTTP_HOST'];
 }
 if (empty($FilterIflist)) {
-	require_once('filter.inc');
-	require_once('shaper.inc');
+	require_once 'filter.inc';
+	require_once 'shaper.inc';
 	filter_generate_optcfg_array();
 }
 foreach ($FilterIflist as $iflist) {

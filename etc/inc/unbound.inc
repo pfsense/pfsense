@@ -34,8 +34,8 @@
 */
 
 /* include all configuration functions */
-require_once("config.inc");
-require_once("functions.inc");
+require_once 'config.inc';
+require_once 'functions.inc';
 
 /* Optimize Unbound for environment */
 function unbound_optimization() {
@@ -346,7 +346,7 @@ function sync_unbound_service() {
     unbound_remote_control_setup();
     unbound_generate_config();
     do_as_unbound_user("start");
-    require_once("service-utils.inc");
+    require_once 'service-utils.inc';
     if (is_service_running("unbound"))
         do_as_unbound_user("restore_cache");
 

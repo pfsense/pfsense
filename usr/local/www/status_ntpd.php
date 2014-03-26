@@ -41,7 +41,7 @@
 ##|*MATCH=status_ntpd.php*
 ##|-PRIV
 
-require_once("guiconfig.inc");
+require_once 'guiconfig.inc';
 
 if(!isset($config['ntpd']['noquery'])) {
 

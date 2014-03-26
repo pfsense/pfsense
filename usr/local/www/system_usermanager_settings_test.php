@@ -39,7 +39,7 @@
 ##|-PRIV
 
 require 'guiconfig.inc';
-require_once("auth.inc");
+require_once 'auth.inc';
 
 $authserver = $_GET['authserver'];
 $authcfg = auth_get_authserver($authserver);

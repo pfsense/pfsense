@@ -2889,8 +2889,8 @@ function pkg_call_plugins($plugin_type, $plugin_params) {
 			foreach ($pkg_config['plugins']['item'] as $plugin) {
 				if ($plugin['type'] == $plugin_type) {
 					if (file_exists($pkg_config['include_file']))
-						require_once($pkg_config['include_file']);
-					else
+						require_once $pkg_config['include_file'];
+                    else
 						continue;
 					$plugin_function = $pkgname . '_'. $plugin_type;
 					$results[$pkgname] = @eval($plugin_function($plugin_params));

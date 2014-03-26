@@ -36,7 +36,7 @@
 ##|*MATCH=services_ntpd_pps.php*
 ##|-PRIV
 
-require_once("guiconfig.inc");
+require_once 'guiconfig.inc';
 
 if (!is_array($config['ntpd']))
 	$config['ntpd'] = array();

@@ -37,9 +37,9 @@
 ##|*MATCH=status_services.php*
 ##|-PRIV
 
-require_once("guiconfig.inc");
-require_once("service-utils.inc");
-require_once("shortcuts.inc");
+require_once 'guiconfig.inc';
+require_once 'service-utils.inc';
+require_once 'shortcuts.inc';
 
 if (!empty($_GET['service'])) {
 	switch ($_GET['mode']) {

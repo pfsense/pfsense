@@ -41,8 +41,8 @@ if ($_POST['downloadbtn'] == gettext("Download Capture"))
 	$nocsrf = true;
 
 $pgtitle = array(gettext("Diagnostics"), gettext("Packet Capture"));
-require_once("guiconfig.inc");
-require_once("pfsense-utils.inc");
+require_once 'guiconfig.inc';
+require_once 'pfsense-utils.inc';
 
 $fp = "/root/";
 $fn = "packetcapture.cap";

@@ -42,7 +42,7 @@
 
 $allowautocomplete = true;
 $pgtitle = array(gettext("Diagnostics"), gettext("Ping"));
-require_once("guiconfig.inc");
+require_once 'guiconfig.inc';
 
 
 define('MAX_COUNT', 10);

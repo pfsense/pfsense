@@ -157,9 +157,9 @@ function relayd_configure($kill_first=false) {
 	global $config, $g;
 
 	// have to do this until every call to filter.inc is
-	// require_once() instead of require().
-	if (!function_exists('filter_expand_alias_array')) {
-		require_once("filter.inc");
+	// require_once '' instead of require ''.
+    if (!function_exists('filter_expand_alias_array')) {
+		require_once 'filter.inc';
 	}
 
 	$vs_a = $config['load_balancer']['virtual_server'];

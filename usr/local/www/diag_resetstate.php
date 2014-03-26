@@ -43,7 +43,7 @@
 ##|-PRIV
 
 require 'guiconfig.inc';
-require_once("filter.inc");
+require_once 'filter.inc';
 
 if ($_POST) {
 	$savemsg = "";

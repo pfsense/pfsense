@@ -35,7 +35,7 @@
 ##|-PRIV
 
 require 'guiconfig.inc';
-require_once("openvpn.inc");
+require_once 'openvpn.inc';
 
 $pgtitle = array(gettext("OpenVPN"), gettext("Client Specific Override"));
 $shortcut_section = "openvpn";

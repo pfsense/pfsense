@@ -38,15 +38,15 @@
 ##|*MATCH=services_captiveportal.php*
 ##|-PRIV
 
-require_once("functions.inc");
-require_once("filter.inc");
-require_once("shaper.inc");
-require_once("captiveportal.inc");
+require_once 'functions.inc';
+require_once 'filter.inc';
+require_once 'shaper.inc';
+require_once 'captiveportal.inc';
 
 if (substr($_GET['act'], 0, 3) == "get")
 	$nocsrf = true;
 
-require_once("guiconfig.inc");
+require_once 'guiconfig.inc';
 
 global $cpzone;
 global $cpzoneid;

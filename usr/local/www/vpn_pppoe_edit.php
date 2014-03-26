@@ -37,7 +37,7 @@
 ##|-PRIV
 
 require 'guiconfig.inc';
-require_once("vpn.inc");
+require_once 'vpn.inc';
 
 function vpn_pppoe_get_id() {
 	global $config;

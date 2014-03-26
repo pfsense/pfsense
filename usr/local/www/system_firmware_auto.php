@@ -45,7 +45,7 @@
 $nocsrf = true;
 
 require 'guiconfig.inc';
-require_once("pfsense-utils.inc");
+require_once 'pfsense-utils.inc';
 
 $curcfg = $config['system']['firmware'];
 

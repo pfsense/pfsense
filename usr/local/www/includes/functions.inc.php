@@ -7,8 +7,8 @@ if(Connection_Aborted()) {
 	exit;
 }
 
-require_once("config.inc");
-require_once("pfsense-utils.inc");
+require_once 'config.inc';
+require_once 'pfsense-utils.inc';
 
 function get_stats() {
 	$stats['cpu'] = cpu_usage();

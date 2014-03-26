@@ -38,8 +38,8 @@
 ##|-PRIV
 
 require 'guiconfig.inc';
-require_once("certs.inc");
-require_once('openvpn.inc');
+require_once 'certs.inc';
+require_once 'openvpn.inc';
 
 global $openssl_crl_status;
 

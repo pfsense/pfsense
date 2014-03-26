@@ -40,8 +40,8 @@
 ##|-PRIV
 
 require 'guiconfig.inc';
-require_once("ipsec.inc");
-require_once("vpn.inc");
+require_once 'ipsec.inc';
+require_once 'vpn.inc';
 
 if (!is_array($config['gateways']['gateway_group']))
 	$config['gateways']['gateway_group'] = array();

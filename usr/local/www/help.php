@@ -4,7 +4,7 @@
  *
  */
 
-require_once("guiconfig.inc");
+require_once 'guiconfig.inc';
 
 /* Define hash of jumpto url maps */
 

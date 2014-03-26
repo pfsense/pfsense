@@ -51,9 +51,9 @@ ini_set('max_input_time', '0');
 $omit_nocacheheaders = true;
 $nocsrf = true;
 require 'guiconfig.inc';
-require_once("functions.inc");
-require_once("filter.inc");
-require_once("shaper.inc");
+require_once 'functions.inc';
+require_once 'filter.inc';
+require_once 'shaper.inc';
 
 $rrddbpath = "/var/db/rrd";
 $rrdtool = "/usr/bin/nice -n20 /usr/local/bin/rrdtool";

@@ -44,7 +44,7 @@
 $pgtitle = array(gettext("Diagnostics"), gettext("Tables"));
 $shortcut_section = "aliases";
 
-require_once("guiconfig.inc");
+require_once 'guiconfig.inc';
 
 // Set default table
 $tablename = "sshlockout";

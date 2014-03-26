@@ -2,14 +2,14 @@
  
 <?php
 
-require_once("globals.inc");
+require_once 'globals.inc';
 echo "Starting the {$g['product_name']} shell system";
 $g['booting'] = true;
-require_once("functions.inc");
+require_once 'functions.inc';
 echo ".";
-require_once("config.inc");
+require_once 'config.inc';
 echo ".";
-require_once("util.inc");
+require_once 'util.inc';
 echo ".";
 $g['booting'] = false;
 
@@ -311,9 +311,9 @@ function str_replace_all($search,$replace,$subject) {
 
 function playback_text($playback_file_contents) {
 	$playback_file_split = explode("\n", $playback_file_contents);
-	$playback_text  = "require_once('functions.inc');\n";
-	$playback_text .= "require_once('globals.inc');\n";
-	$playback_text .= "require_once('config.inc');\n";
+	$playback_text  = "require_once 'functions.inc';\n";
+	$playback_text .= "require_once 'globals.inc';\n";
+	$playback_text .= "require_once 'config.inc';\n";
 	$toquote = '"';
 	$toquotereplace = '\\"';	
 	foreach($playback_file_split as $pfs) {

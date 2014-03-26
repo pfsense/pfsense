@@ -30,11 +30,11 @@
 */
 
 /* parse the configuration and include all functions used below */
-require_once("globals.inc");
-require_once("config.inc");
-require_once("filter.inc");	
-require_once("shaper.inc");	
-require_once("interfaces.inc");
+require_once 'globals.inc';
+require_once 'config.inc';
+require_once 'filter.inc';	
+require_once 'shaper.inc';	
+require_once 'interfaces.inc';
 
 function handle_argument_group($iface, $argument2) {
 	global $config;	
@@ -73,8 +73,8 @@ function handle_argument_group($iface, $argument2) {
 		case "up":
 			log_error("DEVD Ethernet attached event for {$iface}");
 			log_error("HOTPLUG: Configuring interface {$iface}");
-			require_once("vpn.inc");
-			require_once("captiveportal.inc");
+			require_once 'vpn.inc';
+			require_once 'captiveportal.inc';
 			// Do not try to readd to bridge otherwise em(4) has problems
 			interface_configure($iface, true, true); 
 			break;

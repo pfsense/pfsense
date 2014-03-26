@@ -45,9 +45,9 @@
 $d_isfwfile = 1;
 $nocsrf = true;
 
-require_once("globals.inc");
-require_once("functions.inc");
-require_once("guiconfig.inc");
+require_once 'globals.inc';
+require_once 'functions.inc';
+require_once 'guiconfig.inc';
 
 $curcfg = $config['system']['firmware'];
 
@@ -56,7 +56,7 @@ $kerneltypes = array(
 	'wrap' => gettext("Embedded Kernel"),
 );
 
-require_once("xmlrpc_client.inc");
+require_once 'xmlrpc_client.inc';
 
 /* Allow additional execution time 0 = no limit. */
 ini_set('max_execution_time', '9999');

@@ -40,8 +40,8 @@
 ##|*MATCH=status_lb_vs.php*
 ##|-PRIV
 
-require_once("guiconfig.inc");
-require_once("vslb.inc");
+require_once 'guiconfig.inc';
+require_once 'vslb.inc';
 
 if (!is_array($config['load_balancer']['lbpool'])) {
 	$config['load_balancer']['lbpool'] = array();

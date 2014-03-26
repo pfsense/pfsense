@@ -936,7 +936,7 @@ function get_configured_ip_addresses() {
 	global $config;
 
 	if (!function_exists('get_interface_ip'))
-		require_once("interfaces.inc");
+		require_once 'interfaces.inc';
 	$ip_array = array();
 	$interfaces = get_configured_interface_list();
 	if (is_array($interfaces)) {
@@ -971,7 +971,7 @@ function get_configured_ip_addresses() {
  *
  */
 function get_configured_ipv6_addresses() {
-	require_once("interfaces.inc");
+	require_once 'interfaces.inc';
 	$ipv6_array = array();
 	$interfaces = get_configured_interface_list();
 	if(is_array($interfaces)) {
@@ -1499,8 +1499,8 @@ function run_plugins($directory) {
 			if (stristr($file, ".sh") == true)
 				mwexec($directory . $file . " start");
 			else if (!is_dir($directory . "/" . $file) && stristr($file,".inc"))
-				require_once($directory . "/" . $file);
-		}
+				require_once $directory . "/" . $file;
+        }
 	}
 }
 

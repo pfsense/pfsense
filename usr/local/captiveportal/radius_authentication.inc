@@ -46,7 +46,7 @@ RADIUS AUTHENTICATION
 ---------------------
 */
 
-require_once("CHAP.inc");
+require_once 'CHAP.inc';
 
 function RADIUS_AUTHENTICATION($username,$password,$radiusservers,$clientip,$clientmac,$ruleno) {
 
@@ -69,7 +69,7 @@ function RADIUS_AUTHENTICATION($username,$password,$radiusservers,$clientip,$cli
         	break;
         default:
             if (!function_exists('getNasIP'))
-                require_once("captiveportal.inc");
+                require_once 'captiveportal.inc';
         	$calledstationid = getNasIP();
         	$callingstationid = $clientmac;
 		break;

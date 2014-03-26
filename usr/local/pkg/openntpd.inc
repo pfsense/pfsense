@@ -1,7 +1,7 @@
 <?php
-require_once('config.inc');
-require_once('globals.inc');
-require_once('service-utils.inc');
+require_once 'config.inc';
+require_once 'globals.inc';
+require_once 'service-utils.inc';
 
 function openntpd_install() {
 	global $g;

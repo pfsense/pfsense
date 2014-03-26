@@ -38,8 +38,8 @@
 ##|*MATCH=services_unbound.php*
 ##|-PRIV
 
-require_once("guiconfig.inc");
-require_once("unbound.inc");
+require_once 'guiconfig.inc';
+require_once 'unbound.inc';
 
 $pconfig['enable'] = isset($config['unbound']['enable']);
 $pconfig['port'] = $config['unbound']['port'];

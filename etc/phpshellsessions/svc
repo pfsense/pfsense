@@ -1,6 +1,6 @@
-require_once("config.inc");
-require_once("util.inc");
-require_once("service-utils.inc");
+require_once 'config.inc';
+require_once 'util.inc';
+require_once 'service-utils.inc';
 
 function usage() {
 	echo "Usage: playback svc <action> <service name> [service-specific options]\n\n";

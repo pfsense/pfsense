@@ -39,7 +39,7 @@
 ##|*MATCH=diag_dump_states.php*
 ##|-PRIV
 
-require_once("guiconfig.inc");
+require_once 'guiconfig.inc';
 
 /* handle AJAX operations */
 if($_GET['action']) {

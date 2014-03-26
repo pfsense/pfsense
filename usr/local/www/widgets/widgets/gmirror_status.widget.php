@@ -27,7 +27,7 @@
 
 $nocsrf = true;
 
-require_once("/usr/local/www/widgets/include/gmirror_status.inc");
+require_once '/usr/local/www/widgets/include/gmirror_status.inc';
 
 if ($_GET['textonly'] == "true") {
 	header("Cache-Control: no-cache");

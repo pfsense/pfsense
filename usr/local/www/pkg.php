@@ -37,8 +37,8 @@
 ##|*MATCH=pkg.php*
 ##|-PRIV
 
-require_once("guiconfig.inc");
-require_once("pkg-utils.inc");
+require_once 'guiconfig.inc';
+require_once 'pkg-utils.inc';
 
 function gentitle_pkg($pgname) {
 	global $config;
@@ -69,7 +69,7 @@ if($pkg['donotsave'] <> "") {
 }
 
 if ($pkg['include_file'] != "") {
-	require_once($pkg['include_file']);
+	require_once $pkg['include_file'];
 }
 
 $package_name = $pkg['menu'][0]['name'];

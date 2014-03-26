@@ -29,11 +29,11 @@
     POSSIBILITY OF SUCH DAMAGE.
 */
 
-require_once("functions.inc");
-require_once("config.inc");
-require_once("notices.inc");
-require_once("openvpn.inc");
-require_once("interfaces.inc");
+require_once 'functions.inc';
+require_once 'config.inc';
+require_once 'notices.inc';
+require_once 'openvpn.inc';
+require_once 'interfaces.inc';
 
 if (isset($_GET))
 	$argument = $_GET['interface'];

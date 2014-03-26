@@ -2,8 +2,8 @@
 
 $nocsrf = true;
 
-require_once("guiconfig.inc");
-require_once("openvpn.inc");
+require_once 'guiconfig.inc';
+require_once 'openvpn.inc';
 
 /* Handle AJAX */
 if($_GET['action']) {

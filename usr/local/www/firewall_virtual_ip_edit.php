@@ -50,7 +50,7 @@
 ##|-PRIV
 
 require 'guiconfig.inc';
-require_once("filter.inc");
+require_once 'filter.inc';
 require 'shaper.inc';
 
 if (!is_array($config['virtualip']['vip'])) {

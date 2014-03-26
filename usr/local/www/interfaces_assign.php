@@ -43,14 +43,14 @@
 $pgtitle = array(gettext("Interfaces"),gettext("Assign network ports"));
 $shortcut_section = "interfaces";
 
-require("guiconfig.inc");
-require("functions.inc");
-require_once("filter.inc");
-require("shaper.inc");
-require("ipsec.inc");
-require("vpn.inc");
-require("captiveportal.inc");
-require_once("rrd.inc");
+require 'guiconfig.inc';
+require 'functions.inc';
+require_once 'filter.inc';
+require 'shaper.inc';
+require 'ipsec.inc';
+require 'vpn.inc';
+require 'captiveportal.inc';
+require_once 'rrd.inc';
 
 /*
 	In this file, "port" refers to the physical port name,
@@ -368,7 +368,7 @@ if ($_GET['act'] == "add" && (count($config['interfaces']) < count($portlist))) 
 } else if ($_GET['act'] == "add")
 	$input_errors[] = "No more interfaces available to be assigned.";
 
-include("head.inc");
+include 'head.inc';
 
 if(file_exists("/var/run/interface_mismatch_reboot_needed"))
 	if ($_POST) {
@@ -382,7 +382,7 @@ if(file_exists("/var/run/interface_mismatch_reboot_needed"))
 ?>
 
 <body link="#0000CC" vlink="#0000CC" alink="#0000CC">
-<?php include("fbegin.inc"); ?>
+<?php include 'fbegin.inc'; ?>
 
 <form action="interfaces_assign.php" method="post" name="iform" id="iform">
 
@@ -507,6 +507,6 @@ if(file_exists("/var/run/interface_mismatch_reboot_needed"))
 </tr>
 </table>
 </form>
-<?php include("fend.inc"); ?>
+<?php include 'fend.inc'; ?>
 </body>
 </html>

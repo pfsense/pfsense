@@ -40,10 +40,10 @@
 ##|*MATCH=system.php*
 ##|-PRIV
 
-require("guiconfig.inc");
-require_once("functions.inc");
-require_once("filter.inc");
-require_once("shaper.inc");
+require 'guiconfig.inc';
+require_once 'functions.inc';
+require_once 'filter.inc';
+require_once 'shaper.inc';
 
 $pconfig['hostname'] = $config['system']['hostname'];
 $pconfig['domain'] = $config['system']['domain'];
@@ -277,13 +277,13 @@ if ($_POST) {
 }
 
 $pgtitle = array(gettext("System"),gettext("General Setup"));
-include("head.inc");
+include 'head.inc';
 
 ?>
 
 <body link="#0000CC" vlink="#0000CC" alink="#0000CC">
 <?php
-	include("fbegin.inc");
+	include 'fbegin.inc';
 	if ($input_errors)
 		print_input_errors($input_errors);
 	if ($savemsg)
@@ -516,6 +516,6 @@ include("head.inc");
 		</td></tr>
 		</table>
 	</form>
-<?php include("fend.inc"); ?>
+<?php include 'fend.inc'; ?>
 </body>
 </html>

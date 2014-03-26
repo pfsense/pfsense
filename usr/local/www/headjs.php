@@ -34,7 +34,7 @@
 ##|*MATCH=headjs.php*
 ##|-PRIV
 
-require_once("guiconfig.inc");
+require_once 'guiconfig.inc';
 
 function getHeadJS() {
   global $g, $use_loader_tab_gif;

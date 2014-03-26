@@ -1,8 +1,8 @@
 #!/usr/local/bin/php -q
 <?php
-require_once("globals.inc");
-require_once("config.inc");
-require_once("pfsense-utils.inc");
+require_once 'globals.inc';
+require_once 'config.inc';
+require_once 'pfsense-utils.inc';
 
 global $g;
 global $SLICE, $OLDSLICE, $TOFLASH, $COMPLETE_PATH, $COMPLETE_BOOT_PATH;

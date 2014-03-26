@@ -39,7 +39,7 @@
 ##|*MATCH=diag_limiter_info.php*
 ##|-PRIV
 
-require("guiconfig.inc");
+require 'guiconfig.inc';
 
 $pfSversion = str_replace("\n", "", file_get_contents("/etc/version"));
 
@@ -60,7 +60,7 @@ if($_REQUEST['getactivity']) {
 	exit;
 }
 
-include("head.inc");
+include 'head.inc';
 
 ?>
 <body link="#0000CC" vlink="#0000CC" alink="#0000CC">
@@ -85,7 +85,7 @@ include("head.inc");
 </script>
 <div id='maincontent'>
 <?php
-	include("fbegin.inc"); 
+	include 'fbegin.inc'; 
 	if(strstr($pfSversion, "1.2")) 
 		echo "<p class=\"pgtitle\">{$pgtitle}</p>";
 	if($savemsg) {
@@ -118,6 +118,6 @@ include("head.inc");
   </tr>
 </table>
 </form>
-<?php include("fend.inc"); ?>
+<?php include 'fend.inc'; ?>
 </body>
 </html>

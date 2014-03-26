@@ -42,8 +42,8 @@
 ##|*MATCH=diag_logs_filter_dynamic.php*
 ##|-PRIV
 
-require("guiconfig.inc");
-require_once("filter_log.inc");
+require 'guiconfig.inc';
+require_once 'filter_log.inc';
 
 $filter_logfile = "{$g['varlog_path']}/filter.log";
 
@@ -60,11 +60,11 @@ $filterlog = conv_log_filter($filter_logfile, $nentries, $nentries + 100);
 
 $pgtitle = array(gettext("Status"),gettext("System logs"),gettext("Firewall (Dynamic View)"));
 $shortcut_section = "firewall";
-include("head.inc");
+include 'head.inc';
 
 ?>
 <body link="#0000CC" vlink="#0000CC" alink="#0000CC">
-<?php include("fbegin.inc"); ?>
+<?php include 'fbegin.inc'; ?>
 <script type="text/javascript">
 //<![CDATA[
 	lastsawtime = '<?php echo time(); ?>;';
@@ -169,6 +169,6 @@ include("head.inc");
   </tr>
 </table>
 <p><span class="vexpl"><a href="https://doc.pfsense.org/index.php/What_are_TCP_Flags%3F"><?=gettext("TCP Flags"); ?></a>: F - FIN, S - SYN, A or . - ACK, R - RST, P - PSH, U - URG, E - ECE, C - CWR</span></p>
-<?php include("fend.inc"); ?>
+<?php include 'fend.inc'; ?>
 </body>
 </html>

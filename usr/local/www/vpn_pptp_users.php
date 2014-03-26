@@ -35,8 +35,8 @@
 ##|*MATCH=vpn_pptp_users.php*
 ##|-PRIV
 
-require("guiconfig.inc");
-require_once("vpn.inc");
+require 'guiconfig.inc';
+require_once 'vpn.inc';
 
 if (!is_array($config['pptpd']['user'])) {
 	$config['pptpd']['user'] = array();
@@ -70,12 +70,12 @@ if ($_GET['act'] == "del") {
 
 $pgtitle = array(gettext("VPN"),gettext("VPN PPTP"),gettext("Users"));
 $shortcut_section = "pptps";
-include("head.inc");
+include 'head.inc';
 
 ?>
 
 <body link="#0000CC" vlink="#0000CC" alink="#0000CC">
-<?php include("fbegin.inc"); ?>
+<?php include 'fbegin.inc'; ?>
 <form action="vpn_pptp_users.php" method="post">
 <?php if ($savemsg) print_info_box($savemsg); ?>
 <?php if (isset($config['pptpd']['radius']['enable']))
@@ -136,6 +136,6 @@ include("head.inc");
 	</tr>
 </table>
 </form>
-<?php include("fend.inc"); ?>
+<?php include 'fend.inc'; ?>
 </body>
 </html>

@@ -36,15 +36,15 @@
 ##|*MATCH=xmlrpc.php*
 ##|-PRIV
 
-require("config.inc");
-require("functions.inc");
-require_once("filter.inc");
-require("ipsec.inc");
-require("vpn.inc");
-require("shaper.inc");
-require("xmlrpc_server.inc");
-require("xmlrpc.inc");
-require("array_intersect_key.inc");
+require 'config.inc';
+require 'functions.inc';
+require_once 'filter.inc';
+require 'ipsec.inc';
+require 'vpn.inc';
+require 'shaper.inc';
+require 'xmlrpc_server.inc';
+require 'xmlrpc.inc';
+require 'array_intersect_key.inc';
 
 function xmlrpc_loop_detect() {
 	global $config;
@@ -368,7 +368,7 @@ function filter_configure_xmlrpc($raw_params) {
 	system_routing_configure();
 	setup_gateways_monitor();
 	relayd_configure();
-	require_once("openvpn.inc");
+	require_once 'openvpn.inc';
 	openvpn_resync_all();
 	services_dhcpd_configure();
 	services_dnsmasq_configure();
@@ -481,7 +481,7 @@ function get_notices_xmlrpc($raw_params) {
 		xmlrpc_authfail();
 		return $xmlrpc_g['return']['authfail'];
 	}
-	require("notices.inc");
+	require 'notices.inc';
 	if(!$params) {
 		$toreturn = get_notices();
 	} else {

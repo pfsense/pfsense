@@ -52,7 +52,7 @@ function hosts_sort() {
         usort($config['dnsmasq']['hosts'], "hostcmp");
 }
 
-require("guiconfig.inc");
+require 'guiconfig.inc';
 
 if (!is_array($config['dnsmasq']['hosts'])) 
 	$config['dnsmasq']['hosts'] = array();
@@ -166,12 +166,12 @@ if ($_POST) {
 
 $pgtitle = array(gettext("Services"),gettext("DNS forwarder"),gettext("Edit host"));
 $shortcut_section = "resolver";
-include("head.inc");
+include 'head.inc';
 
 ?>
 
 <body link="#0000CC" vlink="#0000CC" alink="#0000CC" onload="<?= $jsevents["body"]["onload"] ?>">
-<?php include("fbegin.inc"); ?>
+<?php include 'fbegin.inc'; ?>
 
 <script type="text/javascript" src="/javascript/row_helper.js">
 </script>
@@ -291,6 +291,6 @@ include("head.inc");
                 </tr>
         </table>
 </form>
-<?php include("fend.inc"); ?>
+<?php include 'fend.inc'; ?>
 </body>
 </html>

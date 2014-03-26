@@ -48,11 +48,11 @@ function passthrumacs_sort() {
 	usort($config['captiveportal'][$cpzone]['passthrumac'],"passthrumacscmp");
 }
 
-require("guiconfig.inc");
-require("functions.inc");
-require_once("filter.inc");
-require("shaper.inc");
-require("captiveportal.inc");
+require 'guiconfig.inc';
+require 'functions.inc';
+require_once 'filter.inc';
+require 'shaper.inc';
+require 'captiveportal.inc';
 
 global $cpzone;
 global $cpzoneid;
@@ -171,9 +171,9 @@ if ($_POST) {
 		exit;
 	}
 }
-include("head.inc");
+include 'head.inc';
 ?>
-<?php include("fbegin.inc"); ?>
+<?php include 'fbegin.inc'; ?>
 <body link="#0000CC" vlink="#0000CC" alink="#0000CC">
 <?php if ($input_errors) print_input_errors($input_errors); ?>
 <form action="services_captiveportal_mac_edit.php" method="post" name="iform" id="iform">
@@ -252,6 +252,6 @@ include("head.inc");
 		</tr>
 	</table>
 </form>
-<?php include("fend.inc"); ?>
+<?php include 'fend.inc'; ?>
 </body>
 </html>

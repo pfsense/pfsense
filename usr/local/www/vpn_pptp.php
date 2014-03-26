@@ -35,11 +35,11 @@
 ##|*MATCH=vpn_pptp.php*
 ##|-PRIV
 
-require("guiconfig.inc");
-require_once("functions.inc");
-require_once("filter.inc");
-require_once("shaper.inc");
-require_once("vpn.inc");
+require 'guiconfig.inc';
+require_once 'functions.inc';
+require_once 'filter.inc';
+require_once 'shaper.inc';
+require_once 'vpn.inc';
 
 if (!is_array($config['pptpd']['radius'])) {
 	$config['pptpd']['radius'] = array();
@@ -195,12 +195,12 @@ if ($_POST) {
 
 $pgtitle = array(gettext("VPN"),gettext("VPN PPTP"));
 $shortcut_section = "pptps";
-include("head.inc");
+include 'head.inc';
 
 ?>
 
 <body link="#0000CC" vlink="#0000CC" alink="#0000CC">
-<?php include("fbegin.inc"); ?>
+<?php include 'fbegin.inc'; ?>
 <script type="text/javascript">
 <!--
 function get_radio_value(obj)
@@ -494,6 +494,6 @@ function enable_change(enable_over) {
 enable_change(false);
 //-->
 </script>
-<?php include("fend.inc"); ?>
+<?php include 'fend.inc'; ?>
 </body>
 </html>

@@ -47,10 +47,10 @@
 ini_set('max_execution_time', '0');
 ini_set('max_input_time', '0');
 
-require_once("functions.inc");
-require("guiconfig.inc");
-require_once("filter.inc");
-require_once("shaper.inc");
+require_once 'functions.inc';
+require 'guiconfig.inc';
+require_once 'filter.inc';
+require_once 'shaper.inc';
 
 if($_POST['overwriteconfigxml'])
 	touch("/tmp/do_not_restore_config.xml");
@@ -102,12 +102,12 @@ if ($_POST['restorefile']) {
 }
 
 $pgtitle = array(gettext("Diagnostics"),gettext("Restore full backup"));
-include("head.inc");
+include 'head.inc';
 
 ?>
 
 <body link="#0000CC" vlink="#0000CC" alink="#0000CC">
-<?php include("fbegin.inc"); ?>
+<?php include 'fbegin.inc'; ?>
 <?php if ($input_errors) print_input_errors($input_errors); ?>
 <?php if ($savemsg) print_info_box($savemsg); ?>
 <?php if (is_subsystem_dirty('restore')): ?><p>
@@ -198,7 +198,7 @@ decrypt_change();
 //]]>
 </script>
 
-<?php include("fend.inc"); ?>
+<?php include 'fend.inc'; ?>
 </body>
 </html>
 <?php

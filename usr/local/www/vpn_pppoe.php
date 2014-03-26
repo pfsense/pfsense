@@ -35,9 +35,9 @@
 ##|*MATCH=vpn_pppoe.php*
 ##|-PRIV
 
-require_once("guiconfig.inc");
-require_once("filter.inc");
-require_once("vpn.inc");
+require_once 'guiconfig.inc';
+require_once 'filter.inc';
+require_once 'vpn.inc';
 
 if (!is_array($config['pppoes']['pppoe']))
 	$config['pppoes']['pppoe'] = array();
@@ -86,12 +86,12 @@ if ($_GET['act'] == "del") {
 
 $pgtitle = array(gettext("VPN"),gettext("PPPoE"));
 $shortcut_section = "pppoes";
-include("head.inc");
+include 'head.inc';
 
 ?>
 
 <body link="#0000CC" vlink="#0000CC" alink="#0000CC">
-<?php include("fbegin.inc"); ?>
+<?php include 'fbegin.inc'; ?>
 <form action="vpn_pppoe.php" method="post">
 <?php if ($savemsg) print_info_box($savemsg); ?>
 <?php if (is_subsystem_dirty('vpnpppoe')): ?><p>
@@ -151,6 +151,6 @@ include("head.inc");
 </tr>
 </table>
 </form>
-<?php include("fend.inc"); ?>
+<?php include 'fend.inc'; ?>
 </body>
 </html>

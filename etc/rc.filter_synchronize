@@ -35,13 +35,13 @@
 
 */
 
-require_once("globals.inc");
-require_once("config.inc");
-require_once("functions.inc");
-require_once("filter.inc");
-require_once("shaper.inc");
-require_once("xmlrpc.inc");
-require_once("interfaces.inc");
+require_once 'globals.inc';
+require_once 'config.inc';
+require_once 'functions.inc';
+require_once 'filter.inc';
+require_once 'shaper.inc';
+require_once 'xmlrpc.inc';
+require_once 'interfaces.inc';
 
 /*
  *  backup_vip_config_section($section): returns as an xml file string of

@@ -37,9 +37,9 @@
 ##|*MATCH=status_filter_reload.php*
 ##|-PRIV
 
-require_once("globals.inc");
-require_once("guiconfig.inc");
-require_once("functions.inc");
+require_once 'globals.inc';
+require_once 'guiconfig.inc';
+require_once 'functions.inc';
 
 $pgtitle = array(gettext("Status"),gettext("Filter Reload Status"));
 $shortcut_section = "firewall";
@@ -62,12 +62,12 @@ if($_POST['syncfilter']) {
 	exit;
 }
 
-include("head.inc");
+include 'head.inc';
 ?>
 
 <body link="#0000CC" vlink="#0000CC" alink="#0000CC">
 
-<?php include("fbegin.inc"); ?>
+<?php include 'fbegin.inc'; ?>
 <br />
 <form action="status_filter_reload.php" method="post" name="filter">
 <input type="submit" value="Reload Filter" name="reloadfilter" id="reloadfilter">
@@ -166,7 +166,7 @@ if (typeof getURL == 'undefined') {
 window.setTimeout('update_status_thread()', 2500);
 </script>
 
-<?php include("fend.inc"); ?>
+<?php include 'fend.inc'; ?>
 
 </body>
 </html>

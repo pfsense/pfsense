@@ -3,7 +3,7 @@
 
 <?php
 
-require_once("util.inc");
+require_once 'util.inc';
 $GLOBALS['lockscript'] = lock('config');
 
 ?>

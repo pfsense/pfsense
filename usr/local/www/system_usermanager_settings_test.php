@@ -38,8 +38,8 @@
 ##|*MATCH=system_usermanager_settings_test.php*
 ##|-PRIV
 
-require("guiconfig.inc");
-require_once("auth.inc");
+require 'guiconfig.inc';
+require_once 'auth.inc';
 
 $authserver = $_GET['authserver'];
 $authcfg = auth_get_authserver($authserver);

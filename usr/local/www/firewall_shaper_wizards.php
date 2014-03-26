@@ -39,10 +39,10 @@
 ##|*MATCH=firewall_shaper_wizards.php*
 ##|-PRIV
 
-require("guiconfig.inc");
-require_once("functions.inc");
-require_once("filter.inc");
-require_once("shaper.inc");
+require 'guiconfig.inc';
+require_once 'functions.inc';
+require_once 'filter.inc';
+require_once 'shaper.inc';
 
 if($_GET['reset'] <> "") {
 	mwexec("/usr/bin/killall -9 pfctl");
@@ -79,14 +79,14 @@ $wizards = array(gettext("Single Lan multi Wan") => "traffic_shaper_wizard.xml",
 				);
 
 $closehead = false;
-include("head.inc");
+include 'head.inc';
 ?>
 <link rel="stylesheet" type="text/css" media="all" href="./tree/tree.css" />
 </head>
 
 <body link="#0000CC" vlink="#0000CC" alink="#0000CC" >
 
-<?php include("fbegin.inc");  ?>
+<?php include 'fbegin.inc';  ?>
 <?php if ($input_errors) print_input_errors($input_errors); ?>
 
 <form action="firewall_shaper_wizards.php" method="post" id="iform" name="iform">
@@ -128,6 +128,6 @@ include("head.inc");
 	</tr>
 </table>
 </form>
-<?php include("fend.inc"); ?>
+<?php include 'fend.inc'; ?>
 </body>
 </html>

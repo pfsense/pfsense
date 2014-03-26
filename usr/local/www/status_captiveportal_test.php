@@ -35,12 +35,12 @@
 ##|*MATCH=status_captiveportal_test.php*
 ##|-PRIV
 
-require("guiconfig.inc");
-require("functions.inc");
-require_once("filter.inc");
-require("shaper.inc");
-require("captiveportal.inc");
-require_once("voucher.inc");
+require 'guiconfig.inc';
+require 'functions.inc';
+require_once 'filter.inc';
+require 'shaper.inc';
+require 'captiveportal.inc';
+require_once 'voucher.inc';
 
 $cpzone = $_GET['zone'];
 if (isset($_POST['zone']))
@@ -58,8 +58,8 @@ $a_cp =& $config['captiveportal'];
 $pgtitle = array(gettext("Status"), gettext("Captive portal"), gettext("Test Vouchers"), $a_cp[$cpzone]['zone']);
 $shortcut_section = "captiveportal-vouchers";
 
-include("head.inc");
-include("fbegin.inc");
+include 'head.inc';
+include 'fbegin.inc';
 
 ?>
 
@@ -116,5 +116,5 @@ if ($_POST) {
     }
 }
 
-include("fend.inc");
+include 'fend.inc';
 ?>

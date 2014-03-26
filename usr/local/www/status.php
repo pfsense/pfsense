@@ -46,8 +46,8 @@
  */
 
 /* include all configuration functions */
-require_once("guiconfig.inc");
-require_once("functions.inc");
+require_once 'guiconfig.inc';
+require_once 'functions.inc';
 
 function doCmdT($title, $command) {
 	$rubbish = array('|', '-', '/', '.', ' ');  /* fixes the <a> tag to be W3C compliant */
@@ -212,7 +212,7 @@ exec("/bin/date", $dateOutput, $dateStatus);
 $currentDate = $dateOutput[0];
 
 $pgtitle = array("{$g['product_name']}","status");
-include("head.inc");
+include 'head.inc';
 
 ?>
 <style type="text/css">
@@ -227,7 +227,7 @@ pre {
 </style>
 
 <body link="#0000CC" vlink="#0000CC" alink="#0000CC">
-<?php include("fbegin.inc"); ?>
+<?php include 'fbegin.inc'; ?>
 <strong><?=$currentDate;?></strong>
 <p><span class="red"><strong><?=gettext("Note: make sure to remove any sensitive information " .
 "(passwords, maybe also IP addresses) before posting " .
@@ -240,6 +240,6 @@ pre {
 <?php execCmds(); ?>
 </div>
 
-<?php include("fend.inc"); ?>
+<?php include 'fend.inc'; ?>
 </body>
 </html>

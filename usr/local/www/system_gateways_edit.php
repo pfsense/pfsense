@@ -39,8 +39,8 @@
 ##|*MATCH=system_gateways_edit.php*
 ##|-PRIV
 
-require("guiconfig.inc");
-require("pkg-utils.inc");
+require 'guiconfig.inc';
+require 'pkg-utils.inc';
 
 $a_gateways = return_gateways_array(true, false, true);
 $a_gateways_arr = array();
@@ -520,12 +520,12 @@ if ($_POST) {
 $pgtitle = array(gettext("System"),gettext("Gateways"),gettext("Edit gateway"));
 $shortcut_section = "gateways";
 
-include("head.inc");
+include 'head.inc';
 
 ?>
 
 <body link="#0000CC" vlink="#0000CC" alink="#0000CC">
-<?php include("fbegin.inc"); ?>
+<?php include 'fbegin.inc'; ?>
 <script type="text/javascript">
 //<![CDATA[
 function show_advanced_gateway() {
@@ -869,7 +869,7 @@ function enable_change() {
 			</tr>
 		</table>
 	</form>
-<?php include("fend.inc"); ?>
+<?php include 'fend.inc'; ?>
 <script type="text/javascript">
 //<![CDATA[
 monitor_change();

@@ -35,10 +35,10 @@
 ##|*MATCH=vpn_ipsec_keys_edit.php*
 ##|-PRIV
 
-require("functions.inc");
-require("guiconfig.inc");
-require_once("ipsec.inc");
-require_once("vpn.inc");
+require 'functions.inc';
+require 'guiconfig.inc';
+require_once 'ipsec.inc';
+require_once 'vpn.inc';
 
 if (!is_array($config['ipsec']['mobilekey'])) {
 	$config['ipsec']['mobilekey'] = array();
@@ -115,12 +115,12 @@ if ($_POST) {
 $pgtitle = gettext("VPN: IPsec: Edit Pre-Shared Key");
 $shortcut_section = "ipsec";
 
-include("head.inc");
+include 'head.inc';
 
 ?>
 
 <body link="#0000CC" vlink="#0000CC" alink="#0000CC">
-<?php include("fbegin.inc"); ?>
+<?php include 'fbegin.inc'; ?>
 <?php if ($input_errors) print_input_errors($input_errors); ?>
             <form action="vpn_ipsec_keys_edit.php" method="post" name="iform" id="iform">
               <table width="100%" border="0" cellpadding="6" cellspacing="0">
@@ -149,4 +149,4 @@ include("head.inc");
                 </tr>
               </table>
 </form>
-<?php include("fend.inc"); ?>
+<?php include 'fend.inc'; ?>

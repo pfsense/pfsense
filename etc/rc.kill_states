@@ -28,10 +28,10 @@
 */
 
 /* parse the configuration and include all functions used below */
-require_once("globals.inc");
-require_once("config.inc");
-require_once("interfaces.inc");
-require_once("util.inc");
+require_once 'globals.inc';
+require_once 'config.inc';
+require_once 'interfaces.inc';
+require_once 'util.inc';
 
 // Do not process while booting
 if($g['booting'])

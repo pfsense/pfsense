@@ -51,8 +51,8 @@ function  l2tp_users_sort()  {
         usort($config['l2tp']['user'],  "l2tpusercmp");
 }
 
-require("guiconfig.inc");
-require_once("vpn.inc");
+require 'guiconfig.inc';
+require_once 'vpn.inc';
 
 if (!is_array($config['l2tp']['user'])) {
 	$config['l2tp']['user'] = array();
@@ -141,11 +141,11 @@ if ($_POST) {
 	}
 }
 
-include("head.inc");
+include 'head.inc';
 ?>
 
 <body link="#0000CC" vlink="#0000CC" alink="#0000CC" onload="<?= $jsevents["body"]["onload"] ?>">
-<?php include("fbegin.inc"); ?>
+<?php include 'fbegin.inc'; ?>
 
 <?php if ($input_errors) print_input_errors($input_errors); ?>
 			<div id="inputerrors"></div>
@@ -186,6 +186,6 @@ include("head.inc");
 	      </div>
 </form>
 
-<?php include("fend.inc"); ?>
+<?php include 'fend.inc'; ?>
 </body>
 </html>

@@ -49,11 +49,11 @@ function cpelements_sort() {
         usort($config['captiveportal'][$cpzone]['element'],"cpelementscmp");
 }
 
-require("guiconfig.inc");
-require("functions.inc");
-require_once("filter.inc");
-require("shaper.inc");
-require("captiveportal.inc");
+require 'guiconfig.inc';
+require 'functions.inc';
+require_once 'filter.inc';
+require 'shaper.inc';
+require 'captiveportal.inc';
 
 $cpzone = $_GET['zone'];
 if (isset($_POST['zone']))
@@ -132,10 +132,10 @@ if ($_POST) {
 	exit;
 }
 
-include("head.inc");
+include 'head.inc';
 
 ?>
-<?php include("fbegin.inc"); ?>
+<?php include 'fbegin.inc'; ?>
 <body link="#0000CC" vlink="#0000CC" alink="#0000CC">
 <form action="services_captiveportal_filemanager.php" method="post" enctype="multipart/form-data" name="iform" id="iform">
 <input type="hidden" name="zone" id="zone" value="<?=htmlspecialchars($cpzone);?>" />
@@ -228,6 +228,6 @@ include("head.inc");
 </tr>
 </table>
 </form>
-<?php include("fend.inc"); ?>
+<?php include 'fend.inc'; ?>
 </body>
 </html>

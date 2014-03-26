@@ -39,7 +39,7 @@
 ##|*MATCH=services_dhcpv6_relay.php*
 ##|-PRIV
 
-require("guiconfig.inc");
+require 'guiconfig.inc';
 
 $pconfig['enable'] = isset($config['dhcrelay6']['enable']);
 if (empty($config['dhcrelay6']['interface']))
@@ -100,7 +100,7 @@ if ($_POST) {
 
 $pgtitle = array(gettext("Services"),gettext("DHCPv6 Relay"));
 $shortcut_section = "dhcp6";
-include("head.inc");
+include 'head.inc';
 
 ?>
 
@@ -122,7 +122,7 @@ function enable_change(enable_over) {
 
 
 <body link="#0000CC" vlink="#0000CC" alink="#0000CC">
-<?php include("fbegin.inc"); ?>
+<?php include 'fbegin.inc'; ?>
 <form action="services_dhcpv6_relay.php" method="post" name="iform" id="iform">
 <?php if ($input_errors) print_input_errors($input_errors); ?>
 <?php if ($savemsg) print_info_box($savemsg); ?>
@@ -138,7 +138,7 @@ function enable_change(enable_over) {
 		echo "<td>DHCPv6 Server is currently enabled.  Cannot enable the DHCPv6 Relay service while the DHCPv6 Server is enabled on any interface.";
 			echo "</td></tr></table></div></td></tr></table></body>";
 			echo "</html>";
-			include("fend.inc"); 
+			include 'fend.inc'; 
 			exit;
 		}
 ?>
@@ -202,6 +202,6 @@ function enable_change(enable_over) {
 enable_change(false);
 //-->
 </script>
-<?php include("fend.inc"); ?>
+<?php include 'fend.inc'; ?>
 </body>
 </html>

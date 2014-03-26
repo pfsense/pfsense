@@ -38,8 +38,8 @@
 ##|*MATCH=system_authservers.php*
 ##|-PRIV
 
-require("guiconfig.inc");
-require_once("auth.inc");
+require 'guiconfig.inc';
+require_once 'auth.inc';
 
 $pgtitle = array(gettext("System"), gettext("Authentication Servers"));
 $shortcut_section = "authentication";
@@ -308,11 +308,11 @@ if ($_POST) {
 	}
 }
 
-include("head.inc");
+include 'head.inc';
 ?>
 
 <body link="#000000" vlink="#000000" alink="#000000" onload="<?= $jsevents["body"]["onload"] ?>">
-<?php include("fbegin.inc"); ?>
+<?php include 'fbegin.inc'; ?>
 <script type="text/javascript">
 //<![CDATA[
 
@@ -860,7 +860,7 @@ function select_clicked() {
 		</td>
 	</tr>
 </table>
-<?php include("fend.inc"); ?>
+<?php include 'fend.inc'; ?>
 <script type="text/javascript">
 //<![CDATA[
 server_typechange('<?=htmlspecialchars($pconfig['type']);?>');

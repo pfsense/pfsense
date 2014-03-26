@@ -38,7 +38,7 @@
 	pfSense_MODULE:	carp
 */
 
-require_once("guiconfig.inc");
+require_once 'guiconfig.inc';
 
 function gentitle_pkg($pgname) {
 	global $config;
@@ -87,12 +87,12 @@ $status = get_carp_status();
 
 $pgtitle = array(gettext("Status"),gettext("CARP"));
 $shortcut_section = "carp";
-include("head.inc");
+include 'head.inc';
 
 ?>
 
 <body link="#0000CC" vlink="#0000CC" alink="#0000CC">
-<?php include("fbegin.inc"); ?>
+<?php include 'fbegin.inc'; ?>
 <form action="carp_status.php" method="post">
 <?php if ($savemsg) print_info_box($savemsg); ?>
 
@@ -133,7 +133,7 @@ include("head.inc");
 					echo "</td></tr></table></table></div><center><br />" . gettext("Could not locate any defined CARP interfaces.");
 					echo "</center>";
 
-					include("fend.inc");
+					include 'fend.inc';
 					echo "</body></html>";
 					exit;
 				}
@@ -193,7 +193,7 @@ include("head.inc");
 	echo "</pre>";
 ?>
 
-<?php include("fend.inc"); ?>
+<?php include 'fend.inc'; ?>
 
 </body>
 </html>

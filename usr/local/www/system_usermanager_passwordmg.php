@@ -37,8 +37,8 @@
 ##|*MATCH=system_usermanager_passwordmg.php*
 ##|-PRIV
 
-require_once("certs.inc");
-require_once("guiconfig.inc");
+require_once 'certs.inc';
+require_once 'guiconfig.inc';
 
 $pgtitle = array(gettext("System"),gettext("User Password"));
 
@@ -78,13 +78,13 @@ foreach($config['system']['user'] as $user)
 
 session_commit();
 
-include("head.inc");
+include 'head.inc';
 
 ?>
 
 <body link="#000000" vlink="#000000" alink="#000000" onload="<?= $jsevents["body"]["onload"] ?>">
 <?php
-include("fbegin.inc");
+include 'fbegin.inc';
 
 if ($input_errors)
 	print_input_errors($input_errors);
@@ -93,7 +93,7 @@ if ($savemsg)
 
 if ($islocal == false) {
 	echo gettext("Sorry, you cannot change the password for a non-local user.");
-	include("fend.inc");
+	include 'fend.inc';
 	exit;
 }
 
@@ -136,6 +136,6 @@ if ($islocal == false) {
                 </form>
         </div>
 </div>
-<?php include("fend.inc");?>
+<?php include 'fend.inc';?>
 </body>
 </html>

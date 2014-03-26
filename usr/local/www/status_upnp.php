@@ -40,7 +40,7 @@
 ##|*MATCH=status_upnp.php*
 ##|-PRIV
 
-require("guiconfig.inc");
+require 'guiconfig.inc';
 
 if ($_POST) {
 	if ($_POST['clear'] == "Clear") {
@@ -57,16 +57,16 @@ $year = date("Y");
 
 $pgtitle = array(gettext("Status"),gettext("UPnP &amp; NAT-PMP Status"));
 $shortcut_section = "upnp";
-include("head.inc");
+include 'head.inc';
 ?>
 <body link="#0000CC" vlink="#0000CC" alink="#0000CC">
-<?php include("fbegin.inc"); ?>
+<?php include 'fbegin.inc'; ?>
 <?php if ($savemsg) print_info_box($savemsg); ?>
 <?php
 if(!$config['installedpackages'] || !$config['installedpackages']['miniupnpd']['config'][0]['iface_array'] ||
 	!$config['installedpackages']['miniupnpd']['config'][0]['enable']) {
 	echo gettext("UPnP is currently disabled.");
-	include("fend.inc");
+	include 'fend.inc';
 	exit;
 }
 ?>
@@ -115,6 +115,6 @@ if(!$config['installedpackages'] || !$config['installedpackages']['miniupnpd']['
     </tr>
 </table>
 </div>
-<?php include("fend.inc"); ?>
+<?php include 'fend.inc'; ?>
 </body>
 </html>

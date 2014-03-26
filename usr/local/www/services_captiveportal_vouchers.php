@@ -39,12 +39,12 @@
 if ($_POST['postafterlogin'])
 	$nocsrf= true;
 
-require("guiconfig.inc");
-require("functions.inc");
-require_once("filter.inc");
-require("shaper.inc");
-require("captiveportal.inc");
-require_once("voucher.inc");
+require 'guiconfig.inc';
+require 'functions.inc';
+require_once 'filter.inc';
+require 'shaper.inc';
+require 'captiveportal.inc';
+require_once 'voucher.inc';
 
 $cpzone = $_GET['zone'];
 if (isset($_POST['zone']))
@@ -273,7 +273,7 @@ if ($_POST) {
 			if($newvoucher['vouchersyncpass'] && $newvoucher['vouchersyncusername'] && 
 			   $newvoucher['vouchersyncport'] && $newvoucher['vouchersyncdbip']) {
 				// Synchronize the voucher DB from the master node
-				require_once("xmlrpc.inc");
+				require_once 'xmlrpc.inc';
 
 				$protocol = "http";
 				if (is_array($config['system']) && is_array($config['system']['webgui']) && !empty($config['system']['webgui']['protocol']) &&
@@ -359,9 +359,9 @@ EOF;
 		}
 	}
 }
-include("head.inc");
+include 'head.inc';
 ?>
-<?php include("fbegin.inc"); ?>
+<?php include 'fbegin.inc'; ?>
 <script type="text/javascript">
 <!--
 function generatenewkey() {
@@ -652,4 +652,4 @@ function enable_change(enable_change) {
 enable_change(false);
 //-->
 </script>
-<?php include("fend.inc"); ?>
+<?php include 'fend.inc'; ?>

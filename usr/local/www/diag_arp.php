@@ -45,7 +45,7 @@
 @ini_set('zlib.output_compression', 0);
 @ini_set('implicit_flush', 1);
 
-require("guiconfig.inc");
+require 'guiconfig.inc';
 
 function leasecmp($a, $b) {
 	return strcmp($a[$_GET['order']], $b[$_GET['order']]);
@@ -259,13 +259,13 @@ function _getHostName($mac,$ip) {
 }
 
 $pgtitle = array(gettext("Diagnostics"),gettext("ARP Table"));
-include("head.inc");
+include 'head.inc';
 
 ?>
 
 <body link="#000000" vlink="#000000" alink="#000000">
 
-<?php include("fbegin.inc"); ?>
+<?php include 'fbegin.inc'; ?>
 
 <div id="loading">
 	<img src="/themes/<?=$g['theme'];?>/images/misc/loader.gif"><?= gettext("Loading, please wait..."); ?>
@@ -343,7 +343,7 @@ $mac_man = load_mac_manufacturer_table();
 	</tr>
 </table>
 
-<?php include("fend.inc"); ?>
+<?php include 'fend.inc'; ?>
 
 <script type="text/javascript">
 	jQuery('#loading').html('');

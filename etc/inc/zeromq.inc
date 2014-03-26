@@ -32,7 +32,7 @@ define('ZEROMQ_TRUE', 'true');
 define('ZEROMQ_FASLE', 'false');
 
 $do_not_include_config_gui_inc = true;
-require("auth.inc");
+require 'auth.inc';
 
 //$debug = true; 
 
@@ -257,7 +257,7 @@ function filter_configure_zeromq($raw_params) {
 	system_routing_configure();
 	setup_gateways_monitor();
 	relayd_configure();
-	require_once("openvpn.inc");
+	require_once 'openvpn.inc';
 	openvpn_resync_all();
 	services_dhcpd_configure();
 	services_dnsmasq_configure();
@@ -297,7 +297,7 @@ function get_notices_zeromq($raw_params) {
 	$params = $raw_params;
 	if(zeromq_auth($raw_params) == false)
 		return ZEROMQ_AUTH_FAIL;
-	require("notices.inc");
+	require 'notices.inc';
 	if(!$params) {
 		$toreturn = get_notices();
 	} else {

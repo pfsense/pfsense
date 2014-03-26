@@ -35,7 +35,7 @@ OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
 */
 
 if(!function_exists("dump_rrd_to_xml"))
-	require("rrd.inc");
+	require 'rrd.inc';
 
 /* Upgrade functions must be named:
 *    upgrade_XXX_to_YYY
@@ -2215,8 +2215,8 @@ function upgrade_058_to_059() {
 
 function upgrade_059_to_060() {
 	global $config;
-	require_once("/etc/inc/certs.inc");
-	if (is_array($config['ca'])) {
+	require_once '/etc/inc/certs.inc';
+    if (is_array($config['ca'])) {
 		/* Locate issuer for all CAs */
 		foreach ($config['ca'] as & $ca) {
 			$subject = cert_get_subject($ca['crt']);
@@ -2936,7 +2936,7 @@ function upgrade_086_to_087() {
 
 	unset($dnqueue_number, $dnpipe_number, $qidx, $idx, $dnpipe, $dnqueue);
 
-	require_once("shaper.inc");
+	require_once 'shaper.inc';
 	read_dummynet_config();
 
 	$dn_list = array();
@@ -3159,8 +3159,8 @@ function upgrade_098_to_099() {
 }
 
 function upgrade_099_to_100() {
-	require_once("/etc/inc/services.inc");
-	install_cron_job("/usr/bin/nice -n20 newsyslog", false);
+    require_once '/etc/inc/services.inc';
+    install_cron_job("/usr/bin/nice -n20 newsyslog", false);
 }
 
 function upgrade_100_to_101() {

@@ -38,8 +38,8 @@
 ##|*MATCH=services_unbound.php*
 ##|-PRIV
 
-require_once("guiconfig.inc");
-require_once("unbound.inc");
+require_once 'guiconfig.inc';
+require_once 'unbound.inc';
 
 $pconfig['enable'] = isset($config['unbound']['enable']);
 $pconfig['port'] = $config['unbound']['port'];
@@ -107,8 +107,7 @@ if ($_POST) {
 }
 
 $pgtitle = array(gettext("Services"),gettext("DNS Resolver"));
-include_once("head.inc");
-
+include_once 'head.inc';
 ?>
 
 <script type="text/javascript">
@@ -126,7 +125,7 @@ function show_advanced_dns() {
 </script>
 	
 <body>
-<?php include("fbegin.inc"); ?>
+<?php include 'fbegin.inc'; ?>
 <form action="services_unbound.php" method="post" name="iform" id="iform">
 <?php if ($input_errors) print_input_errors($input_errors); ?>
 <?php if ($savemsg) print_info_box($savemsg); ?>
@@ -438,6 +437,6 @@ function show_advanced_dns() {
 enable_change(false);
 //-->
 </script>
-<?php include("fend.inc"); ?>
+<?php include 'fend.inc'; ?>
 </body>
 </html>

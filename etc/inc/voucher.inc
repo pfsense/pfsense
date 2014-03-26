@@ -35,13 +35,13 @@
 
 /* include all configuration functions */
 if(!function_exists('captiveportal_syslog'))
-	require_once("captiveportal.inc");
+	require_once 'captiveportal.inc';
 
 function xmlrpc_sync_voucher_expire($vouchers, $syncip, $port, $password, $username) {
 	global $g, $config, $cpzone;
-	require_once("xmlrpc.inc");
+	require_once 'xmlrpc.inc';
 
-	$protocol = "http";
+    $protocol = "http";
 	if (is_array($config['system']) && is_array($config['system']['webgui']) && !empty($config['system']['webgui']['protocol']) &&
 	    $config['system']['webgui']['protocol'] == "https")
 		$protocol = "https";
@@ -54,8 +54,8 @@ function xmlrpc_sync_voucher_expire($vouchers, $syncip, $port, $password, $usern
 	$method = 'pfsense.exec_php';
 	$execcmd  = <<<EOF
 	global \$cpzone;
-	require_once('/etc/inc/captiveportal.inc');
-	require_once('/etc/inc/voucher.inc');
+	require_once '/etc/inc/captiveportal.inc';
+	require_once '/etc/inc/voucher.inc';
 	\$cpzone = "$cpzone";
 	voucher_expire("$vouchers");
 
@@ -93,9 +93,9 @@ EOF;
 
 function xmlrpc_sync_voucher_disconnect($dbent, $syncip, $port, $password, $username, $term_cause = 1, $stop_time = null) {
 	global $g, $config, $cpzone;
-	require_once("xmlrpc.inc");
+	require_once 'xmlrpc.inc';
 
-	$protocol = "http";
+    $protocol = "http";
 	if (is_array($config['system']) && is_array($config['system']['webgui']) && !empty($config['system']['webgui']['protocol']) &&
 	    $config['system']['webgui']['protocol'] == "https")
 		$protocol = "https";
@@ -110,8 +110,8 @@ function xmlrpc_sync_voucher_disconnect($dbent, $syncip, $port, $password, $user
 	$method = 'pfsense.exec_php';
 	$execcmd  = <<<EOF
 	global \$cpzone;
-	require_once('/etc/inc/captiveportal.inc');
-	require_once('/etc/inc/voucher.inc');
+	require_once '/etc/inc/captiveportal.inc';
+	require_once '/etc/inc/voucher.inc';
 	\$cpzone = "$cpzone";
 	\$radiusservers = captiveportal_get_radius_servers();
 	\$dbent = unserialize("$dbent_str");
@@ -151,9 +151,9 @@ EOF;
 
 function xmlrpc_sync_used_voucher($voucher_received, $syncip, $port, $password, $username) {
 	global $g, $config, $cpzone;
-	require_once("xmlrpc.inc");
+	require_once 'xmlrpc.inc';
 
-	$protocol = "http";
+    $protocol = "http";
 	if (is_array($config['system']) && is_array($config['system']['webgui']) && !empty($config['system']['webgui']['protocol']) &&
 	    $config['system']['webgui']['protocol'] == "https")
 		$protocol = "https";
@@ -166,7 +166,7 @@ function xmlrpc_sync_used_voucher($voucher_received, $syncip, $port, $password, 
 	$method = 'pfsense.exec_php';
 	$execcmd  = <<<EOF
 	global \$cpzone;
-	require_once('/etc/inc/voucher.inc');
+	require_once '/etc/inc/voucher.inc';
 	\$cpzone = "$cpzone";
 	\$timeleft = voucher_auth("$voucher_received");
 	\$toreturn = array();

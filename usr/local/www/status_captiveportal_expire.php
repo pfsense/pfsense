@@ -35,12 +35,12 @@
 ##|*MATCH=status_captiveportal_expire.php*
 ##|-PRIV
 
-require("guiconfig.inc");
-require("functions.inc");
-require_once("filter.inc");
-require("shaper.inc");
-require("captiveportal.inc");
-require_once("voucher.inc");
+require 'guiconfig.inc';
+require 'functions.inc';
+require_once 'filter.inc';
+require 'shaper.inc';
+require 'captiveportal.inc';
+require_once 'voucher.inc';
 
 $cpzone = $_GET['zone'];
 if (isset($_POST['zone']))
@@ -57,8 +57,8 @@ $a_cp =& $config['captiveportal'];
 
 $pgtitle = array(gettext("Status"), gettext("Captive portal"), gettext("Expire Vouchers"), $a_cp[$cpzone]['zone']);
 
-include("head.inc");
-include("fbegin.inc");
+include 'head.inc';
+include 'fbegin.inc';
 ?>
 
 <form action="status_captiveportal_expire.php" method="post" enctype="multipart/form-data" name="iform" id="iform">
@@ -112,6 +112,6 @@ if ($_POST) {
     }
 }
 
-include("fend.inc");
+include 'fend.inc';
 ?>
 

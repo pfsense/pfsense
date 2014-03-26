@@ -41,10 +41,10 @@
 ##|*MATCH=firewall_nat_out.php*
 ##|-PRIV
 
-require("guiconfig.inc");
-require_once("functions.inc");
-require_once("filter.inc");
-require_once("shaper.inc");
+require 'guiconfig.inc';
+require_once 'functions.inc';
+require_once 'filter.inc';
+require_once 'shaper.inc';
 
 global $FilterIflist;
 
@@ -207,11 +207,11 @@ if (isset($_POST['del_x'])) {
 }
 
 $pgtitle = array(gettext("Firewall"),gettext("NAT"),gettext("Outbound"));
-include("head.inc");
+include 'head.inc';
 
 ?>
 <body link="#0000CC" vlink="#0000CC" alink="#0000CC">
-<?php include("fbegin.inc"); ?>
+<?php include 'fbegin.inc'; ?>
 <form action="firewall_nat_out.php" method="post" name="iform">
 <script type="text/javascript" src="/javascript/row_toggle.js"></script>
 <?php
@@ -648,6 +648,6 @@ if (is_subsystem_dirty('natconf'))
 	</tr>
 </table>
 </form>
-<?php include("fend.inc"); ?>
+<?php include 'fend.inc'; ?>
 </body>
 </html>

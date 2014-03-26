@@ -48,10 +48,10 @@
 ##|*MATCH=firewall_virtual_ip.php*
 ##|-PRIV
 
-require("guiconfig.inc");
-require_once("functions.inc");
-require_once("filter.inc");
-require_once("shaper.inc");
+require 'guiconfig.inc';
+require_once 'functions.inc';
+require_once 'filter.inc';
+require_once 'shaper.inc';
 
 if (!is_array($config['virtualip']['vip'])) {
 	$config['virtualip']['vip'] = array();
@@ -194,11 +194,11 @@ if ($_GET['act'] == "del") {
 	$id = $_GET['id'];
 
 $pgtitle = array(gettext("Firewall"),gettext("Virtual IP Addresses"));
-include("head.inc");
+include 'head.inc';
 
 ?>
 <body link="#0000CC" vlink="#0000CC" alink="#0000CC">
-<?php include("fbegin.inc"); ?>
+<?php include 'fbegin.inc'; ?>
 <form action="firewall_virtual_ip.php" method="post">
 <?php 
 	if ($input_errors) 
@@ -302,6 +302,6 @@ include("head.inc");
 	   </td></tr>
 	</table>
             </form>
-<?php include("fend.inc"); ?>
+<?php include 'fend.inc'; ?>
 </body>
 </html>

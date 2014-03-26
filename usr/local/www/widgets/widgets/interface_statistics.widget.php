@@ -33,12 +33,12 @@
 
 $nocsrf = true;
 
-require_once("guiconfig.inc");
-require_once("pfsense-utils.inc");
-require_once("functions.inc");
-require_once("/usr/local/www/widgets/include/interface_statistics.inc");
+require_once 'guiconfig.inc';
+require_once 'pfsense-utils.inc';
+require_once 'functions.inc';
+require_once '/usr/local/www/widgets/include/interface_statistics.inc';
 
-		$ifdescrs = get_configured_interface_with_descr();
+$ifdescrs = get_configured_interface_with_descr();
 
 		$array_in_packets = array();
 		$array_out_packets = array();

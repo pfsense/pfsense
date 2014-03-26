@@ -36,10 +36,10 @@
 ##|*MATCH=vpn_ipsec_phase2.php*
 ##|-PRIV
 
-require("functions.inc");
-require("guiconfig.inc");
-require_once("ipsec.inc");
-require_once("vpn.inc");
+require 'functions.inc';
+require 'guiconfig.inc';
+require_once 'ipsec.inc';
+require_once 'vpn.inc';
 
 if (!is_array($config['ipsec']['client']))
 	$config['ipsec']['client'] = array();
@@ -319,13 +319,13 @@ else
 $shortcut_section = "ipsec";
 
 
-include("head.inc");
+include 'head.inc';
 
 ?>
 
 <body link="#0000CC" vlink="#0000CC" alink="#0000CC">
 <script type="text/javascript" src="/javascript/jquery.ipv4v6ify.js"></script>
-<?php include("fbegin.inc"); ?>
+<?php include 'fbegin.inc'; ?>
 <script type="text/javascript">
 <!--
 
@@ -809,7 +809,7 @@ typesel_change_remote(<?=htmlspecialchars($pconfig['remoteid_netbits'])?>);
 <?php endif; ?>
 //-->
 </script>
-<?php include("fend.inc"); ?>
+<?php include 'fend.inc'; ?>
 </body>
 </html>
 

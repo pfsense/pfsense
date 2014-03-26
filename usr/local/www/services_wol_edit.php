@@ -49,7 +49,7 @@ function wol_sort() {
         usort($config['wol']['wolentry'], "wolcmp");
 }
 
-require("guiconfig.inc");
+require 'guiconfig.inc';
 
 if (!is_array($config['wol']['wolentry'])) {
 	$config['wol']['wolentry'] = array();
@@ -111,12 +111,12 @@ if ($_POST) {
 }
 
 $pgtitle = array(gettext("Services"),gettext("Wake on LAN"),gettext("Edit"));
-include("head.inc");
+include 'head.inc';
 
 ?>
 
 <body link="#0000CC" vlink="#0000CC" alink="#0000CC">
-<?php include("fbegin.inc"); ?>
+<?php include 'fbegin.inc'; ?>
 <?php if ($input_errors) print_input_errors($input_errors); ?>
             <form action="services_wol_edit.php" method="post" name="iform" id="iform">
               <table width="100%" border="0" cellpadding="6" cellspacing="0">
@@ -163,6 +163,6 @@ include("head.inc");
                 </tr>
               </table>
 </form>
-<?php include("fend.inc"); ?>
+<?php include 'fend.inc'; ?>
 </body>
 </html>

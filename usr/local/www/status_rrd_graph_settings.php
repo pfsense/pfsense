@@ -39,10 +39,10 @@
 ##|*MATCH=status_rrd_graph_settings.php*
 ##|-PRIV
 
-require("guiconfig.inc");
-require_once("filter.inc");
-require("shaper.inc");
-require_once("rrd.inc");
+require 'guiconfig.inc';
+require_once 'filter.inc';
+require 'shaper.inc';
+require_once 'rrd.inc';
 
 $pconfig['enable'] = isset($config['rrd']['enable']);
 $pconfig['category'] = $config['rrd']['category'];
@@ -117,11 +117,11 @@ foreach($databases as $database) {
 }
 
 $pgtitle = array(gettext("Status"),gettext("RRD Graphs"));
-include("head.inc");
+include 'head.inc';
 
 ?>
 <body link="#0000CC" vlink="#0000CC" alink="#0000CC">
-<?php include("fbegin.inc"); ?>
+<?php include 'fbegin.inc'; ?>
 <?php if ($input_errors) print_input_errors($input_errors); ?>
 <?php if ($savemsg) print_info_box($savemsg); ?>
 <form action="status_rrd_graph_settings.php" method="post" name="iform" id="iform">
@@ -255,6 +255,6 @@ include("head.inc");
 </table>
 
 </form>
-<?php include("fend.inc"); ?>
+<?php include 'fend.inc'; ?>
 </body>
 </html>

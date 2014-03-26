@@ -40,7 +40,7 @@ if(!$nocsrf) {
 		$timeout_minutes = isset($config['system']['webgui']['session_timeout']) ?  $config['system']['webgui']['session_timeout'] : 240;
 		csrf_conf('expires', $timeout_minutes * 60);
 	}
-	require_once("csrf/csrf-magic.php");
+	require_once 'csrf/csrf-magic.php';
 }
 
 /* make sure nothing is cached */
@@ -53,16 +53,16 @@ if (!$omit_nocacheheaders) {
 }
 
 Header("X-Frame-Options: SAMEORIGIN");
-require_once("authgui.inc");
+require_once 'authgui.inc';
 
 /* parse the configuration and include all configuration functions */
-require_once("functions.inc");
+require_once 'functions.inc';
 
 /* Pull in all the gui related display classes) */
 foreach (scandir("/usr/local/www/classes/") as $file) {
 	if (substr($file, -4) == ".inc") {
-		require_once("classes/{$file}");
-	}
+		require_once "classes/{$file}";
+    }
 }
 
 $g['theme'] = get_current_theme();
@@ -816,7 +816,7 @@ function display_widget_tabs(& $tab_array) {
 function outputJavaScriptFileInline($javascript) {
 	if(file_exists($javascript)) {
 		echo "\n<script type=\"text/javascript\">\n";
-		include($javascript);
+		include "$javascript";
 		echo "\n</script>\n";
 	} else {
 		echo "\n\n<!-- Could not location file:  {$javascript} -->\n\n";
@@ -828,7 +828,7 @@ function outputJavaScriptFileInline($javascript) {
 function outputCSSPrintFileInline($css) {
 	if(file_exists($css)) {
 		echo "\n<style media=\"print\" type=\"text/css\">\n";
-		include($css);
+		include "$css";
 		echo "\n</style>\n";
 	} else {
 		echo "\n\n<!-- Could not location file:  {$css} -->\n\n";
@@ -839,7 +839,7 @@ function outputCSSPrintFileInline($css) {
 function outputCSSFileInline($css) {
 	if(file_exists($css)) {
 		echo "\n<style type=\"text/css\">\n";
-		include($css);
+		include "$css";
 		echo "\n</style>\n";
 	} else {
 		echo "\n\n<!-- Could not location file:  {$css} -->\n\n";

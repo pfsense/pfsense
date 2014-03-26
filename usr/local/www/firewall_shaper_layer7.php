@@ -38,10 +38,10 @@
 ##|*MATCH=firewall_shaper_layer7.php*
 ##|-PRIV
 
-require("guiconfig.inc");
-require_once("functions.inc");
-require_once("filter.inc");
-require_once("shaper.inc");
+require 'guiconfig.inc';
+require_once 'functions.inc';
+require_once 'filter.inc';
+require_once 'shaper.inc';
 
 // Variables protocols (dynamic) and structures (static)
 $avail_protos =& generate_protocols_array();
@@ -223,7 +223,7 @@ $tree .= "</ul>";
 $output = "<table summary=\"output form\">";
 $output .= $output_form;
 $closehead = false;
-include("head.inc");
+include 'head.inc';
 ?>
 <link rel="stylesheet" type="text/css" media="all" href="./tree/tree.css" />
 <script type="text/javascript" src="./tree/tree.js"></script>
@@ -390,7 +390,7 @@ function removeRow(tbl,row) {
 
 <body link="#0000CC" vlink="#0000CC" alink="#0000CC">
 
-<?php include("fbegin.inc"); ?>
+<?php include 'fbegin.inc'; ?>
 <div id="inputerrors"></div>
 <?php if ($input_errors) print_input_errors($input_errors); ?>
 
@@ -586,6 +586,6 @@ function removeRow(tbl,row) {
 </table>
 </form>
 
-<?php include("fend.inc"); ?>
+<?php include 'fend.inc'; ?>
 </body>
 </html>

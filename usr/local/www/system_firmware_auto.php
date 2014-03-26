@@ -44,8 +44,8 @@
 
 $nocsrf = true;
 
-require("guiconfig.inc");
-require_once("pfsense-utils.inc");
+require 'guiconfig.inc';
+require_once 'pfsense-utils.inc';
 
 $curcfg = $config['system']['firmware'];
 
@@ -59,7 +59,7 @@ if($_POST['backupbeforeupgrade'])
 
 $closehead = false;
 $pgtitle = array(gettext("Diagnostics"),gettext("Firmware"),gettext("Auto Update"));
-include("head.inc");
+include 'head.inc';
 
 ?>
 
@@ -69,7 +69,7 @@ include("head.inc");
 
 <body link="#0000CC" vlink="#0000CC" alink="#0000CC">
 
-<?php include("fbegin.inc"); ?>
+<?php include 'fbegin.inc'; ?>
 
 <form action="system_firmware_auto.php" method="post">
 <table width="100%" border="0" cellpadding="6" cellspacing="0" summary="firmware auto-check">
@@ -124,7 +124,7 @@ include("head.inc");
 </table>
 </form>
 
-<?php include("fend.inc"); ?>
+<?php include 'fend.inc'; ?>
 
 <?php
 
@@ -144,7 +144,7 @@ download_file_with_progress_bar("{$updater_url}/version{$nanosize}", "/tmp/{$g['
 $latest_version = str_replace("\n", "", @file_get_contents("/tmp/{$g['product_name']}_version"));
 if(!$latest_version) {
 	update_output_window(gettext("Unable to check for updates."));
-	require("fend.inc");
+	require 'fend.inc';
 	exit;
 } else {
 	$current_installed_buildtime = trim(file_get_contents("/etc/version.buildtime"));
@@ -153,7 +153,7 @@ if(!$latest_version) {
 	$latest_version_pfsense = strtotime($latest_version);
 	if(!$latest_version) {
 		update_output_window(gettext("Unable to check for updates."));
-		require("fend.inc");
+		require 'fend.inc';
 		exit;
 	} else {
 		if (pfs_version_compare($current_installed_buildtime, $current_installed_version, $latest_version) == -1) {
@@ -170,7 +170,7 @@ if(!$latest_version) {
 			update_output_window("{$g['product_name']} " . gettext("download complete."));
 		} else {
 			update_output_window(gettext("You are on the latest version."));
-			require("fend.inc");
+			require 'fend.inc';
 			exit;
 		}
 	}
@@ -210,7 +210,7 @@ if ($sigchk == 1) {
 if ($exitstatus) {
 	update_status($sig_warning);
 	update_output_window(gettext("Update cannot continue.  You can disable this check on the Updater Settings tab."));
-	require("fend.inc");
+	require 'fend.inc';
 	exit;
 } else if ($sigchk == 2) {
 	update_status("Upgrade in progress...");
@@ -225,7 +225,7 @@ if (!verify_gzip_file("{$g['upload_path']}/latest.tgz")) {
 		unlink("{$g['upload_path']}/latest.tgz");
 		conf_mount_ro();
 	}
-	require("fend.inc");
+	require 'fend.inc';
 	exit;
 }
 

@@ -37,15 +37,15 @@
 ##|*MATCH=restart_httpd.php*
 ##|-PRIV
 
-require_once("guiconfig.inc");
+require_once 'guiconfig.inc';
 
 $pgtitle = array(gettext("Restarting httpd"));
-include("head.inc");
+include 'head.inc';
 ?>
 
 <body link="#0000CC" vlink="#0000CC" alink="#0000CC">
 <form>
-<?php include("fbegin.inc"); ?>
+<?php include 'fbegin.inc'; ?>
 
 <?=gettext("Mounting file systems read/write");?>...
 <?php flush(); sleep(1); conf_mount_rw(); ?>
@@ -61,5 +61,5 @@ include("head.inc");
 <?=gettext("Done");?>.<br />
 
 <?php
-include("fend.inc");
+include 'fend.inc';
 ?>

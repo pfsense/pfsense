@@ -41,10 +41,10 @@
 ##|*MATCH=firewall_rules.php*
 ##|-PRIV
 
-require("guiconfig.inc");
-require_once("functions.inc");
-require_once("filter.inc");
-require_once("shaper.inc");
+require 'guiconfig.inc';
+require_once 'functions.inc';
+require_once 'filter.inc';
+require_once 'shaper.inc';
 
 $pgtitle = array(gettext("Firewall"),gettext("Rules"));
 $shortcut_section = "firewall";
@@ -291,14 +291,14 @@ if (isset($_POST['del_x'])) {
 }
 $closehead = false;
 
-include("head.inc");
+include 'head.inc';
 ?>
 <link type="text/css" rel="stylesheet" href="/javascript/chosen/chosen.css" />
 </head>
 
 <body link="#0000CC" vlink="#0000CC" alink="#0000CC">
 <script src="/javascript/chosen/chosen.jquery.js" type="text/javascript"></script>
-<?php include("fbegin.inc"); ?>
+<?php include 'fbegin.inc'; ?>
 <form action="firewall_rules.php" method="post">
 
 <script type="text/javascript" src="/javascript/row_toggle.js"></script>
@@ -915,6 +915,6 @@ if($_REQUEST['undodrag']) {
 //]]>
 </script>
 </form>
-<?php include("fend.inc"); ?>
+<?php include 'fend.inc'; ?>
 </body>
 </html>

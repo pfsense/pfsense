@@ -132,12 +132,12 @@ function get_shortcut_log_link($shortcut_section, $addspace = true) {
 $dir_array = get_shortcut_files("/usr/local/www/shortcuts");
 foreach ($dir_array as $file) 
 	if (!is_dir("/usr/local/www/shortcuts/{$file}") && stristr($file,".inc")) 
-		include("/usr/local/www/shortcuts/{$file}");
+		include "/usr/local/www/shortcuts/{$file}";
 if(is_dir("/usr/local/pkg/shortcuts")) {
 	$dir_array = get_shortcut_files("/usr/local/pkg/shortcuts");
 	foreach ($dir_array as $file) 
 		if (!is_dir("/usr/local/pkg/shortcuts/{$file}") && stristr($file,".inc")) 
-			include("/usr/local/pkg/shortcuts/{$file}");
+			include "/usr/local/pkg/shortcuts/{$file}";
 }
 
 $shortcuts['relayd'] = array();

@@ -40,8 +40,8 @@
 ##|*MATCH=status_lb_vs.php*
 ##|-PRIV
 
-require_once("guiconfig.inc");
-require_once("vslb.inc");
+require_once 'guiconfig.inc';
+require_once 'vslb.inc';
 
 if (!is_array($config['load_balancer']['lbpool'])) {
 	$config['load_balancer']['lbpool'] = array();
@@ -54,11 +54,11 @@ $a_pool = &$config['load_balancer']['lbpool'];
 $rdr_a = get_lb_redirects();
 
 $pgtitle = array(gettext("Status"),gettext("Load Balancer"),gettext("Virtual Server"));
-include("head.inc");
+include 'head.inc';
 
 ?>
 <body link="#0000CC" vlink="#0000CC" alink="#0000CC">
-<?php include("fbegin.inc"); ?>
+<?php include 'fbegin.inc'; ?>
 <table width="100%" border="0" cellpadding="0" cellspacing="0">
   <tr><td class="tabnavtbl">
   <?php
@@ -139,6 +139,6 @@ include("head.inc");
 	   </div>
 	</table>
 
-<?php include("fend.inc"); ?>
+<?php include 'fend.inc'; ?>
 </body>
 </html>

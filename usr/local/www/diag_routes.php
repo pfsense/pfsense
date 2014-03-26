@@ -40,7 +40,7 @@
 ##|*MATCH=diag_routes.php*
 ##|-PRIV
 
-include('guiconfig.inc');
+include 'guiconfig.inc';
 
 if (isset($_REQUEST['isAjax'])) {
 	$netstat = "/usr/bin/netstat -rW";
@@ -70,7 +70,7 @@ if (isset($_REQUEST['isAjax'])) {
 $pgtitle = array(gettext("Diagnostics"),gettext("Routing tables"));
 $shortcut_section = "routing";
 
-include('head.inc');
+include 'head.inc';
 
 ?>
 <body link="#000000" vlink="#000000" alink="#000000">
@@ -145,7 +145,7 @@ include('head.inc');
 //]]>
 </script>
 
-<?php include("fbegin.inc"); ?>
+<?php include 'fbegin.inc'; ?>
 
 <script type="text/javascript">
 //<![CDATA[
@@ -230,5 +230,5 @@ include('head.inc');
 </div>
 
 <?php
-include('fend.inc');
+include 'fend.inc';
 ?>

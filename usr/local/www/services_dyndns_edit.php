@@ -48,7 +48,7 @@ function is_dyndns_username($uname) {
                 return true;
 }
 
-require("guiconfig.inc");
+require 'guiconfig.inc';
 
 if (!is_array($config['dyndnses']['dyndns'])) {
 	$config['dyndnses']['dyndns'] = array();
@@ -167,12 +167,12 @@ if ($_POST) {
 }
 
 $pgtitle = array(gettext("Services"),gettext("Dynamic DNS client"));
-include("head.inc");
+include 'head.inc';
 
 ?>
 
 <body link="#0000CC" vlink="#0000CC" alink="#0000CC">
-<?php include("fbegin.inc"); ?>
+<?php include 'fbegin.inc'; ?>
 <?php if ($input_errors) print_input_errors($input_errors); ?>
 <?php if ($savemsg) print_info_box($savemsg); ?>
 <script type="text/javascript">
@@ -428,7 +428,7 @@ function _onTypeChange(type){
                 </tr>
               </table>
 </form>
-<?php include("fend.inc"); ?>
+<?php include 'fend.inc'; ?>
 
 <script type="text/javascript">
 _onTypeChange("<?php echo $pconfig['type']; ?>");

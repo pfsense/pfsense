@@ -38,9 +38,9 @@
 ##|*MATCH=services_ntpd.php*
 ##|-PRIV
 
-require("guiconfig.inc");
-require_once('rrd.inc');
-require_once("shaper.inc");
+require 'guiconfig.inc';
+require_once 'rrd.inc';
+require_once 'shaper.inc';
 
 if (!is_array($config['ntpd']))
 	$config['ntpd'] = array();
@@ -172,7 +172,7 @@ if ($_POST) {
 $pconfig = &$config['ntpd'];
 $pgtitle = array(gettext("Services"),gettext("NTP"));
 $shortcut_section = "ntp";
-include("head.inc");
+include 'head.inc';
 
 ?>
 
@@ -217,7 +217,7 @@ include("head.inc");
 
 
 <body link="#0000CC" vlink="#0000CC" alink="#0000CC">
-<?php include("fbegin.inc"); ?>
+<?php include 'fbegin.inc'; ?>
 <form action="services_ntpd.php" method="post" name="iform" id="iform" enctype="multipart/form-data" accept-charset="utf-8">
 <?php if ($input_errors) print_input_errors($input_errors); ?>
 <?php if ($savemsg) print_info_box($savemsg); ?>
@@ -407,6 +407,6 @@ include("head.inc");
 		</table>
 </div></td></tr></table>
 </form>
-<?php include("fend.inc"); ?>
+<?php include 'fend.inc'; ?>
 </body>
 </html>

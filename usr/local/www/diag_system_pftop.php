@@ -38,7 +38,7 @@
 ##|*MATCH=diag_system_pftop.php*
 ##|-PRIV
 
-require("guiconfig.inc");
+require 'guiconfig.inc';
 
 $pfSversion = str_replace("\n", "", file_get_contents("/etc/version"));
 
@@ -72,7 +72,7 @@ if($_REQUEST['getactivity']) {
 	exit;
 }
 
-include("head.inc");
+include 'head.inc';
 
 if($_REQUEST['sorttype'] && in_array($_REQUEST['sorttype'], $sorttypes)
 	&& $_REQUEST['viewtype'] && in_array($_REQUEST['viewtype'], $viewtypes)
@@ -114,7 +114,7 @@ if($_REQUEST['sorttype'] && in_array($_REQUEST['sorttype'], $sorttypes)
 </script>
 <div id='maincontent'>
 <?php
-	include("fbegin.inc"); 
+	include 'fbegin.inc'; 
 	if(strstr($pfSversion, "1.2")) 
 		echo "<p class=\"pgtitle\">{$pgtitle}</p>";
 	if($savemsg) {
@@ -197,7 +197,7 @@ if($_REQUEST['sorttype'] && in_array($_REQUEST['sorttype'], $sorttypes)
 		</table>
 	</div>
 </form>
-<?php include("fend.inc"); ?>
+<?php include 'fend.inc'; ?>
 <script type="text/javascript">
 jQuery("#viewtype").change(function() {
 	var selected = jQuery("#viewtype option:selected");

@@ -9,7 +9,7 @@
 	Copyright (C) 2010 - Jim Pingle
 */
 
-require("guiconfig.inc");
+require 'guiconfig.inc';
 
 $pgtitle = array(gettext("Diagnostics"), gettext("S.M.A.R.T. Monitor Tools"));
 $smartctl = "/usr/local/sbin/smartctl";
@@ -21,7 +21,7 @@ $valid_info_types = array("i", "H", "c", "A", "a");
 $valid_log_types = array("error", "selftest");
 
 
-include("head.inc");
+include 'head.inc';
 ?>
 
 <style>
@@ -61,7 +61,7 @@ pre {
 <body link="#0000CC" vlink="#0000CC" alink="#0000CC">
 
 <?php 
-include("fbegin.inc"); 
+include 'fbegin.inc'; 
 
 // Highlates the words "PASSED", "FAILED", and "WARNING".
 function add_colors($string)
@@ -452,6 +452,6 @@ if(isset($_POST['submit']) && $_POST['submit'] != "Save")
 <br />
 <?php if ($ulmsg) echo "<p><strong>" . $ulmsg . "</strong></p>\n"; ?>
 
-<?php include("fend.inc"); ?>
+<?php include 'fend.inc'; ?>
 </body>
 </html>

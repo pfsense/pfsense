@@ -40,7 +40,7 @@
 
 $allowautocomplete = true;
 
-require("guiconfig.inc");
+require 'guiconfig.inc';
 
 if (($_POST['submit'] == "Download") && file_exists($_POST['dlPath'])) {
 	session_cache_limiter('public');
@@ -91,7 +91,7 @@ $arrDT   = localtime();
 $intYear = $arrDT[5] + 1900;
 
 $pgtitle = array(gettext("Diagnostics"),gettext("Execute command"));
-include("head.inc");
+include 'head.inc';
 ?>
 
 <script type="text/javascript">
@@ -219,7 +219,7 @@ pre {
 </style>
 </head>
 <body link="#0000CC" vlink="#0000CC" alink="#0000CC">
-<?php include("fbegin.inc"); ?>
+<?php include 'fbegin.inc'; ?>
 <?php if (isBlank($_POST['txtCommand'])): ?>
 <p class="red"><strong><?=gettext("Note: this function is unsupported. Use it " .
 "on your own risk"); ?>!</strong></p>
@@ -241,8 +241,8 @@ if (!isBlank($_POST['txtCommand'])) {
 
 if (!isBlank($_POST['txtPHPCommand'])) {
    puts("<pre>");
-   require_once("config.inc");
-   require_once("functions.inc");
+   require_once 'config.inc';
+   require_once 'functions.inc';
    echo eval($_POST['txtPHPCommand']);
    puts("</pre>");
 }
@@ -322,7 +322,7 @@ if (!isBlank($_POST['txtPHPCommand'])) {
     
   </table>
 </div>
-<?php include("fend.inc"); ?>
+<?php include 'fend.inc'; ?>
 </form>
 <script language="Javascript">
 document.forms[0].txtCommand.focus();

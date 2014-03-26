@@ -61,20 +61,20 @@ else
 	ini_set("memory_limit","128M");
 
 /* include globals from notices.inc /utility/XML parser files */
-require_once("notices.inc");
+require_once 'notices.inc';
 if($g['booting']) echo ".";
-require_once("util.inc");
+require_once 'util.inc';
 if($g['booting']) echo ".";
-require_once("IPv6.inc");
+require_once 'IPv6.inc';
 if($g['booting']) echo ".";
-require_once('config.lib.inc');
+require_once 'config.lib.inc';
 if($g['booting']) echo ".";
 if(file_exists("/cf/conf/use_xmlreader"))
-	require_once("xmlreader.inc");
+	require_once 'xmlreader.inc';
 else
-	require_once("xmlparse.inc");
+	require_once 'xmlparse.inc';
 if($g['booting']) echo ".";
-require_once("crypt.inc");
+require_once 'crypt.inc';
 
 /* read platform */
 if($g['booting']) echo ".";

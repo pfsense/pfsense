@@ -35,8 +35,8 @@
 ##|*MATCH=stats.php*
 ##|-PRIV
 
-require_once("guiconfig.inc");
-require_once("includes/functions.inc.php");
+require_once 'guiconfig.inc';
+require_once 'includes/functions.inc.php';
 
 $cpu = cpu_usage();
 

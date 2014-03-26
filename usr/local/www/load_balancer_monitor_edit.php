@@ -39,7 +39,7 @@
 ##|*MATCH=load_balancer_monitor_edit.php*
 ##|-PRIV
 
-require("guiconfig.inc");
+require 'guiconfig.inc';
 
 if (!is_array($config['load_balancer']['monitor_type'])) {
 	$config['load_balancer']['monitor_type'] = array();
@@ -193,7 +193,7 @@ if ($_POST) {
 $pgtitle = array(gettext("Services"),gettext("Load Balancer"),gettext("Monitor"),gettext("Edit"));
 $shortcut_section = "relayd";
 
-include("head.inc");
+include 'head.inc';
 $types = array("icmp" => gettext("ICMP"), "tcp" => gettext("TCP"), "http" => gettext("HTTP"), "https" => gettext("HTTPS"), "send" => gettext("Send/Expect"));
 
 ?>
@@ -221,7 +221,7 @@ function updateType(t){
 }
 </script>
 
-<?php include("fbegin.inc"); ?>
+<?php include 'fbegin.inc'; ?>
 <?php if ($input_errors) print_input_errors($input_errors); ?>
 
 	<form action="load_balancer_monitor_edit.php" method="post" name="iform" id="iform">
@@ -360,6 +360,6 @@ function updateType(t){
 	</table>
 	</form>
 <br />
-<?php include("fend.inc"); ?>
+<?php include 'fend.inc'; ?>
 </body>
 </html>

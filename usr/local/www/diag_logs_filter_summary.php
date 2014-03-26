@@ -33,8 +33,8 @@
 
 $pgtitle = gettext("Status").": ".gettext("System logs").": ".gettext("Firewall Log Summary");
 $shortcut_section = "firewall";
-require_once("guiconfig.inc");
-include_once("filter_log.inc");
+require_once 'guiconfig.inc';
+include_once 'filter_log.inc';
 
 $filter_logfile = "{$g['varlog_path']}/filter.log";
 $lines = 5000;
@@ -163,7 +163,7 @@ foreach ($filterlog as $fe) {
 		$summary['dstport'][$fe['dstport']]++;
 }
 
-include("head.inc"); ?>
+include 'head.inc'; ?>
 <body link="#000000" vlink="#000000" alink="#000000">
 <script src="/javascript/filter_log.js" type="text/javascript"></script>
 <script type="text/javascript" src="/protochart/prototype.js"></script>
@@ -180,7 +180,7 @@ include("head.inc"); ?>
 //]]>
 </script>
 
-<?php include("fbegin.inc"); ?>
+<?php include 'fbegin.inc'; ?>
 <table width="100%" border="0" cellpadding="0" cellspacing="0" summary="logs filter summary">
   <tr><td>
 <?php
@@ -231,6 +231,6 @@ foreach(array_keys($fields) as $field) {
 	</td>
   </tr>
 </table>
-<?php include("fend.inc"); ?>
+<?php include 'fend.inc'; ?>
 </body>
 </html>

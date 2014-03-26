@@ -35,12 +35,12 @@
 ##|*MATCH=services_captiveportal_vouchers_edit.php*
 ##|-PRIV
 
-require("guiconfig.inc");
-require("functions.inc");
-require_once("filter.inc");
-require("shaper.inc");
-require("captiveportal.inc");
-require_once("voucher.inc");
+require 'guiconfig.inc';
+require 'functions.inc';
+require_once 'filter.inc';
+require 'shaper.inc';
+require 'captiveportal.inc';
+require_once 'voucher.inc';
 
 $pgtitle = array(gettext("Services"), gettext("Captive portal"), gettext("Edit Voucher Rolls"));
 $shortcut_section = "captiveportal-vouchers";
@@ -161,9 +161,9 @@ if ($_POST) {
     }
 }
 
-include("head.inc");
+include 'head.inc';
 ?>
-<?php include("fbegin.inc"); ?>
+<?php include 'fbegin.inc'; ?>
 <?php if ($input_errors) print_input_errors($input_errors); ?>
 <?php if ($savemsg) print_info_box($savemsg); ?>
 <form action="services_captiveportal_vouchers_edit.php" method="post" name="iform" id="iform">
@@ -212,4 +212,4 @@ include("head.inc");
 	</tr>
   </table>
  </form>
-<?php include("fend.inc"); ?>
+<?php include 'fend.inc'; ?>

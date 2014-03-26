@@ -40,11 +40,11 @@
 ##|*MATCH=load_balancer_setting.php*
 ##|-PRIV
 
-require_once("guiconfig.inc");
-require_once("functions.inc");
-require_once("filter.inc");
-require_once("shaper.inc");
-require_once("util.inc");
+require_once 'guiconfig.inc';
+require_once 'functions.inc';
+require_once 'filter.inc';
+require_once 'shaper.inc';
+require_once 'util.inc';
 
 if (!is_array($config['load_balancer']['setting'])) {
 	$config['load_balancer']['setting'] = array();
@@ -98,11 +98,11 @@ if ($_POST) {
 $pgtitle = array(gettext("Services"),gettext("Load Balancer"),gettext("Settings"));
 $shortcut_section = "relayd";
 
-include("head.inc");
+include 'head.inc';
 
 ?>
 <body link="#0000CC" vlink="#0000CC" alink="#0000CC">
-<?php include("fbegin.inc"); ?>
+<?php include 'fbegin.inc'; ?>
 <form action="load_balancer_setting.php" method="post">
 <?php if ($input_errors) print_input_errors($input_errors); ?>
 <?php if ($savemsg) print_info_box($savemsg); ?>
@@ -165,6 +165,6 @@ include("head.inc");
   </tr>
 </table>
 </form>
-<?php include("fend.inc"); ?>
+<?php include 'fend.inc'; ?>
 </body>
 </html>

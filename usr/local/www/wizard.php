@@ -36,12 +36,12 @@
 ##|-PRIV
 
 
-require("globals.inc");
-require("guiconfig.inc");
-require("functions.inc");
-require_once("filter.inc");
-require("shaper.inc");
-require_once("rrd.inc");
+require 'globals.inc';
+require 'guiconfig.inc';
+require 'functions.inc';
+require_once 'filter.inc';
+require 'shaper.inc';
+require_once 'rrd.inc';
 
 function gentitle_pkg($pgname) {
 	global $config;
@@ -83,10 +83,10 @@ $description = preg_replace("/pfSense/i", $g['product_name'], $pkg['step'][$step
 $totalsteps  = $pkg['totalsteps'];
 
 if ($pkg['includefile'])
-	require_once($pkg['includefile']);
+	require_once $pkg['includefile'];
 
 if ($pkg['step'][$stepid]['includefile'])
-	require_once($pkg['step'][$stepid]['includefile']);
+	require_once $pkg['step'][$stepid]['includefile'];
 
 if($pkg['step'][$stepid]['stepsubmitbeforesave']) {
 	eval($pkg['step'][$stepid]['stepsubmitbeforesave']);
@@ -171,7 +171,7 @@ do {
 
 $closehead = false;
 $pgtitle = array($title);
-include("head.inc");
+include 'head.inc';
 
 if(file_exists("/usr/local/www/themes/{$g['theme']}/wizard.css"))
 	echo "<link type=\"text/css\" rel=\"stylesheet\" href=\"/themes/{$g['theme']}/wizard.css\" media=\"all\" />\n";

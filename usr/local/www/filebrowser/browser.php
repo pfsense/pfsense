@@ -1,6 +1,6 @@
 <?php
 
-require_once("guiconfig.inc");
+require_once 'guiconfig.inc';
 
 /*
 	pfSense_MODULE:	shell

@@ -45,7 +45,7 @@
 
 $pgtitle = array(gettext("Firewall"),gettext("IGMP Proxy"), gettext("Edit"));
 
-require("guiconfig.inc");
+require 'guiconfig.inc';
 
 if (!is_array($config['igmpproxy']['igmpentry']))
 	$config['igmpproxy']['igmpentry'] = array();
@@ -121,13 +121,13 @@ if ($_POST) {
 	}
 }
 
-include("head.inc");
+include 'head.inc';
 
 ?>
 
 <body link="#0000CC" vlink="#0000CC" alink="#0000CC" onload="<?= $jsevents["body"]["onload"] ?>">
 <?php
-	include("fbegin.inc");
+	include 'fbegin.inc';
 ?>
 
 <script type="text/javascript" src="/javascript/jquery.ipv4v6ify.js">
@@ -297,6 +297,6 @@ include("head.inc");
 	loaded = <?php echo $counter; ?>;
 </script>
 
-<?php include("fend.inc"); ?>
+<?php include 'fend.inc'; ?>
 </body>
 </html>

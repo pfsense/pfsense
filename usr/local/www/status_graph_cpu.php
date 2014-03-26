@@ -39,9 +39,9 @@
 ##|-PRIV
 
 $pgtitle = array(gettext("Status"), gettext("CPU load"));
-require("guiconfig.inc");
-include("head.inc");
-include("fbegin.inc");
+require 'guiconfig.inc';
+include 'head.inc';
+include 'fbegin.inc';
 
 $pgtitle = gettext("Status: CPU Graph");
 
@@ -51,4 +51,4 @@ $pgtitle = gettext("Status: CPU Graph");
 		width="550" height="275" pluginspage="http://www.adobe.com/svg/viewer/install/auto" />
 </div>
 <br /><span class="red"><strong><?=gettext("Note"); ?>:</strong></span> <?=gettext("if you can't see the graph, you may have to install the"); ?> <a href="http://www.adobe.com/svg/viewer/install/" target="_blank"><?=gettext("Adobe SVG viewer"); ?></a>.
-<?php include("fend.inc"); ?>
+<?php include 'fend.inc'; ?>

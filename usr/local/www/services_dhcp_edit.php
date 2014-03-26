@@ -50,14 +50,14 @@ function staticmaps_sort($ifgui) {
 	usort($config['dhcpd'][$ifgui]['staticmap'], "staticmapcmp");
 }
 
-require_once('globals.inc');
+require_once 'globals.inc';
 
 if(!$g['services_dhcp_server_enable']) {
 	Header("Location: /");
 	exit;
 }
 
-require("guiconfig.inc");
+require 'guiconfig.inc';
 
 $if = $_GET['if'];
 if ($_POST['if'])
@@ -323,7 +323,7 @@ if ($_POST) {
 $pgtitle = array(gettext("Services"),gettext("DHCP"),gettext("Edit static mapping"));
 $shortcut_section = "dhcp";
 
-include("head.inc");
+include 'head.inc';
 
 ?>
 
@@ -348,7 +348,7 @@ include("head.inc");
 </script>
 
 <body link="#0000CC" vlink="#0000CC" alink="#0000CC">
-<?php include("fbegin.inc"); ?>
+<?php include 'fbegin.inc'; ?>
 <?php if ($input_errors) print_input_errors($input_errors); ?>
             <form action="services_dhcp_edit.php" method="post" name="iform" id="iform">
               <table class="tabcont" width="100%" border="0" cellpadding="6" cellspacing="0">
@@ -533,6 +533,6 @@ include("head.inc");
                 </tr>
               </table>
 </form>
-<?php include("fend.inc"); ?>
+<?php include 'fend.inc'; ?>
 </body>
 </html>

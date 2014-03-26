@@ -40,10 +40,10 @@
 ##|*MATCH=firewall_shaper_vinterface.php*
 ##|-PRIV
 
-require("guiconfig.inc");
-require_once("functions.inc");
-require_once("filter.inc");
-require_once("shaper.inc");
+require 'guiconfig.inc';
+require_once 'functions.inc';
+require_once 'filter.inc';
+require_once 'shaper.inc';
 
 if($_GET['reset'] <> "") {
 	mwexec("/usr/bin/killall -9 pfctl");
@@ -347,7 +347,7 @@ else
 $output = "<table summary=\"output form\">";
 $output .= $output_form;
 $closehead = false;
-include("head.inc");
+include 'head.inc';
 ?>
 <link rel="stylesheet" type="text/css" media="all" href="./tree/tree.css" />
 <script type="text/javascript" src="./tree/tree.js"></script>
@@ -373,7 +373,7 @@ if ($queue)
 else
 	echo $newjavascript;
 
-include("fbegin.inc"); 
+include 'fbegin.inc'; 
 ?>
 <div id="inputerrors"></div>
 <?php if ($input_errors) print_input_errors($input_errors); ?>
@@ -438,6 +438,6 @@ include("fbegin.inc");
 ?>
 //]]>
 </script>
-<?php include("fend.inc"); ?>
+<?php include 'fend.inc'; ?>
 </body>
 </html>

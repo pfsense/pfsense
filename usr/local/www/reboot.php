@@ -36,9 +36,9 @@
 ##|*MATCH=reboot.php*
 ##|-PRIV
 
-require("guiconfig.inc");
-require("functions.inc");
-require("captiveportal.inc");
+require 'guiconfig.inc';
+require 'functions.inc';
+require 'captiveportal.inc';
 
 if ($_POST['Submit'] == " " . gettext("No") . " ") {
 	header("Location: index.php");
@@ -46,10 +46,10 @@ if ($_POST['Submit'] == " " . gettext("No") . " ") {
 }
 
 $pgtitle = array(gettext("Diagnostics"),gettext("Reboot System"));
-include("head.inc");
+include 'head.inc';
 
 ?>
-<?php include("fbegin.inc"); ?>
+<?php include 'fbegin.inc'; ?>
 <?php if ($_POST['Submit'] == " " . gettext("Yes") . " "): ?>
 <meta http-equiv=\"refresh\" content=\"70;url=/\">
 <body link="#0000CC" vlink="#0000CC" alink="#0000CC">
@@ -66,6 +66,6 @@ include("head.inc");
 	</p>
 </form>
 <?php endif; ?>
-<?php include("fend.inc"); ?>
+<?php include 'fend.inc'; ?>
 </body>
 </html>

@@ -42,11 +42,11 @@
 
 ini_set('max_execution_time', '0');
 
-require("guiconfig.inc");
-require_once("functions.inc");
-require_once("filter.inc");
-require_once("shaper.inc");
-require_once("pkg-utils.inc");
+require 'guiconfig.inc';
+require_once 'functions.inc';
+require_once 'filter.inc';
+require_once 'shaper.inc';
+require_once 'pkg-utils.inc';
 
 global $static_output;
 
@@ -55,7 +55,7 @@ $static_status = "";
 $sendto = "output";
 
 $pgtitle = array(gettext("System"),gettext("Package Manager"),gettext("Install Package"));
-include("head.inc");
+include 'head.inc';
 
 if ($_POST) {
 	if (isset($_POST['pkgcancel']) || (empty($_POST['id']) && $_POST['mode'] != 'reinstallall')) {
@@ -87,7 +87,7 @@ if ($_POST) {
 ?>
 
 <body link="#0000CC" vlink="#0000CC" alink="#0000CC">
-<?php include("fbegin.inc"); ?>
+<?php include 'fbegin.inc'; ?>
 	<form action="pkg_mgr_install.php" method="post">
 		<div id="mainareapkg">
 			<table width="100%" border="0" cellpadding="0" cellspacing="0" summary="package manager install">
@@ -168,7 +168,7 @@ if ($_POST) {
 			</table>
 		</div>
 	</form>
-<?php include("fend.inc"); ?>
+<?php include 'fend.inc'; ?>
 <script type="text/javascript">
 //<![CDATA[
 NiftyCheck();

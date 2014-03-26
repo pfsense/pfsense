@@ -39,10 +39,10 @@
 ##|-PRIV
 
 $pgtitle = gettext("Firewall: EasyRule");
-require_once("guiconfig.inc");
-require_once("easyrule.inc");
-require_once("filter.inc");
-require_once("shaper.inc");
+require_once 'guiconfig.inc';
+require_once 'easyrule.inc';
+require_once 'filter.inc';
+require_once 'shaper.inc';
 
 $retval = 0;
 $message = "";
@@ -63,9 +63,9 @@ if ($_GET && isset($_GET['action'])) {
 if(stristr($retval, "error") == true)
     $message = $retval;
 
-include("head.inc"); ?>
+include 'head.inc'; ?>
 <body link="#000000" vlink="#000000" alink="#000000">
-<?php include("fbegin.inc"); ?>
+<?php include 'fbegin.inc'; ?>
 <table width="100%" border="0" cellpadding="0" cellspacing="0">
 	<tr>
 		<td>
@@ -84,4 +84,4 @@ include("head.inc"); ?>
 <br />
 <?php } ?>
 </td></tr></table>
-<?php include("fend.inc"); ?>
+<?php include 'fend.inc'; ?>

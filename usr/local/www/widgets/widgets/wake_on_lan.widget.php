@@ -27,7 +27,7 @@
 
 $nocsrf = true;
 
-require_once("/usr/local/www/widgets/include/wake_on_lan.inc");
+require_once '/usr/local/www/widgets/include/wake_on_lan.inc';
 
 if (is_array($config['wol']['wolentry']))
 	$wolcomputers = $config['wol']['wolentry'];

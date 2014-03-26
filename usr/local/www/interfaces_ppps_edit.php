@@ -41,8 +41,8 @@
 ##|*MATCH=interfaces_ppps_edit.php*
 ##|-PRIV
 
-require("guiconfig.inc");
-require("functions.inc");
+require 'guiconfig.inc';
+require 'functions.inc';
 
 define("CRON_MONTHLY_PATTERN", "0 0 1 * *");
 define("CRON_WEEKLY_PATTERN", "0 0 * * 0");
@@ -384,7 +384,7 @@ if ($_POST) {
 $closehead = false;
 $pgtitle = array(gettext("Interfaces"),gettext("PPPs"),gettext("Edit"));
 $shortcut_section = "interfaces";
-include("head.inc");
+include 'head.inc';
 
 $types = array("select" => gettext("Select"), "ppp" => "PPP", "pppoe" => "PPPoE", "pptp" => "PPTP",  "l2tp" => "L2TP"/*, "tcp" => "TCP", "udp" => "UDP"*/  ); 
 
@@ -398,7 +398,7 @@ $types = array("select" => gettext("Select"), "ppp" => "PPP", "pppoe" => "PPPoE"
 	</script>
 </head>
 <body link="#0000CC" vlink="#0000CC" alink="#0000CC" >
-<?php include("fbegin.inc"); ?>
+<?php include 'fbegin.inc'; ?>
 <?php if ($input_errors) print_input_errors($input_errors); ?>
 	<form action="interfaces_ppps_edit.php" method="post" name="iform" id="iform">
 	  <table id="interfacetable" width="100%" border="0" cellpadding="6" cellspacing="0" summary="interfaces ppps edit">
@@ -795,6 +795,6 @@ $types = array("select" => gettext("Select"), "ppp" => "PPP", "pppoe" => "PPPoE"
 		</tr>
 	</table>
 </form>
-<?php include("fend.inc"); ?>
+<?php include 'fend.inc'; ?>
 </body>
 </html>

@@ -44,10 +44,10 @@
 ##|*MATCH=system_advanced_admin.php*
 ##|-PRIV
 
-require("guiconfig.inc");
-require_once("functions.inc");
-require_once("filter.inc");
-require_once("shaper.inc");
+require 'guiconfig.inc';
+require_once 'functions.inc';
+require_once 'filter.inc';
+require_once 'shaper.inc';
 
 $pconfig['webguiproto'] = $config['system']['webgui']['protocol'];
 $pconfig['webguiport'] = $config['system']['webgui']['port'];
@@ -267,12 +267,12 @@ if ($fd) {
 }
 
 $pgtitle = array(gettext("System"),gettext("Advanced: Admin Access"));
-include("head.inc");
+include 'head.inc';
 
 ?>
 
 <body link="#0000CC" vlink="#0000CC" alink="#0000CC">
-<?php include("fbegin.inc"); ?>
+<?php include 'fbegin.inc'; ?>
 <script type="text/javascript">
 //<![CDATA[
 
@@ -604,7 +604,7 @@ function prot_change() {
 	//]]>
 	</script>
 
-<?php include("fend.inc"); ?>
+<?php include 'fend.inc'; ?>
 <?php
 	if ($restart_webgui)
 		echo "<meta http-equiv=\"refresh\" content=\"20;url={$url}\" />";

@@ -32,11 +32,11 @@
 	pfSense_MODULE:	system
 */
 
-require_once("globals.inc");
-require_once("guiconfig.inc");
-require_once("filter.inc");
-require_once("shaper.inc");
-require_once("rrd.inc");
+require_once 'globals.inc';
+require_once 'guiconfig.inc';
+require_once 'filter.inc';
+require_once 'shaper.inc';
+require_once 'rrd.inc';
 
 global $g;
 
@@ -264,7 +264,7 @@ $colorcaptiveportalusers = array('990000');
 /* select theme colors if the inclusion file exists */
 $rrdcolors = "{$g['www_path']}/themes/{$g['theme']}/rrdcolors.inc.php";
 if(file_exists($rrdcolors)) {
-	include($rrdcolors);
+	include "$rrdcolors";
 } else {
 	log_error(sprintf(gettext("rrdcolors.inc.php for theme %s does not exist, using defaults!"),$g['theme']));
 }

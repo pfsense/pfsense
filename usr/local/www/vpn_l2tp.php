@@ -38,8 +38,8 @@
 $pgtitle = array(gettext("VPN"), gettext("L2TP"), gettext("L2TP"));
 $shortcut_section = "l2tps";
 
-require("guiconfig.inc");
-require_once("vpn.inc");
+require 'guiconfig.inc';
+require_once 'vpn.inc';
 
 if (!is_array($config['l2tp']['radius'])) {
 	$config['l2tp']['radius'] = array();
@@ -180,11 +180,11 @@ if ($_POST) {
 	}
 }
 
-include("head.inc");
+include 'head.inc';
 ?>
 
 <body link="#0000CC" vlink="#0000CC" alink="#0000CC" onload="<?= $jsevents["body"]["onload"] ?>">
-<?php include("fbegin.inc"); ?>
+<?php include 'fbegin.inc'; ?>
 
 <script type="text/javascript">
 <!--
@@ -468,6 +468,6 @@ function enable_change(enable_over) {
 	enable_change(false);
 </script>
 
-<?php include("fend.inc"); ?>
+<?php include 'fend.inc'; ?>
 </body>
 </html>

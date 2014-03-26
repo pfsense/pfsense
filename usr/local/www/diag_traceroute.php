@@ -40,15 +40,15 @@
 ##|*MATCH=diag_traceroute.php*
 ##|-PRIV
 
-require("guiconfig.inc");
+require 'guiconfig.inc';
 
 $allowautocomplete = true;
 $pgtitle = array(gettext("Diagnostics"),gettext("Traceroute"));
-include("head.inc");
+include 'head.inc';
 
 ?>
 <body link="#000000" vlink="#000000" alink="#000000">
-<?php include("fbegin.inc"); ?>
+<?php include 'fbegin.inc'; ?>
 <?php
 
 define('MAX_TTL', 64);
@@ -197,4 +197,4 @@ if ($do_traceroute) {
 </tr>
 </table>
 </form>
-<?php include("fend.inc"); ?>
+<?php include 'fend.inc'; ?>

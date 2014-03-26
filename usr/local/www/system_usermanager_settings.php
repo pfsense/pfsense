@@ -41,7 +41,7 @@
 ##|*MATCH=system_usermanager_settings.php*
 ##|-PRIV
 
-require("guiconfig.inc");
+require 'guiconfig.inc';
 
 $pconfig['session_timeout'] = &$config['system']['webgui']['session_timeout'];
 $pconfig['authmode'] = &$config['system']['webgui']['authmode'];
@@ -87,11 +87,11 @@ if ($_POST) {
 	}
 }
 
-include("head.inc");
+include 'head.inc';
 ?>
 
 <body link="#000000" vlink="#000000" alink="#000000" onload="<?= $jsevents["body"]["onload"] ?>">
-<?php include("fbegin.inc");?>
+<?php include 'fbegin.inc';?>
 <?php if ($input_errors) print_input_errors($input_errors);?>
 <?php if ($savemsg) print_info_box($savemsg);?>
 
@@ -171,6 +171,6 @@ include("head.inc");
 			</td>
 		</tr>
 	</table>
-<?php include("fend.inc");?>
+<?php include 'fend.inc';?>
 </body>
 </html>

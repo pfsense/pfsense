@@ -174,9 +174,9 @@ function print_summary_table($label, $iparr, $sort = TRUE) { ?>
 }
 
 $pgtitle = array(gettext("Diagnostics"),gettext("State Table Summary"));
-require_once("guiconfig.inc");
-include("head.inc");
-include("fbegin.inc");
+require_once 'guiconfig.inc';
+include 'head.inc';
+include 'fbegin.inc';
 
 
 print_summary_table(gettext("By Source IP"), $srcipinfo);
@@ -185,4 +185,4 @@ print_summary_table(gettext("Total per IP"), $allipinfo);
 print_summary_table(gettext("By IP Pair"), $pairipinfo, FALSE);
 ?>
 
-<?php include("fend.inc"); ?>
+<?php include 'fend.inc'; ?>

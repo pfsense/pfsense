@@ -1,6 +1,6 @@
 global $config;
 echo "Starting enablesshd...";
-require("config.inc");
+require 'config.inc';
 echo ".";
 $config = parse_config(true);
 echo ".";

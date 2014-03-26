@@ -38,7 +38,7 @@
 ##|*MATCH=interfaces_bridge_edit.php*
 ##|-PRIV
 
-require("guiconfig.inc");
+require 'guiconfig.inc';
 
 if (!is_array($config['bridges']['bridged']))
 	$config['bridges']['bridged'] = array();
@@ -236,7 +236,7 @@ if ($_POST) {
 
 $pgtitle = array(gettext("Interfaces"),gettext("Bridge"),gettext("Edit"));
 $shortcut_section = "interfaces";
-include("head.inc");
+include 'head.inc';
 
 ?>
 
@@ -259,7 +259,7 @@ function show_source_port_range() {
 //]]>
 </script>
 
-<?php include("fbegin.inc"); ?>
+<?php include 'fbegin.inc'; ?>
 <?php if ($input_errors) print_input_errors($input_errors); ?>
             <form action="interfaces_bridge_edit.php" method="post" name="iform" id="iform">
               <table width="100%" border="0" cellpadding="6" cellspacing="0" summary="interfaces bridge edit">
@@ -604,6 +604,6 @@ function show_source_port_range() {
                 </tr>
               </table>
 </form>
-<?php include("fend.inc"); ?>
+<?php include 'fend.inc'; ?>
 </body>
 </html>

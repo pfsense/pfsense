@@ -45,9 +45,9 @@
 $d_isfwfile = 1;
 $nocsrf = true;
 
-require_once("globals.inc");
-require_once("functions.inc");
-require_once("guiconfig.inc");
+require_once 'globals.inc';
+require_once 'functions.inc';
+require_once 'guiconfig.inc';
 
 $curcfg = $config['system']['firmware'];
 
@@ -56,7 +56,7 @@ $kerneltypes = array(
 	'wrap' => gettext("Embedded Kernel"),
 );
 
-require_once("xmlrpc_client.inc");
+require_once 'xmlrpc_client.inc';
 
 /* Allow additional execution time 0 = no limit. */
 ini_set('max_execution_time', '9999');
@@ -106,13 +106,13 @@ function file_upload_error_message($error_code) {
 /* if upgrade in progress, alert user */
 if(is_subsystem_dirty('firmwarelock')) {
 	$pgtitle = array(gettext("System"),gettext("Firmware"),gettext("Manual Update"));
-	include("head.inc");
+	include 'head.inc';
 	echo "<body link=\"#0000CC\" vlink=\"#0000CC\" alink=\"#0000CC\">\n";
-	include("fbegin.inc");
+	include 'fbegin.inc';
 	echo "<div>\n";
 	print_info_box(gettext("An upgrade is currently in progress.<p>The firewall will reboot when the operation is complete.") . "</p><p><img src='/themes/{$g['theme']}/images/icons/icon_fw-update.gif' alt='update' /></p>");
 	echo "</div>\n";
-	include("fend.inc");
+	include 'fend.inc';
 	echo "</body>";
 	echo "</html>";
 	exit;
@@ -208,7 +208,7 @@ if ($_POST && !is_subsystem_dirty('firmwarelock')) {
 }
 
 $pgtitle = array(gettext("System"),gettext("Firmware"));
-include("head.inc");
+include 'head.inc';
 
 ?>
 <body link="#0000CC" vlink="#0000CC" alink="#0000CC">
@@ -221,7 +221,7 @@ include("head.inc");
 		$upload_id = session_id();
 ?>
 <input type="hidden" name="UPLOAD_IDENTIFIER" value="<?php echo $upload_id;?>" />
-<?php include("fbegin.inc"); ?>
+<?php include 'fbegin.inc'; ?>
 <?php if ($input_errors) print_input_errors($input_errors); ?>
 <?php if ($savemsg) print_info_box($savemsg); ?>
 <?php if ($fwinfo <> "") print_info_box($fwinfo); ?>
@@ -332,7 +332,7 @@ if(stristr($_FILES['ulfile']['name'],"nanobsd"))
 </table>
 
 <?php endif; endif; ?>
-<?php include("fend.inc"); ?>
+<?php include 'fend.inc'; ?>
 </form>
 </body>
 </html>

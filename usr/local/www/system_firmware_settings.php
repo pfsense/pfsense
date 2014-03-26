@@ -39,7 +39,7 @@
 ##|*MATCH=system_firmware_settings.php*
 ##|-PRIV
 
-require("guiconfig.inc");
+require 'guiconfig.inc';
 
 if ($_POST) {
 	if (!$input_errors) {
@@ -78,7 +78,7 @@ $gitcfg = $config['system']['gitsync'];
 
 $pgtitle = array(gettext("System"),gettext("Firmware"),gettext("Settings"));
 $closehead = false;
-include("head.inc");
+include 'head.inc';
 
 exec("/usr/bin/fetch -q -o {$g['tmp_path']}/manifest \"{$g['update_manifest']}\"");
 if(file_exists("{$g['tmp_path']}/manifest")) {
@@ -104,7 +104,7 @@ function enable_altfirmwareurl(enable_over) {
 </head>
 
 <body link="#0000CC" vlink="#0000CC" alink="#0000CC">
-<?php include("fbegin.inc");?>
+<?php include 'fbegin.inc';?>
 <?php if ($input_errors) print_input_errors($input_errors); ?>
 
 <form action="system_firmware_settings.php" method="post" name="iform" id="iform">
@@ -268,6 +268,6 @@ function enable_altfirmwareurl(enable_over) {
                 </tr>
               </table></div></td></tr></table>
 </form>
-<?php include("fend.inc"); ?>
+<?php include 'fend.inc'; ?>
 </body>
 </html>

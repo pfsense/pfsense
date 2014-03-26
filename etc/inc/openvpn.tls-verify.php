@@ -42,9 +42,9 @@
  *  intermediates.
  */
 
-require_once("globals.inc");
-require_once("config.inc");
-require_once("interfaces.inc");
+require_once 'globals.inc';
+require_once 'config.inc';
+require_once 'interfaces.inc';
 
 openlog("openvpn", LOG_ODELAY, LOG_AUTH);
 

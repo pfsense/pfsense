@@ -36,8 +36,8 @@
 ##|*MATCH=vpn_pppoe_edit.php*
 ##|-PRIV
 
-require("guiconfig.inc");
-require_once("vpn.inc");
+require 'guiconfig.inc';
+require_once 'vpn.inc';
 
 function vpn_pppoe_get_id() {
 	global $config;
@@ -237,12 +237,12 @@ if ($_POST) {
 
 $pgtitle = array(gettext("Services"),gettext("PPPoE Server"), gettext("Edit"));
 $shortcut_section = "pppoes";
-include("head.inc");
+include 'head.inc';
 
 ?>
 
 <body link="#0000CC" vlink="#0000CC" alink="#0000CC">
-<?php include("fbegin.inc"); ?>
+<?php include 'fbegin.inc'; ?>
 <script type="text/javascript" src="/javascript/row_helper.js"></script>
 
 <input type='hidden' name='username' value='textbox' class="formfld unknown" />
@@ -626,6 +626,6 @@ if ($savemsg)
 	loaded = <?php echo $counter; ?>;
 	//]]>
 </script>
-<?php include("fend.inc"); ?>
+<?php include 'fend.inc'; ?>
 </body>
 </html>

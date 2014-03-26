@@ -43,7 +43,7 @@
 ##|*MATCH=bandwidth_by_ip.php*
 ##|-PRIV
 
-require("guiconfig.inc");
+require 'guiconfig.inc';
 
 if ($_POST['width'])
 	$width = $_POST['width'];
@@ -110,7 +110,7 @@ if ($_GET['hostipformat']) {
 
 $pgtitle = array(gettext("Status"),gettext("Traffic Graph"));
 
-include("head.inc");
+include 'head.inc';
 
 ?>
 
@@ -194,7 +194,7 @@ function updateBandwidthHosts(data){
 
 </script>
 
-<?php include("fbegin.inc"); ?>
+<?php include 'fbegin.inc'; ?>
 <?php
 
 /* link the ipsec interface magically */
@@ -329,7 +329,7 @@ foreach ($ifdescrs as $ifn => $ifd) {
 </div>
 <p><span class="red"><strong><?=gettext("Note"); ?>:</strong></span> <?=gettext("the"); ?> <a href="http://www.adobe.com/svg/viewer/install/" target="_blank"><?=gettext("Adobe SVG Viewer"); ?></a>, <?=gettext("Firefox 1.5 or later or other browser supporting SVG is required to view the graph"); ?>.
 
-<?php include("fend.inc"); ?>
+<?php include 'fend.inc'; ?>
 
 <script type="text/javascript">
 jQuery(document).ready(updateBandwidth);

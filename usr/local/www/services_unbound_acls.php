@@ -29,8 +29,8 @@
 	POSSIBILITY OF SUCH DAMAGE.
 */
 
-require("guiconfig.inc");
-require("unbound.inc");
+require 'guiconfig.inc';
+require 'unbound.inc';
 
 if (!is_array($config['unbound']['acls']))
 	$config['unbound']['acls'] = array();
@@ -132,7 +132,7 @@ if ($_POST) {
 
 
 $pgtitle = "Services: DNS Resolver: Access Lists";
-include("head.inc");
+include 'head.inc';
 
 ?>
 
@@ -160,7 +160,7 @@ include("head.inc");
 
 <body>
 
-<?php include("fbegin.inc"); ?>
+<?php include 'fbegin.inc'; ?>
 <form action="services_unbound_acls.php" method="post" name="iform" id="iform">
 <?php
 if (!$savemsg)
@@ -374,6 +374,6 @@ if (is_subsystem_dirty("unbound"))
 	</tbody>
 </table>
 
-<?php include("fend.inc"); ?>
+<?php include 'fend.inc'; ?>
 </body>
 </html>

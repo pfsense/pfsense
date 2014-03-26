@@ -27,10 +27,10 @@
 */
 
 /* parse the configuration and include all functions used below */
-require_once("util.inc");
-require_once("config.inc");
-require_once("functions.inc");
-require_once("system.inc");
+require_once 'util.inc';
+require_once 'config.inc';
+require_once 'functions.inc';
+require_once 'system.inc';
 
 /* make sure to wait until the boot scripts have finished */
 if (file_exists("{$g['varrun_path']}/booting"))

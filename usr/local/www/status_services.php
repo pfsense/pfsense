@@ -37,9 +37,9 @@
 ##|*MATCH=status_services.php*
 ##|-PRIV
 
-require_once("guiconfig.inc");
-require_once("service-utils.inc");
-require_once("shortcuts.inc");
+require_once 'guiconfig.inc';
+require_once 'service-utils.inc';
+require_once 'shortcuts.inc';
 
 if (!empty($_GET['service'])) {
 	switch ($_GET['mode']) {
@@ -61,13 +61,13 @@ if($_GET['batch'])
 	exit;
 
 $pgtitle = array(gettext("Status"),gettext("Services"));
-include("head.inc");
+include 'head.inc';
 
 ?>
 
 <body link="#0000CC" vlink="#0000CC" alink="#0000CC">
 <?php
-include("fbegin.inc");
+include 'fbegin.inc';
 ?>
 <form action="status_services.php" method="post">
 <?php if ($savemsg) print_info_box($savemsg); ?>
@@ -120,6 +120,6 @@ if (count($services) > 0) {
 </table>
 </div>
 </form>
-<?php include("fend.inc"); ?>
+<?php include 'fend.inc'; ?>
 </body>
 </html>

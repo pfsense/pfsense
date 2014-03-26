@@ -34,8 +34,8 @@
 ##|*MATCH=vpn_openvpn_server.php*
 ##|-PRIV
 
-require("guiconfig.inc");
-require_once("openvpn.inc");
+require 'guiconfig.inc';
+require_once 'openvpn.inc';
 
 if (!is_array($config['openvpn']['openvpn-server']))
 	$config['openvpn']['openvpn-server'] = array();
@@ -463,12 +463,12 @@ if ($_POST) {
 $pgtitle = array(gettext("OpenVPN"), gettext("Server"));
 $shortcut_section = "openvpn";
 
-include("head.inc");
+include 'head.inc';
 
 ?>
 
 <body link="#000000" vlink="#000000" alink="#000000" onload="<?= $jsevents["body"]["onload"] ?>">
-<?php include("fbegin.inc"); ?>
+<?php include 'fbegin.inc'; ?>
 <script type="text/javascript">
 <!--
 
@@ -1826,7 +1826,7 @@ tuntap_change();
 //-->
 </script>
 </body>
-<?php include("fend.inc"); ?>
+<?php include 'fend.inc'; ?>
 
 <?php
 

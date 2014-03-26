@@ -40,7 +40,7 @@
 ##|*MATCH=interfaces_vlan.php*
 ##|-PRIV
 
-require("guiconfig.inc");
+require 'guiconfig.inc';
 
 if (!is_array($config['vlans']['vlan']))
 	$config['vlans']['vlan'] = array();
@@ -82,12 +82,12 @@ if ($_GET['act'] == "del") {
 
 $pgtitle = array(gettext("Interfaces"),gettext("VLAN"));
 $shortcut_section = "interfaces";
-include("head.inc");
+include 'head.inc';
 
 ?>
 
 <body link="#0000CC" vlink="#0000CC" alink="#0000CC">
-<?php include("fbegin.inc"); ?>
+<?php include 'fbegin.inc'; ?>
 <?php if ($input_errors) print_input_errors($input_errors); ?>
 <table width="100%" border="0" cellpadding="0" cellspacing="0" summary="interfaces vlan">
   <tr><td>
@@ -148,6 +148,6 @@ include("head.inc");
 	</td>
 	</tr>
 </table>
-<?php include("fend.inc"); ?>
+<?php include 'fend.inc'; ?>
 </body>
 </html>

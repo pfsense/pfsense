@@ -37,8 +37,8 @@
 ##|*MATCH=system_advanced_notifications.php*
 ##|-PRIV
 
-require("guiconfig.inc");
-require_once("notices.inc");
+require 'guiconfig.inc';
+require_once 'notices.inc';
 
 // Growl
 $pconfig['disable_growl'] = isset($config['notifications']['growl']['disable']);
@@ -155,12 +155,12 @@ if ($_POST) {
 }
 
 $pgtitle = array(gettext("System"),gettext("Advanced: Notifications"));
-include("head.inc");
+include 'head.inc';
 
 ?>
 
 <body link="#0000CC" vlink="#0000CC" alink="#0000CC">
-<?php include("fbegin.inc"); ?>
+<?php include 'fbegin.inc'; ?>
 	<form action="system_advanced_notifications.php" method="post">
 		<?php
 			if ($input_errors)
@@ -357,6 +357,6 @@ include("head.inc");
 		jQuery('#smtpssl').prop('disabled', this.checked);
 	});
 </script>
-<?php include("fend.inc"); ?>
+<?php include 'fend.inc'; ?>
 </body>
 </html>

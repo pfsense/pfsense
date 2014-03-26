@@ -34,8 +34,8 @@
 ##|*MATCH=vpn_openvpn_csc.php*
 ##|-PRIV
 
-require("guiconfig.inc");
-require_once("openvpn.inc");
+require 'guiconfig.inc';
+require_once 'openvpn.inc';
 
 $pgtitle = array(gettext("OpenVPN"), gettext("Client Specific Override"));
 $shortcut_section = "openvpn";
@@ -247,12 +247,12 @@ if ($_POST) {
 	}
 }
 
-include("head.inc");
+include 'head.inc';
 
 ?>
 
 <body link="#000000" vlink="#000000" alink="#000000" onload="<?= $jsevents["body"]["onload"] ?>">
-<?php include("fbegin.inc"); ?>
+<?php include 'fbegin.inc'; ?>
 <script type="text/javascript">
 <!--
 
@@ -811,7 +811,7 @@ netbios_change();
 //-->
 </script>
 </body>
-<?php include("fend.inc"); ?>
+<?php include 'fend.inc'; ?>
 
 <?php
 

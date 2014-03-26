@@ -1,6 +1,6 @@
 #!/usr/local/bin/php -q
 <?php
-require_once('config.inc');
+require_once 'config.inc';
 
 cleanup_backupcache();
 $confvers = get_backups();

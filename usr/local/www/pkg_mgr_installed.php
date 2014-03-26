@@ -37,8 +37,8 @@
 ##|*MATCH=pkg_mgr_installed.php*
 ##|-PRIV
 
-require_once("guiconfig.inc");
-require_once("pkg-utils.inc");
+require_once 'guiconfig.inc';
+require_once 'pkg-utils.inc';
 
 $timezone = $config['system']['timezone'];
 if (!$timezone)
@@ -49,11 +49,11 @@ date_default_timezone_set($timezone);
 /* if upgrade in progress, alert user */
 if(is_subsystem_dirty('packagelock')) {
 	$pgtitle = array(gettext("System"),gettext("Package Manager"));
-	include("head.inc");
+	include 'head.inc';
 	echo "<body link=\"#0000CC\" vlink=\"#0000CC\" alink=\"#0000CC\">\n";
-	include("fbegin.inc");
+	include 'fbegin.inc';
 	echo "Please wait while packages are reinstalled in the background.";
-	include("fend.inc");
+	include 'fend.inc';
 	echo "</body>";
 	echo "</html>";
 	exit;
@@ -78,7 +78,7 @@ if(is_array($config['installedpackages']['package'])) {
 }
 $closehead = false;
 $pgtitle = array(gettext("System"),gettext("Package Manager"));
-include("head.inc");
+include 'head.inc';
 
 ?>
 <script type="text/javascript" src="javascript/domTT/domLib.js"></script>
@@ -89,7 +89,7 @@ include("head.inc");
 </head>
 
 <body link="#0000CC" vlink="#0000CC" alink="#0000CC">
-	<?php include("fbegin.inc"); ?>
+	<?php include 'fbegin.inc'; ?>
 	<table width="100%" border="0" cellpadding="0" cellspacing="0" summary="packages installed">
 		<tr>
 			<td>
@@ -233,6 +233,6 @@ include("head.inc");
 			</td>
 		</tr>
 	</table>
-<?php include("fend.inc"); ?>
+<?php include 'fend.inc'; ?>
 </body>
 </html>

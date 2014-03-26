@@ -41,7 +41,7 @@
 ##|*MATCH=status_ntpd.php*
 ##|-PRIV
 
-require_once("guiconfig.inc");
+require_once 'guiconfig.inc';
 
 if(!isset($config['ntpd']['noquery'])) {
 
@@ -158,10 +158,10 @@ if (isset($config['ntpd']['gps']['type']) && ($config['ntpd']['gps']['type'] == 
 
 $pgtitle = array(gettext("Status"),gettext("NTP"));
 $shortcut_section = "ntp";
-include("head.inc");
+include 'head.inc';
 ?>
 <body link="#0000CC" vlink="#0000CC" alink="#0000CC">
-<?php include("fbegin.inc"); ?>
+<?php include 'fbegin.inc'; ?>
 <table width="100%" border="0" cellpadding="0" cellspacing="0">
 <tr><td><div id="mainarea">
 	<table class="tabcont sortable" width="100%" border="0" cellpadding="0" cellspacing="0">
@@ -264,6 +264,6 @@ include("head.inc");
 <?php endif; ?>
 </div></td></tr>
 </table>
-<?php include("fend.inc"); ?>
+<?php include 'fend.inc'; ?>
 </body>
 </html>

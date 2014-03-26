@@ -38,8 +38,8 @@
 ##|*MATCH=interfaces_gre_edit.php*
 ##|-PRIV
 
-require("guiconfig.inc");
-require_once("functions.inc");
+require 'guiconfig.inc';
+require_once 'functions.inc';
 
 if (!is_array($config['gres']['gre']))
 	$config['gres']['gre'] = array();
@@ -126,13 +126,13 @@ if ($_POST) {
 
 $pgtitle = array(gettext("Interfaces"),gettext("GRE"),gettext("Edit"));
 $shortcut_section = "interfaces";
-include("head.inc");
+include 'head.inc';
 
 ?>
 
 <body link="#0000CC" vlink="#0000CC" alink="#0000CC">
 <script type="text/javascript" src="/javascript/jquery.ipv4v6ify.js"></script>
-<?php include("fbegin.inc"); ?>
+<?php include 'fbegin.inc'; ?>
 <?php if ($input_errors) print_input_errors($input_errors); ?>
             <form action="interfaces_gre_edit.php" method="post" name="iform" id="iform">
               <table width="100%" border="0" cellpadding="6" cellspacing="0" summary="interfaces gre edit">
@@ -235,6 +235,6 @@ include("head.inc");
                 </tr>
               </table>
 </form>
-<?php include("fend.inc"); ?>
+<?php include 'fend.inc'; ?>
 </body>
 </html>

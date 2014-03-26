@@ -43,11 +43,11 @@ ini_set('zlib.output_compression', 0);
 ini_set('implicit_flush', 1);
 ini_set('max_input_time', '9999');
 
-require_once("guiconfig.inc");
-require_once("config.inc");
+require_once 'guiconfig.inc';
+require_once 'config.inc';
 
 $pgtitle = array(gettext("Diagnostics"), gettext("NanoBSD"));
-include("head.inc");
+include 'head.inc';
 
 // Survey slice info
 global $SLICE, $OLDSLICE, $TOFLASH, $COMPLETE_PATH, $COMPLETE_BOOT_PATH;
@@ -59,7 +59,7 @@ nanobsd_detect_slice_info();
 
 <body link="#0000CC" vlink="#0000CC" alink="#0000CC" onload="<?=$jsevents["body"]["onload"];?>">
 
-<?php include("fbegin.inc"); ?>
+<?php include 'fbegin.inc'; ?>
 
 <?php
 
@@ -271,7 +271,7 @@ if ($savemsg)
 		</td>
 	</tr>
 </table>
-<?php require("fend.inc"); ?>
+<?php require 'fend.inc'; ?>
 </body>
 </html>
 

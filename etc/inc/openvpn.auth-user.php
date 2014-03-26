@@ -41,11 +41,11 @@
  * in our config.xml file and check the credentials.
  */
 
-require_once("globals.inc");
-require_once("config.inc");
-require_once("radius.inc");
-require_once("auth.inc");
-require_once("interfaces.inc");
+require_once 'globals.inc';
+require_once 'config.inc';
+require_once 'radius.inc';
+require_once 'auth.inc';
+require_once 'interfaces.inc';
 
 /**
  * Get the NAS-Identifier
@@ -166,8 +166,8 @@ if ($authenticated == false) {
 }
 
 if (file_exists("/etc/inc/openvpn.attributes.php"))
-        include_once("/etc/inc/openvpn.attributes.php");
-        
+        include_once '/etc/inc/openvpn.attributes.php';
+
 $content = "";
 if (is_array($attributes['dns-servers'])) {
         foreach ($attributes['dns-servers'] as $dnssrv) {

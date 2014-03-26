@@ -42,9 +42,9 @@
 ##|*MATCH=status_interfaces.php*
 ##|-PRIV
 
-require_once("guiconfig.inc");
-require_once("shaper.inc");
-require_once("filter.inc");
+require_once 'guiconfig.inc';
+require_once 'shaper.inc';
+require_once 'filter.inc';
 
 if ($_GET['if']) {
 	$interface = $_GET['if'];
@@ -59,12 +59,12 @@ if ($_GET['if']) {
 
 $pgtitle = array(gettext("Status"),gettext("Interfaces"));
 $shortcut_section = "interfaces";
-include("head.inc");
+include 'head.inc';
 
 ?>
 
 <body link="#0000CC" vlink="#0000CC" alink="#0000CC">
-<?php include("fbegin.inc"); ?>
+<?php include 'fbegin.inc'; ?>
 <table width="100%" border="0" cellspacing="0" cellpadding="0" summary="status interfaces">
 <?php 
 	$i = 0; 
@@ -479,6 +479,6 @@ include("head.inc");
 "to the outside! Don't use dial-on-demand if you want to make sure that the line ".
 "is kept disconnected."),'<strong>','</strong>')?>
 
-<?php include("fend.inc"); ?>
+<?php include 'fend.inc'; ?>
 </body>
 </html>

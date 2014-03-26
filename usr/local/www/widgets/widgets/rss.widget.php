@@ -28,9 +28,9 @@
 
 $nocsrf = true;
 
-require_once("guiconfig.inc");
-require_once("pfsense-utils.inc");
-require_once("functions.inc");
+require_once 'guiconfig.inc';
+require_once 'pfsense-utils.inc';
+require_once 'functions.inc';
 
 if($_POST['rssfeed']) {
 	$config['widgets']['rssfeed'] = str_replace("\n", ",", $_POST['rssfeed']);
@@ -145,8 +145,9 @@ else
 	}
 	exec("chmod a+rw /tmp/simplepie/.");
 	exec("chmod a+rw /tmp/simplepie/cache/.");
-	require_once("simplepie/simplepie.inc");
-	function textLimit($string, $length, $replacer = '...') {
+	require_once 'simplepie/simplepie.inc';
+
+function textLimit($string, $length, $replacer = '...') {
 	  if(strlen($string) > $length)
 	  return (preg_match('/^(.*)\W.*$/', substr($string, 0, $length+1), $matches) ? $matches[1] : substr($string, 0, $length)) . $replacer;
 	  return $string;

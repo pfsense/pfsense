@@ -28,10 +28,10 @@
 	POSSIBILITY OF SUCH DAMAGE.
 */
 
-require_once("pfsense-utils.inc");
-require_once("easyrule.inc");
-require_once("filter.inc");
-require_once("shaper.inc");
+require_once 'pfsense-utils.inc';
+require_once 'easyrule.inc';
+require_once 'filter.inc';
+require_once 'shaper.inc';
 
 $message = "";
 $specialsrcdst = explode(" ", "any pptp pppoe l2tp openvpn");

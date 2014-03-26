@@ -34,9 +34,9 @@
 
 $blockaliasname = 'EasyRuleBlockHosts';
 $protocols_with_ports = array('tcp', 'udp');
-require_once("functions.inc");
-require_once("util.inc");
-require_once("config.inc");
+require_once 'functions.inc';
+require_once 'util.inc';
+require_once 'config.inc';
 
 function easyrule_find_rule_interface($int) {
 	global $config;

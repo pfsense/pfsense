@@ -44,15 +44,15 @@
 ##|*MATCH=interfaces.php*
 ##|-PRIV
 
-require_once("guiconfig.inc");
-require_once("ipsec.inc");
-require_once("functions.inc");
-require_once("captiveportal.inc");
-require_once("filter.inc");
-require_once("shaper.inc");
-require_once("rrd.inc");
-require_once("vpn.inc");
-require_once("xmlparse_attr.inc");
+require_once 'guiconfig.inc';
+require_once 'ipsec.inc';
+require_once 'functions.inc';
+require_once 'captiveportal.inc';
+require_once 'filter.inc';
+require_once 'shaper.inc';
+require_once 'rrd.inc';
+require_once 'vpn.inc';
+require_once 'xmlparse_attr.inc';
 
 // Get configured interface list
 $ifdescrs = get_configured_interface_with_descr(false, true);
@@ -1342,7 +1342,7 @@ $pgtitle = array(gettext("Interfaces"), $pconfig['descr']);
 $shortcut_section = "interfaces";
 
 $closehead = false;
-include("head.inc");
+include 'head.inc';
 $types4 = array("none" => gettext("None"), "staticv4" => gettext("Static IPv4"), "dhcp" => gettext("DHCP"), "ppp" => gettext("PPP"), "pppoe" => gettext("PPPoE"), "pptp" => gettext("PPTP"), "l2tp" => gettext("L2TP"));
 $types6 = array("none" => gettext("None"), "staticv6" => gettext("Static IPv6"), "dhcp6" => gettext("DHCP6"), "slaac" => gettext("SLAAC"), "6rd" => gettext("6rd Tunnel"), "6to4" => gettext("6to4 Tunnel"), "track6" => gettext("Track Interface"));
 
@@ -1549,7 +1549,7 @@ $types6 = array("none" => gettext("None"), "staticv6" => gettext("Static IPv6"),
 </script>
 </head>
 	<body link="#0000CC" vlink="#0000CC" alink="#0000CC">
-	<?php include("fbegin.inc"); ?>
+	<?php include 'fbegin.inc'; ?>
 	<form action="interfaces.php" method="post" name="iform" id="iform">
 		<?php if ($input_errors) print_input_errors($input_errors); ?>
 		<?php if (is_subsystem_dirty('interfaces')): ?><p>
@@ -3465,6 +3465,6 @@ $types6 = array("none" => gettext("None"), "staticv6" => gettext("Static IPv6"),
 		?>
 	//]]>
 	</script>
-	<?php include("fend.inc"); ?>
+	<?php include 'fend.inc'; ?>
 	</body>
 </html>

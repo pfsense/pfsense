@@ -310,7 +310,7 @@ class sasl_client_class
 			if(IsSet($this->drivers[$mechanism]))
 			{
 				if(!class_exists($this->drivers[$mechanism][0]))
-					require(dirname(__FILE__)."/".$this->drivers[$mechanism][1]);
+					require dirname(__FILE__)."/".$this->drivers[$mechanism][1];
 				$this->driver=new $this->drivers[$mechanism][0];
 				if($this->driver->Initialize($this))
 				{

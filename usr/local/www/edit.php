@@ -39,7 +39,7 @@
 ##|-PRIV
 
 $pgtitle = array(gettext("Diagnostics"), gettext("Edit file"));
-require("guiconfig.inc");
+require 'guiconfig.inc';
 
 if($_POST['action']) {
 	switch($_POST['action']) {
@@ -86,7 +86,7 @@ if($_POST['action']) {
 	exit;
 }
 
-require("head.inc");
+require 'head.inc';
 outputCSSFileInline("code-syntax-highlighter/SyntaxHighlighter.css");
 outputJavaScriptFileInline("filebrowser/browser.js");
 outputJavaScriptFileInline("javascript/base64.js");
@@ -94,7 +94,7 @@ outputJavaScriptFileInline("javascript/base64.js");
 ?>
 
 <body link="#000000" vlink="#000000" alink="#000000">
-<?php include("fbegin.inc"); ?>
+<?php include 'fbegin.inc'; ?>
 
 <script type="text/javascript">	
 	function loadFile() {
@@ -236,6 +236,6 @@ outputJavaScriptFileInline("javascript/base64.js");
 	<?php endif; ?>
 </script>
 
-<?php include("fend.inc"); ?>
+<?php include 'fend.inc'; ?>
 </body>
 </html>

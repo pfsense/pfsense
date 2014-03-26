@@ -43,13 +43,13 @@
 ##|*MATCH=system_advanced_misc.php*
 ##|-PRIV
 
-require("guiconfig.inc");
-require_once("functions.inc");
-require_once("filter.inc");
-require_once("shaper.inc");
-require_once("ipsec.inc");
-require_once("vpn.inc");
-require_once("vslb.inc");
+require 'guiconfig.inc';
+require_once 'functions.inc';
+require_once 'filter.inc';
+require_once 'shaper.inc';
+require_once 'ipsec.inc';
+require_once 'vpn.inc';
+require_once 'vslb.inc';
 
 $pconfig['proxyurl'] = $config['system']['proxyurl'];
 $pconfig['proxyport'] = $config['system']['proxyport'];
@@ -271,13 +271,13 @@ if ($_POST) {
 }
 
 $pgtitle = array(gettext("System"),gettext("Advanced: Miscellaneous"));
-include("head.inc");
+include 'head.inc';
 
 ?>
 
 <body link="#0000CC" vlink="#0000CC" alink="#0000CC">
 <?php
-	include("fbegin.inc");
+	include 'fbegin.inc';
 	if ($input_errors)
 		print_input_errors($input_errors);
 	if ($savemsg)
@@ -742,6 +742,6 @@ function tmpvar_checked(obj) {
 		</table>
 	</form>
 
-<?php include("fend.inc"); ?>
+<?php include 'fend.inc'; ?>
 </body>
 </html>

@@ -37,8 +37,8 @@
 ##|*MATCH=system_certmanager.php*
 ##|-PRIV
 
-require("guiconfig.inc");
-require_once("certs.inc");
+require 'guiconfig.inc';
+require_once 'certs.inc';
 
 $cert_methods = array(
 	"import" => gettext("Import an existing Certificate"),
@@ -463,11 +463,11 @@ if ($_POST) {
 	}
 }
 
-include("head.inc");
+include 'head.inc';
 ?>
 
 <body link="#000000" vlink="#000000" alink="#000000" onload="<?= $jsevents["body"]["onload"] ?>">
-<?php include("fbegin.inc"); ?>
+<?php include 'fbegin.inc'; ?>
 <script type="text/javascript">
 //<![CDATA[
 
@@ -1222,7 +1222,7 @@ function internalca_change() {
 		</td>
 	</tr>
 </table>
-<?php include("fend.inc");?>
+<?php include 'fend.inc';?>
 <script type="text/javascript">
 //<![CDATA[
 

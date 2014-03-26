@@ -44,10 +44,10 @@
 ##|*MATCH=firewall_aliases_edit.php*
 ##|-PRIV
 
-require("guiconfig.inc");
-require_once("functions.inc");
-require_once("filter.inc");
-require_once("shaper.inc");
+require 'guiconfig.inc';
+require_once 'functions.inc';
+require_once 'filter.inc';
+require_once 'shaper.inc';
 
 $pgtitle = array(gettext("Firewall"),gettext("Aliases"),gettext("Edit"));
 
@@ -427,7 +427,7 @@ if ($_POST) {
 	}
 }
 
-include("head.inc");
+include 'head.inc';
 
 $jscriptstr = <<<EOD
 
@@ -591,7 +591,7 @@ EOD;
 
 <body link="#0000CC" vlink="#0000CC" alink="#0000CC" onload="<?= $jsevents["body"]["onload"] ?>">
 <?php
-	include("fbegin.inc");
+	include 'fbegin.inc';
 	echo $jscriptstr;
 ?>
 
@@ -774,6 +774,6 @@ if (empty($tab)) {
 //]]>
 </script>
 
-<?php include("fend.inc"); ?>
+<?php include 'fend.inc'; ?>
 </body>
 </html>

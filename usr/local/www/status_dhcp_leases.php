@@ -43,8 +43,8 @@
 ##|*MATCH=status_dhcp_leases.php*
 ##|-PRIV
 
-require("guiconfig.inc");
-require_once("config.inc");
+require 'guiconfig.inc';
+require_once 'config.inc';
 
 $pgtitle = array(gettext("Status"),gettext("DHCP leases"));
 $shortcut_section = "dhcp";
@@ -84,12 +84,12 @@ if (($_GET['deleteip']) && (is_ipaddr($_GET['deleteip']))) {
 	header("Location: status_dhcp_leases.php?all={$_GET['all']}");
 }
 
-include("head.inc");
+include 'head.inc';
 
 ?>
 
 <body link="#0000CC" vlink="#0000CC" alink="#0000CC">
-<?php include("fbegin.inc"); ?>
+<?php include 'fbegin.inc'; ?>
 <?php
 
 function leasecmp($a, $b) {
@@ -436,6 +436,6 @@ foreach ($leases as $data) {
 <p><strong><?=gettext("No leases file found. Is the DHCP server active"); ?>?</strong></p>
 <?php endif; ?>
 
-<?php include("fend.inc"); ?>
+<?php include 'fend.inc'; ?>
 </body>
 </html>

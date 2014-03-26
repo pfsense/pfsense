@@ -50,9 +50,9 @@ ob_start(null, "1000");
 
 
 ## Load Essential Includes
-require_once('functions.inc');
-require_once('guiconfig.inc');
-require_once('notices.inc');
+require_once 'functions.inc';
+require_once 'guiconfig.inc';
+require_once 'notices.inc';
 
 if(isset($_REQUEST['closenotice'])){
 	close_notice($_REQUEST['closenotice']);
@@ -129,9 +129,9 @@ if (!is_array($config['widgets'])) {
 	}
 
 	## Load Functions Files
-	require_once('includes/functions.inc.php');
+	require_once 'includes/functions.inc.php';
 
-	## Check to see if we have a swap space,
+## Check to see if we have a swap space,
 	## if true, display, if false, hide it ...
 	if(file_exists("/usr/sbin/swapinfo")) {
 		$swapinfo = `/usr/sbin/swapinfo`;
@@ -252,7 +252,7 @@ if ($config['widgets'] && $config['widgets']['sequence'] != "") {
 	}
 
 	$widgetlist = $savedwidgetfiles;
-} else{
+} else {
 	// no saved widget sequence found, build default list.
 	$widgetlist = $widgetfiles;
 }
@@ -268,10 +268,10 @@ while (false !== ($filename = readdir($dirhandle))) {
 foreach($phpincludefiles as $includename) {
 	if(!stristr($includename, ".inc"))
 		continue;
-	include($directory . $includename);
+	include "$directory"."$includename";
 }
 
-##begin AJAX
+//begin AJAX
 $jscriptstr = <<<EOD
 <script type="text/javascript">
 //<![CDATA[
@@ -463,7 +463,7 @@ EOD;
 
 ## Set Page Title and Include Header
 $pgtitle = array(gettext("Status: Dashboard"));
-include("head.inc");
+include 'head.inc';
 
 ?>
 
@@ -476,7 +476,7 @@ columns = ['col1','col2','col3','col4', 'col5','col6','col7','col8','col9','col1
 </script>
 
 <?php
-include("fbegin.inc");
+include 'fbegin.inc';
 echo $jscriptstr;
 	if(!file_exists("/usr/local/www/themes/{$g['theme']}/no_big_logo"))
 		echo "<center><img src=\"./themes/".$g['theme']."/images/logobig.jpg\" alt=\"big logo\" /></center><br />";
@@ -726,7 +726,7 @@ pfSense_handle_custom_code("/usr/local/pkg/dashboard/pre_dashboard");
 				<?php
 					if ($divdisplay == "block")
 					{
-						include($directory . $widget);
+						include "$directory"."$widget";
 					}
 				?>
 			</div>
@@ -741,7 +741,7 @@ pfSense_handle_custom_code("/usr/local/pkg/dashboard/pre_dashboard");
 	<div style="clear:both;"></div>
 </div>
 
-<?php include("fend.inc"); ?>
+<?php include 'fend.inc'; ?>
 
 <script type="text/javascript">
 //<![CDATA[

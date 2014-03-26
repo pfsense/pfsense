@@ -26,7 +26,7 @@
 
 	pfSense_MODULE: openvpn
 */
-require_once("openvpn.inc");
+require_once 'openvpn.inc';
 
 function has_special_chars($text) {
 	return preg_match('/[^A-Za-z0-9 _-]/', $text);

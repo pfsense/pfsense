@@ -44,7 +44,7 @@
 $pgtitle = array(gettext("Diagnostics"), gettext("Tables"));
 $shortcut_section = "aliases";
 
-require_once("guiconfig.inc");
+require_once 'guiconfig.inc';
 
 // Set default table
 $tablename = "sshlockout";
@@ -90,8 +90,8 @@ if((($tablename == "bogons") || ($tablename == "bogonsv6")) && ($_POST['Download
 exec("/sbin/pfctl -t " . escapeshellarg($tablename) . " -T show", $entries);
 exec("/sbin/pfctl -sT", $tables);
 
-include("head.inc");
-include("fbegin.inc");
+include 'head.inc';
+include 'fbegin.inc';
 
 ?>
 
@@ -168,4 +168,4 @@ include("fbegin.inc");
 
 </table>
 
-<?php include("fend.inc"); ?>
+<?php include 'fend.inc'; ?>

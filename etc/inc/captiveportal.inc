@@ -43,11 +43,11 @@
 */
 
 /* include all configuration functions */
-require_once("config.inc");
-require_once("functions.inc");
-require_once("filter.inc");
-require_once("radius.inc");
-require_once("voucher.inc");
+require_once 'config.inc';
+require_once 'functions.inc';
+require_once 'filter.inc';
+require_once 'radius.inc';
+require_once 'voucher.inc';
 
 function get_default_captive_portal_html() {
 	global $config, $g, $cpzone;
@@ -2032,7 +2032,7 @@ function portal_allow($clientip,$clientmac,$username,$password = null, $attribut
 		else
 			$message = 0;
 
-		include("{$g['varetc_path']}/captiveportal-{$cpzone}-logout.html");
+		include "{$g['varetc_path']}/captiveportal-{$cpzone}-logout.html";
 
 	} else {
 		portal_reply_page($redirurl, "redir", "Just redirect the user.");

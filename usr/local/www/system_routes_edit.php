@@ -39,10 +39,10 @@
 ##|*MATCH=system_routes_edit.php*
 ##|-PRIV
 
-require_once("guiconfig.inc");
-require_once("filter.inc");
-require_once("util.inc");
-require_once("gwlb.inc");
+require_once 'guiconfig.inc';
+require_once 'filter.inc';
+require_once 'util.inc';
+require_once 'gwlb.inc';
 
 if (!is_array($config['staticroutes']['route']))
 	$config['staticroutes']['route'] = array();
@@ -208,14 +208,14 @@ if ($_POST) {
 
 $pgtitle = array(gettext("System"),gettext("Static Routes"),gettext("Edit route"));
 $shortcut_section = "routing";
-include("head.inc");
+include 'head.inc';
 ?>
 
 <body link="#0000CC" vlink="#0000CC" alink="#0000CC">
 <script type="text/javascript" src="/javascript/jquery.ipv4v6ify.js"></script>
 <script type="text/javascript" src="/javascript/autosuggest.js"></script>
 <script type="text/javascript" src="/javascript/suggestions.js"></script>
-<?php include("fbegin.inc");?>
+<?php include 'fbegin.inc';?>
 <?php if ($input_errors) print_input_errors($input_errors); ?>
 	<form action="system_routes_edit.php" method="post" name="iform" id="iform">
 		<table width="100%" border="0" cellpadding="6" cellspacing="0" summary="system routes edit">
@@ -407,6 +407,6 @@ include("head.inc");
 	var oTextbox1 = new AutoSuggestControl(document.getElementById("network"), new StateSuggestions(addressarray));
 //]]>
 </script>
-<?php include("fend.inc"); ?>
+<?php include 'fend.inc'; ?>
 </body>
 </html>

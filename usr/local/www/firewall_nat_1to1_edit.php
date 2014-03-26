@@ -39,10 +39,10 @@
 ##|*MATCH=firewall_nat_1to1_edit.php*
 ##|-PRIV
 
-require("guiconfig.inc");
-require_once("interfaces.inc");
-require_once("filter.inc");
-require("shaper.inc");
+require 'guiconfig.inc';
+require_once 'interfaces.inc';
+require_once 'filter.inc';
+require 'shaper.inc';
 
 $specialsrcdst = explode(" ", "any pptp pppoe l2tp openvpn");
 $ifdisp = get_configured_interface_with_descr();
@@ -221,7 +221,7 @@ if ($_POST) {
 }
 
 $pgtitle = array(gettext("Firewall"),gettext("NAT"),gettext("1:1"),gettext("Edit"));
-include("head.inc");
+include 'head.inc';
 
 ?>
 
@@ -270,7 +270,7 @@ function typesel_change() {
 </script>
 
 <?php
-include("fbegin.inc");
+include 'fbegin.inc';
 if ($input_errors)
 	print_input_errors($input_errors);
 ?>
@@ -548,6 +548,6 @@ if ($input_errors)
 	var oTextbox1 = new AutoSuggestControl(document.getElementById("dst"), new StateSuggestions(addressarray));
 //]]>
 </script>
-<?php include("fend.inc"); ?>
+<?php include 'fend.inc'; ?>
 </body>
 </html>

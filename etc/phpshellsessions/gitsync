@@ -5,11 +5,11 @@
  *   Part of the pfSense project pfSsh.php subsystem
  */
 
-require_once("globals.inc");
-require_once("filter.inc");
-require_once("shaper.inc");
-require_once("rrd.inc");
-require_once("pfsense-utils.inc");
+require_once 'globals.inc';
+require_once 'filter.inc';
+require_once 'shaper.inc';
+require_once 'rrd.inc';
+require_once 'pfsense-utils.inc';
 	
 $GIT_PKG = "git"; // Either "git" or the full package URL
 $GIT_REPO = "git://github.com/pfsense/pfsense.git";
@@ -73,9 +73,9 @@ conf_mount_rw();
 
 if(!file_exists("/usr/local/bin/git")) {
 	echo "Cannot find git, fetching...\n";
-	require_once("config.inc");
-	require_once("util.inc");
-	require_once("pkg-utils.inc");
+	require_once 'config.inc';
+	require_once 'util.inc';
+	require_once 'pkg-utils.inc';
 
 	echo "Trying to fetch package info...";
 	$pkg_info = get_pkg_info();

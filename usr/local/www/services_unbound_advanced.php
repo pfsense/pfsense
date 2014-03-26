@@ -38,8 +38,8 @@
 ##|*MATCH=services_unbound.php*
 ##|-PRIV
 
-require_once("guiconfig.inc");
-require_once("unbound.inc");
+require_once 'guiconfig.inc';
+require_once 'unbound.inc';
 
 if(!is_array($config['unbound']))
 	$config['unbound'] = array();
@@ -94,8 +94,7 @@ if ($_POST) {
 }
 
 $pgtitle = array(gettext("Services"),gettext("DNS Resolver"),gettext("Advanced"));
-include_once("head.inc");
-
+include_once 'head.inc';
 ?>
 
 <script type="text/javascript">
@@ -109,7 +108,7 @@ function enable_change(enable_over) {
 </script>
 	
 <body>
-<?php include("fbegin.inc"); ?>
+<?php include 'fbegin.inc'; ?>
 <form action="services_unbound_advanced.php" method="post" name="iform" id="iform">
 <?php if ($input_errors) print_input_errors($input_errors); ?>
 <?php if ($savemsg) print_info_box($savemsg); ?>
@@ -380,6 +379,6 @@ function enable_change(enable_over) {
 	</tbody>
 </table>
 </form>
-<?php include("fend.inc"); ?>
+<?php include 'fend.inc'; ?>
 </body>
 </html>

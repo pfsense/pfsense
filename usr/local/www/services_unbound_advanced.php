@@ -94,8 +94,7 @@ if ($_POST) {
 }
 
 $pgtitle = array(gettext("Services"),gettext("DNS Resolver"),gettext("Advanced"));
-include_once("head.inc");
-
+include_once 'head.inc';
 ?>
 
 <script type="text/javascript">

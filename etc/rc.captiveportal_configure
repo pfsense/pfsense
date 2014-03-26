@@ -29,11 +29,11 @@
     POSSIBILITY OF SUCH DAMAGE.
 */
 
-require("config.inc");
-require("functions.inc");
+require 'config.inc';
+require 'functions.inc';
 require_once 'filter.inc';
-require("shaper.inc");
-require("captiveportal.inc");
+require 'shaper.inc';
+require 'captiveportal.inc';
 
 captiveportal_configure();
 

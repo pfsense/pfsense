@@ -2,10 +2,10 @@
 
 <?php
 
-require("config.inc");
-require("functions.inc");
-require("shaper.inc");
-require("captiveportal.inc");
+require 'config.inc';
+require 'functions.inc';
+require 'shaper.inc';
+require 'captiveportal.inc';
 require_once 'rrd.inc';
 
 echo "Restarting webConfigurator...";

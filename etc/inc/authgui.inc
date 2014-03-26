@@ -37,8 +37,8 @@
 		pfSense_MODULE: authgui
 */
 
-include_once("auth.inc");
-include_once("priv.inc");
+include_once 'auth.inc';
+include_once 'priv.inc';
 
 /* Authenticate user - exit if failed */
 if (!session_auth()) {

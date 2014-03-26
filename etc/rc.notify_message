@@ -28,9 +28,9 @@
     POSSIBILITY OF SUCH DAMAGE.
 */
 
-require("config.inc");
-require("functions.inc");
-require("notices.inc");
+require 'config.inc';
+require 'functions.inc';
+require 'notices.inc';
 
 $arguments = getopt("egm:");
 

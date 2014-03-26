@@ -1,6 +1,6 @@
 global $config;
 require_once 'filter.inc';
-require("shaper.inc");
+require 'shaper.inc';
 $config = parse_config(true);
 echo "Adding allow all rule...\n";
 $filterent = array();

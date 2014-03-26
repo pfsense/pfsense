@@ -43,7 +43,7 @@ header("Cache-Control: post-check=0, pre-check=0", FALSE );
 header("Pragma: no-cache"); // HTTP/1.0
 
 require_once 'guiconfig.inc';
-include_once("includes/functions.inc.php");
+include_once 'includes/functions.inc.php';
 
 echo get_stats();
 

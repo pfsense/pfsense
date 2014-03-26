@@ -5512,7 +5512,7 @@ wrapMap.th = wrapMap.td;
 
 // IE can't serialize <link> and <script> tags normally
 if ( !jQuery.support.htmlSerialize ) {
-	wrapMap._default = [ 1, "div<div>", "</div>" ];
+	wrapMap._default = [ 1, "<div>", "</div>" ];
 }
 
 jQuery.fn.extend({

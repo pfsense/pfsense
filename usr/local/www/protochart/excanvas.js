@@ -694,7 +694,7 @@ if (!window.CanvasRenderingContext2D) {
     return {
       x: Z * (aX * this.m_[0][0] + aY * this.m_[1][0] + this.m_[2][0]) - Z2,
       y: Z * (aX * this.m_[0][1] + aY * this.m_[1][1] + this.m_[2][1]) - Z2
-    }
+    };
   };
 
   contextPrototype.save = function() {

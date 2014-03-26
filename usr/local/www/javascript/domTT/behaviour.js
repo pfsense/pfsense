@@ -75,10 +75,10 @@ var Behaviour = {
 			window.onload = function() {
 				oldonload();
 				func();
-			}
+			};
 		}
 	}
-}
+};
 
 Behaviour.start();
 

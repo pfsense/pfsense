@@ -157,7 +157,7 @@ domTT_Hash.prototype.get = function(in_key)
 	}
 
 	return null;
-}
+};
 
 domTT_Hash.prototype.set = function(in_key, in_value)
 {
@@ -176,7 +176,7 @@ domTT_Hash.prototype.set = function(in_key, in_value)
 	}
 
 	return false;
-}
+};
 
 domTT_Hash.prototype.remove = function(in_key)
 {
@@ -194,17 +194,17 @@ domTT_Hash.prototype.remove = function(in_key)
 	}
 
 	return tmp_value;
-}
+};
 
 domTT_Hash.prototype.size = function()
 {
 	return this.length;
-}
+};
 
 domTT_Hash.prototype.has = function(in_key)
 {
 	return typeof(this.elementData[in_key]) != 'undefined';
-}
+};
 
 domTT_Hash.prototype.find = function(in_obj)
 {
@@ -217,7 +217,7 @@ domTT_Hash.prototype.find = function(in_obj)
 	}
 
 	return null;
-}
+};
 
 domTT_Hash.prototype.merge = function(in_hash)
 {
@@ -234,7 +234,7 @@ domTT_Hash.prototype.merge = function(in_hash)
 
 		this.elementData[tmp_key] = in_hash.elementData[tmp_key];
 	}
-}
+};
 
 domTT_Hash.prototype.compare = function(in_hash)
 {
@@ -252,7 +252,7 @@ domTT_Hash.prototype.compare = function(in_hash)
 	}
 	
 	return true;
-}
+};
 
 // }}}
 // {{{ domLib_isDescendantOf()
@@ -529,7 +529,7 @@ function domLib_clearTimeout(in_id)
 	{
 		if (domLib_timeoutStates.has(in_id))
 		{
-			clearTimeout(domLib_timeoutStates.get(in_id).get('timeoutId'))
+			clearTimeout(domLib_timeoutStates.get(in_id).get('timeoutId'));
 			domLib_timeoutStates.remove(in_id);
 		}
 	}

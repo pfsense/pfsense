@@ -117,7 +117,7 @@ if (domLib_useLibrary && domTT_useGlobalMousePosition)
 		{
 			domTT_dragUpdate(in_event);
 		}
-	}
+	};
 }
 
 // }}}

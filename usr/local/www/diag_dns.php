@@ -32,7 +32,7 @@
 */
 
 $pgtitle = array(gettext("Diagnostics"),gettext("DNS Lookup"));
-require("guiconfig.inc");
+require 'guiconfig.inc';
 
 /* Cheap hack to support both $_GET and $_POST */
 if ($_GET['host'])

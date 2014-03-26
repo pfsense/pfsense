@@ -38,9 +38,9 @@
 ##|*MATCH=crash_reporter.php*
 ##|-PRIV
 
-require("guiconfig.inc");
-require("functions.inc");
-require("captiveportal.inc");
+require 'guiconfig.inc';
+require 'functions.inc';
+require 'captiveportal.inc';
 
 define("FILE_SIZE", 450000);
 

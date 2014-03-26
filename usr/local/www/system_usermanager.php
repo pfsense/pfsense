@@ -46,8 +46,8 @@
 ##|*MATCH=system_usermanager.php*
 ##|-PRIV
 
-require("certs.inc");
-require("guiconfig.inc");
+require 'certs.inc';
+require 'guiconfig.inc';
 
 
 // start admin user code

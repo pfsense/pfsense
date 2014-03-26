@@ -44,7 +44,7 @@
 ##|*MATCH=status_dhcpv6_leases.php*
 ##|-PRIV
 
-require("guiconfig.inc");
+require 'guiconfig.inc';
 require_once("config.inc");
 
 $pgtitle = array(gettext("Status"),gettext("DHCPv6 leases"));

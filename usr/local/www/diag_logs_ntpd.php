@@ -40,7 +40,7 @@
 ##|*MATCH=diag_logs_ntpd.php*
 ##|-PRIV
 
-require("guiconfig.inc");
+require 'guiconfig.inc';
 
 $ntpd_logfile = "{$g['varlog_path']}/ntpd.log";
 

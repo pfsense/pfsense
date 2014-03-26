@@ -41,7 +41,7 @@
 ##|*MATCH=system_usermanager_settings.php*
 ##|-PRIV
 
-require("guiconfig.inc");
+require 'guiconfig.inc';
 
 $pconfig['session_timeout'] = &$config['system']['webgui']['session_timeout'];
 $pconfig['authmode'] = &$config['system']['webgui']['authmode'];

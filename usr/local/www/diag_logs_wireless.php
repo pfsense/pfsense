@@ -42,7 +42,7 @@
 ##|*MATCH=diag_logs_wireless.php*
 ##|-PRIV
 
-require("guiconfig.inc");
+require 'guiconfig.inc';
 
 $wireless_logfile = "{$g['varlog_path']}/wireless.log";
 

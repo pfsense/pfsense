@@ -29,8 +29,8 @@
 
 $nocsrf = true;
 
-require("globals.inc");
-require("guiconfig.inc");
+require 'globals.inc';
+require 'guiconfig.inc';
 
 define('PC_SYSINSTALL', '/usr/sbin/pc-sysinstall/pc-sysinstall/pc-sysinstall.sh');
 

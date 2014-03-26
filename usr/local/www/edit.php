@@ -39,7 +39,7 @@
 ##|-PRIV
 
 $pgtitle = array(gettext("Diagnostics"), gettext("Edit file"));
-require("guiconfig.inc");
+require 'guiconfig.inc';
 
 if($_POST['action']) {
 	switch($_POST['action']) {
@@ -86,7 +86,7 @@ if($_POST['action']) {
 	exit;
 }
 
-require("head.inc");
+require 'head.inc';
 outputCSSFileInline("code-syntax-highlighter/SyntaxHighlighter.css");
 outputJavaScriptFileInline("filebrowser/browser.js");
 outputJavaScriptFileInline("javascript/base64.js");

@@ -44,7 +44,7 @@
 ##|*MATCH=services_router_advertisements.php*
 ##|-PRIV
 
-require("guiconfig.inc");
+require 'guiconfig.inc';
 
 if(!$g['services_dhcp_server_enable']) {
 	Header("Location: /");

@@ -36,11 +36,11 @@
 ##|*MATCH=services_captiveportal_zones_edit.php*
 ##|-PRIV
 
-require("guiconfig.inc");
-require("functions.inc");
+require 'guiconfig.inc';
+require 'functions.inc';
 require_once("filter.inc");
-require("shaper.inc");
-require("captiveportal.inc");
+require 'shaper.inc';
+require 'captiveportal.inc';
 
 $pgtitle = array(gettext("Services"),gettext("Captive portal"),gettext("Edit Zones"));
 $shortcut_section = "captiveportal";

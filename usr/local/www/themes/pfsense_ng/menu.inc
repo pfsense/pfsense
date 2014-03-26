@@ -36,7 +36,7 @@
                                                                               */
 /* ========================================================================== */
 
-require("menu.inc");
+require 'menu.inc';
 
 define("TMENU_STUB", "
 	// set up drop downs anywhere in the body of the page. I think the bottom of the page is better.. 

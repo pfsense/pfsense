@@ -39,10 +39,10 @@
 ##|*MATCH=firewall_nat_1to1_edit.php*
 ##|-PRIV
 
-require("guiconfig.inc");
+require 'guiconfig.inc';
 require_once("interfaces.inc");
 require_once("filter.inc");
-require("shaper.inc");
+require 'shaper.inc';
 
 $specialsrcdst = explode(" ", "any pptp pppoe l2tp openvpn");
 $ifdisp = get_configured_interface_with_descr();

@@ -38,7 +38,7 @@
 ##|*MATCH=interfaces_wireless.php*
 ##|-PRIV
 
-require("guiconfig.inc");
+require 'guiconfig.inc';
 
 if (!is_array($config['wireless']))
 	$config['wireless'] = array();

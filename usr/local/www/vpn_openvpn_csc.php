@@ -34,7 +34,7 @@
 ##|*MATCH=vpn_openvpn_csc.php*
 ##|-PRIV
 
-require("guiconfig.inc");
+require 'guiconfig.inc';
 require_once("openvpn.inc");
 
 $pgtitle = array(gettext("OpenVPN"), gettext("Client Specific Override"));

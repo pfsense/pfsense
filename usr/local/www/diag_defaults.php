@@ -42,7 +42,7 @@
 ##|*MATCH=diag_defaults.php*
 ##|-PRIV
 
-require("guiconfig.inc");
+require 'guiconfig.inc';
 
 if ($_POST['Submit'] == " " . gettext("No") . " ") {
 	header("Location: index.php");

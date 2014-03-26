@@ -43,7 +43,7 @@
 ##|*MATCH=bandwidth_by_ip.php*
 ##|-PRIV
 
-require("guiconfig.inc");
+require 'guiconfig.inc';
 
 if ($_POST['width'])
 	$width = $_POST['width'];

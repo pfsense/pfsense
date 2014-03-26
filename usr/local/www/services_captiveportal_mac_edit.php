@@ -48,11 +48,11 @@ function passthrumacs_sort() {
 	usort($config['captiveportal'][$cpzone]['passthrumac'],"passthrumacscmp");
 }
 
-require("guiconfig.inc");
-require("functions.inc");
+require 'guiconfig.inc';
+require 'functions.inc';
 require_once("filter.inc");
-require("shaper.inc");
-require("captiveportal.inc");
+require 'shaper.inc';
+require 'captiveportal.inc';
 
 global $cpzone;
 global $cpzoneid;

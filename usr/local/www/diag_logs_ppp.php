@@ -43,7 +43,7 @@
 ##|*MATCH=diag_logs_ppp.php*
 ##|-PRIV
 
-require("guiconfig.inc");
+require 'guiconfig.inc';
 
 $ppp_logfile = "{$g['varlog_path']}/ppp.log";
 

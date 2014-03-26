@@ -37,7 +37,7 @@
 ##|*MATCH=services_dyndns.php*
 ##|-PRIV
 
-require("guiconfig.inc");
+require 'guiconfig.inc';
 
 if (!is_array($config['dyndnses']['dyndns']))
 	$config['dyndnses']['dyndns'] = array();

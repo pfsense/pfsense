@@ -38,7 +38,7 @@
 ##|*MATCH=services_ntpd.php*
 ##|-PRIV
 
-require("guiconfig.inc");
+require 'guiconfig.inc';
 require_once('rrd.inc');
 require_once("shaper.inc");
 

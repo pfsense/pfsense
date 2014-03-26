@@ -39,7 +39,7 @@
 $pgtitle = array(gettext("Interfaces"),gettext("QinQ"), gettext("Edit"));
 $shortcut_section = "interfaces";
 
-require("guiconfig.inc");
+require 'guiconfig.inc';
 
 if (!is_array($config['qinqs']['qinqentry']))
 	$config['qinqs']['qinqentry'] = array();

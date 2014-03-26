@@ -49,7 +49,7 @@ function wol_sort() {
         usort($config['wol']['wolentry'], "wolcmp");
 }
 
-require("guiconfig.inc");
+require 'guiconfig.inc';
 
 if (!is_array($config['wol']['wolentry'])) {
 	$config['wol']['wolentry'] = array();

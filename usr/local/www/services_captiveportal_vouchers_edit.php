@@ -35,11 +35,11 @@
 ##|*MATCH=services_captiveportal_vouchers_edit.php*
 ##|-PRIV
 
-require("guiconfig.inc");
-require("functions.inc");
+require 'guiconfig.inc';
+require 'functions.inc';
 require_once("filter.inc");
-require("shaper.inc");
-require("captiveportal.inc");
+require 'shaper.inc';
+require 'captiveportal.inc';
 require_once("voucher.inc");
 
 $pgtitle = array(gettext("Services"), gettext("Captive portal"), gettext("Edit Voucher Rolls"));

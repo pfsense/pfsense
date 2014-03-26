@@ -39,7 +39,7 @@
 ##|*MATCH=status_gateways.php*
 ##|-PRIV
 
-require("guiconfig.inc");
+require 'guiconfig.inc';
 
 $a_gateways = return_gateways_array();
 $gateways_status = array();

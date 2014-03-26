@@ -271,7 +271,7 @@ if ($savemsg)
 		</td>
 	</tr>
 </table>
-<?php require("fend.inc"); ?>
+<?php require 'fend.inc'; ?>
 </body>
 </html>
 

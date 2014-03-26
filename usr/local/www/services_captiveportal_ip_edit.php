@@ -51,11 +51,11 @@ function allowedips_sort() {
 	usort($config['captiveportal'][$cpzone]['allowedip'],"allowedipscmp");
 }
 
-require("guiconfig.inc");
-require("functions.inc");
+require 'guiconfig.inc';
+require 'functions.inc';
 require_once("filter.inc");
-require("shaper.inc");
-require("captiveportal.inc");
+require 'shaper.inc';
+require 'captiveportal.inc';
 
 $pgtitle = array(gettext("Services"),gettext("Captive portal"),gettext("Edit allowed IP address"));
 $shortcut_section = "captiveportal";

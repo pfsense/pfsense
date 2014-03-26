@@ -48,7 +48,7 @@ function pptpd_users_sort() {
         usort($config['pptpd']['user'], "pptpusercmp");
 }
 
-require("guiconfig.inc");
+require 'guiconfig.inc';
 require_once("vpn.inc");
 
 if (!is_array($config['pptpd']['user'])) {

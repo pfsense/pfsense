@@ -41,9 +41,9 @@
 ##|*MATCH=firewall_nat_out_edit.php*
 ##|-PRIV
 
-require("guiconfig.inc");
+require 'guiconfig.inc';
 require_once("filter.inc");
-require("shaper.inc");
+require 'shaper.inc';
 
 if (!is_array($config['nat']['outbound']))
 	$config['nat']['outbound'] = array();

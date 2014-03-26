@@ -41,9 +41,9 @@
 ##|*MATCH=firewall_rules_edit.php*
 ##|-PRIV
 
-require("guiconfig.inc");
+require 'guiconfig.inc';
 require_once("filter.inc");
-require("shaper.inc");
+require 'shaper.inc';
 
 function is_posnumericint($arg) {
 	// Note that to be safe we do not allow any leading zero - "01", "007"

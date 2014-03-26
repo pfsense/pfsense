@@ -53,10 +53,10 @@ function nat_npt_rules_sort() {
         usort($config['nat']['npt'], "natnptcmp");
 }
 
-require("guiconfig.inc");
+require 'guiconfig.inc';
 require_once("interfaces.inc");
 require_once("filter.inc");
-require("shaper.inc");
+require 'shaper.inc';
 
 $ifdisp = get_configured_interface_with_descr();
 foreach ($ifdisp as $kif => $kdescr) {

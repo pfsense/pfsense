@@ -42,7 +42,7 @@
 ##|-PRIV
 
 $d_isfwfile = 1;
-require("guiconfig.inc");
+require 'guiconfig.inc';
 require_once("pfsense-utils.inc");
 
 $curcfg = $config['system']['firmware'];
@@ -158,7 +158,7 @@ update_output_window($static_text);
 if ($needs_system_upgrade == false) {
 	echo "</p>";
 	echo "</form>";
-	require("fend.inc");
+	require 'fend.inc';
 	echo "</body>";
 	echo "</html>";
 	exit;

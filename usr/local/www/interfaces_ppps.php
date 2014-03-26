@@ -40,7 +40,7 @@
 ##|*MATCH=interfaces_ppps.php*
 ##|-PRIV
 
-require("guiconfig.inc");
+require 'guiconfig.inc';
 require_once("functions.inc");
 
 function ppp_inuse($num) {

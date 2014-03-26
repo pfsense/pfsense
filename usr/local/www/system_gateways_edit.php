@@ -39,8 +39,8 @@
 ##|*MATCH=system_gateways_edit.php*
 ##|-PRIV
 
-require("guiconfig.inc");
-require("pkg-utils.inc");
+require 'guiconfig.inc';
+require 'pkg-utils.inc';
 
 $a_gateways = return_gateways_array(true, false, true);
 $a_gateways_arr = array();

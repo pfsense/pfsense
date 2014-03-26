@@ -43,13 +43,13 @@
 $pgtitle = array(gettext("Interfaces"),gettext("Assign network ports"));
 $shortcut_section = "interfaces";
 
-require("guiconfig.inc");
-require("functions.inc");
+require 'guiconfig.inc';
+require 'functions.inc';
 require_once("filter.inc");
-require("shaper.inc");
-require("ipsec.inc");
-require("vpn.inc");
-require("captiveportal.inc");
+require 'shaper.inc';
+require 'ipsec.inc';
+require 'vpn.inc';
+require 'captiveportal.inc';
 require_once("rrd.inc");
 
 /*

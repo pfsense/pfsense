@@ -39,7 +39,7 @@
 ##|-PRIV
 
 $pgtitle = array(gettext("Status"), gettext("CPU load"));
-require("guiconfig.inc");
+require 'guiconfig.inc';
 include 'head.inc';
 include 'fbegin.inc';
 

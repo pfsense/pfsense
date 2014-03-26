@@ -40,7 +40,7 @@
 ##|*MATCH=interfaces_vlan.php*
 ##|-PRIV
 
-require("guiconfig.inc");
+require 'guiconfig.inc';
 
 if (!is_array($config['vlans']['vlan']))
 	$config['vlans']['vlan'] = array();

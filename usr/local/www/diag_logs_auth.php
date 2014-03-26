@@ -40,7 +40,7 @@
 ##|*MATCH=diag_logs_auth.php*
 ##|-PRIV
 
-require("guiconfig.inc");
+require 'guiconfig.inc';
 
 $portal_logfile = "{$g['varlog_path']}/portalauth.log";
 

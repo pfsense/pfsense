@@ -40,7 +40,7 @@
 ##|*MATCH=status_upnp.php*
 ##|-PRIV
 
-require("guiconfig.inc");
+require 'guiconfig.inc';
 
 if ($_POST) {
 	if ($_POST['clear'] == "Clear") {

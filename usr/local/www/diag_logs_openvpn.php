@@ -45,7 +45,7 @@
 $pgtitle = array(gettext("Status"),gettext("System logs"),gettext("OpenVPN"));
 $shortcut_section = "openvpn";
 
-require("guiconfig.inc");
+require 'guiconfig.inc';
 require_once("vpn.inc");
 
 $openvpn_logfile = "{$g['varlog_path']}/openvpn.log";

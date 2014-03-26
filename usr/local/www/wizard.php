@@ -36,11 +36,11 @@
 ##|-PRIV
 
 
-require("globals.inc");
-require("guiconfig.inc");
-require("functions.inc");
+require 'globals.inc';
+require 'guiconfig.inc';
+require 'functions.inc';
 require_once("filter.inc");
-require("shaper.inc");
+require 'shaper.inc';
 require_once("rrd.inc");
 
 function gentitle_pkg($pgname) {

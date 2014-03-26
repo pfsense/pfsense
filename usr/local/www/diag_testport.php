@@ -47,7 +47,7 @@
 $allowautocomplete = true;
 
 $pgtitle = array(gettext("Diagnostics"), gettext("Test Port"));
-require("guiconfig.inc");
+require 'guiconfig.inc';
 
 define('NC_TIMEOUT', 10);
 

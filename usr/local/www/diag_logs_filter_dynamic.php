@@ -42,7 +42,7 @@
 ##|*MATCH=diag_logs_filter_dynamic.php*
 ##|-PRIV
 
-require("guiconfig.inc");
+require 'guiconfig.inc';
 require_once("filter_log.inc");
 
 $filter_logfile = "{$g['varlog_path']}/filter.log";

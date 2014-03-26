@@ -37,7 +37,7 @@
 ##|*MATCH=system_advanced_notifications.php*
 ##|-PRIV
 
-require("guiconfig.inc");
+require 'guiconfig.inc';
 require_once("notices.inc");
 
 // Growl

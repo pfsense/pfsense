@@ -35,7 +35,7 @@
 ##|*MATCH=license.php*
 ##|-PRIV
 
-require("guiconfig.inc");
+require 'guiconfig.inc';
 include 'head.inc';
 
 ?>

@@ -39,11 +39,11 @@
 if ($_POST['postafterlogin'])
 	$nocsrf= true;
 
-require("guiconfig.inc");
-require("functions.inc");
+require 'guiconfig.inc';
+require 'functions.inc';
 require_once("filter.inc");
-require("shaper.inc");
-require("captiveportal.inc");
+require 'shaper.inc';
+require 'captiveportal.inc';
 require_once("voucher.inc");
 
 $cpzone = $_GET['zone'];

@@ -39,7 +39,7 @@
 ##|*MATCH=diag_confbak.php*
 ##|-PRIV
 
-require("guiconfig.inc");
+require 'guiconfig.inc';
 
 if (isset($_POST['backupcount'])) {
 	if (is_numeric($_POST['backupcount']) && ($_POST['backupcount'] >= 0)) {

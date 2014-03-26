@@ -32,7 +32,7 @@ define('ZEROMQ_TRUE', 'true');
 define('ZEROMQ_FASLE', 'false');
 
 $do_not_include_config_gui_inc = true;
-require("auth.inc");
+require 'auth.inc';
 
 //$debug = true; 
 
@@ -297,7 +297,7 @@ function get_notices_zeromq($raw_params) {
 	$params = $raw_params;
 	if(zeromq_auth($raw_params) == false)
 		return ZEROMQ_AUTH_FAIL;
-	require("notices.inc");
+	require 'notices.inc';
 	if(!$params) {
 		$toreturn = get_notices();
 	} else {

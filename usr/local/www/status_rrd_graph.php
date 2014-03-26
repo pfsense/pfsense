@@ -38,9 +38,9 @@
 ##|*MATCH=status_rrd_graph.php*
 ##|-PRIV
 
-require("guiconfig.inc");
+require 'guiconfig.inc';
 require_once("filter.inc");
-require("shaper.inc");
+require 'shaper.inc';
 require_once("rrd.inc");
 
 unset($input_errors);

@@ -40,7 +40,7 @@
 ##|*MATCH=services_wol.php*
 ##|-PRIV
 
-require("guiconfig.inc");
+require 'guiconfig.inc';
 
 if (!is_array($config['wol']['wolentry'])) {
 	$config['wol']['wolentry'] = array();

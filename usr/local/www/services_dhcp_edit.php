@@ -57,7 +57,7 @@ if(!$g['services_dhcp_server_enable']) {
 	exit;
 }
 
-require("guiconfig.inc");
+require 'guiconfig.inc';
 
 $if = $_GET['if'];
 if ($_POST['if'])

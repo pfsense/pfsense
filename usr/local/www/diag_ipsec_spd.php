@@ -43,8 +43,8 @@
 ##|*MATCH=diag_ipsec_spd.php*
 ##|-PRIV
 
-require("guiconfig.inc");
-require("ipsec.inc");
+require 'guiconfig.inc';
+require 'ipsec.inc';
 
 $pgtitle = array(gettext("Status"),gettext("IPsec"),gettext("SPD"));
 $shortcut_section = "ipsec";

@@ -9,7 +9,7 @@
 	Copyright (C) 2010 - Jim Pingle
 */
 
-require("guiconfig.inc");
+require 'guiconfig.inc';
 
 $pgtitle = array(gettext("Diagnostics"), gettext("S.M.A.R.T. Monitor Tools"));
 $smartctl = "/usr/local/sbin/smartctl";

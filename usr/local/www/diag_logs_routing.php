@@ -40,7 +40,7 @@
 ##|*MATCH=diag_logs_routing.php*
 ##|-PRIV
 
-require("guiconfig.inc");
+require 'guiconfig.inc';
 
 $routing_logfile = "{$g['varlog_path']}/routing.log";
 

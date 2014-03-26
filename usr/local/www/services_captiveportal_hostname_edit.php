@@ -50,11 +50,11 @@ function allowedhostnames_sort() {
 	usort($config['captiveportal'][$cpzone]['allowedhostname'],"allowedhostname");
 }
 
-require("guiconfig.inc");
-require("functions.inc");
+require 'guiconfig.inc';
+require 'functions.inc';
 require_once("filter.inc");
-require("shaper.inc");
-require("captiveportal.inc");
+require 'shaper.inc';
+require 'captiveportal.inc';
 
 $pgtitle = array(gettext("Services"),gettext("Captive portal"),gettext("Edit allowed Hostname"));
 $shortcut_section = "captiveportal";

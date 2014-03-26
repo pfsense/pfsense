@@ -39,7 +39,7 @@
 ##|*MATCH=load_balancer_monitor_edit.php*
 ##|-PRIV
 
-require("guiconfig.inc");
+require 'guiconfig.inc';
 
 if (!is_array($config['load_balancer']['monitor_type'])) {
 	$config['load_balancer']['monitor_type'] = array();

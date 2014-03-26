@@ -38,7 +38,7 @@
 ##|*MATCH=interfaces_qinq.php*
 ##|-PRIV
 
-require("guiconfig.inc");
+require 'guiconfig.inc';
 require_once("functions.inc");
 
 if (!is_array($config['qinqs']['qinqentry']))

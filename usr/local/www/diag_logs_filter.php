@@ -43,7 +43,7 @@
 ##|*MATCH=diag_logs_filter.php*
 ##|-PRIV
 
-require("guiconfig.inc");
+require 'guiconfig.inc';
 require_once("filter_log.inc");
 
 # --- AJAX RESOLVE ---

@@ -42,9 +42,9 @@
 ##|*MATCH=halt.php*
 ##|-PRIV
 
-require("guiconfig.inc");
-require("functions.inc");
-require("captiveportal.inc");
+require 'guiconfig.inc';
+require 'functions.inc';
+require 'captiveportal.inc';
 
 if ($_POST['Submit'] == " " . gettext("No") . " ") {
 	header("Location: index.php");

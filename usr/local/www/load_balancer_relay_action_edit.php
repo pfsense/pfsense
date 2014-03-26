@@ -39,7 +39,7 @@
 ##|*MATCH=load_balancer_relay_action_edit.php*
 ##|-PRIV
 
-require("guiconfig.inc");
+require 'guiconfig.inc';
 if (!is_array($config['load_balancer']['lbaction'])) {
 	$config['load_balancer']['lbaction'] = array();
 }

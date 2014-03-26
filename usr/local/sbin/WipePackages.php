@@ -35,8 +35,8 @@ if(!function_exists("readline")) {
 	die("Need readline() library");
 }
 
-require("functions.inc");
-require("config.inc");
+require 'functions.inc';
+require 'config.inc';
 
 echo "\nThis script will wipe all installed packages off of your pfSense installation.\n";
 

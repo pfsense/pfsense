@@ -127,7 +127,7 @@ function display_error_form($http_code, $desc) {
 				$('#inputerrors').html('');
 			}
 			<?php
-				require("headjs.php");
+				require 'headjs.php';
 				echo getHeadJS();
 			?>
 		//]]>
@@ -248,7 +248,7 @@ $have_cookies = isset($_COOKIE["cookie_test"]);
 				$('#inputerrors').html('');
 			}
 			<?php
-				require("headjs.php");
+				require 'headjs.php';
 				echo getHeadJS();
 			?>
 		//]]>

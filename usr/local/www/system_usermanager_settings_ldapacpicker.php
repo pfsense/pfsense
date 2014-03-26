@@ -31,7 +31,7 @@
 	pfSense_MODULE:	auth
 */
 
-require("guiconfig.inc");
+require 'guiconfig.inc';
 require_once("auth.inc");
 
 $ous = array();

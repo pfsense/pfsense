@@ -41,7 +41,7 @@
 ##|*MATCH=diag_logs_relayd.php*
 ##|-PRIV
 
-require("guiconfig.inc");
+require 'guiconfig.inc';
 
 $relayd_logfile = "{$g['varlog_path']}/relayd.log";
 

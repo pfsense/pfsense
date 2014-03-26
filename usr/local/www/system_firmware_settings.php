@@ -39,7 +39,7 @@
 ##|*MATCH=system_firmware_settings.php*
 ##|-PRIV
 
-require("guiconfig.inc");
+require 'guiconfig.inc';
 
 if ($_POST) {
 	if (!$input_errors) {

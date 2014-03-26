@@ -42,7 +42,7 @@ function admusercmp($a, $b) {
 	return strcasecmp($a['name'], $b['name']);
 }
 
-require("guiconfig.inc");
+require 'guiconfig.inc';
 
 $pgtitle = array("System","User manager","Add privileges");
 

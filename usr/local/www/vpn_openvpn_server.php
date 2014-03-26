@@ -34,7 +34,7 @@
 ##|*MATCH=vpn_openvpn_server.php*
 ##|-PRIV
 
-require("guiconfig.inc");
+require 'guiconfig.inc';
 require_once("openvpn.inc");
 
 if (!is_array($config['openvpn']['openvpn-server']))

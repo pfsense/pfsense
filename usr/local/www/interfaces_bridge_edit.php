@@ -38,7 +38,7 @@
 ##|*MATCH=interfaces_bridge_edit.php*
 ##|-PRIV
 
-require("guiconfig.inc");
+require 'guiconfig.inc';
 
 if (!is_array($config['bridges']['bridged']))
 	$config['bridges']['bridged'] = array();

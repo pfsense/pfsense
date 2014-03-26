@@ -37,7 +37,7 @@
 ##|-PRIV
 
 
-require("guiconfig.inc");
+require 'guiconfig.inc';
 
 header("Content-Type: text/plain");
 

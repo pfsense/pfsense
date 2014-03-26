@@ -39,7 +39,7 @@
 ##|*MATCH=diag_pf_info.php*
 ##|-PRIV
 
-require("guiconfig.inc");
+require 'guiconfig.inc';
 
 $pfSversion = str_replace("\n", "", file_get_contents("/etc/version"));
 

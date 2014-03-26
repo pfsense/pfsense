@@ -228,6 +228,6 @@ pclose($fd);
   </tr>
 </table>
 
-<?php require("fend.inc"); ?>
+<?php require 'fend.inc'; ?>
 </body>
 </html>

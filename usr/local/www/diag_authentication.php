@@ -39,7 +39,7 @@
 ##|*MATCH=diag_authentication.php*
 ##|-PRIV
 
-require("guiconfig.inc");
+require 'guiconfig.inc';
 require_once("PEAR.inc");
 require_once("radius.inc");
 

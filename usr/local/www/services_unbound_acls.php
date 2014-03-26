@@ -29,8 +29,8 @@
 	POSSIBILITY OF SUCH DAMAGE.
 */
 
-require("guiconfig.inc");
-require("unbound.inc");
+require 'guiconfig.inc';
+require 'unbound.inc';
 
 if (!is_array($config['unbound']['acls']))
 	$config['unbound']['acls'] = array();

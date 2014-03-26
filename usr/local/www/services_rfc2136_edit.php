@@ -29,7 +29,7 @@
 	pfSense_MODULE:	dnsupdate
 */
 
-require("guiconfig.inc");
+require 'guiconfig.inc';
 
 if (!is_array($config['dnsupdates']['dnsupdate'])) {
 	$config['dnsupdates']['dnsupdate'] = array();

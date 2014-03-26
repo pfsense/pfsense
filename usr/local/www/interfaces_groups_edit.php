@@ -38,7 +38,7 @@
 ##|-PRIV
 
 
-require("guiconfig.inc");
+require 'guiconfig.inc';
 require_once("functions.inc");
 
 $pgtitle = array(gettext("Interfaces"),gettext("Groups"),gettext("Edit"));

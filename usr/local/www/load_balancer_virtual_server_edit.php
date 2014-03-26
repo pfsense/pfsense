@@ -39,7 +39,7 @@
 ##|*MATCH=load_balancer_virtual_server_edit.php*
 ##|-PRIV
 
-require("guiconfig.inc");
+require 'guiconfig.inc';
 
 if (!is_array($config['load_balancer']['virtual_server'])) {
         $config['load_balancer']['virtual_server'] = array();

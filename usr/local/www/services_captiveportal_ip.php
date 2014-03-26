@@ -39,11 +39,11 @@
 ##|*MATCH=services_captiveportal_ip.php*
 ##|-PRIV
 
-require("guiconfig.inc");
-require("functions.inc");
+require 'guiconfig.inc';
+require 'functions.inc';
 require_once("filter.inc");
-require("shaper.inc");
-require("captiveportal.inc");
+require 'shaper.inc';
+require 'captiveportal.inc';
 
 $cpzone = $_GET['zone'];
 if (isset($_POST['zone']))

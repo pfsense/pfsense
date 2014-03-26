@@ -39,7 +39,7 @@
 ##|*MATCH=services_dhcpv6_relay.php*
 ##|-PRIV
 
-require("guiconfig.inc");
+require 'guiconfig.inc';
 
 $pconfig['enable'] = isset($config['dhcrelay6']['enable']);
 if (empty($config['dhcrelay6']['interface']))

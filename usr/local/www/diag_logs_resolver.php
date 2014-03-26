@@ -43,7 +43,7 @@
 ##|*MATCH=diag_logs_resolver.php*
 ##|-PRIV
 
-require("guiconfig.inc");
+require 'guiconfig.inc';
 
 $system_logfile = "{$g['varlog_path']}/resolver.log";
 

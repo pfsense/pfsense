@@ -37,7 +37,7 @@
 ##|*MATCH=patterns.php*
 ##|-PRIV
 
-require("guiconfig.inc");
+require 'guiconfig.inc';
 
 //Move the upload file to /usr/local/share/protocols (is_uploaded_file must use tmp_name as argument)
 if (($_POST['submit'] == gettext("Upload Pattern file")) && is_uploaded_file($_FILES['ulfile']['tmp_name'])) {

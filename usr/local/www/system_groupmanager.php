@@ -44,7 +44,7 @@
 ##|*MATCH=system_groupmanager.php*
 ##|-PRIV
 
-require("guiconfig.inc");
+require 'guiconfig.inc';
 
 $pgtitle = array(gettext("System"), gettext("Group manager"));
 

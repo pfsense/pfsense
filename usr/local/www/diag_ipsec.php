@@ -48,9 +48,9 @@ global $g;
 $pgtitle = array(gettext("Status"),gettext("IPsec"));
 $shortcut_section = "ipsec";
 
-require("guiconfig.inc");
+require 'guiconfig.inc';
 include 'head.inc';
-require("ipsec.inc");
+require 'ipsec.inc';
 
 if ($_GET['act'] == "connect") {
 	if (is_ipaddrv4($_GET['remoteid']) && is_ipaddrv4($_GET['source'])) {

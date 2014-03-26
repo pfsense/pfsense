@@ -42,7 +42,7 @@
 ##|*MATCH=diag_logs_dhcp.php*
 ##|-PRIV
 
-require("guiconfig.inc");
+require 'guiconfig.inc';
 
 $dhcpd_logfile = "{$g['varlog_path']}/dhcpd.log";
 

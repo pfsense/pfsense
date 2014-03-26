@@ -39,7 +39,7 @@
 ##|*MATCH=load_balancer_relay_protocol_edit.php*
 ##|-PRIV
 
-require("guiconfig.inc");
+require 'guiconfig.inc';
 
 if (!is_array($config['load_balancer']['lbprotocol'])) {
 	$config['load_balancer']['lbprotocol'] = array();

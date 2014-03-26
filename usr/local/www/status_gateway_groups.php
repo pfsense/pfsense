@@ -39,7 +39,7 @@
 ##|*MATCH=status_gateway_groups.php*
 ##|-PRIV
 
-require("guiconfig.inc");
+require 'guiconfig.inc';
 
 if (!is_array($config['gateways']['gateway_group']))
 	$config['gateways']['gateway_group'] = array();

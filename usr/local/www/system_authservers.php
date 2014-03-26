@@ -38,7 +38,7 @@
 ##|*MATCH=system_authservers.php*
 ##|-PRIV
 
-require("guiconfig.inc");
+require 'guiconfig.inc';
 require_once("auth.inc");
 
 $pgtitle = array(gettext("System"), gettext("Authentication Servers"));

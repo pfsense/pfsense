@@ -300,7 +300,7 @@ function check_everything() {
 			<td valign="top" class="vtable">Log Firewall Default Blocks</td>
 			<td class="vtable">
 				<input name="logdefaultblock" type="checkbox" id="logdefaultblock" value="yes" <?php if ($pconfig['logdefaultblock']) echo "checked=\"checked\""; ?> />
-				<strong><?=gettext("Log packets blocked by the default rule");?></strong><br />
+				<strong><?=gettext("Log packets matched from the default rules put in the ruleset");?></strong><br />
 				<?=gettext("Hint: packets that are blocked by the implicit default block rule will not be logged if you uncheck this option. Per-rule logging options are still respected.");?>
 				<br />
 				<input name="logbogons" type="checkbox" id="logbogons" value="yes" <?php if ($pconfig['logbogons']) echo "checked=\"checked\""; ?> />

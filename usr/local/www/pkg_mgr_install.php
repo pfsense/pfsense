@@ -65,6 +65,7 @@ if ($_POST) {
 	}
 } else if ($_GET) {
 	switch ($_GET['mode']) {
+	case 'reinstallall':
 	case 'showlog':
 		break;
 	case 'installedinfo':
@@ -112,8 +113,14 @@ if ($_POST) {
 	} else if (!empty($_GET['mode']) && !empty($_GET['pkg'])) {
 		$pkgname = str_replace(array("<", ">", ";", "&", "'", '"'), "", htmlspecialchars_decode($_GET['pkg'], ENT_QUOTES | ENT_HTML401));
 		$pkgmode = str_replace(array("<", ">", ";", "&", "'", '"'), "", htmlspecialchars_decode($_GET['mode'], ENT_QUOTES | ENT_HTML401));
+	} else if ($_GET['mode'] == 'reinstallall') {
+		$pkgmode = 'reinstallall';
 	}
 	switch ($pkgmode) {
+	case 'reinstallall':
+		$pkgname = 'All packages';
+		$pkgtxt = 'reinstalled';
+		break;
 	case 'reinstallxml':
 	case 'reinstallpkg':
 		$pkgtxt = 'reinstalled';
@@ -130,8 +137,8 @@ if ($_POST) {
 					<td class="tabcont" align="center">
 						<table style="height:15;colspacing:0" width="420" border="0" cellpadding="0" cellspacing="0" summary="images">
 							<tr>
-								<td class="tabcont" align="center">Package:<b><?=$pkgname;?></b> will be <?=$pkgtxt;?>.<br/>
-								Please confirm the action on this package.<br/>
+								<td class="tabcont" align="center">Package: <b><?=$pkgname;?></b> will be <?=$pkgtxt;?>.<br/>
+								Please confirm the action.<br/>
 								</td>
 								<td class="tabcont" align="center">
 									<input type="hidden" name="id" value="<?=$pkgname;?>" />

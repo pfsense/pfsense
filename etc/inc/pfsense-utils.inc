@@ -723,13 +723,16 @@ function check_firmware_version($tocheck = "all", $return_php = true) {
 	$ip = gethostbyname($xmlrpcfqdn);
 	if($ip == $xmlrpcfqdn)
 		return false;
-
+	$version = php_uname('r');
+	$version = explode('-', $version);
 	$rawparams = array("firmware" => array("version" => trim(file_get_contents('/etc/version'))),
-		"kernel"   => array("version" => trim(file_get_contents('/etc/version_kernel'))),
-		"base"     => array("version" => trim(file_get_contents('/etc/version_base'))),
+		"kernel"   => array("version" => $version[0]),
+		"base"     => array("version" => $version[0]),
 		"platform" => trim(file_get_contents('/etc/platform')),
 		"config_version" => $config['version']
 		);
+	unset($version);
+
 	if($tocheck == "all") {
 		$params = $rawparams;
 	} else {

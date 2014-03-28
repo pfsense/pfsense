@@ -801,33 +801,6 @@ EOD;
 	return $retval;
 }
 
-function system_pccard_start() {
-	global $config, $g;
-	if(isset($config['system']['developerspew'])) {
-		$mt = microtime();
-		echo "system_pccard_start() being called $mt\n";
-	}
-
-	if ($g['booting'])
-		echo gettext("Initializing PCMCIA...");
-
-	/* kill any running pccardd */
-	killbypid("{$g['varrun_path']}/pccardd.pid");
-
-	/* fire up pccardd */
-	$res = mwexec("/usr/sbin/pccardd -z -f {$g['etc_path']}/pccard.conf");
-
-	if ($g['booting']) {
-		if ($res == 0)
-			echo gettext("done.") . "\n";
-		else
-			echo gettext("failed!") . "\n";
-	}
-
-	return $res;
-}
-
-
 function system_webgui_start() {
 	global $config, $g;
 

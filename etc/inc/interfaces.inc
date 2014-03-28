@@ -2551,7 +2551,7 @@ rsn_preauth_interfaces={$if}
 
 EOD;
 			}
-			if (isset($wlcfg['wpa']['ieee8021x'])) {
+			if (is_array($wlcfg['wpa']['ieee8021x']) && isset($wlcfg['wpa']['ieee8021x']['enable'])) {
 				$wpa .= "ieee8021x=1\n";
 
 			if (!empty($wlcfg['auth_server_addr']) && !empty($wlcfg['auth_server_shared_secret'])) {

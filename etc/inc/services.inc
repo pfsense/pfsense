@@ -1866,7 +1866,7 @@ function services_unbound_configure() {
 
 	if (isset($config['unbound']['enable'])) {
 		if ($g['booting'])
-			echo gettext("Starting Unbound DNS forwarder...");
+			echo gettext("Starting DNS Resolver...");
 		else
 			sleep(1);
 

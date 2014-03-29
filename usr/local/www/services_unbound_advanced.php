@@ -90,6 +90,8 @@ if ($_POST) {
 		$retval = 0;
 		$retval = services_unbound_configure();
 		$savemsg = get_std_save_message($retval);
+		if ($retval == 0)
+			clear_subsystem_dirty('unbound');
 	}
 }
 
@@ -113,7 +115,7 @@ function enable_change(enable_over) {
 <form action="services_unbound_advanced.php" method="post" name="iform" id="iform">
 <?php if ($input_errors) print_input_errors($input_errors); ?>
 <?php if ($savemsg) print_info_box($savemsg); ?>
-<?php if (is_subsystem_dirty('hosts')): ?><p>
+<?php if (is_subsystem_dirty('unbound')): ?><p>
 <?php print_info_box_np(gettext("The configuration of the DNS Resolver, has been changed") . ".<br />" . gettext("You must apply the changes in order for them to take effect."));?><br />
 <?php endif; ?>
 <table width="100%" border="0" cellpadding="0" cellspacing="0" summary="services unbound advanced">

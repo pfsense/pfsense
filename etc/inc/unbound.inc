@@ -2,8 +2,6 @@
 /*
     unbound.inc
     part of the pfSense project (https://www.pfsense.org)
-
-    originally part of m0n0wall (http://m0n0.ch/wall)
     Copyright (C) 2014 Warren Baker <warren@decoy.co.za>
     All rights reserved.
 

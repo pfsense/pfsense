@@ -605,13 +605,17 @@ EOF;
 
 // Unbound Access lists
 function unbound_acls_config() {
-    global $config;
+    global $g, $config;
 
     $aclcfg = "";
     // Add our networks for active interfaces including localhost
-    $active_interfaces = explode(",", $config['unbound']['active_interface']);
+    if (!empty($config['unbound']['active_interface']))
+        $active_interfaces = array_flip(explode(",", $config['unbound']['active_interface']));
+    else
+        $active_interfaces = get_configured_interface_with_descr();
+
     $bindints = "";
-    foreach($active_interfaces as $ubif) {
+    foreach($active_interfaces as $ubif => $ifdesc) {
         $ifip = get_interface_ip($ubif);
         if (!is_null($ifip)) {
             $subnet_bits = get_interface_subnet($ubif);
@@ -630,10 +634,10 @@ function unbound_acls_config() {
                 $aclcfg .= "access-control: {$network['acl_network']}/{$network['mask']} {$unbound_acl['aclaction']}\n";
             }
         }
-        // Write out Access list
-        file_put_contents("{$g['unbound_chroot_path']}/access_lists.conf", $aclcfg);
-    } else
-        return;
+    }
+    // Write out Access list
+    file_put_contents("{$g['unbound_chroot_path']}/access_lists.conf", $aclcfg);
+
 }
 
 ?>

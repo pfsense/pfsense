@@ -43,15 +43,21 @@ require_once("unbound.inc");
 
 $pconfig['enable'] = isset($config['unbound']['enable']);
 $pconfig['port'] = $config['unbound']['port'];
-$pconfig['active_interface'] = explode(",", $config['unbound']['active_interface']);
-$pconfig['outgoing_interface'] = explode(",", $config['unbound']['outgoing_interface']);
+if (empty($config['unbound']['active_interface']))
+	$pconfig['active_interface'] = array();
+else
+	$pconfig['active_interface'] = explode(",", $config['unbound']['active_interface']);
+if (empty($config['unbound']['outgoing_interface']))
+	$pconfig['outgoing_interface'] = array();
+else
+	$pconfig['outgoing_interface'] = explode(",", $config['unbound']['outgoing_interface']);
 $pconfig['dnssec'] = isset($config['unbound']['dnssec']);
 $pconfig['forwarding'] = isset($config['unbound']['forwarding']);
 $pconfig['regdhcp'] = isset($config['unbound']['regdhcp']);
 $pconfig['regdhcpstatic'] = isset($config['unbound']['regdhcpstatic']);
 $pconfig['txtsupport'] = isset($config['unbound']['txtsupport']);
 
-if(!is_array($config['unbound']))
+if (!is_array($config['unbound']))
 	$config['unbound'] = array();
 $a_unboundcfg =& $config['unbound'];
 
@@ -91,14 +97,19 @@ if ($_POST) {
 	$a_unboundcfg['regdhcp'] = ($_POST['regdhcp']) ? true : false;
 	$a_unboundcfg['regdhcpstatic'] = ($_POST['regdhcpstatic']) ? true : false;
 	$a_unboundcfg['txtsupport'] = ($_POST['txtsupport']) ? true : false;
-	if (is_array($_POST['active_interface']))
+	if (is_array($_POST['active_interface']) && !empty($_POST['active_interface']))
 		$a_unboundcfg['active_interface'] = implode(",", $_POST['active_interface']);
-	else
-		$a_unboundcfg['active_interface'] = $_POST['active_interface'];
-	if (is_array($_POST['outgoing_interface']))
+	else if (isset($config['unbound']['active_interface'])) {
+		unset($config['unbound']['active_interface']);
+		$pconfig['active_interface'] = array();
+	}
+
+	if (is_array($_POST['outgoing_interface']) && !empty($_POST['outgoing_interface']))
 		$a_unboundcfg['outgoing_interface'] = implode(",", $_POST['outgoing_interface']);
-	else
-		$a_unboundcfg['outgoing_interface'] = $_POST['outgoing_interface'];
+	else if (isset($config['unbound']['outgoing_interface'])) {
+		unset($config['unbound']['outgoing_interface']);
+		$pconfig['outgoing_interface'] = array();
+	}
 
 	if (!$input_errors) {
 		write_config("DNS Resolver configured.");
@@ -143,8 +154,8 @@ function show_advanced_dns() {
 			<td class="tabnavtbl">
 				<?php
 					$tab_array = array();
-	$tab_array[] = array(gettext("General settings"), true, "services_unbound.php");
-		$tab_array[] = array(gettext("Advanced settings"), false, "services_unbound_advanced.php");
+					$tab_array[] = array(gettext("General settings"), true, "services_unbound.php");
+					$tab_array[] = array(gettext("Advanced settings"), false, "services_unbound_advanced.php");
 					$tab_array[] = array(gettext("Access Lists"), false, "/services_unbound_acls.php");
 					display_top_tabs($tab_array, true);
 				?>

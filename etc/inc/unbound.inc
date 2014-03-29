@@ -124,6 +124,20 @@ private-address: fe80::/10
 EOF;
     }
 
+    // Determine interfaces to run on
+    $bindints = "";
+    if (!empty($config['unbound']['active_interface'])) {
+        $active_interfaces = explode(",", $config['unbound']['active_interface']);
+        foreach($active_interfaces as $ubif) {
+            $intip = get_interface_ip($ubif);
+            if (!is_null($intip))
+                $bindints .= "interface: $intip\n";
+        }
+    } else {
+        $bindints .= "interface: 0.0.0.0\n";
+        $bindints .= "interface: ::0\n";
+    }
+
     // Allow DNS Rebind for forwarded domains
     if ((isset($config['unbound']['domainoverrides']) && is_array($config['unbound']['domainoverrides'])) && !isset($config['system']['webgui']['nodnsrebindcheck'])) {
         $private_domains = "# Set private domains in case authoritative name server returns a Private IP address\n";
@@ -250,8 +264,7 @@ prefetch-key: {$prefetch_key}
 # Statistics
 {$statistics}
 # Interface IP(s) to bind to
-interface: 0.0.0.0
-interface: ::0
+{$bindints}
 
 # DNS Rebinding
 {$private_addr}
@@ -594,19 +607,31 @@ EOF;
 function unbound_acls_config() {
     global $config;
 
-    // Configure the ACLs
+    $aclcfg = "";
+    // Add our networks for active interfaces including localhost
+    $active_interfaces = explode(",", $config['unbound']['active_interface']);
+    $bindints = "";
+    foreach($active_interfaces as $ubif) {
+        $ifip = get_interface_ip($ubif);
+        if (!is_null($ifip)) {
+            $subnet_bits = get_interface_subnet($ubif);
+            $subnet_ip = gen_subnet($ifip, $subnet_bits);
+            $aclcfg .= "access-control: {$subnet_ip}/{$subnet_bits} allow\n";
+        }
+    }
+
+    // Configure the custom ACLs
     if (is_array($config['unbound']['acls'])) {
-        $unboundcfg = "";
         foreach($config['unbound']['acls'] as $unbound_acl) {
-            $unboundcfg .= "#{$unbound_acl['aclname']}\n";
+            $aclcfg .= "#{$unbound_acl['aclname']}\n";
             foreach($unbound_acl['row'] as $network) {
                 if ($unbound_acl['aclaction'] == "allow snoop")
                     $unbound_acl['aclaction'] = "allow_snoop";
-                $unboundcfg .= "access-control: {$network['acl_network']}/{$network['mask']} {$unbound_acl['aclaction']}\n";
+                $aclcfg .= "access-control: {$network['acl_network']}/{$network['mask']} {$unbound_acl['aclaction']}\n";
             }
         }
         // Write out Access list
-        file_put_contents("{$g['unbound_chroot_path']}/access_lists.conf", $unboundcfg);
+        file_put_contents("{$g['unbound_chroot_path']}/access_lists.conf", $aclcfg);
     } else
         return;
 }

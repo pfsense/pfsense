@@ -270,6 +270,9 @@ prefetch-key: {$prefetch_key}
 {$private_addr}
 {$private_domains}
 
+# Access lists
+include: {$g['unbound_chroot_path']}/access_lists.conf
+
 # Static host entries
 include: {$g['unbound_chroot_path']}/host_entries.conf
 
@@ -607,7 +610,8 @@ EOF;
 function unbound_acls_config() {
     global $g, $config;
 
-    $aclcfg = "";
+    $aclcfg = "access-control: 127.0.0.1/32 allow\n";
+    $aclcfg .= "access-control: ::1 allow\n";
     // Add our networks for active interfaces including localhost
     if (!empty($config['unbound']['active_interface']))
         $active_interfaces = array_flip(explode(",", $config['unbound']['active_interface']));

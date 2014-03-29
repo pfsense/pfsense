@@ -28,7 +28,7 @@
     POSSIBILITY OF SUCH DAMAGE.
 */
 /*
-	pfSense_MODULE:	dnscache
+	pfSense_MODULE:	dnsresolver
 */
 
 ##|+PRIV

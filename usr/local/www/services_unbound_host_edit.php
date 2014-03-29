@@ -38,7 +38,7 @@
 ##|*IDENT=page-services-dnsresolver-edithost
 ##|*NAME=Services: DNS Forwarder: Edit host page
 ##|*DESCR=Allow access to the 'Services: DNS Forwarder: Edit host' page.
-##|*MATCH=services_dnsmasq_edit.php*
+##|*MATCH=services_unbound_host_edit.php*
 ##|-PRIV
 
 function hostcmp($a, $b) {

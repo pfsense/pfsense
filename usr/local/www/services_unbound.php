@@ -28,7 +28,7 @@
     POSSIBILITY OF SUCH DAMAGE.
 */
 /*
-	pfSense_MODULE:	dnscache
+	pfSense_MODULE:	dnsresolver
 */
 
 ##|+PRIV
@@ -103,6 +103,8 @@ if ($_POST) {
 		$retval = 0;
 		$retval = services_unbound_configure();
 		$savemsg = get_std_save_message($retval);
+		if ($retval == 0)
+			clear_subsystem_dirty('unbound_hosts');
 	}
 }
 
@@ -130,7 +132,7 @@ function show_advanced_dns() {
 <form action="services_unbound.php" method="post" name="iform" id="iform">
 <?php if ($input_errors) print_input_errors($input_errors); ?>
 <?php if ($savemsg) print_info_box($savemsg); ?>
-<?php if (is_subsystem_dirty('hosts')): ?><p>
+<?php if (is_subsystem_dirty('unbound_hosts')): ?><p>
 <?php print_info_box_np(gettext("The configuration for the DNS Resolver, has been changed") . ".<br />" . gettext("You must apply the changes in order for them to take effect."));?><br />
 <?php endif; ?>
 <table width="100%" border="0" cellpadding="0" cellspacing="0" summary="services unbound">
@@ -328,7 +330,7 @@ function show_advanced_dns() {
 			<table border="0" cellspacing="0" cellpadding="1">
 				<tr>
 					<td width="17"></td>
-					<td valign="middle"><a href="services_unbound_edit.php"><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_plus.gif" width="17" height="17" border="0"></a></td>
+					<td valign="middle"><a href="services_unbound_host_edit.php"><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_plus.gif" width="17" height="17" border="0"></a></td>
 				</tr>
 			</table>
 		</td>
@@ -337,22 +339,22 @@ function show_advanced_dns() {
 	<tbody>
 	<?php $i = 0; foreach ($a_hosts as $hostent): ?>
 	<tr>
-		<td class="listlr" ondblclick="document.location='services_unbound_edit.php?id=<?=$i;?>';">
+		<td class="listlr" ondblclick="document.location='services_unbound_host_edit.php?id=<?=$i;?>';">
 			<?=strtolower($hostent['host']);?>&nbsp;
 		</td>
-		<td class="listr" ondblclick="document.location='services_unbound_edit.php?id=<?=$i;?>';">
+		<td class="listr" ondblclick="document.location='services_unbound_host_edit.php?id=<?=$i;?>';">
 			<?=strtolower($hostent['domain']);?>&nbsp;
 		</td>
-		<td class="listr" ondblclick="document.location='services_unbound_edit.php?id=<?=$i;?>';">
+		<td class="listr" ondblclick="document.location='services_unbound_host_edit.php?id=<?=$i;?>';">
 			<?=$hostent['ip'];?>&nbsp;
 		</td>
-		<td class="listbg" ondblclick="document.location='services_unbound_edit.php?id=<?=$i;?>';">
+		<td class="listbg" ondblclick="document.location='services_unbound_host_edit.php?id=<?=$i;?>';">
 			<?=htmlspecialchars($hostent['descr']);?>&nbsp;
 		</td>
 		<td valign="middle" nowrap class="list">
 			<table border="0" cellspacing="0" cellpadding="1">
 				<tr>
-					<td valign="middle"><a href="services_unbound_edit.php?id=<?=$i;?>"><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_e.gif" width="17" height="17" border="0"></a></td>
+					<td valign="middle"><a href="services_unbound_host_edit.php?id=<?=$i;?>"><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_e.gif" width="17" height="17" border="0"></a></td>
 					<td><a href="services_unbound.php?type=host&act=del&id=<?=$i;?>" onclick="return confirm('<?=gettext("Do you really want to delete this host?");?>')"><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_x.gif" width="17" height="17" border="0"></a></td>
 				</tr>
 			</table>
@@ -366,7 +368,7 @@ function show_advanced_dns() {
 			<table border="0" cellspacing="0" cellpadding="1">
 				<tr>
 					<td width="17"></td>
-					<td valign="middle"><a href="services_unbound_edit.php"><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_plus.gif" width="17" height="17" border="0"></a></td>
+					<td valign="middle"><a href="services_unbound_host_edit.php"><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_plus.gif" width="17" height="17" border="0"></a></td>
 				</tr>
 			</table>
 		</td>

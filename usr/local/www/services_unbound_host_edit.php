@@ -155,7 +155,7 @@ if ($_POST) {
 			$a_hosts[] = $hostent;
 		hosts_sort();
 		
-		mark_subsystem_dirty('unbound_hosts');
+		mark_subsystem_dirty('unbound');
 		
 		write_config();
 		

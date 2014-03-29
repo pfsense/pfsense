@@ -49,6 +49,7 @@ $pconfig['dnssec'] = isset($config['unbound']['dnssec']);
 $pconfig['forwarding'] = isset($config['unbound']['forwarding']);
 $pconfig['regdhcp'] = isset($config['unbound']['regdhcp']);
 $pconfig['regdhcpstatic'] = isset($config['unbound']['regdhcpstatic']);
+$pconfig['txtsupport'] = isset($config['unbound']['txtsupport']);
 
 if(!is_array($config['unbound']))
 	$config['unbound'] = array();
@@ -89,6 +90,7 @@ if ($_POST) {
 	$a_unboundcfg['forwarding'] = ($_POST['forwarding']) ? true : false;
 	$a_unboundcfg['regdhcp'] = ($_POST['regdhcp']) ? true : false;
 	$a_unboundcfg['regdhcpstatic'] = ($_POST['regdhcpstatic']) ? true : false;
+	$a_unboundcfg['txtsupport'] = ($_POST['txtsupport']) ? true : false;
 	if (is_array($_POST['active_interface']))
 		$a_unboundcfg['active_interface'] = implode(",", $_POST['active_interface']);
 	else

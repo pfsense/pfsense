@@ -485,7 +485,7 @@ function unbound_add_host_entries() {
                     $host_entries .= "local-data: \"{$host['host']}{$host['domain']} IN AAAA {$host['ip']}\"\n";
                 else
                     $host_entries .= "local-data: \"{$host['host']}{$host['domain']} IN A {$host['ip']}\"\n";
-                if (!empty($host['descr']) && $dnscfg['txtsupport'] == 'on')
+                if (!empty($host['descr']) && isset($config['unbound']['txtsupport']))
                     $host_entries .= "local-data: '{$host['host']}{$host['domain']} TXT \"".addslashes($host['descr'])."\"'\n";
 
                 // Do not add duplicate entries

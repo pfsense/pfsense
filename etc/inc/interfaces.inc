@@ -1346,6 +1346,25 @@ function interface_bring_down($interface = "wan", $destroy = false, $ifacecfg = 
 	return;
 }
 
+function interfaces_carp_set_maintenancemode($carp_maintenancemode){
+	global $config;
+	if (isset($config["virtualip_carp_maintenancemode"]) && $carp_maintenancemode == false) {
+		unset($config["virtualip_carp_maintenancemode"]);
+		write_config("Leave CARP maintenance mode");
+	} else
+	if (!isset($config["virtualip_carp_maintenancemode"]) && $carp_maintenancemode == true) {
+		$config["virtualip_carp_maintenancemode"] = true;
+		write_config("Enter CARP maintenance mode");
+	}
+
+	$viparr = &$config['virtualip']['vip'];
+	foreach ($viparr as $vip) {
+		if ($vip['mode'] == "carp") {
+			interface_carp_configure($vip);
+		}
+	}
+}
+
 function interfaces_ptpid_used($ptpid) {
 	global $config;
 
@@ -2174,7 +2193,13 @@ function interface_carp_configure(&$vip) {
 	if (!empty($vip['advbase']))
 		$advbase = "advbase " . escapeshellarg($vip['advbase']);
 
-	mwexec("/sbin/ifconfig {$realif} vhid " . escapeshellarg($vip['vhid']) . " advskew " . escapeshellarg($vip['advskew']) . " {$advbase} {$password}");
+	$carp_maintenancemode = isset($config["virtualip_carp_maintenancemode"]);
+	if ($carp_maintenancemode)
+		$advskew = "advskew 254";
+	else
+		$advskew = "advskew " . escapeshellarg($vip['advskew']);
+	
+	mwexec("/sbin/ifconfig {$realif} vhid " . escapeshellarg($vip['vhid']) . " {$advskew} {$advbase} {$password}");
 
 	if (is_ipaddrv4($vip['subnet']))
 		mwexec("/sbin/ifconfig {$realif} " . escapeshellarg($vip['subnet']) . "/" . escapeshellarg($vip['subnet_bits']) . " alias vhid " . escapeshellarg($vip['vhid']));

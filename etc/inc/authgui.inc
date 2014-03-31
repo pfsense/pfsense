@@ -216,7 +216,7 @@ if ($tunnelnetworkkey) {
 				$tunnel_network = $ovpn[$tunnelnetworkkey];
 				if (!empty($tunnel_network) && ip_in_subnet($http_host, $tunnel_network)) {
 					$local_ip = true;
-					break;
+					break 2;
 				}
 			}
 		}

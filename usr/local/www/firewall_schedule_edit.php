@@ -60,12 +60,6 @@ require_once("shaper.inc");
 
 $pgtitle = array(gettext("Firewall"),gettext("Schedules"),gettext("Edit"));
 
-$starttimehr = 00;
-$starttimemin = 00;
-
-$stoptimehr = 23;
-$stoptimemin = 59;
-
 $dayArray = array (gettext('Mon'),gettext('Tues'),gettext('Wed'),gettext('Thur'),gettext('Fri'),gettext('Sat'),gettext('Sun'));
 $monthArray = array (gettext('January'),gettext('February'),gettext('March'),gettext('April'),gettext('May'),gettext('June'),gettext('July'),gettext('August'),gettext('September'),gettext('October'),gettext('November'),gettext('December'));
 
@@ -669,10 +663,10 @@ function clearCalendar(){
 }
 
 function clearTime(){
-	document.getElementById("starttimehour").value = $starttimehr;
-	document.getElementById("starttimemin").value = $starttimemin;
-	document.getElementById("stoptimehour").value = $stoptimehr;
-	document.getElementById("stoptimemin").value = $stoptimemin;
+	document.getElementById("starttimehour").value = "0";
+	document.getElementById("starttimemin").value = "00";
+	document.getElementById("stoptimehour").value = "23";
+	document.getElementById("stoptimemin").value = "59";
 }
 
 function clearDescr(){

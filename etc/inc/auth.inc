@@ -177,8 +177,8 @@ if(function_exists("display_error_form") && !isset($config['system']['webgui']['
 					$tunnelnetworkkey = 'tunnel_networkv6';
 				}
 				if ($tunnelnetworkkey) {
-					foreach (array('openvpn-server', 'openvpn-client') as $openvpn-type) {
-						$ovpns = $config['openvpn'][$openvpn-type];
+					foreach (array('openvpn-server', 'openvpn-client') as $openvpntype) {
+						$ovpns = $config['openvpn'][$openvpntype];
 						if (is_array($ovpns)) {
 							foreach ($ovpns as $ovpn) {
 								$tunnel_network = $ovpn[$tunnelnetworkkey];

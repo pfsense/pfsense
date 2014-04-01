@@ -71,10 +71,11 @@ if($_REQUEST['getupdatestatus']) {
 			$needs_system_upgrade = false;
 			if (pfs_version_compare($current_installed_buildtime, $current_installed_version, $remote_version) == -1) {
 				echo "<br /><span class=\"red\" id=\"updatealert\"><b>Update available. </b></span><a href=\"/system_firmware_check.php\">Click Here</a> to view update.";
-				echo "<script type=\"text/javascript\">";
-				echo "jQuery('#updatealert').effect('pulsate',{times: 30},10000);";
-
-				echo "</script>";
+				echo "\n<script type=\"text/javascript\">\n";
+				echo "//<![CDATA[\n";
+				echo "jQuery('#updatealert').effect('pulsate',{times: 30},10000);\n";
+				echo "//]]>\n";
+				echo "</script>\n";
 			} else
 				echo "<br />You are on the latest version.";
 		}
@@ -86,6 +87,7 @@ $curcfg = $config['system']['firmware'];
 
 ?>
 <script type="text/javascript">
+//<![CDATA[
 	jQuery(function() { 
 		jQuery("#statePB").progressbar( { value: <?php echo get_pfstate(true); ?> } );
 		jQuery("#mbufPB").progressbar( { value: <?php echo get_mbuf(true); ?> } );
@@ -100,8 +102,8 @@ $curcfg = $config['system']['firmware'];
                 	jQuery("#tempPB").progressbar( { value: <?php echo get_temp(); ?> } );
 		<?php endif; ?>
 	});
+//]]>
 </script>
-<link rel="stylesheet" href="javascript/jquery/jquery-ui.custom.css" />
 
 <table width="100%" border="0" cellspacing="0" cellpadding="0" summary="system information">
 	<tbody>

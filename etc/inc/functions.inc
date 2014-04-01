@@ -108,7 +108,7 @@ if(!function_exists("get_menu_messages")) {
 					$notice_msgs .="</table>";
 						
 					$domtt= "onclick=\"domTT_activate(this, event, 'caption', '{$notice}','content', '<br />{$notice_msgs}', 'trail', false, 'delay', 0, 'fade', 'both', 'fadeMax', 93, 'styleClass', 'niceTitle','width','{$domtt_width}','y',5,'type', 'sticky');\"";					
-                    $menu_messages="<div id='alerts' ; >\n";
+                    $menu_messages="<div id='alerts'>\n";
                     if(count($notices)==1)
                     	$msg= sprintf("%1$02d",count($notices))." ".gettext("unread notice");
                     else

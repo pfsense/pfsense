@@ -173,11 +173,11 @@ if ($_POST) {
 }
 include("head.inc");
 ?>
-<?php include("fbegin.inc"); ?>
 <body link="#0000CC" vlink="#0000CC" alink="#0000CC">
+<?php include("fbegin.inc"); ?>
 <?php if ($input_errors) print_input_errors($input_errors); ?>
 <form action="services_captiveportal_mac_edit.php" method="post" name="iform" id="iform">
-	<table width="100%" border="0" cellpadding="6" cellspacing="0">
+	<table width="100%" border="0" cellpadding="6" cellspacing="0" summary="captiveportal mac edit">
 		<tr>
 			<td colspan="2" valign="top" class="listtopic"><?=gettext("Edit MAC address rules");?></td>
 		</tr>
@@ -203,20 +203,20 @@ include("head.inc");
 		<tr>
 			<td width="22%" valign="top" class="vncellreq"><?=gettext("MAC address"); ?></td>
 			<td width="78%" class="vtable">
-				<?=$mandfldhtml;?><input name="mac" type="text" class="formfld unknown" id="mac" size="17" value="<?=htmlspecialchars($pconfig['mac']);?>">
+				<?=$mandfldhtml;?><input name="mac" type="text" class="formfld unknown" id="mac" size="17" value="<?=htmlspecialchars($pconfig['mac']);?>" />
 <?php
 				$ip = getenv('REMOTE_ADDR');
 				$mac = `/usr/sbin/arp -an | grep {$ip} | cut -d" " -f4`;
 				$mac = str_replace("\n","",$mac);
 ?>
-				<a OnClick="document.forms[0].mac.value='<?=$mac?>';" href="#"><?=gettext("Copy my MAC address");?></a>
+				<a onclick="document.forms[0].mac.value='<?=$mac?>';" href="#"><?=gettext("Copy my MAC address");?></a>
 				<br />
 				<span class="vexpl"><?=gettext("MAC address (6 hex octets separated by colons)"); ?></span></td>
 		</tr>
 		<tr>
 			<td width="22%" valign="top" class="vncell"><?=gettext("Description"); ?></td>
 			<td width="78%" class="vtable">
-				<input name="descr" type="text" class="formfld unknown" id="descr" size="40" value="<?=htmlspecialchars($pconfig['descr']);?>">
+				<input name="descr" type="text" class="formfld unknown" id="descr" size="40" value="<?=htmlspecialchars($pconfig['descr']);?>" />
 				<br />
 				<span class="vexpl"><?=gettext("You may enter a description here for your reference (not parsed)"); ?>.</span>
 			</td>
@@ -224,7 +224,7 @@ include("head.inc");
 		<tr>
 			<td width="22%" valign="top" class="vncell"><?=gettext("Bandwidth up"); ?></td>
 			<td width="78%" class="vtable">
-				<input name="bw_up" type="text" class="formfld unknown" id="bw_up" size="10" value="<?=htmlspecialchars($pconfig['bw_up']);?>">
+				<input name="bw_up" type="text" class="formfld unknown" id="bw_up" size="10" value="<?=htmlspecialchars($pconfig['bw_up']);?>" />
 				<br />
 				<span class="vexpl"><?=gettext("Enter a upload limit to be enforced on this MAC address in Kbit/s"); ?></span>
 			</td>
@@ -232,7 +232,7 @@ include("head.inc");
 		<tr>
 			<td width="22%" valign="top" class="vncell"><?=gettext("Bandwidth down"); ?></td>
 			<td width="78%" class="vtable">
-				<input name="bw_down" type="text" class="formfld unknown" id="bw_down" size="10" value="<?=htmlspecialchars($pconfig['bw_down']);?>">
+				<input name="bw_down" type="text" class="formfld unknown" id="bw_down" size="10" value="<?=htmlspecialchars($pconfig['bw_down']);?>" />
 				<br />
 				<span class="vexpl"><?=gettext("Enter a download limit to be enforced on this MAC address in Kbit/s"); ?></span>
 			</td>
@@ -240,13 +240,13 @@ include("head.inc");
 		<tr>
 			<td width="22%" valign="top">&nbsp;</td>
 			<td width="78%">
-				<input name="Submit" type="submit" class="formbtn" value="<?=gettext("Save"); ?>">
-				<input name="zone" type="hidden" value="<?=htmlspecialchars($cpzone);?>">
+				<input name="Submit" type="submit" class="formbtn" value="<?=gettext("Save"); ?>" />
+				<input name="zone" type="hidden" value="<?=htmlspecialchars($cpzone);?>" />
 				<?php if (isset($id) && $a_passthrumacs[$id]): ?>
-					<input name="id" type="hidden" value="<?=htmlspecialchars($id);?>">
+					<input name="id" type="hidden" value="<?=htmlspecialchars($id);?>" />
 				<?php endif; ?>
 				<?php if (isset($pconfig['username']) && $pconfig['username']): ?>
-					<input name="username" type="hidden" value="<?=htmlspecialchars($pconfig['username']);?>">
+					<input name="username" type="hidden" value="<?=htmlspecialchars($pconfig['username']);?>" />
 				<?php endif; ?>
 			</td>
 		</tr>

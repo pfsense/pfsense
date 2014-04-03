@@ -177,21 +177,21 @@ if ($_POST) {
 include("head.inc");
 
 ?>
-<?php include("fbegin.inc"); ?>
 <body link="#0000CC" vlink="#0000CC" alink="#0000CC">
+<?php include("fbegin.inc"); ?>
 <?php if ($input_errors) print_input_errors($input_errors); ?>
 		<form action="services_captiveportal_ip_edit.php" method="post" name="iform" id="iform">
-		<table width="100%" border="0" cellpadding="6" cellspacing="0">
+		<table width="100%" border="0" cellpadding="6" cellspacing="0" summary="captiveportal allow ip edit">
 		<tr>
                         <td colspan="2" valign="top" class="listtopic"><?=gettext("Edit allowed ip rule");?></td>
                 </tr>
 		<tr>
 			<td width="22%" valign="top" class="vncellreq"><?=gettext("IP address"); ?></td>
 			<td width="78%" class="vtable"> 
-				<?=$mandfldhtml;?><input name="ip" type="text" class="formfld unknown" id="ip" size="17" value="<?=htmlspecialchars($pconfig['ip']);?>">
+				<?=$mandfldhtml;?><input name="ip" type="text" class="formfld unknown" id="ip" size="17" value="<?=htmlspecialchars($pconfig['ip']);?>" />
 				/<select name='sn' class="formselect" id='sn'>
 				<?php for ($i = 32; $i >= 1; $i--): ?>
-					<option value="<?=$i;?>" <?php if ($i == $pconfig['sn']) echo "selected"; ?>><?=$i;?></option>
+					<option value="<?=$i;?>" <?php if ($i == $pconfig['sn']) echo "selected=\"selected\""; ?>><?=$i;?></option>
 				<?php endfor; ?>
 				</select>
 				<br /> 
@@ -201,31 +201,31 @@ include("head.inc");
 		<tr>
 			<td width="22%" valign="top" class="vncell"><?=gettext("Description"); ?></td>
 			<td width="78%" class="vtable"> 
-				<input name="descr" type="text" class="formfld unknown" id="descr" size="40" value="<?=htmlspecialchars($pconfig['descr']);?>">
+				<input name="descr" type="text" class="formfld unknown" id="descr" size="40" value="<?=htmlspecialchars($pconfig['descr']);?>" />
 				<br /> <span class="vexpl"><?=gettext("You may enter a description here for your reference (not parsed)"); ?>.</span>
 			</td>
 		</tr>
 		<tr>
 			<td width="22%" valign="top" class="vncell"><?=gettext("Bandwidth up"); ?></td>
 			<td width="78%" class="vtable">
-			<input name="bw_up" type="text" class="formfld unknown" id="bw_up" size="10" value="<?=htmlspecialchars($pconfig['bw_up']);?>">
+			<input name="bw_up" type="text" class="formfld unknown" id="bw_up" size="10" value="<?=htmlspecialchars($pconfig['bw_up']);?>" />
 			<br /> <span class="vexpl"><?=gettext("Enter a upload limit to be enforced on this IP address in Kbit/s"); ?></span>
 		</td>
 		</tr>
 		<tr>
 		 <td width="22%" valign="top" class="vncell"><?=gettext("Bandwidth down"); ?></td>
 		 <td width="78%" class="vtable">
-			<input name="bw_down" type="text" class="formfld unknown" id="bw_down" size="10" value="<?=htmlspecialchars($pconfig['bw_down']);?>">
+			<input name="bw_down" type="text" class="formfld unknown" id="bw_down" size="10" value="<?=htmlspecialchars($pconfig['bw_down']);?>" />
 			<br /> <span class="vexpl"><?=gettext("Enter a download limit to be enforced on this IP address in Kbit/s"); ?></span>
 		</td>
 		</tr>
 		<tr>
 			<td width="22%" valign="top">&nbsp;</td>
 			<td width="78%"> 
-				<input name="Submit" type="submit" class="formbtn" value="<?=gettext("Save"); ?>">
-				<input name="zone" type="hidden" value="<?=htmlspecialchars($cpzone);?>">
+				<input name="Submit" type="submit" class="formbtn" value="<?=gettext("Save"); ?>" />
+				<input name="zone" type="hidden" value="<?=htmlspecialchars($cpzone);?>" />
 				<?php if (isset($id) && $a_allowedips[$id]): ?>
-					<input name="id" type="hidden" value="<?=htmlspecialchars($id);?>">
+					<input name="id" type="hidden" value="<?=htmlspecialchars($id);?>" />
 				<?php endif; ?>
 			</td>
 		</tr>

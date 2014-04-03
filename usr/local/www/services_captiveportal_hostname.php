@@ -149,7 +149,7 @@ include("head.inc");
 	  <td class="listbg">
 		<?=htmlspecialchars($ip['descr']);?>&nbsp;
 	  </td>
-	  <td valign="middle" nowrap class="list"> <a href="services_captiveportal_hostname_edit.php?zone=<?=$cpzone;?>&amp;id=<?=$i;?>"><img src="/themes/<?php echo $g['theme']; ?>/images/icons/icon_e.gif" title="<?=gettext("edit address"); ?>" width="17" height="17" border="0" alt="add" /></a>
+	  <td valign="middle" class="list nowrap"> <a href="services_captiveportal_hostname_edit.php?zone=<?=$cpzone;?>&amp;id=<?=$i;?>"><img src="/themes/<?php echo $g['theme']; ?>/images/icons/icon_e.gif" title="<?=gettext("edit address"); ?>" width="17" height="17" border="0" alt="add" /></a>
 		 &nbsp;<a href="services_captiveportal_hostname.php?zone=<?=$cpzone;?>&amp;act=del&amp;id=<?=$i;?>" onclick="return confirm('<?=gettext("Do you really want to delete this address?"); ?>')"><img src="/themes/<?php echo $g['theme']; ?>/images/icons/icon_x.gif" title="<?=gettext("delete address"); ?>" width="17" height="17" border="0" alt="delete" /></a></td>
 	</tr>
   <?php $i++; endforeach; endif;  ?>

@@ -544,10 +544,10 @@ function tmpvar_checked(obj) {
 											foreach (array("Silent", "Audit", "Control", "Diag", "Raw", "Highest") as $lidx => $lvalue) {
 												echo "<option value=\"{$lidx}\" ";
 												 if ($pconfig["ipsec_{$lkey}"] == $lidx)
-													echo "\"selected\"";
+													echo "selected=\"selected\"";
 												echo ">{$lvalue}</option>\n";
 											}
-										?> />
+										?>
 											</select>
 										</td>
 									</tr>

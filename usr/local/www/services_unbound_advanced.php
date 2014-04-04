@@ -95,27 +95,29 @@ if ($_POST) {
 	}
 }
 
+$closehead = false;
 $pgtitle = array(gettext("Services"),gettext("DNS Resolver"),gettext("Advanced"));
 include_once("head.inc");
 
 ?>
 
 <script type="text/javascript">
-<!--
+//<![CDATA[
 function enable_change(enable_over) {
 	var endis;
 	endis = !(jQuery('#enable').is(":checked") || enable_over);
 	jQuery("#active_interface,#outgoing_interface,#dnssec,#forwarding,#regdhcp,#regdhcpstatic,#dhcpfirst,#port").prop('disabled', endis);
 }
-//-->
+//]]>
 </script>
+</head>
 	
 <body>
 <?php include("fbegin.inc"); ?>
 <form action="services_unbound_advanced.php" method="post" name="iform" id="iform">
 <?php if ($input_errors) print_input_errors($input_errors); ?>
 <?php if ($savemsg) print_info_box($savemsg); ?>
-<?php if (is_subsystem_dirty('unbound')): ?><p>
+<?php if (is_subsystem_dirty('unbound')): ?><br/>
 <?php print_info_box_np(gettext("The configuration of the DNS Resolver, has been changed") . ".<br />" . gettext("You must apply the changes in order for them to take effect."));?><br />
 <?php endif; ?>
 <table width="100%" border="0" cellpadding="0" cellspacing="0" summary="services unbound advanced">
@@ -134,7 +136,7 @@ function enable_change(enable_over) {
 		<tr>
 			<td id="mainarea">
 				<div class="tabcont">
-					<table width="100%" border="0" cellpadding="6" cellspacing="0">
+					<table width="100%" border="0" cellpadding="6" cellspacing="0" summary="main area">
 						<tbody>
 							<tr>
 								<td colspan="2" valign="top" class="listtopic"><?=gettext("Advanced Resolver Options");?></td>
@@ -142,42 +144,42 @@ function enable_change(enable_over) {
 							<tr>
 								<td width="22%" valign="top" class="vncell"><?=gettext("Hide Identity");?></td>
 								<td width="78%" class="vtable">
-									<p><input name="hideidentity" type="checkbox" id="hideidentity" value="yes" <?php if ($pconfig['hideidentity'] === true) echo "checked";?> onClick="enable_change(false)"><br />
+									<p><input name="hideidentity" type="checkbox" id="hideidentity" value="yes" <?php if ($pconfig['hideidentity'] === true) echo "checked=\"checked\"";?> onclick="enable_change(false)" /><br />
 									<?=gettext("If enabled, id.server and hostname.bind queries are refused.");?></p>
 								</td>
 							</tr>
 							<tr>
 								<td width="22%" valign="top" class="vncell"><?=gettext("Hide Version");?></td>
 								<td width="78%" class="vtable">
-									<p><input name="enable" type="checkbox" id="hideversion" value="yes" <?php if ($pconfig['hideversion'] == "yes") echo "checked";?> onClick="enable_change(false)"><br />
+									<p><input name="enable" type="checkbox" id="hideversion" value="yes" <?php if ($pconfig['hideversion'] == "yes") echo "checked=\"checked\"";?> onclick="enable_change(false)" /><br />
 									<?=gettext("If enabled, version.server and version.bind queries are refused.");?></p>
 								</td>
 							</tr>
 							<tr>
 								<td width="22%" valign="top" class="vncell"><?=gettext("Prefetch Support");?></td>
 								<td width="78%" class="vtable">
-									<p><input name="enable" type="checkbox" id="prefetch" value="yes" <?php if ($pconfig['prefetch'] == "yes") echo "checked";?> onClick="enable_change(false)"><br />
+									<p><input name="enable" type="checkbox" id="prefetch" value="yes" <?php if ($pconfig['prefetch'] == "yes") echo "checked=\"checked\"";?> onclick="enable_change(false)" /><br />
 									<?=gettext("Message cache elements are prefetched before they expire to help keep the cache up to date. When enabled, this option can cause an increase of around 10% more DNS traffic and load on the server, but frequently requested items will not expire from the cache.");?></p>
 								</td>
 							</tr>
 							<tr>
 								<td width="22%" valign="top" class="vncell"><?=gettext("Prefetch DNS Key Support");?></td>
 								<td width="78%" class="vtable">
-									<p><input name="enable" type="checkbox" id="prefetchkey" value="yes" <?php if ($pconfig['prefetchkey'] == "yes") echo "checked";?> onClick="enable_change(false)"><br />
+									<p><input name="enable" type="checkbox" id="prefetchkey" value="yes" <?php if ($pconfig['prefetchkey'] == "yes") echo "checked=\"checked\"";?> onclick="enable_change(false)" /><br />
 									<?=sprintf(gettext("DNSKEY's are fetched earlier in the validation process when a %sDelegation signer%s is encountered. This helps lower the latency of requests but does utilize a little more CPU."), "<a href='http://en.wikipedia.org/wiki/List_of_DNS_record_types'>", "</a>");?></p>
 								</td>
 							</tr>
 							<tr>
 								<td width="22%" valign="top" class="vncell"><?=gettext("Harden Glue");?></td>
 								<td width="78%" class="vtable">
-									<p><input name="enable" type="checkbox" id="hardenglue" value="yes" <?php if ($pconfig['hardenglue'] == "yes") echo "checked";?> onClick="enable_change(false)"><br />
+									<p><input name="enable" type="checkbox" id="hardenglue" value="yes" <?php if ($pconfig['hardenglue'] == "yes") echo "checked=\"checked\"";?> onclick="enable_change(false)" /><br />
 									<?=gettext("Only trust glue if it is within the servers authority.");?></p>
 								</td>
 							</tr>
 							<tr>
 								<td width="22%" valign="top" class="vncell"><?=gettext("Harden DNSSEC data");?></td>
 								<td width="78%" class="vtable">
-									<p><input name="enable" type="checkbox" id="dnssecstripped" value="yes" <?php if ($pconfig['dnssecstripped'] == "yes") echo "checked";?> onClick="enable_change(false)"><br />
+									<p><input name="enable" type="checkbox" id="dnssecstripped" value="yes" <?php if ($pconfig['dnssecstripped'] == "yes") echo "checked=\"checked\"";?> onclick="enable_change(false)" /><br />
 									<?=gettext("DNSSEC data is required for trust-anchored zones. If such data is absent, the zone becomes bogus. If this is disabled and no DNSSEC data is received, then the zone is made insecure.");?></p>
 								</td>
 							</tr>
@@ -274,7 +276,7 @@ function enable_change(enable_over) {
 								<td width="22%" valign="top" class="vncell"><?=gettext("Maximum TTL for RRsets and messages");?></td>
 								<td width="78%" class="vtable">
 									<p>
-										<input type="text" id="cache_max_ttl" name="cache_max_ttl" size=5><br />
+										<input type="text" id="cache_max_ttl" name="cache_max_ttl" size="5" /><br />
 										<?=gettext("Configure a maximum Time to live for RRsets and messages in the cache. The default is 86400 seconds (1 day). When the internal TTL expires the cache item is expired. This can be configured to force the resolver to query for data more often and not trust (very large) TTL values.");?>
 									</p>
 								</td>
@@ -283,7 +285,7 @@ function enable_change(enable_over) {
 								<td width="22%" valign="top" class="vncell"><?=gettext("Minimum TTL for RRsets and messages");?></td>
 								<td width="78%" class="vtable">
 									<p>
-										<input type="text" id="cache_min_ttl" name="cache_min_ttl" size=5><br />
+										<input type="text" id="cache_min_ttl" name="cache_min_ttl" size="5" /><br />
 										<?=gettext("Configure a minimum Time to live for RRsets and messages in the cache. The default is 0 seconds. If the minimum value kicks in, the data is cached for longer than the domain owner intended, and thus less queries are made to look up the data. The 0 value ensures the data in the cache is as the domain owner intended. High values can lead to trouble as the data in the cache might not match up with the actual data anymore.");?>
 									</p>
 								</td>

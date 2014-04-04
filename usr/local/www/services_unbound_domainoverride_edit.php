@@ -119,11 +119,11 @@ include("head.inc");
 <?php include("fbegin.inc"); ?>
 <?php if ($input_errors) print_input_errors($input_errors); ?>
     <form action="services_unbound_domainoverride_edit.php" method="post" name="iform" id="iform">
-        <table width="100%" border="0" cellpadding="6" cellspacing="0">
+        <table width="100%" border="0" cellpadding="6" cellspacing="0" summary="domain override">
             <tr>
                 <td width="22%" valign="top" class="vncellreq"><?=gettext("Domain");?></td>
                 <td width="78%" class="vtable">
-                    <?=$mandfldhtml;?><input name="domain" type="text" class="formfld unknown" id="domain" size="40" value="<?=htmlspecialchars($pconfig['domain']);?>"><br />
+                    <?=$mandfldhtml;?><input name="domain" type="text" class="formfld unknown" id="domain" size="40" value="<?=htmlspecialchars($pconfig['domain']);?>" /><br />
                     <span class="vexpl">
                         <?=gettext("Domain to override (NOTE: this does not have to be a valid TLD!)"); ?><br />
                         <?=gettext("e.g."); ?> <em><?=gettext("test"); ?></em> <?=gettext("or"); ?> <em>mycompany.localdomain</em> <?=gettext("or"); ?> <em>1.168.192.in-addr.arpa</em>
@@ -133,7 +133,7 @@ include("head.inc");
             <tr>
                 <td width="22%" valign="top" class="vncellreq"><?=gettext("IP address");?></td>
                 <td width="78%" class="vtable">
-                    <?=$mandfldhtml;?><input name="ip" type="text" class="formfld unknown" id="ip" size="40" value="<?=htmlspecialchars($pconfig['ip']);?>"><br />
+                    <?=$mandfldhtml;?><input name="ip" type="text" class="formfld unknown" id="ip" size="40" value="<?=htmlspecialchars($pconfig['ip']);?>" /><br />
                     <span class="vexpl">
                     <?=gettext("IP address of the authoritative DNS server for this domain"); ?><br />
                     <?=gettext("e.g."); ?> <em>192.168.100.100</em><br />
@@ -144,7 +144,7 @@ include("head.inc");
             <tr>
                 <td width="22%" valign="top" class="vncell"><?=gettext("Description");?></td>
                 <td width="78%" class="vtable">
-                    <input name="descr" type="text" class="formfld unknown" id="descr" size="40" value="<?=htmlspecialchars($pconfig['descr']);?>"><br />
+                    <input name="descr" type="text" class="formfld unknown" id="descr" size="40" value="<?=htmlspecialchars($pconfig['descr']);?>" /><br />
                     <span class="vexpl">
                         <?=gettext("You may enter a description here for your reference (not parsed).");?>
                     </span>
@@ -153,9 +153,9 @@ include("head.inc");
             <tr>
                 <td width="22%" valign="top">&nbsp;</td>
                 <td width="78%">
-                    <input name="Submit" type="submit" class="formbtn" value="<?=gettext("Save");?>">  <input class="formbtn" type="button" value="<?=gettext("Cancel");?>" onclick="history.back()">
+                    <input name="Submit" type="submit" class="formbtn" value="<?=gettext("Save");?>" />  <input class="formbtn" type="button" value="<?=gettext("Cancel");?>" onclick="history.back()" />
                     <?php if (isset($id) && $a_domainOverrides[$id]): ?>
-                    <input name="id" type="hidden" value="<?=htmlspecialchars($id);?>">
+                    <input name="id" type="hidden" value="<?=htmlspecialchars($id);?>" />
                     <?php endif; ?>
                 </td>
             </tr>

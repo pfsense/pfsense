@@ -177,6 +177,7 @@ include("head.inc");
 </script>
 
 <script type="text/javascript">
+//<![CDATA[
 	rowname[0] = "aliashost";
 	rowtype[0] = "textbox";
 	rowsize[0] = "20";
@@ -186,18 +187,19 @@ include("head.inc");
 	rowname[2] = "aliasdescription";
 	rowtype[2] = "textbox";
 	rowsize[2] = "20";
+//]]>
 </script>
 
 <?php if ($input_errors) print_input_errors($input_errors); ?>
 	<form action="services_unbound_host_edit.php" method="post" name="iform" id="iform">
-		<table width="100%" border="0" cellpadding="6" cellspacing="0">
+		<table width="100%" border="0" cellpadding="6" cellspacing="0" summary="host edit">
 			<tr>
 				<td colspan="2" valign="top" class="listtopic"><?=gettext("Edit DNS Resolver entry");?></td>
 			</tr>
 			<tr>
 				<td width="22%" valign="top" class="vncell"><?=gettext("Host");?></td>
 				<td width="78%" class="vtable">
-					<input name="host" type="text" class="formfld" id="host" size="40" value="<?=htmlspecialchars($pconfig['host']);?>"><br />
+					<input name="host" type="text" class="formfld" id="host" size="40" value="<?=htmlspecialchars($pconfig['host']);?>" /><br />
 					<span class="vexpl"><?=gettext("Name of the host, without domain part"); ?><br />
 					<?=gettext("e.g."); ?> <em><?=gettext("myhost"); ?></em></span>
 				</td>
@@ -205,7 +207,7 @@ include("head.inc");
 			<tr>
 				<td width="22%" valign="top" class="vncellreq"><?=gettext("Domain");?></td>
 				<td width="78%" class="vtable">
-					<input name="domain" type="text" class="formfld" id="domain" size="40" value="<?=htmlspecialchars($pconfig['domain']);?>"><br />
+					<input name="domain" type="text" class="formfld" id="domain" size="40" value="<?=htmlspecialchars($pconfig['domain']);?>" /><br />
 					<span class="vexpl"><?=gettext("Domain of the host"); ?><br />
 						<?=gettext("e.g."); ?> <em><?=gettext("example.com"); ?></em></span>
 				</td>
@@ -213,7 +215,7 @@ include("head.inc");
 			<tr>
 				<td width="22%" valign="top" class="vncellreq"><?=gettext("IP address");?></td>
 				<td width="78%" class="vtable">
-					<input name="ip" type="text" class="formfld" id="ip" size="40" value="<?=htmlspecialchars($pconfig['ip']);?>"><br />
+					<input name="ip" type="text" class="formfld" id="ip" size="40" value="<?=htmlspecialchars($pconfig['ip']);?>" /><br />
 					<span class="vexpl"><?=gettext("IP address of the host"); ?><br />
 						<?=gettext("e.g."); ?> <em>192.168.100.100</em> <?=gettext("or"); ?> <em>fd00:abcd::1</em></span>
 				</td>
@@ -221,14 +223,14 @@ include("head.inc");
 			<tr>
 				<td width="22%" valign="top" class="vncell"><?=gettext("Description");?></td>
 				<td width="78%" class="vtable">
-					<input name="descr" type="text" class="formfld" id="descr" size="40" value="<?=htmlspecialchars($pconfig['descr']);?>"><br />
+					<input name="descr" type="text" class="formfld" id="descr" size="40" value="<?=htmlspecialchars($pconfig['descr']);?>" /><br />
 					<span class="vexpl"><?=gettext("You may enter a description here for your reference (not parsed).");?></span>
 				</td>
 			</tr>
 			<tr>
 				<td width="22%" valign="top" class="vncell"><div id="addressnetworkport"><?=gettext("Aliases"); ?></div></td>
 				<td width="78%" class="vtable">
-					<table id="maintable">
+					<table id="maintable" summary="aliases">
 						<tbody>
 							<tr>
 								<td colspan="4">
@@ -277,19 +279,21 @@ include("head.inc");
 						<img border="0" src="/themes/<?= $g['theme']; ?>/images/icons/icon_plus.gif" alt="" title="<?=gettext("add another entry");?>" />
 					</a>
 					<script type="text/javascript">
+					//<![CDATA[
 						field_counter_js = 3;
 						rows = 1;
 						totalrows = <?php echo $counter; ?>;
 						loaded = <?php echo $counter; ?>;
+					//]]>
 					</script>
 				</td>
 			</tr>
 			<tr>
 				<td width="22%" valign="top">&nbsp;</td>
 				<td width="78%">
-					<input name="Submit" type="submit" class="formbtn" value="<?=gettext("Save");?>"> <input class="formbtn" type="button" value="<?=gettext("Cancel");?>" onclick="history.back()">
+					<input name="Submit" type="submit" class="formbtn" value="<?=gettext("Save");?>" /> <input class="formbtn" type="button" value="<?=gettext("Cancel");?>" onclick="history.back()" />
 					<?php if (isset($id) && $a_hosts[$id]): ?>
-					<input name="id" type="hidden" value="<?=htmlspecialchars($id);?>">
+					<input name="id" type="hidden" value="<?=htmlspecialchars($id);?>" />
 					<?php endif; ?>
 				</td>
 			</tr>

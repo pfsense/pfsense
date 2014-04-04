@@ -89,9 +89,9 @@ if(!function_exists("get_menu_messages")) {
 				$request_string = implode("&", $requests);
 
 				if(is_array($notices)) {
-					$notice_msgs = "<table colspan=6 id=notice_table>";
+					$notice_msgs = "<table colspan=\'6\' id=\'notice_table\'>";
 					$alert_style="style=\'color:#ffffff; filter:Glow(color=#ff0000, strength=12);\' ";
-					$notice = "<a href=# onClick=notice_action(\'acknowledge\',\'all\');domTT_close(this); {$alert_style}>".gettext("Acknowledge All Notices")."</a>";
+					$notice = "<a href=\'#\' onclick=notice_action(\'acknowledge\',\'all\');domTT_close(this); {$alert_style}>".gettext("Acknowledge All Notices")."</a>";
 					$alert_link="title=\'".gettext("Click to Acknowledge")."\' {$alert_style}";
 					$domtt_width=500;
 					foreach ($notices as $key => $value) {
@@ -102,8 +102,8 @@ if(!function_exists("get_menu_messages")) {
 							$domtt_width=(strlen($noticemsg) *8);
 						if ((strlen($noticemsg)* 8) > 900)
 							$domtt_width= 900;
-						$alert_action ="onClick=notice_action(\'acknowledge\',\'{$key}\');domTT_close(this);jQuery(this).parent().parent().remove();";
-						$notice_msgs .= "<tr><td valign=\'top\' width=\'120\'><a href=# {$alert_link} {$alert_action}>{$date}</a></td><td valign=\'top\'><a href=# {$alert_link} {$alert_action}>[ ".htmlspecialchars($noticemsg)."]</a></td><tr>";
+						$alert_action ="onclick=notice_action(\'acknowledge\',\'{$key}\');domTT_close(this);jQuery(this).parent().parent().remove();";
+						$notice_msgs .= "<tr><td valign=\'top\' width=\'120\'><a href=\'#\' {$alert_link} {$alert_action}>{$date}</a></td><td valign=\'top\'><a href=\'#\' {$alert_link} {$alert_action}>[ ".htmlspecialchars($noticemsg)."]</a></td></tr>";
 						}
 					$notice_msgs .="</table>";
 						
@@ -113,7 +113,7 @@ if(!function_exists("get_menu_messages")) {
                     	$msg= sprintf("%1$02d",count($notices))." ".gettext("unread notice");
                     else
                     	$msg= sprintf("%1$02d",count($notices))." ".gettext("unread notices");
-                    $menu_messages.="<div id='marquee-text' style='z-index:1001;'><a href=# {$domtt}><b> .:. {$msg} .:. </b></a></div>\n";
+                    $menu_messages.="<div id='marquee-text' style='z-index:1001;'><a href='#' {$domtt}><b> .:. {$msg} .:. </b></a></div>\n";
                     $menu_messages.="</div>\n";
                     }
 			}

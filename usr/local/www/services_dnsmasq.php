@@ -143,6 +143,7 @@ if ($_GET['act'] == "del") {
 	}
 }
 
+$closehead = false;
 $pgtitle = array(gettext("Services"),gettext("DNS forwarder"));
 $shortcut_section = "resolver";
 include("head.inc");
@@ -150,7 +151,7 @@ include("head.inc");
 ?>
 
 <script type="text/javascript">
-<!--
+//<![CDATA[
 function enable_change(enable_over) {
 	var endis;
 	endis = !(document.iform.enable.checked || enable_over);
@@ -163,32 +164,32 @@ function show_advanced_dns() {
 	aodiv = document.getElementById('showadv');
 	aodiv.style.display = "block";
 }
-//-->
+//]]>
 </script>
-
+</head>
 <body link="#0000CC" vlink="#0000CC" alink="#0000CC">
 <?php include("fbegin.inc"); ?>
 <form action="services_dnsmasq.php" method="post" name="iform" id="iform">
 <?php if ($input_errors) print_input_errors($input_errors); ?>
 <?php if ($savemsg) print_info_box($savemsg); ?>
-<?php if (is_subsystem_dirty('hosts')): ?><p>
+<?php if (is_subsystem_dirty('hosts')): ?><br/>
 <?php print_info_box_np(gettext("The DNS forwarder configuration has been changed") . ".<br />" . gettext("You must apply the changes in order for them to take effect."));?><br />
 <?php endif; ?>
-<table width="100%" border="0" cellpadding="6" cellspacing="0">
+<table width="100%" border="0" cellpadding="6" cellspacing="0" summary="dns forwarder">
 	<tr>
 		<td colspan="2" valign="top" class="listtopic"><?=gettext("General DNS Forwarder Options");?></td>
 	</tr>
 	<tr>
 		<td width="22%" valign="top" class="vncellreq"><?=gettext("Enable");?></td>
 		<td width="78%" class="vtable"><p>
-			<input name="enable" type="checkbox" id="enable" value="yes" <?php if ($pconfig['enable'] == "yes") echo "checked";?> onClick="enable_change(false)">
+			<input name="enable" type="checkbox" id="enable" value="yes" <?php if ($pconfig['enable'] == "yes") echo "checked=\"checked\"";?> onclick="enable_change(false)" />
 			<strong><?=gettext("Enable DNS forwarder");?><br />
 			</strong></p></td>
 		</tr>
 	<tr>
 		<td width="22%" valign="top" class="vncellreq"><?=gettext("DHCP Registration");?></td>
 		<td width="78%" class="vtable"><p>
-			<input name="regdhcp" type="checkbox" id="regdhcp" value="yes" <?php if ($pconfig['regdhcp'] == "yes") echo "checked";?>>
+			<input name="regdhcp" type="checkbox" id="regdhcp" value="yes" <?php if ($pconfig['regdhcp'] == "yes") echo "checked=\"checked\"";?> />
 			<strong><?=gettext("Register DHCP leases in DNS forwarder");?><br />
 			</strong><?php printf(gettext("If this option is set, then machines that specify".
 			" their hostname when requesting a DHCP lease will be registered".
@@ -200,7 +201,7 @@ function show_advanced_dns() {
 	<tr>
 		<td width="22%" valign="top" class="vncellreq"><?=gettext("Static DHCP");?></td>
 		<td width="78%" class="vtable"><p>
-			<input name="regdhcpstatic" type="checkbox" id="regdhcpstatic" value="yes" <?php if ($pconfig['regdhcpstatic'] == "yes") echo "checked";?>>
+			<input name="regdhcpstatic" type="checkbox" id="regdhcpstatic" value="yes" <?php if ($pconfig['regdhcpstatic'] == "yes") echo "checked=\"checked\"";?> />
 			<strong><?=gettext("Register DHCP static mappings in DNS forwarder");?><br />
 			</strong><?php printf(gettext("If this option is set, then DHCP static mappings will ".
 					"be registered in the DNS forwarder, so that their name can be ".
@@ -211,7 +212,7 @@ function show_advanced_dns() {
 	<tr>
 		<td width="22%" valign="top" class="vncellreq"><?=gettext("Prefer DHCP");?></td>
 		<td width="78%" class="vtable"><p>
-			<input name="dhcpfirst" type="checkbox" id="dhcpfirst" value="yes" <?php if ($pconfig['dhcpfirst'] == "yes") echo "checked";?>>
+			<input name="dhcpfirst" type="checkbox" id="dhcpfirst" value="yes" <?php if ($pconfig['dhcpfirst'] == "yes") echo "checked=\"checked\"";?> />
 			<strong><?=gettext("Resolve DHCP mappings first");?><br />
 			</strong><?php printf(gettext("If this option is set, then DHCP mappings will ".
 					"be resolved before the manual list of names below. This only ".
@@ -221,7 +222,7 @@ function show_advanced_dns() {
 	<tr>
 		<td rowspan="3" width="22%" valign="top" class="vncellreq"><?=gettext("DNS Query Forwarding");?></td>
 		<td width="78%" class="vtable"><p>
-			<input name="strict_order" type="checkbox" id="strict_order" value="yes" <?php if ($pconfig['strict_order'] == "yes") echo "checked";?>>
+			<input name="strict_order" type="checkbox" id="strict_order" value="yes" <?php if ($pconfig['strict_order'] == "yes") echo "checked=\"checked\"";?> />
 			<strong><?=gettext("Query DNS servers sequentially");?><br />
 			</strong><?php printf(gettext("If this option is set, %s DNS Forwarder (dnsmasq) will ".
 					"query the DNS servers sequentially in the order specified (<i>System - General Setup - DNS Servers</i>), ".
@@ -231,7 +232,7 @@ function show_advanced_dns() {
 	</tr>
 	<tr>
 		<td width="78%" class="vtable"><p>
-			<input name="domain_needed" type="checkbox" id="domain_needed" value="yes" <?php if ($pconfig['domain_needed'] == "yes") echo "checked";?>>
+			<input name="domain_needed" type="checkbox" id="domain_needed" value="yes" <?php if ($pconfig['domain_needed'] == "yes") echo "checked=\"checked\"";?> />
 			<strong><?=gettext("Require domain");?><br />
 			</strong><?php printf(gettext("If this option is set, %s DNS Forwarder (dnsmasq) will ".
 					"not forward A or AAAA queries for plain names, without dots or domain parts, to upstream name servers.  ".
@@ -241,7 +242,7 @@ function show_advanced_dns() {
 	</tr>
 	<tr>
 		<td width="78%" class="vtable"><p>
-			<input name="no_private_reverse" type="checkbox" id="no_private_reverse" value="yes" <?php if ($pconfig['no_private_reverse'] == "yes") echo "checked";?>>
+			<input name="no_private_reverse" type="checkbox" id="no_private_reverse" value="yes" <?php if ($pconfig['no_private_reverse'] == "yes") echo "checked=\"checked\"";?> />
 			<strong><?=gettext("Do not forward private reverse lookups");?><br />
 			</strong><?php printf(gettext("If this option is set, %s DNS Forwarder (dnsmasq) will ".
 					"not forward reverse DNS lookups (PTR) for private addresses (RFC 1918) to upstream name servers.  ".
@@ -253,7 +254,7 @@ function show_advanced_dns() {
 	<tr>
 		<td width="22%" valign="top" class="vncellreq"><?=gettext("Listen Port");?></td>
 		<td width="78%" class="vtable"><p>
-			<input name="port" type="text" id="port" size="6" <?php if ($pconfig['port']) echo "value=\"{$pconfig['port']}\"";?>>
+			<input name="port" type="text" id="port" size="6" <?php if ($pconfig['port']) echo "value=\"{$pconfig['port']}\"";?> />
 			<br /><br />
 			<?=gettext("The port used for responding to DNS queries. It should normally be left blank unless another service needs to bind to TCP/UDP port 53.");?></p>
 		</td>
@@ -267,7 +268,7 @@ function show_advanced_dns() {
 		?>
 			<?=gettext("Interface IPs used by the DNS Forwarder for responding to queries from clients. If an interface has both IPv4 and IPv6 IPs, both are used. Queries to other interface IPs not selected below are discarded. The default behavior is to respond to queries on every available IPv4 and IPv6 address.");?>
 			<br /><br />
-			<select id="interface" name="interface[]" multiple="true" class="formselect" size="<?php echo $size; ?>">
+			<select id="interface" name="interface[]" multiple="multiple" class="formselect" size="<?php echo $size; ?>">
 				<option value="" <?php if (empty($pconfig['interface'])) echo 'selected="selected"'; ?>>All</option>
 			<?php  foreach ($interface_addresses as $laddr):
 					$selected = "";
@@ -284,7 +285,7 @@ function show_advanced_dns() {
 	</tr>
 	<tr>
 		<td width="78%" class="vtable"><p>
-			<input name="strictbind" type="checkbox" id="strictbind" value="yes" <?php if ($pconfig['strictbind'] == "yes") echo "checked";?>>
+			<input name="strictbind" type="checkbox" id="strictbind" value="yes" <?php if ($pconfig['strictbind'] == "yes") echo "checked=\"checked\"";?> />
 			<strong><?=gettext("Strict Interface Binding");?></strong>
 			<br />
 			<?= gettext("If this option is set, the DNS forwarder will only bind to the interfaces containing the IP addresses selected above, rather than binding to all interfaces and discarding queries to other addresses."); ?>
@@ -295,21 +296,20 @@ function show_advanced_dns() {
 	</tr>
 	<tr>
 		<td width="22%" valign="top" class="vncellreq"><?=gettext("Advanced");?></td>
-		<td width="78%" class="vtable"><p>
+		<td width="78%" class="vtable">
 			<div id="showadvbox" <?php if ($pconfig['custom_options']) echo "style='display:none'"; ?>>
-				<input type="button" onClick="show_advanced_dns()" value="<?=gettext("Advanced"); ?>" /> - <?=gettext("Show advanced option");?></a>
+				<input type="button" onClick="show_advanced_dns()" value="<?=gettext("Advanced"); ?>" /> - <?=gettext("Show advanced option");?>
 			</div>
 			<div id="showadv" <?php if (empty($pconfig['custom_options'])) echo "style='display:none'"; ?>>
 				<strong><?=gettext("Advanced");?><br /></strong>
 				<textarea rows="6" cols="78" name="custom_options" id="custom_options"><?=htmlspecialchars($pconfig['custom_options']);?></textarea><br />
 				<?=gettext("Enter any additional options you would like to add to the dnsmasq configuration here, separated by a space or newline"); ?><br />
 			</div>
-			</p>
 		</td>
 	</tr>
 	<tr>
 		<td colspan="2">
-			<input name="submit" type="submit" class="formbtn" value="<?=gettext("Save"); ?>" onclick="enable_change(true)">
+			<input name="submit" type="submit" class="formbtn" value="<?=gettext("Save"); ?>" onclick="enable_change(true)" />
 		</td>
 	</tr>
 </table>
@@ -329,7 +329,7 @@ function show_advanced_dns() {
 </span></p>
 
 &nbsp;<br />
-<table width="100%" border="0" cellpadding="0" cellspacing="0" class="tabcont">
+<table width="100%" border="0" cellpadding="0" cellspacing="0" class="tabcont" summary="host overrides">
 <tr>
 	<td colspan="5" valign="top" class="listtopic"><?=gettext("Host Overrides");?></td>
 </tr>
@@ -340,7 +340,7 @@ function show_advanced_dns() {
 	</td>
 </tr>
 </table>
-<table width="100%" border="0" cellpadding="0" cellspacing="0" class="tabcont sortable">
+<table width="100%" border="0" cellpadding="0" cellspacing="0" class="tabcont sortable" summary="results">
 	<thead>
 	<tr>
 		<td width="20%" class="listhdrr"><?=gettext("Host");?></td>
@@ -348,15 +348,28 @@ function show_advanced_dns() {
 		<td width="20%" class="listhdrr"><?=gettext("IP");?></td>
 		<td width="25%" class="listhdr"><?=gettext("Description");?></td>
 		<td width="10%" class="list">
-			<table border="0" cellspacing="0" cellpadding="1">
+			<table border="0" cellspacing="0" cellpadding="1" summary="icons">
 				<tr>
 					<td width="17"></td>
-					<td valign="middle"><a href="services_dnsmasq_edit.php"><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_plus.gif" width="17" height="17" border="0"></a></td>
+					<td valign="middle"><a href="services_dnsmasq_edit.php"><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_plus.gif" width="17" height="17" border="0" alt="add" /></a></td>
 				</tr>
 			</table>
 		</td>
 	</tr>
 	</thead>
+	<tfoot>
+	<tr>
+		<td class="list" colspan="4"></td>
+		<td class="list">
+			<table border="0" cellspacing="0" cellpadding="1" summary="add">
+				<tr>
+					<td width="17"></td>
+					<td valign="middle"><a href="services_dnsmasq_edit.php"><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_plus.gif" width="17" height="17" border="0" alt="add" /></a></td>
+				</tr>
+			</table>
+		</td>
+	</tr>
+	</tfoot>
 	<tbody>
 	<?php $i = 0; foreach ($a_hosts as $hostent): ?>
 	<tr>
@@ -372,11 +385,11 @@ function show_advanced_dns() {
 		<td class="listbg" ondblclick="document.location='services_dnsmasq_edit.php?id=<?=$i;?>';">
 			<?=htmlspecialchars($hostent['descr']);?>&nbsp;
 		</td>
-		<td valign="middle" nowrap class="list">
-			<table border="0" cellspacing="0" cellpadding="1">
+		<td valign="middle" class="list nowrap">
+			<table border="0" cellspacing="0" cellpadding="1" summary="icons">
 				<tr>
-					<td valign="middle"><a href="services_dnsmasq_edit.php?id=<?=$i;?>"><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_e.gif" width="17" height="17" border="0"></a></td>
-					<td><a href="services_dnsmasq.php?type=host&act=del&id=<?=$i;?>" onclick="return confirm('<?=gettext("Do you really want to delete this host?");?>')"><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_x.gif" width="17" height="17" border="0"></a></td>
+					<td valign="middle"><a href="services_dnsmasq_edit.php?id=<?=$i;?>"><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_e.gif" width="17" height="17" border="0" alt="edit" /></a></td>
+					<td><a href="services_dnsmasq.php?type=host&act=del&amp;id=<?=$i;?>" onclick="return confirm('<?=gettext("Do you really want to delete this host?");?>')"><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_x.gif" width="17" height="17" border="0" alt="delete" /></a></td>
 				</tr>
 			</table>
 	</tr>
@@ -395,56 +408,55 @@ function show_advanced_dns() {
 		<td class="listbg" ondblclick="document.location='services_dnsmasq_edit.php?id=<?=$i;?>';">
 			<?=htmlspecialchars($alias['description']);?>&nbsp;
 		</td>
-		<td valign="middle" nowrap class="list">
-			<a href="services_dnsmasq_edit.php?id=<?=$i;?>"><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_e.gif" width="17" height="17" border="0"></a>
+		<td valign="middle" class="list nowrap">
+			<a href="services_dnsmasq_edit.php?id=<?=$i;?>"><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_e.gif" width="17" height="17" border="0" alt="edit" /></a>
 		</td>
 	</tr>
 	<?php endforeach; ?>
 	<?php endif; ?>
 	<?php $i++; endforeach; ?>
+	<tr style="display:none"><td></td></tr>
 	</tbody>
-	<tfoot>
-	<tr>
-		<td class="list" colspan="4"></td>
-		<td class="list">
-			<table border="0" cellspacing="0" cellpadding="1">
-				<tr>
-					<td width="17"></td>
-					<td valign="middle"><a href="services_dnsmasq_edit.php"><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_plus.gif" width="17" height="17" border="0"></a></td>
-				</tr>
-			</table>
-		</td>
-	</tr>
-	</tfoot>
 </table>
 <br />
-<table width="100%" border="0" cellpadding="0" cellspacing="0" class="tabcont">
+<table width="100%" border="0" cellpadding="0" cellspacing="0" class="tabcont" summary="domain overrides">
 <tr>
 	<td colspan="5" valign="top" class="listtopic"><?=gettext("Domain Overrides");?></td>
 </tr>
 <tr>
-	<tr>
-		<td><p><?=gettext("Entries in this area override an entire domain by specifying an".
-		" authoritative DNS server to be queried for that domain.");?></p></td>
-	</tr>
+	<td><p><?=gettext("Entries in this area override an entire domain by specifying an".
+	" authoritative DNS server to be queried for that domain.");?></p></td>
 </tr>
 </table>
-<table width="100%" border="0" cellpadding="0" cellspacing="0" class="tabcont sortable">
+<table width="100%" border="0" cellpadding="0" cellspacing="0" class="tabcont sortable" summary="results">
 	<thead>
 	<tr>
 		<td width="35%" class="listhdrr"><?=gettext("Domain");?></td>
 		<td width="20%" class="listhdrr"><?=gettext("IP");?></td>
 		<td width="35%" class="listhdr"><?=gettext("Description");?></td>
 		<td width="10%" class="list">
-			<table border="0" cellspacing="0" cellpadding="1">
+			<table border="0" cellspacing="0" cellpadding="1" summary="add">
 				<tr>
-					<td width="17" heigth="17"></td>
-					<td><a href="services_dnsmasq_domainoverride_edit.php"><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_plus.gif" width="17" height="17" border="0"></a></td>
+					<td width="17" height="17"></td>
+					<td><a href="services_dnsmasq_domainoverride_edit.php"><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_plus.gif" width="17" height="17" border="0" alt="add" /></a></td>
 				</tr>
 			</table>
 		</td>
 	</tr>
 	</thead>
+	<tfoot>
+	<tr>
+		<td class="list" colspan="3"></td>
+		<td class="list">
+		<table border="0" cellspacing="0" cellpadding="1" summary="add">
+			<tr>
+				<td width="17" height="17"></td>
+				<td><a href="services_dnsmasq_domainoverride_edit.php"><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_plus.gif" width="17" height="17" border="0" alt="add" /></a></td>
+			</tr>
+		</table>
+		</td>
+	</tr>
+	</tfoot>
 	<tbody>
 	<?php $i = 0; foreach ($a_domainOverrides as $doment): ?>
 	<tr>
@@ -457,30 +469,18 @@ function show_advanced_dns() {
 		<td class="listbg">
 			<?=htmlspecialchars($doment['descr']);?>&nbsp;
 		</td>
-		<td valign="middle" nowrap class="list"> <a href="services_dnsmasq_domainoverride_edit.php?id=<?=$i;?>"><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_e.gif" width="17" height="17" border="0"></a>
-			&nbsp;<a href="services_dnsmasq.php?act=del&type=doverride&id=<?=$i;?>" onclick="return confirm('<?=gettext("Do you really want to delete this domain override?");?>')"><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_x.gif" width="17" height="17" border="0"></a></td>
+		<td valign="middle" class="list nowrap"> <a href="services_dnsmasq_domainoverride_edit.php?id=<?=$i;?>"><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_e.gif" width="17" height="17" border="0" alt="edit" /></a>
+			&nbsp;<a href="services_dnsmasq.php?act=del&type=doverride&amp;id=<?=$i;?>" onclick="return confirm('<?=gettext("Do you really want to delete this domain override?");?>')"><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_x.gif" width="17" height="17" border="0" alt="delete" /></a></td>
 	</tr>
 	<?php $i++; endforeach; ?>
+	<tr style="display:none"><td></td></tr>
 	</tbody>
-	<tfoot>
-	<tr>
-		<td class="list" colspan="3"></td>
-		<td class="list">
-		<table border="0" cellspacing="0" cellpadding="1">
-			<tr>
-				<td width="17" heigth="17"></td>
-				<td><a href="services_dnsmasq_domainoverride_edit.php"><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_plus.gif" width="17" height="17" border="0"></a></td>
-			</tr>
-		</table>
-		</td>
-	</tr>
-	</tfoot>
 </table>
 </form>
 <script type="text/javascript">
-<!--
+//<![CDATA[
 enable_change(false);
-//-->
+//]]>
 </script>
 <?php include("fend.inc"); ?>
 </body>

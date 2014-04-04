@@ -49,7 +49,7 @@ function vpn_ipsec_configure_loglevels()
 
 	foreach ($ipsec_loglevels as $lkey => $ldescr) {
 		if (empty($config['ipsec']["ipsec_{$lkey}"]))
-			mwexec("/usr/local/sbin/ipsec stroke loglevel {$lkey} -1", false);
+			mwexec("/usr/local/sbin/ipsec stroke loglevel {$lkey} -1", true);
 		else if (is_numeric($config['ipsec']["ipsec_{$lkey}"]) &&
 		    intval($config['ipsec']["ipsec_{$lkey}"]) >= 1 && intval($config['ipsec']["ipsec_{$lkey}"]) <= 4)
 			mwexec("/usr/local/sbin/ipsec stroke loglevel {$lkey} " . (intval($config['ipsec']["ipsec_{$lkey}"]) - 1) , false);

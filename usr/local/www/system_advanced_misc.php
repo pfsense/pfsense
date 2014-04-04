@@ -60,11 +60,9 @@ $pconfig['lb_use_sticky'] = isset($config['system']['lb_use_sticky']);
 $pconfig['srctrack'] = $config['system']['srctrack'];
 $pconfig['gw_switch_default'] = isset($config['system']['gw_switch_default']);
 $pconfig['preferoldsa_enable'] = isset($config['ipsec']['preferoldsa']);
-if (isset($ipsec_loglevel)) {
-    foreach ($ipsec_loglevel as $lkey => $ldescr) {
+foreach ($ipsec_loglevels as $lkey => $ldescr) {
 	if (!empty($config['ipsec']["ipsec_{$lkey}"]))
 		$pconfig["ipsec_{$lkey}"] = $config['ipsec']["ipsec_{$lkey}"];
-    }
 }
 $pconfig['failoverforcereload'] = isset($config['ipsec']['failoverforcereload']);
 $pconfig['maxmss_enable'] = isset($config['system']['maxmss_enable']);
@@ -172,7 +170,7 @@ if ($_POST) {
 		elseif (isset($config['ipsec']['failoverforcereload']))
 			unset($config['ipsec']['failoverforcereload']);
 
-		foreach ($ipsec_loglevel as $lkey => $ldescr) {
+		foreach ($ipsec_loglevels as $lkey => $ldescr) {
 			if (empty($_POST["ipsec_{$lkey}"]))
 				unset($config['ipsec']["ipsec_{$lkey}"]);
 			else

@@ -138,8 +138,8 @@ function parse_filter_line($line) {
 	$log_split = "";
 	
 	#preg_match("/(.*)\s(.*)\spf:\s.*\srule\s(.*)\(match\)\:\s(.*)\s(\w+)\son\s(\w+)\:\s\((.*)\)\s(.*)\s>\s(.*)\:\s(.*)/", $line, $log_split);
-	## Below makes firewall output work, but there's still something need fixing; IPv4 isn't being shown properly, etc.
-	preg_match("/(.*)\s(.*)\spf:\s.*\srule\s(.*)\(match\)\:\s(.*)\s(\w+)\son\s(\w+)\:\s(.*)\)\s::(.*)\s>\s::(.*)\:\s(.*)/", $line, $log_split);
+	## Below makes firewall output work, but there's still something need fixing; i.e. Protocol not showing, etc.
+	preg_match("/(.*)\s(.*)\spf:.*rule\s(.*).*\(match\)\:\s(.*)\s(\w+)\son\s(\w+):\s(\C+)\s-.*\)\s(.*)\s>\s(.*):.*/", $line, $log_split);
 
 	list($all, $flent['time'], $host, $rule, $flent['act'], $flent['direction'], $flent['realint'], $details, $src, $dst, $leftovers) = $log_split;
 

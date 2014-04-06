@@ -60,21 +60,21 @@ else
 
 // SMTP
 $pconfig['disable_smtp'] = isset($config['notifications']['smtp']['disable']);
-if($config['notifications']['smtp']['ipaddress']) 
+if ($config['notifications']['smtp']['ipaddress'])
 	$pconfig['smtpipaddress'] = $config['notifications']['smtp']['ipaddress'];
-if($config['notifications']['smtp']['port'])
+if ($config['notifications']['smtp']['port'])
 	$pconfig['smtpport'] = $config['notifications']['smtp']['port'];
-if($config['notifications']['smtp']['ssl'])
-	$pconfig['smtpssl'] = $config['notifications']['smtp']['ssl'];
-if($config['notifications']['smtp']['tls'])
-	$pconfig['smtptls'] = $config['notifications']['smtp']['tls'];
-if($config['notifications']['smtp']['notifyemailaddress']) 
+if (isset($config['notifications']['smtp']['ssl']))
+	$pconfig['smtpssl'] = true;
+if (isset($config['notifications']['smtp']['tls']))
+	$pconfig['smtptls'] = true;
+if ($config['notifications']['smtp']['notifyemailaddress'])
 	$pconfig['smtpnotifyemailaddress'] = $config['notifications']['smtp']['notifyemailaddress'];
-if($config['notifications']['smtp']['username']) 
+if ($config['notifications']['smtp']['username'])
 	$pconfig['smtpusername'] = $config['notifications']['smtp']['username'];
-if($config['notifications']['smtp']['password']) 
+if ($config['notifications']['smtp']['password'])
 	$pconfig['smtppassword'] = $config['notifications']['smtp']['password'];
-if($config['notifications']['smtp']['fromaddress']) 
+if ($config['notifications']['smtp']['fromaddress'])
 	$pconfig['smtpfromaddress'] = $config['notifications']['smtp']['fromaddress'];
 
 // System Sounds
@@ -114,8 +114,14 @@ if ($_POST) {
 		// SMTP
 		$config['notifications']['smtp']['ipaddress'] = $_POST['smtpipaddress'];
 		$config['notifications']['smtp']['port'] = $_POST['smtpport'];
-		$config['notifications']['smtp']['ssl'] = isset($_POST['smtpssl']) ? 'checked' : 'unchecked';
-		$config['notifications']['smtp']['tls'] = isset($_POST['smtptls']) ? (isset($_POST['smtpssl']) ? 'unchecked' : 'checked') : 'unchecked';
+		if (isset($_POST['smtpssl']))
+			$config['notifications']['smtp']['ssl'] = true;
+		else
+			unset($config['notifications']['smtp']['ssl']);
+		if (isset($_POST['smtptls']))
+			$config['notifications']['smtp']['tls'] = true;
+		else
+			unset($config['notifications']['smtp']['tls']);
 		$config['notifications']['smtp']['notifyemailaddress'] = $_POST['smtpnotifyemailaddress'];
 		$config['notifications']['smtp']['username'] = $_POST['smtpusername'];
 		$config['notifications']['smtp']['password'] = $_POST['smtppassword'];
@@ -268,8 +274,8 @@ include("head.inc");
 						<tr>
 							<td width="22%" valign="top" class="vncell"><?=gettext("Secure SMTP Connection"); ?></td>
 							<td width="78%" class="vtable">
-								<input type='checkbox' id='smtpssl' name='smtpssl' <?php echo $pconfig['smtpssl']; ?> />Enable SMTP over SSL/TLS<br />
-								<input type='checkbox' id='smtptls' name='smtptls' <?php echo $pconfig['smtptls']; ?> />Enable STARTTLS<br />
+								<input type='checkbox' id='smtpssl' name='smtpssl' <?php if (isset($pconfig['smtpssl'])) echo "checked=\"checked\""; ?> />Enable SMTP over SSL/TLS<br />
+								<input type='checkbox' id='smtptls' name='smtptls' <?php if (isset($pconfig['smtptls'])) echo "checked=\"checked\""; ?> />Enable STARTTLS<br />
 							</td>
 						</tr>
 						<tr>

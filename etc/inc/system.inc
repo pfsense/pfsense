@@ -335,8 +335,13 @@ function system_dhcpleases_configure() {
 			@touch("{$g['dhcpd_chroot_path']}/var/db/dhcpd.leases");
 		if (isvalidpid("{$g['varrun_path']}/dhcpleases.pid"))
 			sigkillbypid("{$g['varrun_path']}/dhcpleases.pid", "HUP");
-		else
+		else {
+			/* To ensure we do not start multiple instances of dhcpleases, perform some clean-up first. */
+			if (is_process_running("dhcpleases"))
+				mwexec('/bin/pkill dhcpleases');
+			@unlink("{$g['varrun_path']}/dhcpleases.pid");
 			mwexec("/usr/local/sbin/dhcpleases -l {$g['dhcpd_chroot_path']}/var/db/dhcpd.leases -d {$config['system']['domain']} -p {$g['varrun_path']}/dnsmasq.pid -h {$g['varetc_path']}/hosts");
+		}
 	} else {
 		sigkillbypid("{$g['varrun_path']}/dhcpleases.pid", "TERM");
 		@unlink("{$g['varrun_path']}/dhcpleases.pid");

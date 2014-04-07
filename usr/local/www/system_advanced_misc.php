@@ -170,11 +170,13 @@ if ($_POST) {
 		elseif (isset($config['ipsec']['failoverforcereload']))
 			unset($config['ipsec']['failoverforcereload']);
 
-		foreach ($ipsec_loglevels as $lkey => $ldescr) {
-			if (empty($_POST["ipsec_{$lkey}"]))
-				unset($config['ipsec']["ipsec_{$lkey}"]);
-			else
-				$config['ipsec']["ipsec_{$lkey}"] = $_POST["ipsec_{$lkey}"];
+		if (is_array($config['ipsec'])) {
+			foreach ($ipsec_loglevels as $lkey => $ldescr) {
+				if (empty($_POST["ipsec_{$lkey}"]))
+					unset($config['ipsec']["ipsec_{$lkey}"]);
+				else
+					$config['ipsec']["ipsec_{$lkey}"] = $_POST["ipsec_{$lkey}"];
+			}
 		}
 		if($_POST['noinstalllanspd'] == "yes") {
 			if (!isset($pconfig['noinstalllanspd']))

@@ -1048,7 +1048,7 @@ function captiveportal_allowedip_configure_entry($ipent, $ishostname = false) {
 	$cp_filterdns_conf = "";
 	$enBwup = 0;
 	if (!empty($ipent['bw_up']))
-		$enBwup = iintval($ipent['bw_up']);
+		$enBwup = intval($ipent['bw_up']);
 	else if (isset($config['captiveportal'][$cpzone]['bwdefaultup']))
 		$enBwup = $config['captiveportal'][$cpzone]['bwdefaultup'];
 	$enBwdown = 0;

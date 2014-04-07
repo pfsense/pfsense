@@ -1882,6 +1882,8 @@ function portal_allow($clientip,$clientmac,$username,$password = null, $attribut
 			else
 				captiveportal_logportalauth($cpentry[4],$cpentry[3],$cpentry[2],"CONCURRENT LOGIN - REUSING IP {$cpentry[2]} WITH DIFFERENT MAC ADDRESS {$cpentry[3]}");
 			$sessionid = $cpentry[5];
+			/* Release unused pipe number */
+			captiveportal_free_dn_ruleno($pipeno);
 			break;
 		}
 		elseif (($attributes['voucher']) && ($username != 'unauthenticated') && ($cpentry[4] == $username)) {

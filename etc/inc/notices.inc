@@ -309,8 +309,8 @@ function send_smtp_message($message, $subject = "(no subject)") {
 	$smtp->host_port = empty($config['notifications']['smtp']['port']) ? 25 : $config['notifications']['smtp']['port'];
 
 	$smtp->direct_delivery = 0;
-	$smtp->ssl = ($config['notifications']['smtp']['ssl'] == "checked") ? 1 : 0;
-	$smtp->tls = ($config['notifications']['smtp']['tls'] == "checked") ? 1 : 0;
+	$smtp->ssl = (isset($config['notifications']['smtp']['ssl'])) ? 1 : 0;
+	$smtp->tls = (isset($config['notifications']['smtp']['tls'])) ? 1 : 0;
 	$smtp->debug = 0;
 	$smtp->html_debug = 0;
 	$smtp->localhost=$config['system']['hostname'].".".$config['system']['domain'];

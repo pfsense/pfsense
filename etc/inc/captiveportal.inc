@@ -1882,8 +1882,6 @@ function portal_allow($clientip,$clientmac,$username,$password = null, $attribut
 			else
 				captiveportal_logportalauth($cpentry[4],$cpentry[3],$cpentry[2],"CONCURRENT LOGIN - REUSING IP {$cpentry[2]} WITH DIFFERENT MAC ADDRESS {$cpentry[3]}");
 			$sessionid = $cpentry[5];
-			/* Release unused pipe number */
-			captiveportal_free_dn_ruleno($pipeno);
 			break;
 		}
 		elseif (($attributes['voucher']) && ($username != 'unauthenticated') && ($cpentry[4] == $username)) {
@@ -2010,8 +2008,13 @@ function portal_allow($clientip,$clientmac,$username,$password = null, $attribut
 					captiveportal_logportalauth($username,$clientmac,$clientip,$type,"RADIUS ACCOUNTING FAILED");
 			}
 		}
-	} else
+	} else {
+		/* NOTE: #3062-11 If the pipeno has been allocated free it to not DoS the CP and maintain proper operation as in radius() case */
+		if (!is_null($pipeno))
+			captiveportal_free_dn_ruleno($pipeno);
+
 		unlock($cpdblck);
+	}
 
 	if ($writecfg == true)
 		write_config();

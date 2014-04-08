@@ -172,10 +172,10 @@ if ($_POST) {
 
 		if (is_array($config['ipsec'])) {
 			foreach ($ipsec_loglevels as $lkey => $ldescr) {
-				if (!empty($_POST["ipsec_{$lkey}"]))
-					$config['ipsec']["ipsec_{$lkey}"] = $_POST["ipsec_{$lkey}"];
+				if (empty($_POST["ipsec_{$lkey}"]))
+					@unset($config['ipsec']["ipsec_{$lkey}"]);
 				else
-					unset($config['ipsec']["ipsec_{$lkey}"]);
+					$config['ipsec']["ipsec_{$lkey}"] = $_POST["ipsec_{$lkey}"];
 			}
 		}
 		if($_POST['noinstalllanspd'] == "yes") {

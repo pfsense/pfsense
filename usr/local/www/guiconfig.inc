@@ -914,6 +914,7 @@ function print_rfc2616_select($tag, $current){
 		}
 		echo "<option value=\"{$code}\"{$sel}>{$message}</option>\n";
 	}
+	echo "</select>\n";
 }
 
 // Useful debugging function, much cleaner than print_r

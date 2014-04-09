@@ -49,9 +49,9 @@ $crl_methods = array(
 	"internal" => gettext("Create an internal Certificate Revocation List"),
 	"existing" => gettext("Import an existing Certificate Revocation List"));
 
-if (is_numericint($_GET['id']))
+if (ctype_alnum($_GET['id']))
 	$id = $_GET['id'];
-if (isset($_POST['id']) && is_numericint($_POST['id']))
+if (isset($_POST['id']) && ctype_alnum($_POST['id']))
 	$id = $_POST['id'];
 
 if (!is_array($config['ca']))

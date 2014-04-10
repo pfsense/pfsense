@@ -173,7 +173,8 @@ if ($_POST) {
 		if (is_array($config['ipsec'])) {
 			foreach ($ipsec_loglevels as $lkey => $ldescr) {
 				if (empty($_POST["ipsec_{$lkey}"]))
-					@unset($config['ipsec']["ipsec_{$lkey}"]);
+					if (isset($config['ipsec']["ipsec_{$lkey}"]))
+						unset($config['ipsec']["ipsec_{$lkey}"]);
 				else
 					$config['ipsec']["ipsec_{$lkey}"] = $_POST["ipsec_{$lkey}"];
 			}

@@ -87,10 +87,6 @@ else {
 	$curwanip = find_interface_ip($interface_real, true);
 	if($curwanip == "")
 		$curwanip = get_interface_ip($interface);
-	if (($curwanip == "") && empty($config['interfaces'][$interface]['ipaddr'])) {
-		log_error("Interface does not have an IP address, nothing to do.");
-		return;
-	}
 }
 
 log_error("rc.newwanip: on (IP address: {$curwanip}) (interface: {$interface_descr}[{$interface}]) (real interface: {$interface_real}).");

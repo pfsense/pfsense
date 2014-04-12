@@ -85,7 +85,7 @@ if ($g['booting'] && $config['interfaces'][$interface]['ipaddrv6'] != "dhcp6")
  * NOTE: Take care of openvpn and similar if you generate the event to reconfigure an interface.
  *	i.e. OpenVPN might be in tap mode and not have an ip.
  */
-if (empty($curwanipv6) || !is_ipaddrv6($curwanipv6)) {
+if ((empty($curwanipv6) || !is_ipaddrv6($curwanipv6)) && substr($interface_real, 0, 4) != "ovpn") {
         log_error("rc.newwanipv6: Failed to update {$interface_descr}[{$interface}] IPv6, restarting...");
 	// send_event("interface reconfigure {$interface}");
         exit;

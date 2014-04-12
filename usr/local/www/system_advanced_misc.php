@@ -719,14 +719,14 @@ function tmpvar_checked(obj) {
 							<?php endif; ?>
 
 							<tr>
-								<td colspan="2" valign="top" class="listtopic"><?=gettext("Packages settings"); ?></td>
+								<td colspan="2" valign="top" class="listtopic"><?=gettext("Package settings"); ?></td>
 							</tr>
 							<tr>
-								<td width="22%" valign="top" class="vncell"><?=gettext("Packages signature"); ?></td>
+								<td width="22%" valign="top" class="vncell"><?=gettext("Package signature"); ?></td>
 								<td width="78%" class="vtable">
 									<input name="pkg_nochecksig" type="checkbox" id="pkg_nochecksig" value="yes" <?php if ($pconfig['pkg_nochecksig']) echo "checked=\"checked\""; ?> />
-									<strong><?=gettext("Do NOT check packages signature"); ?></strong><br />
-									<?=gettext("Enable this option will make pfSense install any packages without check its signature."); ?>
+									<strong><?=gettext("Do NOT check package signature"); ?></strong><br />
+									<?=gettext("Enable this option to allow pfSense to install any package without checking its signature."); ?>
 								</td>
 							</tr>
 

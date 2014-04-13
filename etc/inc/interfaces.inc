@@ -945,7 +945,7 @@ function interface_gif_configure(&$gif, $gifkey = "") {
 			$realifip = $ipaddr;
 		else
 			$realifip = get_interface_ipv6($gif['if']);
-		$realifgw = get_interface_gatewayv6($gif['if']);
+		$realifgw = get_interface_gateway_v6($gif['if']);
 	}
 	/* make sure the parent interface is up */
 	if($realif)

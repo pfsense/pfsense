@@ -1180,9 +1180,11 @@ function internalca_change() {
 							<?php endif; ?>
 							<?
 								$refid = $cert['refid'];
+								if (is_array($certificates_used_by_packages))
 								foreach($certificates_used_by_packages as $name => $package){
 									if(isset($package['certificatelist'][$refid])){
 										$hint = "" ;
+										if (is_array($package['certificatelist'][$refid]))
 										foreach($package['certificatelist'][$refid] as $cert_used){
 											$hint = $hint . $cert_used['usedby']."\n";
 										}

@@ -1084,6 +1084,10 @@ function internalca_change() {
 						<td width="10%" class="list"></td>
 					</tr>
 					<?php
+						$pluginparams = array();
+						$pluginparams['type'] = 'certificates';
+						$pluginparams['event'] = 'used_certificates';
+						$certificates_used_by_packages = pkg_call_plugins('plugin_certificates', $pluginparams);
 						$i = 0;
 						foreach($a_cert as $cert):
 							$name = htmlspecialchars($cert['descr']);
@@ -1174,6 +1178,21 @@ function internalca_change() {
 							<?php if (is_captiveportal_cert($cert['refid'])): ?>
 							Captive Portal<br />
 							<?php endif; ?>
+							<?
+								$refid = $cert['refid'];
+								foreach($certificates_used_by_packages as $name => $package){
+									if(isset($package['certificatelist'][$refid])){
+										$hint = "" ;
+										foreach($package['certificatelist'][$refid] as $cert_used){
+											$hint = $hint . $cert_used['usedby']."\n";
+										}
+										$count = count($package['certificatelist'][$refid]);
+										echo "<div title='".htmlspecialchars($hint)."'>";
+										echo htmlspecialchars($package['pkgname'])." ($count)<br />";
+										echo "</div>";
+									}
+								}
+							?>
 						</td>
 						<td valign="middle" class="list nowrap">
 							<a href="system_certmanager.php?act=exp&amp;id=<?=$i;?>">

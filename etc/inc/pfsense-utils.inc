@@ -2896,7 +2896,7 @@ function pkg_call_plugins($plugin_type, $plugin_params) {
 					else
 						continue;
 					$plugin_function = $pkgname . '_'. $plugin_type;
-					$results[$pkgname] = @eval($plugin_function($plugin_params));
+					$results[$pkgname] = call_user_func($plugin_function, $plugin_params);
 				}
 			}
 	}

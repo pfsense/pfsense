@@ -47,6 +47,7 @@ require_once("filter.inc");
 require_once("shaper.inc");
 
 global $FilterIflist;
+global $GatewaysList;
 
 if (!is_array($config['nat']['outbound']))
 	$config['nat']['outbound'] = array();
@@ -88,6 +89,8 @@ if (isset($_POST['save']) && $_POST['save'] == "Save") {
 		 */
 		if(empty($FilterIflist))
 			filter_generate_optcfg_array();
+		if(empty($GatewaysList))
+			filter_generate_gateways();
 		$tonathosts = filter_nat_rules_automatic_tonathosts(true);
 		$automatic_rules = filter_nat_rules_outbound_automatic("");
 
@@ -117,6 +120,7 @@ if (isset($_POST['save']) && $_POST['save'] == "Save") {
 			}
 		}
 		$savemsg = gettext("Default rules for each interface have been created.");
+		unset($FilterIflist, $GatewaysList);
 	}
 
 	$config['nat']['outbound']['mode'] = $_POST['mode'];
@@ -526,6 +530,7 @@ if (is_subsystem_dirty('natconf'))
 				if(empty($GatewaysList))
 					filter_generate_gateways();
 				$automatic_rules = filter_nat_rules_outbound_automatic(implode(" ", filter_nat_rules_automatic_tonathosts()));
+				unset($FilterIflist, $GatewaysList);
 ?>
 				<tr><td colspan="5"><b>&nbsp;<?=gettext("Automatic rules:"); ?></b></td></tr>
 				<tr><td>&nbsp;</td></tr>

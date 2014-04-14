@@ -501,7 +501,7 @@ function pkg_fetch_recursive($pkgname, $filename, $dependlevel = 0, $base_url = 
 	$pkgs = explode(" ", $filename);
 	foreach($pkgs as $filename) {
 		$filename = trim($filename);
-		if (($g['platform'] == "nanobsd") || ($g['platform'] == "embedded")) {
+		if ($g['platform'] == "nanobsd") {
 			$pkgtmpdir = "/usr/bin/env PKG_TMPDIR=/root/ ";
 			$pkgstagingdir = "/root/tmp";
 			if (!is_dir($pkgstagingdir))

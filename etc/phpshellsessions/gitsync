@@ -90,7 +90,7 @@ if(!file_exists($GIT_BIN)) {
 	if (empty($pkg_info["git"])) {
 		echo "Can't locate git package in pfSense repo. Using FreeBSD pkg repo..";
 
-		if (($g['platform'] == "nanobsd") || ($g['platform'] == "embedded")) {
+		if (($g['platform'] == "nanobsd")) {
 			$pkgtmpdir = "/usr/bin/env PKG_TMPDIR=/root/ ";
 			$pkgstagingdir = "/root/tmp";
 			if (!is_dir($pkgstagingdir))

@@ -17,7 +17,7 @@
 	if ($argv[1] != "")
 		$newslicedir = '/tmp/' . $argv[1];
 
-	if($g['platform'] == "embedded" || $g['enableserial_force'] || file_exists("{$newslicedir}/enableserial_force")) {
+	if($g['enableserial_force'] || file_exists("{$newslicedir}/enableserial_force")) {
 		$config['system']['enableserial'] = true;
 		write_config();
 	}

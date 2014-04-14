@@ -5,7 +5,7 @@
 	Copyright (C) 2004-2009 Scott Ullrich
 	All rights reserved.
 
-	originially part of m0n0wall (http://m0n0.ch/wall)
+	originally part of m0n0wall (http://m0n0.ch/wall)
 	Copyright (C) 2003-2004 Manuel Kasper <mk@neon1.net>.
 	All rights reserved.
 
@@ -85,6 +85,7 @@ function is_valid_syslog_server($target) {
 
 if ($_POST['resetlogs'] == gettext("Reset Log Files")) {
 	clear_all_log_files();
+	$savemsg .= gettext("The log files have been reset.");
 } elseif ($_POST) {
 
 	unset($input_errors);
@@ -113,7 +114,13 @@ if ($_POST['resetlogs'] == gettext("Reset Log Files")) {
 	if (!$input_errors) {
 		$config['syslog']['reverse'] = $_POST['reverse'] ? true : false;
 		$config['syslog']['nentries'] = (int)$_POST['nentries'];
-		$config['syslog']['logfilesize'] = (int)$_POST['logfilesize'];
+		$pconfig['nentries'] = $config['syslog']['nentries'];
+		if (isset($_POST['logfilesize']) && (strlen($_POST['logfilesize']) > 0)) {
+			$config['syslog']['logfilesize'] = (int)$_POST['logfilesize'];
+			$pconfig['logfilesize'] = $config['syslog']['logfilesize'];
+		} else {
+			unset($config['syslog']['logfilesize']);
+		}
 		$config['syslog']['remoteserver'] = $_POST['remoteserver'];
 		$config['syslog']['remoteserver2'] = $_POST['remoteserver2'];
 		$config['syslog']['remoteserver3'] = $_POST['remoteserver3'];
@@ -285,7 +292,7 @@ function check_everything() {
 			<?=gettext("Hint: This is only the number of log entries displayed in the GUI. It does not affect how many entries are contained in the actual log files.") ?></td>
 		</tr>
 		<tr>
-			<td width="22%" valign="top" class="vtable">Log File Size</td>
+			<td width="22%" valign="top" class="vtable">Log File Size {Bytes)</td>
 			<td width="78%" class="vtable">
 			<input name="logfilesize" id="logfilesize" type="text" class="formfld unknown" size="8" value="<?=htmlspecialchars($pconfig['logfilesize']);?>" /><br />
 			<?=gettext("Logs are held in constant-size circular log files. This field controls how large each log file is, and thus how many entries may exist inside the log By default this is approximately 500KB per log file, and there are nearly 20 such log files.") ?>
@@ -349,7 +356,7 @@ function check_everything() {
 			<td width="78%">
 				<input name="resetlogs" type="submit" class="formbtn" value="<?=gettext("Reset Log Files"); ?>"  onclick="return confirm('<?=gettext('Do you really want to reset the log files? This will erase all local log data.');?>')" />
 				<br /><br />
-				<?= gettext("Note: Clears all local log files and reinitializes them as empty logs. This also restarts the DHCP daemon."); ?>
+				<?= gettext("Note: Clears all local log files and reinitializes them as empty logs. This also restarts the DHCP daemon. Use the Save button first if you have made any setting changes."); ?>
 			</td>
 		</tr>
 		<tr>

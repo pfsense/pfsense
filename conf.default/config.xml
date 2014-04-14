@@ -446,6 +446,7 @@
 			<ipprotocol>inet</ipprotocol>
 			<descr><![CDATA[Default allow LAN to any rule]]></descr>
 			<interface>lan</interface>
+			<tracker>0100000101</tracker>
 			<source>
 				<network>lan</network>
 			</source>
@@ -458,6 +459,7 @@
 			<ipprotocol>inet6</ipprotocol>
 			<descr><![CDATA[Default allow LAN IPv6 to any rule]]></descr>
 			<interface>lan</interface>
+			<tracker>0100000102</tracker>
 			<source>
 				<network>lan</network>
 			</source>

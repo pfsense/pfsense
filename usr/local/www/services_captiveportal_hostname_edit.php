@@ -47,7 +47,7 @@ function allowedhostnamescmp($a, $b) {
 
 function allowedhostnames_sort() {
 	global $g, $config, $cpzone;
-	usort($config['captiveportal'][$cpzone]['allowedhostname'],"allowedhostname");
+	usort($config['captiveportal'][$cpzone]['allowedhostname'],"allowedhostnamecmp");
 }
 
 require("guiconfig.inc");

@@ -124,19 +124,9 @@ function filter_pflog_start($kill_first = false) {
 		$mt = microtime();
 		echo "filter_pflog_start() being called $mt\n";
 	}
-	mute_kernel_msgs();
-	$output = 0;
-	$tcpdump_cmd = "tcpdump -s 256 -v -S -l -n -e -ttt -i pflog0";
-	exec("/bin/pgrep -af '{$tcpdump_cmd}'", $output, $retval);
-	if ($kill_first && ($output[0] > 1)) {
-		mwexec("/bin/kill {$output[0]}");
-		usleep(1000);
-		/* Ensure the restart below runs */
-		$retval = 1;
-	}
-	if($retval != 0)
-		mwexec_bg("/usr/sbin/{$tcpdump_cmd} | logger -t pf -p local0.info");
-	unmute_kernel_msgs();
+	if (!file_exists("{$g['varrun_path']}/filterlog.pid") ||
+	    !isvalidpid("{$g['varrun_path']}/filterlog.pid"))
+		mwexec("/usr/local/sbin/filterlog -i pflog0 -p {$g['varrun_path']}/filterlog.pid");
 }
 
 /* reload filter async */

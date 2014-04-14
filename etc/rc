@@ -307,6 +307,7 @@ cd $varrunpath && /bin/cp /dev/null utmp && /bin/chmod 644 utmp
 
 echo -n "."
 /sbin/ldconfig -elf /usr/lib /usr/local/lib /lib
+/etc/rc.d/ldconfig start 2>/dev/null
 
 # Make sure /etc/rc.conf doesn't exist.
 if [ -f /etc/rc.conf ]; then

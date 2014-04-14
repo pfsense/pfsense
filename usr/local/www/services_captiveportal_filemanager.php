@@ -221,7 +221,7 @@ include("head.inc");
 	<?=gettext("In addition, you can also upload .php files for execution.  You can pass the filename " .
 	"to your custom page from the initial page by using text similar to:"); ?>
 	<br /><br />
-	<tt>&lt;a href="/captiveportal-aup.php?zone=$PORTAL_ZONE$&amp;redirurl=$PORTAL_REDIRURL$"&gt;<?=gettext("Acceptable usage policy"); ?>&lt/a&gt;</tt>
+	<tt>&lt;a href="/captiveportal-aup.php?zone=$PORTAL_ZONE$&amp;redirurl=$PORTAL_REDIRURL$"&gt;<?=gettext("Acceptable usage policy"); ?>&lt;/a&gt;</tt>
 	<br /><br />
 	<?php printf(gettext("The total size limit for all files is %s."), format_bytes($g['captiveportal_element_sizelimit']));?></span>
 </td>

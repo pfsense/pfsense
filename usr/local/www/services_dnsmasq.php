@@ -298,7 +298,7 @@ function show_advanced_dns() {
 		<td width="22%" valign="top" class="vncellreq"><?=gettext("Advanced");?></td>
 		<td width="78%" class="vtable">
 			<div id="showadvbox" <?php if ($pconfig['custom_options']) echo "style='display:none'"; ?>>
-				<input type="button" onClick="show_advanced_dns()" value="<?=gettext("Advanced"); ?>" /> - <?=gettext("Show advanced option");?>
+				<input type="button" onclick="show_advanced_dns()" value="<?=gettext("Advanced"); ?>" /> - <?=gettext("Show advanced option");?>
 			</div>
 			<div id="showadv" <?php if (empty($pconfig['custom_options'])) echo "style='display:none'"; ?>>
 				<strong><?=gettext("Advanced");?><br /></strong>

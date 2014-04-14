@@ -523,6 +523,8 @@ if (is_subsystem_dirty('natconf'))
 			if ($mode == "automatic" || $mode == "hybrid"):
 				if(empty($FilterIflist))
 					filter_generate_optcfg_array();
+				if(empty($GatewaysList))
+					filter_generate_gateways();
 				$automatic_rules = filter_nat_rules_outbound_automatic(implode(" ", filter_nat_rules_automatic_tonathosts()));
 ?>
 				<tr><td colspan="5"><b>&nbsp;<?=gettext("Automatic rules:"); ?></b></td></tr>

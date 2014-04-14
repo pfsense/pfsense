@@ -56,8 +56,9 @@ if (!is_array($config['dyndnses']['dyndns'])) {
 
 $a_dyndns = &$config['dyndnses']['dyndns'];
 
-$id = $_GET['id'];
-if (isset($_POST['id']))
+if (is_numericint($_GET['id']))
+	$id = $_GET['id'];
+if (isset($_POST['id']) && is_numericint($_POST['id']))
 	$id = $_POST['id'];
 
 if (isset($id) && isset($a_dyndns[$id])) {
@@ -291,7 +292,7 @@ function _onTypeChange(type){
 					unset($grouplist);
 				?>
 					</select>
-					<br/><?= gettext("Note: This is almost always the same as the Interface to Monitor.");?>
+					<br /><?= gettext("Note: This is almost always the same as the Interface to Monitor.");?>
 					</td>
 					</td>
 				</tr>
@@ -299,11 +300,11 @@ function _onTypeChange(type){
                   <td width="22%" valign="top" class="vncellreq"><?=gettext("Hostname");?></td>
                   <td width="78%" class="vtable">
                     <input name="host" type="text" class="formfld unknown" id="host" size="30" value="<?=htmlspecialchars($pconfig['host']);?>">
-                    <br>
+                    <br />
 				    <span class="vexpl">
-				    <span class="red"><strong><?=gettext("Note:");?><br></strong>
+				    <span class="red"><strong><?=gettext("Note:");?><br /></strong>
 				    </span>
-					<?=gettext("Enter the complete host/domain name.  example:  myhost.dyndns.org");?><br/>
+					<?=gettext("Enter the complete host/domain name.  example:  myhost.dyndns.org");?><br />
 					<?=gettext("For he.net tunnelbroker, enter your tunnel ID");?>
 				    </span>
 		          </td>
@@ -312,9 +313,9 @@ function _onTypeChange(type){
                   <td width="22%" valign="top" class="vncell"><?=gettext("MX"); ?></td>
                   <td width="78%" class="vtable">
                     <input name="mx" type="text" class="formfld unknown" id="mx" size="30" value="<?=htmlspecialchars($pconfig['mx']);?>">
-                    <br>
+                    <br />
 					<?=gettext("Note: With DynDNS service you can only use a hostname, not an IP address.");?>
-					<br>
+					<br />
                     <?=gettext("Set this option only if you need a special MX record. Not".
                    " all services support this.");?></td>
 				</tr>
@@ -334,7 +335,7 @@ function _onTypeChange(type){
                   <td width="22%" valign="top" class="vncell"><?=gettext("CURL options"); ?></td>
                   <td width="78%" class="vtable">
                     <input name="curl_ipresolve_v4" type="checkbox" id="curl_ipresolve_v4" value="yes" <?php if ($pconfig['curl_ipresolve_v4']) echo "checked"; ?>>
-                    <?=gettext("Force IPv4 resolving"); ?><br/>
+                    <?=gettext("Force IPv4 resolving"); ?><br />
 					<input name="curl_ssl_verifypeer" type="checkbox" id="curl_ssl_verifypeer" value="yes" <?php if ($pconfig['curl_ssl_verifypeer']) echo "checked"; ?>>
                     <?=gettext("Verify SSL peer"); ?>
 				  </td>
@@ -343,18 +344,18 @@ function _onTypeChange(type){
                   <td width="22%" valign="top" class="vncellreq"><?=gettext("Username");?></td>
                   <td width="78%" class="vtable">
                     <input name="username" type="text" class="formfld user" id="username" size="20" value="<?=htmlspecialchars($pconfig['username']);?>">
-                    <br/><?= gettext("Username is required for all types except Namecheap, FreeDNS and Custom Entries.");?>
-		    <br/><?= gettext("Route 53: Enter your Access Key ID.");?>
-		    <br/><?= gettext("For Custom Entries, Username and Password represent HTTP Authentication username and passwords.");?>
+                    <br /><?= gettext("Username is required for all types except Namecheap, FreeDNS and Custom Entries.");?>
+		    <br /><?= gettext("Route 53: Enter your Access Key ID.");?>
+		    <br /><?= gettext("For Custom Entries, Username and Password represent HTTP Authentication username and passwords.");?>
                   </td>
                 </tr>
                 <tr>
                   <td width="22%" valign="top" class="vncellreq"><?=gettext("Password");?></td>
                   <td width="78%" class="vtable">
                     <input name="password" type="password" class="formfld pwd" id="password" size="20" value="<?=htmlspecialchars($pconfig['password']);?>">
-                    <br/>
+                    <br />
                     <?=gettext("FreeDNS (freedns.afraid.org): Enter your \"Authentication Token\" provided by FreeDNS.");?>
-		    <br/><?= gettext("Route 53: Enter your Secret Access Key.");?>
+		    <br /><?= gettext("Route 53: Enter your Secret Access Key.");?>
                   </td>
                 </tr>
 
@@ -362,15 +363,15 @@ function _onTypeChange(type){
                   <td width="22%" valign="top" class="vncellreq"><?=gettext("Zone ID");?></td>
                   <td width="78%" class="vtable">
                     <input name="zoneid" type="text" class="formfld user" id="zoneid" size="20" value="<?=htmlspecialchars($pconfig['zoneid']);?>">
-                    <br/><?= gettext("Enter Zone ID that you received when you created your domain in Route 53.");?>
+                    <br /><?= gettext("Enter Zone ID that you received when you created your domain in Route 53.");?>
                   </td>
                 </tr>
                 <tr id="_urltr">
                   <td width="22%" valign="top" class="vncell"><?=gettext("Update URL");?></td>
                   <td width="78%" class="vtable">
                     <input name="updateurl" type="text" class="formfld unknown" id="updateurl" size="60" value="<?=htmlspecialchars($pconfig['updateurl']);?>">
-                    <br/><?= gettext("This is the only field required by for Custom Dynamic DNS, and is only used by Custom Entries.");?>
-			<br/>
+                    <br /><?= gettext("This is the only field required by for Custom Dynamic DNS, and is only used by Custom Entries.");?>
+			<br />
 			<?= gettext("If you need the new IP to be included in the request, put %IP% in its place.");?>
                   </td>
                 </tr>
@@ -378,14 +379,14 @@ function _onTypeChange(type){
                   <td width="22%" valign="top" class="vncell"><?=gettext("Result Match");?></td>
                   <td width="78%" class="vtable">
                     <textarea name="resultmatch" class="formpre" id="resultmatch" cols="65" rows="7"><?=htmlspecialchars($pconfig['resultmatch']);?></textarea>
-                    <br/><?= gettext("This field is only used by Custom Dynamic DNS Entries.");?>
-			<br/>
+                    <br /><?= gettext("This field is only used by Custom Dynamic DNS Entries.");?>
+			<br />
 			<?= gettext("This field should be identical to what your DDNS Provider will return if the update succeeds, leave it blank to disable checking of returned results.");?>
-			<br/>
+			<br />
 			<?= gettext("If you need the new IP to be included in the request, put %IP% in its place.");?>
-			<br/>
+			<br />
 			<?= gettext("If you need to include multiple possible values, separate them with a |.  If your provider includes a |, escape it with \\|");?>
-			<br/>
+			<br />
 			<?= gettext("Tabs (\\t), newlines (\\n) and carriage returns (\\r) at the beginning or end of the returned results are removed before comparison.");?>
                   </td>
                 </tr>
@@ -395,7 +396,7 @@ function _onTypeChange(type){
                   <td width="22%" valign="top" class="vncellreq"><?=gettext("TTL");?></td>
                   <td width="78%" class="vtable">
                     <input name="ttl" type="text" class="formfld user" id="ttl" size="20" value="<?=htmlspecialchars($pconfig['ttl']);?>">
-                    <br/><?= gettext("Choose TTL for your dns record.");?>
+                    <br /><?= gettext("Choose TTL for your dns record.");?>
                   </td>
                 </tr>
                 <tr>
@@ -420,7 +421,7 @@ function _onTypeChange(type){
                 </tr>
                 <tr>
                   <td width="22%" valign="top">&nbsp;</td>
-                  <td width="78%"><span class="vexpl"><span class="red"><strong><?=gettext("Note:");?><br>
+                  <td width="78%"><span class="vexpl"><span class="red"><strong><?=gettext("Note:");?><br />
                     </strong></span><?php printf(gettext("You must configure a DNS server in %sSystem:
                     General setup%s or allow the DNS server list to be overridden
                     by DHCP/PPP on WAN for dynamic DNS updates to work."),'<a href="system.php">','</a>');?></span></td>

@@ -56,18 +56,21 @@ $openssl_digest_algs = array("sha1", "sha224", "sha256", "sha384", "sha512");
 
 $pgtitle = array(gettext("System"), gettext("Certificate Manager"));
 
-$userid = $_GET['userid'];
-if (isset($_POST['userid']))
+if (is_numericint($_GET['userid']))
+	$userid = $_GET['userid'];
+if (isset($_POST['userid']) && is_numericint($_POST['userid']))
 	$userid = $_POST['userid'];
-if (is_numeric($userid)) {
+
+if (isset($userid)) {
 	$cert_methods["existing"] = gettext("Choose an existing certificate");
 	if (!is_array($config['system']['user']))
 		$config['system']['user'] = array();
 	$a_user =& $config['system']['user'];
 }
 
-$id = $_GET['id'];
-if (isset($_POST['id']))
+if (is_numericint($_GET['id']))
+	$id = $_GET['id'];
+if (isset($_POST['id']) && is_numericint($_POST['id']))
 	$id = $_POST['id'];
 
 if (!is_array($config['ca']))
@@ -99,7 +102,7 @@ if ($act == "del") {
 	$name = $a_cert[$id]['descr'];
 	unset($a_cert[$id]);
 	write_config();
-	$savemsg = sprintf(gettext("Certificate %s successfully deleted"), $name) . "<br/>";
+	$savemsg = sprintf(gettext("Certificate %s successfully deleted"), $name) . "<br />";
 	pfSenseHeader("system_certmanager.php");
 	exit;
 }
@@ -246,7 +249,7 @@ if ($_POST) {
 
 		$altnames = array();
 		do_input_validation($_POST, $reqdfields, $reqdfieldsn, $input_errors);
-		if ($pconfig['method'] != "import") {
+		if ($pconfig['method'] != "import" && $pconfig['method'] != "existing") {
 			/* subjectAltNames */
 			foreach ($_POST as $key => $value) {
 				$entry = '';
@@ -294,12 +297,12 @@ if ($_POST) {
 			/* Make sure we do not have invalid characters in the fields for the certificate */
 			for ($i = 0; $i < count($reqdfields); $i++) {
 				if (preg_match('/email/', $reqdfields[$i])){ /* dn_email or csr_dn_name */
-				 	if (preg_match("/[\!\#\$\%\^\(\)\~\?\>\<\&\/\\\,\"\']/", $_POST["$reqdfields[$i]"]))
+					if (preg_match("/[\!\#\$\%\^\(\)\~\?\>\<\&\/\\\,\"\']/", $_POST[$reqdfields[$i]]))
 						array_push($input_errors, "The field 'Distinguished name Email Address' contains invalid characters.");
 				}else if (preg_match('/commonname/', $reqdfields[$i])){ /* dn_commonname or csr_dn_commonname */
-					if (preg_match("/[\!\@\#\$\%\^\(\)\~\?\>\<\&\/\\\,\"\']/", $_POST["$reqdfields[$i]"]))
+					if (preg_match("/[\!\@\#\$\%\^\(\)\~\?\>\<\&\/\\\,\"\']/", $_POST[$reqdfields[$i]]))
 						array_push($input_errors, "The field 'Distinguished name Common Name' contains invalid characters.");
-				}else if (($reqdfields[$i] != "descr") && preg_match("/[\!\@\#\$\%\^\(\)\~\?\>\<\&\/\\\,\.\"\']/", $_POST["$reqdfields[$i]"]))
+				}else if (($reqdfields[$i] != "descr") && preg_match("/[\!\@\#\$\%\^\(\)\~\?\>\<\&\/\\\,\.\"\']/", $_POST[$reqdfields[$i]]))
 					array_push($input_errors, "The field '" . $reqdfieldsn[$i] . "' contains invalid characters.");
 			}
 
@@ -631,7 +634,7 @@ function internalca_change() {
 							<td width="22%" valign="top" class="vncellreq"><?=gettext("Certificate data");?></td>
 							<td width="78%" class="vtable">
 								<textarea name="cert" id="cert" cols="65" rows="7" class="formfld_cert"><?=htmlspecialchars($pconfig['cert']);?></textarea>
-								<br/>
+								<br />
 								<?=gettext("Paste a certificate in X.509 PEM format here.");?>
 							</td>
 						</tr>
@@ -639,7 +642,7 @@ function internalca_change() {
 							<td width="22%" valign="top" class="vncellreq"><?=gettext("Private key data");?></td>
 							<td width="78%" class="vtable">
 								<textarea name="key" id="key" cols="65" rows="7" class="formfld_cert"><?=htmlspecialchars($pconfig['key']);?></textarea>
-								<br/>
+								<br />
 								<?=gettext("Paste a private key in X.509 PEM format here.");?>
 							</td>
 						</tr>
@@ -711,7 +714,7 @@ function internalca_change() {
 									<option value="<?=$digest_alg;?>"<?=$selected;?>><?=strtoupper($digest_alg);?></option>
 								<?php endforeach; ?>
 								</select>
-								<br/><?= gettext("NOTE: It is recommended to use an algorithm stronger than SHA1 when possible.") ?>
+								<br /><?= gettext("NOTE: It is recommended to use an algorithm stronger than SHA1 when possible.") ?>
 							</td>
 						</tr>
 						<tr>
@@ -727,7 +730,7 @@ function internalca_change() {
 									<option value="<?=$ct;?>"<?=$selected;?>><?=$ctdesc;?></option>
 								<?php endforeach; ?>
 								</select>
-								<br/>
+								<br />
 								<?=gettext("Type of certificate to generate. Used for placing restrictions on the usage of the generated certificate.");?>
 							</td>
 						</tr>
@@ -838,7 +841,7 @@ function internalca_change() {
 												loaded = <?php echo $counter; ?>;
 											//]]>
 											</script>
-											<br/>NOTE: Type must be one of DNS (FQDN or Hostname), IP (IP address), URI, or email.
+											<br />NOTE: Type must be one of DNS (FQDN or Hostname), IP (IP address), URI, or email.
 										</td>
 									</tr>
 								</table>
@@ -887,7 +890,7 @@ function internalca_change() {
 									<option value="<?=$csr_digest_alg;?>"<?=$selected;?>><?=strtoupper($csr_digest_alg);?></option>
 								<?php endforeach; ?>
 								</select>
-								<br/><?= gettext("NOTE: It is recommended to use an algorithm stronger than SHA1 when possible.") ?>
+								<br /><?= gettext("NOTE: It is recommended to use an algorithm stronger than SHA1 when possible.") ?>
 							</td>
 						</tr>
 						<tr>
@@ -975,7 +978,7 @@ function internalca_change() {
 							<td width="22%" valign="top" class="vncellreq"><?=gettext("Existing Certificates");?></td>
 							<td width="78%" class="vtable">
 								<?php if (isset($userid) && $a_user): ?>
-								<input name="userid" type="hidden" value="<?=$userid;?>" />
+								<input name="userid" type="hidden" value="<?=htmlspecialchars($userid);?>" />
 								<?php endif;?>
 								<select name='certref' class="formselect">
 								<?php
@@ -1009,7 +1012,7 @@ function internalca_change() {
 							<td width="78%">
 								<input id="submit" name="save" type="submit" class="formbtn" value="<?=gettext("Save");?>" />
 								<?php if (isset($id) && $a_cert[$id]): ?>
-								<input name="id" type="hidden" value="<?=$id;?>" />
+								<input name="id" type="hidden" value="<?=htmlspecialchars($id);?>" />
 								<?php endif;?>
 							</td>
 						</tr>
@@ -1037,7 +1040,7 @@ function internalca_change() {
 							<td width="22%" valign="top" class="vncellreq"><?=gettext("Signing request data");?></td>
 							<td width="78%" class="vtable">
 								<textarea name="csr" id="csr" cols="65" rows="7" class="formfld_cert" readonly="readonly"><?=htmlspecialchars($pconfig['csr']);?></textarea>
-								<br/>
+								<br />
 								<?=gettext("Copy the certificate signing data from here and forward it to your certificate authority for signing.");?></td>
 							</td>
 						</tr>
@@ -1045,7 +1048,7 @@ function internalca_change() {
 							<td width="22%" valign="top" class="vncellreq"><?=gettext("Final certificate data");?></td>
 							<td width="78%" class="vtable">
 								<textarea name="cert" id="cert" cols="65" rows="7" class="formfld_cert"><?=htmlspecialchars($pconfig['cert']);?></textarea>
-								<br/>
+								<br />
 								<?=gettext("Paste the certificate received from your certificate authority here.");?></td>
 							</td>
 						</tr>
@@ -1058,11 +1061,11 @@ function internalca_change() {
 								<?php echo gettext("Warning: Using this option may create an " .
 								"invalid certificate.  Check this box to disable the request -> " .
 								"response subject verification. ");
-								?><br/>
+								?><br />
 								<?php endif; */ ?>
 								<input id="submit" name="save" type="submit" class="formbtn" value="<?=gettext("Update");?>" />
 								<?php if (isset($id) && $a_cert[$id]): ?>
-								<input name="id" type="hidden" value="<?=$id;?>" />
+								<input name="id" type="hidden" value="<?=htmlspecialchars($id);?>" />
 								<input name="act" type="hidden" value="csr" />
 								<?php endif;?>
 							</td>
@@ -1151,25 +1154,25 @@ function internalca_change() {
 						</td>
 						<td class="listr">
 							<?php if (is_cert_revoked($cert)): ?>
-							<b>Revoked</b><br/>
+							<b>Revoked</b><br />
 							<?php endif; ?>
 							<?php if (is_webgui_cert($cert['refid'])): ?>
-							webConfigurator<br/>
+							webConfigurator<br />
 							<?php endif; ?>
 							<?php if (is_user_cert($cert['refid'])): ?>
-							User Cert<br/>
+							User Cert<br />
 							<?php endif; ?>
 							<?php if (is_openvpn_server_cert($cert['refid'])): ?>
-							OpenVPN Server<br/>
+							OpenVPN Server<br />
 							<?php endif; ?>
 							<?php if (is_openvpn_client_cert($cert['refid'])): ?>
-							OpenVPN Client<br/>
+							OpenVPN Client<br />
 							<?php endif; ?>
 							<?php if (is_ipsec_cert($cert['refid'])): ?>
-							IPsec Tunnel<br/>
+							IPsec Tunnel<br />
 							<?php endif; ?>
 							<?php if (is_captiveportal_cert($cert['refid'])): ?>
-							Captive Portal<br/>
+							Captive Portal<br />
 							<?php endif; ?>
 						</td>
 						<td valign="middle" class="list nowrap">

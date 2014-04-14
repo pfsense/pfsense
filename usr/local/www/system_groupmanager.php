@@ -71,7 +71,7 @@ if ($_GET['act'] == "delgroup") {
 	unset($a_group[$_GET['id']]);
 	write_config();
 	$savemsg = gettext("Group")." {$groupdeleted} ".
-				gettext("successfully deleted")."<br/>";
+				gettext("successfully deleted")."<br />";
 }
 
 if ($_GET['act'] == "delpriv") {
@@ -95,7 +95,7 @@ if ($_GET['act'] == "delpriv") {
 	write_config();
 	$_GET['act'] = "edit";
 	$savemsg = gettext("Privilege")." {$privdeleted} ".
-				gettext("successfully deleted")."<br/>";
+				gettext("successfully deleted")."<br />";
 }
 
 if($_GET['act']=="edit"){
@@ -282,7 +282,7 @@ function presubmit() {
 							<td width="22%" valign="top" class="vncell"><?=gettext("Description");?></td>
 							<td width="78%" class="vtable"> 
 								<input name="description" type="text" class="formfld unknown" id="description" size="20" value="<?=htmlspecialchars($pconfig['description']);?>" />
-								<br/>
+								<br />
 								<?=gettext("Group description, for your own information only");?>
 							</td>
 						</tr>
@@ -295,8 +295,8 @@ function presubmit() {
 								<table class="tabcont" width="100%" border="0" cellpadding="0" cellspacing="0" summary="membership">
 									<tr>
 										<td align="center" width="50%">
-											<strong><?=gettext("Not Members");?></strong><br/>
-											<br/>
+											<strong><?=gettext("Not Members");?></strong><br />
+											<br />
 												<select size="10" style="width: 75%" name="notmembers[]" class="formselect" id="notmembers" onchange="clear_selected('members')" multiple="multiple">
 												<?php
 													foreach ($config['system']['user'] as $user):
@@ -308,21 +308,21 @@ function presubmit() {
 												</option>
 												<?php endforeach; ?>
 											</select>
-											<br/>
+											<br />
 										</td>
 										<td>
-											<br/>
+											<br />
 											<a href="javascript:move_selected('notmembers','members')">
 												<img src="/themes/<?= $g['theme'];?>/images/icons/icon_right.gif" title="<?=gettext("Add Members");?>" alt="<?=gettext("Add Members");?>" width="17" height="17" border="0" />
 											</a>
-											<br/><br/>
+											<br /><br />
 											<a href="javascript:move_selected('members','notmembers')">
 												<img src="/themes/<?= $g['theme'];?>/images/icons/icon_left.gif" title="<?=gettext("Remove Members");?>" alt="<?=gettext("Remove Members");?>" width="17" height="17" border="0" />
 											</a>
 										</td>
 										<td align="center" width="50%">
-											<strong><?=gettext("Members");?></strong><br/>
-											<br/>
+											<strong><?=gettext("Members");?></strong><br />
+											<br />
 											<select size="10" style="width: 75%" name="members[]" class="formselect" id="members" onchange="clear_selected('notmembers')" multiple="multiple">
 												<?php
 													foreach ($config['system']['user'] as $user):
@@ -334,7 +334,7 @@ function presubmit() {
 												</option>
 												<?php endforeach; ?>
 											</select>
-											<br/>
+											<br />
 										</td>
 									</tr>
 								</table>

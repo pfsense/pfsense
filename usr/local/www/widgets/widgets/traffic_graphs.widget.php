@@ -2,7 +2,7 @@
 /*
 	$Id$
 	Copyright 2007 Scott Dale
-	Part of pfSense widgets (www.pfsense.com)
+	Part of pfSense widgets (https://www.pfsense.org)
 	originally based on m0n0wall (http://m0n0.ch/wall)
 
 	Copyright (C) 2004-2005 T. Lechat <dev@lechat.org>, Manuel Kasper <mk@neon1.net>
@@ -124,18 +124,18 @@ if (isset($a_config["scale_type"])) {
 			}
 		?>
 	<input name="scale_type" class="radio" type="radio" id="scale_type" value="up" <?php echo $scale_type_up; ?> onchange="updateGraphDisplays();" /> <span>up</span>
-	<input name="scale_type" class="radio" type="radio" id="scale_type" value="follow" <?php echo $scale_type_follow; ?> onchange="updateGraphDisplays();" /> <span>follow</span><br><br>
+	<input name="scale_type" class="radio" type="radio" id="scale_type" value="follow" <?php echo $scale_type_follow; ?> onchange="updateGraphDisplays();" /> <span>follow</span><br /><br />
 	Refresh Interval:
 	<select name="refreshinterval" class="formfld" id="refreshinterval" onchange="updateGraphDisplays();">
 		<?php for ($i = 1; $i <= 10; $i += 1) { ?>
 			<option value="<?= $i ?>" <?php if ($refreshinterval == $i) echo "selected='selected'";?>><?= $i ?></option>
 		<?php } ?>
-	</select>&nbsp; Seconds<br>&nbsp; &nbsp; &nbsp; <b>Note:</b> changing this setting will increase CPU utilization<br><br>
+	</select>&nbsp; Seconds<br />&nbsp; &nbsp; &nbsp; <b>Note:</b> changing this setting will increase CPU utilization<br /><br />
 	<input id="submit" name="submit" type="submit" onclick="return updatePref();" class="formbtn" value="Save Settings" />
 </form>
 </div>
 
-<script language="javascript" type="text/javascript">
+<script type="text/javascript">
 	d = document;
 	selectIntLink = "traffic_graphs-configure";
 	textlink = d.getElementById(selectIntLink);

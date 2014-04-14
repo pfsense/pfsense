@@ -60,7 +60,8 @@ function handle_argument_group($iface, $argument2) {
 		interfaces_staticarp_configure($iface);
 		$iface = get_real_interface($iface);
 		interfaces_bring_up($iface);
-		if ($argument2 == "start" || $argument2 == "up")
+		/* NOTE: Do not generate event for OpenVPN since the daemon does that for us. */
+		if (($argument2 == "start" || $argument2 == "up") && substr($iface, 0, 4) != "ovpn")
 			send_event("interface newip {$iface}");
 	} else {
 		switch ($argument2) {

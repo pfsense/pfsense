@@ -340,8 +340,13 @@ function system_dhcpleases_configure() {
 			@touch("{$g['dhcpd_chroot_path']}/var/db/dhcpd.leases");
 		if (isvalidpid("{$g['varrun_path']}/dhcpleases.pid"))
 			sigkillbypid("{$g['varrun_path']}/dhcpleases.pid", "HUP");
-		else
+		else {
+			/* To ensure we do not start multiple instances of dhcpleases, perform some clean-up first. */
+			if (is_process_running("dhcpleases"))
+				mwexec('/bin/pkill dhcpleases');
+			@unlink("{$g['varrun_path']}/dhcpleases.pid");
 			mwexec("/usr/local/sbin/dhcpleases -l {$g['dhcpd_chroot_path']}/var/db/dhcpd.leases -d {$config['system']['domain']} -p {$g['varrun_path']}/dnsmasq.pid -h {$g['varetc_path']}/hosts");
+		}
 	} else {
 		sigkillbypid("{$g['varrun_path']}/dhcpleases.pid", "TERM");
 		@unlink("{$g['varrun_path']}/dhcpleases.pid");
@@ -800,33 +805,6 @@ EOD;
 
 	return $retval;
 }
-
-function system_pccard_start() {
-	global $config, $g;
-	if(isset($config['system']['developerspew'])) {
-		$mt = microtime();
-		echo "system_pccard_start() being called $mt\n";
-	}
-
-	if ($g['booting'])
-		echo gettext("Initializing PCMCIA...");
-
-	/* kill any running pccardd */
-	killbypid("{$g['varrun_path']}/pccardd.pid");
-
-	/* fire up pccardd */
-	$res = mwexec("/usr/sbin/pccardd -z -f {$g['etc_path']}/pccard.conf");
-
-	if ($g['booting']) {
-		if ($res == 0)
-			echo gettext("done.") . "\n";
-		else
-			echo gettext("failed!") . "\n";
-	}
-
-	return $res;
-}
-
 
 function system_webgui_start() {
 	global $config, $g;
@@ -1542,7 +1520,7 @@ function system_ntp_configure($start_ntpd=true) {
 	unset($ts);
 
 	$ntpcfg .= "\n\n";
-	$ntpcfg .= "disable monitor\n"; //prevent NTP reflection attack, see http://forum.pfsense.org/index.php/topic,67189.msg389132.html#msg389132
+	$ntpcfg .= "disable monitor\n"; //prevent NTP reflection attack, see https://forum.pfsense.org/index.php/topic,67189.msg389132.html#msg389132
 	if (!empty($config['ntpd']['clockstats']) || !empty($config['ntpd']['loopstats']) || !empty($config['ntpd']['peerstats'])) {
 		$ntpcfg .= "enable stats\n";
 		$ntpcfg .= 'statistics';
@@ -1631,7 +1609,8 @@ function system_ntp_configure($start_ntpd=true) {
 			if (!is_ipaddr($interface)) {
 				$interface = get_real_interface($interface);
 			}
-			$ntpcfg .= "interface listen {$interface}\n";
+			if (!empty($interface))
+				$ntpcfg .= "interface listen {$interface}\n";
 		}
 	}
 
@@ -1769,7 +1748,7 @@ function system_dmesg_save() {
 	}
 
 	$dmesg = "";
-	exec("/sbin/dmesg", $dmesg);
+	$_gb = exec("/sbin/dmesg", $dmesg);
 
 	/* find last copyright line (output from previous boots may be present) */
 	$lastcpline = 0;
@@ -1789,6 +1768,7 @@ function system_dmesg_save() {
 		fwrite($fd, $dmesg[$i] . "\n");
 
 	fclose($fd);
+	unset($dmesg);
 
 	return 0;
 }
@@ -1927,9 +1907,11 @@ function system_identify_specific_platform() {
 	/* the rest of the code only deals with 'embedded' platforms */
 	if ($g['platform'] != 'nanobsd')
 		return array('name' => $g['platform'], 'descr' => $g['platform']);
-	
-	$dmesg = system_get_dmesg_boot();
-	
+
+	unset($output);
+	$_gb = exec('/sbin/sysctl -n hw.model', $output);
+	$dmesg = $output[0];
+
 	if (strpos($dmesg, "PC Engines WRAP") !== false)
 		return array('name' => 'wrap', 'descr' => gettext('PC Engines WRAP'));
 	

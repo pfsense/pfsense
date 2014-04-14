@@ -3,7 +3,7 @@ if(!document.getElementById || !document.createElement)
     return(false);
 isXHTML=/html\:/.test(document.getElementsByTagName('body')[0].nodeName);
 if(Array.prototype.push==null){Array.prototype.push=function(){
-      this[this.length]=arguments[0]; return(this.length);}}
+      this[this.length]=arguments[0]; return(this.length);};}
 return(true);
 }
 
@@ -30,7 +30,7 @@ else if(opt && opt.indexOf("smooth")>=0){
 if(opt && opt.indexOf("small")>=0) cn+="s";
 prefixt=cn;
 prefixb=cn;
-if(wich.indexOf("all")>=0){t=true;b=true}
+if(wich.indexOf("all")>=0){t=true;b=true;}
 else if(wich.indexOf("top")>=0) t="true";
 else if(wich.indexOf("tl")>=0){
     t="true";

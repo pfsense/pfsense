@@ -174,9 +174,9 @@ include("head.inc");
 						<td rowspan="2">
 							<div align="center"><?=gettext("Action");?></div>
 							<div align="left">
-							<input id="actpass"   name="actpass"   type="checkbox" value="Pass"   <?php if (in_arrayi('Pass',   $Include_Act)) echo "checked=\"checked\""; ?> /> Pass<br/>
-							<input id="actblock"  name="actblock"  type="checkbox" value="Block"  <?php if (in_arrayi('Block',  $Include_Act)) echo "checked=\"checked\""; ?> /> Block<br/>
-							<input id="actreject" name="actreject" type="checkbox" value="Reject" <?php if (in_arrayi('Reject', $Include_Act)) echo "checked=\"checked\""; ?> /> Reject<br/>
+							<input id="actpass"   name="actpass"   type="checkbox" value="Pass"   <?php if (in_arrayi('Pass',   $Include_Act)) echo "checked=\"checked\""; ?> /> Pass<br />
+							<input id="actblock"  name="actblock"  type="checkbox" value="Block"  <?php if (in_arrayi('Block',  $Include_Act)) echo "checked=\"checked\""; ?> /> Block<br />
+							<input id="actreject" name="actreject" type="checkbox" value="Reject" <?php if (in_arrayi('Reject', $Include_Act)) echo "checked=\"checked\""; ?> /> Reject<br />
 							</div>
 						</td>
 						<td>
@@ -294,7 +294,7 @@ include("head.inc");
 					</form>
 				</div>
 				<div style="float: right; vertical-align:middle">
-					<br/>
+					<br />
 					<?php if (!isset($config['syslog']['rawfilter']) && (isset($config['syslog']['filterdescriptions']) && $config['syslog']['filterdescriptions'] === "2")):?>
 					<a href="#" onclick="toggleListDescriptions()">Show/hide rule descriptions</a>
 					<?php endif;?>
@@ -356,7 +356,7 @@ include("head.inc");
 				
 			  $int = strtolower($filterent['interface']);
 			  $proto = strtolower($filterent['proto']);
-			  if(is_ipaddrv6($filterent['srcip'])) {
+			  if($filterent['version'] == '6') {
 				$ipproto = "inet6";
 				$filterent['srcip'] = "[{$filterent['srcip']}]";
 				$filterent['dstip'] = "[{$filterent['dstip']}]";
@@ -448,7 +448,7 @@ function resolve_with_ajax(ip_to_resolve) {
 function resolve_ip_callback(transport) {
 	var response = jQuery.parseJSON(transport.responseText);
 	var resolve_class = htmlspecialchars(response.resolve_ip.replace(/[.:]/g, '-'));
-	var resolve_text = '<small><br/>' + htmlspecialchars(response.resolve_text) + '</small>';
+	var resolve_text = '<small><br />' + htmlspecialchars(response.resolve_text) + '</small>';
 	
 	jQuery('span.RESOLVE-' + resolve_class).html(resolve_text);
 	jQuery('img.ICON-' + resolve_class).removeAttr('title');

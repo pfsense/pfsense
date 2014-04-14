@@ -3,7 +3,7 @@
 /*
         rc.newwanipv6
         Copyright (C) 2006 Scott Ullrich (sullrich@gmail.com)
-        part of pfSense (http://www.pfsense.com)
+        part of pfSense (https://www.pfsense.org)
 
 		Originally part of m0n0wall (http://m0n0.ch)
         Copyright (C) 2003-2005 Manuel Kasper <mk@neon1.net>.
@@ -62,7 +62,7 @@ else
 
 log_error("rc.newwanipv6: Informational is starting {$argument}.");
 
-if(empty($argument)) {
+if (empty($argument)) {
 	$interface = "wan";
 	$interface_real = get_real_interface($interface, "inet6");
 	$curwanipv6 = get_interface_ipv6($interface, true);
@@ -71,6 +71,8 @@ if(empty($argument)) {
 	$interface = convert_real_interface_to_friendly_interface_name($interface_real);
 	$curwanipv6 = get_interface_ipv6($interface, true);
 }
+
+$interface_descr = convert_friendly_interface_to_friendly_descr($interface);
 
 if (empty($interface)) {
 	filter_configure();
@@ -82,8 +84,12 @@ if (empty($interface)) {
 if ($g['booting'] && $config['interfaces'][$interface]['ipaddrv6'] != "dhcp6")
 	return;
 
-if (empty($curwanipv6) || !is_ipaddrv6($curwanipv6)) {
-        log_error("rc.newwanipv6: Failed to update {$interface} IPv6, restarting...");
+/*
+ * NOTE: Take care of openvpn and similar if you generate the event to reconfigure an interface.
+ *	i.e. OpenVPN might be in tap mode and not have an ip.
+ */
+if ((empty($curwanipv6) || !is_ipaddrv6($curwanipv6)) && substr($interface_real, 0, 4) != "ovpn") {
+        log_error("rc.newwanipv6: Failed to update {$interface_descr}[{$interface}] IPv6, restarting...");
 	// send_event("interface reconfigure {$interface}");
         return;
 }
@@ -111,7 +117,8 @@ if (!empty($new_domain_name))
 	file_put_contents("{$g['varetc_path']}/searchdomain_v6{$interface}", $new_domain_name);
 
 /* write current WAN IPv6 to file */
-file_put_contents("{$g['vardb_path']}/{$interface}_ipv6", $curwanipv6);
+if (is_ipaddrv6($curwanipv6))
+	@file_put_contents("{$g['vardb_path']}/{$interface}_ipv6", $curwanipv6);
 
 log_error("rc.newwanipv6: on (IP address: {$curwanipv6}) (interface: {$interface}) (real interface: {$interface_real}).");
 
@@ -151,9 +158,9 @@ if (is_ipaddrv6($oldipv6)) {
 		return;
 	} else if (does_interface_exist($interface_real))
 		mwexec("/sbin/ifconfig {$interface_real} inet6 {$oldipv6} delete");
-}
 
-file_put_contents("{$g['vardb_path']}/{$interface}_cacheipv6", $curwanipv6);
+	file_put_contents("{$g['vardb_path']}/{$interface}_cacheipv6", $curwanipv6);
+}
 
 /* perform RFC 2136 DNS update */
 services_dnsupdate_process($interface);

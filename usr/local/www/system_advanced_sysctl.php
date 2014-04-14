@@ -50,8 +50,9 @@ if (!is_array($config['sysctl']['item']))
 
 $a_tunable = &$config['sysctl']['item'];
 
-$id = $_GET['id'];
-if (isset($_POST['id']))
+if (is_numericint($_GET['id']))
+	$id = $_GET['id'];
+if (isset($_POST['id']) && is_numericint($_POST['id']))
 	$id = $_POST['id'];
 
 $act = $_GET['act'];
@@ -163,9 +164,9 @@ include("head.inc");
 							<strong><?=gettext("NOTE:"); ?>&nbsp;</strong>
 						</span>
 						<?=gettext("The options on this page are intended for use by advanced users only."); ?>
-						<br/>
+						<br />
 					</span>
-					<br/>
+					<br />
 					<table width="100%" border="0" cellpadding="6" cellspacing="0" summary="main area">
 						<tr>
 							<td width="20%" class="listhdrr"><?=gettext("Tunable Name"); ?></td>
@@ -257,7 +258,7 @@ include("head.inc");
 									<input id="submit" name="Submit" type="submit" class="formbtn" value="<?=gettext("Save"); ?>" />
 									<input id="cancelbutton" name="cancelbutton" type="button" class="formbtn" value="<?=gettext("Cancel"); ?>" onclick="history.back()" />
 									<?php if (isset($id) && $a_tunable[$id]): ?>
-									<input name="id" type="hidden" value="<?=$id;?>" />
+									<input name="id" type="hidden" value="<?=htmlspecialchars($id);?>" />
 									<?php endif; ?>
 								</td>
 							</tr>

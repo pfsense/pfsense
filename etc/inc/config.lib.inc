@@ -911,7 +911,7 @@ function get_config_backup_count() {
 	global $config, $g;
 	if (isset($config['system']['backupcount']) && is_numeric($config['system']['backupcount']) && ($config['system']['backupcount'] >= 0)) {
 		return intval($config['system']['backupcount']);
-	} elseif ($g['platform'] == "embedded" or $g['platform'] == "nanobsd") {
+	} elseif ($g['platform'] == "nanobsd") {
 		return 5;
 	} else {
 		return 30;

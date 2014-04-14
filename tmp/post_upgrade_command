@@ -4,83 +4,6 @@
 
 PFSENSETYPE=`cat /etc/platform`
 
-# check in two places for the old kernel type, since it could have been moved elsewhere in the upgrade process.
-if [ -f /boot/kernel/pfsense_kernel.txt ]; then
-	OLDKERNEL=`cat /boot/kernel/pfsense_kernel.txt`
-else
-	OLDKERNEL=`cat /tmp/pfsense_kernel.txt`
-fi
-
-# Massage the existing kernel into one that actually exists.
-#	Leaving old entries so we can bring back other kernels later if desired.
-case "$OLDKERNEL" in
-	"wrap")
-	KERNELTYPE=wrap
-	;;
-	"wrap_vga")
-	KERNELTYPE=wrap_vga
-	;;
-	"Developers")
-	KERNELTYPE=SMP
-	;;
-	"UP")
-	KERNELTYPE=SMP
-	;;
-	"SMP")
-	KERNELTYPE=SMP
-	;;
-	*)
-	if [ "${PFSENSETYPE}" = "pfSense" ]; then
-		KERNELTYPE=SMP
-	elif [ "${PFSENSETYPE}" = "nanobsd" ]; then
-		KERNELTYPE=WRAP
-	fi
-	;;
-esac
-
-# Overwrite the old kernel type with what we're using now to reflect what is about to be written out.
-echo ${KERNELTYPE} > /boot/kernel/pfsense_kernel.txt
-HAVE_KERNEL=false
-
-case "${KERNELTYPE}" in
-	"wrap")
-		if [ -f /kernels/kernel_wrap.gz ]; then
-			HAVE_KERNEL=true
-			tar xzpf /kernels/kernel_wrap.gz --exclude loader.conf -C /boot/
-			cp /etc/ttys_wrap /etc/ttys
-		fi
-		;;
-	"wrap_vga")
-		if [ -f /kernels/kernel_wrap_vga.gz ]; then
-			HAVE_KERNEL=true
-			tar xzpf /kernels/kernel_wrap_vga.gz --exclude loader.conf -C /boot/
-		fi
-		;;
-	"Developers")
-		if [ -f /kernels/kernel_Dev.gz ]; then
-			HAVE_KERNEL=true
-			tar xzpf /kernels/kernel_Dev.gz --exclude loader.conf -C /boot/
-		fi
-		;;
-	"UP")
-		if [ -f /kernels/kernel_uniprocessor.gz ]; then
-			HAVE_KERNEL=true
-			tar xzpf /kernels/kernel_uniprocessor.gz --exclude loader.conf -C /boot/
-		fi
-		;;
-	"SMP")
-		if [ -f /kernels/kernel_SMP.gz ]; then
-			HAVE_KERNEL=true
-			tar xzpf /kernels/kernel_SMP.gz --exclude loader.conf -C /boot/
-		fi
-		;;
-esac
-
-if [ ${HAVE_KERNEL} = "false" ]; then
-	echo "ERROR: Unable to locate a kernel upgrade file!"
-	sleep 5
-fi
-
 if [ $PFSENSETYPE = "pfSense" ] || [ $PFSENSETYPE = "nanobsd" ]; then
 	touch /conf/needs_package_sync
 fi
@@ -105,14 +28,6 @@ rm -f /root/*.md5
 
 # File moved to pfSense php shell (pfSsh.php)
 rm -rf /usr/local/sbin/cvs_sync.sh
-
-if [ $PFSENSETYPE = "embedded" ]; then
-	cp /etc/ttys_wrap /etc/ttys
-fi
-
-if [ -f /usr/local/sbin/php ]; then
-	rm /usr/local/sbin/php
-fi
 
 # Fixup permissions on installed files
 if [ "${PFSENSETYPE}" = "nanobsd" ]; then

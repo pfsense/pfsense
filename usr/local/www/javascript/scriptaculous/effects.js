@@ -15,7 +15,7 @@ String.prototype.parseColor = function() {
   var color = '#';
   if (this.slice(0,4) == 'rgb(') {
     var cols = this.slice(4,this.length-1).split(',');
-    var i=0; do { color += parseInt(cols[i]).toColorPart() } while (++i<3);
+    var i=0; do { color += parseInt(cols[i]).toColorPart(); } while (++i<3);
   } else {
     if (this.slice(0,1) == '#') {
       if (this.length==4) for(var i=1;i<4;i++) color += (this.charAt(i) + this.charAt(i)).toLowerCase();
@@ -178,7 +178,7 @@ Effect.ScopedQueue = Class.create(Enumerable, {
     switch(position) {
       case 'front':
         // move unstarted effects after this effect
-        this.effects.findAll(function(e){ return e.state=='idle' }).each( function(e) {
+        this.effects.findAll(function(e){ return e.state=='idle'; }).each( function(e) {
             e.startOn  += effect.finishOn;
             e.finishOn += effect.finishOn;
           });
@@ -202,7 +202,7 @@ Effect.ScopedQueue = Class.create(Enumerable, {
       this.interval = setInterval(this.loop.bind(this), 15);
   },
   remove: function(effect) {
-    this.effects = this.effects.reject(function(e) { return e==effect });
+    this.effects = this.effects.reject(function(e) { return e==effect; });
     if (this.effects.length == 0) {
       clearInterval(this.interval);
       this.interval = null;
@@ -331,7 +331,7 @@ Effect.Tween = Class.create(Effect.Base, {
       options = args.length == 5 ? args[3] : null;
     this.method = Object.isFunction(method) ? method.bind(object) :
       Object.isFunction(object[method]) ? object[method].bind(object) :
-      function(value) { object[method] = value };
+      function(value) { object[method] = value; };
     this.start(Object.extend({ from: from, to: to }, options || { }));
   },
   update: function(position) {
@@ -493,8 +493,8 @@ Effect.Highlight = Class.create(Effect.Base, {
     if (!this.options.restorecolor)
       this.options.restorecolor = this.element.getStyle('background-color');
     // init color calculations
-    this._base  = $R(0,2).map(function(i){ return parseInt(this.options.startcolor.slice(i*2+1,i*2+3),16) }.bind(this));
-    this._delta = $R(0,2).map(function(i){ return parseInt(this.options.endcolor.slice(i*2+1,i*2+3),16)-this._base[i] }.bind(this));
+    this._base  = $R(0,2).map(function(i){ return parseInt(this.options.startcolor.slice(i*2+1,i*2+3),16); }.bind(this));
+    this._delta = $R(0,2).map(function(i){ return parseInt(this.options.endcolor.slice(i*2+1,i*2+3),16)-this._base[i]; }.bind(this));
   },
   update: function(position) {
     this.element.setStyle({backgroundColor: $R(0,2).inject('#',function(m,v,i){
@@ -1025,7 +1025,7 @@ Effect.Transform = Class.create({
       this.tracks.map(function(track){
         var ids = track.get('ids'), effect = track.get('effect'), options = track.get('options');
         var elements = [$(ids) || $$(ids)].flatten();
-        return elements.map(function(e){ return new effect(e, Object.extend({ sync:true }, options)) });
+        return elements.map(function(e){ return new effect(e, Object.extend({ sync:true }, options)); });
       }).flatten(),
       this.options
     );

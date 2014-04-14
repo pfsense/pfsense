@@ -112,7 +112,7 @@ function display_error_form($http_code, $desc) {
 	<head>
 		<script type="text/javascript" src="/javascript/jquery.js"></script>
 		<title><?=$http_code?></title>
-		<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+		<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 		<link rel="shortcut icon" href="/themes/<?= $g['theme'] ?>/images/icons/favicon.ico" />
 		<?php if (file_exists("{$g['www_path']}/themes/{$g['theme']}/login.css")): ?>
 		<link rel="stylesheet" type="text/css" href="/themes/<?= $g['theme'] ?>/login.css" media="all" />
@@ -195,6 +195,8 @@ foreach ($FilterIflist as $iflist) {
 	if($iflist['ipv6'] == $http_host)
 		$local_ip = true;
 }
+unset($FilterIflist);
+
 if($config['virtualip']) {
 	if($config['virtualip']['vip']) {
 		foreach($config['virtualip']['vip'] as $vip) {
@@ -233,7 +235,7 @@ $have_cookies = isset($_COOKIE["cookie_test"]);
 		</script>
 
 		<title><?=gettext("Login"); ?></title>
-		<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+		<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 		<link rel="shortcut icon" href="/themes/<?= $g['theme'] ?>/images/icons/favicon.ico" />
 		<?php if (file_exists("{$g['www_path']}/themes/{$g['theme']}/login.css")): ?>
 		<link rel="stylesheet" type="text/css" href="/themes/<?= $g['theme'] ?>/login.css" media="all" />
@@ -260,7 +262,7 @@ $have_cookies = isset($_COOKIE["cookie_test"]);
 			<?php 
 				if(is_ipaddr($http_host) && !$local_ip && !isset($config['system']['webgui']['nohttpreferercheck'])) {
 					$nifty_background = "#999";
-					print_info_box(gettext("You are accessing this router by an IP address not configured locally, which may be forwarded by NAT or other means. <br/><br/>If you did not setup this forwarding, you may be the target of a man-in-the-middle attack.")); 
+					print_info_box(gettext("You are accessing this router by an IP address not configured locally, which may be forwarded by NAT or other means. <br /><br />If you did not setup this forwarding, you may be the target of a man-in-the-middle attack.")); 
 				}
 				$noautocomplete = isset($config['system']['webgui']['noautocomplete']) ? 'autocomplete="off"' : '';
 			?>
@@ -287,7 +289,7 @@ $have_cookies = isset($_COOKIE["cookie_test"]);
 					</span>
 
 					<?php if (!$have_cookies && isset($_POST['login'])): ?>
-					<br/><br/>
+					<br /><br />
 					<span style="text-align:center; font-weight: normal ; font-style: italic; color: #ff0000">
 						<?= gettext("Your browser must support cookies to login."); ?>
 					</span>

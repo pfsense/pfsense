@@ -12,9 +12,10 @@ require_once("rrd.inc");
 require_once("pfsense-utils.inc");
 	
 $GIT_PKG = "git"; // Either "git" or the full package URL
+$GIT_BIN= "/usr/pbi/bin/git";
 $GIT_REPO = "git://github.com/pfsense/pfsense.git";
 $DEFAULT_BRANCH = "master";
-$CODIR =  "/root/pfsense/";
+$CODIR =  "/root/pfsense";
 $GITSYNC_MERGE = "/root/.gitsync_merge";
 
 /* NOTE: Set branches here */
@@ -71,7 +72,7 @@ while(!empty($temp_args)) {
 unlink_if_exists("/tmp/config.cache");
 conf_mount_rw();
 
-if(!file_exists("/usr/local/bin/git")) {
+if(!file_exists($GIT_BIN)) {
 	echo "Cannot find git, fetching...\n";
 	require_once("config.inc");
 	require_once("util.inc");
@@ -89,7 +90,7 @@ if(!file_exists("/usr/local/bin/git")) {
 	if (empty($pkg_info["git"])) {
 		echo "Can't locate git package in pfSense repo. Using FreeBSD pkg repo..";
 
-		if (($g['platform'] == "nanobsd") || ($g['platform'] == "embedded")) {
+		if (($g['platform'] == "nanobsd")) {
 			$pkgtmpdir = "/usr/bin/env PKG_TMPDIR=/root/ ";
 			$pkgstagingdir = "/root/tmp";
 			if (!is_dir($pkgstagingdir))
@@ -123,7 +124,7 @@ if(file_exists("/root/cvssync_backup.tgz")) {
 }
 
 if(is_dir("$CODIR/pfSenseGITREPO/pfSenseGITREPO")) {
-	exec("cd $CODIR/pfSenseGITREPO/pfSenseGITREPO && git config remote.origin.url", $output_str, $ret);
+	exec("cd $CODIR/pfSenseGITREPO/pfSenseGITREPO && {$GIT_BIN} config remote.origin.url", $output_str, $ret);
 	if(is_array($output_str) && !empty($output_str[0]))
 		$GIT_REPO = $output_str[0];
 	unset($output_str);
@@ -149,7 +150,7 @@ else
 
 // If the repository has been fetched before, build a list of its branches.
 if(is_dir("$CODIR/pfSenseGITREPO/pfSenseGITREPO")) {
-	exec("cd $CODIR/pfSenseGITREPO/pfSenseGITREPO && git branch -r", $branch_list, $ret);
+	exec("cd $CODIR/pfSenseGITREPO/pfSenseGITREPO && {$GIT_BIN} branch -r", $branch_list, $ret);
 	if($ret == 0 && is_array($branch_list)) {
 		foreach ($branch_list as $branch_item) {
 			$branch_item = substr(strrchr($branch_item, "/"), 1);
@@ -259,29 +260,29 @@ echo "===> Checking out $branch\n";
 // Git commands for resetting to the specified branch
 if($branch == "build_commit") {
 	$git_cmd = array(
-		"cd $CODIR/pfSenseGITREPO/pfSenseGITREPO && git branch " . escapeshellarg($branch) . " 2>/dev/null",
-		"cd $CODIR/pfSenseGITREPO/pfSenseGITREPO && git checkout -f " . escapeshellarg($branch) . " 2>/dev/null",
-		"cd $CODIR/pfSenseGITREPO/pfSenseGITREPO && git reset --hard " . escapeshellarg(trim(file_get_contents("/etc/version.lastcommit")))
+		"cd $CODIR/pfSenseGITREPO/pfSenseGITREPO && {$GIT_BIN} branch " . escapeshellarg($branch) . " 2>/dev/null",
+		"cd $CODIR/pfSenseGITREPO/pfSenseGITREPO && {$GIT_BIN} checkout -f " . escapeshellarg($branch) . " 2>/dev/null",
+		"cd $CODIR/pfSenseGITREPO/pfSenseGITREPO && {$GIT_BIN} reset --hard " . escapeshellarg(trim(file_get_contents("/etc/version.lastcommit")))
 	);
 } else {
 	$git_cmd = array(
-		"cd $CODIR/pfSenseGITREPO/pfSenseGITREPO && git branch " . escapeshellarg($branch) . " " . escapeshellarg("origin/{$branch}") . " 2>/dev/null",
-		"cd $CODIR/pfSenseGITREPO/pfSenseGITREPO && git checkout -f " . escapeshellarg($branch) . " 2>/dev/null",
-		"cd $CODIR/pfSenseGITREPO/pfSenseGITREPO && git reset --hard " . escapeshellarg("origin/{$branch}")
+		"cd $CODIR/pfSenseGITREPO/pfSenseGITREPO && {$GIT_BIN} branch " . escapeshellarg($branch) . " " . escapeshellarg("origin/{$branch}") . " 2>/dev/null",
+		"cd $CODIR/pfSenseGITREPO/pfSenseGITREPO && {$GIT_BIN} checkout -f " . escapeshellarg($branch) . " 2>/dev/null",
+		"cd $CODIR/pfSenseGITREPO/pfSenseGITREPO && {$GIT_BIN} reset --hard " . escapeshellarg("origin/{$branch}")
 	);
 }
 
 // Git 'er done!
 if(is_dir("$CODIR/pfSenseGITREPO/pfSenseGITREPO")) {
 	echo "===> Fetching updates...\n";
-	exec("cd $CODIR/pfSenseGITREPO/pfSenseGITREPO && git config remote.origin.url " . escapeshellarg($GIT_REPO));
-	exec("cd $CODIR/pfSenseGITREPO/pfSenseGITREPO && git fetch");
-	exec("cd $CODIR/pfSenseGITREPO/pfSenseGITREPO && git clean -f -f -x -d");
+	exec("cd $CODIR/pfSenseGITREPO/pfSenseGITREPO && {$GIT_BIN} config remote.origin.url " . escapeshellarg($GIT_REPO));
+	exec("cd $CODIR/pfSenseGITREPO/pfSenseGITREPO && {$GIT_BIN} fetch");
+	exec("cd $CODIR/pfSenseGITREPO/pfSenseGITREPO && {$GIT_BIN} clean -f -f -x -d");
 	run_cmds($git_cmd);
 } else {
     exec("mkdir -p $CODIR/pfSenseGITREPO");
-    echo "Executing cd $CODIR/pfSenseGITREPO && git clone $GIT_REPO pfSenseGITREPO\n";
-	exec("cd $CODIR/pfSenseGITREPO && git clone " . escapeshellarg($GIT_REPO) . " pfSenseGITREPO");
+    echo "Executing cd $CODIR/pfSenseGITREPO && {$GIT_BIN} clone $GIT_REPO pfSenseGITREPO\n";
+	exec("cd $CODIR/pfSenseGITREPO && {$GIT_BIN} clone " . escapeshellarg($GIT_REPO) . " pfSenseGITREPO");
 	if(is_dir("$CODIR/pfSenseGITREPO/pfSense")) 
 		exec("mv $CODIR/pfSenseGITREPO/pfSense $CODIR/pfSenseGITREPO/pfSenseGITREPO");
 	if(is_dir("$CODIR/pfSenseGITREPO/mainline")) 
@@ -291,7 +292,7 @@ if(is_dir("$CODIR/pfSenseGITREPO/pfSenseGITREPO")) {
 
 foreach($merge_repos as $merge_repo) {
 	echo "===> Merging branch {$merge_repo['branch']} from {$merge_repo['repo']}\n";
-	exec("cd $CODIR/pfSenseGITREPO/pfSenseGITREPO && git pull " . escapeshellarg($merge_repo['repo']) . " " . escapeshellarg($merge_repo['branch']), $output_str, $ret);
+	exec("cd $CODIR/pfSenseGITREPO/pfSenseGITREPO && {$GIT_BIN} pull " . escapeshellarg($merge_repo['repo']) . " " . escapeshellarg($merge_repo['branch']), $output_str, $ret);
 	unset($output_str);
 	if($ret <> 0) {
 		echo "\nMerge failed.  Aborting sync.\n\n";
@@ -306,12 +307,12 @@ if(isset($args["--minimal"])) {
 		$old_revision = trim(file_get_contents("/etc/version.gitsync"));
 	else if(file_exists("/etc/version.lastcommit"))
 		$old_revision = trim(file_get_contents("/etc/version.lastcommit"));
-	$files_to_copy = strtr(shell_exec("cd $CODIR/pfSenseGITREPO/pfSenseGITREPO && git diff --name-only " . escapeshellarg($old_revision)), "\n", " ");
+	$files_to_copy = strtr(shell_exec("cd $CODIR/pfSenseGITREPO/pfSenseGITREPO && {$GIT_BIN} diff --name-only " . escapeshellarg($old_revision)), "\n", " ");
 } else
 	$files_to_copy = '--exclude .git .';
 
 // Save new commit ID for later minimal file copies
-exec("cd $CODIR/pfSenseGITREPO/pfSenseGITREPO && git rev-parse -q --verify HEAD > /etc/version.gitsync");
+exec("cd $CODIR/pfSenseGITREPO/pfSenseGITREPO && {$GIT_BIN} rev-parse -q --verify HEAD > /etc/version.gitsync");
 
 exec("mkdir -p /tmp/lighttpd/cache/compress/");
 
@@ -352,7 +353,7 @@ else {
 }
 
 // Reset the repository to restore the deleted files
-exec("cd $CODIR/pfSenseGITREPO/pfSenseGITREPO && git reset --hard >/dev/null 2>/dev/null");
+exec("cd $CODIR/pfSenseGITREPO/pfSenseGITREPO && {$GIT_BIN} reset --hard >/dev/null 2>/dev/null");
 
 // Remove obsolete files
 $files_to_remove = file("/etc/pfSense.obsoletedfiles");

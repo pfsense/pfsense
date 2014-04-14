@@ -2,7 +2,7 @@
 /* $Id$ */
 /*
 	firewall_nat_npt_edit.php
-	part of pfSense (http://pfsense.org)
+	part of pfSense (https://www.pfsense.org)
 	
 	Copyright (C) 2011 Seth Mos <seth.mos@dds.nl>.
 	All rights reserved.
@@ -69,8 +69,9 @@ if (!is_array($config['nat']['npt'])) {
 }
 $a_npt = &$config['nat']['npt'];
 
-$id = $_GET['id'];
-if (isset($_POST['id']))
+if (is_numericint($_GET['id']))
+	$id = $_GET['id'];
+if (isset($_POST['id']) && is_numericint($_POST['id']))
 	$id = $_POST['id'];
 
 if (isset($id) && $a_npt[$id]) {
@@ -201,8 +202,8 @@ include("head.inc");
 					<?=htmlspecialchars($ifacename);?>
 					</option>
 					<?php endforeach; ?>
-				</select><br/>
-			  <span class="vexpl"><?=gettext("Choose which interface this rule applies to"); ?>.<br/>
+				</select><br />
+			  <span class="vexpl"><?=gettext("Choose which interface this rule applies to"); ?>.<br />
 			  <?=gettext("Hint: in most cases, you'll want to use WAN here"); ?>.</span></td>
 		</tr>
 		<tr>
@@ -227,7 +228,7 @@ include("head.inc");
                                                 </td>
                                         </tr>
                                 </table>
-			<br/>
+			<br />
                      <span class="vexpl"><?=gettext("Enter the internal (LAN) ULA IPv6 Prefix for the Network Prefix translation. The prefix size specified for the internal IPv6 prefix will be applied to the 
 external prefix."); 
 ?></span>
@@ -257,15 +258,15 @@ external prefix.");
                                                 </td>
                                         </tr>
                                 </table>
-			<br/>
-                     <span class="vexpl"><?=gettext("Enter the Global Unicast routable IPv6 prefix here"); ?><br/></span>
+			<br />
+                     <span class="vexpl"><?=gettext("Enter the Global Unicast routable IPv6 prefix here"); ?><br /></span>
                      </td>
                 </tr>
                 <tr> 
                   <td width="22%" valign="top" class="vncell"><?=gettext("Description"); ?></td>
                   <td width="78%" class="vtable"> 
                     <input name="descr" type="text" class="formfld unknown" id="descr" size="40" value="<?=htmlspecialchars($pconfig['descr']);?>" />
-                    <br/> <span class="vexpl"><?=gettext("You may enter a description here " .
+                    <br /> <span class="vexpl"><?=gettext("You may enter a description here " .
                     "for your reference (not parsed)."); ?></span></td>
                 </tr>
                 <tr> 

@@ -2,7 +2,7 @@
 /* $Id$ */
 /*
 	status_ntpd.php
-	part of pfSense (http://www.pfsense.com/)
+	part of pfSense (https://www.pfsense.org/)
 
 	Copyright (C) 2013 Dagorlad
 	Copyright (C) 2012 Jim Pingle

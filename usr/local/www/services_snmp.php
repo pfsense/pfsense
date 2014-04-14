@@ -167,7 +167,7 @@ $shortcut_section = "snmp";
 include("head.inc");
 
 ?>
-<script language="JavaScript">
+<script type="text/javascript">
 <!--
 function check_deps() {
 	if (jQuery('#hostres').prop('checked') == true) {
@@ -290,7 +290,7 @@ function enable_change(whichone) {
                   <td width="22%" valign="top" class="vncellreq"><?=gettext("Polling Port ");?></td>
                   <td width="78%" class="vtable">
                     <input name="pollport" type="text" class="formfld unknown" id="pollport" size="40" value="<?=htmlspecialchars($pconfig['pollport']) ? htmlspecialchars($pconfig['pollport']) : htmlspecialchars(161);?>">
-                    <br><?=gettext("Enter the port to accept polling events on (default 161)");?></br>
+                    <br /><?=gettext("Enter the port to accept polling events on (default 161)");?><br />
 		  </td>
                 </tr>
 
@@ -312,7 +312,7 @@ function enable_change(whichone) {
                   <td width="22%" valign="top" class="vncellreq"><?=gettext("Read Community String");?></td>
                   <td width="78%" class="vtable"> 
                     <input name="rocommunity" type="text" class="formfld unknown" id="rocommunity" size="40" value="<?=htmlspecialchars($pconfig['rocommunity']);?>"> 
-		    <br><?=gettext("The community string is like a password, restricting access to querying SNMP to hosts knowing the community string. Use a strong value here to protect from unauthorized information disclosure.");?></br>
+		    <br /><?=gettext("The community string is like a password, restricting access to querying SNMP to hosts knowing the community string. Use a strong value here to protect from unauthorized information disclosure.");?><br />
 		  </td>
                 </tr>
 
@@ -330,7 +330,7 @@ function enable_change(whichone) {
 		  <td width="22%" valign="top" class="vncellreq">Write community string</td>
           <td width="78%" class="vtable">
                     <input name="rwcommunity" type="text" class="formfld unknown" id="rwcommunity" size="40" value="<?=htmlspecialchars($pconfig['rwcommunity']);?>">
-		    <br>Please use something other then &quot;private&quot; here</br>
+		    <br />Please use something other then &quot;private&quot; here<br />
 		  </td>
                 </tr>
 		    	*/ 
@@ -351,7 +351,7 @@ function enable_change(whichone) {
                   <td width="22%" valign="top" class="vncellreq"><?=gettext("Trap server");?></td>
                   <td width="78%" class="vtable">
                     <input name="trapserver" type="text" class="formfld unknown" id="trapserver" size="40" value="<?=htmlspecialchars($pconfig['trapserver']);?>">
-                    <br><?=gettext("Enter trap server name");?></br>
+                    <br /><?=gettext("Enter trap server name");?><br />
 		  </td>
                 </tr>
 
@@ -359,7 +359,7 @@ function enable_change(whichone) {
                   <td width="22%" valign="top" class="vncellreq"><?=gettext("Trap server port ");?></td>
                   <td width="78%" class="vtable">
                     <input name="trapserverport" type="text" class="formfld unknown" id="trapserverport" size="40" value="<?=htmlspecialchars($pconfig['trapserverport']) ? htmlspecialchars($pconfig['trapserverport']) : htmlspecialchars(162);?>">
-                    <br><?=gettext("Enter the port to send the traps to (default 162)");?></br>
+                    <br /><?=gettext("Enter the port to send the traps to (default 162)");?><br />
 		  </td>
                 </tr>
 
@@ -367,7 +367,7 @@ function enable_change(whichone) {
                   <td width="22%" valign="top" class="vncellreq"><?=gettext("Enter the SNMP trap string");?></td>
                   <td width="78%" class="vtable">
                     <input name="trapstring" type="text" class="formfld unknown" id="trapstring" size="40" value="<?=htmlspecialchars($pconfig['trapstring']);?>">
-                    <br><?=gettext("Trap string");?></br>
+                    <br /><?=gettext("Trap string");?><br />
 		  </td>
                 </tr>
 
@@ -432,7 +432,7 @@ function enable_change(whichone) {
 		 </tr>
 		</table>
 </form>
-<script language="JavaScript">
+<script type="text/javascript">
 <!--
 enable_change(this);
 //-->

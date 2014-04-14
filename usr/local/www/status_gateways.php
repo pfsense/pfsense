@@ -2,7 +2,7 @@
 /* $Id$ */
 /*
 	status_gateways.php
-	part of pfSense (http://www.pfsense.com/)
+	part of pfSense (https://www.pfsense.org/)
 
 	Copyright (C) 2010 Seth Mos <seth.mos@dds.nl>.
 	All rights reserved.
@@ -141,7 +141,7 @@ include("head.inc");
 				echo "<tr><td><table width='100%'><tr><td bgcolor=\"$bgcolor\">&nbsp;$online&nbsp;</td></tr><tr><td>";
 				$lastchange = $gateways_status[$gname]['lastcheck'];
 				if(!empty($lastchange)) {
-					echo gettext("Last check:") . '<br/>' . $lastchange;
+					echo gettext("Last check:") . '<br />' . $lastchange;
 				}
 				echo "</td></tr></table></td></tr>";
                         ?>

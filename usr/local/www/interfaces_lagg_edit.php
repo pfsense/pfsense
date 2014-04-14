@@ -3,7 +3,7 @@
 /*
 	interfaces_lagg_edit.php
 
-	Copyright (C) 2008 Ermal Luçi
+	Copyright (C) 2008 Ermal LuÃ§i
 	All rights reserved.
 
 	Redistribution and use in source and binary forms, with or without
@@ -64,8 +64,9 @@ foreach ($checklist as $tmpif)
 
 $laggprotos = array("none", "lacp", "failover", "fec", "loadbalance", "roundrobin");
 
-$id = $_GET['id'];
-if (isset($_POST['id']))
+if (is_numericint($_GET['id']))
+	$id = $_GET['id'];
+if (isset($_POST['id']) && is_numericint($_POST['id']))
 	$id = $_POST['id'];
 
 if (isset($id) && $a_laggs[$id]) {
@@ -159,7 +160,7 @@ include("head.inc");
 						}
 				?>
                     </select>
-			<br/>
+			<br />
 			<span class="vexpl"><?=gettext("Choose the members that will be used for the link aggregation"); ?>.</span></td>
                 </tr>
 		<tr>
@@ -175,20 +176,20 @@ include("head.inc");
 		}
 		?>
                     </select>
-                    <br/>
+                    <br />
 		   <ul class="vexpl">
 		<li>
-		    <b><?=gettext("failover"); ?></b><br/>
+		    <b><?=gettext("failover"); ?></b><br />
 			<?=gettext("Sends and receives traffic only through the master port.  If " .
                   "the master port becomes unavailable, the next active port is " .
                   "used.  The first interface added is the master port; any " .
                   "interfaces added after that are used as failover devices."); ?>
 		</li><li>
-     <b><?=gettext("fec"); ?></b><br/>          <?=gettext("Supports Cisco EtherChannel.  This is a static setup and " .
+     <b><?=gettext("fec"); ?></b><br />          <?=gettext("Supports Cisco EtherChannel.  This is a static setup and " .
                   "does not negotiate aggregation with the peer or exchange " .
                   "frames to monitor the link."); ?>
 		</li><li>
-     <b><?=gettext("lacp"); ?></b><br/>         <?=gettext("Supports the IEEE 802.3ad Link Aggregation Control Protocol " .
+     <b><?=gettext("lacp"); ?></b><br />         <?=gettext("Supports the IEEE 802.3ad Link Aggregation Control Protocol " .
                   "(LACP) and the Marker Protocol.  LACP will negotiate a set " .
                   "of aggregable links with the peer in to one or more Link " .
                   "Aggregated Groups.  Each LAG is composed of ports of the " .
@@ -199,7 +200,7 @@ include("head.inc");
                   "connectivity, Link Aggregation will quickly converge to a " .
                   "new configuration."); ?>
 		</li><li>
-     <b><?=gettext("loadbalance"); ?></b><br/>  <?=gettext("Balances outgoing traffic across the active ports based on " .
+     <b><?=gettext("loadbalance"); ?></b><br />  <?=gettext("Balances outgoing traffic across the active ports based on " .
                   "hashed protocol header information and accepts incoming " .
                   "traffic from any active port.  This is a static setup and " .
                   "does not negotiate aggregation with the peer or exchange " .
@@ -207,11 +208,11 @@ include("head.inc");
                   "source and destination address, and, if available, the VLAN " .
                   "tag, and the IP source and destination address") ?>.
 		</li><li>
-     <b><?=gettext("roundrobin"); ?></b><br/>   <?=gettext("Distributes outgoing traffic using a round-robin scheduler " .
+     <b><?=gettext("roundrobin"); ?></b><br />   <?=gettext("Distributes outgoing traffic using a round-robin scheduler " .
                   "through all active ports and accepts incoming traffic from " .
                   "any active port"); ?>.
 		</li><li>
-     <b><?=gettext("none"); ?></b><br/>         <?=gettext("This protocol is intended to do nothing: it disables any " .
+     <b><?=gettext("none"); ?></b><br />         <?=gettext("This protocol is intended to do nothing: it disables any " .
                   "traffic without disabling the lagg interface itself"); ?>.
 		</li>
 	</ul>
@@ -221,7 +222,7 @@ include("head.inc");
                   <td width="22%" valign="top" class="vncell"><?=gettext("Description"); ?></td>
                   <td width="78%" class="vtable">
                     <input name="descr" type="text" class="formfld unknown" id="descr" size="40" value="<?=htmlspecialchars($pconfig['descr']);?>" />
-                    <br/> <span class="vexpl"><?=gettext("You may enter a description here " .
+                    <br /> <span class="vexpl"><?=gettext("You may enter a description here " .
                     "for your reference (not parsed)"); ?>.</span></td>
                 </tr>
                 <tr>

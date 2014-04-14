@@ -3,7 +3,7 @@
 /*
 	firewall_shaper_vinterface.php
 	Copyright (C) 2004, 2005 Scott Ullrich
-	Copyright (C) 2008 Ermal Luçi
+	Copyright (C) 2008 Ermal LuÃ§i
 	All rights reserved.
 
 	Redistribution and use in source and binary forms, with or without
@@ -336,7 +336,7 @@ $output_form .= "<input type=\"button\" class=\"formbtn\" name=\"delete\"";
 if ($queue)
 	$output_form .= " value=\"" . gettext("Delete this queue") ."\" />";
 else
-	$output_form .= " value=\"" . gettext("Delete virtual interface") ."\" />";
+	$output_form .= " value=\"" . gettext("Delete Limiter") ."\" />";
 $output_form .= "</a>";  
 $output_form .= "</td></tr>";
 $output_form .= "</table>";
@@ -382,7 +382,7 @@ include("fbegin.inc");
 
 <?php if ($savemsg) print_info_box($savemsg); ?>
 <?php if (is_subsystem_dirty('shaper')): ?><p>
-<?php print_info_box_np(gettext("The traffic shaper configuration has been changed.")."<br/>".gettext("You must apply the changes in order for them to take effect."));?><br/></p>
+<?php print_info_box_np(gettext("The traffic shaper configuration has been changed.")."<br />".gettext("You must apply the changes in order for them to take effect."));?><br /></p>
 <?php endif; ?>
 <table width="100%" border="0" cellpadding="0" cellspacing="0" summary="traffic shaper limiter">
   <tr><td>
@@ -409,10 +409,10 @@ include("fbegin.inc");
 			<?php
 				echo $tree; 
 			?>
-			<br/><br/>
+			<br /><br />
 			<a href="firewall_shaper_vinterface.php?pipe=new&amp;action=add">
 			<img src="./themes/<?= $g['theme']; ?>/images/icons/icon_plus.gif" title="<?=gettext("Create new limiter");?>" width="17" height="17" border="0" alt="add" />&nbsp;<?=gettext("Create new limiter");?>
-			</a><br/>
+			</a><br />
 			</td>
 			<td width="75%" valign="top" align="center">
 			<div id="shaperarea" style="position:relative">

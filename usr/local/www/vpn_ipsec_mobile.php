@@ -246,7 +246,7 @@ include("head.inc");
 <body link="#0000CC" vlink="#0000CC" alink="#0000CC">
 <?php include("fbegin.inc"); ?>
 
-<script language="JavaScript">
+<script type="text/javascript">
 <!--
 
 function pool_change() {
@@ -327,12 +327,12 @@ function login_banner_change() {
 	if ($savemsg)
 		print_info_box($savemsg);
 	if (isset($config['ipsec']['enable']) && is_subsystem_dirty('ipsec'))
-		print_info_box_np(gettext("The IPsec tunnel configuration has been changed") . ".<br>" . gettext("You must apply the changes in order for them to take effect."));
+		print_info_box_np(gettext("The IPsec tunnel configuration has been changed") . ".<br />" . gettext("You must apply the changes in order for them to take effect."));
 	foreach ($a_phase1 as $ph1ent)
 		if (isset($ph1ent['mobile']))
 			$ph1found = true;
 	if ($pconfig['enable'] && !$ph1found)
-		print_info_box_np(gettext("Support for IPsec Mobile clients is enabled but a Phase1 definition was not found") . ".<br>" . gettext("Please click Create to define one."),gettext("create"),gettext("Create Phase1"));
+		print_info_box_np(gettext("Support for IPsec Mobile clients is enabled but a Phase1 definition was not found") . ".<br />" . gettext("Please click Create to define one."),gettext("create"),gettext("Create Phase1"));
 	if ($input_errors)
 		print_input_errors($input_errors);
 ?>
@@ -423,7 +423,7 @@ function login_banner_change() {
 										<input name="pool_enable" type="checkbox" id="pool_enable" value="yes" <?=$chk;?> onClick="pool_change()">
 									</td>
 									<td>
-										<?=gettext("Provide a virtual IP address to clients"); ?><br>
+										<?=gettext("Provide a virtual IP address to clients"); ?><br />
 									</td>
 								</tr>
 							</table>
@@ -455,7 +455,7 @@ function login_banner_change() {
 										<input name="net_list_enable" type="checkbox" id="net_list_enable" value="yes" <?=$chk;?>>
 									</td>
 									<td>
-										<?=gettext("Provide a list of accessible networks to clients"); ?><br>
+										<?=gettext("Provide a list of accessible networks to clients"); ?><br />
 									</td>
 								</tr>
 							</table>
@@ -471,8 +471,8 @@ function login_banner_change() {
 										<input name="save_passwd_enable" type="checkbox" id="save_passwd_enable" value="yes" <?=$chk;?>>
 									</td>
 									<td>
-										<?=gettext("Allow clients to save Xauth passwords (Cisco VPN client only)."); ?><br>
-										<?=gettext("NOTE: With iPhone clients, this does not work when deployed via the iPhone configuration utility, only by manual entry."); ?><br>
+										<?=gettext("Allow clients to save Xauth passwords (Cisco VPN client only)."); ?><br />
+										<?=gettext("NOTE: With iPhone clients, this does not work when deployed via the iPhone configuration utility, only by manual entry."); ?><br />
 									</td>
 								</tr>
 							</table>
@@ -488,7 +488,7 @@ function login_banner_change() {
 										<input name="dns_domain_enable" type="checkbox" id="dns_domain_enable" value="yes" <?=$chk;?> onClick="dns_domain_change()">
 									</td>
 									<td>
-										<?=gettext("Provide a default domain name to clients"); ?><br>
+										<?=gettext("Provide a default domain name to clients"); ?><br />
 									</td>
 								</tr>
 							</table>
@@ -511,7 +511,7 @@ function login_banner_change() {
 										<input name="dns_split_enable" type="checkbox" id="dns_split_enable" value="yes" <?=$chk;?> onClick="dns_split_change()">
 									</td>
 									<td>
-										<?=gettext("Provide a list of split DNS domain names to clients. Enter a comma separated list."); ?><br>
+										<?=gettext("Provide a list of split DNS domain names to clients. Enter a comma separated list."); ?><br />
 										<?=gettext("NOTE: If left blank, and a default domain is set, it will be used for this value."); ?>
 									</td>
 								</tr>
@@ -535,7 +535,7 @@ function login_banner_change() {
 										<input name="dns_server_enable" type="checkbox" id="dns_server_enable" value="yes" <?=$chk;?> onClick="dns_server_change()">
 									</td>
 									<td>
-										<?=gettext("Provide a DNS server list to clients"); ?><br>
+										<?=gettext("Provide a DNS server list to clients"); ?><br />
 									</td>
 								</tr>
 							</table>
@@ -577,7 +577,7 @@ function login_banner_change() {
 										<input name="wins_server_enable" type="checkbox" id="wins_server_enable" value="yes" <?=$chk;?> onClick="wins_server_change()">
 									</td>
 									<td>
-										<?=gettext("Provide a WINS server list to clients"); ?><br>
+										<?=gettext("Provide a WINS server list to clients"); ?><br />
 									</td>
 								</tr>
 							</table>
@@ -607,7 +607,7 @@ function login_banner_change() {
 										<input name="pfs_group_enable" type="checkbox" id="pfs_group_enable" value="yes" <?=$chk;?> onClick="pfs_group_change()">
 									</td>
 									<td>
-										<?=gettext("Provide the Phase2 PFS group to clients ( overrides all mobile phase2 settings )"); ?><br>
+										<?=gettext("Provide the Phase2 PFS group to clients ( overrides all mobile phase2 settings )"); ?><br />
 									</td>
 								</tr>
 							</table>
@@ -637,7 +637,7 @@ function login_banner_change() {
 										<input name="login_banner_enable" type="checkbox" id="login_banner_enable" value="yes" <?=$chk;?> onClick="login_banner_change()">
 									</td>
 									<td>
-										<?=gettext("Provide a login banner to clients"); ?><br>
+										<?=gettext("Provide a login banner to clients"); ?><br />
 									</td>
 								</tr>
 							</table>
@@ -663,7 +663,7 @@ function login_banner_change() {
 	</tr>
 </table>
 </form>
-<script language="JavaScript">
+<script type="text/javascript">
 pool_change();
 dns_domain_change();
 dns_split_change();

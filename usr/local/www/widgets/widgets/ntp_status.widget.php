@@ -2,7 +2,7 @@
 /*
         $Id$
         Copyright 2007 Scott Dale
-        Part of pfSense widgets (www.pfsense.com)
+        Part of pfSense widgets (https://www.pfsense.org)
         originally based on m0n0wall (http://m0n0.ch/wall)
 
         Copyright (C) 2004-2005 T. Lechat <dev@lechat.org>, Manuel Kasper <mk@neon1.net>
@@ -207,7 +207,7 @@ function clockTimeString($inDate, $showSeconds) {
 /*** Clock -- end of server-side support code ***/
 ?>
 
-<script language="JavaScript" type="text/javascript">
+<script type="text/javascript">
 <!--
 /* set up variables used to init clock in BODY's onLoad handler;
    should be done as early as possible */
@@ -222,7 +222,7 @@ function clockInit() {
 </script>
 
 
-<script language="JavaScript1.2" type="text/javascript">
+<script type="text/javascript">
 <!--
 /*** simpleFindObj, by Andrew Shearer
 
@@ -444,9 +444,6 @@ function clockUpdate()
 
 /*** End of Clock ***/
 //-->
-</script>
-
-<script>
   window.onload=clockInit(clockLocalStartTime, clockServerStartTime);clockOnLoad();
   window.onunload=clockOnUnload()
   clockUpdate();

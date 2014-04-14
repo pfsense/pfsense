@@ -2,7 +2,7 @@
 /* $Id$ */
 /*
         load_balancer_virtual_server_edit.php
-        part of pfSense (http://www.pfsense.com/)
+        part of pfSense (https://www.pfsense.org/)
 
         Copyright (C) 2005-2008 Bill Marquette <bill.marquette@gmail.com>.
         All rights reserved.
@@ -46,10 +46,10 @@ if (!is_array($config['load_balancer']['virtual_server'])) {
 }
 $a_vs = &$config['load_balancer']['virtual_server'];
 
-if (isset($_POST['id']))
-	$id = $_POST['id'];
-else
+if (is_numericint($_GET['id']))
 	$id = $_GET['id'];
+if (isset($_POST['id']) && is_numericint($_POST['id']))
+	$id = $_POST['id'];
 
 if (isset($id) && $a_vs[$id]) {
   $pconfig = $a_vs[$id];
@@ -174,8 +174,8 @@ include("head.inc");
 		  			<td width="22%" valign="top" class="vncellreq"><?=gettext("IP Address"); ?></td>
                   <td width="78%" class="vtable" colspan="2">
                     <input class="formfldalias" id="ipaddr" name="ipaddr" type="text" <?if(isset($pconfig['ipaddr'])) echo "value=\"" . htmlspecialchars($pconfig['ipaddr']) . "\"";?> size="39" maxlength="39">
-					<br><?=gettext("This is normally the WAN IP address that you would like the server to listen on.  All connections to this IP and port will be forwarded to the pool cluster."); ?>
-					<br><?=gettext("You may also specify a host alias listed in Firewall -&gt; Aliases here."); ?>
+					<br /><?=gettext("This is normally the WAN IP address that you would like the server to listen on.  All connections to this IP and port will be forwarded to the pool cluster."); ?>
+					<br /><?=gettext("You may also specify a host alias listed in Firewall -&gt; Aliases here."); ?>
 					<script type="text/javascript">
 					//<![CDATA[
 						var host_aliases = <?= json_encode(get_alias_list(array("host", "network", "url", "urltable"))) ?>;
@@ -188,9 +188,9 @@ include("head.inc");
 		  			<td width="22%" valign="top" class="vncell"><?=gettext("Port"); ?></td>
                   <td width="78%" class="vtable" colspan="2">
                     <input class="formfldalias" name="port" id="port" type="text" <?if(isset($pconfig['port'])) echo "value=\"" . htmlspecialchars($pconfig['port']) . "\"";?> size="16" maxlength="16">
-					<br><?=gettext("This is the port that the clients will connect to.  All connections to this port will be forwarded to the pool cluster."); ?>
-					<br><?=gettext("If left blank, listening ports from the pool will be used."); ?>
-					<br><?=gettext("You may also specify a port alias listed in Firewall -&gt; Aliases here."); ?>
+					<br /><?=gettext("This is the port that the clients will connect to.  All connections to this port will be forwarded to the pool cluster."); ?>
+					<br /><?=gettext("If left blank, listening ports from the pool will be used."); ?>
+					<br /><?=gettext("You may also specify a port alias listed in Firewall -&gt; Aliases here."); ?>
 					<script type="text/javascript">
 					//<![CDATA[
 						var port_aliases = <?= json_encode(get_alias_list(array("port", "url_ports", "urltable_ports"))) ?>;
@@ -235,8 +235,8 @@ include("head.inc");
             				}
             			?>
             			</select>
-				<br><?=gettext("The server pool to which clients will be redirected if *ALL* servers in the Virtual Server Pool are offline."); ?>
-				<br><?=gettext("This option is NOT compatible with the DNS relay protocol."); ?>
+				<br /><?=gettext("The server pool to which clients will be redirected if *ALL* servers in the Virtual Server Pool are offline."); ?>
+				<br /><?=gettext("This option is NOT compatible with the DNS relay protocol."); ?>
 				  <?php endif; ?>
                   </td>
 				</tr>
@@ -248,7 +248,7 @@ include("head.inc");
                     <input id="redirect_mode" type="radio" name="mode" value="redirect"<?=htmlspecialchars($pconfig['mode']) == 'redirect' ? ' checked="checked"': ''?>> Redirect
                     <input id="relay_mode" type="radio" name="mode" value="relay"<?=htmlspecialchars($pconfig['mode']) == 'relay' ? ' checked="checked"': ''?>> Relay
 
-                  <br>
+                  <br />
                   </td>
 				</tr>
 -->
@@ -266,7 +266,7 @@ include("head.inc");
 				}
 			?>
 			</select>
-			<br>
+			<br />
 			</td>
 		</tr>
                 <tr align="left">
@@ -280,7 +280,7 @@ include("head.inc");
 			</tr>
 		</table>
 	</form>
-	<br/>
+	<br />
 	<span class="red"><strong><?=gettext("Note:"); ?></strong></span> <?=gettext("Don't forget to add a firewall rule for the virtual server/pool after you're finished setting it up."); ?>
 <?php include("fend.inc"); ?>
 </body>

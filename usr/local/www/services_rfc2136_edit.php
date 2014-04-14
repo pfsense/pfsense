@@ -1,7 +1,7 @@
 <?php
 /* $Id$ */
 /*
-	Copyright (C) 2008 Ermal Luçi
+	Copyright (C) 2008 Ermal LuÃ§i
 	All rights reserved.
 
 	Redistribution and use in source and binary forms, with or without
@@ -37,8 +37,9 @@ if (!is_array($config['dnsupdates']['dnsupdate'])) {
 
 $a_rfc2136 = &$config['dnsupdates']['dnsupdate'];
 
-$id = $_GET['id'];
-if (isset($_POST['id']))
+if (is_numericint($_GET['id']))
+	$id = $_GET['id'];
+if (isset($_POST['id']) && is_numericint($_POST['id']))
 	$id = $_POST['id'];
 
 if (isset($id) && isset($a_rfc2136[$id])) {
@@ -151,7 +152,7 @@ include("head.inc");
                   <td width="22%" valign="top" class="vncellreq"><?=gettext("Hostname");?></td>
                   <td width="78%" class="vtable">
                     <input name="host" type="text" class="formfld unknown" id="host" size="30" value="<?=htmlspecialchars($pconfig['host']);?>">
-			<br/><span>Fully qualified hostname of the host to be updated</span>
+			<br /><span>Fully qualified hostname of the host to be updated</span>
                   </td>
 				</tr>
                 <tr>
@@ -164,7 +165,7 @@ include("head.inc");
                   <td valign="top" class="vncellreq"><?=gettext("Key name");?></td>
                   <td class="vtable">
                     <input name="keyname" type="text" class="formfld unknown" id="keyname" size="30" value="<?=htmlspecialchars($pconfig['keyname']);?>">
-                    <br>
+                    <br />
                     <?=gettext("This must match the setting on the DNS server.");?></td>
                 </tr>
                 <tr>
@@ -178,7 +179,7 @@ include("head.inc");
                   <td valign="top" class="vncellreq"><?=gettext("Key");?></td>
                   <td class="vtable">
                     <input name="keydata" type="text" class="formfld unknown" id="keydata" size="70" value="<?=htmlspecialchars($pconfig['keydata']);?>">
-                    <br>
+                    <br />
                     <?=gettext("Paste an HMAC-MD5 key here.");?></td>
 				</tr>
                 <tr>
@@ -219,7 +220,7 @@ include("head.inc");
                 </tr>
                 <tr>
                   <td width="22%" valign="top">&nbsp;</td>
-                  <td width="78%"><span class="vexpl"><span class="red"><strong><?=gettext("Note:");?><br>
+                  <td width="78%"><span class="vexpl"><span class="red"><strong><?=gettext("Note:");?><br />
                     </strong></span><?php printf(gettext("You must configure a DNS server in %sSystem: " .
                     "General setup %sor allow the DNS server list to be overridden " .
                     "by DHCP/PPP on WAN for dynamic DNS updates to work."),'<a href="system.php">', '</a>');?></span></td>

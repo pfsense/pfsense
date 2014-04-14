@@ -55,8 +55,9 @@ require("guiconfig.inc");
 
 $pgtitle = array(gettext("System"),gettext("Group manager"),gettext("Add privileges"));
 
-$groupid = $_GET['groupid'];
-if (isset($_POST['groupid']))
+if (is_numericint($_GET['groupid']))
+	$groupid = $_GET['groupid'];
+if (isset($_POST['groupid']) && is_numericint($_POST['groupid']))
 	$groupid = $_POST['groupid'];
 
 $a_group = & $config['system']['group'][$groupid];
@@ -190,7 +191,7 @@ function update_description() {
 									<option value="<?=$pname;?>"><?=$pdata['name'];?></option>
 									<?php endforeach; ?>
 								</select>
-								<br/>
+								<br />
 								<?=gettext("Hold down CTRL (pc)/COMMAND (mac) key to select multiple items");?>
 								</td><td>
 								<a href='#'onClick="selectAll();">Select all</a>
@@ -206,7 +207,7 @@ function update_description() {
 									selectAll();
 								//]]>									
 								</script>
-								<br/>
+								<br />
 								</td>
 								</tr>
 								</table>
@@ -224,7 +225,7 @@ function update_description() {
 								<input id="submitt"  name="Submit" type="submit" class="formbtn" value="<?=gettext("Save");?>" />
 								<input id="cancelbutton" class="formbtn" type="button" value="<?=gettext("Cancel");?>" onclick="history.back()" />
 								<?php if (isset($groupid)): ?>
-								<input name="groupid" type="hidden" value="<?=$groupid;?>" />
+								<input name="groupid" type="hidden" value="<?=htmlspecialchars($groupid);?>" />
 								<?php endif; ?>
 							</td>
 						</tr>

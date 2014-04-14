@@ -89,8 +89,8 @@ display_top_tabs($tab_array);
 </td></tr>
 <tr><td>
 <div id="mainarea" class="tabcont">
-<input type="hidden" name="if" id="if" value="<?php echo $if; ?>">
-<b><input type="submit" name="rescanwifi" id="rescanwifi" value="Rescan"></b><br/><br/>
+<input type="hidden" name="if" id="if" value="<?php echo htmlspecialchars($if); ?>">
+<b><input type="submit" name="rescanwifi" id="rescanwifi" value="Rescan"></b><br /><br />
 <b><?php echo gettext("Nearby access points or ad-hoc peers"); ?></b>
 <table class="tabcont sortable" colspan="3" cellpadding="3" width="100%">
 	<thead>
@@ -138,7 +138,7 @@ display_top_tabs($tab_array);
 ?>
 	</tbody>
 </table>
-<b><?php echo gettext("Associated or ad-hoc peers"); ?></b><br/>
+<b><?php echo gettext("Associated or ad-hoc peers"); ?></b><br />
 <table class="tabcont sortable" colspan="3" cellpadding="3" width="100%">
 	<thead>
 		<tr bgcolor='#990000'>
@@ -184,8 +184,8 @@ display_top_tabs($tab_array);
 ?>
 	</tbody>
 </table>
-</div><br>
-	<b>Flags:</b> A = authorized, E = Extended Rate (802.11g), P = Power save mode<br>
+</div><br />
+	<b>Flags:</b> A = authorized, E = Extended Rate (802.11g), P = Power save mode<br />
 	<b>Capabilities:</b> E = ESS (infrastructure mode), I = IBSS (ad-hoc mode), P = privacy (WEP/TKIP/AES),
 		S = Short preamble, s = Short slot time
 </td></tr>

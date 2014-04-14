@@ -134,7 +134,7 @@ function restore_rrddata() {
 
 function add_base_packages_menu_items() {
 	global $g, $config;
-	$base_packages = explode($g['base_packages'], ",");
+	$base_packages = explode(",", $g['base_packages']);
 	$modified_config = false;
 	foreach($base_packages as $bp) {
 		$basepkg_path = "/usr/local/pkg/{$bp}";
@@ -187,7 +187,7 @@ function spit_out_select_items($name, $showall) {
 		       "interfaces" => gettext("Interfaces"),
 		       "ipsec" => gettext("IPSEC"),
 		       "nat" => gettext("NAT"),
-		       "ovpn" => gettext("OpenVPN"),
+		       "openvpn" => gettext("OpenVPN"),
 		       "installedpackages" => gettext("Package Manager"),
 		       "pptpd" => gettext("PPTP Server"),
 		       "rrddata" => gettext("RRD Data"),
@@ -586,7 +586,7 @@ include("head.inc");
 
 <body link="#0000CC" vlink="#0000CC" alink="#0000CC">
 <?php include("fbegin.inc"); ?>
-<script language="JavaScript">
+<script type="text/javascript">
 <!--
 
 function encrypt_change() {
@@ -622,7 +622,7 @@ function backuparea_change(obj) {
 <?php if (is_subsystem_dirty('restore')): ?><p>
 <form action="reboot.php" method="post">
 <input name="Submit" type="hidden" value=" Yes ">
-<?php print_info_box(gettext("The firewall configuration has been changed.") . "<br/>" . gettext("The firewall is now rebooting."));?><br>
+<?php print_info_box(gettext("The firewall configuration has been changed.") . "<br />" . gettext("The firewall is now rebooting."));?><br />
 </form>
 <?php endif; ?>
 <form action="diag_backup.php" method="post" name="iform" enctype="multipart/form-data">
@@ -755,8 +755,8 @@ function backuparea_change(obj) {
 						<?php if ($config['installedpackages']['package'] != "") { ?>
 							<p><?=gettext("Click this button to reinstall all system packages.  This may take a while."); ?> <br /><br />
 							<input name="Submit" type="submit" class="formbtn" id="reinstallpackages" value="<?=gettext("Reinstall packages"); ?>">
-							<br/>
-							<br/>
+							<br />
+							<br />
 						<?php } ?>
 						<?php if (is_subsystem_dirty("packagelock")) { ?>
 							<p><?=gettext("Click this button to clear the package lock if a package fails to reinstall properly after an upgrade."); ?> <br /><br />
@@ -772,7 +772,7 @@ function backuparea_change(obj) {
 </table>
 </form>
 
-<script language="JavaScript">
+<script type="text/javascript">
 <!--
 encrypt_change();
 decrypt_change();

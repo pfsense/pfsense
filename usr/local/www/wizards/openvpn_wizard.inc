@@ -251,6 +251,7 @@ function step9_stepbeforeformdisplay() {
 		$state = $pconfig['step6']['state'];
 		$city = $pconfig['step6']['city'];
 		$org = $pconfig['step6']['organization'];
+		$email = $pconfig['step6']['email'];
 	} else {
 		$ca = lookup_ca($pconfig['step6']['authcertca']);
 		$cavl = cert_get_subject_array($ca['crt']);

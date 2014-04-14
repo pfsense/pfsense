@@ -2,7 +2,7 @@
 /*
 	$Id$
 	Copyright 2007 Scott Dale
-	Part of pfSense widgets (www.pfsense.com)
+	Part of pfSense widgets (https://www.pfsense.org)
 	originally based on m0n0wall (http://m0n0.ch/wall)
 
 	Copyright (C) 2004-2005 T. Lechat <dev@lechat.org>, Manuel Kasper <mk@neon1.net>
@@ -78,18 +78,18 @@ $updateavailable = false;
 				$latest_package = $currentvers[$pkg['name']]['version'];
 				if($latest_package == false) {
 					// We can't determine this package's version status.
-					echo "Current: Unknown.<br/>Installed: " . $pkg['version'];
+					echo "Current: Unknown.<br />Installed: " . $pkg['version'];
 				} elseif(strcmp($pkg['version'], $latest_package) > 0) {
 					/* we're running a newer version of the package */
 					echo "Current: {$latest_package}";
-					echo "<br/>Installed: {$pkg['version']}";
+					echo "<br />Installed: {$pkg['version']}";
 				} elseif(strcmp($pkg['version'], $latest_package) < 0) {
 					/* our package is out of date */
 					$updateavailable = true;
 					?>
 					<div id="updatediv-<?php echo $y; ?>" style="color:red">
 						<b>Update Available!</b></div><div style="float:left">
-						Current: <?php echo $latest_package; ?><br/>
+						Current: <?php echo $latest_package; ?><br />
 						Installed: <?php echo $pkg['version']; ?></div><div style="float:right">
 					<a href="pkg_mgr_install.php?mode=reinstallpkg&amp;pkg=<?= $pkg['name']; ?>"><img title="Update this package." src="./themes/<?= $g['theme']; ?>/images/icons/icon_reinstall_pkg.gif" width="17" height="17" border="0" alt="reinstall" /></a>
 					</div>

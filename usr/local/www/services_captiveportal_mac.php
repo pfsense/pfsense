@@ -140,15 +140,15 @@ if ($_GET['act'] == "del") {
 include("head.inc");
 
 ?>
-<?php include("fbegin.inc"); ?>
 <body link="#0000CC" vlink="#0000CC" alink="#0000CC">
+<?php include("fbegin.inc"); ?>
 <form action="services_captiveportal_mac.php" method="post">
-<input type="hidden" name="zone" id="zone" value="<?=$cpzone;?>"/>
+<input type="hidden" name="zone" id="zone" value="<?=htmlspecialchars($cpzone);?>" />
 <?php if ($savemsg) print_info_box($savemsg); ?>
 <?php if (is_subsystem_dirty('passthrumac')): ?><p>
-<?php print_info_box_np(gettext("The captive portal MAC address configuration has been changed.<br>You must apply the changes in order for them to take effect."));?><br>
+<?php print_info_box_np(gettext("The captive portal MAC address configuration has been changed.<br />You must apply the changes in order for them to take effect."));?><br />
 <?php endif; ?>
-<table width="100%" border="0" cellpadding="0" cellspacing="0">
+<table width="100%" border="0" cellpadding="0" cellspacing="0" summary="captiveportal mac">
 	<tr><td class="tabnavtbl">
 <?php
 	$tab_array = array();
@@ -163,7 +163,7 @@ include("head.inc");
 	</td></tr>
 	<tr>
 		<td class="tabcont">
-			<table width="100%" border="0" cellpadding="0" cellspacing="0">
+			<table width="100%" border="0" cellpadding="0" cellspacing="0" summary="main">
 				<tr>
 					<td width="3%"  class="list"></td>
 					<td width="37%" class="listhdrr"><?=gettext("MAC address"); ?></td>
@@ -175,8 +175,8 @@ include("head.inc");
 				$i = 0;
 				foreach ($a_cp[$cpzone]['passthrumac'] as $mac):
 ?>
-				<tr ondblclick="document.location='services_captiveportal_mac_edit.php?zone=<?=$cpzone;?>&id=<?=$i;?>'">
-					<td valign="middle" nowrap class="list">
+				<tr ondblclick="document.location='services_captiveportal_mac_edit.php?zone=<?=$cpzone;?>&amp;id=<?=$i;?>'">
+					<td valign="middle" class="list nowrap">
 						<img src="./themes/<?= $g['theme']; ?>/images/icons/icon_<?=$mac['action'];?>.gif" width="11" height="11" border="0" alt="icon" />
 					</td>
 					<td class="listlr">
@@ -185,13 +185,13 @@ include("head.inc");
 					<td class="listbg">
 						<?=htmlspecialchars($mac['descr']);?>&nbsp;
 					</td>
-					<td valign="middle" nowrap class="list">
-						<a href="services_captiveportal_mac_edit.php?zone=<?=$cpzone;?>&id=<?=$i;?>">
-							<img src="/themes/<?php echo $g['theme']; ?>/images/icons/icon_e.gif" title="<?=gettext("edit host"); ?>" width="17" height="17" border="0">
+					<td valign="middle" class="list nowrap">
+						<a href="services_captiveportal_mac_edit.php?zone=<?=$cpzone;?>&amp;id=<?=$i;?>">
+							<img src="/themes/<?php echo $g['theme']; ?>/images/icons/icon_e.gif" title="<?=gettext("edit host"); ?>" width="17" height="17" border="0" alt="edit" />
 						</a>
 						&nbsp;
-						<a href="services_captiveportal_mac.php?zone=<?=$cpzone;?>&act=del&id=<?=$i;?>" onclick="return confirm('<?=gettext("Do you really want to delete this host?"); ?>')">
-							<img src="/themes/<?php echo $g['theme']; ?>/images/icons/icon_x.gif" title="<?=gettext("delete host"); ?>" width="17" height="17" border="0">
+						<a href="services_captiveportal_mac.php?zone=<?=$cpzone;?>&amp;act=del&amp;id=<?=$i;?>" onclick="return confirm('<?=gettext("Do you really want to delete this host?"); ?>')">
+							<img src="/themes/<?php echo $g['theme']; ?>/images/icons/icon_x.gif" title="<?=gettext("delete host"); ?>" width="17" height="17" border="0" alt="delte" />
 						</a>
 					</td>
 				</tr>
@@ -204,14 +204,14 @@ include("head.inc");
 					<td class="list" colspan="3">&nbsp;</td>
 					<td class="list">
 						<a href="services_captiveportal_mac_edit.php?zone=<?=$cpzone;?>">
-							<img src="/themes/<?php echo $g['theme']; ?>/images/icons/icon_plus.gif" title="<?=gettext("add host"); ?>" width="17" height="17" border="0">
+							<img src="/themes/<?php echo $g['theme']; ?>/images/icons/icon_plus.gif" title="<?=gettext("add host"); ?>" width="17" height="17" border="0" alt="add" />
 						</a>
 					</td>
 				</tr>
 				<tr>
 					<td colspan="3" class="list">
 						<span class="vexpl">
-							<span class="red"><strong><?=gettext("Note:"); ?><br></strong></span>
+							<span class="red"><strong><?=gettext("Note:"); ?><br /></strong></span>
 							<?=gettext("Adding MAC addresses as 'pass' MACs allows them access through the captive portal automatically without being taken to the portal page."); ?>
 						</span>
 					</td>

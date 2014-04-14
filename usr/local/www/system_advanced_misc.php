@@ -60,7 +60,7 @@ $pconfig['lb_use_sticky'] = isset($config['system']['lb_use_sticky']);
 $pconfig['srctrack'] = $config['system']['srctrack'];
 $pconfig['gw_switch_default'] = isset($config['system']['gw_switch_default']);
 $pconfig['preferoldsa_enable'] = isset($config['ipsec']['preferoldsa']);
-foreach ($ipsec_loglevel as $lkey => $ldescr) {
+foreach ($ipsec_loglevels as $lkey => $ldescr) {
 	if (!empty($config['ipsec']["ipsec_{$lkey}"]))
 		$pconfig["ipsec_{$lkey}"] = $config['ipsec']["ipsec_{$lkey}"];
 }
@@ -170,11 +170,14 @@ if ($_POST) {
 		elseif (isset($config['ipsec']['failoverforcereload']))
 			unset($config['ipsec']['failoverforcereload']);
 
-		foreach ($ipsec_loglevel as $lkey => $ldescr) {
-			if (empty($_POST["ipsec_{$lkey}"]))
-				unset($config['ipsec']["ipsec_{$lkey}"]);
-			else
-				$config['ipsec']["ipsec_{$lkey}"] = $_POST["ipsec_{$lkey}"];
+		if (is_array($config['ipsec'])) {
+			foreach ($ipsec_loglevels as $lkey => $ldescr) {
+				if (empty($_POST["ipsec_{$lkey}"])) {
+					if (isset($config['ipsec']["ipsec_{$lkey}"]))
+						unset($config['ipsec']["ipsec_{$lkey}"]);
+				} else
+					$config['ipsec']["ipsec_{$lkey}"] = $_POST["ipsec_{$lkey}"];
+			}
 		}
 		if($_POST['noinstalllanspd'] == "yes") {
 			if (!isset($pconfig['noinstalllanspd']))
@@ -334,9 +337,9 @@ function tmpvar_checked(obj) {
 								<strong><?=gettext("NOTE:"); ?>&nbsp;</strong>
 							</span>
 							<?=gettext("The options on this page are intended for use by advanced users only."); ?>
-							<br/>
+							<br />
 						</span>
-						<br/>
+						<br />
 						<table width="100%" border="0" cellpadding="6" cellspacing="0" summary="main area">
 							<tr>
 								<td colspan="2" valign="top" class="listtopic"><?=gettext("Proxy support"); ?></td>
@@ -380,7 +383,7 @@ function tmpvar_checked(obj) {
 								<td width="22%" valign="top" class="vncell"><?=gettext("Load Balancing"); ?></td>
 								<td width="78%" class="vtable">
 									<input name="lb_use_sticky" type="checkbox" id="lb_use_sticky" value="yes" <?php if ($pconfig['lb_use_sticky']) echo "checked=\"checked\""; ?> onclick="sticky_checked(this)" />
-									<strong><?=gettext("Use sticky connections"); ?></strong><br/>
+									<strong><?=gettext("Use sticky connections"); ?></strong><br />
 									<?=gettext("Successive connections will be redirected to the servers " .
 									"in a round-robin manner with connections from the same " .
 									"source being sent to the same web server. This 'sticky " .
@@ -401,7 +404,7 @@ function tmpvar_checked(obj) {
 								<td width="22%" valign="top" class="vncell"><?=gettext("Load Balancing"); ?></td>
 								<td width="78%" class="vtable">
 									<input name="gw_switch_default" type="checkbox" id="gw_switch_default" value="yes" <?php if ($pconfig['gw_switch_default']) echo "checked=\"checked\""; ?> />
-									<strong><?=gettext("Allow default gateway switching"); ?></strong><br/>
+									<strong><?=gettext("Allow default gateway switching"); ?></strong><br />
 									<?=gettext("If the link where the default gateway resides fails " .
 									"switch the default gateway to another available one."); ?>
 								</td>
@@ -416,8 +419,8 @@ function tmpvar_checked(obj) {
 								<td width="22%" valign="top" class="vncell"><?=gettext("PowerD"); ?></td>
 								<td width="78%" class="vtable">
 									<input name="powerd_enable" type="checkbox" id="powerd_enable" value="yes" <?php if ($pconfig['powerd_enable']) echo "checked=\"checked\""; ?> />
-									<strong><?=gettext("Use PowerD"); ?></strong><br/>
-									<br/>
+									<strong><?=gettext("Use PowerD"); ?></strong><br />
+									<br />
 									<?=gettext("On AC Power Mode"); ?>&nbsp;:&nbsp;
 									<select name="powerd_ac_mode" id="powerd_ac_mode">
 										<option value="hadp"<?php if($pconfig['powerd_ac_mode']=="hadp") echo " selected=\"selected\""; ?>><?=gettext("Hiadaptive");?></option>
@@ -433,7 +436,7 @@ function tmpvar_checked(obj) {
 										<option value="min"<?php if($pconfig['powerd_battery_mode']=="min") echo " selected=\"selected\""; ?>><?=gettext("Minimum");?></option>
 										<option value="max"<?php if($pconfig['powerd_battery_mode']=="max") echo " selected=\"selected\""; ?>><?=gettext("Maximum");?></option>
 									</select>
-									<br/><br/>
+									<br /><br />
 									<?=gettext("The powerd utility monitors the system state and sets various power control " .
 									"options accordingly.  It offers four modes (maximum, minimum, adaptive " .
 									"and hiadaptive) that can be individually selected while on AC power or batteries. " .
@@ -472,7 +475,7 @@ function tmpvar_checked(obj) {
 										"for IPsec when using a cipher supported by your chip, such as AES-128. OpenVPN " .
 										"should be set for AES-128-CBC and have cryptodev enabled for hardware " .
 										"acceleration."); ?>
-									<br/><br/>
+									<br /><br />
 									<?=gettext("If you do not have a crypto chip in your system, this option will have no " .
 									"effect. To unload the selected module, set this option to 'none' and then reboot."); ?>
 								</td>
@@ -496,7 +499,7 @@ function tmpvar_checked(obj) {
 								<?=gettext("If you have a supported CPU, selecting a themal sensor will load the appropriate " .
 										"driver to read its temperature. Setting this to 'None' will attempt to read the " .
 										"temperature from an ACPI-compliant motherboard sensor instead, if one is present."); ?>
-								<br/><br/>
+								<br /><br />
 								<?=gettext("If you do not have a supported thermal sensor chip in your system, this option will have no " .
 									"effect. To unload the selected module, set this option to 'none' and then reboot."); ?>
 								</td>
@@ -542,16 +545,16 @@ function tmpvar_checked(obj) {
 											foreach (array("Silent", "Audit", "Control", "Diag", "Raw", "Highest") as $lidx => $lvalue) {
 												echo "<option value=\"{$lidx}\" ";
 												 if ($pconfig["ipsec_{$lkey}"] == $lidx)
-													echo "\"selected\"";
+													echo "selected=\"selected\"";
 												echo ">{$lvalue}</option>\n";
 											}
-										?> />
+										?>
 											</select>
 										</td>
 									</tr>
 								<?php endforeach; ?>
 									</table>
-									<br/><?=gettext("Launches IPSec in debug mode so that more verbose logs " .
+									<br /><?=gettext("Launches IPSec in debug mode so that more verbose logs " .
 									"will be generated to aid in troubleshooting."); ?>
 								</td>
 							</tr>
@@ -626,7 +629,7 @@ function tmpvar_checked(obj) {
 								<td width="22%" valign="top" class="vncell"><?=gettext("Use RAM Disks"); ?></td>
 								<td width="78%" class="vtable">
 									<input name="use_mfs_tmpvar" type="checkbox" id="use_mfs_tmpvar" value="yes" <?php if ($pconfig['use_mfs_tmpvar']) echo "checked=\"checked\""; ?> onclick="tmpvar_checked(this)" />
-									<strong><?=gettext("Use memory file system for /tmp and /var"); ?></strong><br/>
+									<strong><?=gettext("Use memory file system for /tmp and /var"); ?></strong><br />
 									<?=gettext("Set this if you wish to use /tmp and /var as RAM disks (memory file system disks) on a full install " .
 									"rather than use the hard disk. Setting this will cause the data in /tmp and /var to be lost at reboot, including log data. RRD and DHCP Leases will be retained."); ?>
 								</td>
@@ -660,10 +663,10 @@ function tmpvar_checked(obj) {
 										<option value='<?= $x ?>' <?php if ($config['system']['rrdbackup'] == $x) echo "selected='selected'"; ?>><?= $x ?> <?=gettext("hour"); ?><?php if ($x>1) echo "s"; ?></option>
 									<?php } ?>
 									</select>
-									<br/>
+									<br />
 									<?=gettext("This will periodically backup the RRD data so it can be restored automatically on the next boot. Keep in mind that the more frequent the backup, the more writes will happen to your media.");?>
-									<br/>
-									<br/>
+									<br />
+									<br />
 								</td>
 							</tr>
 							<tr>
@@ -676,10 +679,10 @@ function tmpvar_checked(obj) {
 										<option value='<?= $x ?>' <?php if ($config['system']['dhcpbackup'] == $x) echo "selected='selected'"; ?>><?= $x ?> <?=gettext("hour"); ?><?php if ($x>1) echo "s"; ?></option>
 									<?php } ?>
 									</select>
-									<br/>
+									<br />
 									<?=gettext("This will periodically backup the DHCP leases data so it can be restored automatically on the next boot. Keep in mind that the more frequent the backup, the more writes will happen to your media.");?>
-									<br/>
-									<br/>
+									<br />
+									<br />
 								</td>
 							</tr>
 							<tr>
@@ -705,7 +708,7 @@ function tmpvar_checked(obj) {
 										<option value="<?=$val;?>" <?php if($pconfig['harddiskstandby'] == $val) echo('selected="selected"');?>><?=$min;?> <?=gettext("minutes"); ?></option>
 										<?php endforeach; ?>
 									</select>
-									<br/>
+									<br />
 									<?=gettext("Puts the hard disk into standby mode when the selected amount of time after the last ".
 									"access has elapsed."); ?> <em><?=gettext("Do not set this for CF cards."); ?></em>
 								</td>
@@ -716,14 +719,14 @@ function tmpvar_checked(obj) {
 							<?php endif; ?>
 
 							<tr>
-								<td colspan="2" valign="top" class="listtopic"><?=gettext("Packages settings"); ?></td>
+								<td colspan="2" valign="top" class="listtopic"><?=gettext("Package settings"); ?></td>
 							</tr>
 							<tr>
-								<td width="22%" valign="top" class="vncell"><?=gettext("Packages signature"); ?></td>
+								<td width="22%" valign="top" class="vncell"><?=gettext("Package signature"); ?></td>
 								<td width="78%" class="vtable">
 									<input name="pkg_nochecksig" type="checkbox" id="pkg_nochecksig" value="yes" <?php if ($pconfig['pkg_nochecksig']) echo "checked=\"checked\""; ?> />
-									<strong><?=gettext("Do NOT check packages signature"); ?></strong><br/>
-									<?=gettext("Enable this option will make pfSense install any packages without check its signature."); ?>
+									<strong><?=gettext("Do NOT check package signature"); ?></strong><br />
+									<?=gettext("Enable this option to allow pfSense to install any package without checking its signature."); ?>
 								</td>
 							</tr>
 

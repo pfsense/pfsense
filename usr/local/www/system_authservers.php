@@ -44,8 +44,9 @@ require_once("auth.inc");
 $pgtitle = array(gettext("System"), gettext("Authentication Servers"));
 $shortcut_section = "authentication";
 
-$id = $_GET['id'];
-if (isset($_POST['id']))
+if (is_numericint($_GET['id']))
+	$id = $_GET['id'];
+if (isset($_POST['id']) && is_numericint($_POST['id']))
 	$id = $_POST['id'];
 
 if (!is_array($config['system']['authserver']))
@@ -81,7 +82,7 @@ if ($act == "del") {
 	unset($a_server[$_GET['id']]);
 
 	$savemsg = gettext("Authentication Server")." {$serverdeleted} ".
-				gettext("deleted")."<br/>";
+				gettext("deleted")."<br />";
 	write_config($savemsg);
 }
 
@@ -541,10 +542,10 @@ function select_clicked() {
 									<option value="<?=$ca['refid'];?>" <?=$selected;?>><?=$ca['descr'];?></option>
                                                         <?php	endforeach; ?>
 								</select>
-								<br/><span><?=gettext("This option is used if 'SSL Encrypted' option is choosen.");?> <br/>
+								<br /><span><?=gettext("This option is used if 'SSL Encrypted' option is choosen.");?> <br />
 								<?=gettext("It must match with the CA in the AD otherwise problems will arise.");?></span>
                                                         <?php else: ?>
-                                                                <b>No Certificate Authorities defined.</b> <br/>Create one under <a href="system_camanager.php">System &gt; Cert Manager</a>.
+                                                                <b>No Certificate Authorities defined.</b> <br />Create one under <a href="system_camanager.php">System &gt; Cert Manager</a>.
                                                         <?php endif; ?>
                                                         </td>
 						</tr>
@@ -646,13 +647,13 @@ function select_clicked() {
 									<tr>
 										<td><?=gettext("User DN:");?> &nbsp;</td>
 										<td>
-											<input name="ldap_binddn" type="text" class="formfld unknown" id="ldap_binddn" size="40" value="<?=htmlspecialchars($pconfig['ldap_binddn']);?>"/><br/>
+											<input name="ldap_binddn" type="text" class="formfld unknown" id="ldap_binddn" size="40" value="<?=htmlspecialchars($pconfig['ldap_binddn']);?>"/><br />
 										</td>
 									</tr>
 									<tr>
 										<td><?=gettext("Password:");?> &nbsp;</td>
 										<td>
-											<input name="ldap_bindpw" type="password" class="formfld pwd" id="ldap_bindpw" size="20" value="<?=htmlspecialchars($pconfig['ldap_bindpw']);?>"/><br/>
+											<input name="ldap_bindpw" type="password" class="formfld pwd" id="ldap_bindpw" size="20" value="<?=htmlspecialchars($pconfig['ldap_bindpw']);?>"/><br />
 										</td>
 									</tr>
 								</table>
@@ -788,7 +789,7 @@ function select_clicked() {
 							<td width="78%">
 								<input id="submit" name="save" type="submit" class="formbtn" value="<?=gettext("Save");?>" />
 								<?php if (isset($id) && $a_server[$id]): ?>
-								<input name="id" type="hidden" value="<?=$id;?>" />
+								<input name="id" type="hidden" value="<?=htmlspecialchars($id);?>" />
 								<?php endif;?>
 							</td>
 						</tr>

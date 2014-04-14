@@ -50,7 +50,7 @@ require("shaper.inc");
 require("ipsec.inc");
 require("vpn.inc");
 require("captiveportal.inc");
-require("rrd.inc");
+require_once("rrd.inc");
 
 /*
 	In this file, "port" refers to the physical port name,
@@ -387,7 +387,7 @@ if(file_exists("/var/run/interface_mismatch_reboot_needed"))
 <form action="interfaces_assign.php" method="post" name="iform" id="iform">
 
 <?php if (file_exists("/tmp/reload_interfaces")): ?><p>
-	<?php print_info_box_np(gettext("The interface configuration has been changed.<br>You must apply the changes in order for them to take effect."));?><br/></p>
+	<?php print_info_box_np(gettext("The interface configuration has been changed.<br />You must apply the changes in order for them to take effect."));?><br /></p>
 <?php elseif($savemsg): ?>
 	<?php print_info_box($savemsg); ?>
 <?php endif; ?>
@@ -496,9 +496,9 @@ if(file_exists("/var/run/interface_mismatch_reboot_needed"))
   <?php endif; ?>
 </table>
 </div>
-<br/>
+<br />
 <div id='savediv' <?php if (empty($_GET['act'])) echo "style='display:none;'"; ?>>
-	<input name="Submit" type="submit" class="formbtn" value="<?=gettext("Save"); ?>" /><br/><br/>
+	<input name="Submit" type="submit" class="formbtn" value="<?=gettext("Save"); ?>" /><br /><br />
 </div>
 <ul>
 	<li><span class="vexpl"><?=gettext("Interfaces that are configured as members of a lagg(4) interface will not be shown."); ?></span></li>

@@ -102,7 +102,7 @@ function pie_block($summary, $stat, $num) {
 	$k = array_keys($summary[$stat]);
 	$total = 0;
 	$numentries = 0;
-	print "\n<script language=\"javascript\" type=\"text/javascript\">\n";
+	print "\n<script type=\"text/javascript\">\n";
 	print "//<![CDATA[\n";
 	for ($i=0; $i < $num; $i++) {
 		if ($k[$i]) {
@@ -166,13 +166,13 @@ foreach ($filterlog as $fe) {
 include("head.inc"); ?>
 <body link="#000000" vlink="#000000" alink="#000000">
 <script src="/javascript/filter_log.js" type="text/javascript"></script>
-<script language="javascript" type="text/javascript" src="/protochart/prototype.js"></script>
-<script language="javascript" type="text/javascript" src="/protochart/ProtoChart.js"></script>
+<script type="text/javascript" src="/protochart/prototype.js"></script>
+<script type="text/javascript" src="/protochart/ProtoChart.js"></script>
 <!--[if IE]>
-<script language="javascript" type="text/javascript" src="/protochart/excanvas.js">
+<script type="text/javascript" src="/protochart/excanvas.js">
 </script>
 <![endif]-->
-<script language="javascript" type="text/javascript">
+<script type="text/javascript">
 //<![CDATA[
 	function lblfmt(lbl) {
 		return '<font size=\"-2\">' + lbl + '<\/font>'

@@ -1,8 +1,8 @@
 <?php
 /*
 	diag_authentication.php
-	part of the pfSense project	(http://www.pfsense.org)
-	Copyright (C) 2010 Ermal Luçi
+	part of the pfSense project	(https://www.pfsense.org)
+	Copyright (C) 2010 Ermal LuÃ§i
 
 	All rights reserved.
 

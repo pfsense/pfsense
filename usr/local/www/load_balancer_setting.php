@@ -2,7 +2,7 @@
 /* $Id$ */
 /*
 	load_balancer_setting.php
-	part of pfSense (http://www.pfsense.com/)
+	part of pfSense (https://www.pfsense.org/)
 
 	Copyright (C) 2008 Bill Marquette <bill.marquette@gmail.com>.
 	Copyright (C) 2012 Pierre POMES <pierre.pomes@gmail.com>.
@@ -107,7 +107,7 @@ include("head.inc");
 <?php if ($input_errors) print_input_errors($input_errors); ?>
 <?php if ($savemsg) print_info_box($savemsg); ?>
 <?php if (is_subsystem_dirty('loadbalancer')): ?><p>
-<?php print_info_box_np(gettext("The load balancer configuration has been changed") . ".<br>" . gettext("You must apply the changes in order for them to take effect."));?><br>
+<?php print_info_box_np(gettext("The load balancer configuration has been changed") . ".<br />" . gettext("You must apply the changes in order for them to take effect."));?><br />
 <?php endif; ?>
 <table width="100%" border="0" cellpadding="0" cellspacing="0">
    <tr>

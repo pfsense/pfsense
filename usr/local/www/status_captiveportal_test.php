@@ -84,13 +84,13 @@ include("fbegin.inc");
     <td valign="top" class="vncellreq"><?=gettext("Voucher(s)"); ?></td>
     <td class="vtable">
     <textarea name="vouchers" cols="65" rows="3" type="text" id="vouchers" class="formpre"><?=htmlspecialchars($_POST['vouchers']);?></textarea>
-    <br>
+    <br />
 <?=gettext("Enter multiple vouchers separated by space or newline. The remaining time, if valid, will be shown for each voucher"); ?>.</td>      
   </tr>      
   <tr>
     <td width="22%" valign="top">&nbsp;</td>
     <td width="78%">
-    <input name="zone" type="hidden" value="<?=$cpzone;?>">
+    <input name="zone" type="hidden" value="<?=htmlspecialchars($cpzone);?>">
     <input name="Submit" type="submit" class="formbtn" value="<?=gettext("Submit"); ?>">
     </td>
   </tr>

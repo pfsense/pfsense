@@ -1,6 +1,6 @@
 <?php
 /*
-	Copyright (C) 2009 Ermal Luçi
+	Copyright (C) 2009 Ermal LuÃ§i
 	All rights reserved.
 
 	Redistribution and use in source and binary forms, with or without
@@ -59,8 +59,9 @@ if (count($portlist) < 1) {
 	exit;
 }
 
-$id = $_GET['id'];
-if (isset($_POST['id']))
+if (is_numericint($_GET['id']))
+	$id = $_GET['id'];
+if (isset($_POST['id']) && is_numericint($_POST['id']))
 	$id = $_POST['id'];
 
 if (isset($id) && $a_qinqs[$id]) {
@@ -305,7 +306,7 @@ function removeRow(el) {
 	}
     ?>
     </select>
-    <br/>
+    <br />
     <span class="vexpl"><?=gettext("Only QinQ capable interfaces will be shown.");?></span></td>
   </tr>
   <tr>
@@ -322,17 +323,17 @@ function removeRow(el) {
 	<td width="22%" valign="top" class="vncell"><?=gettext("Options");?></td>
 	<td width="78%" class="vtable">
 <?php /* ?>
-		<br/>
+		<br />
 		<input type="checkbox" value="yes" name="autoassign" id="autoassign" <?php if ($pconfig['autoassign']) echo "checked=\"checked\""; ?> />
 		<span class="vexpl"> Auto assign interface so it can be configured with ip etc...</span>
-		<br/>
+		<br />
 		<input type="checkbox" value="yes" name="autoenable" id="autoenable" <?php if ($pconfig['autoenable']) echo "checked=\"checked\""; ?> />
 		<span class="vexpl"> Auto enable interface so it can be used on filter rules.</span>
-		<br/>
+		<br />
 		<input type="checkbox" value="yes" name="autoadjustmtu" id="autoadjustmtu" <?php if ($pconfig['autoadjustmtu']) echo "checked=\"checked\""; ?> />
-		<span class="vexpl"> Allows to keep clients mtu unchanged(1500). <br/>NOTE: if you are using jumbo frames this option is not needed and may produce incorrect results!</span>
+		<span class="vexpl"> Allows to keep clients mtu unchanged(1500). <br />NOTE: if you are using jumbo frames this option is not needed and may produce incorrect results!</span>
 <?php */ ?>
-		<br/>
+		<br />
 		<input name="autogroup" type="checkbox" value="yes" id="autogroup" <?php if ($pconfig['autogroup']) echo "checked=\"checked\""; ?> />
 		<span class="vexpl"><?=gettext("Adds interface to QinQ interface groups so you can write filter rules easily.");?></span>
 	</td>
@@ -353,7 +354,7 @@ function removeRow(el) {
 	<span class="vexpl">
 		<?=gettext("You can specify ranges in the input below. The format is pretty simple i.e 9-100 or 10.20...");?>
 	</span>
-	<br/>
+	<br />
       <table id="maintable" summary="main table">
         <tbody>
           <tr>

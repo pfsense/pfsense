@@ -532,9 +532,9 @@ pfSense_handle_custom_code("/usr/local/pkg/dashboard/pre_dashboard");
 			</div>
 			<div style="clear:both;"></div>
 			<p>
-			<?=gettext("This page allows you to customize the information you want to be displayed!");?><br/>
-			<?=gettext("To get started click the");?> <img src="./themes/<?= $g['theme']; ?>/images/icons/icon_plus.gif" alt="plus" /> <?=gettext("icon to add widgets.");?><br/>
-			<br/>
+			<?=gettext("This page allows you to customize the information you want to be displayed!");?><br />
+			<?=gettext("To get started click the");?> <img src="./themes/<?= $g['theme']; ?>/images/icons/icon_plus.gif" alt="plus" /> <?=gettext("icon to add widgets.");?><br />
+			<br />
 			<?=gettext("You can move any widget around by clicking and dragging the title.");?>
 			</p>
 	</div>
@@ -667,7 +667,7 @@ pfSense_handle_custom_code("/usr/local/pkg/dashboard/pre_dashboard");
 					<?php
 				}
 				else { ?>
-					<script language="javascript" type="text/javascript">
+					<script type="text/javascript">
 					var colpos = "<?=$colpos[$widgetcounter]?>";
 					createColumn(colpos);					
 					</script>
@@ -766,7 +766,7 @@ pfSense_handle_custom_code("/usr/local/pkg/dashboard/pre_dashboard");
 		$jsincludefiles[] = $filename;
 	}
 	foreach($jsincludefiles as $jsincludename) {
-		if(!stristr($jsincludename, ".js"))
+		if(!preg_match('/\.js$/', $jsincludename))
 			continue;
 		echo "<script src='{$directory}{$jsincludename}' type='text/javascript'></script>\n";
 	}

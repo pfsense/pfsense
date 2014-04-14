@@ -98,7 +98,7 @@ include("head.inc");
 			  <?php printf(gettext("Routing daemon log entries"),$nentries);?></td>
 		  </tr>
 		  <?php dump_clog($routing_logfile, $nentries); ?>
-		<tr><td><br/><form action="diag_logs_routing.php" method="post">
+		<tr><td><br /><form action="diag_logs_routing.php" method="post">
 <input name="clear" type="submit" class="formbtn" value="<?=gettext("Clear log"); ?>" /></form></td></tr>
 		</table>
 	</div>

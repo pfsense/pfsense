@@ -1,10 +1,8 @@
 <?php
 /*
     unbound.inc
-    part of the pfSense project (http://www.pfsense.com)
-
-    originally part of m0n0wall (http://m0n0.ch/wall)
-    Copyright (C) 2014  Warren Baker <warren@decoy.co.za>
+    part of the pfSense project (https://www.pfsense.org)
+    Copyright (C) 2014 Warren Baker <warren@decoy.co.za>
     All rights reserved.
 
     Redistribution and use in source and binary forms, with or without
@@ -106,9 +104,9 @@ function unbound_generate_config() {
     $optimization = unbound_optimization();
 
     // Setup DNSSEC support
-    if (isset($config['unbound']['dnssec_status'])) {
+    if (isset($config['unbound']['dnssec'])) {
         $module_config = "validator iterator";
-        $anchor_file = "auto-trust-anchor-file: {$g['unbound_chroot_path']}/root-trust-anchor";
+        $anchor_file = "auto-trust-anchor-file: {$g['unbound_chroot_path']}/root.key";
     } else
         $module_config = "iterator";
 
@@ -126,9 +124,23 @@ private-address: fe80::/10
 EOF;
     }
 
+    // Determine interfaces to run on
+    $bindints = "";
+    if (!empty($config['unbound']['active_interface'])) {
+        $active_interfaces = explode(",", $config['unbound']['active_interface']);
+        foreach($active_interfaces as $ubif) {
+            $intip = get_interface_ip($ubif);
+            if (!is_null($intip))
+                $bindints .= "interface: $intip\n";
+        }
+    } else {
+        $bindints .= "interface: 0.0.0.0\n";
+        $bindints .= "interface: ::0\n";
+    }
+
     // Allow DNS Rebind for forwarded domains
     if ((isset($config['unbound']['domainoverrides']) && is_array($config['unbound']['domainoverrides'])) && !isset($config['system']['webgui']['nodnsrebindcheck'])) {
-        $private_domains = "# Set private domains in case authoritative name server returns a Private IP address";
+        $private_domains = "# Set private domains in case authoritative name server returns a Private IP address\n";
         $private_domains .= unbound_add_domain_overrides(true);
     }
 
@@ -152,6 +164,7 @@ EOF;
     }
 
     // Server configuration variables
+    $port = (is_port($config['unbound']['port'])) ? $config['unbound']['port'] : "53";
     $hide_id = ($config['unbound']['hide_id'] == "on") ? "yes" : "no";
     $hide_version = ($config['unbound']['hide_version'] == "on") ? "yes" : "no";
     $harden_glue = ($config['unbound']['harden_glue'] == "on") ? "yes" : "no";
@@ -171,6 +184,36 @@ EOF;
     $unwanted_reply_threshold = (!empty($config['unbound']['unwanted_reply_threshold'])) ? $config['unbound']['unwanted_reply_threshold'] : "0";
     $verbosity = isset($config['unbound']['loglevel']) ? $config['unbound']['loglevel'] : 1;
 
+    // Set up forwarding if it configured
+    if (isset($config['unbound']['forwarding'])) {
+        $dnsservers = array();
+        if (isset($config['system']['dnsallowoverride'])) {
+            $ns = array_unique(get_nameservers());
+            foreach($ns as $nameserver) {
+                if ($nameserver)
+                    $dnsservers[] = $nameserver;
+            }
+        } else {
+            $ns = array_unique(get_dns_servers());
+            foreach($ns as $nameserver) {
+                if ($nameserver)
+                    $dnsservers[] = $nameserver;
+            }
+        }
+
+        if (!empty($dnsservers)) {
+            $forward_conf .=<<<EOD
+# Forwarding
+forward-zone:
+    name: "."
+
+EOD;
+            foreach($dnsservers as $dnsserver)
+                $forward_conf .= "\tforward-addr: $dnsserver\n";
+        }
+    } else
+        $forward_conf = "";
+
     $unboundconf = <<<EOD
 ##########################
 # Unbound Configuration
@@ -185,7 +228,7 @@ username: "unbound"
 directory: "{$g['unbound_chroot_path']}"
 pidfile: "/var/run/unbound.pid"
 use-syslog: yes
-port: 53
+port: {$port}
 verbosity: {$verbosity}
 harden-referral-path: no
 do-ip4: yes
@@ -221,18 +264,21 @@ prefetch-key: {$prefetch_key}
 # Statistics
 {$statistics}
 # Interface IP(s) to bind to
-interface: 0.0.0.0
-interface: ::0
+{$bindints}
 
 # DNS Rebinding
 {$private_addr}
 {$private_domains}
+
+# Access lists
+include: {$g['unbound_chroot_path']}/access_lists.conf
 
 # Static host entries
 include: {$g['unbound_chroot_path']}/host_entries.conf
 
 # Domain overrides
 include: {$g['unbound_chroot_path']}/domainoverrides.conf
+{$forward_conf}
 
 {$custom_options}
 
@@ -315,10 +361,8 @@ function sync_unbound_service() {
     unbound_generate_config();
     do_as_unbound_user("start");
     require_once("service-utils.inc");
-    if (is_service_running("unbound")) {
-        do_as_unbound_user("forward");
+    if (is_service_running("unbound"))
         do_as_unbound_user("restore_cache");
-    }
 
 }
 
@@ -455,7 +499,7 @@ function unbound_add_host_entries() {
                     $host_entries .= "local-data: \"{$host['host']}{$host['domain']} IN AAAA {$host['ip']}\"\n";
                 else
                     $host_entries .= "local-data: \"{$host['host']}{$host['domain']} IN A {$host['ip']}\"\n";
-                if (!empty($host['descr']) && $dnscfg['txtsupport'] == 'on')
+                if (!empty($host['descr']) && isset($config['unbound']['txtsupport']))
                     $host_entries .= "local-data: '{$host['host']}{$host['domain']} TXT \"".addslashes($host['descr'])."\"'\n";
 
                 // Do not add duplicate entries
@@ -505,32 +549,6 @@ function unbound_control($action) {
     $cache_dumpfile = "/var/tmp/unbound_cache";
 
     switch ($action) {
-        case "forward":
-            if ($config['unbound']['forwarding_mode'] == "on") {
-               // Get configured DNS servers and add them as forwarders
-                if (!isset($config['system']['dnsallowoverride'])) {
-                    $ns = array_unique(get_nameservers());
-                    foreach($ns as $nameserver) {
-                        if($nameserver)
-                            $dns_servers .= " $nameserver";
-                    }
-                } else {
-                    $ns = array_unique(get_dns_servers());
-                    foreach($ns as $nameserver) {
-                        if($nameserver)
-                            $dns_servers .= " $nameserver";
-                    }
-                }
-
-                if(is_service_running("unbound")) {
-                    unbound_ctl_exec("forward $dns_servers");
-                } else {
-                    unbound_control("start");
-                    sleep(1);
-                    unbound_control("forward");
-                }
-            }
-            break;
         case "start":
             // Start Unbound
             if ($config['unbound']['enable'] == "on") {
@@ -590,23 +608,40 @@ EOF;
 
 // Unbound Access lists
 function unbound_acls_config() {
-    global $config;
+    global $g, $config;
 
-    // Configure the ACLs
+    $aclcfg = "access-control: 127.0.0.1/32 allow\n";
+    $aclcfg .= "access-control: ::1 allow\n";
+    // Add our networks for active interfaces including localhost
+    if (!empty($config['unbound']['active_interface']))
+        $active_interfaces = array_flip(explode(",", $config['unbound']['active_interface']));
+    else
+        $active_interfaces = get_configured_interface_with_descr();
+
+    $bindints = "";
+    foreach($active_interfaces as $ubif => $ifdesc) {
+        $ifip = get_interface_ip($ubif);
+        if (!is_null($ifip)) {
+            $subnet_bits = get_interface_subnet($ubif);
+            $subnet_ip = gen_subnet($ifip, $subnet_bits);
+            $aclcfg .= "access-control: {$subnet_ip}/{$subnet_bits} allow\n";
+        }
+    }
+
+    // Configure the custom ACLs
     if (is_array($config['unbound']['acls'])) {
-        $unboundcfg = "";
         foreach($config['unbound']['acls'] as $unbound_acl) {
-            $unboundcfg .= "#{$unbound_acl['aclname']}\n";
+            $aclcfg .= "#{$unbound_acl['aclname']}\n";
             foreach($unbound_acl['row'] as $network) {
                 if ($unbound_acl['aclaction'] == "allow snoop")
                     $unbound_acl['aclaction'] = "allow_snoop";
-                $unboundcfg .= "access-control: {$network['acl_network']}/{$network['mask']} {$unbound_acl['aclaction']}\n";
+                $aclcfg .= "access-control: {$network['acl_network']}/{$network['mask']} {$unbound_acl['aclaction']}\n";
             }
         }
-        // Write out Access list
-        file_put_contents("{$g['unbound_chroot_path']}/access_lists.conf", $unboundcfg);
-    } else
-        return;
+    }
+    // Write out Access list
+    file_put_contents("{$g['unbound_chroot_path']}/access_lists.conf", $aclcfg);
+
 }
 
 ?>

@@ -198,7 +198,7 @@ if($_REQUEST['sorttype'] && in_array($_REQUEST['sorttype'], $sorttypes)
 	</div>
 </form>
 <?php include("fend.inc"); ?>
-<script language="JavaScript">
+<script type="text/javascript">
 jQuery("#viewtype").change(function() {
 	var selected = jQuery("#viewtype option:selected");
 	switch(selected.val()) {

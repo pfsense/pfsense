@@ -1,5 +1,5 @@
 # Language translation for pfSense project.
-# Copyright (C) 2011 BSD Perimeter
+# Copyright (C) 2011-2014 Electric Sheep Fencing LLC
 # This file is distributed under the same license as the pfSense package.
 # Kiyo Takami and Isaac (.ike) Levy, 2013.
 #
@@ -77,9 +77,9 @@ msgstr " は配列ではありません"
 #: etc/inc/auth.inc:100 etc/inc/auth.inc:100
 msgid ""
 "Potential DNS Rebind attack detected, see http://en.wikipedia.org/wiki/"
-"DNS_rebinding<br/>Try accessing the router by IP address instead of by "
+"DNS_rebinding<br />Try accessing the router by IP address instead of by "
 "hostname."
-msgstr ""検出された潜在的なDNS再バインド攻撃, 見る http://en.wikipedia.org/wiki/"DNS_rebinding<br/>"IPアドレスでルータにアクセスする代わりにホスト名でみてください。"
+msgstr ""検出された潜在的なDNS再バインド攻撃, 見る http://en.wikipedia.org/wiki/"DNS_rebinding<br />"IPアドレスでルータにアクセスする代わりにホスト名でみてください。"
 
 #: etc/inc/auth.inc:115 etc/inc/auth.inc:115
 msgid "Redirecting..."
@@ -207,14 +207,14 @@ msgstr "DN = %3$sとLDAPサーバー%2$s経由%1$sとして正常にログイン
 #: etc/inc/auth.inc:1144 etc/inc/auth.inc:1153 etc/inc/auth.inc:1157
 #: etc/inc/auth.inc:1163 etc/inc/auth.inc:1167 etc/inc/auth.inc:1167
 #, php-format
-msgid "Radius start: %s<br>\n"
+msgid "Radius start: %s<br />\n"
 msgstr "RADIUSスタート: "
 
 #: etc/inc/auth.inc:1155 etc/inc/auth.inc:1164 etc/inc/auth.inc:1168
 #: etc/inc/auth.inc:1174 etc/inc/auth.inc:1178 etc/inc/auth.inc:1178
 #, php-format
-msgid "Radius send failed: %s<br>\n"
-msgstr "RADIUS送信に失敗しました: %s<br>\n"
+msgid "Radius send failed: %s<br />\n"
+msgstr "RADIUS送信に失敗しました: %s<br />\n"
 
 #: etc/inc/auth.inc:1159 etc/inc/auth.inc:1170 etc/inc/auth.inc:1174
 #: etc/inc/auth.inc:1180 etc/inc/auth.inc:1184 etc/inc/auth.inc:1184
@@ -3623,9 +3623,9 @@ msgstr "ログイン"
 #: etc/inc/authgui.inc:263
 msgid ""
 "You are accessing this router by an IP address not configured locally, which "
-"may be forwarded by NAT or other means. <br/><br/>If you did not setup this "
+"may be forwarded by NAT or other means. <br /><br />If you did not setup this "
 "forwarding, you may be the target of a man-in-the-middle attack."
-msgstr "NATまたはその他の手段によって転送されてもよい」はローカルに設定されていないIPアドレスによって、このルータにアクセスしている」 。セットアップこの「転送しなかった<br/><br/>Ifは、 man-in-the-middle攻撃の標的となる可能性がある。"
+msgstr "NATまたはその他の手段によって転送されてもよい」はローカルに設定されていないIPアドレスによって、このルータにアクセスしている」 。セットアップこの「転送しなかった<br /><br />Ifは、 man-in-the-middle攻撃の標的となる可能性がある。"
 
 #: etc/inc/authgui.inc:251 etc/inc/authgui.inc:249 etc/inc/authgui.inc:272
 #: etc/inc/authgui.inc:272
@@ -10888,7 +10888,7 @@ msgstr "リレー動作"
 #: usr/local/www/load_balancer_relay_action.php:116
 #: usr/local/www/load_balancer_relay_action.php:116
 msgid ""
-"The load balancer configuration has been changed.<br>You must apply the "
+"The load balancer configuration has been changed.<br />You must apply the "
 "changes in order for them to take effect."
 msgstr "それらを有効にするための変更」ロードバランサ設定が変更されています。検索して、適用する必要があります」 。"
 
@@ -18126,12 +18126,12 @@ msgstr "あなたは本当に選択したマッピングを削除しますか？
 msgid ""
 "With automatic outbound NAT enabled, a mapping is automatically created for "
 "each interface's subnet (except WAN-type connections) and the rules on this "
-"page are ignored.<br/><br/> If manual outbound NAT is enabled, outbound NAT "
+"page are ignored.<br /><br /> If manual outbound NAT is enabled, outbound NAT "
 "rules will not be automatically generated and only the mappings you specify "
-"on this page will be used. <br/><br/> If a target address other than a WAN-"
+"on this page will be used. <br /><br /> If a target address other than a WAN-"
 "type interface's IP address is used, then depending on the way the WAN "
 "connection is setup, a "
-msgstr "「自動アウトバウンドでのNATは、有効なマッピングが自動的にのために作成されている「 （WAN型の接続を除く）各インターフェイスのサブネットとこれに関するルールはルール」ページには、手動のアウトバウンドNATが有効になっている場合、アウトバウンドNAT ignored.<br/><br/>です」自動的に生成されることはありませんし、指定したマッピングのみ」このページでは。 <br/><br/>を使用する場合は、WAN以外のターゲットアドレス」タイプのインタフェースのIPアドレスは、次にように、WANに応じて、使用されている「接続セットアップ、 aは"
+msgstr "「自動アウトバウンドでのNATは、有効なマッピングが自動的にのために作成されている「 （WAN型の接続を除く）各インターフェイスのサブネットとこれに関するルールはルール」ページには、手動のアウトバウンドNATが有効になっている場合、アウトバウンドNAT ignored.<br /><br />です」自動的に生成されることはありませんし、指定したマッピングのみ」このページでは。 <br /><br />を使用する場合は、WAN以外のターゲットアドレス」タイプのインタフェースのIPアドレスは、次にように、WANに応じて、使用されている「接続セットアップ、 aは"
 
 #: usr/local/www/firewall_nat_out.php:469
 #: usr/local/www/firewall_nat_out_edit.php:588
@@ -18752,14 +18752,14 @@ msgstr "アドレスマスク応答"
 #, php-format
 msgid ""
 "The settings have been applied. The firewall rules are now reloading in the "
-"background.<br/>You can also %s monitor %s the reload progress"
-msgstr "「設定が適用されています。ファイアウォールのルールは今にリロードされる「 background.<br/>Youこともモニターがリロードの進行状況を%s %sでき"
+"background.<br />You can also %s monitor %s the reload progress"
+msgstr "「設定が適用されています。ファイアウォールのルールは今にリロードされる「 background.<br />Youこともモニターがリロードの進行状況を%s %sでき"
 
 #: usr/local/www/firewall_rules.php:315 usr/local/www/firewall_rules.php:317
 #: usr/local/www/firewall_rules.php:319 usr/local/www/firewall_rules.php:321
 #: usr/local/www/firewall_rules.php:312 usr/local/www/firewall_rules.php:314
 msgid ""
-"The firewall rule configuration has been changed.<br>You must apply the "
+"The firewall rule configuration has been changed.<br />You must apply the "
 "changes in order for them to take effect."
 msgstr "「ファイアウォールルールの設定が変更されています。あなたが適用する必要がありますポスター「それらを有効にするために変更を。"
 
@@ -23548,7 +23548,7 @@ msgstr "ファイアウォールは、その後再起動します。"
 #: usr/local/www/interfaces_assign.php:384
 #: usr/local/www/interfaces_assign.php:390
 msgid ""
-"The interface configuration has been changed.<br>You must apply the changes "
+"The interface configuration has been changed.<br />You must apply the changes "
 "in order for them to take effect."
 msgstr "それらを有効にするために、「インターフェイスの設定が変更されています。検索して、変更を適用する必要があります」 。"
 
@@ -30488,7 +30488,7 @@ msgstr "エントリがこのMACアドレスは存在しません。"
 #: usr/local/www/services_captiveportal_mac.php:156
 #: usr/local/www/services_captiveportal_mac.php:156
 msgid ""
-"The captive portal MAC address configuration has been changed.<br>You must "
+"The captive portal MAC address configuration has been changed.<br />You must "
 "apply the changes in order for them to take effect."
 msgstr "「キャプティブポータルのMACアドレスの設定が変更されています。あなたがしなければならないポスター「それらを有効にするために変更を適用します。"
 
@@ -42217,9 +42217,9 @@ msgstr "接続を復元"
 #: usr/local/www/vpn_openvpn_server.php:1352
 msgid ""
 "Allow multiple concurrent connections from clients using the same Common "
-"Name.<br/>NOTE: This is not generally recommended, but may be needed for "
+"Name.<br />NOTE: This is not generally recommended, but may be needed for "
 "some scenarios."
-msgstr "Name.<br/>NOTE 「同じ共通使用してクライアントからの複数の同時接続を許可する」 ：これは、一般的にはお勧めしませんが、いくつかのシナリオ」のために必要な場合があります。"
+msgstr "Name.<br />NOTE 「同じ共通使用してクライアントからの複数の同時接続を許可する」 ：これは、一般的にはお勧めしませんが、いくつかのシナリオ」のために必要な場合があります。"
 
 #: usr/local/www/vpn_openvpn_server.php:1158
 #: usr/local/www/vpn_openvpn_server.php:1300
@@ -45906,9 +45906,9 @@ msgid ""
 "MS-CHAPv2 which has been compromised. If you continue to use PPTP be aware "
 "that intercepted traffic can be decrypted by a third party, so it should be "
 "considered unencrypted. We advise migrating to another VPN type such as "
-"OpenVPN or IPsec.<br/><br/><a href="https://isc.sans.edu/diary/End+of+Days"
+"OpenVPN or IPsec.<br /><br /><a href="https://isc.sans.edu/diary/End+of+Days"
 "+for+MS-CHAPv2/13807">Read More</a>"
-msgstr "侵害されたMS - CHAPv2を「それが依存しているので、PPTPはもはや安全なVPN技術と見なされていない」 。あなたは、PPTPを意識する使用し続ける場合は、「トラフィックは、第三者によって解読することができます傍受することなので、すべきである」 、暗号化されていないと考えた。私たちは、このような詳細MS-CHAPv2/13807"u003e読むための「 OpenVPNのかDays"のIPsec.<br/><br/>もし、ごhref="https://isc.sans.edu/diary/Endとして別のVPNタイプに移行助言するu003c/ A u003e"
+msgstr "侵害されたMS - CHAPv2を「それが依存しているので、PPTPはもはや安全なVPN技術と見なされていない」 。あなたは、PPTPを意識する使用し続ける場合は、「トラフィックは、第三者によって解読することができます傍受することなので、すべきである」 、暗号化されていないと考えた。私たちは、このような詳細MS-CHAPv2/13807"u003e読むための「 OpenVPNのかDays"のIPsec.<br /><br />もし、ごhref="https://isc.sans.edu/diary/Endとして別のVPNタイプに移行助言するu003c/ A u003e"
 
 #: usr/local/www/status_ntpd.php:185 usr/local/www/status_ntpd.php:191
 #: usr/local/www/status_ntpd.php:191
@@ -48243,9 +48243,9 @@ msgstr "手動アウトバウンドのNATスイッチ"
 #: usr/local/www/firewall_rules.php:311 usr/local/www/firewall_rules.php:313
 #: usr/local/www/firewall_rules.php:311 usr/local/www/firewall_rules.php:313
 msgid ""
-"The firewall rule configuration has been changed.<br/>You must apply the "
+"The firewall rule configuration has been changed.<br />You must apply the "
 "changes in order for them to take effect."
-msgstr "それらを有効にするための変更」ファイアウォールルールの設定はchanged.<br/>Youが適用しなければなりませんでした」 。"
+msgstr "それらを有効にするための変更」ファイアウォールルールの設定はchanged.<br />Youが適用しなければなりませんでした」 。"
 
 #: usr/local/www/system_gateway_groups_edit.php:100
 #: usr/local/www/system_gateway_groups_edit.php:100

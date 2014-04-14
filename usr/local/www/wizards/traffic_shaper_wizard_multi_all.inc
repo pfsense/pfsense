@@ -1,11 +1,11 @@
 <?php
 /*
         traffic_shaper_wizard_multi_all.inc
-        part of pfSense (http://www.pfsense.org/)
+        part of pfSense (https://www.pfsense.org/)
 
         Copyright (C) 2006 Bill Marquette - bill.marquette@gmail.com.
         Copyright (C) 2006 Scott Ullrich - sullrich@pfsense.com.
-      	Copyright (C) 2008-2010 Ermal Luçi
+      	Copyright (C) 2008-2010 Ermal LuÃ§i
         All rights reserved.
 
         Redistribution and use in source and binary forms, with or without

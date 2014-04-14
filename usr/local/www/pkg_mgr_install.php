@@ -2,7 +2,7 @@
 /* $Id$ */
 /*
 	pkg_mgr_install.php
-	part of pfSense (http://www.pfSense.com)
+	part of pfSense (https://www.pfsense.org)
 	Copyright (C) 2004-2010 Scott Ullrich <sullrich@gmail.com>
  	Copyright (C) 2005 Colin Smith
 	All rights reserved.
@@ -64,6 +64,7 @@ if ($_POST) {
 	}
 } else if ($_GET) {
 	switch ($_GET['mode']) {
+	case 'reinstallall':
 	case 'showlog':
 		break;
 	case 'installedinfo':
@@ -109,8 +110,14 @@ if ($_POST) {
 	} else if (!empty($_GET['mode']) && !empty($_GET['pkg'])) {
 		$pkgname = str_replace(array("<", ">", ";", "&", "'", '"'), "", htmlspecialchars_decode($_GET['pkg'], ENT_QUOTES | ENT_HTML401));
 		$pkgmode = str_replace(array("<", ">", ";", "&", "'", '"'), "", htmlspecialchars_decode($_GET['mode'], ENT_QUOTES | ENT_HTML401));
+	} else if ($_GET['mode'] == 'reinstallall') {
+		$pkgmode = 'reinstallall';
 	}
 	switch ($pkgmode) {
+	case 'reinstallall':
+		$pkgname = 'All packages';
+		$pkgtxt = 'reinstalled';
+		break;
 	case 'reinstallxml':
 	case 'reinstallpkg':
 		$pkgtxt = 'reinstalled';
@@ -127,8 +134,8 @@ if ($_POST) {
 					<td class="tabcont" align="center">
 						<table style="height:15;colspacing:0" width="420" border="0" cellpadding="0" cellspacing="0" summary="images">
 							<tr>
-								<td class="tabcont" align="center">Package:<b><?=$pkgname;?></b> will be <?=$pkgtxt;?>.<br/>
-								Please confirm the action on this package.<br/>
+								<td class="tabcont" align="center">Package: <b><?=$pkgname;?></b> will be <?=$pkgtxt;?>.<br/>
+								Please confirm the action.<br/>
 								</td>
 								<td class="tabcont" align="center">
 									<input type="hidden" name="id" value="<?=$pkgname;?>" />
@@ -157,7 +164,7 @@ if ($_POST) {
 								</td>
 							</tr>
 						</table>
-						<br/>
+						<br />
 						<!-- status box -->
 						<textarea cols="80" rows="1" name="status" id="status" wrap="hard"><?=gettext("Beginning package installation.");?></textarea>
 						<!-- command output box -->

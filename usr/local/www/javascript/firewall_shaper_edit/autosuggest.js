@@ -191,7 +191,7 @@ AutoSuggestControl.prototype.highlightSuggestion = function (oSuggestionNode) {
     for (var i=0; i < this.layer.childNodes.length; i++) {
         var oNode = this.layer.childNodes[i];
         if (oNode == oSuggestionNode) {
-            oNode.className = "current"
+            oNode.className = "current";
         } else if (oNode.className == "current") {
             oNode.className = "";
         }

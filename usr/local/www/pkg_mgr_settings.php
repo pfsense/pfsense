@@ -103,7 +103,7 @@ function enable_altpkgrepourl(enable_over) {
 	<tr>
 		<td valign="top" class="vncell"><?=gettext("Package Repository URL");?></td>
 		<td class="vtable">
-			<input name="alturlenable" type="checkbox" id="alturlenable" value="yes" onclick="enable_altpkgrepourl()" <?php if(isset($curcfg['enable'])) echo "checked=\"checked\""; ?> /> <?=gettext("Use a different URL server for packages other than");?> <?php echo $g['product_website']; ?><br/>
+			<input name="alturlenable" type="checkbox" id="alturlenable" value="yes" onclick="enable_altpkgrepourl()" <?php if(isset($curcfg['enable'])) echo "checked=\"checked\""; ?> /> <?=gettext("Use a non-official server for packages");?> <br />
 			<table summary="alternative URL">
 			<tr><td><?=gettext("Base URL:");?></td><td><input name="pkgrepourl" type="text" class="formfld url" id="pkgrepourl" size="64" value="<?php if($curcfg['xmlrpcbaseurl']) echo $curcfg['xmlrpcbaseurl']; else echo $g['']; ?>" /></td></tr>
 			</table>

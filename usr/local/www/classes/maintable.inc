@@ -1,7 +1,7 @@
 <?php
 /* $Id$ */
 /*
-        part of pfSense (http://www.pfsense.com/)
+        part of pfSense (https://www.pfsense.org/)
 
         Copyright (C) 2008 Bill Marquette <bill.marquette@gmail.com>.
         All rights reserved.
@@ -119,7 +119,7 @@ class MainTable {
 				echo "  <td class=\"{$cl}\" onclick=\"fr_toggle({$cur_row})\" id=\"frd{$cur_row}\" ondblclick=\"document.location='{$this->edit_uri}?id={$cur_row}'\">\n";
 				if (is_array($row[$this->cname[$col]])) {
 					foreach ($row[$this->cname[$col]] as $data) {
-						echo "    {$data}<br/>\n";
+						echo "    {$data}<br />\n";
 					}
 				} else {
 					echo "    " . $row[$this->cname[$col]] . "\n";

@@ -665,17 +665,19 @@ function rmdir_recursive($path,$follow_links=false) {
 }
 
 /*
- * call_pfsense_method(): Call a method exposed by the pfsense.com XMLRPC server.
+ * call_pfsense_method(): Call a method exposed by the pfsense.org XMLRPC server.
  */
 function call_pfsense_method($method, $params, $timeout = 0) {
 	global $g, $config;
 
-	$ip = gethostbyname($g['product_website']);
-	if($ip == $g['product_website'])
-		return false;
-
 	$xmlrpc_base_url = isset($config['system']['altpkgrepo']['enable']) ? $config['system']['altpkgrepo']['xmlrpcbaseurl'] : $g['xmlrpcbaseurl'];
 	$xmlrpc_path = $g['xmlrpcpath'];
+	
+	$xmlrpcfqdn = preg_replace("(https?://)", "", $xmlrpc_base_url);
+	$ip = gethostbyname($xmlrpcfqdn);
+	if($ip == $xmlrpcfqdn)
+		return false;
+
 	$msg = new XML_RPC_Message($method, array(XML_RPC_Encode($params)));
 	$port = 0;
 	$proxyurl = "";
@@ -715,17 +717,22 @@ function call_pfsense_method($method, $params, $timeout = 0) {
  */
 function check_firmware_version($tocheck = "all", $return_php = true) {
 	global $g, $config;
-
-	$ip = gethostbyname($g['product_website']);
-	if($ip == $g['product_website'])
+	
+	$xmlrpc_base_url = isset($config['system']['altpkgrepo']['enable']) ? $config['system']['altpkgrepo']['xmlrpcbaseurl'] : $g['xmlrpcbaseurl'];
+	$xmlrpcfqdn = preg_replace("(https?://)", "", $xmlrpc_base_url);
+	$ip = gethostbyname($xmlrpcfqdn);
+	if($ip == $xmlrpcfqdn)
 		return false;
-
+	$version = php_uname('r');
+	$version = explode('-', $version);
 	$rawparams = array("firmware" => array("version" => trim(file_get_contents('/etc/version'))),
-		"kernel"   => array("version" => trim(file_get_contents('/etc/version_kernel'))),
-		"base"     => array("version" => trim(file_get_contents('/etc/version_base'))),
+		"kernel"   => array("version" => $version[0]),
+		"base"     => array("version" => $version[0]),
 		"platform" => trim(file_get_contents('/etc/platform')),
 		"config_version" => $config['version']
 		);
+	unset($version);
+
 	if($tocheck == "all") {
 		$params = $rawparams;
 	} else {
@@ -2590,7 +2597,7 @@ function pfSense_handle_custom_code($src_dir) {
 	}
 }
 
-function set_language($lang = 'en_US', $encoding = "ISO8859-1") {
+function set_language($lang = 'en_US', $encoding = "UTF-8") {
 	putenv("LANG={$lang}.{$encoding}");
 	setlocale(LC_ALL, "{$lang}.{$encoding}");
 	textdomain("pfSense");
@@ -2642,7 +2649,7 @@ $g_languages = array (
 	"zh_TW" => array("codeset" => "UTF-8", "desc" => gettext("Chinese (Traditional)")),
 	"nl"    => array("codeset" => "UTF-8", "desc" => gettext("Dutch")),
 	"da"    => array("codeset" => "UTF-8", "desc" => gettext("Danish")),
-	"en_US" => array("codeset" => "ISO-8859-1", "desc" => gettext("English")),
+	"en_US" => array("codeset" => "UTF-8", "desc" => gettext("English")),
 	"fi"    => array("codeset" => "UTF-8", "desc" => gettext("Finnish")),
 	"fr"    => array("codeset" => "UTF-8", "desc" => gettext("French")),
 	"de"    => array("codeset" => "UTF-8", "desc" => gettext("German")),
@@ -2858,6 +2865,42 @@ function get_pppoes_child_interfaces($ifpattern) {
 	}
 	return $if_arr;
 
+}
+
+/****f* pfsense-utils/pkg_call_plugins
+ * NAME
+ *   pkg_call_plugins
+ * INPUTS
+ *   $plugin_type value used to search in package configuration if the plugin is used, also used to create the function name
+ *   $plugin_params parameters to pass to the plugin function for passing multiple parameters a array can be used.
+ * RESULT
+ *   returns associative array results from the plugin calls for each package
+ * NOTES
+ *   This generic function can be used to notify or retrieve results from functions that are defined in packages.
+ ******/
+function pkg_call_plugins($plugin_type, $plugin_params) {
+	global $g, $config;
+	$results = array();
+	if (!is_array($config['installedpackages']['package']))
+		return $results;
+	foreach ($config['installedpackages']['package'] as $package) {
+		if(!file_exists("/usr/local/pkg/" . $package['configurationfile']))
+			continue;
+		$pkg_config = parse_xml_config_pkg("/usr/local/pkg/" . $package['configurationfile'], 'packagegui');
+		$pkgname = substr(reverse_strrchr($package['configurationfile'], "."),0,-1);
+		if (is_array($pkg_config['plugins']['item']))
+			foreach ($pkg_config['plugins']['item'] as $plugin) {
+				if ($plugin['type'] == $plugin_type) {
+					if (file_exists($pkg_config['include_file']))
+						require_once($pkg_config['include_file']);
+					else
+						continue;
+					$plugin_function = $pkgname . '_'. $plugin_type;
+					$results[$pkgname] = @eval($plugin_function($plugin_params));
+				}
+			}
+	}
+	return $results;
 }
 
 ?>

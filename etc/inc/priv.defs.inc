@@ -872,6 +872,42 @@ $priv_list['page-services-dnsforwarder-edithost']['descr'] = gettext("Allow acce
 $priv_list['page-services-dnsforwarder-edithost']['match'] = array();
 $priv_list['page-services-dnsforwarder-edithost']['match'][] = "services_dnsmasq_edit.php*";
 
+$priv_list['page-services-dnsresolver'] = array();
+$priv_list['page-services-dnsresolver']['name'] = gettext("WebCfg - Services: DNS Resolver page");
+$priv_list['page-services-dnsresolver']['descr'] = gettext("Allow access to the 'Services: DNS Resolver' page.");
+$priv_list['page-services-dnsresolver']['match'] = array();
+$priv_list['page-services-dnsresolver']['match'][] = "services_unbound.php*";
+
+$priv_list['page-services-dnsresolver-advanced'] = array();
+$priv_list['page-services-dnsresolver-advanced']['name'] = gettext("WebCfg - Services: DNS Resolver: Advanced page");
+$priv_list['page-services-dnsresolver-advanced']['descr'] = gettext("Allow access to the 'Services: DNS Resolver: Advanced' page.");
+$priv_list['page-services-dnsresolver-advanced']['match'] = array();
+$priv_list['page-services-dnsresolver-advanced']['match'][] = "services_unbound_advanced.php*";
+
+$priv_list['page-services-dnsresolver-acls'] = array();
+$priv_list['page-services-dnsresolver-acls']['name'] = gettext("WebCfg - Services: DNS Resolver: Access Lists page");
+$priv_list['page-services-dnsresolver-acls']['descr'] = gettext("Allow access to the 'Services: DNS Resolver: Access Lists' page.");
+$priv_list['page-services-dnsresolver-acls']['match'] = array();
+$priv_list['page-services-dnsresolver-acls']['match'][] = "services_unbound_acls.php*";
+
+$priv_list['page-services-dnsresolver-editacls'] = array();
+$priv_list['page-services-dnsresolver-editacls']['name'] = gettext("WebCfg - Services: DNS Resolver: Access Lists: Edit page");
+$priv_list['page-services-dnsresolver-editacls']['descr'] = gettext("Allow access to the 'Services: DNS Resolver: Access Lists: Edit' page.");
+$priv_list['page-services-dnsresolver-editacls']['match'] = array();
+$priv_list['page-services-dnsresolver-editacls']['match'][] = "services_unbound_acls_edit.php*";
+
+$priv_list['page-services-dnsresolver-editdomainoverride'] = array();
+$priv_list['page-services-dnsresolver-editdomainoverride']['name'] = gettext("WebCfg - Services: DNS Resolver: Edit Domain Override page");
+$priv_list['page-services-dnsresolver-editdomainoverride']['descr'] = gettext("Allow access to the 'Services: DNS Resolver: Edit Domain Override' page.");
+$priv_list['page-services-dnsresolver-editdomainoverride']['match'] = array();
+$priv_list['page-services-dnsresolver-editdomainoverride']['match'][] = "services_unbound_domainoverride_edit.php*";
+
+$priv_list['page-services-dnsresolver-edithost'] = array();
+$priv_list['page-services-dnsresolver-edithost']['name'] = gettext("WebCfg - Services: DNS Resolver: Edit host page");
+$priv_list['page-services-dnsresolver-edithost']['descr'] = gettext("Allow access to the 'Services: DNS Resolver: Edit host' page.");
+$priv_list['page-services-dnsresolver-edithost']['match'] = array();
+$priv_list['page-services-dnsresolver-edithost']['match'][] = "services_unbound_host_edit.php*";
+
 $priv_list['page-services-dynamicdnsclients'] = array();
 $priv_list['page-services-dynamicdnsclients']['name'] = gettext("WebCfg - Services: Dynamic DNS clients page");
 $priv_list['page-services-dynamicdnsclients']['descr'] = gettext("Allow access to the 'Services: Dynamic DNS clients' page.");

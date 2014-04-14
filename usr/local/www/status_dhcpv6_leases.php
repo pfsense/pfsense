@@ -454,14 +454,14 @@ foreach ($leases as $data) {
 		echo "<td class=\"listr\">{$fspans}{$data['duid']}{$fspane}&nbsp;</td>\n";
 		echo "<td class=\"listr\">{$fspans}";
 		if (!empty($data['hostname'])) {
-			echo htmlentities($data['hostname']) . "<br/>";
+			echo htmlentities($data['hostname']) . "<br />";
 		}
 
 		$mac=trim($ndpdata[$data['ip']]['mac']);
 		if (!empty($mac)) {
 			$mac_hi = strtoupper($mac[0] . $mac[1] . $mac[3] . $mac[4] . $mac[6] . $mac[7]);
 			print htmlentities($mac);
-			if(isset($mac_man[$mac_hi])){ print "<br/><font size=\"-2\"><i>{$mac_man[$mac_hi]}</i></font>"; }
+			if(isset($mac_man[$mac_hi])){ print "<br /><font size=\"-2\"><i>{$mac_man[$mac_hi]}</i></font>"; }
 		}
 
 		echo "{$fspane}&nbsp;</td>\n";
@@ -533,7 +533,7 @@ foreach ($prefixes as $data) {
 		}
 		echo "<tr>\n";
 		if ($mappings[$data['iaid'] . $data['duid']]) {
-			$dip = "<br/>Routed To: {$mappings[$data['iaid'] . $data['duid']]}";
+			$dip = "<br />Routed To: {$mappings[$data['iaid'] . $data['duid']]}";
 		}
 		echo "<td class=\"listlr\">{$fspans}{$data['prefix']}{$dip}{$fspane}&nbsp;</td>\n";
 		echo "<td class=\"listr\">{$fspans}{$data['iaid']}{$fspane}&nbsp;</td>\n";

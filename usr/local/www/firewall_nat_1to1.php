@@ -150,16 +150,16 @@ include("head.inc");
 <body link="#0000CC" vlink="#0000CC" alink="#0000CC">
 <?php include("fbegin.inc"); ?>
 <form action="firewall_nat_1to1.php" method="post">
-<script type="text/javascript" language="javascript" src="/javascript/row_toggle.js"></script>
+<script type="text/javascript" src="/javascript/row_toggle.js"></script>
 <?php
 if ($savemsg)
 	print_info_box($savemsg);
 if (is_subsystem_dirty('natconf'))
 	print_info_box_np(gettext("The NAT configuration has been changed.") .
-		"<br/>" .
+		"<br />" .
 		gettext("You must apply the changes in order for them to take effect."));
 ?>
-<br/>
+<br />
 <table width="100%" border="0" cellpadding="0" cellspacing="0" summary="firewall nat 1to1">
 	<tr><td>
 <?php
@@ -334,9 +334,9 @@ if (is_subsystem_dirty('natconf'))
 			<tr>
 				<td colspan="7">
 					<p><span class="vexpl">
-						<span class="red"><strong><?=gettext("Note:"); ?><br/></strong></span>
+						<span class="red"><strong><?=gettext("Note:"); ?><br /></strong></span>
 						<?=gettext("Depending on the way your WAN connection is setup, you may also need a"); ?>
-						<a href="firewall_virtual_ip.php"><?=gettext("Virtual IP."); ?></a><br/>
+						<a href="firewall_virtual_ip.php"><?=gettext("Virtual IP."); ?></a><br />
 						<?=gettext("If you add a 1:1 NAT entry for any of the interface IPs on this system, " .
 							"it will make this system inaccessible on that IP address. i.e. if " .
 							"you use your WAN IP address, any services on this system (IPsec, OpenVPN server, etc.) " .

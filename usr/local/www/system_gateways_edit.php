@@ -2,7 +2,7 @@
 /* $Id$ */
 /*
 	system_gateways_edit.php
-	part of pfSense (http://pfsense.com)
+	part of pfSense (https://www.pfsense.org)
 
 	Copyright (C) 2010 Seth Mos <seth.mos@dds.nl>.
 	All rights reserved.
@@ -55,13 +55,13 @@ if (!is_array($config['gateways']['gateway_item']))
 $a_gateway_item = &$config['gateways']['gateway_item'];
 $apinger_default = return_apinger_defaults();
 
-$id = $_GET['id'];
-if (isset($_POST['id']))
+if (is_numericint($_GET['id']))
+	$id = $_GET['id'];
+if (isset($_POST['id']) && is_numericint($_POST['id']))
 	$id = $_POST['id'];
 
-if (isset($_GET['dup'])) {
+if (isset($_GET['dup']) && is_numericint($_GET['dup']))
 	$id = $_GET['dup'];
-}
 
 if (isset($id) && $a_gateways[$id]) {
 	$pconfig = array();
@@ -94,7 +94,7 @@ if (isset($id) && $a_gateways[$id]) {
 	$pconfig['disabled'] = isset($a_gateways[$id]['disabled']);
 }
 
-if (isset($_GET['dup'])) {
+if (isset($_GET['dup']) && is_numericint($_GET['dup'])) {
 	unset($id);
 	unset($pconfig['attribute']);
 }
@@ -667,7 +667,7 @@ function enable_change() {
 							echo ">" . gettext("Use BGPD") . "</option>";
 						}
 					?>
-					</select><br/>
+					</select><br />
 					<span class="vexpl"><?=gettext("Choose which interface this gateway applies to."); ?></span>
 				</td>
 			</tr>
@@ -684,7 +684,7 @@ function enable_change() {
 							echo ">" . htmlspecialchars($string) . "</option>\n";
 						}
 					?>
-					</select><br/>
+					</select><br />
 					<span class="vexpl"><?=gettext("Choose the Internet Protocol this gateway uses."); ?></span>
 				</td>
 			</tr>
@@ -692,14 +692,14 @@ function enable_change() {
 				<td width="22%" valign="top" class="vncellreq"><?=gettext("Name"); ?></td>
 				<td width="78%" class="vtable">
 					<input name="name" type="text" class="formfld unknown" id="name" size="20" value="<?=htmlspecialchars($pconfig['name']);?>" />
-					<br/><span class="vexpl"><?=gettext("Gateway name"); ?></span>
+					<br /><span class="vexpl"><?=gettext("Gateway name"); ?></span>
 				</td>
 			</tr>
 			<tr>
 				<td width="22%" valign="top" class="vncellreq"><?=gettext("Gateway"); ?></td>
 				<td width="78%" class="vtable">
 					<input name="gateway" type="text" class="formfld host" id="gateway" size="28" value="<?php if ($pconfig['dynamic']) echo "dynamic"; else echo htmlspecialchars($pconfig['gateway']); ?>" />
-					<br/><span class="vexpl"><?=gettext("Gateway IP address"); ?></span>
+					<br /><span class="vexpl"><?=gettext("Gateway IP address"); ?></span>
 				</td>
 			</tr>
 			<tr>
@@ -777,7 +777,7 @@ function enable_change() {
 									<?=gettext("To");?>
 									<input name="latencyhigh" type="text" class="formfld unknown" id="latencyhigh" size="2"
 										value="<?=htmlspecialchars($pconfig['latencyhigh']);?>" />
-									<br/><span class="vexpl"><?=gettext(sprintf("Low and high thresholds for latency in milliseconds. Default is %d/%d.", $apinger_default['latencylow'], $apinger_default['latencyhigh']));?></span>
+									<br /><span class="vexpl"><?=gettext(sprintf("Low and high thresholds for latency in milliseconds. Default is %d/%d.", $apinger_default['latencylow'], $apinger_default['latencyhigh']));?></span>
 								</td>
 							</tr>
 							<tr>
@@ -797,8 +797,8 @@ function enable_change() {
 								<td width="78%" class="vtable">
 									<input name="interval" type="text" class="formfld unknown" id="interval" size="2"
 										value="<?=htmlspecialchars($pconfig['interval']);?>" onchange="interval_change(this)" />
-									<br/><span class="vexpl">
-										<?=gettext(sprintf("How often that an ICMP probe will be sent in seconds. Default is %d.", $apinger_default['interval']));?><br/><br/>
+									<br /><span class="vexpl">
+										<?=gettext(sprintf("How often that an ICMP probe will be sent in seconds. Default is %d.", $apinger_default['interval']));?><br /><br />
 										<?=gettext("NOTE: The quality graph is averaged over seconds, not intervals, so as the probe interval is increased the accuracy of the quality graph is decreased.");?>
 									</span>
 								</td>
@@ -808,7 +808,7 @@ function enable_change() {
 								<td width="78%" class="vtable">
 									<input name="down" type="text" class="formfld unknown" id="down" size="2"
 										value="<?=htmlspecialchars($pconfig['down']);?>" />
-									<br/><span class="vexpl"><?=gettext(sprintf("The number of seconds of failed probes before the alarm will fire. Default is %d.", $apinger_default['down']));?></span>
+									<br /><span class="vexpl"><?=gettext(sprintf("The number of seconds of failed probes before the alarm will fire. Default is %d.", $apinger_default['down']));?></span>
 								</td>
 							</tr>
 							<tr>
@@ -818,7 +818,7 @@ function enable_change() {
 										value="<?=htmlspecialchars($pconfig['avg_delay_samples']);?>" onchange="samples_change(document.iform.avg_delay_samples_calculated, this)" /> 
 									<input name="avg_delay_samples_calculated" type="checkbox" id="avg_delay_samples_calculated" value="yes" <?php if ($pconfig['avg_delay_samples_calculated'] == true) echo "checked=\"checked\""; ?> onclick="calculated_change(this, document.iform.avg_delay_samples)" />
 										<?=gettext("Use calculated value."); ?>
-									<br/><span class="vexpl"><?=gettext(sprintf("How many replies should be used to compute average delay for controlling \"delay\" alarms?  Default is %d.", $apinger_default['avg_delay_samples']));?><br/><br/></span>
+									<br /><span class="vexpl"><?=gettext(sprintf("How many replies should be used to compute average delay for controlling \"delay\" alarms?  Default is %d.", $apinger_default['avg_delay_samples']));?><br /><br /></span>
 								</td>
 							</tr>
 							<tr>
@@ -828,7 +828,7 @@ function enable_change() {
 										value="<?=htmlspecialchars($pconfig['avg_loss_samples']);?>" onchange="samples_change(document.iform.avg_loss_samples_calculated, this)" />
 									<input name="avg_loss_samples_calculated" type="checkbox" id="avg_loss_samples_calculated" value="yes" <?php if ($pconfig['avg_loss_samples_calculated'] == true) echo "checked=\"checked\""; ?> onclick="calculated_change(this, document.iform.avg_loss_samples)" />
 										<?=gettext("Use calculated value."); ?>
-									<br/><span class="vexpl"><?=gettext(sprintf("How many probes should be useds to compute average packet loss?  Default is %d.", $apinger_default['avg_loss_samples']));?><br/><br/></span>
+									<br /><span class="vexpl"><?=gettext(sprintf("How many probes should be useds to compute average packet loss?  Default is %d.", $apinger_default['avg_loss_samples']));?><br /><br /></span>
 								</td>
 							</tr>
 							<tr>
@@ -838,13 +838,13 @@ function enable_change() {
 										value="<?=htmlspecialchars($pconfig['avg_loss_delay_samples']);?>" onchange="samples_change(document.iform.avg_loss_delay_samples_calculated, this)" />
 									<input name="avg_loss_delay_samples_calculated" type="checkbox" id="avg_loss_delay_samples_calculated" value="yes" <?php if ($pconfig['avg_loss_delay_samples_calculated'] == true) echo "checked=\"checked\""; ?> onclick="calculated_change(this, document.iform.avg_loss_delay_samples)" />
 										<?=gettext("Use calculated value."); ?>
-									<br/><span class="vexpl"><?=gettext(sprintf("The delay (in qty of probe samples) after which loss is computed.  Without this, delays longer than the probe interval would be treated as packet loss.  Default is %d.", $apinger_default['avg_loss_delay_samples']));?><br/><br/></span>
+									<br /><span class="vexpl"><?=gettext(sprintf("The delay (in qty of probe samples) after which loss is computed.  Without this, delays longer than the probe interval would be treated as packet loss.  Default is %d.", $apinger_default['avg_loss_delay_samples']));?><br /><br /></span>
 								</td>
 							</tr>
 							<tr>
 								<td colspan="2">
-									<?= gettext("The probe interval must be less than the down time, otherwise the gateway will seem to go down then come up again at the next probe."); ?><br/><br/>
-									<?= gettext("The down time defines the length of time before the gateway is marked as down, but the accuracy is controlled by the probe interval. For example, if your down time is 40 seconds but on a 30 second probe interval, only one probe would have to fail before the gateway is marked down at the 40 second mark. By default, the gateway is considered down after 10 seconds, and the probe interval is 1 second, so 10 probes would have to fail before the gateway is marked down."); ?><br/>
+									<?= gettext("The probe interval must be less than the down time, otherwise the gateway will seem to go down then come up again at the next probe."); ?><br /><br />
+									<?= gettext("The down time defines the length of time before the gateway is marked as down, but the accuracy is controlled by the probe interval. For example, if your down time is 40 seconds but on a 30 second probe interval, only one probe would have to fail before the gateway is marked down at the 40 second mark. By default, the gateway is considered down after 10 seconds, and the probe interval is 1 second, so 10 probes would have to fail before the gateway is marked down."); ?><br />
 								</td>
 							</tr>
 						</table>
@@ -855,7 +855,7 @@ function enable_change() {
 				<td width="22%" valign="top" class="vncell"><?=gettext("Description"); ?></td>
 				<td width="78%" class="vtable">
 					<input name="descr" type="text" class="formfld unknown" id="descr" size="40" value="<?=htmlspecialchars($pconfig['descr']);?>" />
-					<br/><span class="vexpl"><?=gettext("You may enter a description here for your reference (not parsed)"); ?>.</span>
+					<br /><span class="vexpl"><?=gettext("You may enter a description here for your reference (not parsed)"); ?>.</span>
 				</td>
 			</tr>
 			<tr>

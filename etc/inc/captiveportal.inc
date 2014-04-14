@@ -1,7 +1,7 @@
 <?php
 /*
 	captiveportal.inc
-	part of pfSense (http://www.pfSense.org)
+	part of pfSense (https://www.pfsense.org)
 	Copyright (C) 2004-2011 Scott Ullrich <sullrich@gmail.com>
 	Copyright (C) 2009-2012 Ermal Lu�i <eri@pfsense.org>
 	Copyright (C) 2003-2006 Manuel Kasper <mk@neon1.net>.
@@ -91,7 +91,7 @@ function get_default_captive_portal_html() {
 									</b>
 									</font>
 								</div>
-								<br/>
+								<br />
 								<div id='loginbox'>
 								<table>
 									<tr><td colspan="2"><center>Welcome to the {$g['product_name']} Captive Portal!</td></tr>
@@ -276,36 +276,36 @@ function captiveportal_configure_zone($cpcfg) {
 		else {
 			/* example page */
 			$logouttext = <<<EOD
-<HTML>
-<HEAD><TITLE>Redirecting...</TITLE></HEAD>
-<BODY>
-<SPAN STYLE="font-family: Tahoma, Verdana, Arial, Helvetica, sans-serif; font-size: 11px;">
-<B>Redirecting to <A HREF="<?=\$my_redirurl;?>"><?=\$my_redirurl;?></A>...</B>
-</SPAN>
-<SCRIPT LANGUAGE="JavaScript">
+<html>
+<head><title>Redirecting...</title></head>
+<body>
+<span style="font-family: Tahoma, Verdana, Arial, Helvetica, sans-serif; font-size: 11px;">
+<b>Redirecting to <a href="<?=\$my_redirurl;?>"><?=\$my_redirurl;?></a>...</b>
+</span>
+<script type="text/javascript">
 <!--
 LogoutWin = window.open('', 'Logout', 'toolbar=0,scrollbars=0,location=0,statusbar=0,menubar=0,resizable=0,width=256,height=64');
 if (LogoutWin) {
-	LogoutWin.document.write('<HTML>');
-	LogoutWin.document.write('<HEAD><TITLE>Logout</TITLE></HEAD>') ;
-	LogoutWin.document.write('<BODY BGCOLOR="#435370">');
-	LogoutWin.document.write('<DIV ALIGN="center" STYLE="color: #ffffff; font-family: Tahoma, Verdana, Arial, Helvetica, sans-serif; font-size: 11px;">') ;
-	LogoutWin.document.write('<B>Click the button below to disconnect</B><P>');
-	LogoutWin.document.write('<FORM METHOD="POST" ACTION="<?=\$logouturl;?>">');
-	LogoutWin.document.write('<INPUT NAME="logout_id" TYPE="hidden" VALUE="<?=\$sessionid;?>">');
-	LogoutWin.document.write('<INPUT NAME="zone" TYPE="hidden" VALUE="<?=\$cpzone;?>">');
-	LogoutWin.document.write('<INPUT NAME="logout" TYPE="submit" VALUE="Logout">');
-	LogoutWin.document.write('</FORM>');
-	LogoutWin.document.write('</DIV></BODY>');
-	LogoutWin.document.write('</HTML>');
+	LogoutWin.document.write('<html>');
+	LogoutWin.document.write('<head><title>Logout</title></head>') ;
+	LogoutWin.document.write('<body bgcolor="#435370">');
+	LogoutWin.document.write('<div align="center" style="color: #ffffff; font-family: Tahoma, Verdana, Arial, Helvetica, sans-serif; font-size: 11px;">') ;
+	LogoutWin.document.write('<b>Click the button below to disconnect</b><p />');
+	LogoutWin.document.write('<form method="POST" action="<?=\$logouturl;?>">');
+	LogoutWin.document.write('<input name="logout_id" type="hidden" value="<?=\$sessionid;?>" />');
+	LogoutWin.document.write('<input name="zone" type="hidden" value="<?=\$cpzone;?>" />');
+	LogoutWin.document.write('<input name="logout" type="submit" value="Logout" />');
+	LogoutWin.document.write('</form>');
+	LogoutWin.document.write('</div></body>');
+	LogoutWin.document.write('</html>');
 	LogoutWin.document.close();
 }
 
 document.location.href="<?=\$my_redirurl;?>";
 -->
-</SCRIPT>
-</BODY>
-</HTML>
+</script>
+</body>
+</html>
 
 EOD;
 		}
@@ -367,7 +367,7 @@ EOD;
 		/* Release allocated pipes for this zone */
 		captiveportal_free_dnrules();
 
-		mwexec("/usr/local/sbin/ipfw zone {$cpzoneid} destory", true);
+		mwexec("/sbin/ipfw zone {$cpzoneid} destroy", true);
 
 		if (empty($config['captiveportal']))
 			mwexec("/sbin/sysctl net.link.ether.ipfw=0");
@@ -525,7 +525,7 @@ function captiveportal_init_rules($reinit = false) {
 		return;
 
 	captiveportal_load_modules();
-	mwexec("/usr/local/sbin/ipfw zone {$cpzoneid} create", true);
+	mwexec("/sbin/ipfw zone {$cpzoneid} create", true);
 
 	$cpips = array();
 	$ifaces = get_configured_interface_list();
@@ -542,7 +542,7 @@ function captiveportal_init_rules($reinit = false) {
 				if (!empty($carpif)) {
 					$carpsif = explode(" ", $carpif);
 					foreach ($carpsif as $cpcarp) {
-						mwexec("/usr/local/sbin/ipfw zone {$cpzoneid} madd {$cpcarp}", true);
+						mwexec("/sbin/ipfw zone {$cpzoneid} madd {$cpcarp}", true);
 						$carpip = find_interface_ip($cpcarp);
 						if (is_ipaddr($carpip))
 							$cpips[] = $carpip;
@@ -550,7 +550,7 @@ function captiveportal_init_rules($reinit = false) {
 				}
 				$cpips[] = $cpipm;
 			}
-			mwexec("/usr/local/sbin/ipfw zone {$cpzoneid} madd {$tmpif}", true);
+			mwexec("/sbin/ipfw zone {$cpzoneid} madd {$tmpif}", true);
 		}
 	}
 	if (count($cpips) > 0) {
@@ -1109,7 +1109,7 @@ function captiveportal_allowedip_configure_entry($ipent, $ishostname = false) {
 	$cp_filterdns_conf = "";
 	$enBwup = 0;
 	if (!empty($ipent['bw_up']))
-		$enBwup = iintval($ipent['bw_up']);
+		$enBwup = intval($ipent['bw_up']);
 	else if (isset($config['captiveportal'][$cpzone]['bwdefaultup']))
 		$enBwup = $config['captiveportal'][$cpzone]['bwdefaultup'];
 	$enBwdown = 0;
@@ -1539,7 +1539,7 @@ function captiveportal_get_dn_passthru_ruleno($value) {
 	if (file_exists("{$g['vardb_path']}/captiveportaldn.rules")) {
 		$rules = unserialize(file_get_contents("{$g['vardb_path']}/captiveportaldn.rules"));
 		unset($output);
-		$_gb = exec("/sbin/ipfw -x {$cpzone} show | /usr/bin/grep {$value} |  /usr/bin/grep -v grep | /usr/bin/cut -d \" \" -f 5 | /usr/bin/head -n 1", $output);
+		$_gb = exec("/sbin/ipfw -x {$cpzoneid} show | /usr/bin/grep " . escapeshellarg($value) . " | /usr/bin/grep -v grep | /usr/bin/awk '{print $5}' | /usr/bin/head -n 1", $output);
 		$ruleno = intval($output[0]);
 		if (!$rules[$ruleno])
 			$ruleno = NULL;
@@ -1627,7 +1627,7 @@ function captiveportal_get_ipfw_passthru_ruleno($value) {
 	if (file_exists("{$g['vardb_path']}/captiveportal_{$cpzone}.rules")) {
 		$rules = unserialize(file_get_contents("{$g['vardb_path']}/captiveportal_{$cpzone}.rules"));
 		unset($output);
-		$_gb = exec("/sbin/ipfw -x {$cpzone} show | /usr/bin/grep {$value} |  /usr/bin/grep -v grep | /usr/bin/cut -d \" \" -f 5 | /usr/bin/head -n 1", $output);
+		$_gb = exec("/sbin/ipfw -x {$cpzoneid} show | /usr/bin/grep " . escapeshellarg($value) . " | /usr/bin/grep -v grep | /usr/bin/awk '{print $1}' | /usr/bin/head -n 1", $output);
 		$ruleno = intval($output[0]);
 		if (!$rules[$ruleno])
 			$ruleno = NULL;
@@ -2069,8 +2069,13 @@ function portal_allow($clientip,$clientmac,$username,$password = null, $attribut
 					captiveportal_logportalauth($username,$clientmac,$clientip,$type,"RADIUS ACCOUNTING FAILED");
 			}
 		}
-	} else
+	} else {
+		/* NOTE: #3062-11 If the pipeno has been allocated free it to not DoS the CP and maintain proper operation as in radius() case */
+		if (!is_null($pipeno))
+			captiveportal_free_dn_ruleno($pipeno);
+
 		unlock($cpdblck);
+	}
 
 	if ($writecfg == true)
 		write_config();

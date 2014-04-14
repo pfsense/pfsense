@@ -3,7 +3,7 @@
 /*
 	interfaces_bridge.php
 
-	Copyright (C) 2008 Ermal Luçi
+	Copyright (C) 2008 Ermal LuÃ§i
 	All rights reserved.
 
 	Redistribution and use in source and binary forms, with or without
@@ -148,7 +148,7 @@ include("head.inc");
 				</tr>
 				<tr>
 				<td colspan="3" class="list"><p class="vexpl"><span class="red"><strong>
-				  <?=gettext("Note:"); ?><br/>
+				  <?=gettext("Note:"); ?><br />
 				  </strong></span>
 				  <?=gettext("Here you can configure bridging of interfaces."); ?></p>
 				  </td>

@@ -29,7 +29,9 @@
 PLATFORM=`/bin/cat /etc/platform`
 MIN_REALMEM_FOR_APC=512
 
-if [ -d /usr/local/lib/php/20090626 ]; then
+if [ -d /usr/local/lib/php/20121212 ]; then
+	EXTENSIONSDIR="/usr/local/lib/php/20121212/"
+elif [ -d /usr/local/lib/php/20090626 ]; then
 	EXTENSIONSDIR="/usr/local/lib/php/20090626/"
 else
 	EXTENSIONSDIR="/usr/local/lib/php/20060613/"
@@ -79,7 +81,7 @@ else
 fi
 
 # Set upload directory
-if [ "$PLATFORM" = "embedded" -o "$PLATFORM" = "nanobsd" ]; then
+if [ "$PLATFORM" = "nanobsd" ]; then
 	UPLOADTMPDIR=`/usr/bin/grep upload_path /etc/inc/globals.inc | /usr/bin/cut -d'"' -f4`
 else 
 	UPLOADTMPDIR="/tmp"

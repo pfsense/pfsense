@@ -41,7 +41,7 @@ require("guiconfig.inc");
 require("functions.inc");
 require_once("filter.inc");
 require("shaper.inc");
-require("rrd.inc");
+require_once("rrd.inc");
 
 function gentitle_pkg($pgname) {
 	global $config;
@@ -308,7 +308,7 @@ function showchange() {
 
 <center>
 
-&nbsp;<br/>
+&nbsp;<br />
 
 <?php
 	if($title == "Reload in progress") {
@@ -647,7 +647,7 @@ function showchange() {
 
 				break;
 			case "submit":
-				echo "<td>&nbsp;<br/></td></tr>";
+				echo "<td>&nbsp;<br /></td></tr>";
 				echo "<tr><td colspan=\"2\" align=\"center\">";
 				echo "<input type='submit' name='" . $name . "' value=\"" . htmlspecialchars($field['name']) . "\" />\n";
 
@@ -772,7 +772,7 @@ function showchange() {
 		</td>
 	</tr>
 </table>
-<br/>&nbsp;
+<br />&nbsp;
 </div>
 </center>
 </form>

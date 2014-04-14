@@ -49,20 +49,20 @@ include("head.inc");
 <form action="services_captiveportal_zones.php" method="post">
 <?php if ($savemsg) print_info_box($savemsg); ?>
 <?php if (is_subsystem_dirty('captiveportal')): ?><p>
-<?php print_info_box_np(gettext("The CaptivePortal entry list has been changed") . ".<br>" . gettext("You must apply the changes in order for them to take effect."));?>
+<?php print_info_box_np(gettext("The CaptivePortal entry list has been changed") . ".<br />" . gettext("You must apply the changes in order for them to take effect."));?>
 <?php endif; ?>
 
-<table class="tabcont" width="100%" border="0" cellpadding="0" cellspacing="0">
+<table class="tabcont" width="100%" border="0" cellpadding="0" cellspacing="0" summary="captive portal">
 <tr>
   <td width="15%" class="listhdrr"><?=gettext("Zone");?></td>
   <td width="30%" class="listhdrr"><?=gettext("Interfaces");?></td>
   <td width="10%" class="listhdrr"><?=gettext("Number of users");?></td>
   <td width="40%" class="listhdrr"><?=gettext("Description");?></td>
   <td width="5%" class="list">
-    <table border="0" cellspacing="0" cellpadding="1">
+    <table border="0" cellspacing="0" cellpadding="1" summary="icons">
       <tr>
 	<td valign="middle" width="17">&nbsp;</td>
-        <td valign="middle"><a href="services_captiveportal_zones_edit.php"><img src="/themes/<?= $g['theme']; ?>/images/icons/icon_plus.gif" width="17" height="17" border="0" title="<?=gettext("add a new captiveportal instance");?>"></a></td>
+        <td valign="middle"><a href="services_captiveportal_zones_edit.php"><img src="/themes/<?= $g['theme']; ?>/images/icons/icon_plus.gif" width="17" height="17" border="0" title="<?=gettext("add a new captiveportal instance");?>" alt="add" /></a></td>
       </tr>
     </table>
   </td>
@@ -87,11 +87,11 @@ include("head.inc");
   <td class="listbg" ondblclick="document.location='services_captiveportal.php?zone=<?=$cpzone;?>';">
     <?=htmlspecialchars($cpitem['descr']);?>&nbsp;
   </td>
-  <td valign="middle" nowrap class="list">
-    <table border="0" cellspacing="0" cellpadding="1">
+  <td valign="middle" class="list nowrap">
+    <table border="0" cellspacing="0" cellpadding="1" summary="icons">
       <tr>
-        <td valign="middle"><a href="services_captiveportal.php?zone=<?=$cpzone?>"><img src="/themes/<?= $g['theme']; ?>/images/icons/icon_e.gif" width="17" height="17" border="0" title="<?=gettext("edit captiveportal instance"); ?>"></a></td>
-        <td><a href="services_captiveportal_zones.php?act=del&zone=<?=$cpzone;?>" onclick="return confirm('<?=gettext("Do you really want to delete this entry?");?>')"><img src="/themes/<?= $g['theme']; ?>/images/icons/icon_x.gif" width="17" height="17" border="0" title="<?=gettext("delete captiveportal instance");?>"></a></td>
+        <td valign="middle"><a href="services_captiveportal.php?zone=<?=$cpzone?>"><img src="/themes/<?= $g['theme']; ?>/images/icons/icon_e.gif" width="17" height="17" border="0" title="<?=gettext("edit captiveportal instance"); ?>" alt="edit" /></a></td>
+        <td><a href="services_captiveportal_zones.php?act=del&amp;zone=<?=$cpzone;?>" onclick="return confirm('<?=gettext("Do you really want to delete this entry?");?>')"><img src="/themes/<?= $g['theme']; ?>/images/icons/icon_x.gif" width="17" height="17" border="0" title="<?=gettext("delete captiveportal instance");?>" alt="delete" /></a></td>
       </tr>
     </table>
   </td>
@@ -100,16 +100,13 @@ include("head.inc");
 <tr>
   <td class="list" colspan="4"></td>
   <td class="list">
-    <table border="0" cellspacing="0" cellpadding="1">
+    <table border="0" cellspacing="0" cellpadding="1" summary="add">
       <tr>
 	<td valign="middle" width="17">&nbsp;</td>
-        <td valign="middle"><a href="services_captiveportal_zones_edit.php"><img src="/themes/<?= $g['theme']; ?>/images/icons/icon_plus.gif" width="17" height="17" border="0" title="<?=gettext("add a new captiveportal instance");?>"></a></td>
-        </td>
+        <td valign="middle"><a href="services_captiveportal_zones_edit.php"><img src="/themes/<?= $g['theme']; ?>/images/icons/icon_plus.gif" width="17" height="17" border="0" title="<?=gettext("add a new captiveportal instance");?>" alt="add" /></a></td>
       </tr>
     </table>
   </td>
-</tr>
-</table>
 </tr>
 </table>
 </form>

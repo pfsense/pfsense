@@ -2,7 +2,7 @@
 /* $Id$ */
 /*
 	status_lb_pool.php
-	part of pfSense (http://www.pfsense.com/)
+	part of pfSense (https://www.pfsense.org/)
 
 	Copyright (C) 2010 Seth Mos <seth.mos@dds.nl>.
 	All rights reserved.
@@ -110,7 +110,7 @@ if ($_POST) {
 <?php include("fbegin.inc"); ?>
 <form action="status_lb_pool.php" method="post">
 <?php if (is_subsystem_dirty('loadbalancer')): ?><p>
-<?php print_info_box_np(sprintf(gettext("The load balancer configuration has been changed%sYou must apply the changes in order for them to take effect."), "<br>"));?><br>
+<?php print_info_box_np(sprintf(gettext("The load balancer configuration has been changed%sYou must apply the changes in order for them to take effect."), "<br />"));?><br />
 <?php endif; ?>
 <table width="100%" border="0" cellpadding="0" cellspacing="0">
 	<tr><td class="tabnavtbl">

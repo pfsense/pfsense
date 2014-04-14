@@ -46,8 +46,9 @@ require("guiconfig.inc");
 
 $pgtitle = array("System","User manager","Add privileges");
 
-$userid = $_GET['userid'];
-if (isset($_POST['userid']))
+if (is_numericint($_GET['userid']))
+	$userid = $_GET['userid'];
+if (isset($_POST['userid']) && is_numericint($_POST['userid']))
 	$userid = $_POST['userid'];
 
 $a_user = & $config['system']['user'][$userid];
@@ -179,7 +180,7 @@ function update_description() {
 									<option value="<?=$pname;?>"><?=$pdata['name'];?></option>
 									<?php endforeach; ?>
 								</select>
-								<br/>
+								<br />
 								<?=gettext("Hold down CTRL (pc)/COMMAND (mac) key to select multiple items");?>
 							</td>
 						</tr>
@@ -195,7 +196,7 @@ function update_description() {
 								<input id="submitt"  name="Submit" type="submit" class="formbtn" value="<?=gettext("Save");?>" />
 								<input id="cancelbutton" class="formbtn" type="button" value="<?=gettext("Cancel");?>" onclick="history.back()" />
 								<?php if (isset($userid)): ?>
-								<input name="userid" type="hidden" value="<?=$userid;?>" />
+								<input name="userid" type="hidden" value="<?=htmlspecialchars($userid);?>" />
 								<?php endif; ?>
 							</td>
 						</tr>

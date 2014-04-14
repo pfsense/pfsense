@@ -3,7 +3,7 @@
 /*
 
     firewall_virtual_ip_edit.php
-    part of pfSense (http://www.pfsense.com/)
+    part of pfSense (https://www.pfsense.org/)
 
     Copyright (C) 2005 Bill Marquette <bill.marquette@gmail.com>.
     All rights reserved.
@@ -58,10 +58,10 @@ if (!is_array($config['virtualip']['vip'])) {
 }
 $a_vip = &$config['virtualip']['vip'];
 
-if (isset($_POST['id']))
-	$id = $_POST['id'];
-else
+if (is_numericint($_GET['id']))
 	$id = $_GET['id'];
+if (isset($_POST['id']) && is_numericint($_POST['id']))
+	$id = $_POST['id'];
 
 function return_first_two_octets($ip) {
 	$ip_split = explode(".", $ip);
@@ -415,7 +415,7 @@ function typesel_change() {
 				<tr valign="top">
 				  <td width="22%" class="vncellreq"><?=gettext("Virtual IP Password");?></td>
 				  <td class="vtable"><input type='password'  name='password' value="<?=htmlspecialchars($pconfig['password']);?>" />
-					<br/><?=gettext("Enter the VHID group password.");?>
+					<br /><?=gettext("Enter the VHID group password.");?>
 				  </td>
 				</tr>
 				<tr valign="top">
@@ -427,7 +427,7 @@ function typesel_change() {
                       </option>
                             <?php endfor; ?>
                       </select>
-					<br/><?=gettext("Enter the VHID group that the machines will share");?>
+					<br /><?=gettext("Enter the VHID group that the machines will share");?>
 				  </td>
 				</tr>
 				<tr valign="top">
@@ -447,7 +447,7 @@ function typesel_change() {
                       			</option>
                             <?php endfor; ?>
                       		</select>
-				<br/><br/>
+				<br /><br />
 				<?=gettext("The frequency that this machine will advertise.  0 means usually master. Otherwise the lowest combination of both values in the cluster determines the master.");?>
 				  </td>
 				</tr>
@@ -455,7 +455,7 @@ function typesel_change() {
                   <td width="22%" valign="top" class="vncell"><?=gettext("Description");?></td>
                   <td width="78%" class="vtable">
                     <input name="descr" type="text" class="formfld unknown" id="descr" size="40" value="<?=htmlspecialchars($pconfig['descr']);?>" />
-                    <br/> <span class="vexpl"><?=gettext("You may enter a description here for your reference (not parsed).");?></span></td>
+                    <br /> <span class="vexpl"><?=gettext("You may enter a description here for your reference (not parsed).");?></span></td>
                 </tr>
                 <tr>
                   <td width="22%" valign="top">&nbsp;</td>
@@ -470,10 +470,10 @@ function typesel_change() {
 				  <td colspan="4">
 				      	<span class="vexpl">
 				      		<span class="red">
-							<b><?=gettext("Note:");?><br/></b>
+							<b><?=gettext("Note:");?><br /></b>
 				      		</span>&nbsp;&nbsp;
 				      		<?=gettext("Proxy ARP and Other type Virtual IPs cannot be bound to by anything running on the firewall, such as IPsec, OpenVPN, etc.  Use a CARP or IP Alias type address for these cases.");?>
-				      		<br/><br/>&nbsp;&nbsp;&nbsp;<?=gettext("For more information on CARP and the above values, visit the OpenBSD ");?><a href='http://www.openbsd.org/faq/pf/carp.html'> <?=gettext("CARP FAQ"); ?></a>.
+				      		<br /><br />&nbsp;&nbsp;&nbsp;<?=gettext("For more information on CARP and the above values, visit the OpenBSD ");?><a href='http://www.openbsd.org/faq/pf/carp.html'> <?=gettext("CARP FAQ"); ?></a>.
 						</span>
 				  </td>
 				</tr>

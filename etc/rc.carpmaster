@@ -3,7 +3,7 @@
 /* $Id$ */
 /*
     rc.carpup
-    part of pfSense (http://www.pfSense.com)
+    part of pfSense (https://www.pfsense.org)
     Copyright (C) 2004 Scott Ullrich
     All rights reserved.
 
@@ -71,5 +71,11 @@ if (is_array($config['openvpn']) && is_array($config['openvpn']['openvpn-server'
 		}
 	}
 }
+
+$pluginparams = array();
+$pluginparams['type'] = 'carp';
+$pluginparams['event'] = 'rc.carpmaster';
+$pluginparams['interface'] = $argv[1];
+pkg_call_plugins('plugin_carp', $pluginparams);
 
 ?>

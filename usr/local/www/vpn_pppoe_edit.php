@@ -4,7 +4,7 @@
 	part of pfSense
 
 	Copyright (C) 2005 Scott Ullrich (sullrich@gmail.com)
-	Copyright (C) 2010 Ermal Luçi
+	Copyright (C) 2010 Ermal LuÃ§i
 	All rights reserved.
 
 	Redistribution and use in source and binary forms, with or without
@@ -60,8 +60,9 @@ if (!is_array($config['pppoes']['pppoe'])) {
 }
 $a_pppoes = &$config['pppoes']['pppoe'];
 
-$id = $_GET['id'];
-if (isset($_POST['id']))
+if (is_numericint($_GET['id']))
+	$id = $_GET['id'];
+if (isset($_POST['id']) && is_numericint($_POST['id']))
 	$id = $_POST['id'];
 
 if (isset($id) && $a_pppoes[$id]) {
@@ -434,12 +435,12 @@ if ($savemsg)
 						<td width="22%" valign="top" class="vncellreq"><?=gettext("Server address"); ?></td>
 						<td width="78%" class="vtable">
 							<?=$mandfldhtml;?><input name="localip" type="text" class="formfld unknown" id="localip" size="20" value="<?=htmlspecialchars($pconfig['localip']);?>" />
-							<br/>
+							<br />
 							<?=gettext("Enter the IP address the PPPoE server should give to clients for use as their \"gateway\""); ?>.
-							<br/>
+							<br />
 							<?=gettext("Typically this is set to an unused IP just outside of the client range"); ?>.
-							<br/>
-							<br/>
+							<br />
+							<br />
 							<?=gettext("NOTE: This should NOT be set to any IP address currently in use on this firewall"); ?>.</td>
 					</tr>
 					<tr>
@@ -454,7 +455,7 @@ if ($savemsg)
 						<td width="22%" valign="top" class="vncell"><?=gettext("Description"); ?></td>
 						<td width="78%" class="vtable">
 							<?=$mandfldhtml;?><input name="descr" type="text" class="formfld unknown" id="descr" size="40" value="<?=htmlspecialchars($pconfig['descr']);?>" />
-							<br/>
+							<br />
 						</td>
 					</tr>
 					<tr>
@@ -593,7 +594,7 @@ if ($savemsg)
 						<td width="78%">
 <?php
 						if (isset($id))
-							echo "<input type='hidden' name='id' id='id' value='{$id}' />";
+							echo "<input type='hidden' name='id' id='id' value='" . htmlspecialchars($id, ENT_QUOTES | ENT_HTML401) . "' />";
 ?>
 <?php
 						if (isset($pconfig['pppoeid']))

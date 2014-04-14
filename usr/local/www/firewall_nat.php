@@ -166,10 +166,10 @@ $closehead = false;
 $pgtitle = array(gettext("Firewall"),gettext("NAT"),gettext("Port Forward"));
 include("head.inc");
 
-echo "<script type=\"text/javascript\" language=\"javascript\" src=\"/javascript/domTT/domLib.js\"></script>";
-echo "<script type=\"text/javascript\" language=\"javascript\" src=\"/javascript/domTT/domTT.js\"></script>";
-echo "<script type=\"text/javascript\" language=\"javascript\" src=\"/javascript/domTT/behaviour.js\"></script>";
-echo "<script type=\"text/javascript\" language=\"javascript\" src=\"/javascript/domTT/fadomatic.js\"></script>";
+echo "<script type=\"text/javascript\" src=\"/javascript/domTT/domLib.js\"></script>";
+echo "<script type=\"text/javascript\" src=\"/javascript/domTT/domTT.js\"></script>";
+echo "<script type=\"text/javascript\" src=\"/javascript/domTT/behaviour.js\"></script>";
+echo "<script type=\"text/javascript\" src=\"/javascript/domTT/fadomatic.js\"></script>";
 
 ?>
 </head>
@@ -177,10 +177,10 @@ echo "<script type=\"text/javascript\" language=\"javascript\" src=\"/javascript
 <body link="#000000" vlink="#000000" alink="#000000">
 <?php include("fbegin.inc"); ?>
 <form action="firewall_nat.php" method="post" name="iform">
-<script type="text/javascript" language="javascript" src="/javascript/row_toggle.js"></script>
+<script type="text/javascript" src="/javascript/row_toggle.js"></script>
 <?php if ($savemsg) print_info_box($savemsg); ?>
 <?php if (is_subsystem_dirty('natconf')): ?>
-<?php print_info_box_np(gettext("The NAT configuration has been changed") . ".<br/>" . gettext("You must apply the changes in order for them to take effect."));?><br/>
+<?php print_info_box_np(gettext("The NAT configuration has been changed") . ".<br />" . gettext("You must apply the changes in order for them to take effect."));?><br />
 <?php endif; ?>
 <table width="100%" border="0" cellpadding="0" cellspacing="0" summary="firewall nat">
   <tr><td>

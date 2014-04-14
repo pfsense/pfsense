@@ -23,10 +23,10 @@
 	
 	pi.util = {
 		IsArray:function(_object){
-			return _object && _object != window && ( _object instanceof Array || ( typeof _object.length == "number" && typeof _object.item =="function" ) )
+			return _object && _object != window && ( _object instanceof Array || ( typeof _object.length == "number" && typeof _object.item =="function" ) );
 		},
 		IsHash:function(_object){
-			return _object && typeof _object=="object"&&(_object==window||_object instanceof Object)&&!_object.nodeName&&!pi.util.IsArray(_object)
+			return _object && typeof _object=="object"&&(_object==window||_object instanceof Object)&&!_object.nodeName&&!pi.util.IsArray(_object);
 		},
 		DOMContentLoaded:[],
 		AddEvent: function(_element,_eventName,_fn,_useCapture){
@@ -40,7 +40,7 @@
 			return {
 				height:pi.env.ie?Math.max(document.documentElement.clientHeight,document.body.clientHeight):window.innerHeight,
 				width:pi.env.ie?Math.max(document.documentElement.clientWidth,document.body.clientWidth):window.innerWidth
-			}
+			};
 		},
 		Include:function(_url,_callback){
 			var script = new pi.element("script").attribute.set("src",_url), callback = _callback||new Function, done = false, head = pi.get.byTag("head")[0];
@@ -122,7 +122,7 @@
 					"offsetHeight":_element.offsetHeight,
 					"offsetWidth":_element.offsetWidth,
 					"width":view["width"]
-				}
+				};
 			},
 			addStyle:function(_element,_style){
 				for(var key in _style){
@@ -168,7 +168,7 @@
 				var value = _source[key];
 				if (pi.util.IsArray(_source[key])) {
 					if(pi.util.IsArray( _object[key] )){
-						Array.prototype.push.apply( _source[key], _object[key] )
+						Array.prototype.push.apply( _source[key], _object[key] );
 					}
 					else
 						value = _source[key].clone();
@@ -331,7 +331,7 @@
 			);
 		},
 		"update":function(_value){
-				["TEXTAREA","INPUT"].indexOf(this.environment.getName())>-1?
+				["textarea","input"].indexOf(this.environment.getName())>-1?
 				(this.environment.getElement().value = _value):
 				(this.environment.getElement().innerHTML = _value);
 				return this;
@@ -647,7 +647,7 @@
 		var values = arguments;
 		return this.replace(/\{(\d)\}/g,function(){
 			return values[arguments[1]];
-		})
+		});
 	};
 	
 	String.prototype.leftpad = function(_len,_ch){

@@ -2,7 +2,7 @@
 /*
         $Id$
         Copyright 2007 Scott Dale
-        Part of pfSense widgets (www.pfsense.com)
+        Part of pfSense widgets (https://www.pfsense.org)
         originally based on m0n0wall (http://m0n0.ch/wall)
 
         Copyright (C) 2004-2005 T. Lechat <dev@lechat.org>, Manuel Kasper <mk@neon1.net>
@@ -137,7 +137,7 @@ if (isset($config['ipsec']['phase1'])){?>
 			</div>
 			<div class="listr"  style="display:table-cell;width:100px"><?php echo $spans;?>
 				<?php echo $ipsec['remote-subnet'];?>
-				<br/>
+				<br />
 				(<?php echo htmlspecialchars($ipsec['dest']);?>)<?php echo $spane;?>
 			</div>
 			<div class="listr"  style="display:table-cell;width:90px"><?php echo $spans;?><?php echo htmlspecialchars($ipsec['descr']);?><?php echo $spane;?></div>
@@ -171,11 +171,11 @@ if (isset($config['ipsec']['phase1'])){?>
 <?php	foreach ($mobile as $muser) : ?>
 		<div style="display:table-row;">
 			<div class="listlr" style="display:table-cell;width:139px">
-				<?php echo htmlspecialchars($muser['username']);?><br/>
+				<?php echo htmlspecialchars($muser['username']);?><br />
 				<?php echo htmlspecialchars($muser['logintime']);?>
 			</div>
 			<div class="listr"  style="display:table-cell;width:130px">
-				<?php echo htmlspecialchars($muser['local']);?><br/>
+				<?php echo htmlspecialchars($muser['local']);?><br />
 				<?php echo htmlspecialchars($muser['remote']);?>
 			</div>
 			<div class="listr"  style="display:table-cell;width:30px" align="center">

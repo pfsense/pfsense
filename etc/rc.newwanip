@@ -3,7 +3,7 @@
 /*
 	rc.newwanip
 	Copyright (C) 2006 Scott Ullrich (sullrich@gmail.com)
-	part of pfSense (http://www.pfsense.com)
+	part of pfSense (https://www.pfsense.org)
 
 	Originally part of m0n0wall (http://m0n0.ch)
 	Copyright (C) 2003-2005 Manuel Kasper <mk@neon1.net>.
@@ -65,7 +65,7 @@ else
 
 log_error("rc.newwanip: Informational is starting {$argument}.");
 
-if(empty($argument)) {
+if (empty($argument)) {
 	$interface = "wan";
 	$interface_real = get_real_interface();
 } else {
@@ -73,32 +73,35 @@ if(empty($argument)) {
 	$interface_real = $argument;
 }
 
+$interface_descr = convert_friendly_interface_to_friendly_descr($interface);
+
 /* If the interface is configured and not enabled, bail. We do not need to change settings for disabled interfaces. #3313 */
 if (is_array($config['interfaces'][$interface]) && !isset($config['interfaces'][$interface]['enable'])) {
 	log_error("Interface is disabled, nothing to do.");
 	return;
 }
 
-if(empty($argument))
+if (empty($argument))
 	$curwanip = get_interface_ip();
 else {
 	$curwanip = find_interface_ip($interface_real, true);
 	if($curwanip == "")
 		$curwanip = get_interface_ip($interface);
-	if (($curwanip == "") && empty($config['interfaces'][$interface]['ipaddr'])) {
-		log_error("Interface does not have an IP address, nothing to do.");
-		return;
-	}
 }
 
-log_error("rc.newwanip: on (IP address: {$curwanip}) (interface: {$interface}) (real interface: {$interface_real}).");
+log_error("rc.newwanip: on (IP address: {$curwanip}) (interface: {$interface_descr}[{$interface}]) (real interface: {$interface_real}).");
 
-if($curwanip == "0.0.0.0" || !is_ipaddr($curwanip)) {
+/*
+ * NOTE: Take care of openvpn and similar if you generate the event to reconfigure an interface.
+ *      i.e. OpenVPN might be in tap mode and not have an ip.
+ */
+if (($curwanip == "0.0.0.0" || !is_ipaddr($curwanip)) && susbstr($interface_real, 0, 4) != "ovpn") {
 	log_error("rc.newwanip: Failed to update {$interface} IP, restarting...");
 	send_event("interface reconfigure {$interface}");
 	return;
 }
 
+/* XXX: This really possible? */
 if (empty($interface)) {
 	filter_configure();
 	restart_packages();
@@ -113,7 +116,8 @@ if (file_exists("{$g['vardb_path']}/{$interface}_cacheip"))
 system_resolvconf_generate(true);
 
 /* write current WAN IP to file */
-file_put_contents("{$g['vardb_path']}/{$interface}_ip", $curwanip);
+if (is_ipaddr($curwanip))
+	@file_put_contents("{$g['vardb_path']}/{$interface}_ip", $curwanip);
 
 link_interface_to_vips($interface, "update");
 
@@ -183,7 +187,8 @@ if (!is_ipaddr($oldip) || $curwanip != $oldip || !is_ipaddrv4($config['interface
 	/* reconfigure our gateway monitor */
 	setup_gateways_monitor();
 
-	file_put_contents("{$g['vardb_path']}/{$interface}_cacheip", $curwanip);
+	if (is_ipaddr($curnwanip))
+		@file_put_contents("{$g['vardb_path']}/{$interface}_cacheip", $curwanip);
 
 	/* perform RFC 2136 DNS update */
 	services_dnsupdate_process($interface);

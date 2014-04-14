@@ -2,7 +2,7 @@
 /* $Id$ */
 /*
         load_balancer_monitor_edit.php
-        part of pfSense (http://www.pfsense.com/)
+        part of pfSense (https://www.pfsense.org/)
 
         Copyright (C) 2008 Bill Marquette <bill.marquette@gmail.com>.
         All rights reserved.
@@ -46,10 +46,10 @@ if (!is_array($config['load_balancer']['monitor_type'])) {
 }
 $a_monitor = &$config['load_balancer']['monitor_type'];
 
-if (isset($_POST['id']))
-	$id = $_POST['id'];
-else
+if (is_numericint($_GET['id']))
 	$id = $_GET['id'];
+if (isset($_POST['id']) && is_numericint($_POST['id']))
+	$id = $_POST['id'];
 
 if (isset($id) && $a_monitor[$id]) {
 	$pconfig['name'] = $a_monitor[$id]['name'];
@@ -200,7 +200,7 @@ $types = array("icmp" => gettext("ICMP"), "tcp" => gettext("TCP"), "http" => get
 
 <body link="#0000CC" vlink="#0000CC" alink="#0000CC">
 
-<script language="javascript">
+<script type="text/javascript">
 function updateType(t){
 	switch(t) {
 <?php
@@ -275,7 +275,7 @@ function updateType(t){
 					<tr align="left">
 						<td valign="top"  align="right" class="vtable"><?=gettext("Host"); ?></td>
 						<td class="vtable" colspan="2">
-							<input name="http_options_host" type="text" <?if(isset($pconfig['options']['host'])) echo "value=\"" . htmlspecialchars($pconfig['options']['host']) . "\"";?>size="64"><br/><?=gettext("Hostname for Host: header if needed."); ?>
+							<input name="http_options_host" type="text" <?if(isset($pconfig['options']['host'])) echo "value=\"" . htmlspecialchars($pconfig['options']['host']) . "\"";?>size="64"><br /><?=gettext("Hostname for Host: header if needed."); ?>
 						</td>
 					</td>
 					<tr align="left">
@@ -308,7 +308,7 @@ function updateType(t){
 					<tr align="left">
 						<td valign="top"  align="right" class="vtable"><?=gettext("Host"); ?></td>
 						<td class="vtable" colspan="2">
-							<input name="https_options_host" type="text" <?if(isset($pconfig['options']['host'])) echo "value=\"" . htmlspecialchars($pconfig['options']['host']) . "\"";?>size="64"><br/><?=gettext("Hostname for Host: header if needed."); ?>
+							<input name="https_options_host" type="text" <?if(isset($pconfig['options']['host'])) echo "value=\"" . htmlspecialchars($pconfig['options']['host']) . "\"";?>size="64"><br /><?=gettext("Hostname for Host: header if needed."); ?>
 						</td>
 					</td>
 					<tr align="left">
@@ -359,7 +359,7 @@ function updateType(t){
 		</tr>
 	</table>
 	</form>
-<br>
+<br />
 <?php include("fend.inc"); ?>
 </body>
 </html>

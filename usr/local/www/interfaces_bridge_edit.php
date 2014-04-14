@@ -3,7 +3,7 @@
 /*
 	interfaces_bridge_edit.php
 
-	Copyright (C) 2008 Ermal Luçi
+	Copyright (C) 2008 Ermal LuÃ§i
 	All rights reserved.
 
 	Redistribution and use in source and binary forms, with or without
@@ -51,8 +51,9 @@ foreach ($ifacelist as $bif => $bdescr) {
 		unset($ifacelist[$bif]);
 }
 
-$id = $_GET['id'];
-if (isset($_POST['id']))
+if (is_numericint($_GET['id']))
+	$id = $_GET['id'];
+if (isset($_POST['id']) && is_numericint($_POST['id']))
 	$id = $_POST['id'];
 
 if (isset($id) && $a_bridges[$id]) {
@@ -278,7 +279,7 @@ function show_source_port_range() {
 						}
 				?>
                     </select>
-			<br/>
+			<br />
 			<span class="vexpl"><?=gettext("Interfaces participating in the bridge."); ?></span>
 			</td>
             </tr>
@@ -299,7 +300,7 @@ function show_source_port_range() {
                   <td class="vtable">
 					<input type="checkbox" name="enablestp" id="enablestp" <?php if ($pconfig['enablestp']) echo "checked=\"checked\"";?> />
 					<span class="vexpl"><strong><?=gettext("Enable spanning tree options for this bridge."); ?> </strong></span>
-					<br/><br/>
+					<br /><br />
 					<table id="stpoptions" border="0" cellpadding="6" cellspacing="0" summary="protocol">
 					<tr><td valign="top" class="vncell" width="20%"><?=gettext("Protocol"); ?></td>
 					<td class="vtable" width="80%">
@@ -313,7 +314,7 @@ function show_source_port_range() {
 							}
 						?>
 					</select>
-                    <br/>
+                    <br />
                     <span class="vexpl"><?=gettext("Protocol used for spanning tree."); ?> </span></td>
 					</tr>
 					<tr> <td valign="top" class="vncell" width="20%"><?=gettext("STP interfaces"); ?></td>
@@ -328,7 +329,7 @@ function show_source_port_range() {
 							}
 						?>
 					</select>
-					<br/>
+					<br />
 					<span class="vexpl" >
 	     <?=gettext("Enable Spanning Tree Protocol on interface.  The if_bridge(4) " .
 	     "driver has support for the IEEE 802.1D Spanning Tree Protocol " .
@@ -339,7 +340,7 @@ function show_source_port_range() {
 					<tr><td valign="top" class="vncell" width="20%"><?=gettext("Valid time"); ?></td>
 					<td class="vtable" width="80%">
 					<input name="maxage" type="text" class="formfld unkown" id="maxage" size="8" value="<?=htmlspecialchars($pconfig['maxage']);?>" /> <?=gettext("seconds"); ?>
-					<br/>
+					<br />
 					<span class="vexpl">
 	     <?=gettext("Set the time that a Spanning Tree Protocol configuration is " .
 	     "valid.  The default is 20 seconds.  The minimum is 6 seconds and " .
@@ -349,7 +350,7 @@ function show_source_port_range() {
 					<tr><td valign="top" class="vncell" width="20%"><?=gettext("Forward time"); ?> </td>
 					<td class="vtable" width="80%">
 					<input name="fwdelay" type="text" class="formfld unkown" id="fwdelay" size="8" value="<?=htmlspecialchars($pconfig['fwdelay']);?>" /> <?=gettext("seconds"); ?>
-					<br/>
+					<br />
 					<span class="vexpl">
 	     <?=gettext("Set the time that must pass before an interface begins forwarding " .
 	     "packets when Spanning Tree is enabled.  The default is 15 seconds.  The minimum is 4 seconds and the maximum is 30 seconds."); ?>
@@ -358,7 +359,7 @@ function show_source_port_range() {
 					<tr><td valign="top" class="vncell" width="20%"><?=gettext("Hello time"); ?></td>
 					<td class="vtable" width="80%">
 					<input name="hellotime" type="text" class="formfld unkown" size="8" id="hellotime" value="<?=htmlspecialchars($pconfig['hellotime']);?>" /> <?=gettext("seconds"); ?>
-					<br/>
+					<br />
 					<span class="vexpl">
 	     <?=gettext("Set the time between broadcasting of Spanning Tree Protocol configuration messages.  The hello time may only be changed when " .
 	     "operating in legacy STP mode.  The default is 2 seconds.  The minimum is 1 second and the maximum is 2 seconds."); ?>
@@ -367,7 +368,7 @@ function show_source_port_range() {
 					<tr><td valign="top" class="vncell" width="20%"><?=gettext("Priority"); ?></td>
 					<td class="vtable" width="80%">
 					<input name="priority" type="text" class="formfld unkown" id="priority" value="<?=htmlspecialchars($pconfig['priority']);?>" />
-					<br/>
+					<br />
 					<span class="vexpl">
 	     <?=gettext("Set the bridge priority for Spanning Tree.  The default is 32768. " .
 	     "The minimum is 0 and the maximum is 61440."); ?>
@@ -376,7 +377,7 @@ function show_source_port_range() {
 					<tr><td valign="top" class="vncell" width="20%"><?=gettext("Hold count"); ?></td>
 					<td class="vtable" width="80%">
 					<input name="holdcnt" type="text" class="formfld unkown" id="holdcnt" value="<?=htmlspecialchars($pconfig['holdcnt']);?>" />
-					<br/>
+					<br />
 					<span class="vexpl">
 	     <?=gettext("Set the transmit hold count for Spanning Tree.  This is the number" .
 	     " of packets transmitted before being rate limited.  The " .
@@ -391,7 +392,7 @@ function show_source_port_range() {
 					?>
 					<tr><td></td></tr>
 					</table>
-					<br/>
+					<br />
 					<span class="vexpl" >
 	     <?=gettext("Set the Spanning Tree priority of interface to value.  The " .
 	     "default is 128.  The minimum is 0 and the maximum is 240.  Increments of 16."); ?>
@@ -405,7 +406,7 @@ function show_source_port_range() {
 					?>
 					<tr><td></td></tr>
 					</table>
-					<br/>
+					<br />
 					<span class="vexpl" >
 	     <?=gettext("Set the Spanning Tree path cost of interface to value.  The " .
 	     "default is calculated from the link speed.  To change a previously selected path cost back to automatic, set the cost to 0. ".
@@ -419,7 +420,7 @@ function show_source_port_range() {
                   <td valign="top" class="vncell"><?=gettext("Cache size"); ?></td>
 					<td class="vtable">
 						<input name="maxaddr" size="10" type="text" class="formfld unkown" id="maxaddr" value="<?=htmlspecialchars($pconfig['maxaddr']);?>" /> <?=gettext("entries"); ?>
-					<br/><span class="vexpl">
+					<br /><span class="vexpl">
 <?=gettext("Set the size of the bridge address cache to size.	The default is " .
 	     ".100 entries."); ?>
 					</span>
@@ -429,7 +430,7 @@ function show_source_port_range() {
                   <td valign="top" class="vncell"><?=gettext("Cache entry expire time"); ?></td>
 				  <td>
 					<input name="timeout" type="text" class="formfld unkown" id="timeout" size="10" value="<?=htmlspecialchars($pconfig['timeout']);?>" /> <?=gettext("seconds"); ?>
-					<br/><span class="vexpl">
+					<br /><span class="vexpl">
 	     <?=gettext("Set the timeout of address cache entries to this number of seconds.  If " .
 	     "seconds is zero, then address cache entries will not be expired. " .
 	     "The default is 240 seconds."); ?>
@@ -450,7 +451,7 @@ function show_source_port_range() {
 							}
 						?>
 					</select>
-					<br/><span class="vexpl">
+					<br /><span class="vexpl">
 	     <?=gettext("Add the interface named by interface as a span port on the " .
 	     "bridge.  Span ports transmit a copy of every frame received by " .
 	     "the bridge.  This is most useful for snooping a bridged network " .
@@ -458,7 +459,7 @@ function show_source_port_range() {
 	     "the bridge."); ?>
 					</span>
 		<p class="vexpl"><span class="red"><strong>
-					 <?=gettext("Note:"); ?><br/>
+					 <?=gettext("Note:"); ?><br />
                                   </strong></span>
                  <?=gettext("The span interface cannot be part of the bridge member interfaces."); ?>
                                         </p>
@@ -477,7 +478,7 @@ function show_source_port_range() {
 							}
 						?>
 					</select>
-                    <br/>
+                    <br />
                     <span class="vexpl">
 	     <?=gettext("Set interface as an edge port.  An edge port connects directly to " .
 	     "end stations and cannot create bridging loops in the network; this " .
@@ -497,12 +498,12 @@ function show_source_port_range() {
 							}
 						?>
 					</select>
-                    <br/>
+                    <br />
                     <span class="vexpl">
 	     <?=gettext("Allow interface to automatically detect edge status.  This is the " .
 	     "default for all interfaces added to a bridge."); ?></span>
 		 <p class="vexpl"><span class="red"><strong>
-				  <?=gettext("Note:"); ?><br/>
+				  <?=gettext("Note:"); ?><br />
 				  </strong></span>
 		 <?=gettext("This will disable the autoedge status of interfaces."); ?>
 					</p></td>
@@ -520,7 +521,7 @@ function show_source_port_range() {
 							}
 						?>
 					</select>
-                    <br/>
+                    <br />
                     <span class="vexpl">
 	     <?=gettext("Set the interface as a point-to-point link.  This is required for " .
 	     "straight transitions to forwarding and should be enabled on a " .
@@ -540,13 +541,13 @@ function show_source_port_range() {
 							}
 						?>
 					</select>
-                    <br/>
+                    <br />
                     <span class="vexpl">
 	     <?=gettext("Automatically detect the point-to-point status on interface by " .
 	     "checking the full duplex link status.  This is the default for " .
 	     "interfaces added to the bridge."); ?></span>
 				 <p class="vexpl"><span class="red"><strong>
-				  <?=gettext("Note:"); ?><br/>
+				  <?=gettext("Note:"); ?><br />
 				  </strong></span>
 		 <?=gettext("The interfaces selected here will be removed from default autoedge status."); ?>
 					</p></td>
@@ -564,7 +565,7 @@ function show_source_port_range() {
 							}
 						?>
 					</select>
-                    <br/>
+                    <br />
                     <span class="vexpl">
 	     <?=gettext("Mark an interface as a \"sticky\" interface.  Dynamically learned " .
 	     "address entries are treated as static once entered into the " .
@@ -585,7 +586,7 @@ function show_source_port_range() {
 							}
 						?>
 					</select>
-                    <br/>
+                    <br />
                     <span class="vexpl">
 	     <?=gettext("Mark an interface as a \"private\" interface.  A private interface does not forward any traffic to any other port that is also " .
 	     "a private interface."); ?>

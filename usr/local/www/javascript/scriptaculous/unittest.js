@@ -121,7 +121,7 @@ Test.Unit.Logger.prototype = {
     this.loglines = $('loglines');
   },
   _toHTML: function(txt) {
-    return txt.escapeHTML().replace(/\n/g,"<br/>");
+    return txt.escapeHTML().replace(/\n/g,"<br />");
   },
   addLinksToResults: function(){ 
     $$("tr.failed .nameCell").each( function(td){ // todo: limit to children of this.log
@@ -305,7 +305,7 @@ Test.Unit.Assertions.prototype = {
   assertEnumEqual: function(expected, actual) {
     var message = arguments[2] || "assertEnumEqual";
     try { $A(expected).length == $A(actual).length && 
-      expected.zip(actual).all(function(pair) { return pair[0] == pair[1] }) ?
+      expected.zip(actual).all(function(pair) { return pair[0] == pair[1]; }) ?
         this.pass() : this.fail(message + ': expected ' + Test.Unit.inspect(expected) + 
           ', actual ' + Test.Unit.inspect(actual)); }
     catch(e) { this.error(e); }
@@ -474,7 +474,7 @@ Object.extend(Object.extend(Test.Unit.Testcase.prototype, Test.Unit.Assertions.p
       test = test.gsub(/(\.should[^\(]+)\(this,\)/,'#{1}(this)');
       this.test = function() {
         eval('with(this){'+test+'}');
-      }
+      };
     } else {
       this.test = test || function() {};
     }
@@ -537,7 +537,7 @@ Test.setupBDDExtensionMethods = function(){
   });
   
   [Array.prototype, String.prototype, Number.prototype, Boolean.prototype].each(
-    function(p){ Object.extend(p, Test.BDDMethods) }
+    function(p){ Object.extend(p, Test.BDDMethods); }
   );
 };
 
@@ -558,7 +558,7 @@ Test.context = function(name, spec, log){
         if(/^\{/.test(body[0])) body = body.slice(1);
         body.pop();
         body = body.map(function(statement){ 
-          return statement.strip()
+          return statement.strip();
         });
         compiledSpec[testName] = body.join('\n');
         titles[testName] = specName;

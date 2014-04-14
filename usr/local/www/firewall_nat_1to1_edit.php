@@ -56,8 +56,9 @@ if (!is_array($config['nat']['onetoone']))
 
 $a_1to1 = &$config['nat']['onetoone'];
 
-$id = $_GET['id'];
-if (isset($_POST['id']))
+if (is_numericint($_GET['id']))
+	$id = $_GET['id'];
+if (isset($_POST['id']) && is_numericint($_POST['id']))
 	$id = $_POST['id'];
 
 $after = $_GET['after'];
@@ -323,18 +324,18 @@ if ($input_errors)
 <?php
 					endforeach;
 ?>
-				</select><br/>
-			  <span class="vexpl"><?=gettext("Choose which interface this rule applies to"); ?>.<br/>
+				</select><br />
+			  <span class="vexpl"><?=gettext("Choose which interface this rule applies to"); ?>.<br />
 			  <?=gettext("Hint: in most cases, you'll want to use WAN here"); ?>.</span></td>
 		</tr>
 		<tr>
 			<td width="22%" valign="top" class="vncellreq"><?=gettext("External subnet IP"); ?></td>
 			<td width="78%" class="vtable">
 				<input name="external" type="text" class="formfld" id="external" size="20" value="<?=htmlspecialchars($pconfig['external']);?>" />
-				<br/>
+				<br />
 				<span class="vexpl">
 					<?=gettext("Enter the external (usually on a WAN) subnet's starting address for the 1:1 mapping.  " .
-						"The subnet mask from the internal address below will be applied to this IP address."); ?><br/>
+						"The subnet mask from the internal address below will be applied to this IP address."); ?><br />
 					<?=gettext("Hint: this is generally an address owned by the router itself on the selected interface."); ?>
 				</span>
 			</td>
@@ -409,7 +410,7 @@ if ($input_errors)
 						</td>
 					</tr>
 				</table>
-				<br/>
+				<br />
 				<span class="vexpl"><?=gettext("Enter the internal (LAN) subnet for the 1:1 mapping. The subnet size specified for the internal subnet will be applied to the external subnet."); ?></span>
 			</td>
 		</tr>
@@ -492,9 +493,9 @@ if ($input_errors)
 						</td>
 					</tr>
 				</table>
-				<br/>
+				<br />
 				<span class="vexpl">
-					<?=gettext("The 1:1 mapping will only be used for connections to or from the specified destination."); ?><br/>
+					<?=gettext("The 1:1 mapping will only be used for connections to or from the specified destination."); ?><br />
 					<?=gettext("Hint: this is usually 'any'."); ?>
 				</span>
 			</td>
@@ -503,7 +504,7 @@ if ($input_errors)
 			<td width="22%" valign="top" class="vncell"><?=gettext("Description"); ?></td>
 			<td width="78%" class="vtable">
 				<input name="descr" type="text" class="formfld unknown" id="descr" size="40" value="<?=htmlspecialchars($pconfig['descr']);?>" />
-				<br/>
+				<br />
 				<span class="vexpl">
 					<?=gettext("You may enter a description here for your reference (not parsed)."); ?>
 				</span>

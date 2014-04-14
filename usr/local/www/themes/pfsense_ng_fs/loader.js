@@ -8,9 +8,9 @@ var cond        = '';
 if (browser == '')
 {
 	if (navigator.appName.indexOf('Microsoft') != -1)
-		browser = 'IE'
+		browser = 'IE';
 	else if (navigator.appName.indexOf('Netscape') != -1)
-		browser = 'Netscape'
+		browser = 'Netscape';
 	else
 		browser = 'IE';
 }
@@ -230,7 +230,7 @@ jQuery(document).ready(function ()
     ///////////////////////////////////////////
     
     // insert add/delete column buttons
-    jQuery('<br/><br/><div id=\"columnModifier\"><div style=\"float:left\"><div id =\"addCol\" style=\"float:left\"><img src=\"./themes/pfsense_ng_fs/images/icons/icon_plus.gif\" style=\"cursor:pointer\" alt=\"Click here to add a column\"/></div>&nbsp;Add column&nbsp;</div><div style=\"float:left\"><div id =\"delCol\" style=\"float:left\"><img src=\"./themes/pfsense_ng_fs/images/icons/icon_x.gif\" style=\"cursor:pointer\" alt=\"Click here to delete a column\"/></div>&nbsp;Delete column</div><div id=\"columnWarningText\" style=\"float:left; margin-left:5em\"></div><br/><br/>').insertBefore('#niftyOutter.fakeClass');
+    jQuery('<br /><br /><div id=\"columnModifier\"><div style=\"float:left\"><div id =\"addCol\" style=\"float:left\"><img src=\"./themes/pfsense_ng_fs/images/icons/icon_plus.gif\" style=\"cursor:pointer\" alt=\"Click here to add a column\"/></div>&nbsp;Add column&nbsp;</div><div style=\"float:left\"><div id =\"delCol\" style=\"float:left\"><img src=\"./themes/pfsense_ng_fs/images/icons/icon_x.gif\" style=\"cursor:pointer\" alt=\"Click here to delete a column\"/></div>&nbsp;Delete column</div><div id=\"columnWarningText\" style=\"float:left; margin-left:5em\"></div><br /><br />').insertBefore('#niftyOutter.fakeClass');
     
     if ( jQuery('#columnModifier').length > 0 ) // only perform resizing on the dashboard page
     {

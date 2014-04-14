@@ -104,9 +104,9 @@ include("head.inc"); ?>
 <table width="100%" border="0" cellpadding="0" cellspacing="0">
 <tr><td>
 <?php echo gettext("This page allows you to perform a simple TCP connection test to determine if a host is up and accepting connections on a given port. This test does not function for UDP since there is no way to reliably determine if a UDP port accepts connections in this manner."); ?>
-<br/><br/>
+<br /><br />
 <?php echo gettext("No data is transmitted to the remote host during this test, it will only attempt to open a connection and optionally display the data sent back from the server."); ?>
-<br/><br/><br/>
+<br /><br /><br />
 <?php if ($input_errors) print_input_errors($input_errors); ?>
 	<form action="diag_testport.php" method="post" name="iform" id="iform">
 	<table width="100%" border="0" cellpadding="6" cellspacing="0">
@@ -129,14 +129,14 @@ include("head.inc"); ?>
 			<td width="22%" valign="top" class="vncell"><?= gettext("Source Port"); ?></td>
 			<td width="78%" class="vtable">
 				<input name="srcport" type="text" class="formfld" id="srcport" size="10" value="<?=htmlspecialchars($srcport);?>">
-				<br/><br/><?php echo gettext("This should typically be left blank."); ?>
+				<br /><br /><?php echo gettext("This should typically be left blank."); ?>
 			</td>
 		</tr>
 		<tr>
 			<td width="22%" valign="top" class="vncell"><?= gettext("Show Remote Text"); ?></td>
 			<td width="78%" class="vtable">
 				<input name="showtext" type="checkbox" id="showtext" <?php if ($showtext) echo "checked" ?>>
-				</br><br/><?php echo gettext("Shows the text given by the server when connecting to the port. Will take 10+ seconds to display if checked."); ?>
+				<br /><br /><?php echo gettext("Shows the text given by the server when connecting to the port. Will take 10+ seconds to display if checked."); ?>
 			</td>
 		</tr>
 		<tr>
@@ -171,7 +171,7 @@ include("head.inc"); ?>
 					<?=gettext("IPv6");?>
 				</option>
 			</select>
-			<br/><br/>
+			<br /><br />
 			<?php echo gettext("If you force IPv4 or IPv6 and use a hostname that does not contain a result using that protocol, it will result in an error. For example if you force IPv4 and use a hostname that only returns an AAAA IPv6 IP address, it will not work."); ?>
 			</td>
 		</tr>
@@ -185,7 +185,7 @@ include("head.inc"); ?>
 		<td valign="top" colspan="2">
 		<?php if ($do_testport) {
 			echo "<font face='terminal' size='2'>";
-			echo "<strong>" . gettext("Port Test Results") . ":</strong><br>";
+			echo "<strong>" . gettext("Port Test Results") . ":</strong><br />";
 			echo '<pre>';
 			$result = "";
 			$nc_base_cmd = "/usr/bin/nc";

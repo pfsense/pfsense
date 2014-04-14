@@ -55,7 +55,7 @@ $security_passed = true;
 /* If this function doesn't exist, we're being called from Captive Portal or 
    another internal subsystem which does not include authgui.inc */
 if (function_exists("display_error_form") && !isset($config['system']['webgui']['nodnsrebindcheck'])) {
-	/* DNS ReBinding attack prevention.  http://redmine.pfsense.org/issues/708 */
+	/* DNS ReBinding attack prevention.  https://redmine.pfsense.org/issues/708 */
 	$found_host = false;
 
 	/* Either a IPv6 address with or without a alternate port */
@@ -104,7 +104,7 @@ if (function_exists("display_error_form") && !isset($config['system']['webgui'][
 
 	if($found_host == false) {
 		if(!security_checks_disabled()) {
-			display_error_form("501", gettext("Potential DNS Rebind attack detected, see http://en.wikipedia.org/wiki/DNS_rebinding<br/>Try accessing the router by IP address instead of by hostname."));
+			display_error_form("501", gettext("Potential DNS Rebind attack detected, see http://en.wikipedia.org/wiki/DNS_rebinding<br />Try accessing the router by IP address instead of by hostname."));
 			exit;
 		}
 		$security_passed = false;
@@ -1206,7 +1206,7 @@ function radius_backed($username, $passwd, $authcfg, &$attributes = array()) {
 		$retvalue['auth_val'] = 1;
 		$retvalue['error'] = $rauth->getError();
 		if ($debug)
-			printf(gettext("Radius start: %s<br>\n"), $retvalue['error']);
+			printf(gettext("Radius start: %s<br />\n"), $retvalue['error']);
 	}
 
 	// XXX - billm - somewhere in here we need to handle securid challenge/response
@@ -1217,18 +1217,18 @@ function radius_backed($username, $passwd, $authcfg, &$attributes = array()) {
 		$retvalue['auth_val'] = 1;
 		$retvalue['error'] = $result->getMessage();
 		if ($debug)
-			printf(gettext("Radius send failed: %s<br>\n"), $retvalue['error']);
+			printf(gettext("Radius send failed: %s<br />\n"), $retvalue['error']);
 	} else if ($result === true) {
 		if ($rauth->getAttributes())
 			$attributes = $rauth->listAttributes();
 		$retvalue['auth_val'] = 2;
 		if ($debug)
-			printf(gettext("Radius Auth succeeded")."<br>\n");
+			printf(gettext("Radius Auth succeeded")."<br />\n");
 		$ret = true;
 	} else {
 		$retvalue['auth_val'] = 3;
 		if ($debug)
-			printf(gettext("Radius Auth rejected")."<br>\n");
+			printf(gettext("Radius Auth rejected")."<br />\n");
 	}
 
 	// close OO RADIUS_AUTHENTICATION

@@ -30,6 +30,7 @@
 
  */
 require_once("config.inc");
+require_once("rrd.inc");
 
 /* Returns an array of default values used for apinger.conf */
 function return_apinger_defaults() {
@@ -299,6 +300,11 @@ EOD;
 
 		$apingerconfig .= $alarmscfg;
 		$apingerconfig .= $apingercfg;
+
+		# Create gateway quality RRD with settings more suitable for pfSense graph set, 
+		# since apinger uses default step (300; 5 minutes) and other settings that don't 
+		# match the pfSense gateway quality graph set.
+		create_gateway_quality_rrd("{$g['vardb_path']}/rrd/{$gateway['name']}-quality.rrd");
 	}
 	@file_put_contents("{$g['varetc_path']}/apinger.conf", $apingerconfig);
 	unset($apingerconfig);
@@ -310,6 +316,7 @@ EOD;
 
 	@chown("{$g['vardb_path']}/rrd", "nobody");
 
+ 	/* Restart apinger process */
 	if (isvalidpid("{$g['varrun_path']}/apinger.pid"))
 		sigkillbypid("{$g['varrun_path']}/apinger.pid", "HUP");
 	else {

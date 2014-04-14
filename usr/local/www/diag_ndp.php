@@ -1,7 +1,7 @@
 <?php
 /*
 	diag_ndp.php
-	part of the pfSense project	(http://www.pfsense.org)
+	part of the pfSense project	(https://www.pfsense.org)
 	Copyright (C) 2004-2010 Scott Ullrich <sullrich@gmail.com>
 	Copyright (C) 2011 Seth Mos <seth.mos@dds.nl>
 	
@@ -144,7 +144,7 @@ ob_implicit_flush(1);
 							$mac=trim($entry['mac']);
 							$mac_hi = strtoupper($mac[0] . $mac[1] . $mac[3] . $mac[4] . $mac[6] . $mac[7]);
 							print $mac;
-							if(isset($mac_man[$mac_hi])){ print "<br/><font size=\"-2\"><i>{$mac_man[$mac_hi]}</i></font>"; }
+							if(isset($mac_man[$mac_hi])){ print "<br /><font size=\"-2\"><i>{$mac_man[$mac_hi]}</i></font>"; }
 							?>
 						</td>
 						<td class="listr">

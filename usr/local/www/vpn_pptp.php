@@ -201,7 +201,7 @@ include("head.inc");
 
 <body link="#0000CC" vlink="#0000CC" alink="#0000CC">
 <?php include("fbegin.inc"); ?>
-<script language="JavaScript">
+<script type="text/javascript">
 <!--
 function get_radio_value(obj)
 {
@@ -297,7 +297,7 @@ function enable_change(enable_over) {
 <form action="vpn_pptp.php" method="post" name="iform" id="iform">
 <?php if ($input_errors) print_input_errors($input_errors); ?>
 <?php if ($savemsg) print_info_box($savemsg); ?>
-<?php print_info_box(gettext("PPTP is no longer considered a secure VPN technology because it relies upon MS-CHAPv2 which has been compromised. If you continue to use PPTP be aware that intercepted traffic can be decrypted by a third party, so it should be considered unencrypted. We advise migrating to another VPN type such as OpenVPN or IPsec.<br/><br/><a href=\"https://isc.sans.edu/diary/End+of+Days+for+MS-CHAPv2/13807\">Read More</a>")); ?>
+<?php print_info_box(gettext("PPTP is no longer considered a secure VPN technology because it relies upon MS-CHAPv2 which has been compromised. If you continue to use PPTP be aware that intercepted traffic can be decrypted by a third party, so it should be considered unencrypted. We advise migrating to another VPN type such as OpenVPN or IPsec.<br /><br /><a href=\"https://isc.sans.edu/diary/End+of+Days+for+MS-CHAPv2/13807\">Read More</a>")); ?>
 <table width="100%" border="0" cellpadding="0" cellspacing="0">
   <tr><td class="tabnavtbl">
 <?php
@@ -327,7 +327,7 @@ function enable_change(enable_over) {
 				  <td width="22%" valign="top" class="vncellreq"><?=gettext("PPTP redirection");?></td>
                   <td width="78%" class="vtable"> 
                     <?=$mandfldhtml;?><input name="redir" type="text" class="formfld unknown" id="redir" size="20" value="<?=htmlspecialchars($pconfig['redir']);?>"> 
-                    <br>
+                    <br />
                     <?=gettext("Enter the IP address of a host which will accept incoming " .
                     "PPTP connections"); ?>.</td>
                 <tr> 
@@ -351,19 +351,19 @@ function enable_change(enable_over) {
 								}
 							?>
 						</select>
-						<br><?=gettext("Hint: 10 is ten PPTP clients"); ?>
+						<br /><?=gettext("Hint: 10 is ten PPTP clients"); ?>
 					</td>
 				</tr>
                 <tr> 
                   <td width="22%" valign="top" class="vncellreq"><?=gettext("Server address"); ?></td>
                   <td width="78%" class="vtable"> 
                     <?=$mandfldhtml;?><input name="localip" type="text" class="formfld unknown" id="localip" size="20" value="<?=htmlspecialchars($pconfig['localip']);?>"> 
-			<br/>
+			<br />
 			<?=gettext("Enter the IP address the PPTP server should give to clients for use as their \"gateway\""); ?>.
-			<br/>
+			<br />
 			<?=gettext("Typically this is set to an unused IP just outside of the client range"); ?>.
-			<br/>
-			<br/>
+			<br />
+			<br />
 			<?=gettext("NOTE: This should NOT be set to any IP address currently in use on this firewall"); ?>.</td>
                 </tr>
                 <tr> 
@@ -371,17 +371,17 @@ function enable_change(enable_over) {
                     "range"); ?></td>
                   <td width="78%" class="vtable"> 
                     <?=$mandfldhtml;?><input name="remoteip" type="text" class="formfld unknown" id="remoteip" size="20" value="<?=htmlspecialchars($pconfig['remoteip']);?>">
-                    <br>
-                    <?=gettext("Specify the starting address for the client IP subnet"); ?>.<br>
+                    <br />
+                    <?=gettext("Specify the starting address for the client IP subnet"); ?>.<br />
                 </tr>
                 <tr> 
                   <td width="22%" valign="top" class="vncell"><?=gettext("PPTP DNS Servers"); ?></td>
                   <td width="78%" class="vtable"> 
                     <?=$mandfldhtml;?><input name="pptp_dns1" type="text" class="formfld unknown" id="pptp_dns1" size="20" value="<?=htmlspecialchars($pconfig['pptp_dns1']);?>">
-                    <br>
+                    <br />
 					<input name="pptp_dns2" type="text" class="formfld unknown" id="pptp_dns2" size="20" value="<?=htmlspecialchars($pconfig['pptp_dns2']);?>">
-                    <br>
-                   <?=gettext("primary and secondary DNS servers assigned to PPTP clients"); ?><br>
+                    <br />
+                   <?=gettext("primary and secondary DNS servers assigned to PPTP clients"); ?><br />
                 </tr>
                 <tr> 
                   <td width="22%" valign="top" class="vncell"><?=gettext("WINS Server"); ?></td>
@@ -393,22 +393,22 @@ function enable_change(enable_over) {
                   <td width="22%" valign="top" class="vncell"><?=gettext("RADIUS"); ?></td>
                   <td width="78%" class="vtable"> 
                       <input name="radiusenable" type="checkbox" id="radiusenable" onclick="enable_change(false)" value="yes" <?php if ($pconfig['radiusenable']) echo "checked"; ?>>
-                      <strong><?=gettext("Use a RADIUS server for authentication"); ?></strong><br>
+                      <strong><?=gettext("Use a RADIUS server for authentication"); ?></strong><br />
                       <?=gettext("When set, all users will be authenticated using " .
                       "the RADIUS server specified below. The local user database " .
-                      "will not be used"); ?>.<br>
-                      <br>
+                      "will not be used"); ?>.<br />
+                      <br />
                       <input name="radacct_enable" type="checkbox" id="radacct_enable" onclick="enable_change(false)" value="yes" <?php if ($pconfig['radacct_enable']) echo "checked"; ?>>
-                      <strong><?=gettext("Enable RADIUS accounting"); ?> <br>
-                      </strong><?=gettext("Sends accounting packets to the RADIUS server"); ?>.<br>
-			 <br>
+                      <strong><?=gettext("Enable RADIUS accounting"); ?> <br />
+                      </strong><?=gettext("Sends accounting packets to the RADIUS server"); ?>.<br />
+			 <br />
                       <input name="radiussecenable" type="checkbox" id="radiussecenable" onclick="enable_change(false)" value="yes" <?php if ($pconfig['radiussecenable']) echo "checked"; ?>>
-                      <strong><?=gettext("Secondary RADIUS server for failover authentication"); ?></strong><br>
-                      <?=gettext("When set, all requests will go to the secondary server when primary fails"); ?><br>
-		      <br>
+                      <strong><?=gettext("Secondary RADIUS server for failover authentication"); ?></strong><br />
+                      <?=gettext("When set, all requests will go to the secondary server when primary fails"); ?><br />
+		      <br />
                       <input name="radiusissueips" value="yes" type="checkbox" class="formfld" id="radiusissueips"<?php if($pconfig['radiusissueips']) echo " CHECKED"; ?>>
 		      <strong><?=gettext("RADIUS issued IPs"); ?></strong>
-                      <br><?=gettext("Issue IP addresses via RADIUS server"); ?>.
+                      <br /><?=gettext("Issue IP addresses via RADIUS server"); ?>.
 		      </td>
                  </td>
                 </tr>
@@ -430,14 +430,14 @@ function enable_change(enable_over) {
                       <input name="radiusserver" type="text" class="formfld unknown" id="radiusserver" size="20" value="<?=htmlspecialchars($pconfig['radiusserver']);?>">
                       <input name="radiusserverport" type="text" class="formfld unknown" id="radiusserverport" size="4" value="<?=htmlspecialchars($pconfig['radiusserverport']);?>">
                       <input name="radiusserveracctport" type="text" class="formfld unknown" id="radiusserveracctport" size="4" value="<?=htmlspecialchars($pconfig['radiusserveracctport']);?>">
-                      <br>
+                      <br />
                       <?=gettext("Enter the IP address, RADIUS port, and RADIUS accounting port of the RADIUS server"); ?>.</td>
                 </tr>
                 <tr> 
                   <td width="22%" valign="top" class="vncell"><?=gettext("RADIUS shared secret"); ?></td>
                   <td width="78%" valign="top" class="vtable">
                       <input name="radiussecret" type="password" class="formfld pwd" id="radiussecret" size="20" value="<?=htmlspecialchars($pconfig['radiussecret']);?>">
-                      <br>
+                      <br />
                       <?=gettext("Enter the shared secret that will be used to authenticate " .
                       "to the RADIUS server"); ?>.</td>
                 </tr>
@@ -447,14 +447,14 @@ function enable_change(enable_over) {
                       <input name="radiusserver2" type="text" class="formfld unknown" id="radiusserver2" size="20" value="<?=htmlspecialchars($pconfig['radiusserver2']);?>">
                       <input name="radiusserver2port" type="text" class="formfld unknown" id="radiusserver2port" size="4" value="<?=htmlspecialchars($pconfig['radiusserver2port']);?>">
                       <input name="radiusserver2acctport" type="text" class="formfld unknown" id="radiusserver2acctport" size="4" value="<?=htmlspecialchars($pconfig['radiusserver2acctport']);?>">
-                      <br>
+                      <br />
                       <?=gettext("Enter the IP address, RADIUS port, and RADIUS accounting port of the RADIUS server"); ?>.</td>
                 </tr>
                 <tr> 
                   <td width="22%" valign="top" class="vncell"><?=gettext("Secondary RADIUS shared secret"); ?></td>
                   <td width="78%" valign="top" class="vtable">
                       <input name="radiussecret2" type="password" class="formfld pwd" id="radiussecret2" size="20" value="<?=htmlspecialchars($pconfig['radiussecret2']);?>">
-                      <br>
+                      <br />
                       <?=gettext("Enter the shared secret that will be used to authenticate " .
                       "to the secondary RADIUS server"); ?>.</td>
                 </tr>
@@ -465,7 +465,7 @@ function enable_change(enable_over) {
                   <td width="22%" valign="middle">&nbsp;</td>
                   <td width="78%" class="vtable"> 
                     <input name="req128" type="checkbox" id="req128" value="yes" <?php if ($pconfig['req128']) echo "checked"; ?>> 
-                    <strong><?=gettext("Require 128-bit encryption"); ?></strong><br>
+                    <strong><?=gettext("Require 128-bit encryption"); ?></strong><br />
                     <?=gettext("When set, only 128-bit encryption will be accepted. Otherwise " .
                     "40-bit and 56-bit encryption will be accepted as well. Note that " .
                     "encryption will always be forced on PPTP connections (i.e. " .
@@ -479,7 +479,7 @@ function enable_change(enable_over) {
                 </tr>
                 <tr> 
                   <td width="22%" valign="top">&nbsp;</td>
-                  <td width="78%"><span class="vexpl"><span class="red"><strong><?=gettext("Note");?>:<br>
+                  <td width="78%"><span class="vexpl"><span class="red"><strong><?=gettext("Note");?>:<br />
                     </strong></span><?=gettext("don't forget to ");?><a href="firewall_rules.php?if=pptp"><?=gettext("add a firewall rule"); ?></a> <?=gettext("to permit ". 
                     "traffic from PPTP clients");?>!</span></td>
                  </tr>
@@ -489,7 +489,7 @@ function enable_change(enable_over) {
 	</tr>
 </table>
 </form>
-<script language="JavaScript">
+<script type="text/javascript">
 <!--
 enable_change(false);
 //-->

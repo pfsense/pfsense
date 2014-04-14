@@ -53,8 +53,9 @@ require("guiconfig.inc");
 // start admin user code
 $pgtitle = array(gettext("System"),gettext("User Manager"));
 
-$id = $_GET['id'];
-if (isset($_POST['id']))
+if (is_numericint($_GET['id']))
+	$id = $_GET['id'];
+if (isset($_POST['id']) && is_numericint($_POST['id']))
 	$id = $_POST['id'];
 
 if (!is_array($config['system']['user']))
@@ -89,7 +90,7 @@ if ($_GET['act'] == "deluser") {
 	unset($a_user[$id]);
 	write_config();
 	$savemsg = gettext("User")." {$userdeleted} ".
-				gettext("successfully deleted")."<br/>";
+				gettext("successfully deleted")."<br />";
 }
 else if ($_GET['act'] == "delpriv") {
 
@@ -104,7 +105,7 @@ else if ($_GET['act'] == "delpriv") {
 	write_config();
 	$_GET['act'] = "edit";
 	$savemsg = gettext("Privilege")." {$privdeleted} ".
-				gettext("successfully deleted")."<br/>";
+				gettext("successfully deleted")."<br />";
 }
 else if ($_GET['act'] == "expcert") {
 
@@ -157,7 +158,7 @@ else if ($_GET['act'] == "delcert") {
 	write_config();
 	$_GET['act'] = "edit";
 	$savemsg = gettext("Certificate")." {$certdeleted} ".
-				gettext("association removed.")."<br/>";
+				gettext("association removed.")."<br />";
 }
 else if ($_GET['act'] == "new") {
 	/*
@@ -351,7 +352,7 @@ include("head.inc");
 <link rel="stylesheet" type="text/css" href="/javascript/jquery-ui-timepicker-addon/css/jquery-ui-timepicker-addon.css" />
 <link rel="stylesheet" type="text/css" href="/javascript/jquery/jquery-ui.custom.css" />
 
-<script>
+<script type="text/javascript">
 	jQuery(function() {
 		jQuery( "#expires" ).datepicker( { dateFormat: 'mm/dd/yy', changeYear: true, yearRange: "+0:+100" } );
 	});
@@ -497,7 +498,7 @@ function sshkeyClicked(obj) {
 							<td width="22%" valign="top" class="vncell"><?=gettext("Full name");?></td>
 							<td width="78%" class="vtable">
 								<input name="descr" type="text" class="formfld unknown" id="descr" size="20" value="<?=htmlspecialchars($pconfig['descr']);?>" <?=$ro;?> />
-								<br/>
+								<br />
 								<?=gettext("User's full name, for your own information only");?>
 							</td>
 						</tr>
@@ -505,7 +506,7 @@ function sshkeyClicked(obj) {
 							<td width="22%" valign="top" class="vncell"><?=gettext("Expiration date"); ?></td>
 							<td width="78%" class="vtable">
 								<input name="expires" type="text" class="formfld unknown" id="expires" size="10" value="<?=htmlspecialchars($pconfig['expires']);?>" />
-								<br/>
+								<br />
 								<span class="vexpl"><?=gettext("Leave blank if the account shouldn't expire, otherwise enter the expiration date in the following format: mm/dd/yyyy"); ?></span></td>
 						</tr>
 						<tr>
@@ -514,8 +515,8 @@ function sshkeyClicked(obj) {
 								<table class="tabcont" width="100%" border="0" cellpadding="0" cellspacing="0" summary="group membership">
 									<tr>
 										<td align="center" width="50%">
-											<strong><?=gettext("Not Member Of"); ?></strong><br/>
-											<br/>
+											<strong><?=gettext("Not Member Of"); ?></strong><br />
+											<br />
 											<select size="10" style="width: 75%" name="notgroups[]" class="formselect" id="notgroups" onchange="clear_selected('groups')" multiple="multiple">
 												<?php
 													foreach ($config['system']['group'] as $group):
@@ -529,21 +530,21 @@ function sshkeyClicked(obj) {
 												</option>
 												<?php endforeach; ?>
 											</select>
-											<br/>
+											<br />
 										</td>
 										<td>
-											<br/>
+											<br />
 											<a href="javascript:move_selected('notgroups','groups')">
 												<img src="/themes/<?= $g['theme'];?>/images/icons/icon_right.gif" title="<?=gettext("Add Groups"); ?>" alt="<?=gettext("Add Groups"); ?>" width="17" height="17" border="0" />
 											</a>
-											<br/><br/>
+											<br /><br />
 											<a href="javascript:move_selected('groups','notgroups')">
 												<img src="/themes/<?= $g['theme'];?>/images/icons/icon_left.gif" title="<?=gettext("Remove Groups"); ?>" alt="<?=gettext("Remove Groups"); ?>" width="17" height="17" border="0" />
 											</a>
 										</td>
 										<td align="center" width="50%">
-											<strong><?=gettext("Member Of"); ?></strong><br/>
-											<br/>
+											<strong><?=gettext("Member Of"); ?></strong><br />
+											<br />
 											<select size="10" style="width: 75%" name="groups[]" class="formselect" id="groups" onchange="clear_selected('nogroups')" multiple="multiple">
 												<?php
 												if (is_array($pconfig['groups'])) {
@@ -559,7 +560,7 @@ function sshkeyClicked(obj) {
 												<?php endforeach;
 												} ?>
 											</select>
-											<br/>
+											<br />
 										</td>
 									</tr>
 								</table>
@@ -759,7 +760,7 @@ function sshkeyClicked(obj) {
 							<td width="22%" valign="top" class="vncell"><?=gettext("Authorized keys");?></td>
 							<td width="78%" class="vtable">
 								<textarea name="authorizedkeys" cols="65" rows="7" id="authorizedkeys" class="formfld_cert" wrap="off"><?=htmlspecialchars($pconfig['authorizedkeys']);?></textarea>
-								<br/>
+								<br />
 								<?=gettext("Paste an authorized keys file here.");?>
 							</td>
 						</tr>
@@ -774,7 +775,7 @@ function sshkeyClicked(obj) {
 							<td width="78%">
 								<input id="submit" name="save" type="submit" class="formbtn" value="<?=gettext("Save");?>" />
 								<?php if (isset($id) && $a_user[$id]): ?>
-								<input name="id" type="hidden" value="<?=$id;?>" />
+								<input name="id" type="hidden" value="<?=htmlspecialchars($id);?>" />
 								<?php endif;?>
 							</td>
 						</tr>
@@ -809,7 +810,7 @@ function sshkeyClicked(obj) {
 									"the webConfigurator can be assigned directly or inherited from group memberships. " .
 									"An icon that appears grey indicates that it is a system defined object. " .
 									"Some system object properties can be modified but they cannot be deleted."); ?>
-									<br/><br/>
+									<br /><br />
 									<?=gettext("Accounts created here are also used for other parts of the system " .
 									"such as OpenVPN, IPsec, and Captive Portal.");?>
 								</p>

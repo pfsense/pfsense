@@ -265,11 +265,11 @@ include("head.inc");
 		echo ">{$ifacename}</option>\n";
 	} ?>
 					</select>
-					<br/>
-					<br/><?php echo gettext("Interfaces without an IP address will not be shown."); ?>
-					<br/>
-					<br/><?php echo gettext("Selecting no interfaces will listen on all interfaces with a wildcard."); ?>
-					<br/><?php echo gettext("Selecting all interfaces will explicitly listen on only the interfaces/IPs specified."); ?>
+					<br />
+					<br /><?php echo gettext("Interfaces without an IP address will not be shown."); ?>
+					<br />
+					<br /><?php echo gettext("Selecting no interfaces will listen on all interfaces with a wildcard."); ?>
+					<br /><?php echo gettext("Selecting all interfaces will explicitly listen on only the interfaces/IPs specified."); ?>
 				</td>
 			</tr>
 			<tr>
@@ -292,24 +292,24 @@ include("head.inc");
 						echo '>&nbsp;prefer&emsp;';
 						echo "\n<input name=\"servselect{$i}\" class=\"formcheckbox\" id=\"servselect{$i}\" OnClick=\"CheckOffOther('servselect{$i}', 'servprefer{$i}')\" type=\"checkbox\"";
 						if (substr_count($config['ntpd']['noselect'], $timeservers[$i])) echo ' checked';
-						echo ">&nbsp;noselect\n<br/>\n</div>\n";
+						echo ">&nbsp;noselect\n<br />\n</div>\n";
 					}
 					?>
 					<div id="addserver">
 					<img src="/themes/<?= $g['theme']; ?>/images/icons/icon_plus.gif" width="17" height="17" border="0" title="<?php echo gettext("Add another Time server");?>" OnClick="NewTimeServer(<?php echo $j;?>)">
 					</div>
-					<br/>
+					<br />
 					<?php echo gettext('For best results three to five servers should be configured here.'); ?>
-					<br/>
+					<br />
 					<?php echo gettext('The <i>prefer</i> option indicates that NTP should favor the use of this server more than all others.'); ?>
-					<br/>
+					<br />
 					<?php echo gettext('The <i>noselect</i> option indicates that NTP should not use this server for time, but stats for this server will be collected and displayed.'); ?>
 				</td>
 			</tr>
 			<tr>
 				<td width="22%" valign="top" class="vncellreq">Orphan mode</td>
 				<td width="78%" class="vtable">
-					<input name="ntporphan" type="text" class="formfld unknown" id="ntporphan" min="1" max="16" size="20" value="<?=htmlspecialchars($pconfig['orphan']);?>"><?php echo gettext("(0-15)");?><br>
+					<input name="ntporphan" type="text" class="formfld unknown" id="ntporphan" min="1" max="16" size="20" value="<?=htmlspecialchars($pconfig['orphan']);?>"><?php echo gettext("(0-15)");?><br />
 					<?php echo gettext("Orphan mode allows the system clock to be used when no other clocks are available. The number here specifies the stratum reported during orphan mode and should normally be set to a number high enough to insure that any other servers available to clients are preferred over this server. (default: 12)."); ?>
 				</td>
 			</tr>
@@ -324,10 +324,10 @@ include("head.inc");
 				<td width="22%" valign="top" class="vncellreq">Syslog logging</td>
 				<td width="78%" class="vtable">
 					<?php echo gettext("These options enable additional messages from NTP to be written to the System Log");?> (<a href="diag_logs_ntpd.php"><?php echo gettext("Status > System Logs > NTP"); ?></a>).
-					<br/><br/>
+					<br /><br />
 					<input name="logpeer" type="checkbox" class="formcheckbox" id="logpeer"<?php if($pconfig['logpeer']) echo ' checked'; ?>>
 					<?php echo gettext("Enable logging of peer messages (default: disabled)."); ?>
-					<br/>
+					<br />
 					<input name="logsys" type="checkbox" class="formcheckbox" id="logsys"<?php if($pconfig['logsys']) echo ' checked'; ?>>
 					<?php echo gettext("Enable logging of system messages (default: disabled)."); ?>
 				</td>
@@ -336,17 +336,17 @@ include("head.inc");
 				<td width="22%" valign="top" class="vncellreq">Statistics logging</td>
 				<td width="78%" class="vtable">
 					<div id="showstatisticsbox">
-					<input type="button" onClick="show_advanced('showstatisticsbox', 'showstatistics')" value="<?=gettext("Advanced");?>"></input> - <?=gettext("Show statistics logging options");?></a>
+					<input type="button" onClick="show_advanced('showstatisticsbox', 'showstatistics')" value="<?=gettext("Advanced");?>" /> - <?=gettext("Show statistics logging options");?></a>
 					</div>
 					<div id="showstatistics" style="display:none">
 					<strong><?php echo gettext("Warning: ")?></strong><?php echo gettext("these options will create persistant daily log files in /var/log/ntp."); ?>
-					<br/><br/>
+					<br /><br />
 					<input name="clockstats" type="checkbox" class="formcheckbox" id="clockstats"<?php if($pconfig['clockstats']) echo ' checked'; ?>>
 					<?php echo gettext("Enable logging of reference clock statistics (default: disabled)."); ?>
-					<br/>
+					<br />
 					<input name="loopstats" type="checkbox" class="formcheckbox" id="loopstats"<?php if($pconfig['loopstats']) echo ' checked'; ?>>
 					<?php echo gettext("Enable logging of clock discipline statistics (default: disabled)."); ?>
-					<br/>
+					<br />
 					<input name="peerstats" type="checkbox" class="formcheckbox" id="peerstats"<?php if($pconfig['peerstats']) echo ' checked'; ?>>
 					<?php echo gettext("Enable logging of NTP peer statistics (default: disabled)."); ?>
 					</div>
@@ -356,26 +356,26 @@ include("head.inc");
 				<td width="22%" valign="top" class="vncellreq">Access restrictions</td>
 				<td width="78%" class="vtable">
 					<div id="showrestrictbox">
-					<input type="button" onClick="show_advanced('showrestrictbox', 'showrestrict')" value="<?=gettext("Advanced");?>"></input> - <?=gettext("Show access restriction options");?></a>
+					<input type="button" onClick="show_advanced('showrestrictbox', 'showrestrict')" value="<?=gettext("Advanced");?>" /> - <?=gettext("Show access restriction options");?></a>
 					</div>
 					<div id="showrestrict" style="display:none">
 					<?php echo gettext("these options control access to NTP from the WAN."); ?>
-					<br/><br/>
+					<br /><br />
 					<input name="kod" type="checkbox" class="formcheckbox" id="kod"<?php if(!$pconfig['kod']) echo ' checked'; ?>>
 					<?php echo gettext("Enable Kiss-o'-death packets (default: enabled)."); ?>
-					<br/>
+					<br />
 					<input name="nomodify" type="checkbox" class="formcheckbox" id="nomodify"<?php if(!$pconfig['nomodify']) echo ' checked'; ?>>
 					<?php echo gettext("Deny state modifications (i.e. run time configuration) by ntpq and ntpdc (default: enabled)."); ?>
-					<br/>
+					<br />
 					<input name="noquery" type="checkbox" class="formcheckbox" id="noquery"<?php if($pconfig['noquery']) echo ' checked'; ?>>
 					<?php echo gettext("Disable ntpq and ntpdc queries (default: disabled)."); ?>
-					<br/>
+					<br />
 					<input name="noserve" type="checkbox" class="formcheckbox" id="noserve"<?php if($pconfig['noserve']) echo ' checked'; ?>>
 					<?php echo gettext("Disable all except ntpq and ntpdc queries (default: disabled)."); ?>
-					<br/>
+					<br />
 					<input name="nopeer" type="checkbox" class="formcheckbox" id="nopeer"<?php if(!$pconfig['nopeer']) echo ' checked'; ?>>
 					<?php echo gettext("Deny packets that attempt a peer association (default: enabled)."); ?>
-					<br/>
+					<br />
 					<input name="notrap" type="checkbox" class="formcheckbox" id="notrap"<?php if(!$pconfig['notrap']) echo ' checked'; ?>>
 					<?php echo gettext("Deny mode 6 control message trap service (default: enabled)."); ?>
 					</div>
@@ -385,14 +385,14 @@ include("head.inc");
 				<td width="22%" valign="top" class="vncellreq">Leap seconds</td>
 				<td width="78%" class="vtable">
 					<div id="showleapsecbox">
-					<input type="button" onClick="show_advanced('showleapsecbox', 'showleapsec')" value="<?=gettext("Advanced");?>"></input> - <?=gettext("Show Leap second configuration");?></a>
+					<input type="button" onClick="show_advanced('showleapsecbox', 'showleapsec')" value="<?=gettext("Advanced");?>" /> - <?=gettext("Show Leap second configuration");?></a>
 					</div>
 					<div id="showleapsec" style="display:none">
 					<?php echo gettext("A leap second file allows NTP to advertize an upcoming leap second addition or subtraction.");?>
 					<?php echo gettext("Normally this is only useful if this server is a stratum 1 time server.");?>
-					<br/><br/>
+					<br /><br />
 					<?php echo gettext("Enter Leap second configuration as text:");?><br />
-					<textarea name="leaptxt" class="formpre" id="leaptxt" cols="65" rows="7"><?php $text = base64_decode(chunk_split($pconfig['leapsec'])); echo $text;?></textarea><br/>
+					<textarea name="leaptxt" class="formpre" id="leaptxt" cols="65" rows="7"><?php $text = base64_decode(chunk_split($pconfig['leapsec'])); echo $text;?></textarea><br />
 					<strong><?php echo gettext("Or");?></strong>, <?php echo gettext("select a file to upload:");?>
 					<input type="file" name="leapfile" class="formfld file" id="leapfile">
 					</div>

@@ -3,7 +3,7 @@
 	services_dhcpv6_relay.php
 
 	Copyright (C) 2003-2004 Justin Ellison <justin@techadvise.com>.
-	Copyright (C) 2010 	Ermal Luçi
+	Copyright (C) 2010 	Ermal LuÃ§i
 	Copyright (C) 2010 	Seth Mos
 	All rights reserved.
 
@@ -98,14 +98,15 @@ if ($_POST) {
 	}
 }
 
+$closehead = false;
 $pgtitle = array(gettext("Services"),gettext("DHCPv6 Relay"));
 $shortcut_section = "dhcp6";
 include("head.inc");
 
 ?>
 
-<script language="JavaScript">
-<!--
+<script type="text/javascript">
+//<![CDATA[
 function enable_change(enable_over) {
 	if (document.iform.enable.checked || enable_over) {
 		document.iform.server.disabled = 0;
@@ -117,9 +118,9 @@ function enable_change(enable_over) {
 		document.iform.agentoption.disabled = 1;
 	}
 }
-//-->
+//]]>
 </script>
-
+</head>
 
 <body link="#0000CC" vlink="#0000CC" alink="#0000CC">
 <?php include("fbegin.inc"); ?>
@@ -127,16 +128,16 @@ function enable_change(enable_over) {
 <?php if ($input_errors) print_input_errors($input_errors); ?>
 <?php if ($savemsg) print_info_box($savemsg); ?>
 
-<table width="100%" border="0" cellpadding="0" cellspacing="0">
+<table width="100%" border="0" cellpadding="0" cellspacing="0" summary="dhcpv6 relay">
   <tr>
     <td>
 	<div id="mainarea">
-              <table class="tabcont" width="100%" border="0" cellpadding="6" cellspacing="0">
+              <table class="tabcont" width="100%" border="0" cellpadding="6" cellspacing="0" summary="main area">
 		<tr>
 <?php 
 	if ($dhcpd_enabled) {
 		echo "<td>DHCPv6 Server is currently enabled.  Cannot enable the DHCPv6 Relay service while the DHCPv6 Server is enabled on any interface.";
-			echo "</td></tr></table></div></td></tr></table></body>";
+			echo "</td></tr></table></div></td></tr></table></form></body>";
 			echo "</html>";
 			include("fend.inc"); 
 			exit;
@@ -148,21 +149,21 @@ function enable_change(enable_over) {
 		<tr>
                         <td width="22%" valign="top" class="vncellreq">Enable</td>
                         <td width="78%" class="vtable">
-			<input name="enable" type="checkbox" value="yes" <?php if ($pconfig['enable']) echo "checked"; ?> onClick="enable_change(false)">
+			<input name="enable" type="checkbox" value="yes" <?php if ($pconfig['enable']) echo "checked=\"checked\""; ?> onclick="enable_change(false)" />
                           <strong><?php printf(gettext("Enable DHCPv6 relay on interface"));?></strong>
 			</td>
 		</tr>
 		<tr>
                         <td width="22%" valign="top" class="vncellreq">Interface(s)</td>
                         <td width="78%" class="vtable">
-				<select id="interface" name="interface[]" multiple="true" class="formselect" size="3">
+				<select id="interface" name="interface[]" multiple="multiple" class="formselect" size="3">
 			<?php
                                 foreach ($iflist as $ifent => $ifdesc) {
 					if (!is_ipaddrv6(get_interface_ipv6($ifent)))
 						continue;
-					echo "<option value='{$ifent}'";
+					echo "<option value=\"{$ifent}\"";
 					if (in_array($ifent, $pconfig['interface']))
-						echo "selected";
+						echo " selected=\"selected\"";
 					echo ">{$ifdesc}</option>\n";
 				}
 			?>
@@ -173,22 +174,22 @@ function enable_change(enable_over) {
 		<tr>
 	              <td width="22%" valign="top" class="vtable">&nbsp;</td>
                       <td width="78%" class="vtable">
-<input name="agentoption" type="checkbox" value="yes" <?php if ($pconfig['agentoption']) echo "checked"; ?>>
-                      <strong><?=gettext("Append circuit ID and agent ID to requests"); ?></strong><br>
+<input name="agentoption" type="checkbox" value="yes" <?php if ($pconfig['agentoption']) echo "checked=\"checked\""; ?> />
+                      <strong><?=gettext("Append circuit ID and agent ID to requests"); ?></strong><br />
                       <?php printf(gettext("If this is checked, the DHCPv6 relay will append the circuit ID (%s interface number) and the agent ID to the DHCPv6 request."), $g['product_name']); ?></td>
 		</tr>
 		<tr>
                         <td width="22%" valign="top" class="vncell"><?=gettext("Destination server");?></td>
                         <td width="78%" class="vtable">
-                          <input name="server" type="text" class="formfld unknown" id="server" size="20" value="<?=htmlspecialchars($pconfig['server']);?>">
-                          <br>
+                          <input name="server" type="text" class="formfld unknown" id="server" size="20" value="<?=htmlspecialchars($pconfig['server']);?>" />
+                          <br />
 			  <?=gettext("This is the IPv6 address of the server to which DHCPv6 requests are relayed. You can enter multiple server IPv6 addresses, separated by commas. ");?>
                         </td>
 		</tr>
 		<tr>
                         <td width="22%" valign="top">&nbsp;</td>
                         <td width="78%">
-                          <input name="Submit" type="submit" class="formbtn" value="<?=gettext("Save");?>" onclick="enable_change(true)">
+                          <input name="Submit" type="submit" class="formbtn" value="<?=gettext("Save");?>" onclick="enable_change(true)" />
                         </td>
 		</tr>
 	</table>
@@ -197,10 +198,10 @@ function enable_change(enable_over) {
   </tr>
 </table>
 </form>
-<script language="JavaScript">
-<!--
+<script type="text/javascript">
+//<![CDATA[
 enable_change(false);
-//-->
+//]]>
 </script>
 <?php include("fend.inc"); ?>
 </body>

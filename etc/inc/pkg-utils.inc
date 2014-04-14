@@ -188,7 +188,7 @@ function get_pkg_internal_name($package) {
 
 /****f* pkg-utils/get_pkg_info
  * NAME
- *   get_pkg_info - Retrieve package information from pfsense.com.
+ *   get_pkg_info - Retrieve package information from package server.
  * INPUTS
  *   $pkgs - 'all' to retrieve all packages, an array containing package names otherwise
  *   $info - 'all' to retrieve all information, an array containing keys otherwise
@@ -501,7 +501,7 @@ function pkg_fetch_recursive($pkgname, $filename, $dependlevel = 0, $base_url = 
 	$pkgs = explode(" ", $filename);
 	foreach($pkgs as $filename) {
 		$filename = trim($filename);
-		if (($g['platform'] == "nanobsd") || ($g['platform'] == "embedded")) {
+		if ($g['platform'] == "nanobsd") {
 			$pkgtmpdir = "/usr/bin/env PKG_TMPDIR=/root/ ";
 			$pkgstagingdir = "/root/tmp";
 			if (!is_dir($pkgstagingdir))
@@ -626,7 +626,7 @@ function install_package($package, $pkg_info = "", $force_install = false) {
 			else {
 				$static_output .= gettext("failed!\n\nInstallation aborted.\n");
 				update_output_window($static_output);
-				echo "<br>Show <a href=\"pkg_mgr_install.php?showlog=true\">install log</a></center>";
+				echo "<br />Show <a href=\"pkg_mgr_install.php?showlog=true\">install log</a></center>";
 			}
 			conf_mount_ro();
 			return -1;
@@ -700,8 +700,8 @@ function install_package_xml($pkg) {
 		$static_output .= sprintf(gettext("The %s package is not installed.%sInstallation aborted."), $pkg, "\n\n");
 		update_output_window($static_output);
 		if($pkg_interface <> "console") {
-			echo "\n<script language=\"JavaScript\">document.progressbar.style.visibility='hidden';</script>";
-			echo "\n<script language=\"JavaScript\">document.progholder.style.visibility='hidden';</script>";
+			echo "\n<script type=\"text/javascript\">document.progressbar.style.visibility='hidden';</script>";
+			echo "\n<script type=\"text/javascript\">document.progholder.style.visibility='hidden';</script>";
 		}
 		sleep(1);
 		return false;
@@ -727,8 +727,8 @@ function install_package_xml($pkg) {
 					update_output_window($static_output);
 					pkg_debug(gettext("Package WAS NOT installed properly.") . "\n");
 					if($pkg_interface <> "console") {
-						echo "\n<script language=\"JavaScript\">document.progressbar.style.visibility='hidden';</script>";
-						echo "\n<script language=\"JavaScript\">document.progholder.style.visibility='hidden';</script>";
+						echo "\n<script type=\"text/javascript\">document.progressbar.style.visibility='hidden';</script>";
+						echo "\n<script type=\"text/javascript\">document.progholder.style.visibility='hidden';</script>";
 					}
 					sleep(1);
 					return false;
@@ -924,8 +924,8 @@ function install_package_xml($pkg) {
 		update_output_window($static_output);
 		pkg_debug(gettext("Unable to load package configuration. Installation aborted.") ."\n");
 		if($pkg_interface <> "console") {
-			echo "\n<script language=\"JavaScript\">document.progressbar.style.visibility='hidden';</script>";
-			echo "\n<script language=\"JavaScript\">document.progholder.style.visibility='hidden';</script>";
+			echo "\n<script type=\"text/javascript\">document.progressbar.style.visibility='hidden';</script>";
+			echo "\n<script type=\"text/javascript\">document.progholder.style.visibility='hidden';</script>";
 		}
 		sleep(1);
 		return false;
@@ -990,8 +990,8 @@ function delete_package_xml($pkg) {
 		$static_output .= sprintf(gettext("The %s package is not installed.%sDeletion aborted."), $pkg, "\n\n");
 		update_output_window($static_output);
 		if($pkg_interface <> "console") {
-			echo "\n<script language=\"JavaScript\">document.progressbar.style.visibility='hidden';</script>";
-			echo "\n<script language=\"JavaScript\">document.progholder.style.visibility='hidden';</script>";
+			echo "\n<script type=\"text/javascript\">document.progressbar.style.visibility='hidden';</script>";
+			echo "\n<script type=\"text/javascript\">document.progholder.style.visibility='hidden';</script>";
 		}
 		ob_flush();
 		sleep(1);

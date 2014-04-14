@@ -209,8 +209,8 @@ include("head.inc"); ?>
 </table>
 <?php if (is_array($server['routes']) && count($server['routes'])): ?>
 <div id="shroutebut-<?= $i ?>">
-<input type="button" onClick="show_routes('tabroute-<?= $i ?>','shroutebut-<?= $i ?>')" value="<?php echo gettext("Show Routing Table"); ?>"></input> - <?= gettext("Display OpenVPN's internal routing table for this server.") ?></a>
-<br/><br/>
+<input type="button" onClick="show_routes('tabroute-<?= $i ?>','shroutebut-<?= $i ?>')" value="<?php echo gettext("Show Routing Table"); ?>" /> - <?= gettext("Display OpenVPN's internal routing table for this server.") ?></a>
+<br /><br />
 </div>
 <table style="display: none; padding-top:0px; padding-bottom:0px; padding-left:0px; padding-right:0px" width="100%" border="0" cellpadding="0" cellspacing="0" id="tabroute-<?= $i ?>">
 	<tr>
@@ -255,10 +255,10 @@ include("head.inc"); ?>
 	</tr>
 </table>
 <?php endif; ?>
-<br/>
+<br />
 <?php $i++; ?>
 <?php endforeach; ?>
-<br/>
+<br />
 
 <?php if (!empty($sk_servers)) { ?>
 <table style="padding-top:0px; padding-bottom:0px; padding-left:0px; padding-right:0px" width="100%" border="0" cellpadding="0" cellspacing="0">
@@ -322,7 +322,7 @@ include("head.inc"); ?>
 
 <?php
 } ?>
-<br>
+<br />
 <?php if (!empty($clients)) { ?>
 <table style="padding-top:0px; padding-bottom:0px; padding-left:0px; padding-right:0px" width="100%" border="0" cellpadding="0" cellspacing="0">
 	<tr>
@@ -387,7 +387,7 @@ include("head.inc"); ?>
 }
 
 if ($DisplayNote) {
-	echo "<br/><b>" . gettext("NOTE") . ":</b> " . gettext("If you have custom options that override the management features of OpenVPN on a client or server, they will cause that OpenVPN instance to not work correctly with this status page.");
+	echo "<br /><b>" . gettext("NOTE") . ":</b> " . gettext("If you have custom options that override the management features of OpenVPN on a client or server, they will cause that OpenVPN instance to not work correctly with this status page.");
 }
 
 if ((empty($clients)) && (empty($servers)) && (empty($sk_servers))) {

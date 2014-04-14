@@ -2,7 +2,7 @@
 /*
         $Id$
         Copyright 2007 Scott Dale
-        Part of pfSense widgets (www.pfsense.com)
+        Part of pfSense widgets (https://www.pfsense.org)
         originally based on m0n0wall (http://m0n0.ch/wall)
 
         Copyright (C) 2004-2005 T. Lechat <dev@lechat.org>, Manuel Kasper <mk@neon1.net>
@@ -95,7 +95,7 @@ require_once("/usr/local/www/widgets/include/interfaces.inc");
 						<tr>
 							<td class="vncellt" width="100%">
 								<div id="<?php echo $ifname;?>-ip" style="display:inline"><?=htmlspecialchars($ifinfo['ipaddr']);?> </div>
-								<br/>
+								<br />
 								<div id="<?php echo $ifname;?>-ipv6" style="display:inline"><?=htmlspecialchars($ifinfo['ipaddrv6']);?> </div>
 							</td>
 						</tr>

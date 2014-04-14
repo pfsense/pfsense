@@ -50,13 +50,13 @@ if (!is_array($config['staticroutes']['route']))
 $a_routes = &$config['staticroutes']['route'];
 $a_gateways = return_gateways_array(true, true);
 
-$id = $_GET['id'];
-if (isset($_POST['id']))
+if (is_numericint($_GET['id']))
+	$id = $_GET['id'];
+if (isset($_POST['id']) && is_numericint($_POST['id']))
 	$id = $_POST['id'];
 
-if (isset($_GET['dup'])) {
+if (isset($_GET['dup']) && is_numericint($_GET['dup']))
 	$id = $_GET['dup'];
-}
 
 if (isset($id) && $a_routes[$id]) {
 	list($pconfig['network'],$pconfig['network_subnet']) =
@@ -66,7 +66,7 @@ if (isset($id) && $a_routes[$id]) {
 	$pconfig['disabled'] = isset($a_routes[$id]['disabled']);
 }
 
-if (isset($_GET['dup']))
+if (isset($_GET['dup']) && is_numericint($_GET['dup']))
 	unset($id);
 
 if ($_POST) {
@@ -234,7 +234,7 @@ include("head.inc");
 						</option>
 					<?php endfor; ?>
 					</select>
-					<br/><span class="vexpl"><?=gettext("Destination network for this static route"); ?></span>
+					<br /><span class="vexpl"><?=gettext("Destination network for this static route"); ?></span>
 				</td>
 			</tr>
 			<tr>
@@ -320,7 +320,7 @@ include("head.inc");
 				<td width="22%" valign="top" class="vncell"><?=gettext("Description"); ?></td>
 				<td width="78%" class="vtable">
 					<input name="descr" type="text" class="formfld unknown" id="descr" size="40" value="<?=htmlspecialchars($pconfig['descr']);?>" />
-					<br/><span class="vexpl"><?=gettext("You may enter a description here for your reference (not parsed)."); ?></span>
+					<br /><span class="vexpl"><?=gettext("You may enter a description here for your reference (not parsed)."); ?></span>
 				</td>
 			</tr>
 			<tr>

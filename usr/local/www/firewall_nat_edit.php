@@ -56,16 +56,17 @@ if (!is_array($config['nat']['rule'])) {
 }
 $a_nat = &$config['nat']['rule'];
 
-$id = $_GET['id'];
-if (isset($_POST['id']))
+if (is_numericint($_GET['id']))
+	$id = $_GET['id'];
+if (isset($_POST['id']) && is_numericint($_POST['id']))
 	$id = $_POST['id'];
 
-$after = $_GET['after'];
-
-if (isset($_POST['after']))
+if (is_numericint($_GET['after']))
+	$after = $_GET['after'];
+if (isset($_POST['after']) && is_numericint($_GET['after']))
 	$after = $_POST['after'];
 
-if (isset($_GET['dup'])) {
+if (isset($_GET['dup']) && is_numericint($_GET['dup'])) {
         $id = $_GET['dup'];
         $after = $_GET['dup'];
 }
@@ -105,7 +106,7 @@ if (isset($id) && $a_nat[$id]) {
 	$pconfig['srcendport'] = "any";
 }
 
-if (isset($_GET['dup']))
+if (isset($_GET['dup']) && is_numericint($_GET['dup']))
 	unset($id);
 
 /*  run through $_POST items encoding HTML entties so that the user
@@ -483,7 +484,7 @@ include("fbegin.inc"); ?>
                   <td width="78%" class="vtable">
                     <input type="checkbox" name="nordr" id="nordr" onclick="nordr_change();" <?php if($pconfig['nordr']) echo "checked=\"checked\""; ?> />
                     <span class="vexpl"><?=gettext("Enabling this option will disable redirection for traffic matching this rule."); ?>
-                    <br/><?=gettext("Hint: this option is rarely needed, don't use this unless you know what you're doing."); ?></span>
+                    <br /><?=gettext("Hint: this option is rarely needed, don't use this unless you know what you're doing."); ?></span>
                   </td>
                 </tr>
 		<tr>
@@ -524,8 +525,8 @@ include("fbegin.inc"); ?>
 						<?=htmlspecialchars($ifacename);?>
 						</option>
 						<?php endforeach; ?>
-					</select><br/>
-                     <span class="vexpl"><?=gettext("Choose which interface this rule applies to."); ?><br/>
+					</select><br />
+                     <span class="vexpl"><?=gettext("Choose which interface this rule applies to."); ?><br />
                      <?=gettext("Hint: in most cases, you'll want to use WAN here."); ?></span></td>
                 </tr>
                 <tr>
@@ -535,8 +536,8 @@ include("fbegin.inc"); ?>
                       <?php $protocols = explode(" ", "TCP UDP TCP/UDP GRE ESP ICMP"); foreach ($protocols as $proto): ?>
                       <option value="<?=strtolower($proto);?>" <?php if (strtolower($proto) == $pconfig['proto']) echo "selected=\"selected\""; ?>><?=htmlspecialchars($proto);?></option>
                       <?php endforeach; ?>
-                    </select> <br/> <span class="vexpl"><?=gettext("Choose which IP protocol " .
-                    "this rule should match."); ?><br/>
+                    </select> <br /> <span class="vexpl"><?=gettext("Choose which IP protocol " .
+                    "this rule should match."); ?><br />
                     <?=gettext("Hint: in most cases, you should specify"); ?> <em><?=gettext("TCP"); ?></em> &nbsp;<?=gettext("here."); ?></span></td>
                 </tr>
 		<tr id="showadvancedboxsrc" name="showadvancedboxsrc">
@@ -631,7 +632,7 @@ include("fbegin.inc"); ?>
 					</tr>
 				</table>
 				<br />
-				<span class="vexpl"><?=gettext("Specify the source port or port range for this rule"); ?>. <b><?=gettext("This is usually"); ?> <em><?=gettext("random"); ?></em> <?=gettext("and almost never equal to the destination port range (and should usually be 'any')"); ?>.</b> <br /> <?=gettext("Hint: you can leave the"); ?> <em>'<?=gettext("to"); ?>'</em> <?=gettext("field empty if you only want to filter a single port."); ?></span><br/>
+				<span class="vexpl"><?=gettext("Specify the source port or port range for this rule"); ?>. <b><?=gettext("This is usually"); ?> <em><?=gettext("random"); ?></em> <?=gettext("and almost never equal to the destination port range (and should usually be 'any')"); ?>.</b> <br /> <?=gettext("Hint: you can leave the"); ?> <em>'<?=gettext("to"); ?>'</em> <?=gettext("field empty if you only want to filter a single port."); ?></span><br />
 			</td>
 		</tr>
 		<tr>
@@ -754,8 +755,8 @@ include("fbegin.inc"); ?>
                   <td width="22%" valign="top" class="vncellreq"><?=gettext("Redirect target IP"); ?></td>
                   <td width="78%" class="vtable">
                     <input autocomplete='off' name="localip" type="text" class="formfldalias" id="localip" size="20" value="<?=htmlspecialchars($pconfig['localip']);?>" />
-                    <br/> <span class="vexpl"><?=gettext("Enter the internal IP address of " .
-                    "the server on which you want to map the ports."); ?><br/>
+                    <br /> <span class="vexpl"><?=gettext("Enter the internal IP address of " .
+                    "the server on which you want to map the ports."); ?><br />
                     <?=gettext("e.g."); ?> <em>192.168.1.12</em></span></td>
                 </tr>
                 <tr name="lprtr" id="lprtr">
@@ -772,24 +773,24 @@ include("fbegin.inc"); ?>
 					  </option>
                       <?php endforeach; ?>
                     </select> <input onchange="check_for_aliases();" autocomplete='off' class="formfldalias" name="localbeginport_cust" id="localbeginport_cust" type="text" size="5" value="<?php if (!$bfound) echo htmlspecialchars($pconfig['localbeginport']); ?>" />
-                    <br/>
+                    <br />
                     <span class="vexpl"><?=gettext("Specify the port on the machine with the " .
                     "IP address entered above. In case of a port range, specify " .
                     "the beginning port of the range (the end port will be calculated " .
-                    "automatically)."); ?><br/>
+                    "automatically)."); ?><br />
                     <?=gettext("Hint: this is usually identical to the 'from' port above"); ?></span></td>
                 </tr>
                 <tr>
                   <td width="22%" valign="top" class="vncell"><?=gettext("Description"); ?></td>
                   <td width="78%" class="vtable">
                     <input name="descr" type="text" class="formfld unknown" id="descr" size="40" value="<?=htmlspecialchars($pconfig['descr']);?>" />
-                    <br/> <span class="vexpl"><?=gettext("You may enter a description here " .
+                    <br /> <span class="vexpl"><?=gettext("You may enter a description here " .
                     "for your reference (not parsed)."); ?></span></td>
                 </tr>
 				<tr>
 					<td width="22%" valign="top" class="vncell"><?=gettext("No XMLRPC Sync"); ?></td>
 					<td width="78%" class="vtable">
-						<input type="checkbox" value="yes" name="nosync"<?php if($pconfig['nosync']) echo " checked=\"checked\""; ?> /><br/>
+						<input type="checkbox" value="yes" name="nosync"<?php if($pconfig['nosync']) echo " checked=\"checked\""; ?> /><br />
 						<?=gettext("Hint: This prevents the rule on Master from automatically syncing to other CARP members. This does NOT prevent the rule from being overwritten on Slave.");?>
 					</td>
 				</tr>
@@ -804,7 +805,7 @@ include("fbegin.inc"); ?>
 						</select>
 					</td>
 				</tr>
-				<?php if (isset($id) && $a_nat[$id] && !isset($_GET['dup'])): ?>
+				<?php if (isset($id) && $a_nat[$id] && (!isset($_GET['dup']) || !is_numericint($_GET['dup']))): ?>
 				<tr name="assoctable" id="assoctable">
 					<td width="22%" valign="top" class="vncell"><?=gettext("Filter rule association"); ?></td>
 					<td width="78%" class="vtable">
@@ -820,7 +821,7 @@ include("fbegin.inc"); ?>
 									echo "<option value=\"{$filter_rule['associated-rule-id']}\"";
 									if ($filter_rule['associated-rule-id']==$pconfig['associated-rule-id']) {
 										echo " selected=\"selected\"";
-										$linkedrule = "<br /><a href=\"firewall_rules_edit.php?id={$filter_id}\">" . gettext("View the filter rule") . "</a><br/>";
+										$linkedrule = "<br /><a href=\"firewall_rules_edit.php?id={$filter_id}\">" . gettext("View the filter rule") . "</a><br />";
 									}
 									echo ">". htmlspecialchars('Rule ' . $filter_rule['descr']) . "</option>\n";
 
@@ -835,7 +836,7 @@ include("fbegin.inc"); ?>
 					</td>
 				</tr>
 				<?php endif; ?>
-                <?php if ((!(isset($id) && $a_nat[$id])) || (isset($_GET['dup']))): ?>
+                <?php if ((!(isset($id) && $a_nat[$id])) || (isset($_GET['dup']) && is_numericint($_GET['dup']))): ?>
                 <tr name="assoctable" id="assoctable">
                   <td width="22%" valign="top" class="vncell"><?=gettext("Filter rule association"); ?></td>
                   <td width="78%" class="vtable">
@@ -845,7 +846,7 @@ include("fbegin.inc"); ?>
 						<option value="add-unassociated"><?=gettext("Add unassociated filter rule"); ?></option>
 						<option value="pass"><?=gettext("Pass"); ?></option>
 					</select>
-					<br/><br/><?=gettext("NOTE: The \"pass\" selection does not work properly with Multi-WAN. It will only work on an interface containing the default gateway.")?>
+					<br /><br /><?=gettext("NOTE: The \"pass\" selection does not work properly with Multi-WAN. It will only work on an interface containing the default gateway.")?>
 				  </td>
                 </tr><?php endif; ?>
 <?php

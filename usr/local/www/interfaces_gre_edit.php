@@ -3,7 +3,7 @@
 /*
 	interfaces_gre_edit.php
 
-	Copyright (C) 2008 Ermal Luçi
+	Copyright (C) 2008 Ermal LuÃ§i
 	All rights reserved.
 
 	Redistribution and use in source and binary forms, with or without
@@ -46,9 +46,9 @@ if (!is_array($config['gres']['gre']))
 
 $a_gres = &$config['gres']['gre'];
 
-
-$id = $_GET['id'];
-if (isset($_POST['id']))
+if (is_numericint($_GET['id']))
+	$id = $_GET['id'];
+if (isset($_POST['id']) && is_numericint($_POST['id']))
 	$id = $_POST['id'];
 
 if (isset($id) && $a_gres[$id]) {
@@ -156,21 +156,21 @@ include("head.inc");
 						}
 		      		?>
                     </select>
-			<br/>
+			<br />
 			<span class="vexpl"><?=gettext("The interface here serves as the local address to be used for the GRE tunnel.");?></span></td>
                 </tr>
 				<tr>
                   <td valign="top" class="vncellreq"><?=gettext("GRE remote address");?></td>
                   <td class="vtable">
                     <input name="remote-addr" type="text" class="formfld unknown" id="remote-addr" size="16" value="<?=htmlspecialchars($pconfig['remote-addr']);?>" />
-                    <br/>
+                    <br />
                     <span class="vexpl"><?=gettext("Peer address where encapsulated GRE packets will be sent ");?></span></td>
 			    </tr>
 				<tr>
                   <td valign="top" class="vncellreq"><?=gettext("GRE tunnel local address ");?></td>
                   <td class="vtable">
                     <input name="tunnel-local-addr" type="text" class="formfld unknown" id="tunnel-local-addr" size="16" value="<?=htmlspecialchars($pconfig['tunnel-local-addr']);?>" />
-                    <br/>
+                    <br />
                     <span class="vexpl"><?=gettext("Local GRE tunnel endpoint");?></span></td>
 			    </tr>
 				<tr>
@@ -187,21 +187,21 @@ include("head.inc");
                                         }
                                         ?>
                     </select>
-                    <br/>
+                    <br />
                     <span class="vexpl"><?=gettext("Remote GRE address endpoint. The subnet part is used for the determining the network that is tunneled.");?></span></td>
 			    </tr>
 				<tr>
                   <td valign="top" class="vncell"><?=gettext("Mobile tunnel");?></td>
                   <td class="vtable">
                     <input name="link0" type="checkbox" id="link0" <?if ($pconfig['link0']) echo "checked=\"checked\"";?> />
-                    <br/>
+                    <br />
                     <span class="vexpl"><?=gettext("Specify which encapsulation method the tunnel should use. ");?></span></td>
 			    </tr>
 				<tr>
                   <td valign="top" class="vncell"><?=gettext("Route search type");?></td>
                   <td class="vtable">
                     <input name="link1" type="checkbox" id="link1" <?if ($pconfig['link1']) echo "checked=\"checked\"";?> />
-                    <br/>
+                    <br />
                     <span class="vexpl">
      <?=gettext("For correct operation, the GRE device needs a route to the destination".
     " that is less specific than the one over the tunnel.  (Basically, there".
@@ -213,14 +213,14 @@ include("head.inc");
                   <td valign="top" class="vncell"><?=gettext("WCCP version");?></td>
                   <td class="vtable">
                     <input name="link2" type="checkbox" id="link2" <?if ($pconfig['link2']) echo "checked=\"checked\"";?> />
-                    <br/>
+                    <br />
                     <span class="vexpl"><?=gettext("Check this box for WCCP encapsulation version 2, or leave unchecked for version 1.");?></span></td>
 			    </tr>
 				<tr>
                   <td width="22%" valign="top" class="vncell"><?=gettext("Description");?></td>
                   <td width="78%" class="vtable">
                     <input name="descr" type="text" class="formfld unknown" id="descr" size="40" value="<?=htmlspecialchars($pconfig['descr']);?>" />
-                    <br/> <span class="vexpl"><?=gettext("You may enter a description here".
+                    <br /> <span class="vexpl"><?=gettext("You may enter a description here".
                     " for your reference (not parsed).");?></span></td>
                 </tr>
                 <tr>

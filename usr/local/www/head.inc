@@ -33,6 +33,7 @@ $pagetitle = gentitle( $pgtitle );
 		<link rel="stylesheet" type="text/css" href="/niftycssCode.css" />
 		<link rel="stylesheet" type="text/css" href="/niftycssprintCode.css" media="print" />
 		<link rel="stylesheet" type="text/css" href="/themes/<?=$g['theme']?>/new_tab_menu.css" media="all" />
+		<link rel="stylesheet" type="text/css" href="javascript/jquery/jquery-ui.custom.css" />
 		<script type="text/javascript" src="/javascript/niftyjsCode.js"></script>
 		<script type="text/javascript" src="/javascript/jquery.js"></script>
 		<script type="text/javascript" src="/javascript/jquery/jquery-ui.custom.min.js"></script>

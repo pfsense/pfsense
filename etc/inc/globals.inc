@@ -2,7 +2,7 @@
 /* $Id$ */
 /*
     globals.inc
-    part of pfSense (www.pfsense.com)
+    part of pfSense (https://www.pfsense.org)
     Copyright (C) 2004-2010 Scott Ullrich
 
     Originally Part of m0n0wall
@@ -62,7 +62,7 @@ $g = array(
 	"product_copyright_url" => "http://www.electricsheepfencing.com",
 	"product_copyright_years" => "2004 - ".date("Y"),
 	"product_website" => "www.pfsense.org",
-	"product_website_footer" => "http://www.pfsense.org/?gui22",
+	"product_website_footer" => "https://www.pfsense.org/?gui22",
 	"product_email" => "coreteam@pfsense.org",
 	"hideplatform" => false,
 	"hidedownloadbackup" => false,
@@ -71,7 +71,7 @@ $g = array(
 	"disablehelpmenu" => false,
 	"disablehelpicon" => false,
 	"disablecrashreporter" => false,
-	"crashreporterurl" => "http://crashreporter.pfsense.org/crash_reporter.php",
+	"crashreporterurl" => "https://crashreporter.pfsense.org/crash_reporter.php",
 	"debug" => false,
 	"latest_config" => "10.7",
 	"nopkg_platforms" => array("cdrom"),
@@ -81,11 +81,11 @@ $g = array(
 	"minimum_nic_count_text" => "*AT LEAST* 1",	
 	"wan_interface_name" => "wan", 
 	"nopccard_platforms" => array("wrap", "net48xx"),
-	"xmlrpcbaseurl" => "www.pfsense.com",
+	"xmlrpcbaseurl" => "https://packages.pfsense.org",
 	"captiveportal_path" => "/usr/local/captiveportal",
 	"captiveportal_element_path" => "/var/db/cpelements",
 	"captiveportal_element_sizelimit" => 1048576,
-	"xmlrpcpath" => "/pfSense/xmlrpc.php",
+	"xmlrpcpath" => "/xmlrpc.php",
 	"embeddedbootupslice" => "/dev/ad0a",
 	"services_dhcp_server_enable" => true,
 	"wireless_regex" => "/^(ndis|wi|ath|an|ral|ural|iwi|wlan|rum|run|bwn|zyd|mwl|bwi|ipw|iwn|malo|uath|upgt|urtw|wpi)/",

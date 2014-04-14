@@ -58,19 +58,19 @@ if (!is_array($config['aliases']['alias']))
 	$config['aliases']['alias'] = array();
 $a_aliases = &$config['aliases']['alias'];
 
-$id = $_GET['id'];
-if (isset($_POST['id'])) {
+if (is_numericint($_GET['id']))
+	$id = $_GET['id'];
+if (isset($_POST['id']) && is_numericint($_POST['id']))
 	$id = $_POST['id'];
-}
 
-$after = $_GET['after'];
-
-if (isset($_POST['after']))
+if (is_numericint($_GET['after']))
+	$after = $_GET['after'];
+if (isset($_POST['after']) && is_numericint($_GET['after']))
 	$after = $_POST['after'];
 
-if (isset($_GET['dup']))  {
-	$id  =  $_GET['dup'];
-	$after  =  $_GET['dup'];
+if (isset($_GET['dup']) && is_numericint($_GET['dup'])) {
+        $id = $_GET['dup'];
+        $after = $_GET['dup'];
 }
 
 if (isset($id) && $a_out[$id]) {
@@ -110,9 +110,8 @@ if (isset($id) && $a_out[$id]) {
 	$pconfig['interface'] = "wan";
 }
 
-if (isset($_GET['dup'])) {
+if (isset($_GET['dup']) && is_numericint($_GET['dup']))
 	unset($id);
-}
 
 if ($_POST) {
 	if ($_POST['destination_type'] == "any") {
@@ -455,7 +454,7 @@ function poolopts_change() {
 			<td width="78%" class="vtable">
 				<input type="checkbox" name="nonat" id="nonat" onclick="nonat_change();" <?php if(isset($pconfig['nonat'])) echo " checked=\"checked\""; ?> />
 				<span class="vexpl"><?=gettext("Enabling this option will disable NAT for traffic matching this rule and stop processing Outbound NAT rules.");?>
-				<br/><?=gettext("Hint: in most cases, you won't use this option.");?></span>
+				<br /><?=gettext("Hint: in most cases, you won't use this option.");?></span>
 			</td>
 		</tr>
 		<tr>
@@ -496,8 +495,8 @@ function poolopts_change() {
 <?php
 					endforeach;
 ?>
-				</select><br/>
-				<span class="vexpl"><?=gettext("Choose which interface this rule applies to.");?><br/>
+				</select><br />
+				<span class="vexpl"><?=gettext("Choose which interface this rule applies to.");?><br />
 					<?=gettext("Hint: in most cases, you'll want to use WAN here.");?>
 				</span>
 			</td>
@@ -514,7 +513,7 @@ function poolopts_change() {
 <?php
 				endforeach;
 ?>
-				</select><br/>
+				</select><br />
 				<span class="vexpl"><?=gettext("Choose which protocol this rule should match.");?><br />
 <?php
 					printf(gettext("Hint: in most cases, you should specify %s any %s here."),"<em>","</em>&nbsp;");
@@ -570,9 +569,9 @@ function poolopts_change() {
 			<td width="22%" valign="top" class="vncellreq"><?=gettext("Destination");?></td>
 			<td width="78%" class="vtable">
 				<input name="destination_not" type="checkbox" id="destination_not" value="yes" <?php if ($pconfig['destination_not']) echo "checked=\"checked\""; ?> />
-				<strong><?=gettext("not");?></strong><br/>
-				<?=gettext("Use this option to invert the sense of the match.");?><br/>
-				<br/>
+				<strong><?=gettext("not");?></strong><br />
+				<?=gettext("Use this option to invert the sense of the match.");?><br />
+				<br />
 				<table border="0" cellspacing="1" cellpadding="1" summary="destination">
 					<tr>
 						<td><?=gettext("Type:");?>&nbsp;&nbsp;</td>
@@ -698,12 +697,12 @@ function poolopts_change() {
 					<tr>
 						<td>&nbsp;</td>
 						<td>
-							<span class="vexpl"><?=gettext("Packets matching this rule will be mapped to the IP address given here.");?><br/>
+							<span class="vexpl"><?=gettext("Packets matching this rule will be mapped to the IP address given here.");?><br />
 								<?=gettext("If you want this rule to apply to another IP address rather than the IP address of the interface chosen above, ".
 								"select it here (you will need to define ");?>
 								<a href="firewall_virtual_ip.php"><?=gettext("Virtual IP");?></a>
 								<?=gettext("addresses on the interface first).");?>
-							</span><br/>
+							</span><br />
 						</td>
 					</tr>
 					<tr id="poolopts_tr">
@@ -732,15 +731,15 @@ function poolopts_change() {
 									<?=htmlspecialchars("Bitmask");?>
 								</option>
 							</select>
-							<br/>
+							<br />
 							<span class="vexpl">
-								<?=gettext("Only Round Robin types work with Host Aliases. Any type can be used with a Subnet.");?><br/>
-								* <?=gettext("Round Robin: Loops through the translation addresses.");?><br/>
-								* <?=gettext("Random: Selects an address from the translation address pool at random.");?><br/>
-								* <?=gettext("Source Hash: Uses a hash of the source address to determine the translation address, ensuring that the redirection address is always the same for a given source.");?><br/>
-								* <?=gettext("Bitmask: Applies the subnet mask and keeps the last portion identical; 10.0.1.50 -&gt; x.x.x.50.");?><br/>
-								* <?=gettext("Sticky Address: The Sticky Address option can be used with the Random and Round Robin pool types to ensure that a particular source address is always mapped to the same translation address.");?><br/>
-							</span><br/>
+								<?=gettext("Only Round Robin types work with Host Aliases. Any type can be used with a Subnet.");?><br />
+								* <?=gettext("Round Robin: Loops through the translation addresses.");?><br />
+								* <?=gettext("Random: Selects an address from the translation address pool at random.");?><br />
+								* <?=gettext("Source Hash: Uses a hash of the source address to determine the translation address, ensuring that the redirection address is always the same for a given source.");?><br />
+								* <?=gettext("Bitmask: Applies the subnet mask and keeps the last portion identical; 10.0.1.50 -&gt; x.x.x.50.");?><br />
+								* <?=gettext("Sticky Address: The Sticky Address option can be used with the Random and Round Robin pool types to ensure that a particular source address is always mapped to the same translation address.");?><br />
+							</span><br />
 						</td>
 					</tr>
 					<tr name="tport_tr" id="tport_tr">
@@ -765,7 +764,7 @@ function poolopts_change() {
 		<tr>
 			<td width="22%" valign="top" class="vncell"><?=gettext("No XMLRPC Sync");?></td>
 			<td width="78%" class="vtable">
-				<input value="yes" name="nosync" type="checkbox" class="formfld" id="nosync"<?php if($pconfig['nosync']) echo " checked=\"checked\""; ?> /><br/>
+				<input value="yes" name="nosync" type="checkbox" class="formfld" id="nosync"<?php if($pconfig['nosync']) echo " checked=\"checked\""; ?> /><br />
 				<?=gettext("Hint: This prevents the rule on Master from automatically syncing to other CARP members. This does NOT prevent the rule from being overwritten on Slave.");?>
 			</td>
 		</tr>
@@ -773,7 +772,7 @@ function poolopts_change() {
 			<td width="22%" valign="top" class="vncell"><?=gettext("Description");?></td>
 			<td width="78%" class="vtable">
 				<input name="descr" type="text" class="formfld unknown" id="descr" size="40" value="<?=htmlspecialchars($pconfig['descr']);?>" />
-				<br/>
+				<br />
 				<span class="vexpl"><?=gettext("You may enter a description here for your reference (not parsed).");?></span>
 			</td>
 		</tr>

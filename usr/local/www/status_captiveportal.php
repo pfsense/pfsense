@@ -120,7 +120,7 @@ $mac_man = load_mac_manufacturer_table();
 <table class="tabcont" width="100%" border="0" cellpadding="0" cellspacing="0">
   <tr>
 	<td width="20%" class="vncell" valign="top"> 
-               <br/><?=gettext("Captive Portal Zone"); ?><br/<br/>
+               <br /><?=gettext("Captive Portal Zone"); ?><br/<br />
 	</td>
 	<td "class="vncell" width="30%" align="center"> 
 	<form action="status_captiveportal.php" method="post" enctype="multipart/form-data" name="form1" id="form1">
@@ -134,12 +134,12 @@ $mac_man = load_mac_manufacturer_table();
 		       }
                ?>
                </select>
-		<br/>
+		<br />
 	</form>
 	</td>
 	<td colspan="3" width="50%"></td>
   </tr>
-  <tr><td colspan="5"><br/></tr>
+  <tr><td colspan="5"><br /></tr>
 <?php if (!empty($cpzone)): ?>
   <tr>
 	<td colspan="5" valign="top" class="listtopic"><?=gettext("Captiveportal status");?></td>
@@ -165,7 +165,7 @@ $mac_man = load_mac_manufacturer_table();
 		if (!empty($mac)) {
 			$mac_hi = strtoupper($mac[0] . $mac[1] . $mac[3] . $mac[4] . $mac[6] . $mac[7]);
 			print htmlentities($mac);
-			if(isset($mac_man[$mac_hi])){ print "<br/><font size=\"-2\"><i>{$mac_man[$mac_hi]}</i></font>"; }
+			if(isset($mac_man[$mac_hi])){ print "<br /><font size=\"-2\"><i>{$mac_man[$mac_hi]}</i></font>"; }
 		}
 		?>&nbsp;
 	</td>
@@ -188,7 +188,7 @@ $mac_man = load_mac_manufacturer_table();
 <?php endif; ?>
 
 <form action="status_captiveportal.php" method="get" style="margin: 14px;">
-<input type="hidden" name="order" value="<?=$_GET['order'];?>" />
+<input type="hidden" name="order" value="<?=htmlspecialchars($_GET['order']);?>" />
 <?php if (!empty($cpzone)): ?>
 <?php if ($_GET['showact']): ?>
 <input type="hidden" name="showact" value="0" />
@@ -197,7 +197,7 @@ $mac_man = load_mac_manufacturer_table();
 <input type="hidden" name="showact" value="1" />
 <input type="submit" class="formbtn" value="<?=gettext("Show last activity");?>" />
 <?php endif; ?>
-<input type="hidden" name="zone" value="<?=$cpzone;?>" />
+<input type="hidden" name="zone" value="<?=htmlspecialchars($cpzone);?>" />
 <?php endif; ?>
 </form>
 <?php include("fend.inc"); ?>

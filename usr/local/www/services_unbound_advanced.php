@@ -2,7 +2,7 @@
 /* $Id$ */
 /*
 	services_unbound_advanced.php
-	part of the pfSense project (http://www.pfsense.com)
+	part of the pfSense project (https://www.pfsense.org)
 	Copyright (C) 2011	Warren Baker (warren@pfsense.org)
 	All rights reserved.
 
@@ -28,7 +28,7 @@
     POSSIBILITY OF SUCH DAMAGE.
 */
 /*
-	pfSense_MODULE:	dnscache
+	pfSense_MODULE:	dnsresolver
 */
 
 ##|+PRIV
@@ -90,31 +90,35 @@ if ($_POST) {
 		$retval = 0;
 		$retval = services_unbound_configure();
 		$savemsg = get_std_save_message($retval);
+		if ($retval == 0)
+			clear_subsystem_dirty('unbound');
 	}
 }
 
+$closehead = false;
 $pgtitle = array(gettext("Services"),gettext("DNS Resolver"),gettext("Advanced"));
 include_once("head.inc");
 
 ?>
 
-<script language="JavaScript">
-<!--
+<script type="text/javascript">
+//<![CDATA[
 function enable_change(enable_over) {
 	var endis;
 	endis = !(jQuery('#enable').is(":checked") || enable_over);
 	jQuery("#active_interface,#outgoing_interface,#dnssec,#forwarding,#regdhcp,#regdhcpstatic,#dhcpfirst,#port").prop('disabled', endis);
 }
-//-->
+//]]>
 </script>
+</head>
 	
 <body>
 <?php include("fbegin.inc"); ?>
 <form action="services_unbound_advanced.php" method="post" name="iform" id="iform">
 <?php if ($input_errors) print_input_errors($input_errors); ?>
 <?php if ($savemsg) print_info_box($savemsg); ?>
-<?php if (is_subsystem_dirty('hosts')): ?><p>
-<?php print_info_box_np(gettext("The configuration of the DNS Resolver, has been changed") . ".<br>" . gettext("You must apply the changes in order for them to take effect."));?><br>
+<?php if (is_subsystem_dirty('unbound')): ?><br/>
+<?php print_info_box_np(gettext("The configuration of the DNS Resolver, has been changed") . ".<br />" . gettext("You must apply the changes in order for them to take effect."));?><br />
 <?php endif; ?>
 <table width="100%" border="0" cellpadding="0" cellspacing="0" summary="services unbound advanced">
 	<tbody>
@@ -132,7 +136,7 @@ function enable_change(enable_over) {
 		<tr>
 			<td id="mainarea">
 				<div class="tabcont">
-					<table width="100%" border="0" cellpadding="6" cellspacing="0">
+					<table width="100%" border="0" cellpadding="6" cellspacing="0" summary="main area">
 						<tbody>
 							<tr>
 								<td colspan="2" valign="top" class="listtopic"><?=gettext("Advanced Resolver Options");?></td>
@@ -140,42 +144,42 @@ function enable_change(enable_over) {
 							<tr>
 								<td width="22%" valign="top" class="vncell"><?=gettext("Hide Identity");?></td>
 								<td width="78%" class="vtable">
-									<p><input name="hideidentity" type="checkbox" id="hideidentity" value="yes" <?php if ($pconfig['hideidentity'] === true) echo "checked";?> onClick="enable_change(false)"><br/>
+									<p><input name="hideidentity" type="checkbox" id="hideidentity" value="yes" <?php if ($pconfig['hideidentity'] === true) echo "checked=\"checked\"";?> onclick="enable_change(false)" /><br />
 									<?=gettext("If enabled, id.server and hostname.bind queries are refused.");?></p>
 								</td>
 							</tr>
 							<tr>
 								<td width="22%" valign="top" class="vncell"><?=gettext("Hide Version");?></td>
 								<td width="78%" class="vtable">
-									<p><input name="enable" type="checkbox" id="hideversion" value="yes" <?php if ($pconfig['hideversion'] == "yes") echo "checked";?> onClick="enable_change(false)"><br/>
+									<p><input name="enable" type="checkbox" id="hideversion" value="yes" <?php if ($pconfig['hideversion'] == "yes") echo "checked=\"checked\"";?> onclick="enable_change(false)" /><br />
 									<?=gettext("If enabled, version.server and version.bind queries are refused.");?></p>
 								</td>
 							</tr>
 							<tr>
 								<td width="22%" valign="top" class="vncell"><?=gettext("Prefetch Support");?></td>
 								<td width="78%" class="vtable">
-									<p><input name="enable" type="checkbox" id="prefetch" value="yes" <?php if ($pconfig['prefetch'] == "yes") echo "checked";?> onClick="enable_change(false)"><br/>
+									<p><input name="enable" type="checkbox" id="prefetch" value="yes" <?php if ($pconfig['prefetch'] == "yes") echo "checked=\"checked\"";?> onclick="enable_change(false)" /><br />
 									<?=gettext("Message cache elements are prefetched before they expire to help keep the cache up to date. When enabled, this option can cause an increase of around 10% more DNS traffic and load on the server, but frequently requested items will not expire from the cache.");?></p>
 								</td>
 							</tr>
 							<tr>
 								<td width="22%" valign="top" class="vncell"><?=gettext("Prefetch DNS Key Support");?></td>
 								<td width="78%" class="vtable">
-									<p><input name="enable" type="checkbox" id="prefetchkey" value="yes" <?php if ($pconfig['prefetchkey'] == "yes") echo "checked";?> onClick="enable_change(false)"><br/>
+									<p><input name="enable" type="checkbox" id="prefetchkey" value="yes" <?php if ($pconfig['prefetchkey'] == "yes") echo "checked=\"checked\"";?> onclick="enable_change(false)" /><br />
 									<?=sprintf(gettext("DNSKEY's are fetched earlier in the validation process when a %sDelegation signer%s is encountered. This helps lower the latency of requests but does utilize a little more CPU."), "<a href='http://en.wikipedia.org/wiki/List_of_DNS_record_types'>", "</a>");?></p>
 								</td>
 							</tr>
 							<tr>
 								<td width="22%" valign="top" class="vncell"><?=gettext("Harden Glue");?></td>
 								<td width="78%" class="vtable">
-									<p><input name="enable" type="checkbox" id="hardenglue" value="yes" <?php if ($pconfig['hardenglue'] == "yes") echo "checked";?> onClick="enable_change(false)"><br/>
+									<p><input name="enable" type="checkbox" id="hardenglue" value="yes" <?php if ($pconfig['hardenglue'] == "yes") echo "checked=\"checked\"";?> onclick="enable_change(false)" /><br />
 									<?=gettext("Only trust glue if it is within the servers authority.");?></p>
 								</td>
 							</tr>
 							<tr>
 								<td width="22%" valign="top" class="vncell"><?=gettext("Harden DNSSEC data");?></td>
 								<td width="78%" class="vtable">
-									<p><input name="enable" type="checkbox" id="dnssecstripped" value="yes" <?php if ($pconfig['dnssecstripped'] == "yes") echo "checked";?> onClick="enable_change(false)"><br/>
+									<p><input name="enable" type="checkbox" id="dnssecstripped" value="yes" <?php if ($pconfig['dnssecstripped'] == "yes") echo "checked=\"checked\"";?> onclick="enable_change(false)" /><br />
 									<?=gettext("DNSSEC data is required for trust-anchored zones. If such data is absent, the zone becomes bogus. If this is disabled and no DNSSEC data is received, then the zone is made insecure.");?></p>
 								</td>
 							</tr>
@@ -191,7 +195,7 @@ function enable_change(enable_over) {
 											<option value="100">100MB</option>
 											<option value="250">250MB</option>
 											<option value="512">512MB</option>
-										</select><br/>
+										</select><br />
 										<?=gettext("Size of the message cache. The message cache stores DNS rcodes and validation statuses. The RRSet cache will automatically be set to twice this amount. The RRSet cache contains the actual RR data. The default is 4 megabytes.");?>
 									</p>
 								</td>
@@ -207,7 +211,7 @@ function enable_change(enable_over) {
 											<option value="30">30</option>
 											<option value="40">40</option>
 											<option value="50">50</option>
-										</select><br/>
+										</select><br />
 										<?=gettext("The number of outgoing TCP buffers to allocate per thread. The default value is 10. If 0 is selected then no TCP queries, to authoritative servers, are done.");?>
 									</p>
 								</td>
@@ -223,7 +227,7 @@ function enable_change(enable_over) {
 											<option value="30">30</option>
 											<option value="40">40</option>
 											<option value="50">50</option>
-										</select><br/>
+										</select><br />
 										<?=gettext("The number of incoming TCP buffers to allocate per thread. The default value is 10. If 0 is selected then no TCP queries, from clients, are accepted.");?>
 									</p>
 								</td>
@@ -236,7 +240,7 @@ function enable_change(enable_over) {
 											<option value="512">512</option>
 											<option value="1480">1480</option>
 											<option value="4096">4096</option>
-										</select><br/>
+										</select><br />
 										<?=gettext("Number of bytes size to advertise as the EDNS reassembly buffer size. This is the value that is used in UDP datagrams sent to peers. RFC recommendation is 4096 (which is the default). If you have fragmentation reassemble problems, usually seen as timeouts, then a value of 1480 should help. The 512 value bypasses most MTU path problems, but it can generate an excessive amount of TCP fallback.");?>
 									</p>
 								</td>
@@ -249,7 +253,7 @@ function enable_change(enable_over) {
 											<option value="512">512</option>
 											<option value="1024">1024</option>
 											<option value="2048">2048</option>
-										</select><br/>
+										</select><br />
 										<?=gettext("The number of queries that every thread will service simultaneously. If more queries arrive that need to be serviced, and no queries can be jostled, then these queries are dropped.");?>
 									</p>
 								</td>
@@ -263,7 +267,7 @@ function enable_change(enable_over) {
 											<option value="200">200</option>
 											<option value="500">500</option>
 											<option value="1000">1000</option>
-										</select><br/>
+										</select><br />
 										<?=gettext("This timeout is used for when the server is very busy. This protects against denial of service by slow queries or high query rates. The default value is 200 milliseconds.");?>
 									</p>
 								</td>
@@ -272,7 +276,7 @@ function enable_change(enable_over) {
 								<td width="22%" valign="top" class="vncell"><?=gettext("Maximum TTL for RRsets and messages");?></td>
 								<td width="78%" class="vtable">
 									<p>
-										<input type="text" id="cache_max_ttl" name="cache_max_ttl" size=5><br/>
+										<input type="text" id="cache_max_ttl" name="cache_max_ttl" size="5" /><br />
 										<?=gettext("Configure a maximum Time to live for RRsets and messages in the cache. The default is 86400 seconds (1 day). When the internal TTL expires the cache item is expired. This can be configured to force the resolver to query for data more often and not trust (very large) TTL values.");?>
 									</p>
 								</td>
@@ -281,7 +285,7 @@ function enable_change(enable_over) {
 								<td width="22%" valign="top" class="vncell"><?=gettext("Minimum TTL for RRsets and messages");?></td>
 								<td width="78%" class="vtable">
 									<p>
-										<input type="text" id="cache_min_ttl" name="cache_min_ttl" size=5><br/>
+										<input type="text" id="cache_min_ttl" name="cache_min_ttl" size="5" /><br />
 										<?=gettext("Configure a minimum Time to live for RRsets and messages in the cache. The default is 0 seconds. If the minimum value kicks in, the data is cached for longer than the domain owner intended, and thus less queries are made to look up the data. The 0 value ensures the data in the cache is as the domain owner intended. High values can lead to trouble as the data in the cache might not match up with the actual data anymore.");?>
 									</p>
 								</td>
@@ -296,7 +300,7 @@ function enable_change(enable_over) {
 											<option value="300">5 minutes</option>
 											<option value="600">10 minutes</option>
 											<option value="900">15 minutes</option>
-										</select><br/>
+										</select><br />
 										<?=gettext("Time to live for entries in the host cache. The host cache contains roundtrip timing and EDNS support information. The default is 15 minutes.");?>
 									</p>
 								</td>
@@ -311,7 +315,7 @@ function enable_change(enable_over) {
 											<option value="300">5 minutes</option>
 											<option value="600">10 minutes</option>
 											<option value="900">15 minutes</option>
-										</select><br/>
+										</select><br />
 										<?=gettext("Time to live for when a delegation is considered to be lame. The default is 15 minutes.");?>
 									</p>
 								</td>
@@ -326,7 +330,7 @@ function enable_change(enable_over) {
 											<option value="10000">10 000</option>
 											<option value="20000">20 000</option>
 											<option value="50000">50 000</option>
-										</select><br/>
+										</select><br />
 										<?=gettext("Number of hosts for which information is cached. The default is 10,000.");?>
 									</p>
 								</td>
@@ -342,7 +346,7 @@ function enable_change(enable_over) {
 											<option value="20000000">20 million</option>
 											<option value="40000000">40 million</option>
 											<option value="50000000">50 million</option>
-										</select><br/>
+										</select><br />
 										<?=gettext("If enabled, a total number of unwanted replies is kept track of in every thread. When it reaches the threshold, a defensive action is taken and a warning is printed to the log file. This defensive action is to clear the RRSet and message caches, hopefully flushing away any poison. The default is disabled, but if enabled a value of 10 million is suggested.");?>
 									</p>
 								</td>
@@ -358,7 +362,7 @@ function enable_change(enable_over) {
 											<option value="3">Level 3</option>
 											<option value="4">Level 4</option>
 											<option value="5">Level 5</option>
-										</select><br/>
+										</select><br />
 										<?=gettext("Select the log verbosity.");?>
 									</p>
 								</td>

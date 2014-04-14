@@ -88,7 +88,6 @@ if ($_GET['act'] == "delph1")
 		$ikeid = $a_phase1[$_GET['p1index']]['ikeid'];
 		foreach ($a_phase2 as $p2index => $ph2tmp)
 			if ($ph2tmp['ikeid'] == $ikeid) {
-				remove_tunnel_spd_policy($a_phase1[$_GET['p1index']],$a_phase2[$p2index]);
 				unset($a_phase2[$p2index]);
 			}
 
@@ -105,7 +104,6 @@ if ($_GET['act'] == "delph1")
 if ($_GET['act'] == "delph2")
 {
 	if ($a_phase1[$_GET['p1index']] && $a_phase2[$_GET['p2index']]) {
-		remove_tunnel_spd_policy($a_phase1[$_GET['p1index']],$a_phase2[$_GET['p2index']]);
 		/* remove the phase2 entry */
 		unset($a_phase2[$_GET['p2index']]);
 		vpn_ipsec_configure();
@@ -130,7 +128,7 @@ include("head.inc");
 	if ($savemsg)
 		print_info_box($savemsg);
 	if ($pconfig['enable'] && is_subsystem_dirty('ipsec'))
-		print_info_box_np(gettext("The IPsec tunnel configuration has been changed") . ".<br>" . gettext("You must apply the changes in order for them to take effect."));
+		print_info_box_np(gettext("The IPsec tunnel configuration has been changed") . ".<br />" . gettext("You must apply the changes in order for them to take effect."));
 ?>
 <table width="100%" border="0" cellpadding="0" cellspacing="0">
 	<tr>
@@ -211,9 +209,9 @@ include("head.inc");
 									$if = "WAN";
 
 								if (!isset($ph1ent['mobile']))
-									echo $if."<br>".$ph1ent['remote-gateway'];
+									echo $if."<br />".$ph1ent['remote-gateway'];
 								else
-									echo $if."<br><strong>" . gettext("Mobile Client") . "</strong>";
+									echo $if."<br /><strong>" . gettext("Mobile Client") . "</strong>";
 							?>
 							<?=$spane;?>
 						</td>
@@ -286,7 +284,7 @@ include("head.inc");
 										$phase2count++;
 									}
 								?>								
-								<input  type="button" onClick="show_phase2('tdph2-<?=$i?>','shph2but-<?=$i?>')" value="+"></input> - <?php printf(gettext("Show %s Phase-2 entries"), $phase2count); ?></a>
+								<input  type="button" onClick="show_phase2('tdph2-<?=$i?>','shph2but-<?=$i?>')" value="+" /> - <?php printf(gettext("Show %s Phase-2 entries"), $phase2count); ?></a>
 							</div>
 							<table class="tabcont" width="100%" height="100%" border="0" cellspacing="0" cellpadding="0" id="tdph2-<?=$i?>" style="display:none">
 								<tr>
@@ -429,10 +427,10 @@ include("head.inc");
 							<p>
 								<span class="vexpl">
 									<span class="red">
-										<strong><?=gettext("Note"); ?>:<br></strong>
+										<strong><?=gettext("Note"); ?>:<br /></strong>
 									</span>
-								<?=gettext("You can check your IPsec status at"); ?> <a href="diag_ipsec.php"><?=gettext("Status:IPsec"); ?></a>.<br/>
-									<?=gettext("IPsec Debug Mode can be enabled at"); ?> <a href="system_advanced_misc.php"><?=gettext("System:Advanced:Miscellaneous"); ?></a>.<br/>
+								<?=gettext("You can check your IPsec status at"); ?> <a href="diag_ipsec.php"><?=gettext("Status:IPsec"); ?></a>.<br />
+									<?=gettext("IPsec Debug Mode can be enabled at"); ?> <a href="system_advanced_misc.php"><?=gettext("System:Advanced:Miscellaneous"); ?></a>.<br />
 									<?=gettext("IPsec can be set to prefer older SAs at"); ?> <a href="system_advanced_misc.php"><?=gettext("System:Advanced:Miscellaneous"); ?></a>.
 								</span>
 							</p>

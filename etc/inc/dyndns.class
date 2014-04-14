@@ -1259,7 +1259,7 @@
 		/*
 		 * Private Function (added 12 July 05) [beta]
 		 *   - Detect whether or not IP needs to be updated.
-		 *      | Written Specifically for pfSense (pfsense.com) may
+		 *      | Written Specifically for pfSense (https://www.pfsense.org) may
 		 *      | work with other systems. pfSense base is FreeBSD.
 		 */
 		function _detectChange() {
@@ -1398,6 +1398,9 @@
 				curl_setopt($ip_ch, CURLOPT_INTERFACE, $ip_address);
 				curl_setopt($ip_ch, CURLOPT_CONNECTTIMEOUT, '30');
 				curl_setopt($ip_ch, CURLOPT_TIMEOUT, 120);
+				if ($this->_useIPv6 == false) {
+					curl_setopt($ip_ch, CURLOPT_IPRESOLVE, CURL_IPRESOLVE_V4);
+				}
 				$ip_result_page = curl_exec($ip_ch);
 				curl_close($ip_ch);
 				$ip_result_decoded = urldecode($ip_result_page);

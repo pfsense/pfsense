@@ -31,6 +31,7 @@
 
 require_once("config.inc");
 require_once("functions.inc");
+require_once("filter.inc");
 
 conf_mount_rw();
 
@@ -46,6 +47,8 @@ if (isset($config['system']['enablesshd'])) {
 		echo " done.\n";
 		echo "\nDisabling SSHD...";
 		send_event("service reload sshd");
+		echo "\nReloading firewall rules.";
+		filter_configure();
 		echo " done.\n";
 		exec("ps awux | grep '/usr/sbin/sshd' | grep -v grep | awk '{print $2}' | xargs kill");
 	}
@@ -60,6 +63,8 @@ if (isset($config['system']['enablesshd'])) {
 		echo " done.\n";
 		echo "\nEnabling SSHD...";
 		send_event("service reload sshd");
+		echo "\nReloading firewall rules.";
+		filter_configure();
 		echo " done.\n\n";
 	}	
 }

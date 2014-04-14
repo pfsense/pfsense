@@ -1,7 +1,7 @@
 <?php
 /*
 	installer.php (pfSense webInstaller)
-	part of pfSense (http://www.pfsense.com/)
+	part of pfSense (https://www.pfsense.org/)
 	Copyright (C) 2010 Scott Ullrich <sullrich@gmail.com>
 	All rights reserved.
 
@@ -619,7 +619,7 @@ echo <<<EOFAMB
 						<input type="button" value="Cancel" onClick="javascript:document.location='installer.php?state=custominstall';"> &nbsp;&nbsp;
 EOFAMB;
 						if(!$error_txt) 
-						echo "<input type=\"submit\" value=\"Begin installation\"> <br/>&nbsp;";
+						echo "<input type=\"submit\" value=\"Begin installation\"> <br />&nbsp;";
 echo <<<EOFAMBASDF
 
 					</center>
@@ -670,7 +670,7 @@ function installing_gui() {
 													</table>
 												</div>
 												<div id='pbdiv'>
-													<br/>
+													<br />
 													<center>
 													<table id='pbtable' height='15' width='640' border='0' colspacing='0' cellpadding='0' cellspacing='0'>
 														<tr>
@@ -687,7 +687,7 @@ function installing_gui() {
 															</td>
 														</tr>
 													</table>
-													<br/>
+													<br />
 												</div>
 												<textarea name='installeroutput' id='installeroutput' rows="31" cols="90">
 												</textarea>
@@ -716,7 +716,7 @@ function page_table_start($pgtitle = "") {
 		$pgtitle = "{$g['product_name']} installer";
 	echo <<<EOF
 	<center>
-		<img border="0" src="/themes/{$g['theme']}/images/logo.gif"></a><br/>
+		<img border="0" src="/themes/{$g['theme']}/images/logo.gif"></a><br />
 		<table cellpadding="6" cellspacing="0" width="550" style="border:1px solid #000000">
 		<tr height="10" bgcolor="#990000">
 			<td style="border-bottom:1px solid #000000">
@@ -977,7 +977,7 @@ EOF;
 		if(file_exists("/tmp/webInstaller_disk_layout.txt")) {
 			$disks_restored = unserialize(file_get_contents("/tmp/webInstaller_disk_layout.txt"));
 			$restored_layout_from_file = true;
-			$restored_layout_txt = "<br/>* The previous disk layout was restored from a previous session";
+			$restored_layout_txt = "<br />* The previous disk layout was restored from a previous session";
 		}
 
 		// If we restored disk layout(s) from a file then build the rows
@@ -1045,8 +1045,8 @@ EOF;
 											NOTES:
 										</strong>
 									</span>
-									<br/>* Sizes are in megabytes.
-									<br/>* Mount points named /conf are not allowed.  Use /cf if you want to make a configuration slice/mount.
+									<br />* Sizes are in megabytes.
+									<br />* Mount points named /conf are not allowed.  Use /cf if you want to make a configuration slice/mount.
 									{$restored_layout_txt}
 								</span>
 								</strong>
@@ -1091,7 +1091,7 @@ function installer_main() {
 			    		<td>
 							<center>
 							<div id="mainarea">
-								<br/>
+								<br />
 								<center>
 								Please select an installer option to begin:
 								<p/>

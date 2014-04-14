@@ -2,7 +2,7 @@
 /* $Id$ */
 /*
 	system_gateways.php
-	part of pfSense (http://pfsense.com)
+	part of pfSense (https://www.pfsense.org)
 
 	Copyright (C) 2010 Seth Mos <seth.mos@dds.nl>.
 	All rights reserved.
@@ -189,10 +189,10 @@ include("head.inc");
 <?php include("fbegin.inc"); ?>
 <?php if ($input_errors) print_input_errors($input_errors); ?>
 <form action="system_gateways.php" method="post">
-<script type="text/javascript" language="javascript" src="/javascript/row_toggle.js"></script>
+<script type="text/javascript" src="/javascript/row_toggle.js"></script>
 <?php if ($savemsg) print_info_box($savemsg); ?>
 <?php if (is_subsystem_dirty('staticroutes')): ?><p>
-<?php print_info_box_np(gettext("The gateway configuration has been changed.") . "<br/>" . gettext("You must apply the changes in order for them to take effect."));?><br/></p>
+<?php print_info_box_np(gettext("The gateway configuration has been changed.") . "<br />" . gettext("You must apply the changes in order for them to take effect."));?><br /></p>
 <?php endif; ?>
 	<table width="100%" border="0" cellpadding="0" cellspacing="0" summary="system gatewyas">
 		<tr>

@@ -75,7 +75,7 @@ function domTT_title($title_msg) {
 $pkg_cache_file_time=($g['min_pkg_cache_file_time'] ? $g['min_pkg_cache_file_time'] : 120);
 
 if (!file_exists("{$g['tmp_path']}/pkg_info.cache") || (time() - filemtime("{$g['tmp_path']}/pkg_info.cache")) > $pkg_cache_file_time) {
-	$pkg_info = get_pkg_info('all', array("noembedded", "name", "category", "website", "version", "status", "descr", "maintainer", "required_version", "maximum_version", "pkginfolink", "supportedbybsdperimeter","config_file"));
+	$pkg_info = get_pkg_info('all', array("noembedded", "name", "category", "website", "version", "status", "descr", "maintainer", "required_version", "maximum_version", "pkginfolink", "config_file"));
 	//create cache file after get_pkg_info
 	if($pkg_info) {
 		$fout = fopen("{$g['tmp_path']}/pkg_info.cache", "w");
@@ -109,7 +109,7 @@ include("head.inc");
 <script type="text/javascript" src="javascript/domTT/domTT.js"></script>
 <script type="text/javascript" src="javascript/domTT/behaviour.js"></script>
 <script type="text/javascript" src="javascript/domTT/fadomatic.js"></script>
-<script type="text/javascript" language="javascript" src="/javascript/row_helper_dynamic.js"></script>
+<script type="text/javascript" src="/javascript/row_helper_dynamic.js"></script>
 </head>
 
 <body link="#0000CC" vlink="#0000CC" alink="#0000CC">
@@ -209,7 +209,7 @@ include("head.inc");
 						$pkginfolink = $index['pkginfolink'];
 						$pkginfo=gettext("Package info");
 					} else {
-						$pkginfolink = "http://forum.pfsense.org/index.php/board,15.0.html";
+						$pkginfolink = "https://forum.pfsense.org/index.php/board,15.0.html";
 						$pkginfo=gettext("No package info, check the forum");
 					}
 
@@ -231,16 +231,16 @@ include("head.inc");
 							print ">\n";
 						}
 
-						print "{$index['status']} <br>\n";
+						print "{$index['status']} <br />\n";
 
 						if ($g['disablepackagehistory'])
 							echo"<a>{$index['version']}</a>";
 						else
 							echo "<a target='_blank' href='{$changeloglink}'>{$index['version']}</a>";
 ?>
-						<br/>
+						<br />
 						<?=gettext("platform") .": ". $index['required_version'] ?>
-						<br/>
+						<br />
 						<?=$index['maximum_version'] ?>
 						</td>
 						<td class="listbg" style="overflow:hidden; text-align:justify;" <?=domTT_title(gettext("Click package info for more details about ".ucfirst($index['name'])." package."))?>>
@@ -248,7 +248,7 @@ include("head.inc");
 <?php
 						if (! $g['disablepackageinfo']):
 ?>
-							<br/><br/>
+							<br /><br />
 							<a target='_blank' href='<?=$pkginfolink?>' style='align:center;color:#ffffff; filter:Glow(color=#ff0000, strength=12);'><?=$pkginfo?></a>
 <?php
 						endif;

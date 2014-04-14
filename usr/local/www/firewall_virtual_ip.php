@@ -2,7 +2,7 @@
 /* $Id$ */
 /*
 	firewall_virtual_ip.php
-	part of pfSense (http://www.pfsense.com/)
+	part of pfSense (https://www.pfsense.org/)
 
 	Copyright (C) 2005 Bill Marquette <bill.marquette@gmail.com>.
 	All rights reserved.
@@ -140,22 +140,27 @@ if ($_GET['act'] == "del") {
 			}
 
 		if ($a_vip[$_GET['id']]['mode'] == "ipalias") {
+			$subnet = gen_subnet($a_vip[$_GET['id']]['subnet'], $a_vip[$_GET['id']]['subnet_bits']) . "/" . $a_vip[$_GET['id']]['subnet_bits'];
+			$found_if = false;
 			$found_carp = false;
 			$found_other_alias = false;
 
+			if ($subnet == $if_subnet)
+				$found_if = true;
+			
 			$vipiface = $a_vip[$_GET['id']]['interface'];
 			foreach ($a_vip as $vip_id => $vip) {
 				if ($vip_id == $_GET['id'])
 					continue;
 
-				if ($vip['interface'] == $vipiface && ip_in_subnet($vip['subnet'], gen_subnet($a_vip[$_GET['id']]['subnet'], $a_vip[$_GET['id']]['subnet_bits']) . "/" . $a_vip[$_GET['id']]['subnet_bits']))
+				if ($vip['interface'] == $vipiface && ip_in_subnet($vip['subnet'], $subnet))
 					if ($vip['mode'] == "carp")
 						$found_carp = true;
 					else if ($vip['mode'] == "ipalias")
 						$found_other_alias = true;
 			}
 
-			if ($found_carp === true && $found_other_alias === false)
+			if ($found_carp === true && $found_other_alias === false && $found_if === false)
 				$input_errors[] = gettext("This entry cannot be deleted because it is still referenced by a CARP IP with the description") . " {$vip['descr']}.";
 		}
 		
@@ -185,7 +190,7 @@ if ($_GET['act'] == "del") {
 			exit;
 		}
 	}
-} else if ($_GET['changes'] == "mods")
+} else if ($_GET['changes'] == "mods" && is_numericint($_GET['id']))
 	$id = $_GET['id'];
 
 $pgtitle = array(gettext("Firewall"),gettext("Virtual IP Addresses"));
@@ -203,9 +208,9 @@ include("head.inc");
 		print_info_box($savemsg); 
 	else
 	if (is_subsystem_dirty('vip'))
-		print_info_box_np(gettext("The VIP configuration has been changed.")."<br/>".gettext("You must apply the changes in order for them to take effect."));
+		print_info_box_np(gettext("The VIP configuration has been changed.")."<br />".gettext("You must apply the changes in order for them to take effect."));
 ?>
-<br/>
+<br />
 <table width="100%" border="0" cellpadding="0" cellspacing="0" summary="virtual ip">
   <tr><td class="tabnavtbl">
   <?php
@@ -217,7 +222,7 @@ include("head.inc");
   ?>
   </td></tr>
   <tr>
-	<td><input type="hidden" id="id" name="id" value="<?php echo $id; ?>" /></td>
+	<td><input type="hidden" id="id" name="id" value="<?php echo htmlspecialchars($id); ?>" /></td>
   </tr>
   <tr>
     <td>
@@ -287,8 +292,8 @@ include("head.inc");
                 </tr>
 		<tr>
 		  <td colspan="5">
-		      <p><span class="vexpl"><span class="red"><strong><?=gettext("Note:");?><br/>
-                      </strong></span><?=gettext("The virtual IP addresses defined on this page may be used in");?><a href="firewall_nat.php"> <?=gettext("NAT"); ?> </a><?=gettext("mappings.");?><br/>
+		      <p><span class="vexpl"><span class="red"><strong><?=gettext("Note:");?><br />
+                      </strong></span><?=gettext("The virtual IP addresses defined on this page may be used in");?><a href="firewall_nat.php"> <?=gettext("NAT"); ?> </a><?=gettext("mappings.");?><br />
                       <?=gettext("You can check the status of your CARP Virtual IPs and interfaces ");?><a href="carp_status.php"><?=gettext("here");?></a>.</span></p>
 		  </td>
 		</tr>

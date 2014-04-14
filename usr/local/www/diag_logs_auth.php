@@ -86,7 +86,7 @@ include("head.inc");
 			  <?php printf(gettext("Last %s Portal Auth log entries"),$nentries);?></td>
 		  </tr>
 		  <?php dump_clog($portal_logfile, $nentries, true); ?>
-		<tr><td><br/><form action="diag_logs_auth.php" method="post">
+		<tr><td><br /><form action="diag_logs_auth.php" method="post">
 			<input name="clear" type="submit" class="formbtn" value="<?= gettext("Clear log"); ?>"/></form></td></tr>
 		</table>
 	</div>

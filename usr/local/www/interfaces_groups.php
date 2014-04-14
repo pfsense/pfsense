@@ -1,6 +1,6 @@
 <?php
 /*
-	Copyright (C) 2009 Ermal Luçi
+	Copyright (C) 2009 Ermal LuÃ§i
 	Copyright (C) 2004 Scott Ullrich
 	All rights reserved.
 
@@ -145,7 +145,7 @@ include("head.inc");
 </tr>
 <tr>
   <td class="tabcont" colspan="3">
-	<p><span class="vexpl"><span class="red"><strong><?=gettext("Note:");?><br/></strong></span><?=gettext("Interface Groups allow you to create rules that apply to multiple interfaces without duplicating the rules. If you remove members from an interface group, the group rules no longer apply to that interface.");?></span></p>
+	<p><span class="vexpl"><span class="red"><strong><?=gettext("Note:");?><br /></strong></span><?=gettext("Interface Groups allow you to create rules that apply to multiple interfaces without duplicating the rules. If you remove members from an interface group, the group rules no longer apply to that interface.");?></span></p>
 	</td>
 </tr>
 	</table>

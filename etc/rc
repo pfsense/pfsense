@@ -39,29 +39,6 @@ if [ -e /root/force_fsck ]; then
 	fi
 fi
 
-if [ -e /root/TRIM_set -o -e /root/TRIM_unset ]; then
-	TUNEFS_STATUS=`/sbin/tunefs -p / 2>&1 | /usr/bin/grep trim: | /usr/bin/awk '{print $4;}'`
-	if [ -e /root/TRIM_set ] && [ "${TUNEFS_STATUS}" = "disabled" ]; then
-		echo "Enabling TRIM support"
-		/sbin/tunefs -t enable /
-		if [ "$PLATFORM" = "nanobsd" ]; then
-			/sbin/tunefs -t enable /cf
-		fi
-		echo "Rebooting in 5 seconds after enabling TRIM..."
-		sleep 5
-		/sbin/reboot
-	elif [ -e /root/TRIM_unset ] && [ "${TUNEFS_STATUS}" = "enabled" ]; then
-		echo "Disabling TRIM support"
-		/sbin/tunefs -t disable /
-		if [ "$PLATFORM" = "nanobsd" ]; then
-			/sbin/tunefs -t disable /cf
-		fi
-		echo "Rebooting in 5 seconds after disabling TRIM..."
-		sleep 5
-		/sbin/reboot
-	fi
-fi
-
 # Mount memory file system if it exists
 echo "Mounting filesystems..."
 
@@ -107,7 +84,7 @@ else
 	fi
 
 	USE_MFS_TMPVAR=`/usr/bin/grep -c use_mfs_tmpvar /cf/conf/config.xml`
-	if [ "${PLATFORM}" = "nanobsd" ] || [ "${PLATFORM}" = "embedded" ] || [ ${USE_MFS_TMPVAR} -gt 0 ]; then
+	if [ "${PLATFORM}" = "nanobsd" ] || [ ${USE_MFS_TMPVAR} -gt 0 ]; then
 		/etc/rc.embedded
 	fi
 fi
@@ -160,8 +137,6 @@ fi
 
 if [ "$PLATFORM" = "cdrom" ] ; then
 	# do nothing for cdrom platform
-elif [ "$PLATFORM" = "embedded" ] ; then
-    # do nothing for embedded platform
 elif [ "$PLATFORM" = "nanobsd" ] || [ ${USE_MFS_TMPVAR} -gt 0 ]; then
 	# Ensure that old-style PKG packages can be persistent across reboots
 	/bin/mkdir -p /root/var/db/pkg
@@ -217,12 +192,6 @@ fi
 /bin/rm -rf /var/tmp/*
 
 echo -n "Creating symlinks..."
-# Make sure symlink is correct on embedded
-if [ "$PLATFORM" = "embedded" ] ; then
-	/bin/rm /conf
-	/bin/ln -s /cf/conf/ /conf
-fi
-
 # Make sure symlink is correct on nanobsd
 if [ "$PLATFORM" = "nanobsd" ] ; then
 	/bin/rm /conf
@@ -364,8 +333,8 @@ echo "done."
 
 # Ensure gettytab is of a sane size
 if [ `/bin/ls -la /etc/gettytab | /usr/bin/awk '{ print $5'}` -lt 512 ]; then
-	echo ">>> Restoring /etc/gettytab due to unusal size"
-	echo ">>> Restoring /etc/gettytab due to unusal size" | /usr/bin/logger
+	echo ">>> Restoring /etc/gettytab due to unusual size"
+	echo ">>> Restoring /etc/gettytab due to unusual size" | /usr/bin/logger
 	/bin/cp /etc/gettytab.bak /etc/gettytab
 fi
 
@@ -376,11 +345,6 @@ fi
 # /usr/local/etc/php.ini and /usr/local/lib/php.ini
 /etc/rc.php_ini_setup 2>/tmp/php_errors.txt
 /usr/local/sbin/php-fpm -c /usr/local/lib/php.ini -y /usr/local/lib/php-fpm.conf -RD 2>&1 >/dev/null
-
-# Launch external configuration loader for supported platforms
-if [ "$PLATFORM" = "embedded" ]; then
-	/usr/local/sbin/fcgicli -f /etc/ecl.php
-fi
 
 # Launch external configuration loader for supported platforms
 if [ "$PLATFORM" = "nanobsd" ]; then

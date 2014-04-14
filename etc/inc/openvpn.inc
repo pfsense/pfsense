@@ -595,7 +595,7 @@ function openvpn_reconfigure($mode, $settings) {
 			$cert = lookup_cert($settings['certref']);
 			/* XXX: Seems not used at all! */
 			$servercn = urlencode(cert_get_cn($cert['crt']));
-			$conf .= "tls-verify /usr/local/sbin/ovpn_auth_verify tls '{$servercn}' {$settings['cert_depth']} via-env\n";
+			$conf .= "tls-verify \"/usr/local/sbin/ovpn_auth_verify tls '{$servercn}' {$settings['cert_depth']} via-env\"\n";
 		}
 
 		// The local port to listen on
@@ -682,6 +682,14 @@ function openvpn_reconfigure($mode, $settings) {
 				$conf .= "ifconfig-ipv6 {$ipv6_2} {$prefix}\n";
 		}
 
+		if ($settings['auth_user'] && $settings['auth_pass']) {
+			$up_file = "{$g['varetc_path']}/openvpn/{$mode_id}.up";
+			$conf .= "auth-user-pass {$up_file}\n";
+			$userpass = "{$settings['auth_user']}\n";
+			$userpass .= "{$settings['auth_pass']}\n";
+			file_put_contents($up_file, $userpass);
+		}
+		
 		if ($settings['proxy_addr']) {
 			$conf .= "http-proxy {$settings['proxy_addr']} {$settings['proxy_port']}";
 			if ($settings['proxy_authtype'] != "none") {

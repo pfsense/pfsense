@@ -2,7 +2,7 @@
 /* $Id$ */
 /*
 	system_gateway_groups.php
-	part of pfSense (http://pfsense.com)
+	part of pfSense (https://www.pfsense.org)
 
 	Copyright (C) 2010 Seth Mos <seth.mos@dds.nl>.
 	All rights reserved.
@@ -108,7 +108,7 @@ include("head.inc");
 <input type="hidden" name="y1" value="1" />
 <?php if ($savemsg) print_info_box($savemsg); ?>
 <?php if (is_subsystem_dirty('staticroutes')): ?><p>
-<?php print_info_box_np(sprintf(gettext("The gateway configuration has been changed.%sYou must apply the changes in order for them to take effect."), "<br/>"));?><br/></p>
+<?php print_info_box_np(sprintf(gettext("The gateway configuration has been changed.%sYou must apply the changes in order for them to take effect."), "<br />"));?><br /></p>
 <?php endif; ?>
 	<table width="100%" border="0" cellpadding="0" cellspacing="0" summary="system groups">
 		<tr>
@@ -165,7 +165,7 @@ include("head.inc");
                     <?php
 			foreach($gateway_group['item'] as $item) {
 				$itemsplit = explode("|", $item);
-				echo htmlspecialchars(strtoupper($itemsplit[0])) . "<br/>\n";
+				echo htmlspecialchars(strtoupper($itemsplit[0])) . "<br />\n";
 			}
 		    ?>
                   </td>
@@ -173,7 +173,7 @@ include("head.inc");
 		    <?php
 			foreach($gateway_group['item'] as $item) {
 				$itemsplit = explode("|", $item);
-				echo "Tier ". htmlspecialchars($itemsplit[1]) . "<br/>\n";
+				echo "Tier ". htmlspecialchars($itemsplit[1]) . "<br />\n";
 			}
 		    ?>
                   </td>

@@ -135,12 +135,12 @@ if ($_POST) {
 include("head.inc");
 
 ?>
-<?php include("fbegin.inc"); ?>
 <body link="#0000CC" vlink="#0000CC" alink="#0000CC">
+<?php include("fbegin.inc"); ?>
 <form action="services_captiveportal_filemanager.php" method="post" enctype="multipart/form-data" name="iform" id="iform">
-<input type="hidden" name="zone" id="zone" value="<?=$cpzone;?>" />
+<input type="hidden" name="zone" id="zone" value="<?=htmlspecialchars($cpzone);?>" />
 <?php if ($input_errors) print_input_errors($input_errors); ?>
-<table width="100%" border="0" cellpadding="0" cellspacing="0">
+<table width="100%" border="0" cellpadding="0" cellspacing="0" summary="captiveportal file manager">
   <tr><td class="tabnavtbl">
 <?php
 	$tab_array = array();
@@ -154,15 +154,15 @@ include("head.inc");
 ?>  </td></tr>
   <tr>
     <td class="tabcont">
-	<table width="80%" border="0" cellpadding="0" cellspacing="0">
+	<table width="80%" border="0" cellpadding="0" cellspacing="0" summary="main">
       <tr>
         <td width="70%" class="listhdrr"><?=gettext("Name"); ?></td>
         <td width="20%" class="listhdr"><?=gettext("Size"); ?></td>
         <td width="10%" class="list">
-		<table border="0" cellspacing="0" cellpadding="1">
+		<table border="0" cellspacing="0" cellpadding="1" summary="icons">
 		    <tr>
 			<td width="17" height="17"></td>
-			<td><a href="services_captiveportal_filemanager.php?zone=<?=$cpzone;?>&act=add"><img src="/themes/<?php echo $g['theme']; ?>/images/icons/icon_plus.gif" title="<?=gettext("add file"); ?>" width="17" height="17" border="0"></a></td>
+			<td><a href="services_captiveportal_filemanager.php?zone=<?=$cpzone;?>&amp;act=add"><img src="/themes/<?php echo $g['theme']; ?>/images/icons/icon_plus.gif" title="<?=gettext("add file"); ?>" width="17" height="17" border="0" alt="add" /></a></td>
 		    </tr>
 		</table>
 	</td>
@@ -173,7 +173,7 @@ include("head.inc");
 		<td class="listlr"><?=htmlspecialchars($element['name']);?></td>
 		<td class="listr" align="right"><?=format_bytes($element['size']);?></td>
 		<td valign="middle" nowrap class="list">
-		<a href="services_captiveportal_filemanager.php?zone=<?=$cpzone;?>&act=del&id=<?=$i;?>" onclick="return confirm('<?=gettext("Do you really want to delete this file?"); ?>')"><img src="/themes/<?php echo $g['theme']; ?>/images/icons/icon_x.gif" title="<?=gettext("delete file"); ?>" width="17" height="17" border="0"></a>
+		<a href="services_captiveportal_filemanager.php?zone=<?=$cpzone;?>&amp;act=del&amp;id=<?=$i;?>" onclick="return confirm('<?=gettext("Do you really want to delete this file?"); ?>')"><img src="/themes/<?php echo $g['theme']; ?>/images/icons/icon_x.gif" title="<?=gettext("delete file"); ?>" width="17" height="17" border="0" alt="delete" /></a>
 		</td>
 	  </tr>
   <?php $i++; endforeach; endif; ?>
@@ -182,26 +182,26 @@ include("head.inc");
   	  <tr>
 		<td class="listlr" style="background-color: #eee"><strong><?=gettext("TOTAL"); ?></strong></td>
 		<td class="listr" style="background-color: #eee" align="right"><strong><?=format_bytes($total_size);?></strong></td>
-		<td valign="middle" nowrap class="list"></td>
+		<td valign="middle" class="list nowrap"></td>
 	  </tr>
   <?php endif; ?>
 
   <?php if ($_GET['act'] == 'add'): ?>
 	  <tr>
-		<td class="listlr" colspan="2"><input type="file" name="new" class="formfld file" size="40" id="new">
-		<input name="Submit" type="submit" class="formbtn" value="<?=gettext("Upload"); ?>"></td>
-		<td valign="middle" nowrap class="list">
-		<a href="services_captiveportal_filemanager.php?zone=<?=$cpzone;?>"><img src="/themes/<?php echo $g['theme']; ?>/images/icons/icon_x.gif" title="<?=gettext("cancel"); ?>" width="17" height="17" border="0"></a>
+		<td class="listlr" colspan="2"><input type="file" name="new" class="formfld file" size="40" id="new" />
+		<input name="Submit" type="submit" class="formbtn" value="<?=gettext("Upload"); ?>" /></td>
+		<td valign="middle" class="list nowrap">
+		<a href="services_captiveportal_filemanager.php?zone=<?=$cpzone;?>"><img src="/themes/<?php echo $g['theme']; ?>/images/icons/icon_x.gif" title="<?=gettext("cancel"); ?>" width="17" height="17" border="0" alt="delete" /></a>
 		</td>
 	  </tr>
   <?php else: ?>
 	  <tr>
 		<td class="list" colspan="2"></td>
 		<td class="list">
-			<table border="0" cellspacing="0" cellpadding="1">
+			<table border="0" cellspacing="0" cellpadding="1" summary="add">
 			    <tr>
 				<td width="17" height="17"></td>
-				<td><a href="services_captiveportal_filemanager.php?zone=<?=$cpzone;?>&act=add"><img src="/themes/<?php echo $g['theme']; ?>/images/icons/icon_plus.gif" title="<?=gettext("add file"); ?>" width="17" height="17" border="0"></a></td>
+				<td><a href="services_captiveportal_filemanager.php?zone=<?=$cpzone;?>&amp;act=add"><img src="/themes/<?php echo $g['theme']; ?>/images/icons/icon_plus.gif" title="<?=gettext("add file"); ?>" width="17" height="17" border="0" alt="add" /></a></td>
 			    </tr>
 			</table>
 		</td>
@@ -209,20 +209,20 @@ include("head.inc");
   <?php endif; ?>
 	</table>
 	<span class="vexpl"><span class="red"><strong>
-	<?=gettext("Note:"); ?><br>
+	<?=gettext("Note:"); ?><br />
 	</strong></span>
 	<?=gettext("Any files that you upload here with the filename prefix of captiveportal- will " .
 	"be made available in the root directory of the captive portal HTTP(S) server. " .
 	"You may reference them directly from your portal page HTML code using relative paths. " .
 	"Example: you've uploaded an image with the name 'captiveportal-test.jpg' using the " .
-	"file manager. Then you can include it in your portal page like this:"); ?><br><br>
+	"file manager. Then you can include it in your portal page like this:"); ?><br /><br />
 	<tt>&lt;img src=&quot;captiveportal-test.jpg&quot; width=... height=...&gt;</tt>
-	<br><br>
+	<br /><br />
 	<?=gettext("In addition, you can also upload .php files for execution.  You can pass the filename " .
 	"to your custom page from the initial page by using text similar to:"); ?>
-	<br><br>
-	<tt>&lt;a href="/captiveportal-aup.php?zone=$PORTAL_ZONE$&redirurl=$PORTAL_REDIRURL$"&gt;<?=gettext("Acceptable usage policy"); ?>&lt/a&gt;</tt>
-	<br><br>
+	<br /><br />
+	<tt>&lt;a href="/captiveportal-aup.php?zone=$PORTAL_ZONE$&amp;redirurl=$PORTAL_REDIRURL$"&gt;<?=gettext("Acceptable usage policy"); ?>&lt/a&gt;</tt>
+	<br /><br />
 	<?php printf(gettext("The total size limit for all files is %s."), format_bytes($g['captiveportal_element_sizelimit']));?></span>
 </td>
 </tr>

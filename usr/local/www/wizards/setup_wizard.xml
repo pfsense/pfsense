@@ -4,7 +4,7 @@
 /* $Id$ */
 /*
 	setup.xml
-        part of pfSense (http://www.pfsense.org/)
+        part of pfSense (https://www.pfsense.org/)
 
 	Copyright (C) 2004, 2005 Scott Ullrich
         All rights reserved.
@@ -640,7 +640,7 @@
 	<![CDATA[
 		Congratulations!  pfSense is now configured.<p/>
 		Please consider donating to the project to help us with our overhead costs.<p/>
-		Click <a target='_new' href='http://www.pfsense.org/j.php?jumpto=donate'>here</a> to donate or purchase services offered by the pfSense team.<p/>
+		Click <a target='_new' href='https://www.pfsense.org/j.php?jumpto=donate'>here</a> to donate or purchase services offered by the pfSense team.<p/>
 		Click <a href='$myurl'>here</a> to continue on to pfSense webConfigurator.
 	]]>
 	</description>

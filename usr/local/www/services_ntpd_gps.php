@@ -383,8 +383,8 @@ SureGPS = 		#Sure Electronics SKG16B
 			<td width="22%" valign="top" class="vncellreq">
 			</td>
 			<td width="78%" class="vtable">A GPS connected via a serial port may be used as a reference clock for NTP. If the GPS also supports PPS and is properly configured, and connected, that GPS may also be used as a Pulse Per Second clock reference. NOTE: a USB GPS may work, but is not recommended due to USB bus timing issues.
-			<br/>
-			<br/><?php echo gettext("For the best results, NTP should have at least three sources of time. So it is best to configure at least 2 servers under"); ?> <a href="services_ntpd.php"><?php echo gettext("Services > NTP"); ?></a> <?php echo gettext("to minimize clock drift if the GPS data is not valid over time. Otherwise ntpd may only use values from the unsynchronized local clock when providing time to clients."); ?>
+			<br />
+			<br /><?php echo gettext("For the best results, NTP should have at least three sources of time. So it is best to configure at least 2 servers under"); ?> <a href="services_ntpd.php"><?php echo gettext("Services > NTP"); ?></a> <?php echo gettext("to minimize clock drift if the GPS data is not valid over time. Otherwise ntpd may only use values from the unsynchronized local clock when providing time to clients."); ?>
 			</td>
 		</tr>
 		<tr>
@@ -400,8 +400,8 @@ SureGPS = 		#Sure Electronics SKG16B
 					<option value="U-Blox" title="$PUBX... U-Blox 5, 6 and probably 7"<?php if($pconfig['type'] == 'U-Blox') echo ' selected';?>>U-Blox</option>
 					<option value="SureGPS" title="$PMTK... Sure Electronics SKG16B"<?php if($pconfig['type'] == 'SureGPS') echo ' selected';?>>SureGPS</option>
 				</select> <?php echo gettext("This option allows you to select a predefined configuration.");?>
-				<br/>
-				<br/>
+				<br />
+				<br />
 				<strong><?php echo gettext(" Note: ");?></strong><?php echo gettext("Default is the configuration of pfSense 2.1 and earlier"); ?>
 				<?php echo gettext(" (not recommended). Select Generic if your GPS is not listed.)"); ?>
 				<strong><?php echo gettext(" Note: ");?></strong><?php echo gettext("The perdefined configurations assume your GPS has already been set to NMEA mode."); ?>
@@ -423,7 +423,7 @@ SureGPS = 		#Sure Electronics SKG16B
 					<?php endforeach; ?>
 				</select>&nbsp;
 				<?php echo gettext("All serial ports are listed, be sure to pick the port with the GPS attached."); ?>
-				<br/><br/>
+				<br /><br />
 				<select id="gpsspeed" name="gpsspeed" class="formselect">
 					<option value="0"<?php if(!$pconfig['speed']) echo ' selected'; ?>>4800</option>
 					<option value="16"<?php if($pconfig['speed'] === '16') echo ' selected';?>>9600</option>
@@ -432,8 +432,8 @@ SureGPS = 		#Sure Electronics SKG16B
 					<option value="64"<?php if($pconfig['speed'] === '64') echo ' selected';?>>57600</option>
 					<option value="80"<?php if($pconfig['speed'] === '80') echo ' selected';?>>115200</option>
 				</select>&nbsp;<?php echo gettext("Serial port baud rate."); ?>
-				<br/>
-				<br/>
+				<br />
+				<br />
 				<?php echo gettext("Note: A higher baud rate is generally only helpful if the GPS is sending too many sentences. It is recommended to configure the GPS to send only one sentence at a baud rate of 4800 or 9600."); ?>
 			</td>
 		</tr>
@@ -448,26 +448,26 @@ SureGPS = 		#Sure Electronics SKG16B
 					<option value="2"<?php if($pconfig['nmea'] & 2) echo ' selected';?>>GGA</option>
 					<option value="4"<?php if($pconfig['nmea'] & 4) echo ' selected';?>>GLL</option>
 					<option value="8"<?php if($pconfig['nmea'] & 8) echo ' selected';?>>ZDA or ZDG</option>
-				</select></br>
+				</select><br />
 				<?php echo gettext("By default NTP will listen for all supported NMEA sentences. Here one or more sentences to listen for may be specified."); ?>
 			</td>
 		</tr>
 		<tr>
 			<td width="22%" valign="top" class="vncellreq">Fudge time 1</td>
 			<td width="78%" class="vtable">
-				<input name="gpsfudge1" type="text" class="formfld unknown" id="gpsfudge1" min="-1" max="1" size="20" value="<?=htmlspecialchars($pconfig['fudge1']);?>">(<?php echo gettext("seconds");?>)<br>
+				<input name="gpsfudge1" type="text" class="formfld unknown" id="gpsfudge1" min="-1" max="1" size="20" value="<?=htmlspecialchars($pconfig['fudge1']);?>">(<?php echo gettext("seconds");?>)<br />
 				<?php echo gettext("Fudge time 1 is used to specify the GPS PPS signal offset");?> (<?php echo gettext("default");?>: 0.0).</td>
 		</tr>
 		<tr>
 			<td width="22%" valign="top" class="vncellreq">Fudge time 2</td>
 			<td width="78%" class="vtable">
-				<input name="gpsfudge2" type="text" class="formfld unknown" id="gpsfudge2" min="-1" max="1" size="20" value="<?=htmlspecialchars($pconfig['fudge2']);?>">(<?php echo gettext("seconds");?>)<br>
+				<input name="gpsfudge2" type="text" class="formfld unknown" id="gpsfudge2" min="-1" max="1" size="20" value="<?=htmlspecialchars($pconfig['fudge2']);?>">(<?php echo gettext("seconds");?>)<br />
 				<?php echo gettext("Fudge time 2 is used to specify the GPS time offset");?> (<?php echo gettext("default");?>: 0.0).</td>
 		</tr>
 		<tr>
 			<td width="22%" valign="top" class="vncellreq">Stratum</td>
 			<td width="78%" class="vtable">
-				<input name="gpsstratum" type="text" class="formfld unknown" id="gpsstratum" max="16" size="20" value="<?=htmlspecialchars($pconfig['stratum']);?>"><?php echo gettext("(0-16)");?><br>
+				<input name="gpsstratum" type="text" class="formfld unknown" id="gpsstratum" max="16" size="20" value="<?=htmlspecialchars($pconfig['stratum']);?>"><?php echo gettext("(0-16)");?><br />
 				<?php echo gettext("This may be used to change the GPS Clock stratum");?> (<?php echo gettext("default");?>: 0). <?php echo gettext("This may be useful if, for some reason, you want ntpd to prefer a different clock"); ?></td>
 		</tr>
 		<tr>
@@ -476,7 +476,7 @@ SureGPS = 		#Sure Electronics SKG16B
 				<table>
 					<tr>
 						<td>
-				<?php echo gettext("Normally there should be no need to change these options from the defaults."); ?></br>
+				<?php echo gettext("Normally there should be no need to change these options from the defaults."); ?><br />
 						</td>
 					</tr>
 				</table>
@@ -534,7 +534,7 @@ SureGPS = 		#Sure Electronics SKG16B
 							<input name="gpssubsec" type="checkbox" class="formcheckbox" id="gpssubsec"<?php if($pconfig['subsec']) echo ' checked'; ?>>
 						</td>
 						<td>
-							<span class="vexpl"><?php echo gettext("Log the sub-second fraction of the received time stamp (default: Not logged).<br/>Note: enabling this will rapidly fill the log, but is useful for tuning Fudge time 2."); ?></span>
+							<span class="vexpl"><?php echo gettext("Log the sub-second fraction of the received time stamp (default: Not logged).<br />Note: enabling this will rapidly fill the log, but is useful for tuning Fudge time 2."); ?></span>
 						</td>
 					</tr>
 				</table>
@@ -543,14 +543,14 @@ SureGPS = 		#Sure Electronics SKG16B
 		<tr>
 			<td width="22%" valign="top" class="vncellreq">Clock ID</td>
 			<td width="78%" class="vtable">
-				<input name="gpsrefid" type="text" class="formfld unknown" id="gpsrefid" maxlength= "4" size="20" value="<?=htmlspecialchars($pconfig['refid']);?>"><?php echo gettext("(1 to 4 charactors)");?><br>
+				<input name="gpsrefid" type="text" class="formfld unknown" id="gpsrefid" maxlength= "4" size="20" value="<?=htmlspecialchars($pconfig['refid']);?>"><?php echo gettext("(1 to 4 charactors)");?><br />
 				<?php echo gettext("This may be used to change the GPS Clock ID");?> (<?php echo gettext("default");?>: GPS).</td>
 		</tr>
 		<tr>
 			<td width="22%" valign="top" class="vncellreq">GPS Initialization</td>
 			<td width="78%" class="vtable">
 				<div id="showgpsinitbox">
-					<input type="button" onClick="show_advanced('showgpsinitbox', 'showgpsinit')" value="<?=gettext("Advanced");?>"></input> - <?=gettext("Show GPS Initialization commands");?></a>
+					<input type="button" onClick="show_advanced('showgpsinitbox', 'showgpsinit')" value="<?=gettext("Advanced");?>" /> - <?=gettext("Show GPS Initialization commands");?></a>
 				</div>
 				<div id="showgpsinit" style="display:none">
 					<p>
@@ -559,7 +559,7 @@ SureGPS = 		#Sure Electronics SKG16B
 					<strong><?php echo gettext("NMEA checksum calculator");?>:</strong>
 					<br />
 					<?php echo gettext("Enter the text between &quot;$&quot; and &quot;*&quot; of a NMEA command string:");?><br /> $<input name="nmeastring" type="text" class="formfld unknown" id="nmeastring" size="30" value="">*<span id="nmeachecksum"><?php echo gettext("checksum");?></span>&nbsp&nbsp
-					<input type="button" onClick="NMEAChecksum(nmeastring.value)" value="<?=gettext("Calculate NMEA checksum");?>"></input><br />
+					<input type="button" onClick="NMEAChecksum(nmeastring.value)" value="<?=gettext("Calculate NMEA checksum");?>" /><br />
 				</div>
 			</td>
 		</tr>
@@ -574,7 +574,7 @@ SureGPS = 		#Sure Electronics SKG16B
 	</td>
   </tr>
 </table>
-<script language="JavaScript"><!-- set_gps_default(this.form); --></script>
+<script type="text/javascript"><!-- set_gps_default(this.form); --></script>
 </form>
 <?php include("fend.inc"); ?>
 </body>

@@ -95,12 +95,12 @@ if ($_GET['act'] == "del" && !empty($cpzone)) {
 
 include("head.inc");
 ?>
-<?php include("fbegin.inc"); ?>
 <body link="#0000CC" vlink="#0000CC" alink="#0000CC">
+<?php include("fbegin.inc"); ?>
 <form action="services_captiveportal_hostname.php" method="post">
-<input type="hidden" name="zone" id="zone" value="<?=$cpzone;?>" />
+<input type="hidden" name="zone" id="zone" value="<?=htmlspecialchars($cpzone);?>" />
 <?php if ($savemsg) print_info_box($savemsg); ?>
-<table width="100%" border="0" cellpadding="0" cellspacing="0">
+<table width="100%" border="0" cellpadding="0" cellspacing="0" summary="captiveportal hostname">
   <tr><td class="tabnavtbl">
 <?php
 	$tab_array = array();
@@ -115,33 +115,33 @@ include("head.inc");
   </td></tr>
   <tr>
   <td class="tabcont">
-  <table width="100%" border="0" cellpadding="0" cellspacing="0">
+  <table width="100%" border="0" cellpadding="0" cellspacing="0" summary="main">
 	<tr>
 	  <td width="60%" class="listhdrr"><?=gettext("Hostname"); ?></td>
 	  <td width="40%" class="listhdr"><?=gettext("Description"); ?></td>
 	  <td width="10%" class="list">
-		<table border="0" cellspacing="0" cellpadding="1">
+		<table border="0" cellspacing="0" cellpadding="1" summary="add">
 		   <tr>
 			<td width="17" height="17"></td>
-			<td><a href="services_captiveportal_hostname_edit.php?zone=<?=$cpzone;?>"><img src="/themes/<?php echo $g['theme']; ?>/images/icons/icon_plus.gif" title="<?=gettext("add address"); ?>" width="17" height="17" border="0"></a></td>
+			<td><a href="services_captiveportal_hostname_edit.php?zone=<?=$cpzone;?>"><img src="/themes/<?php echo $g['theme']; ?>/images/icons/icon_plus.gif" title="<?=gettext("add address"); ?>" width="17" height="17" border="0" alt="add" /></a></td>
 		   </tr>
 		</table>
 	  </td>
 	</tr>
 <?php	if (is_array($a_cp[$cpzone]['allowedhostname'])):
 		$i = 0;	foreach ($a_cp[$cpzone]['allowedhostname'] as $ip): ?>
-	<tr ondblclick="document.location='services_captiveportal_hostname_edit.php?zone=<?=$cpzone;?>&id=<?=$i;?>'">
+	<tr ondblclick="document.location='services_captiveportal_hostname_edit.php?zone=<?=$cpzone;?>&amp;id=<?=$i;?>'">
 	  <td class="listlr">
 		<?php
 		if($ip['dir'] == "to") {
-			echo "any <img src=\"/themes/{$g['theme']}/images/icons/icon_in.gif\" width=\"11\" height=\"11\" align=\"absmiddle\"> ";
+			echo "any <img src=\"/themes/{$g['theme']}/images/icons/icon_in.gif\" width=\"11\" height=\"11\" align=\"middle\" alt=\"in\" /> ";
 		}
 		if($ip['dir'] == "both") {
-			echo "<img src=\"/themes/{$g['theme']}/images/icons/icon_pass.gif\" width=\"11\" height=\"11\" align=\"absmiddle\">   ";
+			echo "<img src=\"/themes/{$g['theme']}/images/icons/icon_pass.gif\" width=\"11\" height=\"11\" align=\"absmiddle\" alt=\"pass\" />   ";
 		}
 		echo strtolower($ip['hostname']);
 		if($ip['dir'] == "from") {
-			echo "<img src=\"/themes/{$g['theme']}/images/icons/icon_in.gif\" width=\"11\" height=\"11\" align=\"absmiddle\"> any";
+			echo "<img src=\"/themes/{$g['theme']}/images/icons/icon_in.gif\" width=\"11\" height=\"11\" align=\"absmiddle\" alt=\"in\" /> any";
 		}
 		
 		?>	
@@ -149,40 +149,40 @@ include("head.inc");
 	  <td class="listbg">
 		<?=htmlspecialchars($ip['descr']);?>&nbsp;
 	  </td>
-	  <td valign="middle" nowrap class="list"> <a href="services_captiveportal_hostname_edit.php?zone=<?=$cpzone;?>&id=<?=$i;?>"><img src="/themes/<?php echo $g['theme']; ?>/images/icons/icon_e.gif" title="<?=gettext("edit address"); ?>" width="17" height="17" border="0"></a>
-		 &nbsp;<a href="services_captiveportal_hostname.php?zone=<?=$cpzone;?>&act=del&id=<?=$i;?>" onclick="return confirm('<?=gettext("Do you really want to delete this address?"); ?>')"><img src="/themes/<?php echo $g['theme']; ?>/images/icons/icon_x.gif" title="<?=gettext("delete address"); ?>" width="17" height="17" border="0"></a></td>
+	  <td valign="middle" class="list nowrap"> <a href="services_captiveportal_hostname_edit.php?zone=<?=$cpzone;?>&amp;id=<?=$i;?>"><img src="/themes/<?php echo $g['theme']; ?>/images/icons/icon_e.gif" title="<?=gettext("edit address"); ?>" width="17" height="17" border="0" alt="add" /></a>
+		 &nbsp;<a href="services_captiveportal_hostname.php?zone=<?=$cpzone;?>&amp;act=del&amp;id=<?=$i;?>" onclick="return confirm('<?=gettext("Do you really want to delete this address?"); ?>')"><img src="/themes/<?php echo $g['theme']; ?>/images/icons/icon_x.gif" title="<?=gettext("delete address"); ?>" width="17" height="17" border="0" alt="delete" /></a></td>
 	</tr>
   <?php $i++; endforeach; endif;  ?>
 	<tr>
 	  <td class="list" colspan="2">&nbsp;</td>
 	  <td class="list">
-		<table border="0" cellspacing="0" cellpadding="1">
+		<table border="0" cellspacing="0" cellpadding="1" summary="add">
 		   <tr>
 			<td width="17" height="17"></td>
-			<td><a href="services_captiveportal_hostname_edit.php?zone=<?=$cpzone;?>"><img src="/themes/<?php echo $g['theme']; ?>/images/icons/icon_plus.gif" title="<?=gettext("add address"); ?>" width="17" height="17" border="0"></a></td>
+			<td><a href="services_captiveportal_hostname_edit.php?zone=<?=$cpzone;?>"><img src="/themes/<?php echo $g['theme']; ?>/images/icons/icon_plus.gif" title="<?=gettext("add address"); ?>" width="17" height="17" border="0" alt="add" /></a></td>
 		   </tr>
 		</table>
 	  </td>
 	</tr>
 	<tr>
 	<td colspan="2" class="list"><p class="vexpl"><span class="red"><strong>
-	  <?=gettext("Note:"); ?><br>
+	  <?=gettext("Note:"); ?><br />
 	  </strong></span>
 	  <?=gettext("Adding allowed Hostnames will allow a DNS hostname access to/from access through the captive portal without being taken to the portal page. This can be used for a web server serving images for the portal page or a DNS server on another network, for example. By specifying <em>from</em> addresses, it may be used to always allow pass-through access from a client behind the captive portal."); ?></p>
-	  <table border="0" cellspacing="0" cellpadding="0">
+	  <table border="0" cellspacing="0" cellpadding="0" summary="icons">
 		<tr>
-		  <td><span class="vexpl"><?=gettext("any"); ?> <img src="/themes/<?=$g['theme'];?>/images/icons/icon_in.gif" width="11" height="11" align="absmiddle"> x.x.x.x </span></td>
+		  <td><span class="vexpl"><?=gettext("any"); ?> <img src="/themes/<?=$g['theme'];?>/images/icons/icon_in.gif" width="11" height="11" align="middle" alt="in" /> x.x.x.x </span></td>
 		  <td><span class="vexpl"><?=gettext("All connections"); ?> <strong><?=gettext("to"); ?></strong> <?=gettext("the Hostname are allowed"); ?></span></td>
 		</tr>
 		<tr>
 		  <td colspan="5" height="4"></td>
 		</tr>
 		<tr>
-		  <td>x.x.x.x <span class="vexpl"><img src="/themes/<?=$g['theme'];?>/images/icons/icon_in.gif" width="11" height="11" align="absmiddle"></span> <?=gettext("any"); ?>&nbsp;&nbsp;&nbsp; </td>
+		  <td>x.x.x.x <span class="vexpl"><img src="/themes/<?=$g['theme'];?>/images/icons/icon_in.gif" width="11" height="11" align="middle" alt="in" /></span> <?=gettext("any"); ?>&nbsp;&nbsp;&nbsp; </td>
 		  <td><span class="vexpl"><?=gettext("All connections"); ?> <strong><?=gettext("from"); ?></strong> <?=gettext("the Hostname are allowed"); ?> </span></td>
 		</tr>
 		<tr>
-		  <td><span class="vexpl"><img src="/themes/<?=$g['theme'];?>/images/icons/icon_pass.gif" width="11" height="11" align="right"></span>&nbsp;&nbsp;&nbsp;&nbsp; </td>
+		  <td><span class="vexpl"><img src="/themes/<?=$g['theme'];?>/images/icons/icon_pass.gif" width="11" height="11" align="right" alt="pass" /></span>&nbsp;&nbsp;&nbsp;&nbsp; </td>
 		  <td><span class="vexpl"> All connections <strong>to</strong> and <strong>from</strong> the Hostname are allowed </span></td>
 		</tr>
 	  </table></td>

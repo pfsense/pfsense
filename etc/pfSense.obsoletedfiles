@@ -51,6 +51,7 @@
 /usr/local/www/filter_log.inc
 /usr/local/pkg/routed/routed.inc
 /usr/local/pkg/routed/routed.xml
+/usr/local/pkg/sasyncd.xml
 /usr/local/pkg/carp.xml
 /usr/local/www/javascript/diag_backup/diag_backup.js
 /usr/local/www/progress.php

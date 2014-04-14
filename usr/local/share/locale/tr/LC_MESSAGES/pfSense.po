@@ -78,11 +78,11 @@ msgstr "geçerli bir aralık değil"
 #: etc/inc/auth.inc:100 etc/inc/auth.inc:100
 msgid ""
 "Potential DNS Rebind attack detected, see http://en.wikipedia.org/wiki/"
-"DNS_rebinding<br/>Try accessing the router by IP address instead of by "
+"DNS_rebinding<br />Try accessing the router by IP address instead of by "
 "hostname."
 msgstr ""
 "Muhtemel DNS tekrar bağlama saldırısı tesbit edildi, açıklama: "
-"http://en.wikipedia.org/wiki/DNS_rebinding<br/> Router e host adı yerine IP "
+"http://en.wikipedia.org/wiki/DNS_rebinding<br /> Router e host adı yerine IP "
 "adresi ile giriş yapmayı deneyin."
 
 #: etc/inc/auth.inc:115 etc/inc/auth.inc:115
@@ -213,14 +213,14 @@ msgstr ""
 #: etc/inc/auth.inc:1144 etc/inc/auth.inc:1153 etc/inc/auth.inc:1157
 #: etc/inc/auth.inc:1163
 #, php-format
-msgid "Radius start: %s<br>\n"
-msgstr "Radius başladı: %s<br>\n"
+msgid "Radius start: %s<br />\n"
+msgstr "Radius başladı: %s<br />\n"
 
 #: etc/inc/auth.inc:1155 etc/inc/auth.inc:1164 etc/inc/auth.inc:1168
 #: etc/inc/auth.inc:1174
 #, php-format
-msgid "Radius send failed: %s<br>\n"
-msgstr "Radius başarısız gönderme: %s<br>\n"
+msgid "Radius send failed: %s<br />\n"
+msgstr "Radius başarısız gönderme: %s<br />\n"
 
 #: etc/inc/auth.inc:1159 etc/inc/auth.inc:1170 etc/inc/auth.inc:1174
 #: etc/inc/auth.inc:1180
@@ -3220,11 +3220,11 @@ msgstr "Giriş"
 #: etc/inc/authgui.inc:242 etc/inc/authgui.inc:240 etc/inc/authgui.inc:263
 msgid ""
 "You are accessing this router by an IP address not configured locally, which "
-"may be forwarded by NAT or other means. <br/><br/>If you did not setup this "
+"may be forwarded by NAT or other means. <br /><br />If you did not setup this "
 "forwarding, you may be the target of a man-in-the-middle attack."
 msgstr ""
 "Bu yönlendiriciye yerelde ayarlanmamış, NAT veya başka bir yöntemle "
-"yönlendirilmiş olabilecek bir IP adresinden erişiyorsunuz. <br/><br/>Eğer "
+"yönlendirilmiş olabilecek bir IP adresinden erişiyorsunuz. <br /><br />Eğer "
 "böyle bir yönlendirme ayarlamadıysanız, bir MitM (man-in-the-middle / araya "
 "girilmesi) saldırısı altında olabilirsiniz."
 
@@ -9545,10 +9545,10 @@ msgstr "Aktarma Eylemi"
 #: usr/local/www/load_balancer_relay_action.php:116
 #: usr/local/www/load_balancer_relay_action.php:116
 msgid ""
-"The load balancer configuration has been changed.<br>You must apply the "
+"The load balancer configuration has been changed.<br />You must apply the "
 "changes in order for them to take effect."
 msgstr ""
-"Yük dengeleyici yapılandırması değiştirildi.<br>Değişiklikleri uygulayarak "
+"Yük dengeleyici yapılandırması değiştirildi.<br />Değişiklikleri uygulayarak "
 "etkin hale gelmelerini sağlayabilirsiniz."
 
 #: usr/local/www/load_balancer_relay_action.php:128
@@ -15745,17 +15745,17 @@ msgstr "Seçili eşlemeleri silmek istediğinize emin misiniz?"
 msgid ""
 "With automatic outbound NAT enabled, a mapping is automatically created for "
 "each interface's subnet (except WAN-type connections) and the rules on this "
-"page are ignored.<br/><br/> If manual outbound NAT is enabled, outbound NAT "
+"page are ignored.<br /><br /> If manual outbound NAT is enabled, outbound NAT "
 "rules will not be automatically generated and only the mappings you specify "
-"on this page will be used. <br/><br/> If a target address other than a WAN-"
+"on this page will be used. <br /><br /> If a target address other than a WAN-"
 "type interface's IP address is used, then depending on the way the WAN "
 "connection is setup, a "
 msgstr ""
 "Dışa otomatik NAT etkinleştirildiğinde, WAN türü bağlantılar hariç her "
 "arabirimin alt ağı için otomatik olarak bir eşleme oluşturulur ve bu "
-"sayfadaki kurallar gözardı edilir.<br/><br/>Eğer elle NAT "
+"sayfadaki kurallar gözardı edilir.<br /><br />Eğer elle NAT "
 "etkinleştirilmişse, otomatik NAT kuralları oluşturulmaz ve sadece bu sayfada "
-"belirttiğiniz eşlemeler kullanılır.<br/><br/>WAN türü dışındaki bir "
+"belirttiğiniz eşlemeler kullanılır.<br /><br />WAN türü dışındaki bir "
 "arabirimin IP adresi hedef adres olarak kullanılırsa, WAN bağlantı "
 "yapılandırmasına bağlı olarak bir "
 
@@ -16260,20 +16260,20 @@ msgstr "Adres maskesi yanıtı"
 #, php-format
 msgid ""
 "The settings have been applied. The firewall rules are now reloading in the "
-"background.<br/>You can also %s monitor %s the reload progress"
+"background.<br />You can also %s monitor %s the reload progress"
 msgstr ""
 "Yapılandırma uygulandı. Güvenlik duvarı kuralları arka planda "
-"yükleniyor.<br/>Aynı zamanda %2$s yükleme durumunu %1$s izleyebilirsiniz"
+"yükleniyor.<br />Aynı zamanda %2$s yükleme durumunu %1$s izleyebilirsiniz"
 
 #: usr/local/www/firewall_rules.php:315 usr/local/www/firewall_rules.php:317
 #: usr/local/www/firewall_rules.php:319 usr/local/www/firewall_rules.php:321
 #: usr/local/www/firewall_rules.php:312 usr/local/www/firewall_rules.php:314
 #: usr/local/www/firewall_rules.php:312 usr/local/www/firewall_rules.php:314
 msgid ""
-"The firewall rule configuration has been changed.<br>You must apply the "
+"The firewall rule configuration has been changed.<br />You must apply the "
 "changes in order for them to take effect."
 msgstr ""
-"Güvenlik duvarı kuralları değiştirildi.<br/>Değişiklikleri uygulayarak etkin "
+"Güvenlik duvarı kuralları değiştirildi.<br />Değişiklikleri uygulayarak etkin "
 "hale gelmelerini sağlayabilirsiniz."
 
 #: usr/local/www/firewall_rules.php:338 usr/local/www/firewall_rules.php:342
@@ -20265,10 +20265,10 @@ msgstr ""
 #: usr/local/www/interfaces_assign.php:384
 #: usr/local/www/interfaces_assign.php:390
 msgid ""
-"The interface configuration has been changed.<br>You must apply the changes "
+"The interface configuration has been changed.<br />You must apply the changes "
 "in order for them to take effect."
 msgstr ""
-"Arabirim yapılandırması değiştirildi.<br> Değişiklikleri uygulayarak etkin "
+"Arabirim yapılandırması değiştirildi.<br /> Değişiklikleri uygulayarak etkin "
 "hale gelmelerini sağlayabilirsiniz."
 
 #: usr/local/www/interfaces_assign.php:421
@@ -26824,10 +26824,10 @@ msgstr "Bu MAC adresi için kayıt bulunamadı:"
 #: usr/local/www/services_captiveportal_mac.php:146
 #: usr/local/www/services_captiveportal_mac.php:156
 msgid ""
-"The captive portal MAC address configuration has been changed.<br>You must "
+"The captive portal MAC address configuration has been changed.<br />You must "
 "apply the changes in order for them to take effect."
 msgstr ""
-"Hizmet Portalı MAC adres yapılandırması değiştirildi.<br>Değişiklikleri "
+"Hizmet Portalı MAC adres yapılandırması değiştirildi.<br />Değişiklikleri "
 "uygulayarak etkin hale gelmelerini sağlayabilirsiniz."
 
 #: usr/local/www/services_captiveportal_mac.php:180
@@ -37746,11 +37746,11 @@ msgstr "Çift Bağlantı"
 #: usr/local/www/vpn_openvpn_server.php:1352
 msgid ""
 "Allow multiple concurrent connections from clients using the same Common "
-"Name.<br/>NOTE: This is not generally recommended, but may be needed for "
+"Name.<br />NOTE: This is not generally recommended, but may be needed for "
 "some scenarios."
 msgstr ""
 "Aynı Genel Adı kullanan istemcilerin birlikte birden fazla bağlantısına izin "
-"ver.<br/>NOT: Genellikle önerilmez, ancak bazı durumlarda gerekebilir."
+"ver.<br />NOT: Genellikle önerilmez, ancak bazı durumlarda gerekebilir."
 
 #: usr/local/www/vpn_openvpn_server.php:1158
 #: usr/local/www/vpn_openvpn_server.php:1300
@@ -41260,7 +41260,7 @@ msgid ""
 "MS-CHAPv2 which has been compromised. If you continue to use PPTP be aware "
 "that intercepted traffic can be decrypted by a third party, so it should be "
 "considered unencrypted. We advise migrating to another VPN type such as "
-"OpenVPN or IPsec.<br/><br/><a href=\"https://isc.sans.edu/diary/End+of+Days"
+"OpenVPN or IPsec.<br /><br /><a href=\"https://isc.sans.edu/diary/End+of+Days"
 "+for+MS-CHAPv2/13807\">Read More</a>"
 msgstr ""
 

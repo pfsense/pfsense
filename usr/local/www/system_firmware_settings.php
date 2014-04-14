@@ -150,21 +150,21 @@ function enable_altfirmwareurl(enable_over) {
 					}
 				?>
 			</select>
-		<br/><br/><?php echo sprintf(gettext("Entries denoted by \"Current architecture\" match the architecture of your current installation, such as %s. Changing architectures during an upgrade is not recommended, and may require a manual reboot after the update completes."), php_uname("m")); ?>
+		<br /><br /><?php echo sprintf(gettext("Entries denoted by \"Current architecture\" match the architecture of your current installation, such as %s. Changing architectures during an upgrade is not recommended, and may require a manual reboot after the update completes."), php_uname("m")); ?>
 		</td>
 	</tr>
 <?php endif; ?>
 	<tr>
 		<td valign="top" class="vncell"><?=gettext("Firmware Auto Update URL"); ?></td>
 		<td class="vtable">
-			<input name="alturlenable" type="checkbox" id="alturlenable" value="yes" onclick="enable_altfirmwareurl()" <?php if(isset($curcfg['alturl']['enable'])) echo "checked=\"checked\""; ?> /> <?=gettext("Use a URL server for firmware upgrades other than") . " " . $g['product_website']; ?><br />
+			<input name="alturlenable" type="checkbox" id="alturlenable" value="yes" onclick="enable_altfirmwareurl()" <?php if(isset($curcfg['alturl']['enable'])) echo "checked=\"checked\""; ?> /> <?=gettext("Use an unofficial server for firmware upgrades") ?><br />
 			<table summary="alternative Base URL">
 			<tr><td><?=gettext("Base URL:"); ?></td><td><input name="firmwareurl" type="text" class="formfld url" id="firmwareurl" size="64" value="<?php if($curcfg['alturl']['firmwareurl']) echo $curcfg['alturl']['firmwareurl']; else echo $g['']; ?>" /></td></tr>
 			</table>
 			<span class="vexpl">
 				<?=gettext("This is where"); ?> <?php echo $g['product_name'] ?> <?=gettext("will check for newer firmware versions when the"); ?> <a href="system_firmware_check.php"><?=gettext("System: Firmware: Auto Update"); ?></a> <?=gettext("page is viewed."); ?>
-				<br/>
-				<b><?=gettext("NOTE:"); ?></b> <?php printf(gettext("When a custom URL is enabled, the system will not verify the digital signature from %s."), $g['product_website']); ?>
+				<br />
+				<b><?=gettext("NOTE:"); ?></b> <?php printf(gettext("When a custom URL is configured, the system will not verify the image has an official digital signature")); ?>
 				</span>
 				</td>
 	</tr>

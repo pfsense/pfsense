@@ -163,8 +163,8 @@ $.extend(Timepicker.prototype, {
 			},
 			timepicker: tp_inst // add timepicker as a property of datepicker: $.datepicker._get(dp_inst, 'timepicker');
 		});
-		tp_inst.amNames = $.map(tp_inst._defaults.amNames, function(val) { return val.toUpperCase() });
-		tp_inst.pmNames = $.map(tp_inst._defaults.pmNames, function(val) { return val.toUpperCase() });
+		tp_inst.amNames = $.map(tp_inst._defaults.amNames, function(val) { return val.toUpperCase() ;});
+		tp_inst.pmNames = $.map(tp_inst._defaults.pmNames, function(val) { return val.toUpperCase() ;});
 
 		if (tp_inst._defaults.timezoneList === null) {
 			var timezoneList = [];
@@ -975,7 +975,7 @@ $.datepicker.formatTime = function(format, time, options) {
 
 	tmptime = $.trim(tmptime);
 	return tmptime;
-}
+};
 
 //########################################################################
 // the bad hack :/ override datepicker so it doesnt close on select

@@ -3,7 +3,7 @@
 	$Id$
 	part of m0n0wall (http://m0n0.ch/wall)
 
-	Copyrigth (C) 2009	    Ermal Luçi
+	Copyrigth (C) 2009	    Ermal LuÃ§i
 	Copyright (C) 2003-2006 Manuel Kasper <mk@neon1.net>.
 	All rights reserved.
 
@@ -121,19 +121,19 @@ if ($_POST['auth_user2'])
 
 if ($_POST['logout_id']) {
 	echo <<<EOD
-<HTML>
-<HEAD><TITLE>Disconnecting...</TITLE></HEAD>
-<BODY BGCOLOR="#435370">
-<SPAN STYLE="color: #ffffff; font-family: Tahoma, Verdana, Arial, Helvetica, sans-serif; font-size: 11px;">
-<B>You have been disconnected.</B>
-</SPAN>
-<SCRIPT LANGUAGE="JavaScript">
+<html>
+<head><title>Disconnecting...</title></head>
+<body bgcolor="#435370">
+<span style="color: #ffffff; font-family: Tahoma, Verdana, Arial, Helvetica, sans-serif; font-size: 11px;">
+<b>You have been disconnected.</b>
+</span>
+<script type="text/javascript">
 <!--
 setTimeout('window.close();',5000) ;
 -->
-</SCRIPT>
-</BODY>
-</HTML>
+</script>
+</body>
+</html>
 
 EOD;
 	captiveportal_disconnect_client($_POST['logout_id']);

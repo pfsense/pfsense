@@ -195,6 +195,8 @@ foreach ($FilterIflist as $iflist) {
 	if($iflist['ipv6'] == $http_host)
 		$local_ip = true;
 }
+unset($FilterIflist);
+
 if($config['virtualip']) {
 	if($config['virtualip']['vip']) {
 		foreach($config['virtualip']['vip'] as $vip) {

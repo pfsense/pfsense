@@ -104,7 +104,7 @@ if(file_exists("/etc/platform")) {
 	$arch = ($arch == "i386") ? "" : '/' . $arch;
 
 	/* Full installs and NanoBSD use the same update directory and manifest in 2.x */
-	$g['update_url']="https://snapshots.pfsense.org/FreeBSD_RELENG_10_0/{$arch}/pfSense_HEAD/.updaters/";
+	$g['update_url']="https://snapshots.pfsense.org/FreeBSD_stable/10/{$arch}/pfSense_HEAD/.updaters/";
 	$g['update_manifest']="https://updates.pfSense.org/manifest";
 
 	$g['platform'] = trim(file_get_contents("/etc/platform"));

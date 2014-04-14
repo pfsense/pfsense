@@ -48,15 +48,9 @@ $nocsrf = true;
 require_once("globals.inc");
 require_once("functions.inc");
 require_once("guiconfig.inc");
+require_once("xmlrpc_client.inc");
 
 $curcfg = $config['system']['firmware'];
-
-$kerneltypes = array(
-	'SMP' => gettext("Standard Kernel"),
-	'wrap' => gettext("Embedded Kernel"),
-);
-
-require_once("xmlrpc_client.inc");
 
 /* Allow additional execution time 0 = no limit. */
 ini_set('max_execution_time', '9999');
@@ -120,9 +114,6 @@ if(is_subsystem_dirty('firmwarelock')) {
 
 if($_POST['backupbeforeupgrade'])
 	touch("/tmp/perform_full_backup.txt");
-
-if ($_POST['kerneltype'] && in_array($_POST['kerneltype'], array_keys($kerneltypes)))
-	file_put_contents("/boot/kernel/pfsense_kernel.txt", $_POST['kerneltype']);
 
 /* Handle manual upgrade */
 if ($_POST && !is_subsystem_dirty('firmwarelock')) {
@@ -286,19 +277,6 @@ if(stristr($_FILES['ulfile']['name'],"nanobsd"))
 							<strong><?=gettext("Firmware image file ($type):");?> </strong>
 							<input name="ulfile" type="file" class="formfld" />
 							<br />
-							<?php
-								if(!file_exists("/boot/kernel/pfsense_kernel.txt")) {
-									if($g['platform'] == "pfSense") {
-										echo gettext("Please select kernel type") , ": ";
-										echo "<select name='kerneltype'>";
-										foreach($kerneltypes as $kerntype => $kerndescr) {
-											echo "<option value='{$kerntype}'>{$kerndescr}</option>";
-										}
-										echo "</select>";
-										echo "<br />";
-									}
-								}
-							?>
 							<?php if ($g['hidebackupbeforeupgrade'] === false): ?>
 							<input type="checkbox" name='backupbeforeupgrade' id='backupbeforeupgrade' /> <?=gettext("Perform full backup prior to upgrade");?>
 							<br />

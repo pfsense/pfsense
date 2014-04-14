@@ -143,34 +143,6 @@ switch ($command) {
 		}
 }
 
-function check_for_kernel_file() {
-	global $fp;
-	$platform = file_get_contents("/etc/platform");
-	$platform = str_replace("\n", "", $platform);
-	$platform = str_replace("\r", "", $platform);
-	if($platform == "embedded" or $platform == "wrap" or $platform == "nanobsd") {
-		exec("echo wrap > /boot/kernel/pfsense_kernel.txt");
-		echo "\n";
-		return;
-	}	
-	if(!file_exists("/boot/kernel/pfsense_kernel.txt")) {
-		echo "\nPlease select which kernel you would like to use:\n";
-		echo "\n1. Standard Kernel";
-		echo "\n2. Embedded kernel (no video or keyboard)";
-		echo "\nPlease enter a number [1-2]: ";
-		$selection = strtoupper(chop(fgets($fp)));
-		switch ($selection) {
-			case "1":
-				exec("echo SMP > /boot/kernel/pfsense_kernel.txt");
-			break;
-			case "2":
-				exec("echo wrap > /boot/kernel/pfsense_kernel.txt");
-			break;
-		}
-		echo "\n";
-	}
-}
-
 function do_upgrade($path, $type) {
 	global $g, $fp;
 	
@@ -198,7 +170,6 @@ function do_upgrade($path, $type) {
 		}
 	}
 	mark_subsystem_dirty('firmwarelock');
-	check_for_kernel_file();
 	echo "\nOne moment please...\nInvoking firmware upgrade...";
 	if($type == "bdiff")
 		mwexec_bg("/etc/rc.firmware delta_update $path");

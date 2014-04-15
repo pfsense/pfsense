@@ -292,7 +292,7 @@ function check_everything() {
 			<?=gettext("Hint: This is only the number of log entries displayed in the GUI. It does not affect how many entries are contained in the actual log files.") ?></td>
 		</tr>
 		<tr>
-			<td width="22%" valign="top" class="vtable">Log File Size {Bytes)</td>
+			<td width="22%" valign="top" class="vtable">Log File Size (Bytes)</td>
 			<td width="78%" class="vtable">
 			<input name="logfilesize" id="logfilesize" type="text" class="formfld unknown" size="8" value="<?=htmlspecialchars($pconfig['logfilesize']);?>" /><br />
 			<?=gettext("Logs are held in constant-size circular log files. This field controls how large each log file is, and thus how many entries may exist inside the log By default this is approximately 500KB per log file, and there are nearly 20 such log files.") ?>

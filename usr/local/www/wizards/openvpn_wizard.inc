@@ -259,6 +259,7 @@ function step9_stepbeforeformdisplay() {
 		$state = $cavl[1]['v'];
 		$city = $cavl[2]['v'];
 		$org = $cavl[3]['v'];
+		$email = $cavl[4]['v'];
 	}
 	$fields =& $pkg['step'][$stepid]['fields']['field'];
 
@@ -275,6 +276,9 @@ function step9_stepbeforeformdisplay() {
 			break;
 		case 'organization':
 			$fields[$idx]['value'] = $org;
+			break;
+		case 'email':
+			$fields[$idx]['value'] = $email;
 			break;
 		}
 	}

@@ -89,6 +89,8 @@ if($_POST['disablecarp'] <> "") {
 
 $status = get_carp_status();
 
+$carp_detected_problems = (array_pop(get_sysctl("net.inet.carp.demotion")) > 0);
+
 $pgtitle = array(gettext("Status"),gettext("CARP"));
 $shortcut_section = "carp";
 include("head.inc");
@@ -99,6 +101,9 @@ include("head.inc");
 <?php include("fbegin.inc"); ?>
 <form action="carp_status.php" method="post">
 <?php if ($savemsg) print_info_box($savemsg); ?>
+
+<?PHP	if ($carp_detected_problems) print_info_box(gettext("CARP has detected a problem and this unit has been demoted to BACKUP status.") . "<br />" . gettext("Check link status on all interfaces with configured CARP VIPs.")); ?>
+
 
 <div id="mainlevel">
 	<table width="100%" border="0" cellpadding="0" cellspacing="0">
@@ -144,9 +149,8 @@ include("head.inc");
 
 					include("fend.inc");
 					echo "</body></html>";
-					exit;
+					return;
 				}
-
 				if(is_array($config['virtualip']['vip'])) {
 					foreach($config['virtualip']['vip'] as $carp) {
 						if ($carp['mode'] != "carp")

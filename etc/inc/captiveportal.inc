@@ -163,14 +163,6 @@ function captiveportal_load_modules() {
 		mwexec("/sbin/sysctl net.inet.ip.dummynet.io_fast=1 net.inet.ip.dummynet.hash_size=256");
 	}
 	unmute_kernel_msgs();
-
-	/* XXX: This are not used in pfSense, if needed can be tuned 
-	if($config['system']['maximumstates'] <> "" && is_numeric($config['system']['maximumstates'])) {
-			mwexec("sysctl net.inet.ip.fw.dyn_max={$config['system']['maximumstates']}");
-	} else {
-			mwexec("sysctl net.inet.ip.fw.dyn_max=10000");
-	}
-	*/
 }
 
 function captiveportal_configure() {
@@ -182,8 +174,7 @@ function captiveportal_configure() {
 			$cpzoneid = $cp['zoneid'];
 			captiveportal_configure_zone($cp);
 		}
-	} else
-		mwexec("/sbin/sysctl net.link.ether.ipfw=0");
+	}
 }
 
 function captiveportal_configure_zone($cpcfg) {

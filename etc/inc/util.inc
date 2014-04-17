@@ -297,8 +297,10 @@ function refcount_read($reference) {
 }
 
 function is_module_loaded($module_name) {
-	$running = `/sbin/kldstat | grep {$module_name} | /usr/bin/grep -v grep | /usr/bin/wc -l`;
-	if (intval($running) >= 1)
+	$module_name = str_replace(".ko", "", $module_name);
+	$running = 0;
+	$_gb = exec("/sbin/kldstat -qm {$module_name}", $_gb, $running);
+	if (!intval($running) == 0)
 		return true;
 	else
 		return false;

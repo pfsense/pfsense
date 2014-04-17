@@ -39,15 +39,29 @@ if [ -e /root/force_fsck ]; then
 	fi
 fi
 
+if [ "${PLATFORM}" = "nanobsd" ]; then
+	kldstat -qm zfs
+	if [ $? = 0 ]; then
+		kldunload zfs
+	fi
+fi
+
 # Mount memory file system if it exists
 echo "Mounting filesystems..."
 
+kldstat -qm zfs
 # Handle ZFS read-only case
 if [ "$PLATFORM" = "pfSense" ]; then
-	if [ -f /usr/bin/grep ]; then
-		ZFSROOT=`/sbin/zfs mount | /usr/bin/grep ' /$' | /usr/bin/cut -d ' ' -f 1`
-		if [ "$ZFSROOT" != "" ]; then
-			/sbin/zfs set readonly=off $ZFSROOT
+	kldstat -qm zfs
+	if [ $? = 0 ]; then
+		ZFSFSAVAILABLE=$(/sbin/zfs mount 2>/dev/null | wc -l)
+		if [ $ZFSAVAILABLE -eq 0 ]; then
+			kldunload zfs
+		elif [ -f /usr/bin/grep ]; then
+			ZFSROOT=`/sbin/zfs mount | /usr/bin/grep ' /$' | /usr/bin/cut -d ' ' -f 1`
+			if [ "$ZFSROOT" != "" ]; then
+				/sbin/zfs set readonly=off $ZFSROOT
+			fi
 		fi
 	fi
 fi

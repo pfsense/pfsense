@@ -50,7 +50,7 @@ function write_rcfile($params) {
 	global $g;
 
 	$rcfile_fullname = RCFILEPREFIX . $params['file'];
-	if (!file_exists($rcfile_fullname) && !touch($rcfile_fullname))
+	if (!file_exists($rcfile_fullname) && !is_link($rcfile_fullname) && !touch($rcfile_fullname))
 		return false;
 
 	if (!is_writable($rcfile_fullname) || empty($params['start']))
@@ -100,7 +100,7 @@ function start_service($name) {
 					if (!empty($service['prefix'])) {
 						$prefix =& $service['prefix'];
 					}
-					if(file_exists("{$prefix}{$service['rcfile']}")) {
+					if(file_exists("{$prefix}{$service['rcfile']}") || is_link("{$prefix}{$service['rcfile']}")) {
 						mwexec_bg("{$prefix}{$service['rcfile']} start");
 					}
 				}
@@ -126,7 +126,7 @@ function stop_service($name) {
 					if(!empty($service['prefix'])) {
 						$prefix =& $service['prefix'];
 					}
-					if(file_exists("{$prefix}{$service['rcfile']}")) {
+					if(file_exists("{$prefix}{$service['rcfile']}") || is_link("{$prefix}{$service['rcfile']}")) {
 						mwexec("{$prefix}{$service['rcfile']} stop");
 					}
 					return;

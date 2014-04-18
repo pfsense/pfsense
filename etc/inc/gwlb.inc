@@ -161,8 +161,14 @@ EOD;
 		if(in_array($gateway['monitor'], $monitor_ips))
 			continue;
 
-		/* Interface ip is needed since apinger will bind a socket to it. */
-		if (is_ipaddrv4($gateway['gateway'])) {
+		/* Interface ip is needed since apinger will bind a socket to it. 
+		 * However the config GUI should already have checked this and when 
+		 * PPoE is used the IP address is set to "dynamic". So using is_ipaddrv4
+		 * or is_ipaddrv6 to identify packet type would be wrong, especially as
+		 * further checks (that can cope with the "dynamic" case) are present inside
+		 * the if block. So using $gateway['ipprotocol'] is the better option.
+		 */
+		if ($gateway['ipprotocol'] == "inet") { // This is an IPv4 gateway...
 			$gwifip = find_interface_ip($gateway['interface'], true);
 			if (!is_ipaddrv4($gwifip))
 				continue; //Skip this target
@@ -178,7 +184,7 @@ EOD;
 				mwexec("/sbin/route change -host " . escapeshellarg($gateway['monitor']) .
 					" " . escapeshellarg($gateway['gateway']), true);
 			}
-		} else if (is_ipaddrv6($gateway['gateway'])) {
+		} else if ($gateway['ipprotocol'] == "inet6") { // This is an IPv6 gateway...
 			/* link locals really need a different src ip */
 			if(is_linklocal($gateway['gateway'])) {
 				$gwifip = find_interface_ipv6_ll($gateway['interface'], true);

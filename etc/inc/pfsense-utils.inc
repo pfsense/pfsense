@@ -1634,7 +1634,7 @@ function load_thermal_hardware() {
  ******/
 function isvm() {
 	$virtualenvs = array("vmware", "parallels", "qemu", "bochs", "plex86");
-	$bios_product = trim(`/bin/kenv | /usr/bin/awk -F= '/smbios.system.product/ {print $2}'`);
+	$bios_product = trim(`/bin/kenv smbios.system.product`);
 	foreach ($virtualenvs as $virtualenv)
 		if (stripos($bios_product, $virtualenv) !== false)
 			return true;

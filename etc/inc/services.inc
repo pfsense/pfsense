@@ -1592,12 +1592,14 @@ function dyndnsCheckIP($int) {
 		// Avoid the long wait for the external check to timeout.
 		if (stristr($gateways_status[$config['interfaces'][$int]['gateway']]['status'],"down"))
 			return "down";
-		$hosttocheck = "checkip.dyndns.org";
-		$checkip = gethostbyname($hosttocheck);
-		$ip_ch = curl_init("http://{$checkip}");
+                $hosttocheck = "http://checkip.dyndns.org";
+                $ip_ch = curl_init($hosttocheck);
 		curl_setopt($ip_ch, CURLOPT_RETURNTRANSFER, 1);
 		curl_setopt($ip_ch, CURLOPT_SSL_VERIFYPEER, FALSE);
 		curl_setopt($ip_ch, CURLOPT_INTERFACE, $ip_address);
+                curl_setopt($ip_ch, CURLOPT_CONNECTTIMEOUT, '30');
+                curl_setopt($ip_ch, CURLOPT_TIMEOUT, 120);
+                curl_setopt($ip_ch, CURLOPT_IPRESOLVE, CURL_IPRESOLVE_V4);
 		$ip_result_page = curl_exec($ip_ch);
 		curl_close($ip_ch);
 		$ip_result_decoded = urldecode($ip_result_page);
@@ -1988,9 +1990,13 @@ function services_dnsupdate_process($int = "", $updatehost = "", $forced = false
 
 			/* determine interface name */
 			$if = get_real_interface($dnsupdate['interface']);
-			$wanip = get_interface_ip($dnsupdate['interface']);
+			
+			if (isset($dnsupdate['usepublicip']))
+                                $wanip = dyndnsCheckIP($dnsupdate['interface']);
+                        else
+                                $wanip = get_interface_ip($dnsupdate['interface']);
+			
 			$wanipv6 = get_interface_ipv6($dnsupdate['interface']);
-
 			$cacheFile = "{$g['conf_path']}/dyndns_{$dnsupdate['interface']}_rfc2136_" . escapeshellarg($dnsupdate['host']) . "_{$dnsupdate['server']}.cache";
 			$currentTime = time();
 
@@ -2054,9 +2060,6 @@ EOD;
 				/* Update IPv4 if we have it. */
 				if (is_ipaddrv4($wanip)) {
 					if (($wanip != $cachedipv4) || (($currentTime - $cacheTimev4) > $maxCacheAgeSecs) || $forced) {
-						if (isset($dnsupdate['usepublicip'])) {
-							$wanip = dyndnsCheckIP($dnsupdate['interface']);
-						}
 						$upinst .= "update delete {$dnsupdate['host']}. A\n";
 						$upinst .= "update add {$dnsupdate['host']}. {$dnsupdate['ttl']} A {$wanip}\n";
 						$notify_text .= sprintf(gettext("DynDNS updated IP Address (A) for {$dnsupdate['host']} on %s (%s) to %s"), convert_real_interface_to_friendly_descr($if), $if, $wanip) . "\n";
@@ -2091,7 +2094,7 @@ EOD;
 					@file_put_contents("{$g['varetc_path']}/nsupdatecmds{$i}", $upinst);
 					unset($upinst);
 					/* invoke nsupdate */
-					$cmd = "/usr/bin/nsupdate -k {$g['varetc_path']}/K{$i}{$keyname}+157+00000.key";
+					$cmd = "/usr/local/bin/nsupdate -k {$g['varetc_path']}/K{$i}{$keyname}+157+00000.key";
 					if (isset($dnsupdate['usetcp']))
 						$cmd .= " -v";
 					$cmd .= " {$g['varetc_path']}/nsupdatecmds{$i}";

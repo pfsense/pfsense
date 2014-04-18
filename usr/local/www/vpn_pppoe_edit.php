@@ -356,11 +356,11 @@ if ($input_errors)
 if ($savemsg)
 	print_info_box($savemsg);
 ?>
-<table width="100%" border="0" cellpadding="0" cellspacing="0">
+<table width="100%" border="0" cellpadding="0" cellspacing="0" summary="pppoe edit">
 	<tr>
 		<td>
 			<div id="mainarea">
-				<table class="tabcont" width="100%" border="0" cellpadding="6" cellspacing="0">
+				<table class="tabcont" width="100%" border="0" cellpadding="6" cellspacing="0" summary="main area">
 					<tr>
 						<td height="16" colspan="2" class="listtopic" valign="top"><?php echo gettext("PPPoE server configuration"); ?></td>
 					</tr>
@@ -541,7 +541,7 @@ if ($savemsg)
 					<tr>
 						<td width="22%" valign="top" class="vncell"><div id="addressnetworkport"><?=gettext("User (s)");?></div></td>
 						<td width="78%" class="vtable">
-							<table id="usertable">
+							<table id="usertable" summary="users">
 								<tbody>
 								<tr>
 									<td><div id="onecolumn"><?=gettext("Username");?></div></td>
@@ -571,7 +571,7 @@ if ($savemsg)
 										<input name="ip<?php echo $tracker; ?>" type="text" class="formfld unknown" id="ip<?php echo $tracker; ?>" size="10" value="<?=htmlspecialchars($ip);?>" />
 									</td>
 									<td>
-										<a onclick="removeRow(this); return false;" href="#"><img border="0" src="/themes/<?echo $g['theme'];?>/images/icons/icon_x.gif" /></a>
+										<a onclick="removeRow(this); return false;" href="#"><img border="0" src="/themes/<?echo $g['theme'];?>/images/icons/icon_x.gif" alt="delete" /></a>
 									</td>
 								</tr>
 <?php
@@ -594,11 +594,11 @@ if ($savemsg)
 						<td width="78%">
 <?php
 						if (isset($id))
-							echo "<input type='hidden' name='id' id='id' value='" . htmlspecialchars($id, ENT_QUOTES | ENT_HTML401) . "' />";
+							echo "<input type=\"hidden\" name=\"id\" id=\"id\" value=\"" . htmlspecialchars($id, ENT_QUOTES | ENT_HTML401) . "\" />";
 ?>
 <?php
 						if (isset($pconfig['pppoeid']))
-							echo "<input type='hidden' name='pppoeid' id='pppoeid' value='{$pppoeid}' />";
+							echo "<input type=\"hidden\" name=\"pppoeid\" id=\"pppoeid\" value=\"{$pppoeid}\" />";
 ?>
 							<input name="Submit" type="submit" class="formbtn" value="<?=gettext("Save"); ?>"  onclick="enable_change(true)" />
 							<a href="vpn_pppoe.php"><input name="Cancel" type="button" class="formbtn" value="<?=gettext("Cancel"); ?>" /></a>

@@ -404,9 +404,6 @@ EOF;
 
 function body_html() {
 	global $g, $fstype, $savemsg;
-	$pfSversion = str_replace("\n", "", file_get_contents("/etc/version"));
-	if(strstr($pfSversion, "1.2")) 
-		$one_two = true;
 	$pgtitle = array("{$g['product_name']}", gettext("Installer"));
 	include("head.inc");
 	echo <<<EOF

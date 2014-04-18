@@ -40,8 +40,6 @@
 
 require("guiconfig.inc");
 
-$pfSversion = str_replace("\n", "", file_get_contents("/etc/version"));
-
 $pgtitle = gettext("Diagnostics: pfTop");
 
 $sorttypes = array('age', 'bytes', 'dest', 'dport', 'exp', 'none', 'peak', 'pkt', 'rate', 'size', 'sport', 'src');
@@ -115,8 +113,6 @@ if($_REQUEST['sorttype'] && in_array($_REQUEST['sorttype'], $sorttypes)
 <div id='maincontent'>
 <?php
 	include("fbegin.inc"); 
-	if(strstr($pfSversion, "1.2")) 
-		echo "<p class=\"pgtitle\">{$pgtitle}</p>";
 	if($savemsg) {
 		echo "<div id='savemsg'>";
 		print_info_box($savemsg);

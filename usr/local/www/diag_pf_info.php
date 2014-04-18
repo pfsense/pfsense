@@ -41,8 +41,6 @@
 
 require("guiconfig.inc");
 
-$pfSversion = str_replace("\n", "", file_get_contents("/etc/version"));
-
 $pgtitle = gettext("Diagnostics: pfInfo");
 
 if($_REQUEST['getactivity']) {
@@ -80,8 +78,6 @@ jQuery(document).ready(function() {setTimeout('getpfinfo()', 5000);});
 <div id='maincontent'>
 <?php
 	include("fbegin.inc"); 
-	if(strstr($pfSversion, "1.2")) 
-		echo "<p class=\"pgtitle\">{$pgtitle}</p>";
 	if($savemsg) {
 		echo "<div id='savemsg'>";
 		print_info_box($savemsg);

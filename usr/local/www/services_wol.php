@@ -122,7 +122,7 @@ include("head.inc");
 <?php if ($input_errors) print_input_errors($input_errors); ?>
 <?php if ($savemsg) print_info_box($savemsg); ?>
 			<form action="services_wol.php" method="post" name="iform" id="iform">
-			  <table width="100%" border="0" cellpadding="6" cellspacing="0">
+			  <table width="100%" border="0" cellpadding="6" cellspacing="0" summary="wake on lan">
 			<tr>
 				<td colspan="2" valign="top" class="listtopic"><?=gettext("Wake on LAN");?></td>
 			</tr>
@@ -133,7 +133,7 @@ include("head.inc");
                       <?php 
 						$interfaces = get_configured_interface_with_descr();
 					  	foreach ($interfaces as $iface => $ifacename): ?>
-                      	<option value="<?=$iface;?>" <?php if (!link_interface_to_bridge($iface) && $iface == $if) echo "selected"; ?>>
+                      	<option value="<?=$iface;?>" <?php if (!link_interface_to_bridge($iface) && $iface == $if) echo "selected=\"selected\""; ?>>
                       <?=htmlspecialchars($ifacename);?>
                       </option>
                       <?php endforeach; ?>
@@ -143,29 +143,29 @@ include("head.inc");
                 <tr>
 				  <td width="22%" valign="top" class="vncellreq"><?=gettext("MAC address");?></td>
 				  <td width="78%" class="vtable">
-                      <input name="mac" type="text" class="formfld unknown" id="mac" size="20" value="<?=htmlspecialchars($mac);?>">
+                      <input name="mac" type="text" class="formfld unknown" id="mac" size="20" value="<?=htmlspecialchars($mac);?>" />
                       <br />
                       <?=gettext("Enter a MAC address ");?><span class="vexpl"> <?=gettext("in the following format: xx:xx:xx:xx:xx:xx");?></span></td></tr>
 				<tr>
 				  <td width="22%" valign="top">&nbsp;</td>
 				  <td width="78%">
-                    <input name="Submit" type="submit" class="formbtn" value="<?=gettext("Send");?>">
+                    <input name="Submit" type="submit" class="formbtn" value="<?=gettext("Send");?>" />
 				</td>
 				</tr>
 			</table>
 			&nbsp;<br />
-			<?=gettext("Wake all clients at once: ");?><a href="services_wol.php?wakeall=true"><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_wol_all.gif" width="17" height="17" border="0"></a><p/>
+			<?=gettext("Wake all clients at once: ");?><a href="services_wol.php?wakeall=true"><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_wol_all.gif" width="17" height="17" border="0" alt="wol all" /></a><br/>
 			<?=gettext("Or Click the MAC address to wake up an individual device:");?>
-			<table width="100%" border="0" cellpadding="0" cellspacing="0" class="tabcont">
+			<table width="100%" border="0" cellpadding="0" cellspacing="0" class="tabcont" summary="clients">
                 <tr>
                   <td width="15%" class="listhdrr"><?=gettext("Interface");?></td>
                   <td width="25%" class="listhdrr"><?=gettext("MAC address");?></td>
                   <td width="50%" class="listhdr"><?=gettext("Description");?></td>
                   <td width="10%" class="list">
-                    <table border="0" cellspacing="0" cellpadding="1">
+                    <table border="0" cellspacing="0" cellpadding="1" summary="add">
                       <tr>
 			<td valign="middle" width="17"></td>
-                        <td valign="middle"><a href="services_wol_edit.php"><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_plus.gif" width="17" height="17" border="0"></a></td>
+                        <td valign="middle"><a href="services_wol_edit.php"><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_plus.gif" width="17" height="17" border="0" alt="add" /></a></td>
                       </tr>
                     </table>
 		  </td>
@@ -176,16 +176,16 @@ include("head.inc");
                     <?=convert_friendly_interface_to_friendly_descr($wolent['interface']);?>
                   </td>
                   <td class="listr" ondblclick="document.location='services_wol_edit.php?id=<?=$i;?>';">
-                    <a href="?mac=<?=$wolent['mac'];?>&if=<?=$wolent['interface'];?>"><?=strtolower($wolent['mac']);?></a>
+                    <a href="?mac=<?=$wolent['mac'];?>&amp;if=<?=$wolent['interface'];?>"><?=strtolower($wolent['mac']);?></a>
                   </td>
                   <td class="listbg" ondblclick="document.location='services_wol_edit.php?id=<?=$i;?>';">
                     <?=htmlspecialchars($wolent['descr']);?>
                   </td>
-                  <td valign="middle" nowrap class="list">
-                    <table border="0" cellspacing="0" cellpadding="1">
+                  <td valign="middle" class="list nowrap">
+                    <table border="0" cellspacing="0" cellpadding="1" summary="icons">
                       <tr>
-                        <td valign="middle"><a href="services_wol_edit.php?id=<?=$i;?>"><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_e.gif" width="17" height="17" border="0"></a></td>
-                        <td valign="middle"><a href="services_wol.php?act=del&id=<?=$i;?>" onclick="return confirm('<?=gettext("Do you really want to delete this entry?");?>')"><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_x.gif" width="17" height="17" border="0"></a></td>
+                        <td valign="middle"><a href="services_wol_edit.php?id=<?=$i;?>"><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_e.gif" width="17" height="17" border="0" alt="edit" /></a></td>
+                        <td valign="middle"><a href="services_wol.php?act=del&amp;id=<?=$i;?>" onclick="return confirm('<?=gettext("Do you really want to delete this entry?");?>')"><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_x.gif" width="17" height="17" border="0" alt="delete" /></a></td>
                       </tr>
                     </table>
                   </td>
@@ -194,10 +194,10 @@ include("head.inc");
                 <tr>
                   <td class="list" colspan="3"></td>
                   <td class="list">
-                    <table border="0" cellspacing="0" cellpadding="1">
+                    <table border="0" cellspacing="0" cellpadding="1" summary="add">
                       <tr>
 			<td valign="middle" width="17"></td>
-                        <td valign="middle"><a href="services_wol_edit.php"><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_plus.gif" width="17" height="17" border="0"></a></td>
+                        <td valign="middle"><a href="services_wol_edit.php"><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_plus.gif" width="17" height="17" border="0" alt="add" /></a></td>
                       </tr>
                     </table>
                   </td>

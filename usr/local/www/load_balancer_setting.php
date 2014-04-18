@@ -106,10 +106,10 @@ include("head.inc");
 <form action="load_balancer_setting.php" method="post">
 <?php if ($input_errors) print_input_errors($input_errors); ?>
 <?php if ($savemsg) print_info_box($savemsg); ?>
-<?php if (is_subsystem_dirty('loadbalancer')): ?><p>
+<?php if (is_subsystem_dirty('loadbalancer')): ?><br/>
 <?php print_info_box_np(gettext("The load balancer configuration has been changed") . ".<br />" . gettext("You must apply the changes in order for them to take effect."));?><br />
 <?php endif; ?>
-<table width="100%" border="0" cellpadding="0" cellspacing="0">
+<table width="100%" border="0" cellpadding="0" cellspacing="0" summary="load balancer settings">
    <tr>
       <td class="tabnavtbl">
        <?php
@@ -126,14 +126,14 @@ include("head.inc");
    <tr>
       <td id="mainarea">
          <div class="tabcont">
-            <table width="100%" border="0" cellpadding="6" cellspacing="0">
+            <table width="100%" border="0" cellpadding="6" cellspacing="0" summary="main area">
               <tr>
                  <td colspan="2" valign="top" class="listtopic"><?=gettext("Relayd global settings"); ?></td>
               </tr>
 	      <tr>
 	         <td width="22%" valign="top" class="vncell"><?=gettext("timeout") ; ?></td>
                  <td width="78%" class="vtable">
-                   <input name="timeout" id="timeout" value="<?php if ($lbsetting['timeout'] <> "") echo $lbsetting['timeout']; ?>" class="formfld unknown">
+                   <input name="timeout" id="timeout" value="<?php if ($lbsetting['timeout'] <> "") echo $lbsetting['timeout']; ?>" class="formfld unknown" />
                    <br />
                    <?=gettext("Set the global timeout in milliseconds for checks. Leave blank to use the default value of 1000 ms "); ?>
                  </td>
@@ -141,7 +141,7 @@ include("head.inc");
 	      <tr>
 	         <td width="22%" valign="top" class="vncell"><?=gettext("interval") ; ?></td>
                  <td width="78%" class="vtable">
-                   <input name="interval" id="interval" value="<?php if ($lbsetting['interval'] <> "") echo $lbsetting['interval']; ?>" class="formfld unknown">
+                   <input name="interval" id="interval" value="<?php if ($lbsetting['interval'] <> "") echo $lbsetting['interval']; ?>" class="formfld unknown" />
                    <br />
                    <?=gettext("Set the interval in seconds at which the member of a pool will be checked. Leave blank to use the default interval of 10 seconds"); ?>
                 </td>
@@ -149,7 +149,7 @@ include("head.inc");
               <tr>
                  <td width="22%" valign="top" class="vncell"><?=gettext("prefork") ; ?></td>
                  <td width="78%" class="vtable">
-                   <input name="prefork" id="prefork" value="<?php if ($lbsetting['prefork'] <> "") echo $lbsetting['prefork']; ?>" class="formfld unknown">
+                   <input name="prefork" id="prefork" value="<?php if ($lbsetting['prefork'] <> "") echo $lbsetting['prefork']; ?>" class="formfld unknown" />
                    <br />
                    <?=gettext("Number of processes used by relayd for dns protocol. Leave blank to use the default value of 5 processes"); ?>
                 </td>
@@ -162,6 +162,7 @@ include("head.inc");
             </tr>
            </table>
         </div>
+      </td>
   </tr>
 </table>
 </form>

@@ -176,6 +176,7 @@ include("head.inc");
 <?php if ($input_errors) print_input_errors($input_errors); ?>
 <?php if ($savemsg) print_info_box($savemsg); ?>
 <script type="text/javascript">
+//<![CDATA[
 function _onTypeChange(type){ 
 	switch(type) {
 		case "custom":
@@ -213,12 +214,13 @@ function _onTypeChange(type){
 			document.getElementById("r53_ttl").style.display='none';
 	}
 }
+//]]>
 </script>
 <form action="services_dyndns_edit.php" method="post" name="iform" id="iform">
-              <table width="100%" border="0" cellpadding="6" cellspacing="0">
+              <table width="100%" border="0" cellpadding="6" cellspacing="0" summary="dynamic dns edit">
                 <tr>
                   <td colspan="2" valign="top" class="optsect_t">
-				  <table border="0" cellspacing="0" cellpadding="0" width="100%">
+				  <table border="0" cellspacing="0" cellpadding="0" width="100%" summary="title">
 				  <tr><td class="optsect_s"><strong><?=gettext("Dynamic DNS client");?></strong></td></tr>
 				  </table>
 				  </td>
@@ -226,7 +228,7 @@ function _onTypeChange(type){
                 <tr>
                   <td width="22%" valign="top" class="vncell"><?=gettext("Disable");?></td>
 				  <td width="78%" class="vtable">
-				    <input name="enable" type="checkbox" id="enable" value="<?=gettext("yes");?>" <?php if ($pconfig['enable']) echo "checked"; ?>>
+				    <input name="enable" type="checkbox" id="enable" value="<?=gettext("yes");?>" <?php if ($pconfig['enable']) echo "checked=\"checked\""; ?> />
 				  </td>
                 </tr>
                 <tr>
@@ -237,7 +239,7 @@ function _onTypeChange(type){
 						$types = explode(",", DYNDNS_PROVIDER_DESCRIPTIONS);
 						$vals = explode(" ", DYNDNS_PROVIDER_VALUES);
 						$j = 0; for ($j = 0; $j < count($vals); $j++): ?>
-                      <option value="<?=$vals[$j];?>" <?php if ($vals[$j] == $pconfig['type']) echo "selected";?>>
+                      <option value="<?=$vals[$j];?>" <?php if ($vals[$j] == $pconfig['type']) echo "selected=\"selected\"";?>>
                       <?=htmlspecialchars($types[$j]);?>
                       </option>
                       <?php endfor; ?>
@@ -252,7 +254,7 @@ function _onTypeChange(type){
 				   	foreach ($iflist as $if => $ifdesc) {
 						echo "<option value=\"{$if}\"";
 						if ($pconfig['interface'] == $if)
-							echo "selected";
+							echo "selected=\"selected\"";
 						echo ">{$ifdesc}</option>\n";
 					}
 					unset($iflist);
@@ -260,13 +262,12 @@ function _onTypeChange(type){
 				   	foreach ($grouplist as $name => $group) {
 						echo "<option value=\"{$name}\"";
 						if ($pconfig['interface'] == $name)
-							echo "selected";
+							echo "selected=\"selected\"";
 						echo ">GW Group {$name}</option>\n";
 					}
 					unset($grouplist);
 				?>
 					</select>
-					</td>
 					</td>
 				</tr>	
 				<tr id="_requestiftr">
@@ -278,7 +279,7 @@ function _onTypeChange(type){
 					foreach ($iflist as $if => $ifdesc) {
 						echo "<option value=\"{$if}\"";
 						if ($pconfig['requestif'] == $if)
-							echo "selected";
+							echo "selected=\"selected\"";
 						echo ">{$ifdesc}</option>\n";
 					}
 					unset($iflist);
@@ -286,7 +287,7 @@ function _onTypeChange(type){
 					foreach ($grouplist as $name => $group) {
 						echo "<option value=\"{$name}\"";
 						if ($pconfig['requestif'] == $name)
-							echo "selected";
+							echo "selected=\"selected\"";
 						echo ">GW Group {$name}</option>\n";
 					}
 					unset($grouplist);
@@ -294,12 +295,11 @@ function _onTypeChange(type){
 					</select>
 					<br /><?= gettext("Note: This is almost always the same as the Interface to Monitor.");?>
 					</td>
-					</td>
 				</tr>
                 <tr id="_hostnametr">
                   <td width="22%" valign="top" class="vncellreq"><?=gettext("Hostname");?></td>
                   <td width="78%" class="vtable">
-                    <input name="host" type="text" class="formfld unknown" id="host" size="30" value="<?=htmlspecialchars($pconfig['host']);?>">
+                    <input name="host" type="text" class="formfld unknown" id="host" size="30" value="<?=htmlspecialchars($pconfig['host']);?>" />
                     <br />
 				    <span class="vexpl">
 				    <span class="red"><strong><?=gettext("Note:");?><br /></strong>
@@ -312,7 +312,7 @@ function _onTypeChange(type){
                 <tr id="_mxtr">
                   <td width="22%" valign="top" class="vncell"><?=gettext("MX"); ?></td>
                   <td width="78%" class="vtable">
-                    <input name="mx" type="text" class="formfld unknown" id="mx" size="30" value="<?=htmlspecialchars($pconfig['mx']);?>">
+                    <input name="mx" type="text" class="formfld unknown" id="mx" size="30" value="<?=htmlspecialchars($pconfig['mx']);?>" />
                     <br />
 					<?=gettext("Note: With DynDNS service you can only use a hostname, not an IP address.");?>
 					<br />
@@ -322,28 +322,28 @@ function _onTypeChange(type){
                 <tr id="_wildcardtr">
                   <td width="22%" valign="top" class="vncell"><?=gettext("Wildcards"); ?></td>
                   <td width="78%" class="vtable">
-                    <input name="wildcard" type="checkbox" id="wildcard" value="yes" <?php if ($pconfig['wildcard']) echo "checked"; ?>>
+                    <input name="wildcard" type="checkbox" id="wildcard" value="yes" <?php if ($pconfig['wildcard']) echo "checked=\"checked\""; ?> />
                     <?=gettext("Enable ");?><?=gettext("Wildcard"); ?></td>
 				</tr>
                 <tr id="_verboselogtr">
                   <td width="22%" valign="top" class="vncell"><?=gettext("Verbose logging"); ?></td>
                   <td width="78%" class="vtable">
-                    <input name="verboselog" type="checkbox" id="verboselog" value="yes" <?php if ($pconfig['verboselog']) echo "checked"; ?>>
+                    <input name="verboselog" type="checkbox" id="verboselog" value="yes" <?php if ($pconfig['verboselog']) echo "checked=\"checked\""; ?> />
                     <?=gettext("Enable ");?><?=gettext("verbose logging"); ?></td>
 				</tr>
 				<tr id="_curloptions">
                   <td width="22%" valign="top" class="vncell"><?=gettext("CURL options"); ?></td>
                   <td width="78%" class="vtable">
-                    <input name="curl_ipresolve_v4" type="checkbox" id="curl_ipresolve_v4" value="yes" <?php if ($pconfig['curl_ipresolve_v4']) echo "checked"; ?>>
+                    <input name="curl_ipresolve_v4" type="checkbox" id="curl_ipresolve_v4" value="yes" <?php if ($pconfig['curl_ipresolve_v4']) echo "checked=\"checked\""; ?> />
                     <?=gettext("Force IPv4 resolving"); ?><br />
-					<input name="curl_ssl_verifypeer" type="checkbox" id="curl_ssl_verifypeer" value="yes" <?php if ($pconfig['curl_ssl_verifypeer']) echo "checked"; ?>>
+					<input name="curl_ssl_verifypeer" type="checkbox" id="curl_ssl_verifypeer" value="yes" <?php if ($pconfig['curl_ssl_verifypeer']) echo "checked=\"checked\""; ?> />
                     <?=gettext("Verify SSL peer"); ?>
 				  </td>
 				</tr>
                 <tr id="_usernametr">
                   <td width="22%" valign="top" class="vncellreq"><?=gettext("Username");?></td>
                   <td width="78%" class="vtable">
-                    <input name="username" type="text" class="formfld user" id="username" size="20" value="<?=htmlspecialchars($pconfig['username']);?>">
+                    <input name="username" type="text" class="formfld user" id="username" size="20" value="<?=htmlspecialchars($pconfig['username']);?>" />
                     <br /><?= gettext("Username is required for all types except Namecheap, FreeDNS and Custom Entries.");?>
 		    <br /><?= gettext("Route 53: Enter your Access Key ID.");?>
 		    <br /><?= gettext("For Custom Entries, Username and Password represent HTTP Authentication username and passwords.");?>
@@ -352,7 +352,7 @@ function _onTypeChange(type){
                 <tr>
                   <td width="22%" valign="top" class="vncellreq"><?=gettext("Password");?></td>
                   <td width="78%" class="vtable">
-                    <input name="password" type="password" class="formfld pwd" id="password" size="20" value="<?=htmlspecialchars($pconfig['password']);?>">
+                    <input name="password" type="password" class="formfld pwd" id="password" size="20" value="<?=htmlspecialchars($pconfig['password']);?>" />
                     <br />
                     <?=gettext("FreeDNS (freedns.afraid.org): Enter your \"Authentication Token\" provided by FreeDNS.");?>
 		    <br /><?= gettext("Route 53: Enter your Secret Access Key.");?>
@@ -362,14 +362,14 @@ function _onTypeChange(type){
                 <tr id="r53_zoneid" style="display:none">
                   <td width="22%" valign="top" class="vncellreq"><?=gettext("Zone ID");?></td>
                   <td width="78%" class="vtable">
-                    <input name="zoneid" type="text" class="formfld user" id="zoneid" size="20" value="<?=htmlspecialchars($pconfig['zoneid']);?>">
+                    <input name="zoneid" type="text" class="formfld user" id="zoneid" size="20" value="<?=htmlspecialchars($pconfig['zoneid']);?>" />
                     <br /><?= gettext("Enter Zone ID that you received when you created your domain in Route 53.");?>
                   </td>
                 </tr>
                 <tr id="_urltr">
                   <td width="22%" valign="top" class="vncell"><?=gettext("Update URL");?></td>
                   <td width="78%" class="vtable">
-                    <input name="updateurl" type="text" class="formfld unknown" id="updateurl" size="60" value="<?=htmlspecialchars($pconfig['updateurl']);?>">
+                    <input name="updateurl" type="text" class="formfld unknown" id="updateurl" size="60" value="<?=htmlspecialchars($pconfig['updateurl']);?>" />
                     <br /><?= gettext("This is the only field required by for Custom Dynamic DNS, and is only used by Custom Entries.");?>
 			<br />
 			<?= gettext("If you need the new IP to be included in the request, put %IP% in its place.");?>
@@ -390,32 +390,30 @@ function _onTypeChange(type){
 			<?= gettext("Tabs (\\t), newlines (\\n) and carriage returns (\\r) at the beginning or end of the returned results are removed before comparison.");?>
                   </td>
                 </tr>
-                <tr>
 
                 <tr id="r53_ttl" style="display:none">
                   <td width="22%" valign="top" class="vncellreq"><?=gettext("TTL");?></td>
                   <td width="78%" class="vtable">
-                    <input name="ttl" type="text" class="formfld user" id="ttl" size="20" value="<?=htmlspecialchars($pconfig['ttl']);?>">
+                    <input name="ttl" type="text" class="formfld user" id="ttl" size="20" value="<?=htmlspecialchars($pconfig['ttl']);?>" />
                     <br /><?= gettext("Choose TTL for your dns record.");?>
                   </td>
                 </tr>
-                <tr>
 
 
                 <tr>
                   <td width="22%" valign="top" class="vncell"><?=gettext("Description");?></td>
                   <td width="78%" class="vtable">
-                    <input name="descr" type="text" class="formfld unknown" id="descr" size="60" value="<?=htmlspecialchars($pconfig['descr']);?>">
+                    <input name="descr" type="text" class="formfld unknown" id="descr" size="60" value="<?=htmlspecialchars($pconfig['descr']);?>" />
                   </td>
                 </tr>
                 <tr>
                   <td width="22%" valign="top">&nbsp;</td>
                   <td width="78%">
-                    <input name="Submit" type="submit" class="formbtn" value="<?=gettext("Save");?>" onClick="enable_change(true)">
-					<a href="services_dyndns.php"><input name="cancel" type="button" class="formbtn" value="<?=gettext("Cancel");?>"></a>
+                    <input name="Submit" type="submit" class="formbtn" value="<?=gettext("Save");?>" onclick="enable_change(true)" />
+					<a href="services_dyndns.php"><input name="cancel" type="button" class="formbtn" value="<?=gettext("Cancel");?>" /></a>
 					<?php if (isset($id) && $a_dyndns[$id]): ?>
-						<input name="id" type="hidden" value="<?=htmlspecialchars($id);?>">
-						<input name="force" type="submit" class="formbtn" value="<?=gettext("Save & Force Update");?>" onClick="enable_change(true)">
+						<input name="id" type="hidden" value="<?=htmlspecialchars($id);?>" />
+						<input name="force" type="submit" class="formbtn" value="<?=gettext("Save & Force Update");?>" onclick="enable_change(true)" />
 					<?php endif; ?>
                   </td>
                 </tr>
@@ -431,7 +429,9 @@ function _onTypeChange(type){
 <?php include("fend.inc"); ?>
 
 <script type="text/javascript">
+//<![CDATA[
 _onTypeChange("<?php echo $pconfig['type']; ?>");
+//]]>
 </script>
 
 </body>

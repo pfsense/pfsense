@@ -66,7 +66,7 @@ include("head.inc");
 <?php include("fbegin.inc"); ?>
 <form action="services_dyndns.php" method="post" name="iform" id="iform">
 <?php if ($input_errors) print_input_errors($input_errors); ?>
-<table width="100%" border="0" cellpadding="0" cellspacing="0">
+<table width="100%" border="0" cellpadding="0" cellspacing="0" summary="dynamic dns">
   <tr>
 	<td>
 <?php
@@ -80,7 +80,7 @@ include("head.inc");
   <tr>
 	<td>
 	  <div id="mainarea">
-	  <table class="tabcont" width="100%" border="0" cellpadding="0" cellspacing="0">
+	  <table class="tabcont" width="100%" border="0" cellpadding="0" cellspacing="0" summary="main area">
 		<tr>
 		  <td width="5%"  class="listhdrr"><?=gettext("Interface");?></td>
 		  <td width="15%" class="listhdrr"><?=gettext("Service");?></td>
@@ -121,7 +121,7 @@ include("head.inc");
 			for ($j = 0; $j < count($vals); $j++)
 				if ($vals[$j] == $dyndns['type']) {
 					if (!isset($dyndns['enable']))
-						echo "<span class=\"gray\">".htmlspecialchars($types[$j])."</span>";
+						echo "<span class=\"gray\">" . htmlspecialchars($types[$j]) . "</span>";
 					else
 						echo htmlspecialchars($types[$j]);
 					break;
@@ -131,7 +131,7 @@ include("head.inc");
 		  <td class="listr">
 		  <?php
 			if (!isset($dyndns['enable']))
-				echo "<span class=\"gray\">".htmlspecialchars($dyndns['host'])."</span>";
+				echo "<span class=\"gray\">" . htmlspecialchars($dyndns['host']) . "</span>";
 			else
 				echo htmlspecialchars($dyndns['host']);
 		  ?>
@@ -173,22 +173,22 @@ include("head.inc");
 				echo htmlspecialchars($dyndns['descr']);
 		  ?>
 		  </td>
-		  <td valign="middle" nowrap class="list">
-			<a href="services_dyndns_edit.php?id=<?=$i;?>"><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_e.gif" width="17" height="17" border="0"></a>
-			&nbsp;<a href="services_dyndns.php?act=del&amp;id=<?=$i;?>" onclick="return confirm('<?=gettext("Do you really want to delete this entry?");?>')"><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_x.gif" width="17" height="17" border="0"></a>
+		  <td valign="middle" class="list nowrap">
+			<a href="services_dyndns_edit.php?id=<?=$i;?>"><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_e.gif" width="17" height="17" border="0" alt="edit" /></a>
+			&nbsp;<a href="services_dyndns.php?act=del&amp;id=<?=$i;?>" onclick="return confirm('<?=gettext("Do you really want to delete this entry?");?>')"><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_x.gif" width="17" height="17" border="0" alt="delete" /></a>
 		  </td>
 		</tr>
 		<?php $i++; endforeach; ?>
 		<tr>
 		  <td class="list" colspan="5"></td>
-		  <td class="list"> <a href="services_dyndns_edit.php"><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_plus.gif" width="17" height="17" border="0"></a></td>
+		  <td class="list"><a href="services_dyndns_edit.php"><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_plus.gif" width="17" height="17" border="0" alt="add" /></a></td>
 		</tr>
 		<tr>
 		  <td colspan="5" class="list"><p class="vexpl"><span class="red"><strong>
 			<?=gettext("Note:");?><br />
 			</strong></span>
 			<?=gettext("IP addresses appearing in green are up to date with Dynamic DNS provider.");?><br />
-			<?=gettext("You can force an update for an IP address on the edit page for that service.");?>
+			<?=gettext("You can force an update for an IP address on the edit page for that service.");?></p>
 		  </td>
 		  <td class="list">&nbsp;</td>
 		</tr>

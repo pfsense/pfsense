@@ -57,6 +57,23 @@ if($config['notifications']['growl']['name'])
 else
   $pconfig['name'] = 'PHP-Growl';
 
+// pushover
+$pconfig['disable_pushover'] = isset($config['notifications']['pushover']['disable']);
+if($config['notifications']['pushover']['token'])
+	$pconfig['token'] = $config['notifications']['pushover']['token'];
+if($config['notifications']['pushover']['usergroup'])
+	$pconfig['usergroup'] = $config['notifications']['pushover']['usergroup'];
+
+if($config['notifications']['pushover']['sound'])
+	$pconfig['sound'] = $config['notifications']['pushover']['sound'];
+else
+	$pconfig['sound'] = "tugboat";
+ 
+if($config['notifications']['pushover']['title'])
+	$pconfig['title'] = $config['notifications']['pushover']['title'];
+else
+	$pconfig['title'] = "{$g['product_name']}";
+
 
 // SMTP
 $pconfig['disable_smtp'] = isset($config['notifications']['smtp']['disable']);
@@ -111,6 +128,17 @@ if ($_POST) {
 		else
 			unset($config['notifications']['growl']['disable']);
 
+		// Pushover
+		$config['notifications']['pushover']['token'] = $_POST['token'];
+		$config['notifications']['pushover']['usergroup'] = $_POST['usergroup'];
+		$config['notifications']['pushover']['title'] = $_POST['title'];
+		$config['notifications']['pushover']['sound'] = $_POST['sound'];
+
+		if($_POST['disable_pushover'] == "yes")
+			$config['notifications']['pushover']['disable'] = true;
+		else
+			unset($config['notifications']['pushover']['disable']);
+
 		// SMTP
 		$config['notifications']['smtp']['ipaddress'] = $_POST['smtpipaddress'];
 		$config['notifications']['smtp']['port'] = $_POST['smtpport'];
@@ -151,6 +179,11 @@ if ($_POST) {
 			register_via_growl();
 			notify_via_growl(sprintf(gettext("This is a test message from %s.  It is safe to ignore this message."), $g['product_name']), true);
 		}
+	}
+	if ($_POST['test_pushover'] == gettext("Test Pushover")) {
+		// Send test message via pushover
+		unlink_if_exists($g['vardb_path'] . "/pushovernotices_lastmsg.txt");
+		notify_via_pushover(sprintf(gettext("This is a test message from %s.  It is safe to ignore this message."), $g['product_name']), true);
 	}
 	if ($_POST['test_smtp'] == gettext("Test SMTP")) {
 		// Send test message via smtp
@@ -246,6 +279,61 @@ include("head.inc");
 						<tr>
 							<td colspan="2" class="list" height="12">&nbsp;</td>
 						</tr>	
+						<!-- PUSHOVER -->
+						<tr>
+								<td colspan="2" valign="top" class="listtopic"><?=gettext("Pushover"); ?></td>
+						</tr>
+						<tr>
+								<td width="22%" valign="top" class="vncell"><?=gettext("Disable Pushover Notifications"); ?></td>
+								<td width="78%" class="vtable">
+										<input type='checkbox' name='disable_pushover' value="yes" <?php if ($pconfig['disable_pushover']) {?>checked="checked"<?php } ?> /><b
+r/>
+										<?=gettext("Check this option to disable pushover notifications but preserve the settings below."); ?>
+								</td>
+						</tr>
+						<tr>
+								<td width="22%" valign="top" class="vncell"><?=gettext("Token"); ?></td>
+								<td width="78%" class="vtable">
+										<input name='token' type='text' value='<?php echo $pconfig['token']; ?>' /><br/>
+										<?=gettext("Enter the token of the remote pushover notification device."); ?>
+								</td>
+						</tr>
+						<tr>
+								<td width="22%" valign="top" class="vncell"><?=gettext("User"); ?></td>
+								<td width="78%" class="vtable">
+										<input name='usergroup' type='text' value='<?php echo $pconfig['usergroup']; ?>' /><br/>
+										<?=gettext("Enter the user or group of the remote pushover notification device."); ?>
+								</td>
+						</tr>
+						<tr>
+								<td width="22%" valign="top" class="vncell"><?=gettext("Title"); ?></td>
+								<td width="78%" class="vtable">
+										<input name='title' value='<?php echo $pconfig['title']; ?>' /><br/>
+										<?=gettext("Enter the title of the message."); ?>
+										<?=sprintf(gettext("Enter the title of the message ( default: %s )."), $g['product_name']); ?>
+								</td>
+						</tr>
+				<tr>
+								<td width="22%" valign="top" class="vncell"><?=gettext("Sound"); ?></td>
+								<td width="78%" class="vtable">
+										<input name='sound' value='<?php echo $pconfig['sound']; ?>' /><br/>
+										<?=gettext("Enter the sound abbreviation from https://pushover.net/api#sounds ");?>
+								</td>
+						</tr>
+						<tr>
+								<td valign="top" class="">
+										&nbsp;
+								</td>
+								<td>
+										<input type='submit' id='test_pushover' name='test_pushover' value='<?=gettext("Test Pushover"); ?>' />
+										<br /><?= gettext("NOTE: A test notification will be sent even if the service is marked as disabled.") ?>
+								</td>
+						</tr>
+						<tr>
+								<td colspan="2" class="list" height="12">&nbsp;</td>
+						</tr>  
+
+
 						<!-- SMTP -->
 						<tr>
 							<td colspan="2" valign="top" class="listtopic"><?=gettext("SMTP E-Mail"); ?></td>

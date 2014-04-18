@@ -50,7 +50,7 @@ $notice_path = $g['tmp_path'] . '/notices';
  * INPUTS
  *	 $id, $notice, $category, $url, $priority
  * RESULT
- *   Files a notice and kicks off the various alerts, smtp, growl, system log, LED's, etc.
+ *   Files a notice and kicks off the various alerts, smtp, pushover, growl, system log, LED's, etc.
  ******/
 function file_notice($id, $notice, $category = "General", $url = "", $priority = 1) {
 	/*
@@ -86,6 +86,7 @@ function file_notice($id, $notice, $category = "General", $url = "", $priority =
 	led_normalize();
 	led_morse(1, 'sos');
 	notify_via_growl($notice);
+	notify_via_pushover($notice);
 	notify_via_smtp($notice);
 	return $queuekey;
 }
@@ -404,10 +405,58 @@ function register_via_growl() {
 	}
 }
 
+/****f* notices/notify_via_pushover
+ * NAME
+ *   notify_via_pushover
+ * INPUTS
+ *       notification string to send
+ * RESULT
+ *   returns true if message was sent
+ ******/
+function notify_via_pushover($message, $force=false) {
+        global $config,$g;
+                                
+        if (isset($config['notifications']['pushover']['disable']) && !$force)
+                return;
+                        
+        /* Do NOT send the same message twice */
+        if(file_exists("/var/db/pushovernotices_lastmsg.txt")) {
+                $lastmsg = trim(file_get_contents("/var/db/pushovernotices_lastmsg.txt"));
+                if($lastmsg == $message)
+                        return;
+        }
+        
+        $title = $config['system']['hostname'] . "." . $config['system']['domain'] . " " . $config['notifications']['pushover']['title'];
+        $token = $config['notifications']['pushover']['token'];
+        $usergroup = $config['notifications']['pushover']['usergroup'];
+        $sound = $config['notifications']['pushover']['sound'];
+                
+        if(!empty($token) && !empty($usergroup) ) {
+                curl_setopt_array($ch = curl_init(), array(
+                  CURLOPT_URL => "https://api.pushover.net/1/messages.json",
+                  CURLOPT_RETURNTRANSFER => 1,
+                  CURLOPT_POSTFIELDS => array(
+                  "token" => $token,
+                  "user" => $usergroup,
+                  "sound" => $sound,
+                  "title" => $title,
+                  "message" => $message,
+                )));
+                curl_exec($ch);
+                curl_close($ch);
+        }
+
+        /* Store last message sent to avoid spamming */
+        $fd = fopen("/var/db/pushovernotices_lastmsg.txt", "w");
+        fwrite($fd, $message);
+        fclose($fd);
+}
+
 /* Notify via remote methods only - not via GUI. */
 function notify_all_remote($msg) {
 	notify_via_smtp($msg);
 	notify_via_growl($msg);
+	notify_via_pushover($msg);
 }
 
 ?>

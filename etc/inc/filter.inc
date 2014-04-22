@@ -2307,7 +2307,7 @@ function filter_generate_user_rule($rule) {
 	update_filter_reload_status(sprintf(gettext("Setting up pass/block rules %s"), $rule['descr']));
 
 	/* do not process reply-to for gateway'd rules */
-	if($rule['gateway'] == "" && $aline['direction'] <> "" && interface_has_gateway($rule['interface']) && !isset($config['system']['disablereplyto']) && !isset($rule['disablereplyto']) && $type != "match") {
+	if($rule['gateway'] == "" && $aline['direction'] <> "" && (interface_has_gateway($rule['interface']) || interface_has_gatewayv6($rule['interface'])) && !isset($config['system']['disablereplyto']) && !isset($rule['disablereplyto']) && $type != "match") {
 		if ($rule['ipprotocol'] == "inet6") {
 			$rg = get_interface_gateway_v6($rule['interface']);
 			if (is_ipaddrv6($rg))

@@ -102,33 +102,11 @@ function remove_freebsd_package($packagestring) {
 	// The packagestring passed in must be the full PBI package name, 
 	// as displayed by the pbi_info utility. e.g. "package-1.2.3_4-i386" 
 	// It must NOT have ".pbi" on the end.
-	exec("/usr/local/sbin/pbi_info " . escapeshellarg($packagestring) . " | /usr/bin/awk '/Prefix/ {print $2}'",$pbidir);
-	$pbidir = $pbidir[0];
-	if ($pbidir == "") {
-		log_error("PBI dir for {$packagestring} was not found - cannot cleanup PBI files");
-	}
-	else {
-		$linkdirs = array('bin','sbin');
-		foreach($linkdirs as $dir) {
-			$target_dir = $pbidir . "/" . $dir;
-			if(is_dir($target_dir)) {
-				$files = scandir($target_dir);
-				foreach($files as $f) {
-					if($f != '.' && $f != '..') {
-						// Only try to unlink the file if it is a link to the expected pbi dir.
-						$local_name = "/usr/local/{$dir}/{$f}";
-						if(is_link($local_name)) {
-							if(substr(readlink($local_name),0,strlen($target_dir)) == $target_dir) {
-								unlink($local_name);
-							}
-						}
-					}
-				}
-			}
-		}
-
-		exec("/usr/local/sbin/pbi_delete " . escapeshellarg($packagestring) . " 2>>/tmp/pbi_delete_errors.txt");
-	}
+	$files = get_pbi_binaries(escapeshellarg($packagestring));
+	foreach($files as $target)
+		if (is_link("/usr/local/{$target}"))
+			@unlink("/usr/local/{$target}");
+	exec("/usr/local/sbin/pbi_delete " . escapeshellarg($packagestring) . " 2>>/tmp/pbi_delete_errors.txt");
 }
 
 /****f* pkg-utils/is_package_installed
@@ -547,17 +525,10 @@ function pkg_fetch_recursive($pkgname, $filename, $dependlevel = 0, $base_url = 
 		$result = exec("/usr/local/sbin/pbi_add " . $pkgstaging . " -f -v {$no_checksig} " . escapeshellarg($fetchto) . " 2>&1", $pkgaddout, $rc);
 		pkg_debug($pkgname . " " . print_r($pkgaddout, true) . "\n");
 		if ($rc == 0) {
-			setup_library_paths();
-			$result = exec("/usr/local/sbin/pbi_info " . escapeshellarg(preg_replace('/\.pbi$/','',$filename)) . " | /usr/bin/awk '/Prefix/ {print $2}'",$pbidir);
-			$pbidir = $pbidir[0];
-			foreach(array('bin', 'sbin') as $dir) {
-				if(!is_dir("{$pbidir}/{$dir}"))
-					continue;
-
-				$files = scandir("{$pbidir}/{$dir}");
-				foreach($files as $f)
-					if(!file_exists("/usr/local/{$dir}/{$f}"))
-						@symlink("{$pbidir}/{$dir}/{$f}","/usr/local/{$dir}/{$f}");
+			$files = get_pbi_binaries(escapeshellarg(preg_replace('/\.pbi$/','',$filename)));
+			foreach($files as $target) {
+				@unlink("/usr/local/{$target}");
+				@symlink("{$pbidir}/{$target}","/usr/local/{$target}");
 			}
 			pkg_debug("pbi_add successfully completed.\n");
 		} else {
@@ -571,6 +542,37 @@ function pkg_fetch_recursive($pkgname, $filename, $dependlevel = 0, $base_url = 
 		}
 	}
 	return true;
+}
+
+function get_pbi_binaries($pbi) {
+	$result = array();
+
+	if (empty($pbi))
+		return $result;
+
+	$gb = exec("/usr/local/sbin/pbi_info {$pbi} | /usr/bin/awk '/Prefix/ {print $2}'", $pbi_prefix);
+	$pbi_prefix = $pbi_prefix[0];
+
+	if (empty($pbi_prefix))
+		return $result;
+
+	foreach(array('bin', 'sbin') as $dir) {
+		if(!is_dir("{$pbi_prefix}/{$dir}"))
+			continue;
+
+		$files = glob("{$pbi_prefix}/{$dir}/*.pbiopt");
+		foreach($files as $f) {
+			$pbiopts = file($f, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
+			foreach($pbiopts as $pbiopt) {
+				if (!preg_match('/^TARGET:\s+(.*)$/', $pbiopt, $matches))
+					continue;
+
+				$result[] = $matches[1];
+			}
+		}
+	}
+
+	return $result;
 }
 
 function install_package($package, $pkg_info = "", $force_install = false) {

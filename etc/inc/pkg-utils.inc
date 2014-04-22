@@ -526,9 +526,11 @@ function pkg_fetch_recursive($pkgname, $filename, $dependlevel = 0, $base_url = 
 		pkg_debug($pkgname . " " . print_r($pkgaddout, true) . "\n");
 		if ($rc == 0) {
 			$files = get_pbi_binaries(escapeshellarg(preg_replace('/\.pbi$/','',$filename)));
+			$gb = exec("/usr/local/sbin/pbi_info " .  escapeshellarg(preg_replace('/\.pbi$/','',$filename)) . " | /usr/bin/awk '/Prefix/ {print $2}'", $pbi_prefix);
+			$pbi_prefix = $pbi_prefix[0];
 			foreach($files as $target) {
 				@unlink("/usr/local/{$target}");
-				@symlink("{$pbidir}/{$target}","/usr/local/{$target}");
+				@symlink("{$pbi_prefix}/{$target}","/usr/local/{$target}");
 			}
 			pkg_debug("pbi_add successfully completed.\n");
 		} else {

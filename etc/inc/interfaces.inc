@@ -3352,6 +3352,9 @@ function interface_6rd_configure($interface = "wan", $wancfg) {
 	if (!is_array($wancfg))
 		return;
 
+	if (!is_module_loaded('if_stf.ko'))
+		mwexec('/sbin/kldload if_stf.ko');
+
 	$wanif = get_real_interface($interface);
 	$ip4address = find_interface_ip($wanif);
 	if ((!is_ipaddrv4($ip4address)) || (is_private_ip($ip4address))) {

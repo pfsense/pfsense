@@ -402,7 +402,7 @@ include("head.inc");
 								<?=gettext("Do not use the DNS Forwarder as a DNS server for the firewall"); ?>
 							</strong>
 							<br />
-							<?=gettext("By default localhost (127.0.0.1) will be used as the first DNS server where the DNS forwarder is enabled, so system can use the DNS forwarder to perform lookups. ".
+							<?=gettext("By default localhost (127.0.0.1) will be used as the first DNS server where the DNS Forwarder or DNS Resolver is enabled and set to listen on Localhost, so system can use the local DNS service to perform lookups. ".
 							"Checking this box omits localhost from the list of DNS servers."); ?>
 						</span>
 				</td>

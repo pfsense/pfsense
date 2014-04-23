@@ -110,6 +110,8 @@ if ($_POST) {
 		$savemsg = get_std_save_message($retval);
 		if ($retval == 0)
 			clear_subsystem_dirty('unbound');
+		/* Update resolv.conf in case the interface bindings exclude localhost. */
+		system_resolvconf_generate();
 	}
 }
 

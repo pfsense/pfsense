@@ -103,7 +103,9 @@ function system_resolvconf_generate($dynupdate = false) {
 	if($syscfg['domain'])
 		$resolvconf = "domain {$syscfg['domain']}\n";
 
-	if ((isset($config['dnsmasq']['enable']) || isset($config['unbound']['enable'])) && !isset($config['system']['dnslocalhost']))
+	if (((isset($config['dnsmasq']['enable']) && (empty($config['dnsmasq']['interface']) || in_array("lo0", explode(",", $config['dnsmasq']['interface']))))
+		|| (isset($config['unbound']['enable'])) && (empty($config['unbound']['active_interface']) || in_array("lo0", explode(",", $config['unbound']['active_interface']))))
+		&& !isset($config['system']['dnslocalhost']))
 		$resolvconf .= "nameserver 127.0.0.1\n";
 
 	if (isset($syscfg['dnsallowoverride'])) {

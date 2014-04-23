@@ -116,6 +116,8 @@ if ($_POST) {
 
 		// Relaod filter (we might need to sync to CARP hosts)
 		filter_configure();
+		/* Update resolv.conf in case the interface bindings exclude localhost. */
+		system_resolvconf_generate();
 
 		if ($retval == 0)
 			clear_subsystem_dirty('hosts');

@@ -710,7 +710,7 @@ function system_syslogd_start() {
 		$syslogconf .= "!dhcpd,dhcrelay,dhclient\n";
 		if (!isset($syslogcfg['disablelocallogging']))
 			$syslogconf .= "*.*								{$log_directive}{$g['varlog_path']}/dhcpd.log\n";
-		if (isset($syslogcfg['apinger']))
+		if (isset($syslogcfg['dhcp']))
 			$syslogconf .= system_syslogd_get_remote_servers($syslogcfg, "*.*");
 
 		$syslogconf .= "!relayd\n";

@@ -426,7 +426,7 @@ function show_advanced_dns() {
 	<td colspan="5" valign="top" class="listtopic"><?=gettext("Domain Overrides");?></td>
 </tr>
 <tr>
-	<td><p><?=gettext("Entries in this area override an entire domain by specifying an".
+	<td><p><?=gettext("Entries in this area override an entire domain, and subdomains, by specifying an".
 	" authoritative DNS server to be queried for that domain.");?></p></td>
 </tr>
 </table>

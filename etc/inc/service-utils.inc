@@ -49,6 +49,7 @@ define("RCFILEPREFIX", "/usr/local/etc/rc.d/");
 function write_rcfile($params) {
 	global $g;
 
+	safe_mkdir(RCFILEPREFIX);
 	$rcfile_fullname = RCFILEPREFIX . $params['file'];
 	if (!file_exists($rcfile_fullname) && !is_link($rcfile_fullname) && !touch($rcfile_fullname))
 		return false;

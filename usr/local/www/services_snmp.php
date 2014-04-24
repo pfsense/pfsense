@@ -162,13 +162,14 @@ if ($_POST) {
 	}
 }
 
+$closehead = false;
 $pgtitle = array(gettext("Services"),gettext("SNMP"));
 $shortcut_section = "snmp";
 include("head.inc");
 
 ?>
 <script type="text/javascript">
-<!--
+//<![CDATA[
 function check_deps() {
 	if (jQuery('#hostres').prop('checked') == true) {
 		jQuery('#mibii').prop('checked',true);
@@ -269,27 +270,28 @@ function enable_change(whichone) {
             //document.iform.bridge.disabled = true;
 	}
 }
-//-->
+//]]>
 </script>
+</head>
 <body link="#0000CC" vlink="#0000CC" alink="#0000CC">
 <?php include("fbegin.inc"); ?>
 <?php if ($input_errors) print_input_errors($input_errors); ?>
 <?php if ($savemsg) print_info_box($savemsg); ?>
             <form action="services_snmp.php" method="post" name="iform" id="iform">
-              <table width="100%" border="0" cellpadding="6" cellspacing="0">
+              <table width="100%" border="0" cellpadding="6" cellspacing="0" summary="snmp">
 
                 <tr> 
   		  <td colspan="2" valign="top" class="optsect_t">
-  			<table border="0" cellspacing="0" cellpadding="0" width="100%">
+  			<table border="0" cellspacing="0" cellpadding="0" width="100%" summary="enable">
   			<tr><td class="optsect_s"><strong><?=gettext("SNMP Daemon");?></strong></td>
-					<td align="right" class="optsect_s"><input name="enable" id="enable" type="checkbox" value="yes" <?php if ($pconfig['enable']) echo "checked"; ?> onClick="enable_change(this)"> <strong><?=gettext("Enable");?></strong></td></tr>
+					<td align="right" class="optsect_s"><input name="enable" id="enable" type="checkbox" value="yes" <?php if ($pconfig['enable']) echo "checked=\"checked\""; ?> onclick="enable_change(this)" /> <strong><?=gettext("Enable");?></strong></td></tr>
   			</table></td>
                 </tr>
 
                 <tr>
                   <td width="22%" valign="top" class="vncellreq"><?=gettext("Polling Port ");?></td>
                   <td width="78%" class="vtable">
-                    <input name="pollport" type="text" class="formfld unknown" id="pollport" size="40" value="<?=htmlspecialchars($pconfig['pollport']) ? htmlspecialchars($pconfig['pollport']) : htmlspecialchars(161);?>">
+                    <input name="pollport" type="text" class="formfld unknown" id="pollport" size="40" value="<?=htmlspecialchars($pconfig['pollport']) ? htmlspecialchars($pconfig['pollport']) : htmlspecialchars(161);?>" />
                     <br /><?=gettext("Enter the port to accept polling events on (default 161)");?><br />
 		  </td>
                 </tr>
@@ -297,21 +299,21 @@ function enable_change(whichone) {
                 <tr> 
                   <td width="22%" valign="top" class="vncell"><?=gettext("System location");?></td>
                   <td width="78%" class="vtable"> 
-                    <input name="syslocation" type="text" class="formfld unknown" id="syslocation" size="40" value="<?=htmlspecialchars($pconfig['syslocation']);?>"> 
+                    <input name="syslocation" type="text" class="formfld unknown" id="syslocation" size="40" value="<?=htmlspecialchars($pconfig['syslocation']);?>" />
                   </td>
                 </tr>
 
                 <tr> 
                   <td width="22%" valign="top" class="vncell"><?=gettext("System contact");?></td>
                   <td width="78%" class="vtable"> 
-                    <input name="syscontact" type="text" class="formfld unknown" id="syscontact" size="40" value="<?=htmlspecialchars($pconfig['syscontact']);?>"> 
+                    <input name="syscontact" type="text" class="formfld unknown" id="syscontact" size="40" value="<?=htmlspecialchars($pconfig['syscontact']);?>" />
                   </td>
                 </tr>
 
                 <tr> 
                   <td width="22%" valign="top" class="vncellreq"><?=gettext("Read Community String");?></td>
                   <td width="78%" class="vtable"> 
-                    <input name="rocommunity" type="text" class="formfld unknown" id="rocommunity" size="40" value="<?=htmlspecialchars($pconfig['rocommunity']);?>"> 
+                    <input name="rocommunity" type="text" class="formfld unknown" id="rocommunity" size="40" value="<?=htmlspecialchars($pconfig['rocommunity']);?>" />
 		    <br /><?=gettext("The community string is like a password, restricting access to querying SNMP to hosts knowing the community string. Use a strong value here to protect from unauthorized information disclosure.");?><br />
 		  </td>
                 </tr>
@@ -321,7 +323,7 @@ function enable_change(whichone) {
                 <tr>
                   <td width="22%" valign="top" class="vtable">&nbsp;</td>
                   <td width="78%" class="vtable">
-	 	   <input name="rwenable" id="rwenable" type="checkbox" value="yes" <?php if ($pconfig['rwenable']) echo "checked"; ?> onClick="enable_change(this)">
+	 	   <input name="rwenable" id="rwenable" type="checkbox" value="yes" <?php if ($pconfig['rwenable']) echo "checked=\"checked\""; ?> onclick="enable_change(this)" />
                     <strong>Enable Write Community String</strong>
 		  </td>
                 </tr>
@@ -329,7 +331,7 @@ function enable_change(whichone) {
 		<tr>
 		  <td width="22%" valign="top" class="vncellreq">Write community string</td>
           <td width="78%" class="vtable">
-                    <input name="rwcommunity" type="text" class="formfld unknown" id="rwcommunity" size="40" value="<?=htmlspecialchars($pconfig['rwcommunity']);?>">
+                    <input name="rwcommunity" type="text" class="formfld unknown" id="rwcommunity" size="40" value="<?=htmlspecialchars($pconfig['rwcommunity']);?>" />
 		    <br />Please use something other then &quot;private&quot; here<br />
 		  </td>
                 </tr>
@@ -340,9 +342,9 @@ function enable_change(whichone) {
 
                 <tr> 
   		  <td colspan="2" valign="top" class="optsect_t">
-  			<table border="0" cellspacing="0" cellpadding="0" width="100%">
+  			<table border="0" cellspacing="0" cellpadding="0" width="100%" summary="enable">
   			<tr><td class="optsect_s"><strong><?=gettext("SNMP Traps");?></strong></td>
-			<td align="right" class="optsect_s"><input name="trapenable" id="trapenable" type="checkbox" value="yes" <?php if ($pconfig['trapenable']) echo "checked"; ?> onClick="enable_change(this)"> <strong><?=gettext("Enable");?></strong></td></tr>
+			<td align="right" class="optsect_s"><input name="trapenable" id="trapenable" type="checkbox" value="yes" <?php if ($pconfig['trapenable']) echo "checked=\"checked\""; ?> onclick="enable_change(this)" /> <strong><?=gettext("Enable");?></strong></td></tr>
   			</table></td>
                 </tr>
 
@@ -350,7 +352,7 @@ function enable_change(whichone) {
                 <tr>
                   <td width="22%" valign="top" class="vncellreq"><?=gettext("Trap server");?></td>
                   <td width="78%" class="vtable">
-                    <input name="trapserver" type="text" class="formfld unknown" id="trapserver" size="40" value="<?=htmlspecialchars($pconfig['trapserver']);?>">
+                    <input name="trapserver" type="text" class="formfld unknown" id="trapserver" size="40" value="<?=htmlspecialchars($pconfig['trapserver']);?>" />
                     <br /><?=gettext("Enter trap server name");?><br />
 		  </td>
                 </tr>
@@ -358,7 +360,7 @@ function enable_change(whichone) {
                 <tr>
                   <td width="22%" valign="top" class="vncellreq"><?=gettext("Trap server port ");?></td>
                   <td width="78%" class="vtable">
-                    <input name="trapserverport" type="text" class="formfld unknown" id="trapserverport" size="40" value="<?=htmlspecialchars($pconfig['trapserverport']) ? htmlspecialchars($pconfig['trapserverport']) : htmlspecialchars(162);?>">
+                    <input name="trapserverport" type="text" class="formfld unknown" id="trapserverport" size="40" value="<?=htmlspecialchars($pconfig['trapserverport']) ? htmlspecialchars($pconfig['trapserverport']) : htmlspecialchars(162);?>" />
                     <br /><?=gettext("Enter the port to send the traps to (default 162)");?><br />
 		  </td>
                 </tr>
@@ -366,7 +368,7 @@ function enable_change(whichone) {
                 <tr>
                   <td width="22%" valign="top" class="vncellreq"><?=gettext("Enter the SNMP trap string");?></td>
                   <td width="78%" class="vtable">
-                    <input name="trapstring" type="text" class="formfld unknown" id="trapstring" size="40" value="<?=htmlspecialchars($pconfig['trapstring']);?>">
+                    <input name="trapstring" type="text" class="formfld unknown" id="trapstring" size="40" value="<?=htmlspecialchars($pconfig['trapstring']);?>" />
                     <br /><?=gettext("Trap string");?><br />
 		  </td>
                 </tr>
@@ -375,7 +377,7 @@ function enable_change(whichone) {
 
                 <tr> 
   		  <td colspan="2" valign="top" class="optsect_t">
-  			<table border="0" cellspacing="0" cellpadding="0" width="100%">
+  			<table border="0" cellspacing="0" cellpadding="0" width="100%" summary="modules">
   			<tr><td class="optsect_s"><strong><?=gettext("Modules");?></strong></td>
 			<td align="right" class="optsect_s">&nbsp;</td></tr>
   			</table></td>
@@ -384,17 +386,17 @@ function enable_change(whichone) {
 		<tr>
 		  <td width="22%" valign="top" class="vncellreq"><?=gettext("SNMP Modules");?></td>
 		  <td width="78%" class="vtable">
-		    <input name="mibii" type="checkbox" id="mibii" value="yes" onClick="check_deps()" <?php if ($pconfig['mibii']) echo "checked"; ?> ><?=gettext("MibII"); ?>
+		    <input name="mibii" type="checkbox" id="mibii" value="yes" onclick="check_deps()" <?php if ($pconfig['mibii']) echo "checked=\"checked\""; ?> /><?=gettext("MibII"); ?>
 		    <br />
-		    <input name="netgraph" type="checkbox" id="netgraph" value="yes" <?php if ($pconfig['netgraph']) echo "checked"; ?> ><?=gettext("Netgraph"); ?>
+		    <input name="netgraph" type="checkbox" id="netgraph" value="yes" <?php if ($pconfig['netgraph']) echo "checked=\"checked\""; ?> /><?=gettext("Netgraph"); ?>
 		    <br />
-		    <input name="pf" type="checkbox" id="pf" value="yes" <?php if ($pconfig['pf']) echo "checked"; ?> ><?=gettext("PF"); ?>
+		    <input name="pf" type="checkbox" id="pf" value="yes" <?php if ($pconfig['pf']) echo "checked=\"checked\""; ?> /><?=gettext("PF"); ?>
 		    <br />
-		    <input name="hostres" type="checkbox" id="hostres" value="yes" onClick="check_deps()" <?php if ($pconfig['hostres']) echo "checked"; ?> ><?=gettext("Host Resources (Requires MibII)");?>
+		    <input name="hostres" type="checkbox" id="hostres" value="yes" onclick="check_deps()" <?php if ($pconfig['hostres']) echo "checked=\"checked\""; ?> /><?=gettext("Host Resources (Requires MibII)");?>
 		    <br />
-		    <input name="ucd" type="checkbox" id="ucd" value="yes" <?php if ($pconfig['ucd']) echo "checked"; ?> ><?=gettext("UCD"); ?>
+		    <input name="ucd" type="checkbox" id="ucd" value="yes" <?php if ($pconfig['ucd']) echo "checked=\"checked\""; ?> /><?=gettext("UCD"); ?>
 		    <br />
-		    <input name="regex" type="checkbox" id="regex" value="yes" <?php if ($pconfig['regex']) echo "checked"; ?> ><?=gettext("Regex"); ?>
+		    <input name="regex" type="checkbox" id="regex" value="yes" <?php if ($pconfig['regex']) echo "checked=\"checked\""; ?> /><?=gettext("Regex"); ?>
 		    <br />
 		  </td>
 		</tr>
@@ -403,7 +405,7 @@ function enable_change(whichone) {
 
 		<tr>
 			<td colspan="2" valign="top" class="optsect_t">
-			<table border="0" cellspacing="0" cellpadding="0" width="100%">
+			<table border="0" cellspacing="0" cellpadding="0" width="100%" summary="interface">
 				<tr><td class="optsect_s"><strong><?=gettext("Interface Binding");?></strong></td>
 				<td align="right" class="optsect_s">&nbsp;</td></tr>
 			</table></td>
@@ -417,25 +419,27 @@ function enable_change(whichone) {
 					foreach ($listenips as $lip):
 						$selected = "";
 						if ($lip['value'] == $pconfig['bindip'])
-							$selected = "selected";
+							$selected = "selected=\"selected\"";
 				?>
 					<option value="<?=$lip['value'];?>" <?=$selected;?>>
 						<?=htmlspecialchars($lip['name']);?>
 					</option>
 				<?php endforeach; ?>
+				</select>
+			</td>
 		</tr>
 		 <tr> 
 		   <td width="22%" valign="top">&nbsp;</td>
 		   <td width="78%"> 
-		     <input name="Submit" type="submit" class="formbtn" value="<?=gettext("Save");?>" onClick="enable_change(true)"> 
+		     <input name="Submit" type="submit" class="formbtn" value="<?=gettext("Save");?>" onclick="enable_change(true)" />
 		   </td>
 		 </tr>
 		</table>
 </form>
 <script type="text/javascript">
-<!--
+//<![CDATA[
 enable_change(this);
-//-->
+//]]>
 </script>
 <?php include("fend.inc"); ?>
 </body>

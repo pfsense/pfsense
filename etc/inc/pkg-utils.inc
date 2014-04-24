@@ -102,10 +102,10 @@ function remove_freebsd_package($packagestring) {
 	// The packagestring passed in must be the full PBI package name, 
 	// as displayed by the pbi_info utility. e.g. "package-1.2.3_4-i386" 
 	// It must NOT have ".pbi" on the end.
-	$files = get_pbi_binaries(escapeshellarg($packagestring));
-	foreach($files as $target)
-		if (is_link("/usr/local/{$target}"))
-			@unlink("/usr/local/{$target}");
+	$links = get_pbi_binaries(escapeshellarg($packagestring));
+	foreach($links as $link)
+		if (is_link("/usr/local/{$link['link_name']}"))
+			@unlink("/usr/local/{$link['link_name']}");
 	exec("/usr/local/sbin/pbi_delete " . escapeshellarg($packagestring) . " 2>>/tmp/pbi_delete_errors.txt");
 }
 
@@ -525,12 +525,10 @@ function pkg_fetch_recursive($pkgname, $filename, $dependlevel = 0, $base_url = 
 		$result = exec("/usr/local/sbin/pbi_add " . $pkgstaging . " -f -v {$no_checksig} " . escapeshellarg($fetchto) . " 2>&1", $pkgaddout, $rc);
 		pkg_debug($pkgname . " " . print_r($pkgaddout, true) . "\n");
 		if ($rc == 0) {
-			$files = get_pbi_binaries(escapeshellarg(preg_replace('/\.pbi$/','',$filename)));
-			$gb = exec("/usr/local/sbin/pbi_info " .  escapeshellarg(preg_replace('/\.pbi$/','',$filename)) . " | /usr/bin/awk '/Prefix/ {print $2}'", $pbi_prefix);
-			$pbi_prefix = $pbi_prefix[0];
-			foreach($files as $target) {
-				@unlink("/usr/local/{$target}");
-				@symlink("{$pbi_prefix}/{$target}","/usr/local/{$target}");
+			$links = get_pbi_binaries(escapeshellarg(preg_replace('/\.pbi$/','',$filename)));
+			foreach($links as $link) {
+				@unlink("/usr/local/{$link['link_name']}");
+				@symlink("{$link['target']}","/usr/local/{$link['link_name']}");
 			}
 			pkg_debug("pbi_add successfully completed.\n");
 		} else {
@@ -569,7 +567,9 @@ function get_pbi_binaries($pbi) {
 				if (!preg_match('/^TARGET:\s+(.*)$/', $pbiopt, $matches))
 					continue;
 
-				$result[] = $matches[1];
+				$result[] = array(
+					'target' => preg_replace('/\.pbiopt$/', '', $f),
+					'link_name' => $matches[1]);
 			}
 		}
 	}

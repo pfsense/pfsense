@@ -135,10 +135,11 @@ include("head.inc");
 <script type="text/javascript" src="/javascript/row_helper.js">
 </script>
 
-<input type='hidden' name='address_type' value='textbox' class="formfld unknown" />
-<input type='hidden' name='address_subnet_type' value='select' />
+<input type="hidden" name="address_type" value="textbox" class="formfld unknown" />
+<input type="hidden" name="address_subnet_type" value="select" />
 
 <script type="text/javascript">
+//<![CDATA[
 	rowname[0] = "address";
 	rowtype[0] = "textbox,ipv4v6";
 	rowsize[0] = "30";
@@ -150,13 +151,14 @@ include("head.inc");
 	rowname[2] = "detail";
 	rowtype[2] = "textbox";
 	rowsize[2] = "50";
+//]]>
 </script>
 
 <?php if ($input_errors) print_input_errors($input_errors); ?>
 <div id="inputerrors"></div>
 
 <form action="services_igmpproxy_edit.php" method="post" name="iform" id="iform">
-<table width="100%" border="0" cellpadding="6" cellspacing="0">
+<table width="100%" border="0" cellpadding="6" cellspacing="0" summary="igmp proxy edit">
   <tr>
 	<td colspan="2" valign="top" class="listtopic"><?=gettext("IGMP Proxy Edit");?></td>
   </tr>
@@ -165,9 +167,9 @@ include("head.inc");
     <td class="vtable"> <select name="ifname" id="ifname" >
 		<?php $iflist = get_configured_interface_with_descr();
 			foreach ($iflist as $ifnam => $ifdescr) {
-				echo "<option value={$ifnam}";
+				echo "<option value=\"{$ifnam}\"";
 				if ($ifnam == $pconfig['ifname'])
-					echo " selected";
+					echo " selected=\"selected\"";
 				echo ">{$ifdescr}</option>";
 			}		
 		?>
@@ -188,8 +190,8 @@ include("head.inc");
     <td valign="top" class="vncellreq"><?=gettext("Type");?></td>
     <td class="vtable">
       <select name="type" class="formselect" id="type" >
-        <option value="upstream" <?php if ($pconfig['type'] == "upstream") echo "selected"; ?>><?=gettext("Upstream Interface");?></option>
-        <option value="downstream" <?php if ($pconfig['type'] == "downstream") echo "selected"; ?>><?=gettext("Downstream Interface");?></option>
+        <option value="upstream" <?php if ($pconfig['type'] == "upstream") echo "selected=\"selected\""; ?>><?=gettext("Upstream Interface");?></option>
+        <option value="downstream" <?php if ($pconfig['type'] == "downstream") echo "selected=\"selected\""; ?>><?=gettext("Downstream Interface");?></option>
       </select>
       <br />
       <span class="vexpl">
@@ -208,7 +210,7 @@ include("head.inc");
   <tr>
     <td valign="top" class="vncell"><?=gettext("Threshold");?></td>
     <td class="vtable">
-      <input name="threshold" class="formfld unknown" id="threshold" value="<?php echo htmlspecialchars($pconfig['threshold']);?>">
+      <input name="threshold" class="formfld unknown" id="threshold" value="<?php echo htmlspecialchars($pconfig['threshold']);?>" />
       <br />
       <span class="vexpl">
 	      <?=gettext("Defines the TTL threshold for  the  network  interface.  Packets".
@@ -253,12 +255,12 @@ include("head.inc");
 			        <select name="address_subnet<?php echo $tracker; ?>" class="formselect" id="address_subnet<?php echo $tracker; ?>">
 			          <option></option>
 			          <?php for ($i = 32; $i >= 1; $i--): ?>
-			          <option value="<?=$i;?>" <?php if ($i == $address_subnet) echo "selected"; ?>><?=$i;?></option>
+			          <option value="<?=$i;?>" <?php if ($i == $address_subnet) echo "selected=\"selected\""; ?>><?=$i;?></option>
 			          <?php endfor; ?>
 			        </select>
 			      </td>
             <td>
-    		<a onclick="removeRow(this); return false;" href="#"><img border="0" src="/themes/<?echo $g['theme'];?>/images/icons/icon_x.gif" /></a>
+    		<a onclick="removeRow(this); return false;" href="#"><img border="0" src="/themes/<?echo $g['theme'];?>/images/icons/icon_x.gif" alt="delete" /></a>
 	      </td>
           </tr>
 <?php
@@ -268,12 +270,9 @@ include("head.inc");
 	} // end if
 ?>
         </tbody>
-        <tfoot>
-
-        </tfoot>
 		  </table>
 			<a onclick="javascript:addRowTo('maintable'); return false;" href="#">
-        <img border="0" src="/themes/<?= $g['theme']; ?>/images/icons/icon_plus.gif" alt="" title="<?=gettext("add another entry");?>" />
+        <img border="0" src="/themes/<?= $g['theme']; ?>/images/icons/icon_plus.gif" alt="add" title="<?=gettext("add another entry");?>" />
       </a>
 		</td>
   </tr>
@@ -291,10 +290,12 @@ include("head.inc");
 </form>
 
 <script type="text/javascript">
+//<![CDATA[
 	field_counter_js = 2;
 	rows = 1;
 	totalrows = <?php echo $counter; ?>;
 	loaded = <?php echo $counter; ?>;
+//]]>
 </script>
 
 <?php include("fend.inc"); ?>

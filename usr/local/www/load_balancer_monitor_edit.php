@@ -199,8 +199,9 @@ $types = array("icmp" => gettext("ICMP"), "tcp" => gettext("TCP"), "http" => get
 ?>
 
 <body link="#0000CC" vlink="#0000CC" alink="#0000CC">
-
+<?php include("fbegin.inc"); ?>
 <script type="text/javascript">
+//<![CDATA[
 function updateType(t){
 	switch(t) {
 <?php
@@ -219,26 +220,26 @@ function updateType(t){
 	}
 	jQuery('#' + t).show();
 }
+//]]>
 </script>
 
-<?php include("fbegin.inc"); ?>
 <?php if ($input_errors) print_input_errors($input_errors); ?>
 
 	<form action="load_balancer_monitor_edit.php" method="post" name="iform" id="iform">
-	<table width="100%" border="0" cellpadding="6" cellspacing="0">
+	<table width="100%" border="0" cellpadding="6" cellspacing="0" summary="monitor entry">
  		<tr>
 			<td colspan="2" valign="top" class="listtopic"><?=gettext("Edit Load Balancer - Monitor entry"); ?></td>
                 </tr>
 		<tr align="left">
 			<td width="22%" valign="top" class="vncellreq"><?=gettext("Name"); ?></td>
 			<td width="78%" class="vtable" colspan="2">
-				<input name="name" type="text" <?if(isset($pconfig['name'])) echo "value=\"" . htmlspecialchars($pconfig['name']) . "\"";?> size="16" maxlength="16">
+				<input name="name" type="text" <?if(isset($pconfig['name'])) echo "value=\"" . htmlspecialchars($pconfig['name']) . "\"";?> size="16" maxlength="16" />
 			</td>
 		</tr>
 		<tr align="left">
 			<td width="22%" valign="top" class="vncellreq"><?=gettext("Description"); ?></td>
 			<td width="78%" class="vtable" colspan="2">
-				<input name="descr" type="text" <?if(isset($pconfig['descr'])) echo "value=\"" . htmlspecialchars($pconfig['descr']) . "\"";?>size="64">
+				<input name="descr" type="text" <?if(isset($pconfig['descr'])) echo "value=\"" . htmlspecialchars($pconfig['descr']) . "\"";?> size="64" />
 			</td>
 		</tr>
 		<tr align="left">
@@ -248,7 +249,7 @@ function updateType(t){
 <?
 					foreach ($types as $key => $val) {
 						if(isset($pconfig['type']) && $pconfig['type'] == $key) {
-							$selected = " selected";
+							$selected = " selected=\"selected\"";
 						} else {
 							$selected = "";
 						}
@@ -258,26 +259,26 @@ function updateType(t){
 				</select>
 			</td>
 		</tr>
-		<tr align="left" id="icmp"<?= $pconfig['type'] == "icmp" ? "" : " style=\"display:none;\""?>>
+		<tr align="left" id="icmp"<?= $pconfig['type'] == "icmp" ? "" : " style=\"display:none;\""?>><td></td>
 		</tr>
-		<tr align="left" id="tcp"<?= $pconfig['type'] == "tcp" ? "" : " style=\"display:none;\""?>>
+		<tr align="left" id="tcp"<?= $pconfig['type'] == "tcp" ? "" : " style=\"display:none;\""?>><td></td>
 		</tr>
 		<tr align="left" id="http"<?= $pconfig['type'] == "http" ? "" : " style=\"display:none;\""?>>
 			<td width="22%" valign="top" class="vncellreq"><?=gettext("HTTP"); ?></td>
 			<td width="78%" class="vtable" colspan="2">
-				<table width="100%" border="0" cellpadding="6" cellspacing="0">
+				<table width="100%" border="0" cellpadding="6" cellspacing="0" summary="http">
 					<tr align="left">
 						<td valign="top" align="right" class="vtable"><?=gettext("Path"); ?></td>
 						<td class="vtable" colspan="2">
-							<input name="http_options_path" type="text" <?if(isset($pconfig['options']['path'])) echo "value=\"" . htmlspecialchars($pconfig['options']['path']) . "\"";?>size="64">
+							<input name="http_options_path" type="text" <?if(isset($pconfig['options']['path'])) echo "value=\"" . htmlspecialchars($pconfig['options']['path']) . "\"";?> size="64" />
 						</td>
 					</tr>
 					<tr align="left">
 						<td valign="top"  align="right" class="vtable"><?=gettext("Host"); ?></td>
 						<td class="vtable" colspan="2">
-							<input name="http_options_host" type="text" <?if(isset($pconfig['options']['host'])) echo "value=\"" . htmlspecialchars($pconfig['options']['host']) . "\"";?>size="64"><br /><?=gettext("Hostname for Host: header if needed."); ?>
+							<input name="http_options_host" type="text" <?if(isset($pconfig['options']['host'])) echo "value=\"" . htmlspecialchars($pconfig['options']['host']) . "\"";?> size="64" /><br /><?=gettext("Hostname for Host: header if needed."); ?>
 						</td>
-					</td>
+					</tr>
 					<tr align="left">
 						<td valign="top"  align="right" class="vtable"><?=gettext("HTTP Code"); ?></td>
 						<td class="vtable" colspan="2">
@@ -298,19 +299,19 @@ function updateType(t){
 		<tr align="left" id="https"<?= $pconfig['type'] == "https" ? "" : " style=\"display:none;\""?>>
 			<td width="22%" valign="top" class="vncellreq"><?=gettext("HTTPS"); ?></td>
 			<td width="78%" class="vtable" colspan="2">
-				<table width="100%" border="0" cellpadding="6" cellspacing="0">
+				<table width="100%" border="0" cellpadding="6" cellspacing="0" summary="https">
 					<tr align="left">
 						<td valign="top"  align="right" class="vtable"><?=gettext("Path"); ?></td>
 						<td class="vtable" colspan="2">
-							<input name="https_options_path" type="text" <?if(isset($pconfig['options']['path'])) echo "value=\"" . htmlspecialchars($pconfig['options']['path']) ."\"";?>size="64">
+							<input name="https_options_path" type="text" <?if(isset($pconfig['options']['path'])) echo "value=\"" . htmlspecialchars($pconfig['options']['path']) ."\"";?> size="64" />
 						</td>
 					</tr>
 					<tr align="left">
 						<td valign="top"  align="right" class="vtable"><?=gettext("Host"); ?></td>
 						<td class="vtable" colspan="2">
-							<input name="https_options_host" type="text" <?if(isset($pconfig['options']['host'])) echo "value=\"" . htmlspecialchars($pconfig['options']['host']) . "\"";?>size="64"><br /><?=gettext("Hostname for Host: header if needed."); ?>
+							<input name="https_options_host" type="text" <?if(isset($pconfig['options']['host'])) echo "value=\"" . htmlspecialchars($pconfig['options']['host']) . "\"";?> size="64" /><br /><?=gettext("Hostname for Host: header if needed."); ?>
 						</td>
-					</td>
+					</tr>
 					<tr align="left">
 						<td valign="top"  align="right" class="vtable"><?=gettext("HTTP Code"); ?></td>
 						<td class="vtable" colspan="2">
@@ -332,17 +333,17 @@ function updateType(t){
 		<tr align="left" id="send"<?= $pconfig['type'] == "send" ? "" : " style=\"display:none;\""?>>
 			<td width="22%" valign="top" class="vncellreq"><?=gettext("Send/Expect"); ?></td>
 			<td width="78%" class="vtable" colspan="2">
-				<table width="100%" border="0" cellpadding="6" cellspacing="0">
+				<table width="100%" border="0" cellpadding="6" cellspacing="0" summary="send expect">
 					<tr align="left">
 						<td valign="top"  align="right" class="vtable"><?=gettext("Send string"); ?></td>
 						<td class="vtable" colspan="2">
-							<input name="send_options_send" type="text" <?if(isset($pconfig['options']['send'])) echo "value=\"" . htmlspecialchars($pconfig['options']['send']) . "\"";?>size="64">
+							<input name="send_options_send" type="text" <?if(isset($pconfig['options']['send'])) echo "value=\"" . htmlspecialchars($pconfig['options']['send']) . "\"";?> size="64" />
 						</td>
 					</tr>
 					<tr align="left">
 						<td valign="top" align="right"  class="vtable"><?=gettext("Expect string"); ?></td>
 						<td class="vtable" colspan="2">
-							<input name="send_options_expect" type="text" <?if(isset($pconfig['options']['expect'])) echo "value=\"" . htmlspecialchars($pconfig['options']['expect']) . "\"";?>size="64">
+							<input name="send_options_expect" type="text" <?if(isset($pconfig['options']['expect'])) echo "value=\"" . htmlspecialchars($pconfig['options']['expect']) . "\"";?> size="64" />
 						</td>
 					</tr>
 				</table>
@@ -351,9 +352,9 @@ function updateType(t){
 		<tr align="left">
 			<td width="22%" valign="top">&nbsp;</td>
 			<td width="78%">
-				<input name="Submit" type="submit" class="formbtn" value="<?=gettext("Save"); ?>"><input type="button" class="formbtn" value="<?=gettext("Cancel"); ?>" onclick="history.back()">
+				<input name="Submit" type="submit" class="formbtn" value="<?=gettext("Save"); ?>" /><input type="button" class="formbtn" value="<?=gettext("Cancel"); ?>" onclick="history.back()" />
 				<?php if (isset($id) && $a_monitor[$id]): ?>
-				<input name="id" type="hidden" value="<?=htmlspecialchars($id);?>">
+				<input name="id" type="hidden" value="<?=htmlspecialchars($id);?>" />
 				<?php endif; ?>
 			</td>
 		</tr>

@@ -96,10 +96,10 @@ include("head.inc");
 <form action="load_balancer_monitor.php" method="post">
 <?php if ($input_errors) print_input_errors($input_errors); ?>
 <?php if ($savemsg) print_info_box($savemsg); ?>
-<?php if (is_subsystem_dirty('loadbalancer')): ?><p>
+<?php if (is_subsystem_dirty('loadbalancer')): ?><br/>
 <?php print_info_box_np(gettext("The load balancer configuration has been changed") . ".<br />" . gettext("You must apply the changes in order for them to take effect."));?><br />
 <?php endif; ?>
-<table width="100%" border="0" cellpadding="0" cellspacing="0">
+<table width="100%" border="0" cellpadding="0" cellspacing="0" summary="load balancer monitor">
   <tr><td class="tabnavtbl">
   <?php
         /* active tabs */
@@ -114,7 +114,7 @@ include("head.inc");
   <tr>
     <td>
 	<div id="mainarea">
-<?
+<?php
 			$t = new MainTable();
 			$t->edit_uri('load_balancer_monitor_edit.php');
 			$t->my_uri('load_balancer_monitor.php');

@@ -126,7 +126,7 @@ class MainTable {
 				}
 				echo "  </td>\n";
 			}
-			echo "  <td class=\"listbg\" onclick=\"fr_toggle({$cur_row})\" id=\"frd{$cur_row}\" ondblclick=\"document.location=\'{$this->edit_uri}?id={$cur_row}\'\">\n";
+			echo "  <td class=\"listbg\" onclick=\"fr_toggle({$cur_row})\" id=\"frd{$cur_row}\" ondblclick=\"document.location='{$this->edit_uri}?id={$cur_row}'\">\n";
 			echo "    <font color=\"#FFFFFF\">{$row[$this->cname[$this->columns - 1]]}</font>\n";
 			echo "  </td>\n";
 			echo "  <td class=\"list nowrap\">\n";
@@ -180,7 +180,7 @@ class MainTable {
 				break;
 			}
 			case "del": {
-				echo "<a href=\"{$this->my_uri}?act=del&amp;id={$row}\" onclick=\"return confirm(\'Do you really want to delete this entry?\')\"><img src=\"/themes/{$g['theme']}/images/icons/icon_x.gif\" width=\"17\" height=\"17\" border=\"0\" title=\"Delete entry\" alt=\"delete\" /></a>";
+				echo "<a href=\"{$this->my_uri}?act=del&amp;id={$row}\" onclick=\"return confirm('Do you really want to delete this entry?')\"><img src=\"/themes/{$g['theme']}/images/icons/icon_x.gif\" width=\"17\" height=\"17\" border=\"0\" title=\"Delete entry\" alt=\"delete\" /></a>";
 				break;
 			}
 			case "dup": {

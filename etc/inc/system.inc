@@ -704,8 +704,6 @@ function system_syslogd_start() {
 		$syslogconf .= "!dnsmasq,filterdns,unbound\n";
 		if (!isset($syslogcfg['disablelocallogging']))
 			$syslogconf .= "*.*								{$log_directive}{$g['varlog_path']}/resolver.log\n";
-		if (isset($syslogcfg['apinger']))
-			$syslogconf .= system_syslogd_get_remote_servers($syslogcfg, "*.*");
 
 		$syslogconf .= "!dhcpd,dhcrelay,dhclient\n";
 		if (!isset($syslogcfg['disablelocallogging']))

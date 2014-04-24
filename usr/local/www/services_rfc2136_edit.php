@@ -122,10 +122,10 @@ include("head.inc");
 <?php if ($input_errors) print_input_errors($input_errors); ?>
 <?php if ($savemsg) print_info_box($savemsg); ?>
             <form action="services_rfc2136_edit.php" method="post" name="iform" id="iform">
-              <table width="100%" border="0" cellpadding="6" cellspacing="0">
+              <table width="100%" border="0" cellpadding="6" cellspacing="0" summary="rfs2136 edit">
 			  	<tr>
                   <td colspan="2" valign="top" class="optsect_t">
-				  <table border="0" cellspacing="0" cellpadding="0" width="100%">
+				  <table border="0" cellspacing="0" cellpadding="0" width="100%" summary="title">
 				  	<tr><td class="optsect_s"><strong><?=gettext("RFC 2136 client");?></strong></td></tr>
 				  </table>
 				  </td>
@@ -133,7 +133,7 @@ include("head.inc");
                 <tr>
                   <td width="22%" valign="top" class="vncellreq"><?=gettext("Enable");?></td>
 				  <td width="78%" class="vtable">
-				    <input name="enable" type="checkbox" id="enable" value="yes" <?php if ($pconfig['enable']) echo "checked"; ?>>
+				    <input name="enable" type="checkbox" id="enable" value="yes" <?php if ($pconfig['enable']) echo "checked=\"checked\""; ?> />
 				  </td>
                 </tr>
 				<tr>
@@ -142,79 +142,79 @@ include("head.inc");
 				   <select name="interface" class="formselect" id="interface">
 				   <?php $iflist = get_configured_interface_with_descr();
 				   		foreach ($iflist as $if => $ifdesc):?>
-							<option value="<?=$if;?>" <?php if ($pconfig['interface'] == $if) echo "selected";?>><?=$ifdesc;?></option>
+							<option value="<?=$if;?>" <?php if ($pconfig['interface'] == $if) echo "selected=\"selected\"";?>><?=$ifdesc;?></option>
 					<?php endforeach; ?>
 					</select>
-					</td>
 					</td>
 				</tr>	
                 <tr>
                   <td width="22%" valign="top" class="vncellreq"><?=gettext("Hostname");?></td>
                   <td width="78%" class="vtable">
-                    <input name="host" type="text" class="formfld unknown" id="host" size="30" value="<?=htmlspecialchars($pconfig['host']);?>">
+                    <input name="host" type="text" class="formfld unknown" id="host" size="30" value="<?=htmlspecialchars($pconfig['host']);?>" />
 			<br /><span>Fully qualified hostname of the host to be updated</span>
                   </td>
 				</tr>
                 <tr>
                   <td valign="top" class="vncellreq"><?=gettext("TTL"); ?></td>
                   <td class="vtable">
-                    <input name="ttl" type="text" class="formfld unknown" id="ttl" size="6" value="<?=htmlspecialchars($pconfig['ttl']);?>">
+                    <input name="ttl" type="text" class="formfld unknown" id="ttl" size="6" value="<?=htmlspecialchars($pconfig['ttl']);?>" />
                   <?=gettext("seconds");?></td>
                 </tr>
                 <tr>
                   <td valign="top" class="vncellreq"><?=gettext("Key name");?></td>
                   <td class="vtable">
-                    <input name="keyname" type="text" class="formfld unknown" id="keyname" size="30" value="<?=htmlspecialchars($pconfig['keyname']);?>">
+                    <input name="keyname" type="text" class="formfld unknown" id="keyname" size="30" value="<?=htmlspecialchars($pconfig['keyname']);?>" />
                     <br />
                     <?=gettext("This must match the setting on the DNS server.");?></td>
                 </tr>
                 <tr>
                   <td valign="top" class="vncellreq"><?=gettext("Key type");?> </td>
                   <td class="vtable">
-				  <input name="keytype" type="radio" value="zone" <?php if ($pconfig['keytype'] == "zone") echo "checked"; ?>> <?=gettext("Zone");?> &nbsp;
-                  <input name="keytype" type="radio" value="host" <?php if ($pconfig['keytype'] == "host") echo "checked"; ?>> <?=gettext("Host");?> &nbsp;
-                  <input name="keytype" type="radio" value="user" <?php if ($pconfig['keytype'] == "user") echo "checked"; ?>><?=gettext(" User");?>
-				</tr>
+				  <input name="keytype" type="radio" value="zone" <?php if ($pconfig['keytype'] == "zone") echo "checked=\"checked\""; ?> /> <?=gettext("Zone");?> &nbsp;
+                  <input name="keytype" type="radio" value="host" <?php if ($pconfig['keytype'] == "host") echo "checked=\"checked\""; ?> /> <?=gettext("Host");?> &nbsp;
+                  <input name="keytype" type="radio" value="user" <?php if ($pconfig['keytype'] == "user") echo "checked=\"checked\""; ?> /><?=gettext(" User");?>
+				</td>
+                </tr>
                 <tr>
                   <td valign="top" class="vncellreq"><?=gettext("Key");?></td>
                   <td class="vtable">
-                    <input name="keydata" type="text" class="formfld unknown" id="keydata" size="70" value="<?=htmlspecialchars($pconfig['keydata']);?>">
+                    <input name="keydata" type="text" class="formfld unknown" id="keydata" size="70" value="<?=htmlspecialchars($pconfig['keydata']);?>" />
                     <br />
                     <?=gettext("Paste an HMAC-MD5 key here.");?></td>
 				</tr>
                 <tr>
                   <td width="22%" valign="top" class="vncellreq"><?=gettext("Server");?></td>
                   <td width="78%" class="vtable">
-                    <input name="server" type="text" class+"formfld" id="server" size="30" value="<?=htmlspecialchars($pconfig['server'])?>">
+                    <input name="server" type="text" class="formfld" id="server" size="30" value="<?=htmlspecialchars($pconfig['server'])?>" />
                   </td>
                 </tr>
                 <tr>
                   <td width="22%" valign="top" class="vncellreq"><?=gettext("Protocol");?></td>
                   <td width="78%" class="vtable">
-                    <input name="usetcp" type="checkbox" id="usetcp" value="<?=gettext("yes");?>" <?php if ($pconfig['usetcp']) echo "checked"; ?>>
+                    <input name="usetcp" type="checkbox" id="usetcp" value="<?=gettext("yes");?>" <?php if ($pconfig['usetcp']) echo "checked=\"checked\""; ?> />
                     <strong><?=gettext("Use TCP instead of UDP");?></strong></td>
 				</tr>
 		<tr>
 			<td width="22%" valign="top" class="vncellreq"><?=gettext("Use Public IP");?></td>
 			<td width="78%" class="vtable">
-				<input name="usepublicip" type="checkbox" id="usepublicip" value="<?=gettext("yes");?>" <?php if ($pconfig['usepublicip']) echo "checked"; ?>>
+				<input name="usepublicip" type="checkbox" id="usepublicip" value="<?=gettext("yes");?>" <?php if ($pconfig['usepublicip']) echo "checked=\"checked\""; ?> />
 				<strong><?=gettext("If the interface IP is private, attempt to fetch and use the public IP instead.");?></strong>
 			</td>
 		</tr>
                 <tr>
                   <td width="22%" valign="top" class="vncellreq"><?=gettext("Description");?></td>
                   <td width="78%" class="vtable">
-                    <input name="descr" type="text" class="formfld unknown" id="descr" size="60" value="<?=htmlspecialchars($pconfig['descr']);?>">
+                    <input name="descr" type="text" class="formfld unknown" id="descr" size="60" value="<?=htmlspecialchars($pconfig['descr']);?>" />
                   </td>
                 </tr>
                 <tr>
                   <td width="22%" valign="top">&nbsp;</td>
                   <td width="78%">
-					<input name="Submit" type="submit" class="formbtn" value="<?=gettext("Save");?>" onClick="enable_change(true)">
-					<a href="services_rfc2136.php"><input name="Cancel" type="button" class="formbtn" value="<?=gettext("Cancel");?>"></a>
-					<input name="Submit" type="submit" class="formbtn" value="<?=gettext("Save & Force Update");?>" onClick="enable_change(true)">
+					<input name="Submit" type="submit" class="formbtn" value="<?=gettext("Save");?>" onclick="enable_change(true)" />
+					<a href="services_rfc2136.php"><input name="Cancel" type="button" class="formbtn" value="<?=gettext("Cancel");?>" /></a>
+					<input name="Submit" type="submit" class="formbtn" value="<?=gettext("Save &amp; Force Update");?>" onclick="enable_change(true)" />
 					<?php if (isset($id) && $a_rfc2136[$id]): ?>
-						<input name="id" type="hidden" value="<?=htmlspecialchars($id);?>">
+						<input name="id" type="hidden" value="<?=htmlspecialchars($id);?>" />
 					<?php endif; ?>
                   </td>
                 </tr>

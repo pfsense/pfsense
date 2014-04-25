@@ -138,6 +138,18 @@ EOF;
         $bindints .= "interface: ::0\n";
     }
 
+    // Determine interfaces to run on
+    $outgoingints = "";
+    if (!empty($config['unbound']['outgoing_interface'])) {
+        $outgoingints = "# Outgoing interfaces to be used\n";
+        $outgoing_interfaces = explode(",", $config['unbound']['outgoing_interface']);
+        foreach($outgoing_interfaces as $outif) {
+            $outip = get_interface_ip($outif);
+            if (!is_null($outip))
+                $outgoingints .= "outgoing-interface: $intip\n";
+        }
+    }
+
     // Allow DNS Rebind for forwarded domains
     if ((isset($config['unbound']['domainoverrides']) && is_array($config['unbound']['domainoverrides'])) && !isset($config['system']['webgui']['nodnsrebindcheck'])) {
         $private_domains = "# Set private domains in case authoritative name server returns a Private IP address\n";
@@ -265,6 +277,7 @@ prefetch-key: {$prefetch_key}
 {$statistics}
 # Interface IP(s) to bind to
 {$bindints}
+{$outgoingints}
 
 # DNS Rebinding
 {$private_addr}

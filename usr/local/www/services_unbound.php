@@ -193,7 +193,7 @@ function show_advanced_dns() {
 									<?=gettext("Interface IPs used by the DNS Resolver for responding to queries from clients. If an interface has both IPv4 and IPv6 IPs, both are used. Queries to other interface IPs not selected below are discarded. The default behavior is to respond to queries on every available IPv4 and IPv6 address.");?>
 									<br /><br />
 									<select id="active_interface" name="active_interface[]" multiple="multiple" size="3">
-										<option value="" <?php if (empty($pconfig['active_interface'])) echo 'selected="selected"'; ?>>All</option>
+										<option value="" <?php if (empty($pconfig['active_interface']) || empty($pconfig['active_interface'][0])) echo 'selected="selected"'; ?>>All</option>
 										<?php
 											foreach ($interface_addresses as $laddr):
 												$selected = "";
@@ -218,7 +218,7 @@ function show_advanced_dns() {
 									<?=gettext("Utilize different network interface(s) that the DNS Resolver will use to send queries to authoritative servers and receive their replies. By default all interfaces are used.");?>
 									<br /><br />
 									<select id="outgoing_interface" name="outgoing_interface[]" multiple="multiple" size="3">
-										<option value="" <?php if (empty($pconfig['outgoing_interface'])) echo 'selected="selected"'; ?>>All</option>
+										<option value="" <?php if (empty($pconfig['outgoing_interface']) || empty($pconfig['outgoing_interface'][0])) echo 'selected="selected"'; ?>>All</option>
 										<?php
 											foreach ($interface_addresses as $laddr):
 												$selected = "";

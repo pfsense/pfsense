@@ -271,7 +271,7 @@ function show_advanced_dns() {
 			<?=gettext("Interface IPs used by the DNS Forwarder for responding to queries from clients. If an interface has both IPv4 and IPv6 IPs, both are used. Queries to other interface IPs not selected below are discarded. The default behavior is to respond to queries on every available IPv4 and IPv6 address.");?>
 			<br /><br />
 			<select id="interface" name="interface[]" multiple="multiple" class="formselect" size="<?php echo $size; ?>">
-				<option value="" <?php if (empty($pconfig['interface'])) echo 'selected="selected"'; ?>>All</option>
+				<option value="" <?php if (empty($pconfig['interface']) || empty($pconfig['interface'][0])) echo 'selected="selected"'; ?>>All</option>
 			<?php  foreach ($interface_addresses as $laddr):
 					$selected = "";
 					if (in_array($laddr['value'], $pconfig['interface']))

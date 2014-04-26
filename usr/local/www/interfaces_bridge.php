@@ -66,10 +66,13 @@ if ($_GET['act'] == "del") {
 	/* check if still in use */
 	else if (bridge_inuse($_GET['id'])) {
 		$input_errors[] = gettext("This bridge cannot be deleted because it is assigned as an interface.");
-	} elseif (!does_interface_exist($a_bridges[$_GET['id']]['bridgeif'])) {
-		$input_errors[] = gettext("Invalid bridge interface.");
 	} else {
-		mwexec("/sbin/ifconfig " . $a_bridges[$_GET['id']]['bridgeif'] . " destroy");
+		if (!does_interface_exist($a_bridges[$_GET['id']]['bridgeif'])) {
+			log_error("Bridge interface does not exist, skipping ifconfig destroy.");
+		} else {
+			mwexec("/sbin/ifconfig " . $a_bridges[$_GET['id']]['bridgeif'] . " destroy");
+		}
+		
 		unset($a_bridges[$_GET['id']]);
 
 		write_config();

@@ -129,20 +129,22 @@ function vpn_ipsec_configure($ipchg = false)
 		/* needed for config files */
 		if (!is_dir("{$g['varetc_path']}/ipsec"))
 			mkdir("{$g['varetc_path']}/ipsec");
-		if (!is_dir("{$g['varetc_path']}/ipsec/cacerts"))
-			mkdir("{$g['varetc_path']}/ipsec/cacerts");
-		if (!is_dir("{$g['varetc_path']}/ipsec/private"))
-			mkdir("{$g['varetc_path']}/ipsec/private");
-		if (!is_dir("{$g['varetc_path']}/ipsec/crls"))
-			mkdir("{$g['varetc_path']}/ipsec/crls");
-		if (!is_dir("{$g['varetc_path']}/ipsec/certs"))
-			mkdir("{$g['varetc_path']}/ipsec/certs");
-		if (!is_dir("{$g['varetc_path']}/ipsec/aacerts"))
-			mkdir("{$g['varetc_path']}/ipsec/aacerts");
-		if (!is_dir("{$g['varetc_path']}/ipsec/acerts"))
-			mkdir("{$g['varetc_path']}/ipsec/acerts");
-		if (!is_dir("{$g['varetc_path']}/ipsec/reqs"))
-			mkdir("{$g['varetc_path']}/ipsec/reqs");
+		if (!is_dir("{$g['varetc_path']}/ipsec/ipsec.d"))
+			mkdir("{$g['varetc_path']}/ipsec/ipsec.d");
+		if (!is_dir("{$g['varetc_path']}/ipsec/ipsec.d/cacerts"))
+			mkdir("{$g['varetc_path']}/ipsec/ipsec.d/cacerts");
+		if (!is_dir("{$g['varetc_path']}/ipsec/ipsec.d/private"))
+			mkdir("{$g['varetc_path']}/ipsec/ipsec.d/private");
+		if (!is_dir("{$g['varetc_path']}/ipsec/ipsec.d/crls"))
+			mkdir("{$g['varetc_path']}/ipsec/ipsec.d/crls");
+		if (!is_dir("{$g['varetc_path']}/ipsec/ipsec.d/certs"))
+			mkdir("{$g['varetc_path']}/ipsec/ipsec.d/certs");
+		if (!is_dir("{$g['varetc_path']}/ipsec/ipsec.d/aacerts"))
+			mkdir("{$g['varetc_path']}/ipsec/ipsec.d/aacerts");
+		if (!is_dir("{$g['varetc_path']}/ipsec/ipsec.d/acerts"))
+			mkdir("{$g['varetc_path']}/ipsec/ipsec.d/acerts");
+		if (!is_dir("{$g['varetc_path']}/ipsec/ipsec.d/reqs"))
+			mkdir("{$g['varetc_path']}/ipsec/ipsec.d/reqs");
 		
 
 		if ($g['booting'])
@@ -398,7 +400,7 @@ EOD;
 					log_error(sprintf(gettext("Error: Invalid certificate hash info for %s"), $ca['descr']));
 					continue;
 				}
-				$fname = "{$g['varetc_path']}/ipsec/cacerts/{$x509cert['hash']}.0";
+				$fname = "{$g['varetc_path']}/ipsec/ipsec.d/cacerts/{$x509cert['hash']}.0";
 				if (!@file_put_contents($fname, $cert)) {
 					log_error(sprintf(gettext("Error: Cannot write IPsec CA file for %s"), $ca['descr']));
 					continue;
@@ -444,7 +446,7 @@ EOD;
 						$ca = lookup_ca($ph1ent['caref']);
 						if ($ca) {
 							$cafile = "ca-{$ikeid}.crt";
-							$capath = "{$g['varetc_path']}/ipsec/cacerts/{$cafile}";
+							$capath = "{$g['varetc_path']}/ipsec/ipsec.d/cacerts/{$cafile}";
 
 							if (!file_put_contents($capath, base64_decode($ca['crt'])))
 							{

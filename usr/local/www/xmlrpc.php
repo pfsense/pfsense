@@ -357,7 +357,7 @@ $filter_configure_sig = array(
 );
 
 function filter_configure_xmlrpc($raw_params) {
-	global $xmlrpc_g;
+	global $xmlrpc_g, $config;
 
 	$params = xmlrpc_params_to_php($raw_params);
 	if(!xmlrpc_auth($params)) {

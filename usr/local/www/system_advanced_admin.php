@@ -245,8 +245,11 @@ if ($_POST) {
 
 		conf_mount_rw();
 		setup_serial_port();
-		// Restart dnsmasq in case dns rebinding toggled
-		services_dnsmasq_configure();
+		// Restart DNS in case dns rebinding toggled
+		if (isset($config['dnsmasq']['enable']))
+			services_dnsmasq_configure();
+		elseif (isset($config['unbound']['enable']))
+			services_unbound_configure();
 		conf_mount_ro();
 	}
 }

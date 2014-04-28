@@ -260,7 +260,10 @@ function filter_configure_zeromq($raw_params) {
 	require_once("openvpn.inc");
 	openvpn_resync_all();
 	services_dhcpd_configure();
-	services_dnsmasq_configure();
+	if (isset($config['dnsmasq']['enable']))
+		services_dnsmasq_configure();
+	elseif (isset($config['unbound']['enable']))
+		services_unbound_configure();
 	local_sync_accounts();
 	return ZEROMQ_FASLE;
 }

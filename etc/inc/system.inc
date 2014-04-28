@@ -324,8 +324,10 @@ function system_hosts_generate() {
 	fwrite($fd, $hosts);
 	fclose($fd);
 
-	if (isset($config['unbound']['enable']))
+	if (isset($config['unbound']['enable'])) {
+		require_once("unbound.inc");
 		unbound_hosts_generate();
+	}
 
 	system_dhcpleases_configure();
 

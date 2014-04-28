@@ -1051,6 +1051,11 @@ EOD;
 				if ($syscfg['dnsserver'][0])
 					$mpdconf .= " " . $syscfg['dnsserver'][0];
 				$mpdconf .= "\n";
+			} elseif (isset($config['unbound']['enable'])) {
+				$mpdconf .= "	set ipcp dns " . get_interface_ip("lan");
+				if ($syscfg['dnsserver'][0])
+					$mpdconf .= " " . $syscfg['dnsserver'][0];
+				$mpdconf .= "\n";
 			} elseif (is_array($syscfg['dnsserver']) && ($syscfg['dnsserver'][0])) {
 					$mpdconf .= "	set ipcp dns " . join(" ", $syscfg['dnsserver']) . "\n";
 			}
@@ -1270,6 +1275,11 @@ EOD;
 				if ($syscfg['dnsserver'][0])
 					$mpdconf .= " " . $syscfg['dnsserver'][0];
 				$mpdconf .= "\n";
+			} elseif (isset ($config['unbound']['enable'])) {
+				$mpdconf .= "	set ipcp dns " . get_interface_ip("lan");
+				if ($syscfg['dnsserver'][0])
+					$mpdconf .= " " . $syscfg['dnsserver'][0];
+				$mpdconf .= "\n";
 			} elseif (is_array($syscfg['dnsserver']) && ($syscfg['dnsserver'][0])) {
 					$mpdconf .= "	set ipcp dns " . join(" ", $syscfg['dnsserver']) . "\n";
 			}
@@ -1470,6 +1480,11 @@ EOD;
 					$mpdconf .= " " . $l2tpcfg['dns2'];
 				$mpdconf .= "\n";
 			} elseif (isset ($config['dnsmasq']['enable'])) {
+				$mpdconf .= "	set ipcp dns " . get_interface_ip("lan");
+				if ($syscfg['dnsserver'][0])
+					$mpdconf .= " " . $syscfg['dnsserver'][0];
+				$mpdconf .= "\n";
+			} elseif (isset ($config['unbound']['enable'])) {
 				$mpdconf .= "	set ipcp dns " . get_interface_ip("lan");
 				if ($syscfg['dnsserver'][0])
 					$mpdconf .= " " . $syscfg['dnsserver'][0];

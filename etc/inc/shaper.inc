@@ -4470,18 +4470,15 @@ function filter_generate_dummynet_rules() {
 
 	read_dummynet_config();
 
-	if (!empty($dummynet_pipe_list)) {
-		if (!is_module_loaded("dummynet.ko")) {
-			mwexec("/sbin/kldload dummynet");
-			mwexec("/sbin/sysctl net.inet.ip.dummynet.io_fast=1 net.inet.ip.dummynet.hash_size=256");
-		}
-	}
-
 	$dn_rules = "";
 	foreach ($dummynet_pipe_list as $dn)
 		$dn_rules .= $dn->build_rules();
 
 	if (!empty($dn_rules)) {
+		if (!is_module_loaded("dummynet.ko")) {
+			mwexec("/sbin/kldload dummynet");
+			mwexec("/sbin/sysctl net.inet.ip.dummynet.io_fast=1 net.inet.ip.dummynet.hash_size=256");
+		}
 		file_put_contents("{$g['tmp_path']}/rules.limiter", $dn_rules);
 		mwexec("/sbin/ipfw {$g['tmp_path']}/rules.limiter");
 	}

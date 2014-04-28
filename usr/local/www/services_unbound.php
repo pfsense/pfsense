@@ -115,6 +115,26 @@ if ($_POST) {
 	}
 }
 
+if ($_GET['act'] == "del") {
+    if ($_GET['type'] == 'host') {
+        if ($a_hosts[$_GET['id']]) {
+            unset($a_hosts[$_GET['id']]);
+            write_config();
+            mark_subsystem_dirty('unbound');
+            header("Location: services_unbound.php");
+            exit;
+        }
+    } elseif ($_GET['type'] == 'doverride') {
+        if ($a_domainOverrides[$_GET['id']]) {
+            unset($a_domainOverrides[$_GET['id']]);
+            write_config();
+            mark_subsystem_dirty('unbound');
+            header("Location: services_unbound.php");
+            exit;
+        }
+    }
+}
+
 $closehead = false;
 $pgtitle = array(gettext("Services"),gettext("DNS Resolver"));
 include_once("head.inc");

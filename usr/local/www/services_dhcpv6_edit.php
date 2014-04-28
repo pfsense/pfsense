@@ -169,6 +169,9 @@ if ($_POST) {
 			mark_subsystem_dirty('staticmaps');
 			if (isset($config['dnsmasq']['enable']) && isset($config['dnsmasq']['regdhcpstatic']))
 				mark_subsystem_dirty('hosts');
+			if (isset($config['unbound']['enable']) && isset($config['unbound']['regdhcpstatic']))
+				mark_subsystem_dirty('unbound');
+
 		}
 
 		header("Location: services_dhcpv6.php?if={$if}");

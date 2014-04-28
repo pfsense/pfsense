@@ -629,11 +629,7 @@ function system_syslogd_start() {
 
 	if ($g['booting'])
 		echo gettext("Starting syslog...");
-	else
-		killbypid("{$g['varrun_path']}/syslog.pid");
 
-	if (is_process_running("syslogd"))
-		mwexec('/bin/pkill syslogd');
 	if (is_process_running("fifolog_writer"))
 		mwexec('/bin/pkill fifolog_writer');
 
@@ -651,7 +647,8 @@ function system_syslogd_start() {
 		$log_size = isset($config['syslog']['logfilesize']) ? $config['syslog']['logfilesize'] : "10240";
 		$log_create_directive = "/usr/local/sbin/clog -i -s ";
 	}
-	
+
+	$syslogd_extra = "";
 	if (isset($syslogcfg)) {
 		$separatelogfacilities = array('ntp','ntpd','ntpdate','charon','openvpn','pptps','poes','l2tps','relayd','hostapd','dnsmasq','filterdns','unbound','dhcpd','dhcrelay','dhclient','apinger','radvd','routed','olsrd','zebra','ospfd','bgpd','miniupnpd','filterlog');
 		$syslogconf = "";
@@ -802,11 +799,13 @@ EOD;
 			}
 		}
 
-		$retval = mwexec_bg("/usr/sbin/syslogd -s -c -c -l {$g['dhcpd_chroot_path']}/var/run/log -f {$g['varetc_path']}/syslog.conf {$sourceip}");
-
-	} else {
-		$retval = mwexec_bg("/usr/sbin/syslogd -s -c -c -l {$g['dhcpd_chroot_path']}/var/run/log");
+		$syslogd_extra = "-f {$g['varetc_path']}/syslog.conf {$sourceip}";
 	}
+
+	if (isvalidpid("{$g['varrun_path']}/syslog.pid"))
+		sigkillbypid("{$g['varrun_path']}/syslog.pid", "HUP");
+	else
+		$retval = mwexec_bg("/usr/sbin/syslogd -s -c -c -l {$g['dhcpd_chroot_path']}/var/run/log -P {$g['varrun_path']}/syslog.pid {$syslogd_extra}");
 
 	if ($g['booting'])
 		echo gettext("done.") . "\n";

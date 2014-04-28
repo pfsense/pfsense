@@ -34,8 +34,7 @@
 */
 
 /*
-	pfSense_BUILDER_BINARIES:	/usr/bin/killall	/usr/local/sbin/sasyncd	/sbin/ifconfig	/sbin/sysctl
-	pfSense_BUILDER_BINARIES:	/usr/local/sbin/setkey	/sbin/route	/bin/mkdir
+	pfSense_BUILDER_BINARIES:	/sbin/ifconfig	/sbin/sysctl
 	pfSense_BUILDER_BINARIES:	/usr/local/sbin/ipsec	/usr/local/libexec/ipsec/charon /usr/local/libexec/ipsec/starter
 	pfSense_BUILDER_BINARIES:	/usr/local/sbin/filterdns	/usr/local/sbin/mpd4
 	pfSense_MODULE:	vpn
@@ -118,11 +117,6 @@ function vpn_ipsec_configure($ipchg = false)
 
 		/* wait for process to die */
 		sleep(2);
-
-		/* flush SPD and SAD 
-		mwexec("/usr/local/sbin/setkey -F");
-		mwexec("/usr/local/sbin/setkey -FP");
-		*/
 
 		/* disallow IPSEC, it is off */
 		mwexec("/sbin/ifconfig enc0 down");

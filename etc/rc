@@ -287,7 +287,7 @@ for logfile in $LOG_FILES; do
 				# generate fifolog files
 				/usr/sbin/fifolog_create -s 511488 /var/log/$logfile.log
 			else 
-				/usr/sbin/clog -i -s 512144 /var/log/$logfile.log
+				/usr/local/sbin/clog -i -s 512144 /var/log/$logfile.log
 			fi
 		fi
 	fi 

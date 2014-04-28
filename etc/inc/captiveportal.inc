@@ -1995,7 +1995,7 @@ function portal_allow($clientip,$clientmac,$username,$password = null, $attribut
 		include("{$g['varetc_path']}/captiveportal-{$cpzone}-logout.html");
 
 	} else {
-		portal_reply_page($redirurl, "redir", "Just redirect the user.");
+		portal_reply_page($my_redirurl, "redir", "Just redirect the user.");
 	}
 
 	return $sessionid;

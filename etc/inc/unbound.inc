@@ -573,6 +573,10 @@ function unbound_control($action) {
             if ($config['unbound']['enable'] == "on")
                 do_as_unbound_user("stop");
             break;
+        case "reload":
+            if ($config['unbound']['enable'] == "on")
+                do_as_unbound_user("reload");
+            break;
         case "dump_cache":
             // Dump Unbound's Cache
             if ($config['unbound']['dumpcache'] == "on")
@@ -655,6 +659,15 @@ function unbound_acls_config() {
     // Write out Access list
     file_put_contents("{$g['unbound_chroot_path']}/access_lists.conf", $aclcfg);
 
+}
+
+// Generate hosts and reload services
+function unbound_hosts_generate() {
+    // Generate our hosts file
+    unbound_add_host_entries();
+
+    // Reload our service to read the updates
+    unbound_control("reload");
 }
 
 ?>

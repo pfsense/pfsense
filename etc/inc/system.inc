@@ -723,10 +723,14 @@ function system_syslogd_start() {
 		if (isset($syslogcfg['hostapd']))
 			$syslogconf .= system_syslogd_get_remote_servers($syslogcfg, "*.*");
 
+		$syslogconf .= "!filterlog\n";
+		$syslogconf .= "*.* 								{$log_directive}{$g['varlog_path']}/filter.log\n";
+		if (isset($syslogcfg['filter']))
+			$syslogconf .= system_syslogd_get_remote_servers($syslogcfg, "*.*");
+
 		$syslogconf .= "!-{$facilitylist}\n";
 		if (!isset($syslogcfg['disablelocallogging'])) 
 			$syslogconf .= <<<EOD
-local0.*							{$log_directive}{$g['varlog_path']}/filter.log
 local3.*							{$log_directive}{$g['varlog_path']}/vpn.log
 local4.*							{$log_directive}{$g['varlog_path']}/portalauth.log
 local7.*							{$log_directive}{$g['varlog_path']}/dhcpd.log
@@ -739,8 +743,6 @@ auth.info;authpriv.info 					|exec /usr/local/sbin/sshlockout_pf 15
 *.emerg								*
 
 EOD;
-		if (isset($syslogcfg['filter']))
-			$syslogconf .= system_syslogd_get_remote_servers($syslogcfg, "local0.*");
 		if (isset($syslogcfg['vpn']))
 			$syslogconf .= system_syslogd_get_remote_servers($syslogcfg, "local3.*");
 		if (isset($syslogcfg['portalauth']))

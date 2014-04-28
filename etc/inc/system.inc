@@ -643,7 +643,7 @@ function system_syslogd_start() {
 	} else { // Defaults to CLOG
 		$log_directive = "%";
 		$log_size = isset($config['syslog']['logfilesize']) ? $config['syslog']['logfilesize'] : "10240";
-		$log_create_directive = "/usr/sbin/clog -i -s ";
+		$log_create_directive = "/usr/local/sbin/clog -i -s ";
 	}
 	
 	if (isset($syslogcfg)) {

@@ -299,7 +299,7 @@ for logfile in $LOG_FILES; do
 				# generate fifolog files
 				/usr/sbin/fifolog_create -s ${DEFAULT_LOG_FILE_SIZE} /var/log/$logfile.log
 			else 
-				/usr/sbin/clog -i -s ${DEFAULT_LOG_FILE_SIZE} /var/log/$logfile.log
+				/usr/local/sbin/clog -i -s ${DEFAULT_LOG_FILE_SIZE} /var/log/$logfile.log
 			fi
 		fi
 	fi 

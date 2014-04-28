@@ -30,7 +30,7 @@
 */
 
 /*	
-	pfSense_BUILDER_BINARIES:	/usr/sbin/fifolog_reader	/usr/sbin/clog
+	pfSense_BUILDER_BINARIES:	/usr/sbin/fifolog_reader	/usr/local/sbin/clog
 	pfSense_MODULE:	vpn
 */
 
@@ -92,7 +92,7 @@ function dump_clog_vpn($logfile, $tail) {
 	if(isset($config['system']['usefifolog'])) 
 		exec("/usr/sbin/fifolog_reader " . escapeshellarg($logfile) . " | tail {$sor} -n " . $tail, $logarr);
 	else 
-		exec("/usr/sbin/clog " . escapeshellarg($logfile) . " | tail {$sor} -n " . $tail, $logarr);
+		exec("/usr/local/sbin/clog " . escapeshellarg($logfile) . " | tail {$sor} -n " . $tail, $logarr);
 
 	foreach ($logarr as $logent) {
 		$logent = preg_split("/\s+/", $logent, 6);

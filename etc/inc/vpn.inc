@@ -143,6 +143,8 @@ function vpn_ipsec_configure($ipchg = false)
 			mkdir("{$g['varetc_path']}/ipsec/ipsec.d/aacerts");
 		if (!is_dir("{$g['varetc_path']}/ipsec/ipsec.d/acerts"))
 			mkdir("{$g['varetc_path']}/ipsec/ipsec.d/acerts");
+		if (!is_dir("{$g['varetc_path']}/ipsec/ipsec.d/ocspcerts"))
+			mkdir("{$g['varetc_path']}/ipsec/ipsec.d/ocspcerts");
 		if (!is_dir("{$g['varetc_path']}/ipsec/ipsec.d/reqs"))
 			mkdir("{$g['varetc_path']}/ipsec/ipsec.d/reqs");
 		

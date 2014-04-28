@@ -1141,8 +1141,11 @@ function interfaces_configure() {
 		/* reload dhcpd (interface enabled/disabled status may have changed) */
 		services_dhcpd_configure();
 
-		/* restart dnsmasq */
-		services_dnsmasq_configure();
+		/* restart dnsmasq or unbound */
+		if (isset($config['dnsmasq']['enable']))
+			services_dnsmasq_configure();
+		elseif (isset($config['unbound']['enable']))
+			services_unbound_configure();
 	}
 
 	return 0;
@@ -3144,8 +3147,11 @@ function interface_configure($interface = "wan", $reloadall = false, $linkupeven
 			/* reload ipsec tunnels */
 			vpn_ipsec_configure();
 
-			/* restart dnsmasq */
-			services_dnsmasq_configure();
+			/* restart dnsmasq or unbound */
+			if (isset($config['dnsmasq']['enable']))
+				services_dnsmasq_configure();
+			elseif (isset($config['unbound']['enable']))
+				services_unbound_configure();
 
 			/* update dyndns */
 			send_event("service reload dyndns {$interface}");

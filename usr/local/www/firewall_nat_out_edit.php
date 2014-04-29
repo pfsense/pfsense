@@ -63,9 +63,9 @@ if (is_numericint($_GET['id']))
 if (isset($_POST['id']) && is_numericint($_POST['id']))
 	$id = $_POST['id'];
 
-if (is_numericint($_GET['after']))
+if (is_numericint($_GET['after']) || $_GET['after'] == "-1")
 	$after = $_GET['after'];
-if (isset($_POST['after']) && is_numericint($_GET['after']))
+if (isset($_POST['after']) && (is_numericint($_POST['after']) || $_POST['after'] == "-1"))
 	$after = $_POST['after'];
 
 if (isset($_GET['dup']) && is_numericint($_GET['dup'])) {

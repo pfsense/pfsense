@@ -68,6 +68,29 @@ function is_aoadv_used($rule_config) {
 	return false;
 }
 
+$ostypes = array();
+exec('/sbin/pfctl -s osfp | /usr/bin/tr \'\t\' \' \'', $ostypes);
+
+if (count($ostypes) > 2) {
+	// Remove header rows from pfctl output
+	array_shift($ostypes);
+	array_shift($ostypes);
+} else {
+	// Fall back to a default list
+	$ostypes = array(
+		"AIX",
+		"Linux",
+		"FreeBSD",
+		"NetBSD",
+		"OpenBSD",
+		"Solaris",
+		"MacOS",
+		"Windows",
+		"Novell",
+		"NMAP"
+	);
+}
+
 $specialsrcdst = explode(" ", "any pptp pppoe l2tp openvpn");
 $ifdisp = get_configured_interface_with_descr();
 foreach ($ifdisp as $kif => $kdescr) {
@@ -464,9 +487,12 @@ if ($_POST) {
 		$_POST['dstendport'] = $_POST['dstbeginport'];
 		$_POST['dstbeginport'] = $tmp;
 	}
-	if ($_POST['os'])
+	if ($_POST['os']) {
 		if( $_POST['proto'] != "tcp" )
 			$input_errors[] = gettext("OS detection is only valid with protocol tcp.");
+		if (!in_array($_POST['os'], $ostypes))
+			$input_errors[] = gettext("Invalid OS detection selection. Please select a valid OS.");
+	}
 
 	if ($_POST['ackqueue'] != "") {
 		if ($_POST['defaultqueue'] == "" )
@@ -1242,28 +1268,16 @@ $i--): ?>
 				<div id="showsourceosadv" <?php if (empty($pconfig['os'])) echo "style='display:none'"; ?>>
 					<?=gettext("OS Type:");?>&nbsp;
 					<select name="os" id="os" class="formselect">
+						<option value="" <?php if (empty($pconfig['os'])) echo "selected=\"selected\""; ?>>Any</option>
 <?php
-						$ostypes = array(
-							"" => gettext("any"),
-							"AIX" => "AIX",
-							"Linux" => "Linux",
-							"FreeBSD" => "FreeBSD",
-							"NetBSD" => "NetBSD",
-							"OpenBSD" => "OpenBSD",
-							"Solaris" => "Solaris",
-							"MacOS" => "MacOS",
-							"Windows" => "Windows",
-							"Novell" => "Novell",
-							"NMAP" => "NMAP"
-						);
-						foreach ($ostypes as $ostype => $descr): ?>
-							<option value="<?=$ostype;?>" <?php if ($ostype == $pconfig['os']) echo "selected=\"selected\""; ?>><?=htmlspecialchars($descr);?></option>
+						foreach ($ostypes as $ostype): ?>
+							<option value="<?=$ostype;?>" <?php if ($ostype == $pconfig['os']) echo "selected=\"selected\""; ?>><?=htmlspecialchars($ostype);?></option>
 <?php
 					endforeach;
 ?>
 					</select>
 					<br />
-					<?=gettext("Note: this only works for TCP rules");?>
+					<?=gettext("Note: this only works for TCP rules. General OS choice matches all subtypes.");?>
 				</div>
 			</td>
 		</tr>

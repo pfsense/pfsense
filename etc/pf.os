@@ -1,4 +1,4 @@
-# $FreeBSD: stable/9/etc/pf.os 244647 2012-12-24 00:45:54Z delphij $
+# $FreeBSD: stable/10/etc/pf.os 244096 2012-12-10 20:52:52Z delphij $
 # $OpenBSD: pf.os,v 1.26 2012/08/03 12:25:16 jsg Exp $
 # passive OS fingerprinting
 # -------------------------

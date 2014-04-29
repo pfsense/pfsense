@@ -2357,7 +2357,7 @@ function filter_generate_user_rule($rule) {
 
 	/* OS signatures */
 	if(($rule['protocol'] == "tcp") && ($rule['os'] <> ""))
-		$aline['os'] = " os {$rule['os']} ";
+		$aline['os'] = " os \"{$rule['os']}\" ";
 
 	/* destination address */
 	$dst = trim(filter_generate_address($rule, "destination"));

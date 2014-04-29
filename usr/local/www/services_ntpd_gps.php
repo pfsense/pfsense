@@ -558,7 +558,7 @@ SureGPS = 		#Sure Electronics SKG16B
 					<?php echo gettext("Note: Commands entered here will be sent to the GPS during initialization. Please read and understand your GPS documentation before making any changes here.");?><br /><br />
 					<strong><?php echo gettext("NMEA checksum calculator");?>:</strong>
 					<br />
-					<?php echo gettext("Enter the text between &quot;$&quot; and &quot;*&quot; of a NMEA command string:");?><br /> $<input name="nmeastring" type="text" class="formfld unknown" id="nmeastring" size="30" value="" />*<span id="nmeachecksum"><?php echo gettext("checksum");?></span>&nbsp&nbsp
+					<?php echo gettext("Enter the text between &quot;$&quot; and &quot;*&quot; of a NMEA command string:");?><br /> $<input name="nmeastring" type="text" class="formfld unknown" id="nmeastring" size="30" value="" />*<span id="nmeachecksum"><?php echo gettext("checksum");?></span>&nbsp;&nbsp;
 					<input type="button" onclick="NMEAChecksum(nmeastring.value)" value="<?=gettext("Calculate NMEA checksum");?>" /><br /></p>
 				</div>
 			</td>

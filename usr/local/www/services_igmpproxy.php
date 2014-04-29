@@ -127,7 +127,7 @@ include("head.inc");
   <td class="listbg" ondblclick="document.location='services_igmpproxy_edit.php?id=<?=$i;?>';">
     <?=htmlspecialchars($igmpentry['descr']);?>&nbsp;
   </td>
-  <td valign="middle" nowrap class="list">
+  <td valign="middle" class="list nowrap">
     <table border="0" cellspacing="0" cellpadding="1" summary="icons">
       <tr>
         <td valign="middle"><a href="services_igmpproxy_edit.php?id=<?=$i;?>"><img src="/themes/<?= $g['theme']; ?>/images/icons/icon_e.gif" width="17" height="17" border="0" title="<?=gettext("edit igmpentry"); ?>" alt="edit" /></a></td>

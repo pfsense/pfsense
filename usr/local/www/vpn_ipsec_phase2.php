@@ -53,7 +53,7 @@ $a_phase2 = &$config['ipsec']['phase2'];
 
 if (is_numericint($_GET['p2index']))
 	$p2index = $_GET['p2index'];
-if (isset($_POST['p2index']) && is_numericint($_GET['p2index']))
+if (isset($_POST['p2index']) && is_numericint($_POST['p2index']))
 	$p2index = $_POST['p2index'];
 
 if (isset($_GET['dup']) && is_numericint($_GET['dup']))

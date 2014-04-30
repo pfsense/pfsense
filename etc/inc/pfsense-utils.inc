@@ -1941,9 +1941,9 @@ function update_alias_url_data() {
 			}
 		}
 	}
+	unlock($lockkey);
 	if ($updated)
 		write_config();
-	unlock($lockkey);
 }
 
 function process_alias_unzip($temp_filename) {

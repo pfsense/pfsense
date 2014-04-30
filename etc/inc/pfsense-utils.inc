@@ -1913,10 +1913,13 @@ function update_alias_url_data() {
 				download_file($alias_url, $temp_filename . "/aliases", $verify_ssl);
 
 				/* if the item is tar gzipped then extract */
-				if (stristr($alias_url, ".tgz"))
-					process_alias_tgz($temp_filename);
-				else if (stristr($alias_url, ".zip"))
-					process_alias_unzip($temp_filename);
+				if (stripos($alias_url, '.tgz')) {
+					if (!process_alias_tgz($temp_filename))
+						continue;
+				} else if (stripos($alias_url, '.zip')) {
+					if (!process_alias_unzip($temp_filename))
+						continue;
+				}
 				if (file_exists("{$temp_filename}/aliases")) {
 					$fd = @fopen("{$temp_filename}/aliases");
 					if (!$fd) {
@@ -1953,37 +1956,67 @@ function update_alias_url_data() {
 }
 
 function process_alias_unzip($temp_filename) {
-	if(!file_exists("/usr/local/bin/unzip"))
-		return;
+	if(!file_exists("/usr/local/bin/unzip")) {
+		log_error(gettext("Alias archive is a .zip file which cannot be decompressed because utility is missing!"));
+		return false;
+	}
 	rename("{$temp_filename}/aliases", "{$temp_filename}/aliases.zip");
 	mwexec("/usr/local/bin/unzip {$temp_filename}/aliases.tgz -d {$temp_filename}/aliases/");
 	unlink("{$temp_filename}/aliases.zip");
 	$files_to_process = return_dir_as_array("{$temp_filename}/");
 	/* foreach through all extracted files and build up aliases file */
-	$fd = fopen("{$temp_filename}/aliases", "w");
+	$fd = @fopen("{$temp_filename}/aliases", "w");
+	if (!$fd) {
+		log_error(gettext("Could not open {$temp_filename}/aliases for writing!"));
+		return false;
+	}
 	foreach($files_to_process as $f2p) {
-		$file_contents = file_get_contents($f2p);
-		fwrite($fd, $file_contents);
+		$tmpfd = @fopen($f2p, 'r');
+		if (!$tmpfd) {
+			log_error(gettext("The following file could not be read {$f2p} from {$temp_filename}"));
+			continue;
+		}
+		while (($tmpbuf = fread($tmpfd, 65536)) !== FALSE)
+			fwrite($fd, $tmpbuf);
+		fclose($tmpfd);
 		unlink($f2p);
 	}
 	fclose($fd);
+	unset($tmpbuf);
+
+	return true;
 }
 
 function process_alias_tgz($temp_filename) {
-	if(!file_exists("/usr/bin/tar"))
-		return;
+	if(!file_exists('/usr/bin/tar')) {
+		log_error(gettext("Alias archive is a .tar/tgz file which cannot be decompressed because utility is missing!"));
+		return false;
+	}
 	rename("{$temp_filename}/aliases", "{$temp_filename}/aliases.tgz");
 	mwexec("/usr/bin/tar xzf {$temp_filename}/aliases.tgz -C {$temp_filename}/aliases/");
 	unlink("{$temp_filename}/aliases.tgz");
 	$files_to_process = return_dir_as_array("{$temp_filename}/");
 	/* foreach through all extracted files and build up aliases file */
-	$fd = fopen("{$temp_filename}/aliases", "w");
+	$fd = @fopen("{$temp_filename}/aliases", "w");
+	if (!$fd) {
+		log_error(gettext("Could not open {$temp_filename}/aliases for writing!"));
+		return false;
+	}
 	foreach($files_to_process as $f2p) {
-		$file_contents = file_get_contents($f2p);
-		fwrite($fd, $file_contents);
+		$tmpfd = @fopen($f2p, 'r');
+		if (!$tmpfd) {
+			log_error(gettext("The following file could not be read {$f2p} from {$temp_filename}"));
+			continue;
+		}
+		while (($tmpbuf = fread($tmpfd, 65536)) !== FALSE)
+			fwrite($fd, $tmpbuf);
+		fclose($tmpfd);
 		unlink($f2p);
 	}
 	fclose($fd);
+	unset($tmpbuf);
+
+	return true;
 }
 
 function version_compare_dates($a, $b) {

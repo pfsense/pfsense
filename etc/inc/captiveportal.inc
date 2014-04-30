@@ -1287,41 +1287,31 @@ function radius($username,$password,$clientip,$clientmac,$type, $radiusctx = nul
 function captiveportal_opendb() {
 	global $g, $cpzone;
 
-	if (file_exists("{$g['vardb_path']}/captiveportal{$cpzone}.db"))
-		$DB = @sqlite_open("{$g['vardb_path']}/captiveportal{$cpzone}.db");
-	else {
-		$errormsg = "";
-		$DB = @sqlite_open("{$g['vardb_path']}/captiveportal{$cpzone}.db");
-		if (@sqlite_exec($DB, "CREATE TABLE captiveportal (allow_time INTEGER, pipeno INTEGER, ip TEXT, mac TEXT, username TEXT, sessionid TEXT, bpassword TEXT, session_timeout INTEGER, idle_timeout INTEGER, session_terminate_time INTEGER, interim_interval INTEGER, radiusctx TEXT) ", $errormsg)) {
-			@sqlite_exec($DB, "CREATE UNIQUE INDEX idx_active ON captiveportal (sessionid, username)");
-			@sqlite_exec($DB, "CREATE INDEX user ON captiveportal (username)");
-			@sqlite_exec($DB, "CREATE INDEX ip ON captiveportal (ip)");
-			@sqlite_exec($DB, "CREATE INDEX starttime ON captiveportal (allow_time)");
-			@sqlite_exec($DB, "CREATE INDEX serviceid ON captiveportal (serviceid)");
-		} else
-			captiveportal_syslog("Error during table {$cpzone} creation. Error message: {$errormsg}");
-	}
+	$DB = new SQLite3("{$g['vardb_path']}/captiveportal{$cpzone}.db");
+	if (! $DB->exec("CREATE TABLE IF NOT EXISTS captiveportal (" .
+				"allow_time INTEGER, pipeno INTEGER, ip TEXT, mac TEXT, username TEXT, " .
+				"sessionid TEXT, bpassword TEXT, session_timeout INTEGER, idle_timeout INTEGER, " .
+				"session_terminate_time INTEGER, interim_interval INTEGER, radiusctx TEXT); " .
+			"CREATE UNIQUE INDEX IF NOT EXISTS idx_active ON captiveportal (sessionid, username); " .
+			"CREATE INDEX IF NOT EXISTS user ON captiveportal (username); " .
+			"CREATE INDEX IF NOT EXISTS ip ON captiveportal (ip); " .
+			"CREATE INDEX IF NOT EXISTS starttime ON captiveportal (allow_time)"))
+		captiveportal_syslog("Error during table {$cpzone} creation. Error message: {$DB->lastErrorMsg()}");
 
 	return $DB;
 }
 
 /* read captive portal DB into array */
 function captiveportal_read_db($query = "") {
+	$cpdb = array();
 
 	$DB = captiveportal_opendb();
 	if ($DB) {
-		sqlite_exec($DB, "BEGIN");
-		if (!empty($query))
-			$cpdb = @sqlite_array_query($DB, "SELECT * FROM captiveportal {$query}", SQLITE_NUM);
-		else {
-			$response = @sqlite_unbuffered_query($DB, "SELECT * FROM captiveportal", SQLITE_NUM);
-			$cpdb = @sqlite_fetch_all($response, SQLITE_NUM);
-		}
-		sqlite_exec($DB, "END");
-		@sqlite_close($DB);
+		$response = $DB->query("SELECT * FROM captiveportal {$query}");
+		while ($row = $response->fetchArray())
+			$cpdb[] = $row;
+		$DB->close();
 	}
-	if (!$cpdb)
-		$cpdb = array();
 
 	return $cpdb;
 }
@@ -1352,14 +1342,13 @@ function captiveportal_write_db($queries) {
 
 	$DB = captiveportal_opendb();
 	if ($DB) {
-		$error_msg = "";
-		sqlite_exec($DB, "BEGIN TRANSACTION");
-		$result = @sqlite_exec($DB, $query, $error_msg);
+		$DB->exec("BEGIN TRANSACTION");
+		$result = $DB->exec($query);
 		if (!$result)
-			captiveportal_syslog("Trying to modify DB returned error: {$error_msg}");
+			captiveportal_syslog("Trying to modify DB returned error: {$DB->lastErrorMsg()}");
 		else
-			sqlite_exec($DB, "END TRANSACTION");
-		@sqlite_close($DB);
+			$DB->exec("END TRANSACTION");
+		$DB->close();
 		return $result;
 	} else
 		return true;
@@ -1982,7 +1971,7 @@ function portal_allow($clientip,$clientmac,$username,$password = null, $attribut
 			$interim_interval = (!empty($attributes['interim_interval'])) ? $attributes['interim_interval'] : 'NULL';
 
 			/* escape username */
-			$safe_username = sqlite_escape_string($username);
+			$safe_username = SQLite3::escapeString($username);
 
 			/* encode password in Base64 just in case it contains commas */
 			$bpassword = base64_encode($password);

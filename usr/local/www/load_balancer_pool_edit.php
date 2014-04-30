@@ -287,15 +287,16 @@ function clearcombo(){
 					<tr>
 						<td align="center">
 								<b><?=gettext("Pool Disabled"); ?></b>
+							<br/>
+							<select id="serversDisabledSelect" name="serversdisabled[]" multiple="multiple" size="5">
 <?php
 	if (is_array($pconfig['serversdisabled'])) {
-	echo "<select id=\"serversDisabledSelect\" name=\"serversdisabled[]\" multiple=\"multiple\" size=\"5\">";
 		foreach($pconfig['serversdisabled'] as $svrent) {
 			if($svrent != '') echo "    <option value=\"{$svrent}\">{$svrent}</option>\n";
 		}
-	echo "</select>";
 	}
 ?>
+							</select>
 							<input class="formbtn" type="button" name="removeDisabled" value="<?=gettext("Remove"); ?>" onclick="RemoveServerFromPool(document.iform, 'serversdisabled[]');" />
 						</td>
 
@@ -306,15 +307,16 @@ function clearcombo(){
 
 						<td align="center">
 								<b><?=gettext("Enabled (default)"); ?></b>
+							<br/>
+							<select id="serversSelect" name="servers[]" multiple="multiple" size="5">
 <?php
 if (is_array($pconfig['servers'])) {
-echo "<select id=\"serversSelect\" name=\"servers[]\" multiple=\"multiple\" size=\"5\">";
 	foreach($pconfig['servers'] as $svrent) {
 		echo "    <option value=\"{$svrent}\">{$svrent}</option>\n";
 	}
-echo "</select>";
 }
 ?>
+							</select>
 							<input class="formbtn" type="button" name="removeEnabled" value="<?=gettext("Remove"); ?>" onclick="RemoveServerFromPool(document.iform, 'servers[]');" />
 						</td>
 					</tr>

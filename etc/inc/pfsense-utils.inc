@@ -1921,7 +1921,7 @@ function update_alias_url_data() {
 						continue;
 				}
 				if (file_exists("{$temp_filename}/aliases")) {
-					$fd = @fopen("{$temp_filename}/aliases");
+					$fd = @fopen("{$temp_filename}/aliases", 'r');
 					if (!$fd) {
 						log_error(gettext("Could not process aliases from alias: {$alias_url}"));
 						continue;

@@ -1942,8 +1942,10 @@ function update_alias_url_data() {
 		}
 	}
 	unlock($lockkey);
-	if ($updated)
+	if ($updated) {
 		write_config();
+		send_event("filter reload");
+	}
 }
 
 function process_alias_unzip($temp_filename) {

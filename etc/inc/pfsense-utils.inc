@@ -1893,8 +1893,10 @@ function update_alias_names_upon_change($section, $field, $new_alias_name, $orig
 function update_alias_url_data() {
 	global $config, $g;
 
+	$updated = false;
+
 	/* item is a url type */
-	$lockkey = lock('config');
+	$lockkey = lock('aliasurl');
 	if (is_array($config['aliases']['alias'])) {
 		foreach ($config['aliases']['alias'] as $x => $alias) {
 			if (empty($alias['aliasurl']))
@@ -1916,36 +1918,38 @@ function update_alias_url_data() {
 				else if (stristr($alias_url, ".zip"))
 					process_alias_unzip($temp_filename);
 				if (file_exists("{$temp_filename}/aliases")) {
-					$file_contents = file_get_contents("{$temp_filename}/aliases");
-					$file_contents = str_replace("#", "\n#", $file_contents);
-					$file_contents_split = explode("\n", $file_contents);
-					foreach ($file_contents_split as $fc) {
-						$tmp = trim($fc);
-						if (stristr($fc, "#")) {
-							$tmp_split = explode("#", $tmp);
-							$tmp = trim($tmp_split[0]);
-						}
-						if (trim($tmp) <> "") {
-							if ($isfirst == 1)
-								$address .= " ";
-							$address .= $tmp;
-							$isfirst = 1;
-						}
+					$fd = @fopen("{$temp_filename}/aliases");
+					if (!$fd) {
+						log_error(gettext("Could not process aliases from alias: {$alias_url}"));
+						continue;
 					}
+					/* NOTE: fgetss() is not a typo RTFM before being smart */
+					while (($fc = fgetss($fd)) !== FALSE) {
+						$tmp = trim($fc, " \t\n\r");
+						if (empty($tmp))
+							continue;
+						$tmp_str = strstr($tmp, '#', true);
+						if (!empty($tmp_str))
+							$tmp = $tmp_str;
+						if ($isfirst == 1)
+							$address .= ' ';
+						$address .= $tmp;
+						$isfirst = 1;
+					}
+					fclose($fd);
 					mwexec("/bin/rm -rf {$temp_filename}");
 				}
 			}
-			if($isfirst > 0) {
+			if (!empty($address)) {
 				$config['aliases']['alias'][$x]['address'] = $address;
 				$updated = true;
 			}
 		}
 	}
 	unlock($lockkey);
-	if ($updated) {
-		write_config();
-		send_event("filter reload");
-	}
+
+	/* Report status to callers as well */
+	return $updated;
 }
 
 function process_alias_unzip($temp_filename) {

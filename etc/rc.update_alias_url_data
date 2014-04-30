@@ -36,6 +36,8 @@
 require_once("config.inc");
 require_once("functions.inc");
 
-update_alias_url_data();
-
+if (update_alias_url_data()) {
+	write_config();
+	send_event("filter reload");
+}
 ?>

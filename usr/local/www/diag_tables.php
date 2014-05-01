@@ -106,7 +106,7 @@ if ($savemsg) print_info_box($savemsg);
 		window.location='diag_tables.php?type=' + entrytype;
 	}
 	function del_entry(entry) {
-		jQuery.ajax("diag_tables.php?type=<?php echo htmlspecialchars($tablename);?>&amp;delete=" + entry, {
+		jQuery.ajax("diag_tables.php?type=<?php echo htmlspecialchars($tablename);?>&delete=" + entry, {
 		complete: function(response) {
 			if (200 == response.status) {
 				// Escape all dots to not confuse jQuery selectors
@@ -154,7 +154,7 @@ if ($savemsg) print_info_box($savemsg);
 	</tr>
 <?php $count = 0; foreach($entries as $entryA): ?>
 	<?php $entry = trim($entryA); ?>
-	<tr id='table_row_<?=$count?>'>
+	<tr id='<?=$entry?>'>
 		<td>
 			<?php echo $entry; ?>
 		</td>

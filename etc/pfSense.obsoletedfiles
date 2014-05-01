@@ -65,3 +65,4 @@
 /usr/local/bin/ntptrace
 /usr/local/bin/sntp
 /usr/local/bin/tickadj
+/usr/sbin/clog

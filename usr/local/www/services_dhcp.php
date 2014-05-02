@@ -44,8 +44,8 @@ require("guiconfig.inc");
 require_once("filter.inc");
 
 if(!$g['services_dhcp_server_enable']) {
-	Header("Location: /");
-	exit;
+    header("Location: /");
+    exit;
 }
 
 /* This function will remove entries from dhcpd.leases that would otherwise

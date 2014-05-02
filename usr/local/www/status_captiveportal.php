@@ -51,8 +51,8 @@ if (isset($_POST['zone']))
 
 if ($_GET['act'] == "del" && !empty($cpzone)) {
 	captiveportal_disconnect_client($_GET['id']);
-	Header("Location: status_captiveportal.php?zone={$cpzone}");
-	exit;
+	header("Location: status_captiveportal.php?zone={$cpzone}");
+    exit;
 }
 
 $pgtitle = array(gettext("Status: Captive portal"));

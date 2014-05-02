@@ -52,7 +52,7 @@ if (!$omit_nocacheheaders) {
 	header("Pragma: no-cache");
 }
 
-Header("X-Frame-Options: SAMEORIGIN");
+header("X-Frame-Options: SAMEORIGIN");
 require_once("authgui.inc");
 
 /* parse the configuration and include all configuration functions */

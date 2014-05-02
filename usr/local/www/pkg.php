@@ -64,8 +64,8 @@ if($xml == "") {
 }
 
 if($pkg['donotsave'] <> "") {
-	Header("Location: pkg_edit.php?xml=" . $xml);
-	exit;
+    header("Location: pkg_edit.php?xml=" . $xml);
+    exit;
 }
 
 if ($pkg['include_file'] != "") {

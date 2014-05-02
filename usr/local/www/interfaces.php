@@ -62,8 +62,8 @@ if ($_REQUEST['if'])
 	$if = $_REQUEST['if'];
 
 if (empty($ifdescrs[$if])) {
-	Header("Location: interfaces.php");
-	exit;
+	header("Location: interfaces.php");
+    exit;
 }
 
 define("CRON_MONTHLY_PATTERN", "0 0 1 * *");

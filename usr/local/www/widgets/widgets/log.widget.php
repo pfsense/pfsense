@@ -66,7 +66,7 @@ if($_POST['filterlogentries']) {
     echo '<meta http-equiv="refresh" content="0;url='.$filename.'" />';
     echo '</noscript>';
   }
-	Header("Location: /");
+	header("Location: /");
 }
 
 $nentries = isset($config['widgets']['filterlogentries']) ? $config['widgets']['filterlogentries'] : 5;

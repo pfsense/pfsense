@@ -1,5 +1,4 @@
 <?php
 
-Header("Location: installer.php");
-
+header("Location: installer.php");
 ?>

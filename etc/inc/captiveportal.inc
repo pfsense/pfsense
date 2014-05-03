@@ -1968,8 +1968,13 @@ function portal_allow($clientip,$clientmac,$username,$password = null, $attribut
 					captiveportal_logportalauth($username,$clientmac,$clientip,$type,"RADIUS ACCOUNTING FAILED");
 			}
 		}
-	} else
+	} else {
+		/* NOTE: #3062-11 If the pipeno has been allocated free it to not DoS the CP and maintain proper operation as in radius() case */
+		if (!is_null($pipeno))
+			captiveportal_free_dn_ruleno($pipeno);
+
 		unlock($cpdblck);
+	}
 
 	if ($writecfg == true)
 		write_config();

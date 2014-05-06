@@ -427,7 +427,6 @@ function captiveportal_init_webgui_zone($cpcfg) {
 	}
 
 	/* generate lighttpd configuration */
-	$listenporthttp = $cpcfg['listenporthttp'] ? $cpcfg['listenporthttp'] : $cpcfg['zoneid'];
 	if (!empty($cpcfg['listenporthttp']))
 		$listenporthttp = $cpcfg['listenporthttp'];
 	else

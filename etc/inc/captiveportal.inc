@@ -1675,13 +1675,13 @@ function portal_hostname_from_client_ip($cliip) {
 	$cpcfg = $config['captiveportal'][$cpzone];
 
 	if (isset($cpcfg['httpslogin'])) {
-		$listenporthttps = $cpcfg['listenporthttps'] ? $cpcfg['listenporthttps'] : ($cpcfg['zoneid'] + 1);
+		$listenporthttps = $cpcfg['listenporthttps'] ? $cpcfg['listenporthttps'] : ($cpcfg['zoneid'] + 8001);
 		$ourhostname = $cpcfg['httpsname'];
 		
 		if ($listenporthttps != 443)
 			$ourhostname .= ":" . $listenporthttps;
 	} else {
-		$listenporthttp  = $cpcfg['listenporthttp']  ? $cpcfg['listenporthttp']  : $cpcfg['zoneid'];
+		$listenporthttp  = $cpcfg['listenporthttp']  ? $cpcfg['listenporthttp']  : ($cpcfg['zoneid'] + 8000);
 		$ifip = portal_ip_from_client_ip($cliip);
 		if (!$ifip)
 			$ourhostname = "{$config['system']['hostname']}.{$config['system']['domain']}";

@@ -209,22 +209,28 @@ function get_port_with_service($port, $proto) {
 	return ':' . $portstr;
 }
 
-function find_rule_by_number($rulenum, $type="rules") {
+function find_rule_by_number($rulenum, $trackernum, $type="block") {
 	global $g;
 
 	/* Passing arbitrary input to grep could be a Very Bad Thing(tm) */
-	if (!(is_numeric($rulenum)))
+	if (!is_numeric($rulenum) || !is_numeric($trackernum) || !in_array($type, array('pass', 'block', 'match', 'rdr')))
 		return;
+
+	if ($trackernum == "0")
+		$lookup_pattern = "^@{$rulenum}\([0-9]+\)[[:space:]]{$type}[[:space:]].*[[:space:]]log[[:space:]]";
+	else
+		$lookup_pattern = "^@[0-9]+\({$trackernum}\)[[:space:]]{$type}[[:space:]].*[[:space:]]log[[:space:]]";
+
 	/* At the moment, miniupnpd is the only thing I know of that
 	   generates logging rdr rules */
 	unset($buffer);
 	if ($type == "rdr")
-		$_gb = exec("/sbin/pfctl -vvPsn -a \"miniupnpd\" | grep '^@'", $buffer);
+		$_gb = exec("/sbin/pfctl -vvPsn -a \"miniupnpd\" | grep " . escapeshellarg("^@{$rulenum}"), $buffer);
 	else {
 		if (file_exists("{$g['tmp_path']}/rules.debug"))
-			$_gb = exec("/sbin/pfctl -vvPnf {$g['tmp_path']}/rules.debug 2>/dev/null | /usr/bin/egrep " . escapeshellarg("^@{$rulenum} {$type}"), $buffer);
+			$_gb = exec("/sbin/pfctl -vvPnf {$g['tmp_path']}/rules.debug 2>/dev/null | /usr/bin/egrep " . escapeshellarg($lookup_pattern), $buffer);
 		else
-			$_gb = exec("/sbin/pfctl -vvPsr | grep " . escapeshellarg("^@{$rulenum}"), $buffer);
+			$_gb = exec("/sbin/pfctl -vvPsr | grep " . escapeshellarg($lookup_pattern), $buffer);
 	}
 	if (is_array($buffer))
 		return $buffer[0];
@@ -248,12 +254,21 @@ function buffer_rules_load() {
 	}
 	unset($buffer, $_gb);
 	if (file_exists("{$g['tmp_path']}/rules.debug"))
-		$_gb = exec("/sbin/pfctl -vvPnf {$g['tmp_path']}/rules.debug 2>/dev/null | /usr/bin/egrep '^@[0-9]+ ' | /usr/bin/egrep -v '^@[0-9]+ (nat|rdr|binat|no|scrub)'", $buffer);
+		$_gb = exec("/sbin/pfctl -vvPnf {$g['tmp_path']}/rules.debug 2>/dev/null | /usr/bin/egrep '^@[0-9]+\([0-9]+\)[[:space:]].*[[:space:]]log[[:space:]]' | /usr/bin/egrep -v '^@[0-9]+\([0-9]+\)[[:space:]](nat|rdr|binat|no|scrub)'", $buffer);
 	else
-		$_gb = exec("/sbin/pfctl -vvPsr | grep '^@'", $buffer);
+		$_gb = exec("/sbin/pfctl -vvPsr | /usr/bin/egrep '^@[0-9]+\([0-9]+\)[[:space:]].*[[:space:]]log[[:space:]]'", $buffer);
+
 	if (is_array($buffer)) {
 		foreach ($buffer as $line) {
 			list($key, $value) = explode (" ", $line, 2);
+			# pfctl rule number output with tracker number: @dd(dddddddddd)
+			$matches = array();
+			if (preg_match('/\@(?P<rulenum>\d+)\((?<trackernum>\d+)\)/', $key, $matches) == 1) {
+				if ($matches['trackernum'] > 0)
+					$key = $matches['trackernum'];
+				else
+					$key = "@{$matches['rulenum']}";
+			}
 			$buffer_rules_normal[$key] = $value;
 		}
 	}
@@ -265,19 +280,24 @@ function buffer_rules_clear() {
 	unset($GLOBALS['buffer_rules_rdr']);
 }
 
-function find_rule_by_number_buffer($rulenum, $type){
+function find_rule_by_number_buffer($rulenum, $trackernum, $type){
 	global $g, $buffer_rules_rdr, $buffer_rules_normal;
-	
+
+	if ($trackernum == "0")
+		$lookup_key = "@{$rulenum}";
+	else
+		$lookup_key = $trackernum;
+
 	if ($type == "rdr")	{
-		$ruleString = $buffer_rules_rdr["@".$rulenum];
+		$ruleString = $buffer_rules_rdr[$lookup_key];
 		//TODO: get the correct 'description' part of a RDR log line. currently just first 30 characters..
 		$rulename = substr($ruleString,0,30);
 	} else {
-		$ruleString = $buffer_rules_normal["@".$rulenum];
+		$ruleString = $buffer_rules_normal[$lookup_key];
 		list(,$rulename,) = explode("\"",$ruleString);
 		$rulename = str_replace("USER_RULE: ",'<img src="/themes/'.$g['theme'].'/images/icons/icon_frmfld_user.png" width="11" height="12" title="USER_RULE" alt="USER_RULE"/> ',$rulename);
 	}
-	return $rulename." (@".$rulenum.")";
+	return "{$rulename} ({$lookup_key})";
 }
 
 function find_action_image($action) {

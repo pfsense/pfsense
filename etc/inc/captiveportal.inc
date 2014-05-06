@@ -545,13 +545,13 @@ EOD;
 	if (!empty($config['captiveportal'][$cpzone]['listenporthttp']))
 		$listenporthttp = $config['captiveportal'][$cpzone]['listenporthttp'];
 	else
-		$listenporthttp = 8000 + $config['captiveportal'][$cpzone]['zoneid'];
+		$listenporthttp = 8000 + $cpzoneid;
 
 	if (isset($config['captiveportal'][$cpzone]['httpslogin'])) {
 		if (!empty($config['captiveportal'][$cpzone]['listenporthttps']))
 			$listenporthttps = $config['captiveportal'][$cpzone]['listenporthttps'];
 		else
-			$listenporthttps = 8001 + $config['captiveportal'][$cpzone]['zoneid'];
+			$listenporthttps = 8001 + $cpzoneid;
 			if (!isset($config['captiveportal'][$cpzone]['nohttpsforwards'])) {
 				$cprules .= "add 65531 fwd 127.0.0.1,{$listenporthttps} tcp from any to any dst-port 443 in\n";
 			}

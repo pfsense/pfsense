@@ -225,12 +225,12 @@ function find_rule_by_number($rulenum, $trackernum, $type="block") {
 	   generates logging rdr rules */
 	unset($buffer);
 	if ($type == "rdr")
-		$_gb = exec("/sbin/pfctl -vvPsn -a \"miniupnpd\" | grep " . escapeshellarg("^@{$rulenum}"), $buffer);
+		$_gb = exec("/sbin/pfctl -vvPsn -a \"miniupnpd\" | /usr/bin/egrep " . escapeshellarg("^@{$rulenum}"), $buffer);
 	else {
 		if (file_exists("{$g['tmp_path']}/rules.debug"))
 			$_gb = exec("/sbin/pfctl -vvPnf {$g['tmp_path']}/rules.debug 2>/dev/null | /usr/bin/egrep " . escapeshellarg($lookup_pattern), $buffer);
 		else
-			$_gb = exec("/sbin/pfctl -vvPsr | grep " . escapeshellarg($lookup_pattern), $buffer);
+			$_gb = exec("/sbin/pfctl -vvPsr | /usr/bin/egrep " . escapeshellarg($lookup_pattern), $buffer);
 	}
 	if (is_array($buffer))
 		return $buffer[0];

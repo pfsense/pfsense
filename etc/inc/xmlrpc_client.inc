@@ -735,7 +735,7 @@ class XML_RPC_Client extends XML_RPC_Base {
         if ($match[1] == '') {
             if ($port == 443) {
                 $this->server   = $match[2];
-                $this->protocol = 'https://';
+                $this->protocol = 'ssl://';
                 $this->port     = 443;
             } else {
                 $this->server = $match[2];
@@ -750,7 +750,7 @@ class XML_RPC_Client extends XML_RPC_Base {
             }
         } else {
             $this->server   = $match[2];
-            $this->protocol = 'https://';
+            $this->protocol = 'ssl://';
             if ($port) {
                 $this->port = $port;
             } else {
@@ -763,7 +763,7 @@ class XML_RPC_Client extends XML_RPC_Base {
             if ($match[1] == '') {
                 if ($proxy_port == 443) {
                     $this->proxy          = $match[2];
-                    $this->proxy_protocol = 'https://';
+                    $this->proxy_protocol = 'ssl://';
                     $this->proxy_port     = 443;
                 } else {
                     $this->proxy = $match[2];
@@ -778,7 +778,7 @@ class XML_RPC_Client extends XML_RPC_Base {
                 }
             } else {
                 $this->proxy          = $match[2];
-                $this->proxy_protocol = 'https://';
+                $this->proxy_protocol = 'ssl://';
                 if ($proxy_port) {
                     $this->proxy_port = $proxy_port;
                 } else {

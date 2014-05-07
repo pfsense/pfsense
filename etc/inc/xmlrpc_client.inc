@@ -750,7 +750,7 @@ class XML_RPC_Client extends XML_RPC_Base {
             }
         } else {
             $this->server   = $match[2];
-            $this->protocol = $match[1];
+            $this->protocol = 'https://';
             if ($port) {
                 $this->port = $port;
             } else {
@@ -778,7 +778,7 @@ class XML_RPC_Client extends XML_RPC_Base {
                 }
             } else {
                 $this->proxy          = $match[2];
-                $this->proxy_protocol = $match[1];
+                $this->proxy_protocol = 'https://';
                 if ($proxy_port) {
                     $this->proxy_port = $proxy_port;
                 } else {

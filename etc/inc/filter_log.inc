@@ -36,6 +36,10 @@
 
 require 'config.inc';
 
+global $buffer_rules_rdr, $buffer_rules_normal;
+$buffer_rules_rdr = array();
+$buffer_rules_normal = array();
+
 /* format filter logs */
 function conv_log_filter($logfile, $nentries, $tail = 50, $filtertext = "", $filterinterface = null) {
 	global $config, $g;
@@ -240,8 +244,9 @@ function find_rule_by_number($rulenum, $trackernum, $type="block") {
 
 function buffer_rules_load() {
 	global $g, $buffer_rules_rdr, $buffer_rules_normal;
-
 	unset($buffer, $buffer_rules_rdr, $buffer_rules_normal);
+	/* Redeclare globals after unset to work around PHP */
+	global $buffer_rules_rdr, $buffer_rules_normal;
 	$buffer_rules_rdr = array();
 	$buffer_rules_normal = array();
 

@@ -188,7 +188,7 @@ function format_log_line(row) {
 	?>
 		<tr class="<?=$evenRowClass?>">
 			<td class="listMRlr" nowrap="nowrap" align="center">
-			<a href="#" onclick="javascript:getURL('diag_logs_filter.php?getrulenum=<?php echo "{$filterent['rulenum']},{$filterent['act']}"; ?>', outputrule);">
+			<a href="#" onclick="javascript:getURL('diag_logs_filter.php?getrulenum=<?php echo "{$filterent['rulenum']},{$filterent['tracker']},{$filterent['act']}"; ?>', outputrule);">
 			<img border="0" src="<?php echo find_action_image($filterent['act']);?>" width="11" height="11" alt="<?php echo $filterent['act'];?>" title="<?php echo $filterent['act'];?>" />
 			</a>
 			</td>

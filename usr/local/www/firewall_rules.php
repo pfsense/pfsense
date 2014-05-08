@@ -745,13 +745,13 @@ if($_REQUEST['undodrag']) {
 					}
 				}
 			?>
-			<td class="listlr" onclick="fr_toggle(<?=$nrules;?>)" id="ID_frd<?=$nrules;?>" ondblclick="document.location='firewall_rules_edit.php?id=<?=$i;?>';">
+			<td class="listlr" onclick="fr_toggle(<?=$nrules;?>)" id="frd<?=$nrules;?>" ondblclick="document.location='firewall_rules_edit.php?id=<?=$i;?>';">
 				<?=$textss;?><?php if (isset($filterent['id'])) echo $filterent['id']."&nbsp;"; else echo "&nbsp;"; ?><?=$textse;?>
 			</td>
 			<?php
 				pfSense_handle_custom_code("/usr/local/pkg/firewall_rules/pre_id_tr");
 			?>
-			<td class="listr" onclick="fr_toggle(<?=$nrules;?>)" id="Protocol_frd<?=$nrules;?>" ondblclick="document.location='firewall_rules_edit.php?id=<?=$i;?>';">
+			<td class="listr" onclick="fr_toggle(<?=$nrules;?>)" id="frd<?=$nrules;?>" ondblclick="document.location='firewall_rules_edit.php?id=<?=$i;?>';">
 			<?=$textss;?>
 			<?php
 				if (isset($filterent['ipprotocol'])) {
@@ -780,22 +780,22 @@ if($_REQUEST['undodrag']) {
 			?>
 			<?=$textse;?>
 			</td>
-			<td class="listr" onclick="fr_toggle(<?=$nrules;?>)" id="Source_frd<?=$nrules;?>" ondblclick="document.location='firewall_rules_edit.php?id=<?=$i;?>';">
+			<td class="listr" onclick="fr_toggle(<?=$nrules;?>)" id="frd<?=$nrules;?>" ondblclick="document.location='firewall_rules_edit.php?id=<?=$i;?>';">
 				<?=$textss;?><?php echo $alias_src_span_begin;?><?php echo htmlspecialchars(pprint_address($filterent['source']));?><?php echo $alias_src_span_end;?><?=$textse;?>
 			</td>
-			<td class="listr" onclick="fr_toggle(<?=$nrules;?>)" id="Source_Port_frd<?=$nrules;?>" ondblclick="document.location='firewall_rules_edit.php?id=<?=$i;?>';">
+			<td class="listr" onclick="fr_toggle(<?=$nrules;?>)" id="frd<?=$nrules;?>" ondblclick="document.location='firewall_rules_edit.php?id=<?=$i;?>';">
 				<?=$textss;?><?php echo $alias_src_port_span_begin;?><?php echo htmlspecialchars(pprint_port($filterent['source']['port'])); ?><?php echo $alias_src_port_span_end;?><?=$textse;?>
 			</td>
-			<td class="listr" onclick="fr_toggle(<?=$nrules;?>)" id="Destination_frd<?=$nrules;?>" ondblclick="document.location='firewall_rules_edit.php?id=<?=$i;?>';">
+			<td class="listr" onclick="fr_toggle(<?=$nrules;?>)" id="frd<?=$nrules;?>" ondblclick="document.location='firewall_rules_edit.php?id=<?=$i;?>';">
 				<?=$textss;?><?php echo $alias_dst_span_begin;?><?php echo htmlspecialchars(pprint_address($filterent['destination'])); ?><?php echo $alias_dst_span_end;?><?=$textse;?>
 			</td>
-			<td class="listr" onclick="fr_toggle(<?=$nrules;?>)" id="Destination_Port_frd<?=$nrules;?>" ondblclick="document.location='firewall_rules_edit.php?id=<?=$i;?>';">
+			<td class="listr" onclick="fr_toggle(<?=$nrules;?>)" id="frd<?=$nrules;?>" ondblclick="document.location='firewall_rules_edit.php?id=<?=$i;?>';">
 				<?=$textss;?><?php echo $alias_dst_port_span_begin;?><?php echo htmlspecialchars(pprint_port($filterent['destination']['port'])); ?><?php echo $alias_dst_port_span_end;?><?=$textse;?>
 			</td>
-			<td class="listr" onclick="fr_toggle(<?=$nrules;?>)" id="Gateway_frd<?=$nrules;?>" ondblclick="document.location='firewall_rules_edit.php?id=<?=$i;?>';">
+			<td class="listr" onclick="fr_toggle(<?=$nrules;?>)" id="frd<?=$nrules;?>" ondblclick="document.location='firewall_rules_edit.php?id=<?=$i;?>';">
 				<?=$textss;?><?php if (isset($config['interfaces'][$filterent['gateway']]['descr'])) echo htmlspecialchars($config['interfaces'][$filterent['gateway']]['descr']); else  echo htmlspecialchars(pprint_port($filterent['gateway'])); ?><?=$textse;?>
 			</td>
-			<td class="listr" onclick="fr_toggle(<?=$nrules;?>)" id="Queue_frd<?=$nrules;?>" ondblclick="document.location='firewall_rules_edit.php?id=<?=$i;?>';">
+			<td class="listr" onclick="fr_toggle(<?=$nrules;?>)" id="frd<?=$nrules;?>" ondblclick="document.location='firewall_rules_edit.php?id=<?=$i;?>';">
 			<?=$textss;?>
 			<?php
 				if (isset($filterent['ackqueue']) && isset($filterent['defaultqueue'])) {
@@ -811,7 +811,7 @@ if($_REQUEST['undodrag']) {
 			?>
 			<?=$textse;?>
 			</td>
-			<td class="listr" onclick="fr_toggle(<?=$nrules;?>)" id="Schedule_frd<?=$nrules;?>" ondblclick="document.location='firewall_rules_edit.php?id=<?=$i;?>';"><font color="black">
+			<td class="listr" onclick="fr_toggle(<?=$nrules;?>)" id="frd<?=$nrules;?>" ondblclick="document.location='firewall_rules_edit.php?id=<?=$i;?>';"><font color="black">
 				<?php if ($printicon) { ?><img src="./themes/<?= $g['theme']; ?>/images/icons/<?php echo $image; ?>.gif" title="<?php echo $alttext;?>" border="0" alt="icon" /><?php } ?><?=$textss;?><?php echo $schedule_span_begin;?><?=htmlspecialchars($filterent['sched']);?>&nbsp;<?php echo $schedule_span_end; ?><?=$textse;?>
 			</font></td>
 			<?php

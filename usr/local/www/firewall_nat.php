@@ -270,7 +270,7 @@ echo "<script type=\"text/javascript\" language=\"javascript\" src=\"/javascript
 					<img src="./themes/<?= $g['theme']; ?>/images/icons/icon_chain.png" width="17" height="17" title="<?=gettext("Firewall rule ID"); ?> <?=htmlspecialchars($nnatid); ?> <?=gettext("is managed with this rule"); ?>" border="0" alt="change" />
 					<?php endif; ?>
 				  </td>
-                  <td class="listlr" onclick="fr_toggle(<?=$nnats;?>)" id="Interface_frd<?=$nnats;?>" ondblclick="document.location='firewall_nat_edit.php?id=<?=$nnats;?>';">
+                  <td class="listlr" onclick="fr_toggle(<?=$nnats;?>)" id="frd<?=$nnats;?>" ondblclick="document.location='firewall_nat_edit.php?id=<?=$nnats;?>';">
                     <?=$textss;?>
 		    <?php
 			if (!$natent['interface'])
@@ -281,28 +281,28 @@ echo "<script type=\"text/javascript\" language=\"javascript\" src=\"/javascript
                     <?=$textse;?>
                   </td>
 
-                  <td class="listr" onclick="fr_toggle(<?=$nnats;?>)" id="Protocol_frd<?=$nnats;?>" ondblclick="document.location='firewall_nat_edit.php?id=<?=$nnats;?>';">
+                  <td class="listr" onclick="fr_toggle(<?=$nnats;?>)" id="frd<?=$nnats;?>" ondblclick="document.location='firewall_nat_edit.php?id=<?=$nnats;?>';">
 					<?=$textss;?><?=strtoupper($natent['protocol']);?><?=$textse;?>
                   </td>
 
-                  <td class="listr" onclick="fr_toggle(<?=$nnats;?>)" id="Source_frd<?=$nnats;?>" ondblclick="document.location='firewall_nat_edit.php?id=<?=$nnats;?>';">
+                  <td class="listr" onclick="fr_toggle(<?=$nnats;?>)" id="frd<?=$nnats;?>" ondblclick="document.location='firewall_nat_edit.php?id=<?=$nnats;?>';">
 				    <?=$textss;?><?php echo $alias_src_span_begin;?><?php echo htmlspecialchars(pprint_address($natent['source']));?><?php echo $alias_src_span_end;?><?=$textse;?>
                   </td>
-                  <td class="listr" onclick="fr_toggle(<?=$nnats;?>)" id="Source_Port_frd<?=$nnats;?>" ondblclick="document.location='firewall_nat_edit.php?id=<?=$nnats;?>';">
+                  <td class="listr" onclick="fr_toggle(<?=$nnats;?>)" id="frd<?=$nnats;?>" ondblclick="document.location='firewall_nat_edit.php?id=<?=$nnats;?>';">
 				    <?=$textss;?><?php echo $alias_src_port_span_begin;?><?php echo htmlspecialchars(pprint_port($natent['source']['port']));?><?php echo $alias_src_port_span_end;?><?=$textse;?>
                   </td>
 
-                  <td class="listr" onclick="fr_toggle(<?=$nnats;?>)" id="Destination_frd<?=$nnats;?>" ondblclick="document.location='firewall_nat_edit.php?id=<?=$nnats;?>';">
+                  <td class="listr" onclick="fr_toggle(<?=$nnats;?>)" id="frd<?=$nnats;?>" ondblclick="document.location='firewall_nat_edit.php?id=<?=$nnats;?>';">
 				    <?=$textss;?><?php echo $alias_dst_span_begin;?><?php echo htmlspecialchars(pprint_address($natent['destination']));?><?php echo $alias_dst_span_end;?><?=$textse;?>
                   </td>
-                  <td class="listr" onclick="fr_toggle(<?=$nnats;?>)" id="Destination_Port_frd<?=$nnats;?>" ondblclick="document.location='firewall_nat_edit.php?id=<?=$nnats;?>';">
+                  <td class="listr" onclick="fr_toggle(<?=$nnats;?>)" id="frd<?=$nnats;?>" ondblclick="document.location='firewall_nat_edit.php?id=<?=$nnats;?>';">
 				    <?=$textss;?><?php echo $alias_dst_port_span_begin;?><?php echo htmlspecialchars(pprint_port($natent['destination']['port']));?><?php echo $alias_dst_port_span_end;?><?=$textse;?>
                   </td>
 
-                  <td class="listr" onclick="fr_toggle(<?=$nnats;?>)" id="Target_frd<?=$nnats;?>" ondblclick="document.location='firewall_nat_edit.php?id=<?=$nnats;?>';">
+                  <td class="listr" onclick="fr_toggle(<?=$nnats;?>)" id="frd<?=$nnats;?>" ondblclick="document.location='firewall_nat_edit.php?id=<?=$nnats;?>';">
 				    <?=$textss;?><?php echo $alias_target_span_begin;?><?php echo htmlspecialchars($natent['target']);?><?php echo $alias_target_span_end;?><?=$textse;?>
                   </td>
-                  <td class="listr" onclick="fr_toggle(<?=$nnats;?>)" id="Target_Port_frd<?=$nnats;?>" ondblclick="document.location='firewall_nat_edit.php?id=<?=$nnats;?>';">
+                  <td class="listr" onclick="fr_toggle(<?=$nnats;?>)" id="frd<?=$nnats;?>" ondblclick="document.location='firewall_nat_edit.php?id=<?=$nnats;?>';">
 					<?php
 						$localport = $natent['local-port'];
 

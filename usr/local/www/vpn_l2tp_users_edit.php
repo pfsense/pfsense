@@ -151,12 +151,13 @@ include("head.inc");
 			<div id="inputerrors"></div>
             <form action="vpn_l2tp_users_edit.php" method="post" name="iform" id="iform">
               <div id="mainarea">
-	          <table class="tabcont" width="100%" border="0" cellpadding="6" cellspacing="0">
+	          <table class="tabcont" width="100%" border="0" cellpadding="6" cellspacing="0" summary="vpn l2tp users edit">
                 <tr>
                   <td width="22%" valign="top" class="vncellreq"><?=gettext("Username");?></td>
                   <td width="78%" class="vtable">
 					<?=$mandfldhtml;?><input name="usernamefld" type="text" class="formfld user" id="usernamefld" size="20" value="<?=htmlspecialchars($pconfig['usernamefld']);?>" />
                   </td>
+                </tr>
                 <tr>
                   <td width="22%" valign="top" class="vncellreq"><?=gettext("Password");?></td>
                   <td width="78%" class="vtable">

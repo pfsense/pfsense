@@ -86,14 +86,16 @@ if(!$config['installedpackages'] || !$config['installedpackages']['miniupnpd']['
           <td width="10%" class="listhdrr"><?=gettext("Port");?></td>
           <td width="10%" class="listhdrr"><?=gettext("Protocol");?></td>
           <td width="20%" class="listhdrr"><?=gettext("Internal IP");?></td>
-          <td width="60%" class="listhdr"><?=gettext("Description");?></td>
+          <td width="10%" class="listhdrr"><?=gettext("Int. Port");?></td>
+          <td width="50%" class="listhdr"><?=gettext("Description");?></td>
 		</tr>
 		<?php $i = 0; foreach ($rdr_entries as $rdr_entry) {
-			if (preg_match("/on (.*) inet proto (.*) from any to any port = (.*) label \"(.*)\" rtable [0-9] -> (.*) port (.*)/", $rdr_entry, $matches))
+			if (preg_match("/on (.*) inet proto (.*) from any to any port = (.*) keep state label \"(.*)\" rtable [0-9] -> (.*) port (.*)/", $rdr_entry, $matches))
 			$rdr_proto = $matches[2];
 			$rdr_port = $matches[3];
-			$rdr_ip = $matches[5];
 			$rdr_label =$matches[4];
+			$rdr_ip = $matches[5];
+			$rdr_iport = $matches[6];
 		?>
         <tr>
           <td class="listlr">
@@ -104,6 +106,9 @@ if(!$config['installedpackages'] || !$config['installedpackages']['miniupnpd']['
           </td>
           <td class="listlr">
 		<?php print $rdr_ip;?>
+          </td>
+          <td class="listlr">
+		<?php print $rdr_iport;?>
           </td>
           <td class="listlr">
 		<?php print $rdr_label;?>

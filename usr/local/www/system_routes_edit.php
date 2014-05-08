@@ -228,7 +228,7 @@ include("head.inc");
 					<input name="network" type="text" class="formfldalias ipv4v6" id="network" size="20" value="<?=htmlspecialchars($pconfig['network']);?>" />
 					/
 					<select name="network_subnet" class="formselect ipv4v6" id="network_subnet">
-					<?php for ($i = 129; $i >= 1; $i--): ?>
+					<?php for ($i = 128; $i >= 1; $i--): ?>
 						<option value="<?=$i;?>" <?php if ($i == $pconfig['network_subnet']) echo "selected=\"selected\""; ?>>
 							<?=$i;?>
 						</option>

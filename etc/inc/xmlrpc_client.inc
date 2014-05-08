@@ -1002,7 +1002,7 @@ class XML_RPC_Client extends XML_RPC_Base {
             return false;
         }
         if ($this->proxy) {
-            $this->headers = 'POST ' . $this->protocol . $this->server;
+            $this->headers = 'POST ' . ($this->protocol=='ssl://'?'https://':$this->protocol). $this->server;
             if ($this->proxy_port) {
                 $this->headers .= ':' . $this->port;
             }

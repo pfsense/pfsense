@@ -592,7 +592,7 @@ function showchange() {
 					echo ":</td>\n";
 				}
 				if($field['size']) $size = " size='" . $field['size'] . "' ";
-				if($field['multiple'] == "yes") $multiple = "MULTIPLE ";
+				if($field['multiple'] == "yes") $multiple = "multiple=\"multiple\" ";
 				if(!$field['dontcombinecells'])
 					echo "<td class=\"vtable\">\n";
 				$onchange = "";
@@ -658,7 +658,7 @@ function showchange() {
 				break;
 			case "listtopic":
 				echo "<td>&nbsp;</td></tr>";
-				echo "<tr><td colspan=\"2\" class=\"listtopic\">" . $field['name'] . "<br /></td>\n";
+				echo "<tr><td colspan=\"2\" class=\"listtopic\">" . $field['name'] . "<br />\n";
 
 				break;
 			case "subnet_select":

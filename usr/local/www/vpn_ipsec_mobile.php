@@ -247,7 +247,7 @@ include("head.inc");
 <?php include("fbegin.inc"); ?>
 
 <script type="text/javascript">
-<!--
+//<![CDATA[
 
 function pool_change() {
 
@@ -318,7 +318,7 @@ function login_banner_change() {
 		document.iform.login_banner.disabled = 1;
 }
 
-//-->
+//]]>
 </script>
 
 <form action="vpn_ipsec_mobile.php" method="post" name="iform" id="iform">
@@ -337,7 +337,7 @@ function login_banner_change() {
 		print_input_errors($input_errors);
 ?>
 
-<table width="100%" border="0" cellpadding="0" cellspacing="0">
+<table width="100%" border="0" cellpadding="0" cellspacing="0" summary="vpn ipsec mobile">
 	<tr>
 		<td class="tabnavtbl">
 			<?php
@@ -353,15 +353,15 @@ function login_banner_change() {
 	<tr> 
 		<td id="mainarea">
 			<div class="tabcont">
-				<table width="100%" border="0" cellpadding="6" cellspacing="0">
+				<table width="100%" border="0" cellpadding="6" cellspacing="0" summary="main area">
 					<tr>
 						<td width="22%" valign="top" class="vncellreq"><?=gettext("IKE Extensions"); ?></td>
 						<td width="78%" class="vtable">
-							<table border="0" cellspacing="2" cellpadding="0">
+							<table border="0" cellspacing="2" cellpadding="0" summary="ike extensions">
 								<tr>
 									<td>
 										<?php set_checked($pconfig['enable'],$chk); ?>
-										<input name="enable" type="checkbox" id="enable" value="yes" <?=$chk;?>>
+										<input name="enable" type="checkbox" id="enable" value="yes" <?=$chk;?> />
 									</td>
 									<td>
 										<strong><?=gettext("Enable IPsec Mobile Client Support"); ?></strong>
@@ -382,14 +382,14 @@ function login_banner_change() {
 						<td width="22%" valign="top" class="vncellreq"><?=gettext("User Authentication"); ?></td>
 						<td width="78%" class="vtable">
 							<?=gettext("Source"); ?>:&nbsp;&nbsp;
-							<select name="user_source[]" class="formselect" id="user_source"  multiple="true" size="3">
+							<select name="user_source[]" class="formselect" id="user_source" multiple="multiple" size="3">
 							<?php
 								$authmodes = explode(",", $pconfig['user_source']);
 								$auth_servers = auth_get_authserver_list();
 								foreach ($auth_servers as $auth_server) {
 									$selected = "";
 									if (in_array($auth_server['name'], $authmodes))
-										$selected = "selected";
+										$selected = "selected=\"selected\"";
 									echo "<option value='{$auth_server['name']}' {$selected}>{$auth_server['name']}</option>\n";
 								}
 							?>
@@ -402,7 +402,7 @@ function login_banner_change() {
 							<?=gettext("Source"); ?>:&nbsp;&nbsp;
 							<select name="group_source" class="formselect" id="group_source">
 								<option value="none"><?=gettext("none"); ?></option>
-								<option value="system" <?php if ($pconfig['group_source'] == "system") echo "selected"; ?> ><?=gettext("system"); ?></option>
+								<option value="system" <?php if ($pconfig['group_source'] == "system") echo "selected=\"selected\""; ?> ><?=gettext("system"); ?></option>
 							</select>
 						</td>
 					</tr>
@@ -417,26 +417,26 @@ function login_banner_change() {
 					<tr> 
 						<td width="22%" valign="top" class="vncell"><?=gettext("Virtual Address Pool"); ?></td>
 						<td width="78%" class="vtable">
-							<table border="0" cellspacing="2" cellpadding="0">
+							<table border="0" cellspacing="2" cellpadding="0" summary="enable pool">
 								<tr>
 									<td>
 										<?php set_checked($pconfig['pool_enable'],$chk); ?>
-										<input name="pool_enable" type="checkbox" id="pool_enable" value="yes" <?=$chk;?> onClick="pool_change()">
+										<input name="pool_enable" type="checkbox" id="pool_enable" value="yes" <?=$chk;?> onclick="pool_change()" />
 									</td>
 									<td>
 										<?=gettext("Provide a virtual IP address to clients"); ?><br />
 									</td>
 								</tr>
 							</table>
-							<table border="0" cellspacing="2" cellpadding="0">
+							<table border="0" cellspacing="2" cellpadding="0" summary="virtual address pool">
 								<tr>
 									<td>
 										<?=gettext("Network"); ?>:&nbsp;
-										<input name="pool_address" type="text" class="formfld unknown" id="pool_address" size="20" value="<?=htmlspecialchars($pconfig['pool_address']);?>">
+										<input name="pool_address" type="text" class="formfld unknown" id="pool_address" size="20" value="<?=htmlspecialchars($pconfig['pool_address']);?>" />
 										/
 										<select name="pool_netbits" class="formselect" id="pool_netbits">
 											<?php for ($i = 32; $i >= 0; $i--): ?>
-											<option value="<?=$i;?>" <?php if ($i == $pconfig['pool_netbits']) echo "selected"; ?>>
+											<option value="<?=$i;?>" <?php if ($i == $pconfig['pool_netbits']) echo "selected=\"selected\""; ?>>
 												<?=$i;?>
 											</option>
 											<?php endfor; ?>
@@ -449,11 +449,11 @@ function login_banner_change() {
 					<tr>
 						<td width="22%" valign="top" class="vncell"><?=gettext("Network List"); ?></td>
 						<td width="78%" class="vtable">
-							<table border="0" cellspacing="2" cellpadding="0">
+							<table border="0" cellspacing="2" cellpadding="0" summary="network list">
 								<tr>
 									<td>
 										<?php set_checked($pconfig['net_list_enable'],$chk); ?>
-										<input name="net_list_enable" type="checkbox" id="net_list_enable" value="yes" <?=$chk;?>>
+										<input name="net_list_enable" type="checkbox" id="net_list_enable" value="yes" <?=$chk;?> />
 									</td>
 									<td>
 										<?=gettext("Provide a list of accessible networks to clients"); ?><br />
@@ -465,11 +465,11 @@ function login_banner_change() {
 					<tr>
 						<td width="22%" valign="top" class="vncell"><?=gettext("Save Xauth Password"); ?></td>
 						<td width="78%" class="vtable">
-							<table border="0" cellspacing="2" cellpadding="0">
+							<table border="0" cellspacing="2" cellpadding="0" summary="password">
 								<tr>
 									<td>
 										<?php set_checked($pconfig['save_passwd_enable'],$chk); ?>
-										<input name="save_passwd_enable" type="checkbox" id="save_passwd_enable" value="yes" <?=$chk;?>>
+										<input name="save_passwd_enable" type="checkbox" id="save_passwd_enable" value="yes" <?=$chk;?> />
 									</td>
 									<td>
 										<?=gettext("Allow clients to save Xauth passwords (Cisco VPN client only)."); ?><br />
@@ -482,21 +482,21 @@ function login_banner_change() {
 					<tr> 
 						<td width="22%" valign="top" class="vncell"><?=gettext("DNS Default Domain"); ?></td>
 						<td width="78%" class="vtable">
-							<table border="0" cellspacing="2" cellpadding="0">
+							<table border="0" cellspacing="2" cellpadding="0" summary="enable dns default domain">
 								<tr>
 									<td>
 										<?php set_checked($pconfig['dns_domain_enable'],$chk); ?>
-										<input name="dns_domain_enable" type="checkbox" id="dns_domain_enable" value="yes" <?=$chk;?> onClick="dns_domain_change()">
+										<input name="dns_domain_enable" type="checkbox" id="dns_domain_enable" value="yes" <?=$chk;?> onclick="dns_domain_change()" />
 									</td>
 									<td>
 										<?=gettext("Provide a default domain name to clients"); ?><br />
 									</td>
 								</tr>
 							</table>
-							<table border="0" cellspacing="2" cellpadding="0">
+							<table border="0" cellspacing="2" cellpadding="0" summary="dns default domain">
 								<tr>
 									<td>
-										<input name="dns_domain" type="text" class="formfld unknown" id="dns_domain" size="30" value="<?=htmlspecialchars($pconfig['dns_domain']);?>">
+										<input name="dns_domain" type="text" class="formfld unknown" id="dns_domain" size="30" value="<?=htmlspecialchars($pconfig['dns_domain']);?>" />
 									</td>
 								</tr>
 							</table>
@@ -505,11 +505,11 @@ function login_banner_change() {
 					<tr>
 						<td width="22%" valign="top" class="vncell"><?=gettext("Split DNS"); ?></td>
 						<td width="78%" class="vtable">
-							<table border="0" cellspacing="2" cellpadding="0">
+							<table border="0" cellspacing="2" cellpadding="0" summary="enable split dns">
 								<tr>
 									<td>
 										<?php set_checked($pconfig['dns_split_enable'],$chk); ?>
-										<input name="dns_split_enable" type="checkbox" id="dns_split_enable" value="yes" <?=$chk;?> onClick="dns_split_change()">
+										<input name="dns_split_enable" type="checkbox" id="dns_split_enable" value="yes" <?=$chk;?> onclick="dns_split_change()" />
 									</td>
 									<td>
 										<?=gettext("Provide a list of split DNS domain names to clients. Enter a comma separated list."); ?><br />
@@ -517,10 +517,10 @@ function login_banner_change() {
 									</td>
 								</tr>
 							</table>
-							<table border="0" cellspacing="2" cellpadding="0">
+							<table border="0" cellspacing="2" cellpadding="0" summary="split dns">
 								<tr>
 									<td>
-										<input name="dns_split" type="text" class="formfld unknown" id="dns_split" size="30" value="<?=htmlspecialchars($pconfig['dns_split']);?>">
+										<input name="dns_split" type="text" class="formfld unknown" id="dns_split" size="30" value="<?=htmlspecialchars($pconfig['dns_split']);?>" />
 									</td>
 								</tr>
 							</table>
@@ -529,40 +529,40 @@ function login_banner_change() {
 					<tr> 
 						<td width="22%" valign="top" class="vncell"><?=gettext("DNS Servers"); ?></td>
 						<td width="78%" class="vtable">
-							<table border="0" cellspacing="2" cellpadding="0">
+							<table border="0" cellspacing="2" cellpadding="0" summary="enable dns servers">
 								<tr>
 									<td>
 										<?php set_checked($pconfig['dns_server_enable'],$chk); ?>
-										<input name="dns_server_enable" type="checkbox" id="dns_server_enable" value="yes" <?=$chk;?> onClick="dns_server_change()">
+										<input name="dns_server_enable" type="checkbox" id="dns_server_enable" value="yes" <?=$chk;?> onclick="dns_server_change()" />
 									</td>
 									<td>
 										<?=gettext("Provide a DNS server list to clients"); ?><br />
 									</td>
 								</tr>
 							</table>
-							<table border="0" cellspacing="2" cellpadding="0">
+							<table border="0" cellspacing="2" cellpadding="0" summary="dns servers">
 								<tr>
 									<td>
 										<?=gettext("Server"); ?> #1:&nbsp;
-										<input name="dns_server1" type="text" class="formfld unknown" id="dns_server1" size="20" value="<?=htmlspecialchars($pconfig['dns_server1']);?>">
+										<input name="dns_server1" type="text" class="formfld unknown" id="dns_server1" size="20" value="<?=htmlspecialchars($pconfig['dns_server1']);?>" />
 									</td>
 								</tr>
 								<tr>
 									<td>
 										<?=gettext("Server"); ?> #2:&nbsp;
-										<input name="dns_server2" type="text" class="formfld unknown" id="dns_server2" size="20" value="<?=htmlspecialchars($pconfig['dns_server2']);?>">
+										<input name="dns_server2" type="text" class="formfld unknown" id="dns_server2" size="20" value="<?=htmlspecialchars($pconfig['dns_server2']);?>" />
 									</td>
 								</tr>
 								<tr>
 									<td>
 										<?=gettext("Server"); ?> #3:&nbsp;
-										<input name="dns_server3" type="text" class="formfld unknown" id="dns_server3" size="20" value="<?=htmlspecialchars($pconfig['dns_server3']);?>">
+										<input name="dns_server3" type="text" class="formfld unknown" id="dns_server3" size="20" value="<?=htmlspecialchars($pconfig['dns_server3']);?>" />
 									</td>
 								</tr>
 								<tr>
 									<td>
 										<?=gettext("Server"); ?> #4:&nbsp;
-										<input name="dns_server4" type="text" class="formfld unknown" id="dns_server4" size="20" value="<?=htmlspecialchars($pconfig['dns_server4']);?>">
+										<input name="dns_server4" type="text" class="formfld unknown" id="dns_server4" size="20" value="<?=htmlspecialchars($pconfig['dns_server4']);?>" />
 									</td>
 								</tr>
 							</table>
@@ -571,28 +571,28 @@ function login_banner_change() {
 					<tr> 
 						<td width="22%" valign="top" class="vncell"><?=gettext("WINS Servers"); ?></td>
 						<td width="78%" class="vtable">
-							<table border="0" cellspacing="2" cellpadding="0">
+							<table border="0" cellspacing="2" cellpadding="0" summary="enable wins servers">
 								<tr>
 									<td>
 										<?php set_checked($pconfig['wins_server_enable'],$chk); ?>
-										<input name="wins_server_enable" type="checkbox" id="wins_server_enable" value="yes" <?=$chk;?> onClick="wins_server_change()">
+										<input name="wins_server_enable" type="checkbox" id="wins_server_enable" value="yes" <?=$chk;?> onclick="wins_server_change()" />
 									</td>
 									<td>
 										<?=gettext("Provide a WINS server list to clients"); ?><br />
 									</td>
 								</tr>
 							</table>
-							<table border="0" cellspacing="2" cellpadding="0">
+							<table border="0" cellspacing="2" cellpadding="0" summary="wins servers">
 								<tr>
 									<td>
 										<?=gettext("Server"); ?> #1:&nbsp;
-										<input name="wins_server1" type="text" class="formfld unknown" id="wins_server1" size="20" value="<?=htmlspecialchars($pconfig['wins_server1']);?>">
+										<input name="wins_server1" type="text" class="formfld unknown" id="wins_server1" size="20" value="<?=htmlspecialchars($pconfig['wins_server1']);?>" />
 									</td>
 								</tr>
 								<tr>
 									<td>
 										<?=gettext("Server"); ?> #2:&nbsp;
-										<input name="wins_server2" type="text" class="formfld unknown" id="wins_server2" size="20" value="<?=htmlspecialchars($pconfig['wins_server2']);?>">
+										<input name="wins_server2" type="text" class="formfld unknown" id="wins_server2" size="20" value="<?=htmlspecialchars($pconfig['wins_server2']);?>" />
 									</td>
 								</tr>
 							</table>
@@ -601,24 +601,24 @@ function login_banner_change() {
 					<tr>
 						<td width="22%" valign="top" class="vncell"><?=gettext("Phase2 PFS Group"); ?></td>
 						<td width="78%" class="vtable">
-							<table border="0" cellspacing="2" cellpadding="0">
+							<table border="0" cellspacing="2" cellpadding="0" summary="enable pfs group">
 								<tr>
 									<td>
 										<?php set_checked($pconfig['pfs_group_enable'],$chk); ?>
-										<input name="pfs_group_enable" type="checkbox" id="pfs_group_enable" value="yes" <?=$chk;?> onClick="pfs_group_change()">
+										<input name="pfs_group_enable" type="checkbox" id="pfs_group_enable" value="yes" <?=$chk;?> onclick="pfs_group_change()" />
 									</td>
 									<td>
 										<?=gettext("Provide the Phase2 PFS group to clients ( overrides all mobile phase2 settings )"); ?><br />
 									</td>
 								</tr>
 							</table>
-							<table border="0" cellspacing="2" cellpadding="0">
+							<table border="0" cellspacing="2" cellpadding="0" summary="phase-2 pfs group">
 								<tr>
 									<td>
 										<?=gettext("Group"); ?>:&nbsp;&nbsp;
 										<select name="pfs_group" class="formselect" id="pfs_group">
 										<?php foreach ($p2_pfskeygroups as $keygroup => $keygroupname): ?>
-											<option value="<?=$keygroup;?>" <?php if ($pconfig['pfs_group'] == $keygroup) echo "selected"; ?>>
+											<option value="<?=$keygroup;?>" <?php if ($pconfig['pfs_group'] == $keygroup) echo "selected=\"selected\""; ?>>
 												<?=htmlspecialchars($keygroupname);?>
 											</option>
 										<?php endforeach; ?>
@@ -631,18 +631,18 @@ function login_banner_change() {
 					<tr> 
 						<td width="22%" valign="top" class="vncell"><?=gettext("Login Banner"); ?></td>
 						<td width="78%" class="vtable">
-							<table border="0" cellspacing="2" cellpadding="0">
+							<table border="0" cellspacing="2" cellpadding="0" summary="enable login banner">
 								<tr>
 									<td>
 										<?php set_checked($pconfig['login_banner_enable'],$chk); ?>
-										<input name="login_banner_enable" type="checkbox" id="login_banner_enable" value="yes" <?=$chk;?> onClick="login_banner_change()">
+										<input name="login_banner_enable" type="checkbox" id="login_banner_enable" value="yes" <?=$chk;?> onclick="login_banner_change()" />
 									</td>
 									<td>
 										<?=gettext("Provide a login banner to clients"); ?><br />
 									</td>
 								</tr>
 							</table>
-							<table border="0" cellspacing="2" cellpadding="0">
+							<table border="0" cellspacing="2" cellpadding="0" summary="banner">
 								<tr>
 									<td>
 										<?php $banner = htmlspecialchars($pconfig['login_banner']); ?>
@@ -655,7 +655,7 @@ function login_banner_change() {
 					<tr>
 						<td width="22%" valign="top">&nbsp;</td>
 						<td width="78%">
-							<input name="submit" type="submit" class="formbtn" value="<?=gettext("Save"); ?>">
+							<input name="submit" type="submit" class="formbtn" value="<?=gettext("Save"); ?>" />
 						</td>
 					</tr>
 				</table>
@@ -665,6 +665,7 @@ function login_banner_change() {
 </table>
 </form>
 <script type="text/javascript">
+//<![CDATA[
 pool_change();
 dns_domain_change();
 dns_split_change();
@@ -672,7 +673,7 @@ dns_server_change();
 wins_server_change();
 pfs_group_change();
 login_banner_change();
-//-->
+//]]>
 </script>
 <?php include("fend.inc"); ?>
 </body>
@@ -684,10 +685,9 @@ login_banner_change();
 
 function set_checked($var,& $chk) {
 	if($var)
-		$chk = 'checked';
+		$chk = "checked=\"checked\"";
 	else
-		$chk = '';
+		$chk = "";
 }
 
 ?>
-

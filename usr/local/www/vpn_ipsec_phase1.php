@@ -656,10 +656,10 @@ function dpdchkbox_change() {
 							<select name="mode" class="formselect">
 							<?php
 								$modes = array("main" => "Main", "aggressive" => "Aggressive");
-								foreach ($modes as $mode):
+								foreach ($modes as $mode => $mdescr):
 							?>
 								<option value="<?=$mode;?>" <?php if ($mode == $pconfig['mode']) echo "selected"; ?>>
-									<?=htmlspecialchars($mode);?>
+									<?=htmlspecialchars($mdescr);?>
 								</option>
 							<?php endforeach; ?>
 							</select> <br /> <span class="vexpl"><?=gettext("Aggressive is more flexible, but less secure"); ?>.</span>

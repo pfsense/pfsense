@@ -333,6 +333,7 @@ security.limit_extensions =
 
 ; Pass environment variables
 env[PATH] = /bin:/sbin:/usr/bin:/usr/sbin:/usr/local/bin:/usr/local/sbin
+env[LOGNAME] = root
 
 EOF
 

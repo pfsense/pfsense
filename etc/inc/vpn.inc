@@ -533,9 +533,10 @@ EOD;
 						continue;
 
 					if (!isset($ph1ent['mobile'])) {
-						$rgip = $rgmap[$ph1ent['remote-gateway']];
-						if (!$rgip)
-							continue;
+						$rgip = $ph1ent['remote-gateway'];
+						//$rgip = $rgmap[$ph1ent['remote-gateway']];
+						//if (!$rgip)
+						//	continue;
 					}
 
 					$myid_type = $ph1ent['myid_type'];
@@ -694,7 +695,8 @@ EOD;
 
 					} else {
 						$tunneltype = "type = transport";
-						$rgip = $rgmap[$ph1ent['remote-gateway']];
+						//$rgip = $rgmap[$ph1ent['remote-gateway']];
+						$rgip = $ph1ent['remote-gateway'];
 
 						if ((($ph1ent['authentication_method'] == "xauth_psk_server") ||
 							($ph1ent['authentication_method'] == "pre_shared_key"))

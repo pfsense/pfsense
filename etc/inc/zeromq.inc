@@ -300,7 +300,7 @@ function get_notices_zeromq($raw_params) {
 	$params = $raw_params;
 	if(zeromq_auth($raw_params) == false)
 		return ZEROMQ_AUTH_FAIL;
-	require("notices.inc");
+	require_once("notices.inc");
 	if(!$params) {
 		$toreturn = get_notices();
 	} else {

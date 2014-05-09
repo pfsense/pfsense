@@ -500,6 +500,8 @@ EOD;
 		/* add PSKs for mobile clients */
 		if (is_array($ipseccfg['mobilekey'])) {
 			foreach ($ipseccfg['mobilekey'] as $key) {
+				if ($key['ident'] == "allusers")
+					$key['ident'] = '';
 				$pskconf .= "{$key['ident']} : PSK \"{$key['pre-shared-key']}\"\n";
 			}
 		}
@@ -531,21 +533,27 @@ EOD;
 					if (isset($ph2ent['disabled']))
 						continue;
 
+					if (isset($ph2ent['mobile']) && !isset($a_client['enable']))
+						continue;
+
 					$ikeid = $ph1ent['ikeid'];
 
 					$ep = ipsec_get_phase1_src($ph1ent);
 					if (!$ep)
 						continue;
 
-					if (!isset($ph1ent['mobile'])) {
+					$passive = "start";
+					if (isset($ph1ent['mobile'])) {
+						$rgip = "%any";
+						$passive = 'add';
+					} else
 						$rgip = $ph1ent['remote-gateway'];
-						//$rgip = $rgmap[$ph1ent['remote-gateway']];
-						//if (!$rgip)
-						//	continue;
-					}
+
+					$keyexchange = "ikev1";
+					if (!empty($ph1ent['iketype']) && $ph1ent['iketype'] != "ikev1")
+						$keyexchange = "ikev2";
 
 					$myid_type = $ph1ent['myid_type'];
-
 					switch ($myid_type) {
 					case "myaddress":
 						$myid_type = "address";
@@ -572,7 +580,6 @@ EOD;
 					}
 
 					$peerid_type = $ph1ent['peerid_type'];
-
 					switch ($peerid_type) {
 					case "peeraddress":
 						$peerid_type = "address";
@@ -592,16 +599,6 @@ EOD;
 							$peerid_data = "{$peerid_data}";
 						break;
 					}
-
-					$passive = "start";
-					if (isset($ph1ent['mobile'])) {
-						$rgip = "%any";
-						$passive = "route";
-					}
-
-					$keyexchange = "ikev1";
-					if (!empty($ph1ent['iketype']) && $ph1ent['iketype'] != "ikev1")
-						$keyexchange = "ikev2";
 
 					if (is_array($ph1ent['encryption-algorithm']) && !empty($ph1ent['encryption-algorithm']['name']) && !empty($ph1ent['hash-algorithm'])) {
 						$ealgosp1 = '';
@@ -630,9 +627,8 @@ EOD;
 					} else
 						$dpdline = "dpdaction = none";
 
-					if (!empty($ph1ent['authentication_method']) && (strstr($ph1ent['authentication_method'], "xauth") || strstr($ph1ent['authentication_method'], "hybrid")))
+					if (!empty($ph1ent['authentication_method']) && (strpos($ph1ent['authentication_method'], "xauth") || strpos($ph1ent['authentication_method'], "hybrid")))
 						$xauth = "xauth = server";
-
 
 					$lifeline = '';
 					if ($ph1ent['lifetime'])
@@ -644,17 +640,10 @@ EOD;
 						$peerid_spec = $peerid_data;
 					}
 
-					if (empty($ph1ent['mode']))
-						$aggressive = "no";
-					else if ($ph1ent['mode'] == "aggressive")
+					if ($ph1ent['mode'] == "aggressive")
 						$aggressive = "yes";
-					else if ($ph1ent['mode'] == "main")
-						$aggressive = "no";
 					else
 						$aggressive = "no";
-
-					if (isset($ph2ent['mobile']) && !isset($a_client['enable']))
-						continue;
 
 					if (($ph2ent['mode'] == 'tunnel') or ($ph2ent['mode'] == 'tunnel6')) {
 						$tunneltype = "type = tunnel";
@@ -696,11 +685,12 @@ EOD;
 
 							$remoteid_data = ipsec_idinfo_to_cidr($ph2ent['remoteid'], false, $ph2ent['mode']);
 							$remoteid_spec = $remoteid_data;
-						}
+						} else
+							/* XXX: Should check type of ip used on VPN? */
+							$remoteid_spec = "0.0.0.0/0";
 
 					} else {
 						$tunneltype = "type = transport";
-						//$rgip = $rgmap[$ph1ent['remote-gateway']];
 						$rgip = $ph1ent['remote-gateway'];
 
 						if ((($ph1ent['authentication_method'] == "xauth_psk_server") ||
@@ -712,8 +702,7 @@ EOD;
 							$localid_spec = $ep;
 						}
 						if (!isset($ph2ent['mobile'])) {
-							$remoteid_data = $rgmap[$ph1ent['remote-gateway']];
-							$remoteid_spec = $remoteid_data;
+							$remoteid_spec = $rgip;
 						}
 					}
 					$authentication = "";
@@ -740,6 +729,7 @@ EOD;
 
 					if (isset($a_client['pfs_group']))
 						$ph2ent['pfsgroup'] = $a_client['pfs_group'];
+
 					$ealgosp2 = '';
 					if ($ph2ent['protocol'] == 'esp') {
 						if (is_array($ph2ent['encryption-algorithm-option']) && is_array($ph2ent['hash-algorithm-option'])) {

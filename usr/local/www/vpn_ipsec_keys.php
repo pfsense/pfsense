@@ -49,11 +49,7 @@ $a_secret = &$config['ipsec']['mobilekey'];
 $userkeys = array();
 foreach ($config['system']['user'] as $id => $user) {
 	if (!empty($user['ipsecpsk'])) {
-		$k = array();
-		$k["ident"] = $user['name'];
-		$k["pre-shared-key"] = $user['ipsecpsk'];
-		$k["id"] = $id;
-		$userkeys[] = $k;
+		$userkeys[] = array('ident' => $user['name'], 'pre-shared-key' => $user['ipsecpsk'], 'id' => $id);;
 	}
 }
 
@@ -115,7 +111,12 @@ if (is_subsystem_dirty('ipsec'))
 			  <?php $i = 0; foreach ($userkeys as $secretent): ?>
 		<tr>
 		<td class="listlr gray">
-			<?=htmlspecialchars($secretent['ident']);?>
+			<?php
+				if ($secretent['ident'] == 'allusers')
+					echo gettext("ANY USER");
+				else
+					echo htmlspecialchars($secretent['ident']);
+			?>
 		</td>
 		<td class="listr gray">
 			<?=htmlspecialchars($secretent['pre-shared-key']);?>
@@ -152,6 +153,18 @@ if (is_subsystem_dirty('ipsec'))
 	</div>
       </td>
     </tr>
+	<tr>
+		<td colspan="4">
+			<p>
+			<span class="vexpl">
+			<span class="red">
+				<strong><?=gettext("Note"); ?>:<br /></strong>
+			</span>
+			<?=gettext("PSK for any user can be set by using an identifier of any/ANY");?>
+			</span>
+			</p>
+		</td>
+	</tr>
 </table>
 </form>
 <?php include("fend.inc"); ?>

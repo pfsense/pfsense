@@ -76,6 +76,7 @@ if ($_POST) {
 
 	if (array_key_exists($_POST['ident'], $userids))
 		$input_errors[] = gettext("A user with this name already exists. Add the key to the user instead.");
+	unset($userids);
 	
 	if (!$input_errors && !(isset($id) && $a_secret[$id])) {
 		/* make sure there are no dupes */
@@ -147,6 +148,18 @@ include("head.inc");
                     <?php endif; ?>
                   </td>
                 </tr>
+		<tr>
+			<td colspan="4">
+			<p>
+				<span class="vexpl">
+				<span class="red">
+					<strong><?=gettext("Note"); ?>:<br /></strong>
+				</span>
+				<?=gettext("PSK for any user can be set by using an identifier of any/ANY");?>
+				</span>
+			</p>
+			</td>
+		</tr>
               </table>
 </form>
 <?php include("fend.inc"); ?>

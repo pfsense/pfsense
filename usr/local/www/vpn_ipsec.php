@@ -184,7 +184,7 @@ include("head.inc");
 					<tr valign="top" ondblclick="document.location='vpn_ipsec_phase1.php?p1index=<?=$i;?>'">
 						<td class="listlr">
 							<?=$spans;?>
-							<?php	if (empty($ph1ent['iketype']) || $ph1ent['iketype'] == "IKEv1")
+							<?php	if (empty($ph1ent['iketype']) || $ph1ent['iketype'] == "ikev1")
 									echo "V1";
 								else
 									echo "V2";

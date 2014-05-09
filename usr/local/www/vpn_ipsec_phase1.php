@@ -79,6 +79,7 @@ if (isset($p1index) && $a_phase1[$p1index]) {
 	else
 		$pconfig['remotegw'] = $a_phase1[$p1index]['remote-gateway'];
 
+	$pconfig['iketype'] = $a_phase1[$p1index]['iketype'];
 	$pconfig['mode'] = $a_phase1[$p1index]['mode'];
 	$pconfig['protocol'] = $a_phase1[$p1index]['protocol'];
 	$pconfig['myid_type'] = $a_phase1[$p1index]['myid_type'];
@@ -125,6 +126,7 @@ if (isset($p1index) && $a_phase1[$p1index]) {
 	$pconfig['lifetime'] = "28800";
 	$pconfig['nat_traversal'] = "on";
 	$pconfig['dpd_enable'] = true;
+	$pconfig['iketype'] = "ikev1";
 
 	/* mobile client */
 	if($_GET['mobile'])
@@ -297,6 +299,9 @@ if ($_POST) {
 			$input_errors[] = gettext("A numeric value must be specified for DPD retries.");
 	}
 
+	if (!empty($pconfig['iketype']) && $pconfig['iketype'] != "ikev1" && $pconfig['iketype'] != "ikev2")
+		$input_errors[] = gettext("Valid arguments for IKE type is v1 or v2");
+
 	/* build our encryption algorithms array */
 	$pconfig['ealgo'] = array();
 	$pconfig['ealgo']['name'] = $_POST['ealgo'];
@@ -305,6 +310,7 @@ if ($_POST) {
 
 	if (!$input_errors) {
 		$ph1ent['ikeid'] = $pconfig['ikeid'];
+		$ph1ent['iketype'] = $pconfig['iketype'];
 		$ph1ent['disabled'] = $pconfig['disabled'] ? true : false;
 		$ph1ent['interface'] = $pconfig['interface'];
 		/* if the remote gateway changed and the interface is not WAN then remove route */
@@ -527,6 +533,21 @@ function dpdchkbox_change() {
 								<?=gettext("Set this option to disable this phase1 without " .
 								"removing it from the list"); ?>.
 							</span>
+						</td>
+					</tr>
+					<tr>
+						<td width="22%" valign="top" class="vncellreq"><?=gettext("Key Exchange version"); ?></td>
+						<td width="78%" class="vtable">
+							<select name="iketype" class="formselect">
+							<?php
+								$keyexchange = array("ikev1" => "V1", "ikev2" => "V2");
+								foreach ($keyexchange as $kidx => $name):
+							?>
+								<option value="<?=$kidx;?>" <?php if ($kidx == $pconfig['iketype']) echo "selected"; ?>>
+									<?=htmlspecialchars($name);?>
+								</option>
+							<?php endforeach; ?>
+							</select> <br /> <span class="vexpl"><?=gettext("Select the KeyExchange Protocol version to be used. Usually known as IKEv1 or IKEv2."); ?>.</span>
 						</td>
 					</tr>
 					<tr>

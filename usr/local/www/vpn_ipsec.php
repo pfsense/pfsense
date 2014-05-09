@@ -184,6 +184,15 @@ include("head.inc");
 					<tr valign="top" ondblclick="document.location='vpn_ipsec_phase1.php?p1index=<?=$i;?>'">
 						<td class="listlr">
 							<?=$spans;?>
+							<?php	if (empty($ph1ent['iketype']) || $ph1ent['iketype'] == "IKEv1")
+									echo "V1";
+								else
+									echo "V2";
+							?>
+							<?=$spane;?>
+						</td>
+						<td class="listr">
+							<?=$spans;?>
 							<?php
 								if ($ph1ent['interface']) {
 									$iflabels = get_configured_interface_with_descr();
@@ -462,6 +471,7 @@ function show_ipsec_header($ph1ent) {
 		$mobile = "&mobile=true";
 	?>
 	<tr>
+		<td class="listhdrr"><?=gettext("IKE"); ?></td>
 		<td class="listhdrr"><?=gettext("Remote Gateway"); ?></td>
 		<td class="listhdrr"><?=gettext("Mode"); ?></td>
 		<td class="listhdrr"><?=gettext("P1 Protocol"); ?></td>

@@ -91,7 +91,6 @@ if (isset($p1index) && $a_phase1[$p1index]) {
 	$pconfig['dhgroup'] = $a_phase1[$p1index]['dhgroup'];
 	$pconfig['lifetime'] = $a_phase1[$p1index]['lifetime'];
 	$pconfig['authentication_method'] = $a_phase1[$p1index]['authentication_method'];
-	$pconfig['proposal_check'] = $a_phase1[$p1index]['proposal_check'];
 
 	if (($pconfig['authentication_method'] == "pre_shared_key") ||
 		($pconfig['authentication_method'] == "xauth_psk_server")) {
@@ -342,7 +341,6 @@ if ($_POST) {
 		$ph1ent['certref'] = $pconfig['certref'];
 		$ph1ent['caref'] = $pconfig['caref'];
 		$ph1ent['authentication_method'] = $pconfig['authentication_method'];
-		$ph1ent['proposal_check'] = $pconfig['proposal_check'];
 		$ph1ent['descr'] = $pconfig['descr'];
 		$ph1ent['nat_traversal'] = $pconfig['nat_traversal'];
 
@@ -708,22 +706,6 @@ function dpdchkbox_change() {
 							<span class="vexpl">
 							<br />
 								<?=gettext("Input your Pre-Shared Key string"); ?>.
-							</span>
-						</td>
-					</tr>
-					<tr id="proposal_check">
-						<td width="22%" valign="top" class="vncellreq"><?=gettext("Proposal Checking"); ?></td>
-						<td width="78%" class="vtable">
-							<select name="proposal_check" class="formselect">
-								<option value="" <?php if (empty($pconfig['proposal_check'])) echo "selected"; ?>>Default</option>
-								<option value="obey" <?php if ($pconfig['proposal_check'] == "obey") echo "selected"; ?>>Obey</option>
-								<option value="strict" <?php if ($pconfig['proposal_check'] == "strict") echo "selected"; ?>>Strict</option>
-								<option value="claim" <?php if ($pconfig['proposal_check'] == "claim") echo "selected"; ?>>Claim</option>
-								<option value="exact" <?php if ($pconfig['proposal_check'] == "exact") echo "selected"; ?>>Exact</option>
-							</select>
-							<br />
-							<span class="vexpl">
-								<?=gettext("Specifies the action of lifetime length, key length, and PFS of the phase 2 selection on the responder side, and the action of lifetime check in phase 1."); ?>
 							</span>
 						</td>
 					</tr>

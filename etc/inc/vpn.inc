@@ -685,10 +685,7 @@ EOD;
 
 							$remoteid_data = ipsec_idinfo_to_cidr($ph2ent['remoteid'], false, $ph2ent['mode']);
 							$remoteid_spec = $remoteid_data;
-						} else
-							/* XXX: Should check type of ip used on VPN? */
-							$remoteid_spec = "0.0.0.0/0";
-
+						}
 					} else {
 						$tunneltype = "type = transport";
 						$rgip = $ph1ent['remote-gateway'];

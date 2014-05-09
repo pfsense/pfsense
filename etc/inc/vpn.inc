@@ -561,7 +561,7 @@ EOD;
 					case "asn1dn";
 						$myid_data = $ph1ent['myid_data'];
 						if( $myid_data )
-							$myid_data = "\"{$myid_data}\"";
+							$myid_data = "{$myid_data}";
 						break;
 					}
 
@@ -583,7 +583,7 @@ EOD;
 					case "asn1dn";
 						$peerid_data = $ph1ent['peerid_data'];
 						if( $peerid_data )
-							$peerid_data = "\"{$peerid_data}\"";
+							$peerid_data = "{$peerid_data}";
 						break;
 					}
 

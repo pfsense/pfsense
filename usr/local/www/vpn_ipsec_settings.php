@@ -51,7 +51,7 @@ $pconfig['failoverforcereload'] = isset($config['ipsec']['failoverforcereload'])
 $pconfig['maxmss_enable'] = isset($config['system']['maxmss_enable']);
 $pconfig['maxmss'] = $config['system']['maxmss'];
 
-if ($_POST['submit']) {
+if ($_POST) {
 
 	unset($input_errors);
 	$pconfig = $_POST;

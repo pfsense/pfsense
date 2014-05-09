@@ -269,6 +269,9 @@ charon {
         # number of worker threads in charon
         threads = 16
 
+	# XXX: There is not much choice here really users win their security!
+	i_dont_care_about_security_and_use_aggressive_mode_psk=yes
+
 	# And two loggers using syslog. The subsections define the facility to log
 	# to, currently one of: daemon, auth.
 	syslog {

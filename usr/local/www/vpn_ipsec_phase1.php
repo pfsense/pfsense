@@ -380,7 +380,7 @@ include("head.inc");
 <body link="#0000CC" vlink="#0000CC" alink="#0000CC">
 <?php include("fbegin.inc"); ?>
 <script type="text/javascript">
-<!--
+//<![CDATA[
 
 function myidsel_change() {
 	index = document.iform.myid_type.selectedIndex;
@@ -490,7 +490,7 @@ function dpdchkbox_change() {
 		document.iform.dpd_maxfail.value = "5";
 }
 
-//-->
+//]]>
 </script>
 
 <form action="vpn_ipsec_phase1.php" method="post" name="iform" id="iform">
@@ -500,7 +500,7 @@ function dpdchkbox_change() {
 		print_input_errors($input_errors);
 ?>
 
-<table width="100%" border="0" cellpadding="0" cellspacing="0">
+<table width="100%" border="0" cellpadding="0" cellspacing="0" summary="vpn ipsec phase-1">
 	<tr class="tabnavtbl">
 		<td id="tabnav">
 			<?php
@@ -516,14 +516,14 @@ function dpdchkbox_change() {
 	<tr>
 		<td id="mainarea">
 			<div class="tabcont">
-				<table width="100%" border="0" cellpadding="6" cellspacing="0">
+				<table width="100%" border="0" cellpadding="6" cellspacing="0" summary="main area">
 					<tr>
 						<td colspan="2" valign="top" class="listtopic"><?=gettext("General information"); ?></td>
 					</tr>
 					<tr>
 						<td width="22%" valign="top" class="vncellreq"><?=gettext("Disabled"); ?></td>
 						<td width="78%" class="vtable">
-							<input name="disabled" type="checkbox" id="disabled" value="yes" <?php if ($pconfig['disabled']) echo "checked"; ?>>
+							<input name="disabled" type="checkbox" id="disabled" value="yes" <?php if ($pconfig['disabled']) echo "checked=\"checked\""; ?> />
 							<strong><?=gettext("Disable this phase1 entry"); ?></strong><br />
 							<span class="vexpl">
 								<?=gettext("Set this option to disable this phase1 without " .
@@ -539,7 +539,7 @@ function dpdchkbox_change() {
 								$keyexchange = array("ikev1" => "V1", "ikev2" => "V2");
 								foreach ($keyexchange as $kidx => $name):
 							?>
-								<option value="<?=$kidx;?>" <?php if ($kidx == $pconfig['iketype']) echo "selected"; ?>>
+								<option value="<?=$kidx;?>" <?php if ($kidx == $pconfig['iketype']) echo "selected=\"selected\""; ?>>
 									<?=htmlspecialchars($name);?>
 								</option>
 							<?php endforeach; ?>
@@ -554,7 +554,7 @@ function dpdchkbox_change() {
 								$protocols = array("inet" => "IPv4", "inet6" => "IPv6");
 								foreach ($protocols as $protocol => $name):
 							?>
-								<option value="<?=$protocol;?>" <?php if ($protocol == $pconfig['protocol']) echo "selected"; ?>>
+								<option value="<?=$protocol;?>" <?php if ($protocol == $pconfig['protocol']) echo "selected=\"selected\""; ?>>
 									<?=htmlspecialchars($name);?>
 								</option>
 							<?php endforeach; ?>
@@ -588,7 +588,7 @@ function dpdchkbox_change() {
 
 								foreach ($interfaces as $iface => $ifacename):
 							?>
-								<option value="<?=$iface;?>" <?php if ($iface == $pconfig['interface']) echo "selected"; ?>>
+								<option value="<?=$iface;?>" <?php if ($iface == $pconfig['interface']) echo "selected=\"selected\""; ?>>
 									<?=htmlspecialchars($ifacename);?>
 								</option>
 							<?php endforeach; ?>
@@ -603,7 +603,7 @@ function dpdchkbox_change() {
 					<tr>
 						<td width="22%" valign="top" class="vncellreq"><?=gettext("Remote gateway"); ?></td>
 						<td width="78%" class="vtable">
-							<?=$mandfldhtml;?><input name="remotegw" type="text" class="formfld unknown" id="remotegw" size="28" value="<?=htmlspecialchars($pconfig['remotegw']);?>">
+							<?=$mandfldhtml;?><input name="remotegw" type="text" class="formfld unknown" id="remotegw" size="28" value="<?=htmlspecialchars($pconfig['remotegw']);?>" />
 							<br />
 							<?=gettext("Enter the public IP address or host name of the remote gateway"); ?>
 						</td>
@@ -614,7 +614,7 @@ function dpdchkbox_change() {
 					<tr>
 						<td width="22%" valign="top" class="vncell"><?=gettext("Description"); ?></td>
 						<td width="78%" class="vtable">
-							<input name="descr" type="text" class="formfld unknown" id="descr" size="40" value="<?=htmlspecialchars($pconfig['descr']);?>">
+							<input name="descr" type="text" class="formfld unknown" id="descr" size="40" value="<?=htmlspecialchars($pconfig['descr']);?>" />
 							<br />
 							<span class="vexpl">
 								<?=gettext("You may enter a description here " .
@@ -633,13 +633,13 @@ function dpdchkbox_change() {
 					<tr>
 						<td width="22%" valign="top" class="vncellreq"><?=gettext("Authentication method"); ?></td>
 						<td width="78%" class="vtable">
-							<select name="authentication_method" class="formselect" onChange="methodsel_change()">
+							<select name="authentication_method" class="formselect" onchange="methodsel_change()">
 							<?php
 								foreach ($p1_authentication_methods as $method_type => $method_params):
 									if (!$pconfig['mobile'] && $method_params['mobile'])
 										continue;
 							?>
-								<option value="<?=$method_type;?>" <?php if ($method_type == $pconfig['authentication_method']) echo "selected"; ?>>
+								<option value="<?=$method_type;?>" <?php if ($method_type == $pconfig['authentication_method']) echo "selected=\"selected\""; ?>>
 									<?=htmlspecialchars($method_params['name']);?>
 								</option>
 							<?php endforeach; ?>
@@ -658,7 +658,7 @@ function dpdchkbox_change() {
 								$modes = array("main" => "Main", "aggressive" => "Aggressive");
 								foreach ($modes as $mode => $mdescr):
 							?>
-								<option value="<?=$mode;?>" <?php if ($mode == $pconfig['mode']) echo "selected"; ?>>
+								<option value="<?=$mode;?>" <?php if ($mode == $pconfig['mode']) echo "selected=\"selected\""; ?>>
 									<?=htmlspecialchars($mdescr);?>
 								</option>
 							<?php endforeach; ?>
@@ -668,31 +668,31 @@ function dpdchkbox_change() {
 					<tr>
 						<td width="22%" valign="top" class="vncellreq"><?=gettext("My identifier"); ?></td>
 						<td width="78%" class="vtable">
-							<select name="myid_type" class="formselect" onChange="myidsel_change()">
+							<select name="myid_type" class="formselect" onchange="myidsel_change()">
 							<?php foreach ($my_identifier_list as $id_type => $id_params): ?>
-								<option value="<?=$id_type;?>" <?php if ($id_type == $pconfig['myid_type']) echo "selected"; ?>>
+								<option value="<?=$id_type;?>" <?php if ($id_type == $pconfig['myid_type']) echo "selected=\"selected\""; ?>>
 									<?=htmlspecialchars($id_params['desc']);?>
 								</option>
 							<?php endforeach; ?>
 							</select>
-							<input name="myid_data" type="text" class="formfld unknown" id="myid_data" size="30" value="<?=htmlspecialchars($pconfig['myid_data']);?>">
+							<input name="myid_data" type="text" class="formfld unknown" id="myid_data" size="30" value="<?=htmlspecialchars($pconfig['myid_data']);?>" />
 						</td>
 					</tr>
 					<tr id="opt_peerid">
 						<td width="22%" valign="top" class="vncellreq"><?=gettext("Peer identifier"); ?></td>
 						<td width="78%" class="vtable">
-							<select name="peerid_type" class="formselect" onChange="peeridsel_change()">
+							<select name="peerid_type" class="formselect" onchange="peeridsel_change()">
 							<?php
 								foreach ($peer_identifier_list as $id_type => $id_params):
 									if ($pconfig['mobile'] && !$id_params['mobile'])
 										continue;
 							?>
-							<option value="<?=$id_type;?>" <?php if ($id_type == $pconfig['peerid_type']) echo "selected"; ?>>
+							<option value="<?=$id_type;?>" <?php if ($id_type == $pconfig['peerid_type']) echo "selected=\"selected\""; ?>>
 								<?=htmlspecialchars($id_params['desc']);?>
 							</option>
 							<?php endforeach; ?>
 							</select>
-							<input name="peerid_data" type="text" class="formfld unknown" id="peerid_data" size="30" value="<?=htmlspecialchars($pconfig['peerid_data']);?>">
+							<input name="peerid_data" type="text" class="formfld unknown" id="peerid_data" size="30" value="<?=htmlspecialchars($pconfig['peerid_data']);?>" />
 						<?php if ($pconfig['mobile']) { ?>
 							<br /><br /><?=gettext("NOTE: This is known as the \"group\" setting on some VPN client implementations"); ?>.
 						<?php } ?>
@@ -702,7 +702,7 @@ function dpdchkbox_change() {
 						<td width="22%" valign="top" class="vncellreq"><?=gettext("Pre-Shared Key"); ?></td>
 						<td width="78%" class="vtable">
 							<?=$mandfldhtml;?>
-							<input name="pskey" type="text" class="formfld unknown" id="pskey" size="40" value="<?=htmlspecialchars($pconfig['pskey']);?>">
+							<input name="pskey" type="text" class="formfld unknown" id="pskey" size="40" value="<?=htmlspecialchars($pconfig['pskey']);?>" />
 							<span class="vexpl">
 							<br />
 								<?=gettext("Input your Pre-Shared Key string"); ?>.
@@ -712,12 +712,12 @@ function dpdchkbox_change() {
 					<tr>
 						<td width="22%" valign="top" class="vncellreq"><?=gettext("Encryption algorithm"); ?></td>
 						<td width="78%" class="vtable">
-							<select name="ealgo" class="formselect" onChange="ealgosel_change()">
+							<select name="ealgo" class="formselect" onchange="ealgosel_change()">
 							<?php
 								foreach ($p1_ealgos as $algo => $algodata):
-									$selected = '';
+									$selected = "";
 									if ($algo == $pconfig['ealgo']['name'])
-										$selected = ' selected';
+										$selected = " selected=\"selected\"";
 							?>
 								<option value="<?=$algo;?>"<?=$selected?>>
 									<?=htmlspecialchars($algodata['name']);?>
@@ -733,7 +733,7 @@ function dpdchkbox_change() {
 						<td width="78%" class="vtable">
 							<select name="halgo" class="formselect">
 							<?php foreach ($p1_halgos as $algo => $algoname): ?>
-								<option value="<?=$algo;?>" <?php if ($algo == $pconfig['halgo']) echo "selected"; ?>>
+								<option value="<?=$algo;?>" <?php if ($algo == $pconfig['halgo']) echo "selected=\"selected\""; ?>>
 									<?=htmlspecialchars($algoname);?>
 								</option>
 							<?php endforeach; ?>
@@ -749,7 +749,7 @@ function dpdchkbox_change() {
 						<td width="78%" class="vtable">
 							<select name="dhgroup" class="formselect">
 							<?php foreach ($p1_dhgroups as $keygroup => $keygroupname): ?>
-								<option value="<?=$keygroup;?>" <?php if ($keygroup == $pconfig['dhgroup']) echo "selected"; ?>>
+								<option value="<?=$keygroup;?>" <?php if ($keygroup == $pconfig['dhgroup']) echo "selected=\"selected\""; ?>>
 									<?=htmlspecialchars($keygroupname);?>
 								</option>
 							<?php endforeach; ?>
@@ -763,19 +763,19 @@ function dpdchkbox_change() {
 					<tr>
 						<td width="22%" valign="top" class="vncell"><?=gettext("Lifetime"); ?></td>
 						<td width="78%" class="vtable">
-							<input name="lifetime" type="text" class="formfld unknown" id="lifetime" size="20" value="<?=htmlspecialchars($pconfig['lifetime']);?>">
+							<input name="lifetime" type="text" class="formfld unknown" id="lifetime" size="20" value="<?=htmlspecialchars($pconfig['lifetime']);?>" />
 							<?=gettext("seconds"); ?>
 						</td>
 					</tr>
 					<tr id="opt_cert">
 						<td width="22%" valign="top" class="vncellreq"><?=gettext("My Certificate"); ?></td>
 						<td width="78%" class="vtable">
-							<select name='certref' class="formselect">
+							<select name="certref" class="formselect">
 							<?php
 								foreach ($config['cert'] as $cert):
 									$selected = "";
 									if ($pconfig['certref'] == $cert['refid'])
-										$selected = "selected";
+										$selected = "selected=\"selected\"";
 							?>
 								<option value="<?=$cert['refid'];?>" <?=$selected;?>><?=$cert['descr'];?></option>
 							<?php endforeach; ?>
@@ -789,12 +789,12 @@ function dpdchkbox_change() {
 					<tr id="opt_ca">
 						<td width="22%" valign="top" class="vncellreq"><?=gettext("My Certificate Authority"); ?></td>
 						<td width="78%" class="vtable">
-							<select name='caref' class="formselect">
+							<select name="caref" class="formselect">
 							<?php
 								foreach ($config['ca'] as $ca):
 									$selected = "";
 									if ($pconfig['caref'] == $ca['refid'])
-										$selected = "selected";
+										$selected = "selected=\"selected\"";
 							?>
 								<option value="<?=$ca['refid'];?>" <?=$selected;?>><?=$ca['descr'];?></option>
 							<?php endforeach; ?>
@@ -815,9 +815,9 @@ function dpdchkbox_change() {
 						<td width="22%" valign="top" class="vncell"><?=gettext("NAT Traversal"); ?></td>
 						<td width="78%" class="vtable">
 							<select name="nat_traversal" class="formselect">
-								<option value="off" <?php if ($pconfig['nat_traversal'] == "off") echo "selected"; ?>><?=gettext("Disable"); ?></option>
-								<option value="on" <?php if ($pconfig['nat_traversal'] == "on") echo "selected"; ?>><?=gettext("Enable"); ?></option>
-								<option value="force" <?php if ($pconfig['nat_traversal'] == "force") echo "selected"; ?>><?=gettext("Force"); ?></option>
+								<option value="off" <?php if ($pconfig['nat_traversal'] == "off") echo "selected=\"selected\""; ?>><?=gettext("Disable"); ?></option>
+								<option value="on" <?php if ($pconfig['nat_traversal'] == "on") echo "selected=\"selected\""; ?>><?=gettext("Enable"); ?></option>
+								<option value="force" <?php if ($pconfig['nat_traversal'] == "force") echo "selected=\"selected\""; ?>><?=gettext("Force"); ?></option>
 							</select>
 							<br />
 							<span class="vexpl">
@@ -829,17 +829,17 @@ function dpdchkbox_change() {
 					<tr>
 						<td width="22%" valign="top" class="vncell"><?=gettext("Dead Peer Detection"); ?></td>
 						<td width="78%" class="vtable">
-							<input name="dpd_enable" type="checkbox" id="dpd_enable" value="yes" <?php if (isset($pconfig['dpd_enable'])) echo "checked"; ?> onClick="dpdchkbox_change()">
+							<input name="dpd_enable" type="checkbox" id="dpd_enable" value="yes" <?php if (isset($pconfig['dpd_enable'])) echo "checked=\"checked\""; ?> onclick="dpdchkbox_change()" />
 							<?=gettext("Enable DPD"); ?><br />
 							<div id="opt_dpd">
 								<br />
-								<input name="dpd_delay" type="text" class="formfld unknown" id="dpd_delay" size="5" value="<?=htmlspecialchars($pconfig['dpd_delay']);?>">
+								<input name="dpd_delay" type="text" class="formfld unknown" id="dpd_delay" size="5" value="<?=htmlspecialchars($pconfig['dpd_delay']);?>" />
 								<?=gettext("seconds"); ?><br />
 								<span class="vexpl">
 									<?=gettext("Delay between requesting peer acknowledgement"); ?>.
 								</span><br />
 								<br />
-								<input name="dpd_maxfail" type="text" class="formfld unknown" id="dpd_maxfail" size="5" value="<?=htmlspecialchars($pconfig['dpd_maxfail']);?>">
+								<input name="dpd_maxfail" type="text" class="formfld unknown" id="dpd_maxfail" size="5" value="<?=htmlspecialchars($pconfig['dpd_maxfail']);?>" />
 								<?=gettext("retries"); ?><br />
 								<span class="vexpl">
 									<?=gettext("Number of consecutive failures allowed before disconnect"); ?>.
@@ -852,13 +852,13 @@ function dpdchkbox_change() {
 						<td width="22%" valign="top">&nbsp;</td>
 						<td width="78%">
 							<?php if (isset($p1index) && $a_phase1[$p1index]): ?>
-							<input name="p1index" type="hidden" value="<?=htmlspecialchars($p1index);?>">
+							<input name="p1index" type="hidden" value="<?=htmlspecialchars($p1index);?>" />
 							<?php endif; ?>
 							<?php if ($pconfig['mobile']): ?>
-							<input name="mobile" type="hidden" value="true">
+							<input name="mobile" type="hidden" value="true" />
 							<?php endif; ?>
-							<input name="ikeid" type="hidden" value="<?=htmlspecialchars($pconfig['ikeid']);?>">
-							<input name="Submit" type="submit" class="formbtn" value="<?=gettext("Save"); ?>">
+							<input name="ikeid" type="hidden" value="<?=htmlspecialchars($pconfig['ikeid']);?>" />
+							<input name="Submit" type="submit" class="formbtn" value="<?=gettext("Save"); ?>" />
 						</td>
 					</tr>
 				</table>
@@ -868,8 +868,8 @@ function dpdchkbox_change() {
 </table>
 </form>
 
-<script lannguage="JavaScript">
-<!--
+<script type="text/javascript">
+//<![CDATA[
 <?php
 	/* determine if we should init the key length */
 	$keyset = '';
@@ -882,7 +882,7 @@ peeridsel_change();
 methodsel_change();
 ealgosel_change(<?=$keyset;?>);
 dpdchkbox_change();
-//-->
+//]]>
 </script>
 <?php include("fend.inc"); ?>
 </body>

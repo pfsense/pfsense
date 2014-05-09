@@ -122,7 +122,7 @@ include("head.inc");
 <?php include("fbegin.inc"); ?>
 
 <script type="text/javascript">
-<!--
+//<![CDATA[
 
 function maxmss_checked(obj) {
 	if (obj.checked)
@@ -131,7 +131,7 @@ function maxmss_checked(obj) {
 		jQuery('#maxmss').attr('disabled','true');
 }
 
-//-->
+//]]>
 </script>
 
 <form action="vpn_ipsec_settings.php" method="post" name="iform" id="iform">
@@ -143,7 +143,7 @@ function maxmss_checked(obj) {
 		print_input_errors($input_errors);
 ?>
 
-<table width="100%" border="0" cellpadding="0" cellspacing="0">
+<table width="100%" border="0" cellpadding="0" cellspacing="0" summary="vpn ipsec settings">
 	<tr>
 		<td class="tabnavtbl">
 			<?php
@@ -159,7 +159,7 @@ function maxmss_checked(obj) {
 	<tr>
 		<td id="mainarea">
 			<div class="tabcont">
-				<table width="100%" border="0" cellpadding="6" cellspacing="0">
+				<table width="100%" border="0" cellpadding="6" cellspacing="0" summary="main area">
 					<tr>
 						<td colspan="2" valign="top" class="listtopic"><?=gettext("IPSec Advanced Settings"); ?></td>
 					</tr>
@@ -189,7 +189,7 @@ function maxmss_checked(obj) {
 						<td width="78%" class="vtable">
 							<strong><?=gettext("Start IPSec in debug mode based on sections selected"); ?></strong>
 							<br />
-							<table>
+							<table summary="ipsec debug">
 						<?php foreach ($ipsec_loglevels as $lkey => $ldescr): ?>
 							<tr>
 								<td width="22%" valign="top" class="vncell"><?=$ldescr;?></td>
@@ -206,6 +206,7 @@ function maxmss_checked(obj) {
 								</td>
 							</tr>
 						<?php endforeach; ?>
+							<tr style="display:none;"><td></td></tr>
 							</table>
 							<br /><?=gettext("Launches IPSec in debug mode so that more verbose logs " .
 							"will be generated to aid in troubleshooting."); ?>
@@ -238,7 +239,7 @@ function maxmss_checked(obj) {
 					<tr>
 						<td width="22%" valign="top">&nbsp;</td>
 						<td width="78%">
-							<input name="submit" type="submit" class="formbtn" value="<?=gettext("Save"); ?>">
+							<input name="submit" type="submit" class="formbtn" value="<?=gettext("Save"); ?>" />
 						</td>
 					</tr>
 				</table>

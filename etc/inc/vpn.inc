@@ -587,10 +587,6 @@ EOD;
 						break;
 					}
 
-					$genp = "no";
-					if (!empty($ph1ent['generate_policy']) && $ph1ent['generate_policy'] != "off")
-						$genp = "yes";
-						
 					$passive = "start";
 					if (isset($ph1ent['mobile'])) {
 						$rgip = "%any";

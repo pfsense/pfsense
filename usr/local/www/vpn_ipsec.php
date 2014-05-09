@@ -440,8 +440,8 @@ include("head.inc");
 										<strong><?=gettext("Note"); ?>:<br /></strong>
 									</span>
 								<?=gettext("You can check your IPsec status at"); ?> <a href="diag_ipsec.php"><?=gettext("Status:IPsec"); ?></a>.<br />
-									<?=gettext("IPsec Debug Mode can be enabled at"); ?> <a href="system_advanced_misc.php"><?=gettext("System:Advanced:Miscellaneous"); ?></a>.<br />
-									<?=gettext("IPsec can be set to prefer older SAs at"); ?> <a href="system_advanced_misc.php"><?=gettext("System:Advanced:Miscellaneous"); ?></a>.
+									<?=gettext("IPsec Debug Mode can be enabled at"); ?> <a href="vpn_ipsec_settings.php"><?=gettext("VPN:IPsec:Advanced Settings"); ?></a>.<br />
+									<?=gettext("IPsec can be set to prefer older SAs at"); ?> <a href="vpn_ipsec_settings.php"><?=gettext("VPN:IPsec:Advanced Settings"); ?></a>.
 								</span>
 							</p>
 						</td>

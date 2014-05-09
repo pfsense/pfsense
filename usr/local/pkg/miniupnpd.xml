@@ -146,10 +146,10 @@
 		</field>	
 	</fields>
 	<custom_php_command_before_form>
-		before_form_miniupnpd(&amp;$pkg);
+		before_form_miniupnpd($pkg);
 	</custom_php_command_before_form>
 	<custom_php_validation_command>
-		validate_form_miniupnpd($_POST, &amp;$input_errors);
+		validate_form_miniupnpd($_POST, $input_errors);
 	</custom_php_validation_command>
 	<custom_php_resync_config_command>
 		sync_package_miniupnpd();

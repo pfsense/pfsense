@@ -58,8 +58,9 @@ $a_cp =& $config['captiveportal'];
 $pgtitle = array(gettext("Status"), gettext("Captive portal"), gettext("Expire Vouchers"), $a_cp[$cpzone]['zone']);
 
 include("head.inc");
-include("fbegin.inc");
 ?>
+<body>
+<?php include("fbegin.inc"); ?>
 
 <form action="status_captiveportal_expire.php" method="post" enctype="multipart/form-data" name="iform" id="iform">
 <table width="100%" border="0" cellpadding="0" cellspacing="0" summary="tab pane">
@@ -81,37 +82,38 @@ include("fbegin.inc");
   <tr>
     <td valign="top" class="vncellreq"><?=gettext("Voucher(s)"); ?></td>
     <td class="vtable">
-    <textarea name="vouchers" cols="65" rows="3" type="text" id="vouchers" class="formpre"><?=htmlspecialchars($_POST['vouchers']);?></textarea>
+    <textarea name="vouchers" cols="65" rows="3" id="vouchers" class="formpre"><?=htmlspecialchars($_POST['vouchers']);?></textarea>
     <br />
 <?=gettext("Enter multiple vouchers separated by space or newline. All valid vouchers will be marked as expired"); ?>.</td>
   </tr>
   <tr>
     <td width="22%" valign="top">&nbsp;</td>
     <td width="78%">
-    <input name="zone" type="hidden" value="<?=htmlspecialchars($cpzone);?>">
-    <input name="Submit" type="submit" class="formbtn" value="<?=gettext("Submit"); ?>">
+    <input name="zone" type="hidden" value="<?=htmlspecialchars($cpzone);?>" />
+    <input name="Submit" type="submit" class="formbtn" value="<?=gettext("Submit"); ?>" />
     </td>
   </tr>
 </table>
 </td></tr></table>
 </form>
-<p>
+<br/>
 <?php
 if ($_POST) {
     if ($_POST['vouchers']) {
         $result = voucher_expire($_POST['vouchers']);
-        echo "<p><table border=\"0\" cellspacing=\"0\" cellpadding=\"4\" width=\"100%\">\n";
+        echo "<table border=\"0\" cellspacing=\"0\" cellpadding=\"4\" width=\"100%\" summary=\"test result\">\n";
         if ( $result) {
-            echo "<tr><td bgcolor=\"#D9DEE8\"><img src=\"/themes/{$g['theme']}/images/icons/icon_pass.gif\"></td>";
+            echo "<tr><td bgcolor=\"#D9DEE8\"><img src=\"/themes/{$g['theme']}/images/icons/icon_pass.gif\" alt=\"pass\" /></td>";
             echo "<td bgcolor=\"#D9DEE8\">Success</td></tr>";
         } else {
-            echo "<tr><td bgcolor=\"#FFD9D1\"><img src=\"/themes/{$g['theme']}/images/icons/icon_block.gif\"></td>";
+            echo "<tr><td bgcolor=\"#FFD9D1\"><img src=\"/themes/{$g['theme']}/images/icons/icon_block.gif\" alt=\"block\" /></td>";
             echo "<td bgcolor=\"#FFD9D1\">Error</td></tr>";
         }
-        echo "</table></p>";
+        echo "</table>";
     }
 }
 
 include("fend.inc");
 ?>
-
+</body>
+</html>

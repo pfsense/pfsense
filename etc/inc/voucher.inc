@@ -279,7 +279,7 @@ function voucher_expire($voucher_received) {
 				$cpentry = captiveportal_read_db("WHERE username = '{$voucher}'");
 				if (!empty($cpentry)) {
 					captiveportal_disconnect($cpentry,null,13);
-					captiveportal_logportalauth($cpentry[4],$cpentry[3],$cpentry[2],"FORCLY TERMINATING VOUCHER {$voucher} SESSION");
+					captiveportal_logportalauth($cpentry[4],$cpentry[3],$cpentry[2],"FORCIBLY TERMINATING VOUCHER {$voucher} SESSION");
 					$unsetindexes[] = $cpentry[5];
 				}
 			} else

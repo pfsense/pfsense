@@ -282,7 +282,7 @@ include("head.inc");
 						</td>
 					</tr>
 					<tr>
-						<td class="listrborder" colspan="5">
+						<td class="listrborder" colspan="6">
 							<div id="shph2but-<?=$i?>">
 								<?php
 									$phase2count=0;
@@ -418,7 +418,7 @@ include("head.inc");
 						show_ipsec_header($ph1ent);
 					?>
 					<tr>
-						<td class="list" colspan="5"></td>
+						<td class="list" colspan="6"></td>
 						<td class="list">
 							<table border="0" cellspacing="0" cellpadding="1" summary="add">
 								<tr>
@@ -433,7 +433,7 @@ include("head.inc");
 						</td>
 					</tr>
 					<tr>
-						<td colspan="4">
+						<td colspan="7">
 							<p>
 								<span class="vexpl">
 									<span class="red">

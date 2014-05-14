@@ -120,9 +120,9 @@ $mac_man = load_mac_manufacturer_table();
 <table class="tabcont" width="100%" border="0" cellpadding="0" cellspacing="0">
   <tr>
 	<td width="20%" class="vncell" valign="top"> 
-               <br /><?=gettext("Captive Portal Zone"); ?><br/<br />
+               <br /><?=gettext("Captive Portal Zone"); ?><br/><br />
 	</td>
-	<td "class="vncell" width="30%" align="center"> 
+	<td class="vncell" width="30%" align="center"> 
 	<form action="status_captiveportal.php" method="post" enctype="multipart/form-data" name="form1" id="form1">
 		<select name="zone" class="formselect" onchange="document.form1.submit()">
 		echo "<option value="">none</option>\n";
@@ -169,14 +169,15 @@ $mac_man = load_mac_manufacturer_table();
 		}
 		?>&nbsp;
 	</td>
-    <td class="listr"><?=$cpent[4];?>&nbsp;</td>
+    <td class="listr"><?=htmlspecialchars($cpent[4]);?>&nbsp;</td>
     <td class="listr"><?=htmlspecialchars(date("m/d/Y H:i:s", $cpent[0]));?></td>
 	<?php if ($_GET['showact']):
 	$last_act = captiveportal_get_last_activity($cpent[2], $cpent[3]); ?>
     <td class="listr"><?php if ($last_act != 0) echo htmlspecialchars(date("m/d/Y H:i:s", $last_act));?></td>
 	<?php endif; ?>
-	<td valign="middle" class="list" nowrap>
-	<a href="?zone=<?=$cpzone;?>&order=<?=$_GET['order'];?>&showact=<?=htmlspecialchars($_GET['showact']);?>&act=del&id=<?=$cpent[5];?>" onclick="return confirm('<?=gettext("Do you really want to disconnect this client?");?>')"><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_x.gif" width="17" height="17" border="0" title="<?=gettext("Disconnect");?>"></a></td>
+    <td valign="middle" class="list" nowrap>
+      <a href="?zone=<?=$cpzone;?>&amp;order=<?=$_GET['order'];?>&amp;showact=<?=htmlspecialchars($_GET['showact']);?>&amp;act=del&amp;id=<?=$cpent[5];?>" onclick="return confirm('<?=gettext("Do you really want to disconnect this client?");?>')"><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_x.gif" width="17" height="17" border="0" title="<?=gettext("Disconnect");?>"></a>
+    </td>
   </tr>
 <?php endforeach; endif; ?>
 </table>

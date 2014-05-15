@@ -32,7 +32,7 @@
 */
 
 /*
-	pfSense_BUILDER_BINARIES:	/usr/local/sbin/setkey
+	pfSense_BUILDER_BINARIES:	/sbin/setkey
 	pfSense_MODULE:	ipsec
 */
 
@@ -54,7 +54,7 @@ $sad = ipsec_dump_sad();
 
 /* delete any SA? */
 if ($_GET['act'] == "del") {
-	$fd = @popen("/usr/local/sbin/setkey -c > /dev/null 2>&1", "w");
+	$fd = @popen("/sbin/setkey -c > /dev/null 2>&1", "w");
 	if ($fd) {
 		fwrite($fd, "delete {$_GET['src']} {$_GET['dst']} {$_GET['proto']} {$_GET['spi']} ;\n");
 		pclose($fd);

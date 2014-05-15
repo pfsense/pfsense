@@ -647,6 +647,7 @@ EOD;
 					if ($ph1ent['lifetime'])
 						$lifeline = "ikelifetime = {$ph1ent['lifetime']}s";
 
+					$remoteid_spec = '';
 					if (($ph2ent['mode'] == 'tunnel') or ($ph2ent['mode'] == 'tunnel6')) {
 						$tunneltype = "type = tunnel";
 
@@ -681,13 +682,10 @@ EOD;
 						}
 
 						if (!isset($ph2ent['mobile'])) {
-							$remoteid_type = $ph2ent['remoteid']['type'];
-							if ($remoteid_type != "address")
-								$remoteid_type = "subnet";
-
 							$remoteid_data = ipsec_idinfo_to_cidr($ph2ent['remoteid'], false, $ph2ent['mode']);
-							$remoteid_spec = $remoteid_data;
-						}
+							$remoteid_spec = "\trightsubnet = {$remoteid_data}";
+						} else if (!empty($a_client['pool_address']))
+							$remoteid_spec = "\trightsourceip = {$a_client['pool_address']}/{$a_client['pool_netbits']}";
 					} else {
 						$tunneltype = "type = transport";
 						$rgip = $ph1ent['remote-gateway'];
@@ -701,7 +699,7 @@ EOD;
 							$localid_spec = $ep;
 						}
 						if (!isset($ph2ent['mobile'])) {
-							$remoteid_spec = $rgip;
+							$remoteid_spec = "\trightsubnet = {$rgip}";
 						}
 					}
 					$authentication = "";
@@ -810,7 +808,7 @@ conn con{$ph2ent['ikeid']}-{$ph2ent['ikeid']}
 EOD;
 
 					if (!empty($remoteid_spec))
-						$ipsecconf .= "\trightsubnet = $remoteid_spec\n";
+						$ipsecconf .= "{$remoteid_spec}\n";
 					if (!empty($ealgosp1))
 						$ipsecconf .= "\t{$ealgosp1}\n";
 					if (!empty($ealgosp2))

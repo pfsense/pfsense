@@ -467,28 +467,16 @@ EOD;
 						}
 					}
 				} else {
+					list ($myid_type, $myid_data) = ipsec_find_id($ph1ent, "local");
+					list ($peerid_type, $peerid_data) = ipsec_find_id($ph1ent, "peer", $rgmap);
 
-					$peerid_type = $ph1ent['peerid_type'];
+					if (empty($peerid_data))
+						continue;
 
-					switch ($peerid_type) {
-						case "peeraddress":
-							$peerid_type = "address";
-							$peerid_data = $rgmap[$ph1ent['remote-gateway']];
-							break;
-
-						case "address";
-							$peerid_data = $ph1ent['peerid_data'];
-							break;
-
-						case "fqdn";
-						case "keyid tag";
-						case "user_fqdn";
-							$peerid_data = $ph1ent['peerid_data'];
-							break;
-					}
-
-					if (!empty($peerid_data) && !empty($ph1ent['pre-shared-key']))
-						$pskconf .= trim($peerid_data) . " : PSK \"" . trim($ph1ent['pre-shared-key']) . "\"\n";
+					$myid = isset($ph1ent['mobile']) ? trim($myid_data) . " " : "";
+					$peerid = ($peerid_data != "allusers") ? trim($peerid_data) : "";
+					if (!empty($ph1ent['pre-shared-key']))
+						$pskconf .= $myid . $peerid . " : PSK \"" . trim($ph1ent['pre-shared-key']) . "\"\n";
 				}
 			}
 		}
@@ -561,52 +549,8 @@ EOD;
 					if (!empty($ph1ent['iketype']) && $ph1ent['iketype'] != "ikev1")
 						$keyexchange = "ikev2";
 
-					$myid_type = $ph1ent['myid_type'];
-					switch ($myid_type) {
-					case "myaddress":
-						$myid_type = "address";
-						$myid_data = $ep;
-						break;
-
-					case "dyn_dns":
-						$myid_type = "address";
-						$myid_data = resolve_retry($ph1ent['myid_data']);
-						break;
-
-					case "address";
-						$myid_data = $ph1ent['myid_data'];
-						break;
-
-					case "fqdn";
-					case "keyid tag";
-					case "user_fqdn";
-					case "asn1dn";
-						$myid_data = $ph1ent['myid_data'];
-						if( $myid_data )
-							$myid_data = "{$myid_data}";
-						break;
-					}
-
-					$peerid_type = $ph1ent['peerid_type'];
-					switch ($peerid_type) {
-					case "peeraddress":
-						$peerid_type = "address";
-						$peerid_data = $rgip;
-						break;
-
-					case "address";
-						$peerid_data = $ph1ent['peerid_data'];
-						break;
-
-					case "fqdn";
-					case "keyid tag";
-					case "user_fqdn";
-					case "asn1dn";
-						$peerid_data = $ph1ent['peerid_data'];
-						if( $peerid_data )
-							$peerid_data = "{$peerid_data}";
-						break;
-					}
+					list ($myid_type, $myid_data) = ipsec_find_id($ph1ent, "local");
+					list ($peerid_type, $peerid_data) = ipsec_find_id($ph1ent, "peer", $rgmap);
 
 					/* Only specify peer ID if we are not dealing with a mobile PSK-only tunnel */
 					$peerid_spec = '';

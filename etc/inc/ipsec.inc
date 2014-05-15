@@ -669,4 +669,57 @@ function ipsec_fixup_ip($ipaddr) {
 		return $ipaddr;
 }
 
+function ipsec_find_id(& $ph1ent, $side = "local", $rgmap = array()) {
+	if ($side == "local") {
+		$id_type = $ph1ent['myid_type'];
+		$id_data = $ph1ent['myid_data'];
+
+		$addr = ipsec_get_phase1_src($ph1ent);
+		if (!$addr)
+			return array();
+	} elseif ($side = "peer") {
+		$id_type = $ph1ent['peerid_type'];
+		$id_data = $ph1ent['peerid_data'];
+
+		if (isset($ph1ent['mobile']))
+			$addr = "%any";
+		else
+			$addr = $ph1ent['remote-gateway'];
+	} else {
+		return array();
+	}
+
+
+	$thisid_type = $id_type;
+	switch ($thisid_type) {
+	case "myaddress":
+		$thisid_type = "address";
+		$thisid_data = $addr;
+		break;
+
+	case "dyn_dns":
+		$thisid_type = "address";
+		$thisid_data = resolve_retry($id_data);
+		break;
+
+	case "peeraddress":
+		$thisid_type = "address";
+		$thisid_data = $rgmap[$ph1ent['remote-gateway']];
+		break;
+
+	case "address";
+		$thisid_data = $id_data;
+		break;
+
+	case "fqdn";
+	case "keyid tag";
+	case "user_fqdn";
+	case "asn1dn";
+		$thisid_data = $id_data;
+		if( $thisid_data )
+			$thisid_data = "{$thisid_data}";
+		break;
+	}
+	return array($thisid_type, $thisid_data);
+}
 ?>

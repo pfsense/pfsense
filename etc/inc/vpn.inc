@@ -541,6 +541,17 @@ EOD;
 
 					$ikeid = $ph1ent['ikeid'];
 
+					/* Only specify peer ID if we are not dealing with a mobile PSK-only tunnel */
+					$peerid_spec = '';
+					if (!(($ph1ent['authentication_method'] == "pre_shared_key") && !isset($ph1ent['mobile']))) {
+						$peerid_spec = $peerid_data;
+					}
+
+					if ($ph1ent['mode'] == "aggressive")
+						$aggressive = "yes";
+					else
+						$aggressive = "no";
+
 					$ep = ipsec_get_phase1_src($ph1ent);
 					if (!$ep)
 						continue;
@@ -636,17 +647,6 @@ EOD;
 					$lifeline = '';
 					if ($ph1ent['lifetime'])
 						$lifeline = "ikelifetime = {$ph1ent['lifetime']}s";
-
-					/* Only specify peer ID if we are not dealing with a mobile PSK-only tunnel */
-					$peerid_spec = '';
-					if (!(($ph1ent['authentication_method'] == "pre_shared_key") && isset($ph1ent['mobile']))) {
-						$peerid_spec = $peerid_data;
-					}
-
-					if ($ph1ent['mode'] == "aggressive")
-						$aggressive = "yes";
-					else
-						$aggressive = "no";
 
 					if (($ph2ent['mode'] == 'tunnel') or ($ph2ent['mode'] == 'tunnel6')) {
 						$tunneltype = "type = tunnel";

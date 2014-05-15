@@ -541,12 +541,6 @@ EOD;
 
 					$ikeid = $ph1ent['ikeid'];
 
-					/* Only specify peer ID if we are not dealing with a mobile PSK-only tunnel */
-					$peerid_spec = '';
-					if (!(($ph1ent['authentication_method'] == "pre_shared_key") && !isset($ph1ent['mobile']))) {
-						$peerid_spec = $peerid_data;
-					}
-
 					if ($ph1ent['mode'] == "aggressive")
 						$aggressive = "yes";
 					else
@@ -612,6 +606,12 @@ EOD;
 						if( $peerid_data )
 							$peerid_data = "{$peerid_data}";
 						break;
+					}
+
+					/* Only specify peer ID if we are not dealing with a mobile PSK-only tunnel */
+					$peerid_spec = '';
+					if (!(($ph1ent['authentication_method'] == "pre_shared_key") && !isset($ph1ent['mobile']))) {
+						$peerid_spec = $peerid_data;
 					}
 
 					if (is_array($ph1ent['encryption-algorithm']) && !empty($ph1ent['encryption-algorithm']['name']) && !empty($ph1ent['hash-algorithm'])) {

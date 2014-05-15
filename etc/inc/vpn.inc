@@ -610,9 +610,8 @@ EOD;
 
 					/* Only specify peer ID if we are not dealing with a mobile PSK-only tunnel */
 					$peerid_spec = '';
-					if (!(($ph1ent['authentication_method'] == "pre_shared_key") && !isset($ph1ent['mobile']))) {
+					if (!isset($ph1ent['mobile']))
 						$peerid_spec = $peerid_data;
-					}
 
 					if (is_array($ph1ent['encryption-algorithm']) && !empty($ph1ent['encryption-algorithm']['name']) && !empty($ph1ent['hash-algorithm'])) {
 						$ealgosp1 = '';

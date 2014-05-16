@@ -4097,7 +4097,7 @@ function convert_real_interface_to_friendly_interface_name($interface = "wan") {
 	}
 
 	if ($interface == "enc0")
-		return 'IPSec';
+		return 'IPsec';
 
 	return NULL;
 }

@@ -302,8 +302,7 @@ EOD;
 				$pool_netmask = gen_subnet_mask($a_client['pool_netbits']);
 				$pool_address = long2ip32(ip2long($pool_address)+1);
 
-				$strongswan .= "\t\taddress = {$pool_address}\n";
-				$strongswan .= "\t\tnetmask = {$pool_netmask}\n";
+				$strongswan .= "\t\tsubnet = {$pool_address}/{$pool_netmask}\n";
 			}
 
 			$cfgservers = array();

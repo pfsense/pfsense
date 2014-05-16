@@ -162,12 +162,12 @@ include("head.inc");
 ?>
 <body link="#0000CC" vlink="#0000CC" alink="#0000CC">
 <?php include("fbegin.inc"); ?>
-<table width="100%" border="0" cellpadding="0" cellspacing="0">
+<table width="100%" border="0" cellpadding="0" cellspacing="0" summary="status ntpd">
 <tr><td><div id="mainarea">
-	<table class="tabcont sortable" width="100%" border="0" cellpadding="0" cellspacing="0">
+	<table class="tabcont sortable" width="100%" border="0" cellpadding="0" cellspacing="0" summary="heading">
 		<tr><td class="listtopic">Network Time Protocol Status</td></tr>
 	</table>
-	<table class="tabcont sortable" width="100%" border="0" cellpadding="0" cellspacing="0">
+	<table class="tabcont sortable" width="100%" border="0" cellpadding="0" cellspacing="0" summary="main area">
 	<thead>
 	<tr>
 		<th class="listhdrr"><?=gettext("Status"); ?></th>
@@ -195,37 +195,37 @@ include("head.inc");
 	<?php else: ?>
 	<?php $i = 0; foreach ($ntpq_servers as $server): ?>
 	<tr>
-	<td class="listlr" nowrap>
+	<td class="listlr nowrap">
 		<?=$server['status'];?>
 	</td>
-	<td class="listlr">
+	<td class="listr">
 		<?=$server['server'];?>
 	</td>
-	<td class="listlr">
+	<td class="listr">
 		<?=$server['refid'];?>
 	</td>
-	<td class="listlr">
+	<td class="listr">
 		<?=$server['stratum'];?>
 	</td>
-	<td class="listlr">
+	<td class="listr">
 		<?=$server['type'];?>
 	</td>
-	<td class="listlr">
+	<td class="listr">
 		<?=$server['when'];?>
 	</td>
-	<td class="listlr">
+	<td class="listr">
 		<?=$server['poll'];?>
 	</td>
-	<td class="listlr">
+	<td class="listr">
 		<?=$server['reach'];?>
 	</td>
-	<td class="listlr">
+	<td class="listr">
 		<?=$server['delay'];?>
 	</td>
-	<td class="listlr">
+	<td class="listr">
 		<?=$server['offset'];?>
 	</td>
-	<td class="listlr">
+	<td class="listr">
 		<?=$server['jitter'];?>
 	</td>
 	</tr>
@@ -234,20 +234,20 @@ include("head.inc");
 	</table>
 <?php if (($gps_ok) && ($gps_lat) && ($gps_lon)): ?>
 	<?php $gps_goo_lnk = 2; ?>
-	<table class="tabcont sortable" width="100%" border="0" cellpadding="0" cellspacing="0">
+	<table class="tabcont sortable" width="100%" border="0" cellpadding="0" cellspacing="0" summary="gps status">
 	<thead>
 	<tr>
 		<th class="listhdrr"><?=gettext("Clock Latitude"); ?></th>
 		<th class="listhdrr"><?=gettext("Clock Longitude"); ?></th>
-		<?php if (isset($gps_alt)) { echo '<th class="listhdrr">'.gettext("Clock Altitude").'</th>'; $gps_goo_lnk++;}?>
-		<?php if (isset($gps_sat) || isset($gps_satview)) { echo '<th class="listhdrr">'.gettext("Satellites").'</th>'; $gps_goo_lnk++;}?>
+		<?php if (isset($gps_alt)) { echo '<th class="listhdrr">' . gettext("Clock Altitude") . '</th>'; $gps_goo_lnk++;}?>
+		<?php if (isset($gps_sat) || isset($gps_satview)) { echo '<th class="listhdrr">' . gettext("Satellites") . '</th>'; $gps_goo_lnk++;}?>
 	</tr>
 	</thead>
 	<tbody>
 		<tr>
 			<td class="listlr" align="center"><?php echo sprintf("%.5f", $gps_lat); ?> (<?php echo sprintf("%d", $gps_lat_deg); ?>&deg; <?php echo sprintf("%.5f", $gps_lat_min*60); ?><?php echo $gps_vars[4]; ?>)</td>
 			<td class="listlr" align="center"><?php echo sprintf("%.5f", $gps_lon); ?> (<?php echo sprintf("%d", $gps_lon_deg); ?>&deg; <?php echo sprintf("%.5f", $gps_lon_min*60); ?><?php echo $gps_vars[6]; ?>)</td>
-			<?php if (isset($gps_alt)) { echo '<td class="listlr" align="center">'.$gps_alt.' '.$gps_alt_unit.'</td>';}?>
+			<?php if (isset($gps_alt)) { echo '<td class="listlr" align="center">' . $gps_alt . ' ' . $gps_alt_unit . '</td>';}?>
 			<td class="listr" align="center">
 			<?php 
 			if (isset($gps_satview)) {echo 'in view ' . intval($gps_satview);}

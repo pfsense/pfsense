@@ -65,7 +65,7 @@ $spd = ipsec_dump_spd();
 
 <body link="#0000CC" vlink="#0000CC" alink="#0000CC">
 	<?php include("fbegin.inc"); ?>
-	<table width="100%" border="0" cellpadding="0" cellspacing="0" summary="status ipsec spd"">
+	<table width="100%" border="0" cellpadding="0" cellspacing="0" summary="status ipsec spd">
 		<tr>
 			<td>
 				<?php

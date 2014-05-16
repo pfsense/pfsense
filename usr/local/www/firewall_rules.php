@@ -511,6 +511,8 @@ if($_REQUEST['undodrag']) {
 					$iconfn = "block";
 				else if ($filterent['type'] == "reject")
 					$iconfn = "reject";
+				else if ($filterent['type'] == "match")
+					$iconfn = "match";
 				else
 					$iconfn = "pass";
 				if (isset($filterent['disabled'])) {
@@ -829,20 +831,26 @@ if($_REQUEST['undodrag']) {
 		<table class="tabcont" width="100%" border="0" cellspacing="0" cellpadding="0" summary="icons">
 			<tr>
 				<td width="16"><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_pass.gif" width="11" height="11" alt="pass" /></td>
-				<td><?=gettext("pass");?></td>
+				<td width="100"><?=gettext("pass");?></td>
+				<td width="14"></td>
+				<td width="16"><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_match.gif" width="11" height="11" alt="match" /></td>
+				<td width="100"><?=gettext("match");?></td>
 				<td width="14"></td>
 				<td width="16"><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_block.gif" width="11" height="11" alt="block" /></td>
-				<td><?=gettext("block");?></td>
+				<td width="100"><?=gettext("block");?></td>
 				<td width="14"></td>
 				<td width="16"><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_reject.gif" width="11" height="11" alt="reject" /></td>
-				<td><?=gettext("reject");?></td>
+				<td width="100"><?=gettext("reject");?></td>
 				<td width="14"></td>
 				<td width="16"><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_log.gif" width="11" height="11" alt="log" /></td>
-				<td><?=gettext("log");?></td>
+				<td width="100"><?=gettext("log");?></td>
 			</tr>
 			<tr>
 				<td><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_pass_d.gif" width="11" height="11" alt="pass disabled" /></td>
 				<td class="nowrap"><?=gettext("pass (disabled)");?></td>
+				<td>&nbsp;</td>
+				<td><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_match_d.gif" width="11" height="11" alt="match disabled" /></td>
+				<td class="nowrap"><?=gettext("match (disabled)");?></td>
 				<td>&nbsp;</td>
 				<td><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_block_d.gif" width="11" height="11" alt="block disabled" /></td>
 				<td class="nowrap"><?=gettext("block (disabled)");?></td>

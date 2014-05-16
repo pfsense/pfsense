@@ -135,7 +135,7 @@ if(!is_array($config['shaper']['queue']) || count($config['shaper']['queue']) < 
 <?php if (!$error): ?>
 <form action="status_queues.php" method="post">
 <script type="text/javascript">
-	/*<![CDATA[*/
+//<![CDATA[
 	function getqueueactivity() {
 		var url = "/status_queues.php";
 		var pars = "getactivity=yes&stats=" + jQuery("#selStatistic").val();
@@ -153,10 +153,10 @@ if(!is_array($config['shaper']['queue']) || count($config['shaper']['queue']) < 
 	jQuery(document).ready(function(){
 		setTimeout('getqueueactivity()', 150);
 	});
-	/*]]>*/
+//]]>
 </script>
 <?php endif; ?>
-<table width="100%" border="1" cellpadding="0" cellspacing="0">
+<table width="100%" border="1" cellpadding="0" cellspacing="0" summary="status queues">
 <?php if ($error): ?>
 	<tr><td><?php echo $error; ?></td></tr>
 <?php else: ?>
@@ -187,6 +187,7 @@ if(!is_array($config['shaper']['queue']) || count($config['shaper']['queue']) < 
 	<?=gettext("You can configure the Traffic Shaper"); ?> <a href="/firewall_shaper_wizards.php"><?=gettext("here"); ?></a>.
 </p>
 <script type="text/javascript">
+//<![CDATA[
 	function StatsShowHide(classname) {
     var firstrow = jQuery("." + classname).first();
     if (firstrow.is(':visible')) {
@@ -194,6 +195,7 @@ if(!is_array($config['shaper']['queue']) || count($config['shaper']['queue']) < 
     else {
         jQuery("." + classname).show();}
 	}
+//]]>
 </script>
 </form>
 <?php include("fend.inc"); ?>
@@ -234,7 +236,7 @@ function processQueues($altqstats, $level, $parent_name){
 			</td>
 			<?php
 			$cpuUsage = 0;
-			echo "<td nowrap=\"nowrap\" width=\"1%\" bgcolor=\"#{$row_background}\">";
+			echo "<td class=\"nowrap\" width=\"1%\" bgcolor=\"#{$row_background}\">";
 			echo "<img src='./themes/".$g['theme']."/images/misc/bar_left.gif' height='10' width='4' border='0' align='middle' alt='' />";
 			echo "<img src='./themes/".$g['theme']."/images/misc/bar_blue.gif' height='10' name='queue{$q['name']}{$q['interface']}widtha' id='queue{$q['name']}{$q['interface']}widtha' width='" . $cpuUsage . "' border='0' align='middle' alt='" . htmlspecialchars($q['name']) . "' />";
 			echo "<img src='./themes/".$g['theme']."/images/misc/bar_gray.gif' height='10' name='queue{$q['name']}{$q['interface']}widthb' id='queue{$q['name']}{$q['interface']}widthb' width='" . (150 - $cpuUsage) . "' border='0' align='middle' alt='" . htmlspecialchars($q['name']) . "' />";

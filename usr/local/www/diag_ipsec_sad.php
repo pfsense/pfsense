@@ -66,7 +66,7 @@ if ($_GET['act'] == "del") {
 
 <body link="#0000CC" vlink="#0000CC" alink="#0000CC">
 	<?php include("fbegin.inc"); ?>
-	<table width="100%" border="0" cellpadding="0" cellspacing="0">
+	<table width="100%" border="0" cellpadding="0" cellspacing="0" summary="status ipsec sad">
 		<tr>
 			<td>
 				<?php
@@ -82,17 +82,17 @@ if ($_GET['act'] == "del") {
 		<tr>
 			<td>
 				<div id="mainarea">
-					<table class="tabcont sortable" width="100%" border="0" cellpadding="6" cellspacing="0">
+					<table class="tabcont sortable" width="100%" border="0" cellpadding="6" cellspacing="0" summary="main area">
 						<?php if (count($sad)): ?>
 						<tr>
-							<td nowrap class="listhdrr"><?=gettext("Source");?></td>
-							<td nowrap class="listhdrr"><?=gettext("Destination");?></td>
-							<td nowrap class="listhdrr"><?=gettext("Protocol");?></td>
-							<td nowrap class="listhdrr"><?=gettext("SPI");?></td>
-							<td nowrap class="listhdrr"><?=gettext("Enc. alg.");?></td>
-							<td nowrap class="listhdr"><?=gettext("Auth. alg.");?></td>
-							<td nowrap class="listhdr"><?=gettext("Data");?></td>
-							<td nowrap class="list"></td>
+							<td class="listhdrr nowrap"><?=gettext("Source");?></td>
+							<td class="listhdrr nowrap"><?=gettext("Destination");?></td>
+							<td class="listhdrr nowrap"><?=gettext("Protocol");?></td>
+							<td class="listhdrr nowrap"><?=gettext("SPI");?></td>
+							<td class="listhdrr nowrap"><?=gettext("Enc. alg.");?></td>
+							<td class="listhdr nowrap"><?=gettext("Auth. alg.");?></td>
+							<td class="listhdr nowrap"><?=gettext("Data");?></td>
+							<td class="list nowrap"></td>
 						</tr>
 						<?php foreach ($sad as $sa): ?>
 						<tr>
@@ -103,15 +103,15 @@ if ($_GET['act'] == "del") {
 							<td class="listr"><?=htmlspecialchars($sa['ealgo']);?></td>
 							<td class="listr"><?=htmlspecialchars($sa['aalgo']);?></td>
 							<td class="listr"><?=htmlspecialchars($sa['data']);?></td>
-							<td class="list" nowrap>
+							<td class="list nowrap">
 								<?php
 									$args = "src=" . rawurlencode($sa['src']);
-									$args .= "&dst=" . rawurlencode($sa['dst']);
-									$args .= "&proto=" . rawurlencode($sa['proto']);
-									$args .= "&spi=" . rawurlencode("0x" . $sa['spi']);
+									$args .= "&amp;dst=" . rawurlencode($sa['dst']);
+									$args .= "&amp;proto=" . rawurlencode($sa['proto']);
+									$args .= "&amp;spi=" . rawurlencode("0x" . $sa['spi']);
 								?>
-								<a href="diag_ipsec_sad.php?act=del&<?=$args;?>" onclick="return confirm('<?=gettext("Do you really want to delete this security association?"); ?>')">
-									<img src="/themes/<?= $g['theme']; ?>/images/icons/icon_x.gif" width="17" height="17" border="0">
+								<a href="diag_ipsec_sad.php?act=del&amp;<?=$args;?>" onclick="return confirm('<?=gettext("Do you really want to delete this security association?"); ?>')">
+									<img src="/themes/<?= $g['theme']; ?>/images/icons/icon_x.gif" width="17" height="17" border="0" alt="delete" />
 								</a>
 							</td>
 						</tr>
@@ -129,12 +129,10 @@ if ($_GET['act'] == "del") {
 		</tr>
 	</table>
 
-<p/>
-
-<span class="vexpl">
+<p class="vexpl">
 <span class="red"><strong><?=gettext("Note:");?><br /></strong></span>
 <?=gettext("You can configure your IPsec");?> <a href="vpn_ipsec.php"><?=gettext("here.");?></a>
-</span>
+</p>
 
 <?php include("fend.inc"); ?>
 </body>

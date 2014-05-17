@@ -333,13 +333,12 @@ EOD;
 
 					$localid = ipsec_idinfo_to_cidr($ph2ent['localid'], true, $ph2ent['mode']);
 
-					if ($net_list)
-						$net_list .= ", ";
+					if (!empty($net_list))
+						$net_list .= ",";
 					$net_list .= $localid;
 				}
 
 				if (!empty($net_list)) {
-					$strongswan .= "\t\tsubnet = {$net_list}\n";
 					$strongswan .= "\t\tsplit-include = {$net_list}\n";
 					unset($net_list);
 				}

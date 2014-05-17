@@ -90,12 +90,13 @@ $ScriptName = $REQUEST['SCRIPT_NAME'];
 $arrDT   = localtime();
 $intYear = $arrDT[5] + 1900;
 
+$closehead = false;
 $pgtitle = array(gettext("Diagnostics"),gettext("Execute command"));
 include("head.inc");
 ?>
 
 <script type="text/javascript">
-<!--
+//<![CDATA[
 
    // Create recall buffer array (of encoded strings).
 
@@ -182,10 +183,10 @@ if (isBlank( $_POST['txtRecallBuffer'] )) {
 
       return true;
    }
-//-->
+//]]>
 </script>
-<style>
-<!--
+<style type="text/css">
+/*<![CDATA[*/
 
 input {
    font-family: courier new, courier;
@@ -215,7 +216,7 @@ pre {
    font-size: 11px;
 }
 
--->
+/*]]>*/
 </style>
 </head>
 <body link="#0000CC" vlink="#0000CC" alink="#0000CC">
@@ -235,7 +236,7 @@ if (!isBlank($_POST['txtCommand'])) {
    $ph = popen($_POST['txtCommand'] . ' 2>&1', "r" );
    while ($line = fgets($ph)) echo htmlspecialchars($line);
    pclose($ph);
-   puts("</pre>");
+   puts("&nbsp;</pre>");
 }
 
 
@@ -244,28 +245,28 @@ if (!isBlank($_POST['txtPHPCommand'])) {
    require_once("config.inc");
    require_once("functions.inc");
    echo eval($_POST['txtPHPCommand']);
-   puts("</pre>");
+   puts("&nbsp;</pre>");
 }
 
 ?>
 <div id="niftyOutter">
-<form action="exec.php" method="post" enctype="multipart/form-data" name="frmExecPlus" onSubmit="return frmExecPlus_onSubmit( this );">
-  <table>
+<form action="exec.php" method="post" enctype="multipart/form-data" name="frmExecPlus" onsubmit="return frmExecPlus_onSubmit( this );">
+  <table summary="exec">
 	<tr>
 	  <td colspan="2" valign="top" class="vnsepcell"><?=gettext("Execute Shell command"); ?></td>
 	</tr>  
     <tr>
       <td class="label" align="right"><?=gettext("Command"); ?>:</td>
-      <td class="type"><input id="txtCommand" name="txtCommand" type="text" class="formfld unknown" size="80" value="<?=htmlspecialchars($_POST['txtCommand']);?>"></td>
+      <td class="type"><input id="txtCommand" name="txtCommand" type="text" class="formfld unknown" size="80" value="<?=htmlspecialchars($_POST['txtCommand']);?>" /></td>
     </tr>
     <tr>
       <td valign="top">&nbsp;&nbsp;&nbsp;</td>
       <td valign="top" class="label">
-         <input type="hidden" name="txtRecallBuffer" value="<?=htmlspecialchars($_POST['txtRecallBuffer']) ?>">
-         <input type="button" class="button" name="btnRecallPrev" value="<" onClick="btnRecall_onClick( this.form, -1 );">
-         <input type="submit" class="button" value="<?=gettext("Execute"); ?>">
-         <input type="button" class="button" name="btnRecallNext" value=">" onClick="btnRecall_onClick( this.form,  1 );">
-         <input type="button"  class="button" value="<?=gettext("Clear"); ?>" onClick="return Reset_onClick( this.form );">
+         <input type="hidden" name="txtRecallBuffer" value="<?=htmlspecialchars($_POST['txtRecallBuffer']) ?>" />
+         <input type="button" class="button" name="btnRecallPrev" value="<" onclick="btnRecall_onClick( this.form, -1 );" />
+         <input type="submit" class="button" value="<?=gettext("Execute"); ?>" />
+         <input type="button" class="button" name="btnRecallNext" value=">" onclick="btnRecall_onClick( this.form,  1 );" />
+         <input type="button"  class="button" value="<?=gettext("Clear"); ?>" onclick="return Reset_onClick( this.form );" />
       </td>
     </tr>
 	<tr>
@@ -277,12 +278,12 @@ if (!isBlank($_POST['txtPHPCommand'])) {
     <tr>
       <td align="right"><?=gettext("File to download"); ?>:</td>
       <td>
-        <input name="dlPath" type="text" class="formfld file" id="dlPath" size="50">
+        <input name="dlPath" type="text" class="formfld file" id="dlPath" size="50" />
 	</td></tr>
     <tr>
       <td valign="top">&nbsp;&nbsp;&nbsp;</td>
       <td valign="top" class="label">	
-        <input name="submit" type="submit"  class="button" id="download" value="<?=gettext("Download"); ?>">
+        <input name="submit" type="submit"  class="button" id="download" value="<?=gettext("Download"); ?>" />
         </td>
     </tr>
 	<tr>
@@ -294,12 +295,12 @@ if (!isBlank($_POST['txtPHPCommand'])) {
     <tr>
       <td align="right"><?=gettext("File to upload"); ?>:</td>
       <td valign="top" class="label">
-	<input name="ulfile" type="file" class="formfld file" id="ulfile">
+	<input name="ulfile" type="file" class="formfld file" id="ulfile" />
 	</td></tr>
     <tr>
       <td valign="top">&nbsp;&nbsp;&nbsp;</td>
       <td valign="top" class="label">	
-        <input name="submit" type="submit"  class="button" id="upload" value="<?=gettext("Upload"); ?>"></td>
+        <input name="submit" type="submit"  class="button" id="upload" value="<?=gettext("Upload"); ?>" /></td>
     </tr>
 	<tr>
 	  <td colspan="2" valign="top" height="16"></td>
@@ -309,23 +310,26 @@ if (!isBlank($_POST['txtPHPCommand'])) {
 	</tr>
 	<tr>
 		<td align="right"><?=gettext("Command"); ?>:</td>
-		<td class="type"><textarea id="txtPHPCommand" name="txtPHPCommand" type="text" rows="9" cols="80"><?=htmlspecialchars($_POST['txtPHPCommand']);?></textarea></td>
+		<td class="type"><textarea id="txtPHPCommand" name="txtPHPCommand" rows="9" cols="80"><?=htmlspecialchars($_POST['txtPHPCommand']);?></textarea></td>
 	</tr>
     <tr>
       <td valign="top">&nbsp;&nbsp;&nbsp;</td>
       <td valign="top" class="label">
-         <input type="submit" class="button" value="<?=gettext("Execute"); ?>">
+         <input type="submit" class="button" value="<?=gettext("Execute"); ?>" />
 	 <p>
 	 <strong><?=gettext("Example"); ?>:</strong>   interfaces_carp_setup();
+	 </p>
       </td>
     </tr>
     
   </table>
+</form>
 </div>
 <?php include("fend.inc"); ?>
-</form>
-<script language="Javascript">
+<script type="text/javascript">
+//<![CDATA[
 document.forms[0].txtCommand.focus();
+//]]>
 </script>
 </body>
 </html>

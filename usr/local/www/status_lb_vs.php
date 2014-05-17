@@ -137,7 +137,8 @@ include("head.inc");
 		<?php $i++; endforeach; ?>
              </table>
 	   </div>
-	</table>
+</td></tr>
+</table>
 
 <?php include("fend.inc"); ?>
 </body>

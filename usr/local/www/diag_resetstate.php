@@ -70,7 +70,7 @@ include("head.inc");
 <?php if ($input_errors) print_input_errors($input_errors); ?>
 <?php if ($savemsg) print_info_box($savemsg); ?>
         <form action="diag_resetstate.php" method="post" name="iform" id="iform">
-	<table width="100%" border="0" cellpadding="0" cellspacing="0">
+	<table width="100%" border="0" cellpadding="0" cellspacing="0" summary="reset states">
 	<tr><td>
 	<?php
 		$tab_array = array();
@@ -81,13 +81,13 @@ include("head.inc");
 		display_top_tabs($tab_array);
 	?>
 	</td></tr>
-	<tr><td class="tabcont">	    
+	<tr><td class="tabcont">
 	    
-              <table width="100%" border="0" cellpadding="6" cellspacing="0">
+              <table width="100%" border="0" cellpadding="6" cellspacing="0" summary="main area">
                 <tr>
                   <td width="22%" valign="top" class="vtable">&nbsp;</td>
                   <td width="78%" class="vtable"> <p>
-                      <input name="statetable" type="checkbox" id="statetable" value="yes" checked>
+                      <input name="statetable" type="checkbox" id="statetable" value="yes" checked="checked" />
                       <strong><?= gettext("Firewall state table"); ?></strong><br />
                       <span class="vexpl"><br />
                       <?=gettext("Resetting the state tables will remove all entries from " .
@@ -109,7 +109,7 @@ include("head.inc");
 		<tr>
 			<td width="22%" valign="top" class="vtable">&nbsp;</td>
 			<td width="78%" class="vtable"><p>
-			<input name="sourcetracking" type="checkbox" id="sourcetracking" value="yes" checked>
+			<input name="sourcetracking" type="checkbox" id="sourcetracking" value="yes" checked="checked" />
 			<strong><?= gettext("Firewall Source Tracking"); ?></strong><br />
 			<span class="vexpl"><br />
 			<?=gettext("Resetting the source tracking table will remove all source/destination associations. " .
@@ -124,7 +124,7 @@ include("head.inc");
                 <tr>
                   <td width="22%" valign="top">&nbsp;</td>
                   <td width="78%">
-                    <input name="Submit" type="submit" class="formbtn" value="<?=gettext("Reset"); ?>">
+                    <input name="Submit" type="submit" class="formbtn" value="<?=gettext("Reset"); ?>" />
                   </td>
                 </tr>
               </table>

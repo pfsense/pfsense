@@ -74,6 +74,7 @@ include("head.inc");
 <form action="diag_dump_states.php" method="get" name="iform">
 
 <script type="text/javascript">
+//<![CDATA[
 	function removeState(srcip, dstip) {
 		var busy = function(index,icon) {
 			jQuery(icon).bind("onclick","");
@@ -101,9 +102,10 @@ include("head.inc");
 			function(index,row) { jQuery(row).fadeOut(1000); }
 		);
 	}
+//]]>
 </script>
 
-<table width="100%" border="0" cellpadding="0" cellspacing="0">
+<table width="100%" border="0" cellpadding="0" cellspacing="0" summary="tabcon">
 	<tr>
 		<td>
 		<?php
@@ -126,11 +128,11 @@ include("head.inc");
 	$current_statecount=`pfctl -si | grep "current entries" | awk '{ print $3 }'`;
 ?>
 
-<table class="tabcont" width="100%" border="0" cellspacing="0" cellpadding="0">
+<table class="tabcont" width="100%" border="0" cellspacing="0" cellpadding="0" summary="states">
 	<tr>
 		<td>
 			<form action="<?=$_SERVER['SCRIPT_NAME'];?>" method="get">
-			<table class="tabcont" width="100%" border="0" cellspacing="0" cellpadding="0">
+			<table class="tabcont" width="100%" border="0" cellspacing="0" cellpadding="0" summary="filter">
 				<tr>
 					<td>
 						<?=gettext("Current total state count");?>: <?= $current_statecount ?>
@@ -150,7 +152,7 @@ include("head.inc");
 	</tr>
 	<tr>
 		<td>
-			<table class="tabcont sortable" width="100%" border="0" cellspacing="0" cellpadding="0">
+			<table class="tabcont sortable" width="100%" border="0" cellspacing="0" cellpadding="0" summary="results">
 				<thead>
 				<tr>
 					<th class="listhdrr" width="10%"><?=gettext("Proto");?></th>
@@ -183,7 +185,7 @@ while ($line = chop(fgets($fd))) {
 	$dstip = trim($parts[0]);
 
 ?>
-	<tr valign="top" name="r:<?= $srcip ?>:<?= $dstip ?>">
+	<tr valign="top" id="r:<?= $srcip ?>:<?= $dstip ?>">
 			<td class="listlr"><?= $proto ?></td>
 			<td class="listr"><?= $info ?></td>
 			<td class="listr"><?= $state ?></td>
@@ -227,6 +229,7 @@ pclose($fd);
 	</td>
   </tr>
 </table>
+</form>
 
 <?php require("fend.inc"); ?>
 </body>

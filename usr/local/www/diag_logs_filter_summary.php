@@ -142,7 +142,7 @@ function pie_block($summary, $stat, $num) {
 	print "</script>\n";
 	print "<table cellpadding=\"3\" cellspacing=\"0\" border=\"0\" summary=\"pie chart\">";
 	print "<tr><th><font size=\"+1\">{$fields[$stat]}</font></th></tr>";
-	print "<tr><td><div id=\"piechart{$stat}\" style=\"width:450px;height:300px\"></div>";
+	print "<tr><td><div id=\"piechart{$stat}\" style=\"width:450px;height:300px\"></div></td></tr>";
 	print "</table>\n";
 }
 

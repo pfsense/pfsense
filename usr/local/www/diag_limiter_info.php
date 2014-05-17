@@ -62,8 +62,9 @@ include("head.inc");
 
 ?>
 <body link="#0000CC" vlink="#0000CC" alink="#0000CC">
-
+<?php include("fbegin.inc"); ?>
 <script type="text/javascript">
+//<![CDATA[
 	function getlimiteractivity() {
 		var url = "/diag_limiter_info.php";
 		var pars = 'getactivity=yes';
@@ -76,44 +77,42 @@ include("head.inc");
 			});
 	}
 	function activitycallback(transport) {
-		jQuery('#limiteractivitydiv').html('<font face="Courier"><font size="2"><b><pre style="text-align:left;">' + transport.responseText  + '</pre></font>');
-		setTimeout('getlimiteractivity()', 2000);		
+		jQuery('#limiteractivitydiv').html('<font face="Courier" size="2"><pre style="text-align:left;">' + transport.responseText  + '<\/pre><\/font>');
+		setTimeout('getlimiteractivity()', 2000);
 	}
-	setTimeout('getlimiteractivity()', 5000);	
+	setTimeout('getlimiteractivity()', 5000);
+//]]>
 </script>
-<div id='maincontent'>
+<div id="maincontent">
 <?php
-	include("fbegin.inc"); 
 	if($savemsg) {
-		echo "<div id='savemsg'>";
+		echo "<div id=\"savemsg\">";
 		print_info_box($savemsg);
 		echo "</div>";	
 	}
 	if ($input_errors)
 		print_input_errors($input_errors);
 ?>
-<table width="100%" border="0" cellpadding="0" cellspacing="0">  
+<table width="100%" border="0" cellpadding="0" cellspacing="0" summary="diag limiter info">
   <tr>
     <td>
-	<table id="backuptable" class="tabcont" align="center" width="100%" border="0" cellpadding="6" cellspacing="0">
+	<table id="backuptable" class="tabcont" align="center" width="100%" border="0" cellpadding="6" cellspacing="0" summary="tabcont">
 		<tr>
-			<td>
-				<center>
-				<table>
+			<td align="center">
+				<table summary="results">
 					<tr><td>
-						<div name='limiteractivitydiv' id='limiteractivitydiv'>
-							<b><?=gettext("Gathering Limiter information, please wait...");?>
+						<div id="limiteractivitydiv">
+							<?=gettext("Gathering Limiter information, please wait...");?>
 						</div>
 					</td></tr>
 				</table>
 			</td>
 		</tr>
 	</table>
-	</div>
     </td>
   </tr>
 </table>
-</form>
+</div>
 <?php include("fend.inc"); ?>
 </body>
 </html>

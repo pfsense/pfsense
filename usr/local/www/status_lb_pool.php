@@ -220,7 +220,8 @@ if ($_POST) {
 		</tr>
 		</table>
 	</div>
-	</table>
+</td></tr>
+</table>
 </form>
 <?php include("fend.inc"); ?>
 </body>

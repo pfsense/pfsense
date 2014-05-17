@@ -136,7 +136,7 @@ function build_port_info($portarr, $proto) {
 function print_summary_table($label, $iparr, $sort = TRUE) { ?>
 
 <h3><?php echo $label; ?></h3>
-<table class="tabcont" width="100%" border="0" cellspacing="0" cellpadding="0">
+<table class="tabcont" width="100%" border="0" cellspacing="0" cellpadding="0" summary="states summary">
 	<tr>
 		<td class="listhdrr"><?=gettext("IP");?></td>
 		<td class="listhdrr"># <?=gettext("States");?></td>
@@ -149,21 +149,21 @@ function print_summary_table($label, $iparr, $sort = TRUE) { ?>
 		uksort($iparr, "sort_by_ip");
 	foreach($iparr as $ip => $ipinfo) { ?>
 	<tr>
-		<td class='vncell'><?php echo $ip; ?></td>
-		<td class='vncell'><?php echo $ipinfo['seen']; ?></td>
-		<td class='vncell'>&nbsp;</td>
-		<td class='vncell'>&nbsp;</td>
-		<td class='vncell'>&nbsp;</td>
-		<td class='vncell'>&nbsp;</td>
+		<td class="vncell"><?php echo $ip; ?></td>
+		<td class="vncell"><?php echo $ipinfo['seen']; ?></td>
+		<td class="vncell">&nbsp;</td>
+		<td class="vncell">&nbsp;</td>
+		<td class="vncell">&nbsp;</td>
+		<td class="vncell">&nbsp;</td>
 	</tr>
 	<?php foreach($ipinfo['protos'] as $proto => $protoinfo) { ?>
 	<tr>
-		<td class='list'>&nbsp;</td>
-		<td class='list'>&nbsp;</td>
-		<td class='listlr'><?php echo $proto; ?></td>
-		<td class='listr' align="center"><?php echo $protoinfo['seen']; ?></td>
-		<td class='listr' align="center"><span title="<?php echo build_port_info($protoinfo['srcports'], $proto); ?>"><?php echo count($protoinfo['srcports']); ?></span></td>
-		<td class='listr' align="center"><span title="<?php echo build_port_info($protoinfo['dstports'], $proto); ?>"><?php echo count($protoinfo['dstports']); ?></span></td>
+		<td class="list">&nbsp;</td>
+		<td class="list">&nbsp;</td>
+		<td class="listlr"><?php echo $proto; ?></td>
+		<td class="listr" align="center"><?php echo $protoinfo['seen']; ?></td>
+		<td class="listr" align="center"><span title="<?php echo build_port_info($protoinfo['srcports'], $proto); ?>"><?php echo count($protoinfo['srcports']); ?></span></td>
+		<td class="listr" align="center"><span title="<?php echo build_port_info($protoinfo['dstports'], $proto); ?>"><?php echo count($protoinfo['dstports']); ?></span></td>
 	</tr>
 	<?php } ?>
 <?php } ?>
@@ -176,6 +176,7 @@ function print_summary_table($label, $iparr, $sort = TRUE) { ?>
 $pgtitle = array(gettext("Diagnostics"),gettext("State Table Summary"));
 require_once("guiconfig.inc");
 include("head.inc");
+echo "<body>";
 include("fbegin.inc");
 
 
@@ -186,3 +187,5 @@ print_summary_table(gettext("By IP Pair"), $pairipinfo, FALSE);
 ?>
 
 <?php include("fend.inc"); ?>
+</body>
+</html>

@@ -139,7 +139,7 @@ $mac_man = load_mac_manufacturer_table();
 	</td>
 	<td colspan="3" width="50%"></td>
   </tr>
-  <tr><td colspan="5"><br /></tr>
+  <tr><td colspan="5"><br /></td></tr>
 <?php if (!empty($cpzone)): ?>
   <tr>
 	<td colspan="5" valign="top" class="listtopic"><?=gettext("Captiveportal status");?></td>

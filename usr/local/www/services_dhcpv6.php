@@ -543,11 +543,11 @@ display_top_tabs($tab_array);
 			"%s " .
 			"interface"),htmlspecialchars($iflist[$if]));?></strong></td>
 			</tr>
-			<tr>
 			<?php
 			/* the PPPoE Server could well have no IPv6 address and operate fine with just link-local, just hide these */
 			if(is_ipaddrv6($ifcfgip)) {
 			?>
+			<tr>
 			<td width="22%" valign="top" class="vncellreq"><?=gettext("Subnet");?></td>
 			<td width="78%" class="vtable">
 				<?=gen_subnetv6($ifcfgip, $ifcfgsn);?>
@@ -757,7 +757,7 @@ display_top_tabs($tab_array);
 				<div id="shownetboot" style="display:none">
 					<input style="vertical-align:middle" type="checkbox" value="yes" name="netboot" id="netboot" <?php if($pconfig['netboot']) echo " checked=\"checked\""; ?> />&nbsp;
 					<b><?=gettext("Enables network booting.");?></b>
-					<p>
+					<br/>
 					<?=gettext("Enter the Bootfile URL");?>
 					<input name="bootfile_url" type="text" class="formfld unknown" id="bootfile_url" size="28" value="<?=htmlspecialchars($pconfig['bootfile_url']);?>" />
 				</div>

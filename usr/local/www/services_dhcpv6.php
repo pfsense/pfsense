@@ -878,7 +878,7 @@ display_top_tabs($tab_array);
 		<td class="listbg" ondblclick="document.location='services_dhcpv6_edit.php?if=<?=$if;?>&amp;id=<?=$i;?>';">
 			<?=htmlspecialchars($mapent['descr']);?>&nbsp;
 		</td>
-		<td valign="middle" nowrap="nowrap" class="list">
+		<td valign="middle" class="list nowrap">
 			<table border="0" cellspacing="0" cellpadding="1" summary="icons">
 			<tr>
 			<td valign="middle"><a href="services_dhcpv6_edit.php?if=<?=$if;?>&amp;id=<?=$i;?>"><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_e.gif" width="17" height="17" border="0" alt="edit" /></a></td>

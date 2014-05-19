@@ -892,7 +892,9 @@ if($pkg['step'][$stepid]['stepafterformdisplay'] <> "") {
 if($pkg['step'][$stepid]['javascriptafterformdisplay'] <> "") {
 	// handle after form display event.
 	echo "\n<script type=\"text/javascript\">\n";
+	echo "//<![CDATA[\n";
 	echo $pkg['step'][$stepid]['javascriptafterformdisplay'] . "\n";
+	echo "//]]>\n";
 	echo "</script>\n\n";
 }
 

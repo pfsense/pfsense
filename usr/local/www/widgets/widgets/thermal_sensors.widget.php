@@ -272,8 +272,8 @@ function getBoolValueFromConfig(&$configArray, $valueKey, $defaultValue) {
 
 <!-- needed to display the widget settings menu -->
 <script type="text/javascript">
-
+//<![CDATA[
 	textlink = jQuery("#thermal_sensors-configure");
 	textlink.css({display: "inline"});
-
+//]]>
 </script>

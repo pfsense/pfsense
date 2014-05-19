@@ -139,7 +139,7 @@ include("head.inc");
 					$logent = preg_split("/\s+/", $logent, 6);
 					echo "<tr valign=\"top\">\n";
 					$entry_date_time = htmlspecialchars(join(" ", array_slice($logent, 0, 3)));
-					echo "<td class=\"listlr\" nowrap>" . $entry_date_time  . "</td>\n";
+					echo "<td class=\"listlr nowrap\">" . $entry_date_time  . "</td>\n";
 					echo "<td class=\"listr\">" . $logent[4] . " " . $logent[5] . "</td>\n";
 					echo "</tr>\n";
 				}

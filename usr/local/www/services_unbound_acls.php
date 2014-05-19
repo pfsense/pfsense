@@ -354,7 +354,7 @@ if (is_subsystem_dirty("unbound"))
 							<td class="listbg">
 								<?=htmlspecialchars($acl['description']);?>
 							</td>
-							<td valign="middle" nowrap class="list">
+							<td valign="middle" class="list nowrap">
 								<a href="services_unbound_acls.php?act=edit&amp;id=<?=$i;?>">
 									<img src="./themes/<?=$g['theme'];?>/images/icons/icon_e.gif" title="<?=gettext("edit access list"); ?>" width="17" height="17" border="0" alt="edit" />
 								</a>

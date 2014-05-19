@@ -298,7 +298,7 @@ EOD;
 		if (is_array($a_client) && isset($a_client['enable'])) {
 			$strongswan .= "\t\tattr {\n";
 			if ($a_client['pool_address'] && $a_client['pool_netbits'])
-				$strongswan .= "\t\tsubnet = {$a_client['pool_address']}/{$a_client['pool_netmask']}\n";
+				$strongswan .= "\t\tsubnet = {$a_client['pool_address']}/{$a_client['pool_netbits']}\n";
 
 			$cfgservers = array();
 			if (!empty($a_client['dns_server1']))

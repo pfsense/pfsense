@@ -487,7 +487,7 @@ function enable_change(enable_change) {
 								<td class="listr">
 									<?=htmlspecialchars($rollent['descr']); ?>&nbsp;
 								</td>
-								<td valign="middle" nowrap class="list"> 
+								<td valign="middle" class="list nowrap"> 
 									<div id='addeditdelete<?=$i?>'>
 										<?php if ($pconfig['enable']): ?> 
 											<a href="services_captiveportal_vouchers_edit.php?zone=<?=$cpzone;?>&amp;id=<?=$i; ?>"><img src="/themes/<?=$g['theme']; ?>/images/icons/icon_e.gif" title="<?=gettext("edit voucher"); ?>" width="17" height="17" border="0" alt="<?=gettext("edit voucher"); ?>" /></a>

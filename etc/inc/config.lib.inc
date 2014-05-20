@@ -488,17 +488,6 @@ function safe_write_file($file, $content, $force_binary) {
 function write_config($desc="Unknown", $backup = true) {
 	global $config, $g;
 
-	/* TODO: Not sure what this was added for; commenting out
-	 *       for now, since it was preventing config saving. */
-	// $config = parse_config(true, false, false);
-	
-	/* Comment this check out for now. There aren't any current issues that
-	 *   make this problematic, and it makes users think there is a problem
-	 *   when one doesn't really exist.
-	if($g['booting'])
-		log_error("WARNING! Configuration written on bootup.  This can cause stray openvpn and load balancing items in config.xml");
-	*/
-
 	if (!empty($_SERVER['REMOTE_ADDR'])) {
 		if (!session_id())
 			@session_start();

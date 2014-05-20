@@ -290,7 +290,7 @@ charon {
 
 EOD;
 
-		if (is_array($a_client) && isset($a_client['enable']) && !empty($a_client['net_list']))
+		if (is_array($a_client) && isset($a_client['enable']) && isset($a_client['net_list']))
 			$strongswan .= "\tcisco_unity = yes\n";
 
 		$strongswan .= "\tplugins {\n";

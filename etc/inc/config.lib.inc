@@ -274,6 +274,8 @@ function parse_config_bootup() {
 	}
 	unlock($lockkey);
 
+	$config = parse_config(true);
+
 	if ((float)$config['version'] > (float)$g['latest_config']) {
 		echo <<<EOD
 

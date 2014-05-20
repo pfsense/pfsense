@@ -256,6 +256,7 @@ function parse_config_bootup() {
 			}
 		} else {
 			unlock($lockkey);
+			log_error(gettext("Could not find a usable configuration file! Exiting...."));
 			exit(0);
 		}
 	}

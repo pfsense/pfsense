@@ -1241,6 +1241,7 @@ function interface_bring_down($interface = "wan", $destroy = false, $ifacecfg = 
 		unlink_if_exists("{$g['varetc_path']}/dhclient_{$interface}.conf");
 		if(does_interface_exist("$realif")) {
 			mwexec("/sbin/ifconfig " . escapeshellarg($realif) . " delete", true);
+			interface_ipalias_cleanup($interface);
 			if ($destroy == true)
 				pfSense_interface_flags($realif, -IFF_UP);
 			mwexec("/usr/sbin/arp -d -i " . escapeshellarg($realif) . " -a");
@@ -1249,6 +1250,7 @@ function interface_bring_down($interface = "wan", $destroy = false, $ifacecfg = 
 	default:
 		if(does_interface_exist("$realif")) {
 			mwexec("/sbin/ifconfig " . escapeshellarg($realif) . " delete", true);
+			interface_ipalias_cleanup($interface);
 			if ($destroy == true)
 				pfSense_interface_flags($realif, -IFF_UP);
 			mwexec("/usr/sbin/arp -d -i " . escapeshellarg($realif) . " -a");
@@ -1269,6 +1271,7 @@ function interface_bring_down($interface = "wan", $destroy = false, $ifacecfg = 
 			$ip6 = find_interface_ipv6($realifv6);
 			if (is_ipaddrv6($ip6) && $ip6 != "::")
 				mwexec("/sbin/ifconfig " . escapeshellarg($realifv6) . " inet6 {$ip6} delete", true);
+			interface_ipalias_cleanup($interface, "inet6");
 			if ($destroy == true)
 				pfSense_interface_flags($realif, -IFF_UP);
 			mwexec("/usr/sbin/arp -d -i " . escapeshellarg($realif) . " -a");
@@ -1282,6 +1285,7 @@ function interface_bring_down($interface = "wan", $destroy = false, $ifacecfg = 
 			$ip6 = get_interface_ipv6($interface);
 			if (is_ipaddrv6($ip6))
 				mwexec("/sbin/ifconfig " . escapeshellarg($realif) . " inet6 {$ip6} delete", true);
+			interface_ipalias_cleanup($interface, "inet6");
 			if ($destroy == true)
 				pfSense_interface_flags($realif, -IFF_UP);
 		}
@@ -1294,6 +1298,7 @@ function interface_bring_down($interface = "wan", $destroy = false, $ifacecfg = 
 				mwexec("/sbin/ifconfig " . escapeshellarg($realif) . " inet6 {$ip6} delete", true);
 			if (!empty($ifcfg['ipaddrv6']) && is_ipaddrv6($ifcfg['ipaddrv6']))
 				mwexec("/sbin/ifconfig " . escapeshellarg($realif) . " inet6 {$ifcfg['ipaddrv6']} delete", true);
+			interface_ipalias_cleanup($interface, "inet6");
 			if ($destroy == true)
 				pfSense_interface_flags($realif, -IFF_UP);
 			mwexec("/usr/sbin/arp -d -i " . escapeshellarg($realif) . " -a");
@@ -2093,13 +2098,22 @@ function interfaces_vips_configure($interface = "") {
 }
 
 function interface_ipalias_configure(&$vip) {
-	if ($vip['mode'] == "ipalias") {
-		$if = get_real_interface($vip['interface']);
-		$af = "inet";
-		if(is_ipaddrv6($vip['subnet']))
-			$af = "inet6";
-		mwexec("/sbin/ifconfig " . escapeshellarg($if) ." {$af} ". escapeshellarg($vip['subnet']) ."/" . escapeshellarg($vip['subnet_bits']) . " alias");
-	}
+	global $config;
+
+	if ($vip['mode'] != "ipalias")
+		return;
+
+	if (!isset($config['interfaces'][$vip['interface']]))
+		return;
+
+	if (!isset($config['interfaces'][$vip['interface']]['enable']))
+		return;
+
+	$if = get_real_interface($vip['interface']);
+	$af = "inet";
+	if(is_ipaddrv6($vip['subnet']))
+		$af = "inet6";
+	mwexec("/sbin/ifconfig " . escapeshellarg($if) ." {$af} ". escapeshellarg($vip['subnet']) ."/" . escapeshellarg($vip['subnet_bits']) . " alias");
 }
 
 function interface_reload_carps($cif) {

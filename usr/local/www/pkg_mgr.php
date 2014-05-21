@@ -202,7 +202,11 @@ include("head.inc");
 
 					/* get history/changelog git dir */
 					$commit_dir=explode("/",$index['config_file']);
-					$changeloglink ="https://github.com/pfsense/pfsense-packages/commits/master/config/".$commit_dir[(count($commit_dir)-2)];
+					$changeloglink = "https://github.com/pfsense/pfsense-packages/commits/master/config/";
+					if ($commit_dir[(count($commit_dir)-2)] == "config")
+						$changeloglink .= $commit_dir[(count($commit_dir)-1)];
+					else
+						$changeloglink .= $commit_dir[(count($commit_dir)-2)];
 
 					/* Check package info link */
 					if($index['pkginfolink']) {

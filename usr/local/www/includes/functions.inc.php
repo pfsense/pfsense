@@ -191,9 +191,29 @@ function get_temp() {
 	return $temp_out;
 }
 
-function disk_usage() {
+/* Get mounted filesystems and usage. Do not display entries for virtual filesystems (e.g. devfs, nullfs, unionfs) */
+function get_mounted_filesystems() {
+	$mout = "";
+	$filesystems = array();
+	exec("/bin/df -Tht ufs,zfs,cd9660 | /usr/bin/awk '{print $1, $2, $3, $6, $7;}'", $mout);
+
+	/* Get rid of the header */
+	array_shift($mout);
+	foreach ($mout as $fs) {
+		$f = array();
+		list($f['device'], $f['type'], $f['total_size'], $f['percent_used'], $f['mountpoint']) = explode(' ', $fs);
+
+		/* We dont' want the trailing % sign. */
+		$f['percent_used'] = trim($f['percent_used'], '%');
+
+		$filesystems[] = $f;
+	}
+	return $filesystems;
+}
+
+function disk_usage($slice = '/') {
 	$dfout = "";
-	exec("/bin/df -h | /usr/bin/grep -w '/' | /usr/bin/awk '{ print $5 }' | /usr/bin/cut -d '%' -f 1", $dfout);
+	exec("/bin/df -h {$slice} | /usr/bin/tail -n 1 | /usr/bin/awk '{ print $5 }' | /usr/bin/cut -d '%' -f 1", $dfout);
 	$diskusage = trim($dfout[0]);
 
 	return $diskusage;

@@ -484,7 +484,8 @@ function get_notices_xmlrpc($raw_params) {
 		xmlrpc_authfail();
 		return $xmlrpc_g['return']['authfail'];
 	}
-	require("notices.inc");
+	if(!function_exists("get_notices"))
+		require("notices.inc");
 	if(!$params) {
 		$toreturn = get_notices();
 	} else {

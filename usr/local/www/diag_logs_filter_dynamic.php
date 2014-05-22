@@ -127,16 +127,16 @@ include("head.inc");
 			<thead>
 			<tr>
 				<td colspan="6" class="listtopic">
-				<?php printf(gettext("Last %s records"),$nentries);?>;   <?=gettext("Pause:");?><input style="vertical-align:middle;" type="checkbox" onClick="javascript:toggle_pause();" />
+				<?php printf(gettext("Last %s records"),$nentries);?>;   <?=gettext("Pause:");?><input style="vertical-align:middle;" type="checkbox" onclick="javascript:toggle_pause();" />
 				</td>
 			</tr>
 			<tr>
-				<td width="10%" class="listhdrr"><?=gettext("Act");?></ td>
-				<td width="10%" class="listhdrr"><?=gettext("Time");?></ td>
-				<td width="15%" class="listhdrr"><?=gettext("If");?></ td>
-				<td width="25%" class="listhdrr"><?=gettext("Source");?></ td>
-				<td width="25%" class="listhdrr"><?=gettext("Destination");?></ td>
-				<td width="15%" class="listhdrr"><?=gettext("Proto");?></ td>
+				<td width="10%" class="listhdrr"><?=gettext("Act");?></td>
+				<td width="10%" class="listhdrr"><?=gettext("Time");?></td>
+				<td width="15%" class="listhdrr"><?=gettext("If");?></td>
+				<td width="25%" class="listhdrr"><?=gettext("Source");?></td>
+				<td width="25%" class="listhdrr"><?=gettext("Destination");?></td>
+				<td width="15%" class="listhdrr"><?=gettext("Proto");?></td>
 			</tr>
 			</thead>
 			<tbody id="filter-log-entries">
@@ -162,6 +162,7 @@ include("head.inc");
 				<td class="listMRr nowrap"><?php echo htmlspecialchars($filterent['proto']);?></td>
 			</tr>
 			<?php endforeach; ?>
+			<tr style="display:none;"><td></td></tr>
 			</tbody>
 		</table>
 	</div>

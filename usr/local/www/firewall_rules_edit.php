@@ -887,7 +887,9 @@ include("head.inc");
 						echo "<input name='interface' id='interface' type='hidden' value='{$pconfig['interface']}' />";
 				?>
 				<script type="text/javascript">
+				//<![CDATA[
 				editenabled = 0;
+				//]]>
 				</script>
 			</td>
 		</tr>

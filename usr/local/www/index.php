@@ -668,8 +668,10 @@ pfSense_handle_custom_code("/usr/local/pkg/dashboard/pre_dashboard");
 				}
 				else { ?>
 					<script type="text/javascript">
+					//<![CDATA[
 					var colpos = "<?=$colpos[$widgetcounter]?>";
-					createColumn(colpos);					
+					createColumn(colpos);
+					//]]>
 					</script>
 				<?php }
 			}		

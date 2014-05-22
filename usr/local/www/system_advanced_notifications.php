@@ -349,6 +349,7 @@ include("head.inc");
 		</tr>
 	</table>
 <script type="text/javascript">
+//<![CDATA[
 	jQuery(document).ready(function() {
 		if (jQuery('#smtpssl').is(':checked')) {
 			jQuery('#smtptls').prop('disabled', true);
@@ -362,6 +363,7 @@ include("head.inc");
 	jQuery('#smtptls').change( function() {
 		jQuery('#smtpssl').prop('disabled', this.checked);
 	});
+//]]>
 </script>
 <?php include("fend.inc"); ?>
 </body>

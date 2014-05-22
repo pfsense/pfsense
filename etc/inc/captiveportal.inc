@@ -274,7 +274,7 @@ function captiveportal_configure_zone($cpcfg) {
 <b>Redirecting to <a href="<?=\$my_redirurl;?>"><?=\$my_redirurl;?></a>...</b>
 </span>
 <script type="text/javascript">
-<!--
+//<![CDATA[
 LogoutWin = window.open('', 'Logout', 'toolbar=0,scrollbars=0,location=0,statusbar=0,menubar=0,resizable=0,width=256,height=64');
 if (LogoutWin) {
 	LogoutWin.document.write('<html>');
@@ -293,7 +293,7 @@ if (LogoutWin) {
 }
 
 document.location.href="<?=\$my_redirurl;?>";
--->
+//]]>
 </script>
 </body>
 </html>

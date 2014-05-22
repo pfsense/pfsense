@@ -114,8 +114,8 @@ include("head.inc");
 <?php include("fbegin.inc"); ?>
 
 <div id="loading">
-	<img src="/themes/<?=$g['theme'];?>/images/misc/loader.gif"><?= gettext("Loading, please wait..."); ?>
-	<p/>&nbsp;
+	<img src="/themes/<?=$g['theme'];?>/images/misc/loader.gif" alt="loader" /><?= gettext("Loading, please wait..."); ?>
+	<p>&nbsp;</p>
 </div>
 
 <?php
@@ -125,10 +125,10 @@ for ($i = 0; $i < ob_get_level(); $i++) { ob_end_flush(); }
 ob_implicit_flush(1);
 
 ?>
-<table width="100%" border="0" cellpadding="0" cellspacing="0">
+<table width="100%" border="0" cellpadding="0" cellspacing="0" summary="diag ndp">
 	<tr>
 		<td>
-			<table class="tabcont sortable" width="100%" border="0" cellpadding="0" cellspacing="0">
+			<table class="tabcont sortable" width="100%" border="0" cellpadding="0" cellspacing="0" summary="tabcont">
 				<tr>
 					<td class="listhdrr"><?= gettext("IPv6 address"); ?></td>
 					<td class="listhdrr"><?= gettext("MAC address"); ?></td>
@@ -170,5 +170,9 @@ ob_implicit_flush(1);
 <?php include("fend.inc"); ?>
 
 <script type="text/javascript">
+//<![CDATA[
 	jQuery('#loading').html('');
+//]]>
 </script>
+</body>
+</html>

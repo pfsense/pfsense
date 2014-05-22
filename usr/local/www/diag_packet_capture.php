@@ -297,7 +297,7 @@ include("fbegin.inc");
 			<td colspan="2" width="83%" class="vtable">
 			<input name="host" class="formfld host" id="host" size="20" value="<?=htmlspecialchars($host);?>" />
 			<br /><?=gettext("This value is either the Source or Destination IP address or subnet in CIDR notation. The packet capture will look for this address in either field.");?>
-			<br /><?=gettext("This value can be a domain name or IP address, or subnet in CIDR notation.");?>
+			<br /><?=gettext("Matching can be negated by preceding the value with \"!\". Multiple IP addresses or CIDR subnets may be specified. Comma (\",\") separated values perform a boolean \"and\". Separating with a pipe (\"|\") performs a boolean \"or\".");?>
 			<br /><?=gettext("If you leave this field blank, all packets on the specified interface will be captured.");?>
 			</td>
 		</tr>

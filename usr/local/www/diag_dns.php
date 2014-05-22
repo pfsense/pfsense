@@ -171,12 +171,12 @@ function display_host_results ($address,$hostname,$dns_speeds) {
 include("head.inc"); ?>
 <body link="#000000" vlink="#000000" alink="#000000">
 <?php include("fbegin.inc"); ?>
-<table width="100%" border="0" cellpadding="0" cellspacing="0">
+<table width="100%" border="0" cellpadding="0" cellspacing="0" summary="diag dns">
         <tr>
                 <td>
 <?php if ($input_errors) print_input_errors($input_errors); ?>
 	<form action="diag_dns.php" method="post" name="iform" id="iform">
-	  <table width="100%" border="0" cellpadding="6" cellspacing="0">
+	  <table width="100%" border="0" cellpadding="6" cellspacing="0" summary="tabcont">
 		<tr>
 			<td colspan="2" valign="top" class="listtopic"> <?=gettext("Resolve DNS hostname or IP");?></td>
 		</tr>
@@ -184,9 +184,9 @@ include("head.inc"); ?>
 		  <td width="22%" valign="top" class="vncellreq"><?=gettext("Hostname or IP");?></td>
 		  <td width="78%" class="vtable">
             <?=$mandfldhtml;?>
-			<table>
+			<table summary="results">
 				<tr><td valign="top">
-			<input name="host" type="text" class="formfld" id="host" size="20" value="<?=htmlspecialchars($host);?>">
+			<input name="host" type="text" class="formfld" id="host" size="20" value="<?=htmlspecialchars($host);?>" />
 			</td>
 			<td>
 			<?php if ($resolved && $type) { ?>
@@ -205,17 +205,16 @@ include("head.inc"); ?>
 				} 
 				if($found > 0) {
 					if($alias_exists) {
-						echo "<br /><font size='-2'>An alias already exists for the hostname " . htmlspecialchars($host) . ".  To overwrite, click <a href='diag_dns.php?host=" . trim(urlencode(htmlspecialchars($host))) . "&createalias=true&override=true'>here</a>.";
+						echo "</font><br /><font size=\"-2\">An alias already exists for the hostname " . htmlspecialchars($host) . ".  To overwrite, click <a href=\"diag_dns.php?host=" . trim(urlencode(htmlspecialchars($host))) . "&amp;createalias=true&amp;override=true\">here</a>." . "</font>";
 					} else { 
 						if(!$createdalias) {
-							echo "<br /><font size='-2'><a href='diag_dns.php?host=" . trim(urlencode(htmlspecialchars($host))) . "&createalias=true'>Create alias</a> out of these entries.";
+							echo "</font><br /><font size=\"-2\"><a href=\"diag_dns.php?host=" . trim(urlencode(htmlspecialchars($host))) . "&amp;createalias=true\">Create alias</a> out of these entries." . "</font>";
 						} else {
-							echo "<br /><font size='-2'>Alias created with name " . htmlspecialchars($newalias['name']);
+							echo "</font><br /><font size=\"-2\">Alias created with name " . htmlspecialchars($newalias['name']) . "</font>";
 						}
 					}
 				}
 ?>
-				<font size="-1">
 
 			<?php } ?>
 			</td></tr></table>
@@ -225,7 +224,7 @@ include("head.inc"); ?>
 		<tr>
 		  <td width="22%" valign="top" class="vncell"><?=gettext("Resolution time per server");?></td>
 		  <td width="78%" class="vtable">
-				<table width="170" border="1" cellpadding="2" style="border-width: 1px 1px 1px 1px; border-collapse: collapse;">
+				<table width="170" border="1" cellpadding="2" style="border-width: 1px 1px 1px 1px; border-collapse: collapse;" summary="resolution time">
 					<tr>
 						<td>
 							<b><?=gettext("Server");?></b>
@@ -257,12 +256,13 @@ include("head.inc"); ?>
 		<tr>
 			<td width="22%" valign="top"  class="vncell"><?=gettext("More Information:");?></td>
 			<td width="78%" class="vtable">
-				<a target="_new" href ="/diag_ping.php?host=<?=htmlspecialchars($host)?>&interface=wan&count=3"><?=gettext("Ping");?></a> <br />
-				<a target="_new" href ="/diag_traceroute.php?host=<?=htmlspecialchars($host)?>&ttl=18"><?=gettext("Traceroute");?></a>
-				<p/>
+				<a href ="/diag_ping.php?host=<?=htmlspecialchars($host)?>&amp;interface=wan&amp;count=3"><?=gettext("Ping");?></a> <br />
+				<a href ="/diag_traceroute.php?host=<?=htmlspecialchars($host)?>&amp;ttl=18"><?=gettext("Traceroute");?></a>
+				<p>
 				<?=gettext("NOTE: The following links are to external services, so their reliability cannot be guaranteed.");?><br /><br />
-				<a target="_new" href="http://private.dnsstuff.com/tools/whois.ch?ip=<?php echo $ipaddr; ?>"><?=gettext("IP WHOIS @ DNS Stuff");?></a><br />
-				<a target="_new" href="http://private.dnsstuff.com/tools/ipall.ch?ip=<?php echo $ipaddr; ?>"><?=gettext("IP Info @ DNS Stuff");?></a>
+				<a target="_blank" href="http://private.dnsstuff.com/tools/whois.ch?ip=<?php echo $ipaddr; ?>"><?=gettext("IP WHOIS @ DNS Stuff");?></a><br />
+				<a target="_blank" href="http://private.dnsstuff.com/tools/ipall.ch?ip=<?php echo $ipaddr; ?>"><?=gettext("IP Info @ DNS Stuff");?></a>
+				</p>
 			</td>
 		</tr>
 		<?php } ?>
@@ -270,10 +270,12 @@ include("head.inc"); ?>
 		  <td width="22%" valign="top">&nbsp;</td>
 		  <td width="78%">
 			<br />&nbsp;
-            <input name="Submit" type="submit" class="formbtn" value="<?=gettext("DNS Lookup");?>">
+            <input name="Submit" type="submit" class="formbtn" value="<?=gettext("DNS Lookup");?>" />
 		</td>
 		</tr>
 	</table>
 </form>
 </td></tr></table>
 <?php include("fend.inc"); ?>
+</body>
+</html>

@@ -59,7 +59,7 @@ include("head.inc");
 ?>
 <body link="#0000CC" vlink="#0000CC" alink="#0000CC">
 <?php include("fbegin.inc"); ?>
-<table width="100%" border="0" cellpadding="0" cellspacing="0">
+<table width="100%" border="0" cellpadding="0" cellspacing="0" summary="status load balancer virtual servers">
   <tr><td class="tabnavtbl">
   <?php
         /* active tabs */
@@ -72,10 +72,10 @@ include("head.inc");
   <tr>
     <td>
 	<div id="mainarea">
-              <table class="tabcont sortable" width="100%" border="0" cellpadding="0" cellspacing="0">
+              <table class="tabcont sortable" width="100%" border="0" cellpadding="0" cellspacing="0" summary="main area">
                 <tr>
                   <td width="10%" class="listhdrr"><?=gettext("Name"); ?></td>
-				  <td width="20%" class="listhdrr"><?=gettext("Address"); ?></td>
+		  <td width="20%" class="listhdrr"><?=gettext("Address"); ?></td>
                   <td width="10%" class="listhdrr"><?=gettext("Servers"); ?></td>
                   <td width="25%" class="listhdrr"><?=gettext("Status"); ?></td>
                   <td width="25%" class="listhdr"><?=gettext("Description"); ?></td>
@@ -90,7 +90,7 @@ include("head.inc");
                                 <br />
                   </td>
                   <td class="listr" align="center" >
-			<table border="0" cellpadding="0" cellspacing="2">
+			<table border="0" cellpadding="0" cellspacing="2" summary="servers">
                         <?php
 			foreach ($a_pool as $vipent) {
 				if ($vipent['name'] == $vsent['poolname']) {
@@ -118,7 +118,7 @@ include("head.inc");
                   }
                   ?>
                   <td class="listr" nowrap>
-			<table border="0" cellpadding="3" cellspacing="2">
+			<table border="0" cellpadding="3" cellspacing="2" summary="status">
 				<tr><td bgcolor="<?=$bgcolor?>"><?=$rdr_a[$vsent['name']]['status']?> </td></tr>
 			</table>
 			<?php
@@ -137,7 +137,8 @@ include("head.inc");
 		<?php $i++; endforeach; ?>
              </table>
 	   </div>
-	</table>
+</td></tr>
+</table>
 
 <?php include("fend.inc"); ?>
 </body>

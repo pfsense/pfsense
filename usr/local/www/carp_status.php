@@ -106,7 +106,7 @@ include("head.inc");
 
 
 <div id="mainlevel">
-	<table width="100%" border="0" cellpadding="0" cellspacing="0">
+	<table width="100%" border="0" cellpadding="0" cellspacing="0" summary="carp status">
 		<tr>
 			<td>
 <?php
@@ -122,29 +122,29 @@ include("head.inc");
 			if($carpcount > 0) {
 				if($status == false) {
 					$carp_enabled = false;
-					echo "<input type=\"submit\" name=\"disablecarp\" id=\"disablecarp\" value=\"" . gettext("Enable CARP") . "\">";
+					echo "<input type=\"submit\" name=\"disablecarp\" id=\"disablecarp\" value=\"" . gettext("Enable CARP") . "\" />";
 				} else {
 					$carp_enabled = true;
-					echo "<input type=\"submit\" name=\"disablecarp\" id=\"disablecarp\" value=\"" . gettext("Temporarily Disable CARP") . "\">";
+					echo "<input type=\"submit\" name=\"disablecarp\" id=\"disablecarp\" value=\"" . gettext("Temporarily Disable CARP") . "\" />";
 				}
 				if(isset($config["virtualip_carp_maintenancemode"])) {
-					echo "<input type=\"submit\" name=\"carp_maintenancemode\" id=\"carp_maintenancemode\" value=\"" . gettext("Leave Persistent CARP Maintenance Mode") . "\">";
+					echo "<input type=\"submit\" name=\"carp_maintenancemode\" id=\"carp_maintenancemode\" value=\"" . gettext("Leave Persistent CARP Maintenance Mode") . "\" />";
 				} else {
-					echo "<input type=\"submit\" name=\"carp_maintenancemode\" id=\"carp_maintenancemode\" value=\"" . gettext("Enter Persistent CARP Maintenance Mode") . "\">";
+					echo "<input type=\"submit\" name=\"carp_maintenancemode\" id=\"carp_maintenancemode\" value=\"" . gettext("Enter Persistent CARP Maintenance Mode") . "\" />";
 				}
 			}
 ?>
 
-			<p>
-			<table class="tabcont sortable" width="100%" border="0" cellpadding="6" cellspacing="0">
+			<br/><br/>
+			<table class="tabcont sortable" width="100%" border="0" cellpadding="6" cellspacing="0" summary="results">
 				<tr>
-					<td class="listhdrr"><b><center><?=gettext("CARP Interface"); ?></center></b></td>
-					<td class="listhdrr"><b><center><?=gettext("Virtual IP"); ?></center></b></td>
-					<td class="listhdrr"><b><center><?=gettext("Status"); ?></center></b></td>
+					<td class="listhdrr" align="center"><?=gettext("CARP Interface"); ?></td>
+					<td class="listhdrr" align="center"><?=gettext("Virtual IP"); ?></td>
+					<td class="listhdrr" align="center"><?=gettext("Status"); ?></td>
 				</tr>
 <?php
 				if ($carpcount == 0) {
-					echo "</td></tr></table></table></div><center><br />" . gettext("Could not locate any defined CARP interfaces.");
+					echo "</table></td></tr></table></div></form><center><br />" . gettext("Could not locate any defined CARP interfaces.");
 					echo "</center>";
 
 					include("fend.inc");
@@ -163,22 +163,22 @@ include("head.inc");
 						$advbase = $carp['advbase'];
 						$status = get_carp_interface_status("{$carp['interface']}_vip{$carp['vhid']}");
 						echo "<tr>";
-						$align = "valign='middle'";
+						$align = "style=\"vertical-align:middle\"";
 						if($carp_enabled == false) {
-							$icon = "<img {$align} src='/themes/".$g['theme']."/images/icons/icon_block.gif'>";
+							$icon = "<img {$align} src=\"/themes/".$g['theme']."/images/icons/icon_block.gif\" alt=\"disbled\" />";
 							$status = "DISABLED";
 						} else {
 							if($status == "MASTER") {
-								$icon = "<img {$align} src='/themes/".$g['theme']."/images/icons/icon_pass.gif'>";
+								$icon = "<img {$align} src=\"/themes/".$g['theme']."/images/icons/icon_pass.gif\" alt=\"master\" />";
 							} else if($status == "BACKUP") {
-								$icon = "<img {$align} src='/themes/".$g['theme']."/images/icons/icon_pass_d.gif'>";
+								$icon = "<img {$align} src=\"/themes/".$g['theme']."/images/icons/icon_pass_d.gif\" alt=\"backup\" />";
 							} else if($status == "INIT") {
-								$icon = "<img {$align} src='/themes/".$g['theme']."/images/icons/icon_log.gif'>";
+								$icon = "<img {$align} src=\"/themes/".$g['theme']."/images/icons/icon_log.gif\" alt=\"init\" />";
 							}
 						}
-						echo "<td class=\"listlr\"><center>" . convert_friendly_interface_to_friendly_descr($carp['interface']) . "@{$vhid} &nbsp;</td>";
-						echo "<td class=\"listlr\"><center>" . $ipaddress . "&nbsp;</td>";
-						echo "<td class=\"listlr\"><center>{$icon}&nbsp;&nbsp;" . $status . "&nbsp;</td>";
+						echo "<td class=\"listlr\" align=\"center\">" . convert_friendly_interface_to_friendly_descr($carp['interface']) . "@{$vhid} &nbsp;</td>";
+						echo "<td class=\"listlr\" align=\"center\">" . $ipaddress . "&nbsp;</td>";
+						echo "<td class=\"listlr\" align=\"center\">{$icon}&nbsp;&nbsp;" . $status . "&nbsp;</td>";
 						echo "</tr>";
 					}
 				}
@@ -188,16 +188,13 @@ include("head.inc");
 		</tr>
 	</table>
 </div>
+</form>
 
-<p/>
-
-<span class="vexpl">
+<p class="vexpl">
 <span class="red"><strong><?=gettext("Note"); ?>:</strong></span>
 <br />
 <?=gettext("You can configure high availability sync settings"); ?> <a href="system_hasync.php"><?=gettext("here"); ?></a>.
-</span>
-
-<p/>
+</p>
 
 <?php
 	echo "<br />" . gettext("pfSync nodes") . ":<br />";

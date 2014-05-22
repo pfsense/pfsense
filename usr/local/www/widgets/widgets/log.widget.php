@@ -57,14 +57,14 @@ if($_POST['filterlogentries']) {
 	write_config("Saved Filter Log Entries via Dashboard");
   $filename = $_SERVER['HTTP_REFERER'];
   if(headers_sent($file, $line)){
-    echo '<script type="text/javascript">';
-    echo '//<![CDATA[';
-    echo 'window.location.href="'.$filename.'";';
-    echo '//]]>';
-    echo '</script>';
-    echo '<noscript>';
-    echo '<meta http-equiv="refresh" content="0;url='.$filename.'" />';
-    echo '</noscript>';
+    echo "<script type=\"text/javascript\">\n";
+    echo "//<![CDATA[\n";
+    echo "window.location.href=\"" . $filename . "\";\n";
+    echo "//]]>\n";
+    echo "</script>\n";
+    echo "<noscript>\n";
+    echo "<meta http-equiv=\"refresh\" content=\"0;url=" . $filename . "\" />\n";
+    echo "</noscript>\n";
   }
 	Header("Location: /");
 }
@@ -134,7 +134,7 @@ function format_log_line(row) {
 		Number of lines to display:
 		<select name="filterlogentries" class="formfld unknown" id="filterlogentries">
 		<?php for ($i = 1; $i <= 20; $i++) { ?>
-			<option value="<?php echo $i;?>" <?php if ($nentries == $i) echo "SELECTED";?>><?php echo $i;?></option>
+			<option value="<?php echo $i;?>" <?php if ($nentries == $i) echo "selected=\"selected\"";?>><?php echo $i;?></option>
 		<?php } ?>
 		</select>
 
@@ -152,7 +152,7 @@ function format_log_line(row) {
                       <?php
 						$interfaces = get_configured_interface_with_descr();
 					  	foreach ($interfaces as $iface => $ifacename): ?>
-                        <option value="<?=$iface;?>" <?php if ($nentriesinterfaces == $iface) echo "selected='selected'";?>>
+                        <option value="<?=$iface;?>" <?php if ($nentriesinterfaces == $iface) echo "selected=\"selected\"";?>>
                       <?=htmlspecialchars($ifacename);?>
                       </option>
                       <?php endforeach; ?>
@@ -187,7 +187,7 @@ function format_log_line(row) {
 	$rowIndex++;
 	?>
 		<tr class="<?=$evenRowClass?>">
-			<td class="listMRlr" nowrap="nowrap" align="center">
+			<td class="listMRlr nowrap" align="center">
 			<a href="#" onclick="javascript:getURL('diag_logs_filter.php?getrulenum=<?php echo "{$filterent['rulenum']},{$filterent['tracker']},{$filterent['act']}"; ?>', outputrule);">
 			<img border="0" src="<?php echo find_action_image($filterent['act']);?>" width="11" height="11" alt="<?php echo $filterent['act'];?>" title="<?php echo $filterent['act'];?>" />
 			</a>
@@ -195,10 +195,10 @@ function format_log_line(row) {
 			<td class="listMRr ellipsis nowrap" title="<?php echo htmlspecialchars($filterent['time']);?>"><?php echo substr(htmlspecialchars($filterent['time']),0,-3);?></td>
 			<td class="listMRr ellipsis nowrap" title="<?php echo htmlspecialchars($filterent['interface']);?>"><?php echo htmlspecialchars($filterent['interface']);?></td>
 			<td class="listMRr ellipsis nowrap" title="<?php echo htmlspecialchars($filterent['src']);?>">
-				<a href="#" onclick="javascript:getURL('diag_dns.php?host=<?php echo "{$filterent['srcip']}"; ?>&dialog_output=true', outputrule);" title="<?=gettext("Reverse Resolve with DNS");?>">
+				<a href="#" onclick="javascript:getURL('diag_dns.php?host=<?php echo "{$filterent['srcip']}"; ?>&amp;dialog_output=true', outputrule);" title="<?=gettext("Reverse Resolve with DNS");?>">
 				<?php echo htmlspecialchars($filterent['srcip']);?></a></td>
 			<td class="listMRr ellipsis nowrap" title="<?php echo htmlspecialchars($filterent['dst']);?>">
-				<a href="#" onclick="javascript:getURL('diag_dns.php?host=<?php echo "{$filterent['dstip']}"; ?>&dialog_output=true', outputrule);" title="<?=gettext("Reverse Resolve with DNS");?>">
+				<a href="#" onclick="javascript:getURL('diag_dns.php?host=<?php echo "{$filterent['dstip']}"; ?>&amp;dialog_output=true', outputrule);" title="<?=gettext("Reverse Resolve with DNS");?>">
 				<?php echo htmlspecialchars($filterent['dstip']);?></a><?php echo ":" . htmlspecialchars($filterent['dstport']);?></td>
 			<?php
 				if ($filterent['proto'] == "TCP")
@@ -206,6 +206,7 @@ function format_log_line(row) {
 			?>
 		</tr>
 	<?php endforeach; ?>
+		<tr style="display:none;"><td></td></tr>
 	</tbody>
 </table>
 

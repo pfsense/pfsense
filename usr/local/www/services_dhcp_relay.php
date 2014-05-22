@@ -136,9 +136,9 @@ function enable_change(enable_over) {
 <?php
 	if ($dhcpd_enabled) {
 		echo "<td>DHCP Server is currently enabled. Cannot enable the DHCP Relay service while the DHCP Server is enabled on any interface.";
-			echo "</td></tr></table></div></td></tr></table></form></body>";
-			echo "</html>";
+			echo "</td></tr></table></div></td></tr></table></form>";
 			include("fend.inc"); 
+			echo "</body></html>";
 			exit;
 		}
 ?>

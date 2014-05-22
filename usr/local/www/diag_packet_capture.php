@@ -37,11 +37,46 @@
 
 $allowautocomplete = true;
 
+function fixup_host_logic($value) {
+	return str_replace(array(" ", ",", "+", "|", "!"), array("", "and ", "and ", "or ", "not "), $value);
+}
+function strip_host_logic($value) {
+	return str_replace(array(" ", ",", "+", "|", "!"), array("", "", "", "", ""), $value);
+}
+function get_host_boolean($value, $host) {
+	$value = str_replace(array("!", $host), array("", ""), $value);
+	$andor = "";
+	switch (trim($value)) {
+		case "|":
+			$andor = "or ";
+			break;
+		case ",":
+		case "+":
+			$andor = "and ";
+			break;
+	}
+	return $andor;
+}
+function has_not($value) {
+	return strpos($value, '!') !== false;
+}
 function fixup_not($value) {
 	return str_replace("!", "not ", $value);
 }
 function strip_not($value) {
-	return ltrim($value, '!');
+	return ltrim(trim($value), '!');
+}
+
+function fixup_host($value, $position) {
+	$host = strip_host_logic($value);
+	$not = has_not($value) ? "not " : "";
+	$andor = ($position > 0) ? get_host_boolean($value, $host) : "";
+	if (is_ipaddr($host))
+		return "{$andor}host {$not}" . $host;
+	elseif (is_subnet($host))
+		return "{$andor}net {$not}" . $host;
+	else
+		return "";
 }
 
 if ($_POST['downloadbtn'] == gettext("Download Capture"))
@@ -96,8 +131,16 @@ if ($_POST) {
 	}
 	
 	if ($host != "") {
-		if (!is_subnet(strip_not($host)) && !is_ipaddr(strip_not($host))) {
-			$input_errors[] = sprintf(gettext("A valid IP address or CIDR block must be specified. [%s]"), $host);
+		$host_string = str_replace(array(" ", "|", ","), array("", "#|", "#+"), $host);
+		if (strpos($host_string, '#') === false) {
+			$hosts = array($host);
+		} else {
+			$hosts = explode('#', $host_string);
+		}
+		foreach ($hosts as $h) {
+			if (!is_subnet(strip_host_logic($h)) && !is_ipaddr(strip_host_logic($h))) {
+				$input_errors[] = sprintf(gettext("A valid IP address or CIDR block must be specified. [%s]"), $h);
+			}
 		}
 	}
 	if ($port != "") {
@@ -352,10 +395,15 @@ include("fbegin.inc");
 				$matches[] = "port ".fixup_not($port);
 
 			if ($host != "") {
-				if (is_ipaddr($host))
-					$matches[] = "host " . fixup_not($host);
-				elseif (is_subnet($host))
-					$matches[] = "net " . fixup_not($host);
+				$hostmatch = "";
+				$hostcount = 0;
+				foreach ($hosts as $h) {
+					$h = fixup_host($h, $hostcount++);
+					if (!empty($h))
+						$hostmatch .= " " . $h;
+				}
+				if (!empty($hostmatch))
+					$matches[] = "({$hostmatch})";
 			}
 
 			if ($count != "0" ) {
@@ -369,7 +417,10 @@ include("fbegin.inc");
 			if ($action == gettext("Start")) {
 				$matchstr = implode($matches, " and ");
 				echo("<strong>" . gettext("Packet Capture is running.") . "</strong><br />");
-				mwexec_bg ("/usr/sbin/tcpdump -i {$selectedif} {$disablepromiscuous} {$searchcount} -s {$snaplen} -w {$fp}{$fn} {$matchstr}");
+				$cmd = "/usr/sbin/tcpdump -i {$selectedif} {$disablepromiscuous} {$searchcount} -s {$snaplen} -w {$fp}{$fn} " . escapeshellarg($matchstr);
+				// Debug
+				//echo $cmd;
+				mwexec_bg ($cmd);
 			} else {
 				//action = stop
 				echo("<strong>" . gettext("Packet Capture stopped.") . "<br /><br />" . gettext("Packets Captured:") . "</strong><br />");

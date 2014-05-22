@@ -59,8 +59,10 @@ include("head.inc");
 
 ?>
 <body link="#0000CC" vlink="#0000CC" alink="#0000CC">
+<?php include("fbegin.inc"); ?>
 <script type="text/javascript">
 jQuery(document).ready(function() {setTimeout('getpfinfo()', 5000);});
+//<![CDATA[
 	function getpfinfo() {
 		jQuery.ajax({
 			type: "POST",
@@ -71,43 +73,41 @@ jQuery(document).ready(function() {setTimeout('getpfinfo()', 5000);});
 		});
 	}
 	function activitycallback(transport) {
-		jQuery('#pfactivitydiv').html('<font face="Courier"><font size="2"><b><pre style="text-align:left;">' + transport.responseText  + '</pre></font>');
+		jQuery('#pfactivitydiv').html('<font face="Courier" size="2"><pre style="text-align:left;">' + transport.responseText  + '<\/pre><\/font>');
 		setTimeout('getpfinfo()', 2000);
 	}
+//]]>
 </script>
-<div id='maincontent'>
+<div id="maincontent">
 <?php
-	include("fbegin.inc"); 
 	if($savemsg) {
-		echo "<div id='savemsg'>";
+		echo "<div id=\"savemsg\">";
 		print_info_box($savemsg);
 		echo "</div>";	
 	}
 	if ($input_errors)
 		print_input_errors($input_errors);
 ?>
-<table width="100%" border="0" cellpadding="0" cellspacing="0">  
+<table width="100%" border="0" cellpadding="0" cellspacing="0" summary="diag pf info">
   <tr>
     <td>
-	<table id="backuptable" class="tabcont" align="center" width="100%" border="0" cellpadding="6" cellspacing="0">
+	<table id="backuptable" class="tabcont" align="center" width="100%" border="0" cellpadding="6" cellspacing="0" summary="tabcont">
 		<tr>
-			<td>
-				<center>
-				<table>
+			<td align="center">
+				<table summary="results">
 					<tr><td>
-						<div name='pfactivitydiv' id='pfactivitydiv'>
-							<b><?=gettext("Gathering PF information, please wait...");?>
+						<div id="pfactivitydiv">
+							<?=gettext("Gathering PF information, please wait...");?>
 						</div>
 					</td></tr>
 				</table>
 			</td>
 		</tr>
 	</table>
-	</div>
     </td>
   </tr>
 </table>
-</form>
+</div>
 <?php include("fend.inc"); ?>
 </body>
 </html>

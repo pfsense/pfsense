@@ -1017,12 +1017,12 @@ include("head.inc");
 			<td width="22%" valign="top" class="vncell"><?=gettext("Dynamic DNS");?></td>
 			<td width="78%" class="vtable">
 				<div id="showddnsbox">
-					<input type="button" onClick="show_ddns_config()" value="<?=gettext("Advanced");?>" /> - <?=gettext("Show Dynamic DNS");?>
+					<input type="button" onclick="show_ddns_config()" value="<?=gettext("Advanced");?>" /> - <?=gettext("Show Dynamic DNS");?>
 				</div>
 				<div id="showddns" style="display:none">
 					<input style="vertical-align:middle" type="checkbox" value="yes" name="ddnsupdate" id="ddnsupdate" <?php if($pconfig['ddnsupdate']) echo " checked=\"checked\""; ?> />&nbsp;
 					<b><?=gettext("Enable registration of DHCP client names in DNS.");?></b><br />
-					<p>
+					<br/>
 					<input name="ddnsdomain" type="text" class="formfld unknown" id="ddnsdomain" size="20" value="<?=htmlspecialchars($pconfig['ddnsdomain']);?>" /><br />
 					<?=gettext("Note: Leave blank to disable dynamic DNS registration.");?><br />
 					<?=gettext("Enter the dynamic DNS domain which will be used to register client names in the DNS server.");?>
@@ -1039,7 +1039,7 @@ include("head.inc");
 			<td width="22%" valign="top" class="vncell"><?=gettext("MAC Address Control");?></td>
 			<td width="78%" class="vtable">
 				<div id="showmaccontrolbox">
-					<input type="button" onClick="show_maccontrol_config()" value="<?=gettext("Advanced");?>" /> - <?=gettext("Show MAC Address Control");?>
+					<input type="button" onclick="show_maccontrol_config()" value="<?=gettext("Advanced");?>" /> - <?=gettext("Show MAC Address Control");?>
 				</div>
 				<div id="showmaccontrol" style="display:none">
 					<input name="mac_allow" type="text" class="formfld unknown" id="mac_allow" size="20" value="<?=htmlspecialchars($pconfig['mac_allow']);?>" /><br />
@@ -1053,7 +1053,7 @@ include("head.inc");
 			<td width="22%" valign="top" class="vncell"><?=gettext("NTP servers");?></td>
 			<td width="78%" class="vtable">
 				<div id="showntpbox">
-					<input type="button" onClick="show_ntp_config()" value="<?=gettext("Advanced");?>" /> - <?=gettext("Show NTP configuration");?>
+					<input type="button" onclick="show_ntp_config()" value="<?=gettext("Advanced");?>" /> - <?=gettext("Show NTP configuration");?>
 				</div>
 				<div id="showntp" style="display:none">
 					<input name="ntp1" type="text" class="formfld unknown" id="ntp1" size="20" value="<?=htmlspecialchars($pconfig['ntp1']);?>" /><br />
@@ -1065,7 +1065,7 @@ include("head.inc");
 			<td width="22%" valign="top" class="vncell"><?=gettext("TFTP server");?></td>
 			<td width="78%" class="vtable">
 			<div id="showtftpbox">
-				<input type="button" onClick="show_tftp_config()" value="<?=gettext("Advanced");?>" /> - <?=gettext("Show TFTP configuration");?>
+				<input type="button" onclick="show_tftp_config()" value="<?=gettext("Advanced");?>" /> - <?=gettext("Show TFTP configuration");?>
 			</div>
 			<div id="showtftp" style="display:none">
 				<input name="tftp" type="text" class="formfld unknown" id="tftp" size="50" value="<?=htmlspecialchars($pconfig['tftp']);?>" /><br />
@@ -1077,7 +1077,7 @@ include("head.inc");
 			<td width="22%" valign="top" class="vncell"><?=gettext("LDAP URI");?></td>
 			<td width="78%" class="vtable">
 				<div id="showldapbox">
-					<input type="button" onClick="show_ldap_config()" value="<?=gettext("Advanced");?>" /> - <?=gettext("Show LDAP configuration");?>
+					<input type="button" onclick="show_ldap_config()" value="<?=gettext("Advanced");?>" /> - <?=gettext("Show LDAP configuration");?>
 				</div>
 				<div id="showldap" style="display:none">
 					<input name="ldap" type="text" class="formfld unknown" id="ldap" size="80" value="<?=htmlspecialchars($pconfig['ldap']);?>" /><br />
@@ -1089,12 +1089,12 @@ include("head.inc");
 			<td width="22%" valign="top" class="vncell"><?=gettext("Enable network booting");?></td>
 			<td width="78%" class="vtable">
 				<div id="shownetbootbox">
-					<input type="button" onClick="show_netboot_config()" value="<?=gettext("Advanced");?>" /> - <?=gettext("Show Network booting");?>
+					<input type="button" onclick="show_netboot_config()" value="<?=gettext("Advanced");?>" /> - <?=gettext("Show Network booting");?>
 				</div>
 				<div id="shownetboot" style="display:none">
 					<input style="vertical-align:middle" type="checkbox" value="yes" name="netboot" id="netboot" <?php if($pconfig['netboot']) echo " checked=\"checked\""; ?> />&nbsp;
 					<b><?=gettext("Enables network booting.");?></b>
-					<p>
+					<br/>
 					<?=gettext("Enter the IP of the"); ?> <b><?=gettext("next-server"); ?></b>
 					<input name="nextserver" type="text" class="formfld unknown" id="nextserver" size="20" value="<?=htmlspecialchars($pconfig['nextserver']);?>" /><br />
 					<?=gettext("and the default bios filename");?>
@@ -1105,11 +1105,9 @@ include("head.inc");
 						<input name="filename64" type="text" class="formfld unknown" id="filename64" size="20" value="<?=htmlspecialchars($pconfig['filename64']);?>" /><br />
 					<?=gettext("Note: You need both a filename and a boot server configured for this to work!");?>
 					<?=gettext("You will need all three filenames and a boot server configured for UEFI to work!");?>
-					<p>
 					<?=gettext("Enter the"); ?> <b><?=gettext("root-path"); ?></b>-<?=gettext("string");?>
 					<input name="rootpath" type="text" class="formfld unknown" id="rootpath" size="90" value="<?=htmlspecialchars($pconfig['rootpath']);?>" /><br />
 					<?=gettext("Note: string-format: iscsi:(servername):(protocol):(port):(LUN):targetname");?>
-					</p>
 				</div>
 			</td>
 			</tr>
@@ -1118,7 +1116,7 @@ include("head.inc");
 			<td width="22%" valign="top" class="vncell"><?=gettext("Additional BOOTP/DHCP Options");?></td>
 			<td width="78%" class="vtable">
 				<div id="shownumbervaluebox">
-					<input type="button" onClick="show_shownumbervalue()" value="<?=gettext("Advanced");?>" /> - <?=gettext("Show Additional BOOTP/DHCP Options");?>
+					<input type="button" onclick="show_shownumbervalue()" value="<?=gettext("Advanced");?>" /> - <?=gettext("Show Additional BOOTP/DHCP Options");?>
 				</div>
 				<div id="shownumbervalue" style="display:none">
 				<table id="maintable" summary="bootp-dhcp options">

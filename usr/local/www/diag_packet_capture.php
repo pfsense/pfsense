@@ -37,6 +37,13 @@
 
 $allowautocomplete = true;
 
+function fixup_not($value) {
+	return str_replace("!", "not ", $value);
+}
+function strip_not($value) {
+	return ltrim($value, '!');
+}
+
 if ($_POST['downloadbtn'] == gettext("Download Capture"))
 	$nocsrf = true;
 
@@ -50,7 +57,8 @@ $snaplen = 0;//default packet length
 $count = 100;//default number of packets to capture
 
 $fams = array('ip', 'ip6');
-$protos = array('icmp', 'icmp6', 'tcp', 'udp', 'arp', 'carp', 'esp');
+$protos = array('icmp', 'icmp6', 'tcp', 'udp', 'arp', 'carp', 'esp',
+		'!icmp', '!icmp6', '!tcp', '!udp', '!arp', '!carp', '!esp');
 
 $input_errors = array();
 
@@ -83,17 +91,17 @@ if ($_POST) {
 	if ($fam !== "" && $fam !== "ip" && $fam !== "ip6") {
 		$input_errors[] = gettext("Invalid address family.");
 	}
-	if ($proto !== "" && !in_array($proto, $protos)) {
+	if ($proto !== "" && !in_array(strip_not($proto), $protos)) {
 		$input_errors[] = gettext("Invalid protocol.");
 	}
 	
 	if ($host != "") {
-		if (!is_subnet($host) && !is_ipaddr($host)) {
+		if (!is_subnet(strip_not($host)) && !is_ipaddr(strip_not($host))) {
 			$input_errors[] = sprintf(gettext("A valid IP address or CIDR block must be specified. [%s]"), $host);
 		}
 	}
 	if ($port != "") {
-		if (!is_port($port)) {
+		if (!is_port(strip_not($port))) {
 			$input_errors[] = gettext("Invalid value specified for port.");
 		}
 	}
@@ -225,11 +233,17 @@ include("fbegin.inc");
 			<select name="proto">
 				<option value="">Any</option>
 				<option value="icmp" <?php if ($proto == "icmp") echo "selected=\"selected\""; ?>>ICMP</option>
+				<option value="!icmp" <?php if ($proto == "!icmp") echo "selected=\"selected\""; ?>>Exclude ICMP</option>
 				<option value="icmp6" <?php if ($proto == "icmp6") echo "selected=\"selected\""; ?>>ICMPv6</option>
+				<option value="!icmp6" <?php if ($proto == "!icmp6") echo "selected=\"selected\""; ?>>Exclude ICMPv6</option>
 				<option value="tcp" <?php if ($proto == "tcp") echo "selected=\"selected\""; ?>>TCP</option>
+				<option value="!tcp" <?php if ($proto == "!tcp") echo "selected=\"selected\""; ?>>Exclude TCP</option>
 				<option value="udp" <?php if ($proto == "udp") echo "selected=\"selected\""; ?>>UDP</option>
+				<option value="!udp" <?php if ($proto == "!udp") echo "selected=\"selected\""; ?>>Exclude UDP</option>
 				<option value="arp" <?php if ($proto == "arp") echo "selected=\"selected\""; ?>>ARP</option>
+				<option value="!arp" <?php if ($proto == "!arp") echo "selected=\"selected\""; ?>>Exclude ARP</option>
 				<option value="carp" <?php if ($proto == "carp") echo "selected=\"selected\""; ?>>CARP (VRRP)</option>
+				<option value="!carp" <?php if ($proto == "!carp") echo "selected=\"selected\""; ?>>Exclude CARP (VRRP)</option>
 				<option value="esp" <?php if ($proto == "esp") echo "selected=\"selected\""; ?>>ESP</option>
 			</select>
 			<br /><?=gettext("Select the protocol to capture, or Any.");?>
@@ -331,21 +345,17 @@ include("fbegin.inc");
 				$matches[] = $fam;
 
 			if (in_array($proto, $protos)) {
-				if ($proto == "carp") {
-					$matches[] = 'proto 112';
-				} else {
-					$matches[] = $proto;
-				}
+				$matches[] = fixup_not($proto);
 			}
 
 			if ($port != "")
-				$matches[] = "port ".$port;
+				$matches[] = "port ".fixup_not($port);
 
 			if ($host != "") {
 				if (is_ipaddr($host))
-					$matches[] = "host " . $host;
+					$matches[] = "host " . fixup_not($host);
 				elseif (is_subnet($host))
-					$matches[] = "net " . $host;
+					$matches[] = "net " . fixup_not($host);
 			}
 
 			if ($count != "0" ) {
@@ -359,7 +369,7 @@ include("fbegin.inc");
 			if ($action == gettext("Start")) {
 				$matchstr = implode($matches, " and ");
 				echo("<strong>" . gettext("Packet Capture is running.") . "</strong><br />");
-				mwexec_bg ("/usr/sbin/tcpdump -i $selectedif $disablepromiscuous $searchcount -s $snaplen -w $fp$fn $matchstr");
+				mwexec_bg ("/usr/sbin/tcpdump -i {$selectedif} {$disablepromiscuous} {$searchcount} -s {$snaplen} -w {$fp}{$fn} {$matchstr}");
 			} else {
 				//action = stop
 				echo("<strong>" . gettext("Packet Capture stopped.") . "<br /><br />" . gettext("Packets Captured:") . "</strong><br />");
@@ -389,7 +399,7 @@ include("fbegin.inc");
 					$detail_args = "-q";
 					break;
 				}
-				system("/usr/sbin/tcpdump $disabledns $detail_args -r $fp$fn");
+				system("/usr/sbin/tcpdump {$disabledns} {$detail_args} -r {$fp}{$fn}");
 
 				conf_mount_ro();
 ?>

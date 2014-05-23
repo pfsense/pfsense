@@ -165,7 +165,7 @@ include("head.inc");
 						echo "<tr>";
 						$align = "style=\"vertical-align:middle\"";
 						if($carp_enabled == false) {
-							$icon = "<img {$align} src=\"/themes/".$g['theme']."/images/icons/icon_block.gif\" alt=\"disbled\" />";
+							$icon = "<img {$align} src=\"/themes/".$g['theme']."/images/icons/icon_block.gif\" alt=\"disabled\" />";
 							$status = "DISABLED";
 						} else {
 							if($status == "MASTER") {

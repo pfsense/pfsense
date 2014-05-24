@@ -121,6 +121,9 @@ if ($_POST) {
 	if ($_POST['source_type'] == "any") {
 		$_POST['source'] = "any";
 		$_POST['source_subnet'] = 24;
+	} elseif ($_POST['source_type'] == "(self)") {
+		$_POST['source'] = "(self)";
+		$_POST['source_subnet'] = 24;
 	}
 
 	unset($input_errors);
@@ -165,7 +168,7 @@ if ($_POST) {
 	if($protocol_uses_ports && $_POST['natport'] <> "" && !is_port($_POST['natport']) && !isset($_POST['nonat']))
 		$input_errors[] = gettext("You must supply a valid port for the NAT port entry.");
 
-	if ($_POST['source_type'] != "any") {
+	if (($_POST['source_type'] != "any") && ($_POST['source_type'] != "(self)")) {
 		if ($_POST['source'] && !is_ipaddroralias($_POST['source']) && $_POST['source'] <> "any") {
 			$input_errors[] = gettext("A valid source must be specified.");
 		}
@@ -216,6 +219,8 @@ if ($_POST) {
 	/* if user has selected any as source, set it here */
 	if($_POST['source_type'] == "any") {
 		$osn = "any";
+	} else if($_POST['source_type'] == "(self)") {
+		$osn = "(self)";
 	} else if(is_alias($_POST['source'])) {
 		$osn = $_POST['source'];
 	} else {
@@ -367,7 +372,7 @@ function typesel_change() {
 }
 function sourcesel_change() {
 	switch (document.iform.source_type.selectedIndex) {
-	case 1: // network
+	case 2: // network
 		document.iform.source.disabled = 0;
 		document.iform.source_subnet.disabled = 0;
 		break;
@@ -530,7 +535,8 @@ function poolopts_change() {
 						<td>
 							<select name="source_type" class="formselect" onchange="sourcesel_change()">
 								<option value="any" <?php if ($pconfig['source'] == "any") echo "selected=\"selected\""; ?>><?=gettext("any");?></option>
-								<option value="network" <?php if ($pconfig['source'] != "any") echo "selected=\"selected\""; ?>><?=gettext("Network");?></option>
+								<option value="(self)" <?PHP if ($pconfig['source'] == "(self)") echo "selected=\"selected\""; ?>><?=gettext("This Firewall (self)");?></option>
+								<option value="network" <?php if (($pconfig['source'] != "any") && ($pconfig['source'] != "(self)")) echo "selected=\"selected\""; ?>><?=gettext("Network");?></option>
 							</select>
 						</td>
 					</tr>

@@ -130,7 +130,7 @@ include("head.inc");
 	if ($pconfig['enable'] && is_subsystem_dirty('ipsec'))
 		print_info_box_np(gettext("The IPsec tunnel configuration has been changed") . ".<br />" . gettext("You must apply the changes in order for them to take effect."));
 ?>
-<table width="100%" border="0" cellpadding="0" cellspacing="0">
+<table width="100%" border="0" cellpadding="0" cellspacing="0" summary="vpn ipsec">
 	<tr>
 		<td class="tabnavtbl">
 			<?php
@@ -146,13 +146,13 @@ include("head.inc");
 	<tr>
 		<td>
 			<div id="mainarea">
-				<table class="tabcont" width="100%" border="0" cellpadding="6" cellspacing="0">
+				<table class="tabcont" width="100%" border="0" cellpadding="6" cellspacing="0" summary="main area">
 					<tr>
 						<td class="vtable">
-							<table border="0" cellspacing="2" cellpadding="0">
+							<table border="0" cellspacing="2" cellpadding="0" summary="enable">
 								<tr>
 									<td>
-										<input name="enable" type="checkbox" id="enable" value="yes" <?php if ($pconfig['enable']) echo "checked";?>>
+										<input name="enable" type="checkbox" id="enable" value="yes" <?php if ($pconfig['enable']) echo "checked=\"checked\"";?> />
 									</td>
 									<td>
 										<strong><?=gettext("Enable IPsec"); ?></strong>
@@ -163,11 +163,11 @@ include("head.inc");
 					</tr>
 					<tr>
 						<td>
-							<input name="submit" type="submit" class="formbtn" value="<?=gettext("Save"); ?>">
+							<input name="submit" type="submit" class="formbtn" value="<?=gettext("Save"); ?>" />
 						</td>
 					</tr>
 				</table>
-				<table class="tabcont" width="100%" border="0" cellpadding="0" cellspacing="0">
+				<table class="tabcont" width="100%" border="0" cellpadding="0" cellspacing="0" summary="phase-1 entries">
 					<?php
 						$i = 0;
 						foreach ($a_phase1 as $ph1ent) {
@@ -183,6 +183,15 @@ include("head.inc");
 					?>					
 					<tr valign="top" ondblclick="document.location='vpn_ipsec_phase1.php?p1index=<?=$i;?>'">
 						<td class="listlr">
+							<?=$spans;?>
+							<?php	if (empty($ph1ent['iketype']) || $ph1ent['iketype'] == "ikev1")
+									echo "V1";
+								else
+									echo "V2";
+							?>
+							<?=$spane;?>
+						</td>
+						<td class="listr">
 							<?=$spans;?>
 							<?php
 								if ($ph1ent['interface']) {
@@ -244,17 +253,17 @@ include("head.inc");
 							<?=htmlspecialchars($ph1ent['descr']);?>&nbsp;
 							<?=$spane;?>
 						</td>
-						<td valign="middle" nowrap class="list">
-							<table border="0" cellspacing="0" cellpadding="1">
+						<td valign="middle" class="list nowrap">
+							<table border="0" cellspacing="0" cellpadding="1" summary="icons">
 								<tr>
 									<td>
 										<a href="vpn_ipsec_phase1.php?p1index=<?=$i;?>">
-											<img src="./themes/<?= $g['theme']; ?>/images/icons/icon_e.gif" title="<?=gettext("edit phase1 entry"); ?>" width="17" height="17" border="0">
+											<img src="./themes/<?= $g['theme']; ?>/images/icons/icon_e.gif" title="<?=gettext("edit phase1 entry"); ?>" width="17" height="17" border="0" alt="edit" />
 										</a>
 									</td>
 									<td>
-										<a href="vpn_ipsec.php?act=delph1&p1index=<?=$i;?>" onclick="return confirm('<?=gettext("Do you really want to delete this phase1 and all associated phase2 entries?"); ?>')">
-											<img src="./themes/<?= $g['theme']; ?>/images/icons/icon_x.gif" title="<?=gettext("delete phase1 entry"); ?>" width="17" height="17" border="0">
+										<a href="vpn_ipsec.php?act=delph1&amp;p1index=<?=$i;?>" onclick="return confirm('<?=gettext("Do you really want to delete this phase1 and all associated phase2 entries?"); ?>')">
+											<img src="./themes/<?= $g['theme']; ?>/images/icons/icon_x.gif" title="<?=gettext("delete phase1 entry"); ?>" width="17" height="17" border="0" alt="delete" />
 										</a>
 									</td>
 								</tr>
@@ -264,7 +273,7 @@ include("head.inc");
 									</td>
 									<td>
 										<a href="vpn_ipsec_phase1.php?dup=<?=$i;?>">
-											<img src="./themes/<?= $g['theme']; ?>/images/icons/icon_plus.gif" title="<?=gettext("copy phase1 entry"); ?>" width="17" height="17" border="0">
+											<img src="./themes/<?= $g['theme']; ?>/images/icons/icon_plus.gif" title="<?=gettext("copy phase1 entry"); ?>" width="17" height="17" border="0" alt="add" />
 										</a>
 									</td>
 								</tr>
@@ -273,7 +282,7 @@ include("head.inc");
 						</td>
 					</tr>
 					<tr>
-						<td class="listrborder" colspan="5">
+						<td class="listrborder" colspan="6">
 							<div id="shph2but-<?=$i?>">
 								<?php
 									$phase2count=0;
@@ -285,9 +294,9 @@ include("head.inc");
 										$phase2count++;
 									}
 								?>								
-								<input  type="button" onClick="show_phase2('tdph2-<?=$i?>','shph2but-<?=$i?>')" value="+" /> - <?php printf(gettext("Show %s Phase-2 entries"), $phase2count); ?></a>
+								<input type="button" onclick="show_phase2('tdph2-<?=$i?>','shph2but-<?=$i?>')" value="+" /> - <?php printf(gettext("Show %s Phase-2 entries"), $phase2count); ?>
 							</div>
-							<table class="tabcont" width="100%" height="100%" border="0" cellspacing="0" cellpadding="0" id="tdph2-<?=$i?>" style="display:none">
+							<table class="tabcont" width="100%" border="0" cellspacing="0" cellpadding="0" id="tdph2-<?=$i?>" style="display:none" summary="phase-2 entries">
 								<tr>
 									<td class="listhdrr"><?=gettext("Mode"); ?></td>
 									<?php if(($ph2ent['mode'] == "tunnel") or ($ph2ent['mode'] == "tunnel6")): ?>
@@ -298,8 +307,8 @@ include("head.inc");
 									<td class="listhdrr"><?=gettext("P2 Transforms"); ?></td>
 									<td class="listhdrr"><?=gettext("P2 Auth Methods"); ?></td>
 									<td class ="list">
-										<a href="vpn_ipsec_phase2.php?ikeid=<?=$ph1ent['ikeid'];?><?php if (isset($ph1ent['mobile'])) echo "&mobile=true";?>">
-											<img src="./themes/<?= $g['theme']; ?>/images/icons/icon_plus.gif" title="<?=gettext("add phase2 entry"); ?>" width="17" height="17" border="0">
+										<a href="vpn_ipsec_phase2.php?ikeid=<?=$ph1ent['ikeid'];?><?php if (isset($ph1ent['mobile'])) echo "&amp;mobile=true";?>">
+											<img src="./themes/<?= $g['theme']; ?>/images/icons/icon_plus.gif" title="<?=gettext("add phase2 entry"); ?>" width="17" height="17" border="0" alt="add" />
 										</a>
 									</td>
 								</tr>
@@ -320,29 +329,29 @@ include("head.inc");
 								?>
 								<tr valign="top" ondblclick="document.location='vpn_ipsec_phase2.php?p2index=<?=$j;?>'">
 
-									<td nowrap class="listlr">
+									<td class="listlr nowrap">
 										<?=$spans;?>
 											<?=$ph2ent['mode'];?>
 										<?=$spane;?>
 									</td>
 									<?php 
 										if(($ph2ent['mode'] <> "tunnel") and ($ph2ent['mode'] <> "tunnel6")) {
-											echo "<td nowrap class=\"listr\">&nbsp;</td><td nowrap class=\"listr\">&nbsp;</td>";
+											echo "<td class=\"listr nowrap\">&nbsp;</td><td class=\"listr nowrap\">&nbsp;</td>";
 										} 
 									?>
 									<?php if(($ph2ent['mode'] == "tunnel") or ($ph2ent['mode'] == "tunnel6")): ?>
-									<td nowrap class="listr">
+									<td class="listr nowrap">
 										<?=$spans;?>
 											<?=ipsec_idinfo_to_text($ph2ent['localid']); ?>
 										<?=$spane;?>
 									</td>
-									<td nowrap class="listr">
+									<td class="listr nowrap">
 										<?=$spans;?>
 											<?=ipsec_idinfo_to_text($ph2ent['remoteid']); ?>
 										<?=$spane;?>
 									</td>
 									<?php endif; ?>
-									<td nowrap class="listr">
+									<td class="listr nowrap">
 										<?=$spans;?>
 											<?php echo $p2_protos[$ph2ent['protocol']];	?>
 										<?=$spane;?>
@@ -365,7 +374,7 @@ include("head.inc");
 										?>
 										<?=$spane;?>
 									</td>
-									<td nowrap class="listr">
+									<td class="listr nowrap">
 										<?=$spans;?>
 										<?php
 											$k = 0;
@@ -377,15 +386,15 @@ include("head.inc");
 										?>
 										<?=$spane;?>
 									</td>
-									<td nowrap class="list">
+									<td class="list nowrap">
 										<a href="vpn_ipsec_phase2.php?p2index=<?=$j;?>">
-											<img src="./themes/<?= $g['theme']; ?>/images/icons/icon_e.gif" title="<?=gettext("edit phase2 entry"); ?>" width="17" height="17" border="0">
+											<img src="./themes/<?= $g['theme']; ?>/images/icons/icon_e.gif" title="<?=gettext("edit phase2 entry"); ?>" width="17" height="17" border="0" alt="edit" />
 										</a>
-										<a href="vpn_ipsec.php?act=delph2&p1index=<?=$i;?>&p2index=<?=$j;?>" onclick="return confirm('<?=gettext("Do you really want to delete this phase2 entry?"); ?>')">
-											<img src="./themes/<?= $g['theme']; ?>/images/icons/icon_x.gif" title="<?=gettext("delete phase2 entry"); ?>" width="17" height="17" border="0">
+										<a href="vpn_ipsec.php?act=delph2&amp;p1index=<?=$i;?>&amp;p2index=<?=$j;?>" onclick="return confirm('<?=gettext("Do you really want to delete this phase2 entry?"); ?>')">
+											<img src="./themes/<?= $g['theme']; ?>/images/icons/icon_x.gif" title="<?=gettext("delete phase2 entry"); ?>" width="17" height="17" border="0" alt="delete" />
 										</a>
 										<a href="vpn_ipsec_phase2.php?dup=<?=$j;?>">
-											<img src="./themes/<?= $g['theme']; ?>/images/icons/icon_plus.gif" title="<?=gettext("add a new Phase 2 based on this one"); ?>" width="17" height="17" border="0">
+											<img src="./themes/<?= $g['theme']; ?>/images/icons/icon_plus.gif" title="<?=gettext("add a new Phase 2 based on this one"); ?>" width="17" height="17" border="0" alt="add" />
 										</a>
 									</td>
 								</tr>
@@ -409,30 +418,30 @@ include("head.inc");
 						show_ipsec_header($ph1ent);
 					?>
 					<tr>
-						<td class="list" colspan="5"></td>
+						<td class="list" colspan="6"></td>
 						<td class="list">
-							<table border="0" cellspacing="0" cellpadding="1">
+							<table border="0" cellspacing="0" cellpadding="1" summary="add">
 								<tr>
 									<td width="17"></td>
 									<td>
 										<a href="vpn_ipsec_phase1.php">
-											<img src="./themes/<?= $g['theme']; ?>/images/icons/icon_plus.gif" title="<?=gettext("add phase1 entry"); ?>" width="17" height="17" border="0">
+											<img src="./themes/<?= $g['theme']; ?>/images/icons/icon_plus.gif" title="<?=gettext("add phase1 entry"); ?>" width="17" height="17" border="0" alt="add" />
 										</a>
 									</td>
 								</tr>
 							</table>
-						<td>
+						</td>
 					</tr>
 					<tr>
-						<td colspan="4">
+						<td colspan="7">
 							<p>
 								<span class="vexpl">
 									<span class="red">
 										<strong><?=gettext("Note"); ?>:<br /></strong>
 									</span>
 								<?=gettext("You can check your IPsec status at"); ?> <a href="diag_ipsec.php"><?=gettext("Status:IPsec"); ?></a>.<br />
-									<?=gettext("IPsec Debug Mode can be enabled at"); ?> <a href="system_advanced_misc.php"><?=gettext("System:Advanced:Miscellaneous"); ?></a>.<br />
-									<?=gettext("IPsec can be set to prefer older SAs at"); ?> <a href="system_advanced_misc.php"><?=gettext("System:Advanced:Miscellaneous"); ?></a>.
+									<?=gettext("IPsec Debug Mode can be enabled at"); ?> <a href="vpn_ipsec_settings.php"><?=gettext("VPN:IPsec:Advanced Settings"); ?></a>.<br />
+									<?=gettext("IPsec can be set to prefer older SAs at"); ?> <a href="vpn_ipsec_settings.php"><?=gettext("VPN:IPsec:Advanced Settings"); ?></a>.
 								</span>
 							</p>
 						</td>
@@ -445,11 +454,13 @@ include("head.inc");
 </form>
 <?php include("fend.inc"); ?>
 <script type="text/javascript">
+//<![CDATA[
 function show_phase2(id, buttonid) {
 	document.getElementById(buttonid).innerHTML='';
 	aodiv = document.getElementById(id);
 	aodiv.style.display = "block";
 }
+//]]>
 </script>
 </body>
 </html>
@@ -462,6 +473,7 @@ function show_ipsec_header($ph1ent) {
 		$mobile = "&mobile=true";
 	?>
 	<tr>
+		<td class="listhdrr"><?=gettext("IKE"); ?></td>
 		<td class="listhdrr"><?=gettext("Remote Gateway"); ?></td>
 		<td class="listhdrr"><?=gettext("Mode"); ?></td>
 		<td class="listhdrr"><?=gettext("P1 Protocol"); ?></td>

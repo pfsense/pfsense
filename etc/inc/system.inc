@@ -1247,6 +1247,11 @@ EOD;
 		url.redirect = ( "^/(.*)" => "https://%1{$redirectport}/$1" )
 	}
 }
+\$SERVER["socket"] == "[::]:80" {
+	\$HTTP["host"] =~ "(.*)" {
+		url.redirect = ( "^/(.*)" => "https://%1{$redirectport}/$1" )
+	}
+}
 EOD;
 	}
 

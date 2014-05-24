@@ -20,12 +20,12 @@ $valid_test_types = array("offline", "short", "long", "conveyance");
 $valid_info_types = array("i", "H", "c", "A", "a");
 $valid_log_types = array("error", "selftest");
 
-
+$closehead = false;
 include("head.inc");
 ?>
 
-<style>
-<!--
+<style type="text/css">
+/*<![CDATA[*/
 
 input {
 	font-family: courier new, courier;
@@ -55,7 +55,7 @@ pre {
 	font-size: 11px;
 }
 
--->
+/*]]>*/
 </style>
 </head>
 <body link="#0000CC" vlink="#0000CC" alink="#0000CC">
@@ -207,7 +207,7 @@ switch($action) {
 
 		?>
 		<!-- Print the tabs across the top -->
-		<table width="100%" border="0" cellpadding="0" cellspacing="0">
+		<table width="100%" border="0" cellpadding="0" cellspacing="0" summary="tabs">
 			<tr>
 				<td>
 					<?php
@@ -221,7 +221,7 @@ switch($action) {
 		</table>
 <!-- user email address -->
 		<form action="<?= $_SERVER['PHP_SELF']?>" method="post" name="config">
-		<table width="100%" border="0" cellpadding="6" cellspacing="0">
+		<table width="100%" border="0" cellpadding="6" cellspacing="0" summary="e-mail">
 			<tbody>
 				<tr>
 					<td colspan="2" valign="top" class="listtopic"><?=gettext("Config"); ?></td>
@@ -246,7 +246,7 @@ switch($action) {
 
 <!-- test email -->
 		<form action="<?= $_SERVER['PHP_SELF']?>" method="post" name="config">
-		<table width="100%" border="0" cellpadding="6" cellspacing="0">
+		<table width="100%" border="0" cellpadding="6" cellspacing="0" summary="test e-mail">
 			<tbody>
 				<tr>
 					<td colspan="2" valign="top" class="listtopic"><?=gettext("Test email"); ?></td>
@@ -279,7 +279,7 @@ switch($action) {
 		// Get all AD* and DA* (IDE and SCSI) devices currently installed and stores them in the $devs array
 		exec("ls /dev | grep '^\(ad\|da\|ada\)[0-9]\{1,2\}$'", $devs);
 		?>
-		<table width="100%" border="0" cellpadding="0" cellspacing="0">
+		<table width="100%" border="0" cellpadding="0" cellspacing="0" summary="default page">
 			<tr>
 				<td>
 					<?php
@@ -293,7 +293,7 @@ switch($action) {
 		</table>
 <!--INFO-->
 		<form action="<?= $_SERVER['PHP_SELF']?>" method="post" name="info">
-		<table width="100%" border="0" cellpadding="6" cellspacing="0">
+		<table width="100%" border="0" cellpadding="6" cellspacing="0" summary="info">
 			<tbody>
 				<tr>
 					<td colspan="2" valign="top" class="listtopic"><?=gettext("Info"); ?></td>
@@ -302,7 +302,7 @@ switch($action) {
 					<td width="22%" valign="top" class="vncell"><?=gettext("Info type"); ?></td>
 					<td width="78%" class="vtable">
 						<input type="radio" name="type" value="i" /><?=gettext("Info"); ?><br />
-						<input type="radio" name="type" value="H" checked /><?=gettext("Health"); ?><br />
+						<input type="radio" name="type" value="H" checked="checked" /><?=gettext("Health"); ?><br />
 						<input type="radio" name="type" value="c" /><?=gettext("SMART Capabilities"); ?><br />
 						<input type="radio" name="type" value="A" /><?=gettext("Attributes"); ?><br />
 						<input type="radio" name="type" value="a" /><?=gettext("All"); ?><br />
@@ -315,7 +315,7 @@ switch($action) {
 						<?php
 						foreach($devs as $dev)
 						{
-							echo "<option value=" . $dev . ">" . $dev . "</option>";
+							echo "<option value=\"" . $dev . "\">" . $dev . "</option>";
 						}
 						?>
 						</select>
@@ -333,7 +333,7 @@ switch($action) {
 		</form>
 <!--TESTS-->
 		<form action="<?= $_SERVER['PHP_SELF']?>" method="post" name="tests">
-		<table width="100%" border="0" cellpadding="6" cellspacing="0">
+		<table width="100%" border="0" cellpadding="6" cellspacing="0" summary="tests">
 			<tbody>
 				<tr>
 					<td colspan="2" valign="top" class="listtopic"><?=gettext("Perform Self-tests"); ?></td>
@@ -342,7 +342,7 @@ switch($action) {
 					<td width="22%" valign="top" class="vncell"><?=gettext("Test type"); ?></td>
 					<td width="78%" class="vtable">
 						<input type="radio" name="testType" value="offline" /><?=gettext("Offline"); ?><br />
-						<input type="radio" name="testType" value="short" checked /><?=gettext("Short"); ?><br />
+						<input type="radio" name="testType" value="short" checked="checked" /><?=gettext("Short"); ?><br />
 						<input type="radio" name="testType" value="long" /><?=gettext("Long"); ?><br />
 						<input type="radio" name="testType" value="conveyance" /><?=gettext("Conveyance (ATA Disks Only)"); ?><br />
 					</td>
@@ -354,7 +354,7 @@ switch($action) {
 						<?php
 						foreach($devs as $dev)
 						{
-							echo "<option value=" . $dev . ">" . $dev;
+							echo "<option value=\"" . $dev . "\">" . $dev . "</option>";
 						}
 						?>
 						</select>
@@ -372,7 +372,7 @@ switch($action) {
 		</form>
 <!--LOGS-->
 		<form action="<?= $_SERVER['PHP_SELF']?>" method="post" name="logs">
-		<table width="100%" border="0" cellpadding="6" cellspacing="0">
+		<table width="100%" border="0" cellpadding="6" cellspacing="0" summary="logs">
 			<tbody>
 				<tr>
 					<td colspan="2" valign="top" class="listtopic"><?=gettext("View Logs"); ?></td>
@@ -380,7 +380,7 @@ switch($action) {
 				<tr>
 					<td width="22%" valign="top" class="vncell"><?=gettext("Log type"); ?></td>
 					<td width="78%" class="vtable">
-						<input type="radio" name="type" value="error" checked /><?=gettext("Error"); ?><br />
+						<input type="radio" name="type" value="error" checked="checked" /><?=gettext("Error"); ?><br />
 						<input type="radio" name="type" value="selftest" /><?=gettext("Self-test"); ?><br />
 					</td>
 				</tr>
@@ -391,7 +391,7 @@ switch($action) {
 						<?php
 						foreach($devs as $dev)
 						{
-							echo "<option value=" . $dev . ">" . $dev;
+							echo "<option value=\"" . $dev . "\">" . $dev . "</option>";
 						}
 						?>
 						</select>
@@ -409,7 +409,7 @@ switch($action) {
 		</form>
 <!--ABORT-->
 		<form action="<?= $_SERVER['PHP_SELF']?>" method="post" name="abort">
-		<table width="100%" border="0" cellpadding="6" cellspacing="0">
+		<table width="100%" border="0" cellpadding="6" cellspacing="0" summary="abort">
 			<tbody>
 				<tr>
 					<td colspan="2" valign="top" class="listtopic"><?=gettext("Abort tests"); ?></td>
@@ -421,7 +421,7 @@ switch($action) {
 						<?php
 						foreach($devs as $dev)
 						{
-							echo "<option value=" . $dev . ">" . $dev;
+							echo "<option value=\"" . $dev . "\">" . $dev . "</option>";
 						}
 						?>
 						</select>

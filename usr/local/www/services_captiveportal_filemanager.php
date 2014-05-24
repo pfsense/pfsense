@@ -172,7 +172,7 @@ include("head.inc");
   	  <tr>
 		<td class="listlr"><?=htmlspecialchars($element['name']);?></td>
 		<td class="listr" align="right"><?=format_bytes($element['size']);?></td>
-		<td valign="middle" nowrap class="list">
+		<td valign="middle" class="list nowrap">
 		<a href="services_captiveportal_filemanager.php?zone=<?=$cpzone;?>&amp;act=del&amp;id=<?=$i;?>" onclick="return confirm('<?=gettext("Do you really want to delete this file?"); ?>')"><img src="/themes/<?php echo $g['theme']; ?>/images/icons/icon_x.gif" title="<?=gettext("delete file"); ?>" width="17" height="17" border="0" alt="delete" /></a>
 		</td>
 	  </tr>

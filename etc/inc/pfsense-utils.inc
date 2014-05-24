@@ -760,10 +760,12 @@ function check_firmware_version($tocheck = "all", $return_php = true) {
 function host_firmware_version($tocheck = "") {
 	global $g, $config;
 
+	$os_version = trim(substr(php_uname("r"), 0, strpos(php_uname("r"), '-')));
+
 	return array(
 		"firmware" => array("version" => trim(file_get_contents('/etc/version', " \n"))),
-		"kernel"   => array("version" => trim(file_get_contents('/etc/version_kernel', " \n"))),
-		"base"     => array("version" => trim(file_get_contents('/etc/version_base', " \n"))),
+		"kernel"   => array("version" => $os_version),
+		"base"     => array("version" => $os_version),
 		"platform" => trim(file_get_contents('/etc/platform', " \n")),
 		"config_version" => $config['version']
 	);

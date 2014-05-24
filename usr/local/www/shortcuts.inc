@@ -179,7 +179,7 @@ $shortcuts['ipsec'] = array();
 $shortcuts['ipsec']['main'] = "vpn_ipsec.php";
 $shortcuts['ipsec']['log'] = "diag_logs_ipsec.php";
 $shortcuts['ipsec']['status'] = "diag_ipsec.php";
-$shortcuts['ipsec']['service'] = "racoon";
+$shortcuts['ipsec']['service'] = "ipsec";
 
 $shortcuts['openvpn'] = array();
 $shortcuts['openvpn']['main'] = "vpn_openvpn_server.php";

@@ -445,7 +445,7 @@ function method_change() {
 						<tr id='intermediate'>
 							<td width="22%" valign="top" class="vncellreq"><?=gettext("Signing Certificate Authority");?></td>
 							<td width="78%" class="vtable">
-                                                                <select name='caref' id='caref' class="formselect" onChange='internalca_change()'>
+                                                                <select name='caref' id='caref' class="formselect" onchange='internalca_change()'>
                                                                 <?php
                                                                         foreach( $a_ca as $ca):
                                                                         if (!$ca['prv'])
@@ -662,7 +662,7 @@ function method_change() {
 								</tr>
 							</table>
 						</td>
-						<td valign="middle" nowrap class="list">
+						<td valign="middle" class="list nowrap">
 							<a href="system_camanager.php?act=edit&amp;id=<?=$i;?>">
 								<img src="/themes/<?= $g['theme'];?>/images/icons/icon_e.gif" title="<?=gettext("edit CA");?>" alt="<?=gettext("edit CA");?>" width="17" height="17" border="0" />
 							</a>

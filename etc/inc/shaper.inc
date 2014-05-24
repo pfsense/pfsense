@@ -3171,7 +3171,7 @@ class dnpipe_class extends dummynet_class {
 								if (filter_get_time_based_rule_status($schedule)) {
 									$pfq_rule .= " bw ".trim($bw['bw']).$bw['bwscale'];
 									if (is_numeric($bw['burst']) && ($bw['burst'] > 0))
-										$pfq_rule .= " burst ".trim($bw['burst']).$bw['bwscale'];
+										$pfq_rule .= " burst ".trim($bw['burst']);
 									$found = true;
 									break;
 								}
@@ -3185,7 +3185,7 @@ class dnpipe_class extends dummynet_class {
 				} else {
 					$pfq_rule .= " bw ".trim($bw['bw']).$bw['bwscale'];
 					if (is_numeric($bw['burst']) && ($bw['burst'] > 0))
-						$pfq_rule .= " burst ".trim($bw['burst']).$bw['bwscale'];
+						$pfq_rule .= " burst ".trim($bw['burst']);
 					$found = true;
 					break;
 				}

@@ -101,7 +101,7 @@ if (!isset($do_testport)) {
 include("head.inc"); ?>
 <body link="#000000" vlink="#000000" alink="#000000">
 <?php include("fbegin.inc"); ?>
-<table width="100%" border="0" cellpadding="0" cellspacing="0">
+<table width="100%" border="0" cellpadding="0" cellspacing="0" summary="diag test port">
 <tr><td>
 <?php echo gettext("This page allows you to perform a simple TCP connection test to determine if a host is up and accepting connections on a given port. This test does not function for UDP since there is no way to reliably determine if a UDP port accepts connections in this manner."); ?>
 <br /><br />
@@ -109,7 +109,7 @@ include("head.inc"); ?>
 <br /><br /><br />
 <?php if ($input_errors) print_input_errors($input_errors); ?>
 	<form action="diag_testport.php" method="post" name="iform" id="iform">
-	<table width="100%" border="0" cellpadding="6" cellspacing="0">
+	<table width="100%" border="0" cellpadding="6" cellspacing="0" summary="main area">
 		<tr>
 			<td colspan="2" valign="top" class="listtopic"><?=gettext("Test Port"); ?></td>
 		</tr>
@@ -117,25 +117,25 @@ include("head.inc"); ?>
 			<td width="22%" valign="top" class="vncellreq"><?=gettext("Host"); ?></td>
 			<td width="78%" class="vtable">
 			<?=$mandfldhtml;?>
-			<input name="host" type="text" class="formfld" id="host" size="20" value="<?=htmlspecialchars($host);?>"></td>
+			<input name="host" type="text" class="formfld" id="host" size="20" value="<?=htmlspecialchars($host);?>" /></td>
 		</tr>
 		<tr>
 			<td width="22%" valign="top" class="vncellreq"><?= gettext("Port"); ?></td>
 			<td width="78%" class="vtable">
-				<input name="port" type="text" class="formfld" id="port" size="10" value="<?=htmlspecialchars($port);?>">
+				<input name="port" type="text" class="formfld" id="port" size="10" value="<?=htmlspecialchars($port);?>" />
 			</td>
 		</tr>
 		<tr>
 			<td width="22%" valign="top" class="vncell"><?= gettext("Source Port"); ?></td>
 			<td width="78%" class="vtable">
-				<input name="srcport" type="text" class="formfld" id="srcport" size="10" value="<?=htmlspecialchars($srcport);?>">
+				<input name="srcport" type="text" class="formfld" id="srcport" size="10" value="<?=htmlspecialchars($srcport);?>" />
 				<br /><br /><?php echo gettext("This should typically be left blank."); ?>
 			</td>
 		</tr>
 		<tr>
 			<td width="22%" valign="top" class="vncell"><?= gettext("Show Remote Text"); ?></td>
 			<td width="78%" class="vtable">
-				<input name="showtext" type="checkbox" id="showtext" <?php if ($showtext) echo "checked" ?>>
+				<input name="showtext" type="checkbox" id="showtext" <?php if ($showtext) echo "checked=\"checked\"" ?> />
 				<br /><br /><?php echo gettext("Shows the text given by the server when connecting to the port. Will take 10+ seconds to display if checked."); ?>
 			</td>
 		</tr>
@@ -148,7 +148,7 @@ include("head.inc"); ?>
 					foreach ($sourceips as $sip):
 						$selected = "";
 						if (!link_interface_to_bridge($sip['value']) && ($sip['value'] == $sourceip))
-							$selected = 'selected="selected"';
+							$selected = "selected=\"selected\"";
 				?>
 					<option value="<?=$sip['value'];?>" <?=$selected;?>>
 						<?=htmlspecialchars($sip['name']);?>
@@ -161,13 +161,13 @@ include("head.inc"); ?>
 			<td width="22%" valign="top" class="vncell"><?=gettext("IP Protocol"); ?></td>
 			<td width="78%" class="vtable">
 			<select name="ipprotocol" class="formfld">
-				<option value="any" <?php if ("any" == $ipprotocol) echo "selected"; ?>>
+				<option value="any" <?php if ("any" == $ipprotocol) echo "selected=\"selected\""; ?>>
 					Any
 				</option>
-				<option value="ipv4" <?php if ($ipprotocol == "ipv4") echo "selected"; ?>>
+				<option value="ipv4" <?php if ($ipprotocol == "ipv4") echo "selected=\"selected\""; ?>>
 					<?=gettext("IPv4");?>
 				</option>
-				<option value="ipv6" <?php if ($ipprotocol == "ipv6") echo "selected"; ?>>
+				<option value="ipv6" <?php if ($ipprotocol == "ipv6") echo "selected=\"selected\""; ?>>
 					<?=gettext("IPv6");?>
 				</option>
 			</select>
@@ -178,15 +178,24 @@ include("head.inc"); ?>
 		<tr>
 			<td width="22%" valign="top">&nbsp;</td>
 			<td width="78%">
-				<input name="Submit" type="submit" class="formbtn" value="<?=gettext("Test"); ?>">
+				<input name="Submit" type="submit" class="formbtn" value="<?=gettext("Test"); ?>" />
 			</td>
 		</tr>
 		<tr>
 		<td valign="top" colspan="2">
 		<?php if ($do_testport) {
-			echo "<font face='terminal' size='2'>";
+			echo "<font face=\"terminal\" size=\"2\">";
 			echo "<strong>" . gettext("Port Test Results") . ":</strong><br />";
-			echo '<pre>';
+		?>
+			<script type="text/javascript">
+			//<![CDATA[
+			window.onload=function(){
+				document.getElementById("testportCaptured").wrap='off';
+			}
+			//]]>
+			</script>
+		<?php
+			echo "<textarea id=\"testportCaptured\" style=\"width:98%\" name=\"code\" rows=\"15\" cols=\"66\" readonly=\"readonly\">";
 			$result = "";
 			$nc_base_cmd = "/usr/bin/nc";
 			$nc_args = "-w {$timeout}";
@@ -266,7 +275,7 @@ include("head.inc"); ?>
 					echo htmlspecialchars($result);
 				}
 			}
-			echo '</pre>' ;
+			echo '</textarea>&nbsp;</font>' ;
 		}
 		?>
 		</td>
@@ -275,3 +284,5 @@ include("head.inc"); ?>
 </form>
 </td></tr></table>
 <?php include("fend.inc"); ?>
+</body>
+</html>

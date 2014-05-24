@@ -76,6 +76,7 @@ if ($_POST) {
 
 	if (array_key_exists($_POST['ident'], $userids))
 		$input_errors[] = gettext("A user with this name already exists. Add the key to the user instead.");
+	unset($userids);
 	
 	if (!$input_errors && !(isset($id) && $a_secret[$id])) {
 		/* make sure there are no dupes */
@@ -123,11 +124,11 @@ include("head.inc");
 <?php include("fbegin.inc"); ?>
 <?php if ($input_errors) print_input_errors($input_errors); ?>
             <form action="vpn_ipsec_keys_edit.php" method="post" name="iform" id="iform">
-              <table width="100%" border="0" cellpadding="6" cellspacing="0">
+              <table width="100%" border="0" cellpadding="6" cellspacing="0" summary="vpn ipsec keys edit">
                 <tr> 
                   <td valign="top" class="vncellreq"><?=gettext("Identifier"); ?></td>
                   <td class="vtable">
-					<?=$mandfldhtml;?><input name="ident" type="text" class="formfld unknown" id="ident" size="30" value="<?=htmlspecialchars($pconfig['ident']);?>">
+					<?=$mandfldhtml;?><input name="ident" type="text" class="formfld unknown" id="ident" size="30" value="<?=htmlspecialchars($pconfig['ident']);?>" />
                     <br />
 <?=gettext("This can be either an IP address, fully qualified domain name or an e-mail address"); ?>.       
                   </td>
@@ -135,18 +136,32 @@ include("head.inc");
                 <tr> 
                   <td width="22%" valign="top" class="vncellreq"><?=gettext("Pre-Shared Key"); ?></td>
                   <td width="78%" class="vtable"> 
-                    <?=$mandfldhtml;?><input name="psk" type="text" class="formfld unknown" id="psk" size="40" value="<?=htmlspecialchars($pconfig['psk']);?>">
+                    <?=$mandfldhtml;?><input name="psk" type="text" class="formfld unknown" id="psk" size="40" value="<?=htmlspecialchars($pconfig['psk']);?>" />
                   </td>
                 </tr>
                 <tr> 
                   <td width="22%" valign="top">&nbsp;</td>
                   <td width="78%"> 
-                    <input name="Submit" type="submit" class="formbtn" value="<?=gettext("Save"); ?>"> 
+                    <input name="Submit" type="submit" class="formbtn" value="<?=gettext("Save"); ?>" /> 
                     <?php if (isset($id) && $a_secret[$id]): ?>
-                    <input name="id" type="hidden" value="<?=htmlspecialchars($id);?>">
+                    <input name="id" type="hidden" value="<?=htmlspecialchars($id);?>" />
                     <?php endif; ?>
                   </td>
                 </tr>
+		<tr>
+			<td colspan="4">
+			<p>
+				<span class="vexpl">
+				<span class="red">
+					<strong><?=gettext("Note"); ?>:<br /></strong>
+				</span>
+				<?=gettext("PSK for any user can be set by using an identifier of any/ANY");?>
+				</span>
+			</p>
+			</td>
+		</tr>
               </table>
 </form>
 <?php include("fend.inc"); ?>
+</body>
+</html>

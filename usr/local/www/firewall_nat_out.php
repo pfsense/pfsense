@@ -378,6 +378,7 @@ if (is_subsystem_dirty('natconf'))
 						&nbsp;
 					</td>
 					<td class="listr" onclick="fr_toggle(<?=$i;?>)" id="frd<?=$i;?>" ondblclick="document.location='firewall_nat_out_edit.php?id=<?=$i;?>';">
+						<?PHP $natent['source']['network'] = ($natent['source']['network'] == "(self)") ? "This Firewall" : $natent['source']['network']; ?>
 						<?php echo $textss . $alias_src_span_begin . $natent['source']['network'] . $alias_src_span_end . $textse;?>
 					</td>
 					<td class="listr" onclick="fr_toggle(<?=$i;?>)" id="frd<?=$i;?>" ondblclick="document.location='firewall_nat_out_edit.php?id=<?=$i;?>';">

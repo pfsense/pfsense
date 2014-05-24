@@ -81,7 +81,7 @@ $status = ipsec_smp_dump_status();
 <body link="#0000CC" vlink="#0000CC" alink="#0000CC" onload="<?php echo $jsevents["body"]["onload"]; ?>">
 <?php include("fbegin.inc"); ?>
 <div id="inputerrors"></div>
-<table width="100%" border="0" cellpadding="0" cellspacing="0">
+<table width="100%" border="0" cellpadding="0" cellspacing="0" summary="status ipsec">
 	<tr>
 		<td>
 			<?php
@@ -97,16 +97,16 @@ $status = ipsec_smp_dump_status();
 	<tr>
 	<td>
 	<div id="mainarea">
-		<table width="100%" border="0" cellpadding="6" cellspacing="0" class="tabcont sortable">
+		<table width="100%" border="0" cellpadding="6" cellspacing="0" class="tabcont sortable" summary="status">
 		<thead>
 			<tr>
-				<th nowrap class="listhdrr"><?php echo gettext("Description");?></th>
-				<th nowrap class="listhdrr"><?php echo gettext("Local ID");?></th>
-				<th nowrap class="listhdrr"><?php echo gettext("Local IP");?></th>
-				<th nowrap class="listhdrr"><?php echo gettext("Remote ID");?></th>
-				<th nowrap class="listhdrr"><?php echo gettext("Remote IP");?></a></th>
-				<th nowrap class="listhdrr"><?php echo gettext("Role");?></a></th>
-				<th nowrap class="listhdrr"><?php echo gettext("Status");?></a></th>
+				<th class="listhdrr nowrap"><?php echo gettext("Description");?></th>
+				<th class="listhdrr nowrap"><?php echo gettext("Local ID");?></th>
+				<th class="listhdrr nowrap"><?php echo gettext("Local IP");?></th>
+				<th class="listhdrr nowrap"><?php echo gettext("Remote ID");?></th>
+				<th class="listhdrr nowrap"><?php echo gettext("Remote IP");?></th>
+				<th class="listhdrr nowrap"><?php echo gettext("Role");?></th>
+				<th class="listhdrr nowrap"><?php echo gettext("Status");?></th>
 		</tr>
 		</thead>
 		<tbody>
@@ -175,8 +175,8 @@ $status = ipsec_smp_dump_status();
 				<td class="listbg">
 					<?php ?> &nbsp;
 				</td>
-				<td valign="middle" nowrap class="list">
-					<table border="0" cellspacing="0" cellpadding="1">
+				<td valign="middle" class="list nowrap">
+					<table border="0" cellspacing="0" cellpadding="1" summary="">
 					</table>
 				</td>
 			</tr>
@@ -184,15 +184,15 @@ $status = ipsec_smp_dump_status();
 			<tr>
 				<td class="listrborder" colspan="7">
 				<div id="btnchildsa-<?=$ikeid;?>">
-					<input  type="button" onClick="show_childsa('childsa-<?=$ikeid;?>','btnchildsa-<?=$ikeid;?>');" value="+" /> - Show child SA entries</a>
+					<input  type="button" onclick="show_childsa('childsa-<?=$ikeid;?>','btnchildsa-<?=$ikeid;?>');" value="+" /> - Show child SA entries
 				</div>
-				<table class="tabcont" width="100%" height="100%" border="0" cellspacing="0" cellpadding="0" id="childsa-<?=$ikeid;?>" style="display:none">
+				<table class="tabcont" width="100%" height="100%" border="0" cellspacing="0" cellpadding="0" id="childsa-<?=$ikeid;?>" style="display:none" summary="">
 				<thead>
 					<tr>
-						<th nowrap class="listhdrr"><?php echo gettext("Local subnets");?></th>
-						<th nowrap class="listhdrr"><?php echo gettext("Local SPI");?></th>
-						<th nowrap class="listhdrr"><?php echo gettext("Remote SPI");?></th>
-						<th nowrap class="listhdrr"><?php echo gettext("Remote subnets");?></th>
+						<th class="listhdrr nowrap"><?php echo gettext("Local subnets");?></th>
+						<th class="listhdrr nowrap"><?php echo gettext("Local SPI");?></th>
+						<th class="listhdrr nowrap"><?php echo gettext("Remote SPI");?></th>
+						<th class="listhdrr nowrap"><?php echo gettext("Remote subnets");?></th>
 					</tr>
 				</thead>
 				<tbody>
@@ -201,7 +201,7 @@ $status = ipsec_smp_dump_status();
 						foreach ($ikesa['childsalist']['childsa'] as $childsa) {
 				?>
 					<tr valign="top">
-						<td nowrap class="listlr">
+						<td class="listlr nowrap">
 				<?php	if (is_array($childsa['local']) && is_array($childsa['local']['networks']) && is_array($childsa['local']['networks']['network'])) {
 						foreach ($childsa['local']['networks']['network'] as $lnets) {
 							echo htmlspecialchars($lnets) . "<br />";	
@@ -210,17 +210,17 @@ $status = ipsec_smp_dump_status();
 						echo "Unknown";
 				?>
 						</td>
-						<td nowrap class="listr">
+						<td class="listr nowrap">
 				<?php	if (is_array($childsa['local']))
 						echo htmlspecialchars($childsa['local']['spi']);
 				?>
 						</td>
-						<td nowrap class="listr">
+						<td class="listr nowrap">
 				<?php	if (is_array($childsa['remote']))
 						echo htmlspecialchars($childsa['remote']['spi']);
 				?>
 						</td>
-						<td nowrap class="listlr">
+						<td class="listlr nowrap">
 				<?php	if (is_array($childsa['remote']) && is_array($childsa['remote']['networks']) && is_array($childsa['remote']['networks']['network'])) {
 						foreach ($childsa['remote']['networks']['network'] as $rnets) {
 							echo htmlspecialchars($rnets) . "<br />";	
@@ -229,11 +229,12 @@ $status = ipsec_smp_dump_status();
 						echo "Unknown";
 				?>
 						</td>
-						<td nowrap class="list">
+						<td class="list nowrap">
 							&nbsp;
 						</td>
 					</tr>
 				<?php } } ?>
+					<tr style="display:none;"><td></td></tr>
 				</tbody>
 				</table>
 				</td>
@@ -242,28 +243,30 @@ $status = ipsec_smp_dump_status();
 		}
 	}
 ?>
+			<tr style="display:none;"><td></td></tr>
 		</tbody>
 		</table>
 	</div>
 	</td>
 	</tr>
 </table>
-</div>
 
-<span class="vexpl">
+<p class="vexpl">
 	<span class="red">
 		<strong><?php echo gettext("Note:");?><br /></strong>
 	</span>
 	<?php echo gettext("You can configure IPsec");?>
 	<a href="vpn_ipsec.php">here</a>.
-</span>
+</p>
 <?php unset($status); include("fend.inc"); ?>
 <script type="text/javascript">
+//<![CDATA[
 function show_childsa(id, buttonid) {
 	document.getElementById(buttonid).innerHTML='';
 	aodiv = document.getElementById(id);
 	aodiv.style.display = "block";
 }
+//]]>
 </script>
 </body>
 </html>

@@ -72,8 +72,8 @@ function getGETPOSTsettingvalue($settingname, $default)
 
 $rulenum = getGETPOSTsettingvalue('getrulenum', null);
 if($rulenum) {
-	list($rulenum, $type) = explode(',', $rulenum);
-	$rule = find_rule_by_number($rulenum, $type);
+	list($rulenum, $tracker, $type) = explode(',', $rulenum);
+	$rule = find_rule_by_number($rulenum, $tracker, $type);
 	echo gettext("The rule that triggered this action is") . ":\n\n{$rule}";
 	exit;
 }
@@ -159,11 +159,10 @@ include("head.inc");
   <tr>
     <td>
 	<div id="mainarea">
-		<table class="tabcont sortable" width="100%" border="0" cellpadding="0" cellspacing="0" sortableMultirow="<?=$config['syslog']['filterdescriptions'] === "2"?2:1?>" summary="main area">
-			<thead>
+		<table class="tabcont sortable" width="100%" border="0" cellpadding="0" cellspacing="0" style="sortableMultirow:<?=$config['syslog']['filterdescriptions'] === "2"?2:1?>" summary="main area">
 			<tr>
 				<td colspan="<?=(!isset($config['syslog']['rawfilter']))?7:2?>" align="left" valign="middle">
-				<div id="filterlogentries_show" class="widgetconfigdiv" style=<?=(!isset($config['syslog']['rawfilter']))?"":"display:none"?>>
+				<div id="filterlogentries_show" class="widgetconfigdiv" style="<?=(!isset($config['syslog']['rawfilter']))?"":"display:none"?>">
 					<form id="filterlogentries" name="filterlogentries" action="diag_logs_filter.php" method="post">
 						<?php 
 							$Include_Act = explode(",", str_replace(" ", ",", $filterfieldsarray['act']));
@@ -231,14 +230,14 @@ include("head.inc");
 					</table>
 					</form>
 				</div>
-				<div id="filterform_show" class="widgetconfigdiv" style=<?=(!isset($config['syslog']['rawfilter']))?"display:none":""?>>
+				<div id="filterform_show" class="widgetconfigdiv" style="<?=(!isset($config['syslog']['rawfilter']))?"display:none":""?>">
 					<form id="filterform" name="filterform" action="diag_logs_filter.php" method="post">
 					<table width="0%" border="0" cellpadding="0" cellspacing="0" summary="firewall log">
 					<tr>
 						<td>
 							<div align="center" style="vertical-align:top;"><?=gettext("Interface");?></div>
 							<div align="center" style="vertical-align:top;">
-							<select name="interface" onChange="dst_change(this.value,iface_old,document.iform.dsttype.value);iface_old = document.iform.interface.value;typesel_change();">
+							<select name="interface" onchange="dst_change(this.value,iface_old,document.iform.dsttype.value);iface_old = document.iform.interface.value;typesel_change();">
 							<option value="" <?=$interfacefilter?"":"selected=\"selected\""?>>*Any interface</option>
 							<?php						
 							$iflist = get_configured_interface_with_descr(false, true);
@@ -320,17 +319,16 @@ include("head.inc");
 			  </td>
 			</tr>
 			<tr class="sortableHeaderRowIdentifier">
-			  <td width="10%" class="listhdrr"><?=gettext("Act");?></ td>
-			  <td width="10%" class="listhdrr"><?=gettext("Time");?></ td>
-			  <td width="15%" class="listhdrr"><?=gettext("If");?></ td>
+			  <td width="10%" class="listhdrr"><?=gettext("Act");?></td>
+			  <td width="10%" class="listhdrr"><?=gettext("Time");?></td>
+			  <td width="15%" class="listhdrr"><?=gettext("If");?></td>
 			  <?php if ($config['syslog']['filterdescriptions'] === "1"):?>
-				<td width="10%" class="listhdrr"><?=gettext("Rule");?></ td>
+				<td width="10%" class="listhdrr"><?=gettext("Rule");?></td>
 			  <?php endif;?>
-			  <td width="25%" class="listhdrr"><?=gettext("Source");?></ td>
-			  <td width="25%" class="listhdrr"><?=gettext("Destination");?></ td>
-			  <td width="15%" class="listhdrr"><?=gettext("Proto");?></ td>
+			  <td width="25%" class="listhdrr"><?=gettext("Source");?></td>
+			  <td width="25%" class="listhdrr"><?=gettext("Destination");?></td>
+			  <td width="15%" class="listhdrr"><?=gettext("Proto");?></td>
 			</tr>
-			</thead>
 			<?php
 			if ($config['syslog']['filterdescriptions'])
 				buffer_rules_load();
@@ -341,18 +339,18 @@ include("head.inc");
 			<tr class="<?=$evenRowClass?>">
 			  <td class="listMRlr nowrap" align="center" sorttable_customkey="<?=$filterent['act']?>">
 			  <center>
-			  <a onclick="javascript:getURL('diag_logs_filter.php?getrulenum=<?php echo "{$filterent['rulenum']},{$filterent['act']}"; ?>', outputrule);">
-			  <img border="0" src="<?php echo find_action_image($filterent['act']);?>" width="11" height="11" align="middle" alt="<?php echo $filterent['act'];?>" title="<?php echo $filterent['act'];?>" />
+			  <a onclick="javascript:getURL('diag_logs_filter.php?getrulenum=<?php echo "{$filterent['rulenum']},{$filterent['tracker']},{$filterent['act']}"; ?>', outputrule);">
+			  <img border="0" src="<?php echo find_action_image($filterent['act']);?>" width="11" height="11" align="middle" alt="<?php echo $filterent['act'] .'/'. $filterent['tracker'];?>" title="<?php echo $filterent['act'] .'/'. $filterent['tracker'];?>" />
 			  <?php if ($filterent['count']) echo $filterent['count'];?></a></center></td>
-			  <td class="listMRr" nowrap="nowrap"><?php echo htmlspecialchars($filterent['time']);?></td>
-			  <td class="listMRr" nowrap="nowrap">
+			  <td class="listMRr nowrap"><?php echo htmlspecialchars($filterent['time']);?></td>
+			  <td class="listMRr nowrap">
 				<?php if ($filterent['direction'] == "out"): ?>
 				<img border="0" src="/themes/<?= $g['theme']; ?>/images/icons/out.gif" alt="Direction=OUT" title="Direction=OUT"/>
 				<?php endif; ?>
 				<?php echo htmlspecialchars($filterent['interface']);?></td>
 			  <?php 
 			  if ($config['syslog']['filterdescriptions'] === "1")
-				echo("<td class=\"listMRr nowrap\">".find_rule_by_number_buffer($filterent['rulenum'],$filterent['act'])."</td>");
+				echo("<td class=\"listMRr nowrap\">".find_rule_by_number_buffer($filterent['rulenum'],$filterent['tracker'],$filterent['act'])."</td>");
 				
 			  $int = strtolower($filterent['interface']);
 			  $proto = strtolower($filterent['proto']);
@@ -385,12 +383,12 @@ include("head.inc");
 				if ($filterent['proto'] == "TCP")
 					$filterent['proto'] .= ":{$filterent['tcpflags']}";
 			  ?>
-			  <td class="listMRr" nowrap="nowrap"><?php echo htmlspecialchars($filterent['proto']);?></td>
+			  <td class="listMRr nowrap"><?php echo htmlspecialchars($filterent['proto']);?></td>
 			</tr>
 			<?php if (isset($config['syslog']['filterdescriptions']) && $config['syslog']['filterdescriptions'] === "2"):?>
 			<tr class="<?=$evenRowClass?>">
 			  <td colspan="2" class="listMRDescriptionL listMRlr" />
-			  <td colspan="4" class="listMRDescriptionR listMRr nowrap"><?=find_rule_by_number_buffer($filterent['rulenum'],$filterent['act']);?></td>
+			  <td colspan="4" class="listMRDescriptionR listMRr nowrap"><?=find_rule_by_number_buffer($filterent['rulenum'],$filterent['tracker'],$filterent['act']);?></td>
 			</tr>
 			<?php endif;
 			endforeach; 
@@ -407,7 +405,6 @@ include("head.inc");
 				dump_clog($filter_logfile, $nentries);
 		  ?>
 <?php endif; ?>
-		<tfoot>
 		<tr>
 			<td align="left" valign="top" colspan="3">
 				<form id="clearform" name="clearform" action="diag_logs_filter.php" method="post" style="margin-top: 14px;">
@@ -415,7 +412,6 @@ include("head.inc");
 				</form>
 			</td>
 		</tr>
-		</tfoot>
 		</table>
 		</div>
 	</td>
@@ -428,7 +424,7 @@ include("head.inc");
 
 <!-- AJAXY STUFF -->
 <script type="text/javascript">
-
+//<![CDATA[
 function resolve_with_ajax(ip_to_resolve) {
 	var url = "/diag_logs_filter.php";
 
@@ -448,7 +444,7 @@ function resolve_with_ajax(ip_to_resolve) {
 function resolve_ip_callback(transport) {
 	var response = jQuery.parseJSON(transport.responseText);
 	var resolve_class = htmlspecialchars(response.resolve_ip.replace(/[.:]/g, '-'));
-	var resolve_text = '<small><br />' + htmlspecialchars(response.resolve_text) + '</small>';
+	var resolve_text = '<small><br />' + htmlspecialchars(response.resolve_text) + '<\/small>';
 	
 	jQuery('span.RESOLVE-' + resolve_class).html(resolve_text);
 	jQuery('img.ICON-' + resolve_class).removeAttr('title');
@@ -462,6 +458,7 @@ function resolve_ip_callback(transport) {
 function htmlspecialchars(str) {
     return str.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&apos;');
 }
+//]]>
 </script>
 
 </body>

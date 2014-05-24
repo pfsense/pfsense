@@ -485,7 +485,7 @@ include("head.inc");
 		<td width="22%" valign="top" class="vncell"><?=gettext("Dynamic DNS");?></td>
 		<td width="78%" class="vtable">
 			<div id="showddnsbox">
-				<input type="button" onClick="show_ddns_config()" value="<?=gettext("Advanced");?>" /> - <?=gettext("Show Dynamic DNS");?>
+				<input type="button" onclick="show_ddns_config()" value="<?=gettext("Advanced");?>" /> - <?=gettext("Show Dynamic DNS");?>
 			</div>
 			<div id="showddns" style="display:none">
 				<input style="vertical-align:middle" type="checkbox" value="yes" name="ddnsupdate" id="ddnsupdate" <?php if($pconfig['ddnsupdate']) echo "checked=\"checked\""; ?> />&nbsp;
@@ -508,7 +508,7 @@ include("head.inc");
 		<td width="22%" valign="top" class="vncell"><?=gettext("NTP servers");?></td>
 		<td width="78%" class="vtable">
 			<div id="showntpbox">
-				<input type="button" onClick="show_ntp_config()" value="<?=gettext("Advanced");?>" /> - <?=gettext("Show NTP configuration");?>
+				<input type="button" onclick="show_ntp_config()" value="<?=gettext("Advanced");?>" /> - <?=gettext("Show NTP configuration");?>
 			</div>
 			<div id="showntp" style="display:none">
 				<input name="ntp1" type="text" class="formfld unknown" id="ntp1" size="20" value="<?=htmlspecialchars($pconfig['ntp1']);?>" /><br />
@@ -520,7 +520,7 @@ include("head.inc");
 		<td width="22%" valign="top" class="vncell"><?=gettext("TFTP server");?></td>
 		<td width="78%" class="vtable">
 		<div id="showtftpbox">
-			<input type="button" onClick="show_tftp_config()" value="<?=gettext("Advanced");?>" /> - <?=gettext("Show TFTP configuration");?>
+			<input type="button" onclick="show_tftp_config()" value="<?=gettext("Advanced");?>" /> - <?=gettext("Show TFTP configuration");?>
 		</div>
 		<div id="showtftp" style="display:none">
 			<input name="tftp" type="text" class="formfld unknown" id="tftp" size="50" value="<?=htmlspecialchars($pconfig['tftp']);?>" /><br />

@@ -592,7 +592,7 @@ function showchange() {
 					echo ":</td>\n";
 				}
 				if($field['size']) $size = " size='" . $field['size'] . "' ";
-				if($field['multiple'] == "yes") $multiple = "MULTIPLE ";
+				if($field['multiple'] == "yes") $multiple = "multiple=\"multiple\" ";
 				if(!$field['dontcombinecells'])
 					echo "<td class=\"vtable\">\n";
 				$onchange = "";
@@ -658,7 +658,7 @@ function showchange() {
 				break;
 			case "listtopic":
 				echo "<td>&nbsp;</td></tr>";
-				echo "<tr><td colspan=\"2\" class=\"listtopic\">" . $field['name'] . "<br /></td>\n";
+				echo "<tr><td colspan=\"2\" class=\"listtopic\">" . $field['name'] . "<br />\n";
 
 				break;
 			case "subnet_select":
@@ -892,7 +892,9 @@ if($pkg['step'][$stepid]['stepafterformdisplay'] <> "") {
 if($pkg['step'][$stepid]['javascriptafterformdisplay'] <> "") {
 	// handle after form display event.
 	echo "\n<script type=\"text/javascript\">\n";
+	echo "//<![CDATA[\n";
 	echo $pkg['step'][$stepid]['javascriptafterformdisplay'] . "\n";
+	echo "//]]>\n";
 	echo "</script>\n\n";
 }
 

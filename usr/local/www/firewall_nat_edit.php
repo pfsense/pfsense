@@ -44,7 +44,7 @@ require_once("itemid.inc");
 require_once("filter.inc");
 require("shaper.inc");
 
-$specialsrcdst = explode(" ", "any pptp pppoe l2tp openvpn");
+$specialsrcdst = explode(" ", "any (self) pptp pppoe l2tp openvpn");
 $ifdisp = get_configured_interface_with_descr();
 foreach ($ifdisp as $kif => $kdescr) {
 	$specialsrcdst[] = "{$kif}";
@@ -654,6 +654,7 @@ include("fbegin.inc"); ?>
 								<option value="any" <?php if ($pconfig['dst'] == "any") { echo "selected=\"selected\""; } ?>><?=gettext("any"); ?></option>
 								<option value="single" <?php if (($pconfig['dstmask'] == 32) && !$sel) { echo "selected=\"selected\""; $sel = 1; } ?>><?=gettext("Single host or alias"); ?></option>
 								<option value="network" <?php if (!$sel) echo "selected=\"selected\""; ?>><?=gettext("Network"); ?></option>
+								<option value="(self)" <?PHP if ($pconfig['dst'] == "(self)") echo "selected=\"selected\""; ?>><?=gettext("This Firewall (self)");?></option>
 								<?php if(have_ruleint_access("pptp")): ?>
 								<option value="pptp" <?php if ($pconfig['dst'] == "pptp") { echo "selected=\"selected\""; } ?>><?=gettext("PPTP clients"); ?></option>
 								<?php endif; ?>

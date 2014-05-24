@@ -1963,7 +1963,7 @@ $types6 = array("none" => gettext("None"), "staticv6" => gettext("Static IPv6"),
 									</tr>
 
 									<tr style='display:none' id="show_adv_dhcp_protocol_timing">
-										<td width="22%" valign="top" class="vncell"><?=gettext("<a target=\"FreeBSD_DHCP\" href=\"http://www.freebsd.org/cgi/man.cgi?query=dhclient.conf&amp;sektion=5#PROTOCOL_TIMING\"\">Protocol Timing</a>"); ?></td>
+										<td width="22%" valign="top" class="vncell"><a target="_blank" href="http://www.freebsd.org/cgi/man.cgi?query=dhclient.conf&amp;sektion=5#PROTOCOL_TIMING"><?=gettext("Protocol Timing"); ?></a></td>
 										<td width="48%" class="vtable">
 											Timeout: <input name="adv_dhcp_pt_timeout" type="text" class="formfld unknown" id="adv_dhcp_pt_timeout" size="2" value="<?=htmlspecialchars($pconfig['adv_dhcp_pt_timeout']);?>" onchange="customdhcpptcheckradiobuton(document.iform.adv_dhcp_pt_values, '');" />
 											Retry:   <input name="adv_dhcp_pt_retry"   type="text" class="formfld unknown" id="adv_dhcp_pt_retry"   size="2" value="<?=htmlspecialchars($pconfig['adv_dhcp_pt_retry']);?>"   onchange="customdhcpptcheckradiobuton(document.iform.adv_dhcp_pt_values, '');" />
@@ -2218,7 +2218,7 @@ $types6 = array("none" => gettext("None"), "staticv6" => gettext("Static IPv6"),
 										</td>
 										<td width="78%" class="vtable">
 
-											<input name="adv_dhcp6_id_assoc_statement_address_enable" type="checkbox" id="adv_dhcp6_id_assoc_statement_address_enable" value="" onclick="show_adv_dhcp6_config(this)"; />
+											<input name="adv_dhcp6_id_assoc_statement_address_enable" type="checkbox" id="adv_dhcp6_id_assoc_statement_address_enable" value="" onclick="show_adv_dhcp6_config(this);" />
 											<?=gettext("Non-Temporary Address Allocation"); ?>
 											<div style='display:none'  id="show_adv_dhcp6_id_assoc_statement_address">
 											<?=gettext("id-assoc na"); ?>

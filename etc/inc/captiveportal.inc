@@ -274,7 +274,7 @@ function captiveportal_configure_zone($cpcfg) {
 <b>Redirecting to <a href="<?=\$my_redirurl;?>"><?=\$my_redirurl;?></a>...</b>
 </span>
 <script type="text/javascript">
-<!--
+//<![CDATA[
 LogoutWin = window.open('', 'Logout', 'toolbar=0,scrollbars=0,location=0,statusbar=0,menubar=0,resizable=0,width=256,height=64');
 if (LogoutWin) {
 	LogoutWin.document.write('<html>');
@@ -293,7 +293,7 @@ if (LogoutWin) {
 }
 
 document.location.href="<?=\$my_redirurl;?>";
--->
+//]]>
 </script>
 </body>
 </html>
@@ -427,7 +427,6 @@ function captiveportal_init_webgui_zone($cpcfg) {
 	}
 
 	/* generate lighttpd configuration */
-	$listenporthttp = $cpcfg['listenporthttp'] ? $cpcfg['listenporthttp'] : $cpcfg['zoneid'];
 	if (!empty($cpcfg['listenporthttp']))
 		$listenporthttp = $cpcfg['listenporthttp'];
 	else
@@ -543,16 +542,16 @@ EOD;
 	$cprules .= "add {$rulenum} pipe tablearg ip from any to table(2) out\n";
 	$rulenum++;
 
-	if (!empty($$config['captiveportal'][$cpzone]['listenporthttp']))
-		$listenporthttp = $$config['captiveportal'][$cpzone]['listenporthttp'];
+	if (!empty($config['captiveportal'][$cpzone]['listenporthttp']))
+		$listenporthttp = $config['captiveportal'][$cpzone]['listenporthttp'];
 	else
-		$listenporthttp = 8000 + $$config['captiveportal'][$cpzone]['zoneid'];
+		$listenporthttp = 8000 + $cpzoneid;
 
 	if (isset($config['captiveportal'][$cpzone]['httpslogin'])) {
 		if (!empty($config['captiveportal'][$cpzone]['listenporthttps']))
 			$listenporthttps = $config['captiveportal'][$cpzone]['listenporthttps'];
 		else
-			$listenporthttps = 8001 + $$config['captiveportal'][$cpzone]['zoneid'];
+			$listenporthttps = 8001 + $cpzoneid;
 			if (!isset($config['captiveportal'][$cpzone]['nohttpsforwards'])) {
 				$cprules .= "add 65531 fwd 127.0.0.1,{$listenporthttps} tcp from any to any dst-port 443 in\n";
 			}
@@ -1676,13 +1675,13 @@ function portal_hostname_from_client_ip($cliip) {
 	$cpcfg = $config['captiveportal'][$cpzone];
 
 	if (isset($cpcfg['httpslogin'])) {
-		$listenporthttps = $cpcfg['listenporthttps'] ? $cpcfg['listenporthttps'] : ($cpcfg['zoneid'] + 1);
+		$listenporthttps = $cpcfg['listenporthttps'] ? $cpcfg['listenporthttps'] : ($cpcfg['zoneid'] + 8001);
 		$ourhostname = $cpcfg['httpsname'];
 		
 		if ($listenporthttps != 443)
 			$ourhostname .= ":" . $listenporthttps;
 	} else {
-		$listenporthttp  = $cpcfg['listenporthttp']  ? $cpcfg['listenporthttp']  : $cpcfg['zoneid'];
+		$listenporthttp  = $cpcfg['listenporthttp']  ? $cpcfg['listenporthttp']  : ($cpcfg['zoneid'] + 8000);
 		$ifip = portal_ip_from_client_ip($cliip);
 		if (!$ifip)
 			$ourhostname = "{$config['system']['hostname']}.{$config['system']['domain']}";

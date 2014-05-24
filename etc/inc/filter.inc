@@ -2136,6 +2136,9 @@ function filter_generate_address(& $rule, $target = "source", $isnat = false) {
 						$lansn = $FilterIflist['lan']['snv6'];
 						$src = "{$lansa}/{$lansn}";
 						break;
+					case '(self)':
+						$src = "(self)";
+						break;
 					case 'pptp':
 						$pptpsav6 = gen_subnetv6($FilterIflist['pptp']['sav6'], $FilterIflist['pptp']['snv6']);
 						$pptpsnv6 = $FilterIflist['pptp']['snv6'];
@@ -2171,6 +2174,9 @@ function filter_generate_address(& $rule, $target = "source", $isnat = false) {
 							return "";
 						$lansn = $FilterIflist['lan']['sn'];
 						$src = "{$lansa}/{$lansn}";
+						break;
+					case '(self)':
+						$src = "(self)";
 						break;
 					case 'pptp':
 						if (isset($config['pptpd']['n_pptp_units']) && is_numeric($config['pptpd']['n_pptp_units']))

@@ -85,6 +85,8 @@ if($_REQUEST['getupdatestatus']) {
 
 $curcfg = $config['system']['firmware'];
 
+$filesystems = get_mounted_filesystems();
+
 ?>
 <script type="text/javascript">
 //<![CDATA[
@@ -93,7 +95,11 @@ $curcfg = $config['system']['firmware'];
 		jQuery("#mbufPB").progressbar( { value: <?php echo get_mbuf(true); ?> } );
 		jQuery("#cpuPB").progressbar( { value:false } );
 		jQuery("#memUsagePB").progressbar( { value: <?php echo mem_usage(); ?> } );
-		jQuery("#diskUsagePB").progressbar( { value: <?php echo disk_usage(); ?> } );
+
+<?PHP $d = 0; ?>
+<?PHP foreach ($filesystems as $fs): ?>
+		jQuery("#diskUsagePB<?php echo $d++; ?>").progressbar( { value: <?php echo $fs['percent_used']; ?> } );
+<?PHP endforeach; ?>
 
 		<?php if($showswap == true): ?>
 			jQuery("#swapUsagePB").progressbar( { value: <?php echo swap_usage(); ?> } );
@@ -274,9 +280,13 @@ $curcfg = $config['system']['firmware'];
 		<tr>
 			<td width="25%" class="vncellt"><?=gettext("Disk usage");?></td>
 			<td width="75%" class="listr">
-				<?php $diskusage = disk_usage(); ?>
-				<div id="diskUsagePB"></div>
-				<span id="diskusagemeter"><?= $diskusage.'%'; ?></span> of <?= `/bin/df -h / | /usr/bin/grep -v 'Size' | /usr/bin/awk '{ print $2 }'` ?>
+<?PHP $d = 0; ?>
+<?PHP foreach ($filesystems as $fs): ?>
+				<div id="diskUsagePB<?php echo $d; ?>"></div>
+				<?PHP if (substr(basename($fs['device']), 0, 2) == "md") $fs['type'] .= " in RAM"; ?>
+				<?PHP echo "{$fs['mountpoint']} ({$fs['type']})";?>: <span id="diskusagemeter<?php echo $d++ ?>"><?= $fs['percent_used'].'%'; ?></span> of <?PHP echo $fs['total_size'];?>
+				<br />
+<?PHP endforeach; ?>
 			</td>
 		</tr>
 	</tbody>

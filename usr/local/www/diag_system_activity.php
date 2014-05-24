@@ -53,8 +53,9 @@ include("head.inc");
 
 ?>
 <body link="#0000CC" vlink="#0000CC" alink="#0000CC">
-
+<?php include("fbegin.inc"); ?>
 <script type="text/javascript">
+//<![CDATA[
 	function getcpuactivity() {
 		scroll(0,0);
 		var url = "/diag_system_activity.php";
@@ -68,44 +69,42 @@ include("head.inc");
 			});
 	}
 	function activitycallback(transport) {
-		jQuery('#cpuactivitydiv').html('<font face="Courier"><font size="2"><b><pre style="text-align:left;">' + transport.responseText  + '</pre></font>');
-		setTimeout('getcpuactivity()', 2500);		
+		jQuery('#cpuactivitydiv').html('<font face="Courier" size="2"><pre style="text-align:left;">' + transport.responseText  + '<\/pre><\/font>');
+		setTimeout('getcpuactivity()', 2500);
 	}
-	setTimeout('getcpuactivity()', 1000);	
+	setTimeout('getcpuactivity()', 1000);
+//]]>
 </script>
-<div id='maincontent'>
+<div id="maincontent">
 <?php
-	include("fbegin.inc"); 
 	if($savemsg) {
-		echo "<div id='savemsg'>";
+		echo "<div id=\"savemsg\">";
 		print_info_box($savemsg);
 		echo "</div>";	
 	}
 	if ($input_errors)
 		print_input_errors($input_errors);
 ?>
-<table width="100%" border="0" cellpadding="0" cellspacing="0">  
+<table width="100%" border="0" cellpadding="0" cellspacing="0" summary="diag system activity">
   <tr>
     <td>
-	<table id="backuptable" class="tabcont" align="center" width="100%" border="0" cellpadding="6" cellspacing="0">
+	<table id="backuptable" class="tabcont" align="center" width="100%" border="0" cellpadding="6" cellspacing="0" summary="tabcont">
 		<tr>
-			<td>
-				<center>
-				<table>
+			<td align="center">
+				<table summary="results">
 					<tr><td>
-						<div name='cpuactivitydiv' id='cpuactivitydiv'>
-							<b><?=gettext("Gathering CPU activity, please wait...");?>
+						<div id="cpuactivitydiv">
+							<?=gettext("Gathering CPU activity, please wait...");?>
 						</div>
 					</td></tr>
 				</table>
 			</td>
 		</tr>
 	</table>
-	</div>
     </td>
   </tr>
 </table>
-</form>
+</div>
 <?php include("fend.inc"); ?>
 </body>
 </html>

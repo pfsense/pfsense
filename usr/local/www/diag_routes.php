@@ -75,6 +75,8 @@ include('head.inc');
 ?>
 <body link="#000000" vlink="#000000" alink="#000000">
 
+<?php include("fbegin.inc"); ?>
+
 <script type="text/javascript">
 //<![CDATA[
 
@@ -105,7 +107,7 @@ include('head.inc');
 		var elements = 8;
 		var tr_class = '';
 
-		var thead = '<tr><td class="listtopic" colspan="' + elements + '"><strong>' + section + '</strong></td></tr>' + "\n";
+		var thead = '<tr><td class="listtopic" colspan="' + elements + '"><strong>' + section + '<\/strong><\/td><\/tr>' + "\n";
 		for (var i = 0; i < responseTextArr.length; i++) {
 			if (responseTextArr[i] == "")
 				continue;
@@ -124,15 +126,15 @@ include('head.inc');
 					continue;
 				if (i == 0 && j == (elements - 1))
 					tr_class = 'listhdr';
-				tmp += '<td class="' + tr_class + '">' + entry[k] + '</td>' + "\n";
+				tmp += '<td class="' + tr_class + '">' + entry[k] + '<\/td>' + "\n";
 				if (i > 0)
 					tr_class = 'listr';
 				j++;
 			}
 			// The 'Expire' field might be blank
 			if (j == (elements - 1))
-				tmp += '<td class="listr">&nbsp;</td>' + "\n";
-			tmp += '</tr>' + "\n";
+				tmp += '<td class="listr">&nbsp;<\/td>' + "\n";
+			tmp += '<\/tr>' + "\n";
 			if (i == 0)
 				thead += tmp;
 			else
@@ -144,8 +146,6 @@ include('head.inc');
 
 //]]>
 </script>
-
-<?php include("fbegin.inc"); ?>
 
 <script type="text/javascript">
 //<![CDATA[
@@ -162,12 +162,12 @@ include('head.inc');
 
 <div id="mainarea">
 <form action="diag_routes.php" method="post">
-<table class="tabcont" width="100%" border="0" cellspacing="0" cellpadding="6">
+<table class="tabcont" width="100%" border="0" cellspacing="0" cellpadding="6" summary="diag routes">
 
 <tr>
 <td class="vncellreq" width="22%"><?=gettext("Name resolution");?></td>
 <td class="vtable" width="78%">
-<input type="checkbox" class="formfld" id="resolve" name="resolve" value="yes" <?php if ($_POST['resolve'] == 'yes') echo 'checked'; ?> /><?=gettext("Enable");?>
+<input type="checkbox" class="formfld" id="resolve" name="resolve" value="yes" <?php if ($_POST['resolve'] == 'yes') echo "checked=\"checked\""; ?> /><?=gettext("Enable");?>
 <br />
 <span class="expl"><?=gettext("Enable this to attempt to resolve names when displaying the tables.");?></span>
 </td>
@@ -179,7 +179,7 @@ include('head.inc');
 <select id="limit" name="limit">
 <?php
 	foreach (array("10", "50", "100", "200", "500", "1000", gettext("all")) as $item) {
-		echo "<option value=\"{$item}\" " . ($item == "100" ? "selected" : "") . ">{$item}</option>\n";
+		echo "<option value=\"{$item}\" " . ($item == "100" ? "selected=\"selected\"" : "") . ">{$item}</option>\n";
 	}
 ?>
 </select>
@@ -210,7 +210,7 @@ include('head.inc');
 </table>
 </form>
 
-<table class="tabcont sortable" width="100%" cellspacing="0" cellpadding="6" border="0" id="IPv4">
+<table class="tabcont sortable" width="100%" cellspacing="0" cellpadding="6" border="0" id="IPv4" summary="ipv4 routes">
 	<thead>
 		<tr><td class="listtopic"><strong>IPv4</strong></td></tr>
 	</thead>
@@ -218,7 +218,7 @@ include('head.inc');
 		<tr><td class="listhdrr"><?=gettext("Gathering data, please wait...");?></td></tr>
 	</tbody>
 </table>
-<table class="tabcont sortable" width="100%" cellspacing="0" cellpadding="6" border="0" id="IPv6">
+<table class="tabcont sortable" width="100%" cellspacing="0" cellpadding="6" border="0" id="IPv6" summary="ipv6 routes">
 	<thead>
 		<tr><td class="listtopic"><strong>IPv6</strong></td></tr>
 	</thead>
@@ -232,3 +232,6 @@ include('head.inc');
 <?php
 include('fend.inc');
 ?>
+
+</body>
+</html>

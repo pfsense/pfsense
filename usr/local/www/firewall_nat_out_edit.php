@@ -413,13 +413,13 @@ function proto_change() {
 	}
 }
 function poolopts_change() {
-	if (jQuery('#target option:selected').text().substring(0,4) == "Host") {
+	if (jQuery('#target option:selected').text().trim().substring(0,4) == "Host") {
 		jQuery('#poolopts_tr').css('display','');
 		jQuery('#target_network').css('display','none');
-	} else if (jQuery('#target option:selected').text().substring(0,6) == "Subnet") {
+	} else if (jQuery('#target option:selected').text().trim().substring(0,6) == "Subnet") {
 		jQuery('#poolopts_tr').css('display','');
 		jQuery('#target_network').css('display','none');
-	} else if (jQuery('#target option:selected').text().substring(0,5) == "Other") {
+	} else if (jQuery('#target option:selected').text().trim().substring(0,5) == "Other") {
 		jQuery('#poolopts_tr').css('display','');
 		jQuery('#target_network').css('display','');
 	} else {

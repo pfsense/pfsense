@@ -109,10 +109,18 @@ include("head.inc");
 										</tr>
 									</table>
 									<br />
+									<script type="text/javascript">
+									//<![CDATA[
+									window.onload=function(){
+										document.getElementById("status").wrap='hard';
+										document.getElementById("output").wrap='hard';
+									}
+									//]]>
+									</script>
 									<!-- status box -->
-									<textarea cols="90" rows="1" name="status" id="status" wrap="hard"><?=gettext("Beginning firmware upgrade"); ?>.</textarea>
+									<textarea cols="90" rows="1" name="status" id="status"><?=gettext("Beginning firmware upgrade"); ?>.</textarea>
 									<!-- command output box -->
-									<textarea cols="90" rows="25" name="output" id="output" wrap="hard"></textarea>
+									<textarea cols="90" rows="25" name="output" id="output"></textarea>
 								</td>
 							</tr>
 						</table>

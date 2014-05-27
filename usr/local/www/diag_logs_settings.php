@@ -423,6 +423,7 @@ function check_everything() {
 					<tr>
 						<td>&nbsp;</td>
 						<td><?=gettext("IP addresses of remote syslog servers, or an IP:port.");?></td>
+					</tr>
 				</table>
 			</td>
 		</tr>

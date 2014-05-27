@@ -48,23 +48,20 @@ require_once("priv.defs.inc");
 
 /* Load and process custom privs. */
 function get_priv_files($directory) {
+	$invalid_files = array('..', '.');
 	$dir_array = array();
+
 	if(!is_dir($directory)) 
-		return;
+		return $dir_array;
+
 	if ($dh = opendir($directory)) {
 		while (($file = readdir($dh)) !== false) {
-			$canadd = 0;
-			if($file == ".") 
-				$canadd = 1;
-			if($file == "..") 
-				$canadd = 1;
-			if($canadd == 0)
-				array_push($dir_array, $file);
+			if(in_array($file, $invalid_files)) continue;
+			$dir_array[] = $file;
 		}
 		closedir($dh);
 	}
-	if(!is_array($dir_array))
-		return;
+
 	return $dir_array;
 }
 

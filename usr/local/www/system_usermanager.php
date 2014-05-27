@@ -346,6 +346,7 @@ if ($_POST) {
 	}
 }
 
+$closehead = false;
 include("head.inc");
 ?>
 
@@ -353,10 +354,13 @@ include("head.inc");
 <link rel="stylesheet" type="text/css" href="/javascript/jquery/jquery-ui.custom.css" />
 
 <script type="text/javascript">
+//<![CDATA[
 	jQuery(function() {
 		jQuery( "#expires" ).datepicker( { dateFormat: 'mm/dd/yy', changeYear: true, yearRange: "+0:+100" } );
 	});
+//]]>
 </script>
+</head>
 
 <body link="#000000" vlink="#000000" alink="#000000" onload="<?= $jsevents["body"]["onload"] ?>">
 <?php include("fbegin.inc"); ?>
@@ -600,7 +604,7 @@ function sshkeyClicked(obj) {
 										</td>
 										<td valign="middle" class="list nowrap">
 											<?php if (!$group): ?>
-											<a href="system_usermanager.php?act=delpriv&amp;id=<?=$id?>&privid=<?=$i;?>" onclick="return confirm('<?=gettext("Do you really want to delete this privilege?");?>')">
+											<a href="system_usermanager.php?act=delpriv&amp;id=<?=$id?>&amp;privid=<?=$i;?>" onclick="return confirm('<?=gettext("Do you really want to delete this privilege?");?>')">
 												<img src="/themes/<?= $g['theme']; ?>/images/icons/icon_x.gif" width="17" height="17" border="0" alt="delete" />
 											</a>
 											<?php endif; ?>
@@ -653,13 +657,13 @@ function sshkeyClicked(obj) {
 											<?=htmlspecialchars($ca['descr']);?>
 										</td>
 										<td valign="middle" class="list nowrap">
-											<a href="system_usermanager.php?act=expckey&id=<?=$id;?>&amp;certid=<?=$i;?>">
+											<a href="system_usermanager.php?act=expckey&amp;id=<?=$id;?>&amp;certid=<?=$i;?>">
 												<img src="/themes/<?= $g['theme'];?>/images/icons/icon_down.gif" title="<?=gettext("export private key"); ?>" alt="<?=gettext("export private key"); ?>" width="17" height="17" border="0" />
 											</a>
-											<a href="system_usermanager.php?act=expcert&id=<?=$id;?>&amp;certid=<?=$i;?>">
+											<a href="system_usermanager.php?act=expcert&amp;id=<?=$id;?>&amp;certid=<?=$i;?>">
 												<img src="/themes/<?= $g['theme'];?>/images/icons/icon_down.gif" title="<?=gettext("export cert"); ?>" alt="<?=gettext("export cert"); ?>" width="17" height="17" border="0" />
 											</a>
-											<a href="system_usermanager.php?act=delcert&id=<?=$id?>&amp;certid=<?=$i;?>" onclick="return confirm('<?=gettext("Do you really want to remove this certificate association?") .'\n'. gettext("(Certificate will not be deleted)");?>')">
+											<a href="system_usermanager.php?act=delcert&amp;id=<?=$id?>&amp;certid=<?=$i;?>" onclick="return confirm('<?=gettext("Do you really want to remove this certificate association?") .'\n'. gettext("(Certificate will not be deleted)");?>')">
 												<img src="/themes/<?= $g['theme']; ?>/images/icons/icon_x.gif" width="17" height="17" border="0" alt="<?=gettext("delete cert");?>" />
 											</a>
 										</td>
@@ -699,7 +703,7 @@ function sshkeyClicked(obj) {
 
 						<?php		if ($i > 0): ?>
 
-						<tr id="usercert" name="usercert" style="display:none">
+						<tr id="usercert" style="display:none">
 							<td width="22%" valign="top" class="vncell"><?=gettext("Certificate");?></td>
                                                 	<td width="78%" class="vtable">
 							<table width="100%" border="0" cellpadding="6" cellspacing="0" summary="certificate">
@@ -759,7 +763,14 @@ function sshkeyClicked(obj) {
 						<tr id="sshkey" <?php if(empty($pconfig['authorizedkeys'])) echo 'style="display:none"'; ?>>
 							<td width="22%" valign="top" class="vncell"><?=gettext("Authorized keys");?></td>
 							<td width="78%" class="vtable">
-								<textarea name="authorizedkeys" cols="65" rows="7" id="authorizedkeys" class="formfld_cert" wrap="off"><?=htmlspecialchars($pconfig['authorizedkeys']);?></textarea>
+								<script type="text/javascript">
+								//<![CDATA[
+								window.onload=function(){
+									document.getElementById("authorizedkeys").wrap='off';
+								}
+								//]]>
+								</script>
+								<textarea name="authorizedkeys" cols="65" rows="7" id="authorizedkeys" class="formfld_cert"><?=htmlspecialchars($pconfig['authorizedkeys']);?></textarea>
 								<br />
 								<?=gettext("Paste an authorized keys file here.");?>
 							</td>
@@ -875,4 +886,3 @@ function sshkeyClicked(obj) {
 <?php include("fend.inc");?>
 </body>
 </html>
-

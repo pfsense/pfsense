@@ -6306,11 +6306,6 @@ msgstr "Erro de XML: %1$s na linha %2$d"
 msgid "Error returned while trying to parse %s"
 msgstr "Erro retornado quando tentava analisar %s"
 
-#: etc/inc/zeromq.inc:225 etc/inc/zeromq.inc:236
-#, php-format
-msgid "Merged in config (%s sections) from ZeroMQ client."
-msgstr "Mesclado em config (seções %s) do cliente ZeroMQ."
-
 #: usr/local/www/load_balancer_virtual_server.php:94
 #: usr/local/www/services_dnsmasq_domainoverride_edit.php:96
 #: usr/local/www/load_balancer_relay_action.php:104

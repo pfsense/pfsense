@@ -174,6 +174,54 @@ function parse_filter_line($line) {
 				$flent['urg'] = $rule_data[$field++];
 				$flent['options'] = explode(";",$rule_data[$field++]);
 			}
+		} else if ($flent['protoid'] == '1') { // ICMP
+			$flent['src'] = $flent['srcip'];
+			$flent['dst'] = $flent['dstip'];
+
+			$flent['icmp_type'] = $rule_data[$field++];
+
+			switch ($flent['icmp_type']) {
+			case "request":
+			case "reply":
+				$flent['icmp_id'] = $rule_data[$field++];
+				$flent['icmp_seq'] = $rule_data[$field++];
+				break;
+			case "unreachproto":
+				$flent['icmp_dstip'] = $rule_data[$field++];
+				$flent['icmp_protoid'] = $rule_data[$field++];
+				break;
+			case "unreachport":
+				$flent['icmp_dstip'] = $rule_data[$field++];
+				$flent['icmp_protoid'] = $rule_data[$field++];
+				$flent['icmp_port'] = $rule_data[$field++];
+				break;
+			case "unreach":
+			case "timexceed":
+			case "paramprob":
+			case "redirect":
+			case "maskreply":
+				$flent['icmp_descr'] = $rule_data[$field++];
+				break;
+			case "needfrag":
+				$flent['icmp_dstip'] = $rule_data[$field++];
+				$flent['icmp_mtu'] = $rule_data[$field++];
+				break;
+			case "tstamp":
+				$flent['icmp_id'] = $rule_data[$field++];
+				$flent['icmp_seq'] = $rule_data[$field++];
+				break;
+			case "tstampreply":
+				$flent['icmp_id'] = $rule_data[$field++];
+				$flent['icmp_seq'] = $rule_data[$field++];
+				$flent['icmp_otime'] = $rule_data[$field++];
+				$flent['icmp_rtime'] = $rule_data[$field++];
+				$flent['icmp_ttime'] = $rule_data[$field++];
+				break;
+			default :
+				$flent['icmp_descr'] = $rule_data[$field++];
+				break;
+			}
+
 		} else if ($flent['protoid'] == '112') { // CARP
 			$flent['type'] = $rule_data[$field++];
 			$flent['ttl'] = $rule_data[$field++];

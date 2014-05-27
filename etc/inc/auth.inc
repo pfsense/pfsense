@@ -42,6 +42,10 @@
 		pfSense_MODULE:	auth
 */
 
+/*
+ * NOTE : Portions of the mschapv2 support was based on the BSD licensed CHAP.php
+ * file courtesy of Michael Retterklieber.
+ */
 require_once("config.gui.inc");
 
 // Will be changed to false if security checks fail

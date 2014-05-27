@@ -78,7 +78,7 @@ function get_shortcut_main_link($shortcut_section, $addspace = true, $service = 
 	switch ($shortcut_section) {
 		case "openvpn":
 			if (!empty($service['mode']) && is_numeric($service['id']))
-				$link = "vpn_openvpn_{$service['mode']}.php?act=edit&id={$service['id']}";
+				$link = "vpn_openvpn_{$service['mode']}.php?act=edit&amp;id={$service['id']}";
 			else
 				$link = $shortcuts[$shortcut_section]['main'];
 			break;

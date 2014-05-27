@@ -2625,7 +2625,7 @@ function filter_rules_generate() {
 	$log = array(); 
 	if(!isset($config['syslog']['nologdefaultblock']))
 		$log['block'] = "log";
-	if(!isset($config['syslog']['nologdefaultpass']))
+	if(isset($config['syslog']['nologdefaultpass']))
 		$log['pass'] = "log";
 
 	$saved_tracker = $tracker;

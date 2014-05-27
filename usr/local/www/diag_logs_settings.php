@@ -65,7 +65,7 @@ $pconfig['logall'] = isset($config['syslog']['logall']);
 $pconfig['system'] = isset($config['syslog']['system']);
 $pconfig['enable'] = isset($config['syslog']['enable']);
 $pconfig['logdefaultblock'] = !isset($config['syslog']['nologdefaultblock']);
-$pconfig['logdefaultpass'] = !isset($config['syslog']['nologdefaultpass']);
+$pconfig['logdefaultpass'] = isset($config['syslog']['nologdefaultpass']);
 $pconfig['logbogons'] = !isset($config['syslog']['nologbogons']);
 $pconfig['logprivatenets'] = !isset($config['syslog']['nologprivatenets']);
 $pconfig['loglighttpd'] = !isset($config['syslog']['nologlighttpd']);
@@ -144,7 +144,7 @@ if ($_POST['resetlogs'] == gettext("Reset Log Files")) {
 		$oldnologprivatenets = isset($config['syslog']['nologprivatenets']);
 		$oldnologlighttpd = isset($config['syslog']['nologlighttpd']);
 		$config['syslog']['nologdefaultblock'] = $_POST['logdefaultblock'] ? false : true;
-		$config['syslog']['nologdefaultpass'] = $_POST['logdefaultpass'] ? false : true;
+		$config['syslog']['nologdefaultpass'] = $_POST['logdefaultpass'] ? true : false;
 		$config['syslog']['nologbogons'] = $_POST['logbogons'] ? false : true;
 		$config['syslog']['nologprivatenets'] = $_POST['logprivatenets'] ? false : true;
 		$config['syslog']['nologlighttpd'] = $_POST['loglighttpd'] ? false : true;
@@ -316,7 +316,7 @@ function check_everything() {
 				<br />
 				<input name="logdefaultpass" type="checkbox" id="logdefaultpass" value="yes" <?php if ($pconfig['logdefaultpass']) echo "checked=\"checked\""; ?> />
 				<strong><?=gettext("Log packets matched from the default pass rules put in the ruleset");?></strong><br />
-				<?=gettext("Hint: packets that are allowed by the implicit default pass rule will not be logged if you uncheck this option. Per-rule logging options are still respected.");?>
+				<?=gettext("Hint: packets that are allowed by the implicit default pass rule will be logged if you check this option. Per-rule logging options are still respected.");?>
 				<br />
 				<input name="logbogons" type="checkbox" id="logbogons" value="yes" <?php if ($pconfig['logbogons']) echo "checked=\"checked\""; ?> />
 				<strong><?=gettext("Log packets blocked by 'Block Bogon Networks' rules");?></strong><br />

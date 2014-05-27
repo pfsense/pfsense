@@ -1413,7 +1413,3 @@ $priv_list['page-firewall-easyrule']['name'] = gettext("WebCfg - Firewall: Easy 
 $priv_list['page-firewall-easyrule']['descr'] = gettext("Allow access to the 'Firewall: Easy Rule' add/status page.");
 $priv_list['page-firewall-easyrule']['match'] = array();
 $priv_list['page-firewall-easyrule']['match'][] = "easyrule.php*";
-
-$priv_rmvd = array();
-
-?>

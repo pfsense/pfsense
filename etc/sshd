@@ -1,4 +1,4 @@
-#! /usr/local/bin/php -f
+#!/usr/local/bin/php -f
 <?php
 /*
 	sshd - Modified to work on disk based system

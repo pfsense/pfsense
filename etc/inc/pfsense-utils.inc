@@ -50,7 +50,7 @@
  ******/
 function have_natpfruleint_access($if) {
 	$security_url = "firewall_nat_edit.php?if=". strtolower($if);
-	if(isAllowedPage($security_url, $allowed))
+	if(Privilege::isAllowedPage($security_url, $allowed))
 		return true;
 	return false;
 }
@@ -65,7 +65,7 @@ function have_natpfruleint_access($if) {
  ******/
 function have_ruleint_access($if) {
 	$security_url = "firewall_rules.php?if=". strtolower($if);
-	if(isAllowedPage($security_url))
+	if(Privilege::isAllowedPage($security_url))
 		return true;
 	return false;
 }

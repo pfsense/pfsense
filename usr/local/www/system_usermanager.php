@@ -35,7 +35,7 @@
     POSSIBILITY OF SUCH DAMAGE.
 */
 /*
-	pfSense_BUILDER_BINARIES:
+	pfSense_BUILDER_BINARIES:	
 	pfSense_MODULE:	auth
 */
 
@@ -58,7 +58,7 @@ if (is_numericint($_GET['id']))
 if (isset($_POST['id']) && is_numericint($_POST['id']))
 	$id = $_POST['id'];
 
-if (!is_array($config['system']['user']))
+if (!is_array($config['system']['user'])) 
 	$config['system']['user'] = array();
 
 $a_user = &$config['system']['user'];
@@ -90,7 +90,7 @@ if ($_GET['act'] == "deluser") {
 	unset($a_user[$id]);
 	write_config();
 	$savemsg = gettext("User")." {$userdeleted} ".
-				gettext("successfully deleted")."<br />";
+				gettext("successfully deleted")."<br/>";
 }
 else if ($_GET['act'] == "delpriv") {
 
@@ -105,7 +105,7 @@ else if ($_GET['act'] == "delpriv") {
 	write_config();
 	$_GET['act'] = "edit";
 	$savemsg = gettext("Privilege")." {$privdeleted} ".
-				gettext("successfully deleted")."<br />";
+				gettext("successfully deleted")."<br/>";
 }
 else if ($_GET['act'] == "expcert") {
 
@@ -158,7 +158,7 @@ else if ($_GET['act'] == "delcert") {
 	write_config();
 	$_GET['act'] = "edit";
 	$savemsg = gettext("Certificate")." {$certdeleted} ".
-				gettext("association removed.")."<br />";
+				gettext("association removed.")."<br/>";
 }
 else if ($_GET['act'] == "new") {
 	/*
@@ -196,7 +196,7 @@ if ($_POST) {
 		}
 	}
 
-	do_input_validation($_POST, $reqdfields, $reqdfieldsn, $input_errors);
+	do_input_validation($_POST, $reqdfields, $reqdfieldsn, &$input_errors);
 
 	if (preg_match("/[^a-zA-Z0-9\.\-_]/", $_POST['usernamefld']))
 		$input_errors[] = gettext("The username contains invalid characters.");
@@ -285,10 +285,10 @@ if ($_POST) {
 		$userent['expires'] = $_POST['expires'];
 		$userent['authorizedkeys'] = base64_encode($_POST['authorizedkeys']);
 		$userent['ipsecpsk'] = $_POST['ipsecpsk'];
-
+		
 		if($_POST['disabled'])
 			$userent['disabled'] = true;
-		else
+		else 
 			unset($userent['disabled']);
 
 		if (isset($id) && $a_user[$id])
@@ -341,7 +341,7 @@ if ($_POST) {
 			run_plugins("/etc/inc/privhooks");
 
 		conf_mount_ro();
-
+		
 		pfSenseHeader("system_usermanager.php");
 	}
 }
@@ -349,18 +349,14 @@ if ($_POST) {
 include("head.inc");
 ?>
 
-<link rel="stylesheet" type="text/css" href="/javascript/jquery-ui-timepicker-addon/css/jquery-ui-timepicker-addon.css" />
-<link rel="stylesheet" type="text/css" href="/javascript/jquery/jquery-ui.custom.css" />
-
-<script type="text/javascript">
-	jQuery(function() {
-		jQuery( "#expires" ).datepicker( { dateFormat: 'mm/dd/yy', changeYear: true, yearRange: "+0:+100" } );
-	});
-</script>
-
 <body link="#000000" vlink="#000000" alink="#000000" onload="<?= $jsevents["body"]["onload"] ?>">
 <?php include("fbegin.inc"); ?>
-
+<!--
+//Date Time Picker script- by TengYong Ng of http://www.rainforestnet.com
+//Script featured on JavaScript Kit (http://www.javascriptkit.com)
+//For this script, visit http://www.javascriptkit.com
+// -->
+<script type="text/javascript" src="javascript/datetimepicker.js"></script>
 <script type="text/javascript">
 //<![CDATA[
 
@@ -498,7 +494,7 @@ function sshkeyClicked(obj) {
 							<td width="22%" valign="top" class="vncell"><?=gettext("Full name");?></td>
 							<td width="78%" class="vtable">
 								<input name="descr" type="text" class="formfld unknown" id="descr" size="20" value="<?=htmlspecialchars($pconfig['descr']);?>" <?=$ro;?> />
-								<br />
+								<br/>
 								<?=gettext("User's full name, for your own information only");?>
 							</td>
 						</tr>
@@ -506,7 +502,10 @@ function sshkeyClicked(obj) {
 							<td width="22%" valign="top" class="vncell"><?=gettext("Expiration date"); ?></td>
 							<td width="78%" class="vtable">
 								<input name="expires" type="text" class="formfld unknown" id="expires" size="10" value="<?=htmlspecialchars($pconfig['expires']);?>" />
-								<br />
+								<a href="javascript:NewCal('expires','mmddyyyy')">
+									<img src="/themes/<?php echo $g['theme']; ?>/images/icons/icon_cal.gif" width="16" height="16" border="0" alt="<?=gettext("Pick a date");?>" />
+								</a>
+								<br/>
 								<span class="vexpl"><?=gettext("Leave blank if the account shouldn't expire, otherwise enter the expiration date in the following format: mm/dd/yyyy"); ?></span></td>
 						</tr>
 						<tr>
@@ -515,8 +514,8 @@ function sshkeyClicked(obj) {
 								<table class="tabcont" width="100%" border="0" cellpadding="0" cellspacing="0" summary="group membership">
 									<tr>
 										<td align="center" width="50%">
-											<strong><?=gettext("Not Member Of"); ?></strong><br />
-											<br />
+											<strong><?=gettext("Not Member Of"); ?></strong><br/>
+											<br/>
 											<select size="10" style="width: 75%" name="notgroups[]" class="formselect" id="notgroups" onchange="clear_selected('groups')" multiple="multiple">
 												<?php
 													foreach ($config['system']['group'] as $group):
@@ -530,21 +529,21 @@ function sshkeyClicked(obj) {
 												</option>
 												<?php endforeach; ?>
 											</select>
-											<br />
+											<br/>
 										</td>
 										<td>
-											<br />
+											<br/>
 											<a href="javascript:move_selected('notgroups','groups')">
 												<img src="/themes/<?= $g['theme'];?>/images/icons/icon_right.gif" title="<?=gettext("Add Groups"); ?>" alt="<?=gettext("Add Groups"); ?>" width="17" height="17" border="0" />
 											</a>
-											<br /><br />
+											<br/><br/>
 											<a href="javascript:move_selected('groups','notgroups')">
 												<img src="/themes/<?= $g['theme'];?>/images/icons/icon_left.gif" title="<?=gettext("Remove Groups"); ?>" alt="<?=gettext("Remove Groups"); ?>" width="17" height="17" border="0" />
 											</a>
 										</td>
 										<td align="center" width="50%">
-											<strong><?=gettext("Member Of"); ?></strong><br />
-											<br />
+											<strong><?=gettext("Member Of"); ?></strong><br/>
+											<br/>
 											<select size="10" style="width: 75%" name="groups[]" class="formselect" id="groups" onchange="clear_selected('nogroups')" multiple="multiple">
 												<?php
 												if (is_array($pconfig['groups'])) {
@@ -560,7 +559,7 @@ function sshkeyClicked(obj) {
 												<?php endforeach;
 												} ?>
 											</select>
-											<br />
+											<br/>
 										</td>
 									</tr>
 								</table>
@@ -581,8 +580,8 @@ function sshkeyClicked(obj) {
 										<td class="list"></td>
 									</tr>
 									<?php
-
-										$privdesc = get_user_privdesc($a_user[$id]);
+											
+										$privdesc = Privilege::get_user_privdesc($a_user[$id]);
 										if(is_array($privdesc)):
 											$i = 0;
 											foreach ($privdesc as $priv):
@@ -634,7 +633,7 @@ function sshkeyClicked(obj) {
 										<td class="list"></td>
 									</tr>
 									<?php
-
+										
 										$a_cert = $a_user[$id]['cert'];
 										if(is_array($a_cert)):
 											$i = 0;
@@ -760,7 +759,7 @@ function sshkeyClicked(obj) {
 							<td width="22%" valign="top" class="vncell"><?=gettext("Authorized keys");?></td>
 							<td width="78%" class="vtable">
 								<textarea name="authorizedkeys" cols="65" rows="7" id="authorizedkeys" class="formfld_cert" wrap="off"><?=htmlspecialchars($pconfig['authorizedkeys']);?></textarea>
-								<br />
+								<br/>
 								<?=gettext("Paste an authorized keys file here.");?>
 							</td>
 						</tr>
@@ -810,7 +809,7 @@ function sshkeyClicked(obj) {
 									"the webConfigurator can be assigned directly or inherited from group memberships. " .
 									"An icon that appears grey indicates that it is a system defined object. " .
 									"Some system object properties can be modified but they cannot be deleted."); ?>
-									<br /><br />
+									<br/><br/>
 									<?=gettext("Accounts created here are also used for other parts of the system " .
 									"such as OpenVPN, IPsec, and Captive Portal.");?>
 								</p>
@@ -875,4 +874,3 @@ function sshkeyClicked(obj) {
 <?php include("fend.inc");?>
 </body>
 </html>
-

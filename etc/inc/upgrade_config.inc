@@ -1428,7 +1428,7 @@ function upgrade_049_to_050() {
 			continue;
 		}
 		foreach ($group['pages'] as $page) {
-			$priv = map_page_privname($page);
+			$priv = Privilege::map_page_privname($page);
 			if ($priv)
 				$privs[] = $priv;
 		}

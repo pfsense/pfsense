@@ -152,7 +152,8 @@ include("head.inc");
 		<?php } ?>
               </table>
 	   </div>
-	</table>
+</td></tr>
+</table>
 
 <?php include("fend.inc"); ?>
 </body>

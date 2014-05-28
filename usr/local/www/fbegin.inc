@@ -65,7 +65,7 @@ function return_ext_menu($section) {
 				$description = '/pkg.php?xml=' . $menuitem['configfile'];
 				$test_url=$description;
 			}
-			 if(isAllowedPage($test_url)){
+			 if(Privilege::isAllowedPage($test_url)){
 				$extarray[] = array($menuitem['name'], $description);
 			 }
 		}
@@ -75,7 +75,7 @@ function return_ext_menu($section) {
 
 function output_menu($arrayitem, $target = null) {
 	foreach ($arrayitem as $item) {
-		if (isAllowedPage($item[1]) || $item[1]=="/index.php?logout"){
+		if (Privilege::isAllowedPage($item[1]) || $item[1]=="/index.php?logout"){
 			$attr = sprintf("href=\"%s\"", htmlentities($item[1]));
 			if ($target) {
 				$attr .= sprintf(" target=\"%s\"", htmlentities($target));
@@ -107,7 +107,7 @@ if ($g['platform'] == "pfSense" or $g['platform'] == "nanobsd")
 $system_menu[] = array(gettext("Setup Wizard"), "/wizard.php?xml=setup_wizard.xml");
 $system_menu[] = array(gettext("Routing"), "/system_gateways.php");
 $system_menu[] = array(gettext("Cert Manager"), "/system_camanager.php");
-if (!isAllowedPage("system_usermanager.php*"))
+if (!Privilege::isAllowedPage("system_usermanager.php*"))
 	$system_menu[] = array(gettext("User Manager"), "/system_usermanager_passwordmg.php");
 else
 	$system_menu[] = array(gettext("User Manager"), "/system_usermanager.php");
@@ -116,7 +116,7 @@ $system_menu = msort(array_merge($system_menu, return_ext_menu("System")),0);
 // Interfaces
 $interfaces_menu = array();
 if (!isset($config['system']['webgui']['noassigninterfaces']))
-	$interfaces_menu[] = array(gettext("(assign)"), "/interfaces_assign.php");
+	$interfaces_menu[] = array("(assign)", "/interfaces_assign.php");
 $opts = get_configured_interface_with_descr(false, true);
 foreach ($opts as $oif => $odescr)
 	if (!isset($config['interfaces'][$oif]['ovpn']))
@@ -137,7 +137,6 @@ $firewall_menu = msort(array_merge($firewall_menu, return_ext_menu("Firewall")),
 $services_menu = array();
 $services_menu[] = array(gettext("Captive Portal"), "/services_captiveportal.php");
 $services_menu[] = array(gettext("DNS Forwarder"), "/services_dnsmasq.php");
-$services_menu[] = array(gettext("DNS Resolver"), "/services_unbound.php");
 $services_menu[] = array(gettext("DHCP Relay"), "/services_dhcp_relay.php");
 $services_menu[] = array(gettext("DHCPv6 Relay"), "/services_dhcpv6_relay.php");
 if($g['services_dhcp_server_enable']) {
@@ -189,7 +188,7 @@ $status_menu[] = array(gettext("RRD Graphs"), "/status_rrd_graph.php");
 $status_menu[] = array(gettext("Services"), "/status_services.php");
 $status_menu[] = array(gettext("System Logs"), "/diag_logs.php");
 $status_menu[] = array(gettext("Traffic Graph"), "/status_graph.php?if=wan");
-if(count($config['interfaces']) > 1)
+if(count($config['interfaces']) > 1) 
 	$status_menu[] = array(gettext("UPnP &amp; NAT-PMP"), "/status_upnp.php");
 $ifentries = get_configured_interface_with_descr();
 foreach ($ifentries as $ent => $entdesc) {
@@ -373,7 +372,7 @@ echo "\t<script type=\"text/javascript\" src=\"javascript/domTT/fadomatic.js\"><
 	}
 
 function add_to_menu($url, $name) {
-	if (isAllowedPage($url))
+	if (Privilege::isAllowedPage($url))
 		echo "<li><a href=\"{$url}\" class=\"navlnk\">{$name}</a></li>\n";
 }
 

@@ -32,70 +32,68 @@
     DISABLE_PHP_LINT_CHECKING
 */
 
-	function crypt_data($val, $pass, $opt) {
-		$file = tempnam("/tmp", "php-encrypt");
-		file_put_contents("{$file}.dec", $val);
-		exec("/usr/bin/openssl enc {$opt} -aes-256-cbc -in {$file}.dec -out {$file}.enc -k " . escapeshellarg($pass));
-		if (file_exists("{$file}.enc"))
-			$result = file_get_contents("{$file}.enc");
-		else {
-			$result = "";
-			log_error("Failed to encrypt/decrypt data!");
-		}
-		@unlink($file);
-		@unlink("{$file}.dec");
-		@unlink("{$file}.enc");
-		return $result;
+function crypt_data($val, $pass, $opt) {
+	$file = tempnam("/tmp", "php-encrypt");
+	file_put_contents("{$file}.dec", $val);
+	exec("/usr/bin/openssl enc {$opt} -aes-256-cbc -in {$file}.dec -out {$file}.enc -k " . escapeshellarg($pass));
+	if (file_exists("{$file}.enc"))
+		$result = file_get_contents("{$file}.enc");
+	else {
+		$result = "";
+		log_error("Failed to encrypt/decrypt data!");
+	}
+	@unlink($file);
+	@unlink("{$file}.dec");
+	@unlink("{$file}.enc");
+	return $result;
+}
+
+function encrypt_data(& $data, $pass) {
+	return base64_encode(crypt_data($data, $pass, "-e"));
+}
+
+function decrypt_data(& $data, $pass) {
+	return crypt_data(base64_decode($data), $pass, "-d");
+}
+
+function tagfile_reformat($in, & $out, $tag) {
+
+	$out = "---- BEGIN {$tag} ----\n";
+
+	$size = 80;
+	$oset = 0;
+	while ($size >= 64) {
+		$line = substr($in, $oset, 64);
+		$out .= $line."\n";
+		$size = strlen($line);
+		$oset += $size;
 	}
 
-	function encrypt_data(& $data, $pass) {
-		return base64_encode(crypt_data($data, $pass, "-e"));
-	}
+	$out .= "---- END {$tag} ----\n";
 
-	function decrypt_data(& $data, $pass) {
-		return crypt_data(base64_decode($data), $pass, "-d");
-	}
+	return true;
+}
 
-	function tagfile_reformat($in, & $out, $tag) {
+function tagfile_deformat($in, & $out, $tag) {
 
-		$out = "---- BEGIN {$tag} ----\n";
+	$btag_val = "---- BEGIN {$tag} ----";
+	$etag_val = "---- END {$tag} ----";
 
-		$size = 80;
-		$oset = 0;
-		while ($size >= 64) {
-			$line = substr($in, $oset, 64);
-			$out .= $line."\n";
-			$size = strlen($line);
-			$oset += $size;
-		}
+	$btag_len = strlen($btag_val);
+	$etag_len = strlen($etag_val);
 
-		$out .= "---- END {$tag} ----\n";
+	$btag_pos = stripos($in, $btag_val);
+	$etag_pos = stripos($in, $etag_val);
 
-		return true;
-	}
+	if (($btag_pos === false) || ($etag_pos === false))
+		return false;
 
-	function tagfile_deformat($in, & $out, $tag) {
+	$body_pos = $btag_pos + $btag_len;
+	$body_len = strlen($in);
+	$body_len -= $btag_len;
+	$body_len -= $etag_len + 1;
 
-		$btag_val = "---- BEGIN {$tag} ----";
-		$etag_val = "---- END {$tag} ----";
+	$out = substr($in, $body_pos, $body_len);
 
-		$btag_len = strlen($btag_val);
-		$etag_len = strlen($etag_val);
-
-		$btag_pos = stripos($in, $btag_val);
-		$etag_pos = stripos($in, $etag_val);
-
-		if (($btag_pos === false) || ($etag_pos === false))
-			return false;
-
-		$body_pos = $btag_pos + $btag_len;
-		$body_len = strlen($in);
-		$body_len -= $btag_len;
-		$body_len -= $etag_len + 1;
-
-		$out = substr($in, $body_pos, $body_len);
-
-		return true;
-	}
-
-?>
+	return true;
+}

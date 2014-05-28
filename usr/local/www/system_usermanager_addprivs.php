@@ -75,7 +75,7 @@ if ($_POST) {
 	$reqdfields = explode(" ", "sysprivs");
 	$reqdfieldsn = array(gettext("Selected priveleges"));
 
-	do_input_validation($_POST, $reqdfields, $reqdfieldsn, $input_errors);
+	do_input_validation($_POST, $reqdfields, $reqdfieldsn, &$input_errors);
 
 	/* if this is an AJAX caller then handle via JSON */
 	if(isAjax() && is_array($input_errors)) {
@@ -93,7 +93,7 @@ if ($_POST) {
 		else
 			$a_user['priv'] = array_merge($a_user['priv'], $pconfig['sysprivs']);
 
-		$a_user['priv'] = sort_user_privs($a_user['priv']);
+		$a_user['priv'] = Privilege::sort_user_privs($a_user['priv']);
 		local_user_set($a_user);
 		$retval = write_config();
 		$savemsg = get_std_save_message($retval);
@@ -180,7 +180,7 @@ function update_description() {
 									<option value="<?=$pname;?>"><?=$pdata['name'];?></option>
 									<?php endforeach; ?>
 								</select>
-								<br />
+								<br/>
 								<?=gettext("Hold down CTRL (pc)/COMMAND (mac) key to select multiple items");?>
 							</td>
 						</tr>

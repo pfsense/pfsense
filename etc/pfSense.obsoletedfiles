@@ -4,6 +4,7 @@
 /etc/inc/cmd_chain.inc
 /etc/inc/regdomain.inc
 /etc/inc/sysctl.inc
+/etc/inc/zeromq.inc
 /usr/local/www/diag_showbogons.php
 /usr/local/www/interfaces_wan.php
 /usr/local/www/interfaces_lan.php

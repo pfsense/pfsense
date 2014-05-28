@@ -1,6 +1,6 @@
 <?php
 
-global $priv_list;
+$priv_list = array();
 
 $priv_list['user-services-captiveportal-login'] = array();
 $priv_list['user-services-captiveportal-login']['name']  = gettext("User - Services - Captive portal login");
@@ -70,5 +70,3 @@ $priv_list['user-pptp-dialin']['descr'] = "Indicates whether the user is allowed
 $priv_list['user-pppoe-dialin'] = array();
 $priv_list['user-pppoe-dialin']['name'] = "User - VPN - PPPOE Dialin";
 $priv_list['user-pppoe-dialin']['descr'] = "Indicates whether the user is allowed to dial in via PPPOE";
-
-?>

@@ -7094,12 +7094,6 @@ msgstr "XMLエラー：行％では%1$s 2 $ dの"
 msgid "Error returned while trying to parse %s"
 msgstr "%sを解析しようとしてエラーが返さ"
 
-#: etc/inc/zeromq.inc:225 etc/inc/zeromq.inc:236 etc/inc/zeromq.inc:225
-#: etc/inc/zeromq.inc:236
-#, php-format
-msgid "Merged in config (%s sections) from ZeroMQ client."
-msgstr "ZeroMQクライアントから（セクション%s ）設定に合併しました。"
-
 #: usr/local/www/load_balancer_virtual_server.php:94
 #: usr/local/www/services_dnsmasq_domainoverride_edit.php:96
 #: usr/local/www/load_balancer_relay_action.php:104

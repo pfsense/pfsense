@@ -849,7 +849,7 @@ function enable_rrd_graphing() {
 		/* NTP, set up the ntpd rrd file */
 		if (isset($config['ntpd']['statsgraph'])) {
 			/* set up the ntpd rrd file */
-			if (!file_exists("$rrddbpath$ifname$ntpd")) {
+			if (!file_exists("$rrddbpath$ntpd")) {
 				$rrdcreate = "$rrdtool create $rrddbpath$ntpd --step $rrdntpdinterval ";
 				$rrdcreate .= "DS:offset:GAUGE:$ntpdvalid:0:1000 ";
 				$rrdcreate .= "DS:sjit:GAUGE:$ntpdvalid:0:1000 ";
@@ -876,7 +876,7 @@ function enable_rrd_graphing() {
 
 			/* enter UNKNOWN values in the RRD so it knows we rebooted. */
 			if($g['booting']) {
-				mwexec("$rrdtool update $rrddbpath$ntpd N:U");
+			mwexec("$rrdtool update $rrddbpath$ntpd N:U:U:U:U:U:U");
 			}
 
 			/* the ntp stats gathering function. */

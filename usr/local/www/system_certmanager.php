@@ -403,7 +403,7 @@ if ($_POST) {
 				write_config();
 
 			if ($userid)
-				pfSenseHeader("system_usermanager.php?act=edit&id={$userid}");
+				pfSenseHeader("system_usermanager.php?act=edit&amp;id={$userid}");
 		}
 	}
 

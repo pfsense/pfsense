@@ -91,14 +91,15 @@ exec("/sbin/pfctl -t " . escapeshellarg($tablename) . " -T show", $entries);
 exec("/sbin/pfctl -sT", $tables);
 
 include("head.inc");
-include("fbegin.inc");
-
 ?>
+<body>
+<?php include("fbegin.inc"); ?>
 
 <?php if ($savemsg) print_info_box($savemsg); ?>
-<form method='post'>
+<form method="post" action="diag_tables.php">
 
 <script type="text/javascript">
+//<![CDATA[
 	function method_change(entrytype) {
 		window.location='diag_tables.php?type=' + entrytype;
 	}
@@ -114,58 +115,62 @@ include("fbegin.inc");
 		}
 		});
 	}
+//]]>
 </script>
 
 <?=gettext("Table:");?>
-<select id='type' onChange='method_change(jQuery("#type").val());' name='type'>
+<select id="type" onchange="method_change(jQuery('#type').val());" name="type">
 	<?php foreach ($tables as $table) {
-		echo "<option name='{$table}' value='{$table}'";
+		echo "<option value=\"{$table}\"";
 		if ($tablename == $table)
-			echo " selected ";
+			echo " selected=\"selected\"";
 		echo ">{$table}</option>\n";
 		}
 	?>
 </select>
 
-<p/>
+<br/><br/>
 
-<table class="tabcont" width="100%" border="0" cellspacing="0" cellpadding="0">
+<table class="tabcont" width="100%" border="0" cellspacing="0" cellpadding="0" summary="tables">
 	<tr>
 		<td class="listhdrr"><?=gettext("IP Address");?></td>
 	</tr>
 <?php $count = 0; foreach($entries as $entryA): ?>
 	<?php $entry = trim($entryA); ?>
-	<tr id='<?=$entry?>'>
+	<tr id="<?=$entry?>">
 		<td>
 			<?php echo $entry; ?>
 		</td>
 		<td>
 			<?php if ( ($tablename != "bogons") && ($tablename != "bogonsv6") ) { ?>
-			<a onClick='del_entry("<?=htmlspecialchars($entry)?>");'>
-				<img img src="/themes/<?=$g['theme'];?>/images/icons/icon_x.gif">
-			<?php } ?>
+			<a onclick="del_entry('<?=htmlspecialchars($entry)?>');">
+				<img src="/themes/<?=$g['theme'];?>/images/icons/icon_x.gif" alt="delete" />
 			</a>
+			<?php } ?>
 		</td>
 	</tr>
 <?php $count++; endforeach; ?>
 <?php
 	if($count == 0)
 		if( ($tablename == "bogons") || ($tablename == "bogonsv6") )
-			echo "<p/>" . gettext("No entries exist in this table.") . "&nbsp&nbsp" . "<input name='Download' type='submit' class='formbtn' value='" . gettext("Download") . "'> " . gettext(" the latest bogon data.");
+			echo "<tr><td>" . gettext("No entries exist in this table.") . "&nbsp;&nbsp;" . "<input name=\"Download\" type=\"submit\" class=\"formbtn\" value=\"" . gettext("Download") . "\" /> " . gettext(" the latest bogon data.");
 		else
-			echo "<p/>" . gettext("No entries exist in this table.");
+			echo "<tr><td>" . gettext("No entries exist in this table.");
 ?>
 
 <?php
 	if($count > 0)
 		if( ($tablename == "bogons") || ($tablename == "bogonsv6") ) {
 			$last_updated = exec('/usr/bin/grep -i -m 1 -E "^# last updated" /etc/' . escapeshellarg($tablename));
-			echo "<p/>&nbsp<b>$count</b> " . gettext("entries in this table.") . "&nbsp&nbsp" . "<input name='Download' type='submit' class='formbtn' value='" . gettext("Download") . "'> " . gettext(" the latest bogon data.") . "<br />" . "$last_updated";
+			echo "<tr><td>&nbsp;<b>$count</b> " . gettext("entries in this table.") . "&nbsp;&nbsp;" . "<input name=\"Download\" type=\"submit\" class=\"formbtn\" value=\"" . gettext("Download") . "\" /> " . gettext(" the latest bogon data.") . "<br />" . "$last_updated";
 		}
 		else
-			echo "<p/>" . gettext("Delete") . " <a href='diag_tables.php?deleteall=true&type=" . htmlspecialchars($tablename) . "'>" . gettext("all") . "</a> " . "<b>$count</b> " . gettext("entries in this table.");
+			echo "<tr><td>" . gettext("Delete") . " <a href=\"diag_tables.php?deleteall=true&amp;type=" . htmlspecialchars($tablename) . "\">" . gettext("all") . "</a> " . "<b>$count</b> " . gettext("entries in this table.");
 ?>
-
+</td></tr>
 </table>
+</form>
 
 <?php include("fend.inc"); ?>
+</body>
+</html>

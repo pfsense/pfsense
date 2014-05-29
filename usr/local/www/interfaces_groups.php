@@ -106,7 +106,7 @@ include("head.inc");
   <td class="listr" ondblclick="document.location='interfaces_groups_edit.php?id=<?=$i;?>';">
       <?php
 	$members_arr = explode(" ", $ifgroupentry['members']);
-	$iflist = get_configured_interface_with_descr();
+	$iflist = get_configured_interface_with_descr(false, true);
 	$memberses_arr = array();
 	foreach ($members_arr as $memb)
 		$memberses_arr[] = $iflist[$memb] ? $iflist[$memb] : $memb;

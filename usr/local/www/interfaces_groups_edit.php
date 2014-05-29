@@ -344,6 +344,10 @@ function removeRow(el) {
 //]]>
 </script>
 
-<?php include("fend.inc"); ?>
+<?php
+	unset($iflist);
+	unset($iflist_disabled);
+	include("fend.inc");
+?>
 </body>
 </html>

@@ -110,6 +110,7 @@ include("head.inc");
 	$memberses_arr = array();
 	foreach ($members_arr as $memb)
 		$memberses_arr[] = $iflist[$memb] ? $iflist[$memb] : $memb;
+	unset($iflist);
 	$memberses = implode(", ", $memberses_arr);
 	echo $memberses;
 	if(count($members_arr) < 10) {

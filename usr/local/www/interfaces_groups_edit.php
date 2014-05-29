@@ -58,8 +58,10 @@ if (isset($id) && $a_ifgroups[$id]) {
 	$pconfig['ifname'] = $a_ifgroups[$id]['ifname'];
 	$pconfig['members'] = $a_ifgroups[$id]['members'];
 	$pconfig['descr'] = html_entity_decode($a_ifgroups[$id]['descr']);
-
 }
+
+$iflist = get_configured_interface_with_descr();
+$iflist_disabled = get_configured_interface_with_descr(false, true);
 
 if ($_POST) {
 
@@ -74,8 +76,7 @@ if ($_POST) {
 	if (preg_match("/([^a-zA-Z])+/", $_POST['ifname'], $match))
 		$input_errors[] = gettext("Only letters A-Z are allowed as the group name.");
 
-	$ifaces = get_configured_interface_with_descr();
-	foreach ($ifaces as $gif => $gdescr) {
+	foreach ($iflist as $gif => $gdescr) {
 		if ($gdescr == $_POST['ifname'] || $gif == $_POST['ifname'])
 			$input_errors[] = "The specified group name is already used by an interface. Please choose another name.";
 	}
@@ -200,7 +201,6 @@ var addRowTo = (function() {
 		<?php
                         $innerHTML="\"<input type='hidden' value='\" + totalrows +\"' name='\" + rowname[i] + \"_row-\" + totalrows + \"' /><select size='1' name='\" + rowname[i] + totalrows + \"'>\" +\"";
 
-			$iflist = get_configured_interface_with_descr();
                         foreach ($iflist as $ifnam => $ifdescr)
                                 $innerHTML .= "<option value='{$ifnam}'>{$ifdescr}<\/option>";
 			$innerHTML .= "<\/select>\";";
@@ -288,12 +288,20 @@ function removeRow(el) {
 	<td class="vtable">
 	        <select name="members<?php echo $tracker; ?>" class="formselect" id="members<?php echo $tracker; ?>">
 			<?php
+				$found = false;
 				foreach ($iflist as $ifnam => $ifdescr) {
 					echo "<option value=\"{$ifnam}\"";
-					if ($ifnam == $members)
+					if ($ifnam == $members) {
+						$found = true;
 						echo " selected=\"selected\"";
+					}
 					echo ">{$ifdescr}</option>";
 				}
+
+				if ($found === false)
+					foreach ($iflist_disabled as $ifnam => $ifdescr)
+						if ($ifnam == $members)
+							echo "<option value=\"{$ifnam}\" selected=\"selected\">{$ifdescr}</option>";
 			?>
                         </select>
 	</td>

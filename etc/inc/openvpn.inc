@@ -538,6 +538,7 @@ function openvpn_reconfigure($mode, $settings) {
 							$biface_sm=gen_subnet_mask(get_interface_subnet($settings['serverbridge_interface']));
 							if (is_ipaddrv4($biface_ip) && is_ipaddrv4($settings['serverbridge_dhcp_start']) && is_ipaddrv4($settings['serverbridge_dhcp_end'])) {
 								$conf .= "server-bridge {$biface_ip} {$biface_sm} {$settings['serverbridge_dhcp_start']} {$settings['serverbridge_dhcp_end']}\n";
+								$conf .= "client-config-dir {$g['varetc_path']}/openvpn-csc\n";
 							} else {
 								$conf .= "mode server\n";
 							}

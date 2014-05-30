@@ -180,7 +180,7 @@
 	$sshd_pid = exec("ps ax | egrep '/usr/sbin/[s]shd' | awk '{print $1}'");
 	if($sshd_pid <> "") {
 		echo "stopping ssh process $sshd_pid \n";
-		posix_kill($sshd_pid, SIGTERM);
+		@posix_kill($sshd_pid, SIGTERM);
 	}
 	/* Launch new server process */
 	$status = mwexec("/usr/sbin/sshd");

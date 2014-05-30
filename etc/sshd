@@ -171,7 +171,7 @@
 		$_gb = exec("/usr/bin/nice -n20 /usr/bin/ssh-keygen -t rsa -N '' -f $sshConfigDir/ssh_host_rsa_key");
 		$_gb = exec("/usr/bin/nice -n20 /usr/bin/ssh-keygen -t dsa -N '' -f $sshConfigDir/ssh_host_dsa_key");
 		$_gb = exec("/usr/bin/nice -n20 /usr/bin/ssh-keygen -t ecdsa -N '' -f $sshConfigDir/ssh_host_ecdsa_key");
-		$_gb = exec("/usr/bin/nice -n20 /usr/bin/ssh-keygen -t ed25519 -N '' -f $sshConfigDir/ssh_host_ecdsa_key");
+		$_gb = exec("/usr/bin/nice -n20 /usr/bin/ssh-keygen -t ed25519 -N '' -f $sshConfigDir/ssh_host_ed25519_key");
 		clear_subsystem_dirty('sshdkeys');
 		file_notice("SSH", "{$g['product_name']} has completed creating your SSH keys.  SSH is now started.", "SSH Startup", "");
 	}

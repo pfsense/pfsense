@@ -319,9 +319,11 @@ if ($_GET["error"] && ($_GET["error"] != 0))
 						<br /><?PHP echo gettext("Consumers may only be added to a mirror if they are larger than the size of the mirror."); ?>
 						</td>
 					</tr>
-
 					<tr>
 						<td colspan="2" valign="top" class="">&nbsp;</td>
+					</tr>
+					<tr>
+						<td colspan="2" valign="top" class=""><?PHP echo gettext("To repair a failed mirror, first perform a 'Forget' command on the mirror, followed by an 'insert' action on the new consumer."); ?></td>
 					</tr>
 <?PHP endif;?>
 				</table>

@@ -598,7 +598,7 @@ function method_change() {
 								<img src="/themes/<?= $g['theme'];?>/images/icons/icon_e.gif" title="<?=gettext("Edit CRL") . " " . htmlspecialchars($tmpcrl['descr']);?>" alt="<?=gettext("Edit CRL") . " " . htmlspecialchars($tmpcrl['descr']);?>" width="17" height="17" border="0" />
 							</a>
 							<?php else: ?>
-							<a href="system_crlmanager.php?act=editimported&id=<?=$tmpcrl['refid'];?>">
+							<a href="system_crlmanager.php?act=editimported&amp;id=<?=$tmpcrl['refid'];?>">
 								<img src="/themes/<?= $g['theme'];?>/images/icons/icon_e.gif" title="<?=gettext("Edit CRL") . " " . htmlspecialchars($tmpcrl['descr']);?>" alt="<?=gettext("Edit CRL") . " " . htmlspecialchars($tmpcrl['descr']);?>" width="17" height="17" border="0" />
 							</a>
 							<?php endif; ?>

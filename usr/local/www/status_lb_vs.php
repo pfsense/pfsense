@@ -117,7 +117,7 @@ include("head.inc");
                       $rdr_a[$vsent['name']]['status'] = 'Unknown - relayd not running?';
                   }
                   ?>
-                  <td class="listr" nowrap>
+                  <td class="listr nowrap">
 			<table border="0" cellpadding="3" cellspacing="2" summary="status">
 				<tr><td bgcolor="<?=$bgcolor?>"><?=$rdr_a[$vsent['name']]['status']?> </td></tr>
 			</table>

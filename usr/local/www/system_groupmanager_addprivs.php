@@ -110,7 +110,7 @@ if ($_POST) {
 		$retval = write_config();
 		$savemsg = get_std_save_message($retval);
 
-		pfSenseHeader("system_groupmanager.php?act=edit&id={$groupid}");
+		pfSenseHeader("system_groupmanager.php?act=edit&amp;id={$groupid}");
 		exit;
 	}
 }

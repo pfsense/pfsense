@@ -65,6 +65,7 @@ $pconfig['logall'] = isset($config['syslog']['logall']);
 $pconfig['system'] = isset($config['syslog']['system']);
 $pconfig['enable'] = isset($config['syslog']['enable']);
 $pconfig['logdefaultblock'] = !isset($config['syslog']['nologdefaultblock']);
+$pconfig['logdefaultpass'] = isset($config['syslog']['nologdefaultpass']);
 $pconfig['logbogons'] = !isset($config['syslog']['nologbogons']);
 $pconfig['logprivatenets'] = !isset($config['syslog']['nologprivatenets']);
 $pconfig['loglighttpd'] = !isset($config['syslog']['nologlighttpd']);
@@ -138,10 +139,12 @@ if ($_POST['resetlogs'] == gettext("Reset Log Files")) {
 		$config['syslog']['disablelocallogging'] = $_POST['disablelocallogging'] ? true : false;
 		$config['syslog']['enable'] = $_POST['enable'] ? true : false;
 		$oldnologdefaultblock = isset($config['syslog']['nologdefaultblock']);
+		$oldnologdefaultpass = isset($config['syslog']['nologdefaultpass']);
 		$oldnologbogons = isset($config['syslog']['nologbogons']);
 		$oldnologprivatenets = isset($config['syslog']['nologprivatenets']);
 		$oldnologlighttpd = isset($config['syslog']['nologlighttpd']);
 		$config['syslog']['nologdefaultblock'] = $_POST['logdefaultblock'] ? false : true;
+		$config['syslog']['nologdefaultpass'] = $_POST['logdefaultpass'] ? true : false;
 		$config['syslog']['nologbogons'] = $_POST['logbogons'] ? false : true;
 		$config['syslog']['nologprivatenets'] = $_POST['logprivatenets'] ? false : true;
 		$config['syslog']['nologlighttpd'] = $_POST['loglighttpd'] ? false : true;
@@ -161,6 +164,7 @@ if ($_POST['resetlogs'] == gettext("Reset Log Files")) {
 		$retval = 0;
 		$retval = system_syslogd_start();
 		if (($oldnologdefaultblock !== isset($config['syslog']['nologdefaultblock']))
+			|| ($oldnologdefaultpass !== isset($config['syslog']['nologdefaultpass']))
 			|| ($oldnologbogons !== isset($config['syslog']['nologbogons']))
 			|| ($oldnologprivatenets !== isset($config['syslog']['nologprivatenets'])))
 			$retval |= filter_configure();
@@ -307,8 +311,12 @@ function check_everything() {
 			<td valign="top" class="vtable">Log Firewall Default Blocks</td>
 			<td class="vtable">
 				<input name="logdefaultblock" type="checkbox" id="logdefaultblock" value="yes" <?php if ($pconfig['logdefaultblock']) echo "checked=\"checked\""; ?> />
-				<strong><?=gettext("Log packets matched from the default rules put in the ruleset");?></strong><br />
+				<strong><?=gettext("Log packets matched from the default block rules put in the ruleset");?></strong><br />
 				<?=gettext("Hint: packets that are blocked by the implicit default block rule will not be logged if you uncheck this option. Per-rule logging options are still respected.");?>
+				<br />
+				<input name="logdefaultpass" type="checkbox" id="logdefaultpass" value="yes" <?php if ($pconfig['logdefaultpass']) echo "checked=\"checked\""; ?> />
+				<strong><?=gettext("Log packets matched from the default pass rules put in the ruleset");?></strong><br />
+				<?=gettext("Hint: packets that are allowed by the implicit default pass rule will be logged if you check this option. Per-rule logging options are still respected.");?>
 				<br />
 				<input name="logbogons" type="checkbox" id="logbogons" value="yes" <?php if ($pconfig['logbogons']) echo "checked=\"checked\""; ?> />
 				<strong><?=gettext("Log packets blocked by 'Block Bogon Networks' rules");?></strong><br />
@@ -423,6 +431,7 @@ function check_everything() {
 					<tr>
 						<td>&nbsp;</td>
 						<td><?=gettext("IP addresses of remote syslog servers, or an IP:port.");?></td>
+					</tr>
 				</table>
 			</td>
 		</tr>

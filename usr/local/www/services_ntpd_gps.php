@@ -311,10 +311,10 @@ SureGPS = 		#Sure Electronics SKG16B
 				break;
 
 			case "SureGPS":
-				gpsdef['nmea'] = 0;
+				gpsdef['nmea'] = 1;
 				gpsdef['speed'] = 16;
 				gpsdef['fudge1'] = "";
-				gpsdef['fudge2'] = "0.400";
+				gpsdef['fudge2'] = "0.407";
 				gpsdef['inittxt'] = "JFBNVEsyMjUsMCoyQg0KJFBNVEszMTQsMSwxLDAsMSwwLDUsMCwwLDAsMCwwLDAsMCwwLDAsMCwwLDEsMCoyRA0KJFBNVEszMDEsMioyRQ0KJFBNVEszOTcsMCoyMw0KJFBNVEsxMDIqMzENCiRQTVRLMzEzLDEqMkUNCiRQTVRLNTEzLDEqMjgNCiRQTVRLMzE5LDAqMjUNCiRQTVRLNTI3LDAuMDAqMDANCiRQTVRLMjUxLDk2MDAqMTcNCg==";
 				break;
 
@@ -439,12 +439,12 @@ SureGPS = 		#Sure Electronics SKG16B
 		</tr>
 <?php endif; ?>
 		<tr>
-<?php /* 1 = MRC, 2 = GGA, 4 = GLL, 8 = ZDA or ZDG */?>
+<?php /* 1 = RMC, 2 = GGA, 4 = GLL, 8 = ZDA or ZDG */?>
 			<td width="22%" valign="top" class="vncellreq">NMEA sentences</td>
 			<td width="78%" class="vtable">
-				<select id="gpsnmea" name="gpsnmea[]" multiple="multiple" class="formselect">
+				<select id="gpsnmea" name="gpsnmea[]" multiple="multiple" class="formselect" size="5">
 					<option value="0"<?php if(!$pconfig['nmea']) echo " selected=\"selected\""; ?>>All</option>
-					<option value="1"<?php if($pconfig['nmea'] & 1) echo " selected=\"selected\"";?>>MRC</option>
+					<option value="1"<?php if($pconfig['nmea'] & 1) echo " selected=\"selected\"";?>>RMC</option>
 					<option value="2"<?php if($pconfig['nmea'] & 2) echo " selected=\"selected\"";?>>GGA</option>
 					<option value="4"<?php if($pconfig['nmea'] & 4) echo " selected=\"selected\"";?>>GLL</option>
 					<option value="8"<?php if($pconfig['nmea'] & 8) echo " selected=\"selected\"";?>>ZDA or ZDG</option>

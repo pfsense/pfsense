@@ -28,7 +28,7 @@
 $nocsrf = true;
 
 require_once("guiconfig.inc");
-require_once("/usr/local/www/widgets/include/gmirror_status.inc");
+require_once("gmirror.inc");
 
 if ($_GET['textonly'] == "true") {
 	header("Cache-Control: no-cache");

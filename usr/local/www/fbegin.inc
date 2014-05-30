@@ -210,6 +210,10 @@ $diagnostics_menu[] = array(gettext("Command Prompt"), "/exec.php");
 $diagnostics_menu[] = array(gettext("DNS Lookup"), "/diag_dns.php");
 $diagnostics_menu[] = array(gettext("Edit File"), "/edit.php");
 $diagnostics_menu[] = array(gettext("Factory Defaults"), "/diag_defaults.php");
+
+if(file_exists("/var/run/gmirror_active"))
+	$diagnostics_menu[] = array(gettext("GEOM Mirrors"), "/diag_gmirror.php" );
+
 $diagnostics_menu[] = array(gettext("Halt System"), "/halt.php" );
 $diagnostics_menu[] = array(gettext("Limiter Info"), "/diag_limiter_info.php" );
 $diagnostics_menu[] = array(gettext("NDP Table"), "/diag_ndp.php" );

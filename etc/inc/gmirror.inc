@@ -219,7 +219,8 @@ function gmirror_get_mirror_balance($mirror) {
 
 /* Change balance algorithm of the mirror */
 function gmirror_configure_balance($mirror, $balancemethod) {
-	if (!is_valid_mirror($mirror) || !in_array($balancemethod, $balancemethods))
+	global $balance_methods;
+	if (!is_valid_mirror($mirror) || !in_array($balancemethod, $balance_methods))
 		return false;
 	return mwexec("/sbin/gmirror configure -b " . escapeshellarg($balancemethod) . " " . escapeshellarg($mirror));
 }

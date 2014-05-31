@@ -444,14 +444,14 @@ function system_routing_configure($interface = "") {
 	if ($dont_add_route == false ) {
 		if (!empty($interface) && $interface != $interfacegw)
 			;
-		else if (($interfacegw <> "bgpd") && (is_ipaddrv4($gatewayip))) {
+		else if (is_ipaddrv4($gatewayip)) {
 			log_error("ROUTING: setting default route to $gatewayip");
 			mwexec("/sbin/route change -inet default " . escapeshellarg($gatewayip));
 		}
 
 		if (!empty($interface) && $interface != $interfacegwv6)
 			;
-		else if (($interfacegwv6 <> "bgpd") && (is_ipaddrv6($gatewayipv6))) {
+		else if (is_ipaddrv6($gatewayipv6)) {
 			$ifscope = "";
 			if (is_linklocal($gatewayipv6))
 				$ifscope = "%{$defaultifv6}";

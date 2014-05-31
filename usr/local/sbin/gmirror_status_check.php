@@ -1,7 +1,7 @@
 #!/usr/local/bin/php -f
 <?php
 /*
-	diag_gmirror.php
+	gmirror_status_check.php
 	Copyright (C) 2014 Jim Pingle
 
 	Redistribution and use in source and binary forms, with or without

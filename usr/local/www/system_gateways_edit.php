@@ -660,12 +660,6 @@ function enable_change() {
 								echo " selected='selected'";
 							echo ">" . htmlspecialchars($ifacename) . "</option>";
 						}
-						if (is_package_installed("openbgpd") == 1) {
-							echo "<option value=\"bgpd\"";
-							if ($pconfig['interface'] == "bgpd")
-								echo " selected='selected'";
-							echo ">" . gettext("Use BGPD") . "</option>";
-						}
 					?>
 					</select><br />
 					<span class="vexpl"><?=gettext("Choose which interface this gateway applies to."); ?></span>

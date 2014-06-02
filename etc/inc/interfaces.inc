@@ -2124,10 +2124,10 @@ function interface_ipalias_configure(&$vip) {
 	if ($vip['mode'] != "ipalias")
 		return;
 
-	if (!isset($config['interfaces'][$vip['interface']]))
+	if ($vip['interface'] != 'lo0' && !isset($config['interfaces'][$vip['interface']]))
 		return;
 
-	if (!isset($config['interfaces'][$vip['interface']]['enable']))
+	if ($vip['interface'] != 'lo0' && !isset($config['interfaces'][$vip['interface']]['enable']))
 		return;
 
 	$if = get_real_interface($vip['interface']);

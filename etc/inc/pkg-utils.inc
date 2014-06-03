@@ -254,7 +254,7 @@ function is_freebsd_pkg_installed($pkg) {
 	if(!$pkg) 
 		return;
 	$output = "";
-	exec("/usr/local/sbin/pbi_info " . escapeshellarg($pkg), $output, $retval);
+	$_gb = exec("/usr/local/sbin/pbi_info " . escapeshellarg($pkg), $output, $retval);
 
 	return (intval($retval) == 0);
 }

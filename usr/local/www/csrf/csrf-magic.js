@@ -142,25 +142,30 @@ if (window.XMLHttpRequest && window.XMLHttpRequest.prototype && '\v' != 'v') {
             }
             return jQuery.csrf_ajax( s );
         }
-    } else if (window.Prototype) {
+    }
+    if (window.Prototype) {
         // This works for script.aculo.us too
         Ajax.csrf_getTransport = Ajax.getTransport;
         Ajax.getTransport = function() {
             return new CsrfMagic(Ajax.csrf_getTransport());
         }
-    } else if (window.MooTools) {
+    }
+    if (window.MooTools) {
         Browser.csrf_Request = Browser.Request;
         Browser.Request = function () {
             return new CsrfMagic(Browser.csrf_Request());
         }
-    } else if (window.YAHOO) {
+    }
+    if (window.YAHOO) {
+        // old YUI API
         YAHOO.util.Connect.csrf_createXhrObject = YAHOO.util.Connect.createXhrObject;
         YAHOO.util.Connect.createXhrObject = function (transaction) {
             obj = YAHOO.util.Connect.csrf_createXhrObject(transaction);
             obj.conn = new CsrfMagic(obj.conn);
             return obj;
         }
-    } else if (window.Ext) {
+    }
+    if (window.Ext) {
         // Ext can use other js libraries as loaders, so it has to come last
         // Ext's implementation is pretty identical to Yahoo's, but we duplicate
         // it for comprehensiveness's sake.
@@ -170,7 +175,9 @@ if (window.XMLHttpRequest && window.XMLHttpRequest.prototype && '\v' != 'v') {
             obj.conn = new CsrfMagic(obj.conn);
             return obj;
         }
-    } else if (window.dojo) {
+    }
+    if (window.dojo) {
+        // NOTE: this doesn't work with latest dojo
         dojo.csrf__xhrObj = dojo._xhrObj;
         dojo._xhrObj = function () {
             return new CsrfMagic(dojo.csrf__xhrObj());

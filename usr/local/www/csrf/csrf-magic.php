@@ -53,6 +53,8 @@ $GLOBALS['csrf']['rewrite-js'] = false;
  * will become invalid.
  */
 $GLOBALS['csrf']['secret'] = '';
+// nota bene: library code should use csrf_get_secret() and not access
+// this global directly
 
 /**
  * Set this to false to disable csrf-magic's output handler, and therefore,
@@ -129,7 +131,7 @@ $GLOBALS['csrf']['xhtml'] = true;
 // FUNCTIONS:
 
 // Don't edit this!
-$GLOBALS['csrf']['version'] = '1.0.1';
+$GLOBALS['csrf']['version'] = '1.0.4';
 
 /**
  * Rewrites <form> on the fly to add CSRF tokens to them. This can also
@@ -240,12 +242,40 @@ function csrf_get_tokens() {
     return 'invalid';
 }
 
+function csrf_flattenpost($data) {
+    $ret = array();
+    foreach($data as $n => $v) {
+        $ret = array_merge($ret, csrf_flattenpost2(1, $n, $v));
+    }
+    return $ret;
+}
+function csrf_flattenpost2($level, $key, $data) {
+    if(!is_array($data)) return array($key => $data);
+    $ret = array();
+    foreach($data as $n => $v) {
+        $nk = $level >= 1 ? $key."[$n]" : "[$n]";
+        $ret = array_merge($ret, csrf_flattenpost2($level+1, $nk, $v));
+    }
+    return $ret;
+}
+
 /**
  * @param $tokens is safe for HTML consumption
  */
 function csrf_callback($tokens) {
+    // (yes, $tokens is safe to echo without escaping)
     header($_SERVER['SERVER_PROTOCOL'] . ' 403 Forbidden');
-    echo "<html><head><title>CSRF check failed</title></head><body>CSRF check failed. Either your session has expired, this page has been inactive too long, or you need to enable cookies.<br />Debug: ".$tokens."</body></html>
+    $data = '';
+    foreach (csrf_flattenpost($_POST) as $key => $value) {
+        if ($key == $GLOBALS['csrf']['input-name']) continue;
+        $data .= '<input type="hidden" name="'.htmlspecialchars($key).'" value="'.htmlspecialchars($value).'" />';
+    }
+    echo "<html><head><title>CSRF check failed</title></head>
+        <body>
+        <p>CSRF check failed. Your form session may have expired, or you may not have
+        cookies enabled.</p>
+        <form method='post' action=''>$data<input type='submit' value='Try again' /></form>
+        <p>Debug: $tokens</p></body></html>
 ";
 }
 
@@ -362,7 +392,7 @@ function csrf_generate_secret($len = 32) {
  */
 function csrf_hash($value, $time = null) {
     if (!$time) $time = time();
-    return sha1($GLOBALS['csrf']['secret'] . $value . $time) . ',' . $time;
+    return sha1(csrf_get_secret() . $value . $time) . ',' . $time;
 }
 
 // Load user configuration

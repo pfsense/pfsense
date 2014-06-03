@@ -65,17 +65,13 @@ function upload_crash_report($files) {
 }
 
 function output_crash_reporter_html($crash_reports) {
-	echo "<strong>" . gettext("Unfortunately we have detected a programming bug.") . "</strong></p>";
-	echo gettext("Would you like to submit the programming debug logs to the pfSense developers for inspection?") . "</p>";
-	echo "<p>";
-	echo "<i>" . gettext("Please double check the contents to ensure you are comfortable sending this information before clicking Yes.") . "</i><br />";
-	echo "<p>";
-	echo gettext("Contents of crash reports") . ":<br />";
-	echo "<textarea readonly rows='40' cols='65' name='crashreports'>{$crash_reports}</textarea>";
-	echo "<p/>";
-	echo "<input name=\"Submit\" type=\"submit\" class=\"formbtn\" value=\"" . gettext("Yes") .  "\">" . gettext(" - Submit this to the developers for inspection");
-	echo "<p/><input name=\"Submit\" type=\"submit\" class=\"formbtn\" value=\"" . gettext("No") .  "\">" . gettext(" - Just delete the crash report and take me back to the Dashboard");
-	echo "<p/>";
+	echo "<p><strong>" . gettext("Unfortunately we have detected a programming bug.") . "</strong></p>";
+	echo "<p>" . gettext("Would you like to submit the programming debug logs to the pfSense developers for inspection?") . "</p>";
+	echo "<p><i>" . gettext("Please double check the contents to ensure you are comfortable sending this information before clicking Yes.") . "</i></p>";
+	echo "<p>" . gettext("Contents of crash reports") . ":<br />";
+	echo "<textarea readonly=\"readonly\" rows=\"40\" cols=\"65\" name=\"crashreports\">{$crash_reports}</textarea></p>";
+	echo "<p><input name=\"Submit\" type=\"submit\" class=\"formbtn\" value=\"" . gettext("Yes") .  "\" />" . gettext(" - Submit this to the developers for inspection") . "</p>";
+	echo "<p><input name=\"Submit\" type=\"submit\" class=\"formbtn\" value=\"" . gettext("No") .  "\" />" . gettext(" - Just delete the crash report and take me back to the Dashboard") . "</p>";
 	echo "</form>";
 }
 
@@ -108,7 +104,7 @@ exec("/usr/bin/grep -vi warning /tmp/PHP_errors.log", $php_errors);
 			copy("/tmp/PHP_errors.log", "/var/crash/PHP_errors.log");
 		exec("/usr/bin/gzip /var/crash/*");
 		$files_to_upload = glob("/var/crash/*");
-		echo "<p/>";
+		echo "<br/>";
 		echo gettext("Uploading...");
 		ob_flush();
 		flush();
@@ -117,9 +113,9 @@ exec("/usr/bin/grep -vi warning /tmp/PHP_errors.log", $php_errors);
 			array_map('unlink', glob("/var/crash/*"));
 			// Erase the contents of the PHP error log
 			fclose(fopen("/tmp/PHP_errors.log", 'w'));
-			echo "<p/>";
+			echo "<br/>";
 			print_r($resp);
-			echo "<p/><a href='/'>" . gettext("Continue") . "</a>" . gettext(" and delete crash report files from local disk.");
+			echo "<p><a href=\"/\">" . gettext("Continue") . "</a>" . gettext(" and delete crash report files from local disk.") . "</p>";
 		} else {
 			echo "Could not find any crash files.";
 		}

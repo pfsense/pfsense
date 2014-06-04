@@ -1,20 +1,20 @@
-<?php 
+<?php
 /*
 	vpn_openvpn_client.php
 
 	Copyright (C) 2008 Shrew Soft Inc.
-	All rights reserved. 
+	All rights reserved.
 
 	Redistribution and use in source and binary forms, with or without
 	modification, are permitted provided that the following conditions are met:
-	
+
 	1. Redistributions of source code must retain the above copyright notice,
 	   this list of conditions and the following disclaimer.
-	
+
 	2. Redistributions in binary form must reproduce the above copyright
 	   notice, this list of conditions and the following disclaimer in the
 	   documentation and/or other materials provided with the distribution.
-	
+
 	THIS SOFTWARE IS PROVIDED ``AS IS'' AND ANY EXPRESS OR IMPLIED WARRANTIES,
 	INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY
 	AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE
@@ -105,7 +105,7 @@ if($_GET['act']=="edit"){
 	if (isset($id) && $a_client[$id]) {
 		foreach($simplefields as $stat)
 			$pconfig[$stat] = $a_client[$id][$stat];
-	
+
 		$pconfig['disable'] = isset($a_client[$id]['disable']);
 		$pconfig['mode'] = $a_client[$id]['mode'];
 		$pconfig['protocol'] = $a_client[$id]['protocol'];
@@ -126,7 +126,7 @@ if($_GET['act']=="edit"){
 		$pconfig['custom_options'] = $a_client[$id]['custom_options'];
 		$pconfig['ns_cert_type'] = $a_client[$id]['ns_cert_type'];
 		$pconfig['dev_mode'] = $a_client[$id]['dev_mode'];
-	
+
 		if ($pconfig['mode'] != "p2p_shared_key") {
 			$pconfig['caref'] = $a_client[$id]['caref'];
 			$pconfig['certref'] = $a_client[$id]['certref'];
@@ -229,8 +229,8 @@ if ($_POST) {
 	if (!empty($pconfig['use_shaper']) && (!is_numeric($pconfig['use_shaper']) || ($pconfig['use_shaper'] <= 0)))
 		$input_errors[] = gettext("The bandwidth limit must be a positive numeric value.");
 
-    if ($pconfig['autokey_enable'])
-        $pconfig['shared_key'] = openvpn_create_key();
+	if ($pconfig['autokey_enable'])
+		$pconfig['shared_key'] = openvpn_create_key();
 
 	if (!$tls_mode && !$pconfig['autokey_enable'])
 		if (!strstr($pconfig['shared_key'], "-----BEGIN OpenVPN Static key V1-----") ||
@@ -261,10 +261,10 @@ if ($_POST) {
 	if (!$input_errors) {
 
 		$client = array();
-		
+
 		foreach($simplefields as $stat)
 			update_if_changed($stat, $client[$stat], $_POST[$stat]);
-			
+
 		if ($vpnid)
 			$client['vpnid'] = $vpnid;
 		else
@@ -288,17 +288,17 @@ if ($_POST) {
 		$client['mode'] = $pconfig['mode'];
 		$client['custom_options'] = str_replace("\r\n", "\n", $pconfig['custom_options']);
 
-        if ($tls_mode) {
-            $client['caref'] = $pconfig['caref'];
-            $client['certref'] = $pconfig['certref'];
-            if ($pconfig['tlsauth_enable']) {
-                if ($pconfig['autotls_enable'])
-                    $pconfig['tls'] = openvpn_create_key();
-                $client['tls'] = base64_encode($pconfig['tls']);
-            }
-        } else {
-            $client['shared_key'] = base64_encode($pconfig['shared_key']);
-        }
+		if ($tls_mode) {
+			$client['caref'] = $pconfig['caref'];
+			$client['certref'] = $pconfig['certref'];
+			if ($pconfig['tlsauth_enable']) {
+				if ($pconfig['autotls_enable'])
+					$pconfig['tls'] = openvpn_create_key();
+				$client['tls'] = base64_encode($pconfig['tls']);
+			}
+		} else {
+			$client['shared_key'] = base64_encode($pconfig['shared_key']);
+		}
 		$client['crypto'] = $pconfig['crypto'];
 		$client['digest'] = $pconfig['digest'];
 		$client['engine'] = $pconfig['engine'];
@@ -318,7 +318,7 @@ if ($_POST) {
 
 		openvpn_resync('client', $client);
 		write_config();
-		
+
 		header("Location: vpn_openvpn_client.php");
 		exit;
 	}
@@ -362,10 +362,10 @@ function autokey_change() {
 function useproxy_changed() {
 
 	if (jQuery('#proxy_authtype').val() != 'none') {
-                jQuery('#proxy_authtype_opts').show();
-        } else {
-                jQuery('#proxy_authtype_opts').hide();
-        }
+		jQuery('#proxy_authtype_opts').show();
+	} else {
+		jQuery('#proxy_authtype_opts').hide();
+	}
 }
 
 function tlsauth_change() {
@@ -406,9 +406,9 @@ if ($savemsg)
 	print_info_box($savemsg);
 ?>
 <table width="100%" border="0" cellpadding="0" cellspacing="0" summary="vpn openvpn client">
- 	<tr>
+	<tr>
 		<td class="tabnavtbl">
-			<?php 
+			<?php
 				$tab_array = array();
 				$tab_array[] = array(gettext("Server"), false, "vpn_openvpn_server.php");
 				$tab_array[] = array(gettext("Client"), true, "vpn_openvpn_client.php");
@@ -418,7 +418,7 @@ if ($savemsg)
 				display_top_tabs($tab_array);
 			?>
 		</td>
-	</tr>    
+	</tr>
 	<tr>
 		<td class="tabcont">
 
@@ -479,21 +479,21 @@ if ($savemsg)
 							</select>
 							</td>
 					</tr>
-                                        <tr>
-                                                <td width="22%" valign="top" class="vncellreq"><?=gettext("Device mode");?></td>
-                                                        <td width="78%" class="vtable">
-                                                        <select name='dev_mode' class="formselect">
-                                                        <?php
-                                                                foreach ($openvpn_dev_mode as $mode):
-                                                                        $selected = "";
-                                                                        if ($pconfig['dev_mode'] == $mode)
-                                                                                $selected = "selected=\"selected\"";
-                                                        ?>
-                                                                <option value="<?=$mode;?>" <?=$selected;?>><?=$mode;?></option>
-                                                        <?php endforeach; ?>
-                                                        </select>
-                                                        </td>
-                                        </tr>
+					<tr>
+						<td width="22%" valign="top" class="vncellreq"><?=gettext("Device mode");?></td>
+							<td width="78%" class="vtable">
+							<select name='dev_mode' class="formselect">
+							<?php
+								foreach ($openvpn_dev_mode as $mode):
+									$selected = "";
+									if ($pconfig['dev_mode'] == $mode)
+										$selected = "selected=\"selected\"";
+							?>
+								<option value="<?=$mode;?>" <?=$selected;?>><?=$mode;?></option>
+							<?php endforeach; ?>
+							</select>
+							</td>
+					</tr>
 					<tr>
 						<td width="22%" valign="top" class="vncellreq"><?=gettext("Interface"); ?></td>
 						<td width="78%" class="vtable">
@@ -567,12 +567,12 @@ if ($savemsg)
 						<td width="78%" class="vtable">
 							<table border="0" cellpadding="2" cellspacing="0" summary="proxy authentication">
 								<tr>
-                                                                        <td align="right" width="25%">
-                                                                                <span class="vexpl">
-                                                                                         &nbsp;<?=gettext("Authentication method"); ?> :&nbsp;
-                                                                                </span>
-                                                                        </td>
-                                                                        <td>
+									<td align="right" width="25%">
+										<span class="vexpl">
+											 &nbsp;<?=gettext("Authentication method"); ?> :&nbsp;
+										</span>
+									</td>
+									<td>
 										<select name="proxy_authtype" id="proxy_authtype" class="formfld select" onchange="useproxy_changed()">
 											<option value="none" <?php if ($pconfig['proxy_authtype'] == "none") echo "selected=\"selected\""; ?>><?=gettext("none"); ?></option>
 											<option value="basic" <?php if ($pconfig['proxy_authtype'] == "basic") echo "selected=\"selected\""; ?>><?=gettext("basic"); ?></option>
@@ -583,27 +583,27 @@ if ($savemsg)
 							</table>
 							<br />
 							 <table border="0" cellpadding="2" cellspacing="0" id="proxy_authtype_opts" style="display:none" summary="proxy authentication options">
-                                                                <tr>
-                                                                        <td align="right" width="25%">
-                                                                                <span class="vexpl">
-                                                                                         &nbsp;<?=gettext("Username"); ?> :&nbsp;
-                                                                                </span>
-                                                                        </td>
-                                                                        <td>
-                                                                                <input name="proxy_user" id="proxy_user" class="formfld unknown" size="20" value="<?=htmlspecialchars($pconfig['proxy_user']);?>" />
-                                                                        </td>
-                                                                </tr>
-                                                                <tr>
-                                                                        <td align="right" width="25%">
-                                                                                <span class="vexpl">
-                                                                                         &nbsp;<?=gettext("Password"); ?> :&nbsp;
-                                                                                </span>
-                                                                        </td>
-                                                                        <td>
-                                                                                <input name="proxy_passwd" id="proxy_passwd" type="password" class="formfld pwd" size="20" value="<?=htmlspecialchars($pconfig['proxy_passwd']);?>" />
-                                                                        </td>
-                                                                </tr>
-                                                        </table>
+								<tr>
+									<td align="right" width="25%">
+										<span class="vexpl">
+											 &nbsp;<?=gettext("Username"); ?> :&nbsp;
+										</span>
+									</td>
+									<td>
+										<input name="proxy_user" id="proxy_user" class="formfld unknown" size="20" value="<?=htmlspecialchars($pconfig['proxy_user']);?>" />
+									</td>
+								</tr>
+								<tr>
+									<td align="right" width="25%">
+										<span class="vexpl">
+											 &nbsp;<?=gettext("Password"); ?> :&nbsp;
+										</span>
+									</td>
+									<td>
+										<input name="proxy_passwd" id="proxy_passwd" type="password" class="formfld pwd" size="20" value="<?=htmlspecialchars($pconfig['proxy_passwd']);?>" />
+									</td>
+								</tr>
+							</table>
 						</td>
 					</tr>
 					<tr>
@@ -627,9 +627,9 @@ if ($savemsg)
 							"that is not permanently connected to the Internet"); ?>.
 						</td>
 					</tr>
-					<tr> 
+					<tr>
 						<td width="22%" valign="top" class="vncell"><?=gettext("Description"); ?></td>
-						<td width="78%" class="vtable"> 
+						<td width="78%" class="vtable">
 							<input name="description" type="text" class="formfld unknown" size="30" value="<?=htmlspecialchars($pconfig['description']);?>" />
 							<br />
 							<?=gettext("You may enter a description here for your reference (not parsed)"); ?>.
@@ -983,8 +983,8 @@ if ($savemsg)
 				<table width="100%" border="0" cellpadding="6" cellspacing="0" summary="icons">
 					<tr>
 						<td width="22%" valign="top">&nbsp;</td>
-						<td width="78%"> 
-							<input name="save" type="submit" class="formbtn" value="<?=gettext("Save"); ?>" /> 
+						<td width="78%">
+							<input name="save" type="submit" class="formbtn" value="<?=gettext("Save"); ?>" />
 							<input name="act" type="hidden" value="<?=$act;?>" />
 							<?php if (isset($id) && $a_client[$id]): ?>
 							<input name="id" type="hidden" value="<?=htmlspecialchars($id);?>" />
@@ -1084,10 +1084,10 @@ useproxy_changed();
 /* local utility functions */
 
 function set_checked($var,& $chk) {
-    if($var)
-        $chk = "checked=\"checked\"";
-    else
-        $chk = "";
+	if($var)
+		$chk = "checked=\"checked\"";
+	else
+		$chk = "";
 }
 
 ?>

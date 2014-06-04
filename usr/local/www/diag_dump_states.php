@@ -40,6 +40,7 @@
 ##|-PRIV
 
 require_once("guiconfig.inc");
+require_once("interfaces.inc");
 
 /* handle AJAX operations */
 if($_GET['action']) {
@@ -50,7 +51,7 @@ if($_GET['action']) {
 		} else {
 			echo gettext("invalid input");
 		}
-		exit;
+		return;
 	}
 }
 
@@ -59,9 +60,14 @@ if ($_GET['filter'] && ($_GET['killfilter'] == "Kill")) {
 		$tokill = escapeshellarg($_GET['filter'] . "/32");
 	} elseif (is_subnet($_GET['filter'])) {
 		$tokill = escapeshellarg($_GET['filter']);
+	} else {
+		// Invalid filter
+		$tokill = "";
 	}
-	$retval = mwexec("/sbin/pfctl -k {$tokill} -k 0/0");
-	$retval = mwexec("/sbin/pfctl -k 0.0.0.0/0 -k {$tokill}");
+	if (!empty($tokill)) {
+		$retval = mwexec("/sbin/pfctl -k {$tokill} -k 0/0");
+		$retval = mwexec("/sbin/pfctl -k 0.0.0.0/0 -k {$tokill}");
+	}
 }
 
 $pgtitle = array(gettext("Diagnostics"),gettext("Show States"));
@@ -155,7 +161,8 @@ include("head.inc");
 			<table class="tabcont sortable" width="100%" border="0" cellspacing="0" cellpadding="0" summary="results">
 				<thead>
 				<tr>
-					<th class="listhdrr" width="10%"><?=gettext("Proto");?></th>
+					<th class="listhdrr" width="5%"><?=gettext("Int");?></th>
+					<th class="listhdrr" width="5%"><?=gettext("Proto");?></th>
 					<th class="listhdrr" width="65"><?=gettext("Source -> Router -> Destination");?></th>
 					<th class="listhdr" width="24%"><?=gettext("State");?></th>
 					<th class="list sort_ignore" width="1%"></th>
@@ -165,17 +172,21 @@ include("head.inc");
 <?php
 $row = 0;
 /* get our states */
-$grepline = ($_GET['filter']) ? "| grep " . escapeshellarg(htmlspecialchars($_GET['filter'])) : "";
+$grepline = ($_GET['filter']) ? "| /usr/bin/egrep " . escapeshellarg(htmlspecialchars($_GET['filter'])) : "";
 $fd = popen("/sbin/pfctl -s state {$grepline}", "r" );
 while ($line = chop(fgets($fd))) {
 	if($row >= 10000)
 		break;
 
 	$line_split = preg_split("/\s+/", $line);
-	$type  = array_shift($line_split);
+
+	$iface  = array_shift($line_split);
 	$proto = array_shift($line_split);
 	$state = array_pop($line_split);
 	$info  = implode(" ", $line_split);
+
+	// We may want to make this optional, with a large state table, this could get to be expensive.
+	$iface = convert_real_interface_to_friendly_descr($iface);
 
 	/* break up info and extract $srcip and $dstip */
 	$ends = preg_split("/\<?-\>?/", $info);
@@ -185,8 +196,9 @@ while ($line = chop(fgets($fd))) {
 	$dstip = trim($parts[0]);
 
 ?>
-	<tr valign="top" id="r:<?= $srcip ?>:<?= $dstip ?>">
-			<td class="listlr"><?= $proto ?></td>
+	<tr valign="top" id="r:<?= $srcip ?>:<?= $dstip ?>" name="r:<?= $srcip ?>:<?= $dstip ?>">
+			<td class="listlr"><?= $iface ?></td>
+			<td class="listr"><?= $proto ?></td>
 			<td class="listr"><?= $info ?></td>
 			<td class="listr"><?= $state ?></td>
 			<td class="list">

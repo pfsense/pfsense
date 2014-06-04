@@ -244,8 +244,8 @@ if ($_POST) {
 
 	/* If we are not in shared key mode, then we need the CA/Cert. */
 	if ($pconfig['mode'] != "p2p_shared_key") {
-		$reqdfields = explode(" ", "caref certref");
-		$reqdfieldsn = array(gettext("Certificate Authority"),gettext("Certificate"));
+		$reqdfields = explode(" ", "caref");
+		$reqdfieldsn = array(gettext("Certificate Authority"));
 	} elseif (!$pconfig['autokey_enable']) {
 		/* We only need the shared key filled in if we are in shared key mode and autokey is not selected. */
 		$reqdfields = array('shared_key');
@@ -253,7 +253,11 @@ if ($_POST) {
 	}
 
 	do_input_validation($_POST, $reqdfields, $reqdfieldsn, $input_errors);
-	
+
+	if (($pconfig['mode'] != "p2p_shared_key") && empty($pconfig['certref']) && empty($pconfig['auth_user']) && empty($pconfig['auth_pass'])) {
+		$input_errors[] = gettext("If no Client Certificate is selected, a username and password must be entered.");
+	}
+
 	if (!$input_errors) {
 
 		$client = array();
@@ -733,7 +737,6 @@ if ($savemsg)
 					<tr id="tls_cert">
 						<td width="22%" valign="top" class="vncellreq"><?=gettext("Client Certificate"); ?></td>
 							<td width="78%" class="vtable">
-							<?php if (count($a_cert)): ?>
 							<select name='certref' class="formselect">
 							<?php
 							foreach ($a_cert as $cert):
@@ -753,9 +756,10 @@ if ($savemsg)
 							?>
 								<option value="<?=$cert['refid'];?>" <?=$selected;?>><?=$cert['descr'] . $caname . $inuse . $revoked;?></option>
 							<?php endforeach; ?>
+								<option value="" <?PHP if (empty($pconfig['certref'])) echo "selected=\"selected\""; ?>>None (Username and Password required)</option>
 							</select>
-							<?php else: ?>
-								<b>No Certificates defined.</b> <br />Create one under <a href="system_certmanager.php">System &gt; Cert Manager</a>.
+							<?php if (!count($a_cert)): ?>
+								<b>No Certificates defined.</b> <br />Create one under <a href="system_certmanager.php">System &gt; Cert Manager</a> if one is required for this connection.
 							<?php endif; ?>
 						</td>
 					</tr>

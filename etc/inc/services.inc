@@ -1698,9 +1698,11 @@ function dyndnsCheckIP($int) {
 	return $ip_address;
 }
 
-function services_dnsmasq_configure() {
+function services_dnsmasq_configure($instanceIndex = null) {
 	global $config, $g;
 	$return = 0;
+	
+	require_once("dnsmasq.inc");
 
 	// hard coded args: will be removed to avoid duplication if specified in custom_options
 	$standard_args = array(
@@ -1709,135 +1711,156 @@ function services_dnsmasq_configure() {
 		"local-ttl" => "--local-ttl=1"
 	);
 
-
 	if(isset($config['system']['developerspew'])) {
 		$mt = microtime();
 		echo "services_dnsmasq_configure() being called $mt\n";
 	}
-
+	
 	/* kill any running dnsmasq */
-	if (file_exists("{$g['varrun_path']}/dnsmasq.pid"))
-		sigkillbypid("{$g['varrun_path']}/dnsmasq.pid", "TERM");
+	$instanceIndex = empty($instanceIndex) && $instanceIndex != 0 ? null : $instanceIndex;
+	$pidname = dnsmasq_get_instance_file($instanceIndex, true);
+	foreach (glob("{$g['varrun_path']}/{$pidname}.pid") as $pidfile) {
+		killbypid($pidfile, "TERM");
+		@unlink($pidfile);
+	}
 
-	if (isset($config['dnsmasq']['enable'])) {
-
-		if ($g['booting'])
-			echo gettext("Starting DNS forwarder...");
-		else
-			sleep(1);
-
-		$args = "";
-
-		if (isset($config['dnsmasq']['regdhcp'])) {
-			$args .= " --dhcp-hostsfile={$g['varetc_path']}/hosts ";
-		}
-
-		/* Setup listen port, if non-default */
-		if (is_port($config['dnsmasq']['port']))
-			$args .= " --port={$config['dnsmasq']['port']} ";
-
-		$listen_addresses = "";
-		if(isset($config['dnsmasq']['interface'])) {
-			$interfaces = explode(",", $config['dnsmasq']['interface']);
-			foreach ($interfaces as $interface) {
-				if (is_ipaddrv4($interface)) {
-					$listen_addresses .= " --listen-address={$interface} ";
-				} else if (is_ipaddrv6($interface)) {
-					/*
-					 * XXX: Since dnsmasq does not support link-local address
-					 * with scope specified. These checks are being done.
-					 */
-					if (is_linklocal($interface) && strstr($interface, "%")) {
-						$tmpaddrll6 = explode("%", $interface);
-						$listen_addresses .= " --listen-address={$tmpaddrll6[0]} ";
-					} else 
-						$listen_addresses .= " --listen-address={$interface} ";
-				} else {
-					$if = get_real_interface($interface);
-					if (does_interface_exist($if)) {
-						$laddr = find_interface_ip($if);
-						if (is_ipaddrv4($laddr))
-							$listen_addresses .= " --listen-address={$laddr} ";
-						$laddr6 = find_interface_ipv6($if);
-						if (is_ipaddrv6($laddr6) && !isset($config['dnsmasq']['strictbind'])) {
-							/*
-							 * XXX: Since dnsmasq does not support link-local address
-							 * with scope specified. These checks are being done.
-							 */
-							if (is_linklocal($laddr6) && strstr($laddr6, "%")) {
-								$tmpaddrll6 = explode("%", $laddr6);
-								$listen_addresses .= " --listen-address={$tmpaddrll6[0]} ";
-							} else
-								$listen_addresses .= " --listen-address={$laddr6} ";
+	$a_instances = isset($config['dnsmasq']['enable'])
+		? dnsmasq_get_configured_instances(false, $instanceIndex)
+		: array();
+	
+	$multiInstance = isset($config['dnsmasq']['allow_multi']);
+	$instanceIndex = $instanceIndex ?: 0;
+	foreach ($a_instances as $instance) {
+		if (isset($instance['enable'])) {
+			if ($g['booting']) {
+				if ($multiInstance)
+					echo gettext("Starting DNS forwarder (instance {$instanceIndex})...");
+				else
+					echo gettext("Starting DNS forwarder...");
+			}
+			else
+				sleep(1);
+		
+			$args = "";
+		
+			if (isset($instance['regdhcp'])) {
+				$hostsfile = "hosts" .(isset($instance['regdhcpfilter']) ? ".{$instanceIndex}" : "");
+				$args .= " --dhcp-hostsfile={$g['varetc_path']}/{$hostsfile}";
+			}
+		
+			/* Setup listen port, if non-default */
+			if (is_port($instance['port']))
+				$args .= " --port={$instance['port']}";
+		
+			$listen_addresses = "";
+			if (isset($instance['interface'])) {
+				$interfaces = explode(",", $instance['interface']);
+				foreach ($interfaces as $interface) {
+					if (is_ipaddrv4($interface)) {
+						$listen_addresses .= " --listen-address={$interface}";
+					} else if (is_ipaddrv6($interface)) {
+						/*
+						 * XXX: Since dnsmasq does not support link-local address
+						 * with scope specified. These checks are being done.
+						 */
+						if (is_linklocal($interface) && strstr($interface, "%")) {
+							$tmpaddrll6 = explode("%", $interface);
+							$listen_addresses .= " --listen-address={$tmpaddrll6[0]}";
+						} else 
+							$listen_addresses .= " --listen-address={$interface}";
+					} else {
+						$if = get_real_interface($interface);
+						if (does_interface_exist($if)) {
+							$laddr = find_interface_ip($if);
+							if (is_ipaddrv4($laddr))
+								$listen_addresses .= " --listen-address={$laddr}";
+							$laddr6 = find_interface_ipv6($if);
+							if (is_ipaddrv6($laddr6) && !isset($instance['strictbind'])) {
+								/*
+								 * XXX: Since dnsmasq does not support link-local address
+								 * with scope specified. These checks are being done.
+								 */
+								if (is_linklocal($laddr6) && strstr($laddr6, "%")) {
+									$tmpaddrll6 = explode("%", $laddr6);
+									$listen_addresses .= " --listen-address={$tmpaddrll6[0]}";
+								} else 
+									$listen_addresses .= " --listen-address={$laddr6}";
+							}
 						}
 					}
 				}
-			}
-			if (!empty($listen_addresses)) {
-				$args .= " {$listen_addresses} ";
-				if (isset($config['dnsmasq']['strictbind']))
-					$args .= " --bind-interfaces ";
-			}
-		}
-
-		/* If selected, then first forward reverse lookups for private IPv4 addresses to nowhere. */
-		/* If any of these are duplicated by a user-specified domain override (e.g. 10.in-addr.arpa) then */
-		/* the user-specified entry made later on the command line below will be the one that is effective. */
-		if (isset($config['dnsmasq']['no_private_reverse'])) {
-			/* Note: Carrier Grade NAT (CGN) addresses 100.64.0.0/10 are intentionally not here. */
-			/* End-users should not be aware of CGN addresses, so reverse lookups for these should not happen. */
-			/* Just the pfSense WAN might get a CGN address from an ISP. */
-			$args .= " --server=/10.in-addr.arpa/ ";
-			$args .= " --server=/168.192.in-addr.arpa/ ";
-			/* Unfortunately the 172.16.0.0/12 range does not map nicely to the in-addr.arpa scheme. */
-			for ($subnet_num = 16; $subnet_num < 32; $subnet_num++) { 
-				$args .= " --server=/" . $subnet_num . ".172.in-addr.arpa/ ";
-			}
-		}
-
-		/* Setup forwarded domains */
-		if (isset($config['dnsmasq']['domainoverrides']) && is_array($config['dnsmasq']['domainoverrides'])) {
-			foreach($config['dnsmasq']['domainoverrides'] as $override) {
-				if ($override['ip'] == "!")
-					$override[ip] = "";
-				$args .= ' --server=/' . $override['domain'] . '/' . $override['ip'];
-			}
-		}
-
-		/* Allow DNS Rebind for forwarded domains */
-		if (isset($config['dnsmasq']['domainoverrides']) && is_array($config['dnsmasq']['domainoverrides'])) {
-			if(!isset($config['system']['webgui']['nodnsrebindcheck'])) {
-				foreach($config['dnsmasq']['domainoverrides'] as $override) {
-					$args .= ' --rebind-domain-ok=/' . $override['domain'] . '/ ';
+				if (!empty($listen_addresses)) {
+					$args .= " {$listen_addresses} ";
+					if (isset($instance['strictbind']))
+						$args .= " --bind-interfaces";
 				}
 			}
-		}
-
-		if(!isset($config['system']['webgui']['nodnsrebindcheck']))
-			$dns_rebind = "--rebind-localhost-ok --stop-dns-rebind";
-
-		if (isset($config['dnsmasq']['strict_order'])) {
-			$args .= " --strict-order ";
-		}
-
-		if (isset($config['dnsmasq']['domain_needed'])) {
-			$args .= " --domain-needed ";
-		}
-
-		if ($config['dnsmasq']['custom_options'])
-			foreach (preg_split('/\s+/', $config['dnsmasq']['custom_options']) as $c) {
-				$args .= " --$c";
-				$p = explode('=', $c);
-				if (array_key_exists($p[0], $standard_args))
-					unset($standard_args[$p[0]]);
+		
+			/* If selected, then first forward reverse lookups for private IPv4 addresses to nowhere. */
+			/* If any of these are duplicated by a user-specified domain override (e.g. 10.in-addr.arpa) then */
+			/* the user-specified entry made later on the command line below will be the one that is effective. */
+			if (isset($instance['no_private_reverse'])) {
+				/* Note: Carrier Grade NAT (CGN) addresses 100.64.0.0/10 are intentionally not here. */
+				/* End-users should not be aware of CGN addresses, so reverse lookups for these should not happen. */
+				/* Just the pfSense WAN might get a CGN address from an ISP. */
+				$args .= " --server=/10.in-addr.arpa/ ";
+				$args .= " --server=/168.192.in-addr.arpa/ ";
+				/* Unfortunately the 172.16.0.0/12 range does not map nicely to the in-addr.arpa scheme. */
+				for ($subnet_num = 16; $subnet_num < 32; $subnet_num++) { 
+					$args .= " --server=/" . $subnet_num . ".172.in-addr.arpa/";
+				}
 			}
-		$args .= ' ' . implode(' ', array_values($standard_args));
+		
+			/* Setup forwarded domains */
+			if (isset($instance['domainoverrides']) && is_array($instance['domainoverrides'])) {
+				foreach($instance['domainoverrides'] as $override) {
+					if ($override['ip'] == "!")
+						$override[ip] = "";
+					$args .= ' --server=/' . $override['domain'] . '/' . $override['ip'];
+				}
+			}
+		
+			/* Allow DNS Rebind for forwarded domains */
+			if (isset($instance['domainoverrides']) && is_array($instance['domainoverrides'])) {
+				if(!isset($config['system']['webgui']['nodnsrebindcheck'])) {
+					foreach($instance['domainoverrides'] as $override) {
+						$args .= ' --rebind-domain-ok=/' . $override['domain'] . '/';
+					}
+				}
+			}
+		
+			if(!isset($config['system']['webgui']['nodnsrebindcheck']))
+				$dns_rebind = "--rebind-localhost-ok --stop-dns-rebind";
+		
+			if (isset($instance['strict_order'])) {
+				$args .= " --strict-order";
+			}
+		
+			if (isset($instance['domain_needed'])) {
+				$args .= " --domain-needed";
+			}
 
-		/* run dnsmasq */
-		$cmd = "/usr/local/sbin/dnsmasq --all-servers {$dns_rebind} {$args}";
-		//log_error("dnsmasq command: {$cmd}");
-		mwexec_bg($cmd);
-		unset($args);
+			if ($multiInstance)
+				$args .= " --pid-file={$g['varrun_path']}/dnsmasq.{$instanceIndex}.pid";
+		
+			if ($instance['custom_options'])
+				foreach (preg_split('/\s+/', $instance['custom_options']) as $c) {
+					$args .= " --$c";
+					$p = explode('=', $c);
+					if (array_key_exists($p[0], $standard_args))
+						unset($standard_args[$p[0]]);
+				}
+			$args .= ' ' . implode(' ', array_values($standard_args));
+		
+			/* run dnsmasq */
+			$cmd = "/usr/local/sbin/dnsmasq --all-servers {$dns_rebind} {$args}";
+			//log_error("dnsmasq command: {$cmd}");
+			//file_put_contents("/tmp/dnsmasq.log", "cmd ({$instanceIndex}): {$cmd}\n", FILE_APPEND | LOCK_EX);
+			mwexec_bg($cmd);
+			unset($args);
+
+			++$instanceIndex;
+		}
 
 		if ($g['booting'])
 			echo gettext("done.") . "\n";

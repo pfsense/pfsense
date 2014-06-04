@@ -39,6 +39,7 @@
 */
 require_once("globals.inc");
 require_once("captiveportal.inc");
+require_once("dnsmasq.inc");
 require_once("openvpn.inc");
 require_once("ipsec.inc");
 require_once("vpn.inc");
@@ -220,7 +221,7 @@ function is_service_running($service, $ps = "") {
 	return false;
 }
 
-function get_services() {
+function get_services($includeAllInstances = false) {
 	global $config;
 	if (is_array($config['installedpackages']['service']))
 		$services = $config['installedpackages']['service'];
@@ -238,10 +239,26 @@ function get_services() {
 	}
 
 	if (isset($config['dnsmasq']['enable'])) {
-		$pconfig = array();
-		$pconfig['name'] = "dnsmasq";
-		$pconfig['description'] = gettext("DNS Forwarder");
-		$services[] = $pconfig;
+		$instanceIndex = 0;
+		$a_dmInstances = dnsmasq_get_configured_instances();
+		$multiInstance = count($a_dmInstances) > 1;
+		foreach ($a_dmInstances as $instance) {
+			++$instanceIndex;
+			if (!isset($instance['enable']))
+				continue;
+
+			$pconfig = array();
+			$pconfig['name'] = "dnsmasq";
+			$pconfig['description'] = gettext("DNS Forwarder");
+			if ($multiInstance && $includeAllInstances)
+				$pconfig['instance'] = $instanceIndex - 1;
+
+			$services[] = $pconfig;
+			
+			if (!$includeAllInstances)
+				break;
+		}
+		unset($a_dmInstances, $multiInstance, $instanceIndex);
 	}
 
 	if (isset($config['unbound']['enable'])) {
@@ -380,6 +397,14 @@ function find_service_by_name($name) {
 	return array();
 }
 
+function find_service_by_name_and_instance($name, $instance) {
+	$services = get_services();
+	foreach ($services as $service)
+		if ($service["name"] == $name && $service['instance'] == $instance)
+			return $service;
+	return array();
+}
+
 function find_service_by_openvpn_vpnid($vpnid) {
 	$services = get_services();
 	foreach ($services as $service)
@@ -398,7 +423,7 @@ function find_service_by_cp_zone($zone) {
 
 function service_name_compare($a, $b) {
 	if (strtolower($a['name']) == strtolower($b['name']))
-		return 0;
+		return ($a['instance'] < $b['instance']) ? -1 : 1;
 	return (strtolower($a['name']) < strtolower($b['name'])) ? -1 : 1;
 }
 
@@ -433,6 +458,15 @@ function get_service_status($service) {
 		case 'ipsec':
 			$running = is_pid_running("{$g['varrun_path']}/charon.pid");
 			break;
+		case "dnsmasq":
+			require_once("dnsmasq.inc");
+			
+			if (isset($service['instance'])) {
+				$pidname = dnsmasq_get_instance_file($service['instance'], false, true);
+				$running = is_pid_running("{$g['varrun_path']}/{$pidname}.pid");
+			}
+			else $running = is_service_running($service['name']);
+			break;
 		default:
 			$running = is_service_running($service['name']);
 	}
@@ -442,9 +476,13 @@ function get_service_status($service) {
 function get_service_status_icon($service, $withtext = true, $smallicon = false) {
 	global $g;
 	$output = "";
+	$name = $service['name'];
+	if (isset($service['instance']))
+		$name .= ' ('. $service['instance'] .')';
+
 	if(get_service_status($service)) {
 		$statustext = gettext("Running");
-		$output .= "<img style=\"vertical-align:middle\" title=\"" . sprintf(gettext("%s Service is"),$service["name"]) . " {$statustext}\" src=\"/themes/" . $g["theme"] . "/images/icons/";
+		$output .= "<img style=\"vertical-align:middle\" title=\"" . sprintf(gettext("%s Service is"),$name) . " {$statustext}\" src=\"/themes/" . $g["theme"] . "/images/icons/";
 		$output .= ($smallicon) ? "icon_pass.gif" : "icon_service_running.gif";
 		$output .= "\" alt=\"status\" />&nbsp;";
 		if ($withtext)
@@ -452,7 +490,7 @@ function get_service_status_icon($service, $withtext = true, $smallicon = false)
 	} else {
 		$service_enabled = is_service_enabled($service['name']);
 		$statustext = ($service_enabled) ? gettext("Stopped") : gettext("Disabled");
-		$output .= "<img style=\"vertical-align:middle\" title=\"" . sprintf(gettext("%s Service is"),$service["name"]) . " {$statustext}\" src=\"/themes/" . $g["theme"] . "/images/icons/";
+		$output .= "<img style=\"vertical-align:middle\" title=\"" . sprintf(gettext("%s Service is"),$name) . " {$statustext}\" src=\"/themes/" . $g["theme"] . "/images/icons/";
 		$output .= ($smallicon) ? "icon_block.gif" : "icon_service_stopped.gif";
 		$output .= "\" alt=\"status\" />&nbsp;";
 		if ($withtext)
@@ -465,6 +503,8 @@ function get_service_control_links($service, $addname = false) {
 	global $g;
 	$output = "";
 	$stitle = ($addname) ? $service['name'] . " " : "";
+	
+	$instanceArg = isset($service['instance']) ? "&amp;instance=". $service['instance'] : "";
 	if(get_service_status($service)) {
 		switch ($service['name']) {
 			case "openvpn":
@@ -474,7 +514,7 @@ function get_service_control_links($service, $addname = false) {
 				$output .= "<a href='status_services.php?mode=restartservice&amp;service={$service['name']}&amp;zone={$service['zone']}'>";
 				break;
 			default:
-				$output .= "<a href='status_services.php?mode=restartservice&amp;service={$service['name']}'>";
+				$output .= "<a href='status_services.php?mode=restartservice&amp;service={$service['name']}{$instanceArg}'>";
 		}
 		$output .= "<img style=\"vertical-align:middle\" title='" . sprintf(gettext("Restart %sService"),$stitle) . "' border='0' src='./themes/".$g['theme']."/images/icons/icon_service_restart.gif' alt='restart' /></a>\n";
 		switch ($service['name']) {
@@ -485,7 +525,7 @@ function get_service_control_links($service, $addname = false) {
 				$output .= "<a href='status_services.php?mode=stopservice&amp;service={$service['name']}&amp;zone={$service['zone']}'>";
 				break;
 			default:
-				$output .= "<a href='status_services.php?mode=stopservice&amp;service={$service['name']}'>";
+				$output .= "<a href='status_services.php?mode=stopservice&amp;service={$service['name']}{$instanceArg}'>";
 		}
 		$output .= "<img style=\"vertical-align:middle\" title='" . sprintf(gettext("Stop %sService"),$stitle) . "' border='0' src='./themes/".$g['theme']."/images/icons/icon_service_stop.gif' alt='stop' />";
 		$output .= "</a>";
@@ -500,7 +540,7 @@ function get_service_control_links($service, $addname = false) {
 				break;
 			default:
 				if ($service_enabled)
-					$output .= "<a href='status_services.php?mode=startservice&amp;service={$service['name']}'>";
+					$output .= "<a href='status_services.php?mode=startservice&amp;service={$service['name']}{$instanceArg}'>";
 		}
 		if ($service_enabled)
 			$output .= "<img style=\"vertical-align:middle\" title='" . sprintf(gettext("Start %sService"),$stitle) . "' border='0' src='./themes/".$g['theme']."/images/icons/icon_service_start.gif' alt='start' /></a>\n";
@@ -535,7 +575,9 @@ function service_control_start($name, $extras) {
 			services_dhcrelay6_configure();
 			break;
 		case 'dnsmasq':
-			services_dnsmasq_configure();
+			$instance = isset($extras['instance']) && is_numericint($extras['instance']) ? $extras['instance'] : null;
+			if (isset($instance)) $name .= " ({$instance})";
+			services_dnsmasq_configure($instance);
 			break;
 		case 'dhcpd':
 			services_dhcpd_configure();
@@ -606,7 +648,15 @@ function service_control_stop($name, $extras) {
 			killbypid("{$g['varrun_path']}/dhcrelay6.pid");
 			break;
 		case 'dnsmasq':
-			killbypid("{$g['varrun_path']}/dnsmasq.pid");
+			require_once("dnsmasq.inc");
+			
+			$instance = isset($extras['instance']) && is_numericint($extras['instance']) ? $extras['instance'] : null;
+			if (isset($instance)) $name .= " ({$instance})";
+			
+			$pidname = dnsmasq_get_instance_file($instance, true);
+			foreach (glob("{$g['varrun_path']}/{$pidname}.pid") as $pidfile) {
+				killbypid($pidfile);
+			}
 			break;
 		case 'unbound':
 			killbypid("{$g['varrun_path']}/unbound.pid");
@@ -671,7 +721,10 @@ function service_control_restart($name, $extras) {
 			services_dhcrelay6_configure();
 			break;
 		case 'dnsmasq':
-			services_dnsmasq_configure();
+			$instance = isset($extras['instance']) && is_numericint($extras['instance']) ? $extras['instance'] : null;
+			if (isset($instance)) $name .= " ({$instance})";
+			
+			services_dnsmasq_configure($instance);
 			break;
 		case 'unbound':
 			services_unbound_configure();

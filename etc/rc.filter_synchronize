@@ -181,13 +181,24 @@ function carp_sync_xml($url, $username, $password, $sections, $port = 80, $metho
 				unset ($config_copy['aliases']['alias'][$x]);
 		}
 	}
-	if (is_array($config_copy['dnsmasq']['hosts'])) {
-		$dnscnt = count($config_copy['dnsmasq']['hosts']);
-		for ($x = 0; $x < $dnscnt; $x++) {
-			$config_copy['dnsmasq']['hosts'][$x]['descr'] = remove_special_characters($config_copy['dnsmasq']['hosts'][$x]['descr']);
-			if (isset ($config_copy['dnsmasq']['hosts'][$x]['nosync']))
-				unset ($config_copy['dnsmasq']['hosts'][$x]);
+	if (is_array($config_copy['dnsmasq']['instances']) || is_array($config_copy['dnsmasq']['hosts'])) {
+		/* check for old or missing config */
+		if (!isset($config_copy['dnsmasq']['instances']))
+		    $config_copy['dnsmasq']['instance'] = array('instance0' => $config_copy['dnsmasq']);
+
+		$dnsinstkeys = array_keys($config_copy['dnsmasq']['instances']);
+		$dnsinstcnt = count($dnsinstkeys);
+		for ($i = 0; $i < $dnsinstcnt; $i++) {
+			if (is_array($config_copy['dnsmasq']['instances'][$dnsinstkeys[$i]]['hosts'])) {
+				$dnscnt = count($config_copy['dnsmasq']['instances'][$dnsinstkeys[$i]['hosts']);
+				for ($x = 0; $x < $dnscnt; $x++) {
+					$config_copy['dnsmasq']['instances'][$dnsinstkeys[$i]]['hosts'][$x]['descr'] = remove_special_characters($config_copy['dnsmasq']['instances'][$dnsinstkeys[$i]]['hosts'][$x]['descr']);
+					if (isset ($config_copy['dnsmasq']['instances'][$dnsinstkeys[$i]]['hosts'][$x]['nosync']))
+						unset ($config_copy['dnsmasq']['instances'][$dnsinstkeys[$i]]['hosts'][$x]);
+				}
+			}
 		}
+		unset ($dnsinstkeys, $dnsinstcnt);
 	}
 	if (is_array($config_copy['ipsec']['tunnel'])) {
 		$ipseccnt = count($config_copy['ipsec']['tunnel']);

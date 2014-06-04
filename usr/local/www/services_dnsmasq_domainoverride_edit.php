@@ -40,10 +40,31 @@
 
 require("guiconfig.inc");
 
-if (!is_array($config['dnsmasq']['domainoverrides'])) {
-       $config['dnsmasq']['domainoverrides'] = array();
+// check for old or missing config
+if (!isset($config['dnsmasq']['instances']))
+	$config['dnsmasq']['instances'] = array('instance0' => $config['dnsmasq']);
+
+$a_instances = &$config['dnsmasq']['instances'];
+
+// find correct instance
+if (is_numericint($_GET['instance']))
+	$idx = $_GET['instance'];
+if (isset($_POST['instance']) && is_numericint($_POST['instance']))
+	$idx = $_POST['instance'];
+
+$instanceIndex = $idx;
+
+$keys = array_keys($a_instances);
+if (!isset($idx) || !isset($keys[$idx])) {
+	$idx = 0;
 }
-$a_domainOverrides = &$config['dnsmasq']['domainoverrides'];
+$instance = &$a_instances[$keys[$idx]];
+unset($idx, $keys);
+
+if (!is_array($instance['domainoverrides'])) {
+       $instance['domainoverrides'] = array();
+}
+$a_domainOverrides = &$instance['domainoverrides'];
 
 if (is_numericint($_GET['id']))
 	$id = $_GET['id'];
@@ -111,7 +132,10 @@ if ($_POST) {
 
 			write_config();
 
-			header("Location: services_dnsmasq.php");
+			$serviceUrl = "services_dnsmasq.php";
+			if (isset($instanceIndex))
+				$serviceUrl .= "?instance={$instanceIndex}";
+			header("Location: {$serviceUrl}");
 			exit;
        }
 }
@@ -161,6 +185,9 @@ include("head.inc");
                     <input name="Submit" type="submit" class="formbtn" value="<?=gettext("Save");?>" />  <input class="formbtn" type="button" value="<?=gettext("Cancel");?>" onclick="history.back()" />
                     <?php if (isset($id) && $a_domainOverrides[$id]): ?>
                     <input name="id" type="hidden" value="<?=htmlspecialchars($id);?>" />
+                    <?php endif; ?>
+                    <?php if (isset($instanceIndex)): ?>
+                    <input name="id" type="hidden" value="<?=htmlspecialchars($instanceIndex);?>"/>
                     <?php endif; ?>
                   </td>
                 </tr>

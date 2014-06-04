@@ -57,9 +57,21 @@ $hostipformat = $_GET['hostipformat'];
 $iplookup = array();
 // If hostname display is requested and the DNS forwarder does not already have DHCP static names registered,
 // then load the DHCP static mappings into an array keyed by IP address.
-if (($hostipformat != "") && ((!isset($config['dnsmasq']['enable']) || !isset($config['dnsmasq']['regdhcpstatic']))
-	|| (!isset($config['unbound']['enable']) || !isset($config['unbound']['regdhcpstatic'])))) {
-	if (is_array($config['dhcpd'])) {
+if (($hostipformat != ""))
+	// load if either unbound or dnsmasq is not enabled or has no registered static dhcp hosts
+	$doLoad = !isset($config['dnsmasq']['enable']) || (!isset($config['unbound']['enable']) || !isset($config['unbound']['regdhcpstatic']));
+	if (!$doLoad) {
+		$noStatic = true;
+		$a_dmInstances = dnsmasq_get_configured_instances();
+		foreach ($a_dmInstances as &$dmInstance) {
+			if (($noStatic = !(isset($dmInstance['enable']) && isset($dmInstance['regdhcpstatic']))) === false)
+				break;
+		}
+		$doLoad = $noStatic;
+		unset($a_dmInstances, $noStatic);
+	}
+	
+	if ($doLoad && is_array($config['dhcpd'])) {
 		foreach ($config['dhcpd'] as $ifdata) {
 			if (is_array($ifdata['staticmap'])) {
 				foreach ($ifdata['staticmap'] as $hostent) {

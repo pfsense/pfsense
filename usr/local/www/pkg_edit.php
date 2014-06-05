@@ -258,10 +258,15 @@ else
 	$title = gettext("Package Editor");
 
 $pgtitle = $title;
-include("head.inc");
 
-if ($pkg['custom_php_after_head_command'])
+if ($pkg['custom_php_after_head_command']) {
+	$closehead = false;
+	include("head.inc");
 	eval($pkg['custom_php_after_head_command']);
+	echo "</head>\n";
+}
+else
+	include("head.inc");
 
 ?>
 

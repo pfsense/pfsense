@@ -46,6 +46,7 @@ echo "Q) Quit\n";
 
 echo "\nPlease select an option to continue: ";
 
+$pkg_interface = 'console';
 $command = strtoupper(chop(fgets($fp)));
 
 switch ($command) {
@@ -69,28 +70,20 @@ switch ($command) {
 		if($status) {
 			conf_mount_rw();
 			mark_subsystem_dirty('firmware');
-			if(file_exists("/root/firmware.tgz"))
-				unlink("/root/firmware.tgz");
-			echo "\nFetching file size...\n";
-			$file_size = exec("fetch -s \"$url\"");
-			$file_size = trim($file_size, "\r");
-			echo "\nFile size: $file_size\n";
-			echo "\nFetching file...\n";
-			exec("fetch -1 -w15 -a -v -o /root/firmware.tgz \"$url\"");
-			if($file_size <> filesize("/root/firmware.tgz")) {
-				echo "\nFile size mismatch.  Upgrade cancelled.\n\n";
-				fclose($fp);
-				die;
-			}			
+			unlink_if_exists("/root/firmware.tgz");
+			echo "\nFetching file... ";
+			download_file_with_progress_bar($url, '/root/firmware.tgz');
 			if(!file_exists("/root/firmware.tgz")) {
 				echo "Something went wrong during file transfer.  Exiting.\n\n";
 				fclose($fp);
+				clear_subsystem_dirty('firmware');
 				die;
 			}
 			$status = does_url_exist("$url.sha256");
 			if($status) { 
-				echo "\nFetching sha256...\n";
-				exec("fetch -1 -w15 -a -v -o /root/firmware.tgz.sha256 \"$url.sha256\"");
+				echo "\nFetching sha256... ";
+				download_file_with_progress_bar($url . ".sha256", '/root/firmware.tgz.sha256');
+				echo "\n";
 			} else {
 				echo "\n\nWARNING.\n";
 				echo "\nCould not locate a sha256 file.  We cannot verify the download once completed.\n\n";
@@ -103,12 +96,13 @@ switch ($command) {
 				echo "Downloaded file sha256: $file_sha256\n";
 				if($source_sha256 <> $file_sha256) {
 					echo "\n\nsha256 checksum does not match.  Cancelling upgrade.\n\n";
-					exec("rm -f /root/*.sha256");
+					unlink_if_exists("/root/firmware.tgz.sha256");
 					fclose($fp);
+					clear_subsystem_dirty('firmware');
 					die -1;
 				}
 				echo "\nsha256 checksum matches.\n";
-				exec("rm -f /root/*.sha256");
+				unlink_if_exists("/root/firmware.tgz.sha256");
 			}
 			if(strstr($url,"bdiff")) {
 				echo "Binary DIFF upgrade file detected...\n";
@@ -120,6 +114,7 @@ switch ($command) {
 				$type = "normal";
 			}
 			do_upgrade("/root/firmware.tgz", $type);
+			clear_subsystem_dirty('firmware');
 			exit;
 		}
 	case "2":
@@ -136,6 +131,7 @@ switch ($command) {
 		if(file_exists($path)) {
 			mark_subsystem_dirty('firmware');
 			do_upgrade($path, $type);
+			clear_subsystem_dirty('firmware');
 		} else {
 			echo "\nCould not find file.\n\n";
 			fclose($fp);

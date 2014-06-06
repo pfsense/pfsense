@@ -153,7 +153,7 @@ function stop_service($name) {
 	}
 	/* finally if we get here lets simply kill the service name */
 	if(is_process_running("{$name}"))
-		mwexec("/usr/bin/killall {$name}");
+		mwexec("/usr/bin/killall " . escapeshellarg($name));
 }
 
 function restart_service($name) {

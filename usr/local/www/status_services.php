@@ -41,16 +41,20 @@ require_once("guiconfig.inc");
 require_once("service-utils.inc");
 require_once("shortcuts.inc");
 
-if (!empty($_GET['service'])) {
+$service_name = '';
+if (isset($_GET['service']))
+	$service_name = htmlspecialchars($_GET['service']);
+
+if (!empty($service_name)) {
 	switch ($_GET['mode']) {
 		case "restartservice":
-			$savemsg = service_control_restart($_GET['service'], $_GET);
+			$savemsg = service_control_restart($service_name, $_GET);
 			break;
 		case "startservice":
-			$savemsg = service_control_start($_GET['service'], $_GET);
+			$savemsg = service_control_start($service_name, $_GET);
 			break;
 		case "stopservice":
-			$savemsg = service_control_stop($_GET['service'], $_GET);
+			$savemsg = service_control_stop($service_name, $_GET);
 			break;
 	}
 	sleep(5);

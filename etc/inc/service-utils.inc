@@ -144,7 +144,7 @@ function stop_service($name) {
 
 				if(!($service['rcfile'] or $service['stopcmd'])) {
 					if(is_process_running("{$service['executable']}"))
-						mwexec("/usr/bin/killall {$service['executable']}");
+						killbyname($service['executable']);
 					return;
 				}
 				break;
@@ -152,8 +152,8 @@ function stop_service($name) {
 		}
 	}
 	/* finally if we get here lets simply kill the service name */
-	if(is_process_running("{$name}"))
-		mwexec("/usr/bin/killall " . escapeshellarg($name));
+	if(is_process_running(escapeshellarg($name)))
+		killbyname(escapeshellarg($name));
 }
 
 function restart_service($name) {

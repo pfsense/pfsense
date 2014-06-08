@@ -78,6 +78,8 @@ $counter = 1;
 								echo htmlspecialchars(get_interface_gateway($gateway['friendlyiface']));
 							if($gateway['ipprotocol'] == "inet6")
 								echo htmlspecialchars(get_interface_gateway_v6($gateway['friendlyiface']));
+							if( (htmlspecialchars(get_interface_gateway($gateway['friendlyiface'])) == '') && (htmlspecialchars(get_interface_gateway_v6($gateway['friendlyiface'])) == '') )
+								echo htmlspecialchars("~");
 						}
 						$counter++;
 					?>

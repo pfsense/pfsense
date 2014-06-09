@@ -43,8 +43,8 @@ function dnsmasq_get_instance_file($instanceIndex = null, $appendStar = false, $
 	global $config;
 
 	$basename = "dnsmasq";
-	if ((empty($instanceIndex) && $instanceIndex != 0) || !isset($config['dnsmasq']['allow_multi'])) {
-		return $basename . ($star ? "*" : "");
+	if (($instanceIndex === null || $instanceIndex === false) || !isset($config['dnsmasq']['allow_multi'])) {
+		return $basename . ($appendStar ? "*" : "");
 	} elseif (is_numericint($instanceIndex)) {
 		if ($instanceIndex == 0 && $shortName && isset($config['dnsmasq']['allow_multi'])) {
 			$i = 0;

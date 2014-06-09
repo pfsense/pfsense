@@ -1728,6 +1728,11 @@ function services_dnsmasq_configure($instanceIndex = null) {
 		? dnsmasq_get_configured_instances(false, $instanceIndex)
 		: array();
 	
+	/* generate hosts file */
+	if (!empty($a_instances) && system_hosts_generate() != 0) {
+		$return = 1;
+	}
+	
 	$multiInstance = isset($config['dnsmasq']['allow_multi']);
 	$instanceIndex = $instanceIndex ?: 0;
 	foreach ($a_instances as $instance) {

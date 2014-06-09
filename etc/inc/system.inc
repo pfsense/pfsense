@@ -369,6 +369,10 @@ function system_hosts_generate() {
 		
 		++$instanceIndex;
 	}
+	
+	// make sure the hosts file exists
+	if (!file_exists("{$g['varetc_path']}/hosts"))
+		file_put_contents("{$g['varetc_path']}/hosts", $hosts);
 
 	/*
 	 * Do not remove this because dhcpleases monitors with kqueue it needs to be 

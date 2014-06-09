@@ -575,7 +575,7 @@ function service_control_start($name, $extras) {
 			services_dhcrelay6_configure();
 			break;
 		case 'dnsmasq':
-			$instance = isset($extras['instance']) && is_numericint($extras['instance']) ? $extras['instance'] : null;
+			$instance = isset($extras['instance']) && is_numericint($extras['instance']) ? htmlspecialchars($extras['instance']) : null;
 			if (isset($instance)) $name .= " ({$instance})";
 			services_dnsmasq_configure($instance);
 			break;
@@ -650,7 +650,7 @@ function service_control_stop($name, $extras) {
 		case 'dnsmasq':
 			require_once("dnsmasq.inc");
 			
-			$instance = isset($extras['instance']) && is_numericint($extras['instance']) ? $extras['instance'] : null;
+			$instance = isset($extras['instance']) && is_numericint($extras['instance']) ? htmlspecialchars($extras['instance']) : null;
 			if (isset($instance)) $name .= " ({$instance})";
 			
 			$pidname = dnsmasq_get_instance_file($instance, true);
@@ -721,7 +721,7 @@ function service_control_restart($name, $extras) {
 			services_dhcrelay6_configure();
 			break;
 		case 'dnsmasq':
-			$instance = isset($extras['instance']) && is_numericint($extras['instance']) ? $extras['instance'] : null;
+			$instance = isset($extras['instance']) && is_numericint($extras['instance']) ? htmlspecialchars($extras['instance']) : null;
 			if (isset($instance)) $name .= " ({$instance})";
 			
 			services_dnsmasq_configure($instance);

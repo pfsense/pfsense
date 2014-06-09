@@ -251,7 +251,7 @@ function removeRow(el) {
   <tr>
     <td valign="top" class="vncellreq"><?=gettext("Group Name");?></td>
     <td class="vtable">
-	<input class="formfld unknown" name="ifname" id="ifname" value="<?=htmlspecialchars($pconfig['ifname']);?>" />
+	<input class="formfld unknown" name="ifname" id="ifname" maxlength="15" value="<?=htmlspecialchars($pconfig['ifname']);?>" />
 	<br />
 	<?=gettext("No numbers or spaces are allowed. Only characters in a-zA-Z");?>
     </td>

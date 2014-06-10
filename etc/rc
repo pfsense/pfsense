@@ -443,6 +443,15 @@ echo "done."
 
 /bin/chmod a+rw /tmp/.
 
+# Check for GEOM mirrors
+GMIRROR_STATUS=`/sbin/gmirror status`
+if [ "${GMIRROR_STATUS}" != "" ]; then
+	# Using a flag file at bootup saves an expensive exec/check on each page load.
+	/usr/bin/touch /var/run/gmirror_active
+	# Setup monitoring/notifications
+	/usr/local/bin/minicron 60 /var/run/gmirror_status_check.pid /usr/local/sbin/gmirror_status_check.php
+fi
+
 echo "Bootup complete"
 
 /usr/local/bin/beep.sh start 2>&1 >/dev/null

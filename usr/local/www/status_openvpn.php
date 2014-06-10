@@ -384,7 +384,6 @@ include("head.inc"); ?>
 		</td>
 	</tr>
 </table>
-</form>
 
 <?php 
 }
@@ -397,7 +396,7 @@ if ((empty($clients)) && (empty($servers)) && (empty($sk_servers))) {
 	echo gettext("No OpenVPN instance defined");
 }
 ?>
-
+</form>
 
 <?php include("fend.inc"); ?>
 <script type="text/javascript">

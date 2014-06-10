@@ -83,6 +83,8 @@ if ($_POST) {
 				if (!empty($_POST["servselect{$i}"])) $config['ntpd']['noselect'].= "{$tserver} ";
 			}
 		}
+		if (trim($timeservers) == "")
+			$timeservers = "pool.ntp.org";
 		$config['system']['timeservers'] = trim($timeservers);
 
 		if (!empty($_POST['ntporphan']) && ($_POST['ntporphan'] < 17) && ($_POST['ntporphan'] != '12'))

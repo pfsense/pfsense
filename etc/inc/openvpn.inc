@@ -562,6 +562,7 @@ function openvpn_reconfigure($mode, $settings) {
 							$biface_sm=gen_subnet_mask(get_interface_subnet($settings['serverbridge_interface']));
 							if (is_ipaddrv4($biface_ip) && is_ipaddrv4($settings['serverbridge_dhcp_start']) && is_ipaddrv4($settings['serverbridge_dhcp_end'])) {
 								$conf .= "server-bridge {$biface_ip} {$biface_sm} {$settings['serverbridge_dhcp_start']} {$settings['serverbridge_dhcp_end']}\n";
+								$conf .= "client-config-dir {$g['varetc_path']}/openvpn-csc\n";
 							} else {
 								$conf .= "mode server\n";
 							}
@@ -592,10 +593,14 @@ function openvpn_reconfigure($mode, $settings) {
 		if (!isset($settings['cert_depth']) && (strstr($settings['mode'], 'tls')))
 			$settings['cert_depth'] = 1;
 		if (is_numeric($settings['cert_depth'])) {
-			$cert = lookup_cert($settings['certref']);
-			/* XXX: Seems not used at all! */
-			$servercn = urlencode(cert_get_cn($cert['crt']));
-			$conf .= "tls-verify \"/usr/local/sbin/ovpn_auth_verify tls '{$servercn}' {$settings['cert_depth']}\"\n";
+			if (($mode == 'client') && empty($settings['certref']))
+				$cert = "";
+			else {
+				$cert = lookup_cert($settings['certref']);
+				/* XXX: Seems not used at all! */
+				$servercn = urlencode(cert_get_cn($cert['crt']));
+				$conf .= "tls-verify \"/usr/local/sbin/ovpn_auth_verify tls '{$servercn}' {$settings['cert_depth']}\"\n";
+			}
 		}
 
 		// The local port to listen on
@@ -722,9 +727,12 @@ function openvpn_reconfigure($mode, $settings) {
 		case 'server_user':
 			$ca = lookup_ca($settings['caref']);
 			openvpn_add_keyfile($ca['crt'], $conf, $mode_id, "ca");
-			$cert = lookup_cert($settings['certref']);
-			openvpn_add_keyfile($cert['crt'], $conf, $mode_id, "cert");
-			openvpn_add_keyfile($cert['prv'], $conf, $mode_id, "key");
+
+			if (!empty($settings['certref'])) {
+				$cert = lookup_cert($settings['certref']);
+				openvpn_add_keyfile($cert['crt'], $conf, $mode_id, "cert");
+				openvpn_add_keyfile($cert['prv'], $conf, $mode_id, "key");
+			}
 			if ($mode == 'server')
 				$conf .= "dh {$g['etc_path']}/dh-parameters.{$settings['dh_length']}\n";
 			if (!empty($settings['crlref'])) {

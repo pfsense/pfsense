@@ -186,11 +186,11 @@ include("head.inc"); ?>
             <?=$mandfldhtml;?>
 			<table summary="results">
 				<tr><td valign="top">
-			<input name="host" type="text" class="formfld" id="host" size="20" value="<?=htmlspecialchars($host);?>" />
+			<input name="host" type="text" class="formfld" id="host" size="20" value="<?=htmlspecialchars($host);?>" /> =
 			</td>
 			<td>
 			<?php if ($resolved && $type) { ?>
-			=  <font size="+1">
+			<font size="+1">
 <?php
 				$found = 0;
 				if(is_array($resolved)) { 
@@ -224,13 +224,13 @@ include("head.inc"); ?>
 		<tr>
 		  <td width="22%" valign="top" class="vncell"><?=gettext("Resolution time per server");?></td>
 		  <td width="78%" class="vtable">
-				<table width="170" border="1" cellpadding="2" style="border-width: 1px 1px 1px 1px; border-collapse: collapse;" summary="resolution time">
+				<table width="170" border="0" cellpadding="6" cellspacing="0" summary="resolution time">
 					<tr>
-						<td>
-							<b><?=gettext("Server");?></b>
+						<td class="listhdrr">
+							<?=gettext("Server");?>
 						</td>
-						<td>
-							<b><?=gettext("Query time");?></b>
+						<td class="listhdrr">
+							<?=gettext("Query time");?>
 						</td>
 					</tr>
 <?php
@@ -238,10 +238,10 @@ include("head.inc"); ?>
 						foreach($dns_speeds as $qt):
 ?>
 					<tr>
-						<td>
+						<td class="listlr">
 							<?=$qt['dns_server']?>
 						</td>
-						<td>
+						<td class="listr">
 							<?=$qt['query_time']?>
 						</td>
 					</tr>

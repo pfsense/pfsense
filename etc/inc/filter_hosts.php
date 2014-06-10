@@ -117,9 +117,12 @@ if (isset($leases)) {
 			}
 			
 			foreach ($leases as &$lease) {
-				fprintf($foh, "%s\t%s %s\t\t# dynamic entry from dhcpd.leasesx\n", $lease['addr'],
+				fprintf($foh, "%s\t%s %s\t\t# dynamic entry from dhcpd.leases\n", $lease['addr'],
 								$lease['fqdn'] ? $lease['fqdn'] : "empty", $lease['name'] ? $lease['name'] : "empty");
 			}
+			
+			if (isset($pid) && file_exists($pid))
+				sigkillbypid($pid, "HUP");
 		} else {
 			echo "cannot write to file ". $output ."\n";
 			fclose($fih);

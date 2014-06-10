@@ -271,12 +271,14 @@ function show_source_port_range() {
                   <td width="78%" class="vtable">
 				  <select name="members[]" multiple="multiple" class="formselect" size="3">
                       <?php
+						$members_array = explode(',', $pconfig['members']);
 						foreach ($ifacelist as $ifn => $ifinfo) {
 							echo "<option value=\"{$ifn}\"";
-							if (stristr($pconfig['members'], $ifn))
+							if (in_array($ifn, $members_array))
 								echo " selected=\"selected\"";
 							echo ">{$ifinfo}</option>";
 						}
+						unset($members_array);
 				?>
                     </select>
 			<br/>

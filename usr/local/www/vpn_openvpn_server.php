@@ -1340,7 +1340,7 @@ if ($savemsg)
 								<?php endforeach; ?>
 							</select>
 							<br />
-							<?=gettext("Compress tunnel packets using the LZO algorithm. Adaptive compression will dynamically disable compression for a period of time if OpenVPN detects that the data in the packets is not being compressed efficiently."); ?>.
+							<?=gettext("Compress tunnel packets using the LZO algorithm. Adaptive compression will dynamically disable compression for a period of time if OpenVPN detects that the data in the packets is not being compressed efficiently."); ?>
 						</td>
 					</tr>
 					<tr>

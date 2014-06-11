@@ -117,6 +117,10 @@ $a_domainOverrides = &$instance['domainoverrides'];
 $showMultiInstanceOptions = isset($_REQUEST['instance']);
 $allowMultiInstance = $instanceIndex == 0 || isset($config['dnsmasq']['allow_multi']);
 
+$serviceUrl = "services_dnsmasq.php";
+if ($showMultiInstanceOptions)
+	$serviceUrl .= "?instance={$instanceIndex}";
+
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
 	$pconfig = $_POST;
@@ -233,27 +237,31 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 	if (!$input_errors) {
 		write_config();
 
-		$retval = 0;
-		$retval = services_dnsmasq_configure();
-		$savemsg = get_std_save_message($retval);
-		if (isset($config['dnsmasq']['allow_multi']))
-			$savemsg .= " You can also go to the <a href=\"services_dnsmasq_instances.php\">overview</a>.";
+		if (!isset($config['dnsmasq']['allow_multi'])) {
+			// reload dnsmasq
+			$retval = 0;
+			$retval = services_dnsmasq_configure();
+			$savemsg = get_std_save_message($retval);
+			if (isset($config['dnsmasq']['allow_multi']))
+				$savemsg .= " You can also go to the <a href=\"services_dnsmasq_instances.php\">overview</a>.";
 
-		// Reload filter (we might need to sync to CARP hosts)
-		filter_configure();
-		/* Update resolv.conf in case the interface bindings exclude localhost. */
-		system_resolvconf_generate();
+			// Reload filter (we might need to sync to CARP hosts)
+			filter_configure();
+			/* Update resolv.conf in case the interface bindings exclude localhost. */
+			system_resolvconf_generate();
 
-		if ($retval == 0)
-			clear_subsystem_dirty('hosts');
+			if ($retval == 0)
+				clear_subsystem_dirty('hosts');
+		} else {
+			// do not reload dnsmasq, but show warning
+			mark_subsystem_dirty('hosts');
+			header("Location: {$serviceUrl}");
+			exit;
+		}
 	}
 }
 
-if ($_GET['act'] == "del") {
-	$serviceUrl = "services_dnsmasq.php";
-	if ($showMultiInstanceOptions)
-		$serviceUrl .= "?instance={$instanceIndex}";
-	
+if ($_GET['act'] == "del") {	
 	if ($_GET['type'] == 'host') {
 		if ($a_hosts[$_GET['id']]) {
 			unset($a_hosts[$_GET['id']]);

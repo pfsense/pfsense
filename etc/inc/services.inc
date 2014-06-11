@@ -1700,9 +1700,9 @@ function dyndnsCheckIP($int) {
 
 function services_dnsmasq_configure($instanceIndex = null) {
 	global $config, $g;
-	$return = 0;
-	
 	require_once("dnsmasq.inc");
+	
+	$return = 0;
 
 	// hard coded args: will be removed to avoid duplication if specified in custom_options
 	$standard_args = array(

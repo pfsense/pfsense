@@ -91,6 +91,7 @@ function activate_sysctls() {
 
 function system_resolvconf_generate($dynupdate = false) {
 	global $config, $g;
+	require_once("dnsmasq.inc");
 
 	if(isset($config['system']['developerspew'])) {
 		$mt = microtime();

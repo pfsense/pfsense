@@ -27,13 +27,14 @@ ROUTE=/sbin/route
 SED=/usr/bin/sed
 ARP=/usr/sbin/arp
 IFCONFIG=/sbin/ifconfig
+PFCTL=/sbin/pfctl
 
 LOCALHOST=127.0.0.1
 
 if [ -x /usr/bin/logger ]; then
 	LOGGER="/usr/bin/logger -s -p user.notice -t dhclient"
 else
-	LOGGER=echo
+	LOGGER="echo"
 fi
 
 #
@@ -42,11 +43,8 @@ fi
 
 check_hostname() {
 	current_hostname=`$HOSTNAME`
-	if [ -z "$current_hostname" ]; then
-		$LOGGER "New Hostname ($interface): $new_host_name"
-		$HOSTNAME $new_host_name
-	elif [ "$current_hostname" = "$old_host_name" -a \
-	       "$new_host_name" != "$old_host_name" ]; then
+	if [ -z "$current_hostname" -o \
+	    "$current_hostname" != "$new_host_name" ]; then
 		$LOGGER "New Hostname ($interface): $new_host_name"
 		$HOSTNAME $new_host_name
 	fi
@@ -60,28 +58,30 @@ arp_flush() {
 
 delete_old_states() {
 	$LOGGER "Starting delete_old_states()"
+	_FLUSHED=0
 	# If the IP changed, remove states from the old one
 	if [ -f /var/db/${interface}_ip ]; then
-		OLD_IP = `cat /var/db/${interface}_ip`
+		OLD_IP=`cat /var/db/${interface}_ip`
 		$LOGGER "Comparing IPs: Old: ${OLD_IP} New: ${new_ip_address}"
 		if [ -n "${OLD_IP}" ] && [ "${OLD_IP}" != "${new_ip_address}" ]; then
 			$LOGGER "Removing states from old IP '${OLD_IP}' (new IP '${new_ip_address}')"
-			/sbin/pfctl -i $interface -Fs
-			pfctl -K ${OLD_IP}/32
+			${PFCTL} -i $interface -Fs
+			${PFCTL} -K ${OLD_IP}/32
+			_FLUSHED=1
 		fi
 	fi
 	# Delete states through old gateway if it's not the same
+	OLD_ROUTER=""
 	if [ -n "${old_routers}" ]; then
-		OLD_ROUTER = $old_routers
+		OLD_ROUTER=$old_routers
+	elif [ -f /tmp/${interface}_router ]; then
+		OLD_ROUTER=`cat /tmp/${interface}_router`
 	fi
-	if [ -z "${OLD_ROUTER}" ] && [ -f /tmp/${interface}_router ]; then
-		OLD_ROUTER = `cat /tmp/${interface}_router`
-	fi
-	if [ -n "${OLD_ROUTER}" ]; then
+	if [ ${_FLUSHED} -eq 0 -a -n "${OLD_ROUTER}" ]; then
 		$LOGGER "Comparing Routers: Old: ${OLD_ROUTER} New: ${new_routers}"
 		if [ "${OLD_ROUTER}" != "${new_routers}" ]; then
 			$LOGGER "Removing states through old gateway '${OLD_ROUTER}' (new gateway '${new_routers}')"
-			/sbin/pfctl -i $interface -Fs -G ${OLD_ROUTER}
+			${PFCTL} -i $interface -Fs
 		fi
 	fi
 }

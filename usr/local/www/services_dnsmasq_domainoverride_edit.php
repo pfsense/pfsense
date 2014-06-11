@@ -187,7 +187,7 @@ include("head.inc");
                     <input name="id" type="hidden" value="<?=htmlspecialchars($id);?>" />
                     <?php endif; ?>
                     <?php if (isset($instanceIndex)): ?>
-                    <input name="id" type="hidden" value="<?=htmlspecialchars($instanceIndex);?>"/>
+                    <input name="instance" type="hidden" value="<?=htmlspecialchars($instanceIndex);?>"/>
                     <?php endif; ?>
                   </td>
                 </tr>

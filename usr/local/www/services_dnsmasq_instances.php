@@ -29,10 +29,9 @@ require("guiconfig.inc");
 require_once("functions.inc");
 require_once("filter.inc");
 require_once("shaper.inc");
+require_once("dnsmasq.inc");
 
-/* check for old or missing config */
-if (!isset($config['dnsmasq']['instances']))
-	$config['dnsmasq']['instances'] = array('instance0' => $config['dnsmasq']);
+dnsmasq_upgrade_config();
 
 $a_instances = &$config['dnsmasq']['instances'];
 $nextInstanceId = count($a_instances);

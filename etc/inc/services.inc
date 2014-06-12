@@ -1725,7 +1725,7 @@ function services_dnsmasq_configure($instanceIndex = null) {
 	}
 
 	$a_instances = isset($config['dnsmasq']['enable'])
-		? dnsmasq_get_configured_instances(false, $instanceIndex)
+		? dnsmasq_get_configured_instances($instanceIndex ?: false)
 		: array();
 	
 	/* generate hosts file */

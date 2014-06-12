@@ -20,23 +20,59 @@
 */
 require_once('config.inc');
 
-function dnsmasq_get_configured_instances($all = false, $instanceIndex = null) {
+/*
+ * Returns an array of configured dnsmasq instances.
+ *
+ * instanceIndex: (true|false|null|<n>). Index of the instance, true/false for all
+ *   instances or null for the default instance. 'true' ignores the 'allow_multi' setting.
+ */
+function dnsmasq_get_configured_instances($instanceIndex = false) {
 	global $config;
 	
-	/* check for old or missing config */
-	if (!isset($config['dnsmasq']['instances']))
-		$config['dnsmasq']['instances'] = array('instance0' => $config['dnsmasq']);
+	// check for old or missing config
+	dnsmasq_upgrade_config();
 	
+	// only return relevant instances
 	$a_instances = &$config['dnsmasq']['instances'];
-	if (!$all && (!isset($config['dnsmasq']['allow_multi'])) || $instanceIndex !== null) {
-		// only the first instance is processed
-		//list($firstInstance, ) = $a_instances;
+	if (($instanceIndex === false && !isset($config['dnsmasq']['allow_multi']))
+			|| ($instanceIndex !== false && $instanceIndex !== true)) {
 		$keys = array_keys($a_instances);
 		$firstInstance = &$a_instances[$keys[$instanceIndex ?: 0]];
+		
 		return array($firstInstance);
 	}
-	
 	return $a_instances;
+}
+
+function &dnsmasq_instance_config_by_index($idx) {
+	global $config;
+
+	// check for old or missing config
+	dnsmasq_upgrade_config();
+	
+	// only return relevant instance
+	$a_instances = &$config['dnsmasq']['instances'];
+	$keys = array_keys($a_instances);
+	if (!isset($idx) || !isset($keys[$idx])) {
+		$idx = 0;
+	}
+	
+	return $a_instances[$keys[$idx]];
+}
+
+function dnsmasq_upgrade_config($writeResult = false) {
+	global $config;
+	
+	if (!isset($config['dnsmasq']['instances'])) {
+		$config['dnsmasq'] = array(
+			'enable' => isset($config['dnsmasq']['enable']),
+			'instances' => array('instance0' => $config['dnsmasq']),
+			'allow_multi' => isset($config['dnsmasq']['allow_multi']),
+		);
+		
+		if ($writeResult)
+			write_config();
+	}
 }
 
 function dnsmasq_get_instance_file($instanceIndex = null, $appendStar = false, $shortName = false) {

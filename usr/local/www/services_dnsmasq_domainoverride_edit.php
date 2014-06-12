@@ -39,27 +39,14 @@
 ##|-PRIV
 
 require("guiconfig.inc");
+require_once("dnsmasq.inc");
 
-// check for old or missing config
-if (!isset($config['dnsmasq']['instances']))
-	$config['dnsmasq']['instances'] = array('instance0' => $config['dnsmasq']);
-
-$a_instances = &$config['dnsmasq']['instances'];
-
-// find correct instance
 if (is_numericint($_GET['instance']))
-	$idx = $_GET['instance'];
+	$instanceIndex = $_GET['instance'];
 if (isset($_POST['instance']) && is_numericint($_POST['instance']))
-	$idx = $_POST['instance'];
+	$instanceIndex = $_POST['instance'];
 
-$instanceIndex = $idx;
-
-$keys = array_keys($a_instances);
-if (!isset($idx) || !isset($keys[$idx])) {
-	$idx = 0;
-}
-$instance = &$a_instances[$keys[$idx]];
-unset($idx, $keys);
+$instance = &dnsmasq_instance_config_by_index($instanceIndex);
 
 if (!is_array($instance['domainoverrides'])) {
        $instance['domainoverrides'] = array();
@@ -128,7 +115,7 @@ if ($_POST) {
 			else
 				$a_domainOverrides[] = $doment;
 
-			$retval = services_dnsmasq_configure();
+			mark_subsystem_dirty('hosts');
 
 			write_config();
 

@@ -79,8 +79,8 @@ if ($_GET['act'] == "del" && !empty($cpzone)) {
 					pfSense_pipe_action("pipe delete {$ipfw['dnpipe']}");
 					pfSense_pipe_action("pipe delete " . ($ipfw['dnpipe']+1));
 				}
-				pfSense_ipfw_Tableaction($cpzone, IP_FW_TABLE_DEL, 3, $ip);
-				pfSense_ipfw_Tableaction($cpzone, IP_FW_TABLE_DEL, 4, $ip);
+				pfSense_ipfw_Tableaction($cpzone, IP_FW_TABLE_XDEL, 3, $ip);
+				pfSense_ipfw_Tableaction($cpzone, IP_FW_TABLE_XDEL, 4, $ip);
 			}
 		}
 			

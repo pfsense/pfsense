@@ -708,8 +708,8 @@ function captiveportal_prune_old() {
 						$cpentry[2], // clientip
 						$cpentry[3], // clientmac
 						10); // NAS Request
-					$_gb = @pfSense_ipfw_Tableaction($cpzone, IP_FW_TABLE_ZERO_ENTRY_STATS, 1, $cpentry[2], $cpentry[3]);
-					$_gb = @pfSense_ipfw_Tableaction($cpzone, IP_FW_TABLE_ZERO_ENTRY_STATS, 2, $cpentry[2], $cpentry[3]);
+					$_gb = @pfSense_ipfw_Tableaction($cpzoneid, IP_FW_TABLE_XZEROENTRY, 1, $cpentry[2], $cpentry[3]);
+					$_gb = @pfSense_ipfw_Tableaction($cpzoneid, IP_FW_TABLE_XZEROENTRY, 2, $cpentry[2], $cpentry[3]);
 					RADIUS_ACCOUNTING_START($cpentry[1], // ruleno
 						$cpentry[4], // username
 						$cpentry[5], // sessionid
@@ -835,7 +835,7 @@ function captiveportal_prune_old_automac() {
 
 /* remove a single client according to the DB entry */
 function captiveportal_disconnect($dbent, $radiusservers,$term_cause = 1,$stop_time = null) {
-	global $g, $config, $cpzone;
+	global $g, $config, $cpzone, $cpzoneid;
 
 	$stop_time = (empty($stop_time)) ? time() : $stop_time;
 
@@ -855,8 +855,8 @@ function captiveportal_disconnect($dbent, $radiusservers,$term_cause = 1,$stop_t
 	
 	if (is_ipaddr($dbent[2])) {
 		/* Delete client's ip entry from tables 1 and 2. */
-		$_gb = @pfSense_ipfw_Tableaction($cpzone, IP_FW_TABLE_DEL, 1, $dbent[2], $dbent[3]);
-		$_gb = @pfSense_ipfw_Tableaction($cpzone, IP_FW_TABLE_DEL, 2, $dbent[2], $dbent[3]);
+		$_gb = @pfSense_ipfw_Tableaction($cpzoneid, IP_FW_TABLE_XDEL, 1, $dbent[2], $dbent[3]);
+		$_gb = @pfSense_ipfw_Tableaction($cpzoneid, IP_FW_TABLE_XDEL, 2, $dbent[2], $dbent[3]);
 		/* XXX: Redundant?! Ensure all pf(4) states are killed. */
 		$_gb = @pfSense_kill_states($dbent[2]);
 		$_gb = @pfSense_kill_srcstates($dbent[2]);
@@ -1951,14 +1951,14 @@ function portal_allow($clientip,$clientmac,$username,$password = null, $attribut
 
 			$clientsn = (is_ipaddrv6($clientip)) ? 128 : 32;
 			if (!isset($config['captiveportal'][$cpzone]['nomacfilter']))
-				$_gb = @pfSense_ipfw_Tableaction($cpzone, IP_FW_TABLE_ADD, 1, $clientip, $clientsn, $clientmac, $bw_up_pipeno);
+				$_gb = @pfSense_ipfw_Tableaction($cpzoneid, IP_FW_TABLE_XADD, 1, $clientip, $clientsn, $clientmac, $bw_up_pipeno);
 			else
-				$_gb = @pfSense_ipfw_Tableaction($cpzone, IP_FW_TABLE_ADD, 1, $clientip, $clientsn, NULL, $bw_up_pipeno);
+				$_gb = @pfSense_ipfw_Tableaction($cpzoneid, IP_FW_TABLE_XADD, 1, $clientip, $clientsn, NULL, $bw_up_pipeno);
 
 			if (!isset($config['captiveportal'][$cpzone]['nomacfilter']))
-				$_gb = @pfSense_ipfw_Tableaction($cpzone, IP_FW_TABLE_ADD, 2, $clientip, $clientsn, $clientmac, $bw_down_pipeno);
+				$_gb = @pfSense_ipfw_Tableaction($cpzoneid, IP_FW_TABLE_XADD, 2, $clientip, $clientsn, $clientmac, $bw_down_pipeno);
 			else
-				$_gb = @pfSense_ipfw_Tableaction($cpzone, IP_FW_TABLE_ADD, 2, $clientip, $clientsn, NULL, $bw_down_pipeno);
+				$_gb = @pfSense_ipfw_Tableaction($cpzoneid, IP_FW_TABLE_XADD, 2, $clientip, $clientsn, NULL, $bw_down_pipeno);
 
 			if ($attributes['voucher'])
 				$attributes['session_timeout'] = $remaining_time;

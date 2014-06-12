@@ -51,7 +51,7 @@ if (is_numericint($_GET['instance']))
 if (isset($_POST['instance']) && is_numericint($_POST['instance']))
 	$instanceIndex = $_POST['instance'];
 
-$instance = dnsmasq_instance_config_by_index($instanceIndex);
+$instance = &dnsmasq_instance_config_by_index($instanceIndex);
 
 if (!is_array($instance['hosts'])) 
 	$instance['hosts'] = array();

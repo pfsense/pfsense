@@ -656,6 +656,30 @@ function ipsec_get_number_of_phase2($ikeid) {
 	return $nbph2;
 }
 
+function ipsec_get_descr($ikeid) {
+	global $config;
+
+	if (!isset($config['ipsec']['phase1']) ||
+	    !is_array($config['ipsec']['phase1']))
+		return "";
+
+	$descr = '';
+	$a_phase1 = $config['ipsec']['phase1'];
+	foreach ($a_phase1 as $p1) {
+		if ($p1['ikeid'] == $ikeid) {
+			$descr = $p1['descr'];
+			break;
+		}
+	}
+	unset($a_phase1);
+
+	return $descr;
+}
+
+function ipsec_get_descr_by_peerconfig($peerconfig) {
+	return ipsec_get_descr(substr($peerconfig, strrpos($peerconfig, '-') + 1));
+}
+
 function ipsec_disconnect_mobile($username) {
 	if (empty($username))
 		return false;

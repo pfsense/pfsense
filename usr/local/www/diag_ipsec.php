@@ -116,7 +116,7 @@ $status = ipsec_smp_dump_status();
 ?>
 			<tr>
 				<td class="listlr">
-					<?php echo htmlspecialchars($ikesa['peerconfig']);?>
+					<?php echo htmlspecialchars(ipsec_get_descr_by_peerconfig($ikesa['peerconfig']));?>
 				</td>
 				<td class="listr">
 			<?php   if (!is_array($ikesa['local']))

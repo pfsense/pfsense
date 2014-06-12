@@ -179,6 +179,10 @@ if ($_POST && !is_subsystem_dirty('firmwarelock')) {
 					/* fire up the update script in the background */
 					mark_subsystem_dirty('firmwarelock');
 					$savemsg = gettext("The firmware is now being updated. The firewall will reboot automatically.");
+					/* Checking option "Disable auto update packages" to disable package update after firmware update */
+					if (isset($config['system']['firmware']['pkg_autoupdate_disable']))
+						safe_write_file("{$g['cf_conf_path']}/pkg_autoupdate_disabled", getmypid(), false);
+
 					if (stristr($_FILES['ulfile']['name'],"nanobsd") or $_POST['isnano'] == "yes")
 						mwexec_bg("/etc/rc.firmware pfSenseNanoBSDupgrade {$g['upload_path']}/firmware.tgz");
 					else if(stristr($_FILES['ulfile']['name'],"bdiff"))

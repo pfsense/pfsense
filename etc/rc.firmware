@@ -365,7 +365,9 @@ pfSenseNanoBSDupgrade)
 	echo "" >> /conf/upgrade_log.txt
 
 	# Trigger a package reinstallation on reobot
-	touch /conf/needs_package_sync
+	if [ ! -e /conf/pkg_autoupdate_disabled ]; then
+		touch /conf/needs_package_sync
+	fi
 
 	# remount /cf ro
 	/etc/rc.conf_mount_ro

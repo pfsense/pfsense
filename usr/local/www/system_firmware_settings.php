@@ -62,6 +62,11 @@ if ($_POST) {
 		else
 			unset($config['system']['firmware']['disablecheck']);
 
+		if($_POST['pkg_autoupdate_disable'] == "yes")
+			$config['system']['firmware']['pkg_autoupdate_disable'] = true;
+		else
+			unset($config['system']['firmware']['pkg_autoupdate_disable']);
+
 		if($_POST['synconupgrade'] == "yes")
 			$config['system']['gitsync']['synconupgrade'] = true;
 		else
@@ -70,6 +75,7 @@ if ($_POST) {
 		$config['system']['gitsync']['branch'] = $_POST['branch'];
 
 		write_config();
+		$savemsg = gettext("The changes have been applied successfully.");
 	}
 }
 
@@ -255,6 +261,22 @@ function enable_altfirmwareurl(enable_over) {
 		</td>
 	</tr>
 <?php endif; ?>
+	<tr>
+		<td colspan="2" class="list" height="12">&nbsp;</td>
+	</tr>
+	<tr>
+		<td colspan="2" valign="top" class="listtopic"><?=gettext("Packages"); ?></td>
+	</tr>
+	<tr>
+		<td width="22%" valign="top" class="vncell"><?=gettext("Disable auto update packages"); ?></td>
+		<td width="78%" class="vtable">
+			<input name="pkg_autoupdate_disable" type="checkbox" id="pkg_autoupdate_disable" value="yes" <?php if (isset($curcfg['pkg_autoupdate_disable'])) echo "checked"; ?> />
+			<br />
+			<?=gettext("By default all packages will be updated on the first reboot after firmware update. " .
+			"This option turn it off. However, you have to consider make it manually as soon as possible. " .
+			"Some firmware updates can make packages broken."); ?>
+		</td>
+	</tr>
 	<tr><td><script type="text/javascript">
 	//<![CDATA[
 	enable_altfirmwareurl();

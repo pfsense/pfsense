@@ -432,6 +432,9 @@ if(file_exists('/conf/needs_package_sync')) {
 	@unlink('/conf/needs_package_sync');
 }
 
+/* Remove packages autoupdate flag */
+unlink_if_exists("{$g['cf_conf_path']}/pkg_autoupdate_disabled");
+
 /* Give syslogd a kick after everything else has been initialized, otherwise it can occasionally
    fail to route syslog messages properly on both IPv4 and IPv6 */
 system_syslogd_start();

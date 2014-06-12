@@ -241,6 +241,10 @@ if($downloaded_latest_tgz_sha256 <> $upgrade_latest_tgz_sha256) {
 	update_status(gettext("Downloading complete but sha256 does not match."));
 	update_output_window(gettext("Auto upgrade aborted.") . "  \n\n" . gettext("Downloaded SHA256") . ": " . $downloaded_latest_tgz_sha256 . "\n\n" . gettext("Needed SHA256") . ": " . $upgrade_latest_tgz_sha256);
 } else {
+	/* Checking option "Disable auto update packages" to disable package update after firmware update */
+	if (isset($config['system']['firmware']['pkg_autoupdate_disable']))
+		safe_write_file("{$g['cf_conf_path']}/pkg_autoupdate_disabled", getmypid(), false);
+
 	update_output_window($g['product_name'] . " " . gettext("is now upgrading.") . "\\n\\n" . gettext("The firewall will reboot once the operation is completed."));
 	echo "\n<script type=\"text/javascript\">";
 	echo "\n//<![CDATA[";

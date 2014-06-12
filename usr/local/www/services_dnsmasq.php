@@ -237,7 +237,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 	if (!$input_errors) {
 		write_config();
 
-		if (!isset($config['dnsmasq']['allow_multi'])) {
+		if (!isset($config['dnsmasq']['allow_multi']) || isset($_POST['apply'])) {
 			// reload dnsmasq
 			$retval = 0;
 			$retval = services_dnsmasq_configure();

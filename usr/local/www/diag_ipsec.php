@@ -220,7 +220,7 @@ $status = ipsec_smp_dump_status();
 						echo htmlspecialchars($childsa['remote']['spi']);
 				?>
 						</td>
-						<td class="listlr nowrap">
+						<td class="listr nowrap">
 				<?php	if (is_array($childsa['remote']) && is_array($childsa['remote']['networks']) && is_array($childsa['remote']['networks']['network'])) {
 						foreach ($childsa['remote']['networks']['network'] as $rnets) {
 							echo htmlspecialchars($rnets) . "<br />";	

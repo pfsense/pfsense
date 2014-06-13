@@ -125,7 +125,7 @@ if (!$nentries)
 								$checked = "checked";
 						}
 						echo "<tr>";
-						echo "<td bgcolor={$bgcolor}>&nbsp;{$server['ip']['addr']}:{$pool['port']}&nbsp;</td><td bgcolor={$bgcolor}>&nbsp;";
+						echo "<td bgcolor=\"{$bgcolor}\">&nbsp;{$server['ip']['addr']}:{$pool['port']}&nbsp;</td><td bgcolor=\"{$bgcolor}\">&nbsp;";
 						if($server['ip']['avail'])
 						  echo " ({$server['ip']['avail']}) ";
 						echo "&nbsp;</td></tr>";

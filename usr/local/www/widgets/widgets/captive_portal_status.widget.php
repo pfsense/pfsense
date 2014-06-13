@@ -88,7 +88,7 @@ if ($_GET['order']) {
 	usort($cpdb_all, "clientcmp");
 }
 ?>
-<table class="sortable" name="sortabletable" id="sortabletable" width="100%" border="0" cellpadding="0" cellspacing="0" summary="captive portal status">
+<table class="sortable" id="sortabletable" width="100%" border="0" cellpadding="0" cellspacing="0" summary="captive portal status">
   <tr>
     <td class="listhdrr"><a href="?order=ip&amp;showact=<?=$_GET['showact'];?>">IP address</a></td>
     <td class="listhdrr"><a href="?order=mac&amp;showact=<?=$_GET['showact'];?>">MAC address</a></td>

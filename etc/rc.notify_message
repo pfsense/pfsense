@@ -32,10 +32,11 @@ require_once("config.inc");
 require_once("functions.inc");
 require_once("notices.inc");
 
-$arguments = getopt("egm:");
+$arguments = getopt("epgm:");
 
 $send_email = false;
 $send_growl = false;
+$send_pushover = false;
 $message = "";
 
 foreach($arguments as $item => $arg) {
@@ -45,6 +46,9 @@ foreach($arguments as $item => $arg) {
 			break;
 		case "g":
 			$send_growl = true;
+			break;
+		case "p":
+			$send_pushover = true;
 			break;
 		case "m":
 			$message = $arg;
@@ -58,6 +62,9 @@ if($message) {
 	}
 	if($send_growl) {
 		notify_via_growl($message);
+	}
+	if($send_pushover) {
+		notify_via_pushover($message);
 	}
 }
 

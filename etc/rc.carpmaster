@@ -51,6 +51,7 @@ $notificationmsg = sprintf('Carp cluster member "%2$s (%1$s)" has resumed the st
 
 notify_via_smtp($notificationmsg);
 notify_via_growl($notificationmsg);
+notify_via_pushover($notificationmsg);
 log_error($notificationmsg);
 
 /* Start OpenVPN clients running on this VIP, since they should be in the stopped state while the VIP is CARP Backup. */

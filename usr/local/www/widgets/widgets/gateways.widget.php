@@ -71,16 +71,17 @@ $counter = 1;
 			<td class="vncellt ellipsis" width="100%">
 				<div id="gateway<?php echo $counter; ?>" style="display:inline">
 					<?php
+						$if_gw = '';
 						if (is_ipaddr($gateway['gateway']))
-							echo htmlspecialchars($gateway['gateway']);
+							$if_gw = htmlspecialchars($gateway['gateway']);
 						else {
 							if($gateway['ipprotocol'] == "inet")
-								echo htmlspecialchars(get_interface_gateway($gateway['friendlyiface']));
+								$if_gw = htmlspecialchars(get_interface_gateway($gateway['friendlyiface']));
 							if($gateway['ipprotocol'] == "inet6")
-								echo htmlspecialchars(get_interface_gateway_v6($gateway['friendlyiface']));
-							if( (htmlspecialchars(get_interface_gateway($gateway['friendlyiface'])) == '') && (htmlspecialchars(get_interface_gateway_v6($gateway['friendlyiface'])) == '') )
-								echo '~';
+								$if_gw = htmlspecialchars(get_interface_gateway_v6($gateway['friendlyiface']));
 						}
+						echo ($if_gw == '' ? '~' : $if_gw);
+						unset ($if_gw);
 						$counter++;
 					?>
 				</div>

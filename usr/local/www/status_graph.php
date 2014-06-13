@@ -79,8 +79,8 @@ if ($_GET['if']) {
 		}
 	}
 	if ($found === false) {
-		Header("Location: status_graph.php");
-		exit;
+		header("Location: status_graph.php");
+        exit;
 	}
 } else {
 	if (empty($ifdescrs["wan"])) {

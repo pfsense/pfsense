@@ -35,8 +35,8 @@ require("guiconfig.inc");
 define('PC_SYSINSTALL', '/usr/sbin/pc-sysinstall/pc-sysinstall/pc-sysinstall.sh');
 
 if($g['platform'] == "pfSense" or $g['platform'] == "nanobsd") {
-	Header("Location: /");
-	exit;
+	header("Location: /");
+    exit;
 }
 
 // Main switch dispatcher
@@ -94,8 +94,8 @@ function easy_install($fstype = "UFS+S") {
 	$bootmanager = "bsd";
 	file_put_contents("/tmp/webInstaller_disk_layout.txt", serialize($disk_setup));
 	file_put_contents("/tmp/webInstaller_disk_bootmanager.txt", serialize($bootmanager));
-	Header("Location: installer.php?state=verify_before_install");
-	exit;
+	header("Location: installer.php?state=verify_before_install");
+    exit;
 }
 
 function write_out_pc_sysinstaller_config($disks, $bootmanager = "bsd") {

@@ -98,8 +98,8 @@ if(!$id && !$_POST)
 	$id = "0";
 
 if(!is_numeric($id)) {
-	Header("Location: /");
-	exit;
+    header("Location: /");
+    exit;
 }
 
 if($pkg['custom_php_global_functions'] <> "")

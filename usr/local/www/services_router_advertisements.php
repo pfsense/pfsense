@@ -47,8 +47,8 @@
 require("guiconfig.inc");
 
 if(!$g['services_dhcp_server_enable']) {
-	Header("Location: /");
-	exit;
+    header("Location: /");
+    exit;
 }
 
 /*  Fix failover DHCP problem

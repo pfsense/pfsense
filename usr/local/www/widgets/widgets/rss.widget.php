@@ -38,7 +38,7 @@ if($_POST['rssfeed']) {
 	$config['widgets']['rsswidgetheight'] = $_POST['rsswidgetheight'];
 	$config['widgets']['rsswidgettextlength'] = $_POST['rsswidgettextlength'];
 	write_config("Saved RSS Widget feed via Dashboard");
-	Header("Location: /");
+	header("Location: /");
 }
 
 // Use saved feed and max items

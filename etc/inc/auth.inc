@@ -1444,9 +1444,9 @@ function session_auth() {
 			return false;
 
 		/* redirect to page the user is on, it'll prompt them to login again */
-		Header("Location: {$scriptName}");
+		header("Location: {$scriptName}");
 
-		return false;
+        return false;
 	}
 
 	/*
@@ -1463,7 +1463,7 @@ function session_auth() {
 	if ($_GET['enable_ajax'])
 		unset($_SESSION['NO_AJAX']);
 
-	return true;
+    return true;
 }
 
 ?>

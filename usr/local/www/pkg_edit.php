@@ -98,7 +98,7 @@ if(!$id && !$_POST)
 	$id = "0";
 
 if(!is_numeric($id)) {
-	Header("Location: /");
+	header("Location: /");
 	exit;
 }
 

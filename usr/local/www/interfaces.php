@@ -62,7 +62,7 @@ if ($_REQUEST['if'])
 	$if = $_REQUEST['if'];
 
 if (empty($ifdescrs[$if])) {
-	Header("Location: interfaces.php");
+	header("Location: interfaces.php");
 	exit;
 }
 

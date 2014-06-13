@@ -321,7 +321,6 @@ exec("cd ${CODIR}/pfSenseGITREPO/pfSenseGITREPO && find . -name CVS -exec rm -rf
 exec("cd ${CODIR}/pfSenseGITREPO/pfSenseGITREPO && find . -name pfSense.tgz -exec rm {} \; 2>/dev/null");
 
 // Remove files that we do not want to overwrite the system with 
-exec("rm ${CODIR}/pfSenseGITREPO/pfSenseGITREPO/cf/conf/trigger_initial_wizard 2>/dev/null");
 exec("rm ${CODIR}/pfSenseGITREPO/pfSenseGITREPO/etc/crontab 2>/dev/null");
 exec("rm ${CODIR}/pfSenseGITREPO/pfSenseGITREPO/etc/master.passwd 2>/dev/null");
 exec("rm ${CODIR}/pfSenseGITREPO/pfSenseGITREPO/etc/passwd 2>/dev/null");

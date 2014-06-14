@@ -453,6 +453,11 @@ if [ "${GMIRROR_STATUS}" != "" ]; then
 	/usr/local/bin/minicron 60 /var/run/gmirror_status_check.pid /usr/local/sbin/gmirror_status_check.php
 fi
 
+# Log pfSense version to syslog
+BUILDTIME=`cat /etc/version.buildtime`
+ARCH=`uname -m`
+echo "pfSense ($PLATFORM) $version $ARCH $BUILDTIME"
+
 echo "Bootup complete"
 
 /usr/local/bin/beep.sh start 2>&1 >/dev/null

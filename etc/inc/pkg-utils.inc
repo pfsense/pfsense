@@ -524,10 +524,31 @@ function pkg_fetch_recursive($pkgname, $filename, $dependlevel = 0, $base_url = 
 		$result = exec("/usr/local/sbin/pbi_add " . $pkgstaging . " -f -v {$no_checksig} " . escapeshellarg($fetchto) . " 2>&1", $pkgaddout, $rc);
 		pkg_debug($pkgname . " " . print_r($pkgaddout, true) . "\n");
 		if ($rc == 0) {
-			$links = get_pbi_binaries(escapeshellarg(preg_replace('/\.pbi$/','',$filename)));
+			$pbi_name = preg_replace('/\.pbi$/','',$filename);
+
+			$gb = exec("/usr/local/sbin/pbi_info {$pbi_name} | /usr/bin/awk '/Prefix/ {print $2}'", $pbi_prefix);
+			$pbi_prefix = $pbi_prefix[0];
+
+			$links = get_pbi_binaries(escapeshellarg($pbi_name));
 			foreach($links as $link) {
 				@unlink("/usr/local/{$link['link_name']}");
 				@symlink("{$link['target']}","/usr/local/{$link['link_name']}");
+			}
+
+			$extra_links = array(
+				array("target" => "bin", "link_name" => "sbin"),
+				array("target" => "local/lib", "link_name" => "lib"),
+				array("target" => "local/libexec", "link_name" => "libexec"),
+				array("target" => "local/share", "link_name" => "share"),
+				array("target" => "local/etc", "link_name" => "etc")
+			);
+
+			foreach ($extra_links as $link) {
+				if (!file_exists($pbi_prefix . "/" . $link['target']))
+					continue;
+				@rmdir("{$pbi_prefix}/{$link['link_name']}");
+				unlink_if_exists("{$pbi_prefix}/{$link['link_name']}");
+				@symlink("{$pbi_prefix}/{$link['target']}", "{$pbi_prefix}/{$link['link_name']}");
 			}
 			pkg_debug("pbi_add successfully completed.\n");
 		} else {

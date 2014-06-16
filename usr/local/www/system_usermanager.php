@@ -728,12 +728,17 @@ function sshkeyClicked(obj) {
                                                         	<td width="78%" class="vtable">
                                                                 	<select name='caref' id='caref' class="formselect" onchange='internalca_change()'>
                                                                 <?php
+																		$rowIndex = 0;
                                                                         foreach( $config['ca'] as $ca):
                                                                         if (!$ca['prv'])
                                                                                 continue;
+																			$rowIndex++;
                                                                 ?>
                                                                         <option value="<?=$ca['refid'];?>"><?=$ca['descr'];?></option>
-                                                                <?php endforeach; ?>
+                                                                <?php endforeach;
+																if ($rowIndex == 0)
+																	echo "<option></option>";
+																?>
                                                                 	</select>
                                                         	</td>
                                                 	</tr>
@@ -743,10 +748,15 @@ function sshkeyClicked(obj) {
                                                                 	<select name='keylen' class="formselect">
                                                                 <?php
 									$cert_keylens = array( "2048", "512", "1024", "4096");
+																		$rowIndex = 0;
                                                                         foreach( $cert_keylens as $len):
+																			$rowIndex++;
                                                                 ?>
                                                                         <option value="<?=$len;?>"><?=$len;?></option>
-                                                                <?php endforeach; ?>
+                                                                <?php endforeach;
+																if ($rowIndex == 0)
+																	echo "<option></option>";
+																?>
                                                                 	</select>
                                                                 	bits
                                                         	</td>

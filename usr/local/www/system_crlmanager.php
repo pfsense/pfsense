@@ -311,7 +311,7 @@ function method_change() {
 									if ($pconfig['method'] == $method)
 										$selected = "selected=\"selected\"";
 								?>
-									<option value="<?=$method;?>"<?=$selected;?>><?=$desc;?></option>
+									<option value="<?=$method;?>" <?=$selected;?>><?=$desc;?></option>
 								<?php endforeach; ?>
 								</select>
 							</td>
@@ -333,7 +333,7 @@ function method_change() {
 									if ($pconfig['caref'] == $ca['refid'])
 										$selected = "selected=\"selected\"";
 								?>
-									<option value="<?=$ca['refid'];?>"<?=$selected;?>><?=$ca['descr'];?></option>
+									<option value="<?=$ca['refid'];?>" <?=$selected;?>><?=$ca['descr'];?></option>
 								<?php endforeach; ?>
 								</select>
 							</td>

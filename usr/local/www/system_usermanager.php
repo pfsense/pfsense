@@ -523,16 +523,21 @@ function sshkeyClicked(obj) {
 											<br />
 											<select size="10" style="width: 75%" name="notgroups[]" class="formselect" id="notgroups" onchange="clear_selected('groups')" multiple="multiple">
 												<?php
+													$rowIndex = 0;
 													foreach ($config['system']['group'] as $group):
 														if ($group['gid'] == 1998) /* all users group */
 															continue;
 														if (is_array($pconfig['groups']) && in_array($group['name'],$pconfig['groups']))
 															continue;
+														$rowIndex++;
 												?>
 												<option value="<?=$group['name'];?>" <?=$selected;?>>
 													<?=htmlspecialchars($group['name']);?>
 												</option>
-												<?php endforeach; ?>
+												<?php endforeach;
+												if ($rowIndex == 0)
+													echo "<option></option>";
+												?>
 											</select>
 											<br />
 										</td>
@@ -551,18 +556,23 @@ function sshkeyClicked(obj) {
 											<br />
 											<select size="10" style="width: 75%" name="groups[]" class="formselect" id="groups" onchange="clear_selected('nogroups')" multiple="multiple">
 												<?php
+												$rowIndex = 0;
 												if (is_array($pconfig['groups'])) {
 													foreach ($config['system']['group'] as $group):
 														if ($group['gid'] == 1998) /* all users group */
 															continue;
 														if (!in_array($group['name'],$pconfig['groups']))
 															continue;
+														$rowIndex++;
 												?>
 												<option value="<?=$group['name'];?>">
 													<?=htmlspecialchars($group['name']);?>
 												</option>
 												<?php endforeach;
-												} ?>
+												}
+												if ($rowIndex == 0)
+													echo "<option></option>";
+												?>
 											</select>
 											<br />
 										</td>

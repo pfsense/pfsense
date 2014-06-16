@@ -360,7 +360,7 @@ function prot_change() {
 												if ($pconfig['ssl-certref'] == $cert['refid'])
 													$selected = "selected=\"selected\"";
 										?>
-										<option value="<?=$cert['refid'];?>"<?=$selected;?>><?=$cert['descr'];?></option>
+										<option value="<?=$cert['refid'];?>" <?=$selected;?>><?=$cert['descr'];?></option>
 										<?php endforeach; ?>
 									</select>
 								</td>

@@ -38,16 +38,17 @@ require("guiconfig.inc");
 if ($_GET['host'])
 	$_POST = $_GET;
 
-if($_GET['createalias'] == "true") {
-	$host = trim($_POST['host']);
+$host = trim($_POST['host'], " \t\n\r\0\x0B[];\"'");
+$host_esc = escapeshellarg($host);
+
+if($_GET['createalias'] == "true" && (is_hostname($host) || is_ipaddr($host))) {
 	if($_GET['override'])
 		$override = true;
 	$a_aliases = &$config['aliases']['alias'];
 	$type = "hostname";
 	$resolved = gethostbyname($host);
 	if($resolved) {
-		$host = trim($_POST['host']);
-		$dig=`dig "$host" A | grep "$host" | grep -v ";" | awk '{ print $5 }'`;
+		$dig=`dig "{$host_esc}" A | grep "{$host_esc}" | grep -v ";" | awk '{ print $5 }'`;
 		$resolved = explode("\n", $dig);
 		$isfirst = true;
 		foreach($resolved as $re) {
@@ -93,8 +94,6 @@ if ($_POST) {
 	$reqdfieldsn = explode(",", "Host");
 
 	do_input_validation($_POST, $reqdfields, $reqdfieldsn, &$input_errors);
-	$host = trim($_POST['host'], " \t\n\r\0\x0B[]");
-	$host_esc = escapeshellarg($host);
 	
 	if (!is_hostname($host) && !is_ipaddr($host)) {
 		$input_errors[] = gettext("Host must be a valid hostname or IP address.");
@@ -130,7 +129,7 @@ if ($_POST) {
 			$type = "hostname";
 			$resolved = gethostbyname($host);
 			if($resolved) {
-				$dig=`dig $host_esc A | grep $host_esc | grep -v ";" | awk '{ print $5 }'`;
+				$dig=`dig {$host_esc} A | grep {$host_esc} | grep -v ";" | awk '{ print $5 }'`;
 				$resolved = explode("\n", $dig);
 			}
 			$hostname = $host;

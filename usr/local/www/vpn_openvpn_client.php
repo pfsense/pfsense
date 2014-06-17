@@ -158,7 +158,10 @@ if($_GET['act']=="edit"){
 		$pconfig['no_tun_ipv6'] = $a_client[$id]['no_tun_ipv6'];
 		$pconfig['route_no_pull'] = $a_client[$id]['route_no_pull'];
 		$pconfig['route_no_exec'] = $a_client[$id]['route_no_exec'];
-		$pconfig['verbosity_level'] = $a_client[$id]['verbosity_level'];
+		if (isset($a_client[$id]['verbosity_level']))
+			$pconfig['verbosity_level'] = $a_client[$id]['verbosity_level'];
+		else
+			$pconfig['verbosity_level'] = 1; // Default verbosity is 1
 	}
 }
 

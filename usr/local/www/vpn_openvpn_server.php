@@ -209,7 +209,10 @@ if($_GET['act']=="edit"){
 		
 		// New features
 		$pconfig['no_tun_ipv6'] = $a_server[$id]['no_tun_ipv6'];
-		$pconfig['verbosity_level'] = $a_server[$id]['verbosity_level'];		
+		if (isset($a_server[$id]['verbosity_level']))
+			$pconfig['verbosity_level'] = $a_server[$id]['verbosity_level'];
+		else
+			$pconfig['verbosity_level'] = 1; // Default verbosity is 1
 	}
 }
 if ($_POST) {

@@ -43,7 +43,7 @@ global $g;
 $pgtitle = array(gettext("System"),gettext("RRD Graphs"),gettext("Image viewer"));
 
 if ($_GET['database']) {
-	$curdatabase = basename($_GET['database']);
+	$curdatabase = escapeshellarg(basename($_GET['database']));
 } else {
 	$curdatabase = "wan-traffic.rrd";
 }
@@ -56,7 +56,7 @@ if ($_GET['style']) {
 
 /* this is used for temp name */
 if ($_GET['graph']) {
-	$curgraph = $_GET['graph'];
+	$curgraph = escapeshellarg($_GET['graph']);
 } else {
 	$curgraph = "custom";
 }
@@ -1246,14 +1246,14 @@ if(($graphcmdreturn <> 0) || (! $data)) {
 	log_error(sprintf(gettext('Failed to create graph with error code %1$s, the error is: %2$s'),$graphcmdreturn,$graphcmdoutput));
 	if(strstr($curdatabase, "queues")) {
 		log_error(sprintf(gettext("failed to create graph from %s%s, removing database"),$rrddbpath,$curdatabase));
-		exec("/bin/rm -f $rrddbpath$curif$queues");
+		unlink_if_exists($rrddbpath . $curif . $queues);
 		flush();
 		usleep(500);
 		enable_rrd_graphing();
 	}
 	if(strstr($curdatabase, "queuesdrop")) {
 		log_error(sprintf(gettext("failed to create graph from %s%s, removing database"),$rrddbpath,$curdatabase));
-		exec("/bin/rm -f $rrddbpath$curdatabase");
+		unlink_if_exists($rrddbpath . $curdatabase);
 		flush();
 		usleep(500);
 		enable_rrd_graphing();

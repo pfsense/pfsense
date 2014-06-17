@@ -1361,6 +1361,7 @@ function session_auth() {
 		$authcfg = auth_get_authserver($config['system']['webgui']['authmode']);
 		if (authenticate_user($_POST['usernamefld'], $_POST['passwordfld'], $authcfg) || 
 		    authenticate_user($_POST['usernamefld'], $_POST['passwordfld'])) {
+			session_regenerate_id();
 			$_SESSION['Logged_In'] = "True";
 			$_SESSION['Username'] = $_POST['usernamefld'];
 			$_SESSION['last_access'] = time();

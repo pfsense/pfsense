@@ -59,9 +59,9 @@ if($_GET['backupnow'])
 	mwexec_bg("/etc/rc.create_full_backup");
 
 if($_GET['downloadbackup']) {
-	$filename = $_GET['downloadbackup'];
+	$filename = basename($_GET['downloadbackup']);
 	$path = "/root/{$filename}";
-	if(file_exists("/root/{$filename}")) {
+	if(file_exists($path)) {
 		session_write_close();
 		ob_end_clean();
 		session_cache_limiter('public');

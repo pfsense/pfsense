@@ -65,8 +65,13 @@ function domTT_title($title_msg){
 $xml = htmlspecialchars($_GET['xml']);
 if($_POST['xml']) $xml = htmlspecialchars($_POST['xml']);
 
-if($xml == "") {
+$xml = basename($xml);
+
+if ($xml == "") {
             print_info_box_np(gettext("ERROR: No package defined."));
+            die;
+} else if (!file_exists('/usr/local/pkg/' . $xml)) {
+            print_info_box_np(gettext("ERROR: XML file not found"));
             die;
 } else {
             $pkg = parse_xml_config_pkg("/usr/local/pkg/" . $xml, "packagegui");

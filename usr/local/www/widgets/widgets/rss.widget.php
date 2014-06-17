@@ -33,10 +33,10 @@ require_once("pfsense-utils.inc");
 require_once("functions.inc");
 
 if($_POST['rssfeed']) {
-	$config['widgets']['rssfeed'] = str_replace("\n", ",", $_POST['rssfeed']);
-	$config['widgets']['rssmaxitems'] = str_replace("\n", ",", $_POST['rssmaxitems']);
-	$config['widgets']['rsswidgetheight'] = $_POST['rsswidgetheight'];
-	$config['widgets']['rsswidgettextlength'] = $_POST['rsswidgettextlength'];
+	$config['widgets']['rssfeed'] = str_replace("\n", ",", htmlspecialchars($_POST['rssfeed'], ENT_QUOTES | ENT_HTML401));
+	$config['widgets']['rssmaxitems'] = str_replace("\n", ",", htmlspecialchars($_POST['rssmaxitems'], ENT_QUOTES | ENT_HTML401));
+	$config['widgets']['rsswidgetheight'] = htmlspecialchars($_POST['rsswidgetheight'], ENT_QUOTES | ENT_HTML401);
+	$config['widgets']['rsswidgettextlength'] = htmlspecialchars($_POST['rsswidgettextlength'], ENT_QUOTES | ENT_HTML401);
 	write_config("Saved RSS Widget feed via Dashboard");
 	Header("Location: /");
 }
@@ -48,10 +48,10 @@ if($config['widgets']['rssfeed'])
 if($config['widgets']['rssmaxitems'])
 	$max_items =  $config['widgets']['rssmaxitems'];
 
-if($config['widgets']['rsswidgetheight'])
+if(is_numeric($config['widgets']['rsswidgetheight']))
 	$rsswidgetheight =  $config['widgets']['rsswidgetheight'];
 
-if($config['widgets']['rsswidgettextlength'])
+if(is_numeric($config['widgets']['rsswidgettextlength']))
 	$rsswidgettextlength =  $config['widgets']['rsswidgettextlength'];
 
 // Set a default feed if none exists

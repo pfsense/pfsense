@@ -680,7 +680,7 @@ function tuntap_change() {
 	value = document.iform.dev_mode.options[index].value;
 	switch(value) {
 		case "tun":
-			document.getElementById("cbNoTunIPv6").style.display="";
+			document.getElementById("chkboxNoTunIPv6").style.display="";
 			document.getElementById("ipv4_tunnel_network").className="vncellreq";
 			document.getElementById("serverbridge_dhcp").style.display="none";
 			document.getElementById("serverbridge_interface").style.display="none";
@@ -689,7 +689,7 @@ function tuntap_change() {
 			document.getElementById("topology_subnet_opt").style.display="";
 			break;
 		case "tap":
-			document.getElementById("cbNoTunIPv6").style.display="none";
+			document.getElementById("chkboxNoTunIPv6").style.display="none";
 			document.getElementById("ipv4_tunnel_network").className="vncell";
 			if (!p2p) {
 				document.getElementById("serverbridge_dhcp").style.display="";
@@ -1351,7 +1351,7 @@ if ($savemsg)
 								<?php endforeach; ?>
 							</select>
 							<br />
-							<?=gettext("Compress tunnel packets using the LZO algorithm. Adaptive compression will dynamically disable compression for a period of time if OpenVPN detects that the data in the packets is not being compressed efficiently."); ?>.
+							<?=gettext("Compress tunnel packets using the LZO algorithm. Adaptive compression will dynamically disable compression for a period of time if OpenVPN detects that the data in the packets is not being compressed efficiently"); ?>.
 						</td>
 					</tr>
 					<tr>
@@ -1409,7 +1409,7 @@ if ($savemsg)
 						</td>
 					</tr>
 
-					<tr id="cbNoTunIPv6">
+					<tr id="chkboxNoTunIPv6">
 						<td width="22%" valign="top" class="vncell"><?=gettext("Disable IPv6"); ?></td>
 						<td width="78%" class="vtable">
 							<table border="0" cellpadding="2" cellspacing="0" summary="disable-ipv6-srv">

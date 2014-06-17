@@ -64,9 +64,6 @@ if ($_GET['graph']) {
 $now = time();
 
 if (is_numeric($_GET['start'])) {
-        if($start < ($now - (3600 * 24 * 365 * 5))) {
-                $start = $now - (8 * 3600);
-        }
         $start = $_GET['start'];
 } else {
         $start = $now - (8 * 3600);

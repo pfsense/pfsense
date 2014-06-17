@@ -85,7 +85,7 @@ function update_email($email)
 	if(!empty($email))
 	{
 		// Put it in the smartd.conf file
-		shell_exec("/usr/bin/sed -i old 's/^DEVICESCAN.*/DEVICESCAN -H -m " . $email . "/' /usr/local/etc/smartd.conf");
+		shell_exec("/usr/bin/sed -i old 's/^DEVICESCAN.*/DEVICESCAN -H -m " . escapeshellarg($email) . "/' /usr/local/etc/smartd.conf");
 	}
 	// Nope
 	else

@@ -198,6 +198,7 @@
 		<timeservers>0.pfsense.pool.ntp.org</timeservers>
 		<webgui>
 			<protocol>https</protocol>
+			<noautocomplete/>
 		</webgui>
 		<disablenatreflection>yes</disablenatreflection>
 		<!-- <disableconsolemenu/> -->

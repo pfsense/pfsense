@@ -264,9 +264,9 @@ $have_cookies = isset($_COOKIE["cookie_test"]);
 					$nifty_background = "#999";
 					print_info_box(gettext("You are accessing this router by an IP address not configured locally, which may be forwarded by NAT or other means. <br /><br />If you did not setup this forwarding, you may be the target of a man-in-the-middle attack.")); 
 				}
-				$noautocomplete = isset($config['system']['webgui']['noautocomplete']) ? 'autocomplete="off"' : '';
+				$loginautocomplete = isset($config['system']['webgui']['loginautocomplete']) ? '' : 'autocomplete="off"';
 			?>
-			<form id="iform" name="iform" method="post" <?= $noautocomplete ?> action="<?=$_SERVER['SCRIPT_NAME'];?>">
+			<form id="iform" name="iform" method="post" <?= $loginautocomplete ?> action="<?=$_SERVER['SCRIPT_NAME'];?>">
 				<h1>&nbsp;</h1>
 				<div id="inputerrors"><?=$_SESSION['Login_Error'];?></div>
 				<p>

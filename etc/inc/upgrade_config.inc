@@ -3333,4 +3333,13 @@ function upgrade_106_to_107() {
 	}
 }
 
+function upgrade_107_to_108() {
+	global $config;
+
+	if (isset($config['system']['webgui']['noautocomplete']))
+		unset($config['system']['webgui']['noautocomplete']);
+	else
+		$config['system']['webgui']['loginautocomplete'] = true;
+}
+
 ?>

@@ -1,34 +1,34 @@
 <?php
 /*
-        $Id$
-        Copyright 2007 Scott Dale
-        Part of pfSense widgets (https://www.pfsense.org)
-        originally based on m0n0wall (http://m0n0.ch/wall)
+	$Id$
+	Copyright 2007 Scott Dale
+	Part of pfSense widgets (https://www.pfsense.org)
+	originally based on m0n0wall (http://m0n0.ch/wall)
 
-        Copyright (C) 2004-2005 T. Lechat <dev@lechat.org>, Manuel Kasper <mk@neon1.net>
-        and Jonathan Watt <jwatt@jwatt.org>.
-        All rights reserved.
+	Copyright (C) 2004-2005 T. Lechat <dev@lechat.org>, Manuel Kasper <mk@neon1.net>
+	and Jonathan Watt <jwatt@jwatt.org>.
+	All rights reserved.
 
-        Redistribution and use in source and binary forms, with or without
-        modification, are permitted provided that the following conditions are met:
+	Redistribution and use in source and binary forms, with or without
+	modification, are permitted provided that the following conditions are met:
 
-        1. Redistributions of source code must retain the above copyright notice,
-           this list of conditions and the following disclaimer.
+	1. Redistributions of source code must retain the above copyright notice,
+	   this list of conditions and the following disclaimer.
+	
+	2. Redistributions in binary form must reproduce the above copyright
+	   notice, this list of conditions and the following disclaimer in the
+	   documentation and/or other materials provided with the distribution.
 
-        2. Redistributions in binary form must reproduce the above copyright
-           notice, this list of conditions and the following disclaimer in the
-           documentation and/or other materials provided with the distribution.
-
-        THIS SOFTWARE IS PROVIDED ``AS IS'' AND ANY EXPRESS OR IMPLIED WARRANTIES,
-        INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY
-        AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE
-        AUTHOR BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY,
-        OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
-        SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
-        INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
-        CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
-        ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
-        POSSIBILITY OF SUCH DAMAGE.
+	THIS SOFTWARE IS PROVIDED ``AS IS'' AND ANY EXPRESS OR IMPLIED WARRANTIES,
+	INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY
+	AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE
+	AUTHOR BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY,
+	OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+	SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+	INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+	CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+	ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+	POSSIBILITY OF SUCH DAMAGE.
 */
 
 $nocsrf = true;
@@ -55,17 +55,17 @@ if($_POST['filterlogentries']) {
 	if (isset($config['widgets']['filterlogentriesinterfaces'])) $config['widgets']['filterlogentriesinterfaces'] = trim($config['widgets']['filterlogentriesinterfaces']);
 
 	write_config("Saved Filter Log Entries via Dashboard");
-  $filename = $_SERVER['HTTP_REFERER'];
-  if(headers_sent($file, $line)){
-    echo "<script type=\"text/javascript\">\n";
-    echo "//<![CDATA[\n";
-    echo "window.location.href=\"" . $filename . "\";\n";
-    echo "//]]>\n";
-    echo "</script>\n";
-    echo "<noscript>\n";
-    echo "<meta http-equiv=\"refresh\" content=\"0;url=" . $filename . "\" />\n";
-    echo "</noscript>\n";
-  }
+	$filename = $_SERVER['HTTP_REFERER'];
+	if(headers_sent($file, $line)){
+		echo "<script type=\"text/javascript\">\n";
+		echo "//<![CDATA[\n";
+		echo "window.location.href=\"" . $filename . "\";\n";
+		echo "//]]>\n";
+		echo "</script>\n";
+		echo "<noscript>\n";
+		echo "<meta http-equiv=\"refresh\" content=\"0;url=" . $filename . "\" />\n";
+		echo "</noscript>\n";
+	}
 	header("Location: /");
 }
 
@@ -111,7 +111,7 @@ function format_log_line(row) {
 		'<td class="listMRr ellipsis" title="' + row[1] + '">' + row[1].slice(0,-3) + '<\/td>' +
 		'<td class="listMRr ellipsis" title="' + row[2] + '">' + row[2] + '<\/td>' +
 		'<td class="listMRr ellipsis" title="' + row[3] + '">' + row[3] + '<\/td>' +
- 		'<td class="listMRr ellipsis" title="' + row[4] + '">' + row[4] + '<\/td>';
+		'<td class="listMRr ellipsis" title="' + row[4] + '">' + row[4] + '<\/td>';
 
 	var nentriesacts = "<?php echo $nentriesacts; ?>";
 	var nentriesinterfaces = "<?php echo $nentriesinterfaces; ?>";
@@ -149,14 +149,17 @@ function format_log_line(row) {
 		Interfaces:
 		<select id="filterlogentriesinterfaces" name="filterlogentriesinterfaces" class="formselect">
 			<option value="All">ALL</option>
-                      <?php
-						$interfaces = get_configured_interface_with_descr();
-					  	foreach ($interfaces as $iface => $ifacename): ?>
-                        <option value="<?=$iface;?>" <?php if ($nentriesinterfaces == $iface) echo "selected=\"selected\"";?>>
-                      <?=htmlspecialchars($ifacename);?>
-                      </option>
-                      <?php endforeach; ?>
-                    </select>
+<?php
+		$interfaces = get_configured_interface_with_descr();
+		foreach ($interfaces as $iface => $ifacename):
+?>
+			<option value="<?=$iface;?>" <?php if ($nentriesinterfaces == $iface) echo "selected=\"selected\"";?>>
+				<?=htmlspecialchars($ifacename);?>
+			</option>
+<?php
+		endforeach;
+?>
+		</select>
 
 		<input id="submita" name="submita" type="submit" class="formbtn" value="Save" />
 	</form>

@@ -40,33 +40,28 @@ require_once("functions.inc");
 /* In an effort to reduce duplicate code, many shared functions have been moved here. */
 require_once("filter_log.inc");
 
-if($_POST['filterlogentries']) {
-	unset($config['widgets']['filterlogentries']);
-	if( ($_POST['filterlogentries']) and ($_POST['filterlogentries'] != ' ') ) $config['widgets']['filterlogentries'] = $_POST['filterlogentries'];
+if(is_numeric($_POST['filterlogentries'])) {
+	$config['widgets']['filterlogentries'] = $_POST['filterlogentries'];
 
-	unset($config['widgets']['filterlogentriesacts']);
-	if($_POST['actpass'])   $config['widgets']['filterlogentriesacts'] .= $_POST['actpass']   . " ";
-	if($_POST['actblock'])  $config['widgets']['filterlogentriesacts'] .= $_POST['actblock']  . " ";
-	if($_POST['actreject']) $config['widgets']['filterlogentriesacts'] .= $_POST['actreject'] . " ";
-	if (isset($config['widgets']['filterlogentriesacts'])) $config['widgets']['filterlogentriesacts'] = trim($config['widgets']['filterlogentriesacts']);
+	$acts = array();
+	if ($_POST['actpass'])   $acts[] = "Pass";
+	if ($_POST['actblock'])  $acts[] = "Block";
+	if ($_POST['actreject']) $acts[] = "Reject";
 
-	unset($config['widgets']['filterlogentriesinterfaces']);
-	if( ($_POST['filterlogentriesinterfaces']) and ($_POST['filterlogentriesinterfaces'] != "All") ) $config['widgets']['filterlogentriesinterfaces'] = $_POST['filterlogentriesinterfaces'];
-	if (isset($config['widgets']['filterlogentriesinterfaces'])) $config['widgets']['filterlogentriesinterfaces'] = trim($config['widgets']['filterlogentriesinterfaces']);
+	if (!empty($acts))
+		$config['widgets']['filterlogentriesacts'] = implode(" ", $acts);
+	else
+		unset($config['widgets']['filterlogentriesacts']);
+	unset($acts);
+
+	if( ($_POST['filterlogentriesinterfaces']) and ($_POST['filterlogentriesinterfaces'] != "All") )
+		$config['widgets']['filterlogentriesinterfaces'] = trim($_POST['filterlogentriesinterfaces']);
+	else
+		unset($config['widgets']['filterlogentriesinterfaces']);
 
 	write_config("Saved Filter Log Entries via Dashboard");
-	$filename = $_SERVER['HTTP_REFERER'];
-	if(headers_sent($file, $line)){
-		echo "<script type=\"text/javascript\">\n";
-		echo "//<![CDATA[\n";
-		echo "window.location.href=\"" . $filename . "\";\n";
-		echo "//]]>\n";
-		echo "</script>\n";
-		echo "<noscript>\n";
-		echo "<meta http-equiv=\"refresh\" content=\"0;url=" . $filename . "\" />\n";
-		echo "</noscript>\n";
-	}
-	header("Location: /");
+	Header("Location: /");
+	exit(0);
 }
 
 $nentries = isset($config['widgets']['filterlogentries']) ? $config['widgets']['filterlogentries'] : 5;
@@ -76,9 +71,10 @@ $nentries = isset($config['widgets']['filterlogentries']) ? $config['widgets']['
 $nentriesacts       = isset($config['widgets']['filterlogentriesacts'])       ? $config['widgets']['filterlogentriesacts']       : 'All';
 $nentriesinterfaces = isset($config['widgets']['filterlogentriesinterfaces']) ? $config['widgets']['filterlogentriesinterfaces'] : 'All';
 
-$filterfieldsarray = array("act", "interface");
-$filterfieldsarray['act'] = $nentriesacts;
-$filterfieldsarray['interface'] = $nentriesinterfaces;
+$filterfieldsarray = array(
+	"act" => $nentriesacts,
+	"interface" => $nentriesinterfaces
+);
 
 $filter_logfile = "{$g['varlog_path']}/filter.log";
 $filterlog = conv_log_filter($filter_logfile, $nentries, 50, $filterfieldsarray);        //Get log entries
@@ -139,7 +135,7 @@ function format_log_line(row) {
 		</select>
 
 <?php
-		$Include_Act = explode(",", str_replace(" ", ",", $nentriesacts));
+		$Include_Act = explode(" ", $nentriesacts);
 		if ($nentriesinterfaces == "All") $nentriesinterfaces = "";
 ?>
 		<input id="actpass"   name="actpass"   type="checkbox" value="Pass"   <?php if (in_arrayi('Pass',   $Include_Act)) echo "checked=\"checked\""; ?> /> Pass
@@ -158,6 +154,8 @@ function format_log_line(row) {
 			</option>
 <?php
 		endforeach;
+		unset($interfaces);
+		unset($Include_Act);
 ?>
 		</select>
 

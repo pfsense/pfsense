@@ -65,16 +65,14 @@ function domTT_title($title_msg){
 $xml = htmlspecialchars($_GET['xml']);
 if($_POST['xml']) $xml = htmlspecialchars($_POST['xml']);
 
-$xml = basename($xml);
+$xml_fullpath = realpath('/usr/local/pkg/' . $xml);
 
-if ($xml == "") {
-            print_info_box_np(gettext("ERROR: No package defined."));
-            die;
-} else if (!file_exists('/usr/local/pkg/' . $xml)) {
-            print_info_box_np(gettext("ERROR: XML file not found"));
+if ($xml == "" || $xml_fullpath === false ||
+    substr($xml_fullpath, 0, strlen('/usr/local/pkg/')) != '/usr/local/pkg/') {
+            print_info_box_np(gettext("ERROR: No valid package defined."));
             die;
 } else {
-            $pkg = parse_xml_config_pkg("/usr/local/pkg/" . $xml, "packagegui");
+            $pkg = parse_xml_config_pkg($xml_fullpath, "packagegui");
 }
 
 if($pkg['include_file'] <> "") {

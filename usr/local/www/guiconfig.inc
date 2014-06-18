@@ -614,7 +614,7 @@ function dump_clog($logfile, $tail, $withorig = true, $grepfor = "", $grepinvert
 		$grepline .= " | /usr/bin/egrep -v " . escapeshellarg(implode("|", $grepinvert));
 	if (is_dir($logfile)) {
 		$logarr = array("File $logfile is a directory.");
-	} elsif(file_exists($logfile) && filesize($logfile) == 0) {
+	} elseif (file_exists($logfile) && filesize($logfile) == 0) {
 		$logarr = array("Log file started.");
 	} else {
 		if($config['system']['disablesyslogclog']) {

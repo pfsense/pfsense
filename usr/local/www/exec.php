@@ -102,13 +102,14 @@ include("head.inc");
 <?php
 
 if (isBlank( $_POST['txtRecallBuffer'] )) {
-   puts( "   var arrRecallBuffer = new Array;" );
+	puts( "   var arrRecallBuffer = new Array;" );
 } else {
-   puts( "   var arrRecallBuffer = new Array(" );
-   $arrBuffer = explode( "&", $_POST['txtRecallBuffer'] );
-   for ($i=0; $i < (count( $arrBuffer ) - 1); $i++) puts( "      '" . htmlspecialchars($arrBuffer[$i]) . "'," );
-   puts( "      '" . htmlspecialchars($arrBuffer[count( $arrBuffer ) - 1]) . "'" );
-   puts( "   );" );
+	puts( "   var arrRecallBuffer = new Array(" );
+	$arrBuffer = explode( "&", $_POST['txtRecallBuffer'] );
+	for ($i=0; $i < (count( $arrBuffer ) - 1); $i++)
+		puts( "      '" . htmlspecialchars($arrBuffer[$i]) . "'," );
+	puts( "      '" . htmlspecialchars($arrBuffer[count( $arrBuffer ) - 1]) . "'" );
+	puts( "   );" );
 }
 
 ?>

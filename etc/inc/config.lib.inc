@@ -190,13 +190,17 @@ function generate_config_cache($config) {
 }
 
 function discover_last_backup() {
-        $backups = explode("\n", `cd /cf/conf/backup && ls -ltr *.xml | awk '{print \$9}'`);
+	$backups = glob('/cf/conf/backup/*.xml');
 	$last_backup = "";
-        foreach($backups as $backup)
-        	if($backup)
-	        	$last_backup = $backup;
+	$last_mtime = 0;
+	foreach($backups as $backup) {
+		if(filemtime($backup) > $last_mtime) {
+			$last_mtime = filemtime($backup);
+			$last_backup = $backup;
+		}
+	}
 
-        return $last_backup;
+	return basename($last_backup);
 }
 
 function restore_backup($file) {

@@ -754,7 +754,7 @@ function fixup_default_gateway($ipprotocol, $gateways_status, $gateways_arr) {
 			mwexec("/sbin/route change {$inetfamily} default {$gateways_arr[$upgw]['gateway']}");
 		}
 	} else {
-		$defaultgw = trim(`/sbin/route -n get -{$ipprotocol} default | /usr/bin/grep gateway | /usr/bin/sed 's/gateway://g'`, " \n");
+		$defaultgw = trim(exec("/sbin/route -n get -{$ipprotocol} default | /usr/bin/awk '/gateway:/ {print $2}'"), " \n");
 		if(is_ipaddrv6($gateways_arr[$dfltgwname]['gateway'])) {
 			$inetfamily = "-inet6";
 		} else {

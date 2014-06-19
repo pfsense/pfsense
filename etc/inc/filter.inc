@@ -106,7 +106,7 @@ function flowtable_configure() {
 	else
 		$maxstates = 150000;
 	// nmbflows cpu count * ($maxstates * 2)
-	$cpus = trim(`/sbin/sysctl -n kern.smp.cpus`, " \n");
+	$cpus = trim(exec('/sbin/sysctl -n kern.smp.cpus'), " \n");
 	$nmbflows = ($cpus*($maxstates*2));
 	// Flowtable currently only works on 8.0
 	if(get_freebsd_version() == "8") {

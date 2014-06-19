@@ -3418,7 +3418,7 @@ function filter_tdr_hour($schedule) {
 	$now = strtotime("now");
 	if($g['debug'])
 		log_error("[TDR DEBUG] S: $starting_time E: $ending_time N: $now");
-	if($now >= $starting_time and $now <= $ending_time)
+	if($now >= $starting_time and $now < $ending_time)
 		return true;
 	return false;
 }

@@ -94,8 +94,8 @@ $pgtitle = array(gettext("Diagnostics"),gettext("Execute command"));
 include("head.inc");
 ?>
 
-<script language="javascript">
-<!--
+<script type="text/javascript">
+//<![CDATA[
 
    // Create recall buffer array (of encoded strings).
 
@@ -183,7 +183,7 @@ if (isBlank( $_POST['txtRecallBuffer'] )) {
 
       return true;
    }
-//-->
+//]]>
 </script>
 <style>
 <!--

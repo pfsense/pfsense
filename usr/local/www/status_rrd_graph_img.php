@@ -57,7 +57,7 @@ if ($_GET['style']) {
 
 /* this is used for temp name */
 if ($_GET['graph']) {
-	$curgraph = str_replace(array("<", ">", ";", "&", "'", '"'), "", htmlspecialchars_decode($_GET['graph'], ENT_QUOTES | ENT_HTML401));
+	$curgraph = str_replace(array("<", ">", ";", "&", "'", '"', '.', '/'), "", htmlspecialchars_decode($_GET['graph'], ENT_QUOTES | ENT_HTML401));
 } else {
 	$curgraph = "custom";
 }

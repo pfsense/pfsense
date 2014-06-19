@@ -1184,7 +1184,7 @@ elseif((strstr($curdatabase, "ntpd.rrd")) && (file_exists("$rrddbpath$curdatabas
 	$graphcmd .= "--start $start --end $end --step $step ";
 	$graphcmd .= "--vertical-label \"time\" ";
 	$graphcmd .= "--color SHADEA#eeeeee --color SHADEB#eeeeee ";
-	$graphcmd .= "--title \"`hostname` - {$prettydb} - {$hperiod} - {$havg} average\" ";
+	$graphcmd .= "--title \"" . php_uname('n') . " - {$prettydb} - {$hperiod} - {$havg} average\" ";
 	$graphcmd .= "--height 200 --width 620 ";
 	$graphcmd .= "DEF:\"offset=$rrddbpath$curdatabase:offset:AVERAGE:step=$step\" ";
 	$graphcmd .= "DEF:\"sjit=$rrddbpath$curdatabase:sjit:AVERAGE:step=$step\" ";
@@ -1220,7 +1220,7 @@ elseif((strstr($curdatabase, "ntpd.rrd")) && (file_exists("$rrddbpath$curdatabas
 	$graphcmd .= "GPRINT:\"wander:MAX:%7.2lf %s    \" ";
 	$graphcmd .= "GPRINT:\"wander:LAST:%7.2lf %S    \" ";
 	$graphcmd .= "COMMENT:\"\\n\" ";
-	$graphcmd .= "COMMENT:\"\t\t\t\t\t\t\t\t\t\t\t\t\t`date +\"%b %d %H\:%M\:%S %Y\"`\" ";
+	$graphcmd .= "COMMENT:\"\t\t\t\t\t\t\t\t\t\t\t\t\t" . strftime('%b %d %H\:%M\:%S %Y') . "\" ";
 }
 else {
 	$data = false;

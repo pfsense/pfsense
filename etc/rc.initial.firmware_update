@@ -167,11 +167,6 @@ function do_upgrade($path, $type) {
 	}
 	mark_subsystem_dirty('firmwarelock');
 	echo "\nOne moment please...\nInvoking firmware upgrade...";
-
-	/* Checking option "Disable auto update packages" to disable package update after firmware update */
-	if (isset($config['system']['firmware']['pkg_autoupdate_disable']))
-		safe_write_file("{$g['cf_conf_path']}/pkg_autoupdate_disabled", getmypid(), false);
-
 	if($type == "bdiff")
 		mwexec_bg("/etc/rc.firmware delta_update $path");
 	elseif($type == "nanobsd")

@@ -207,7 +207,6 @@ if($_GET['act']=="edit"){
 
 		$pconfig['duplicate_cn'] = isset($a_server[$id]['duplicate_cn']);
 		
-		// New features
 		$pconfig['no_tun_ipv6'] = $a_server[$id]['no_tun_ipv6'];
 		if (isset($a_server[$id]['verbosity_level']))
 			$pconfig['verbosity_level'] = $a_server[$id]['verbosity_level'];
@@ -437,7 +436,6 @@ if ($_POST) {
 		$server['netbios_ntype'] = $pconfig['netbios_ntype'];
 		$server['netbios_scope'] = $pconfig['netbios_scope'];
 		 
-		// New features
 		$server['no_tun_ipv6'] = $pconfig['no_tun_ipv6'];
 		$server['verbosity_level'] = $pconfig['verbosity_level'];
 

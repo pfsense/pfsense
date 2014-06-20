@@ -483,8 +483,6 @@ function openvpn_reconfigure($mode, $settings) {
 		case "tun":
 			if (!$settings['no_tun_ipv6']) {
 				$conf .= "tun-ipv6\n";
-			} else {
-			
 			}
 			break;
 	}

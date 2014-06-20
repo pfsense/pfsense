@@ -456,7 +456,7 @@ fi
 # Log pfSense version to syslog
 BUILDTIME=`cat /etc/version.buildtime`
 ARCH=`uname -m`
-echo "pfSense ($PLATFORM) $version $ARCH $BUILDTIME"
+echo "$product ($PLATFORM) $version $ARCH $BUILDTIME"
 
 echo "Bootup complete"
 

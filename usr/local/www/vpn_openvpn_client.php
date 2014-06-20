@@ -154,7 +154,6 @@ if($_GET['act']=="edit"){
 		$pconfig['autokey_enable'] = "yes";
 		$pconfig['autotls_enable'] = "yes";
 		
-		// New features
 		$pconfig['no_tun_ipv6'] = $a_client[$id]['no_tun_ipv6'];
 		$pconfig['route_no_pull'] = $a_client[$id]['route_no_pull'];
 		$pconfig['route_no_exec'] = $a_client[$id]['route_no_exec'];
@@ -321,7 +320,6 @@ if ($_POST) {
 		$client['compression'] = $pconfig['compression'];
 		$client['passtos'] = $pconfig['passtos'];
 
-		// New features
 		$client['no_tun_ipv6'] = $pconfig['no_tun_ipv6'];
 		$client['route_no_pull'] = $pconfig['route_no_pull'];
 		$client['route_no_exec'] = $pconfig['route_no_exec'];
@@ -983,7 +981,6 @@ if ($savemsg)
 							</table>
 						</td>
 					</tr>
-
 
 					<tr id="chkboxNoTunIPv6">
 						<td width="22%" valign="top" class="vncell"><?=gettext("Disable IPv6"); ?></td>

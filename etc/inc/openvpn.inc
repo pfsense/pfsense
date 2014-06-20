@@ -476,7 +476,12 @@ function openvpn_reconfigure($mode, $settings) {
 		}
 	}
 
-	$conf = "verb {$settings['verbosity_level']}\n";
+	if (isset($settings['verbosity_level'])) {
+		$conf = "verb {$settings['verbosity_level']}\n";
+	} else {
+		$conf = 'verb 1\n'; // Default verbosity level
+	}
+		
 	$conf .= "dev {$devname}\n";
 	$conf .= "dev-type {$settings['dev_mode']}\n";
 	switch($settings['dev_mode']) {

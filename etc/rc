@@ -452,7 +452,7 @@ if [ "${GMIRROR_STATUS}" != "" ]; then
 	/usr/local/bin/minicron 60 /var/run/gmirror_status_check.pid /usr/local/sbin/gmirror_status_check.php
 fi
 
-# Log pfSense version to syslog
+# Log product version to syslog
 BUILDTIME=`cat /etc/version.buildtime`
 ARCH=`uname -m`
 echo "$product ($PLATFORM) $version $ARCH $BUILDTIME"

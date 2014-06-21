@@ -355,16 +355,14 @@ function prot_change() {
 								<td width="78%" class="vtable">
 									<select name="ssl-certref" id="ssl-certref" class="formselect">
 										<?php
-											$rowIndex = 0;
 											foreach($a_cert as $cert):
-												$selected = "";
 												if ($pconfig['ssl-certref'] == $cert['refid'])
 													$selected = "selected=\"selected\"";
-												$rowIndex++;
 										?>
 										<option value="<?=$cert['refid'];?>" <?=$selected;?>><?=$cert['descr'];?></option>
-										<?php endforeach;
-										if ($rowIndex == 0)
+										<?php
+										endforeach;
+										if (!count($a_cert))
 											echo "<option></option>";
 										?>
 									</select>

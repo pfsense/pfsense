@@ -748,15 +748,14 @@ function sshkeyClicked(obj) {
                                                                 	<select name='keylen' class="formselect">
                                                                 <?php
 									$cert_keylens = array( "2048", "512", "1024", "4096");
-																		$rowIndex = 0;
                                                                         foreach( $cert_keylens as $len):
-																			$rowIndex++;
                                                                 ?>
                                                                         <option value="<?=$len;?>"><?=$len;?></option>
-                                                                <?php endforeach;
-																if ($rowIndex == 0)
-																	echo "<option></option>";
-																?>
+                                                                <?php
+                                                                endforeach;
+                                                                if (!count($cert_keylens))
+                                                                	echo "<option></option>";
+                                                                ?>
                                                                 	</select>
                                                                 	bits
                                                         	</td>

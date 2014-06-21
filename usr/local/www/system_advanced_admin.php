@@ -356,6 +356,7 @@ function prot_change() {
 									<select name="ssl-certref" id="ssl-certref" class="formselect">
 										<?php
 											foreach($a_cert as $cert):
+												$selected = "";
 												if ($pconfig['ssl-certref'] == $cert['refid'])
 													$selected = "selected=\"selected\"";
 										?>

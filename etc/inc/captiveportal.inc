@@ -96,23 +96,23 @@ function get_default_captive_portal_html() {
 								<table>
 									<tr><td colspan="2"><center>Welcome to the {$g['product_name']} Captive Portal!</td></tr>
 									<tr><td>&nbsp;</td></tr>
+EOD;
+	if(!isset($config['voucher'][$cpzone]['enable'])) :
+		$htmltext .= <<<EOD
 									<tr><td align="right">Username:</td><td><input name="auth_user" type="text" style="border: 1px dashed;"></td></tr>
 									<tr><td align="right">Password:</td><td><input name="auth_pass" type="password" style="border: 1px dashed;"></td></tr>
-									<tr><td>&nbsp;</td></tr>
-
 EOD;
-
-	if(isset($config['voucher'][$cpzone]['enable'])) {
-	$htmltext .= <<<EOD
+	else :
+		$htmltext .= <<<EOD
 									<tr>
 										<td align="right">Enter Voucher Code: </td>
 										<td><input name="auth_voucher" type="text" style="border:1px dashed;" size="22"></td>
 									</tr>
-
 EOD;
-	}
+	endif;
 
 	$htmltext .= <<<EOD
+									<tr><td>&nbsp;</td></tr>
 									<tr>
 										<td colspan="2"><center><input name="accept" type="submit" value="Continue"></center></td>
 									</tr>

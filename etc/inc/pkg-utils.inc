@@ -540,6 +540,7 @@ function pkg_fetch_recursive($pkgname, $filename, $dependlevel = 0, $base_url = 
 				array("target" => "local/lib", "link_name" => "lib"),
 				array("target" => "local/libexec", "link_name" => "libexec"),
 				array("target" => "local/share", "link_name" => "share"),
+				array("target" => "local/www", "link_name" => "www"),
 				array("target" => "local/etc", "link_name" => "etc")
 			);
 

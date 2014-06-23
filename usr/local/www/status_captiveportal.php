@@ -62,6 +62,9 @@ if (!is_array($config['captiveportal']))
         $config['captiveportal'] = array();
 $a_cp =& $config['captiveportal'];
 
+if (count($a_cp) == 1)
+ $cpzone = current(array_keys($a_cp));
+
 include("head.inc");
 
 ?>
@@ -122,7 +125,8 @@ $mac_man = load_mac_manufacturer_table();
 	<td width="20%" class="vncell" valign="top"> 
                <br /><?=gettext("Captive Portal Zone"); ?><br/><br />
 	</td>
-	<td class="vncell" width="30%" align="center"> 
+	<td class="vncell" width="30%" align="center">
+	<?php if (count($a_cp) >  1) { ?>
 	<form action="status_captiveportal.php" method="post" enctype="multipart/form-data" name="form1" id="form1">
 		<select name="zone" class="formselect" onchange="document.form1.submit()">
 		<option value="">none</option>
@@ -136,6 +140,7 @@ $mac_man = load_mac_manufacturer_table();
                </select>
 		<br />
 	</form>
+	<?php } else echo $a_cp[$cpzone]['zone']; ?>
 	</td>
 	<td colspan="3" width="50%"></td>
   </tr>

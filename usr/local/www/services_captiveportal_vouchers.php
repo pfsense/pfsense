@@ -513,8 +513,9 @@ function enable_change(enable_change) {
 								"time, the voucher can be re-used from the same or a different computer. If the voucher " .
 								"is used again from another computer, the previous session is stopped."); ?>
 						<?php else: ?>
-							<?=gettext("Enable Voucher support first using the checkbox above and hit Save at the bottom."); ?></td>
+							<?=gettext("Enable Voucher support first using the checkbox above and hit Save at the bottom."); ?>
 						<?php endif;?>
+						</td>
 					</tr>
 					<tr>
 						<td valign="top" class="vncellreq">

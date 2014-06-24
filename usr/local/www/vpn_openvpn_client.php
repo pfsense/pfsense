@@ -993,7 +993,7 @@ if ($savemsg)
 									</td>
 									<td>
 										<span class="vexpl">
-											<?=gettext("Do not forward IPv6 traffic"); ?>.
+											<?=gettext("Don't forward IPv6 traffic"); ?>.
 										</span>
 									</td>
 								</tr>
@@ -1002,7 +1002,7 @@ if ($savemsg)
 					</tr>
 
 					<tr id="chkboxRouteNoPull">
-						<td width="22%" valign="top" class="vncell"><?=gettext("Dont pull routes"); ?></td>
+						<td width="22%" valign="top" class="vncell"><?=gettext("Don't pull routes"); ?></td>
 						<td width="78%" class="vtable">
 							<table border="0" cellpadding="2" cellspacing="0" summary="dont-pull-routes">
 								<tr>
@@ -1021,7 +1021,7 @@ if ($savemsg)
 					</tr>
 
 					<tr id="chkboxRouteNoExec">
-						<td width="22%" valign="top" class="vncell"><?=gettext("Dont add/remove routes"); ?></td>
+						<td width="22%" valign="top" class="vncell"><?=gettext("Don't add/remove routes"); ?></td>
 						<td width="78%" class="vtable">
 							<table border="0" cellpadding="2" cellspacing="0" summary="dont-exec-routes">
 								<tr>

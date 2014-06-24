@@ -129,9 +129,9 @@ $firewall_rules_dscp_types = array("af11",
 				"cs5",
 				"cs6",
 				"cs7",
-				"0x01 (reliability, ToS 0x04)",
-				"0x02 (throughput, ToS 0x08)",
-				"0x04 (lowdelay, ToS 0x10)");
+				"0x01",
+				"0x02",
+				"0x04");
 
 $auth_server_types = array(
 	'ldap' => "LDAP",

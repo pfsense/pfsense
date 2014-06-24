@@ -1421,7 +1421,7 @@ if ($savemsg)
 									</td>
 									<td>
 										<span class="vexpl">
-											<?=gettext("Do not forward IPv6 traffic"); ?>.
+											<?=gettext("Don't forward IPv6 traffic"); ?>.
 										</span>
 									</td>
 								</tr>

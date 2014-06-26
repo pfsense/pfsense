@@ -539,7 +539,7 @@ function prot_change() {
 								<td width="22%" valign="top" class="vncell"><?=gettext("Serial Terminal"); ?></td>
 								<td width="78%" class="vtable">
 									<input name="enableserial" type="checkbox" id="enableserial" value="yes" <?php if (isset($pconfig['enableserial'])) echo "checked=\"checked\""; ?> />
-									<strong><?=gettext("Enables the first serial port with 9600/8/N/1 by default, or another speed selectable below."); ?></strong>
+									<strong><?=gettext("Enables the first serial port with 115200/8/N/1 by default, or another speed selectable below."); ?></strong>
 									<span class="vexpl"><?=gettext("Note:  This will redirect the console output and messages to the serial port. You can still access the console menu from the internal video card/keyboard. A <b>null modem</b> serial cable or adapter is required to use the serial console."); ?></span>
 								</td>
 							</tr>
@@ -548,12 +548,12 @@ function prot_change() {
 								<td width="22%" valign="top" class="vncell"><?=gettext("Serial Speed")?></td>
 								<td width="78%" class="vtable">
 									<select name="serialspeed" id="serialspeed" class="formselect">
-										<option value="9600"   <?php if ($pconfig['serialspeed'] == "9600")   echo "selected=\"selected\"";?>>9600</option>
-										<option value="14400"  <?php if ($pconfig['serialspeed'] == "14400")  echo "selected=\"selected\"";?>>14400</option>
-										<option value="19200"  <?php if ($pconfig['serialspeed'] == "19200")  echo "selected=\"selected\"";?>>19200</option>
-										<option value="38400"  <?php if ($pconfig['serialspeed'] == "38400")  echo "selected=\"selected\"";?>>38400</option>
-										<option value="57600"  <?php if ($pconfig['serialspeed'] == "57600")  echo "selected=\"selected\"";?>>57600</option>
 										<option value="115200" <?php if ($pconfig['serialspeed'] == "115200") echo "selected=\"selected\"";?>>115200</option>
+										<option value="57600"  <?php if ($pconfig['serialspeed'] == "57600")  echo "selected=\"selected\"";?>>57600</option>
+										<option value="38400"  <?php if ($pconfig['serialspeed'] == "38400")  echo "selected=\"selected\"";?>>38400</option>
+										<option value="19200"  <?php if ($pconfig['serialspeed'] == "19200")  echo "selected=\"selected\"";?>>19200</option>
+										<option value="14400"  <?php if ($pconfig['serialspeed'] == "14400")  echo "selected=\"selected\"";?>>14400</option>
+										<option value="9600"   <?php if ($pconfig['serialspeed'] == "9600")   echo "selected=\"selected\"";?>>9600</option>
 									</select> bps
 									<br /><?=gettext("Allows selection of different speeds for the serial console port."); ?>
 								</td>

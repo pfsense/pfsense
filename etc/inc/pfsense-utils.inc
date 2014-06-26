@@ -988,6 +988,7 @@ function setup_serial_port($when="save", $path="") {
 	else
 		$boot_config = "";
 
+	$serialspeed = (is_numeric($config['system']['serialspeed'])) ? $config['system']['serialspeed'] : "115200";
 	if(($g['platform'] != "cdrom") && ($g['platform'] != "nanobsd")) {
 		$boot_config_split = explode("\n", $boot_config);
 		$fd = fopen($boot_config_file,"w");
@@ -1001,7 +1002,7 @@ function setup_serial_port($when="save", $path="") {
 				}
 			}
 			if(isset($config['system']['enableserial']) || $g['enableserial_force']) {
-				fwrite($fd, "-D");
+				fwrite($fd, "-S{$serialspeed} -D");
 			}
 			fclose($fd);
 		}
@@ -1024,11 +1025,9 @@ function setup_serial_port($when="save", $path="") {
 					&& (stripos($bcs, "hw.usb.no_pf") === false))
 					$new_boot_config[] = $bcs;
 
-			$serialspeed = (is_numeric($config['system']['serialspeed'])) ? $config['system']['serialspeed'] : "9600";
 			if(isset($config['system']['enableserial']) || $g['enableserial_force']) {
 				$new_boot_config[] = 'boot_multicons="YES"';
 				$new_boot_config[] = 'boot_serial="YES"';
-				$new_boot_config[] = 'comconsole_speed="' . $serialspeed . '"';
 				$primaryconsole = isset($g['primaryconsole_force']) ? $g['primaryconsole_force'] : $config['system']['primaryconsole'];
 				switch ($primaryconsole) {
 					case "video":
@@ -1038,10 +1037,8 @@ function setup_serial_port($when="save", $path="") {
 					default:
 						$new_boot_config[] = 'console="comconsole,vidconsole"';
 				}
-			} elseif ($g['platform'] == "nanobsd") {
-				$new_boot_config[] = 'comconsole_speed="' . $serialspeed . '"';
 			}
-
+			$new_boot_config[] = 'comconsole_speed="' . $serialspeed . '"';
 			$new_boot_config[] = 'hw.usb.no_pf="1"';
 
 			file_put_contents($loader_conf_file, implode("\n", $new_boot_config) . "\n");

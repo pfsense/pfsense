@@ -3150,6 +3150,10 @@ function upgrade_097_to_098() {
 
 function upgrade_098_to_099() {
 	global $config;
+
+	if (empty($config['dhcpd']) || !is_array($config['dhcpd']))
+		return;
+
 	foreach ($config['dhcpd'] as & $dhcpifconf) {
 		if (isset($dhcpifconf['next-server'])) {
 			$dhcpifconf['nextserver'] = $dhcpifconf['next-server'];

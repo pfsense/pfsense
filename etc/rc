@@ -197,7 +197,7 @@ else
 		/bin/mkdir -p /var/db/pkg
 		/bin/mv /root/var/db/pkg /var/db/pkg
 		/bin/mkdir -p /var/db/pbi
-		/bin/mv /root/var/db/pkg /var/db/pbi
+		/bin/mv /root/var/db/pbi /var/db/pbi
 	fi
 fi
 

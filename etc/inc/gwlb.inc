@@ -31,6 +31,7 @@
  */
 require_once("config.inc");
 require_once("rrd.inc");
+require_once("openvpn.inc");
 
 /* Returns an array of default values used for apinger.conf */
 function return_apinger_defaults() {
@@ -555,8 +556,14 @@ function return_gateways_array($disabled = false, $localhost = false, $inactive 
 				$ctype = strtoupper($ifcfg['ipaddr']);
 				break;
 			default:
-				if (substr($ifcfg['if'], 0, 4) ==  "ovpn")
+				if (substr($ifcfg['if'], 0, 4) ==  "ovpn") {
+					// if current iface is an ovpn server endpoint then skip it
+					if (is_array(openvpn_get_server_by_iface_name($ifcfg['if']))) {
+							break 2;							
+					}
+
 					$ctype = "VPNv4";
+				}
 				break;
 		}
 		$ctype = "_". strtoupper($ctype);
@@ -626,10 +633,18 @@ function return_gateways_array($disabled = false, $localhost = false, $inactive 
 				break;
 			default:
 				$tunnelif = substr($ifcfg['if'], 0, 3);
-				if (substr($ifcfg['if'], 0, 4) ==  "ovpn")
+				if (substr($ifcfg['if'], 0, 4) ==  "ovpn") {
+					// if current iface is an ovpn server endpoint then skip it
+					if (is_array(openvpn_get_server_by_iface_name($ifcfg['if']))) {
+							break 2;							
+					}
+
 					$ctype = "VPNv6";
-				else if ($tunnelif == "gif" || $tunnelif == "gre")
+				}
+				else if ($tunnelif == "gif" || $tunnelif == "gre") {
 					$ctype = "TUNNELv6";
+				}
+
 				break;
 		}
 		$ctype = "_". strtoupper($ctype);

@@ -73,14 +73,14 @@ if ($filtersubmit) {
 
 $filterlogentries_submit = getGETPOSTsettingvalue('filterlogentries_submit', null);
 if ($filterlogentries_submit) {
-	$filterfieldsarray = array("act", "time", "interface", "srcip", "srcport", "dstip", "dstport", "proto", "tcpflags");
+	$filterfieldsarray = array();
 
 	$actpass = getGETPOSTsettingvalue('actpass', null);
 	$actblock = getGETPOSTsettingvalue('actblock', null);
 	$actreject = getGETPOSTsettingvalue('actreject', null);
 
-	$filterfieldsarray['act'] = trim($actpass . " " . $actblock . " " . $actreject);
-	$filterfieldsarray['act'] = $filterfieldsarray['act'] ? $filterfieldsarray['act'] : 'All';
+	$filterfieldsarray['act'] = str_replace("  ", " ", trim($actpass . " " . $actblock . " " . $actreject));
+	$filterfieldsarray['act'] = $filterfieldsarray['act'] != "" ? $filterfieldsarray['act'] : 'All';
 	$filterfieldsarray['time'] = getGETPOSTsettingvalue('filterlogentries_time', null);
 	$filterfieldsarray['interface'] = getGETPOSTsettingvalue('filterlogentries_interfaces', null);
 	$filterfieldsarray['srcip'] = getGETPOSTsettingvalue('filterlogentries_sourceipaddress', null);

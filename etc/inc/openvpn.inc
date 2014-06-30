@@ -1440,4 +1440,30 @@ function openvpn_restart_by_vpnid($mode, $vpnid) {
 	openvpn_restart($mode, $settings);
 }
 
+/* Return an openvpn server instance by interface name.
+
+   returns:
+	Array if instance found;
+	false otherwise;	*/
+function openvpn_get_server_by_iface_name($iface_name) {
+	// We are not interested in non-server ovpn interfaces
+	if (substr($iface_name, 4, 1) != 's') {
+		return false;
+	}
+
+        global $config;
+
+	if (is_array($config['openvpn']['openvpn-server'])) {
+		// Go thru all ovpn instances in search of server ones
+		foreach ($config['openvpn']['openvpn-server'] as $ovpn_server) {
+			// If instance is the server with vpnid matches iface id
+	    		if ($ovpn_server['vpnid'] == substr($iface_name, 5, 1)) {
+				return($ovpn_server);
+	    		} // if
+		} // foreach
+	} // if
+
+	return (false);
+}
+
 ?>

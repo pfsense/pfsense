@@ -118,7 +118,7 @@ if($_REQUEST['dragdroporder']) {
 	}
 	foreach($undo as $dt)
 		$undotxt .= "&dragtable[]={$dt}";
-	Header("Location: firewall_rules.php?if=" . $_REQUEST['if'] . "&undodrag=true" . $undotxt);
+	header("Location: firewall_rules.php?if=" . $_REQUEST['if'] . "&undodrag=true" . $undotxt);
 	exit;
 }
 

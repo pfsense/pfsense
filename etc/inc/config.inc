@@ -121,7 +121,7 @@ else if ($g['booting'] and !file_exists($g['cf_conf_path'] . "/config.xml")  ) {
 		if (strstr($g['platform'], "cdrom")) {
 			/* config is on floppy disk for CD-ROM version */
 			$cfgdevice = $cfgpartition = "fd0";
-			$dmesg = `dmesg -a`;
+			$_gb = exec('/sbin/dmesg -a', $dmesg);
 			if(preg_match("/da0/", $dmesg) == true) {
 				$cfgdevice = $cfgpartition = "da0" ;
 				if (mwexec("/sbin/mount -r /dev/{$cfgdevice} /cf")) {
@@ -137,7 +137,7 @@ else if ($g['booting'] and !file_exists($g['cf_conf_path'] . "/config.xml")  ) {
 		} else {
 			if($g['booting']) echo ".";
 			/* probe kernel known disks until we find one with config.xml */
-			$disks = explode(" ", trim(preg_replace("/kern.disks: /", "", exec("/sbin/sysctl kern.disks"))));
+			$disks = explode(" ", trim(exec("/sbin/sysctl -n kern.disks")));
 			foreach ($disks as $mountdisk) {
 				/* skip mfs mounted filesystems */
 				if (strstr($mountdisk, "md"))

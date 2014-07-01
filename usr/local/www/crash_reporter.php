@@ -123,7 +123,7 @@ exec("/usr/bin/grep -vi warning /tmp/PHP_errors.log", $php_errors);
 		array_map('unlink', glob("/var/crash/*"));
 		// Erase the contents of the PHP error log
 		fclose(fopen("/tmp/PHP_errors.log", 'w'));
-		Header("Location: /");
+		header("Location: /");
 		exit;
 	} else {
 		$crash_files = glob("/var/crash/*");

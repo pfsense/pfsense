@@ -66,7 +66,7 @@ if(!function_exists("pfSenseHeader")) {
 	                $complete_url = "{$protocol}://{$_SERVER['SERVER_NAME']}{$port}/{$text}";
 	                echo "\ndocument.location.href = '{$complete_url}';\n";
 	        } else {
-	                Header("Location: $text");
+	                header("Location: $text");
 	        }
 	}
 }

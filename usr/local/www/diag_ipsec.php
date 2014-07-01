@@ -116,7 +116,7 @@ $status = ipsec_smp_dump_status();
 ?>
 			<tr>
 				<td class="listlr">
-					<?php echo htmlspecialchars($ikesa['peerconfig']);?>
+					<?php echo htmlspecialchars(ipsec_get_descr_by_peerconfig($ikesa['peerconfig']));?>
 				</td>
 				<td class="listr">
 			<?php   if (!is_array($ikesa['local']))
@@ -220,7 +220,7 @@ $status = ipsec_smp_dump_status();
 						echo htmlspecialchars($childsa['remote']['spi']);
 				?>
 						</td>
-						<td class="listlr nowrap">
+						<td class="listr nowrap">
 				<?php	if (is_array($childsa['remote']) && is_array($childsa['remote']['networks']) && is_array($childsa['remote']['networks']['network'])) {
 						foreach ($childsa['remote']['networks']['network'] as $rnets) {
 							echo htmlspecialchars($rnets) . "<br />";	

@@ -44,6 +44,7 @@ $pgtitle = array(gettext("System"),gettext("RRD Graphs"),gettext("Image viewer")
 
 if ($_GET['database']) {
 	$curdatabase = basename($_GET['database']);
+	$curdatabase = str_replace(array("<", ">", ";", "&", "'", '"'), "", htmlspecialchars_decode($curdatabase, ENT_QUOTES | ENT_HTML401));
 } else {
 	$curdatabase = "wan-traffic.rrd";
 }
@@ -56,7 +57,7 @@ if ($_GET['style']) {
 
 /* this is used for temp name */
 if ($_GET['graph']) {
-	$curgraph = $_GET['graph'];
+	$curgraph = str_replace(array("<", ">", ";", "&", "'", '"', '.', '/'), "", htmlspecialchars_decode($_GET['graph'], ENT_QUOTES | ENT_HTML401));
 } else {
 	$curgraph = "custom";
 }
@@ -64,9 +65,6 @@ if ($_GET['graph']) {
 $now = time();
 
 if (is_numeric($_GET['start'])) {
-        if($start < ($now - (3600 * 24 * 365 * 5))) {
-                $start = $now - (8 * 3600);
-        }
         $start = $_GET['start'];
 } else {
         $start = $now - (8 * 3600);
@@ -332,7 +330,7 @@ if((strstr($curdatabase, "-traffic.rrd")) && (file_exists("$rrddbpath$curdatabas
 	$graphcmd = "$rrdtool graph $rrdtmppath$curdatabase-$curgraph.png ";
 	$graphcmd .= "--start $start --end $end --step $step --vertical-label \"bits/sec\" ";
 	$graphcmd .= "--color SHADEA#eeeeee --color SHADEB#eeeeee ";
-	$graphcmd .= "--title \"`hostname` - {$prettydb} - {$hperiod} - {$havg} average\" ";
+	$graphcmd .= "--title \"" . php_uname('n') . " - {$prettydb} - {$hperiod} - {$havg} average\" ";
 	$graphcmd .= "--height 200 --width 620 ";
 	$graphcmd .= "DEF:$curif-in_bytes_pass=$rrddbpath$curdatabase:inpass:AVERAGE:step=$step ";
 	$graphcmd .= "DEF:$curif-out_bytes_pass=$rrddbpath$curdatabase:outpass:AVERAGE:step=$step ";
@@ -477,7 +475,7 @@ if((strstr($curdatabase, "-traffic.rrd")) && (file_exists("$rrddbpath$curdatabas
 	$graphcmd .= "GPRINT:\"$curif-out6_bits_block:LAST:%7.2lf %Sb/s\" ";
 	$graphcmd .= "GPRINT:\"$curif-bytes_out6_t_block:AVERAGE:%7.2lf %sB o\" ";
 	$graphcmd .= "COMMENT:\"\\n\" ";
-	$graphcmd .= "COMMENT:\"\t\t\t\t\t\t\t\t\t\t\t\t\t`date +\"%b %d %H\:%M\:%S %Y\"`\" ";
+	$graphcmd .= "COMMENT:\"\t\t\t\t\t\t\t\t\t\t\t\t\t" . strftime('%b %d %H\:%M\:%S %Y') . "\" ";
 }
 elseif(strstr($curdatabase, "-throughput.rrd")) {
 	/* define graphcmd for throughput stats */
@@ -486,7 +484,7 @@ elseif(strstr($curdatabase, "-throughput.rrd")) {
 	$graphcmd .= "--start $start --end $end --step $step ";
 	$graphcmd .= "--vertical-label \"bits/sec\" ";
 	$graphcmd .= "--color SHADEA#eeeeee --color SHADEB#eeeeee ";
-	$graphcmd .= "--title \"`hostname` - {$prettydb} - {$hperiod} - {$havg} average\" ";
+	$graphcmd .= "--title \"" . php_uname('n') . " - {$prettydb} - {$hperiod} - {$havg} average\" ";
 	$graphcmd .= "--height 200 --width 620 ";
 
 	$iflist = get_configured_interface_list();
@@ -605,7 +603,7 @@ elseif(strstr($curdatabase, "-throughput.rrd")) {
 	$graphcmd .= "GPRINT:\"tput-out_bits_block:LAST:%7.2lf %Sb/s\" ";
 	$graphcmd .= "GPRINT:\"tput-bytes_out_t_block:AVERAGE:%7.2lf %sB o\" ";
 	$graphcmd .= "COMMENT:\"\\n\" ";
-	$graphcmd .= "COMMENT:\"\t\t\t\t\t\t\t\t\t\t\t\t\t`date +\"%b %d %H\:%M\:%S %Y\"`\" ";
+	$graphcmd .= "COMMENT:\"\t\t\t\t\t\t\t\t\t\t\t\t\t" . strftime('%b %d %H\:%M\:%S %Y') . "\" ";
 }
 elseif((strstr($curdatabase, "-packets.rrd")) && (file_exists("$rrddbpath$curdatabase"))) {
 	/* define graphcmd for packets stats */
@@ -613,7 +611,7 @@ elseif((strstr($curdatabase, "-packets.rrd")) && (file_exists("$rrddbpath$curdat
 	$graphcmd .= "--start $start --end $end --step $step ";
 	$graphcmd .= "--vertical-label \"packets/sec\" ";
 	$graphcmd .= "--color SHADEA#eeeeee --color SHADEB#eeeeee ";
-	$graphcmd .= "--title \"`hostname` - {$prettydb} - {$hperiod} - {$havg} average\" ";
+	$graphcmd .= "--title \"" . php_uname('n') . " - {$prettydb} - {$hperiod} - {$havg} average\" ";
 	$graphcmd .= "--height 200 --width 620 ";
 	$graphcmd .= "DEF:\"$curif-in_pps_pass=$rrddbpath$curdatabase:inpass:AVERAGE:step=$step\" ";
 	$graphcmd .= "DEF:\"$curif-out_pps_pass=$rrddbpath$curdatabase:outpass:AVERAGE:step=$step\" ";
@@ -731,7 +729,7 @@ elseif((strstr($curdatabase, "-packets.rrd")) && (file_exists("$rrddbpath$curdat
 	$graphcmd .= "GPRINT:\"$curif-out6_pps_block:LAST:%7.2lf %S pps\" ";
 	$graphcmd .= "GPRINT:\"$curif-pps_out6_t_block:AVERAGE:%7.2lf %s pkts\" ";
 	$graphcmd .= "COMMENT:\"\\n\" ";
-	$graphcmd .= "COMMENT:\"\t\t\t\t\t\t\t\t\t\t\t\t\t`date +\"%b %d %H\:%M\:%S %Y\"`\" ";
+	$graphcmd .= "COMMENT:\"\t\t\t\t\t\t\t\t\t\t\t\t\t" . strftime('%b %d %H\:%M\:%S %Y') . "\" ";
 }
 elseif((strstr($curdatabase, "-wireless.rrd")) && (file_exists("$rrddbpath$curdatabase"))) {
 	/* define graphcmd for packets stats */
@@ -739,7 +737,7 @@ elseif((strstr($curdatabase, "-wireless.rrd")) && (file_exists("$rrddbpath$curda
 	$graphcmd .= "--start $start --end $end --step $step ";
 	$graphcmd .= "--vertical-label \"snr/channel/rate\" ";
 	$graphcmd .= "--color SHADEA#eeeeee --color SHADEB#eeeeee ";
-	$graphcmd .= "--title \"`hostname` - {$prettydb} - {$hperiod} - {$havg} average\" ";
+	$graphcmd .= "--title \"" . php_uname('n') . " - {$prettydb} - {$hperiod} - {$havg} average\" ";
 	$graphcmd .= "--height 200 --width 620 ";
 	$graphcmd .= "DEF:\"$curif-snr=$rrddbpath$curdatabase:snr:AVERAGE:step=$step\" ";
 	$graphcmd .= "DEF:\"$curif-rate=$rrddbpath$curdatabase:rate:AVERAGE:step=$step\" ";
@@ -764,7 +762,7 @@ elseif((strstr($curdatabase, "-wireless.rrd")) && (file_exists("$rrddbpath$curda
 	$graphcmd .= "GPRINT:\"$curif-channel:AVERAGE:%7.2lf      \" ";
 	$graphcmd .= "GPRINT:\"$curif-channel:LAST:%7.2lf\" ";
 	$graphcmd .= "COMMENT:\"\\n\" ";
-	$graphcmd .= "COMMENT:\"\t\t\t\t\t\t\t\t\t\t\t\t\t`date +\"%b %d %H\:%M\:%S %Y\"`\" ";
+	$graphcmd .= "COMMENT:\"\t\t\t\t\t\t\t\t\t\t\t\t\t" . strftime('%b %d %H\:%M\:%S %Y') . "\" ";
 }
 elseif((strstr($curdatabase, "-vpnusers.rrd")) && (file_exists("$rrddbpath$curdatabase"))) {
 	/* define graphcmd for vpn users stats */
@@ -772,7 +770,7 @@ elseif((strstr($curdatabase, "-vpnusers.rrd")) && (file_exists("$rrddbpath$curda
 	$graphcmd .= "--start $start --end $end --step $step ";
 	$graphcmd .= "--vertical-label \"users\" ";
 	$graphcmd .= "--color SHADEA#eeeeee --color SHADEB#eeeeee ";
-	$graphcmd .= "--title \"`hostname` - {$prettydb} - {$hperiod} - {$havg} average\" ";
+	$graphcmd .= "--title \"" . php_uname('n') . " - {$prettydb} - {$hperiod} - {$havg} average\" ";
 	$graphcmd .= "--height 200 --width 620 ";
 	$graphcmd .= "DEF:\"$curif-users=$rrddbpath$curdatabase:users:AVERAGE:step=$step\" ";
 	$graphcmd .= "LINE2:\"$curif-users#{$colorvpnusers[0]}:$curif-users\" ";
@@ -783,7 +781,7 @@ elseif((strstr($curdatabase, "-vpnusers.rrd")) && (file_exists("$rrddbpath$curda
 	$graphcmd .= "GPRINT:\"$curif-users:AVERAGE:%7.2lf      \" ";
 	$graphcmd .= "GPRINT:\"$curif-users:LAST:%7.2lf \" ";
 	$graphcmd .= "COMMENT:\"\\n\" ";
-	$graphcmd .= "COMMENT:\"\t\t\t\t\t\t\t\t\t\t\t\t\t`date +\"%b %d %H\:%M\:%S %Y\"`\" ";
+	$graphcmd .= "COMMENT:\"\t\t\t\t\t\t\t\t\t\t\t\t\t" . strftime('%b %d %H\:%M\:%S %Y') . "\" ";
 }
 elseif((strstr($curdatabase, "-states.rrd")) && (file_exists("$rrddbpath$curdatabase"))) {
 	/* define graphcmd for states stats */
@@ -791,7 +789,7 @@ elseif((strstr($curdatabase, "-states.rrd")) && (file_exists("$rrddbpath$curdata
 	$graphcmd .= "--start -$seconds -e -$average --step $step ";
 	$graphcmd .= "--vertical-label \"states, ip\" ";
 	$graphcmd .= "--color SHADEA#eeeeee --color SHADEB#eeeeee ";
-	$graphcmd .= "--title \"`hostname` - {$prettydb} - {$hperiod} - {$havg} average\" ";
+	$graphcmd .= "--title \"" . php_uname('n') . " - {$prettydb} - {$hperiod} - {$havg} average\" ";
 	$graphcmd .= "--height 200 --width 620 ";
 	$graphcmd .= "DEF:\"$curif-pfrate=$rrddbpath$curdatabase:pfrate:AVERAGE:step=$step\" ";
 	$graphcmd .= "DEF:\"$curif-pfstates=$rrddbpath$curdatabase:pfstates:AVERAGE:step=$step\" ";
@@ -837,7 +835,7 @@ elseif((strstr($curdatabase, "-states.rrd")) && (file_exists("$rrddbpath$curdata
 	$graphcmd .= "GPRINT:\"$curif-dstip:MAX:%7.2lf %s    \" ";
 	$graphcmd .= "GPRINT:\"$curif-dstip:LAST:%7.2lf %s    \" ";
 	$graphcmd .= "COMMENT:\"\\n\" ";
-	$graphcmd .= "COMMENT:\"\t\t\t\t\t\t\t\t\t\t\t\t\t`date +\"%b %d %H\:%M\:%S %Y\"`\" ";
+	$graphcmd .= "COMMENT:\"\t\t\t\t\t\t\t\t\t\t\t\t\t" . strftime('%b %d %H\:%M\:%S %Y') . "\" ";
 }
 elseif((strstr($curdatabase, "-processor.rrd")) && (file_exists("$rrddbpath$curdatabase"))) {
 	/* define graphcmd for processor stats */
@@ -845,7 +843,7 @@ elseif((strstr($curdatabase, "-processor.rrd")) && (file_exists("$rrddbpath$curd
 	$graphcmd .= "--start $start --end $end --step $step ";
 	$graphcmd .= "--vertical-label \"utilization, number\" ";
 	$graphcmd .= "--color SHADEA#eeeeee --color SHADEB#eeeeee ";
-	$graphcmd .= "--title \"`hostname` - {$prettydb} - {$hperiod} - {$havg} average\" ";
+	$graphcmd .= "--title \"" . php_uname('n') . " - {$prettydb} - {$hperiod} - {$havg} average\" ";
 	$graphcmd .= "--height 200 --width 620 ";
 	$graphcmd .= "DEF:\"user=$rrddbpath$curdatabase:user:AVERAGE:step=$step\" ";
 	$graphcmd .= "DEF:\"nice=$rrddbpath$curdatabase:nice:AVERAGE:step=$step\" ";
@@ -889,7 +887,7 @@ elseif((strstr($curdatabase, "-processor.rrd")) && (file_exists("$rrddbpath$curd
 	$graphcmd .= "GPRINT:\"processes:MAX:%7.2lf %s    \" ";
 	$graphcmd .= "GPRINT:\"processes:LAST:%7.2lf %s    \" ";
 	$graphcmd .= "COMMENT:\"\\n\" ";
-	$graphcmd .= "COMMENT:\"\t\t\t\t\t\t\t\t\t\t\t\t\t`date +\"%b %d %H\:%M\:%S %Y\"`\" ";
+	$graphcmd .= "COMMENT:\"\t\t\t\t\t\t\t\t\t\t\t\t\t" . strftime('%b %d %H\:%M\:%S %Y') . "\" ";
 }
 elseif((strstr($curdatabase, "-memory.rrd")) && (file_exists("$rrddbpath$curdatabase"))) {
 	/* define graphcmd for memory usage stats */
@@ -897,7 +895,7 @@ elseif((strstr($curdatabase, "-memory.rrd")) && (file_exists("$rrddbpath$curdata
 	$graphcmd .= "--start $start --end $end --step $step ";
 	$graphcmd .= "--vertical-label \"utilization, percent\" ";
 	$graphcmd .= "--color SHADEA#eeeeee --color SHADEB#eeeeee ";
-	$graphcmd .= "--title \"`hostname` - {$prettydb} - {$hperiod} - {$havg} average\" ";
+	$graphcmd .= "--title \"" . php_uname('n') . " - {$prettydb} - {$hperiod} - {$havg} average\" ";
 	$graphcmd .= "--height 200 --width 620 ";
 	$graphcmd .= "DEF:\"active=$rrddbpath$curdatabase:active:AVERAGE:step=$step\" ";
 	$graphcmd .= "DEF:\"inactive=$rrddbpath$curdatabase:inactive:AVERAGE:step=$step\" ";
@@ -941,7 +939,7 @@ elseif((strstr($curdatabase, "-memory.rrd")) && (file_exists("$rrddbpath$curdata
 	$graphcmd .= "GPRINT:\"wire:MAX:%7.2lf %s    \" ";
 	$graphcmd .= "GPRINT:\"wire:LAST:%7.2lf %S    \" ";
 	$graphcmd .= "COMMENT:\"\\n\" ";
-	$graphcmd .= "COMMENT:\"\t\t\t\t\t\t\t\t\t\t\t\t\t`date +\"%b %d %H\:%M\:%S %Y\"`\" ";
+	$graphcmd .= "COMMENT:\"\t\t\t\t\t\t\t\t\t\t\t\t\t" . strftime('%b %d %H\:%M\:%S %Y') . "\" ";
 }
 elseif((strstr($curdatabase, "-mbuf.rrd")) && (file_exists("$rrddbpath$curdatabase"))) {
 	/* define graphcmd for mbuf usage stats */
@@ -949,7 +947,7 @@ elseif((strstr($curdatabase, "-mbuf.rrd")) && (file_exists("$rrddbpath$curdataba
 	$graphcmd .= "--start $start --end $end --step $step ";
 	$graphcmd .= "--vertical-label \"utilization, percent\" ";
 	$graphcmd .= "--color SHADEA#eeeeee --color SHADEB#eeeeee ";
-	$graphcmd .= "--title \"`hostname` - {$prettydb} clusters - {$hperiod} - {$havg} average\" ";
+	$graphcmd .= "--title \"" . php_uname('n') . " - {$prettydb} clusters - {$hperiod} - {$havg} average\" ";
 	$graphcmd .= "--height 200 --width 620 ";
 	$graphcmd .= "DEF:\"current=$rrddbpath$curdatabase:current:AVERAGE:step=$step\" ";
 	$graphcmd .= "DEF:\"cache=$rrddbpath$curdatabase:cache:AVERAGE:step=$step\" ";
@@ -985,7 +983,7 @@ elseif((strstr($curdatabase, "-mbuf.rrd")) && (file_exists("$rrddbpath$curdataba
 	$graphcmd .= "GPRINT:\"max:MAX:%7.2lf %s    \" ";
 	$graphcmd .= "GPRINT:\"max:LAST:%7.2lf %S    \" ";
 	$graphcmd .= "COMMENT:\"\\n\" ";
-	$graphcmd .= "COMMENT:\"\t\t\t\t\t\t\t\t\t\t\t\t\t`date +\"%b %d %H\:%M\:%S %Y\"`\" ";
+	$graphcmd .= "COMMENT:\"\t\t\t\t\t\t\t\t\t\t\t\t\t" . strftime('%b %d %H\:%M\:%S %Y') . "\" ";
 }
 elseif((strstr($curdatabase, "-queues.rrd")) && (file_exists("$rrddbpath$curdatabase"))) {
 	/* define graphcmd for queue stats */
@@ -993,7 +991,7 @@ elseif((strstr($curdatabase, "-queues.rrd")) && (file_exists("$rrddbpath$curdata
 	$graphcmd .= "--start $start --end $end --step $step ";
 	$graphcmd .= "--vertical-label \"bits/sec\" ";
 	$graphcmd .= "--color SHADEA#eeeeee --color SHADEB#eeeeee ";
-	$graphcmd .= "--title \"`hostname` - {$prettydb} - {$hperiod} - {$havg} average\" ";
+	$graphcmd .= "--title \"" . php_uname('n') . " - {$prettydb} - {$hperiod} - {$havg} average\" ";
 	$graphcmd .= "--height 200 --width 620 ";
 	if ($altq) {
 		$a_queues =& $altq->get_queue_list();
@@ -1014,7 +1012,7 @@ elseif((strstr($curdatabase, "-queues.rrd")) && (file_exists("$rrddbpath$curdata
 		if($t > 7) { $t = 0; }
 	}
 	$graphcmd .= "COMMENT:\"\\n\" ";
-	$graphcmd .= "COMMENT:\"\t\t\t\t\t\t\t\t\t\t\t\t\t`date +\"%b %d %H\:%M\:%S %Y\"`\" ";
+	$graphcmd .= "COMMENT:\"\t\t\t\t\t\t\t\t\t\t\t\t\t" . strftime('%b %d %H\:%M\:%S %Y') . "\" ";
 }
 elseif((strstr($curdatabase, "-queuedrops.rrd")) && (file_exists("$rrddbpath$curdatabase"))) {
 	/* define graphcmd for queuedrop stats */
@@ -1022,7 +1020,7 @@ elseif((strstr($curdatabase, "-queuedrops.rrd")) && (file_exists("$rrddbpath$cur
 	$graphcmd .= "--start $start --end $end --step $step ";
 	$graphcmd .= "--vertical-label \"drops / sec\" ";
 	$graphcmd .= "--color SHADEA#eeeeee --color SHADEB#eeeeee ";
-	$graphcmd .= "--title \"`hostname` - {$prettydb} - {$hperiod} - {$havg} average\" ";
+	$graphcmd .= "--title \"" . php_uname('n') . " - {$prettydb} - {$hperiod} - {$havg} average\" ";
 	$graphcmd .= "--height 200 --width 620 ";
 	if ($altq) {
 		$a_queues =& $altq->get_queue_list();
@@ -1044,13 +1042,13 @@ elseif((strstr($curdatabase, "-queuedrops.rrd")) && (file_exists("$rrddbpath$cur
 		if($t > 7) { $t = 0; }
 	}
 	$graphcmd .= "COMMENT:\"\\n\" ";
-	$graphcmd .= "COMMENT:\"\t\t\t\t\t\t\t\t\t\t\t\t\t`date +\"%b %d %H\:%M\:%S %Y\"`\" ";
+	$graphcmd .= "COMMENT:\"\t\t\t\t\t\t\t\t\t\t\t\t\t" . strftime('%b %d %H\:%M\:%S %Y') . "\" ";
 }
 elseif((strstr($curdatabase, "-quality.rrd")) && (file_exists("$rrddbpath$curdatabase"))) {
 	/* make a link quality graphcmd, we only have WAN for now, others too follow */
 	$graphcmd = "$rrdtool graph $rrdtmppath$curdatabase-$curgraph.png \\
 		--start $start --end $end --step $step  \\
-		--title \"`hostname` - {$prettydb} - {$hperiod} - {$havg} average\" \\
+		--title \"" . php_uname('n') . " - {$prettydb} - {$hperiod} - {$havg} average\" \\
 		--color SHADEA#eeeeee --color SHADEB#eeeeee \\
 		--vertical-label \"ms / %\" \\
 		--height 200 --width 620 \\
@@ -1080,13 +1078,13 @@ elseif((strstr($curdatabase, "-quality.rrd")) && (file_exists("$rrddbpath$curdat
 		GPRINT:loss:LAST:\"\tLast\: %3.1lf %%\\n\" \\
 		AREA:loss10#$colorqualityloss:\"Packet loss\\n\" \\
 		LINE1:delay#$colorqualityrtt[5]:\"Delay average\\n\" \\
-		COMMENT:\"\t\t\t\t\t\t\t\t\t\t\t\t\t`date +\"%b %d %H\:%M\:%S %Y\"`\"";
+		COMMENT:\"\t\t\t\t\t\t\t\t\t\t\t\t\t" . strftime('%b %d %H\:%M\:%S %Y') . "\"";
 }
 elseif((strstr($curdatabase, "spamd.rrd")) && (file_exists("$rrddbpath$curdatabase"))) {
 	/* graph a spamd statistics graph */
 	$graphcmd = "$rrdtool graph $rrdtmppath$curdatabase-$curgraph.png \\
 		--start $start --end $end --step $step \\
-		--title \"`hostname` - {$prettydb} - {$hperiod} - {$havg} average\" \\
+		--title \"" . php_uname('n') . " - {$prettydb} - {$hperiod} - {$havg} average\" \\
 		--color SHADEA#eeeeee --color SHADEB#eeeeee \\
 		--vertical-label=\"Conn / Time, sec.\" \\
 		--height 200 --width 620 --no-gridfit \\
@@ -1119,14 +1117,14 @@ elseif((strstr($curdatabase, "spamd.rrd")) && (file_exists("$rrddbpath$curdataba
 		GPRINT:consmin:MIN:\"Min\\:%6.2lf\\t\" \\
 		GPRINT:consavg:AVERAGE:\"Avg\\:%6.2lf\\t\" \\
 		GPRINT:consmax:MAX:\"Max\\:%6.2lf\\n\" \\
-		COMMENT:\"\t\t\t\t\t\t\t\t\t\t\t\t\t`date +\"%b %d %H\:%M\:%S %Y\"`\" ";
+		COMMENT:\"\t\t\t\t\t\t\t\t\t\t\t\t\t" . strftime('%b %d %H\:%M\:%S %Y') . "\" ";
 }
 elseif((strstr($curdatabase, "-cellular.rrd")) && (file_exists("$rrddbpath$curdatabase"))) {
 	$graphcmd = "$rrdtool graph $rrdtmppath$curdatabase-$curgraph.png ";
 	$graphcmd .= "--start $start --end $end --step $step ";
 	$graphcmd .= "--vertical-label \"signal\" ";
 	$graphcmd .= "--color SHADEA#eeeeee --color SHADEB#eeeeee ";
-	$graphcmd .= "--title \"`hostname` - {$prettydb} - {$hperiod} - {$havg} average\" ";
+	$graphcmd .= "--title \"" . php_uname('n') . " - {$prettydb} - {$hperiod} - {$havg} average\" ";
 	$graphcmd .= "--height 200 --width 620 ";
 	$graphcmd .= "DEF:\"$curif-rssi=$rrddbpath$curdatabase:rssi:AVERAGE:step=$step\" ";
 	$graphcmd .= "LINE2:\"$curif-rssi#{$colorwireless[0]}:$curif-rssi\" ";
@@ -1137,7 +1135,7 @@ elseif((strstr($curdatabase, "-cellular.rrd")) && (file_exists("$rrddbpath$curda
 	$graphcmd .= "GPRINT:\"$curif-rssi:AVERAGE:%7.2lf     \" ";
 	$graphcmd .= "GPRINT:\"$curif-rssi:LAST:%7.2lf \" ";
 	$graphcmd .= "COMMENT:\"\\n\" ";
-	$graphcmd .= "COMMENT:\"\t\t\t\t\t\t\t\t\t\t\t\t\t`date +\"%b %d %H\:%M\:%S %Y\"`\" ";
+	$graphcmd .= "COMMENT:\"\t\t\t\t\t\t\t\t\t\t\t\t\t" . strftime('%b %d %H\:%M\:%S %Y') . "\" ";
 }
 elseif((strstr($curdatabase, "-loggedin.rrd")) && (file_exists("$rrddbpath$curdatabase"))) {
 	/* define graphcmd for online Captive Portal users stats */
@@ -1148,7 +1146,7 @@ elseif((strstr($curdatabase, "-loggedin.rrd")) && (file_exists("$rrddbpath$curda
 	$graphcmd .= "--base=1000 ";
 	$graphcmd .= "--lower-limit=0 ";
 	$graphcmd .= "--slope-mode ";
-	$graphcmd .= "--title \"`hostname` - {$prettydb} - {$hperiod} - {$havg} average\" ";
+	$graphcmd .= "--title \"" . php_uname('n') . " - {$prettydb} - {$hperiod} - {$havg} average\" ";
 	$graphcmd .= "--height 200 --width 620 ";
 	$graphcmd .= "DEF:\"$curif-loggedinusers=$rrddbpath$curdatabase:loggedinusers:AVERAGE:step=$step\" ";
 	$graphcmd .= "CDEF:\"$curif-totalusers_t=PREV,UN,0,PREV,IF,$curif-loggedinusers,+\" ";
@@ -1156,7 +1154,7 @@ elseif((strstr($curdatabase, "-loggedin.rrd")) && (file_exists("$rrddbpath$curda
 	$graphcmd .= "AREA:\"$curif-totalusers_d#{$colorcaptiveportalusers[0]}:Total logged in users\" ";
 	$graphcmd .= "GPRINT:\"$curif-totalusers_d:MAX:%8.0lf \\n\" ";
 	$graphcmd .= "COMMENT:\"\\n\" ";
-	$graphcmd .= "COMMENT:\"\t\t\t\t\t\t\t\t\t\t\t\t\t`date +\"%b %d %H\:%M\:%S %Y\"`\" ";	
+	$graphcmd .= "COMMENT:\"\t\t\t\t\t\t\t\t\t\t\t\t\t" . strftime('%b %d %H\:%M\:%S %Y') . "\" ";	
 }
 elseif((strstr($curdatabase, "-concurrent.rrd")) && (file_exists("$rrddbpath$curdatabase"))) {
 	/* define graphcmd for online Captive Portal users stats */
@@ -1164,7 +1162,7 @@ elseif((strstr($curdatabase, "-concurrent.rrd")) && (file_exists("$rrddbpath$cur
 	$graphcmd .= "--start $start --end $end --step $step ";
 	$graphcmd .= "--vertical-label \"Captive Portal Users\" ";
 	$graphcmd .= "--color SHADEA#eeeeee --color SHADEB#eeeeee ";
-	$graphcmd .= "--title \"`hostname` - {$prettydb} - {$hperiod} - {$havg} average\" ";
+	$graphcmd .= "--title \"" . php_uname('n') . " - {$prettydb} - {$hperiod} - {$havg} average\" ";
 	$graphcmd .= "--base=1000 ";
 	$graphcmd .= "--lower-limit=0 ";
 	$graphcmd .= "--slope-mode ";
@@ -1178,7 +1176,7 @@ elseif((strstr($curdatabase, "-concurrent.rrd")) && (file_exists("$rrddbpath$cur
 	$graphcmd .= "GPRINT:\"$curif-concurrentusers:AVERAGE:%8.0lf      \" ";
 	$graphcmd .= "GPRINT:\"$curif-concurrentusers:MAX:%8.0lf \" ";
 	$graphcmd .= "COMMENT:\"\\n\" ";
-	$graphcmd .= "COMMENT:\"\t\t\t\t\t\t\t\t\t\t\t\t\t`date +\"%b %d %H\:%M\:%S %Y\"`\" ";	
+	$graphcmd .= "COMMENT:\"\t\t\t\t\t\t\t\t\t\t\t\t\t" . strftime('%b %d %H\:%M\:%S %Y') . "\" ";	
 }
 elseif((strstr($curdatabase, "ntpd.rrd")) && (file_exists("$rrddbpath$curdatabase"))) {
 	/* define graphcmd for ntpd (was: mbuf) usage stats */
@@ -1186,7 +1184,7 @@ elseif((strstr($curdatabase, "ntpd.rrd")) && (file_exists("$rrddbpath$curdatabas
 	$graphcmd .= "--start $start --end $end --step $step ";
 	$graphcmd .= "--vertical-label \"time\" ";
 	$graphcmd .= "--color SHADEA#eeeeee --color SHADEB#eeeeee ";
-	$graphcmd .= "--title \"`hostname` - {$prettydb} - {$hperiod} - {$havg} average\" ";
+	$graphcmd .= "--title \"" . php_uname('n') . " - {$prettydb} - {$hperiod} - {$havg} average\" ";
 	$graphcmd .= "--height 200 --width 620 ";
 	$graphcmd .= "DEF:\"offset=$rrddbpath$curdatabase:offset:AVERAGE:step=$step\" ";
 	$graphcmd .= "DEF:\"sjit=$rrddbpath$curdatabase:sjit:AVERAGE:step=$step\" ";
@@ -1222,7 +1220,7 @@ elseif((strstr($curdatabase, "ntpd.rrd")) && (file_exists("$rrddbpath$curdatabas
 	$graphcmd .= "GPRINT:\"wander:MAX:%7.2lf %s    \" ";
 	$graphcmd .= "GPRINT:\"wander:LAST:%7.2lf %S    \" ";
 	$graphcmd .= "COMMENT:\"\\n\" ";
-	$graphcmd .= "COMMENT:\"\t\t\t\t\t\t\t\t\t\t\t\t\t`date +\"%b %d %H\:%M\:%S %Y\"`\" ";
+	$graphcmd .= "COMMENT:\"\t\t\t\t\t\t\t\t\t\t\t\t\t" . strftime('%b %d %H\:%M\:%S %Y') . "\" ";
 }
 else {
 	$data = false;
@@ -1233,14 +1231,14 @@ else {
 if (file_exists("$rrdtmppath$curdatabase-$curgraph.png")) {
 	if((time() - filemtime("$rrdtmppath$curdatabase-$curgraph.png")) >= 15 ) {
 		if($data)
-			exec("$graphcmd 2>&1", $graphcmdoutput, $graphcmdreturn);
+			$_gb = exec("$graphcmd 2>&1", $graphcmdoutput, $graphcmdreturn);
 			$graphcmdoutput = implode(" ", $graphcmdoutput) . $graphcmd;
 			flush();
 			usleep(500);
 	}			
 } else {
 	if($data)
-		exec("$graphcmd 2>&1", $graphcmdoutput, $graphcmdreturn);
+		$_gb = exec("$graphcmd 2>&1", $graphcmdoutput, $graphcmdreturn);
 		$graphcmdoutput = implode(" ", $graphcmdoutput) . $graphcmd;
 		flush();
 		usleep(500);
@@ -1249,14 +1247,14 @@ if(($graphcmdreturn <> 0) || (! $data)) {
 	log_error(sprintf(gettext('Failed to create graph with error code %1$s, the error is: %2$s'),$graphcmdreturn,$graphcmdoutput));
 	if(strstr($curdatabase, "queues")) {
 		log_error(sprintf(gettext("failed to create graph from %s%s, removing database"),$rrddbpath,$curdatabase));
-		exec("/bin/rm -f $rrddbpath$curif$queues");
+		unlink_if_exists($rrddbpath . $curif . $queues);
 		flush();
 		usleep(500);
 		enable_rrd_graphing();
 	}
 	if(strstr($curdatabase, "queuesdrop")) {
 		log_error(sprintf(gettext("failed to create graph from %s%s, removing database"),$rrddbpath,$curdatabase));
-		exec("/bin/rm -f $rrddbpath$curdatabase");
+		unlink_if_exists($rrddbpath . $curdatabase);
 		flush();
 		usleep(500);
 		enable_rrd_graphing();

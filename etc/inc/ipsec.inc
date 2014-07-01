@@ -60,6 +60,9 @@ $peer_identifier_list = array(
 
 $p1_ealgos = array(
 	'aes' => array( 'name' => 'AES', 'keysel' => array( 'lo' => 128, 'hi' => 256, 'step' => 64 ) ),
+	'aes128gcm' => array( 'name' => 'AES128-GCM', 'keysel' => array( 'lo' => 64, 'hi' => 128, 'step' => 32 ) ),
+	'aes192gcm' => array( 'name' => 'AES192-GCM', 'keysel' => array( 'lo' => 64, 'hi' => 128, 'step' => 32 ) ),
+	'aes256gcm' => array( 'name' => 'AES256-GCM', 'keysel' => array( 'lo' => 64, 'hi' => 128, 'step' => 32 ) ),
 	'blowfish' => array( 'name' => 'Blowfish', 'keysel' => array( 'lo' => 128, 'hi' => 256, 'step' => 64 ) ),
 	'3des' => array( 'name' => '3DES' ),
 	'cast128' => array( 'name' => 'CAST128' ),
@@ -67,6 +70,9 @@ $p1_ealgos = array(
 
 $p2_ealgos = array(
 	'aes' => array( 'name' => 'AES', 'keysel' => array( 'lo' => 128, 'hi' => 256, 'step' => 64 ) ),
+	'aes128gcm' => array( 'name' => 'AES128-GCM', 'keysel' => array( 'lo' => 64, 'hi' => 128, 'step' => 32 ) ),
+	'aes192gcm' => array( 'name' => 'AES192-GCM', 'keysel' => array( 'lo' => 64, 'hi' => 128, 'step' => 32 ) ),
+	'aes256gcm' => array( 'name' => 'AES256-GCM', 'keysel' => array( 'lo' => 64, 'hi' => 128, 'step' => 32 ) ),
 	'blowfish' => array( 'name' => 'Blowfish', 'keysel' => array( 'lo' => 128, 'hi' => 256, 'step' => 64 ) ),
 	'3des' => array( 'name' => '3DES' ),
 	'cast128' => array( 'name' => 'CAST128' ),
@@ -77,7 +83,8 @@ $p1_halgos = array(
 	'sha1' => 'SHA1',
 	'sha256' => 'SHA256',
 	'sha384' => 'SHA384',
-	'sha512' => 'SHA512'
+	'sha512' => 'SHA512',
+	'aesxcbc' => 'AES-XCBC'
 );
 
 $p1_dhgroups = array(
@@ -88,7 +95,10 @@ $p1_dhgroups = array(
 	15 => '15 (3072 bit)',
 	16 => '16 (4096 bit)',
 	17 => '17 (6144 bit)',
-	18 => '18 (8192 bit)'
+	18 => '18 (8192 bit)',
+	22 => '22 (1024(sub 160) bit)',
+	23 => '23 (2048(sub 224) bit)',
+	24 => '24 (2048(sub 256) bit)'
 );
 
 $p2_halgos = array(
@@ -96,7 +106,8 @@ $p2_halgos = array(
 	'hmac_sha1' => 'SHA1',
 	'hmac_sha256' => 'SHA256',
 	'hmac_sha384' => 'SHA384',
-	'hmac_sha512' => 'SHA512'
+	'hmac_sha512' => 'SHA512',
+	'aesxcbc' => 'AES-XCBC'
 );
 
 $p1_authentication_methods = array(
@@ -654,6 +665,30 @@ function ipsec_get_number_of_phase2($ikeid) {
 	}
 
 	return $nbph2;
+}
+
+function ipsec_get_descr($ikeid) {
+	global $config;
+
+	if (!isset($config['ipsec']['phase1']) ||
+	    !is_array($config['ipsec']['phase1']))
+		return "";
+
+	$descr = '';
+	$a_phase1 = $config['ipsec']['phase1'];
+	foreach ($a_phase1 as $p1) {
+		if ($p1['ikeid'] == $ikeid) {
+			$descr = $p1['descr'];
+			break;
+		}
+	}
+	unset($a_phase1);
+
+	return $descr;
+}
+
+function ipsec_get_descr_by_peerconfig($peerconfig) {
+	return ipsec_get_descr(substr($peerconfig, strrpos($peerconfig, '-') + 1));
 }
 
 function ipsec_disconnect_mobile($username) {

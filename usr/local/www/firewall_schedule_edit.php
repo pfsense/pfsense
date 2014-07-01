@@ -116,6 +116,14 @@ if ($_POST) {
 	$timerangeFound = false;
 	for ($x=0; $x<99; $x++){
 		if($_POST['schedule' . $x]) {
+			if (!preg_match('/^[0-9]+:[0-9]+$/', $_POST['starttime' . $x])) {
+				$input_errors[] = sprintf(gettext("Invalid start time - '%s'"), $_POST['starttime' . $x]);
+				continue;
+			}
+			if (!preg_match('/^[0-9]+:[0-9]+$/', $_POST['stoptime' . $x])) {
+				$input_errors[] = sprintf(gettext("Invalid start time - '%s'"), $_POST['stoptime' . $x]);
+				continue;
+			}
 			$timerangeFound = true;
 			$timeparts = array();
 			$firstprint = false;

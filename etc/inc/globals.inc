@@ -73,7 +73,7 @@ $g = array(
 	"disablecrashreporter" => false,
 	"crashreporterurl" => "https://crashreporter.pfsense.org/crash_reporter.php",
 	"debug" => false,
-	"latest_config" => "10.7",
+	"latest_config" => "10.9",
 	"nopkg_platforms" => array("cdrom"),
 	"minimum_ram_warning" => "101",
 	"minimum_ram_warning_text" => "128 MB",
@@ -101,7 +101,7 @@ $tcpflags = array("syn", "ack", "fin", "rst", "psh", "urg", "ece", "cwr");
 if(file_exists("/etc/platform")) {
 	$arch = php_uname("m");
 	/* Do not remove this, it is not needed for the snapshots URL but is needed later for the -RELEASE/stable URLs */
-	$arch = ($arch == "i386") ? "" : '/' . $arch;
+	//$arch = ($arch == "i386") ? "" : '/' . $arch;
 
 	/* Full installs and NanoBSD use the same update directory and manifest in 2.x */
 	$g['update_url']="https://snapshots.pfsense.org/FreeBSD_stable/10/{$arch}/pfSense_HEAD/.updaters/";

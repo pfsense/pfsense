@@ -106,7 +106,7 @@ function flowtable_configure() {
 	else
 		$maxstates = 150000;
 	// nmbflows cpu count * ($maxstates * 2)
-	$cpus = trim(`/sbin/sysctl -n kern.smp.cpus`, " \n");
+	$cpus = trim(exec('/sbin/sysctl -n kern.smp.cpus'), " \n");
 	$nmbflows = ($cpus*($maxstates*2));
 	// Flowtable currently only works on 8.0
 	if(get_freebsd_version() == "8") {
@@ -3418,7 +3418,7 @@ function filter_tdr_hour($schedule) {
 	$now = strtotime("now");
 	if($g['debug'])
 		log_error("[TDR DEBUG] S: $starting_time E: $ending_time N: $now");
-	if($now >= $starting_time and $now <= $ending_time)
+	if($now >= $starting_time and $now < $ending_time)
 		return true;
 	return false;
 }

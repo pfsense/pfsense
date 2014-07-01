@@ -483,7 +483,7 @@
 				$config['interfaces']['wan']['ipaddr'] = $_POST['selectedtype'];
 				write_config();
 				if(!$config['interfaces']['lan']) 
-					Header("Location: /wizard.php?xml=setup_wizard.xml&stepid=5&next=Next");
+					header("Location: /wizard.php?xml=setup_wizard.xml&stepid=5&next=Next");
 			}
 		]]>
 	</stepsubmitbeforesave>
@@ -631,7 +631,7 @@
 	<stepbeforeformdisplay>
 	<![CDATA[
 		if($g['product_name'] <> 'pfSense') {
-			Header("Location: " . fixup_string("\$myurl"));
+			header("Location: " . fixup_string("\$myurl"));
 			exit;
 		}	
 	]]>

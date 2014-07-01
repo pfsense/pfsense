@@ -1322,12 +1322,13 @@ function interface_bring_down($interface = "wan", $destroy = false, $ifacecfg = 
 		services_dhcpd_configure('inet6', $track6);
 	}
 
+	$old_router = '';
 	if (file_exists("{$g['tmp_path']}/{$realif}_router"))
 		$old_router = trim(file_get_contents("{$g['tmp_path']}/{$realif}_router"));
 //	log_error("Checking for old router states: {$g['tmp_path']}/{$realif}_router = {$old_router}");
 	if (!empty($old_router)) {
 		log_error("Clearing states to old gateway {$old_router}.");
-		mwexec("/sbin/pfctl -i " . escapeshellarg($realif) . " -Fs -G {$old_router}");
+		mwexec("/sbin/pfctl -i " . escapeshellarg($realif) . " -Fs");
 	}
 
 	/* remove interface up file if it exists */
@@ -2944,7 +2945,7 @@ function interface_configure($interface = "wan", $reloadall = false, $linkupeven
 	}
 
 	/* Need to check that the interface exists or not in the case where its coming back from disabled state see #3270 */
-	if (!does_interface_exist($interface_to_check))
+	if (in_array(substr($realif, 0, 3), array("gre", "gif")) || !does_interface_exist($interface_to_check))
 		interface_virtual_create($interface_to_check);
 
 	/* Disable Accepting router advertisements unless specifically requested */

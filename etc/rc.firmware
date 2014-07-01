@@ -428,6 +428,7 @@ pfSenseupgrade)
 	/etc/rc.notify_message -e -g -m "Firmware upgrade in progress..."
 	
 	# backup config
+	[ -d /tmp/configbak ] && rm -rf /tmp/configbak
 	/bin/mkdir -p /tmp/configbak
 	cp -Rp /conf/* /tmp/configbak 2>/dev/null
 

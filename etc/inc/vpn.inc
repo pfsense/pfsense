@@ -725,7 +725,7 @@ EOD;
 
 					$ipsecconf .=<<<EOD
 
-conn con{$ph2ent['ikeid']}-{$ph2ent['ikeid']}
+conn con{$ph1ent['ikeid']}-{$ph2ent['ikeid']}
 	aggressive = {$aggressive}
 	fragmentation = yes
 	keyexchange = {$keyexchange}

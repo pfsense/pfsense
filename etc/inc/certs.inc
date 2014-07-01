@@ -449,10 +449,16 @@ function cert_get_issuer($str_crt, $decode = true) {
 
 	ksort($components);
 	foreach ($components as $a => $v) {
-		if (!strlen($issuer))
-			$issuer = "{$a}={$v}";
-		else
-			$issuer = "{$a}={$v}, {$issuer}";
+		if (is_array($v)) {
+			ksort($v);
+			foreach ($v as $w) {
+				$aissuer = "{$a}={$w}";
+				$issuer = (strlen($issuer)) ? "{$aissuer}, {$issuer}" : $aissuer;
+			}
+		} else {
+			$aissuer = "{$a}={$v}";
+			$issuer = (strlen($issuer)) ? "{$aissuer}, {$issuer}" : $aissuer;
+		}
 	}
 
 	return $issuer;

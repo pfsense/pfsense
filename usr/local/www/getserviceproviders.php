@@ -74,7 +74,7 @@ function providers_list($country) {
 }
 
 function provider_plan_data($country,$provider,$connection) {
-	Header("Content-type: application/xml;");
+	header("Content-type: application/xml;");
 	echo "<?xml version=\"1.0\" ?>\n";
 	echo "<connection>\n";
 	$serviceproviders = get_country_providers($country);

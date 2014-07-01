@@ -65,11 +65,14 @@ function domTT_title($title_msg){
 $xml = htmlspecialchars($_GET['xml']);
 if($_POST['xml']) $xml = htmlspecialchars($_POST['xml']);
 
-if($xml == "") {
-            print_info_box_np(gettext("ERROR: No package defined."));
+$xml_fullpath = realpath('/usr/local/pkg/' . $xml);
+
+if ($xml == "" || $xml_fullpath === false ||
+    substr($xml_fullpath, 0, strlen('/usr/local/pkg/')) != '/usr/local/pkg/') {
+            print_info_box_np(gettext("ERROR: No valid package defined."));
             die;
 } else {
-            $pkg = parse_xml_config_pkg("/usr/local/pkg/" . $xml, "packagegui");
+            $pkg = parse_xml_config_pkg($xml_fullpath, "packagegui");
 }
 
 if($pkg['include_file'] <> "") {
@@ -98,7 +101,7 @@ if(!$id && !$_POST)
 	$id = "0";
 
 if(!is_numeric($id)) {
-	Header("Location: /");
+	header("Location: /");
 	exit;
 }
 
@@ -258,10 +261,15 @@ else
 	$title = gettext("Package Editor");
 
 $pgtitle = $title;
-include("head.inc");
 
-if ($pkg['custom_php_after_head_command'])
+if ($pkg['custom_php_after_head_command']) {
+	$closehead = false;
+	include("head.inc");
 	eval($pkg['custom_php_after_head_command']);
+	echo "</head>\n";
+}
+else
+	include("head.inc");
 
 ?>
 

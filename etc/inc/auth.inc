@@ -1347,16 +1347,14 @@ function session_auth() {
 	global $config, $_SESSION, $page;
 
 	// Handle HTTPS httponly and secure flags
-	if($config['system']['webgui']['protocol'] == "https") {
-		$currentCookieParams = session_get_cookie_params();
-		session_set_cookie_params(
-			$currentCookieParams["lifetime"],
-			$currentCookieParams["path"],
-			NULL,
-			true,
-			true
-		);
-	}
+	$currentCookieParams = session_get_cookie_params();
+	session_set_cookie_params(
+		$currentCookieParams["lifetime"],
+		$currentCookieParams["path"],
+		NULL,
+		($config['system']['webgui']['protocol'] == "https"),
+		true
+	);
 
 	if (!session_id())
 		session_start();
@@ -1366,6 +1364,8 @@ function session_auth() {
 		$authcfg = auth_get_authserver($config['system']['webgui']['authmode']);
 		if (authenticate_user($_POST['usernamefld'], $_POST['passwordfld'], $authcfg) || 
 		    authenticate_user($_POST['usernamefld'], $_POST['passwordfld'])) {
+			// Generate a new id to avoid session fixation
+			session_regenerate_id();
 			$_SESSION['Logged_In'] = "True";
 			$_SESSION['Username'] = $_POST['usernamefld'];
 			$_SESSION['last_access'] = time();
@@ -1444,7 +1444,7 @@ function session_auth() {
 			return false;
 
 		/* redirect to page the user is on, it'll prompt them to login again */
-		Header("Location: {$scriptName}");
+		header("Location: {$scriptName}");
 
 		return false;
 	}

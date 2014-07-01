@@ -70,10 +70,10 @@ $updateavailable = false;
 				<td class="listlr">
 					<?= $pkg['name'] ?>
 				</td>
-				<td class="listlr">
+				<td class="listr">
 					<?= $pkg['category'] ?>
 				</td>
-				<td class="listlr">
+				<td class="listr">
 				<?php
 				$latest_package = $currentvers[$pkg['name']]['version'];
 				if($latest_package == false) {

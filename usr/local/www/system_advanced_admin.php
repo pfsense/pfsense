@@ -59,7 +59,7 @@ $pconfig['noantilockout'] = isset($config['system']['webgui']['noantilockout']);
 $pconfig['nodnsrebindcheck'] = isset($config['system']['webgui']['nodnsrebindcheck']);
 $pconfig['nohttpreferercheck'] = isset($config['system']['webgui']['nohttpreferercheck']);
 $pconfig['beast_protection'] = isset($config['system']['webgui']['beast_protection']);
-$pconfig['noautocomplete'] = isset($config['system']['webgui']['noautocomplete']);
+$pconfig['loginautocomplete'] = isset($config['system']['webgui']['loginautocomplete']);
 $pconfig['althostnames'] = $config['system']['webgui']['althostnames'];
 $pconfig['enableserial'] = $config['system']['enableserial'];
 $pconfig['serialspeed'] = $config['system']['serialspeed'];
@@ -178,10 +178,10 @@ if ($_POST) {
 		else
 			unset($config['system']['webgui']['beast_protection']);
 
-		if ($_POST['noautocomplete'] == "yes")
-			$config['system']['webgui']['noautocomplete'] = true;
+		if ($_POST['loginautocomplete'] == "yes")
+			$config['system']['webgui']['loginautocomplete'] = true;
 		else
-			unset($config['system']['webgui']['noautocomplete']);
+			unset($config['system']['webgui']['loginautocomplete']);
 
 		if ($_POST['althostnames'])
 			$config['system']['webgui']['althostnames'] = $_POST['althostnames'];
@@ -404,12 +404,12 @@ function prot_change() {
 							<tr>
 								<td width="22%" valign="top" class="vncell"><?=gettext("WebGUI Login Autocomplete"); ?></td>
 								<td width="78%" class="vtable">
-									<input name="noautocomplete" type="checkbox" id="noautocomplete" value="yes" <?php if ($pconfig['noautocomplete']) echo "checked=\"checked\""; ?> />
-									<strong><?=gettext("Disable webConfigurator login autocomplete"); ?></strong>
+									<input name="loginautocomplete" type="checkbox" id="loginautocomplete" value="yes" <?php if ($pconfig['loginautocomplete']) echo "checked=\"checked\""; ?> />
+									<strong><?=gettext("Enable webConfigurator login autocomplete"); ?></strong>
 									<br />
-									<?php echo gettext("When this is unchecked, login credentials for the webConfigurator " .
+									<?php echo gettext("When this is checked, login credentials for the webConfigurator " .
 									"may be saved by the browser. While convenient, some security standards require this to be disabled. " .
-									"Check this box to disable autocomplete on the login form so that browsers will not prompt to save credentials (NOTE: Some browsers do not respect this option). ");
+									"Check this box to enable autocomplete on the login form so that browsers will prompt to save credentials (NOTE: Some browsers do not respect this option). ");
 									?>
 								</td>
 							</tr>
@@ -539,7 +539,7 @@ function prot_change() {
 								<td width="22%" valign="top" class="vncell"><?=gettext("Serial Terminal"); ?></td>
 								<td width="78%" class="vtable">
 									<input name="enableserial" type="checkbox" id="enableserial" value="yes" <?php if (isset($pconfig['enableserial'])) echo "checked=\"checked\""; ?> />
-									<strong><?=gettext("Enables the first serial port with 9600/8/N/1 by default, or another speed selectable below."); ?></strong>
+									<strong><?=gettext("Enables the first serial port with 115200/8/N/1 by default, or another speed selectable below."); ?></strong>
 									<span class="vexpl"><?=gettext("Note:  This will redirect the console output and messages to the serial port. You can still access the console menu from the internal video card/keyboard. A <b>null modem</b> serial cable or adapter is required to use the serial console."); ?></span>
 								</td>
 							</tr>
@@ -548,12 +548,12 @@ function prot_change() {
 								<td width="22%" valign="top" class="vncell"><?=gettext("Serial Speed")?></td>
 								<td width="78%" class="vtable">
 									<select name="serialspeed" id="serialspeed" class="formselect">
-										<option value="9600"   <?php if ($pconfig['serialspeed'] == "9600")   echo "selected=\"selected\"";?>>9600</option>
-										<option value="14400"  <?php if ($pconfig['serialspeed'] == "14400")  echo "selected=\"selected\"";?>>14400</option>
-										<option value="19200"  <?php if ($pconfig['serialspeed'] == "19200")  echo "selected=\"selected\"";?>>19200</option>
-										<option value="38400"  <?php if ($pconfig['serialspeed'] == "38400")  echo "selected=\"selected\"";?>>38400</option>
-										<option value="57600"  <?php if ($pconfig['serialspeed'] == "57600")  echo "selected=\"selected\"";?>>57600</option>
 										<option value="115200" <?php if ($pconfig['serialspeed'] == "115200") echo "selected=\"selected\"";?>>115200</option>
+										<option value="57600"  <?php if ($pconfig['serialspeed'] == "57600")  echo "selected=\"selected\"";?>>57600</option>
+										<option value="38400"  <?php if ($pconfig['serialspeed'] == "38400")  echo "selected=\"selected\"";?>>38400</option>
+										<option value="19200"  <?php if ($pconfig['serialspeed'] == "19200")  echo "selected=\"selected\"";?>>19200</option>
+										<option value="14400"  <?php if ($pconfig['serialspeed'] == "14400")  echo "selected=\"selected\"";?>>14400</option>
+										<option value="9600"   <?php if ($pconfig['serialspeed'] == "9600")   echo "selected=\"selected\"";?>>9600</option>
 									</select> bps
 									<br /><?=gettext("Allows selection of different speeds for the serial console port."); ?>
 								</td>

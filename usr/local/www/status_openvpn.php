@@ -177,10 +177,10 @@ include("head.inc"); ?>
 					<?=$conn['connect_time'];?>
 				</td>
 				<td class="listr">
-					<?=$conn['bytes_sent'];?>
+					<?=format_bytes($conn['bytes_sent']);?>
 				</td>
 				<td class="listr">
-					<?=$conn['bytes_recv'];?>
+					<?=format_bytes($conn['bytes_recv']);?>
 				</td>
 				<td class="list">
 					<img src="/themes/<?php echo $g['theme']; ?>/images/icons/icon_x.gif" height="17" width="17" border="0"
@@ -301,10 +301,10 @@ include("head.inc"); ?>
 					<?=$sk_server['remote_host'];?>
 				</td>
 				<td class="listr">
-					<?=$sk_server['bytes_sent'];?>
+					<?=format_bytes($sk_server['bytes_sent']);?>
 				</td>
 				<td class="listr">
-					<?=$sk_server['bytes_recv'];?>
+					<?=format_bytes($sk_server['bytes_recv']);?>
 				</td>
 				<td class="listr">
 				<table>
@@ -364,10 +364,10 @@ include("head.inc"); ?>
 					<?=$client['remote_host'];?>
 				</td>
 				<td class="listr">
-					<?=$client['bytes_sent'];?>
+					<?=format_bytes($client['bytes_sent']);?>
 				</td>
 				<td class="listr">
-					<?=$client['bytes_recv'];?>
+					<?=format_bytes($client['bytes_recv']);?>
 				</td>
 				<td class="listr" height="12">
 				<table>

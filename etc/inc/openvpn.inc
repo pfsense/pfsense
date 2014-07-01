@@ -55,6 +55,22 @@ $openvpn_prots = array("UDP", "UDP6", "TCP", "TCP6");
 global $openvpn_dev_mode;
 $openvpn_dev_mode = array("tun", "tap");
 
+global $openvpn_verbosity_level;
+$openvpn_verbosity_level = array(
+	0 =>	"none", 
+	1 =>	"default", 
+	2 =>	"2", 
+	3 =>	"3 (recommended)", 
+	4 =>	"4",
+	5 => 	"5",
+	6 => 	"6",
+	7 => 	"7",
+	8 => 	"8",
+	9 => 	"9",
+	10 => 	"10",
+	11 => 	"11"
+); 
+
 /* 
  * The User Auth mode below is disabled because
  * OpenVPN erroneously requires that we provide
@@ -460,11 +476,18 @@ function openvpn_reconfigure($mode, $settings) {
 		}
 	}
 
-	$conf  = "dev {$devname}\n";
+
+	$conf = "dev {$devname}\n";
+	if (isset($settings['verbosity_level'])) {
+		$conf .= "verb {$settings['verbosity_level']}\n";
+	}
+		
 	$conf .= "dev-type {$settings['dev_mode']}\n";
 	switch($settings['dev_mode']) {
 		case "tun":
-			$conf .= "tun-ipv6\n";
+			if (!$settings['no_tun_ipv6']) {
+				$conf .= "tun-ipv6\n";
+			}
 			break;
 	}
 	$conf .= "dev-node /dev/{$tunname}\n";
@@ -766,6 +789,19 @@ function openvpn_reconfigure($mode, $settings) {
 
 	if ($settings['topology_subnet']) {
 		$conf .= "topology subnet\n";
+	}
+
+	// New client features
+	if ($mode == "client") {
+		// Dont pull routes checkbox
+		if ($settings['route_no_pull']) {
+			$conf .= "route-nopull\n";
+		}
+
+		// Dont add/remove routes checkbox
+		if ($settings['route_no_exec']) {
+			$conf .= "route-noexec\n";
+		}
 	}
 
 	openvpn_add_custom($settings, $conf);

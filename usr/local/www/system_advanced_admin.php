@@ -135,13 +135,10 @@ if ($_POST) {
 			unset($config['system']['webgui']['quietlogin']);
 		}
 
-		if($_POST['disableconsolemenu'] == "yes") {
+		if($_POST['disableconsolemenu'] == "yes")
 			$config['system']['disableconsolemenu'] = true;
-			auto_login();
-		} else {
+		else
 			unset($config['system']['disableconsolemenu']);
-			auto_login();
-		}
 
 		if ($_POST['noantilockout'] == "yes")
 			$config['system']['webgui']['noantilockout'] = true;

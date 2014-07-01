@@ -9,7 +9,7 @@ if [ $PFSENSETYPE = "pfSense" ] || [ $PFSENSETYPE = "nanobsd" ]; then
 fi
 
 # Detect interactive logins and display the shell
-detect_command='[ -n "$SSH_TTY" -o "$TERM" = "cons25" ] && exec /etc/rc.initial'
+detect_command='[ -n "$SSH_TTY" -o "$TERM" = "xterm" ] && exec /etc/rc.initial'
 echo "$detect_command" > $CVS_CO_DIR/root/.shrc
 echo "$detect_command" >> $CVS_CO_DIR/root/.profile
 

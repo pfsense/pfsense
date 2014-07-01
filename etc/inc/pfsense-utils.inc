@@ -917,25 +917,25 @@ function setup_serial_port($when="save", $path="") {
 		$boot_config = "";
 
 	$serialspeed = (is_numeric($config['system']['serialspeed'])) ? $config['system']['serialspeed'] : "115200";
-	if(($g['platform'] != "cdrom") && ($g['platform'] != "nanobsd")) {
+	if ($g['platform'] != "cdrom") {
 		$boot_config_split = explode("\n", $boot_config);
 		$fd = fopen($boot_config_file,"w");
 		if($fd) {
 			foreach($boot_config_split as $bcs) {
-				if(stristr($bcs, "-D")) {
+				if(stristr($bcs, "-D") || stristr($bcs, "-h")) {
 					/* DONT WRITE OUT, WE'LL DO IT LATER */
 				} else {
 					if($bcs <> "")
 						fwrite($fd, "{$bcs}\n");
 				}
 			}
-			if(isset($config['system']['enableserial']) || $g['enableserial_force']) {
+			if (($g['platform'] == "nanobsd") && !file_exists("/etc/nano_use_vga.txt"))
+				fwrite($fd, "-S{$serialspeed} -h");
+			else if (is_serial_enabled())
 				fwrite($fd, "-S{$serialspeed} -D");
-			}
 			fclose($fd);
 		}
-	}
-	if($g['platform'] != "cdrom") {
+
 		/* serial console - write out /boot/loader.conf */
 		if ($when == "upgrade")
 			system("echo \"Reading {$loader_conf_file}...\" >> /conf/upgrade_log.txt");
@@ -953,7 +953,10 @@ function setup_serial_port($when="save", $path="") {
 					&& (stripos($bcs, "hw.usb.no_pf") === false))
 					$new_boot_config[] = $bcs;
 
-			if(isset($config['system']['enableserial']) || $g['enableserial_force']) {
+			if (($g['platform'] == "nanobsd") && !file_exists("/etc/nano_use_vga.txt")) {
+				$new_boot_config[] = 'boot_serial="YES"';
+				$new_boot_config[] = 'console="comconsole"';
+			} else if (is_serial_enabled()) {
 				$new_boot_config[] = 'boot_multicons="YES"';
 				$new_boot_config[] = 'boot_serial="YES"';
 				$primaryconsole = isset($g['primaryconsole_force']) ? $g['primaryconsole_force'] : $config['system']['primaryconsole'];
@@ -976,12 +979,7 @@ function setup_serial_port($when="save", $path="") {
 	$ttys_split = explode("\n", $ttys);
 	$fd = fopen("/etc/ttys", "w");
 
-	if (!isset($g['enableserial_force']) &&
-	    !isset($config['system']['enableserial']) &&
-	    ($g['platform'] == "pfSense" || $g['platform'] == "cdrom" || file_exists("/etc/nano_use_vga.txt")))
-		$on_off = 'off';
-	else
-		$on_off = 'on';
+	$on_off = (is_serial_enabled() ? 'on' : 'off');
 
 	if (isset($config['system']['disableconsolemenu'])) {
 		$console_type = 'Pc';
@@ -1004,6 +1002,17 @@ function setup_serial_port($when="save", $path="") {
 
 	conf_mount_ro();
 	return;
+}
+
+function is_serial_enabled() {
+	global $g, $config;
+
+	if (!isset($g['enableserial_force']) &&
+	    !isset($config['system']['enableserial']) &&
+	    ($g['platform'] == "pfSense" || $g['platform'] == "cdrom" || file_exists("/etc/nano_use_vga.txt")))
+		return false;
+
+	return true;
 }
 
 function reload_ttys() {

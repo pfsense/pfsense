@@ -902,78 +902,6 @@ function reload_all_sync() {
 	send_event("service restart webgui");
 }
 
-function auto_login() {
-	global $config;
-
-	if(isset($config['system']['disableconsolemenu']))
-		$status = false;
-	else
-		$status = true;
-
-	$gettytab = file_get_contents("/etc/gettytab");
-	$getty_split = explode("\n", $gettytab);
-	$getty_update_needed = false;
-	$getty_search_str = ":ht:np:sp#115200";
-	$getty_al_str = ":al=root:";
-	$getty_al_search_str = $getty_search_str . $getty_al_str;
-	/* Check if gettytab is already OK, if so then do not rewrite it. */
-	foreach($getty_split as $gs) {
-		if(stristr($gs, $getty_search_str)) {
-			if($status == true) {
-				if(!stristr($gs, $getty_al_search_str)) {
-					$getty_update_needed = true;
-				}
-			} else {
-				if(stristr($gs, $getty_al_search_str)) {
-					$getty_update_needed = true;
-				}
-			}
-		}
-	}
-
-	if (!$getty_update_needed) {
-		return;
-	}
-
-	conf_mount_rw();
-	$fd = false;
-	$tries = 0;
-	while (!$fd && $tries < 100) {
-		$fd = fopen("/etc/gettytab", "w");
-		$tries++;
-
-	}
-	if (!$fd) {
-		conf_mount_ro();
-		if ($status) {
-			log_error(gettext("Enabling auto login was not possible."));
-		} else {
-			log_error(gettext("Disabling auto login was not possible."));
-		}
-		return;
-	}
-	foreach($getty_split as $gs) {
-		if(stristr($gs, $getty_search_str)) {
-			if($status == true) {
-				fwrite($fd, "	".$getty_al_search_str."\n");
-			} else {
-				fwrite($fd, "	".$getty_search_str."\n");
-			}
-		} else {
-			fwrite($fd, "{$gs}\n");
-		}
-	}
-	fclose($fd);
-
-	if ($status) {
-		log_error(gettext("Enabled console auto login, console menu is NOT password protected."));
-	} else {
-		log_error(gettext("Disabled console auto login, console menu is password protected."));
-	}
-
-	conf_mount_ro();
-}
-
 function setup_serial_port($when="save", $path="") {
 	global $g, $config;
 	conf_mount_rw();
@@ -1047,22 +975,33 @@ function setup_serial_port($when="save", $path="") {
 	$ttys = file_get_contents("/etc/ttys");
 	$ttys_split = explode("\n", $ttys);
 	$fd = fopen("/etc/ttys", "w");
-	foreach($ttys_split as $tty) {
-		if(stristr($tty, "ttyd0") or stristr($tty, "ttyu0")) {
-			if(isset($config['system']['enableserial']) || $g['enableserial_force']) {
-				fwrite($fd, "ttyu0	\"/usr/libexec/getty bootupcli\"	cons25	on	secure\n");
-			} else {
-				fwrite($fd, "ttyu0	\"/usr/libexec/getty bootupcli\"	cons25	off	secure\n");
-			}
-		} else {
-			fwrite($fd, $tty . "\n");
-		}
+	$on_off = ((isset($config['system']['enableserial']) || $g['enableserial_force']) ? 'on' : 'off');
+	if (isset($config['system']['disableconsolemenu'])) {
+		$console_type = 'Pc';
+		$serial_type = 'std.' . $serialspeed;
+	} else {
+		$console_type = 'al.Pc';
+		$serial_type = 'al.' . $serialspeed;
 	}
+	foreach($ttys_split as $tty) {
+		if (stristr($tty, "ttyv0"))
+			fwrite($fd, "ttyv0	\"/usr/libexec/getty {$console_type}\"	xterm	on	secure\n");
+		else if (stristr($tty, "ttyu0"))
+			fwrite($fd, "ttyu0	\"/usr/libexec/getty {$seral_type}\"	xterm	{$on_off}	secure\n");
+		else
+			fwrite($fd, $tty . "\n");
+	}
+	unset($on_off, $console_type, $serial_type);
 	fclose($fd);
-	auto_login();
+	reload_ttys();
 
 	conf_mount_ro();
 	return;
+}
+
+function reload_ttys() {
+	// Send a HUP signal to init will make it reload /etc/ttys
+	posix_kill(1, SIGHUP);
 }
 
 function print_value_list($list, $count = 10, $separator = ",") {

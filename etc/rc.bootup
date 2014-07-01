@@ -61,19 +61,19 @@ function rescue_detect_keypress() {
 	}
 	// If R or I was pressed do our logic here
 	if (in_array($key, array("r", "R"))) {
-	  putenv("TERM=cons25");
+	  putenv("TERM=xterm");
 	  echo "\n\nRecovery mode selected...\n";
-	  passthru("/usr/bin/env TERM=cons25 /bin/tcsh -c /scripts/lua_installer_rescue");
+	  passthru("/usr/bin/env TERM=xterm /bin/tcsh -c /scripts/lua_installer_rescue");
 	} elseif (in_array($key, array("i", "I"))) {
-	  putenv("TERM=cons25");  
+	  putenv("TERM=xterm");
 	  echo "\n\nInstaller mode selected...\n";
-	  passthru("/usr/bin/env TERM=cons25 /bin/tcsh -c /scripts/lua_installer");
+	  passthru("/usr/bin/env TERM=xterm /bin/tcsh -c /scripts/lua_installer");
 	  if(file_exists("/tmp/install_complete")) {
 		passthru("/etc/rc.reboot");
 		exit;
 	  }
 	} elseif (in_array($key, array("!", "~"))) {
- 		putenv("TERM=cons25");
+		putenv("TERM=xterm");
 		echo "\n\nRecovery shell selected...\n";
 		echo "\n";
 		touch("/tmp/donotbootup");
@@ -375,7 +375,7 @@ services_snmpd_configure();
 system_set_harddisk_standby();
 
 /* lock down console if necessary */
-auto_login();
+reload_ttys();
 
 /* load graphing functions */
 enable_rrd_graphing();

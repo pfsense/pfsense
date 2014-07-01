@@ -975,7 +975,14 @@ function setup_serial_port($when="save", $path="") {
 	$ttys = file_get_contents("/etc/ttys");
 	$ttys_split = explode("\n", $ttys);
 	$fd = fopen("/etc/ttys", "w");
-	$on_off = ((isset($config['system']['enableserial']) || $g['enableserial_force']) ? 'on' : 'off');
+
+	if (!isset($g['enableserial_force']) &&
+	    !isset($config['system']['enableserial']) &&
+	    ($g['platform'] == "pfSense" || $g['platform'] == "cdrom" || file_exists("/etc/nano_use_vga.txt")))
+		$on_off = 'off';
+	else
+		$on_off = 'on';
+
 	if (isset($config['system']['disableconsolemenu'])) {
 		$console_type = 'Pc';
 		$serial_type = 'std.' . $serialspeed;

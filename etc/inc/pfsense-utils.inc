@@ -987,7 +987,7 @@ function setup_serial_port($when="save", $path="") {
 		if (stristr($tty, "ttyv0"))
 			fwrite($fd, "ttyv0	\"/usr/libexec/getty {$console_type}\"	xterm	on	secure\n");
 		else if (stristr($tty, "ttyu0"))
-			fwrite($fd, "ttyu0	\"/usr/libexec/getty {$seral_type}\"	xterm	{$on_off}	secure\n");
+			fwrite($fd, "ttyu0	\"/usr/libexec/getty {$serial_type}\"	xterm	{$on_off}	secure\n");
 		else
 			fwrite($fd, $tty . "\n");
 	}

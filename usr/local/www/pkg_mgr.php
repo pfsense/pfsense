@@ -74,6 +74,7 @@ function domTT_title($title_msg) {
 //get_pkg_info only if cache file has more then $g[min_pkg_cache_file_time] seconds
 $pkg_cache_file_time=($g['min_pkg_cache_file_time'] ? $g['min_pkg_cache_file_time'] : 120);
 
+$xmlrpc_base_url = isset($config['system']['altpkgrepo']['enable']) ? $config['system']['altpkgrepo']['xmlrpcbaseurl'] : $g['xmlrpcbaseurl'];
 if (!file_exists("{$g['tmp_path']}/pkg_info.cache") || (time() - filemtime("{$g['tmp_path']}/pkg_info.cache")) > $pkg_cache_file_time) {
 	$pkg_info = get_pkg_info('all', array("noembedded", "name", "category", "website", "version", "status", "descr", "maintainer", "required_version", "maximum_version", "pkginfolink", "config_file"));
 	//create cache file after get_pkg_info
@@ -84,7 +85,6 @@ if (!file_exists("{$g['tmp_path']}/pkg_info.cache") || (time() - filemtime("{$g[
 		//$pkg_sizes = get_pkg_sizes();
 	} else {
 		$using_cache = true;
-		$xmlrpc_base_url = isset($config['system']['altpkgrepo']['enable']) ? $config['system']['altpkgrepo']['xmlrpcbaseurl'] : $g['xmlrpcbaseurl'];
 		if(file_exists("{$g['tmp_path']}/pkg_info.cache")) {
 			$savemsg = sprintf(gettext("Unable to retrieve package info from %s. Cached data will be used."), $xmlrpc_base_url);
 			$pkg_info = unserialize(@file_get_contents("{$g['tmp_path']}/pkg_info.cache"));
@@ -115,6 +115,15 @@ include("head.inc");
 <body link="#0000CC" vlink="#0000CC" alink="#0000CC">
 <?php
 	include("fbegin.inc");
+
+	if (!verify_all_package_servers())
+		print_info_box(sprintf(gettext("The package server currently "
+		. "configured on this firewall (%s) is NOT an official package "
+		. "server. The contents of such servers cannot be verified and "
+		. "may contain malicious files. To ensure that you receive "
+		. "verifiable and trusted packages, return the package server "
+		. "settings to their default values."), htmlspecialchars($xmlrpc_base_url)));
+
 	if ($savemsg)
 		print_info_box($savemsg);
 ?>

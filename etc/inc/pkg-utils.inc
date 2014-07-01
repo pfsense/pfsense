@@ -1411,4 +1411,34 @@ function get_pkg_interfaces_select_source($include_localhost=false) {
 	}
 	return $ssifs;
 }
+
+function verify_all_package_servers() {
+	global $config, $g;
+	/* If an alternate package repository is defined, check it before
+		checking the default. */
+	if (isset($config['system']['altpkgrepo']['enable']) && !empty($config['system']['altpkgrepo']['xmlrpcbaseurl'])) {
+		return verify_package_server($config['system']['altpkgrepo']['xmlrpcbaseurl']);
+	} else {
+		return verify_package_server($g['xmlrpcbaseurl']);
+	}
+}
+
+/* Check if the active package server is a valid default or if it has been
+	altered. */
+function verify_package_server($server) {
+	/* Define the expected default package server domains. Include
+		preceding "." to prevent matching from being too liberal. */
+	$default_package_domains = array('.pfsense.org', '.pfsense.com', '.netgate.com');
+
+	/* For this test we only need to check the hostname. */
+	$xmlrpcbase = parse_url($server, PHP_URL_HOST);
+
+	foreach ($default_package_domains as $dom) {
+		if (substr($xmlrpcbase, -(strlen($dom))) == $dom) {
+			return true;
+		}
+	}
+	return false;
+}
+
 ?>

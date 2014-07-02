@@ -845,8 +845,8 @@ function system_webgui_start() {
 			$cert = array();
 			$cert['refid'] = uniqid();
 			$cert['descr'] = gettext("webConfigurator default");
-			mwexec("/usr/bin/openssl genrsa 1024 > {$g['tmp_path']}/ssl.key");
-			mwexec("/usr/bin/openssl req -new -x509 -nodes -sha256 -days 2000 -key {$g['tmp_path']}/ssl.key > {$g['tmp_path']}/ssl.crt");
+			mwexec("/usr/bin/openssl genrsa 2048 > {$g['tmp_path']}/ssl.key");
+			mwexec("/usr/bin/openssl req -new -x509 -nodes -sha256 -days 366 -key {$g['tmp_path']}/ssl.key > {$g['tmp_path']}/ssl.crt");
 			$crt = file_get_contents("{$g['tmp_path']}/ssl.crt");
 			$key = file_get_contents("{$g['tmp_path']}/ssl.key");
 			unlink("{$g['tmp_path']}/ssl.key");
@@ -1228,8 +1228,9 @@ EOD;
 
 		if (isset($config['system']['webgui']['beast_protection'])) {
 			$lighty_config .= "ssl.honor-cipher-order = \"enable\"\n";
-			$lighty_config .= "ssl.cipher-list = \"ECDHE-RSA-AES256-SHA384:AES256-SHA256:RC4-SHA:RC4:HIGH:!MD5:!aNULL:!EDH:!AESGCM\"\n";
+			$lighty_config .= "ssl.cipher-list = \"ECDHE-RSA-AES256-GCM-SHA384:ECDHE-RSA-AES128-GCM-SHA256:ECDHE-RSA-RC4-SHA:AES256-GCM-SHA384:AES256-SHA256:AES256-SHA:AES128-SHA:RC4-SHA\"\n";
 		} else {
+			// This is terrible, but I'm ignoring it for now.
 			$lighty_config .= "ssl.cipher-list = \"DHE-RSA-CAMELLIA256-SHA:DHE-DSS-CAMELLIA256-SHA:CAMELLIA256-SHA:DHE-DSS-AES256-SHA:AES256-SHA:DHE-RSA-CAMELLIA128-SHA:DHE-DSS-CAMELLIA128-SHA:CAMELLIA128-SHA:DHE-RSA-AES128-SHA:DHE-DSS-AES128-SHA:AES128-SHA:RC4-SHA:RC4-MD5:!aNULL:!eNULL:!3DES:@STRENGTH\"\n";
 		}
 

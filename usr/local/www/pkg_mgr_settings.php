@@ -83,6 +83,10 @@ function enable_altpkgrepourl(enable_over) {
 	if (!verify_all_package_servers())
 		print_info_box(package_server_mismatch_message()); ?>
 
+	/* Print package server SSL warning. See https://redmine.pfsense.org/issues/484 */
+	if (check_package_server_ssl() === false)
+		print_info_box(package_server_ssl_failure_message());
+
 <?php if ($input_errors) print_input_errors($input_errors); ?>
 
 <form action="pkg_mgr_settings.php" method="post" name="iform" id="iform">

@@ -74,7 +74,7 @@ function domTT_title($title_msg) {
 //get_pkg_info only if cache file has more then $g[min_pkg_cache_file_time] seconds
 $pkg_cache_file_time=($g['min_pkg_cache_file_time'] ? $g['min_pkg_cache_file_time'] : 120);
 
-$xmlrpc_base_url = isset($config['system']['altpkgrepo']['enable']) ? $config['system']['altpkgrepo']['xmlrpcbaseurl'] : $g['xmlrpcbaseurl'];
+$xmlrpc_base_url = get_active_xml_rpc_base_url();
 if (!file_exists("{$g['tmp_path']}/pkg_info.cache") || (time() - filemtime("{$g['tmp_path']}/pkg_info.cache")) > $pkg_cache_file_time) {
 	$pkg_info = get_pkg_info('all', array("noembedded", "name", "category", "website", "version", "status", "descr", "maintainer", "required_version", "maximum_version", "pkginfolink", "config_file"));
 	//create cache file after get_pkg_info
@@ -116,13 +116,9 @@ include("head.inc");
 <?php
 	include("fbegin.inc");
 
+	/* Print package server mismatch warning. See https://redmine.pfsense.org/issues/484 */
 	if (!verify_all_package_servers())
-		print_info_box(sprintf(gettext("The package server currently "
-		. "configured on this firewall (%s) is NOT an official package "
-		. "server. The contents of such servers cannot be verified and "
-		. "may contain malicious files. To ensure that you receive "
-		. "verifiable and trusted packages, return the package server "
-		. "settings to their default values."), htmlspecialchars($xmlrpc_base_url)));
+		print_info_box(package_server_mismatch_message());
 
 	if ($savemsg)
 		print_info_box($savemsg);

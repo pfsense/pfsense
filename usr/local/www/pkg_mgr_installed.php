@@ -89,7 +89,12 @@ include("head.inc");
 </head>
 
 <body link="#0000CC" vlink="#0000CC" alink="#0000CC">
-	<?php include("fbegin.inc"); ?>
+	<?php include("fbegin.inc"); 
+
+	/* Print package server mismatch warning. See https://redmine.pfsense.org/issues/484 */
+	if (!verify_all_package_servers())
+		print_info_box(package_server_mismatch_message()); ?>
+
 	<table width="100%" border="0" cellpadding="0" cellspacing="0" summary="packages installed">
 		<tr>
 			<td>

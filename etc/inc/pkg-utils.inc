@@ -196,7 +196,7 @@ function get_pkg_sizes($pkgs = 'all') {
 		"freebsd_machine" => $freebsd_machine
 	);
 	$msg = new XML_RPC_Message('pfsense.get_pkg_sizes', array(php_value_to_xmlrpc($params)));
-	$xmlrpc_base_url = isset($config['system']['altpkgrepo']['enable']) ? $config['system']['altpkgrepo']['xmlrpcbaseurl'] : $g['xmlrpcbaseurl'];
+	$xmlrpc_base_url = get_active_xml_rpc_base_url();
 	$cli = new XML_RPC_Client($g['xmlrpcpath'], $xmlrpc_base_url);
 	$resp = $cli->send($msg, 10);
 	if(!is_object($resp))
@@ -1282,7 +1282,7 @@ function pkg_reinstall_all() {
 		if ($pkg_info) {
 			echo " Done.\n";
 		} else {
-			$xmlrpc_base_url = isset($config['system']['altpkgrepo']['enable']) ? $config['system']['altpkgrepo']['xmlrpcbaseurl'] : $g['xmlrpcbaseurl'];
+			$xmlrpc_base_url = get_active_xml_rpc_base_url();
 			$error = sprintf(gettext(' >>> Unable to communicate with %1$s. Please verify DNS and interface configuration, and that %2$s has functional Internet connectivity.'), $xmlrpc_base_url, $g['product_name']);
 			echo "\n{$error}\n";
 			log_error(gettext("Cannot reinstall packages: ") . $error);
@@ -1413,14 +1413,7 @@ function get_pkg_interfaces_select_source($include_localhost=false) {
 }
 
 function verify_all_package_servers() {
-	global $config, $g;
-	/* If an alternate package repository is defined, check it before
-		checking the default. */
-	if (isset($config['system']['altpkgrepo']['enable']) && !empty($config['system']['altpkgrepo']['xmlrpcbaseurl'])) {
-		return verify_package_server($config['system']['altpkgrepo']['xmlrpcbaseurl']);
-	} else {
-		return verify_package_server($g['xmlrpcbaseurl']);
-	}
+	return verify_package_server(get_active_xml_rpc_base_url());
 }
 
 /* Check if the active package server is a valid default or if it has been
@@ -1439,6 +1432,18 @@ function verify_package_server($server) {
 		}
 	}
 	return false;
+}
+
+/* Keep this message centrally since it will be used several times on pages
+	in the GUI. */
+function package_server_mismatch_message() {
+	return sprintf(gettext("The package server currently configured on "
+	. "this firewall (%s) is NOT an official package server. The contents "
+	. "of such servers cannot be verified and may contain malicious files. "
+	. "Return the package server settings to their default values to "
+	. "ensure that verifiable and trusted packages are received."),
+	htmlspecialchars(get_active_xml_rpc_base_url())) . '<br/><br/>'
+	. '<a href="/pkg_mgr_settings.php">' . gettext("Package Manager Settings") . '</a>';
 }
 
 ?>

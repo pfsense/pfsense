@@ -66,7 +66,7 @@ function cmp($a, $b) {
 }
 
 function stat_block($summary, $stat, $num) {
-	global $gotlines, $fields;
+	global $g, $gotlines, $fields;
 	uasort($summary[$stat] , 'cmp');
 	print "<table width=\"200\" cellpadding=\"3\" cellspacing=\"0\" border=\"1\" summary=\"source destination ip\">";
 	print "<tr><th colspan=\"2\">{$fields[$stat]} ".gettext("data")."</th></tr>";

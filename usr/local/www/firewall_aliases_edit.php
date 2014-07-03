@@ -702,7 +702,7 @@ if (empty($tab)) {
 		<td width="22%" valign="top">&nbsp;</td>
 		<td width="78%">
 			<input id="submit" name="submit" type="submit" class="formbtn" value="<?=gettext("Save"); ?>" />
-			<a href="firewall_aliases.php?tab=<?=$tab;?>"><input id="cancelbutton" name="cancelbutton" type="button" class="formbtn" value="<?=gettext("Cancel"); ?>" /></a>
+			<input type="button" class="formbtn" value="<?=gettext("Cancel"); ?>" onclick="history.back()" />
 		</td>
 	</tr>
 </table>

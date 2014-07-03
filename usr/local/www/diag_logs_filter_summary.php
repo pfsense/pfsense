@@ -39,7 +39,7 @@ include_once("filter_log.inc");
 $filter_logfile = "{$g['varlog_path']}/filter.log";
 $lines = 5000;
 $entriesperblock = 5;
-
+$theme = $g['theme'];
 $filterlog = conv_log_filter($filter_logfile, $lines, $lines);
 $gotlines = count($filterlog);
 $fields = array(
@@ -66,7 +66,7 @@ function cmp($a, $b) {
 }
 
 function stat_block($summary, $stat, $num) {
-	global $gotlines, $fields;
+	global $gotlines, $fields, $theme;
 	uasort($summary[$stat] , 'cmp');
 	print '<table width="200px" cellpadding="3" cellspacing="0" border="1">';
 	print "<tr><th colspan='2'>{$fields[$stat]} ".gettext("data")."</th></tr>";
@@ -79,7 +79,7 @@ function stat_block($summary, $stat, $num) {
 			$numentries++;
 			$outstr = $k[$i];
 			if (is_ipaddr($outstr)) {
-				$outstr = "<a href=\"diag_dns.php?host={$outstr}\" title=\"".gettext("Reverse Resolve with DNS")."\"><img border=\"0\" src=\"/themes/{$g['theme']}/images/icons/icon_log.gif\"></a> {$outstr}";
+				$outstr = "<a href=\"diag_dns.php?host={$outstr}\" title=\"".gettext("Reverse Resolve with DNS")."\"><img border=\"0\" src=\"/themes/$theme/images/icons/icon_log.gif\"></a> {$outstr}";
 			} elseif (substr_count($outstr, '/') == 1) {
 				list($proto, $port) = explode('/', $outstr);
 				$service = getservbyport($port, strtolower($proto));

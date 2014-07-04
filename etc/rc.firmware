@@ -439,7 +439,7 @@ pfSenseupgrade)
 	killall -9 check_reload_status
 	killall -9 check_reload_status
 	echo "Installing $IMG." >> /conf/upgrade_log.txt 2>&1
-	cd / && /usr/bin/tar xzUPf $IMG >> /conf/upgrade_log.txt 2>&1
+	cd / && /usr/bin/tar --exclude=./dev -xzUPf $IMG >> /conf/upgrade_log.txt 2>&1
 	/usr/local/sbin/check_reload_status
 	echo "Image installed $IMG." >> /conf/upgrade_log.txt 2>&1
 

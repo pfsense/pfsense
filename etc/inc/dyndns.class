@@ -309,7 +309,7 @@
 				case 'noip-free':
 					$needsIP = TRUE;
 					curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, FALSE);
-					$server = "http://dynupdate.no-ip.com/ducupdate.php";
+					$server = "https://dynupdate.no-ip.com/ducupdate.php";
 					$port = "";
 					if($this->_dnsServer)
 						$server = $this->_dnsServer;
@@ -331,7 +331,7 @@
 					$needsIP = TRUE;
 					curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, FALSE);
 					curl_setopt($ch, CURLOPT_USERPWD, $this->_dnsUser.':'.$this->_dnsPass);
-					$server = "http://members.easydns.com/dyn/dyndns.php";
+					$server = "https://members.easydns.com/dyn/dyndns.php";
 					$port = "";
 					if($this->_dnsServer)
 						$server = $this->_dnsServer;
@@ -367,7 +367,7 @@
 					break;
 				case 'dyns':
 					$needsIP = FALSE;
-					$server = "http://www.dyns.cx/postscript011.php";
+					$server = "https://www.dyns.cx/postscript011.php";
 					$port = "";
 					if($this->_dnsServer)
 						$server = $this->_dnsServer;
@@ -415,11 +415,11 @@
 					break;
 				case 'freedns':
 					$needIP = FALSE;
-					curl_setopt($ch, CURLOPT_URL, 'http://freedns.afraid.org/dynamic/update.php?' . $this->_dnsPass);
+					curl_setopt($ch, CURLOPT_URL, 'https://freedns.afraid.org/dynamic/update.php?' . $this->_dnsPass);
 					break;
 				case 'dnsexit':
 					$needsIP = TRUE;
-					curl_setopt($ch, CURLOPT_URL, 'http://www.dnsexit.com/RemoteUpdate.sv?login='.$this->_dnsUser. '&password='.$this->_dnsPass.'&host='.$this->_dnsHost.'&myip='.$this->_dnsIP);
+					curl_setopt($ch, CURLOPT_URL, 'https://www.dnsexit.com/RemoteUpdate.sv?login='.$this->_dnsUser. '&password='.$this->_dnsPass.'&host='.$this->_dnsHost.'&myip='.$this->_dnsIP);
 					break;
 				case 'loopia':
 					$needsIP = TRUE;
@@ -443,7 +443,7 @@
 
 				case 'staticcling':
 					$needsIP = FALSE;
-					curl_setopt($ch, CURLOPT_URL, 'http://www.staticcling.org/update.html?login='.$this->_dnsUser.'&pass='.$this->_dnsPass);
+					curl_setopt($ch, CURLOPT_URL, 'https://www.staticcling.org/update.html?login='.$this->_dnsUser.'&pass='.$this->_dnsPass);
 					break;	                    
 				case 'dnsomatic':
 					/* Example syntax 

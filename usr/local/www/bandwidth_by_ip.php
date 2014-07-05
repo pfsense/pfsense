@@ -57,7 +57,7 @@ $hostipformat = $_GET['hostipformat'];
 $iplookup = array();
 // If hostname display is requested and the DNS forwarder does not already have DHCP static names registered,
 // then load the DHCP static mappings into an array keyed by IP address.
-if (($hostipformat != ""))
+if ($hostipformat != "") {
 	// load if either unbound or dnsmasq is not enabled or has no registered static dhcp hosts
 	$doLoad = !isset($config['dnsmasq']['enable']) || (!isset($config['unbound']['enable']) || !isset($config['unbound']['regdhcpstatic']));
 	if (!$doLoad) {

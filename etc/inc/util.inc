@@ -1643,7 +1643,7 @@ function get_memory() {
 	$_gb = exec("/sbin/sysctl -n hw.physmem", $output);
 	$physmem = trim($output[0], " \n");
 	unset($output);
-	$_gb = exec("/sbin/sysctl -n hw.physmem", $output);
+	$_gb = exec("/sbin/sysctl -n hw.realmem", $output);
 	$realmem = trim($output[0], " \n");
 	unset($output, $_gb);
 	/* convert from bytes to megabytes */

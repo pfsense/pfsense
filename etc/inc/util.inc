@@ -1614,6 +1614,23 @@ function set_sysctl($values) {
 }
 
 /*
+ * set_single_sysctl($name, $value)
+ * Wrapper to set_sysctl() to make it simple to set only one sysctl
+ * returns boolean meaning if it suceed
+ */
+function set_single_sysctl($name, $value) {
+	if (empty($name))
+		return false;
+
+	$result = set_sysctl(array($name => $value));
+
+	if (!isset($result[$name]) || $result[$name] != $value)
+		return false;
+
+	return true;
+}
+
+/*
  *     get_memory()
  *     returns an array listing the amount of
  *     memory installed in the hardware

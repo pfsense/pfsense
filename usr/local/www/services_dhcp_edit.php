@@ -58,6 +58,7 @@ if(!$g['services_dhcp_server_enable']) {
 }
 
 require("guiconfig.inc");
+require_once("dnsmasq.inc");
 
 $if = $_GET['if'];
 if ($_POST['if'])

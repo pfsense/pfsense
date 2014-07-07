@@ -42,6 +42,7 @@
 
 require("guiconfig.inc");
 require_once("filter.inc");
+require_once("dnsmasq.inc");
 
 if(!$g['services_dhcp_server_enable']) {
 	header("Location: /");
@@ -526,7 +527,7 @@ if ($_POST) {
 		killbyname("dhcpd");
 		dhcp_clean_leases();
 		/* dnsmasq_configure calls dhcpd_configure */
-		/* no need to restart dhcpd twice */
+		/* no need to restart dhcpd twice */		
 		$dnsmasqStaticReg = false;
 		if (isset($config['dnsmasq']['enable'])) {
 			$a_dmInstances = dnsmasq_get_configured_instances();

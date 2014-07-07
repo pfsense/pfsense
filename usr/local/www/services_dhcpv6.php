@@ -46,6 +46,7 @@
 
 require("guiconfig.inc");
 require_once("filter.inc");
+require_once("dnsmasq.inc");
 
 if(!$g['services_dhcp_server_enable']) {
 	header("Location: /");

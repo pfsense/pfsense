@@ -233,16 +233,12 @@ function swap_usage() {
 
 function mem_usage() {
 	$memory = "";
-	exec("/sbin/sysctl -n vm.stats.vm.v_page_count vm.stats.vm.v_inactive_count " .
-		"vm.stats.vm.v_cache_count vm.stats.vm.v_free_count", $memory);
+	exec("/sbin/sysctl -n vm.stats.vm.v_free_count hw.physmem hw.pagesize", $memory);
 
-	$totalMem = $memory[0];
-	$availMem = $memory[1] + $memory[2] + $memory[3];
+	$totalMem = $memory[1];
+	$availMem = $memory[0] * $memory[2];
 	$usedMem = $totalMem - $availMem;
-	if ($totalMem > 0)
-		$memUsage = round(($usedMem * 100) / $totalMem, 0);
-	else
-		$memUsage = "NA";
+	$memUsage = round(($usedMem * 100) / $totalMem, 2);
 
 	return $memUsage;
 }

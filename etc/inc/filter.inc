@@ -33,7 +33,7 @@
 	ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 	POSSIBILITY OF SUCH DAMAGE.
 
-	pfSense_BUILDER_BINARIES:	/sbin/sysctl	/sbin/kldload	/usr/sbin/tcpdump	/sbin/pfctl	/bin/rm
+	pfSense_BUILDER_BINARIES:	/sbin/kldload	/usr/sbin/tcpdump	/sbin/pfctl	/bin/rm
 	pfSense_BUILDER_BINARIES:	/usr/sbin/inetd
 	pfSense_MODULE:	filter
 */
@@ -95,7 +95,7 @@ function flowtable_configure() {
 	global $config, $g;
 
 	if (empty($config['system']['flowtable'])) {
-		mwexec("/sbin/sysctl net.inet.flowtable.enable=0", true);
+		set_single_sysctl("net.inet.flowtable.enable", "0");
 		return;
 	}
 
@@ -106,13 +106,15 @@ function flowtable_configure() {
 	else
 		$maxstates = 150000;
 	// nmbflows cpu count * ($maxstates * 2)
-	$cpus = trim(exec('/sbin/sysctl -n kern.smp.cpus'), " \n");
+	$cpus = get_single_sysctl('kern.smp.cpus');
 	$nmbflows = ($cpus*($maxstates*2));
 	// Flowtable currently only works on 8.0
 	if(get_freebsd_version() == "8") {
-		mwexec("/sbin/sysctl net.inet.flowtable.nmbflows={$nmbflows}");
-		mwexec("/sbin/sysctl net.inet.ip.output_flowtable_size={$maxstates}");
-		mwexec("/sbin/sysctl net.inet.flowtable.enable=1");
+		set_sysctl(array(
+			"net.inet.flowtable.nmbflows" => $nmbflows,
+			"net.inet.ip.output_flowtable_size" => $maxstates,
+			"net.inet.flowtable.enable" => "1")
+		);
 	}
 }
 
@@ -3514,9 +3516,9 @@ function filter_generate_ipsec_rules($log = array()) {
 	$ipfrules = "\n# VPN Rules\n";
 	/* Is IP Compression enabled? */
 	if(isset($config['ipsec']['ipcomp']))
-		exec("/sbin/sysctl net.inet.ipcomp.ipcomp_enable=1");
+		set_single_sysctl("net.inet.ipcomp.ipcomp_enable" , "1");
 	else
-		exec("/sbin/sysctl net.inet.ipcomp.ipcomp_enable=0");
+		set_single_sysctl("net.inet.ipcomp.ipcomp_enable" , "0");
 
 	if(isset($config['ipsec']['enable']) &&
 		is_array($config['ipsec']['phase1'])) {

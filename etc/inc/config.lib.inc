@@ -39,7 +39,7 @@
 	POSSIBILITY OF SUCH DAMAGE.
 
 
-	pfSense_BUILDER_BINARIES:	/sbin/mount	/sbin/sysctl	/sbin/umount	/sbin/halt	/sbin/fsck
+	pfSense_BUILDER_BINARIES:	/sbin/mount	/sbin/umount	/sbin/halt	/sbin/fsck
 	pfSense_MODULE:	config
 */
 

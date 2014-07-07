@@ -38,7 +38,7 @@
 	POSSIBILITY OF SUCH DAMAGE.
 
 
-	pfSense_BUILDER_BINARIES:	/sbin/mount	/sbin/sysctl	/sbin/umount	/sbin/halt	/sbin/fsck
+	pfSense_BUILDER_BINARIES:	/sbin/mount	/sbin/umount	/sbin/halt	/sbin/fsck
 	pfSense_MODULE:	config
 */
 
@@ -137,7 +137,7 @@ else if ($g['booting'] and !file_exists($g['cf_conf_path'] . "/config.xml")  ) {
 		} else {
 			if($g['booting']) echo ".";
 			/* probe kernel known disks until we find one with config.xml */
-			$disks = explode(" ", trim(exec("/sbin/sysctl -n kern.disks")));
+			$disks = explode(" ", get_single_sysctl("kern.disks"));
 			foreach ($disks as $mountdisk) {
 				/* skip mfs mounted filesystems */
 				if (strstr($mountdisk, "md"))

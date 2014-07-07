@@ -34,7 +34,7 @@
 */
 
 /*
-	pfSense_BUILDER_BINARIES:	/sbin/ifconfig	/sbin/sysctl
+	pfSense_BUILDER_BINARIES:	/sbin/ifconfig
 	pfSense_BUILDER_BINARIES:	/usr/local/sbin/ipsec	/usr/local/libexec/ipsec/charon /usr/local/libexec/ipsec/starter
 	pfSense_BUILDER_BINARIES:	/usr/local/sbin/filterdns	/usr/local/sbin/mpd4
 	pfSense_MODULE:	vpn
@@ -124,12 +124,12 @@ function vpn_ipsec_configure($ipchg = false)
 
 		/* disallow IPSEC, it is off */
 		mwexec("/sbin/ifconfig enc0 down");
-		exec("/sbin/sysctl net.inet.ip.ipsec_in_use=0");
+		set_single_sysctl("net.inet.ip.ipsec_in_use", "0");
 
 		return 0;
 	} else {
 		mwexec("/sbin/ifconfig enc0 up");
-		mwexec("/sbin/sysctl net.inet.ip.ipsec_in_use=1");
+		set_single_sysctl("net.inet.ip.ipsec_in_use", "1");
 		/* needed for config files */
 		if (!is_dir("{$g['varetc_path']}/ipsec"))
 			mkdir("{$g['varetc_path']}/ipsec");
@@ -157,7 +157,7 @@ function vpn_ipsec_configure($ipchg = false)
 			echo gettext("Configuring IPsec VPN... ");
 
 		/* fastforwarding is not compatible with ipsec tunnels */
-		mwexec("/sbin/sysctl net.inet.ip.fastforwarding=0");
+		set_single_sysctl("net.inet.ip.fastforwarding", "0");
 
 		/* resolve all local, peer addresses and setup pings */
 		$ipmap = array();
@@ -1506,9 +1506,9 @@ EOD;
 function vpn_ipsec_configure_preferoldsa() {
 	global $config;
 	if(isset($config['ipsec']['preferoldsa']))
-		mwexec("/sbin/sysctl -w net.key.preferred_oldsa=-30");
+		set_single_sysctl("net.key.preferred_oldsa", "-30");
 	else
-		mwexec("/sbin/sysctl net.key.preferred_oldsa=0");
+		set_single_sysctl("net.key.preferred_oldsa", "0");
 }
 
 ?>

@@ -19,7 +19,7 @@ $thermal_sensors_widget_title = "Thermal Sensors";
 //NOTE: depends on proper cofing in System >> Advanced >> Miscellaneous tab >> Thermal Sensors section.
 function getThermalSensorsData() {
 
-	exec("/sbin/sysctl -a | grep temperature", $dfout);
+	$_gb = exec("/sbin/sysctl -a | grep temperature", $dfout);
 	$thermalSensorsData = join("|", $dfout);
 	return $thermalSensorsData;
 	

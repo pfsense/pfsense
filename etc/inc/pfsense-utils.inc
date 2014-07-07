@@ -34,7 +34,7 @@
  */
 
 /*
-	pfSense_BUILDER_BINARIES:	/sbin/sysctl	/sbin/ifconfig	/sbin/pfctl	/usr/local/bin/php /usr/bin/netstat
+	pfSense_BUILDER_BINARIES:	/sbin/ifconfig	/sbin/pfctl	/usr/local/bin/php /usr/bin/netstat
 	pfSense_BUILDER_BINARIES:	/bin/df	/usr/bin/grep	/usr/bin/awk	/bin/rm	/usr/sbin/pwd_mkdb	/usr/bin/host
 	pfSense_BUILDER_BINARIES:	/sbin/kldload
 	pfSense_MODULE:	utils
@@ -265,16 +265,16 @@ function setup_polling() {
 	global $g, $config;
 
 	if (isset($config['system']['polling']))
-		mwexec("/sbin/sysctl kern.polling.idle_poll=1");
+		set_single_sysctl("kern.polling.idle_poll", "1");
 	else
-		mwexec("/sbin/sysctl kern.polling.idle_poll=0");
+		set_single_sysctl("kern.polling.idle_poll", "0");
 
 	if($config['system']['polling_each_burst'])
-		mwexec("/sbin/sysctl kern.polling.each_burst={$config['system']['polling_each_burst']}");
+		set_single_sysctl("kern.polling.each_burst", $config['system']['polling_each_burst']);
 	if($config['system']['polling_burst_max'])
-		mwexec("/sbin/sysctl kern.polling.burst_max={$config['system']['polling_burst_max']}");
+		set_single_sysctl("kern.polling.burst_max", $config['system']['polling_burst_max']);
 	if($config['system']['polling_user_frac'])
-		mwexec("/sbin/sysctl kern.polling.user_frac={$config['system']['polling_user_frac']}");
+		set_single_sysctl("kern.polling.user_frac", $config['system']['polling_user_frac']);
 }
 
 /****f* pfsense-utils/setup_microcode
@@ -305,7 +305,7 @@ function setup_microcode() {
  ******/
 function get_carp_status() {
 	/* grab the current status of carp */
-	$status = `/sbin/sysctl -n net.inet.carp.allow`;
+	$status = get_single_sysctl('net.inet.carp.allow');
 	return (intval($status) > 0);
 }
 
@@ -1415,14 +1415,14 @@ function get_interface_info($ifdescr) {
 
 //returns cpu speed of processor. Good for determining capabilities of machine
 function get_cpu_speed() {
-	return exec("/sbin/sysctl -n hw.clockrate");
+	return get_single_sysctl("hw.clockrate");
 }
 
 function get_uptime_sec() {
 	$boottime = "";
 	$matches = "";
-	exec("/sbin/sysctl -n kern.boottime", $boottime);
-	preg_match("/sec = (\d+)/", $boottime[0], $matches);
+	$boottime = get_single_sysctl("kern.boottime");
+	preg_match("/sec = (\d+)/", $boottime, $matches);
 	$boottime = $matches[1];
 	if(intval($boottime) == 0)
 		return 0;
@@ -2156,7 +2156,7 @@ function nanobsd_switch_boot_slice() {
 	$ACOMPLETE_PATH="{$BOOT_DRIVE}s{$ASLICE}a";
 	$ABOOTFLASH="{$BOOT_DRIVE}s{$AOLDSLICE}";
 	conf_mount_rw();
-	exec("sysctl kern.geom.debugflags=16");
+	set_single_sysctl("kern.geom.debugflags", "16");
 	exec("gpart set -a active -i {$ASLICE} {$BOOT_DRIVE}");
 	exec("/usr/sbin/boot0cfg -s {$ASLICE} -v /dev/{$BOOT_DRIVE}");
 	// We can't update these if they are mounted now.
@@ -2164,7 +2164,7 @@ function nanobsd_switch_boot_slice() {
 		exec("/sbin/tunefs -L ${AGLABEL_SLICE} /dev/$ACOMPLETE_PATH");
 		nanobsd_update_fstab($AGLABEL_SLICE, $ACOMPLETE_PATH, $AOLD_UFS_ID, $AUFS_ID);
 	}
-	exec("/sbin/sysctl kern.geom.debugflags=0");
+	set_single_sysctl("kern.geom.debugflags", "0");
 	conf_mount_ro();
 }
 function nanobsd_clone_slice() {
@@ -2175,12 +2175,12 @@ function nanobsd_clone_slice() {
 
 	for ($i = 0; $i < ob_get_level(); $i++) { ob_end_flush(); }
 	ob_implicit_flush(1);
-	exec("/sbin/sysctl kern.geom.debugflags=16");
+	set_single_sysctl("kern.geom.debugflags", "16");
 	exec("/bin/dd if=/dev/zero of=/dev/{$TOFLASH} bs=1m count=1");
 	exec("/bin/dd if=/dev/{$BOOTFLASH} of=/dev/{$TOFLASH} bs=64k");
 	exec("/sbin/tunefs -L {$GLABEL_SLICE} /dev/{$COMPLETE_PATH}");
 	$status = nanobsd_update_fstab($GLABEL_SLICE, $COMPLETE_PATH, $OLD_UFS_ID, $UFS_ID);
-	exec("/sbin/sysctl kern.geom.debugflags=0");
+	set_single_sysctl("kern.geom.debugflags", "0");
 	if($status) {
 		return false;
 	} else {

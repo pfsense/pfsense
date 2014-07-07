@@ -3,7 +3,7 @@ require_once("config.inc");
 require_once("interfaces.inc");
 require_once("util.inc");
 
-mwexec("/sbin/sysctl net.inet.carp.allow=0");
+set_single_sysctl("net.inet.carp.allow", "0");
 if(is_array($config['virtualip']['vip'])) {
 	$viparr = &$config['virtualip']['vip'];
 	foreach ($viparr as $vip) {

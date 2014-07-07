@@ -34,7 +34,6 @@
 ##|-PRIV
 
 /*
-	pfSense_BUILDER_BINARIES:	/sbin/sysctl	
 	pfSense_MODULE:	carp
 */
 
@@ -56,7 +55,7 @@ if($_POST['carp_maintenancemode'] <> "") {
 }
 if($_POST['disablecarp'] <> "") {
 	if($status == true) {
-		mwexec("/sbin/sysctl net.inet.carp.allow=0");
+		set_single_sysctl('net.inet.carp.allow', '0');
 		if(is_array($config['virtualip']['vip'])) {
 			$viparr = &$config['virtualip']['vip'];
 			foreach ($viparr as $vip) {
@@ -83,7 +82,7 @@ if($_POST['disablecarp'] <> "") {
 			}
 		}
 		interfaces_carp_setup();
-		mwexec("/sbin/sysctl net.inet.carp.allow=1");
+		set_single_sysctl('net.inet.carp.allow', '1');
 	}
 }
 

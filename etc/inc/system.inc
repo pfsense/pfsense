@@ -30,7 +30,7 @@
 */
 
 /*
-	pfSense_BUILDER_BINARIES:	/usr/sbin/powerd	/usr/bin/killall	/sbin/sysctl	/sbin/route
+	pfSense_BUILDER_BINARIES:	/usr/sbin/powerd	/usr/bin/killall	/sbin/route
 	pfSense_BUILDER_BINARIES:	/bin/hostname	/bin/ls	/usr/sbin/syslogd	
 	pfSense_BUILDER_BINARIES:	/usr/sbin/pccardd	/usr/local/sbin/lighttpd	/bin/chmod 	/bin/mkdir
 	pfSense_BUILDER_BINARIES:	/usr/bin/tar		/usr/local/sbin/ntpd	/usr/local/sbin/ntpdate
@@ -70,23 +70,29 @@ function get_default_sysctl_value($id) {
 
 function activate_sysctls() {
 	global $config, $g;
+
 	if ($g['platform'] == 'jail')
 		return;
-	exec("/sbin/sysctl net.enc.out.ipsec_bpf_mask=0x0001");
-	exec("/sbin/sysctl net.enc.out.ipsec_filter_mask=0x0001");
-	exec("/sbin/sysctl net.enc.in.ipsec_bpf_mask=0x0002");
-	exec("/sbin/sysctl net.enc.in.ipsec_filter_mask=0x0002");
+
+	$sysctls = array(
+		"net.enc.out.ipsec_bpf_mask" => "0x0001",
+		"net.enc.out.ipsec_filter_mask" => "0x0001",
+		"net.enc.in.ipsec_bpf_mask" => "0x0002",
+		"net.enc.in.ipsec_filter_mask" => "0x0002"
+	);
 
 	if(is_array($config['sysctl'])) {
 		foreach($config['sysctl']['item'] as $tunable) {
-			if($tunable['value'] == "default") {
+			if($tunable['value'] == "default")
 				$value = get_default_sysctl_value($tunable['tunable']);
-				mwexec("/sbin/sysctl " . $tunable['tunable'] . "=\"" . $value .  "\"", true);
-			} else { 
-				mwexec("/sbin/sysctl " . $tunable['tunable'] . "=\"" . $tunable['value'] .  "\"", true);
-			}
+			else
+				$value = $tunable['value'];
+
+			$sysctls[$tunable['tunable']] = $value;
 		}
 	}
+
+	set_sysctl($sysctls);
 }
 
 function system_resolvconf_generate($dynupdate = false) {
@@ -588,8 +594,11 @@ function system_routing_enable() {
 		echo "system_routing_enable() being called $mt\n";
 	}
 
-	mwexec("/sbin/sysctl net.inet.ip.forwarding=1");
-	mwexec("/sbin/sysctl net.inet6.ip6.forwarding=1");
+	set_sysctl(array(
+		"net.inet.ip.forwarding" => "1",
+		"net.inet6.ip6.forwarding" => "1"
+	));
+
 	return;
 }
 
@@ -1802,7 +1811,7 @@ function system_set_harddisk_standby() {
 		if (is_numeric($standby)) {
 			// Sync the disk(s)
 			pfSense_sync();
-			if (!mwexec('/sbin/sysctl hw.ata.standby=' . ((int)$standby))) {
+			if (set_single_sysctl('hw.ata.standby', (int)$standby)) {
 				// Reinitialize ATA-drives
 				mwexec('/usr/local/sbin/atareinit');
 				if ($g['booting']) {
@@ -1837,8 +1846,10 @@ function system_disable_arp_wrong_if() {
 		$mt = microtime();
 		echo "system_disable_arp_wrong_if() being called $mt\n";
 	}
-	mwexec("/sbin/sysctl -n net.link.ether.inet.log_arp_wrong_iface=0");
-	mwexec("/sbin/sysctl -n net.link.ether.inet.log_arp_movements=0");
+	set_sysctl(array(
+		"net.link.ether.inet.log_arp_wrong_iface" => "0",
+		"net.link.ether.inet.log_arp_movements" => "0"
+	));
 }
 
 function system_enable_arp_wrong_if() {
@@ -1847,8 +1858,10 @@ function system_enable_arp_wrong_if() {
 		$mt = microtime();
 		echo "system_enable_arp_wrong_if() being called $mt\n";
 	}
-	mwexec("/sbin/sysctl -n net.link.ether.inet.log_arp_wrong_iface=1");
-	mwexec("/sbin/sysctl -n net.link.ether.inet.log_arp_movements=1");
+	set_sysctl(array(
+		"net.link.ether.inet.log_arp_wrong_iface" => "1",
+		"net.link.ether.inet.log_arp_movements" => "1"
+	));
 }
 
 function enable_watchdog() {
@@ -1920,9 +1933,7 @@ function system_identify_specific_platform() {
 	if ($g['platform'] != 'nanobsd')
 		return array('name' => $g['platform'], 'descr' => $g['platform']);
 
-	unset($output);
-	$_gb = exec('/sbin/sysctl -n hw.model', $output);
-	$dmesg = $output[0];
+	$dmesg = get_single_sysctl('hw.model');
 
 	if (strpos($dmesg, "PC Engines WRAP") !== false)
 		return array('name' => 'wrap', 'descr' => gettext('PC Engines WRAP'));

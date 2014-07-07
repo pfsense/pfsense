@@ -1638,14 +1638,8 @@ function set_single_sysctl($name, $value) {
  *     [1] real (actual) memory of the system, should be the size of the RAM card/s - e.g. 256 MBytes
  */
 function get_memory() {
-
-	$output = "";
-	$_gb = exec("/sbin/sysctl -n hw.physmem", $output);
-	$physmem = trim($output[0], " \n");
-	unset($output);
-	$_gb = exec("/sbin/sysctl -n hw.realmem", $output);
-	$realmem = trim($output[0], " \n");
-	unset($output, $_gb);
+	$physmem = get_single_sysctl("hw.physmem");
+	$realmem = get_single_sysctl("hw.realmem");
 	/* convert from bytes to megabytes */
 	return array(($physmem/1048576),($realmem/1048576));
 }

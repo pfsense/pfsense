@@ -36,7 +36,7 @@
 	added rules which may have been created by other per-user code (index.php, etc).
 	These changes are (c) 2004 Keycom PLC.
 	
-	pfSense_BUILDER_BINARIES:	/sbin/ipfw	/sbin/sysctl	/sbin/route
+	pfSense_BUILDER_BINARIES:	/sbin/ipfw	/sbin/route
 	pfSense_BUILDER_BINARIES:	/usr/local/sbin/lighttpd	/usr/local/bin/minicron /sbin/pfctl
 	pfSense_BUILDER_BINARIES:	/bin/hostname	/bin/cp 
 	pfSense_MODULE: captiveportal
@@ -151,16 +151,18 @@ function captiveportal_load_modules() {
 	if (!is_module_loaded("ipfw.ko")) {
 		mwexec("/sbin/kldload ipfw");
 		/* make sure ipfw is not on pfil hooks */
-		mwexec("/sbin/sysctl net.inet.ip.pfil.inbound=\"pf\" net.inet6.ip6.pfil.inbound=\"pf\"" .
-		       " net.inet.ip.pfil.outbound=\"pf\" net.inet6.ip6.pfil.outbound=\"pf\"");
+		set_sysctl(array(
+			"net.inet.ip.pfil.inbound" => "pf", "net.inet6.ip6.pfil.inbound" => "pf",
+			"net.inet.ip.pfil.outbound" => "pf", "net.inet6.ip6.pfil.outbound" => "pf")
+		);
 	}
 	/* Activate layer2 filtering */
-	mwexec("/sbin/sysctl net.link.ether.ipfw=1 net.inet.ip.fw.one_pass=1");
+	set_sysctl(array("net.link.ether.ipfw" => "1", "net.inet.ip.fw.one_pass" => "1"));
 
 	/* Always load dummynet now that even allowed ip and mac passthrough use it. */
 	if (!is_module_loaded("dummynet.ko")) {
 		mwexec("/sbin/kldload dummynet");
-		mwexec("/sbin/sysctl net.inet.ip.dummynet.io_fast=1 net.inet.ip.dummynet.hash_size=256");
+		set_sysctl(array("net.inet.ip.dummynet.io_fast" => "1", "net.inet.ip.dummynet.hash_size" => "256"));
 	}
 	unmute_kernel_msgs();
 }
@@ -361,7 +363,7 @@ EOD;
 		mwexec("/sbin/ipfw zone {$cpzoneid} destroy", true);
 
 		if (empty($config['captiveportal']))
-			mwexec("/sbin/sysctl net.link.ether.ipfw=0");
+			set_single_sysctl("net.link.ether.ipfw", "0");
 		else {
 			/* Deactivate ipfw(4) if not needed */
 			$cpactive = false;
@@ -374,8 +376,8 @@ EOD;
 				}
 			}
 			if ($cpactive === false)
-				mwexec("/sbin/sysctl net.link.ether.ipfw=0");
-				
+				set_single_sysctl("net.link.ether.ipfw", "0");
+
 		}
 	}
 

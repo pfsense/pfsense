@@ -1,10 +1,10 @@
 <?php
 /*
 	openvpn.inc part of pfSense
-	
+
 	Copyright (C) 2008 Scott Ullrich <sullrich@gmail.com>
 	All rights reserved.
-	
+
 	Copyright (C) 2006  Fernando Lemos
 	All rights reserved.
 
@@ -37,9 +37,9 @@
 	CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
 	ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 	POSSIBILITY OF SUCH DAMAGE.
-	
+
 	DISABLE_PHP_LINT_CHECKING
-	
+
 	pfSense_BUILDER_BINARIES:	/usr/local/sbin/openvpn	/usr/bin/openssl	/sbin/ifconfig
 	pfSense_MODULE:	openvpn
 
@@ -57,10 +57,10 @@ $openvpn_dev_mode = array("tun", "tap");
 
 global $openvpn_verbosity_level;
 $openvpn_verbosity_level = array(
-	0 =>	"none", 
-	1 =>	"default", 
-	2 =>	"2", 
-	3 =>	"3 (recommended)", 
+	0 =>	"none",
+	1 =>	"default",
+	2 =>	"2",
+	3 =>	"3 (recommended)",
 	4 =>	"4",
 	5 => 	"5",
 	6 => 	"6",
@@ -69,9 +69,9 @@ $openvpn_verbosity_level = array(
 	9 => 	"9",
 	10 => 	"10",
 	11 => 	"11"
-); 
+);
 
-/* 
+/*
  * The User Auth mode below is disabled because
  * OpenVPN erroneously requires that we provide
  * a CA configuration parameter. In this mode,
@@ -338,7 +338,7 @@ function openvpn_validate_cidr_ipv6($value) {
 
 function openvpn_add_dhcpopts(& $settings, & $conf) {
 
-	if (!empty($settings['dns_domain'])) 
+	if (!empty($settings['dns_domain']))
 		$conf .= "push \"dhcp-option DOMAIN {$settings['dns_domain']}\"\n";
 
 	if (!empty($settings['dns_server1']))
@@ -359,7 +359,7 @@ function openvpn_add_dhcpopts(& $settings, & $conf) {
 
 		if (!empty($settings['dhcp_nbttype']) && ($settings['dhcp_nbttype'] != 0))
 			$conf .= "push \"dhcp-option NBT {$settings['dhcp_nbttype']}\"\n";
-		if (!empty($settings['dhcp_nbtscope'])) 
+		if (!empty($settings['dhcp_nbtscope']))
 			$conf .= "push \"dhcp-option NBS {$settings['dhcp_nbtscope']}\"\n";
 
 		if (!empty($settings['wins_server1']))
@@ -371,7 +371,7 @@ function openvpn_add_dhcpopts(& $settings, & $conf) {
 			$conf .= "push \"dhcp-option NBDD {$settings['nbdd_server1']}\"\n";
 	}
 
-	if ($settings['gwredir']) 
+	if ($settings['gwredir'])
 		$conf .= "push \"redirect-gateway def1\"\n";
 }
 
@@ -407,7 +407,7 @@ function openvpn_reconfigure($mode, $settings) {
 
 	if (empty($settings))
 		return;
-	if (isset($settings['disable'])) 
+	if (isset($settings['disable']))
 		return;
 	openvpn_create_dirs();
 	/*
@@ -481,7 +481,7 @@ function openvpn_reconfigure($mode, $settings) {
 	if (isset($settings['verbosity_level'])) {
 		$conf .= "verb {$settings['verbosity_level']}\n";
 	}
-		
+
 	$conf .= "dev-type {$settings['dev_mode']}\n";
 	switch($settings['dev_mode']) {
 		case "tun":
@@ -673,7 +673,7 @@ function openvpn_reconfigure($mode, $settings) {
 		}
 
 		// If there is no bind option at all (ip and/or port), add "nobind" directive
-		//  Otherwise, use the local port if defined, failing that, use lport 0 to 
+		//  Otherwise, use the local port if defined, failing that, use lport 0 to
 		//  ensure a random source port.
 		if ((empty($iface_ip)) && (!$settings['local_port']))
 			$conf .= "nobind\n";
@@ -717,7 +717,7 @@ function openvpn_reconfigure($mode, $settings) {
 			$userpass .= "{$settings['auth_pass']}\n";
 			file_put_contents($up_file, $userpass);
 		}
-		
+
 		if ($settings['proxy_addr']) {
 			$conf .= "http-proxy {$settings['proxy_addr']} {$settings['proxy_port']}";
 			if ($settings['proxy_authtype'] != "none") {
@@ -764,7 +764,7 @@ function openvpn_reconfigure($mode, $settings) {
 				openvpn_add_keyfile($crl['text'], $conf, $mode_id, "crl-verify");
 			}
 			if ($settings['tls']) {
-				if ($mode == "server") 
+				if ($mode == "server")
 					$tlsopt = 0;
 				else
 					$tlsopt = 1;
@@ -849,8 +849,8 @@ function openvpn_restart($mode, $settings) {
 	/* Do not start a client if we are a CARP backup on this vip! */
 	if (($mode == "client") && (strstr($settings['interface'], "_vip") && get_carp_interface_status($settings['interface']) == "BACKUP"))
 		return;
-		
-	/* Check if client is bound to a gateway group */    
+
+	/* Check if client is bound to a gateway group */
 	$a_groups = return_gateway_groups_array();
 	if (is_array($a_groups[$settings['interface']])) {
 	/* the interface is a gateway group. If a vip is defined and its a CARP backup then do not start */
@@ -1017,7 +1017,7 @@ function openvpn_resync_all($interface = "") {
 	if ($interface <> "")
 		log_error("Resyncing OpenVPN instances for interface " . convert_friendly_interface_to_friendly_descr($interface) . ".");
 	else
-		log_error("Resyncing OpenVPN instances."); 
+		log_error("Resyncing OpenVPN instances.");
 
 	if (is_array($config['openvpn']['openvpn-server'])) {
 		foreach ($config['openvpn']['openvpn-server'] as & $settings) {
@@ -1067,7 +1067,7 @@ function openvpn_resync_gwgroup($gwgroupname = "") {
 		// Note: no need to resysnc Client Specific (csc) here, as changes to the OpenVPN real interface do not effect these.
 
 	} else
-		log_error("openvpn_resync_gwgroup called with null gwgroup parameter."); 
+		log_error("openvpn_resync_gwgroup called with null gwgroup parameter.");
 }
 
 function openvpn_get_active_servers($type="multipoint") {
@@ -1081,7 +1081,7 @@ function openvpn_get_active_servers($type="multipoint") {
 
 			$prot = $settings['protocol'];
 			$port = $settings['local_port'];
-	
+
 			$server = array();
 			$server['port'] = ($settings['local_port']) ? $settings['local_port'] : 1194;
 			$server['mode'] = $settings['mode'];
@@ -1178,20 +1178,20 @@ function openvpn_get_active_clients() {
 	$clients = array();
 	if (is_array($config['openvpn']['openvpn-client'])) {
 		foreach ($config['openvpn']['openvpn-client'] as & $settings) {
-	
+
 			if (empty($settings) || isset($settings['disable']))
 				continue;
 
 			$prot = $settings['protocol'];
 			$port = ($settings['local_port']) ? ":{$settings['local_port']}" : "";
-	
+
 			$client = array();
 			$client['port'] = $settings['local_port'];
 			if ($settings['description'])
 				$client['name'] = "{$settings['description']} {$prot}{$port}";
 			else
 				$client['name'] = "Client {$prot}{$port}";
-	
+
 			$client['vpnid'] = $settings['vpnid'];
 			$client['mgmt'] = "client{$client['vpnid']}";
 			$socket = "unix://{$g['varetc_path']}/openvpn/{$client['mgmt']}.sock";

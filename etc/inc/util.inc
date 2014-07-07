@@ -1565,6 +1565,22 @@ function get_sysctl($names) {
 }
 
 /*
+ * get_single_sysctl($name)
+ * Wrapper for get_sysctl() to simplify read of a single sysctl value
+ * return the value for sysctl $name or empty string if it doesn't exist
+ */
+function get_single_sysctl($name) {
+	if (empty($name))
+		return "";
+
+	$value = get_sysctl($name);
+	if (empty($value) || !isset($value[$name]))
+		return "";
+
+	return $value[$name];
+}
+
+/*
  * set_sysctl($value_list)
  * Set sysctl OID's listed as key/value pairs and return
  * an array with keys set for those that succeeded

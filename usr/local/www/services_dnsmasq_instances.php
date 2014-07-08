@@ -40,6 +40,18 @@ $pconfig['allow_multi'] = isset($config['dnsmasq']['allow_multi']);
 $pconfig['enable'] = isset($config['dnsmasq']['enable']);
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+if (isset($_POST['apply'])) {
+	// reload dnsmasq			
+	$retval = services_dnsmasq_configure();
+	$savemsg = get_std_save_message($retval);
+
+	// Reload filter (we might need to sync to CARP hosts)
+	filter_configure();
+
+	if ($retval == 0)
+		clear_subsystem_dirty('hosts');
+}
+else {
 
 	$pconfig = $_POST;
 	unset($input_errors);
@@ -80,6 +92,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 		if ($retval == 0)
 			clear_subsystem_dirty('hosts');
 	}
+}
 }
 
 if ($_GET['act'] == "del") {

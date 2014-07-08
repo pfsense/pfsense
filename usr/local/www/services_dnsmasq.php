@@ -126,7 +126,8 @@ if ($showMultiInstanceOptions)
 	$serviceUrl .= "?instance={$instanceIndex}";
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-
+$do_reload_service = isset($_POST['apply']);
+if (!$do_reload_service) {
 	$pconfig = $_POST;
 	unset($input_errors);
 
@@ -245,29 +246,32 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
 	if (!$input_errors) {
 		write_config();
-
-		if (!isset($config['dnsmasq']['allow_multi']) || isset($_POST['apply'])) {
-			// reload dnsmasq
-			$retval = 0;
-			$retval = services_dnsmasq_configure();
-			$savemsg = get_std_save_message($retval);
-			if (isset($config['dnsmasq']['allow_multi']))
-				$savemsg .= " You can also go to the <a href=\"services_dnsmasq_instances.php\">overview</a>.";
-
-			// Reload filter (we might need to sync to CARP hosts)
-			filter_configure();
-			/* Update resolv.conf in case the interface bindings exclude localhost. */
-			system_resolvconf_generate();
-
-			if ($retval == 0)
-				clear_subsystem_dirty('hosts');
-		} else {
+		
+		$do_reload_service = !isset($config['dnsmasq']['allow_multi']);
+		if (!$do_reload_service) {
 			// do not reload dnsmasq, but show warning
 			mark_subsystem_dirty('hosts');
 			header("Location: {$serviceUrl}");
 			exit;
 		}
 	}
+}
+
+if ($do_reload_service) {
+	// reload dnsmasq
+	$retval = services_dnsmasq_configure();
+	$savemsg = get_std_save_message($retval);
+	if (isset($config['dnsmasq']['allow_multi']))
+		$savemsg .= " You can also go to the <a href=\"services_dnsmasq_instances.php\">overview</a>.";
+
+	// Reload filter (we might need to sync to CARP hosts)
+	filter_configure();
+	/* Update resolv.conf in case the interface bindings exclude localhost. */
+	system_resolvconf_generate();
+
+	if ($retval == 0)
+		clear_subsystem_dirty('hosts');
+}
 }
 
 if ($_GET['act'] == "del") {	

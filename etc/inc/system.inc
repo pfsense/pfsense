@@ -295,7 +295,12 @@ function system_hosts_generate() {
 				}
 			}
 			// static dhcp hosts
-			$iflist = isset($dnsmasqcfg['interface']) && !empty($dnsmasqcfg['interface']) ? explode(",", $dnsmasqcfg['interface']) : NULL;
+			$iflist = isset($dnsmasqcfg['interface']) && !empty($dnsmasqcfg['interface']) ? explode(",", $dnsmasqcfg['interface']) : array();
+			if (isset($dnsmasqcfg['regdhcpstatic']) && isset($dnsmasqcfg['regdhcpfilter']) && isset($dnsmasqcfg['dhcpfilter_addn_if']) && !empty($dnsmasqcfg['dhcpfilter_addn_if'])) {
+				$addn_ifs = explode(",", $dnsmasqcfg['dhcpfilter_addn_if']);
+				$iflist = array_merge($iflist, $addn_ifs);
+			}
+			
 			if (isset($dnsmasqcfg['regdhcpstatic']) && is_array($config['dhcpd'])) {
 				foreach ($config['dhcpd'] as $dhcpif => $dhcpifconf)
 					if ((!isset($dnsmasqcfg['regdhcpfilter']) || (empty($iflist) || in_array($dhcpif, $iflist))) && is_array($dhcpifconf['staticmap']) && isset($dhcpifconf['enable']))
@@ -328,7 +333,7 @@ function system_hosts_generate() {
 			// build hosts file for instance
 			$hosts_localif = "";
 			$pfInfix = "";
-			if (isset($dnsmasqcfg['regdhcpfilter']) && !empty($iflist)) {
+			if (isset($dnsmasqcfg['regdhcpfilter']) && (isset($dnsmasqcfg['interface']) && !empty($dnsmasqcfg['interface']))) {
 				$sysiflist = explode(",", $dnsmasqcfg['interface']);
 				// XXX: is this always lo0?
 				if (in_array("lo0", $sysiflist))
@@ -431,6 +436,10 @@ function system_dhcpleases_configure() {
 				$subnets = array();
 				if (isset($instance['interface']) && isset($instance['regdhcpfilter'])) {
 					$interfaces = explode(",", $instance['interface']);
+					if (isset($instance['regdhcpstatic']) && isset($instance['regdhcpfilter']) && isset($instance['dhcpfilter_addn_if']) && !empty($instance['dhcpfilter_addn_if'])) {
+						$addn_ifs = explode(",", $instance['dhcpfilter_addn_if']);
+						$interfaces = array_merge($interfaces, $addn_ifs);
+					}
 					foreach ($interfaces as $interface) {
 						if (empty($interface))
 							continue;

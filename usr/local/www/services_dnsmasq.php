@@ -103,6 +103,11 @@ if (!empty($instance['interface']))
 else
 	$pconfig['interface'] = array();
 
+if (!empty($instance['dhcpfilter_addn_if']))
+	$pconfig['dhcpfilter_addn_if'] = explode(",", $instance['dhcpfilter_addn_if']);
+else
+	$pconfig['dhcpfilter_addn_if'] = array();
+
 if (!is_array($instance['hosts']))
 	$instance['hosts'] = array();
 
@@ -184,6 +189,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 		$instance['interface'] = implode(",", $_POST['interface']);
 	elseif (isset($instance['interface']))
 		unset($instance['interface']);
+	
+	if (is_array($_POST['dhcpfilter_addn_if']))
+		$instance['dhcpfilter_addn_if'] = implode(",", $_POST['dhcpfilter_addn_if']);
+	elseif (isset($instance['dhcpfilter_addn_if']))
+		unset($instance['dhcpfilter_addn_if']);
 
 	// check whether the combination of ports and interfaces are valid
 	if (isset($config['dnsmasq']['allow_multi']) && count($a_instances) > 1) {
@@ -310,9 +320,9 @@ function enable_change(enable_over) {
 	document.iform.regdhcpfilter.disabled = endis;
 	document.iform.dhcpfirst.disabled = endis;
 }
-function show_advanced_dns() {
-	document.getElementById("showadvbox").innerHTML='';
-	aodiv = document.getElementById('showadv');
+function show_advanced_opts(name = 'adv') {
+	document.getElementById("show"+name+"box").innerHTML='';
+	aodiv = document.getElementById('show'+name);
 	aodiv.style.display = "block";
 }
 //]]>
@@ -410,18 +420,6 @@ if ($showMultiInstanceOptions): ?>
 					"affects the name given for a reverse lookup (PTR)."));?></p>
 		</td>
 	</tr>
-	<?php if ($showMultiInstanceOptions): ?>
-	<tr>
-		<td width="22%" valign="top" class="vncellreq"><?=gettext("Filter DHCP");?></td>
-		<td width="78%" class="vtable"><p>
-			<input name="regdhcpfilter" type="checkbox" id="regdhcpfilter" value="yes" <?php if ($pconfig['regdhcpfilter'] == "yes") echo "checked=\"checked\"";?>/>
-			<strong><?=gettext("Filter DHCP mappings");?><br />
-			</strong><?php printf(gettext("If this option is set, then DHCP mappings will ".
-					"be filtered so that they must be in at least one subnet defined by ".
-					"any of the selected interfaces."));?></p>
-		</td>
-	</tr>
-	<?php endif; ?>
 	<tr>
 		<td rowspan="3" width="22%" valign="top" class="vncellreq"><?=gettext("DNS Query Forwarding");?></td>
 		<td width="78%" class="vtable"><p>
@@ -497,6 +495,46 @@ if ($showMultiInstanceOptions): ?>
 			</p>
 		</td>
 	</tr>
+	<?php if ($showMultiInstanceOptions): ?>
+	<tr>
+		<td width="22%" valign="top" rowspan="2" class="vncellreq"><?=gettext("Filter DHCP");?></td>
+		<td width="78%" class="vtable"><p>
+			<input name="regdhcpfilter" type="checkbox" id="regdhcpfilter" value="yes" <?php if ($pconfig['regdhcpfilter'] == "yes") echo "checked=\"checked\"";?>/>
+			<strong><?=gettext("Filter DHCP mappings");?><br />
+			</strong><?php printf(gettext("If this option is set, then DHCP mappings will ".
+					"be filtered so that they must be in at least one subnet defined by ".
+					"any of the selected interfaces."));?></p>
+		</td>
+	</tr>
+	<tr>
+		<td width="78%" class="vtable">
+			<div id="showdhcpfilteraddnifbox" <?php if ($pconfig['dhcpfilter_addn_if']) echo "style='display:none'"; ?>>
+				<input type="button" onclick="show_advanced_opts('dhcpfilteraddnif')" value="<?=gettext("Additional interfaces"); ?>"></input> - <?=gettext("Show interfaces");?>
+			</div>
+			<div id="showdhcpfilteraddnif" <?php if (empty($pconfig['dhcpfilter_addn_if'])) echo "style='display:none'"; ?>>
+			<?php
+				$interface_addresses = get_possible_listen_ips(true);
+				$size=count($interface_addresses)+1;
+			?>
+			<strong><?=gettext("Additional interfaces for which to register DHCP mappings.");?></strong>
+				<br /><br />
+				<select id="dhcpfilter_addn_if" name="dhcpfilter_addn_if[]" multiple="multiple" class="formselect" size="<?php echo $size; ?>">
+					<option value="" <?php if (empty($pconfig['dhcpfilter_addn_if'])) echo 'selected="selected"'; ?>>All</option>
+				<?php  foreach ($interface_addresses as $laddr):
+						$selected = "";
+						if (in_array($laddr['value'], $pconfig['dhcpfilter_addn_if']))
+							$selected = 'selected="selected"';
+				?>
+					<option value="<?=$laddr['value'];?>" <?=$selected;?>>
+						<?=htmlspecialchars($laddr['name']);?>
+					</option>
+				<?php endforeach; ?>
+				</select>
+				<br /><br />
+			</div>
+		</td>
+	</tr>
+	<?php endif; ?>
 	<?php if (!isset($_REQUEST['instance'])): ?>
 	<tr>
 		<td width="22%" valign="top" class="vncellreq"><?=gettext("Multiple instances");?></td>
@@ -523,7 +561,7 @@ if ($showMultiInstanceOptions): ?>
 		<td width="22%" valign="top" class="vncellreq"><?=gettext("Advanced");?></td>
 		<td width="78%" class="vtable">
 			<div id="showadvbox" <?php if ($pconfig['custom_options']) echo "style='display:none'"; ?>>
-				<input type="button" onclick="show_advanced_dns()" value="<?=gettext("Advanced"); ?>" /> - <?=gettext("Show advanced option");?>
+				<input type="button" onclick="show_advanced_opts()" value="<?=gettext("Advanced"); ?>" /> - <?=gettext("Show advanced option");?>
 			</div>
 			<div id="showadv" <?php if (empty($pconfig['custom_options'])) echo "style='display:none'"; ?>>
 				<strong><?=gettext("Advanced");?><br /></strong>

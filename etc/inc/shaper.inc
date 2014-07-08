@@ -530,6 +530,8 @@ class altq_root_queue {
 			$rules = " altq on  " . get_real_interface($this->GetInterface());
 			if ($this->GetScheduler())
 				$rules .= " ".strtolower($this->GetScheduler());
+			if ($this->GetQlimit() > 0)
+				$rules .= " ( qlimit " . $this->GetQlimit() . " ) ";
 			if ($this->GetBandwidth()) {
 				$rules .= " bandwidth ".trim($this->GetBandwidth());
 				if ($this->GetBwscale())

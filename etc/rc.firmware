@@ -379,7 +379,7 @@ pfSenseNanoBSDupgrade)
 
 	rm -f /var/run/firmwarelock.dirty
 	rm -f /var/run/firmware.lock
-	sh /etc/rc.reboot
+	. /etc/rc.reboot
 
 	;;
 pfSenseupgrade)
@@ -509,7 +509,7 @@ pfSenseupgrade)
 	if [ -f /tmp/no_upgrade_reboot_required ]; then
 		rm /tmp/no_upgrade_reboot_required
 	else
-		sh /etc/rc.reboot
+		. /etc/rc.reboot
 	fi
 
 	;;

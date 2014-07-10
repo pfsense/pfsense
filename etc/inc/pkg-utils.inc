@@ -491,7 +491,7 @@ function pkg_fetch_recursive($pkgname, $filename, $dependlevel = 0, $base_url = 
 
 		/* FreeBSD has no PBI's hosted, so fall back to our own URL for now. (Maybe fail to PC-BSD?) */
 		$rel = get_freebsd_version();
-		$priv_url = "http://files.pfsense.org/packages/{$rel}/All/";
+		$priv_url = "https://files.pfsense.org/packages/{$rel}/All/";
 		if (empty($base_url))
 			$base_url = $priv_url;
 		if (substr($base_url, -1) == "/")

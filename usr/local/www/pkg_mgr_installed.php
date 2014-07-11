@@ -93,11 +93,11 @@ include("head.inc");
 
 	/* Print package server mismatch warning. See https://redmine.pfsense.org/issues/484 */
 	if (!verify_all_package_servers())
-		print_info_box(package_server_mismatch_message()); ?>
+		print_info_box(package_server_mismatch_message());
 
 	/* Print package server SSL warning. See https://redmine.pfsense.org/issues/484 */
 	if (check_package_server_ssl() === false)
-		print_info_box(package_server_ssl_failure_message());
+		print_info_box(package_server_ssl_failure_message()); ?>
 
 	<table width="100%" border="0" cellpadding="0" cellspacing="0" summary="packages installed">
 		<tr>

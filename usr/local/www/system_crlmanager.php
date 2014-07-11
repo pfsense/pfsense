@@ -451,7 +451,7 @@ function method_change() {
 							&nbsp;&nbsp;&nbsp;&nbsp;<?php echo gettext("No Certificates Found for this CRL."); ?>
 						</td>
 						<td class="list">&nbsp;</td>
-					</td>
+					</tr>
 				<?php	else:
 					foreach($crl['cert'] as $i => $cert):
 						$name = htmlspecialchars($cert['descr']);
@@ -488,7 +488,7 @@ function method_change() {
 							&nbsp;&nbsp;&nbsp;&nbsp;<?php echo gettext("No Certificates Found for this CA."); ?>
 						</td>
 						<td class="list">&nbsp;</td>
-					</td>
+					</tr>
 				<?php	else: ?>
 					<tr>
 						<td class="listlr" colspan="3" align="center">

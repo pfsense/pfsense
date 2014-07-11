@@ -187,8 +187,8 @@ include("head.inc"); ?>
 				<tr><td valign="top">
 			<input name="host" type="text" class="formfld" id="host" size="20" value="<?=htmlspecialchars($host);?>" /> =
 			</td>
-			<td>
 			<?php if ($resolved && $type) { ?>
+			<td valign="top">&nbsp;=&nbsp;</td><td>
 			<font size="+1">
 <?php
 				$found = 0;

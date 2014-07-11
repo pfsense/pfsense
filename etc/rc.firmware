@@ -468,7 +468,10 @@ pfSenseupgrade)
 	rm -f $IMG
 
 	if [ -e /etc/init_bootloader.sh ]; then
-		sh /etc/init_bootloader.sh >> /conf/upgrade_log.txt 2>&1
+		if [ ! -x /etc/init_bootloader.sh ]; then
+			chmod ug+x /etc/init_bootloader.sh
+		fi
+		/etc/init_bootloader.sh >> /conf/upgrade_log.txt 2>&1
 	fi
 
 	# Remove saved commit ID for gitsync
@@ -477,7 +480,10 @@ pfSenseupgrade)
 	# If /tmp/post_upgrade_command exists after update
 	# then execute the command.
 	if [ -f /tmp/post_upgrade_command ]; then
-		sh /tmp/post_upgrade_command >> /conf/upgrade_log.txt 2>&1
+		if [ ! -x /tmp/post_upgrade_command ]; then
+			chmod ug+x /tmp/post_upgrade_command
+		fi
+		/tmp/post_upgrade_command >> /conf/upgrade_log.txt 2>&1
 	fi
 
 	# remove unused files

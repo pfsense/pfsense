@@ -96,7 +96,7 @@ if($_POST['aliasimport'] <> "") {
 				list($startip, $endip) = explode('-', $impip);
 				$rangesubnets = ip_range_to_subnet_array($startip, $endip);
 				$imported = array_merge($imported, $rangesubnets);
-			} else if (!is_ipaddr($impip) && !is_subnet($impip) && !empty($impip)) {
+			} else if (!is_ipaddr($impip) && !is_subnet($impip) && !is_hostname($impip) && !empty($impip)) {
 				$input_errors[] = sprintf(gettext("%s is not an IP address. Please correct the error to continue"), $impip);
 			} elseif (!empty($impip)) {
 				$imported[] = $impip;

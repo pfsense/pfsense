@@ -2274,7 +2274,7 @@ function configure_cron() {
 	unset($crontab_contents);
 
 	/* do a HUP kill to force sync changes */
-	exec('/bin/pkill -HUP cron');
+	sigkillbypid("{$g['varrun_path']}/cron.pid", "HUP");
 
 	conf_mount_ro();
 }

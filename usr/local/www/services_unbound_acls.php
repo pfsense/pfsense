@@ -93,7 +93,8 @@ if ($_POST) {
 					$input_errors[] = gettext("You must enter a valid IPv6 netmask for {$networkacl[$x]['acl_network']}/{$networkacl[$x]['mask']}.");
 			} else
 				$input_errors[] = gettext("You must enter a valid IPv4 address for {$networkacl[$x]['acl_network']}.");
-		}
+		} else if (isset($networkacl[$x]))
+			unset($networkacl[$x]);
 	}
 	
 	if (!$input_errors) {

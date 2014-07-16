@@ -146,7 +146,7 @@ include_once("head.inc");
 function enable_change(enable_over) {
 	var endis;
 	endis = !(jQuery('#enable').is(":checked") || enable_over);
-	jQuery("#active_interface,#outgoing_interface,#dnssec,#forwarding,#regdhcp,#regdhcpstatic,#dhcpfirst,#port").prop('disabled', endis);
+	jQuery("#active_interface,#outgoing_interface,#dnssec,#forwarding,#regdhcp,#regdhcpstatic,#dhcpfirst,#port,#txtsupport,#custom_options").prop('disabled', endis);
 }
 function show_advanced_dns() {
 	jQuery("#showadv").show();
@@ -355,8 +355,8 @@ function show_advanced_dns() {
 		<td width="20%" class="listhdrr"><?=gettext("Host");?></td>
 		<td width="25%" class="listhdrr"><?=gettext("Domain");?></td>
 		<td width="20%" class="listhdrr"><?=gettext("IP");?></td>
-		<td width="25%" class="listhdr"><?=gettext("Description");?></td>
-		<td width="10%" class="list">
+		<td width="30%" class="listhdr"><?=gettext("Description");?></td>
+		<td width="5%" class="list">
 			<table border="0" cellspacing="0" cellpadding="1" summary="add">
 				<tr>
 					<td width="17"></td>
@@ -421,8 +421,8 @@ function show_advanced_dns() {
 	<tr>
 		<td width="35%" class="listhdrr"><?=gettext("Domain");?></td>
 		<td width="20%" class="listhdrr"><?=gettext("IP");?></td>
-		<td width="35%" class="listhdr"><?=gettext("Description");?></td>
-		<td width="10%" class="list">
+		<td width="40%" class="listhdr"><?=gettext("Description");?></td>
+		<td width="5%" class="list">
 			<table border="0" cellspacing="0" cellpadding="1" summary="add">
 				<tr>
 					<td width="17" height="17"></td>
@@ -457,8 +457,18 @@ function show_advanced_dns() {
 		<td class="listbg">
 			<?=htmlspecialchars($doment['descr']);?>&nbsp;
 		</td>
-		<td valign="middle" class="list nowrap"> <a href="services_unbound_domainoverride_edit.php?id=<?=$i;?>"><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_e.gif" width="17" height="17" border="0" alt="edit" /></a>
-			&nbsp;<a href="services_unbound.php?act=del&amp;type=doverride&amp;id=<?=$i;?>" onclick="return confirm('<?=gettext("Do you really want to delete this domain override?");?>')"><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_x.gif" width="17" height="17" border="0" alt="delete" /></a></td>
+		<td valign="middle" class="list nowrap">
+			<table border="0" cellspacing="0" cellpadding="1" summary="icons">
+				<tr>
+					<td valign="middle"><a href="services_unbound_domainoverride_edit.php?id=<?=$i;?>">
+						<img src="./themes/<?= $g['theme']; ?>/images/icons/icon_e.gif" width="17" height="17" border="0" alt="edit" />
+					</a></td>
+					<td valign="middle"><a href="services_unbound.php?act=del&amp;type=doverride&amp;id=<?=$i;?>" onclick="return confirm('<?=gettext("Do you really want to delete this domain override?");?>')">
+						<img src="./themes/<?= $g['theme']; ?>/images/icons/icon_x.gif" width="17" height="17" border="0" alt="delete" />
+					</a></td>
+				</tr>
+			</table>
+		</td>
 	</tr>
 	<?php $i++; endforeach; ?>
 	<tr style="display:none"><td></td></tr>

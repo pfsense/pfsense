@@ -41,22 +41,6 @@
 require_once("guiconfig.inc");
 require_once("unbound.inc");
 
-$pconfig['enable'] = isset($config['unbound']['enable']);
-$pconfig['port'] = $config['unbound']['port'];
-if (empty($config['unbound']['active_interface']))
-	$pconfig['active_interface'] = array();
-else
-	$pconfig['active_interface'] = explode(",", $config['unbound']['active_interface']);
-if (empty($config['unbound']['outgoing_interface']))
-	$pconfig['outgoing_interface'] = array();
-else
-	$pconfig['outgoing_interface'] = explode(",", $config['unbound']['outgoing_interface']);
-$pconfig['dnssec'] = isset($config['unbound']['dnssec']);
-$pconfig['forwarding'] = isset($config['unbound']['forwarding']);
-$pconfig['regdhcp'] = isset($config['unbound']['regdhcp']);
-$pconfig['regdhcpstatic'] = isset($config['unbound']['regdhcpstatic']);
-$pconfig['txtsupport'] = isset($config['unbound']['txtsupport']);
-
 if (!is_array($config['unbound']))
 	$config['unbound'] = array();
 $a_unboundcfg =& $config['unbound'];
@@ -69,48 +53,96 @@ if (!is_array($config['unbound']['domainoverrides']))
 	$config['unbound']['domainoverrides'] = array();
 $a_domainOverrides = &$config['unbound']['domainoverrides'];
 
+if (isset($config['unbound']['enable']))
+	$pconfig['enable'] = true;
+if (isset($config['unbound']['dnssec']))
+	$pconfig['dnssec'] = true;
+if (isset($config['unbound']['forwarding']))
+	$pconfig['forwarding'] = true;
+if (isset($config['unbound']['regdhcp']))
+	$pconfig['regdhcp'] = true;
+if (isset($config['unbound']['regdhcpstatic']))
+	$pconfig['regdhcpstatic'] = true;
+if (isset($config['unbound']['txtsupport']))
+	$pconfig['txtsupport'] = true;
+
+$pconfig['port'] = $config['unbound']['port'];
+$pconfig['custom_options'] = $config['unbound']['custom_options'];
+
+if (empty($config['unbound']['active_interface']))
+	$pconfig['active_interface'] = array();
+else
+	$pconfig['active_interface'] = explode(",", $config['unbound']['active_interface']);
+if (empty($config['unbound']['outgoing_interface']))
+	$pconfig['outgoing_interface'] = array();
+else
+	$pconfig['outgoing_interface'] = explode(",", $config['unbound']['outgoing_interface']);
+
 if ($_POST) {
 	$pconfig = $_POST;
 	unset($input_errors);
 
-	if ($_POST['enable'] == "yes" && isset($config['dnsmasq']['enable']))
-		$input_errors[] = "The system dns-forwarder is still active. Disable it before enabling the DNS Resolver.";
-
-	if (empty($_POST['active_interface']))
-		$input_errors[] = "A single network interface needs to be selected for the DNS Resolver to bind to.";
-
-	if (empty($_POST['outgoing_interface']))
-		$input_errors[] = "A single outgoing network interface needs to be selected for the DNS Resolver to use for outgoing DNS requests.";
-
-	if ($_POST['port'])
-		if (is_port($_POST['port']))
-			$a_unboundcfg['port'] = $_POST['port'];
-		else
-			$input_errors[] = gettext("You must specify a valid port number.");
-	else if (isset($config['unbound']['port']))
-		unset($config['unbound']['port']);
-
-	$a_unboundcfg['enable'] = ($_POST['enable']) ? true : false;
-	$a_unboundcfg['dnssec'] = ($_POST['dnssec']) ? true : false;
-	$a_unboundcfg['forwarding'] = ($_POST['forwarding']) ? true : false;
-	$a_unboundcfg['regdhcp'] = ($_POST['regdhcp']) ? true : false;
-	$a_unboundcfg['regdhcpstatic'] = ($_POST['regdhcpstatic']) ? true : false;
-	$a_unboundcfg['txtsupport'] = ($_POST['txtsupport']) ? true : false;
-	if (is_array($_POST['active_interface']) && !empty($_POST['active_interface']))
-		$a_unboundcfg['active_interface'] = implode(",", $_POST['active_interface']);
-
-	if (is_array($_POST['outgoing_interface']) && !empty($_POST['outgoing_interface']))
-		$a_unboundcfg['outgoing_interface'] = implode(",", $_POST['outgoing_interface']);
-
-	if (!$input_errors) {
-		write_config("DNS Resolver configured.");
-		$retval = 0;
+	if ($_POST['apply']) {
 		$retval = services_unbound_configure();
 		$savemsg = get_std_save_message($retval);
 		if ($retval == 0)
 			clear_subsystem_dirty('unbound');
 		/* Update resolv.conf in case the interface bindings exclude localhost. */
 		system_resolvconf_generate();
+	} else {
+		if (isset($_POST['enable']) && isset($config['dnsmasq']['enable']))
+			$input_errors[] = "The system dns-forwarder is still active. Disable it before enabling the DNS Resolver.";
+
+		if (empty($_POST['active_interface']))
+			$input_errors[] = "A single network interface needs to be selected for the DNS Resolver to bind to.";
+
+		if (empty($_POST['outgoing_interface']))
+			$input_errors[] = "A single outgoing network interface needs to be selected for the DNS Resolver to use for outgoing DNS requests.";
+
+		if ($_POST['port'])
+			if (is_port($_POST['port']))
+				$a_unboundcfg['port'] = $_POST['port'];
+			else
+				$input_errors[] = gettext("You must specify a valid port number.");
+		else if (isset($config['unbound']['port']))
+			unset($config['unbound']['port']);
+
+		if (isset($_POST['enable']))
+			$a_unboundcfg['enable'] = true;
+		else
+			unset($a_unboundcfg['enable']);
+		if (isset($_POST['dnssec']))
+			$a_unboundcfg['dnssec'] = true;
+		else
+			unset($a_unboundcfg['dnssec']);
+		if (isset($_POST['forwarding']))
+			$a_unboundcfg['forwarding'] = true;
+		else
+			unset($a_unboundcfg['forwarding']);
+		if (isset($_POST['regdhcp']))
+			$a_unboundcfg['regdhcp'] = true;
+		else
+			unset($a_unboundcfg['regdhcp']);
+		if (isset($_POST['regdhcpstatic']))
+			$a_unboundcfg['regdhcpstatic'] = true;
+		else
+			unset($a_unboundcfg['regdhcpstatic']);
+		if (isset($_POST['txtsupport']))
+			$a_unboundcfg['txtsupport'] = true;
+		else
+			unset($a_unboundcfg['txtsupport']);
+		if (is_array($_POST['active_interface']) && !empty($_POST['active_interface']))
+			$a_unboundcfg['active_interface'] = implode(",", $_POST['active_interface']);
+
+		if (is_array($_POST['outgoing_interface']) && !empty($_POST['outgoing_interface']))
+			$a_unboundcfg['outgoing_interface'] = implode(",", $_POST['outgoing_interface']);
+
+		$a_unboundcfg['custom_options'] = str_replace("\r\n", "\n", $_POST['custom_options']);
+
+		if (!$input_errors) {
+			write_config("DNS Resolver configured.");
+			mark_subsystem_dirty('unbound');
+		}
 	}
 }
 
@@ -187,7 +219,7 @@ function show_advanced_dns() {
 							<tr>
 								<td width="22%" valign="top" class="vncellreq"><?=gettext("Enable");?></td>
 								<td width="78%" class="vtable"><p>
-									<input name="enable" type="checkbox" id="enable" value="yes" <?php if ($pconfig['enable'] == "yes") echo "checked=\"checked\"";?> onclick="enable_change(false)" />
+									<input name="enable" type="checkbox" id="enable" value="yes" <?php if (isset($pconfig['enable'])) echo "checked=\"checked\"";?> onclick="enable_change(false)" />
 									<strong><?=gettext("Enable DNS Resolver");?><br />
 									</strong></p>
 								</td>
@@ -270,7 +302,7 @@ function show_advanced_dns() {
 							<tr>
 								<td width="22%" valign="top" class="vncellreq"><?=gettext("DHCP Registration");?></td>
 								<td width="78%" class="vtable"><p>
-									<input name="regdhcp" type="checkbox" id="regdhcp" value="yes" <?php if ($pconfig['regdhcp'] === true) echo "checked=\"checked\"";?> />
+									<input name="regdhcp" type="checkbox" id="regdhcp" value="yes" <?php if (isset($pconfig['regdhcp'])) echo "checked=\"checked\"";?> />
 									<strong><?=gettext("Register DHCP leases in the DNS Resolver");?><br />
 									</strong><?php printf(gettext("If this option is set, then machines that specify".
 									" their hostname when requesting a DHCP lease will be registered".
@@ -282,7 +314,7 @@ function show_advanced_dns() {
 							<tr>
 								<td width="22%" valign="top" class="vncellreq"><?=gettext("Static DHCP");?></td>
 								<td width="78%" class="vtable"><p>
-									<input name="regdhcpstatic" type="checkbox" id="regdhcpstatic" value="yes" <?php if ($pconfig['regdhcpstatic'] === true) echo "checked=\"checked\"";?> />
+									<input name="regdhcpstatic" type="checkbox" id="regdhcpstatic" value="yes" <?php if (isset($pconfig['regdhcpstatic'])) echo "checked=\"checked\"";?> />
 									<strong><?=gettext("Register DHCP static mappings in the DNS Resolver");?><br />
 									</strong><?php printf(gettext("If this option is set, then DHCP static mappings will ".
 											"be registered in the DNS Resolver, so that their name can be ".

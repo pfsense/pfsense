@@ -53,8 +53,7 @@ if ($act == "del") {
 
 	unset($a_acls[$id]);
 	write_config();
-	services_unbound_configure();
-	$savemsg = gettext("Access List successfully deleted")."<br />";
+	mark_subsystem_dirty('unbound');
 }
 
 if ($act == "new") {
@@ -69,64 +68,65 @@ if ($act == "edit") {
 }
 
 if ($_POST) {
-
 	unset($input_errors);
 	$pconfig = $_POST;
 
-	// input validation - only allow 50 entries in a single ACL
-	for($x=0; $x<50; $x++) {
-		if (isset($pconfig["acl_network{$x}"])) {
-			$networkacl[$x] = array();
-			$networkacl[$x]['acl_network'] = $pconfig["acl_network{$x}"];
-			$networkacl[$x]['mask'] = $pconfig["mask{$x}"];
-			$networkacl[$x]['description'] = $pconfig["description{$x}"];
-			if (!is_ipaddr($networkacl[$x]['acl_network']))
-				$input_errors[] = gettext("You must enter a valid network IP address for {$networkacl[$x]['acl_network']}.");
+	if ($_POST['apply']) {
+		$retval = services_unbound_configure();
+		$savemsg = get_std_save_message($retval);
+		if ($retval == 0)
+			clear_subsystem_dirty('unbound');
+	} else {
 
-			if (is_ipaddr($networkacl[$x]['acl_network'])) {
-				if (!is_subnet($networkacl[$x]['acl_network']."/".$networkacl[$x]['mask']))
-					$input_errors[] = gettext("You must enter a valid IPv4 netmask for {$networkacl[$x]['acl_network']}/{$networkacl[$x]['mask']}.");
-			} else if (function_exists("is_ipaddrv6")) {
-				if (!is_ipaddrv6($networkacl[$x]['acl_network']))
-					$input_errors[] = gettext("You must enter a valid IPv6 address for {$networkacl[$x]['acl_network']}.");
-				else if (!is_subnetv6($networkacl[$x]['acl_network']."/".$networkacl[$x]['mask']))
-					$input_errors[] = gettext("You must enter a valid IPv6 netmask for {$networkacl[$x]['acl_network']}/{$networkacl[$x]['mask']}.");
-			} else
-				$input_errors[] = gettext("You must enter a valid IPv4 address for {$networkacl[$x]['acl_network']}.");
-		} else if (isset($networkacl[$x]))
-			unset($networkacl[$x]);
-	}
-	
-	if (!$input_errors) {
-		if ($pconfig['Submit'] == gettext("Save")) {
-			$acl_entry = array();
-			$acl_entry['aclid'] = $pconfig['aclid'];
-			$acl_entry['aclname'] = $pconfig['aclname'];
-			$acl_entry['aclaction'] = $pconfig['aclaction'];
-			$acl_entry['description'] = $pconfig['description'];
-			$acl_entry['aclid'] = $pconfig['aclid'];
-			$acl_entry['row'] = array();
-			foreach ($networkacl as $acl)
-				$acl_entry['row'][] = $acl;
+		// input validation - only allow 50 entries in a single ACL
+		for($x=0; $x<50; $x++) {
+			if (isset($pconfig["acl_network{$x}"])) {
+				$networkacl[$x] = array();
+				$networkacl[$x]['acl_network'] = $pconfig["acl_network{$x}"];
+				$networkacl[$x]['mask'] = $pconfig["mask{$x}"];
+				$networkacl[$x]['description'] = $pconfig["description{$x}"];
+				if (!is_ipaddr($networkacl[$x]['acl_network']))
+					$input_errors[] = gettext("You must enter a valid network IP address for {$networkacl[$x]['acl_network']}.");
 
-			if (isset($id) && $a_acls[$id])
-				$a_acls[$id] = $acl_entry;
-			else
-				$a_acls[] = $acl_entry;
-
-
-			mark_subsystem_dirty("unbound");
-			write_config();
-
-			pfSenseHeader("/services_unbound_acls.php");
-			exit;
+				if (is_ipaddr($networkacl[$x]['acl_network'])) {
+					if (!is_subnet($networkacl[$x]['acl_network']."/".$networkacl[$x]['mask']))
+						$input_errors[] = gettext("You must enter a valid IPv4 netmask for {$networkacl[$x]['acl_network']}/{$networkacl[$x]['mask']}.");
+				} else if (function_exists("is_ipaddrv6")) {
+					if (!is_ipaddrv6($networkacl[$x]['acl_network']))
+						$input_errors[] = gettext("You must enter a valid IPv6 address for {$networkacl[$x]['acl_network']}.");
+					else if (!is_subnetv6($networkacl[$x]['acl_network']."/".$networkacl[$x]['mask']))
+						$input_errors[] = gettext("You must enter a valid IPv6 netmask for {$networkacl[$x]['acl_network']}/{$networkacl[$x]['mask']}.");
+				} else
+					$input_errors[] = gettext("You must enter a valid IPv4 address for {$networkacl[$x]['acl_network']}.");
+			} else if (isset($networkacl[$x]))
+				unset($networkacl[$x]);
 		}
 
-		if ($pconfig['apply']) {
-			clear_subsystem_dirty("unbound");
-			$retval = 0;
-			$retval = services_unbound_configure();
-			$savemsg = get_std_save_message($retval);
+		if (!$input_errors) {
+			if ($pconfig['Submit'] == gettext("Save")) {
+				$acl_entry = array();
+				$acl_entry['aclid'] = $pconfig['aclid'];
+				$acl_entry['aclname'] = $pconfig['aclname'];
+				$acl_entry['aclaction'] = $pconfig['aclaction'];
+				$acl_entry['description'] = $pconfig['description'];
+				$acl_entry['aclid'] = $pconfig['aclid'];
+				$acl_entry['row'] = array();
+				foreach ($networkacl as $acl)
+					$acl_entry['row'][] = $acl;
+
+				if (isset($id) && $a_acls[$id])
+					$a_acls[$id] = $acl_entry;
+				else
+					$a_acls[] = $acl_entry;
+
+
+				mark_subsystem_dirty("unbound");
+				write_config();
+
+				pfSenseHeader("/services_unbound_acls.php");
+				exit;
+			}
+
 		}
 	}
 }

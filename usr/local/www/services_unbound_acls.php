@@ -137,26 +137,21 @@ include("head.inc");
 
 ?>
 
-<script type="text/javascript" src="/javascript/row_helper.js">
-</script>
+<script type="text/javascript" src="/javascript/jquery.ipv4v6ify.js"></script>
+<script type="text/javascript" src="/javascript/row_helper.js"></script>
 
 <script type="text/javascript">
 //<![CDATA[
-	function mask_field(fieldname, fieldsize, n) {
-		return '<select name="' + fieldname + n + '" class="formselect" id="' + fieldname + n + '"><?php
-			for ($i = 128; $i >= 0; $i--) {
-					echo "<option value=\"$i\">$i<\/option>";
-			}
-		?><\/select>';
-	}
-
-	rowtype[0] = "textbox";
 	rowname[0] = "acl_network";
+	rowtype[0] = "textbox,ipv4v6";
 	rowsize[0] = "30";
+
 	rowname[1] = "mask";
-	rowtype[1] = mask_field;
-	rowtype[2] = "textbox";
+	rowtype[1] = "select,ipv4v6";
+	rowsize[1] = "1";
+
 	rowname[2] = "description";
+	rowtype[2] = "textbox";
 	rowsize[2] = "40";
 //]]>
 </script>
@@ -253,10 +248,10 @@ if (is_subsystem_dirty("unbound"))
 											?>
 									<tr>
 										<td>
-											<input autocomplete="off" name="acl_network<?=$counter;?>" type="text" class="formfld unknown" id="acl_network<?=$counter;?>" size="40" value="<?=htmlspecialchars($network);?>" />
+											<input name="acl_network<?=$counter;?>" type="text" class="formfld unknown ipv4v6" id="acl_network<?=$counter;?>" size="30" value="<?=htmlspecialchars($network);?>" />
 										</td>
 										<td>
-											<select name="mask<?=$counter;?>" class="formselect" id="mask<?=$counter;?>">
+											<select name="mask<?=$counter;?>" class="formselect ipv4v6" id="mask<?=$counter;?>">
 											<?php
 												for ($i = 128; $i > 0; $i--) {
 													echo "<option value=\"$i\" ";
@@ -267,7 +262,7 @@ if (is_subsystem_dirty("unbound"))
 											</select>
 										</td>
 										<td>
-											<input autocomplete="off" name="description<?=$counter;?>" type="text" class="listbg" id="description<?=$counter;?>" size="40" value="<?=htmlspecialchars($description);?>" />
+											<input name="description<?=$counter;?>" type="text" class="formfld unknown" id="description<?=$counter;?>" size="40" value="<?=htmlspecialchars($description);?>" />
 										</td>
 										<td>
 											<a onclick="removeRow(this); return false;" href="#"><img border="0" src="/themes/<?=$g['theme'];?>/images/icons/icon_x.gif" alt="delete" /></a>

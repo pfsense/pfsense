@@ -318,17 +318,22 @@ if (is_subsystem_dirty("unbound"))
 						<tr>
 							<td width="25%" class="listhdrr"><?=gettext("Access List Name"); ?></td>
 							<td width="25%" class="listhdrr"><?=gettext("Action"); ?></td>
-							<td width="40%" class="listhdrr"><?=gettext("Description"); ?></td>
-							<td width="10%" class="list"></td>
+							<td width="45%" class="listhdr"><?=gettext("Description"); ?></td>
+							<td width="5%" class="list">&nbsp;</td>
 						</tr>
 					</thead>
 					<tfoot>
 						<tr>
-							<td class="list" colspan="4"></td>
+							<td class="list" colspan="3">&nbsp;</td>
 							<td class="list">
-								<a href="services_unbound_acls.php?act=new">
-									<img src="./themes/<?=$g['theme'];?>/images/icons/icon_plus.gif" title="<?=gettext("Add new Access List"); ?>" border="0" alt="add" />
-								</a>
+								<table border="0" cellspacing="0" cellpadding="1" summary="icons">
+									<tr>
+										<td width="17">&nbsp;</td>
+										<td valign="middle"><a href="services_unbound_acls.php?act=new">
+											<img src="./themes/<?=$g['theme'];?>/images/icons/icon_plus.gif" title="<?=gettext("Add new Access List"); ?>" border="0" alt="add" />
+										</a></td>
+									</tr>
+								</table>
 							</td>
 						</tr>
 						<tr>
@@ -346,7 +351,7 @@ if (is_subsystem_dirty("unbound"))
 					?>
 						<tr ondblclick="document.location='services_unbound_acls.php?act=edit&amp;id=<?=$i;?>'">
 							<td class="listlr">
-								<?=$acl['aclname'];?>
+								<?=htmlspecialchars($acl['aclname']);?>
 							</td>
 							<td class="listr">
 								<?=htmlspecialchars($acl['aclaction']);?>
@@ -355,13 +360,16 @@ if (is_subsystem_dirty("unbound"))
 								<?=htmlspecialchars($acl['description']);?>
 							</td>
 							<td valign="middle" class="list nowrap">
-								<a href="services_unbound_acls.php?act=edit&amp;id=<?=$i;?>">
-									<img src="./themes/<?=$g['theme'];?>/images/icons/icon_e.gif" title="<?=gettext("edit access list"); ?>" width="17" height="17" border="0" alt="edit" />
-								</a>
-								&nbsp;
-								<a href="services_unbound_acls.php?act=del&amp;id=<?=$i;?>" onclick="return confirm('<?=gettext("Do you really want to delete this access list?"); ?>')">
-									<img src="/themes/<?=$g['theme'];?>/images/icons/icon_x.gif" title="<?=gettext("delete access list"); ?>" width="17" height="17" border="0" alt="delete" />
-								</a>
+								<table border="0" cellspacing="0" cellpadding="1" summary="icons">
+									<tr>
+										<td valign="middle"><a href="services_unbound_acls.php?act=edit&amp;id=<?=$i;?>">
+											<img src="./themes/<?=$g['theme'];?>/images/icons/icon_e.gif" title="<?=gettext("edit access list"); ?>" width="17" height="17" border="0" alt="edit" />
+										</a></td>
+										<td valign="middle"><a href="services_unbound_acls.php?act=del&amp;id=<?=$i;?>" onclick="return confirm('<?=gettext("Do you really want to delete this access list?"); ?>')">
+											<img src="/themes/<?=$g['theme'];?>/images/icons/icon_x.gif" title="<?=gettext("delete access list"); ?>" width="17" height="17" border="0" alt="delete" />
+										</a></td>
+									</tr>
+								</table>
 							</td>
 						</tr>
 					<?php

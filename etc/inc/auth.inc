@@ -1359,6 +1359,10 @@ function session_auth() {
 	if (!session_id())
 		session_start();
 
+	// Detect protocol change
+	if (!isset($_POST['login']) && !empty($_SESSION['Logged_In']) && $_SESSION['protocol'] != $config['system']['webgui']['protocol'])
+		return false;
+
 	/* Validate incoming login request */
 	if (isset($_POST['login']) && !empty($_POST['usernamefld']) && !empty($_POST['passwordfld'])) {
 		$authcfg = auth_get_authserver($config['system']['webgui']['authmode']);
@@ -1369,6 +1373,7 @@ function session_auth() {
 			$_SESSION['Logged_In'] = "True";
 			$_SESSION['Username'] = $_POST['usernamefld'];
 			$_SESSION['last_access'] = time();
+			$_SESSION['protocol'] = $config['system']['webgui']['protocol'];
 			if(! isset($config['system']['webgui']['quietlogin'])) {
 				log_auth(sprintf(gettext("Successful login for user '%1\$s' from: %2\$s"), $_POST['usernamefld'], $_SERVER['REMOTE_ADDR']));
 			}

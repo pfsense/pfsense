@@ -324,7 +324,7 @@ function update_description(itemnum) {
 										<option value="conservative"<?php if($config['system']['optimization']=="conservative") echo " selected=\"selected\""; ?>><?=gettext("conservative");?></option>
 									</select>
 									<br />
-									<textarea readonly="readonly" cols="60" rows="2" id="info" name="info"style="padding:5px; border:1px dashed #990000; background-color: #ffffff; color: #000000; font-size: 8pt;"></textarea>
+									<textarea readonly="readonly" cols="60" rows="2" id="info" name="info" style="padding:5px; border:1px dashed #990000; background-color: #ffffff; color: #000000; font-size: 8pt;"></textarea>
 									<script type="text/javascript">
 									//<![CDATA[
 										update_description(document.forms[0].optimization.selectedIndex);
@@ -537,10 +537,15 @@ function update_description(itemnum) {
 									<select name="tftpinterface[]" multiple="multiple" class="formselect" size="3">
 <?php
 										$ifdescs = get_configured_interface_with_descr();
+										$rowIndex = 0;
 										foreach ($ifdescs as $ifent => $ifdesc):
+											$rowIndex++;
 ?>
 											<option value="<?=$ifent;?>" <?php if (in_array($ifent, $pconfig['tftpinterface'])) echo "selected=\"selected\""; ?>><?=gettext($ifdesc);?></option>
-<?php									endforeach; ?>
+<?php									endforeach;
+										if ($rowIndex == 0)
+											echo "<option></option>";
+ ?>
 									</select>
 									<strong><?=gettext("Choose the interfaces where you want TFTP proxy helper to be enabled.");?></strong>
 								</td>

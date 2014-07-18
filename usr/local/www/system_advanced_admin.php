@@ -357,8 +357,12 @@ function prot_change() {
 												if ($pconfig['ssl-certref'] == $cert['refid'])
 													$selected = "selected=\"selected\"";
 										?>
-										<option value="<?=$cert['refid'];?>"<?=$selected;?>><?=$cert['descr'];?></option>
-										<?php endforeach; ?>
+										<option value="<?=$cert['refid'];?>" <?=$selected;?>><?=$cert['descr'];?></option>
+										<?php
+										endforeach;
+										if (!count($a_cert))
+											echo "<option></option>";
+										?>
 									</select>
 								</td>
 							</tr>

@@ -169,8 +169,8 @@ if ($_POST) {
 	}
 
 	if (!$input_errors) {
-		update_if_changed("hostname", $config['system']['hostname'], strtolower($_POST['hostname']));
-		update_if_changed("domain", $config['system']['domain'], strtolower($_POST['domain']));
+		update_if_changed("hostname", $config['system']['hostname'], $_POST['hostname']);
+		update_if_changed("domain", $config['system']['domain'], $_POST['domain']);
 
 		update_if_changed("timezone", $config['system']['timezone'], $_POST['timezone']);
 		update_if_changed("NTP servers", $config['system']['timeservers'], strtolower($_POST['timeservers']));

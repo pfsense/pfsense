@@ -81,7 +81,7 @@ if (count($services) > 0) {
 			$bgclass = "listr";
 		else
 			$bgclass = "listbg";
-		echo "<td class=\"" . $bgclass . "\" align=\"center\">" . get_service_status_icon($service, true, true) . "</td>\n";
+		echo "<td class=\"" . $bgclass . "\" align=\"center\">" . get_service_status_icon($service, false, true) . "</td>\n";
 		echo "<td valign=\"middle\" class=\"list nowrap\">" . get_service_control_links($service) . "</td></tr>\n";
 	}
 } else {

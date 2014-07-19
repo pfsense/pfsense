@@ -216,7 +216,7 @@ function enable_altfirmwareurl(enable_over) {
 	<tr>
 		<td width="22%" valign="top" class="vncell"><?=gettext("Repository URL"); ?></td>
 		<td width="78%" class="vtable">
-			<input name="repositoryurl" type="input" class="formfld url" id="repositoryurl" size="64" value="<?php if ($gitcfg['repositoryurl']) echo $gitcfg['repositoryurl']; ?>" />
+			<input name="repositoryurl" type="text" class="formfld url" id="repositoryurl" size="64" value="<?php if ($gitcfg['repositoryurl']) echo $gitcfg['repositoryurl']; ?>" />
 <?php if($lastrepositoryurl): ?>
 			<br />
 			<?=sprintf(gettext("The most recently used repository was %s"), $lastrepositoryurl); ?>
@@ -242,7 +242,7 @@ function enable_altfirmwareurl(enable_over) {
 	<tr>
 		<td width="22%" valign="top" class="vncell"><?=gettext("Branch name"); ?></td>
 		<td width="78%" class="vtable">
-			<input name="branch" type="input" class="formfld unknown" id="branch" size="64" value="<?php if ($gitcfg['branch']) echo $gitcfg['branch']; ?>" />
+			<input name="branch" type="text" class="formfld unknown" id="branch" size="64" value="<?php if ($gitcfg['branch']) echo $gitcfg['branch']; ?>" />
 <?php if($lastbranch): ?>
 			<br />
 			<?=sprintf(gettext("The most recently used branch was %s"), $lastbranch); ?>

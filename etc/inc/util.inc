@@ -36,6 +36,8 @@
 	pfSense_MODULE:	utils
 */
 
+require_once("IPv6.inc");
+
 /* kill a process by pid file */
 function killbypid($pidfile) {
 	return sigkillbypid($pidfile, "TERM");

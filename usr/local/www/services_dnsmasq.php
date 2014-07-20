@@ -43,64 +43,201 @@ require("guiconfig.inc");
 require_once("functions.inc");
 require_once("filter.inc");
 require_once("shaper.inc");
+require_once("dnsmasq.inc");
 
-$pconfig['enable'] = isset($config['dnsmasq']['enable']);
-$pconfig['regdhcp'] = isset($config['dnsmasq']['regdhcp']);
-$pconfig['regdhcpstatic'] = isset($config['dnsmasq']['regdhcpstatic']);
-$pconfig['dhcpfirst'] = isset($config['dnsmasq']['dhcpfirst']);
-$pconfig['strict_order'] = isset($config['dnsmasq']['strict_order']);
-$pconfig['domain_needed'] = isset($config['dnsmasq']['domain_needed']);
-$pconfig['no_private_reverse'] = isset($config['dnsmasq']['no_private_reverse']);
-$pconfig['port'] = $config['dnsmasq']['port'];
-$pconfig['custom_options'] = $config['dnsmasq']['custom_options'];
+dnsmasq_upgrade_config();
 
-$pconfig['strictbind'] = isset($config['dnsmasq']['strictbind']);
-if (!empty($config['dnsmasq']['interface']))
-	$pconfig['interface'] = explode(",", $config['dnsmasq']['interface']);
+$a_instances = &$config['dnsmasq']['instances'];
+
+// find correct instance
+if (is_numericint($_GET['instance']))
+	$idx = $_GET['instance'];
+if (isset($_POST['instance']) && is_numericint($_POST['instance']))
+	$idx = $_POST['instance'];
+
+// redirect to overview or determine next index when index is not in range
+if (!isset($idx) || $idx < 0) {
+	if (isset($config['dnsmasq']['allow_multi']) && ($idx < 0 || $_SERVER['REQUEST_METHOD'] != 'POST')) {
+		header("Location: services_dnsmasq_instances.php");
+		exit;
+	}
+	$idx = 0;
+}
+
+$N = count($a_instances);
+if ($N > $idx || $_SERVER['REQUEST_METHOD'] == 'POST') {
+	if ($N > $idx) {
+		$keys = array_keys($a_instances);
+		$key = $keys[$idx];
+	} else {
+		$key = "instance{$N}";
+	}
+
+	$instance = &$a_instances[$key];
+	$instanceIndex = $idx;
+	unset($keys, $key);
+}
+else {
+	$isNewInstance = true;
+	$instance = array();
+	$instanceIndex = $N;
+}
+unset($idx, $N);
+
+$pconfig['allow_multi'] = isset($config['dnsmasq']['allow_multi']);
+$pconfig['enable'] = isset($instance['enable']);
+$pconfig['regdhcp'] = isset($instance['regdhcp']);
+$pconfig['regdhcpstatic'] = isset($instance['regdhcpstatic']);
+$pconfig['regdhcpfilter'] = isset($instance['regdhcpfilter']);
+$pconfig['dhcpfirst'] = isset($instance['dhcpfirst']);
+$pconfig['strict_order'] = isset($instance['strict_order']);
+$pconfig['domain_needed'] = isset($instance['domain_needed']);
+$pconfig['no_private_reverse'] = isset($instance['no_private_reverse']);
+$pconfig['port'] = $instance['port'];
+$pconfig['custom_options'] = $instance['custom_options'];
+$pconfig['descr'] = $instance['descr'];
+
+$pconfig['strictbind'] = isset($instance['strictbind']);
+if (!empty($instance['interface']))
+	$pconfig['interface'] = explode(",", $instance['interface']);
 else
 	$pconfig['interface'] = array();
 
-if (!is_array($config['dnsmasq']['hosts']))
-	$config['dnsmasq']['hosts'] = array();
+if (!empty($instance['dhcpfilter_addn_if']))
+	$pconfig['dhcpfilter_addn_if'] = explode(",", $instance['dhcpfilter_addn_if']);
+else
+	$pconfig['dhcpfilter_addn_if'] = array();
 
-if (!is_array($config['dnsmasq']['domainoverrides']))
-	$config['dnsmasq']['domainoverrides'] = array();
+if (!is_array($instance['hosts']))
+	$instance['hosts'] = array();
+
+if (!is_array($instance['domainoverrides']))
+	$instance['domainoverrides'] = array();
 
 
-$a_hosts = &$config['dnsmasq']['hosts'];
-$a_domainOverrides = &$config['dnsmasq']['domainoverrides'];
+$a_hosts = &$instance['hosts'];
+$a_domainOverrides = &$instance['domainoverrides'];
 
-if ($_POST) {
+$showMultiInstanceOptions = isset($_REQUEST['instance']);
+$allowMultiInstance = $instanceIndex == 0 || isset($config['dnsmasq']['allow_multi']);
 
+$serviceUrl = "services_dnsmasq.php";
+if ($showMultiInstanceOptions)
+	$serviceUrl .= "?instance={$instanceIndex}";
+
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+$do_reload_service = isset($_POST['apply']);
+if (!$do_reload_service) {
 	$pconfig = $_POST;
 	unset($input_errors);
 
-	$config['dnsmasq']['enable'] = ($_POST['enable']) ? true : false;
-	$config['dnsmasq']['regdhcp'] = ($_POST['regdhcp']) ? true : false;
-	$config['dnsmasq']['regdhcpstatic'] = ($_POST['regdhcpstatic']) ? true : false;
-	$config['dnsmasq']['dhcpfirst'] = ($_POST['dhcpfirst']) ? true : false;
-	$config['dnsmasq']['strict_order'] = ($_POST['strict_order']) ? true : false;
-	$config['dnsmasq']['domain_needed'] = ($_POST['domain_needed']) ? true : false;
-	$config['dnsmasq']['no_private_reverse'] = ($_POST['no_private_reverse']) ? true : false;
-	$config['dnsmasq']['custom_options'] = str_replace("\r\n", "\n", $_POST['custom_options']);
-	$config['dnsmasq']['strictbind'] = ($_POST['strictbind']) ? true : false;
+	$instance['enable'] = ($_POST['enable']) ? true : false;
+	$instance['regdhcp'] = ($_POST['regdhcp']) ? true : false;
+	$instance['regdhcpstatic'] = ($_POST['regdhcpstatic']) ? true : false;
+	$instance['regdhcpfilter'] = ($_POST['regdhcpfilter']) ? true : false;
+	$instance['dhcpfirst'] = ($_POST['dhcpfirst']) ? true : false;
+	$instance['strict_order'] = ($_POST['strict_order']) ? true : false;
+	$instance['domain_needed'] = ($_POST['domain_needed']) ? true : false;
+	$instance['no_private_reverse'] = ($_POST['no_private_reverse']) ? true : false;
+	$instance['custom_options'] = str_replace("\r\n", "\n", $_POST['custom_options']);
+	
+	if (!isset($_REQUEST['instance'])) {
+		if (!$_POST['allow_multi']) {
+			$first = true;
+			foreach ($a_instances as &$other) {
+				if ($first) {
+					$first = false;
+					continue;
+				}
+				unset($other['enable']);
+			}
+			unset($first, $config['dnsmasq']['allow_multi']);
+		} else {
+			$config['dnsmasq']['allow_multi'] = true;
+		}
+
+		$allowMultiInstance = $instanceIndex == 0 || isset($config['dnsmasq']['allow_multi']);
+		$showMultiInstanceOptions = $showMultiInstanceOptions ?: isset($config['dnsmasq']['allow_multi']);
+	}
+	
+	if (!$instance['enable']) {	
+		if (!isset($config['dnsmasq']['allow_multi']))
+			unset($config['dnsmasq']['enable']);
+		else {
+			foreach ($a_instances as &$other) {
+				if (isset($other['enable'])) {
+					$config['dnsmasq']['enable'] = true;
+					break;
+				}
+			}
+		}
+	}
+	else $config['dnsmasq']['enable'] = true;
+
+	$instance['strictbind'] = ($_POST['strictbind']) ? true : false;
+
+	$instance['descr'] = $_POST['descr']; 
 
 	if ($_POST['port'])
 		if(is_port($_POST['port']))
-			$config['dnsmasq']['port'] = $_POST['port'];
+			$instance['port'] = $_POST['port'];
 		else
 			$input_errors[] = gettext("You must specify a valid port number");
-	else if (isset($config['dnsmasq']['port']))
-		unset($config['dnsmasq']['port']);
+	else if (isset($instance['port']))
+		unset($instance['port']);
 
 	if (is_array($_POST['interface']))
-		$config['dnsmasq']['interface'] = implode(",", $_POST['interface']);
-	elseif (isset($config['dnsmasq']['interface']))
-		unset($config['dnsmasq']['interface']);
+		$instance['interface'] = implode(",", $_POST['interface']);
+	elseif (isset($instance['interface']))
+		unset($instance['interface']);
+	
+	if (is_array($_POST['dhcpfilter_addn_if']))
+		$instance['dhcpfilter_addn_if'] = implode(",", $_POST['dhcpfilter_addn_if']);
+	elseif (isset($instance['dhcpfilter_addn_if']))
+		unset($instance['dhcpfilter_addn_if']);
 
-	if ($config['dnsmasq']['custom_options']) {
+	// check whether the combination of ports and interfaces are valid
+	if (isset($config['dnsmasq']['allow_multi']) && count($a_instances) > 1) {
+		// interface + port must be unique w.r.t. other instances
+		$a_interfaces = $_POST['interface'];
+		if (!is_array($a_interfaces))
+			$a_interfaces = array(NULL);
+
+		$portBindError = false;
+		foreach ($a_interfaces as $interface) {
+			$k = 0;
+			foreach ($a_instances as $other) {				
+				if ($k == $instanceIndex || !isset($other['enable']))
+					continue;
+
+				if ($other['port'] == $instance['port']) {
+					if (!isset($other['strictbind']) && (!$instance['strictbind'] || $interface == NULL)) {
+						$portBindError = true;
+						break 2;
+					}
+					
+					if (isset($other['interface'])) {
+						$a_interfacesOther = explode(",", $other['interface']);
+						if (in_array($interface, $a_interfacesOther))
+							$portBindError = true;
+							break 2;
+						}
+					elseif ($interface === NULL) {
+						$portBindError = true;
+						break 2;
+					}
+				}
+				++$k;
+			}
+		}
+
+		if ($portBindError)
+			$input_errors[] = gettext("Cannot bind to the same combination of interface and port on multiple instances.");
+	}
+
+	if ($instance['custom_options']) {
 		$args = '';
-		foreach (preg_split('/\s+/', $config['dnsmasq']['custom_options']) as $c)
+		foreach (preg_split('/\s+/', $instance['custom_options']) as $c)
 			$args .= "--$c ";
 		exec("/usr/local/sbin/dnsmasq --test $args", $output, $rc);
 		if ($rc != 0)
@@ -109,28 +246,41 @@ if ($_POST) {
 
 	if (!$input_errors) {
 		write_config();
-
-		$retval = 0;
-		$retval = services_dnsmasq_configure();
-		$savemsg = get_std_save_message($retval);
-
-		// Relaod filter (we might need to sync to CARP hosts)
-		filter_configure();
-		/* Update resolv.conf in case the interface bindings exclude localhost. */
-		system_resolvconf_generate();
-
-		if ($retval == 0)
-			clear_subsystem_dirty('hosts');
+		
+		$do_reload_service = !isset($config['dnsmasq']['allow_multi']);
+		if (!$do_reload_service) {
+			// do not reload dnsmasq, but show warning
+			mark_subsystem_dirty('hosts');
+			header("Location: {$serviceUrl}");
+			exit;
+		}
 	}
 }
 
-if ($_GET['act'] == "del") {
+if ($do_reload_service) {
+	// reload dnsmasq
+	$retval = services_dnsmasq_configure();
+	$savemsg = get_std_save_message($retval);
+	if (isset($config['dnsmasq']['allow_multi']))
+		$savemsg .= " You can also go to the <a href=\"services_dnsmasq_instances.php\">overview</a>.";
+
+	// Reload filter (we might need to sync to CARP hosts)
+	filter_configure();
+	/* Update resolv.conf in case the interface bindings exclude localhost. */
+	system_resolvconf_generate();
+
+	if ($retval == 0)
+		clear_subsystem_dirty('hosts');
+}
+}
+
+if ($_GET['act'] == "del") {	
 	if ($_GET['type'] == 'host') {
 		if ($a_hosts[$_GET['id']]) {
 			unset($a_hosts[$_GET['id']]);
 			write_config();
 			mark_subsystem_dirty('hosts');
-			header("Location: services_dnsmasq.php");
+			header("Location: {$serviceUrl}");
 			exit;
 		}
 	}
@@ -139,7 +289,7 @@ if ($_GET['act'] == "del") {
 			unset($a_domainOverrides[$_GET['id']]);
 			write_config();
 			mark_subsystem_dirty('hosts');
-			header("Location: services_dnsmasq.php");
+			header("Location: {$serviceUrl}");
 			exit;
 		}
 	}
@@ -150,6 +300,18 @@ $pgtitle = array(gettext("Services"),gettext("DNS forwarder"));
 $shortcut_section = "resolver";
 include("head.inc");
 
+function getInstanceParam($prefix = '', $suffix = '') {
+	global $showMultiInstanceOptions, $instanceIndex;
+	
+	$s = "";
+	if ($showMultiInstanceOptions) {
+		$s .= "{$prefix}instance={$instanceIndex}";
+		if (!empty($suffix))
+			$s .= $suffix;
+	}
+	return $s;
+}
+
 ?>
 
 <script type="text/javascript">
@@ -159,11 +321,12 @@ function enable_change(enable_over) {
 	endis = !(document.iform.enable.checked || enable_over);
 	document.iform.regdhcp.disabled = endis;
 	document.iform.regdhcpstatic.disabled = endis;
+	document.iform.regdhcpfilter.disabled = endis;
 	document.iform.dhcpfirst.disabled = endis;
 }
-function show_advanced_dns() {
-	document.getElementById("showadvbox").innerHTML='';
-	aodiv = document.getElementById('showadv');
+function show_advanced_opts(name = 'adv') {
+	document.getElementById("show"+name+"box").innerHTML='';
+	aodiv = document.getElementById('show'+name);
 	aodiv.style.display = "block";
 }
 //]]>
@@ -174,20 +337,60 @@ function show_advanced_dns() {
 <form action="services_dnsmasq.php" method="post" name="iform" id="iform">
 <?php if ($input_errors) print_input_errors($input_errors); ?>
 <?php if ($savemsg) print_info_box($savemsg); ?>
+<?php if (!$allowMultiInstance) print_info_box(gettext("Enable multiple instances for dnsmasq to enable this service.")); ?>
+<?php //if (isset($config['dnsmasq']['allow_multi']) && !isset($config['dnsmasq']['enable'])) print_info_box(gettext("Please <a href=\"services_dnsmasq_instances.php\">enable the service</a> to run this instance.")); ?>
 <?php if (is_subsystem_dirty('hosts')): ?><br/>
 <?php print_info_box_np(gettext("The DNS forwarder configuration has been changed") . ".<br />" . gettext("You must apply the changes in order for them to take effect."));?><br />
-<?php endif; ?>
+<?php endif;
+
+if ($showMultiInstanceOptions): ?>
+<table width="100%" border="0" cellpadding="0" cellspacing="0">
+<tr><td>
+<?php
+	/* active tabs */
+	$tab_array = array();
+	$i = 0; // count tabs (= instances)
+	foreach ($a_instances as &$other) {
+		$active = ($i == $instanceIndex);
+		$tab_array[] = array(sprintf(gettext("Instance %s"), $i), $active, "services_dnsmasq.php?instance={$i}");
+		++$i;
+	}
+	if ($isNewInstance) {
+		$tab_array[] = array(gettext("New instance"), true);
+		++$i;
+	}
+	if ($i == 0) {
+		echo "</td></tr></table></form>";
+		include("fend.inc");
+		echo "</body>";
+		echo "</html>";
+		exit;
+	}
+	display_top_tabs($tab_array);
+?>
+</td></tr>
+<tr>
+<td>
+	<div id="mainarea">
+	<table class="tabcont" width="100%" border="0" cellpadding="6" cellspacing="0" summary="dns forwarder">
+<?php else: ?>
 <table width="100%" border="0" cellpadding="6" cellspacing="0" summary="dns forwarder">
 	<tr>
 		<td colspan="2" valign="top" class="listtopic"><?=gettext("General DNS Forwarder Options");?></td>
 	</tr>
+<?php endif; ?>
 	<tr>
 		<td width="22%" valign="top" class="vncellreq"><?=gettext("Enable");?></td>
 		<td width="78%" class="vtable"><p>
-			<input name="enable" type="checkbox" id="enable" value="yes" <?php if ($pconfig['enable'] == "yes") echo "checked=\"checked\"";?> onclick="enable_change(false)" />
-			<strong><?=gettext("Enable DNS forwarder");?><br />
+			<input name="enable" type="checkbox" id="enable" value="yes" <?php if (!$allowMultiInstance) echo "disabled=\"disabled\""; elseif ($pconfig['enable'] == "yes") echo "checked=\"checked\"";?> onclick="enable_change(false)" />
+			<strong><?php
+				if ($showMultiInstanceOptions)
+					echo gettext("Enable instance");
+				else
+					echo gettext("Enable DNS forwarder");
+			?><br />
 			</strong></p></td>
-		</tr>
+	</tr>
 	<tr>
 		<td width="22%" valign="top" class="vncellreq"><?=gettext("DHCP Registration");?></td>
 		<td width="78%" class="vtable"><p>
@@ -296,11 +499,73 @@ function show_advanced_dns() {
 			</p>
 		</td>
 	</tr>
+	<?php if ($showMultiInstanceOptions): ?>
+	<tr>
+		<td width="22%" valign="top" rowspan="2" class="vncellreq"><?=gettext("Filter DHCP");?></td>
+		<td width="78%" class="vtable"><p>
+			<input name="regdhcpfilter" type="checkbox" id="regdhcpfilter" value="yes" <?php if ($pconfig['regdhcpfilter'] == "yes") echo "checked=\"checked\"";?>/>
+			<strong><?=gettext("Filter DHCP mappings");?><br />
+			</strong><?php printf(gettext("If this option is set, then DHCP mappings will ".
+					"be filtered so that they must be in at least one subnet defined by ".
+					"any of the selected interfaces."));?></p>
+		</td>
+	</tr>
+	<tr>
+		<td width="78%" class="vtable">
+			<div id="showdhcpfilteraddnifbox" <?php if ($pconfig['dhcpfilter_addn_if']) echo "style='display:none'"; ?>>
+				<input type="button" onclick="show_advanced_opts('dhcpfilteraddnif')" value="<?=gettext("Additional interfaces"); ?>"></input> - <?=gettext("Show interfaces");?>
+			</div>
+			<div id="showdhcpfilteraddnif" <?php if (empty($pconfig['dhcpfilter_addn_if'])) echo "style='display:none'"; ?>>
+			<?php
+				$interface_addresses = get_possible_listen_ips(true);
+				$size=count($interface_addresses)+1;
+			?>
+			<strong><?=gettext("Additional interfaces for which to register DHCP mappings.");?></strong>
+				<br /><br />
+				<select id="dhcpfilter_addn_if" name="dhcpfilter_addn_if[]" multiple="multiple" class="formselect" size="<?php echo $size; ?>">
+					<option value="" <?php if (empty($pconfig['dhcpfilter_addn_if'])) echo 'selected="selected"'; ?>>All</option>
+				<?php  foreach ($interface_addresses as $laddr):
+						$selected = "";
+						if (in_array($laddr['value'], $pconfig['dhcpfilter_addn_if']))
+							$selected = 'selected="selected"';
+				?>
+					<option value="<?=$laddr['value'];?>" <?=$selected;?>>
+						<?=htmlspecialchars($laddr['name']);?>
+					</option>
+				<?php endforeach; ?>
+				</select>
+				<br /><br />
+			</div>
+		</td>
+	</tr>
+	<?php endif; ?>
+	<?php if (!isset($_REQUEST['instance'])): ?>
+	<tr>
+		<td width="22%" valign="top" class="vncellreq"><?=gettext("Multiple instances");?></td>
+		<td width="78%" class="vtable"><p>
+			<input name="allow_multi" type="checkbox" id="allow_multi" value="yes" <?php if ($pconfig['allow_multi'] == "yes") echo "checked=\"checked\"";?> onclick="enable_change(false)"/>
+			<strong><?= gettext("Allow multiple instances"); ?></strong>
+			<br /><br />
+			<?= gettext("NOTE: Only one instance can bind to a interface and port combination. Use strict interface binding to listen to specific interfaces."); ?>
+			</p>
+		</td>
+	</tr>
+	<?php endif; ?>
+	<?php if ($showMultiInstanceOptions): ?>
+	<tr>
+		<td width="22%" valign="top" class="vncellreq"><?=gettext("Description");?></td>
+		<td width="78%" class="vtable"><p>
+			<input name="descr" type="text" class="formfld unknown" id="descr" size="40" value="<?=htmlspecialchars($pconfig['descr']);?>"/>
+			<br /> <span class="vexpl"><?=gettext("You may enter a description here".
+			" for your reference (not parsed).");?></span>
+		</p></td>
+	</tr>
+	<?php endif; ?>
 	<tr>
 		<td width="22%" valign="top" class="vncellreq"><?=gettext("Advanced");?></td>
 		<td width="78%" class="vtable">
 			<div id="showadvbox" <?php if ($pconfig['custom_options']) echo "style='display:none'"; ?>>
-				<input type="button" onclick="show_advanced_dns()" value="<?=gettext("Advanced"); ?>" /> - <?=gettext("Show advanced option");?>
+				<input type="button" onclick="show_advanced_opts()" value="<?=gettext("Advanced"); ?>" /> - <?=gettext("Show advanced option");?>
 			</div>
 			<div id="showadv" <?php if (empty($pconfig['custom_options'])) echo "style='display:none'"; ?>>
 				<strong><?=gettext("Advanced");?><br /></strong>
@@ -310,11 +575,25 @@ function show_advanced_dns() {
 		</td>
 	</tr>
 	<tr>
+		<?php if ($showMultiInstanceOptions): ?>
+		<td width="22%" valign="top">&nbsp;</td>
+		<td>
+		<?php else: ?>
 		<td colspan="2">
+		<?php endif; ?>
 			<input name="submit" type="submit" class="formbtn" value="<?=gettext("Save"); ?>" onclick="enable_change(true)" />
+			<?php if (isset($_REQUEST['instance'])): ?>
+			<input name="instance" type="hidden" value="<?=htmlspecialchars($instanceIndex);?>"/>
+			<?php endif; ?>
 		</td>
 	</tr>
 </table>
+<?php if ($showMultiInstanceOptions): ?>
+	</div>
+</td>
+</tr>
+</table>
+<?php endif; ?>
 
 <p><span class="vexpl"><span class="red"><strong><?=gettext("Note:");?><br />
 </strong></span><?php printf(gettext("If the DNS forwarder is enabled, the DHCP".
@@ -353,7 +632,7 @@ function show_advanced_dns() {
 			<table border="0" cellspacing="0" cellpadding="1" summary="icons">
 				<tr>
 					<td width="17"></td>
-					<td valign="middle"><a href="services_dnsmasq_edit.php"><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_plus.gif" width="17" height="17" border="0" alt="add" /></a></td>
+					<td valign="middle"><a href="services_dnsmasq_edit.php<?=getInstanceParam('?');?>"><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_plus.gif" width="17" height="17" border="0" alt="add" /></a></td>
 				</tr>
 			</table>
 		</td>
@@ -366,52 +645,53 @@ function show_advanced_dns() {
 			<table border="0" cellspacing="0" cellpadding="1" summary="add">
 				<tr>
 					<td width="17"></td>
-					<td valign="middle"><a href="services_dnsmasq_edit.php"><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_plus.gif" width="17" height="17" border="0" alt="add" /></a></td>
+					<td valign="middle"><a href="services_dnsmasq_edit.php<?=getInstanceParam('?');?>"><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_plus.gif" width="17" height="17" border="0" alt="add" /></a></td>
 				</tr>
 			</table>
 		</td>
 	</tr>
 	</tfoot>
 	<tbody>
-	<?php $i = 0; foreach ($a_hosts as $hostent): ?>
+	<?php $instanceParam = getInstanceParam('','&amp;'); $i = 0; foreach ($a_hosts as $hostent): ?>
 	<tr>
-		<td class="listlr" ondblclick="document.location='services_dnsmasq_edit.php?id=<?=$i;?>';">
+		<td class="listlr" ondblclick="document.location='services_dnsmasq_edit.php?<?=$instanceParam;?>id=<?=$i;?>';">
 			<?=strtolower($hostent['host']);?>&nbsp;
 		</td>
-		<td class="listr" ondblclick="document.location='services_dnsmasq_edit.php?id=<?=$i;?>';">
+		<td class="listr" ondblclick="document.location='services_dnsmasq_edit.php?<?=$instanceParam;?>id=<?=$i;?>';">
 			<?=strtolower($hostent['domain']);?>&nbsp;
 		</td>
-		<td class="listr" ondblclick="document.location='services_dnsmasq_edit.php?id=<?=$i;?>';">
+		<td class="listr" ondblclick="document.location='services_dnsmasq_edit.php?<?=$instanceParam;?>id=<?=$i;?>';">
 			<?=$hostent['ip'];?>&nbsp;
 		</td>
-		<td class="listbg" ondblclick="document.location='services_dnsmasq_edit.php?id=<?=$i;?>';">
+		<td class="listbg" ondblclick="document.location='services_dnsmasq_edit.php?<?=$instanceParam;?>id=<?=$i;?>';">
 			<?=htmlspecialchars($hostent['descr']);?>&nbsp;
 		</td>
 		<td valign="middle" class="list nowrap">
 			<table border="0" cellspacing="0" cellpadding="1" summary="icons">
 				<tr>
-					<td valign="middle"><a href="services_dnsmasq_edit.php?id=<?=$i;?>"><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_e.gif" width="17" height="17" border="0" alt="edit" /></a></td>
-					<td><a href="services_dnsmasq.php?type=host&amp;act=del&amp;id=<?=$i;?>" onclick="return confirm('<?=gettext("Do you really want to delete this host?");?>')"><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_x.gif" width="17" height="17" border="0" alt="delete" /></a></td>
+					<td valign="middle"><a href="services_dnsmasq_edit.php?<?=$instanceParam;?>id=<?=$i;?>"><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_e.gif" width="17" height="17" border="0" alt="edit" /></a></td>
+					<td><a href="services_dnsmasq.php?<?=$instanceParam;?>type=host&amp;act=del&amp;id=<?=$i;?>" onclick="return confirm('<?=gettext("Do you really want to delete this host?");?>')"><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_x.gif" width="17" height="17" border="0" alt="delete" /></a></td>
 				</tr>
 			</table>
+		</td>
 	</tr>
 	<?php if ($hostent['aliases']['item'] && is_array($hostent['aliases']['item'])): ?>
 	<?php foreach ($hostent['aliases']['item'] as $alias): ?>
 	<tr>
-		<td class="listlr" ondblclick="document.location='services_dnsmasq_edit.php?id=<?=$i;?>';">
+		<td class="listlr" ondblclick="document.location='services_dnsmasq_edit.php?<?=$instanceParam;?>id=<?=$i;?>';">
 			<?=strtolower($alias['host']);?>&nbsp;
 		</td>
-		<td class="listr" ondblclick="document.location='services_dnsmasq_edit.php?id=<?=$i;?>';">
+		<td class="listr" ondblclick="document.location='services_dnsmasq_edit.php?<?=$instanceParam;?>id=<?=$i;?>';">
 			<?=strtolower($alias['domain']);?>&nbsp;
 		</td>
-		<td class="listr" ondblclick="document.location='services_dnsmasq_edit.php?id=<?=$i;?>';">
+		<td class="listr" ondblclick="document.location='services_dnsmasq_edit.php?<?=$instanceParam;?>id=<?=$i;?>';">
 			Alias for <?=$hostent['host'] ? $hostent['host'] . '.' . $hostent['domain'] : $hostent['domain'];?>&nbsp;
 		</td>
-		<td class="listbg" ondblclick="document.location='services_dnsmasq_edit.php?id=<?=$i;?>';">
+		<td class="listbg" ondblclick="document.location='services_dnsmasq_edit.php?<?=$instanceParam;?>id=<?=$i;?>';">
 			<?=htmlspecialchars($alias['description']);?>&nbsp;
 		</td>
 		<td valign="middle" class="list nowrap">
-			<a href="services_dnsmasq_edit.php?id=<?=$i;?>"><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_e.gif" width="17" height="17" border="0" alt="edit" /></a>
+			<a href="services_dnsmasq_edit.php?<?=$instanceParam;?>id=<?=$i;?>"><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_e.gif" width="17" height="17" border="0" alt="edit" /></a>
 		</td>
 	</tr>
 	<?php endforeach; ?>
@@ -440,7 +720,7 @@ function show_advanced_dns() {
 			<table border="0" cellspacing="0" cellpadding="1" summary="add">
 				<tr>
 					<td width="17" height="17"></td>
-					<td><a href="services_dnsmasq_domainoverride_edit.php"><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_plus.gif" width="17" height="17" border="0" alt="add" /></a></td>
+					<td><a href="services_dnsmasq_domainoverride_edit.php<?=getInstanceParam('?');?>"><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_plus.gif" width="17" height="17" border="0" alt="add" /></a></td>
 				</tr>
 			</table>
 		</td>
@@ -453,7 +733,7 @@ function show_advanced_dns() {
 		<table border="0" cellspacing="0" cellpadding="1" summary="add">
 			<tr>
 				<td width="17" height="17"></td>
-				<td><a href="services_dnsmasq_domainoverride_edit.php"><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_plus.gif" width="17" height="17" border="0" alt="add" /></a></td>
+				<td><a href="services_dnsmasq_domainoverride_edit.php<?=getInstanceParam('?');?>"><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_plus.gif" width="17" height="17" border="0" alt="add" /></a></td>
 			</tr>
 		</table>
 		</td>
@@ -471,8 +751,8 @@ function show_advanced_dns() {
 		<td class="listbg">
 			<?=htmlspecialchars($doment['descr']);?>&nbsp;
 		</td>
-		<td valign="middle" class="list nowrap"> <a href="services_dnsmasq_domainoverride_edit.php?id=<?=$i;?>"><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_e.gif" width="17" height="17" border="0" alt="edit" /></a>
-			&nbsp;<a href="services_dnsmasq.php?act=del&amp;type=doverride&amp;id=<?=$i;?>" onclick="return confirm('<?=gettext("Do you really want to delete this domain override?");?>')"><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_x.gif" width="17" height="17" border="0" alt="delete" /></a></td>
+		<td valign="middle" class="list nowrap"> <a href="services_dnsmasq_domainoverride_edit.php?<?=$instanceParam;?>id=<?=$i;?>"><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_e.gif" width="17" height="17" border="0" alt="edit" /></a>
+			&nbsp;<a href="services_dnsmasq.php?<?=$instanceParam;?>act=del&amp;type=doverride&amp;id=<?=$i;?>" onclick="return confirm('<?=gettext("Do you really want to delete this domain override?");?>')"><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_x.gif" width="17" height="17" border="0" alt="delete" /></a></td>
 	</tr>
 	<?php $i++; endforeach; ?>
 	<tr style="display:none"><td></td></tr>

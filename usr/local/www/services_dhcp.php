@@ -42,6 +42,7 @@
 
 require("guiconfig.inc");
 require_once("filter.inc");
+require_once("dnsmasq.inc");
 
 if(!$g['services_dhcp_server_enable']) {
 	header("Location: /");
@@ -526,8 +527,17 @@ if ($_POST) {
 		killbyname("dhcpd");
 		dhcp_clean_leases();
 		/* dnsmasq_configure calls dhcpd_configure */
-		/* no need to restart dhcpd twice */
-		if (isset($config['dnsmasq']['enable']) && isset($config['dnsmasq']['regdhcpstatic']))	{
+		/* no need to restart dhcpd twice */		
+		$dnsmasqStaticReg = false;
+		if (isset($config['dnsmasq']['enable'])) {
+			$a_dmInstances = dnsmasq_get_configured_instances();
+			foreach ($a_dmInstances as &$dmInstance) {
+				if (($dnsmasqStaticReg = (isset($dmInstance['enable']) && isset($dmInstance['regdhcpstatic']))) === true)
+					break;
+			}
+			unset($a_dmInstances);
+		}
+		if ($dnsmasqStaticReg) {
 			$retvaldns = services_dnsmasq_configure();
 			if ($retvaldns == 0) {
 				clear_subsystem_dirty('hosts');
@@ -566,8 +576,16 @@ if ($act == "del") {
 		write_config();
 		if(isset($config['dhcpd'][$if]['enable'])) {
 			mark_subsystem_dirty('staticmaps');
-			if (isset($config['dnsmasq']['enable']) && isset($config['dnsmasq']['regdhcpstatic']))
-				mark_subsystem_dirty('hosts');
+			if (isset($config['dnsmasq']['enable'])) {
+				$a_dmInstances = dnsmasq_get_configured_instances();
+				foreach ($a_dmInstances as &$dmInstance) {
+					if (isset($dmInstance['enable']) && isset($dmInstance['regdhcpstatic'])) {
+						mark_subsystem_dirty('hosts');
+						break;
+					}
+				}
+				unset($a_dmInstances);
+			}
 		}
 		header("Location: services_dhcp.php?if={$if}");
 		exit;

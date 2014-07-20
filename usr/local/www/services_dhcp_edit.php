@@ -58,6 +58,7 @@ if(!$g['services_dhcp_server_enable']) {
 }
 
 require("guiconfig.inc");
+require_once("dnsmasq.inc");
 
 $if = $_GET['if'];
 if ($_POST['if'])
@@ -311,8 +312,16 @@ if ($_POST) {
 
 		if(isset($config['dhcpd'][$if]['enable'])) {
 			mark_subsystem_dirty('staticmaps');
-			if (isset($config['dnsmasq']['enable']) && isset($config['dnsmasq']['regdhcpstatic']))
-				mark_subsystem_dirty('hosts');
+			if (isset($config['dnsmasq']['enable'])) {
+				$a_dmInstances = dnsmasq_get_configured_instances();
+				foreach ($a_dmInstances as &$dmInstance) {
+					if (isset($dmInstance['enable']) && isset($dmInstance['regdhcpstatic'])) {
+						mark_subsystem_dirty('hosts');
+						break;
+					}
+				}
+				unset($a_dmInstances);
+			}
 			if (isset($config['unbound']['enable']) && isset($config['unbound']['regdhcpstatic']))
 				mark_subsystem_dirty('unbound');
 		}

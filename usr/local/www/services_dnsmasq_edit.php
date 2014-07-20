@@ -43,21 +43,20 @@ function hostcmp($a, $b) {
 	return strcasecmp($a['host'], $b['host']);
 }
 
-function hosts_sort() {
-        global $g, $config;
-
-        if (!is_array($config['dnsmasq']['hosts']))
-                return;
-
-        usort($config['dnsmasq']['hosts'], "hostcmp");
-}
-
 require("guiconfig.inc");
+require_once("dnsmasq.inc");
 
-if (!is_array($config['dnsmasq']['hosts'])) 
-	$config['dnsmasq']['hosts'] = array();
+if (is_numericint($_GET['instance']))
+	$instanceIndex = $_GET['instance'];
+if (isset($_POST['instance']) && is_numericint($_POST['instance']))
+	$instanceIndex = $_POST['instance'];
 
-$a_hosts = &$config['dnsmasq']['hosts'];
+$instance = &dnsmasq_instance_config_by_index($instanceIndex);
+
+if (!is_array($instance['hosts'])) 
+	$instance['hosts'] = array();
+
+$a_hosts = &$instance['hosts'];
 
 if (is_numericint($_GET['id']))
 	$id = $_GET['id'];
@@ -153,13 +152,18 @@ if ($_POST) {
 			$a_hosts[$id] = $hostent;
 		else
 			$a_hosts[] = $hostent;
-		hosts_sort();
+		
+		if (is_array($instance['hosts']))
+			usort($instance['hosts'], "hostcmp");
 		
 		mark_subsystem_dirty('hosts');
 		
 		write_config();
 		
-		header("Location: services_dnsmasq.php");
+		$serviceUrl = "services_dnsmasq.php";
+		if (isset($instanceIndex))
+			$serviceUrl .= "?instance={$instanceIndex}";
+		header("Location: {$serviceUrl}");
 		exit;
 	}
 }
@@ -290,6 +294,9 @@ include("head.inc");
                     <input name="Submit" type="submit" class="formbtn" value="<?=gettext("Save");?>" /> <input class="formbtn" type="button" value="<?=gettext("Cancel");?>" onclick="history.back()" />
                     <?php if (isset($id) && $a_hosts[$id]): ?>
                     <input name="id" type="hidden" value="<?=htmlspecialchars($id);?>" />
+                    <?php endif; ?>
+                    <?php if (isset($instanceIndex)): ?>
+                    <input name="instance" type="hidden" value="<?=htmlspecialchars($instanceIndex);?>"/>
                     <?php endif; ?>
                   </td>
                 </tr>

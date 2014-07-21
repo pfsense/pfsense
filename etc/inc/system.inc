@@ -359,7 +359,11 @@ function system_dhcpleases_configure() {
 			if (is_process_running("dhcpleases"))
 				mwexec('/bin/pkill dhcpleases');
 			@unlink("{$g['varrun_path']}/dhcpleases.pid");
-			mwexec("/usr/local/sbin/dhcpleases -l {$g['dhcpd_chroot_path']}/var/db/dhcpd.leases -d {$config['system']['domain']} -p {$g['varrun_path']}/dnsmasq.pid -h {$g['varetc_path']}/hosts");
+			if (isset($config['unbound']['enable']))
+				$dns_pid = "unbound.pid";
+			else
+				$dns_pid = "dnsmasq.pid";
+			mwexec("/usr/local/sbin/dhcpleases -l {$g['dhcpd_chroot_path']}/var/db/dhcpd.leases -d {$config['system']['domain']} -p {$g['varrun_path']}/{$dns_pid} -h {$g['varetc_path']}/hosts");
 		}
 	} else {
 		sigkillbypid("{$g['varrun_path']}/dhcpleases.pid", "TERM");

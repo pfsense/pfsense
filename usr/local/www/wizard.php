@@ -927,8 +927,7 @@ function fixup_string($string) {
 			$urlport = "";
 		}
 	}
-	$http_host = explode(":", $_SERVER['HTTP_HOST']);
-	$http_host = $http_host[0];
+	$http_host = $_SERVER['SERVER_NAME'];
 	$urlhost = $http_host;
 	// If finishing the setup wizard, check if accessing on a LAN or WAN address that changed
 	if($title == "Reload in progress") {

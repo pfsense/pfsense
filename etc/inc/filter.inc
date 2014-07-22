@@ -2070,6 +2070,44 @@ function filter_generate_port(& $rule, $target = "source", $isnat = false) {
 	return $src;
 }
 
+function filter_address_add_vips_subnets(&$subnets, $if, $not) {
+	global $FilterIflist;
+
+	if (!isset($FilterIflist[$if]['vips']) || !is_array($FilterIflist[$if]['vips']))
+		return;
+
+	$if_subnets = array($subnets);
+
+	if ($not == true)
+		$subnets = "!{$subnets}";
+
+	foreach ($FilterIflist[$if]['vips'] as $vip) {
+		foreach ($if_subnets as $subnet)
+			if (ip_in_subnet($vip['ip'], $subnet))
+				continue 2;
+
+		if (is_ipaddrv4($vip['ip'])) {
+			if (!is_subnetv4($if_subnets[0]))
+				continue;
+
+			$network = gen_subnet($vip['ip'], $vip['sn']);
+		} else if (is_ipaddrv6($vip['ip'])) {
+			if (!is_subnetv6($if_subnets[0]))
+				continue;
+
+			$network = gen_subnetv6($vip['ip'], $vip['sn']);
+		} else
+			continue;
+
+		$subnets .= ' ' . ($not == true ? '!' : '') . $network . '/' . $vip['sn'];
+		$if_subnets[] = $network . '/' . $vip['sn'];
+	}
+	unset($if_subnets);
+
+	if (strpos($subnets, ' ') !== false)
+		$subnets = "{ {$subnets} }";
+}
+
 function filter_generate_address(& $rule, $target = "source", $isnat = false) {
 	global $FilterIflist, $config;
 	$src = "";
@@ -2092,9 +2130,9 @@ function filter_generate_address(& $rule, $target = "source", $isnat = false) {
 					$src = $FilterIflist["opt{$matches[1]}"]['ipv6'];
 					if(!is_ipaddrv6($src))
 						return "";
+					if(isset($rule[$target]['not']))
+						$src = " !{$src}";
 				}
-				if(isset($rule[$target]['not']))
-					$src = " !{$src}";
 			} else {
 				if(preg_match("/opt([0-9]*)$/", $rule[$target]['network'], $optmatch)) {
 					$opt_ip = $FilterIflist["opt{$optmatch[1]}"]['ip'];
@@ -2107,9 +2145,9 @@ function filter_generate_address(& $rule, $target = "source", $isnat = false) {
 					$src = $FilterIflist["opt{$matches[1]}"]['ip'];
 					if(!is_ipaddrv4($src))
 						return "";
+					if(isset($rule[$target]['not']))
+						$src = " !{$src}";
 				}
-				if(isset($rule[$target]['not']))
-					$src = " !{$src}";
 			}
 		} else {
 			if($rule['ipprotocol'] == "inet6") {
@@ -2153,7 +2191,7 @@ function filter_generate_address(& $rule, $target = "source", $isnat = false) {
 							$src = "{$pppoesav6}/{$pppoesnv6}";
 						}
 					}
-				if(isset($rule[$target]['not']))
+				if(isset($rule[$target]['not']) && !is_subnet($src))
 					$src = " !{$src}";
 			} else {
 				switch ($rule[$target]['network']) {
@@ -2187,6 +2225,10 @@ function filter_generate_address(& $rule, $target = "source", $isnat = false) {
 							$pptp_subnets = ip_range_to_subnet_array($config['pptpd']['remoteip'], long2ip32(ip2long($config['pptpd']['remoteip'])));
 						if (empty($pptp_subnets))
 							return "";
+						if(isset($rule[$target]['not']))
+							array_walk($pptp_subnets, function (&$value, $key) {
+								$value="!{$value}";
+							});
 						$src = "{ " . implode(" ", $pptp_subnets) . " }";
 						break;
 					case 'pppoe':
@@ -2198,9 +2240,13 @@ function filter_generate_address(& $rule, $target = "source", $isnat = false) {
 						}
 						break;
 				}
-				if(isset($rule[$target]['not']))
+				if(isset($rule[$target]['not']) && !is_subnet($src) &&
+				    (strpos($src, '{') === false))
 					$src = " !{$src}";
 			}
+			if (is_subnet($src))
+				filter_address_add_vips_subnets($src, $rule[$target]['network'],
+					isset($rule[$target]['not']));
 		}
 	} else if($rule[$target]['address']) {
 		$expsrc = alias_expand($rule[$target]['address']);

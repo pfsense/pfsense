@@ -36,6 +36,7 @@ function step1_stepbeforeformdisplay() {
 	$fields =& $pkg['step'][0]['fields']['field'];
 
 	$wans = 0;
+	$lans = 0;
 
 	$iflisttmp = get_configured_interface_with_descr();
 	foreach ($iflisttmp as $if => $ifdesc) {
@@ -43,11 +44,13 @@ function step1_stepbeforeformdisplay() {
 			continue;
 		if (interface_has_gateway($if) || interface_has_gatewayv6($if))
 			$wans++;
+		else
+			$lans++;
 	}
 
 	foreach ($fields as &$field)
 		if ($field['name'] == 'numberofconnections')
-			$field['value'] = $wans;
+			$field['value'] = ($wans < $lans ? $wans : $lans);
 }
 
 function step1_submitphpaction() {
@@ -69,17 +72,21 @@ function step2_stepbeforeformdisplay() {
 	global $config, $pkg;
 	global $stepid, $savemsg;
 
-	$numberofinterfaces = 0;
+	$wans = 0;
+	$lans = 0;
 	$iflist = array();
 	$iflisttmp = get_configured_interface_with_descr();
 	foreach ($iflisttmp as $if => $ifdesc) {
 		if (!is_altq_capable(get_real_interface($if)))
 			continue;
-		$numberofinterfaces++;
+		if (interface_has_gateway($if) || interface_has_gatewayv6($if))
+			$wans++;
+		else
+			$lans++;
 		$iflist[$if] = $ifdesc;
 	}
 	$numberofconnections = intval($config['ezshaper']['step1']['numberofconnections']);
-	if ($numberofconnections > ($numberofinterfaces/2)) {
+	if ($numberofconnections > ($wans < $lans ? $wans : $lans)) {
 		$savemsg=gettext("You have less interfaces than number of connections!");
 		$stepid--;
 		return;

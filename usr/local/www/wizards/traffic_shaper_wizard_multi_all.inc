@@ -30,6 +30,32 @@
 	POSSIBILITY OF SUCH DAMAGE.
 */
 
+function step1_stepbeforeformdisplay() {
+	global $stepid, $savemsg, $pkg;
+
+	$fields =& $pkg['step'][0]['fields']['field'];
+
+	$lans = 0;
+	$wans = 0;
+
+	$iflisttmp = get_configured_interface_with_descr();
+	foreach ($iflisttmp as $if => $ifdesc) {
+		if (!is_altq_capable(get_real_interface($if)))
+			continue;
+		if (interface_has_gateway($if) || interface_has_gatewayv6($if))
+			$wans++;
+		else
+			$lans++;
+	}
+
+	foreach ($fields as &$field) {
+		if ($field['name'] == 'numberofconnections')
+			$field['value'] = $wans;
+		else if ($field['name'] == 'numberoflocalinterfaces')
+			$field['value'] = $lans;
+	}
+}
+
 function step1_submitphpaction() {
 	global $stepid, $savemsg;
 

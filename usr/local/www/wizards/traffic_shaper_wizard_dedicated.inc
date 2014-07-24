@@ -91,6 +91,9 @@ function step2_stepbeforeformdisplay() {
 		$field['options']['option'] = array();
 		$ifcnt = 0;
 		foreach ($iflist as $ifname => $ifdescr) {
+			// Skip wan interfaces here
+			if (interface_has_gateway($ifname) || interface_has_gatewayv6($ifname))
+				continue;
 			if ($ifcnt == ($ifsel + 1))
 				$field['value'] = $ifname;
 			$opts = array();
@@ -134,6 +137,9 @@ function step2_stepbeforeformdisplay() {
 		$field['options']['option'] = array();
 		$ifcnt = 0;
 		foreach ($iflist as $ifname => $ifdescr) {
+			// Skip lan interfaces here
+			if (!interface_has_gateway($ifname) && !interface_has_gatewayv6($ifname))
+				continue;
 			if ($ifcnt == $ifsel)
 				$field['value'] = $ifname;
 			$opts = array();

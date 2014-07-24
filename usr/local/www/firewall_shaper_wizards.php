@@ -74,8 +74,6 @@ $pgtitle = array(gettext("Firewall"),gettext("Traffic Shaper"),gettext("Wizards"
 $shortcut_section = "trafficshaper";
 
 $wizards = array(
-	gettext("Single Lan multi Wan") => "traffic_shaper_wizard.xml",
-	gettext("Single Wan multi Lan") => "traffic_shaper_wizard_multi_lan.xml",
 	gettext("Multiple Lan/Wan") => "traffic_shaper_wizard_multi_all.xml",
 	gettext("Dedicated Links") => "traffic_shaper_wizard_dedicated.xml",
 );

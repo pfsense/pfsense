@@ -36,11 +36,21 @@ function step1_submitphpaction() {
 	if (!isset($_POST['numberofconnections'])) {
 		$savemsg=gettext("You need to specify the number of connections.");
 		$stepid--;
+		return;
+	}
+	if (intval($_POST['numberofconnections']) < 1) {
+		$savemsg=gettext("The number of connections should be greater than 1.");
+		$stepid--;
+		return;
+	}
+
+	if (!isset($_POST['numberoflocalinterfaces'])) {
+		$savemsg=gettext("You need to specify the number of LAN type interfaces.");
 		$stepid--;
 		return;
 	}
 	if (intval($_POST['numberoflocalinterfaces']) < 1) {
-		$savemsg=gettext("The number of connections should be greater than 1.");
+		$savemsg=gettext("The number of LAN type interfaces should be greater than 1.");
 		$stepid--;
 		return;
 	}

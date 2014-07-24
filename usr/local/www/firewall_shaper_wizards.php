@@ -43,9 +43,10 @@ require("guiconfig.inc");
 require_once("functions.inc");
 require_once("filter.inc");
 require_once("shaper.inc");
+require_once("util.inc");
 
 if($_GET['reset'] <> "") {
-	mwexec("/usr/bin/killall -9 pfctl");
+	sigkillbyname('pfctl', SIGKILL);
 	exit;
 }
 
@@ -62,8 +63,8 @@ if ($_POST['apply']) {
 		$savemsg = $retval;
 
 	/* reset rrd queues */
-	system("rm -f /var/db/rrd/*queuedrops.rrd");
-	system("rm -f /var/db/rrd/*queues.rrd");
+	unlink_if_exists("/var/db/rrd/*queuedrops.rrd");
+	unlink_if_exists("/var/db/rrd/*queues.rrd");
 	enable_rrd_graphing();
 
 	clear_subsystem_dirty('shaper');

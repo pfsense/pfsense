@@ -102,6 +102,8 @@ foreach ($a_ppps as $pppid => $ppp) {
 		break;
 }
 
+$type_disabled = (substr($wancfg['if'], 0, 3) == 'gre') ? 'disabled="disabled"' : '';
+
 if ($wancfg['if'] == $a_ppps[$pppid]['if']) {
 	$pconfig['pppid'] = $pppid;
 	$pconfig['ptpid'] = $a_ppps[$pppid]['ptpid'];
@@ -1584,7 +1586,7 @@ $types6 = array("none" => gettext("None"), "staticv6" => gettext("Static IPv6"),
 						<tr>
 							<td valign="middle" class="vncell"><strong><?=gettext("IPv4 Configuration Type"); ?></strong></td>
 							<td class="vtable">
-								<select name="type" onchange="updateType(this.value);" class="formselect" id="type">
+							<select name="type" onchange="updateType(this.value);" <?php echo $type_disabled; ?> class="formselect" id="type">
 								<?php
 									foreach ($types4 as $key => $opt) {
 										echo "<option onclick=\"updateType('{$key}');\"";
@@ -1600,7 +1602,7 @@ $types6 = array("none" => gettext("None"), "staticv6" => gettext("Static IPv6"),
 						<tr>
 							<td valign="middle" class="vncell"><strong><?=gettext("IPv6 Configuration Type"); ?></strong></td>
 							<td class="vtable">
-								<select name="type6" onchange="updateTypeSix(this.value);" class="formselect" id="type6">
+							<select name="type6" onchange="updateTypeSix(this.value);" <?php echo $type_disabled; ?> class="formselect" id="type6">
 								<?php
 									foreach ($types6 as $key => $opt) {
 										echo "<option onclick=\"updateTypeSix('{$key}');\"";

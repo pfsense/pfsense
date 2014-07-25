@@ -239,6 +239,13 @@ if ($_POST['apply']) {
 					if (isset($portlist[$ifport]['isppp']))
 						$config['interfaces'][$ifname]['ipaddr'] = $portlist[$ifport]['type'];
 
+					if (substr($ifport, 0, 3) == 'gre') {
+						unset($config['interfaces'][$ifname]['ipaddr']);
+						unset($config['interfaces'][$ifname]['subnet']);
+						unset($config['interfaces'][$ifname]['ipaddrv6']);
+						unset($config['interfaces'][$ifname]['subnetv6']);
+					}
+
 					/* check for wireless interfaces, set or clear ['wireless'] */
 					if (preg_match($g['wireless_regex'], $ifport)) {
 						if (!is_array($config['interfaces'][$ifname]['wireless']))

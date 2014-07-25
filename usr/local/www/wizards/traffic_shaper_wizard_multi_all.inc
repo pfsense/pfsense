@@ -425,8 +425,9 @@ function step3_stepbeforeformdisplay() {
 	$voipfields[] = $field;
 
 	$field = array();
-	$field['name'] = "Upstream SIP Server";
-	$enablefields[] = "Upstream SIP Server";
+	$field['displayname'] = "Upstream SIP Server";
+	$field['name'] = "upstream_sip_server";
+	$enablefields[] = "upstream_sip_server";
 	$field['type'] = "inputalias";
 	$field['description'] = "(Optional) If this is chosen, the provider field will be overridden. This allows you to provide the IP address of the <strong>remote</strong> PBX or SIP Trunk to prioritize.  <br />NOTE: You can also use a Firewall Alias in this location.";
 	$field['message'] = "IP Address field is non-blank and doesn't look like an IP address.";

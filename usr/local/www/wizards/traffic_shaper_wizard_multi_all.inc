@@ -323,7 +323,7 @@ function step2_stepsubmitphpaction() {
 				$stepid--;
 				return;
 			}
-			if (intval($upbw) < 128 && $_POST["conn{$i}uploadspeed"] == "Kb" && trim($_POST["conn{$i}scheduler"]) == "CBQ") {
+			if (intval($upbw) < 128 && $_POST["conn{$i}uploadspeed"] == "Kb" && trim($_POST["conn{$i}uploadscheduler"]) == "CBQ") {
 				$savemsg=gettext("Uploads smaller than 128Kbit/s is not supported for connection {$i} on CBQ scheduler.");
 				$stepid--;
 				return;

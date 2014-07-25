@@ -99,7 +99,7 @@ if ($_POST) {
 		$savemsg = get_std_save_message($retval);
 		conf_mount_ro();
 		
-		pfSenseHeader("system_usermanager.php?act=edit&amp;id={$userid}");
+		pfSenseHeader("system_usermanager.php?act=edit&id={$userid}");
 		
 		exit;
 	}

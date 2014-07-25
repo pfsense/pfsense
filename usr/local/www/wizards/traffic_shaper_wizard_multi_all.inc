@@ -306,27 +306,29 @@ function step2_stepsubmitphpaction() {
 				$stepid--;
 				return;
 			}
-			if (!is_numeric($_POST["conn{$i}upload"])) {
-				$savemsg = gettext("Upload bandwidth of connection {$i} is not valid.");
-				$stepid--;
-				return;
-			}
-			if (!is_numeric($_POST["conn{$i}download"])) {
-				$savemsg = gettext("Download bandwidth of connection {$i} is not valid.");
-				$stepid--;
-				return;
-			}
-			$upbw = $_POST["conn{$i}upload"];
-			$downbw = $_POST["conn{$i}download"];
-			if ($upbw < 1 || $downbw < 1) {
-				$savemsg = gettext("You cannot specify 0 bandwidth!");
-				$stepid--;
-				return;
-			}
-			if (intval($upbw) < 128 && $_POST["conn{$i}uploadspeed"] == "Kb" && trim($_POST["conn{$i}uploadscheduler"]) == "CBQ") {
-				$savemsg=gettext("Uploads smaller than 128Kbit/s is not supported for connection {$i} on CBQ scheduler.");
-				$stepid--;
-				return;
+			if (trim($_POST["conn{$i}uploadscheduler"]) != "PRIQ") {
+				if (!is_numeric($_POST["conn{$i}upload"])) {
+					$savemsg = gettext("Upload bandwidth of connection {$i} is not valid.");
+					$stepid--;
+					return;
+				}
+				if (!is_numeric($_POST["conn{$i}download"])) {
+					$savemsg = gettext("Download bandwidth of connection {$i} is not valid.");
+					$stepid--;
+					return;
+				}
+				$upbw = $_POST["conn{$i}upload"];
+				$downbw = $_POST["conn{$i}download"];
+				if ($upbw < 1 || $downbw < 1) {
+					$savemsg = gettext("You cannot specify 0 bandwidth!");
+					$stepid--;
+					return;
+				}
+				if (intval($upbw) < 128 && $_POST["conn{$i}uploadspeed"] == "Kb" && trim($_POST["conn{$i}uploadscheduler"]) == "CBQ") {
+					$savemsg=gettext("Uploads smaller than 128Kbit/s is not supported for connection {$i} on CBQ scheduler.");
+					$stepid--;
+					return;
+				}
 			}
 		}
 		for ($j = 0; $j < $localint; $j++) {
@@ -541,6 +543,8 @@ function step3_stepsubmitphpaction() {
 
 	$steps = intval($config['ezshaper']['step1']['numberofconnections']);
 	for ($i = 0; $i < $steps; $i++) {
+		if ($config['ezshaper']['step2']["conn{$i}uploadscheduler"] == "PRIQ")
+			continue;
 		if (!is_numeric($_POST["conn{$i}upload"])) {
 			$savemsg = gettext("Upload bandwidth of connection {$i} is not valid.");
 			$stepid--;
@@ -567,6 +571,8 @@ function step3_stepsubmitphpaction() {
 
 	$localint = intval($config['ezshaper']['step1']['numberoflocalinterfaces']);
 	for ($i = 0; $i < $localint; $i++) {
+		if ($config['ezshaper']['step2']["local{$i}downloadscheduler"] == "PRIQ")
+			continue;
 		if (!is_numeric($_POST["local{$i}download"])) {
 			$savemsg = gettext("Download bandwidth of connection {$i} is not valid.");
 			$stepid--;

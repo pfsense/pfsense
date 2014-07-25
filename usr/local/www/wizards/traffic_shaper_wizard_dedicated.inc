@@ -285,27 +285,29 @@ function step2_stepsubmitphpaction() {
 				$stepid--;
 				return;
 			}
-			if (!is_numeric($_POST["conn{$i}upload"])) {
-				$savemsg = gettext("Upload bandwidth of connection {$i} is not valid.");
-				$stepid--;
-				return;
-			}
-			if (!is_numeric($_POST["conn{$i}download"])) {
-				$savemsg = gettext("Download bandwidth of connection {$i} is not valid.");
-				$stepid--;
-				return;
-			}
-			$upbw = $_POST["conn{$i}upload"];
-			$downbw = $_POST["conn{$i}download"];
-			if ($upbw < 1 || $downbw < 1) {
-				$savemsg = gettext("You cannot specify bandwidth smaller than 1!");
-				$stepid--;
-				return;
-			}
-			if (intval($upbw) < 128 && $_POST["conn{$i}uploadspeed"] == "Kb" && trim($_POST["conn{$i}uploadscheduler"]) == "CBQ") {
-				$savemsg=gettext("Uploads smaller than 128Kbit/s is not supported for connection {$i} on CBQ scheduler.");
-				$stepid--;
-				return;
+			if (trim($_POST["conn{$i}uploadscheduler"]) != "PRIQ") {
+				if (!is_numeric($_POST["conn{$i}upload"])) {
+					$savemsg = gettext("Upload bandwidth of connection {$i} is not valid.");
+					$stepid--;
+					return;
+				}
+				if (!is_numeric($_POST["conn{$i}download"])) {
+					$savemsg = gettext("Download bandwidth of connection {$i} is not valid.");
+					$stepid--;
+					return;
+				}
+				$upbw = $_POST["conn{$i}upload"];
+				$downbw = $_POST["conn{$i}download"];
+				if ($upbw < 1 || $downbw < 1) {
+					$savemsg = gettext("You cannot specify bandwidth smaller than 1!");
+					$stepid--;
+					return;
+				}
+				if (intval($upbw) < 128 && $_POST["conn{$i}uploadspeed"] == "Kb" && trim($_POST["conn{$i}uploadscheduler"]) == "CBQ") {
+					$savemsg=gettext("Uploads smaller than 128Kbit/s is not supported for connection {$i} on CBQ scheduler.");
+					$stepid--;
+					return;
+				}
 			}
 			if ($_POST["local{$i}interface"] == $_POST["conn{$j}interface"] || $_POST["local{$i}interface"] == $_POST["local{$j}interface"]) {
 				$savemsg=gettext("You cannot select the same interface for local and outside.");
@@ -498,49 +500,53 @@ function step3_stepsubmitphpaction() {
 
 	$steps = intval($config['ezshaper']['step1']['numberofconnections']);
 	for ($i = 0; $i < $steps; $i++) {
-		if (!is_numeric($_POST["conn{$i}upload"])) {
-			$savemsg = gettext("Upload bandwidth of connection {$i} is not valid.");
-			$stepid--;
-			return;
-		}
-		if ($_POST["conn{$i}uploadspeed"] == "%") {
-			if (intval($_POST["conn{$i}upload"]) > 80) {
-				$savemsg=gettext("You cannot set the VoIP upload bandwidth on connection {$i} higher than 80% of the connection.");
+		if ($config['ezshaper']['step2']["conn{$i}uploadscheduler"] != "PRIQ") {
+			if (!is_numeric($_POST["conn{$i}upload"])) {
+				$savemsg = gettext("Upload bandwidth of connection {$i} is not valid.");
 				$stepid--;
 				return;
 			}
-		} else {
-			$factor = wizard_get_bandwidthtype_scale($config['ezshaper']['step2']["conn{$i}uploadspeed"]);
-			$ifbw = $factor * floatval($config['ezshaper']['step2']["conn{$i}upload"]);
-			$factor = wizard_get_bandwidthtype_scale($_POST["conn{$i}uploadspeed"]);
-			$input_bw = $factor * floatval($_POST["conn{$i}upload"]);
-			if ((0.8 * $ifbw) < $input_bw) {
-				$savemsg=gettext("You cannot set the VoIP upload bandwidth on connection {$i} higher than 80% of the connection.");
-				$stepid--;
-				return;
+			if ($_POST["conn{$i}uploadspeed"] == "%") {
+				if (intval($_POST["conn{$i}upload"]) > 80) {
+					$savemsg=gettext("You cannot set the VoIP upload bandwidth on connection {$i} higher than 80% of the connection.");
+					$stepid--;
+					return;
+				}
+			} else {
+				$factor = wizard_get_bandwidthtype_scale($config['ezshaper']['step2']["conn{$i}uploadspeed"]);
+				$ifbw = $factor * floatval($config['ezshaper']['step2']["conn{$i}upload"]);
+				$factor = wizard_get_bandwidthtype_scale($_POST["conn{$i}uploadspeed"]);
+				$input_bw = $factor * floatval($_POST["conn{$i}upload"]);
+				if ((0.8 * $ifbw) < $input_bw) {
+					$savemsg=gettext("You cannot set the VoIP upload bandwidth on connection {$i} higher than 80% of the connection.");
+					$stepid--;
+					return;
+				}
 			}
 		}
 
-		if (!is_numeric($_POST["local{$i}download"])) {
-			$savemsg = gettext("Download bandwidth of connection {$i} is not valid.");
-			$stepid--;
-			return;
-		}
-		if ($_POST["local{$i}downloadspeed"] == "%") {
-			if (intval($_POST["local{$i}download"]) > 80) {
-				$savemsg=gettext("You cannot set the VoIP upload bandwidth on connection {$i} higher than 80% of the connection.");
+		if ($config['ezshaper']['step2']["local{$i}downloadscheduler"] != "PRIQ") {
+			if (!is_numeric($_POST["local{$i}download"])) {
+				$savemsg = gettext("Download bandwidth of connection {$i} is not valid.");
 				$stepid--;
 				return;
 			}
-		} else {
-			$factor = wizard_get_bandwidthtype_scale($config['ezshaper']['step2']["conn{$i}downloadspeed"]);
-			$ifbw = $factor * floatval($config['ezshaper']['step2']["conn{$i}download"]);
-			$factor = wizard_get_bandwidthtype_scale($_POST["local{$i}downloadspeed"]);
-			$input_bw = $factor * floatval($_POST["local{$i}download"]);
-			if ((0.8 * $ifbw) < $input_bw) {
-				$savemsg=gettext("You cannot set the VoIP download bandwidth on connection {$i} higher than 80% of the connection.");
-				$stepid--;
-				return;
+			if ($_POST["local{$i}downloadspeed"] == "%") {
+				if (intval($_POST["local{$i}download"]) > 80) {
+					$savemsg=gettext("You cannot set the VoIP upload bandwidth on connection {$i} higher than 80% of the connection.");
+					$stepid--;
+					return;
+				}
+			} else {
+				$factor = wizard_get_bandwidthtype_scale($config['ezshaper']['step2']["conn{$i}downloadspeed"]);
+				$ifbw = $factor * floatval($config['ezshaper']['step2']["conn{$i}download"]);
+				$factor = wizard_get_bandwidthtype_scale($_POST["local{$i}downloadspeed"]);
+				$input_bw = $factor * floatval($_POST["local{$i}download"]);
+				if ((0.8 * $ifbw) < $input_bw) {
+					$savemsg=gettext("You cannot set the VoIP download bandwidth on connection {$i} higher than 80% of the connection.");
+					$stepid--;
+					return;
+				}
 			}
 		}
 	}

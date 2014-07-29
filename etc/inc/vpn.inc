@@ -573,7 +573,8 @@ EOD;
 						else
 							$dpdline = "dpdaction = clear";
 						$dpdline .= "\n\tdpddelay = {$ph1ent['dpd_delay']}s";
-						$dpdline .= "\n\tdpdtimeout = {$ph1ent['dpd_maxfail']}s";
+						$dpdtimeout = $ph1ent['dpd_delay'] * ($ph1ent['dpd_maxfail'] + 1);
+						$dpdline .= "\n\tdpdtimeout = {$dpdtimeout}s";
 					} else
 						$dpdline = "dpdaction = none";
 

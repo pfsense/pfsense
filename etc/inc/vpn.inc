@@ -581,9 +581,9 @@ EOD;
 					if (!empty($ph1ent['authentication_method']) && (strpos($ph1ent['authentication_method'], "xauth") || strpos($ph1ent['authentication_method'], "hybrid")))
 						$xauth = "xauth = server";
 
-					$lifeline = '';
+					$ikelifeline = '';
 					if ($ph1ent['lifetime'])
-						$lifeline = "ikelifetime = {$ph1ent['lifetime']}s";
+						$ikelifeline = "ikelifetime = {$ph1ent['lifetime']}s";
 
 					$remoteid_spec = '';
 					if (($ph2ent['mode'] == 'tunnel') or ($ph2ent['mode'] == 'tunnel6')) {
@@ -721,8 +721,9 @@ EOD;
 					}
 
 
+					$ipseclifetime = '';
 					if ($ph2ent['lifetime'])
-						$lifeline = "ikelifetime = {$ph2ent['lifetime']}s";
+						$ipseclifeline = "lifetime = {$ph2ent['lifetime']}s";
 
 					$ipsecconf .=<<<EOD
 
@@ -734,7 +735,8 @@ conn con{$ph2_index}-{$ph1ent['ikeid']}
 	reauth = yes
 	reqid = {$ikeid}
 	installpolicy = yes
-	{$lifeline}
+	{$ikelifeline}
+	{$ipseclifeline}
 	{$tunneltype}
 	{$dpdline}
 	auto = {$passive}

@@ -539,8 +539,12 @@ EOD;
 						$rgip = $ph1ent['remote-gateway'];
 
 					$keyexchange = "ikev1";
-					if (!empty($ph1ent['iketype']) && $ph1ent['iketype'] != "ikev1")
+					if (!empty($ph1ent['iketype']) && $ph1ent['iketype'] != "ikev1") {
 						$keyexchange = "ikev2";
+						$rekey = "rekey = yes";
+					} else {
+						$rekey = "rekey = no";
+					}
 
 					list ($myid_type, $myid_data) = ipsec_find_id($ph1ent, "local");
 					list ($peerid_type, $peerid_data) = ipsec_find_id($ph1ent, "peer", $rgmap);
@@ -733,6 +737,7 @@ conn con{$ph1ent['ikeid']}-{$ph2ent['uniqid']}
 	keyexchange = {$keyexchange}
 	keyingtries = %forever
 	reauth = yes
+	{$rekey}
 	reqid = {$ikeid}
 	installpolicy = yes
 	{$ikelifeline}

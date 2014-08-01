@@ -93,9 +93,8 @@ if ($_GET['act'] == "delph1")
 
 		/* remove the phase1 entry */
 		unset($a_phase1[$_GET['p1index']]);
-		vpn_ipsec_configure();
 		write_config();
-		filter_configure();
+		mark_subsystem_dirty('ipsec');
 		header("Location: vpn_ipsec.php");
 		exit;
 	}
@@ -105,10 +104,14 @@ if ($_GET['act'] == "delph2")
 {
 	if ($a_phase1[$_GET['p1index']] && $a_phase2[$_GET['p2index']]) {
 		/* remove the phase2 entry */
-		unset($a_phase2[$_GET['p2index']]);
-		vpn_ipsec_configure();
-		filter_configure();
-		write_config();
+		foreach ($a_phase2 as $ph2idx => $ph2) {
+			if ($ph2['uniqid'] == $_GET['p2index']) {
+				unset($a_phase2[$ph2idx]);
+				write_config();
+				mark_subsystem_dirty('ipsec');
+				break;
+			}
+		}
 		header("Location: vpn_ipsec.php");
 		exit;
 	}
@@ -289,8 +292,6 @@ include("head.inc");
 									foreach ($a_phase2 as $ph2ent) {
 										if ($ph2ent['ikeid'] != $ph1ent['ikeid']) 
 											continue;
-										if (isset( $ph2ent['disabled']) || isset($ph1ent['disabled'])) 
-											continue;
 										$phase2count++;
 									}
 								?>								
@@ -312,13 +313,10 @@ include("head.inc");
 										</a>
 									</td>
 								</tr>
-								<?php
-									$j = 0;
-									foreach ($a_phase2 as $ph2ent) {
-										if ($ph2ent['ikeid'] != $ph1ent['ikeid']) {
-											$j++;
+							<?php
+									foreach ($a_phase2 as $ph2ent):
+										if ($ph2ent['ikeid'] != $ph1ent['ikeid'])
 											continue;
-										}
 
 										if (isset( $ph2ent['disabled']) || isset($ph1ent['disabled'])) {
 											$spans = "<span class=\"gray\">";
@@ -326,8 +324,8 @@ include("head.inc");
 										}
 										else
 											$spans = $spane = "";
-								?>
-								<tr valign="top" ondblclick="document.location='vpn_ipsec_phase2.php?p2index=<?=$j;?>'">
+							?>
+								<tr valign="top" ondblclick="document.location='vpn_ipsec_phase2.php?p2index=<?=$ph2ent['uniqid'];?>'">
 
 									<td class="listlr nowrap">
 										<?=$spans;?>
@@ -359,9 +357,8 @@ include("head.inc");
 									<td class="listr">
 										<?=$spans;?>
 										<?php
-											$k = 0;
-											foreach ($ph2ent['encryption-algorithm-option'] as $ph2ea) {
-												if ($k++)
+											foreach ($ph2ent['encryption-algorithm-option'] as $k => $ph2ea) {
+												if ($k)
 													echo ", ";
 												echo $p2_ealgos[$ph2ea['name']]['name'];
 												if ($ph2ea['keylen']) {
@@ -377,9 +374,8 @@ include("head.inc");
 									<td class="listr nowrap">
 										<?=$spans;?>
 										<?php
-											$k = 0;
-											foreach ($ph2ent['hash-algorithm-option'] as $ph2ha) {
-												if ($k++)
+											foreach ($ph2ent['hash-algorithm-option'] as $k => $ph2ha) {
+												if ($k)
 													echo ", ";
 												echo $p2_halgos[$ph2ha];
 											}
@@ -387,22 +383,20 @@ include("head.inc");
 										<?=$spane;?>
 									</td>
 									<td class="list nowrap">
-										<a href="vpn_ipsec_phase2.php?p2index=<?=$j;?>">
+										<a href="vpn_ipsec_phase2.php?p2index=<?=$ph2ent['uniqid'];?>">
 											<img src="./themes/<?= $g['theme']; ?>/images/icons/icon_e.gif" title="<?=gettext("edit phase2 entry"); ?>" width="17" height="17" border="0" alt="edit" />
 										</a>
-										<a href="vpn_ipsec.php?act=delph2&amp;p1index=<?=$i;?>&amp;p2index=<?=$j;?>" onclick="return confirm('<?=gettext("Do you really want to delete this phase2 entry?"); ?>')">
+										<a href="vpn_ipsec.php?act=delph2&amp;p1index=<?=$i;?>&amp;p2index=<?=$ph2ent['uniqid'];?>" onclick="return confirm('<?=gettext("Do you really want to delete this phase2 entry?"); ?>')">
 											<img src="./themes/<?= $g['theme']; ?>/images/icons/icon_x.gif" title="<?=gettext("delete phase2 entry"); ?>" width="17" height="17" border="0" alt="delete" />
 										</a>
-										<a href="vpn_ipsec_phase2.php?dup=<?=$j;?>">
+										<a href="vpn_ipsec_phase2.php?dup=<?=$ph2ent['uniqid'];?>">
 											<img src="./themes/<?= $g['theme']; ?>/images/icons/icon_plus.gif" title="<?=gettext("add a new Phase 2 based on this one"); ?>" width="17" height="17" border="0" alt="add" />
 										</a>
 									</td>
 								</tr>
 
-								<?php
-										$j++;
-									}
-								?>
+								<?php endforeach; ?>
+
 							</table>
 						</td>
 					</tr>

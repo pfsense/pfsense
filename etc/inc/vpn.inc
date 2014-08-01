@@ -504,7 +504,7 @@ EOD;
 				$ipsecconf .= "config setup\n\tuniqueids = yes\n";
 				$ipsecconf .= "\tcharondebug=\"" . vpn_ipsec_configure_loglevels(true) . "\"\n";
 
-				foreach ($a_phase2 as $ph2_index => $ph2ent) {
+				foreach ($a_phase2 as $ph2ent) {
 					$ikeid = $ph2ent['ikeid'];
 
 					$ph1ent = false;
@@ -727,7 +727,7 @@ EOD;
 
 					$ipsecconf .=<<<EOD
 
-conn con{$ph2_index}-{$ph1ent['ikeid']}
+conn con{$ph1ent['ikeid']}-{$ph2ent['uniqid']}
 	aggressive = {$aggressive}
 	fragmentation = yes
 	keyexchange = {$keyexchange}

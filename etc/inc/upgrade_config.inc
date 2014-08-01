@@ -3360,4 +3360,18 @@ function upgrade_108_to_109() {
 	}
 }
 
+function upgrade_109_to_110() {
+	global $config;
+
+	if (!is_array($config['ipsec']) || !is_array($config['ipsec']['phase2']))
+		return;
+
+	foreach ($config['ipsec']['phase2'] as &$rule) {
+		if (!empty($rule['uniqid']))
+			continue;
+
+		$rule['uniqid'] = uniqid();
+	}
+}
+
 ?>

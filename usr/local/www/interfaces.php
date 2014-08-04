@@ -464,6 +464,12 @@ if ($_POST['apply']) {
 
 	unset($input_errors);
 	$pconfig = $_POST;
+
+	if (isset($_POST['track6-interface'])) {
+		$ipv6_delegation_length = calculate_ipv6_delegation_length($_POST['track6-interface']);
+		$ipv6_num_prefix_ids = pow(2, $ipv6_delegation_length);
+	}
+
 	if (is_numeric("0x" . $_POST['track6-prefix-id--hex']))
 		$pconfig['track6-prefix-id'] = intval($_POST['track6-prefix-id--hex'], 16);
 	else

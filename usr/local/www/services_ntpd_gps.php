@@ -146,7 +146,6 @@ if ($_POST) {
 
 	write_config("Updated NTP GPS Settings");
 
-	$retval = 0;
 	$retval = system_ntp_configure();
 	$savemsg = get_std_save_message($retval);
 } else {
@@ -176,7 +175,7 @@ include("head.inc");
 		}
 	}
 
-<?php /*
+/*
 init commands are Base64 encoded
 Default =	#Sponsored, probably a Ublox
 		$PUBX,40,GSV,0,0,0,0*59
@@ -249,7 +248,7 @@ SureGPS = 		#Sure Electronics SKG16B
 		$PMTK527,0.00*00
 		$PMTK251,9600*17	#really needs to work at 9600 baud
 
-*/ ?>
+*/
 
 	function set_gps_default(form) {
 		//This handles a new config and also a reset to a defined default config
@@ -361,11 +360,11 @@ SureGPS = 		#Sure Electronics SKG16B
 <table width="100%" border="0" cellpadding="0" cellspacing="0" summary="ntpd gps">
 	<tr><td>
 <?php
-	$tab_array = array();
-	$tab_array[] = array(gettext("NTP"), false, "services_ntpd.php");
-	$tab_array[] = array(gettext("Serial GPS"), true, "services_ntpd_gps.php");
-	$tab_array[] = array(gettext("PPS"), false, "services_ntpd_pps.php");
-	display_top_tabs($tab_array);
+		$tab_array = array();
+		$tab_array[] = array(gettext("NTP"), false, "services_ntpd.php");
+		$tab_array[] = array(gettext("Serial GPS"), true, "services_ntpd_gps.php");
+		$tab_array[] = array(gettext("PPS"), false, "services_ntpd_pps.php");
+		display_top_tabs($tab_array);
 ?>
 	</td></tr>
 	<tr><td>
@@ -385,7 +384,7 @@ SureGPS = 		#Sure Electronics SKG16B
 		<tr>
 			<td width="22%" valign="top" class="vncellreq"><?=gettext("GPS"); ?></td>
 			<td width="78%" valign="top" class="vtable">
-			<?php /* Start with the original "Default", list a "Generic" and then specific configs alphabetically */ ?>
+				<!-- Start with the original "Default", list a "Generic" and then specific configs alphabetically -->
 				<select id="gpstype" name="gpstype" class="formselect" onchange="set_gps_default(this.form)">
 					<option value="Default"<?php if($pconfig['type'] == 'Default') echo " selected=\"selected\""; ?>>Default</option>
 					<option value="Generic" title="Generic"<?php if($pconfig['type'] == 'Generic') echo " selected=\"selected\"";?>>Generic</option>
@@ -397,25 +396,31 @@ SureGPS = 		#Sure Electronics SKG16B
 				</select> <?php echo gettext("This option allows you to select a predefined configuration.");?>
 				<br />
 				<br />
-				<strong><?php echo gettext(" Note: ");?></strong><?php echo gettext("Default is the configuration of pfSense 2.1 and earlier"); ?>
-				<?php echo gettext(" (not recommended). Select Generic if your GPS is not listed.)"); ?>
-				<strong><?php echo gettext(" Note: ");?></strong><?php echo gettext("The perdefined configurations assume your GPS has already been set to NMEA mode."); ?>
+				<strong><?php echo gettext("Note: ");?></strong><?php echo gettext("Default is the configuration of pfSense 2.1 and earlier"); ?>
+				<?php echo gettext(" (not recommended). Select Generic if your GPS is not listed.)"); ?><br />
+				<strong><?php echo gettext("Note: ");?></strong><?php echo gettext("The perdefined configurations assume your GPS has already been set to NMEA mode."); ?>
 			</td>
 		</tr>
 
-<?php /* Probing would be nice, but much more complex. Would need to listen to each port for 1s+ and watch for strings. */ ?>
-<?php $serialports = glob("/dev/cua?[0-9]{,.[0-9]}", GLOB_BRACE); ?>
-<?php if (!empty($serialports)): ?>
+<?php
+	/* Probing would be nice, but much more complex. Would need to listen to each port for 1s+ and watch for strings. */
+	$serialports = glob("/dev/cua?[0-9]{,.[0-9]}", GLOB_BRACE);
+	if (!empty($serialports)):
+?>
 		<tr>
 			<td width="22%" valign="top" class="vncellreq">Serial port</td>
 			<td width="78%" class="vtable">
 				<select name="gpsport" class="formselect">
 					<option value="">none</option>
-					<?php foreach ($serialports as $port):
-						$shortport = substr($port,5);
-						$selected = ($shortport == $pconfig['port']) ? " selected=\"selected\"" : "";?>
-						<option value="<?php echo $shortport;?>"<?php echo $selected;?>><?php echo $shortport;?></option>
-					<?php endforeach; ?>
+<?php
+				foreach ($serialports as $port):
+					$shortport = substr($port,5);
+					$selected = ($shortport == $pconfig['port']) ? " selected=\"selected\"" : "";
+?>
+					<option value="<?php echo $shortport;?>"<?php echo $selected;?>><?php echo $shortport;?></option>
+<?php
+				endforeach;
+?>
 				</select>&nbsp;
 				<?php echo gettext("All serial ports are listed, be sure to pick the port with the GPS attached."); ?>
 				<br /><br />
@@ -432,9 +437,11 @@ SureGPS = 		#Sure Electronics SKG16B
 				<?php echo gettext("Note: A higher baud rate is generally only helpful if the GPS is sending too many sentences. It is recommended to configure the GPS to send only one sentence at a baud rate of 4800 or 9600."); ?>
 			</td>
 		</tr>
-<?php endif; ?>
+<?php
+	endif;
+?>
 		<tr>
-<?php /* 1 = RMC, 2 = GGA, 4 = GLL, 8 = ZDA or ZDG */?>
+			<!-- 1 = RMC, 2 = GGA, 4 = GLL, 8 = ZDA or ZDG -->
 			<td width="22%" valign="top" class="vncellreq">NMEA sentences</td>
 			<td width="78%" class="vtable">
 				<select id="gpsnmea" name="gpsnmea[]" multiple="multiple" class="formselect" size="5">

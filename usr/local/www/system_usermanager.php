@@ -554,7 +554,7 @@ function sshkeyClicked(obj) {
 										<td align="center" width="50%">
 											<strong><?=gettext("Member Of"); ?></strong><br />
 											<br />
-											<select size="10" style="width: 75%" name="groups[]" class="formselect" id="groups" onchange="clear_selected('nogroups')" multiple="multiple">
+											<select size="10" style="width: 75%" name="groups[]" class="formselect" id="groups" onchange="clear_selected('notgroups')" multiple="multiple">
 												<?php
 												$rowIndex = 0;
 												if (is_array($pconfig['groups'])) {

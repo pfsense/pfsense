@@ -393,6 +393,12 @@ function remove_selected(id) {
 function copy_selected(srcid, dstid) {
 	src_selbox = document.getElementById(srcid);
 	dst_selbox = document.getElementById(dstid);
+	count = dst_selbox.options.length;
+	for (index = count - 1; index >= 0; index--) {
+		if (dst_selbox.options[index].value == '') {
+			dst_selbox.remove(index);
+		}
+	}
 	count = src_selbox.options.length;
 	for (index = 0; index < count; index++) {
 		if (src_selbox.options[index].selected) {

@@ -1,38 +1,38 @@
 <?php
 /* $Id$ */
 /*
-    system_usermanager.php
-    part of m0n0wall (http://m0n0.ch/wall)
+	system_usermanager.php
+	part of m0n0wall (http://m0n0.ch/wall)
 
-    Copyright (C) 2008 Shrew Soft Inc.
-    All rights reserved.
+	Copyright (C) 2008 Shrew Soft Inc.
+	All rights reserved.
 
-    Copyright (C) 2005 Paul Taylor <paultaylor@winn-dixie.com>.
-    All rights reserved.
+	Copyright (C) 2005 Paul Taylor <paultaylor@winn-dixie.com>.
+	All rights reserved.
 
-    Copyright (C) 2003-2005 Manuel Kasper <mk@neon1.net>.
-    All rights reserved.
+	Copyright (C) 2003-2005 Manuel Kasper <mk@neon1.net>.
+	All rights reserved.
 
-    Redistribution and use in source and binary forms, with or without
-    modification, are permitted provided that the following conditions are met:
+	Redistribution and use in source and binary forms, with or without
+	modification, are permitted provided that the following conditions are met:
 
-    1. Redistributions of source code must retain the above copyright notice,
-       this list of conditions and the following disclaimer.
+	1. Redistributions of source code must retain the above copyright notice,
+	   this list of conditions and the following disclaimer.
 
-    2. Redistributions in binary form must reproduce the above copyright
-       notice, this list of conditions and the following disclaimer in the
-       documentation and/or other materials provided with the distribution.
+	2. Redistributions in binary form must reproduce the above copyright
+	   notice, this list of conditions and the following disclaimer in the
+	   documentation and/or other materials provided with the distribution.
 
-    THIS SOFTWARE IS PROVIDED ``AS IS'' AND ANY EXPRESS OR IMPLIED WARRANTIES,
-    INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY
-    AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE
-    AUTHOR BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY,
-    OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
-    SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
-    INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
-    CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
-    ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
-    POSSIBILITY OF SUCH DAMAGE.
+	THIS SOFTWARE IS PROVIDED ``AS IS'' AND ANY EXPRESS OR IMPLIED WARRANTIES,
+	INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY
+	AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE
+	AUTHOR BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY,
+	OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+	SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+	INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+	CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+	ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+	POSSIBILITY OF SUCH DAMAGE.
 */
 /*
 	pfSense_BUILDER_BINARIES:
@@ -252,8 +252,8 @@ if ($_POST) {
 
 	if (!empty($_POST['name'])) {
 		$ca = lookup_ca($_POST['caref']);
-       		if (!$ca)
-               		$input_errors[] = gettext("Invalid internal Certificate Authority") . "\n";
+		if (!$ca)
+			$input_errors[] = gettext("Invalid internal Certificate Authority") . "\n";
 	}
 
 	/* if this is an AJAX caller then handle via JSON */
@@ -297,19 +297,19 @@ if ($_POST) {
 			if (!empty($_POST['name'])) {
 				$cert = array();
 				$cert['refid'] = uniqid();
-                       		$userent['cert'] = array();
+				$userent['cert'] = array();
 
 				$cert['descr'] = $_POST['name'];
 
-               			$subject = cert_get_subject_array($ca['crt']);
+				$subject = cert_get_subject_array($ca['crt']);
 
-               			$dn = array(
-                       			'countryName' => $subject[0]['v'],
-                       			'stateOrProvinceName' => $subject[1]['v'],
-                       			'localityName' => $subject[2]['v'],
-                       			'organizationName' => $subject[3]['v'],
-                       			'emailAddress' => $subject[4]['v'],
-                       			'commonName' => $userent['name']);
+				$dn = array(
+					'countryName' => $subject[0]['v'],
+					'stateOrProvinceName' => $subject[1]['v'],
+					'localityName' => $subject[2]['v'],
+					'organizationName' => $subject[3]['v'],
+					'emailAddress' => $subject[4]['v'],
+					'commonName' => $userent['name']);
 
 				cert_create($cert, $_POST['caref'], $_POST['keylen'],
 					(int)$_POST['lifetime'], $dn);
@@ -431,13 +431,13 @@ function usercertClicked(obj) {
 }
 
 function sshkeyClicked(obj) {
-        if (obj.checked) {
-                document.getElementById("sshkeychck").style.display="none";
-                document.getElementById("sshkey").style.display="";
-        } else {
-                document.getElementById("sshkey").style.display="none";
-                document.getElementById("sshkeychck").style.display="";
-        }
+	if (obj.checked) {
+		document.getElementById("sshkeychck").style.display="none";
+		document.getElementById("sshkey").style.display="";
+	} else {
+		document.getElementById("sshkey").style.display="none";
+		document.getElementById("sshkeychck").style.display="";
+	}
 }
 //]]>
 </script>
@@ -450,36 +450,36 @@ function sshkeyClicked(obj) {
 <table width="100%" border="0" cellpadding="0" cellspacing="0" summary="user manager">
 	<tr>
 		<td>
-		<?php
+<?php
 			$tab_array = array();
 			$tab_array[] = array(gettext("Users"), true, "system_usermanager.php");
 			$tab_array[] = array(gettext("Groups"), false, "system_groupmanager.php");
 			$tab_array[] = array(gettext("Settings"), false, "system_usermanager_settings.php");
 			$tab_array[] = array(gettext("Servers"), false, "system_authservers.php");
 			display_top_tabs($tab_array);
-		?>
+?>
 		</td>
 	</tr>
 	<tr>
 		<td id="mainarea">
 			<div class="tabcont">
-
-				<?php if ($_GET['act'] == "new" || $_GET['act'] == "edit" || $input_errors): ?>
-
+<?php
+			if ($_GET['act'] == "new" || $_GET['act'] == "edit" || $input_errors):
+?>
 				<form action="system_usermanager.php" method="post" name="iform" id="iform" onsubmit="presubmit()">
 					<table width="100%" border="0" cellpadding="6" cellspacing="0" summary="main area">
-						<?php
-							$ro = "";
-							if ($pconfig['utype'] == "system")
-								$ro = "readonly=\"readonly\"";
-						?>
-	                    <tr>
-	                        <td width="22%" valign="top" class="vncell"><?=gettext("Defined by");?></td>
-	                        <td width="78%" class="vtable">
-	                            <strong><?=strtoupper(htmlspecialchars($pconfig['utype']));?></strong>
+<?php
+						$ro = "";
+						if ($pconfig['utype'] == "system")
+							$ro = "readonly=\"readonly\"";
+?>
+						<tr>
+							<td width="22%" valign="top" class="vncell"><?=gettext("Defined by");?></td>
+							<td width="78%" class="vtable">
+								<strong><?=strtoupper(htmlspecialchars($pconfig['utype']));?></strong>
 								<input name="utype" type="hidden" value="<?=htmlspecialchars($pconfig['utype'])?>" />
-	                        </td>
-	                    </tr>
+							</td>
+						</tr>
 						<tr>
 							<td width="22%" valign="top" class="vncell"><?=gettext("Disabled");?></td>
 							<td width="78%" class="vtable">
@@ -528,22 +528,23 @@ function sshkeyClicked(obj) {
 											<strong><?=gettext("Not Member Of"); ?></strong><br />
 											<br />
 											<select size="10" style="width: 75%" name="notgroups[]" class="formselect" id="notgroups" onchange="clear_selected('groups')" multiple="multiple">
-												<?php
-													$rowIndex = 0;
-													foreach ($config['system']['group'] as $group):
-														if ($group['gid'] == 1998) /* all users group */
-															continue;
-														if (is_array($pconfig['groups']) && in_array($group['name'],$pconfig['groups']))
-															continue;
-														$rowIndex++;
-												?>
+<?php
+												$rowIndex = 0;
+												foreach ($config['system']['group'] as $group):
+													if ($group['gid'] == 1998) /* all users group */
+														continue;
+													if (is_array($pconfig['groups']) && in_array($group['name'],$pconfig['groups']))
+														continue;
+													$rowIndex++;
+?>
 												<option value="<?=$group['name'];?>" <?=$selected;?>>
 													<?=htmlspecialchars($group['name']);?>
 												</option>
-												<?php endforeach;
+<?php
+												endforeach;
 												if ($rowIndex == 0)
 													echo "<option></option>";
-												?>
+?>
 											</select>
 											<br />
 										</td>
@@ -561,24 +562,25 @@ function sshkeyClicked(obj) {
 											<strong><?=gettext("Member Of"); ?></strong><br />
 											<br />
 											<select size="10" style="width: 75%" name="groups[]" class="formselect" id="groups" onchange="clear_selected('notgroups')" multiple="multiple">
-												<?php
+<?php
 												$rowIndex = 0;
-												if (is_array($pconfig['groups'])) {
+												if (is_array($pconfig['groups'])):
 													foreach ($config['system']['group'] as $group):
 														if ($group['gid'] == 1998) /* all users group */
 															continue;
 														if (!in_array($group['name'],$pconfig['groups']))
 															continue;
 														$rowIndex++;
-												?>
+?>
 												<option value="<?=$group['name'];?>">
 													<?=htmlspecialchars($group['name']);?>
 												</option>
-												<?php endforeach;
-												}
+<?php
+													endforeach;
+												endif;
 												if ($rowIndex == 0)
 													echo "<option></option>";
-												?>
+?>
 											</select>
 											<br />
 										</td>
@@ -587,9 +589,9 @@ function sshkeyClicked(obj) {
 								<?=gettext("Hold down CTRL (pc)/COMMAND (mac) key to select multiple items");?>
 							</td>
 						</tr>
-
-						<?php if (isset($pconfig['uid'])): ?>
-
+<?php
+					if (isset($pconfig['uid'])):
+?>
 						<tr>
 							<td width="22%" valign="top" class="vncell"><?=gettext("Effective Privileges");?></td>
 							<td width="78%" class="vtable">
@@ -600,39 +602,42 @@ function sshkeyClicked(obj) {
 										<td width="40%" class="listhdrr"><?=gettext("Description");?></td>
 										<td class="list"></td>
 									</tr>
-									<?php
-
-										$privdesc = get_user_privdesc($a_user[$id]);
-										if(is_array($privdesc)):
-											$i = 0;
-											foreach ($privdesc as $priv):
-											$group = false;
-											if ($priv['group'])
-												$group = $priv['group'];
-									?>
+<?php
+							$privdesc = get_user_privdesc($a_user[$id]);
+							if(is_array($privdesc)):
+								$i = 0;
+								foreach ($privdesc as $priv):
+									$group = false;
+									if ($priv['group'])
+										$group = $priv['group'];
+?>
 									<tr>
 										<td class="listlr"><?=$group;?></td>
 										<td class="listr">
 											<?=htmlspecialchars($priv['name']);?>
 										</td>
 										<td class="listbg">
-												<?=htmlspecialchars($priv['descr']);?>
+											<?=htmlspecialchars($priv['descr']);?>
 										</td>
 										<td valign="middle" class="list nowrap">
-											<?php if (!$group): ?>
+<?php
+										if (!$group):
+?>
 											<a href="system_usermanager.php?act=delpriv&amp;id=<?=$id?>&amp;privid=<?=$i;?>" onclick="return confirm('<?=gettext("Do you really want to delete this privilege?");?>')">
 												<img src="/themes/<?= $g['theme']; ?>/images/icons/icon_x.gif" width="17" height="17" border="0" alt="delete" />
 											</a>
-											<?php endif; ?>
+<?php
+										endif;
+?>
 										</td>
 									</tr>
-									<?php
-											/* can only delete user priv indexes */
-											if (!$group)
-												$i++;
-											endforeach;
-										endif;
-									?>
+<?php
+										/* can only delete user priv indexes */
+										if (!$group)
+											$i++;
+								endforeach;
+							endif;
+?>
 									<tr>
 										<td class="list" colspan="3"></td>
 										<td class="list">
@@ -653,21 +658,24 @@ function sshkeyClicked(obj) {
 										<td width="45%" class="listhdrr"><?=gettext("CA");?></td>
 										<td class="list"></td>
 									</tr>
-									<?php
-
-										$a_cert = $a_user[$id]['cert'];
-										if(is_array($a_cert)):
-											$i = 0;
-											foreach ($a_cert as $certref):
-												$cert = lookup_cert($certref);
-												$ca = lookup_ca($cert['caref']);
-									?>
+<?php
+							$a_cert = $a_user[$id]['cert'];
+							if(is_array($a_cert)):
+								$i = 0;
+								foreach ($a_cert as $certref):
+									$cert = lookup_cert($certref);
+									$ca = lookup_ca($cert['caref']);
+?>
 									<tr>
 										<td class="listlr">
 											<?=htmlspecialchars($cert['descr']);?>
-											<?php if (is_cert_revoked($cert)): ?>
+<?php
+										if (is_cert_revoked($cert)):
+?>
 											(<b>Revoked</b>)
-											<?php endif; ?>
+<?php
+										endif;
+?>
 										</td>
 										<td class="listr">
 											<?=htmlspecialchars($ca['descr']);?>
@@ -684,11 +692,11 @@ function sshkeyClicked(obj) {
 											</a>
 										</td>
 									</tr>
-									<?php
-												$i++;
-											endforeach;
-										endif;
-									?>
+<?php
+									$i++;
+								endforeach;
+							endif;
+?>
 									<tr>
 										<td class="list" colspan="2"></td>
 										<td class="list">
@@ -701,90 +709,95 @@ function sshkeyClicked(obj) {
 							</td>
 						</tr>
 
-						<?php else : ?>
-						<?php 	if (is_array($config['ca']) && count($config['ca']) > 0): ?>
-						<?php		$i = 0; foreach( $config['ca'] as $ca) {
-                                                                        	if (!$ca['prv'])
-                                                                                	continue;
-										$i++;
-									}
-						?>
+<?php
+					else:
+						if (is_array($config['ca']) && count($config['ca']) > 0):
+							$i = 0;
+							foreach( $config['ca'] as $ca) {
+								if (!$ca['prv'])
+									continue;
+								$i++;
+							}
+?>
 
 						<tr id="usercertchck">
 							<td width="22%" valign="top" class="vncell"><?=gettext("Certificate");?></td>
-                                                	<td width="78%" class="vtable">
+							<td width="78%" class="vtable">
 							<input type="checkbox" onclick="javascript:usercertClicked(this)" /> <?=gettext("Click to create a user certificate."); ?>
 							</td>
 						</tr>
 
-						<?php		if ($i > 0): ?>
-
+<?php
+							if ($i > 0):
+?>
 						<tr id="usercert" style="display:none">
 							<td width="22%" valign="top" class="vncell"><?=gettext("Certificate");?></td>
-                                                	<td width="78%" class="vtable">
-							<table width="100%" border="0" cellpadding="6" cellspacing="0" summary="certificate">
-							<tr>
-                                                        	<td width="22%" valign="top" class="vncellreq"><?=gettext("Descriptive name");?></td>
-                                                        	<td width="78%" class="vtable">
-									<input name="name" type="text" class="formfld unknown" id="name" size="20" value="<?=htmlspecialchars($pconfig['name']);?>" />
-                                                        	</td>
-                                                	</tr>
-                                                	<tr>
-                                                        	<td width="22%" valign="top" class="vncellreq"><?=gettext("Certificate authority");?></td>
-                                                        	<td width="78%" class="vtable">
-                                                                	<select name='caref' id='caref' class="formselect" onchange='internalca_change()'>
-                                                                <?php
-																		$rowIndex = 0;
-                                                                        foreach( $config['ca'] as $ca):
-                                                                        if (!$ca['prv'])
-                                                                                continue;
-																			$rowIndex++;
-                                                                ?>
-                                                                        <option value="<?=$ca['refid'];?>"><?=$ca['descr'];?></option>
-                                                                <?php endforeach;
-																if ($rowIndex == 0)
-																	echo "<option></option>";
-																?>
-                                                                	</select>
-                                                        	</td>
-                                                	</tr>
-                                                	<tr>
-                                                        	<td width="22%" valign="top" class="vncellreq"><?=gettext("Key length");?></td>
-                                                        	<td width="78%" class="vtable">
-                                                                	<select name='keylen' class="formselect">
-                                                                <?php
-									$cert_keylens = array( "2048", "512", "1024", "4096");
-                                                                        foreach( $cert_keylens as $len):
-                                                                ?>
-                                                                        <option value="<?=$len;?>"><?=$len;?></option>
-                                                                <?php
-                                                                endforeach;
-                                                                if (!count($cert_keylens))
-                                                                	echo "<option></option>";
-                                                                ?>
-                                                                	</select>
-                                                                	bits
-                                                        	</td>
-                                                	</tr>
-							<tr>
-                                                        	<td width="22%" valign="top" class="vncellreq"><?=gettext("Lifetime");?></td>
-                                                        	<td width="78%" class="vtable">
-                                                                	<input name="lifetime" type="text" class="formfld unknown" id="lifetime" size="5" value="<?=htmlspecialchars($pconfig['lifetime']);?>" />days
-                                                        	</td>
-                                                	</tr>
-						</table>
+							<td width="78%" class="vtable">
+								<table width="100%" border="0" cellpadding="6" cellspacing="0" summary="certificate">
+									<tr>
+										<td width="22%" valign="top" class="vncellreq"><?=gettext("Descriptive name");?></td>
+										<td width="78%" class="vtable">
+											<input name="name" type="text" class="formfld unknown" id="name" size="20" value="<?=htmlspecialchars($pconfig['name']);?>" />
+										</td>
+									</tr>
+									<tr>
+										<td width="22%" valign="top" class="vncellreq"><?=gettext("Certificate authority");?></td>
+										<td width="78%" class="vtable">
+											<select name='caref' id='caref' class="formselect" onchange='internalca_change()'>
+<?php
+											$rowIndex = 0;
+											foreach( $config['ca'] as $ca):
+												if (!$ca['prv'])
+													continue;
+												$rowIndex++;
+?>
+												<option value="<?=$ca['refid'];?>"><?=$ca['descr'];?></option>
+<?php
+											endforeach;
+											if ($rowIndex == 0)
+												echo "<option></option>";
+?>
+											</select>
+										</td>
+									</tr>
+									<tr>
+										<td width="22%" valign="top" class="vncellreq"><?=gettext("Key length");?></td>
+										<td width="78%" class="vtable">
+											<select name='keylen' class="formselect">
+<?php
+											$cert_keylens = array( "2048", "512", "1024", "4096");
+											foreach( $cert_keylens as $len):
+?>
+												<option value="<?=$len;?>"><?=$len;?></option>
+<?php
+											endforeach;
+											if (!count($cert_keylens))
+												echo "<option></option>";
+?>
+											</select>
+											bits
+										</td>
+									</tr>
+									<tr>
+										<td width="22%" valign="top" class="vncellreq"><?=gettext("Lifetime");?></td>
+										<td width="78%" class="vtable">
+											<input name="lifetime" type="text" class="formfld unknown" id="lifetime" size="5" value="<?=htmlspecialchars($pconfig['lifetime']);?>" />days
+										</td>
+									</tr>
+								</table>
 							</td>
 						</tr>
-
-						<?php 	endif; endif; ?>
-						<?php endif; ?>
-
+<?php
+							endif;
+						endif;
+					endif;
+?>
 						<tr id="sshkeychck" <?php if(!empty($pconfig['authorizedkeys'])) echo 'style="display:none"'; ?>>
-                                                        <td width="22%" valign="top" class="vncell"><?=gettext("Authorized keys");?></td>
-                                                        <td width="78%" class="vtable">
-                                                        <input type="checkbox" onclick="javascript:sshkeyClicked(this)" /> <?=gettext("Click to paste an authorized key."); ?>
-                                                        </td>
-                                                </tr>
+							<td width="22%" valign="top" class="vncell"><?=gettext("Authorized keys");?></td>
+							<td width="78%" class="vtable">
+								<input type="checkbox" onclick="javascript:sshkeyClicked(this)" /> <?=gettext("Click to paste an authorized key."); ?>
+							</td>
+						</tr>
 						<tr id="sshkey" <?php if(empty($pconfig['authorizedkeys'])) echo 'style="display:none"'; ?>>
 							<td width="22%" valign="top" class="vncell"><?=gettext("Authorized keys");?></td>
 							<td width="78%" class="vtable">
@@ -817,9 +830,9 @@ function sshkeyClicked(obj) {
 						</tr>
 					</table>
 				</form>
-
-				<?php else: ?>
-
+<?php
+			else:
+?>
 				<table class="sortable" width="100%" border="0" cellpadding="0" cellspacing="0" summary="">
 					<thead>
 						<tr>
@@ -854,21 +867,21 @@ function sshkeyClicked(obj) {
 						</tr>
 					</tfoot>
 					<tbody>
-						<?php
-							$i = 0;
-							foreach($a_user as $userent):
-						?>
+<?php
+					$i = 0;
+					foreach($a_user as $userent):
+?>
 						<tr ondblclick="document.location='system_usermanager.php?act=edit&amp;id=<?=$i;?>'">
 							<td class="listlr">
 								<table border="0" cellpadding="0" cellspacing="0" summary="icons">
 									<tr>
 										<td align="left" valign="middle">
-											<?php
-												if($userent['scope'] != "user")
-													$usrimg = "/themes/{$g['theme']}/images/icons/icon_system-user-grey.png";
-												else
-													$usrimg = "/themes/{$g['theme']}/images/icons/icon_system-user.png";
-											?>
+<?php
+											if($userent['scope'] != "user")
+												$usrimg = "/themes/{$g['theme']}/images/icons/icon_system-user-grey.png";
+											else
+												$usrimg = "/themes/{$g['theme']}/images/icons/icon_system-user.png";
+?>
 											<img src="<?=$usrimg;?>" alt="<?=gettext("User"); ?>" title="<?=gettext("User"); ?>" border="0" height="16" width="16" />
 										</td>
 										<td align="left" valign="middle">
@@ -880,30 +893,34 @@ function sshkeyClicked(obj) {
 							<td class="listr"><?=htmlspecialchars($userent['descr']);?>&nbsp;</td>
 							<td class="listr"><?php if(isset($userent['disabled'])) echo "*"; ?></td>
 							<td class="listbg">
-									<?=implode(",",local_user_get_groups($userent));?>
+								<?=implode(",",local_user_get_groups($userent));?>
 								&nbsp;
 							</td>
 							<td valign="middle" class="list nowrap">
 								<a href="system_usermanager.php?act=edit&amp;id=<?=$i;?>">
 									<img src="/themes/<?= $g['theme'];?>/images/icons/icon_e.gif" title="<?=gettext("edit user"); ?>" alt="<?=gettext("edit user"); ?>" width="17" height="17" border="0" />
 								</a>
-								<?php if($userent['scope'] != "system"): ?>
+<?php
+							if($userent['scope'] != "system"):
+?>
 								&nbsp;
 								<a href="system_usermanager.php?act=deluser&amp;id=<?=$i;?>" onclick="return confirm('<?=gettext("Do you really want to delete this User?");?>')">
 									<img src="/themes/<?= $g['theme'];?>/images/icons/icon_x.gif" title="<?=gettext("delete user"); ?>" alt="<?=gettext("delete user"); ?>" width="17" height="17" border="0" />
 								</a>
-								<?php endif; ?>
+<?php
+							endif;
+?>
 							</td>
 						</tr>
-						<?php
-								$i++;
-							endforeach;
-						?>
+<?php
+						$i++;
+					endforeach;
+?>
 					</tbody>
 				</table>
-
-				<?php endif; ?>
-
+<?php
+			endif;
+?>
 			</div>
 		</td>
 	</tr>

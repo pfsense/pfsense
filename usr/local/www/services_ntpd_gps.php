@@ -44,7 +44,7 @@ function set_default_gps() {
 
 	if (!is_array($config['ntpd']))
 		$config['ntpd'] = array();
-	 if (is_array($config['ntpd']['gps']))
+	if (is_array($config['ntpd']['gps']))
 		unset($config['ntpd']['gps']);
 
 	$config['ntpd']['gps'] = array();
@@ -138,7 +138,7 @@ if ($_POST) {
 		$config['ntpd']['gps']['refid'] = $_POST['gpsrefid'];
 	elseif (isset($config['ntpd']['gps']['refid']))
 		unset($config['ntpd']['gps']['refid']);
-		
+
 	if (!empty($_POST['gpsinitcmd']))
 		$config['ntpd']['gps']['initcmd'] = base64_encode($_POST['gpsinitcmd']);
 	elseif (isset($config['ntpd']['gps']['initcmd']))
@@ -169,14 +169,14 @@ include("head.inc");
 		aodiv = document.getElementById(configvalueID);
 		aodiv.style.display = "block";
 	}
-	
+
 	function ToggleOther(clicked, checkOff) {
 		if (document.getElementById(clicked).checked) {
 			document.getElementById(checkOff).checked=false;
 		}
 	}
 
-<?php /*	
+<?php /*
 init commands are Base64 encoded
 Default =	#Sponsored, probably a Ublox
 		$PUBX,40,GSV,0,0,0,0*59
@@ -192,7 +192,7 @@ Default =	#Sponsored, probably a Ublox
 		$PUBX,40,ZDA,1,1,1,1
 
 Generic =					#do nothing
-		
+
 Garmin =	#most Garmin
 		$PGRMC,,,,,,,,,,3,,2,4*52	#enable PPS @ 100ms
 		$PGRMC1,,1,,,,,,W,,,,,,,*30	#enable WAAS
@@ -212,7 +212,7 @@ MediaTek =	#Adafruit, Fastrax, some Garmin and others
 		$PMTK251,4800*14		#4800 baud rate
 
 SiRF =		#used by many devices
- 		$PSRF103,00,00,01,01*25		#turn on GGA
+		$PSRF103,00,00,01,01*25		#turn on GGA
 		$PSRF103,01,00,01,01*24		#turn on GLL
 		$PSRF103,02,00,00,01*24		#turn off GSA
 		$PSRF103,03,00,00,01*24		#turn off GSV
@@ -236,7 +236,7 @@ U-Blox =	#U-Blox 5, 6 and probably 7
 		$PUBX,40,TXT,0,0,0,0,0,0*43	#turn off TXT all ports
 		$PUBX,40,THS,0,0,0,0,0,0*54	#turn off THS all ports (U-Blox 6)
 		$PUBX,41,1,0007,0003,4800,0*13	# set port 1 to 4800 baud
-		
+
 SureGPS = 		#Sure Electronics SKG16B
 		$PMTK225,0*2B
 		$PMTK314,1,1,0,1,0,5,0,0,0,0,0,0,0,0,0,0,0,1,0*2D
@@ -248,7 +248,7 @@ SureGPS = 		#Sure Electronics SKG16B
 		$PMTK319,0*25
 		$PMTK527,0.00*00
 		$PMTK251,9600*17	#really needs to work at 9600 baud
-		
+
 */ ?>
 
 	function set_gps_default(form) {
@@ -275,7 +275,7 @@ SureGPS = 		#Sure Electronics SKG16B
 				gpsdef['fudge2'] = "0.600";
 				gpsdef['inittxt'] = "JFBHUk1DLCwsLCwsLCwsLDMsLDIsOCo1RQ0KJFBHUk1DMSwsMSwsLCwsLFcsLCwsLCwsKjMwDQokUEdSTU8sLDMqNzQNCiRQR1JNTyxHUFJNQywxKjNEDQokUEdSTU8sR1BHR0EsMSoyMA0KJFBHUk1PLEdQR0xMLDEqMjYNCg==";
 				break;
-								
+
 			case "Generic":
 				gpsdef['nmea'] = 0;
 				gpsdef['speed'] = 0;
@@ -359,8 +359,7 @@ SureGPS = 		#Sure Electronics SKG16B
 <?php if ($savemsg) print_info_box($savemsg); ?>
 
 <table width="100%" border="0" cellpadding="0" cellspacing="0" summary="ntpd gps">
-  <tr>
-	<td>
+	<tr><td>
 <?php
 	$tab_array = array();
 	$tab_array[] = array(gettext("NTP"), false, "services_ntpd.php");
@@ -368,10 +367,8 @@ SureGPS = 		#Sure Electronics SKG16B
 	$tab_array[] = array(gettext("PPS"), false, "services_ntpd_pps.php");
 	display_top_tabs($tab_array);
 ?>
-	</td>
-  </tr>
-  <tr>
-	<td>
+	</td></tr>
+	<tr><td>
 	<div id="mainarea">
 	<table class="tabcont" width="100%" border="0" cellpadding="6" cellspacing="0" summary="main area">
 		<tr>
@@ -569,8 +566,7 @@ SureGPS = 		#Sure Electronics SKG16B
 		</tr>
 	</table>
 	</div>
-	</td>
-  </tr>
+	</td></tr>
 </table>
 <script type="text/javascript">
 //<![CDATA[

@@ -142,8 +142,7 @@ if ($_POST) {
 	/* make sure new ip is within the subnet of a valid ip
 	 * on one of our interfaces (wan, lan optX)
 	 */
-	switch ($_POST['mode']) {
-	case "carp":
+	if ($_POST['mode'] == 'carp') {
 		/* verify against reusage of vhids */
 		$idtracker = 0;
 		foreach($config['virtualip']['vip'] as $vip) {
@@ -171,12 +170,8 @@ if ($_POST) {
 
 		if ($_POST['interface'] == "lo0")
 			$input_errors[] = gettext("For this type of vip localhost is not allowed.");
-		break;
-	default:
-		if ($_POST['interface'] == "lo0")
-			$input_errors[] = gettext("For this type of vip localhost is not allowed.");
-		break;
-	}
+	} else if ($_POST['mode'] != 'ipalias' && $_POST['interface'] == "lo0")
+		$input_errors[] = gettext("For this type of vip localhost is not allowed.");
 
 	if (!$input_errors) {
 		$vipent = array();

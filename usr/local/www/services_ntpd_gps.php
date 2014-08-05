@@ -70,7 +70,7 @@ if ($_POST) {
 	else unset($config['ntpd']['gps']);
 
 	if (!empty($_POST['gpstype']))
-		$config['ntpd']['gps']['type'] = $_POST['gpstype'];
+		$config['ntpd']['gps']['type'] = 'Custom';
 	elseif (isset($config['ntpd']['gps']['type']))
 		unset($config['ntpd']['gps']['type']);
 
@@ -314,8 +314,9 @@ SureGPS = 		#Sure Electronics SKG16B
 				gpsdef['fudge2'] = "0.407";
 				gpsdef['inittxt'] = "JFBNVEsyMjUsMCoyQg0KJFBNVEszMTQsMSwxLDAsMSwwLDUsMCwwLDAsMCwwLDAsMCwwLDAsMCwwLDEsMCoyRA0KJFBNVEszMDEsMioyRQ0KJFBNVEszOTcsMCoyMw0KJFBNVEsxMDIqMzENCiRQTVRLMzEzLDEqMkUNCiRQTVRLNTEzLDEqMjgNCiRQTVRLMzE5LDAqMjUNCiRQTVRLNTI3LDAuMDAqMDANCiRQTVRLMjUxLDk2MDAqMTcNCg==";
 				break;
-
-			}
+			default:
+				return;
+		}
 
 		//then update the html and set the common stuff
 		document.getElementById("gpsnmea").selectedIndex = gpsdef['nmea'];
@@ -386,6 +387,7 @@ SureGPS = 		#Sure Electronics SKG16B
 			<td width="78%" valign="top" class="vtable">
 				<!-- Start with the original "Default", list a "Generic" and then specific configs alphabetically -->
 				<select id="gpstype" name="gpstype" class="formselect" onchange="set_gps_default(this.form)">
+					<option value="Custom"<?php if($pconfig['type'] == 'Custom') echo " selected=\"selected\""; ?>>Custom</option>
 					<option value="Default"<?php if($pconfig['type'] == 'Default') echo " selected=\"selected\""; ?>>Default</option>
 					<option value="Generic" title="Generic"<?php if($pconfig['type'] == 'Generic') echo " selected=\"selected\"";?>>Generic</option>
 					<option value="Garmin" title="$PGRM... Most Garmin"<?php if($pconfig['type'] == 'Garmin') echo " selected=\"selected\"";?>>Garmin</option>

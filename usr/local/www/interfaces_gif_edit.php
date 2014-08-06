@@ -161,7 +161,7 @@ include("head.inc");
 							echo "<option value=\"{$ifn}\"";
 							if ($ifn == $pconfig['if'])
 								echo " selected=\"selected\"";
-							echo ">{$ifinfo}</option>";
+							echo ">" . htmlspecialchars($ifinfo) . "</option>\n";
 						}
 		      		?>
                     </select>

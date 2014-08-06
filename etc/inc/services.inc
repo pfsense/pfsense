@@ -1741,7 +1741,7 @@ function services_dnsmasq_configure() {
 
 		if ($config['dnsmasq']['custom_options'])
 			foreach (preg_split('/\s+/', $config['dnsmasq']['custom_options']) as $c) {
-				$args .= " --$c";
+				$args .= " " . escapeshellarg("--{$c}");
 				$p = explode('=', $c);
 				if (array_key_exists($p[0], $standard_args))
 					unset($standard_args[$p[0]]);

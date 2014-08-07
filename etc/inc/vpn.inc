@@ -543,7 +543,7 @@ EOD;
 						$keyexchange = "ikev2";
 						$rekey = "rekey = yes";
 					} else {
-						$rekey = "rekey = no";
+						$rekey = "rekey = yes";
 					}
 
 					list ($myid_type, $myid_data) = ipsec_find_id($ph1ent, "local");

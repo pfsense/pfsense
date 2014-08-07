@@ -480,11 +480,10 @@ EOD;
 					}
 				}
 			} else {
-				log_error(gettext("Warning!  DHCP Failover setup and no CARP virtual IP's defined!"));
+				log_error(gettext("Warning!  DHCP Failover setup and no CARP virtual IPs defined!"));
 			}
 			if($skew > 10) {
 				$type = "secondary";
-				$dhcpdconf_pri  = "mclt 600;\n";
 				$my_port = "520";
 				$peer_port = "519";
 			} else {
@@ -508,7 +507,7 @@ failover peer "dhcp_{$dhcpif}" {
   {$dhcpdconf_pri}
   load balance max seconds 3;
 }
-
+\n
 EOPP;
 			}
 		}

@@ -239,7 +239,7 @@ if ($_POST['apply']) {
 					if (isset($portlist[$ifport]['isppp']))
 						$config['interfaces'][$ifname]['ipaddr'] = $portlist[$ifport]['type'];
 
-					if (substr($ifport, 0, 3) == 'gre') {
+					if (substr($ifport, 0, 3) == 'gre' || substr($ifport, 0, 3) == 'gif') {
 						unset($config['interfaces'][$ifname]['ipaddr']);
 						unset($config['interfaces'][$ifname]['subnet']);
 						unset($config['interfaces'][$ifname]['ipaddrv6']);

@@ -194,8 +194,11 @@ function vpn_ipsec_configure($ipchg = false)
 						if ($ph2ent['pinghost']) {
 							if (!is_array($iflist))
 								$iflist = get_configured_interface_list();
-							foreach ($iflist as $ifent => $ifname) {
-								if(is_ipaddrv6($ph2ent['pinghost'])) {
+							$viplist = get_configured_vips_list();
+							$srcip = null;
+							$local_subnet = ipsec_idinfo_to_cidr($ph2ent['localid'], true, $ph2ent['mode']);
+							if(is_ipaddrv6($ph2ent['pinghost'])) {
+								foreach ($iflist as $ifent => $ifname) {
 									$interface_ip = get_interface_ipv6($ifent);
 									if(!is_ipaddrv6($interface_ip))
 										continue;
@@ -204,13 +207,23 @@ function vpn_ipsec_configure($ipchg = false)
 										$srcip = $interface_ip;
 										break;
 									}
-								} else {
+								}
+							} else {
+								foreach ($iflist as $ifent => $ifname) {
 									$interface_ip = get_interface_ip($ifent);
 									if(!is_ipaddrv4($interface_ip))
 										continue;
-									$local_subnet = ipsec_idinfo_to_cidr($ph2ent['localid'], true, $ph2ent['mode']);
 									if ($local_subnet == "0.0.0.0/0" || ip_in_subnet($interface_ip, $local_subnet)) {
 										$srcip = $interface_ip;
+										break;
+									}
+								}
+							}
+							/* if no valid src IP was found in configured interfaces, try the vips */
+							if (is_null($srcip)) {
+								foreach ($viplist as $vip) {
+									if (ip_in_subnet($vip['ipaddr'], $local_subnet)) {
+										$srcip = $vip['ipaddr'];
 										break;
 									}
 								}

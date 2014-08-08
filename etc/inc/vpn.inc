@@ -562,7 +562,7 @@ EOD;
 				}
 
 				if ($ph1ent['dpd_delay'] && $ph1ent['dpd_maxfail']) {
-					if ($passive == "start")
+					if ($passive == "route")
 						$dpdline = "dpdaction = restart";
 					else
 						$dpdline = "dpdaction = clear";

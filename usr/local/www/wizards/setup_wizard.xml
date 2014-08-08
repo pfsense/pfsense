@@ -594,7 +594,7 @@
 	<title>Reload in progress</title>
 	<description>
 		A reload is now in progress.  Please wait. &lt;p&gt; 
-		&lt;meta http-equiv="refresh" content="60; url=wizard.php?xml=setup_wizard.xml&amp;stepid=9" &gt;
+		&lt;meta http-equiv="refresh" content="5; url=wizard.php?xml=setup_wizard.xml&amp;stepid=9" &gt;
 		&lt;p&gt;
 		The wizard will redirect to the next step once the reload is completed.
 	</description>

@@ -241,9 +241,6 @@ if (isset($config['system']['developer'])) {
 }
 $diagnostics_menu = msort(array_merge($diagnostics_menu, return_ext_menu("Diagnostics")),0);
 
-$gold_menu = array();
-$gold_menu[] = array(gettext("pfSense Gold"), "https://portal.pfsense.org/gold-subscription.php");
-$gold_menu = msort(array_merge($gold_menu, return_ext_menu("Gold")),0);
 
 if(! $g['disablehelpmenu']) {
 	$help_menu = array();
@@ -251,6 +248,7 @@ if(! $g['disablehelpmenu']) {
 	if($g['product_name'] == "pfSense")
 	$help_menu[] = array(gettext("Bug Database"), "https://www.pfsense.org/j.php?jumpto=redmine");
 	$help_menu[] = array(gettext("User Forum"), "https://www.pfsense.org/j.php?jumpto=forum");
+  $help_menu[] = array(gettext("pfSense Gold"), "https://portal.pfsense.org/gold-subscription.php");
 	$help_menu[] = array(gettext("Documentation"), "https://www.pfsense.org/j.php?jumpto=doc");
 	$help_menu[] = array(gettext("Developers Wiki"), "https://www.pfsense.org/j.php?jumpto=devwiki");
 	$help_menu[] = array(gettext("Paid Support"), "https://www.pfsense.org/j.php?jumpto=portal");

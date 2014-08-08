@@ -434,7 +434,7 @@ function login_banner_change() {
 										<input name="pool_address" type="text" class="formfld unknown" id="pool_address" size="20" value="<?=htmlspecialchars($pconfig['pool_address']);?>"/>
 										/
 										<select name="pool_netbits" class="formselect" id="pool_netbits">
-											<?php for ($i = 32; $i >= 0; $i--): ?>
+											<?php for ($i = 29; $i >= 0; $i--): ?>
 											<option value="<?=$i;?>" <?php if ($i == $pconfig['pool_netbits']) echo "selected=\"selected\""; ?>>
 												<?=$i;?>
 											</option>

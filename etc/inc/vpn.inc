@@ -345,6 +345,11 @@ function vpn_ipsec_configure($ipchg = false)
 					$pool_address = long2ip32(ip2long($pool_address)+1);
 					$pool_size = (~ip2long($pool_netmask) & 0xFFFFFFFF) - 2;
 
+					if ($pool_size < 0) {
+						log_error(sprintf(gettext("Invalid mobile IPsec pool size: %s, using 0"), $pool_size));
+						$pool_size = 0;
+					}
+
 					$racoonconf .= "\tpool_size {$pool_size};\n";
 					$racoonconf .= "\tnetwork4 {$pool_address};\n";
 					$racoonconf .= "\tnetmask4 {$pool_netmask};\n";

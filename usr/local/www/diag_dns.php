@@ -34,42 +34,39 @@
 $pgtitle = array(gettext("Diagnostics"),gettext("DNS Lookup"));
 require("guiconfig.inc");
 
-/* Cheap hack to support both $_GET and $_POST */
-if ($_GET['host'])
-	$_POST = $_GET;
-
-$host = trim($_POST['host'], " \t\n\r\0\x0B[];\"'");
+$host = trim($_REQUEST['host'], " \t\n\r\0\x0B[];\"'");
 $host_esc = escapeshellarg($host);
 
-if($_GET['createalias'] == "true" && (is_hostname($host) || is_ipaddr($host))) {
-	if($_GET['override'])
+$a_aliases = &$config['aliases']['alias'];
+$aliasname = str_replace(array(".","-"), "_", $host);
+$alias_exists = false;
+$counter=0;
+foreach($a_aliases as $a) {
+	if($a['name'] == $aliasname) {
+		$alias_exists = true;
+		$id=$counter;
+	}
+	$counter++;
+}
+
+if(isset($_POST['create_alias']) && (is_hostname($host) || is_ipaddr($host))) {
+	if($_POST['override'])
 		$override = true;
-	$a_aliases = &$config['aliases']['alias'];
-	$type = "hostname";
 	$resolved = gethostbyname($host);
+	$type = "hostname";
 	if($resolved) {
-		$dig=`dig "{$host_esc}" A | grep "{$host_esc}" | grep -v ";" | awk '{ print $5 }'`;
-		$resolved = explode("\n", $dig);
+		$resolved = array();
+		exec("/usr/bin/dig {$host_esc} A | /usr/bin/grep {$host_esc} | /usr/bin/grep -v ';' | /usr/bin/awk '{ print $5 }'", $resolved);
 		$isfirst = true;
 		foreach($resolved as $re) {
 			if($re <> "") {
 				if(!$isfirst) 
 					$addresses .= " ";
-				$addresses .= $re . "/32";
+				$addresses .= rtrim($re) . "/32";
 				$isfirst = false;
 			}
 		}
 		$newalias = array();
-		$aliasname = str_replace(array(".","-"), "_", $host);
-		$alias_exists = false;
-		$counter=0;
-		foreach($a_aliases as $a) {
-			if($a['name'] == $aliasname) {
-				$alias_exists = true;
-				$id=$counter;
-			}
-			$counter++;
-		}
 		if($override) 
 			$alias_exists = false;
 		if($alias_exists == false) {
@@ -100,15 +97,15 @@ if ($_POST) {
 	} else {
 		// Test resolution speed of each DNS server.
 		$dns_speeds = array();
-		$resolvconf_servers = `grep nameserver /etc/resolv.conf | cut -f2 -d' '`;
-		$dns_servers = explode("\n", trim($resolvconf_servers));
+		$dns_servers = array();
+		exec("/usr/bin/grep nameserver /etc/resolv.conf | /usr/bin/cut -f2 -d' '", $dns_servers);
 		foreach ($dns_servers as $dns_server) {
-			$query_time = `dig {$host_esc} @{$dns_server} | grep Query | cut -d':' -f2`;
+			$query_time = exec("/usr/bin/dig {$host_esc} " . escapeshellarg("@" . trim($dns_server)) . " | /usr/bin/grep Query | /usr/bin/cut -d':' -f2");
 			if($query_time == "")
 				$query_time = gettext("No response");
 			$new_qt = array();
 			$new_qt['dns_server'] = $dns_server;
-			$new_qt['query_time'] = $query_time;			
+			$new_qt['query_time'] = $query_time;
 			$dns_speeds[] = $new_qt;
 			unset($new_qt);
 		}
@@ -129,8 +126,8 @@ if ($_POST) {
 			$type = "hostname";
 			$resolved = gethostbyname($host);
 			if($resolved) {
-				$dig=`dig {$host_esc} A | grep {$host_esc} | grep -v ";" | awk '{ print $5 }'`;
-				$resolved = explode("\n", $dig);
+				$resolved = array();
+				exec("/usr/bin/dig {$host_esc} A | /usr/bin/grep {$host_esc} | /usr/bin/grep -v ';' | /usr/bin/awk '{ print $5 }'", $resolved);
 			}
 			$hostname = $host;
 			if ($host != $resolved)
@@ -202,15 +199,18 @@ include("head.inc"); ?>
 				} else {
 					echo $resolved; 
 				} 
-				if($found > 0) {
-					if($alias_exists) {
-						echo "<br/><font size='-2'>An alias already exists for the hostname " . htmlspecialchars($host) . ".  To overwrite, click <a href='diag_dns.php?host=" . trim(urlencode(htmlspecialchars($host))) . "&createalias=true&override=true'>here</a>.";
-					} else { 
-						if(!$createdalias) {
-							echo "<br/><font size='-2'><a href='diag_dns.php?host=" . trim(urlencode(htmlspecialchars($host))) . "&createalias=true'>Create alias</a> out of these entries.";
-						} else {
-							echo "<br/><font size='-2'>Alias created with name " . htmlspecialchars($newalias['name']);
-						}
+				if($found > 0) { ?>
+					<br/><font size='-2'>
+				<?PHP	if($alias_exists) { ?>
+							An alias already exists for the hostname <?= htmlspecialchars($host) ?>. <br />
+							<input type="hidden" name="override" value="true"/>
+							<input type="submit" name="create_alias" value="Overwrite Alias"/>
+				<?PHP	} else {
+						if(!$createdalias) { ?>
+							<input type="submit" name="create_alias" value="Create Alias from These Entries"/>
+					<?PHP	} else { ?>
+							Alias created with name <?= htmlspecialchars($newalias['name']) ?>
+					<?PHP	}
 					}
 				}
 ?>
@@ -273,6 +273,6 @@ include("head.inc"); ?>
 		</td>
 		</tr>
 	</table>
-</form>
 </td></tr></table>
+</form>
 <?php include("fend.inc"); ?>

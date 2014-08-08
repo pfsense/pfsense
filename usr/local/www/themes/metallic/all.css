@@ -78,7 +78,7 @@ div.niceTitle
 	font-weight: bold;
 	font-size: 13px;
 	font-family: "Trebuchet MS", sans-serif;
-	width: 250px;
+	width: 220px;
 	left: 0;
 	top: 0;
 	padding: 4px;
@@ -360,7 +360,7 @@ table#marquee div#container div#scroller {
 	float: left;
 	position: relative;
 	/* width: 7.5em; */
-	width: 7.47em;
+	width: 6.2em;
 }
 #navigation ul li div {
 	font-size: 1em;

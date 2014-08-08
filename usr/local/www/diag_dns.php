@@ -140,11 +140,6 @@ if ($_POST) {
 	}
 }
 
-if( ($_POST['host']) && ($_POST['dialog_output']) ) {
-	display_host_results ($host,$resolved,$dns_speeds);
-	exit;
-}
-
 function display_host_results ($address,$hostname,$dns_speeds) {
 	$map_lengths = function($element) { return strlen($element[0]); };
 

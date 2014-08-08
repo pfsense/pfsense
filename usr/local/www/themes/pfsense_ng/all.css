@@ -88,7 +88,7 @@ div.niceTitle
 	font-weight: bold;
 	font-size: 13px;
 	font-family: "Trebuchet MS", sans-serif;
-	width: 220px;
+	width: 250px;
 	left: 0;
 	top: 0;
 	padding: 4px;
@@ -428,21 +428,20 @@ table#marquee div#container div#scroller {
 #navigation ul li {
 	float: left;
 	position: relative;
-	width: 6.2em;
+	width: 7.0em;
 	top: 0px;
 }
 
 /* Text mainmenubar */
 #navigation ul li div {
 	background-image: url(images/mainmenu-right.gif);
-	background-position: 2% 50%;
+	background-position: 5% 50%;
 	background-repeat: no-repeat;
 	padding-top:0px;
 	font-size: 12px;
 	font-weight: normal;
 	color: #ffffff;
-	text-align: left;
-	padding-left: 13px;
+	text-align: center;
 	height: 13px;
 }
 

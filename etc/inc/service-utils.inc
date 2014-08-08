@@ -202,10 +202,13 @@ function is_service_enabled($service_name) {
 	global $config;
 	if ($service_name == "")
 		return false;
-	if (isset($config['installedpackages'][$service_name]['config'][0]['enable']) &&
-		((empty($config['installedpackages'][$service_name]['config'][0]['enable'])) ||
-		 ($config['installedpackages'][$service_name]['config'][0]['enable'] === 'off')))
-		return false;
+	if (is_array($config['installedpackages'])) {
+		if (isset($config['installedpackages'][$service_name]['config'][0]['enable']) &&
+			((empty($config['installedpackages'][$service_name]['config'][0]['enable'])) ||
+			($config['installedpackages'][$service_name]['config'][0]['enable'] === 'off'))) {
+			return false;
+		}
+	}
 	return true;
 }
 

@@ -1405,14 +1405,14 @@ function filter_nat_rules_automatic_tonathosts($with_descr = false) {
 	/* add openvpn interfaces */
 	if(is_array($config['openvpn']['openvpn-server']))
 		foreach ($config['openvpn']['openvpn-server'] as $ovpnsrv)
-			if (!empty($ovpnsrv['tunnel_network'])) {
+			if (!isset($ovpnsrv['disable']) && !empty($ovpnsrv['tunnel_network'])) {
 				$tonathosts[] = $ovpnsrv['tunnel_network'];
 				$descriptions[] = gettext("OpenVPN server");
 			}
 
 	if(is_array($config['openvpn']['openvpn-client']))
 		foreach ($config['openvpn']['openvpn-client'] as $ovpncli)
-			if (!empty($ovpncli['tunnel_network'])) {
+			if (!isset($ovpncli['disable']) && !empty($ovpncli['tunnel_network'])) {
 				$tonathosts[] = $ovpncli['tunnel_network'];
 				$descriptions[] = gettext("OpenVPN client");
 			}

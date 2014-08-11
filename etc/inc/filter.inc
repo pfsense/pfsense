@@ -1342,7 +1342,7 @@ function filter_nat_rules_automatic_tonathosts($with_descr = false) {
 	global $config, $FilterIflist, $GatewaysList;
 
 	$tonathosts = array("127.0.0.0/8");
-	$descriptions = array(gettext("localhost"), gettext("localhost"));
+	$descriptions = array(gettext("localhost"));
 
 	foreach (get_staticroutes() as $route) {
 		$netip = explode("/", $route['network']);

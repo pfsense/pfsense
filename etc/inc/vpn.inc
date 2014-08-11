@@ -613,6 +613,7 @@ EOD;
 				$left_spec = $ep;
 
 				$ipseclifetime = 0;
+				$rightsourceip = NULL;
 				$rightsubnet_spec = array();
 				$leftsubnet_spec = array();
 				$ealgoAHsp2arr = array();
@@ -664,8 +665,10 @@ EOD;
 
 						if (!isset($ph2ent['mobile'])) {
 							$rightsubnet_spec[] = ipsec_idinfo_to_cidr($ph2ent['remoteid'], false, $ph2ent['mode']);
-						} else if (!empty($a_client['pool_address']))
+						} else if (!empty($a_client['pool_address'])) {
 							$rightsubnet_spec[] = "{$a_client['pool_address']}/{$a_client['pool_netbits']}";
+							$rightsourceip = "\trightsourceip={$a_client['pool_address']}/{$a_client['pool_netbits']}\n";
+						}
 					} else {
 						$tunneltype = "type = transport";
 
@@ -765,6 +768,8 @@ EOD;
 					$ipsecconf .= "\t{$ikelifeline}\n";
 				if ($ipseclifetime > 0)
 					$ipsecconf .= "\tlifetime = {$ipseclifetime}s\n";
+				if (!empty($rightsourceip))
+					$ipsecconf .= "{$rightsourceip}";
 				if (!empty($rightsubnet_spec))
 					$ipsecconf .= "\trightsubnet = " . join(",", $rightsubnet_spec) . "\n";
 				if (!empty($leftsubnet_spec))

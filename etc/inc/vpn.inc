@@ -281,9 +281,6 @@ charon {
         # number of worker threads in charon
         threads = 16
 
-	# NOTE: Allows to send multiple subnets for IKEv1
-	cisco_unity = yes
-
 	# XXX: There is not much choice here really users win their security!
 	i_dont_care_about_security_and_use_aggressive_mode_psk=yes
 

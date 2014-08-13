@@ -307,7 +307,7 @@ function cert_create(& $cert, $caref, $keylen, $lifetime, $dn, $type="user", $di
 	// switch to another openssl configuration file in case of using Subject Alternative Name(s),
 	// remove 'subjectAltName' from $dn
 	if ($dn['subjectAltName']) {
-		putenv('SAN='.$dn['subjectAltName']); // subjectAltName can be set _only_ via configuration file
+		putenv("SAN={$dn['subjectAltName']}"); // subjectAltName can be set _only_ via configuration file
 		$args['config'] = '/etc/ssl/openssl-san.cnf';
 		unset($dn['subjectAltName']);
 	}

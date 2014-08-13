@@ -304,6 +304,14 @@ function cert_create(& $cert, $caref, $keylen, $lifetime, $dn, $type="user", $di
 	$res_key = openssl_pkey_new($args);
 	if(!$res_key) return false;
 
+	// switch to another openssl configuration file in case of using Subject Alternative Name(s),
+	// remove 'subjectAltName' from $dn
+	if ($dn['subjectAltName']) {
+		putenv('SAN='.$dn['subjectAltName']); // subjectAltName can be set _only_ via configuration file
+		$args['config'] = '/etc/ssl/openssl-san.cnf';
+		unset($dn['subjectAltName']);
+	}
+
 	// generate a certificate signing request
 	$res_csr = openssl_csr_new($dn, $res_key, $args);
 	if(!$res_csr) return false;

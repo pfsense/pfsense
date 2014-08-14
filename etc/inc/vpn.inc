@@ -586,6 +586,7 @@ EOD;
 					$ikelifeline = "ikelifetime = {$ph1ent['lifetime']}s";
 
 				$authentication = "";
+				$rightsourceip = NULL;
 				switch ($ph1ent['authentication_method']) {
 				case 'xauth_rsa_server':
 					$authentication = "leftauth = pubkey\n\trightauth = pubkey";
@@ -594,6 +595,8 @@ EOD;
 				case 'xauth_psk_server':
 					$authentication = "leftauth = psk\n\trightauth = psk";
 					$authentication .= "\n\trightauth2 = xauth-generic";
+					if (!empty($a_client['pool_address'])) 
+						$rightsourceip = "\trightsourceip = {$a_client['pool_address']}/{$a_client['pool_netbits']}\n";
 					break;
 				case 'pre_shared_key':
 					$authentication = "leftauth = psk\n\trightauth = psk";
@@ -610,7 +613,6 @@ EOD;
 				$left_spec = $ep;
 
 				$ipseclifetime = 0;
-				$rightsourceip = NULL;
 				$rightsubnet_spec = array();
 				$leftsubnet_spec = array();
 				$ealgoAHsp2arr = array();
@@ -664,7 +666,6 @@ EOD;
 							$rightsubnet_spec[] = ipsec_idinfo_to_cidr($ph2ent['remoteid'], false, $ph2ent['mode']);
 						} else if (!empty($a_client['pool_address'])) {
 							$rightsubnet_spec[] = "{$a_client['pool_address']}/{$a_client['pool_netbits']}";
-							$rightsourceip = "\trightsourceip={$a_client['pool_address']}/{$a_client['pool_netbits']}\n";
 						}
 					} else {
 						$tunneltype = "type = transport";

@@ -37,7 +37,11 @@ require("guiconfig.inc");
 $host = trim($_REQUEST['host'], " \t\n\r\0\x0B[];\"'");
 $host_esc = escapeshellarg($host);
 
-$a_aliases = &$config['aliases']['alias'];
+if (is_array($config['aliases']['alias'])) {
+	$a_aliases = &$config['aliases']['alias'];
+} else {
+	$a_aliases = array();
+}
 $aliasname = str_replace(array(".","-"), "_", $host);
 $alias_exists = false;
 $counter=0;

@@ -903,7 +903,7 @@ function openvpn_delete($mode, & $settings) {
 	mwexec("/sbin/ifconfig " . escapeshellarg($devname) . " name " . escapeshellarg($tunname));
 
 	/* remove the configuration files */
-	array_map('unlink', glob("{$g['varetc_path']}/openvpn/{$mode_id}.*"));
+	@array_map('unlink', glob("{$g['varetc_path']}/openvpn/{$mode_id}.*"));
 }
 
 function openvpn_cleanup_csc($common_name) {

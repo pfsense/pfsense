@@ -533,9 +533,10 @@ EOD;
 					continue;
 
 				$keyexchange = "ikev1";
+				$passive = "route";
 				if (!empty($ph1ent['iketype']) && $ph1ent['iketype'] != "ikev1") {
 					$keyexchange = "ikev2";
-					$passive = "start";
+					//$passive = "start";
 				} else
 					$passive = "route";
 

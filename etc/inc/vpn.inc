@@ -567,8 +567,7 @@ EOD;
 					if (!empty($modp))
 						$ealgosp1 .= "-{$modp}";
 
-					if ($keyexchange == "ikev1")
-						$ealgosp1 .= "!";
+					$ealgosp1 .= "!";
 				}
 
 				if ($ph1ent['dpd_delay'] && $ph1ent['dpd_maxfail']) {

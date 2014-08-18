@@ -346,9 +346,9 @@ function ipsec_lookup_phase1(& $ph2ent,& $ph1ent) {
 function ipsec_phase1_status($ipsec_status, $ikeid) {
 
 	foreach ($ipsec_status as $ike) {
-		if ($ike['peerconfig'] != "con{$ikeid}")
+		if ($ike['id'] != $ikeid)
 			continue;
-		if ($ike['status'] == "established")
+		if ($ike['status'] == 'established')
 			return true;
 		break;
 	}
@@ -674,10 +674,6 @@ function ipsec_get_descr($ikeid) {
 	unset($a_phase1);
 
 	return $descr;
-}
-
-function ipsec_get_descr_by_peerconfig($peerconfig) {
-	return ipsec_get_descr(substr($peerconfig, strrpos($peerconfig, '-') + 1));
 }
 
 function ipsec_disconnect_mobile($username) {

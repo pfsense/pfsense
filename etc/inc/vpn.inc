@@ -660,12 +660,16 @@ EOD;
 							}
 						}
 
-						$leftsubnet_spec[] = $leftsubnet_data;
+						if (empty($leftsubnet_spec[$leftsubnet_data]))
+							$leftsubnet_spec[$leftsubnet_data] = $leftsubnet_data;
 
 						if (!isset($ph2ent['mobile'])) {
-							$rightsubnet_spec[] = ipsec_idinfo_to_cidr($ph2ent['remoteid'], false, $ph2ent['mode']);
+							$tmpsubnet = ipsec_idinfo_to_cidr($ph2ent['remoteid'], false, $ph2ent['mode']);
+							if (empty($rightsubnet_spec[$tmpsubnet]))
+								$rightsubnet_spec[$tmpsubnet] = $tmpsubnet;
 						} else if (!empty($a_client['pool_address'])) {
-							$rightsubnet_spec[] = "{$a_client['pool_address']}/{$a_client['pool_netbits']}";
+							if (empty($rightsubnet_spec["{$a_client['pool_address']}/{$a_client['pool_netbits']}"]))
+								$rightsubnet_spec["{$a_client['pool_address']}/{$a_client['pool_netbits']}"] = "{$a_client['pool_address']}/{$a_client['pool_netbits']}";
 						}
 					} else {
 						$tunneltype = "type = transport";
@@ -674,11 +678,15 @@ EOD;
 						    ($ph1ent['authentication_method'] == "pre_shared_key")) && isset($ph1ent['mobile'])) {
 							$left_spec = "%any";
 						} else {
-							$leftsubnet_spec[] = ipsec_get_phase1_src($ph1ent);
+							$tmpsubnet = ipsec_get_phase1_src($ph1ent);
+							if ($leftsubnet_spec[$tmpsubnet])
+								$leftsubnet_spec[$tmpsubnet] = $tmpsubnet;
 						}
 
-						if (!isset($ph2ent['mobile']))
-							$rightsubnet_spec[] = $right_spec;
+						if (!isset($ph2ent['mobile'])) {
+							if (empty($rightsubnet_spec[$right_spec]))
+								$rightsubnet_spec[$right_spec] = $right_spec;
+						}
 					}
 
 					if (isset($a_client['pfs_group']))

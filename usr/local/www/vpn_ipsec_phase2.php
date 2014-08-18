@@ -127,8 +127,8 @@ if ($_POST) {
 		$input_errors[] = gettext("A valid ikeid must be specified.");
 
 	/* input validation */
-	$reqdfields = explode(" ", "localid_type halgos uniqid");
-	$reqdfieldsn = array(gettext("Local network type"),gettext("P2 Hash Algorithms"), gettext("Unique Identifier"));
+	$reqdfields = explode(" ", "localid_type uniqid");
+	$reqdfieldsn = array(gettext("Local network type"), gettext("Unique Identifier"));
 	if (!isset($pconfig['mobile'])){
 		$reqdfields[] = "remoteid_type";
 		$reqdfieldsn[] = gettext("Remote network type");
@@ -254,7 +254,17 @@ if ($_POST) {
 
 		if (!count($ealgos)) {
 			$input_errors[] = gettext("At least one encryption algorithm must be selected.");
+		} else {
+			if (empty($pconfig['halgo'])) {
+				foreach ($ealgos as $ealgo) {
+					if (!strpos($ealgo['name'], "gcm")) {
+						$input_errors[] = gettext("At least one hashing algorithm needs to be selected.");
+						break;
+					}
+				}
+			}
 		}
+		
 	}
 	if (($_POST['lifetime'] && !is_numeric($_POST['lifetime']))) {
 		$input_errors[] = gettext("The P2 lifetime must be an integer.");
@@ -277,7 +287,10 @@ if ($_POST) {
 
 		$ph2ent['protocol'] = $pconfig['proto'];
 		$ph2ent['encryption-algorithm-option'] = $ealgos;
-		$ph2ent['hash-algorithm-option'] = $pconfig['halgos'];
+		if (!empty($pconfig['halgos']))
+			$ph2ent['hash-algorithm-option'] = $pconfig['halgos'];
+		else
+			unset($ph2ent['hash-algorithm-option']);
 		$ph2ent['pfsgroup'] = $pconfig['pfsgroup'];
 		$ph2ent['lifetime'] = $pconfig['lifetime'];
 		$ph2ent['pinghost'] = $pconfig['pinghost'];

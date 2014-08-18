@@ -693,7 +693,7 @@ EOD;
 						$ph2ent['pfsgroup'] = $a_client['pfs_group'];
 
 					if ($ph2ent['protocol'] == 'esp') {
-						if (is_array($ph2ent['encryption-algorithm-option']) && is_array($ph2ent['hash-algorithm-option'])) {
+						if (is_array($ph2ent['encryption-algorithm-option'])) {
 							foreach ($ph2ent['encryption-algorithm-option'] as $ealg) {
 								$ealg_id = $ealg['name'];
 								$ealg_kl = $ealg['keylen'];
@@ -709,9 +709,17 @@ EOD;
 									 * seconds wrecking bootup */
 									if ($key_hi != 0 and $key_lo !=0 and $key_step !=0) {
 										for ($keylen = $key_hi; $keylen >= $key_lo; $keylen -= $key_step) {
-											foreach ($ph2ent['hash-algorithm-option'] as $halgo) {
-												$halgo = str_replace('hmac_', '', $halgo);
-												$tmpealgo = "{$ealg_id}{$keylen}-{$halgo}";
+											if (!empty($ph2ent['hash-algorithm-option']) && is_array($ph2ent['hash-algorithm-option'])) {
+												foreach ($ph2ent['hash-algorithm-option'] as $halgo) {
+													$halgo = str_replace('hmac_', '', $halgo);
+													$tmpealgo = "{$ealg_id}{$keylen}-{$halgo}";
+													$modp = vpn_ipsec_convert_to_modp($ph2ent['pfsgroup']);
+													if (!empty($modp))
+														$tmpealgo .= "-{$modp}";
+													$ealgoESPsp2arr[] = $tmpealgo;
+												}
+											} else {
+												$tmpealgo = "{$ealg_id}{$keylen}";
 												$modp = vpn_ipsec_convert_to_modp($ph2ent['pfsgroup']);
 												if (!empty($modp))
 													$tmpealgo .= "-{$modp}";
@@ -720,9 +728,17 @@ EOD;
 										}
 									}
 								} else {
-									foreach ($ph2ent['hash-algorithm-option'] as $halgo) {
-										$halgo = str_replace('hmac_', '', $halgo);
-										$tmpealgo = "{$ealg_id}{$ealg_kl}-{$halgo}";
+									if (!empty($ph2ent['hash-algorithm-option']) && is_array($ph2ent['hash-algorithm-option'])) {
+										foreach ($ph2ent['hash-algorithm-option'] as $halgo) {
+											$halgo = str_replace('hmac_', '', $halgo);
+											$tmpealgo = "{$ealg_id}{$ealg_kl}-{$halgo}";
+											$modp = vpn_ipsec_convert_to_modp($ph2ent['pfsgroup']);
+											if (!empty($modp))
+												$tmpealgo .= "-{$modp}";
+											$ealgoESPsp2arr[] = $tmpealgo;
+										}
+									} else {
+										$tmpealgo = "{$ealg_id}{$ealg_kl}";
 										$modp = vpn_ipsec_convert_to_modp($ph2ent['pfsgroup']);
 										if (!empty($modp))
 											$tmpealgo .= "-{$modp}";
@@ -732,7 +748,7 @@ EOD;
 							}
 						}
 					} else if ($ph2ent['protocol'] == 'ah') {
-						if (is_array($ph2ent['hash-algorithm-option'])) {
+						if (!empty($ph2ent['hash-algorithm-option']) && is_array($ph2ent['hash-algorithm-option'])) {
 							$modp = vpn_ipsec_convert_to_modp($ph2ent['pfsgroup']);
 							foreach ($ph2ent['hash-algorithm-option'] as $tmpAHalgo) {
 								$tmpAHalgo = str_replace('hmac_', '', $tmpAHalgo);
@@ -784,8 +800,10 @@ EOD;
 					$ipsecconf .= "\t{$ealgosp1}\n";
 				if (!empty($ealgoAHsp2arr))
 					$ipsecconf .= "\tah = " . join(',', $ealgoAHsp2arr) . "!\n";
-				if (!empty($ealgoESPsp2arr))
+				if (!empty($ealgoESPsp2arr)) {
+					file_put_contents("/var/etc/ipsec/dump_test", print_r($ealgoESPsp2arr, true));
 					$ipsecconf .= "\tesp = " . join(',', $ealgoESPsp2arr) . "!\n";
+				}
 				if (!empty($authentication))
 					$ipsecconf .= "\t{$authentication}\n";
 				if (!empty($peerid_spec))

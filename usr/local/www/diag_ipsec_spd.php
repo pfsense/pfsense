@@ -32,7 +32,7 @@
 */
 
 /*
-	pfSense_BUILDER_BINARIES:	/usr/local/sbin/setkey
+	pfSense_BUILDER_BINARIES:	/sbin/setkey
 	pfSense_MODULE:	ipsec
 */
 
@@ -52,7 +52,7 @@ include("head.inc");
 
 /* delete any SP? */
 if ($_GET['act'] == "del") {
-	$fd = @popen("/usr/local/sbin/setkey -c > /dev/null 2>&1", "w");
+	$fd = @popen("/sbin/setkey -c > /dev/null 2>&1", "w");
 	if ($fd) {
 		fwrite($fd, "spddelete {$_GET['srcid']} {$_GET['dstid']} any -P {$_GET['dir']} ;\n");
 		pclose($fd);

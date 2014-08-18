@@ -29,7 +29,7 @@
 	ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 	POSSIBILITY OF SUCH DAMAGE.
 
-	pfSense_BUILDER_BINARIES:	/usr/local/sbin/setkey
+	pfSense_BUILDER_BINARIES:	/sbin/setkey
 	pfSense_MODULE:	ipsec
 
 */
@@ -498,7 +498,7 @@ function ipsec_smp_dump_status() {
  */
 function ipsec_dump_spd()
 {
-	$fd = @popen("/usr/local/sbin/setkey -DP", "r");
+	$fd = @popen("/sbin/setkey -DP", "r");
 	$spd = array();
 	if ($fd) {
 		while (!feof($fd)) {
@@ -548,7 +548,7 @@ function ipsec_dump_spd()
  */
 function ipsec_dump_sad()
 {
-	$fd = @popen("/usr/local/sbin/setkey -D", "r");
+	$fd = @popen("/sbin/setkey -D", "r");
 	$sad = array();
 	if ($fd) {
 		while (!feof($fd)) {

@@ -324,11 +324,11 @@ function ipsec_lookup_phase1(& $ph2ent,& $ph1ent) {
 	global $config;
 
 	if (!is_array($config['ipsec']))
-		return;
+		return false;
 	if (!is_array($config['ipsec']['phase1']))
-		return;
+		return false;
 	if (empty($config['ipsec']['phase1']))
-		return;
+		return false;
 
 	foreach ($config['ipsec']['phase1'] as $ph1tmp) {
 	    if ($ph1tmp['ikeid'] == $ph2ent['ikeid']) {
@@ -343,13 +343,15 @@ function ipsec_lookup_phase1(& $ph2ent,& $ph1ent) {
 /*
  * Check phase1 communications status
  */
-function ipsec_phase1_status(& $ph1ent) {
+function ipsec_phase1_status($ipsec_status, $ikeid) {
 
-	$loc_ip = get_ipsec_tunnel_src($ph1ent);
-	$rmt_ip = $ph1ent['remote-gateway'];
-
-	if (ipsec_lookup_ipsakmp_sa($loc_ip,$rmt_ip))
-		return true;
+	foreach ($ipsec_status as $ike) {
+		if ($ike['peerconfig'] != "con{$ikeid}")
+			continue;
+		if ($ike['status'] == "established")
+			return true;
+		break;
+	}
 
 	return false;
 }
@@ -357,23 +359,10 @@ function ipsec_phase1_status(& $ph1ent) {
 /*
  * Check phase2 communications status
  */
-function ipsec_phase2_status(& $spd,& $sad,& $ph1ent,& $ph2ent) {
+function ipsec_phase2_status($ipsec_status, &$phase2) {
 
-	$loc_ip = ipsec_get_phase1_src($ph1ent);
-	$rmt_ip = ipsec_get_phase1_dst($ph1ent);
-
-	$loc_id = ipsec_idinfo_to_cidr($ph2ent['localid'],true,$ph2ent['mode']);
-	if (!empty($ph2ent['natlocalid']))
-		$natloc_id = ipsec_idinfo_to_cidr($ph2ent['natlocalid'],true,$ph2ent['mode']);
-	$rmt_id = ipsec_idinfo_to_cidr($ph2ent['remoteid'],true,$ph2ent['mode']);
-
-	/* check for established SA in both directions */
-	if( ipsec_lookup_ipsec_sa($spd,$sad,"out",$loc_ip,$rmt_ip,$loc_id,$rmt_id)) {
-		if (empty($ph2ent['natlocalid']) && ipsec_lookup_ipsec_sa($spd,$sad,"in",$rmt_ip,$loc_ip,$rmt_id,$loc_id))
-			return true;
-		else if (!empty($ph2ent['natlocalid']) && ipsec_lookup_ipsec_sa($spd,$sad,"out",$loc_ip,$rmt_ip,$loc_id,$rmt_id))
-			return true;
-	}
+	if (ipsec_lookup_phase1($ph2ent,$ph1ent))
+		return ipsec_phase1_status($ipsec_status, $ph1ent['ikeid']);
 
 	return false;
 }

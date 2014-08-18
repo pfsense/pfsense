@@ -173,6 +173,7 @@ function vpn_ipsec_configure($ipchg = false)
 				if (isset($ph1ent['disabled']))
 					continue;
 
+				$ikeid = $ph1ent['ikeid'];
 				$listeniflist = get_real_interface($a_phase1['interface']);
 
 				$ep = ipsec_get_phase1_src($ph1ent);
@@ -207,12 +208,10 @@ function vpn_ipsec_configure($ipchg = false)
 				if (is_array($a_phase2)) {
 					/* step through each phase2 entry */
 					foreach ($a_phase2 as $ph2ent) {
-						$ikeid = $ph2ent['ikeid'];
-
 						if (isset($ph2ent['disabled']))
 							continue;
 
-						if ($ikeid != $ph1ent['ikeid'])
+						if ($ikeid != $ph2ent['ikeid'])
 							continue;
 
 						/* add an ipsec pinghosts entry */
@@ -436,6 +435,7 @@ EOD;
 
 					if (strstr($authmethod,'rsa')) {
 
+						$ikeid = $ph1ent['ikeid'];
 						$cert = lookup_cert($ph1ent['certref']);
 
 						if (!$cert) {
@@ -532,6 +532,7 @@ EOD;
 				if (!$ep)
 					continue;
 
+				$ikeid = $ph1ent['ikeid'];
 				$keyexchange = "ikev1";
 				$passive = "route";
 				if (!empty($ph1ent['iketype']) && $ph1ent['iketype'] != "ikev1") {
@@ -619,8 +620,7 @@ EOD;
 				$ealgoESPsp2arr = array();
 			if (is_array($a_phase2) && count($a_phase2)) {
 				foreach ($a_phase2 as $ph2ent) {
-					$ikeid = $ph2ent['ikeid'];
-					if ($ikeid != $ph1ent['ikeid'])
+					if ($ikeid != $ph2ent['ikeid'])
 						continue;
 
 					if (isset($ph2ent['disabled']))

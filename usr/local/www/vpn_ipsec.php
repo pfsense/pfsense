@@ -374,10 +374,12 @@ include("head.inc");
 									<td class="listr nowrap">
 										<?=$spans;?>
 										<?php
-											foreach ($ph2ent['hash-algorithm-option'] as $k => $ph2ha) {
-												if ($k)
-													echo ", ";
-												echo $p2_halgos[$ph2ha];
+											if (!empty($ph2ent['hash-algorithm-option']) && is_array($ph2ent['hash-algorithm-option'])) {
+												foreach ($ph2ent['hash-algorithm-option'] as $k => $ph2ha) {
+													if ($k)
+														echo ", ";
+													echo $p2_halgos[$ph2ha];
+												}
 											}
 										?>
 										<?=$spane;?>

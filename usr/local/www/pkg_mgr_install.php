@@ -226,6 +226,8 @@ if ($_GET) {
 			filter_configure();
 			break;
 		case 'reinstallxml':
+			pkg_fetch_config_file($pkgid);
+			pkg_fetch_additional_files($pkgid);
 		case 'reinstallpkg':
 			delete_package_xml($pkgid);
 			if (install_package($pkgid) < 0) {

@@ -428,20 +428,21 @@ table#marquee div#container div#scroller {
 #navigation ul li {
 	float: left;
 	position: relative;
-	width: 7.0em;
+	padding-right: 27px;
 	top: 0px;
 }
 
 /* Text mainmenubar */
 #navigation ul li div {
 	background-image: url(images/mainmenu-right.gif);
-	background-position: 5% 50%;
+	background-position: 2% 50%;
 	background-repeat: no-repeat;
 	padding-top:0px;
 	font-size: 12px;
 	font-weight: normal;
 	color: #ffffff;
-	text-align: center;
+	text-align: left;
+	padding-left: 13px;
 	height: 13px;
 }
 

@@ -82,28 +82,44 @@ function conv_log_filter($logfile, $nentries, $tail = 50, $filtertext = "", $fil
 	return isset($config['syslog']['reverse']) ? $filterlog : array_reverse($filterlog);
 }
 
+function escape_filter_regex($filtertext) {
+	/* If the caller (user) has not already put a backslash before a slash, to escape it in the regex, */
+	/* then this will do it. Take out any "\/" already there, then turn all ordinary "/" into "\/".  */
+	return str_replace('/', '\/', str_replace('\/', '/', $filtertext));
+}
+
 function match_filter_line($flent, $filtertext = "") {
 	if (!$filtertext)
 		return true;
-	$filtertext = str_replace(' ', '\s+', $filtertext);
-	return preg_match("/{$filtertext}/i", implode(" ", array_values($flent)));
+	$filtertext = escape_filter_regex(str_replace(' ', '\s+', $filtertext));
+	return @preg_match("/{$filtertext}/i", implode(" ", array_values($flent)));
 }
 
 function match_filter_field($flent, $fields) {
-	foreach ($fields as $field) {
-		if ($fields[$field] == "All") continue;
-		if ((strpos($fields[$field], '!') === 0)) {
-			$fields[$field] = substr($fields[$field], 1);
-			if (preg_match("/act/i", $field)) {
-				if ( (in_arrayi($flent[$field], explode(",", str_replace(" ", ",", $fields[$field]))) ) ) return false;
-			} else if ( (preg_match("/{$fields[$field]}/i", $flent[$field])) ) return false;
+	foreach ($fields as $key => $field) {
+		if ($field == "All")
+			continue;
+		if ((strpos($$field, '!') === 0)) {
+			$field = substr($field, 1);
+			if (strtolower($key) == 'act') {
+				if (in_arrayi($flent[$key], explode(" ", $field)))
+					return false;
+			} else {
+				$field_regex = escape_filter_regex($field);
+				if (@preg_match("/{$field_regex}/i", $flent[$key]))
+					return false;
+			}
+		} else {
+			if (strtolower($key) == 'act') {
+				if (!in_arrayi($flent[$key], explode(" ", $field)))
+					return false;
+			} else {
+				$field_regex = escape_filter_regex($field);
+				if (!@preg_match("/{$field_regex}/i", $flent[$key]))
+					return false;
+			}
 		}
-		else {
-			if (preg_match("/act/i", $field)) {
-				if ( !(in_arrayi($flent[$field], explode(",", str_replace(" ", ",", $fields[$field]))) ) ) return false;
-			} else if ( !(preg_match("/{$fields[$field]}/i", $flent[$field])) ) return false;
-		}
-	}	
+	}
 	return true;
 }
 

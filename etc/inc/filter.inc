@@ -33,7 +33,7 @@
 	ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 	POSSIBILITY OF SUCH DAMAGE.
 
-	pfSense_BUILDER_BINARIES:	/sbin/sysctl	/sbin/kldload	/usr/sbin/tcpdump	/sbin/pfctl	/bin/rm
+	pfSense_BUILDER_BINARIES:	/sbin/kldload	/usr/sbin/tcpdump	/sbin/pfctl	/bin/rm
 	pfSense_BUILDER_BINARIES:	/usr/sbin/inetd
 	pfSense_MODULE:	filter
 */
@@ -95,7 +95,7 @@ function flowtable_configure() {
 	global $config, $g;
 
 	if (empty($config['system']['flowtable'])) {
-		mwexec("/sbin/sysctl net.inet.flowtable.enable=0", true);
+		set_single_sysctl("net.inet.flowtable.enable", "0");
 		return;
 	}
 
@@ -106,13 +106,15 @@ function flowtable_configure() {
 	else
 		$maxstates = 150000;
 	// nmbflows cpu count * ($maxstates * 2)
-	$cpus = trim(`/sbin/sysctl -n kern.smp.cpus`, " \n");
+	$cpus = get_single_sysctl('kern.smp.cpus');
 	$nmbflows = ($cpus*($maxstates*2));
 	// Flowtable currently only works on 8.0
 	if(get_freebsd_version() == "8") {
-		mwexec("/sbin/sysctl net.inet.flowtable.nmbflows={$nmbflows}");
-		mwexec("/sbin/sysctl net.inet.ip.output_flowtable_size={$maxstates}");
-		mwexec("/sbin/sysctl net.inet.flowtable.enable=1");
+		set_sysctl(array(
+			"net.inet.flowtable.nmbflows" => $nmbflows,
+			"net.inet.ip.output_flowtable_size" => $maxstates,
+			"net.inet.flowtable.enable" => "1")
+		);
 	}
 }
 
@@ -1340,7 +1342,7 @@ function filter_nat_rules_automatic_tonathosts($with_descr = false) {
 	global $config, $FilterIflist, $GatewaysList;
 
 	$tonathosts = array("127.0.0.0/8");
-	$descriptions = array(gettext("localhost"), gettext("localhost"));
+	$descriptions = array(gettext("localhost"));
 
 	foreach (get_staticroutes() as $route) {
 		$netip = explode("/", $route['network']);
@@ -1403,14 +1405,14 @@ function filter_nat_rules_automatic_tonathosts($with_descr = false) {
 	/* add openvpn interfaces */
 	if(is_array($config['openvpn']['openvpn-server']))
 		foreach ($config['openvpn']['openvpn-server'] as $ovpnsrv)
-			if (!empty($ovpnsrv['tunnel_network'])) {
+			if (!isset($ovpnsrv['disable']) && !empty($ovpnsrv['tunnel_network'])) {
 				$tonathosts[] = $ovpnsrv['tunnel_network'];
 				$descriptions[] = gettext("OpenVPN server");
 			}
 
 	if(is_array($config['openvpn']['openvpn-client']))
 		foreach ($config['openvpn']['openvpn-client'] as $ovpncli)
-			if (!empty($ovpncli['tunnel_network'])) {
+			if (!isset($ovpncli['disable']) && !empty($ovpncli['tunnel_network'])) {
 				$tonathosts[] = $ovpncli['tunnel_network'];
 				$descriptions[] = gettext("OpenVPN client");
 			}
@@ -2068,6 +2070,44 @@ function filter_generate_port(& $rule, $target = "source", $isnat = false) {
 	return $src;
 }
 
+function filter_address_add_vips_subnets(&$subnets, $if, $not) {
+	global $FilterIflist;
+
+	if (!isset($FilterIflist[$if]['vips']) || !is_array($FilterIflist[$if]['vips']))
+		return;
+
+	$if_subnets = array($subnets);
+
+	if ($not == true)
+		$subnets = "!{$subnets}";
+
+	foreach ($FilterIflist[$if]['vips'] as $vip) {
+		foreach ($if_subnets as $subnet)
+			if (ip_in_subnet($vip['ip'], $subnet))
+				continue 2;
+
+		if (is_ipaddrv4($vip['ip'])) {
+			if (!is_subnetv4($if_subnets[0]))
+				continue;
+
+			$network = gen_subnet($vip['ip'], $vip['sn']);
+		} else if (is_ipaddrv6($vip['ip'])) {
+			if (!is_subnetv6($if_subnets[0]))
+				continue;
+
+			$network = gen_subnetv6($vip['ip'], $vip['sn']);
+		} else
+			continue;
+
+		$subnets .= ' ' . ($not == true ? '!' : '') . $network . '/' . $vip['sn'];
+		$if_subnets[] = $network . '/' . $vip['sn'];
+	}
+	unset($if_subnets);
+
+	if (strpos($subnets, ' ') !== false)
+		$subnets = "{ {$subnets} }";
+}
+
 function filter_generate_address(& $rule, $target = "source", $isnat = false) {
 	global $FilterIflist, $config;
 	$src = "";
@@ -2090,9 +2130,9 @@ function filter_generate_address(& $rule, $target = "source", $isnat = false) {
 					$src = $FilterIflist["opt{$matches[1]}"]['ipv6'];
 					if(!is_ipaddrv6($src))
 						return "";
+					if(isset($rule[$target]['not']))
+						$src = " !{$src}";
 				}
-				if(isset($rule[$target]['not']))
-					$src = " !{$src}";
 			} else {
 				if(preg_match("/opt([0-9]*)$/", $rule[$target]['network'], $optmatch)) {
 					$opt_ip = $FilterIflist["opt{$optmatch[1]}"]['ip'];
@@ -2105,9 +2145,9 @@ function filter_generate_address(& $rule, $target = "source", $isnat = false) {
 					$src = $FilterIflist["opt{$matches[1]}"]['ip'];
 					if(!is_ipaddrv4($src))
 						return "";
+					if(isset($rule[$target]['not']))
+						$src = " !{$src}";
 				}
-				if(isset($rule[$target]['not']))
-					$src = " !{$src}";
 			}
 		} else {
 			if($rule['ipprotocol'] == "inet6") {
@@ -2151,7 +2191,7 @@ function filter_generate_address(& $rule, $target = "source", $isnat = false) {
 							$src = "{$pppoesav6}/{$pppoesnv6}";
 						}
 					}
-				if(isset($rule[$target]['not']))
+				if(isset($rule[$target]['not']) && !is_subnet($src))
 					$src = " !{$src}";
 			} else {
 				switch ($rule[$target]['network']) {
@@ -2185,6 +2225,10 @@ function filter_generate_address(& $rule, $target = "source", $isnat = false) {
 							$pptp_subnets = ip_range_to_subnet_array($config['pptpd']['remoteip'], long2ip32(ip2long($config['pptpd']['remoteip'])));
 						if (empty($pptp_subnets))
 							return "";
+						if(isset($rule[$target]['not']))
+							array_walk($pptp_subnets, function (&$value, $key) {
+								$value="!{$value}";
+							});
 						$src = "{ " . implode(" ", $pptp_subnets) . " }";
 						break;
 					case 'pppoe':
@@ -2196,9 +2240,13 @@ function filter_generate_address(& $rule, $target = "source", $isnat = false) {
 						}
 						break;
 				}
-				if(isset($rule[$target]['not']))
+				if(isset($rule[$target]['not']) && !is_subnet($src) &&
+				    (strpos($src, '{') === false))
 					$src = " !{$src}";
 			}
+			if (is_subnet($src))
+				filter_address_add_vips_subnets($src, $rule[$target]['network'],
+					isset($rule[$target]['not']));
 		}
 	} else if($rule[$target]['address']) {
 		$expsrc = alias_expand($rule[$target]['address']);
@@ -3418,7 +3466,7 @@ function filter_tdr_hour($schedule) {
 	$now = strtotime("now");
 	if($g['debug'])
 		log_error("[TDR DEBUG] S: $starting_time E: $ending_time N: $now");
-	if($now >= $starting_time and $now <= $ending_time)
+	if($now >= $starting_time and $now < $ending_time)
 		return true;
 	return false;
 }
@@ -3514,9 +3562,9 @@ function filter_generate_ipsec_rules($log = array()) {
 	$ipfrules = "\n# VPN Rules\n";
 	/* Is IP Compression enabled? */
 	if(isset($config['ipsec']['ipcomp']))
-		exec("/sbin/sysctl net.inet.ipcomp.ipcomp_enable=1");
+		set_single_sysctl("net.inet.ipcomp.ipcomp_enable" , "1");
 	else
-		exec("/sbin/sysctl net.inet.ipcomp.ipcomp_enable=0");
+		set_single_sysctl("net.inet.ipcomp.ipcomp_enable" , "0");
 
 	if(isset($config['ipsec']['enable']) &&
 		is_array($config['ipsec']['phase1'])) {

@@ -32,7 +32,7 @@
 */
 
 /*
-	pfSense_BUILDER_BINARIES:	/usr/local/sbin/setkey
+	pfSense_BUILDER_BINARIES:	/sbin/setkey
 	pfSense_MODULE:	ipsec
 */
 
@@ -50,16 +50,6 @@ require_once("pfsense-utils.inc");
 $pgtitle = array(gettext("Status"),gettext("IPsec"),gettext("SPD"));
 $shortcut_section = "ipsec";
 include("head.inc");
-
-/* delete any SP? */
-if ($_GET['act'] == "del") {
-	$fd = @popen("/usr/local/sbin/setkey -c > /dev/null 2>&1", "w");
-	if ($fd) {
-		fwrite($fd, "spddelete {$_GET['srcid']} {$_GET['dstid']} any -P {$_GET['dir']} ;\n");
-		pclose($fd);
-		sleep(1);
-	}
-}
 
 $spd = ipsec_dump_spd();
 ?>
@@ -107,9 +97,6 @@ $spd = ipsec_dump_spd();
 									$args .= "&amp;dstid=".rawurlencode($sp['dstid']);
 									$args .= "&amp;dir=".rawurlencode($sp['dir']);
 								?>
-								<a href="diag_ipsec_spd.php?act=del&amp;<?=$args;?>" onclick="return confirm('<?= gettext("Do you really want to delete this security policy?"); ?>')">
-									<img src="/themes/<?= $g['theme']; ?>/images/icons/icon_x.gif" width="17" height="17" border="0" alt="delete" />
-								</a>
 							</td>
 						</tr>
 						<?php endforeach; ?>

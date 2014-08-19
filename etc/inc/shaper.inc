@@ -531,6 +531,8 @@ class altq_root_queue {
 			$rules = " altq on  " . get_real_interface($this->GetInterface());
 			if ($this->GetScheduler())
 				$rules .= " ".strtolower($this->GetScheduler());
+			if ($this->GetQlimit() > 0)
+				$rules .= " qlimit " . $this->GetQlimit() . " ";
 			if ($this->GetBandwidth()) {
 				$rules .= " bandwidth ".trim($this->GetBandwidth());
 				if ($this->GetBwscale())
@@ -4478,7 +4480,10 @@ function filter_generate_dummynet_rules() {
 	if (!empty($dn_rules)) {
 		if (!is_module_loaded("dummynet.ko")) {
 			mwexec("/sbin/kldload dummynet");
-			mwexec("/sbin/sysctl net.inet.ip.dummynet.io_fast=1 net.inet.ip.dummynet.hash_size=256");
+			set_sysctl(array(
+				"net.inet.ip.dummynet.io_fast" => "1",
+				"net.inet.ip.dummynet.hash_size" => "256"
+			));
 		}
 		file_put_contents("{$g['tmp_path']}/rules.limiter", $dn_rules);
 		mwexec("/sbin/ipfw {$g['tmp_path']}/rules.limiter");

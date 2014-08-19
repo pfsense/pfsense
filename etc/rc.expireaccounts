@@ -45,7 +45,7 @@
 			continue;
 		echo "1\n";
 		echo "User {$user['name']} expires {$user['expires']}\n";
-		if(!$user['expires'])
+		if(!$user['expires'] || isset($user['disabled']))
 			continue;
 		echo "1\n";
 		if(strtotime("-1 day") > strtotime($user['expires'])) {

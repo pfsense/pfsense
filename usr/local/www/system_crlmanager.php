@@ -305,15 +305,20 @@ function method_change() {
 							<td width="78%" class="vtable">
 								<select name='method' id='method' class="formselect" onchange='method_change()'>
 								<?php
+									$rowIndex = 0;
 									foreach($crl_methods as $method => $desc):
 									if (($_GET['importonly'] == "yes") && ($method != "existing"))
 										continue;
 									$selected = "";
 									if ($pconfig['method'] == $method)
 										$selected = "selected=\"selected\"";
+									$rowIndex++;
 								?>
-									<option value="<?=$method;?>"<?=$selected;?>><?=$desc;?></option>
-								<?php endforeach; ?>
+									<option value="<?=$method;?>" <?=$selected;?>><?=$desc;?></option>
+								<?php endforeach;
+								if ($rowIndex == 0)
+									echo "<option></option>";
+								?>
 								</select>
 							</td>
 						</tr>
@@ -329,13 +334,18 @@ function method_change() {
 							<td width="78%" class="vtable">
 								<select name='caref' id='caref' class="formselect">
 								<?php
+									$rowIndex = 0;
 									foreach($a_ca as $ca):
 									$selected = "";
 									if ($pconfig['caref'] == $ca['refid'])
 										$selected = "selected=\"selected\"";
+									$rowIndex++;
 								?>
-									<option value="<?=$ca['refid'];?>"<?=$selected;?>><?=$ca['descr'];?></option>
-								<?php endforeach; ?>
+									<option value="<?=$ca['refid'];?>" <?=$selected;?>><?=$ca['descr'];?></option>
+								<?php endforeach;
+								if ($rowIndex == 0)
+									echo "<option></option>";
+								?>
 								</select>
 							</td>
 						</tr>
@@ -452,7 +462,7 @@ function method_change() {
 							&nbsp;&nbsp;&nbsp;&nbsp;<?php echo gettext("No Certificates Found for this CRL."); ?>
 						</td>
 						<td class="list">&nbsp;</td>
-					</td>
+					</tr>
 				<?php	else:
 					foreach($crl['cert'] as $i => $cert):
 						$name = xhtmlspecialchars($cert['descr']);
@@ -489,20 +499,28 @@ function method_change() {
 							&nbsp;&nbsp;&nbsp;&nbsp;<?php echo gettext("No Certificates Found for this CA."); ?>
 						</td>
 						<td class="list">&nbsp;</td>
-					</td>
+					</tr>
 				<?php	else: ?>
 					<tr>
 						<td class="listlr" colspan="3" align="center">
 							<b><?php echo gettext("Choose a Certificate to Revoke"); ?></b>: <select name='certref' id='certref' class="formselect">
-				<?php	foreach($ca_certs as $cert): ?>
+				<?php	$rowIndex = 0;
+						foreach($ca_certs as $cert): 
+							$rowIndex++; ?>
 							<option value="<?=$cert['refid'];?>"><?=xhtmlspecialchars($cert['descr'])?></option>
-				<?php	endforeach; ?>
+				<?php	endforeach;
+						if ($rowIndex == 0)
+							echo "<option></option>"; ?>
 							</select>
 							<b><?php echo gettext("Reason");?></b>:
 							<select name='crlreason' id='crlreason' class="formselect">
-				<?php	foreach($openssl_crl_status as $code => $reason): ?>
+				<?php	$rowIndex = 0;
+						foreach($openssl_crl_status as $code => $reason): 
+							$rowIndex++; ?>
 							<option value="<?= $code ?>"><?= xhtmlspecialchars($reason) ?></option>
-				<?php	endforeach; ?>
+				<?php	endforeach;
+						if ($rowIndex == 0)
+							echo "<option></option>"; ?>
 							</select>
 							<input name="act" type="hidden" value="addcert" />
 							<input name="crlref" type="hidden" value="<?=$crl['refid'];?>" />

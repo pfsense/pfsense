@@ -2110,6 +2110,7 @@ function upgrade_054_to_055() {
 	/* Let's save the RRD graphs after we run enable RRD graphing */
 	/* The function will restore the rrd.tgz so we will save it after */
 	exec("cd /; LANG=C NO_REMOUNT=1 RRDDBPATH='{$rrddbpath}' CF_CONF_PATH='{$g['cf_conf_path']}' /etc/rc.backup_rrd.sh");
+	unlink_if_exists("{$g['vardb_path']}/rrd/*.xml");
 	if ($g['booting'])
 		echo "Updating configuration...";
 }
@@ -3330,6 +3331,46 @@ function upgrade_106_to_107() {
 
 		}
 		unset($tracker, $ridx);
+	}
+}
+
+function upgrade_107_to_108() {
+	global $config;
+
+	if (isset($config['system']['webgui']['noautocomplete']))
+		unset($config['system']['webgui']['noautocomplete']);
+	else
+		$config['system']['webgui']['loginautocomplete'] = true;
+}
+
+function upgrade_108_to_109() {
+	global $config;
+
+	if (!isset($config['filter']['rule']) || !is_array($config['filter']['rule']))
+		return;
+
+	foreach ($config['filter']['rule'] as &$rule) {
+		if (!isset($rule['dscp']) || empty($rule['dscp']))
+			continue;
+
+		$pos = strpos($rule['dscp'], ' ');
+		if ($pos !== false)
+			$rule['dscp'] = substr($rule['dscp'], 0, $pos);
+		unset($pos);
+	}
+}
+
+function upgrade_109_to_110() {
+	global $config;
+
+	if (!is_array($config['ipsec']) || !is_array($config['ipsec']['phase2']))
+		return;
+
+	foreach ($config['ipsec']['phase2'] as &$rule) {
+		if (!empty($rule['uniqid']))
+			continue;
+
+		$rule['uniqid'] = uniqid();
 	}
 }
 

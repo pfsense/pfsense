@@ -52,7 +52,7 @@ if (!$omit_nocacheheaders) {
 	header("Pragma: no-cache");
 }
 
-Header("X-Frame-Options: SAMEORIGIN");
+header("X-Frame-Options: SAMEORIGIN");
 require_once("authgui.inc");
 require_once("pfsense-utils.inc");
 
@@ -130,9 +130,9 @@ $firewall_rules_dscp_types = array("af11",
 				"cs5",
 				"cs6",
 				"cs7",
-				"0x01 (reliability, ToS 0x04)",
-				"0x02 (throughput, ToS 0x08)",
-				"0x04 (lowdelay, ToS 0x10)");
+				"0x01",
+				"0x02",
+				"0x04");
 
 $auth_server_types = array(
 	'ldap' => "LDAP",
@@ -261,7 +261,7 @@ function do_input_validation($postdata, $reqdfields, $reqdfieldsn, &$input_error
 
 	for ($i = 0; $i < count($reqdfields); $i++) {
 		if ($_POST[$reqdfields[$i]] == "" && $_REQUEST[$reqdfields[$i]] == "") {
-			$input_errors[] = sprintf(gettext("The field %s is required."), $reqfieldsn[$i]);
+			$input_errors[] = sprintf(gettext("The field %s is required."), $reqdfieldsn[$i]);
 		}
 	}
 }
@@ -613,7 +613,9 @@ function dump_clog($logfile, $tail, $withorig = true, $grepfor = "", $grepinvert
 		$grepline .= " | /usr/bin/egrep " . escapeshellarg(implode("|", $grepfor));
 	if(is_array($grepinvert))
 		$grepline .= " | /usr/bin/egrep -v " . escapeshellarg(implode("|", $grepinvert));
-	if(file_exists($logfile) && filesize($logfile) == 0) {
+	if (is_dir($logfile)) {
+		$logarr = array("File $logfile is a directory.");
+	} elseif (file_exists($logfile) && filesize($logfile) == 0) {
 		$logarr = array("Log file started.");
 	} else {
 		if($config['system']['disablesyslogclog']) {

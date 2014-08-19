@@ -65,6 +65,7 @@
 				<type>submit</type>
 			</field>
 		</fields>
+		<stepbeforeformdisplay>step1_stepbeforeformdisplay();</stepbeforeformdisplay>
 		<stepsubmitphpaction>step1_submitphpaction();</stepsubmitphpaction>
 		<includefile>/usr/local/www/wizards/traffic_shaper_wizard_multi_all.inc</includefile>
 	</step>

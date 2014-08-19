@@ -105,7 +105,7 @@ if($_REQUEST['getdyndnsstatus']) {
 		}
 		?>
 		</td>
-		<td class="listlr">
+		<td class="listr">
 		<?php
 		$types = explode(",", DYNDNS_PROVIDER_DESCRIPTIONS);
 		$vals = explode(" ", DYNDNS_PROVIDER_VALUES);
@@ -127,7 +127,7 @@ if($_REQUEST['getdyndnsstatus']) {
 			echo xhtmlspecialchars($dyndns['host']);
 		?>
 		</td>
-		<td class="listlr">
+		<td class="listr">
 		<div id='dyndnsstatus<?php echo $i; ?>'><?php echo gettext("Checking ..."); ?></div>
 		</td>
 	</tr>

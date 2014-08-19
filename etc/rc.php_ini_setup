@@ -137,6 +137,8 @@ PHPMODULES="$PHPMODULES pfSense"
 PHPMODULES="$PHPMODULES json"
 # bcmath
 PHPMODULES="$PHPMODULES bcmath"
+# filter
+PHPMODULES="$PHPMODULES filter"
 
 PHP_ZEND_MODULES="ioncube_loader"
 PHP_ZEND_MODULES_TS="ioncube_loader_ts"

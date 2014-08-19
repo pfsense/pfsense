@@ -53,6 +53,7 @@ ob_start(null, "1000");
 require_once('functions.inc');
 require_once('guiconfig.inc');
 require_once('notices.inc');
+require_once("pkg-utils.inc");
 
 if(isset($_REQUEST['closenotice'])){
 	close_notice($_REQUEST['closenotice']);
@@ -480,6 +481,10 @@ include("fbegin.inc");
 echo $jscriptstr;
 	if(!file_exists("/usr/local/www/themes/{$g['theme']}/no_big_logo"))
 		echo "<center><img src=\"./themes/".$g['theme']."/images/logobig.jpg\" alt=\"big logo\" /></center><br />";
+
+/* Print package server mismatch warning. See https://redmine.pfsense.org/issues/484 */
+if (!verify_all_package_servers())
+	print_info_box(package_server_mismatch_message());
 
 if ($savemsg)
 	print_info_box($savemsg);

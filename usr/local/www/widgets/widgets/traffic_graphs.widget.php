@@ -111,7 +111,7 @@ if (isset($a_config["scale_type"])) {
 	<?php } ?>
 	Default AutoScale:
 		<?php 
-			$scale_type_up="checked";
+			$scale_type_up="checked=\"checked\"";
 			$scale_type_follow="";
 			if (isset($config["widgets"]["trafficgraphs"]["scale_type"])) {
 				$selected_radio = $config["widgets"]["trafficgraphs"]["scale_type"];
@@ -123,15 +123,15 @@ if (isset($a_config["scale_type"])) {
 				}
 			}
 		?>
-	<input name="scale_type" class="radio" type="radio" id="scale_type" value="up" <?php echo $scale_type_up; ?> onchange="updateGraphDisplays();" /> <span>up</span>
-	<input name="scale_type" class="radio" type="radio" id="scale_type" value="follow" <?php echo $scale_type_follow; ?> onchange="updateGraphDisplays();" /> <span>follow</span><br /><br />
+	<input name="scale_type_up" class="radio" type="radio" id="scale_type_up" value="up" <?php echo $scale_type_up; ?> onchange="updateGraphDisplays();" /> <span>up</span>
+	<input name="scale_type_follow" class="radio" type="radio" id="scale_type_follow" value="follow" <?php echo $scale_type_follow; ?> onchange="updateGraphDisplays();" /> <span>follow</span><br /><br />
 	Refresh Interval:
 	<select name="refreshinterval" class="formfld" id="refreshinterval" onchange="updateGraphDisplays();">
 		<?php for ($i = 1; $i <= 10; $i += 1) { ?>
 			<option value="<?= $i ?>" <?php if ($refreshinterval == $i) echo "selected=\"selected\"";?>><?= $i ?></option>
 		<?php } ?>
 	</select>&nbsp; Seconds<br />&nbsp; &nbsp; &nbsp; <b>Note:</b> changing this setting will increase CPU utilization<br /><br />
-	<input id="submit" name="submit" type="submit" onclick="return updatePref();" class="formbtn" value="Save Settings" />
+	<input id="submit_settings" name="submit_settings" type="submit" onclick="return updatePref();" class="formbtn" value="Save Settings" />
 </form>
 </div>
 

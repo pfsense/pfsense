@@ -1951,8 +1951,10 @@ function interfaces_carp_setup() {
 		unset($pfsyncenabled);
 	}
 
-	mwexec("/sbin/sysctl net.inet.carp.preempt=1", true);
-	mwexec("/sbin/sysctl net.inet.carp.log=1", true);
+	set_sysctl(array(
+		"net.inet.carp.preempt" => "1",
+		"net.inet.carp.log" => "1")
+	);
 
 	if (!empty($pfsyncinterface))
 		$carp_sync_int = get_real_interface($pfsyncinterface);
@@ -1986,9 +1988,9 @@ function interfaces_carp_setup() {
 	}
 
 	if($config['virtualip']['vip'])
-		mwexec("/sbin/sysctl net.inet.carp.allow=1", true);
+		set_single_sysctl("net.inet.carp.allow", "1");
 	else
-		mwexec("/sbin/sysctl net.inet.carp.allow=0", true);
+		set_single_sysctl("net.inet.carp.allow", "0");
 
 	if ($g['booting']) {
 		unmute_kernel_msgs();
@@ -3610,9 +3612,9 @@ function interface_dhcpv6_configure($interface = "wan", $wancfg) {
 
 	$dhcp6cscript = "#!/bin/sh\n";
 	$dhcp6cscript .= "# This shell script launches /etc/rc.newwanipv6 with a interface argument.\n";
-	$dhcp6cscript .= "\$dmips = \${new_domain_name_servers}\n";
-	$dhcp6cscript .= "\$dmnames = \${new_domain_name}\n";
-	$dhcp6cscript .= "/usr/local/sbin/fcgicli -f /etc/rc.newwanipv6 -d \"interface={$wanif}&dmnames=\$dmnames&dmips=\$dmips\"\n";
+	$dhcp6cscript .= "dmips=\${new_domain_name_servers}\n";
+	$dhcp6cscript .= "dmnames=\${new_domain_name}\n";
+	$dhcp6cscript .= "/usr/local/sbin/fcgicli -f /etc/rc.newwanipv6 -d \"interface={$wanif}&dmnames=\${dmnames}&dmips=\${dmips}\"\n";
 	/* Add wide-dhcp6c shell script here. Because we can not pass a argument to it. */
 	if (!@file_put_contents("{$g['varetc_path']}/dhcp6c_{$interface}_script.sh", $dhcp6cscript)) {
 		printf("Error: cannot open dhcp6c_{$interface}_script.sh in interface_dhcpv6_configure() for writing.\n");
@@ -3642,7 +3644,7 @@ function interface_dhcpv6_configure($interface = "wan", $wancfg) {
 	@chmod("{$g['varetc_path']}/rtsold_{$wanif}_script.sh", 0755);
 
 	/* accept router advertisements for this interface */
-	mwexec("/sbin/sysctl -w net.inet6.ip6.accept_rtadv=1");
+	set_single_sysctl("net.inet6.ip6.accept_rtadv", "1");
 	log_error("Accept router advertisements on interface {$wanif} ");
 	mwexec("/sbin/ifconfig {$wanif} inet6 accept_rtadv");
 

@@ -52,35 +52,45 @@ if (!is_array($config['ipsec']['phase2']))
 
 $a_phase2 = &$config['ipsec']['phase2'];
 
-if (is_numericint($_GET['p2index']))
-	$p2index = $_GET['p2index'];
-if (isset($_POST['p2index']) && is_numericint($_POST['p2index']))
-	$p2index = $_POST['p2index'];
+if (!empty($_GET['p2index']))
+	$uindex = $_GET['p2index'];
+if (!empty($_POST['uniqid']))
+	$uindex = $_POST['uniqid'];
 
-if (isset($_GET['dup']) && is_numericint($_GET['dup']))
-	$p2index = $_GET['dup'];
+if (!empty($_GET['dup']))
+	$uindex = $_GET['dup'];
 
-if (isset($p2index) && $a_phase2[$p2index])
+$ph2found = false;
+if (isset($uindex)) {
+	foreach ($a_phase2 as $p2index => $ph2) {
+		if ($ph2['uniqid'] == $uindex) {
+			$ph2found = true;
+			break;
+		}
+	}
+}
+
+if ($ph2found === true)
 {
-	$pconfig['ikeid'] = $a_phase2[$p2index]['ikeid'];
-	$pconfig['disabled'] = isset($a_phase2[$p2index]['disabled']);
-	$pconfig['mode'] = $a_phase2[$p2index]['mode'];
-	$pconfig['descr'] = $a_phase2[$p2index]['descr'];
-	$old_ph2ent = $a_phase2[$p2index];
+	$pconfig['ikeid'] = $ph2['ikeid'];
+	$pconfig['disabled'] = isset($ph2['disabled']);
+	$pconfig['mode'] = $ph2['mode'];
+	$pconfig['descr'] = $ph2['descr'];
+	$pconfig['uniqid'] = $ph2['uniqid'];
 
-	if (!empty($a_phase2[$p2index]['natlocalid']))
-		idinfo_to_pconfig("natlocal",$a_phase2[$p2index]['natlocalid'],$pconfig);
-	idinfo_to_pconfig("local",$a_phase2[$p2index]['localid'],$pconfig);
-	idinfo_to_pconfig("remote",$a_phase2[$p2index]['remoteid'],$pconfig);
+	if (!empty($ph2['natlocalid']))
+		idinfo_to_pconfig("natlocal",$ph2['natlocalid'],$pconfig);
+	idinfo_to_pconfig("local",$ph2['localid'],$pconfig);
+	idinfo_to_pconfig("remote",$ph2['remoteid'],$pconfig);
 
-	$pconfig['proto'] = $a_phase2[$p2index]['protocol'];
-	ealgos_to_pconfig($a_phase2[$p2index]['encryption-algorithm-option'],$pconfig);
-	$pconfig['halgos'] = $a_phase2[$p2index]['hash-algorithm-option'];
-	$pconfig['pfsgroup'] = $a_phase2[$p2index]['pfsgroup'];
-	$pconfig['lifetime'] = $a_phase2[$p2index]['lifetime'];
-	$pconfig['pinghost'] = $a_phase2[$p2index]['pinghost'];
+	$pconfig['proto'] = $ph2['protocol'];
+	ealgos_to_pconfig($ph2['encryption-algorithm-option'],$pconfig);
+	$pconfig['halgos'] = $ph2['hash-algorithm-option'];
+	$pconfig['pfsgroup'] = $ph2['pfsgroup'];
+	$pconfig['lifetime'] = $ph2['lifetime'];
+	$pconfig['pinghost'] = $ph2['pinghost'];
 
-	if (isset($a_phase2[$p2index]['mobile']))
+	if (isset($ph2['mobile']))
 		$pconfig['mobile'] = true;
 }
 else
@@ -95,14 +105,19 @@ else
 	$pconfig['halgos'] = explode(",", "hmac_sha1,hmac_md5");
 	$pconfig['pfsgroup'] = "0";
 	$pconfig['lifetime'] = "3600";
+	$pconfig['uniqid'] = uniqid();
 
-    /* mobile client */
-    if($_GET['mobile'])
-        $pconfig['mobile']=true;
+	/* mobile client */
+	if($_GET['mobile'])
+		$pconfig['mobile']=true;
 }
 
-if (isset($_GET['dup']) && is_numericint($_GET['dup']))
+unset($ph2);
+if (!empty($_GET['dup'])) {
+	unset($uindex);
 	unset($p2index);
+	$pconfig['uniqid'] = uniqid();
+}
 
 if ($_POST) {
 
@@ -113,8 +128,8 @@ if ($_POST) {
 		$input_errors[] = gettext("A valid ikeid must be specified.");
 
 	/* input validation */
-	$reqdfields = explode(" ", "localid_type halgos");
-	$reqdfieldsn = array(gettext("Local network type"),gettext("P2 Hash Algorithms"));
+	$reqdfields = explode(" ", "localid_type uniqid");
+	$reqdfieldsn = array(gettext("Local network type"), gettext("Unique Identifier"));
 	if (!isset($pconfig['mobile'])){
 		$reqdfields[] = "remoteid_type";
 		$reqdfieldsn[] = gettext("Remote network type");
@@ -192,7 +207,7 @@ if ($_POST) {
 	if (isset($pconfig['mobile'])){
 		/* User is adding phase 2 for mobile phase1 */
 		foreach($a_phase2 as $key => $name){
-			if (isset($name['mobile'])){
+			if (isset($name['mobile']) && $name['uniqid'] != $pconfig['uniqid']) {
 				/* check duplicate localids only for mobile clents */
 				$localid_data = ipsec_idinfo_to_cidr($name['localid'], false, $name['mode']);
 				$entered = array();
@@ -201,15 +216,9 @@ if ($_POST) {
 				if (isset($pconfig['localid_netbits'])) $entered['netbits'] = $pconfig['localid_netbits'];
 				$entered_localid_data = ipsec_idinfo_to_cidr($entered, false, $pconfig['mode']);
 				if ($localid_data == $entered_localid_data){
-					if (!isset($pconfig['p2index'])){
-						/* adding new p2 entry */
-						$input_errors[] = gettext("Phase2 with this Local Network is already defined for mobile clients.");
-						break;
-					}else if ($pconfig['p2index'] != $key){
-						/* editing p2 and entered p2 networks match with different p2 for given p1 */
-						$input_errors[] = gettext("Phase2 with this Local Network is already defined for mobile clients.");
-						break;
-					}
+					/* adding new p2 entry */
+					$input_errors[] = gettext("Phase2 with this Local Network is already defined for mobile clients.");
+					break;
 				}
 			}
 		}
@@ -217,7 +226,7 @@ if ($_POST) {
 		/* User is adding phase 2 for site-to-site phase1 */
 		$input_error = 0;
 		foreach($a_phase2 as $key => $name){
-			if (!isset($name['mobile']) && $pconfig['ikeid'] == $name['ikeid']){
+			if (!isset($name['mobile']) && $pconfig['ikeid'] == $name['ikeid'] && $pconfig['uniqid'] != $name['uniqid']) {
 				/* check duplicate subnets only for given phase1 */
 				$localid_data = ipsec_idinfo_to_cidr($name['localid'], false, $name['mode']);
 				$remoteid_data = ipsec_idinfo_to_cidr($name['remoteid'], false, $name['mode']);
@@ -232,15 +241,9 @@ if ($_POST) {
 				if (isset($pconfig['remoteid_netbits'])) $entered_remote['netbits'] = $pconfig['remoteid_netbits'];
 				$entered_remoteid_data = ipsec_idinfo_to_cidr($entered_remote, false, $pconfig['mode']);
 				if ($localid_data == $entered_localid_data && $remoteid_data == $entered_remoteid_data) { 
-					if (!isset($pconfig['p2index'])){
-						/* adding new p2 entry */
-						$input_errors[] = gettext("Phase2 with this Local/Remote networks combination is already defined for this Phase1.");
-						break;
-					}else if ($pconfig['p2index'] != $key){
-						/* editing p2 and entered p2 networks match with different p2 for given p1 */
-						$input_errors[] = gettext("Phase2 with this Local/Remote networks combination is already defined for this Phase1.");
-						break;
-					}
+					/* adding new p2 entry */
+					$input_errors[] = gettext("Phase2 with this Local/Remote networks combination is already defined for this Phase1.");
+					break;
 				}
 			}
 		}
@@ -252,7 +255,17 @@ if ($_POST) {
 
 		if (!count($ealgos)) {
 			$input_errors[] = gettext("At least one encryption algorithm must be selected.");
+		} else {
+			if (empty($pconfig['halgo'])) {
+				foreach ($ealgos as $ealgo) {
+					if (!strpos($ealgo['name'], "gcm")) {
+						$input_errors[] = gettext("At least one hashing algorithm needs to be selected.");
+						break;
+					}
+				}
+			}
 		}
+		
 	}
 	if (($_POST['lifetime'] && !is_numeric($_POST['lifetime']))) {
 		$input_errors[] = gettext("The P2 lifetime must be an integer.");
@@ -260,7 +273,9 @@ if ($_POST) {
 
 	if (!$input_errors) {
 
+		$ph2ent = array();
 		$ph2ent['ikeid'] = $pconfig['ikeid'];
+		$ph2ent['uniqid'] = $pconfig['uniqid'];
 		$ph2ent['mode'] = $pconfig['mode'];
 		$ph2ent['disabled'] = $pconfig['disabled'] ? true : false;
 
@@ -273,7 +288,10 @@ if ($_POST) {
 
 		$ph2ent['protocol'] = $pconfig['proto'];
 		$ph2ent['encryption-algorithm-option'] = $ealgos;
-		$ph2ent['hash-algorithm-option'] = $pconfig['halgos'];
+		if (!empty($pconfig['halgos']))
+			$ph2ent['hash-algorithm-option'] = $pconfig['halgos'];
+		else
+			unset($ph2ent['hash-algorithm-option']);
 		$ph2ent['pfsgroup'] = $pconfig['pfsgroup'];
 		$ph2ent['lifetime'] = $pconfig['lifetime'];
 		$ph2ent['pinghost'] = $pconfig['pinghost'];
@@ -282,26 +300,11 @@ if ($_POST) {
 		if (isset($pconfig['mobile']))
 			$ph2ent['mobile'] = true;
 
-		ipsec_lookup_phase1($ph2ent, $ph1ent);
-		if (($ph1ent['protocol'] == "inet") && ($ph2ent['mode'] == "tunnel6"))
-			$input_errors[] = gettext("Phase 1 is using IPv4. You cannot use Tunnel IPv6 on Phase 2.");
-		if (($ph1ent['protocol'] == "inet6") && ($ph2ent['mode'] == "tunnel"))
-			$input_errors[] = gettext("Phase 1 is using IPv6. You cannot use Tunnel IPv4 on Phase 2.");
-	}
-
-	if (!$input_errors) {
-		if (isset($p2index) && $a_phase2[$p2index])
+		if ($ph2found === true && $a_phase2[$p2index])
 			$a_phase2[$p2index] = $ph2ent;
 		else
 			$a_phase2[] = $ph2ent;
 
-
-		/* now we need to find all phase2 entries for this host */
-		if(is_array($ph2ent)) {
-			ipsec_lookup_phase1($ph2ent, $ph1ent);
-			$old_ph1ent = $ph1ent;
-			$old_ph1ent['remote-gateway'] = resolve_retry($old_ph1ent['remote-gateway']);
-		}
 
 		write_config();
 		mark_subsystem_dirty('ipsec');
@@ -781,15 +784,13 @@ function change_protocol() {
 					<tr>
 						<td width="22%" valign="top">&nbsp;</td>
 						<td width="78%">
-						<?php if (isset($p2index) && $a_phase2[$p2index]): ?>
-							<input name="p2index" type="hidden" value="<?=xhtmlspecialchars($p2index);?>" />
-						<?php endif; ?>
 						<?php if ($pconfig['mobile']): ?>
 							<input name="mobile" type="hidden" value="true" />
 							<input name="remoteid_type" type="hidden" value="mobile" />
 						<?php endif; ?>
 							<input name="Submit" type="submit" class="formbtn" value="<?=gettext("Save"); ?>" />
 							<input name="ikeid" type="hidden" value="<?=xhtmlspecialchars($pconfig['ikeid']);?>" />
+							<input name="uniqid" type="hidden" value="<?=xhtmlspecialchars($pconfig['uniqid']);?>" />
 						</td>
 					</tr>
 				</table>
@@ -818,7 +819,6 @@ typesel_change_remote(<?=xhtmlspecialchars($pconfig['remoteid_netbits'])?>);
 /* local utility functions */
 
 function pconfig_to_ealgos(& $pconfig) {
-
 	global $p2_ealgos;
 
 	$ealgos = array();

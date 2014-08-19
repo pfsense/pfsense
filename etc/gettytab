@@ -1,4 +1,4 @@
-# $FreeBSD: src/etc/gettytab,v 1.22 2004/06/06 11:46:27 schweikh Exp $
+# $FreeBSD: stable/10/etc/gettytab 241708 2012-10-18 22:20:02Z peterj $
 #	from: @(#)gettytab	5.14 (Berkeley) 3/27/91
 #
 # Most of the table entries here are just copies of the old getty table,
@@ -36,7 +36,7 @@
 #     ep:op:  same as ap.
 #
 default:\
-	::cb:ce:ck:lc:fd#1000:im=\r\n%s/%m (%h) (%t)\r\n\r\n:sp#1200:\
+	:cb:ce:ck:lc:fd#1000:im=\r\n%s/%m (%h) (%t)\r\n\r\n:sp#1200:\
 	:if=/etc/issue:
 
 #
@@ -96,7 +96,7 @@ local.9600|CLOCAL tty @ 9600 Bd:\
 	:o0#0x00000007:o1#0x00000002:o2#0x00000007:\
 	:i0#0x00000704:i1#0x00000000:i2#0x00000704:\
 	:l0#0x000005cf:l1#0x00000000:l2#0x000005cf:\
-	:sp#9600:
+	:sp#9600:np:
 
 #
 # Dial in rotary tables, speed selection via 'break'
@@ -162,14 +162,12 @@ X|Xwindow|X window system:\
 	:fd@:nd@:cd@:rw:sp#9600:
 
 P|Pc|Pc console:\
-	:ht:np:sp#115200:al=root:
+	:ht:np:sp#9600:
 
-bootupcli:\
-	tc=std.9600:\
-	:ht:np:sp#115200:al=root:
+al.Pc:\
+	:ht:np:sp#9600:al=root:
 
-#
-# Wierdo special case for fast crt's with hardcopy devices
+# Weirdo special case for fast crt's with hardcopy devices
 #
 8|T9600|CRT with hardcopy:\
 	:nx=T300:tc=9600-baud:
@@ -207,7 +205,17 @@ A|Auto-baud:\
 #
 
 autologin|al.9600:\
-	::tc=std.9600:
+	:al=root:tc=std.9600:
+al.19200:\
+	:al=root:tc=std.19200:
+al.38400:\
+	:al=root:tc=std.38400:
+al.57600:\
+	:al=root:tc=std.57600:
+al.115200:\
+	:al=root:tc=std.115200:
+al.230400:\
+	:al=root:tc=std.230400:
 
 #
 # Entries for 3-wire serial terminals.  These don't supply carrier, so
@@ -215,6 +223,8 @@ autologin|al.9600:\
 #
 3wire.9600|9600-3wire:\
 	:np:nc:sp#9600:
+3wire.19200|19200-3wire:\
+	:np:nc:sp#19200:
 3wire.38400|38400-3wire:\
 	:np:nc:sp#38400:
 3wire.57600|57600-3wire:\

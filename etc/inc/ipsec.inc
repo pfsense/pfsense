@@ -29,7 +29,7 @@
 	ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 	POSSIBILITY OF SUCH DAMAGE.
 
-	pfSense_BUILDER_BINARIES:	/usr/local/sbin/setkey
+	pfSense_BUILDER_BINARIES:	/sbin/setkey
 	pfSense_MODULE:	ipsec
 
 */
@@ -60,6 +60,9 @@ $peer_identifier_list = array(
 
 $p1_ealgos = array(
 	'aes' => array( 'name' => 'AES', 'keysel' => array( 'lo' => 128, 'hi' => 256, 'step' => 64 ) ),
+	'aes128gcm' => array( 'name' => 'AES128-GCM', 'keysel' => array( 'lo' => 64, 'hi' => 128, 'step' => 32 ) ),
+	'aes192gcm' => array( 'name' => 'AES192-GCM', 'keysel' => array( 'lo' => 64, 'hi' => 128, 'step' => 32 ) ),
+	'aes256gcm' => array( 'name' => 'AES256-GCM', 'keysel' => array( 'lo' => 64, 'hi' => 128, 'step' => 32 ) ),
 	'blowfish' => array( 'name' => 'Blowfish', 'keysel' => array( 'lo' => 128, 'hi' => 256, 'step' => 64 ) ),
 	'3des' => array( 'name' => '3DES' ),
 	'cast128' => array( 'name' => 'CAST128' ),
@@ -67,6 +70,9 @@ $p1_ealgos = array(
 
 $p2_ealgos = array(
 	'aes' => array( 'name' => 'AES', 'keysel' => array( 'lo' => 128, 'hi' => 256, 'step' => 64 ) ),
+	'aes128gcm' => array( 'name' => 'AES128-GCM', 'keysel' => array( 'lo' => 64, 'hi' => 128, 'step' => 32 ) ),
+	'aes192gcm' => array( 'name' => 'AES192-GCM', 'keysel' => array( 'lo' => 64, 'hi' => 128, 'step' => 32 ) ),
+	'aes256gcm' => array( 'name' => 'AES256-GCM', 'keysel' => array( 'lo' => 64, 'hi' => 128, 'step' => 32 ) ),
 	'blowfish' => array( 'name' => 'Blowfish', 'keysel' => array( 'lo' => 128, 'hi' => 256, 'step' => 64 ) ),
 	'3des' => array( 'name' => '3DES' ),
 	'cast128' => array( 'name' => 'CAST128' ),
@@ -77,7 +83,8 @@ $p1_halgos = array(
 	'sha1' => 'SHA1',
 	'sha256' => 'SHA256',
 	'sha384' => 'SHA384',
-	'sha512' => 'SHA512'
+	'sha512' => 'SHA512',
+	'aesxcbc' => 'AES-XCBC'
 );
 
 $p1_dhgroups = array(
@@ -88,7 +95,10 @@ $p1_dhgroups = array(
 	15 => '15 (3072 bit)',
 	16 => '16 (4096 bit)',
 	17 => '17 (6144 bit)',
-	18 => '18 (8192 bit)'
+	18 => '18 (8192 bit)',
+	22 => '22 (1024(sub 160) bit)',
+	23 => '23 (2048(sub 224) bit)',
+	24 => '24 (2048(sub 256) bit)'
 );
 
 $p2_halgos = array(
@@ -96,7 +106,8 @@ $p2_halgos = array(
 	'hmac_sha1' => 'SHA1',
 	'hmac_sha256' => 'SHA256',
 	'hmac_sha384' => 'SHA384',
-	'hmac_sha512' => 'SHA512'
+	'hmac_sha512' => 'SHA512',
+	'aesxcbc' => 'AES-XCBC'
 );
 
 $p1_authentication_methods = array(
@@ -313,11 +324,11 @@ function ipsec_lookup_phase1(& $ph2ent,& $ph1ent) {
 	global $config;
 
 	if (!is_array($config['ipsec']))
-		return;
+		return false;
 	if (!is_array($config['ipsec']['phase1']))
-		return;
+		return false;
 	if (empty($config['ipsec']['phase1']))
-		return;
+		return false;
 
 	foreach ($config['ipsec']['phase1'] as $ph1tmp) {
 	    if ($ph1tmp['ikeid'] == $ph2ent['ikeid']) {
@@ -332,13 +343,15 @@ function ipsec_lookup_phase1(& $ph2ent,& $ph1ent) {
 /*
  * Check phase1 communications status
  */
-function ipsec_phase1_status(& $ph1ent) {
+function ipsec_phase1_status($ipsec_status, $ikeid) {
 
-	$loc_ip = get_ipsec_tunnel_src($ph1ent);
-	$rmt_ip = $ph1ent['remote-gateway'];
-
-	if (ipsec_lookup_ipsakmp_sa($loc_ip,$rmt_ip))
-		return true;
+	foreach ($ipsec_status as $ike) {
+		if ($ike['id'] != $ikeid)
+			continue;
+		if ($ike['status'] == 'established')
+			return true;
+		break;
+	}
 
 	return false;
 }
@@ -346,23 +359,10 @@ function ipsec_phase1_status(& $ph1ent) {
 /*
  * Check phase2 communications status
  */
-function ipsec_phase2_status(& $spd,& $sad,& $ph1ent,& $ph2ent) {
+function ipsec_phase2_status($ipsec_status, &$phase2) {
 
-	$loc_ip = ipsec_get_phase1_src($ph1ent);
-	$rmt_ip = ipsec_get_phase1_dst($ph1ent);
-
-	$loc_id = ipsec_idinfo_to_cidr($ph2ent['localid'],true,$ph2ent['mode']);
-	if (!empty($ph2ent['natlocalid']))
-		$natloc_id = ipsec_idinfo_to_cidr($ph2ent['natlocalid'],true,$ph2ent['mode']);
-	$rmt_id = ipsec_idinfo_to_cidr($ph2ent['remoteid'],true,$ph2ent['mode']);
-
-	/* check for established SA in both directions */
-	if( ipsec_lookup_ipsec_sa($spd,$sad,"out",$loc_ip,$rmt_ip,$loc_id,$rmt_id)) {
-		if (empty($ph2ent['natlocalid']) && ipsec_lookup_ipsec_sa($spd,$sad,"in",$rmt_ip,$loc_ip,$rmt_id,$loc_id))
-			return true;
-		else if (!empty($ph2ent['natlocalid']) && ipsec_lookup_ipsec_sa($spd,$sad,"out",$loc_ip,$rmt_ip,$loc_id,$rmt_id))
-			return true;
-	}
+	if (ipsec_lookup_phase1($ph2ent,$ph1ent))
+		return ipsec_phase1_status($ipsec_status, $ph1ent['ikeid']);
 
 	return false;
 }
@@ -498,7 +498,7 @@ function ipsec_smp_dump_status() {
  */
 function ipsec_dump_spd()
 {
-	$fd = @popen("/usr/local/sbin/setkey -DP", "r");
+	$fd = @popen("/sbin/setkey -DP", "r");
 	$spd = array();
 	if ($fd) {
 		while (!feof($fd)) {
@@ -548,7 +548,7 @@ function ipsec_dump_spd()
  */
 function ipsec_dump_sad()
 {
-	$fd = @popen("/usr/local/sbin/setkey -D", "r");
+	$fd = @popen("/sbin/setkey -D", "r");
 	$sad = array();
 	if ($fd) {
 		while (!feof($fd)) {
@@ -654,6 +654,26 @@ function ipsec_get_number_of_phase2($ikeid) {
 	}
 
 	return $nbph2;
+}
+
+function ipsec_get_descr($ikeid) {
+	global $config;
+
+	if (!isset($config['ipsec']['phase1']) ||
+	    !is_array($config['ipsec']['phase1']))
+		return "";
+
+	$descr = '';
+	$a_phase1 = $config['ipsec']['phase1'];
+	foreach ($a_phase1 as $p1) {
+		if ($p1['ikeid'] == $ikeid) {
+			$descr = $p1['descr'];
+			break;
+		}
+	}
+	unset($a_phase1);
+
+	return $descr;
 }
 
 function ipsec_disconnect_mobile($username) {

@@ -99,6 +99,7 @@ if($_GET['act']=="new"){
 	$pconfig['local_port'] = openvpn_port_next('UDP');
 	$pconfig['pool_enable'] = "yes";
 	$pconfig['cert_depth'] = 1;
+	$pconfig['verbosity_level'] = 1; // Default verbosity is 1
 	// OpenVPN Defaults to SHA1
 	$pconfig['digest'] = "SHA1";
 }
@@ -206,6 +207,12 @@ if($_GET['act']=="edit"){
 		$pconfig['autotls_enable'] = "yes";
 
 		$pconfig['duplicate_cn'] = isset($a_server[$id]['duplicate_cn']);
+		
+		$pconfig['no_tun_ipv6'] = $a_server[$id]['no_tun_ipv6'];
+		if (isset($a_server[$id]['verbosity_level']))
+			$pconfig['verbosity_level'] = $a_server[$id]['verbosity_level'];
+		else
+			$pconfig['verbosity_level'] = 1; // Default verbosity is 1
 	}
 }
 if ($_POST) {
@@ -429,6 +436,9 @@ if ($_POST) {
 		$server['netbios_enable'] = $pconfig['netbios_enable'];
 		$server['netbios_ntype'] = $pconfig['netbios_ntype'];
 		$server['netbios_scope'] = $pconfig['netbios_scope'];
+		 
+		$server['no_tun_ipv6'] = $pconfig['no_tun_ipv6'];
+		$server['verbosity_level'] = $pconfig['verbosity_level'];
 
 		if ($pconfig['netbios_enable']) {
 
@@ -672,6 +682,7 @@ function tuntap_change() {
 	value = document.iform.dev_mode.options[index].value;
 	switch(value) {
 		case "tun":
+			document.getElementById("chkboxNoTunIPv6").style.display="";
 			document.getElementById("ipv4_tunnel_network").className="vncellreq";
 			document.getElementById("serverbridge_dhcp").style.display="none";
 			document.getElementById("serverbridge_interface").style.display="none";
@@ -680,6 +691,7 @@ function tuntap_change() {
 			document.getElementById("topology_subnet_opt").style.display="";
 			break;
 		case "tap":
+			document.getElementById("chkboxNoTunIPv6").style.display="none";
 			document.getElementById("ipv4_tunnel_network").className="vncell";
 			if (!p2p) {
 				document.getElementById("serverbridge_dhcp").style.display="";
@@ -1341,7 +1353,7 @@ if ($savemsg)
 								<?php endforeach; ?>
 							</select>
 							<br />
-							<?=gettext("Compress tunnel packets using the LZO algorithm. Adaptive compression will dynamically disable compression for a period of time if OpenVPN detects that the data in the packets is not being compressed efficiently."); ?>
+							<?=gettext("Compress tunnel packets using the LZO algorithm. Adaptive compression will dynamically disable compression for a period of time if OpenVPN detects that the data in the packets is not being compressed efficiently"); ?>.
 						</td>
 					</tr>
 					<tr>
@@ -1398,6 +1410,26 @@ if ($savemsg)
 							</table>
 						</td>
 					</tr>
+
+					<tr id="chkboxNoTunIPv6">
+						<td width="22%" valign="top" class="vncell"><?=gettext("Disable IPv6"); ?></td>
+						<td width="78%" class="vtable">
+							<table border="0" cellpadding="2" cellspacing="0" summary="disable-ipv6-srv">
+								<tr>
+									<td>
+										<?php set_checked($pconfig['no_tun_ipv6'],$chk); ?>
+										<input name="no_tun_ipv6" type="checkbox" value="yes" <?=$chk;?> />
+									</td>
+									<td>
+										<span class="vexpl">
+											<?=gettext("Don't forward IPv6 traffic"); ?>.
+										</span>
+									</td>
+								</tr>
+							</table>
+						</td>
+					</tr>
+
 				</table>
 
 				<table width="100%" border="0" cellpadding="6" cellspacing="0" id="client_opts" summary="client settings">
@@ -1725,6 +1757,29 @@ if ($savemsg)
 							</table>
 						</td>
 					</tr>
+
+					<tr id="comboboxVerbosityLevel">
+							<td width="22%" valign="top" class="vncell"><?=gettext("Verbosity level");?></td>
+							<td width="78%" class="vtable">
+							<select name="verbosity_level" class="formselect">
+							<?php
+								foreach ($openvpn_verbosity_level as $verb_value => $verb_desc):
+									$selected = "";
+									if ($pconfig['verbosity_level'] == $verb_value)
+										$selected = "selected=\"selected\"";
+							?>
+								<option value="<?=$verb_value;?>" <?=$selected;?>><?=$verb_desc;?></option>
+							<?php endforeach; ?>
+							</select>
+							<br />
+							<?=gettext("Each level shows all info from the previous levels. Level 3 is recommended if you want a good summary of what's happening without being swamped by output"); ?>.<br /> <br />
+							<strong>none</strong> -- <?=gettext("No output except fatal errors"); ?>. <br />
+							<strong>default</strong>-<strong>4</strong> -- <?=gettext("Normal usage range"); ?>. <br />
+							<strong>5</strong> -- <?=gettext("Output R and W characters to the console for each packet read and write, uppercase is used for TCP/UDP packets and lowercase is used for TUN/TAP packets"); ?>. <br />
+							<strong>6</strong>-<strong>11</strong> -- <?=gettext("Debug info range"); ?>.
+							</td>
+					</tr>
+
 				</table>
 
 				<br />

@@ -45,7 +45,7 @@ function unbound_optimization() {
      * Set the number of threads equal to number of CPUs.
      * Use 1 to disable threading, if for some reason this sysctl fails.
      */
-    $numprocs = intval(trim(`/sbin/sysctl kern.smp.cpus | /usr/bin/cut -d" " -f2`));
+    $numprocs = intval(get_single_sysctl('kern.smp.cpus'));
     if ($numprocs > 0)
         $optimization['number_threads'] = "num-threads: {$numprocs}";
     else

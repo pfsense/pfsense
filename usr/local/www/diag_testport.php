@@ -69,7 +69,7 @@ if ($_POST || $_REQUEST['host']) {
 		$input_errors[] = gettext("Please enter a valid port number.");
 	}
 
-	if (is_numeric($_REQUEST['srcport']) && !is_port($_REQUEST['srcport'])) {
+	if (!is_numeric($_REQUEST['srcport']) || !is_port($_REQUEST['srcport'])) {
 		$input_errors[] = gettext("Please enter a valid source port number, or leave the field blank.");
 	}
 
@@ -199,11 +199,11 @@ include("head.inc"); ?>
 			echo "<textarea id=\"testportCaptured\" style=\"width:98%\" name=\"code\" rows=\"15\" cols=\"66\" readonly=\"readonly\">";
 			$result = "";
 			$nc_base_cmd = "/usr/bin/nc";
-			$nc_args = "-w {$timeout}";
+			$nc_args = "-w " . escapeshellarg($timeout);
 			if (!$showtext)
 				$nc_args .= " -z ";
 			if (!empty($srcport))
-				$nc_args .= " -p {$srcport} ";
+				$nc_args .= " -p " . escapeshellarg($srcport) . " ";
 
 			/* Attempt to determine the interface address, if possible. Else try both. */
 			if (is_ipaddrv4($host)) {

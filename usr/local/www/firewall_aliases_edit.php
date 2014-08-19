@@ -722,7 +722,7 @@ if (empty($tab)) {
 							</select>
 						</td>
 						<td>
-							<input name="detail<?php echo $counter; ?>" type="text" class="formfld unknown" id="detail<?php echo $counter; ?>" size="50" value="<?=$details[$counter];?>" />
+							<input name="detail<?php echo $counter; ?>" type="text" class="formfld unknown" id="detail<?php echo $counter; ?>" size="50" value="<?=htmlspecialchars($details[$counter]);?>" />
 						</td>
 						<td>
 							<a onclick="removeRow(this); return false;" href="#"><img border="0" src="/themes/<?echo $g['theme'];?>/images/icons/icon_x.gif" alt="" title="<?=gettext("remove this entry"); ?>" /></a>
@@ -747,7 +747,7 @@ if (empty($tab)) {
 		<td width="22%" valign="top">&nbsp;</td>
 		<td width="78%">
 			<input id="submit" name="submit" type="submit" class="formbtn" value="<?=gettext("Save"); ?>" />
-			<a href="firewall_aliases.php?tab=<?=$tab;?>"><input id="cancelbutton" name="cancelbutton" type="button" class="formbtn" value="<?=gettext("Cancel"); ?>" /></a>
+			<input type="button" class="formbtn" value="<?=gettext("Cancel"); ?>" onclick="history.back()" />
 		</td>
 	</tr>
 </table>

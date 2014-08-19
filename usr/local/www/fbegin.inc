@@ -155,7 +155,7 @@ if(count($config['interfaces']) > 1) {
 	/* no use for UPnP in single-interface deployments
 	remove to reduce user confusion
 	*/
-	$services_menu[] = array(gettext("UPnP &amp; NAT-PMP"), "/pkg_edit.php?xml=miniupnpd.xml&amp;id=0");
+	$services_menu[] = array(gettext("UPnP &amp; NAT-PMP"), "/pkg_edit.php?xml=miniupnpd.xml");
 }
 $services_menu[] = array(gettext("Wake on LAN"), "/services_wol.php");
 $services_menu = msort(array_merge($services_menu, return_ext_menu("Services")),0);
@@ -241,6 +241,10 @@ if (isset($config['system']['developer'])) {
 
 }
 $diagnostics_menu = msort(array_merge($diagnostics_menu, return_ext_menu("Diagnostics")),0);
+
+$gold_menu = array();
+$gold_menu[] = array(gettext("pfSense Gold"), "https://portal.pfsense.org/gold-subscription.php");
+$gold_menu = msort(array_merge($gold_menu, return_ext_menu("Gold")),0);
 
 if(! $g['disablehelpmenu']) {
 	$help_menu = array();
@@ -343,6 +347,9 @@ if(! $g['disablehelpmenu']) {
 						</ul>
 					</li>
 					<?php endif; ?>
+					<li class="drop">
+						<div><a href="https://www.pfsense.org/gold/"><?php echo gettext("Gold"); ?></a></div>
+					</li>
 				</ul>
 			</div>
 

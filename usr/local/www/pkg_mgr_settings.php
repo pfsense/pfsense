@@ -77,7 +77,16 @@ function enable_altpkgrepourl(enable_over) {
 </script>
 </head>
 <body link="#0000CC" vlink="#0000CC" alink="#0000CC">
-<?php include("fbegin.inc");?>
+<?php include("fbegin.inc");
+
+	/* Print package server mismatch warning. See https://redmine.pfsense.org/issues/484 */
+	if (!verify_all_package_servers())
+		print_info_box(package_server_mismatch_message()); 
+
+	/* Print package server SSL warning. See https://redmine.pfsense.org/issues/484 */
+	if (check_package_server_ssl() === false)
+		print_info_box(package_server_ssl_failure_message()); ?>
+
 <?php if ($input_errors) print_input_errors($input_errors); ?>
 
 <form action="pkg_mgr_settings.php" method="post" name="iform" id="iform">
@@ -97,6 +106,16 @@ function enable_altpkgrepourl(enable_over) {
 	</tr>
 	<tr><td><div id="mainarea">
 	      <table class="tabcont" width="100%" border="0" cellpadding="6" cellspacing="0" summary="main area">
+	<tr>
+		<td colspan="2" valign="top" class="vncell">
+			<?PHP echo gettext("This page allows an alternate package repository to be configured, primarily for temporary use as a testing mechanism."); ?>
+			<?PHP echo gettext("The contents of unofficial packages servers cannot be verified and may contain malicious files."); ?>
+			<?PHP echo gettext("The package server settings should remain at their default values to ensure that verifiable and trusted packages are recevied."); ?>
+			<br/><br/>
+			<?PHP echo gettext("A warning is printed on the Dashboard and in the package manager when an unofficial package server is in use."); ?>
+			<br/><br/>
+		</td>
+	</tr>
 	<tr>
 		<td colspan="2" valign="top" class="listtopic"><?=gettext("Package Repository URL");?></td>
 	</tr>

@@ -49,7 +49,7 @@ require_once("filter.inc");
 require_once("pfsense-utils.inc");
 
 if(!$g['services_dhcp_server_enable']) {
-	Header("Location: /");
+	header("Location: /");
 	exit;
 }
 

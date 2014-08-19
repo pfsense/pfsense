@@ -80,8 +80,8 @@ if ($_GET['act'] == "del" && !empty($cpzone)) {
 					pfSense_pipe_action("pipe delete {$ipfw['dnpipe']}");
 					pfSense_pipe_action("pipe delete " . ($ipfw['dnpipe']+1));
 				}
-				pfSense_ipfw_Tableaction($cpzone, IP_FW_TABLE_DEL, 3, $ip);
-				pfSense_ipfw_Tableaction($cpzone, IP_FW_TABLE_DEL, 4, $ip);
+				pfSense_ipfw_Tableaction($cpzone, IP_FW_TABLE_XDEL, 3, $ip);
+				pfSense_ipfw_Tableaction($cpzone, IP_FW_TABLE_XDEL, 4, $ip);
 			}
 		}
 			
@@ -138,11 +138,11 @@ include("head.inc");
 			echo "any <img src=\"/themes/{$g['theme']}/images/icons/icon_in.gif\" width=\"11\" height=\"11\" align=\"middle\" alt=\"in\" /> ";
 		}
 		if($ip['dir'] == "both") {
-			echo "<img src=\"/themes/{$g['theme']}/images/icons/icon_pass.gif\" width=\"11\" height=\"11\" align=\"absmiddle\" alt=\"pass\" />   ";
+			echo "<img src=\"/themes/{$g['theme']}/images/icons/icon_pass.gif\" width=\"11\" height=\"11\" align=\"middle\" alt=\"pass\" />   ";
 		}
 		echo strtolower($ip['hostname']);
 		if($ip['dir'] == "from") {
-			echo "<img src=\"/themes/{$g['theme']}/images/icons/icon_in.gif\" width=\"11\" height=\"11\" align=\"absmiddle\" alt=\"in\" /> any";
+			echo "<img src=\"/themes/{$g['theme']}/images/icons/icon_in.gif\" width=\"11\" height=\"11\" align=\"middle\" alt=\"in\" /> any";
 		}
 		
 		?>	

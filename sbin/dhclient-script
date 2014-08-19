@@ -43,8 +43,9 @@ fi
 
 check_hostname() {
 	current_hostname=`$HOSTNAME`
-	if [ -z "$current_hostname" -o \
-	    "$current_hostname" != "$new_host_name" ]; then
+	if [ -z "$current_hostname" ] || \
+	   [ "$current_hostname" = "$old_host_name" -a \
+	     "$new_hostname" != "$old_host_name" ]; then
 		$LOGGER "New Hostname ($interface): $new_host_name"
 		$HOSTNAME $new_host_name
 	fi

@@ -63,7 +63,7 @@ if ($_REQUEST['if'])
 	$if = $_REQUEST['if'];
 
 if (empty($ifdescrs[$if])) {
-	Header("Location: interfaces.php");
+	header("Location: interfaces.php");
 	exit;
 }
 
@@ -102,6 +102,8 @@ foreach ($a_ppps as $pppid => $ppp) {
 	if ($wancfg['if'] == $ppp['if'])
 		break;
 }
+
+$type_disabled = (substr($wancfg['if'], 0, 3) == 'gre') ? 'disabled="disabled"' : '';
 
 if ($wancfg['if'] == $a_ppps[$pppid]['if']) {
 	$pconfig['pppid'] = $pppid;
@@ -463,6 +465,12 @@ if ($_POST['apply']) {
 
 	unset($input_errors);
 	$pconfig = $_POST;
+
+	if (isset($_POST['track6-interface'])) {
+		$ipv6_delegation_length = calculate_ipv6_delegation_length($_POST['track6-interface']);
+		$ipv6_num_prefix_ids = pow(2, $ipv6_delegation_length);
+	}
+
 	if (is_numeric("0x" . $_POST['track6-prefix-id--hex']))
 		$pconfig['track6-prefix-id'] = intval($_POST['track6-prefix-id--hex'], 16);
 	else
@@ -1585,7 +1593,7 @@ $types6 = array("none" => gettext("None"), "staticv6" => gettext("Static IPv6"),
 						<tr>
 							<td valign="middle" class="vncell"><strong><?=gettext("IPv4 Configuration Type"); ?></strong></td>
 							<td class="vtable">
-								<select name="type" onchange="updateType(this.value);" class="formselect" id="type">
+							<select name="type" onchange="updateType(this.value);" <?php echo $type_disabled; ?> class="formselect" id="type">
 								<?php
 									foreach ($types4 as $key => $opt) {
 										echo "<option onclick=\"updateType('{$key}');\"";
@@ -1601,7 +1609,7 @@ $types6 = array("none" => gettext("None"), "staticv6" => gettext("Static IPv6"),
 						<tr>
 							<td valign="middle" class="vncell"><strong><?=gettext("IPv6 Configuration Type"); ?></strong></td>
 							<td class="vtable">
-								<select name="type6" onchange="updateTypeSix(this.value);" class="formselect" id="type6">
+							<select name="type6" onchange="updateTypeSix(this.value);" <?php echo $type_disabled; ?> class="formselect" id="type6">
 								<?php
 									foreach ($types6 as $key => $opt) {
 										echo "<option onclick=\"updateTypeSix('{$key}');\"";

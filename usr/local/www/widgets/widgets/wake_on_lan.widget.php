@@ -39,9 +39,9 @@ else
 <table width="100%" border="0" cellpadding="0" cellspacing="0" summary="wol status">
 	<tr>
 		<?php
-		echo '<td class="widgetsubheader" align="center"><b>' . gettext("Computer / Device") . '</b></td>';
-		echo '<td class="widgetsubheader" align="center"><b>' . gettext("Interface") . '</b></td>';
-		echo '<td class="widgetsubheader" align="center"><b>' . gettext("Status") . '</b></td>';
+		echo '<td class="widgetsubheader" align="center">' . gettext("Computer / Device") . '</td>';
+		echo '<td class="widgetsubheader" align="center">' . gettext("Interface") . '</td>';
+		echo '<td class="widgetsubheader" align="center">' . gettext("Status") . '</td>';
 		?>
 		<td class="widgetsubheader">&nbsp;</td>
 	</tr>
@@ -70,7 +70,7 @@ if (count($wolcomputers) > 0) {
 		echo "</td></tr>\n";
 	}
 } else {
-	echo "<tr><td colspan=\"3\" align=\"center\">" . gettext("No saved WoL addresses") . ".</td></tr>\n";
+	echo "<tr><td colspan=\"4\" align=\"center\">" . gettext("No saved WoL addresses") . ".</td></tr>\n";
 }
 ?>
 </table>

@@ -72,7 +72,7 @@ function get_gatewaystats() {
 			$bgcolor = "#ADD8E6";  // lightblue
 		}
 		$data .= ($online == "Pending") ? "{$online},{$online}," : "{$gws['delay']},{$gws['loss']},";
-		$data .= "<table><tr><td bgcolor=\"$bgcolor\">&nbsp;$online&nbsp;</td></td></tr></table>";
+		$data .= "<table border=\"0\" cellpadding=\"0\" cellspacing=\"2\" style=\"table-layout: fixed;\" summary=\"status\"><tr><td bgcolor=\"$bgcolor\">&nbsp;$online&nbsp;</td></tr></table>";
 	}
 	return $data;
 }
@@ -114,9 +114,9 @@ function get_uptime() {
 function cpu_usage() {
 	$duration = 1;
 	$diff = array('user', 'nice', 'sys', 'intr', 'idle');
-	$cpuTicks = array_combine($diff, explode(" ", `/sbin/sysctl -n kern.cp_time`));
+	$cpuTicks = array_combine($diff, explode(" ", get_single_sysctl('kern.cp_time')));
 	sleep($duration);
-	$cpuTicks2 = array_combine($diff, explode(" ", `/sbin/sysctl -n kern.cp_time`));
+	$cpuTicks2 = array_combine($diff, explode(" ", get_single_sysctl('kern.cp_time')));
 
 	$totalStart = array_sum($cpuTicks);
 	$totalEnd = array_sum($cpuTicks2);
@@ -180,15 +180,12 @@ function get_mbuf($percent=false) {
 }
 
 function get_temp() {
-	$temp_out = "";
-	exec("/sbin/sysctl dev.cpu.0.temperature | /usr/bin/awk '{ print $2 }' | /usr/bin/cut -d 'C' -f 1", $dfout);
-	$temp_out = trim($dfout[0]);
-	if ($temp_out == "") {
-		exec("/sbin/sysctl hw.acpi.thermal.tz0.temperature | /usr/bin/awk '{ print $2 }' | /usr/bin/cut -d 'C' -f 1", $dfout);
-		$temp_out = trim($dfout[0]);
-	}
+	$temp_out = get_single_sysctl("dev.cpu.0.temperature");
+	if ($temp_out == "")
+		$temp_out = get_single_sysctl("hw.acpi.thermal.tz0.temperature");
 
-	return $temp_out;
+	// Remove 'C' from the end
+	return rtrim($temp_out, 'C');
 }
 
 /* Get mounted filesystems and usage. Do not display entries for virtual filesystems (e.g. devfs, nullfs, unionfs) */
@@ -232,16 +229,14 @@ function swap_usage() {
 }
 
 function mem_usage() {
-	$memory = "";
-	exec("/sbin/sysctl -n vm.stats.vm.v_page_count vm.stats.vm.v_inactive_count " .
-		"vm.stats.vm.v_cache_count vm.stats.vm.v_free_count", $memory);
-
-	$totalMem = $memory[0];
-	$availMem = $memory[1] + $memory[2] + $memory[3];
-	$usedMem = $totalMem - $availMem;
-	if ($totalMem > 0)
+	$totalMem = get_single_sysctl("vm.stats.vm.v_page_count");
+	if ($totalMem > 0) {
+		$inactiveMem = get_single_sysctl("vm.stats.vm.v_inactive_count");
+		$cachedMem = get_single_sysctl("vm.stats.vm.v_cache_count");
+		$freeMem = get_single_sysctl("vm.stats.vm.v_free_count");
+		$usedMem = $totalMem - ($inactiveMem + $cachedMem + $freeMem);
 		$memUsage = round(($usedMem * 100) / $totalMem, 0);
-	else
+	} else
 		$memUsage = "NA";
 
 	return $memUsage;
@@ -255,22 +250,18 @@ function update_date_time() {
 function get_cpufreq() {
 	$cpufreqs = "";
 	$out = "";
-	exec("/sbin/sysctl -n dev.cpu.0.freq_levels", $cpufreqs);
-	$cpufreqs = explode(" ", trim($cpufreqs[0]));
+	$cpufreqs = explode(" ", get_single_sysctl('dev.cpu.0.freq_levels'));
 	$maxfreq = explode("/", $cpufreqs[0]);
 	$maxfreq = $maxfreq[0];
 	$curfreq = "";
-	exec("/sbin/sysctl -n dev.cpu.0.freq", $curfreq);
-	$curfreq = trim($curfreq[0]);
+	$curfreq = get_single_sysctl('dev.cpu.0.freq');
 	if (($curfreq > 0) && ($curfreq != $maxfreq))
 		$out = "Current: {$curfreq} MHz, Max: {$maxfreq} MHz";
 	return $out;
 }
 
 function get_cpu_count($show_detail = false) {
-	$cpucount = "";
-	exec("/sbin/sysctl -n kern.smp.cpus", $cpucount);
-	$cpucount = $cpucount[0];
+	$cpucount = get_single_sysctl('kern.smp.cpus');
 
 	if ($show_detail) {
 		$cpudetail = "";

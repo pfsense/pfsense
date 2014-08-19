@@ -148,3 +148,4 @@
 /usr/local/lib/php/20090626/zlib.so
 /usr/local/lib/php/20090626/zmq.so
 /usr/sbin/clog
+/etc/ttys_wrap

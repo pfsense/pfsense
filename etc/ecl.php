@@ -61,9 +61,8 @@ function get_disk_slices($disk) {
 function get_disks() {
 	global $g, $debug;
 	$disks_array = array();
-	$disks = exec("/sbin/sysctl -n kern.disks");
-	$disks_s = explode(" ", $disks);
-	foreach($disks_s as $disk) 
+	$disks_s = explode(" ", get_single_sysctl("kern.disks"));
+	foreach($disks_s as $disk)
 		if(trim($disk))
 			$disks_array[] = $disk;
 	return $disks_array;

@@ -45,7 +45,7 @@ function set_default_gps() {
 
 	if (!is_array($config['ntpd']))
 		$config['ntpd'] = array();
-	 if (is_array($config['ntpd']['gps']))
+	if (is_array($config['ntpd']['gps']))
 		unset($config['ntpd']['gps']);
 
 	$config['ntpd']['gps'] = array();
@@ -65,93 +65,90 @@ if ($_POST) {
 
 	unset($input_errors);
 
-	if (!$input_errors) {
-		if (!empty($_POST['gpsport']) && file_exists('/dev/'.$_POST['gpsport']))
-			$config['ntpd']['gps']['port'] = $_POST['gpsport'];
-		/* if port is not set, remove all the gps config */
-		else unset($config['ntpd']['gps']);
+	if (!empty($_POST['gpsport']) && file_exists('/dev/'.$_POST['gpsport']))
+		$config['ntpd']['gps']['port'] = $_POST['gpsport'];
+	/* if port is not set, remove all the gps config */
+	else unset($config['ntpd']['gps']);
 
-		if (!empty($_POST['gpstype']))
-			$config['ntpd']['gps']['type'] = $_POST['gpstype'];
-		elseif (isset($config['ntpd']['gps']['type']))
-			unset($config['ntpd']['gps']['type']);
+	if (!empty($_POST['gpstype']))
+		$config['ntpd']['gps']['type'] = 'Custom';
+	elseif (isset($config['ntpd']['gps']['type']))
+		unset($config['ntpd']['gps']['type']);
 
-		if (!empty($_POST['gpsspeed']))
-			$config['ntpd']['gps']['speed'] = $_POST['gpsspeed'];
-		elseif (isset($config['ntpd']['gps']['speed']))
-			unset($config['ntpd']['gps']['speed']);
+	if (!empty($_POST['gpsspeed']))
+		$config['ntpd']['gps']['speed'] = $_POST['gpsspeed'];
+	elseif (isset($config['ntpd']['gps']['speed']))
+		unset($config['ntpd']['gps']['speed']);
 
-		if (!empty($_POST['gpsnmea']) && ($_POST['gpsnmea'][0] === "0"))
-			$config['ntpd']['gps']['nmea'] = "0";
-		else
-			$config['ntpd']['gps']['nmea'] = strval(array_sum($_POST['gpsnmea']));
+	if (!empty($_POST['gpsnmea']) && ($_POST['gpsnmea'][0] === "0"))
+		$config['ntpd']['gps']['nmea'] = "0";
+	else
+		$config['ntpd']['gps']['nmea'] = strval(array_sum($_POST['gpsnmea']));
 
-		if (!empty($_POST['gpsfudge1']))
-			$config['ntpd']['gps']['fudge1'] = $_POST['gpsfudge1'];
-		elseif (isset($config['ntpd']['gps']['fudge1']))
-			unset($config['ntpd']['gps']['fudge1']);
+	if (!empty($_POST['gpsfudge1']))
+		$config['ntpd']['gps']['fudge1'] = $_POST['gpsfudge1'];
+	elseif (isset($config['ntpd']['gps']['fudge1']))
+		unset($config['ntpd']['gps']['fudge1']);
 
-		if (!empty($_POST['gpsfudge2']))
-			$config['ntpd']['gps']['fudge2'] = $_POST['gpsfudge2'];
-		elseif (isset($config['ntpd']['gps']['fudge2']))
-			unset($config['ntpd']['gps']['fudge2']);
+	if (!empty($_POST['gpsfudge2']))
+		$config['ntpd']['gps']['fudge2'] = $_POST['gpsfudge2'];
+	elseif (isset($config['ntpd']['gps']['fudge2']))
+		unset($config['ntpd']['gps']['fudge2']);
 
-		if (!empty($_POST['gpsstratum']) && ($_POST['gpsstratum']) < 17 )
-			$config['ntpd']['gps']['stratum'] = $_POST['gpsstratum'];
-		elseif (isset($config['ntpd']['gps']['stratum']))
-			unset($config['ntpd']['gps']['stratum']);
+	if (!empty($_POST['gpsstratum']) && ($_POST['gpsstratum']) < 17 )
+		$config['ntpd']['gps']['stratum'] = $_POST['gpsstratum'];
+	elseif (isset($config['ntpd']['gps']['stratum']))
+		unset($config['ntpd']['gps']['stratum']);
 
-		if (empty($_POST['gpsprefer']))
-			$config['ntpd']['gps']['prefer'] = 'on';
-		elseif (isset($config['ntpd']['gps']['prefer']))
-			unset($config['ntpd']['gps']['prefer']);
+	if (empty($_POST['gpsprefer']))
+		$config['ntpd']['gps']['prefer'] = 'on';
+	elseif (isset($config['ntpd']['gps']['prefer']))
+		unset($config['ntpd']['gps']['prefer']);
 
-		if (!empty($_POST['gpsselect']))
-			$config['ntpd']['gps']['noselect'] = $_POST['gpsselect'];
-		elseif (isset($config['ntpd']['gps']['noselect']))
-			unset($config['ntpd']['gps']['noselect']);
+	if (!empty($_POST['gpsselect']))
+		$config['ntpd']['gps']['noselect'] = $_POST['gpsselect'];
+	elseif (isset($config['ntpd']['gps']['noselect']))
+		unset($config['ntpd']['gps']['noselect']);
 
-		if (!empty($_POST['gpsflag1']))
-			$config['ntpd']['gps']['flag1'] = $_POST['gpsflag1'];
-		elseif (isset($config['ntpd']['gps']['flag1']))
-			unset($config['ntpd']['gps']['flag1']);
+	if (!empty($_POST['gpsflag1']))
+		$config['ntpd']['gps']['flag1'] = $_POST['gpsflag1'];
+	elseif (isset($config['ntpd']['gps']['flag1']))
+		unset($config['ntpd']['gps']['flag1']);
 
-		if (!empty($_POST['gpsflag2']))
-			$config['ntpd']['gps']['flag2'] = $_POST['gpsflag2'];
-		elseif (isset($config['ntpd']['gps']['flag2']))
-			unset($config['ntpd']['gps']['flag2']);
+	if (!empty($_POST['gpsflag2']))
+		$config['ntpd']['gps']['flag2'] = $_POST['gpsflag2'];
+	elseif (isset($config['ntpd']['gps']['flag2']))
+		unset($config['ntpd']['gps']['flag2']);
 
-		if (!empty($_POST['gpsflag3']))
-			$config['ntpd']['gps']['flag3'] = $_POST['gpsflag3'];
-		elseif (isset($config['ntpd']['gps']['flag3']))
-			unset($config['ntpd']['gps']['flag3']);
+	if (!empty($_POST['gpsflag3']))
+		$config['ntpd']['gps']['flag3'] = $_POST['gpsflag3'];
+	elseif (isset($config['ntpd']['gps']['flag3']))
+		unset($config['ntpd']['gps']['flag3']);
 
-		if (!empty($_POST['gpsflag4']))
-			$config['ntpd']['gps']['flag4'] = $_POST['gpsflag4'];
-		elseif (isset($config['ntpd']['gps']['flag4']))
-			unset($config['ntpd']['gps']['flag4']);
+	if (!empty($_POST['gpsflag4']))
+		$config['ntpd']['gps']['flag4'] = $_POST['gpsflag4'];
+	elseif (isset($config['ntpd']['gps']['flag4']))
+		unset($config['ntpd']['gps']['flag4']);
 
-		if (!empty($_POST['gpssubsec']))
-			$config['ntpd']['gps']['subsec'] = $_POST['gpssubsec'];
-		elseif (isset($config['ntpd']['gps']['subsec']))
-			unset($config['ntpd']['gps']['subsec']);
+	if (!empty($_POST['gpssubsec']))
+		$config['ntpd']['gps']['subsec'] = $_POST['gpssubsec'];
+	elseif (isset($config['ntpd']['gps']['subsec']))
+		unset($config['ntpd']['gps']['subsec']);
 
-		if (!empty($_POST['gpsrefid']))
-			$config['ntpd']['gps']['refid'] = $_POST['gpsrefid'];
-		elseif (isset($config['ntpd']['gps']['refid']))
-			unset($config['ntpd']['gps']['refid']);
-			
-		if (!empty($_POST['gpsinitcmd']))
-			$config['ntpd']['gps']['initcmd'] = base64_encode($_POST['gpsinitcmd']);
-		elseif (isset($config['ntpd']['gps']['initcmd']))
-			unset($config['ntpd']['gps']['initcmd']);
+	if (!empty($_POST['gpsrefid']))
+		$config['ntpd']['gps']['refid'] = $_POST['gpsrefid'];
+	elseif (isset($config['ntpd']['gps']['refid']))
+		unset($config['ntpd']['gps']['refid']);
 
-		write_config("Updated NTP GPS Settings");
+	if (!empty($_POST['gpsinitcmd']))
+		$config['ntpd']['gps']['initcmd'] = base64_encode($_POST['gpsinitcmd']);
+	elseif (isset($config['ntpd']['gps']['initcmd']))
+		unset($config['ntpd']['gps']['initcmd']);
 
-		$retval = 0;
-		$retval = system_ntp_configure();
-		$savemsg = get_std_save_message($retval);
-	}
+	write_config("Updated NTP GPS Settings");
+
+	$retval = system_ntp_configure();
+	$savemsg = get_std_save_message($retval);
 } else {
 	/* set defaults if they do not already exist */
 	if (!is_array($config['ntpd']) || !is_array($config['ntpd']['gps']) || empty($config['ntpd']['gps']['type'])) {
@@ -172,14 +169,14 @@ include("head.inc");
 		aodiv = document.getElementById(configvalueID);
 		aodiv.style.display = "block";
 	}
-	
+
 	function ToggleOther(clicked, checkOff) {
 		if (document.getElementById(clicked).checked) {
 			document.getElementById(checkOff).checked=false;
 		}
 	}
 
-<?php /*	
+/*
 init commands are Base64 encoded
 Default =	#Sponsored, probably a Ublox
 		$PUBX,40,GSV,0,0,0,0*59
@@ -195,7 +192,7 @@ Default =	#Sponsored, probably a Ublox
 		$PUBX,40,ZDA,1,1,1,1
 
 Generic =					#do nothing
-		
+
 Garmin =	#most Garmin
 		$PGRMC,,,,,,,,,,3,,2,4*52	#enable PPS @ 100ms
 		$PGRMC1,,1,,,,,,W,,,,,,,*30	#enable WAAS
@@ -215,7 +212,7 @@ MediaTek =	#Adafruit, Fastrax, some Garmin and others
 		$PMTK251,4800*14		#4800 baud rate
 
 SiRF =		#used by many devices
- 		$PSRF103,00,00,01,01*25		#turn on GGA
+		$PSRF103,00,00,01,01*25		#turn on GGA
 		$PSRF103,01,00,01,01*24		#turn on GLL
 		$PSRF103,02,00,00,01*24		#turn off GSA
 		$PSRF103,03,00,00,01*24		#turn off GSV
@@ -239,7 +236,7 @@ U-Blox =	#U-Blox 5, 6 and probably 7
 		$PUBX,40,TXT,0,0,0,0,0,0*43	#turn off TXT all ports
 		$PUBX,40,THS,0,0,0,0,0,0*54	#turn off THS all ports (U-Blox 6)
 		$PUBX,41,1,0007,0003,4800,0*13	# set port 1 to 4800 baud
-		
+
 SureGPS = 		#Sure Electronics SKG16B
 		$PMTK225,0*2B
 		$PMTK314,1,1,0,1,0,5,0,0,0,0,0,0,0,0,0,0,0,1,0*2D
@@ -251,8 +248,8 @@ SureGPS = 		#Sure Electronics SKG16B
 		$PMTK319,0*25
 		$PMTK527,0.00*00
 		$PMTK251,9600*17	#really needs to work at 9600 baud
-		
-*/ ?>
+
+*/
 
 	function set_gps_default(form) {
 		//This handles a new config and also a reset to a defined default config
@@ -278,7 +275,7 @@ SureGPS = 		#Sure Electronics SKG16B
 				gpsdef['fudge2'] = "0.600";
 				gpsdef['inittxt'] = "JFBHUk1DLCwsLCwsLCwsLDMsLDIsOCo1RQ0KJFBHUk1DMSwsMSwsLCwsLFcsLCwsLCwsKjMwDQokUEdSTU8sLDMqNzQNCiRQR1JNTyxHUFJNQywxKjNEDQokUEdSTU8sR1BHR0EsMSoyMA0KJFBHUk1PLEdQR0xMLDEqMjYNCg==";
 				break;
-								
+
 			case "Generic":
 				gpsdef['nmea'] = 0;
 				gpsdef['speed'] = 0;
@@ -318,8 +315,9 @@ SureGPS = 		#Sure Electronics SKG16B
 				gpsdef['fudge2'] = "0.407";
 				gpsdef['inittxt'] = "JFBNVEsyMjUsMCoyQg0KJFBNVEszMTQsMSwxLDAsMSwwLDUsMCwwLDAsMCwwLDAsMCwwLDAsMCwwLDEsMCoyRA0KJFBNVEszMDEsMioyRQ0KJFBNVEszOTcsMCoyMw0KJFBNVEsxMDIqMzENCiRQTVRLMzEzLDEqMkUNCiRQTVRLNTEzLDEqMjgNCiRQTVRLMzE5LDAqMjUNCiRQTVRLNTI3LDAuMDAqMDANCiRQTVRLMjUxLDk2MDAqMTcNCg==";
 				break;
-
-			}
+			default:
+				return;
+		}
 
 		//then update the html and set the common stuff
 		document.getElementById("gpsnmea").selectedIndex = gpsdef['nmea'];
@@ -362,19 +360,16 @@ SureGPS = 		#Sure Electronics SKG16B
 <?php if ($savemsg) print_info_box($savemsg); ?>
 
 <table width="100%" border="0" cellpadding="0" cellspacing="0" summary="ntpd gps">
-  <tr>
-	<td>
+	<tr><td>
 <?php
-	$tab_array = array();
-	$tab_array[] = array(gettext("NTP"), false, "services_ntpd.php");
-	$tab_array[] = array(gettext("Serial GPS"), true, "services_ntpd_gps.php");
-	$tab_array[] = array(gettext("PPS"), false, "services_ntpd_pps.php");
-	display_top_tabs($tab_array);
+		$tab_array = array();
+		$tab_array[] = array(gettext("NTP"), false, "services_ntpd.php");
+		$tab_array[] = array(gettext("Serial GPS"), true, "services_ntpd_gps.php");
+		$tab_array[] = array(gettext("PPS"), false, "services_ntpd_pps.php");
+		display_top_tabs($tab_array);
 ?>
-	</td>
-  </tr>
-  <tr>
-	<td>
+	</td></tr>
+	<tr><td>
 	<div id="mainarea">
 	<table class="tabcont" width="100%" border="0" cellpadding="6" cellspacing="0" summary="main area">
 		<tr>
@@ -391,8 +386,9 @@ SureGPS = 		#Sure Electronics SKG16B
 		<tr>
 			<td width="22%" valign="top" class="vncellreq"><?=gettext("GPS"); ?></td>
 			<td width="78%" valign="top" class="vtable">
-			<?php /* Start with the original "Default", list a "Generic" and then specific configs alphabetically */ ?>
+				<!-- Start with the original "Default", list a "Generic" and then specific configs alphabetically -->
 				<select id="gpstype" name="gpstype" class="formselect" onchange="set_gps_default(this.form)">
+					<option value="Custom"<?php if($pconfig['type'] == 'Custom') echo " selected=\"selected\""; ?>>Custom</option>
 					<option value="Default"<?php if($pconfig['type'] == 'Default') echo " selected=\"selected\""; ?>>Default</option>
 					<option value="Generic" title="Generic"<?php if($pconfig['type'] == 'Generic') echo " selected=\"selected\"";?>>Generic</option>
 					<option value="Garmin" title="$PGRM... Most Garmin"<?php if($pconfig['type'] == 'Garmin') echo " selected=\"selected\"";?>>Garmin</option>
@@ -403,25 +399,31 @@ SureGPS = 		#Sure Electronics SKG16B
 				</select> <?php echo gettext("This option allows you to select a predefined configuration.");?>
 				<br />
 				<br />
-				<strong><?php echo gettext(" Note: ");?></strong><?php echo gettext("Default is the configuration of pfSense 2.1 and earlier"); ?>
-				<?php echo gettext(" (not recommended). Select Generic if your GPS is not listed.)"); ?>
-				<strong><?php echo gettext(" Note: ");?></strong><?php echo gettext("The perdefined configurations assume your GPS has already been set to NMEA mode."); ?>
+				<strong><?php echo gettext("Note: ");?></strong><?php echo gettext("Default is the configuration of pfSense 2.1 and earlier"); ?>
+				<?php echo gettext(" (not recommended). Select Generic if your GPS is not listed.)"); ?><br />
+				<strong><?php echo gettext("Note: ");?></strong><?php echo gettext("The perdefined configurations assume your GPS has already been set to NMEA mode."); ?>
 			</td>
 		</tr>
 
-<?php /* Probing would be nice, but much more complex. Would need to listen to each port for 1s+ and watch for strings. */ ?>
-<?php $serialports = glob("/dev/cua?[0-9]{,.[0-9]}", GLOB_BRACE); ?>
-<?php if (!empty($serialports)): ?>
+<?php
+	/* Probing would be nice, but much more complex. Would need to listen to each port for 1s+ and watch for strings. */
+	$serialports = glob("/dev/cua?[0-9]{,.[0-9]}", GLOB_BRACE);
+	if (!empty($serialports)):
+?>
 		<tr>
 			<td width="22%" valign="top" class="vncellreq">Serial port</td>
 			<td width="78%" class="vtable">
 				<select name="gpsport" class="formselect">
 					<option value="">none</option>
-					<?php foreach ($serialports as $port):
-						$shortport = substr($port,5);
-						$selected = ($shortport == $pconfig['port']) ? " selected=\"selected\"" : "";?>
-						<option value="<?php echo $shortport;?>"<?php echo $selected;?>><?php echo $shortport;?></option>
-					<?php endforeach; ?>
+<?php
+				foreach ($serialports as $port):
+					$shortport = substr($port,5);
+					$selected = ($shortport == $pconfig['port']) ? " selected=\"selected\"" : "";
+?>
+					<option value="<?php echo $shortport;?>"<?php echo $selected;?>><?php echo $shortport;?></option>
+<?php
+				endforeach;
+?>
 				</select>&nbsp;
 				<?php echo gettext("All serial ports are listed, be sure to pick the port with the GPS attached."); ?>
 				<br /><br />
@@ -438,9 +440,11 @@ SureGPS = 		#Sure Electronics SKG16B
 				<?php echo gettext("Note: A higher baud rate is generally only helpful if the GPS is sending too many sentences. It is recommended to configure the GPS to send only one sentence at a baud rate of 4800 or 9600."); ?>
 			</td>
 		</tr>
-<?php endif; ?>
+<?php
+	endif;
+?>
 		<tr>
-<?php /* 1 = RMC, 2 = GGA, 4 = GLL, 8 = ZDA or ZDG */?>
+			<!-- 1 = RMC, 2 = GGA, 4 = GLL, 8 = ZDA or ZDG -->
 			<td width="22%" valign="top" class="vncellreq">NMEA sentences</td>
 			<td width="78%" class="vtable">
 				<select id="gpsnmea" name="gpsnmea[]" multiple="multiple" class="formselect" size="5">
@@ -572,8 +576,7 @@ SureGPS = 		#Sure Electronics SKG16B
 		</tr>
 	</table>
 	</div>
-	</td>
-  </tr>
+	</td></tr>
 </table>
 <script type="text/javascript">
 //<![CDATA[

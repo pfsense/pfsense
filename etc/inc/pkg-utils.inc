@@ -196,7 +196,7 @@ function get_pkg_sizes($pkgs = 'all') {
 		"freebsd_machine" => $freebsd_machine
 	);
 	$msg = new XML_RPC_Message('pfsense.get_pkg_sizes', array(php_value_to_xmlrpc($params)));
-	$xmlrpc_base_url = isset($config['system']['altpkgrepo']['enable']) ? $config['system']['altpkgrepo']['xmlrpcbaseurl'] : $g['xmlrpcbaseurl'];
+	$xmlrpc_base_url = get_active_xml_rpc_base_url();
 	$cli = new XML_RPC_Client($g['xmlrpcpath'], $xmlrpc_base_url);
 	$resp = $cli->send($msg, 10);
 	if(!is_object($resp))
@@ -491,7 +491,7 @@ function pkg_fetch_recursive($pkgname, $filename, $dependlevel = 0, $base_url = 
 
 		/* FreeBSD has no PBI's hosted, so fall back to our own URL for now. (Maybe fail to PC-BSD?) */
 		$rel = get_freebsd_version();
-		$priv_url = "http://files.pfsense.org/packages/{$rel}/All/";
+		$priv_url = "https://files.pfsense.org/packages/{$rel}/All/";
 		if (empty($base_url))
 			$base_url = $priv_url;
 		if (substr($base_url, -1) == "/")
@@ -524,10 +524,32 @@ function pkg_fetch_recursive($pkgname, $filename, $dependlevel = 0, $base_url = 
 		$result = exec("/usr/local/sbin/pbi_add " . $pkgstaging . " -f -v {$no_checksig} " . escapeshellarg($fetchto) . " 2>&1", $pkgaddout, $rc);
 		pkg_debug($pkgname . " " . print_r($pkgaddout, true) . "\n");
 		if ($rc == 0) {
-			$links = get_pbi_binaries(escapeshellarg(preg_replace('/\.pbi$/','',$filename)));
+			$pbi_name = preg_replace('/\.pbi$/','',$filename);
+
+			$gb = exec("/usr/local/sbin/pbi_info {$pbi_name} | /usr/bin/awk '/Prefix/ {print $2}'", $pbi_prefix);
+			$pbi_prefix = $pbi_prefix[0];
+
+			$links = get_pbi_binaries(escapeshellarg($pbi_name));
 			foreach($links as $link) {
 				@unlink("/usr/local/{$link['link_name']}");
 				@symlink("{$link['target']}","/usr/local/{$link['link_name']}");
+			}
+
+			$extra_links = array(
+				array("target" => "bin", "link_name" => "sbin"),
+				array("target" => "local/lib", "link_name" => "lib"),
+				array("target" => "local/libexec", "link_name" => "libexec"),
+				array("target" => "local/share", "link_name" => "share"),
+				array("target" => "local/www", "link_name" => "www"),
+				array("target" => "local/etc", "link_name" => "etc")
+			);
+
+			foreach ($extra_links as $link) {
+				if (!file_exists($pbi_prefix . "/" . $link['target']))
+					continue;
+				@rmdir("{$pbi_prefix}/{$link['link_name']}");
+				unlink_if_exists("{$pbi_prefix}/{$link['link_name']}");
+				@symlink("{$pbi_prefix}/{$link['target']}", "{$pbi_prefix}/{$link['link_name']}");
 			}
 			pkg_debug("pbi_add successfully completed.\n");
 		} else {
@@ -1260,7 +1282,7 @@ function pkg_reinstall_all() {
 		if ($pkg_info) {
 			echo " Done.\n";
 		} else {
-			$xmlrpc_base_url = isset($config['system']['altpkgrepo']['enable']) ? $config['system']['altpkgrepo']['xmlrpcbaseurl'] : $g['xmlrpcbaseurl'];
+			$xmlrpc_base_url = get_active_xml_rpc_base_url();
 			$error = sprintf(gettext(' >>> Unable to communicate with %1$s. Please verify DNS and interface configuration, and that %2$s has functional Internet connectivity.'), $xmlrpc_base_url, $g['product_name']);
 			echo "\n{$error}\n";
 			log_error(gettext("Cannot reinstall packages: ") . $error);
@@ -1389,4 +1411,81 @@ function get_pkg_interfaces_select_source($include_localhost=false) {
 	}
 	return $ssifs;
 }
+
+function verify_all_package_servers() {
+	return verify_package_server(get_active_xml_rpc_base_url());
+}
+
+/* Check if the active package server is a valid default or if it has been
+	altered. */
+function verify_package_server($server) {
+	/* Define the expected default package server domains. Include
+		preceding "." to prevent matching from being too liberal. */
+	$default_package_domains = array('.pfsense.org', '.pfsense.com', '.netgate.com');
+
+	/* For this test we only need to check the hostname. */
+	$xmlrpcbase = parse_url($server, PHP_URL_HOST);
+
+	foreach ($default_package_domains as $dom) {
+		if (substr($xmlrpcbase, -(strlen($dom))) == $dom) {
+			return true;
+		}
+	}
+	return false;
+}
+
+/* Test the package server certificate to ensure that it validates properly */
+function check_package_server_ssl() {
+	global $g;
+	$xmlrpcurl = get_active_xml_rpc_base_url() . $g['xmlrpcpath'];
+
+	/* If the package server is using HTTP, we can't verify SSL */
+	if (substr($xmlrpcurl, 0, 5) == "http:") {
+		return "http";
+	}
+
+	/* Setup a basic cURL connection. We do not care about the content of
+		the result, only the SSL verification. */
+	$ch = curl_init($xmlrpcurl);
+	curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+	curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, true);
+	curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, '30');
+	curl_setopt($ch, CURLOPT_TIMEOUT, 60);
+	curl_setopt($ch, CURLOPT_USERAGENT, $g['product_name'] . '/' . rtrim(file_get_contents("/etc/version")));
+	$result_page = curl_exec($ch);
+	$verifyfail = curl_getinfo($ch, CURLINFO_SSL_VERIFYRESULT);
+	curl_close($ch);
+
+	/* The result from curl is 1 on failure, 0 on success. */
+	if ($verifyfail == 0)
+		return true;
+	else
+		return false;
+}
+
+/* Keep this message centrally since it will be used several times on pages
+	in the GUI. */
+function package_server_ssl_failure_message() {
+	$msg = "The package server's SSL certificate could not be verified. "
+	. "The SSL certificate itself may be invalid, its chain of trust may "
+	. "have failed validation, or the server may have been impersonated. "
+	. "Downloaded packages may come from an untrusted source. "
+	. "Proceed with caution.";
+
+	return sprintf(gettext($msg), htmlspecialchars(get_active_xml_rpc_base_url()));
+}
+
+/* Keep this message centrally since it will be used several times on pages
+	in the GUI. */
+function package_server_mismatch_message() {
+	$msg = "The package server currently configured on "
+	. "this firewall (%s) is NOT an official package server. The contents "
+	. "of such servers cannot be verified and may contain malicious files. "
+	. "Return the package server settings to their default values to "
+	. "ensure that verifiable and trusted packages are received.";
+
+	return sprintf(gettext($msg), htmlspecialchars(get_active_xml_rpc_base_url())) . '<br/><br/>'
+	. '<a href="/pkg_mgr_settings.php">' . gettext("Package Manager Settings") . '</a>';
+}
+
 ?>

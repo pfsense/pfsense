@@ -9,23 +9,23 @@
 	Redistribution and use in source and binary forms, with or without
 	modification, are permitted provided that the following conditions are met:
 
-    1. Redistributions of source code must retain the above copyright notice,
-       this list of conditions and the following disclaimer.
+	1. Redistributions of source code must retain the above copyright notice,
+	   this list of conditions and the following disclaimer.
 
-    2. Redistributions in binary form must reproduce the above copyright
-       notice, this list of conditions and the following disclaimer in the
-       documentation and/or other materials provided with the distribution.
+	2. Redistributions in binary form must reproduce the above copyright
+	   notice, this list of conditions and the following disclaimer in the
+	   documentation and/or other materials provided with the distribution.
 
-    THIS SOFTWARE IS PROVIDED ``AS IS'' AND ANY EXPRESS OR IMPLIED WARRANTIES,
-    INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY
-    AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE
-    AUTHOR BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY,
-    OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
-    SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
-    INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
-    CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
-    ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
-    POSSIBILITY OF SUCH DAMAGE.
+	THIS SOFTWARE IS PROVIDED ``AS IS'' AND ANY EXPRESS OR IMPLIED WARRANTIES,
+	INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY
+	AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE
+	AUTHOR BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY,
+	OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+	SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+	INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+	CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+	ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+	POSSIBILITY OF SUCH DAMAGE.
 */
 /*
 	pfSense_MODULE:	dnsresolver
@@ -42,22 +42,6 @@ require_once("guiconfig.inc");
 require_once("unbound.inc");
 require_once("pfsense-utils.inc");
 
-$pconfig['enable'] = isset($config['unbound']['enable']);
-$pconfig['port'] = $config['unbound']['port'];
-if (empty($config['unbound']['active_interface']))
-	$pconfig['active_interface'] = array();
-else
-	$pconfig['active_interface'] = explode(",", $config['unbound']['active_interface']);
-if (empty($config['unbound']['outgoing_interface']))
-	$pconfig['outgoing_interface'] = array();
-else
-	$pconfig['outgoing_interface'] = explode(",", $config['unbound']['outgoing_interface']);
-$pconfig['dnssec'] = isset($config['unbound']['dnssec']);
-$pconfig['forwarding'] = isset($config['unbound']['forwarding']);
-$pconfig['regdhcp'] = isset($config['unbound']['regdhcp']);
-$pconfig['regdhcpstatic'] = isset($config['unbound']['regdhcpstatic']);
-$pconfig['txtsupport'] = isset($config['unbound']['txtsupport']);
-
 if (!is_array($config['unbound']))
 	$config['unbound'] = array();
 $a_unboundcfg =& $config['unbound'];
@@ -70,70 +54,117 @@ if (!is_array($config['unbound']['domainoverrides']))
 	$config['unbound']['domainoverrides'] = array();
 $a_domainOverrides = &$config['unbound']['domainoverrides'];
 
-if ($_POST) {
+if (isset($config['unbound']['enable']))
+	$pconfig['enable'] = true;
+if (isset($config['unbound']['dnssec']))
+	$pconfig['dnssec'] = true;
+if (isset($config['unbound']['forwarding']))
+	$pconfig['forwarding'] = true;
+if (isset($config['unbound']['regdhcp']))
+	$pconfig['regdhcp'] = true;
+if (isset($config['unbound']['regdhcpstatic']))
+	$pconfig['regdhcpstatic'] = true;
+if (isset($config['unbound']['txtsupport']))
+	$pconfig['txtsupport'] = true;
 
+$pconfig['port'] = $config['unbound']['port'];
+$pconfig['custom_options'] = $config['unbound']['custom_options'];
+
+if (empty($config['unbound']['active_interface']))
+	$pconfig['active_interface'] = array();
+else
+	$pconfig['active_interface'] = explode(",", $config['unbound']['active_interface']);
+if (empty($config['unbound']['outgoing_interface']))
+	$pconfig['outgoing_interface'] = array();
+else
+	$pconfig['outgoing_interface'] = explode(",", $config['unbound']['outgoing_interface']);
+
+if ($_POST) {
 	$pconfig = $_POST;
 	unset($input_errors);
 
-	if ($_POST['enable'] == "yes" && isset($config['dnsmasq']['enable']))
-		$input_errors[] = "The system dns-forwarder is still active. Disable it before enabling the DNS Resolver.";
-
-	if (empty($_POST['active_interface']))
-		$input_errors[] = "A single network interface needs to be selected for the DNS Resolver to bind to.";
-
-	if (empty($_POST['outgoing_interface']))
-		$input_errors[] = "A single outgoing network interface needs to be selected for the DNS Resolver to use for outgoing DNS requests.";
-
-	if ($_POST['port'])
-		if (is_port($_POST['port']))
-			$a_unboundcfg['port'] = $_POST['port'];
-		else
-			$input_errors[] = gettext("You must specify a valid port number.");
-	else if (isset($config['unbound']['port']))
-		unset($config['unbound']['port']);
-
-	$a_unboundcfg['enable'] = ($_POST['enable']) ? true : false;
-	$a_unboundcfg['dnssec'] = ($_POST['dnssec']) ? true : false;
-	$a_unboundcfg['forwarding'] = ($_POST['forwarding']) ? true : false;
-	$a_unboundcfg['regdhcp'] = ($_POST['regdhcp']) ? true : false;
-	$a_unboundcfg['regdhcpstatic'] = ($_POST['regdhcpstatic']) ? true : false;
-	$a_unboundcfg['txtsupport'] = ($_POST['txtsupport']) ? true : false;
-	if (is_array($_POST['active_interface']) && !empty($_POST['active_interface']))
-		$a_unboundcfg['active_interface'] = implode(",", $_POST['active_interface']);
-
-	if (is_array($_POST['outgoing_interface']) && !empty($_POST['outgoing_interface']))
-		$a_unboundcfg['outgoing_interface'] = implode(",", $_POST['outgoing_interface']);
-
-	if (!$input_errors) {
-		write_config("DNS Resolver configured.");
-		$retval = 0;
+	if ($_POST['apply']) {
 		$retval = services_unbound_configure();
 		$savemsg = get_std_save_message($retval);
 		if ($retval == 0)
 			clear_subsystem_dirty('unbound');
 		/* Update resolv.conf in case the interface bindings exclude localhost. */
 		system_resolvconf_generate();
+	} else {
+		if (isset($_POST['enable']) && isset($config['dnsmasq']['enable']))
+			$input_errors[] = "The system dns-forwarder is still active. Disable it before enabling the DNS Resolver.";
+
+		if (empty($_POST['active_interface']))
+			$input_errors[] = "A single network interface needs to be selected for the DNS Resolver to bind to.";
+
+		if (empty($_POST['outgoing_interface']))
+			$input_errors[] = "A single outgoing network interface needs to be selected for the DNS Resolver to use for outgoing DNS requests.";
+
+		if ($_POST['port'])
+			if (is_port($_POST['port']))
+				$a_unboundcfg['port'] = $_POST['port'];
+			else
+				$input_errors[] = gettext("You must specify a valid port number.");
+		else if (isset($config['unbound']['port']))
+			unset($config['unbound']['port']);
+
+		if (isset($_POST['enable']))
+			$a_unboundcfg['enable'] = true;
+		else
+			unset($a_unboundcfg['enable']);
+		if (isset($_POST['dnssec']))
+			$a_unboundcfg['dnssec'] = true;
+		else
+			unset($a_unboundcfg['dnssec']);
+		if (isset($_POST['forwarding']))
+			$a_unboundcfg['forwarding'] = true;
+		else
+			unset($a_unboundcfg['forwarding']);
+		if (isset($_POST['regdhcp']))
+			$a_unboundcfg['regdhcp'] = true;
+		else
+			unset($a_unboundcfg['regdhcp']);
+		if (isset($_POST['regdhcpstatic']))
+			$a_unboundcfg['regdhcpstatic'] = true;
+		else
+			unset($a_unboundcfg['regdhcpstatic']);
+		if (isset($_POST['txtsupport']))
+			$a_unboundcfg['txtsupport'] = true;
+		else
+			unset($a_unboundcfg['txtsupport']);
+		if (is_array($_POST['active_interface']) && !empty($_POST['active_interface']))
+			$a_unboundcfg['active_interface'] = implode(",", $_POST['active_interface']);
+
+		if (is_array($_POST['outgoing_interface']) && !empty($_POST['outgoing_interface']))
+			$a_unboundcfg['outgoing_interface'] = implode(",", $_POST['outgoing_interface']);
+
+		$a_unboundcfg['custom_options'] = str_replace("\r\n", "\n", $_POST['custom_options']);
+
+		if (!$input_errors) {
+			write_config("DNS Resolver configured.");
+			mark_subsystem_dirty('unbound');
+		}
 	}
 }
 
 if ($_GET['act'] == "del") {
-    if ($_GET['type'] == 'host') {
-        if ($a_hosts[$_GET['id']]) {
-            unset($a_hosts[$_GET['id']]);
-            write_config();
-            mark_subsystem_dirty('unbound');
-            header("Location: services_unbound.php");
-            exit;
-        }
-    } elseif ($_GET['type'] == 'doverride') {
-        if ($a_domainOverrides[$_GET['id']]) {
-            unset($a_domainOverrides[$_GET['id']]);
-            write_config();
-            mark_subsystem_dirty('unbound');
-            header("Location: services_unbound.php");
-            exit;
-        }
-    }
+	if ($_GET['type'] == 'host') {
+		if ($a_hosts[$_GET['id']]) {
+			unset($a_hosts[$_GET['id']]);
+			write_config();
+			mark_subsystem_dirty('unbound');
+			header("Location: services_unbound.php");
+			exit;
+		}
+	} elseif ($_GET['type'] == 'doverride') {
+		if ($a_domainOverrides[$_GET['id']]) {
+			unset($a_domainOverrides[$_GET['id']]);
+			write_config();
+			mark_subsystem_dirty('unbound');
+			header("Location: services_unbound.php");
+			exit;
+		}
+	}
 }
 
 $closehead = false;
@@ -147,7 +178,7 @@ include_once("head.inc");
 function enable_change(enable_over) {
 	var endis;
 	endis = !(jQuery('#enable').is(":checked") || enable_over);
-	jQuery("#active_interface,#outgoing_interface,#dnssec,#forwarding,#regdhcp,#regdhcpstatic,#dhcpfirst,#port").prop('disabled', endis);
+	jQuery("#active_interface,#outgoing_interface,#dnssec,#forwarding,#regdhcp,#regdhcpstatic,#dhcpfirst,#port,#txtsupport,#custom_options").prop('disabled', endis);
 }
 function show_advanced_dns() {
 	jQuery("#showadv").show();
@@ -156,7 +187,7 @@ function show_advanced_dns() {
 //]]>
 </script>
 </head>
-	
+
 <body>
 <?php include("fbegin.inc"); ?>
 <form action="services_unbound.php" method="post" name="iform" id="iform">
@@ -189,7 +220,7 @@ function show_advanced_dns() {
 							<tr>
 								<td width="22%" valign="top" class="vncellreq"><?=gettext("Enable");?></td>
 								<td width="78%" class="vtable"><p>
-									<input name="enable" type="checkbox" id="enable" value="yes" <?php if ($pconfig['enable'] == "yes") echo "checked=\"checked\"";?> onclick="enable_change(false)" />
+									<input name="enable" type="checkbox" id="enable" value="yes" <?php if (isset($pconfig['enable'])) echo "checked=\"checked\"";?> onclick="enable_change(false)" />
 									<strong><?=gettext("Enable DNS Resolver");?><br />
 									</strong></p>
 								</td>
@@ -272,7 +303,7 @@ function show_advanced_dns() {
 							<tr>
 								<td width="22%" valign="top" class="vncellreq"><?=gettext("DHCP Registration");?></td>
 								<td width="78%" class="vtable"><p>
-									<input name="regdhcp" type="checkbox" id="regdhcp" value="yes" <?php if ($pconfig['regdhcp'] === true) echo "checked=\"checked\"";?> />
+									<input name="regdhcp" type="checkbox" id="regdhcp" value="yes" <?php if (isset($pconfig['regdhcp'])) echo "checked=\"checked\"";?> />
 									<strong><?=gettext("Register DHCP leases in the DNS Resolver");?><br />
 									</strong><?php printf(gettext("If this option is set, then machines that specify".
 									" their hostname when requesting a DHCP lease will be registered".
@@ -284,7 +315,7 @@ function show_advanced_dns() {
 							<tr>
 								<td width="22%" valign="top" class="vncellreq"><?=gettext("Static DHCP");?></td>
 								<td width="78%" class="vtable"><p>
-									<input name="regdhcpstatic" type="checkbox" id="regdhcpstatic" value="yes" <?php if ($pconfig['regdhcpstatic'] === true) echo "checked=\"checked\"";?> />
+									<input name="regdhcpstatic" type="checkbox" id="regdhcpstatic" value="yes" <?php if (isset($pconfig['regdhcpstatic'])) echo "checked=\"checked\"";?> />
 									<strong><?=gettext("Register DHCP static mappings in the DNS Resolver");?><br />
 									</strong><?php printf(gettext("If this option is set, then DHCP static mappings will ".
 											"be registered in the DNS Resolver, so that their name can be ".
@@ -356,8 +387,8 @@ function show_advanced_dns() {
 		<td width="20%" class="listhdrr"><?=gettext("Host");?></td>
 		<td width="25%" class="listhdrr"><?=gettext("Domain");?></td>
 		<td width="20%" class="listhdrr"><?=gettext("IP");?></td>
-		<td width="25%" class="listhdr"><?=gettext("Description");?></td>
-		<td width="10%" class="list">
+		<td width="30%" class="listhdr"><?=gettext("Description");?></td>
+		<td width="5%" class="list">
 			<table border="0" cellspacing="0" cellpadding="1" summary="add">
 				<tr>
 					<td width="17"></td>
@@ -422,8 +453,8 @@ function show_advanced_dns() {
 	<tr>
 		<td width="35%" class="listhdrr"><?=gettext("Domain");?></td>
 		<td width="20%" class="listhdrr"><?=gettext("IP");?></td>
-		<td width="35%" class="listhdr"><?=gettext("Description");?></td>
-		<td width="10%" class="list">
+		<td width="40%" class="listhdr"><?=gettext("Description");?></td>
+		<td width="5%" class="list">
 			<table border="0" cellspacing="0" cellpadding="1" summary="add">
 				<tr>
 					<td width="17" height="17"></td>
@@ -458,8 +489,18 @@ function show_advanced_dns() {
 		<td class="listbg">
 			<?=xhtmlspecialchars($doment['descr']);?>&nbsp;
 		</td>
-		<td valign="middle" class="list nowrap"> <a href="services_unbound_domainoverride_edit.php?id=<?=$i;?>"><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_e.gif" width="17" height="17" border="0" alt="edit" /></a>
-			&nbsp;<a href="services_unbound.php?act=del&amp;type=doverride&amp;id=<?=$i;?>" onclick="return confirm('<?=gettext("Do you really want to delete this domain override?");?>')"><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_x.gif" width="17" height="17" border="0" alt="delete" /></a></td>
+		<td valign="middle" class="list nowrap">
+			<table border="0" cellspacing="0" cellpadding="1" summary="icons">
+				<tr>
+					<td valign="middle"><a href="services_unbound_domainoverride_edit.php?id=<?=$i;?>">
+						<img src="./themes/<?= $g['theme']; ?>/images/icons/icon_e.gif" width="17" height="17" border="0" alt="edit" />
+					</a></td>
+					<td valign="middle"><a href="services_unbound.php?act=del&amp;type=doverride&amp;id=<?=$i;?>" onclick="return confirm('<?=gettext("Do you really want to delete this domain override?");?>')">
+						<img src="./themes/<?= $g['theme']; ?>/images/icons/icon_x.gif" width="17" height="17" border="0" alt="delete" />
+					</a></td>
+				</tr>
+			</table>
+		</td>
 	</tr>
 	<?php $i++; endforeach; ?>
 	<tr style="display:none"><td></td></tr>

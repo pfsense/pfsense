@@ -71,8 +71,8 @@ if ($_GET['act'] == "del") {
 			$mask = (!empty($ipent['sn'])) ? $ipent['sn'] : 32;
 			
 			$ipfw = pfSense_ipfw_getTablestats($cpzone, 3, $ipent['ip'], $mask);
-			pfSense_ipfw_Tableaction($cpzone, IP_FW_TABLE_DEL, 3, $ipent['ip'], $mask);
-			pfSense_ipfw_Tableaction($cpzone, IP_FW_TABLE_DEL, 4, $ipent['ip'], $mask);
+			pfSense_ipfw_Tableaction($cpzone, IP_FW_TABLE_XDEL, 3, $ipent['ip'], $mask);
+			pfSense_ipfw_Tableaction($cpzone, IP_FW_TABLE_XDEL, 4, $ipent['ip'], $mask);
 			
 			if (is_array($ipfw)) {
 				captiveportal_free_dn_ruleno($ipfw['dnpipe']);

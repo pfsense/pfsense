@@ -379,7 +379,7 @@ pfSenseNanoBSDupgrade)
 
 	rm -f /var/run/firmwarelock.dirty
 	rm -f /var/run/firmware.lock
-	sh /etc/rc.reboot
+	. /etc/rc.reboot
 
 	;;
 pfSenseupgrade)
@@ -428,6 +428,7 @@ pfSenseupgrade)
 	/etc/rc.notify_message -e -g -m "Firmware upgrade in progress..."
 	
 	# backup config
+	[ -d /tmp/configbak ] && rm -rf /tmp/configbak
 	/bin/mkdir -p /tmp/configbak
 	cp -Rp /conf/* /tmp/configbak 2>/dev/null
 
@@ -438,7 +439,7 @@ pfSenseupgrade)
 	killall -9 check_reload_status
 	killall -9 check_reload_status
 	echo "Installing $IMG." >> /conf/upgrade_log.txt 2>&1
-	cd / && /usr/bin/tar xzUPf $IMG >> /conf/upgrade_log.txt 2>&1
+	cd / && /usr/bin/tar --exclude=./dev -xzUPf $IMG >> /conf/upgrade_log.txt 2>&1
 	/usr/local/sbin/check_reload_status
 	echo "Image installed $IMG." >> /conf/upgrade_log.txt 2>&1
 
@@ -467,7 +468,10 @@ pfSenseupgrade)
 	rm -f $IMG
 
 	if [ -e /etc/init_bootloader.sh ]; then
-		sh /etc/init_bootloader.sh >> /conf/upgrade_log.txt 2>&1
+		if [ ! -x /etc/init_bootloader.sh ]; then
+			chmod ug+x /etc/init_bootloader.sh
+		fi
+		/etc/init_bootloader.sh >> /conf/upgrade_log.txt 2>&1
 	fi
 
 	# Remove saved commit ID for gitsync
@@ -476,7 +480,10 @@ pfSenseupgrade)
 	# If /tmp/post_upgrade_command exists after update
 	# then execute the command.
 	if [ -f /tmp/post_upgrade_command ]; then
-		sh /tmp/post_upgrade_command >> /conf/upgrade_log.txt 2>&1
+		if [ ! -x /tmp/post_upgrade_command ]; then
+			chmod ug+x /tmp/post_upgrade_command
+		fi
+		/tmp/post_upgrade_command >> /conf/upgrade_log.txt 2>&1
 	fi
 
 	# remove unused files
@@ -508,7 +515,7 @@ pfSenseupgrade)
 	if [ -f /tmp/no_upgrade_reboot_required ]; then
 		rm /tmp/no_upgrade_reboot_required
 	else
-		sh /etc/rc.reboot
+		. /etc/rc.reboot
 	fi
 
 	;;

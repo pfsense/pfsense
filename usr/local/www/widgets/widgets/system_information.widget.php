@@ -168,10 +168,7 @@ $filesystems = get_mounted_filesystems();
 			<td width="25%" class="vncellt"><?=gettext("CPU Type");?></td>
 			<td width="75%" class="listr">
 			<?php 
-				$cpumodel = "";
-				exec("/sbin/sysctl -n hw.model", $cpumodel);
-				$cpumodel = implode(" ", $cpumodel);
-				echo (xhtmlspecialchars($cpumodel));
+				echo (xhtmlspecialchars(get_single_sysctl("hw.model")));
 			?>
 			<div id="cpufreq"><?= get_cpufreq(); ?></div>
 		<?php	$cpucount = get_cpu_count();
@@ -265,7 +262,7 @@ $filesystems = get_mounted_filesystems();
 			<td width="75%" class="listr">
 				<?php $memUsage = mem_usage(); ?>
 				<div id="memUsagePB"></div>
-				<span id="memusagemeter"><?= $memUsage.'%'; ?></span> of <?= sprintf("%.0f", `/sbin/sysctl -n hw.physmem` / (1024*1024)) ?> MB
+				<span id="memusagemeter"><?= $memUsage.'%'; ?></span> of <?= sprintf("%.0f", get_single_sysctl('hw.physmem') / (1024*1024)) ?> MB
 			</td>
 		</tr>
 		<?php if($showswap == true): ?>

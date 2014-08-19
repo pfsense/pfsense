@@ -1565,6 +1565,22 @@ function get_sysctl($names) {
 }
 
 /*
+ * get_single_sysctl($name)
+ * Wrapper for get_sysctl() to simplify read of a single sysctl value
+ * return the value for sysctl $name or empty string if it doesn't exist
+ */
+function get_single_sysctl($name) {
+	if (empty($name))
+		return "";
+
+	$value = get_sysctl($name);
+	if (empty($value) || !isset($value[$name]))
+		return "";
+
+	return $value[$name];
+}
+
+/*
  * set_sysctl($value_list)
  * Set sysctl OID's listed as key/value pairs and return
  * an array with keys set for those that succeeded
@@ -1598,6 +1614,23 @@ function set_sysctl($values) {
 }
 
 /*
+ * set_single_sysctl($name, $value)
+ * Wrapper to set_sysctl() to make it simple to set only one sysctl
+ * returns boolean meaning if it suceed
+ */
+function set_single_sysctl($name, $value) {
+	if (empty($name))
+		return false;
+
+	$result = set_sysctl(array($name => $value));
+
+	if (!isset($result[$name]) || $result[$name] != $value)
+		return false;
+
+	return true;
+}
+
+/*
  *     get_memory()
  *     returns an array listing the amount of
  *     memory installed in the hardware
@@ -1605,14 +1638,8 @@ function set_sysctl($values) {
  *     [1] real (actual) memory of the system, should be the size of the RAM card/s - e.g. 256 MBytes
  */
 function get_memory() {
-
-	$output = "";
-	$_gb = exec("/sbin/sysctl -n hw.physmem", $output);
-	$physmem = trim($output[0], " \n");
-	unset($output);
-	$_gb = exec("/sbin/sysctl -n hw.physmem", $output);
-	$realmem = trim($output[0], " \n");
-	unset($output, $_gb);
+	$physmem = get_single_sysctl("hw.physmem");
+	$realmem = get_single_sysctl("hw.realmem");
 	/* convert from bytes to megabytes */
 	return array(($physmem/1048576),($realmem/1048576));
 }
@@ -1771,79 +1798,6 @@ function msort($array, $id="id", $sort_ascending=true) {
 		return $temp_array;
 	} else {
 		return array_reverse($temp_array);
-	}
-}
-
-/****f* util/color
- * NAME
- *   color - outputs a color code to the ansi terminal if supported
- * INPUTS
- *   color code or color name
- * RESULT
- *   Outputs the ansi color sequence for the color specified.  Default resets terminal.
- ******/
-function color($color = "0m") {
-	/*
-		Color codes available:
-		 0m reset; clears all colors and styles (to white on black)
-		 1m bold on (see below)
-		 3m italics on
-		 4m underline on
-		 7m inverse on; reverses foreground & background colors
-		 9m strikethrough on
-		 22m bold off (see below)
-		 23m italics off
-		 24m underline off
-		 27m inverse off
-		 29m strikethrough off
-		 30m set foreground color to black
-		 31m set foreground color to red
-		 32m set foreground color to green
-		 33m set foreground color to yellow
-		 34m set foreground color to blue
-		 35m set foreground color to magenta (purple)
-		 36m set foreground color to cyan
-		 37m set foreground color to white
-		 40m  set background color to black
-		 41m set background color to red
-		 42m set background color to green
-		 43m set background color to yellow
-		 44m set background color to blue
-		 45m set background color to magenta (purple)
-		 46m set background color to cyan
-		 47m set background color to white
-		 49m set background color to default (black)
-	*/
-	// Allow caching of TERM to
-	// speedup subequence requests.
-	global $TERM;
-	if(!$TERM)
-		$TERM=`/usr/bin/env | grep color`;
-	if(!$TERM)
-		$TERM=`/usr/bin/env | grep cons25`;
-	if($TERM) {
-		$ESCAPE=chr(27);
-		switch ($color) {
-			case "black":
-				return "{$ESCAPE}[30m";
-			case "red":
-				return "{$ESCAPE}[31m";
-			case "green":
-				return "{$ESCAPE}[32m";
-			case "yellow":
-				return "{$ESCAPE}[33m";
-			case "blue":
-				return "{$ESCAPE}[34m";
-			case "magenta":
-				return "{$ESCAPE}[35m";
-			case "cyan":
-				return "{$ESCAPE}[36m";
-			case "white":
-				return "{$ESCAPE}[37m";
-			case "default":
-				return "{$ESCAPE}[39m";
-		}
-		return "{$ESCAPE}[{$color}";
 	}
 }
 

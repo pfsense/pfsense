@@ -6,25 +6,29 @@ function ext_change() {
 	if ((document.iform.srcbeginport.selectedIndex == 0) && portsenabled && editenabled) {
 		document.iform.srcbeginport_cust.disabled = 0;
 	} else {
-		document.iform.srcbeginport_cust.value = "";
+		if (editenabled)
+			document.iform.srcbeginport_cust.value = "";
 		document.iform.srcbeginport_cust.disabled = 1;
 	}
 	if ((document.iform.srcendport.selectedIndex == 0) && portsenabled && editenabled) {
 		document.iform.srcendport_cust.disabled = 0;
 	} else {
-		document.iform.srcendport_cust.value = "";
+		if (editenabled)
+			document.iform.srcendport_cust.value = "";
 		document.iform.srcendport_cust.disabled = 1;
 	}
 	if ((document.iform.dstbeginport.selectedIndex == 0) && portsenabled && editenabled) {
 		document.iform.dstbeginport_cust.disabled = 0;
 	} else {
-		document.iform.dstbeginport_cust.value = "";
+		if (editenabled)
+			document.iform.dstbeginport_cust.value = "";
 		document.iform.dstbeginport_cust.disabled = 1;
 	}
 	if ((document.iform.dstendport.selectedIndex == 0) && portsenabled && editenabled) {
 		document.iform.dstendport_cust.disabled = 0;
 	} else {
-		document.iform.dstendport_cust.value = "";
+		if (editenabled)
+			document.iform.dstendport_cust.value = "";
 		document.iform.dstendport_cust.disabled = 1;
 	}
 

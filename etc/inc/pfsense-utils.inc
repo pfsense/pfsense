@@ -34,7 +34,7 @@
  */
 
 /*
-	pfSense_BUILDER_BINARIES:	/sbin/sysctl	/sbin/ifconfig	/sbin/pfctl	/usr/local/bin/php /usr/bin/netstat
+	pfSense_BUILDER_BINARIES:	/sbin/ifconfig	/sbin/pfctl	/usr/local/bin/php /usr/bin/netstat
 	pfSense_BUILDER_BINARIES:	/bin/df	/usr/bin/grep	/usr/bin/awk	/bin/rm	/usr/sbin/pwd_mkdb	/usr/bin/host
 	pfSense_BUILDER_BINARIES:	/sbin/kldload
 	pfSense_MODULE:	utils
@@ -265,16 +265,16 @@ function setup_polling() {
 	global $g, $config;
 
 	if (isset($config['system']['polling']))
-		mwexec("/sbin/sysctl kern.polling.idle_poll=1");
+		set_single_sysctl("kern.polling.idle_poll", "1");
 	else
-		mwexec("/sbin/sysctl kern.polling.idle_poll=0");
+		set_single_sysctl("kern.polling.idle_poll", "0");
 
 	if($config['system']['polling_each_burst'])
-		mwexec("/sbin/sysctl kern.polling.each_burst={$config['system']['polling_each_burst']}");
+		set_single_sysctl("kern.polling.each_burst", $config['system']['polling_each_burst']);
 	if($config['system']['polling_burst_max'])
-		mwexec("/sbin/sysctl kern.polling.burst_max={$config['system']['polling_burst_max']}");
+		set_single_sysctl("kern.polling.burst_max", $config['system']['polling_burst_max']);
 	if($config['system']['polling_user_frac'])
-		mwexec("/sbin/sysctl kern.polling.user_frac={$config['system']['polling_user_frac']}");
+		set_single_sysctl("kern.polling.user_frac", $config['system']['polling_user_frac']);
 }
 
 /****f* pfsense-utils/setup_microcode
@@ -305,7 +305,7 @@ function setup_microcode() {
  ******/
 function get_carp_status() {
 	/* grab the current status of carp */
-	$status = `/sbin/sysctl -n net.inet.carp.allow`;
+	$status = get_single_sysctl('net.inet.carp.allow');
 	return (intval($status) > 0);
 }
 
@@ -670,7 +670,7 @@ function rmdir_recursive($path,$follow_links=false) {
 function call_pfsense_method($method, $params, $timeout = 0) {
 	global $g, $config;
 
-	$xmlrpc_base_url = isset($config['system']['altpkgrepo']['enable']) ? $config['system']['altpkgrepo']['xmlrpcbaseurl'] : $g['xmlrpcbaseurl'];
+	$xmlrpc_base_url = get_active_xml_rpc_base_url();
 	$xmlrpc_path = $g['xmlrpcpath'];
 	
 	$xmlrpcfqdn = preg_replace("(https?://)", "", $xmlrpc_base_url);
@@ -718,7 +718,7 @@ function call_pfsense_method($method, $params, $timeout = 0) {
 function check_firmware_version($tocheck = "all", $return_php = true) {
 	global $g, $config;
 	
-	$xmlrpc_base_url = isset($config['system']['altpkgrepo']['enable']) ? $config['system']['altpkgrepo']['xmlrpcbaseurl'] : $g['xmlrpcbaseurl'];
+	$xmlrpc_base_url = get_active_xml_rpc_base_url();
 	$xmlrpcfqdn = preg_replace("(https?://)", "", $xmlrpc_base_url);
 	$ip = gethostbyname($xmlrpcfqdn);
 	if($ip == $xmlrpcfqdn)
@@ -902,78 +902,6 @@ function reload_all_sync() {
 	send_event("service restart webgui");
 }
 
-function auto_login() {
-	global $config;
-
-	if(isset($config['system']['disableconsolemenu']))
-		$status = false;
-	else
-		$status = true;
-
-	$gettytab = file_get_contents("/etc/gettytab");
-	$getty_split = explode("\n", $gettytab);
-	$getty_update_needed = false;
-	$getty_search_str = ":ht:np:sp#115200";
-	$getty_al_str = ":al=root:";
-	$getty_al_search_str = $getty_search_str . $getty_al_str;
-	/* Check if gettytab is already OK, if so then do not rewrite it. */
-	foreach($getty_split as $gs) {
-		if(stristr($gs, $getty_search_str)) {
-			if($status == true) {
-				if(!stristr($gs, $getty_al_search_str)) {
-					$getty_update_needed = true;
-				}
-			} else {
-				if(stristr($gs, $getty_al_search_str)) {
-					$getty_update_needed = true;
-				}
-			}
-		}
-	}
-
-	if (!$getty_update_needed) {
-		return;
-	}
-
-	conf_mount_rw();
-	$fd = false;
-	$tries = 0;
-	while (!$fd && $tries < 100) {
-		$fd = fopen("/etc/gettytab", "w");
-		$tries++;
-
-	}
-	if (!$fd) {
-		conf_mount_ro();
-		if ($status) {
-			log_error(gettext("Enabling auto login was not possible."));
-		} else {
-			log_error(gettext("Disabling auto login was not possible."));
-		}
-		return;
-	}
-	foreach($getty_split as $gs) {
-		if(stristr($gs, $getty_search_str)) {
-			if($status == true) {
-				fwrite($fd, "	".$getty_al_search_str."\n");
-			} else {
-				fwrite($fd, "	".$getty_search_str."\n");
-			}
-		} else {
-			fwrite($fd, "{$gs}\n");
-		}
-	}
-	fclose($fd);
-
-	if ($status) {
-		log_error(gettext("Enabled console auto login, console menu is NOT password protected."));
-	} else {
-		log_error(gettext("Disabled console auto login, console menu is password protected."));
-	}
-
-	conf_mount_ro();
-}
-
 function setup_serial_port($when="save", $path="") {
 	global $g, $config;
 	conf_mount_rw();
@@ -988,25 +916,26 @@ function setup_serial_port($when="save", $path="") {
 	else
 		$boot_config = "";
 
-	if(($g['platform'] != "cdrom") && ($g['platform'] != "nanobsd")) {
+	$serialspeed = (is_numeric($config['system']['serialspeed'])) ? $config['system']['serialspeed'] : "115200";
+	if ($g['platform'] != "cdrom") {
 		$boot_config_split = explode("\n", $boot_config);
 		$fd = fopen($boot_config_file,"w");
 		if($fd) {
 			foreach($boot_config_split as $bcs) {
-				if(stristr($bcs, "-D")) {
+				if(stristr($bcs, "-D") || stristr($bcs, "-h")) {
 					/* DONT WRITE OUT, WE'LL DO IT LATER */
 				} else {
 					if($bcs <> "")
 						fwrite($fd, "{$bcs}\n");
 				}
 			}
-			if(isset($config['system']['enableserial']) || $g['enableserial_force']) {
-				fwrite($fd, "-D");
-			}
+			if (($g['platform'] == "nanobsd") && !file_exists("/etc/nano_use_vga.txt"))
+				fwrite($fd, "-S{$serialspeed} -h");
+			else if (is_serial_enabled())
+				fwrite($fd, "-S{$serialspeed} -D");
 			fclose($fd);
 		}
-	}
-	if($g['platform'] != "cdrom") {
+
 		/* serial console - write out /boot/loader.conf */
 		if ($when == "upgrade")
 			system("echo \"Reading {$loader_conf_file}...\" >> /conf/upgrade_log.txt");
@@ -1024,11 +953,12 @@ function setup_serial_port($when="save", $path="") {
 					&& (stripos($bcs, "hw.usb.no_pf") === false))
 					$new_boot_config[] = $bcs;
 
-			$serialspeed = (is_numeric($config['system']['serialspeed'])) ? $config['system']['serialspeed'] : "9600";
-			if(isset($config['system']['enableserial']) || $g['enableserial_force']) {
+			if (($g['platform'] == "nanobsd") && !file_exists("/etc/nano_use_vga.txt")) {
+				$new_boot_config[] = 'boot_serial="YES"';
+				$new_boot_config[] = 'console="comconsole"';
+			} else if (is_serial_enabled()) {
 				$new_boot_config[] = 'boot_multicons="YES"';
 				$new_boot_config[] = 'boot_serial="YES"';
-				$new_boot_config[] = 'comconsole_speed="' . $serialspeed . '"';
 				$primaryconsole = isset($g['primaryconsole_force']) ? $g['primaryconsole_force'] : $config['system']['primaryconsole'];
 				switch ($primaryconsole) {
 					case "video":
@@ -1038,10 +968,8 @@ function setup_serial_port($when="save", $path="") {
 					default:
 						$new_boot_config[] = 'console="comconsole,vidconsole"';
 				}
-			} elseif ($g['platform'] == "nanobsd") {
-				$new_boot_config[] = 'comconsole_speed="' . $serialspeed . '"';
 			}
-
+			$new_boot_config[] = 'comconsole_speed="' . $serialspeed . '"';
 			$new_boot_config[] = 'hw.usb.no_pf="1"';
 
 			file_put_contents($loader_conf_file, implode("\n", $new_boot_config) . "\n");
@@ -1050,22 +978,46 @@ function setup_serial_port($when="save", $path="") {
 	$ttys = file_get_contents("/etc/ttys");
 	$ttys_split = explode("\n", $ttys);
 	$fd = fopen("/etc/ttys", "w");
-	foreach($ttys_split as $tty) {
-		if(stristr($tty, "ttyd0") or stristr($tty, "ttyu0")) {
-			if(isset($config['system']['enableserial']) || $g['enableserial_force']) {
-				fwrite($fd, "ttyu0	\"/usr/libexec/getty bootupcli\"	cons25	on	secure\n");
-			} else {
-				fwrite($fd, "ttyu0	\"/usr/libexec/getty bootupcli\"	cons25	off	secure\n");
-			}
-		} else {
-			fwrite($fd, $tty . "\n");
-		}
+
+	$on_off = (is_serial_enabled() ? 'on' : 'off');
+
+	if (isset($config['system']['disableconsolemenu'])) {
+		$console_type = 'Pc';
+		$serial_type = 'std.' . $serialspeed;
+	} else {
+		$console_type = 'al.Pc';
+		$serial_type = 'al.' . $serialspeed;
 	}
+	foreach($ttys_split as $tty) {
+		if (stristr($tty, "ttyv0"))
+			fwrite($fd, "ttyv0	\"/usr/libexec/getty {$console_type}\"	cons25	on	secure\n");
+		else if (stristr($tty, "ttyu0"))
+			fwrite($fd, "ttyu0	\"/usr/libexec/getty {$serial_type}\"	cons25	{$on_off}	secure\n");
+		else
+			fwrite($fd, $tty . "\n");
+	}
+	unset($on_off, $console_type, $serial_type);
 	fclose($fd);
-	auto_login();
+	reload_ttys();
 
 	conf_mount_ro();
 	return;
+}
+
+function is_serial_enabled() {
+	global $g, $config;
+
+	if (!isset($g['enableserial_force']) &&
+	    !isset($config['system']['enableserial']) &&
+	    ($g['platform'] == "pfSense" || $g['platform'] == "cdrom" || file_exists("/etc/nano_use_vga.txt")))
+		return false;
+
+	return true;
+}
+
+function reload_ttys() {
+	// Send a HUP signal to init will make it reload /etc/ttys
+	posix_kill(1, SIGHUP);
 }
 
 function print_value_list($list, $count = 10, $separator = ",") {
@@ -1463,14 +1415,14 @@ function get_interface_info($ifdescr) {
 
 //returns cpu speed of processor. Good for determining capabilities of machine
 function get_cpu_speed() {
-	return exec("/sbin/sysctl -n hw.clockrate");
+	return get_single_sysctl("hw.clockrate");
 }
 
 function get_uptime_sec() {
 	$boottime = "";
 	$matches = "";
-	exec("/sbin/sysctl -n kern.boottime", $boottime);
-	preg_match("/sec = (\d+)/", $boottime[0], $matches);
+	$boottime = get_single_sysctl("kern.boottime");
+	preg_match("/sec = (\d+)/", $boottime, $matches);
 	$boottime = $matches[1];
 	if(intval($boottime) == 0)
 		return 0;
@@ -2204,7 +2156,7 @@ function nanobsd_switch_boot_slice() {
 	$ACOMPLETE_PATH="{$BOOT_DRIVE}s{$ASLICE}a";
 	$ABOOTFLASH="{$BOOT_DRIVE}s{$AOLDSLICE}";
 	conf_mount_rw();
-	exec("sysctl kern.geom.debugflags=16");
+	set_single_sysctl("kern.geom.debugflags", "16");
 	exec("gpart set -a active -i {$ASLICE} {$BOOT_DRIVE}");
 	exec("/usr/sbin/boot0cfg -s {$ASLICE} -v /dev/{$BOOT_DRIVE}");
 	// We can't update these if they are mounted now.
@@ -2212,7 +2164,7 @@ function nanobsd_switch_boot_slice() {
 		exec("/sbin/tunefs -L ${AGLABEL_SLICE} /dev/$ACOMPLETE_PATH");
 		nanobsd_update_fstab($AGLABEL_SLICE, $ACOMPLETE_PATH, $AOLD_UFS_ID, $AUFS_ID);
 	}
-	exec("/sbin/sysctl kern.geom.debugflags=0");
+	set_single_sysctl("kern.geom.debugflags", "0");
 	conf_mount_ro();
 }
 function nanobsd_clone_slice() {
@@ -2223,12 +2175,12 @@ function nanobsd_clone_slice() {
 
 	for ($i = 0; $i < ob_get_level(); $i++) { ob_end_flush(); }
 	ob_implicit_flush(1);
-	exec("/sbin/sysctl kern.geom.debugflags=16");
+	set_single_sysctl("kern.geom.debugflags", "16");
 	exec("/bin/dd if=/dev/zero of=/dev/{$TOFLASH} bs=1m count=1");
 	exec("/bin/dd if=/dev/{$BOOTFLASH} of=/dev/{$TOFLASH} bs=64k");
 	exec("/sbin/tunefs -L {$GLABEL_SLICE} /dev/{$COMPLETE_PATH}");
 	$status = nanobsd_update_fstab($GLABEL_SLICE, $COMPLETE_PATH, $OLD_UFS_ID, $UFS_ID);
-	exec("/sbin/sysctl kern.geom.debugflags=0");
+	set_single_sysctl("kern.geom.debugflags", "0");
 	if($status) {
 		return false;
 	} else {
@@ -2970,6 +2922,17 @@ function pkg_call_plugins($plugin_type, $plugin_params) {
 			}
 	}
 	return $results;
+}
+
+/* Function to find and return the active XML RPC base URL to avoid code duplication */
+function get_active_xml_rpc_base_url() {
+	global $config, $g;
+	/* If the user has activated the option to enable an alternate xmlrpcbaseurl, and it's not empty, then use it */
+	if (isset($config['system']['altpkgrepo']['enable']) && !empty($config['system']['altpkgrepo']['xmlrpcbaseurl'])) {
+		return $config['system']['altpkgrepo']['xmlrpcbaseurl'];
+	} else {
+		return $g['xmlrpcbaseurl'];
+	}
 }
 
 ?>

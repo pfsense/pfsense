@@ -43,40 +43,40 @@ require("guiconfig.inc");
 require_once("functions.inc");
 require_once("filter.inc");
 require_once("shaper.inc");
+require_once("util.inc");
 
 if($_GET['reset'] <> "") {
-	mwexec("/usr/bin/killall -9 pfctl");
+	sigkillbyname('pfctl', SIGKILL);
 	exit;
 }
 
 if ($_POST['apply']) {
-          write_config();
+	write_config();
 
-          $retval = 0;
-        /* Setup pf rules since the user may have changed the optimization value */
-                        $retval = filter_configure();
-         $savemsg = get_std_save_message($retval);
-                        if (stristr($retval, "error") <> true)
-                                $savemsg = get_std_save_message($retval);
-                        else
-                                $savemsg = $retval;
+	$retval = 0;
+	/* Setup pf rules since the user may have changed the optimization value */
+	$retval = filter_configure();
+	$savemsg = get_std_save_message($retval);
+	if (stristr($retval, "error") <> true)
+		$savemsg = get_std_save_message($retval);
+	else
+		$savemsg = $retval;
 
-                /* reset rrd queues */
-                system("rm -f /var/db/rrd/*queuedrops.rrd");
-                system("rm -f /var/db/rrd/*queues.rrd");
-                        enable_rrd_graphing();
+	/* reset rrd queues */
+	unlink_if_exists("/var/db/rrd/*queuedrops.rrd");
+	unlink_if_exists("/var/db/rrd/*queues.rrd");
+	enable_rrd_graphing();
 
-		clear_subsystem_dirty('shaper');
+	clear_subsystem_dirty('shaper');
 }
 
 $pgtitle = array(gettext("Firewall"),gettext("Traffic Shaper"),gettext("Wizards"));
 $shortcut_section = "trafficshaper";
 
-$wizards = array(gettext("Single Lan multi Wan") => "traffic_shaper_wizard.xml",
-                gettext("Single Wan multi Lan") => "traffic_shaper_wizard_multi_lan.xml",
-				gettext("Multiple Lan/Wan") => "traffic_shaper_wizard_multi_all.xml",
-				gettext("Dedicated Links") => "traffic_shaper_wizard_dedicated.xml",
-				);
+$wizards = array(
+	gettext("Multiple Lan/Wan") => "traffic_shaper_wizard_multi_all.xml",
+	gettext("Dedicated Links") => "traffic_shaper_wizard_dedicated.xml",
+);
 
 $closehead = false;
 include("head.inc");
@@ -96,7 +96,7 @@ include("head.inc");
 <?php print_info_box_np(gettext("The traffic shaper configuration has been changed.")."<br />".gettext("You must apply the changes in order for them to take effect."));?><br /></p>
 <?php endif; ?>
 <table width="100%" border="0" cellpadding="0" cellspacing="0" summary="traffic shaper wizard">
-  <tr><td>
+	<tr><td>
 <?php
 	$tab_array = array();
 	$tab_array[0] = array(gettext("By Interface"), false, "firewall_shaper.php");
@@ -106,25 +106,36 @@ include("head.inc");
 	$tab_array[4] = array(gettext("Wizards"), true, "firewall_shaper_wizards.php");
 	display_top_tabs($tab_array);
 ?>
-  </td></tr>
-  <tr>
-    <td>
-	<div id="mainarea">
-              <table  width="100%" border="0" cellpadding="0" cellspacing="0" summary="main area">
-			  <tr>
-		  		<td class="listhdrr" width="25%" align="center" ><?=gettext("Wizard function");?></td>
-		  		<td class="listhdrr" width="75%" align="center"><?=gettext("Wizard Link");?></td>
-			  </tr>
-			  <?php	foreach ($wizards as $key => $wizard):  ?>
-                        <tr class="tabcont"><td class="listlr" style="background-color: #e0e0e0" width="25%" align="center">
-				<?php echo $key;?>
-                        </td><td class="listr" style="background-color: #e0e0e0" width="75%" align="center">
-				<?php echo "<a href=\"wizard.php?xml=" . $wizard ."\" >" .$wizard . "</a>"; ?>
-				</td></tr>
-				<?php endforeach; ?>
-             </table>
-		</div>
-	  </td>
+	</td></tr>
+	<tr>
+		<td>
+			<div id="mainarea">
+				<table  width="100%" border="0" cellpadding="0" cellspacing="0" summary="main area">
+					<tr>
+						<td class="listhdrr" width="25%" align="center" ><?=gettext("Wizard function");?></td>
+						<td class="listhdrr" width="75%" align="center"><?=gettext("Wizard Link");?></td>
+					</tr>
+<?php
+				foreach ($wizards as $key => $wizard):
+?>
+					<tr class="tabcont">
+						<td class="listlr" style="background-color: #e0e0e0" width="25%" align="center">
+<?php
+							echo $key;
+?>
+						</td>
+						<td class="listr" style="background-color: #e0e0e0" width="75%" align="center">
+<?php
+							echo "<a href=\"wizard.php?xml=" . $wizard ."\" >" .$wizard . "</a>";
+?>
+						</td>
+					</tr>
+<?php
+				endforeach;
+?>
+				</table>
+			</div>
+		</td>
 	</tr>
 </table>
 </form>

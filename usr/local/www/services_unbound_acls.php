@@ -54,8 +54,7 @@ if ($act == "del") {
 
 	unset($a_acls[$id]);
 	write_config();
-	services_unbound_configure();
-	$savemsg = gettext("Access List successfully deleted")."<br />";
+	mark_subsystem_dirty('unbound');
 }
 
 if ($act == "new") {
@@ -70,63 +69,65 @@ if ($act == "edit") {
 }
 
 if ($_POST) {
-
 	unset($input_errors);
 	$pconfig = $_POST;
 
-	// input validation - only allow 50 entries in a single ACL
-	for($x=0; $x<50; $x++) {
-		if (isset($pconfig["acl_network{$x}"])) {
-			$networkacl[$x] = array();
-			$networkacl[$x]['acl_network'] = $pconfig["acl_network{$x}"];
-			$networkacl[$x]['mask'] = $pconfig["mask{$x}"];
-			$networkacl[$x]['description'] = $pconfig["description{$x}"];
-			if (!is_ipaddr($networkacl[$x]['acl_network']))
-				$input_errors[] = gettext("You must enter a valid network IP address for {$networkacl[$x]['acl_network']}.");
+	if ($_POST['apply']) {
+		$retval = services_unbound_configure();
+		$savemsg = get_std_save_message($retval);
+		if ($retval == 0)
+			clear_subsystem_dirty('unbound');
+	} else {
 
-			if (is_ipaddr($networkacl[$x]['acl_network'])) {
-				if (!is_subnet($networkacl[$x]['acl_network']."/".$networkacl[$x]['mask']))
-					$input_errors[] = gettext("You must enter a valid IPv4 netmask for {$networkacl[$x]['acl_network']}/{$networkacl[$x]['mask']}.");
-			} else if (function_exists("is_ipaddrv6")) {
-				if (!is_ipaddrv6($networkacl[$x]['acl_network']))
-					$input_errors[] = gettext("You must enter a valid IPv6 address for {$networkacl[$x]['acl_network']}.");
-				else if (!is_subnetv6($networkacl[$x]['acl_network']."/".$networkacl[$x]['mask']))
-					$input_errors[] = gettext("You must enter a valid IPv6 netmask for {$networkacl[$x]['acl_network']}/{$networkacl[$x]['mask']}.");
-			} else
-				$input_errors[] = gettext("You must enter a valid IPv4 address for {$networkacl[$x]['acl_network']}.");
-		}
-	}
-	
-	if (!$input_errors) {
-		if ($pconfig['Submit'] == gettext("Save")) {
-			$acl_entry = array();
-			$acl_entry['aclid'] = $pconfig['aclid'];
-			$acl_entry['aclname'] = $pconfig['aclname'];
-			$acl_entry['aclaction'] = $pconfig['aclaction'];
-			$acl_entry['description'] = $pconfig['description'];
-			$acl_entry['aclid'] = $pconfig['aclid'];
-			$acl_entry['row'] = array();
-			foreach ($networkacl as $acl)
-				$acl_entry['row'][] = $acl;
+		// input validation - only allow 50 entries in a single ACL
+		for($x=0; $x<50; $x++) {
+			if (isset($pconfig["acl_network{$x}"])) {
+				$networkacl[$x] = array();
+				$networkacl[$x]['acl_network'] = $pconfig["acl_network{$x}"];
+				$networkacl[$x]['mask'] = $pconfig["mask{$x}"];
+				$networkacl[$x]['description'] = $pconfig["description{$x}"];
+				if (!is_ipaddr($networkacl[$x]['acl_network']))
+					$input_errors[] = gettext("You must enter a valid network IP address for {$networkacl[$x]['acl_network']}.");
 
-			if (isset($id) && $a_acls[$id])
-				$a_acls[$id] = $acl_entry;
-			else
-				$a_acls[] = $acl_entry;
-
-
-			mark_subsystem_dirty("unbound");
-			write_config();
-
-			pfSenseHeader("/services_unbound_acls.php");
-			exit;
+				if (is_ipaddr($networkacl[$x]['acl_network'])) {
+					if (!is_subnet($networkacl[$x]['acl_network']."/".$networkacl[$x]['mask']))
+						$input_errors[] = gettext("You must enter a valid IPv4 netmask for {$networkacl[$x]['acl_network']}/{$networkacl[$x]['mask']}.");
+				} else if (function_exists("is_ipaddrv6")) {
+					if (!is_ipaddrv6($networkacl[$x]['acl_network']))
+						$input_errors[] = gettext("You must enter a valid IPv6 address for {$networkacl[$x]['acl_network']}.");
+					else if (!is_subnetv6($networkacl[$x]['acl_network']."/".$networkacl[$x]['mask']))
+						$input_errors[] = gettext("You must enter a valid IPv6 netmask for {$networkacl[$x]['acl_network']}/{$networkacl[$x]['mask']}.");
+				} else
+					$input_errors[] = gettext("You must enter a valid IPv4 address for {$networkacl[$x]['acl_network']}.");
+			} else if (isset($networkacl[$x]))
+				unset($networkacl[$x]);
 		}
 
-		if ($pconfig['apply']) {
-			clear_subsystem_dirty("unbound");
-			$retval = 0;
-			$retval = services_unbound_configure();
-			$savemsg = get_std_save_message($retval);
+		if (!$input_errors) {
+			if ($pconfig['Submit'] == gettext("Save")) {
+				$acl_entry = array();
+				$acl_entry['aclid'] = $pconfig['aclid'];
+				$acl_entry['aclname'] = $pconfig['aclname'];
+				$acl_entry['aclaction'] = $pconfig['aclaction'];
+				$acl_entry['description'] = $pconfig['description'];
+				$acl_entry['aclid'] = $pconfig['aclid'];
+				$acl_entry['row'] = array();
+				foreach ($networkacl as $acl)
+					$acl_entry['row'][] = $acl;
+
+				if (isset($id) && $a_acls[$id])
+					$a_acls[$id] = $acl_entry;
+				else
+					$a_acls[] = $acl_entry;
+
+
+				mark_subsystem_dirty("unbound");
+				write_config();
+
+				pfSenseHeader("/services_unbound_acls.php");
+				exit;
+			}
+
 		}
 	}
 }
@@ -137,26 +138,21 @@ include("head.inc");
 
 ?>
 
-<script type="text/javascript" src="/javascript/row_helper.js">
-</script>
+<script type="text/javascript" src="/javascript/jquery.ipv4v6ify.js"></script>
+<script type="text/javascript" src="/javascript/row_helper.js"></script>
 
 <script type="text/javascript">
 //<![CDATA[
-	function mask_field(fieldname, fieldsize, n) {
-		return '<select name="' + fieldname + n + '" class="formselect" id="' + fieldname + n + '"><?php
-			for ($i = 128; $i >= 0; $i--) {
-					echo "<option value=\"$i\">$i<\/option>";
-			}
-		?><\/select>';
-	}
-
-	rowtype[0] = "textbox";
 	rowname[0] = "acl_network";
+	rowtype[0] = "textbox,ipv4v6";
 	rowsize[0] = "30";
+
 	rowname[1] = "mask";
-	rowtype[1] = mask_field;
-	rowtype[2] = "textbox";
+	rowtype[1] = "select,ipv4v6";
+	rowsize[1] = "1";
+
 	rowname[2] = "description";
+	rowtype[2] = "textbox";
 	rowsize[2] = "40";
 //]]>
 </script>
@@ -253,10 +249,10 @@ if (is_subsystem_dirty("unbound"))
 											?>
 									<tr>
 										<td>
-											<input autocomplete="off" name="acl_network<?=$counter;?>" type="text" class="formfld unknown" id="acl_network<?=$counter;?>" size="40" value="<?=xhtmlspecialchars($network);?>" />
+											<input name="acl_network<?=$counter;?>" type="text" class="formfld unknown ipv4v6" id="acl_network<?=$counter;?>" size="30" value="<?=xhtmlspecialchars($network);?>" />
 										</td>
 										<td>
-											<select name="mask<?=$counter;?>" class="formselect" id="mask<?=$counter;?>">
+											<select name="mask<?=$counter;?>" class="formselect ipv4v6" id="mask<?=$counter;?>">
 											<?php
 												for ($i = 128; $i > 0; $i--) {
 													echo "<option value=\"$i\" ";
@@ -267,7 +263,7 @@ if (is_subsystem_dirty("unbound"))
 											</select>
 										</td>
 										<td>
-											<input autocomplete="off" name="description<?=$counter;?>" type="text" class="listbg" id="description<?=$counter;?>" size="40" value="<?=xhtmlspecialchars($description);?>" />
+											<input name="description<?=$counter;?>" type="text" class="formfld unknown" id="description<?=$counter;?>" size="40" value="<?=xhtmlspecialchars($description);?>" />
 										</td>
 										<td>
 											<a onclick="removeRow(this); return false;" href="#"><img border="0" src="/themes/<?=$g['theme'];?>/images/icons/icon_x.gif" alt="delete" /></a>
@@ -319,17 +315,22 @@ if (is_subsystem_dirty("unbound"))
 						<tr>
 							<td width="25%" class="listhdrr"><?=gettext("Access List Name"); ?></td>
 							<td width="25%" class="listhdrr"><?=gettext("Action"); ?></td>
-							<td width="40%" class="listhdrr"><?=gettext("Description"); ?></td>
-							<td width="10%" class="list"></td>
+							<td width="45%" class="listhdr"><?=gettext("Description"); ?></td>
+							<td width="5%" class="list">&nbsp;</td>
 						</tr>
 					</thead>
 					<tfoot>
 						<tr>
-							<td class="list" colspan="4"></td>
+							<td class="list" colspan="3">&nbsp;</td>
 							<td class="list">
-								<a href="services_unbound_acls.php?act=new">
-									<img src="./themes/<?=$g['theme'];?>/images/icons/icon_plus.gif" title="<?=gettext("Add new Access List"); ?>" border="0" alt="add" />
-								</a>
+								<table border="0" cellspacing="0" cellpadding="1" summary="icons">
+									<tr>
+										<td width="17">&nbsp;</td>
+										<td valign="middle"><a href="services_unbound_acls.php?act=new">
+											<img src="./themes/<?=$g['theme'];?>/images/icons/icon_plus.gif" title="<?=gettext("Add new Access List"); ?>" border="0" alt="add" />
+										</a></td>
+									</tr>
+								</table>
 							</td>
 						</tr>
 						<tr>
@@ -347,7 +348,7 @@ if (is_subsystem_dirty("unbound"))
 					?>
 						<tr ondblclick="document.location='services_unbound_acls.php?act=edit&amp;id=<?=$i;?>'">
 							<td class="listlr">
-								<?=$acl['aclname'];?>
+								<?=htmlspecialchars($acl['aclname']);?>
 							</td>
 							<td class="listr">
 								<?=xhtmlspecialchars($acl['aclaction']);?>
@@ -356,13 +357,16 @@ if (is_subsystem_dirty("unbound"))
 								<?=xhtmlspecialchars($acl['description']);?>
 							</td>
 							<td valign="middle" class="list nowrap">
-								<a href="services_unbound_acls.php?act=edit&amp;id=<?=$i;?>">
-									<img src="./themes/<?=$g['theme'];?>/images/icons/icon_e.gif" title="<?=gettext("edit access list"); ?>" width="17" height="17" border="0" alt="edit" />
-								</a>
-								&nbsp;
-								<a href="services_unbound_acls.php?act=del&amp;id=<?=$i;?>" onclick="return confirm('<?=gettext("Do you really want to delete this access list?"); ?>')">
-									<img src="/themes/<?=$g['theme'];?>/images/icons/icon_x.gif" title="<?=gettext("delete access list"); ?>" width="17" height="17" border="0" alt="delete" />
-								</a>
+								<table border="0" cellspacing="0" cellpadding="1" summary="icons">
+									<tr>
+										<td valign="middle"><a href="services_unbound_acls.php?act=edit&amp;id=<?=$i;?>">
+											<img src="./themes/<?=$g['theme'];?>/images/icons/icon_e.gif" title="<?=gettext("edit access list"); ?>" width="17" height="17" border="0" alt="edit" />
+										</a></td>
+										<td valign="middle"><a href="services_unbound_acls.php?act=del&amp;id=<?=$i;?>" onclick="return confirm('<?=gettext("Do you really want to delete this access list?"); ?>')">
+											<img src="/themes/<?=$g['theme'];?>/images/icons/icon_x.gif" title="<?=gettext("delete access list"); ?>" width="17" height="17" border="0" alt="delete" />
+										</a></td>
+									</tr>
+								</table>
 							</td>
 						</tr>
 					<?php

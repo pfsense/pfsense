@@ -15,4 +15,4 @@ if(is_array($config['virtualip']['vip'])) {
 	}
 }
 interfaces_carp_setup();
-mwexec("/sbin/sysctl net.inet.carp.allow=1");
+set_single_sysctl("net.inet.carp.allow", "1");

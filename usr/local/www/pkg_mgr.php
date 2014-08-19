@@ -75,6 +75,7 @@ function domTT_title($title_msg) {
 //get_pkg_info only if cache file has more then $g[min_pkg_cache_file_time] seconds
 $pkg_cache_file_time=($g['min_pkg_cache_file_time'] ? $g['min_pkg_cache_file_time'] : 120);
 
+$xmlrpc_base_url = get_active_xml_rpc_base_url();
 if (!file_exists("{$g['tmp_path']}/pkg_info.cache") || (time() - filemtime("{$g['tmp_path']}/pkg_info.cache")) > $pkg_cache_file_time) {
 	$pkg_info = get_pkg_info('all', array("noembedded", "name", "category", "website", "version", "status", "descr", "maintainer", "required_version", "maximum_version", "pkginfolink", "config_file"));
 	//create cache file after get_pkg_info
@@ -85,7 +86,6 @@ if (!file_exists("{$g['tmp_path']}/pkg_info.cache") || (time() - filemtime("{$g[
 		//$pkg_sizes = get_pkg_sizes();
 	} else {
 		$using_cache = true;
-		$xmlrpc_base_url = isset($config['system']['altpkgrepo']['enable']) ? $config['system']['altpkgrepo']['xmlrpcbaseurl'] : $g['xmlrpcbaseurl'];
 		if(file_exists("{$g['tmp_path']}/pkg_info.cache")) {
 			$savemsg = sprintf(gettext("Unable to retrieve package info from %s. Cached data will be used."), $xmlrpc_base_url);
 			$pkg_info = unserialize(@file_get_contents("{$g['tmp_path']}/pkg_info.cache"));
@@ -116,6 +116,15 @@ include("head.inc");
 <body link="#0000CC" vlink="#0000CC" alink="#0000CC">
 <?php
 	include("fbegin.inc");
+
+	/* Print package server mismatch warning. See https://redmine.pfsense.org/issues/484 */
+	if (!verify_all_package_servers())
+		print_info_box(package_server_mismatch_message());
+
+	/* Print package server SSL warning. See https://redmine.pfsense.org/issues/484 */
+	if (check_package_server_ssl() === false)
+		print_info_box(package_server_ssl_failure_message());
+
 	if ($savemsg)
 		print_info_box($savemsg);
 ?>

@@ -197,8 +197,16 @@ else
 		/bin/mkdir -p /var/db/pkg
 		/bin/mv /root/var/db/pkg /var/db/pkg
 		/bin/mkdir -p /var/db/pbi
-		/bin/mv /root/var/db/pkg /var/db/pbi
+		/bin/mv /root/var/db/pbi /var/db/pbi
 	fi
+fi
+
+# Copy PBI keys
+if ls /usr/local/share/pbi-keys/*.ssl >/dev/null 2>&1; then
+	if [ ! -d "/var/db/pbi/keys" ]; then
+		mkdir -p /var/db/pbi/keys
+	fi
+	cp -f /usr/local/share/pbi-keys/*.ssl /var/db/pbi/keys
 fi
 
 if [ "$PLATFORM" = "cdrom" ] ; then
@@ -371,13 +379,6 @@ fi
 
 echo "done."
 
-# Ensure gettytab is of a sane size
-if [ `/bin/ls -la /etc/gettytab | /usr/bin/awk '{ print $5'}` -lt 512 ]; then
-	echo ">>> Restoring /etc/gettytab due to unusual size"
-	echo ">>> Restoring /etc/gettytab due to unusual size" | /usr/bin/logger
-	/bin/cp /etc/gettytab.bak /etc/gettytab
-fi
-
 # Recreate capabilities DB
 /usr/bin/cap_mkdb /etc/login.conf
 
@@ -451,6 +452,11 @@ if [ "${GMIRROR_STATUS}" != "" ]; then
 	# Setup monitoring/notifications
 	/usr/local/bin/minicron 60 /var/run/gmirror_status_check.pid /usr/local/sbin/gmirror_status_check.php
 fi
+
+# Log product version to syslog
+BUILDTIME=`cat /etc/version.buildtime`
+ARCH=`uname -m`
+echo "$product ($PLATFORM) $version $ARCH $BUILDTIME"
 
 echo "Bootup complete"
 

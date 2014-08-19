@@ -1,34 +1,34 @@
 <?php
 /*
-        $Id$
-        Copyright 2007 Scott Dale
-        Part of pfSense widgets (https://www.pfsense.org)
-        originally based on m0n0wall (http://m0n0.ch/wall)
+	$Id$
+	Copyright 2007 Scott Dale
+	Part of pfSense widgets (https://www.pfsense.org)
+	originally based on m0n0wall (http://m0n0.ch/wall)
 
-        Copyright (C) 2004-2005 T. Lechat <dev@lechat.org>, Manuel Kasper <mk@neon1.net>
-        and Jonathan Watt <jwatt@jwatt.org>.
-        All rights reserved.
+	Copyright (C) 2004-2005 T. Lechat <dev@lechat.org>, Manuel Kasper <mk@neon1.net>
+	and Jonathan Watt <jwatt@jwatt.org>.
+	All rights reserved.
 
-        Redistribution and use in source and binary forms, with or without
-        modification, are permitted provided that the following conditions are met:
+	Redistribution and use in source and binary forms, with or without
+	modification, are permitted provided that the following conditions are met:
 
-        1. Redistributions of source code must retain the above copyright notice,
-           this list of conditions and the following disclaimer.
+	1. Redistributions of source code must retain the above copyright notice,
+	   this list of conditions and the following disclaimer.
+	
+	2. Redistributions in binary form must reproduce the above copyright
+	   notice, this list of conditions and the following disclaimer in the
+	   documentation and/or other materials provided with the distribution.
 
-        2. Redistributions in binary form must reproduce the above copyright
-           notice, this list of conditions and the following disclaimer in the
-           documentation and/or other materials provided with the distribution.
-
-        THIS SOFTWARE IS PROVIDED ``AS IS'' AND ANY EXPRESS OR IMPLIED WARRANTIES,
-        INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY
-        AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE
-        AUTHOR BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY,
-        OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
-        SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
-        INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
-        CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
-        ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
-        POSSIBILITY OF SUCH DAMAGE.
+	THIS SOFTWARE IS PROVIDED ``AS IS'' AND ANY EXPRESS OR IMPLIED WARRANTIES,
+	INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY
+	AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE
+	AUTHOR BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY,
+	OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+	SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+	INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+	CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+	ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+	POSSIBILITY OF SUCH DAMAGE.
 */
 
 $nocsrf = true;
@@ -40,33 +40,28 @@ require_once("functions.inc");
 /* In an effort to reduce duplicate code, many shared functions have been moved here. */
 require_once("filter_log.inc");
 
-if($_POST['filterlogentries']) {
-	unset($config['widgets']['filterlogentries']);
-	if( ($_POST['filterlogentries']) and ($_POST['filterlogentries'] != ' ') ) $config['widgets']['filterlogentries'] = $_POST['filterlogentries'];
+if(is_numeric($_POST['filterlogentries'])) {
+	$config['widgets']['filterlogentries'] = $_POST['filterlogentries'];
 
-	unset($config['widgets']['filterlogentriesacts']);
-	if($_POST['actpass'])   $config['widgets']['filterlogentriesacts'] .= $_POST['actpass']   . " ";
-	if($_POST['actblock'])  $config['widgets']['filterlogentriesacts'] .= $_POST['actblock']  . " ";
-	if($_POST['actreject']) $config['widgets']['filterlogentriesacts'] .= $_POST['actreject'] . " ";
-	if (isset($config['widgets']['filterlogentriesacts'])) $config['widgets']['filterlogentriesacts'] = trim($config['widgets']['filterlogentriesacts']);
+	$acts = array();
+	if ($_POST['actpass'])   $acts[] = "Pass";
+	if ($_POST['actblock'])  $acts[] = "Block";
+	if ($_POST['actreject']) $acts[] = "Reject";
 
-	unset($config['widgets']['filterlogentriesinterfaces']);
-	if( ($_POST['filterlogentriesinterfaces']) and ($_POST['filterlogentriesinterfaces'] != "All") ) $config['widgets']['filterlogentriesinterfaces'] = $_POST['filterlogentriesinterfaces'];
-	if (isset($config['widgets']['filterlogentriesinterfaces'])) $config['widgets']['filterlogentriesinterfaces'] = trim($config['widgets']['filterlogentriesinterfaces']);
+	if (!empty($acts))
+		$config['widgets']['filterlogentriesacts'] = implode(" ", $acts);
+	else
+		unset($config['widgets']['filterlogentriesacts']);
+	unset($acts);
+
+	if( ($_POST['filterlogentriesinterfaces']) and ($_POST['filterlogentriesinterfaces'] != "All") )
+		$config['widgets']['filterlogentriesinterfaces'] = trim($_POST['filterlogentriesinterfaces']);
+	else
+		unset($config['widgets']['filterlogentriesinterfaces']);
 
 	write_config("Saved Filter Log Entries via Dashboard");
-  $filename = $_SERVER['HTTP_REFERER'];
-  if(headers_sent($file, $line)){
-    echo "<script type=\"text/javascript\">\n";
-    echo "//<![CDATA[\n";
-    echo "window.location.href=\"" . $filename . "\";\n";
-    echo "//]]>\n";
-    echo "</script>\n";
-    echo "<noscript>\n";
-    echo "<meta http-equiv=\"refresh\" content=\"0;url=" . $filename . "\" />\n";
-    echo "</noscript>\n";
-  }
 	Header("Location: /");
+	exit(0);
 }
 
 $nentries = isset($config['widgets']['filterlogentries']) ? $config['widgets']['filterlogentries'] : 5;
@@ -76,9 +71,10 @@ $nentries = isset($config['widgets']['filterlogentries']) ? $config['widgets']['
 $nentriesacts       = isset($config['widgets']['filterlogentriesacts'])       ? $config['widgets']['filterlogentriesacts']       : 'All';
 $nentriesinterfaces = isset($config['widgets']['filterlogentriesinterfaces']) ? $config['widgets']['filterlogentriesinterfaces'] : 'All';
 
-$filterfieldsarray = array("act", "interface");
-$filterfieldsarray['act'] = $nentriesacts;
-$filterfieldsarray['interface'] = $nentriesinterfaces;
+$filterfieldsarray = array(
+	"act" => $nentriesacts,
+	"interface" => $nentriesinterfaces
+);
 
 $filter_logfile = "{$g['varlog_path']}/filter.log";
 $filterlog = conv_log_filter($filter_logfile, $nentries, 50, $filterfieldsarray);        //Get log entries
@@ -111,7 +107,7 @@ function format_log_line(row) {
 		'<td class="listMRr ellipsis" title="' + row[1] + '">' + row[1].slice(0,-3) + '<\/td>' +
 		'<td class="listMRr ellipsis" title="' + row[2] + '">' + row[2] + '<\/td>' +
 		'<td class="listMRr ellipsis" title="' + row[3] + '">' + row[3] + '<\/td>' +
- 		'<td class="listMRr ellipsis" title="' + row[4] + '">' + row[4] + '<\/td>';
+		'<td class="listMRr ellipsis" title="' + row[4] + '">' + row[4] + '<\/td>';
 
 	var nentriesacts = "<?php echo $nentriesacts; ?>";
 	var nentriesinterfaces = "<?php echo $nentriesinterfaces; ?>";
@@ -139,7 +135,7 @@ function format_log_line(row) {
 		</select>
 
 <?php
-		$Include_Act = explode(",", str_replace(" ", ",", $nentriesacts));
+		$Include_Act = explode(" ", $nentriesacts);
 		if ($nentriesinterfaces == "All") $nentriesinterfaces = "";
 ?>
 		<input id="actpass"   name="actpass"   type="checkbox" value="Pass"   <?php if (in_arrayi('Pass',   $Include_Act)) echo "checked=\"checked\""; ?> /> Pass
@@ -149,14 +145,19 @@ function format_log_line(row) {
 		Interfaces:
 		<select id="filterlogentriesinterfaces" name="filterlogentriesinterfaces" class="formselect">
 			<option value="All">ALL</option>
-                      <?php
-						$interfaces = get_configured_interface_with_descr();
-					  	foreach ($interfaces as $iface => $ifacename): ?>
-                        <option value="<?=$iface;?>" <?php if ($nentriesinterfaces == $iface) echo "selected=\"selected\"";?>>
-                      <?=xhtmlspecialchars($ifacename);?>
-                      </option>
-                      <?php endforeach; ?>
-                    </select>
+<?php
+		$interfaces = get_configured_interface_with_descr();
+		foreach ($interfaces as $iface => $ifacename):
+?>
+			<option value="<?=$iface;?>" <?php if ($nentriesinterfaces == $iface) echo "selected=\"selected\"";?>>
+				<?=xhtmlspecialchars($ifacename);?>
+			</option>
+<?php
+		endforeach;
+		unset($interfaces);
+		unset($Include_Act);
+?>
+		</select>
 
 		<input id="submita" name="submita" type="submit" class="formbtn" value="Save" />
 	</form>

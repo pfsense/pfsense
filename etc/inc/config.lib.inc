@@ -39,7 +39,7 @@
 	POSSIBILITY OF SUCH DAMAGE.
 
 
-	pfSense_BUILDER_BINARIES:	/sbin/mount	/sbin/sysctl	/sbin/umount	/sbin/halt	/sbin/fsck
+	pfSense_BUILDER_BINARIES:	/sbin/mount	/sbin/umount	/sbin/halt	/sbin/fsck
 	pfSense_MODULE:	config
 */
 
@@ -190,13 +190,17 @@ function generate_config_cache($config) {
 }
 
 function discover_last_backup() {
-        $backups = explode("\n", `cd /cf/conf/backup && ls -ltr *.xml | awk '{print \$9}'`);
+	$backups = glob('/cf/conf/backup/*.xml');
 	$last_backup = "";
-        foreach($backups as $backup)
-        	if($backup)
-	        	$last_backup = $backup;
+	$last_mtime = 0;
+	foreach($backups as $backup) {
+		if(filemtime($backup) > $last_mtime) {
+			$last_mtime = filemtime($backup);
+			$last_backup = $backup;
+		}
+	}
 
-        return $last_backup;
+	return basename($last_backup);
 }
 
 function restore_backup($file) {
@@ -587,6 +591,7 @@ function reset_factory_defaults($lock = false) {
 		}
 	}
 	closedir($dh);
+	unlink_if_exists($g['tmp_path'] . "/config.cache");
 
 	/* copy default configuration */
 	copy("{$g['conf_default_path']}/config.xml", "{$g['conf_path']}/config.xml");

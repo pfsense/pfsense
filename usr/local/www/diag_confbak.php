@@ -51,24 +51,24 @@ if (isset($_POST['backupcount'])) {
 		$changedescr = "(platform default)";
 	}
 	write_config("Changed backup revision count to {$changedescr}");
-}
+} elseif ($_POST) {
+	if (!isset($_POST['confirm']) || ($_POST['confirm'] != gettext("Confirm")) || (!isset($_POST['newver']) && !isset($_POST['rmver']))) {
+		header("Location: diag_confbak.php");
+		return;
+	}
 
-if($_GET['newver'] != "") {
 	conf_mount_rw();
 	$confvers = unserialize(file_get_contents($g['cf_conf_path'] . '/backup/backup.cache'));
-	if(config_restore($g['conf_path'] . '/backup/config-' . $_GET['newver'] . '.xml') == 0)
-
-	$savemsg = sprintf(gettext('Successfully reverted to timestamp %1$s with description "%2$s".'), date(gettext("n/j/y H:i:s"), $_GET['newver']), $confvers[$_GET['newver']]['description']);
-	else
-		$savemsg = gettext("Unable to revert to the selected configuration.");
-	conf_mount_ro();
-}
-
-if($_GET['rmver'] != "") {
-	conf_mount_rw();
-	$confvers = unserialize(file_get_contents($g['cf_conf_path'] . '/backup/backup.cache'));
-	unlink_if_exists($g['conf_path'] . '/backup/config-' . $_GET['rmver'] . '.xml');
-	$savemsg = sprintf(gettext('Deleted backup with timestamp %1$s and description "%2$s".'), date(gettext("n/j/y H:i:s"), $_GET['rmver']),$confvers[$_GET['rmver']]['description']);
+	if($_POST['newver'] != "") {
+		if(config_restore($g['conf_path'] . '/backup/config-' . $_POST['newver'] . '.xml') == 0)
+		$savemsg = sprintf(gettext('Successfully reverted to timestamp %1$s with description "%2$s".'), date(gettext("n/j/y H:i:s"), $_POST['newver']), $confvers[$_POST['newver']]['description']);
+		else
+			$savemsg = gettext("Unable to revert to the selected configuration.");
+	}
+	if($_POST['rmver'] != "") {
+		unlink_if_exists($g['conf_path'] . '/backup/config-' . $_POST['rmver'] . '.xml');
+		$savemsg = sprintf(gettext('Deleted backup with timestamp %1$s and description "%2$s".'), date(gettext("n/j/y H:i:s"), $_POST['rmver']),$confvers[$_POST['rmver']]['description']);
+	}
 	conf_mount_ro();
 }
 
@@ -159,6 +159,34 @@ include("head.inc");
 				<div id="mainarea">
 					<form action="diag_confbak.php" method="post">
 					<table class="tabcont" align="center" width="100%" border="0" cellpadding="6" cellspacing="0" summary="tabcont">
+
+<?PHP if ($_GET["newver"] || $_GET["rmver"]): ?>
+					<tr>
+						<td colspan="2" valign="top" class="listtopic"><?PHP echo gettext("Confirm Action"); ?></td>
+					</tr>
+					<tr>
+						<td width="22%" valign="top" class="vncell">&nbsp;</td>
+						<td width="78%" class="vtable">
+
+							<strong><?PHP echo gettext("Please confirm the selected action"); ?></strong>:
+							<br />
+							<br /><strong><?PHP echo gettext("Action"); ?>:</strong>
+						<?PHP	if (!empty($_GET["newver"])) {
+							echo gettext("Restore from Configuration Backup");
+							$target_config = $_GET["newver"]; ?>
+							<input type="hidden" name="newver" value="<?PHP echo htmlspecialchars($_GET["newver"]); ?>" />
+						<?PHP	} elseif (!empty($_GET["rmver"])) {
+							echo gettext("Remove Configuration Backup");
+							$target_config = $_GET["rmver"]; ?>
+							<input type="hidden" name="rmver" value="<?PHP echo htmlspecialchars($_GET["rmver"]); ?>" />
+						<?PHP	} ?>
+							<br /><strong><?PHP echo gettext("Target Configuration"); ?>:</strong>
+							<?PHP echo sprintf(gettext('Timestamp %1$s'), date(gettext("n/j/y H:i:s"), $target_config)); ?>
+							<br /><input type="submit" name="confirm" value="<?PHP echo gettext("Confirm"); ?>" />
+						</td>
+					</tr>
+<?PHP else: ?>
+
 						<tr>
 							<td width="10%">&nbsp;</td>
 							<td width="15%" valign="top"><?=gettext("Backup Count");?></td>
@@ -231,10 +259,10 @@ include("head.inc");
 							<td class="listr"> <?= format_bytes($version['filesize']) ?></td>
 							<td class="listr"> <?= $version['description'] ?></td>
 							<td valign="middle" class="list nowrap">
-							<a href="diag_confbak.php?newver=<?=$version['time'];?>" onclick="return confirm('<?=gettext("Revert to this configuration?");?>')">
+							<a href="diag_confbak.php?newver=<?=$version['time'];?>">
 							<img src="/themes/<?= $g['theme']; ?>/images/icons/icon_plus.gif" width="17" height="17" border="0" alt="<?=gettext("Revert to this configuration");?>" title="<?=gettext("Revert to this configuration");?>" />
 								</a>
-							<a href="diag_confbak.php?rmver=<?=$version['time'];?>" onclick="return confirm('<?=gettext("Delete this configuration backup?");?>')">
+							<a href="diag_confbak.php?rmver=<?=$version['time'];?>">
 							<img src="/themes/<?= $g['theme']; ?>/images/icons/icon_x.gif" width="17" height="17" border="0" alt="<?=gettext("Remove this backup");?>" title="<?=gettext("Remove this backup");?>" />
 								</a>
 								<a href="diag_confbak.php?getcfg=<?=$version['time'];?>">
@@ -254,6 +282,7 @@ include("head.inc");
 							</td>
 						</tr>
 						<?php endif; ?>
+<?php endif; ?>
 					</table>
 					</form>
 				</div>

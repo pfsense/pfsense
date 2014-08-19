@@ -94,6 +94,7 @@ if($_GET['act']=="new"){
 	$pconfig['autotls_enable'] = "yes";
 	$pconfig['interface'] = "wan";
 	$pconfig['server_port'] = 1194;
+	$pconfig['verbosity_level'] = 1; // Default verbosity is 1
 	// OpenVPN Defaults to SHA1
 	$pconfig['digest'] = "SHA1";
 }
@@ -153,6 +154,14 @@ if($_GET['act']=="edit"){
 		// just in case the modes switch
 		$pconfig['autokey_enable'] = "yes";
 		$pconfig['autotls_enable'] = "yes";
+		
+		$pconfig['no_tun_ipv6'] = $a_client[$id]['no_tun_ipv6'];
+		$pconfig['route_no_pull'] = $a_client[$id]['route_no_pull'];
+		$pconfig['route_no_exec'] = $a_client[$id]['route_no_exec'];
+		if (isset($a_client[$id]['verbosity_level']))
+			$pconfig['verbosity_level'] = $a_client[$id]['verbosity_level'];
+		else
+			$pconfig['verbosity_level'] = 1; // Default verbosity is 1
 	}
 }
 
@@ -312,6 +321,11 @@ if ($_POST) {
 		$client['compression'] = $pconfig['compression'];
 		$client['passtos'] = $pconfig['passtos'];
 
+		$client['no_tun_ipv6'] = $pconfig['no_tun_ipv6'];
+		$client['route_no_pull'] = $pconfig['route_no_pull'];
+		$client['route_no_exec'] = $pconfig['route_no_exec'];
+		$client['verbosity_level'] = $pconfig['verbosity_level'];
+
 		if (isset($id) && $a_client[$id])
 			$a_client[$id] = $client;
 		else
@@ -349,6 +363,19 @@ function mode_change() {
 			document.getElementById("tls_ca").style.display="none";
 			document.getElementById("tls_cert").style.display="none";
 			document.getElementById("psk").style.display="";
+			break;
+	}
+}
+
+function dev_mode_change() {
+	index = document.iform.dev_mode.selectedIndex;
+	value = document.iform.dev_mode.options[index].value;
+	switch(value) {
+		case "tun":
+			document.getElementById("chkboxNoTunIPv6").style.display="";
+			break;
+		case "tap":
+			document.getElementById("chkboxNoTunIPv6").style.display="none";
 			break;
 	}
 }
@@ -483,7 +510,7 @@ if ($savemsg)
 					<tr>
 						<td width="22%" valign="top" class="vncellreq"><?=gettext("Device mode");?></td>
 							<td width="78%" class="vtable">
-							<select name='dev_mode' class="formselect">
+							<select name='dev_mode' class="formselect" onchange="dev_mode_change()">
 							<?php
 								foreach ($openvpn_dev_mode as $mode):
 									$selected = "";
@@ -955,6 +982,63 @@ if ($savemsg)
 							</table>
 						</td>
 					</tr>
+
+					<tr id="chkboxNoTunIPv6">
+						<td width="22%" valign="top" class="vncell"><?=gettext("Disable IPv6"); ?></td>
+						<td width="78%" class="vtable">
+							<table border="0" cellpadding="2" cellspacing="0" summary="disable-ipv6">
+								<tr>
+									<td>
+										<?php set_checked($pconfig['no_tun_ipv6'],$chk); ?>
+										<input name="no_tun_ipv6" type="checkbox" value="yes" <?=$chk;?> />
+									</td>
+									<td>
+										<span class="vexpl">
+											<?=gettext("Don't forward IPv6 traffic"); ?>.
+										</span>
+									</td>
+								</tr>
+							</table>
+						</td>
+					</tr>
+
+					<tr id="chkboxRouteNoPull">
+						<td width="22%" valign="top" class="vncell"><?=gettext("Don't pull routes"); ?></td>
+						<td width="78%" class="vtable">
+							<table border="0" cellpadding="2" cellspacing="0" summary="dont-pull-routes">
+								<tr>
+									<td>
+										<?php set_checked($pconfig['route_no_pull'],$chk); ?>
+										<input name="route_no_pull" type="checkbox" value="yes" <?=$chk;?> />
+									</td>
+									<td>
+										<span class="vexpl">
+											<?=gettext("Don't add or remove routes automatically. Instead pass routes to "); ?> <strong>--route-up</strong> <?=gettext("script using environmental variables"); ?>.
+										</span>
+									</td>
+								</tr>
+							</table>
+						</td>
+					</tr>
+
+					<tr id="chkboxRouteNoExec">
+						<td width="22%" valign="top" class="vncell"><?=gettext("Don't add/remove routes"); ?></td>
+						<td width="78%" class="vtable">
+							<table border="0" cellpadding="2" cellspacing="0" summary="dont-exec-routes">
+								<tr>
+									<td>
+										<?php set_checked($pconfig['route_no_exec'],$chk); ?>
+										<input name="route_no_exec" type="checkbox" value="yes" <?=$chk;?> />
+									</td>
+									<td>
+										<span class="vexpl">
+											<?=gettext("This option effectively bars the server from adding routes to the client's routing table, however note that this option still allows the server to set the TCP/IP properties of the client's TUN/TAP interface"); ?>.
+										</span>
+									</td>
+								</tr>
+							</table>
+						</td>
+					</tr>
 				</table>
 
 				<table width="100%" border="0" cellpadding="6" cellspacing="0" id="client_opts" summary="advance configuration">
@@ -978,6 +1062,29 @@ if ($savemsg)
 							</table>
 						</td>
 					</tr>
+
+					<tr id="comboboxVerbosityLevel">
+							<td width="22%" valign="top" class="vncell"><?=gettext("Verbosity level");?></td>
+							<td width="78%" class="vtable">
+							<select name="verbosity_level" class="formselect">
+							<?php
+								foreach ($openvpn_verbosity_level as $verb_value => $verb_desc):
+									$selected = "";
+									if ($pconfig['verbosity_level'] == $verb_value)
+										$selected = "selected=\"selected\"";
+							?>
+								<option value="<?=$verb_value;?>" <?=$selected;?>><?=$verb_desc;?></option>
+							<?php endforeach; ?>
+							</select>
+							<br />
+							<?=gettext("Each level shows all info from the previous levels. Level 3 is recommended if you want a good summary of what's happening without being swamped by output"); ?>.<br /> <br />
+							<strong>none</strong> -- <?=gettext("No output except fatal errors"); ?>. <br />
+							<strong>default</strong>-<strong>4</strong> -- <?=gettext("Normal usage range"); ?>. <br />
+							<strong>5</strong> -- <?=gettext("Output R and W characters to the console for each packet read and write, uppercase is used for TCP/UDP packets and lowercase is used for TUN/TAP packets"); ?>. <br />
+							<strong>6</strong>-<strong>11</strong> -- <?=gettext("Debug info range"); ?>.
+							</td>
+					</tr>
+
 				</table>
 
 				<br />

@@ -969,7 +969,7 @@ function enable_change(enable_change) {
 					foreach($a_cert as $cert):
 						$selected = "";
 						if ($pconfig['certref'] == $cert['refid'])
-							$selected = "selected=\"selected\"";
+							$selected = " selected=\"selected\"";
 				?>
 				<option value="<?=$cert['refid'];?>"<?=$selected;?>><?=$cert['descr'];?></option>
 			<?php endforeach; ?>
@@ -982,8 +982,8 @@ function enable_change(enable_change) {
 	<tr>
 		<td valign="top" class="vncell"><?=gettext("Disable HTTPS forwards"); ?></td>
 		<td class="vtable">
-			<input name="nohttpsforwards" type="checkbox" class="formfld" id="nohttpsforwards" value="yes" <?php if ($pconfig['nohttpsforwards']) echo "checked"; ?>>
-			<strong><?=gettext("Disable HTTPS forwards"); ?></strong><br>
+			<input name="nohttpsforwards" type="checkbox" class="formfld" id="nohttpsforwards" value="yes" <?php if ($pconfig['nohttpsforwards']) echo "checked=\"checked\""; ?> />
+			<strong><?=gettext("Disable HTTPS forwards"); ?></strong><br/>
 			<?=gettext("If this option is set, attempts to connect to SSL/HTTPS (Port 443) sites will not be forwarded to the captive portal.  This prevents certificate errors from being presented to the user even if HTTPS logins are enabled.  Users must attempt a connecton to an HTTP (Port 80) site to get forwarded to the captive portal. If HTTPS logins are enabled, the user will be redirected to the HTTPS login page."); ?></td>
 	</tr>
 	<tr>

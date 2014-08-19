@@ -480,11 +480,10 @@ EOD;
 					}
 				}
 			} else {
-				log_error(gettext("Warning!  DHCP Failover setup and no CARP virtual IP's defined!"));
+				log_error(gettext("Warning!  DHCP Failover setup and no CARP virtual IPs defined!"));
 			}
 			if($skew > 10) {
 				$type = "secondary";
-				$dhcpdconf_pri  = "mclt 600;\n";
 				$my_port = "520";
 				$peer_port = "519";
 			} else {
@@ -508,7 +507,7 @@ failover peer "dhcp_{$dhcpif}" {
   {$dhcpdconf_pri}
   load balance max seconds 3;
 }
-
+\n
 EOPP;
 			}
 		}
@@ -1826,7 +1825,7 @@ function services_dnsmasq_configure() {
 
 		if ($config['dnsmasq']['custom_options'])
 			foreach (preg_split('/\s+/', $config['dnsmasq']['custom_options']) as $c) {
-				$args .= " --$c";
+				$args .= " " . escapeshellarg("--{$c}");
 				$p = explode('=', $c);
 				if (array_key_exists($p[0], $standard_args))
 					unset($standard_args[$p[0]]);
@@ -2274,7 +2273,7 @@ function configure_cron() {
 	unset($crontab_contents);
 
 	/* do a HUP kill to force sync changes */
-	exec('/bin/pkill -HUP cron');
+	sigkillbypid("{$g['varrun_path']}/cron.pid", "HUP");
 
 	conf_mount_ro();
 }

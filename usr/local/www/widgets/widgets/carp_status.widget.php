@@ -74,7 +74,7 @@ $carp_enabled = get_carp_status();
 			if ($ipaddress){ ?> &nbsp;
 				<?=xhtmlspecialchars($status);?> &nbsp;
 				<?=xhtmlspecialchars($ipaddress);}?>
-</tr><?php	}
+</td></tr><?php	}
 	} else { ?>
 		<tr><td class="listr">No CARP Interfaces Defined. Click <a href="carp_status.php">here</a> to configure CARP.</td></tr>
 <?php	} ?>

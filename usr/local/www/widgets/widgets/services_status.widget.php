@@ -41,7 +41,7 @@ require_once("/usr/local/www/widgets/include/services_status.inc");
 $services = get_services();
 
 if(isset($_POST['servicestatusfilter'])) {
-	$config['widgets']['servicestatusfilter'] = $_POST['servicestatusfilter'];
+	$config['widgets']['servicestatusfilter'] = htmlspecialchars($_POST['servicestatusfilter'], ENT_QUOTES | ENT_HTML401);
 	write_config("Saved Service Status Filter via Dashboard");
 	header("Location: ../../index.php");
 }
@@ -81,7 +81,7 @@ if (count($services) > 0) {
 			$bgclass = "listr";
 		else
 			$bgclass = "listbg";
-		echo "<td class=\"" . $bgclass . "\" align=\"center\">" . get_service_status_icon($service, true, true) . "</td>\n";
+		echo "<td class=\"" . $bgclass . "\" align=\"center\">" . get_service_status_icon($service, false, true) . "</td>\n";
 		echo "<td valign=\"middle\" class=\"list nowrap\">" . get_service_control_links($service) . "</td></tr>\n";
 	}
 } else {

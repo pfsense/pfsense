@@ -389,7 +389,7 @@ table#marquee div#container div#scroller {
 #navigation ul li {
 	float: left;
 	position: relative;
-	width: 6.2em;
+	padding-right: 27px;
 	top: 0px;
 }
 

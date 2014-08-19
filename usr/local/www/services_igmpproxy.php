@@ -44,6 +44,7 @@
 ##|-PRIV
 
 require("guiconfig.inc");
+require_once("pfsense-utils.inc");
 
 if (!is_array($config['igmpproxy']['igmpentry']))
 	$config['igmpproxy']['igmpentry'] = array();
@@ -108,10 +109,10 @@ include("head.inc");
 	  <?php $i = 0; foreach ($a_igmpproxy as $igmpentry): ?>
 <tr>
   <td class="listlr" ondblclick="document.location='services_igmpproxy_edit.php?id=<?=$i;?>';">
-    <?=htmlspecialchars(convert_friendly_interface_to_friendly_descr($igmpentry['ifname']));?>
+    <?=xhtmlspecialchars(convert_friendly_interface_to_friendly_descr($igmpentry['ifname']));?>
   </td>
   <td class="listlr" ondblclick="document.location='services_igmpproxy_edit.php?id=<?=$i;?>';">
-    <?=htmlspecialchars($igmpentry['type']);?>
+    <?=xhtmlspecialchars($igmpentry['type']);?>
   </td>
   <td class="listr" ondblclick="document.location='services_igmpproxy_edit.php?id=<?=$i;?>';">
       <?php
@@ -125,7 +126,7 @@ include("head.inc");
     ?>
   </td>
   <td class="listbg" ondblclick="document.location='services_igmpproxy_edit.php?id=<?=$i;?>';">
-    <?=htmlspecialchars($igmpentry['descr']);?>&nbsp;
+    <?=xhtmlspecialchars($igmpentry['descr']);?>&nbsp;
   </td>
   <td valign="middle" class="list nowrap">
     <table border="0" cellspacing="0" cellpadding="1" summary="icons">

@@ -46,6 +46,7 @@
 
 require("guiconfig.inc");
 require_once("config.inc");
+require_once("pfsense-utils.inc");
 
 $pgtitle = array(gettext("Status"),gettext("DHCPv6 leases"));
 $shortcut_section = "dhcp6";
@@ -360,7 +361,7 @@ foreach($config['interfaces'] as $ifname => $ifarr) {
 			$slease['duid'] = $static['duid'];
 			$slease['start'] = "";
 			$slease['end'] = "";
-			$slease['hostname'] = htmlentities($static['hostname']);
+			$slease['hostname'] = xhtmlentities($static['hostname']);
 			$slease['act'] = "static";
 			if (in_array($slease['ip'], array_keys($ndpdata))) {
 				$slease['online'] = 'online';
@@ -455,13 +456,13 @@ foreach ($leases as $data) {
 		echo "<td class=\"listr\">{$fspans}{$data['duid']}{$fspane}</td>\n";
 		echo "<td class=\"listr\">{$fspans}";
 		if (!empty($data['hostname'])) {
-			echo htmlentities($data['hostname']) . "<br />";
+			echo xhtmlentities($data['hostname']) . "<br />";
 		}
 
 		$mac=trim($ndpdata[$data['ip']]['mac']);
 		if (!empty($mac)) {
 			$mac_hi = strtoupper($mac[0] . $mac[1] . $mac[3] . $mac[4] . $mac[6] . $mac[7]);
-			print htmlentities($mac);
+			print xhtmlentities($mac);
 			if(isset($mac_man[$mac_hi])){ print "<br /><font size=\"-2\"><i>{$mac_man[$mac_hi]}</i></font>"; }
 		}
 
@@ -486,7 +487,7 @@ foreach ($leases as $data) {
 
 		/* Only show the button for offline dynamic leases */
 		if (($data['type'] == "dynamic") && ($data['online'] != "online")) {
-			echo "<td class=\"list\" valign=\"middle\"><a href=\"status_dhcpv6_leases.php?deleteip={$data['ip']}&amp;all=" . htmlspecialchars($_GET['all']) . "\">";
+			echo "<td class=\"list\" valign=\"middle\"><a href=\"status_dhcpv6_leases.php?deleteip={$data['ip']}&amp;all=" . xhtmlspecialchars($_GET['all']) . "\">";
 			echo "<img src=\"/themes/{$g['theme']}/images/icons/icon_x.gif\" width=\"17\" height=\"17\" border=\"0\" title=\"" . gettext("delete this DHCP lease") . "\" alt=\"delete\" /></a></td>\n";
 		}
 		echo "</tr>\n";
@@ -555,7 +556,7 @@ foreach ($prefixes as $data) {
 </table>
 <br/>
 <form action="status_dhcpv6_leases.php" method="get">
-<input type="hidden" name="order" value="<?=htmlspecialchars($_GET['order']);?>" />
+<input type="hidden" name="order" value="<?=xhtmlspecialchars($_GET['order']);?>" />
 <?php if ($_GET['all']): ?>
 <input type="hidden" name="all" value="0" />
 <input type="submit" class="formbtn" value="<?=gettext("Show active and static leases only"); ?>" />

@@ -41,6 +41,7 @@ require_once("filter.inc");
 require("shaper.inc");
 require("captiveportal.inc");
 require_once("voucher.inc");
+require_once("pfsense-utils.inc");
 
 $cpzone = $_GET['zone'];
 if (isset($_POST['zone']))
@@ -105,25 +106,25 @@ include("head.inc");
 				?>
 				<tr>
 					<td class="listlr">
-						<?=htmlspecialchars($rollent['number']); ?>&nbsp;
+						<?=xhtmlspecialchars($rollent['number']); ?>&nbsp;
 					</td>
 					<td class="listr">
-						<?=htmlspecialchars($rollent['minutes']);?>&nbsp;
+						<?=xhtmlspecialchars($rollent['minutes']);?>&nbsp;
 					</td>
 					<td class="listr">
-						<?=htmlspecialchars($rollent['count']);?>&nbsp;
+						<?=xhtmlspecialchars($rollent['count']);?>&nbsp;
 					</td>
 					<td class="listr">
-						<?=htmlspecialchars($rollent['comment']); ?>&nbsp;
+						<?=xhtmlspecialchars($rollent['comment']); ?>&nbsp;
 					</td>
 					<td class="listr">
-						<?=htmlspecialchars($used); ?>&nbsp;
+						<?=xhtmlspecialchars($used); ?>&nbsp;
 					</td>
 					<td class="listr">
-						<?=htmlspecialchars($active); ?>&nbsp;
+						<?=xhtmlspecialchars($active); ?>&nbsp;
 					</td>
 					<td class="listr">
-						<?=htmlspecialchars($ready); ?>&nbsp;
+						<?=xhtmlspecialchars($ready); ?>&nbsp;
 					</td>
 				</tr>
 				<?php $i++; endforeach; unlock($voucherlck); ?>

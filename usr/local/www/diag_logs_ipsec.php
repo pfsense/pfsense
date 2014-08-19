@@ -45,6 +45,7 @@
 
 require("guiconfig.inc");
 require("ipsec.inc");
+require_once("pfsense-utils.inc");
 
 $ipsec_logfile = "{$g['varlog_path']}/ipsec.log";
 
@@ -124,7 +125,7 @@ include("head.inc");
 		  		</tr>
 				<?php
 				foreach($ipsec_logarr as $logent){
-					$logent = htmlspecialchars($logent);
+					$logent = xhtmlspecialchars($logent);
 					foreach($search as $string) {
 						if(preg_match($string, $logent))
 							$match = true;
@@ -138,7 +139,7 @@ include("head.inc");
 					}
 					$logent = preg_split("/\s+/", $logent, 6);
 					echo "<tr valign=\"top\">\n";
-					$entry_date_time = htmlspecialchars(join(" ", array_slice($logent, 0, 3)));
+					$entry_date_time = xhtmlspecialchars(join(" ", array_slice($logent, 0, 3)));
 					echo "<td class=\"listlr nowrap\">" . $entry_date_time  . "</td>\n";
 					echo "<td class=\"listr\">" . $logent[4] . " " . $logent[5] . "</td>\n";
 					echo "</tr>\n";

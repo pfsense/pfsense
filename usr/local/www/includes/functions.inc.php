@@ -317,7 +317,7 @@ function get_interfacestats() {
 				$new_data .= "0,";
 			}
 			if (isset($ifinfo['collisions']))
-				$new_data .= htmlspecialchars($ifinfo['collisions']) . ",";
+				$new_data .= xhtmlspecialchars($ifinfo['collisions']) . ",";
 			else
 				$new_data .= "0,";
 	}//end for
@@ -344,10 +344,10 @@ function get_interfacestatus() {
 		}
 		$data .= ",";
 		if ($ifinfo['ipaddr'])
-			$data .= htmlspecialchars($ifinfo['ipaddr']);
+			$data .= xhtmlspecialchars($ifinfo['ipaddr']);
 		$data .= ",";
 		if ($ifinfo['status'] != "down")
-			$data .= htmlspecialchars($ifinfo['media']);
+			$data .= xhtmlspecialchars($ifinfo['media']);
 
 		$data .= "~";
 

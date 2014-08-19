@@ -40,6 +40,7 @@
 ##|-PRIV
 
 require("guiconfig.inc");
+require_once("pfsense-utils.inc");
 
 if (!is_array($config['gifs']['gif']))
 	$config['gifs']['gif'] = array();
@@ -116,13 +117,13 @@ include("head.inc");
 			  <?php $i = 0; foreach ($a_gifs as $gif): ?>
                 <tr  ondblclick="document.location='interfaces_gif_edit.php?id=<?=$i;?>'">
                   <td class="listlr">
-					<?=htmlspecialchars(convert_friendly_interface_to_friendly_descr($gif['if']));?>
+					<?=xhtmlspecialchars(convert_friendly_interface_to_friendly_descr($gif['if']));?>
                   </td>
                   <td class="listr">
-					<?=htmlspecialchars($gif['remote-addr']);?>
+					<?=xhtmlspecialchars($gif['remote-addr']);?>
                   </td>
                   <td class="listbg">
-                    <?=htmlspecialchars($gif['descr']);?>&nbsp;
+                    <?=xhtmlspecialchars($gif['descr']);?>&nbsp;
                   </td>
                   <td valign="middle" class="list nowrap"> <a href="interfaces_gif_edit.php?id=<?=$i;?>"><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_e.gif" width="17" height="17" border="0" alt="edit" /></a>
                      &nbsp;<a href="interfaces_gif.php?act=del&amp;id=<?=$i;?>" onclick="return confirm('<?=gettext("Do you really want to delete this gif tunnel?"); ?>')"><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_x.gif" width="17" height="17" border="0" alt="delete" /></a></td>

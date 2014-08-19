@@ -46,6 +46,7 @@
 $pgtitle = array(gettext("Firewall"),gettext("IGMP Proxy"), gettext("Edit"));
 
 require("guiconfig.inc");
+require_once("pfsense-utils.inc");
 
 if (!is_array($config['igmpproxy']['igmpentry']))
 	$config['igmpproxy']['igmpentry'] = array();
@@ -63,7 +64,7 @@ if (isset($id) && $a_igmpproxy[$id]) {
 	$pconfig['threshold'] = $a_igmpproxy[$id]['threshold'];
 	$pconfig['type'] = $a_igmpproxy[$id]['type'];
 	$pconfig['address'] = $a_igmpproxy[$id]['address'];
-	$pconfig['descr'] = html_entity_decode($a_igmpproxy[$id]['descr']);
+	$pconfig['descr'] = xhtml_entity_decode($a_igmpproxy[$id]['descr']);
 
 }
 
@@ -179,7 +180,7 @@ include("head.inc");
   <tr>
     <td width="22%" valign="top" class="vncell"><?=gettext("Description");?></td>
     <td width="78%" class="vtable">
-      <input name="descr" type="text" class="formfld unknown" id="descr" size="40" value="<?=htmlspecialchars($pconfig['descr']);?>" />
+      <input name="descr" type="text" class="formfld unknown" id="descr" size="40" value="<?=xhtmlspecialchars($pconfig['descr']);?>" />
       <br />
       <span class="vexpl">
         <?=gettext("You may enter a description here for your reference (not parsed).");?>
@@ -210,7 +211,7 @@ include("head.inc");
   <tr>
     <td valign="top" class="vncell"><?=gettext("Threshold");?></td>
     <td class="vtable">
-      <input name="threshold" class="formfld unknown" id="threshold" value="<?php echo htmlspecialchars($pconfig['threshold']);?>" />
+      <input name="threshold" class="formfld unknown" id="threshold" value="<?php echo xhtmlspecialchars($pconfig['threshold']);?>" />
       <br />
       <span class="vexpl">
 	      <?=gettext("Defines the TTL threshold for  the  network  interface.  Packets".
@@ -249,7 +250,7 @@ include("head.inc");
 	?>
           <tr>
             <td>
-              <input name="address<?php echo $tracker; ?>" type="text" class="formfld unknown" id="address<?php echo $tracker; ?>" size="30" value="<?=htmlspecialchars($address);?>" />
+              <input name="address<?php echo $tracker; ?>" type="text" class="formfld unknown" id="address<?php echo $tracker; ?>" size="30" value="<?=xhtmlspecialchars($address);?>" />
             </td>
             <td>
 			        <select name="address_subnet<?php echo $tracker; ?>" class="formselect" id="address_subnet<?php echo $tracker; ?>">
@@ -282,7 +283,7 @@ include("head.inc");
       <input id="submit" name="submit" type="submit" class="formbtn" value="<?=gettext("Save");?>" />
       <a href="services_igmpproxy.php"><input id="cancelbutton" name="cancelbutton" type="button" class="formbtn" value="<?=gettext("Cancel");?>" /></a>
       <?php if (isset($id) && $a_igmpproxy[$id]): ?>
-      <input name="id" type="hidden" value="<?=htmlspecialchars($id);?>" />
+      <input name="id" type="hidden" value="<?=xhtmlspecialchars($id);?>" />
       <?php endif; ?>
     </td>
   </tr>

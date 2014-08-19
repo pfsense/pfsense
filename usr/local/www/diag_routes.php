@@ -41,6 +41,7 @@
 ##|-PRIV
 
 include('guiconfig.inc');
+require_once("pfsense-utils.inc");
 
 if (isset($_REQUEST['isAjax'])) {
 	$netstat = "/usr/bin/netstat -rW";
@@ -55,14 +56,14 @@ if (isset($_REQUEST['isAjax'])) {
 		$netstat .= " -n";
 
 	if (!empty($_REQUEST['filter']))
-		$netstat .= " | /usr/bin/sed -e '1,3d; 5,\$ { /" . escapeshellarg(htmlspecialchars($_REQUEST['filter'])) . "/!d; };'";
+		$netstat .= " | /usr/bin/sed -e '1,3d; 5,\$ { /" . escapeshellarg(xhtmlspecialchars($_REQUEST['filter'])) . "/!d; };'";
 	else
 		$netstat .= " | /usr/bin/sed -e '1,3d'";
 
 	if (is_numeric($_REQUEST['limit']) && $_REQUEST['limit'] > 0)
 		$netstat .= " | /usr/bin/head -n {$_REQUEST['limit']}";
 
-	echo htmlspecialchars_decode(shell_exec($netstat));
+	echo xhtmlspecialchars_decode(shell_exec($netstat));
 
 	exit;
 }

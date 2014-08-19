@@ -54,6 +54,7 @@ require("functions.inc");
 require_once("filter.inc");
 require("shaper.inc");
 require("captiveportal.inc");
+require_once("pfsense-utils.inc");
 
 $cpzone = $_GET['zone'];
 if (isset($_POST['zone']))
@@ -138,7 +139,7 @@ include("head.inc");
 <body link="#0000CC" vlink="#0000CC" alink="#0000CC">
 <?php include("fbegin.inc"); ?>
 <form action="services_captiveportal_filemanager.php" method="post" enctype="multipart/form-data" name="iform" id="iform">
-<input type="hidden" name="zone" id="zone" value="<?=htmlspecialchars($cpzone);?>" />
+<input type="hidden" name="zone" id="zone" value="<?=xhtmlspecialchars($cpzone);?>" />
 <?php if ($input_errors) print_input_errors($input_errors); ?>
 <table width="100%" border="0" cellpadding="0" cellspacing="0" summary="captiveportal file manager">
   <tr><td class="tabnavtbl">
@@ -170,7 +171,7 @@ include("head.inc");
 <?php if (is_array($a_cp[$cpzone]['element'])):
 	$i = 0; foreach ($a_cp[$cpzone]['element'] as $element): ?>
   	  <tr>
-		<td class="listlr"><?=htmlspecialchars($element['name']);?></td>
+		<td class="listlr"><?=xhtmlspecialchars($element['name']);?></td>
 		<td class="listr" align="right"><?=format_bytes($element['size']);?></td>
 		<td valign="middle" class="list nowrap">
 		<a href="services_captiveportal_filemanager.php?zone=<?=$cpzone;?>&amp;act=del&amp;id=<?=$i;?>" onclick="return confirm('<?=gettext("Do you really want to delete this file?"); ?>')"><img src="/themes/<?php echo $g['theme']; ?>/images/icons/icon_x.gif" title="<?=gettext("delete file"); ?>" width="17" height="17" border="0" alt="delete" /></a>

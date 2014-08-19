@@ -40,6 +40,7 @@
 ##|-PRIV
 
 require("guiconfig.inc");
+require_once("pfsense-utils.inc");
 
 if (!is_array($config['hasync']))
 	$config['hasync'] = array();
@@ -126,7 +127,7 @@ include("head.inc");
 			<select id='pfsyncinterface' name="pfsyncinterface">
 			<?php foreach ($ifaces as $ifname => $iface) { ?>
 				<?php $selected = ($pconfig['pfsyncinterface'] === $ifname) ? 'selected="selected"' : ''; ?>
-				<option value="<?= htmlentities($ifname); ?>" <?= $selected ?>><?= htmlentities($iface); ?></option>
+				<option value="<?= xhtmlentities($ifname); ?>" <?= $selected ?>><?= xhtmlentities($iface); ?></option>
 			<?php } ?>
 			</select>
 			<br />
@@ -139,7 +140,7 @@ include("head.inc");
 	<tr valign="top">
 		<td width="22%" class="vncell">pfsync Synchronize Peer IP</td>
 		<td class="vtable">
-			<input  id='pfsyncpeerip' name='pfsyncpeerip' class='formfld unknown' value='<?= htmlentities($pconfig['pfsyncpeerip']); ?>' />
+			<input  id='pfsyncpeerip' name='pfsyncpeerip' class='formfld unknown' value='<?= xhtmlentities($pconfig['pfsyncpeerip']); ?>' />
 			<br />
 			Setting this option will force pfsync to synchronize its state table to this IP address.  The default is directed multicast.
 		</td>
@@ -153,7 +154,7 @@ include("head.inc");
 	<tr valign="top">
 		<td width="22%" class="vncell">Synchronize Config to IP</td>
 		<td class="vtable">
-			<input  id='synchronizetoip' name='synchronizetoip' class='formfld unknown' value='<?= htmlentities($pconfig['synchronizetoip']); ?>' />
+			<input  id='synchronizetoip' name='synchronizetoip' class='formfld unknown' value='<?= xhtmlentities($pconfig['synchronizetoip']); ?>' />
 			<br />
 			Enter the IP address of the firewall to which the selected configuration sections should be synchronized.<br />
 			<br />
@@ -165,7 +166,7 @@ include("head.inc");
 	<tr valign="top">
 		<td width="22%" class="vncell">Remote System Username</td>
 		<td class="vtable">
-			<input  id='username' name='username' class='formfld unknown' value='<?= htmlentities($pconfig['username']); ?>' />
+			<input  id='username' name='username' class='formfld unknown' value='<?= xhtmlentities($pconfig['username']); ?>' />
 			<br />
 			Enter the webConfigurator username of the system entered above for synchronizing your configuration.<br />
 			<br />
@@ -175,7 +176,7 @@ include("head.inc");
 	<tr valign="top">
 		<td width="22%" class="vncell">Remote System Password</td>
 		<td class="vtable">
-			<input  id='password' type='password'  name='password' class='formfld pwd' value='<?= htmlentities($pconfig['password']); ?>' />
+			<input  id='password' type='password'  name='password' class='formfld pwd' value='<?= xhtmlentities($pconfig['password']); ?>' />
 			<br />
 			Enter the webConfigurator password of the system entered above for synchronizing your configuration.<br />
 			<br />

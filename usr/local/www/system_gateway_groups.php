@@ -44,6 +44,7 @@ require_once("functions.inc");
 require_once("filter.inc");
 require_once("shaper.inc");
 require_once("openvpn.inc");
+require_once("pfsense-utils.inc");
 
 if (!is_array($config['gateways']['gateway_group']))
 	$config['gateways']['gateway_group'] = array();
@@ -165,7 +166,7 @@ include("head.inc");
                     <?php
 			foreach($gateway_group['item'] as $item) {
 				$itemsplit = explode("|", $item);
-				echo htmlspecialchars(strtoupper($itemsplit[0])) . "<br />\n";
+				echo xhtmlspecialchars(strtoupper($itemsplit[0])) . "<br />\n";
 			}
 		    ?>
                   </td>
@@ -173,12 +174,12 @@ include("head.inc");
 		    <?php
 			foreach($gateway_group['item'] as $item) {
 				$itemsplit = explode("|", $item);
-				echo "Tier ". htmlspecialchars($itemsplit[1]) . "<br />\n";
+				echo "Tier ". xhtmlspecialchars($itemsplit[1]) . "<br />\n";
 			}
 		    ?>
                   </td>
                   <td class="listbg" ondblclick="document.location='system_gateway_groups_edit.php?id=<?=$i;?>';">
-				<?=htmlspecialchars($gateway_group['descr']);?>&nbsp;
+				<?=xhtmlspecialchars($gateway_group['descr']);?>&nbsp;
                   </td>
                   <td valign="middle" class="list nowrap">
 			<table border="0" cellspacing="0" cellpadding="1" summary="edit">

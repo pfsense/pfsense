@@ -35,6 +35,7 @@
 require_once("auth.inc");
 require_once("functions.inc");
 require_once("captiveportal.inc");
+require_once("pfsense-utils.inc");
 
 $errormsg = "Invalid credentials specified.";
 
@@ -49,7 +50,7 @@ global $cpzone, $cpzoneid;
 $cpzone = $_REQUEST['zone'];
 $cpcfg = $config['captiveportal'][$cpzone];
 if (empty($cpcfg)) {
-	log_error("Submission to captiveportal with unkown parameter zone: " . htmlspecialchars($cpzone));
+	log_error("Submission to captiveportal with unkown parameter zone: " . xhtmlspecialchars($cpzone));
 	portal_reply_page($redirurl, "error", $errormsg);
 	ob_flush();
 	return;

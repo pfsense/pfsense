@@ -41,6 +41,7 @@ require_once("filter.inc");
 require("shaper.inc");
 require("captiveportal.inc");
 require_once("voucher.inc");
+require_once("pfsense-utils.inc");
 
 $cpzone = $_GET['zone'];
 if (isset($_POST['zone']))
@@ -119,20 +120,20 @@ include("head.inc");
 
 <table width="100%" border="0" cellpadding="0" cellspacing="0" summary="content pane">
   <tr>
-    <td class="listhdrr"><a href="?order=0&amp;showact=<?=htmlspecialchars($_GET['showact']);?>"><?=gettext("Voucher"); ?></a></td>
-    <td class="listhdrr"><a href="?order=1&amp;showact=<?=htmlspecialchars($_GET['showact']);?>"><?=gettext("Roll"); ?></a></td>
-    <td class="listhdrr"><a href="?order=2&amp;showact=<?=htmlspecialchars($_GET['showact']);?>"><?=gettext("Activated at"); ?></a></td>
-    <td class="listhdrr"><a href="?order=3&amp;showact=<?=htmlspecialchars($_GET['showact']);?>"><?=gettext("Expires in"); ?></a></td>
-    <td class="listhdr"><a href="?order=4&amp;showact=<?=htmlspecialchars($_GET['showact']);?>"><?=gettext("Expires at"); ?></a></td>
+    <td class="listhdrr"><a href="?order=0&amp;showact=<?=xhtmlspecialchars($_GET['showact']);?>"><?=gettext("Voucher"); ?></a></td>
+    <td class="listhdrr"><a href="?order=1&amp;showact=<?=xhtmlspecialchars($_GET['showact']);?>"><?=gettext("Roll"); ?></a></td>
+    <td class="listhdrr"><a href="?order=2&amp;showact=<?=xhtmlspecialchars($_GET['showact']);?>"><?=gettext("Activated at"); ?></a></td>
+    <td class="listhdrr"><a href="?order=3&amp;showact=<?=xhtmlspecialchars($_GET['showact']);?>"><?=gettext("Expires in"); ?></a></td>
+    <td class="listhdr"><a href="?order=4&amp;showact=<?=xhtmlspecialchars($_GET['showact']);?>"><?=gettext("Expires at"); ?></a></td>
     <td class="list"></td>
   </tr>
 <?php foreach ($db as $dbent): ?>
   <tr>
     <td class="listlr"><?=$dbent[0];?></td>
     <td class="listr"><?=$dbent[1];?></td>
-    <td class="listr"><?=htmlspecialchars(date("m/d/Y H:i:s", $dbent[2]));?></td>
+    <td class="listr"><?=xhtmlspecialchars(date("m/d/Y H:i:s", $dbent[2]));?></td>
     <td class="listr"><?=$dbent[3];?> <?=gettext("min"); ?></td>
-    <td class="listr"><?=htmlspecialchars(date("m/d/Y H:i:s", $dbent[4]));?></td>
+    <td class="listr"><?=xhtmlspecialchars(date("m/d/Y H:i:s", $dbent[4]));?></td>
     <td class="list"></td>
   </tr>
 <?php endforeach; ?>

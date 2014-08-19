@@ -104,8 +104,8 @@ if ($_GET['order']) {
     <td class="listr"><?=$cpent[3];?>&nbsp;</td>
     <td class="listr"><?=$cpent[4];?>&nbsp;</td>
 	<?php if ($_GET['showact']): ?>
-    <td class="listr"><?=htmlspecialchars(date("m/d/Y H:i:s", $cpent[0]));?></td>
-    <td class="listr"><?php if ($cpent[11] && ($cpent[11] > 0)) echo htmlspecialchars(date("m/d/Y H:i:s", $cpent[11]));?></td>
+    <td class="listr"><?=xhtmlspecialchars(date("m/d/Y H:i:s", $cpent[0]));?></td>
+    <td class="listr"><?php if ($cpent[11] && ($cpent[11] > 0)) echo xhtmlspecialchars(date("m/d/Y H:i:s", $cpent[11]));?></td>
 	<?php endif; ?>
 	<td valign="middle" class="list nowrap">
 	<a href="?order=<?=$_GET['order'];?>&amp;showact=<?=$_GET['showact'];?>&amp;act=del&amp;zone=<?=$cpent[10];?>&amp;id=<?=$cpent[5];?>" onclick="return confirm('Do you really want to disconnect this client?')"><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_x.gif" width="17" height="17" border="0" alt="x" /></a></td>

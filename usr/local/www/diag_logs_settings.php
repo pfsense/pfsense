@@ -46,6 +46,7 @@ require("guiconfig.inc");
 require_once("functions.inc");
 require_once("filter.inc");
 require_once("shaper.inc");
+require_once("pfsense-utils.inc");
 
 $pconfig['reverse'] = isset($config['syslog']['reverse']);
 $pconfig['nentries'] = $config['syslog']['nentries'];
@@ -292,13 +293,13 @@ function check_everything() {
 		<tr>
 			<td width="22%" valign="top" class="vtable">GUI Log Entries to Display</td>
 			<td width="78%" class="vtable">
-			<input name="nentries" id="nentries" type="text" class="formfld unknown" size="4" value="<?=htmlspecialchars($pconfig['nentries']);?>" /><br />
+			<input name="nentries" id="nentries" type="text" class="formfld unknown" size="4" value="<?=xhtmlspecialchars($pconfig['nentries']);?>" /><br />
 			<?=gettext("Hint: This is only the number of log entries displayed in the GUI. It does not affect how many entries are contained in the actual log files.") ?></td>
 		</tr>
 		<tr>
 			<td width="22%" valign="top" class="vtable">Log File Size (Bytes)</td>
 			<td width="78%" class="vtable">
-			<input name="logfilesize" id="logfilesize" type="text" class="formfld unknown" size="8" value="<?=htmlspecialchars($pconfig['logfilesize']);?>" /><br />
+			<input name="logfilesize" id="logfilesize" type="text" class="formfld unknown" size="8" value="<?=xhtmlspecialchars($pconfig['logfilesize']);?>" /><br />
 			<?=gettext("Logs are held in constant-size circular log files. This field controls how large each log file is, and thus how many entries may exist inside the log By default this is approximately 500KB per log file, and there are nearly 20 such log files.") ?>
 			<br /><br />
 			<?=gettext("NOTE: Log sizes are changed the next time a log file is cleared or deleted. To immediately increase the size of the log files, you must first save the options to set the size, then clear all logs using the \"Reset Log Files\" option farther down this page. "); ?>
@@ -385,7 +386,7 @@ function check_everything() {
 							$selected = 'selected="selected"';
 				?>
 					<option value="<?=$sip['value'];?>" <?=$selected;?>>
-						<?=htmlspecialchars($sip['name']);?>
+						<?=xhtmlspecialchars($sip['name']);?>
 					</option>
 					<?php endforeach; ?>
 				</select>
@@ -418,15 +419,15 @@ function check_everything() {
 				<table summary="remtote syslog servers">
 					<tr>
 						<td><?=gettext("Server") . " 1";?></td>
-						<td><input name="remoteserver" id="remoteserver" type="text" class="formfld host" size="20" value="<?=htmlspecialchars($pconfig['remoteserver']);?>" /></td>
+						<td><input name="remoteserver" id="remoteserver" type="text" class="formfld host" size="20" value="<?=xhtmlspecialchars($pconfig['remoteserver']);?>" /></td>
 					</tr>
 					<tr>
 						<td><?=gettext("Server") . " 2";?></td>
-						<td><input name="remoteserver2" id="remoteserver2" type="text" class="formfld host" size="20" value="<?=htmlspecialchars($pconfig['remoteserver2']);?>" /></td>
+						<td><input name="remoteserver2" id="remoteserver2" type="text" class="formfld host" size="20" value="<?=xhtmlspecialchars($pconfig['remoteserver2']);?>" /></td>
 					</tr>
 					<tr>
 						<td><?=gettext("Server") . " 3";?></td>
-						<td><input name="remoteserver3" id="remoteserver3" type="text" class="formfld host" size="20" value="<?=htmlspecialchars($pconfig['remoteserver3']);?>" /></td>
+						<td><input name="remoteserver3" id="remoteserver3" type="text" class="formfld host" size="20" value="<?=xhtmlspecialchars($pconfig['remoteserver3']);?>" /></td>
 					</tr>
 					<tr>
 						<td>&nbsp;</td>

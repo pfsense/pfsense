@@ -45,6 +45,7 @@ require("guiconfig.inc");
 require_once("functions.inc");
 require_once("filter.inc");
 require_once("shaper.inc");
+require_once("pfsense-utils.inc");
 
 if (!is_array($config['aliases']['alias']))
 	$config['aliases']['alias'] = array();
@@ -179,7 +180,7 @@ include("head.inc");
 				$tab_array[] = array(gettext("All"), ($tab=="all"? true : false), "/firewall_aliases.php?tab=all");
 				display_top_tabs($tab_array);
 			?>
-			<input type="hidden" name="tab" value="<?=htmlspecialchars($tab);?>" />
+			<input type="hidden" name="tab" value="<?=xhtmlspecialchars($tab);?>" />
 		</td>
 	</tr>
 	<tr>
@@ -226,7 +227,7 @@ include("head.inc");
 					?>
 					<tr>
 						<td class="listlr" ondblclick="document.location='firewall_aliases_edit.php?id=<?=$i;?>';">
-							<?=htmlspecialchars($alias['name']);?>
+							<?=xhtmlspecialchars($alias['name']);?>
 						</td>
 						<td class="listr" ondblclick="document.location='firewall_aliases_edit.php?id=<?=$i;?>';">
 						<?php
@@ -251,7 +252,7 @@ include("head.inc");
 						?>
 						</td>
 						<td class="listbg" ondblclick="document.location='firewall_aliases_edit.php?id=<?=$i;?>';">
-							<?=htmlspecialchars($alias['descr']);?>&nbsp;
+							<?=xhtmlspecialchars($alias['descr']);?>&nbsp;
 						</td>
 						<td valign="middle" class="list nowrap">
 							<table border="0" cellspacing="0" cellpadding="1" summary="icons">

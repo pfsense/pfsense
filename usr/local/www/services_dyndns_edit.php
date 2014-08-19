@@ -49,6 +49,7 @@ function is_dyndns_username($uname) {
 }
 
 require("guiconfig.inc");
+require_once("pfsense-utils.inc");
 
 if (!is_array($config['dyndnses']['dyndns'])) {
 	$config['dyndnses']['dyndns'] = array();
@@ -240,7 +241,7 @@ function _onTypeChange(type){
 						$vals = explode(" ", DYNDNS_PROVIDER_VALUES);
 						$j = 0; for ($j = 0; $j < count($vals); $j++): ?>
                       <option value="<?=$vals[$j];?>" <?php if ($vals[$j] == $pconfig['type']) echo "selected=\"selected\"";?>>
-                      <?=htmlspecialchars($types[$j]);?>
+                      <?=xhtmlspecialchars($types[$j]);?>
                       </option>
                       <?php endfor; ?>
                     </select></td>
@@ -299,7 +300,7 @@ function _onTypeChange(type){
                 <tr id="_hostnametr">
                   <td width="22%" valign="top" class="vncellreq"><?=gettext("Hostname");?></td>
                   <td width="78%" class="vtable">
-                    <input name="host" type="text" class="formfld unknown" id="host" size="30" value="<?=htmlspecialchars($pconfig['host']);?>" />
+                    <input name="host" type="text" class="formfld unknown" id="host" size="30" value="<?=xhtmlspecialchars($pconfig['host']);?>" />
                     <br />
 				    <span class="vexpl">
 				    <span class="red"><strong><?=gettext("Note:");?><br /></strong>
@@ -312,7 +313,7 @@ function _onTypeChange(type){
                 <tr id="_mxtr">
                   <td width="22%" valign="top" class="vncell"><?=gettext("MX"); ?></td>
                   <td width="78%" class="vtable">
-                    <input name="mx" type="text" class="formfld unknown" id="mx" size="30" value="<?=htmlspecialchars($pconfig['mx']);?>" />
+                    <input name="mx" type="text" class="formfld unknown" id="mx" size="30" value="<?=xhtmlspecialchars($pconfig['mx']);?>" />
                     <br />
 					<?=gettext("Note: With DynDNS service you can only use a hostname, not an IP address.");?>
 					<br />
@@ -343,7 +344,7 @@ function _onTypeChange(type){
                 <tr id="_usernametr">
                   <td width="22%" valign="top" class="vncellreq"><?=gettext("Username");?></td>
                   <td width="78%" class="vtable">
-                    <input name="username" type="text" class="formfld user" id="username" size="20" value="<?=htmlspecialchars($pconfig['username']);?>" />
+                    <input name="username" type="text" class="formfld user" id="username" size="20" value="<?=xhtmlspecialchars($pconfig['username']);?>" />
                     <br /><?= gettext("Username is required for all types except Namecheap, FreeDNS and Custom Entries.");?>
 		    <br /><?= gettext("Route 53: Enter your Access Key ID.");?>
 		    <br /><?= gettext("For Custom Entries, Username and Password represent HTTP Authentication username and passwords.");?>
@@ -352,7 +353,7 @@ function _onTypeChange(type){
                 <tr>
                   <td width="22%" valign="top" class="vncellreq"><?=gettext("Password");?></td>
                   <td width="78%" class="vtable">
-                    <input name="password" type="password" class="formfld pwd" id="password" size="20" value="<?=htmlspecialchars($pconfig['password']);?>" />
+                    <input name="password" type="password" class="formfld pwd" id="password" size="20" value="<?=xhtmlspecialchars($pconfig['password']);?>" />
                     <br />
                     <?=gettext("FreeDNS (freedns.afraid.org): Enter your \"Authentication Token\" provided by FreeDNS.");?>
 		    <br /><?= gettext("Route 53: Enter your Secret Access Key.");?>
@@ -362,14 +363,14 @@ function _onTypeChange(type){
                 <tr id="r53_zoneid" style="display:none">
                   <td width="22%" valign="top" class="vncellreq"><?=gettext("Zone ID");?></td>
                   <td width="78%" class="vtable">
-                    <input name="zoneid" type="text" class="formfld user" id="zoneid" size="20" value="<?=htmlspecialchars($pconfig['zoneid']);?>" />
+                    <input name="zoneid" type="text" class="formfld user" id="zoneid" size="20" value="<?=xhtmlspecialchars($pconfig['zoneid']);?>" />
                     <br /><?= gettext("Enter Zone ID that you received when you created your domain in Route 53.");?>
                   </td>
                 </tr>
                 <tr id="_urltr">
                   <td width="22%" valign="top" class="vncell"><?=gettext("Update URL");?></td>
                   <td width="78%" class="vtable">
-                    <input name="updateurl" type="text" class="formfld unknown" id="updateurl" size="60" value="<?=htmlspecialchars($pconfig['updateurl']);?>" />
+                    <input name="updateurl" type="text" class="formfld unknown" id="updateurl" size="60" value="<?=xhtmlspecialchars($pconfig['updateurl']);?>" />
                     <br /><?= gettext("This is the only field required by for Custom Dynamic DNS, and is only used by Custom Entries.");?>
 			<br />
 			<?= gettext("If you need the new IP to be included in the request, put %IP% in its place.");?>
@@ -378,7 +379,7 @@ function _onTypeChange(type){
 		<tr id="_resulttr">
                   <td width="22%" valign="top" class="vncell"><?=gettext("Result Match");?></td>
                   <td width="78%" class="vtable">
-                    <textarea name="resultmatch" class="formpre" id="resultmatch" cols="65" rows="7"><?=htmlspecialchars($pconfig['resultmatch']);?></textarea>
+                    <textarea name="resultmatch" class="formpre" id="resultmatch" cols="65" rows="7"><?=xhtmlspecialchars($pconfig['resultmatch']);?></textarea>
                     <br /><?= gettext("This field is only used by Custom Dynamic DNS Entries.");?>
 			<br />
 			<?= gettext("This field should be identical to what your DDNS Provider will return if the update succeeds, leave it blank to disable checking of returned results.");?>
@@ -394,7 +395,7 @@ function _onTypeChange(type){
                 <tr id="r53_ttl" style="display:none">
                   <td width="22%" valign="top" class="vncellreq"><?=gettext("TTL");?></td>
                   <td width="78%" class="vtable">
-                    <input name="ttl" type="text" class="formfld user" id="ttl" size="20" value="<?=htmlspecialchars($pconfig['ttl']);?>" />
+                    <input name="ttl" type="text" class="formfld user" id="ttl" size="20" value="<?=xhtmlspecialchars($pconfig['ttl']);?>" />
                     <br /><?= gettext("Choose TTL for your dns record.");?>
                   </td>
                 </tr>
@@ -403,7 +404,7 @@ function _onTypeChange(type){
                 <tr>
                   <td width="22%" valign="top" class="vncell"><?=gettext("Description");?></td>
                   <td width="78%" class="vtable">
-                    <input name="descr" type="text" class="formfld unknown" id="descr" size="60" value="<?=htmlspecialchars($pconfig['descr']);?>" />
+                    <input name="descr" type="text" class="formfld unknown" id="descr" size="60" value="<?=xhtmlspecialchars($pconfig['descr']);?>" />
                   </td>
                 </tr>
                 <tr>
@@ -412,7 +413,7 @@ function _onTypeChange(type){
                     <input name="Submit" type="submit" class="formbtn" value="<?=gettext("Save");?>" onclick="enable_change(true)" />
 					<a href="services_dyndns.php"><input name="cancel" type="button" class="formbtn" value="<?=gettext("Cancel");?>" /></a>
 					<?php if (isset($id) && $a_dyndns[$id]): ?>
-						<input name="id" type="hidden" value="<?=htmlspecialchars($id);?>" />
+						<input name="id" type="hidden" value="<?=xhtmlspecialchars($id);?>" />
 						<input name="force" type="submit" class="formbtn" value="<?=gettext("Save & Force Update");?>" onclick="enable_change(true)" />
 					<?php endif; ?>
                   </td>

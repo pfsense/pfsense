@@ -38,6 +38,7 @@
 require_once("guiconfig.inc");
 require_once("filter.inc");
 require_once("vpn.inc");
+require_once("pfsense-utils.inc");
 
 if (!is_array($config['pppoes']['pppoe']))
 	$config['pppoes']['pppoe'] = array();
@@ -116,16 +117,16 @@ include("head.inc");
 	  <?php $i = 0; foreach ($a_pppoes as $pppoe): ?>
 <tr>
   <td class="listlr" ondblclick="document.location='vpn_pppoe_edit.php?id=<?=$i;?>';">
-    <?=htmlspecialchars(strtoupper($pppoe['interface']));?>
+    <?=xhtmlspecialchars(strtoupper($pppoe['interface']));?>
   </td>
   <td class="listlr" ondblclick="document.location='vpn_pppoe_edit.php?id=<?=$i;?>';">
-    <?=htmlspecialchars($pppoe['localip']);?>
+    <?=xhtmlspecialchars($pppoe['localip']);?>
   </td>
   <td class="listr" ondblclick="document.location='vpn_pppoe_edit.php?id=<?=$i;?>';">
-      <?=htmlspecialchars($pppoe['n_pppoe_units']);?>
+      <?=xhtmlspecialchars($pppoe['n_pppoe_units']);?>
   </td>
   <td class="listbg" ondblclick="document.location='vpn_pppoe_edit.php?id=<?=$i;?>';">
-    <?=htmlspecialchars($pppoe['descr']);?>&nbsp;
+    <?=xhtmlspecialchars($pppoe['descr']);?>&nbsp;
   </td>
   <td valign="middle" class="list nowrap">
     <table border="0" cellspacing="0" cellpadding="1" summary="icons">

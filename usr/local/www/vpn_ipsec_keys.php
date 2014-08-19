@@ -39,6 +39,7 @@ require("functions.inc");
 require("guiconfig.inc");
 require_once("ipsec.inc");
 require_once("vpn.inc");
+require_once("pfsense-utils.inc");
 
 if (!is_array($config['ipsec']['mobilekey'])) {
 	$config['ipsec']['mobilekey'] = array();
@@ -115,11 +116,11 @@ if (is_subsystem_dirty('ipsec'))
 				if ($secretent['ident'] == 'allusers')
 					echo gettext("ANY USER");
 				else
-					echo htmlspecialchars($secretent['ident']);
+					echo xhtmlspecialchars($secretent['ident']);
 			?>
 		</td>
 		<td class="listr gray">
-			<?=htmlspecialchars($secretent['pre-shared-key']);?>
+			<?=xhtmlspecialchars($secretent['pre-shared-key']);?>
 		</td>
 		<td class="list nowrap"><a href="system_usermanager.php?act=edit&amp;id=<?=$secretent['id'];?>"><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_e.gif" title="<?=gettext("edit key"); ?>" width="17" height="17" border="0" alt="edit" /></a>
 		&nbsp;</td>
@@ -129,10 +130,10 @@ if (is_subsystem_dirty('ipsec'))
 			  <?php $i = 0; foreach ($a_secret as $secretent): ?>
                 <tr> 
                   <td class="listlr">
-                    <?=htmlspecialchars($secretent['ident']);?>
+                    <?=xhtmlspecialchars($secretent['ident']);?>
                   </td>
                   <td class="listr">
-                    <?=htmlspecialchars($secretent['pre-shared-key']);?>
+                    <?=xhtmlspecialchars($secretent['pre-shared-key']);?>
                   </td>
                   <td class="list nowrap"><a href="vpn_ipsec_keys_edit.php?id=<?=$i;?>"><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_e.gif" title="<?=gettext("edit key"); ?>" width="17" height="17" border="0" alt="edit" /></a>
                      &nbsp;<a href="vpn_ipsec_keys.php?act=del&amp;id=<?=$i;?>" onclick="return confirm('<?=gettext("Do you really want to delete this Pre-Shared Key?"); ?>')"><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_x.gif" title="<?=gettext("delete key"); ?>" width="17" height="17" border="0" alt="delete" /></a></td>

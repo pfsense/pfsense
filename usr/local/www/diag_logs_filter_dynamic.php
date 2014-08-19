@@ -44,6 +44,7 @@
 
 require("guiconfig.inc");
 require_once("filter_log.inc");
+require_once("pfsense-utils.inc");
 
 $filter_logfile = "{$g['varlog_path']}/filter.log";
 
@@ -151,15 +152,15 @@ include("head.inc");
 				<img border="0" src="<?php echo find_action_image($filterent['act']);?>" width="11" height="11" alt="<?php echo $filterent['act'];?>" title="<?php echo $filterent['act'];?>" />
 				</a>
 				</td>
-				<td class="listMRr nowrap"><?php echo htmlspecialchars($filterent['time']);?></td>
-				<td class="listMRr nowrap"><?php echo htmlspecialchars($filterent['interface']);?></td>
-				<td class="listMRr nowrap"><?php echo htmlspecialchars($filterent['src']);?></td>
-				<td class="listMRr nowrap"><?php echo htmlspecialchars($filterent['dst']);?></td>
+				<td class="listMRr nowrap"><?php echo xhtmlspecialchars($filterent['time']);?></td>
+				<td class="listMRr nowrap"><?php echo xhtmlspecialchars($filterent['interface']);?></td>
+				<td class="listMRr nowrap"><?php echo xhtmlspecialchars($filterent['src']);?></td>
+				<td class="listMRr nowrap"><?php echo xhtmlspecialchars($filterent['dst']);?></td>
 				<?php
 					if ($filterent['proto'] == "TCP")
 						$filterent['proto'] .= ":{$filterent['tcpflags']}";
 				?>
-				<td class="listMRr nowrap"><?php echo htmlspecialchars($filterent['proto']);?></td>
+				<td class="listMRr nowrap"><?php echo xhtmlspecialchars($filterent['proto']);?></td>
 			</tr>
 			<?php endforeach; ?>
 			<tr style="display:none;"><td></td></tr>

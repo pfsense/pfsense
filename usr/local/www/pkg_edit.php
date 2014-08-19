@@ -45,6 +45,7 @@ require_once("functions.inc");
 require_once("filter.inc");
 require_once("shaper.inc");
 require_once("pkg-utils.inc");
+require_once("pfsense-utils.inc");
 
 /* dummy stubs needed by some code that was MFC'd */
 function pfSenseHeader($location) { header("Location: " . $location); }
@@ -62,8 +63,8 @@ function domTT_title($title_msg){
 	}
 }
 
-$xml = htmlspecialchars($_GET['xml']);
-if($_POST['xml']) $xml = htmlspecialchars($_POST['xml']);
+$xml = xhtmlspecialchars($_GET['xml']);
+if($_POST['xml']) $xml = xhtmlspecialchars($_POST['xml']);
 
 if($xml == "") {
             print_info_box_np(gettext("ERROR: No package defined."));
@@ -90,7 +91,7 @@ $pgtitle      = $title;
 
 $id = $_GET['id'];
 if (isset($_POST['id']))
-	$id = htmlspecialchars($_POST['id']);
+	$id = xhtmlspecialchars($_POST['id']);
 
 // Not posting?  Then user is editing a record. There must be a valid id
 // when editing a record.
@@ -117,7 +118,7 @@ if ($config['installedpackages'] && (count($config['installedpackages'][xml_safe
 $a_pkg = &$config['installedpackages'][xml_safe_fieldname($pkg['name'])]['config'];
 
 if($_GET['savemsg'] <> "")
-	$savemsg = htmlspecialchars($_GET['savemsg']);
+	$savemsg = xhtmlspecialchars($_GET['savemsg']);
 
 if($pkg['custom_php_command_before_form'] <> "")
 	eval($pkg['custom_php_command_before_form']);
@@ -370,7 +371,7 @@ if ($pkg['custom_php_after_head_command'])
 
 <?php if (!empty($input_errors)) print_input_errors($input_errors); ?>
 <form name="iform" action="pkg_edit.php" method="post">
-<input type="hidden" name="xml" value="<?= htmlspecialchars($xml) ?>" />
+<input type="hidden" name="xml" value="<?= xhtmlspecialchars($xml) ?>" />
 <?php if ($savemsg) print_info_box($savemsg); ?>
 <table width="100%" border="0" cellpadding="0" cellspacing="0" summary="package edit">
 <?php
@@ -522,7 +523,7 @@ if ($pkg['tabs'] <> "") {
 		switch($pkga['type']){
 			case "input":
 				$size = ($pkga['size'] ? " size='{$pkga['size']}' " : "");
-				$input = "<input {$size} id='{$pkga['fieldname']}' name='{$pkga['fieldname']}' class='formfld unknown' value=\"" . htmlspecialchars($value) ."\" />\n";
+				$input = "<input {$size} id='{$pkga['fieldname']}' name='{$pkga['fieldname']}' class='formfld unknown' value=\"" . xhtmlspecialchars($value) ."\" />\n";
 				$input .= "<br />" . fixup_string($pkga['description']) . "\n";
 				if(isset($pkga['advancedfield']) && isset($adv_filed_count)) {
 					$js_array[] = $pkga['fieldname'];
@@ -534,7 +535,7 @@ if ($pkg['tabs'] <> "") {
 
 			case "password":
 				$size = ($pkga['size'] ? " size='{$pkga['size']}' " : "");
-				$input = "<input " . $size . " id='" . $pkga['fieldname'] . "' type='password' name='" . $pkga['fieldname'] . "' class='formfld pwd' value=\"" . htmlspecialchars($value) . "\" />\n";
+				$input = "<input " . $size . " id='" . $pkga['fieldname'] . "' type='password' name='" . $pkga['fieldname'] . "' class='formfld pwd' value=\"" . xhtmlspecialchars($value) . "\" />\n";
 				$input .= "<br />" . fixup_string($pkga['description']) . "\n";
 				if(isset($pkga['advancedfield']) && isset($adv_filed_count)) {
 					$js_array[] = $pkga['fieldname'];
@@ -926,8 +927,8 @@ if ($pkg['tabs'] <> "") {
 			echo "<p><span class=\"red\"><strong>" . gettext("Note") . ":</strong></span> {$pkg['note']}</p>";
 			}
 		//if (isset($id) && $a_pkg[$id]) // We'll always have a valid ID in our hands
-		echo "<input name='id' type='hidden' value=\"" . htmlspecialchars($id) . "\" />";
-		echo "<input name='Submit' type='submit' class='formbtn' value=\"" . htmlspecialchars($savevalue) . "\" />\n{$pkg_buttons}\n";
+		echo "<input name='id' type='hidden' value=\"" . xhtmlspecialchars($id) . "\" />";
+		echo "<input name='Submit' type='submit' class='formbtn' value=\"" . xhtmlspecialchars($savevalue) . "\" />\n{$pkg_buttons}\n";
 		if (!$only_edit){
 			echo "<input class='formbtn' type='button' value='".gettext("Cancel")."' onclick='history.back()' />";
 			}
@@ -972,13 +973,13 @@ function display_row($trc, $value, $fieldname, $type, $rowhelper, $size) {
 	echo "<td>\n";
 	switch($type){
 		case "input":
-			echo "<input size='{$size}' name='{$fieldname}{$trc}' id='{$fieldname}{$trc}' class='formfld unknown' value=\"" . htmlspecialchars($value) . "\" />\n";
+			echo "<input size='{$size}' name='{$fieldname}{$trc}' id='{$fieldname}{$trc}' class='formfld unknown' value=\"" . xhtmlspecialchars($value) . "\" />\n";
 			break;
 		case "checkbox":
 			echo "<input size='{$size}' type='checkbox' id='{$fieldname}{$trc}' name='{$fieldname}{$trc}' value='ON' ".($value?"CHECKED":"")." />\n";
 			break;
 		case "password":
-			echo "<input size='{$size}' type='password' id='{$fieldname}{$trc}' name='{$fieldname}{$trc}' class='formfld pwd' value=\"" . htmlspecialchars($value) . "\" />\n";
+			echo "<input size='{$size}' type='password' id='{$fieldname}{$trc}' name='{$fieldname}{$trc}' class='formfld pwd' value=\"" . xhtmlspecialchars($value) . "\" />\n";
 			break;
 		case "textarea":
 			echo "<textarea rows='2' cols='12' id='{$fieldname}{$trc}' class='formfld unknown' name='{$fieldname}{$trc}'>{$value}</textarea>\n";

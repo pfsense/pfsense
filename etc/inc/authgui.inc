@@ -37,6 +37,7 @@
 		pfSense_MODULE: authgui
 */
 
+require_once("pfsense-utils.inc");
 include_once("auth.inc");
 include_once("priv.inc");
 
@@ -108,7 +109,7 @@ function display_error_form($http_code, $desc) {
 
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="<?=system_get_language_code();?>" xml:lang="<?=system_get_language_code();?>">
 	<head>
 		<script type="text/javascript" src="/javascript/jquery.js"></script>
 		<title><?=$http_code?></title>
@@ -225,7 +226,7 @@ $have_cookies = isset($_COOKIE["cookie_test"]);
 
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="<?=system_get_language_code();?>" xml:lang="<?=system_get_language_code();?>">
 	<head>
 		<script type="text/javascript" src="/javascript/jquery.js"></script>
 		<script type="text/javascript">

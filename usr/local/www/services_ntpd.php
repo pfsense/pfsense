@@ -41,6 +41,7 @@
 require("guiconfig.inc");
 require_once('rrd.inc');
 require_once("shaper.inc");
+require_once("pfsense-utils.inc");
 
 if (!is_array($config['ntpd']))
 	$config['ntpd'] = array();
@@ -311,7 +312,7 @@ include("head.inc");
 			<tr>
 				<td width="22%" valign="top" class="vncellreq">Orphan mode</td>
 				<td width="78%" class="vtable">
-					<input name="ntporphan" type="text" class="formfld unknown" id="ntporphan" min="1" max="16" size="20" value="<?=htmlspecialchars($pconfig['orphan']);?>" /><?php echo gettext("(0-15)");?><br />
+					<input name="ntporphan" type="text" class="formfld unknown" id="ntporphan" min="1" max="16" size="20" value="<?=xhtmlspecialchars($pconfig['orphan']);?>" /><?php echo gettext("(0-15)");?><br />
 					<?php echo gettext("Orphan mode allows the system clock to be used when no other clocks are available. The number here specifies the stratum reported during orphan mode and should normally be set to a number high enough to insure that any other servers available to clients are preferred over this server. (default: 12)."); ?>
 				</td>
 			</tr>

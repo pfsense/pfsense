@@ -40,6 +40,7 @@
 ##|-PRIV
 
 require("guiconfig.inc");
+require_once("pfsense-utils.inc");
 
 if (!is_array($config['laggs']['lagg']))
 	$config['laggs']['lagg'] = array();
@@ -122,13 +123,13 @@ include("head.inc");
 			  <?php $i = 0; foreach ($a_laggs as $lagg): ?>
                 <tr  ondblclick="document.location='interfaces_lagg_edit.php?id=<?=$i;?>'">
                   <td class="listlr">
-					<?=htmlspecialchars(strtoupper($lagg['laggif']));?>
+					<?=xhtmlspecialchars(strtoupper($lagg['laggif']));?>
                   </td>
                   <td class="listr">
-					<?=htmlspecialchars($lagg['members']);?>
+					<?=xhtmlspecialchars($lagg['members']);?>
                   </td>
                   <td class="listbg">
-                    <?=htmlspecialchars($lagg['descr']);?>&nbsp;
+                    <?=xhtmlspecialchars($lagg['descr']);?>&nbsp;
                   </td>
                   <td valign="middle" class="list nowrap"> <a href="interfaces_lagg_edit.php?id=<?=$i;?>"><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_e.gif" width="17" height="17" border="0" alt="edit" /></a>
                      &nbsp;<a href="interfaces_lagg.php?act=del&amp;id=<?=$i;?>" onclick="return confirm('Do you really want to delete this LAGG interface?')"><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_x.gif" width="17" height="17" border="0" alt="delete" /></a></td>

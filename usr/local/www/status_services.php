@@ -40,10 +40,11 @@
 require_once("guiconfig.inc");
 require_once("service-utils.inc");
 require_once("shortcuts.inc");
+require_once("pfsense-utils.inc");
 
 $service_name = '';
 if (isset($_GET['service']))
-	$service_name = htmlspecialchars($_GET['service']);
+	$service_name = xhtmlspecialchars($_GET['service']);
 
 if (!empty($service_name)) {
 	switch ($_GET['mode']) {

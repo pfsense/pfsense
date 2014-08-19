@@ -44,22 +44,23 @@
 $pgtitle = array(gettext("Status"), gettext("System logs"), gettext("VPN"));
 require("guiconfig.inc");
 require_once("vpn.inc");
+require_once("pfsense-utils.inc");
 
 $nentries = $config['syslog']['nentries'];
 if (!$nentries)
 	$nentries = 50;
 
-if (htmlspecialchars($_POST['vpntype']))
-	$vpntype = htmlspecialchars($_POST['vpntype']);
-elseif (htmlspecialchars($_GET['vpntype']))
-	$vpntype = htmlspecialchars($_GET['vpntype']);
+if (xhtmlspecialchars($_POST['vpntype']))
+	$vpntype = xhtmlspecialchars($_POST['vpntype']);
+elseif (xhtmlspecialchars($_GET['vpntype']))
+	$vpntype = xhtmlspecialchars($_GET['vpntype']);
 else
 	$vpntype = "pptp";
 
-if (htmlspecialchars($_POST['mode']))
-	$mode = htmlspecialchars($_POST['mode']);
-elseif (htmlspecialchars($_GET['mode']))
-	$mode = htmlspecialchars($_GET['mode']);
+if (xhtmlspecialchars($_POST['mode']))
+	$mode = xhtmlspecialchars($_POST['mode']);
+elseif (xhtmlspecialchars($_GET['mode']))
+	$mode = xhtmlspecialchars($_GET['mode']);
 else
 	$mode = "login";
 
@@ -101,15 +102,15 @@ function dump_clog_vpn($logfile, $tail) {
 		if ($iftype != $vpntype)
 			continue;
 		echo "<tr>\n";
-		echo "<td class=\"listlr nowrap\">" . htmlspecialchars(join(" ", array_slice($logent, 0, 3))) . "</td>\n";
+		echo "<td class=\"listlr nowrap\">" . xhtmlspecialchars(join(" ", array_slice($logent, 0, 3))) . "</td>\n";
 
 		if ($llent[0] == "login")
 			echo "<td class=\"listr\"><img src=\"/themes/{$g['theme']}/images/icons/icon_in.gif\" width=\"11\" height=\"11\" title=\"login\" alt=\"in\" /></td>\n";
 		else
 			echo "<td class=\"listr\"><img src=\"/themes/{$g['theme']}/images/icons/icon_out.gif\" width=\"11\" height=\"11\" title=\"logout\" alt=\"out\" /></td>\n";
 
-		echo "<td class=\"listr\">" . htmlspecialchars($llent[3]) . "</td>\n";
-		echo "<td class=\"listr\">" . htmlspecialchars($llent[2]) . "&nbsp;</td>\n";
+		echo "<td class=\"listr\">" . xhtmlspecialchars($llent[3]) . "</td>\n";
+		echo "<td class=\"listr\">" . xhtmlspecialchars($llent[2]) . "&nbsp;</td>\n";
 		echo "</tr>\n";
 	}
 }

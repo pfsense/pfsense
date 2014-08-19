@@ -43,6 +43,7 @@ function admusercmp($a, $b) {
 }
 
 require("guiconfig.inc");
+require_once("pfsense-utils.inc");
 
 $pgtitle = array("System","User manager","Add privileges");
 
@@ -196,7 +197,7 @@ function update_description() {
 								<input id="submitt"  name="Submit" type="submit" class="formbtn" value="<?=gettext("Save");?>" />
 								<input id="cancelbutton" class="formbtn" type="button" value="<?=gettext("Cancel");?>" onclick="history.back()" />
 								<?php if (isset($userid)): ?>
-								<input name="userid" type="hidden" value="<?=htmlspecialchars($userid);?>" />
+								<input name="userid" type="hidden" value="<?=xhtmlspecialchars($userid);?>" />
 								<?php endif; ?>
 							</td>
 						</tr>

@@ -45,6 +45,7 @@
 
 require("guiconfig.inc");
 require("ipsec.inc");
+require_once("pfsense-utils.inc");
 
 $pgtitle = array(gettext("Status"),gettext("IPsec"),gettext("SPD"));
 $shortcut_section = "ipsec";
@@ -93,13 +94,13 @@ $spd = ipsec_dump_spd();
 						</tr>
 						<?php foreach ($spd as $sp): ?>
 						<tr>
-							<td class="listlr" valign="top"><?=htmlspecialchars($sp['srcid']);?></td>
-							<td class="listr" valign="top"><?=htmlspecialchars($sp['dstid']);?></td>
+							<td class="listlr" valign="top"><?=xhtmlspecialchars($sp['srcid']);?></td>
+							<td class="listr" valign="top"><?=xhtmlspecialchars($sp['dstid']);?></td>
 							<td class="listr" valign="top">
 								<img src="/themes/<?= $g['theme']; ?>/images/icons/icon_<?=$sp['dir'];?>.gif" width="11" height="11" style="margin-top: 2px" alt="direction" />
 							</td>
-							<td class="listr" valign="top"><?=htmlspecialchars(strtoupper($sp['proto']));?></td>
-							<td class="listr" valign="top"><?=htmlspecialchars($sp['src']);?> -> <?=htmlspecialchars($sp['dst']);?></td>
+							<td class="listr" valign="top"><?=xhtmlspecialchars(strtoupper($sp['proto']));?></td>
+							<td class="listr" valign="top"><?=xhtmlspecialchars($sp['src']);?> -> <?=xhtmlspecialchars($sp['dst']);?></td>
 							<td class="list nowrap">
 								<?php
 									$args = "srcid=".rawurlencode($sp['srcid']);

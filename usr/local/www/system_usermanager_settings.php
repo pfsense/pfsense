@@ -42,6 +42,7 @@
 ##|-PRIV
 
 require("guiconfig.inc");
+require_once("pfsense-utils.inc");
 
 $pconfig['session_timeout'] = &$config['system']['webgui']['session_timeout'];
 $pconfig['authmode'] = &$config['system']['webgui']['authmode'];
@@ -132,7 +133,7 @@ include("head.inc");
 							<tr>
 								<td width="22%" valign="top" class="vncell"><?=gettext("Session Timeout"); ?></td>
 								<td width="78%" class="vtable">
-									<input name="session_timeout" id="session_timeout" type="text" size="8" value="<?=htmlspecialchars($pconfig['session_timeout']);?>" />
+									<input name="session_timeout" id="session_timeout" type="text" size="8" value="<?=xhtmlspecialchars($pconfig['session_timeout']);?>" />
 									<br />
 									<?=gettext("Time in minutes to expire idle management sessions. The default is 4 hours (240 minutes).");?><br />
 									<?=gettext("Enter 0 to never expire sessions. NOTE: This is a security risk!");?><br />

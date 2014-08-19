@@ -50,6 +50,7 @@ function wol_sort() {
 }
 
 require("guiconfig.inc");
+require_once("pfsense-utils.inc");
 
 if (!is_array($config['wol']['wolentry'])) {
 	$config['wol']['wolentry'] = array();
@@ -131,7 +132,7 @@ include("head.inc");
 					  $interfaces = get_configured_interface_with_descr();
 					  foreach ($interfaces as $iface => $ifacename): ?>
                       <option value="<?=$iface;?>" <?php if (!link_interface_to_bridge($iface) && $iface == $pconfig['interface']) echo "selected=\"selected\""; ?>> 
-                      <?=htmlspecialchars($ifacename);?>
+                      <?=xhtmlspecialchars($ifacename);?>
                       </option>
                       <?php endforeach; ?>
                     </select> <br />
@@ -140,7 +141,7 @@ include("head.inc");
 				<tr>
                   <td width="22%" valign="top" class="vncellreq"><?=gettext("MAC address");?></td>
                   <td width="78%" class="vtable"> 
-                    <input name="mac" type="text" class="formfld" id="mac" size="20" value="<?=htmlspecialchars($pconfig['mac']);?>" />
+                    <input name="mac" type="text" class="formfld" id="mac" size="20" value="<?=xhtmlspecialchars($pconfig['mac']);?>" />
                     <br /> 
                     <span class="vexpl"><?=gettext("Enter a MAC address  in the following format: ".
                     "xx:xx:xx:xx:xx:xx");?></span></td>
@@ -148,7 +149,7 @@ include("head.inc");
 				<tr>
                   <td width="22%" valign="top" class="vncell"><?=gettext("Description");?></td>
                   <td width="78%" class="vtable"> 
-                    <input name="descr" type="text" class="formfld" id="descr" size="40" value="<?=htmlspecialchars($pconfig['descr']);?>" />
+                    <input name="descr" type="text" class="formfld" id="descr" size="40" value="<?=xhtmlspecialchars($pconfig['descr']);?>" />
                     <br /> <span class="vexpl"><?=gettext("You may enter a description here".
                    " for your reference (not parsed).");?></span></td>
                 </tr>
@@ -157,7 +158,7 @@ include("head.inc");
                   <td width="78%"> 
                     <input name="Submit" type="submit" class="formbtn" value="<?=gettext("Save");?>" /> <input class="formbtn" type="button" value="<?=gettext("Cancel");?>" onclick="history.back()" />
                     <?php if (isset($id) && $a_wol[$id]): ?>
-                    <input name="id" type="hidden" value="<?=htmlspecialchars($id);?>" />
+                    <input name="id" type="hidden" value="<?=xhtmlspecialchars($id);?>" />
                     <?php endif; ?>
                   </td>
                 </tr>

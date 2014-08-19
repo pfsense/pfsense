@@ -40,6 +40,7 @@
 
 require("guiconfig.inc");
 require_once("functions.inc");
+require_once("pfsense-utils.inc");
 
 $pgtitle = array(gettext("Interfaces"),gettext("Groups"),gettext("Edit"));
 $shortcut_section = "interfaces";
@@ -57,7 +58,7 @@ if (isset($_POST['id']) && is_numericint($_POST['id']))
 if (isset($id) && $a_ifgroups[$id]) {
 	$pconfig['ifname'] = $a_ifgroups[$id]['ifname'];
 	$pconfig['members'] = $a_ifgroups[$id]['members'];
-	$pconfig['descr'] = html_entity_decode($a_ifgroups[$id]['descr']);
+	$pconfig['descr'] = xhtml_entity_decode($a_ifgroups[$id]['descr']);
 }
 
 $iflist = get_configured_interface_with_descr();
@@ -251,7 +252,7 @@ function removeRow(el) {
   <tr>
     <td valign="top" class="vncellreq"><?=gettext("Group Name");?></td>
     <td class="vtable">
-	<input class="formfld unknown" name="ifname" id="ifname" maxlength="15" value="<?=htmlspecialchars($pconfig['ifname']);?>" />
+	<input class="formfld unknown" name="ifname" id="ifname" maxlength="15" value="<?=xhtmlspecialchars($pconfig['ifname']);?>" />
 	<br />
 	<?=gettext("No numbers or spaces are allowed. Only characters in a-zA-Z");?>
     </td>
@@ -259,7 +260,7 @@ function removeRow(el) {
   <tr>
     <td width="22%" valign="top" class="vncell"><?=gettext("Description");?></td>
     <td width="78%" class="vtable">
-      <input name="descr" type="text" class="formfld unknown" id="descr" size="40" value="<?=htmlspecialchars($pconfig['descr']);?>" />
+      <input name="descr" type="text" class="formfld unknown" id="descr" size="40" value="<?=xhtmlspecialchars($pconfig['descr']);?>" />
       <br />
       <span class="vexpl">
         <?=gettext("You may enter a description here for your reference (not parsed).");?>
@@ -328,7 +329,7 @@ function removeRow(el) {
       <input id="submit" name="submit" type="submit" class="formbtn" value="<?=gettext("Save");?>" />
       <a href="interfaces_groups.php"><input id="cancelbutton" name="cancelbutton" type="button" class="formbtn" value="<?=gettext("Cancel");?>" /></a>
       <?php if (isset($id) && $a_ifgroups[$id]): ?>
-      <input name="id" type="hidden" value="<?=htmlspecialchars($id);?>" />
+      <input name="id" type="hidden" value="<?=xhtmlspecialchars($id);?>" />
       <?php endif; ?>
     </td>
   </tr>

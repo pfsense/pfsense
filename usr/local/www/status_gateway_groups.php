@@ -40,6 +40,7 @@
 ##|-PRIV
 
 require("guiconfig.inc");
+require_once("pfsense-utils.inc");
 
 if (!is_array($config['gateways']['gateway_group']))
 	$config['gateways']['gateway_group'] = array();
@@ -136,7 +137,7 @@ include("head.inc");
 								$online = gettext("Gathering data");
 								$bgcolor = "#ADD8E6";  // lightblue
 							}
-							echo "<td bgcolor='$bgcolor'>&nbsp;". htmlspecialchars($member) .", $online&nbsp;</td>";
+							echo "<td bgcolor='$bgcolor'>&nbsp;". xhtmlspecialchars($member) .", $online&nbsp;</td>";
 						} else {
 							echo "<td>&nbsp;</td>";
 						}
@@ -150,7 +151,7 @@ include("head.inc");
 			</table>
                   </td>
                   <td class="listbg">
-                    <?=htmlspecialchars($gateway_group['descr']);?>&nbsp;
+                    <?=xhtmlspecialchars($gateway_group['descr']);?>&nbsp;
                   </td>
 		</tr>
 			  <?php $i++; endforeach; ?>

@@ -39,6 +39,7 @@
 ##|-PRIV
 
 require("guiconfig.inc");
+require_once("pfsense-utils.inc");
 
 if (!is_array($config['wireless']))
 	$config['wireless'] = array();
@@ -169,7 +170,7 @@ include("head.inc");
                             if ($ifn == $pconfig['if'])
                                 echo " selected=\"selected\"";
                             echo ">";
-                            echo htmlspecialchars($ifn . " (" . $ifinfo['mac'] . ")");
+                            echo xhtmlspecialchars($ifn . " (" . $ifinfo['mac'] . ")");
                             echo "</option>";
                         }
                       ?>
@@ -187,17 +188,17 @@ include("head.inc");
                 <tr>
                   <td width="22%" valign="top" class="vncell"><?=gettext("Description");?></td>
                   <td width="78%" class="vtable">
-                    <input name="descr" type="text" class="formfld unknown" id="descr" size="40" value="<?=htmlspecialchars($pconfig['descr']);?>" />
+                    <input name="descr" type="text" class="formfld unknown" id="descr" size="40" value="<?=xhtmlspecialchars($pconfig['descr']);?>" />
                     <br /> <span class="vexpl"><?=gettext("You may enter a description here ".
                     "for your reference (not parsed).");?></span></td>
                 </tr>
                 <tr>
                   <td width="22%" valign="top">&nbsp;</td>
                   <td width="78%">
-                    <input type="hidden" name="cloneif" value="<?=htmlspecialchars($pconfig['cloneif']); ?>" />
+                    <input type="hidden" name="cloneif" value="<?=xhtmlspecialchars($pconfig['cloneif']); ?>" />
                     <input name="Submit" type="submit" class="formbtn" value="<?=gettext("Save");?>" /> <input type="button" value="<?=gettext("Cancel");?>" onclick="history.back()" />
                     <?php if (isset($id) && $a_clones[$id]): ?>
-                    <input name="id" type="hidden" value="<?=htmlspecialchars($id);?>" />
+                    <input name="id" type="hidden" value="<?=xhtmlspecialchars($id);?>" />
                     <?php endif; ?>
                   </td>
                 </tr>

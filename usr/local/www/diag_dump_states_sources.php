@@ -40,13 +40,14 @@
 ##|-PRIV
 
 require_once("guiconfig.inc");
+require_once("pfsense-utils.inc");
 
 /* handle AJAX operations */
 if($_GET['action']) {
 	if($_GET['action'] == "remove") {
 		if (is_ipaddr($_GET['srcip']) and is_ipaddr($_GET['dstip'])) {
 			$retval = mwexec("/sbin/pfctl -K " . escapeshellarg($_GET['srcip']) . " -K " . escapeshellarg($_GET['dstip']));
-			echo htmlentities("|{$_GET['srcip']}|{$_GET['dstip']}|{$retval}|");
+			echo xhtmlentities("|{$_GET['srcip']}|{$_GET['dstip']}|{$retval}|");
 		} else {
 			echo gettext("invalid input");
 		}
@@ -56,7 +57,7 @@ if($_GET['action']) {
 
 /* get our states */
 if($_GET['filter']) {
-	exec("/sbin/pfctl -s Sources | grep " . escapeshellarg(htmlspecialchars($_GET['filter'])), $sources);
+	exec("/sbin/pfctl -s Sources | grep " . escapeshellarg(xhtmlspecialchars($_GET['filter'])), $sources);
 }
 else {
 	exec("/sbin/pfctl -s Sources", $sources);
@@ -130,7 +131,7 @@ include("head.inc");
 					<td>&nbsp;</td>
 					<td style="font-weight:bold;" align="right">
 						<?=gettext("Filter expression:");?>
-						<input type="text" name="filter" class="formfld search" value="<?=htmlspecialchars($_GET['filter']);?>" size="30" />
+						<input type="text" name="filter" class="formfld search" value="<?=xhtmlspecialchars($_GET['filter']);?>" size="30" />
 						<input type="submit" class="formbtn" value="<?=gettext("Filter");?>" />
 					</td>
 				</tr>

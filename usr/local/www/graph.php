@@ -41,6 +41,7 @@
 
 require("globals.inc");
 require("guiconfig.inc");
+require_once("pfsense-utils.inc");
 
 header("Last-Modified: " . gmdate( "D, j M Y H:i:s" ) . " GMT" );
 header("Expires: " . gmdate( "D, j M Y H:i:s", time() ) . " GMT" );
@@ -87,12 +88,12 @@ $attribs['error']='fill="blue" font-family="Arial" font-size="4"';
 $attribs['collect_initial']='fill="gray" font-family="Tahoma, Verdana, Arial, Helvetica, sans-serif" font-size="4"';
 
 //Error text if we cannot fetch data : depends on which method is used
-$error_text = "Cannot get data about interface " . htmlspecialchars($ifnum);
+$error_text = "Cannot get data about interface " . xhtmlspecialchars($ifnum);
 
 $height=100;            //SVG internal height : do not modify
 $width=200;             //SVG internal width : do not modify
 
-$fetch_link = "ifstats.php?if=" . htmlspecialchars($ifnum);
+$fetch_link = "ifstats.php?if=" . xhtmlspecialchars($ifnum);
 
 /* check for custom theme colors */
 if(file_exists("/usr/local/www/themes/{$g['theme']}/graph.php")) {
@@ -117,7 +118,7 @@ print('<?xml version="1.0" ?>' . "\n");?>
     <text id="graph_out_lbl" x="5" y="16" <?=$attribs['out']?>><?=gettext("Out"); ?></text>
     <text id="graph_in_txt" x="20" y="8" <?=$attribs['in']?>> </text>
     <text id="graph_out_txt" x="20" y="16" <?=$attribs['out']?>> </text>
-    <text id="ifname" x="<?=$width?>" y="8" <?=$attribs['graphname']?> text-anchor="end"><?=htmlspecialchars($ifname)?></text>
+    <text id="ifname" x="<?=$width?>" y="8" <?=$attribs['graphname']?> text-anchor="end"><?=xhtmlspecialchars($ifname)?></text>
     <text id="switch_unit" x="<?=$width*0.55?>" y="5" <?=$attribs['switch_unit']?>><?=gettext("Switch to bytes/s"); ?></text>
     <text id="switch_scale" x="<?=$width*0.55?>" y="11" <?=$attribs['switch_scale']?>><?=gettext("AutoScale"); ?> (<?=$scale_type?>)</text>
     <text id="date" x="<?=$width*0.33?>" y="5" <?=$attribs['legend']?>> </text>

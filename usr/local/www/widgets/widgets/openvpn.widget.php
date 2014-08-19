@@ -4,6 +4,7 @@ $nocsrf = true;
 
 require_once("guiconfig.inc");
 require_once("openvpn.inc");
+require_once("pfsense-utils.inc");
 
 /* Handle AJAX */
 if($_GET['action']) {
@@ -12,7 +13,7 @@ if($_GET['action']) {
 		$remipp = $_GET['remipp'];
 		if (!empty($port) and !empty($remipp)) {
 			$retval = kill_client($port, $remipp);
-			echo htmlentities("|{$port}|{$remipp}|{$retval}|");
+			echo xhtmlentities("|{$port}|{$remipp}|{$retval}|");
 		} else {
 			echo gettext("invalid input");
 		}

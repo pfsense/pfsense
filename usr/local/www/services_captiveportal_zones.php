@@ -15,6 +15,7 @@ require("functions.inc");
 require_once("filter.inc");
 require("shaper.inc");
 require("captiveportal.inc");
+require_once("pfsense-utils.inc");
 
 global $cpzone;
 global $cpzoneid;
@@ -73,7 +74,7 @@ include("head.inc");
 	  ?>
 <tr>
   <td class="listlr" ondblclick="document.location='services_captiveportal.php?zone=<?=$cpzone;?>';">
-    <?=htmlspecialchars($cpitem['zone']);?>
+    <?=xhtmlspecialchars($cpitem['zone']);?>
   </td>
   <td class="listlr" ondblclick="document.location='services_captiveportal.php?zone=<?=$cpzone;?>';">
     <?php $cpifaces = explode(",", $cpitem['interface']);
@@ -85,7 +86,7 @@ include("head.inc");
       <?=count(captiveportal_read_db());?>
   </td>
   <td class="listbg" ondblclick="document.location='services_captiveportal.php?zone=<?=$cpzone;?>';">
-    <?=htmlspecialchars($cpitem['descr']);?>&nbsp;
+    <?=xhtmlspecialchars($cpitem['descr']);?>&nbsp;
   </td>
   <td valign="middle" class="list nowrap">
     <table border="0" cellspacing="0" cellpadding="1" summary="icons">

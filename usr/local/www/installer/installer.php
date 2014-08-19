@@ -31,6 +31,7 @@ $nocsrf = true;
 
 require("globals.inc");
 require("guiconfig.inc");
+require_once("pfsense-utils.inc");
 
 define('PC_SYSINSTALL', '/usr/sbin/pc-sysinstall/pc-sysinstall/pc-sysinstall.sh');
 
@@ -220,7 +221,7 @@ function pcsysinstall_get_disk_info($diskname) {
 			}
 			$tmp_array['size']--;
 			$tmp_array['disk'] = trim($disks_info[0]);
-			$tmp_array['desc'] = trim(htmlentities($disks_info[1]));
+			$tmp_array['desc'] = trim(xhtmlentities($disks_info[1]));
 			return $tmp_array;
 		}
 	}
@@ -244,7 +245,7 @@ function installer_find_all_disks() {
 		}
 		$tmp_array['size']--;
 		$tmp_array['disk'] = trim($disks_info[0]);
-		$tmp_array['desc'] = trim(htmlentities($disks_info[1]));
+		$tmp_array['desc'] = trim(xhtmlentities($disks_info[1]));
 		$disks_array[] = $tmp_array;
 	}
 	return $disks_array;
@@ -349,7 +350,7 @@ function update_installer_status() {
 function update_installer_status_win($status) {
 	global $g, $fstype, $savemsg;
 	echo "<script type=\"text/javascript\">\n";
-	echo "	\$('#installeroutput').val('" . str_replace(htmlentities($status), "\n", "") . "');\n";
+	echo "	\$('#installeroutput').val('" . str_replace(xhtmlentities($status), "\n", "") . "');\n";
 	echo "</script>\n";
 }
 
@@ -496,7 +497,7 @@ function verify_before_install() {
 	if(!$bootmanager) 
 		$bootmanager = $_REQUEST['bootmanager'];
 	echo "\n<!--" . print_r($_REQUEST, true) . " -->\n";
-	$disk = pcsysinstall_get_disk_info(htmlspecialchars($_REQUEST['disk']));
+	$disk = pcsysinstall_get_disk_info(xhtmlspecialchars($_REQUEST['disk']));
 	$disksize = format_bytes($disk['size'] * 1048576);
 	// Loop through posted items and create an array
 	for($x=0; $x<99; $x++) { // XXX: Make this more optimal

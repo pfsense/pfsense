@@ -43,6 +43,7 @@ require("guiconfig.inc");
 require_once("functions.inc");
 require_once("filter.inc");
 require_once("shaper.inc");
+require_once("pfsense-utils.inc");
 
 if (!is_array($config['nat']['onetoone']))
 	$config['nat']['onetoone'] = array();
@@ -221,9 +222,9 @@ if (is_subsystem_dirty('natconf'))
 <?php
 					echo $textss;
 					if (!$natent['interface'])
-						echo htmlspecialchars(convert_friendly_interface_to_friendly_descr("wan"));
+						echo xhtmlspecialchars(convert_friendly_interface_to_friendly_descr("wan"));
 					else
-						echo htmlspecialchars(convert_friendly_interface_to_friendly_descr($natent['interface']));
+						echo xhtmlspecialchars(convert_friendly_interface_to_friendly_descr($natent['interface']));
 					echo $textse;
 ?>
 				</td>
@@ -246,7 +247,7 @@ if (is_subsystem_dirty('natconf'))
 				</td>
 				<td class="listbg" onclick="fr_toggle(<?=$i;?>)" ondblclick="document.location='firewall_nat_1to1_edit.php?id=<?=$i;?>';">
 <?php
-					echo $textss . htmlspecialchars($natent['descr']) . '&nbsp;' . $textse;
+					echo $textss . xhtmlspecialchars($natent['descr']) . '&nbsp;' . $textse;
 ?>
 				</td>
 				<td class="list nowrap" valign="middle">

@@ -52,6 +52,7 @@ require("guiconfig.inc");
 require_once("functions.inc");
 require_once("filter.inc");
 require_once("shaper.inc");
+require_once("pfsense-utils.inc");
 
 if (!is_array($config['virtualip']['vip'])) {
 	$config['virtualip']['vip'] = array();
@@ -222,7 +223,7 @@ include("head.inc");
   ?>
   </td></tr>
   <tr>
-	<td><input type="hidden" id="id" name="id" value="<?php echo htmlspecialchars($id); ?>" /></td>
+	<td><input type="hidden" id="id" name="id" value="<?php echo xhtmlspecialchars($id); ?>" /></td>
   </tr>
   <tr>
     <td>
@@ -260,13 +261,13 @@ include("head.inc");
 					<?php if($vipent['mode'] == "carp") echo " (vhid {$vipent['vhid']})"; ?>
                   </td>
                   <td class="listr" ondblclick="document.location='firewall_virtual_ip_edit.php?id=<?=$i;?>';">
-                    <?=htmlspecialchars($interfaces[$vipent['interface']]);?>&nbsp;
+                    <?=xhtmlspecialchars($interfaces[$vipent['interface']]);?>&nbsp;
                   </td>
                   <td class="listr" align="center" ondblclick="document.location='firewall_virtual_ip_edit.php?id=<?=$i;?>';">
                     <?php if($vipent['mode'] == "proxyarp") echo "<img src='./themes/".$g['theme']."/images/icons/icon_parp.gif' title='Proxy ARP' alt='proxy arp' />"; elseif($vipent['mode'] == "carp") echo "<img src='./themes/".$g['theme']."/images/icons/icon_carp.gif' title='CARP' alt='carp' />"; elseif($vipent['mode'] == "other") echo "<img src='./themes/".$g['theme']."/images/icons/icon_other.gif' title='Other' alt='other' />"; elseif($vipent['mode'] == "ipalias") echo "<img src='./themes/".$g['theme']."/images/icons/icon_ifalias.gif' title='IP Alias' alt='ip alias' />";?>
                   </td>
                   <td class="listbg" ondblclick="document.location='firewall_virtual_ip_edit.php?id=<?=$i;?>';">
-                    <?=htmlspecialchars($vipent['descr']);?>&nbsp;
+                    <?=xhtmlspecialchars($vipent['descr']);?>&nbsp;
                   </td>
                   <td class="list nowrap">
                     <table border="0" cellspacing="0" cellpadding="1" summary="icons">

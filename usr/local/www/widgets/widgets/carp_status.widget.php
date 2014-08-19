@@ -55,7 +55,7 @@ $carp_enabled = get_carp_status();
 	<td class="vncellt" width="35%">
 		<img src="./themes/<?= $g['theme']; ?>/images/icons/icon_cablenic.gif" alt="cablenic" />&nbsp;
 		<strong><a href="/system_hasync.php">
-		<span style="color:#000000"><?=htmlspecialchars(convert_friendly_interface_to_friendly_descr($carp['interface']) . "@{$vhid}");?></span></a></strong>
+		<span style="color:#000000"><?=xhtmlspecialchars(convert_friendly_interface_to_friendly_descr($carp['interface']) . "@{$vhid}");?></span></a></strong>
 	</td>
 	<td width="65%"  class="listr">
 <?php
@@ -72,8 +72,8 @@ $carp_enabled = get_carp_status();
 				}
 			}
 			if ($ipaddress){ ?> &nbsp;
-				<?=htmlspecialchars($status);?> &nbsp;
-				<?=htmlspecialchars($ipaddress);}?>
+				<?=xhtmlspecialchars($status);?> &nbsp;
+				<?=xhtmlspecialchars($ipaddress);}?>
 </tr><?php	}
 	} else { ?>
 		<tr><td class="listr">No CARP Interfaces Defined. Click <a href="carp_status.php">here</a> to configure CARP.</td></tr>

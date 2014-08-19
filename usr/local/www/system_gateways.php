@@ -43,6 +43,7 @@ require("guiconfig.inc");
 require_once("functions.inc");
 require_once("filter.inc");
 require_once("shaper.inc");
+require_once("pfsense-utils.inc");
 
 $a_gateways = return_gateways_array(true, false, true);
 $a_gateways_arr = array();
@@ -291,7 +292,7 @@ include("head.inc");
 						<td class="listr" onclick="fr_toggle(<?=$i;?>)" id="frd<?=$i;?>" ondblclick="document.location='system_gateways_edit.php?id=<?=$i;?>';">
 <?php
 							echo $textss;
-							echo htmlspecialchars(convert_friendly_interface_to_friendly_descr($gateway['friendlyiface']));
+							echo xhtmlspecialchars(convert_friendly_interface_to_friendly_descr($gateway['friendlyiface']));
 							echo $textse;
 ?>
 						</td>
@@ -305,7 +306,7 @@ include("head.inc");
 						<td class="listr" onclick="fr_toggle(<?=$i;?>)" id="frd<?=$i;?>" ondblclick="document.location='system_gateways_edit.php?id=<?=$i;?>';">
 <?php
 							echo $textss;
-							echo htmlspecialchars($gateway['monitor']) . " ";
+							echo xhtmlspecialchars($gateway['monitor']) . " ";
 							echo $textse;
 ?>
 						</td>
@@ -320,7 +321,7 @@ include("head.inc");
 <?php
 					endif;
 							echo $textss;
-							echo htmlspecialchars($gateway['descr']) . "&nbsp;";
+							echo xhtmlspecialchars($gateway['descr']) . "&nbsp;";
 							echo $textse;
 ?>
 						</td>

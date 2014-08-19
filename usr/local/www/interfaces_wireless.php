@@ -39,6 +39,7 @@
 ##|-PRIV
 
 require("guiconfig.inc");
+require_once("pfsense-utils.inc");
 
 if (!is_array($config['wireless']))
 	$config['wireless'] = array();
@@ -115,13 +116,13 @@ include("head.inc");
 					foreach ($a_clones as $clone): ?>
                 <tr ondblclick="document.location='interfaces_wireless_edit.php?id=<?=$i;?>'">
                   <td class="listlr">
-					<?=htmlspecialchars($clone['cloneif']);?>
+					<?=xhtmlspecialchars($clone['cloneif']);?>
                   </td>
                   <td class="listr">
 					<?= $wlan_modes[$clone['mode']]; ?>
                   </td>
                   <td class="listbg">
-                    <?=htmlspecialchars($clone['descr']);?>&nbsp;
+                    <?=xhtmlspecialchars($clone['descr']);?>&nbsp;
                   </td>
                   <td valign="middle" class="list nowrap"> <a href="interfaces_wireless_edit.php?id=<?=$i;?>"><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_e.gif" width="17" height="17" border="0" alt="edit" ></a>
                      &nbsp;<a href="interfaces_wireless.php?act=del&amp;id=<?=$i;?>" onclick="return confirm('<?=gettext("Do you really want to delete this wireless clone?");?>')"><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_x.gif" width="17" height="17" border="0" alt="delete" /></a></td>

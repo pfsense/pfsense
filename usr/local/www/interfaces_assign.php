@@ -51,6 +51,7 @@ require("ipsec.inc");
 require("vpn.inc");
 require("captiveportal.inc");
 require_once("rrd.inc");
+require_once("pfsense-utils.inc");
 
 /*
 	In this file, "port" refers to the physical port name,
@@ -437,40 +438,40 @@ if(file_exists("/var/run/interface_mismatch_reboot_needed"))
 					$descr = sprintf(gettext('VLAN %1$s on %2$s'),$portinfo['tag'],$portinfo['if']);
 				if ($portinfo['descr'])
 					$descr .= " (" . $portinfo['descr'] . ")";
-					echo htmlspecialchars($descr);
+					echo xhtmlspecialchars($descr);
 				} elseif ($portinfo['iswlclone']) {
 					$descr = $portinfo['cloneif'];
 					if ($portinfo['descr'])
 						$descr .= " (" . $portinfo['descr'] . ")";
-					echo htmlspecialchars($descr);
+					echo xhtmlspecialchars($descr);
 				} elseif ($portinfo['isppp']) {
-					echo htmlspecialchars($portinfo['descr']);
+					echo xhtmlspecialchars($portinfo['descr']);
 				} elseif ($portinfo['isbridge']) {
 					$descr = strtoupper($portinfo['bridgeif']);
 					if ($portinfo['descr'])
 						$descr .= " (" . $portinfo['descr'] . ")";
-					echo htmlspecialchars($descr);
+					echo xhtmlspecialchars($descr);
 				} elseif ($portinfo['isgre']) {
 					$descr = "GRE {$portinfo['remote-addr']}";
 					if ($portinfo['descr'])
 						$descr .= " (" . $portinfo['descr'] . ")";
-					echo htmlspecialchars($descr);
+					echo xhtmlspecialchars($descr);
 				} elseif ($portinfo['isgif']) {
 					$descr = "GIF {$portinfo['remote-addr']}";
 					if ($portinfo['descr'])
 						$descr .= " (" . $portinfo['descr'] . ")";
-					echo htmlspecialchars($descr);
+					echo xhtmlspecialchars($descr);
 				} elseif ($portinfo['islagg']) {
 					$descr = strtoupper($portinfo['laggif']);
 					if ($portinfo['descr'])
 						$descr .= " (" . $portinfo['descr'] . ")";
-					echo htmlspecialchars($descr);
+					echo xhtmlspecialchars($descr);
 				} elseif ($portinfo['isqinq']) {
-					echo htmlspecialchars($portinfo['descr']);
+					echo xhtmlspecialchars($portinfo['descr']);
 				} elseif (substr($portname, 0, 4) == 'ovpn') {
-					echo htmlspecialchars($portname . " (" . $ovpn_descrs[substr($portname, 5)] . ")");
+					echo xhtmlspecialchars($portname . " (" . $ovpn_descrs[substr($portname, 5)] . ")");
 				} else
-					echo htmlspecialchars($portname . " (" . $portinfo['mac'] . ")");
+					echo xhtmlspecialchars($portname . " (" . $portinfo['mac'] . ")");
 			?></option>
 		<?php endforeach; ?>
 	</select>

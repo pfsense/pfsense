@@ -41,13 +41,14 @@
 
 require_once("guiconfig.inc");
 require_once("interfaces.inc");
+require_once("pfsense-utils.inc");
 
 /* handle AJAX operations */
 if($_GET['action']) {
 	if($_GET['action'] == "remove") {
 		if (is_ipaddr($_GET['srcip']) and is_ipaddr($_GET['dstip'])) {
 			$retval = mwexec("/sbin/pfctl -k " . escapeshellarg($_GET['srcip']) . " -k " . escapeshellarg($_GET['dstip']));
-			echo htmlentities("|{$_GET['srcip']}|{$_GET['dstip']}|{$retval}|");
+			echo xhtmlentities("|{$_GET['srcip']}|{$_GET['dstip']}|{$retval}|");
 		} else {
 			echo gettext("invalid input");
 		}
@@ -145,7 +146,7 @@ include("head.inc");
 					</td>
 					<td style="font-weight:bold;" align="right">
 						<?=gettext("Filter expression:");?>
-						<input type="text" name="filter" class="formfld search" value="<?=htmlspecialchars($_GET['filter']);?>" size="30" />
+						<input type="text" name="filter" class="formfld search" value="<?=xhtmlspecialchars($_GET['filter']);?>" size="30" />
 						<input type="submit" class="formbtn" value="<?=gettext("Filter");?>" />
 					<?php if (is_ipaddr($_GET['filter']) || is_subnet($_GET['filter'])): ?>
 						<input type="submit" class="formbtn" name="killfilter" value="<?=gettext("Kill");?>" />
@@ -172,7 +173,7 @@ include("head.inc");
 <?php
 $row = 0;
 /* get our states */
-$grepline = ($_GET['filter']) ? "| /usr/bin/egrep " . escapeshellarg(htmlspecialchars($_GET['filter'])) : "";
+$grepline = ($_GET['filter']) ? "| /usr/bin/egrep " . escapeshellarg(xhtmlspecialchars($_GET['filter'])) : "";
 $fd = popen("/sbin/pfctl -s state {$grepline}", "r" );
 while ($line = chop(fgets($fd))) {
 	if($row >= 10000)

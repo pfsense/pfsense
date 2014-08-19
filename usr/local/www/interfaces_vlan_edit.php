@@ -40,6 +40,7 @@
 ##|-PRIV
 
 require("guiconfig.inc");
+require_once("pfsense-utils.inc");
 
 if (!is_array($config['vlans']['vlan']))
 	$config['vlans']['vlan'] = array();
@@ -171,7 +172,7 @@ include("head.inc");
 							if ($ifn == $pconfig['if'])
 								echo " selected=\"selected\"";
 							echo ">";
-                      				        echo htmlspecialchars($ifn . " (" . $ifinfo['mac'] . ")");
+                      				        echo xhtmlspecialchars($ifn . " (" . $ifinfo['mac'] . ")");
                       					echo "</option>";
 						}
 		      ?>
@@ -182,24 +183,24 @@ include("head.inc");
 				<tr>
                   <td valign="top" class="vncellreq"><?=gettext("VLAN tag ");?></td>
                   <td class="vtable">
-                    <input name="tag" type="text" class="formfld unknown" id="tag" size="6" value="<?=htmlspecialchars($pconfig['tag']);?>" />
+                    <input name="tag" type="text" class="formfld unknown" id="tag" size="6" value="<?=xhtmlspecialchars($pconfig['tag']);?>" />
                     <br />
                     <span class="vexpl"><?=gettext("802.1Q VLAN tag (between 1 and 4094) ");?></span></td>
 			    </tr>
 				<tr>
                   <td width="22%" valign="top" class="vncell"><?=gettext("Description");?></td>
                   <td width="78%" class="vtable">
-                    <input name="descr" type="text" class="formfld unknown" id="descr" size="40" value="<?=htmlspecialchars($pconfig['descr']);?>" />
+                    <input name="descr" type="text" class="formfld unknown" id="descr" size="40" value="<?=xhtmlspecialchars($pconfig['descr']);?>" />
                     <br /> <span class="vexpl"><?=gettext("You may enter a description here ".
                     "for your reference (not parsed).");?></span></td>
                 </tr>
                 <tr>
                   <td width="22%" valign="top">&nbsp;</td>
                   <td width="78%">
-		    <input type="hidden" name="vlanif" value="<?=htmlspecialchars($pconfig['vlanif']); ?>" />
+		    <input type="hidden" name="vlanif" value="<?=xhtmlspecialchars($pconfig['vlanif']); ?>" />
                     <input name="Submit" type="submit" class="formbtn" value="<?=gettext("Save");?>" /> <input type="button" value="<?=gettext("Cancel");?>" onclick="history.back()" />
                     <?php if (isset($id) && $a_vlans[$id]): ?>
-                    <input name="id" type="hidden" value="<?=htmlspecialchars($id);?>" />
+                    <input name="id" type="hidden" value="<?=xhtmlspecialchars($id);?>" />
                     <?php endif; ?>
                   </td>
                 </tr>

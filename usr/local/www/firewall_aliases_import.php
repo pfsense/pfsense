@@ -45,6 +45,7 @@ require("guiconfig.inc");
 require_once("util.inc");
 require_once("filter.inc");
 require("shaper.inc");
+require_once("pfsense-utils.inc");
 
 $pgtitle = array(gettext("Firewall"),gettext("Aliases"),gettext("Bulk import"));
 
@@ -167,13 +168,13 @@ include("head.inc");
 	</tr>
 	<tr>
 	  <td valign="top" class="vncellreq"><?=gettext("Alias Name"); ?></td>
-	  <td class="vtable"> <input name="name" type="text" class="formfld unknown" id="name" size="40" value="<?=htmlspecialchars($_POST['name']);?>" />
+	  <td class="vtable"> <input name="name" type="text" class="formfld unknown" id="name" size="40" value="<?=xhtmlspecialchars($_POST['name']);?>" />
 	    <br /> <span class="vexpl">
 	    <?=gettext("The name of the alias may only consist of the characters \"a-z, A-Z and 0-9\"."); ?></span></td>
 	</tr>
 	<tr>
 	  <td width="22%" valign="top" class="vncell"><?=gettext("Description"); ?></td>
-	  <td width="78%" class="vtable"> <input name="descr" type="text" class="formfld unknown" id="descr" size="40" value="<?=htmlspecialchars($_POST['descr']);?>" />
+	  <td width="78%" class="vtable"> <input name="descr" type="text" class="formfld unknown" id="descr" size="40" value="<?=xhtmlspecialchars($_POST['descr']);?>" />
 	    <br /> <span class="vexpl"><?=gettext("You may enter a description here " .
 	    "for your reference (not parsed)"); ?>.</span></td>
 	</tr>

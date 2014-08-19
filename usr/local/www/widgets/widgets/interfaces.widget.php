@@ -64,7 +64,7 @@ require_once("/usr/local/www/widgets/include/interfaces.inc");
 				<?php } ?>&nbsp;
 				<strong><u>
 				<span onclick="location.href='/interfaces.php?if=<?=$ifdescr; ?>'" style="cursor:pointer">
-				<?=htmlspecialchars($ifname);?></span></u></strong>
+				<?=xhtmlspecialchars($ifname);?></span></u></strong>
 				<?php
 					if ($ifinfo['dhcplink'])
 						echo "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(DHCP)";
@@ -85,18 +85,18 @@ require_once("/usr/local/www/widgets/include/interfaces.inc");
 							<td>
 								<div id="<?php echo $ifname;?>-block" style="display:inline" ><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_block.gif" title="<?=$ifname;?> is disabled" alt="disabled" /></div>
 							</td>
-		                <?php } else { ?><?=htmlspecialchars($ifinfo['status']); }?>
+		                <?php } else { ?><?=xhtmlspecialchars($ifinfo['status']); }?>
 							<td>
-								<div id="<?php echo $ifname;?>-media" style="display:inline"><?=htmlspecialchars($ifinfo['media']);?></div>
+								<div id="<?php echo $ifname;?>-media" style="display:inline"><?=xhtmlspecialchars($ifinfo['media']);?></div>
 							</td>
 						</tr>
 					</table>
 					<table  width="100%" border="0" cellspacing="0" cellpadding="0" summary="summary">
 						<tr>
 							<td class="vncellt" width="100%">
-								<div id="<?php echo $ifname;?>-ip" style="display:inline"><?=htmlspecialchars($ifinfo['ipaddr']);?> </div>
+								<div id="<?php echo $ifname;?>-ip" style="display:inline"><?=xhtmlspecialchars($ifinfo['ipaddr']);?> </div>
 								<br />
-								<div id="<?php echo $ifname;?>-ipv6" style="display:inline"><?=htmlspecialchars($ifinfo['ipaddrv6']);?> </div>
+								<div id="<?php echo $ifname;?>-ipv6" style="display:inline"><?=xhtmlspecialchars($ifinfo['ipaddrv6']);?> </div>
 							</td>
 						</tr>
 					</table>

@@ -44,6 +44,7 @@
 ##|-PRIV
 
 require("guiconfig.inc");
+require_once("pfsense-utils.inc");
 
 if ($_POST['width'])
 	$width = $_POST['width'];
@@ -63,7 +64,7 @@ foreach (array('server', 'client') as $mode) {
 	if (is_array($config['openvpn']["openvpn-{$mode}"])) {
 		foreach ($config['openvpn']["openvpn-{$mode}"] as $id => $setting) {
 			if (!isset($setting['disable'])) {
-				$ifdescrs['ovpn' . substr($mode, 0, 1) . $setting['vpnid']] = gettext("OpenVPN") . " ".$mode.": ".htmlspecialchars($setting['description']);
+				$ifdescrs['ovpn' . substr($mode, 0, 1) . $setting['vpnid']] = gettext("OpenVPN") . " ".$mode.": ".xhtmlspecialchars($setting['description']);
 			}
 		}
 	}
@@ -208,7 +209,7 @@ if (isset($config['ipsec']['enable']) || isset($config['ipsec']['client']['enabl
 foreach ($ifdescrs as $ifn => $ifd) {
 	echo "<option value=\"$ifn\"";
 	if ($ifn == $curif) echo " selected=\"selected\"";
-	echo ">" . htmlspecialchars($ifd) . "</option>\n";
+	echo ">" . xhtmlspecialchars($ifd) . "</option>\n";
 }
 ?>
 </select>
@@ -233,7 +234,7 @@ foreach ($ifdescrs as $ifn => $ifd) {
 <p>&nbsp;</p>
 <div id="niftyOutter">
     <div id="col1" style="float: left; width: 46%; padding: 5px; position: relative;">
-        <object	data="graph.php?ifnum=<?=htmlspecialchars($curif);?>&amp;ifname=<?=rawurlencode($ifdescrs[htmlspecialchars($curif)]);?>">
+        <object	data="graph.php?ifnum=<?=xhtmlspecialchars($curif);?>&amp;ifname=<?=rawurlencode($ifdescrs[xhtmlspecialchars($curif)]);?>">
           <param name="id" value="graph" />
           <param name="type" value="image/svg+xml" />
           <param name="width" value="<? echo $width; ?>" />

@@ -48,6 +48,8 @@ header("Cache-Control: post-check=0, pre-check=0", FALSE );
 header("Pragma: no-cache"); // HTTP/1.0
 
 require("guiconfig.inc");
+require_once("pfsense-utils.inc");
+
 class QueueStats {
 	public $queuename;
 	public $queuelength;	
@@ -220,7 +222,7 @@ function processQueues($altqstats, $level, $parent_name){
 			}
 		}
 		if ($prev_if != $q['interface']) {
-			echo "<tr><td colspan=\"8\" style=\"padding: 2px;\"><b>Interface ". htmlspecialchars(convert_real_interface_to_friendly_descr($q['interface'])) . "</b></td></tr>";
+			echo "<tr><td colspan=\"8\" style=\"padding: 2px;\"><b>Interface ". xhtmlspecialchars(convert_real_interface_to_friendly_descr($q['interface'])) . "</b></td></tr>";
 			$prev_if = $q['interface'];
 		}
 		?>
@@ -231,7 +233,7 @@ function processQueues($altqstats, $level, $parent_name){
 					if (strstr($q['name'], "root_"))
 						echo "<a href=\"firewall_shaper.php?interface={$if_name}&amp;queue={$if_name}&amp;action=show\">Root queue</a>";
 					else
-						echo "<a href=\"firewall_shaper.php?interface={$if_name}&amp;queue={$q['name']}&amp;action=show\">" . htmlspecialchars($q['name']) . "</a>";
+						echo "<a href=\"firewall_shaper.php?interface={$if_name}&amp;queue={$q['name']}&amp;action=show\">" . xhtmlspecialchars($q['name']) . "</a>";
 					?>
 				</font>
 			</td>
@@ -239,8 +241,8 @@ function processQueues($altqstats, $level, $parent_name){
 			$cpuUsage = 0;
 			echo "<td class=\"nowrap\" width=\"1%\" bgcolor=\"#{$row_background}\">";
 			echo "<img src='./themes/".$g['theme']."/images/misc/bar_left.gif' height='10' width='4' border='0' align='middle' alt='' />";
-			echo "<img src='./themes/".$g['theme']."/images/misc/bar_blue.gif' height='10' name='queue{$q['name']}{$q['interface']}widtha' id='queue{$q['name']}{$q['interface']}widtha' width='" . $cpuUsage . "' border='0' align='middle' alt='" . htmlspecialchars($q['name']) . "' />";
-			echo "<img src='./themes/".$g['theme']."/images/misc/bar_gray.gif' height='10' name='queue{$q['name']}{$q['interface']}widthb' id='queue{$q['name']}{$q['interface']}widthb' width='" . (150 - $cpuUsage) . "' border='0' align='middle' alt='" . htmlspecialchars($q['name']) . "' />";
+			echo "<img src='./themes/".$g['theme']."/images/misc/bar_blue.gif' height='10' name='queue{$q['name']}{$q['interface']}widtha' id='queue{$q['name']}{$q['interface']}widtha' width='" . $cpuUsage . "' border='0' align='middle' alt='" . xhtmlspecialchars($q['name']) . "' />";
+			echo "<img src='./themes/".$g['theme']."/images/misc/bar_gray.gif' height='10' name='queue{$q['name']}{$q['interface']}widthb' id='queue{$q['name']}{$q['interface']}widthb' width='" . (150 - $cpuUsage) . "' border='0' align='middle' alt='" . xhtmlspecialchars($q['name']) . "' />";
 			echo "<img src='./themes/".$g['theme']."/images/misc/bar_right.gif' height='10' width='5' border='0' align='middle' alt='' /> ";
 			if (is_array($q['queue'])) {
 				echo "<a href=\"#\" onclick=\"StatsShowHide('queuerow{$q['name']}{$q['interface']}');return false\">+/-</a> ";

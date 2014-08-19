@@ -42,6 +42,7 @@ require_once("functions.inc");
 require_once("filter.inc");
 require_once("shaper.inc");
 require_once("captiveportal.inc");
+require_once("pfsense-utils.inc");
 
 if (substr($_GET['act'], 0, 3) == "get")
 	$nocsrf = true;
@@ -527,7 +528,7 @@ function enable_change(enable_change) {
 		  $cselected = explode(",", $pconfig['cinterface']);
 		  foreach ($interfaces as $iface => $ifacename): ?>
 			  <option value="<?=$iface;?>" <?php if (in_array($iface, $cselected)) echo "selected=\"selected\""; ?>>
-			  <?=htmlspecialchars($ifacename);?>
+			  <?=xhtmlspecialchars($ifacename);?>
 			  </option>
 		  <?php endforeach; ?>
 		</select> <br />
@@ -538,7 +539,7 @@ function enable_change(enable_change) {
 	  <td class="vtable">
 		<table cellpadding="0" cellspacing="0" summary="connections">
                  <tr>
-           			<td><input name="maxprocperip" type="text" class="formfld unknown" id="maxprocperip" size="5" value="<?=htmlspecialchars($pconfig['maxprocperip']);?>" /> <?=gettext("per client IP address (0 = no limit)"); ?></td>
+           			<td><input name="maxprocperip" type="text" class="formfld unknown" id="maxprocperip" size="5" value="<?=xhtmlspecialchars($pconfig['maxprocperip']);?>" /> <?=gettext("per client IP address (0 = no limit)"); ?></td>
                  </tr>
                </table>
 <?=gettext("This setting limits the number of concurrent connections to the captive portal HTTP(S) server. This does not set how many users can be logged in " .
@@ -548,28 +549,28 @@ function enable_change(enable_change) {
 	<tr>
 	  <td valign="top" class="vncell"><?=gettext("Idle timeout"); ?></td>
 	  <td class="vtable">
-		<input name="idletimeout" type="text" class="formfld unknown" id="idletimeout" size="6" value="<?=htmlspecialchars($pconfig['idletimeout']);?>" />
+		<input name="idletimeout" type="text" class="formfld unknown" id="idletimeout" size="6" value="<?=xhtmlspecialchars($pconfig['idletimeout']);?>" />
 <?=gettext("minutes"); ?><br />
 <?=gettext("Clients will be disconnected after this amount of inactivity. They may log in again immediately, though. Leave this field blank for no idle timeout."); ?></td>
 	</tr>
 	<tr>
 	  <td width="22%" valign="top" class="vncell"><?=gettext("Hard timeout"); ?></td>
 	  <td width="78%" class="vtable">
-		<input name="timeout" type="text" class="formfld unknown" id="timeout" size="6" value="<?=htmlspecialchars($pconfig['timeout']);?>" />
+		<input name="timeout" type="text" class="formfld unknown" id="timeout" size="6" value="<?=xhtmlspecialchars($pconfig['timeout']);?>" />
 		<?=gettext("minutes"); ?><br />
 	  <?=gettext("Clients will be disconnected after this amount of time, regardless of activity. They may log in again immediately, though. Leave this field blank for no hard timeout (not recommended unless an idle timeout is set)."); ?></td>
 	</tr>
 	<tr>
 	  <td width="22%" valign="top" class="vncell"><?=gettext("Pass-through credits allowed per MAC address"); ?></td>
 	  <td width="78%" class="vtable">
-		<input name="freelogins_count" type="text" class="formfld unknown" id="freelogins_count" size="6" value="<?=htmlspecialchars($pconfig['freelogins_count']);?>" />
+		<input name="freelogins_count" type="text" class="formfld unknown" id="freelogins_count" size="6" value="<?=xhtmlspecialchars($pconfig['freelogins_count']);?>" />
 		<?=gettext("per client MAC address (0 or blank = none)"); ?><br />
 		<?=gettext("This setting allows passing through the captive portal without authentication a limited number of times per MAC address. Once used up, the client can only log in with valid credentials until the waiting period specified below has expired. Recommended to set a hard timeout and/or idle timeout when using this for it to be effective."); ?></td>
 	</tr>
 	<tr>
 	  <td width="22%" valign="top" class="vncell"><?=gettext("Waiting period to restore pass-through credits"); ?></td>
 	  <td width="78%" class="vtable">
-		<input name="freelogins_resettimeout" type="text" class="formfld unknown" id="freelogins_resettimeout" size="6" value="<?=htmlspecialchars($pconfig['freelogins_resettimeout']);?>" />
+		<input name="freelogins_resettimeout" type="text" class="formfld unknown" id="freelogins_resettimeout" size="6" value="<?=xhtmlspecialchars($pconfig['freelogins_resettimeout']);?>" />
 		<?=gettext("hours"); ?><br />
 		<?=gettext("Clients will have their available pass-through credits restored to the original count after this amount of time since using the first one. This must be above 0 hours if pass-through credits are enabled."); ?></td>
 	</tr>
@@ -590,14 +591,14 @@ function enable_change(enable_change) {
 	<tr>
       <td valign="top" class="vncell"><?=gettext("Pre-authentication redirect URL"); ?> </td>
       <td class="vtable">
-        <input name="preauthurl" type="text" class="formfld url" id="preauthurl" size="60" value="<?=htmlspecialchars($pconfig['preauthurl']);?>" /><br />
+        <input name="preauthurl" type="text" class="formfld url" id="preauthurl" size="60" value="<?=xhtmlspecialchars($pconfig['preauthurl']);?>" /><br />
 		<?php printf(gettext("Use this field to set \$PORTAL_REDIRURL\$ variable which can be accessed using your custom captive portal index.php page or error pages."));?>
 	  </td>
 	</tr>
 	<tr>
 	  <td valign="top" class="vncell"><?=gettext("After authentication Redirection URL"); ?></td>
 	  <td class="vtable">
-		<input name="redirurl" type="text" class="formfld url" id="redirurl" size="60" value="<?=htmlspecialchars($pconfig['redirurl']);?>" />
+		<input name="redirurl" type="text" class="formfld url" id="redirurl" size="60" value="<?=xhtmlspecialchars($pconfig['redirurl']);?>" />
 		<br />
 <?=gettext("If you provide a URL here, clients will be redirected to that URL instead of the one they initially tried " .
 "to access after they've authenticated."); ?></td>
@@ -605,7 +606,7 @@ function enable_change(enable_change) {
 	<tr>
 		<td valign="top" class="vncell"><?=gettext("Blocked MAC address redirect URL"); ?> </td>
 		<td class="vtable">
-			<input name="blockedmacsurl" type="text" class="formfld url" id="blockedmacsurl" size="60" value="<?=htmlspecialchars($pconfig['blockedmacsurl']);?>" /><br />
+			<input name="blockedmacsurl" type="text" class="formfld url" id="blockedmacsurl" size="60" value="<?=xhtmlspecialchars($pconfig['blockedmacsurl']);?>" /><br />
 			<?php printf(gettext("If you provide a URL here, MAC addresses set to be blocked will be redirect to that URL when attempt to access anything."));?>
 		</td>
 	</tr>
@@ -648,11 +649,11 @@ function enable_change(enable_change) {
         <table cellpadding="0" cellspacing="0" summary="bandwidth">
         <tr>
         <td><?=gettext("Default download"); ?></td>
-        <td><input type="text" class="formfld unknown" name="bwdefaultdn" id="bwdefaultdn" size="10" value="<?=htmlspecialchars($pconfig['bwdefaultdn']);?>" /> <?=gettext("Kbit/s"); ?></td>
+        <td><input type="text" class="formfld unknown" name="bwdefaultdn" id="bwdefaultdn" size="10" value="<?=xhtmlspecialchars($pconfig['bwdefaultdn']);?>" /> <?=gettext("Kbit/s"); ?></td>
         </tr>
         <tr>
         <td><?=gettext("Default upload"); ?></td>
-        <td><input type="text" class="formfld unknown" name="bwdefaultup" id="bwdefaultup" size="10" value="<?=htmlspecialchars($pconfig['bwdefaultup']);?>" /> <?=gettext("Kbit/s"); ?></td>
+        <td><input type="text" class="formfld unknown" name="bwdefaultup" id="bwdefaultup" size="10" value="<?=xhtmlspecialchars($pconfig['bwdefaultup']);?>" /> <?=gettext("Kbit/s"); ?></td>
         </tr></table>
         <br />
         <?=gettext("If this option is set, the captive portal will restrict each user who logs in to the specified default bandwidth. RADIUS can override the default settings. Leave empty or set to 0 for no limit."); ?> </td>
@@ -723,17 +724,17 @@ function enable_change(enable_change) {
 			</tr>
 			<tr>
 				<td class="vncell" valign="top"><?=gettext("IP address"); ?></td>
-				<td class="vtable"><input name="radiusip" type="text" class="formfld unknown" id="radiusip" size="20" value="<?=htmlspecialchars($pconfig['radiusip']);?>" /><br />
+				<td class="vtable"><input name="radiusip" type="text" class="formfld unknown" id="radiusip" size="20" value="<?=xhtmlspecialchars($pconfig['radiusip']);?>" /><br />
 				<?=gettext("Enter the IP address of the RADIUS server which users of the captive portal have to authenticate against."); ?></td>
 			</tr>
 			<tr>
 				<td class="vncell" valign="top"><?=gettext("Port"); ?></td>
-				<td class="vtable"><input name="radiusport" type="text" class="formfld unknown" id="radiusport" size="5" value="<?=htmlspecialchars($pconfig['radiusport']);?>" /><br />
+				<td class="vtable"><input name="radiusport" type="text" class="formfld unknown" id="radiusport" size="5" value="<?=xhtmlspecialchars($pconfig['radiusport']);?>" /><br />
 				 <?=gettext("Leave this field blank to use the default port (1812)."); ?></td>
 			</tr>
 			<tr>
 				<td class="vncell" valign="top"><?=gettext("Shared secret"); ?>&nbsp;&nbsp;</td>
-				<td class="vtable"><input name="radiuskey" type="text" class="formfld unknown" id="radiuskey" size="16" value="<?=htmlspecialchars($pconfig['radiuskey']);?>" /><br />
+				<td class="vtable"><input name="radiuskey" type="text" class="formfld unknown" id="radiuskey" size="16" value="<?=xhtmlspecialchars($pconfig['radiuskey']);?>" /><br />
 				<?=gettext("Leave this field blank to not use a RADIUS shared secret (not recommended)."); ?></td>
 			</tr>
 			<tr>
@@ -744,16 +745,16 @@ function enable_change(enable_change) {
 			</tr>
 			<tr>
 				<td class="vncell" valign="top"><?=gettext("IP address"); ?></td>
-				<td class="vtable"><input name="radiusip2" type="text" class="formfld unknown" id="radiusip2" size="20" value="<?=htmlspecialchars($pconfig['radiusip2']);?>" /><br />
+				<td class="vtable"><input name="radiusip2" type="text" class="formfld unknown" id="radiusip2" size="20" value="<?=xhtmlspecialchars($pconfig['radiusip2']);?>" /><br />
 				<?=gettext("If you have a second RADIUS server, you can activate it by entering its IP address here."); ?></td>
 			</tr>
 			<tr>
 				<td class="vncell" valign="top"><?=gettext("Port"); ?></td>
-				<td class="vtable"><input name="radiusport2" type="text" class="formfld unknown" id="radiusport2" size="5" value="<?=htmlspecialchars($pconfig['radiusport2']);?>" /></td>
+				<td class="vtable"><input name="radiusport2" type="text" class="formfld unknown" id="radiusport2" size="5" value="<?=xhtmlspecialchars($pconfig['radiusport2']);?>" /></td>
 			</tr>
 			<tr>
 				<td class="vncell" valign="top"><?=gettext("Shared secret"); ?>&nbsp;&nbsp;</td>
-				<td class="vtable"><input name="radiuskey2" type="text" class="formfld unknown" id="radiuskey2" size="16" value="<?=htmlspecialchars($pconfig['radiuskey2']);?>" /></td>
+				<td class="vtable"><input name="radiuskey2" type="text" class="formfld unknown" id="radiuskey2" size="16" value="<?=xhtmlspecialchars($pconfig['radiuskey2']);?>" /></td>
 			</tr>
 			<tr>
 			  <td colspan="2" class="list" height="12"></td>
@@ -766,16 +767,16 @@ function enable_change(enable_change) {
 			</tr>
 			<tr>
 				<td class="vncell" valign="top"><?=gettext("IP address"); ?></td>
-				<td class="vtable"><input name="radiusip3" type="text" class="formfld unknown" id="radiusip3" size="20" value="<?=htmlspecialchars($pconfig['radiusip3']);?>" /><br />
+				<td class="vtable"><input name="radiusip3" type="text" class="formfld unknown" id="radiusip3" size="20" value="<?=xhtmlspecialchars($pconfig['radiusip3']);?>" /><br />
 				<?=gettext("If you have a third RADIUS server, you can activate it by entering its IP address here."); ?></td>
 			</tr>
 			<tr>
 				<td class="vncell" valign="top"><?=gettext("Port"); ?></td>
-				<td class="vtable"><input name="radiusport3" type="text" class="formfld unknown" id="radiusport3" size="5" value="<?=htmlspecialchars($pconfig['radiusport3']);?>" /></td>
+				<td class="vtable"><input name="radiusport3" type="text" class="formfld unknown" id="radiusport3" size="5" value="<?=xhtmlspecialchars($pconfig['radiusport3']);?>" /></td>
 			</tr>
 			<tr>
 				<td class="vncell" valign="top"><?=gettext("Shared secret"); ?>&nbsp;&nbsp;</td>
-				<td class="vtable"><input name="radiuskey3" type="text" class="formfld unknown" id="radiuskey3" size="16" value="<?=htmlspecialchars($pconfig['radiuskey3']);?>" /></td>
+				<td class="vtable"><input name="radiuskey3" type="text" class="formfld unknown" id="radiuskey3" size="16" value="<?=xhtmlspecialchars($pconfig['radiuskey3']);?>" /></td>
 			</tr>
 			<tr>
 			  <td colspan="2" class="list" height="12"></td>
@@ -785,16 +786,16 @@ function enable_change(enable_change) {
 			</tr>
 			<tr>
 				<td class="vncell" valign="top"><?=gettext("IP address"); ?></td>
-				<td class="vtable"><input name="radiusip4" type="text" class="formfld unknown" id="radiusip4" size="20" value="<?=htmlspecialchars($pconfig['radiusip4']);?>" /><br />
+				<td class="vtable"><input name="radiusip4" type="text" class="formfld unknown" id="radiusip4" size="20" value="<?=xhtmlspecialchars($pconfig['radiusip4']);?>" /><br />
 				<?=gettext("If you have a fourth RADIUS server, you can activate it by entering its IP address here."); ?></td>
 			</tr>
 			<tr>
 				<td class="vncell" valign="top"><?=gettext("Port"); ?></td>
-				<td class="vtable"><input name="radiusport4" type="text" class="formfld unknown" id="radiusport4" size="5" value="<?=htmlspecialchars($pconfig['radiusport4']);?>" /></td>
+				<td class="vtable"><input name="radiusport4" type="text" class="formfld unknown" id="radiusport4" size="5" value="<?=xhtmlspecialchars($pconfig['radiusport4']);?>" /></td>
 			</tr>
 			<tr>
 				<td class="vncell" valign="top"><?=gettext("Shared secret"); ?>&nbsp;&nbsp;</td>
-				<td class="vtable"><input name="radiuskey4" type="text" class="formfld unknown" id="radiuskey4" size="16" value="<?=htmlspecialchars($pconfig['radiuskey4']);?>" /></td>
+				<td class="vtable"><input name="radiuskey4" type="text" class="formfld unknown" id="radiuskey4" size="16" value="<?=xhtmlspecialchars($pconfig['radiuskey4']);?>" /></td>
 			</tr>
 			<tr>
 			  <td colspan="2" class="list" height="12"></td>
@@ -810,7 +811,7 @@ function enable_change(enable_change) {
 			</tr>
 			<tr>
 			  <td class="vncell" valign="top"><?=gettext("Accounting port"); ?></td>
-			  <td class="vtable"><input name="radiusacctport" type="text" class="formfld unknown" id="radiusacctport" size="5" value="<?=htmlspecialchars($pconfig['radiusacctport']);?>" /><br />
+			  <td class="vtable"><input name="radiusacctport" type="text" class="formfld unknown" id="radiusacctport" size="5" value="<?=xhtmlspecialchars($pconfig['radiusacctport']);?>" /><br />
 			  <?=gettext("Leave blank to use the default port (1813)."); ?></td>
 			  </tr>
 			<tr>
@@ -846,7 +847,7 @@ function enable_change(enable_change) {
 			</tr>
 			<tr>
 				<td class="vncell"><?=gettext("MAC authentication secret"); ?></td>
-				<td class="vtable"><input name="radmac_secret" type="text" class="formfld unknown" id="radmac_secret" size="16" value="<?=htmlspecialchars($pconfig['radmac_secret']);?>" /></td>
+				<td class="vtable"><input name="radmac_secret" type="text" class="formfld unknown" id="radmac_secret" size="16" value="<?=xhtmlspecialchars($pconfig['radmac_secret']);?>" /></td>
 			</tr>
 			<tr>
 				<td class="vncell" valign="top"><?=gettext("RADIUS NAS IP attribute"); ?></td>
@@ -871,10 +872,10 @@ function enable_change(enable_change) {
 
 								for ($i = 0; $i <= $len; $i++) {
 									$snip = long2ip32($start+$i);
-									echo "<option value='{$snip}' {$selected}>" . htmlspecialchars("{$sn['descr']} - {$snip}") . "></option>\n";
+									echo "<option value='{$snip}' {$selected}>" . xhtmlspecialchars("{$sn['descr']} - {$snip}") . "></option>\n";
 								}
 							} else
-								echo "<option value='{$sn['subnet']}' {$selected}>" . htmlspecialchars("{$sn['descr']} - {$sn['subnet']}") . "></option>\n";
+								echo "<option value='{$sn['subnet']}' {$selected}>" . xhtmlspecialchars("{$sn['descr']} - {$sn['subnet']}") . "></option>\n";
 						}
 					}
 				?>
@@ -915,7 +916,7 @@ function enable_change(enable_change) {
 
 			<tr>
 				<td class="vncell" valign="top"><?=gettext("NAS Identifier"); ?></td>
-				<td class="vtable"><input name="radiusnasid" type="text" maxlength="253" class="formfld unknown" id="radiusnasid" value="<?=htmlspecialchars($pconfig['radiusnasid']);?>" /><br />
+				<td class="vtable"><input name="radiusnasid" type="text" maxlength="253" class="formfld unknown" id="radiusnasid" value="<?=xhtmlspecialchars($pconfig['radiusnasid']);?>" /><br />
 					<?=gettext("Specify a NAS identifier to override the default value") . " (" . php_uname("n") . ")"; ?></td>
 			</tr>
 			<tr>
@@ -956,7 +957,7 @@ function enable_change(enable_change) {
 	<tr>
 		<td valign="top" class="vncell"><?=gettext("HTTPS server name"); ?> </td>
 		<td class="vtable">
-			<input name="httpsname" type="text" class="formfld unknown" id="httpsname" size="30" value="<?=htmlspecialchars($pconfig['httpsname']);?>" /><br />
+			<input name="httpsname" type="text" class="formfld unknown" id="httpsname" size="30" value="<?=xhtmlspecialchars($pconfig['httpsname']);?>" /><br />
 			<?php printf(gettext("This name will be used in the form action for the HTTPS POST and should match the Common Name (CN) in your certificate (otherwise, the client browser will most likely display a security warning). Make sure captive portal clients can resolve this name in DNS and verify on the client that the IP resolves to the correct interface IP on %s."), $g['product_name']);?> </td>
 	</tr>
 	<tr id="ssl_opts">
@@ -1076,7 +1077,7 @@ function enable_change(enable_change) {
 	<tr>
 	  <td width="22%" valign="top">&nbsp;</td>
 	  <td width="78%">
-		<?php echo "<input name='zone' id='zone' type='hidden' value='" . htmlspecialchars($cpzone) . "' />"; ?>
+		<?php echo "<input name='zone' id='zone' type='hidden' value='" . xhtmlspecialchars($cpzone) . "' />"; ?>
 		<input name="Submit" type="submit" class="formbtn" value="<?=gettext("Save"); ?>" onclick="enable_change(true)" />
 		<a href="services_captiveportal_zones.php"><input name="Cancel" type="button" class="formbtn" value="<?=gettext("Cancel"); ?>" onclick="enable_change(true)" /></a>
 	  </td>

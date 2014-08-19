@@ -34,6 +34,7 @@ require_once("globals.inc");
 require_once("functions.inc");
 require_once("util.inc");
 require_once("notices.inc");
+require_once("pfsense-utils.inc");
 
 /*
  * I admit :) this is derived from xmplparse.inc StartElement()
@@ -1173,24 +1174,24 @@ class priq_queue {
 		$form .= "<td width=\"22%\" valign=\"middle\" class=\"vncellreq\">";
 		$form .= gettext("Queue Name") . "</td><td width=\"78%\" class=\"vtable\">";
 		$form .= "<input name=\"newname\" type=\"text\" id=\"newname\" class=\"formfld unknown\" size=\"15\" maxlength=\"15\" value=\"";
-		$form .= htmlspecialchars($this->GetQname());
+		$form .= xhtmlspecialchars($this->GetQname());
 		$form .= "\" />";
 		$form .= "<input name=\"name\" type=\"hidden\" id=\"name\" class=\"formfld unknown\" size=\"15\" maxlength=\"15\" value=\"";
-		$form .= htmlspecialchars($this->GetQname());
+		$form .= xhtmlspecialchars($this->GetQname());
 		$form .= "\" />";
 		$form .= "<br /> <span class=\"vexpl\">" . gettext("Enter the name of the queue here.  Do not use spaces and limit the size to 15 characters.");
 		$form .= "</span><br /></td>";
 		$form .= "</tr><tr>";
 		$form .= "<td width=\"22%\" valign=\"middle\" class=\"vncellreq\">" . gettext("Priority") . "</td>";
 		$form .= "<td width=\"78%\" class=\"vtable\"> <input name=\"priority\" type=\"text\" id=\"priority\" size=\"5\" value=\"";
-		$form .= htmlspecialchars($this->GetQpriority());
+		$form .= xhtmlspecialchars($this->GetQpriority());
 		$form .= "\" />";
 		$form .= "<br /> <span class=\"vexpl\">" . gettext("For hfsc, the range is 0 to 7. The default is 1.  Hfsc queues with a higher priority are preferred in the case of overload.") . "</span></td>";
 		$form .= "</tr>";
 		$form .= "<tr>";
 		$form .= "<td width=\"22%\" valign=\"middle\" class=\"vncellreq\">" . gettext("Queue limit") . "</td>";
 		$form .= "<td width=\"78%\" class=\"vtable\"> <input name=\"qlimit\" type=\"text\" id=\"qlimit\" size=\"8\" value=\"";
-		$form .= htmlspecialchars($this->GetQlimit());
+		$form .= xhtmlspecialchars($this->GetQlimit());
 		$form .= "\" />";
 		$form .= "<br /> <span class=\"vexpl\">" . gettext("Queue limit in packets.");
 		$form .= "</span></td></tr>";
@@ -1911,7 +1912,7 @@ class hfsc_queue extends priq_queue {
 		$form .= "<tr>";
 		$form .= "<td valign=\"middle\" class=\"vncellreq\">" . gettext("Bandwidth") . "</td>";
 		$form .= "<td class=\"vtable\"> <input name=\"bandwidth\" id=\"bandwidth\" class=\"formfld unknown\" value=\"";
-		$form .= htmlspecialchars($this->GetBandwidth());
+		$form .= xhtmlspecialchars($this->GetBandwidth());
 		$form .= "\" />";
 		$form .= "<select name=\"bandwidthtype\" id=\"bandwidthtype\" class=\"formselect\">";
 		$form .= "<option value=\"Gb\"";
@@ -1946,17 +1947,17 @@ class hfsc_queue extends priq_queue {
 		if($this->GetUpperlimit()<> "")
 			$form .=  " checked=\"checked\" ";
 		$form .= "onchange=\"enable_upperlimit()\" /> " . gettext("Upperlimit:") . "</td><td><input size=\"6\" value=\"";
-		$form .= htmlspecialchars($this->GetU_m1());
+		$form .= xhtmlspecialchars($this->GetU_m1());
 		$form .= "\" id=\"upperlimit1\" name=\"upperlimit1\" ";
 		if ($this->GetUpperlimit() == "")
 			$form .= " disabled=\"disabled\"";
 		$form .= " /></td><td><input size=\"6\" value=\"";
-		$form .= htmlspecialchars($this->GetU_d());
+		$form .= xhtmlspecialchars($this->GetU_d());
 		$form .= "\" id=\"upperlimi2\" name=\"upperlimit2\" ";
 		if ($this->GetUpperlimit() == "")
 			$form .= " disabled=\"disabled\"";
 		$form .= " /></td><td><input size=\"6\" value=\"";
-		$form .= htmlspecialchars($this->GetU_m2());
+		$form .= xhtmlspecialchars($this->GetU_m2());
 		$form .= "\" id=\"upperlimit3\" name=\"upperlimit3\" ";
 		if ($this->GetUpperlimit() == "")
 			$form .= " disabled=\"disabled\"";
@@ -1965,17 +1966,17 @@ class hfsc_queue extends priq_queue {
 		if($this->GetRealtime() <> "")
 			$form .=  " checked=\"checked\" ";
 		$form .= "onchange=\"enable_realtime()\" /> " . gettext("Real time:") . "</td><td><input size=\"6\" value=\"";
-		$form .= htmlspecialchars($this->GetR_m1());
+		$form .= xhtmlspecialchars($this->GetR_m1());
 		$form .= "\" id=\"realtime1\" name=\"realtime1\" ";
 		if ($this->GetRealtime() == "")
 			$form .= " disabled=\"disabled\"";
 		$form .= " /></td><td><input size=\"6\" value=\"";
-		$form .= htmlspecialchars($this->GetR_d());
+		$form .= xhtmlspecialchars($this->GetR_d());
 		$form .= "\" id=\"realtime2\" name=\"realtime2\" ";
 		if ($this->GetRealtime() == "")
 			$form .= " disabled=\"disabled\"";
 		$form .= " /></td><td><input size=\"6\" value=\"";
-		$form .= htmlspecialchars($this->GetR_m2());
+		$form .= xhtmlspecialchars($this->GetR_m2());
 		$form .= "\" id=\"realtime3\" name=\"realtime3\" ";
 		if ($this->GetRealtime() == "")
 			$form .= " disabled=\"disabled\"";
@@ -1984,17 +1985,17 @@ class hfsc_queue extends priq_queue {
 		if($this->GetLinkshare() <> "")
 			$form .=  " checked=\"checked\" ";
 		$form .= "onchange=\"enable_linkshare()\" /> " . gettext("Link share:") . "</td><td><input size=\"6\" value=\"";
-		$form .= htmlspecialchars($this->GetL_m1());
+		$form .= xhtmlspecialchars($this->GetL_m1());
 		$form .= "\" id=\"linkshare1\" name=\"linkshare1\" ";
 		if ($this->GetLinkshare() == "")
 			$form .= " disabled=\"disabled\"";
 		$form .= " /></td><td><input size=\"6\" value=\"";
-		$form .= htmlspecialchars($this->GetL_d());
+		$form .= xhtmlspecialchars($this->GetL_d());
 		$form .= "\" id=\"linkshare2\" name=\"linkshare2\" ";
 		if ($this->GetLinkshare() == "")
 			$form .= " disabled=\"disabled\"";
 		$form .= " /></td><td><input size=\"6\" value=\"";
-		$form .= htmlspecialchars($this->GetL_m2());
+		$form .= xhtmlspecialchars($this->GetL_m2());
 		$form .= "\" id=\"linkshare3\" name=\"linkshare3\" ";
 		if ($this->GetLinkshare() == "")
 			$form .= " disabled=\"disabled\"";
@@ -2397,7 +2398,7 @@ class cbq_queue extends priq_queue {
 		$form .= "<td valign=\"middle\" class=\"vncellreq\">" . gettext("Bandwidth") . "</td>";
 		$form .= "<td class=\"vtable\"> <input name=\"bandwidth\" id=\"bandwidth\" class=\"formfld unknown\" value=\"";
 		if ($this->GetBandwidth() > 0)
-			$form .= htmlspecialchars($this->GetBandwidth());
+			$form .= xhtmlspecialchars($this->GetBandwidth());
 		$form .= "\" />";
 		$form .= "<select name=\"bandwidthtype\" id=\"bandwidthtype\" class=\"formselect\">";
 		$form .= "<option value=\"Gb\"";
@@ -2671,7 +2672,7 @@ class fairq_queue extends priq_queue {
 		$form .= "<td valign=\"middle\" class=\"vncellreq\">" . gettext("Bandwidth") . "</td>";
 		$form .= "<td class=\"vtable\"> <input name=\"bandwidth\" id=\"bandwidth\" class=\"formfld unknown\" value=\"";
 		if ($this->GetBandwidth() > 0)
-			$form .= htmlspecialchars($this->GetBandwidth());
+			$form .= xhtmlspecialchars($this->GetBandwidth());
 		$form .= "\" />";
 		$form .= "<select name=\"bandwidthtype\" id=\"bandwidthtype\" class=\"formselect\">";
 		$form .= "<option value=\"Gb\"";

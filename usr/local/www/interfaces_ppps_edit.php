@@ -43,6 +43,7 @@
 
 require("guiconfig.inc");
 require("functions.inc");
+require_once("pfsense-utils.inc");
 
 define("CRON_MONTHLY_PATTERN", "0 0 1 * *");
 define("CRON_WEEKLY_PATTERN", "0 0 * * 0");
@@ -416,7 +417,7 @@ $types = array("select" => gettext("Select"), "ppp" => "PPP", "pppoe" => "PPPoE"
 						echo "<option onclick=\"updateType('{$key}');\"";
 						if ($key == $pconfig['type']) 
 							echo " selected=\"selected\"";
-						echo " value=\"{$key}\" >" . htmlspecialchars($opt) . "</option>";
+						echo " value=\"{$key}\" >" . xhtmlspecialchars($opt) . "</option>";
 					} 
 				?>
 				</select> 
@@ -462,7 +463,7 @@ $types = array("select" => gettext("Select"), "ppp" => "PPP", "pppoe" => "PPPoE"
 					} else
 						$string .= $ifinfo;
 					$string .= ",{$ifn}";
-					echo htmlspecialchars($string);
+					echo xhtmlspecialchars($string);
 					if (in_array($ifn,$selected_ports))
 						echo ",1|";
 					else
@@ -472,12 +473,12 @@ $types = array("select" => gettext("Select"), "ppp" => "PPP", "pppoe" => "PPPoE"
 				if($serport_count > $port_count)
 					$port_count=$serport_count;
 			?></td>
-			<td style="display:none" name="port_count" id="port_count"><?=htmlspecialchars($port_count);?></td>
+			<td style="display:none" name="port_count" id="port_count"><?=xhtmlspecialchars($port_count);?></td>
 		</tr>
 		<tr>
 			<td width="22%" valign="top" class="vncell"><?= gettext("Description"); ?></td>
 			<td width="78%" class="vtable">
-				<input name="descr" type="text" class="formfld unknown" id="descr" size="40" value="<?=htmlspecialchars($pconfig['descr']);?>" />
+				<input name="descr" type="text" class="formfld unknown" id="descr" size="40" value="<?=xhtmlspecialchars($pconfig['descr']);?>" />
 				<br /> <span class="vexpl"><?= gettext("You may enter a description here for your reference. Description will appear in the \"Interfaces Assign\" select lists."); ?></span>
 			</td>
 		</tr>	
@@ -518,27 +519,27 @@ $types = array("select" => gettext("Select"), "ppp" => "PPP", "pppoe" => "PPPoE"
 		<tr>
 			<td width="22%" valign="top" class="vncell"><?= gettext("Username"); ?></td>
 			<td width="78%" class="vtable">
-			<input name="username" type="text" class="formfld user" id="username" size="20" value="<?=htmlspecialchars($pconfig['username']);?>" />
+			<input name="username" type="text" class="formfld user" id="username" size="20" value="<?=xhtmlspecialchars($pconfig['username']);?>" />
 			</td>
 		</tr>
 		<tr>
 			<td width="22%" valign="top" class="vncell"><?= gettext("Password"); ?></td>
 			<td width="78%" class="vtable">
-			<input name="password" type="password" class="formfld pwd" id="password" size="20" value="<?=htmlspecialchars($pconfig['password']);?>" />
+			<input name="password" type="password" class="formfld pwd" id="password" size="20" value="<?=xhtmlspecialchars($pconfig['password']);?>" />
 			</td>
 		</tr>
 
 		<tr style="display:none" name="phone_num" id="phone_num">
 			<td width="22%" valign="top" class="vncell"><?= gettext("Phone Number"); ?></td>
 			<td width="78%" class="vtable">
-				<input name="phone" type="text" class="formfld unknown" id="phone" size="40" value="<?=htmlspecialchars($pconfig['phone']);?>" />
+				<input name="phone" type="text" class="formfld unknown" id="phone" size="40" value="<?=xhtmlspecialchars($pconfig['phone']);?>" />
 				<br /><span class="vexpl"><?= gettext("Note: Typically *99# for GSM networks and #777 for CDMA networks"); ?></span>
 			</td>
 		</tr>
 		<tr style="display:none" name="apn_" id="apn_">
 			<td width="22%" valign="top" class="vncell"><?= gettext("Access Point Name (APN)"); ?></td>
 			<td width="78%" class="vtable">
-				<input name="apn" type="text" class="formfld unknown" id="apn" size="40" value="<?=htmlspecialchars($pconfig['apn']);?>" />
+				<input name="apn" type="text" class="formfld unknown" id="apn" size="40" value="<?=xhtmlspecialchars($pconfig['apn']);?>" />
 			</td>
 		</tr>
 		
@@ -548,28 +549,28 @@ $types = array("select" => gettext("Select"), "ppp" => "PPP", "pppoe" => "PPPoE"
 					<tr style="display:none" id="advanced_<?=$k;?>" name="advanced_<?=$k;$k++;?>">
 						<td width="22%" valign="top" class="vncell"><?= gettext("APN number (optional)"); ?></td>
 						<td width="78%" class="vtable">
-							<input name="apnum" type="text" class="formfld unknown" id="apnum" size="2" value="<?=htmlspecialchars($pconfig['apnum']);?>" />
+							<input name="apnum" type="text" class="formfld unknown" id="apnum" size="2" value="<?=xhtmlspecialchars($pconfig['apnum']);?>" />
 							<br /><span class="vexpl"><?= gettext("Note: Defaults to 1 if you set APN above. Ignored if you set no APN above."); ?></span>
 						</td>
 					</tr>
 					<tr style="display:none" id="advanced_<?=$k;?>" name="advanced_<?=$k;$k++;?>">
 						<td width="22%" valign="top" class="vncell"><?= gettext("SIM PIN"); ?></td>
 						<td width="78%" class="vtable">
-							<input name="simpin" type="text" class="formfld unknown" id="simpin" size="12" value="<?=htmlspecialchars($pconfig['simpin']);?>" />
+							<input name="simpin" type="text" class="formfld unknown" id="simpin" size="12" value="<?=xhtmlspecialchars($pconfig['simpin']);?>" />
 						</td>
 					</tr>
 			
 					<tr style="display:none" id="advanced_<?=$k;?>" name="advanced_<?=$k;$k++;?>">
 						<td width="22%" valign="top" class="vncell"><?= gettext("SIM PIN wait"); ?></td>
 						<td width="78%" class="vtable">
-							<input name="pin-wait" type="text" class="formfld unknown" id="pin-wait" size="2" value="<?=htmlspecialchars($pconfig['pin-wait']);?>" />
+							<input name="pin-wait" type="text" class="formfld unknown" id="pin-wait" size="2" value="<?=xhtmlspecialchars($pconfig['pin-wait']);?>" />
 							<br /><span class="vexpl"><?= gettext("Note: Time to wait for SIM to discover network after PIN is sent to SIM (seconds)."); ?></span>
 						</td>
 					</tr>
 					<tr style="display:none" id="advanced_<?=$k;?>" name="advanced_<?=$k;$k++;?>">
 						<td width="22%" valign="top" class="vncell"><?= gettext("Init String"); ?></td>
 						<td width="78%" class="vtable">
-							<input type="text" size="40" class="formfld unknown" id="initstr" name="initstr" value="<?=htmlspecialchars($pconfig['initstr']);?>" />
+							<input type="text" size="40" class="formfld unknown" id="initstr" name="initstr" value="<?=xhtmlspecialchars($pconfig['initstr']);?>" />
 							<br /><span class="vexpl"><?= gettext("Note: Enter the modem initialization string here. Do NOT include the \"AT\"" . 
 							" string at the beginning of the command. Many modern USB 3G modems don't need an initialization string."); ?></span>
 						</td>
@@ -577,7 +578,7 @@ $types = array("select" => gettext("Select"), "ppp" => "PPP", "pppoe" => "PPPoE"
 					<tr style="display:none" id="advanced_<?=$k;?>" name="advanced_<?=$k;$k++;?>">
 						<td width="22%" valign="top" class="vncell"><?= gettext("Connection Timeout"); ?></td>
 						<td width="78%" class="vtable">
-							<input name="connect-timeout" type="text" class="formfld unknown" id="connect-timeout" size="2" value="<?=htmlspecialchars($pconfig['connect-timeout']);?>" />
+							<input name="connect-timeout" type="text" class="formfld unknown" id="connect-timeout" size="2" value="<?=xhtmlspecialchars($pconfig['connect-timeout']);?>" />
 							<br /><span class="vexpl"><?= gettext("Note: Enter timeout in seconds for connection to be established (sec.) Default is 45 sec."); ?></span>
 						</td>
 					</tr>
@@ -596,7 +597,7 @@ $types = array("select" => gettext("Select"), "ppp" => "PPP", "pppoe" => "PPPoE"
 				<table width="100%" border="0" cellpadding="6" cellspacing="0" summary="service name">
 					<tr>
 						<td width="22%" valign="top" class="vncell"><?= gettext("Service name"); ?></td>
-						<td width="78%" class="vtable"><input name="provider" type="text" class="formfld unknown" id="provider" size="20" value="<?=htmlspecialchars($pconfig['provider']);?>" />&nbsp;&nbsp;
+						<td width="78%" class="vtable"><input name="provider" type="text" class="formfld unknown" id="provider" size="20" value="<?=xhtmlspecialchars($pconfig['provider']);?>" />&nbsp;&nbsp;
 						<input type="checkbox" value="on" id="null_service" name="null_service" <?php if (isset($pconfig['null_service'])) echo "checked=\"checked\""; ?> /> <?= gettext("Configure a NULL Service name"); ?> 
 							<br /> <span class="vexpl"><?= gettext("Hint: this field can usually be left empty. Service name will not be configured if this field is empty. Check the \"Configure NULL\" box to configure a blank Service name."); ?></span>
 						</td>
@@ -623,7 +624,7 @@ $types = array("select" => gettext("Select"), "ppp" => "PPP", "pppoe" => "PPPoE"
 										<?= gettext("hour (0-23)"); ?><br />
 										<input type="text" name="pppoe_resetminute" class="fd_incremental_inp_range_0_59 fd_increment_1 fd_classname_dec_buttonDec fd_classname_inc_buttonInc" maxlength="2" id="pppoe_resetminute" value="<?= $pconfig['pppoe_resetminute']; ?>" size="3" /> 
 										<?= gettext("minute (0-59)"); ?><br />
-										<input name="pppoe_resetdate" type="text" class="w8em format-m-d-y highlight-days-67" id="pppoe_resetdate" maxlength="10" size="10" value="<?=htmlspecialchars($pconfig['pppoe_resetdate']);?>" /> 
+										<input name="pppoe_resetdate" type="text" class="w8em format-m-d-y highlight-days-67" id="pppoe_resetdate" maxlength="10" size="10" value="<?=xhtmlspecialchars($pconfig['pppoe_resetdate']);?>" /> 
 										<?= gettext("reset at a specific date (mm/dd/yyyy)"); ?>
 										<br />&nbsp;<br />
 										<span class="red"><strong><?=gettext("Note:");?></strong></span>
@@ -660,7 +661,7 @@ $types = array("select" => gettext("Select"), "ppp" => "PPP", "pppoe" => "PPPoE"
 		<tr style="display:none" id="gw_fields<?=$j;?>">
 			<td width="22%" id="localiplabel<?=$j;?>" valign="top" class="vncell"><?= gettext("Local IP"); ?></td>
 			<td width="78%" class="vtable"> 
-				<input name="localip[]" type="text" class="formfld unknown" id="localip<?=$j;?>" size="20"  value="<?=htmlspecialchars($pconfig['localip'][$j]);?>" />
+				<input name="localip[]" type="text" class="formfld unknown" id="localip<?=$j;?>" size="20"  value="<?=xhtmlspecialchars($pconfig['localip'][$j]);?>" />
 				/
 				<select name="subnet[]" class="formselect" id="subnet<?=$j;?>" disabled="disabled">
 				<?php for ($i = 31; $i > 0; $i--): ?>
@@ -673,7 +674,7 @@ $types = array("select" => gettext("Select"), "ppp" => "PPP", "pppoe" => "PPPoE"
 		<tr style="display:none" id="ip_fields<?=$j;?>">
 			<td width="22%" id="gatewaylabel<?=$j;?>" valign="top" class="vncell"></td>
 			<td width="78%" class="vtable">
-				<input name="gateway[]" type="text" class="formfld unknown" id="gateway<?=$j;?>" size="20" value="<?=htmlspecialchars($pconfig['gateway'][$j]);?>" /><?= gettext("IP Address OR Hostname"); ?>
+				<input name="gateway[]" type="text" class="formfld unknown" id="gateway<?=$j;?>" size="20" value="<?=xhtmlspecialchars($pconfig['gateway'][$j]);?>" /><?= gettext("IP Address OR Hostname"); ?>
 			</td>
 		</tr><?php endfor; ?>
 
@@ -694,7 +695,7 @@ $types = array("select" => gettext("Select"), "ppp" => "PPP", "pppoe" => "PPPoE"
 		<tr style="display:none" id="advanced_<?=$k;?>" name="advanced_<?=$k;$k++;?>">
 			<td valign="top" class="vncell"><?= gettext("Idle Timeout"); ?></td>
 			<td class="vtable">
-				<input name="idletimeout" type="text" class="formfld unknown" id="idletimeout" size="12" value="<?=htmlspecialchars($pconfig['idletimeout']);?>" /> <?= gettext("(seconds) Default is 0, which disables the timeout feature."); ?>
+				<input name="idletimeout" type="text" class="formfld unknown" id="idletimeout" size="12" value="<?=xhtmlspecialchars($pconfig['idletimeout']);?>" /> <?= gettext("(seconds) Default is 0, which disables the timeout feature."); ?>
 				<br /> <span class="vexpl"><?= gettext("If no incoming or outgoing packets are transmitted for the entered number of seconds the connection is brought down.");?>
 				<br /><?=gettext("When the idle timeout occurs, if the dial-on-demand option is enabled, mpd goes back into dial-on-demand mode. Otherwise, the interface is brought down and all associated routes removed."); ?></span>
 			</td>
@@ -757,28 +758,28 @@ $types = array("select" => gettext("Select"), "ppp" => "PPP", "pppoe" => "PPPoE"
 					<tr>
 						<td width="22%" id="bwlabel<?=$i;?>" valign="top"class="vncell"> <?=gettext("Bandwidth");?></td>
 						<td width="78%" class="vtable">
-						<br /><input name="bandwidth[]" id="bandwidth<?=$i;?>" type="text" class="formfld unknown" size="40" value="<?=htmlspecialchars($pconfig['bandwidth'][$i]);?>" />
+						<br /><input name="bandwidth[]" id="bandwidth<?=$i;?>" type="text" class="formfld unknown" size="40" value="<?=xhtmlspecialchars($pconfig['bandwidth'][$i]);?>" />
 						<br /> <span class="vexpl"><?=gettext("Set ONLY for MLPPP connections and ONLY when links have different bandwidths.");?></span>
 					  </td>
 					</tr>
 					<tr>
 					  <td width="22%" id="mtulabel<?=$i;?>" valign="top" class="vncell"> <?=gettext("MTU"); ?></td>
 					  <td width="78%" class="vtable">
-						<input name="mtu[]" id="mtu<?=$i;?>" type="text" class="formfld unknown" size="6" value="<?=htmlspecialchars($pconfig['mtu'][$i]);?>" />
+						<input name="mtu[]" id="mtu<?=$i;?>" type="text" class="formfld unknown" size="6" value="<?=xhtmlspecialchars($pconfig['mtu'][$i]);?>" />
 						<br /> <span class="vexpl"><?=gettext("MTU will default to 1492.");?></span>
 					  </td>
 					</tr>
 					<tr>
 					  <td width="22%" id="mrulabel<?=$i;?>" valign="top" class="vncell"> <?=gettext("MRU"); ?></td>
 					  <td width="78%" class="vtable">
-						<input name="mru[]" id="mru<?=$i;?>" type="text" class="formfld unknown" size="6" value="<?=htmlspecialchars($pconfig['mru'][$i]);?>" />
+						<input name="mru[]" id="mru<?=$i;?>" type="text" class="formfld unknown" size="6" value="<?=xhtmlspecialchars($pconfig['mru'][$i]);?>" />
 						<br /> <span class="vexpl">MRU <?=gettext("will be auto-negotiated by default.");?></span>
 					  </td>
 					</tr>
 					<tr>
 					  <td width="22%" id="mrrulabel<?=$i;?>" valign="top" class="vncell"> <?=gettext("MRRU"); ?></td>
 					  <td width="78%" class="vtable">
-						<input name="mrru[]" id="mrru<?=$i;?>" type="text" class="formfld unknown" size="6" value="<?=htmlspecialchars($pconfig['mrru'][$i]);?>" />
+						<input name="mrru[]" id="mrru<?=$i;?>" type="text" class="formfld unknown" size="6" value="<?=xhtmlspecialchars($pconfig['mrru'][$i]);?>" />
 						<br /> <span class="vexpl"><?=gettext("Set ONLY for MLPPP connections.");?> MRRU <?=gettext("will be auto-negotiated by default.");?></span>
 					  </td>
 					</tr>
@@ -790,9 +791,9 @@ $types = array("select" => gettext("Select"), "ppp" => "PPP", "pppoe" => "PPPoE"
 			<td width="78%">
 				<input name="Submit" type="submit" class="formbtn" value="<?=gettext("Save"); ?>" />
 				<input type="button" value="<?=gettext("Cancel"); ?>" onclick="history.back()" />
-				<input name="ptpid" type="hidden" value="<?=htmlspecialchars($pconfig['ptpid']);?>" />
+				<input name="ptpid" type="hidden" value="<?=xhtmlspecialchars($pconfig['ptpid']);?>" />
 				<?php if (isset($id) && $a_ppps[$id]): ?>
-					<input name="id" type="hidden" value="<?=htmlspecialchars($id);?>" />
+					<input name="id" type="hidden" value="<?=xhtmlspecialchars($id);?>" />
 				<?php endif; ?>
 			</td>
 		</tr>

@@ -36,6 +36,7 @@ $nocsrf = true;
 require_once("guiconfig.inc");
 require_once("functions.inc");
 require_once("ipsec.inc");
+require_once("pfsense-utils.inc");
 
 if (isset($config['ipsec']['phase1'])){?>
 	<div>&nbsp;</div>
@@ -132,15 +133,15 @@ if (isset($config['ipsec']['phase1'])){?>
 		<div style="display:table-row;">
 			<div class="listlr" style="display:table-cell;width:39px">
 				<?php echo $spans;?>
-					<?php echo htmlspecialchars($ipsec['src']);?>
+					<?php echo xhtmlspecialchars($ipsec['src']);?>
 				<?php echo $spane;?>
 			</div>
 			<div class="listr"  style="display:table-cell;width:100px"><?php echo $spans;?>
 				<?php echo $ipsec['remote-subnet'];?>
 				<br />
-				(<?php echo htmlspecialchars($ipsec['dest']);?>)<?php echo $spane;?>
+				(<?php echo xhtmlspecialchars($ipsec['dest']);?>)<?php echo $spane;?>
 			</div>
-			<div class="listr"  style="display:table-cell;width:90px"><?php echo $spans;?><?php echo htmlspecialchars($ipsec['descr']);?><?php echo $spane;?></div>
+			<div class="listr"  style="display:table-cell;width:90px"><?php echo $spans;?><?php echo xhtmlspecialchars($ipsec['descr']);?><?php echo $spane;?></div>
 			<div class="listr"  style="display:table-cell;width:37px" align="center"><?php echo $spans;?>
 			<?php
 
@@ -171,12 +172,12 @@ if (isset($config['ipsec']['phase1'])){?>
 <?php	foreach ($mobile as $muser) : ?>
 		<div style="display:table-row;">
 			<div class="listlr" style="display:table-cell;width:139px">
-				<?php echo htmlspecialchars($muser['username']);?><br />
-				<?php echo htmlspecialchars($muser['logintime']);?>
+				<?php echo xhtmlspecialchars($muser['username']);?><br />
+				<?php echo xhtmlspecialchars($muser['logintime']);?>
 			</div>
 			<div class="listr"  style="display:table-cell;width:130px">
-				<?php echo htmlspecialchars($muser['local']);?><br />
-				<?php echo htmlspecialchars($muser['remote']);?>
+				<?php echo xhtmlspecialchars($muser['local']);?><br />
+				<?php echo xhtmlspecialchars($muser['remote']);?>
 			</div>
 			<div class="listr"  style="display:table-cell;width:30px" align="center">
 				<a href="diag_ipsec.php?act=disconnect&amp;user=<?php echo $muser['username']; ?>"><img src='/themes/<?php echo $g['theme']; ?>/images/icons/icon_x.gif' height='17' width='17' border='0' alt='x' /></a>

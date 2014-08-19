@@ -10,6 +10,7 @@
 */
 
 require("guiconfig.inc");
+require_once("pfsense-utils.inc");
 
 $pgtitle = array(gettext("Diagnostics"), gettext("S.M.A.R.T. Monitor Tools"));
 $smartctl = "/usr/local/sbin/smartctl";
@@ -229,7 +230,7 @@ switch($action) {
 				<tr>
 					<td width="22%" valign="top" class="vncell"><?=gettext("Email Address"); ?></td>
 					<td width="78%" class="vtable">
-						<input type="text" name="smartmonemail" value="<?=htmlspecialchars($pconfig['smartmonemail'])?>"/>
+						<input type="text" name="smartmonemail" value="<?=xhtmlspecialchars($pconfig['smartmonemail'])?>"/>
 					</td>
 				</tr>
 				<tr>

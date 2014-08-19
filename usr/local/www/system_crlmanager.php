@@ -40,6 +40,7 @@
 require("guiconfig.inc");
 require_once("certs.inc");
 require_once('openvpn.inc');
+require_once("pfsense-utils.inc");
 
 global $openssl_crl_status;
 
@@ -320,7 +321,7 @@ function method_change() {
 						<tr>
 							<td width="22%" valign="top" class="vncellreq"><?=gettext("Descriptive name");?></td>
 							<td width="78%" class="vtable">
-								<input name="descr" type="text" class="formfld unknown" id="descr" size="20" value="<?=htmlspecialchars($pconfig['descr']);?>"/>
+								<input name="descr" type="text" class="formfld unknown" id="descr" size="20" value="<?=xhtmlspecialchars($pconfig['descr']);?>"/>
 							</td>
 						</tr>
 						<tr>
@@ -368,7 +369,7 @@ function method_change() {
 						<tr>
 							<td width="22%" valign="top" class="vncellreq"><?=gettext("Lifetime");?></td>
 							<td width="78%" class="vtable">
-								<input name="lifetime" type="text" class="formfld unknown" id="lifetime" size="5" value="<?=htmlspecialchars($pconfig['lifetime']);?>"/>
+								<input name="lifetime" type="text" class="formfld unknown" id="lifetime" size="5" value="<?=xhtmlspecialchars($pconfig['lifetime']);?>"/>
 								<?=gettext("days");?><br />
 								<?=gettext("Default: 9999");?>
 							</td>
@@ -376,7 +377,7 @@ function method_change() {
 						<tr>
 							<td width="22%" valign="top" class="vncellreq"><?=gettext("Serial");?></td>
 							<td width="78%" class="vtable">
-								<input name="serial" type="text" class="formfld unknown" id="serial" size="5" value="<?=htmlspecialchars($pconfig['serial']);?>"/>
+								<input name="serial" type="text" class="formfld unknown" id="serial" size="5" value="<?=xhtmlspecialchars($pconfig['serial']);?>"/>
 								<br />
 								<?=gettext("Default: 0");?>
 							</td>
@@ -389,7 +390,7 @@ function method_change() {
 							<td width="78%">
 								<input id="submit" name="save" type="submit" class="formbtn" value="<?=gettext("Save"); ?>" />
 								<?php if (isset($id) && $thiscrl): ?>
-								<input name="id" type="hidden" value="<?=htmlspecialchars($id);?>" />
+								<input name="id" type="hidden" value="<?=xhtmlspecialchars($id);?>" />
 								<?php endif;?>
 							</td>
 						</tr>
@@ -405,7 +406,7 @@ function method_change() {
 						<tr>
 							<td width="22%" valign="top" class="vncellreq"><?=gettext("Descriptive name");?></td>
 							<td width="78%" class="vtable">
-								<input name="descr" type="text" class="formfld unknown" id="descr" size="20" value="<?=htmlspecialchars($crl['descr']);?>"/>
+								<input name="descr" type="text" class="formfld unknown" id="descr" size="20" value="<?=xhtmlspecialchars($crl['descr']);?>"/>
 							</td>
 						</tr>
 						<tr>
@@ -420,7 +421,7 @@ function method_change() {
 							<td width="22%" valign="top">&nbsp;</td>
 							<td width="78%">
 								<input id="submit" name="save" type="submit" class="formbtn" value="<?=gettext("Save"); ?>" />
-								<input name="id" type="hidden" value="<?=htmlspecialchars($id);?>" />
+								<input name="id" type="hidden" value="<?=xhtmlspecialchars($id);?>" />
 								<input name="act" type="hidden" value="editimported" />
 							</td>
 						</tr>
@@ -454,7 +455,7 @@ function method_change() {
 					</td>
 				<?php	else:
 					foreach($crl['cert'] as $i => $cert):
-						$name = htmlspecialchars($cert['descr']);
+						$name = xhtmlspecialchars($cert['descr']);
 				 ?>
 					<tr>
 						<td class="listlr">
@@ -494,13 +495,13 @@ function method_change() {
 						<td class="listlr" colspan="3" align="center">
 							<b><?php echo gettext("Choose a Certificate to Revoke"); ?></b>: <select name='certref' id='certref' class="formselect">
 				<?php	foreach($ca_certs as $cert): ?>
-							<option value="<?=$cert['refid'];?>"><?=htmlspecialchars($cert['descr'])?></option>
+							<option value="<?=$cert['refid'];?>"><?=xhtmlspecialchars($cert['descr'])?></option>
 				<?php	endforeach; ?>
 							</select>
 							<b><?php echo gettext("Reason");?></b>:
 							<select name='crlreason' id='crlreason' class="formselect">
 				<?php	foreach($openssl_crl_status as $code => $reason): ?>
-							<option value="<?= $code ?>"><?= htmlspecialchars($reason) ?></option>
+							<option value="<?= $code ?>"><?= xhtmlspecialchars($reason) ?></option>
 				<?php	endforeach; ?>
 							</select>
 							<input name="act" type="hidden" value="addcert" />
@@ -544,7 +545,7 @@ function method_change() {
 
 						$i = 0;
 						foreach($a_ca as $ca):
-							$name = htmlspecialchars($ca['descr']);
+							$name = xhtmlspecialchars($ca['descr']);
 
 							if($ca['prv']) {
 								$cainternal = "YES";
@@ -591,20 +592,20 @@ function method_change() {
 						<td class="listr"><?php echo ($inuse) ? "YES" : "NO"; ?></td>
 						<td valign="middle" class="list nowrap">
 							<a href="system_crlmanager.php?act=exp&amp;id=<?=$tmpcrl['refid'];?>">
-								<img src="/themes/<?= $g['theme'];?>/images/icons/icon_down.gif" title="<?=gettext("Export CRL") . " " . htmlspecialchars($tmpcrl['descr']);?>" alt="<?=gettext("Export CRL") . " " . htmlspecialchars($tmpcrl['descr']);?>" width="17" height="17" border="0" />
+								<img src="/themes/<?= $g['theme'];?>/images/icons/icon_down.gif" title="<?=gettext("Export CRL") . " " . xhtmlspecialchars($tmpcrl['descr']);?>" alt="<?=gettext("Export CRL") . " " . xhtmlspecialchars($tmpcrl['descr']);?>" width="17" height="17" border="0" />
 							</a>
 							<?php if ($internal): ?>
 							<a href="system_crlmanager.php?act=edit&amp;id=<?=$tmpcrl['refid'];?>">
-								<img src="/themes/<?= $g['theme'];?>/images/icons/icon_e.gif" title="<?=gettext("Edit CRL") . " " . htmlspecialchars($tmpcrl['descr']);?>" alt="<?=gettext("Edit CRL") . " " . htmlspecialchars($tmpcrl['descr']);?>" width="17" height="17" border="0" />
+								<img src="/themes/<?= $g['theme'];?>/images/icons/icon_e.gif" title="<?=gettext("Edit CRL") . " " . xhtmlspecialchars($tmpcrl['descr']);?>" alt="<?=gettext("Edit CRL") . " " . xhtmlspecialchars($tmpcrl['descr']);?>" width="17" height="17" border="0" />
 							</a>
 							<?php else: ?>
 							<a href="system_crlmanager.php?act=editimported&amp;id=<?=$tmpcrl['refid'];?>">
-								<img src="/themes/<?= $g['theme'];?>/images/icons/icon_e.gif" title="<?=gettext("Edit CRL") . " " . htmlspecialchars($tmpcrl['descr']);?>" alt="<?=gettext("Edit CRL") . " " . htmlspecialchars($tmpcrl['descr']);?>" width="17" height="17" border="0" />
+								<img src="/themes/<?= $g['theme'];?>/images/icons/icon_e.gif" title="<?=gettext("Edit CRL") . " " . xhtmlspecialchars($tmpcrl['descr']);?>" alt="<?=gettext("Edit CRL") . " " . xhtmlspecialchars($tmpcrl['descr']);?>" width="17" height="17" border="0" />
 							</a>
 							<?php endif; ?>
 							<?php if (!$inuse): ?>
-							<a href="system_crlmanager.php?act=del&amp;id=<?=$tmpcrl['refid'];?>" onclick="return confirm('<?=gettext("Do you really want to delete this Certificate Revocation List?") . ' (' . htmlspecialchars($tmpcrl['descr']) . ')';?>')">
-								<img src="/themes/<?= $g['theme'];?>/images/icons/icon_x.gif" title="<?=gettext("Delete CRL") . " " . htmlspecialchars($tmpcrl['descr']);?>" alt="<?=gettext("Delete CRL") . " " . htmlspecialchars($tmpcrl['descr']); ?>" width="17" height="17" border="0" />
+							<a href="system_crlmanager.php?act=del&amp;id=<?=$tmpcrl['refid'];?>" onclick="return confirm('<?=gettext("Do you really want to delete this Certificate Revocation List?") . ' (' . xhtmlspecialchars($tmpcrl['descr']) . ')';?>')">
+								<img src="/themes/<?= $g['theme'];?>/images/icons/icon_x.gif" title="<?=gettext("Delete CRL") . " " . xhtmlspecialchars($tmpcrl['descr']);?>" alt="<?=gettext("Delete CRL") . " " . xhtmlspecialchars($tmpcrl['descr']); ?>" width="17" height="17" border="0" />
 							</a>
 							<?php endif; ?>
 						</td>

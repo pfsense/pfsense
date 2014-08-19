@@ -40,6 +40,7 @@
 ##|-PRIV
 
 require("guiconfig.inc");
+require_once("pfsense-utils.inc");
 
 if (!is_array($config['load_balancer']['lbprotocol'])) {
 	$config['load_balancer']['lbprotocol'] = array();
@@ -277,7 +278,7 @@ echo "</select>";
 			<td width="78%">
 				<input name="Submit" type="submit" class="formbtn" value="<?=gettext("Save"); ?>" onClick="AllOptions($('lbaction'), true); AllOptions($('available_action'), false);"><input type="button" class="formbtn" value="<?=gettext("Cancel"); ?>" onclick="history.back()">
 				<?php if (isset($id) && $a_protocol[$id] && $_GET['act'] != 'dup'): ?>
-				<input name="id" type="hidden" value="<?=htmlspecialchars($id);?>">
+				<input name="id" type="hidden" value="<?=xhtmlspecialchars($id);?>">
 				<?php endif; ?>
 			</td>
 		</tr>

@@ -51,6 +51,7 @@ require_once("functions.inc");
 require("guiconfig.inc");
 require_once("filter.inc");
 require_once("shaper.inc");
+require_once("pfsense-utils.inc");
 
 if($_POST['overwriteconfigxml'])
 	touch("/tmp/do_not_restore_config.xml");
@@ -159,10 +160,10 @@ include("head.inc");
 					echo format_bytes($size);
 					echo "</td>";
 					echo "<td  class='listr nowrap' width='20%' colspan='1'>";
-					echo "<a onclick=\"return confirm('" . gettext("Do you really want to delete this backup?") . "')\" href='system_firmware_restorefullbackup.php?deletefile=" . htmlspecialchars($arf) . "'>";
+					echo "<a onclick=\"return confirm('" . gettext("Do you really want to delete this backup?") . "')\" href='system_firmware_restorefullbackup.php?deletefile=" . xhtmlspecialchars($arf) . "'>";
 					echo gettext("Delete");
 					echo "</a> | ";
-					echo "<a href='system_firmware_restorefullbackup.php?downloadbackup=" . htmlspecialchars($arf) . "'>";
+					echo "<a href='system_firmware_restorefullbackup.php?downloadbackup=" . xhtmlspecialchars($arf) . "'>";
 					echo gettext("Download");
 					echo "</a>";
 					echo "</td>";

@@ -44,6 +44,7 @@ require_once("functions.inc");
 require_once("filter.inc");
 require_once("shaper.inc");
 require_once("rrd.inc");
+require_once("pfsense-utils.inc");
 
 if($_GET['reset'] <> "") {
 	/* XXX: Huh, why are we killing php? */
@@ -65,17 +66,17 @@ if ($_GET) {
 	if ($_GET['queue'])
         	$qname = trim($_GET['queue']);
         if ($_GET['interface'])
-                $interface = htmlspecialchars(trim($_GET['interface']));
+                $interface = xhtmlspecialchars(trim($_GET['interface']));
         if ($_GET['action'])
-                $action = htmlspecialchars($_GET['action']);
+                $action = xhtmlspecialchars($_GET['action']);
 }
 if ($_POST) {
 	if ($_POST['name'])
-        	$qname = htmlspecialchars(trim($_POST['name']));
+        	$qname = xhtmlspecialchars(trim($_POST['name']));
         if ($_POST['interface'])
-                $interface = htmlspecialchars(trim($_POST['interface']));
+                $interface = xhtmlspecialchars(trim($_POST['interface']));
 	if ($_POST['parentqueue'])
-		$parentqueue = htmlspecialchars(trim($_POST['parentqueue']));
+		$parentqueue = xhtmlspecialchars(trim($_POST['parentqueue']));
 }
 
 if ($interface) {

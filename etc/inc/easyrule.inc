@@ -37,6 +37,7 @@ $protocols_with_ports = array('tcp', 'udp');
 require_once("functions.inc");
 require_once("util.inc");
 require_once("config.inc");
+require_once("pfsense-utils.inc");
 
 function easyrule_find_rule_interface($int) {
 	global $config;
@@ -316,11 +317,11 @@ function easyrule_parse_block($int, $src, $ipproto = "inet") {
 	if (!empty($src) && !empty($int)) {
 		$src = trim($src, "[]");
 		if (!is_ipaddr($src) && !is_subnet($src)) {
-			return gettext("Tried to block invalid IP:") . ' ' . htmlspecialchars($src);
+			return gettext("Tried to block invalid IP:") . ' ' . xhtmlspecialchars($src);
 		}
 		$int = easyrule_find_rule_interface($int);
 		if ($int === false) {
-			return gettext("Invalid interface for block rule:") . ' ' . htmlspecialchars($int);
+			return gettext("Invalid interface for block rule:") . ' ' . xhtmlspecialchars($int);
 		}
 		if (easyrule_block_host_add($src, $int, $ipproto)) {
 			return gettext("Host added successfully");
@@ -341,23 +342,23 @@ function easyrule_parse_pass($int, $proto, $src, $dst, $dstport = 0, $ipproto = 
 	if (!empty($int) && !empty($proto) && !empty($src) && !empty($dst)) {
 		$int = easyrule_find_rule_interface($int);
 		if ($int === false) {
-			return gettext("Invalid interface for pass rule:") . ' ' . htmlspecialchars($int);
+			return gettext("Invalid interface for pass rule:") . ' ' . xhtmlspecialchars($int);
 		}
 		if (getprotobyname($proto) == -1) {
-			return gettext("Invalid protocol for pass rule:") . ' ' . htmlspecialchars($proto);
+			return gettext("Invalid protocol for pass rule:") . ' ' . xhtmlspecialchars($proto);
 		}
 		if (!is_ipaddr($src) && !is_subnet($src) && !is_ipaddroralias($src) && !is_specialnet($src)) {
-			return gettext("Tried to pass invalid source IP:") . ' ' . htmlspecialchars($src);
+			return gettext("Tried to pass invalid source IP:") . ' ' . xhtmlspecialchars($src);
 		}
 		if (!is_ipaddr($dst) && !is_subnet($dst) && !is_ipaddroralias($dst) && !is_specialnet($dst)) {
-			return gettext("Tried to pass invalid destination IP:") . ' ' . htmlspecialchars($dst);
+			return gettext("Tried to pass invalid destination IP:") . ' ' . xhtmlspecialchars($dst);
 		}
 		if (in_array($proto, $protocols_with_ports)) {
 			if (empty($dstport)) {
-				return gettext("Missing destination port:") . ' ' . htmlspecialchars($dstport);
+				return gettext("Missing destination port:") . ' ' . xhtmlspecialchars($dstport);
 			}
 			if (!is_port($dstport) && ($dstport != "any")) {
-				return gettext("Tried to pass invalid destination port:") . ' ' . htmlspecialchars($dstport);
+				return gettext("Tried to pass invalid destination port:") . ' ' . xhtmlspecialchars($dstport);
 			}
 		} else {
 			$dstport = 0;

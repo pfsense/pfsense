@@ -43,6 +43,7 @@ require("functions.inc");
 require_once("filter.inc");
 require("shaper.inc");
 require("captiveportal.inc");
+require_once("pfsense-utils.inc");
 
 global $cpzone;
 global $cpzoneid;
@@ -143,7 +144,7 @@ include("head.inc");
 <body link="#0000CC" vlink="#0000CC" alink="#0000CC">
 <?php include("fbegin.inc"); ?>
 <form action="services_captiveportal_mac.php" method="post">
-<input type="hidden" name="zone" id="zone" value="<?=htmlspecialchars($cpzone);?>" />
+<input type="hidden" name="zone" id="zone" value="<?=xhtmlspecialchars($cpzone);?>" />
 <?php if ($savemsg) print_info_box($savemsg); ?>
 <?php if (is_subsystem_dirty('passthrumac')): ?><p>
 <?php print_info_box_np(gettext("The captive portal MAC address configuration has been changed.<br />You must apply the changes in order for them to take effect."));?><br />
@@ -183,7 +184,7 @@ include("head.inc");
 						<?=$mac['mac'];?>
 					</td>
 					<td class="listbg">
-						<?=htmlspecialchars($mac['descr']);?>&nbsp;
+						<?=xhtmlspecialchars($mac['descr']);?>&nbsp;
 					</td>
 					<td valign="middle" class="list nowrap">
 						<a href="services_captiveportal_mac_edit.php?zone=<?=$cpzone;?>&amp;id=<?=$i;?>">

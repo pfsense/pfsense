@@ -30,6 +30,8 @@
 	POSSIBILITY OF SUCH DAMAGE.
 */
 
+require_once("pfsense-utils.inc");
+
 /* The following items will be treated as arrays in config.xml */
 function listtags() {
 	/*
@@ -130,10 +132,10 @@ function cData($parser, $data) {
 		}
 
 		if (is_string($ptr)) {
-			$ptr .= html_entity_decode($data);
+			$ptr .= xhtml_entity_decode($data);
 		} else {
 			if (trim($data, " ") != "") {
-				$ptr = html_entity_decode($data);
+				$ptr = xhtml_entity_decode($data);
 				$havedata++;
 			}
 		}
@@ -248,9 +250,9 @@ function dump_xml_config_sub($arr, $indent) {
 							|| (substr($ent, 0, 11) == "ldap_basedn")
 							|| (substr($ent, 0, 18) == "ldap_authcn")
 							|| (substr($ent, 0, 19) == "ldap_extended_query")) {
-							$xmlconfig .= "<$ent><![CDATA[" . htmlentities($cval) . "]]></$ent>\n";
+							$xmlconfig .= "<$ent><![CDATA[" . xhtmlentities($cval) . "]]></$ent>\n";
 						} else {
-							$xmlconfig .= "<$ent>" . htmlentities($cval) . "</$ent>\n";
+							$xmlconfig .= "<$ent>" . xhtmlentities($cval) . "</$ent>\n";
 						}
 					}
 				}
@@ -279,9 +281,9 @@ function dump_xml_config_sub($arr, $indent) {
 				|| (substr($ent, 0, 11) == "ldap_basedn")
 				|| (substr($ent, 0, 18) == "ldap_authcn")
 				|| (substr($ent, 0, 19) == "ldap_extended_query"))
-					$xmlconfig .= "<$ent><![CDATA[" . htmlentities($val) . "]]></$ent>\n";
+					$xmlconfig .= "<$ent><![CDATA[" . xhtmlentities($val) . "]]></$ent>\n";
 				else
-					$xmlconfig .= "<$ent>" . htmlentities($val) . "</$ent>\n";
+					$xmlconfig .= "<$ent>" . xhtmlentities($val) . "</$ent>\n";
 			}
 		}
 	}

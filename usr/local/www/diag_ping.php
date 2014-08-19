@@ -43,7 +43,7 @@
 $allowautocomplete = true;
 $pgtitle = array(gettext("Diagnostics"), gettext("Ping"));
 require_once("guiconfig.inc");
-
+require_once("pfsense-utils.inc");
 
 define('MAX_COUNT', 10);
 define('DEFAULT_COUNT', 3);
@@ -96,7 +96,7 @@ include("head.inc"); ?>
 <tr>
 	<td width="22%" valign="top" class="vncellreq"><?=gettext("Host"); ?></td>
 	<td width="78%" class="vtable">
-		<?=$mandfldhtml;?><input name="host" type="text" class="formfldunknown" id="host" size="20" value="<?=htmlspecialchars($host);?>" /></td>
+		<?=$mandfldhtml;?><input name="host" type="text" class="formfldunknown" id="host" size="20" value="<?=xhtmlspecialchars($host);?>" /></td>
 </tr>
 <tr>
 	<td width="22%" valign="top" class="vncellreq"><?=gettext("IP Protocol"); ?></td>
@@ -119,7 +119,7 @@ include("head.inc"); ?>
 					$selected = "selected=\"selected\"";
 		?>
 			<option value="<?=$sip['value'];?>" <?=$selected;?>>
-				<?=htmlspecialchars($sip['name']);?>
+				<?=xhtmlspecialchars($sip['name']);?>
 			</option>
 			<?php endforeach; ?>
 		</select>

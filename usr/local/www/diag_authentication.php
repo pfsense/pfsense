@@ -42,6 +42,7 @@
 require("guiconfig.inc");
 require_once("PEAR.inc");
 require_once("radius.inc");
+require_once("pfsense-utils.inc");
 
 if ($_POST) {
 	$pconfig = $_POST;
@@ -106,13 +107,13 @@ include("head.inc");
 	<tr>
 		<td width="22%" valign="top" class="vncell"><?=gettext("Username"); ?></td>
 		<td width="78%" class="vtable">
-			<input class="formfld unknown" size="20" id="username" name="username" value="<?=htmlspecialchars($pconfig['username']);?>" />
+			<input class="formfld unknown" size="20" id="username" name="username" value="<?=xhtmlspecialchars($pconfig['username']);?>" />
 		</td>
 	</tr>
 	<tr>
 		<td width="22%" valign="top" class="vncell"><?=gettext("Password"); ?></td>
 		<td width="78%" class="vtable">
-			<input class="formfld pwd" type="password" size="20" id="password" name="password" value="<?=htmlspecialchars($pconfig['password']);?>" />
+			<input class="formfld pwd" type="password" size="20" id="password" name="password" value="<?=xhtmlspecialchars($pconfig['password']);?>" />
 		</td>
 	</tr>
 	<tr>

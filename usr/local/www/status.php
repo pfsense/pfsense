@@ -48,6 +48,7 @@
 /* include all configuration functions */
 require_once("guiconfig.inc");
 require_once("functions.inc");
+require_once("pfsense-utils.inc");
 
 function doCmdT($title, $command) {
 	$rubbish = array('|', '-', '/', '.', ' ');  /* fixes the <a> tag to be W3C compliant */
@@ -66,7 +67,7 @@ function doCmdT($title, $command) {
 				$line = preg_replace("/<pre-shared-key>.*?<\\/pre-shared-key>/", "<pre-shared-key>xxxxx</pre-shared-key>", $line);
 				$line = preg_replace("/<rocommunity>.*?<\\/rocommunity>/", "<rocommunity>xxxxx</rocommunity>", $line);
 				$line = str_replace("\t", "    ", $line);
-				echo htmlspecialchars($line,ENT_NOQUOTES);
+				echo xhtmlspecialchars($line,ENT_NOQUOTES);
 			}
 		}
 		fclose($fd);
@@ -78,7 +79,7 @@ function doCmdT($title, $command) {
 			if ($i > 0) {
 				echo "\n";
 			}
-			echo htmlspecialchars($execOutput[$i],ENT_NOQUOTES);
+			echo xhtmlspecialchars($execOutput[$i],ENT_NOQUOTES);
 		}
 	}
     echo "\n\t\t\t</pre>\n\t\t</td>\n\t</tr>\n";
@@ -93,7 +94,7 @@ function doCmd($command) {
 /* Define a command, with a title, to be executed later. */
 function defCmdT($title, $command) {
 	global $commands;
-	$title = htmlspecialchars($title,ENT_NOQUOTES);
+	$title = xhtmlspecialchars($title,ENT_NOQUOTES);
 	$commands[] = array($title, $command);
 }
 

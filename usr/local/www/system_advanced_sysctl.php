@@ -44,6 +44,7 @@
 ##|-PRIV
 
 require("guiconfig.inc");
+require_once("pfsense-utils.inc");
 
 if (!is_array($config['sysctl']['item']))
 	$config['sysctl']['item'] = array();
@@ -258,7 +259,7 @@ include("head.inc");
 									<input id="submit" name="Submit" type="submit" class="formbtn" value="<?=gettext("Save"); ?>" />
 									<input id="cancelbutton" name="cancelbutton" type="button" class="formbtn" value="<?=gettext("Cancel"); ?>" onclick="history.back()" />
 									<?php if (isset($id) && $a_tunable[$id]): ?>
-									<input name="id" type="hidden" value="<?=htmlspecialchars($id);?>" />
+									<input name="id" type="hidden" value="<?=xhtmlspecialchars($id);?>" />
 									<?php endif; ?>
 								</td>
 							</tr>

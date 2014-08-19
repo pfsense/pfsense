@@ -31,6 +31,7 @@
 
 require("guiconfig.inc");
 require("unbound.inc");
+require_once("pfsense-utils.inc");
 
 if (!is_array($config['unbound']['acls']))
 	$config['unbound']['acls'] = array();
@@ -205,7 +206,7 @@ if (is_subsystem_dirty("unbound"))
 						<tr>
 							<td width="22%" valign="top" class="vncellreq"><?=gettext("Access List name");?></td>
 							<td width="78%" class="vtable">
-								<input name="aclname" type="text" class="formfld" id="aclname" size="30" maxlength="30" value="<?=htmlspecialchars($pconfig['aclname']);?>" />
+								<input name="aclname" type="text" class="formfld" id="aclname" size="30" maxlength="30" value="<?=xhtmlspecialchars($pconfig['aclname']);?>" />
 								<br />
 								<span class="vexpl"><?=gettext("Provide an Access List name.");?></span>
 							</td>
@@ -216,7 +217,7 @@ if (is_subsystem_dirty("unbound"))
 								<select name="aclaction" class="formselect">
 									<?php $types = explode(",", "Allow,Deny,Refuse,Allow Snoop"); foreach ($types as $type): ?>
 									<option value="<?=strtolower($type);?>" <?php if (strtolower($type) == strtolower($pconfig['aclaction'])) echo "selected=\"selected\""; ?>>
-									<?=htmlspecialchars($type);?>
+									<?=xhtmlspecialchars($type);?>
 									</option>
 									<?php endforeach; ?>
 								</select>
@@ -252,7 +253,7 @@ if (is_subsystem_dirty("unbound"))
 											?>
 									<tr>
 										<td>
-											<input autocomplete="off" name="acl_network<?=$counter;?>" type="text" class="formfld unknown" id="acl_network<?=$counter;?>" size="40" value="<?=htmlspecialchars($network);?>" />
+											<input autocomplete="off" name="acl_network<?=$counter;?>" type="text" class="formfld unknown" id="acl_network<?=$counter;?>" size="40" value="<?=xhtmlspecialchars($network);?>" />
 										</td>
 										<td>
 											<select name="mask<?=$counter;?>" class="formselect" id="mask<?=$counter;?>">
@@ -266,7 +267,7 @@ if (is_subsystem_dirty("unbound"))
 											</select>
 										</td>
 										<td>
-											<input autocomplete="off" name="description<?=$counter;?>" type="text" class="listbg" id="description<?=$counter;?>" size="40" value="<?=htmlspecialchars($description);?>" />
+											<input autocomplete="off" name="description<?=$counter;?>" type="text" class="listbg" id="description<?=$counter;?>" size="40" value="<?=xhtmlspecialchars($description);?>" />
 										</td>
 										<td>
 											<a onclick="removeRow(this); return false;" href="#"><img border="0" src="/themes/<?=$g['theme'];?>/images/icons/icon_x.gif" alt="delete" /></a>
@@ -294,7 +295,7 @@ if (is_subsystem_dirty("unbound"))
 						<tr>
 							<td width="22%" valign="top" class="vncell"><?=gettext("Description");?></td>
 							<td width="78%" class="vtable">
-								<input name="description" type="text" class="formfld unknown" id="description" size="52" maxlength="52" value="<?=htmlspecialchars($pconfig['description']);?>" />
+								<input name="description" type="text" class="formfld unknown" id="description" size="52" maxlength="52" value="<?=xhtmlspecialchars($pconfig['description']);?>" />
 								<br />
 								<span class="vexpl"><?=gettext("You may enter a description here for your reference.");?></span>
 							</td>
@@ -349,10 +350,10 @@ if (is_subsystem_dirty("unbound"))
 								<?=$acl['aclname'];?>
 							</td>
 							<td class="listr">
-								<?=htmlspecialchars($acl['aclaction']);?>
+								<?=xhtmlspecialchars($acl['aclaction']);?>
 							</td>
 							<td class="listbg">
-								<?=htmlspecialchars($acl['description']);?>
+								<?=xhtmlspecialchars($acl['description']);?>
 							</td>
 							<td valign="middle" class="list nowrap">
 								<a href="services_unbound_acls.php?act=edit&amp;id=<?=$i;?>">

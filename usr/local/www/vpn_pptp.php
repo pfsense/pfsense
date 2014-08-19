@@ -40,6 +40,7 @@ require_once("functions.inc");
 require_once("filter.inc");
 require_once("shaper.inc");
 require_once("vpn.inc");
+require_once("pfsense-utils.inc");
 
 if (!is_array($config['pptpd']['radius'])) {
 	$config['pptpd']['radius'] = array();
@@ -328,7 +329,7 @@ function enable_change(enable_over) {
 				<tr>
 				  <td width="22%" valign="top" class="vncellreq"><?=gettext("PPTP redirection");?></td>
                   <td width="78%" class="vtable"> 
-                    <?=$mandfldhtml;?><input name="redir" type="text" class="formfld unknown" id="redir" size="20" value="<?=htmlspecialchars($pconfig['redir']);?>" /> 
+                    <?=$mandfldhtml;?><input name="redir" type="text" class="formfld unknown" id="redir" size="20" value="<?=xhtmlspecialchars($pconfig['redir']);?>" /> 
                     <br />
                     <?=gettext("Enter the IP address of a host which will accept incoming " .
                     "PPTP connections"); ?>.</td>
@@ -360,7 +361,7 @@ function enable_change(enable_over) {
                 <tr> 
                   <td width="22%" valign="top" class="vncellreq"><?=gettext("Server address"); ?></td>
                   <td width="78%" class="vtable"> 
-                    <?=$mandfldhtml;?><input name="localip" type="text" class="formfld unknown" id="localip" size="20" value="<?=htmlspecialchars($pconfig['localip']);?>" /> 
+                    <?=$mandfldhtml;?><input name="localip" type="text" class="formfld unknown" id="localip" size="20" value="<?=xhtmlspecialchars($pconfig['localip']);?>" /> 
 			<br />
 			<?=gettext("Enter the IP address the PPTP server should give to clients for use as their \"gateway\""); ?>.
 			<br />
@@ -373,7 +374,7 @@ function enable_change(enable_over) {
                   <td width="22%" valign="top" class="vncellreq"><?=gettext("Remote address " .
                     "range"); ?></td>
                   <td width="78%" class="vtable"> 
-                    <?=$mandfldhtml;?><input name="remoteip" type="text" class="formfld unknown" id="remoteip" size="20" value="<?=htmlspecialchars($pconfig['remoteip']);?>" />
+                    <?=$mandfldhtml;?><input name="remoteip" type="text" class="formfld unknown" id="remoteip" size="20" value="<?=xhtmlspecialchars($pconfig['remoteip']);?>" />
                     <br />
                     <?=gettext("Specify the starting address for the client IP subnet"); ?>.<br />
                   </td>
@@ -381,9 +382,9 @@ function enable_change(enable_over) {
                 <tr> 
                   <td width="22%" valign="top" class="vncell"><?=gettext("PPTP DNS Servers"); ?></td>
                   <td width="78%" class="vtable"> 
-                    <?=$mandfldhtml;?><input name="pptp_dns1" type="text" class="formfld unknown" id="pptp_dns1" size="20" value="<?=htmlspecialchars($pconfig['pptp_dns1']);?>" />
+                    <?=$mandfldhtml;?><input name="pptp_dns1" type="text" class="formfld unknown" id="pptp_dns1" size="20" value="<?=xhtmlspecialchars($pconfig['pptp_dns1']);?>" />
                     <br />
-					<input name="pptp_dns2" type="text" class="formfld unknown" id="pptp_dns2" size="20" value="<?=htmlspecialchars($pconfig['pptp_dns2']);?>" />
+					<input name="pptp_dns2" type="text" class="formfld unknown" id="pptp_dns2" size="20" value="<?=xhtmlspecialchars($pconfig['pptp_dns2']);?>" />
                     <br />
                    <?=gettext("primary and secondary DNS servers assigned to PPTP clients"); ?><br />
                   </td>
@@ -391,7 +392,7 @@ function enable_change(enable_over) {
                 <tr> 
                   <td width="22%" valign="top" class="vncell"><?=gettext("WINS Server"); ?></td>
                   <td width="78%" valign="top" class="vtable">
-                      <input name="wins" class="formfld unknown" id="wins" size="20" value="<?=htmlspecialchars($pconfig['wins']);?>" />
+                      <input name="wins" class="formfld unknown" id="wins" size="20" value="<?=xhtmlspecialchars($pconfig['wins']);?>" />
                   </td>
                 </tr>
                 <tr> 
@@ -419,28 +420,28 @@ function enable_change(enable_over) {
                 <tr> 
                   <td width="22%" valign="top" class="vncell"><?=gettext("RADIUS NAS IP"); ?></td>
                   <td width="78%" valign="top" class="vtable">
-                      <input name="radius_nasip" class="formfld unknown" id="radius_nasip" size="20" value="<?=htmlspecialchars($pconfig['radius_nasip']);?>" />
+                      <input name="radius_nasip" class="formfld unknown" id="radius_nasip" size="20" value="<?=xhtmlspecialchars($pconfig['radius_nasip']);?>" />
                   </td>
 		</tr>
                 <tr> 
                   <td width="22%" valign="top" class="vncell"><?=gettext("RADIUS Accounting Update"); ?></td>
                   <td width="78%" valign="top" class="vtable">
-                      <input name="radius_acct_update" class="formfld unknown" id="radius_acct_update" size="20" value="<?=htmlspecialchars($pconfig['radius_acct_update']);?>" />
+                      <input name="radius_acct_update" class="formfld unknown" id="radius_acct_update" size="20" value="<?=xhtmlspecialchars($pconfig['radius_acct_update']);?>" />
                   </td>
 		</tr>
                 <tr> 
                   <td width="22%" valign="top" class="vncell"><?=gettext("RADIUS Server"); ?> </td>
                   <td width="78%" class="vtable">
-                      <input name="radiusserver" type="text" class="formfld unknown" id="radiusserver" size="20" value="<?=htmlspecialchars($pconfig['radiusserver']);?>" />
-                      <input name="radiusserverport" type="text" class="formfld unknown" id="radiusserverport" size="4" value="<?=htmlspecialchars($pconfig['radiusserverport']);?>" />
-                      <input name="radiusserveracctport" type="text" class="formfld unknown" id="radiusserveracctport" size="4" value="<?=htmlspecialchars($pconfig['radiusserveracctport']);?>" />
+                      <input name="radiusserver" type="text" class="formfld unknown" id="radiusserver" size="20" value="<?=xhtmlspecialchars($pconfig['radiusserver']);?>" />
+                      <input name="radiusserverport" type="text" class="formfld unknown" id="radiusserverport" size="4" value="<?=xhtmlspecialchars($pconfig['radiusserverport']);?>" />
+                      <input name="radiusserveracctport" type="text" class="formfld unknown" id="radiusserveracctport" size="4" value="<?=xhtmlspecialchars($pconfig['radiusserveracctport']);?>" />
                       <br />
                       <?=gettext("Enter the IP address, RADIUS port, and RADIUS accounting port of the RADIUS server"); ?>.</td>
                 </tr>
                 <tr> 
                   <td width="22%" valign="top" class="vncell"><?=gettext("RADIUS shared secret"); ?></td>
                   <td width="78%" valign="top" class="vtable">
-                      <input name="radiussecret" type="password" class="formfld pwd" id="radiussecret" size="20" value="<?=htmlspecialchars($pconfig['radiussecret']);?>" />
+                      <input name="radiussecret" type="password" class="formfld pwd" id="radiussecret" size="20" value="<?=xhtmlspecialchars($pconfig['radiussecret']);?>" />
                       <br />
                       <?=gettext("Enter the shared secret that will be used to authenticate " .
                       "to the RADIUS server"); ?>.</td>
@@ -448,16 +449,16 @@ function enable_change(enable_over) {
                 <tr> 
                   <td width="22%" valign="top" class="vncell"><?=gettext("Secondary RADIUS server"); ?> </td>
                   <td width="78%" class="vtable">
-                      <input name="radiusserver2" type="text" class="formfld unknown" id="radiusserver2" size="20" value="<?=htmlspecialchars($pconfig['radiusserver2']);?>" />
-                      <input name="radiusserver2port" type="text" class="formfld unknown" id="radiusserver2port" size="4" value="<?=htmlspecialchars($pconfig['radiusserver2port']);?>" />
-                      <input name="radiusserver2acctport" type="text" class="formfld unknown" id="radiusserver2acctport" size="4" value="<?=htmlspecialchars($pconfig['radiusserver2acctport']);?>" />
+                      <input name="radiusserver2" type="text" class="formfld unknown" id="radiusserver2" size="20" value="<?=xhtmlspecialchars($pconfig['radiusserver2']);?>" />
+                      <input name="radiusserver2port" type="text" class="formfld unknown" id="radiusserver2port" size="4" value="<?=xhtmlspecialchars($pconfig['radiusserver2port']);?>" />
+                      <input name="radiusserver2acctport" type="text" class="formfld unknown" id="radiusserver2acctport" size="4" value="<?=xhtmlspecialchars($pconfig['radiusserver2acctport']);?>" />
                       <br />
                       <?=gettext("Enter the IP address, RADIUS port, and RADIUS accounting port of the RADIUS server"); ?>.</td>
                 </tr>
                 <tr> 
                   <td width="22%" valign="top" class="vncell"><?=gettext("Secondary RADIUS shared secret"); ?></td>
                   <td width="78%" valign="top" class="vtable">
-                      <input name="radiussecret2" type="password" class="formfld pwd" id="radiussecret2" size="20" value="<?=htmlspecialchars($pconfig['radiussecret2']);?>" />
+                      <input name="radiussecret2" type="password" class="formfld pwd" id="radiussecret2" size="20" value="<?=xhtmlspecialchars($pconfig['radiussecret2']);?>" />
                       <br />
                       <?=gettext("Enter the shared secret that will be used to authenticate " .
                       "to the secondary RADIUS server"); ?>.</td>

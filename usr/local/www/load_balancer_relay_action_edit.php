@@ -40,6 +40,8 @@
 ##|-PRIV
 
 require("guiconfig.inc");
+require_once("pfsense-utils.inc");
+
 if (!is_array($config['load_balancer']['lbaction'])) {
 	$config['load_balancer']['lbaction'] = array();
 }
@@ -389,10 +391,10 @@ function num_options() {
 
 
 jQuery(document).ready(function() {
-  updateProtocol('<?=htmlspecialchars($pconfig['protocol'])?>');  
-  updateDirection('<?=htmlspecialchars($pconfig['direction'])?>');  
-  updateType('<?=htmlspecialchars($pconfig['type'])?>');  
-  updateAction('<?=htmlspecialchars($pconfig['action'])?>');  
+  updateProtocol('<?=xhtmlspecialchars($pconfig['protocol'])?>');  
+  updateDirection('<?=xhtmlspecialchars($pconfig['direction'])?>');  
+  updateType('<?=xhtmlspecialchars($pconfig['type'])?>');  
+  updateAction('<?=xhtmlspecialchars($pconfig['action'])?>');  
 });
 
 </script>
@@ -553,7 +555,7 @@ jQuery(document).ready(function() {
 			<td width="78%">
 				<input name="Submit" type="submit" class="formbtn" value="<?=gettext("Save"); ?>"><input type="button" class="formbtn" value="<?=gettext("Cancel"); ?>" onclick="history.back()">
 				<?php if (isset($id) && $a_action[$id] && $_GET['act'] != 'dup'): ?>
-				<input name="id" type="hidden" value="<?=htmlspecialchars($id);?>">
+				<input name="id" type="hidden" value="<?=xhtmlspecialchars($id);?>">
 				<?php endif; ?>
 			</td>
 		</tr>

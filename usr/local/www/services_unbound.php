@@ -40,6 +40,7 @@
 
 require_once("guiconfig.inc");
 require_once("unbound.inc");
+require_once("pfsense-utils.inc");
 
 $pconfig['enable'] = isset($config['unbound']['enable']);
 $pconfig['port'] = $config['unbound']['port'];
@@ -221,7 +222,7 @@ function show_advanced_dns() {
 													$selected = 'selected="selected"';
 										?>
 										<option value="<?=$laddr['value'];?>" <?=$selected;?>>
-											<?=htmlspecialchars($laddr['name']);?>
+											<?=xhtmlspecialchars($laddr['name']);?>
 										</option>
 										<?php endforeach; ?>
 									</select>
@@ -246,7 +247,7 @@ function show_advanced_dns() {
 												$selected = 'selected="selected"';
 										?>
 										<option value="<?=$laddr['value'];?>" <?=$selected;?>>
-											<?=htmlspecialchars($laddr['name']);?>
+											<?=xhtmlspecialchars($laddr['name']);?>
 										</option>
 										<?php endforeach; ?>
 									</select>
@@ -307,7 +308,7 @@ function show_advanced_dns() {
 									</div>
 									<div id="showadv" <?php if (empty($pconfig['custom_options'])) echo "style='display:none'"; ?>>
 										<strong><?=gettext("Advanced");?><br /></strong>
-										<textarea rows="6" cols="78" name="custom_options" id="custom_options"><?=htmlspecialchars($pconfig['custom_options']);?></textarea><br />
+										<textarea rows="6" cols="78" name="custom_options" id="custom_options"><?=xhtmlspecialchars($pconfig['custom_options']);?></textarea><br />
 										<?=gettext("Enter any additional options you would like to add to the DNS Resolver configuration here, separated by a space or newline"); ?><br />
 									</div>
 								</td>
@@ -392,7 +393,7 @@ function show_advanced_dns() {
 			<?=$hostent['ip'];?>&nbsp;
 		</td>
 		<td class="listbg" ondblclick="document.location='services_unbound_host_edit.php?id=<?=$i;?>';">
-			<?=htmlspecialchars($hostent['descr']);?>&nbsp;
+			<?=xhtmlspecialchars($hostent['descr']);?>&nbsp;
 		</td>
 		<td valign="middle" class="list nowrap">
 			<table border="0" cellspacing="0" cellpadding="1" summary="icons">
@@ -455,7 +456,7 @@ function show_advanced_dns() {
 			<?=$doment['ip'];?>&nbsp;
 		</td>
 		<td class="listbg">
-			<?=htmlspecialchars($doment['descr']);?>&nbsp;
+			<?=xhtmlspecialchars($doment['descr']);?>&nbsp;
 		</td>
 		<td valign="middle" class="list nowrap"> <a href="services_unbound_domainoverride_edit.php?id=<?=$i;?>"><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_e.gif" width="17" height="17" border="0" alt="edit" /></a>
 			&nbsp;<a href="services_unbound.php?act=del&amp;type=doverride&amp;id=<?=$i;?>" onclick="return confirm('<?=gettext("Do you really want to delete this domain override?");?>')"><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_x.gif" width="17" height="17" border="0" alt="delete" /></a></td>

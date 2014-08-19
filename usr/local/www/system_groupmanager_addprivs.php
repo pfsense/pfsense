@@ -52,6 +52,7 @@ function admin_groups_sort() {
 }
 
 require("guiconfig.inc");
+require_once("pfsense-utils.inc");
 
 $pgtitle = array(gettext("System"),gettext("Group manager"),gettext("Add privileges"));
 
@@ -225,7 +226,7 @@ function update_description() {
 								<input id="submitt"  name="Submit" type="submit" class="formbtn" value="<?=gettext("Save");?>" />
 								<input id="cancelbutton" class="formbtn" type="button" value="<?=gettext("Cancel");?>" onclick="history.back()" />
 								<?php if (isset($groupid)): ?>
-								<input name="groupid" type="hidden" value="<?=htmlspecialchars($groupid);?>" />
+								<input name="groupid" type="hidden" value="<?=xhtmlspecialchars($groupid);?>" />
 								<?php endif; ?>
 							</td>
 						</tr>

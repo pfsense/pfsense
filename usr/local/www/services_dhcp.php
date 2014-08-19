@@ -42,6 +42,7 @@
 
 require("guiconfig.inc");
 require_once("filter.inc");
+require_once("pfsense-utils.inc");
 
 if(!$g['services_dhcp_server_enable']) {
 	Header("Location: /");
@@ -226,9 +227,9 @@ if ($_POST) {
 	for($x=0; $x<99; $x++) {
 		if(isset($_POST["number{$x}"]) && ctype_digit($_POST["number{$x}"])) {
 			$numbervalue = array();
-			$numbervalue['number'] = htmlspecialchars($_POST["number{$x}"]);
-			$numbervalue['type'] = htmlspecialchars($_POST["itemtype{$x}"]);
-			$numbervalue['value'] = str_replace('&quot;', '"', htmlspecialchars($_POST["value{$x}"]));
+			$numbervalue['number'] = xhtmlspecialchars($_POST["number{$x}"]);
+			$numbervalue['type'] = xhtmlspecialchars($_POST["itemtype{$x}"]);
+			$numbervalue['value'] = str_replace('&quot;', '"', xhtmlspecialchars($_POST["value{$x}"]));
 			$numberoptions['item'][] = $numbervalue;
 		}
 	}
@@ -756,7 +757,7 @@ include("head.inc");
 				<input name="enable" type="checkbox" value="yes" <?php if ($pconfig['enable']) echo "checked=\"checked\""; ?> onclick="enable_change(false)" />
 			<strong><?php printf(gettext("Enable DHCP server on " .
 			"%s " .
-			"interface"),htmlspecialchars($iflist[$if]));?></strong></td>
+			"interface"),xhtmlspecialchars($iflist[$if]));?></strong></td>
 			</tr>
 			<?php else: ?>
 			<tr>
@@ -774,7 +775,7 @@ include("head.inc");
 				<tr>
 				<td width="22%" valign="top" class="vncell"><?=gettext("Pool Description");?></td>
 				<td width="78%" class="vtable">
-					<input name="descr" type="text" class="formfld unknown" id="descr" size="20" value="<?=htmlspecialchars($pconfig['descr']);?>" />
+					<input name="descr" type="text" class="formfld unknown" id="descr" size="20" value="<?=xhtmlspecialchars($pconfig['descr']);?>" />
 				</td>
 				</tr>
 			<?php endif; ?>
@@ -838,8 +839,8 @@ include("head.inc");
 			<tr>
 			<td width="22%" valign="top" class="vncellreq"><?=gettext("Range");?></td>
 			<td width="78%" class="vtable">
-				<input name="range_from" type="text" class="formfld unknown" id="range_from" size="20" value="<?=htmlspecialchars($pconfig['range_from']);?>" />
-				&nbsp;<?=gettext("to"); ?>&nbsp; <input name="range_to" type="text" class="formfld unknown" id="range_to" size="20" value="<?=htmlspecialchars($pconfig['range_to']);?>" />
+				<input name="range_from" type="text" class="formfld unknown" id="range_from" size="20" value="<?=xhtmlspecialchars($pconfig['range_from']);?>" />
+				&nbsp;<?=gettext("to"); ?>&nbsp; <input name="range_to" type="text" class="formfld unknown" id="range_to" size="20" value="<?=xhtmlspecialchars($pconfig['range_to']);?>" />
 			</td>
 			</tr>
 			<?php if (!is_numeric($pool) && !($act == "newpool")): ?>
@@ -856,7 +857,7 @@ include("head.inc");
 					<table border="0" cellspacing="0" cellpadding="1" summary="pool">
 					<tr>
 					<td valign="middle" width="17"></td>
-					<td valign="middle"><a href="services_dhcp.php?if=<?=htmlspecialchars($if);?>&amp;act=newpool"><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_plus.gif" width="17" height="17" border="0" alt="plus" /></a></td>
+					<td valign="middle"><a href="services_dhcp.php?if=<?=xhtmlspecialchars($if);?>&amp;act=newpool"><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_plus.gif" width="17" height="17" border="0" alt="plus" /></a></td>
 					</tr>
 					</table>
 					</td>
@@ -865,20 +866,20 @@ include("head.inc");
 					<?php $i = 0; foreach ($a_pools as $poolent): ?>
 					<?php if(!empty($poolent['range']['from']) && !empty($poolent['range']['to'])): ?>
 				<tr>
-				<td class="listlr" ondblclick="document.location='services_dhcp.php?if=<?=htmlspecialchars($if);?>&amp;pool=<?=$i;?>';">
-					<?=htmlspecialchars($poolent['range']['from']);?>
+				<td class="listlr" ondblclick="document.location='services_dhcp.php?if=<?=xhtmlspecialchars($if);?>&amp;pool=<?=$i;?>';">
+					<?=xhtmlspecialchars($poolent['range']['from']);?>
 				</td>
-				<td class="listr" ondblclick="document.location='services_dhcp.php?if=<?=htmlspecialchars($if);?>&amp;pool=<?=$i;?>';">
-					<?=htmlspecialchars($poolent['range']['to']);?>&nbsp;
+				<td class="listr" ondblclick="document.location='services_dhcp.php?if=<?=xhtmlspecialchars($if);?>&amp;pool=<?=$i;?>';">
+					<?=xhtmlspecialchars($poolent['range']['to']);?>&nbsp;
 				</td>
-				<td class="listr" ondblclick="document.location='services_dhcp.php?if=<?=htmlspecialchars($if);?>&amp;pool=<?=$i;?>';">
-					<?=htmlspecialchars($poolent['descr']);?>&nbsp;
+				<td class="listr" ondblclick="document.location='services_dhcp.php?if=<?=xhtmlspecialchars($if);?>&amp;pool=<?=$i;?>';">
+					<?=xhtmlspecialchars($poolent['descr']);?>&nbsp;
 				</td>
 				<td valign="middle" class="list nowrap">
 					<table border="0" cellspacing="0" cellpadding="1" summary="icons">
 					<tr>
-					<td valign="middle"><a href="services_dhcp.php?if=<?=htmlspecialchars($if);?>&amp;pool=<?=$i;?>"><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_e.gif" width="17" height="17" border="0" alt="edit" /></a></td>
-					<td valign="middle"><a href="services_dhcp.php?if=<?=htmlspecialchars($if);?>&amp;act=delpool&amp;id=<?=$i;?>" onclick="return confirm('<?=gettext("Do you really want to delete this pool?");?>')"><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_x.gif" width="17" height="17" border="0" alt="delete" /></a></td>
+					<td valign="middle"><a href="services_dhcp.php?if=<?=xhtmlspecialchars($if);?>&amp;pool=<?=$i;?>"><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_e.gif" width="17" height="17" border="0" alt="edit" /></a></td>
+					<td valign="middle"><a href="services_dhcp.php?if=<?=xhtmlspecialchars($if);?>&amp;act=delpool&amp;id=<?=$i;?>" onclick="return confirm('<?=gettext("Do you really want to delete this pool?");?>')"><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_x.gif" width="17" height="17" border="0" alt="delete" /></a></td>
 					</tr>
 					</table>
 				</td>
@@ -892,7 +893,7 @@ include("head.inc");
 					<table border="0" cellspacing="0" cellpadding="1" summary="add">
 					<tr>
 					<td valign="middle" width="17"></td>
-					<td valign="middle"><a href="services_dhcp.php?if=<?=htmlspecialchars($if);?>&amp;act=newpool"><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_plus.gif" width="17" height="17" border="0" alt="add" /></a></td>
+					<td valign="middle"><a href="services_dhcp.php?if=<?=xhtmlspecialchars($if);?>&amp;act=newpool"><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_plus.gif" width="17" height="17" border="0" alt="add" /></a></td>
 					</tr>
 					</table>
 				</td>
@@ -904,43 +905,43 @@ include("head.inc");
 			<tr>
 			<td width="22%" valign="top" class="vncell"><?=gettext("WINS servers");?></td>
 			<td width="78%" class="vtable">
-				<input name="wins1" type="text" class="formfld unknown" id="wins1" size="20" value="<?=htmlspecialchars($pconfig['wins1']);?>" /><br />
-				<input name="wins2" type="text" class="formfld unknown" id="wins2" size="20" value="<?=htmlspecialchars($pconfig['wins2']);?>" />
+				<input name="wins1" type="text" class="formfld unknown" id="wins1" size="20" value="<?=xhtmlspecialchars($pconfig['wins1']);?>" /><br />
+				<input name="wins2" type="text" class="formfld unknown" id="wins2" size="20" value="<?=xhtmlspecialchars($pconfig['wins2']);?>" />
 			</td>
 			</tr>
 			<tr>
 			<td width="22%" valign="top" class="vncell"><?=gettext("DNS servers");?></td>
 			<td width="78%" class="vtable">
-				<input name="dns1" type="text" class="formfld unknown" id="dns1" size="20" value="<?=htmlspecialchars($pconfig['dns1']);?>" /><br />
-				<input name="dns2" type="text" class="formfld unknown" id="dns2" size="20" value="<?=htmlspecialchars($pconfig['dns2']);?>" /><br />
+				<input name="dns1" type="text" class="formfld unknown" id="dns1" size="20" value="<?=xhtmlspecialchars($pconfig['dns1']);?>" /><br />
+				<input name="dns2" type="text" class="formfld unknown" id="dns2" size="20" value="<?=xhtmlspecialchars($pconfig['dns2']);?>" /><br />
 				<?=gettext("NOTE: leave blank to use the system default DNS servers - this interface's IP if DNS forwarder is enabled, otherwise the servers configured on the General page.");?>
 			</td>
 			</tr>
 			<tr>
 			<td width="22%" valign="top" class="vncell"><?=gettext("Gateway");?></td>
 			<td width="78%" class="vtable">
-				<input name="gateway" type="text" class="formfld host" id="gateway" size="20" value="<?=htmlspecialchars($pconfig['gateway']);?>" /><br />
+				<input name="gateway" type="text" class="formfld host" id="gateway" size="20" value="<?=xhtmlspecialchars($pconfig['gateway']);?>" /><br />
 				<?=gettext("The default is to use the IP on this interface of the firewall as the gateway. Specify an alternate gateway here if this is not the correct gateway for your network. Type \"none\" for no gateway assignment.");?>
 			</td>
 			</tr>
 			<tr>
 			<td width="22%" valign="top" class="vncell"><?=gettext("Domain name");?></td>
 			<td width="78%" class="vtable">
-				<input name="domain" type="text" class="formfld unknown" id="domain" size="20" value="<?=htmlspecialchars($pconfig['domain']);?>" /><br />
+				<input name="domain" type="text" class="formfld unknown" id="domain" size="20" value="<?=xhtmlspecialchars($pconfig['domain']);?>" /><br />
 				<?=gettext("The default is to use the domain name of this system as the default domain name provided by DHCP. You may specify an alternate domain name here.");?>
 			</td>
 			</tr>
 			<tr>
 			<td width="22%" valign="top" class="vncell"><?=gettext("Domain search list");?></td>
 			<td width="78%" class="vtable">
-				<input name="domainsearchlist" type="text" class="formfld unknown" id="domainsearchlist" size="20" value="<?=htmlspecialchars($pconfig['domainsearchlist']);?>" /><br />
+				<input name="domainsearchlist" type="text" class="formfld unknown" id="domainsearchlist" size="20" value="<?=xhtmlspecialchars($pconfig['domainsearchlist']);?>" /><br />
 				<?=gettext("The DHCP server can optionally provide a domain search list. Use the semicolon character as separator ");?>
 			</td>
 			</tr>
 			<tr>
 			<td width="22%" valign="top" class="vncell"><?=gettext("Default lease time");?></td>
 			<td width="78%" class="vtable">
-				<input name="deftime" type="text" class="formfld unknown" id="deftime" size="10" value="<?=htmlspecialchars($pconfig['deftime']);?>" />
+				<input name="deftime" type="text" class="formfld unknown" id="deftime" size="10" value="<?=xhtmlspecialchars($pconfig['deftime']);?>" />
 				<?=gettext("seconds");?><br />
 				<?=gettext("This is used for clients that do not ask for a specific " .
 				"expiration time."); ?><br />
@@ -950,7 +951,7 @@ include("head.inc");
 			<tr>
 			<td width="22%" valign="top" class="vncell"><?=gettext("Maximum lease time");?></td>
 			<td width="78%" class="vtable">
-				<input name="maxtime" type="text" class="formfld unknown" id="maxtime" size="10" value="<?=htmlspecialchars($pconfig['maxtime']);?>" />
+				<input name="maxtime" type="text" class="formfld unknown" id="maxtime" size="10" value="<?=xhtmlspecialchars($pconfig['maxtime']);?>" />
 				<?=gettext("seconds");?><br />
 				<?=gettext("This is the maximum lease time for clients that ask".
 				" for a specific expiration time."); ?><br />
@@ -961,7 +962,7 @@ include("head.inc");
 			<tr>
 			<td width="22%" valign="top" class="vncell"><?=gettext("Failover peer IP:");?></td>
 			<td width="78%" class="vtable">
-				<input name="failover_peerip" type="text" class="formfld host" id="failover_peerip" size="20" value="<?=htmlspecialchars($pconfig['failover_peerip']);?>" /><br />
+				<input name="failover_peerip" type="text" class="formfld host" id="failover_peerip" size="20" value="<?=xhtmlspecialchars($pconfig['failover_peerip']);?>" /><br />
 				<?=gettext("Leave blank to disable.  Enter the interface IP address of the other machine.  Machines must be using CARP. Interface's advskew determines whether the DHCPd process is Primary or Secondary. Ensure one machine's advskew<20 (and the other is >20).");?>
 			</td>
 			</tr>
@@ -1023,14 +1024,14 @@ include("head.inc");
 					<input style="vertical-align:middle" type="checkbox" value="yes" name="ddnsupdate" id="ddnsupdate" <?php if($pconfig['ddnsupdate']) echo " checked=\"checked\""; ?> />&nbsp;
 					<b><?=gettext("Enable registration of DHCP client names in DNS.");?></b><br />
 					<br/>
-					<input name="ddnsdomain" type="text" class="formfld unknown" id="ddnsdomain" size="20" value="<?=htmlspecialchars($pconfig['ddnsdomain']);?>" /><br />
+					<input name="ddnsdomain" type="text" class="formfld unknown" id="ddnsdomain" size="20" value="<?=xhtmlspecialchars($pconfig['ddnsdomain']);?>" /><br />
 					<?=gettext("Note: Leave blank to disable dynamic DNS registration.");?><br />
 					<?=gettext("Enter the dynamic DNS domain which will be used to register client names in the DNS server.");?>
-					<input name="ddnsdomainprimary" type="text" class="formfld unknown" id="ddnsdomainprimary" size="20" value="<?=htmlspecialchars($pconfig['ddnsdomainprimary']);?>" /><br />
+					<input name="ddnsdomainprimary" type="text" class="formfld unknown" id="ddnsdomainprimary" size="20" value="<?=xhtmlspecialchars($pconfig['ddnsdomainprimary']);?>" /><br />
 					<?=gettext("Enter the primary domain name server IP address for the dynamic domain name.");?><br />
-					<input name="ddnsdomainkeyname" type="text" class="formfld unknown" id="ddnsdomainkeyname" size="20" value="<?=htmlspecialchars($pconfig['ddnsdomainkeyname']);?>" /><br />
+					<input name="ddnsdomainkeyname" type="text" class="formfld unknown" id="ddnsdomainkeyname" size="20" value="<?=xhtmlspecialchars($pconfig['ddnsdomainkeyname']);?>" /><br />
 					<?=gettext("Enter the dynamic DNS domain key name which will be used to register client names in the DNS server.");?>
-					<input name="ddnsdomainkey" type="text" class="formfld unknown" id="ddnsdomainkey" size="20" value="<?=htmlspecialchars($pconfig['ddnsdomainkey']);?>" /><br />
+					<input name="ddnsdomainkey" type="text" class="formfld unknown" id="ddnsdomainkey" size="20" value="<?=xhtmlspecialchars($pconfig['ddnsdomainkey']);?>" /><br />
 					<?=gettext("Enter the dynamic DNS domain key secret which will be used to register client names in the DNS server.");?>
 				</div>
 			</td>
@@ -1042,9 +1043,9 @@ include("head.inc");
 					<input type="button" onclick="show_maccontrol_config()" value="<?=gettext("Advanced");?>" /> - <?=gettext("Show MAC Address Control");?>
 				</div>
 				<div id="showmaccontrol" style="display:none">
-					<input name="mac_allow" type="text" class="formfld unknown" id="mac_allow" size="20" value="<?=htmlspecialchars($pconfig['mac_allow']);?>" /><br />
+					<input name="mac_allow" type="text" class="formfld unknown" id="mac_allow" size="20" value="<?=xhtmlspecialchars($pconfig['mac_allow']);?>" /><br />
 					<?=gettext("Enter a list of partial MAC addresses to allow, comma separated, no spaces, such as ");?>00:00:00,01:E5:FF
-					<input name="mac_deny" type="text" class="formfld unknown" id="mac_deny" size="20" value="<?=htmlspecialchars($pconfig['mac_deny']);?>" /><br />
+					<input name="mac_deny" type="text" class="formfld unknown" id="mac_deny" size="20" value="<?=xhtmlspecialchars($pconfig['mac_deny']);?>" /><br />
 					<?=gettext("Enter a list of partial MAC addresses to deny access, comma separated, no spaces, such as ");?>00:00:00,01:E5:FF
 				</div>
 			</td>
@@ -1056,8 +1057,8 @@ include("head.inc");
 					<input type="button" onclick="show_ntp_config()" value="<?=gettext("Advanced");?>" /> - <?=gettext("Show NTP configuration");?>
 				</div>
 				<div id="showntp" style="display:none">
-					<input name="ntp1" type="text" class="formfld unknown" id="ntp1" size="20" value="<?=htmlspecialchars($pconfig['ntp1']);?>" /><br />
-					<input name="ntp2" type="text" class="formfld unknown" id="ntp2" size="20" value="<?=htmlspecialchars($pconfig['ntp2']);?>" />
+					<input name="ntp1" type="text" class="formfld unknown" id="ntp1" size="20" value="<?=xhtmlspecialchars($pconfig['ntp1']);?>" /><br />
+					<input name="ntp2" type="text" class="formfld unknown" id="ntp2" size="20" value="<?=xhtmlspecialchars($pconfig['ntp2']);?>" />
 				</div>
 			</td>
 			</tr>
@@ -1068,7 +1069,7 @@ include("head.inc");
 				<input type="button" onclick="show_tftp_config()" value="<?=gettext("Advanced");?>" /> - <?=gettext("Show TFTP configuration");?>
 			</div>
 			<div id="showtftp" style="display:none">
-				<input name="tftp" type="text" class="formfld unknown" id="tftp" size="50" value="<?=htmlspecialchars($pconfig['tftp']);?>" /><br />
+				<input name="tftp" type="text" class="formfld unknown" id="tftp" size="50" value="<?=xhtmlspecialchars($pconfig['tftp']);?>" /><br />
 				<?=gettext("Leave blank to disable.  Enter a full hostname or IP for the TFTP server.");?>
 			</div>
 			</td>
@@ -1080,7 +1081,7 @@ include("head.inc");
 					<input type="button" onclick="show_ldap_config()" value="<?=gettext("Advanced");?>" /> - <?=gettext("Show LDAP configuration");?>
 				</div>
 				<div id="showldap" style="display:none">
-					<input name="ldap" type="text" class="formfld unknown" id="ldap" size="80" value="<?=htmlspecialchars($pconfig['ldap']);?>" /><br />
+					<input name="ldap" type="text" class="formfld unknown" id="ldap" size="80" value="<?=xhtmlspecialchars($pconfig['ldap']);?>" /><br />
 					<?=gettext("Leave blank to disable.  Enter a full URI for the LDAP server in the form ldap://ldap.example.com/dc=example,dc=com");?>
 				</div>
 			</td>
@@ -1096,17 +1097,17 @@ include("head.inc");
 					<b><?=gettext("Enables network booting.");?></b>
 					<br/>
 					<?=gettext("Enter the IP of the"); ?> <b><?=gettext("next-server"); ?></b>
-					<input name="nextserver" type="text" class="formfld unknown" id="nextserver" size="20" value="<?=htmlspecialchars($pconfig['nextserver']);?>" /><br />
+					<input name="nextserver" type="text" class="formfld unknown" id="nextserver" size="20" value="<?=xhtmlspecialchars($pconfig['nextserver']);?>" /><br />
 					<?=gettext("and the default bios filename");?>
-						<input name="filename" type="text" class="formfld unknown" id="filename" size="20" value="<?=htmlspecialchars($pconfig['filename']);?>" /><br />
+						<input name="filename" type="text" class="formfld unknown" id="filename" size="20" value="<?=xhtmlspecialchars($pconfig['filename']);?>" /><br />
 					<?=gettext("and the UEFI 32bit filename  ");?>
-						<input name="filename32" type="text" class="formfld unknown" id="filename32" size="20" value="<?=htmlspecialchars($pconfig['filename32']);?>" /><br />
+						<input name="filename32" type="text" class="formfld unknown" id="filename32" size="20" value="<?=xhtmlspecialchars($pconfig['filename32']);?>" /><br />
 					<?=gettext("and the UEFI 64bit filename  ");?>
-						<input name="filename64" type="text" class="formfld unknown" id="filename64" size="20" value="<?=htmlspecialchars($pconfig['filename64']);?>" /><br />
+						<input name="filename64" type="text" class="formfld unknown" id="filename64" size="20" value="<?=xhtmlspecialchars($pconfig['filename64']);?>" /><br />
 					<?=gettext("Note: You need both a filename and a boot server configured for this to work!");?>
 					<?=gettext("You will need all three filenames and a boot server configured for UEFI to work!");?>
 					<?=gettext("Enter the"); ?> <b><?=gettext("root-path"); ?></b>-<?=gettext("string");?>
-					<input name="rootpath" type="text" class="formfld unknown" id="rootpath" size="90" value="<?=htmlspecialchars($pconfig['rootpath']);?>" /><br />
+					<input name="rootpath" type="text" class="formfld unknown" id="rootpath" size="90" value="<?=xhtmlspecialchars($pconfig['rootpath']);?>" /><br />
 					<?=gettext("Note: string-format: iscsi:(servername):(protocol):(port):(LUN):targetname");?>
 				</div>
 			</td>
@@ -1145,7 +1146,7 @@ include("head.inc");
 					?>
 				<tr>
 				<td>
-					<input autocomplete="off" name="number<?php echo $counter; ?>" type="text" class="formfld unknown" id="number<?php echo $counter; ?>" size="10" value="<?=htmlspecialchars($number);?>" />
+					<input autocomplete="off" name="number<?php echo $counter; ?>" type="text" class="formfld unknown" id="number<?php echo $counter; ?>" size="10" value="<?=xhtmlspecialchars($number);?>" />
 				</td>
 				<td>
 					<select name="itemtype<?php echo $counter; ?>" class="formselect" id="itemtype<?php echo $counter; ?>">
@@ -1159,7 +1160,7 @@ include("head.inc");
 					</select>
 				</td>
 				<td>
-					<input autocomplete="off" name="value<?php echo $counter; ?>" type="text" class="formfld unknown" id="value<?php echo $counter; ?>" size="40" value="<?=htmlspecialchars($value);?>" />
+					<input autocomplete="off" name="value<?php echo $counter; ?>" type="text" class="formfld unknown" id="value<?php echo $counter; ?>" size="40" value="<?=xhtmlspecialchars($value);?>" />
 				</td>
 				<td>
 					<a onclick="removeRow(this); return false;" href="#"><img border="0" src="/themes/<?echo $g['theme'];?>/images/icons/icon_x.gif" alt="delete" /></a>
@@ -1194,7 +1195,7 @@ include("head.inc");
 				<?php if (is_numeric($pool)): ?>
 				<input type="hidden" name="pool" value="<?php echo $pool; ?>" />
 				<?php endif; ?>
-				<input name="if" type="hidden" value="<?=htmlspecialchars($if);?>" />
+				<input name="if" type="hidden" value="<?=xhtmlspecialchars($if);?>" />
 				<input name="Submit" type="submit" class="formbtn" value="<?=gettext("Save");?>" onclick="enable_change(true)" />
 			</td>
 			</tr>
@@ -1228,7 +1229,7 @@ include("head.inc");
 			<table border="0" cellspacing="0" cellpadding="1" summary="add">
 			<tr>
 			<td valign="middle" width="17"></td>
-			<td valign="middle"><a href="services_dhcp_edit.php?if=<?=htmlspecialchars($if);?>"><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_plus.gif" width="17" height="17" border="0" alt="add" /></a></td>
+			<td valign="middle"><a href="services_dhcp_edit.php?if=<?=xhtmlspecialchars($if);?>"><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_plus.gif" width="17" height="17" border="0" alt="add" /></a></td>
 			</tr>
 			</table>
 			</td>
@@ -1237,28 +1238,28 @@ include("head.inc");
 			<?php $i = 0; foreach ($a_maps as $mapent): ?>
 			<?php if($mapent['mac'] <> "" or $mapent['ipaddr'] <> ""): ?>
 		<tr>
-		<td align="center" class="listlr" ondblclick="document.location='services_dhcp_edit.php?if=<?=htmlspecialchars($if);?>&amp;id=<?=$i;?>';">
+		<td align="center" class="listlr" ondblclick="document.location='services_dhcp_edit.php?if=<?=xhtmlspecialchars($if);?>&amp;id=<?=$i;?>';">
 			<?php if (isset($mapent['arp_table_static_entry'])): ?>
 				<img src="./themes/<?= $g['theme']; ?>/images/icons/icon_alert.gif" alt="ARP Table Static Entry" width="17" height="17" border="0" alt="alert" />
 			<?php endif; ?>
 		</td>
-		<td class="listlr" ondblclick="document.location='services_dhcp_edit.php?if=<?=htmlspecialchars($if);?>&amp;id=<?=$i;?>';">
-			<?=htmlspecialchars($mapent['mac']);?>
+		<td class="listlr" ondblclick="document.location='services_dhcp_edit.php?if=<?=xhtmlspecialchars($if);?>&amp;id=<?=$i;?>';">
+			<?=xhtmlspecialchars($mapent['mac']);?>
 		</td>
-		<td class="listr" ondblclick="document.location='services_dhcp_edit.php?if=<?=htmlspecialchars($if);?>&amp;id=<?=$i;?>';">
-			<?=htmlspecialchars($mapent['ipaddr']);?>&nbsp;
+		<td class="listr" ondblclick="document.location='services_dhcp_edit.php?if=<?=xhtmlspecialchars($if);?>&amp;id=<?=$i;?>';">
+			<?=xhtmlspecialchars($mapent['ipaddr']);?>&nbsp;
 		</td>
-		<td class="listr" ondblclick="document.location='services_dhcp_edit.php?if=<?=htmlspecialchars($if);?>&amp;id=<?=$i;?>';">
-			<?=htmlspecialchars($mapent['hostname']);?>&nbsp;
+		<td class="listr" ondblclick="document.location='services_dhcp_edit.php?if=<?=xhtmlspecialchars($if);?>&amp;id=<?=$i;?>';">
+			<?=xhtmlspecialchars($mapent['hostname']);?>&nbsp;
 		</td>
-		<td class="listbg" ondblclick="document.location='services_dhcp_edit.php?if=<?=htmlspecialchars($if);?>&amp;id=<?=$i;?>';">
-			<?=htmlspecialchars($mapent['descr']);?>&nbsp;
+		<td class="listbg" ondblclick="document.location='services_dhcp_edit.php?if=<?=xhtmlspecialchars($if);?>&amp;id=<?=$i;?>';">
+			<?=xhtmlspecialchars($mapent['descr']);?>&nbsp;
 		</td>
 		<td valign="middle" class="list nowrap">
 			<table border="0" cellspacing="0" cellpadding="1" summary="icons">
 			<tr>
-			<td valign="middle"><a href="services_dhcp_edit.php?if=<?=htmlspecialchars($if);?>&amp;id=<?=$i;?>"><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_e.gif" width="17" height="17" border="0" alt="edit" /></a></td>
-			<td valign="middle"><a href="services_dhcp.php?if=<?=htmlspecialchars($if);?>&amp;act=del&amp;id=<?=$i;?>" onclick="return confirm('<?=gettext("Do you really want to delete this mapping?");?>')"><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_x.gif" width="17" height="17" border="0" alt="delete" /></a></td>
+			<td valign="middle"><a href="services_dhcp_edit.php?if=<?=xhtmlspecialchars($if);?>&amp;id=<?=$i;?>"><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_e.gif" width="17" height="17" border="0" alt="edit" /></a></td>
+			<td valign="middle"><a href="services_dhcp.php?if=<?=xhtmlspecialchars($if);?>&amp;act=del&amp;id=<?=$i;?>" onclick="return confirm('<?=gettext("Do you really want to delete this mapping?");?>')"><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_x.gif" width="17" height="17" border="0" alt="delete" /></a></td>
 			</tr>
 			</table>
 		</td>
@@ -1272,7 +1273,7 @@ include("head.inc");
 			<table border="0" cellspacing="0" cellpadding="1" summary="add">
 			<tr>
 			<td valign="middle" width="17"></td>
-			<td valign="middle"><a href="services_dhcp_edit.php?if=<?=htmlspecialchars($if);?>"><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_plus.gif" width="17" height="17" border="0" alt="add" /></a></td>
+			<td valign="middle"><a href="services_dhcp_edit.php?if=<?=xhtmlspecialchars($if);?>"><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_plus.gif" width="17" height="17" border="0" alt="add" /></a></td>
 			</tr>
 			</table>
 		</td>

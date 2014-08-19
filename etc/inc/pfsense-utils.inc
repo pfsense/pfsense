@@ -2652,6 +2652,7 @@ function get_locale_list() {
 		"en_US" => gettext("English"),
 		"pt_BR" => gettext("Portuguese (Brazil)"),
 		"tr" => gettext("Turkish"),
+		"ja" => gettext("Japanese"),
 	);
 	asort($locales);
 	return $locales;
@@ -2666,7 +2667,11 @@ function system_get_language_code() {
 	$code = str_replace("_", "-", $language);
 
 	if (empty($code))
+	{
 		$code = "en-US"; // Set default code.
+		$config['system']['language'] = "en_US"; // Set default language.
+		set_language("en_US", "UTF-8");
+	}
 
 	return $code;
 }
@@ -2703,7 +2708,7 @@ $g_languages = array (
 	"lv"    => array("codeset" => "UTF-8", "desc" => gettext("Latvian")),
 	"nb"    => array("codeset" => "UTF-8", "desc" => gettext("Norwegian (Bokmal)")),
 	"pl"    => array("codeset" => "UTF-8", "desc" => gettext("Polish")),
-	"pt_BR" => array("codeset" => "ISO-8859-1", "desc" => gettext("Portuguese (Brazil)")),
+	"pt_BR" => array("codeset" => "UTF-8", "desc" => gettext("Portuguese (Brazil)")),
 	"pt"    => array("codeset" => "UTF-8", "desc" => gettext("Portuguese (Portugal)")),
 	"ro"    => array("codeset" => "UTF-8", "desc" => gettext("Romanian")),
 	"ru"    => array("codeset" => "UTF-8", "desc" => gettext("Russian")),
@@ -2714,6 +2719,28 @@ $g_languages = array (
 	"sk"    => array("codeset" => "UTF-8", "desc" => gettext("Slovak")),
 	"cs"    => array("codeset" => "UTF-8", "desc" => gettext("Czech"))
 );
+
+function xhtmlspecialchars($string, $flags = ENT_QUOTES , $encoding = "") {
+	if(!$encoding)
+		$encoding = system_get_language_codeset();
+	return(htmlspecialchars($string, $flags, $encoding));
+}
+
+function xhtmlspecialchars_decode($string, $flags = ENT_QUOTES) {
+	return(htmlspecialchars_decode($string, $flags));
+}
+
+function xhtmlentities($string, $flags = ENT_QUOTES, $encoding = "") {
+	if(!$encoding)
+		$encoding = system_get_language_codeset();
+	return(htmlentities($string, $flags, $encoding));
+}
+
+function xhtml_entity_decode($string, $flags = ENT_QUOTES , $encoding = "") {
+	if(!$encoding)
+		$encoding = system_get_language_codeset();
+	return(html_entity_decode($string, $flags, $encoding));
+}
 
 function return_hex_ipv4($ipv4) {
 	if(!is_ipaddrv4($ipv4))

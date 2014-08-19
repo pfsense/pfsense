@@ -42,6 +42,7 @@
 require("guiconfig.inc");
 require_once("filter.inc");
 require_once("util.inc");
+require_once("pfsense-utils.inc");
 
 if (!is_array($config['load_balancer']['lbpool'])) {
 	$config['load_balancer']['lbpool'] = array();
@@ -331,7 +332,7 @@ if (is_array($pconfig['servers'])) {
 				<input name="Submit" type="submit" class="formbtn" value="<?=gettext("Save"); ?>" onclick="AllServers('serversSelect', true); AllServers('serversDisabledSelect', true);" /> 
 				<input type="button" class="formbtn" value="<?=gettext("Cancel"); ?>" onclick="history.back()" />
 				<?php if (isset($id) && $a_pool[$id] && $_GET['act'] != 'dup'): ?>
-				<input name="id" type="hidden" value="<?=htmlspecialchars($id);?>" />
+				<input name="id" type="hidden" value="<?=xhtmlspecialchars($id);?>" />
 				<?php endif; ?>
 			</td>
 		</tr>

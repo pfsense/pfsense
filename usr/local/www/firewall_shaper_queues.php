@@ -44,6 +44,7 @@ require_once("functions.inc");
 require_once("filter.inc");
 require_once("shaper.inc");
 require_once("rrd.inc");
+require_once("pfsense-utils.inc");
 
 if($_GET['reset'] <> "") {
 	mwexec("killall -9 pfctl");
@@ -69,11 +70,11 @@ $tree .= "</ul>";
 
 if ($_GET) {
 	if ($_GET['queue'])
-        	$qname = htmlspecialchars(trim($_GET['queue']));
+        	$qname = xhtmlspecialchars(trim($_GET['queue']));
         if ($_GET['interface'])
-                $interface = htmlspecialchars(trim($_GET['interface']));
+                $interface = xhtmlspecialchars(trim($_GET['interface']));
         if ($_GET['action'])
-                $action = htmlspecialchars($_GET['action']);
+                $action = xhtmlspecialchars($_GET['action']);
 
 	switch ($action) {
 	case "delete":

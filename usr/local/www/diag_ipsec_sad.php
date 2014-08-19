@@ -45,6 +45,7 @@
 
 require("guiconfig.inc");
 require("ipsec.inc");
+require_once("pfsense-utils.inc");
 
 $pgtitle = array(gettext("Status"),gettext("IPsec"),gettext("SAD"));
 $shortcut_section = "ipsec";
@@ -96,13 +97,13 @@ if ($_GET['act'] == "del") {
 						</tr>
 						<?php foreach ($sad as $sa): ?>
 						<tr>
-							<td class="listlr"><?=htmlspecialchars($sa['src']);?></td>
-							<td class="listr"><?=htmlspecialchars($sa['dst']);?></td>
-							<td class="listr"><?=htmlspecialchars(strtoupper($sa['proto']));?></td>
-							<td class="listr"><?=htmlspecialchars($sa['spi']);?></td>
-							<td class="listr"><?=htmlspecialchars($sa['ealgo']);?></td>
-							<td class="listr"><?=htmlspecialchars($sa['aalgo']);?></td>
-							<td class="listr"><?=htmlspecialchars($sa['data']);?></td>
+							<td class="listlr"><?=xhtmlspecialchars($sa['src']);?></td>
+							<td class="listr"><?=xhtmlspecialchars($sa['dst']);?></td>
+							<td class="listr"><?=xhtmlspecialchars(strtoupper($sa['proto']));?></td>
+							<td class="listr"><?=xhtmlspecialchars($sa['spi']);?></td>
+							<td class="listr"><?=xhtmlspecialchars($sa['ealgo']);?></td>
+							<td class="listr"><?=xhtmlspecialchars($sa['aalgo']);?></td>
+							<td class="listr"><?=xhtmlspecialchars($sa['data']);?></td>
 							<td class="list nowrap">
 								<?php
 									$args = "src=" . rawurlencode($sa['src']);

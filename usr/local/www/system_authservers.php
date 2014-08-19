@@ -40,6 +40,7 @@
 
 require("guiconfig.inc");
 require_once("auth.inc");
+require_once("pfsense-utils.inc");
 
 $pgtitle = array(gettext("System"), gettext("Authentication Servers"));
 $shortcut_section = "authentication";
@@ -464,10 +465,10 @@ function select_clicked() {
 							<td width="22%" valign="top" class="vncellreq"><?=gettext("Descriptive name");?></td>
 							<td width="78%" class="vtable">
 							<?php if (!isset($id)): ?>
-								<input name="name" type="text" class="formfld unknown" id="name" size="20" value="<?=htmlspecialchars($pconfig['name']);?>"/>
+								<input name="name" type="text" class="formfld unknown" id="name" size="20" value="<?=xhtmlspecialchars($pconfig['name']);?>"/>
 							<?php else: ?>
-                                                                <strong><?=htmlspecialchars($pconfig['name']);?></strong>
-                                                                <input name='name' type='hidden' id='name' value="<?=htmlspecialchars($pconfig['name']);?>"/>
+                                                                <strong><?=xhtmlspecialchars($pconfig['name']);?></strong>
+                                                                <input name='name' type='hidden' id='name' value="<?=xhtmlspecialchars($pconfig['name']);?>"/>
                                                                 <?php endif; ?>
 							</td>
 						</tr>
@@ -487,7 +488,7 @@ function select_clicked() {
 								</select>
 								<?php else: ?>
 								<strong><?=$auth_server_types[$pconfig['type']];?></strong>
-								<input name='type' type='hidden' id='type' value="<?=htmlspecialchars($pconfig['type']);?>"/>
+								<input name='type' type='hidden' id='type' value="<?=xhtmlspecialchars($pconfig['type']);?>"/>
 								<?php endif; ?>
 							</td>
 						</tr>
@@ -503,14 +504,14 @@ function select_clicked() {
 						<tr>
 							<td width="22%" valign="top" class="vncellreq"><?=gettext("Hostname or IP address");?></td>
 							<td width="78%" class="vtable">
-								<input name="ldap_host" type="text" class="formfld unknown" id="ldap_host" size="20" value="<?=htmlspecialchars($pconfig['ldap_host']);?>"/>
+								<input name="ldap_host" type="text" class="formfld unknown" id="ldap_host" size="20" value="<?=xhtmlspecialchars($pconfig['ldap_host']);?>"/>
 								<br /><?= gettext("NOTE: When using SSL, this hostname MUST match the Common Name (CN) of the LDAP server's SSL Certificate."); ?>
 							</td>
 						</tr>
 						<tr>
 							<td width="22%" valign="top" class="vncellreq"><?=gettext("Port value");?></td>
 							<td width="78%" class="vtable">
-								<input name="ldap_port" type="text" class="formfld unknown" id="ldap_port" size="5" value="<?=htmlspecialchars($pconfig['ldap_port']);?>"/>
+								<input name="ldap_port" type="text" class="formfld unknown" id="ldap_port" size="5" value="<?=xhtmlspecialchars($pconfig['ldap_port']);?>"/>
 							</td>
 						</tr>
 						<tr>
@@ -586,7 +587,7 @@ function select_clicked() {
 									<tr>
 										<td><?=gettext("Base DN:");?> &nbsp;</td>
 										<td>
-											<input name="ldap_basedn" type="text" class="formfld unknown" id="ldap_basedn" size="40" value="<?=htmlspecialchars($pconfig['ldap_basedn']);?>"/>
+											<input name="ldap_basedn" type="text" class="formfld unknown" id="ldap_basedn" size="40" value="<?=xhtmlspecialchars($pconfig['ldap_basedn']);?>"/>
 										</td>
 									</tr>
 								</table>
@@ -600,7 +601,7 @@ function select_clicked() {
 									<tr>
 										<td><?=gettext("Containers:");?> &nbsp;</td>
 										<td>
-											<input name="ldapauthcontainers" type="text" class="formfld unknown" id="ldapauthcontainers" size="40" value="<?=htmlspecialchars($pconfig['ldap_authcn']);?>"/>
+											<input name="ldapauthcontainers" type="text" class="formfld unknown" id="ldapauthcontainers" size="40" value="<?=xhtmlspecialchars($pconfig['ldap_authcn']);?>"/>
 											<input type="button" onclick="select_clicked();" value="<?=gettext("Select");?>" />
 											<br /><?=gettext("Note: Semi-Colon separated. This will be prepended to the search base dn above or you can specify full container path containing a dc= component.");?>
 											<br /><?=gettext("Example:");?> CN=Users;DC=example,DC=com
@@ -620,7 +621,7 @@ function select_clicked() {
 										</td>
 										<td>
 
-											<input name="ldap_extended_query" type="text" class="formfld unknown" id="ldap_extended_query" size="40" value="<?=htmlspecialchars($pconfig['ldap_extended_query']);?>"/>
+											<input name="ldap_extended_query" type="text" class="formfld unknown" id="ldap_extended_query" size="40" value="<?=xhtmlspecialchars($pconfig['ldap_extended_query']);?>"/>
 											<br /><?=gettext("Example:");?> &amp;(objectClass=inetOrgPerson)(mail=*@example.com)
 										</td>
 									</tr>
@@ -647,13 +648,13 @@ function select_clicked() {
 									<tr>
 										<td><?=gettext("User DN:");?> &nbsp;</td>
 										<td>
-											<input name="ldap_binddn" type="text" class="formfld unknown" id="ldap_binddn" size="40" value="<?=htmlspecialchars($pconfig['ldap_binddn']);?>"/><br />
+											<input name="ldap_binddn" type="text" class="formfld unknown" id="ldap_binddn" size="40" value="<?=xhtmlspecialchars($pconfig['ldap_binddn']);?>"/><br />
 										</td>
 									</tr>
 									<tr>
 										<td><?=gettext("Password:");?> &nbsp;</td>
 										<td>
-											<input name="ldap_bindpw" type="password" class="formfld pwd" id="ldap_bindpw" size="20" value="<?=htmlspecialchars($pconfig['ldap_bindpw']);?>"/><br />
+											<input name="ldap_bindpw" type="password" class="formfld pwd" id="ldap_bindpw" size="20" value="<?=xhtmlspecialchars($pconfig['ldap_bindpw']);?>"/><br />
 										</td>
 									</tr>
 								</table>
@@ -679,19 +680,19 @@ function select_clicked() {
 						<tr>
 							<td width="22%" valign="top" class="vncell"><?=gettext("User naming attribute");?></td>
 							<td width="78%" class="vtable">
-								<input name="ldap_attr_user" type="text" class="formfld unknown" id="ldap_attr_user" size="20" value="<?=htmlspecialchars($pconfig['ldap_attr_user']);?>"/>
+								<input name="ldap_attr_user" type="text" class="formfld unknown" id="ldap_attr_user" size="20" value="<?=xhtmlspecialchars($pconfig['ldap_attr_user']);?>"/>
 							</td>
 						</tr>
 						<tr>
 							<td width="22%" valign="top" class="vncell"><?=gettext("Group naming attribute");?></td>
 							<td width="78%" class="vtable">
-								<input name="ldap_attr_group" type="text" class="formfld unknown" id="ldap_attr_group" size="20" value="<?=htmlspecialchars($pconfig['ldap_attr_group']);?>"/>
+								<input name="ldap_attr_group" type="text" class="formfld unknown" id="ldap_attr_group" size="20" value="<?=xhtmlspecialchars($pconfig['ldap_attr_group']);?>"/>
 							</td>
 						</tr>
 						<tr>
 							<td width="22%" valign="top" class="vncell"><?=gettext("Group member attribute");?></td>
 							<td width="78%" class="vtable">
-								<input name="ldap_attr_member" type="text" class="formfld unknown" id="ldap_attr_member" size="20" value="<?=htmlspecialchars($pconfig['ldap_attr_member']);?>"/>
+								<input name="ldap_attr_member" type="text" class="formfld unknown" id="ldap_attr_member" size="20" value="<?=xhtmlspecialchars($pconfig['ldap_attr_member']);?>"/>
 							</td>
 						</tr>
 						<tr>
@@ -736,13 +737,13 @@ function select_clicked() {
 						<tr>
 							<td width="22%" valign="top" class="vncellreq"><?=gettext("Hostname or IP address");?></td>
 							<td width="78%" class="vtable">
-								<input name="radius_host" type="text" class="formfld unknown" id="radius_host" size="20" value="<?=htmlspecialchars($pconfig['radius_host']);?>"/>
+								<input name="radius_host" type="text" class="formfld unknown" id="radius_host" size="20" value="<?=xhtmlspecialchars($pconfig['radius_host']);?>"/>
 							</td>
 						</tr>
 						<tr>
 							<td width="22%" valign="top" class="vncellreq"><?=gettext("Shared Secret");?></td>
 							<td width="78%" class="vtable">
-								<input name="radius_secret" type="password" class="formfld pwd" id="radius_secret" size="20" value="<?=htmlspecialchars($pconfig['radius_secret']);?>"/>
+								<input name="radius_secret" type="password" class="formfld pwd" id="radius_secret" size="20" value="<?=xhtmlspecialchars($pconfig['radius_secret']);?>"/>
 							</td>
 						</tr>
 						<tr>
@@ -763,19 +764,19 @@ function select_clicked() {
 						<tr id="radius_auth">
 							<td width="22%" valign="top" class="vncellreq"><?=gettext("Authentication port value");?></td>
 							<td width="78%" class="vtable">
-								<input name="radius_auth_port" type="text" class="formfld unknown" id="radius_auth_port" size="5" value="<?=htmlspecialchars($pconfig['radius_auth_port']);?>"/>
+								<input name="radius_auth_port" type="text" class="formfld unknown" id="radius_auth_port" size="5" value="<?=xhtmlspecialchars($pconfig['radius_auth_port']);?>"/>
 							</td>
 						</tr>
 						<tr id="radius_acct">
 							<td width="22%" valign="top" class="vncellreq"><?=gettext("Accounting port value");?></td>
 							<td width="78%" class="vtable">
-								<input name="radius_acct_port" type="text" class="formfld unknown" id="radius_acct_port" size="5" value="<?=htmlspecialchars($pconfig['radius_acct_port']);?>"/>
+								<input name="radius_acct_port" type="text" class="formfld unknown" id="radius_acct_port" size="5" value="<?=xhtmlspecialchars($pconfig['radius_acct_port']);?>"/>
 							</td>
 						</tr>
 						<tr>
 							<td width="22%" valign="top" class="vncellreq"><?=gettext("Authentication Timeout");?></td>
 							<td width="78%" class="vtable">
-								<input name="radius_timeout" type="text" class="formfld unknown" id="radius_timeout" size="20" value="<?=htmlspecialchars($pconfig['radius_timeout']);?>"/>
+								<input name="radius_timeout" type="text" class="formfld unknown" id="radius_timeout" size="20" value="<?=xhtmlspecialchars($pconfig['radius_timeout']);?>"/>
 								<br /><?= gettext("This value controls how long, in seconds, that the RADIUS server may take to respond to an authentication request.") ?>
 								<br /><?= gettext("If left blank, the default value is 5 seconds.") ?>
 								<br /><br /><?= gettext("NOTE: If you are using an interactive two-factor authentication system, increase this timeout to account for how long it will take the user to receive and enter a token.") ?>
@@ -789,7 +790,7 @@ function select_clicked() {
 							<td width="78%">
 								<input id="submit" name="save" type="submit" class="formbtn" value="<?=gettext("Save");?>" />
 								<?php if (isset($id) && $a_server[$id]): ?>
-								<input name="id" type="hidden" value="<?=htmlspecialchars($id);?>" />
+								<input name="id" type="hidden" value="<?=xhtmlspecialchars($id);?>" />
 								<?php endif;?>
 							</td>
 						</tr>
@@ -828,9 +829,9 @@ function select_clicked() {
 						<?php
 							$i = 0;
 							foreach($a_server as $server):
-								$name = htmlspecialchars($server['name']);
-								$type = htmlspecialchars($auth_server_types[$server['type']]);
-								$host = htmlspecialchars($server['host']);
+								$name = xhtmlspecialchars($server['name']);
+								$type = xhtmlspecialchars($auth_server_types[$server['type']]);
+								$host = xhtmlspecialchars($server['host']);
 						?>
 						<tr <?php if ($i < (count($a_server) - 1)): ?> ondblclick="document.location='system_authservers.php?act=edit&amp;id=<?=$i;?>'" <?php endif; ?>>
 							<td class="listlr"><?=$name?>&nbsp;</td>
@@ -863,7 +864,7 @@ function select_clicked() {
 <?php include("fend.inc"); ?>
 <script type="text/javascript">
 //<![CDATA[
-server_typechange('<?=htmlspecialchars($pconfig['type']);?>');
+server_typechange('<?=xhtmlspecialchars($pconfig['type']);?>');
 <?php if (!isset($id) || $pconfig['type'] == "ldap"): ?>
 ldap_bindchange();
 if (document.getElementById("ldap_port").value == "")

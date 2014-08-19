@@ -142,15 +142,15 @@ div.niceTitle p
 }
 
 a:link {
-	color: #000000;
+	color: #550000;
 }
 
 a:visited {
-	color: #000000;
+	color: #550000;
 }
 
 a:active {
-	color: #000000;
+	color: #550000;
 }
 
 a:hover {
@@ -389,7 +389,7 @@ table#marquee div#container div#scroller {
 #navigation ul li {
 	float: left;
 	position: relative;
-	padding-right: 27px;
+	width: 6.2em;
 	top: 0px;
 }
 
@@ -470,11 +470,6 @@ table#marquee div#container div#scroller {
 	background-image: url(images/mainmenu-down.gif);
 	background-position: 5% 50%;
 	background-repeat: no-repeat;
-}
-
-#navigation ul li:last-child div, #navigation ul li:last-child:hover div {
-	background-image: none;
-	font-weight: bold;
 }
 
 #navigation ul li {

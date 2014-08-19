@@ -336,6 +336,14 @@ if(! $g['disablehelpmenu']) {
 						?>
 						</ul>
 					</li>
+					<li class="drop">
+						<div><?php echo gettext("Gold"); ?></div>
+						<ul id="diag" class="subdrop">
+						<?php
+							output_menu($gold_menu, "_blank");
+						?>
+						</ul>
+					</li>
 					<?php if(! $g['disablehelpmenu']): ?>
 					<li class="lastdrop">
 						<div><?php echo gettext("Help"); ?></div>
@@ -346,9 +354,6 @@ if(! $g['disablehelpmenu']) {
 						</ul>
 					</li>
 					<?php endif; ?>
-					<li class="drop">
-						<div><a href="https://www.pfsense.org/gold/"><?php echo gettext("Gold"); ?></a></div>
-					</li>
 				</ul>
 			</div>
 

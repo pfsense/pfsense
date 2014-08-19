@@ -427,7 +427,7 @@ table#marquee div#container div#scroller {
 	text-decoration: none;
 }
 
-#navigation ul li, #navigation ul li a {
+#navigation ul li {
 	background-color: transparent;
 	color: #FFF;
 }

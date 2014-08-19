@@ -31,7 +31,7 @@
         POSSIBILITY OF SUCH DAMAGE.
 */
 </copyright>
-<totalsteps>9</totalsteps>
+<totalsteps>10</totalsteps>
 <step>
 	<id>1</id>
 	<title>pfSense Setup Wizard</title>
@@ -51,6 +51,18 @@
 </step>
 <step>
 	<id>2</id>
+	<title>Bling your pfSense with pfSense Gold</title>
+	<disableheader>true</disableheader>
+	<description>Feel the power of a pfSense Gold subscription. Receive special benefits while supporting ongoing development of the Open Source pfSense project.&lt;br/&gt; &lt;br/&gt; Benefits include access to our AutoConfigBackup secure cloud based backup service for up to 10 hosts, pre-publication access to the updated pfSense: The Definitive Guide book in PDF, fully updated for the pfSense 2.1 release, and a monthly online MeetUp! Video conference to discuss and demonstrate advanced features and architectures using pfSense. &lt;br/&gt; &lt;br/&gt; Go to &lt;a href="https://www.pfsense.org/gold" target="_blank"&gt; pfSense Gold Subscriptions&lt;/a&gt; to sign up now &lt;br/&gt; &lt;br/&gt; </description>
+	<fields>
+		<field>
+			<name>Next</name>
+			<type>submit</type>
+		</field>
+	</fields>
+</step>
+<step>
+	<id>3</id>
 	<title>General Information</title>
 	<description>On this screen you will set the general pfSense parameters.</description>
 	<fields>
@@ -129,7 +141,7 @@
 	</stepsubmitphpaction>
 </step>
 <step>
-	<id>3</id>
+	<id>4</id>
 	<title>Time Server Information</title>
 	<description>Please enter the time, date and time zone.</description>
 	<fields>
@@ -161,7 +173,7 @@
 	</stepsubmitphpaction>
 </step>
 <step>
-	<id>4</id>
+	<id>5</id>
 	<disableallfieldsbydefault>true</disableallfieldsbydefault>
 	<title>Configure WAN Interface</title>
 	<description>On this screen we will configure the Wide Area Network information.</description>
@@ -483,13 +495,13 @@
 				$config['interfaces']['wan']['ipaddr'] = $_POST['selectedtype'];
 				write_config();
 				if(!$config['interfaces']['lan']) 
-					Header("Location: /wizard.php?xml=setup_wizard.xml&stepid=5&next=Next");
+					Header("Location: /wizard.php?xml=setup_wizard.xml&stepid=6&next=Next");
 			}
 		]]>
 	</stepsubmitbeforesave>
 </step>
 <step>
-	<id>5</id>
+	<id>6</id>
 	<title>Configure LAN Interface</title>
 	<description>On this screen we will configure the Local Area Network information.</description>
 	<fields>
@@ -534,7 +546,7 @@
 	</stepsubmitphpaction>
 </step>
 <step>
-	<id>6</id>
+	<id>7</id>
 	<title>Set Admin WebGUI Password</title>
 	<description>On this screen we will set the admin password, which is used to access the WebGUI and also SSH services if you wish to enable them.</description>
 	<fields>
@@ -566,7 +578,7 @@
 	</stepsubmitphpaction>
 </step>
 <step>
-	<id>7</id>
+	<id>8</id>
 	<title>Reload configuration</title>
 	<disableheader>true</disableheader>
 	<description>Click 'Reload' to reload pfSense with new changes.</description>
@@ -578,11 +590,11 @@
 	</fields>
 </step>
 <step>
-	<id>8</id>
+	<id>9</id>
 	<title>Reload in progress</title>
 	<description>
 		A reload is now in progress.  Please wait. &lt;p&gt; 
-		&lt;meta http-equiv="refresh" content="5; url=wizard.php?xml=setup_wizard.xml&amp;stepid=8" &gt;
+		&lt;meta http-equiv="refresh" content="5; url=wizard.php?xml=setup_wizard.xml&amp;stepid=9" &gt;
 		&lt;p&gt;
 		The wizard will redirect to the next step once the reload is completed.
 	</description>
@@ -628,7 +640,7 @@
 	</stepafterformdisplay>
 </step>
 <step>
-	<id>9</id>
+	<id>10</id>
 	<title>Wizard completed.</title>
 	<stepbeforeformdisplay>
 	<![CDATA[

@@ -150,15 +150,15 @@ body {
   background-color: #7f7f7f;
 }
 a:link {
-	color: #550000;
+	color: #000000;
 }
 
 a:visited {
-	color: #550000;
+	color: #000000;
 }
 
 a:active {
-	color: #550000;
+	color: #000000;
 }
 
 a:hover {
@@ -428,7 +428,7 @@ table#marquee div#container div#scroller {
 #navigation ul li {
 	float: left;
 	position: relative;
-	width: 6.2em;
+	padding-right: 27px;
 	top: 0px;
 }
 
@@ -509,6 +509,11 @@ table#marquee div#container div#scroller {
 	background-image: url(images/mainmenu-down.gif);
 	background-position: 5% 50%;
 	background-repeat: no-repeat;
+}
+
+#navigation ul li:last-child div, #navigation ul li:last-child:hover div {
+	background-image: none;
+	font-weight: bold;
 }
 
 #navigation ul li {

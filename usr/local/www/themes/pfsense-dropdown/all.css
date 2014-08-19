@@ -75,6 +75,7 @@ form {
 }
 a {
 	text-decoration: none;
+	color:#000000;
 }
 form input {
 	font-size: 1.1em;

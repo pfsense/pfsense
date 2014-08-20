@@ -36,12 +36,13 @@ require_once("captiveportal.inc");
 require_once("service-utils.inc");
 require_once("ipsec.inc");
 require_once("vpn.inc");
+require_once("pfsense-utils.inc");
 require_once("/usr/local/www/widgets/include/services_status.inc");
 
 $services = get_services();
 
 if(isset($_POST['servicestatusfilter'])) {
-	$config['widgets']['servicestatusfilter'] = htmlspecialchars($_POST['servicestatusfilter'], ENT_QUOTES | ENT_HTML401);
+	$config['widgets']['servicestatusfilter'] = xhtmlspecialchars($_POST['servicestatusfilter'], ENT_QUOTES | ENT_HTML401);
 	write_config("Saved Service Status Filter via Dashboard");
 	header("Location: ../../index.php");
 }

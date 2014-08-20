@@ -174,11 +174,11 @@ include("head.inc");
 						<?PHP	if (!empty($_GET["newver"])) {
 							echo gettext("Restore from Configuration Backup");
 							$target_config = $_GET["newver"]; ?>
-							<input type="hidden" name="newver" value="<?PHP echo htmlspecialchars($_GET["newver"]); ?>" />
+							<input type="hidden" name="newver" value="<?PHP echo xhtmlspecialchars($_GET["newver"]); ?>" />
 						<?PHP	} elseif (!empty($_GET["rmver"])) {
 							echo gettext("Remove Configuration Backup");
 							$target_config = $_GET["rmver"]; ?>
-							<input type="hidden" name="rmver" value="<?PHP echo htmlspecialchars($_GET["rmver"]); ?>" />
+							<input type="hidden" name="rmver" value="<?PHP echo xhtmlspecialchars($_GET["rmver"]); ?>" />
 						<?PHP	} ?>
 							<br /><strong><?PHP echo gettext("Target Configuration"); ?>:</strong>
 							<?PHP echo sprintf(gettext('Timestamp %1$s'), date(gettext("n/j/y H:i:s"), $target_config)); ?>

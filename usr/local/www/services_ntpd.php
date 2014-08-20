@@ -265,7 +265,7 @@ include("head.inc");
 		echo "<option value='{$iface}'";
 		if (is_array($pconfig['interface']))
 			if (in_array($iface, $pconfig['interface'])) echo " selected=\"selected\"";
-		echo ">" . htmlspecialchars($ifacename) . "</option>\n";
+		echo ">" . xhtmlspecialchars($ifacename) . "</option>\n";
 	} ?>
 					</select>
 					<br />

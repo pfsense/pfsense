@@ -384,7 +384,7 @@ table#marquee div#container div#scroller {
 #navigation ul li {
 	float: left;
 	position: relative;
-	width: 7.5em;
+	padding: 0 25px 0 15px;
 }
 #navigation ul li div {
 	font-size: 1em;

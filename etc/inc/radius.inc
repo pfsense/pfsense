@@ -494,7 +494,11 @@ class Auth_RADIUS extends PEAR {
             case RADIUS_FRAMED_ROUTING:
                 $this->attributes['framed_routing'] = radius_cvt_int($data);
                 break;
-
+                
+            case RADIUS_FRAMED_ROUTE:
+                $this->attributes['framed_route'] = radius_cvt_string($data);
+                break;
+                
             case RADIUS_FILTER_ID:
                 $this->attributes['filter_id'] = radius_cvt_string($data);
                 break;

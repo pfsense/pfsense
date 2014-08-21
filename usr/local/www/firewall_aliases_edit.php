@@ -243,33 +243,41 @@ if ($_POST) {
 					$final_address_details[] = sprintf(gettext("Entry added %s"), date('r'));
 
 				if(file_exists("{$temp_filename}/aliases")) {
-					$file_contents = file_get_contents("{$temp_filename}/aliases");
-					$file_contents = str_replace("#", "\n#", $file_contents);
-					$file_contents_split = explode("\n", $file_contents);
-					foreach($file_contents_split as $fc) {
-						// Stop at 3000 items, aliases larger than that tend to break both pf and the WebGUI.
-						if ($address_count >= 3000)
-							break;
-						$tmp = trim($fc);
-						if(stristr($fc, "#")) {
-							$tmp_split = explode("#", $tmp);
-							$tmp = trim($tmp_split[0]);
-						}
-						$tmp = trim($tmp);
-						if ($_POST['type'] == "url")
-							$is_valid = (is_ipaddr($tmp) || is_subnet($tmp));
-						else
+					if ($_POST['type'] == "url")
+						$address = parse_file_subnets("{$temp_filename}/aliases");
+					else {				
+						$address = array();
+						$file_contents = file_get_contents("{$temp_filename}/aliases");
+						$file_contents = str_replace("#", "\n#", $file_contents);
+						$file_contents_split = explode("\n", $file_contents);
+						foreach($file_contents_split as $fc) {
+							// Stop at 3000 items, aliases larger than that tend to break both pf and the WebGUI.
+							if ($address_count >= 3000)
+								break;
+							$tmp = trim($fc);
+							if(stristr($fc, "#")) {
+								$tmp_split = explode("#", $tmp);
+								$tmp = trim($tmp_split[0]);
+							}
+							if(stristr($fc, " ")) {
+								$tmp_split = explode(" ", $tmp);
+								$tmp = trim($tmp_split[0]);
+							}
+							$tmp = trim($tmp);
 							$is_valid = (is_port($tmp) || is_portrange($tmp));
-
-						if (!empty($tmp) && $is_valid) {
-							$address[] = $tmp;
-							$isfirst = 1;
-							$address_count++;
+							if (!empty($tmp) && $is_valid) {
+								$address[] = $tmp;
+								$address_count++;
+							}
 						}
 					}
-					if($isfirst == 0) {
+					if(count($address) == 0) {
 						/* nothing was found */
 						$input_errors[] = sprintf(gettext("You must provide a valid URL. Could not fetch usable data from '%s'."), $_POST['address' . $x]);
+					}
+					if(count($address) >= 3000) {
+						/* nothing was found */
+						$input_errors[] = sprintf(gettext("List to large, >= 3000 items, aliases larger than that tend to break both pf and the WebGUI. '%s'."), $_POST['address' . $x]);
 					}
 					mwexec("/bin/rm -rf " . escapeshellarg($temp_filename));
 				} else {

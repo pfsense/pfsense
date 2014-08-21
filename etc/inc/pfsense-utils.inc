@@ -1845,6 +1845,34 @@ function update_alias_names_upon_change($section, $field, $new_alias_name, $orig
 
 }
 
+function parse_file_subnets($filename) {
+	/* retrieves ip subnets and ip's from a string of data
+	 * $file_contents: a string that contains for example blocklist like DROP:  http://www.spamhaus.org/drop/drop.txt
+	 * RETURNS an array of ip subnets and ip's */
+	$address = array();
+	$fd = @fopen($filename, 'r');
+	if (!$fd) {
+		log_error(gettext("Could not process aliases from alias: {$alias_url}"));
+		return $address;
+	}
+	/* NOTE: fgetss() is not a typo RTFM before being smart */
+	while (($fc = fgetss($fd)) !== FALSE) {
+		$tmp = trim($fc, " \t\n\r");
+		if (empty($tmp))
+			continue;
+		$tmp_str = strstr($tmp, '#', true);
+		if (!empty($tmp_str))
+			$tmp = $tmp_str;
+		$tmp_str = strstr($tmp, ' ', true);
+		if (!empty($tmp_str))
+			$tmp = $tmp_str;
+		if (is_ipaddr($tmp) || is_subnet($tmp))
+			$address[] = $tmp;
+	}
+	fclose($fd);
+	return $address;
+}
+
 function update_alias_url_data() {
 	global $config, $g;
 
@@ -1876,25 +1904,8 @@ function update_alias_url_data() {
 						continue;
 				}
 				if (file_exists("{$temp_filename}/aliases")) {
-					$fd = @fopen("{$temp_filename}/aliases", 'r');
-					if (!$fd) {
-						log_error(gettext("Could not process aliases from alias: {$alias_url}"));
-						continue;
-					}
-					/* NOTE: fgetss() is not a typo RTFM before being smart */
-					while (($fc = fgetss($fd)) !== FALSE) {
-						$tmp = trim($fc, " \t\n\r");
-						if (empty($tmp))
-							continue;
-						$tmp_str = strstr($tmp, '#', true);
-						if (!empty($tmp_str))
-							$tmp = $tmp_str;
-						if ($isfirst == 1)
-							$address .= ' ';
-						$address .= $tmp;
-						$isfirst = 1;
-					}
-					fclose($fd);
+					$subnets = parse_file_subnets("{$temp_filename}/aliases");
+					$address = join(',', $subnets);
 					mwexec("/bin/rm -rf {$temp_filename}");
 				}
 			}

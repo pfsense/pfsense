@@ -132,10 +132,10 @@ function cData($parser, $data) {
 		}
 
 		if (is_string($ptr)) {
-			$ptr .= xhtml_entity_decode($data);
+			$ptr .= xhtml_entity_decode($data, ENT_QUOTES, 'UTF-8');
 		} else {
 			if (trim($data, " ") != "") {
-				$ptr = xhtml_entity_decode($data);
+				$ptr = xhtml_entity_decode($data, ENT_QUOTES, 'UTF-8');
 				$havedata++;
 			}
 		}
@@ -250,9 +250,9 @@ function dump_xml_config_sub($arr, $indent) {
 							|| (substr($ent, 0, 11) == "ldap_basedn")
 							|| (substr($ent, 0, 18) == "ldap_authcn")
 							|| (substr($ent, 0, 19) == "ldap_extended_query")) {
-							$xmlconfig .= "<$ent><![CDATA[" . xhtmlentities($cval) . "]]></$ent>\n";
+							$xmlconfig .= "<$ent><![CDATA[" . xhtmlentities($cval, ENT_QUOTES, 'UTF-8') . "]]></$ent>\n";
 						} else {
-							$xmlconfig .= "<$ent>" . xhtmlentities($cval) . "</$ent>\n";
+							$xmlconfig .= "<$ent>" . xhtmlentities($cval, ENT_QUOTES, 'UTF-8') . "</$ent>\n";
 						}
 					}
 				}
@@ -281,9 +281,9 @@ function dump_xml_config_sub($arr, $indent) {
 				|| (substr($ent, 0, 11) == "ldap_basedn")
 				|| (substr($ent, 0, 18) == "ldap_authcn")
 				|| (substr($ent, 0, 19) == "ldap_extended_query"))
-					$xmlconfig .= "<$ent><![CDATA[" . xhtmlentities($val) . "]]></$ent>\n";
+					$xmlconfig .= "<$ent><![CDATA[" . xhtmlentities($val, ENT_QUOTES, 'UTF-8') . "]]></$ent>\n";
 				else
-					$xmlconfig .= "<$ent>" . xhtmlentities($val) . "</$ent>\n";
+					$xmlconfig .= "<$ent>" . xhtmlentities($val, ENT_QUOTES, 'UTF-8') . "</$ent>\n";
 			}
 		}
 	}

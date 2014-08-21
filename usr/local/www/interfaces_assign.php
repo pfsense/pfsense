@@ -377,7 +377,7 @@ if(file_exists("/var/run/interface_mismatch_reboot_needed"))
 		else
 			$savemsg = gettext("Reboot is needed. Please apply the settings in order to reboot.");
 	} else {
-		$savemsg = gettext("Interface mismatch detected.  Please resolve the mismatch and click Save.  The firewall will reboot afterwards.");
+		$savemsg = gettext("Interface mismatch detected.  Please resolve the mismatch and click 'Apply changes'.  The firewall will reboot afterwards.");
 	}
 ?>
 

@@ -179,7 +179,7 @@ if ($_POST) {
 
 		if($_POST['language'] && $_POST['language'] != $config['system']['language']) {
 			$config['system']['language'] = $_POST['language'];
-			set_language($config['system']['language']);
+			set_language($config['system']['language'], system_get_language_codeset());
 		}
 
 		/* pfSense themes */

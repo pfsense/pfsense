@@ -1044,7 +1044,7 @@ include("head.inc");
 				</div>
 				<div id="showmaccontrol" style="display:none">
 					<input name="mac_allow" type="text" class="formfld unknown" id="mac_allow" size="20" value="<?=xhtmlspecialchars($pconfig['mac_allow']);?>" /><br />
-					<?=gettext("Enter a list of partial MAC addresses to allow, comma separated, no spaces, such as ");?>00:00:00,01:E5:FF
+					<?=gettext("Enter a list of partial MAC addresses to allow, comma separated, no spaces, such as ");?>00:00:00,01:E5:FF<br />
 					<input name="mac_deny" type="text" class="formfld unknown" id="mac_deny" size="20" value="<?=xhtmlspecialchars($pconfig['mac_deny']);?>" /><br />
 					<?=gettext("Enter a list of partial MAC addresses to deny access, comma separated, no spaces, such as ");?>00:00:00,01:E5:FF
 				</div>

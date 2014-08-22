@@ -893,6 +893,10 @@ EOD;
 	if (!file_exists("{$g['dhcpd_chroot_path']}/var/db/dhcpd.leases"))
 		@touch("{$g['dhcpd_chroot_path']}/var/db/dhcpd.leases");
 
+	/* make sure there isn't a stale dhcpd.pid file, which can make dhcpd fail to start.   */
+	/* if we get here, dhcpd has been killed and is not started yet                        */ 
+	unlink_if_exists("{$g['dhcpd_chroot_path']}{$g['varrun_path']}/dhcpd.pid");
+
 	/* fire up dhcpd in a chroot */
 	if (count($dhcpdifs) > 0) {
 		mwexec("/usr/local/sbin/dhcpd -user dhcpd -group _dhcp -chroot {$g['dhcpd_chroot_path']} -cf /etc/dhcpd.conf -pf {$g['varrun_path']}/dhcpd.pid " .
@@ -1299,6 +1303,10 @@ EOD;
 	/* create an empty leases v6 database */
 	if (!file_exists("{$g['dhcpd_chroot_path']}/var/db/dhcpd6.leases"))
 		@touch("{$g['dhcpd_chroot_path']}/var/db/dhcpd6.leases");
+
+        /* make sure there isn't a stale dhcpdv6.pid file, which may make dhcpdv6 fail to start.  */
+        /* if we get here, dhcpdv6 has been killed and is not started yet                         */
+        unlink_if_exists("{$g['dhcpd_chroot_path']}{$g['varrun_path']}/dhcpdv6.pid");
 
 	/* fire up dhcpd in a chroot */
 	if (count($dhcpdv6ifs) > 0) {

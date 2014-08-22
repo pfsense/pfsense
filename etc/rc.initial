@@ -61,9 +61,9 @@ fi
 product=`grep product_name /etc/inc/globals.inc | cut -d'"' -f4`
 hidebanner=`grep hidebanner /etc/inc/globals.inc | cut -d'"' -f4`
 
-# Check to see if SSH is listening.
-SSHD=`/usr/bin/sockstat -4l | grep "*.22" | wc -l`
-if [ "$SSHD" -gt 0 ]; then
+# Check to see if SSH is running.
+SSHD=`/bin/pgrep sshd -F /var/run/sshd.pid`
+if [ "$?" == "0" ]; then
 	sshd_option="14) Disable Secure Shell (sshd)";
 else
 	sshd_option="14) Enable Secure Shell (sshd)";

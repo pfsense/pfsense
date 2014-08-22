@@ -1366,6 +1366,24 @@ function filter_nat_rules_automatic_tonathosts($with_descr = false) {
 		if($oc['sa']) {
 			$tonathosts[] = "{$oc['sa']}/{$oc['sn']}";
 			$descriptions[] = $oc['descr'];
+			if (isset($oc['vips']) && is_array($oc['vips'])) {
+				$if_subnets = array("{$oc['sa']}/{$oc['sn']}");
+				foreach ($oc['vips'] as $vip) {
+					if (!is_ipaddrv4($vip['ip']))
+						continue;
+
+					foreach ($if_subnets as $subnet)
+						if (ip_in_subnet($vip['ip'], $subnet))
+							continue 2;
+
+					$network = gen_subnet($vip['ip'], $vip['sn']);
+					$tonathosts[] = $network . '/' . $vip['sn'];
+					$descriptions[] = "Virtual IP ({$oc['descr']})";
+					$if_subnets[] = $network . '/' . $vip['sn'];
+					unset($network);
+				}
+				unset($if_subnets);
+			}
 		}
 	}
 

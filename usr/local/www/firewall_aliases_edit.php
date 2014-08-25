@@ -643,7 +643,7 @@ if (empty($tab)) {
 		<td valign="top" class="vncellreq"><?=gettext("Name"); ?></td>
 		<td class="vtable">
 			<input name="origname" type="hidden" id="origname" class="formfld unknown" size="40" value="<?=htmlspecialchars($pconfig['name']);?>" />
-			<input name="name" type="text" id="name" class="formfld unknown" size="40" value="<?=htmlspecialchars($pconfig['name']);?>" />
+			<input name="name" type="text" id="name" class="formfld unknown" size="40" maxlength="31" value="<?=htmlspecialchars($pconfig['name']);?>" />
 			<?php if (isset($id) && $a_aliases[$id]): ?>
 				<input name="id" type="hidden" value="<?=htmlspecialchars($id);?>" />
 			<?php endif; ?>

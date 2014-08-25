@@ -59,9 +59,6 @@ if ($_POST) {
 	if (isset($_POST["refreshinterval"])) {
 		$a_config["refreshinterval"] = $_POST["refreshinterval"];
 	}
-	if (isset($_POST["scale_type"])) {
-		$a_config["scale_type"] = $_POST["scale_type"];
-	}
 	$a_config["shown"]["item"] = array();
 	foreach ($ifdescrs as $ifname => $ifdescr) {
 		$state = $_POST["shown"][$ifname];
@@ -89,12 +86,6 @@ if (isset($a_config["refreshinterval"])) {
 	$refreshinterval = 10;
 }
 
-if (isset($a_config["scale_type"])) {
-        $scale_type = $a_config["scale_type"];
-} else {
-        $scale_type = "up";
-}
-
 ?>
 <input type="hidden" id="traffic_graphs-config" name="traffic_graphs-config" value="" />
 
@@ -109,22 +100,6 @@ if (isset($a_config["scale_type"])) {
 	<?php foreach ($ifdescrs as $ifname => $ifdescr) { ?>
 		<input type="hidden" name="shown[<?= $ifname ?>]" value="<?= $shown[$ifname] ? "show" : "hide" ?>" />
 	<?php } ?>
-	Default AutoScale:
-		<?php 
-			$scale_type_up="checked=\"checked\"";
-			$scale_type_follow="";
-			if (isset($config["widgets"]["trafficgraphs"]["scale_type"])) {
-				$selected_radio = $config["widgets"]["trafficgraphs"]["scale_type"];
-				if ($selected_radio == "up") {
-					$scale_type_up = "checked=\"checked\"";
-				}
-				else if ($selected_radio == "follow") {
-					$scale_type_follow = "checked=\"checked\"";
-				}
-			}
-		?>
-	<input name="scale_type_up" class="radio" type="radio" id="scale_type_up" value="up" <?php echo $scale_type_up; ?> onchange="updateGraphDisplays();" /> <span>up</span>
-	<input name="scale_type_follow" class="radio" type="radio" id="scale_type_follow" value="follow" <?php echo $scale_type_follow; ?> onchange="updateGraphDisplays();" /> <span>follow</span><br /><br />
 	Refresh Interval:
 	<select name="refreshinterval" class="formfld" id="refreshinterval" onchange="updateGraphDisplays();">
 		<?php for ($i = 1; $i <= 10; $i += 1) { ?>

@@ -98,12 +98,6 @@ if (isset($a_config["scale_type"])) {
 ?>
 <input type="hidden" id="traffic_graphs-config" name="traffic_graphs-config" value="" />
 
-<?php
-	//set variables for traffic graph
-	$width = "100%";
-	$height = "150";
-?>
-
 <div id="traffic_graphs-settings" class="widgetconfigdiv" style="display:none;">
 <form action="/widgets/widgets/traffic_graphs.widget.php" method="post" name="iform" id="iform">
 	<?php foreach ($ifdescrs as $ifname => $ifdescr) { ?>
@@ -173,11 +167,9 @@ foreach ($ifdescrs as $ifname => $ifdescr) {
 				<div style="clear:both;"></div>
 			</div>
 			<div id="<?=$ifname;?>graphdiv" style="display:<?php echo $graphdisplay;?>">
-				<object data="graph.php?ifnum=<?=$ifname;?>&amp;ifname=<?=rawurlencode($ifdescr);?>&amp;timeint=<?=$refreshinterval;?>&amp;initdelay=<?=($graphcounter+1) * 2;?>">
+				<object data="graph.php?ifnum=<?=$ifname;?>&amp;ifname=<?=rawurlencode($ifdescr);?>&amp;timeint=<?=$refreshinterval;?>&amp;initdelay=<?=($graphcounter+1) * 2;?>" height="100%" width="100%">
 					<param name="id" value="graph" />
 					<param name="type" value="image/svg+xml" />
-					<param name="width" value="<? echo $width; ?>" />
-					<param name="height" value="<? echo $height; ?>" />
 					<param name="pluginspage" value="http://www.adobe.com/svg/viewer/install/auto" />
 				</object>
 			</div>

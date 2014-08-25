@@ -102,7 +102,7 @@ if ($_GET['act'] == "delph1")
 
 if ($_GET['act'] == "delph2")
 {
-	if ($a_phase1[$_GET['p1index']] && $a_phase2[$_GET['p2index']]) {
+	if ($a_phase1[$_GET['p1index']]) {
 		/* remove the phase2 entry */
 		foreach ($a_phase2 as $ph2idx => $ph2) {
 			if ($ph2['uniqid'] == $_GET['p2index']) {

@@ -55,11 +55,7 @@ $ifnum = get_real_interface($ifnum);
 $ifname=@$_GET["ifname"]?$_GET["ifname"]:"Interface $ifnum";  //Interface name that will be showed on top right of graph
 
 /********* Other conf *******/
-if (isset($config["widgets"]["trafficgraphs"]["scale_type"]))
-	$scale_type = $config["widgets"]["trafficgraphs"]["scale_type"];
-else
-	$scale_type = "up";
-
+$scale_type="up";               //Autoscale default setup : "up" = only increase scale; "follow" = increase and decrease scale according to current graphed datas
 $nb_plot=120;                   //NB plot in graph
 if ($_GET["timeint"])
 	$time_interval = $_GET["timeint"];		//Refresh time Interval

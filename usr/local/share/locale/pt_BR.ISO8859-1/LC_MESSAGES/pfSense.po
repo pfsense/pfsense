@@ -29655,7 +29655,7 @@ msgstr "Threshold"
 
 #: usr/local/www/services_igmpproxy_edit.php:211
 #: usr/local/www/services_igmpproxy_edit.php:213
-msgid "Defines the TTL threshold for  the  network  interface.  Packets with  a lower TTL than the threshols value will be ignored. This setting is optional, and by default the threshold is 1."
+msgid "Defines the TTL threshold for  the  network  interface.  Packets with  a lower TTL than the threshold value will be ignored. This setting is optional, and by default the threshold is 1."
 msgstr "Define o threshold TTL para a interface de rede. Pacotes com um TTL mais baixo que os valores de thresholds serão ignorados. Essa configuração é opcional e, por padrão, o threshold é 1."
 
 #: usr/local/www/services_igmpproxy_edit.php:218

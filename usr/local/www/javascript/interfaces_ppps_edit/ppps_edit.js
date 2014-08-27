@@ -187,7 +187,7 @@ function country_list() {
 function providers_list() {
 	jQuery('#provider_list option').remove();
 	jQuery('#providerplan option').remove();
-	jQuery('#provider').append(new Option('', ''));
+	jQuery('#provider_list').append(new Option('', ''));
 	jQuery.ajax("getserviceproviders.php",{
 		type: 'POST',
 		data: {country : jQuery('#country').val()},

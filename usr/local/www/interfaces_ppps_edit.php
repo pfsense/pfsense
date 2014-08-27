@@ -500,7 +500,7 @@ $types = array("select" => gettext("Select"), "ppp" => "PPP", "pppoe" => "PPPoE"
 					<tr id="trprovider" style="display:none">
 						<td><?= gettext("Provider:"); ?> &nbsp;&nbsp;</td>
 						<td>
-							<select class="formselect" id="provider" onchange="providerplan_list()">
+							<select class="formselect" id="provider_list" onchange="providerplan_list()">
 								<option></option>
 							</select>
 						</td>

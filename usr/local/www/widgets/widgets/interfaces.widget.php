@@ -89,9 +89,13 @@ require_once("/usr/local/www/widgets/include/interfaces.inc");
 						</tr>
 						<tr>
 							<td class="listr"><b>
-								<div id="<?php echo $ifname;?>-ip" style="display:inline"><?=htmlspecialchars($ifinfo['ipaddr']);?> </div>
-								<br />
-								<div id="<?php echo $ifname;?>-ipv6" style="display:inline"><?=htmlspecialchars($ifinfo['ipaddrv6']);?> </div>
+								<?php if($ifinfo['ipaddr'] != "") { ?>
+                                                                	<div id="<?php echo $ifname;?>-ip" style="display:inline"><?=htmlspecialchars($ifinfo['ipaddr']);?> </div>
+                                                                	<br />
+								<?php }
+								if ($ifinfo['ipaddrv6'] != "") { ?>
+									<div id="<?php echo $ifname;?>-ipv6" style="display:inline"><?=htmlspecialchars($ifinfo['ipaddrv6']);?> </div>
+								<?php } ?>
 							</b></td>
 						</tr>
 				</tr>

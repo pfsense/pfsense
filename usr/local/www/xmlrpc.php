@@ -369,8 +369,13 @@ function filter_configure_xmlrpc($raw_params) {
 	relayd_configure();
 	require_once("openvpn.inc");
 	openvpn_resync_all();
-	services_dhcpd_configure();
-	services_dnsmasq_configure();
+	if (isset($config['dnsmasq']['enable']))
+		services_dnsmasq_configure();
+	else
+		# Both calls above run services_dhcpd_configure(), then we just
+		# need to call it when them are not called to avoid restart dhcpd
+		# twice, as described on ticket #3797
+		services_dhcpd_configure();
 	local_sync_accounts();
 
 	return $xmlrpc_g['return']['true'];

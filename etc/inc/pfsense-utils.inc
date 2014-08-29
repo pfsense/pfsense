@@ -1845,16 +1845,22 @@ function update_alias_names_upon_change($section, $field, $new_alias_name, $orig
 
 }
 
-function parse_file_subnets($filename) {
-	/* retrieves ip subnets and ip's from a string of data
-	 * $file_contents: a string that contains for example blocklist like DROP:  http://www.spamhaus.org/drop/drop.txt
-	 * RETURNS an array of ip subnets and ip's */
-	$address = array();
+function parse_aliases_file($filename, $use_subnets, $use_ports, $max_items = -1) {
+	/*
+	 * $filename = file to process for example blocklist like DROP:  http://www.spamhaus.org/drop/drop.txt
+	 * $use_subnets = if set to TRUE subnets and ips will be returned
+	 * $use_ports = if set to TRUE port-ranges and ports will be returned
+	 * $max_items = sets the maximum amount of valid items to load, -1 the default defines there is no limit.
+	 * 
+	 * RETURNS an array of ip subnets and ip's or ports and port-ranges, returns NULL upon a error conditions (file not found)
+	 */
+	$items = array();
 	$fd = @fopen($filename, 'r');
 	if (!$fd) {
 		log_error(gettext("Could not process aliases from alias: {$alias_url}"));
-		return $address;
+		return null;
 	}
+	$item_count = 0;
 	/* NOTE: fgetss() is not a typo RTFM before being smart */
 	while (($fc = fgetss($fd)) !== FALSE) {
 		$tmp = trim($fc, " \t\n\r");
@@ -1866,11 +1872,17 @@ function parse_file_subnets($filename) {
 		$tmp_str = strstr($tmp, ' ', true);
 		if (!empty($tmp_str))
 			$tmp = $tmp_str;
-		if (is_ipaddr($tmp) || is_subnet($tmp))
-			$address[] = $tmp;
+		$valid = ($use_subnets && (is_ipaddr($tmp) || is_subnet($tmp))) ||
+		         ($use_ports && (is_port_one($tmp) || is_portrange($tmp)));
+		if ($valid) {
+			$items[] = $tmp;
+			$item_count++;
+			if ($item_count == $max_items)
+				break;
+		}
 	}
 	fclose($fd);
-	return $address;
+	return $items;
 }
 
 function update_alias_url_data() {
@@ -1893,21 +1905,21 @@ function update_alias_url_data() {
 				unlink($temp_filename);
 				$verify_ssl = isset($config['system']['checkaliasesurlcert']);
 				mkdir($temp_filename);
-				download_file($alias_url, $temp_filename . "/aliases", $verify_ssl);
-
-				/* if the item is tar gzipped then extract */
-				if (stripos($alias_url, '.tgz')) {
-					if (!process_alias_tgz($temp_filename))
-						continue;
-				} else if (stripos($alias_url, '.zip')) {
-					if (!process_alias_unzip($temp_filename))
-						continue;
+				if (download_file($alias_url, $temp_filename . "/aliases", $verify_ssl) === true) {
+					/* if the item is tar gzipped then extract */
+					if (stripos($alias_url, '.tgz')) {
+						if (!process_alias_tgz($temp_filename))
+							continue;
+					} else if (stripos($alias_url, '.zip')) {
+						if (!process_alias_unzip($temp_filename))
+							continue;
+					}
+					if (file_exists("{$temp_filename}/aliases")) {
+						$subnets = parse_aliases_file("{$temp_filename}/aliases", true, false);
+						$address = join(',', $subnets);
+					}
 				}
-				if (file_exists("{$temp_filename}/aliases")) {
-					$subnets = parse_file_subnets("{$temp_filename}/aliases");
-					$address = join(',', $subnets);
-					mwexec("/bin/rm -rf {$temp_filename}");
-				}
+				mwexec("/bin/rm -rf {$temp_filename}");
 			}
 			if (!empty($address)) {
 				$config['aliases']['alias'][$x]['address'] = $address;

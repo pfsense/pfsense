@@ -1327,7 +1327,7 @@ div#log span.log-protocol-mini-header {
 /* Sortable tables */
 table.sortable thead {
         cursor: default;
-//	background-color: #EEEEEE; this causing light gray rectangles to the right of many tables in gui
+	/* background-color: #EEEEEE; this causing light gray rectangles to the right of many tables in gui */
 	padding-right: 12px;
 	padding-left: 12px;
 	padding-top: 12px;

@@ -46,13 +46,12 @@ require_once("guiconfig.inc");
 require_once("shaper.inc");
 require_once("filter.inc");
 
-if ($_POST['if']) {
+if ($_POST['if'] && $_POST['submit']) {
 	$interface = $_POST['if'];
-	if ($_POST['action'] == "disconnect" || $_POST['action'] == "release") {
+	if ($_POST['status'] == "up")
 		interface_bring_down($interface);
-	} else if ($_POST['action'] == "connect" || $_POST['action'] == "renew") {
+	else
 		interface_configure($interface); 
-	}
 	header("Location: status_interfaces.php");
 	exit;
 }
@@ -97,16 +96,11 @@ include("head.inc");
 		</td>
 		<td width="78%" class="listr">
 			<form name="dhcplink_form" action="status_interfaces.php" method="post">
+				<input type="hidden" name="if" value="<?php echo $ifdescr; ?>" />
+				<input type="hidden" name="status" value="<?php echo $ifinfo['dhcplink']; ?>" />
 				<?=htmlspecialchars($ifinfo['dhcplink']);?>&nbsp;&nbsp;
-				<?php if ($ifinfo['dhcplink'] == "up"): ?>
-					<input type="hidden" name="if" value="<?php echo $ifdescr; ?>" />
-					<input type="hidden" name="action" value="release" />
-					<input type="submit" name="submit" class="formbtn" value="<?php echo gettext("Release"); ?>" />
-				<?php else: ?>
-					<input type="hidden" name="if" value="<?php echo $ifdescr; ?>" />
-					<input type="hidden" name="action" value="renew" />
-					<input type="submit" name="submit" class="formbtn" value="<?php echo gettext("Renew"); ?>" />
-				<?php endif; ?>
+				<?php $action = ($ifinfo['dhcplink'] == "up" ? gettext("Release") : gettext("Renew")); ?>
+				<input type="submit" name="submit" class="formbtn" value="<?php echo $action; ?>" />
 			</form>
 		</td>
 	</tr>
@@ -118,16 +112,11 @@ include("head.inc");
 		</td>
 		<td width="78%" class="listr">
 			<form name="dhcp6link_form" action="status_interfaces.php" method="post">
+				<input type="hidden" name="if" value="<?php echo $ifdescr; ?>" />
+				<input type="hidden" name="status" value="<?php echo $ifinfo['dhcp6link']; ?>" />
 				<?=htmlspecialchars($ifinfo['dhcp6link']);?>&nbsp;&nbsp;
-				<?php if ($ifinfo['dhcp6link'] == "up"): ?>
-					<input type="hidden" name="if" value="<?php echo $ifdescr; ?>" />
-					<input type="hidden" name="action" value="release" />
-					<input type="submit" name="submit" class="formbtn" value="<?php echo gettext("Release"); ?>" />
-				<?php else: ?>
-					<input type="hidden" name="if" value="<?php echo $ifdescr; ?>" />
-					<input type="hidden" name="action" value="renew" />
-					<input type="submit" name="submit" class="formbtn" value="<?php echo gettext("Renew"); ?>" />
-				<?php endif; ?>
+				<?php $action = ($ifinfo['dhcp6link'] == "up" ? gettext("Release") : gettext("Renew")); ?>
+				<input type="submit" name="submit" class="formbtn" value="<?php echo $action; ?>" />
 			</form>
 		</td>
 	</tr>
@@ -136,16 +125,11 @@ include("head.inc");
 		<td width="22%" class="vncellt"><?=gettext("PPPoE"); ?></td>
 		<td width="78%" class="listr">
 			<form name="pppoelink_form" action="status_interfaces.php" method="post">
+				<input type="hidden" name="if" value="<?php echo $ifdescr; ?>" />
+				<input type="hidden" name="status" value="<?php echo $ifinfo['pppoelink']; ?>" />
 				<?=htmlspecialchars($ifinfo['pppoelink']);?>&nbsp;&nbsp;
-				<?php if ($ifinfo['pppoelink'] == "up"): ?>
-					<input type="hidden" name="if" value="<?php echo $ifdescr; ?>" />
-					<input type="hidden" name="action" value="disconnect" />
-					<input type="submit" name="submit" class="formbtn" value="<?php echo gettext("Disconnect"); ?>" />
-				<?php else: ?>
-					<input type="hidden" name="if" value="<?php echo $ifdescr; ?>" />
-					<input type="hidden" name="action" value="connect" />
-					<input type="submit" name="submit" class="formbtn" value="<?php echo gettext("Connect"); ?>" />
-				<?php endif; ?>
+				<?php $action = ($ifinfo['pppoelink'] == "up" ? gettext("Disconnect") : gettext("Connect")); ?>
+				<input type="submit" name="submit" class="formbtn" value="<?php echo $action; ?>" />
 			</form>
 		</td>
 	</tr>
@@ -154,16 +138,11 @@ include("head.inc");
 		<td width="22%" class="vncellt"><?=gettext("PPTP"); ?></td>
 		<td width="78%" class="listr">
 			<form name="pptplink_form" action="status_interfaces.php" method="post">
+				<input type="hidden" name="if" value="<?php echo $ifdescr; ?>" />
+				<input type="hidden" name="status" value="<?php echo $ifinfo['pptplink']; ?>" />
 				<?=htmlspecialchars($ifinfo['pptplink']);?>&nbsp;&nbsp;
-				<?php if ($ifinfo['pptplink'] == "up"): ?>
-					<input type="hidden" name="if" value="<?php echo $ifdescr; ?>" />
-					<input type="hidden" name="action" value="disconnect" />
-					<input type="submit" name="submit" class="formbtn" value="<?php echo gettext("Disconnect"); ?>" />
-				<?php else: ?>
-					<input type="hidden" name="if" value="<?php echo $ifdescr; ?>" />
-					<input type="hidden" name="action" value="connect" />
-					<input type="submit" name="submit" class="formbtn" value="<?php echo gettext("Connect"); ?>" />
-				<?php endif; ?>
+				<?php $action = ($ifinfo['pptplink'] == "up" ? gettext("Disconnect") : gettext("Connect")); ?>
+				<input type="submit" name="submit" class="formbtn" value="<?php echo $action; ?>" />
 			</form>
 		</td>
 	</tr>
@@ -172,16 +151,11 @@ include("head.inc");
 		<td width="22%" class="vncellt"><?=gettext("L2TP"); ?></td>
 		<td width="78%" class="listr">
 			<form name="l2tplink_form" action="status_interfaces.php" method="post">
+				<input type="hidden" name="if" value="<?php echo $ifdescr; ?>" />
+				<input type="hidden" name="status" value="<?php echo $ifinfo['l2tplink']; ?>" />
 				<?=htmlspecialchars($ifinfo['l2tplink']);?>&nbsp;&nbsp;
-				<?php if ($ifinfo['l2tplink'] == "up"): ?>
-					<input type="hidden" name="if" value="<?php echo $ifdescr; ?>" />
-					<input type="hidden" name="action" value="disconnect" />
-					<input type="submit" name="submit" class="formbtn" value="<?php echo gettext("Disconnect"); ?>" />
-				<?php else: ?>
-					<input type="hidden" name="if" value="<?php echo $ifdescr; ?>" />
-					<input type="hidden" name="action" value="connect" />
-					<input type="submit" name="submit" class="formbtn" value="<?php echo gettext("Connect"); ?>" />
-				<?php endif; ?>
+				<?php $action = ($ifinfo['l2tplink'] == "up" ? gettext("Disconnect") : gettext("Connect")); ?>
+				<input type="submit" name="submit" class="formbtn" value="<?php echo $action; ?>" />
 			</form>
 		</td>
 	</tr>
@@ -190,15 +164,13 @@ include("head.inc");
 		<td width="22%" class="vncellt"><?=gettext("PPP"); ?></td>
 		<td width="78%" class="listr">
 			<form name="ppplink_form" action="status_interfaces.php" method="post">
+				<input type="hidden" name="if" value="<?php echo $ifdescr; ?>" />
+				<input type="hidden" name="status" value="<?php echo $ifinfo['ppplink']; ?>" />
 				<?=htmlspecialchars($ifinfo['pppinfo']);?>
 				<?php if ($ifinfo['ppplink'] == "up"): ?>
-					<input type="hidden" name="if" value="<?php echo $ifdescr; ?>" />
-					<input type="hidden" name="action" value="disconnect" />
 					<input type="submit" name="submit" class="formbtn" value="<?php echo gettext("Disconnect"); ?>" />
 				<?php else: ?>
 					<?php if (!$ifinfo['nodevice']): ?>
-						<input type="hidden" name="if" value="<?php echo $ifdescr; ?>" />
-						<input type="hidden" name="action" value="connect" />
 						<input type="submit" name="submit" class="formbtn" value="<?php echo gettext("Connect"); ?>" />
 					<?php endif; ?>
 				<?php endif; ?>

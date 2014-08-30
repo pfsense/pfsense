@@ -59,7 +59,6 @@ $lb_logfile = "{$g['varlog_path']}/relayd.log";
 $nentries = $config['syslog']['nentries'];
 if (!$nentries)
 	$nentries = 50;
-
 ?>
 
 <table bgcolor="#990000" width="100%" border="0" cellspacing="0" cellpadding="0" summary="load balancer">
@@ -71,24 +70,68 @@ if (!$nentries)
 	<?php $i = 0; foreach ($a_vs as $vsent): ?>
 	<tr>
 		<?php
-		switch (trim($rdr_a[$vsent['name']]['status'])) {
-			case 'active':
-				$bgcolor = "#90EE90";  // lightgreen
-				$rdr_a[$vsent['name']]['status'] = "Active";
-				break;
-			case 'down':
-				$bgcolor = "#F08080";  // lightcoral
-				$rdr_a[$vsent['name']]['status'] = "Down";
-				break;
-			default:
-				$bgcolor = "#D3D3D3";  // lightgray
-				 $rdr_a[$vsent['name']]['status'] = 'Unknown - relayd not running?';
-		}
+        if (!is_numeric($vsent['port']))
+        {
+            /* Probably it's an alias. Search for it and get the ports' */
+            foreach ($config['aliases']['alias'] as $alias)
+                if ($alias['name'] == $vsent['port'] && $alias['type'] == 'port')
+                    $vsent['ports'] = explode(' ', $alias['address']);
+        }
+        else
+        {
+            $vsent['ports'] = array($vsent['port']);
+        }
+
+
+        /* The VS is up if all ports all up */
+        $vs_is_up   = null;
+        $vs_unknown = false;
+
+        foreach ($vsent['ports'] as $port)
+        {
+            if (count($vsent['ports']) == 1)
+            {
+                $tmp_status = trim($rdr_a[$vsent['name']]['status']);
+            } else {
+                $tmp_status = trim($rdr_a[$vsent['name'] . '_' . $port]['status']);
+            }
+
+            switch ($tmp_status)
+            {
+                case 'active':
+                    $vs_is_up = (is_null($vs_is_up)) ? true : $vs_is_up && true;
+                    break;
+                case 'down':
+                    $vs_is_up = false;
+                    break;
+                default:
+                    $vs_unknown = true;
+            }
+        }
+
+        if ($vs_unknown)
+        {
+            $bgcolor = "#D3D3D3";  // lightgray
+            $rdr_a[$vsent['name']]['status'] = 'Unknown - relayd not running?';
+
+            $bgcolor = "#90EE90";  // lightgreen
+            $rdr_a[$vsent['name']]['status'] = "Active";
+        }
+        elseif ($vs_is_up)
+        {
+            $bgcolor = "#90EE90";  // lightgreen
+            $rdr_a[$vsent['name']]['status'] = "Active";
+        }
+        else
+        {
+            $bgcolor = "#F08080";  // lightcoral
+            $rdr_a[$vsent['name']]['status'] = "Down";
+        }
 		?>
 		<td class="listlr">
-			<?=$vsent['name'];?><br />
+			<?=$vsent['name'];?><br/>
 			<span style="background-color: <?=$bgcolor?>; display: block"><i><?=$rdr_a[$vsent['name']]['status']?></i></span>
-			<?=$vsent['ipaddr'].":".$vsent['port'];?><br />
+			<?=$vsent['ipaddr'].":".$vsent['port'];?><br/>
 		</td>
 		<td class="listr" align="center" >
 		<table border="0" cellpadding="0" cellspacing="2" summary="status">
@@ -97,10 +140,23 @@ if (!$nentries)
 			if ($pool['name'] == $vsent['poolname']) {
 				$pool_hosts=array();
 				foreach ((array) $pool['servers'] as $server) {
-					$svr['ip']['addr']=$server;
-					$svr['ip']['state']=$relay_hosts[$pool['name'].":".$pool['port']][$server]['state'];
-					$svr['ip']['avail']=$relay_hosts[$pool['name'].":".$pool['port']][$server]['avail'];
-					$pool_hosts[]=$svr;
+
+                    if (!is_numeric($pool['port']))
+                    {
+                        /* Probably it's an alias. Search for it and get the ports' */
+                        foreach ($config['aliases']['alias'] as $alias)
+                            if ($alias['name'] == $pool['port'] && $alias['type'] == 'port')
+                                $pool['port'] = explode(' ', $alias['address']);
+                    }
+
+                    foreach ((array)$pool['port'] as $port)
+                    {
+                        $svr['name'] = $server . ':' . $port;
+                        $svr['ip']['addr']=$server;
+                        $svr['ip']['state']=$relay_hosts[$pool['name'].":".$port][$server]['state'];
+                        $svr['ip']['avail']=$relay_hosts[$pool['name'].":".$port][$server]['avail'];
+                        $pool_hosts[]=$svr;
+                    }
 				}
 				foreach ((array) $pool['serversdisabled'] as $server) {
 					$svr['ip']['addr']="$server";
@@ -125,7 +181,7 @@ if (!$nentries)
 								$checked = "checked";
 						}
 						echo "<tr>";
-						echo "<td bgcolor=\"{$bgcolor}\">&nbsp;{$server['ip']['addr']}:{$pool['port']}&nbsp;</td><td bgcolor=\"{$bgcolor}\">&nbsp;";
+						echo "<td bgcolor={$bgcolor}>&nbsp;{$server['name']}&nbsp;</td><td bgcolor={$bgcolor}>&nbsp;";
 						if($server['ip']['avail'])
 						  echo " ({$server['ip']['avail']}) ";
 						echo "&nbsp;</td></tr>";

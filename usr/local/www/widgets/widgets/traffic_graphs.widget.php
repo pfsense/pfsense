@@ -111,14 +111,16 @@ if (isset($a_config["scale_type"])) {
 				$selected_radio = $config["widgets"]["trafficgraphs"]["scale_type"];
 				if ($selected_radio == "up") {
 					$scale_type_up = "checked=\"checked\"";
+					$scale_type_follow="";
 				}
 				else if ($selected_radio == "follow") {
+					$scale_type_up="";
 					$scale_type_follow = "checked=\"checked\"";
 				}
 			}
 		?>
-	<input name="scale_type_up" class="radio" type="radio" id="scale_type_up" value="up" <?php echo $scale_type_up; ?> onchange="updateGraphDisplays();" /> <span>up</span>
-	<input name="scale_type_follow" class="radio" type="radio" id="scale_type_follow" value="follow" <?php echo $scale_type_follow; ?> onchange="updateGraphDisplays();" /> <span>follow</span><br /><br />
+	<input name="scale_type" class="radio" type="radio" id="scale_type_up" value="up" <?php echo $scale_type_up; ?> onchange="updateGraphDisplays();" /> <span>up</span>
+	<input name="scale_type" class="radio" type="radio" id="scale_type_follow" value="follow" <?php echo $scale_type_follow; ?> onchange="updateGraphDisplays();" /> <span>follow</span><br /><br />
 	Refresh Interval:
 	<select name="refreshinterval" class="formfld" id="refreshinterval" onchange="updateGraphDisplays();">
 		<?php for ($i = 1; $i <= 10; $i += 1) { ?>

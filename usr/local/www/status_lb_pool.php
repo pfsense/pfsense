@@ -109,10 +109,11 @@ if ($_POST) {
 <body link="#0000CC" vlink="#0000CC" alink="#0000CC">
 <?php include("fbegin.inc"); ?>
 <form action="status_lb_pool.php" method="post">
-<?php if (is_subsystem_dirty('loadbalancer')): ?><br/>
+<?php if (is_subsystem_dirty('loadbalancer')): ?><p/>
 <?php print_info_box_np(sprintf(gettext("The load balancer configuration has been changed%sYou must apply the changes in order for them to take effect."), "<br />"));?><br />
 <?php endif; ?>
-<table width="100%" border="0" cellpadding="0" cellspacing="0" summary="status load balancer pools">
+
+<table width="100%" border="0" cellpadding="0" cellspacing="0">
 	<tr><td class="tabnavtbl">
 	<?php
 	/* active tabs */
@@ -125,7 +126,7 @@ if ($_POST) {
 	<tr>
 	<td>
 	<div id="mainarea">
-		<table width="100%" border="0" cellpadding="0" cellspacing="0" class="tabcont sortable" id="sortabletable" summary="main area">
+		<table width="100%" border="0" cellpadding="0" cellspacing="0" class="tabcont sortable" id="sortabletable">
 		<tr>
 		<td width="10%" class="listhdrr"><?=gettext("Name");?></td>
 		<td width="10%" class="listhdrr"><?=gettext("Mode");?></td>
@@ -153,14 +154,27 @@ if ($_POST) {
 		?>
 		</td>
 		<td class="listr" align="center">
-		<table border="0" cellpadding="2" cellspacing="0" summary="status">
+		<table border="0" cellpadding="2" cellspacing="0">
 		<?php
 		$pool_hosts=array();
 		foreach ((array) $pool['servers'] as $server) {
-			$svr['ip']['addr']=$server;
-			$svr['ip']['state']=$relay_hosts[$pool['name'].":".$pool['port']][$server]['state'];
-			$svr['ip']['avail']=$relay_hosts[$pool['name'].":".$pool['port']][$server]['avail'];
-			$pool_hosts[]=$svr;
+
+            if (!is_numeric($pool['port']))
+            {
+                /* Probably it's an alias. Search for it and get the ports' */
+                foreach ($config['aliases']['alias'] as $alias)
+                    if ($alias['name'] == $pool['port'] && $alias['type'] == 'port')
+                        $pool['port'] = explode(' ', $alias['address']);
+            }
+
+            foreach ((array)$pool['port'] as $port)
+            {
+                $svr['name'] = $server . ':' . $port;
+			    $svr['ip']['addr']=$server;
+			    $svr['ip']['state']=$relay_hosts[$pool['name'].":".$port][$server]['state'];
+			    $svr['ip']['avail']=$relay_hosts[$pool['name'].":".$pool][$server]['avail'];
+			    $pool_hosts[]=$svr;
+            }
 		}
 		foreach ((array) $pool['serversdisabled'] as $server) {
 			$svr['ip']['addr']="$server";
@@ -171,11 +185,12 @@ if ($_POST) {
 		asort($pool_hosts);
 
 		foreach ((array) $pool_hosts as $server) {
-			if($server['ip']['addr']!="") {
+
+			IF($server['ip']['addr']!="") {
 				switch ($server['ip']['state']) {
 					case 'up':
 						$bgcolor = "#90EE90";  // lightgreen
-						$checked = "checked=\"checked\"";
+						$checked = "checked";
 						break;
 					case 'disabled':
 						$bgcolor = "white";
@@ -183,19 +198,31 @@ if ($_POST) {
 						break;
 					default:
 						$bgcolor = "#F08080";  // lightcoral
-						$checked = "checked=\"checked\"";
+						$checked = "checked";
 				}
 				echo "<tr>";
-				switch ($pool['mode']) {
-					case 'loadbalance':
-						echo "<td><input type=\"checkbox\" name=\"{$pool['name']}|" . str_replace('.', '_', $server['ip']['addr']) . "\" {$checked} /></td>\n";
-						break;
-					case 'failover':
-						echo "<td><input type=\"radio\" name=\"{$pool['name']}\" value=\"{$server['ip']['addr']}\" {$checked} /></td>\n";
-						break;
-				}
-				echo "<td bgcolor=\"{$bgcolor}\">&nbsp;{$server['ip']['addr']}:{$pool['port']}&nbsp;</td><td bgcolor=\"{$bgcolor}\">&nbsp;";
-#				echo "<td bgcolor=\"{$bgcolor}\">&nbsp;{$server['ip']['addr']}:{$pool['port']} ";
+
+                if (!is_array($checkboxes_displayed)) $checkboxes_displayed = array();
+                if (!in_array($pool['name'].'|'.str_replace('.', '_', $server['ip']['addr']), $checkboxes_displayed))
+                {
+				    switch ($pool['mode']) {
+					    case 'loadbalance':
+						    echo "<td><input type='checkbox' name='{$pool['name']}|".str_replace('.', '_', $server['ip']['addr'])."' {$checked} /></td>\n";
+						    break;
+					    case 'failover':
+						    echo "<td><input type='radio' name='{$pool['name']}' value='{$server['ip']['addr']}' {$checked} /></td>\n";
+						    break;
+				    }
+
+                    $checkboxes_displayed[] = $pool['name'].'|'.str_replace('.', '_', $server['ip']['addr']);
+                }
+                else
+                {
+                    echo "<td>&nbsp;</td>";
+                }
+
+				echo "<td bgcolor={$bgcolor}>&nbsp;{$server['name']}&nbsp;</td><td bgcolor={$bgcolor}>&nbsp;";
+#				echo "<td bgcolor={$bgcolor}>&nbsp;{$server['ip']['addr']}:{$pool['port']} ";
 				if($server['ip']['avail'])
 				  echo " ({$server['ip']['avail']}) ";
 				echo "&nbsp;</td></tr>";
@@ -220,8 +247,9 @@ if ($_POST) {
 		</tr>
 		</table>
 	</div>
-</td></tr>
-</table>
+	</td>
+	</tr>
+	</table>
 </form>
 <?php include("fend.inc"); ?>
 </body>

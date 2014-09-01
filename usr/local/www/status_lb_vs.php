@@ -90,32 +90,76 @@ include("head.inc");
                                 <br />
                   </td>
                   <td class="listr" align="center" >
-			<table border="0" cellpadding="0" cellspacing="2" summary="servers">
-                        <?php
-			foreach ($a_pool as $vipent) {
-				if ($vipent['name'] == $vsent['poolname']) {
-					foreach ((array) $vipent['servers'] as $server) {
-						print "<tr><td> {$server} </td></tr>";
-					}
-				}
-			}
-			?>
-			</table>
+			        <table border="0" cellpadding="0" cellspacing="2" summary="servers">
+                                <?php
+			        foreach ($a_pool as $vipent) {
+				        if ($vipent['name'] == $vsent['poolname']) {
+					        foreach ((array) $vipent['servers'] as $server) {
+						        print "<tr><td> {$server} </td></tr>";
+					        }
+				        }
+			        }
+			        ?>
+			        </table>
                   </td>
                   <?php
-                  switch (trim($rdr_a[$vsent['name']]['status'])) {
-                    case 'active':
-                      $bgcolor = "#90EE90";  // lightgreen
-                      $rdr_a[$vsent['name']]['status'] = "Active";
-                      break;
-                    case 'down':
-                      $bgcolor = "#F08080";  // lightcoral
-                      $rdr_a[$vsent['name']]['status'] = "Down";
-                      break;
-                    default:
-                      $bgcolor = "#D3D3D3";  // lightgray
-                      $rdr_a[$vsent['name']]['status'] = 'Unknown - relayd not running?';
-                  }
+                    if (!is_numeric($vsent['port']))
+                    {
+                        /* Probably it's an alias. Search for it and get the ports' */
+                        foreach ($config['aliases']['alias'] as $alias)
+                            if ($alias['name'] == $vsent['port'] && $alias['type'] == 'port')
+                                $vsent['ports'] = explode(' ', $alias['address']);
+                    }
+                    else
+                    {
+                        $vsent['ports'] = array($vsent['port']);
+                    }
+
+
+                    /* The VS is up if all ports all up */
+                    $vs_is_up   = null;
+                    $vs_unknown = false;
+
+                    foreach ($vsent['ports'] as $port)
+                    {
+                        if (count($vsent['ports']) == 1)
+                        {
+                            $tmp_status = trim($rdr_a[$vsent['name']]['status']);
+                        } else {
+                            $tmp_status = trim($rdr_a[$vsent['name'] . '_' . $port]['status']);
+                        }
+
+                        switch ($tmp_status)
+                        {
+                            case 'active':
+                                $vs_is_up = (is_null($vs_is_up)) ? true : $vs_is_up && true;
+                                break;
+                            case 'down':
+                                $vs_is_up = false;
+                                break;
+                            default:
+                                $vs_unknown = true;
+                        }
+                    }
+
+                    if ($vs_unknown)
+                    {
+                        $bgcolor = "#D3D3D3";  // lightgray
+                        $rdr_a[$vsent['name']]['status'] = 'Unknown - relayd not running?';
+
+                        $bgcolor = "#90EE90";  // lightgreen
+                        $rdr_a[$vsent['name']]['status'] = "Active";
+                    }
+                    elseif ($vs_is_up)
+                    {
+                        $bgcolor = "#90EE90";  // lightgreen
+                        $rdr_a[$vsent['name']]['status'] = "Active";
+                    }
+                    else
+                    {
+                        $bgcolor = "#F08080";  // lightcoral
+                        $rdr_a[$vsent['name']]['status'] = "Down";
+                    }
                   ?>
                   <td class="listr nowrap">
 			<table border="0" cellpadding="3" cellspacing="2" summary="status">

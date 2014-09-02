@@ -229,7 +229,7 @@ $status = ipsec_smp_dump_status();
 						<td class="listlr nowrap">
 				<?php	if (is_array($childsa['local']) && is_array($childsa['local']['networks']) && is_array($childsa['local']['networks']['network'])) {
 						foreach ($childsa['local']['networks']['network'] as $lnets) {
-							echo htmlspecialchars($lnets) . "<br />";	
+							echo htmlspecialchars(ipsec_fixup_network($lnets)) . "<br />";
 						}
 					} else
 						echo "Unknown";
@@ -248,7 +248,7 @@ $status = ipsec_smp_dump_status();
 						<td class="listr nowrap">
 				<?php	if (is_array($childsa['remote']) && is_array($childsa['remote']['networks']) && is_array($childsa['remote']['networks']['network'])) {
 						foreach ($childsa['remote']['networks']['network'] as $rnets) {
-							echo htmlspecialchars($rnets) . "<br />";	
+							echo htmlspecialchars(ipsec_fixup_network($rnets)) . "<br />";
 						}
 					} else
 						echo "Unknown";

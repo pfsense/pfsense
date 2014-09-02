@@ -114,6 +114,8 @@ $status = ipsec_smp_dump_status();
 <?php
 	if (is_array($status['query']) && is_array($status['query']['ikesalist']) && is_array($status['query']['ikesalist']['ikesa'])) {
 		foreach ($status['query']['ikesalist']['ikesa'] as $ikeid => $ikesa) {
+			$con_id = substr($ikesa['peerconfig'], 3);
+
 			if (ipsec_phase1_status($status['query']['ikesalist']['ikesa'], $ikesa['id'])) {
 				$icon = "pass";
 			} elseif(!isset($config['ipsec']['enable'])) {
@@ -124,7 +126,7 @@ $status = ipsec_smp_dump_status();
 ?>
 			<tr>
 				<td class="listlr">
-					<?php echo "({$ikesa['id']}) " . htmlspecialchars(ipsec_get_descr($ikesa['id']));?>
+					<?php echo htmlspecialchars(ipsec_get_descr($con_id));?>
 				</td>
 				<td class="listr">
 			<?php   if (!is_array($ikesa['local']))
@@ -186,13 +188,13 @@ $status = ipsec_smp_dump_status();
 				<td >
 				<?php if ($icon != "pass"): ?>
 					<center>
-						<a href="diag_ipsec.php?act=connect&amp;ikeid=<?php echo $ikesa['id']; ?>">
+						<a href="diag_ipsec.php?act=connect&amp;ikeid=<?php echo $con_id; ?>">
 						<img src ="/themes/<?php echo $g['theme']; ?>/images/icons/icon_service_start.gif" alt="Connect VPN" title="Connect VPN" border="0"/>
 						</a>
 					</center>
 				<?php else: ?>
 					<center>
-						<a href="diag_ipsec.php?act=ikedisconnect&amp;ikeid=<?php echo $ikesa['id']; ?>">
+						<a href="diag_ipsec.php?act=ikedisconnect&amp;ikeid=<?php echo $con_id; ?>">
 						<img src ="/themes/<?php echo $g['theme']; ?>/images/icons/icon_service_stop.gif" alt="Disconnect VPN" title="Disconnect VPN" border="0"/>
 						</a>
 					</center>
@@ -263,6 +265,8 @@ $status = ipsec_smp_dump_status();
 				</td>
 			</tr>
 			<?php endif; 
+
+			unset($con_id);
 		}
 	}
 ?>

@@ -476,10 +476,8 @@ function show_phase2(id, buttonid) {
 <?php
 
 function show_ipsec_header($ph1ent) {
-	global $g;
-	if (isset($ph1ent['mobile']))
-		$mobile = "&mobile=true";
-	?>
+
+?>
 	<tr>
 		<td class="listhdrr"><?=gettext("IKE"); ?></td>
 		<td class="listhdrr"><?=gettext("Remote Gateway"); ?></td>

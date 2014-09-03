@@ -251,14 +251,6 @@ include("head.inc");
 						</td>
 						<td class="listt" align="center" valign="middle">
 							<a href="?p1index=<?=$i;?>&amp;act=toggle"><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_<?=$iconfn;?>.gif" width="11" height="11" border="0" title="<?=gettext("click to toggle enabled/disabled status");?>" alt="icon" /></a>
-<?php
-							if (isset($filterent['log'])):
-								$iconfnlog = "log_s";
-							if (isset($filterent['disabled']))
-								$iconfnlog .= "_d";
-?>
-						<br /><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_<?=$iconfnlog;?>.gif" width="11" height="15" border="0" alt="icon" />
-			<?php endif; ?>
 						</td>
 						<td class="listlr" onclick="fr_toggle(<?=$i;?>)" id="frd<?=$i;?>">
 							<?=$spans;?>

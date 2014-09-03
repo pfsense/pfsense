@@ -182,7 +182,6 @@ include("head.inc");
 						$spans = $spane = "";
 
 					show_ipsec_header($ph1ent);
-					$counter++; // used to determine if we need to output header manually (no records exist)
 ?>
 					<tr valign="top" ondblclick="document.location='vpn_ipsec_phase1.php?p1index=<?=$i;?>'">
 						<td class="listlr">
@@ -422,7 +421,7 @@ include("head.inc");
 <?php
 					$i++;
 				endforeach;  // $a_phase1 as $ph1ent
-				if(!$counter)
+				if($i === 0)
 					show_ipsec_header($ph1ent);
 ?>
 					<tr>

@@ -150,14 +150,9 @@ if (isset($_GET['p1index']) && is_numericint($_GET['p1index']) && isset($a_phase
 		mark_subsystem_dirty('ipsec');
 	} else if ($_GET['act'] == "delph2") {
 		/* remove the phase2 entry */
-		foreach ($a_phase2 as $ph2idx => $ph2) {
-			if ($ph2['uniqid'] == $_GET['p2index']) {
-				unset($a_phase2[$ph2idx]);
-				write_config();
-				mark_subsystem_dirty('ipsec');
-				break;
-			}
-		}
+		unset($a_phase2[$_GET['p2index']]);
+		write_config();
+		mark_subsystem_dirty('ipsec');
 	} else if ($_GET['act'] == "toggle") {
 		if (isset($a_phase1[$_GET['p1index']]['disabled']))
 			unset($a_phase1[$_GET['p1index']]['disabled']);
@@ -410,7 +405,7 @@ include("head.inc");
 									</td>
 								</tr>
 <?php
-								foreach ($a_phase2 as $ph2ent):
+								foreach ($a_phase2 as $ph2index => $ph2ent):
 									if ($ph2ent['ikeid'] != $ph1ent['ikeid'])
 										continue;
 
@@ -487,7 +482,7 @@ include("head.inc");
 										<a href="vpn_ipsec_phase2.php?p2index=<?=$ph2ent['uniqid'];?>">
 											<img src="./themes/<?= $g['theme']; ?>/images/icons/icon_e.gif" title="<?=gettext("edit phase2 entry"); ?>" width="17" height="17" border="0" alt="edit" />
 										</a>
-										<a href="vpn_ipsec.php?act=delph2&amp;p1index=<?=$i;?>&amp;p2index=<?=$ph2ent['uniqid'];?>" onclick="return confirm('<?=gettext("Do you really want to delete this phase2 entry?"); ?>')">
+										<a href="vpn_ipsec.php?act=delph2&amp;p1index=<?=$i;?>&amp;p2index=<?=$ph2index;?>" onclick="return confirm('<?=gettext("Do you really want to delete this phase2 entry?"); ?>')">
 											<img src="./themes/<?= $g['theme']; ?>/images/icons/icon_x.gif" title="<?=gettext("delete phase2 entry"); ?>" width="17" height="17" border="0" alt="delete" />
 										</a>
 										<a href="vpn_ipsec_phase2.php?dup=<?=$ph2ent['uniqid'];?>">

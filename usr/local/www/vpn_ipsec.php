@@ -136,14 +136,14 @@ include("head.inc");
 <table width="100%" border="0" cellpadding="0" cellspacing="0" summary="vpn ipsec">
 	<tr>
 		<td class="tabnavtbl">
-			<?php
-				$tab_array = array();
-				$tab_array[0] = array(gettext("Tunnels"), true, "vpn_ipsec.php");
-				$tab_array[1] = array(gettext("Mobile clients"), false, "vpn_ipsec_mobile.php");
-				$tab_array[2] = array(gettext("Pre-Shared Keys"), false, "vpn_ipsec_keys.php");
-				$tab_array[3] = array(gettext("Advanced Settings"), false, "vpn_ipsec_settings.php");
-				display_top_tabs($tab_array);
-			?>
+<?php
+			$tab_array = array();
+			$tab_array[0] = array(gettext("Tunnels"), true, "vpn_ipsec.php");
+			$tab_array[1] = array(gettext("Mobile clients"), false, "vpn_ipsec_mobile.php");
+			$tab_array[2] = array(gettext("Pre-Shared Keys"), false, "vpn_ipsec_keys.php");
+			$tab_array[3] = array(gettext("Advanced Settings"), false, "vpn_ipsec_settings.php");
+			display_top_tabs($tab_array);
+?>
 		</td>
 	</tr>
 	<tr>
@@ -171,61 +171,62 @@ include("head.inc");
 					</tr>
 				</table>
 				<table class="tabcont" width="100%" border="0" cellpadding="0" cellspacing="0" summary="phase-1 entries">
-					<?php
-						$i = 0;
-						foreach ($a_phase1 as $ph1ent) {
-							if (isset( $ph1ent['disabled'])) {
-								$spans = "<span class=\"gray\">";
-								$spane = "</span>";
-							}
-							else
-								$spans = $spane = "";
-						
-						show_ipsec_header($ph1ent);
-						$counter++; // used to determine if we need to output header manually (no records exist)
-					?>					
+<?php
+				$i = 0;
+				foreach ($a_phase1 as $ph1ent):
+					if (isset( $ph1ent['disabled'])) {
+						$spans = "<span class=\"gray\">";
+						$spane = "</span>";
+					}
+					else
+						$spans = $spane = "";
+
+					show_ipsec_header($ph1ent);
+					$counter++; // used to determine if we need to output header manually (no records exist)
+?>
 					<tr valign="top" ondblclick="document.location='vpn_ipsec_phase1.php?p1index=<?=$i;?>'">
 						<td class="listlr">
 							<?=$spans;?>
-							<?php	if (empty($ph1ent['iketype']) || $ph1ent['iketype'] == "ikev1")
-									echo "V1";
-								else
-									echo "V2";
-							?>
+<?php
+							if (empty($ph1ent['iketype']) || $ph1ent['iketype'] == "ikev1")
+								echo "V1";
+							else
+								echo "V2";
+?>
 							<?=$spane;?>
 						</td>
 						<td class="listr">
 							<?=$spans;?>
-							<?php
-								if ($ph1ent['interface']) {
-									$iflabels = get_configured_interface_with_descr();
+<?php
+							if ($ph1ent['interface']) {
+								$iflabels = get_configured_interface_with_descr();
 
-									$carplist = get_configured_carp_interface_list();
-									foreach ($carplist as $cif => $carpip)
-										$iflabels[$cif] = $carpip." (".get_vip_descr($carpip).")";
+								$carplist = get_configured_carp_interface_list();
+								foreach ($carplist as $cif => $carpip)
+									$iflabels[$cif] = $carpip." (".get_vip_descr($carpip).")";
 
-									$aliaslist = get_configured_ip_aliases_list();
-									foreach ($aliaslist as $aliasip => $aliasif)
-										$iflabels[$aliasip] = $aliasip." (".get_vip_descr($aliasip).")";
+								$aliaslist = get_configured_ip_aliases_list();
+								foreach ($aliaslist as $aliasip => $aliasif)
+									$iflabels[$aliasip] = $aliasip." (".get_vip_descr($aliasip).")";
 
-									$grouplist = return_gateway_groups_array();
-									foreach ($grouplist as $name => $group) {
-										if($group[0]['vip'] <> "")
-											$vipif = $group[0]['vip'];
-										else
-											$vipif = $group[0]['int'];
-										$iflabels[$name] = "GW Group {$name}";
-									}
-									$if = htmlspecialchars($iflabels[$ph1ent['interface']]);
+								$grouplist = return_gateway_groups_array();
+								foreach ($grouplist as $name => $group) {
+									if($group[0]['vip'] <> "")
+										$vipif = $group[0]['vip'];
+									else
+										$vipif = $group[0]['int'];
+									$iflabels[$name] = "GW Group {$name}";
 								}
-								else
-									$if = "WAN";
+								$if = htmlspecialchars($iflabels[$ph1ent['interface']]);
+							}
+							else
+								$if = "WAN";
 
-								if (!isset($ph1ent['mobile']))
-									echo $if."<br />".$ph1ent['remote-gateway'];
-								else
-									echo $if."<br /><strong>" . gettext("Mobile Client") . "</strong>";
-							?>
+							if (!isset($ph1ent['mobile']))
+								echo $if."<br />".$ph1ent['remote-gateway'];
+							else
+								echo $if."<br /><strong>" . gettext("Mobile Client") . "</strong>";
+?>
 							<?=$spane;?>
 						</td>
 						<td class="listr">
@@ -236,14 +237,14 @@ include("head.inc");
 						<td class="listr">
 							<?=$spans;?>
 							<?=$p1_ealgos[$ph1ent['encryption-algorithm']['name']]['name'];?>
-							<?php
-								if ($ph1ent['encryption-algorithm']['keylen']) {
-									if ($ph1ent['encryption-algorithm']['keylen']=="auto")
-										echo " (" . gettext("auto") . ")";
-									else
-										echo " ({$ph1ent['encryption-algorithm']['keylen']} " . gettext("bits") . ")";
-								}
-							?>
+<?php
+							if ($ph1ent['encryption-algorithm']['keylen']) {
+								if ($ph1ent['encryption-algorithm']['keylen']=="auto")
+									echo " (" . gettext("auto") . ")";
+								else
+									echo " ({$ph1ent['encryption-algorithm']['keylen']} " . gettext("bits") . ")";
+							}
+?>
 							<?=$spane;?>
 						</td>
 						<td class="listr">
@@ -270,7 +271,9 @@ include("head.inc");
 										</a>
 									</td>
 								</tr>
-								<?php if (!isset($ph1ent['mobile'])): ?>
+<?php
+							if (!isset($ph1ent['mobile'])):
+?>
 								<tr>
 									<td>
 									</td>
@@ -280,30 +283,36 @@ include("head.inc");
 										</a>
 									</td>
 								</tr>
-								<?php endif; ?>
+<?php
+							endif;
+?>
 							</table>
 						</td>
 					</tr>
 					<tr>
 						<td class="listrborder" colspan="6">
 							<div id="shph2but-<?=$i?>">
-								<?php
-									$phase2count=0;
-									foreach ($a_phase2 as $ph2ent) {
-										if ($ph2ent['ikeid'] != $ph1ent['ikeid']) 
-											continue;
-										$phase2count++;
-									}
-								?>								
+<?php
+								$phase2count=0;
+								foreach ($a_phase2 as $ph2ent) {
+									if ($ph2ent['ikeid'] != $ph1ent['ikeid'])
+										continue;
+									$phase2count++;
+								}
+?>
 								<input type="button" onclick="show_phase2('tdph2-<?=$i?>','shph2but-<?=$i?>')" value="+" /> - <?php printf(gettext("Show %s Phase-2 entries"), $phase2count); ?>
 							</div>
 							<table class="tabcont" width="100%" border="0" cellspacing="0" cellpadding="0" id="tdph2-<?=$i?>" style="display:none" summary="phase-2 entries">
 								<tr>
 									<td class="listhdrr"><?=gettext("Mode"); ?></td>
-									<?php if(($ph2ent['mode'] == "tunnel") or ($ph2ent['mode'] == "tunnel6")): ?>
+<?php
+								if(($ph2ent['mode'] == "tunnel") or ($ph2ent['mode'] == "tunnel6")):
+?>
 									<td class="listhdrr"><?=gettext("Local Subnet"); ?></td>
 									<td class="listhdrr"><?=gettext("Remote Subnet"); ?></td>
-									<?php endif; ?>
+<?php
+								endif;
+?>
 									<td class="listhdrr"><?=gettext("P2 Protocol"); ?></td>
 									<td class="listhdrr"><?=gettext("P2 Transforms"); ?></td>
 									<td class="listhdrr"><?=gettext("P2 Auth Methods"); ?></td>
@@ -313,75 +322,78 @@ include("head.inc");
 										</a>
 									</td>
 								</tr>
-							<?php
-									foreach ($a_phase2 as $ph2ent):
-										if ($ph2ent['ikeid'] != $ph1ent['ikeid'])
-											continue;
+<?php
+								foreach ($a_phase2 as $ph2ent):
+									if ($ph2ent['ikeid'] != $ph1ent['ikeid'])
+										continue;
 
-										if (isset( $ph2ent['disabled']) || isset($ph1ent['disabled'])) {
-											$spans = "<span class=\"gray\">";
-											$spane = "</span>";
-										}
-										else
-											$spans = $spane = "";
-							?>
+									if (isset( $ph2ent['disabled']) || isset($ph1ent['disabled'])) {
+										$spans = "<span class=\"gray\">";
+										$spane = "</span>";
+									} else
+										$spans = $spane = "";
+?>
 								<tr valign="top" ondblclick="document.location='vpn_ipsec_phase2.php?p2index=<?=$ph2ent['uniqid'];?>'">
 
 									<td class="listlr nowrap">
 										<?=$spans;?>
-											<?=$ph2ent['mode'];?>
+										<?=$ph2ent['mode'];?>
 										<?=$spane;?>
 									</td>
-									<?php 
-										if(($ph2ent['mode'] <> "tunnel") and ($ph2ent['mode'] <> "tunnel6")) {
-											echo "<td class=\"listr nowrap\">&nbsp;</td><td class=\"listr nowrap\">&nbsp;</td>";
-										} 
-									?>
-									<?php if(($ph2ent['mode'] == "tunnel") or ($ph2ent['mode'] == "tunnel6")): ?>
+<?php
+									if(($ph2ent['mode'] <> "tunnel") and ($ph2ent['mode'] <> "tunnel6")) {
+										echo "<td class=\"listr nowrap\">&nbsp;</td><td class=\"listr nowrap\">&nbsp;</td>";
+									}
+?>
+<?php
+									if(($ph2ent['mode'] == "tunnel") or ($ph2ent['mode'] == "tunnel6")):
+?>
+										<td class="listr nowrap">
+											<?=$spans;?>
+												<?=ipsec_idinfo_to_text($ph2ent['localid']); ?>
+											<?=$spane;?>
+										</td>
+										<td class="listr nowrap">
+											<?=$spans;?>
+												<?=ipsec_idinfo_to_text($ph2ent['remoteid']); ?>
+											<?=$spane;?>
+										</td>
+<?php
+									endif;
+?>
 									<td class="listr nowrap">
 										<?=$spans;?>
-											<?=ipsec_idinfo_to_text($ph2ent['localid']); ?>
-										<?=$spane;?>
-									</td>
-									<td class="listr nowrap">
-										<?=$spans;?>
-											<?=ipsec_idinfo_to_text($ph2ent['remoteid']); ?>
-										<?=$spane;?>
-									</td>
-									<?php endif; ?>
-									<td class="listr nowrap">
-										<?=$spans;?>
-											<?php echo $p2_protos[$ph2ent['protocol']];	?>
+										<?php echo $p2_protos[$ph2ent['protocol']]; ?>
 										<?=$spane;?>
 									</td>
 									<td class="listr">
 										<?=$spans;?>
-										<?php
-											foreach ($ph2ent['encryption-algorithm-option'] as $k => $ph2ea) {
-												if ($k)
-													echo ", ";
-												echo $p2_ealgos[$ph2ea['name']]['name'];
-												if ($ph2ea['keylen']) {
-													if ($ph2ea['keylen']=="auto")
-														echo " (" . gettext("auto") . ")";
-													else
-														echo " ({$ph2ea['keylen']} " . gettext("bits") . ")";
-												}
+<?php
+										foreach ($ph2ent['encryption-algorithm-option'] as $k => $ph2ea) {
+											if ($k)
+												echo ", ";
+											echo $p2_ealgos[$ph2ea['name']]['name'];
+											if ($ph2ea['keylen']) {
+												if ($ph2ea['keylen']=="auto")
+													echo " (" . gettext("auto") . ")";
+												else
+													echo " ({$ph2ea['keylen']} " . gettext("bits") . ")";
 											}
-										?>
+										}
+?>
 										<?=$spane;?>
 									</td>
 									<td class="listr nowrap">
 										<?=$spans;?>
-										<?php
-											if (!empty($ph2ent['hash-algorithm-option']) && is_array($ph2ent['hash-algorithm-option'])) {
-												foreach ($ph2ent['hash-algorithm-option'] as $k => $ph2ha) {
-													if ($k)
-														echo ", ";
-													echo $p2_halgos[$ph2ha];
-												}
+<?php
+										if (!empty($ph2ent['hash-algorithm-option']) && is_array($ph2ent['hash-algorithm-option'])) {
+											foreach ($ph2ent['hash-algorithm-option'] as $k => $ph2ha) {
+												if ($k)
+													echo ", ";
+												echo $p2_halgos[$ph2ha];
 											}
-										?>
+										}
+?>
 										<?=$spane;?>
 									</td>
 									<td class="list nowrap">
@@ -396,9 +408,9 @@ include("head.inc");
 										</a>
 									</td>
 								</tr>
-
-								<?php endforeach; ?>
-
+<?php
+								endforeach;
+?>
 							</table>
 						</td>
 					</tr>
@@ -407,12 +419,12 @@ include("head.inc");
 							&nbsp;
 						</td>
 					</tr>
-					<?php
-							$i++;
-						}
-					if(!$counter)
-						show_ipsec_header($ph1ent);
-					?>
+<?php
+					$i++;
+				endforeach;  // $a_phase1 as $ph1ent
+				if(!$counter)
+					show_ipsec_header($ph1ent);
+?>
 					<tr>
 						<td class="list" colspan="6"></td>
 						<td class="list">
@@ -465,7 +477,7 @@ function show_phase2(id, buttonid) {
 
 function show_ipsec_header($ph1ent) {
 	global $g;
-	if (isset($ph1ent['mobile'])) 
+	if (isset($ph1ent['mobile']))
 		$mobile = "&mobile=true";
 	?>
 	<tr>
@@ -475,12 +487,12 @@ function show_ipsec_header($ph1ent) {
 		<td class="listhdrr"><?=gettext("P1 Protocol"); ?></td>
 		<td class="listhdrr"><?=gettext("P1 Transforms"); ?></td>
 		<td class="listhdrr"><?=gettext("P1 Description"); ?></td>
-		<td class ="list">
+		<td class="list">
 		</td>
 	</tr>
 
 <?php
-	
+
 }
 
 ?>

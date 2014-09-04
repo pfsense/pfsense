@@ -81,8 +81,6 @@ if ($_POST) {
 			}
 			if (write_config())
 				mark_subsystem_dirty('ipsec');
-			header("Location: vpn_ipsec.php");
-			exit;
 		}
 	} else if (isset($_POST['delp2_x'])) {
 		/* delete selected p2 entries */
@@ -92,8 +90,6 @@ if ($_POST) {
 			}
 			if (write_config())
 				mark_subsystem_dirty('ipsec');
-			header("Location: vpn_ipsec.php");
-			exit;
 		}
 	} else {
 		/* yuck - IE won't send value attributes for image buttons, while Mozilla does - so we use .x/.y to find move button clicks instead... */
@@ -211,8 +207,6 @@ if ($_POST) {
 		if ($save === 1) {
 			if (write_config())
 				mark_subsystem_dirty('ipsec');
-			header("Location: vpn_ipsec.php");
-			exit;
 		}
 	}
 }
@@ -417,7 +411,14 @@ include("head.inc");
 						<td class="listt">&nbsp;</td>
 						<td class="listt">&nbsp;</td>
 						<td class="listrborder" colspan="6">
-							<div id="shph2but-<?=$i?>">
+<?php
+							if (isset($_POST["tdph2-{$i}-visible"]))
+								$tdph2_visible = htmlspecialchars($_POST["tdph2-{$i}-visible"]);
+							else
+								$tdph2_visible = 0;
+?>
+							<input type="hidden" name="tdph2-<?=$i;?>-visible" id="tdph2-<?=$i;?>-visible" value="<?=$tdph2_visible?>" />
+							<div id="shph2but-<?=$i?>" <?php echo ($tdph2_visible == '1' ? 'style="display:none"' : '');?>>
 <?php
 							$phase2count=0;
 							foreach ($a_phase2 as $ph2ent) {
@@ -430,7 +431,7 @@ include("head.inc");
 ?>
 								<input type="button" onclick="show_phase2('tdph2-<?=$i?>','shph2but-<?=$i?>')" value="+" /> - <?php printf(gettext("Show %s Phase-2 entries"), $phase2count); ?>
 							</div>
-							<div id="tdph2-<?=$i?>" style="display:none">
+							<div id="tdph2-<?=$i?>" <?php echo ($tdph2_visible != '1' ? 'style="display:none"' : '');?>>
 							<table class="tabcont" width="100%" border="0" cellspacing="0" cellpadding="0" summary="phase-2 entries">
 							<tr id="<?=$fr_header;?>">
 									<td>&nbsp;</td>
@@ -653,8 +654,9 @@ include("head.inc");
 //<![CDATA[
 function show_phase2(id, buttonid) {
 	document.getElementById(buttonid).innerHTML='';
-	aodiv = document.getElementById(id);
-	aodiv.style.display = "block";
+	document.getElementById(id).style.display = "block";
+	var visible = id + '-visible';
+	document.getElementById(visible).value = "1";
 }
 //]]>
 </script>

@@ -97,13 +97,25 @@ if ($_POST) {
 		}
 	} else {
 		/* yuck - IE won't send value attributes for image buttons, while Mozilla does - so we use .x/.y to find move button clicks instead... */
-		unset($movebtn);
+		unset($delbtn, $delbtnp2, $movebtn, $movebtnp2, $togglebtn, $togglebtnp2);
 		foreach ($_POST as $pn => $pd) {
-			if (preg_match("/move_(\d+)_x/", $pn, $matches)) {
+			if (preg_match("/del_(\d+)_x/", $pn, $matches)) {
+				$delbtn = $matches[1];
+			} else if (preg_match("/delp2_(\d+)_x/", $pn, $matches)) {
+				$delbtnp2 = $matches[1];
+			} else if (preg_match("/move_(\d+)_x/", $pn, $matches)) {
 				$movebtn = $matches[1];
-				break;
+			} else if (preg_match("/movep2_(\d+)_x/", $pn, $matches)) {
+				$movebtnp2 = $matches[1];
+			} else if (preg_match("/toggle_(\d+)_x/", $pn, $matches)) {
+				$togglebtn = $matches[1];
+			} else if (preg_match("/togglep2_(\d+)_x/", $pn, $matches)) {
+				$togglebtnp2 = $matches[1];
 			}
 		}
+
+		$save = 1;
+
 		/* move selected p1 entries before this */
 		if (isset($movebtn) && is_array($_POST['p1entry']) && count($_POST['p1entry'])) {
 			$a_phase1_new = array();
@@ -134,104 +146,75 @@ if ($_POST) {
 			if (count($a_phase1_new) > 0)
 				$a_phase1 = $a_phase1_new;
 
-			if (write_config())
-				mark_subsystem_dirty('ipsec');
-			header("Location: vpn_ipsec.php");
-			exit;
-		}
-
-		unset($movebtn);
-		foreach ($_POST as $pn => $pd) {
-			if (preg_match("/movep2_(\d+)_x/", $pn, $matches)) {
-				$movebtn = $matches[1];
-				break;
-			}
-		}
-		/* move selected p2 entries before this */
-		if (isset($movebtn) && is_array($_POST['p2entry']) && count($_POST['p2entry'])) {
+		} else if (isset($movebtnp2) && is_array($_POST['p2entry']) && count($_POST['p2entry'])) {
+			/* move selected p2 entries before this */
 			$a_phase2_new = array();
 
-			/* copy all p2 entries < $movebtn and not selected */
-			for ($i = 0; $i < $movebtn; $i++) {
+			/* copy all p2 entries < $movebtnp2 and not selected */
+			for ($i = 0; $i < $movebtnp2; $i++) {
 				if (!in_array($i, $_POST['p2entry']))
 					$a_phase2_new[] = $a_phase2[$i];
 			}
 
 			/* copy all selected p2 entries */
 			for ($i = 0; $i < count($a_phase2); $i++) {
-				if ($i == $movebtn)
+				if ($i == $movebtnp2)
 					continue;
 				if (in_array($i, $_POST['p2entry']))
 					$a_phase2_new[] = $a_phase2[$i];
 			}
 
-			/* copy $movebtn p2 entry */
-			if ($movebtn < count($a_phase2))
-				$a_phase2_new[] = $a_phase2[$movebtn];
+			/* copy $movebtnp2 p2 entry */
+			if ($movebtnp2 < count($a_phase2))
+				$a_phase2_new[] = $a_phase2[$movebtnp2];
 
-			/* copy all p2 entries > $movebtn and not selected */
-			for ($i = $movebtn+1; $i < count($a_phase2); $i++) {
+			/* copy all p2 entries > $movebtnp2 and not selected */
+			for ($i = $movebtnp2+1; $i < count($a_phase2); $i++) {
 				if (!in_array($i, $_POST['p2entry']))
 					$a_phase2_new[] = $a_phase2[$i];
 			}
 			if (count($a_phase2_new) > 0)
 				$a_phase2 = $a_phase2_new;
 
+		} else if (isset($togglebtn)) {
+			if (isset($a_phase1[$togglebtn]['disabled']))
+				unset($a_phase1[$togglebtn]['disabled']);
+			else
+				$a_phase1[$togglebtn]['disabled'] = true;
+
+		} else if (isset($togglebtnp2)) {
+			if (isset($a_phase2[$togglebtnp2]['disabled']))
+				unset($a_phase2[$togglebtnp2]['disabled']);
+			else
+				$a_phase2[$togglebtnp2]['disabled'] = true;
+
+		} else if (isset($delbtn)) {
+			/* remove static route if interface is not WAN */
+			if ($a_phase1[$delbtn]['interface'] <> "wan")
+				mwexec("/sbin/route delete -host {$a_phase1[$delbtn]['remote-gateway']}");
+
+			/* remove all phase2 entries that match the ikeid */
+			$ikeid = $a_phase1[$delbtn]['ikeid'];
+			foreach ($a_phase2 as $p2index => $ph2tmp)
+				if ($ph2tmp['ikeid'] == $ikeid) {
+					unset($a_phase2[$p2index]);
+				}
+
+			unset($a_phase1[$delbtn]);
+
+		} else if (isset($delbtnp2)) {
+			unset($a_phase2[$delbtnp2]);
+
+		} else
+			$save = 0;
+
+		if ($save === 1) {
 			if (write_config())
 				mark_subsystem_dirty('ipsec');
 			header("Location: vpn_ipsec.php");
 			exit;
 		}
 	}
-}
-
-if (isset($_GET['p1index']) && is_numericint($_GET['p1index']) && isset($a_phase1[$_GET['p1index']])) {
-	if ($_GET['act'] == "delph1") {
-		/* remove static route if interface is not WAN */
-		if ($a_phase1[$_GET['p1index']]['interface'] <> "wan")
-			mwexec("/sbin/route delete -host {$a_phase1[$_GET['p1index']]['remote-gateway']}");
-
-		/* remove all phase2 entries that match the ikeid */
-		$ikeid = $a_phase1[$_GET['p1index']]['ikeid'];
-		foreach ($a_phase2 as $p2index => $ph2tmp)
-			if ($ph2tmp['ikeid'] == $ikeid) {
-				unset($a_phase2[$p2index]);
-			}
-
-		/* remove the phase1 entry */
-		unset($a_phase1[$_GET['p1index']]);
-		write_config();
-		mark_subsystem_dirty('ipsec');
-	} else if ($_GET['act'] == "delph2") {
-		/* remove the phase2 entry */
-		unset($a_phase2[$_GET['p2index']]);
-		write_config();
-		mark_subsystem_dirty('ipsec');
-	} else if ($_GET['act'] == "toggle") {
-		if (isset($a_phase1[$_GET['p1index']]['disabled']))
-			unset($a_phase1[$_GET['p1index']]['disabled']);
-		else
-			$a_phase1[$_GET['p1index']]['disabled'] = true;
-
-		write_config();
-		mark_subsystem_dirty('ipsec');
-	}
-
-	header("Location: vpn_ipsec.php");
-	exit;
-} else if (isset($_GET['p2index']) && is_numericint($_GET['p2index']) && isset($a_phase2[$_GET['p2index']])) {
-	if ($_GET['act'] == "togglep2") {
-		if (isset($a_phase2[$_GET['p2index']]['disabled']))
-			unset($a_phase2[$_GET['p2index']]['disabled']);
-		else
-			$a_phase2[$_GET['p2index']]['disabled'] = true;
-
-		write_config();
-		mark_subsystem_dirty('ipsec');
-	}
-
-	header("Location: vpn_ipsec.php");
-	exit;
 }
 
 $pgtitle = array(gettext("VPN"),gettext("IPsec"));
@@ -317,7 +300,9 @@ include("head.inc");
 							<input type="checkbox" id="frc<?=$i;?>" name="p1entry[]" value="<?=$i;?>" onclick="fr_bgcolor('<?=$i;?>')" style="margin: 0; padding: 0; width: 15px; height: 15px;" />
 						</td>
 						<td class="listt" align="center" valign="middle">
-							<a href="?p1index=<?=$i;?>&amp;act=toggle"><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_<?=$iconfn;?>.gif" width="11" height="11" border="0" title="<?=gettext("click to toggle enabled/disabled status");?>" alt="icon" /></a>
+							<input name="toggle_<?=$i;?>" src="/themes/<?= $g['theme']; ?>/images/icons/icon_<?=$iconfn?>.gif"
+								title="<?=gettext("click to toggle enabled/disabled status");?>"
+								type="image" style="height:11;width:11;border:0" />
 						</td>
 						<td class="listlr" onclick="fr_toggle(<?=$i;?>)" id="frd<?=$i;?>">
 							<?=$spans;?>
@@ -408,9 +393,10 @@ include("head.inc");
 								</tr>
 								<tr>
 									<td>
-										<a href="vpn_ipsec.php?act=delph1&amp;p1index=<?=$i;?>" onclick="return confirm('<?=gettext("Do you really want to delete this phase1 and all associated phase2 entries?"); ?>')">
-											<img src="./themes/<?= $g['theme']; ?>/images/icons/icon_x.gif" title="<?=gettext("delete phase1 entry"); ?>" width="17" height="17" border="0" alt="delete" />
-										</a>
+										<input name="del_<?=$i;?>" src="/themes/<?= $g['theme']; ?>/images/icons/icon_x.gif"
+											title="<?=gettext("delete phase1 entry");?>"
+											type="image" style="height:17;width:17;border:0"
+											onclick="return confirm('<?=gettext("Do you really want to delete this phase1 and all associated phase2 entries?"); ?>')" />
 									</td>
 									<td>
 <?php
@@ -479,7 +465,9 @@ include("head.inc");
 									<input type="checkbox" id="<?=$fr_c;?>" name="p2entry[]" value="<?=$ph2index;?>" onclick="fr_bgcolor('<?=$j;?>', '<?=$fr_prefix;?>')" style="margin: 0; padding: 0; width: 15px; height: 15px;" />
 									</td>
 									<td class="listt" align="center" valign="middle">
-										<a href="?p2index=<?=$ph2index;?>&amp;act=togglep2"><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_<?=$iconfn;?>.gif" width="11" height="11" border="0" title="<?=gettext("click to toggle enabled/disabled status");?>" alt="icon" /></a>
+										<input name="togglep2_<?=$ph2index;?>" src="/themes/<?= $g['theme']; ?>/images/icons/icon_<?=$iconfn?>.gif"
+											title="<?=gettext("click to toggle enabled/disabled status");?>"
+											type="image" style="height:11;width:11;border:0" />
 									</td>
 									<td class="listlr nowrap" id="<?=$fr_d;?>" onclick="fr_toggle('<?=$j;?>', '<?=$fr_prefix;?>')">
 										<?=$spans;?>
@@ -547,9 +535,10 @@ include("head.inc");
 										<a href="vpn_ipsec_phase2.php?p2index=<?=$ph2ent['uniqid'];?>">
 											<img src="./themes/<?= $g['theme']; ?>/images/icons/icon_e.gif" title="<?=gettext("edit phase2 entry"); ?>" width="17" height="17" border="0" alt="edit" />
 										</a>
-										<a href="vpn_ipsec.php?act=delph2&amp;p1index=<?=$i;?>&amp;p2index=<?=$ph2index;?>" onclick="return confirm('<?=gettext("Do you really want to delete this phase2 entry?"); ?>')">
-											<img src="./themes/<?= $g['theme']; ?>/images/icons/icon_x.gif" title="<?=gettext("delete phase2 entry"); ?>" width="17" height="17" border="0" alt="delete" />
-										</a>
+										<input name="delp2_<?=$ph2index;?>" src="/themes/<?= $g['theme']; ?>/images/icons/icon_x.gif"
+											title="<?=gettext("delete phase2 entry");?>"
+											type="image" style="height:17;width:17;border:0"
+											onclick="return confirm('<?=gettext("Do you really want to delete this phase2 entry?"); ?>')" />
 										<a href="vpn_ipsec_phase2.php?dup=<?=$ph2ent['uniqid'];?>">
 											<img src="./themes/<?= $g['theme']; ?>/images/icons/icon_plus.gif" title="<?=gettext("add a new Phase 2 based on this one"); ?>" width="17" height="17" border="0" alt="add" />
 										</a>

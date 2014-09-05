@@ -250,9 +250,9 @@ if ($_POST) {
 
 				if(file_exists("{$temp_filename}/aliases")) {
 					if ($_POST['type'] == "url") {
-						$address = parse_aliases_file("{$temp_filename}/aliases", true, false);
+						$address = parse_aliases_file("{$temp_filename}/aliases", "subnets");
 					} else {
-						$address = parse_aliases_file("{$temp_filename}/aliases", false, true, $maxitems);
+						$address = parse_aliases_file("{$temp_filename}/aliases", "ports", $maxitems);
 					}
 					if ($address == null) {
 						$input_errors[] = sprintf(gettext("Could not process. '%s'."), $url);

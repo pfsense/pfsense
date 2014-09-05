@@ -1845,22 +1845,25 @@ function update_alias_names_upon_change($section, $field, $new_alias_name, $orig
 
 }
 
-function parse_aliases_file($filename, $use_subnets, $use_ports, $max_items = -1) {
+function parse_aliases_file($filename, $type = "subnets", $max_items = -1) {
 	/*
 	 * $filename = file to process for example blocklist like DROP:  http://www.spamhaus.org/drop/drop.txt
-	 * $use_subnets = if set to TRUE subnets and ips will be returned
-	 * $use_ports = if set to TRUE port-ranges and ports will be returned
+	 * $type = if set to 'subnets' then subnets and ips will be returned, 
+	 * 	       if set to 'ports' port-ranges and ports will be returned
 	 * $max_items = sets the maximum amount of valid items to load, -1 the default defines there is no limit.
 	 * 
 	 * RETURNS an array of ip subnets and ip's or ports and port-ranges, returns NULL upon a error conditions (file not found)
 	 */
+	// convert text value to boolean
+	$use_subnets = $type == "subnets";
+	$use_ports   = $type == "ports";
+	
 	$items = array();
 	$fd = @fopen($filename, 'r');
 	if (!$fd) {
 		log_error(gettext("Could not process aliases from alias: {$alias_url}"));
 		return null;
 	}
-	$item_count = 0;
 	/* NOTE: fgetss() is not a typo RTFM before being smart */
 	while (($fc = fgetss($fd)) !== FALSE) {
 		$tmp = trim($fc, " \t\n\r");
@@ -1876,8 +1879,7 @@ function parse_aliases_file($filename, $use_subnets, $use_ports, $max_items = -1
 		         ($use_ports && (is_port_one($tmp) || is_portrange($tmp)));
 		if ($valid) {
 			$items[] = $tmp;
-			$item_count++;
-			if ($item_count == $max_items)
+			if (count($items) == $max_items)
 				break;
 		}
 	}
@@ -1915,7 +1917,7 @@ function update_alias_url_data() {
 							continue;
 					}
 					if (file_exists("{$temp_filename}/aliases")) {
-						$subnets = parse_aliases_file("{$temp_filename}/aliases", true, false);
+						$subnets = parse_aliases_file("{$temp_filename}/aliases", "subnets");
 						$address = join(',', $subnets);
 					}
 				}

@@ -393,17 +393,21 @@ if(file_exists("/var/run/interface_mismatch_reboot_needed"))
 
 <form action="interfaces_assign.php" method="post" name="iform" id="iform">
 
-<?php if (file_exists("/tmp/reload_interfaces")): ?><p>
-	<?php print_info_box_np(gettext("The interface configuration has been changed.<br />You must apply the changes in order for them to take effect."));?><br /></p>
-<?php elseif($savemsg): ?>
-	<?php print_info_box($savemsg); ?>
-<?php endif; ?>
+<?php
+if (file_exists("/tmp/reload_interfaces")) {
+	echo "<p>\n";
+	print_info_box_np(gettext("The interface configuration has been changed.<br />You must apply the changes in order for them to take effect."));
+	echo "<br /></p>\n";
+} elseif($savemsg)
+	print_info_box($savemsg);
 
-<?php pfSense_handle_custom_code("/usr/local/pkg/interfaces_assign/pre_input_errors"); ?>
-<?php if ($input_errors) print_input_errors($input_errors); ?>
+pfSense_handle_custom_code("/usr/local/pkg/interfaces_assign/pre_input_errors");
+if ($input_errors)
+	print_input_errors($input_errors);
+?>
 
 <table width="100%" border="0" cellpadding="0" cellspacing="0" summary="interfaces assign">
-  <tr><td class="tabnavtbl">
+	<tr><td class="tabnavtbl">
 <?php
 	$tab_array = array();
 	$tab_array[0] = array(gettext("Interface assignments"), true, "interfaces_assign.php");
@@ -418,100 +422,115 @@ if(file_exists("/var/run/interface_mismatch_reboot_needed"))
 	$tab_array[10] = array(gettext("LAGG"), false, "interfaces_lagg.php");
 	display_top_tabs($tab_array);
 ?>
-  </td></tr>
-  <tr>
-    <td>
-	<div id="mainarea">
-        <table class="tabcont" width="100%" border="0" cellpadding="0" cellspacing="0" summary="main area">
-       <tr>
-	<td class="listhdrr"><?=gettext("Interface"); ?></td>
-	<td class="listhdr"><?=gettext("Network port"); ?></td>
-	<td class="list">&nbsp;</td>
-  </tr>
-  <?php foreach ($config['interfaces'] as $ifname => $iface):
-  	if ($iface['descr'])
-		$ifdescr = $iface['descr'];
-	else
-		$ifdescr = strtoupper($ifname);
-	?>
-  <tr>
-	<td class="listlr" valign="middle"><strong><u><span onclick="location.href='/interfaces.php?if=<?=$ifname;?>'" style="cursor: pointer;"><?=$ifdescr;?></span></u></strong></td>
-	  <td valign="middle" class="listr">
-		<select onchange="javascript:jQuery('#savediv').show();" name="<?=$ifname;?>" id="<?=$ifname;?>">
-		  <?php foreach ($portlist as $portname => $portinfo): ?>
-			<option  value="<?=$portname;?>"  <?php if ($portname == $iface['if']) echo " selected=\"selected\"";?>>
-				<?php if ($portinfo['isvlan']) {
-					$descr = sprintf(gettext('VLAN %1$s on %2$s'),$portinfo['tag'],$portinfo['if']);
-				if ($portinfo['descr'])
-					$descr .= " (" . $portinfo['descr'] . ")";
-					echo htmlspecialchars($descr);
-				} elseif ($portinfo['iswlclone']) {
-					$descr = $portinfo['cloneif'];
-					if ($portinfo['descr'])
-						$descr .= " (" . $portinfo['descr'] . ")";
-					echo htmlspecialchars($descr);
-				} elseif ($portinfo['isppp']) {
-					echo htmlspecialchars($portinfo['descr']);
-				} elseif ($portinfo['isbridge']) {
-					$descr = strtoupper($portinfo['bridgeif']);
-					if ($portinfo['descr'])
-						$descr .= " (" . $portinfo['descr'] . ")";
-					echo htmlspecialchars($descr);
-				} elseif ($portinfo['isgre']) {
-					$descr = "GRE {$portinfo['remote-addr']}";
-					if ($portinfo['descr'])
-						$descr .= " (" . $portinfo['descr'] . ")";
-					echo htmlspecialchars($descr);
-				} elseif ($portinfo['isgif']) {
-					$descr = "GIF {$portinfo['remote-addr']}";
-					if ($portinfo['descr'])
-						$descr .= " (" . $portinfo['descr'] . ")";
-					echo htmlspecialchars($descr);
-				} elseif ($portinfo['islagg']) {
-					$descr = strtoupper($portinfo['laggif']);
-					if ($portinfo['descr'])
-						$descr .= " (" . $portinfo['descr'] . ")";
-					echo htmlspecialchars($descr);
-				} elseif ($portinfo['isqinq']) {
-					echo htmlspecialchars($portinfo['descr']);
-				} elseif (substr($portname, 0, 4) == 'ovpn') {
-					echo htmlspecialchars($portname . " (" . $ovpn_descrs[substr($portname, 5)] . ")");
-				} else
-					echo htmlspecialchars($portname . " (" . $portinfo['mac'] . ")");
-			?></option>
-		<?php endforeach; ?>
-	</select>
-	</td>
-	<td valign="middle" class="list">
-		  <?php if ($ifname != 'wan'): ?>
-		  <a href="interfaces_assign.php?act=del&amp;id=<?=$ifname;?>" onclick="return confirm('<?=gettext("Do you really want to delete this interface?");?>')"><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_x.gif" title="<?=gettext("delete interface"); ?>" width="17" height="17" border="0" alt="delete" /></a>
-		  <?php endif; ?>
-		</td>
-  </tr>
-  <?php endforeach; ?>
-  <?php if (count($config['interfaces']) < count($portlist)): ?>
-  <tr>
-	<td class="list" colspan="2"></td>
-	<td class="list nowrap">
-	<a href="interfaces_assign.php?act=add"><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_plus.gif" title="<?=gettext("add interface"); ?>" width="17" height="17" border="0" alt="add" /></a>
-	</td>
-  </tr>
-  <?php else: ?>
-  <tr>
-	<td class="list" colspan="3" height="10"></td>
-  </tr>
-  <?php endif; ?>
-</table>
-</div>
-<br />
-<div id='savediv' <?php if (empty($_GET['act'])) echo "style='display:none;'"; ?>>
-	<input name="Submit" type="submit" class="formbtn" value="<?=gettext("Save"); ?>" /><br /><br />
-</div>
-<ul>
-	<li><span class="vexpl"><?=gettext("Interfaces that are configured as members of a lagg(4) interface will not be shown."); ?></span></li>
-</ul>
-</td>
-</tr>
+	</td></tr>
+	<tr><td>
+		<div id="mainarea">
+			<table class="tabcont" width="100%" border="0" cellpadding="0" cellspacing="0" summary="main area">
+				<tr>
+					<td class="listhdrr"><?=gettext("Interface"); ?></td>
+					<td class="listhdr"><?=gettext("Network port"); ?></td>
+					<td class="list">&nbsp;</td>
+				</tr>
+<?php
+			foreach ($config['interfaces'] as $ifname => $iface):
+				if ($iface['descr'])
+					$ifdescr = $iface['descr'];
+				else
+					$ifdescr = strtoupper($ifname);
+?>
+				<tr>
+					<td class="listlr" valign="middle"><strong><u><span onclick="location.href='/interfaces.php?if=<?=$ifname;?>'" style="cursor: pointer;"><?=$ifdescr;?></span></u></strong></td>
+					<td valign="middle" class="listr">
+						<select onchange="javascript:jQuery('#savediv').show();" name="<?=$ifname;?>" id="<?=$ifname;?>">
+<?php
+						foreach ($portlist as $portname => $portinfo):
+?>
+							<option  value="<?=$portname;?>"  <?php if ($portname == $iface['if']) echo " selected=\"selected\"";?>>
+<?php
+							if ($portinfo['isvlan']) {
+								$descr = sprintf(gettext('VLAN %1$s on %2$s'),$portinfo['tag'],$portinfo['if']);
+							if ($portinfo['descr'])
+								$descr .= " (" . $portinfo['descr'] . ")";
+								echo htmlspecialchars($descr);
+							} elseif ($portinfo['iswlclone']) {
+								$descr = $portinfo['cloneif'];
+								if ($portinfo['descr'])
+									$descr .= " (" . $portinfo['descr'] . ")";
+								echo htmlspecialchars($descr);
+							} elseif ($portinfo['isppp']) {
+								echo htmlspecialchars($portinfo['descr']);
+							} elseif ($portinfo['isbridge']) {
+								$descr = strtoupper($portinfo['bridgeif']);
+								if ($portinfo['descr'])
+									$descr .= " (" . $portinfo['descr'] . ")";
+								echo htmlspecialchars($descr);
+							} elseif ($portinfo['isgre']) {
+								$descr = "GRE {$portinfo['remote-addr']}";
+								if ($portinfo['descr'])
+									$descr .= " (" . $portinfo['descr'] . ")";
+								echo htmlspecialchars($descr);
+							} elseif ($portinfo['isgif']) {
+								$descr = "GIF {$portinfo['remote-addr']}";
+								if ($portinfo['descr'])
+									$descr .= " (" . $portinfo['descr'] . ")";
+								echo htmlspecialchars($descr);
+							} elseif ($portinfo['islagg']) {
+								$descr = strtoupper($portinfo['laggif']);
+								if ($portinfo['descr'])
+									$descr .= " (" . $portinfo['descr'] . ")";
+								echo htmlspecialchars($descr);
+							} elseif ($portinfo['isqinq']) {
+								echo htmlspecialchars($portinfo['descr']);
+							} elseif (substr($portname, 0, 4) == 'ovpn') {
+								echo htmlspecialchars($portname . " (" . $ovpn_descrs[substr($portname, 5)] . ")");
+							} else
+								echo htmlspecialchars($portname . " (" . $portinfo['mac'] . ")");
+?>
+							</option>
+<?php
+						endforeach;
+?>
+						</select>
+					</td>
+					<td valign="middle" class="list">
+<?php
+					if ($ifname != 'wan'):
+?>
+						<a href="interfaces_assign.php?act=del&amp;id=<?=$ifname;?>" onclick="return confirm('<?=gettext("Do you really want to delete this interface?");?>')"><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_x.gif" title="<?=gettext("delete interface"); ?>" width="17" height="17" border="0" alt="delete" /></a>
+<?php
+					endif;
+?>
+					</td>
+				</tr>
+<?php
+			endforeach;
+			if (count($config['interfaces']) < count($portlist)):
+?>
+				<tr>
+					<td class="list" colspan="2"></td>
+					<td class="list nowrap">
+						<a href="interfaces_assign.php?act=add"><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_plus.gif" title="<?=gettext("add interface"); ?>" width="17" height="17" border="0" alt="add" /></a>
+					</td>
+				</tr>
+<?php
+			else:
+?>
+				<tr>
+					<td class="list" colspan="3" height="10"></td>
+				</tr>
+<?php
+			endif;
+?>
+			</table>
+		</div>
+		<br />
+		<div id='savediv' <?php if (empty($_GET['act'])) echo "style='display:none;'"; ?>>
+			<input name="Submit" type="submit" class="formbtn" value="<?=gettext("Save"); ?>" /><br /><br />
+		</div>
+		<ul>
+			<li><span class="vexpl"><?=gettext("Interfaces that are configured as members of a lagg(4) interface will not be shown."); ?></span></li>
+		</ul>
+	</td></tr>
 </table>
 </form>
 <?php include("fend.inc"); ?>

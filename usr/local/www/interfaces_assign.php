@@ -160,7 +160,6 @@ if ($_POST['apply']) {
 	} else {
 		write_config();
 
-		$retval = 0;
 		$retval = filter_configure();
 		$savemsg = get_std_save_message($retval);
 

@@ -52,6 +52,43 @@ require("vpn.inc");
 require("captiveportal.inc");
 require_once("rrd.inc");
 
+function interface_assign_description($portinfo, $portname) {
+	if ($portinfo['isvlan']) {
+		$descr = sprintf(gettext('VLAN %1$s on %2$s'),$portinfo['tag'],$portinfo['if']);
+		if ($portinfo['descr'])
+			$descr .= " (" . $portinfo['descr'] . ")";
+	} elseif ($portinfo['iswlclone']) {
+		$descr = $portinfo['cloneif'];
+		if ($portinfo['descr'])
+			$descr .= " (" . $portinfo['descr'] . ")";
+	} elseif ($portinfo['isppp']) {
+		$descr = $portinfo['descr'];
+	} elseif ($portinfo['isbridge']) {
+		$descr = strtoupper($portinfo['bridgeif']);
+		if ($portinfo['descr'])
+			$descr .= " (" . $portinfo['descr'] . ")";
+	} elseif ($portinfo['isgre']) {
+		$descr = "GRE {$portinfo['remote-addr']}";
+		if ($portinfo['descr'])
+			$descr .= " (" . $portinfo['descr'] . ")";
+	} elseif ($portinfo['isgif']) {
+		$descr = "GIF {$portinfo['remote-addr']}";
+		if ($portinfo['descr'])
+			$descr .= " (" . $portinfo['descr'] . ")";
+	} elseif ($portinfo['islagg']) {
+		$descr = strtoupper($portinfo['laggif']);
+		if ($portinfo['descr'])
+			$descr .= " (" . $portinfo['descr'] . ")";
+	} elseif ($portinfo['isqinq']) {
+		$descr =  $portinfo['descr'];
+	} elseif (substr($portname, 0, 4) == 'ovpn') {
+		$descr = $portname . " (" . $ovpn_descrs[substr($portname, 5)] . ")";
+	} else
+		$descr = $portname . " (" . $portinfo['mac'] . ")";
+
+	return htmlspecialchars($descr);
+}
+
 /*
 	In this file, "port" refers to the physical port name,
 	while "interface" refers to LAN, WAN, or OPTn.
@@ -445,46 +482,7 @@ if ($input_errors)
 						foreach ($portlist as $portname => $portinfo):
 ?>
 							<option  value="<?=$portname;?>"  <?php if ($portname == $iface['if']) echo " selected=\"selected\"";?>>
-<?php
-							if ($portinfo['isvlan']) {
-								$descr = sprintf(gettext('VLAN %1$s on %2$s'),$portinfo['tag'],$portinfo['if']);
-								if ($portinfo['descr'])
-									$descr .= " (" . $portinfo['descr'] . ")";
-								echo htmlspecialchars($descr);
-							} elseif ($portinfo['iswlclone']) {
-								$descr = $portinfo['cloneif'];
-								if ($portinfo['descr'])
-									$descr .= " (" . $portinfo['descr'] . ")";
-								echo htmlspecialchars($descr);
-							} elseif ($portinfo['isppp']) {
-								echo htmlspecialchars($portinfo['descr']);
-							} elseif ($portinfo['isbridge']) {
-								$descr = strtoupper($portinfo['bridgeif']);
-								if ($portinfo['descr'])
-									$descr .= " (" . $portinfo['descr'] . ")";
-								echo htmlspecialchars($descr);
-							} elseif ($portinfo['isgre']) {
-								$descr = "GRE {$portinfo['remote-addr']}";
-								if ($portinfo['descr'])
-									$descr .= " (" . $portinfo['descr'] . ")";
-								echo htmlspecialchars($descr);
-							} elseif ($portinfo['isgif']) {
-								$descr = "GIF {$portinfo['remote-addr']}";
-								if ($portinfo['descr'])
-									$descr .= " (" . $portinfo['descr'] . ")";
-								echo htmlspecialchars($descr);
-							} elseif ($portinfo['islagg']) {
-								$descr = strtoupper($portinfo['laggif']);
-								if ($portinfo['descr'])
-									$descr .= " (" . $portinfo['descr'] . ")";
-								echo htmlspecialchars($descr);
-							} elseif ($portinfo['isqinq']) {
-								echo htmlspecialchars($portinfo['descr']);
-							} elseif (substr($portname, 0, 4) == 'ovpn') {
-								echo htmlspecialchars($portname . " (" . $ovpn_descrs[substr($portname, 5)] . ")");
-							} else
-								echo htmlspecialchars($portname . " (" . $portinfo['mac'] . ")");
-?>
+								<?=interface_assign_description($portinfo, $portname);?>
 							</option>
 <?php
 						endforeach;

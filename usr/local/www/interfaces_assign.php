@@ -366,7 +366,7 @@ if ($_GET['act'] == "add" && (count($config['interfaces']) < count($portlist))) 
 	}
 
 	/* XXX: Do not remove this. */
-	mwexec("/bin/rm -f /tmp/config.cache");
+	unlink_if_exists("{$g['tmp_path']}/config.cache");
 
 	write_config();
 

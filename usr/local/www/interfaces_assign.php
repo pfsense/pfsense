@@ -448,8 +448,8 @@ if ($input_errors)
 <?php
 							if ($portinfo['isvlan']) {
 								$descr = sprintf(gettext('VLAN %1$s on %2$s'),$portinfo['tag'],$portinfo['if']);
-							if ($portinfo['descr'])
-								$descr .= " (" . $portinfo['descr'] . ")";
+								if ($portinfo['descr'])
+									$descr .= " (" . $portinfo['descr'] . ")";
 								echo htmlspecialchars($descr);
 							} elseif ($portinfo['iswlclone']) {
 								$descr = $portinfo['cloneif'];

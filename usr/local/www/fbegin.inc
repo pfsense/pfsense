@@ -243,7 +243,7 @@ if (isset($config['system']['developer'])) {
 $diagnostics_menu = msort(array_merge($diagnostics_menu, return_ext_menu("Diagnostics")),0);
 
 $gold_menu = array();
-$gold_menu[] = array(gettext("pfSense Gold"), "https://portal.pfsense.org/gold-subscription.php");
+$gold_menu[] = array(gettext("pfSense Gold"), "https://www.pfsense.org/gold");
 $gold_menu = msort(array_merge($gold_menu, return_ext_menu("Gold")),0);
 
 if(! $g['disablehelpmenu']) {
@@ -337,6 +337,14 @@ if(! $g['disablehelpmenu']) {
 						?>
 						</ul>
 					</li>
+					<li class="drop">
+						<div><?php echo gettext("Gold"); ?></div>
+						<ul id="diag" class="subdrop">
+						<?php
+							output_menu($gold_menu, "_blank");
+						?>
+						</ul>
+					</li>
 					<?php if(! $g['disablehelpmenu']): ?>
 					<li class="lastdrop">
 						<div><?php echo gettext("Help"); ?></div>
@@ -347,9 +355,6 @@ if(! $g['disablehelpmenu']) {
 						</ul>
 					</li>
 					<?php endif; ?>
-					<li class="drop">
-						<div><a href="https://www.pfsense.org/gold/"><?php echo gettext("Gold"); ?></a></div>
-					</li>
 				</ul>
 			</div>
 

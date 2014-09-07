@@ -742,4 +742,20 @@ function ipsec_find_id(& $ph1ent, $side = "local", $rgmap = array()) {
 	}
 	return array($thisid_type, $thisid_data);
 }
+
+function ipsec_fixup_network($network) {
+	if (substr($network, -3) == '|/0')
+		$result = substr($network, 0, -3);
+	else {
+		$tmp = explode('|', $network);
+		if (isset($tmp[1]))
+			$result = $tmp[1];
+		else
+			$result = $tmp[0];
+		unset($tmp);
+	}
+
+	return $result;
+}
+
 ?>

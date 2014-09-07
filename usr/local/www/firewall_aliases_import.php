@@ -58,7 +58,7 @@ $reserved_ifs = get_configured_interface_list(false, true);
 $reserved_keywords = array_merge($reserved_keywords, $reserved_ifs, $reserved_table_names);
 
 if (!is_array($config['aliases']['alias']))
-        $config['aliases']['alias'] = array();
+	$config['aliases']['alias'] = array();
 $a_aliases = &$config['aliases']['alias'];
 
 if($_POST['aliasimport'] <> "") {
@@ -66,7 +66,7 @@ if($_POST['aliasimport'] <> "") {
 	$reqdfieldsn = array(gettext("Name"),gettext("Aliases"));
 
 	do_input_validation($_POST, $reqdfields, $reqdfieldsn, $input_errors);
-		
+
 	if (is_validaliasname($_POST['name']) == false)
 		$input_errors[] = gettext("The alias name may only consist of the characters") . " a-z, A-Z, 0-9, _.";
 
@@ -76,17 +76,17 @@ if($_POST['aliasimport'] <> "") {
 
 
 	/* Check for reserved keyword names */
-        foreach($reserved_keywords as $rk)
-                if ($rk == $_POST['name'])
-                        $input_errors[] = sprintf(gettext("Cannot use a reserved keyword as alias name %s"), $rk);
+	foreach($reserved_keywords as $rk)
+		if ($rk == $_POST['name'])
+			$input_errors[] = sprintf(gettext("Cannot use a reserved keyword as alias name %s"), $rk);
 
-        /* check for name interface description conflicts */
-        foreach($config['interfaces'] as $interface) {
-                if($interface['descr'] == $_POST['name']) {
-                        $input_errors[] = gettext("An interface description with this name already exists.");
-                        break;
-                }
-        }
+	/* check for name interface description conflicts */
+	foreach($config['interfaces'] as $interface) {
+		if($interface['descr'] == $_POST['name']) {
+			$input_errors[] = gettext("An interface description with this name already exists.");
+			break;
+		}
+	}
 
 	if ($_POST['aliasimport']) {
 		$tocheck = explode("\n", $_POST['aliasimport']);
@@ -148,7 +148,7 @@ if($_POST['aliasimport'] <> "") {
 		if (write_config())
 			mark_subsystem_dirty('aliases');
 		pfSenseHeader("firewall_aliases.php");
-		
+
 		exit;
 	}
 }
@@ -164,38 +164,53 @@ include("head.inc");
 <div id="inputerrors"></div>
 <table width="100%" border="0" cellpadding="6" cellspacing="0" summary="firewall alias import">
 	<tr>
-	  <td colspan="2" valign="top" class="listtopic"><?=gettext("Alias Import"); ?></td>
+		<td colspan="2" valign="top" class="listtopic"><?=gettext("Alias Import"); ?></td>
 	</tr>
 	<tr>
-	  <td valign="top" class="vncellreq"><?=gettext("Alias Name"); ?></td>
-	  <td class="vtable"> <input name="name" type="text" class="formfld unknown" id="name" size="40" value="<?=xhtmlspecialchars($_POST['name']);?>" />
-	    <br /> <span class="vexpl">
-	    <?=gettext("The name of the alias may only consist of the characters \"a-z, A-Z and 0-9\"."); ?></span></td>
+		<td valign="top" class="vncellreq"><?=gettext("Alias Name"); ?></td>
+		<td class="vtable">
+			<input name="name" type="text" class="formfld unknown" id="name" size="40" maxlength="31" value="<?=xhtmlspecialchars($_POST['name']);?>" />
+			<br />
+			<span class="vexpl">
+				<?=gettext("The name of the alias may only consist of the characters \"a-z, A-Z and 0-9\"."); ?>
+			</span>
+		</td>
 	</tr>
 	<tr>
-	  <td width="22%" valign="top" class="vncell"><?=gettext("Description"); ?></td>
-	  <td width="78%" class="vtable"> <input name="descr" type="text" class="formfld unknown" id="descr" size="40" value="<?=xhtmlspecialchars($_POST['descr']);?>" />
-	    <br /> <span class="vexpl"><?=gettext("You may enter a description here " .
-	    "for your reference (not parsed)"); ?>.</span></td>
+		<td width="22%" valign="top" class="vncell"><?=gettext("Description"); ?></td>
+		<td width="78%" class="vtable">
+			<input name="descr" type="text" class="formfld unknown" id="descr" size="40" value="<?=xhtmlspecialchars($_POST['descr']);?>" />
+			<br />
+			<span class="vexpl">
+				<?=gettext("You may enter a description here for your reference (not parsed)"); ?>.
+			</span>
+		</td>
 	</tr>
 	<tr>
-	  <td valign="top" class="vncellreq"><?=gettext("Aliases to import"); ?></td>
-	  <td class="vtable"><textarea name="aliasimport" rows="15" cols="40"><?php echo $_POST['aliasimport']; ?></textarea>
-		<br /> <span class="vexpl"><?=gettext("Paste in the aliases to import separated by a carriage return.  Common examples are lists of IPs, networks, blacklists, etc."); ?> 
-		<br /> <?=gettext("The list may contain IP addresses, with or without CIDR prefix, IP ranges, blank lines (ignored) and an optional description after each IP. e.g.:"); ?>
-		<br />172.16.1.2
-		<br />172.16.0.0/24
-		<br />10.11.12.100-10.11.12.200
-		<br />192.168.1.254 Home router
-		<br />10.20.0.0/16 Office network
-		<br />10.40.1.10-10.40.1.19 Managed switches</span></td>
+		<td valign="top" class="vncellreq"><?=gettext("Aliases to import"); ?></td>
+		<td class="vtable">
+			<textarea name="aliasimport" rows="15" cols="40"><?php echo $_POST['aliasimport']; ?></textarea>
+			<br />
+			<span class="vexpl">
+				<?=gettext("Paste in the aliases to import separated by a carriage return.  Common examples are lists of IPs, networks, blacklists, etc."); ?>
+				<br />
+				<?=gettext("The list may contain IP addresses, with or without CIDR prefix, IP ranges, blank lines (ignored) and an optional description after each IP. e.g.:"); ?>
+				<br />172.16.1.2
+				<br />172.16.0.0/24
+				<br />10.11.12.100-10.11.12.200
+				<br />192.168.1.254 Home router
+				<br />10.20.0.0/16 Office network
+				<br />10.40.1.10-10.40.1.19 Managed switches
+			</span>
+		</td>
 	</tr>
 	<tr>
-	  <td width="22%" valign="top">&nbsp;</td>
-	  <td width="78%">
-      <input id="submit" name="Submit" type="submit" class="formbtn" value="<?=gettext("Save"); ?>" />
-      <input class="formbtn" type="button" value="<?=gettext("Cancel"); ?>" onclick="history.back()" />
-	</td></tr>
+		<td width="22%" valign="top">&nbsp;</td>
+		<td width="78%">
+			<input id="submit" name="Submit" type="submit" class="formbtn" value="<?=gettext("Save"); ?>" />
+			<input class="formbtn" type="button" value="<?=gettext("Cancel"); ?>" onclick="history.back()" />
+		</td>
+	</tr>
 </table>
 
 
@@ -203,7 +218,7 @@ include("head.inc");
 </div>
 
 <?php include("fend.inc"); ?>
-	    
+
 <script type="text/javascript">
 //<![CDATA[
 	NiftyCheck();

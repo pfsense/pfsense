@@ -256,7 +256,7 @@ if ($_POST) {
 		if (!count($ealgos)) {
 			$input_errors[] = gettext("At least one encryption algorithm must be selected.");
 		} else {
-			if (empty($pconfig['halgo'])) {
+			if (empty($pconfig['halgos'])) {
 				foreach ($ealgos as $ealgo) {
 					if (!strpos($ealgo['name'], "gcm")) {
 						$input_errors[] = gettext("At least one hashing algorithm needs to be selected.");

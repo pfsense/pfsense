@@ -1,61 +1,62 @@
 #!/bin/sh
 
+export PATH=/bin:/usr/bin:/usr/local/bin:/sbin:/usr/sbin:/usr/local/sbin
+
 if [ "${2}" == "inet" ]; then
 
-	OLD_ROUTER=`/bin/cat /tmp/${1}_router`
-	if [ "${OLD_ROUTER}" != "" ]; then
+	OLD_ROUTER=`cat /tmp/${1}_router`
+	if [ -n "${OLD_ROUTER}" ]; then
 		echo "Removing states to old router ${OLD_ROUTER}" | logger -t ppp-linkup
-		/sbin/pfctl -i ${1} -k 0.0.0.0/0 -k ${OLD_ROUTER}/32
-		/sbin/pfctl -i ${1} -k ${OLD_ROUTER}/32 -k 0.0.0.0/0
+		pfctl -i ${1} -k 0.0.0.0/0 -k ${OLD_ROUTER}/32
+		pfctl -i ${1} -k ${OLD_ROUTER}/32 -k 0.0.0.0/0
 	fi
 
 	# let the configuration system know that the ipv4 has changed.
-	/bin/echo ${4} > /tmp/${1}_router
-	/bin/echo ${3} > /tmp/${1}_ip
-	/usr/bin/touch /tmp/${1}up
+	echo ${4} > /tmp/${1}_router
+	echo ${3} > /tmp/${1}_ip
+	touch /tmp/${1}up
 
-	ALLOWOVERRIDE=`/usr/bin/grep -c dnsallowoverride /conf/config.xml`
-	if [ ${ALLOWOVERRIDE} -gt 0 ]; then
+	if grep -q dnsallowoverride /conf/config.xml; then
 		# write nameservers to file
-		if [ "`echo ${6}|grep -c dns1`" -gt 0 ]; then
-			DNS1=`echo ${6} |awk '{print ${2}}'`
-			echo "${DNS1}"> /var/etc/nameserver_${1}
-			/sbin/route change "${DNS1}" ${4}
+		echo -n "" > /var/etc/nameserver_${1}
+		if echo "${6}" | grep -q dns1; then
+			DNS1=`echo "${6}" | awk '{print $2}'`
+			echo "${DNS1}" >> /var/etc/nameserver_${1}
+			route change "${DNS1}" ${4}
 		fi
-		if [ "`echo ${7}|grep -c dns2`" -gt 0 ]; then
-			DNS2=`echo ${7} |awk '{print ${2}}'`
+		if echo "${7}" | grep -q dns2; then
+			DNS2=`echo "${7}" | awk '{print $2}'`
 			echo "${DNS2}" >> /var/etc/nameserver_${1}
-			/sbin/route change "${DNS2}" ${4}
+			route change "${DNS2}" ${4}
 		fi
-		/usr/local/sbin/pfSctl -c 'service reload dns'
-		/bin/sleep 1
+		pfSctl -c 'service reload dns'
+		sleep 1
 	fi
-	/usr/local/sbin/pfSctl -c "interface newip ${1}"
-fi
+	pfSctl -c "interface newip ${1}"
 
-if [ "${2}" == "inet6" ]; then
+elif [ "${2}" == "inet6" ]; then
 	# let the configuration system know that the ipv6 has changed.
-	/bin/echo ${4} |cut -d% -f1 > /tmp/${1}_routerv6
-	/bin/echo ${3} |cut -d% -f1 > /tmp/${1}_ipv6
-	/usr/bin/touch /tmp/${1}upv6
+	echo ${4} |cut -d% -f1 > /tmp/${1}_routerv6
+	echo ${3} |cut -d% -f1 > /tmp/${1}_ipv6
+	touch /tmp/${1}upv6
 
-	ALLOWOVERRIDE=`/usr/bin/grep -c dnsallowoverride /conf/config.xml`
-	if [ ${ALLOWOVERRIDE} -gt 0 ]; then
+	if grep -q dnsallowoverride /conf/config.xml; then
 		# write nameservers to file
-		if [ "`echo ${6}|grep -c dns1`" -gt 0 ]; then
-			DNS1=`echo ${6} |awk '{print ${2}}'`
-			echo "${DNS1}"> /var/etc/nameserver_v6${1}
-			/sbin/route change -inet6 "${DNS1}" ${4}
+		echo -n "" > /var/etc/nameserver_v6${1}
+		if echo "${6}" | grep -q dns1; then
+			DNS1=`echo "${6}" | awk '{print $2}'`
+			echo "${DNS1}" >> /var/etc/nameserver_v6${1}
+			route change -inet6 "${DNS1}" ${4}
 		fi
-		if [ "`echo ${7}|grep -c dns2`" -gt 0 ]; then
-			DNS2=`echo ${7} |awk '{print ${2}}'`
+		if echo "${7}" | grep -q dns2; then
+			DNS2=`echo "${7}" | awk '{print $2}'`
 			echo "${DNS2}" >> /var/etc/nameserver_v6${1}
-			/sbin/route change -inet6 "${DNS2}" ${4}
+			route change -inet6 "${DNS2}" ${4}
 		fi
-		/usr/local/sbin/pfSctl -c 'service reload dns'
-		/bin/sleep 1
+		pfSctl -c 'service reload dns'
+		sleep 1
 	fi
-	/usr/local/sbin/pfSctl -c "interface newipv6 ${1}"
+	pfSctl -c "interface newipv6 ${1}"
 fi
 
 exit 0

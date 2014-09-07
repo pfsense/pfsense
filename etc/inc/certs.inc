@@ -293,6 +293,14 @@ function cert_create(& $cert, $caref, $keylen, $lifetime, $dn, $type="user", $di
 			break;
 	}
 
+	// in case of using Subject Alternative Names use other sections (with postfix '_san')
+	// pass subjectAltName over environment variable 'SAN'
+	if ($dn['subjectAltName']) {
+		putenv("SAN={$dn['subjectAltName']}"); // subjectAltName can be set _only_ via configuration file
+		$cert_type .= '_san';
+		unset($dn['subjectAltName']);
+	}
+
 	$args = array(
 		"x509_extensions" => $cert_type,
 		"digest_alg" => $digest_alg,

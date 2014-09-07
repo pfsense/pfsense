@@ -92,9 +92,8 @@ if ($filterlogentries_submit) {
 
 	$actpass = getGETPOSTsettingvalue('actpass', null);
 	$actblock = getGETPOSTsettingvalue('actblock', null);
-	$actreject = getGETPOSTsettingvalue('actreject', null);
 
-	$filterfieldsarray['act'] = str_replace("  ", " ", trim($actpass . " " . $actblock . " " . $actreject));
+	$filterfieldsarray['act'] = str_replace("  ", " ", trim($actpass . " " . $actblock));
 	$filterfieldsarray['act'] = $filterfieldsarray['act'] != "" ? $filterfieldsarray['act'] : 'All';
 	$filterfieldsarray['time'] = getGETPOSTsettingvalue('filterlogentries_time', null);
 	$filterfieldsarray['interface'] = getGETPOSTsettingvalue('filterlogentries_interfaces', null);
@@ -176,7 +175,6 @@ include("head.inc");
 							<div align="left">
 							<input id="actpass"   name="actpass"   type="checkbox" value="Pass"   <?php if (in_arrayi('Pass',   $Include_Act)) echo "checked=\"checked\""; ?> /> Pass<br />
 							<input id="actblock"  name="actblock"  type="checkbox" value="Block"  <?php if (in_arrayi('Block',  $Include_Act)) echo "checked=\"checked\""; ?> /> Block<br />
-							<input id="actreject" name="actreject" type="checkbox" value="Reject" <?php if (in_arrayi('Reject', $Include_Act)) echo "checked=\"checked\""; ?> /> Reject<br />
 							</div>
 						</td>
 						<td>

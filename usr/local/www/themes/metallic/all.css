@@ -1,6 +1,6 @@
 /* Element CSS Definitions */
 html, body, td, th, input, select {
-	font-family: Tahoma, Verdana, Arial, Helvetica, sans-serif;
+	font-family: Tahoma, sans-serif;
 	font-size: 0.9em;
 }
 
@@ -141,7 +141,6 @@ form {
 }
 a {
 	text-decoration: none;
-	color: #000000;
 }
 form input {
 	font-size: 1.1em;
@@ -335,12 +334,9 @@ table#marquee div#container div#scroller {
 
 /* Style the List */
 #navigation {
-	/* background: url('images/menu.gif') no-repeat; */
-	/* width: 693px; */
 	position: relative;
 	top: -24px;
 	left: -4px;
-	width: 800px;
 	padding: 0px;
 	height: 28px;
 	z-index: 3;
@@ -360,8 +356,7 @@ table#marquee div#container div#scroller {
 #navigation ul li {
 	float: left;
 	position: relative;
-	/* width: 7.5em; */
-	width: 6.2em;
+	width: 80px;
 }
 #navigation ul li div {
 	font-size: 1em;

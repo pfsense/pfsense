@@ -10,7 +10,7 @@ $priv_list['page-help-all'] = array();
 $priv_list['page-help-all']['name'] = "WebCfg - Help pages";
 $priv_list['page-help-all']['descr'] = "Show all items on help menu";
 $priv_list['page-help-all']['match'] = array();
-$priv_list['page-help-all']['match'][] = "*www.pfsense.org*";
+$priv_list['page-help-all']['match'][] = "*help.php";
 
 $priv_list['page-dashboard-all'] = array();
 $priv_list['page-dashboard-all']['name'] = "WebCfg - Dashboard (all)";

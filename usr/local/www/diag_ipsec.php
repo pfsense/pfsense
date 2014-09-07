@@ -115,6 +115,8 @@ $status = ipsec_smp_dump_status();
 <?php
 	if (is_array($status['query']) && is_array($status['query']['ikesalist']) && is_array($status['query']['ikesalist']['ikesa'])) {
 		foreach ($status['query']['ikesalist']['ikesa'] as $ikeid => $ikesa) {
+			$con_id = substr($ikesa['peerconfig'], 3);
+
 			if (ipsec_phase1_status($status['query']['ikesalist']['ikesa'], $ikesa['id'])) {
 				$icon = "pass";
 			} elseif(!isset($config['ipsec']['enable'])) {
@@ -125,7 +127,7 @@ $status = ipsec_smp_dump_status();
 ?>
 			<tr>
 				<td class="listlr">
-					<?php echo "({$ikesa['id']}) " . xhtmlspecialchars(ipsec_get_descr($ikesa['id']));?>
+					<?php echo xhtmlspecialchars(ipsec_get_descr($con_id));?>
 				</td>
 				<td class="listr">
 			<?php   if (!is_array($ikesa['local']))
@@ -187,13 +189,13 @@ $status = ipsec_smp_dump_status();
 				<td >
 				<?php if ($icon != "pass"): ?>
 					<center>
-						<a href="diag_ipsec.php?act=connect&amp;ikeid=<?php echo $ikesa['id']; ?>">
+						<a href="diag_ipsec.php?act=connect&amp;ikeid=<?php echo $con_id; ?>">
 						<img src ="/themes/<?php echo $g['theme']; ?>/images/icons/icon_service_start.gif" alt="Connect VPN" title="Connect VPN" border="0"/>
 						</a>
 					</center>
 				<?php else: ?>
 					<center>
-						<a href="diag_ipsec.php?act=ikedisconnect&amp;ikeid=<?php echo $ikesa['id']; ?>">
+						<a href="diag_ipsec.php?act=ikedisconnect&amp;ikeid=<?php echo $con_id; ?>">
 						<img src ="/themes/<?php echo $g['theme']; ?>/images/icons/icon_service_stop.gif" alt="Disconnect VPN" title="Disconnect VPN" border="0"/>
 						</a>
 					</center>
@@ -228,7 +230,7 @@ $status = ipsec_smp_dump_status();
 						<td class="listlr nowrap">
 				<?php	if (is_array($childsa['local']) && is_array($childsa['local']['networks']) && is_array($childsa['local']['networks']['network'])) {
 						foreach ($childsa['local']['networks']['network'] as $lnets) {
-							echo xhtmlspecialchars($lnets) . "<br />";	
+							echo xhtmlspecialchars(ipsec_fixup_network($lnets)) . "<br />";
 						}
 					} else
 						echo "Unknown";
@@ -247,7 +249,7 @@ $status = ipsec_smp_dump_status();
 						<td class="listr nowrap">
 				<?php	if (is_array($childsa['remote']) && is_array($childsa['remote']['networks']) && is_array($childsa['remote']['networks']['network'])) {
 						foreach ($childsa['remote']['networks']['network'] as $rnets) {
-							echo xhtmlspecialchars($rnets) . "<br />";	
+							echo xhtmlspecialchars(ipsec_fixup_network($rnets)) . "<br />";
 						}
 					} else
 						echo "Unknown";
@@ -264,6 +266,8 @@ $status = ipsec_smp_dump_status();
 				</td>
 			</tr>
 			<?php endif; 
+
+			unset($con_id);
 		}
 	}
 ?>

@@ -7,7 +7,7 @@
 	Copyright (C) 2004 Scott Ullrich
 	All rights reserved.
 
-	originially part of m0n0wall (http://m0n0.ch/wall)
+	originally part of m0n0wall (http://m0n0.ch/wall)
 	Copyright (C) 2003-2004 Manuel Kasper <mk@neon1.net>.
 	All rights reserved.
 
@@ -215,7 +215,7 @@ include("head.inc");
       <br />
       <span class="vexpl">
 	      <?=gettext("Defines the TTL threshold for  the  network  interface.  Packets".
-             " with  a lower TTL than the threshols value will be ignored. This".
+             " with  a lower TTL than the threshold value will be ignored. This".
              " setting is optional, and by default the threshold is 1.");?>
       </span>
     </td>

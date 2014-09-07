@@ -114,8 +114,23 @@ if ($_POST) {
 	if ($_POST['subnet']) {
 		if (!is_ipaddr($_POST['subnet']))
 			$input_errors[] = gettext("A valid IP address must be specified.");
-		else if (is_ipaddr_configured($_POST['subnet'], "{$_POST['interface']}_vip{$id}"))
-			$input_errors[] = gettext("This IP address is being used by another interface or VIP.");
+		else {
+			if (isset($id) && isset($a_vip[$id])) {
+				$ignore_if = $a_vip[$id]['interface'];
+				$ignore_mode = $a_vip[$id]['mode'];
+			} else {
+				$ignore_if = $_POST['interface'];
+				$ignore_mode = $_POST['mode'];
+			}
+
+			if ($ignore_mode == 'carp')
+				$ignore_if .= "_vip{$id}";
+
+			if (is_ipaddr_configured($_POST['subnet'], $ignore_if))
+				$input_errors[] = gettext("This IP address is being used by another interface or VIP.");
+
+			unset($ignore_if, $ignore_mode);
+		}
 	}
 
 	$natiflist = get_configured_interface_with_descr();

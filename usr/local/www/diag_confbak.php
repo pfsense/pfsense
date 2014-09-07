@@ -211,7 +211,7 @@ include("head.inc");
 						<?php if (is_array($confvers)): ?>
 						<tr>
 							<td colspan="7" class="list">
-							<?= gettext("To view the differences between an older configuration and a newer configuration, select the older configuration using the left column of radio options and select the newer configuration in the right colomn, then press the Diff button."); ?>
+							<?= gettext("To view the differences between an older configuration and a newer configuration, select the older configuration using the left column of radio options and select the newer configuration in the right column, then press the Diff button."); ?>
 							<br /><br />
 							</td>
 						</tr>

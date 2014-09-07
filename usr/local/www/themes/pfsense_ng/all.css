@@ -1,6 +1,6 @@
 /* Element CSS Definitions */
 html, body, td, th, input, select {
-	font-family: Tahoma, Verdana, Arial, Helvetica, sans-serif;
+	font-family: Tahoma, sans-serif;
 	font-size: 0.9em;
 
 }
@@ -150,15 +150,15 @@ body {
   background-color: #7f7f7f;
 }
 a:link {
-	color: #000000;
+	color: #550000;
 }
 
 a:visited {
-	color: #000000;
+	color: #550000;
 }
 
 a:active {
-	color: #000000;
+	color: #550000;
 }
 
 a:hover {
@@ -407,7 +407,6 @@ table#marquee div#container div#scroller {
 	position: fixed;
 	top: 0px;
 	left: 100px;
-	width: 750px;
 	padding: 0px;
 	height: 28px;
 	z-index: 3;
@@ -428,7 +427,7 @@ table#marquee div#container div#scroller {
 #navigation ul li {
 	float: left;
 	position: relative;
-	padding-right: 27px;
+	padding-right: 20px;
 	top: 0px;
 }
 
@@ -509,11 +508,6 @@ table#marquee div#container div#scroller {
 	background-image: url(images/mainmenu-down.gif);
 	background-position: 5% 50%;
 	background-repeat: no-repeat;
-}
-
-#navigation ul li:last-child div, #navigation ul li:last-child:hover div {
-	background-image: none;
-	font-weight: bold;
 }
 
 #navigation ul li {
@@ -1371,7 +1365,7 @@ div#log span.log-protocol-mini-header {
 /* Sortable tables */
 table.sortable thead {
         cursor: default;
-	// background-color: #EEEEEE; this causing light gray rectangles to the right of many tables in gui
+	/* background-color: #EEEEEE; this causing light gray rectangles to the right of many tables in gui */
 	padding-right: 12px;
 	padding-left: 12px;
 	padding-top: 12px;

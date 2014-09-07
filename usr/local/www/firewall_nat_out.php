@@ -483,7 +483,7 @@ if (is_subsystem_dirty('natconf'))
 				$i++;
 			endforeach;
 ?>
-				<tr>
+				<tr valign="top" id="fr<?=$i;?>">
 					<td class="list" colspan="11"></td>
 					<td class="list nowrap" valign="middle">
 						<table border="0" cellspacing="0" cellpadding="1" summary="edit">
@@ -496,7 +496,7 @@ if (is_subsystem_dirty('natconf'))
 <?php
 								else:
 ?>
-									<input name="move_<?=$i;?>" type="image" src="/themes/<?= $g['theme']; ?>/images/icons/icon_left.gif" style="width:17;height:17;border:0" title="<?=gettext("move selected mappings to end");?>" />
+									<input onmouseover="fr_insline(<?=$i;?>, true)" onmouseout="fr_insline(<?=$i;?>, false)" name="move_<?=$i;?>" type="image" src="/themes/<?= $g['theme']; ?>/images/icons/icon_left.gif" style="width:17;height:17;border:0" title="<?=gettext("move selected mappings to end");?>" />
 <?php
 								endif;
 ?>

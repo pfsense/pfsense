@@ -348,7 +348,7 @@ if (is_subsystem_dirty("unbound"))
 					?>
 						<tr ondblclick="document.location='services_unbound_acls.php?act=edit&amp;id=<?=$i;?>'">
 							<td class="listlr">
-								<?=htmlspecialchars($acl['aclname']);?>
+								<?=xhtmlspecialchars($acl['aclname']);?>
 							</td>
 							<td class="listr">
 								<?=xhtmlspecialchars($acl['aclaction']);?>

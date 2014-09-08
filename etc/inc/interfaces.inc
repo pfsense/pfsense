@@ -4142,6 +4142,7 @@ function convert_friendly_interface_to_friendly_descr($interface) {
 		break;
 	case "enc0":
 	case "ipsec":
+	case "IPsec":
 		$ifdesc = "IPsec";
 		break;
 	default:
@@ -4175,14 +4176,11 @@ function convert_friendly_interface_to_friendly_descr($interface) {
 }
 
 function convert_real_interface_to_friendly_descr($interface) {
-	global $config;
 
 	$ifdesc = convert_real_interface_to_friendly_interface_name("{$interface}");
 
-	if ($ifdesc) {
-		$iflist = get_configured_interface_with_descr(false, true);
-		return $iflist[$ifdesc];
-	}
+	if (!empty($ifdesc))
+		return convert_friendly_interface_to_friendly_descr($ifdesc);
 
 	return $interface;
 }

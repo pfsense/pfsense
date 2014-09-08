@@ -132,9 +132,12 @@ $status = ipsec_smp_dump_status();
 			<?php   if (!is_array($ikesa['local']))
 					echo "Unknown";
 				else {
-					if (!empty($ikesa['local']['identification']))
-						echo htmlspecialchars($ikesa['local']['identification']);
-					else
+					if (!empty($ikesa['local']['identification'])) {
+						if ($ikesa['local']['identification'] == '%any')
+							echo 'Any identifier';
+						else
+							echo htmlspecialchars($ikesa['local']['identification']);
+					} else
 						echo 'Unknown';
 				}
 			?>
@@ -156,9 +159,12 @@ $status = ipsec_smp_dump_status();
 			<?php   if (!is_array($ikesa['remote']))
 					echo "Unknown";
 				else {
-					if (!empty($ikesa['remote']['identification']))
-						echo htmlspecialchars($ikesa['remote']['identification']);
-					else
+					if (!empty($ikesa['remote']['identification'])) {
+						if ($ikesa['remote']['identification'] == '%any')
+							echo 'Any identifier';
+						else
+							echo htmlspecialchars($ikesa['remote']['identification']);
+					} else
 						echo 'Unknown';
 				}
 			?>

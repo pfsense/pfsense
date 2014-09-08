@@ -485,7 +485,7 @@ function ipsec_smp_dump_status() {
 	@file_put_contents("{$g['tmp_path']}/smp_status.xml", $response);
 	unset($response, $sread);
 
-	$custom_listtags = array('ikesa', 'childsa', 'network');
+	$custom_listtags = array('ikesa', 'childsa', 'network', 'auth');
 	$response = parse_xml_config("{$g['tmp_path']}/smp_status.xml", "message");
 	@unlink("{$g['tmp_path']}/smp_status.xml");
 	unset($custom_listtags);

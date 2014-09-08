@@ -69,10 +69,10 @@ if ($_GET['act'] == 'connect') {
 	}
 }
 
-if (!is_array($config['ipsec']['phase2']))
-    $config['ipsec']['phase2'] = array();
+if (!is_array($config['ipsec']['phase1']))
+    $config['ipsec']['phase1'] = array();
 
-$a_phase2 = &$config['ipsec']['phase2'];
+$a_phase1 = &$config['ipsec']['phase1'];
 
 $status = ipsec_smp_dump_status();
 
@@ -112,9 +112,11 @@ $status = ipsec_smp_dump_status();
 		</thead>
 		<tbody>
 <?php
+	$ipsecconnected = array();
 	if (is_array($status['query']) && is_array($status['query']['ikesalist']) && is_array($status['query']['ikesalist']['ikesa'])) {
 		foreach ($status['query']['ikesalist']['ikesa'] as $ikeid => $ikesa) {
 			$con_id = substr($ikesa['peerconfig'], 3);
+			$ipsecconnected[$con_id] = $con_id;
 
 			if (ipsec_phase1_status($status['query']['ikesalist']['ikesa'], $ikesa['id'])) {
 				$icon = "pass";
@@ -275,6 +277,76 @@ $status = ipsec_smp_dump_status();
 			unset($con_id);
 		}
 	}
+
+	$rgmap = array();
+	foreach ($a_phase1 as $ph1ent):
+		$rgmap[$ph1ent['remote-gateway']] = $ph1ent['remote-gateway'];
+		if ($ipsecconnected[$ph1ent['ikeid']])
+			continue;
+?>
+		<tr>
+			<td class="listlr">
+				<?php echo htmlspecialchars($ph1ent['descr']);?>
+			</td>
+			<td class="listr">
+		<?php
+			list ($myid_type, $myid_data) = ipsec_find_id($ph1ent, "local");
+			if (empty($myid_data))
+				echo "Unknown";
+			else
+				echo htmlspecialchars($myid_data);
+		?>
+			</td>
+			<td class="listr">
+		<?php
+			$ph1src = ipsec_get_phase1_src($ph1ent);
+			if (empty($ph1src))
+				echo "Unknown";
+			else
+				echo htmlspecialchars($ph1src);
+		?>
+			</td>
+			<td class="listr">
+		<?php
+			list ($peerid_type, $peerid_data) = ipsec_find_id($ph1ent, "peer", $rgmap);
+			if (empty($peerid_data))
+				echo "Unknown";
+			else
+				echo htmlspecialchars($peerid_data);
+		?>
+			</td>
+			<td class="listr">
+		<?php
+			$ph1src = ipsec_get_phase1_dst($ph1ent);
+			if (empty($ph1src))
+				echo "Unknown";
+			else
+				echo htmlspecialchars($ph1src);
+		?>
+			</td>
+			<td class="listr">
+			</td>
+			<td class="listr">
+				<center>
+					<img src ="/themes/<?php echo $g['theme']; ?>/images/icons/icon_reject.gif" title="Disconnected" alt=""/>
+					<br/>Disconnected
+				</center>
+			</td>
+			<td >
+				<center>
+					<a href="diag_ipsec.php?act=connect&amp;ikeid=<?php echo $ph1ent['ikeid']; ?>">
+					<img src ="/themes/<?php echo $g['theme']; ?>/images/icons/icon_service_start.gif" alt="Connect VPN" title="Connect VPN" border="0"/>
+					</a>
+				</center>
+			</td>
+			<td valign="middle" class="list nowrap">
+				<table border="0" cellspacing="0" cellpadding="1" summary="">
+				</table>
+			</td>
+		</tr>
+<?php
+	endforeach;
+	unset($ipsecconnected, $phase1, $rgmap);
 ?>
 			<tr style="display:none;"><td></td></tr>
 		</tbody>

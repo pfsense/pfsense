@@ -1242,10 +1242,7 @@ function interface_bring_down($interface = "wan", $destroy = false, $ifacecfg = 
 		}
 		break;
 	case "dhcp":
-		$pid = find_dhclient_process($realif);
-		if($pid)
-			posix_kill($pid, SIGTERM);
-		sleep(1);
+		kill_dhclient_process($realif);
 		unlink_if_exists("{$g['varetc_path']}/dhclient_{$interface}.conf");
 		if(does_interface_exist("$realif")) {
 			mwexec("/sbin/ifconfig " . escapeshellarg($realif) . " delete", true);
@@ -2799,6 +2796,21 @@ function find_dhclient_process($interface) {
 		$pid = 0;
 
 	return intval($pid);
+}
+
+function kill_dhclient_process($interface) {
+	if (empty($interface) || !does_interface_exist($interface))
+		return;
+
+	$i = 0;
+	while ((($pid = find_dhclient_process($interface)) != 0) && ($i < 3)) {
+		/* 3rd time make it die for sure */
+		$sig = ($i == 2 ? SIGKILL : SIGTERM);
+		posix_kill($pid, $sig);
+		sleep(1);
+		$i++;
+	}
+	unset($i);
 }
 
 function find_dhcp6c_process($interface) {

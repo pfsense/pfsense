@@ -1250,7 +1250,7 @@ function get_interface_info($ifdescr) {
 	/* DHCP? -> see if dhclient is up */
 	case "dhcp":
 		/* see if dhclient is up */
-		if (find_dhclient_process($ifinfo['if']) <> "")
+		if (find_dhclient_process($ifinfo['if']) != 0)
 			$ifinfo['dhcplink'] = "up";
 		else
 			$ifinfo['dhcplink'] = "down";

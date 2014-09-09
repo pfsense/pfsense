@@ -110,7 +110,7 @@ $authenticated = false;
 
 if (($strictusercn === true) && ($common_name != $username)) {
 	syslog(LOG_WARNING, "Username does not match certificate common name ({$username} != {$common_name}), access denied.\n");
-	if (isset($_GET)) {
+	if (isset($_GET['username'])) {
 		echo "FAILED";
 		closelog();
 		return;
@@ -142,7 +142,7 @@ foreach ($authmodes as $authmode) {
 
 if ($authenticated == false) {
 	syslog(LOG_WARNING, "user '{$username}' could not authenticate.\n");
-	if (isset($_GET)) {
+	if (isset($_GET['username'])) {
 		echo "FAILED";
 		closelog();
 		return;
@@ -158,7 +158,7 @@ if (file_exists("/etc/inc/ipsec.attributes.php"))
 syslog(LOG_NOTICE, "user '{$username}' authenticated\n");
 closelog();
 
-if (isset($_GET))
+if (isset($_GET['username']))
 	echo "OK";
 else
 	exit(0);

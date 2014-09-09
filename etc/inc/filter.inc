@@ -1377,8 +1377,8 @@ function filter_nat_rules_automatic_tonathosts($with_descr = false) {
 							continue 2;
 
 					$network = gen_subnet($vip['ip'], $vip['sn']);
-					$tonathosts[] = $network . '/' . $vip['sn'];
-					$descriptions[] = "Virtual IP ({$oc['descr']})";
+					array_unshift($tonathosts, $network . '/' . $vip['sn']);
+					array_unshift($descriptions, "Virtual IP ({$oc['descr']})");
 					$if_subnets[] = $network . '/' . $vip['sn'];
 					unset($network);
 				}

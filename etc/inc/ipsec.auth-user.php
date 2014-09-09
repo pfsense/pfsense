@@ -79,7 +79,7 @@ function getNasIP()
 }
 }
 /* setup syslog logging */
-openlog("racoon", LOG_ODELAY, LOG_AUTH);
+openlog("charon", LOG_ODELAY, LOG_AUTH);
 
 if (isset($_GET)) {
 	$authmodes = explode(",", $_GET['authcfg']);

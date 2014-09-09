@@ -586,8 +586,11 @@ EOD;
 				if ($ph1ent['lifetime'])
 					$ikelifeline = "ikelifetime = {$ph1ent['lifetime']}s";
 
-				$authentication = "";
 				$rightsourceip = NULL;
+				if (!empty($a_client['pool_address'])) 
+					$rightsourceip = "\trightsourceip = {$a_client['pool_address']}/{$a_client['pool_netbits']}\n";
+
+				$authentication = "";
 				switch ($ph1ent['authentication_method']) {
 				case 'xauth_rsa_server':
 					$authentication = "leftauth = pubkey\n\trightauth = pubkey";
@@ -596,8 +599,6 @@ EOD;
 				case 'xauth_psk_server':
 					$authentication = "leftauth = psk\n\trightauth = psk";
 					$authentication .= "\n\trightauth2 = xauth-generic";
-					if (!empty($a_client['pool_address'])) 
-						$rightsourceip = "\trightsourceip = {$a_client['pool_address']}/{$a_client['pool_netbits']}\n";
 					break;
 				case 'pre_shared_key':
 					$authentication = "leftauth = psk\n\trightauth = psk";

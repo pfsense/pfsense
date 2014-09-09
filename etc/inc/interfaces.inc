@@ -4372,12 +4372,12 @@ function guess_interface_from_ip($ipaddress) {
 	}
 	if(is_ipaddrv4($ipaddress)) {
 		/* create a route table we can search */
-		exec("netstat -rnWf inet", $output, $ret);
+		exec("/usr/bin/netstat -rnWf inet", $output, $ret);
 		foreach($output as $line) {
 			if(preg_match("/^[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+\/[0-9]+[ ]+link[#]/", $line)) {
 				$fields = preg_split("/[ ]+/", $line);
 				if(ip_in_subnet($ipaddress, $fields[0])) {
-					return $fields[6];
+					return $fields[5];
 				}
 			}
 		}
@@ -4385,12 +4385,12 @@ function guess_interface_from_ip($ipaddress) {
 	/* FIXME: This works from cursory testing, regexp might need fine tuning */
 	if(is_ipaddrv6($ipaddress)) {
 		/* create a route table we can search */
-		exec("netstat -rnWf inet6", $output, $ret);
+		exec("/usr/bin/netstat -rnWf inet6", $output, $ret);
 		foreach($output as $line) {
 			if(preg_match("/[0-9a-f]+[:]+[0-9a-f]+[:]+[\/][0-9]+/", $line)) {
 				$fields = preg_split("/[ ]+/", $line);
 				if(ip_in_subnet($ipaddress, $fields[0])) {
-					return $fields[6];
+					return $fields[5];
 				}
 			}
 		}

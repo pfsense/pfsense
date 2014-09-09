@@ -81,7 +81,7 @@ function getNasIP()
 /* setup syslog logging */
 openlog("charon", LOG_ODELAY, LOG_AUTH);
 
-if (isset($_GET)) {
+if (isset($_GET['username'])) {
 	$authmodes = explode(",", $_GET['authcfg']);
 	$username = $_GET['username'];
 	$password = $_GET['password'];

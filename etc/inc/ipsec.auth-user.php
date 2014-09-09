@@ -96,7 +96,7 @@ if (isset($_GET['username'])) {
 
 if (!$username || !$password) {
 	syslog(LOG_ERR, "invalid user authentication environment");
-	if (isset($_GET)) {
+	if (isset($_GET['username'])) {
 		echo "FAILED";
 		closelog();
 		return;

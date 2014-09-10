@@ -203,7 +203,7 @@ function restore_config_section_xmlrpc($raw_params) {
 				if ($vip['mode'] == "carp")
 					$oldvips["{$vip['interface']}_vip{$vip['vhid']}"] = "{$vip['password']}{$vip['advskew']}{$vip['subnet']}{$vip['subnet_bits']}{$vip['advbase']}";
 				else if ($vip['mode'] == "ipalias" && (strstr($vip['interface'], "_vip") || strstr($vip['interface'], "lo0")))
-					$oldvips[$vip['subnet']] = "{$vip['interface']}{$vip['subnet']}{$vip['subnet_bits']}";
+					$oldvips[$vip['subnet']] = $vip;
 				else if (($vip['mode'] == "ipalias" || $vip['mode'] == 'proxyarp') && !(strstr($vip['interface'], "_vip") || strstr($vip['interface'], "lo0")))
 					$vipbackup[] = $vip;
 			}
@@ -244,11 +244,12 @@ function restore_config_section_xmlrpc($raw_params) {
 				}
 				unset($oldvips["{$vip['interface']}_vip{$vip['vhid']}"]);
 			} else if ($vip['mode'] == "ipalias" && strstr($vip['interface'], "_vip") && isset($oldvips[$vip['subnet']])) {
-				if ($oldvips[$vip['subnet']] == "{$vip['interface']}{$vip['subnet']}{$vip['subnet_bits']}") {
-					if (does_vip_exist($vip)) {
+				if ($oldvips[$vip['subnet']]['interface'] == $vip['interface'] &&
+				    $oldvips[$vip['subnet']]['subnet'] == $vip['subnet'] &&
+				    $oldvips[$vip['subnet']]['subnet_bits'] == $vip['subnet_bits'] &&
+				    does_vip_exist($vip)) {
 						unset($oldvips[$vip['subnet']]);
 						continue; // Skip reconfiguring this vips since nothing has changed.
-					}
 				}
 				unset($oldvips[$vip['subnet']]);
 			}
@@ -267,10 +268,12 @@ function restore_config_section_xmlrpc($raw_params) {
 				break;
 			}
 		}
-		/* Cleanup remaining old carps */
+		/* Cleanup remaining old carps and ipalias */
 		foreach ($oldvips as $oldvipif => $oldvippar) {
-			if (!is_ipaddr($oldvipif) && does_interface_exist($oldvipif))
-					pfSense_interface_destroy($oldvipif);
+			if (is_ipaddr($oldvipif))
+				interface_vip_bring_down($oldvippar);
+			else if (does_interface_exist($oldvipif))
+				pfSense_interface_destroy($oldvipif);
 		}
 		if ($carp_setuped == true)
 			interfaces_carp_setup();

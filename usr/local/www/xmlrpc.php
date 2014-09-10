@@ -244,7 +244,7 @@ function restore_config_section_xmlrpc($raw_params) {
 				}
 				unset($oldvips["{$vip['interface']}_vip{$vip['vhid']}"]);
 			} else if ($vip['mode'] == "ipalias" && strstr($vip['interface'], "_vip") && isset($oldvips[$vip['subnet']])) {
-				if ($oldvips[$vip['subnet']] = "{$vip['interface']}{$vip['subnet']}{$vip['subnet_bits']}") {
+				if ($oldvips[$vip['subnet']] == "{$vip['interface']}{$vip['subnet']}{$vip['subnet_bits']}") {
 					if (does_vip_exist($vip)) {
 						unset($oldvips[$vip['subnet']]);
 						continue; // Skip reconfiguring this vips since nothing has changed.

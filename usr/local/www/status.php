@@ -179,7 +179,7 @@ defCmdT("dhcpd.conf","cat /var/dhcpd/etc/dhcpd.conf");
 
 defCmdT("df","/bin/df");
 
-defCmdT("racoon.conf","cat /var/etc/racoon.conf");
+defCmdT("ipsec.conf","cat /var/etc/ipsec/ipsec.conf");
 defCmdT("SPD","/sbin/setkey -DP");
 defCmdT("SAD","/sbin/setkey -D");
 

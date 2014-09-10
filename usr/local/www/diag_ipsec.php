@@ -59,13 +59,15 @@ if ($_GET['act'] == 'connect') {
 	}
 } else if ($_GET['act'] == 'ikedisconnect') {
 	if (ctype_digit($_GET['ikeid'])) {
-		mwexec("/usr/local/sbin/ipsec down con" . escapeshellarg($_GET['ikeid']));
+		if (!empty($_GET['ikesaid']) && ctype_digit($_GET['ikesaid']))
+			mwexec("/usr/local/sbin/ipsec down con" . escapeshellarg($_GET['ikeid']) . "[" . escapeshellarg($_GET['ikesaid']) . "]");
+		else
+			mwexec("/usr/local/sbin/ipsec down con" . escapeshellarg($_GET['ikeid']));
 	}
-} else if ($_GET['act'] == 'disconnect') {
-	if (!empty($_GET['user'])) {
-		ipsec_disconnect_mobile($_GET['user']);
-		sleep(1);
-		$savemsg = gettext("Disconnected user") . " " . $_GET['user'];
+} else if ($_GET['act'] == 'childdisconnect') {
+	if (ctype_digit($_GET['ikeid'])) {
+		if (!empty($_GET['ikesaid']) && ctype_digit($_GET['ikesaid']))
+			mwexec("/usr/local/sbin/ipsec down con" . escapeshellarg($_GET['ikeid']) . "{" . escapeshellarg($_GET['ikesaid']) . "}");
 	}
 }
 
@@ -213,6 +215,9 @@ $status = ipsec_smp_dump_status();
 						<a href="diag_ipsec.php?act=ikedisconnect&amp;ikeid=<?php echo $con_id; ?>">
 						<img src ="/themes/<?php echo $g['theme']; ?>/images/icons/icon_service_stop.gif" alt="Disconnect VPN" title="Disconnect VPN" border="0"/>
 						</a>
+						<a href="diag_ipsec.php?act=ikedisconnect&amp;ikeid=<?php echo $con_id; ?>&amp;ikesaid=<?php echo $ikesa['id']; ?>">
+						<img src ="/themes/<?php echo $g['theme']; ?>/images/icons/icon_x.gif" alt="Disconnect VPN Connection" title="Disconnect VPN Connection" border="0"/>
+						</a>
 					</center>
 				<?php endif; ?>
 				</td>
@@ -294,6 +299,13 @@ $status = ipsec_smp_dump_status();
 							echo "<br/>";
 							echo "Bytes-Out: " . htmlspecialchars($childsa['bytesout']) . "/Packets-Out: " . htmlspecialchars($childsa['packetsout']);;
 						?>
+						</td>
+						<td class="listr nowrap">
+							<center>
+								<a href="diag_ipsec.php?act=childdisconnect&amp;ikeid=<?php echo $con_id; ?>&amp;ikesaid=<?php echo $childsa['reqid']; ?>">
+								<img src ="/themes/<?php echo $g['theme']; ?>/images/icons/icon_x.gif" alt="Disconnect Child SA" title="Disconnect Child SA" border="0"/>
+								</a>
+							</center>
 						</td>
 						<td class="list nowrap">
 							&nbsp;

@@ -676,12 +676,6 @@ function ipsec_get_descr($ikeid) {
 	return $descr;
 }
 
-function ipsec_disconnect_mobile($username) {
-	if (empty($username))
-		return false;
-	exec("/usr/local/sbin/racoonctl logout-user " . escapeshellarg($username));
-}
-
 function ipsec_fixup_ip($ipaddr) {
 	if (is_ipaddrv6($ipaddr) || is_subnetv6($ipaddr))
 		return Net_IPv6::compress(Net_IPv6::uncompress($ipaddr));

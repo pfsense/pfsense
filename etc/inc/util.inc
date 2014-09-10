@@ -675,18 +675,10 @@ function is_validaliasname($name) {
 	return true;
 }
 
-/* returns true if $port is a valid TCP/UDP port */
+/* returns true if $port is a valid TCP/UDP port number 0 - 65535, or a valid PHP port name
+   NOTE:  while port 0 is undefined, it does get used in malware and has serious security implications, so users must be able to enter it as a port num */
 function is_port($port) {
-	$tmpports = explode(":", $port);
-	foreach($tmpports as $tmpport) {
-		if (getservbyname($tmpport, "tcp") || getservbyname($tmpport, "udp"))
-			continue;
-		if (!ctype_digit($tmpport))
-			return false;
-		else if ((intval($tmpport) < 1) || (intval($tmpport) > 65535))
-			return false;
-	}
-	return true;
+	return ((is_numericint($port) && $port <= 65535) || getservbyname($port, "tcp") || getservbyname($port, "udp"));
 }
 
 /* returns true if $portrange is a valid TCP/UDP portrange ("<port>:<port>") */

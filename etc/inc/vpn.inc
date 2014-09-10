@@ -281,6 +281,7 @@ charon {
         threads = 16
 	ikesa_table_size = 32
 	ikesa_table_segments = 4
+	init_limit_half_open = 1000;
 
 	# XXX: There is not much choice here really users win their security!
 	i_dont_care_about_security_and_use_aggressive_mode_psk=yes

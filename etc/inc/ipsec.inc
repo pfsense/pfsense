@@ -601,35 +601,21 @@ function ipsec_dump_sad()
  * Return dump of mobile user list
  */
 function ipsec_dump_mobile() {
-	/* XXX: Need to be fixed */
-	return array();
+	global $g;
 
-	$command = "/usr/local/sbin/racoonctl show-users";
-	$fd = @popen($command, "r");
-	$mobile = array();
-	if ($fd) {
-		while (!feof($fd)) {
-			$user = array();
-			$line = chop(fgets($fd));
-			if (!$line)
-				continue;
-			if ($line == "User|Source|Destination|CreatedOn|SPI")
-				continue;
+	$_gb = exec("/usr/local/sbin/ipsec stroke leases > {$g['tmp_path']}/strongswan_leases.xml");
 
-			// jim|192.168.20.243:4500|192.168.20.5:24146|2012-05-25 09:54:39|989d10e1e2d4eca4:7243830d5fd2afe7
-			$linea = explode("|", trim($line));
-			$user['username'] = $linea[0];
-			$user['local'] = $linea[1];
-			$user['remote'] = $linea[2];
-			$user['logintime'] = $linea[3];
-			$user['spi'] = $linea[4];
-			if (!empty($user['username']))
-				$mobile[] = $user;
-		}
-		pclose($fd);
+	if (!file_exists("{$g['varrun_path']}/strongswan_leases.xml")) {
+		log_error(gettext("IPSec daemon seems to have issues or not running! Could not display mobile user stats!"));
+		return array();
 	}
 
-	return $mobile;
+	$custom_listtags = array('lease', 'pool');
+	$response = parse_xml_config("{$g['tmp_path']}/strongswan_leases.xml", "leases");
+	@unlink("{$g['tmp_path']}/strongswan_leases.xml");
+	unset($custom_listtags, $_gb);
+
+	return $response;
 }
 
 function ipsec_mobilekey_sort() {

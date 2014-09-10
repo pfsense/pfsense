@@ -601,6 +601,9 @@ function ipsec_dump_sad()
  * Return dump of mobile user list
  */
 function ipsec_dump_mobile() {
+	/* XXX: Need to be fixed */
+	return array();
+
 	$command = "/usr/local/sbin/racoonctl show-users";
 	$fd = @popen($command, "r");
 	$mobile = array();

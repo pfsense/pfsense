@@ -89,9 +89,10 @@ $status = ipsec_smp_dump_status();
 			<?php
 				$tab_array = array();
 				$tab_array[0] = array(gettext("Overview"), true, "diag_ipsec.php");
-				$tab_array[1] = array(gettext("SAD"), false, "diag_ipsec_sad.php");
-				$tab_array[2] = array(gettext("SPD"), false, "diag_ipsec_spd.php");
-				$tab_array[3] = array(gettext("Logs"), false, "diag_logs_ipsec.php");
+				$tab_array[1] = array(gettext("Leases"), false, "diag_ipsec_leases.php");
+				$tab_array[2] = array(gettext("SAD"), false, "diag_ipsec_sad.php");
+				$tab_array[3] = array(gettext("SPD"), false, "diag_ipsec_spd.php");
+				$tab_array[4] = array(gettext("Logs"), false, "diag_logs_ipsec.php");
 				display_top_tabs($tab_array);
 			?>
 		</td>

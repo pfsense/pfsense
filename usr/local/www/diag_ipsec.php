@@ -109,6 +109,7 @@ $status = ipsec_smp_dump_status();
 				<th class="listhdrr nowrap"><?php echo gettext("Remote IP");?></th>
 				<th class="listhdrr nowrap"><?php echo gettext("Role");?></th>
 				<th class="listhdrr nowrap"><?php echo gettext("Reauth");?></th>
+				<th class="listhdrr nowrap"><?php echo gettext("Algo");?></th>
 				<th class="listhdrr nowrap"><?php echo gettext("Status");?></th>
 				<td class="list nowrap"></td>
 		</tr>
@@ -152,7 +153,7 @@ $status = ipsec_smp_dump_status();
 					echo "Unknown";
 				else {
 					if (!empty($ikesa['local']['address']))
-						echo htmlspecialchars($ikesa['local']['address']) . ':' . htmlspecialchars($ikesa['local']['port']);
+						echo htmlspecialchars($ikesa['local']['address']) . '<br/>Port:' . htmlspecialchars($ikesa['local']['port']);
 					else
 						echo 'Unknown';
 					if ($ikesa['local']['nat'] != 'false')
@@ -164,16 +165,22 @@ $status = ipsec_smp_dump_status();
 			<?php   if (!is_array($ikesa['remote']))
 					echo "Unknown";
 				else {
+					$identity = "";
 					if (!empty($ikesa['remote']['identification'])) {
 						if ($ikesa['remote']['identification'] == '%any')
-							echo 'Any identifier';
+							$identity = 'Any identifier';
 						else
-							echo htmlspecialchars($ikesa['remote']['identification']);
-					} else
-						echo 'Unknown';
+							$identity = htmlspecialchars($ikesa['remote']['identification']);
+					}
 
-					if (is_array($ikesa['remote']['auth']) && !empty($ikesa['remote']['auth']['identity'])) {
-						echo "<br/> {$ikesa['remote']['auth']['identity']}";
+					if (is_array($ikesa['remote']['auth']) && !empty($ikesa['remote']['auth'][0]['identity'])) {
+						echo htmlspecialchars($ikesa['remote']['auth'][0]['identity']);
+						echo "<br/>{$identity}";
+					} else {
+						if (empty($identity))
+							echo "Unknown";
+						else
+							echo $identity;
 					}
 				}
 			?>
@@ -183,7 +190,7 @@ $status = ipsec_smp_dump_status();
 					echo "Unknown";
 				else {
 					if (!empty($ikesa['remote']['address']))
-						echo htmlspecialchars($ikesa['remote']['address']) . ':' . htmlspecialchars($ikesa['remote']['port']);
+						echo htmlspecialchars($ikesa['remote']['address']) . '<br/>Port:' . htmlspecialchars($ikesa['remote']['port']);
 					else
 						echo 'Unknown';
 					if ($ikesa['remote']['nat'] != 'false')
@@ -192,15 +199,30 @@ $status = ipsec_smp_dump_status();
 			?>
 				</td>
 				<td class="listr">
+					IKEv<?php echo htmlspecialchars($ikesa['version']);?>
+					<br/>
 					<?php echo htmlspecialchars($ikesa['role']);?>
+					
 				</td>
 				<td class="listr">
 					<?php echo htmlspecialchars($ikesa['reauth']);?>
 				</td>
 				<td class="listr">
+					<?php
+						echo htmlspecialchars($ikesa['encalg']);
+						echo "<br/>";
+						echo htmlspecialchars($ikesa['intalg']);
+						echo "<br/>";
+						echo htmlspecialchars($ikesa['prfalg']);
+						echo "<br/>";
+						echo htmlspecialchars($ikesa['dhgroup']);
+					?>
+				</td>
+				<td class="listr">
 					<center>
 						<img src ="/themes/<?php echo $g['theme']; ?>/images/icons/icon_<?php echo $icon; ?>.gif" title="<?php echo $ikesa['status']; ?>" alt=""/>
 						<br/><?php echo htmlspecialchars($ikesa['status']);?>
+						<br/><?php echo htmlspecialchars($ikesa['established']);?>
 					</center>
 				</td>
 				<td >
@@ -228,7 +250,7 @@ $status = ipsec_smp_dump_status();
 			</tr>
 			<?php if (is_array($ikesa['childsalist'])): ?>
 			<tr>
-				<td class="listrborder" colspan="8">
+				<td class="listrborder" colspan="9">
 				<div id="btnchildsa-<?=$ikeid;?>">
 					<input  type="button" onclick="show_childsa('childsa-<?=$ikeid;?>','btnchildsa-<?=$ikeid;?>');" value="+" /> - Show child SA entries
 				</div>
@@ -236,10 +258,9 @@ $status = ipsec_smp_dump_status();
 				<thead>
 					<tr>
 						<th class="listhdrr nowrap"><?php echo gettext("Local subnets");?></th>
-						<th class="listhdrr nowrap"><?php echo gettext("Local SPI");?></th>
-						<th class="listhdrr nowrap"><?php echo gettext("Remote SPI");?></th>
+						<th class="listhdrr nowrap"><?php echo gettext("Local SPI(s)");?></th>
 						<th class="listhdrr nowrap"><?php echo gettext("Remote subnets");?></th>
-						<th class="listhdrr nowrap"><?php echo gettext("Rekey");?></th>
+						<th class="listhdrr nowrap"><?php echo gettext("Times");?></th>
 						<th class="listhdrr nowrap"><?php echo gettext("Algo");?></th>
 						<th class="listhdrr nowrap"><?php echo gettext("Stats");?></th>
 					</tr>
@@ -261,12 +282,10 @@ $status = ipsec_smp_dump_status();
 						</td>
 						<td class="listr nowrap">
 				<?php	if (is_array($childsa['local']))
-						echo htmlspecialchars($childsa['local']['spi']);
+						echo "Local: " . htmlspecialchars($childsa['local']['spi']);
 				?>
-						</td>
-						<td class="listr nowrap">
 				<?php	if (is_array($childsa['remote']))
-						echo htmlspecialchars($childsa['remote']['spi']);
+						echo "<br/>Remote: " . htmlspecialchars($childsa['remote']['spi']);
 				?>
 						</td>
 						<td class="listr nowrap">
@@ -279,7 +298,12 @@ $status = ipsec_smp_dump_status();
 				?>
 						</td>
 						<td class="listr nowrap">
-							<?php echo htmlspecialchars($childsa['rekey']); ?>
+							<?php
+								echo "Rekey: " . htmlspecialchars($childsa['rekey']);
+								echo "<br/>Life: " . htmlspecialchars($childsa['lifetime']);
+								echo "<br/>Install: " .htmlspecialchars($childsa['installtime']);
+
+							?>
 						</td>
 						<td class="listr nowrap">
 						<?php
@@ -287,20 +311,29 @@ $status = ipsec_smp_dump_status();
 							echo "<br/>";
 							echo htmlspecialchars($childsa['intalg']);
 							echo "<br/>";
-							if (!empty($childsa['esn']))
-								echo htmlspecialchars($childsa['rekey']);
+							if (!empty($childsa['prfalg'])) {
+								echo htmlspecialchars($childsa['prfalg']);
+								echo "<br/>";
+							}
+							if (!empty($childsa['dhgroup'])) {
+								echo htmlspecialchars($childsa['dhgroup']);
+								echo "<br/>";
+							}
+							if (!empty($childsa['esn'])) {
+								echo htmlspecialchars($childsa['esn']);
+								echo "<br/>";
+							}
+							echo "IPComp: " . htmlspecialchars($childsa['ipcomp']);
 						?>
 						</td>
 						<td class="listr nowrap">
 						<?php
-							echo "IPComp: " . htmlspecialchars($childsa['ipcomp']);
+							echo "Bytes-In: " . htmlspecialchars($childsa['bytesin']) . "<br/>Packets-In: " . htmlspecialchars($childsa['packetsin']);;
 							echo "<br/>";
-							echo "Bytes-In: " . htmlspecialchars($childsa['bytesin']) . "/Packets-In: " . htmlspecialchars($childsa['packetsin']);;
-							echo "<br/>";
-							echo "Bytes-Out: " . htmlspecialchars($childsa['bytesout']) . "/Packets-Out: " . htmlspecialchars($childsa['packetsout']);;
+							echo "Bytes-Out: " . htmlspecialchars($childsa['bytesout']) . "<br/>Packets-Out: " . htmlspecialchars($childsa['packetsout']);;
 						?>
 						</td>
-						<td class="listr nowrap">
+						<td>
 							<center>
 								<a href="diag_ipsec.php?act=childdisconnect&amp;ikeid=<?php echo $con_id; ?>&amp;ikesaid=<?php echo $childsa['reqid']; ?>">
 								<img src ="/themes/<?php echo $g['theme']; ?>/images/icons/icon_x.gif" alt="Disconnect Child SA" title="Disconnect Child SA" border="0"/>
@@ -369,7 +402,11 @@ $status = ipsec_smp_dump_status();
 				echo htmlspecialchars($ph1src);
 		?>
 			</td>
-			<td class="listr">
+			<td class="listr" >
+			</td>
+			<td class="listr" >
+			</td>
+			<td class="listr" >
 			</td>
 			<td class="listr">
 				<center>

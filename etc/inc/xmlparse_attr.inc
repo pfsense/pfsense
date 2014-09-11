@@ -119,10 +119,10 @@ function cData_attr($parser, $data) {
 		}
 
 		if (is_string($ptr)) {
-			$ptr .= xhtml_entity_decode($data, ENT_QUOTES, 'UTF-8');
+			$ptr .= xhtml_entity_decode($data, ENT_QUOTES | ENT_XHTML, 'UTF-8');
 		} else {
 			if (trim($data, " ") != "") {
-				$ptr = xhtml_entity_decode($data, ENT_QUOTES, 'UTF-8');
+				$ptr = xhtml_entity_decode($data, ENT_QUOTES | ENT_XHTML, 'UTF-8');
 				$havedata++;
 			}
 		}

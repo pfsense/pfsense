@@ -41,6 +41,8 @@
 ##|*DESCR=Allow access to the 'Status: Traffic Graph' page.
 ##|*MATCH=status_graph.php*
 ##|*MATCH=bandwidth_by_ip.php*
+##|*MATCH=graph.php*
+##|*MATCH=ifstats.php*
 ##|-PRIV
 
 require("guiconfig.inc");

@@ -992,6 +992,8 @@ $priv_list['page-status-trafficgraph']['descr'] = gettext("Allow access to the '
 $priv_list['page-status-trafficgraph']['match'] = array();
 $priv_list['page-status-trafficgraph']['match'][] = "status_graph.php*";
 $priv_list['page-status-trafficgraph']['match'][] = "bandwidth_by_ip.php*";
+$priv_list['page-status-trafficgraph']['match'][] = "graph.php*";
+$priv_list['page-status-trafficgraph']['match'][] = "ifstats.php*";
 
 $priv_list['page-status-cpuload'] = array();
 $priv_list['page-status-cpuload']['name'] = gettext("WebCfg - Status: CPU load page");

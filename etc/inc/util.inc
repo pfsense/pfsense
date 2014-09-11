@@ -2022,4 +2022,17 @@ function prefer_ipv4_or_ipv6() {
 		mwexec("/etc/rc.d/ip6addrctl prefer_ipv6");
 }
 
+/* Redirect to page passing parameters via POST */
+function post_redirect($page, $params) {
+	if (!is_array($params))
+		return;
+
+	print "<html><body><form action=\"{$page}\" name=\"formredir\" method=\"post\">\n";
+	foreach ($params as $key => $value) {
+		print "<input type=\"hidden\" name=\"{$key}\" value=\"{$value}\" />\n";
+	}
+	print "</form><script type=\"text/javascript\">document.formredir.submit();</script>\n";
+	print "</body></html>\n";
+}
+
 ?>

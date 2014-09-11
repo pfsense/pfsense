@@ -74,7 +74,7 @@ $mobile = ipsec_dump_mobile();
 						<tr>
 							<td colspan="4" valign="top" class="listtopic">
 							<?php
-								echo gettext("Pool Name: ") . $pool['name'];
+								echo gettext("Pool: ") . $pool['name'];
 								echo '/ ' . gettext("usage: ") . $pool['usage'];
 								echo '/ ' . gettext("online: ") . $pool['online'];
 							?>

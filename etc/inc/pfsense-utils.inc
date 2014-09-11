@@ -2672,23 +2672,23 @@ $g_languages = array (
 	"cs"    => array("codeset" => "UTF-8", "desc" => gettext("Czech"))
 );
 
-function xhtmlspecialchars($string, $flags = ENT_QUOTES , $encoding = "") {
+function xhtmlspecialchars($string, $flags = ENT_QUOTES | ENT_XHTML, $encoding = "") {
 	if(!$encoding)
 		$encoding = system_get_language_codeset();
 	return(htmlspecialchars($string, $flags, $encoding));
 }
 
-function xhtmlspecialchars_decode($string, $flags = ENT_QUOTES) {
+function xhtmlspecialchars_decode($string, $flags = ENT_QUOTES | ENT_XHTML) {
 	return(htmlspecialchars_decode($string, $flags));
 }
 
-function xhtmlentities($string, $flags = ENT_QUOTES, $encoding = "") {
+function xhtmlentities($string, $flags = ENT_QUOTES | ENT_XHTML, $encoding = "") {
 	if(!$encoding)
 		$encoding = system_get_language_codeset();
 	return(htmlentities($string, $flags, $encoding));
 }
 
-function xhtml_entity_decode($string, $flags = ENT_QUOTES , $encoding = "") {
+function xhtml_entity_decode($string, $flags = ENT_QUOTES | ENT_XHTML, $encoding = "") {
 	if(!$encoding)
 		$encoding = system_get_language_codeset();
 	return(html_entity_decode($string, $flags, $encoding));

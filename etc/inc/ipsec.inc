@@ -601,11 +601,11 @@ function ipsec_dump_sad()
  * Return dump of mobile user list
  */
 function ipsec_dump_mobile() {
-	global $g;
+	global $g, $custom_listtags;
 
 	$_gb = exec("/usr/local/sbin/ipsec stroke leases > {$g['tmp_path']}/strongswan_leases.xml");
 
-	if (!file_exists("{$g['varrun_path']}/strongswan_leases.xml")) {
+	if (!file_exists("{$g['tmp_path']}/strongswan_leases.xml")) {
 		log_error(gettext("IPSec daemon seems to have issues or not running! Could not display mobile user stats!"));
 		return array();
 	}

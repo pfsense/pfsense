@@ -49,6 +49,7 @@ if (isset($config['ipsec']['phase1'])){?>
 	$spd = ipsec_dump_spd();
 	$sad = ipsec_dump_sad();
 	$mobile = ipsec_dump_mobile();
+	$ipsec_status = ipsec_smp_dump_status();
 
 	$activecounter = 0;
 	$inactivecounter = 0;
@@ -69,7 +70,7 @@ if (isset($config['ipsec']['phase1'])){?>
 			continue;
 		}
 
-		if(ipsec_phase2_status($spd,$sad,$ph1ent,$ph2ent)) {
+		if (if(ipsec_phase1_status($ipsec_status, $ph1ent)) {
 			/* tunnel is up */
 			$iconfn = "true";
 			$activecounter++;

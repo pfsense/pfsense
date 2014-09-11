@@ -217,10 +217,9 @@ if ($savemsg)
 								</select>
 								<br/>
 								<?=gettext("This will duplicate the bootup slice to the alternate slice.  Use this if you would like to duplicate the known good working boot partition to the alternate.");?>
+								<br/><input type='submit' name='duplicateslice' value='<?php echo gettext("Duplicate slice") ?>'>
+							</form>
 						</td>
-					</tr>
-					<tr>
-						<td valign="top" class="">&nbsp;</td><td><br/><input type='submit' value='Duplicate slice'></form></td>
 					</tr>
 					<tr>
 						<td colspan="2" valign="top" class="">&nbsp;</td>

@@ -63,6 +63,11 @@ if (!is_array($config['system']['user']))
 
 $a_user = &$config['system']['user'];
 
+if (isset($_SERVER['HTTP_REFERER']))
+	$referer = $_SERVER['HTTP_REFERER'];
+else
+	$referer = '/system_usermanager.php';
+
 if (isset($id) && $a_user[$id]) {
 	$pconfig['usernamefld'] = $a_user[$id]['name'];
 	$pconfig['descr'] = $a_user[$id]['descr'];
@@ -823,7 +828,7 @@ function sshkeyClicked(obj) {
 							<td width="22%" valign="top">&nbsp;</td>
 							<td width="78%">
 								<input id="submit" name="save" type="submit" class="formbtn" value="<?=gettext("Save");?>" />
-								<input type="button" value="<?=gettext("Cancel");?>" onclick="window.location.href='/system_usermanager.php'" />
+								<input type="button" value="<?=gettext("Cancel");?>" onclick="window.location.href='<?=$referer;?>'" />
 								<?php if (isset($id) && $a_user[$id]): ?>
 								<input name="id" type="hidden" value="<?=htmlspecialchars($id);?>" />
 								<?php endif;?>

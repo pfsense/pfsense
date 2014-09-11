@@ -166,7 +166,7 @@ if (isset($config['ipsec']['phase1'])){?>
 		<div style="display:table-row;">
 			<div class="widgetsubheader" style="display:table-cell;width:140px">User</div>
 			<div class="widgetsubheader" style="display:table-cell;width:130px">IP</div>
-			<div class="widgetsubheader" style="display:table-cell;width:30px">Status;</div>
+			<div class="widgetsubheader" style="display:table-cell;width:30px">Status</div>
 		</div>
 		<div style="max-height:105px;overflow:auto;">
 <?php

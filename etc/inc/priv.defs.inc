@@ -90,6 +90,12 @@ $priv_list['page-status-ipsec']['descr'] = gettext("Allow access to the 'Status:
 $priv_list['page-status-ipsec']['match'] = array();
 $priv_list['page-status-ipsec']['match'][] = "diag_ipsec.php*";
 
+$priv_list['page-status-ipsec-leases'] = array();
+$priv_list['page-status-ipsec-leases']['name'] = gettext("WebCfg - Status: IPsec: Leasespage");
+$priv_list['page-status-ipsec-leases']['descr'] = gettext("Allow access to the 'Status: IPsec: Leases' page.");
+$priv_list['page-status-ipsec-leases']['match'] = array();
+$priv_list['page-status-ipsec-leases']['match'][] = "diag_ipsec_leases.php*";
+
 $priv_list['page-status-ipsec-sad'] = array();
 $priv_list['page-status-ipsec-sad']['name'] = gettext("WebCfg - Status: IPsec: SAD page");
 $priv_list['page-status-ipsec-sad']['descr'] = gettext("Allow access to the 'Status: IPsec: SAD' page.");

@@ -212,6 +212,8 @@ if($_GET['act']=="edit"){
 			$pconfig['verbosity_level'] = $a_server[$id]['verbosity_level'];
 		else
 			$pconfig['verbosity_level'] = 1; // Default verbosity is 1
+		
+		$pconfig['push_register_dns'] = $a_server[$id]['push_register_dns'];
 	}
 }
 if ($_POST) {
@@ -426,6 +428,9 @@ if ($_POST) {
 			$server['dns_server3'] = $pconfig['dns_server3'];
 			$server['dns_server4'] = $pconfig['dns_server4'];
 		}
+
+		if ($pconfig['push_register_dns'])
+			$server['push_register_dns'] = $pconfig['push_register_dns'];
 
 		if ($pconfig['ntp_server_enable']) {
 			$server['ntp_server1'] = $pconfig['ntp_server1'];
@@ -1576,6 +1581,26 @@ if ($savemsg)
 							</table>
 						</td>
 					</tr>
+
+					<tr id="chkboxPushRegisterDNS">
+						<td width="22%" valign="top" class="vncell"><?=gettext("Force DNS cache update"); ?></td>
+						<td width="78%" class="vtable">
+							<table border="0" cellpadding="2" cellspacing="0" summary="push register dns">
+								<tr>
+									<td>
+										<?php set_checked($pconfig['push_register_dns'],$chk); ?>
+										<input name="push_register_dns" type="checkbox" value="yes" <?=$chk;?> />
+									</td>
+									<td>
+										<span class="vexpl">
+											<?=gettext("Run ''net stop dnscache'', ''net start dnscache'', ''ipconfig /flushdns'' and ''ipconfig /registerdns'' on connection initiation. This is known to kick Windows into recognizing pushed DNS servers."); ?><br />
+										</span>
+									</td>
+								</tr>
+							</table>
+						</td>
+					</tr>
+
 					<tr>
 						<td width="22%" valign="top" class="vncell"><?=gettext("NTP Servers"); ?></td>
 						<td width="78%" class="vtable">

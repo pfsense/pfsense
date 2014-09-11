@@ -350,6 +350,9 @@ function openvpn_add_dhcpopts(& $settings, & $conf) {
 	if (!empty($settings['dns_server4']))
 		$conf .= "push \"dhcp-option DNS {$settings['dns_server4']}\"\n";
 
+	if (!empty($settings['push_register_dns']))
+		$conf .= "push \"register-dns\"\n";
+
 	if (!empty($settings['ntp_server1']))
 		$conf .= "push \"dhcp-option NTP {$settings['ntp_server1']}\"\n";
 	if (!empty($settings['ntp_server2']))

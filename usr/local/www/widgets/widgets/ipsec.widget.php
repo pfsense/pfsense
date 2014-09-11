@@ -80,7 +80,7 @@ if (isset($config['ipsec']['phase1'])){?>
 			$inactivecounter++;
 		}
 
-		$ipsec_detail_array[] = array('src' => $ph1ent['interface'],
+		$ipsec_detail_array[] = array('src' => convert_friendly_interface_to_friendly_descr($ph1ent['interface']),
 					'dest' => $ph1ent['remote-gateway'],
 					'remote-subnet' => ipsec_idinfo_to_text($ph2ent['remoteid']),
 					'descr' => $ph2ent['descr'],

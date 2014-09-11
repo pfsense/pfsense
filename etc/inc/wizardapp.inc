@@ -479,13 +479,13 @@ $othersplist = array();
 	$othersplist['facetime'] = array();
 		/* Facetime */
 		$othersplist['facetime'][] = array('Facetime-UDP-1', 'udp', '3478', '3479', 'both');
-		$othersplist['facetime'][] = array('Facetime-UDP-2', 'tcp', '16384', '16387', 'both');
-		$othersplist['facetime'][] = array('Facetime-UDP-3', 'tcp', '16393', '16402', 'both');
+		$othersplist['facetime'][] = array('Facetime-TCP-1', 'tcp', '16384', '16387', 'both');
+		$othersplist['facetime'][] = array('Facetime-TCP-2', 'tcp', '16393', '16402', 'both');
 
 	$othersplist['googlehangouts'] = array();
 		/* Google Hangouts */
 		$othersplist['googlehangouts'][] = array('GoogleHangouts-UDP', 'udp', '19302', '19309', 'both');
-		$othersplist['googlehangouts'][] = array('GoogleHangouts-TCP', 'tcp', '19305', '9309', 'both');
+		$othersplist['googlehangouts'][] = array('GoogleHangouts-TCP', 'tcp', '19305', '19309', 'both');
 
 	$othersplist['icq'] = array();
 		/* icq */

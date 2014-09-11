@@ -48,8 +48,8 @@ function vpn_ipsec_configure_loglevels($forconfig = false)
 
 	$cfgtext = array();
 	foreach ($ipsec_loglevels as $lkey => $ldescr) {
-		if (!isset($config['ipsec']["ipsec_{$lkey}"]))
-			$forconfig ? $cfgtext[] = "{$lkey} = -1" : mwexec("/usr/local/sbin/ipsec stroke loglevel {$lkey} -1", false);
+		if (!isset($config['ipsec']["ipsec_{$lkey}"]) && !$forconfig)
+			mwexec("/usr/local/sbin/ipsec stroke loglevel {$lkey} -1", false);
 		else if (is_numeric($config['ipsec']["ipsec_{$lkey}"]) &&
 		    intval($config['ipsec']["ipsec_{$lkey}"]) >= 1 && intval($config['ipsec']["ipsec_{$lkey}"]) <= 5)
 			$forconfig ? $cfgtext[] = "${lkey} = " . (intval($config['ipsec']["ipsec_{$lkey}"]) - 1) :
@@ -279,6 +279,9 @@ charon {
 
         # number of worker threads in charon
         threads = 16
+	ikesa_table_size = 32
+	ikesa_table_segments = 4
+	init_limit_half_open = 1000;
 
 	# XXX: There is not much choice here really users win their security!
 	i_dont_care_about_security_and_use_aggressive_mode_psk=yes
@@ -586,8 +589,11 @@ EOD;
 				if ($ph1ent['lifetime'])
 					$ikelifeline = "ikelifetime = {$ph1ent['lifetime']}s";
 
-				$authentication = "";
 				$rightsourceip = NULL;
+				if (!empty($a_client['pool_address'])) 
+					$rightsourceip = "\trightsourceip = {$a_client['pool_address']}/{$a_client['pool_netbits']}\n";
+
+				$authentication = "";
 				switch ($ph1ent['authentication_method']) {
 				case 'xauth_rsa_server':
 					$authentication = "leftauth = pubkey\n\trightauth = pubkey";
@@ -596,8 +602,6 @@ EOD;
 				case 'xauth_psk_server':
 					$authentication = "leftauth = psk\n\trightauth = psk";
 					$authentication .= "\n\trightauth2 = xauth-generic";
-					if (!empty($a_client['pool_address'])) 
-						$rightsourceip = "\trightsourceip = {$a_client['pool_address']}/{$a_client['pool_netbits']}\n";
 					break;
 				case 'pre_shared_key':
 					$authentication = "leftauth = psk\n\trightauth = psk";

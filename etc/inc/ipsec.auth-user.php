@@ -35,7 +35,7 @@
 	pfSense_MODULE:	openvpn
 */
 /*
- * racoon calls this script to authenticate a user
+ * ipsec calls this script to authenticate a user
  * based on a username and password. We lookup these
  * in our config.xml file and check the credentials.
  */
@@ -79,9 +79,9 @@ function getNasIP()
 }
 }
 /* setup syslog logging */
-openlog("racoon", LOG_ODELAY, LOG_AUTH);
+openlog("charon", LOG_ODELAY, LOG_AUTH);
 
-if (isset($_GET)) {
+if (isset($_GET['username'])) {
 	$authmodes = explode(",", $_GET['authcfg']);
 	$username = $_GET['username'];
 	$password = $_GET['password'];
@@ -96,7 +96,7 @@ if (isset($_GET)) {
 
 if (!$username || !$password) {
 	syslog(LOG_ERR, "invalid user authentication environment");
-	if (isset($_GET)) {
+	if (isset($_GET['username'])) {
 		echo "FAILED";
 		closelog();
 		return;
@@ -110,7 +110,7 @@ $authenticated = false;
 
 if (($strictusercn === true) && ($common_name != $username)) {
 	syslog(LOG_WARNING, "Username does not match certificate common name ({$username} != {$common_name}), access denied.\n");
-	if (isset($_GET)) {
+	if (isset($_GET['username'])) {
 		echo "FAILED";
 		closelog();
 		return;
@@ -142,7 +142,7 @@ foreach ($authmodes as $authmode) {
 
 if ($authenticated == false) {
 	syslog(LOG_WARNING, "user '{$username}' could not authenticate.\n");
-	if (isset($_GET)) {
+	if (isset($_GET['username'])) {
 		echo "FAILED";
 		closelog();
 		return;
@@ -158,7 +158,7 @@ if (file_exists("/etc/inc/ipsec.attributes.php"))
 syslog(LOG_NOTICE, "user '{$username}' authenticated\n");
 closelog();
 
-if (isset($_GET))
+if (isset($_GET['username']))
 	echo "OK";
 else
 	exit(0);

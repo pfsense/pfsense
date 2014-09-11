@@ -295,7 +295,7 @@ if ($_POST) {
 						      preg_match("/urltable/i", alias_get_type($_POST["address{$x}"]))))
 							$wrongaliases .= " " . $_POST["address{$x}"];
 				} else if ($_POST['type'] == "port") {
-					if (!is_port($_POST["address{$x}"]))
+					if (!is_port($_POST["address{$x}"]) && !is_portrange($_POST["address{$x}"]))
 						$input_errors[] = $_POST["address{$x}"] . " " . gettext("is not a valid port or alias.");
 				} else if ($_POST['type'] == "host" || $_POST['type'] == "network") {
 					if (is_subnet($_POST["address{$x}"]) || (!is_ipaddr($_POST["address{$x}"])

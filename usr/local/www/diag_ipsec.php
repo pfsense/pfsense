@@ -60,20 +60,22 @@ if ($_GET['act'] == 'connect') {
 	}
 } else if ($_GET['act'] == 'ikedisconnect') {
 	if (ctype_digit($_GET['ikeid'])) {
-		mwexec("/usr/local/sbin/ipsec down con" . escapeshellarg($_GET['ikeid']));
+		if (!empty($_GET['ikesaid']) && ctype_digit($_GET['ikesaid']))
+			mwexec("/usr/local/sbin/ipsec down con" . escapeshellarg($_GET['ikeid']) . "[" . escapeshellarg($_GET['ikesaid']) . "]");
+		else
+			mwexec("/usr/local/sbin/ipsec down con" . escapeshellarg($_GET['ikeid']));
 	}
-} else if ($_GET['act'] == 'disconnect') {
-	if (!empty($_GET['user'])) {
-		ipsec_disconnect_mobile($_GET['user']);
-		sleep(1);
-		$savemsg = gettext("Disconnected user") . " " . $_GET['user'];
+} else if ($_GET['act'] == 'childdisconnect') {
+	if (ctype_digit($_GET['ikeid'])) {
+		if (!empty($_GET['ikesaid']) && ctype_digit($_GET['ikesaid']))
+			mwexec("/usr/local/sbin/ipsec down con" . escapeshellarg($_GET['ikeid']) . "{" . escapeshellarg($_GET['ikesaid']) . "}");
 	}
 }
 
-if (!is_array($config['ipsec']['phase2']))
-    $config['ipsec']['phase2'] = array();
+if (!is_array($config['ipsec']['phase1']))
+    $config['ipsec']['phase1'] = array();
 
-$a_phase2 = &$config['ipsec']['phase2'];
+$a_phase1 = &$config['ipsec']['phase1'];
 
 $status = ipsec_smp_dump_status();
 
@@ -107,15 +109,18 @@ $status = ipsec_smp_dump_status();
 				<th class="listhdrr nowrap"><?php echo gettext("Remote ID");?></th>
 				<th class="listhdrr nowrap"><?php echo gettext("Remote IP");?></th>
 				<th class="listhdrr nowrap"><?php echo gettext("Role");?></th>
+				<th class="listhdrr nowrap"><?php echo gettext("Reauth");?></th>
 				<th class="listhdrr nowrap"><?php echo gettext("Status");?></th>
 				<td class="list nowrap"></td>
 		</tr>
 		</thead>
 		<tbody>
 <?php
+	$ipsecconnected = array();
 	if (is_array($status['query']) && is_array($status['query']['ikesalist']) && is_array($status['query']['ikesalist']['ikesa'])) {
 		foreach ($status['query']['ikesalist']['ikesa'] as $ikeid => $ikesa) {
 			$con_id = substr($ikesa['peerconfig'], 3);
+			$ipsecconnected[$con_id] = $con_id;
 
 			if (ipsec_phase1_status($status['query']['ikesalist']['ikesa'], $ikesa['id'])) {
 				$icon = "pass";
@@ -133,9 +138,12 @@ $status = ipsec_smp_dump_status();
 			<?php   if (!is_array($ikesa['local']))
 					echo "Unknown";
 				else {
-					if (!empty($ikesa['local']['identification']))
-						echo xhtmlspecialchars($ikesa['local']['identification']);
-					else
+					if (!empty($ikesa['local']['identification'])) {
+						if ($ikesa['local']['identification'] == '%any')
+							echo 'Any identifier';
+						else
+							echo xhtmlspecialchars($ikesa['local']['identification']);
+					} else
 						echo 'Unknown';
 				}
 			?>
@@ -157,10 +165,17 @@ $status = ipsec_smp_dump_status();
 			<?php   if (!is_array($ikesa['remote']))
 					echo "Unknown";
 				else {
-					if (!empty($ikesa['remote']['identification']))
-						echo xhtmlspecialchars($ikesa['remote']['identification']);
-					else
+					if (!empty($ikesa['remote']['identification'])) {
+						if ($ikesa['remote']['identification'] == '%any')
+							echo 'Any identifier';
+						else
+							echo xhtmlspecialchars($ikesa['remote']['identification']);
+					} else
 						echo 'Unknown';
+
+					if (is_array($ikesa['remote']['auth']) && !empty($ikesa['remote']['auth']['identity'])) {
+						echo "<br/> {$ikesa['remote']['auth']['identity']}";
+					}
 				}
 			?>
 				</td>
@@ -181,6 +196,9 @@ $status = ipsec_smp_dump_status();
 					<?php echo xhtmlspecialchars($ikesa['role']);?>
 				</td>
 				<td class="listr">
+					<?php echo xhtmlspecialchars($ikesa['reauth']);?>
+				</td>
+				<td class="listr">
 					<center>
 						<img src ="/themes/<?php echo $g['theme']; ?>/images/icons/icon_<?php echo $icon; ?>.gif" title="<?php echo $ikesa['status']; ?>" alt=""/>
 						<br/><?php echo xhtmlspecialchars($ikesa['status']);?>
@@ -198,6 +216,9 @@ $status = ipsec_smp_dump_status();
 						<a href="diag_ipsec.php?act=ikedisconnect&amp;ikeid=<?php echo $con_id; ?>">
 						<img src ="/themes/<?php echo $g['theme']; ?>/images/icons/icon_service_stop.gif" alt="Disconnect VPN" title="Disconnect VPN" border="0"/>
 						</a>
+						<a href="diag_ipsec.php?act=ikedisconnect&amp;ikeid=<?php echo $con_id; ?>&amp;ikesaid=<?php echo $ikesa['id']; ?>">
+						<img src ="/themes/<?php echo $g['theme']; ?>/images/icons/icon_x.gif" alt="Disconnect VPN Connection" title="Disconnect VPN Connection" border="0"/>
+						</a>
 					</center>
 				<?php endif; ?>
 				</td>
@@ -208,7 +229,7 @@ $status = ipsec_smp_dump_status();
 			</tr>
 			<?php if (is_array($ikesa['childsalist'])): ?>
 			<tr>
-				<td class="listrborder" colspan="7">
+				<td class="listrborder" colspan="8">
 				<div id="btnchildsa-<?=$ikeid;?>">
 					<input  type="button" onclick="show_childsa('childsa-<?=$ikeid;?>','btnchildsa-<?=$ikeid;?>');" value="+" /> - Show child SA entries
 				</div>
@@ -219,6 +240,9 @@ $status = ipsec_smp_dump_status();
 						<th class="listhdrr nowrap"><?php echo gettext("Local SPI");?></th>
 						<th class="listhdrr nowrap"><?php echo gettext("Remote SPI");?></th>
 						<th class="listhdrr nowrap"><?php echo gettext("Remote subnets");?></th>
+						<th class="listhdrr nowrap"><?php echo gettext("Rekey");?></th>
+						<th class="listhdrr nowrap"><?php echo gettext("Algo");?></th>
+						<th class="listhdrr nowrap"><?php echo gettext("Stats");?></th>
 					</tr>
 				</thead>
 				<tbody>
@@ -255,6 +279,35 @@ $status = ipsec_smp_dump_status();
 						echo "Unknown";
 				?>
 						</td>
+						<td class="listr nowrap">
+							<?php echo xhtmlspecialchars($childsa['rekey']); ?>
+						</td>
+						<td class="listr nowrap">
+						<?php
+							echo xhtmlspecialchars($childsa['encalg']);
+							echo "<br/>";
+							echo xhtmlspecialchars($childsa['intalg']);
+							echo "<br/>";
+							if (!empty($childsa['esn']))
+								echo xhtmlspecialchars($childsa['rekey']);
+						?>
+						</td>
+						<td class="listr nowrap">
+						<?php
+							echo "IPComp: " . xhtmlspecialchars($childsa['ipcomp']);
+							echo "<br/>";
+							echo "Bytes-In: " . xhtmlspecialchars($childsa['bytesin']) . "/Packets-In: " . xhtmlspecialchars($childsa['packetsin']);;
+							echo "<br/>";
+							echo "Bytes-Out: " . xhtmlspecialchars($childsa['bytesout']) . "/Packets-Out: " . xhtmlspecialchars($childsa['packetsout']);;
+						?>
+						</td>
+						<td class="listr nowrap">
+							<center>
+								<a href="diag_ipsec.php?act=childdisconnect&amp;ikeid=<?php echo $con_id; ?>&amp;ikesaid=<?php echo $childsa['reqid']; ?>">
+								<img src ="/themes/<?php echo $g['theme']; ?>/images/icons/icon_x.gif" alt="Disconnect Child SA" title="Disconnect Child SA" border="0"/>
+								</a>
+							</center>
+						</td>
 						<td class="list nowrap">
 							&nbsp;
 						</td>
@@ -270,6 +323,76 @@ $status = ipsec_smp_dump_status();
 			unset($con_id);
 		}
 	}
+
+	$rgmap = array();
+	foreach ($a_phase1 as $ph1ent):
+		$rgmap[$ph1ent['remote-gateway']] = $ph1ent['remote-gateway'];
+		if ($ipsecconnected[$ph1ent['ikeid']])
+			continue;
+?>
+		<tr>
+			<td class="listlr">
+				<?php echo xhtmlspecialchars($ph1ent['descr']);?>
+			</td>
+			<td class="listr">
+		<?php
+			list ($myid_type, $myid_data) = ipsec_find_id($ph1ent, "local");
+			if (empty($myid_data))
+				echo "Unknown";
+			else
+				echo xhtmlspecialchars($myid_data);
+		?>
+			</td>
+			<td class="listr">
+		<?php
+			$ph1src = ipsec_get_phase1_src($ph1ent);
+			if (empty($ph1src))
+				echo "Unknown";
+			else
+				echo xhtmlspecialchars($ph1src);
+		?>
+			</td>
+			<td class="listr">
+		<?php
+			list ($peerid_type, $peerid_data) = ipsec_find_id($ph1ent, "peer", $rgmap);
+			if (empty($peerid_data))
+				echo "Unknown";
+			else
+				echo xhtmlspecialchars($peerid_data);
+		?>
+			</td>
+			<td class="listr">
+		<?php
+			$ph1src = ipsec_get_phase1_dst($ph1ent);
+			if (empty($ph1src))
+				echo "Unknown";
+			else
+				echo xhtmlspecialchars($ph1src);
+		?>
+			</td>
+			<td class="listr">
+			</td>
+			<td class="listr">
+				<center>
+					<img src ="/themes/<?php echo $g['theme']; ?>/images/icons/icon_reject.gif" title="Disconnected" alt=""/>
+					<br/>Disconnected
+				</center>
+			</td>
+			<td >
+				<center>
+					<a href="diag_ipsec.php?act=connect&amp;ikeid=<?php echo $ph1ent['ikeid']; ?>">
+					<img src ="/themes/<?php echo $g['theme']; ?>/images/icons/icon_service_start.gif" alt="Connect VPN" title="Connect VPN" border="0"/>
+					</a>
+				</center>
+			</td>
+			<td valign="middle" class="list nowrap">
+				<table border="0" cellspacing="0" cellpadding="1" summary="">
+				</table>
+			</td>
+		</tr>
+<?php
+	endforeach;
+	unset($ipsecconnected, $phase1, $rgmap);
 ?>
 			<tr style="display:none;"><td></td></tr>
 		</tbody>

@@ -1242,10 +1242,7 @@ function interface_bring_down($interface = "wan", $destroy = false, $ifacecfg = 
 		}
 		break;
 	case "dhcp":
-		$pid = find_dhclient_process($realif);
-		if($pid)
-			posix_kill($pid, SIGTERM);
-		sleep(1);
+		kill_dhclient_process($realif);
 		unlink_if_exists("{$g['varetc_path']}/dhclient_{$interface}.conf");
 		if(does_interface_exist("$realif")) {
 			mwexec("/sbin/ifconfig " . escapeshellarg($realif) . " delete", true);
@@ -2801,6 +2798,21 @@ function find_dhclient_process($interface) {
 	return intval($pid);
 }
 
+function kill_dhclient_process($interface) {
+	if (empty($interface) || !does_interface_exist($interface))
+		return;
+
+	$i = 0;
+	while ((($pid = find_dhclient_process($interface)) != 0) && ($i < 3)) {
+		/* 3rd time make it die for sure */
+		$sig = ($i == 2 ? SIGKILL : SIGTERM);
+		posix_kill($pid, $sig);
+		sleep(1);
+		$i++;
+	}
+	unset($i);
+}
+
 function find_dhcp6c_process($interface) {
 	global $g;
 
@@ -3897,6 +3909,9 @@ EOD;
 	else
 		log_error(printf(gettext("Could not bring up %s interface in interface_dhcp_configure()"), $wanif));
 
+	/* Make sure dhclient is not running */
+	kill_dhclient_process($wanif);
+
 	/* fire up dhclient */
 	mwexec("/sbin/dhclient -c {$g['varetc_path']}/dhclient_{$interface}.conf {$wanif} > {$g['tmp_path']}/{$wanif}_output 2> {$g['tmp_path']}/{$wanif}_error_output");
 
@@ -4142,6 +4157,7 @@ function convert_friendly_interface_to_friendly_descr($interface) {
 		break;
 	case "enc0":
 	case "ipsec":
+	case "IPsec":
 		$ifdesc = "IPsec";
 		break;
 	default:
@@ -4175,14 +4191,11 @@ function convert_friendly_interface_to_friendly_descr($interface) {
 }
 
 function convert_real_interface_to_friendly_descr($interface) {
-	global $config;
 
 	$ifdesc = convert_real_interface_to_friendly_interface_name("{$interface}");
 
-	if ($ifdesc) {
-		$iflist = get_configured_interface_with_descr(false, true);
-		return $iflist[$ifdesc];
-	}
+	if (!empty($ifdesc))
+		return convert_friendly_interface_to_friendly_descr($ifdesc);
 
 	return $interface;
 }
@@ -4374,12 +4387,12 @@ function guess_interface_from_ip($ipaddress) {
 	}
 	if(is_ipaddrv4($ipaddress)) {
 		/* create a route table we can search */
-		exec("netstat -rnWf inet", $output, $ret);
+		exec("/usr/bin/netstat -rnWf inet", $output, $ret);
 		foreach($output as $line) {
 			if(preg_match("/^[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+\/[0-9]+[ ]+link[#]/", $line)) {
 				$fields = preg_split("/[ ]+/", $line);
 				if(ip_in_subnet($ipaddress, $fields[0])) {
-					return $fields[6];
+					return $fields[5];
 				}
 			}
 		}
@@ -4387,12 +4400,12 @@ function guess_interface_from_ip($ipaddress) {
 	/* FIXME: This works from cursory testing, regexp might need fine tuning */
 	if(is_ipaddrv6($ipaddress)) {
 		/* create a route table we can search */
-		exec("netstat -rnWf inet6", $output, $ret);
+		exec("/usr/bin/netstat -rnWf inet6", $output, $ret);
 		foreach($output as $line) {
 			if(preg_match("/[0-9a-f]+[:]+[0-9a-f]+[:]+[\/][0-9]+/", $line)) {
 				$fields = preg_split("/[ ]+/", $line);
 				if(ip_in_subnet($ipaddress, $fields[0])) {
-					return $fields[6];
+					return $fields[5];
 				}
 			}
 		}

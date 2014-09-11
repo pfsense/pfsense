@@ -53,6 +53,43 @@ require("captiveportal.inc");
 require_once("rrd.inc");
 require_once("pfsense-utils.inc");
 
+function interface_assign_description($portinfo, $portname) {
+	if ($portinfo['isvlan']) {
+		$descr = sprintf(gettext('VLAN %1$s on %2$s'),$portinfo['tag'],$portinfo['if']);
+		if ($portinfo['descr'])
+			$descr .= " (" . $portinfo['descr'] . ")";
+	} elseif ($portinfo['iswlclone']) {
+		$descr = $portinfo['cloneif'];
+		if ($portinfo['descr'])
+			$descr .= " (" . $portinfo['descr'] . ")";
+	} elseif ($portinfo['isppp']) {
+		$descr = $portinfo['descr'];
+	} elseif ($portinfo['isbridge']) {
+		$descr = strtoupper($portinfo['bridgeif']);
+		if ($portinfo['descr'])
+			$descr .= " (" . $portinfo['descr'] . ")";
+	} elseif ($portinfo['isgre']) {
+		$descr = "GRE {$portinfo['remote-addr']}";
+		if ($portinfo['descr'])
+			$descr .= " (" . $portinfo['descr'] . ")";
+	} elseif ($portinfo['isgif']) {
+		$descr = "GIF {$portinfo['remote-addr']}";
+		if ($portinfo['descr'])
+			$descr .= " (" . $portinfo['descr'] . ")";
+	} elseif ($portinfo['islagg']) {
+		$descr = strtoupper($portinfo['laggif']);
+		if ($portinfo['descr'])
+			$descr .= " (" . $portinfo['descr'] . ")";
+	} elseif ($portinfo['isqinq']) {
+		$descr =  $portinfo['descr'];
+	} elseif (substr($portname, 0, 4) == 'ovpn') {
+		$descr = $portname . " (" . $ovpn_descrs[substr($portname, 5)] . ")";
+	} else
+		$descr = $portname . " (" . $portinfo['mac'] . ")";
+
+	return xhtmlspecialchars($descr);
+}
+
 /*
 	In this file, "port" refers to the physical port name,
 	while "interface" refers to LAN, WAN, or OPTn.
@@ -154,14 +191,55 @@ if (is_array($config['openvpn'])) {
 			$ovpn_descrs[$c['vpnid']] = $c['description'];
 }
 
-if ($_POST['apply']) {
+if (isset($_POST['add_x']) && isset($_POST['if_add'])) {
+	/* Be sure this port is not being used */
+	$portused = false;
+	foreach ($config['interfaces'] as $ifname => $ifdata) {
+		if ($ifdata['if'] == $_PORT['if_add']) {
+			$portused = true;
+			break;
+		}
+	}
+
+	if ($portused === false) {
+		/* find next free optional interface number */
+		if(!$config['interfaces']['lan']) {
+			$newifname = gettext("lan");
+			$descr = gettext("LAN");
+		} else {
+			for ($i = 1; $i <= count($config['interfaces']); $i++) {
+				if (!$config['interfaces']["opt{$i}"])
+					break;
+			}
+			$newifname = 'opt' . $i;
+			$descr = "OPT" . $i;
+		}
+
+		$config['interfaces'][$newifname] = array();
+		$config['interfaces'][$newifname]['descr'] = $descr;
+		$config['interfaces'][$newifname]['if'] = $_POST['if_add'];
+		if (preg_match($g['wireless_regex'], $_POST['if_add'])) {
+			$config['interfaces'][$newifname]['wireless'] = array();
+			interface_sync_wireless_clones($config['interfaces'][$newifname], false);
+		}
+
+		uksort($config['interfaces'], "compare_interface_friendly_names");
+
+		/* XXX: Do not remove this. */
+		unlink_if_exists("{$g['tmp_path']}/config.cache");
+
+		write_config();
+
+		$savemsg = gettext("Interface has been added.");
+	}
+
+} else if (isset($_POST['apply'])) {
 	if (file_exists("/var/run/interface_mismatch_reboot_needed")) {
 		system_reboot();
 		$rebootingnow = true;
 	} else {
 		write_config();
 
-		$retval = 0;
 		$retval = filter_configure();
 		$savemsg = get_std_save_message($retval);
 
@@ -171,7 +249,7 @@ if ($_POST['apply']) {
 			$savemsg = $retval;
 	}
 
-} else if ($_POST) {
+} else if (isset($_POST['Submit'])) {
 
 	unset($input_errors);
 
@@ -273,108 +351,80 @@ if ($_POST['apply']) {
 
 		enable_rrd_graphing();
 	}
-}
+} else {
+	/* yuck - IE won't send value attributes for image buttons, while Mozilla does - so we use .x/.y to find move button clicks instead... */
+	unset($delbtn);
+	foreach ($_POST as $pn => $pd) {
+		if (preg_match("/del_(.+)_x/", $pn, $matches))
+			$delbtn = $matches[1];
+	}
 
-if ($_GET['act'] == "del") {
-	$id = $_GET['id'];
+	if (isset($delbtn)) {
+		$id = $delbtn;
 
-	if (link_interface_to_group($id))
-		$input_errors[] = gettext("The interface is part of a group. Please remove it from the group to continue");
-	else if (link_interface_to_bridge($id))
-		$input_errors[] = gettext("The interface is part of a bridge. Please remove it from the bridge to continue");
-	else if (link_interface_to_gre($id))
-		$input_errors[] = gettext("The interface is part of a gre tunnel. Please delete the tunnel to continue");
-	else if (link_interface_to_gif($id))
-		$input_errors[] = gettext("The interface is part of a gif tunnel. Please delete the tunnel to continue");
-	else {
-		unset($config['interfaces'][$id]['enable']);
-		$realid = get_real_interface($id);
-		interface_bring_down($id);   /* down the interface */
+		if (link_interface_to_group($id))
+			$input_errors[] = gettext("The interface is part of a group. Please remove it from the group to continue");
+		else if (link_interface_to_bridge($id))
+			$input_errors[] = gettext("The interface is part of a bridge. Please remove it from the bridge to continue");
+		else if (link_interface_to_gre($id))
+			$input_errors[] = gettext("The interface is part of a gre tunnel. Please delete the tunnel to continue");
+		else if (link_interface_to_gif($id))
+			$input_errors[] = gettext("The interface is part of a gif tunnel. Please delete the tunnel to continue");
+		else {
+			unset($config['interfaces'][$id]['enable']);
+			$realid = get_real_interface($id);
+			interface_bring_down($id);   /* down the interface */
 
-		unset($config['interfaces'][$id]);	/* delete the specified OPTn or LAN*/
+			unset($config['interfaces'][$id]);	/* delete the specified OPTn or LAN*/
 
-		if (is_array($config['dhcpd']) && is_array($config['dhcpd'][$id])) {
-			unset($config['dhcpd'][$id]);
-			services_dhcpd_configure();
-		}
-
-		if (count($config['filter']['rule']) > 0) {
-			foreach ($config['filter']['rule'] as $x => $rule) {
-				if($rule['interface'] == $id)
-					unset($config['filter']['rule'][$x]);
+			if (is_array($config['dhcpd']) && is_array($config['dhcpd'][$id])) {
+				unset($config['dhcpd'][$id]);
+				services_dhcpd_configure();
 			}
-		}
-		if (is_array($config['nat']['rule']) && count($config['nat']['rule']) > 0) {
-			foreach ($config['nat']['rule'] as $x => $rule) {
-				if($rule['interface'] == $id)
-					unset($config['nat']['rule'][$x]['interface']);
+
+			if (count($config['filter']['rule']) > 0) {
+				foreach ($config['filter']['rule'] as $x => $rule) {
+					if($rule['interface'] == $id)
+						unset($config['filter']['rule'][$x]);
+				}
 			}
+			if (is_array($config['nat']['rule']) && count($config['nat']['rule']) > 0) {
+				foreach ($config['nat']['rule'] as $x => $rule) {
+					if($rule['interface'] == $id)
+						unset($config['nat']['rule'][$x]['interface']);
+				}
+			}
+
+			write_config();
+
+			/* If we are in firewall/routing mode (not single interface)
+			 * then ensure that we are not running DHCP on the wan which
+			 * will make a lot of ISP's unhappy.
+			 */
+			if($config['interfaces']['lan'] && $config['dhcpd']['wan']) {
+				unset($config['dhcpd']['wan']);
+			}
+
+			link_interface_to_vlans($realid, "update");
+
+			$savemsg = gettext("Interface has been deleted.");
 		}
-
-		write_config();
-
-		/* If we are in firewall/routing mode (not single interface)
-		 * then ensure that we are not running DHCP on the wan which
-		 * will make a lot of ISP's unhappy.
-		 */
-		if($config['interfaces']['lan'] && $config['dhcpd']['wan']) {
-			unset($config['dhcpd']['wan']);
-		}
-
-		link_interface_to_vlans($realid, "update");
-
-		$savemsg = gettext("Interface has been deleted.");
 	}
 }
 
-if ($_GET['act'] == "add" && (count($config['interfaces']) < count($portlist))) {
-	/* find next free optional interface number */
-	if(!$config['interfaces']['lan']) {
-		$newifname = gettext("lan");
-		$descr = gettext("LAN");
-		$config['interfaces'][$newifname] = array();
-		$config['interfaces'][$newifname]['descr'] = $descr;
-	} else {
-		for ($i = 1; $i <= count($config['interfaces']); $i++) {
-			if (!$config['interfaces']["opt{$i}"])
-				break;
-		}
-		$newifname = 'opt' . $i;
-		$descr = "OPT" . $i;
-		$config['interfaces'][$newifname] = array();
-		$config['interfaces'][$newifname]['descr'] = $descr;
-	}
-
-	uksort($config['interfaces'], "compare_interface_friendly_names");
-
-	/* Find an unused port for this interface */
-	foreach ($portlist as $portname => $portinfo) {
-		$portused = false;
-		foreach ($config['interfaces'] as $ifname => $ifdata) {
-			if ($ifdata['if'] == $portname) {
-				$portused = true;
-				break;
-			}
-		}
-		if (!$portused) {
-			$config['interfaces'][$newifname]['if'] = $portname;
-			if (preg_match($g['wireless_regex'], $portname)) {
-				$config['interfaces'][$newifname]['wireless'] = array();
-				interface_sync_wireless_clones($config['interfaces'][$newifname], false);
-			}
+/* Create a list of unused ports */
+$unused_portlist = array();
+foreach ($portlist as $portname => $portinfo) {
+	$portused = false;
+	foreach ($config['interfaces'] as $ifname => $ifdata) {
+		if ($ifdata['if'] == $portname) {
+			$portused = true;
 			break;
 		}
 	}
-
-	/* XXX: Do not remove this. */
-	mwexec("/bin/rm -f /tmp/config.cache");
-
-	write_config();
-
-	$savemsg = gettext("Interface has been added.");
-
-} else if ($_GET['act'] == "add")
-	$input_errors[] = "No more interfaces available to be assigned.";
+	if ($portused === false)
+		$unused_portlist[$portname] = $portinfo;
+}
 
 include("head.inc");
 
@@ -394,17 +444,21 @@ if(file_exists("/var/run/interface_mismatch_reboot_needed"))
 
 <form action="interfaces_assign.php" method="post" name="iform" id="iform">
 
-<?php if (file_exists("/tmp/reload_interfaces")): ?><p>
-	<?php print_info_box_np(gettext("The interface configuration has been changed.<br />You must apply the changes in order for them to take effect."));?><br /></p>
-<?php elseif($savemsg): ?>
-	<?php print_info_box($savemsg); ?>
-<?php endif; ?>
+<?php
+if (file_exists("/tmp/reload_interfaces")) {
+	echo "<p>\n";
+	print_info_box_np(gettext("The interface configuration has been changed.<br />You must apply the changes in order for them to take effect."));
+	echo "<br /></p>\n";
+} elseif($savemsg)
+	print_info_box($savemsg);
 
-<?php pfSense_handle_custom_code("/usr/local/pkg/interfaces_assign/pre_input_errors"); ?>
-<?php if ($input_errors) print_input_errors($input_errors); ?>
+pfSense_handle_custom_code("/usr/local/pkg/interfaces_assign/pre_input_errors");
+if ($input_errors)
+	print_input_errors($input_errors);
+?>
 
 <table width="100%" border="0" cellpadding="0" cellspacing="0" summary="interfaces assign">
-  <tr><td class="tabnavtbl">
+	<tr><td class="tabnavtbl">
 <?php
 	$tab_array = array();
 	$tab_array[0] = array(gettext("Interface assignments"), true, "interfaces_assign.php");
@@ -419,100 +473,88 @@ if(file_exists("/var/run/interface_mismatch_reboot_needed"))
 	$tab_array[10] = array(gettext("LAGG"), false, "interfaces_lagg.php");
 	display_top_tabs($tab_array);
 ?>
-  </td></tr>
-  <tr>
-    <td>
-	<div id="mainarea">
-        <table class="tabcont" width="100%" border="0" cellpadding="0" cellspacing="0" summary="main area">
-       <tr>
-	<td class="listhdrr"><?=gettext("Interface"); ?></td>
-	<td class="listhdr"><?=gettext("Network port"); ?></td>
-	<td class="list">&nbsp;</td>
-  </tr>
-  <?php foreach ($config['interfaces'] as $ifname => $iface):
-  	if ($iface['descr'])
-		$ifdescr = $iface['descr'];
-	else
-		$ifdescr = strtoupper($ifname);
-	?>
-  <tr>
-	<td class="listlr" valign="middle"><strong><u><span onclick="location.href='/interfaces.php?if=<?=$ifname;?>'" style="cursor: pointer;"><?=$ifdescr;?></span></u></strong></td>
-	  <td valign="middle" class="listr">
-		<select onchange="javascript:jQuery('#savediv').show();" name="<?=$ifname;?>" id="<?=$ifname;?>">
-		  <?php foreach ($portlist as $portname => $portinfo): ?>
-			<option  value="<?=$portname;?>"  <?php if ($portname == $iface['if']) echo " selected=\"selected\"";?>>
-				<?php if ($portinfo['isvlan']) {
-					$descr = sprintf(gettext('VLAN %1$s on %2$s'),$portinfo['tag'],$portinfo['if']);
-				if ($portinfo['descr'])
-					$descr .= " (" . $portinfo['descr'] . ")";
-					echo xhtmlspecialchars($descr);
-				} elseif ($portinfo['iswlclone']) {
-					$descr = $portinfo['cloneif'];
-					if ($portinfo['descr'])
-						$descr .= " (" . $portinfo['descr'] . ")";
-					echo xhtmlspecialchars($descr);
-				} elseif ($portinfo['isppp']) {
-					echo xhtmlspecialchars($portinfo['descr']);
-				} elseif ($portinfo['isbridge']) {
-					$descr = strtoupper($portinfo['bridgeif']);
-					if ($portinfo['descr'])
-						$descr .= " (" . $portinfo['descr'] . ")";
-					echo xhtmlspecialchars($descr);
-				} elseif ($portinfo['isgre']) {
-					$descr = "GRE {$portinfo['remote-addr']}";
-					if ($portinfo['descr'])
-						$descr .= " (" . $portinfo['descr'] . ")";
-					echo xhtmlspecialchars($descr);
-				} elseif ($portinfo['isgif']) {
-					$descr = "GIF {$portinfo['remote-addr']}";
-					if ($portinfo['descr'])
-						$descr .= " (" . $portinfo['descr'] . ")";
-					echo xhtmlspecialchars($descr);
-				} elseif ($portinfo['islagg']) {
-					$descr = strtoupper($portinfo['laggif']);
-					if ($portinfo['descr'])
-						$descr .= " (" . $portinfo['descr'] . ")";
-					echo xhtmlspecialchars($descr);
-				} elseif ($portinfo['isqinq']) {
-					echo xhtmlspecialchars($portinfo['descr']);
-				} elseif (substr($portname, 0, 4) == 'ovpn') {
-					echo xhtmlspecialchars($portname . " (" . $ovpn_descrs[substr($portname, 5)] . ")");
-				} else
-					echo xhtmlspecialchars($portname . " (" . $portinfo['mac'] . ")");
-			?></option>
-		<?php endforeach; ?>
-	</select>
-	</td>
-	<td valign="middle" class="list">
-		  <?php if ($ifname != 'wan'): ?>
-		  <a href="interfaces_assign.php?act=del&amp;id=<?=$ifname;?>" onclick="return confirm('<?=gettext("Do you really want to delete this interface?");?>')"><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_x.gif" title="<?=gettext("delete interface"); ?>" width="17" height="17" border="0" alt="delete" /></a>
-		  <?php endif; ?>
-		</td>
-  </tr>
-  <?php endforeach; ?>
-  <?php if (count($config['interfaces']) < count($portlist)): ?>
-  <tr>
-	<td class="list" colspan="2"></td>
-	<td class="list nowrap">
-	<a href="interfaces_assign.php?act=add"><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_plus.gif" title="<?=gettext("add interface"); ?>" width="17" height="17" border="0" alt="add" /></a>
-	</td>
-  </tr>
-  <?php else: ?>
-  <tr>
-	<td class="list" colspan="3" height="10"></td>
-  </tr>
-  <?php endif; ?>
-</table>
-</div>
-<br />
-<div id='savediv' <?php if (empty($_GET['act'])) echo "style='display:none;'"; ?>>
-	<input name="Submit" type="submit" class="formbtn" value="<?=gettext("Save"); ?>" /><br /><br />
-</div>
-<ul>
-	<li><span class="vexpl"><?=gettext("Interfaces that are configured as members of a lagg(4) interface will not be shown."); ?></span></li>
-</ul>
-</td>
-</tr>
+	</td></tr>
+	<tr><td>
+		<div id="mainarea">
+			<table class="tabcont" width="100%" border="0" cellpadding="0" cellspacing="0" summary="main area">
+				<tr>
+					<td class="listhdrr"><?=gettext("Interface"); ?></td>
+					<td class="listhdr"><?=gettext("Network port"); ?></td>
+					<td class="list">&nbsp;</td>
+				</tr>
+<?php
+			foreach ($config['interfaces'] as $ifname => $iface):
+				if ($iface['descr'])
+					$ifdescr = $iface['descr'];
+				else
+					$ifdescr = strtoupper($ifname);
+?>
+				<tr>
+					<td class="listlr" valign="middle"><strong><u><span onclick="location.href='/interfaces.php?if=<?=$ifname;?>'" style="cursor: pointer;"><?=$ifdescr;?></span></u></strong></td>
+					<td valign="middle" class="listr">
+						<select onchange="javascript:jQuery('#savediv').show();" name="<?=$ifname;?>" id="<?=$ifname;?>">
+<?php
+						foreach ($portlist as $portname => $portinfo):
+?>
+							<option  value="<?=$portname;?>"  <?php if ($portname == $iface['if']) echo " selected=\"selected\"";?>>
+								<?=interface_assign_description($portinfo, $portname);?>
+							</option>
+<?php
+						endforeach;
+?>
+						</select>
+					</td>
+					<td valign="middle" class="list">
+<?php
+					if ($ifname != 'wan'):
+?>
+						<input name="del_<?=$ifname;?>" src="/themes/<?= $g['theme']; ?>/images/icons/icon_x.gif"
+							title="<?=gettext("delete interface");?>"
+							type="image" style="height:17;width:17;border:0"
+							onclick="return confirm('<?=gettext("Do you really want to delete this interface?"); ?>')" />
+<?php
+					endif;
+?>
+					</td>
+				</tr>
+<?php
+			endforeach;
+			if (count($config['interfaces']) < count($portlist)):
+?>
+				<tr>
+					<td class="list">
+						<strong><?=gettext("Available network ports:");?></strong>
+					</td>
+					<td class="list">
+						<select name="if_add" id="if_add">
+<?php
+						foreach ($unused_portlist as $portname => $portinfo):
+?>
+							<option  value="<?=$portname;?>"  <?php if ($portname == $iface['if']) echo " selected=\"selected\"";?>>
+								<?=interface_assign_description($portinfo, $portname);?>
+							</option>
+<?php
+						endforeach;
+?>
+						</select>
+					</td>
+					<td class="list">
+						<input name="add" type="image" src="/themes/<?=$g['theme'];?>/images/icons/icon_plus.gif" style="width:17;height:17;border:0" title="<?=gettext("add selected interface");?>" />
+					</td>
+				</tr>
+<?php
+			endif;
+?>
+			</table>
+		</div>
+		<br />
+		<div id='savediv' style='display:none'>
+			<input name="Submit" type="submit" class="formbtn" value="<?=gettext("Save"); ?>" /><br /><br />
+		</div>
+		<ul>
+			<li><span class="vexpl"><?=gettext("Interfaces that are configured as members of a lagg(4) interface will not be shown."); ?></span></li>
+		</ul>
+	</td></tr>
 </table>
 </form>
 <?php include("fend.inc"); ?>

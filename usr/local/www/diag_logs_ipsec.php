@@ -49,37 +49,6 @@ require_once("pfsense-utils.inc");
 
 $ipsec_logfile = "{$g['varlog_path']}/ipsec.log";
 
-/* Create array with all IPsec tunnel descriptions */
-$search = array();
-$replace = array();
-if(is_array($config['ipsec']['phase1']))
-	foreach($config['ipsec']['phase1'] as $ph1ent) {
-		$gateway = ipsec_get_phase1_dst($ph1ent);
-		if(!is_ipaddr($gateway))
-			continue;
-		$search[] = "/(racoon: )(INFO[:].*?)({$gateway}\[[0-9].+\]|{$gateway})(.*)/i";
-		$search[] = "/(racoon: )(\[{$gateway}\]|{$gateway})(.*)/i";
-		$replace[] = "$1<strong>[{$ph1ent['descr']}]</strong>: $2$3$4";
-		$replace[] = "$1<strong>[{$ph1ent['descr']}]</strong>: $2$3$4";
-	}
-/* collect all our own ip addresses */
-exec("/sbin/ifconfig | /usr/bin/awk '/inet/ {print $2}'", $ip_address_list);
-foreach($ip_address_list as $address) {
-	$search[] = "/(racoon: )(INFO[:].*?)({$address}\[[0-9].+\])/i";
-	$search[] = "/(racoon: )(\[{$address}\]|{$address})(.*)/i";
-	$replace[] = "$1<strong>[Self]</strong>: $2$3$4";
-	$replace[] = "$1<strong>[Self]</strong>: $2$3$4";
-}
-
-$search[] = "/(time up waiting for phase1)/i";
-$search[] = "/(failed to pre-process ph1 packet)/i";
-$search[] = "/(failed to pre-process ph2 packet)/i";
-$search[] = "/(no proposal chosen)/i";
-$replace[] = "$1 <strong>[Remote Side not responding]</strong>";
-$replace[] = "$1 <strong>[Check Phase 1 settings, lifetime, algorithm]</strong>";
-$replace[] = "$1 <strong>[Check Phase 2 settings, networks]</strong>";
-$replace[] = "$1 <strong>[Check Phase 2 settings, algorithm]</strong>";
-
 $nentries = $config['syslog']['nentries'];
 if (!$nentries)
 	$nentries = 50;
@@ -126,17 +95,6 @@ include("head.inc");
 				<?php
 				foreach($ipsec_logarr as $logent){
 					$logent = xhtmlspecialchars($logent);
-					foreach($search as $string) {
-						if(preg_match($string, $logent))
-							$match = true;
-					}
-					if(isset($match)) {
-						$logent = preg_replace($search, $replace, $logent);
-					} else {
-						$searchs = "/(racoon: )([A-Z:].*?)([0-9].+\.[0-9].+.[0-9].+.[0-9].+\[[0-9].+\])(.*)/i";
-						$replaces = "$1<strong><font color=\"red\">[".gettext("Unknown Gateway/Dynamic")."]</font></strong>: $2$3$4";
-						$logent = preg_replace($searchs, $replaces, $logent);
-					}
 					$logent = preg_split("/\s+/", $logent, 6);
 					echo "<tr valign=\"top\">\n";
 					$entry_date_time = xhtmlspecialchars(join(" ", array_slice($logent, 0, 3)));

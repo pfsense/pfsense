@@ -164,26 +164,33 @@ if (isset($config['ipsec']['phase1'])){?>
 <div id="ipsec-mobile" style="display:none;background-color:#EEEEEE;">
 	<div style="padding: 10px">
 		<div style="display:table-row;">
-			<div class="widgetsubheader" style="display:table-cell;width:140px">User/Time</div>
-			<div class="widgetsubheader" style="display:table-cell;width:130px">Local/Remote</div>
-			<div class="widgetsubheader" style="display:table-cell;width:30px">&nbsp;</div>
+			<div class="widgetsubheader" style="display:table-cell;width:140px">User</div>
+			<div class="widgetsubheader" style="display:table-cell;width:130px">IP</div>
+			<div class="widgetsubheader" style="display:table-cell;width:30px">Status;</div>
 		</div>
 		<div style="max-height:105px;overflow:auto;">
-<?php	foreach ($mobile as $muser) : ?>
+<?php
+	if (is_array($mobile['pool'])):
+	foreach ($mobile['pool'] as $pool):
+		if (is_array($pool['lease'])): 
+			foreach ($pool['lease'] as $muser) : ?>
 		<div style="display:table-row;">
 			<div class="listlr" style="display:table-cell;width:139px">
-				<?php echo xhtmlspecialchars($muser['username']);?><br />
-				<?php echo xhtmlspecialchars($muser['logintime']);?>
+				<?php echo xhtmlspecialchars($muser['id']);?><br />
 			</div>
 			<div class="listr"  style="display:table-cell;width:130px">
-				<?php echo xhtmlspecialchars($muser['local']);?><br />
-				<?php echo xhtmlspecialchars($muser['remote']);?>
+				<?php echo xhtmlspecialchars($muser['host']);?><br />
 			</div>
-			<div class="listr"  style="display:table-cell;width:30px" align="center">
-				<a href="diag_ipsec.php?act=disconnect&amp;user=<?php echo $muser['username']; ?>"><img src='/themes/<?php echo $g['theme']; ?>/images/icons/icon_x.gif' height='17' width='17' border='0' alt='x' /></a>
+			<div class="listr"  style="display:table-cell;width:30px">
+				<?php echo xhtmlspecialchars($muser['status']);?><br/>
 			</div>
 		</div>
-<?php	endforeach; ?>
+<?php
+			endforeach;
+		endif;
+	endforeach;
+	endif;
+?>
 		</div>
 	</div>
 </div>

@@ -506,7 +506,7 @@ function filter_generate_nested_alias($name, $alias, &$aliasnesting, &$aliasaddr
 			else if(!isset($aliasnesting[$address]))
 				$tmpline = filter_generate_nested_alias($name, $aliastable[$address], $aliasnesting, $aliasaddrnesting);
 		} else if(!isset($aliasaddrnesting[$address])) {
-			if (!is_ipaddr($address) && !is_subnet($address) && !is_port($address) && is_hostname($address)) {
+			if (!is_ipaddr($address) && !is_subnet($address) && !is_port($address) && !is_portrange($address) && is_hostname($address)) {
 				if (!isset($filterdns["{$address}{$name}"]))
 					$filterdns["{$address}{$name}"] = "pf {$address} {$name}\n";
 				continue;
@@ -1377,8 +1377,8 @@ function filter_nat_rules_automatic_tonathosts($with_descr = false) {
 							continue 2;
 
 					$network = gen_subnet($vip['ip'], $vip['sn']);
-					$tonathosts[] = $network . '/' . $vip['sn'];
-					$descriptions[] = "Virtual IP ({$oc['descr']})";
+					array_unshift($tonathosts, $network . '/' . $vip['sn']);
+					array_unshift($descriptions, "Virtual IP ({$oc['descr']})");
 					$if_subnets[] = $network . '/' . $vip['sn'];
 					unset($network);
 				}

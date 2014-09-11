@@ -172,7 +172,7 @@ function is_pid_running($pidfile) {
 
 function is_dhcp_running($interface) {
 	$status = find_dhclient_process($interface);
-	if($status <> "")
+	if($status != 0)
 		return true;
 	return false;
 }

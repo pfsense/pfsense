@@ -101,7 +101,7 @@ if (isset($config['ipsec']['phase1'])){?>
 	<tr>
 		<td class="listlr"><?php echo $activecounter; ?></td>
 		<td class="listr"><?php echo $inactivecounter; ?></td>
-		<td class="listr"><?php echo count($mobile); ?></td>
+		<td class="listr"><?php if (is_array($mobile['pool'])) echo htmlspecialchars($mobile['pool'][0]['usage']); else echo 0; ?></td>
 	</tr>
 	</table>
 	</div>

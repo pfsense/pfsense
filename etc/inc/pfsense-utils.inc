@@ -1876,7 +1876,7 @@ function parse_aliases_file($filename, $type = "subnets", $max_items = -1) {
 		if (!empty($tmp_str))
 			$tmp = $tmp_str;
 		$valid = ($use_subnets && (is_ipaddr($tmp) || is_subnet($tmp))) ||
-		         ($use_ports && (is_port_one($tmp) || is_portrange($tmp)));
+		         ($use_ports && (is_port($tmp) || is_portrange($tmp)));
 		if ($valid) {
 			$items[] = $tmp;
 			if (count($items) == $max_items)

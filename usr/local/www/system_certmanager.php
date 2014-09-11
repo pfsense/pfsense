@@ -402,8 +402,10 @@ if ($_POST) {
 			if (!$input_errors)
 				write_config();
 
-			if ($userid)
-				pfSenseHeader("system_usermanager.php?act=edit&amp;id={$userid}");
+			if ($userid) {
+				post_redirect("system_usermanager.php", array('act' => 'edit', 'userid' => $userid));
+				exit;
+			}
 		}
 	}
 

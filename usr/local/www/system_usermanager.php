@@ -53,12 +53,10 @@ require("guiconfig.inc");
 // start admin user code
 $pgtitle = array(gettext("System"),gettext("User Manager"));
 
-if (is_numericint($_GET['id']))
-	$id = $_GET['id'];
-if (isset($_POST['id']) && is_numericint($_POST['id']))
-	$id = $_POST['id'];
+if (isset($_POST['userid']) && is_numericint($_POST['userid']))
+	$id = $_POST['userid'];
 
-if (!is_array($config['system']['user']))
+if (!isset($config['system']['user']) || !is_array($config['system']['user']))
 	$config['system']['user'] = array();
 
 $a_user = &$config['system']['user'];
@@ -81,7 +79,7 @@ if (isset($id) && $a_user[$id]) {
 	$pconfig['disabled'] = isset($a_user[$id]['disabled']);
 }
 
-if ($_GET['act'] == "deluser") {
+if ($_POST['act'] == "deluser") {
 
 	if (!$a_user[$id]) {
 		pfSenseHeader("system_usermanager.php");
@@ -97,29 +95,29 @@ if ($_GET['act'] == "deluser") {
 	$savemsg = gettext("User")." {$userdeleted} ".
 				gettext("successfully deleted")."<br />";
 }
-else if ($_GET['act'] == "delpriv") {
+else if ($_POST['act'] == "delpriv") {
 
 	if (!$a_user[$id]) {
 		pfSenseHeader("system_usermanager.php");
 		exit;
 	}
 
-	$privdeleted = $priv_list[$a_user[$id]['priv'][$_GET['privid']]]['name'];
-	unset($a_user[$id]['priv'][$_GET['privid']]);
+	$privdeleted = $priv_list[$a_user[$id]['priv'][$_POST['privid']]]['name'];
+	unset($a_user[$id]['priv'][$_POST['privid']]);
 	local_user_set($a_user[$id]);
 	write_config();
-	$_GET['act'] = "edit";
+	$_POST['act'] = "edit";
 	$savemsg = gettext("Privilege")." {$privdeleted} ".
 				gettext("successfully deleted")."<br />";
 }
-else if ($_GET['act'] == "expcert") {
+else if ($_POST['act'] == "expcert") {
 
 	if (!$a_user[$id]) {
 		pfSenseHeader("system_usermanager.php");
 		exit;
 	}
 
-	$cert =& lookup_cert($a_user[$id]['cert'][$_GET['certid']]);
+	$cert =& lookup_cert($a_user[$id]['cert'][$_POST['certid']]);
 
 	$exp_name = urlencode("{$a_user[$id]['name']}-{$cert['descr']}.crt");
 	$exp_data = base64_decode($cert['crt']);
@@ -131,14 +129,14 @@ else if ($_GET['act'] == "expcert") {
 	echo $exp_data;
 	exit;
 }
-else if ($_GET['act'] == "expckey") {
+else if ($_POST['act'] == "expckey") {
 
 	if (!$a_user[$id]) {
 		pfSenseHeader("system_usermanager.php");
 		exit;
 	}
 
-	$cert =& lookup_cert($a_user[$id]['cert'][$_GET['certid']]);
+	$cert =& lookup_cert($a_user[$id]['cert'][$_POST['certid']]);
 
 	$exp_name = urlencode("{$a_user[$id]['name']}-{$cert['descr']}.key");
 	$exp_data = base64_decode($cert['prv']);
@@ -150,22 +148,22 @@ else if ($_GET['act'] == "expckey") {
 	echo $exp_data;
 	exit;
 }
-else if ($_GET['act'] == "delcert") {
+else if ($_POST['act'] == "delcert") {
 
 	if (!$a_user[$id]) {
 		pfSenseHeader("system_usermanager.php");
 		exit;
 	}
 
-	$certdeleted = lookup_cert($a_user[$id]['cert'][$_GET['certid']]);
+	$certdeleted = lookup_cert($a_user[$id]['cert'][$_POST['certid']]);
 	$certdeleted = $certdeleted['descr'];
-	unset($a_user[$id]['cert'][$_GET['certid']]);
+	unset($a_user[$id]['cert'][$_POST['certid']]);
 	write_config();
-	$_GET['act'] = "edit";
+	$_POST['act'] = "edit";
 	$savemsg = gettext("Certificate")." {$certdeleted} ".
 				gettext("association removed.")."<br />";
 }
-else if ($_GET['act'] == "new") {
+else if ($_POST['act'] == "new") {
 	/*
 	 * set this value cause the text field is read only
 	 * and the user should not be able to mess with this
@@ -175,7 +173,7 @@ else if ($_GET['act'] == "new") {
 	$pconfig['lifetime'] = 3650;
 }
 
-if ($_POST) {
+if ($_POST['save']) {
 	unset($input_errors);
 	$pconfig = $_POST;
 
@@ -469,9 +467,13 @@ function sshkeyClicked(obj) {
 		<td id="mainarea">
 			<div class="tabcont">
 <?php
-			if ($_GET['act'] == "new" || $_GET['act'] == "edit" || $input_errors):
+			if ($_POST['act'] == "new" || $_POST['act'] == "edit" || $input_errors):
 ?>
 				<form action="system_usermanager.php" method="post" name="iform" id="iform" onsubmit="presubmit()">
+					<input type="hidden" id="act" name="act" value="" />
+					<input type="hidden" id="userid" name="userid" value="<?=(isset($id) ? $id : '');?>" />
+					<input type="hidden" id="privid" name="privid" value="" />
+					<input type="hidden" id="certid" name="certid" value="" />
 					<table width="100%" border="0" cellpadding="6" cellspacing="0" summary="main area">
 <?php
 						$ro = "";
@@ -628,9 +630,13 @@ function sshkeyClicked(obj) {
 <?php
 										if (!$group):
 ?>
-											<a href="system_usermanager.php?act=delpriv&amp;id=<?=$id?>&amp;privid=<?=$i;?>" onclick="return confirm('<?=gettext("Do you really want to delete this privilege?");?>')">
-												<img src="/themes/<?= $g['theme']; ?>/images/icons/icon_x.gif" width="17" height="17" border="0" alt="delete" />
-											</a>
+											<input type="image" name="delpriv[]" width="17" height="17" border="0"
+												src="/themes/<?=$g['theme'];?>/images/icons/icon_x.gif"
+												onclick="document.getElementById('privid').value='<?=$i;?>';
+													document.getElementById('userid').value='<?=$id;?>';
+													document.getElementById('act').value='<?php echo "delpriv";?>';
+													return confirm('<?=gettext("Do you really want to delete this privilege?");?>');"
+												title="<?=gettext("delete privilege");?>" />
 <?php
 										endif;
 ?>
@@ -686,15 +692,25 @@ function sshkeyClicked(obj) {
 											<?=htmlspecialchars($ca['descr']);?>
 										</td>
 										<td valign="middle" class="list nowrap">
-											<a href="system_usermanager.php?act=expckey&amp;id=<?=$id;?>&amp;certid=<?=$i;?>">
-												<img src="/themes/<?= $g['theme'];?>/images/icons/icon_down.gif" title="<?=gettext("export private key"); ?>" alt="<?=gettext("export private key"); ?>" width="17" height="17" border="0" />
-											</a>
-											<a href="system_usermanager.php?act=expcert&amp;id=<?=$id;?>&amp;certid=<?=$i;?>">
-												<img src="/themes/<?= $g['theme'];?>/images/icons/icon_down.gif" title="<?=gettext("export cert"); ?>" alt="<?=gettext("export cert"); ?>" width="17" height="17" border="0" />
-											</a>
-											<a href="system_usermanager.php?act=delcert&amp;id=<?=$id?>&amp;certid=<?=$i;?>" onclick="return confirm('<?=gettext("Do you really want to remove this certificate association?") .'\n'. gettext("(Certificate will not be deleted)");?>')">
-												<img src="/themes/<?= $g['theme']; ?>/images/icons/icon_x.gif" width="17" height="17" border="0" alt="<?=gettext("delete cert");?>" />
-											</a>
+											<input type="image" name="expckey[]" width="17" height="17" border="0"
+												src="/themes/<?=$g['theme'];?>/images/icons/icon_down.gif"
+												onclick="document.getElementById('certid').value='<?=$i;?>';
+													document.getElementById('userid').value='<?=$id;?>';
+													document.getElementById('act').value='<?php echo "expckey";?>';"
+												title="<?=gettext("export private key");?>" />
+											<input type="image" name="expcert[]" width="17" height="17" border="0"
+												src="/themes/<?=$g['theme'];?>/images/icons/icon_down.gif"
+												onclick="document.getElementById('certid').value='<?=$i;?>';
+													document.getElementById('userid').value='<?=$id;?>';
+													document.getElementById('act').value='<?php echo "expcert";?>';"
+												title="<?=gettext("export cert");?>" />
+											<input type="image" name="delcert[]" width="17" height="17" border="0"
+												src="/themes/<?=$g['theme'];?>/images/icons/icon_x.gif"
+												onclick="document.getElementById('certid').value='<?=$i;?>';
+													document.getElementById('userid').value='<?=$id;?>';
+													document.getElementById('act').value='<?php echo "delcert";?>';
+													return confirm('<?=gettext("Do you really want to remove this certificate association?") .'\n'. gettext("(Certificate will not be deleted)");?>')"
+												title="<?=gettext("delete cert");?>" />
 										</td>
 									</tr>
 <?php
@@ -839,91 +855,105 @@ function sshkeyClicked(obj) {
 <?php
 			else:
 ?>
-				<table class="sortable" width="100%" border="0" cellpadding="0" cellspacing="0" summary="">
-					<thead>
-						<tr>
-							<th width="25%" class="listhdrr"><?=gettext("Username"); ?></th>
-							<th width="25%" class="listhdrr"><?=gettext("Full name"); ?></th>
-							<th width="5%" class="listhdrr"><?=gettext("Disabled"); ?></th>
-							<th width="25%" class="listhdrr"><?=gettext("Groups"); ?></th>
-							<th width="10%" class="list"></th>
-						</tr>
-					</thead>
-					<tfoot>
-						<tr>
-							<td class="list" colspan="4"></td>
-							<td class="list">
-								<a href="system_usermanager.php?act=new">
-									<img src="/themes/<?= $g['theme'];?>/images/icons/icon_plus.gif" title="<?=gettext("add user"); ?>" alt="<?=gettext("add user"); ?>" width="17" height="17" border="0" />
-								</a>
-							</td>
-						</tr>
-						<tr>
-							<td colspan="4">
-								<p>
-									<?=gettext("Additional users can be added here. User permissions for accessing " .
-									"the webConfigurator can be assigned directly or inherited from group memberships. " .
-									"An icon that appears grey indicates that it is a system defined object. " .
-									"Some system object properties can be modified but they cannot be deleted."); ?>
-									<br /><br />
-									<?=gettext("Accounts created here are also used for other parts of the system " .
-									"such as OpenVPN, IPsec, and Captive Portal.");?>
-								</p>
-							</td>
-						</tr>
-					</tfoot>
-					<tbody>
+				<form action="system_usermanager.php" method="post" name="iform2" id="iform2">
+					<input type="hidden" id="act" name="act" value="" />
+					<input type="hidden" id="userid" name="userid" value="<?=(isset($id) ? $id : '');?>" />
+					<input type="hidden" id="privid" name="privid" value="" />
+					<input type="hidden" id="certid" name="certid" value="" />
+					<table class="sortable" width="100%" border="0" cellpadding="0" cellspacing="0" summary="">
+						<thead>
+							<tr>
+								<th width="25%" class="listhdrr"><?=gettext("Username"); ?></th>
+								<th width="25%" class="listhdrr"><?=gettext("Full name"); ?></th>
+								<th width="5%" class="listhdrr"><?=gettext("Disabled"); ?></th>
+								<th width="25%" class="listhdrr"><?=gettext("Groups"); ?></th>
+								<th width="10%" class="list"></th>
+							</tr>
+						</thead>
+						<tfoot>
+							<tr>
+								<td class="list" colspan="4"></td>
+								<td class="list">
+									<input type="image" name="addcert" width="17" height="17" border="0"
+										src="/themes/<?=$g['theme'];?>/images/icons/icon_plus.gif"
+										onclick="document.getElementById('act').value='<?php echo "new";?>';"
+										title="<?=gettext("add user");?>" />
+								</td>
+							</tr>
+							<tr>
+								<td colspan="4">
+									<p>
+										<?=gettext("Additional users can be added here. User permissions for accessing " .
+										"the webConfigurator can be assigned directly or inherited from group memberships. " .
+										"An icon that appears grey indicates that it is a system defined object. " .
+										"Some system object properties can be modified but they cannot be deleted."); ?>
+										<br /><br />
+										<?=gettext("Accounts created here are also used for other parts of the system " .
+										"such as OpenVPN, IPsec, and Captive Portal.");?>
+									</p>
+								</td>
+							</tr>
+						</tfoot>
+						<tbody>
 <?php
-					$i = 0;
-					foreach($a_user as $userent):
+						$i = 0;
+						foreach($a_user as $userent):
 ?>
-						<tr ondblclick="document.location='system_usermanager.php?act=edit&amp;id=<?=$i;?>'">
-							<td class="listlr">
-								<table border="0" cellpadding="0" cellspacing="0" summary="icons">
-									<tr>
-										<td align="left" valign="middle">
+								<tr ondblclick="document.getElementById('act').value='<?php echo "edit";?>';
+									document.getElementById('userid').value='<?=$i;?>';
+									document.iform2.submit();">
+								<td class="listlr">
+									<table border="0" cellpadding="0" cellspacing="0" summary="icons">
+										<tr>
+											<td align="left" valign="middle">
 <?php
-											if($userent['scope'] != "user")
-												$usrimg = "/themes/{$g['theme']}/images/icons/icon_system-user-grey.png";
-											else
-												$usrimg = "/themes/{$g['theme']}/images/icons/icon_system-user.png";
+												if($userent['scope'] != "user")
+													$usrimg = "/themes/{$g['theme']}/images/icons/icon_system-user-grey.png";
+												else
+													$usrimg = "/themes/{$g['theme']}/images/icons/icon_system-user.png";
 ?>
-											<img src="<?=$usrimg;?>" alt="<?=gettext("User"); ?>" title="<?=gettext("User"); ?>" border="0" height="16" width="16" />
-										</td>
-										<td align="left" valign="middle">
-											<?=htmlspecialchars($userent['name']);?>
-										</td>
-									</tr>
-								</table>
-							</td>
-							<td class="listr"><?=htmlspecialchars($userent['descr']);?>&nbsp;</td>
-							<td class="listr"><?php if(isset($userent['disabled'])) echo "*"; ?></td>
-							<td class="listbg">
-								<?=implode(",",local_user_get_groups($userent));?>
-								&nbsp;
-							</td>
-							<td valign="middle" class="list nowrap">
-								<a href="system_usermanager.php?act=edit&amp;id=<?=$i;?>">
-									<img src="/themes/<?= $g['theme'];?>/images/icons/icon_e.gif" title="<?=gettext("edit user"); ?>" alt="<?=gettext("edit user"); ?>" width="17" height="17" border="0" />
-								</a>
+												<img src="<?=$usrimg;?>" alt="<?=gettext("User"); ?>" title="<?=gettext("User"); ?>" border="0" height="16" width="16" />
+											</td>
+											<td align="left" valign="middle">
+												<?=htmlspecialchars($userent['name']);?>
+											</td>
+										</tr>
+									</table>
+								</td>
+								<td class="listr"><?=htmlspecialchars($userent['descr']);?>&nbsp;</td>
+								<td class="listr"><?php if(isset($userent['disabled'])) echo "*"; ?></td>
+								<td class="listbg">
+									<?=implode(",",local_user_get_groups($userent));?>
+									&nbsp;
+								</td>
+								<td valign="middle" class="list nowrap">
+									<input type="image" name="edituser[]" width="17" height="17" border="0"
+										src="/themes/<?=$g['theme'];?>/images/icons/icon_e.gif"
+										onclick="document.getElementById('userid').value='<?=$i;?>';
+											document.getElementById('act').value='<?php echo "edit";?>';"
+										title="<?=gettext("edit user");?>" />
 <?php
-							if($userent['scope'] != "system"):
+								if($userent['scope'] != "system"):
 ?>
-								&nbsp;
-								<a href="system_usermanager.php?act=deluser&amp;id=<?=$i;?>" onclick="return confirm('<?=gettext("Do you really want to delete this User?");?>')">
-									<img src="/themes/<?= $g['theme'];?>/images/icons/icon_x.gif" title="<?=gettext("delete user"); ?>" alt="<?=gettext("delete user"); ?>" width="17" height="17" border="0" />
-								</a>
+									&nbsp;
+									<input type="image" name="deluser[]" width="17" height="17" border="0"
+										src="/themes/<?=$g['theme'];?>/images/icons/icon_x.gif"
+										onclick="document.getElementById('userid').value='<?=$i;?>';
+											document.getElementById('act').value='<?php echo "deluser";?>';
+											return confirm('<?=gettext("Do you really want to delete this user?");?>');"
+										title="<?=gettext("delete user");?>" />
 <?php
-							endif;
+								endif;
 ?>
-							</td>
-						</tr>
+								</td>
+							</tr>
 <?php
-						$i++;
-					endforeach;
+							$i++;
+						endforeach;
 ?>
-					</tbody>
-				</table>
+						</tbody>
+					</table>
+				</form>
 <?php
 			endif;
 ?>

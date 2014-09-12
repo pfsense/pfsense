@@ -615,6 +615,15 @@ EOD;
 
 				$left_spec = $ep;
 
+				if (isset($ph1ent['reauth_enable']))
+					$reauth = "reauth = yes";
+				else
+					$reauth = "reauth = no";
+				if (isset($ph1ent['rekey_enable']))
+					$rekey = "rekey = yes";
+				else
+					$rekey = "rekey = no";
+
 				$ipseclifetime = 0;
 				$rightsubnet_spec = array();
 				$leftsubnet_spec = array();
@@ -775,8 +784,8 @@ conn con{$ph1ent['ikeid']}
 	aggressive = {$aggressive}
 	fragmentation = yes
 	keyexchange = {$keyexchange}
-	reauth = yes
-	rekey = yes
+	{$reauth}
+	{$rekey}
 	reqid = {$ikeid}
 	installpolicy = yes
 	{$tunneltype}

@@ -616,13 +616,13 @@ EOD;
 				$left_spec = $ep;
 
 				if (isset($ph1ent['reauth_enable']))
-					$reauth = "reauth = yes";
-				else
 					$reauth = "reauth = no";
-				if (isset($ph1ent['rekey_enable']))
-					$rekey = "rekey = yes";
 				else
+					$reauth = "reauth = yes";
+				if (isset($ph1ent['rekey_enable']))
 					$rekey = "rekey = no";
+				else
+					$rekey = "rekey = yes";
 
 				$ipseclifetime = 0;
 				$rightsubnet_spec = array();

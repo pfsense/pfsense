@@ -107,9 +107,9 @@ if (isset($p1index) && $a_phase1[$p1index]) {
 	$pconfig['descr'] = $a_phase1[$p1index]['descr'];
 	$pconfig['nat_traversal'] = $a_phase1[$p1index]['nat_traversal'];
 
-	if (isset($a_phase1[$p1index]['reauth_enable']))
+	if (!isset($a_phase1[$p1index]['reauth_enable']))
 		$pconfig['reauth_enable'] = true;
-	if (isset($a_phase1[$p1index]['rekey_enable']))
+	if (!isset($a_phase1[$p1index]['rekey_enable']))
 		$pconfig['rekey_enable'] = true;
 
 	if ($a_phase1[$p1index]['dpd_delay'] &&	$a_phase1[$p1index]['dpd_maxfail']) {
@@ -133,8 +133,6 @@ if (isset($p1index) && $a_phase1[$p1index]) {
 	$pconfig['lifetime'] = "28800";
 	$pconfig['nat_traversal'] = "on";
 	$pconfig['dpd_enable'] = true;
-	$pconfig['rekey_enable'] = true;
-	$pconfig['reauth_enable'] = true;
 	$pconfig['iketype'] = "ikev1";
 
 	/* mobile client */
@@ -845,14 +843,14 @@ function dpdchkbox_change() {
 						<td colspan="2" valign="top" class="listtopic"><?=gettext("Advanced Options"); ?></td>
 					</tr>
 					<tr>
-						<td width="22%" valign="top" class="vncell"><?=gettext("Rekey");?></td>
+						<td width="22%" valign="top" class="vncell"><?=gettext("Disable Rekey");?></td>
 						<td width="78%" class="vtable">
 							<input name="rekey_enable" type="checkbox" id="rekey_enable" value="yes" <?php if (isset($pconfig['rekey_enable'])) echo "checked=\"checked\""; ?> />
 							<?=gettext("Whether a connection should be renegotiated when it is about to expire."); ?><br />
 						</td>
 					</tr>
 					<tr>
-						<td width="22%" valign="top" class="vncell"><?=gettext("Reauth");?></td>
+						<td width="22%" valign="top" class="vncell"><?=gettext("Disable Reauth");?></td>
 						<td width="78%" class="vtable">
 							<input name="reauth_enable" type="checkbox" id="reauth_enable" value="yes" <?php if (isset($pconfig['reauth_enable'])) echo "checked=\"checked\""; ?> />
 							<?=gettext("whether rekeying of an IKE_SA should also reauthenticate the peer. In IKEv1, reauthentication is always don.."); ?><br />

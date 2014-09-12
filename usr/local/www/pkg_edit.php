@@ -937,7 +937,7 @@ if ($pkg['tabs'] <> "") {
 		echo "<input name='id' type='hidden' value=\"" . htmlspecialchars($id) . "\" />";
 		echo "<input name='Submit' type='submit' class='formbtn' value=\"" . htmlspecialchars($savevalue) . "\" />\n{$pkg_buttons}\n";
 		if (!$only_edit){
-			echo "<input class='formbtn' type='button' value='".gettext("Cancel")."' onclick='history.back()' />";
+			echo "<input class=\"formbtn\" type=\"button\" value=\"".gettext("Cancel")."\" onclick=\"window.location.href='" . $_SERVER['HTTP_REFERER'] . "'\" />";
 			}
 		?>
 	</div>

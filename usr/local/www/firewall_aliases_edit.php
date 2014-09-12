@@ -51,6 +51,8 @@ require_once("shaper.inc");
 
 $pgtitle = array(gettext("Firewall"),gettext("Aliases"),gettext("Edit"));
 
+$referer = (isset($_SERVER['HTTP_REFERER']) ? $_SERVER['HTTP_REFERER'] : '/firewall_aliases.php');
+
 // Keywords not allowed in names
 $reserved_keywords = array("all", "pass", "block", "out", "queue", "max", "min", "pptp", "pppoe", "L2TP", "OpenVPN", "IPsec");
 
@@ -746,7 +748,7 @@ if (empty($tab)) {
 		<td width="22%" valign="top">&nbsp;</td>
 		<td width="78%">
 			<input id="submit" name="submit" type="submit" class="formbtn" value="<?=gettext("Save"); ?>" />
-			<input type="button" class="formbtn" value="<?=gettext("Cancel"); ?>" onclick="history.back()" />
+			<input type="button" class="formbtn" value="<?=gettext("Cancel");?>" onclick="window.location.href='<?=$referer;?>'" />
 		</td>
 	</tr>
 </table>

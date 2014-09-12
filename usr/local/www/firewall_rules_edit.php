@@ -45,6 +45,8 @@ require("guiconfig.inc");
 require_once("filter.inc");
 require("shaper.inc");
 
+$referer = (isset($_SERVER['HTTP_REFERER']) ? $_SERVER['HTTP_REFERER'] : '/firewall_rules.php');
+
 function is_posnumericint($arg) {
 	// Note that to be safe we do not allow any leading zero - "01", "007"
 	return (is_numericint($arg) && $arg[0] != '0' && $arg > 0);
@@ -1251,7 +1253,8 @@ $i--): ?>
 			<td width="22%" valign="top">&nbsp;</td>
 			<td width="78%">
 				&nbsp;<br />&nbsp;
-				<input name="Submit" type="submit" class="formbtn" value="<?=gettext("Save"); ?>" />  <input type="button" class="formbtn" value="<?=gettext("Cancel"); ?>" onclick="history.back()" />
+				<input name="Submit" type="submit" class="formbtn" value="<?=gettext("Save"); ?>" />
+				<input type="button" class="formbtn" value="<?=gettext("Cancel");?>" onclick="window.location.href='<?=$referer;?>'" />
 <?php			if (isset($id) && $a_filter[$id]): ?>
 					<input name="id" type="hidden" value="<?=htmlspecialchars($id);?>" />
 <?php 			endif; ?>
@@ -1727,7 +1730,8 @@ $has_updated_time = (isset($a_filter[$id]['updated']) && is_array($a_filter[$id]
 			<td width="22%" valign="top">&nbsp;</td>
 			<td width="78%">
 				&nbsp;<br />&nbsp;
-				<input name="Submit" type="submit" class="formbtn" value="<?=gettext("Save"); ?>" />  <input type="button" class="formbtn" value="<?=gettext("Cancel"); ?>" onclick="history.back()" />
+				<input name="Submit" type="submit" class="formbtn" value="<?=gettext("Save"); ?>" />
+				<input type="button" class="formbtn" value="<?=gettext("Cancel");?>" onclick="window.location.href='<?=$referer;?>'" />
 <?php			if (isset($id) && $a_filter[$id]): ?>
 					<input name="id" type="hidden" value="<?=htmlspecialchars($id);?>" />
 					<input name="tracker" type="hidden" value="<?=htmlspecialchars($pconfig['tracker']);?>">

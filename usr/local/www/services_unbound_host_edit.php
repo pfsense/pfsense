@@ -41,6 +41,8 @@
 ##|*MATCH=services_unbound_host_edit.php*
 ##|-PRIV
 
+$referer = (isset($_SERVER['HTTP_REFERER']) ? $_SERVER['HTTP_REFERER'] : '/services_unbound.php');
+
 function hostcmp($a, $b) {
 	return strcasecmp($a['host'], $b['host']);
 }
@@ -291,7 +293,8 @@ include("head.inc");
 			<tr>
 				<td width="22%" valign="top">&nbsp;</td>
 				<td width="78%">
-					<input name="Submit" type="submit" class="formbtn" value="<?=gettext("Save");?>" /> <input class="formbtn" type="button" value="<?=gettext("Cancel");?>" onclick="history.back()" />
+					<input name="Submit" type="submit" class="formbtn" value="<?=gettext("Save");?>" />
+					<input type="button" class="formbtn" value="<?=gettext("Cancel");?>" onclick="window.location.href='<?=$referer;?>'" />
 					<?php if (isset($id) && $a_hosts[$id]): ?>
 					<input name="id" type="hidden" value="<?=htmlspecialchars($id);?>" />
 					<?php endif; ?>

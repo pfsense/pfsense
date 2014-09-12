@@ -41,6 +41,8 @@
 
 require("guiconfig.inc");
 
+$referer = (isset($_SERVER['HTTP_REFERER']) ? $_SERVER['HTTP_REFERER'] : '/system_hasync.php');
+
 if (!is_array($config['hasync']))
 	$config['hasync'] = array();
 
@@ -342,7 +344,7 @@ include("head.inc");
 		<td width="78%">
 			<input name="id" type="hidden" value="0" />
 			<input name="Submit" type="submit" class="formbtn" value="Save" />
-			<input class="formbtn" type="button" value="Cancel" onclick="history.back()" />
+			<input type="button" class="formbtn" value="<?=gettext("Cancel");?>" onclick="window.location.href='<?=$referer;?>'" />
 		</td>
 	</tr>
 	</table>

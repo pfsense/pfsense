@@ -48,6 +48,8 @@ require("shaper.inc");
 
 $pgtitle = array(gettext("Firewall"),gettext("Aliases"),gettext("Bulk import"));
 
+$referer = (isset($_SERVER['HTTP_REFERER']) ? $_SERVER['HTTP_REFERER'] : '/firewall_aliases.php');
+
 // Add all Load balance names to reserved_keywords
 if (is_array($config['load_balancer']['lbpool']))
 	foreach ($config['load_balancer']['lbpool'] as $lbpool)
@@ -207,7 +209,7 @@ include("head.inc");
 		<td width="22%" valign="top">&nbsp;</td>
 		<td width="78%">
 			<input id="submit" name="Submit" type="submit" class="formbtn" value="<?=gettext("Save"); ?>" />
-			<input class="formbtn" type="button" value="<?=gettext("Cancel"); ?>" onclick="history.back()" />
+			<input type="button" class="formbtn" value="<?=gettext("Cancel");?>" onclick="window.location.href='<?=$referer;?>'" />
 		</td>
 	</tr>
 </table>

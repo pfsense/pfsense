@@ -40,6 +40,8 @@
 
 require("guiconfig.inc");
 
+$referer = (isset($_SERVER['HTTP_REFERER']) ? $_SERVER['HTTP_REFERER'] : '/interfaces_lagg.php');
+
 if (!is_array($config['laggs']['lagg']))
 	$config['laggs']['lagg'] = array();
 
@@ -229,7 +231,8 @@ include("head.inc");
                   <td width="22%" valign="top">&nbsp;</td>
                   <td width="78%">
 				    <input type="hidden" name="laggif" value="<?=htmlspecialchars($pconfig['laggif']); ?>" />
-                    <input name="Submit" type="submit" class="formbtn" value="<?=gettext("Save"); ?>" /> <input type="button" value="<?=gettext("Cancel"); ?>" onclick="history.back()" />
+                    <input name="Submit" type="submit" class="formbtn" value="<?=gettext("Save"); ?>" />
+                    <input type="button" class="formbtn" value="<?=gettext("Cancel");?>" onclick="window.location.href='<?=$referer;?>'" />
                     <?php if (isset($id) && $a_laggs[$id]): ?>
                     <input name="id" type="hidden" value="<?=htmlspecialchars($id);?>" />
                     <?php endif; ?>

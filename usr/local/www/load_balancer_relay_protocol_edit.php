@@ -41,6 +41,8 @@
 
 require("guiconfig.inc");
 
+$referer = (isset($_SERVER['HTTP_REFERER']) ? $_SERVER['HTTP_REFERER'] : '/load_balancer_relay_protocol.php');
+
 if (!is_array($config['load_balancer']['lbprotocol'])) {
 	$config['load_balancer']['lbprotocol'] = array();
 }
@@ -275,7 +277,8 @@ echo "</select>";
 		<tr align="left">
 			<td width="22%" valign="top">&nbsp;</td>
 			<td width="78%">
-				<input name="Submit" type="submit" class="formbtn" value="<?=gettext("Save"); ?>" onClick="AllOptions($('lbaction'), true); AllOptions($('available_action'), false);"><input type="button" class="formbtn" value="<?=gettext("Cancel"); ?>" onclick="history.back()">
+				<input name="Submit" type="submit" class="formbtn" value="<?=gettext("Save"); ?>" onClick="AllOptions($('lbaction'), true); AllOptions($('available_action'), false);">
+				<input type="button" class="formbtn" value="<?=gettext("Cancel");?>" onclick="window.location.href='<?=$referer;?>'" />
 				<?php if (isset($id) && $a_protocol[$id] && $_GET['act'] != 'dup'): ?>
 				<input name="id" type="hidden" value="<?=htmlspecialchars($id);?>">
 				<?php endif; ?>

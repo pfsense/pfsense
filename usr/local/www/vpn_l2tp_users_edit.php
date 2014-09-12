@@ -54,6 +54,8 @@ function  l2tp_users_sort()  {
 require("guiconfig.inc");
 require_once("vpn.inc");
 
+$referer = (isset($_SERVER['HTTP_REFERER']) ? $_SERVER['HTTP_REFERER'] : '/vpn_l2tp_users.php');
+
 if (!is_array($config['l2tp']['user'])) {
 	$config['l2tp']['user'] = array();
 }
@@ -177,7 +179,7 @@ include("head.inc");
                   <td width="22%" valign="top">&nbsp;</td>
                   <td width="78%">
                     <input id="submit" name="Submit" type="submit" class="formbtn" value="<?=gettext('Save');?>" />
-                    <input id="cancelbutton" name="cancelbutton" type="button" class="formbtn" value="<?=gettext("Cancel");?>" onclick="history.back()" />
+                    <input type="button" class="formbtn" value="<?=gettext("Cancel");?>" onclick="window.location.href='<?=$referer;?>'" />
                     <?php if (isset($id) && $a_secret[$id]): ?>
                     <input name="id" type="hidden" value="<?=htmlspecialchars($id);?>" />
                     <?php endif; ?>

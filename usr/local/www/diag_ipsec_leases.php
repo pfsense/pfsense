@@ -1,12 +1,8 @@
 <?php
 /* $Id$ */
 /*
-	diag_ipsec_sad.php
-	Copyright (C) 2004-2009 Scott Ullrich
-	All rights reserved.
-
-	originially part of m0n0wall (http://m0n0.ch/wall)
-	Copyright (C) 2003-2004 Manuel Kasper <mk@neon1.net>.
+	diag_ipsec_leases.php
+	Copyright (C) 2014 Ermal LUÇi
 	All rights reserved.
 
 	Redistribution and use in source and binary forms, with or without
@@ -32,26 +28,25 @@
 */
 
 /*
-	pfSense_BUILDER_BINARIES:	/sbin/setkey
+	pfSense_BUILDER_BINARIES:	/usr/local/sbin/ipsec
 	pfSense_MODULE:	ipsec
 */
 
 ##|+PRIV
-##|*IDENT=page-status-ipsec-sad
-##|*NAME=Status: IPsec: SAD page
-##|*DESCR=Allow access to the 'Status: IPsec: SAD' page.
-##|*MATCH=diag_ipsec_sad.php*
+##|*IDENT=page-status-ipsec-leases
+##|*NAME=Status: IPsec: Leases page
+##|*DESCR=Allow access to the 'Status: IPsec: Leases' page.
+##|*MATCH=diag_ipsec_leases.php*
 ##|-PRIV
 
 require("guiconfig.inc");
 require("ipsec.inc");
-require_once("pfsense-utils.inc");
 
-$pgtitle = array(gettext("Status"),gettext("IPsec"),gettext("SAD"));
+$pgtitle = array(gettext("Status"),gettext("IPsec"),gettext("Leases"));
 $shortcut_section = "ipsec";
 include("head.inc");
 
-$sad = ipsec_dump_sad();
+$mobile = ipsec_dump_mobile();
 
 ?>
 
@@ -63,8 +58,8 @@ $sad = ipsec_dump_sad();
 				<?php
 					$tab_array = array();
 					$tab_array[0] = array(gettext("Overview"), false, "diag_ipsec.php");
-					$tab_array[1] = array(gettext("Leases"), false, "diag_ipsec_leases.php");
-					$tab_array[2] = array(gettext("SAD"), true, "diag_ipsec_sad.php");
+					$tab_array[1] = array(gettext("Leases"), true, "diag_ipsec_leases.php");
+					$tab_array[2] = array(gettext("SAD"), false, "diag_ipsec_sad.php");
 					$tab_array[3] = array(gettext("SPD"), false, "diag_ipsec_spd.php");
 					$tab_array[4] = array(gettext("Logs"), false, "diag_logs_ipsec.php");
 					display_top_tabs($tab_array);
@@ -74,39 +69,42 @@ $sad = ipsec_dump_sad();
 		<tr>
 			<td>
 				<div id="mainarea">
+				<?php foreach($mobile['pool'] as $pool): ?>
 					<table class="tabcont sortable" width="100%" border="0" cellpadding="6" cellspacing="0" summary="main area">
-						<?php if (count($sad)): ?>
 						<tr>
-							<td class="listhdrr nowrap"><?=gettext("Source");?></td>
-							<td class="listhdrr nowrap"><?=gettext("Destination");?></td>
-							<td class="listhdrr nowrap"><?=gettext("Protocol");?></td>
-							<td class="listhdrr nowrap"><?=gettext("SPI");?></td>
-							<td class="listhdrr nowrap"><?=gettext("Enc. alg.");?></td>
-							<td class="listhdr nowrap"><?=gettext("Auth. alg.");?></td>
-							<td class="listhdr nowrap"><?=gettext("Data");?></td>
+							<td colspan="4" valign="top" class="listtopic">
+							<?php
+								echo gettext("Pool: ") . $pool['name'];
+								echo ' ' . gettext("usage: ") . $pool['usage'];
+								echo ' ' . gettext("online: ") . $pool['online'];
+							?>
+							</td>
+						</tr>
+						<?php if (is_array($pool['lease']) && count($pool['lease']) > 0): ?>
+						<tr>
+							<td class="listhdrr nowrap"><?=gettext("ID");?></td>
+							<td class="listhdrr nowrap"><?=gettext("Host");?></td>
+							<td class="listhdrr nowrap"><?=gettext("Status");?></td>
 							<td class="list nowrap"></td>
 						</tr>
-						<?php foreach ($sad as $sa): ?>
+						<?php foreach ($pool['lease'] as $lease): ?>
 						<tr>
-							<td class="listlr"><?=xhtmlspecialchars($sa['src']);?></td>
-							<td class="listr"><?=xhtmlspecialchars($sa['dst']);?></td>
-							<td class="listr"><?=xhtmlspecialchars(strtoupper($sa['proto']));?></td>
-							<td class="listr"><?=xhtmlspecialchars($sa['spi']);?></td>
-							<td class="listr"><?=xhtmlspecialchars($sa['ealgo']);?></td>
-							<td class="listr"><?=xhtmlspecialchars($sa['aalgo']);?></td>
-							<td class="listr"><?=xhtmlspecialchars($sa['data']);?></td>
+							<td class="listlr"><?=htmlspecialchars($lease['id']);?></td>
+							<td class="listr"><?=htmlspecialchars($lease['host']);?></td>
+							<td class="listr"><?=htmlspecialchars($lease['status']);?></td>
 							<td class="list nowrap">
 							</td>
 						</tr>
-						<?php endforeach; ?>
-						<?php else: ?>
+						<?php endforeach;
+						else: ?>
 						<tr>
 							<td>
-								<p><strong><?=gettext("No IPsec security associations.");?></strong></p>
+								<p><strong><?=gettext("No leases from this pool yet.");?></strong></p>
 							</td>
 						</tr>
 						<?php endif; ?>
 					</table>
+				<?php endforeach; ?>
 				</div>
 			</td>
 		</tr>

@@ -45,6 +45,8 @@ require_once("util.inc");
 require_once("gwlb.inc");
 require_once("pfsense-utils.inc");
 
+$referer = (isset($_SERVER['HTTP_REFERER']) ? $_SERVER['HTTP_REFERER'] : '/system_routes.php');
+
 if (!is_array($config['staticroutes']['route']))
 	$config['staticroutes']['route'] = array();
 
@@ -327,7 +329,8 @@ include("head.inc");
 			<tr>
 				<td width="22%" valign="top">&nbsp;</td>
 				<td width="78%">
-					<input id="save" name="Submit" type="submit" class="formbtn" value="<?=gettext("Save");?>" /> <input id="cancel" type="button" value="<?=gettext("Cancel"); ?>" class="formbtn"  onclick="history.back()" />
+					<input id="save" name="Submit" type="submit" class="formbtn" value="<?=gettext("Save");?>" />
+					<input type="button" class="formbtn" value="<?=gettext("Cancel");?>" onclick="window.location.href='<?=$referer;?>'" />
 					<?php if (isset($id) && $a_routes[$id]): ?>
 						<input name="id" type="hidden" value="<?=xhtmlspecialchars($id);?>" />
 					<?php endif; ?>

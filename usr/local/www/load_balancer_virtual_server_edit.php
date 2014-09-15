@@ -42,6 +42,8 @@
 require("guiconfig.inc");
 require_once("pfsense-utils.inc");
 
+$referer = (isset($_SERVER['HTTP_REFERER']) ? $_SERVER['HTTP_REFERER'] : '/load_balancer_virtual_server.php');
+
 if (!is_array($config['load_balancer']['virtual_server'])) {
         $config['load_balancer']['virtual_server'] = array();
 }
@@ -274,7 +276,7 @@ include("head.inc");
                   <td width="22%" valign="top">&nbsp;</td>
                   <td align="left" valign="bottom" width="78%">
 					<input name="Submit" type="submit" class="formbtn" value="<?=gettext("Submit"); ?>" />
-					<input type="button" class="formbtn" value="<?=gettext("Cancel"); ?>" onclick="history.back()" />
+					<input type="button" class="formbtn" value="<?=gettext("Cancel");?>" onclick="window.location.href='<?=$referer;?>'" />
 			<?php if (isset($id) && $a_vs[$id] && $_GET['act'] != 'dup'): ?>
 				<input name="id" type="hidden" value="<?=xhtmlspecialchars($id);?>" />
 			<?php endif; ?>

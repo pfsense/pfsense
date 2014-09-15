@@ -33,6 +33,8 @@ require("guiconfig.inc");
 require("unbound.inc");
 require_once("pfsense-utils.inc");
 
+$referer = (isset($_SERVER['HTTP_REFERER']) ? $_SERVER['HTTP_REFERER'] : '/services_unbound_acls.php');
+
 if (!is_array($config['unbound']['acls']))
 	$config['unbound']['acls'] = array();
 
@@ -303,7 +305,8 @@ if (is_subsystem_dirty("unbound"))
 							<td width="22%" valign="top">&nbsp;</td>
 							<td width="78%">
 								&nbsp;<br />&nbsp;
-								<input name="Submit" type="submit" class="formbtn" value="<?=gettext("Save"); ?>" />  <input type="button" class="formbtn" value="<?=gettext("Cancel"); ?>" onclick="history.back()" />
+								<input name="Submit" type="submit" class="formbtn" value="<?=gettext("Save"); ?>" />
+								<input type="button" class="formbtn" value="<?=gettext("Cancel");?>" onclick="window.location.href='<?=$referer;?>'" />
 							</td>
 						</tr>
 					</table>

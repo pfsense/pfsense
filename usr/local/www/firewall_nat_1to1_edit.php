@@ -45,6 +45,8 @@ require_once("filter.inc");
 require("shaper.inc");
 require_once("pfsense-utils.inc");
 
+$referer = (isset($_SERVER['HTTP_REFERER']) ? $_SERVER['HTTP_REFERER'] : '/firewall_nat_1to1.php');
+
 $specialsrcdst = explode(" ", "any pptp pppoe l2tp openvpn");
 $ifdisp = get_configured_interface_with_descr();
 foreach ($ifdisp as $kif => $kdescr) {
@@ -530,7 +532,8 @@ if ($input_errors)
 		<tr>
 			<td width="22%" valign="top">&nbsp;</td>
 			<td width="78%">
-				<input name="Submit" type="submit" class="formbtn" value="<?=gettext("Save"); ?>" /> <input type="button" class="formbtn" value="<?=gettext("Cancel"); ?>" onclick="history.back()" />
+				<input name="Submit" type="submit" class="formbtn" value="<?=gettext("Save"); ?>" />
+				<input type="button" class="formbtn" value="<?=gettext("Cancel");?>" onclick="window.location.href='<?=$referer;?>'" />
 				<?php if (isset($id) && $a_1to1[$id]): ?>
 				<input name="id" type="hidden" value="<?=xhtmlspecialchars($id);?>" />
 				<?php endif; ?>

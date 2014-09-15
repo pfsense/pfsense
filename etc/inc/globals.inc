@@ -153,7 +153,8 @@ $sysctls = array("net.inet.ip.portrange.first" => "1024",
 	"kern.random.sys.harvest.ethernet" => 0,
 	"net.route.netisr_maxqlen" => 1024,
 	"net.inet.udp.checksum" => 1,
-	"net.bpf.zerocopy_enable" => 1
+	"net.bpf.zerocopy_enable" => 1,
+	"net.inet.icmp.reply_from_interface" => 1
 );
 
 /* Include override values for the above if needed. If the file doesn't exist, don't try to load it. */

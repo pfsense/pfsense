@@ -52,16 +52,12 @@ if (is_numericint($_GET['userid']))
 if (isset($_POST['userid']) && is_numericint($_POST['userid']))
 	$userid = $_POST['userid'];
 
-$a_user = & $config['system']['user'][$userid];
-if (!is_array($a_user)) {
-	pfSenseHeader("system_usermanager.php?id={$userid}");
-	exit;
-}
-
-if (!is_array($a_user)) {
+if (!isset($config['system']['user'][$userid]) && !is_array($config['system']['user'][$userid])) {
 	pfSenseHeader("system_usermanager.php");
 	exit;
 }
+
+$a_user = & $config['system']['user'][$userid];
 
 if (!is_array($a_user['priv']))
 	$a_user['priv'] = array();
@@ -100,7 +96,7 @@ if ($_POST) {
 		$savemsg = get_std_save_message($retval);
 		conf_mount_ro();
 		
-		pfSenseHeader("system_usermanager.php?act=edit&id={$userid}");
+		post_redirect("system_usermanager.php", array('act' => 'edit', 'userid' => $userid));
 		
 		exit;
 	}

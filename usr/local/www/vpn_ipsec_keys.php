@@ -74,7 +74,6 @@ include("head.inc");
 
 <body link="#0000CC" vlink="#0000CC" alink="#0000CC">
 <?php include("fbegin.inc"); ?>
-<form action="vpn_ipsec.php" method="post">
 <?php 
 if ($savemsg)
 	print_info_box($savemsg);
@@ -122,7 +121,14 @@ if (is_subsystem_dirty('ipsec'))
 		<td class="listr gray">
 			<?=xhtmlspecialchars($secretent['pre-shared-key']);?>
 		</td>
-		<td class="list nowrap"><a href="system_usermanager.php?act=edit&amp;id=<?=$secretent['id'];?>"><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_e.gif" title="<?=gettext("edit key"); ?>" width="17" height="17" border="0" alt="edit" /></a>
+		<td class="list nowrap">
+			<form action="system_usermanager.php" method="post" name="form_edit_key">
+				<input type="hidden" name="act" value="edit" />
+				<input type="hidden" name="userid" value="<?=$secretent['id'];?>" />
+				<input type="image" name="edituser[]" width="17" height="17" border="0"
+					src="/themes/<?=$g['theme'];?>/images/icons/icon_e.gif"
+					title="<?=gettext("edit");?>" />
+			</form>
 		&nbsp;</td>
 				</tr>
 			  <?php $i++; endforeach; ?>
@@ -167,7 +173,6 @@ if (is_subsystem_dirty('ipsec'))
 		</td>
 	</tr>
 </table>
-</form>
 <?php include("fend.inc"); ?>
 </body>
 </html>

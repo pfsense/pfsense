@@ -43,6 +43,8 @@ require("guiconfig.inc");
 require("pkg-utils.inc");
 require_once("pfsense-utils.inc");
 
+$referer = (isset($_SERVER['HTTP_REFERER']) ? $_SERVER['HTTP_REFERER'] : '/system_gateways.php');
+
 $a_gateways = return_gateways_array(true, false, true);
 $a_gateways_arr = array();
 foreach($a_gateways as $gw) {
@@ -856,7 +858,8 @@ function enable_change() {
 			<tr>
 				<td width="22%" valign="top">&nbsp;</td>
 				<td width="78%">
-					<input name="Submit" type="submit" class="formbtn" value="<?=gettext("Save");?>" onclick="enable_change()" /> <input type="button" value="<?=gettext("Cancel");?>" class="formbtn"  onclick="history.back()" />
+					<input name="Submit" type="submit" class="formbtn" value="<?=gettext("Save");?>" onclick="enable_change()" />
+					<input type="button" class="formbtn" value="<?=gettext("Cancel");?>" onclick="window.location.href='<?=$referer;?>'" />
 					<?php if (isset($id) && $a_gateways[$id]): ?>
 					<input name="id" type="hidden" value="<?=xhtmlspecialchars($id);?>" />
 					<?php endif; ?>

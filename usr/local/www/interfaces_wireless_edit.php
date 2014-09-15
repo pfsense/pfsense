@@ -41,6 +41,8 @@
 require("guiconfig.inc");
 require_once("pfsense-utils.inc");
 
+$referer = (isset($_SERVER['HTTP_REFERER']) ? $_SERVER['HTTP_REFERER'] : '/interfaces_wireless.php');
+
 if (!is_array($config['wireless']))
 	$config['wireless'] = array();
 if (!is_array($config['wireless']['clone']))
@@ -196,7 +198,8 @@ include("head.inc");
                   <td width="22%" valign="top">&nbsp;</td>
                   <td width="78%">
                     <input type="hidden" name="cloneif" value="<?=xhtmlspecialchars($pconfig['cloneif']); ?>" />
-                    <input name="Submit" type="submit" class="formbtn" value="<?=gettext("Save");?>" /> <input type="button" value="<?=gettext("Cancel");?>" onclick="history.back()" />
+                    <input name="Submit" type="submit" class="formbtn" value="<?=gettext("Save");?>" />
+                    <input type="button" class="formbtn" value="<?=gettext("Cancel");?>" onclick="window.location.href='<?=$referer;?>'" />
                     <?php if (isset($id) && $a_clones[$id]): ?>
                     <input name="id" type="hidden" value="<?=xhtmlspecialchars($id);?>" />
                     <?php endif; ?>

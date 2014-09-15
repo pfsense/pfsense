@@ -61,6 +61,8 @@ require_once("pfsense-utils.inc");
 
 $pgtitle = array(gettext("Firewall"),gettext("Schedules"),gettext("Edit"));
 
+$referer = (isset($_SERVER['HTTP_REFERER']) ? $_SERVER['HTTP_REFERER'] : '/firewall_schedule.php');
+
 $dayArray = array (gettext('Mon'),gettext('Tues'),gettext('Wed'),gettext('Thur'),gettext('Fri'),gettext('Sat'),gettext('Sun'));
 $monthArray = array (gettext('January'),gettext('February'),gettext('March'),gettext('April'),gettext('May'),gettext('June'),gettext('July'),gettext('August'),gettext('September'),gettext('October'),gettext('November'),gettext('December'));
 
@@ -1164,7 +1166,7 @@ EOD;
 				    <td width="15%" valign="top">&nbsp;</td>
 				    <td width="85%">
 				      <input id="submit" name="submit" type="submit" onclick="return checkForRanges();" class="formbtn" value="<?=gettext("Save"); ?>" />
-				      <input id="cancelbutton" name="cancelbutton" type="button" class="formbtn" value="<?=gettext("Cancel"); ?>" onclick="history.back()" />
+				      <input type="button" class="formbtn" value="<?=gettext("Cancel");?>" onclick="window.location.href='<?=$referer;?>'" />
 				      <?php if (isset($id) && $a_schedules[$id]): ?>
 				      <input name="id" type="hidden" value="<?=xhtmlspecialchars($id);?>" />
 				      <?php endif; ?>

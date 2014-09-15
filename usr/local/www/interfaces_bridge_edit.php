@@ -41,6 +41,8 @@
 require("guiconfig.inc");
 require_once("pfsense-utils.inc");
 
+$referer = (isset($_SERVER['HTTP_REFERER']) ? $_SERVER['HTTP_REFERER'] : '/interfaces_bridge.php');
+
 if (!is_array($config['bridges']['bridged']))
 	$config['bridges']['bridged'] = array();
 
@@ -599,7 +601,8 @@ function show_source_port_range() {
                   <td width="22%" valign="top">&nbsp;</td>
                   <td width="78%">
 		    <input type="hidden" name="bridgeif" value="<?=xhtmlspecialchars($pconfig['bridgeif']); ?>" />
-                    <input name="Submit" type="submit" class="formbtn" value="<?=gettext("Save"); ?>" /> <input type="button" value="<?=gettext("Cancel"); ?>" onclick="history.back()" />
+                    <input name="Submit" type="submit" class="formbtn" value="<?=gettext("Save"); ?>" />
+                    <input type="button" class="formbtn" value="<?=gettext("Cancel");?>" onclick="window.location.href='<?=$referer;?>'" />
                     <?php if (isset($id) && $a_bridges[$id]): ?>
                     <input name="id" type="hidden" value="<?=xhtmlspecialchars($id);?>" />
                     <?php endif; ?>

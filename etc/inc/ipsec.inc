@@ -39,7 +39,7 @@ $ipsec_loglevels = array("dmn" => "Daemon", "mgr" => "SA Manager", "ike" => "IKE
 	"job" => "Job Processing", "cfg" => "Configuration backend", "knl" => "Kernel Interface",
 	"net" => "Networking", "asn" => "ASN encoding", "enc" => "Message encoding",
 	"imc" => "Integrity checker", "imv" => "Integrity Verifier", "pts" => "Platform Trust Service",
-	"tls" => "TLS handler", "app" => "Not daemon", "esp" => "IPSec traffic", "lib" => "StrongSWAN Lib");
+	"tls" => "TLS handler", "esp" => "IPSec traffic", "lib" => "StrongSWAN Lib");
 
 $my_identifier_list = array(
 	'myaddress' => array( 'desc' => gettext('My IP address'), 'mobile' => true ),
@@ -114,6 +114,7 @@ $p1_authentication_methods = array(
 	'hybrid_rsa_server' => array( 'name' => 'Hybrid RSA + Xauth', 'mobile' => true ),
 	'xauth_rsa_server' => array( 'name' => 'Mutual RSA + Xauth', 'mobile' => true ),
 	'xauth_psk_server' => array( 'name' => 'Mutual PSK + Xauth', 'mobile' => true ),
+	'eap-tls' => array( 'name' => 'EAP-TLS', 'mobile' => true),
 	'rsasig' => array( 'name' => 'Mutual RSA', 'mobile' => false ),
 	'pre_shared_key' => array( 'name' => 'Mutual PSK', 'mobile' => false ) );
 
@@ -601,11 +602,11 @@ function ipsec_dump_sad()
  * Return dump of mobile user list
  */
 function ipsec_dump_mobile() {
-	global $g;
+	global $g, $custom_listtags;
 
 	$_gb = exec("/usr/local/sbin/ipsec stroke leases > {$g['tmp_path']}/strongswan_leases.xml");
 
-	if (!file_exists("{$g['varrun_path']}/strongswan_leases.xml")) {
+	if (!file_exists("{$g['tmp_path']}/strongswan_leases.xml")) {
 		log_error(gettext("IPSec daemon seems to have issues or not running! Could not display mobile user stats!"));
 		return array();
 	}

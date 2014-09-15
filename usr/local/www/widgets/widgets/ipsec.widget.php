@@ -50,6 +50,7 @@ if (isset($config['ipsec']['phase1'])){?>
 	$spd = ipsec_dump_spd();
 	$sad = ipsec_dump_sad();
 	$mobile = ipsec_dump_mobile();
+	$ipsec_status = ipsec_smp_dump_status();
 
 	$activecounter = 0;
 	$inactivecounter = 0;
@@ -70,7 +71,7 @@ if (isset($config['ipsec']['phase1'])){?>
 			continue;
 		}
 
-		if(ipsec_phase2_status($spd,$sad,$ph1ent,$ph2ent)) {
+		if (if(ipsec_phase1_status($ipsec_status, $ph1ent)) {
 			/* tunnel is up */
 			$iconfn = "true";
 			$activecounter++;
@@ -80,7 +81,7 @@ if (isset($config['ipsec']['phase1'])){?>
 			$inactivecounter++;
 		}
 
-		$ipsec_detail_array[] = array('src' => $ph1ent['interface'],
+		$ipsec_detail_array[] = array('src' => convert_friendly_interface_to_friendly_descr($ph1ent['interface']),
 					'dest' => $ph1ent['remote-gateway'],
 					'remote-subnet' => ipsec_idinfo_to_text($ph2ent['remoteid']),
 					'descr' => $ph2ent['descr'],
@@ -102,7 +103,7 @@ if (isset($config['ipsec']['phase1'])){?>
 	<tr>
 		<td class="listlr"><?php echo $activecounter; ?></td>
 		<td class="listr"><?php echo $inactivecounter; ?></td>
-		<td class="listr"><?php echo count($mobile); ?></td>
+		<td class="listr"><?php if (is_array($mobile['pool'])) echo htmlspecialchars($mobile['pool'][0]['usage']); else echo 0; ?></td>
 	</tr>
 	</table>
 	</div>
@@ -166,7 +167,7 @@ if (isset($config['ipsec']['phase1'])){?>
 		<div style="display:table-row;">
 			<div class="widgetsubheader" style="display:table-cell;width:140px">User</div>
 			<div class="widgetsubheader" style="display:table-cell;width:130px">IP</div>
-			<div class="widgetsubheader" style="display:table-cell;width:30px">Status;</div>
+			<div class="widgetsubheader" style="display:table-cell;width:30px">Status</div>
 		</div>
 		<div style="max-height:105px;overflow:auto;">
 <?php

@@ -45,6 +45,8 @@ require("guiconfig.inc");
 require("functions.inc");
 require_once("pfsense-utils.inc");
 
+$referer = (isset($_SERVER['HTTP_REFERER']) ? $_SERVER['HTTP_REFERER'] : '/interfaces_ppps.php');
+
 define("CRON_MONTHLY_PATTERN", "0 0 1 * *");
 define("CRON_WEEKLY_PATTERN", "0 0 * * 0");
 define("CRON_DAILY_PATTERN", "0 0 * * *");
@@ -790,7 +792,7 @@ $types = array("select" => gettext("Select"), "ppp" => "PPP", "pppoe" => "PPPoE"
 			<td width="22%" valign="top">&nbsp;</td>
 			<td width="78%">
 				<input name="Submit" type="submit" class="formbtn" value="<?=gettext("Save"); ?>" />
-				<input type="button" value="<?=gettext("Cancel"); ?>" onclick="history.back()" />
+				<input type="button" class="formbtn" value="<?=gettext("Cancel");?>" onclick="window.location.href='<?=$referer;?>'" />
 				<input name="ptpid" type="hidden" value="<?=xhtmlspecialchars($pconfig['ptpid']);?>" />
 				<?php if (isset($id) && $a_ppps[$id]): ?>
 					<input name="id" type="hidden" value="<?=xhtmlspecialchars($id);?>" />

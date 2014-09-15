@@ -5,6 +5,7 @@
 
 	Copyright (C) 2008 Shrew Soft Inc
 	Copyright (C) 2003-2005 Manuel Kasper <mk@neon1.net>.
+	Copyright (C) 2014 Ermal LUÇI
 	All rights reserved.
 
 	Redistribution and use in source and binary forms, with or without
@@ -80,7 +81,10 @@ if (isset($p1index) && $a_phase1[$p1index]) {
 	else
 		$pconfig['remotegw'] = $a_phase1[$p1index]['remote-gateway'];
 
-	$pconfig['iketype'] = $a_phase1[$p1index]['iketype'];
+	if (empty($a_phase1[$p1index]['iketype']))
+		$pconfig['iketype'] = "ikev1";
+	else
+		$pconfig['iketype'] = $a_phase1[$p1index]['iketype'];
 	$pconfig['mode'] = $a_phase1[$p1index]['mode'];
 	$pconfig['protocol'] = $a_phase1[$p1index]['protocol'];
 	$pconfig['myid_type'] = $a_phase1[$p1index]['myid_type'];
@@ -103,6 +107,11 @@ if (isset($p1index) && $a_phase1[$p1index]) {
 
 	$pconfig['descr'] = $a_phase1[$p1index]['descr'];
 	$pconfig['nat_traversal'] = $a_phase1[$p1index]['nat_traversal'];
+
+	if (!isset($a_phase1[$p1index]['reauth_enable']))
+		$pconfig['reauth_enable'] = true;
+	if (!isset($a_phase1[$p1index]['rekey_enable']))
+		$pconfig['rekey_enable'] = true;
 
 	if ($a_phase1[$p1index]['dpd_delay'] &&	$a_phase1[$p1index]['dpd_maxfail']) {
 		$pconfig['dpd_enable'] = true;
@@ -151,6 +160,10 @@ if ($_POST) {
 	// Only require PSK here for normal PSK tunnels (not mobile) or xauth.
 	// For RSA methods, require the CA/Cert.
 	switch ($method) {
+		case "eap-tls":
+			if ($pconfig['iketype'] != 'ikev2')
+				$input_errors[] = gettext("EAP-TLS can only be used with IKEv2 type VPNs.");
+			break;
 		case "pre_shared_key":
 			// If this is a mobile PSK tunnel the user PSKs go on
 			//    the PSK tab, not here, so skip the check.
@@ -345,6 +358,11 @@ if ($_POST) {
 		$ph1ent['descr'] = $pconfig['descr'];
 		$ph1ent['nat_traversal'] = $pconfig['nat_traversal'];
 
+		if (isset($pconfig['reauth_enable']))
+			$ph1ent['reauth_enable'] = true;
+		if (isset($pconfig['rekey_enable']))
+			$ph1ent['rekey_enable'] = true;
+
 		if (isset($pconfig['dpd_enable'])) {
 			$ph1ent['dpd_delay'] = $pconfig['dpd_delay'];
 			$ph1ent['dpd_maxfail'] = $pconfig['dpd_maxfail'];
@@ -406,41 +424,49 @@ function methodsel_change() {
 	value = document.iform.authentication_method.options[index].value;
 
 	switch (value) {
-		case 'hybrid_rsa_server':
-			document.getElementById('opt_psk').style.display = 'none';
-			document.getElementById('opt_peerid').style.display = '';
-			document.getElementById('opt_cert').style.display = '';
-			document.getElementById('opt_ca').style.display = '';
-			document.getElementById('opt_cert').disabled = false;
-			document.getElementById('opt_ca').disabled = false;
-			break;
-		case 'xauth_rsa_server':
-		case 'rsasig':
-			document.getElementById('opt_psk').style.display = 'none';
-			document.getElementById('opt_peerid').style.display = '';
-			document.getElementById('opt_cert').style.display = '';
-			document.getElementById('opt_ca').style.display = '';
-			document.getElementById('opt_cert').disabled = false;
-			document.getElementById('opt_ca').disabled = false;
-			break;
+	case 'eap-tls':
+		document.getElementById('opt_psk').style.display = 'none';
+		document.getElementById('opt_peerid').style.display = '';
+		document.getElementById('opt_cert').style.display = '';
+		document.getElementById('opt_ca').style.display = '';
+		document.getElementById('opt_cert').disabled = false;
+		document.getElementById('opt_ca').disabled = false;
+		break;
+	case 'hybrid_rsa_server':
+		document.getElementById('opt_psk').style.display = 'none';
+		document.getElementById('opt_peerid').style.display = '';
+		document.getElementById('opt_cert').style.display = '';
+		document.getElementById('opt_ca').style.display = '';
+		document.getElementById('opt_cert').disabled = false;
+		document.getElementById('opt_ca').disabled = false;
+		break;
+	case 'xauth_rsa_server':
+	case 'rsasig':
+		document.getElementById('opt_psk').style.display = 'none';
+		document.getElementById('opt_peerid').style.display = '';
+		document.getElementById('opt_cert').style.display = '';
+		document.getElementById('opt_ca').style.display = '';
+		document.getElementById('opt_cert').disabled = false;
+		document.getElementById('opt_ca').disabled = false;
+		break;
 <?php if ($pconfig['mobile']) { ?>
-		case 'pre_shared_key':
-			document.getElementById('opt_psk').style.display = 'none';
-			document.getElementById('opt_peerid').style.display = 'none';
-			document.getElementById('opt_cert').style.display = 'none';
-			document.getElementById('opt_ca').style.display = 'none';
-			document.getElementById('opt_cert').disabled = true;
-			document.getElementById('opt_ca').disabled = true;
-			break;
+	case 'pre_shared_key':
+		document.getElementById('opt_psk').style.display = 'none';
+		document.getElementById('opt_peerid').style.display = 'none';
+		document.getElementById('opt_cert').style.display = 'none';
+		document.getElementById('opt_ca').style.display = 'none';
+		document.getElementById('opt_cert').disabled = true;
+		document.getElementById('opt_ca').disabled = true;
+		break;
 <?php } ?>
-		default: /* psk modes*/
-			document.getElementById('opt_psk').style.display = '';
-			document.getElementById('opt_peerid').style.display = '';
-			document.getElementById('opt_cert').style.display = 'none';
-			document.getElementById('opt_ca').style.display = 'none';
-			document.getElementById('opt_cert').disabled = true;
-			document.getElementById('opt_ca').disabled = true;
-			break;
+	default: /* psk modes*/
+		document.getElementById('opt_psk').style.display = '';
+		document.getElementById('opt_peerid').style.display = '';
+		document.getElementById('opt_cert').style.display = 'none';
+		document.getElementById('opt_ca').style.display = 'none';
+		document.getElementById('opt_cert').disabled = true;
+		document.getElementById('opt_ca').disabled = true;
+		break;
 	}
 }
 
@@ -710,6 +736,49 @@ function dpdchkbox_change() {
 							</span>
 						</td>
 					</tr>
+					<tr id="opt_cert">
+						<td width="22%" valign="top" class="vncellreq"><?=gettext("My Certificate"); ?></td>
+						<td width="78%" class="vtable">
+							<select name="certref" class="formselect">
+							<?php
+								foreach ($config['cert'] as $cert):
+									$selected = "";
+									if ($pconfig['certref'] == $cert['refid'])
+										$selected = "selected=\"selected\"";
+							?>
+								<option value="<?=$cert['refid'];?>" <?=$selected;?>><?=$cert['descr'];?></option>
+							<?php endforeach; ?>
+							</select>
+							<br />
+							<span class="vexpl">
+								<?=gettext("Select a certificate previously configured in the Certificate Manager"); ?>.
+							</span>
+						</td>
+					</tr>
+					<tr id="opt_ca">
+						<td width="22%" valign="top" class="vncellreq"><?=gettext("My Certificate Authority"); ?></td>
+						<td width="78%" class="vtable">
+							<select name="caref" class="formselect">
+							<?php
+								foreach ($config['ca'] as $ca):
+									$selected = "";
+									if ($pconfig['caref'] == $ca['refid'])
+										$selected = "selected=\"selected\"";
+							?>
+								<option value="<?=$ca['refid'];?>" <?=$selected;?>><?=$ca['descr'];?></option>
+							<?php endforeach; ?>
+							</select>
+							<br />
+							<span class="vexpl">
+								<?=gettext("Select a certificate authority previously configured in the Certificate Manager"); ?>.
+							</span>
+						</td>
+					</tr>
+					<tr>
+						<td colspan="2" valign="top" class="listtopic">
+							<?=gettext("Phase 1 proposal (Algorithms)"); ?>
+						</td>
+					</tr>
 					<tr>
 						<td width="22%" valign="top" class="vncellreq"><?=gettext("Encryption algorithm"); ?></td>
 						<td width="78%" class="vtable">
@@ -768,49 +837,25 @@ function dpdchkbox_change() {
 							<?=gettext("seconds"); ?>
 						</td>
 					</tr>
-					<tr id="opt_cert">
-						<td width="22%" valign="top" class="vncellreq"><?=gettext("My Certificate"); ?></td>
-						<td width="78%" class="vtable">
-							<select name="certref" class="formselect">
-							<?php
-								foreach ($config['cert'] as $cert):
-									$selected = "";
-									if ($pconfig['certref'] == $cert['refid'])
-										$selected = "selected=\"selected\"";
-							?>
-								<option value="<?=$cert['refid'];?>" <?=$selected;?>><?=$cert['descr'];?></option>
-							<?php endforeach; ?>
-							</select>
-							<br />
-							<span class="vexpl">
-								<?=gettext("Select a certificate previously configured in the Certificate Manager"); ?>.
-							</span>
-						</td>
-					</tr>
-					<tr id="opt_ca">
-						<td width="22%" valign="top" class="vncellreq"><?=gettext("My Certificate Authority"); ?></td>
-						<td width="78%" class="vtable">
-							<select name="caref" class="formselect">
-							<?php
-								foreach ($config['ca'] as $ca):
-									$selected = "";
-									if ($pconfig['caref'] == $ca['refid'])
-										$selected = "selected=\"selected\"";
-							?>
-								<option value="<?=$ca['refid'];?>" <?=$selected;?>><?=$ca['descr'];?></option>
-							<?php endforeach; ?>
-							</select>
-							<br />
-							<span class="vexpl">
-								<?=gettext("Select a certificate authority previously configured in the Certificate Manager"); ?>.
-							</span>
-						</td>
-					</tr>
 					<tr>
 						<td colspan="2" class="list" height="12"></td>
 					</tr>
 					<tr>
 						<td colspan="2" valign="top" class="listtopic"><?=gettext("Advanced Options"); ?></td>
+					</tr>
+					<tr>
+						<td width="22%" valign="top" class="vncell"><?=gettext("Disable Rekey");?></td>
+						<td width="78%" class="vtable">
+							<input name="rekey_enable" type="checkbox" id="rekey_enable" value="yes" <?php if (isset($pconfig['rekey_enable'])) echo "checked=\"checked\""; ?> />
+							<?=gettext("Whether a connection should be renegotiated when it is about to expire."); ?><br />
+						</td>
+					</tr>
+					<tr>
+						<td width="22%" valign="top" class="vncell"><?=gettext("Disable Reauth");?></td>
+						<td width="78%" class="vtable">
+							<input name="reauth_enable" type="checkbox" id="reauth_enable" value="yes" <?php if (isset($pconfig['reauth_enable'])) echo "checked=\"checked\""; ?> />
+							<?=gettext("whether rekeying of an IKE_SA should also reauthenticate the peer. In IKEv1, reauthentication is always don.."); ?><br />
+						</td>
 					</tr>
 					<tr>
 						<td width="22%" valign="top" class="vncell"><?=gettext("NAT Traversal"); ?></td>

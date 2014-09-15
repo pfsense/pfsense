@@ -49,10 +49,10 @@ function vpn_ipsec_configure_loglevels($forconfig = false)
 	$cfgtext = array();
 	foreach ($ipsec_loglevels as $lkey => $ldescr) {
 		if (!isset($config['ipsec']["ipsec_{$lkey}"]) && !$forconfig)
-			mwexec("/usr/local/sbin/ipsec stroke loglevel {$lkey} -1", false);
+			mwexec("/usr/local/sbin/ipsec stroke loglevel {$lkey} -- -1", false);
 		else if (is_numeric($config['ipsec']["ipsec_{$lkey}"]) &&
 		    intval($config['ipsec']["ipsec_{$lkey}"]) >= 1 && intval($config['ipsec']["ipsec_{$lkey}"]) <= 5)
-			$forconfig ? $cfgtext[] = "${lkey} = " . (intval($config['ipsec']["ipsec_{$lkey}"]) - 1) :
+			$forconfig ? $cfgtext[] = "${lkey} " . (intval($config['ipsec']["ipsec_{$lkey}"]) - 1) :
 				mwexec("/usr/local/sbin/ipsec stroke loglevel {$lkey} " . (intval($config['ipsec']["ipsec_{$lkey}"]) - 1) , false);
 	}
 	if ($forconfig)
@@ -128,6 +128,10 @@ function vpn_ipsec_configure($ipchg = false)
 
 		return 0;
 	} else {
+		$certpath = "{$g['varetc_path']}/ipsec/ipsec.d/certs";
+		$capath = "{$g['varetc_path']}/ipsec/ipsec.d/cacerts";
+		$keypath = "{$g['varetc_path']}/ipsec/ipsec.d/private";
+
 		mwexec("/sbin/ifconfig enc0 up");
 		set_single_sysctl("net.inet.ip.ipsec_in_use", "1");
 		/* needed for config files */
@@ -135,14 +139,14 @@ function vpn_ipsec_configure($ipchg = false)
 			mkdir("{$g['varetc_path']}/ipsec");
 		if (!is_dir("{$g['varetc_path']}/ipsec/ipsec.d"))
 			mkdir("{$g['varetc_path']}/ipsec/ipsec.d");
-		if (!is_dir("{$g['varetc_path']}/ipsec/ipsec.d/cacerts"))
-			mkdir("{$g['varetc_path']}/ipsec/ipsec.d/cacerts");
-		if (!is_dir("{$g['varetc_path']}/ipsec/ipsec.d/private"))
-			mkdir("{$g['varetc_path']}/ipsec/ipsec.d/private");
+		if (!is_dir($capath))
+			mkdir($capath);
+		if (!is_dir($keypath))
+			mkdir($keypath);
 		if (!is_dir("{$g['varetc_path']}/ipsec/ipsec.d/crls"))
 			mkdir("{$g['varetc_path']}/ipsec/ipsec.d/crls");
-		if (!is_dir("{$g['varetc_path']}/ipsec/ipsec.d/certs"))
-			mkdir("{$g['varetc_path']}/ipsec/ipsec.d/certs");
+		if (!is_dir($certpath))
+			mkdir($certpath);
 		if (!is_dir("{$g['varetc_path']}/ipsec/ipsec.d/aacerts"))
 			mkdir("{$g['varetc_path']}/ipsec/ipsec.d/aacerts");
 		if (!is_dir("{$g['varetc_path']}/ipsec/ipsec.d/acerts"))
@@ -416,7 +420,7 @@ EOD;
 					log_error(sprintf(gettext("Error: Invalid certificate hash info for %s"), $ca['descr']));
 					continue;
 				}
-				$fname = "{$g['varetc_path']}/ipsec/ipsec.d/cacerts/{$x509cert['hash']}.0";
+				$fname = "{$capath}/{$x509cert['hash']}.0.crt";
 				if (!@file_put_contents($fname, $cert)) {
 					log_error(sprintf(gettext("Error: Cannot write IPsec CA file for %s"), $ca['descr']));
 					continue;
@@ -433,47 +437,36 @@ EOD;
 				if (isset($ph1ent['disabled']))
 					continue;
 
-				if (strstr($ph1ent['authentication_method'],'rsa')) {
+				if (strpos($ph1ent['authentication_method'], 'rsa') || $ph1ent['authentication_method'] == 'eap-tls') {
 					$certline = '';
 
-					if (strstr($authmethod,'rsa')) {
+					$ikeid = $ph1ent['ikeid'];
+					$cert = lookup_cert($ph1ent['certref']);
 
-						$ikeid = $ph1ent['ikeid'];
-						$cert = lookup_cert($ph1ent['certref']);
-
-						if (!$cert) {
-							log_error(sprintf(gettext("Error: Invalid phase1 certificate reference for %s"), $ph1ent['name']));
-							continue;
-						}
-
-						chmod($certpath, 0600);
-
-						$keyfile = "cert-{$ikeid}.key";
-						$keypath = "{$g['varetc_path']}/ipsec/{$keyfile}";
-
-						if (!file_put_contents($keypath, base64_decode($cert['prv']))) {
-							log_error(sprintf(gettext("Error: Cannot write phase1 key file for %s"), $ph1ent['name']));
-							continue;
-						}
-
-						chmod($keypath, 0600);
-						/* XXX" Traffic selectors? */
-						$pskconf .= " : RSA {$keypath}\n";
-
-						$ca = lookup_ca($ph1ent['caref']);
-						if ($ca) {
-							$cafile = "ca-{$ikeid}.crt";
-							$capath = "{$g['varetc_path']}/ipsec/ipsec.d/cacerts/{$cafile}";
-
-							if (!file_put_contents($capath, base64_decode($ca['crt'])))
-							{
-								log_error(sprintf(gettext("Error: Cannot write phase1 CA certificate file for %s"), $ph1ent['name']));
-								continue;
-							}
-
-							chmod($capath, 0600);
-						}
+					if (!$cert) {
+						log_error(sprintf(gettext("Error: Invalid phase1 certificate reference for %s"), $ph1ent['name']));
+						continue;
 					}
+
+					@chmod($certpath, 0600);
+
+					$ph1keyfile = "{$keypath}/cert-{$ikeid}.key";
+					if (!file_put_contents($ph1keyfile, base64_decode($cert['prv']))) {
+						log_error(sprintf(gettext("Error: Cannot write phase1 key file for %s"), $ph1ent['name']));
+						continue;
+					}
+					@chmod($ph1keyfile, 0600);
+
+					$ph1certfile = "{$certpath}/cert-{$ikeid}.crt";
+					if (!file_put_contents($ph1certfile, base64_decode($cert['crt']))) {
+						log_error(sprintf(gettext("Error: Cannot write phase1 certificate file for %s"), $ph1ent['name']));
+						@unlink($ph1keyfile);
+						continue;
+					}
+					@chmod($ph1certfile, 0600);
+
+					/* XXX" Traffic selectors? */
+					$pskconf .= " : RSA {$ph1keyfile}\n";
 				} else {
 					list ($myid_type, $myid_data) = ipsec_find_id($ph1ent, "local");
 					list ($peerid_type, $peerid_data) = ipsec_find_id($ph1ent, "peer", $rgmap);
@@ -595,6 +588,11 @@ EOD;
 
 				$authentication = "";
 				switch ($ph1ent['authentication_method']) {
+				case 'eap-tls':
+					$authentication = "leftauth=eap-tls\n\trightauth=eap-tls";
+					if (!empty($ph1ent['certref']))
+						$authentication .= "\n\tleftcert={$certpath}/cert-{$ph1ent['ikeid']}.crt";
+					break;
 				case 'xauth_rsa_server':
 					$authentication = "leftauth = pubkey\n\trightauth = pubkey";
 					$authentication .= "\n\trightauth2 = xauth-generic";
@@ -616,6 +614,15 @@ EOD;
 				}
 
 				$left_spec = $ep;
+
+				if (isset($ph1ent['reauth_enable']))
+					$reauth = "reauth = no";
+				else
+					$reauth = "reauth = yes";
+				if (isset($ph1ent['rekey_enable']))
+					$rekey = "rekey = no";
+				else
+					$rekey = "rekey = yes";
 
 				$ipseclifetime = 0;
 				$rightsubnet_spec = array();
@@ -777,8 +784,8 @@ conn con{$ph1ent['ikeid']}
 	aggressive = {$aggressive}
 	fragmentation = yes
 	keyexchange = {$keyexchange}
-	reauth = yes
-	rekey = yes
+	{$reauth}
+	{$rekey}
 	reqid = {$ikeid}
 	installpolicy = yes
 	{$tunneltype}

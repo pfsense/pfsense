@@ -853,7 +853,7 @@ function dpdchkbox_change() {
 						<td width="22%" valign="top" class="vncell"><?=gettext("Disable Reauth");?></td>
 						<td width="78%" class="vtable">
 							<input name="reauth_enable" type="checkbox" id="reauth_enable" value="yes" <?php if (isset($pconfig['reauth_enable'])) echo "checked=\"checked\""; ?> />
-							<?=gettext("whether rekeying of an IKE_SA should also reauthenticate the peer. In IKEv1, reauthentication is always don.."); ?><br />
+							<?=gettext("Whether rekeying of an IKE_SA should also reauthenticate the peer. In IKEv1, reauthentication is always done."); ?><br />
 						</td>
 					</tr>
 					<tr>

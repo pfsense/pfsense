@@ -98,7 +98,7 @@ function match_filter_field($flent, $fields) {
 	foreach ($fields as $key => $field) {
 		if ($field == "All")
 			continue;
-		if ((strpos($$field, '!') === 0)) {
+		if ((strpos($field, '!') === 0)) {
 			$field = substr($field, 1);
 			if (strtolower($key) == 'act') {
 				if (in_arrayi($flent[$key], explode(" ", $field)))

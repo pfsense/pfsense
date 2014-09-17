@@ -71,7 +71,6 @@ include("head.inc");
 
 <body link="#0000CC" vlink="#0000CC" alink="#0000CC" onload="<?=$jsevents["body"]["onload"];?>">
 <?php include("fbegin.inc"); ?>
-<form action="diag_dump_states.php" method="get" name="iform">
 
 <script type="text/javascript">
 	function removeState(srcip, dstip) {
@@ -129,7 +128,7 @@ include("head.inc");
 <table class="tabcont" width="100%" border="0" cellspacing="0" cellpadding="0">
 	<tr>
 		<td>
-			<form action="<?=$_SERVER['SCRIPT_NAME'];?>" method="get">
+			<form action="<?=$_SERVER['SCRIPT_NAME'];?>" method="get" name="iform">
 			<table class="tabcont" width="100%" border="0" cellspacing="0" cellpadding="0">
 				<tr>
 					<td>

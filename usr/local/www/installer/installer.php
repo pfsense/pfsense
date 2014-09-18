@@ -408,7 +408,8 @@ function body_html() {
 	include("head.inc");
 	echo <<<EOF
 	<body link="#0000CC" vlink="#0000CC" alink="#0000CC">
-	<script type="text/javascript" src="/javascript/jquery.js"></script>
+	<script type="text/javascript" src="/javascript/jquery-1.11.1.min.js"></script>
+	<script type="text/javascript" src="/javascript/jquery-migrate-1.2.1.min.js"></script>
 	<script type="text/javascript" src="/javascript/jquery/jquery-ui.custom.min.js"></script>
 	<script type="text/javascript">
 		function getinstallerprogress() {

@@ -110,7 +110,8 @@ function display_error_form($http_code, $desc) {
    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
 	<head>
-		<script type="text/javascript" src="/javascript/jquery.js"></script>
+		<script type="text/javascript" src="/javascript/jquery-1.11.1.min.js"></script>
+		<script type="text/javascript" src="/javascript/jquery-migrate-1.2.1.min.js"></script>
 		<title><?=$http_code?></title>
 		<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 		<link rel="shortcut icon" href="/themes/<?= $g['theme'] ?>/images/icons/favicon.ico" />
@@ -227,7 +228,8 @@ $have_cookies = isset($_COOKIE["cookie_test"]);
    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
 	<head>
-		<script type="text/javascript" src="/javascript/jquery.js"></script>
+		<script type="text/javascript" src="/javascript/jquery-1.11.1.min.js"></script>
+		<script type="text/javascript" src="/javascript/jquery-migrate-1.2.1.min.js"></script>
 		<script type="text/javascript">
 		//<![CDATA[
 		$(document).ready(function() { jQuery('#usernamefld').focus(); });

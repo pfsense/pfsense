@@ -686,7 +686,7 @@ class Auth_RADIUS extends PEAR {
                 break;
 
             case 85: /* Acct-Interim-Interval: RFC 2869 */
-                $this->attributes['interim_interval'] = radius_cvt_int($datav[1]);
+                $this->attributes['interim_interval'] = radius_cvt_int($data);
                 break;
             }
         }

@@ -53,6 +53,17 @@ foreach ($config['system']['user'] as $id => $user) {
 	}
 }
 
+if ($_POST) {
+        if ($_POST['apply']) {
+		$retval = 0;
+		$retval = vpn_ipsec_configure();
+		/* reload the filter in the background */
+		filter_configure();
+		$savemsg = get_std_save_message($retval);
+		if (is_subsystem_dirty('ipsec'))
+			clear_subsystem_dirty('ipsec');
+	}
+}
 
 if ($_GET['act'] == "del") {
 	if ($a_secret[$_GET['id']]) {

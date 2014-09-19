@@ -35,7 +35,7 @@
 		<field>
 			<name>UPnP &amp; NAT-PMP Settings</name>
 			<type>listtopic</type>
-			<enablefields>enable_upnp,enable_natpmp,listen_on_iface,iface_array,overridewanip,upnpqueue,logpackets,sysuptime,permdefault,permuser1,permuser2,permuser3,permuser4</enablefields>
+			<enablefields>enable_upnp,enable_natpmp,iface_array,overridewanip,upnpqueue,logpackets,sysuptime,permdefault,permuser1,permuser2,permuser3,permuser4</enablefields>
 		</field>
 		<field>
 			<fielddescr>Enable UPnP &amp; NAT-PMP</fielddescr>
@@ -80,11 +80,6 @@
 			<description>You can use the CTRL or COMMAND key to select multiple interfaces.</description>
 			<required/>
 		</field>
-		<field>
-			<fielddescr>Listen on interface instead of interface's IPv4 address</fielddescr>
-			<fieldname>listen_on_iface</fieldname>
-			<type>checkbox</type>
-		</field>			
 		<field>
 			<fielddescr>Maximum Download Speed (Kbits/second)</fielddescr>
 			<fieldname>download</fieldname>

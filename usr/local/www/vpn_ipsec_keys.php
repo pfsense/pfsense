@@ -39,6 +39,7 @@ require("functions.inc");
 require("guiconfig.inc");
 require_once("ipsec.inc");
 require_once("vpn.inc");
+require_once("filter.inc");
 
 if (!is_array($config['ipsec']['mobilekey'])) {
 	$config['ipsec']['mobilekey'] = array();
@@ -84,6 +85,7 @@ include("head.inc");
 
 <body link="#0000CC" vlink="#0000CC" alink="#0000CC">
 <?php include("fbegin.inc"); ?>
+<form action="vpn_ipsec_keys.php" method="post">
 <?php 
 if ($savemsg)
 	print_info_box($savemsg);
@@ -183,6 +185,7 @@ if (is_subsystem_dirty('ipsec'))
 		</td>
 	</tr>
 </table>
+</form>
 <?php include("fend.inc"); ?>
 </body>
 </html>

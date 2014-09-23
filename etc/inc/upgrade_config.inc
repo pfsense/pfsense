@@ -3377,6 +3377,10 @@ function upgrade_109_to_110() {
 function upgrade_110_to_111() {
 	global $config;
 
+	/* Make sure unbound user exist */
+	mwexec('/usr/sbin/pw groupadd -n unbound -g 59', true);
+	mwexec('/usr/sbin/pw useradd -n unbound -c "Unbound DNS Resolver" -d /var/unbound -s /usr/sbin/nologin -u 59 -g 59', true);
+
 	if (!isset($config['installedpackages']['unbound']['config'][0]))
 		return;
 

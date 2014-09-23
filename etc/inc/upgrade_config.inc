@@ -3374,4 +3374,96 @@ function upgrade_109_to_110() {
 	}
 }
 
+function upgrade_110_to_111() {
+	global $config;
+
+	if (!isset($config['installedpackages']['unbound']['config'][0]))
+		return;
+
+	$pkg = $config['installedpackages']['unbound']['config'][0];
+
+	if (isset($config['installedpackages']['unboundadvanced']['config'][0]))
+		$pkg = array_merge($pkg, $config['installedpackages']['unboundadvanced']['config'][0]);
+
+	$new = array();
+
+	/* deal first with boolean fields */
+	$fields = array(
+		"enable" => "enable",
+		"dnssec_status" => "dnssec",
+		"forwarding_mode" => "forwarding",
+		"regdhcp" => "regdhcp",
+		"regdhcpstatic" => "regdhcpstatic",
+		"txtsupport" => "txtsupport",
+		"hide_id" => "hideidentity",
+		"hide_version" => "hideversion",
+		"prefetch" => "prefetch",
+		"prefetch_key" => "prefetchkey",
+		"harden_glue" => "hardenglue",
+		"harden_dnssec_stripped" => "dnssec_stripped");
+
+	foreach ($fields as $oldk => $newk) {
+		if (isset($pkg[$oldk])) {
+			if ($pkg[$oldk] == 'on')
+				$new[$newk] = true;
+			unset($pkg[$oldk]);
+		}
+	}
+
+	$fields = array(
+		"active_interface" => "network_interface",
+		"query_interface" => "outgoing_interface",
+		"unbound_verbosity" => "log_verbosity",
+		"unbound_verbosity" => "log_verbosity",
+		"msg_cache_size" => "msgcachesize",
+		"outgoing_num_tcp" => "outgoing_num_tcp",
+		"incoming_num_tcp" => "incoming_num_tcp",
+		"edns_buffer_size" => "edns_buffer_size",
+		"num_queries_per_thread" => "num_queries_per_thread",
+		"jostle_timeout" => "jostle_timeout",
+		"cache_max_ttl" => "cache_max_ttl",
+		"cache_min_ttl" => "cache_min_ttl",
+		"infra_host_ttl" => "infra_host_ttl",
+		"infra_cache_numhosts" => "infra_cache_numhosts",
+		"unwanted_reply_threshold" => "unwanted_reply_threshold",
+		"custom_options" => "custom_options");
+
+	foreach ($fields as $oldk => $newk) {
+		if (isset($pkg[$oldk])) {
+			$new[$newk] = $pkg[$oldk];
+			unset($pkg[$oldk]);
+		}
+	}
+
+	/* Following options were removed, bring them as custom_options */
+	if (isset($pkg['stats']) && $pkg['stats'] == "on") {
+		if (isset($pkg['stats_interval']))
+			$new['custom_options'] .= (empty($new['custom_options']) ? "" : ";") . "statistics-interval: {$pkg['stats_interval']}";
+		if (isset($pkg['cumulative_stats']))
+			$new['custom_options'] .= (empty($new['custom_options']) ? "" : ";") . "statistics-cumulative: {$pkg['cumulative_stats']}";
+		if (isset($pkg['extended_stats']) && $pkg['extended_stats'] == "on")
+			$new['custom_options'] .= (empty($new['custom_options']) ? "" : ";") . "extended-statistics: yes";
+		else
+			$new['custom_options'] .= (empty($new['custom_options']) ? "" : ";") . "extended-statistics: no";
+	}
+
+	$new['acls'] = array();
+	if (isset($config['installedpackages']['unboundacls']['config']) &&
+	    is_array($config['installedpackages']['unboundacls']['config'])) {
+		foreach ($config['installedpackages']['unboundacls']['config'] as $acl)
+			$new['acls'][] = $acl;
+	}
+
+	$config['unbound'] = $new;
+
+	if(isset($config['installedpackages']['unbound']))
+		unset($config['installedpackages']['unbound']);
+	if(isset($config['installedpackages']['unboundadvanced']))
+		unset($config['installedpackages']['unboundadvanced']);
+	if(isset($config['installedpackages']['unboundacls']))
+		unset($config['installedpackages']['unboundacls']);
+
+	unset($pkg, $new);
+}
+
 ?>

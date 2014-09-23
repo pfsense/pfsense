@@ -187,10 +187,10 @@ include("head.inc"); ?>
             <?=$mandfldhtml;?>
 			<table summary="results">
 				<tr><td valign="top">
-			<input name="host" type="text" class="formfld" id="host" size="20" value="<?=xhtmlspecialchars($host);?>" /> =
+			<input name="host" type="text" class="formfld" id="host" size="20" value="<?=xhtmlspecialchars($host);?>" />
 			</td>
 			<?php if ($resolved && $type) { ?>
-			<td valign="top">&nbsp;=&nbsp;</td><td>
+			<td valign="middle">&nbsp;=&nbsp;</td><td>
 			<font size="+1">
 <?php
 				$found = 0;
@@ -205,7 +205,7 @@ include("head.inc"); ?>
 					echo $resolved; 
 				} 
 				if($found > 0) { ?>
-					<br/><font size='-2'>
+					<br/></font><font size='-2'>
 				<?PHP	if($alias_exists) { ?>
 							An alias already exists for the hostname <?= xhtmlspecialchars($host) ?>. <br />
 							<input type="hidden" name="override" value="true"/>
@@ -221,7 +221,7 @@ include("head.inc"); ?>
 ?>
 
 			<?php } ?>
-			</td></tr></table>
+			</font></td></tr></table>
 		  </td>
 		</tr>
 <?php		if($_POST): ?>

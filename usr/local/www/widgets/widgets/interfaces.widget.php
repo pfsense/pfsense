@@ -88,7 +88,7 @@ require_once("/usr/local/www/widgets/include/interfaces.inc");
 							</td>
 						</tr>
 						<tr>
-							<td class="listr"><b>
+							<td class="vncellt" style="border-right:1px solid #999999;">
 								<?php if($ifinfo['ipaddr'] != "") { ?>
                                                                 	<div id="<?php echo $ifname;?>-ip" style="display:inline"><?=xhtmlspecialchars($ifinfo['ipaddr']);?> </div>
                                                                 	<br />
@@ -96,8 +96,7 @@ require_once("/usr/local/www/widgets/include/interfaces.inc");
 								if ($ifinfo['ipaddrv6'] != "") { ?>
 									<div id="<?php echo $ifname;?>-ipv6" style="display:inline"><?=xhtmlspecialchars($ifinfo['ipaddrv6']);?> </div>
 								<?php } ?>
-							</b></td>
+							</td>
 						</tr>
-				</tr>
 				<?php 	}//end for each ?>
 			</table>

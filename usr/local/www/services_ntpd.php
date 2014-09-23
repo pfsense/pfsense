@@ -173,6 +173,10 @@ if ($_POST) {
 }
 $closehead = false;
 $pconfig = &$config['ntpd'];
+if (empty($pconfig['interface']))
+	$pconfig['interface'] = array();
+else
+	$pconfig['interface'] = explode(",", $pconfig['interface']);
 $pgtitle = array(gettext("Services"),gettext("NTP"));
 $shortcut_section = "ntp";
 include("head.inc");

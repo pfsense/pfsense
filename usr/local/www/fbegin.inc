@@ -339,7 +339,7 @@ if(! $g['disablehelpmenu']) {
 					</li>
 					<li class="drop">
 						<div><?php echo gettext("Gold"); ?></div>
-						<ul id="diag" class="subdrop">
+						<ul id="gold" class="subdrop">
 						<?php
 							output_menu($gold_menu, "_blank");
 						?>

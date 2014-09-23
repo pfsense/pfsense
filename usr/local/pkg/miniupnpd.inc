@@ -159,10 +159,7 @@
 					$bits = find_interface_subnet($if);
 					/* check that the interface has an ip address before adding parameters */
 					if (is_ipaddr($addr)) {
-						if ($upnp_config['listen_on_iface'])
-							$config_text .= "listening_ip={$if}\n";
-						else
-							$config_text .= "listening_ip={$addr}/{$bits}\n";
+						$config_text .= "listening_ip={$if}\n";
 						if(!$ifaces_active) {
 							$webgui_ip = $addr;
 							$ifaces_active = $iface;

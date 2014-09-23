@@ -57,7 +57,7 @@ $counter = 1;
 		</strong>
 		<?php $counter++; ?>
 	</td>
-	<td colspan="3" class="listr ellipsis" summary="address" align="center">
+	<td colspan="3" class="listr ellipsis" align="center">
 				<div id="gateway<?php echo $counter; ?>" style="display:inline"><b>
 					<?php
 						$if_gw = '';

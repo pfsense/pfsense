@@ -246,16 +246,16 @@ foreach($databases as $database) {
 $ui_databases = array_merge($dbheader, $databases);
 $custom_databases = array_merge($dbheader_custom, $databases);
 
-$graphs = array("8hour", "day", "week", "month", "quarter", "year", "4year");
+$graphs = array("eighthour", "day", "week", "month", "quarter", "year", "fouryear");
 $periods = array("absolute" => gettext("Absolute Timespans"), "current" => gettext("Current Period"), "previous" => gettext("Previous Period"));
 $graph_length = array(
-	"8hour" => 28800,
+	"eighthour" => 28800,
 	"day" => 86400,
 	"week" => 604800,
 	"month" => 2678400,
 	"quarter" => 7948800,
 	"year" => 31622400,
-	"4year" => 126230400);
+	"fouryear" => 126230400);
 
 $pgtitle = array(gettext("Status"),gettext("RRD Graphs"));
 
@@ -286,10 +286,10 @@ include("head.inc");
 
 <?php if ($curcat === "custom") { ?>
 	<link rel="stylesheet" type="text/css" href="/javascript/jquery-ui-timepicker-addon/css/jquery-ui-timepicker-addon.css" />
-	<?php if (file_exists("{$g['www_path']}/themes/{$g['theme']}/jquery-ui.custom.css")) { ?>
-		<link rel="stylesheet" type="text/css" href="/themes/<?= $g['theme'] ?>/jquery-ui.custom.css" />
+	<?php if (file_exists("{$g['www_path']}/themes/{$g['theme']}/jquery-ui-1.11.1.css")) { ?>
+		<link rel="stylesheet" type="text/css" href="/themes/<?= $g['theme'] ?>/jquery-ui-1.11.1.css" />
 	<?php } else { ?>
-		<link rel="stylesheet" type="text/css" href="/javascript/jquery/jquery-ui.custom.css" />
+		<link rel="stylesheet" type="text/css" href="/javascript/jquery/jquery-ui-1.11.1.css" />
 	<?php } ?>
 	<script type="text/javascript" src="/javascript/jquery-ui-timepicker-addon/js/jquery-ui-timepicker-addon.js"></script>
 	<script type="text/javascript">
@@ -332,7 +332,7 @@ function get_dates($curperiod, $graph) {
 				$offset = 0;
 		}
 		switch($graph) {
-			case "8hour":
+			case "eighthour":
 				if($curhour < 24)
 					$starthour = 16;
 				if($curhour < 16)
@@ -386,7 +386,7 @@ function get_dates($curperiod, $graph) {
 				if($offset != 0)
 					$end = mktime(0, 0, 0, 1, 0, (($curyear + $offset) +1));
 				break;
-			case "4year":
+			case "fouryear":
 				$start = mktime(0, 0, 0, 1, 0, (($curyear - 3) + $offset));
 				if($offset != 0)
 					$end = mktime(0, 0, 0, 1, 0, (($curyear + $offset) +1));

@@ -321,6 +321,10 @@ function removeRow(el) {
 			<a onclick="javascript:addRowTo('maintable'); return false;" href="#">
         <img border="0" src="/themes/<?= $g['theme']; ?>/images/icons/icon_plus.gif" alt="" title="<?=gettext("add another entry");?>" />
       </a>
+		<br /><br />
+		<strong><?PHP echo gettext("NOTE:");?></strong>
+		<?PHP echo gettext("Rules for WAN type interfaces in groups do not contain the reply-to mechanism upon which Multi-WAN typically relies.");?>
+		<a href="https://doc.pfsense.org/index.php/Interface_Groups"><?PHP echo gettext("More Information");?></a>
 		</td>
   </tr>
   <tr>

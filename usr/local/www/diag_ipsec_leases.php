@@ -69,42 +69,52 @@ $mobile = ipsec_dump_mobile();
 		<tr>
 			<td>
 				<div id="mainarea">
-				<?php foreach($mobile['pool'] as $pool): ?>
+				<?php if (isset($mobile['pool']) && is_array($mobile['pool'])): ?>
+					<?php foreach($mobile['pool'] as $pool): ?>
+						<table class="tabcont sortable" width="100%" border="0" cellpadding="6" cellspacing="0" summary="main area">
+							<tr>
+								<td colspan="4" valign="top" class="listtopic">
+								<?php
+									echo gettext("Pool: ") . $pool['name'];
+									echo ' ' . gettext("usage: ") . $pool['usage'];
+									echo ' ' . gettext("online: ") . $pool['online'];
+								?>
+								</td>
+							</tr>
+							<?php if (is_array($pool['lease']) && count($pool['lease']) > 0): ?>
+							<tr>
+								<td class="listhdrr nowrap"><?=gettext("ID");?></td>
+								<td class="listhdrr nowrap"><?=gettext("Host");?></td>
+								<td class="listhdrr nowrap"><?=gettext("Status");?></td>
+								<td class="list nowrap"></td>
+							</tr>
+							<?php foreach ($pool['lease'] as $lease): ?>
+							<tr>
+								<td class="listlr"><?=htmlspecialchars($lease['id']);?></td>
+								<td class="listr"><?=htmlspecialchars($lease['host']);?></td>
+								<td class="listr"><?=htmlspecialchars($lease['status']);?></td>
+								<td class="list nowrap">
+								</td>
+							</tr>
+							<?php endforeach;
+							else: ?>
+							<tr>
+								<td>
+									<p><strong><?=gettext("No leases from this pool yet.");?></strong></p>
+								</td>
+							</tr>
+							<?php endif; ?>
+						</table>
+					<?php endforeach; ?>
+				<?php else: ?>
 					<table class="tabcont sortable" width="100%" border="0" cellpadding="6" cellspacing="0" summary="main area">
 						<tr>
-							<td colspan="4" valign="top" class="listtopic">
-							<?php
-								echo gettext("Pool: ") . $pool['name'];
-								echo ' ' . gettext("usage: ") . $pool['usage'];
-								echo ' ' . gettext("online: ") . $pool['online'];
-							?>
-							</td>
-						</tr>
-						<?php if (is_array($pool['lease']) && count($pool['lease']) > 0): ?>
-						<tr>
-							<td class="listhdrr nowrap"><?=gettext("ID");?></td>
-							<td class="listhdrr nowrap"><?=gettext("Host");?></td>
-							<td class="listhdrr nowrap"><?=gettext("Status");?></td>
-							<td class="list nowrap"></td>
-						</tr>
-						<?php foreach ($pool['lease'] as $lease): ?>
-						<tr>
-							<td class="listlr"><?=htmlspecialchars($lease['id']);?></td>
-							<td class="listr"><?=htmlspecialchars($lease['host']);?></td>
-							<td class="listr"><?=htmlspecialchars($lease['status']);?></td>
-							<td class="list nowrap">
-							</td>
-						</tr>
-						<?php endforeach;
-						else: ?>
-						<tr>
 							<td>
-								<p><strong><?=gettext("No leases from this pool yet.");?></strong></p>
+								<p><strong><?=gettext("No IPsec pools.");?></strong></p>
 							</td>
 						</tr>
-						<?php endif; ?>
 					</table>
-				<?php endforeach; ?>
+				<?php endif; ?>
 				</div>
 			</td>
 		</tr>

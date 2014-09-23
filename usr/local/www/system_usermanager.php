@@ -354,7 +354,7 @@ include("head.inc");
 ?>
 
 <link rel="stylesheet" type="text/css" href="/javascript/jquery-ui-timepicker-addon/css/jquery-ui-timepicker-addon.css" />
-<link rel="stylesheet" type="text/css" href="/javascript/jquery/jquery-ui.custom.css" />
+<link rel="stylesheet" type="text/css" href="/javascript/jquery/jquery-ui-1.11.1.css" />
 
 <script type="text/javascript">
 //<![CDATA[

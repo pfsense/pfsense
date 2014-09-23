@@ -33,10 +33,11 @@ $pagetitle = gentitle( $pgtitle );
 		<link rel="stylesheet" type="text/css" href="/niftycssCode.css" />
 		<link rel="stylesheet" type="text/css" href="/niftycssprintCode.css" media="print" />
 		<link rel="stylesheet" type="text/css" href="/themes/<?=$g['theme']?>/new_tab_menu.css" media="all" />
-		<link rel="stylesheet" type="text/css" href="javascript/jquery/jquery-ui.custom.css" />
+		<link rel="stylesheet" type="text/css" href="javascript/jquery/jquery-ui-1.11.1.css" />
 		<script type="text/javascript" src="/javascript/niftyjsCode.js"></script>
-		<script type="text/javascript" src="/javascript/jquery.js"></script>
-		<script type="text/javascript" src="/javascript/jquery/jquery-ui.custom.min.js"></script>
+		<script type="text/javascript" src="/javascript/jquery-1.11.1.min.js"></script>
+		<script type="text/javascript" src="/javascript/jquery-migrate-1.2.1.min.js"></script>
+		<script type="text/javascript" src="/javascript/jquery/jquery-ui-1.11.1.min.js"></script>
 		<script type="text/javascript">
 		//<![CDATA[
 			var theme = "<?php echo $g['theme']; ?>";

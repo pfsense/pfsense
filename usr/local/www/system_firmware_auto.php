@@ -119,6 +119,7 @@ include("head.inc");
 									</script>
 									<!-- status box -->
 									<textarea cols="90" rows="1" name="status" id="status"><?=gettext("Beginning firmware upgrade"); ?>.</textarea>
+									<br />
 									<!-- command output box -->
 									<textarea cols="90" rows="25" name="output" id="output"></textarea>
 								</td>

@@ -109,8 +109,18 @@ if ($_POST) {
 
 	do_input_validation($_POST, $reqdfields, $reqdfieldsn, $input_errors);
 
-	if (($_POST['host'] && !is_domain($_POST['host'])))
-		$input_errors[] = gettext("The Hostname contains invalid characters.");
+	if (isset($_POST['host'])) {
+		/* Namecheap can have a @. in hostname */
+		if ($pconfig['type'] == "namecheap" && substr($_POST['host'], 0, 2) == '@.')
+			$host_to_check = substr($_POST['host'], 2);
+		else
+			$host_to_check = $_POST['host'];
+
+		if (!is_domain($host_to_check))
+			$input_errors[] = gettext("The Hostname contains invalid characters.");
+
+		unset($host_to_check);
+	}
 	if (($_POST['mx'] && !is_domain($_POST['mx']))) 
 		$input_errors[] = gettext("The MX contains invalid characters.");
 	if ((in_array("username", $reqdfields) && $_POST['username'] && !is_dyndns_username($_POST['username'])) || ((in_array("username", $reqdfields)) && ($_POST['username'] == ""))) 

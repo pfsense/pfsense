@@ -217,7 +217,7 @@ function validate_partial_mac_list($maclist) {
 	return true;
 }
 
-if ($_POST) {
+if (isset($_POST['submit'])) {
 
 	unset($input_errors);
 
@@ -519,37 +519,39 @@ if ($_POST) {
 		}
 
 		write_config();
-
-		$retval = 0;
-		$retvaldhcp = 0;
-		$retvaldns = 0;
-		/* Stop DHCP so we can cleanup leases */
-		killbyname("dhcpd");
-		dhcp_clean_leases();
-		/* dnsmasq_configure calls dhcpd_configure */
-		/* no need to restart dhcpd twice */
-		if (isset($config['dnsmasq']['enable']) && isset($config['dnsmasq']['regdhcpstatic']))	{
-			$retvaldns = services_dnsmasq_configure();
-			if ($retvaldns == 0) {
-				clear_subsystem_dirty('hosts');
-				clear_subsystem_dirty('staticmaps');
-			}
-		} else if (isset($config['unbound']['enable']) && isset($config['unbound']['regdhcpstatic'])) {
-			$retvaldns = services_unbound_configure();
-			if ($retvaldns == 0)
-				clear_subsystem_dirty('unbound');
-		} else {
-			$retvaldhcp = services_dhcpd_configure();
-			if ($retvaldhcp == 0)
-				clear_subsystem_dirty('staticmaps');
-		}
-		if ($dhcpd_enable_changed)
-			$retvalfc = filter_configure();
-
-		if($retvaldhcp == 1 || $retvaldns == 1 || $retvalfc == 1)
-			$retval = 1;
-		$savemsg = get_std_save_message($retval);
 	}
+}
+
+if (isset($_POST['submit']) || isset($_POST['apply'])) {
+	$retval = 0;
+	$retvaldhcp = 0;
+	$retvaldns = 0;
+	/* Stop DHCP so we can cleanup leases */
+	killbyname("dhcpd");
+	dhcp_clean_leases();
+	/* dnsmasq_configure calls dhcpd_configure */
+	/* no need to restart dhcpd twice */
+	if (isset($config['dnsmasq']['enable']) && isset($config['dnsmasq']['regdhcpstatic']))	{
+		$retvaldns = services_dnsmasq_configure();
+		if ($retvaldns == 0) {
+			clear_subsystem_dirty('hosts');
+			clear_subsystem_dirty('staticmaps');
+		}
+	} else if (isset($config['unbound']['enable']) && isset($config['unbound']['regdhcpstatic'])) {
+		$retvaldns = services_unbound_configure();
+		if ($retvaldns == 0)
+			clear_subsystem_dirty('unbound');
+	} else {
+		$retvaldhcp = services_dhcpd_configure();
+		if ($retvaldhcp == 0)
+			clear_subsystem_dirty('staticmaps');
+	}
+	if ($dhcpd_enable_changed)
+		$retvalfc = filter_configure();
+
+	if($retvaldhcp == 1 || $retvaldns == 1 || $retvalfc == 1)
+		$retval = 1;
+	$savemsg = get_std_save_message($retval);
 }
 
 if ($act == "delpool") {
@@ -1044,7 +1046,7 @@ include("head.inc");
 				</div>
 				<div id="showmaccontrol" style="display:none">
 					<input name="mac_allow" type="text" class="formfld unknown" id="mac_allow" size="20" value="<?=xhtmlspecialchars($pconfig['mac_allow']);?>" /><br />
-					<?=gettext("Enter a list of partial MAC addresses to allow, comma separated, no spaces, such as ");?>00:00:00,01:E5:FF<br />
+					<?=gettext("Enter a list of partial MAC addresses to allow, comma separated, no spaces, such as ");?>00:00:00,01:E5:FF
 					<input name="mac_deny" type="text" class="formfld unknown" id="mac_deny" size="20" value="<?=xhtmlspecialchars($pconfig['mac_deny']);?>" /><br />
 					<?=gettext("Enter a list of partial MAC addresses to deny access, comma separated, no spaces, such as ");?>00:00:00,01:E5:FF
 				</div>
@@ -1196,7 +1198,7 @@ include("head.inc");
 				<input type="hidden" name="pool" value="<?php echo $pool; ?>" />
 				<?php endif; ?>
 				<input name="if" type="hidden" value="<?=xhtmlspecialchars($if);?>" />
-				<input name="Submit" type="submit" class="formbtn" value="<?=gettext("Save");?>" onclick="enable_change(true)" />
+				<input name="submit" type="submit" class="formbtn" value="<?=gettext("Save");?>" onclick="enable_change(true)" />
 			</td>
 			</tr>
 			<tr>

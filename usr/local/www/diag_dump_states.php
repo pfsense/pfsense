@@ -44,23 +44,21 @@ require_once("interfaces.inc");
 require_once("pfsense-utils.inc");
 
 /* handle AJAX operations */
-if($_GET['action']) {
-	if($_GET['action'] == "remove") {
-		if (is_ipaddr($_GET['srcip']) and is_ipaddr($_GET['dstip'])) {
-			$retval = mwexec("/sbin/pfctl -k " . escapeshellarg($_GET['srcip']) . " -k " . escapeshellarg($_GET['dstip']));
-			echo xhtmlentities("|{$_GET['srcip']}|{$_GET['dstip']}|{$retval}|");
-		} else {
-			echo gettext("invalid input");
-		}
-		return;
+if(isset($_POST['action']) && $_POST['action'] == "remove") {
+	if (isset($_POST['srcip']) && isset($_POST['dstip']) && is_ipaddr($_POST['srcip']) && is_ipaddr($_POST['dstip'])) {
+		$retval = mwexec("/sbin/pfctl -k " . escapeshellarg($_POST['srcip']) . " -k " . escapeshellarg($_POST['dstip']));
+		echo xhtmlentities("|{$_POST['srcip']}|{$_POST['dstip']}|{$retval}|");
+	} else {
+		echo gettext("invalid input");
 	}
+	return;
 }
 
-if ($_GET['filter'] && ($_GET['killfilter'] == "Kill")) {
-	if (is_ipaddr($_GET['filter'])) {
-		$tokill = escapeshellarg($_GET['filter'] . "/32");
-	} elseif (is_subnet($_GET['filter'])) {
-		$tokill = escapeshellarg($_GET['filter']);
+if (isset($_POST['filter']) && isset($_POST['killfilter'])) {
+	if (is_ipaddr($_POST['filter'])) {
+		$tokill = escapeshellarg($_POST['filter'] . "/32");
+	} elseif (is_subnet($_POST['filter'])) {
+		$tokill = escapeshellarg($_POST['filter']);
 	} else {
 		// Invalid filter
 		$tokill = "";
@@ -78,7 +76,6 @@ include("head.inc");
 
 <body link="#0000CC" vlink="#0000CC" alink="#0000CC" onload="<?=$jsevents["body"]["onload"];?>">
 <?php include("fbegin.inc"); ?>
-<form action="diag_dump_states.php" method="get" name="iform">
 
 <script type="text/javascript">
 //<![CDATA[
@@ -92,9 +89,16 @@ include("head.inc");
 		jQuery('img[name="i:' + srcip + ":" + dstip + '"]').each(busy);
 
 		jQuery.ajax(
-			"<?=$_SERVER['SCRIPT_NAME'];?>" +
-				"?action=remove&srcip=" + srcip + "&dstip=" + dstip,
-			{ type: "get", complete: removeComplete }
+			"<?=$_SERVER['SCRIPT_NAME'];?>",
+			{
+				type: "post",
+				data: {
+					action: "remove",
+					srcip: srcip,
+					dstip: dstip
+				},
+				complete: removeComplete
+			}
 		);
 	}
 
@@ -138,7 +142,7 @@ include("head.inc");
 <table class="tabcont" width="100%" border="0" cellspacing="0" cellpadding="0" summary="states">
 	<tr>
 		<td>
-			<form action="<?=$_SERVER['SCRIPT_NAME'];?>" method="get">
+			<form action="<?=$_SERVER['SCRIPT_NAME'];?>" method="post" name="iform">
 			<table class="tabcont" width="100%" border="0" cellspacing="0" cellpadding="0" summary="filter">
 				<tr>
 					<td>
@@ -146,9 +150,9 @@ include("head.inc");
 					</td>
 					<td style="font-weight:bold;" align="right">
 						<?=gettext("Filter expression:");?>
-						<input type="text" name="filter" class="formfld search" value="<?=xhtmlspecialchars($_GET['filter']);?>" size="30" />
+						<input type="text" name="filter" class="formfld search" value="<?=xhtmlspecialchars($_POST['filter']);?>" size="30" />
 						<input type="submit" class="formbtn" value="<?=gettext("Filter");?>" />
-					<?php if (is_ipaddr($_GET['filter']) || is_subnet($_GET['filter'])): ?>
+					<?php if (isset($_POST['filter']) && (is_ipaddr($_POST['filter']) || is_subnet($_POST['filter']))): ?>
 						<input type="submit" class="formbtn" name="killfilter" value="<?=gettext("Kill");?>" />
 					<?php endif; ?>
 					</td>
@@ -173,7 +177,7 @@ include("head.inc");
 <?php
 $row = 0;
 /* get our states */
-$grepline = ($_GET['filter']) ? "| /usr/bin/egrep " . escapeshellarg(xhtmlspecialchars($_GET['filter'])) : "";
+$grepline = (isset($_POST['filter'])) ? "| /usr/bin/egrep " . escapeshellarg(xhtmlspecialchars($_POST['filter'])) : "";
 $fd = popen("/sbin/pfctl -s state {$grepline}", "r" );
 while ($line = chop(fgets($fd))) {
 	if($row >= 10000)
@@ -229,7 +233,7 @@ pclose($fd);
 	</tr>
 	<tr>
 		<td class="list" colspan="4" align="center" valign="top">
-		<?php if (!empty($_GET['filter'])): ?>
+		<?php if (isset($_POST['filter']) && !empty($_POST['filter'])): ?>
 			<?=gettext("States matching current filter")?>: <?= $row ?>
 		<?php endif; ?>
 		</td>
@@ -242,7 +246,6 @@ pclose($fd);
 	</td>
   </tr>
 </table>
-</form>
 
 <?php require("fend.inc"); ?>
 </body>

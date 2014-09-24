@@ -64,6 +64,7 @@ $pconfig['thermal_hardware'] = $config['system']['thermal_hardware'];
 $pconfig['schedule_states'] = isset($config['system']['schedule_states']);
 $pconfig['kill_states'] = isset($config['system']['kill_states']);
 $pconfig['skip_rules_gw_down'] = isset($config['system']['skip_rules_gw_down']);
+$pconfig['apinger_debug'] = isset($config['system']['apinger_debug']);
 $pconfig['use_mfs_tmpvar'] = isset($config['system']['use_mfs_tmpvar']);
 $pconfig['use_mfs_tmp_size'] = $config['system']['use_mfs_tmp_size'];
 $pconfig['use_mfs_var_size'] = $config['system']['use_mfs_var_size'];
@@ -188,6 +189,17 @@ if ($_POST) {
 		else
 			unset($config['system']['skip_rules_gw_down']);
 
+		$need_apinger_restart = false;
+		if($_POST['apinger_debug'] == "yes") {
+			if (!isset($config['system']['apinger_debug']))
+				$need_apinger_restart = true;
+			$config['system']['apinger_debug'] = true;
+		} else {
+			if (isset($config['system']['apinger_debug']))
+				$need_apinger_restart = true;
+			unset($config['system']['apinger_debug']);
+		}
+
 		if($_POST['use_mfs_tmpvar'] == "yes")
 			$config['system']['use_mfs_tmpvar'] = true;
 		else
@@ -220,6 +232,8 @@ if ($_POST) {
 		load_thermal_hardware();
 		if ($need_relayd_restart)
 			relayd_configure();
+		if ($need_apinger_restart)
+			setup_gateways_monitor();
 	}
 }
 
@@ -499,6 +513,15 @@ function tmpvar_checked(obj) {
 									<?=gettext("By default, when a rule has a specific gateway set, and this gateway is down, ".
 									"rule is created and traffic is sent to default gateway.This option overrides that behavior ".
 									"and the rule is not created when gateway is down"); ?>
+								</td>
+							</tr>
+							<tr>
+								<td width="22%" valign="top" class="vncell"><?=gettext("Enable debugging messages of gateway monitoring daemon"); ?></td>
+								<td width="78%" class="vtable">
+									<input name="apinger_debug" type="checkbox" id="apinger_debug" value="yes" <?php if ($pconfig['apinger_debug']) echo "checked=\"checked\""; ?> />
+									<br />
+									<?=gettext("By default, gateway monitoring does not log its error messages, ".
+									"by toggling this setting the daemon would enable logging its messages to syslog."); ?>
 								</td>
 							</tr>
 							<tr>

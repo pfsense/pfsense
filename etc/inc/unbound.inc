@@ -146,7 +146,7 @@ EOF;
         foreach($outgoing_interfaces as $outif) {
             $outip = get_interface_ip($outif);
             if (!is_null($outip))
-                $outgoingints .= "outgoing-interface: $intip\n";
+                $outgoingints .= "outgoing-interface: $outip\n";
         }
     }
 

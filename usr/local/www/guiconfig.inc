@@ -334,7 +334,7 @@ function print_info_box_np($msg, $name="apply",$value="", $showapply=false) {
 	}
 
 	if(!$savebutton) {
-		$savebutton = "<td class=\"infoboxsave\"><input value=\"" . gettext("Close") . "\" type=\"button\" onclick=\"jQuery('#redboxtable').hide();\" /></td>";
+		$savebutton = "<td class=\"infoboxsave\"><input value=\"" . gettext("Close") . "\" type=\"button\" onclick=\"jQuery(this).parents('table[id=redboxtable]').hide();\" /></td>";
 	}
 
 	echo <<<EOFnp
@@ -399,7 +399,7 @@ function print_info_box_np_undo($msg, $name="apply",$value="Apply changes", $und
 
 
 	if(!$savebutton) {
-		$savebutton = "<td class=\"infoboxsave\"><input value=\"" . gettext("Close") . "\" type=\"button\" onclick=\"jQuery('#redboxtable').hide();\" /></td>";
+		$savebutton = "<td class=\"infoboxsave\"><input value=\"" . gettext("Close") . "\" type=\"button\" onclick=\"jQuery(this).parents('table[id=redboxtable]').hide();\" /></td>";
 	}
 
 	echo <<<EOFnp

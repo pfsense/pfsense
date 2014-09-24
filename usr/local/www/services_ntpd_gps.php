@@ -70,7 +70,7 @@ if ($_POST) {
 	else unset($config['ntpd']['gps']);
 
 	if (!empty($_POST['gpstype']))
-		$config['ntpd']['gps']['type'] = 'Custom';
+		$config['ntpd']['gps']['type'] = $_POST['gpstype'];
 	elseif (isset($config['ntpd']['gps']['type']))
 		unset($config['ntpd']['gps']['type']);
 

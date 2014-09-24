@@ -3381,6 +3381,34 @@ function upgrade_110_to_111() {
 	mwexec('/usr/sbin/pw groupadd -n unbound -g 59', true);
 	mwexec('/usr/sbin/pw useradd -n unbound -c "Unbound DNS Resolver" -d /var/unbound -s /usr/sbin/nologin -u 59 -g 59', true);
 
+	/* cleanup old unbound package stuffs */
+	unlink_if_exists("/usr/local/pkg/unbound.xml");
+	unlink_if_exists("/usr/local/pkg/unbound.inc");
+	unlink_if_exists("/usr/local/pkg/unbound_advanced.xml");
+	unlink_if_exists("/usr/local/www/unbound_status.php");
+	unlink_if_exists("/usr/local/www/unbound_acls.php");
+	unlink_if_exists("/usr/local/bin/unbound_monitor.sh");
+
+	/* Remove old menu and service entries */
+	if (isset($config['installedpackages']['menu']) && is_array($config['installedpackages']['menu'])) {
+		foreach ($config['installedpackages']['menu'] as $idx => $menu) {
+			if ($menu['name'] != 'Unbound DNS')
+				continue;
+
+			unset($config['installedpackages']['menu'][$idx]);
+			break;
+		}
+	}
+
+	if (isset($config['installedpackages']['service']) && is_array($config['installedpackages']['service'])) {
+		foreach ($config['installedpackages']['service'] as $idx => $service) {
+			if ($service['name'] != 'unbound')
+				continue;
+			unset($config['installedpackages']['service'][$idx]);
+			break;
+		}
+	}
+
 	if (!isset($config['installedpackages']['unbound']['config'][0]))
 		return;
 

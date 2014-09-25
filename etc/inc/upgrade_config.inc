@@ -3388,6 +3388,7 @@ function upgrade_110_to_111() {
 	unlink_if_exists("/usr/local/www/unbound_status.php");
 	unlink_if_exists("/usr/local/www/unbound_acls.php");
 	unlink_if_exists("/usr/local/bin/unbound_monitor.sh");
+	unlink_if_exists("/usr/local/etc/rc.d/unbound.sh");
 
 	/* Remove old menu and service entries */
 	if (isset($config['installedpackages']['menu']) && is_array($config['installedpackages']['menu'])) {

@@ -202,7 +202,7 @@ if ($_POST) {
 	} else if ($_POST['type'] == "url" || $_POST['type'] == "url_ports") {
 		$desc_fmt_err_found = false;
 		if ($_POST['type'] == "url_ports")
-			$maxitems = 1000; // Truncate at 1000 ports, aliases larger than +-1350 ports cause pf to throw an error "string too long"
+			$maxitems = 3000; // Truncate at 1000 ports, aliases larger than +-1350 ports cause pf to throw an error "string too long"
 		else
 			$maxitems = 3000; // ?? does that work ??
 

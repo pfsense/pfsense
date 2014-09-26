@@ -107,12 +107,6 @@ if (isset($id) && $a_aliases[$id]) {
 	$pconfig['type'] = $a_aliases[$id]['type'];
 	$pconfig['descr'] = html_entity_decode($a_aliases[$id]['descr']);
 
-	/* interface list */
-	$iflist = get_configured_interface_with_descr(false, true);
-	foreach ($iflist as $if => $ifdesc)
-		if($ifdesc == $pconfig['descr'])
-			$input_errors[] = sprintf(gettext("Sorry, an interface is already named %s."), $pconfig['descr']);
-
 	if(preg_match("/urltable/i", $a_aliases[$id]['type'])) {
 		$pconfig['address'] = $a_aliases[$id]['url'];
 		$pconfig['updatefreq'] = $a_aliases[$id]['updatefreq'];

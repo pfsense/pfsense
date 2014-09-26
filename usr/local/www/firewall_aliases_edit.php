@@ -7,7 +7,7 @@
 	Copyright (C) 2010 Jim Pingle
 	All rights reserved.
 
-	originially part of m0n0wall (http://m0n0.ch/wall)
+	originally part of m0n0wall (http://m0n0.ch/wall)
 	Copyright (C) 2003-2004 Manuel Kasper <mk@neon1.net>.
 	All rights reserved.
 
@@ -104,12 +104,6 @@ if (isset($id) && $a_aliases[$id]) {
 	$pconfig['address'] = $a_aliases[$id]['address'];
 	$pconfig['type'] = $a_aliases[$id]['type'];
 	$pconfig['descr'] = html_entity_decode($a_aliases[$id]['descr']);
-
-	/* interface list */
-	$iflist = get_configured_interface_with_descr(false, true);
-	foreach ($iflist as $if => $ifdesc)
-		if($ifdesc == $pconfig['descr'])
-			$input_errors[] = sprintf(gettext("Sorry, an interface is already named %s."), $pconfig['descr']);
 
 	if($a_aliases[$id]['type'] == "urltable") {
 		$pconfig['address'] = $a_aliases[$id]['url'];
@@ -462,12 +456,12 @@ function add_alias_control() {
 }
 EOD;
 
-$network_str = gettext("Network");
+$network_str = gettext("Network or FQDN");
 $networks_str = gettext("Network(s)");
 $cidr_str = gettext("CIDR");
 $description_str = gettext("Description");
 $hosts_str = gettext("Host(s)");
-$ip_str = gettext("IP");
+$ip_str = gettext("IP or FQDN");
 $ports_str = gettext("Port(s)");
 $port_str = gettext("Port");
 $url_str = gettext("URL");
@@ -495,6 +489,7 @@ function update_box_type() {
 		document.getElementById ("onecolumn").firstChild.data = "{$network_str}";
 		document.getElementById ("twocolumn").firstChild.data = "{$cidr_str}";
 		document.getElementById ("threecolumn").firstChild.data = "{$description_str}";
+		document.getElementById ("threecolumn").style.display = 'block';
 		document.getElementById ("itemhelp").firstChild.data = "{$networks_help}";
 		document.getElementById ("addrowbutton").style.display = 'block';
 	} else if(selected == '{$hosts_str}') {
@@ -502,6 +497,7 @@ function update_box_type() {
 		document.getElementById ("onecolumn").firstChild.data = "{$ip_str}";
 		document.getElementById ("twocolumn").firstChild.data = "";
 		document.getElementById ("threecolumn").firstChild.data = "{$description_str}";
+		document.getElementById ("threecolumn").style.display = 'block';
 		document.getElementById ("itemhelp").firstChild.data = "{$hosts_help}";
 		document.getElementById ("addrowbutton").style.display = 'block';
 	} else if(selected == '{$ports_str}') {
@@ -509,6 +505,7 @@ function update_box_type() {
 		document.getElementById ("onecolumn").firstChild.data = "{$port_str}";
 		document.getElementById ("twocolumn").firstChild.data = "";
 		document.getElementById ("threecolumn").firstChild.data = "{$description_str}";
+		document.getElementById ("threecolumn").style.display = 'block';
 		document.getElementById ("itemhelp").firstChild.data = "{$ports_help}";
 		document.getElementById ("addrowbutton").style.display = 'block';
 	} else if(selected == '{$url_str}') {
@@ -516,6 +513,7 @@ function update_box_type() {
 		document.getElementById ("onecolumn").firstChild.data = "{$url_str}";
 		document.getElementById ("twocolumn").firstChild.data = "";
 		document.getElementById ("threecolumn").firstChild.data = "{$description_str}";
+		document.getElementById ("threecolumn").style.display = 'block';
 		document.getElementById ("itemhelp").firstChild.data = "{$url_help}";
 		document.getElementById ("addrowbutton").style.display = 'block';
 	} else if(selected == '{$openvpn_user_str}') {
@@ -523,6 +521,7 @@ function update_box_type() {
 		document.getElementById ("onecolumn").firstChild.data = "{$openvpn_str}";
 		document.getElementById ("twocolumn").firstChild.data = "{$openvpn_freq}";
 		document.getElementById ("threecolumn").firstChild.data = "{$description_str}";
+		document.getElementById ("threecolumn").style.display = 'block';
 		document.getElementById ("itemhelp").firstChild.data = "{$openvpn_help}";
 		document.getElementById ("addrowbutton").style.display = 'block';
 	} else if(selected == '{$urltable_str}') {

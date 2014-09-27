@@ -54,7 +54,7 @@ $pgtitle = array(gettext("Firewall"),gettext("Aliases"),gettext("Edit"));
 // Keywords not allowed in names
 $reserved_keywords = array("all", "pass", "block", "out", "queue", "max", "min", "pptp", "pppoe", "L2TP", "OpenVPN", "IPsec");
 
-// Add all Load balance names to resrved_keywords
+// Add all Load balance names to reserved_keywords
 if (is_array($config['load_balancer']['lbpool']))
 	foreach ($config['load_balancer']['lbpool'] as $lbpool)
 		$reserved_keywords[] = $lbpool['name'];
@@ -259,60 +259,81 @@ if ($_POST) {
 		}
 		$wrongaliases = "";
 		$wrongaliases_fqdn = "";
+		
+		// First trim and expand the input data. 
+		// Users can paste strings like "10.1.2.0/24 10.3.0.0/16 9.10.11.0/24" into an address box.
+		// They can also put an IP range.
+		// This loop expands out that stuff so it can easily be validated.
 		for($x=0; $x<4999; $x++) {
 			if($_POST["address{$x}"] <> "") {
-				$_POST["address{$x}"] = trim($_POST["address{$x}"]);
-				if (is_alias($_POST["address{$x}"])) {
-					if (!alias_same_type($_POST["address{$x}"], $_POST['type']))
-						// But alias type network can include alias type urltable. Feature#1603.
-						if (!($_POST['type'] == 'network' &&
-						      alias_get_type($_POST["address{$x}"]) == 'urltable'))
-							$wrongaliases .= " " . $_POST["address{$x}"];
-					if ($used_for_routes === 1) {
-						foreach (filter_expand_alias_array($_POST["address{$x}"], true) as $tgt) {
-							if (is_ipaddrv4($tgt))
-								$tgt .= "/32";
-							if (is_ipaddrv6($tgt))
-								$tgt .= "/128";
-							if (!is_subnet($tgt) && is_fqdn($tgt)) {
-								$wrongaliases_fqdn .= " " . $_POST["address{$x}"];
-								break;
-							}
+				if ($_POST["detail{$x}"] <> "")
+					$detail_text = $_POST["detail{$x}"];
+				else
+					$detail_text = sprintf(gettext("Entry added %s"), date('r'));
+				$address_items = explode(" ", trim($_POST["address{$x}"]));
+				foreach ($address_items as $address_item) {
+					if (is_iprange($address_item)) {
+						list($startip, $endip) = explode('-', $address_item);
+						$rangesubnets = ip_range_to_subnet_array($startip, $endip);
+						foreach ($rangesubnets as $rangesubnet) {
+							list($address_part, $subnet_part) = explode("/", $rangesubnet);
+							$input_addresses[] = $address_part;
+							$input_address_subnet[] = $subnet_part;
+							$final_address_details[] = $detail_text;
+						}
+					} else {
+						list($address_part, $subnet_part) = explode("/", $address_item);
+						$input_addresses[] = $address_part;
+						if (!empty($subnet_part))
+							$input_address_subnet[] = $subnet_part;
+						else
+							$input_address_subnet[] = $_POST["address_subnet{$x}"];
+						$final_address_details[] = $detail_text;
+					}
+				}
+			}
+		}
+
+		// Validate the input data expanded above.
+		foreach($input_addresses as $idx => $input_address) {
+			if (is_alias($input_address)) {
+				if (!alias_same_type($input_address, $_POST['type']))
+					// But alias type network can include alias type urltable. Feature#1603.
+					if (!($_POST['type'] == 'network' &&
+						  alias_get_type($input_address) == 'urltable'))
+						$wrongaliases .= " " . $input_address;
+				if ($used_for_routes === 1) {
+					foreach (filter_expand_alias_array($input_address, true) as $tgt) {
+						if (is_ipaddrv4($tgt))
+							$tgt .= "/32";
+						if (is_ipaddrv6($tgt))
+							$tgt .= "/128";
+						if (!is_subnet($tgt) && is_fqdn($tgt)) {
+							$wrongaliases_fqdn .= " " . $input_address;
+							break;
 						}
 					}
-				} else if ($_POST['type'] == "port") {
-					if (!is_port($_POST["address{$x}"]))
-						$input_errors[] = $_POST["address{$x}"] . " " . gettext("is not a valid port or alias.");
-				} else if ($_POST['type'] == "host" || $_POST['type'] == "network") {
-					if (is_subnet($_POST["address{$x}"]) || (!is_ipaddr($_POST["address{$x}"])
-					 && !is_hostname($_POST["address{$x}"])
-					 && !is_iprange($_POST["address{$x}"])))
-						$input_errors[] = sprintf(gettext('%1$s is not a valid %2$s alias.'), $_POST["address{$x}"], $_POST['type']);
-					if (($used_for_routes === 1)
-					 && !is_ipaddr($_POST["address{$x}"])
-					 && !is_iprange($_POST["address{$x}"])
-					 && is_hostname($_POST["address{$x}"]))
-						$input_errors[] = gettext('This alias is used on a static route and cannot contain FQDNs.');
 				}
-				if (is_iprange($_POST["address{$x}"])) {
-					list($startip, $endip) = explode('-', $_POST["address{$x}"]);
-					$rangesubnets = ip_range_to_subnet_array($startip, $endip);
-					$address = array_merge($address, $rangesubnets);
-				} else {
-					$tmpaddress = $_POST["address{$x}"];
-					if($_POST['type'] != "host" && is_ipaddr($_POST["address{$x}"]) && $_POST["address_subnet{$x}"] <> "") {
-						if (!is_subnet($_POST["address{$x}"] . "/" . $_POST["address_subnet{$x}"]))
-							$input_errors[] = sprintf(gettext('%s/%s is not a valid subnet.'), $_POST["address{$x}"], $_POST["address_subnet{$x}"]);
-						else
-							$tmpaddress .= "/" . $_POST["address_subnet{$x}"];
-					}
-					$address[] = $tmpaddress;
-				}
-				if ($_POST["detail{$x}"] <> "")
-					$final_address_details[] = $_POST["detail{$x}"];
-				else
-					$final_address_details[] = sprintf(gettext("Entry added %s"), date('r'));
+			} else if ($_POST['type'] == "port") {
+				if (!is_port($input_address))
+					$input_errors[] = $input_address . " " . gettext("is not a valid port or alias.");
+			} else if ($_POST['type'] == "host" || $_POST['type'] == "network") {
+				if (is_subnet($input_address) || 
+					(!is_ipaddr($input_address) && !is_hostname($input_address)))
+					$input_errors[] = sprintf(gettext('%1$s is not a valid %2$s address, FQDN or alias.'), $input_address, $_POST['type']);
+				if (($used_for_routes === 1)
+				 && !is_ipaddr($input_address)
+				 && is_hostname($input_address))
+					$input_errors[] = gettext('This alias is used on a static route and cannot contain FQDNs.');
 			}
+			$tmpaddress = $input_address;
+			if ($_POST['type'] != "host" && is_ipaddr($input_address) && $input_address_subnet[$idx] <> "") {
+				if (!is_subnet($input_address . "/" . $input_address_subnet[$idx]))
+					$input_errors[] = sprintf(gettext('%s/%s is not a valid subnet.'), $input_address, $input_address_subnet[$idx]);
+				else
+					$tmpaddress .= "/" . $input_address_subnet[$idx];
+			}
+			$address[] = $tmpaddress;
 		}
 		if ($wrongaliases <> "")
 			$input_errors[] = sprintf(gettext('The alias(es): %s cannot be nested because they are not of the same type.'), $wrongaliases);

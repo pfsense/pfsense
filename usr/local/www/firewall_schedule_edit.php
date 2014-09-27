@@ -4,7 +4,7 @@
 	Copyright (C) 2004 Scott Ullrich
 	All rights reserved.
 
-	originially part of m0n0wall (http://m0n0.ch/wall)
+	originally part of m0n0wall (http://m0n0.ch/wall)
 	Copyright (C) 2003-2004 Manuel Kasper <mk@neon1.net>.
 	All rights reserved.
 
@@ -123,7 +123,7 @@ if ($_POST) {
 				continue;
 			}
 			if (!preg_match('/^[0-9]+:[0-9]+$/', $_POST['stoptime' . $x])) {
-				$input_errors[] = sprintf(gettext("Invalid start time - '%s'"), $_POST['stoptime' . $x]);
+				$input_errors[] = sprintf(gettext("Invalid stop time - '%s'"), $_POST['stoptime' . $x]);
 				continue;
 			}
 			$timerangeFound = true;
@@ -914,7 +914,7 @@ EOD;
 					} //end for loop
 					?>
 							<br />
-					<?=gettext("Click individual date to select that date only. Click the appropriate weekday Header to select all occurences of that weekday.");?>
+					<?=gettext("Click individual date to select that date only. Click the appropriate weekday Header to select all occurrences of that weekday.");?>
 	                 </td>
 				</tr>
 				<tr>

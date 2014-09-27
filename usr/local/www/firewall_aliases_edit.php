@@ -287,7 +287,7 @@ if ($_POST) {
 		// This loop expands out that stuff so it can easily be validated.
 		for($x=0; $x<4999; $x++) {
 			if($_POST["address{$x}"] <> "") {
-				if ($_POST["detail{$x}"] <> "")
+				if ($_POST["detail{$x}"] <> "") {
 					if ((strpos($_POST["detail{$x}"], "||") === false) && (substr($_POST["detail{$x}"], 0, 1) != "|") && (substr($_POST["detail{$x}"], -1, 1) != "|")) {
 						$detail_text = $_POST["detail{$x}"];
 					} else {
@@ -299,7 +299,7 @@ if ($_POST) {
 							$desc_fmt_err_found = true;
 						}
 					}
-				else {
+				} else {
 					$detail_text = sprintf(gettext("Entry added %s"), date('r'));
 				}
 				$address_items = explode(" ", trim($_POST["address{$x}"]));

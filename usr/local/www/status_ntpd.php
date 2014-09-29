@@ -248,13 +248,15 @@ include("head.inc");
 			<td class="listlr" align="center"><?php echo sprintf("%.5f", $gps_lat); ?> (<?php echo sprintf("%d", $gps_lat_deg); ?>&deg; <?php echo sprintf("%.5f", $gps_lat_min*60); ?><?php echo $gps_vars[4]; ?>)</td>
 			<td class="listlr" align="center"><?php echo sprintf("%.5f", $gps_lon); ?> (<?php echo sprintf("%d", $gps_lon_deg); ?>&deg; <?php echo sprintf("%.5f", $gps_lon_min*60); ?><?php echo $gps_vars[6]; ?>)</td>
 			<?php if (isset($gps_alt)) { echo '<td class="listlr" align="center">' . $gps_alt . ' ' . $gps_alt_unit . '</td>';}?>
-			<td class="listr" align="center">
 			<?php 
-			if (isset($gps_satview)) {echo 'in view ' . intval($gps_satview);}
-			if (isset($gps_sat) && isset($gps_satview)) {echo ', ';}
-			if (isset($gps_sat)) {echo 'in use ' . $gps_sat;} 
+			if (isset($gps_sat) || isset($gps_satview)) {
+				echo '<td class="listr" align="center">';
+				if (isset($gps_satview)) {echo 'in view ' . intval($gps_satview);}
+				if (isset($gps_sat) && isset($gps_satview)) {echo ', ';}
+				if (isset($gps_sat)) {echo 'in use ' . $gps_sat;}
+				echo '</td>';
+			}
 			?>
-			</td>
 		</tr>
 		<tr>
 			<td class="listlr" colspan="<?php echo $gps_goo_lnk; ?>" align="center"><a target="_gmaps" href="http://maps.google.com/?q=<?php echo $gps_lat; ?>,<?php echo $gps_lon; ?>">Google Maps Link</a></td>

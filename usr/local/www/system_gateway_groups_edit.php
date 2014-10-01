@@ -42,6 +42,7 @@
 require("guiconfig.inc");
 require_once("ipsec.inc");
 require_once("vpn.inc");
+require_once("pfsense-utils.inc");
 
 $referer = (isset($_SERVER['HTTP_REFERER']) ? $_SERVER['HTTP_REFERER'] : '/system_gateway_groups.php');
 
@@ -233,7 +234,7 @@ jQuery(function ($) {
                 <tr>
                   <td width="22%" valign="top" class="vncellreq"><?=gettext("Group Name"); ?></td>
                   <td width="78%" class="vtable"> 
-                    <input name="name" type="text" class="formfld unknown" id="name" size="20" value="<?=htmlspecialchars($pconfig['name']);?>" />
+                    <input name="name" type="text" class="formfld unknown" id="name" size="20" value="<?=xhtmlspecialchars($pconfig['name']);?>" />
                     <br /> <span class="vexpl"><?=gettext("Group Name"); ?></span></td>
                 </tr>
 		<tr>
@@ -328,7 +329,7 @@ jQuery(function ($) {
 				foreach ($categories as $category => $categoryd) {
 				        echo "<option value=\"$category\"";
 				        if ($category == $pconfig['trigger']) echo " selected=\"selected\"";
-					echo ">" . htmlspecialchars($categoryd) . "</option>\n";
+					echo ">" . xhtmlspecialchars($categoryd) . "</option>\n";
 				}
 			?>
 			</select>
@@ -337,7 +338,7 @@ jQuery(function ($) {
 		<tr>
                   <td width="22%" valign="top" class="vncell"><?=gettext("Description"); ?></td>
                   <td width="78%" class="vtable"> 
-                    <input name="descr" type="text" class="formfld unknown" id="descr" size="40" value="<?=htmlspecialchars($pconfig['descr']);?>" />
+                    <input name="descr" type="text" class="formfld unknown" id="descr" size="40" value="<?=xhtmlspecialchars($pconfig['descr']);?>" />
                     <br /> <span class="vexpl"><?=gettext("You may enter a description here for your reference (not parsed)."); ?></span></td>
                 </tr>
                 <tr>
@@ -346,7 +347,7 @@ jQuery(function ($) {
                     <input name="Submit" type="submit" class="formbtn" value="<?=gettext("Save");?>" />
                     <input type="button" class="formbtn" value="<?=gettext("Cancel");?>" onclick="window.location.href='<?=$referer;?>'" />
                     <?php if (isset($id) && $a_gateway_groups[$id]): ?>
-                    <input name="id" type="hidden" value="<?=htmlspecialchars($id);?>" />
+                    <input name="id" type="hidden" value="<?=xhtmlspecialchars($id);?>" />
                     <?php endif; ?>
                   </td>
                 </tr>

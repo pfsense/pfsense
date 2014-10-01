@@ -62,7 +62,7 @@ if($_REQUEST['getdyndnsstatus']) {
 				echo "<font color='red'>";
 			else
 				echo "<font color='green'>";
-			echo htmlspecialchars($cached_ip);
+			echo xhtmlspecialchars($cached_ip);
 			echo "</font>";
 		} else {
 			echo "N/A " . date("H:i:s");
@@ -112,9 +112,9 @@ if($_REQUEST['getdyndnsstatus']) {
 		for ($j = 0; $j < count($vals); $j++)
 			if ($vals[$j] == $dyndns['type']) {
 				if (!isset($dyndns['enable']))
-					echo "<span class=\"gray\">".htmlspecialchars($types[$j])."</span>";
+					echo "<span class=\"gray\">".xhtmlspecialchars($types[$j])."</span>";
 				else
-					echo htmlspecialchars($types[$j]);
+					echo xhtmlspecialchars($types[$j]);
 				break;
 			}
 		?>
@@ -122,9 +122,9 @@ if($_REQUEST['getdyndnsstatus']) {
 		<td class="listr">
 		<?php
 		if (!isset($dyndns['enable']))
-			echo "<span class=\"gray\">".htmlspecialchars($dyndns['host'])."</span>";
+			echo "<span class=\"gray\">".xhtmlspecialchars($dyndns['host'])."</span>";
 		else
-			echo htmlspecialchars($dyndns['host']);
+			echo xhtmlspecialchars($dyndns['host']);
 		?>
 		</td>
 		<td class="listr">

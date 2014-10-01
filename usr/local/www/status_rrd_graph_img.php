@@ -37,6 +37,7 @@ require_once("guiconfig.inc");
 require_once("filter.inc");
 require_once("shaper.inc");
 require_once("rrd.inc");
+require_once("pfsense-utils.inc");
 
 global $g;
 
@@ -44,7 +45,7 @@ $pgtitle = array(gettext("System"),gettext("RRD Graphs"),gettext("Image viewer")
 
 if ($_GET['database']) {
 	$curdatabase = basename($_GET['database']);
-	$curdatabase = str_replace(array("<", ">", ";", "&", "'", '"'), "", htmlspecialchars_decode($curdatabase, ENT_QUOTES | ENT_HTML401));
+	$curdatabase = str_replace(array("<", ">", ";", "&", "'", '"'), "", xhtmlspecialchars_decode($curdatabase, ENT_QUOTES | ENT_HTML401));
 } else {
 	$curdatabase = "wan-traffic.rrd";
 }
@@ -57,7 +58,7 @@ if ($_GET['style']) {
 
 /* this is used for temp name */
 if ($_GET['graph']) {
-	$curgraph = str_replace(array("<", ">", ";", "&", "'", '"', '.', '/'), "", htmlspecialchars_decode($_GET['graph'], ENT_QUOTES | ENT_HTML401));
+	$curgraph = str_replace(array("<", ">", ";", "&", "'", '"', '.', '/'), "", xhtmlspecialchars_decode($_GET['graph'], ENT_QUOTES | ENT_HTML401));
 } else {
 	$curgraph = "custom";
 }

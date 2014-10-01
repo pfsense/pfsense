@@ -35,6 +35,7 @@
 */
 
 require 'config.inc';
+require_once("pfsense-utils.inc");
 
 global $buffer_rules_rdr, $buffer_rules_normal;
 $buffer_rules_rdr = array();
@@ -270,9 +271,9 @@ function get_port_with_service($port, $proto) {
 	$service = getservbyport($port, $proto);
 	$portstr = "";
 	if ($service) {
-		$portstr = sprintf('<span title="' . gettext('Service %1$s/%2$s: %3$s') . '">' . htmlspecialchars($port) . '</span>', $port, $proto, $service);
+		$portstr = sprintf('<span title="' . gettext('Service %1$s/%2$s: %3$s') . '">' . xhtmlspecialchars($port) . '</span>', $port, $proto, $service);
 	} else {
-		$portstr = htmlspecialchars($port);
+		$portstr = xhtmlspecialchars($port);
 	}
 	return ':' . $portstr;
 }

@@ -41,6 +41,7 @@
 ##|-PRIV
 
 require("guiconfig.inc");
+require_once("pfsense-utils.inc");
 
 $allowautocomplete = true;
 $pgtitle = array(gettext("Diagnostics"),gettext("Traceroute"));
@@ -98,7 +99,7 @@ if (!isset($do_traceroute)) {
 <tr>
 	<td width="22%" valign="top" class="vncellreq"><?=gettext("Host");?></td>
 	<td width="78%" class="vtable">
-		<?=$mandfldhtml;?><input name="host" type="text" class="formfld" id="host" size="20" value="<?=htmlspecialchars($host);?>" /></td>
+		<?=$mandfldhtml;?><input name="host" type="text" class="formfld" id="host" size="20" value="<?=xhtmlspecialchars($host);?>" /></td>
 </tr>
 <tr>
 	<td width="22%" valign="top" class="vncellreq"><?=gettext("IP Protocol"); ?></td>
@@ -121,7 +122,7 @@ if (!isset($do_traceroute)) {
 					$selected = "selected=\"selected\"";
 		?>
 			<option value="<?=$sip['value'];?>" <?=$selected;?>>
-				<?=htmlspecialchars($sip['name']);?>
+				<?=xhtmlspecialchars($sip['name']);?>
 			</option>
 			<?php endforeach; ?>
 		</select>

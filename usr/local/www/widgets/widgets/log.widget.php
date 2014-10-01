@@ -150,7 +150,7 @@ function format_log_line(row) {
 		foreach ($interfaces as $iface => $ifacename):
 ?>
 			<option value="<?=$iface;?>" <?php if ($nentriesinterfaces == $iface) echo "selected=\"selected\"";?>>
-				<?=htmlspecialchars($ifacename);?>
+				<?=xhtmlspecialchars($ifacename);?>
 			</option>
 <?php
 		endforeach;
@@ -193,14 +193,14 @@ function format_log_line(row) {
 			<img border="0" src="<?php echo find_action_image($filterent['act']);?>" width="11" height="11" alt="<?php echo $filterent['act'];?>" title="<?php echo $filterent['act'];?>" />
 			</a>
 			</td>
-			<td class="listMRr ellipsis nowrap" title="<?php echo htmlspecialchars($filterent['time']);?>"><?php echo substr(htmlspecialchars($filterent['time']),0,-3);?></td>
-			<td class="listMRr ellipsis nowrap" title="<?php echo htmlspecialchars($filterent['interface']);?>"><?php echo htmlspecialchars($filterent['interface']);?></td>
-			<td class="listMRr ellipsis nowrap" title="<?php echo htmlspecialchars($filterent['src']);?>">
+			<td class="listMRr ellipsis nowrap" title="<?php echo xhtmlspecialchars($filterent['time']);?>"><?php echo substr(xhtmlspecialchars($filterent['time']),0,-3);?></td>
+			<td class="listMRr ellipsis nowrap" title="<?php echo xhtmlspecialchars($filterent['interface']);?>"><?php echo xhtmlspecialchars($filterent['interface']);?></td>
+			<td class="listMRr ellipsis nowrap" title="<?php echo xhtmlspecialchars($filterent['src']);?>">
 				<a href="#" onclick="javascript:getURL('diag_dns.php?host=<?php echo "{$filterent['srcip']}"; ?>&amp;dialog_output=true', outputrule);" title="<?=gettext("Reverse Resolve with DNS");?>">
-				<?php echo htmlspecialchars($filterent['srcip']);?></a></td>
-			<td class="listMRr ellipsis nowrap" title="<?php echo htmlspecialchars($filterent['dst']);?>">
+				<?php echo xhtmlspecialchars($filterent['srcip']);?></a></td>
+			<td class="listMRr ellipsis nowrap" title="<?php echo xhtmlspecialchars($filterent['dst']);?>">
 				<a href="#" onclick="javascript:getURL('diag_dns.php?host=<?php echo "{$filterent['dstip']}"; ?>&amp;dialog_output=true', outputrule);" title="<?=gettext("Reverse Resolve with DNS");?>">
-				<?php echo htmlspecialchars($filterent['dstip']);?></a><?php echo ":" . htmlspecialchars($filterent['dstport']);?></td>
+				<?php echo xhtmlspecialchars($filterent['dstip']);?></a><?php echo ":" . xhtmlspecialchars($filterent['dstport']);?></td>
 			<?php
 				if ($filterent['proto'] == "TCP")
 					$filterent['proto'] .= ":{$filterent['tcpflags']}";

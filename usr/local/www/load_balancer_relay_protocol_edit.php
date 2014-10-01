@@ -40,6 +40,7 @@
 ##|-PRIV
 
 require("guiconfig.inc");
+require_once("pfsense-utils.inc");
 
 $referer = (isset($_SERVER['HTTP_REFERER']) ? $_SERVER['HTTP_REFERER'] : '/load_balancer_relay_protocol.php');
 
@@ -280,7 +281,7 @@ echo "</select>";
 				<input name="Submit" type="submit" class="formbtn" value="<?=gettext("Save"); ?>" onClick="AllOptions($('lbaction'), true); AllOptions($('available_action'), false);">
 				<input type="button" class="formbtn" value="<?=gettext("Cancel");?>" onclick="window.location.href='<?=$referer;?>'" />
 				<?php if (isset($id) && $a_protocol[$id] && $_GET['act'] != 'dup'): ?>
-				<input name="id" type="hidden" value="<?=htmlspecialchars($id);?>">
+				<input name="id" type="hidden" value="<?=xhtmlspecialchars($id);?>">
 				<?php endif; ?>
 			</td>
 		</tr>

@@ -41,6 +41,7 @@ require_once("filter.inc");
 require("shaper.inc");
 require("captiveportal.inc");
 require_once("voucher.inc");
+require_once("pfsense-utils.inc");
 
 $cpzone = $_GET['zone'];
 if (isset($_POST['zone']))
@@ -82,14 +83,14 @@ include("head.inc");
   <tr>
     <td valign="top" class="vncellreq"><?=gettext("Voucher(s)"); ?></td>
     <td class="vtable">
-    <textarea name="vouchers" cols="65" rows="3" id="vouchers" class="formpre"><?=htmlspecialchars($_POST['vouchers']);?></textarea>
+    <textarea name="vouchers" cols="65" rows="3" id="vouchers" class="formpre"><?=xhtmlspecialchars($_POST['vouchers']);?></textarea>
     <br />
 <?=gettext("Enter multiple vouchers separated by space or newline. All valid vouchers will be marked as expired"); ?>.</td>
   </tr>
   <tr>
     <td width="22%" valign="top">&nbsp;</td>
     <td width="78%">
-    <input name="zone" type="hidden" value="<?=htmlspecialchars($cpzone);?>" />
+    <input name="zone" type="hidden" value="<?=xhtmlspecialchars($cpzone);?>" />
     <input name="Submit" type="submit" class="formbtn" value="<?=gettext("Submit"); ?>" />
     </td>
   </tr>

@@ -104,7 +104,7 @@ foreach (array('server', 'client') as $mode) {
 	if (is_array($config['openvpn']["openvpn-{$mode}"])) {
 		foreach ($config['openvpn']["openvpn-{$mode}"] as $id => $setting) {
 			if (!isset($setting['disable'])) {
-				$interfaces['ovpn' . substr($mode, 0, 1) . $setting['vpnid']] = gettext("OpenVPN") . " ".$mode.": ".htmlspecialchars($setting['description']);
+				$interfaces['ovpn' . substr($mode, 0, 1) . $setting['vpnid']] = gettext("OpenVPN") . " ".$mode.": ".xhtmlspecialchars($setting['description']);
 			}
 		}
 	}
@@ -295,7 +295,7 @@ include("fbegin.inc");
 		<tr>
 			<td width="17%" valign="top" class="vncellreq"><?=gettext("Host Address");?></td>
 			<td colspan="2" width="83%" class="vtable">
-			<input name="host" class="formfld host" id="host" size="20" value="<?=htmlspecialchars($host);?>" />
+			<input name="host" class="formfld host" id="host" size="20" value="<?=xhtmlspecialchars($host);?>" />
 			<br /><?=gettext("This value is either the Source or Destination IP address or subnet in CIDR notation. The packet capture will look for this address in either field.");?>
 			<br /><?=gettext("Matching can be negated by preceding the value with \"!\". Multiple IP addresses or CIDR subnets may be specified. Comma (\",\") separated values perform a boolean \"and\". Separating with a pipe (\"|\") performs a boolean \"or\".");?>
 			<br /><?=gettext("If you leave this field blank, all packets on the specified interface will be captured.");?>

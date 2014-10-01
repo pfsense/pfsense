@@ -40,6 +40,7 @@
 
 require_once("guiconfig.inc");
 require_once("unbound.inc");
+require_once("pfsense-utils.inc");
 
 if (!is_array($config['unbound']))
 	$config['unbound'] = array();
@@ -252,7 +253,7 @@ function show_advanced_dns() {
 													$selected = 'selected="selected"';
 										?>
 										<option value="<?=$laddr['value'];?>" <?=$selected;?>>
-											<?=htmlspecialchars($laddr['name']);?>
+											<?=xhtmlspecialchars($laddr['name']);?>
 										</option>
 										<?php endforeach; ?>
 									</select>
@@ -277,7 +278,7 @@ function show_advanced_dns() {
 												$selected = 'selected="selected"';
 										?>
 										<option value="<?=$laddr['value'];?>" <?=$selected;?>>
-											<?=htmlspecialchars($laddr['name']);?>
+											<?=xhtmlspecialchars($laddr['name']);?>
 										</option>
 										<?php endforeach; ?>
 									</select>
@@ -338,7 +339,7 @@ function show_advanced_dns() {
 									</div>
 									<div id="showadv" <?php if (empty($pconfig['custom_options'])) echo "style='display:none'"; ?>>
 										<strong><?=gettext("Advanced");?><br /></strong>
-										<textarea rows="6" cols="78" name="custom_options" id="custom_options"><?=htmlspecialchars($pconfig['custom_options']);?></textarea><br />
+										<textarea rows="6" cols="78" name="custom_options" id="custom_options"><?=xhtmlspecialchars($pconfig['custom_options']);?></textarea><br />
 										<?=gettext("Enter any additional options you would like to add to the DNS Resolver configuration here, separated by a space or newline"); ?><br />
 									</div>
 								</td>
@@ -423,7 +424,7 @@ function show_advanced_dns() {
 			<?=$hostent['ip'];?>&nbsp;
 		</td>
 		<td class="listbg" ondblclick="document.location='services_unbound_host_edit.php?id=<?=$i;?>';">
-			<?=htmlspecialchars($hostent['descr']);?>&nbsp;
+			<?=xhtmlspecialchars($hostent['descr']);?>&nbsp;
 		</td>
 		<td valign="middle" class="list nowrap">
 			<table border="0" cellspacing="0" cellpadding="1" summary="icons">
@@ -486,7 +487,7 @@ function show_advanced_dns() {
 			<?=$doment['ip'];?>&nbsp;
 		</td>
 		<td class="listbg">
-			<?=htmlspecialchars($doment['descr']);?>&nbsp;
+			<?=xhtmlspecialchars($doment['descr']);?>&nbsp;
 		</td>
 		<td valign="middle" class="list nowrap">
 			<table border="0" cellspacing="0" cellpadding="1" summary="icons">

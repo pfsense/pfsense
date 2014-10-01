@@ -46,7 +46,7 @@ require("guiconfig.inc");
 require_once("functions.inc");
 require_once("filter.inc");
 require_once("shaper.inc");
-
+require_once("pfsense-utils.inc");
 
 $pconfig['ipv6nat_enable'] = isset($config['diag']['ipv6nat']['enable']);
 $pconfig['ipv6nat_ipaddr'] = $config['diag']['ipv6nat']['ipaddr'];
@@ -234,7 +234,7 @@ function enable_change(enable_over) {
 									"add a firewall rule to permit IPv6 packets."); ?><br />
 									<br />
 									<?=gettext("IP address"); ?>&nbsp;:&nbsp;
-									<input name="ipv6nat_ipaddr" type="text" class="formfld unknown" id="ipv6nat_ipaddr" size="20" value="<?=htmlspecialchars($pconfig['ipv6nat_ipaddr']);?>" />
+									<input name="ipv6nat_ipaddr" type="text" class="formfld unknown" id="ipv6nat_ipaddr" size="20" value="<?=xhtmlspecialchars($pconfig['ipv6nat_ipaddr']);?>" />
 								</td>
 							</tr>
 							<tr>

@@ -45,6 +45,7 @@
 
 require("guiconfig.inc");
 require_once("config.inc");
+require_once("pfsense-utils.inc");
 
 $pgtitle = array(gettext("Status"),gettext("DHCP leases"));
 $shortcut_section = "dhcp";
@@ -280,7 +281,7 @@ foreach($config['interfaces'] as $ifname => $ifarr) {
 			$slease['mac'] = $static['mac'];
 			$slease['start'] = "";
 			$slease['end'] = "";
-			$slease['hostname'] = htmlentities($static['hostname']);
+			$slease['hostname'] = xhtmlentities($static['hostname']);
 			$slease['act'] = "static";
 			$slease['online'] = in_array(strtolower($slease['mac']), $arpdata_mac) ? 'online' : 'offline';
 			$leases[] = $slease;
@@ -389,7 +390,7 @@ foreach ($leases as $data) {
                 		echo "<td class=\"listr\">{$fspans}{$data['mac']}{$fspane}</td>\n";
 			}
                 }
-                echo "<td class=\"listr\">{$fspans}"  . htmlentities($data['hostname']) . "{$fspane}</td>\n";
+                echo "<td class=\"listr\">{$fspans}"  . xhtmlentities($data['hostname']) . "{$fspane}</td>\n";
 				if ($data['type'] != "static") {
 					echo "<td class=\"listr\">{$fspans}" . adjust_gmt($data['start']) . "{$fspane}</td>\n";
 					echo "<td class=\"listr\">{$fspans}" . adjust_gmt($data['end']) . "{$fspane}</td>\n";
@@ -412,7 +413,7 @@ foreach ($leases as $data) {
 
 		/* Only show the button for offline dynamic leases */
 		if (($data['type'] == "dynamic") && ($data['online'] != "online")) {
-			echo "<a href=\"status_dhcp_leases.php?deleteip={$data['ip']}&amp;all=" . htmlspecialchars($_GET['all']) . "\">";
+			echo "<a href=\"status_dhcp_leases.php?deleteip={$data['ip']}&amp;all=" . xhtmlspecialchars($_GET['all']) . "\">";
 			echo "<img src=\"/themes/{$g['theme']}/images/icons/icon_x.gif\" width=\"17\" height=\"17\" border=\"0\" title=\"" . gettext("delete this DHCP lease") . "\" alt=\"delete\" /></a>&nbsp;\n";
 		}
                 echo "</td></tr>\n";
@@ -423,7 +424,7 @@ foreach ($leases as $data) {
 </table>
 <br/>
 <form action="status_dhcp_leases.php" method="get">
-<input type="hidden" name="order" value="<?=htmlspecialchars($_GET['order']);?>" />
+<input type="hidden" name="order" value="<?=xhtmlspecialchars($_GET['order']);?>" />
 <?php if ($_GET['all']): ?>
 <input type="hidden" name="all" value="0" />
 <input type="submit" class="formbtn" value="<?=gettext("Show active and static leases only"); ?>" />

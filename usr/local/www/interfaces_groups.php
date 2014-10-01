@@ -39,6 +39,7 @@
 
 require("guiconfig.inc");
 require_once("functions.inc");
+require_once("pfsense-utils.inc");
 
 if (!is_array($config['ifgroups']['ifgroupentry']))
 	$config['ifgroups']['ifgroupentry'] = array();
@@ -101,7 +102,7 @@ include("head.inc");
 		$i = 0; foreach ($a_ifgroups as $ifgroupentry): ?>
 <tr>
   <td class="listlr" ondblclick="document.location='interfaces_groups_edit.php?id=<?=$i;?>';">
-	<a href="/firewall_rules.php?if=<?=htmlspecialchars($ifgroupentry['ifname']);?>"><?=htmlspecialchars($ifgroupentry['ifname']);?></a>
+	<a href="/firewall_rules.php?if=<?=xhtmlspecialchars($ifgroupentry['ifname']);?>"><?=xhtmlspecialchars($ifgroupentry['ifname']);?></a>
   </td>
   <td class="listr" ondblclick="document.location='interfaces_groups_edit.php?id=<?=$i;?>';">
       <?php
@@ -121,7 +122,7 @@ include("head.inc");
     ?>
   </td>
   <td class="listbg" ondblclick="document.location='interfaces_groups_edit.php?id=<?=$i;?>';">
-    <?=htmlspecialchars($ifgroupentry['descr']);?>&nbsp;
+    <?=xhtmlspecialchars($ifgroupentry['descr']);?>&nbsp;
   </td>
   <td valign="middle" class="list nowrap">
     <table border="0" cellspacing="0" cellpadding="1" summary="icons">

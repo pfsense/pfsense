@@ -46,6 +46,7 @@ $monthArray = array (gettext('January'),gettext('February'),gettext('March'),get
 require("guiconfig.inc");
 require_once("filter.inc");
 require("shaper.inc");
+require_once("pfsense-utils.inc");
 
 $pgtitle = array(gettext("Firewall"),gettext("Schedules"));
 
@@ -108,7 +109,7 @@ include("head.inc");
 	<?php $i = 0; foreach ($a_schedules as $schedule): ?>
 	<tr>
 	   <td class="listlr" ondblclick="document.location='firewall_schedule_edit.php?id=<?=$i;?>';">
-			<?=htmlspecialchars($schedule['name']);?>
+			<?=xhtmlspecialchars($schedule['name']);?>
 					<?php
 					$schedstatus = filter_get_time_based_rule_status($schedule);
 					 if ($schedstatus) { ?>
@@ -212,7 +213,7 @@ include("head.inc");
 					}//end for?></table>
 	  </td>
 	 <td class="listbg" ondblclick="document.location='firewall_schedule_edit.php?id=<?=$i;?>';">
-    		<?=htmlspecialchars($schedule['descr']);?>&nbsp;
+    		<?=xhtmlspecialchars($schedule['descr']);?>&nbsp;
   		</td>
   		  <td valign="middle" class="list nowrap">
     <table border="0" cellspacing="0" cellpadding="1" summary="buttons">

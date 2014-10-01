@@ -36,6 +36,7 @@ $nocsrf = true;
 require_once("guiconfig.inc");
 require_once("functions.inc");
 require_once("ipsec.inc");
+require_once("pfsense-utils.inc");
 
 if (isset($config['ipsec']['phase1'])){?>
 	<div>&nbsp;</div>
@@ -133,15 +134,15 @@ if (isset($config['ipsec']['phase1'])){?>
 		<div style="display:table-row;">
 			<div class="listlr" style="display:table-cell;width:39px">
 				<?php echo $spans;?>
-					<?php echo htmlspecialchars($ipsec['src']);?>
+					<?php echo xhtmlspecialchars($ipsec['src']);?>
 				<?php echo $spane;?>
 			</div>
 			<div class="listr"  style="display:table-cell;width:100px"><?php echo $spans;?>
 				<?php echo $ipsec['remote-subnet'];?>
 				<br />
-				(<?php echo htmlspecialchars($ipsec['dest']);?>)<?php echo $spane;?>
+				(<?php echo xhtmlspecialchars($ipsec['dest']);?>)<?php echo $spane;?>
 			</div>
-			<div class="listr"  style="display:table-cell;width:90px"><?php echo $spans;?><?php echo htmlspecialchars($ipsec['descr']);?><?php echo $spane;?></div>
+			<div class="listr"  style="display:table-cell;width:90px"><?php echo $spans;?><?php echo xhtmlspecialchars($ipsec['descr']);?><?php echo $spane;?></div>
 			<div class="listr"  style="display:table-cell;width:37px" align="center"><?php echo $spans;?>
 			<?php
 
@@ -176,13 +177,13 @@ if (isset($config['ipsec']['phase1'])){?>
 			foreach ($pool['lease'] as $muser) : ?>
 		<div style="display:table-row;">
 			<div class="listlr" style="display:table-cell;width:139px">
-				<?php echo htmlspecialchars($muser['id']);?><br />
+				<?php echo xhtmlspecialchars($muser['id']);?><br />
 			</div>
 			<div class="listr"  style="display:table-cell;width:130px">
-				<?php echo htmlspecialchars($muser['host']);?><br />
+				<?php echo xhtmlspecialchars($muser['host']);?><br />
 			</div>
 			<div class="listr"  style="display:table-cell;width:30px">
-				<?php echo htmlspecialchars($muser['status']);?><br/>
+				<?php echo xhtmlspecialchars($muser['status']);?><br/>
 			</div>
 		</div>
 <?php

@@ -41,6 +41,7 @@
 
 require("guiconfig.inc");
 require("pkg-utils.inc");
+require_once("pfsense-utils.inc");
 
 $referer = (isset($_SERVER['HTTP_REFERER']) ? $_SERVER['HTTP_REFERER'] : '/system_gateways.php');
 
@@ -634,9 +635,9 @@ function enable_change() {
 
 	/* If this is a system gateway we need this var */
 	if(($pconfig['attribute'] == "system") || is_numeric($pconfig['attribute'])) {
-		echo "<input type='hidden' name='attribute' id='attribute' value=\"" . htmlspecialchars($pconfig['attribute']) . "\" />\n";
+		echo "<input type='hidden' name='attribute' id='attribute' value=\"" . xhtmlspecialchars($pconfig['attribute']) . "\" />\n";
 	}
-	echo "<input type='hidden' name='friendlyiface' id='friendlyiface' value=\"" . htmlspecialchars($pconfig['friendlyiface']) . "\" />\n";
+	echo "<input type='hidden' name='friendlyiface' id='friendlyiface' value=\"" . xhtmlspecialchars($pconfig['friendlyiface']) . "\" />\n";
 	?>
 		<table width="100%" border="0" cellpadding="6" cellspacing="0" summary="system gateways edit">
 			<tr>
@@ -660,7 +661,7 @@ function enable_change() {
 							echo "<option value=\"{$iface}\"";
 							if ($iface == $pconfig['friendlyiface'])
 								echo " selected='selected'";
-							echo ">" . htmlspecialchars($ifacename) . "</option>";
+							echo ">" . xhtmlspecialchars($ifacename) . "</option>";
 						}
 					?>
 					</select><br />
@@ -677,7 +678,7 @@ function enable_change() {
 							echo "<option value=\"{$name}\"";
 							if ($name == $pconfig['ipprotocol'])
 								echo " selected='selected'";
-							echo ">" . htmlspecialchars($string) . "</option>\n";
+							echo ">" . xhtmlspecialchars($string) . "</option>\n";
 						}
 					?>
 					</select><br />
@@ -687,14 +688,14 @@ function enable_change() {
 			<tr>
 				<td width="22%" valign="top" class="vncellreq"><?=gettext("Name"); ?></td>
 				<td width="78%" class="vtable">
-					<input name="name" type="text" class="formfld unknown" id="name" size="20" value="<?=htmlspecialchars($pconfig['name']);?>" />
+					<input name="name" type="text" class="formfld unknown" id="name" size="20" value="<?=xhtmlspecialchars($pconfig['name']);?>" />
 					<br /><span class="vexpl"><?=gettext("Gateway name"); ?></span>
 				</td>
 			</tr>
 			<tr>
 				<td width="22%" valign="top" class="vncellreq"><?=gettext("Gateway"); ?></td>
 				<td width="78%" class="vtable">
-					<input name="gateway" type="text" class="formfld host" id="gateway" size="28" value="<?php if ($pconfig['dynamic']) echo "dynamic"; else echo htmlspecialchars($pconfig['gateway']); ?>" />
+					<input name="gateway" type="text" class="formfld host" id="gateway" size="28" value="<?php if ($pconfig['dynamic']) echo "dynamic"; else echo xhtmlspecialchars($pconfig['gateway']); ?>" />
 					<br /><span class="vexpl"><?=gettext("Gateway IP address"); ?></span>
 				</td>
 			</tr>
@@ -721,9 +722,9 @@ function enable_change() {
 						if ($pconfig['gateway'] == $pconfig['monitor'])
 							$monitor = "";
 						else
-							$monitor = htmlspecialchars($pconfig['monitor']);
+							$monitor = xhtmlspecialchars($pconfig['monitor']);
 					?>
-					<input name="monitor" type="text" id="monitor" value="<?php echo htmlspecialchars($monitor); ?>" size="28" />
+					<input name="monitor" type="text" id="monitor" value="<?php echo xhtmlspecialchars($monitor); ?>" size="28" />
 					<strong><?=gettext("Alternative monitor IP"); ?></strong> <br />
 					<?=gettext("Enter an alternative address here to be used to monitor the link. This is used for the " .
 					"quality RRD graphs as well as the load balancer entries. Use this if the gateway does not respond " .
@@ -769,10 +770,10 @@ function enable_change() {
 								<td width="78%" class="vtable">
 									<?=gettext("From");?>
 									<input name="latencylow" type="text" class="formfld unknown" id="latencylow" size="2"
-										value="<?=htmlspecialchars($pconfig['latencylow']);?>" />
+										value="<?=xhtmlspecialchars($pconfig['latencylow']);?>" />
 									<?=gettext("To");?>
 									<input name="latencyhigh" type="text" class="formfld unknown" id="latencyhigh" size="2"
-										value="<?=htmlspecialchars($pconfig['latencyhigh']);?>" />
+										value="<?=xhtmlspecialchars($pconfig['latencyhigh']);?>" />
 									<br /><span class="vexpl"><?=gettext(sprintf("Low and high thresholds for latency in milliseconds. Default is %d/%d.", $apinger_default['latencylow'], $apinger_default['latencyhigh']));?></span>
 								</td>
 							</tr>
@@ -781,10 +782,10 @@ function enable_change() {
 								<td width="78%" class="vtable">
 									<?=gettext("From");?>
 									<input name="losslow" type="text" class="formfld unknown" id="losslow" size="2"
-										value="<?=htmlspecialchars($pconfig['losslow']);?>" />
+										value="<?=xhtmlspecialchars($pconfig['losslow']);?>" />
 									<?=gettext("To");?>
 									<input name="losshigh" type="text" class="formfld unknown" id="losshigh" size="2"
-										value="<?=htmlspecialchars($pconfig['losshigh']);?>" />
+										value="<?=xhtmlspecialchars($pconfig['losshigh']);?>" />
 									<br /><span class="vexpl"><?=gettext(sprintf("Low and high thresholds for packet loss in %%. Default is %d/%d.", $apinger_default['losslow'], $apinger_default['losshigh']));?></span>
 								</td>
 							</tr>
@@ -792,7 +793,7 @@ function enable_change() {
 								<td width="22%" valign="top" class="vncellreq"><?=gettext("Probe Interval");?></td>
 								<td width="78%" class="vtable">
 									<input name="interval" type="text" class="formfld unknown" id="interval" size="2"
-										value="<?=htmlspecialchars($pconfig['interval']);?>" onchange="interval_change(this)" />
+										value="<?=xhtmlspecialchars($pconfig['interval']);?>" onchange="interval_change(this)" />
 									<br /><span class="vexpl">
 										<?=gettext(sprintf("How often that an ICMP probe will be sent in seconds. Default is %d.", $apinger_default['interval']));?><br /><br />
 										<?=gettext("NOTE: The quality graph is averaged over seconds, not intervals, so as the probe interval is increased the accuracy of the quality graph is decreased.");?>
@@ -803,7 +804,7 @@ function enable_change() {
 								<td width="22%" valign="top" class="vncellreq"><?=gettext("Down");?></td>
 								<td width="78%" class="vtable">
 									<input name="down" type="text" class="formfld unknown" id="down" size="2"
-										value="<?=htmlspecialchars($pconfig['down']);?>" />
+										value="<?=xhtmlspecialchars($pconfig['down']);?>" />
 									<br /><span class="vexpl"><?=gettext(sprintf("The number of seconds of failed probes before the alarm will fire. Default is %d.", $apinger_default['down']));?></span>
 								</td>
 							</tr>
@@ -811,7 +812,7 @@ function enable_change() {
 								<td width="22%" valign="top" class="vncellreq"><?=gettext("Average Delay Replies Qty");?></td>
 								<td width="78%" class="vtable">
 									<input name="avg_delay_samples" type="text" class="formfld unknown" id="avg_delay_samples" size="2"
-										value="<?=htmlspecialchars($pconfig['avg_delay_samples']);?>" onchange="samples_change(document.iform.avg_delay_samples_calculated, this)" /> 
+										value="<?=xhtmlspecialchars($pconfig['avg_delay_samples']);?>" onchange="samples_change(document.iform.avg_delay_samples_calculated, this)" /> 
 									<input name="avg_delay_samples_calculated" type="checkbox" id="avg_delay_samples_calculated" value="yes" <?php if ($pconfig['avg_delay_samples_calculated'] == true) echo "checked=\"checked\""; ?> onclick="calculated_change(this, document.iform.avg_delay_samples)" />
 										<?=gettext("Use calculated value."); ?>
 									<br /><span class="vexpl"><?=gettext(sprintf("How many replies should be used to compute average delay for controlling \"delay\" alarms?  Default is %d.", $apinger_default['avg_delay_samples']));?><br /><br /></span>
@@ -821,7 +822,7 @@ function enable_change() {
 								<td width="22%" valign="top" class="vncellreq"><?=gettext("Average Packet Loss Probes Qty");?></td>
 								<td width="78%" class="vtable">
 									<input name="avg_loss_samples" type="text" class="formfld unknown" id="avg_loss_samples" size="2"
-										value="<?=htmlspecialchars($pconfig['avg_loss_samples']);?>" onchange="samples_change(document.iform.avg_loss_samples_calculated, this)" />
+										value="<?=xhtmlspecialchars($pconfig['avg_loss_samples']);?>" onchange="samples_change(document.iform.avg_loss_samples_calculated, this)" />
 									<input name="avg_loss_samples_calculated" type="checkbox" id="avg_loss_samples_calculated" value="yes" <?php if ($pconfig['avg_loss_samples_calculated'] == true) echo "checked=\"checked\""; ?> onclick="calculated_change(this, document.iform.avg_loss_samples)" />
 										<?=gettext("Use calculated value."); ?>
 									<br /><span class="vexpl"><?=gettext(sprintf("How many probes should be useds to compute average packet loss?  Default is %d.", $apinger_default['avg_loss_samples']));?><br /><br /></span>
@@ -831,7 +832,7 @@ function enable_change() {
 								<td width="22%" valign="top" class="vncellreq"><?=gettext("Lost Probe Delay");?></td>
 								<td width="78%" class="vtable">
 									<input name="avg_loss_delay_samples" type="text" class="formfld unknown" id="avg_loss_delay_samples" size="2"
-										value="<?=htmlspecialchars($pconfig['avg_loss_delay_samples']);?>" onchange="samples_change(document.iform.avg_loss_delay_samples_calculated, this)" />
+										value="<?=xhtmlspecialchars($pconfig['avg_loss_delay_samples']);?>" onchange="samples_change(document.iform.avg_loss_delay_samples_calculated, this)" />
 									<input name="avg_loss_delay_samples_calculated" type="checkbox" id="avg_loss_delay_samples_calculated" value="yes" <?php if ($pconfig['avg_loss_delay_samples_calculated'] == true) echo "checked=\"checked\""; ?> onclick="calculated_change(this, document.iform.avg_loss_delay_samples)" />
 										<?=gettext("Use calculated value."); ?>
 									<br /><span class="vexpl"><?=gettext(sprintf("The delay (in qty of probe samples) after which loss is computed.  Without this, delays longer than the probe interval would be treated as packet loss.  Default is %d.", $apinger_default['avg_loss_delay_samples']));?><br /><br /></span>
@@ -850,7 +851,7 @@ function enable_change() {
 			<tr>
 				<td width="22%" valign="top" class="vncell"><?=gettext("Description"); ?></td>
 				<td width="78%" class="vtable">
-					<input name="descr" type="text" class="formfld unknown" id="descr" size="40" value="<?=htmlspecialchars($pconfig['descr']);?>" />
+					<input name="descr" type="text" class="formfld unknown" id="descr" size="40" value="<?=xhtmlspecialchars($pconfig['descr']);?>" />
 					<br /><span class="vexpl"><?=gettext("You may enter a description here for your reference (not parsed)"); ?>.</span>
 				</td>
 			</tr>
@@ -860,7 +861,7 @@ function enable_change() {
 					<input name="Submit" type="submit" class="formbtn" value="<?=gettext("Save");?>" onclick="enable_change()" />
 					<input type="button" class="formbtn" value="<?=gettext("Cancel");?>" onclick="window.location.href='<?=$referer;?>'" />
 					<?php if (isset($id) && $a_gateways[$id]): ?>
-					<input name="id" type="hidden" value="<?=htmlspecialchars($id);?>" />
+					<input name="id" type="hidden" value="<?=xhtmlspecialchars($id);?>" />
 					<?php endif; ?>
 				</td>
 			</tr>

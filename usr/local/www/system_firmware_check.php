@@ -188,7 +188,7 @@ if ($g['platform'] == "nanobsd") {
 	$txt .= "  " . gettext("NanoBSD Size") . " : " . trim(file_get_contents("/etc/nanosize.txt")) . "\\n";
 }
 $txt .= "       " . gettext("Built On") .": ".  $current_installed_buildtime . "\\n";
-$txt .= "    " . gettext("New version") .": ".  htmlspecialchars($remote_version, ENT_QUOTES | ENT_HTML401). "\\n\\n";
+$txt .= "    " . gettext("New version") .": ".  xhtmlspecialchars($remote_version, ENT_QUOTES | ENT_HTML401). "\\n\\n";
 $txt .= "  " . gettext("Update source") .": ".  $updater_url . "\\n";
 update_output_window($txt);
 ?>

@@ -61,6 +61,7 @@ if(!$g['services_dhcp_server_enable']) {
 }
 
 require("guiconfig.inc");
+require_once("pfsense-utils.inc");
 
 $if = $_GET['if'];
 if ($_POST['if'])
@@ -199,7 +200,7 @@ include("head.inc");
                 <tr> 
                   <td width="22%" valign="top" class="vncellreq"><?=gettext("DUID Identifier");?></td>
                   <td width="78%" class="vtable"> 
-                    <input name="duid" type="text" class="formfld unknown" id="duid" size="40" value="<?=htmlspecialchars($pconfig['duid']);?>" />
+                    <input name="duid" type="text" class="formfld unknown" id="duid" size="40" value="<?=xhtmlspecialchars($pconfig['duid']);?>" />
                     <br />
                     <span class="vexpl"><?=gettext("Enter a DUID Identifier in the following format: ");?><br />
 "DUID-LLT - ETH -- TIME --- ---- address ----" <br />
@@ -208,7 +209,7 @@ include("head.inc");
                 <tr>
                   <td width="22%" valign="top" class="vncell"><?=gettext("IPv6 address");?></td>
                   <td width="78%" class="vtable"> 
-                    <input name="ipaddrv6" type="text" class="formfld unknown" id="ipaddrv6" size="28" value="<?=htmlspecialchars($pconfig['ipaddrv6']);?>" />
+                    <input name="ipaddrv6" type="text" class="formfld unknown" id="ipaddrv6" size="28" value="<?=xhtmlspecialchars($pconfig['ipaddrv6']);?>" />
                     <br />
 			<?=gettext("If an IPv6 address is entered, the address must be outside of the pool.");?>
 			<br />
@@ -218,27 +219,27 @@ include("head.inc");
                 <tr> 
                   <td width="22%" valign="top" class="vncell"><?=gettext("Hostname");?></td>
                   <td width="78%" class="vtable"> 
-                    <input name="hostname" type="text" class="formfld unknown" id="hostname" size="28" value="<?=htmlspecialchars($pconfig['hostname']);?>" />
+                    <input name="hostname" type="text" class="formfld unknown" id="hostname" size="28" value="<?=xhtmlspecialchars($pconfig['hostname']);?>" />
                     <br /> <span class="vexpl"><?=gettext("Name of the host, without domain part.");?></span></td>
                 </tr>				
                 <?php if($netboot_enabled) { ?>
 		<tr>
 		  <td width="22%" valign="top" class="vncell">Netboot filename</td>
 		  <td width="78%" class="vtable">
-		    <input name="filename" type="text" class="formfld unknown" id="filename" size="28" value="<?=htmlspecialchars($pconfig['filename']);?>" />
+		    <input name="filename" type="text" class="formfld unknown" id="filename" size="28" value="<?=xhtmlspecialchars($pconfig['filename']);?>" />
 		    <br /> <span class="vexpl">Name of the file that should be loaded when this host boots off of the network, overrides setting on main page.</span></td>
 		</tr>
 		<tr>
 		  <td width="22%" valign="top" class="vncell">Root Path</td>
 		  <td width="78%" class="vtable">
-			<input name="rootpath" type="text" class="formfld unknown" id="rootpath" size="90" value="<?=htmlspecialchars($pconfig['rootpath']);?>" />
+			<input name="rootpath" type="text" class="formfld unknown" id="rootpath" size="90" value="<?=xhtmlspecialchars($pconfig['rootpath']);?>" />
 		    <br /> <span class="vexpl"><?=gettext("Enter the"); ?> <b><?=gettext("root-path"); ?></b>-<?=gettext("string");?>, overrides setting on main page.</span></td>
 		</tr>
 		<?php } ?>
                 <tr> 
                   <td width="22%" valign="top" class="vncell"><?=gettext("Description");?></td>
                   <td width="78%" class="vtable"> 
-                    <input name="descr" type="text" class="formfld unknown" id="descr" size="40" value="<?=htmlspecialchars($pconfig['descr']);?>" />
+                    <input name="descr" type="text" class="formfld unknown" id="descr" size="40" value="<?=xhtmlspecialchars($pconfig['descr']);?>" />
                     <br /> <span class="vexpl"><?=gettext("You may enter a description here ".
                     "for your reference (not parsed).");?></span></td>
                 </tr>
@@ -248,9 +249,9 @@ include("head.inc");
                     <input name="Submit" type="submit" class="formbtn" value="<?=gettext("Save");?>" />
                     <input type="button" class="formbtn" value="<?=gettext("Cancel");?>" onclick="window.location.href='<?=$referer;?>'" />
                     <?php if (isset($id) && $a_maps[$id]): ?>
-                    <input name="id" type="hidden" value="<?=htmlspecialchars($id);?>" />
+                    <input name="id" type="hidden" value="<?=xhtmlspecialchars($id);?>" />
                     <?php endif; ?>
-                    <input name="if" type="hidden" value="<?=htmlspecialchars($if);?>" />
+                    <input name="if" type="hidden" value="<?=xhtmlspecialchars($if);?>" />
                   </td>
                 </tr>
               </table>

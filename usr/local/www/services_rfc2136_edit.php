@@ -30,6 +30,7 @@
 */
 
 require("guiconfig.inc");
+require_once("pfsense-utils.inc");
 
 if (!is_array($config['dnsupdates']['dnsupdate'])) {
 	$config['dnsupdates']['dnsupdate'] = array();
@@ -150,20 +151,20 @@ include("head.inc");
                 <tr>
                   <td width="22%" valign="top" class="vncellreq"><?=gettext("Hostname");?></td>
                   <td width="78%" class="vtable">
-                    <input name="host" type="text" class="formfld unknown" id="host" size="30" value="<?=htmlspecialchars($pconfig['host']);?>" />
+                    <input name="host" type="text" class="formfld unknown" id="host" size="30" value="<?=xhtmlspecialchars($pconfig['host']);?>" />
 			<br /><span>Fully qualified hostname of the host to be updated</span>
                   </td>
 				</tr>
                 <tr>
                   <td valign="top" class="vncellreq"><?=gettext("TTL"); ?></td>
                   <td class="vtable">
-                    <input name="ttl" type="text" class="formfld unknown" id="ttl" size="6" value="<?=htmlspecialchars($pconfig['ttl']);?>" />
+                    <input name="ttl" type="text" class="formfld unknown" id="ttl" size="6" value="<?=xhtmlspecialchars($pconfig['ttl']);?>" />
                   <?=gettext("seconds");?></td>
                 </tr>
                 <tr>
                   <td valign="top" class="vncellreq"><?=gettext("Key name");?></td>
                   <td class="vtable">
-                    <input name="keyname" type="text" class="formfld unknown" id="keyname" size="30" value="<?=htmlspecialchars($pconfig['keyname']);?>" />
+                    <input name="keyname" type="text" class="formfld unknown" id="keyname" size="30" value="<?=xhtmlspecialchars($pconfig['keyname']);?>" />
                     <br />
                     <?=gettext("This must match the setting on the DNS server.");?></td>
                 </tr>
@@ -178,14 +179,14 @@ include("head.inc");
                 <tr>
                   <td valign="top" class="vncellreq"><?=gettext("Key");?></td>
                   <td class="vtable">
-                    <input name="keydata" type="text" class="formfld unknown" id="keydata" size="70" value="<?=htmlspecialchars($pconfig['keydata']);?>" />
+                    <input name="keydata" type="text" class="formfld unknown" id="keydata" size="70" value="<?=xhtmlspecialchars($pconfig['keydata']);?>" />
                     <br />
                     <?=gettext("Paste an HMAC-MD5 key here.");?></td>
 				</tr>
                 <tr>
                   <td width="22%" valign="top" class="vncellreq"><?=gettext("Server");?></td>
                   <td width="78%" class="vtable">
-                    <input name="server" type="text" class="formfld" id="server" size="30" value="<?=htmlspecialchars($pconfig['server'])?>" />
+                    <input name="server" type="text" class="formfld" id="server" size="30" value="<?=xhtmlspecialchars($pconfig['server'])?>" />
                   </td>
                 </tr>
                 <tr>
@@ -204,7 +205,7 @@ include("head.inc");
                 <tr>
                   <td width="22%" valign="top" class="vncellreq"><?=gettext("Description");?></td>
                   <td width="78%" class="vtable">
-                    <input name="descr" type="text" class="formfld unknown" id="descr" size="60" value="<?=htmlspecialchars($pconfig['descr']);?>" />
+                    <input name="descr" type="text" class="formfld unknown" id="descr" size="60" value="<?=xhtmlspecialchars($pconfig['descr']);?>" />
                   </td>
                 </tr>
                 <tr>
@@ -214,7 +215,7 @@ include("head.inc");
 					<a href="services_rfc2136.php"><input name="Cancel" type="button" class="formbtn" value="<?=gettext("Cancel");?>" /></a>
 					<input name="Submit" type="submit" class="formbtn" value="<?=gettext("Save &amp; Force Update");?>" onclick="enable_change(true)" />
 					<?php if (isset($id) && $a_rfc2136[$id]): ?>
-						<input name="id" type="hidden" value="<?=htmlspecialchars($id);?>" />
+						<input name="id" type="hidden" value="<?=xhtmlspecialchars($id);?>" />
 					<?php endif; ?>
                   </td>
                 </tr>

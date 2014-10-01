@@ -39,6 +39,7 @@
 
 require("guiconfig.inc");
 require_once("certs.inc");
+require_once("pfsense-utils.inc");
 
 $ca_methods = array(
 	"existing" => gettext("Import an existing Certificate Authority"),
@@ -370,14 +371,14 @@ function method_change() {
 				<form action="system_camanager.php" method="post" name="iform" id="iform">
 					<?php if ($act == "edit"): ?>
 					<input type="hidden" name="edit" value="edit" id="edit" />
-					<input type="hidden" name="id" value="<?php echo htmlspecialchars($id); ?>" id="id" />
+					<input type="hidden" name="id" value="<?php echo xhtmlspecialchars($id); ?>" id="id" />
 					<input type="hidden" name="refid" value="<?php echo $pconfig['refid']; ?>" id="refid" />
 					<?php endif; ?>
 					<table width="100%" border="0" cellpadding="6" cellspacing="0" summary="main area">
 						<tr>
 							<td width="22%" valign="top" class="vncellreq"><?=gettext("Descriptive name");?></td>
 							<td width="78%" class="vtable">
-								<input name="descr" type="text" class="formfld unknown" id="descr" size="20" value="<?=htmlspecialchars($pconfig['descr']);?>"/>
+								<input name="descr" type="text" class="formfld unknown" id="descr" size="20" value="<?=xhtmlspecialchars($pconfig['descr']);?>"/>
 							</td>
 						</tr>
 						<?php if (!isset($id) || $act == "edit"): ?>
@@ -410,7 +411,7 @@ function method_change() {
 						<tr>
 							<td width="22%" valign="top" class="vncellreq"><?=gettext("Certificate data");?></td>
 							<td width="78%" class="vtable">
-								<textarea name="cert" id="cert" cols="65" rows="7" class="formfld_cert"><?=htmlspecialchars($pconfig['cert']);?></textarea>
+								<textarea name="cert" id="cert" cols="65" rows="7" class="formfld_cert"><?=xhtmlspecialchars($pconfig['cert']);?></textarea>
 								<br />
 								<?=gettext("Paste a certificate in X.509 PEM format here.");?>
 							</td>
@@ -418,7 +419,7 @@ function method_change() {
 						<tr>
 							<td width="22%" valign="top" class="vncellreq"><?=gettext("Certificate Private Key");?><br /><?=gettext("(optional)");?></td>
 							<td width="78%" class="vtable">
-								<textarea name="key" id="key" cols="65" rows="7" class="formfld_cert"><?=htmlspecialchars($pconfig['key']);?></textarea>
+								<textarea name="key" id="key" cols="65" rows="7" class="formfld_cert"><?=xhtmlspecialchars($pconfig['key']);?></textarea>
 								<br />
 								<?=gettext("Paste the private key for the above certificate here. This is optional in most cases, but required if you need to generate a Certificate Revocation List (CRL).");?>
 							</td>
@@ -428,7 +429,7 @@ function method_change() {
 						<tr>
 							<td width="22%" valign="top" class="vncellreq"><?=gettext("Serial for next certificate");?></td>
 							<td width="78%" class="vtable">
-								<input name="serial" type="text" class="formfld unknown" id="serial" size="20" value="<?=htmlspecialchars($pconfig['serial']);?>"/>
+								<input name="serial" type="text" class="formfld unknown" id="serial" size="20" value="<?=xhtmlspecialchars($pconfig['serial']);?>"/>
 								<br /><?=gettext("Enter a decimal number to be used as the serial number for the next certificate to be created using this CA.");?>
 							</td>
 						</tr>
@@ -494,7 +495,7 @@ function method_change() {
 						<tr>
 							<td width="22%" valign="top" class="vncellreq"><?=gettext("Lifetime");?></td>
 							<td width="78%" class="vtable">
-								<input name="lifetime" type="text" class="formfld unknown" id="lifetime" size="5" value="<?=htmlspecialchars($pconfig['lifetime']);?>"/>
+								<input name="lifetime" type="text" class="formfld unknown" id="lifetime" size="5" value="<?=xhtmlspecialchars($pconfig['lifetime']);?>"/>
 								<?=gettext("days");?>
 							</td>
 						</tr>
@@ -520,7 +521,7 @@ function method_change() {
 									<tr>
 										<td align="right"><?=gettext("State or Province");?> : &nbsp;</td>
 										<td align="left">
-											<input name="dn_state" type="text" class="formfld unknown" size="40" value="<?=htmlspecialchars($pconfig['dn_state']);?>"/>
+											<input name="dn_state" type="text" class="formfld unknown" size="40" value="<?=xhtmlspecialchars($pconfig['dn_state']);?>"/>
 											&nbsp;
 											<em><?=gettext("ex:");?></em>
 											&nbsp;
@@ -530,7 +531,7 @@ function method_change() {
 									<tr>
 										<td align="right"><?=gettext("City");?> : &nbsp;</td>
 										<td align="left">
-											<input name="dn_city" type="text" class="formfld unknown" size="40" value="<?=htmlspecialchars($pconfig['dn_city']);?>"/>
+											<input name="dn_city" type="text" class="formfld unknown" size="40" value="<?=xhtmlspecialchars($pconfig['dn_city']);?>"/>
 											&nbsp;
 											<em><?=gettext("ex:");?></em>
 											&nbsp;
@@ -540,7 +541,7 @@ function method_change() {
 									<tr>
 										<td align="right"><?=gettext("Organization");?> : &nbsp;</td>
 										<td align="left">
-											<input name="dn_organization" type="text" class="formfld unknown" size="40" value="<?=htmlspecialchars($pconfig['dn_organization']);?>"/>
+											<input name="dn_organization" type="text" class="formfld unknown" size="40" value="<?=xhtmlspecialchars($pconfig['dn_organization']);?>"/>
 											&nbsp;
 											<em><?=gettext("ex:");?></em>
 											&nbsp;
@@ -550,7 +551,7 @@ function method_change() {
 									<tr>
 										<td align="right"><?=gettext("Email Address");?> : &nbsp;</td>
 										<td align="left">
-											<input name="dn_email" type="text" class="formfld unknown" size="25" value="<?=htmlspecialchars($pconfig['dn_email']);?>"/>
+											<input name="dn_email" type="text" class="formfld unknown" size="25" value="<?=xhtmlspecialchars($pconfig['dn_email']);?>"/>
 											&nbsp;
 											<em><?=gettext("ex:");?></em>
 											&nbsp;
@@ -560,7 +561,7 @@ function method_change() {
 									<tr>
 										<td align="right"><?=gettext("Common Name");?> : &nbsp;</td>
 										<td align="left">
-											<input name="dn_commonname" type="text" class="formfld unknown" size="25" value="<?=htmlspecialchars($pconfig['dn_commonname']);?>"/>
+											<input name="dn_commonname" type="text" class="formfld unknown" size="25" value="<?=xhtmlspecialchars($pconfig['dn_commonname']);?>"/>
 											&nbsp;
 											<em><?=gettext("ex:");?></em>
 											&nbsp;
@@ -578,7 +579,7 @@ function method_change() {
 							<td width="78%">
 								<input id="submit" name="save" type="submit" class="formbtn" value="<?=gettext("Save"); ?>" />
 								<?php if (isset($id) && $a_ca[$id]): ?>
-								<input name="id" type="hidden" value="<?=htmlspecialchars($id);?>" />
+								<input name="id" type="hidden" value="<?=xhtmlspecialchars($id);?>" />
 								<?php endif;?>
 							</td>
 						</tr>
@@ -599,7 +600,7 @@ function method_change() {
 					<?php
 						$i = 0;
 						foreach($a_ca as $ca):
-							$name = htmlspecialchars($ca['descr']);
+							$name = xhtmlspecialchars($ca['descr']);
 							$subj = cert_get_subject($ca['crt']);
 							$issuer = cert_get_issuer($ca['crt']);
 							list($startdate, $enddate) = cert_get_dates($ca['crt']);
@@ -607,8 +608,8 @@ function method_change() {
 							  $issuer_name = "<em>" . gettext("self-signed") . "</em>";
 							else
 							  $issuer_name = "<em>" . gettext("external") . "</em>";
-							$subj = htmlspecialchars($subj);
-							$issuer = htmlspecialchars($issuer);
+							$subj = xhtmlspecialchars($subj);
+							$issuer = xhtmlspecialchars($issuer);
 							$certcount = 0;
 
 							$issuer_ca = lookup_ca($ca['caref']);

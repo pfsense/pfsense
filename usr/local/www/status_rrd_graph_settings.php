@@ -43,6 +43,7 @@ require("guiconfig.inc");
 require_once("filter.inc");
 require("shaper.inc");
 require_once("rrd.inc");
+require_once("pfsense-utils.inc");
 
 $pconfig['enable'] = isset($config['rrd']['enable']);
 $pconfig['category'] = $config['rrd']['category'];
@@ -192,7 +193,7 @@ include("head.inc");
 					foreach ($categories as $category => $categoryd) {
 						echo "<option value=\"$category\"";
 						if ($category == $pconfig['category']) echo " selected=\"selected\"";
-						echo ">" . htmlspecialchars($categoryd) . "</option>\n";
+						echo ">" . xhtmlspecialchars($categoryd) . "</option>\n";
 					}
 					?>
 					</select>
@@ -207,7 +208,7 @@ include("head.inc");
 					foreach ($styles as $style => $styled) {
 						echo "<option value=\"$style\"";
 						if ($style == $pconfig['style']) echo " selected=\"selected\"";
-						echo ">" . htmlspecialchars($styled) . "</option>\n";
+						echo ">" . xhtmlspecialchars($styled) . "</option>\n";
 					}
 					?>
 					</select>
@@ -222,7 +223,7 @@ include("head.inc");
 					foreach ($periods as $period => $periodd) {
 						echo "<option value=\"$period\"";
 						if ($period == $pconfig['period']) echo " selected=\"selected\"";
-						echo ">" . htmlspecialchars($periodd) . "</option>\n";
+						echo ">" . xhtmlspecialchars($periodd) . "</option>\n";
 					}
 					?>
 					</select>

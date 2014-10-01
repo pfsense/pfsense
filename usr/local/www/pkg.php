@@ -39,6 +39,7 @@
 
 require_once("guiconfig.inc");
 require_once("pkg-utils.inc");
+require_once("pfsense-utils.inc");
 
 function gentitle_pkg($pgname) {
 	global $config;
@@ -58,7 +59,7 @@ if($xml == "") {
 	if(file_exists("/usr/local/pkg/" . $xml))
 		$pkg = parse_xml_config_pkg("/usr/local/pkg/" . $xml, "packagegui");
 	else {
-		echo "File not found " . htmlspecialchars($xml);
+		echo "File not found " . xhtmlspecialchars($xml);
 		exit;
 	}
 }
@@ -209,7 +210,7 @@ include("head.inc");
 </script>
 <form action="pkg.php" name="pkgform" method="get">
 <input type='hidden' name='xml' value='<?=$_REQUEST['xml']?>' />
-<?php if($_GET['savemsg'] <> "") $savemsg = htmlspecialchars($_GET['savemsg']); ?>
+<?php if($_GET['savemsg'] <> "") $savemsg = xhtmlspecialchars($_GET['savemsg']); ?>
 <div id="savemsg"></div>
 <?php if ($savemsg) print_info_box($savemsg); ?>
 <table width="100%" border="0" cellpadding="0" cellspacing="0" summary="package settings">

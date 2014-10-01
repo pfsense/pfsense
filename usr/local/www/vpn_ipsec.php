@@ -42,6 +42,7 @@ require_once("filter.inc");
 require_once("shaper.inc");
 require_once("ipsec.inc");
 require_once("vpn.inc");
+require_once("pfsense-utils.inc");
 
 if (!is_array($config['ipsec']['phase1']))
 	$config['ipsec']['phase1'] = array();
@@ -330,7 +331,7 @@ include("head.inc");
 										$vipif = $group[0]['int'];
 									$iflabels[$name] = "GW Group {$name}";
 								}
-								$if = htmlspecialchars($iflabels[$ph1ent['interface']]);
+								$if = xhtmlspecialchars($iflabels[$ph1ent['interface']]);
 							}
 							else
 								$if = "WAN";
@@ -367,7 +368,7 @@ include("head.inc");
 						</td>
 						<td class="listbg" onclick="fr_toggle(<?=$i;?>)">
 							<?=$spans;?>
-							<?=htmlspecialchars($ph1ent['descr']);?>&nbsp;
+							<?=xhtmlspecialchars($ph1ent['descr']);?>&nbsp;
 							<?=$spane;?>
 						</td>
 						<td valign="middle" class="list nowrap">
@@ -413,7 +414,7 @@ include("head.inc");
 						<td class="listrborder" colspan="6">
 <?php
 							if (isset($_POST["tdph2-{$i}-visible"]))
-								$tdph2_visible = htmlspecialchars($_POST["tdph2-{$i}-visible"]);
+								$tdph2_visible = xhtmlspecialchars($_POST["tdph2-{$i}-visible"]);
 							else
 								$tdph2_visible = 0;
 ?>

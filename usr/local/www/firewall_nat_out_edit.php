@@ -44,6 +44,7 @@
 require("guiconfig.inc");
 require_once("filter.inc");
 require("shaper.inc");
+require_once("pfsense-utils.inc");
 
 $referer = (isset($_SERVER['HTTP_REFERER']) ? $_SERVER['HTTP_REFERER'] : '/firewall_nat_out.php');
 
@@ -135,7 +136,7 @@ if ($_POST) {
 	 */
 	foreach ($_POST as $key => $value) {
 		$temp = str_replace(">", "", $value);
-		$newpost = htmlentities($temp);
+		$newpost = xhtmlentities($temp);
 		if($newpost <> $temp)
 			$input_errors[] = sprintf(gettext("Invalid characters detected (%s).  Please remove invalid characters and save again."),$temp);
 	}
@@ -497,7 +498,7 @@ function poolopts_change() {
 					foreach ($interfaces as $iface => $ifacename):
 ?>
 						<option value="<?=$iface;?>" <?php if ($iface == $pconfig['interface']) echo "selected=\"selected\""; ?>>
-							<?=htmlspecialchars($ifacename);?>
+							<?=xhtmlspecialchars($ifacename);?>
 						</option>
 <?php
 					endforeach;
@@ -516,7 +517,7 @@ function poolopts_change() {
 				$protocols = explode(" ", "any TCP UDP TCP/UDP ICMP ESP AH GRE IPV6 IGMP carp pfsync");
 				foreach ($protocols as $proto):
 ?>
-					<option value="<?=strtolower($proto);?>" <?php if (strtolower($proto) == $pconfig['protocol']) echo "selected=\"selected\""; ?>><?=htmlspecialchars($proto);?></option>
+					<option value="<?=strtolower($proto);?>" <?php if (strtolower($proto) == $pconfig['protocol']) echo "selected=\"selected\""; ?>><?=xhtmlspecialchars($proto);?></option>
 <?php
 				endforeach;
 ?>
@@ -545,7 +546,7 @@ function poolopts_change() {
 					<tr>
 						<td><?=gettext("Address:");?>&nbsp;&nbsp;</td>
 						<td>
-							<input name="source" type="text" autocomplete="off" class="formfldalias" id="source" size="20" value="<?=htmlspecialchars($pconfig['source']);?>" />/
+							<input name="source" type="text" autocomplete="off" class="formfldalias" id="source" size="20" value="<?=xhtmlspecialchars($pconfig['source']);?>" />/
 							<select name="source_subnet" class="formfld" id="source_subnet">
 <?php
 							for ($i = 32; $i >= 0; $i--):
@@ -566,7 +567,7 @@ function poolopts_change() {
 					<tr name="sport_tr" id="sport_tr">
 						<td><?=gettext("Source port:");?>&nbsp;&nbsp;</td>
 						<td>
-							<input name="sourceport" type="text" autocomplete="off" class="formfldalias" id="sourceport" size="5" value="<?=htmlspecialchars($pconfig['sourceport']);?>" />
+							<input name="sourceport" type="text" autocomplete="off" class="formfldalias" id="sourceport" size="5" value="<?=xhtmlspecialchars($pconfig['sourceport']);?>" />
 							<?=gettext("(leave blank for any)");?>
 						</td>
 					</tr>
@@ -597,7 +598,7 @@ function poolopts_change() {
 					<tr>
 						<td><?=gettext("Address:");?>&nbsp;&nbsp;</td>
 						<td>
-							<input name="destination" type="text" autocomplete="off" class="formfldalias" id="destination" size="20" value="<?=htmlspecialchars($pconfig['destination']);?>" />/
+							<input name="destination" type="text" autocomplete="off" class="formfldalias" id="destination" size="20" value="<?=xhtmlspecialchars($pconfig['destination']);?>" />/
 							<select name="destination_subnet" class="formselect" id="destination_subnet">
 <?php
 							for ($i = 32; $i >= 0; $i--):
@@ -618,7 +619,7 @@ function poolopts_change() {
 					<tr name="dport_tr" id="dport_tr">
 						<td><?=gettext("Destination port:");?>&nbsp;&nbsp;</td>
 						<td>
-							<input name="dstport" type="text" autocomplete="off" class="formfldalias" id="dstport" size="5" value="<?=htmlspecialchars($pconfig['dstport']);?>" />
+							<input name="dstport" type="text" autocomplete="off" class="formfldalias" id="dstport" size="5" value="<?=xhtmlspecialchars($pconfig['dstport']);?>" />
 							<?=gettext("(leave blank for any)");?>
 						</td>
 					</tr>
@@ -647,14 +648,14 @@ function poolopts_change() {
 											$len = $end - $start;
 ?>
 								<option value="<?=$sn['subnet'].'/'.$sn['subnet_bits'];?>" <?php if ($sn['subnet'].'/'.$sn['subnet_bits'] == $pconfig['target']) echo "selected=\"selected\""; ?>>
-									<?=htmlspecialchars("Subnet: {$sn['subnet']}/{$sn['subnet_bits']} ({$sn['descr']})");?>
+									<?=xhtmlspecialchars("Subnet: {$sn['subnet']}/{$sn['subnet_bits']} ({$sn['descr']})");?>
 								</option>
 <?php
 											for ($i = 0; $i <= $len; $i++):
 												$snip = long2ip32($start+$i);
 ?>
 								<option value="<?=$snip;?>" <?php if ($snip == $pconfig['target']) echo "selected"; ?>>
-									<?=htmlspecialchars("{$snip} ({$sn['descr']})");?>
+									<?=xhtmlspecialchars("{$snip} ({$sn['descr']})");?>
 								</option>
 <?php
 											endfor;
@@ -663,7 +664,7 @@ function poolopts_change() {
 										else:
 ?>
 								<option value="<?=$sn['subnet'];?>" <?php if ($sn['subnet'] == $pconfig['target']) echo "selected=\"selected\""; ?>>
-									<?=htmlspecialchars("{$sn['subnet']} ({$sn['descr']})");?>
+									<?=xhtmlspecialchars("{$sn['subnet']} ({$sn['descr']})");?>
 								</option>
 <?php
 										endif;
@@ -674,7 +675,7 @@ function poolopts_change() {
 										continue;
 ?>
 								<option value="<?=$alias['name'];?>" <?php if ($alias['name'] == $pconfig['target']) echo "selected=\"selected\""; ?>>
-									<?=htmlspecialchars("Host Alias: {$alias['name']} ({$alias['descr']})");?>
+									<?=xhtmlspecialchars("Host Alias: {$alias['name']} ({$alias['descr']})");?>
 								</option>
 <?php
 								endforeach;
@@ -689,7 +690,7 @@ function poolopts_change() {
 					<tr id="target_network">
 						<td><?=gettext("Other Subnet:");?>&nbsp;&nbsp;</td>
 						<td>
-							<input name="targetip" type="text" class="formfld unknown" id="targetip" size="20" value="<?=htmlspecialchars($pconfig['targetip']);?>" />/
+							<input name="targetip" type="text" class="formfld unknown" id="targetip" size="20" value="<?=xhtmlspecialchars($pconfig['targetip']);?>" />/
 							<select name="targetip_subnet" class="formfld" id="targetip_subnet">
 <?php
 							for ($i = 32; $i >= 0; $i--):
@@ -718,25 +719,25 @@ function poolopts_change() {
 						<td>
 							<select name="poolopts" id="poolopts">
 								<option value="" <?php if ($pconfig['poolopts'] == "") echo "selected=\"selected\""; ?>>
-									<?=htmlspecialchars("Default");?>
+									<?=xhtmlspecialchars("Default");?>
 								</option>
 								<option value="round-robin" <?php if ($pconfig['poolopts'] == "round-robin") echo "selected=\"selected\""; ?>>
-									<?=htmlspecialchars("Round Robin");?>
+									<?=xhtmlspecialchars("Round Robin");?>
 								</option>
 								<option value="round-robin sticky-address" <?php if ($pconfig['poolopts'] == "round-robin sticky-address") echo "selected=\"selected\""; ?>>
-									<?=htmlspecialchars("Round Robin with Sticky Address");?>
+									<?=xhtmlspecialchars("Round Robin with Sticky Address");?>
 								</option>
 								<option value="random" <?php if ($pconfig['poolopts'] == "random") echo "selected=\"selected\""; ?>>
-									<?=htmlspecialchars("Random");?>
+									<?=xhtmlspecialchars("Random");?>
 								</option>
 								<option value="random sticky-address" <?php if ($pconfig['poolopts'] == "random sticky-address") echo "selected=\"selected\""; ?>>
-									<?=htmlspecialchars("Random with Sticky Address");?>
+									<?=xhtmlspecialchars("Random with Sticky Address");?>
 								</option>
 								<option value="source-hash" <?php if ($pconfig['poolopts'] == "source-hash") echo "selected=\"selected\""; ?>>
-									<?=htmlspecialchars("Source Hash");?>
+									<?=xhtmlspecialchars("Source Hash");?>
 								</option>
 								<option value="bitmask" <?php if ($pconfig['poolopts'] == "bitmask") echo "selected=\"selected\""; ?>>
-									<?=htmlspecialchars("Bitmask");?>
+									<?=xhtmlspecialchars("Bitmask");?>
 								</option>
 							</select>
 							<br />
@@ -753,7 +754,7 @@ function poolopts_change() {
 					<tr name="tport_tr" id="tport_tr">
 						<td><?=gettext("Port:");?>&nbsp;&nbsp;</td>
 						<td>
-							<input name="natport" type="text" class="formfld unknown" id="natport" size="5" value="<?=htmlspecialchars($pconfig['natport']);?>" />
+							<input name="natport" type="text" class="formfld unknown" id="natport" size="5" value="<?=xhtmlspecialchars($pconfig['natport']);?>" />
 						</td>
 					</tr>
 					<tr name="tporttext_tr" id="tporttext_tr">
@@ -779,7 +780,7 @@ function poolopts_change() {
 		<tr>
 			<td width="22%" valign="top" class="vncell"><?=gettext("Description");?></td>
 			<td width="78%" class="vtable">
-				<input name="descr" type="text" class="formfld unknown" id="descr" size="40" value="<?=htmlspecialchars($pconfig['descr']);?>" />
+				<input name="descr" type="text" class="formfld unknown" id="descr" size="40" value="<?=xhtmlspecialchars($pconfig['descr']);?>" />
 				<br />
 				<span class="vexpl"><?=gettext("You may enter a description here for your reference (not parsed).");?></span>
 			</td>
@@ -829,11 +830,11 @@ function poolopts_change() {
 <?php
 			if (isset($id) && $a_out[$id]):
 ?>
-				<input name="id" type="hidden" value="<?=htmlspecialchars($id);?>" />
+				<input name="id" type="hidden" value="<?=xhtmlspecialchars($id);?>" />
 <?php
 			endif;
 ?>
-				<input name="after" type="hidden" value="<?=htmlspecialchars($after);?>" />
+				<input name="after" type="hidden" value="<?=xhtmlspecialchars($after);?>" />
 			</td>
 		</tr>
 	</table>

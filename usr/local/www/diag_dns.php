@@ -33,6 +33,7 @@
 
 $pgtitle = array(gettext("Diagnostics"),gettext("DNS Lookup"));
 require("guiconfig.inc");
+require_once("pfsense-utils.inc");
 
 $host = trim($_REQUEST['host'], " \t\n\r\0\x0B[];\"'");
 $host_esc = escapeshellarg($host);
@@ -186,7 +187,7 @@ include("head.inc"); ?>
             <?=$mandfldhtml;?>
 			<table summary="results">
 				<tr><td valign="top">
-			<input name="host" type="text" class="formfld" id="host" size="20" value="<?=htmlspecialchars($host);?>" />
+			<input name="host" type="text" class="formfld" id="host" size="20" value="<?=xhtmlspecialchars($host);?>" />
 			</td>
 			<?php if ($resolved && $type) { ?>
 			<td valign="middle">&nbsp;=&nbsp;</td><td>
@@ -206,14 +207,14 @@ include("head.inc"); ?>
 				if($found > 0) { ?>
 					<br/></font><font size='-2'>
 				<?PHP	if($alias_exists) { ?>
-							An alias already exists for the hostname <?= htmlspecialchars($host) ?>. <br />
+							An alias already exists for the hostname <?= xhtmlspecialchars($host) ?>. <br />
 							<input type="hidden" name="override" value="true"/>
 							<input type="submit" name="create_alias" value="Overwrite Alias"/>
 				<?PHP	} else {
 						if(!$createdalias) { ?>
 							<input type="submit" name="create_alias" value="Create Alias from These Entries"/>
 					<?PHP	} else { ?>
-							Alias created with name <?= htmlspecialchars($newalias['name']) ?>
+							Alias created with name <?= xhtmlspecialchars($newalias['name']) ?>
 					<?PHP	}
 					}
 				}
@@ -259,8 +260,8 @@ include("head.inc"); ?>
 		<tr>
 			<td width="22%" valign="top"  class="vncell"><?=gettext("More Information:");?></td>
 			<td width="78%" class="vtable">
-				<a href ="/diag_ping.php?host=<?=htmlspecialchars($host)?>&amp;interface=wan&amp;count=3"><?=gettext("Ping");?></a> <br />
-				<a href ="/diag_traceroute.php?host=<?=htmlspecialchars($host)?>&amp;ttl=18"><?=gettext("Traceroute");?></a>
+				<a href ="/diag_ping.php?host=<?=xhtmlspecialchars($host)?>&amp;interface=wan&amp;count=3"><?=gettext("Ping");?></a> <br />
+				<a href ="/diag_traceroute.php?host=<?=xhtmlspecialchars($host)?>&amp;ttl=18"><?=gettext("Traceroute");?></a>
 				<p>
 				<?=gettext("NOTE: The following links are to external services, so their reliability cannot be guaranteed.");?><br /><br />
 				<a target="_blank" href="http://private.dnsstuff.com/tools/whois.ch?ip=<?php echo $ipaddr; ?>"><?=gettext("IP WHOIS @ DNS Stuff");?></a><br />

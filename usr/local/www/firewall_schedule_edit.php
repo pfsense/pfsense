@@ -57,6 +57,7 @@ require("guiconfig.inc");
 require_once("functions.inc");
 require_once("filter.inc");
 require_once("shaper.inc");
+require_once("pfsense-utils.inc");
 
 $pgtitle = array(gettext("Firewall"),gettext("Schedules"),gettext("Edit"));
 
@@ -77,7 +78,7 @@ if (isset($_POST['id']) && is_numericint($_POST['id']))
 
 if (isset($id) && $a_schedules[$id]) {
 	$pconfig['name'] = $a_schedules[$id]['name'];
-	$pconfig['descr'] = html_entity_decode($a_schedules[$id]['descr']);
+	$pconfig['descr'] = xhtml_entity_decode($a_schedules[$id]['descr']);
 	$pconfig['timerange'] = $a_schedules[$id]['timerange'];
 	$pconfig['schedlabel'] = $a_schedules[$id]['schedlabel'];
 	$getSchedule = true;
@@ -113,7 +114,7 @@ if ($_POST) {
 	$schedule = array();
 	
 	$schedule['name'] = $_POST['name'];
-	$schedule['descr'] = htmlentities($_POST['descr'], ENT_QUOTES, 'UTF-8');	
+	$schedule['descr'] = xhtmlentities($_POST['descr'], ENT_QUOTES, 'UTF-8');	
 	
 	$timerangeFound = false;
 	for ($x=0; $x<99; $x++){
@@ -133,7 +134,7 @@ if ($_POST) {
 			$timehourstr = $_POST['starttime' . $x];
 			$timehourstr .= "-";
 			$timehourstr .= $_POST['stoptime' . $x];
-			$timedescrstr = htmlentities($_POST['timedescr' . $x], ENT_QUOTES, 'UTF-8'); 
+			$timedescrstr = xhtmlentities($_POST['timedescr' . $x], ENT_QUOTES, 'UTF-8'); 
 			$dashpos = strpos($timestr, '-');
 			if ($dashpos === false)
 			{
@@ -787,13 +788,13 @@ EOD;
 				  <td width="15%" valign="top" class="vncellreq"><?=gettext("Schedule Name");?></td>
 				  <td width="85%" class="vtable">
 				  <?php if(is_schedule_inuse($pconfig['name']) == true): ?>
-				  			<input name="name" type="hidden" id="name" size="40"  value="<?=htmlspecialchars($pconfig['name']);?>" />
+				  			<input name="name" type="hidden" id="name" size="40"  value="<?=xhtmlspecialchars($pconfig['name']);?>" />
 						  <?php echo $pconfig['name']; ?>
 						      <p>
 						        <span class="vexpl"><?=gettext("NOTE: This schedule is in use so the name may not be modified!");?></span>
 						      </p>
 				<?php else: ?>
-				  <input name="name" type="text" id="name" size="40" maxlength="40" class="formfld unknown" value="<?=htmlspecialchars($pconfig['name']);?>" /><br />
+				  <input name="name" type="text" id="name" size="40" maxlength="40" class="formfld unknown" value="<?=xhtmlspecialchars($pconfig['name']);?>" /><br />
 				      	<span class="vexpl">
      					   <?=gettext("The name of the alias may only consist of the characters a-z, A-Z and 0-9");?>
       					</span>
@@ -802,7 +803,7 @@ EOD;
 				</tr>
 				<tr>
 					<td width="15%" valign="top" class="vncell"><?=gettext("Description");?></td>
-					<td width="85%" class="vtable"><input name="descr" type="text" id="descr" size="40" maxlength="40" class="formfld unknown" value="<?=htmlspecialchars($pconfig['descr']);?>" /><br />
+					<td width="85%" class="vtable"><input name="descr" type="text" id="descr" size="40" maxlength="40" class="formfld unknown" value="<?=xhtmlspecialchars($pconfig['descr']);?>" /><br />
  						<span class="vexpl">
 				        	<?=gettext("You may enter a description here for your reference (not parsed).");?>
 				      	</span>
@@ -1167,7 +1168,7 @@ EOD;
 				      <input id="submit" name="submit" type="submit" onclick="return checkForRanges();" class="formbtn" value="<?=gettext("Save"); ?>" />
 				      <input type="button" class="formbtn" value="<?=gettext("Cancel");?>" onclick="window.location.href='<?=$referer;?>'" />
 				      <?php if (isset($id) && $a_schedules[$id]): ?>
-				      <input name="id" type="hidden" value="<?=htmlspecialchars($id);?>" />
+				      <input name="id" type="hidden" value="<?=xhtmlspecialchars($id);?>" />
 				      <?php endif; ?>
 				    </td>
 			  	</tr>

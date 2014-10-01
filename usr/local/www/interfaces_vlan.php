@@ -41,6 +41,7 @@
 ##|-PRIV
 
 require("guiconfig.inc");
+require_once("pfsense-utils.inc");
 
 if (!is_array($config['vlans']['vlan']))
 	$config['vlans']['vlan'] = array();
@@ -119,13 +120,13 @@ include("head.inc");
 			  <?php $i = 0; foreach ($a_vlans as $vlan): ?>
                 <tr ondblclick="document.location='interfaces_vlan_edit.php?id=<?=$i;?>'">
                   <td class="listlr">
-					<?=htmlspecialchars($vlan['if']);?>
+					<?=xhtmlspecialchars($vlan['if']);?>
                   </td>
                   <td class="listr">
-					<?=htmlspecialchars($vlan['tag']);?>
+					<?=xhtmlspecialchars($vlan['tag']);?>
                   </td>
                   <td class="listbg">
-                    <?=htmlspecialchars($vlan['descr']);?>&nbsp;
+                    <?=xhtmlspecialchars($vlan['descr']);?>&nbsp;
                   </td>
                   <td valign="middle" class="list nowrap"> <a href="interfaces_vlan_edit.php?id=<?=$i;?>"><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_e.gif" width="17" height="17" border="0" alt="edit" /></a>
                      &nbsp;<a href="interfaces_vlan.php?act=del&amp;id=<?=$i;?>" onclick="return confirm('<?=gettext("Do you really want to delete this VLAN?");?>')"><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_x.gif" width="17" height="17" border="0" alt="delete" /></a></td>

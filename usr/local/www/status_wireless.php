@@ -37,6 +37,7 @@
 ##|-PRIV
 
 require_once("guiconfig.inc");
+require_once("pfsense-utils.inc");
 
 $pgtitle = array(gettext("Status"),gettext("Wireless"));
 $shortcut_section = "wireless";
@@ -89,7 +90,7 @@ display_top_tabs($tab_array);
 </td></tr>
 <tr><td>
 <div id="mainarea" class="tabcont">
-<input type="hidden" name="if" id="if" value="<?php echo htmlspecialchars($if); ?>">
+<input type="hidden" name="if" id="if" value="<?php echo xhtmlspecialchars($if); ?>">
 <b><input type="submit" name="rescanwifi" id="rescanwifi" value="Rescan"></b><br /><br />
 <b><?php echo gettext("Nearby access points or ad-hoc peers"); ?></b>
 <table class="tabcont sortable" colspan="3" cellpadding="3" width="100%">
@@ -115,7 +116,7 @@ display_top_tabs($tab_array);
 		/* Split by Mac address for the SSID Field */
 		$split = preg_split("/([0-9a-f][[0-9a-f]\:[0-9a-f][[0-9a-f]\:[0-9a-f][[0-9a-f]\:[0-9a-f][[0-9a-f]\:[0-9a-f][[0-9a-f]\:[0-9a-f][[0-9a-f])/i", $state);
 		preg_match("/([0-9a-f][[0-9a-f]\:[0-9a-f][[0-9a-f]\:[0-9a-f][[0-9a-f]\:[0-9a-f][[0-9a-f]\:[0-9a-f][[0-9a-f]\:[0-9a-f][[0-9a-f])/i", $state, $bssid);
-		$ssid = htmlspecialchars($split[0]);
+		$ssid = xhtmlspecialchars($split[0]);
 		$bssid = $bssid[0];
 		/* Split the rest by using spaces for this line using the 2nd part */
 		$split = preg_split("/[ ]+/i", $split[1]);

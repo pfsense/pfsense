@@ -40,6 +40,7 @@
 ##|-PRIV
 
 require("guiconfig.inc");
+require_once("pfsense-utils.inc");
 
 if (isset($_POST['backupcount'])) {
 	if (is_numeric($_POST['backupcount']) && ($_POST['backupcount'] >= 0)) {
@@ -136,7 +137,7 @@ include("head.inc");
 			}
 			?>
 		<tr>
-			<td valign="middle" bgcolor="<?php echo $color; ?>" style="white-space: pre-wrap;"><?php echo htmlentities($line);?></td>
+			<td valign="middle" bgcolor="<?php echo $color; ?>" style="white-space: pre-wrap;"><?php echo xhtmlentities($line);?></td>
 		</tr>
 		<?php } ?>
 	</table>
@@ -173,11 +174,11 @@ include("head.inc");
 						<?PHP	if (!empty($_GET["newver"])) {
 							echo gettext("Restore from Configuration Backup");
 							$target_config = $_GET["newver"]; ?>
-							<input type="hidden" name="newver" value="<?PHP echo htmlspecialchars($_GET["newver"]); ?>" />
+							<input type="hidden" name="newver" value="<?PHP echo xhtmlspecialchars($_GET["newver"]); ?>" />
 						<?PHP	} elseif (!empty($_GET["rmver"])) {
 							echo gettext("Remove Configuration Backup");
 							$target_config = $_GET["rmver"]; ?>
-							<input type="hidden" name="rmver" value="<?PHP echo htmlspecialchars($_GET["rmver"]); ?>" />
+							<input type="hidden" name="rmver" value="<?PHP echo xhtmlspecialchars($_GET["rmver"]); ?>" />
 						<?PHP	} ?>
 							<br /><strong><?PHP echo gettext("Target Configuration"); ?>:</strong>
 							<?PHP echo sprintf(gettext('Timestamp %1$s'), date(gettext("n/j/y H:i:s"), $target_config)); ?>
@@ -190,7 +191,7 @@ include("head.inc");
 							<td width="10%">&nbsp;</td>
 							<td width="15%" valign="top"><?=gettext("Backup Count");?></td>
 							<td width="10%">
-							<input name="backupcount" type="text" class="formfld unknown" size="5" value="<?=htmlspecialchars($config['system']['backupcount']);?>"/>
+							<input name="backupcount" type="text" class="formfld unknown" size="5" value="<?=xhtmlspecialchars($config['system']['backupcount']);?>"/>
 							</td>
 							<td width="60%">
 							<?= gettext("Enter the number of older configurations to keep in the local backup cache. By default this is 30 for a full install or 5 on NanoBSD."); ?>

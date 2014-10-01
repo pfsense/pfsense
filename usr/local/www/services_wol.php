@@ -41,6 +41,7 @@
 ##|-PRIV
 
 require("guiconfig.inc");
+require_once("pfsense-utils.inc");
 
 if (!is_array($config['wol']['wolentry'])) {
 	$config['wol']['wolentry'] = array();
@@ -134,7 +135,7 @@ include("head.inc");
 						$interfaces = get_configured_interface_with_descr();
 					  	foreach ($interfaces as $iface => $ifacename): ?>
                       	<option value="<?=$iface;?>" <?php if (!link_interface_to_bridge($iface) && $iface == $if) echo "selected=\"selected\""; ?>>
-                      <?=htmlspecialchars($ifacename);?>
+                      <?=xhtmlspecialchars($ifacename);?>
                       </option>
                       <?php endforeach; ?>
                     </select> <br />
@@ -143,7 +144,7 @@ include("head.inc");
                 <tr>
 				  <td width="22%" valign="top" class="vncellreq"><?=gettext("MAC address");?></td>
 				  <td width="78%" class="vtable">
-                      <input name="mac" type="text" class="formfld unknown" id="mac" size="20" value="<?=htmlspecialchars($mac);?>" />
+                      <input name="mac" type="text" class="formfld unknown" id="mac" size="20" value="<?=xhtmlspecialchars($mac);?>" />
                       <br />
                       <?=gettext("Enter a MAC address ");?><span class="vexpl"> <?=gettext("in the following format: xx:xx:xx:xx:xx:xx");?></span></td></tr>
 				<tr>
@@ -179,7 +180,7 @@ include("head.inc");
                     <a href="?mac=<?=$wolent['mac'];?>&amp;if=<?=$wolent['interface'];?>"><?=strtolower($wolent['mac']);?></a>
                   </td>
                   <td class="listbg" ondblclick="document.location='services_wol_edit.php?id=<?=$i;?>';">
-                    <?=htmlspecialchars($wolent['descr']);?>
+                    <?=xhtmlspecialchars($wolent['descr']);?>
                   </td>
                   <td valign="middle" class="list nowrap">
                     <table border="0" cellspacing="0" cellpadding="1" summary="icons">

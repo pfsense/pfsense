@@ -45,6 +45,7 @@
 ##|-PRIV
 
 require("guiconfig.inc");
+require_once("pfsense-utils.inc");
 
 $pgtitle = array(gettext("System"), gettext("Group manager"));
 
@@ -281,19 +282,19 @@ function presubmit() {
 							<td width="22%" valign="top" class="vncell"><?=gettext("Defined by");?></td>
 							<td width="78%" class="vtable">
 								<strong><?=strtoupper($pconfig['gtype']);?></strong>
-								<input name="gtype" type="hidden" value="<?=htmlspecialchars($pconfig['gtype'])?>"/>
+								<input name="gtype" type="hidden" value="<?=xhtmlspecialchars($pconfig['gtype'])?>"/>
 							</td>
 						</tr>
 						<tr>
 							<td width="22%" valign="top" class="vncellreq"><?=gettext("Group name");?></td>
 							<td width="78%" class="vtable">
-								<input name="groupname" type="text" class="formfld group" id="groupname" size="20" maxlength="16" value="<?=htmlspecialchars($pconfig['name']);?>" <?=$ro;?> />
+								<input name="groupname" type="text" class="formfld group" id="groupname" size="20" maxlength="16" value="<?=xhtmlspecialchars($pconfig['name']);?>" <?=$ro;?> />
 							</td>
 						</tr>
 						<tr>
 							<td width="22%" valign="top" class="vncell"><?=gettext("Description");?></td>
 							<td width="78%" class="vtable">
-								<input name="description" type="text" class="formfld unknown" id="description" size="20" value="<?=htmlspecialchars($pconfig['description']);?>" />
+								<input name="description" type="text" class="formfld unknown" id="description" size="20" value="<?=xhtmlspecialchars($pconfig['description']);?>" />
 								<br />
 								<?=gettext("Group description, for your own information only");?>
 							</td>
@@ -318,7 +319,7 @@ function presubmit() {
 												$rowIndex++;
 ?>
 												<option value="<?=$user['uid'];?>" <?=$selected;?>>
-													<?=htmlspecialchars($user['name']);?>
+													<?=xhtmlspecialchars($user['name']);?>
 												</option>
 <?php
 											endforeach;
@@ -350,7 +351,7 @@ function presubmit() {
 												$rowIndex++;
 ?>
 												<option value="<?=$user['uid'];?>">
-													<?=htmlspecialchars($user['name']);?>
+													<?=xhtmlspecialchars($user['name']);?>
 												</option>
 <?php
 											endforeach;
@@ -385,10 +386,10 @@ function presubmit() {
 ?>
 									<tr>
 										<td class="listr">
-											<?=htmlspecialchars($priv_list[$priv]['name']);?>
+											<?=xhtmlspecialchars($priv_list[$priv]['name']);?>
 										</td>
 										<td class="listbg">
-											<?=htmlspecialchars($priv_list[$priv]['descr']);?>
+											<?=xhtmlspecialchars($priv_list[$priv]['descr']);?>
 										</td>
 										<td valign="middle" class="list nowrap">
 											<input type="image" name="delpriv[]" width="17" height="17" border="0"
@@ -408,7 +409,7 @@ function presubmit() {
 									<tr>
 										<td class="list" colspan="2"></td>
 										<td class="list">
-											<a href="system_groupmanager_addprivs.php?groupid=<?=htmlspecialchars($id)?>">
+											<a href="system_groupmanager_addprivs.php?groupid=<?=xhtmlspecialchars($id)?>">
 												<img src="/themes/<?= $g['theme']; ?>/images/icons/icon_plus.gif" width="17" height="17" border="0" alt="add" />
 											</a>
 
@@ -427,8 +428,8 @@ function presubmit() {
 								<input name="save" type="submit" class="formbtn" value="<?=gettext("Save");?>" />
 								<input type="button" value="<?=gettext("Cancel");?>" onclick="window.location.href='/system_groupmanager.php'" />
 								<?php if (isset($id) && $a_group[$id]): ?>
-								<input name="id" type="hidden" value="<?=htmlspecialchars($id);?>" />
-								<input name="gid" type="hidden" value="<?=htmlspecialchars($pconfig['gid']);?>" />
+								<input name="id" type="hidden" value="<?=xhtmlspecialchars($id);?>" />
+								<input name="gid" type="hidden" value="<?=xhtmlspecialchars($pconfig['gid']);?>" />
 								<?php endif; ?>
 							</td>
 						</tr>
@@ -493,13 +494,13 @@ function presubmit() {
 												<img src="<?=$grpimg;?>" alt="<?=gettext("User");?>" title="<?=gettext("User");?>" border="0" height="16" width="16" />
 											</td>
 											<td align="left" valign="middle">
-												<?=htmlspecialchars($group['name']); ?>&nbsp;
+												<?=xhtmlspecialchars($group['name']); ?>&nbsp;
 											</td>
 										</tr>
 									</table>
 								</td>
 								<td class="listr">
-									<?=htmlspecialchars($group['description']);?>&nbsp;
+									<?=xhtmlspecialchars($group['description']);?>&nbsp;
 								</td>
 								<td class="listbg">
 									<?=$groupcount;?>

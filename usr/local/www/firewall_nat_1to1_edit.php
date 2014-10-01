@@ -43,6 +43,7 @@ require("guiconfig.inc");
 require_once("interfaces.inc");
 require_once("filter.inc");
 require("shaper.inc");
+require_once("pfsense-utils.inc");
 
 $referer = (isset($_SERVER['HTTP_REFERER']) ? $_SERVER['HTTP_REFERER'] : '/firewall_nat_1to1.php');
 
@@ -105,7 +106,7 @@ if ($_POST) {
 	 */
 	foreach ($_POST as $key => $value) {
 		$temp = str_replace(">", "", $value);
-		$newpost = htmlentities($temp);
+		$newpost = xhtmlentities($temp);
 		if($newpost <> $temp)
 			$input_errors[] = sprintf(gettext("Invalid characters detected (%s).  Please remove invalid characters and save again."),$temp);
 	}
@@ -321,7 +322,7 @@ if ($input_errors)
 					foreach ($interfaces as $iface => $ifacename):
 ?>
 						<option value="<?=$iface;?>" <?php if ($iface == $pconfig['interface']) echo "selected=\"selected\""; ?>>
-							<?=htmlspecialchars($ifacename);?>
+							<?=xhtmlspecialchars($ifacename);?>
 						</option>
 <?php
 					endforeach;
@@ -333,7 +334,7 @@ if ($input_errors)
 		<tr>
 			<td width="22%" valign="top" class="vncellreq"><?=gettext("External subnet IP"); ?></td>
 			<td width="78%" class="vtable">
-				<input name="external" type="text" class="formfld" id="external" size="20" value="<?=htmlspecialchars($pconfig['external']);?>" />
+				<input name="external" type="text" class="formfld" id="external" size="20" value="<?=xhtmlspecialchars($pconfig['external']);?>" />
 				<br />
 				<span class="vexpl">
 					<?=gettext("Enter the external (usually on a WAN) subnet's starting address for the 1:1 mapping.  " .
@@ -384,7 +385,7 @@ if ($input_errors)
 								if(have_ruleint_access($ifent)):
 ?>
 									<option value="<?=$ifent;?>" <?php if ($pconfig['src'] == $ifent) { echo "selected=\"selected\""; } ?>>
-										<?=htmlspecialchars($ifdesc);?> <?=gettext("net"); ?>
+										<?=xhtmlspecialchars($ifdesc);?> <?=gettext("net"); ?>
 									</option>
 									<option value="<?=$ifent;?>ip"<?php if ($pconfig['src'] ==  $ifent . "ip") { echo "selected=\"selected\""; } ?>>
 										<?=$ifdesc?> <?=gettext("address");?>
@@ -399,7 +400,7 @@ if ($input_errors)
 					<tr>
 						<td><?=gettext("Address:"); ?>&nbsp;&nbsp;</td>
 						<td>
-							<input name="src" type="text" class="formfld" id="src" size="20" value="<?php if (!is_specialnet($pconfig['src'])) echo htmlspecialchars($pconfig['src']);?>" /> /
+							<input name="src" type="text" class="formfld" id="src" size="20" value="<?php if (!is_specialnet($pconfig['src'])) echo xhtmlspecialchars($pconfig['src']);?>" /> /
 							<select name="srcmask" class="formselect" id="srcmask">
 <?php
 							for ($i = 31; $i > 0; $i--):
@@ -465,7 +466,7 @@ if ($input_errors)
 							foreach ($ifdisp as $if => $ifdesc):
 								if(have_ruleint_access($if)):
 ?>
-									<option value="<?=$if;?>" <?php if ($pconfig['dst'] == $if) { echo "selected=\"selected\""; } ?>><?=htmlspecialchars($ifdesc);?>
+									<option value="<?=$if;?>" <?php if ($pconfig['dst'] == $if) { echo "selected=\"selected\""; } ?>><?=xhtmlspecialchars($ifdesc);?>
 										<?=gettext("net"); ?>
 									</option>
 									<option value="<?=$if;?>ip"<?php if ($pconfig['dst'] == $if . "ip") { echo "selected=\"selected\""; } ?>>
@@ -481,7 +482,7 @@ if ($input_errors)
 					<tr>
 						<td><?=gettext("Address:"); ?>&nbsp;&nbsp;</td>
 						<td>
-							<input name="dst" type="text" autocomplete="off" class="formfldalias" id="dst" size="20" value="<?php if (!is_specialnet($pconfig['dst'])) echo htmlspecialchars($pconfig['dst']);?>" />
+							<input name="dst" type="text" autocomplete="off" class="formfldalias" id="dst" size="20" value="<?php if (!is_specialnet($pconfig['dst'])) echo xhtmlspecialchars($pconfig['dst']);?>" />
 							/
 							<select name="dstmask" class="formselect" id="dstmask">
 <?php
@@ -505,7 +506,7 @@ if ($input_errors)
 		<tr>
 			<td width="22%" valign="top" class="vncell"><?=gettext("Description"); ?></td>
 			<td width="78%" class="vtable">
-				<input name="descr" type="text" class="formfld unknown" id="descr" size="40" value="<?=htmlspecialchars($pconfig['descr']);?>" />
+				<input name="descr" type="text" class="formfld unknown" id="descr" size="40" value="<?=xhtmlspecialchars($pconfig['descr']);?>" />
 				<br />
 				<span class="vexpl">
 					<?=gettext("You may enter a description here for your reference (not parsed)."); ?>
@@ -534,7 +535,7 @@ if ($input_errors)
 				<input name="Submit" type="submit" class="formbtn" value="<?=gettext("Save"); ?>" />
 				<input type="button" class="formbtn" value="<?=gettext("Cancel");?>" onclick="window.location.href='<?=$referer;?>'" />
 				<?php if (isset($id) && $a_1to1[$id]): ?>
-				<input name="id" type="hidden" value="<?=htmlspecialchars($id);?>" />
+				<input name="id" type="hidden" value="<?=xhtmlspecialchars($id);?>" />
 				<?php endif; ?>
 			</td>
 		</tr>

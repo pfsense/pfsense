@@ -39,6 +39,7 @@ require("functions.inc");
 require("guiconfig.inc");
 require_once("ipsec.inc");
 require_once("vpn.inc");
+require_once("pfsense-utils.inc");
 
 if (!is_array($config['ipsec']['mobilekey'])) {
 	$config['ipsec']['mobilekey'] = array();
@@ -128,7 +129,7 @@ include("head.inc");
                 <tr> 
                   <td valign="top" class="vncellreq"><?=gettext("Identifier"); ?></td>
                   <td class="vtable">
-					<?=$mandfldhtml;?><input name="ident" type="text" class="formfld unknown" id="ident" size="30" value="<?=htmlspecialchars($pconfig['ident']);?>" />
+					<?=$mandfldhtml;?><input name="ident" type="text" class="formfld unknown" id="ident" size="30" value="<?=xhtmlspecialchars($pconfig['ident']);?>" />
                     <br />
 <?=gettext("This can be either an IP address, fully qualified domain name or an e-mail address"); ?>.       
                   </td>
@@ -136,7 +137,7 @@ include("head.inc");
                 <tr> 
                   <td width="22%" valign="top" class="vncellreq"><?=gettext("Pre-Shared Key"); ?></td>
                   <td width="78%" class="vtable"> 
-                    <?=$mandfldhtml;?><input name="psk" type="text" class="formfld unknown" id="psk" size="40" value="<?=htmlspecialchars($pconfig['psk']);?>" />
+                    <?=$mandfldhtml;?><input name="psk" type="text" class="formfld unknown" id="psk" size="40" value="<?=xhtmlspecialchars($pconfig['psk']);?>" />
                   </td>
                 </tr>
                 <tr> 
@@ -144,7 +145,7 @@ include("head.inc");
                   <td width="78%"> 
                     <input name="Submit" type="submit" class="formbtn" value="<?=gettext("Save"); ?>" /> 
                     <?php if (isset($id) && $a_secret[$id]): ?>
-                    <input name="id" type="hidden" value="<?=htmlspecialchars($id);?>" />
+                    <input name="id" type="hidden" value="<?=xhtmlspecialchars($id);?>" />
                     <?php endif; ?>
                   </td>
                 </tr>

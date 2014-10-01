@@ -54,6 +54,7 @@ if (!$omit_nocacheheaders) {
 
 header("X-Frame-Options: SAMEORIGIN");
 require_once("authgui.inc");
+require_once("pfsense-utils.inc");
 
 /* parse the configuration and include all configuration functions */
 require_once("functions.inc");
@@ -74,7 +75,7 @@ if($config['system']['language'] <> "") {
 	$g['language'] = 'en_US';
 }
 
-set_language($g['language']);
+set_language($g['language'], system_get_language_codeset());
 
 /* used by progress bar */
 $lastseen = "-1";
@@ -279,7 +280,7 @@ function print_input_errors($input_errors) {
 EOF;
     echo "<p>" . gettext("The following input errors were detected:") . "</p>\n<ul>";
 	foreach ($input_errors as $ierr) {
-		echo "<li>" . htmlspecialchars($ierr) . "</li>";
+		echo "<li>" . xhtmlspecialchars($ierr) . "</li>";
 	}
 
 	print <<<EOF2
@@ -315,7 +316,7 @@ function print_info_box_np($msg, $name="apply",$value="", $showapply=false) {
 		$savebutton = "<td class=\"infoboxsave\">";
 		$savebutton .= "<input name=\"{$name}\" type=\"submit\" class=\"formbtn\" id=\"${name}\" value=\"{$value}\" />";
 		if($_POST['if'])
-			$savebutton .= "<input type=\"hidden\" name=\"if\" value=\"" . htmlspecialchars($_POST['if']) . "\" />";
+			$savebutton .= "<input type=\"hidden\" name=\"if\" value=\"" . xhtmlspecialchars($_POST['if']) . "\" />";
 		$savebutton.="</td>";
 	}
 	$nifty_redbox = "#990000";
@@ -380,7 +381,7 @@ function print_info_box_np_undo($msg, $name="apply",$value="Apply changes", $und
 		$savebutton .= "<input name=\"{$name}\" type=\"submit\" class=\"formbtn\" id=\"${name}\" value=\"{$value}\" />";
 		$savebutton .= "</td>";
 		if($_POST['if'])
-			$savebutton .= "<input type=\"hidden\" name=\"if\" value=\"" . htmlspecialchars($_POST['if']) . "\" />";
+			$savebutton .= "<input type=\"hidden\" name=\"if\" value=\"" . xhtmlspecialchars($_POST['if']) . "\" />";
 	}
 	$nifty_redbox = "#990000";
 	$nifty_blackbox = "#000000";
@@ -631,18 +632,18 @@ function dump_clog($logfile, $tail, $withorig = true, $grepfor = "", $grepinvert
 			echo "<tr valign=\"top\">\n";
 			if ($withorig) {
 					if(isset($config['system']['usefifolog'])) {
-						$entry_date_time = htmlspecialchars(date("F j, Y, g:i a","" . $logent[1] . ""));
-						$entry_text = htmlspecialchars($logent[5]);
+						$entry_date_time = xhtmlspecialchars(date("F j, Y, g:i a","" . $logent[1] . ""));
+						$entry_text = xhtmlspecialchars($logent[5]);
 					} else {
-						$entry_date_time = htmlspecialchars(join(" ", array_slice($logent, 0, 3)));
+						$entry_date_time = xhtmlspecialchars(join(" ", array_slice($logent, 0, 3)));
 						$entry_text = ($logent[3] ==  $config['system']['hostname']) ? "" : $logent[3] . " ";
-						$entry_text .= htmlspecialchars($logent[4] . " " . $logent[5]);
+						$entry_text .= xhtmlspecialchars($logent[4] . " " . $logent[5]);
 					}
 					echo "<td class=\"listlr nowrap\">{$entry_date_time}</td>\n";
 					echo "<td class=\"listr\">{$entry_text}</td>\n";
 
 			} else {
-					echo "<td class=\"listlr\" colspan=\"2\">" . htmlspecialchars($logent[5]) . "</td>\n";
+					echo "<td class=\"listlr\" colspan=\"2\">" . xhtmlspecialchars($logent[5]) . "</td>\n";
 			}
 			echo "</tr>\n";
 	}

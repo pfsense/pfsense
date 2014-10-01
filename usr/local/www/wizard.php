@@ -42,6 +42,7 @@ require("functions.inc");
 require_once("filter.inc");
 require("shaper.inc");
 require_once("rrd.inc");
+require_once("pfsense-utils.inc");
 
 function gentitle_pkg($pgname) {
 	global $config;
@@ -50,15 +51,15 @@ function gentitle_pkg($pgname) {
 
 global $g;
 
-$stepid = htmlspecialchars($_GET['stepid']);
+$stepid = xhtmlspecialchars($_GET['stepid']);
 if (isset($_POST['stepid']))
-	$stepid = htmlspecialchars($_POST['stepid']);
+	$stepid = xhtmlspecialchars($_POST['stepid']);
 if (!$stepid)
 	$stepid = "0";
 
-$xml = htmlspecialchars($_GET['xml']);
+$xml = xhtmlspecialchars($_GET['xml']);
 if($_POST['xml'])
-	$xml = htmlspecialchars($_POST['xml']);
+	$xml = xhtmlspecialchars($_POST['xml']);
 
 if(empty($xml)) {
 	$xml = "not_defined";
@@ -303,8 +304,8 @@ function showchange() {
 <?php } ?>
 
 <form action="wizard.php" method="post" name="iform" id="iform">
-<input type="hidden" name="xml" value="<?= htmlspecialchars($xml) ?>" />
-<input type="hidden" name="stepid" value="<?= htmlspecialchars($stepid) ?>" />
+<input type="hidden" name="xml" value="<?= xhtmlspecialchars($xml) ?>" />
+<input type="hidden" name="stepid" value="<?= xhtmlspecialchars($stepid) ?>" />
 
 <center>
 
@@ -327,9 +328,9 @@ function showchange() {
 	if ($savemsg)
 		print_info_box($savemsg);
 	if ($_GET['message'] != "")
-		print_info_box(htmlspecialchars($_GET['message']));
+		print_info_box(xhtmlspecialchars($_GET['message']));
 	if ($_POST['message'] != "")
-		print_info_box(htmlspecialchars($_POST['message']));
+		print_info_box(xhtmlspecialchars($_POST['message']));
 ?>
 <table bgcolor="#ffffff" width="95%" border="0" cellspacing="0" cellpadding="2" summary="wizard">
 	<!-- wizard goes here -->
@@ -389,7 +390,7 @@ function showchange() {
 				if(!$field['dontcombinecells'])
 					echo "<td class=\"vtable\">\n";
 
-				echo "<input class='formfld unknown' id='" . $name . "' name='" . $name . "' value=\"" . htmlspecialchars($value) . "\"";
+				echo "<input class='formfld unknown' id='" . $name . "' name='" . $name . "' value=\"" . xhtmlspecialchars($value) . "\"";
 				if($field['size'])
 					echo " size='" . $field['size'] . "' ";
 				if($field['validate'])
@@ -420,7 +421,7 @@ function showchange() {
 					echo "<td class=\"vtable\">\n";
 
 				$inputaliases[] = $name;
-				echo "<input class='formfldalias' autocomplete='off' id='" . $name . "' name='" . $name . "' value=\"" . htmlspecialchars($value) . "\"";
+				echo "<input class='formfldalias' autocomplete='off' id='" . $name . "' name='" . $name . "' value=\"" . xhtmlspecialchars($value) . "\"";
 				if($field['size'])
 					echo " size='" . $field['size'] . "' ";
 				if($field['validate'])
@@ -493,7 +494,7 @@ function showchange() {
 				}
 				if(!$field['dontcombinecells'])
 					echo "<td class=\"vtable\">";
-				echo "<input class='formfld pwd' id='" . $name . "' name='" . $name . "' value=\"" . htmlspecialchars($value) . "\" type='password' ";
+				echo "<input class='formfld pwd' id='" . $name . "' name='" . $name . "' value=\"" . xhtmlspecialchars($value) . "\" type='password' ";
 				if($field['size'])
 					echo " size='" . $field['size'] . "' ";
 				echo " />\n";
@@ -519,7 +520,7 @@ function showchange() {
 					echo "<option value='" . $field['add_to_certca_selection'] . "'" . $SELECTED . ">" . $field['add_to_certca_selection'] . "</option>\n";
 				}
 				foreach($config['ca'] as $ca) {
-					$name = htmlspecialchars($ca['descr']);
+					$name = xhtmlspecialchars($ca['descr']);
 					$SELECTED = "";
 					if ($value == $name) $SELECTED = " selected=\"selected\"";
 					$to_echo = "<option value='" . $ca['refid'] . "'" . $SELECTED . ">" . $name . "</option>\n";
@@ -559,7 +560,7 @@ function showchange() {
 				foreach($config['cert'] as $ca) {
 					if (stristr($ca['descr'], "webconf"))
 						continue;
-					$name = htmlspecialchars($ca['descr']);
+					$name = xhtmlspecialchars($ca['descr']);
 					$SELECTED = "";
 					if ($value == $name) $SELECTED = " selected=\"selected\"";
 					$to_echo = "<option value='" . $ca['refid'] . "'" . $SELECTED . ">" . $name . "</option>\n";
@@ -649,7 +650,7 @@ function showchange() {
 			case "submit":
 				echo "<td>&nbsp;<br /></td></tr>";
 				echo "<tr><td colspan=\"2\" align=\"center\">";
-				echo "<input type='submit' name='" . $name . "' value=\"" . htmlspecialchars($field['name']) . "\" />\n";
+				echo "<input type='submit' name='" . $name . "' value=\"" . xhtmlspecialchars($field['name']) . "\" />\n";
 
 				if($field['description'] <> "") {
 					echo "<br /> " . $field['description'];
@@ -713,8 +714,8 @@ function showchange() {
 						continue;
 					$SELECTED = "";
 					if ($value == $tz) $SELECTED = " selected=\"selected\"";
-					echo "<option value=\"" . htmlspecialchars($tz) . "\" {$SELECTED}>";
-					echo htmlspecialchars($tz);
+					echo "<option value=\"" . xhtmlspecialchars($tz) . "\" {$SELECTED}>";
+					echo xhtmlspecialchars($tz);
 					echo "</option>\n";
 				}
 				echo "</select>\n";

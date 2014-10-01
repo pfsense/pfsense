@@ -45,6 +45,7 @@ ini_set('max_execution_time', '0');
 require_once("globals.inc");
 require_once("guiconfig.inc");
 require_once("pkg-utils.inc");
+require_once("pfsense-utils.inc");
 
 $timezone = $config['system']['timezone'];
 if (!$timezone)
@@ -98,7 +99,7 @@ if (!file_exists("{$g['tmp_path']}/pkg_info.cache") || (time() - filemtime("{$g[
 
 if (! empty($_GET))
 	if (isset($_GET['ver']))
-		$requested_version = htmlspecialchars($_GET['ver']);
+		$requested_version = xhtmlspecialchars($_GET['ver']);
 
 $closehead = false;
 $pgtitle = array(gettext("System"),gettext("Package Manager"));

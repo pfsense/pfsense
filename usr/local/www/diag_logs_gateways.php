@@ -44,6 +44,7 @@
 ##|-PRIV
 
 require("guiconfig.inc");
+require_once("pfsense-utils.inc");
 
 $system_logfile = "{$g['varlog_path']}/gateways.log";
 
@@ -55,10 +56,10 @@ if ($_POST['clear'])
 	clear_log_file($system_logfile);
 
 if ($_GET['filtertext'])
-	$filtertext = htmlspecialchars($_GET['filtertext']);
+	$filtertext = xhtmlspecialchars($_GET['filtertext']);
 
 if ($_POST['filtertext'])
-	$filtertext = htmlspecialchars($_POST['filtertext']);
+	$filtertext = xhtmlspecialchars($_POST['filtertext']);
 
 if ($filtertext)
 	$filtertextmeta="?filtertext=$filtertext";

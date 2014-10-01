@@ -44,6 +44,7 @@
 require("guiconfig.inc");
 require_once("filter.inc");
 require("shaper.inc");
+require_once("pfsense-utils.inc");
 
 $referer = (isset($_SERVER['HTTP_REFERER']) ? $_SERVER['HTTP_REFERER'] : '/firewall_rules.php');
 
@@ -791,7 +792,7 @@ if ($_POST) {
 		if (isset($_POST['floating']))
 			header("Location: firewall_rules.php?if=FloatingRules");
 		else
-			header("Location: firewall_rules.php?if=" . htmlspecialchars($_POST['interface']));
+			header("Location: firewall_rules.php?if=" . xhtmlspecialchars($_POST['interface']));
 		exit;
 	}
 }
@@ -816,7 +817,7 @@ include("head.inc");
 <?php if ($input_errors) print_input_errors($input_errors); ?>
 
 <form action="firewall_rules_edit.php" method="post" name="iform" id="iform">
-<input type='hidden' name="ruleid" value="<?=(isset($pconfig['ruleid'])&&$pconfig['ruleid']>0)?htmlspecialchars($pconfig['ruleid']):''?>" />
+<input type='hidden' name="ruleid" value="<?=(isset($pconfig['ruleid'])&&$pconfig['ruleid']>0)?xhtmlspecialchars($pconfig['ruleid']):''?>" />
 
 	<table width="100%" border="0" cellpadding="6" cellspacing="0" summary="firewall rules edit">
 		<tr>
@@ -832,7 +833,7 @@ include("head.inc");
 				<select name="type" class="formselect">
 					<?php $types = explode(" ", "Pass Block Reject"); foreach ($types as $type): ?>
 					<option value="<?=strtolower($type);?>" <?php if (strtolower($type) == strtolower($pconfig['type'])) echo "selected=\"selected\""; ?>>
-					<?=htmlspecialchars($type);?>
+					<?=xhtmlspecialchars($type);?>
 					</option>
 					<?php endforeach; ?>
 <?php if ($if == "FloatingRules" || isset($pconfig['floating'])): ?>
@@ -985,7 +986,7 @@ include("head.inc");
 <?php
 				$protocols = explode(" ", "TCP UDP TCP/UDP ICMP ESP AH GRE IPV6 IGMP PIM OSPF any carp pfsync");
 				foreach ($protocols as $proto): ?>
-					<option value="<?=strtolower($proto);?>" <?php if (strtolower($proto) == $pconfig['proto']) echo "selected=\"selected\""; ?>><?=htmlspecialchars($proto);?></option>
+					<option value="<?=strtolower($proto);?>" <?php if (strtolower($proto) == $pconfig['proto']) echo "selected=\"selected\""; ?>><?=xhtmlspecialchars($proto);?></option>
 <?php 			endforeach; ?>
 				</select>
 				<br />
@@ -1018,7 +1019,7 @@ include("head.inc");
 				);
 
 				foreach ($icmptypes as $icmptype => $descr): ?>
-					<option value="<?=$icmptype;?>" <?php if ($icmptype == $pconfig['icmptype']) echo "selected=\"selected\""; ?>><?=htmlspecialchars($descr);?></option>
+					<option value="<?=$icmptype;?>" <?php if ($icmptype == $pconfig['icmptype']) echo "selected=\"selected\""; ?>><?=xhtmlspecialchars($descr);?></option>
 <?php 			endforeach; ?>
 			</select>
 			<br />
@@ -1065,7 +1066,7 @@ include("head.inc");
 <?php
 								foreach ($ifdisp as $ifent => $ifdesc): ?>
 								<?php if(have_ruleint_access($ifent)): ?>
-									<option value="<?=$ifent;?>" <?php if ($pconfig['src'] == $ifent) { echo "selected=\"selected\""; } ?>><?=htmlspecialchars($ifdesc);?> <?=gettext("net");?></option>
+									<option value="<?=$ifent;?>" <?php if ($pconfig['src'] == $ifent) { echo "selected=\"selected\""; } ?>><?=xhtmlspecialchars($ifdesc);?> <?=gettext("net");?></option>
 									<option value="<?=$ifent;?>ip"<?php if ($pconfig['src'] ==  $ifent . "ip") { echo "selected=\"selected\""; } ?>>
 										<?=$ifdesc?> <?=gettext("address");?>
 									</option>
@@ -1077,7 +1078,7 @@ include("head.inc");
 					<tr>
 						<td><?=gettext("Address:");?>&nbsp;&nbsp;</td>
 						<td>
-							<input <?=$edit_disabled;?> autocomplete='off' name="src" type="text" class="formfldalias ipv4v6" id="src" size="20" value="<?php if (!is_specialnet($pconfig['src'])) echo htmlspecialchars($pconfig['src']);?>" /> /
+							<input <?=$edit_disabled;?> autocomplete='off' name="src" type="text" class="formfldalias ipv4v6" id="src" size="20" value="<?php if (!is_specialnet($pconfig['src'])) echo xhtmlspecialchars($pconfig['src']);?>" /> /
 							<select <?=$edit_disabled;?> name="srcmask" class="formselect ipv4v6" id="srcmask">
 <?php						for ($i = 127; $i > 0; $i--): ?>
 								<option value="<?=$i;?>" <?php if ($i == $pconfig['srcmask']) echo "selected=\"selected\""; ?>><?=$i;?></option>
@@ -1104,10 +1105,10 @@ include("head.inc");
 								<option value="">(<?=gettext("other"); ?>)</option>
 								<option value="any" <?php $bfound = 0; if ($pconfig['srcbeginport'] == "any") { echo "selected=\"selected\""; $bfound = 1; } ?>><?=gettext("any");?></option>
 <?php 							foreach ($wkports as $wkport => $wkportdesc): ?>
-									<option value="<?=$wkport;?>" <?php if ($wkport == $pconfig['srcbeginport']) { echo "selected=\"selected\""; $bfound = 1; } ?>><?=htmlspecialchars("{$wkportdesc} ({$wkport})");?></option>
+									<option value="<?=$wkport;?>" <?php if ($wkport == $pconfig['srcbeginport']) { echo "selected=\"selected\""; $bfound = 1; } ?>><?=xhtmlspecialchars("{$wkportdesc} ({$wkport})");?></option>
 <?php 							endforeach; ?>
 							</select>
-							<input <?=$edit_disabled;?> autocomplete='off' class="formfldalias" name="srcbeginport_cust" id="srcbeginport_cust" type="text" size="5" value="<?php if (!$bfound && $pconfig['srcbeginport']) echo htmlspecialchars($pconfig['srcbeginport']); ?>" />
+							<input <?=$edit_disabled;?> autocomplete='off' class="formfldalias" name="srcbeginport_cust" id="srcbeginport_cust" type="text" size="5" value="<?php if (!$bfound && $pconfig['srcbeginport']) echo xhtmlspecialchars($pconfig['srcbeginport']); ?>" />
 						</td>
 					</tr>
 					<tr>
@@ -1117,10 +1118,10 @@ include("head.inc");
 								<option value="">(<?=gettext("other"); ?>)</option>
 								<option value="any" <?php $bfound = 0; if ($pconfig['srcendport'] == "any") { echo "selected=\"selected\""; $bfound = 1; } ?>><?=gettext("any");?></option>
 <?php							foreach ($wkports as $wkport => $wkportdesc): ?>
-									<option value="<?=$wkport;?>" <?php if ($wkport == $pconfig['srcendport']) { echo "selected=\"selected\""; $bfound = 1; } ?>><?=htmlspecialchars("{$wkportdesc} ({$wkport})");?></option>
+									<option value="<?=$wkport;?>" <?php if ($wkport == $pconfig['srcendport']) { echo "selected=\"selected\""; $bfound = 1; } ?>><?=xhtmlspecialchars("{$wkportdesc} ({$wkport})");?></option>
 <?php							endforeach; ?>
 							</select>
-							<input <?=$edit_disabled;?> autocomplete='off' class="formfldalias" name="srcendport_cust" id="srcendport_cust" type="text" size="5" value="<?php if (!$bfound && $pconfig['srcendport']) echo htmlspecialchars($pconfig['srcendport']); ?>" />
+							<input <?=$edit_disabled;?> autocomplete='off' class="formfldalias" name="srcendport_cust" id="srcendport_cust" type="text" size="5" value="<?php if (!$bfound && $pconfig['srcendport']) echo xhtmlspecialchars($pconfig['srcendport']); ?>" />
 						</td>
 					</tr>
 				</table>
@@ -1166,7 +1167,7 @@ include("head.inc");
 
 <?php 							foreach ($ifdisp as $if => $ifdesc): ?>
 								<?php if(have_ruleint_access($if)): ?>
-									<option value="<?=$if;?>" <?php if ($pconfig['dst'] == $if) { echo "selected=\"selected\""; } ?>><?=htmlspecialchars($ifdesc);?> <?=gettext("net");?></option>
+									<option value="<?=$if;?>" <?php if ($pconfig['dst'] == $if) { echo "selected=\"selected\""; } ?>><?=xhtmlspecialchars($ifdesc);?> <?=gettext("net");?></option>
 									<option value="<?=$if;?>ip"<?php if ($pconfig['dst'] == $if . "ip") { echo "selected=\"selected\""; } ?>>
 										<?=$ifdesc;?> <?=gettext("address");?>
 									</option>
@@ -1178,7 +1179,7 @@ include("head.inc");
 					<tr>
 						<td><?=gettext("Address:");?>&nbsp;&nbsp;</td>
 						<td>
-							<input <?=$edit_disabled;?> autocomplete='off' name="dst" type="text" class="formfldalias ipv4v6" id="dst" size="20" value="<?php if (!is_specialnet($pconfig['dst'])) echo htmlspecialchars($pconfig['dst']);?>" />
+							<input <?=$edit_disabled;?> autocomplete='off' name="dst" type="text" class="formfldalias ipv4v6" id="dst" size="20" value="<?php if (!is_specialnet($pconfig['dst'])) echo xhtmlspecialchars($pconfig['dst']);?>" />
 							/
 							<select <?=$edit_disabled;?> name="dstmask" class="formselect ipv4v6" id="dstmask">
 <?php
@@ -1203,10 +1204,10 @@ $i--): ?>
 								<option value="">(<?=gettext("other"); ?>)</option>
 								<option value="any" <?php $bfound = 0; if ($pconfig['dstbeginport'] == "any") { echo "selected=\"selected\""; $bfound = 1; } ?>><?=gettext("any");?></option>
 <?php 							foreach ($wkports as $wkport => $wkportdesc): ?>
-									<option value="<?=$wkport;?>" <?php if ($wkport == $pconfig['dstbeginport']) { echo "selected=\"selected\""; $bfound = 1; }?>><?=htmlspecialchars("{$wkportdesc} ({$wkport})");?></option>
+									<option value="<?=$wkport;?>" <?php if ($wkport == $pconfig['dstbeginport']) { echo "selected=\"selected\""; $bfound = 1; }?>><?=xhtmlspecialchars("{$wkportdesc} ({$wkport})");?></option>
 <?php 							endforeach; ?>
 							</select>
-							<input <?=$edit_disabled;?> autocomplete='off' class="formfldalias" name="dstbeginport_cust" id="dstbeginport_cust" type="text" size="5" value="<?php if (!$bfound && $pconfig['dstbeginport']) echo htmlspecialchars($pconfig['dstbeginport']); ?>" />
+							<input <?=$edit_disabled;?> autocomplete='off' class="formfldalias" name="dstbeginport_cust" id="dstbeginport_cust" type="text" size="5" value="<?php if (!$bfound && $pconfig['dstbeginport']) echo xhtmlspecialchars($pconfig['dstbeginport']); ?>" />
 						</td>
 					</tr>
 					<tr>
@@ -1216,10 +1217,10 @@ $i--): ?>
 								<option value="">(<?=gettext("other"); ?>)</option>
 								<option value="any" <?php $bfound = 0; if ($pconfig['dstendport'] == "any") { echo "selected=\"selected\""; $bfound = 1; } ?>><?=gettext("any");?></option>
 <?php							foreach ($wkports as $wkport => $wkportdesc): ?>
-									<option value="<?=$wkport;?>" <?php if ($wkport == $pconfig['dstendport']) { echo "selected=\"selected\""; $bfound = 1; } ?>><?=htmlspecialchars("{$wkportdesc} ({$wkport})");?></option>
+									<option value="<?=$wkport;?>" <?php if ($wkport == $pconfig['dstendport']) { echo "selected=\"selected\""; $bfound = 1; } ?>><?=xhtmlspecialchars("{$wkportdesc} ({$wkport})");?></option>
 <?php 							endforeach; ?>
 							</select>
-								<input <?=$edit_disabled;?> autocomplete='off' class="formfldalias" name="dstendport_cust" id="dstendport_cust" type="text" size="5" value="<?php if (!$bfound && $pconfig['dstendport']) echo htmlspecialchars($pconfig['dstendport']); ?>" />
+								<input <?=$edit_disabled;?> autocomplete='off' class="formfldalias" name="dstendport_cust" id="dstendport_cust" type="text" size="5" value="<?php if (!$bfound && $pconfig['dstendport']) echo xhtmlspecialchars($pconfig['dstendport']); ?>" />
 						</td>
 					</tr>
 				</table>
@@ -1243,7 +1244,7 @@ $i--): ?>
 		<tr>
 			<td width="22%" valign="top" class="vncell"><?=gettext("Description");?></td>
 			<td width="78%" class="vtable">
-				<input name="descr" type="text" class="formfld unknown" id="descr" size="52" maxlength="52" value="<?=htmlspecialchars($pconfig['descr']);?>" />
+				<input name="descr" type="text" class="formfld unknown" id="descr" size="52" maxlength="52" value="<?=xhtmlspecialchars($pconfig['descr']);?>" />
 				<br />
 				<span class="vexpl"><?=gettext("You may enter a description here for your reference.");?></span>
 			</td>
@@ -1256,9 +1257,9 @@ $i--): ?>
 				<input name="Submit" type="submit" class="formbtn" value="<?=gettext("Save"); ?>" />
 				<input type="button" class="formbtn" value="<?=gettext("Cancel");?>" onclick="window.location.href='<?=$referer;?>'" />
 <?php			if (isset($id) && $a_filter[$id]): ?>
-					<input name="id" type="hidden" value="<?=htmlspecialchars($id);?>" />
+					<input name="id" type="hidden" value="<?=xhtmlspecialchars($id);?>" />
 <?php 			endif; ?>
-				<input name="after" type="hidden" value="<?=htmlspecialchars($after);?>" />
+				<input name="after" type="hidden" value="<?=xhtmlspecialchars($after);?>" />
 			</td>
 		</tr>
 <?php		endif; ?>
@@ -1280,7 +1281,7 @@ $i--): ?>
 						<option value="" <?php if (empty($pconfig['os'])) echo "selected=\"selected\""; ?>>Any</option>
 <?php
 						foreach ($ostypes as $ostype): ?>
-							<option value="<?=$ostype;?>" <?php if ($ostype == $pconfig['os']) echo "selected=\"selected\""; ?>><?=htmlspecialchars($ostype);?></option>
+							<option value="<?=$ostype;?>" <?php if ($ostype == $pconfig['os']) echo "selected=\"selected\""; ?>><?=xhtmlspecialchars($ostype);?></option>
 <?php
 					endforeach;
 ?>
@@ -1319,17 +1320,17 @@ $i--): ?>
 				<input type="checkbox" id="disablereplyto" value="yes" name="disablereplyto"<?php if($pconfig['disablereplyto'] == true) echo " checked=\"checked\""; ?> />
 				<br /><span class="vexpl"><?=gettext("This will disable auto generated reply-to for this rule.");?>
 				</span></p><p>
-				<input name="tag" id="tag" value="<?=htmlspecialchars($pconfig['tag']);?>" />
+				<input name="tag" id="tag" value="<?=xhtmlspecialchars($pconfig['tag']);?>" />
 				<br /><span class="vexpl"><?=gettext("You can mark a packet matching this rule and use this mark to match on other NAT/filter rules. It is called"); ?> <b><?=gettext("Policy filtering"); ?></b>
 				</span></p><p>
-				<input name="tagged" id="tagged" value="<?=htmlspecialchars($pconfig['tagged']);?>" />
+				<input name="tagged" id="tagged" value="<?=xhtmlspecialchars($pconfig['tagged']);?>" />
 				<br /><span class="vexpl"><?=gettext("You can match packet on a mark placed before on another rule.")?>
 				</span></p><p>
-				<input name="max" id="max" value="<?php echo htmlspecialchars($pconfig['max']) ?>" /><br /><?=gettext(" Maximum state entries this rule can create");?></p><p>
-				<input name="max-src-nodes" id="max-src-nodes" value="<?php echo htmlspecialchars($pconfig['max-src-nodes']) ?>" /><br /><?=gettext(" Maximum number of unique source hosts");?></p><p>
-				<input name="max-src-conn" id="max-src-conn" value="<?php echo htmlspecialchars($pconfig['max-src-conn']) ?>" /><br /><?=gettext(" Maximum number of established connections per host (TCP only)");?></p><p>
-				<input name="max-src-states" id="max-src-states" value="<?php echo htmlspecialchars($pconfig['max-src-states']) ?>" /><br /><?=gettext(" Maximum state entries per host");?></p><p>
-				<input name="max-src-conn-rate" id="max-src-conn-rate" value="<?php echo htmlspecialchars($pconfig['max-src-conn-rate']) ?>" /> /
+				<input name="max" id="max" value="<?php echo xhtmlspecialchars($pconfig['max']) ?>" /><br /><?=gettext(" Maximum state entries this rule can create");?></p><p>
+				<input name="max-src-nodes" id="max-src-nodes" value="<?php echo xhtmlspecialchars($pconfig['max-src-nodes']) ?>" /><br /><?=gettext(" Maximum number of unique source hosts");?></p><p>
+				<input name="max-src-conn" id="max-src-conn" value="<?php echo xhtmlspecialchars($pconfig['max-src-conn']) ?>" /><br /><?=gettext(" Maximum number of established connections per host (TCP only)");?></p><p>
+				<input name="max-src-states" id="max-src-states" value="<?php echo xhtmlspecialchars($pconfig['max-src-states']) ?>" /><br /><?=gettext(" Maximum state entries per host");?></p><p>
+				<input name="max-src-conn-rate" id="max-src-conn-rate" value="<?php echo xhtmlspecialchars($pconfig['max-src-conn-rate']) ?>" /> /
 				<select name="max-src-conn-rates" id="max-src-conn-rates">
 					<option value=""<?php if(intval($pconfig['max-src-conn-rates']) < 1) echo " selected=\"selected\""; ?>></option>
 <?php				for($x=1; $x<255; $x++) {
@@ -1339,7 +1340,7 @@ $i--): ?>
 				</select><br />
 				<?=gettext("Maximum new connections per host / per second(s) (TCP only)");?>
 				</p><p>
-				<input name="statetimeout" value="<?php echo htmlspecialchars($pconfig['statetimeout']) ?>" /><br />
+				<input name="statetimeout" value="<?php echo xhtmlspecialchars($pconfig['statetimeout']) ?>" /><br />
 				<?=gettext("State Timeout in seconds (TCP only)");?>
 				</p>
 				<p><strong><?=gettext("Note: Leave fields blank to disable that feature.");?></strong></p>
@@ -1733,10 +1734,10 @@ $has_updated_time = (isset($a_filter[$id]['updated']) && is_array($a_filter[$id]
 				<input name="Submit" type="submit" class="formbtn" value="<?=gettext("Save"); ?>" />
 				<input type="button" class="formbtn" value="<?=gettext("Cancel");?>" onclick="window.location.href='<?=$referer;?>'" />
 <?php			if (isset($id) && $a_filter[$id]): ?>
-					<input name="id" type="hidden" value="<?=htmlspecialchars($id);?>" />
-					<input name="tracker" type="hidden" value="<?=htmlspecialchars($pconfig['tracker']);?>">
+					<input name="id" type="hidden" value="<?=xhtmlspecialchars($id);?>" />
+					<input name="tracker" type="hidden" value="<?=xhtmlspecialchars($pconfig['tracker']);?>">
 <?php 			endif; ?>
-				<input name="after" type="hidden" value="<?=htmlspecialchars($after);?>" />
+				<input name="after" type="hidden" value="<?=xhtmlspecialchars($after);?>" />
 			</td>
 		</tr>
 	</table>

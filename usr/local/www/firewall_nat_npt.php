@@ -43,6 +43,7 @@ require("guiconfig.inc");
 require_once("functions.inc");
 require_once("filter.inc");
 require_once("shaper.inc");
+require_once("pfsense-utils.inc");
 
 if (!is_array($config['nat']['npt'])) {
 	$config['nat']['npt'] = array();
@@ -128,9 +129,9 @@ include("head.inc");
                   <?php
 			echo $textss;
 					if (!$natent['interface'])
-						echo htmlspecialchars(convert_friendly_interface_to_friendly_descr("wan"));
+						echo xhtmlspecialchars(convert_friendly_interface_to_friendly_descr("wan"));
 					else
-						echo htmlspecialchars(convert_friendly_interface_to_friendly_descr($natent['interface']));
+						echo xhtmlspecialchars(convert_friendly_interface_to_friendly_descr($natent['interface']));
 			echo $textse;
 				  ?>
                   </td>
@@ -148,7 +149,7 @@ include("head.inc");
                   </td>
                   <td class="listbg" ondblclick="document.location='firewall_nat_npt_edit.php?id=<?=$i;?>';">
 			<?=$textss;?>
-                    <?=htmlspecialchars($natent['descr']);?>&nbsp;
+                    <?=xhtmlspecialchars($natent['descr']);?>&nbsp;
 			<?=$textse;?>
                   </td>
                   <td class="list nowrap">

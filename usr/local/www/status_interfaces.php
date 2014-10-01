@@ -45,6 +45,7 @@
 require_once("guiconfig.inc");
 require_once("shaper.inc");
 require_once("filter.inc");
+require_once("pfsense-utils.inc");
 
 if ($_POST['if'] && $_POST['submit']) {
 	$interface = $_POST['if'];
@@ -80,13 +81,13 @@ include("head.inc");
 <?php endif; ?>
 	<tr>
 		<td colspan="2" class="listtopic">
-			<?=htmlspecialchars($ifname);?> <?=gettext("interface"); ?> (<?=htmlspecialchars($ifdescr);?>, <?=htmlspecialchars($ifinfo['hwif']);?>)
+			<?=xhtmlspecialchars($ifname);?> <?=gettext("interface"); ?> (<?=xhtmlspecialchars($ifdescr);?>, <?=xhtmlspecialchars($ifinfo['hwif']);?>)
 		</td>
 	</tr>
 	<tr>
 		<td width="22%" class="vncellt"><?=gettext("Status"); ?></td>
 		<td width="78%" class="listr">
-			<?=htmlspecialchars($ifinfo['status']);?>
+			<?=xhtmlspecialchars($ifinfo['status']);?>
 		</td>
 	</tr>
 	<?php if ($ifinfo['dhcplink']): ?>
@@ -98,7 +99,7 @@ include("head.inc");
 			<form name="dhcplink_form" action="status_interfaces.php" method="post">
 				<input type="hidden" name="if" value="<?php echo $ifdescr; ?>" />
 				<input type="hidden" name="status" value="<?php echo $ifinfo['dhcplink']; ?>" />
-				<?=htmlspecialchars($ifinfo['dhcplink']);?>&nbsp;&nbsp;
+				<?=xhtmlspecialchars($ifinfo['dhcplink']);?>&nbsp;&nbsp;
 				<?php $action = ($ifinfo['dhcplink'] == "up" ? gettext("Release") : gettext("Renew")); ?>
 				<input type="submit" name="submit" class="formbtn" value="<?php echo $action; ?>" />
 			</form>
@@ -114,7 +115,7 @@ include("head.inc");
 			<form name="dhcp6link_form" action="status_interfaces.php" method="post">
 				<input type="hidden" name="if" value="<?php echo $ifdescr; ?>" />
 				<input type="hidden" name="status" value="<?php echo $ifinfo['dhcp6link']; ?>" />
-				<?=htmlspecialchars($ifinfo['dhcp6link']);?>&nbsp;&nbsp;
+				<?=xhtmlspecialchars($ifinfo['dhcp6link']);?>&nbsp;&nbsp;
 				<?php $action = ($ifinfo['dhcp6link'] == "up" ? gettext("Release") : gettext("Renew")); ?>
 				<input type="submit" name="submit" class="formbtn" value="<?php echo $action; ?>" />
 			</form>
@@ -127,7 +128,7 @@ include("head.inc");
 			<form name="pppoelink_form" action="status_interfaces.php" method="post">
 				<input type="hidden" name="if" value="<?php echo $ifdescr; ?>" />
 				<input type="hidden" name="status" value="<?php echo $ifinfo['pppoelink']; ?>" />
-				<?=htmlspecialchars($ifinfo['pppoelink']);?>&nbsp;&nbsp;
+				<?=xhtmlspecialchars($ifinfo['pppoelink']);?>&nbsp;&nbsp;
 				<?php $action = ($ifinfo['pppoelink'] == "up" ? gettext("Disconnect") : gettext("Connect")); ?>
 				<input type="submit" name="submit" class="formbtn" value="<?php echo $action; ?>" />
 			</form>
@@ -140,7 +141,7 @@ include("head.inc");
 			<form name="pptplink_form" action="status_interfaces.php" method="post">
 				<input type="hidden" name="if" value="<?php echo $ifdescr; ?>" />
 				<input type="hidden" name="status" value="<?php echo $ifinfo['pptplink']; ?>" />
-				<?=htmlspecialchars($ifinfo['pptplink']);?>&nbsp;&nbsp;
+				<?=xhtmlspecialchars($ifinfo['pptplink']);?>&nbsp;&nbsp;
 				<?php $action = ($ifinfo['pptplink'] == "up" ? gettext("Disconnect") : gettext("Connect")); ?>
 				<input type="submit" name="submit" class="formbtn" value="<?php echo $action; ?>" />
 			</form>
@@ -153,7 +154,7 @@ include("head.inc");
 			<form name="l2tplink_form" action="status_interfaces.php" method="post">
 				<input type="hidden" name="if" value="<?php echo $ifdescr; ?>" />
 				<input type="hidden" name="status" value="<?php echo $ifinfo['l2tplink']; ?>" />
-				<?=htmlspecialchars($ifinfo['l2tplink']);?>&nbsp;&nbsp;
+				<?=xhtmlspecialchars($ifinfo['l2tplink']);?>&nbsp;&nbsp;
 				<?php $action = ($ifinfo['l2tplink'] == "up" ? gettext("Disconnect") : gettext("Connect")); ?>
 				<input type="submit" name="submit" class="formbtn" value="<?php echo $action; ?>" />
 			</form>
@@ -166,7 +167,7 @@ include("head.inc");
 			<form name="ppplink_form" action="status_interfaces.php" method="post">
 				<input type="hidden" name="if" value="<?php echo $ifdescr; ?>" />
 				<input type="hidden" name="status" value="<?php echo $ifinfo['ppplink']; ?>" />
-				<?=htmlspecialchars($ifinfo['pppinfo']);?>
+				<?=xhtmlspecialchars($ifinfo['pppinfo']);?>
 				<?php if ($ifinfo['ppplink'] == "up"): ?>
 					<input type="submit" name="submit" class="formbtn" value="<?php echo gettext("Disconnect"); ?>" />
 				<?php else: ?>
@@ -181,63 +182,63 @@ include("head.inc");
 	<tr>
 		<td width="22%" class="vncellt"><?=gettext("Uptime ");?><?php if ($ifinfo['ppp_uptime_accumulated']) echo "(historical)"; ?></td>
 		<td width="78%" class="listr">
-			<?=htmlspecialchars($ifinfo['ppp_uptime']);?> <?=htmlspecialchars($ifinfo['ppp_uptime_accumulated']);?>
+			<?=xhtmlspecialchars($ifinfo['ppp_uptime']);?> <?=xhtmlspecialchars($ifinfo['ppp_uptime_accumulated']);?>
 		</td>
         </tr>
 	<?php  endif; if ($ifinfo['cell_rssi']): ?>
 	<tr>
 		<td width="22%" class="vncellt"><?=gettext("Cell Signal (RSSI)");?></td>
 		<td width="78%" class="listr">
-			<?=htmlspecialchars($ifinfo['cell_rssi']);?>
+			<?=xhtmlspecialchars($ifinfo['cell_rssi']);?>
 		</td>
         </tr>
 	<?php  endif; if ($ifinfo['cell_mode']): ?>
 	<tr>
 		<td width="22%" class="vncellt"><?=gettext("Cell Mode");?></td>
 		<td width="78%" class="listr">
-			<?=htmlspecialchars($ifinfo['cell_mode']);?>
+			<?=xhtmlspecialchars($ifinfo['cell_mode']);?>
 		</td>
         </tr>
 	<?php  endif; if ($ifinfo['cell_simstate']): ?>
 	<tr>
 		<td width="22%" class="vncellt"><?=gettext("Cell SIM State");?></td>
 		<td width="78%" class="listr">
-			<?=htmlspecialchars($ifinfo['cell_simstate']);?>
+			<?=xhtmlspecialchars($ifinfo['cell_simstate']);?>
 		</td>
         </tr>
 	<?php  endif; if ($ifinfo['cell_service']): ?>
 	<tr>
 		<td width="22%" class="vncellt"><?=gettext("Cell Service");?></td>
 		<td width="78%" class="listr">
-			<?=htmlspecialchars($ifinfo['cell_service']);?>
+			<?=xhtmlspecialchars($ifinfo['cell_service']);?>
 		</td>
         </tr>
 	<?php  endif; if ($ifinfo['cell_bwupstream']): ?>
 	<tr>
 		<td width="22%" class="vncellt"><?=gettext("Cell Upstream");?></td>
 		<td width="78%" class="listr">
-			<?=htmlspecialchars($ifinfo['cell_bwupstream']);?> kbit/s
+			<?=xhtmlspecialchars($ifinfo['cell_bwupstream']);?> kbit/s
 		</td>
         </tr>
 	<?php  endif; if ($ifinfo['cell_bwdownstream']): ?>
 	<tr>
 		<td width="22%" class="vncellt"><?=gettext("Cell Downstream");?></td>
 		<td width="78%" class="listr">
-			<?=htmlspecialchars($ifinfo['cell_bwdownstream']);?> kbit/s
+			<?=xhtmlspecialchars($ifinfo['cell_bwdownstream']);?> kbit/s
 		</td>
         </tr>
 	<?php  endif; if ($ifinfo['cell_upstream']): ?>
 	<tr>
 		<td width="22%" class="vncellt"><?=gettext("Cell Current Up");?></td>
 		<td width="78%" class="listr">
-			<?=htmlspecialchars($ifinfo['cell_upstream']);?> kbit/s
+			<?=xhtmlspecialchars($ifinfo['cell_upstream']);?> kbit/s
 		</td>
         </tr>
 	<?php  endif; if ($ifinfo['cell_downstream']): ?>
 	<tr>
 		<td width="22%" class="vncellt"><?=gettext("Cell Current Down");?></td>
 		<td width="78%" class="listr">
-			<?=htmlspecialchars($ifinfo['cell_downstream']);?> kbit/s
+			<?=xhtmlspecialchars($ifinfo['cell_downstream']);?> kbit/s
 		</td>
         </tr>
 	<?php  endif; if ($ifinfo['macaddr']): ?>
@@ -247,8 +248,8 @@ include("head.inc");
 			<?php 
 			$mac=$ifinfo['macaddr']; 
 			$mac_hi = strtoupper($mac[0] . $mac[1] . $mac[3] . $mac[4] . $mac[6] . $mac[7]);
-			if(isset($mac_man[$mac_hi])){ print "<span>" . $mac . " - " . htmlspecialchars($mac_man[$mac_hi]); print "</span>"; }
-			      else {print htmlspecialchars($mac);}
+			if(isset($mac_man[$mac_hi])){ print "<span>" . $mac . " - " . xhtmlspecialchars($mac_man[$mac_hi]); print "</span>"; }
+			      else {print xhtmlspecialchars($mac);}
 			?>
 		</td>
 	</tr>
@@ -258,7 +259,7 @@ include("head.inc");
 	<tr>
 		<td width="22%" class="vncellt"><?=gettext("IPv4 address");?></td>
 		<td width="78%" class="listr">
-			<?=htmlspecialchars($ifinfo['ipaddr']);?>
+			<?=xhtmlspecialchars($ifinfo['ipaddr']);?>
 			&nbsp; 
 		</td>
 	</tr>
@@ -266,22 +267,22 @@ include("head.inc");
 	<tr>
 		<td width="22%" class="vncellt"><?=gettext("Subnet mask IPv4");?></td>
 		<td width="78%" class="listr">
-			<?=htmlspecialchars($ifinfo['subnet']);?>
+			<?=xhtmlspecialchars($ifinfo['subnet']);?>
 		</td>
 	</tr>
 	<?php endif; ?><?php if ($ifinfo['gateway']): ?>
 	<tr>
 		<td width="22%" class="vncellt"><?=gettext("Gateway IPv4");?></td>
 		<td width="78%" class="listr">
-			<?=htmlspecialchars($config['interfaces'][$ifdescr]['gateway']);?>
-			<?=htmlspecialchars($ifinfo['gateway']);?>
+			<?=xhtmlspecialchars($config['interfaces'][$ifdescr]['gateway']);?>
+			<?=xhtmlspecialchars($ifinfo['gateway']);?>
 		</td>
 	</tr>
 	<?php endif; ?><?php if ($ifinfo['linklocal']): ?>
 	<tr>
 		<td width="22%" class="vncellt"><?=gettext("IPv6 Link Local");?></td>
 		<td width="78%" class="listr">
-			<?=htmlspecialchars($ifinfo['linklocal']);?>
+			<?=xhtmlspecialchars($ifinfo['linklocal']);?>
 			&nbsp; 
 		</td>
 	</tr>
@@ -289,7 +290,7 @@ include("head.inc");
 	<tr>
 		<td width="22%" class="vncellt"><?=gettext("IPv6 address");?></td>
 		<td width="78%" class="listr">
-			<?=htmlspecialchars($ifinfo['ipaddrv6']);?>
+			<?=xhtmlspecialchars($ifinfo['ipaddrv6']);?>
 			&nbsp; 
 		</td>
 	</tr>
@@ -297,15 +298,15 @@ include("head.inc");
 	<tr>
 		<td width="22%" class="vncellt"><?=gettext("Subnet mask IPv6");?></td>
 		<td width="78%" class="listr">
-			<?=htmlspecialchars($ifinfo['subnetv6']);?>
+			<?=xhtmlspecialchars($ifinfo['subnetv6']);?>
 		</td>
 	</tr>
 	<?php endif; ?><?php if ($ifinfo['gatewayv6']): ?>
 	<tr>
 		<td width="22%" class="vncellt"><?=gettext("Gateway IPv6");?></td>
 		<td width="78%" class="listr">
-			<?=htmlspecialchars($config['interfaces'][$ifdescr]['gatewayv6']);?>
-			<?=htmlspecialchars($ifinfo['gatewayv6']);?>
+			<?=xhtmlspecialchars($config['interfaces'][$ifdescr]['gatewayv6']);?>
+			<?=xhtmlspecialchars($ifinfo['gatewayv6']);?>
 		</td>
 	</tr>
 	<?php endif; if ($ifdescr == "wan" && file_exists("{$g['varetc_path']}/resolv.conf")): ?>
@@ -324,14 +325,14 @@ include("head.inc");
 	<tr>
 		<td width="22%" class="vncellt"><?=gettext("Media");?></td>
 		<td width="78%" class="listr">
-			<?=htmlspecialchars($ifinfo['media']);?>
+			<?=xhtmlspecialchars($ifinfo['media']);?>
 		</td>
 	</tr>
 	<?php endif; if ($ifinfo['laggproto']): ?>
 	<tr>
 		<td width="22%" class="vncellt"><?=gettext("LAGG Protocol");?></td>
 		<td width="78%" class="listr">
-			<?=htmlspecialchars($ifinfo['laggproto']);?>
+			<?=xhtmlspecialchars($ifinfo['laggproto']);?>
 		</td>
 	</tr>
 	<?php endif; if (is_array($ifinfo['laggport'])): ?>
@@ -339,7 +340,7 @@ include("head.inc");
 		<td width="22%" class="vncellt"><?=gettext("LAGG Ports");?></td>
 		<td width="78%" class="listr">
 			<?php 	foreach ($ifinfo['laggport'] as $laggport) { ?>
-					<?php echo htmlspecialchars($laggport); ?><br />
+					<?php echo xhtmlspecialchars($laggport); ?><br />
 			<?php	} ?>
 		</td>
 	</tr>
@@ -347,35 +348,35 @@ include("head.inc");
 	<tr>
 		<td width="22%" class="vncellt"><?=gettext("Channel");?></td>
 		<td width="78%" class="listr">
-			<?=htmlspecialchars($ifinfo['channel']);?>
+			<?=xhtmlspecialchars($ifinfo['channel']);?>
 		</td>
 	</tr>
 <?php endif; ?><?php if ($ifinfo['ssid']): ?>
 	<tr>
 		<td width="22%" class="vncellt"><?=gettext("SSID");?></td>
 		<td width="78%" class="listr">
-			<?=htmlspecialchars($ifinfo['ssid']);?>
+			<?=xhtmlspecialchars($ifinfo['ssid']);?>
 		</td>
 	</tr>
 <?php endif; ?><?php if ($ifinfo['bssid']): ?>
 	<tr>
 		<td width="22%" class="vncellt"><?=gettext("BSSID");?></td>
 		<td width="78%" class="listr">
-			<?=htmlspecialchars($ifinfo['bssid']);?>
+			<?=xhtmlspecialchars($ifinfo['bssid']);?>
 		</td>
 	</tr>
 <?php endif; ?><?php if ($ifinfo['rate']): ?>
 	<tr>
 		<td width="22%" class="vncellt"><?=gettext("Rate");?></td>
 		<td width="78%" class="listr">
-			<?=htmlspecialchars($ifinfo['rate']);?>
+			<?=xhtmlspecialchars($ifinfo['rate']);?>
 		</td>
 	</tr>
 <?php endif; ?><?php if ($ifinfo['rssi']): ?>
 	<tr>
 		<td width="22%" class="vncellt"><?=gettext("RSSI");?></td>
 		<td width="78%" class="listr">
-			<?=htmlspecialchars($ifinfo['rssi']);?>
+			<?=xhtmlspecialchars($ifinfo['rssi']);?>
 		</td>
 	</tr>
 <?php endif; ?>
@@ -383,8 +384,8 @@ include("head.inc");
 		<td width="22%" class="vncellt"><?=gettext("In/out packets");?></td>
 		<td width="78%" class="listr">
 		<?php
-			echo htmlspecialchars($ifinfo['inpkts'] . "/" . $ifinfo['outpkts'] . " (");
-			echo htmlspecialchars(format_bytes($ifinfo['inbytes']) . "/" . format_bytes($ifinfo['outbytes']) . ")");
+			echo xhtmlspecialchars($ifinfo['inpkts'] . "/" . $ifinfo['outpkts'] . " (");
+			echo xhtmlspecialchars(format_bytes($ifinfo['inbytes']) . "/" . format_bytes($ifinfo['outbytes']) . ")");
 		?>
 		</td>
 	</tr>
@@ -392,8 +393,8 @@ include("head.inc");
 		<td width="22%" class="vncellt"><?=gettext("In/out packets (pass)");?></td>
 		<td width="78%" class="listr">
 			<?php
-				echo htmlspecialchars($ifinfo['inpktspass'] . "/" . $ifinfo['outpktspass'] . " (");
-				echo htmlspecialchars(format_bytes($ifinfo['inbytespass']) . "/" . format_bytes($ifinfo['outbytespass']) . ")");
+				echo xhtmlspecialchars($ifinfo['inpktspass'] . "/" . $ifinfo['outpktspass'] . " (");
+				echo xhtmlspecialchars(format_bytes($ifinfo['inbytespass']) . "/" . format_bytes($ifinfo['outbytespass']) . ")");
 			?>
 		</td>
 	</tr>
@@ -401,8 +402,8 @@ include("head.inc");
 		<td width="22%" class="vncellt"><?=gettext("In/out packets (block)");?></td>
 		<td width="78%" class="listr">
 			<?php
-				echo htmlspecialchars($ifinfo['inpktsblock'] . "/" . $ifinfo['outpktsblock'] . " (");
-				echo htmlspecialchars(format_bytes($ifinfo['inbytesblock']) . "/" . format_bytes($ifinfo['outbytesblock']) . ")");
+				echo xhtmlspecialchars($ifinfo['inpktsblock'] . "/" . $ifinfo['outpktsblock'] . " (");
+				echo xhtmlspecialchars(format_bytes($ifinfo['inbytesblock']) . "/" . format_bytes($ifinfo['outbytesblock']) . ")");
 			?>
 		</td>
 	</tr>
@@ -410,7 +411,7 @@ include("head.inc");
 	<tr>
 		<td width="22%" class="vncellt"><?=gettext("In/out errors");?></td>
 		<td width="78%" class="listr">
-			<?=htmlspecialchars($ifinfo['inerrs'] . "/" . $ifinfo['outerrs']);?>
+			<?=xhtmlspecialchars($ifinfo['inerrs'] . "/" . $ifinfo['outerrs']);?>
 		</td>
 	</tr>
 <?php endif; ?>
@@ -418,7 +419,7 @@ include("head.inc");
 	<tr>
 		<td width="22%" class="vncellt"><?=gettext("Collisions");?></td>
 		<td width="78%" class="listr">
-			<?=htmlspecialchars($ifinfo['collisions']);?>
+			<?=xhtmlspecialchars($ifinfo['collisions']);?>
 		</td>
 	</tr>
 <?php endif; ?>

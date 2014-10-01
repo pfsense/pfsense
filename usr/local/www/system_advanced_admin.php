@@ -48,6 +48,7 @@ require("guiconfig.inc");
 require_once("functions.inc");
 require_once("filter.inc");
 require_once("shaper.inc");
+require_once("pfsense-utils.inc");
 
 $pconfig['webguiproto'] = $config['system']['webgui']['protocol'];
 $pconfig['webguiport'] = $config['system']['webgui']['port'];
@@ -96,7 +97,7 @@ if ($_POST) {
 		$althosts = explode(" ", $_POST['althostnames']);
 		foreach ($althosts as $ah)
 			if (!is_hostname($ah))
-				$input_errors[] = sprintf(gettext("Alternate hostname %s is not a valid hostname."),htmlspecialchars($ah));
+				$input_errors[] = sprintf(gettext("Alternate hostname %s is not a valid hostname."),xhtmlspecialchars($ah));
 	}
 
 	if ($_POST['sshport'])
@@ -369,7 +370,7 @@ function prot_change() {
 							<tr>
 								<td valign="top" class="vncell"><?=gettext("TCP port"); ?></td>
 								<td class="vtable">
-									<input name="webguiport" type="text" class="formfld unknown" id="webguiport" size="5" value="<?=htmlspecialchars($config['system']['webgui']['port']);?>" />
+									<input name="webguiport" type="text" class="formfld unknown" id="webguiport" size="5" value="<?=xhtmlspecialchars($config['system']['webgui']['port']);?>" />
 									<br />
 									<span class="vexpl">
 										<?=gettext("Enter a custom port number for the webConfigurator " .
@@ -381,7 +382,7 @@ function prot_change() {
 							<tr>
 								<td valign="top" class="vncell"><?=gettext("Max Processes"); ?></td>
 								<td class="vtable">
-									<input name="max_procs" type="text" class="formfld unknown" id="max_procs" size="5" value="<?=htmlspecialchars($pconfig['max_procs']);?>" />
+									<input name="max_procs" type="text" class="formfld unknown" id="max_procs" size="5" value="<?=xhtmlspecialchars($pconfig['max_procs']);?>" />
 									<br />
 									<span class="vexpl">
 										<?=gettext("Enter the number of webConfigurator processes you " .
@@ -461,7 +462,7 @@ function prot_change() {
 							<tr>
 								<td width="22%" valign="top" class="vncell"><?=gettext("Alternate Hostnames"); ?></td>
 								<td width="78%" class="vtable">
-									<input name="althostnames" type="text" class="formfld unknown" id="althostnames" size="75" value="<?=htmlspecialchars($pconfig['althostnames']);?>"/>
+									<input name="althostnames" type="text" class="formfld unknown" id="althostnames" size="75" value="<?=xhtmlspecialchars($pconfig['althostnames']);?>"/>
 									<br />
 									<strong><?=gettext("Alternate Hostnames for DNS Rebinding and HTTP_REFERER Checks"); ?></strong>
 									<br />

@@ -37,6 +37,7 @@
 ##|-PRIV
 
 require("guiconfig.inc");
+require_once("pfsense-utils.inc");
 
 if (!is_array($config['dnsupdates']['dnsupdate']))
 	$config['dnsupdates']['dnsupdate'] = array();
@@ -102,17 +103,17 @@ include("head.inc");
 		  <td class="listr">
 		  <?php
 			if (!isset($rfc2136['enable']))
-				echo "<span class=\"gray\">" . htmlspecialchars($rfc2136['server']) . "</span>";
+				echo "<span class=\"gray\">" . xhtmlspecialchars($rfc2136['server']) . "</span>";
 			else
-				echo htmlspecialchars($rfc2136['server']);
+				echo xhtmlspecialchars($rfc2136['server']);
 		  ?>
 		  </td>
 		  <td class="listr">
 		  <?php
 			if (!isset($rfc2136['enable']))
-				echo "<span class=\"gray\">" . htmlspecialchars($rfc2136['host']) . "</span>";
+				echo "<span class=\"gray\">" . xhtmlspecialchars($rfc2136['host']) . "</span>";
 			else
-				echo htmlspecialchars($rfc2136['host']);
+				echo xhtmlspecialchars($rfc2136['host']);
 		  ?>
 		  </td>
 		  <td class="listr">
@@ -130,7 +131,7 @@ include("head.inc");
 					echo "<font color='red'>";
 				else
 					echo "<font color='green'>";
-				echo htmlspecialchars($cached_ip);
+				echo xhtmlspecialchars($cached_ip);
 				echo "</font>";
 			} else {
 				echo "IPv4: N/A";
@@ -145,7 +146,7 @@ include("head.inc");
 					echo "<font color='red'>";
 				else
 					echo "<font color='green'>";
-				echo htmlspecialchars($cached_ip);
+				echo xhtmlspecialchars($cached_ip);
 				echo "</font>";
 			} else {
 				echo "IPv6: N/A";
@@ -155,9 +156,9 @@ include("head.inc");
 		  <td class="listbg">
 		  <?php
 			if (!isset($rfc2136['enable']))
-				echo "<span class=\"gray\">" . htmlspecialchars($rfc2136['descr']) . "</span>";
+				echo "<span class=\"gray\">" . xhtmlspecialchars($rfc2136['descr']) . "</span>";
 			else
-				echo htmlspecialchars($rfc2136['descr']);
+				echo xhtmlspecialchars($rfc2136['descr']);
 		  ?>
 		  </td>
 		  <td valign="middle" class="list nowrap">

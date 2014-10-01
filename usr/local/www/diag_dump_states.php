@@ -41,12 +41,13 @@
 
 require_once("guiconfig.inc");
 require_once("interfaces.inc");
+require_once("pfsense-utils.inc");
 
 /* handle AJAX operations */
 if(isset($_POST['action']) && $_POST['action'] == "remove") {
 	if (isset($_POST['srcip']) && isset($_POST['dstip']) && is_ipaddr($_POST['srcip']) && is_ipaddr($_POST['dstip'])) {
 		$retval = mwexec("/sbin/pfctl -k " . escapeshellarg($_POST['srcip']) . " -k " . escapeshellarg($_POST['dstip']));
-		echo htmlentities("|{$_POST['srcip']}|{$_POST['dstip']}|{$retval}|");
+		echo xhtmlentities("|{$_POST['srcip']}|{$_POST['dstip']}|{$retval}|");
 	} else {
 		echo gettext("invalid input");
 	}
@@ -149,7 +150,7 @@ include("head.inc");
 					</td>
 					<td style="font-weight:bold;" align="right">
 						<?=gettext("Filter expression:");?>
-						<input type="text" name="filter" class="formfld search" value="<?=htmlspecialchars($_POST['filter']);?>" size="30" />
+						<input type="text" name="filter" class="formfld search" value="<?=xhtmlspecialchars($_POST['filter']);?>" size="30" />
 						<input type="submit" class="formbtn" value="<?=gettext("Filter");?>" />
 					<?php if (isset($_POST['filter']) && (is_ipaddr($_POST['filter']) || is_subnet($_POST['filter']))): ?>
 						<input type="submit" class="formbtn" name="killfilter" value="<?=gettext("Kill");?>" />
@@ -176,7 +177,7 @@ include("head.inc");
 <?php
 $row = 0;
 /* get our states */
-$grepline = (isset($_POST['filter'])) ? "| /usr/bin/egrep " . escapeshellarg(htmlspecialchars($_POST['filter'])) : "";
+$grepline = (isset($_POST['filter'])) ? "| /usr/bin/egrep " . escapeshellarg(xhtmlspecialchars($_POST['filter'])) : "";
 $fd = popen("/sbin/pfctl -s state {$grepline}", "r" );
 while ($line = chop(fgets($fd))) {
 	if($row >= 10000)

@@ -53,6 +53,7 @@ function  l2tp_users_sort()  {
 
 require("guiconfig.inc");
 require_once("vpn.inc");
+require_once("pfsense-utils.inc");
 
 $referer = (isset($_SERVER['HTTP_REFERER']) ? $_SERVER['HTTP_REFERER'] : '/vpn_l2tp_users.php');
 
@@ -157,7 +158,7 @@ include("head.inc");
                 <tr>
                   <td width="22%" valign="top" class="vncellreq"><?=gettext("Username");?></td>
                   <td width="78%" class="vtable">
-					<?=$mandfldhtml;?><input name="usernamefld" type="text" class="formfld user" id="usernamefld" size="20" value="<?=htmlspecialchars($pconfig['usernamefld']);?>" />
+					<?=$mandfldhtml;?><input name="usernamefld" type="text" class="formfld user" id="usernamefld" size="20" value="<?=xhtmlspecialchars($pconfig['usernamefld']);?>" />
                   </td>
                 </tr>
                 <tr>
@@ -172,7 +173,7 @@ include("head.inc");
                 <tr>
                   <td width="22%" valign="top" class="vncell"><?=gettext("IP address");?></td>
                   <td width="78%" class="vtable">
-                    <input name="ip" type="text" class="formfld unknown" id="ip" size="20" value="<?=htmlspecialchars($pconfig['ip']);?>" />
+                    <input name="ip" type="text" class="formfld unknown" id="ip" size="20" value="<?=xhtmlspecialchars($pconfig['ip']);?>" />
                     <br /><span class="vexpl"><?=gettext("If you want the user to be assigned a specific IP address, enter it here.");?></span></td>
                 </tr>
                 <tr>
@@ -181,7 +182,7 @@ include("head.inc");
                     <input id="submit" name="Submit" type="submit" class="formbtn" value="<?=gettext('Save');?>" />
                     <input type="button" class="formbtn" value="<?=gettext("Cancel");?>" onclick="window.location.href='<?=$referer;?>'" />
                     <?php if (isset($id) && $a_secret[$id]): ?>
-                    <input name="id" type="hidden" value="<?=htmlspecialchars($id);?>" />
+                    <input name="id" type="hidden" value="<?=xhtmlspecialchars($id);?>" />
                     <?php endif; ?>
                   </td>
                 </tr>

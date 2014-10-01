@@ -44,6 +44,7 @@
 ##|-PRIV
 
 require("guiconfig.inc");
+require_once("pfsense-utils.inc");
 
 $referer = (isset($_SERVER['HTTP_REFERER']) ? $_SERVER['HTTP_REFERER'] : '/system_advanced_sysctl.php');
 
@@ -260,7 +261,7 @@ include("head.inc");
 									<input id="submit" name="Submit" type="submit" class="formbtn" value="<?=gettext("Save"); ?>" />
 									<input type="button" class="formbtn" value="<?=gettext("Cancel");?>" onclick="window.location.href='<?=$referer;?>'" />
 									<?php if (isset($id) && $a_tunable[$id]): ?>
-									<input name="id" type="hidden" value="<?=htmlspecialchars($id);?>" />
+									<input name="id" type="hidden" value="<?=xhtmlspecialchars($id);?>" />
 									<?php endif; ?>
 								</td>
 							</tr>

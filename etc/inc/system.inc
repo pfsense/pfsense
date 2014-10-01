@@ -39,6 +39,8 @@
 	pfSense_MODULE:	utils
 */
 
+require_once("pfsense-utils.inc");
+
 function activate_powerd() {
 	global $config, $g;
 	if ($g['platform'] == 'jail')
@@ -2001,7 +2003,7 @@ function get_possible_traffic_source_addresses($include_ipv6_link_local=false) {
 				if (!isset($setting['disable'])) {
 					$vpn = array();
 					$vpn['value'] = 'ovpn' . substr($mode, 0, 1) . $setting['vpnid'];
-					$vpn['name'] = gettext("OpenVPN") . " ".$mode.": ".htmlspecialchars($setting['description']);
+					$vpn['name'] = gettext("OpenVPN") . " ".$mode.": ".xhtmlspecialchars($setting['description']);
 					$sourceips[] = $vpn;
 				}
 			}

@@ -40,6 +40,7 @@ $shortcut_section = "l2tps";
 
 require("guiconfig.inc");
 require_once("vpn.inc");
+require_once("pfsense-utils.inc");
 
 if (!is_array($config['l2tp']['radius'])) {
 	$config['l2tp']['radius'] = array();
@@ -314,7 +315,7 @@ function enable_change(enable_over) {
 				foreach ($interfaces as $iface => $ifacename):
 			  ?>
 			  <option value="<?=$iface;?>" <?php if ($iface == $pconfig['interface']) echo "selected=\"selected\""; ?>>
-			  <?=htmlspecialchars($ifacename);?>
+			  <?=xhtmlspecialchars($ifacename);?>
 			  </option>
 			  <?php endforeach; ?>
 			</select> <br />
@@ -324,7 +325,7 @@ function enable_change(enable_over) {
                 <tr>
                   <td width="22%" valign="top" class="vncellreq"><?=gettext("Server Address");?></td>
                   <td width="78%" class="vtable">
-                    <?=$mandfldhtml;?><input name="localip" type="text" class="formfld unknown" id="localip" size="20" value="<?=htmlspecialchars($pconfig['localip']);?>" />
+                    <?=$mandfldhtml;?><input name="localip" type="text" class="formfld unknown" id="localip" size="20" value="<?=xhtmlspecialchars($pconfig['localip']);?>" />
 			<br />
 			<?=gettext("Enter the IP address the L2TP server should give to clients for use as their \"gateway\""); ?>.
 			<br />
@@ -336,7 +337,7 @@ function enable_change(enable_over) {
                 <tr>
                   <td width="22%" valign="top" class="vncellreq"><?=gettext("Remote Address Range");?></td>
                   <td width="78%" class="vtable">
-                    <?=$mandfldhtml;?><input name="remoteip" type="text" class="formfld unknown" id="remoteip" size="20" value="<?=htmlspecialchars($pconfig['remoteip']);?>" />
+                    <?=$mandfldhtml;?><input name="remoteip" type="text" class="formfld unknown" id="remoteip" size="20" value="<?=xhtmlspecialchars($pconfig['remoteip']);?>" />
                     <br />
                     <?=gettext("Specify the starting address for the client IP address subnet.");?><br />
                     </td>
@@ -378,7 +379,7 @@ function enable_change(enable_over) {
 		<tr>
                   <td width="22%" valign="top" class="vncell"><?=gettext("Secret");?></td>
                   <td width="78%" class="vtable">
-			<input type="password" name="secret" id="secret" class="formfld pwd" value="<?php echo htmlspecialchars($pconfig['secret']); ?>" />
+			<input type="password" name="secret" id="secret" class="formfld pwd" value="<?php echo xhtmlspecialchars($pconfig['secret']); ?>" />
                     <br />
                     <?=gettext("Specify optional secret shared between peers. Required on some devices/setups.");?><br />
                     </td>
@@ -397,9 +398,9 @@ function enable_change(enable_over) {
 		<tr>
 		  <td width="22%" valign="top" class="vncell"><?=gettext("L2TP DNS Servers"); ?></td>
 		  <td width="78%" class="vtable">
-		    <?=$mandfldhtml;?><input name="l2tp_dns1" type="text" class="formfld unknown" id="l2tp_dns1" size="20" value="<?=htmlspecialchars($pconfig['l2tp_dns1']);?>" />
+		    <?=$mandfldhtml;?><input name="l2tp_dns1" type="text" class="formfld unknown" id="l2tp_dns1" size="20" value="<?=xhtmlspecialchars($pconfig['l2tp_dns1']);?>" />
 		   	<br />
-				<input name="l2tp_dns2" type="text" class="formfld unknown" id="l2tp_dns2" size="20" value="<?=htmlspecialchars($pconfig['l2tp_dns2']);?>" />
+				<input name="l2tp_dns2" type="text" class="formfld unknown" id="l2tp_dns2" size="20" value="<?=xhtmlspecialchars($pconfig['l2tp_dns2']);?>" />
 			<br />
 		   <?=gettext("primary and secondary DNS servers assigned to L2TP clients"); ?><br />
 		  </td>
@@ -407,7 +408,7 @@ function enable_change(enable_over) {
 		<tr>
 		  <td width="22%" valign="top" class="vncell"><?=gettext("WINS Server"); ?></td>
 		  <td width="78%" valign="top" class="vtable">
-		      <input name="wins" class="formfld unknown" id="wins" size="20" value="<?=htmlspecialchars($pconfig['wins']);?>" />
+		      <input name="wins" class="formfld unknown" id="wins" size="20" value="<?=xhtmlspecialchars($pconfig['wins']);?>" />
 		  </td>
 		</tr>
                 <tr>
@@ -424,14 +425,14 @@ function enable_change(enable_over) {
                 <tr>
                   <td width="22%" valign="top" class="vncell"><?=gettext("RADIUS Server");?></td>
                   <td width="78%" class="vtable">
-                      <input name="radiusserver" type="text" class="formfld unknown" id="radiusserver" size="20" value="<?=htmlspecialchars($pconfig['radiusserver']);?>" />
+                      <input name="radiusserver" type="text" class="formfld unknown" id="radiusserver" size="20" value="<?=xhtmlspecialchars($pconfig['radiusserver']);?>" />
                       <br />
                       <?=gettext("Enter the IP address of the RADIUS server.");?></td>
                 </tr>
                 <tr>
                   <td width="22%" valign="top" class="vncell"><?=gettext("RADIUS Shared Secret");?></td>
                   <td width="78%" valign="top" class="vtable">
-                      <input name="radiussecret" type="password" class="formfld pwd" id="radiussecret" size="20" value="<?=htmlspecialchars($pconfig['radiussecret']);?>" />
+                      <input name="radiussecret" type="password" class="formfld pwd" id="radiussecret" size="20" value="<?=xhtmlspecialchars($pconfig['radiussecret']);?>" />
                       <br />
                       <?=gettext("Enter the shared secret that will be used to authenticate to the RADIUS server.");?></td>
                 </tr>

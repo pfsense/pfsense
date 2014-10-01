@@ -41,6 +41,7 @@ require_once("filter.inc");
 require("shaper.inc");
 require("captiveportal.inc");
 require_once("voucher.inc");
+require_once("pfsense-utils.inc");
 
 $pgtitle = array(gettext("Services"), gettext("Captive portal"), gettext("Edit Voucher Rolls"));
 $shortcut_section = "captiveportal-vouchers";
@@ -172,15 +173,15 @@ include("head.inc");
 	<tr> 
 	  <td width="22%" valign="top" class="vncellreq"><?=gettext("Roll"); ?>#</td>
 	  <td width="78%" class="vtable"> 
-		<?=$mandfldhtml;?><input name="number" type="text" class="formfld" id="number" size="10" value="<?=htmlspecialchars($pconfig['number']);?>" /> 
+		<?=$mandfldhtml;?><input name="number" type="text" class="formfld" id="number" size="10" value="<?=xhtmlspecialchars($pconfig['number']);?>" /> 
         <br />
-        <span class="vexpl"><?=gettext("Enter the Roll"); ?># (0..<?=htmlspecialchars($maxnumber);?>) <?=gettext("found on top of the generated/printed vouchers"); ?>.</span>
+        <span class="vexpl"><?=gettext("Enter the Roll"); ?># (0..<?=xhtmlspecialchars($maxnumber);?>) <?=gettext("found on top of the generated/printed vouchers"); ?>.</span>
 		</td>
 	</tr>
 	<tr> 
 	  <td width="22%" valign="top" class="vncellreq"><?=gettext("Minutes per Ticket"); ?></td>
 	  <td width="78%" class="vtable"> 
-		<?=$mandfldhtml;?><input name="minutes" type="text" class="formfld" id="minutes" size="10" value="<?=htmlspecialchars($pconfig['minutes']);?>" /> 
+		<?=$mandfldhtml;?><input name="minutes" type="text" class="formfld" id="minutes" size="10" value="<?=xhtmlspecialchars($pconfig['minutes']);?>" /> 
         <br />
         <span class="vexpl"><?=gettext("Defines the time in minutes that a user is allowed access. The clock starts ticking the first time a voucher is used for authentication"); ?>.</span>
 	   </td>
@@ -188,15 +189,15 @@ include("head.inc");
 	<tr> 
 	  <td width="22%" valign="top" class="vncellreq"><?=gettext("Count"); ?></td>
 	  <td width="78%" class="vtable"> 
-		<?=$mandfldhtml;?><input name="count" type="text" class="formfld" id="count" size="10" value="<?=htmlspecialchars($pconfig['count']);?>" /> 
+		<?=$mandfldhtml;?><input name="count" type="text" class="formfld" id="count" size="10" value="<?=xhtmlspecialchars($pconfig['count']);?>" /> 
         <br />
-        <span class="vexpl"><?=gettext("Enter the number of vouchers"); ?> (1..<?=htmlspecialchars($maxcount);?>) <?=gettext("found on top of the generated/printed vouchers. WARNING: Changing this number for an existing Roll will mark all vouchers as unused again"); ?>.</span>
+        <span class="vexpl"><?=gettext("Enter the number of vouchers"); ?> (1..<?=xhtmlspecialchars($maxcount);?>) <?=gettext("found on top of the generated/printed vouchers. WARNING: Changing this number for an existing Roll will mark all vouchers as unused again"); ?>.</span>
 		</td>
 	</tr>
 	<tr> 
 	  <td width="22%" valign="top" class="vncell"><?=gettext("Comment"); ?></td>
 	  <td width="78%" class="vtable"> 
-		<?=$mandfldhtml;?><input name="descr" type="text" class="formfld" id="descr" size="60" value="<?=htmlspecialchars($pconfig['descr']);?>" /> 
+		<?=$mandfldhtml;?><input name="descr" type="text" class="formfld" id="descr" size="60" value="<?=xhtmlspecialchars($pconfig['descr']);?>" /> 
         <br />
         <span class="vexpl"><?=gettext("Can be used to further identify this roll. Ignored by the system"); ?>.</span>
 		</td>
@@ -205,9 +206,9 @@ include("head.inc");
 	  <td width="22%" valign="top">&nbsp;</td>
 	  <td width="78%"> 
 		<input name="Submit" type="submit" class="formbtn" value="<?=gettext("Save"); ?>" /> 
-		<input name="zone" type="hidden" value="<?=htmlspecialchars($cpzone);?>" />
+		<input name="zone" type="hidden" value="<?=xhtmlspecialchars($cpzone);?>" />
 		<?php if (isset($id) && $a_roll[$id]): ?>
-		<input name="id" type="hidden" value="<?=htmlspecialchars($id);?>" />
+		<input name="id" type="hidden" value="<?=xhtmlspecialchars($id);?>" />
 		<?php endif; ?>
 	  </td>
 	</tr>

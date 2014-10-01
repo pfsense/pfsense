@@ -48,6 +48,7 @@ $allowautocomplete = true;
 
 $pgtitle = array(gettext("Diagnostics"), gettext("Test Port"));
 require("guiconfig.inc");
+require_once("pfsense-utils.inc");
 
 define('NC_TIMEOUT', 10);
 
@@ -117,18 +118,18 @@ include("head.inc"); ?>
 			<td width="22%" valign="top" class="vncellreq"><?=gettext("Host"); ?></td>
 			<td width="78%" class="vtable">
 			<?=$mandfldhtml;?>
-			<input name="host" type="text" class="formfld" id="host" size="20" value="<?=htmlspecialchars($host);?>" /></td>
+			<input name="host" type="text" class="formfld" id="host" size="20" value="<?=xhtmlspecialchars($host);?>" /></td>
 		</tr>
 		<tr>
 			<td width="22%" valign="top" class="vncellreq"><?= gettext("Port"); ?></td>
 			<td width="78%" class="vtable">
-				<input name="port" type="text" class="formfld" id="port" size="10" value="<?=htmlspecialchars($port);?>" />
+				<input name="port" type="text" class="formfld" id="port" size="10" value="<?=xhtmlspecialchars($port);?>" />
 			</td>
 		</tr>
 		<tr>
 			<td width="22%" valign="top" class="vncell"><?= gettext("Source Port"); ?></td>
 			<td width="78%" class="vtable">
-				<input name="srcport" type="text" class="formfld" id="srcport" size="10" value="<?=htmlspecialchars($srcport);?>" />
+				<input name="srcport" type="text" class="formfld" id="srcport" size="10" value="<?=xhtmlspecialchars($srcport);?>" />
 				<br /><br /><?php echo gettext("This should typically be left blank."); ?>
 			</td>
 		</tr>
@@ -151,7 +152,7 @@ include("head.inc"); ?>
 							$selected = "selected=\"selected\"";
 				?>
 					<option value="<?=$sip['value'];?>" <?=$selected;?>>
-						<?=htmlspecialchars($sip['name']);?>
+						<?=xhtmlspecialchars($sip['name']);?>
 					</option>
 					<?php endforeach; ?>
 				</select>
@@ -269,10 +270,10 @@ include("head.inc"); ?>
 			} else {
 				if (is_array($result)) {
 					foreach ($result as $resline) {
-						echo htmlspecialchars($resline) . "\n";
+						echo xhtmlspecialchars($resline) . "\n";
 					}
 				} else {
-					echo htmlspecialchars($result);
+					echo xhtmlspecialchars($result);
 				}
 			}
 			echo '</textarea>&nbsp;</font>' ;

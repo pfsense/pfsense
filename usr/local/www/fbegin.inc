@@ -7,6 +7,7 @@ require_once("globals.inc");
 require_once("functions.inc");
 require_once("shortcuts.inc");
 require_once("service-utils.inc");
+require_once("pfsense-utils.inc");
 
 /* $Id$ */
 
@@ -76,17 +77,17 @@ function return_ext_menu($section) {
 function output_menu($arrayitem, $target = null) {
 	foreach ($arrayitem as $item) {
 		if (isAllowedPage($item[1]) || $item[1]=="/index.php?logout"){
-			$attr = sprintf("href=\"%s\"", htmlentities($item[1]));
+			$attr = sprintf("href=\"%s\"", xhtmlentities($item[1]));
 			if ($target) {
-				$attr .= sprintf(" target=\"%s\"", htmlentities($target));
+				$attr .= sprintf(" target=\"%s\"", xhtmlentities($target));
 			}
 			$class = "navlnk";
 			if ($item['class']) {
 				$class .= " {$item['class']}";
 			}
-			$attr .= sprintf(" class=\"%s\"", htmlentities($class));
+			$attr .= sprintf(" class=\"%s\"", xhtmlentities($class));
 			if ($item['style']) {
-				$attr .= sprintf(" style=\"%s\"", htmlentities($item['style']));
+				$attr .= sprintf(" style=\"%s\"", xhtmlentities($item['style']));
 			}
 			echo "<li>\n";
 			printf("<a %s>%s</a>\n", $attr, $item[0]);
@@ -120,7 +121,7 @@ if (!isset($config['system']['webgui']['noassigninterfaces']))
 $opts = get_configured_interface_with_descr(false, true);
 foreach ($opts as $oif => $odescr)
 	if (!isset($config['interfaces'][$oif]['ovpn']))
-		$interfaces_menu[] = array(htmlspecialchars($odescr), "/interfaces.php?if={$oif}");
+		$interfaces_menu[] = array(xhtmlspecialchars($odescr), "/interfaces.php?if={$oif}");
 $interfaces_menu = msort(array_merge($interfaces_menu, return_ext_menu("Interfaces")),0);
 
 // Firewall
@@ -396,7 +397,7 @@ function add_to_menu($url, $name) {
 ?>
 
 <div>
-<span class="pgtitle"><a href="<?= htmlentities($_SERVER['REQUEST_URI']) ?>"><?=genhtmltitle($pgtitle);?></a></span>
+<span class="pgtitle"><a href="<?= xhtmlentities($_SERVER['REQUEST_URI']) ?>"><?=genhtmltitle($pgtitle);?></a></span>
 <span style="float:right; margin: 0 0 20px 20px">
 <?php
 if (!$hide_service_status && !empty($shortcuts[$shortcut_section]['service'])) {

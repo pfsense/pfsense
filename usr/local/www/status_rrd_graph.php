@@ -42,6 +42,7 @@ require("guiconfig.inc");
 require_once("filter.inc");
 require("shaper.inc");
 require_once("rrd.inc");
+require_once("pfsense-utils.inc");
 
 unset($input_errors);
 
@@ -56,7 +57,7 @@ $databases = glob("*.rrd");
 
 
 if ($_GET['cat']) {
-	$curcat = htmlspecialchars($_GET['cat']);
+	$curcat = xhtmlspecialchars($_GET['cat']);
 } else {
 	if(! empty($config['rrd']['category'])) {
 		$curcat = $config['rrd']['category'];
@@ -471,7 +472,7 @@ function get_dates($curperiod, $graph) {
                                         <td colspan="2" class="list">
 					<?=gettext("Graphs:");?>
 					<?php if (!empty($curzone)): ?>
-					<input type="hidden" name="zone" value="<?= htmlspecialchars($curzone) ?>" />
+					<input type="hidden" name="zone" value="<?= xhtmlspecialchars($curzone) ?>" />
 					<?php endif; ?>
 					<select name="option" class="formselect" style="z-index: -10;" onchange="document.form1.submit()">
 					<?php
@@ -486,7 +487,7 @@ function get_dates($curperiod, $graph) {
 							if($curoption == $database) {
 								echo " selected=\"selected\"";
 							}
-							echo ">" . htmlspecialchars($prettyprint) . "</option>\n";
+							echo ">" . xhtmlspecialchars($prettyprint) . "</option>\n";
 						}
 					}
 					foreach ($ui_databases as $db => $database) {
@@ -526,7 +527,7 @@ function get_dates($curperiod, $graph) {
 						if($curoption == $optionc) {
 							echo " selected=\"selected\"";
 						}
-						echo ">" . htmlspecialchars($prettyprint) . "</option>\n";
+						echo ">" . xhtmlspecialchars($prettyprint) . "</option>\n";
 					}
 
 					?>
@@ -538,7 +539,7 @@ function get_dates($curperiod, $graph) {
 					foreach ($styles as $style => $styled) {
 						echo "<option value=\"$style\"";
 						if ($style == $curstyle) echo " selected=\"selected\"";
-						echo ">" . htmlspecialchars($styled) . "</option>\n";
+						echo ">" . xhtmlspecialchars($styled) . "</option>\n";
 					}
 					?>
 					</select>
@@ -552,7 +553,7 @@ function get_dates($curperiod, $graph) {
 						foreach ($periods as $period => $value) {
 							echo "<option value=\"$period\"";
 							if ($period == $curperiod) echo " selected=\"selected\"";
-							echo ">" . htmlspecialchars($value) . "</option>\n";
+							echo ">" . xhtmlspecialchars($value) . "</option>\n";
 						}
 						echo "</select>\n";
 						echo "</td></tr>\n";
@@ -567,9 +568,9 @@ function get_dates($curperiod, $graph) {
 						$end_fmt   = strftime("%m/%d/%Y %H:%M:%S", $end);
 						?>
 						<?=gettext("Start:");?>
-						<input id="startDateTime" title="<?= htmlentities($tz_msg); ?>." type="text" name="start" class="formfldunknown" size="24" value="<?= htmlentities($start_fmt); ?>" />
+						<input id="startDateTime" title="<?= xhtmlentities($tz_msg); ?>." type="text" name="start" class="formfldunknown" size="24" value="<?= xhtmlentities($start_fmt); ?>" />
 						<?=gettext("End:");?>
-						<input id="endDateTime" title="<?= htmlentities($tz_msg); ?>." type="text" name="end" class="formfldunknown" size="24" value="<?= htmlentities($end_fmt); ?>" />
+						<input id="endDateTime" title="<?= xhtmlentities($tz_msg); ?>." type="text" name="end" class="formfldunknown" size="24" value="<?= xhtmlentities($end_fmt); ?>" />
 						<input type="submit" name="Submit" value="<?=gettext("Go"); ?>" />
 						</td></tr>
 						<?php

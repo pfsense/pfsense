@@ -1416,7 +1416,7 @@ function package_server_ssl_failure_message() {
 	. "Downloaded packages may come from an untrusted source. "
 	. "Proceed with caution.";
 
-	return sprintf(gettext($msg), htmlspecialchars(get_active_xml_rpc_base_url()));
+	return sprintf(gettext($msg), xhtmlspecialchars(get_active_xml_rpc_base_url()));
 }
 
 /* Keep this message centrally since it will be used several times on pages
@@ -1428,7 +1428,7 @@ function package_server_mismatch_message() {
 	. "Return the package server settings to their default values to "
 	. "ensure that verifiable and trusted packages are received.";
 
-	return sprintf(gettext($msg), htmlspecialchars(get_active_xml_rpc_base_url())) . '<br/><br/>'
+	return sprintf(gettext($msg), xhtmlspecialchars(get_active_xml_rpc_base_url())) . '<br/><br/>'
 	. '<a href="/pkg_mgr_settings.php">' . gettext("Package Manager Settings") . '</a>';
 }
 

@@ -53,7 +53,7 @@ $counter = 1;
 	<tr>
 	<td class="listhdrr" id="gateway<?php echo $counter; ?>" rowspan="2" align="center">
 		<strong>
-		<?php echo htmlspecialchars($gateway['name']); ?>
+		<?php echo xhtmlspecialchars($gateway['name']); ?>
 		</strong>
 		<?php $counter++; ?>
 	</td>
@@ -62,12 +62,12 @@ $counter = 1;
 					<?php
 						$if_gw = '';
 						if (is_ipaddr($gateway['gateway']))
-							$if_gw = htmlspecialchars($gateway['gateway']);
+							$if_gw = xhtmlspecialchars($gateway['gateway']);
 						else {
 							if($gateway['ipprotocol'] == "inet")
-								$if_gw = htmlspecialchars(get_interface_gateway($gateway['friendlyiface']));
+								$if_gw = xhtmlspecialchars(get_interface_gateway($gateway['friendlyiface']));
 							if($gateway['ipprotocol'] == "inet6")
-								$if_gw = htmlspecialchars(get_interface_gateway_v6($gateway['friendlyiface']));
+								$if_gw = xhtmlspecialchars(get_interface_gateway_v6($gateway['friendlyiface']));
 						}
 						echo ($if_gw == '' ? '~' : $if_gw);
 						unset ($if_gw);
@@ -80,7 +80,7 @@ $counter = 1;
 			<td class="listr ellipsis" align="center" id="gateway<?php echo $counter; ?>">
 			<?php
 				if ($gateways_status[$gname])
-					echo htmlspecialchars($gateways_status[$gname]['delay']);
+					echo xhtmlspecialchars($gateways_status[$gname]['delay']);
 				else
 					echo gettext("Pending");
 			?>
@@ -89,7 +89,7 @@ $counter = 1;
 			<td class="listr ellipsis" align="center" id="gateway<?php echo $counter; ?>">
 			<?php
 				if ($gateways_status[$gname])
-					echo htmlspecialchars($gateways_status[$gname]['loss']);
+					echo xhtmlspecialchars($gateways_status[$gname]['loss']);
 				else
 					echo gettext("Pending");
 			?>

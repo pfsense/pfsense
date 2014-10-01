@@ -40,6 +40,7 @@ $pgtitle = array(gettext("Interfaces"),gettext("QinQ"), gettext("Edit"));
 $shortcut_section = "interfaces";
 
 require("guiconfig.inc");
+require_once("pfsense-utils.inc");
 
 if (!is_array($config['qinqs']['qinqentry']))
 	$config['qinqs']['qinqentry'] = array();
@@ -68,7 +69,7 @@ if (isset($id) && $a_qinqs[$id]) {
 	$pconfig['if'] = $a_qinqs[$id]['if'];
 	$pconfig['tag'] = $a_qinqs[$id]['tag'];
 	$pconfig['members'] = $a_qinqs[$id]['members'];
-	$pconfig['descr'] = html_entity_decode($a_qinqs[$id]['descr']);
+	$pconfig['descr'] = xhtml_entity_decode($a_qinqs[$id]['descr']);
 /*
 	$pconfig['autoassign'] = isset($a_qinqs[$id]['autoassign']);
 	$pconfig['autoenable'] = isset($a_qinqs[$id]['autoenable']);
@@ -300,7 +301,7 @@ function removeRow(el) {
                         if ($ifn == $pconfig['if'])
 				echo " selected=\"selected\"";
                         echo ">";
-                        echo htmlspecialchars($ifn . " (" . $ifinfo['mac'] . ")");
+                        echo xhtmlspecialchars($ifn . " (" . $ifinfo['mac'] . ")");
                         echo "</option>";
                 }
 	}
@@ -312,7 +313,7 @@ function removeRow(el) {
   <tr>
     <td width="22%" valign="top" class="vncellreq"><?=gettext("First level tag");?></td>
     <td width="78%" class="vtable">
-      <input name="tag" type="text" class="formfld unknown" id="tag" size="10" value="<?=htmlspecialchars($pconfig['tag']);?>" />
+      <input name="tag" type="text" class="formfld unknown" id="tag" size="10" value="<?=xhtmlspecialchars($pconfig['tag']);?>" />
       <br />
       <span class="vexpl">
 	<?=gettext("This is the first level VLAN tag. On top of this are stacked the member VLANs defined below.");?>
@@ -341,7 +342,7 @@ function removeRow(el) {
   <tr>
     <td width="22%" valign="top" class="vncell"><?=gettext("Description");?></td>
     <td width="78%" class="vtable">
-      <input name="descr" type="text" class="formfld unknown" id="descr" size="40" value="<?=htmlspecialchars($pconfig['descr']);?>" />
+      <input name="descr" type="text" class="formfld unknown" id="descr" size="40" value="<?=xhtmlspecialchars($pconfig['descr']);?>" />
       <br />
       <span class="vexpl">
         <?=gettext("You may enter a description here for your reference (not parsed).");?>
@@ -396,7 +397,7 @@ function removeRow(el) {
       <input id="submit" name="submit" type="submit" class="formbtn" value="<?=gettext("Save");?>" />
       <a href="interfaces_qinq.php"><input id="cancelbutton" name="cancelbutton" type="button" class="formbtn" value="<?=gettext("Cancel");?>" /></a>
       <?php if (isset($id) && $a_qinqs[$id]): ?>
-      <input name="id" type="hidden" value="<?=htmlspecialchars($id);?>" />
+      <input name="id" type="hidden" value="<?=xhtmlspecialchars($id);?>" />
       <?php endif; ?>
     </td>
   </tr>

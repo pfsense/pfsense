@@ -44,6 +44,7 @@ require("guiconfig.inc");
 require_once("functions.inc");
 require_once("filter.inc");
 require_once("shaper.inc");
+require_once("pfsense-utils.inc");
 
 $pconfig['hostname'] = $config['system']['hostname'];
 $pconfig['domain'] = $config['system']['domain'];
@@ -178,7 +179,7 @@ if ($_POST) {
 
 		if($_POST['language'] && $_POST['language'] != $config['system']['language']) {
 			$config['system']['language'] = $_POST['language'];
-			set_language($config['system']['language']);
+			set_language($config['system']['language'], system_get_language_codeset());
 		}
 
 		/* pfSense themes */
@@ -303,7 +304,7 @@ include("head.inc");
 			</tr>
 			<tr>
 				<td width="22%" valign="top" class="vncellreq"><?=gettext("Hostname"); ?></td>
-				<td width="78%" class="vtable"> <input name="hostname" type="text" class="formfld unknown" id="hostname" size="40" value="<?=htmlspecialchars($pconfig['hostname']);?>" />
+				<td width="78%" class="vtable"> <input name="hostname" type="text" class="formfld unknown" id="hostname" size="40" value="<?=xhtmlspecialchars($pconfig['hostname']);?>" />
 					<br />
 					<span class="vexpl">
 						<?=gettext("Name of the firewall host, without domain part"); ?>
@@ -314,7 +315,7 @@ include("head.inc");
 			</tr>
 			<tr>
 				<td width="22%" valign="top" class="vncellreq"><?=gettext("Domain"); ?></td>
-				<td width="78%" class="vtable"> <input name="domain" type="text" class="formfld unknown" id="domain" size="40" value="<?=htmlspecialchars($pconfig['domain']);?>" />
+				<td width="78%" class="vtable"> <input name="domain" type="text" class="formfld unknown" id="domain" size="40" value="<?=xhtmlspecialchars($pconfig['domain']);?>" />
 					<br />
 					<span class="vexpl">
 						<?=gettext("Do not use 'local' as a domain name. It will cause local hosts running mDNS (avahi, bonjour, etc.) to be unable to resolve local hosts not running mDNS."); ?>
@@ -416,8 +417,8 @@ include("head.inc");
 					<select name="timezone" id="timezone">
 						<?php foreach ($timezonelist as $value): ?>
 						<?php if(strstr($value, "GMT")) continue; ?>
-						<option value="<?=htmlspecialchars($value);?>" <?php if ($value == $pconfig['timezone']) echo "selected=\"selected\""; ?>>
-							<?=htmlspecialchars($value);?>
+						<option value="<?=xhtmlspecialchars($value);?>" <?php if ($value == $pconfig['timezone']) echo "selected=\"selected\""; ?>>
+							<?=xhtmlspecialchars($value);?>
 						</option>
 						<?php endforeach; ?>
 					</select>
@@ -431,7 +432,7 @@ include("head.inc");
 			<tr>
 				<td width="22%" valign="top" class="vncell">Time update interval</td>
 				<td width="78%" class="vtable">
-					<input name="timeupdateinterval" type="text" class="formfld unknown" id="timeupdateinterval" size="4" value="<?=htmlspecialchars($pconfig['timeupdateinterval']);?>" />
+					<input name="timeupdateinterval" type="text" class="formfld unknown" id="timeupdateinterval" size="4" value="<?=xhtmlspecialchars($pconfig['timeupdateinterval']);?>" />
 					<br />
 					<span class="vexpl">
 						Minutes between network time sync. 300 recommended,
@@ -443,7 +444,7 @@ include("head.inc");
 			<tr>
 				<td width="22%" valign="top" class="vncell"><?=gettext("NTP time server"); ?></td>
 				<td width="78%" class="vtable">
-					<input name="timeservers" type="text" class="formfld unknown" id="timeservers" size="40" value="<?=htmlspecialchars($pconfig['timeservers']);?>" />
+					<input name="timeservers" type="text" class="formfld unknown" id="timeservers" size="40" value="<?=xhtmlspecialchars($pconfig['timeservers']);?>" />
 					<br />
 					<span class="vexpl">
 						<?=gettext("Use a space to separate multiple hosts (only one " .

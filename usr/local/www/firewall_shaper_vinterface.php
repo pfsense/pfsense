@@ -44,6 +44,7 @@ require("guiconfig.inc");
 require_once("functions.inc");
 require_once("filter.inc");
 require_once("shaper.inc");
+require_once("pfsense-utils.inc");
 
 if($_GET['reset'] <> "") {
 	mwexec("/usr/bin/killall -9 pfctl");
@@ -61,23 +62,23 @@ read_dummynet_config();
 
 if ($_GET) {
 	if ($_GET['queue'])
-        	$qname = htmlspecialchars(trim($_GET['queue']));
+        	$qname = xhtmlspecialchars(trim($_GET['queue']));
         if ($_GET['pipe'])
-                $pipe = htmlspecialchars(trim($_GET['pipe']));
+                $pipe = xhtmlspecialchars(trim($_GET['pipe']));
         if ($_GET['action'])
-                $action = htmlspecialchars($_GET['action']);
+                $action = xhtmlspecialchars($_GET['action']);
 }
 if ($_POST) {
 	if ($_POST['name'])
-        	$qname = htmlspecialchars(trim($_POST['name']));
+        	$qname = xhtmlspecialchars(trim($_POST['name']));
 	else if ($_POST['newname'])
-        	$qname = htmlspecialchars(trim($_POST['newname']));
+        	$qname = xhtmlspecialchars(trim($_POST['newname']));
         if ($_POST['pipe'])
-        	$pipe = htmlspecialchars(trim($_POST['pipe']));
+        	$pipe = xhtmlspecialchars(trim($_POST['pipe']));
 	else
-		$pipe = htmlspecialchars(trim($qname));
+		$pipe = xhtmlspecialchars(trim($qname));
 	if ($_POST['parentqueue'])
-		$parentqueue = htmlspecialchars(trim($_POST['parentqueue']));
+		$parentqueue = xhtmlspecialchars(trim($_POST['parentqueue']));
 }
 
 if ($pipe) {

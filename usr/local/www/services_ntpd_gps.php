@@ -38,6 +38,7 @@
 ##|-PRIV
 
 require_once("guiconfig.inc");
+require_once("pfsense-utils.inc");
 
 function set_default_gps() {
 	global $config;
@@ -459,19 +460,19 @@ SureGPS = 		#Sure Electronics SKG16B
 		<tr>
 			<td width="22%" valign="top" class="vncellreq">Fudge time 1</td>
 			<td width="78%" class="vtable">
-				<input name="gpsfudge1" type="text" class="formfld unknown" id="gpsfudge1" min="-1" max="1" size="20" value="<?=htmlspecialchars($pconfig['fudge1']);?>" />(<?php echo gettext("seconds");?>)<br />
+				<input name="gpsfudge1" type="text" class="formfld unknown" id="gpsfudge1" min="-1" max="1" size="20" value="<?=xhtmlspecialchars($pconfig['fudge1']);?>" />(<?php echo gettext("seconds");?>)<br />
 				<?php echo gettext("Fudge time 1 is used to specify the GPS PPS signal offset");?> (<?php echo gettext("default");?>: 0.0).</td>
 		</tr>
 		<tr>
 			<td width="22%" valign="top" class="vncellreq">Fudge time 2</td>
 			<td width="78%" class="vtable">
-				<input name="gpsfudge2" type="text" class="formfld unknown" id="gpsfudge2" min="-1" max="1" size="20" value="<?=htmlspecialchars($pconfig['fudge2']);?>" />(<?php echo gettext("seconds");?>)<br />
+				<input name="gpsfudge2" type="text" class="formfld unknown" id="gpsfudge2" min="-1" max="1" size="20" value="<?=xhtmlspecialchars($pconfig['fudge2']);?>" />(<?php echo gettext("seconds");?>)<br />
 				<?php echo gettext("Fudge time 2 is used to specify the GPS time offset");?> (<?php echo gettext("default");?>: 0.0).</td>
 		</tr>
 		<tr>
 			<td width="22%" valign="top" class="vncellreq">Stratum</td>
 			<td width="78%" class="vtable">
-				<input name="gpsstratum" type="text" class="formfld unknown" id="gpsstratum" max="16" size="20" value="<?=htmlspecialchars($pconfig['stratum']);?>" /><?php echo gettext("(0-16)");?><br />
+				<input name="gpsstratum" type="text" class="formfld unknown" id="gpsstratum" max="16" size="20" value="<?=xhtmlspecialchars($pconfig['stratum']);?>" /><?php echo gettext("(0-16)");?><br />
 				<?php echo gettext("This may be used to change the GPS Clock stratum");?> (<?php echo gettext("default");?>: 0). <?php echo gettext("This may be useful if, for some reason, you want ntpd to prefer a different clock"); ?></td>
 		</tr>
 		<tr>
@@ -547,7 +548,7 @@ SureGPS = 		#Sure Electronics SKG16B
 		<tr>
 			<td width="22%" valign="top" class="vncellreq">Clock ID</td>
 			<td width="78%" class="vtable">
-				<input name="gpsrefid" type="text" class="formfld unknown" id="gpsrefid" maxlength= "4" size="20" value="<?=htmlspecialchars($pconfig['refid']);?>" /><?php echo gettext("(1 to 4 charactors)");?><br />
+				<input name="gpsrefid" type="text" class="formfld unknown" id="gpsrefid" maxlength= "4" size="20" value="<?=xhtmlspecialchars($pconfig['refid']);?>" /><?php echo gettext("(1 to 4 charactors)");?><br />
 				<?php echo gettext("This may be used to change the GPS Clock ID");?> (<?php echo gettext("default");?>: GPS).</td>
 		</tr>
 		<tr>
@@ -558,7 +559,7 @@ SureGPS = 		#Sure Electronics SKG16B
 				</div>
 				<div id="showgpsinit" style="display:none">
 					<p>
-					<textarea name="gpsinitcmd" class="formpre" id="gpsinitcmd" cols="65" rows="7"><?=htmlspecialchars(base64_decode($pconfig['initcmd'])); /*resultmatch*/?></textarea><br />
+					<textarea name="gpsinitcmd" class="formpre" id="gpsinitcmd" cols="65" rows="7"><?=xhtmlspecialchars(base64_decode($pconfig['initcmd'])); /*resultmatch*/?></textarea><br />
 					<?php echo gettext("Note: Commands entered here will be sent to the GPS during initialization. Please read and understand your GPS documentation before making any changes here.");?><br /><br />
 					<strong><?php echo gettext("NMEA checksum calculator");?>:</strong>
 					<br />

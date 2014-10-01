@@ -38,6 +38,7 @@
 ##|-PRIV
 
 require("guiconfig.inc");
+require_once("pfsense-utils.inc");
 
 if (!is_array($config['dyndnses']['dyndns']))
 	$config['dyndnses']['dyndns'] = array();
@@ -121,9 +122,9 @@ include("head.inc");
 			for ($j = 0; $j < count($vals); $j++)
 				if ($vals[$j] == $dyndns['type']) {
 					if (!isset($dyndns['enable']))
-						echo "<span class=\"gray\">" . htmlspecialchars($types[$j]) . "</span>";
+						echo "<span class=\"gray\">" . xhtmlspecialchars($types[$j]) . "</span>";
 					else
-						echo htmlspecialchars($types[$j]);
+						echo xhtmlspecialchars($types[$j]);
 					break;
 				}
 		  ?>
@@ -131,9 +132,9 @@ include("head.inc");
 		  <td class="listr">
 		  <?php
 			if (!isset($dyndns['enable']))
-				echo "<span class=\"gray\">" . htmlspecialchars($dyndns['host']) . "</span>";
+				echo "<span class=\"gray\">" . xhtmlspecialchars($dyndns['host']) . "</span>";
 			else
-				echo htmlspecialchars($dyndns['host']);
+				echo xhtmlspecialchars($dyndns['host']);
 		  ?>
 		  </td>
 		  <td class="listr">
@@ -148,7 +149,7 @@ include("head.inc");
 					echo "<font color='red'>";
 				else
 					echo "<font color='green'>";
-				echo htmlspecialchars($cached_ip);
+				echo xhtmlspecialchars($cached_ip);
 				echo "</font>";
 			} else if (file_exists($filename_v6)) {
 				$ipv6addr = get_interface_ipv6($dyndns['interface']);
@@ -158,7 +159,7 @@ include("head.inc");
 					echo "<font color='red'>";
 				else
 					echo "<font color='green'>";
-				echo htmlspecialchars($cached_ipv6);
+				echo xhtmlspecialchars($cached_ipv6);
 				echo "</font>";
 			} else {
 				echo "N/A";
@@ -168,9 +169,9 @@ include("head.inc");
 		  <td class="listbg">
 		  <?php
 			if (!isset($dyndns['enable']))
-				echo "<span class=\"gray\">".htmlspecialchars($dyndns['descr'])."</span>";
+				echo "<span class=\"gray\">".xhtmlspecialchars($dyndns['descr'])."</span>";
 			else
-				echo htmlspecialchars($dyndns['descr']);
+				echo xhtmlspecialchars($dyndns['descr']);
 		  ?>
 		  </td>
 		  <td valign="middle" class="list nowrap">

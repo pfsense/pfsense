@@ -32,6 +32,8 @@
 	POSSIBILITY OF SUCH DAMAGE.
 */
 
+require_once("pfsense-utils.inc");
+
 /* The following items will be treated as arrays in regdomain.xml */
 function listtags_rd() {
 	$ret = explode(" ",
@@ -117,10 +119,10 @@ function cData_attr($parser, $data) {
 		}
 
 		if (is_string($ptr)) {
-			$ptr .= html_entity_decode($data);
+			$ptr .= xhtml_entity_decode($data, ENT_QUOTES | ENT_XHTML, 'UTF-8');
 		} else {
 			if (trim($data, " ") != "") {
-				$ptr = html_entity_decode($data);
+				$ptr = xhtml_entity_decode($data, ENT_QUOTES | ENT_XHTML, 'UTF-8');
 				$havedata++;
 			}
 		}

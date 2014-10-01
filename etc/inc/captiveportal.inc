@@ -48,6 +48,7 @@ require_once("functions.inc");
 require_once("filter.inc");
 require_once("radius.inc");
 require_once("voucher.inc");
+require_once("pfsense-utils.inc");
 
 function get_default_captive_portal_html() {
 	global $config, $g, $cpzone;
@@ -1725,22 +1726,22 @@ function portal_reply_page($redirurl, $type = null, $message = null, $clientmac 
 	$htmltext = str_replace("\$PORTAL_ACTION\$", "{$protocol}{$ourhostname}/", $htmltext);
 	$htmltext = str_replace("#PORTAL_ACTION#", "{$protocol}{$ourhostname}/", $htmltext);
 
-	$htmltext = str_replace("\$PORTAL_ZONE\$", htmlspecialchars($cpzone), $htmltext);
-	$htmltext = str_replace("\$PORTAL_REDIRURL\$", htmlspecialchars($redirurl), $htmltext);
-	$htmltext = str_replace("\$PORTAL_MESSAGE\$", htmlspecialchars($message), $htmltext);
-	$htmltext = str_replace("\$CLIENT_MAC\$", htmlspecialchars($clientmac), $htmltext);
-	$htmltext = str_replace("\$CLIENT_IP\$", htmlspecialchars($clientip), $htmltext);
+	$htmltext = str_replace("\$PORTAL_ZONE\$", xhtmlspecialchars($cpzone), $htmltext);
+	$htmltext = str_replace("\$PORTAL_REDIRURL\$", xhtmlspecialchars($redirurl), $htmltext);
+	$htmltext = str_replace("\$PORTAL_MESSAGE\$", xhtmlspecialchars($message), $htmltext);
+	$htmltext = str_replace("\$CLIENT_MAC\$", xhtmlspecialchars($clientmac), $htmltext);
+	$htmltext = str_replace("\$CLIENT_IP\$", xhtmlspecialchars($clientip), $htmltext);
 
 	// Special handling case for captive portal master page so that it can be ran 
 	// through the PHP interpreter using the include method above.  We convert the
 	// $VARIABLE$ case to #VARIABLE# in /etc/inc/captiveportal.inc before writing out.
-	$htmltext = str_replace("#PORTAL_ZONE#", htmlspecialchars($cpzone), $htmltext);
-	$htmltext = str_replace("#PORTAL_REDIRURL#", htmlspecialchars($redirurl), $htmltext);
-	$htmltext = str_replace("#PORTAL_MESSAGE#", htmlspecialchars($message), $htmltext);
-	$htmltext = str_replace("#CLIENT_MAC#", htmlspecialchars($clientmac), $htmltext);
-	$htmltext = str_replace("#CLIENT_IP#", htmlspecialchars($clientip), $htmltext);
-	$htmltext = str_replace("#USERNAME#", htmlspecialchars($username), $htmltext);
-	$htmltext = str_replace("#PASSWORD#", htmlspecialchars($password), $htmltext);
+	$htmltext = str_replace("#PORTAL_ZONE#", xhtmlspecialchars($cpzone), $htmltext);
+	$htmltext = str_replace("#PORTAL_REDIRURL#", xhtmlspecialchars($redirurl), $htmltext);
+	$htmltext = str_replace("#PORTAL_MESSAGE#", xhtmlspecialchars($message), $htmltext);
+	$htmltext = str_replace("#CLIENT_MAC#", xhtmlspecialchars($clientmac), $htmltext);
+	$htmltext = str_replace("#CLIENT_IP#", xhtmlspecialchars($clientip), $htmltext);
+	$htmltext = str_replace("#USERNAME#", xhtmlspecialchars($username), $htmltext);
+	$htmltext = str_replace("#PASSWORD#", xhtmlspecialchars($password), $htmltext);
 
 	echo $htmltext;
 }

@@ -57,6 +57,7 @@ require("guiconfig.inc");
 require_once("interfaces.inc");
 require_once("filter.inc");
 require("shaper.inc");
+require_once("pfsense-utils.inc");
 
 $referer = (isset($_SERVER['HTTP_REFERER']) ? $_SERVER['HTTP_REFERER'] : '/firewall_nat_npt.php');
 
@@ -201,7 +202,7 @@ include("head.inc");
 					foreach ($interfaces as $iface => $ifacename): 
 					?>
 					<option value="<?=$iface;?>" <?php if ($iface == $pconfig['interface']) echo "selected=\"selected\""; ?>>
-					<?=htmlspecialchars($ifacename);?>
+					<?=xhtmlspecialchars($ifacename);?>
 					</option>
 					<?php endforeach; ?>
 				</select><br />
@@ -221,7 +222,7 @@ include("head.inc");
                                         <tr>
                                                 <td><?=gettext("Address:"); ?>&nbsp;&nbsp;</td>
                                                 <td>
-                                                        <input name="src" type="text" class="formfldalias" id="src" size="20" value="<?php if (!is_specialnet($pconfig['src'])) echo htmlspecialchars($pconfig['src']);?>" /> /
+                                                        <input name="src" type="text" class="formfldalias" id="src" size="20" value="<?php if (!is_specialnet($pconfig['src'])) echo xhtmlspecialchars($pconfig['src']);?>" /> /
                                                         <select name="srcmask" class="formselect" id="srcmask">
 <?php                                           for ($i = 128; $i > 0; $i--): ?>
                                                         <option value="<?=$i;?>" <?php if ($i == $pconfig['srcmask']) echo "selected=\"selected\""; ?>><?=$i;?></option>
@@ -249,7 +250,7 @@ external prefix.");
                                         <tr>
                                                 <td><?=gettext("Address:"); ?>&nbsp;&nbsp;</td>
                                                 <td>
-                                                        <input name="dst" type="text" class="formfldalias" id="dst" size="20" value="<?php if (!is_specialnet($pconfig['dst'])) echo htmlspecialchars($pconfig['dst']);?>" />
+                                                        <input name="dst" type="text" class="formfldalias" id="dst" size="20" value="<?php if (!is_specialnet($pconfig['dst'])) echo xhtmlspecialchars($pconfig['dst']);?>" />
                                                         /
                                                         <select name="dstmask" class="formselect" id="dstmask">
 <?php
@@ -267,7 +268,7 @@ external prefix.");
                 <tr> 
                   <td width="22%" valign="top" class="vncell"><?=gettext("Description"); ?></td>
                   <td width="78%" class="vtable"> 
-                    <input name="descr" type="text" class="formfld unknown" id="descr" size="40" value="<?=htmlspecialchars($pconfig['descr']);?>" />
+                    <input name="descr" type="text" class="formfld unknown" id="descr" size="40" value="<?=xhtmlspecialchars($pconfig['descr']);?>" />
                     <br /> <span class="vexpl"><?=gettext("You may enter a description here " .
                     "for your reference (not parsed)."); ?></span></td>
                 </tr>
@@ -277,7 +278,7 @@ external prefix.");
                     <input name="Submit" type="submit" class="formbtn" value="<?=gettext("Save"); ?>" />
                     <input type="button" class="formbtn" value="<?=gettext("Cancel");?>" onclick="window.location.href='<?=$referer;?>'" />
                     <?php if (isset($id) && $a_npt[$id]): ?>
-                    <input name="id" type="hidden" value="<?=htmlspecialchars($id);?>" />
+                    <input name="id" type="hidden" value="<?=xhtmlspecialchars($id);?>" />
                     <?php endif; ?>
                   </td>
                 </tr>

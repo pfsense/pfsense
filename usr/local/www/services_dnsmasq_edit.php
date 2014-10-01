@@ -53,6 +53,7 @@ function hosts_sort() {
 }
 
 require("guiconfig.inc");
+require_once("pfsense-utils.inc");
 
 $referer = (isset($_SERVER['HTTP_REFERER']) ? $_SERVER['HTTP_REFERER'] : '/services_dnsmasq.php');
 
@@ -201,7 +202,7 @@ include("head.inc");
                 <tr>
                   <td width="22%" valign="top" class="vncell"><?=gettext("Host");?></td>
                   <td width="78%" class="vtable"> 
-                    <input name="host" type="text" class="formfld" id="host" size="40" value="<?=htmlspecialchars($pconfig['host']);?>" />
+                    <input name="host" type="text" class="formfld" id="host" size="40" value="<?=xhtmlspecialchars($pconfig['host']);?>" />
                     <br /> <span class="vexpl"><?=gettext("Name of the host, without".
                    " domain part"); ?><br />
                    <?=gettext("e.g."); ?> <em><?=gettext("myhost"); ?></em></span></td>
@@ -209,21 +210,21 @@ include("head.inc");
 				<tr>
                   <td width="22%" valign="top" class="vncellreq"><?=gettext("Domain");?></td>
                   <td width="78%" class="vtable"> 
-                    <input name="domain" type="text" class="formfld" id="domain" size="40" value="<?=htmlspecialchars($pconfig['domain']);?>" />
+                    <input name="domain" type="text" class="formfld" id="domain" size="40" value="<?=xhtmlspecialchars($pconfig['domain']);?>" />
                     <br /> <span class="vexpl"><?=gettext("Domain of the host"); ?><br />
                    <?=gettext("e.g."); ?> <em><?=gettext("example.com"); ?></em></span></td>
                 </tr>
 				<tr>
                   <td width="22%" valign="top" class="vncellreq"><?=gettext("IP address");?></td>
                   <td width="78%" class="vtable"> 
-                    <input name="ip" type="text" class="formfld" id="ip" size="40" value="<?=htmlspecialchars($pconfig['ip']);?>" />
+                    <input name="ip" type="text" class="formfld" id="ip" size="40" value="<?=xhtmlspecialchars($pconfig['ip']);?>" />
                     <br /> <span class="vexpl"><?=gettext("IP address of the host"); ?><br />
                    <?=gettext("e.g."); ?> <em>192.168.100.100</em> <?=gettext("or"); ?> <em>fd00:abcd::1</em></span></td>
                 </tr>
 				<tr>
                   <td width="22%" valign="top" class="vncell"><?=gettext("Description");?></td>
                   <td width="78%" class="vtable"> 
-                    <input name="descr" type="text" class="formfld" id="descr" size="40" value="<?=htmlspecialchars($pconfig['descr']);?>" />
+                    <input name="descr" type="text" class="formfld" id="descr" size="40" value="<?=xhtmlspecialchars($pconfig['descr']);?>" />
                     <br /> <span class="vexpl"><?=gettext("You may enter a description here".
                    " for your reference (not parsed).");?></span></td>
                 </tr>
@@ -254,13 +255,13 @@ include("head.inc");
                         ?>
                         <tr>
                           <td>
-                            <input autocomplete="off" name="aliashost<?php echo $counter; ?>" type="text" class="formfld unknown" id="aliashost<?php echo $counter; ?>" size="20" value="<?=htmlspecialchars($host);?>" />
+                            <input autocomplete="off" name="aliashost<?php echo $counter; ?>" type="text" class="formfld unknown" id="aliashost<?php echo $counter; ?>" size="20" value="<?=xhtmlspecialchars($host);?>" />
                           </td>
                           <td>
-                            <input autocomplete="off" name="aliasdomain<?php echo $counter; ?>" type="text" class="formfld unknown" id="aliasdomain<?php echo $counter; ?>" size="20" value="<?=htmlspecialchars($domain);?>" />
+                            <input autocomplete="off" name="aliasdomain<?php echo $counter; ?>" type="text" class="formfld unknown" id="aliasdomain<?php echo $counter; ?>" size="20" value="<?=xhtmlspecialchars($domain);?>" />
                           </td>
                           <td>
-                            <input name="aliasdescription<?php echo $counter; ?>" type="text" class="formfld unknown" id="aliasdescription<?php echo $counter; ?>" size="20" value="<?=htmlspecialchars($description);?>" />
+                            <input name="aliasdescription<?php echo $counter; ?>" type="text" class="formfld unknown" id="aliasdescription<?php echo $counter; ?>" size="20" value="<?=xhtmlspecialchars($description);?>" />
                           </td>
                           <td>
                             <a onclick="removeRow(this); return false;" href="#"><img border="0" src="/themes/<?echo $g['theme'];?>/images/icons/icon_x.gif" alt="" title="<?=gettext("remove this entry"); ?>" /></a>
@@ -292,7 +293,7 @@ include("head.inc");
                     <input name="Submit" type="submit" class="formbtn" value="<?=gettext("Save");?>" />
                     <input type="button" class="formbtn" value="<?=gettext("Cancel");?>" onclick="window.location.href='<?=$referer;?>'" />
                     <?php if (isset($id) && $a_hosts[$id]): ?>
-                    <input name="id" type="hidden" value="<?=htmlspecialchars($id);?>" />
+                    <input name="id" type="hidden" value="<?=xhtmlspecialchars($id);?>" />
                     <?php endif; ?>
                   </td>
                 </tr>

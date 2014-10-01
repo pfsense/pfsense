@@ -41,6 +41,7 @@
 $allowautocomplete = true;
 
 require("guiconfig.inc");
+require_once("pfsense-utils.inc");
 
 if (($_POST['submit'] == "Download") && file_exists($_POST['dlPath'])) {
 	session_cache_limiter('public');
@@ -48,7 +49,7 @@ if (($_POST['submit'] == "Download") && file_exists($_POST['dlPath'])) {
 	header("Content-Type: application/octet-stream");
 	header("Content-Length: " . filesize($_POST['dlPath']));
 	header("Content-Disposition: attachment; filename=\"" .
-		trim(htmlentities(basename($_POST['dlPath']))) . "\"");
+		trim(xhtmlentities(basename($_POST['dlPath']))) . "\"");
 	if (isset($_SERVER['HTTPS'])) {
 		header('Pragma: ');
 		header('Cache-Control: ');
@@ -61,7 +62,7 @@ if (($_POST['submit'] == "Download") && file_exists($_POST['dlPath'])) {
 	exit;
 } else if (($_POST['submit'] == "Upload") && is_uploaded_file($_FILES['ulfile']['tmp_name'])) {
 	move_uploaded_file($_FILES['ulfile']['tmp_name'], "/tmp/" . $_FILES['ulfile']['name']);
-	$ulmsg = "Uploaded file to /tmp/" . htmlentities($_FILES['ulfile']['name']);
+	$ulmsg = "Uploaded file to /tmp/" . xhtmlentities($_FILES['ulfile']['name']);
 	unset($_POST['txtCommand']);
 }
 
@@ -108,8 +109,8 @@ if (isBlank( $_POST['txtRecallBuffer'] )) {
 	puts( "   var arrRecallBuffer = new Array(" );
 	$arrBuffer = explode( "&", $_POST['txtRecallBuffer'] );
 	for ($i=0; $i < (count( $arrBuffer ) - 1); $i++)
-		puts( "      '" . htmlspecialchars($arrBuffer[$i], ENT_QUOTES | ENT_HTML401) . "'," );
-	puts( "      '" . htmlspecialchars($arrBuffer[count( $arrBuffer ) - 1], ENT_QUOTES | ENT_HTML401) . "'" );
+		puts( "      '" . xhtmlspecialchars($arrBuffer[$i], ENT_QUOTES | ENT_HTML401) . "'," );
+	puts( "      '" . xhtmlspecialchars($arrBuffer[count( $arrBuffer ) - 1], ENT_QUOTES | ENT_HTML401) . "'" );
 	puts( "   );" );
 }
 
@@ -231,11 +232,11 @@ pre {
 
 if (!isBlank($_POST['txtCommand'])) {
    puts("<pre>");
-   puts("\$ " . htmlspecialchars($_POST['txtCommand']));
+   puts("\$ " . xhtmlspecialchars($_POST['txtCommand']));
    putenv("PATH=/bin:/sbin:/usr/bin:/usr/sbin:/usr/local/bin:/usr/local/sbin");
    putenv("SCRIPT_FILENAME=" . strtok($_POST['txtCommand'], " "));	/* PHP scripts */
    $ph = popen($_POST['txtCommand'] . ' 2>&1', "r" );
-   while ($line = fgets($ph)) echo htmlspecialchars($line);
+   while ($line = fgets($ph)) echo xhtmlspecialchars($line);
    pclose($ph);
    puts("&nbsp;</pre>");
 }
@@ -258,12 +259,12 @@ if (!isBlank($_POST['txtPHPCommand'])) {
 	</tr>  
     <tr>
       <td class="label" align="right"><?=gettext("Command"); ?>:</td>
-      <td class="type"><input id="txtCommand" name="txtCommand" type="text" class="formfld unknown" size="80" value="<?=htmlspecialchars($_POST['txtCommand']);?>" /></td>
+      <td class="type"><input id="txtCommand" name="txtCommand" type="text" class="formfld unknown" size="80" value="<?=xhtmlspecialchars($_POST['txtCommand']);?>" /></td>
     </tr>
     <tr>
       <td valign="top">&nbsp;&nbsp;&nbsp;</td>
       <td valign="top" class="label">
-         <input type="hidden" name="txtRecallBuffer" value="<?=htmlspecialchars($_POST['txtRecallBuffer']) ?>" />
+         <input type="hidden" name="txtRecallBuffer" value="<?=xhtmlspecialchars($_POST['txtRecallBuffer']) ?>" />
          <input type="button" class="button" name="btnRecallPrev" value="<" onclick="btnRecall_onClick( this.form, -1 );" />
          <input type="submit" class="button" value="<?=gettext("Execute"); ?>" />
          <input type="button" class="button" name="btnRecallNext" value=">" onclick="btnRecall_onClick( this.form,  1 );" />
@@ -311,7 +312,7 @@ if (!isBlank($_POST['txtPHPCommand'])) {
 	</tr>
 	<tr>
 		<td align="right"><?=gettext("Command"); ?>:</td>
-		<td class="type"><textarea id="txtPHPCommand" name="txtPHPCommand" rows="9" cols="80"><?=htmlspecialchars($_POST['txtPHPCommand']);?></textarea></td>
+		<td class="type"><textarea id="txtPHPCommand" name="txtPHPCommand" rows="9" cols="80"><?=xhtmlspecialchars($_POST['txtPHPCommand']);?></textarea></td>
 	</tr>
     <tr>
       <td valign="top">&nbsp;&nbsp;&nbsp;</td>

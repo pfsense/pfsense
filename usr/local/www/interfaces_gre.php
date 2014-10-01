@@ -41,6 +41,7 @@
 
 require("guiconfig.inc");
 require_once("functions.inc");
+require_once("pfsense-utils.inc");
 
 if (!is_array($config['gres']['gre']))
 	$config['gres']['gre'] = array();
@@ -117,13 +118,13 @@ include("head.inc");
 			  <?php $i = 0; foreach ($a_gres as $gre): ?>
                 <tr  ondblclick="document.location='interfaces_gre_edit.php?id=<?=$i;?>'">
                   <td class="listlr">
-					<?=htmlspecialchars(convert_friendly_interface_to_friendly_descr($gre['if']));?>
+					<?=xhtmlspecialchars(convert_friendly_interface_to_friendly_descr($gre['if']));?>
                   </td>
                   <td class="listr">
-					<?=htmlspecialchars($gre['remote-addr']);?>
+					<?=xhtmlspecialchars($gre['remote-addr']);?>
                   </td>
                   <td class="listbg">
-                    <?=htmlspecialchars($gre['descr']);?>&nbsp;
+                    <?=xhtmlspecialchars($gre['descr']);?>&nbsp;
                   </td>
                   <td valign="middle" class="list nowrap"> <a href="interfaces_gre_edit.php?id=<?=$i;?>"><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_e.gif" width="17" height="17" border="0" alt="edit" /></a>
                      &nbsp;<a href="interfaces_gre.php?act=del&amp;id=<?=$i;?>" onclick="return confirm('<?=gettext("Do you really want to delete this GRE tunnel?");?>')"><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_x.gif" width="17" height="17" border="0" alt="delete" /></a></td>

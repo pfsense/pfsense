@@ -46,6 +46,7 @@ require_once("functions.inc");
 require_once("filter.inc");
 require_once("shaper.inc");
 require_once("itemid.inc");
+require_once("pfsense-utils.inc");
 
 if (!is_array($config['nat']['rule']))
 	$config['nat']['rule'] = array();
@@ -267,16 +268,16 @@ echo "<script type=\"text/javascript\" src=\"/javascript/domTT/fadomatic.js\"></
 					<?php if($natent['associated-rule-id'] == "pass"): ?>
 					<img src="./themes/<?= $g['theme']; ?>/images/icons/icon_pass.gif" title="<?=gettext("All traffic matching this NAT entry is passed"); ?>" border="0" alt="pass" />
 					<?php elseif (!empty($natent['associated-rule-id'])): ?>
-					<img src="./themes/<?= $g['theme']; ?>/images/icons/icon_chain.png" width="17" height="17" title="<?=gettext("Firewall rule ID"); ?> <?=htmlspecialchars($nnatid); ?> <?=gettext("is managed with this rule"); ?>" border="0" alt="change" />
+					<img src="./themes/<?= $g['theme']; ?>/images/icons/icon_chain.png" width="17" height="17" title="<?=gettext("Firewall rule ID"); ?> <?=xhtmlspecialchars($nnatid); ?> <?=gettext("is managed with this rule"); ?>" border="0" alt="change" />
 					<?php endif; ?>
 				  </td>
                   <td class="listlr" onClick="fr_toggle(<?=$nnats;?>)" id="frd<?=$nnats;?>" ondblclick="document.location='firewall_nat_edit.php?id=<?=$nnats;?>';">
                     <?=$textss;?>
 		    <?php
 			if (!$natent['interface'])
-				echo htmlspecialchars(convert_friendly_interface_to_friendly_descr("wan"));
+				echo xhtmlspecialchars(convert_friendly_interface_to_friendly_descr("wan"));
 			else
-				echo htmlspecialchars(convert_friendly_interface_to_friendly_descr($natent['interface']));
+				echo xhtmlspecialchars(convert_friendly_interface_to_friendly_descr($natent['interface']));
 		    ?>
                     <?=$textse;?>
                   </td>
@@ -286,21 +287,21 @@ echo "<script type=\"text/javascript\" src=\"/javascript/domTT/fadomatic.js\"></
                   </td>
 
                   <td class="listr" onclick="fr_toggle(<?=$nnats;?>)" id="frd<?=$nnats;?>" ondblclick="document.location='firewall_nat_edit.php?id=<?=$nnats;?>';">
-				    <?=$textss;?><?php echo $alias_src_span_begin;?><?php echo htmlspecialchars(pprint_address($natent['source']));?><?php echo $alias_src_span_end;?><?=$textse;?>
+				    <?=$textss;?><?php echo $alias_src_span_begin;?><?php echo xhtmlspecialchars(pprint_address($natent['source']));?><?php echo $alias_src_span_end;?><?=$textse;?>
                   </td>
                   <td class="listr" onclick="fr_toggle(<?=$nnats;?>)" id="frd<?=$nnats;?>" ondblclick="document.location='firewall_nat_edit.php?id=<?=$nnats;?>';">
-				    <?=$textss;?><?php echo $alias_src_port_span_begin;?><?php echo htmlspecialchars(pprint_port($natent['source']['port']));?><?php echo $alias_src_port_span_end;?><?=$textse;?>
-                  </td>
-
-                  <td class="listr" onclick="fr_toggle(<?=$nnats;?>)" id="frd<?=$nnats;?>" ondblclick="document.location='firewall_nat_edit.php?id=<?=$nnats;?>';">
-				    <?=$textss;?><?php echo $alias_dst_span_begin;?><?php echo htmlspecialchars(pprint_address($natent['destination']));?><?php echo $alias_dst_span_end;?><?=$textse;?>
-                  </td>
-                  <td class="listr" onclick="fr_toggle(<?=$nnats;?>)" id="frd<?=$nnats;?>" ondblclick="document.location='firewall_nat_edit.php?id=<?=$nnats;?>';">
-				    <?=$textss;?><?php echo $alias_dst_port_span_begin;?><?php echo htmlspecialchars(pprint_port($natent['destination']['port']));?><?php echo $alias_dst_port_span_end;?><?=$textse;?>
+				    <?=$textss;?><?php echo $alias_src_port_span_begin;?><?php echo xhtmlspecialchars(pprint_port($natent['source']['port']));?><?php echo $alias_src_port_span_end;?><?=$textse;?>
                   </td>
 
                   <td class="listr" onclick="fr_toggle(<?=$nnats;?>)" id="frd<?=$nnats;?>" ondblclick="document.location='firewall_nat_edit.php?id=<?=$nnats;?>';">
-				    <?=$textss;?><?php echo $alias_target_span_begin;?><?php echo htmlspecialchars($natent['target']);?><?php echo $alias_target_span_end;?><?=$textse;?>
+				    <?=$textss;?><?php echo $alias_dst_span_begin;?><?php echo xhtmlspecialchars(pprint_address($natent['destination']));?><?php echo $alias_dst_span_end;?><?=$textse;?>
+                  </td>
+                  <td class="listr" onclick="fr_toggle(<?=$nnats;?>)" id="frd<?=$nnats;?>" ondblclick="document.location='firewall_nat_edit.php?id=<?=$nnats;?>';">
+				    <?=$textss;?><?php echo $alias_dst_port_span_begin;?><?php echo xhtmlspecialchars(pprint_port($natent['destination']['port']));?><?php echo $alias_dst_port_span_end;?><?=$textse;?>
+                  </td>
+
+                  <td class="listr" onclick="fr_toggle(<?=$nnats;?>)" id="frd<?=$nnats;?>" ondblclick="document.location='firewall_nat_edit.php?id=<?=$nnats;?>';">
+				    <?=$textss;?><?php echo $alias_target_span_begin;?><?php echo xhtmlspecialchars($natent['target']);?><?php echo $alias_target_span_end;?><?=$textse;?>
                   </td>
                   <td class="listr" onclick="fr_toggle(<?=$nnats;?>)" id="frd<?=$nnats;?>" ondblclick="document.location='firewall_nat_edit.php?id=<?=$nnats;?>';">
 					<?php
@@ -313,11 +314,11 @@ echo "<script type=\"text/javascript\" src=\"/javascript/domTT/fadomatic.js\"></
 							$localport   .= '-' . $localendport;
 						}
 					?>
-				    <?=$textss;?><?php echo $alias_local_port_span_begin;?><?php echo htmlspecialchars(pprint_port($localport));?><?php echo $alias_local_port_span_end;?><?=$textse;?>
+				    <?=$textss;?><?php echo $alias_local_port_span_begin;?><?php echo xhtmlspecialchars(pprint_port($localport));?><?php echo $alias_local_port_span_end;?><?=$textse;?>
                   </td>
 
                   <td class="listbg" onclick="fr_toggle(<?=$nnats;?>)" ondblclick="document.location='firewall_nat_edit.php?id=<?=$nnats;?>';">
-				  <?=$textss;?><?=htmlspecialchars($natent['descr']);?>&nbsp;<?=$textse;?>
+				  <?=$textss;?><?=xhtmlspecialchars($natent['descr']);?>&nbsp;<?=$textse;?>
                   </td>
                   <td valign="middle" class="list nowrap">
                     <table border="0" cellspacing="0" cellpadding="1" summary="move">

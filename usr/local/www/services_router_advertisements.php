@@ -45,6 +45,7 @@
 ##|-PRIV
 
 require("guiconfig.inc");
+require_once("pfsense-utils.inc");
 
 if(!$g['services_dhcp_server_enable']) {
 	header("Location: /");
@@ -314,7 +315,7 @@ display_top_tabs($tab_array);
 			<tr>
 			<td width="22%" valign="top" class="vncell"><?=gettext("RA Subnet(s)");?></td>
 			<td width="78%" class="vtable">
-				<div><?= htmlentities($subnets_help) ?></div>
+				<div><?= xhtmlentities($subnets_help) ?></div>
 				<table id="maintable" summary="subnets">
 				<tbody>
 <?php
@@ -326,7 +327,7 @@ display_top_tabs($tab_array);
 ?>
 					<tr>
 						<td>
-							<input autocomplete="off" name="<?= $address_name ?>" type="text" class="formfldalias" id="<?= $address_name ?>" size="30" value="<?= htmlentities($address) ?>" />
+							<input autocomplete="off" name="<?= $address_name ?>" type="text" class="formfldalias" id="<?= $address_name ?>" size="30" value="<?= xhtmlentities($address) ?>" />
 						</td>
 						<td>
 							<select name="<?= $bits_name ?>" class="formselect" id="<?= $bits_name ?>">
@@ -371,8 +372,8 @@ display_top_tabs($tab_array);
 			<tr>
 			<td width="22%" valign="top" class="vncell"><?=gettext("DNS servers");?></td>
 			<td width="78%" class="vtable">
-				<input name="radns1" type="text" class="formfld unknown" id="radns1" size="28" value="<?=htmlspecialchars($pconfig['radns1']);?>" /><br />
-				<input name="radns2" type="text" class="formfld unknown" id="radns2" size="28" value="<?=htmlspecialchars($pconfig['radns2']);?>" /><br />
+				<input name="radns1" type="text" class="formfld unknown" id="radns1" size="28" value="<?=xhtmlspecialchars($pconfig['radns1']);?>" /><br />
+				<input name="radns2" type="text" class="formfld unknown" id="radns2" size="28" value="<?=xhtmlspecialchars($pconfig['radns2']);?>" /><br />
 				<?=gettext("NOTE: leave blank to use the system default DNS servers - this interface's IP if DNS forwarder is enabled, otherwise the servers configured on the General page.");?>
 			</td>
 			</tr>
@@ -380,7 +381,7 @@ display_top_tabs($tab_array);
 			<tr>
 			<td width="22%" valign="top" class="vncell"><?=gettext("Domain search list");?></td>
 			<td width="78%" class="vtable">
-				<input name="radomainsearchlist" type="text" class="formfld unknown" id="radomainsearchlist" size="28" value="<?=htmlspecialchars($pconfig['radomainsearchlist']);?>" /><br />
+				<input name="radomainsearchlist" type="text" class="formfld unknown" id="radomainsearchlist" size="28" value="<?=xhtmlspecialchars($pconfig['radomainsearchlist']);?>" /><br />
 				<?=gettext("The RA server can optionally provide a domain search list. Use the semicolon character as separator");?>
 			</td>
 			</tr>

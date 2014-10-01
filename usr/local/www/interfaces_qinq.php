@@ -40,6 +40,7 @@
 
 require("guiconfig.inc");
 require_once("functions.inc");
+require_once("pfsense-utils.inc");
 
 if (!is_array($config['qinqs']['qinqentry']))
 	$config['qinqs']['qinqentry'] = array();
@@ -126,21 +127,21 @@ include("head.inc");
 			  <?php $i = 0; foreach ($a_qinqs as $qinq): ?>
                 <tr  ondblclick="document.location='interfaces_qinq_edit.php?id=<?=$i;?>'">
                   <td class="listlr">
-					<?=htmlspecialchars($qinq['if']);?>
+					<?=xhtmlspecialchars($qinq['if']);?>
                   </td>
 		  <td class="listlr">
-					<?=htmlspecialchars($qinq['tag']);?>
+					<?=xhtmlspecialchars($qinq['tag']);?>
 		  </td>
                   <td class="listr">
 					<?php
 					if (strlen($qinq['members']) > 20)
-						echo substr(htmlspecialchars($qinq['members']), 0, 20) . "...";
+						echo substr(xhtmlspecialchars($qinq['members']), 0, 20) . "...";
 					else
-						echo htmlspecialchars($qinq['members']);
+						echo xhtmlspecialchars($qinq['members']);
 					?>
                   </td>
                   <td class="listbg">
-                    <?=htmlspecialchars($qinq['descr']);?>&nbsp;
+                    <?=xhtmlspecialchars($qinq['descr']);?>&nbsp;
                   </td>
                   <td valign="middle" class="list nowrap"> <a href="interfaces_qinq_edit.php?id=<?=$i;?>"><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_e.gif" width="17" height="17" border="0" alt="edit" /></a>
                      &nbsp;<a href="interfaces_qinq.php?act=del&amp;id=<?=$i;?>" onclick="return confirm('<?=gettext("Do you really want to delete this QinQ?");?>')"><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_x.gif" width="17" height="17" border="0" alt="remove" /></a></td>

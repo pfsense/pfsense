@@ -45,6 +45,7 @@
 
 require("guiconfig.inc");
 require_once("filter_log.inc");
+require_once("pfsense-utils.inc");
 
 # --- AJAX RESOLVE ---
 if (isset($_POST['resolve'])) {
@@ -263,7 +264,7 @@ include("head.inc");
 								$interfaces["openvpn"] = "OpenVPN";
 
 							foreach ($interfaces as $iface => $ifacename): ?>
-							<option value="<?=$iface;?>" <?=($iface==$interfacefilter)?"selected=\"selected\"":"";?>><?=htmlspecialchars($ifacename);?></option>
+							<option value="<?=$iface;?>" <?=($iface==$interfacefilter)?"selected=\"selected\"":"";?>><?=xhtmlspecialchars($ifacename);?></option>
 							<?php endforeach; ?>
 							</select>
 							</div>
@@ -340,12 +341,12 @@ include("head.inc");
 			  <a onclick="javascript:getURL('diag_logs_filter.php?getrulenum=<?php echo "{$filterent['rulenum']},{$filterent['tracker']},{$filterent['act']}"; ?>', outputrule);">
 			  <img border="0" src="<?php echo find_action_image($filterent['act']);?>" width="11" height="11" align="middle" alt="<?php echo $filterent['act'] .'/'. $filterent['tracker'];?>" title="<?php echo $filterent['act'] .'/'. $filterent['tracker'];?>" />
 			  <?php if ($filterent['count']) echo $filterent['count'];?></a></center></td>
-			  <td class="listMRr nowrap"><?php echo htmlspecialchars($filterent['time']);?></td>
+			  <td class="listMRr nowrap"><?php echo xhtmlspecialchars($filterent['time']);?></td>
 			  <td class="listMRr nowrap">
 				<?php if ($filterent['direction'] == "out"): ?>
 				<img border="0" src="/themes/<?= $g['theme']; ?>/images/icons/out.gif" alt="Direction=OUT" title="Direction=OUT"/>
 				<?php endif; ?>
-				<?php echo htmlspecialchars($filterent['interface']);?></td>
+				<?php echo xhtmlspecialchars($filterent['interface']);?></td>
 			  <?php 
 			  if ($config['syslog']['filterdescriptions'] === "1")
 				echo("<td class=\"listMRr nowrap\">".find_rule_by_number_buffer($filterent['rulenum'],$filterent['tracker'],$filterent['act'])."</td>");
@@ -381,7 +382,7 @@ include("head.inc");
 				if ($filterent['proto'] == "TCP")
 					$filterent['proto'] .= ":{$filterent['tcpflags']}";
 			  ?>
-			  <td class="listMRr nowrap"><?php echo htmlspecialchars($filterent['proto']);?></td>
+			  <td class="listMRr nowrap"><?php echo xhtmlspecialchars($filterent['proto']);?></td>
 			</tr>
 			<?php if (isset($config['syslog']['filterdescriptions']) && $config['syslog']['filterdescriptions'] === "2"):?>
 			<tr class="<?=$evenRowClass?>">

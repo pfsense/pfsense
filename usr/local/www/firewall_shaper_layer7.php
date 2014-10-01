@@ -42,6 +42,7 @@ require("guiconfig.inc");
 require_once("functions.inc");
 require_once("filter.inc");
 require_once("shaper.inc");
+require_once("pfsense-utils.inc");
 
 // Variables protocols (dynamic) and structures (static)
 $avail_protos =& generate_protocols_array();
@@ -77,14 +78,14 @@ if($_GET['reset'] <> "") {
 
 if ($_GET) {
 	if ($_GET['container'])
-		$name = htmlspecialchars(trim($_GET['container']));
+		$name = xhtmlspecialchars(trim($_GET['container']));
         if ($_GET['action'])
-                $action = htmlspecialchars($_GET['action']);
+                $action = xhtmlspecialchars($_GET['action']);
 }
 
 if($_POST) {
 	if ($_POST['container']) {
-		$name = htmlspecialchars(trim($_POST['container']));
+		$name = xhtmlspecialchars(trim($_POST['container']));
 	}
 }
 

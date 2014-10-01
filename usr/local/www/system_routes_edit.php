@@ -43,6 +43,7 @@ require_once("guiconfig.inc");
 require_once("filter.inc");
 require_once("util.inc");
 require_once("gwlb.inc");
+require_once("pfsense-utils.inc");
 
 $referer = (isset($_SERVER['HTTP_REFERER']) ? $_SERVER['HTTP_REFERER'] : '/system_routes.php');
 
@@ -227,7 +228,7 @@ include("head.inc");
 			<tr>
 				<td width="22%" valign="top" class="vncellreq"><?=gettext("Destination network"); ?></td>
 				<td width="78%" class="vtable">
-					<input name="network" type="text" class="formfldalias ipv4v6" id="network" size="20" value="<?=htmlspecialchars($pconfig['network']);?>" />
+					<input name="network" type="text" class="formfldalias ipv4v6" id="network" size="20" value="<?=xhtmlspecialchars($pconfig['network']);?>" />
 					/
 					<select name="network_subnet" class="formselect ipv4v6" id="network_subnet">
 					<?php for ($i = 128; $i >= 1; $i--): ?>
@@ -248,7 +249,7 @@ include("head.inc");
 							echo "<option value='{$gateway['name']}' ";
 							if ($gateway['name'] == $pconfig['gateway'])
 								echo "selected=\"selected\"";
-							echo ">" . htmlspecialchars($gateway['name']) . " - " . htmlspecialchars($gateway['gateway']) . "</option>\n";
+							echo ">" . xhtmlspecialchars($gateway['name']) . " - " . xhtmlspecialchars($gateway['gateway']) . "</option>\n";
 						}
 					?>
 					</select> <br />
@@ -321,7 +322,7 @@ include("head.inc");
 			<tr>
 				<td width="22%" valign="top" class="vncell"><?=gettext("Description"); ?></td>
 				<td width="78%" class="vtable">
-					<input name="descr" type="text" class="formfld unknown" id="descr" size="40" value="<?=htmlspecialchars($pconfig['descr']);?>" />
+					<input name="descr" type="text" class="formfld unknown" id="descr" size="40" value="<?=xhtmlspecialchars($pconfig['descr']);?>" />
 					<br /><span class="vexpl"><?=gettext("You may enter a description here for your reference (not parsed)."); ?></span>
 				</td>
 			</tr>
@@ -331,7 +332,7 @@ include("head.inc");
 					<input id="save" name="Submit" type="submit" class="formbtn" value="<?=gettext("Save");?>" />
 					<input type="button" class="formbtn" value="<?=gettext("Cancel");?>" onclick="window.location.href='<?=$referer;?>'" />
 					<?php if (isset($id) && $a_routes[$id]): ?>
-						<input name="id" type="hidden" value="<?=htmlspecialchars($id);?>" />
+						<input name="id" type="hidden" value="<?=xhtmlspecialchars($id);?>" />
 					<?php endif; ?>
 				</td>
 			</tr>

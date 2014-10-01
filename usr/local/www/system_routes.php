@@ -43,6 +43,7 @@ require("guiconfig.inc");
 require_once("functions.inc");
 require_once("filter.inc");
 require_once("shaper.inc");
+require_once("pfsense-utils.inc");
 
 if (!is_array($config['staticroutes']['route']))
 	$config['staticroutes']['route'] = array();
@@ -268,7 +269,7 @@ include("head.inc");
 						<td class="listr" onclick="fr_toggle(<?=$i;?>)" id="frd<?=$i;?>" ondblclick="document.location='system_routes_edit.php?id=<?=$i;?>';">
 							<?=$textss;?>
 							<?php
-								echo htmlentities($a_gateways[$route['gateway']]['name']) . " - " . htmlentities($a_gateways[$route['gateway']]['gateway']);
+								echo xhtmlentities($a_gateways[$route['gateway']]['name']) . " - " . xhtmlentities($a_gateways[$route['gateway']]['gateway']);
 							?>
 							<?=$textse;?>
 						</td>
@@ -280,7 +281,7 @@ include("head.inc");
 							<?=$textse;?>
 						</td>
 						<td class="listbg" onclick="fr_toggle(<?=$i;?>)" ondblclick="document.location='system_routes_edit.php?id=<?=$i;?>';">
-							<?=$textss;?><?=htmlspecialchars($route['descr']);?>&nbsp;<?=$textse;?>
+							<?=$textss;?><?=xhtmlspecialchars($route['descr']);?>&nbsp;<?=$textse;?>
 						</td>
 						<td class="list nowrap" valign="middle">
 							<table border="0" cellspacing="0" cellpadding="1" summary="move">

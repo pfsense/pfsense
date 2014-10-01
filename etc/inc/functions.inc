@@ -34,6 +34,8 @@
 
 */
 
+require_once("pfsense-utils.inc");
+
 /* BEGIN compatibility goo with HEAD */
 if(!function_exists("gettext")) {
 	function gettext($text) {
@@ -103,7 +105,7 @@ if(!function_exists("get_menu_messages")) {
 						if ((strlen($noticemsg)* 8) > 900)
 							$domtt_width= 900;
 						$alert_action ="onclick=notice_action(\'acknowledge\',\'{$key}\');domTT_close(this);jQuery(this).parent().parent().remove();";
-						$notice_msgs .= "<tr><td valign=\'top\' width=\'120\'><a href=\'#\' {$alert_link} {$alert_action}>{$date}</a></td><td valign=\'top\'><a href=\'#\' {$alert_link} {$alert_action}>[ ".htmlspecialchars($noticemsg)."]</a></td></tr>";
+						$notice_msgs .= "<tr><td valign=\'top\' width=\'120\'><a href=\'#\' {$alert_link} {$alert_action}>{$date}</a></td><td valign=\'top\'><a href=\'#\' {$alert_link} {$alert_action}>[ ".xhtmlspecialchars($noticemsg)."]</a></td></tr>";
 						}
 					$notice_msgs .="</table>";
 						

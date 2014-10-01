@@ -41,6 +41,7 @@ require("functions.inc");
 require("guiconfig.inc");
 require_once("ipsec.inc");
 require_once("vpn.inc");
+require_once("pfsense-utils.inc");
 
 if (!is_array($config['ipsec']['phase1']))
 	$config['ipsec']['phase1'] = array();
@@ -566,7 +567,7 @@ function dpdchkbox_change() {
 								foreach ($keyexchange as $kidx => $name):
 							?>
 								<option value="<?=$kidx;?>" <?php if ($kidx == $pconfig['iketype']) echo "selected=\"selected\""; ?>>
-									<?=htmlspecialchars($name);?>
+									<?=xhtmlspecialchars($name);?>
 								</option>
 							<?php endforeach; ?>
 							</select> <br /> <span class="vexpl"><?=gettext("Select the KeyExchange Protocol version to be used. Usually known as IKEv1 or IKEv2."); ?>.</span>
@@ -581,7 +582,7 @@ function dpdchkbox_change() {
 								foreach ($protocols as $protocol => $name):
 							?>
 								<option value="<?=$protocol;?>" <?php if ($protocol == $pconfig['protocol']) echo "selected=\"selected\""; ?>>
-									<?=htmlspecialchars($name);?>
+									<?=xhtmlspecialchars($name);?>
 								</option>
 							<?php endforeach; ?>
 							</select> <br /> <span class="vexpl"><?=gettext("Select the Internet Protocol family from this dropdown"); ?>.</span>
@@ -615,7 +616,7 @@ function dpdchkbox_change() {
 								foreach ($interfaces as $iface => $ifacename):
 							?>
 								<option value="<?=$iface;?>" <?php if ($iface == $pconfig['interface']) echo "selected=\"selected\""; ?>>
-									<?=htmlspecialchars($ifacename);?>
+									<?=xhtmlspecialchars($ifacename);?>
 								</option>
 							<?php endforeach; ?>
 							</select>
@@ -629,7 +630,7 @@ function dpdchkbox_change() {
 					<tr>
 						<td width="22%" valign="top" class="vncellreq"><?=gettext("Remote gateway"); ?></td>
 						<td width="78%" class="vtable">
-							<?=$mandfldhtml;?><input name="remotegw" type="text" class="formfld unknown" id="remotegw" size="28" value="<?=htmlspecialchars($pconfig['remotegw']);?>" />
+							<?=$mandfldhtml;?><input name="remotegw" type="text" class="formfld unknown" id="remotegw" size="28" value="<?=xhtmlspecialchars($pconfig['remotegw']);?>" />
 							<br />
 							<?=gettext("Enter the public IP address or host name of the remote gateway"); ?>
 						</td>
@@ -640,7 +641,7 @@ function dpdchkbox_change() {
 					<tr>
 						<td width="22%" valign="top" class="vncell"><?=gettext("Description"); ?></td>
 						<td width="78%" class="vtable">
-							<input name="descr" type="text" class="formfld unknown" id="descr" size="40" value="<?=htmlspecialchars($pconfig['descr']);?>" />
+							<input name="descr" type="text" class="formfld unknown" id="descr" size="40" value="<?=xhtmlspecialchars($pconfig['descr']);?>" />
 							<br />
 							<span class="vexpl">
 								<?=gettext("You may enter a description here " .
@@ -666,7 +667,7 @@ function dpdchkbox_change() {
 										continue;
 							?>
 								<option value="<?=$method_type;?>" <?php if ($method_type == $pconfig['authentication_method']) echo "selected=\"selected\""; ?>>
-									<?=htmlspecialchars($method_params['name']);?>
+									<?=xhtmlspecialchars($method_params['name']);?>
 								</option>
 							<?php endforeach; ?>
 							</select>
@@ -685,7 +686,7 @@ function dpdchkbox_change() {
 								foreach ($modes as $mode => $mdescr):
 							?>
 								<option value="<?=$mode;?>" <?php if ($mode == $pconfig['mode']) echo "selected=\"selected\""; ?>>
-									<?=htmlspecialchars($mdescr);?>
+									<?=xhtmlspecialchars($mdescr);?>
 								</option>
 							<?php endforeach; ?>
 							</select> <br /> <span class="vexpl"><?=gettext("Aggressive is more flexible, but less secure"); ?>.</span>
@@ -697,11 +698,11 @@ function dpdchkbox_change() {
 							<select name="myid_type" class="formselect" onchange="myidsel_change()">
 							<?php foreach ($my_identifier_list as $id_type => $id_params): ?>
 								<option value="<?=$id_type;?>" <?php if ($id_type == $pconfig['myid_type']) echo "selected=\"selected\""; ?>>
-									<?=htmlspecialchars($id_params['desc']);?>
+									<?=xhtmlspecialchars($id_params['desc']);?>
 								</option>
 							<?php endforeach; ?>
 							</select>
-							<input name="myid_data" type="text" class="formfld unknown" id="myid_data" size="30" value="<?=htmlspecialchars($pconfig['myid_data']);?>" />
+							<input name="myid_data" type="text" class="formfld unknown" id="myid_data" size="30" value="<?=xhtmlspecialchars($pconfig['myid_data']);?>" />
 						</td>
 					</tr>
 					<tr id="opt_peerid">
@@ -714,11 +715,11 @@ function dpdchkbox_change() {
 										continue;
 							?>
 							<option value="<?=$id_type;?>" <?php if ($id_type == $pconfig['peerid_type']) echo "selected=\"selected\""; ?>>
-								<?=htmlspecialchars($id_params['desc']);?>
+								<?=xhtmlspecialchars($id_params['desc']);?>
 							</option>
 							<?php endforeach; ?>
 							</select>
-							<input name="peerid_data" type="text" class="formfld unknown" id="peerid_data" size="30" value="<?=htmlspecialchars($pconfig['peerid_data']);?>" />
+							<input name="peerid_data" type="text" class="formfld unknown" id="peerid_data" size="30" value="<?=xhtmlspecialchars($pconfig['peerid_data']);?>" />
 						<?php if ($pconfig['mobile']) { ?>
 							<br /><br /><?=gettext("NOTE: This is known as the \"group\" setting on some VPN client implementations"); ?>.
 						<?php } ?>
@@ -728,7 +729,7 @@ function dpdchkbox_change() {
 						<td width="22%" valign="top" class="vncellreq"><?=gettext("Pre-Shared Key"); ?></td>
 						<td width="78%" class="vtable">
 							<?=$mandfldhtml;?>
-							<input name="pskey" type="text" class="formfld unknown" id="pskey" size="40" value="<?=htmlspecialchars($pconfig['pskey']);?>" />
+							<input name="pskey" type="text" class="formfld unknown" id="pskey" size="40" value="<?=xhtmlspecialchars($pconfig['pskey']);?>" />
 							<span class="vexpl">
 							<br />
 								<?=gettext("Input your Pre-Shared Key string"); ?>.
@@ -789,7 +790,7 @@ function dpdchkbox_change() {
 										$selected = " selected=\"selected\"";
 							?>
 								<option value="<?=$algo;?>"<?=$selected?>>
-									<?=htmlspecialchars($algodata['name']);?>
+									<?=xhtmlspecialchars($algodata['name']);?>
 								</option>
 							<?php endforeach; ?>
 							</select>
@@ -803,7 +804,7 @@ function dpdchkbox_change() {
 							<select name="halgo" class="formselect">
 							<?php foreach ($p1_halgos as $algo => $algoname): ?>
 								<option value="<?=$algo;?>" <?php if ($algo == $pconfig['halgo']) echo "selected=\"selected\""; ?>>
-									<?=htmlspecialchars($algoname);?>
+									<?=xhtmlspecialchars($algoname);?>
 								</option>
 							<?php endforeach; ?>
 							</select>
@@ -819,7 +820,7 @@ function dpdchkbox_change() {
 							<select name="dhgroup" class="formselect">
 							<?php foreach ($p1_dhgroups as $keygroup => $keygroupname): ?>
 								<option value="<?=$keygroup;?>" <?php if ($keygroup == $pconfig['dhgroup']) echo "selected=\"selected\""; ?>>
-									<?=htmlspecialchars($keygroupname);?>
+									<?=xhtmlspecialchars($keygroupname);?>
 								</option>
 							<?php endforeach; ?>
 							</select>
@@ -832,7 +833,7 @@ function dpdchkbox_change() {
 					<tr>
 						<td width="22%" valign="top" class="vncell"><?=gettext("Lifetime"); ?></td>
 						<td width="78%" class="vtable">
-							<input name="lifetime" type="text" class="formfld unknown" id="lifetime" size="20" value="<?=htmlspecialchars($pconfig['lifetime']);?>" />
+							<input name="lifetime" type="text" class="formfld unknown" id="lifetime" size="20" value="<?=xhtmlspecialchars($pconfig['lifetime']);?>" />
 							<?=gettext("seconds"); ?>
 						</td>
 					</tr>
@@ -878,13 +879,13 @@ function dpdchkbox_change() {
 							<?=gettext("Enable DPD"); ?><br />
 							<div id="opt_dpd">
 								<br />
-								<input name="dpd_delay" type="text" class="formfld unknown" id="dpd_delay" size="5" value="<?=htmlspecialchars($pconfig['dpd_delay']);?>" />
+								<input name="dpd_delay" type="text" class="formfld unknown" id="dpd_delay" size="5" value="<?=xhtmlspecialchars($pconfig['dpd_delay']);?>" />
 								<?=gettext("seconds"); ?><br />
 								<span class="vexpl">
 									<?=gettext("Delay between requesting peer acknowledgement"); ?>.
 								</span><br />
 								<br />
-								<input name="dpd_maxfail" type="text" class="formfld unknown" id="dpd_maxfail" size="5" value="<?=htmlspecialchars($pconfig['dpd_maxfail']);?>" />
+								<input name="dpd_maxfail" type="text" class="formfld unknown" id="dpd_maxfail" size="5" value="<?=xhtmlspecialchars($pconfig['dpd_maxfail']);?>" />
 								<?=gettext("retries"); ?><br />
 								<span class="vexpl">
 									<?=gettext("Number of consecutive failures allowed before disconnect"); ?>.
@@ -897,12 +898,12 @@ function dpdchkbox_change() {
 						<td width="22%" valign="top">&nbsp;</td>
 						<td width="78%">
 							<?php if (isset($p1index) && $a_phase1[$p1index]): ?>
-							<input name="p1index" type="hidden" value="<?=htmlspecialchars($p1index);?>" />
+							<input name="p1index" type="hidden" value="<?=xhtmlspecialchars($p1index);?>" />
 							<?php endif; ?>
 							<?php if ($pconfig['mobile']): ?>
 							<input name="mobile" type="hidden" value="true" />
 							<?php endif; ?>
-							<input name="ikeid" type="hidden" value="<?=htmlspecialchars($pconfig['ikeid']);?>" />
+							<input name="ikeid" type="hidden" value="<?=xhtmlspecialchars($pconfig['ikeid']);?>" />
 							<input name="Submit" type="submit" class="formbtn" value="<?=gettext("Save"); ?>" />
 						</td>
 					</tr>

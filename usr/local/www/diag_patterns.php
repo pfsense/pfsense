@@ -38,6 +38,7 @@
 ##|-PRIV
 
 require("guiconfig.inc");
+require_once("pfsense-utils.inc");
 
 //Move the upload file to /usr/local/share/protocols (is_uploaded_file must use tmp_name as argument)
 if (($_POST['submit'] == gettext("Upload Pattern file")) && is_uploaded_file($_FILES['ulfile']['tmp_name'])) {
@@ -48,7 +49,7 @@ if (($_POST['submit'] == gettext("Upload Pattern file")) && is_uploaded_file($_F
 		$config['l7shaper']['custom_pat'][$_FILES['ulfile']['name']] = base64_encode(file_get_contents($_FILES['ulfile']['tmp_name']));
 		write_config(sprintf(gettext("Added custom l7 pattern %s"), $_FILES['ulfile']['name']));
 		move_uploaded_file($_FILES['ulfile']['tmp_name'], "/usr/local/share/protocols/" . $_FILES['ulfile']['name']);
-		$ulmsg = gettext("Uploaded file to") . " /usr/local/share/protocols/" . htmlentities($_FILES['ulfile']['name']);
+		$ulmsg = gettext("Uploaded file to") . " /usr/local/share/protocols/" . xhtmlentities($_FILES['ulfile']['name']);
 	}
 	else
 		$ulmsg = gettext("Warning: You must upload a file with .pat extension.");

@@ -40,6 +40,7 @@
 ##|-PRIV
 
 require("guiconfig.inc");
+require_once("pfsense-utils.inc");
 
 $pconfig['enable'] = isset($config['dhcrelay6']['enable']);
 if (empty($config['dhcrelay6']['interface']))
@@ -181,7 +182,7 @@ function enable_change(enable_over) {
 		<tr>
                         <td width="22%" valign="top" class="vncell"><?=gettext("Destination server");?></td>
                         <td width="78%" class="vtable">
-                          <input name="server" type="text" class="formfld unknown" id="server" size="20" value="<?=htmlspecialchars($pconfig['server']);?>" />
+                          <input name="server" type="text" class="formfld unknown" id="server" size="20" value="<?=xhtmlspecialchars($pconfig['server']);?>" />
                           <br />
 			  <?=gettext("This is the IPv6 address of the server to which DHCPv6 requests are relayed. You can enter multiple server IPv6 addresses, separated by commas. ");?>
                         </td>

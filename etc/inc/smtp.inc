@@ -10,6 +10,8 @@
 	pfSense_MODULE:	notifications
 */
 
+require_once("pfsense-utils.inc");
+
 class smtp_class
 {
 	var $user="";
@@ -78,7 +80,7 @@ class smtp_class
 	{
 		$message.="\n";
 		if($this->html_debug)
-			$message=str_replace("\n","<br />\n",HtmlEntities($message));
+			$message=str_replace("\n","<br />\n",xhtmlentities($message));
 		echo $message;
 		flush();
 	}

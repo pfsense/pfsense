@@ -55,6 +55,7 @@ require("functions.inc");
 require_once("filter.inc");
 require("shaper.inc");
 require("captiveportal.inc");
+require_once("pfsense-utils.inc");
 
 $pgtitle = array(gettext("Services"),gettext("Captive portal"),gettext("Edit allowed Hostname"));
 $shortcut_section = "captiveportal";
@@ -166,7 +167,7 @@ include("head.inc");
 			$dirs = array(gettext("Both"),gettext("From"),gettext("To")) ;
 			foreach ($dirs as $dir): ?>
 				<option value="<?=strtolower($dir);?>" <?php if (strtolower($dir) == strtolower($pconfig['dir'])) echo "selected=\"selected\"";?> >
-				<?=htmlspecialchars($dir);?>
+				<?=xhtmlspecialchars($dir);?>
 				</option>
 		<?php endforeach; ?>
 			</select>
@@ -177,35 +178,35 @@ include("head.inc");
 		<tr>
 			<td width="22%" valign="top" class="vncellreq"><?=gettext("Hostname"); ?></td>
 			<td width="78%" class="vtable"> 
-				<?=$mandfldhtml;?><input name="hostname" type="text" class="formfld unknown" id="hostname" size="17" value="<?=htmlspecialchars($pconfig['hostname']);?>" />
+				<?=$mandfldhtml;?><input name="hostname" type="text" class="formfld unknown" id="hostname" size="17" value="<?=xhtmlspecialchars($pconfig['hostname']);?>" />
 			<br /> 
 			<span class="vexpl"><?=gettext("Hostname");?>.</span></td>
 		</tr>
 		<tr>
 			<td width="22%" valign="top" class="vncell"><?=gettext("Description"); ?></td>
 			<td width="78%" class="vtable"> 
-			<input name="descr" type="text" class="formfld unknown" id="descr" size="40" value="<?=htmlspecialchars($pconfig['descr']);?>" />
+			<input name="descr" type="text" class="formfld unknown" id="descr" size="40" value="<?=xhtmlspecialchars($pconfig['descr']);?>" />
 			<br /> <span class="vexpl"><?=gettext("You may enter a description here for your reference (not parsed)"); ?>.</span></td>
 			</tr>
 		<tr>
 			<td width="22%" valign="top" class="vncell"><?=gettext("Bandwidth up"); ?></td>
 			<td width="78%" class="vtable">
-			<input name="bw_up" type="text" class="formfld unknown" id="bw_up" size="10" value="<?=htmlspecialchars($pconfig['bw_up']);?>" />
+			<input name="bw_up" type="text" class="formfld unknown" id="bw_up" size="10" value="<?=xhtmlspecialchars($pconfig['bw_up']);?>" />
 			<br /> <span class="vexpl"><?=gettext("Enter a upload limit to be enforced on this Hostname in Kbit/s"); ?></span></td>
 		</tr>
 		<tr>
 			<td width="22%" valign="top" class="vncell"><?=gettext("Bandwidth down"); ?></td>
 			<td width="78%" class="vtable">
-			<input name="bw_down" type="text" class="formfld unknown" id="bw_down" size="10" value="<?=htmlspecialchars($pconfig['bw_down']);?>" />
+			<input name="bw_down" type="text" class="formfld unknown" id="bw_down" size="10" value="<?=xhtmlspecialchars($pconfig['bw_down']);?>" />
 			<br /> <span class="vexpl"><?=gettext("Enter a download limit to be enforced on this Hostname in Kbit/s"); ?></span></td>
 		</tr>
 		<tr>
 			<td width="22%" valign="top">&nbsp;</td>
 			<td width="78%"> 
 				<input name="Submit" type="submit" class="formbtn" value="<?=gettext("Save"); ?>" />
-				<input name="zone" type="hidden" value="<?=htmlspecialchars($cpzone);?>" />
+				<input name="zone" type="hidden" value="<?=xhtmlspecialchars($cpzone);?>" />
 				<?php if (isset($id) && $a_allowedhostnames[$id]): ?>
-					<input name="id" type="hidden" value="<?=htmlspecialchars($id);?>" />
+					<input name="id" type="hidden" value="<?=xhtmlspecialchars($id);?>" />
 				<?php endif; ?>
 			</td>
 		</tr>

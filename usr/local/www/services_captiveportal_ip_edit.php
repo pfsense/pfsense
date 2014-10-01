@@ -56,6 +56,7 @@ require("functions.inc");
 require_once("filter.inc");
 require("shaper.inc");
 require("captiveportal.inc");
+require_once("pfsense-utils.inc");
 
 $pgtitle = array(gettext("Services"),gettext("Captive portal"),gettext("Edit allowed IP address"));
 $shortcut_section = "captiveportal";
@@ -188,7 +189,7 @@ include("head.inc");
 		<tr>
 			<td width="22%" valign="top" class="vncellreq"><?=gettext("IP address"); ?></td>
 			<td width="78%" class="vtable"> 
-				<?=$mandfldhtml;?><input name="ip" type="text" class="formfld unknown" id="ip" size="17" value="<?=htmlspecialchars($pconfig['ip']);?>" />
+				<?=$mandfldhtml;?><input name="ip" type="text" class="formfld unknown" id="ip" size="17" value="<?=xhtmlspecialchars($pconfig['ip']);?>" />
 				/<select name='sn' class="formselect" id='sn'>
 				<?php for ($i = 32; $i >= 1; $i--): ?>
 					<option value="<?=$i;?>" <?php if ($i == $pconfig['sn']) echo "selected=\"selected\""; ?>><?=$i;?></option>
@@ -201,21 +202,21 @@ include("head.inc");
 		<tr>
 			<td width="22%" valign="top" class="vncell"><?=gettext("Description"); ?></td>
 			<td width="78%" class="vtable"> 
-				<input name="descr" type="text" class="formfld unknown" id="descr" size="40" value="<?=htmlspecialchars($pconfig['descr']);?>" />
+				<input name="descr" type="text" class="formfld unknown" id="descr" size="40" value="<?=xhtmlspecialchars($pconfig['descr']);?>" />
 				<br /> <span class="vexpl"><?=gettext("You may enter a description here for your reference (not parsed)"); ?>.</span>
 			</td>
 		</tr>
 		<tr>
 			<td width="22%" valign="top" class="vncell"><?=gettext("Bandwidth up"); ?></td>
 			<td width="78%" class="vtable">
-			<input name="bw_up" type="text" class="formfld unknown" id="bw_up" size="10" value="<?=htmlspecialchars($pconfig['bw_up']);?>" />
+			<input name="bw_up" type="text" class="formfld unknown" id="bw_up" size="10" value="<?=xhtmlspecialchars($pconfig['bw_up']);?>" />
 			<br /> <span class="vexpl"><?=gettext("Enter a upload limit to be enforced on this IP address in Kbit/s"); ?></span>
 		</td>
 		</tr>
 		<tr>
 		 <td width="22%" valign="top" class="vncell"><?=gettext("Bandwidth down"); ?></td>
 		 <td width="78%" class="vtable">
-			<input name="bw_down" type="text" class="formfld unknown" id="bw_down" size="10" value="<?=htmlspecialchars($pconfig['bw_down']);?>" />
+			<input name="bw_down" type="text" class="formfld unknown" id="bw_down" size="10" value="<?=xhtmlspecialchars($pconfig['bw_down']);?>" />
 			<br /> <span class="vexpl"><?=gettext("Enter a download limit to be enforced on this IP address in Kbit/s"); ?></span>
 		</td>
 		</tr>
@@ -223,9 +224,9 @@ include("head.inc");
 			<td width="22%" valign="top">&nbsp;</td>
 			<td width="78%"> 
 				<input name="Submit" type="submit" class="formbtn" value="<?=gettext("Save"); ?>" />
-				<input name="zone" type="hidden" value="<?=htmlspecialchars($cpzone);?>" />
+				<input name="zone" type="hidden" value="<?=xhtmlspecialchars($cpzone);?>" />
 				<?php if (isset($id) && $a_allowedips[$id]): ?>
-					<input name="id" type="hidden" value="<?=htmlspecialchars($id);?>" />
+					<input name="id" type="hidden" value="<?=xhtmlspecialchars($id);?>" />
 				<?php endif; ?>
 			</td>
 		</tr>

@@ -42,6 +42,7 @@
 
 require("guiconfig.inc");
 require_once("functions.inc");
+require_once("pfsense-utils.inc");
 
 function ppp_inuse($num) {
 	global $config, $g;
@@ -114,7 +115,7 @@ include("head.inc");
 			  <?php $i = 0; foreach ($a_ppps as $id => $ppp): ?>
                 <tr  ondblclick="document.location='interfaces_ppps_edit.php?id=<?=$i;?>'">
                 	<td class="listr">
-					<?=htmlspecialchars($ppp['if']);?>
+					<?=xhtmlspecialchars($ppp['if']);?>
                   </td>
                   <td class="listr">
 					<?php
@@ -123,11 +124,11 @@ include("head.inc");
 							if ($port != get_real_interface($port) && $ppp['type'] != "ppp")
 								$portlist[$portid] = convert_friendly_interface_to_friendly_descr($port);
 						}
-						echo htmlspecialchars(implode(",", $portlist));
+						echo xhtmlspecialchars(implode(",", $portlist));
 					?>
                   </td>
                   <td class="listbg">
-                    <?=htmlspecialchars($ppp['descr']);?>&nbsp;
+                    <?=xhtmlspecialchars($ppp['descr']);?>&nbsp;
                   </td>
                   <td valign="middle" class="list nowrap"> <a href="interfaces_ppps_edit.php?id=<?=$i;?>"><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_e.gif" width="17" height="17" border="0" alt="edit" /></a>
                      &nbsp;<a href="interfaces_ppps.php?act=del&amp;id=<?=$i;?>" onclick="return confirm('<?=gettext("Do you really want to delete this PPP interface?");?>')"><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_x.gif" width="17" height="17" border="0" alt="remove" /></a></td>

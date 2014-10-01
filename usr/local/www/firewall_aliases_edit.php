@@ -48,6 +48,7 @@ require("guiconfig.inc");
 require_once("functions.inc");
 require_once("filter.inc");
 require_once("shaper.inc");
+require_once("pfsense-utils.inc");
 
 $pgtitle = array(gettext("Firewall"),gettext("Aliases"),gettext("Edit"));
 
@@ -105,7 +106,7 @@ if (isset($id) && $a_aliases[$id]) {
 	$pconfig['detail'] = $a_aliases[$id]['detail'];
 	$pconfig['address'] = $a_aliases[$id]['address'];
 	$pconfig['type'] = $a_aliases[$id]['type'];
-	$pconfig['descr'] = html_entity_decode($a_aliases[$id]['descr']);
+	$pconfig['descr'] = xhtml_entity_decode($a_aliases[$id]['descr']);
 
 	if(preg_match("/urltable/i", $a_aliases[$id]['type'])) {
 		$pconfig['address'] = $a_aliases[$id]['url'];
@@ -404,7 +405,7 @@ if ($_POST) {
 			mark_subsystem_dirty('aliases');
 
 		if(!empty($tab))
-			header("Location: firewall_aliases.php?tab=" . htmlspecialchars ($tab));
+			header("Location: firewall_aliases.php?tab=" . xhtmlspecialchars ($tab));
 		else
 			header("Location: firewall_aliases.php");
 		exit;
@@ -636,7 +637,7 @@ if (empty($tab)) {
 		$tab = $pconfig['type'];
 }
 ?>
-<input name="tab" type="hidden" id="tab" value="<?=htmlspecialchars($tab);?>" />
+<input name="tab" type="hidden" id="tab" value="<?=xhtmlspecialchars($tab);?>" />
 <table class="tabcont" width="100%" border="0" cellpadding="6" cellspacing="0" summary="firewall aliases edit">
 	<tr>
 		<td colspan="2" valign="top" class="listtopic"><?=gettext("Alias Edit"); ?></td>
@@ -644,10 +645,10 @@ if (empty($tab)) {
 	<tr>
 		<td valign="top" class="vncellreq"><?=gettext("Name"); ?></td>
 		<td class="vtable">
-			<input name="origname" type="hidden" id="origname" class="formfld unknown" size="40" value="<?=htmlspecialchars($pconfig['name']);?>" />
-			<input name="name" type="text" id="name" class="formfld unknown" size="40" maxlength="31" value="<?=htmlspecialchars($pconfig['name']);?>" />
+			<input name="origname" type="hidden" id="origname" class="formfld unknown" size="40" value="<?=xhtmlspecialchars($pconfig['name']);?>" />
+			<input name="name" type="text" id="name" class="formfld unknown" size="40" maxlength="31" value="<?=xhtmlspecialchars($pconfig['name']);?>" />
 			<?php if (isset($id) && $a_aliases[$id]): ?>
-				<input name="id" type="hidden" value="<?=htmlspecialchars($id);?>" />
+				<input name="id" type="hidden" value="<?=xhtmlspecialchars($id);?>" />
 			<?php endif; ?>
 			<br />
 			<span class="vexpl">
@@ -659,7 +660,7 @@ if (empty($tab)) {
 	<tr>
 		<td width="22%" valign="top" class="vncell"><?=gettext("Description"); ?></td>
 		<td width="78%" class="vtable">
-			<input name="descr" type="text" class="formfld unknown" id="descr" size="40" value="<?=htmlspecialchars($pconfig['descr']);?>" />
+			<input name="descr" type="text" class="formfld unknown" id="descr" size="40" value="<?=xhtmlspecialchars($pconfig['descr']);?>" />
 			<br />
 			<span class="vexpl">
 				<?=gettext("You may enter a description here for your reference (not parsed)."); ?>
@@ -712,7 +713,7 @@ if (empty($tab)) {
 					?>
 					<tr>
 						<td>
-							<input autocomplete="off" name="address<?php echo $counter; ?>" type="text" class="formfldalias ipv4v6" id="address<?php echo $counter; ?>" size="30" value="<?=htmlspecialchars($address);?>" />
+							<input autocomplete="off" name="address<?php echo $counter; ?>" type="text" class="formfldalias ipv4v6" id="address<?php echo $counter; ?>" size="30" value="<?=xhtmlspecialchars($address);?>" />
 						</td>
 						<td>
 							<select name="address_subnet<?php echo $counter; ?>" class="formselect ipv4v6" id="address_subnet<?php echo $counter; ?>">
@@ -723,7 +724,7 @@ if (empty($tab)) {
 							</select>
 						</td>
 						<td>
-							<input name="detail<?php echo $counter; ?>" type="text" class="formfld unknown" id="detail<?php echo $counter; ?>" size="50" value="<?=htmlspecialchars($details[$counter]);?>" />
+							<input name="detail<?php echo $counter; ?>" type="text" class="formfld unknown" id="detail<?php echo $counter; ?>" size="50" value="<?=xhtmlspecialchars($details[$counter]);?>" />
 						</td>
 						<td>
 							<a onclick="removeRow(this); return false;" href="#"><img border="0" src="/themes/<?echo $g['theme'];?>/images/icons/icon_x.gif" alt="" title="<?=gettext("remove this entry"); ?>" /></a>

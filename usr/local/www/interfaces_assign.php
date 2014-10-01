@@ -51,6 +51,7 @@ require("ipsec.inc");
 require("vpn.inc");
 require("captiveportal.inc");
 require_once("rrd.inc");
+require_once("pfsense-utils.inc");
 
 function interface_assign_description($portinfo, $portname) {
 	if ($portinfo['isvlan']) {
@@ -86,7 +87,7 @@ function interface_assign_description($portinfo, $portname) {
 	} else
 		$descr = $portname . " (" . $portinfo['mac'] . ")";
 
-	return htmlspecialchars($descr);
+	return xhtmlspecialchars($descr);
 }
 
 /*

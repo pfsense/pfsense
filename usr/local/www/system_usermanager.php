@@ -81,7 +81,7 @@ if (isset($id) && $a_user[$id]) {
 
 if ($_POST['act'] == "deluser") {
 
-	if (!$a_user[$id]) {
+	if (!isset($_POST['username']) || !isset($a_user[$id]) || ($_POST['username'] != $a_user[$id]['name'])) {
 		pfSenseHeader("system_usermanager.php");
 		exit;
 	}
@@ -858,6 +858,7 @@ function sshkeyClicked(obj) {
 				<form action="system_usermanager.php" method="post" name="iform2" id="iform2">
 					<input type="hidden" id="act" name="act" value="" />
 					<input type="hidden" id="userid" name="userid" value="<?=(isset($id) ? $id : '');?>" />
+					<input type="hidden" id="username" name="username" value="" />
 					<input type="hidden" id="privid" name="privid" value="" />
 					<input type="hidden" id="certid" name="certid" value="" />
 					<table class="sortable" width="100%" border="0" cellpadding="0" cellspacing="0" summary="">
@@ -939,6 +940,7 @@ function sshkeyClicked(obj) {
 									<input type="image" name="deluser[]" width="17" height="17" border="0"
 										src="/themes/<?=$g['theme'];?>/images/icons/icon_x.gif"
 										onclick="document.getElementById('userid').value='<?=$i;?>';
+											document.getElementById('username').value='<?=$userent['name'];?>';
 											document.getElementById('act').value='<?php echo "deluser";?>';
 											return confirm('<?=gettext("Do you really want to delete this user?");?>');"
 										title="<?=gettext("delete user");?>" />

@@ -54,36 +54,38 @@ if (!is_array($config['system']['group']))
 
 $a_group = &$config['system']['group'];
 
-$id = $_GET['id'];
-if (isset($_POST['id']))
-	$id = $_POST['id'];
+unset($id);
+if (isset($_POST['groupid']) && is_numericint($_POST['groupid']))
+	$id = $_POST['groupid'];
 
-if ($_GET['act'] == "delgroup") {
+$act = (isset($_POST['act']) ? $_POST['act'] : '');
 
-	if (!$a_group[$_GET['id']]) {
+if ($act == "delgroup") {
+
+	if (!isset($id) || !isset($_POST['groupname']) || !isset($a_group[$id]) || ($_POST['groupname'] != $a_group[$id]['name'])) {
 		pfSenseHeader("system_groupmanager.php");
 		exit;
 	}
 
 	conf_mount_rw();
-	local_group_del($a_group[$_GET['id']]);
+	local_group_del($a_group[$id]);
 	conf_mount_ro();
-	$groupdeleted = $a_group[$_GET['id']]['name'];
-	unset($a_group[$_GET['id']]);
+	$groupdeleted = $a_group[$id]['name'];
+	unset($a_group[$id]);
 	write_config();
 	$savemsg = gettext("Group")." {$groupdeleted} ".
-				gettext("successfully deleted")."<br />";
+		gettext("successfully deleted")."<br />";
 }
 
-if ($_GET['act'] == "delpriv") {
+if ($act == "delpriv") {
 
-	if (!$a_group[$_GET['id']]) {
+	if (!isset($id) || !isset($a_group[$id])) {
 		pfSenseHeader("system_groupmanager.php");
 		exit;
 	}
 
-	$privdeleted = $priv_list[$a_group[$id]['priv'][$_GET['privid']]]['name'];
-	unset($a_group[$id]['priv'][$_GET['privid']]);
+	$privdeleted = $priv_list[$a_group[$id]['priv'][$_POST['privid']]]['name'];
+	unset($a_group[$id]['priv'][$_POST['privid']]);
 
 	if (is_array($a_group[$id]['member'])) {
 		foreach ($a_group[$id]['member'] as $uid) {
@@ -94,13 +96,13 @@ if ($_GET['act'] == "delpriv") {
 	}
 
 	write_config();
-	$_GET['act'] = "edit";
+	$act = "edit";
 	$savemsg = gettext("Privilege")." {$privdeleted} ".
 				gettext("successfully deleted")."<br />";
 }
 
-if($_GET['act']=="edit"){
-	if (isset($id) && $a_group[$id]) {
+if ($act == "edit") {
+	if (isset($id) && isset($a_group[$id])) {
 		$pconfig['name'] = $a_group[$id]['name'];
 		$pconfig['gid'] = $a_group[$id]['gid'];
 		$pconfig['gtype'] = $a_group[$id]['scope'];
@@ -110,7 +112,7 @@ if($_GET['act']=="edit"){
 	}
 }
 
-if ($_POST) {
+if (isset($_POST['save'])) {
 
 	unset($input_errors);
 	$pconfig = $_POST;
@@ -264,9 +266,12 @@ function presubmit() {
 			<div class="tabcont">
 
 <?php
-			if($_GET['act']=="new" || $_GET['act']=="edit"):
+			if($act == "new" || $act == "edit"):
 ?>
 				<form action="system_groupmanager.php" method="post" name="iform" id="iform" onsubmit="presubmit()">
+					<input type="hidden" id="act" name="act" value="" />
+					<input type="hidden" id="groupid" name="groupid" value="<?=(isset($id) ? $id : '');?>" />
+					<input type="hidden" id="privid" name="privid" value="" />
 					<table width="100%" border="0" cellpadding="6" cellspacing="0" summary="main area">
 <?php
 						$ro = "";
@@ -363,7 +368,7 @@ function presubmit() {
 						</tr>
 <?php
 					endif;
-					if($_GET['act'] != "new"):
+					if ($act != "new"):
 ?>
 						<tr>
 							<td width="22%" valign="top" class="vncell"><?=gettext("Assigned Privileges");?></td>
@@ -387,9 +392,13 @@ function presubmit() {
 											<?=xhtmlspecialchars($priv_list[$priv]['descr']);?>
 										</td>
 										<td valign="middle" class="list nowrap">
-											<a href="system_groupmanager.php?act=delpriv&amp;id=<?=xhtmlspecialchars($id)?>&amp;privid=<?=$i;?>" onclick="return confirm('<?=gettext("Do you really want to delete this privilege?");?>')">
-												<img src="/themes/<?= $g['theme']; ?>/images/icons/icon_x.gif" width="17" height="17" border="0" alt="delete" />
-											</a>
+											<input type="image" name="delpriv[]" width="17" height="17" border="0"
+												src="/themes/<?=$g['theme'];?>/images/icons/icon_x.gif"
+												onclick="document.getElementById('privid').value='<?=$i;?>';
+													document.getElementById('groupid').value='<?=$id;?>';
+													document.getElementById('act').value='<?php echo "delpriv";?>';
+													return confirm('<?=gettext("Do you really want to delete this privilege?");?>');"
+												title="<?=gettext("delete privilege");?>" />
 										</td>
 									</tr>
 <?php
@@ -429,87 +438,102 @@ function presubmit() {
 <?php
 			else:
 ?>
-				<table class="sortable" width="100%" border="0" cellpadding="0" cellspacing="0" summary="">
-					<thead>
-						<tr>
-							<th width="25%" class="listhdrr"><?=gettext("Group name");?></th>
-							<th width="25%" class="listhdrr"><?=gettext("Description");?></th>
-							<th width="30%" class="listhdrr"><?=gettext("Member Count");?></th>
-							<th width="10%" class="list"></th>
-						</tr>
-					</thead>
-					<tfoot>
-						<tr>
-							<td class="list" colspan="3"></td>
-							<td class="list">
-								<a href="system_groupmanager.php?act=new"><img src="./themes/<?=$g['theme'];?>/images/icons/icon_plus.gif" title="<?=gettext("add group");?>" width="17" height="17" border="0" alt="add" />
-								</a>
-							</td>
-						</tr>
-						<tr>
-							<td colspan="3">
-								<p>
-									<?=gettext("Additional webConfigurator groups can be added here.
-									Group permissions can be assigned which are inherited by users who are members of the group.
-									An icon that appears grey indicates that it is a system defined object.
-									Some system object properties can be modified but they cannot be deleted.");?>
-								</p>
-							</td>
-						</tr>
-					</tfoot>
-					<tbody>
+				<form action="system_groupmanager.php" method="post" name="iform2" id="iform2">
+					<input type="hidden" id="act" name="act" value="" />
+					<input type="hidden" id="groupid" name="groupid" value="<?=(isset($id) ? $id : '');?>" />
+					<input type="hidden" id="groupname" name="groupname" value="" />
+					<table class="sortable" width="100%" border="0" cellpadding="0" cellspacing="0" summary="">
+						<thead>
+							<tr>
+								<th width="25%" class="listhdrr"><?=gettext("Group name");?></th>
+								<th width="25%" class="listhdrr"><?=gettext("Description");?></th>
+								<th width="30%" class="listhdrr"><?=gettext("Member Count");?></th>
+								<th width="10%" class="list"></th>
+							</tr>
+						</thead>
+						<tfoot>
+							<tr>
+								<td class="list" colspan="3"></td>
+								<td class="list">
+									<input type="image" name="addcert" width="17" height="17" border="0"
+										src="/themes/<?=$g['theme'];?>/images/icons/icon_plus.gif"
+										onclick="document.getElementById('act').value='<?php echo "new";?>';"
+										title="<?=gettext("add group");?>" />
+								</td>
+							</tr>
+							<tr>
+								<td colspan="3">
+									<p>
+										<?=gettext("Additional webConfigurator groups can be added here.
+										Group permissions can be assigned which are inherited by users who are members of the group.
+										An icon that appears grey indicates that it is a system defined object.
+										Some system object properties can be modified but they cannot be deleted.");?>
+									</p>
+								</td>
+							</tr>
+						</tfoot>
+						<tbody>
 <?php
-					$i = 0;
-					foreach($a_group as $group):
-						if($group['scope'] == "system")
-							$grpimg = "/themes/{$g['theme']}/images/icons/icon_system-group-grey.png";
-						else
-							$grpimg = "/themes/{$g['theme']}/images/icons/icon_system-group.png";
-						$groupcount = count($group['member']);
-						if ($group["name"] == "all")
-							$groupcount = count($config['system']['user']);
+						$i = 0;
+						foreach($a_group as $group):
+							if($group['scope'] == "system")
+								$grpimg = "/themes/{$g['theme']}/images/icons/icon_system-group-grey.png";
+							else
+								$grpimg = "/themes/{$g['theme']}/images/icons/icon_system-group.png";
+							$groupcount = count($group['member']);
+							if ($group["name"] == "all")
+								$groupcount = count($config['system']['user']);
 ?>
-						<tr ondblclick="document.location='system_groupmanager.php?act=edit&amp;id=<?=$i;?>'">
-							<td class="listlr">
-								<table border="0" cellpadding="0" cellspacing="0" summary="">
-									<tr>
-										<td align="left" valign="middle">
-											<img src="<?=$grpimg;?>" alt="<?=gettext("User");?>" title="<?=gettext("User");?>" border="0" height="16" width="16" />
-										</td>
-										<td align="left" valign="middle">
-											<?=xhtmlspecialchars($group['name']); ?>&nbsp;
-										</td>
-									</tr>
-								</table>
-							</td>
-							<td class="listr">
-								<?=xhtmlspecialchars($group['description']);?>&nbsp;
-							</td>
-							<td class="listbg">
-								<?=$groupcount;?>
-							</td>
-							<td valign="middle" class="list nowrap">
-								<a href="system_groupmanager.php?act=edit&amp;id=<?=$i;?>">
-									<img src="./themes/<?=$g['theme'];?>/images/icons/icon_e.gif" title="<?=gettext("edit group");?>" width="17" height="17" border="0" alt="edit" />
-								</a>
-								&nbsp;
+							<tr ondblclick="document.getElementById('act').value='<?php echo "edit";?>';
+								document.getElementById('groupid').value='<?=$i;?>';
+								document.iform2.submit();">
+								<td class="listlr">
+									<table border="0" cellpadding="0" cellspacing="0" summary="">
+										<tr>
+											<td align="left" valign="middle">
+												<img src="<?=$grpimg;?>" alt="<?=gettext("User");?>" title="<?=gettext("User");?>" border="0" height="16" width="16" />
+											</td>
+											<td align="left" valign="middle">
+												<?=xhtmlspecialchars($group['name']); ?>&nbsp;
+											</td>
+										</tr>
+									</table>
+								</td>
+								<td class="listr">
+									<?=xhtmlspecialchars($group['description']);?>&nbsp;
+								</td>
+								<td class="listbg">
+									<?=$groupcount;?>
+								</td>
+								<td valign="middle" class="list nowrap">
+									<input type="image" name="editgroup[]" width="17" height="17" border="0"
+										src="/themes/<?=$g['theme'];?>/images/icons/icon_e.gif"
+										onclick="document.getElementById('groupid').value='<?=$i;?>';
+											document.getElementById('act').value='<?php echo "edit";?>';"
+										title="<?=gettext("edit group");?>" />
+									&nbsp;
 <?php
-							if($group['scope'] != "system"):
+								if($group['scope'] != "system"):
 ?>
-								<a href="system_groupmanager.php?act=delgroup&amp;id=<?=$i;?>" onclick="return confirm('<?=gettext("Do you really want to delete this group?"); ?>')">
-									<img src="/themes/<?=$g['theme'];?>/images/icons/icon_x.gif" title="<?=gettext("delete group"); ?>" width="17" height="17" border="0" alt="delete" />
-								</a>
+									<input type="image" name="delgroup[]" width="17" height="17" border="0"
+										src="/themes/<?=$g['theme'];?>/images/icons/icon_x.gif"
+										onclick="document.getElementById('groupid').value='<?=$i;?>';
+											document.getElementById('groupname').value='<?=$group['name'];?>';
+											document.getElementById('act').value='<?php echo "delgroup";?>';
+											return confirm('<?=gettext("Do you really want to delete this group?");?>');"
+										title="<?=gettext("delete group");?>" />
 <?php
-							endif;
+								endif;
 ?>
-							</td>
-						</tr>
+								</td>
+							</tr>
 <?php
-						$i++;
-					endforeach;
+							$i++;
+						endforeach;
 ?>
-					</tbody>
-				</table>
+						</tbody>
+					</table>
+				</form>
 <?php
 			endif;
 ?>

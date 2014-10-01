@@ -132,6 +132,9 @@ EOF;
             $intip = get_interface_ip($ubif);
             if (!is_null($intip))
                 $bindints .= "interface: $intip\n";
+            $intip = get_interface_ipv6($ubif);
+            if (!is_null($intip))
+                $bindints .= "interface: $intip\n";
         }
     } else {
         $bindints .= "interface: 0.0.0.0\n";
@@ -146,7 +149,10 @@ EOF;
         foreach($outgoing_interfaces as $outif) {
             $outip = get_interface_ip($outif);
             if (!is_null($outip))
-                $outgoingints .= "outgoing-interface: $intip\n";
+                $outgoingints .= "outgoing-interface: $outip\n";
+            $outip = get_interface_ipv6($outif);
+            if (!is_null($outip))
+                $outgoingints .= "outgoing-interface: $outip\n";
         }
     }
 
@@ -641,6 +647,12 @@ function unbound_acls_config() {
         if (!is_null($ifip)) {
             $subnet_bits = get_interface_subnet($ubif);
             $subnet_ip = gen_subnet($ifip, $subnet_bits);
+            $aclcfg .= "access-control: {$subnet_ip}/{$subnet_bits} allow\n";
+        }
+        $ifip = get_interface_ipv6($ubif);
+        if (!is_null($ifip)) {
+            $subnet_bits = get_interface_subnetv6($ubif);
+            $subnet_ip = gen_subnetv6($ifip, $subnet_bits);
             $aclcfg .= "access-control: {$subnet_ip}/{$subnet_bits} allow\n";
         }
     }

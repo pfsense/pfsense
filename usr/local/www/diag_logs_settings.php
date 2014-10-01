@@ -95,13 +95,13 @@ if ($_POST['resetlogs'] == gettext("Reset Log Files")) {
 
 	/* input validation */
 	if ($_POST['enable'] && !is_valid_syslog_server($_POST['remoteserver'])) {
-		$input_errors[] = gettext("A valid IP address/hosname or IP/hostname:port must be specified for remote syslog server #1.");
+		$input_errors[] = gettext("A valid IP address/hostname or IP/hostname:port must be specified for remote syslog server #1.");
 	}
 	if ($_POST['enable'] && $_POST['remoteserver2'] && !is_valid_syslog_server($_POST['remoteserver2'])) {
-		$input_errors[] = gettext("A valid IP address/hosname or IP/hostname:port must be specified for remote syslog server #2.");
+		$input_errors[] = gettext("A valid IP address/hostname or IP/hostname:port must be specified for remote syslog server #2.");
 	}
 	if ($_POST['enable'] && $_POST['remoteserver3'] && !is_valid_syslog_server($_POST['remoteserver3'])) {
-		$input_errors[] = gettext("A valid IP address/hosname or IP/hostname:port must be specified for remote syslog server #3.");
+		$input_errors[] = gettext("A valid IP address/hostname or IP/hostname:port must be specified for remote syslog server #3.");
 	}
 
 	if (($_POST['nentries'] < 5) || ($_POST['nentries'] > 2000)) {
@@ -300,7 +300,7 @@ function check_everything() {
 			<td width="22%" valign="top" class="vtable">Log File Size (Bytes)</td>
 			<td width="78%" class="vtable">
 			<input name="logfilesize" id="logfilesize" type="text" class="formfld unknown" size="8" value="<?=xhtmlspecialchars($pconfig['logfilesize']);?>" /><br />
-			<?=gettext("Logs are held in constant-size circular log files. This field controls how large each log file is, and thus how many entries may exist inside the log By default this is approximately 500KB per log file, and there are nearly 20 such log files.") ?>
+			<?=gettext("Logs are held in constant-size circular log files. This field controls how large each log file is, and thus how many entries may exist inside the log. By default this is approximately 500KB per log file, and there are nearly 20 such log files.") ?>
 			<br /><br />
 			<?=gettext("NOTE: Log sizes are changed the next time a log file is cleared or deleted. To immediately increase the size of the log files, you must first save the options to set the size, then clear all logs using the \"Reset Log Files\" option farther down this page. "); ?>
 			<?=gettext("Be aware that increasing this value increases every log file size, so disk usage will increase significantly."); ?>

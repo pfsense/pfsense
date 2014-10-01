@@ -7,7 +7,7 @@
 	Copyright (C) 2004 Scott Ullrich
 	All rights reserved.
 
-	originially part of m0n0wall (http://m0n0.ch/wall)
+	originally part of m0n0wall (http://m0n0.ch/wall)
 	Copyright (C) 2003-2004 Manuel Kasper <mk@neon1.net>.
 	All rights reserved.
 
@@ -132,7 +132,7 @@ include("head.inc");
     <table border="0" cellspacing="0" cellpadding="1" summary="icons">
       <tr>
         <td valign="middle"><a href="services_igmpproxy_edit.php?id=<?=$i;?>"><img src="/themes/<?= $g['theme']; ?>/images/icons/icon_e.gif" width="17" height="17" border="0" title="<?=gettext("edit igmpentry"); ?>" alt="edit" /></a></td>
-        <td><a href="services_igmpproxy.php?act=del&amp;id=<?=$i;?>" onclick="return confirm('<?=gettext("Do you really want to delete this igmpentry? All elements that still use it will become invalid (e.g. filter rules)!");?>')"><img src="/themes/<?= $g['theme']; ?>/images/icons/icon_x.gif" width="17" height="17" border="0" title="<?=gettext("delete igmpentry");?>" alt="delete" /></a></td>
+        <td><a href="services_igmpproxy.php?act=del&amp;id=<?=$i;?>" onclick="return confirm('<?=gettext("Do you really want to delete this igmp entry? All elements that still use it will become invalid (e.g. filter rules)!");?>')"><img src="/themes/<?= $g['theme']; ?>/images/icons/icon_x.gif" width="17" height="17" border="0" title="<?=gettext("delete igmpentry");?>" alt="delete" /></a></td>
       </tr>
     </table>
   </td>

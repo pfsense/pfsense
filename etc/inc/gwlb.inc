@@ -44,7 +44,7 @@ function return_apinger_defaults() {
 		"avg_delay_samples" => "10",
 		"avg_loss_samples" => "50",
 		"avg_loss_delay_samples" => "20");
-	}
+}
 
 /*
  * Creates monitoring configuration file and
@@ -61,10 +61,16 @@ function setup_gateways_monitor() {
 		return;
 	}
 
+	$apinger_debug = "";
+	if (isset($config['system']['apinger_debug']))
+		$apinger_debug = "debug on";
+
 	$apinger_default = return_apinger_defaults();
 	$apingerconfig = <<<EOD
 
 # pfSense apinger configuration file. Automatically Generated!
+
+{$apinger_debug}
 
 ## User and group the pinger should run as
 user "root"

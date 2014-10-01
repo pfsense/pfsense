@@ -854,6 +854,7 @@ if ($savemsg)
 								</option>
 								<?php endforeach; ?>
 							</select>
+							<br /><?PHP echo gettext("NOTE: Leave this set to SHA1 unless the server is set to match. SHA1 is the default for OpenVPN."); ?>
 						</td>
 					</tr>
 					<tr id="engine">

@@ -10599,7 +10599,7 @@ msgstr "IPsec VPN"
 #: usr/local/www/diag_logs_ipsec.php:123
 #, php-format
 msgid "Last %s  IPsec log entries"
-msgstr "IPSec son %s günlük girdisi"
+msgstr "IPsec son %s günlük girdisi"
 
 #: usr/local/www/diag_logs_ipsec.php:135 usr/local/www/diag_logs_ppp.php:99
 #: usr/local/www/diag_logs_ipsec.php:134 usr/local/www/diag_logs_ppp.php:98
@@ -22302,7 +22302,7 @@ msgstr "HATA: Geçersiz yapılandırma alındı."
 #: usr/local/www/vpn_ipsec.php:139 usr/local/www/vpn_ipsec_mobile.php:330
 #: usr/local/www/vpn_ipsec_keys.php:85
 msgid "The IPsec tunnel configuration has been changed"
-msgstr "IPSec tünel yapılandırması değiştirildi"
+msgstr "IPsec tünel yapılandırması değiştirildi"
 
 #: usr/local/www/vpn_ipsec.php:141 usr/local/www/vpn_ipsec_keys.php:93
 #: usr/local/www/vpn_ipsec_mobile.php:318
@@ -42914,7 +42914,7 @@ msgstr ""
 
 #: usr/local/www/vpn_ipsec_phase2.php:192
 msgid "Mobile IPsec only supports Tunnel mode."
-msgstr "Mobil IPSec yalnızca tünel modu destekler."
+msgstr "Mobil IPsec yalnızca tünel modu destekler."
 
 #: usr/local/www/vpn_ipsec_phase2.php:287
 msgid "Phase 1 is using IPv4. You cannot use Tunnel IPv6 on Phase 2."

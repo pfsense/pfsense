@@ -39,7 +39,7 @@ $ipsec_loglevels = array("dmn" => "Daemon", "mgr" => "SA Manager", "ike" => "IKE
 	"job" => "Job Processing", "cfg" => "Configuration backend", "knl" => "Kernel Interface",
 	"net" => "Networking", "asn" => "ASN encoding", "enc" => "Message encoding",
 	"imc" => "Integrity checker", "imv" => "Integrity Verifier", "pts" => "Platform Trust Service",
-	"tls" => "TLS handler", "esp" => "IPSec traffic", "lib" => "StrongSWAN Lib");
+	"tls" => "TLS handler", "esp" => "IPsec traffic", "lib" => "StrongSWAN Lib");
 
 $my_identifier_list = array(
 	'myaddress' => array( 'desc' => gettext('My IP address'), 'mobile' => true ),
@@ -463,7 +463,7 @@ function ipsec_smp_dump_status() {
 	global $config, $g, $custom_listtags;
 
 	if (!file_exists("{$g['varrun_path']}/charon.xml")) {
-		log_error("IPSec daemon seems to have issues or not running!");
+		log_error("IPsec daemon seems to have issues or not running!");
 		return;
 	}
 
@@ -607,7 +607,7 @@ function ipsec_dump_mobile() {
 	$_gb = exec("/usr/local/sbin/ipsec stroke leases > {$g['tmp_path']}/strongswan_leases.xml");
 
 	if (!file_exists("{$g['tmp_path']}/strongswan_leases.xml")) {
-		log_error(gettext("IPSec daemon seems to have issues or not running! Could not display mobile user stats!"));
+		log_error(gettext("IPsec daemon seems to have issues or not running! Could not display mobile user stats!"));
 		return array();
 	}
 

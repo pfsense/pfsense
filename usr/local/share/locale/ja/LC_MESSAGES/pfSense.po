@@ -4497,7 +4497,7 @@ msgstr "ページ：'はもはや含まれて隠された'へのアクセスを�
 #: etc/inc/priv.defs.inc:166 etc/inc/priv.defs.inc:148
 #: etc/inc/priv.defs.inc:166
 msgid "WebCfg - Status: System logs: IPsec VPN page"
-msgstr "WebCfg - ステータス：システムログ： IPSec VPNのページ"
+msgstr "WebCfg - ステータス：システムログ： IPsec VPNのページ"
 
 #: etc/inc/priv.defs.inc:125 etc/inc/priv.defs.inc:143
 #: etc/inc/priv.defs.inc:161 etc/inc/priv.defs.inc:149
@@ -6378,7 +6378,7 @@ msgstr "WebCfg - VPN ： IPsecのページ"
 #: etc/inc/priv.defs.inc:1153 etc/inc/priv.defs.inc:1161
 #: etc/inc/priv.defs.inc:1161
 msgid "Allow access to the 'VPN: IPsec' page."
-msgstr "ページ：'のIPSec VPN 」へのアクセスを許可します。"
+msgstr "ページ：'のIPsec VPN 」へのアクセスを許可します。"
 
 #: etc/inc/priv.defs.inc:1134 etc/inc/priv.defs.inc:1152
 #: etc/inc/priv.defs.inc:1158 etc/inc/priv.defs.inc:1166
@@ -12076,7 +12076,7 @@ msgstr "TCPフラグ"
 #: etc/inc/service-utils.inc:336 usr/local/www/diag_logs_ipsec.php:91
 #: etc/inc/service-utils.inc:336
 msgid "IPsec VPN"
-msgstr "IPSec VPNの"
+msgstr "IPsec VPNの"
 
 #: usr/local/www/diag_logs_ipsec.php:123 usr/local/www/diag_logs_ipsec.php:122
 #: usr/local/www/diag_logs_ipsec.php:123
@@ -36875,7 +36875,7 @@ msgid ""
 "cryptographic acceleration card, as this will take precedence and the Hifn "
 "card will not be used. Acceleration should be automatic for IPsec when using "
 "Rijndael (AES). OpenVPN should be set for AES-128-CBC."
-msgstr "チップを持つシステムでは「AMDのGeode LXセキュリティブロックは、いくつかの暗号機能を加速していきます」 。あなたはHifnのある場合は、「暗号化アクセラレータカードを、これが優先されますし、 Hifnのように、 「カードが使用されない場合は、このオプションを有効にしないでください。 「ラインダール（ AES）を使用した場合、加速がIPSecの自動にする必要があります。 OpenVPNのは、AES - 128 -CBCのために設定する必要があります。"
+msgstr "チップを持つシステムでは「AMDのGeode LXセキュリティブロックは、いくつかの暗号機能を加速していきます」 。あなたはHifnのある場合は、「暗号化アクセラレータカードを、これが優先されますし、 Hifnのように、 「カードが使用されない場合は、このオプションを有効にしないでください。 「ラインダール（ AES）を使用した場合、加速がIPsecの自動にする必要があります。 OpenVPNのは、AES - 128 -CBCのために設定する必要があります。"
 
 #: usr/local/www/system_advanced_misc.php:332
 #: usr/local/www/system_advanced_misc.php:375
@@ -36988,7 +36988,7 @@ msgstr "MSSは、VPNトラフィックにクランプ可能にする"
 msgid ""
 "Enable MSS clamping on TCP flows over VPN. This helps overcome problems with "
 "PMTUD on IPsec VPN links. If left blank, the default value is 1400 bytes. "
-msgstr "IPSec VPNのリンク上でPMTUD 「VPN上を流れるTCP上でクランプするMSSを有効にします。これはの問題を克服するのに役立ちます」 。空白の場合、デフォルト値は1400バイトです。"
+msgstr "IPsec VPNのリンク上でPMTUD 「VPN上を流れるTCP上でクランプするMSSを有効にします。これはの問題を克服するのに役立ちます」 。空白の場合、デフォルト値は1400バイトです。"
 
 #: usr/local/www/system_advanced_misc.php:383
 #: usr/local/www/system_advanced_misc.php:426
@@ -40055,7 +40055,7 @@ msgstr "「追加ユーザーは、ここで追加することができます。
 msgid ""
 "Accounts created here are also used for other parts of the system such as "
 "OpenVPN, IPsec, and Captive Portal."
-msgstr "OpenVPNは、 IPSec、およびキャプティブポータル「ここで作成したアカウントはまた、などのシステムの他の部分に使用されます」 。"
+msgstr "OpenVPNは、 IPsec、およびキャプティブポータル「ここで作成したアカウントはまた、などのシステムの他の部分に使用されます」 。"
 
 #: usr/local/www/system_usermanager_passwordmg.php:43
 #: usr/local/www/system_usermanager_passwordmg.php:43

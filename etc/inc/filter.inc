@@ -2684,7 +2684,7 @@ function filter_rules_generate() {
 	$ipfrules .= "anchor \"relayd/*\"\n";
 	/* OpenVPN user rules from radius */
 	$ipfrules .= "anchor \"openvpn/*\"\n";
-	/* IPSec user rules from radius */
+	/* IPsec user rules from radius */
 	$ipfrules .= "anchor \"ipsec/*\"\n";
 	# BEGIN OF firewall rules
 	/* default block logging? */
@@ -3563,7 +3563,7 @@ function filter_process_carp_rules($log) {
 	return $lines;
 }
 
-/* Generate IPSEC Filter Items */
+/* Generate IPsec Filter Items */
 function filter_generate_ipsec_rules($log = array()) {
 	global $config, $g, $FilterIflist, $tracker;
 

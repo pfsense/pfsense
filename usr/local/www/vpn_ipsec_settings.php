@@ -161,7 +161,7 @@ function maxmss_checked(obj) {
 			<div class="tabcont">
 				<table width="100%" border="0" cellpadding="6" cellspacing="0" summary="main area">
 					<tr>
-						<td colspan="2" valign="top" class="listtopic"><?=gettext("IPSec Advanced Settings"); ?></td>
+						<td colspan="2" valign="top" class="listtopic"><?=gettext("IPsec Advanced Settings"); ?></td>
 					</tr>
 					<tr>
 						<td width="22%" valign="top" class="vncell"><?=gettext("LAN security associations"); ?></td>
@@ -169,7 +169,7 @@ function maxmss_checked(obj) {
 							<input name="noinstalllanspd" type="checkbox" id="noinstalllanspd" value="yes" <?php if ($pconfig['noinstalllanspd']) echo "checked=\"checked\""; ?> />
 							<strong><?=gettext("Do not install LAN SPD"); ?></strong>
 							<br />
-							<?=gettext("By default, if IPSec is enabled negating SPD are inserted to provide protection. " .
+							<?=gettext("By default, if IPsec is enabled negating SPD are inserted to provide protection. " .
 							"This behaviour can be changed by enabling this setting which will prevent installing these SPDs."); ?>
 						</td>
 					</tr>
@@ -187,7 +187,7 @@ function maxmss_checked(obj) {
 					<tr>
 						<td width="22%" valign="top" class="vncell"><?=gettext("IPsec Debug"); ?></td>
 						<td width="78%" class="vtable">
-							<strong><?=gettext("Start IPSec in debug mode based on sections selected"); ?></strong>
+							<strong><?=gettext("Start IPsec in debug mode based on sections selected"); ?></strong>
 							<br />
 							<table summary="ipsec debug">
 						<?php foreach ($ipsec_loglevels as $lkey => $ldescr): ?>
@@ -208,7 +208,7 @@ function maxmss_checked(obj) {
 						<?php endforeach; ?>
 							<tr style="display:none;"><td></td></tr>
 							</table>
-							<br /><?=gettext("Launches IPSec in debug mode so that more verbose logs " .
+							<br /><?=gettext("Launches IPsec in debug mode so that more verbose logs " .
 							"will be generated to aid in troubleshooting."); ?>
 						</td>
 					</tr>

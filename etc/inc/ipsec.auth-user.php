@@ -132,7 +132,7 @@ foreach ($authmodes as $authmode) {
 			$user = getUserEntry($username); 
 			if (!is_array($user) || !userHasPrivilege($user, "user-ipsec-xauth-dialin")) {
 				$authenticated = false;
-				syslog(LOG_WARNING, "user '{$username}' cannot authenticate through IPSec since the required privileges are missing.\n");
+				syslog(LOG_WARNING, "user '{$username}' cannot authenticate through IPsec since the required privileges are missing.\n");
 				continue;
 			}
 		}

@@ -47,7 +47,7 @@
 
 	$realif = get_real_interface($if);
 	if(!$realif)
-		$realif = $if; // Need for IPSec case interface.
+		$realif = $if; // Need for IPsec case interface.
 
 	$ifinfo = pfSense_get_interface_stats($realif);
 

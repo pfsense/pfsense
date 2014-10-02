@@ -13656,7 +13656,7 @@ msgstr "IP virtual."
 
 #: usr/local/www/firewall_nat_1to1.php:181
 msgid "If you add a 1:1 NAT entry for any of the interface IPs on this system, it will make this system inaccessible on that IP address. i.e. if you use your WAN IP address, any services on this system (IPsec, OpenVPN server, etc.) using the WAN IP address will no longer function."
-msgstr "Se você adicionar uma entrada NAT 1:1 para qualquer uma das interfaces IP no sistema, isto irá tornar o sistema inacessível naquele endereço IP. Ex.: se você usar seu endereço IP WAN, qualquer serviço neste sistema (IPSec, servidor OpenVPN, etc) utilizando o endereço IP WAN deixará de funcionar."
+msgstr "Se você adicionar uma entrada NAT 1:1 para qualquer uma das interfaces IP no sistema, isto irá tornar o sistema inacessível naquele endereço IP. Ex.: se você usar seu endereço IP WAN, qualquer serviço neste sistema (IPsec, servidor OpenVPN, etc) utilizando o endereço IP WAN deixará de funcionar."
 
 #: usr/local/www/firewall_nat_1to1_edit.php:109
 #: usr/local/www/firewall_nat_out_edit.php:125

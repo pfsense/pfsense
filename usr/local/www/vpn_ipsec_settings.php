@@ -164,7 +164,7 @@ function maxmss_checked(obj) {
 						<td colspan="2" valign="top" class="listtopic"><?=gettext("IPSec Advanced Settings"); ?></td>
 					</tr>
 					<tr>
-						<td width="22%" valign="top" class="vncell"><?=gettext("LAN security associsations"); ?></td>
+						<td width="22%" valign="top" class="vncell"><?=gettext("LAN security associations"); ?></td>
 						<td width="78%" class="vtable">
 							<input name="noinstalllanspd" type="checkbox" id="noinstalllanspd" value="yes" <?php if ($pconfig['noinstalllanspd']) echo "checked=\"checked\""; ?> />
 							<strong><?=gettext("Do not install LAN SPD"); ?></strong>

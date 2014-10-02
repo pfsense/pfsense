@@ -227,7 +227,7 @@ include("head.inc");
   <tr>
     <td>
 	<div id="mainarea">
-              <table class="tabcont" width="100%" border="0" cellpadding="0" cellspacing="0" summary="main area">
+              <table class="tabcont sortable" width="100%" border="0" cellpadding="0" cellspacing="0" summary="main area">
                 <tr>
                   <td width="30%" class="listhdrr"><?=gettext("Virtual IP address");?></td>
                   <td width="10%" class="listhdrr"><?=gettext("Interface");?></td>
@@ -279,29 +279,31 @@ include("head.inc");
                 </tr>
 		<?php endif; ?>
                 <?php $i++; endforeach; ?>
-                <tr>
-                  <td class="list" colspan="4"></td>
-                  <td class="list">
-                    <table border="0" cellspacing="0" cellpadding="1" summary="edit">
-                      <tr>
-			<td width="17"></td>
-                        <td valign="middle"><a href="firewall_virtual_ip_edit.php"><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_plus.gif" width="17" height="17" border="0" alt="edit" /></a></td>
-                      </tr>
-                    </table>
-                  </td>
-                </tr>
-		<tr>
-		  <td colspan="5">
-		      <p><span class="vexpl"><span class="red"><strong><?=gettext("Note:");?><br />
-                      </strong></span><?=gettext("The virtual IP addresses defined on this page may be used in");?><a href="firewall_nat.php"> <?=gettext("NAT"); ?> </a><?=gettext("mappings.");?><br />
-                      <?=gettext("You can check the status of your CARP Virtual IPs and interfaces ");?><a href="carp_status.php"><?=gettext("here");?></a>.</span></p>
-		  </td>
-		</tr>
-              </table>
+			<tfoot>
+				<tr>
+					<td class="list" colspan="4"></td>
+					<td class="list">
+						<table border="0" cellspacing="0" cellpadding="1" summary="edit">
+							<tr>
+								<td width="17"></td>
+								<td valign="middle"><a href="firewall_virtual_ip_edit.php"><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_plus.gif" width="17" height="17" border="0" alt="edit" /></a></td>
+							</tr>
+						</table>
+					</td>
+				</tr>
+				<tr>
+					<td colspan="5">
+					  <p><span class="vexpl"><span class="red"><strong><?=gettext("Note:");?><br />
+							  </strong></span><?=gettext("The virtual IP addresses defined on this page may be used in");?><a href="firewall_nat.php"> <?=gettext("NAT"); ?> </a><?=gettext("mappings.");?><br />
+							  <?=gettext("You can check the status of your CARP Virtual IPs and interfaces ");?><a href="carp_status.php"><?=gettext("here");?></a>.</span></p>
+					</td>
+				</tr>
+			</tfoot>
+		</table>
 	   </div><!-- div:mainarea -->
 	   </td></tr>
 	</table>
-            </form>
+  </form>
 <?php include("fend.inc"); ?>
 </body>
 </html>

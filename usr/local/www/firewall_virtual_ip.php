@@ -279,23 +279,25 @@ include("head.inc");
                 </tr>
 		<?php endif; ?>
                 <?php $i++; endforeach; ?>
-                <tfoot>
-                  <td class="list" colspan="4"></td>
-                  <td class="list">
-                    <table border="0" cellspacing="0" cellpadding="1" summary="edit">
-                      <tr>
-			<td width="17"></td>
-                        <td valign="middle"><a href="firewall_virtual_ip_edit.php"><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_plus.gif" width="17" height="17" border="0" alt="edit" /></a></td>
-                      </tr>
-                    </table>
-                  </td>
-                </tfoot>
 			<tfoot>
-			  <td colspan="5">
-				  <p><span class="vexpl"><span class="red"><strong><?=gettext("Note:");?><br />
-						  </strong></span><?=gettext("The virtual IP addresses defined on this page may be used in");?><a href="firewall_nat.php"> <?=gettext("NAT"); ?> </a><?=gettext("mappings.");?><br />
-						  <?=gettext("You can check the status of your CARP Virtual IPs and interfaces ");?><a href="carp_status.php"><?=gettext("here");?></a>.</span></p>
-			  </td>
+				<tr>
+					<td class="list" colspan="4"></td>
+					<td class="list">
+						<table border="0" cellspacing="0" cellpadding="1" summary="edit">
+							<tr>
+								<td width="17"></td>
+								<td valign="middle"><a href="firewall_virtual_ip_edit.php"><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_plus.gif" width="17" height="17" border="0" alt="edit" /></a></td>
+							</tr>
+						</table>
+					</td>
+				</tr>
+				<tr>
+					<td colspan="5">
+					  <p><span class="vexpl"><span class="red"><strong><?=gettext("Note:");?><br />
+							  </strong></span><?=gettext("The virtual IP addresses defined on this page may be used in");?><a href="firewall_nat.php"> <?=gettext("NAT"); ?> </a><?=gettext("mappings.");?><br />
+							  <?=gettext("You can check the status of your CARP Virtual IPs and interfaces ");?><a href="carp_status.php"><?=gettext("here");?></a>.</span></p>
+					</td>
+				</tr>
 			</tfoot>
 		</table>
 	   </div><!-- div:mainarea -->

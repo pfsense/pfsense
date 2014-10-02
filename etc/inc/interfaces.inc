@@ -2184,19 +2184,17 @@ function interface_carp_configure(&$vip) {
 	}
 
 	if (is_ipaddrv4($vip['subnet'])) {
-		/* Ensure CARP IP really exists prior to loading up. */
+		/* Ensure a IP on this interface exists prior to configuring CARP. */
 		$ww_subnet_ip = find_interface_ip($realif);
-		$ww_subnet_bits = find_interface_subnet($realif);
-		if (!ip_in_subnet($vip['subnet'], gen_subnet($ww_subnet_ip, $ww_subnet_bits) . "/" . $ww_subnet_bits) && !ip_in_interface_alias_subnet($vip['interface'], $vip['subnet'])) {
-			file_notice("CARP", sprintf(gettext("Sorry but we could not find a matching real interface subnet for the virtual IP address %s."), $vip['subnet']), "Firewall: Virtual IP", "");
+		if (!is_ipaddrv4($ww_subnet_ip)) {
+			file_notice("CARP", sprintf(gettext("Sorry but we could not find a required assigned ip address on the interface for the virtual IP address %s."), $vip['subnet']), "Firewall: Virtual IP", "");
 			return;
 		}
 	} else if (is_ipaddrv6($vip['subnet'])) {
-		/* Ensure CARP IP really exists prior to loading up. */
+		/* Ensure a IP on this interface exists prior to configuring CARP. */
 		$ww_subnet_ip = find_interface_ipv6($realif);
-		$ww_subnet_bits = find_interface_subnetv6($realif);
-		if (!ip_in_subnet($vip['subnet'], gen_subnetv6($ww_subnet_ip, $ww_subnet_bits) . "/" . $ww_subnet_bits) && !ip_in_interface_alias_subnet($vip['interface'], $vip['subnet'])) {
-			file_notice("CARP", sprintf(gettext("Sorry but we could not find a matching real interface subnet for the virtual IPv6 address %s."), $vip['subnet']), "Firewall: Virtual IP", "");
+		if (!is_ipaddrv6($ww_subnet_ip)) {
+			file_notice("CARP", sprintf(gettext("Sorry but we could not find a required assigned ip address on the interface for the virtual IPv6 address %s."), $vip['subnet']), "Firewall: Virtual IP", "");
 			return;
 		}
 	}
@@ -2221,7 +2219,7 @@ function interface_carp_configure(&$vip) {
 	if (is_ipaddrv4($vip['subnet']))
 		mwexec("/sbin/ifconfig {$realif} " . escapeshellarg($vip['subnet']) . "/" . escapeshellarg($vip['subnet_bits']) . " alias vhid " . escapeshellarg($vip['vhid']));
 	else if (is_ipaddrv6($vip['subnet']))
-		mwexec("/sbin/ifconfig {$realif} inet6 " . escapeshellarg($vip['subnet']) . " prefixlen " . escapeshellarg($vip['subnet_bits']) . " vhid " . escapeshellarg($vip['vhid']));
+		mwexec("/sbin/ifconfig {$realif} inet6 " . escapeshellarg($vip['subnet']) . " prefixlen " . escapeshellarg($vip['subnet_bits']) . " alias vhid " . escapeshellarg($vip['vhid']));
 
 	return $realif;
 }
@@ -4494,6 +4492,7 @@ function find_number_of_created_carp_interfaces() {
 }
 
 function get_all_carp_interfaces() {
+    trigger_error("Broken function get_all_carp_interfaces() called. Remo", E_USER_NOTICE);
 	$ints = str_replace("\n", " ", `ifconfig | grep "carp:" -B2 | grep ": flag" | cut -d: -f1`);
 	$ints = explode(" ", $ints);
 	return $ints;

@@ -119,13 +119,20 @@ if ($_POST) {
 			if (isset($id) && isset($a_vip[$id])) {
 				$ignore_if = $a_vip[$id]['interface'];
 				$ignore_mode = $a_vip[$id]['mode'];
+				if (isset($a_vip[$id]['vhid']))
+					$ignore_vhid = $a_vip[$id]['vhid'];
 			} else {
 				$ignore_if = $_POST['interface'];
 				$ignore_mode = $_POST['mode'];
 			}
 
+			if (!isset($ignore_vhid))
+				$ignore_vhid = $_POST['vhid'];
+
 			if ($ignore_mode == 'carp')
-				$ignore_if .= "_vip{$id}";
+				$ignore_if .= "_vip{$ignore_vhid}";
+			else
+				$ignore_if .= "_virtualip{$id}";
 
 			if (is_ipaddr_configured($_POST['subnet'], $ignore_if))
 				$input_errors[] = gettext("This IP address is being used by another interface or VIP.");

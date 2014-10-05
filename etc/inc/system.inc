@@ -57,7 +57,11 @@ function activate_powerd() {
 		if (!empty($config['system']['powerd_battery_mode']))
 			$battery_mode = $config['system']['powerd_battery_mode'];
 
-		mwexec("/usr/sbin/powerd -b $battery_mode -a $ac_mode");
+		$normal_mode = "hadp";
+		if (!empty($config['system']['powerd_normal_mode']))
+			$normal_mode = $config['system']['powerd_normal_mode'];
+
+		mwexec("/usr/sbin/powerd -b $battery_mode -a $ac_mode -n $normal_mode");
 	}
 }
 

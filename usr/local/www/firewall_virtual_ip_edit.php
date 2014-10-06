@@ -187,11 +187,6 @@ if ($_POST) {
 			$subnet = gen_subnetv6($parent_ip, $parent_sn);
 		}
 
-		if (isset($parent_ip) && !ip_in_subnet($_POST['subnet'], "{$subnet}/{$parent_sn}") && !ip_in_interface_alias_subnet($_POST['interface'], $_POST['subnet'])) {
-			$cannot_find = $_POST['subnet'] . "/" . $_POST['subnet_bits'] ;
-			$input_errors[] = sprintf(gettext("Sorry, we could not locate an interface with a matching subnet for %s.  Please add an IP alias in this subnet on this interface."),$cannot_find);
-		}
-
 		if ($_POST['interface'] == "lo0")
 			$input_errors[] = gettext("For this type of vip localhost is not allowed.");
 	} else if ($_POST['mode'] != 'ipalias' && $_POST['interface'] == "lo0")

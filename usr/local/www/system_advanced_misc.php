@@ -78,6 +78,10 @@ $pconfig['powerd_battery_mode'] = "hadp";
 if (!empty($config['system']['powerd_battery_mode']))
 	$pconfig['powerd_battery_mode'] = $config['system']['powerd_battery_mode'];
 
+$pconfig['powerd_normal_mode'] = "hadp";
+if (!empty($config['system']['powerd_normal_mode']))
+	$pconfig['powerd_normal_mode'] = $config['system']['powerd_normal_mode'];
+
 $crypto_modules = array('glxsb' => gettext("AMD Geode LX Security Block"),
 			'aesni' => gettext("AES-NI CPU-based Acceleration"));
 
@@ -163,6 +167,7 @@ if ($_POST) {
 
 		$config['system']['powerd_ac_mode'] = $_POST['powerd_ac_mode'];
 		$config['system']['powerd_battery_mode'] = $_POST['powerd_battery_mode'];
+		$config['system']['powerd_normal_mode'] = $_POST['powerd_normal_mode'];
 
 		if($_POST['crypto_hardware'])
 			$config['system']['crypto_hardware'] = $_POST['crypto_hardware'];
@@ -395,6 +400,14 @@ function tmpvar_checked(obj) {
 										<option value="adp"<?php if($pconfig['powerd_battery_mode']=="adp") echo " selected=\"selected\""; ?>><?=gettext("Adaptive");?></option>
 										<option value="min"<?php if($pconfig['powerd_battery_mode']=="min") echo " selected=\"selected\""; ?>><?=gettext("Minimum");?></option>
 										<option value="max"<?php if($pconfig['powerd_battery_mode']=="max") echo " selected=\"selected\""; ?>><?=gettext("Maximum");?></option>
+									</select>
+									<br />
+									<?=gettext("On Unknown Power Mode"); ?>&nbsp;:&nbsp;
+									<select name="powerd_normal_mode" id="powerd_normal_mode">
+										<option value="hadp"<?php if($pconfig['powerd_normal_mode']=="hadp") echo " selected=\"selected\""; ?>><?=gettext("Hiadaptive");?></option>
+										<option value="adp"<?php if($pconfig['powerd_normal_mode']=="adp") echo " selected=\"selected\""; ?>><?=gettext("Adaptive");?></option>
+										<option value="min"<?php if($pconfig['powerd_normal_mode']=="min") echo " selected=\"selected\""; ?>><?=gettext("Minimum");?></option>
+										<option value="max"<?php if($pconfig['powerd_normal_mode']=="max") echo " selected=\"selected\""; ?>><?=gettext("Maximum");?></option>
 									</select>
 									<br /><br />
 									<?=gettext("The powerd utility monitors the system state and sets various power control " .

@@ -50,11 +50,12 @@ unset($carp_interface_count_cache);
 unset($interface_ip_arr_cache);
 
 $status = get_carp_status();
+$status = intval($status);
 if($_POST['carp_maintenancemode'] <> "") {
 	interfaces_carp_set_maintenancemode(!isset($config["virtualip_carp_maintenancemode"]));
 }
 if($_POST['disablecarp'] <> "") {
-	if($status == true) {
+	if($status > 0) {
 		set_single_sysctl('net.inet.carp.allow', '0');
 		if(is_array($config['virtualip']['vip'])) {
 			$viparr = &$config['virtualip']['vip'];
@@ -68,6 +69,7 @@ if($_POST['disablecarp'] <> "") {
 			}
 		}
 		$savemsg = sprintf(gettext("%s IPs have been disabled. Please note that disabling does not survive a reboot."), $carp_counter);
+		$status = 0;
 	} else {
 		$savemsg = gettext("CARP has been enabled.");
 		if(is_array($config['virtualip']['vip'])) {
@@ -83,12 +85,11 @@ if($_POST['disablecarp'] <> "") {
 		}
 		interfaces_carp_setup();
 		set_single_sysctl('net.inet.carp.allow', '1');
+		$status = 1;
 	}
 }
 
-$status = get_carp_status();
-
-$carp_detected_problems = (array_pop(get_sysctl("net.inet.carp.demotion")) > 0);
+$carp_detected_problems = ((get_single_sysctl("net.inet.carp.demotion")) > 0);
 
 $pgtitle = array(gettext("Status"),gettext("CARP"));
 $shortcut_section = "carp";
@@ -119,12 +120,12 @@ include("head.inc");
 				}
 			}
 			if($carpcount > 0) {
-				if($status == false) {
-					$carp_enabled = false;
-					echo "<input type=\"submit\" name=\"disablecarp\" id=\"disablecarp\" value=\"" . gettext("Enable CARP") . "\" />";
-				} else {
+				if($status > 0) {
 					$carp_enabled = true;
 					echo "<input type=\"submit\" name=\"disablecarp\" id=\"disablecarp\" value=\"" . gettext("Temporarily Disable CARP") . "\" />";
+				} else {
+					$carp_enabled = false;
+					echo "<input type=\"submit\" name=\"disablecarp\" id=\"disablecarp\" value=\"" . gettext("Enable CARP") . "\" />";
 				}
 				if(isset($config["virtualip_carp_maintenancemode"])) {
 					echo "<input type=\"submit\" name=\"carp_maintenancemode\" id=\"carp_maintenancemode\" value=\"" . gettext("Leave Persistent CARP Maintenance Mode") . "\" />";

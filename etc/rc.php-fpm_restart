@@ -1,0 +1,11 @@
+#!/bin/sh
+
+/bin/pkill -F /var/run/php-fpm.pid 
+sleep 2
+
+# Run the php.ini setup file and populate
+# /usr/local/etc/php.ini and /usr/local/lib/php.ini
+/etc/rc.php_ini_setup 2>/tmp/php_errors.txt
+echo ">>> Restarting php-fpm" | /usr/bin/logger -p daemon.info -i -t rc.php-fpm_restart
+/usr/local/sbin/php-fpm -c /usr/local/lib/php.ini -y /usr/local/lib/php-fpm.conf -RD 2>&1 >/dev/null
+

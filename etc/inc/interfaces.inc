@@ -4491,13 +4491,6 @@ function find_number_of_created_carp_interfaces() {
 	return `/sbin/ifconfig | grep "carp:" | wc -l`;
 }
 
-function get_all_carp_interfaces() {
-    trigger_error("Broken function get_all_carp_interfaces() called. Remo", E_USER_NOTICE);
-	$ints = str_replace("\n", " ", `ifconfig | grep "carp:" -B2 | grep ": flag" | cut -d: -f1`);
-	$ints = explode(" ", $ints);
-	return $ints;
-}
-
 /*
  * find_carp_interface($ip): return the carp interface where an ip is defined
  */

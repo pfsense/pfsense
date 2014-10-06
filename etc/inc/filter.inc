@@ -2091,13 +2091,13 @@ function filter_generate_port(& $rule, $target = "source", $isnat = false) {
 function filter_address_add_vips_subnets(&$subnets, $if, $not) {
 	global $FilterIflist;
 
-	if (!isset($FilterIflist[$if]['vips']) || !is_array($FilterIflist[$if]['vips']))
-		return;
-
 	$if_subnets = array($subnets);
 
 	if ($not == true)
 		$subnets = "!{$subnets}";
+
+	if (!isset($FilterIflist[$if]['vips']) || !is_array($FilterIflist[$if]['vips']))
+		return;
 
 	foreach ($FilterIflist[$if]['vips'] as $vip) {
 		foreach ($if_subnets as $subnet)
@@ -2141,8 +2141,7 @@ function filter_generate_address(& $rule, $target = "source", $isnat = false) {
 					$opt_ip = $FilterIflist["opt{$optmatch[1]}"]['ipv6'];
 					if(!is_ipaddrv6($opt_ip))
 						return "";
-					$src = $opt_ip . "/" .
-					$FilterIflist["opt{$optmatch[1]}"]['snv6'];
+					$src = $opt_ip . "/" . $FilterIflist["opt{$optmatch[1]}"]['snv6'];
 				/* check for opt$NUMip here */
 				} else if(preg_match("/opt([0-9]*)ip/", $rule[$target]['network'], $matches)) {
 					$src = $FilterIflist["opt{$matches[1]}"]['ipv6'];
@@ -2156,8 +2155,7 @@ function filter_generate_address(& $rule, $target = "source", $isnat = false) {
 					$opt_ip = $FilterIflist["opt{$optmatch[1]}"]['ip'];
 					if(!is_ipaddrv4($opt_ip))
 						return "";
-					$src = $opt_ip . "/" .
-					$FilterIflist["opt{$optmatch[1]}"]['sn'];
+					$src = $opt_ip . "/" . $FilterIflist["opt{$optmatch[1]}"]['sn'];
 				/* check for opt$NUMip here */
 				} else if(preg_match("/opt([0-9]*)ip/", $rule[$target]['network'], $matches)) {
 					$src = $FilterIflist["opt{$matches[1]}"]['ip'];
@@ -2262,10 +2260,9 @@ function filter_generate_address(& $rule, $target = "source", $isnat = false) {
 				    (strpos($src, '{') === false))
 					$src = " !{$src}";
 			}
-			if (is_subnet($src))
-				filter_address_add_vips_subnets($src, $rule[$target]['network'],
-					isset($rule[$target]['not']));
 		}
+		if (is_subnet($src))
+			filter_address_add_vips_subnets($src, $rule[$target]['network'], isset($rule[$target]['not']));
 	} else if($rule[$target]['address']) {
 		$expsrc = alias_expand($rule[$target]['address']);
 		if(isset($rule[$target]['not']))

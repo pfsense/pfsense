@@ -358,10 +358,14 @@ function services_dhcpdv4_configure() {
 		return 0;
 
 	/* if OLSRD is enabled, allow WAN to house DHCP. */
-	if($config['installedpackages']['olsrd'])
+	if (!function_exists('is_package_installed'))
+		require_once('pkg-utils.inc');
+	if (is_package_installed('olsrd') && isset($config['installedpackages']['olsrd']))
 		foreach($config['installedpackages']['olsrd']['config'] as $olsrd)
-				if($olsrd['enable'])
-					$is_olsr_enabled = true;
+			if (isset($olsrd['enable']) && $olsrd['enable'] == "on") {
+				$is_olsr_enabled = true;
+				break;
+			}
 
 	if ($g['booting']) {
 		/* restore the leases, if we have them */

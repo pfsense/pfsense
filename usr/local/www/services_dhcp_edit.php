@@ -108,7 +108,7 @@ if (isset($id) && $a_maps[$id]) {
 	$pconfig['domain'] = $a_maps[$id]['domain'];
 	$pconfig['domainsearchlist'] = $a_maps[$id]['domainsearchlist'];
 	list($pconfig['wins1'],$pconfig['wins2']) = $a_maps[$id]['winsserver'];
-	list($pconfig['dns1'],$pconfig['dns2']) = $a_maps[$id]['dnsserver'];
+	list($pconfig['dns1'],$pconfig['dns2'],$pconfig['dns3'],$pconfig['dns4']) = $a_maps[$id]['dnsserver'];
 	$pconfig['ddnsdomain'] = $a_maps[$id]['ddnsdomain'];
 	$pconfig['ddnsdomainprimary'] = $a_maps[$id]['ddnsdomainprimary'];
 	$pconfig['ddnsdomainkeyname'] = $a_maps[$id]['ddnsdomainkeyname'];
@@ -133,6 +133,8 @@ if (isset($id) && $a_maps[$id]) {
 	$pconfig['wins2'] = $_GET['wins2'];
 	$pconfig['dns1'] = $_GET['dns1'];
 	$pconfig['dns2'] = $_GET['dns2'];
+	$pconfig['dns3'] = $_GET['dns3'];
+	$pconfig['dns4'] = $_GET['dns4'];
 	$pconfig['ddnsdomain'] = $_GET['ddnsdomain'];
 	$pconfig['ddnsdomainprimary'] = $_GET['ddnsdomainprimary'];
 	$pconfig['ddnsdomainkeyname'] = $_GET['ddnsdomainkeyname'];
@@ -229,8 +231,8 @@ if ($_POST) {
 		if(!ip_in_subnet($_POST['gateway'], gen_subnet($parent_ip, $parent_sn) . "/" . $parent_sn) && !ip_in_interface_alias_subnet($_POST['if'], $_POST['gateway']))
 			$input_errors[] = sprintf(gettext("The gateway address %s does not lie within the chosen interface's subnet."), $_POST['gateway']);
 	}
-	if (($_POST['dns1'] && !is_ipaddrv4($_POST['dns1'])) || ($_POST['dns2'] && !is_ipaddrv4($_POST['dns2'])))
-		$input_errors[] = gettext("A valid IP address must be specified for the primary/secondary DNS servers.");
+	if (($_POST['dns1'] && !is_ipaddrv4($_POST['dns1'])) || ($_POST['dns2'] && !is_ipaddrv4($_POST['dns2'])) || ($_POST['dns3'] && !is_ipaddrv4($_POST['dns3'])) || ($_POST['dns4'] && !is_ipaddrv4($_POST['dns4'])))
+		$input_errors[] = gettext("A valid IP address must be specified for each of the DNS servers.");
 
 	if ($_POST['deftime'] && (!is_numeric($_POST['deftime']) || ($_POST['deftime'] < 60)))
 		$input_errors[] = gettext("The default lease time must be at least 60 seconds.");
@@ -284,6 +286,10 @@ if ($_POST) {
 			$mapent['dnsserver'][] = $_POST['dns1'];
 		if ($_POST['dns2'])
 			$mapent['dnsserver'][] = $_POST['dns2'];
+		if ($_POST['dns3'])
+			$mapent['dnsserver'][] = $_POST['dns3'];
+		if ($_POST['dns4'])
+			$mapent['dnsserver'][] = $_POST['dns4'];
 
 		$mapent['gateway'] = $_POST['gateway'];
 		$mapent['domain'] = $_POST['domain'];
@@ -439,6 +445,8 @@ include("head.inc");
 		<td width="78%" class="vtable">
 			<input name="dns1" type="text" class="formfld unknown" id="dns1" size="20" value="<?=htmlspecialchars($pconfig['dns1']);?>" /><br />
 			<input name="dns2" type="text" class="formfld unknown" id="dns2" size="20" value="<?=htmlspecialchars($pconfig['dns2']);?>" /><br />
+			<input name="dns3" type="text" class="formfld unknown" id="dns3" size="20" value="<?=htmlspecialchars($pconfig['dns3']);?>" /><br />
+			<input name="dns4" type="text" class="formfld unknown" id="dns4" size="20" value="<?=htmlspecialchars($pconfig['dns4']);?>" /><br />
 			<?=gettext("NOTE: leave blank to use the system default DNS servers - this interface's IP if DNS forwarder is enabled, otherwise the servers configured on the General page.");?>
 		</td>
 		</tr>

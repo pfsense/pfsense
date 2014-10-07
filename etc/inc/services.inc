@@ -612,6 +612,10 @@ EOPP;
 				$dhcpdconf .= "		option domain-name-servers {$poolconf['dnsserver'][0]}";
 				if($poolconf['dnsserver'][1] <> "")
 					$dhcpdconf .= ",{$poolconf['dnsserver'][1]}";
+				if($poolconf['dnsserver'][2] <> "")
+					$dhcpdconf .= ",{$poolconf['dnsserver'][2]}";
+				if($poolconf['dnsserver'][3] <> "")
+					$dhcpdconf .= ",{$poolconf['dnsserver'][3]}";
 				$dhcpdconf .= ";\n";
 			}
 

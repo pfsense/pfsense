@@ -1710,7 +1710,6 @@ function is_interface_mismatch() {
 		}
 	}
 
-	$do_assign = true;
 	if (file_exists("{$g['tmp_path']}/assign_complete"))
 		$do_assign = false;
 

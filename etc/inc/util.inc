@@ -1710,9 +1710,8 @@ function is_interface_mismatch() {
 		}
 	}
 
-	if ($g['minimum_nic_count'] > $i) {
-		$do_assign = true;
-	} else if (file_exists("{$g['tmp_path']}/assign_complete"))
+	$do_assign = true;
+	if (file_exists("{$g['tmp_path']}/assign_complete"))
 		$do_assign = false;
 
 	if (!empty($missing_interfaces) && $do_assign)

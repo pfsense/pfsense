@@ -84,6 +84,8 @@ if ($_POST) {
 
 	unset($input_errors);
 	$pconfig = $_POST;
+	$pconfig['smtpssl'] = isset($_POST['smtpssl']) ? 'checked' : 'unchecked';
+	$pconfig['smtptls'] = isset($_POST['smtptls']) ? (isset($_POST['smtpssl']) ? 'unchecked' : 'checked') : 'unchecked';
 
 	/* if this is an AJAX caller then handle via JSON */
 	if (isAjax() && is_array($input_errors)) {
@@ -114,8 +116,8 @@ if ($_POST) {
 		// SMTP
 		$config['notifications']['smtp']['ipaddress'] = $_POST['smtpipaddress'];
 		$config['notifications']['smtp']['port'] = $_POST['smtpport'];
-		$config['notifications']['smtp']['ssl'] = isset($_POST['smtpssl']) ? 'checked' : 'unchecked';
-		$config['notifications']['smtp']['tls'] = isset($_POST['smtptls']) ? (isset($_POST['smtpssl']) ? 'unchecked' : 'checked') : 'unchecked';
+		$config['notifications']['smtp']['ssl'] = $pconfig['smtpssl'];
+		$config['notifications']['smtp']['tls'] = $pconfig['smtptls'];
 		$config['notifications']['smtp']['notifyemailaddress'] = $_POST['smtpnotifyemailaddress'];
 		$config['notifications']['smtp']['username'] = $_POST['smtpusername'];
 		$config['notifications']['smtp']['password'] = $_POST['smtppassword'];

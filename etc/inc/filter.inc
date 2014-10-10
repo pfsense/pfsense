@@ -2442,7 +2442,7 @@ function filter_generate_user_rule($rule) {
 		$l7_present = true;
 		$l7rule =& $layer7_rules_list[$rule['l7container']];
 		$l7_structures = $l7rule->get_unique_structures();
-		$aline['divert'] = "divert " . $l7rule->GetRPort() . " ";
+		$aline['divert'] = "divert-to " . $l7rule->GetRPort() . " ";
 	}
 	if (($rule['protocol'] == "icmp") && $rule['icmptype'] && ($rule['ipprotocol'] == "inet"))
 		$aline['icmp-type'] = "icmp-type {$rule['icmptype']} ";

@@ -165,21 +165,21 @@ include("head.inc");
 			<span class="vexpl"><?=gettext("The interface here serves as the local address to be used for the GRE tunnel.");?></span></td>
                 </tr>
 				<tr>
-                  <td valign="top" class="vncellreq"><?=gettext("GRE remote address");?></td>
+                  <td valign="top" class="vncellreq"><?=gettext("Remote tunnel endpoint IP address");?></td>
                   <td class="vtable">
                     <input name="remote-addr" type="text" class="formfld unknown" id="remote-addr" size="16" value="<?=htmlspecialchars($pconfig['remote-addr']);?>" />
                     <br />
                     <span class="vexpl"><?=gettext("Peer address where encapsulated GRE packets will be sent ");?></span></td>
 			    </tr>
 				<tr>
-                  <td valign="top" class="vncellreq"><?=gettext("GRE tunnel local address ");?></td>
+                  <td valign="top" class="vncellreq"><?=gettext("Local tunnel IP address ");?></td>
                   <td class="vtable">
                     <input name="tunnel-local-addr" type="text" class="formfld unknown" id="tunnel-local-addr" size="16" value="<?=htmlspecialchars($pconfig['tunnel-local-addr']);?>" />
                     <br />
-                    <span class="vexpl"><?=gettext("Local GRE tunnel endpoint");?></span></td>
+                    <span class="vexpl"><?=gettext("Local IP address assigned inside this tunnel");?></span></td>
 			    </tr>
 				<tr>
-                  <td valign="top" class="vncellreq"><?=gettext("GRE tunnel remote address ");?></td>
+                  <td valign="top" class="vncellreq"><?=gettext("Remote tunnel IP address ");?></td>
                   <td class="vtable">
                     <input name="tunnel-remote-addr" type="text" class="formfld unknown ipv4v6" id="tunnel-remote-addr" size="16" value="<?=htmlspecialchars($pconfig['tunnel-remote-addr']);?>" />
                     <select name="tunnel-remote-net" class="formselect ipv4v6" id="tunnel-remote-net">
@@ -193,14 +193,14 @@ include("head.inc");
                                         ?>
                     </select>
                     <br />
-                    <span class="vexpl"><?=gettext("Remote GRE address endpoint. The subnet part is used for the determining the network that is tunneled.");?></span></td>
+                    <span class="vexpl"><?=gettext("IP address inside this tunnel on the remote end. The subnet part is used for the determining the network that is tunneled.");?></span></td>
 			    </tr>
 				<tr>
-                  <td valign="top" class="vncell"><?=gettext("Mobile tunnel");?></td>
+                  <td valign="top" class="vncell"><?=gettext("Mobile encapsulation");?></td>
                   <td class="vtable">
                     <input name="link0" type="checkbox" id="link0" <?if ($pconfig['link0']) echo "checked=\"checked\"";?> />
                     <br />
-                    <span class="vexpl"><?=gettext("Specify which encapsulation method the tunnel should use. ");?></span></td>
+                    <span class="vexpl"><?=gettext("Check this box to use mobile encapsulation (IP protocol 55, RFC 2004). When unchecked, uses GRE encapsulation (IP protocol 47, RFCs 1701, 1702).");?></span></td>
 			    </tr>
 				<tr>
                   <td valign="top" class="vncell"><?=gettext("Route search type");?></td>

@@ -127,7 +127,7 @@ function enable_altpkgrepourl(enable_over) {
 			<tr><td><?=gettext("Base URL:");?></td><td><input name="pkgrepourl" type="text" class="formfld url" id="pkgrepourl" size="64" value="<?php if($curcfg['xmlrpcbaseurl']) echo $curcfg['xmlrpcbaseurl']; else echo $g['']; ?>" /></td></tr>
 			</table>
 			<span class="vexpl">
-				<?php printf(gettext("This is where %s will check for packages when the"),$g['product_name']);?>, <a href="pkg_mgr.php"><?=gettext("System: Packages");?></a> <?=gettext("page is viewed.");?>
+				<?php printf(gettext("This is where %s will check for packages when the"),$g['product_name']);?> <a href="pkg_mgr.php"><?=gettext("System: Packages");?></a> <?=gettext("page is viewed.");?>
 				</span>
 				</td>
 	</tr>

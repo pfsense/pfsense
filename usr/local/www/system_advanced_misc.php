@@ -314,7 +314,7 @@ function tmpvar_checked(obj) {
 								<td width="78%" class="vtable">
 									<input name="proxyurl" id="proxyurl" value="<?php if ($pconfig['proxyurl'] <> "") echo $pconfig['proxyurl']; ?>" class="formfld unknown" />
 									<br />
-									<?php printf(gettext("Proxy url for allowing %s to use this proxy to connect outside."),$g['product']); ?>
+									<?php printf(gettext("Hostname or IP address of proxy server this system will use for its outbound Internet access.")); ?>
 								</td>
 							</tr>
 							<tr>
@@ -322,7 +322,7 @@ function tmpvar_checked(obj) {
 								<td width="78%" class="vtable">
 									<input name="proxyport" id="proxyport" value="<?php if ($pconfig['proxyport'] <> "") echo $pconfig['proxyport']; ?>" class="formfld unknown" />
 									<br />
-									<?php printf(gettext("Proxy port to use when %s connects to the proxy URL configured above. Default is 8080 for http protocol or 443 for ssl."),$g['product']); ?>
+									<?php printf(gettext("Port where proxy server is listening.")); ?>
 								</td>
 							</tr>
 							<tr>
@@ -330,15 +330,15 @@ function tmpvar_checked(obj) {
 								<td width="78%" class="vtable">
 									<input name="proxyuser" id="proxyuser" value="<?php if ($pconfig['proxyuser'] <> "") echo $pconfig['proxyuser']; ?>" class="formfld unknown" />
 									<br />
-									<?php printf(gettext("Proxy username for allowing %s to use this proxy to connect outside"),$g['product']); ?>
+									<?php printf(gettext("Username for authentication to proxy server. Optional, leave blank to not use authentication.")); ?>
 								</td>
 							</tr>
 							<tr>
-								<td width="22%" valign="top" class="vncell"><?=gettext("Proxy Pass"); ?></td>
+								<td width="22%" valign="top" class="vncell"><?=gettext("Proxy Password"); ?></td>
 								<td width="78%" class="vtable">
 									<input type="password" name="proxypass" id="proxypass" value="<?php if ($pconfig['proxypass'] <> "") echo $pconfig['proxypass']; ?>" class="formfld unknown" />
 									<br />
-									<?php printf(gettext("Proxy password for allowing %s to use this proxy to connect outside"),$g['product']); ?>
+									<?php printf(gettext("Password for authentication to proxy server.")); ?>
 								</td>
 							</tr>
 							<tr>
@@ -369,9 +369,9 @@ function tmpvar_checked(obj) {
 								<td width="22%" valign="top" class="vncell"><?=gettext("Load Balancing"); ?></td>
 								<td width="78%" class="vtable">
 									<input name="gw_switch_default" type="checkbox" id="gw_switch_default" value="yes" <?php if ($pconfig['gw_switch_default']) echo "checked=\"checked\""; ?> />
-									<strong><?=gettext("Allow default gateway switching"); ?></strong><br />
-									<?=gettext("If the link where the default gateway resides fails " .
-									"switch the default gateway to another available one."); ?>
+									<strong><?=gettext("Enable default gateway switching"); ?></strong><br />
+									<?=gettext("If the default gateway goes down, " .
+									"switch the default gateway to another available one. This is not enabled by default, as it's unnecessary in most all scenarios, which instead use gateway groups."); ?>
 								</td>
 							</tr>
 							<tr>
@@ -500,7 +500,7 @@ function tmpvar_checked(obj) {
 								<td width="78%" class="vtable">
 									<input name="schedule_states" type="checkbox" id="schedule_states" value="yes" <?php if ($pconfig['schedule_states']) echo "checked=\"checked\""; ?> />
 									<br />
-									<?=gettext("By default schedules clear the states of existing connections when the expiration time has come. ".
+									<?=gettext("By default, when a schedule expires, connections permitted by that schedule are killed. ".
 									"This option overrides that behavior by not clearing states for existing connections."); ?>
 								</td>
 							</tr>
@@ -523,18 +523,17 @@ function tmpvar_checked(obj) {
 								<td width="78%" class="vtable">
 									<input name="skip_rules_gw_down" type="checkbox" id="skip_rules_gw_down" value="yes" <?php if ($pconfig['skip_rules_gw_down']) echo "checked=\"checked\""; ?> />
 									<br />
-									<?=gettext("By default, when a rule has a specific gateway set, and this gateway is down, ".
-									"rule is created and traffic is sent to default gateway.This option overrides that behavior ".
-									"and the rule is not created when gateway is down"); ?>
+									<?=gettext("By default, when a rule has a gateway specified and this gateway is down, ".
+									"the rule is created omitting the gateway. This option overrides that behavior by omitting ".
+									"the entire rule instead."); ?>
 								</td>
 							</tr>
 							<tr>
-								<td width="22%" valign="top" class="vncell"><?=gettext("Enable debugging messages of gateway monitoring daemon"); ?></td>
+								<td width="22%" valign="top" class="vncell"><?=gettext("Enable gateway monitoring debug logging"); ?></td>
 								<td width="78%" class="vtable">
 									<input name="apinger_debug" type="checkbox" id="apinger_debug" value="yes" <?php if ($pconfig['apinger_debug']) echo "checked=\"checked\""; ?> />
 									<br />
-									<?=gettext("By default, gateway monitoring does not log its error messages, ".
-									"by toggling this setting the daemon would enable logging its messages to syslog."); ?>
+									<?=gettext("Enable this setting to log debug information from the gateway monitoring process to the system logs."); ?>
 								</td>
 							</tr>
 							<tr>

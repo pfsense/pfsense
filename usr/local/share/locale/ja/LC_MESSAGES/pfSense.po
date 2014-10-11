@@ -4063,17 +4063,17 @@ msgstr "「モニターは%1$sのスタティックルートの取り外しと%2
 
 #: etc/inc/gwlb.inc:501 etc/inc/gwlb.inc:727 etc/inc/gwlb.inc:750
 #, php-format
-msgid "MONITOR: %s is down, removing from routing group"
+msgid "MONITOR: %s is down, omitting from routing group"
 msgstr "モニタ： %s 、グループをルーティングから取り出し、ダウンしている"
 
 #: etc/inc/gwlb.inc:505 etc/inc/gwlb.inc:731 etc/inc/gwlb.inc:754
 #, php-format
-msgid "MONITOR: %s has packet loss, removing from routing group"
+msgid "MONITOR: %s has packet loss, omitting from routing group"
 msgstr "MONITOR ： %sは、ルーティンググループから除去し、パケット損失を有する"
 
 #: etc/inc/gwlb.inc:509 etc/inc/gwlb.inc:735 etc/inc/gwlb.inc:758
 #, php-format
-msgid "MONITOR: %s has high latency, removing from routing group"
+msgid "MONITOR: %s has high latency, omitting from routing group"
 msgstr "モニタ： %s 、グループをルーティングから取り出し、大きな遅延がある"
 
 #: etc/inc/gwlb.inc:526 etc/inc/gwlb.inc:752 etc/inc/gwlb.inc:775

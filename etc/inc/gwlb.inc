@@ -822,15 +822,15 @@ function return_gateway_groups_array() {
 					$status = $gateways_status[$gwname];
 					$gwdown = false;
 					if (stristr($status['status'], "down")) {
-						$msg = sprintf(gettext("MONITOR: %s is down, removing from routing group {$group['name']}"), $gwname);
+						$msg = sprintf(gettext("MONITOR: %s is down, omitting from routing group {$group['name']}"), $gwname);
 						$gwdown = true;
 					} else if (stristr($status['status'], "loss") && strstr($group['trigger'], "loss")) {
 						/* packet loss */
-						$msg = sprintf(gettext("MONITOR: %s has packet loss, removing from routing group {$group['name']}"), $gwname);
+						$msg = sprintf(gettext("MONITOR: %s has packet loss, omitting from routing group {$group['name']}"), $gwname);
 						$gwdown = true;
 					} else if (stristr($status['status'], "delay") && strstr($group['trigger'] , "latency")) {
 						/* high latency */
-						$msg = sprintf(gettext("MONITOR: %s has high latency, removing from routing group {$group['name']}"), $gwname);
+						$msg = sprintf(gettext("MONITOR: %s has high latency, omitting from routing group {$group['name']}"), $gwname);
 						$gwdown = true;
 					}
 					if ($gwdown == true) {

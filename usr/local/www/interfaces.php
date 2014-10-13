@@ -710,8 +710,18 @@ if ($_POST['apply']) {
 	if (($_POST['spoofmac'] && !is_macaddr($_POST['spoofmac'])))
 		$input_errors[] = gettext("A valid MAC address must be specified.");
 	if ($_POST['mtu']) {
-		if ($_POST['mtu'] < 576 || $_POST['mtu'] > 9000)
-			$input_errors[] = gettext("The MTU must be greater than 576 bytes and less than 9000.");
+		if (substr($wancfg['if'], 0, 3) == 'gif') {
+			$min_mtu = 1280;
+			$max_mtu = 8192;
+		} else {
+			$min_mtu = 576;
+			$max_mtu = 9000;
+		}
+
+		if ($_POST['mtu'] < $min_mtu || $_POST['mtu'] > $max_mtu)
+			$input_errors[] = sprintf(gettext("The MTU must be greater than %d bytes and less than %d."), $min_mtu, $max_mtu);
+
+		unset($min_mtu, $max_mtu);
 
 		if (stristr($wancfg['if'], "_vlan")) {
 			$realhwif_array = get_parent_interface($wancfg['if']);

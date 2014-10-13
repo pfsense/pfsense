@@ -489,22 +489,30 @@ function ip_range_to_subnet_array($startip, $endip) {
 	return $rangesubnets;
 }
 
+/* Arg represents a valid IPv4 or IPv6 range?
+   	false - if not a valid range
+   	true (numeric 4 or 6) - if valid, gives type of IP range */
+   	
 function is_iprange($range) {
-	if (substr_count($range, '-') != 1) {
-		return false;
+	$ip = explode ('-', $range);
+	if (count($ip) == 2) {
+		if (is_ipaddrv4($ip[0]) && is_ipaddrv4($ip[1]) && ip_compare($ip[0], $ip[1]) == 1)
+			return 4;
+		if (is_ipaddrv6($ip[0]) && is_ipaddrv6($ip[1]) && ip_compare($ip[0], $ip[1]) == 1)
+			return 6;
 	}
-	list($ip1, $ip2) = explode ('-', $range);
-	return (is_ipaddr($ip1) && is_ipaddr($ip2));
+	return false;
 }
 
-/* returns true if $ipaddr is a valid dotted IPv4 address or a IPv6 */
+/* returns true if $ipaddr is a valid dotted-quad IPv4 or IPv6 address
+   	false - if not a valid IP
+   	true (numeric 4 or 6) - if valid, gives type of IP */
+
 function is_ipaddr($ipaddr) {
-	if(is_ipaddrv4($ipaddr)) {
-		return true;
-	}
-	if(is_ipaddrv6($ipaddr)) {
-		return true;
-	}
+	if (is_ipaddrv4($ipaddr))
+		return 4;
+	if (is_ipaddrv6($ipaddr))
+		return 6;
 	return false;
 }
 

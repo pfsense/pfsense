@@ -719,7 +719,7 @@ if ($_POST['apply']) {
 		}
 
 		if ($_POST['mtu'] < $min_mtu || $_POST['mtu'] > $max_mtu)
-			$input_errors[] = sprintf(gettext("The MTU must be greater than %d bytes and less than %d."), $min_mtu, $max_mtu);
+			$input_errors[] = sprintf(gettext("The MTU must be from %d to %d bytes."), $min_mtu, $max_mtu);
 
 		unset($min_mtu, $max_mtu);
 

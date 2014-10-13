@@ -730,7 +730,7 @@ function interfaces_lagg_configure($realif = "") {
 		echo gettext("done.") . "\n";
 }
 
-function interface_lagg_configure(&$lagg) {
+function interface_lagg_configure($lagg) {
 	global $config, $g;
 
 	if (!is_array($lagg))
@@ -747,30 +747,47 @@ function interface_lagg_configure(&$lagg) {
 	} else
 		$laggif = pfSense_interface_create("lagg");
 
-	/* Calculate smaller mtu and enforce it */
-	$smallermtu = 0;
-	foreach ($members as $member) {
-		$opts = pfSense_get_interface_addresses($member);
-		$mtu = $opts['mtu'];
-		if (!isset($opts['caps']['txcsum']))
-			$commontx = false;
-		if (!isset($opts['caps']['rxcsum']))
-			$commonrx = false;
-		if (!isset($opts['caps']['tso4']))
-			$commontso4 = false;
-		if (!isset($opts['caps']['tso6']))
-			$commontso6 = false;
-		if (!isset($opts['caps']['lro']))
-			$commonlro = false;
-		if ($smallermtu == 0 && !empty($mtu))
-			$smallermtu = $mtu;
-		else if (!empty($mtu) && $mtu < $smallermtu)
-			$smallermtu = $mtu;
+	/* Check if MTU was defined for this lagg interface */
+	$lagg_mtu = 0;
+	if (is_array($config['interfaces'])) {
+		foreach ($config['interfaces'] as $ifname => $ifdata) {
+			if ($ifdata['if'] != $laggif)
+				continue;
+
+			if (isset($ifdata['mtu']) && !empty($ifdata['mtu'])) {
+				$lagg_mtu = $ifdata['mtu'];
+				break;
+			}
+		}
+	}
+
+	if ($lagg_mtu == 0) {
+		/* Calculate smaller mtu and enforce it */
+		$smallermtu = 0;
+		foreach ($members as $member) {
+			$opts = pfSense_get_interface_addresses($member);
+			$mtu = $opts['mtu'];
+			if (!isset($opts['caps']['txcsum']))
+				$commontx = false;
+			if (!isset($opts['caps']['rxcsum']))
+				$commonrx = false;
+			if (!isset($opts['caps']['tso4']))
+				$commontso4 = false;
+			if (!isset($opts['caps']['tso6']))
+				$commontso6 = false;
+			if (!isset($opts['caps']['lro']))
+				$commonlro = false;
+			if ($smallermtu == 0 && !empty($mtu))
+				$smallermtu = $mtu;
+			else if (!empty($mtu) && $mtu < $smallermtu)
+				$smallermtu = $mtu;
+		}
+		$lagg_mtu = $smallermtu;
 	}
 
 	/* Just in case anything is not working well */
-	if ($smallermtu == 0)
-		$smallermtu = 1500;
+	if ($lagg_mtu == 0)
+		$lagg_mtu = 1500;
 
 	$flags_on = 0;
 	$flags_off = 0;
@@ -801,7 +818,7 @@ function interface_lagg_configure(&$lagg) {
 		if (!array_key_exists($member, $checklist))
 			continue;
 		/* make sure the parent interface is up */
-		pfSense_interface_mtu($member, $smallermtu);
+		pfSense_interface_mtu($member, $lagg_mtu);
 		pfSense_interface_capabilities($member, -$flags_off);
 		pfSense_interface_capabilities($member, $flags_on);
 		interfaces_bring_up($member);
@@ -3123,6 +3140,18 @@ function interface_configure($interface = "wan", $reloadall = false, $linkupeven
 				interface_vlan_adapt_mtu(link_interface_to_vlans($realhwif), $wancfg['mtu']);
 			} else
 				pfSense_interface_mtu($realif, $wancfg['mtu']);
+		} else if (substr($realif, 0, 4) == 'lagg') {
+			/* LAGG interface must be destroyed and re-created to change MTU */
+			if ($wancfg['mtu'] != get_interface_mtu($realif)) {
+				if (isset($config['laggs']['lagg']) && is_array($config['laggs']['lagg'])) {
+					foreach ($config['laggs']['lagg'] as $lagg) {
+						if ($lagg['laggif'] == $realif) {
+							interface_lagg_configure($lagg);
+							break;
+						}
+					}
+				}
+			}
 		} else {
 			if ($wancfg['mtu'] != get_interface_mtu($realif))
 				pfSense_interface_mtu($realif, $wancfg['mtu']);
@@ -3130,7 +3159,7 @@ function interface_configure($interface = "wan", $reloadall = false, $linkupeven
 			/* This case is needed when the parent of vlans is being configured */
 			interface_vlan_adapt_mtu(link_interface_to_vlans($realif), $wancfg['mtu']);
 		}
-		/* XXX: What about gre/gif/lagg/.. ? */
+		/* XXX: What about gre/gif/.. ? */
 	}
 
 	if (does_interface_exist($wancfg['if']))

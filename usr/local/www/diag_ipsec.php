@@ -441,10 +441,26 @@ $status = ipsec_smp_dump_status();
 				</td>
 				<td class="listr" >
 				</td>
+<?php
+			if (isset($ph1ent['mobile'])):
+?>
+				<td class="listr">
+					<center>
+						<img src ="/themes/<?php echo $g['theme']; ?>/images/icons/icon_pass.gif" title=<?php echo gettext("Waiting connections");?> alt=""/>
+						<br/><?php echo gettext("Waiting connections");?>
+					</center>
+				</td>
+				<td valign="middle" class="list nowrap">
+					<table border="0" cellspacing="0" cellpadding="1" summary="">
+					</table>
+				</td>
+<?php
+			else:
+?>
 				<td class="listr">
 					<center>
 						<img src ="/themes/<?php echo $g['theme']; ?>/images/icons/icon_reject.gif" title=<?php echo gettext("Disconnected");?> alt=""/>
-						<br/>Disconnected
+						<br/><?php echo gettext("Disconnected");?>
 					</center>
 				</td>
 				<td >
@@ -454,6 +470,9 @@ $status = ipsec_smp_dump_status();
 						</a>
 					</center>
 				</td>
+<?php
+			endif;
+?>
 				<td valign="middle" class="list nowrap">
 					<table border="0" cellspacing="0" cellpadding="1" summary="">
 					</table>

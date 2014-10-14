@@ -896,7 +896,8 @@ if ($_POST['apply']) {
 		unset($wancfg['pptp_username']);
 		unset($wancfg['pptp_password']);
 		unset($wancfg['provider']);
-		unset($wancfg['ondemand']);
+		if ($wancfg['ipaddr'] != "ppp")
+			unset($wancfg['ondemand']);
 		unset($wancfg['timeout']);
 		if (empty($wancfg['pppoe']['pppoe-reset-type']))
 			unset($wancfg['pppoe']['pppoe-reset-type']);

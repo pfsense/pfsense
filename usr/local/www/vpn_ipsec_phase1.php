@@ -171,6 +171,7 @@ if ($_POST) {
 		case "xauth_psk_server":
 			$reqdfields = explode(" ", "pskey");
 			$reqdfieldsn = array(gettext("Pre-Shared Key"));
+			$validate_pskey = true;
 			break;
 		case "hybrid_rsa_server":
 		case "xauth_rsa_server":
@@ -185,6 +186,11 @@ if ($_POST) {
 	}
 
 	do_input_validation($pconfig, $reqdfields, $reqdfieldsn, $input_errors);
+
+	if (isset($validate_pskey) && isset($pconfig['pskey']) && !preg_match('/^[[:ascii:]]*$/', $pconfig['pskey'])) {
+		unset($validate_pskey);
+		$input_errors[] = gettext("Pre-Shared Key contains invalid characters.");
+	}
 
 	if (($pconfig['lifetime'] && !is_numeric($pconfig['lifetime'])))
 		$input_errors[] = gettext("The P1 lifetime must be an integer.");

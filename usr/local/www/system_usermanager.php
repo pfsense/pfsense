@@ -210,6 +210,9 @@ if ($_POST['save']) {
 	if (($_POST['passwordfld1']) && ($_POST['passwordfld1'] != $_POST['passwordfld2']))
 		$input_errors[] = gettext("The passwords do not match.");
 
+	if (isset($_POST['ipsecpsk']) && !preg_match('/^[[:ascii:]]*$/', $_POST['ipsecpsk']))
+		$input_errors[] = gettext("IPsec Pre-Shared Key contains invalid characters.");
+
 	if (isset($id) && $a_user[$id])
 		$oldusername = $a_user[$id]['name'];
 	else

@@ -78,6 +78,9 @@ if ($_POST) {
 		$input_errors[] = gettext("A user with this name already exists. Add the key to the user instead.");
 	unset($userids);
 	
+	if (isset($_POST['psk']) && !preg_match('/^[[:ascii:]]*$/', $_POST['psk']))
+		$input_errors[] = gettext("Pre-Shared Key contains invalid characters.");
+
 	if (!$input_errors && !(isset($id) && $a_secret[$id])) {
 		/* make sure there are no dupes */
 		foreach ($a_secret as $secretent) {

@@ -443,7 +443,7 @@ $status = ipsec_smp_dump_status();
 				</td>
 				<td class="listr">
 					<center>
-						<img src ="/themes/<?php echo $g['theme']; ?>/images/icons/icon_reject.gif" title="Disconnected" alt=""/>
+						<img src ="/themes/<?php echo $g['theme']; ?>/images/icons/icon_reject.gif" title=<?php echo gettext("Disconnected");?> alt=""/>
 						<br/>Disconnected
 					</center>
 				</td>

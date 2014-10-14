@@ -1976,7 +1976,7 @@ function interfaces_carp_setup() {
 		unset($carp_sync_int);
 
 	/* setup pfsync interface */
-	if ($carp_sync_int and $pfsyncenabled) {
+	if (isset($carp_sync_int) and isset($pfsyncenabled)) {
 		if (is_ipaddr($pfsyncpeerip))
 			$syncpeer = "syncpeer {$pfsyncpeerip}";
 		else

@@ -318,7 +318,7 @@ if (!isBlank($_POST['txtPHPCommand'])) {
       <td valign="top" class="label">
          <input type="submit" class="button" value="<?=gettext("Execute"); ?>" />
 	 <p>
-	 <strong><?=gettext("Example"); ?>:</strong>   interfaces_carp_setup();
+	 <strong><?=gettext("Example"); ?>:</strong>   interfaces_sync_setup();
 	 </p>
       </td>
     </tr>

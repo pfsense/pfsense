@@ -1942,12 +1942,12 @@ EOD;
 	return 1;
 }
 
-function interfaces_carp_setup() {
+function interfaces_sync_setup() {
 	global $g, $config;
 
 	if (isset($config['system']['developerspew'])) {
 		$mt = microtime();
-		echo "interfaces_carp_setup() being called $mt\n";
+		echo "interfaces_sync_setup() being called $mt\n";
 	}
 
 	if ($g['booting']) {
@@ -2129,7 +2129,7 @@ function interfaces_vips_configure($interface = "") {
 			}
 		}
 		if ($carp_setuped == true)
-			interfaces_carp_setup();
+			interfaces_sync_setup();
 		if ($anyproxyarp == true)
 			interface_proxyarp_configure();
 	}

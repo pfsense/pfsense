@@ -83,7 +83,7 @@ if($_POST['disablecarp'] <> "") {
 				}
 			}
 		}
-		interfaces_carp_setup();
+		interfaces_sync_setup();
 		set_single_sysctl('net.inet.carp.allow', '1');
 		$status = 1;
 	}

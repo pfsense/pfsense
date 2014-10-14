@@ -274,7 +274,7 @@ function restore_config_section_xmlrpc($raw_params) {
 				pfSense_interface_deladdress($oldvipif, $oldvipar['subnet']);
 		}
 		if ($carp_setuped == true)
-			interfaces_carp_setup();
+			interfaces_sync_setup();
 		if ($anyproxyarp == true)
 			interface_proxyarp_configure();
 	}

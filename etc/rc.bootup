@@ -265,6 +265,7 @@ echo "done.\n";
 if(!$debugging)
 	mute_kernel_msgs();
 interfaces_configure();
+interfaces_sync_setup();
 if(!$debugging)
 	unmute_kernel_msgs();
 

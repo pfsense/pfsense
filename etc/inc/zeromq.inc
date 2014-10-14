@@ -273,7 +273,7 @@ function interfaces_carp_configure_zeromq($raw_params) {
 	$params = $raw_params;
 	if(zeromq_auth($raw_params) == false) 
 		return ZEROMQ_AUTH_FAIL;
-	interfaces_carp_setup();
+	interfaces_sync_setup();
 	interfaces_vips_configure();
 	return ZEROMQ_FASLE;
 }

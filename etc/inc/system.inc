@@ -544,7 +544,7 @@ function system_staticroutes_configure($interface = "", $update_dns = false) {
 			}
 
 			if (isset($rtent['disabled'])) {
-				/* XXX: This is a bit dangerous in case of routing daemons!? */
+				/* XXX: This can break things by deleting routes that shouldn't be deleted - OpenVPN, dynamic routing scenarios, etc. redmine #3709 */
 				foreach ($ips as $ip)
 					mwexec("/sbin/route delete " . escapeshellarg($ip), true);
 				continue;

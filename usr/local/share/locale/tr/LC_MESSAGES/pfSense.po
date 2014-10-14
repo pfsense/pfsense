@@ -13906,8 +13906,7 @@ msgstr "Grup için bu isim kullanılamaz."
 #: usr/local/www/firewall_aliases_edit.php:145
 #: usr/local/www/firewall_aliases_edit.php:145
 msgid ""
-"The alias name must be less than 32 characters long and may only consist of "
-"the characters"
+"The alias name must be less than 32 characters long, may not consist of only numbers, and may only contain the following characters "
 msgstr "Grup adı sadece karakterlerden oluşmalıdır ve 32 karakteri geçmemelidir"
 
 #: usr/local/www/firewall_aliases_edit.php:187

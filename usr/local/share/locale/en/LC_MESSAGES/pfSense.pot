@@ -15735,8 +15735,7 @@ msgstr ""
 #: usr/local/www/firewall_aliases_edit.php:139
 #: usr/local/www/firewall_aliases_edit.php:139
 msgid ""
-"The alias name must be less than 32 characters long and may only consist of "
-"the characters"
+"The alias name must be less than 32 characters long, may not consist of only numbers, and may only contain the following characters "
 msgstr ""
 
 #: usr/local/www/firewall_aliases_edit.php:187

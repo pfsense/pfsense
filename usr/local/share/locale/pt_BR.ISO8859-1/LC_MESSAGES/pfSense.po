@@ -13223,7 +13223,7 @@ msgstr "Palavra reservada usada para nome de alias."
 
 #: usr/local/www/firewall_aliases_edit.php:145
 #: usr/local/www/firewall_aliases_edit.php:139
-msgid "The alias name must be less than 32 characters long and may only consist of the characters"
+msgid "The alias name must be less than 32 characters long, may not consist of only numbers, and may only contain the following characters"
 msgstr "O nome de alias deve conter menos de 32 caracteres e deve consistir apenas de caracteres"
 
 #: usr/local/www/firewall_aliases_edit.php:187

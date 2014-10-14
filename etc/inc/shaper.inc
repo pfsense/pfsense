@@ -3044,7 +3044,8 @@ class dnpipe_class extends dummynet_class {
 		$schedule = 0;
 		$schedulenone = 0;
 		$entries = 0;
-		for ($i = 0; $i < 30; $i++) {
+		/* XXX: Really no better way? */
+		for ($i = 0; $i < 2900; $i++) {
 			if (!empty($data["bwsched{$i}"])) {
 				if ($data["bwsched{$i}"] != "none")
 					$schedule++;
@@ -3082,7 +3083,8 @@ class dnpipe_class extends dummynet_class {
 
 		if (!empty($_POST)) {
 			$bandwidth = array();
-			for ($i = 0; $i < 30; $i++) {
+			/* XXX: Really no better way? */
+			for ($i = 0; $i < 2900; $i++) {
 				if (isset($q["bandwidth{$i}"]) && $q["bandwidth{$i}"] <> "") {
 					$bw = array();
 					$bw['bw'] = $q["bandwidth{$i}"];

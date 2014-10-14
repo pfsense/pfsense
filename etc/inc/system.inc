@@ -830,6 +830,44 @@ EOD;
 	return $retval;
 }
 
+function system_webgui_create_certificate() {
+	global $config, $g;
+
+	if (!is_array($config['ca']))
+		$config['ca'] = array();
+	$a_ca =& $config['ca'];
+	if (!is_array($config['cert']))
+		$config['cert'] = array();
+	$a_cert =& $config['cert'];
+	log_error("Creating SSL Certificate for this host");
+
+	$cert = array();
+	$cert['refid'] = uniqid();
+	$cert['descr'] = gettext("webConfigurator default");
+
+	$dn = array(
+		'countryName' => "US",
+		'stateOrProvinceName' => "State",
+		'localityName' => "Locality",
+		'organizationName' => "{$g['product_name']} webConfigurator Self-Signed Certificate",
+		'emailAddress' => "admin@{$config['system']['hostname']}.{$config['system']['domain']}",
+		'commonName' => $config['system']['hostname'] . '-' . uniqid());
+	$old_err_level = error_reporting(0); /* otherwise openssl_ functions throw warings directly to a page screwing menu tab */
+	if (!cert_create($cert, null, 2048, 2000, $dn, "self-signed", "sha256")){
+		while($ssl_err = openssl_error_string()){
+			log_error("Error creating WebGUI Certificate: openssl library returns: " . $ssl_err);
+		}
+		error_reporting($old_err_level);
+		return null;
+	}
+	error_reporting($old_err_level);
+
+	$a_cert[] = $cert;
+	$config['system']['webgui']['ssl-certref'] = $cert['refid'];
+	write_config(gettext("Importing HTTPS certificate"));
+	return $cert;
+}
+
 function system_webgui_start() {
 	global $config, $g;
 
@@ -852,36 +890,17 @@ function system_webgui_start() {
 		// Ensure that we have a webConfigurator CERT
 		$cert =& lookup_cert($config['system']['webgui']['ssl-certref']);
 		if(!is_array($cert) && !$cert['crt'] && !$cert['prv']) {
-			if (!is_array($config['ca']))
-				$config['ca'] = array();
-			$a_ca =& $config['ca'];
-			if (!is_array($config['cert']))
-				$config['cert'] = array();
-			$a_cert =& $config['cert'];
-			log_error("Creating SSL Certificate for this host");
-			$cert = array();
-			$cert['refid'] = uniqid();
-			$cert['descr'] = gettext("webConfigurator default");
-			mwexec("/usr/bin/openssl genrsa 1024 > {$g['tmp_path']}/ssl.key");
-			mwexec("/usr/bin/openssl req -new -x509 -nodes -sha256 -days 2000 -key {$g['tmp_path']}/ssl.key > {$g['tmp_path']}/ssl.crt");
-			$crt = file_get_contents("{$g['tmp_path']}/ssl.crt");
-			$key = file_get_contents("{$g['tmp_path']}/ssl.key");
-			unlink("{$g['tmp_path']}/ssl.key");
-			unlink("{$g['tmp_path']}/ssl.crt");
-			cert_import($cert, $crt, $key);
-			$a_cert[] = $cert;
-			$config['system']['webgui']['ssl-certref'] = $cert['refid'];
-			write_config(gettext("Importing HTTPS certificate"));
-			if(!$config['system']['webgui']['port'])
-				$portarg = "443";
-			$ca = ca_chain($cert);
+			$cert = system_webgui_create_certificate();
+			$crt = $cert['crt'];
+			$key = $cert['prv'];
 		} else {
 			$crt = base64_decode($cert['crt']);
 			$key = base64_decode($cert['prv']);
-			if(!$config['system']['webgui']['port'])
-				$portarg = "443";
-			$ca = ca_chain($cert);
 		}
+
+		if(!$config['system']['webgui']['port'])
+			$portarg = "443";
+		$ca  = ca_chain($cert);
 	}
 
 	/* generate lighttpd configuration */

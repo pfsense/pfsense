@@ -270,22 +270,28 @@ function cert_import(& $cert, $crt_str, $key_str) {
 
 function cert_create(& $cert, $caref, $keylen, $lifetime, $dn, $type="user", $digest_alg = "sha256") {
 
-	$ca =& lookup_ca($caref);
-	if (!$ca)
-		return false;
+	$cert['type'] = $type;
 
-	$ca_str_crt = base64_decode($ca['crt']);
-	$ca_str_key = base64_decode($ca['prv']);
-	$ca_res_crt = openssl_x509_read($ca_str_crt);
-	$ca_res_key = openssl_pkey_get_private(array(0 => $ca_str_key, 1 => ""));
-	if(!$ca_res_key) return false;
-	$ca_serial = ++$ca['serial'];
+	if ($type != "self-signed") {
+		$cert['caref'] = $caref;
+		$ca =& lookup_ca($caref);
+		if (!$ca)
+			return false;
+
+		$ca_str_crt = base64_decode($ca['crt']);
+		$ca_str_key = base64_decode($ca['prv']);
+		$ca_res_crt = openssl_x509_read($ca_str_crt);
+		$ca_res_key = openssl_pkey_get_private(array(0 => $ca_str_key, 1 => ""));
+		if(!$ca_res_key) return false;
+		$ca_serial = ++$ca['serial'];
+	}
 
 	switch ($type) {
 		case "ca":
 			$cert_type = "v3_ca";
 			break;
 		case "server":
+		case "self-signed":
 			$cert_type = "server";
 			break;
 		default:
@@ -312,11 +318,20 @@ function cert_create(& $cert, $caref, $keylen, $lifetime, $dn, $type="user", $di
 	$res_key = openssl_pkey_new($args);
 	if(!$res_key) return false;
 
+	// If this is a self-signed cert, blank out the CA and sign with the cert's key
+	if ($type == "self-signed") {
+		$ca           = null;
+		$ca_res_crt   = null;
+		$ca_res_key   = $res_key;
+		$ca_serial    = 0;
+		$cert['type'] = "server";
+	}
+
 	// generate a certificate signing request
 	$res_csr = openssl_csr_new($dn, $res_key, $args);
 	if(!$res_csr) return false;
 
-	// self sign the certificate
+	// sign the certificate using an internal CA
 	$res_crt = openssl_csr_sign($res_csr, $ca_res_crt, $ca_res_key, $lifetime,
 				 $args, $ca_serial);
 	if(!$res_crt) return false;
@@ -327,10 +342,8 @@ function cert_create(& $cert, $caref, $keylen, $lifetime, $dn, $type="user", $di
 		return false;
 
 	// return our certificate information
-	$cert['caref'] = $caref;
 	$cert['crt'] = base64_encode($str_crt);
 	$cert['prv'] = base64_encode($str_key);
-	$cert['type'] = $type;
 
 	return true;
 }

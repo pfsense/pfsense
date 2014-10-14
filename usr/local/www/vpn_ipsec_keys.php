@@ -90,6 +90,7 @@ if (is_subsystem_dirty('ipsec'))
 	print_info_box_np(gettext("The IPsec tunnel configuration has been changed") . ".<br />" . gettext("You must apply the changes in order for them to take effect."));
 
 ?>
+</form>
 <table width="100%" border="0" cellpadding="0" cellspacing="0" summary="vpn ipsec keys">
   <tr><td class="tabnavtbl">
 <?php
@@ -182,7 +183,6 @@ if (is_subsystem_dirty('ipsec'))
 		</td>
 	</tr>
 </table>
-</form>
 <?php include("fend.inc"); ?>
 </body>
 </html>

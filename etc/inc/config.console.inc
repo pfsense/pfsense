@@ -224,8 +224,8 @@ EOD;
 			}
 			
 			if($lanif == "") {
-				fclose($fp);
-				return;
+				/* It is OK to have just a WAN, without a LAN so break if the user does not want LAN. */
+				break;
 			}
 	
 			if ($lanif === "a")

@@ -1152,6 +1152,7 @@ EOD;
 
 		// Harden SSL a bit for PCI conformance testing
 		$lighty_config .= "ssl.use-sslv2 = \"disable\"\n";
+		$lighty_config .= "ssl.use-sslv3 = \"disable\"\n";
 
 		/* Hifn accelerators do NOT work with the BEAST mitigation code. Do not allow it to be enabled if a Hifn card has been detected. */
 		$fd = @fopen("{$g['varlog_path']}/dmesg.boot", "r");

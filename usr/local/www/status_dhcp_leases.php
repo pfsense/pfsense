@@ -155,7 +155,7 @@ foreach($leases_content as $lease) {
 	/* walk the fields */
 	$f = 0;
 	$fcount = count($data);
-	/* with less then 20 fields there is nothing useful */
+	/* with less than 20 fields there is nothing useful */
 	if($fcount < 20) {
 		$i++;
 		continue;
@@ -351,11 +351,13 @@ foreach ($leases as $data) {
 		if ($data['act'] == "static") {
 			foreach ($config['dhcpd'] as $dhcpif => $dhcpifconf) {
 				if(is_array($dhcpifconf['staticmap'])) {
+					$staticmap_array_index = 0;
 					foreach ($dhcpifconf['staticmap'] as $staticent) {
 						if ($data['ip'] == $staticent['ipaddr']) {
 							$data['if'] = $dhcpif;
 							break;
 						}
+						$staticmap_array_index++;
 					}
 				}
 				/* exit as soon as we have an interface */
@@ -404,7 +406,8 @@ foreach ($leases as $data) {
 			echo "<a href=\"services_dhcp_edit.php?if={$data['if']}&amp;mac={$data['mac']}&amp;hostname={$data['hostname']}\">";
 			echo "<img src=\"/themes/{$g['theme']}/images/icons/icon_plus.gif\" width=\"17\" height=\"17\" border=\"0\" title=\"" . gettext("add a static mapping for this MAC address") ."\" alt=\"add\" /></a>&nbsp;\n";
 		} else {
-			echo "<img src=\"/themes/{$g['theme']}/images/icons/icon_plus_mo.gif\" width=\"17\" height=\"17\" border=\"0\" alt=\"add\" />&nbsp;\n";
+			echo "<a href=\"services_dhcp_edit.php?if={$data['if']}&amp;id={$staticmap_array_index}\">";
+			echo "<img src=\"/themes/{$g['theme']}/images/icons/icon_e.gif\" width=\"17\" height=\"17\" border=\"0\" title=\"" . gettext("edit the static mapping for this entry") ."\" alt=\"add\" />&nbsp;\n";
 		}
 
 		echo "<a href=\"services_wol_edit.php?if={$data['if']}&amp;mac={$data['mac']}&amp;descr={$data['hostname']}\">";

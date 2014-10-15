@@ -161,7 +161,17 @@ if (is_array($dhcpdconf)) {
 		// No reason to specify this per-pool, per the dhcpd.conf man page it needs to be in every
 		//   pool and should be specified in every pool both nodes share, so we'll treat it as global
 		$pconfig['failover_peerip'] = $dhcpdconf['failover_peerip'];
-		$pconfig['dhcpleaseinlocaltime'] = $dhcpdconf['dhcpleaseinlocaltime'];
+
+		// dhcpleaseinlocaltime is global to all interfaces. So if it is selected on any interface,
+		// then show it true/checked.
+		foreach ($config['dhcpd'] as $dhcpdifitem) {
+			$dhcpleaseinlocaltime = $dhcpdifitem['dhcpleaseinlocaltime'];
+			if ($dhcpleaseinlocaltime)
+				break;
+		}
+
+		$pconfig['dhcpleaseinlocaltime'] = $dhcpleaseinlocaltime;
+
 		if (!is_array($dhcpdconf['staticmap']))
 			$dhcpdconf['staticmap'] = array();
 		$a_maps = &$dhcpdconf['staticmap'];
@@ -232,7 +242,7 @@ if (isset($_POST['submit'])) {
 			$numberoptions['item'][] = $numbervalue;
 		}
 	}
-	// Reload the new pconfig variable that the forum uses.
+	// Reload the new pconfig variable that the form uses.
 	$pconfig['numberoptions'] = $numberoptions;
 
 	/* input validation */
@@ -451,7 +461,10 @@ if (isset($_POST['submit'])) {
 			if($previous <> $_POST['failover_peerip'])
 				mwexec("/bin/rm -rf /var/dhcpd/var/db/*");
 			$dhcpdconf['failover_peerip'] = $_POST['failover_peerip'];
-			$dhcpdconf['dhcpleaseinlocaltime'] = $_POST['dhcpleaseinlocaltime'];
+			// dhcpleaseinlocaltime is global to all interfaces. So update the setting on all interfaces.
+			foreach ($config['dhcpd'] as &$dhcpdifitem) {
+				$dhcpdifitem['dhcpleaseinlocaltime'] = $_POST['dhcpleaseinlocaltime'];
+			}
 		} else {
 			// Options that exist only in pools
 			$dhcpdconf['descr'] = $_POST['descr'];

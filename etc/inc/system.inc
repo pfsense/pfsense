@@ -843,7 +843,7 @@ function system_webgui_create_certificate() {
 
 	$cert = array();
 	$cert['refid'] = uniqid();
-	$cert['descr'] = gettext("webConfigurator default");
+	$cert['descr'] = gettext("webConfigurator default ({$cert['refid']})");
 
 	$dn = array(
 		'countryName' => "US",
@@ -851,7 +851,7 @@ function system_webgui_create_certificate() {
 		'localityName' => "Locality",
 		'organizationName' => "{$g['product_name']} webConfigurator Self-Signed Certificate",
 		'emailAddress' => "admin@{$config['system']['hostname']}.{$config['system']['domain']}",
-		'commonName' => $config['system']['hostname'] . '-' . uniqid());
+		'commonName' => "{$config['system']['hostname']}-{$cert['refid']}");
 	$old_err_level = error_reporting(0); /* otherwise openssl_ functions throw warings directly to a page screwing menu tab */
 	if (!cert_create($cert, null, 2048, 2000, $dn, "self-signed", "sha256")){
 		while($ssl_err = openssl_error_string()){
@@ -864,7 +864,7 @@ function system_webgui_create_certificate() {
 
 	$a_cert[] = $cert;
 	$config['system']['webgui']['ssl-certref'] = $cert['refid'];
-	write_config(gettext("Importing HTTPS certificate"));
+	write_config(gettext("Generated new self-signed HTTPS certificate ({$cert['refid']})"));
 	return $cert;
 }
 

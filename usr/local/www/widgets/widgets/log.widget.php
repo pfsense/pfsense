@@ -182,10 +182,10 @@ function format_log_line(row) {
 			<td class="listMRr ellipsis nowrap" title="<?php echo htmlspecialchars($filterent['time']);?>"><?php echo substr(htmlspecialchars($filterent['time']),0,-3);?></td>
 			<td class="listMRr ellipsis nowrap" title="<?php echo htmlspecialchars($filterent['interface']);?>"><?php echo htmlspecialchars($filterent['interface']);?></td>
 			<td class="listMRr ellipsis nowrap" title="<?php echo htmlspecialchars($filterent['src']);?>">
-				<a href="#" onclick="javascript:getURL('diag_dns.php?host=<?php echo "{$filterent['srcip']}"; ?>&amp;dialog_output=true', outputrule);" title="<?=gettext("Reverse Resolve with DNS");?>">
+				<a href="diag_dns.php?host=<?php echo "{$filterent['srcip']}"; ?>" title="<?=gettext("Reverse Resolve with DNS");?>">
 				<?php echo htmlspecialchars($filterent['srcip']);?></a></td>
 			<td class="listMRr ellipsis nowrap" title="<?php echo htmlspecialchars($filterent['dst']);?>">
-				<a href="#" onclick="javascript:getURL('diag_dns.php?host=<?php echo "{$filterent['dstip']}"; ?>&amp;dialog_output=true', outputrule);" title="<?=gettext("Reverse Resolve with DNS");?>">
+				<a href="diag_dns.php?host=<?php echo "{$filterent['dstip']}"; ?>" title="<?=gettext("Reverse Resolve with DNS");?>">
 				<?php echo htmlspecialchars($filterent['dstip']);?></a><?php echo ":" . htmlspecialchars($filterent['dstport']);?></td>
 			<?php
 				if ($filterent['proto'] == "TCP")

@@ -131,8 +131,11 @@ function services_radvd_configure($blacklist = array()) {
 		}
 		switch($dhcpv6ifconf['ramode']) {
 			case "managed":
-			case "assist":
 				$radvdconf .= "\tAdvManagedFlag on;\n";
+				$radvdconf .= "\tAdvOtherConfigFlag on;\n";
+				break;
+			case "assist":
+				$radvdconf .= "\tAdvManagedFlag off;\n";
 				$radvdconf .= "\tAdvOtherConfigFlag on;\n";
 				break;
 		}

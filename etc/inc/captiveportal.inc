@@ -937,7 +937,7 @@ function captiveportal_radius_stop_all() {
 	}
 }
 
-function captiveportal_passthrumac_configure_entry($macent) {
+function captiveportal_passthrumac_configure_entry($macent, $pipeinrule = false) {
 	global $config, $g, $cpzone;
 
 	$bwUp = 0;
@@ -954,14 +954,22 @@ function captiveportal_passthrumac_configure_entry($macent) {
 	$ruleno = captiveportal_get_next_ipfw_ruleno();
 
 	if ($macent['action'] == 'pass') {
+		$rules = "";
 		$pipeno = captiveportal_get_next_dn_ruleno();
 
 		$pipeup = $pipeno;
-		$_gb = @pfSense_pipe_action("pipe {$pipeno} config bw {$bwUp}Kbit/s queue 100 buckets 16");
+		if ($pipeinrule == true)
+			$_gb = @pfSense_pipe_action("pipe {$pipeno} config bw {$bwUp}Kbit/s queue 100 buckets 16");
+		else
+			$rules .= "pipe {$pipeno} config bw {$bwUp}Kbit/s queue 100 buckets 16\n";
+			
 		$pipedown = $pipeno + 1;
-		$_gb = @pfSense_pipe_action("pipe {$pipedown} config bw {$bwDown}Kbit/s queue 100 buckets 16");
+		if ($pipeinrule == true)
+			$_gb = @pfSense_pipe_action("pipe {$pipedown} config bw {$bwDown}Kbit/s queue 100 buckets 16");
+		else
+			$rules .= "pipe {$pipedown} config bw {$bwDown}Kbit/s queue 100 buckets 16\n";
 
-		$rules = "add {$ruleno} pipe {$pipeup} ip from any to any MAC any {$macent['mac']}\n";
+		$rules .= "add {$ruleno} pipe {$pipeup} ip from any to any MAC any {$macent['mac']}\n";
 		$ruleno++;
 		$rules .= "add {$ruleno} pipe {$pipedown} ip from any to any MAC {$macent['mac']} any\n";
 	}
@@ -1000,9 +1008,15 @@ function captiveportal_passthrumac_configure($lock = false) {
 
 	$rules = "";
 
-	if (is_array($config['captiveportal'][$cpzone]['passthrumac']))
-		foreach ($config['captiveportal'][$cpzone]['passthrumac'] as $macent)
-			$rules .= captiveportal_passthrumac_configure_entry($macent);
+	if (is_array($config['captiveportal'][$cpzone]['passthrumac'])) {
+		$nentries = count($config['captiveportal'][$cpzone]['passthrumac']);
+		foreach ($config['captiveportal'][$cpzone]['passthrumac'] as $macent) {
+			if ($nentries > 100)
+				$rules .= captiveportal_passthrumac_configure_entry($macent, true);
+			else
+				$rules .= captiveportal_passthrumac_configure_entry($macent);
+		}
+	}
 
 	return $rules;
 }

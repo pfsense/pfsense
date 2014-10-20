@@ -87,7 +87,14 @@ switch ($command) {
 			} else {
 				echo "\n\nWARNING.\n";
 				echo "\nCould not locate a sha256 file.  We cannot verify the download once completed.\n\n";
-				sleep(15);
+				echo "Do you still want to proceed with the upgrade [n]? ";
+				$answer = strtoupper(chop(fgets($fp)));
+				if ($answer == "Y" or $answer == "YES") {
+					echo "\nContinuing upgrade...";
+				} else {
+					echo "\nUpgrade cancelled.\n\n";
+					die;
+				}
 			}
 			if(file_exists("/root/firmware.tgz.sha256")) {
 				$source_sha256 = trim(`cat /root/firmware.tgz.sha256 | awk '{ print \$4 }'`,"\r");

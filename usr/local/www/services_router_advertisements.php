@@ -96,7 +96,7 @@ if (is_array($config['dhcpdv6'][$if])) {
 		$pconfig['rapriority'] = "medium";
 	$pconfig['rainterface'] = $config['dhcpdv6'][$if]['rainterface'];
 	$pconfig['radomainsearchlist'] = $config['dhcpdv6'][$if]['radomainsearchlist'];
-	list($pconfig['radns1'],$pconfig['radns2']) = $config['dhcpdv6'][$if]['radnsserver'];
+	list($pconfig['radns1'],$pconfig['radns2'],$pconfig['radns3'],$pconfig['radns4']) = $config['dhcpdv6'][$if]['radnsserver'];
 	$pconfig['rasamednsasdhcp6'] = isset($config['dhcpdv6'][$if]['rasamednsasdhcp6']);
 
 	$pconfig['subnets'] = $config['dhcpdv6'][$if]['subnets']['item'];
@@ -145,8 +145,8 @@ if ($_POST) {
 		}
 	}
 
-	if (($_POST['radns1'] && !is_ipaddrv6($_POST['radns1'])) || ($_POST['radns2'] && !is_ipaddrv6($_POST['radns2'])))
-		$input_errors[] = gettext("A valid IPv6 address must be specified for the primary/secondary DNS servers.");
+	if (($_POST['radns1'] && !is_ipaddrv6($_POST['radns1'])) || ($_POST['radns2'] && !is_ipaddrv6($_POST['radns2'])) || ($_POST['radns3'] && !is_ipaddrv6($_POST['radns3'])) || ($_POST['radns4'] && !is_ipaddrv6($_POST['radns4'])))
+		$input_errors[] = gettext("A valid IPv6 address must be specified for each of the DNS servers.");
 	if ($_POST['radomainsearchlist']) {
 		$domain_array=preg_split("/[ ;]+/",$_POST['radomainsearchlist']);
 		foreach ($domain_array as $curdomain) {
@@ -171,6 +171,10 @@ if ($_POST) {
 			$config['dhcpdv6'][$if]['radnsserver'][] = $_POST['radns1'];
 		if ($_POST['radns2'])
 			$config['dhcpdv6'][$if]['radnsserver'][] = $_POST['radns2'];
+		if ($_POST['radns3'])
+			$config['dhcpdv6'][$if]['radnsserver'][] = $_POST['radns3'];
+		if ($_POST['radns4'])
+			$config['dhcpdv6'][$if]['radnsserver'][] = $_POST['radns4'];
 
 		$config['dhcpdv6'][$if]['rasamednsasdhcp6'] = ($_POST['rasamednsasdhcp6']) ? true : false;
 
@@ -373,6 +377,8 @@ display_top_tabs($tab_array);
 			<td width="78%" class="vtable">
 				<input name="radns1" type="text" class="formfld unknown" id="radns1" size="28" value="<?=htmlspecialchars($pconfig['radns1']);?>" /><br />
 				<input name="radns2" type="text" class="formfld unknown" id="radns2" size="28" value="<?=htmlspecialchars($pconfig['radns2']);?>" /><br />
+				<input name="radns3" type="text" class="formfld unknown" id="radns3" size="28" value="<?=htmlspecialchars($pconfig['radns3']);?>" /><br />
+				<input name="radns4" type="text" class="formfld unknown" id="radns4" size="28" value="<?=htmlspecialchars($pconfig['radns4']);?>" /><br />
 				<?=gettext("NOTE: leave blank to use the system default DNS servers - this interface's IP if DNS forwarder is enabled, otherwise the servers configured on the General page.");?>
 			</td>
 			</tr>
@@ -411,7 +417,7 @@ display_top_tabs($tab_array);
 //<![CDATA[
 	jQuery(function ($) {
 		var $rasamednsasdhcp6 = $("#rasamednsasdhcp6");
-		var $triggered_checkboxes = $("#radns1, #radns2, #radomainsearchlist");
+		var $triggered_checkboxes = $("#radns1, #radns2, #radns3, #radns4, #radomainsearchlist");
 		if ($rasamednsasdhcp6.length !== 1) { return; }
 		var onchange = function () {
 			var checked = $rasamednsasdhcp6.is(":checked");
@@ -433,6 +439,8 @@ display_top_tabs($tab_array);
 		<?php } ?>
 		new AutoSuggestControl(document.getElementById('radns1'), new StateSuggestions(addressarray));
 		new AutoSuggestControl(document.getElementById('radns2'), new StateSuggestions(addressarray));
+		new AutoSuggestControl(document.getElementById('radns3'), new StateSuggestions(addressarray));
+		new AutoSuggestControl(document.getElementById('radns4'), new StateSuggestions(addressarray));
 	}
 	setTimeout(createAutoSuggest, 500);
 //]]>

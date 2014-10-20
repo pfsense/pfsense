@@ -106,7 +106,7 @@ if (is_array($config['dhcpdv6'][$if])){
 	$pconfig['domain'] = $config['dhcpdv6'][$if]['domain'];
 	$pconfig['domainsearchlist'] = $config['dhcpdv6'][$if]['domainsearchlist'];
 	list($pconfig['wins1'],$pconfig['wins2']) = $config['dhcpdv6'][$if]['winsserver'];
-	list($pconfig['dns1'],$pconfig['dns2']) = $config['dhcpdv6'][$if]['dnsserver'];
+	list($pconfig['dns1'],$pconfig['dns2'],$pconfig['dns3'],$pconfig['dns4']) = $config['dhcpdv6'][$if]['dnsserver'];
 	$pconfig['enable'] = isset($config['dhcpdv6'][$if]['enable']);
 	$pconfig['ddnsdomain'] = $config['dhcpdv6'][$if]['ddnsdomain'];
 	$pconfig['ddnsdomainprimary'] = $config['dhcpdv6'][$if]['ddnsdomainprimary'];
@@ -184,8 +184,8 @@ if ($_POST) {
 			$input_errors[] = gettext("A valid range must be specified.");
 		if (($_POST['gateway'] && !is_ipaddrv6($_POST['gateway'])))
 			$input_errors[] = gettext("A valid IPv6 address must be specified for the gateway.");
-		if (($_POST['dns1'] && !is_ipaddrv6($_POST['dns1'])) || ($_POST['dns2'] && !is_ipaddrv6($_POST['dns2'])))
-			$input_errors[] = gettext("A valid IPv6 address must be specified for the primary/secondary DNS servers.");
+		if (($_POST['dns1'] && !is_ipaddrv6($_POST['dns1'])) || ($_POST['dns2'] && !is_ipaddrv6($_POST['dns2'])) || ($_POST['dns3'] && !is_ipaddrv6($_POST['dns3'])) || ($_POST['dns4'] && !is_ipaddrv6($_POST['dns4'])))
+			$input_errors[] = gettext("A valid IPv6 address must be specified for each of the DNS servers.");
 
 		if ($_POST['deftime'] && (!is_numeric($_POST['deftime']) || ($_POST['deftime'] < 60)))
 			$input_errors[] = gettext("The default lease time must be at least 60 seconds.");
@@ -295,6 +295,10 @@ if ($_POST) {
 			$config['dhcpdv6'][$if]['dnsserver'][] = $_POST['dns1'];
 		if ($_POST['dns2'])
 			$config['dhcpdv6'][$if]['dnsserver'][] = $_POST['dns2'];
+		if ($_POST['dns3'])
+			$config['dhcpdv6'][$if]['dnsserver'][] = $_POST['dns3'];
+		if ($_POST['dns4'])
+			$config['dhcpdv6'][$if]['dnsserver'][] = $_POST['dns4'];
 
 		$config['dhcpdv6'][$if]['domain'] = $_POST['domain'];
 		$config['dhcpdv6'][$if]['domainsearchlist'] = $_POST['domainsearchlist'];
@@ -404,6 +408,8 @@ include("head.inc");
 		document.iform.prefixrange_length.disabled = endis;
 		document.iform.dns1.disabled = endis;
 		document.iform.dns2.disabled = endis;
+		document.iform.dns3.disabled = endis;
+		document.iform.dns4.disabled = endis;
 		document.iform.deftime.disabled = endis;
 		document.iform.maxtime.disabled = endis;
 		//document.iform.gateway.disabled = endis;
@@ -625,6 +631,8 @@ display_top_tabs($tab_array);
 			<td width="78%" class="vtable">
 				<input name="dns1" type="text" class="formfld unknown" id="dns1" size="28" value="<?=htmlspecialchars($pconfig['dns1']);?>" /><br />
 				<input name="dns2" type="text" class="formfld unknown" id="dns2" size="28" value="<?=htmlspecialchars($pconfig['dns2']);?>" /><br />
+				<input name="dns3" type="text" class="formfld unknown" id="dns3" size="28" value="<?=htmlspecialchars($pconfig['dns3']);?>" /><br />
+				<input name="dns4" type="text" class="formfld unknown" id="dns4" size="28" value="<?=htmlspecialchars($pconfig['dns4']);?>" /><br />
 				<?=gettext("NOTE: leave blank to use the system default DNS servers - this interface's IP if DNS forwarder is enabled, otherwise the servers configured on the General page.");?>
 			</td>
 			</tr>

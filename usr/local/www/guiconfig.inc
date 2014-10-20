@@ -179,7 +179,7 @@ $netbios_nodetypes = array(
 	'1' => "b-node",
 	'2' => "p-node",
 	'4' => "m-node",
-	'5' => "h-node");
+	'8' => "h-node");
 
 /* some well knows ports */
 $wkports = array(

@@ -263,101 +263,107 @@ function relayd_configure($kill_first=false) {
 	$conf .= "\t" . "tcp { nodelay, sack, socket buffer 1024, backlog 1000 }\n";
 	$conf .= "}\n";
 
-	if(is_array($vs_a)) {
-		for ($i = 0; isset($vs_a[$i]); $i++) {
-			
-			$append_port_to_name = false;
-			if (is_alias($pools[$vs_a[$i]['poolname']]['port'])) {
-				$dest_port_array = filter_expand_alias_array($pools[$vs_a[$i]['poolname']]['port']);
-				$append_port_to_name = true;
-			}
-			else {
-				$dest_port_array = array($pools[$vs_a[$i]['poolname']]['port']);
-			}
-			if (is_alias($vs_a[$i]['port'])) {
-				$src_port_array = filter_expand_alias_array($vs_a[$i]['port']);
-				$append_port_to_name = true;
-			}
-			else if ($vs_a[$i]['port']) {
-				$src_port_array = array($vs_a[$i]['port']);
-			}
-			else {
-				$src_port_array = $dest_port_array;
-			}
+	   if(is_array($vs_a)) {
+        $in = -1;
+        for ($i = 0; isset($vs_a[$i]); $i++) {
+            $name               = $vs_a[$i]['name'];
+            $sticky_connection  = $vs_a[$i]['sticky_connection'] == '1' ? TRUE : FALSE;            
+            $append_port_to_name = false;
+            if (is_alias($pools[$vs_a[$i]['poolname']]['port'])) {
+                $dest_port_array = filter_expand_alias_array($pools[$vs_a[$i]['poolname']]['port']);
+                $append_port_to_name = true;
+            }
+            else {
+                $dest_port_array = array($pools[$vs_a[$i]['poolname']]['port']);
+            }
+            if (is_alias($vs_a[$i]['port'])) {
+                $src_port_array = filter_expand_alias_array($vs_a[$i]['port']);
+                $append_port_to_name = true;
+            }
+            else if ($vs_a[$i]['port']) {
+                $src_port_array = array($vs_a[$i]['port']);
+            }
+            else {
+                $src_port_array = $dest_port_array;
+            }
 
-			$append_ip_to_name = false;
-			if (is_alias($vs_a[$i]['ipaddr'])) {
-				$ip_list = array();
-				foreach (filter_expand_alias_array($vs_a[$i]['ipaddr']) as $item) {
-					log_error("item is $item");
-					if (is_subnetv4($item)) {
-						$ip_list = array_merge($ip_list, subnetv4_expand($item));
-					}
-					else {
-						$ip_list[] = $item;
-					}
-				}
-				$append_ip_to_name = true;
-			}
-			else if (is_subnetv4($vs_a[$i]['ipaddr'])) {
-				$ip_list = subnetv4_expand($vs_a[$i]['ipaddr']);
-				$append_ip_to_name = true;
-			}
-			else {
-				$ip_list = array($vs_a[$i]['ipaddr']);
-			}
+            $append_ip_to_name = false;
+            if (is_alias($vs_a[$i]['ipaddr'])) {
+                $ip_list = array();
+                foreach (filter_expand_alias_array($vs_a[$i]['ipaddr']) as $item) {
+                    log_error("item is $item");
+                    if (is_subnetv4($item)) {
+                        $ip_list = array_merge($ip_list, subnetv4_expand($item));
+                    }
+                    else {
+                        $ip_list[] = $item;
+                    }
+                }
+                //$append_ip_to_name = true;
+            }
+            else if (is_subnetv4($vs_a[$i]['ipaddr'])) {
+                $ip_list = subnetv4_expand($vs_a[$i]['ipaddr']);
+                $append_ip_to_name = true;
+            }
+            else {
+                $ip_list = array($vs_a[$i]['ipaddr']);
+            }
+                                  
+            for ($k = 0; $k < count($src_port_array); $k += 1) {
+                $src_port  = $src_port_array[$k];
+                $dest_port = $dest_port_array[$k]?:$dest_port_array[0];                     
+                                    
+                if ($append_port_to_name) {
+                    $name .= "_" . $src_port;
+                }
 
-			for ($j = 0; $j < count($ip_list); $j += 1) {
-				$ip = $ip_list[$j];
-				for ($k = 0; $k < count($src_port_array) && $k < count($dest_port_array); $k += 1) {
-					$src_port  = $src_port_array[$k];
-					$dest_port = $dest_port_array[$k];
+                if (($vs_a[$i]['mode'] == 'relay') || ($vs_a[$i]['relay_protocol'] == 'dns')) {
+                    if ($i!=$in){    
+                        $conf .= "relay \"{$name}\" {\n";                           
 
-					$name = $vs_a[$i]['name'];
-					if ($append_ip_to_name) {
-						$name .= "_" . $j;
-					}
-					if ($append_port_to_name) {
-						$name .= "_" . $src_port;
-					}
+                        if ($vs_a[$i]['relay_protocol'] == "dns") {
+                            $conf .= "  protocol \"dnsproto\"\n";
+                        } else {
+                            $conf .= "  protocol \"{$vs_a[$i]['relay_protocol']}\"\n";
+                        }
+                        $lbmode = "";
+                        if ( $pools[$vs_a[$i]['poolname']]['mode'] == "loadbalance" ) {
+                            $lbmode = "mode loadbalance";
+                        }
+   
+                        $conf .= "  forward to <{$vs_a[$i]['poolname']}> port {$dest_port} {$lbmode} {$check_a[$pools[$vs_a[$i]['poolname']]['monitor']]} \n";
 
-					if (($vs_a[$i]['mode'] == 'relay') || ($vs_a[$i]['relay_protocol'] == 'dns')) {
-						$conf .= "relay \"{$name}\" {\n";
-						$conf .= "  listen on {$ip} port {$src_port}\n";
+                        if (isset($vs_a[$i]['sitedown']) &&  strlen($vs_a[$i]['sitedown']) > 0 && ($vs_a[$i]['relay_protocol'] != 'dns'))
+                            $conf .= "  forward to <{$vs_a[$i]['sitedown']}> port {$dest_port} {$lbmode} {$check_a[$pools[$vs_a[$i]['poolname']]['monitor']]} \n";
+                    }
+                    for ($j = 0; $j < count($ip_list); $j += 1) {
+                        $ip = $ip_list[$j]; 
+                        $conf .= "  listen on {$ip} port {$src_port}\n";
+                    }                        
+                } else  {
+                    if ($i!=$in || $append_port_to_name){
+                        $conf .= "redirect \"{$name}\" {\n";
+                        $conf .= "  forward to <{$vs_a[$i]['poolname']}> port {$dest_port} {$check_a[$pools[$vs_a[$i]['poolname']]['monitor']]} \n";
 
-						if ($vs_a[$i]['relay_protocol'] == "dns") {
-							$conf .= "  protocol \"dnsproto\"\n";
-						} else {
-							$conf .= "  protocol \"{$vs_a[$i]['relay_protocol']}\"\n";
-						}
-						$lbmode = "";
-						if ( $pools[$vs_a[$i]['poolname']]['mode'] == "loadbalance" ) {
-							$lbmode = "mode loadbalance";
-						}
+                        if (isset($config['system']['lb_use_sticky']) || $sticky_connection)
+                            $conf .= "  sticky-address\n";
 
-						$conf .= "  forward to <{$vs_a[$i]['poolname']}> port {$dest_port} {$lbmode} {$check_a[$pools[$vs_a[$i]['poolname']]['monitor']]} \n";
-
-						if (isset($vs_a[$i]['sitedown']) &&  strlen($vs_a[$i]['sitedown']) > 0 && ($vs_a[$i]['relay_protocol'] != 'dns'))
-							$conf .= "  forward to <{$vs_a[$i]['sitedown']}> port {$dest_port} {$lbmode} {$check_a[$pools[$vs_a[$i]['poolname']]['monitor']]} \n";
-						$conf .= "}\n";
-					} else  {
-						$conf .= "redirect \"{$name}\" {\n";
-						$conf .= "  listen on {$ip} port {$src_port}\n";
-						$conf .= "  forward to <{$vs_a[$i]['poolname']}> port {$dest_port} {$check_a[$pools[$vs_a[$i]['poolname']]['monitor']]} \n";
-
-						if (isset($config['system']['lb_use_sticky']))
-							$conf .= "  sticky-address\n";
-
-						/* sitedown MUST use the same port as the primary pool - sucks, but it's a relayd thing */
-						if (isset($vs_a[$i]['sitedown']) && strlen($vs_a[$i]['sitedown']) > 0 && ($vs_a[$i]['relay_protocol'] != 'dns'))
-							$conf .= "  forward to <{$vs_a[$i]['sitedown']}> port {$dest_port} {$check_a[$pools[$vs_a[$i]['sitedown']]['monitor']]} \n";
-
-						$conf .= "}\n";
-					}
-				}
-			}
-		}
-	}
+                        /* sitedown MUST use the same port as the primary pool - sucks, but it's a relayd thing */
+                        if (isset($vs_a[$i]['sitedown']) && strlen($vs_a[$i]['sitedown']) > 0 && ($vs_a[$i]['relay_protocol'] != 'dns'))
+                            $conf .= "  forward to <{$vs_a[$i]['sitedown']}> port {$dest_port} {$check_a[$pools[$vs_a[$i]['sitedown']]['monitor']]} \n";                            
+                    }
+                    for ($j = 0; $j < count($ip_list); $j += 1) {
+                        $ip = $ip_list[$j]; 
+                        $conf .= "  listen on {$ip} port {$src_port}\n";
+                    }
+                }
+                if ($i!=$in || $append_port_to_name){
+                    $conf .= "}\n";
+                }
+                $in = $i;                       
+            }
+        }
+    }
 	fwrite($fd, $conf);
 	fclose($fd);
 

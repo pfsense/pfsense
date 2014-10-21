@@ -644,7 +644,7 @@ function is_domain($domain) {
 	if (!is_string($domain))
 		return false;
 
-	if (preg_match('/^(?:(?:[a-z_0-9]|[a-z_0-9][a-z_0-9\-]*[a-z_0-9])\.)*(?:[a-z_0-9]|[a-z_0-9][a-z_0-9\-]*[a-z_0-9])$/i', $domain))
+	if (preg_match('/^(?:(?:[a-z_0-9]|[a-z_0-9][a-z_0-9\-]*[a-z_0-9])\.)*(?:[a-z_0-9]|[a-z_0-9][a-z_0-9\-]*[a-z_0-9\.])$/i', $domain))
 		return true;
 	else
 		return false;

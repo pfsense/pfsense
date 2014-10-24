@@ -290,6 +290,8 @@ charon {
 	# XXX: There is not much choice here really users win their security!
 	i_dont_care_about_security_and_use_aggressive_mode_psk=yes
 
+	cisco_unity = yes
+
 	# And two loggers using syslog. The subsections define the facility to log
 	# to, currently one of: daemon, auth.
 	syslog {
@@ -307,9 +309,6 @@ charon {
 	}
 
 EOD;
-
-		if (is_array($a_client) && isset($a_client['enable']) && isset($a_client['net_list']))
-			$strongswan .= "\tcisco_unity = yes\n";
 
 		$strongswan .= "\tplugins {\n";
 

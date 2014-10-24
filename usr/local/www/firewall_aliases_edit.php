@@ -168,7 +168,6 @@ if ($_POST) {
 	$alias['name'] = $_POST['name'];
 
 	if (preg_match("/urltable/i", $_POST['type'])) {
-		$address = "";
 		$isfirst = 0;
 
 		/* item is a url table type */
@@ -197,32 +196,21 @@ if ($_POST) {
 				$final_address_details[] = sprintf(gettext("Entry added %s"), date('r'));
 		}
 	} else if ($_POST['type'] == "url" || $_POST['type'] == "url_ports") {
-		$isfirst = 0;
-		$address_count = 2;
 		$desc_fmt_err_found = false;
+		if ($_POST['type'] == "url_ports")
+			$maxitems = 3000; // Truncate at 1000 ports, aliases larger than +-1350 ports cause pf to throw an error "string too long"
+		else
+			$maxitems = 3000; // ?? does that work ??
 
+		$address_sum = array();
 		/* item is a url type */
 		for($x=0; $x<4999; $x++) {
-			$_POST['address' . $x] = trim($_POST['address' . $x]);
-			if($_POST['address' . $x]) {
-				/* fetch down and add in */
-				$isfirst = 0;
-				$temp_filename = tempnam("{$g['tmp_path']}/", "alias_import");
-				unlink_if_exists($temp_filename);
-				$verify_ssl = isset($config['system']['checkaliasesurlcert']);
-				mkdir($temp_filename);
-				download_file($_POST['address' . $x], $temp_filename . "/aliases", $verify_ssl);
-
-				/* if the item is tar gzipped then extract */
-				if(stristr($_POST['address' . $x], ".tgz"))
-					process_alias_tgz($temp_filename);
-				else if(stristr($_POST['address' . $x], ".zip"))
-					process_alias_unzip($temp_filename);
-
+			$url = trim($_POST['address' . $x]);
+			if($url) {
 				if (!isset($alias['aliasurl']))
 					$alias['aliasurl'] = array();
-
-				$alias['aliasurl'][] = $_POST['address' . $x];
+				$alias['aliasurl'][] = $url;
+				
 				if ($_POST["detail{$x}"] <> "") {
 					if ((strpos($_POST["detail{$x}"], "||") === false) && (substr($_POST["detail{$x}"], 0, 1) != "|") && (substr($_POST["detail{$x}"], -1, 1) != "|")) {
 						$final_address_details[] = $_POST["detail{$x}"];
@@ -237,41 +225,54 @@ if ($_POST) {
 					}
 				} else
 					$final_address_details[] = sprintf(gettext("Entry added %s"), date('r'));
+					
+				$temp_filename = tempnam("{$g['tmp_path']}/", "alias_import");
+				unlink_if_exists($temp_filename);
+				$verify_ssl = isset($config['system']['checkaliasesurlcert']);
+				mkdir($temp_filename);
+				if (download_file($url, $temp_filename . "/aliases", $verify_ssl) !== true) {
+					$input_errors[] = sprintf(gettext("Could not download list from URL '%s'"), $url);
+					if (file_exists("{$temp_filename}/aliases"))
+						mwexec("/bin/rm -rf " . escapeshellarg($temp_filename));
+					continue;
+				}
+
+				/* if the item is tar gzipped then extract */
+				if(stristr($url, ".tgz"))
+					process_alias_tgz($temp_filename);
+				else if(stristr($url, ".zip"))
+					process_alias_unzip($temp_filename);
+
 
 				if(file_exists("{$temp_filename}/aliases")) {
-					$file_contents = file_get_contents("{$temp_filename}/aliases");
-					$file_contents = str_replace("#", "\n#", $file_contents);
-					$file_contents_split = explode("\n", $file_contents);
-					foreach($file_contents_split as $fc) {
-						// Stop at 3000 items, aliases larger than that tend to break both pf and the WebGUI.
-						if ($address_count >= 3000)
-							break;
-						$tmp = trim($fc);
-						if(stristr($fc, "#")) {
-							$tmp_split = explode("#", $tmp);
-							$tmp = trim($tmp_split[0]);
-						}
-						$tmp = trim($tmp);
-						if ($_POST['type'] == "url")
-							$is_valid = (is_ipaddr($tmp) || is_subnet($tmp));
-						else
-							$is_valid = (is_port($tmp) || is_portrange($tmp));
-
-						if (!empty($tmp) && $is_valid) {
-							$address[] = $tmp;
-							$isfirst = 1;
-							$address_count++;
-						}
+					if ($_POST['type'] == "url") {
+						$address = parse_aliases_file("{$temp_filename}/aliases", "subnets");
+					} else {
+						$address = parse_aliases_file("{$temp_filename}/aliases", "ports", $maxitems);
 					}
-					if($isfirst == 0) {
+					if ($address == null) {
+						$input_errors[] = sprintf(gettext("Could not process. '%s'."), $url);
+						continue;
+					}
+					if(count($address) >= $maxitems) {
 						/* nothing was found */
-						$input_errors[] = sprintf(gettext("You must provide a valid URL. Could not fetch usable data from '%s'."), $_POST['address' . $x]);
+						$input_errors[] = sprintf(gettext("List to large, >= %s items, aliases larger than that tend to break pf. '%s'."), $maxitems, $url);
+					}
+					if(count($address) == 0) {
+						/* nothing was found */
+						$input_errors[] = sprintf(gettext("You must provide a valid URL. Could not fetch usable data from '%s'."), $url);
+					} else {
+						$address_sum = array_merge($address_sum, $address);
 					}
 					mwexec("/bin/rm -rf " . escapeshellarg($temp_filename));
 				} else {
-					$input_errors[] = sprintf(gettext("URL '%s' is not valid."), $_POST['address' . $x]);
+					$input_errors[] = sprintf(gettext("URL '%s' is not valid."), $url);
 				}
 			}
+		}
+		$address = $address_sum;
+		if(count($address) >= $maxitems) {
+			$input_errors[] = sprintf(gettext("Sum of lists to large, >= %s items, aliases larger than that tend to break pf."), $maxitems);
 		}
 		unset($desc_fmt_err_found);
 		if ($_POST['type'] == "url_ports")
@@ -494,7 +495,7 @@ $networks_help = gettext("Networks are specified in CIDR format.  Select the CID
 $hosts_help = gettext("Enter as many hosts as you would like.  Hosts must be specified by their IP address or fully qualified domain name (FQDN). FQDN hostnames are periodically re-resolved and updated. If multiple IPs are returned by a DNS query, all are used.");
 $ports_help = gettext("Enter as many ports as you wish.  Port ranges can be expressed by separating with a colon.");
 $url_help = sprintf(gettext("Enter as many URLs as you wish. After saving %s will download the URL and import the items into the alias. Use only with small sets of IP addresses (less than 3000)."), $g['product_name']);
-$url_ports_help = sprintf(gettext("Enter as many URLs as you wish. After saving %s will download the URL and import the items into the alias. Use only with small sets of Ports (less than 3000)."), $g['product_name']);
+$url_ports_help = sprintf(gettext("Enter as many URLs as you wish. After saving %s will download the URL and import the items into the alias. Use only with small sets of Ports (less than 1000)."), $g['product_name']);
 $urltable_help = sprintf(gettext("Enter a single URL containing a large number of IPs and/or Subnets. After saving %s will download the URL and create a table file containing these addresses. This will work with large numbers of addresses (30,000+) or small numbers."), $g['product_name']);
 $urltable_ports_help = sprintf(gettext("Enter a single URL containing a list of Port numbers and/or Port ranges. After saving %s will download the URL."), $g['product_name']);
 

@@ -1845,6 +1845,48 @@ function update_alias_names_upon_change($section, $field, $new_alias_name, $orig
 
 }
 
+function parse_aliases_file($filename, $type = "subnets", $max_items = -1) {
+	/*
+	 * $filename = file to process for example blocklist like DROP:  http://www.spamhaus.org/drop/drop.txt
+	 * $type = if set to 'subnets' then subnets and ips will be returned, 
+	 * 	       if set to 'ports' port-ranges and ports will be returned
+	 * $max_items = sets the maximum amount of valid items to load, -1 the default defines there is no limit.
+	 * 
+	 * RETURNS an array of ip subnets and ip's or ports and port-ranges, returns NULL upon a error conditions (file not found)
+	 */
+	// convert text value to boolean
+	$use_subnets = $type == "subnets";
+	$use_ports   = $type == "ports";
+	
+	$items = array();
+	$fd = @fopen($filename, 'r');
+	if (!$fd) {
+		log_error(gettext("Could not process aliases from alias: {$alias_url}"));
+		return null;
+	}
+	/* NOTE: fgetss() is not a typo RTFM before being smart */
+	while (($fc = fgetss($fd)) !== FALSE) {
+		$tmp = trim($fc, " \t\n\r");
+		if (empty($tmp))
+			continue;
+		$tmp_str = strstr($tmp, '#', true);
+		if (!empty($tmp_str))
+			$tmp = $tmp_str;
+		$tmp_str = strstr($tmp, ' ', true);
+		if (!empty($tmp_str))
+			$tmp = $tmp_str;
+		$valid = ($use_subnets && (is_ipaddr($tmp) || is_subnet($tmp))) ||
+		         ($use_ports && (is_port($tmp) || is_portrange($tmp)));
+		if ($valid) {
+			$items[] = $tmp;
+			if (count($items) == $max_items)
+				break;
+		}
+	}
+	fclose($fd);
+	return $items;
+}
+
 function update_alias_url_data() {
 	global $config, $g;
 
@@ -1865,38 +1907,21 @@ function update_alias_url_data() {
 				unlink($temp_filename);
 				$verify_ssl = isset($config['system']['checkaliasesurlcert']);
 				mkdir($temp_filename);
-				download_file($alias_url, $temp_filename . "/aliases", $verify_ssl);
-
-				/* if the item is tar gzipped then extract */
-				if (stripos($alias_url, '.tgz')) {
-					if (!process_alias_tgz($temp_filename))
-						continue;
-				} else if (stripos($alias_url, '.zip')) {
-					if (!process_alias_unzip($temp_filename))
-						continue;
-				}
-				if (file_exists("{$temp_filename}/aliases")) {
-					$fd = @fopen("{$temp_filename}/aliases", 'r');
-					if (!$fd) {
-						log_error(gettext("Could not process aliases from alias: {$alias_url}"));
-						continue;
-					}
-					/* NOTE: fgetss() is not a typo RTFM before being smart */
-					while (($fc = fgetss($fd)) !== FALSE) {
-						$tmp = trim($fc, " \t\n\r");
-						if (empty($tmp))
+				if (download_file($alias_url, $temp_filename . "/aliases", $verify_ssl) === true) {
+					/* if the item is tar gzipped then extract */
+					if (stripos($alias_url, '.tgz')) {
+						if (!process_alias_tgz($temp_filename))
 							continue;
-						$tmp_str = strstr($tmp, '#', true);
-						if (!empty($tmp_str))
-							$tmp = $tmp_str;
-						if ($isfirst == 1)
-							$address .= ' ';
-						$address .= $tmp;
-						$isfirst = 1;
+					} else if (stripos($alias_url, '.zip')) {
+						if (!process_alias_unzip($temp_filename))
+							continue;
 					}
-					fclose($fd);
-					mwexec("/bin/rm -rf {$temp_filename}");
+					if (file_exists("{$temp_filename}/aliases")) {
+						$subnets = parse_aliases_file("{$temp_filename}/aliases", "subnets");
+						$address = join(',', $subnets);
+					}
 				}
+				mwexec("/bin/rm -rf {$temp_filename}");
 			}
 			if (!empty($address)) {
 				$config['aliases']['alias'][$x]['address'] = $address;

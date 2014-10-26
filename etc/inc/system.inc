@@ -109,10 +109,6 @@ function system_resolvconf_generate($dynupdate = false) {
 
 	$syscfg = $config['system'];
 
-	// Do not create blank domain lines, it breaks tools like dig.
-	if($syscfg['domain'])
-		$resolvconf = "domain {$syscfg['domain']}\n";
-
 	if (((isset($config['dnsmasq']['enable']) && (empty($config['dnsmasq']['interface']) || in_array("lo0", explode(",", $config['dnsmasq']['interface']))))
 		|| (isset($config['unbound']['enable'])) && (empty($config['unbound']['active_interface']) || in_array("lo0", explode(",", $config['unbound']['active_interface']))))
 		&& !isset($config['system']['dnslocalhost']))
@@ -130,6 +126,10 @@ function system_resolvconf_generate($dynupdate = false) {
 			if($nameserver)
 				$resolvconf .= "nameserver $nameserver\n";
 		}
+	} else {
+		// Do not create blank search/domain lines, it can break tools like dig.
+		if($syscfg['domain'])
+			$resolvconf = "search {$syscfg['domain']}\n";
 	}
 	if (is_array($syscfg['dnsserver'])) {
 		foreach ($syscfg['dnsserver'] as $ns) {

@@ -552,6 +552,11 @@ function return_gateways_array($disabled = false, $localhost = false, $inactive 
 		if (isset($interfaces_v4[$ifname]))
 			continue;
 
+		/* We're not interested in ifaces without an IP address assigned */
+		$iface_ip = get_interface_ip($ifname);
+		if (!is_ipaddrv4($iface_ip))
+			continue;
+
 		$ctype = "";
 		switch($ifcfg['ipaddr']) {
 			case "dhcp":
@@ -597,8 +602,13 @@ function return_gateways_array($disabled = false, $localhost = false, $inactive 
 					continue 2;
 		}
 
-		if (is_ipaddrv4($gateway['gateway']))
+		/* if a usable IPv4 address is specified ... */
+		if (is_valid_iface_ipaddrv4($gateway['gateway']))
+			/* ... then let's monitor it! */
 			$gateway['monitor'] = $gateway['gateway'];
+		else
+			/* ... otherwise disable any monitoring of this gateway */
+			$gateway['monitor_disable'] = true;
 
 		$gateway['descr'] = "Interface {$friendly}{$ctype} Gateway";
 		$gateways_arr[$gateway['name']] = $gateway;
@@ -625,6 +635,11 @@ function return_gateways_array($disabled = false, $localhost = false, $inactive 
 			continue;
 
 		if(isset($interfaces_v6[$ifname]))
+			continue;
+
+		/* We're not interested in ifaces without an IP address assigned */
+		$iface_ip = get_interface_ip($ifname);
+		if (!is_ipaddrv6($iface_ip))
 			continue;
 
 		$ctype = "";
@@ -681,8 +696,13 @@ function return_gateways_array($disabled = false, $localhost = false, $inactive 
 					continue 2;
 		}
 
-		if (is_ipaddrv6($gateway['gateway']))
+		/* if a usable IPv6 address is specified ... */
+		if (is_valid_iface_ipaddrv6($gateway['gateway']))
+			/* ... then let's monitor it! */
 			$gateway['monitor'] = $gateway['gateway'];
+		else
+			/* ... otherwise disable any monitoring of this gateway */
+			$gateway['monitor_disable'] = true;			
 
 		$gateway['descr'] = "Interface {$friendly}{$ctype} Gateway";
 		$gateways_arr[$gateway['name']] = $gateway;

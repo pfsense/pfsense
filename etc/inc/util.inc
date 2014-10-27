@@ -560,18 +560,10 @@ function is_valid_iface_ipaddrv4($ipaddr) {
 	if (!is_ipaddrv4($ipaddr))
 		return false;
 	
-	/* convert string to ULONG */
-	$ip_long = ip2long32($ipaddr);
+	/* Convert string to ULONG and extract last octet */
+	$ip_high = ip2long32($ipaddr) >> 24;
 
-	/* ANY is not a usable IP address */
-	if ($ip_long == 0)
-		return false;
-
-	/* Let's extract first and last octets */
-	$ip_low  = $ip_long % 256;
-	$ip_high = $ip_long >> 24;
-
-	/* IP address start with 0 */
+	/* IP address can't start with 0 */
 	if ($ip_high == 0)
 		return false;
 

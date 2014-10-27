@@ -300,7 +300,7 @@ function is_module_loaded($module_name) {
 	$module_name = str_replace(".ko", "", $module_name);
 	$running = 0;
 	$_gb = exec("/sbin/kldstat -qn {$module_name} 2>&1", $_gb, $running);
-	if (intval($running) == 0)
+	if (intval($running) == 0
 		return true;
 	else
 		return false;
@@ -554,8 +554,6 @@ function is_linklocal($ipaddr) {
 	0.0.0.0/8
 	127.0.0.0/8
 	224.0.0.0/3
-	x.y.z.0
-	x.y.z.255
 */
 function is_valid_iface_ipaddrv4($ipaddr) {
 	/* check if input address format is correct */
@@ -573,13 +571,8 @@ function is_valid_iface_ipaddrv4($ipaddr) {
 	$ip_low  = $ip_long % 256;
 	$ip_high = $ip_long >> 24;
 
-
 	/* IP address start with 0 */
 	if ($ip_high == 0)
-		return false;
-
-	/* IP address can't end with 0 or 255 */
-	if ($ip_low == 0 || $ip_low == 255)
 		return false;
 
 	/* IP address from LOCALHOST scope is definitely bad idea */

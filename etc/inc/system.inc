@@ -889,14 +889,10 @@ function system_webgui_start() {
 	if ($config['system']['webgui']['protocol'] == "https") {
 		// Ensure that we have a webConfigurator CERT
 		$cert =& lookup_cert($config['system']['webgui']['ssl-certref']);
-		if(!is_array($cert) || !$cert['crt'] || !$cert['prv']) {
+		if(!is_array($cert) || !$cert['crt'] || !$cert['prv'])
 			$cert = system_webgui_create_certificate();
-			$crt = base64_decode($cert['crt']);
-			$key = base64_decode($cert['prv']);
-		} else {
-			$crt = base64_decode($cert['crt']);
-			$key = base64_decode($cert['prv']);
-		}
+		$crt = base64_decode($cert['crt']);
+		$key = base64_decode($cert['prv']);
 
 		if(!$config['system']['webgui']['port'])
 			$portarg = "443";

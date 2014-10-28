@@ -49,7 +49,7 @@ global $cpzone, $cpzoneid;
 $cpzone = $_REQUEST['zone'];
 $cpcfg = $config['captiveportal'][$cpzone];
 if (empty($cpcfg)) {
-	log_error("Submission to captiveportal with unkown parameter zone: " . htmlspecialchars($cpzone));
+	log_error("Submission to captiveportal with unknown parameter zone: " . htmlspecialchars($cpzone));
 	portal_reply_page($redirurl, "error", $errormsg);
 	ob_flush();
 	return;

@@ -73,16 +73,13 @@ foreach ($ifdescrs as $ifdescr => $ifname):
 ?>
 	<tr>
 		<td class="vncellt" rowspan="2">
-			<img src="./themes/<?=$g['theme'];?>/images/icons/icon_<?=$icon;?>.gif" alt="<?=$icon;?>" />
-			&nbsp;
-			<strong><u>
-				<span onclick="location.href='/interfaces.php?if=<?=$ifdescr; ?>'" style="cursor:pointer">
-					<?=htmlspecialchars($ifname);?>
-				</span>
-			</u></strong>
+			<span onclick="location.href='/interfaces.php?if=<?=$ifdescr; ?>'" style="cursor:pointer; white-space:nowrap">
+				<img src="./themes/<?=$g['theme'];?>/images/icons/icon_<?=$icon;?>.gif" alt="<?=$icon;?>" />
+				<u><?=htmlspecialchars($ifname);?></u>
+			</span>
 <?php
 		if ($ifinfo['dhcplink'])
-			echo "&nbsp;(DHCP)";
+			echo "<br />(DHCP)";
 ?>
 		</td>
 <?php
@@ -103,7 +100,8 @@ foreach ($ifdescrs as $ifdescr => $ifname):
 		</td>
 	</tr>
 	<tr>
-		<td class="vncellt" style="border-right:1px solid #999999;">
+		<td class="listr">
+			<strong>
 <?php
 		if($ifinfo['ipaddr'] != ""):
 ?>
@@ -117,6 +115,7 @@ foreach ($ifdescrs as $ifdescr => $ifname):
 <?php
 		endif;
 ?>
+			</strong>
 		</td>
 	</tr>
 <?php

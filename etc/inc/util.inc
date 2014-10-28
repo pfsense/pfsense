@@ -542,7 +542,52 @@ function is_ipaddrv4($ipaddr) {
 
 /* returns true if $ipaddr is a valid linklocal address */
 function is_linklocal($ipaddr) {
-	return (strtolower(substr($ipaddr, 0, 5)) == "fe80:");
+	if (is_ipaddrv4($ipaddr))
+		return ( (ip2long32($ipaddr) & (integer)0xFFFF0000) == (integer)0xA9FE0000 );
+	
+	return (Net_IPv6::getAddressType($ipaddr) == NET_IPV6_LOCAL_LINK);
+}
+
+/* returns true if $ipaddr is an actually usable interface IPv4 address.
+   returns false if $ipaddr is:
+	not valid IPv4 address
+	0.0.0.0/8
+	127.0.0.0/8
+	224.0.0.0/3
+*/
+function is_valid_iface_ipaddrv4($ipaddr) {
+	/* check if input address format is correct */
+	if (!is_ipaddrv4($ipaddr))
+		return false;
+	
+	/* Convert string to ULONG and extract last octet */
+	$ip_high = ip2long32($ipaddr) >> 24;
+
+	/* IP address can't start with 0 */
+	if ($ip_high == 0)
+		return false;
+
+	/* IP address from LOCALHOST scope is definitely bad idea */
+	if ($ip_high == 127)
+		return false;
+		
+	/* MULTICAST and BROADCAST addresses are not good either */
+	if ($ip_high >= 224 && $ip_high <= 255)
+		return false;
+
+	return true;
+}
+
+/* returns true if $ipaddr is an actually usable interface IPv6 address */
+function is_valid_iface_ipaddrv6($ipaddr) {
+	
+	switch (Net_IPv6::getAddressType($ipaddr)) {
+		case NET_IPV6_LOCAL_LINK:
+		case NET_IPV6_UNASSIGNED:
+				return true;
+	}
+
+	return false;
 }
 
 /* returns scope of a linklocal address */

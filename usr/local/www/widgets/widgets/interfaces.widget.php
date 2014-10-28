@@ -55,6 +55,21 @@ foreach ($ifdescrs as $ifdescr => $ifname):
 			$icon = 'wlan_d';
 	} else
 		$icon = 'cablenic';
+
+	if ($ifinfo['status'] == "up" || $ifinfo['status'] == "associated") {
+		$status = '-up';
+		$status_text = 'up';
+		$status_icon = 'icon_interface_up.gif';
+	} elseif ($ifinfo['status'] == "no carrier") {
+		$status = '-down';
+		$status_text = 'down';
+		$status_icon = 'icon_interface_down.gif';
+	} elseif ($ifinfo['status'] == "down") {
+		$status = '-block';
+		$status_text = 'disabled';
+		$status_icon = 'icon_block.gif';
+	} else
+		$status = '';
 ?>
 	<tr>
 		<td class="vncellt" rowspan="2">
@@ -71,32 +86,16 @@ foreach ($ifdescrs as $ifdescr => $ifname):
 ?>
 		</td>
 <?php
-	if($ifinfo['status'] == "up" || $ifinfo['status'] == "associated"):
-?>
-		<td rowspan="2" class="listr" align="center">
-			<div id="<?php echo $ifname;?>-up" style="display:inline" >
-				<img src="./themes/<?= $g['theme']; ?>/images/icons/icon_interface_up.gif" title="<?=$ifname;?> is up" alt="up" />
-			</div>
-		</td>
-<?php
-	elseif ($ifinfo['status'] == "no carrier"):
-?>
-		<td rowspan="2" class="listr" align="center">
-			<div id="<?php echo $ifname;?>-down" style="display:inline" >
-				<img src="./themes/<?= $g['theme']; ?>/images/icons/icon_interface_down.gif" title="<?=$ifname;?> is down" alt="down" />
-			</div>
-		</td>
-<?php
-	elseif ($ifinfo['status'] == "down"):
-?>
-		<td rowspan="2" class="listr" align="center">
-			<div id="<?php echo $ifname;?>-block" style="display:inline" >
-				<img src="./themes/<?= $g['theme']; ?>/images/icons/icon_block.gif" title="<?=$ifname;?> is disabled" alt="disabled" />
-			</div>
-		</td>
-<?php
-	else:
+	if ($status === ''):
 		echo htmlspecialchars($ifinfo['status']);
+	else:
+?>
+		<td rowspan="2" class="listr" align="center">
+			<div id="<?php echo $ifname . $status;?>" style="display:inline" >
+				<img src="./themes/<?= $g['theme']; ?>/images/icons/<?=$status_icon;?>" title="<?=$ifname;?> is <?=$status_text;?>" alt="<?=$status;?>" />
+			</div>
+		</td>
+<?php
 	endif;
 ?>
 		<td class="listr">

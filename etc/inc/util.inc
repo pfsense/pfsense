@@ -384,8 +384,8 @@ function ip2ulong($ip) {
 /* Find out how many IPs are contained within a given IP range
  *  e.g. 192.168.0.0 to 192.168.0.255 returns 256
  */
-function ip_range_size($startip, $endip) {
-	if (is_ipaddr($startip) && is_ipaddr($endip)) {
+function ip_range_size_v4($startip, $endip) {
+	if (is_ipaddrv4($startip) && is_ipaddrv4($endip)) {
 		// Operate as unsigned long because otherwise it wouldn't work
 		//   when crossing over from 127.255.255.255 / 128.0.0.0 barrier
 		return abs(ip2ulong($startip) - ip2ulong($endip)) + 1;
@@ -396,7 +396,7 @@ function ip_range_size($startip, $endip) {
 /* Find the smallest possible subnet mask which can contain a given number of IPs
  *  e.g. 512 IPs can fit in a /23, but 513 IPs need a /22
  */
-function find_smallest_cidr($number) {
+function find_smallest_cidr_v4($number) {
 	$smallest = 1;
 	for ($b=32; $b > 0; $b--) {
 		$smallest = ($number <= pow(2,$b)) ? $b : $smallest;
@@ -428,9 +428,37 @@ function ip_greater_than($ip1, $ip2) {
 	return ip2ulong($ip1) > ip2ulong($ip2);
 }
 
-/* Convert a range of IPs to an array of subnets which can contain the range. */
+/* Convert a range of IPv4 addresses to an array of individual addresses. */
+/* Note: IPv6 ranges are not yet supported here. */
+function ip_range_to_address_array($startip, $endip, $max_size = 5000) {
+	if (!is_ipaddrv4($startip) || !is_ipaddrv4($endip)) {
+		return false;
+	}
+
+	if (ip_greater_than($startip, $endip)) {
+		// Swap start and end so we can process sensibly.
+		$temp = $startip;
+		$startip = $endip;
+		$endip = $temp;
+	}
+
+	if (ip_range_size_v4($startip, $endip) > $max_size)
+		return false;
+	
+	// Container for IP addresses within this range.
+	$rangeaddresses = array();
+	$end_int = ip2ulong($endip);
+	for ($ip_int = ip2ulong($startip); $ip_int <= $end_int; $ip_int++) {
+		$rangeaddresses[] = long2ip($ip_int);
+	}
+
+	return $rangeaddresses;
+}
+
+/* Convert a range of IPv4 addresses to an array of subnets which can contain the range. */
+/* Note: IPv6 ranges are not yet supported here. */
 function ip_range_to_subnet_array($startip, $endip) {
-	if (!is_ipaddr($startip) || !is_ipaddr($endip)) {
+	if (!is_ipaddrv4($startip) || !is_ipaddrv4($endip)) {
 		return array();
 	}
 
@@ -445,7 +473,7 @@ function ip_range_to_subnet_array($startip, $endip) {
 	$rangesubnets = array();
 
 	// Figure out what the smallest subnet is that holds the number of IPs in the given range.
-	$cidr = find_smallest_cidr(ip_range_size($startip, $endip));
+	$cidr = find_smallest_cidr_v4(ip_range_size_v4($startip, $endip));
 
 	// Loop here to reduce subnet size and retest as needed. We need to make sure
 	//   that the target subnet is wholly contained between $startip and $endip.
@@ -496,12 +524,19 @@ function ip_range_to_subnet_array($startip, $endip) {
 	return $rangesubnets;
 }
 
+/* returns true if $range is a valid pair of IPv4 or IPv6 addresses separated by a "-"
+   	false - if not a valid pair
+   	true (numeric 4 or 6) - if valid, gives type of addresses */
 function is_iprange($range) {
 	if (substr_count($range, '-') != 1) {
 		return false;
 	}
 	list($ip1, $ip2) = explode ('-', $range);
-	return (is_ipaddr($ip1) && is_ipaddr($ip2));
+	if (is_ipaddrv4($ip1) && is_ipaddrv4($ip2))
+		return 4;
+	if (is_ipaddrv6($ip1) && is_ipaddrv6($ip2))
+		return 6;
+	return false;
 }
 
 /* returns true if $ipaddr is a valid dotted IPv4 address or a IPv6 */

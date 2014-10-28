@@ -38,7 +38,6 @@ require_once("pfsense-utils.inc");
 require_once("functions.inc");
 require_once("/usr/local/www/widgets/include/interfaces.inc");
 
-$i = 0;
 $ifdescrs = get_configured_interface_with_descr();
 ?>
 
@@ -46,11 +45,10 @@ $ifdescrs = get_configured_interface_with_descr();
 <?php
 foreach ($ifdescrs as $ifdescr => $ifname):
 	$ifinfo = get_interface_info($ifdescr);
-	$iswireless = is_interface_wireless($ifdescr);
 
 	if ($ifinfo['ppplink']) {
 		$icon = '3g';
-	} else if ($iswireless) {
+	} else if (is_interface_wireless($ifdescr)) {
 		if($ifinfo['status'] == "associated")
 			$icon = 'wlan';
 		else
@@ -68,8 +66,8 @@ foreach ($ifdescrs as $ifdescr => $ifname):
 				</span>
 			</u></strong>
 <?php
-			if ($ifinfo['dhcplink'])
-				echo "&nbsp;(DHCP)";
+		if ($ifinfo['dhcplink'])
+			echo "&nbsp;(DHCP)";
 ?>
 		</td>
 <?php

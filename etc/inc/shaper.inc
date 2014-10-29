@@ -2887,8 +2887,8 @@ class dummynet_class {
 	function validate_input($data, &$input_errors) {
 		$reqdfields[] = "bandwidth";
 		$reqdfieldsn[] = gettext("Bandwidth");
-		$reqdfields[] = "burst";
-		$reqdfieldsn[] = gettext("Burst");
+		/*$reqdfields[] = "burst";
+		$reqdfieldsn[] = gettext("Burst"); */
 		$reqdfields[] = "bandwidthtype";
 		$reqdfieldsn[] = gettext("Bandwidthtype");
 		$reqdfields[] = "newname";
@@ -3253,9 +3253,9 @@ var addBwRowTo = (function() {
 	td = d.createElement("td");
 	td.innerHTML="<input type='hidden' value='" + totalrows +"' name='bandwidth_row-" + totalrows + "' /><input size='10' type='text' class='formfld unknown' name='bandwidth" + totalrows + "' id='bandwidth" + totalrows + "' />";
 	tr.appendChild(td);
-	td = d.createElement("td");
-	td.innerHTML="<input type='hidden' value='" + totalrows +"' name='burst_row-" + totalrows + "' /><input size='10' type='text' class='formfld unknown' name='burst" + totalrows + "' id='burst" + totalrows + "' />";
-	tr.appendChild(td);
+	//td = d.createElement("td");
+	//td.innerHTML="<input type='hidden' value='" + totalrows +"' name='burst_row-" + totalrows + "' /><input size='10' type='text' class='formfld unknown' name='burst" + totalrows + "' id='burst" + totalrows + "' />";
+	//tr.appendChild(td);
 	td = d.createElement("td");
 	td.innerHTML="<input type='hidden' value='" + totalrows +"' name='bwtype_row-" + totalrows + "' /><select class='formselect' name='bwtype" + totalrows + "'>{$bwopt}</select>";
 	tr.appendChild(td);
@@ -3326,7 +3326,7 @@ EOD;
 		$form .= "<table id='maintable'>";
 		$form .= "<tbody><tr>";
 		$form .= "<td width='35%'><div id='onecolumn'>Bandwidth</div></td>";
-		$form .= "<td width='35%'><div id='fifthcolumn'>Burst</div></td>";
+		//$form .= "<td width='35%'><div id='fifthcolumn'>Burst</div></td>";
 		$form .= "<td width='20%'><div id='twocolumn'>Bw type</div></td>";
 		$form .= "<td width='35%' ><div id='thirdcolumn'>Schedule</div></td>";
 		$form .= "<td width='5%'><div id='fourthcolumn'></div></td>";
@@ -3335,8 +3335,8 @@ EOD;
 			foreach ($bandwidth as $bwidx => $bw) {
 				$form .= "\n<tr><td width='40%'>";
 				$form .= "<input class='formfld unknown' size='10' type=\"text\" id=\"bandwidth{$bwidx}\" name=\"bandwidth{$bwidx}\" value=\"{$bw['bw']}\" />";
-				$form .= "</td><td width='20%'>";
-				$form .= "<input class='formfld unknown' size='10' type=\"text\" id=\"burst{$bwidx}\" name=\"burst{$bwidx}\" value=\"{$bw['burst']}\" />";
+				//$form .= "</td><td width='20%'>";
+				//$form .= "<input class='formfld unknown' size='10' type=\"text\" id=\"burst{$bwidx}\" name=\"burst{$bwidx}\" value=\"{$bw['burst']}\" />";
 				$form .= "</td><td width='20%'>";
 				$form .= "<select id=\"bwtype{$bwidx}\" name=\"bwtype{$bwidx}\" class=\"formselect\">";
 				foreach (array("Kb" => "Kbit/s", "Mb" => "Mbit/s", "Gb" => "Gbit/s", "b" => "Bit/s") as $bwsidx => $bwscale) {
@@ -3363,7 +3363,8 @@ EOD;
 		$form .= "</tbody></table>";
 		$form .= "<a onclick=\"javascript:addBwRowTo('maintable'); return false;\" href='#'>";
 		$form .= "<img border='0' src='/themes/{$g['theme']}/images/icons/icon_plus.gif' alt='add' title='" . gettext("add another schedule") . "' /></a>";
-		$form .= "<br /><span class=\"vexpl\">" . gettext("Bandwidth is a rate (e.g. Mbit/s), burst is a total amount of data that will be transferred at full speed after an idle period.") . "</span><br />";
+		//$form .= "<br /><span class=\"vexpl\">" . gettext("Bandwidth is a rate (e.g. Mbit/s), burst is a total amount of data that will be transferred at full speed after an idle period.") . "</span><br />";
+		$form .= "<br /><span class=\"vexpl\">" . gettext("Bandwidth is the rate (e.g. Mbit/s) to which traffic in this limiter will be restricted.") . "</span><br />";
 		$form .= "</td></tr>";
 		$form .= "<tr><td valign=\"middle\" class=\"vncellreq\">" . gettext("Mask") . "</td>";
 		$form .= "<td class=\"vncellreq\">";

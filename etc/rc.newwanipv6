@@ -50,7 +50,7 @@ function restart_packages() {
 	/* restart packages */
 	system_ntp_configure(false);
 	mwexec_bg("/usr/local/sbin/ntpdate_sync_once.sh", true);
-	log_error("{$g['product_name']} package system has detected an ip change $oldipv6 ->  $curwanipv6 ... Restarting packages.");		
+	log_error("{$g['product_name']} package system has detected an IP change $oldipv6 ->  $curwanipv6 ... Restarting packages.");		
 	send_event("service reload packages");
 }
 
@@ -60,7 +60,7 @@ if (isset($_GET))
 else
 	$argument = trim($argv[1], " \n\t");
 
-log_error("rc.newwanipv6: Informational is starting {$argument}.");
+log_error("rc.newwanipv6: Info: starting on {$argument}.");
 
 if (empty($argument)) {
 	$interface = "wan";

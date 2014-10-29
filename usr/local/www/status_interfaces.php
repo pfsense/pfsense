@@ -166,7 +166,7 @@ include("head.inc");
 			<form name="ppplink_form" action="status_interfaces.php" method="post">
 				<input type="hidden" name="if" value="<?php echo $ifdescr; ?>" />
 				<input type="hidden" name="status" value="<?php echo $ifinfo['ppplink']; ?>" />
-				<?=htmlspecialchars($ifinfo['pppinfo']);?>
+				<?=htmlspecialchars($ifinfo['ppplink']);?>
 				<?php if ($ifinfo['ppplink'] == "up"): ?>
 					<input type="submit" name="submit" class="formbtn" value="<?php echo gettext("Disconnect"); ?>" />
 				<?php else: ?>

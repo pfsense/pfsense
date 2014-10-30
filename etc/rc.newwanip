@@ -185,9 +185,12 @@ if(is_array($config['gifs']['gif'])){
  * could be failing back in which case we need to switch IPs back anyhow.
  */
 if (!is_ipaddr($oldip) || $curwanip != $oldip || !is_ipaddrv4($config['interfaces'][$interface]['ipaddr'])) {
-	/* option to flush state table on IP change */
+	/* IP changed, kill states accordingly */
 	if ($curwanip != $oldip) {
+		log_error("IP has changed, killing states on former IP $oldip.");
+		mwexec_bg("/sbin/pfctl -k $oldip");
 		if (isset($config['system']['ip_change_kill_states'])) {
+			/* hidden config option to wipe all states if needed */
 			log_error("Killing all states post-IP change.");
 			filter_flush_state_table();
 		}

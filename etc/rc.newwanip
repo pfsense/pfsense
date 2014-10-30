@@ -233,4 +233,10 @@ if (!is_ipaddr($oldip) || $curwanip != $oldip || !is_ipaddrv4($config['interface
 /* signal filter reload */
 filter_configure();
 
+if (is_ipaddr($oldip) && $curwanip != $oldip) {
+	/*  Reset states that are using the wan-ip, for example outbound natted
+		udp traffic would otherwise stay natted using the old wan-ip */
+	mwexec_bg("/sbin/pfctl -k $oldip");
+}
+
 ?>

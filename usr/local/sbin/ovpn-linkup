@@ -7,7 +7,7 @@ if [ "${dev_type}" = "tun" ]; then
 	if [ "" != "$route_vpn_gateway" ]; then
 		/bin/echo $route_vpn_gateway > /tmp/$1_router
 	else
-		/bin/echo $5 > /tmp/$1_router
+		/bin/echo $4 > /tmp/$1_router
 	fi
 fi
 

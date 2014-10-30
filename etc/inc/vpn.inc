@@ -272,6 +272,10 @@ function vpn_ipsec_configure($ipchg = false)
 		}
 		unset($iflist);
 
+		$accept_unencrypted = "";
+		if (isset($config['ipsec']['acceptunencryptedmainmode']))
+			$accept_unencrypted = "accept_unencrypted_mainmode_messages = yes";
+
 		$strongswan = <<<EOD
 
 #Automatically generated please do not modify
@@ -290,6 +294,7 @@ charon {
 	# XXX: There is not much choice here really users win their security!
 	i_dont_care_about_security_and_use_aggressive_mode_psk=yes
 
+	{$accept_unencrypted}
 	cisco_unity = yes
 
 	# And two loggers using syslog. The subsections define the facility to log

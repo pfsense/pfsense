@@ -48,6 +48,7 @@ foreach ($ipsec_loglevels as $lkey => $ldescr) {
 		$pconfig["ipsec_{$lkey}"] = $config['ipsec']["ipsec_{$lkey}"];
 }
 $pconfig['failoverforcereload'] = isset($config['ipsec']['failoverforcereload']);
+$pconfig['acceptunencryptedmainmode'] = isset($config['ipsec']['acceptunencryptedmainmode']);
 $pconfig['maxmss_enable'] = isset($config['system']['maxmss_enable']);
 $pconfig['maxmss'] = $config['system']['maxmss'];
 
@@ -85,6 +86,11 @@ if ($_POST) {
 			$config['ipsec']['failoverforcereload'] = true;
 		elseif (isset($config['ipsec']['failoverforcereload']))
 			unset($config['ipsec']['failoverforcereload']);
+
+		if($_POST['acceptunencryptedmainmode'] == "yes")
+			$config['ipsec']['acceptunencryptedmainmode'] = true;
+		elseif (isset($config['ipsec']['acceptunencryptedmainmode']))
+			unset($config['ipsec']['acceptunencryptedmainmode']);
 
 		if($_POST['maxmss_enable'] == "yes") {
 			$config['system']['maxmss_enable'] = true;
@@ -222,6 +228,18 @@ function maxmss_checked(obj) {
 							"an IPsec tunnel does not function properly, and IPsec must be forcefully reloaded " .
 							"when a failover occurs. Because this will disrupt all IPsec tunnels, this behavior" .
 							" is disabled by default. Check this box to force IPsec to fully reload on failover."); ?>
+						</td>
+					</tr>
+					<tr>
+						<td width="22%" valign="top" class="vncell"><?=gettext("Unencrypted payloads in IKEv1 Main Mode"); ?></td>
+						<td width="78%" class="vtable">
+							<input name="acceptunencryptedmainmode" type="checkbox" id="acceptunencryptedmainmode" value="yes" <?php if ($pconfig['acceptunencryptedmainmode']) echo "checked=\"checked\""; ?> />
+							<strong><?=gettext("Accept unencrypted ID and HASH payloads in IKEv1 Main Mode"); ?></strong>
+							<br />
+							<?=gettext("Some implementations send the third Main Mode message unencrypted, probably to find the PSKs for the specified ID for authentication." .
+							"This is very similar to Aggressive Mode, and has the same security implications: " .
+							"A passive attacker can sniff the negotiated Identity, and start brute forcing the PSK using the HASH payload." .
+							" It is recommended to keep this option to no, unless you know exactly what the implications are and require compatibility to such devices (for example, some SonicWall boxes).");?>
 						</td>
 					</tr>
 					<tr>

@@ -186,9 +186,11 @@ if(is_array($config['gifs']['gif'])){
  */
 if (!is_ipaddr($oldip) || $curwanip != $oldip || !is_ipaddrv4($config['interfaces'][$interface]['ipaddr'])) {
 	/* option to flush state table on IP change */
-	if (isset($config['system']['ip_change_kill_states'])) {
-		log_error("Killing all states post-IP change.");
-		filter_flush_state_table();
+	if ($curwanip != $oldip) {
+		if (isset($config['system']['ip_change_kill_states'])) {
+			log_error("Killing all states post-IP change.");
+			filter_flush_state_table();
+		}
 	}
 	
 	/* reconfigure static routes (kernel may have deleted them) */

@@ -746,7 +746,9 @@ function cleanup_backupcache($lock = false) {
 			unlink($backup);
 			continue;
 		}
-		$tocheck = array_shift(explode('.', array_pop(explode('-', $backup))));
+		$tocheck = explode('-', $backup);
+		$tocheck = explode('.', array_pop($tocheck));
+		$tocheck = array_shift($tocheck);
 		if(!in_array($tocheck, $baktimes)) {
 			$i = true;
 			if($g['booting'])
@@ -917,6 +919,21 @@ function get_config_backup_count() {
 function pfSense_clear_globals() {
 	global $config, $FilterIfList, $GatewaysList, $filterdns, $aliases, $aliastable;
 
+	$error = error_get_last();
+	if( $error !== NULL) {
+		$errtype = $error["type"];
+		if ($errtype != E_NOTICE) {
+			// there are a lot of 'innocent' errors.. so skip reporting E_NOTICE
+			$errfile = $error["file"];
+			$errline = $error["line"];
+			$errstr  = $error["message"];
+			$str = "PHP ERROR Type:$errtype, File:$errfile, Line: $errline, Message: $errstr";
+			print($str);
+			log_error($str);
+			file_notice("phperror", $str, "General", "", 2);
+		}
+	}
+	
 	if (isset($FilterIfList))
 		unset($FilterIfList);
 

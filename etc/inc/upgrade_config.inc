@@ -1991,7 +1991,7 @@ function upgrade_054_to_055() {
 		/* restore the databases, if we have one */
 		if (restore_rrd()) {
 			/* Make sure to move the rrd backup out of the way. We will make a new one after converting. */
-			rename("{$g['cf_conf_path']}/rrd.tgz", "{$g['cf_conf_path']}/backup");
+			@rename("{$g['cf_conf_path']}/rrd.tgz", "{$g['cf_conf_path']}/backup/rrd.tgz");
 		}
 	}
 
@@ -3108,7 +3108,7 @@ function upgrade_095_to_096() {
 		/* restore the databases, if we have one */
 		if (restore_rrd()) {
 			/* Make sure to move the rrd backup out of the way. We will make a new one after converting. */
-			rename("{$g['cf_conf_path']}/rrd.tgz", "{$g['cf_conf_path']}/backup");
+			@rename("{$g['cf_conf_path']}/rrd.tgz", "{$g['cf_conf_path']}/backup/rrd.tgz");
 		}
 	}
 

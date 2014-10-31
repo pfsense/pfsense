@@ -311,20 +311,14 @@ function presubmit() {
 											<br />
 												<select size="10" style="width: 75%" name="notmembers[]" class="formselect" id="notmembers" onchange="clear_selected('members')" multiple="multiple">
 <?php
-											$rowIndex = 0;
 											foreach ($config['system']['user'] as $user):
 												if (is_array($pconfig['members']) && in_array($user['uid'],$pconfig['members']))
 													continue;
-												$rowIndex++;
 ?>
 												<option value="<?=$user['uid'];?>" <?=$selected;?>>
 													<?=htmlspecialchars($user['name']);?>
 												</option>
-<?php
-											endforeach;
-											if ($rowIndex == 0)
-												echo "<option></option>";
-?>
+											<?php endforeach; ?>
 											</select>
 											<br />
 										</td>
@@ -343,20 +337,14 @@ function presubmit() {
 											<br />
 											<select size="10" style="width: 75%" name="members[]" class="formselect" id="members" onchange="clear_selected('notmembers')" multiple="multiple">
 <?php
-											$rowIndex = 0;
 											foreach ($config['system']['user'] as $user):
 												if (!(is_array($pconfig['members']) && in_array($user['uid'],$pconfig['members'])))
 													continue;
-												$rowIndex++;
 ?>
 												<option value="<?=$user['uid'];?>">
 													<?=htmlspecialchars($user['name']);?>
 												</option>
-<?php
-											endforeach;
-											if ($rowIndex == 0)
-												echo "<option></option>";
-?>
+											<?php endforeach; ?>
 											</select>
 											<br />
 										</td>

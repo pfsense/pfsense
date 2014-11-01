@@ -94,7 +94,7 @@ if ((empty($curwanipv6) || !is_ipaddrv6($curwanipv6)) && substr($interface_real,
         return;
 }
 
-if (isset($_GET))
+if (isset($_GET['dmips']))
 	$new_domain_name_servers = $_GET['dmips'];
 else
 	$new_domain_name_servers = getenv("new_domain_name_servers");
@@ -109,7 +109,7 @@ if (!empty($new_domain_name_servers)) {
 	if (count($valid_ns > 0))
 		file_put_contents("{$g['varetc_path']}/nameserver_v6{$interface}", implode("\n", $valid_ns));
 }
-if (isset($_GET))
+if (isset($_GET['dmnames']))
 	$new_domain_name = $_GET['dmnames'];
 else
 	$new_domain_name = getenv("new_domain_name");

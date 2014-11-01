@@ -405,17 +405,17 @@ function system_routing_configure($interface = "") {
 
 	$gatewayip = "";
 	$interfacegw = "";
-	$foundgw = false;
 	$gatewayipv6 = "";
 	$interfacegwv6 = "";
+	$foundgw = false;
 	$foundgwv6 = false;
 	/* tack on all the hard defined gateways as well */
 	if (is_array($config['gateways']['gateway_item'])) {
 		array_map('unlink', glob("{$g['tmp_path']}/*_defaultgw{,v6}", GLOB_BRACE));
 		foreach	($config['gateways']['gateway_item'] as $gateway) {
 			if (isset($gateway['defaultgw'])) {
-				if ($gateway['ipprotocol'] != "inet6" && (is_ipaddrv4($gateway['gateway']) || $gateway['gateway'] == "dynamic")) {
-					if(strstr($gateway['gateway'], ":"))
+				if ($foundgw == false && ($gateway['ipprotocol'] != "inet6" && (is_ipaddrv4($gateway['gateway']) || $gateway['gateway'] == "dynamic"))) {
+					if(strpos($gateway['gateway'], ":"))
 						continue;
 					if ($gateway['gateway'] == "dynamic")
 						$gateway['gateway'] = get_interface_gateway($gateway['interface']);
@@ -427,7 +427,7 @@ function system_routing_configure($interface = "") {
 							@file_put_contents("{$g['tmp_path']}/{$defaultif}_defaultgw", $gateway['gateway']);
 					}
 					$foundgw = true;
-				} else if ($gateway['ipprotocol'] == "inet6" && (is_ipaddrv6($gateway['gateway']) || $gateway['gateway'] == "dynamic")) {
+				} else if ($foundgwv6 == false && ($gateway['ipprotocol'] == "inet6" && (is_ipaddrv6($gateway['gateway']) || $gateway['gateway'] == "dynamic"))) {
 					if ($gateway['gateway'] == "dynamic")
 						$gateway['gateway'] = get_interface_gateway_v6($gateway['interface']);
 					$gatewayipv6 = $gateway['gateway'];
@@ -448,13 +448,13 @@ function system_routing_configure($interface = "") {
 		$defaultif = get_real_interface("wan");
 		$interfacegw = "wan";
 		$gatewayip = get_interface_gateway("wan");
-		@touch("{$g['tmp_path']}/{$defaultif}_defaultgw");
+		@file_put_contents("{$g['tmp_path']}/{$defaultif}_defaultgw", $gatewayip);
 	}	
 	if ($foundgwv6 == false) {
 		$defaultifv6 = get_real_interface("wan");
 		$interfacegwv6 = "wan";
 		$gatewayipv6 = get_interface_gateway_v6("wan");
-		@touch("{$g['tmp_path']}/{$defaultif}_defaultgwv6");
+		@file_put_contents("{$g['tmp_path']}/{$defaultifv6}_defaultgwv6", $gatewayipv6);
 	}
 	$dont_add_route = false;
 	/* if OLSRD is enabled, allow WAN to house DHCP. */

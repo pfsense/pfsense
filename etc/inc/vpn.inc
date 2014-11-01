@@ -628,6 +628,11 @@ EOD;
 				else
 					$rekey = "rekey = yes";
 
+				if ($ph1ent['nat_traversal'] != 'off')
+					$forceencaps = "forceencaps = yes";
+				else
+					$forceencaps = "forceencaps = no";
+
 				$ipseclifetime = 0;
 				$rightsubnet_spec = array();
 				$leftsubnet_spec = array();
@@ -779,16 +784,18 @@ EOD;
 						if ($ipseclifetime == 0 || intval($ipseclifetime) > intval($ph2ent['lifetime']))
 							$ipseclifetime = intval($ph2ent['lifetime']);
 					}
+
 				}
 			}
 
-				$ipsecconf .=<<<EOD
+					$ipsecconf .=<<<EOD
 
 conn con{$ph1ent['ikeid']}
 	aggressive = {$aggressive}
 	fragmentation = yes
 	keyexchange = {$keyexchange}
 	{$reauth}
+	{$forceencaps}
 	{$rekey}
 	reqid = {$ikeid}
 	installpolicy = yes
@@ -801,26 +808,26 @@ conn con{$ph1ent['ikeid']}
 
 EOD;
 
-				if (!empty($ikelifeline))
-					$ipsecconf .= "\t{$ikelifeline}\n";
-				if ($ipseclifetime > 0)
-					$ipsecconf .= "\tlifetime = {$ipseclifetime}s\n";
-				if (!empty($rightsourceip))
-					$ipsecconf .= "{$rightsourceip}";
-				if (!empty($rightsubnet_spec))
-					$ipsecconf .= "\trightsubnet = " . join(",", $rightsubnet_spec) . "\n";
-				if (!empty($leftsubnet_spec))
-					$ipsecconf .= "\tleftsubnet = " . join(",", $leftsubnet_spec) . "\n";
-				if (!empty($ealgosp1))
-					$ipsecconf .= "\t{$ealgosp1}\n";
-				if (!empty($ealgoAHsp2arr))
-					$ipsecconf .= "\tah = " . join(',', $ealgoAHsp2arr) . "!\n";
-				if (!empty($ealgoESPsp2arr))
-					$ipsecconf .= "\tesp = " . join(',', $ealgoESPsp2arr) . "!\n";
-				if (!empty($authentication))
-					$ipsecconf .= "\t{$authentication}\n";
-				if (!empty($peerid_spec))
-					$ipsecconf .= "\trightid = {$peerid_spec}\n";
+					if (!empty($ikelifeline))
+						$ipsecconf .= "\t{$ikelifeline}\n";
+					if ($ipseclifetime > 0)
+						$ipsecconf .= "\tlifetime = {$ipseclifetime}s\n";
+					if (!empty($rightsourceip))
+						$ipsecconf .= "{$rightsourceip}";
+					if (!empty($rightsubnet_spec))
+						$ipsecconf .= "\trightsubnet = " . join(",", $rightsubnet_spec) . "\n";
+					if (!empty($leftsubnet_spec))
+						$ipsecconf .= "\tleftsubnet = " . join(",", $leftsubnet_spec) . "\n";
+					if (!empty($ealgosp1))
+						$ipsecconf .= "\t{$ealgosp1}\n";
+					if (!empty($ealgoAHsp2arr))
+						$ipsecconf .= "\tah = " . join(',', $ealgoAHsp2arr) . "!\n";
+					if (!empty($ealgoESPsp2arr))
+						$ipsecconf .= "\tesp = " . join(',', $ealgoESPsp2arr) . "!\n";
+					if (!empty($authentication))
+						$ipsecconf .= "\t{$authentication}\n";
+					if (!empty($peerid_spec))
+						$ipsecconf .= "\trightid = {$peerid_spec}\n";
 			}
 		}
 	}

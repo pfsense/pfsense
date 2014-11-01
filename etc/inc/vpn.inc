@@ -815,10 +815,8 @@ EOD;
 					$ipsecconf .= "\t{$ealgosp1}\n";
 				if (!empty($ealgoAHsp2arr))
 					$ipsecconf .= "\tah = " . join(',', $ealgoAHsp2arr) . "!\n";
-				if (!empty($ealgoESPsp2arr)) {
-					file_put_contents("/var/etc/ipsec/dump_test", print_r($ealgoESPsp2arr, true));
+				if (!empty($ealgoESPsp2arr))
 					$ipsecconf .= "\tesp = " . join(',', $ealgoESPsp2arr) . "!\n";
-				}
 				if (!empty($authentication))
 					$ipsecconf .= "\t{$authentication}\n";
 				if (!empty($peerid_spec))

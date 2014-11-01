@@ -55,7 +55,7 @@ function restart_packages() {
 }
 
 /* Interface IP address has changed */
-if (isset($_GET)) 
+if (isset($_GET['interface'])) 
 	$argument = $_GET['interface'];
 else
 	$argument = trim($argv[1], " \n\t");

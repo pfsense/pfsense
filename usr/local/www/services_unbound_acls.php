@@ -92,24 +92,24 @@ if ($_POST) {
 				$networkacl[$x]['description'] = $pconfig["description{$x}"];
 				if (!is_ipaddr($networkacl[$x]['acl_network'])) {
 					$input_errors[] = gettext("You must enter a valid network IP address for {$networkacl[$x]['acl_network']}.");
-                }
+				}
 
 				if (is_ipaddr($networkacl[$x]['acl_network'])) {
 					if (!is_subnet($networkacl[$x]['acl_network']."/".$networkacl[$x]['mask'])) {
 						$input_errors[] = gettext("You must enter a valid IPv4 netmask for {$networkacl[$x]['acl_network']}/{$networkacl[$x]['mask']}.");
-                    }
+					}
 				} else if (function_exists("is_ipaddrv6")) {
 					if (!is_ipaddrv6($networkacl[$x]['acl_network'])) {
 						$input_errors[] = gettext("You must enter a valid IPv6 address for {$networkacl[$x]['acl_network']}.");
-                    } else if (!is_subnetv6($networkacl[$x]['acl_network']."/".$networkacl[$x]['mask'])) {
+					} else if (!is_subnetv6($networkacl[$x]['acl_network']."/".$networkacl[$x]['mask'])) {
 						$input_errors[] = gettext("You must enter a valid IPv6 netmask for {$networkacl[$x]['acl_network']}/{$networkacl[$x]['mask']}.");
-                    }
+					}
 				} else {
 					$input_errors[] = gettext("You must enter a valid IPv4 address for {$networkacl[$x]['acl_network']}.");
-                }
+				}
 			} else if (isset($networkacl[$x])) {
 				unset($networkacl[$x]);
-            }
+			}
 		}
 
 		if (!$input_errors) {
@@ -123,13 +123,13 @@ if ($_POST) {
 				$acl_entry['row'] = array();
 				foreach ($networkacl as $acl) {
 					$acl_entry['row'][] = $acl;
-                }
+				}
 
 				if (isset($id) && $a_acls[$id]) {
 					$a_acls[$id] = $acl_entry;
-                } else {
+				} else {
 					$a_acls[] = $acl_entry;
-                }
+				}
 
 				mark_subsystem_dirty("unbound");
 				write_config();

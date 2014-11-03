@@ -395,16 +395,11 @@ function console_configure_dhcpd($version = 4) {
 		$config[$dhcpd][$interface]['range']['from'] = $dhcpstartip;
 		$config[$dhcpd][$interface]['range']['to'] = $dhcpendip;
 	} else {
-		/* TODO - this line is causing a "Fatal error: Cannot unset
-		   string offsets in /etc/rc.initial.setlanip" on below line
-		   number */
-		if($config[$dhcpd][$interface]) 
+		if(isset($config[$dhcpd][$interface]['enable'])) {
 			unset($config[$dhcpd][$interface]['enable']);
-		echo "Disabling DHCPD...";
-		if (!$dry_run) {
-			services_dhcpd_configure();
+			printf(gettext("Disabling %s DHCPD..."), $label_IPvX);
+			$restart_dhcpd = true;
 		}
-		echo "Done!\n";
 	}
 }
 
@@ -454,7 +449,7 @@ if(!$config['interfaces']['lan']) {
 	unset($config['nat']);
 	if (!$dry_run) {
 		system("rm /var/dhcpd/var/db/* >/dev/null 2>/dev/null");
-		services_dhcpd_configure();
+		$restart_dhcpd = true;
 	}
 }
 

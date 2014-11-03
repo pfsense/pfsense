@@ -401,7 +401,7 @@ function console_configure_dhcpd($version = 4) {
 		   number - Nov 2014 - is it really? */
 		if($config[$dhcpd][$interface]) {
 			unset($config[$dhcpd][$interface]['enable']);
-			echo sprintf("Disabling %s DHCPD...", $label_IPvX);
+			printf(gettext("Disabling %s DHCPD..."), $label_IPvX);
 			$restart_dhcpd = true;
 		}
 	}

@@ -41,21 +41,29 @@
 require_once("guiconfig.inc");
 require_once("unbound.inc");
 
-if(!is_array($config['unbound']))
+if(!is_array($config['unbound'])) {
 	$config['unbound'] = array();
+}
 
-if (isset($config['unbound']['hideidentity']))
+if (isset($config['unbound']['hideidentity'])) {
 	$pconfig['hideidentity'] = true;
-if (isset($config['unbound']['hideversion']))
+}
+if (isset($config['unbound']['hideversion'])){
 	$pconfig['hideversion'] = true;
-if (isset($config['unbound']['prefetch']))
+}
+if (isset($config['unbound']['prefetch'])) {
 	$pconfig['prefetch'] = true;
-if (isset($config['unbound']['prefetchkey']))
+}
+if (isset($config['unbound']['prefetchkey'])) {
 	$pconfig['prefetchkey'] = true;
-if (isset($config['unbound']['hardenglue']))
+}
+if (isset($config['unbound']['hardenglue'])) {
 	$pconfig['hardenglue'] = true;
-if (isset($config['unbound']['dnssecstripped']))
+}
+if (isset($config['unbound']['dnssecstripped'])) {
 	$pconfig['dnssecstripped'] = true;
+}
+
 $pconfig['msgcachesize'] = $config['unbound']['msgcachesize'];
 $pconfig['outgoing_num_tcp'] = $config['unbound']['outgoing_num_tcp'];
 $pconfig['incoming_num_tcp'] = $config['unbound']['incoming_num_tcp'];
@@ -76,33 +84,40 @@ if ($_POST) {
 	if ($_POST['apply']) {
 		$retval = services_unbound_configure();
 		$savemsg = get_std_save_message($retval);
-		if ($retval == 0)
+		if ($retval == 0) {
 			clear_subsystem_dirty('unbound');
+        }
 	} else {
-		if (isset($_POST['hideidentity']))
+		if (isset($_POST['hideidentity'])) {
 			$config['unbound']['hideidentity'] = true;
-		else
+        } else {
 			unset($config['unbound']['hideidentity']);
-		if (isset($_POST['hideversion']))
+        }
+		if (isset($_POST['hideversion'])) {
 			$config['unbound']['hideversion'] = true;
-		else
+        } else {
 			unset($config['unbound']['hideversion']);
-		if (isset($_POST['prefetch']))
+        }
+		if (isset($_POST['prefetch'])) {
 			$config['unbound']['prefetch'] = true;
-		else
+        } else {
 			unset($config['unbound']['prefetch']);
-		if (isset($_POST['prefetchkey']))
+        }
+		if (isset($_POST['prefetchkey'])) {
 			$config['unbound']['prefetchkey'] = true;
-		else
+        } else {
 			unset($config['unbound']['prefetchkey']);
-		if (isset($_POST['hardenglue']))
+        }
+		if (isset($_POST['hardenglue'])) {
 			$config['unbound']['hardenglue'] = true;
-		else
+        } else {
 			unset($config['unbound']['hardenglue']);
-		if (isset($_POST['dnssecstripped']))
+        }
+		if (isset($_POST['dnssecstripped'])) {
 			$config['unbound']['dnssecstripped'] = true;
-		else
+        } else {
 			unset($config['unbound']['dnssecstripped']);
+        }
 		$config['unbound']['msgcachesize'] = $_POST['msgcachesize'];
 		$config['unbound']['outgoing_num_tcp'] = $_POST['outgoing_num_tcp'];
 		$config['unbound']['incoming_num_tcp'] = $_POST['incoming_num_tcp'];

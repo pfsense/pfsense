@@ -65,17 +65,17 @@ if (isset($config['unbound']['dnssecstripped'])) {
 }
 
 $pconfig['msgcachesize'] = $config['unbound']['msgcachesize'];
-$pconfig['outgoing_num_tcp'] = $config['unbound']['outgoing_num_tcp'];
-$pconfig['incoming_num_tcp'] = $config['unbound']['incoming_num_tcp'];
-$pconfig['edns_buffer_size'] = $config['unbound']['edns_buffer_size'];
+$pconfig['outgoing_num_tcp'] = isset($config['unbound']['outgoing_num_tcp']) ? $config['unbound']['outgoing_num_tcp'] : '10';
+$pconfig['incoming_num_tcp'] = isset($config['unbound']['incoming_num_tcp']) ? $config['unbound']['incoming_num_tcp'] : '10';
+$pconfig['edns_buffer_size'] = isset($config['unbound']['edns_buffer_size']) ? $config['unbound']['edns_buffer_size'] : '4096';
 $pconfig['num_queries_per_thread'] = $config['unbound']['num_queries_per_thread'];
-$pconfig['jostle_timeout'] = $config['unbound']['jostle_timeout'];
-$pconfig['cache_max_ttl'] = $config['unbound']['cache_max_ttl'];
-$pconfig['cache_min_ttl'] = $config['unbound']['cache_min_ttl'];
-$pconfig['infra_host_ttl'] = $config['unbound']['infra_host_ttl'];
-$pconfig['infra_lame_ttl'] = $config['unbound']['infra_lame_ttl'];
-$pconfig['infra_cache_numhosts'] = $config['unbound']['infra_cache_numhosts'];
-$pconfig['unwanted_reply_threshold'] = $config['unbound']['unwanted_reply_threshold'];
+$pconfig['jostle_timeout'] = isset($config['unbound']['jostle_timeout']) ? $config['unbound']['jostle_timeout'] : '200';
+$pconfig['cache_max_ttl'] = isset($config['unbound']['cache_max_ttl']) ? $config['unbound']['cache_max_ttl'] : '86400';
+$pconfig['cache_min_ttl'] = isset($config['unbound']['cache_min_ttl']) ? $config['unbound']['cache_min_ttl'] : '0';
+$pconfig['infra_host_ttl'] = isset($config['unbound']['infra_host_ttl']) ? $config['unbound']['infra_host_ttl'] : '900';
+$pconfig['infra_lame_ttl'] = isset($config['unbound']['infra_lame_ttl']) ? $config['unbound']['infra_lame_ttl'] : '900';
+$pconfig['infra_cache_numhosts'] = isset($config['unbound']['infra_cache_numhosts']) ? $config['unbound']['infra_cache_numhosts'] : '10000';
+$pconfig['unwanted_reply_threshold'] = isset($config['unbound']['unwanted_reply_threshold']) ? $config['unbound']['unwanted_reply_threshold'] : 'disabled';
 $pconfig['log_verbosity'] = isset($config['unbound']['log_verbosity']) ? $config['unbound']['log_verbosity'] : "1";
 
 if ($_POST) {

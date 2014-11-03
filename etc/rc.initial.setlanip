@@ -463,15 +463,14 @@ if (!$dry_run) {
 	echo "\nPlease wait while the changes are saved to {$upperifname}...";
 	write_config(sprintf(gettext("%s IP configuration from console menu"), $interface));
 	interface_reconfigure(strtolower($upperifname));
-	echo " Reloading filter...";
+	echo "\n Reloading filter...";
 	filter_configure_sync();
-	echo "\n";
 	if($restart_dhcpd) {
-		echo " DHCPD..."; 
+		echo "\n DHCPD..."; 
 		services_dhcpd_configure();
 	}
 	if($restart_webgui) {
-		echo " restarting webConfigurator... ";
+		echo "\n Restarting webConfigurator... ";
 		mwexec("/etc/rc.restart_webgui");
 	}
 }
@@ -496,7 +495,7 @@ if ($intip6 != '') {
 }
 
 if ($intip != '' || $intip6 != '') {
-	if (count($ifdescrs) == "1" or $interface = "lan") {
+	if (count($ifdescrs) == "1" or $interface == "lan") {
 		if ($debug) {
 			echo "ifdescrs count is " . count($ifdescrs) . "\n";
 			echo "interface is {$interface} \n";

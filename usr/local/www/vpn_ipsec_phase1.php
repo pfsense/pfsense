@@ -866,8 +866,8 @@ function dpdchkbox_change() {
 						<td width="22%" valign="top" class="vncell"><?=gettext("NAT Traversal"); ?></td>
 						<td width="78%" class="vtable">
 							<select name="nat_traversal" class="formselect">
-								<option value="off" <?php if ($pconfig['nat_traversal'] == 'off') echo "selected=\"selected\""; ?>><?=gettext("Disable"); ?></option>
-								<option value="on" <?php if ($pconfig['nat_traversal'] != 'off') echo "selected=\"selected\""; ?>><?=gettext("Enable"); ?></option>
+								<option value="off" <?php if ($pconfig['nat_traversal'] == 'off') echo "selected=\"selected\""; ?>><?=gettext("Auto"); ?></option>
+								<option value="on" <?php if ($pconfig['nat_traversal'] != 'off') echo "selected=\"selected\""; ?>><?=gettext("Force"); ?></option>
 							</select>
 							<br />
 							<span class="vexpl">

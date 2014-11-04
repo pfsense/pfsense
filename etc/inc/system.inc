@@ -1241,7 +1241,7 @@ EOD;
 		$lighty_config .= "ssl.engine = \"enable\"\n";
 		$lighty_config .= "ssl.pemfile = \"{$g['varetc_path']}/{$cert_location}\"\n\n";
 
-		// Harden SSL a bit for PCI conformance testing
+		// SSLv2/3 is deprecated, force use of TLS
 		$lighty_config .= "ssl.use-sslv2 = \"disable\"\n";
 		$lighty_config .= "ssl.use-sslv3 = \"disable\"\n";
 

@@ -131,7 +131,7 @@ if (isset($p1index) && $a_phase1[$p1index]) {
 	$pconfig['halgo'] = "sha1";
 	$pconfig['dhgroup'] = "2";
 	$pconfig['lifetime'] = "28800";
-	$pconfig['nat_traversal'] = "on";
+	$pconfig['nat_traversal'] = 'on';
 	$pconfig['dpd_enable'] = true;
 	$pconfig['iketype'] = "ikev1";
 
@@ -866,9 +866,8 @@ function dpdchkbox_change() {
 						<td width="22%" valign="top" class="vncell"><?=gettext("NAT Traversal"); ?></td>
 						<td width="78%" class="vtable">
 							<select name="nat_traversal" class="formselect">
-								<option value="off" <?php if ($pconfig['nat_traversal'] == "off") echo "selected=\"selected\""; ?>><?=gettext("Disable"); ?></option>
-								<option value="on" <?php if ($pconfig['nat_traversal'] == "on") echo "selected=\"selected\""; ?>><?=gettext("Enable"); ?></option>
-								<option value="force" <?php if ($pconfig['nat_traversal'] == "force") echo "selected=\"selected\""; ?>><?=gettext("Force"); ?></option>
+								<option value="off" <?php if ($pconfig['nat_traversal'] == 'off') echo "selected=\"selected\""; ?>><?=gettext("Disable"); ?></option>
+								<option value="on" <?php if ($pconfig['nat_traversal'] != 'off') echo "selected=\"selected\""; ?>><?=gettext("Enable"); ?></option>
 							</select>
 							<br />
 							<span class="vexpl">

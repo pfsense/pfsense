@@ -2075,4 +2075,17 @@ function post_redirect($page, $params) {
 	print "</body></html>\n";
 }
 
+/* Locate disks that can be queried for S.M.A.R.T. data. */
+function get_smart_drive_list() {
+	$disk_list = explode(" ", get_single_sysctl("kern.disks"));
+	foreach ($disk_list as $id => $disk) {
+		// We only want certain kinds of disks for S.M.A.R.T.
+		if (preg_match("/^(ad|da|ada).*[0-9]{1,2}$/", $disk) === FALSE) {
+			unset($disk_list[$id]);
+		}
+	}
+	sort($disk_list);
+	return $disk_list;
+}
+
 ?>

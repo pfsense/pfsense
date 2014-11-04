@@ -276,8 +276,7 @@ switch($action) {
 	// Default page, prints the forms to view info, test, etc...
 	default:
 	{
-		// Get all AD* and DA* (IDE and SCSI) devices currently installed and stores them in the $devs array
-		exec("ls /dev | grep '^\(ad\|da\|ada\)[0-9]\{1,2\}$'", $devs);
+		$devs = get_smart_drive_list();
 		?>
 		<table width="100%" border="0" cellpadding="0" cellspacing="0" summary="default page">
 			<tr>

@@ -395,16 +395,11 @@ function console_configure_dhcpd($version = 4) {
 		$config[$dhcpd][$interface]['range']['from'] = $dhcpstartip;
 		$config[$dhcpd][$interface]['range']['to'] = $dhcpendip;
 	} else {
-		/* TODO - this line is causing a "Fatal error: Cannot unset
-		   string offsets in /etc/rc.initial.setlanip" on below line
-		   number */
-		if($config[$dhcpd][$interface]) 
+		if(isset($config[$dhcpd][$interface]['enable'])) {
 			unset($config[$dhcpd][$interface]['enable']);
-		echo "Disabling DHCPD...";
-		if (!$dry_run) {
-			services_dhcpd_configure();
+			printf(gettext("Disabling %s DHCPD..."), $label_IPvX);
+			$restart_dhcpd = true;
 		}
-		echo "Done!\n";
 	}
 }
 
@@ -454,7 +449,7 @@ if(!$config['interfaces']['lan']) {
 	unset($config['nat']);
 	if (!$dry_run) {
 		system("rm /var/dhcpd/var/db/* >/dev/null 2>/dev/null");
-		services_dhcpd_configure();
+		$restart_dhcpd = true;
 	}
 }
 
@@ -463,15 +458,14 @@ if (!$dry_run) {
 	echo "\nPlease wait while the changes are saved to {$upperifname}...";
 	write_config(sprintf(gettext("%s IP configuration from console menu"), $interface));
 	interface_reconfigure(strtolower($upperifname));
-	echo " Reloading filter...";
+	echo "\n Reloading filter...";
 	filter_configure_sync();
-	echo "\n";
 	if($restart_dhcpd) {
-		echo " DHCPD..."; 
+		echo "\n DHCPD..."; 
 		services_dhcpd_configure();
 	}
 	if($restart_webgui) {
-		echo " restarting webConfigurator... ";
+		echo "\n Restarting webConfigurator... ";
 		mwexec("/etc/rc.restart_webgui");
 	}
 }
@@ -496,7 +490,7 @@ if ($intip6 != '') {
 }
 
 if ($intip != '' || $intip6 != '') {
-	if (count($ifdescrs) == "1" or $interface = "lan") {
+	if (count($ifdescrs) == "1" or $interface == "lan") {
 		if ($debug) {
 			echo "ifdescrs count is " . count($ifdescrs) . "\n";
 			echo "interface is {$interface} \n";

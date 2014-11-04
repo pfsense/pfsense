@@ -107,9 +107,9 @@ if (isset($p1index) && $a_phase1[$p1index]) {
 	$pconfig['descr'] = $a_phase1[$p1index]['descr'];
 	$pconfig['nat_traversal'] = $a_phase1[$p1index]['nat_traversal'];
 
-	if (!isset($a_phase1[$p1index]['reauth_enable']))
+	if (isset($a_phase1[$p1index]['reauth_enable']))
 		$pconfig['reauth_enable'] = true;
-	if (!isset($a_phase1[$p1index]['rekey_enable']))
+	if (isset($a_phase1[$p1index]['rekey_enable']))
 		$pconfig['rekey_enable'] = true;
 
 	if ($a_phase1[$p1index]['dpd_delay'] &&	$a_phase1[$p1index]['dpd_maxfail']) {

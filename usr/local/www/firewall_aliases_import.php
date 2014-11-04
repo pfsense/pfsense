@@ -101,12 +101,15 @@ if($_POST['aliasimport'] <> "") {
 			$impdesc = trim($implinea[1]);
 			if (strlen($impdesc) < 200) {
 				if ((strpos($impdesc, "||") === false) && (substr($impdesc, 0, 1) != "|") && (substr($impdesc, -1, 1) != "|")) {
-					if (is_iprange($impip)) {
+					$iprange_type = is_iprange($impip);
+					if ($iprange_type == 4) {
 						list($startip, $endip) = explode('-', $impip);
 						$rangesubnets = ip_range_to_subnet_array($startip, $endip);
 						$imported_ips = array_merge($imported_ips, $rangesubnets);
 						$rangedescs = array_fill(0, count($rangesubnets), $impdesc);
 						$imported_descs = array_merge($imported_descs, $rangedescs);
+					} else if ($iprange_type == 6) {
+						$input_errors[] = sprintf(gettext('IPv6 address ranges are not supported (%s)'), $impip);
 					} else if (!is_ipaddr($impip) && !is_subnet($impip) && !is_hostname($impip) && !empty($impip)) {
 						$input_errors[] = sprintf(gettext("%s is not an IP address. Please correct the error to continue"), $impip);
 					} elseif (!empty($impip)) {

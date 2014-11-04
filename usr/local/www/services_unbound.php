@@ -41,42 +41,56 @@
 require_once("guiconfig.inc");
 require_once("unbound.inc");
 
-if (!is_array($config['unbound']))
+if (!is_array($config['unbound'])) {
 	$config['unbound'] = array();
+}
+
 $a_unboundcfg =& $config['unbound'];
 
-if (!is_array($config['unbound']['hosts']))
+if (!is_array($config['unbound']['hosts'])) {
 	$config['unbound']['hosts'] = array();
+}
+
 $a_hosts =& $config['unbound']['hosts'];
 
-if (!is_array($config['unbound']['domainoverrides']))
+if (!is_array($config['unbound']['domainoverrides'])) {
 	$config['unbound']['domainoverrides'] = array();
+}
+
 $a_domainOverrides = &$config['unbound']['domainoverrides'];
 
-if (isset($config['unbound']['enable']))
+if (isset($config['unbound']['enable'])) {
 	$pconfig['enable'] = true;
-if (isset($config['unbound']['dnssec']))
+}
+if (isset($config['unbound']['dnssec'])) {
 	$pconfig['dnssec'] = true;
-if (isset($config['unbound']['forwarding']))
+}
+if (isset($config['unbound']['forwarding'])) {
 	$pconfig['forwarding'] = true;
-if (isset($config['unbound']['regdhcp']))
+}
+if (isset($config['unbound']['regdhcp'])) {
 	$pconfig['regdhcp'] = true;
-if (isset($config['unbound']['regdhcpstatic']))
+}
+if (isset($config['unbound']['regdhcpstatic'])) {
 	$pconfig['regdhcpstatic'] = true;
-if (isset($config['unbound']['txtsupport']))
+}
+if (isset($config['unbound']['txtsupport'])) {
 	$pconfig['txtsupport'] = true;
+}
 
 $pconfig['port'] = $config['unbound']['port'];
 $pconfig['custom_options'] = $config['unbound']['custom_options'];
 
-if (empty($config['unbound']['active_interface']))
+if (empty($config['unbound']['active_interface'])) {
 	$pconfig['active_interface'] = array();
-else
+} else {
 	$pconfig['active_interface'] = explode(",", $config['unbound']['active_interface']);
-if (empty($config['unbound']['outgoing_interface']))
+}
+if (empty($config['unbound']['outgoing_interface'])) {
 	$pconfig['outgoing_interface'] = array();
-else
+} else {
 	$pconfig['outgoing_interface'] = explode(",", $config['unbound']['outgoing_interface']);
+}
 
 if ($_POST) {
 	$pconfig = $_POST;
@@ -85,57 +99,71 @@ if ($_POST) {
 	if ($_POST['apply']) {
 		$retval = services_unbound_configure();
 		$savemsg = get_std_save_message($retval);
-		if ($retval == 0)
+		if ($retval == 0) {
 			clear_subsystem_dirty('unbound');
+		}
 		/* Update resolv.conf in case the interface bindings exclude localhost. */
 		system_resolvconf_generate();
 	} else {
-		if (isset($_POST['enable']) && isset($config['dnsmasq']['enable']))
+		if (isset($_POST['enable']) && isset($config['dnsmasq']['enable'])) {
 			$input_errors[] = "The system dns-forwarder is still active. Disable it before enabling the DNS Resolver.";
+		}
 
-		if (empty($_POST['active_interface']))
+		if (empty($_POST['active_interface'])) {
 			$input_errors[] = "A single network interface needs to be selected for the DNS Resolver to bind to.";
+		}
 
-		if (empty($_POST['outgoing_interface']))
+		if (empty($_POST['outgoing_interface'])) {
 			$input_errors[] = "A single outgoing network interface needs to be selected for the DNS Resolver to use for outgoing DNS requests.";
+		}
 
-		if ($_POST['port'])
-			if (is_port($_POST['port']))
+		if ($_POST['port']) {
+			if (is_port($_POST['port'])) {
 				$a_unboundcfg['port'] = $_POST['port'];
-			else
+			} else {
 				$input_errors[] = gettext("You must specify a valid port number.");
-		else if (isset($config['unbound']['port']))
+			}
+		} else if (isset($config['unbound']['port'])) {
 			unset($config['unbound']['port']);
+		}
 
-		if (isset($_POST['enable']))
+		if (isset($_POST['enable'])) {
 			$a_unboundcfg['enable'] = true;
-		else
+		} else {
 			unset($a_unboundcfg['enable']);
-		if (isset($_POST['dnssec']))
+		}
+		if (isset($_POST['dnssec'])) {
 			$a_unboundcfg['dnssec'] = true;
-		else
+		} else {
 			unset($a_unboundcfg['dnssec']);
-		if (isset($_POST['forwarding']))
+		}
+		if (isset($_POST['forwarding'])) {
 			$a_unboundcfg['forwarding'] = true;
-		else
+		} else {
 			unset($a_unboundcfg['forwarding']);
-		if (isset($_POST['regdhcp']))
+		}
+		if (isset($_POST['regdhcp'])) {
 			$a_unboundcfg['regdhcp'] = true;
-		else
+		} else {
 			unset($a_unboundcfg['regdhcp']);
-		if (isset($_POST['regdhcpstatic']))
+		}
+		if (isset($_POST['regdhcpstatic'])) {
 			$a_unboundcfg['regdhcpstatic'] = true;
-		else
+		} else {
 			unset($a_unboundcfg['regdhcpstatic']);
-		if (isset($_POST['txtsupport']))
+		}
+		if (isset($_POST['txtsupport'])) {
 			$a_unboundcfg['txtsupport'] = true;
-		else
+		} else {
 			unset($a_unboundcfg['txtsupport']);
-		if (is_array($_POST['active_interface']) && !empty($_POST['active_interface']))
+		}
+		if (is_array($_POST['active_interface']) && !empty($_POST['active_interface'])) {
 			$a_unboundcfg['active_interface'] = implode(",", $_POST['active_interface']);
+		}
 
-		if (is_array($_POST['outgoing_interface']) && !empty($_POST['outgoing_interface']))
+		if (is_array($_POST['outgoing_interface']) && !empty($_POST['outgoing_interface'])) {
 			$a_unboundcfg['outgoing_interface'] = implode(",", $_POST['outgoing_interface']);
+		}
 
 		$a_unboundcfg['custom_options'] = str_replace("\r\n", "\n", $_POST['custom_options']);
 

@@ -272,6 +272,10 @@ function vpn_ipsec_configure($ipchg = false)
 		}
 		unset($iflist);
 
+		$accept_unencrypted = "";
+		if (isset($config['ipsec']['acceptunencryptedmainmode']))
+			$accept_unencrypted = "accept_unencrypted_mainmode_messages = yes";
+
 		$strongswan = <<<EOD
 
 #Automatically generated please do not modify
@@ -290,6 +294,9 @@ charon {
 	# XXX: There is not much choice here really users win their security!
 	i_dont_care_about_security_and_use_aggressive_mode_psk=yes
 
+	{$accept_unencrypted}
+	cisco_unity = yes
+
 	# And two loggers using syslog. The subsections define the facility to log
 	# to, currently one of: daemon, auth.
 	syslog {
@@ -307,9 +314,6 @@ charon {
 	}
 
 EOD;
-
-		if (is_array($a_client) && isset($a_client['enable']) && isset($a_client['net_list']))
-			$strongswan .= "\tcisco_unity = yes\n";
 
 		$strongswan .= "\tplugins {\n";
 
@@ -624,6 +628,11 @@ EOD;
 				else
 					$rekey = "rekey = yes";
 
+				if ($ph1ent['nat_traversal'] != 'off')
+					$forceencaps = "forceencaps = yes";
+				else
+					$forceencaps = "forceencaps = no";
+
 				$ipseclifetime = 0;
 				$rightsubnet_spec = array();
 				$leftsubnet_spec = array();
@@ -775,16 +784,18 @@ EOD;
 						if ($ipseclifetime == 0 || intval($ipseclifetime) > intval($ph2ent['lifetime']))
 							$ipseclifetime = intval($ph2ent['lifetime']);
 					}
+
 				}
 			}
 
-				$ipsecconf .=<<<EOD
+					$ipsecconf .=<<<EOD
 
 conn con{$ph1ent['ikeid']}
 	aggressive = {$aggressive}
 	fragmentation = yes
 	keyexchange = {$keyexchange}
 	{$reauth}
+	{$forceencaps}
 	{$rekey}
 	reqid = {$ikeid}
 	installpolicy = yes
@@ -797,28 +808,26 @@ conn con{$ph1ent['ikeid']}
 
 EOD;
 
-				if (!empty($ikelifeline))
-					$ipsecconf .= "\t{$ikelifeline}\n";
-				if ($ipseclifetime > 0)
-					$ipsecconf .= "\tlifetime = {$ipseclifetime}s\n";
-				if (!empty($rightsourceip))
-					$ipsecconf .= "{$rightsourceip}";
-				if (!empty($rightsubnet_spec))
-					$ipsecconf .= "\trightsubnet = " . join(",", $rightsubnet_spec) . "\n";
-				if (!empty($leftsubnet_spec))
-					$ipsecconf .= "\tleftsubnet = " . join(",", $leftsubnet_spec) . "\n";
-				if (!empty($ealgosp1))
-					$ipsecconf .= "\t{$ealgosp1}\n";
-				if (!empty($ealgoAHsp2arr))
-					$ipsecconf .= "\tah = " . join(',', $ealgoAHsp2arr) . "!\n";
-				if (!empty($ealgoESPsp2arr)) {
-					file_put_contents("/var/etc/ipsec/dump_test", print_r($ealgoESPsp2arr, true));
-					$ipsecconf .= "\tesp = " . join(',', $ealgoESPsp2arr) . "!\n";
-				}
-				if (!empty($authentication))
-					$ipsecconf .= "\t{$authentication}\n";
-				if (!empty($peerid_spec))
-					$ipsecconf .= "\trightid = {$peerid_spec}\n";
+					if (!empty($ikelifeline))
+						$ipsecconf .= "\t{$ikelifeline}\n";
+					if ($ipseclifetime > 0)
+						$ipsecconf .= "\tlifetime = {$ipseclifetime}s\n";
+					if (!empty($rightsourceip))
+						$ipsecconf .= "{$rightsourceip}";
+					if (!empty($rightsubnet_spec))
+						$ipsecconf .= "\trightsubnet = " . join(",", $rightsubnet_spec) . "\n";
+					if (!empty($leftsubnet_spec))
+						$ipsecconf .= "\tleftsubnet = " . join(",", $leftsubnet_spec) . "\n";
+					if (!empty($ealgosp1))
+						$ipsecconf .= "\t{$ealgosp1}\n";
+					if (!empty($ealgoAHsp2arr))
+						$ipsecconf .= "\tah = " . join(',', $ealgoAHsp2arr) . "!\n";
+					if (!empty($ealgoESPsp2arr))
+						$ipsecconf .= "\tesp = " . join(',', $ealgoESPsp2arr) . "!\n";
+					if (!empty($authentication))
+						$ipsecconf .= "\t{$authentication}\n";
+					if (!empty($peerid_spec))
+						$ipsecconf .= "\trightid = {$peerid_spec}\n";
 			}
 		}
 	}

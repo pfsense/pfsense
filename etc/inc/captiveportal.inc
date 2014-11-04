@@ -1323,8 +1323,10 @@ function captiveportal_read_db($query = "") {
 	$DB = captiveportal_opendb();
 	if ($DB) {
 		$response = $DB->query("SELECT * FROM captiveportal {$query}");
-		while ($row = $response->fetchArray())
-			$cpdb[] = $row;
+		if ($response != FALSE) {
+			while ($row = $response->fetchArray())
+				$cpdb[] = $row;
+		}
 		$DB->close();
 	}
 

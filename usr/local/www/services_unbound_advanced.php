@@ -6,26 +6,26 @@
 	Copyright (C) 2011	Warren Baker (warren@pfsense.org)
 	All rights reserved.
 
-    Redistribution and use in source and binary forms, with or without
-    modification, are permitted provided that the following conditions are met:
+	Redistribution and use in source and binary forms, with or without
+	modification, are permitted provided that the following conditions are met:
 
-    1. Redistributions of source code must retain the above copyright notice,
-       this list of conditions and the following disclaimer.
+	1. Redistributions of source code must retain the above copyright notice,
+	   this list of conditions and the following disclaimer.
 
-    2. Redistributions in binary form must reproduce the above copyright
-       notice, this list of conditions and the following disclaimer in the
-       documentation and/or other materials provided with the distribution.
+	2. Redistributions in binary form must reproduce the above copyright
+	   notice, this list of conditions and the following disclaimer in the
+	   documentation and/or other materials provided with the distribution.
 
-    THIS SOFTWARE IS PROVIDED ``AS IS'' AND ANY EXPRESS OR IMPLIED WARRANTIES,
-    INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY
-    AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE
-    AUTHOR BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY,
-    OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
-    SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
-    INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
-    CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
-    ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
-    POSSIBILITY OF SUCH DAMAGE.
+	THIS SOFTWARE IS PROVIDED ``AS IS'' AND ANY EXPRESS OR IMPLIED WARRANTIES,
+	INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY
+	AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE
+	AUTHOR BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY,
+	OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+	SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+	INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+	CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+	ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+	POSSIBILITY OF SUCH DAMAGE.
 */
 /*
 	pfSense_MODULE:	dnsresolver
@@ -41,33 +41,41 @@
 require_once("guiconfig.inc");
 require_once("unbound.inc");
 
-if(!is_array($config['unbound']))
+if(!is_array($config['unbound'])) {
 	$config['unbound'] = array();
+}
 
-if (isset($config['unbound']['hideidentity']))
+if (isset($config['unbound']['hideidentity'])) {
 	$pconfig['hideidentity'] = true;
-if (isset($config['unbound']['hideversion']))
+}
+if (isset($config['unbound']['hideversion'])){
 	$pconfig['hideversion'] = true;
-if (isset($config['unbound']['prefetch']))
+}
+if (isset($config['unbound']['prefetch'])) {
 	$pconfig['prefetch'] = true;
-if (isset($config['unbound']['prefetchkey']))
+}
+if (isset($config['unbound']['prefetchkey'])) {
 	$pconfig['prefetchkey'] = true;
-if (isset($config['unbound']['hardenglue']))
+}
+if (isset($config['unbound']['hardenglue'])) {
 	$pconfig['hardenglue'] = true;
-if (isset($config['unbound']['dnssecstripped']))
+}
+if (isset($config['unbound']['dnssecstripped'])) {
 	$pconfig['dnssecstripped'] = true;
+}
+
 $pconfig['msgcachesize'] = $config['unbound']['msgcachesize'];
-$pconfig['outgoing_num_tcp'] = $config['unbound']['outgoing_num_tcp'];
-$pconfig['incoming_num_tcp'] = $config['unbound']['incoming_num_tcp'];
-$pconfig['edns_buffer_size'] = $config['unbound']['edns_buffer_size'];
+$pconfig['outgoing_num_tcp'] = isset($config['unbound']['outgoing_num_tcp']) ? $config['unbound']['outgoing_num_tcp'] : '10';
+$pconfig['incoming_num_tcp'] = isset($config['unbound']['incoming_num_tcp']) ? $config['unbound']['incoming_num_tcp'] : '10';
+$pconfig['edns_buffer_size'] = isset($config['unbound']['edns_buffer_size']) ? $config['unbound']['edns_buffer_size'] : '4096';
 $pconfig['num_queries_per_thread'] = $config['unbound']['num_queries_per_thread'];
-$pconfig['jostle_timeout'] = $config['unbound']['jostle_timeout'];
-$pconfig['cache_max_ttl'] = $config['unbound']['cache_max_ttl'];
-$pconfig['cache_min_ttl'] = $config['unbound']['cache_min_ttl'];
-$pconfig['infra_host_ttl'] = $config['unbound']['infra_host_ttl'];
-$pconfig['infra_lame_ttl'] = $config['unbound']['infra_lame_ttl'];
-$pconfig['infra_cache_numhosts'] = $config['unbound']['infra_cache_numhosts'];
-$pconfig['unwanted_reply_threshold'] = $config['unbound']['unwanted_reply_threshold'];
+$pconfig['jostle_timeout'] = isset($config['unbound']['jostle_timeout']) ? $config['unbound']['jostle_timeout'] : '200';
+$pconfig['cache_max_ttl'] = isset($config['unbound']['cache_max_ttl']) ? $config['unbound']['cache_max_ttl'] : '86400';
+$pconfig['cache_min_ttl'] = isset($config['unbound']['cache_min_ttl']) ? $config['unbound']['cache_min_ttl'] : '0';
+$pconfig['infra_host_ttl'] = isset($config['unbound']['infra_host_ttl']) ? $config['unbound']['infra_host_ttl'] : '900';
+$pconfig['infra_lame_ttl'] = isset($config['unbound']['infra_lame_ttl']) ? $config['unbound']['infra_lame_ttl'] : '900';
+$pconfig['infra_cache_numhosts'] = isset($config['unbound']['infra_cache_numhosts']) ? $config['unbound']['infra_cache_numhosts'] : '10000';
+$pconfig['unwanted_reply_threshold'] = isset($config['unbound']['unwanted_reply_threshold']) ? $config['unbound']['unwanted_reply_threshold'] : 'disabled';
 $pconfig['log_verbosity'] = isset($config['unbound']['log_verbosity']) ? $config['unbound']['log_verbosity'] : "1";
 
 if ($_POST) {
@@ -76,33 +84,40 @@ if ($_POST) {
 	if ($_POST['apply']) {
 		$retval = services_unbound_configure();
 		$savemsg = get_std_save_message($retval);
-		if ($retval == 0)
+		if ($retval == 0) {
 			clear_subsystem_dirty('unbound');
+		}
 	} else {
-		if (isset($_POST['hideidentity']))
+		if (isset($_POST['hideidentity'])) {
 			$config['unbound']['hideidentity'] = true;
-		else
+		} else {
 			unset($config['unbound']['hideidentity']);
-		if (isset($_POST['hideversion']))
+		}
+		if (isset($_POST['hideversion'])) {
 			$config['unbound']['hideversion'] = true;
-		else
+		} else {
 			unset($config['unbound']['hideversion']);
-		if (isset($_POST['prefetch']))
+		}
+		if (isset($_POST['prefetch'])) {
 			$config['unbound']['prefetch'] = true;
-		else
+		} else {
 			unset($config['unbound']['prefetch']);
-		if (isset($_POST['prefetchkey']))
+		}
+		if (isset($_POST['prefetchkey'])) {
 			$config['unbound']['prefetchkey'] = true;
-		else
+		} else {
 			unset($config['unbound']['prefetchkey']);
-		if (isset($_POST['hardenglue']))
+		}
+		if (isset($_POST['hardenglue'])) {
 			$config['unbound']['hardenglue'] = true;
-		else
+		} else {
 			unset($config['unbound']['hardenglue']);
-		if (isset($_POST['dnssecstripped']))
+		}
+		if (isset($_POST['dnssecstripped'])) {
 			$config['unbound']['dnssecstripped'] = true;
-		else
+		} else {
 			unset($config['unbound']['dnssecstripped']);
+		}
 		$config['unbound']['msgcachesize'] = $_POST['msgcachesize'];
 		$config['unbound']['outgoing_num_tcp'] = $_POST['outgoing_num_tcp'];
 		$config['unbound']['incoming_num_tcp'] = $_POST['incoming_num_tcp'];

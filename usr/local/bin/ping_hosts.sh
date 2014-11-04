@@ -40,7 +40,7 @@ if [ -f /var/db/pkgpinghosts ]; then
 	PKGHOSTS="/var/db/pkgpinghosts"
 fi
 
-cat $PKGHOSTS $HOSTS $IPSECHOSTS >/tmp/tmpHOSTS
+cat $PKGHOSTS $HOSTS $CURRENTIPSECHOSTS >/tmp/tmpHOSTS
 
 if [ ! -d /var/db/pingstatus ]; then
 	/bin/mkdir -p /var/db/pingstatus

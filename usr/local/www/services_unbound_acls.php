@@ -34,18 +34,21 @@ require("unbound.inc");
 
 $referer = (isset($_SERVER['HTTP_REFERER']) ? $_SERVER['HTTP_REFERER'] : '/services_unbound_acls.php');
 
-if (!is_array($config['unbound']['acls']))
+if (!is_array($config['unbound']['acls'])) {
 	$config['unbound']['acls'] = array();
+}
 
 $a_acls = &$config['unbound']['acls'];
 
 $id = $_GET['id'];
-if (isset($_POST['aclid']))
+if (isset($_POST['aclid'])) {
 	$id = $_POST['aclid'];
+}
 
 $act = $_GET['act'];
-if (isset($_POST['act']))
+if (isset($_POST['act'])) {
 	$act = $_POST['act'];
+}
 
 if ($act == "del") {
 	if (!$a_acls[$id]) {
@@ -87,21 +90,26 @@ if ($_POST) {
 				$networkacl[$x]['acl_network'] = $pconfig["acl_network{$x}"];
 				$networkacl[$x]['mask'] = $pconfig["mask{$x}"];
 				$networkacl[$x]['description'] = $pconfig["description{$x}"];
-				if (!is_ipaddr($networkacl[$x]['acl_network']))
+				if (!is_ipaddr($networkacl[$x]['acl_network'])) {
 					$input_errors[] = gettext("You must enter a valid network IP address for {$networkacl[$x]['acl_network']}.");
+				}
 
 				if (is_ipaddr($networkacl[$x]['acl_network'])) {
-					if (!is_subnet($networkacl[$x]['acl_network']."/".$networkacl[$x]['mask']))
+					if (!is_subnet($networkacl[$x]['acl_network']."/".$networkacl[$x]['mask'])) {
 						$input_errors[] = gettext("You must enter a valid IPv4 netmask for {$networkacl[$x]['acl_network']}/{$networkacl[$x]['mask']}.");
+					}
 				} else if (function_exists("is_ipaddrv6")) {
-					if (!is_ipaddrv6($networkacl[$x]['acl_network']))
+					if (!is_ipaddrv6($networkacl[$x]['acl_network'])) {
 						$input_errors[] = gettext("You must enter a valid IPv6 address for {$networkacl[$x]['acl_network']}.");
-					else if (!is_subnetv6($networkacl[$x]['acl_network']."/".$networkacl[$x]['mask']))
+					} else if (!is_subnetv6($networkacl[$x]['acl_network']."/".$networkacl[$x]['mask'])) {
 						$input_errors[] = gettext("You must enter a valid IPv6 netmask for {$networkacl[$x]['acl_network']}/{$networkacl[$x]['mask']}.");
-				} else
+					}
+				} else {
 					$input_errors[] = gettext("You must enter a valid IPv4 address for {$networkacl[$x]['acl_network']}.");
-			} else if (isset($networkacl[$x]))
+				}
+			} else if (isset($networkacl[$x])) {
 				unset($networkacl[$x]);
+			}
 		}
 
 		if (!$input_errors) {
@@ -113,14 +121,15 @@ if ($_POST) {
 				$acl_entry['description'] = $pconfig['description'];
 				$acl_entry['aclid'] = $pconfig['aclid'];
 				$acl_entry['row'] = array();
-				foreach ($networkacl as $acl)
+				foreach ($networkacl as $acl) {
 					$acl_entry['row'][] = $acl;
+				}
 
-				if (isset($id) && $a_acls[$id])
+				if (isset($id) && $a_acls[$id]) {
 					$a_acls[$id] = $acl_entry;
-				else
+				} else {
 					$a_acls[] = $acl_entry;
-
+				}
 
 				mark_subsystem_dirty("unbound");
 				write_config();
@@ -163,19 +172,12 @@ include("head.inc");
 
 <?php include("fbegin.inc"); ?>
 <form action="services_unbound_acls.php" method="post" name="iform" id="iform">
-<?php
-if (!$savemsg)
-	$savemsg = "";
+<?php if ($input_errors) print_input_errors($input_errors); ?>
+<?php if ($savemsg) print_info_box($savemsg); ?>
+<?php if (is_subsystem_dirty('unbound')): ?><br/>
+<?php print_info_box_np(gettext("The configuration of the DNS Resolver, has been changed") . ".<br />" . gettext("You must apply the changes in order for them to take effect."));?><br />
+<?php endif; ?>
 
-if ($input_errors)
-	print_input_errors($input_errors);
-
-if ($savemsg)
-	print_info_box($savemsg);
-
-if (is_subsystem_dirty("unbound"))
-		print_info_box_np(gettext("The settings for the DNS Resolver have changed. You must apply the configuration to take affect."));
-?>
 <table width="100%" border="0" cellpadding="0" cellspacing="0" summary="services unbound acls">
 	<tbody>
 		<tr>

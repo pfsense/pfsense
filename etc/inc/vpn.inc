@@ -628,10 +628,12 @@ EOD;
 				else
 					$rekey = "rekey = yes";
 
-				if ($ph1ent['nat_traversal'] != 'off')
-					$forceencaps = "forceencaps = yes";
+				if ($ph1ent['nat_traversal'] == 'off')
+					$forceencaps = 'forceencaps = no\n\tmobike = no';
+				else if ($ph1ent['nat_traversal'] == 'force')
+					$forceencaps = 'forceencaps = yes';
 				else
-					$forceencaps = "forceencaps = no";
+					$forceencaps = 'forceencaps = no';
 
 				$ipseclifetime = 0;
 				$rightsubnet_spec = array();

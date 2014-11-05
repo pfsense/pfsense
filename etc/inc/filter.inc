@@ -476,6 +476,7 @@ function filter_generate_nested_alias($name, $alias, &$aliasnesting, &$aliasaddr
 	global $aliastable, $filterdns;
 
 	$addresses = explode(" ", $alias);
+	$use_filterdns = false;
 	$finallist = "";
 	$builtlist = "";
 	$urltable_nesting = "";
@@ -506,8 +507,10 @@ function filter_generate_nested_alias($name, $alias, &$aliasnesting, &$aliasaddr
 				$tmpline = filter_generate_nested_alias($name, $aliastable[$address], $aliasnesting, $aliasaddrnesting);
 		} else if(!isset($aliasaddrnesting[$address])) {
 			if (!is_ipaddr($address) && !is_subnet($address) && !is_port($address) && !is_portrange($address) && is_hostname($address)) {
-				if (!isset($filterdns["{$address}{$name}"]))
+				if (!isset($filterdns["{$address}{$name}"])) {
+					$use_filterdns = true;
 					$filterdns["{$address}{$name}"] = "pf {$address} {$name}\n";
+				}
 				continue;
 			}
 			$aliasaddrnesting[$address] = $address;
@@ -521,6 +524,17 @@ function filter_generate_nested_alias($name, $alias, &$aliasnesting, &$aliasaddr
 			$builtlist .= " {$tmpline}";
 	}
 	$finallist .= $builtlist;
+
+	if ($use_filterdns === true && !empty($finallist)) {
+		foreach (explode(" ", $finallist) as $address) {
+			if (empty($address))
+				continue;
+			if ((is_ipaddr($address) || is_subnet($address)) && !isset($filterdns["{$address}{$name}"]))
+				$filterdns["{$address}{$name}"] = "pf {$address} {$name}\n";
+		}
+		$finallist = '';
+	}
+
 	return $finallist;
 }
 

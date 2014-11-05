@@ -278,15 +278,14 @@ function vpn_ipsec_configure($ipchg = false)
 
 		$strongswan = <<<EOD
 
-#Automatically generated please do not modify
+# Automatically generated config file - DO NOT MODIFY. Changes will be overwritten. 
 starter {
     load_warning = no
 }
 
 charon {
-
-        # number of worker threads in charon
-        threads = 16
+	# number of worker threads in charon
+	threads = 16
 	ikesa_table_size = 32
 	ikesa_table_segments = 4
 	init_limit_half_open = 1000;
@@ -300,16 +299,15 @@ charon {
 	# And two loggers using syslog. The subsections define the facility to log
 	# to, currently one of: daemon, auth.
 	syslog {
-
 		identifier = charon
 		# default level to the LOG_DAEMON facility
 		daemon {
 		}
 		# very minimalistic IKE auditing logs to LOG_AUTHPRIV
 		auth {
-		    default = -1
-		    ike = 1
-		    ike_name = yes
+			default = -1
+			ike = 1
+			ike_name = yes
 		}
 	}
 

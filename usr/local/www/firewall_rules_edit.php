@@ -277,10 +277,10 @@ if ($_POST) {
 						$input_errors[] = gettext("You can not assign a gateway to a rule that applies to IPv4 and IPv6");
 					}
 					if(($_POST['ipprotocol'] == "inet6") && ($_POST['ipprotocol'] != $family)) {
-						$input_errors[] = gettext("You can not assign a IPv4 gateway group on IPv6 Address Family rule");
+						$input_errors[] = gettext("You can not assign an IPv4 gateway group on IPv6 Address Family rule");
 					}
 					if(($_POST['ipprotocol'] == "inet") && ($_POST['ipprotocol'] != $family)) {
-						$input_errors[] = gettext("You can not assign a IPv6 gateway group on IPv4 Address Family rule");
+						$input_errors[] = gettext("You can not assign an IPv6 gateway group on IPv4 Address Family rule");
 					}
 				}
 			}
@@ -291,16 +291,16 @@ if ($_POST) {
 			$input_errors[] = gettext("You can not assign a gateway to a rule that applies to IPv4 and IPv6");
 		}
 		if(($_POST['ipprotocol'] == "inet6") && (!is_ipaddrv6(lookup_gateway_ip_by_name($_POST['gateway'])))) {
-			$input_errors[] = gettext("You can not assign the IPv4 Gateway to a IPv6 Filter rule");
+			$input_errors[] = gettext("You can not assign an IPv4 Gateway to an IPv6 Filter rule");
 		}
 		if(($_POST['ipprotocol'] == "inet") && (!is_ipaddrv4(lookup_gateway_ip_by_name($_POST['gateway'])))) {
-			$input_errors[] = gettext("You can not assign the IPv6 Gateway to a IPv4 Filter rule");
+			$input_errors[] = gettext("You can not assign an IPv6 Gateway to an IPv4 Filter rule");
 		}
 	}
 
 	if (($_POST['proto'] != "tcp") && ($_POST['proto'] != "udp") && ($_POST['proto'] != "tcp/udp") && ($_POST['proto'] != "icmp")) {
 		if($_POST['ipprotocol'] == "inet46")
-			$input_errors[] =  gettext("You can not assign a protocol other then ICMP, TCP, UDP or TCP/UDP to a rule that applies to IPv4 and IPv6");
+			$input_errors[] =  gettext("You can not assign a protocol other than ICMP, TCP, UDP or TCP/UDP to a rule that applies to IPv4 and IPv6");
 	}
 	if (($_POST['proto'] == "icmp") && ($_POST['icmptype'] <> "")){
 		if($_POST['ipprotocol'] == "inet46")
@@ -512,11 +512,11 @@ if ($_POST) {
 		else if ($_POST['pdnpipe'] == $_POST['dnpipe'])
 			$input_errors[] = gettext("In and Out Queue cannot be the same.");
 		else if ($dnqlist[$_POST['pdnpipe']][0] == "?" && $dnqlist[$_POST['dnpipe']][0] <> "?")
-			$input_errors[] = gettext("You cannot select one queue and one virtual interface for IN and Out. both must be from the same type.");
+			$input_errors[] = gettext("You cannot select one queue and one virtual interface for IN and Out. Both must be from the same type.");
 		else if ($dnqlist[$_POST['dnpipe']][0] == "?" && $dnqlist[$_POST['pdnpipe']][0] <> "?")
-			$input_errors[] = gettext("You cannot select one queue and one virtual interface for IN and Out. both must be from the same type.");
+			$input_errors[] = gettext("You cannot select one queue and one virtual interface for IN and Out. Both must be from the same type.");
 		if ($_POST['direction'] == "out" && empty($_POST['gateway']))
-			$input_errors[] = gettext("Please select a gateway, normaly the interface selected gateway, so the limiters work correctly");
+			$input_errors[] = gettext("Please select a gateway, normally the interface selected gateway, so the limiters work correctly");
 	}
 	if( !empty($_POST['ruleid']) && !ctype_digit($_POST['ruleid']))
 		$input_errors[] = gettext('ID must be an integer');

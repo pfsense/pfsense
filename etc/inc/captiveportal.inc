@@ -1251,7 +1251,7 @@ function captiveportal_syslog($message) {
 	global $cpzone;
 
 	$message = trim($message);
-	$message .= "Zone: {$cpzone} - {$message}";
+	$message = "Zone: {$cpzone} - {$message}";
 	openlog("logportalauth", LOG_PID, LOG_LOCAL4);
 	// Log it
 	syslog(LOG_INFO, $message);

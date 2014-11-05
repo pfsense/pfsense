@@ -60,9 +60,9 @@ function gif_inuse($num) {
 
 if ($_GET['act'] == "del") {
 	if (!isset($_GET['id']))
-                $input_errors[] = getext("Wrong parameters supplied");
+                $input_errors[] = gettext("Wrong parameters supplied");
         else if (empty($a_gifs[$_GET['id']]))
-                $input_errors[] = getext("Wrong index supplied");
+                $input_errors[] = gettext("Wrong index supplied");
 	/* check if still in use */
 	else if (gif_inuse($_GET['id'])) {
 		$input_errors[] = gettext("This gif TUNNEL cannot be deleted because it is still being used as an interface.");

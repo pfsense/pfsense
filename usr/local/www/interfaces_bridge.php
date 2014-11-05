@@ -60,9 +60,9 @@ function bridge_inuse($num) {
 
 if ($_GET['act'] == "del") {
 	if (!isset($_GET['id']))
-		$input_errors[] = getext("Wrong parameters supplied");
+		$input_errors[] = gettext("Wrong parameters supplied");
 	else if (empty($a_bridges[$_GET['id']]))
-		$input_errors[] = getext("Wrong index supplied");
+		$input_errors[] = gettext("Wrong index supplied");
 	/* check if still in use */
 	else if (bridge_inuse($_GET['id'])) {
 		$input_errors[] = gettext("This bridge cannot be deleted because it is assigned as an interface.");

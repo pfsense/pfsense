@@ -1,6 +1,5 @@
 <?php
 /* $Id: transmenu-head.php,v 1.2.2.1 2007/01/17 18:43:47 sullrich Exp $ */
-/* DISABLE_PHP_LINT_CHECKING                                                  */
 /* ========================================================================== */
 /*
   transmenu.php

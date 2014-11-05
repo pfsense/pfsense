@@ -38,7 +38,6 @@
 	pfSense_MODULE:	filter
 */
 
-/* DISABLE_PHP_LINT_CHECKING */
 
 /* holds the items that will be executed *AFTER* the filter is fully loaded */
 $after_filter_configure_run = array();

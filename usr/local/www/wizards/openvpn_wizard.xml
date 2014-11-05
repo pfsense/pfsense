@@ -615,7 +615,7 @@
 		<field>
 			<name>localport</name>
 			<displayname>Local Port</displayname>
-			<description>Local port upon which OpenVPN will listen for connections. The default port is 1194. Leave this blank unless you need to use a different port.</description>
+			<description>Local port upon which OpenVPN will listen for connections. The default port is 1194. This can be left at its default unless you need to use a different port.</description>
 			<type>input</type>
 			<size>10</size>
 			<bindstofield>ovpnserver->step10->localport</bindstofield>
@@ -623,7 +623,7 @@
 		<field>
 			<name>description</name>
 			<displayname>Description</displayname>
-			<description>A name for this OpenVPN instance, for your reference. It can be set however you like, but is often used to distinguish the purpose of the service (e.g. "Remote Technical Staff").</description>
+			<description>A name for this OpenVPN instance, for your reference. It can be set however you like, but is often used to distinguish the purpose of the service (e.g. "Remote Technical Staff"). It is also used by OpenVPN Client Export to identify this VPN on clients.</description>
 			<type>input</type>
 			<size>30</size>
 			<bindstofield>ovpnserver->step10->descr</bindstofield>
@@ -772,7 +772,7 @@
 			<displayname>Type-of-Service</displayname>
 			<name>tos</name>
 			<type>checkbox</type>
-			<description>Set the TOS IP header value of tunnel packets to match the encapsulated packet value.</description>
+			<description>Set the TOS IP header value of tunnel packets to match the encapsulated packet's TOS value.</description>
 			<bindstofield>ovpnserver->step10->tos</bindstofield>
 		</field>
 		<field>
@@ -821,42 +821,42 @@
 			<name>dnsserver1</name>
 			<type>input</type>
 			<bindstofield>ovpnserver->step10->dns1</bindstofield>
-			<description>DNS server to provide for connecting client systems.</description>
+			<description>DNS server IP to provide to connecting clients.</description>
 		</field>
 		<field>
 			<displayname>DNS Server 2</displayname>
 			<name>dnserver2</name>
 			<type>input</type>
 			<bindstofield>ovpnserver->step10->dns2</bindstofield>
-			<description>DNS server to provide for connecting client systems.</description>
+			<description>DNS server IP to provide to connecting clients.</description>
 		</field>
 		<field>
 			<displayname>DNS Server 3</displayname>
 			<name>dnserver3</name>
 			<type>input</type>
 			<bindstofield>ovpnserver->step10->dns3</bindstofield>
-			<description>DNS server to provide for connecting client systems.</description>
+			<description>DNS server IP to provide to connecting clients.</description>
 		</field>
 		<field>
 			<displayname>DNS Server 4</displayname>
 			<name>dnserver4</name>
 			<type>input</type>
 			<bindstofield>ovpnserver->step10->dns4</bindstofield>
-			<description>DNS server to provide for connecting client systems.</description>
+			<description>DNS server IP to provide to connecting clients.</description>
 		</field>
 		<field>
 			<displayname>NTP Server</displayname>
 			<name>ntpserver1</name>
 			<type>input</type>
 			<bindstofield>ovpnserver->step10->ntp1</bindstofield>
-			<description>Network Time Protocol server to provide for connecting client systems.</description>
+			<description>Network Time Protocol server to provide to connecting clients.</description>
 		</field>
 		<field>
 			<displayname>NTP Server 2</displayname>
 			<name>ntpserver2</name>
 			<type>input</type>
 			<bindstofield>ovpnserver->step10->ntp2</bindstofield>
-			<description>Network Time Protocol server to provide for connecting client systems.</description>
+			<description>Network Time Protocol server to provide to connecting clients.</description>
 		</field>
 		<field>
 			<name>nbtenable</name>
@@ -890,14 +890,14 @@
 			<name>winsserver1</name>
 			<type>input</type>
 			<bindstofield>ovpnserver->step10->wins1</bindstofield>
-			<description>A Windows Internet Name Service (WINS) server IP to provide to connecting clients. Not desirable in most modern networks.</description>
+			<description>A Windows Internet Name Service (WINS) server IP to provide to connecting clients. Not desirable in most all modern networks.</description>
 		</field>
 		<field>
 			<displayname>WINS Server 2</displayname>
 			<name>winsserver2</name>
 			<type>input</type>
 			<bindstofield>ovpnserver->step10->wins2</bindstofield>
-			<description>A Windows Internet Name Service (WINS) server IP to provide to connecting clients. Not desirable in most modern networks.</description>
+			<description>A Windows Internet Name Service (WINS) server IP to provide to connecting clients. Not desirable in most all modern networks.</description>
 		</field>
 		<field>
 			<name>Advanced</name>
@@ -928,7 +928,7 @@
 		</field>
 		<field>
 			<type>text</type>
-			<description>Firewall Rules control what network traffic is permitted. You must add rules to allow traffic to the OpenVPN server's IP and port, as well as allowing traffic from connected clients through the tunnel. These rules can be automatically added here, or configured manually after completing the wizard.</description>
+			<description>Firewall rules control what network traffic is permitted. You must add rules to allow traffic to the OpenVPN server's IP and port, as well as allowing traffic from connected clients through the tunnel. These rules can be automatically added here, or configured manually after completing the wizard.</description>
 		</field>
 		<field>
 			<type>listtopic</type>
@@ -937,7 +937,7 @@
 		<field>
 			<name>ovpnrule</name>
 			<displayname>Firewall Rule</displayname>
-			<description>Add a rule to permit traffic from clients on the Internet to the OpenVPN server process.</description>
+			<description>Add a rule to permit connections to this OpenVPN server process from clients anywhere on the Internet.</description>
 			<type>checkbox</type>
 			<bindstofield>ovpnserver->step11->ovpnrule</bindstofield>
 		</field>
@@ -948,7 +948,7 @@
 		<field>
 			<name>ovpnallow</name>
 			<displayname>OpenVPN rule</displayname>
-			<description>Add a rule to allow all traffic from connected clients to pass across the VPN tunnel.</description>
+			<description>Add a rule to allow all traffic from connected clients to pass inside the VPN tunnel.</description>
 			<type>checkbox</type>
 			<bindstofield>ovpnserver->step11->ovpnallow</bindstofield>
 		</field>

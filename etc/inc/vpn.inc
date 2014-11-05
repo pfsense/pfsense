@@ -629,7 +629,7 @@ EOD;
 					$rekey = "rekey = yes";
 
 				if ($ph1ent['nat_traversal'] == 'off')
-					$forceencaps = 'forceencaps = no\n\tmobike = no';
+					$forceencaps = 'forceencaps = no';
 				else if ($ph1ent['nat_traversal'] == 'force')
 					$forceencaps = 'forceencaps = yes';
 				else

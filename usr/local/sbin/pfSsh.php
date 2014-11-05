@@ -3,7 +3,7 @@
 <?php
 
 require_once("globals.inc");
-echo "Starting the {$g['product_name']} shell system";
+echo "Starting the {$g['product_name']} developer shell";
 $g['booting'] = true;
 require_once("functions.inc");
 echo ".";
@@ -104,7 +104,7 @@ $show_help_text = <<<EOF
 	/* to output the dhcp server configuration */
 	print_r(\$config['dhcpd']);
 
-	/* to exit the php {$g['product_name']} shell */
+	/* to exit the {$g['product_name']} developer shell */
 	exit
 	
 	/* to output supported wireless modes for an interface */
@@ -164,8 +164,7 @@ function completion($string, $index) {
 readline_completion_function("completion");
 
 if($argc < 2) {
-	echo "Welcome to the {$g['product_name']} php shell system\n";
-	echo "Written by Scott Ullrich (sullrich@gmail.com)\n";
+	echo "Welcome to the {$g['product_name']} developer shell\n";
 	echo "\nType \"help\" to show common usage scenarios.\n";
 	echo "\nAvailable playback commands:\n     ";
 	$files = scandir("/etc/phpshellsessions/");

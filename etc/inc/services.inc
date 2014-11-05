@@ -1741,6 +1741,10 @@ function services_dnsmasq_configure() {
 		else
 			sleep(1);
 
+                /* generate hosts file */
+                if(system_hosts_generate()!=0)
+                        $return = 1;
+
 		$args = "";
 
 		if (isset($config['dnsmasq']['regdhcp'])) {

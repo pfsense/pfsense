@@ -888,14 +888,14 @@
 			<name>winsserver1</name>
 			<type>input</type>
 			<bindstofield>ovpnserver->step10->wins1</bindstofield>
-			<description>A Windows Internet Name Service (WINS) server to provide for connecting clients, which allows them to browse Windows shares. This is typically an Active Directory Domain Controller, designated WINS server, or Samba server.</description>
+			<description>A Windows Internet Name Service (WINS) server IP to provide to connecting clients. Not desirable in most modern networks.</description>
 		</field>
 		<field>
 			<displayname>WINS Server 2</displayname>
 			<name>winsserver2</name>
 			<type>input</type>
 			<bindstofield>ovpnserver->step10->wins2</bindstofield>
-			<description>A Windows Internet Name Service (WINS) server to provide for connecting clients, which allows them to browse Windows shares. This is typically an Active Directory Domain Controller, designated WINS server, or Samba server.</description>
+			<description>A Windows Internet Name Service (WINS) server IP to provide to connecting clients. Not desirable in most modern networks.</description>
 		</field>
 		<field>
 			<name>Advanced</name>

@@ -389,6 +389,8 @@ $status = ipsec_smp_dump_status();
 
 	$rgmap = array();
 	foreach ($a_phase1 as $ph1ent):
+		if (isset($ph1ent['disabled']))
+			continue;
 		$rgmap[$ph1ent['remote-gateway']] = $ph1ent['remote-gateway'];
 		if ($ipsecconnected[$ph1ent['ikeid']])
 			continue;

@@ -214,7 +214,11 @@ EOD;
 					$gwifip = find_interface_ipv6($gateway['interface'], true);
 				}
 			}
-							
+
+			/* Make sure srcip has scope defined when it's ll */
+			if (is_linklocal($gwifip) && !strstr($gwifip, '%'))
+				$gwifip .= '%' . $gateway['interface'];
+
 			if (!is_ipaddrv6($gwifip))
 				continue; //Skip this target
 

@@ -34,7 +34,7 @@ require_once("functions.inc");
 require_once("filter.inc");	
 require_once("shaper.inc");	
 
-if (isset($_GET))
+if (isset($_GET['interface']))
 	$argument = $_GET['interface'];
 else
 	$argument = str_replace("\n", "", $argv[1]);

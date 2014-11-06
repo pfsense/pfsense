@@ -71,7 +71,7 @@ if (file_exists("{$g['varrun_path']}/booting"))
 	return;
 
 /* Input argument is a comma-separated list of gateway names, blank or "all". */
-if (isset($_GET))
+if (isset($_GET['interface']))
 	$argument = $_GET['interface'];
 else
 	$argument = trim($argv[1], " \n");

@@ -85,7 +85,7 @@ function handle_argument_group($iface, $argument2) {
 
 global $g;
 if (!file_exists("{$g['varrun_path']}/booting") && empty($g['booting'])) {
-if (isset($_GET)) {
+if (isset($_GET['interface'])) {
 	if (!empty($_GET['interface']))
 		handle_argument_group($_GET['interface'], $_GET['action']);
 } else {

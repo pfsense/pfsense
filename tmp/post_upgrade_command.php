@@ -1,4 +1,4 @@
-#!/usr/local/bin/php -f 
+#!/usr/local/bin/php -f
 <?php
 
 	/* upgrade embedded users serial console */

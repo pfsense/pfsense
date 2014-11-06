@@ -31,8 +31,8 @@ rm -f /root/*.md5 >/dev/null 2>&1
 
 # Fixup permissions on installed files
 if [ -f ${ROOT}etc/installed_filesystem.mtree ]; then
-	/usr/sbin/mtree -U -e -q -f ${ROOT}etc/installed_filesystem.mtree -p ${ROOT} > /conf/mtree.log;
-fi;
+	/usr/sbin/mtree -U -e -q -f ${ROOT}etc/installed_filesystem.mtree -p ${ROOT} > /conf/mtree.log
+fi
 
 # Make sure to preserve existing time zone
 if [ "${PFSENSETYPE}" = "nanobsd" -a -f /etc/localtime ]; then

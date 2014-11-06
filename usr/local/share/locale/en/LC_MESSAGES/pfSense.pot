@@ -14112,7 +14112,7 @@ msgstr ""
 #: usr/local/www/status_captiveportal.php:157
 #: usr/local/www/status_captiveportal.php:143
 #: usr/local/www/status_captiveportal.php:143
-msgid "Captiveportal status"
+msgid "Captive Portal status"
 msgstr ""
 
 #: usr/local/www/status_captiveportal.php:164
@@ -42997,7 +42997,7 @@ msgstr ""
 
 #: usr/local/www/services_captiveportal_zones.php:37
 #: usr/local/www/services_captiveportal_zones.php:37
-msgid "Captiveportal"
+msgid "Captive Portal"
 msgstr ""
 
 #: usr/local/www/services_captiveportal_zones.php:37
@@ -43048,7 +43048,7 @@ msgstr ""
 #: usr/local/www/services_captiveportal_zones_edit.php:98
 #: usr/local/www/services_captiveportal_zones_edit.php:94
 #: usr/local/www/services_captiveportal_zones_edit.php:94
-msgid "Edit Captiveportal Zones"
+msgid "Edit Captive Portal Zones"
 msgstr ""
 
 #: usr/local/www/services_captiveportal_zones_edit.php:103

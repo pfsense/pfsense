@@ -12429,7 +12429,7 @@ msgstr "Hizmet Portalı Alanı"
 
 #: usr/local/www/status_captiveportal.php:157
 #: usr/local/www/status_captiveportal.php:143
-msgid "Captiveportal status"
+msgid "Captive Portal status"
 msgstr "Hizmet Portalı durumu"
 
 #: usr/local/www/status_captiveportal.php:164
@@ -38525,7 +38525,7 @@ msgstr "Kablosuz (hostapd) günlük girdileri"
 
 #: usr/local/www/services_captiveportal_zones.php:37
 #: usr/local/www/services_captiveportal_zones.php:37
-msgid "Captiveportal"
+msgid "Captive Portal"
 msgstr "Hizmet Portalı"
 
 #: usr/local/www/services_captiveportal_zones.php:37
@@ -38575,7 +38575,7 @@ msgstr "zaten mevcut"
 #: usr/local/www/services_captiveportal_zones_edit.php:96
 #: usr/local/www/services_captiveportal_zones_edit.php:98
 #: usr/local/www/services_captiveportal_zones_edit.php:94
-msgid "Edit Captiveportal Zones"
+msgid "Edit Captive Portal Zones"
 msgstr "Hizmet Portalı Bölgelerini düzenle"
 
 #: usr/local/www/services_captiveportal_zones_edit.php:103

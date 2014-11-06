@@ -14122,8 +14122,8 @@ msgstr "キャプティブポータルゾーン"
 #: usr/local/www/status_captiveportal.php:157
 #: usr/local/www/status_captiveportal.php:143
 #: usr/local/www/status_captiveportal.php:143
-msgid "Captiveportal status"
-msgstr "Captiveportal状況"
+msgid "Captive Portal status"
+msgstr "Captive Portal状況"
 
 #: usr/local/www/status_captiveportal.php:164
 #: usr/local/www/status_captiveportal.php:167
@@ -43007,8 +43007,8 @@ msgstr "ワイヤレス（ hostapdの）ログエントリ"
 
 #: usr/local/www/services_captiveportal_zones.php:37
 #: usr/local/www/services_captiveportal_zones.php:37
-msgid "Captiveportal"
-msgstr "Captiveportal"
+msgid "Captive Portal"
+msgstr "Captive Portal"
 
 #: usr/local/www/services_captiveportal_zones.php:37
 #: usr/local/www/services_captiveportal_zones.php:37
@@ -43058,8 +43058,8 @@ msgstr "すでに存在しています"
 #: usr/local/www/services_captiveportal_zones_edit.php:98
 #: usr/local/www/services_captiveportal_zones_edit.php:94
 #: usr/local/www/services_captiveportal_zones_edit.php:94
-msgid "Edit Captiveportal Zones"
-msgstr "編集Captiveportalゾーン"
+msgid "Edit Captive Portal Zones"
+msgstr "編集Captive Portalゾーン"
 
 #: usr/local/www/services_captiveportal_zones_edit.php:103
 msgid "Zone name. Cannot contain spaces."

@@ -91,7 +91,7 @@ include("head.inc");
 	<form action="services_captiveportal_zones_edit.php" method="post" name="iform" id="iform">
 		<table width="100%" border="0" cellpadding="6" cellspacing="0" summary="captive portal edit">
 			<tr>
-				<td colspan="2" valign="top" class="listtopic"><?=gettext("Edit Captiveportal Zones");?></td>
+				<td colspan="2" valign="top" class="listtopic"><?=gettext("Edit Captive Portal Zones");?></td>
 			</tr>
 			<tr>
 				<td width="22%" valign="top" class="vncellreq"><?=gettext("Zone name"); ?></td>

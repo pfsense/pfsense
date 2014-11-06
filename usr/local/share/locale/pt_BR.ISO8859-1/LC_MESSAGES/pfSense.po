@@ -11962,7 +11962,7 @@ msgstr "Zona Captive Portal"
 
 #: usr/local/www/status_captiveportal.php:157
 #: usr/local/www/status_captiveportal.php:143
-msgid "Captiveportal status"
+msgid "Captive Portal status"
 msgstr "Status Captive Portal"
 
 #: usr/local/www/status_captiveportal.php:164
@@ -36304,8 +36304,8 @@ msgid "Wireless (hostapd) log entries"
 msgstr "Wireless (hostapd) registro de logs"
 
 #: usr/local/www/services_captiveportal_zones.php:37
-msgid "Captiveportal"
-msgstr "Captiveportal"
+msgid "Captive Portal"
+msgstr "Captive Portal"
 
 #: usr/local/www/services_captiveportal_zones.php:37
 msgid "Zones"
@@ -36321,7 +36321,7 @@ msgstr "A lista de entrada do CaptivePortal foi modificada"
 #: usr/local/www/services_captiveportal_zones.php:61
 #: usr/local/www/services_captiveportal_zones.php:102
 msgid "add a new captiveportal instance"
-msgstr "adicionar uma nova instância do Captiveportal"
+msgstr "adicionar uma nova instância do Captive Portal"
 
 #: usr/local/www/services_captiveportal_zones.php:88
 #: usr/local/www/services_captiveportal_zones.php:89
@@ -36346,8 +36346,8 @@ msgstr "Já existe"
 #: usr/local/www/services_captiveportal_zones_edit.php:96
 #: usr/local/www/services_captiveportal_zones_edit.php:98
 #: usr/local/www/services_captiveportal_zones_edit.php:94
-msgid "Edit Captiveportal Zones"
-msgstr "Editar Zonas do Captiveportal"
+msgid "Edit Captive Portal Zones"
+msgstr "Editar Zonas do Captive Portal"
 
 #: usr/local/www/services_captiveportal_zones_edit.php:103
 msgid "Zone name. Cannot contain spaces."

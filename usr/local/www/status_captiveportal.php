@@ -147,7 +147,7 @@ $mac_man = load_mac_manufacturer_table();
   <tr><td colspan="5"><br /></td></tr>
 <?php if (!empty($cpzone)): ?>
   <tr>
-	<td colspan="5" valign="top" class="listtopic"><?=gettext("Captiveportal status");?></td>
+	<td colspan="5" valign="top" class="listtopic"><?=gettext("Captive Portal status");?></td>
   </tr>
   <tr>
     <td class="listhdrr"><a href="?zone=<?=$cpzone?>&amp;order=ip&amp;showact=<?=htmlspecialchars($_GET['showact']);?>"><?=gettext("IP address");?></a></td>

@@ -38,3 +38,13 @@ fi;
 if [ "${PFSENSETYPE}" = "nanobsd" -a -f /etc/localtime ]; then
 	/bin/cp -p /etc/localtime ${ROOT}etc/localtime 2>/dev/null
 fi
+
+# Obsolete files - nanobsd doesn't need it since a new image is installed
+# on the other partition
+if [ "${PFSENSETYPE}" != "nanobsd" -a -f /etc/pfSense.obsoletedfiles ]; then
+	for f in $(cat /etc/pfSense.obsoletedfiles); do
+		if [ -n "${f}" -a -f "${f}" ]; then
+			rm -f ${f}
+		fi
+	done
+fi

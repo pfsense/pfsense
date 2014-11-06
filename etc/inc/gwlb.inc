@@ -205,19 +205,13 @@ EOD;
 				 * ICMP6 response would not find its way back home...
 				 */
 				$gwifip = find_interface_ipv6($gateway['interface'], true);
-				if (is_linklocal($gateway['monitor'])) {
-					if (!strstr($gateway['monitor'], '%')) {
-						$gateway['monitor'] .= "%{$gateway['interface']}";
-					}
-				} else {
-					// Monitor is a routable address, so use a routable address for the "src" part
-					$gwifip = find_interface_ipv6($gateway['interface'], true);
-				}
 			}
 
-			/* Make sure srcip has scope defined when it's ll */
+			/* Make sure srcip and target have scope defined when they are ll */
 			if (is_linklocal($gwifip) && !strstr($gwifip, '%'))
 				$gwifip .= '%' . $gateway['interface'];
+			if (is_linklocal($gateway['monitor']) && !strstr($gateway['monitor'], '%'))
+				$gateway['monitor'] .= "%{$gateway['interface']}";
 
 			if (!is_ipaddrv6($gwifip))
 				continue; //Skip this target

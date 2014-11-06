@@ -250,43 +250,41 @@ if ($_POST) {
 				}
 			}
 		}
-		if (is_array($a_phase1)) {
-			foreach ($a_phase1 as $phase1) {
-				if($phase1['ikeid'] == $pconfig['ikeid']) {
-					/* This is the P1 for this entry, validate its remote-gateway and local interface isn't within tunnel */
-					$entered_local = array();
-					$entered_local['type'] = $pconfig['localid_type'];
-					if (isset($pconfig['localid_address'])) $entered_local['address'] = $pconfig['localid_address'];
-					if (isset($pconfig['localid_netbits'])) $entered_local['netbits'] = $pconfig['localid_netbits'];
-					$entered_localid_data = ipsec_idinfo_to_cidr($entered_local, false, $pconfig['mode']);
-					list($entered_local_network, $entered_local_mask) = split("/", $entered_localid_data);
-					$entered_remote = array();
-					$entered_remote['type'] = $pconfig['remoteid_type'];
-					if (isset($pconfig['remoteid_address'])) $entered_remote['address'] = $pconfig['remoteid_address'];
-					if (isset($pconfig['remoteid_netbits'])) $entered_remote['netbits'] = $pconfig['remoteid_netbits'];
-					$entered_remoteid_data = ipsec_idinfo_to_cidr($entered_remote, false, $pconfig['mode']);
-					list($entered_remote_network, $entered_remote_mask) = split("/", $entered_remoteid_data);
-					if ($phase1['protocol'] == "inet6") { 
-						$if = get_failover_interface($phase1['interface'], "inet6");
-						$interfaceip = get_interface_ipv6($if);
-					} else {
-						$if = get_failover_interface($phase1['interface']);
-						$interfaceip = get_interface_ip($if);
-					}
-					/* skip validation for hostnames, they're subject to change anyway */
-					if (is_ipaddr($phase1['remote-gateway'])) {
-						if ($pconfig['mode'] == "tunnel") {
-							if(check_subnets_overlap($interfaceip, 32, $entered_local_network, $entered_local_mask) && check_subnets_overlap($phase1['remote-gateway'], 32, $entered_remote_network, $entered_remote_mask)) {
-								$input_errors[] = gettext("The local and remote networks of a phase 2 entry cannot overlap the outside of the tunnel (interface and remote gateway) configured in its phase 1.");
-								break;
-							}
-						} else if ($pconfig['mode'] == "tunnel6") {
-							if(check_subnetsv6_overlap($interfaceip, 128, $entered_local_network, $entered_local_mask) && check_subnets_overlap($phase1['remote-gateway'], 128, $entered_remote_network, $entered_remote_mask)) {
-								$input_errors[] = gettext("The local and remote networks of a phase 2 entry cannot overlap the outside of the tunnel (interface and remote gateway) configured in its phase 1.");
-								break;
-							}							
-						}				
-					}
+		foreach ($a_phase1 as $phase1) {
+			if($phase1['ikeid'] == $pconfig['ikeid']) {
+				/* This is the P1 for this entry, validate its remote-gateway and local interface isn't within tunnel */
+				$entered_local = array();
+				$entered_local['type'] = $pconfig['localid_type'];
+				if (isset($pconfig['localid_address'])) $entered_local['address'] = $pconfig['localid_address'];
+				if (isset($pconfig['localid_netbits'])) $entered_local['netbits'] = $pconfig['localid_netbits'];
+				$entered_localid_data = ipsec_idinfo_to_cidr($entered_local, false, $pconfig['mode']);
+				list($entered_local_network, $entered_local_mask) = split("/", $entered_localid_data);
+				$entered_remote = array();
+				$entered_remote['type'] = $pconfig['remoteid_type'];
+				if (isset($pconfig['remoteid_address'])) $entered_remote['address'] = $pconfig['remoteid_address'];
+				if (isset($pconfig['remoteid_netbits'])) $entered_remote['netbits'] = $pconfig['remoteid_netbits'];
+				$entered_remoteid_data = ipsec_idinfo_to_cidr($entered_remote, false, $pconfig['mode']);
+				list($entered_remote_network, $entered_remote_mask) = split("/", $entered_remoteid_data);
+				if ($phase1['protocol'] == "inet6") { 
+					$if = get_failover_interface($phase1['interface'], "inet6");
+					$interfaceip = get_interface_ipv6($if);
+				} else {
+					$if = get_failover_interface($phase1['interface']);
+					$interfaceip = get_interface_ip($if);
+				}
+				/* skip validation for hostnames, they're subject to change anyway */
+				if (is_ipaddr($phase1['remote-gateway'])) {
+					if ($pconfig['mode'] == "tunnel") {
+						if(check_subnets_overlap($interfaceip, 32, $entered_local_network, $entered_local_mask) && check_subnets_overlap($phase1['remote-gateway'], 32, $entered_remote_network, $entered_remote_mask)) {
+							$input_errors[] = gettext("The local and remote networks of a phase 2 entry cannot overlap the outside of the tunnel (interface and remote gateway) configured in its phase 1.");
+							break;
+						}
+					} else if ($pconfig['mode'] == "tunnel6") {
+						if(check_subnetsv6_overlap($interfaceip, 128, $entered_local_network, $entered_local_mask) && check_subnets_overlap($phase1['remote-gateway'], 128, $entered_remote_network, $entered_remote_mask)) {
+							$input_errors[] = gettext("The local and remote networks of a phase 2 entry cannot overlap the outside of the tunnel (interface and remote gateway) configured in its phase 1.");
+							break;
+						}							
+					}				
 				}
 			}
 		}

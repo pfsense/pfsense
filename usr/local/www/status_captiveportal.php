@@ -175,9 +175,9 @@ $mac_man = load_mac_manufacturer_table();
 		?>&nbsp;
 	</td>
     <td class="listr"><?=htmlspecialchars($cpent[4]);?>&nbsp;</td>
-    <td class="listr"><?=htmlspecialchars(date("m/d/Y H:i:s", $cpent[0]));?></td>
 	<?php if ($_GET['showact']):
 	$last_act = captiveportal_get_last_activity($cpent[2], $cpent[3]); ?>
+    <td class="listr"><?=htmlspecialchars(date("m/d/Y H:i:s", $cpent[0]));?></td>
     <td class="listr"><?php if ($last_act != 0) echo htmlspecialchars(date("m/d/Y H:i:s", $last_act));?></td>
 	<?php else: ?>
     <td class="listr" colspan="2"><?=htmlspecialchars(date("m/d/Y H:i:s", $cpent[0]));?></td>

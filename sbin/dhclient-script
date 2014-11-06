@@ -57,6 +57,9 @@ arp_flush() {
 		/bin/sh >/dev/null 2>&1
 }
 
+# NOTE: use of the below has been disabled because rc.newwanip handles this correctly and this
+# unnecessarily killed states in multiple circumstances. Leaving here for now, should be safe
+# to remove later.  -cmb 20141105
 delete_old_states() {
 	$LOGGER "Starting delete_old_states()"
 	_FLUSHED=0
@@ -320,7 +323,6 @@ MEDIUM)
 PREINIT)
 	delete_old_alias
 	$IFCONFIG $interface inet 0.0.0.0 netmask 0.0.0.0 broadcast 255.255.255.255 up
-	delete_old_states
 	/bin/rm -f /tmp/${interface}_router
 	;;
 
@@ -330,9 +332,6 @@ ARPCHECK|ARPSEND)
 BOUND|RENEW|REBIND|REBOOT)
 	check_hostname
 	changes="no"
-	if [ "$old_ip_address" != "$new_ip_address" ]; then
-		delete_old_states
-	fi
 	if [ -n "$old_ip_address" ]; then
 		if [ -n "$alias_ip_address" ] && \
 		   [ "$old_ip_address" != "$alias_ip_address" ]; then
@@ -366,7 +365,6 @@ BOUND|RENEW|REBIND|REBOOT)
 
 EXPIRE|FAIL)
 	delete_old_alias
-	delete_old_states
 	if [ -n "$old_ip_address" ]; then
 		delete_old_address
 		delete_old_routes
@@ -391,7 +389,6 @@ TIMEOUT)
 		fi
 	fi
 	$IFCONFIG $interface inet -alias $new_ip_address $medium
-	delete_old_states
 	delete_old_routes
 	;;
 esac

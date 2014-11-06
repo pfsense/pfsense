@@ -14,7 +14,7 @@
 	}
 
 	$newslicedir = "";
-	if ($argv[1] != "")
+	if (isset($argv[1]) && $argv[1] != "")
 		$newslicedir = '/tmp/' . $argv[1];
 
 	if($g['enableserial_force'] || file_exists("{$newslicedir}/enableserial_force")) {

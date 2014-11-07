@@ -586,7 +586,7 @@ EOD;
 					$ikelifeline = "ikelifetime = {$ph1ent['lifetime']}s";
 
 				$rightsourceip = NULL;
-				if (!empty($a_client['pool_address'])) 
+				if (isset($ph1ent['mobile']) && !empty($a_client['pool_address'])) 
 					$rightsourceip = "\trightsourceip = {$a_client['pool_address']}/{$a_client['pool_netbits']}\n";
 
 				$authentication = "";

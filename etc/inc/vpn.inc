@@ -841,6 +841,7 @@ EOD;
 		/* Read secrets */
 		mwexec("/usr/local/sbin/ipsec rereadall", false);
 		/* Update configuration changes */
+		mwexec("/usr/local/sbin/ipsec update", false);
 		mwexec("/usr/local/sbin/ipsec reload", false);
 	} else {
 		mwexec("/usr/local/sbin/ipsec start", false); 

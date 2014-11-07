@@ -116,7 +116,7 @@ include("head.inc");
 	  <?php $i = 0; foreach ($a_pppoes as $pppoe): ?>
 <tr>
   <td class="listlr" ondblclick="document.location='vpn_pppoe_edit.php?id=<?=$i;?>';">
-    <?=htmlspecialchars(strtoupper($pppoe['interface']));?>
+    <?=htmlspecialchars(convert_friendly_interface_to_friendly_descr($pppoe['interface']));?>
   </td>
   <td class="listlr" ondblclick="document.location='vpn_pppoe_edit.php?id=<?=$i;?>';">
     <?=htmlspecialchars($pppoe['localip']);?>

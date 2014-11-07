@@ -1182,7 +1182,7 @@ function vpn_pppoe_configure(&$pppoecfg) {
 		if (!$pppoecfg['mode'] || ($pppoecfg['mode'] == "off"))
 			return 0;
 
-		echo gettext("Configuring PPPoE VPN service... ");
+		echo gettext("Configuring PPPoE Server service... ");
 	} else {
 		/* kill mpd */
 		killbypid("{$g['varrun_path']}/pppoe{$pppoecfg['pppoeid']}-vpn.pid");

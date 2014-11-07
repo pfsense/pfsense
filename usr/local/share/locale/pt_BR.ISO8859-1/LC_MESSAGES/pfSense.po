@@ -3040,7 +3040,7 @@ msgstr "Erro: não pôde abrir mpd.secret em vpn_pptpd_configure()."
 #: etc/inc/vpn.inc:1279 etc/inc/vpn.inc:1285 etc/inc/vpn.inc:1283
 #: etc/inc/vpn.inc:1295 etc/inc/vpn.inc:1308 etc/inc/vpn.inc:1307
 #: etc/inc/vpn.inc:1309
-msgid "Configuring PPPoE VPN service... "
+msgid "Configuring PPPoE Server service... "
 msgstr "Configurando serviço PPPoE da VPN..."
 
 #: etc/inc/vpn.inc:1303 etc/inc/vpn.inc:1309 etc/inc/vpn.inc:1307

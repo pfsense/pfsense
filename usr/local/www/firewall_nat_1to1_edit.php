@@ -307,7 +307,7 @@ if ($input_errors)
 							$interfaces['pptp'] = "PPTP VPN";
 
 					if (is_pppoe_server_enabled() && have_ruleint_access("pppoe"))
-						$interfaces['pppoe'] = "PPPoE VPN";
+						$interfaces['pppoe'] = "PPPoE Server";
 
 					/* add ipsec interfaces */
 					if (isset($config['ipsec']['enable']) || isset($config['ipsec']['client']['enable']))

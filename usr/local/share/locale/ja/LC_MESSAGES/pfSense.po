@@ -3368,7 +3368,7 @@ msgstr "エラー： vpn_pptpd_configure.()にmpd.secretを開くことができ
 
 #: etc/inc/vpn.inc:1279 etc/inc/vpn.inc:1285 etc/inc/vpn.inc:1283
 #: etc/inc/vpn.inc:1295 etc/inc/vpn.inc:1308 etc/inc/vpn.inc:1307
-msgid "Configuring PPPoE VPN service... "
+msgid "Configuring PPPoE Server service... "
 msgstr "PPPoEのVPNサービスの設定..."
 
 #: etc/inc/vpn.inc:1303 etc/inc/vpn.inc:1309 etc/inc/vpn.inc:1307

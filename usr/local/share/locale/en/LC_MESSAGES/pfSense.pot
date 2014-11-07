@@ -27488,7 +27488,7 @@ msgstr ""
 
 #: usr/local/www/vpn_pppoe.php:131 usr/local/www/vpn_pppoe.php:132
 #: usr/local/www/vpn_pppoe.php:133 usr/local/www/vpn_pppoe.php:133
-msgid "edit pppoe instance"
+msgid "edit PPPoE instance"
 msgstr ""
 
 #: usr/local/www/vpn_pppoe.php:132 usr/local/www/vpn_pppoe.php:133

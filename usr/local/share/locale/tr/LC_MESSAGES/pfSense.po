@@ -23979,7 +23979,7 @@ msgstr "yeni PPPoE ekle"
 
 #: usr/local/www/vpn_pppoe.php:131 usr/local/www/vpn_pppoe.php:132
 #: usr/local/www/vpn_pppoe.php:133
-msgid "edit pppoe instance"
+msgid "edit PPPoE instance"
 msgstr "PPPoE düzenle"
 
 #: usr/local/www/vpn_pppoe.php:132 usr/local/www/vpn_pppoe.php:133

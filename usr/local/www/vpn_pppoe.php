@@ -130,7 +130,7 @@ include("head.inc");
   <td valign="middle" class="list nowrap">
     <table border="0" cellspacing="0" cellpadding="1" summary="icons">
       <tr>
-        <td valign="middle"><a href="vpn_pppoe_edit.php?id=<?=$i;?>"><img src="/themes/<?= $g['theme']; ?>/images/icons/icon_e.gif" width="17" height="17" border="0" title="<?=gettext("edit pppoe instance"); ?>" alt="edit" /></a></td>
+        <td valign="middle"><a href="vpn_pppoe_edit.php?id=<?=$i;?>"><img src="/themes/<?= $g['theme']; ?>/images/icons/icon_e.gif" width="17" height="17" border="0" title="<?=gettext("edit PPPoE instance"); ?>" alt="edit" /></a></td>
         <td><a href="vpn_pppoe.php?act=del&amp;id=<?=$i;?>" onclick="return confirm('<?=gettext("Do you really want to delete this entry? All elements that still use it will become invalid (e.g. filter rules)!");?>')"><img src="/themes/<?= $g['theme']; ?>/images/icons/icon_x.gif" width="17" height="17" border="0" title="<?=gettext("delete pppoe instance");?>" alt="delete" /></a></td>
       </tr>
     </table>

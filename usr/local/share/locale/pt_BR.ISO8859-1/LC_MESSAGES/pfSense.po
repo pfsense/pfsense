@@ -23326,7 +23326,7 @@ msgstr "adicione uma nova instância pppoe"
 
 #: usr/local/www/vpn_pppoe.php:131 usr/local/www/vpn_pppoe.php:132
 #: usr/local/www/vpn_pppoe.php:133
-msgid "edit pppoe instance"
+msgid "edit PPPoE instance"
 msgstr "editar instância pppoe"
 
 #: usr/local/www/vpn_pppoe.php:132 usr/local/www/vpn_pppoe.php:133

@@ -172,11 +172,19 @@ function system_resolvconf_generate($dynupdate = false) {
 					/* dns server array starts at 0 */
 					$dnscountermo = $dnscounter - 1;
 					mwexec("/sbin/route change -host " . $syscfg['dnsserver'][$dnscountermo] . " {$gatewayip}");
+					if (isset($config['system']['route-debug'])) {
+						$mt = microtime();
+						log_error("ROUTING debug: $mt - route change -host {$syscfg['dnsserver'][$dnscountermo]} $gatewayip ");
+					}
 				}
 				if (is_ipaddrv6($gatewayip)) {
 					/* dns server array starts at 0 */
 					$dnscountermo = $dnscounter - 1;
 					mwexec("/sbin/route change -host -inet6 " . $syscfg['dnsserver'][$dnscountermo] . " {$gatewayip}");
+					if (isset($config['system']['route-debug'])) {
+						$mt = microtime();
+						log_error("ROUTING debug: $mt - route change -host -inet6 {$syscfg['dnsserver'][$dnscountermo]} $gatewayip ");
+					}					
 				}
 			}
 		}
@@ -541,12 +549,21 @@ function system_staticroutes_configure($interface = "", $update_dns = false) {
 				if (in_array($ip, $ips))
 					continue;
 				mwexec("/sbin/route delete " . escapeshellarg($ip), true);
+				if (isset($config['system']['route-debug'])) {
+					$mt = microtime();
+					log_error("ROUTING debug: $mt - route delete $ip ");
+				}
 			}
 
 			if (isset($rtent['disabled'])) {
 				/* XXX: This can break things by deleting routes that shouldn't be deleted - OpenVPN, dynamic routing scenarios, etc. redmine #3709 */
-				foreach ($ips as $ip)
+				foreach ($ips as $ip) {
 					mwexec("/sbin/route delete " . escapeshellarg($ip), true);
+					if (isset($config['system']['route-debug'])) {
+						$mt = microtime();
+						log_error("ROUTING debug: $mt - route delete $ip ");
+					}
+				}
 				continue;
 			}
 
@@ -561,10 +578,19 @@ function system_staticroutes_configure($interface = "", $update_dns = false) {
 				$cmd = "/sbin/route change {$inet} {$blackhole} " . escapeshellarg($ip) . " ";
 
 				if (is_subnet($ip))
-					if (is_ipaddr($gatewayip))
+					if (is_ipaddr($gatewayip)) {
 						mwexec($cmd . escapeshellarg($gatewayip));
-					else if (!empty($interfacegw))
+						if (isset($config['system']['route-debug'])) {
+							$mt = microtime();
+							log_error("ROUTING debug: $mt - $cmd $gatewayip");
+						}
+					} else if (!empty($interfacegw)) {
 						mwexec($cmd . "-iface " . escapeshellarg($interfacegw));
+						if (isset($config['system']['route-debug'])) {
+							$mt = microtime();
+							log_error("ROUTING debug: $mt - $cmd -iface $interfacegw ");
+						}
+					}
 			}
 		}
 		unset($gateways_arr);

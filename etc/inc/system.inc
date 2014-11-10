@@ -73,19 +73,12 @@ function get_default_sysctl_value($id) {
 }
 
 function activate_sysctls() {
-	global $config, $g;
+	global $config, $g, $sysctls;
 
 	if ($g['platform'] == 'jail')
 		return;
 
-	$sysctls = array(
-		"net.enc.out.ipsec_bpf_mask" => "0x0001",
-		"net.enc.out.ipsec_filter_mask" => "0x0001",
-		"net.enc.in.ipsec_bpf_mask" => "0x0002",
-		"net.enc.in.ipsec_filter_mask" => "0x0002"
-	);
-
-	if(is_array($config['sysctl'])) {
+	if (is_array($config['sysctl'])) {
 		foreach($config['sysctl']['item'] as $tunable) {
 			if($tunable['value'] == "default")
 				$value = get_default_sysctl_value($tunable['tunable']);

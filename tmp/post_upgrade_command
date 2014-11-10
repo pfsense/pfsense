@@ -45,6 +45,8 @@ if [ "${PFSENSETYPE}" != "nanobsd" -a -f /etc/pfSense.obsoletedfiles ]; then
 	for f in $(cat /etc/pfSense.obsoletedfiles); do
 		if [ -n "${f}" -a -f "${f}" ]; then
 			rm -f ${f}
+		elif [ -n "${f}" -a -d "${f}" ]; then
+			rm -rf ${f}
 		fi
 	done
 fi

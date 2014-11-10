@@ -699,7 +699,7 @@ function return_gateways_array($disabled = false, $localhost = false, $inactive 
 					$found_defaultv4 = 1;
 				}
 			}
-			if (($gateway['friendlyiface'] == "wan") && ($found_defaultv6 == 0) && ($gateway['ipprotocol'] == "inet6")) {
+			else if (($gateway['friendlyiface'] == "wan") && ($found_defaultv6 == 0) && ($gateway['ipprotocol'] == "inet6")) {
 				if (file_exists("{$g['tmp_path']}/{$gateway['interface']}_defaultgwv6")) {
 					$gateway['defaultgw'] = true;
 					$found_defaultv6 = 1;

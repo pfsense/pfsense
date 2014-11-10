@@ -732,7 +732,8 @@ function fixup_default_gateway($ipprotocol, $gateways_status, $gateways_arr) {
 	 * NOTE: The code below is meant to replace the default gateway when it goes down.
 	 *	This facilitates services running on pfSense itself and are not handled by a PBR to continue working.
 	 */
-	$upgw = "";
+	$upgw = '';
+	$dfltgwname = '';
 	$dfltgwdown = false;
 	$dfltgwfound = false;
 	foreach ($gateways_arr as $gwname => $gwsttng) {
@@ -766,15 +767,14 @@ function fixup_default_gateway($ipprotocol, $gateways_status, $gateways_arr) {
 			}
 			mwexec("/sbin/route change {$inetfamily} default {$gateways_arr[$upgw]['gateway']}");
 		}
-	} else {
+	} else if (!empty($dftgwname)) {
 		$defaultgw = trim(exec("/sbin/route -n get -{$ipprotocol} default | /usr/bin/awk '/gateway:/ {print $2}'"), " \n");
-		if(is_ipaddrv6($gateways_arr[$dfltgwname]['gateway'])) {
-			$inetfamily = "-inet6";
-		} else {
-			$inetfamily = "-inet";
-		}
+		if ($ipprotocol == 'inet6' && !is_ipaddrv6($gateways_arr[$dfltgwname]['gateway']))
+			return;
+		if ($ipprotocol == 'inet' && !is_ipaddrv4($gateways_arr[$dfltgwname]['gateway']))
+			return;
 		if ($defaultgw != $gateways_arr[$dfltgwname]['gateway'])
-			mwexec("/sbin/route change {$inetfamily} default {$gateways_arr[$dfltgwname]['gateway']}");
+			mwexec("/sbin/route change -{$ipprotocol} default {$gateways_arr[$dfltgwname]['gateway']}");
 	}
 }
 

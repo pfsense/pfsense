@@ -826,7 +826,7 @@ function is_inrange($test, $start, $end) {
 }
 
 /* XXX: return the configured carp interface list */
-function get_configured_carp_interface_list($carpinterface = "", $family = "inet") {
+function get_configured_carp_interface_list($carpinterface = '', $family = 'inet', $what = 'ip') {
 	global $config;
 
 	$iflist = array();
@@ -838,10 +838,33 @@ function get_configured_carp_interface_list($carpinterface = "", $family = "inet
 			case "carp":
 				if (!empty($carpinterface)) {
 					if ($carpinterface == "{$vip['interface']}_vip{$vip['vhid']}") {
-						if ($family == "inet" && is_ipaddrv4($vip['subnet']))
-							return $vip['subnet'];
-						else if ($family == "inet6" && is_ipaddrv6($vip['subnet']))
-							return $vip['subnet'];
+						switch ($what) {
+						case 'subnet':
+							if ($family == 'inet' && is_ipaddrv4($vip['subnet']))
+								return "{$vip['subnet']}/{$vip['subnet_bits']}";
+							else if ($family == 'inet6' && is_ipaddrv6($vip['subnet']))
+								return "{$vip['subnet']}/{$vip['subnet_bits']}";
+							break;
+						case 'iface':
+							if ($family == 'inet' && is_ipaddrv4($vip['subnet']))
+								return $vip['interface'];
+							else if ($family == 'inet6' && is_ipaddrv6($vip['subnet']))
+								return $vip['interface'];
+							break;
+						case 'vip':
+							if ($family == 'inet' && is_ipaddrv4($vip['subnet']))
+								return $vip;
+							else if ($family == 'inet6' && is_ipaddrv6($vip['subnet']))
+								return $vip;
+							break;
+						case 'ip':
+						default:
+							if ($family == 'inet' && is_ipaddrv4($vip['subnet']))
+								return $vip['subnet'];
+							else if ($family == 'inet6' && is_ipaddrv6($vip['subnet']))
+								return $vip['subnet'];
+							break;
+						}
 					}
 				} else {
 					$iflist["{$vip['interface']}_vip{$vip['vhid']}"] = $vip['subnet'];

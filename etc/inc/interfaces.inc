@@ -2150,20 +2150,30 @@ function interfaces_vips_configure($interface = "") {
 function interface_ipalias_configure(&$vip) {
 	global $config;
 
-	if ($vip['mode'] != "ipalias")
+	if ($vip['mode'] != 'ipalias')
 		return;
 
-	if ($vip['interface'] != 'lo0' && !isset($config['interfaces'][$vip['interface']]))
-		return;
+	if ($vip['interface'] != 'lo0' && stripos($vip['interface'], '_vip') === false) {
+		if (!isset($config['interfaces'][$vip['interface']]))
+			return;
 
-	if ($vip['interface'] != 'lo0' && !isset($config['interfaces'][$vip['interface']]['enable']))
-		return;
+		if (!isset($config['interfaces'][$vip['interface']]['enable']))
+			return;
+	}
 
-	$if = get_real_interface($vip['interface']);
-	$af = "inet";
+	$af = 'inet';
 	if(is_ipaddrv6($vip['subnet']))
-		$af = "inet6";
-	mwexec("/sbin/ifconfig " . escapeshellarg($if) ." {$af} ". escapeshellarg($vip['subnet']) ."/" . escapeshellarg($vip['subnet_bits']) . " alias");
+		$af = 'inet6';
+	$iface = $vip['interface'];
+	$vipadd = '';
+	if (stripos($vip['interface'], '_vip')) {
+		$carpvip = get_configured_carp_interface_list($vip['interface'], $af, 'vip');
+		$iface = $carpvip['interface'];
+		$vipadd = "vhid {$carpvip['vhid']}";
+	}
+	$if = get_real_interface($vip['interface']);
+	mwexec("/sbin/ifconfig " . escapeshellarg($if) ." {$af} ". escapeshellarg($vip['subnet']) ."/" . escapeshellarg($vip['subnet_bits']) . " alias {$vipadd}");
+	unset($iface, $af, $if, $carpvip, $vipadd);
 }
 
 function interface_reload_carps($cif) {

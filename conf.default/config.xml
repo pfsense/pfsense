@@ -150,6 +150,11 @@
 			<tunable>kern.ipc.maxsockbuf</tunable>
 			<value>default</value>
 		</item>
+		<item>
+			<descr><![CDATA[Reply ICMP from source interface]]></descr>
+			<tunable>net.inet.icmp.reply_from_interface</tunable>
+			<value>default</value>
+		</item>
 	</sysctl>
 	<system>
 		<optimization>normal</optimization>

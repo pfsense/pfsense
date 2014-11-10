@@ -72,13 +72,50 @@ function get_default_sysctl_value($id) {
 		return $sysctls[$id];
 }
 
+function get_sysctl_descr($sysctl) {
+	unset($output);
+	$_gb = exec("/sbin/sysctl -nd {$sysctl}", $output);
+
+	return $output[0];
+}
+
+function system_get_sysctls() {
+	global $config, $sysctls;
+
+	$disp_sysctl = array();
+	$disp_cache = array();
+	if (is_array($config['sysctl']) && is_array($config['sysctl']['item'])) {
+		foreach($config['sysctl']['item'] as $id => $tunable) {
+			if ($tunable['value'] == "default")
+				$value = get_default_sysctl_value($tunable['tunable']);
+			else
+				$value = $tunable['value'];
+
+			$disp_sysctl[$id] = $tunable;
+			$disp_sysctl[$id]['modified'] = true;
+			$disp_cache[$tunable['tunable']] = 'set';
+		}
+	}
+
+	foreach ($sysctls as $sysctl => $value) {
+		if (isset($disp_cache[$sysctl]))
+			continue;
+
+		$disp_sysctl[$sysctl] = array('tunable' => $sysctl, 'value' => $value, 'descr' => get_sysctl_descr($sysctl));
+		
+		
+	}
+	unset($disp_cache);
+	return $disp_sysctl;
+}
+
 function activate_sysctls() {
 	global $config, $g, $sysctls;
 
 	if ($g['platform'] == 'jail')
 		return;
 
-	if (is_array($config['sysctl'])) {
+	if (is_array($config['sysctl']) && is_array($config['sysctl']['item'])) {
 		foreach($config['sysctl']['item'] as $tunable) {
 			if($tunable['value'] == "default")
 				$value = get_default_sysctl_value($tunable['tunable']);

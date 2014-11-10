@@ -140,9 +140,6 @@ if ($_POST) {
 		// Write out configuration (config.xml)
 		write_config();
 
-		// Configure flowtable support from filter.inc
-		flowtable_configure();
-
 		// Set preferred protocol
 		prefer_ipv4_or_ipv6();
 

@@ -4151,6 +4151,15 @@ function get_current_wan_address($interface = "wan") {
 function convert_real_interface_to_friendly_interface_name($interface = "wan") {
 	global $config;
 
+	if (stripos($interface, "_vip")) {
+		foreach ($config['virtualip']['vip'] as $counter => $vip) {
+			if ($vip['mode'] == "carp")  {
+				if ($interface == "{$vip['interface']}_vip{$vip['vhid']}")
+				return $vip['interface'];
+			}
+		}
+	}
+
 	/* XXX: For speed reasons reference directly the interface array */
 	$ifdescrs = &$config['interfaces'];
 	//$ifdescrs = get_configured_interface_list(false, true);

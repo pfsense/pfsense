@@ -7,9 +7,13 @@ if(is_array($config['virtualip']['vip'])) {
 	$viparr = &$config['virtualip']['vip'];
 	foreach ($viparr as $vip) {
 		switch ($vip['mode']) {
-			case "carp":
-				interface_carp_configure($vip);
-				sleep(1);
+		case "carp":
+			interface_carp_configure($vip);
+			sleep(1);
+			break;
+		case "ipalias":
+			if (strpos($vip['interface'], '_vip'))
+				interface_ipalias_configure($vip);
 			break;
 		}
 	}

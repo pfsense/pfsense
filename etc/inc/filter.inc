@@ -3641,7 +3641,7 @@ function filter_generate_ipsec_rules($log = array()) {
 				}
 			}
 
-			if (strstr($ph1ent['interface'], "_vip"))
+			if (strpos($ph1ent['interface'], "_vip"))
 				list($parentinterface, $vhid) = explode("_vhid", $ph1ent['interface']);
 			else
 				$parentinterface = $ph1ent['interface'];

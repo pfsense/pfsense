@@ -81,6 +81,10 @@ if($_POST['disablecarp'] <> "") {
 					sleep(1);
 					break;
 				}
+				case 'ipalias':
+					if (strpos($vip['interface'], '_vip'))
+						interface_ipalias_configure($vip);
+					break;
 			}
 		}
 		interfaces_sync_setup();

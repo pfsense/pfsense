@@ -623,9 +623,12 @@ function local_group_set($group, $reset = false) {
 
 	$group_name = $group['name'];
 	$group_gid = $group['gid'];
-	$group_members = "''";
+	$group_members = '';
 	if (!$reset && !empty($group['member']) && count($group['member']) > 0)
 		$group_members = implode(",",$group['member']);
+
+	if (empty($group_members))
+		return;
 
 	/* read from group db */
 	$fd = popen("/usr/sbin/pw groupshow {$group_name} 2>&1", "r");

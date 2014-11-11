@@ -2150,20 +2150,30 @@ function interfaces_vips_configure($interface = "") {
 function interface_ipalias_configure(&$vip) {
 	global $config;
 
-	if ($vip['mode'] != "ipalias")
+	if ($vip['mode'] != 'ipalias')
 		return;
 
-	if ($vip['interface'] != 'lo0' && !isset($config['interfaces'][$vip['interface']]))
-		return;
+	if ($vip['interface'] != 'lo0' && stripos($vip['interface'], '_vip') === false) {
+		if (!isset($config['interfaces'][$vip['interface']]))
+			return;
 
-	if ($vip['interface'] != 'lo0' && !isset($config['interfaces'][$vip['interface']]['enable']))
-		return;
+		if (!isset($config['interfaces'][$vip['interface']]['enable']))
+			return;
+	}
 
-	$if = get_real_interface($vip['interface']);
-	$af = "inet";
+	$af = 'inet';
 	if(is_ipaddrv6($vip['subnet']))
-		$af = "inet6";
-	mwexec("/sbin/ifconfig " . escapeshellarg($if) ." {$af} ". escapeshellarg($vip['subnet']) ."/" . escapeshellarg($vip['subnet_bits']) . " alias");
+		$af = 'inet6';
+	$iface = $vip['interface'];
+	$vipadd = '';
+	if (strpos($vip['interface'], '_vip')) {
+		$carpvip = get_configured_carp_interface_list($vip['interface'], $af, 'vip');
+		$iface = $carpvip['interface'];
+		$vipadd = "vhid {$carpvip['vhid']}";
+	}
+	$if = get_real_interface($iface);
+	mwexec("/sbin/ifconfig " . escapeshellarg($if) ." {$af} ". escapeshellarg($vip['subnet']) ."/" . escapeshellarg($vip['subnet_bits']) . " alias {$vipadd}");
+	unset($iface, $af, $if, $carpvip, $vipadd);
 }
 
 function interface_reload_carps($cif) {
@@ -2216,14 +2226,14 @@ function interface_carp_configure(&$vip) {
 		/* Ensure a IP on this interface exists prior to configuring CARP. */
 		$ww_subnet_ip = find_interface_ip($realif);
 		if (!is_ipaddrv4($ww_subnet_ip)) {
-			file_notice("CARP", sprintf(gettext("Sorry but we could not find a required assigned ip address on the interface for the virtual IP address %s."), $vip['subnet']), "Firewall: Virtual IP", "");
+			file_notice("CARP", sprintf(gettext("Interface does not have required IP address in the subnet of virtual IP address %s. Skipping this VIP."), $vip['subnet']), "Firewall: Virtual IP", "");
 			return;
 		}
 	} else if (is_ipaddrv6($vip['subnet'])) {
 		/* Ensure a IP on this interface exists prior to configuring CARP. */
 		$ww_subnet_ip = find_interface_ipv6($realif);
 		if (!is_ipaddrv6($ww_subnet_ip)) {
-			file_notice("CARP", sprintf(gettext("Sorry but we could not find a required assigned ip address on the interface for the virtual IPv6 address %s."), $vip['subnet']), "Firewall: Virtual IP", "");
+			file_notice("CARP", sprintf(gettext("Interface does not have required IPv6 address in the subnet of virtual IPv6 address %s. Skipping this VIP."), $vip['subnet']), "Firewall: Virtual IP", "");
 			return;
 		}
 	}
@@ -3679,6 +3689,7 @@ function interface_dhcpv6_configure($interface = "wan", $wancfg) {
 	$rtsoldscript .= "# This shell script launches dhcp6c and configured gateways for this interface.\n";
 	$rtsoldscript .= "echo $2 > {$g['tmp_path']}/{$wanif}_routerv6\n";
 	$rtsoldscript .= "echo $2 > {$g['tmp_path']}/{$wanif}_defaultgwv6\n";
+	$rtsoldscript .= "/usr/bin/logger -t rtsold \"Recieved RA specifying route \$2 for interface {$interface}({$wanif})\"\n";
 	$rtsoldscript .= "if [ -f {$g['varrun_path']}/dhcp6c_{$wanif}.pid ]; then\n";
 	$rtsoldscript .= "\t/bin/pkill -F {$g['varrun_path']}/dhcp6c_{$wanif}.pid\n";
 	$rtsoldscript .= "\t/bin/sleep 1\n";
@@ -4150,6 +4161,15 @@ function get_current_wan_address($interface = "wan") {
  */
 function convert_real_interface_to_friendly_interface_name($interface = "wan") {
 	global $config;
+
+	if (stripos($interface, "_vip")) {
+		foreach ($config['virtualip']['vip'] as $counter => $vip) {
+			if ($vip['mode'] == "carp")  {
+				if ($interface == "{$vip['interface']}_vip{$vip['vhid']}")
+				return $vip['interface'];
+			}
+		}
+	}
 
 	/* XXX: For speed reasons reference directly the interface array */
 	$ifdescrs = &$config['interfaces'];

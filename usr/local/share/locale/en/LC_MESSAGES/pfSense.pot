@@ -3358,7 +3358,7 @@ msgstr ""
 
 #: etc/inc/vpn.inc:1279 etc/inc/vpn.inc:1285 etc/inc/vpn.inc:1283
 #: etc/inc/vpn.inc:1295 etc/inc/vpn.inc:1308 etc/inc/vpn.inc:1307
-msgid "Configuring PPPoE VPN service... "
+msgid "Configuring PPPoE Server service... "
 msgstr ""
 
 #: etc/inc/vpn.inc:1303 etc/inc/vpn.inc:1309 etc/inc/vpn.inc:1307
@@ -10092,7 +10092,7 @@ msgstr ""
 #: usr/local/www/firewall_virtual_ip_edit.php:168
 #: usr/local/www/firewall_virtual_ip_edit.php:182
 #: usr/local/www/firewall_virtual_ip_edit.php:182
-msgid "For this type of vip a carp parent is not allowed."
+msgid "A CARP parent interface can only be used with IP Alias type Virtual IPs."
 msgstr ""
 
 #: usr/local/www/firewall_virtual_ip_edit.php:188
@@ -14112,7 +14112,7 @@ msgstr ""
 #: usr/local/www/status_captiveportal.php:157
 #: usr/local/www/status_captiveportal.php:143
 #: usr/local/www/status_captiveportal.php:143
-msgid "Captiveportal status"
+msgid "Captive Portal status"
 msgstr ""
 
 #: usr/local/www/status_captiveportal.php:164
@@ -27488,7 +27488,7 @@ msgstr ""
 
 #: usr/local/www/vpn_pppoe.php:131 usr/local/www/vpn_pppoe.php:132
 #: usr/local/www/vpn_pppoe.php:133 usr/local/www/vpn_pppoe.php:133
-msgid "edit pppoe instance"
+msgid "edit PPPoE instance"
 msgstr ""
 
 #: usr/local/www/vpn_pppoe.php:132 usr/local/www/vpn_pppoe.php:133
@@ -42997,7 +42997,7 @@ msgstr ""
 
 #: usr/local/www/services_captiveportal_zones.php:37
 #: usr/local/www/services_captiveportal_zones.php:37
-msgid "Captiveportal"
+msgid "Captive Portal"
 msgstr ""
 
 #: usr/local/www/services_captiveportal_zones.php:37
@@ -43048,7 +43048,7 @@ msgstr ""
 #: usr/local/www/services_captiveportal_zones_edit.php:98
 #: usr/local/www/services_captiveportal_zones_edit.php:94
 #: usr/local/www/services_captiveportal_zones_edit.php:94
-msgid "Edit Captiveportal Zones"
+msgid "Edit Captive Portal Zones"
 msgstr ""
 
 #: usr/local/www/services_captiveportal_zones_edit.php:103

@@ -4,6 +4,10 @@
 	system_usermanager.php
 	part of m0n0wall (http://m0n0.ch/wall)
 
+	part of pfSense
+        Copyright (C) 2013-2014 Electric Sheep Fencing, LP
+	All rights reserved.
+
 	Copyright (C) 2008 Shrew Soft Inc.
 	All rights reserved.
 

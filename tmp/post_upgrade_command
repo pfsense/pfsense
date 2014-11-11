@@ -4,42 +4,47 @@
 
 PFSENSETYPE=`cat /etc/platform`
 
-if [ $PFSENSETYPE = "pfSense" ] || [ $PFSENSETYPE = "nanobsd" ]; then
+if [ "${PFSENSETYPE}" = "pfSense" -o "${PFSENSETYPE}" = "nanobsd" ]; then
 	touch /conf/needs_package_sync
 fi
 
 # Detect interactive logins and display the shell
 detect_command='[ -n "$SSH_TTY" -o "$TERM" = "cons25" ] && exec /etc/rc.initial'
-echo "$detect_command" > $CVS_CO_DIR/root/.shrc
-echo "$detect_command" >> $CVS_CO_DIR/root/.profile
+echo "${detect_command}" > ${CVS_CO_DIR}/root/.shrc
+echo "${detect_command}" >> ${CVS_CO_DIR}/root/.profile
+
+if [ "${PFSENSETYPE}" = "nanobsd" ]; then
+	ROOT=/tmp/${1}/
+else
+	ROOT=/
+fi
 
 # Now turn on or off serial console as needed
-echo "Checking for /tmp/$1/tmp/post_upgrade_command.php... " >> /conf/upgrade_log.txt
-if [ -x /tmp/$1/tmp/post_upgrade_command.php ]; then
-	echo "Running /tmp/$1/tmp/post_upgrade_command.php $1" >> /conf/upgrade_log.txt
-	/tmp/$1/tmp/post_upgrade_command.php $1 >> /conf/upgrade_log.txt 2>&1
-elif [ -f /tmp/post_upgrade_command.php ]; then
-	echo "Running /tmp/post_upgrade_command.php $1" >> /conf/upgrade_log.txt
-	/tmp/post_upgrade_command.php $1
+echo "Checking for ${ROOT}tmp/post_upgrade_command.php... " >> /conf/upgrade_log.txt
+if [ -x ${ROOT}tmp/post_upgrade_command.php ]; then
+	echo "Running ${ROOT}tmp/post_upgrade_command.php $1" >> /conf/upgrade_log.txt
+	${ROOT}tmp/post_upgrade_command.php $1 >> /conf/upgrade_log.txt 2>&1
 fi
 
 # Remove any previous MD5 sum files
-rm -f /root/*.md5
-
-# File moved to pfSense php shell (pfSsh.php)
-rm -rf /usr/local/sbin/cvs_sync.sh
+rm -f /root/*.md5 >/dev/null 2>&1
 
 # Fixup permissions on installed files
-if [ "${PFSENSETYPE}" = "nanobsd" ]; then
-	MTREECHKDIR=/tmp/${1}/
-else
-	MTREECHKDIR=/
+if [ -f ${ROOT}etc/installed_filesystem.mtree ]; then
+	/usr/sbin/mtree -U -e -q -f ${ROOT}etc/installed_filesystem.mtree -p ${ROOT} > /conf/mtree.log
 fi
-if [ -f ${MTREECHKDIR}etc/installed_filesystem.mtree ]; then
-	/usr/sbin/mtree -U -e -q -f ${MTREECHKDIR}etc/installed_filesystem.mtree -p ${MTREECHKDIR} > /conf/mtree.log;
-fi;
 
 # Make sure to preserve existing time zone
-if [ "${PFSENSETYPE}" = "nanobsd" ] && [ -f /etc/localtime ]; then
-	/bin/cp -p /etc/localtime /tmp/${1}/etc/localtime 2>/dev/null
+if [ "${PFSENSETYPE}" = "nanobsd" -a -f /etc/localtime ]; then
+	/bin/cp -p /etc/localtime ${ROOT}etc/localtime 2>/dev/null
+fi
+
+# Obsolete files - nanobsd doesn't need it since a new image is installed
+# on the other partition
+if [ "${PFSENSETYPE}" != "nanobsd" -a -f /etc/pfSense.obsoletedfiles ]; then
+	for f in $(cat /etc/pfSense.obsoletedfiles); do
+		if [ -n "${f}" -a -f "${f}" ]; then
+			rm -f ${f}
+		fi
+	done
 fi

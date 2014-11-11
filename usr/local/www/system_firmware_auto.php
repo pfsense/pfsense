@@ -2,8 +2,9 @@
 /* $Id$ */
 /*
 	system_firmware_auto.php
-	Copyright (C) 2008 Scott Ullrich <sullrich@gmail.com>
 	Copyright (C) 2005 Scott Ullrich
+	Copyright (C) 2008 Scott Ullrich <sullrich@gmail.com>
+        Copyright (C) 2013-2014 Electric Sheep Fencing, LP
 
 	Based originally on system_firmware.php
 	(C)2003-2004 Manuel Kasper

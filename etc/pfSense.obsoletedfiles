@@ -152,3 +152,4 @@
 /usr/local/www/javascript/jquery/jquery-ui.custom.css
 /usr/local/www/javascript/jquery/jquery-ui.custom.min.js
 /usr/local/www/javascript/jquery.js
+/usr/local/sbin/cvs_sync.sh

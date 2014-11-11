@@ -2,6 +2,7 @@
 /* $Id$ */
 /*
 	diag_resetstate.php
+        Copyright (C) 2013-2014 Electric Sheep Fencing, LP
 	Copyright (C) 2004-2009 Scott Ullrich
 	All rights reserved.
 

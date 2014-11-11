@@ -1,6 +1,10 @@
 <?php
 /*
         $Id$
+
+        Copyright (C) 2013-2014 Electric Sheep Fencing, LP
+        All rights reserved.
+
         Copyright 2007 Scott Dale
         Part of pfSense widgets (https://www.pfsense.org)
         originally based on m0n0wall (http://m0n0.ch/wall)

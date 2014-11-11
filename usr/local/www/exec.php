@@ -6,6 +6,8 @@
 
 	(modified for m0n0wall by Manuel Kasper <mk@neon1.net>)
 
+        Copyright (C) 2013-2014 Electric Sheep Fencing, LP
+
     Redistribution and use in source and binary forms, with or without
     modification, are permitted provided that the following conditions are met:
 

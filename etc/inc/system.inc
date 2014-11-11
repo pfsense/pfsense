@@ -72,20 +72,50 @@ function get_default_sysctl_value($id) {
 		return $sysctls[$id];
 }
 
+function get_sysctl_descr($sysctl) {
+	unset($output);
+	$_gb = exec("/sbin/sysctl -nd {$sysctl}", $output);
+
+	return $output[0];
+}
+
+function system_get_sysctls() {
+	global $config, $sysctls;
+
+	$disp_sysctl = array();
+	$disp_cache = array();
+	if (is_array($config['sysctl']) && is_array($config['sysctl']['item'])) {
+		foreach($config['sysctl']['item'] as $id => $tunable) {
+			if ($tunable['value'] == "default")
+				$value = get_default_sysctl_value($tunable['tunable']);
+			else
+				$value = $tunable['value'];
+
+			$disp_sysctl[$id] = $tunable;
+			$disp_sysctl[$id]['modified'] = true;
+			$disp_cache[$tunable['tunable']] = 'set';
+		}
+	}
+
+	foreach ($sysctls as $sysctl => $value) {
+		if (isset($disp_cache[$sysctl]))
+			continue;
+
+		$disp_sysctl[$sysctl] = array('tunable' => $sysctl, 'value' => $value, 'descr' => get_sysctl_descr($sysctl));
+		
+		
+	}
+	unset($disp_cache);
+	return $disp_sysctl;
+}
+
 function activate_sysctls() {
-	global $config, $g;
+	global $config, $g, $sysctls;
 
 	if ($g['platform'] == 'jail')
 		return;
 
-	$sysctls = array(
-		"net.enc.out.ipsec_bpf_mask" => "0x0001",
-		"net.enc.out.ipsec_filter_mask" => "0x0001",
-		"net.enc.in.ipsec_bpf_mask" => "0x0002",
-		"net.enc.in.ipsec_filter_mask" => "0x0002"
-	);
-
-	if(is_array($config['sysctl'])) {
+	if (is_array($config['sysctl']) && is_array($config['sysctl']['item'])) {
 		foreach($config['sysctl']['item'] as $tunable) {
 			if($tunable['value'] == "default")
 				$value = get_default_sysctl_value($tunable['tunable']);
@@ -172,11 +202,19 @@ function system_resolvconf_generate($dynupdate = false) {
 					/* dns server array starts at 0 */
 					$dnscountermo = $dnscounter - 1;
 					mwexec("/sbin/route change -host " . $syscfg['dnsserver'][$dnscountermo] . " {$gatewayip}");
+					if (isset($config['system']['route-debug'])) {
+						$mt = microtime();
+						log_error("ROUTING debug: $mt - route change -host {$syscfg['dnsserver'][$dnscountermo]} $gatewayip ");
+					}
 				}
 				if (is_ipaddrv6($gatewayip)) {
 					/* dns server array starts at 0 */
 					$dnscountermo = $dnscounter - 1;
 					mwexec("/sbin/route change -host -inet6 " . $syscfg['dnsserver'][$dnscountermo] . " {$gatewayip}");
+					if (isset($config['system']['route-debug'])) {
+						$mt = microtime();
+						log_error("ROUTING debug: $mt - route change -host -inet6 {$syscfg['dnsserver'][$dnscountermo]} $gatewayip ");
+					}					
 				}
 			}
 		}
@@ -480,7 +518,7 @@ function system_routing_configure($interface = "") {
 			;
 		else if (is_ipaddrv6($gatewayipv6)) {
 			$ifscope = "";
-			if (is_linklocal($gatewayipv6))
+			if (is_linklocal($gatewayipv6) && !strpos($gatewayipv6, '%'))
 				$ifscope = "%{$defaultifv6}";
 			log_error("ROUTING: setting IPv6 default route to {$gatewayipv6}{$ifscope}");
 			mwexec("/sbin/route change -inet6 default " . escapeshellarg("{$gatewayipv6}{$ifscope}"));
@@ -541,12 +579,21 @@ function system_staticroutes_configure($interface = "", $update_dns = false) {
 				if (in_array($ip, $ips))
 					continue;
 				mwexec("/sbin/route delete " . escapeshellarg($ip), true);
+				if (isset($config['system']['route-debug'])) {
+					$mt = microtime();
+					log_error("ROUTING debug: $mt - route delete $ip ");
+				}
 			}
 
 			if (isset($rtent['disabled'])) {
 				/* XXX: This can break things by deleting routes that shouldn't be deleted - OpenVPN, dynamic routing scenarios, etc. redmine #3709 */
-				foreach ($ips as $ip)
+				foreach ($ips as $ip) {
 					mwexec("/sbin/route delete " . escapeshellarg($ip), true);
+					if (isset($config['system']['route-debug'])) {
+						$mt = microtime();
+						log_error("ROUTING debug: $mt - route delete $ip ");
+					}
+				}
 				continue;
 			}
 
@@ -561,10 +608,19 @@ function system_staticroutes_configure($interface = "", $update_dns = false) {
 				$cmd = "/sbin/route change {$inet} {$blackhole} " . escapeshellarg($ip) . " ";
 
 				if (is_subnet($ip))
-					if (is_ipaddr($gatewayip))
+					if (is_ipaddr($gatewayip)) {
 						mwexec($cmd . escapeshellarg($gatewayip));
-					else if (!empty($interfacegw))
+						if (isset($config['system']['route-debug'])) {
+							$mt = microtime();
+							log_error("ROUTING debug: $mt - $cmd $gatewayip");
+						}
+					} else if (!empty($interfacegw)) {
 						mwexec($cmd . "-iface " . escapeshellarg($interfacegw));
+						if (isset($config['system']['route-debug'])) {
+							$mt = microtime();
+							log_error("ROUTING debug: $mt - $cmd -iface $interfacegw ");
+						}
+					}
 			}
 		}
 		unset($gateways_arr);
@@ -667,7 +723,7 @@ function system_syslogd_start() {
 
 	$syslogd_extra = "";
 	if (isset($syslogcfg)) {
-		$separatelogfacilities = array('ntp','ntpd','ntpdate','charon','openvpn','pptps','poes','l2tps','relayd','hostapd','dnsmasq','filterdns','unbound','dhcpd','dhcrelay','dhclient','dhcp6c','apinger','radvd','routed','olsrd','zebra','ospfd','bgpd','miniupnpd','filterlog');
+		$separatelogfacilities = array('ntp','ntpd','ntpdate','charon','ipsec_starter','openvpn','pptps','poes','l2tps','relayd','hostapd','dnsmasq','filterdns','unbound','dhcpd','dhcrelay','dhclient','dhcp6c','apinger','radvd','routed','olsrd','zebra','ospfd','bgpd','miniupnpd','filterlog');
 		$syslogconf = "";
 		if($config['installedpackages']['package']) {
 			foreach($config['installedpackages']['package'] as $package) {
@@ -703,7 +759,7 @@ function system_syslogd_start() {
 		if (!isset($syslogcfg['disablelocallogging'])) 
 			$syslogconf .= "*.*								{$log_directive}{$g['varlog_path']}/l2tps.log\n";
 
-		$syslogconf .= "!charon\n";
+		$syslogconf .= "!charon,ipsec_starter\n";
 		if (!isset($syslogcfg['disablelocallogging'])) 
 			$syslogconf .= "*.*								{$log_directive}{$g['varlog_path']}/ipsec.log\n";
 		if (isset($syslogcfg['vpn']))
@@ -1241,7 +1297,7 @@ EOD;
 		$lighty_config .= "ssl.engine = \"enable\"\n";
 		$lighty_config .= "ssl.pemfile = \"{$g['varetc_path']}/{$cert_location}\"\n\n";
 
-		// Harden SSL a bit for PCI conformance testing
+		// SSLv2/3 is deprecated, force use of TLS
 		$lighty_config .= "ssl.use-sslv2 = \"disable\"\n";
 		$lighty_config .= "ssl.use-sslv3 = \"disable\"\n";
 

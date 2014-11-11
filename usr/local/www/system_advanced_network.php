@@ -3,8 +3,8 @@
 	system_advanced_network.php
 	part of pfSense
 	Copyright (C) 2005-2007 Scott Ullrich
-
 	Copyright (C) 2008 Shrew Soft Inc
+        Copyright (C) 2013-2014 Electric Sheep Fencing, LP
 
 	originally part of m0n0wall (http://m0n0.ch/wall)
 	Copyright (C) 2003-2004 Manuel Kasper <mk@neon1.net>.
@@ -139,9 +139,6 @@ if ($_POST) {
 
 		// Write out configuration (config.xml)
 		write_config();
-
-		// Configure flowtable support from filter.inc
-		flowtable_configure();
 
 		// Set preferred protocol
 		prefer_ipv4_or_ipv6();

@@ -1,6 +1,8 @@
 <?php
 /*
         $Id$
+        Copyright (C) 2013-2014 Electric Sheep Fencing, LP
+
         Copyright 2009 Scott Ullrich
         Part of pfSense widgets (https://www.pfsense.org)
 

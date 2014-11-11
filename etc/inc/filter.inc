@@ -38,7 +38,6 @@
 	pfSense_MODULE:	filter
 */
 
-/* DISABLE_PHP_LINT_CHECKING */
 
 /* holds the items that will be executed *AFTER* the filter is fully loaded */
 $after_filter_configure_run = array();
@@ -89,33 +88,6 @@ function is_bogonsv6_used() {
 		}
 	}
 	return $usebogonsv6;
-}
-
-function flowtable_configure() {
-	global $config, $g;
-
-	if (empty($config['system']['flowtable'])) {
-		set_single_sysctl("net.inet.flowtable.enable", "0");
-		return;
-	}
-
-	// Figure out how many flows we should reserve
-	// sized 2x larger than the number of unique connection destinations.
-	if($config['system']['maximumstates'] <> "" && is_numeric($config['system']['maximumstates']))
-		$maxstates = $config['system']['maximumstates'];
-	else
-		$maxstates = 150000;
-	// nmbflows cpu count * ($maxstates * 2)
-	$cpus = get_single_sysctl('kern.smp.cpus');
-	$nmbflows = ($cpus*($maxstates*2));
-	// Flowtable currently only works on 8.0
-	if(get_freebsd_version() == "8") {
-		set_sysctl(array(
-			"net.inet.flowtable.nmbflows" => $nmbflows,
-			"net.inet.ip.output_flowtable_size" => $maxstates,
-			"net.inet.flowtable.enable" => "1")
-		);
-	}
 }
 
 function filter_pflog_start($kill_first = false) {
@@ -273,9 +245,6 @@ function filter_configure_sync($delete_states_if_needed = true) {
 
 	if (isset($config['system']['lb_use_sticky']) && is_numeric($config['system']['srctrack']) && ($config['system']['srctrack'] > 0))
 		$limitrules .= "set timeout src.track {$config['system']['srctrack']}\n";
-
-	// Configure flowtable support if enabled.
-	flowtable_configure();
 
 	$rules = "";
 	$rules = "{$limitrules}\n";
@@ -477,6 +446,7 @@ function filter_generate_nested_alias($name, $alias, &$aliasnesting, &$aliasaddr
 	global $aliastable, $filterdns;
 
 	$addresses = explode(" ", $alias);
+	$use_filterdns = false;
 	$finallist = "";
 	$builtlist = "";
 	$urltable_nesting = "";
@@ -507,8 +477,10 @@ function filter_generate_nested_alias($name, $alias, &$aliasnesting, &$aliasaddr
 				$tmpline = filter_generate_nested_alias($name, $aliastable[$address], $aliasnesting, $aliasaddrnesting);
 		} else if(!isset($aliasaddrnesting[$address])) {
 			if (!is_ipaddr($address) && !is_subnet($address) && !is_port($address) && !is_portrange($address) && is_hostname($address)) {
-				if (!isset($filterdns["{$address}{$name}"]))
+				if (!isset($filterdns["{$address}{$name}"])) {
+					$use_filterdns = true;
 					$filterdns["{$address}{$name}"] = "pf {$address} {$name}\n";
+				}
 				continue;
 			}
 			$aliasaddrnesting[$address] = $address;
@@ -522,6 +494,17 @@ function filter_generate_nested_alias($name, $alias, &$aliasnesting, &$aliasaddr
 			$builtlist .= " {$tmpline}";
 	}
 	$finallist .= $builtlist;
+
+	if ($use_filterdns === true && !empty($finallist)) {
+		foreach (explode(" ", $finallist) as $address) {
+			if (empty($address))
+				continue;
+			if ((is_ipaddr($address) || is_subnet($address)) && !isset($filterdns["{$address}{$name}"]))
+				$filterdns["{$address}{$name}"] = "pf {$address} {$name}\n";
+		}
+		$finallist = '';
+	}
+
 	return $finallist;
 }
 
@@ -3628,7 +3611,7 @@ function filter_generate_ipsec_rules($log = array()) {
 				}
 			}
 
-			if (strstr($ph1ent['interface'], "_vip"))
+			if (strpos($ph1ent['interface'], "_vip"))
 				list($parentinterface, $vhid) = explode("_vhid", $ph1ent['interface']);
 			else
 				$parentinterface = $ph1ent['interface'];

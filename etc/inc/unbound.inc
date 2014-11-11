@@ -79,14 +79,16 @@ function unbound_optimization() {
 	 * Larger socket buffer for busy servers
 	 * Check that it is set to 4MB (by default the OS has it configured to 4MB)
 	 */
-	foreach ($config['sysctl']['item'] as $tunable) {
-		if ($tunable['tunable'] == 'kern.ipc.maxsockbuf') {
-			$so = floor(($tunable['value']/1024/1024)-1);
-			// Check to ensure that the number is not a negative
-			if ($so > 0)
-				$optimization['so_rcvbuf'] = "so-rcvbuf: {$so}m";
-			else
-				unset($optimization['so_rcvbuf']);
+	if (is_array($config['sysctl']) && is_array($config['sysctl']['item'])) {
+		foreach ($config['sysctl']['item'] as $tunable) {
+			if ($tunable['tunable'] == 'kern.ipc.maxsockbuf') {
+				$so = floor(($tunable['value']/1024/1024)-1);
+				// Check to ensure that the number is not a negative
+				if ($so > 0)
+					$optimization['so_rcvbuf'] = "so-rcvbuf: {$so}m";
+				else
+					unset($optimization['so_rcvbuf']);
+			}
 		}
 	}
 	// Safety check in case kern.ipc.maxsockbuf is not available.

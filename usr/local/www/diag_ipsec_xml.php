@@ -4,6 +4,7 @@
 	diag_ipsec_xml.php
 	Copyright (C) 2007 pfSense Project
 	Copyright (C) 2010 Seth Mos
+        Copyright (C) 2013-2014 Electric Sheep Fencing, LP
 	All rights reserved.
 
 	Parts of this code was originally based on vpn_ipsec_sad.php

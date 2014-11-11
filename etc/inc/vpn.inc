@@ -278,18 +278,18 @@ function vpn_ipsec_configure($ipchg = false)
 
 		$strongswan = <<<EOD
 
-#Automatically generated please do not modify
+# Automatically generated config file - DO NOT MODIFY. Changes will be overwritten. 
 starter {
     load_warning = no
 }
 
 charon {
-
-        # number of worker threads in charon
-        threads = 16
+	# number of worker threads in charon
+	threads = 16
 	ikesa_table_size = 32
 	ikesa_table_segments = 4
-	init_limit_half_open = 1000;
+	init_limit_half_open = 1000
+	install_routes = no
 
 	# XXX: There is not much choice here really users win their security!
 	i_dont_care_about_security_and_use_aggressive_mode_psk=yes
@@ -300,16 +300,15 @@ charon {
 	# And two loggers using syslog. The subsections define the facility to log
 	# to, currently one of: daemon, auth.
 	syslog {
-
 		identifier = charon
 		# default level to the LOG_DAEMON facility
 		daemon {
 		}
 		# very minimalistic IKE auditing logs to LOG_AUTHPRIV
 		auth {
-		    default = -1
-		    ike = 1
-		    ike_name = yes
+			default = -1
+			ike = 1
+			ike_name = yes
 		}
 	}
 
@@ -587,7 +586,7 @@ EOD;
 					$ikelifeline = "ikelifetime = {$ph1ent['lifetime']}s";
 
 				$rightsourceip = NULL;
-				if (!empty($a_client['pool_address'])) 
+				if (isset($ph1ent['mobile']) && !empty($a_client['pool_address'])) 
 					$rightsourceip = "\trightsourceip = {$a_client['pool_address']}/{$a_client['pool_netbits']}\n";
 
 				$authentication = "";
@@ -628,10 +627,12 @@ EOD;
 				else
 					$rekey = "rekey = yes";
 
-				if ($ph1ent['nat_traversal'] != 'off')
-					$forceencaps = "forceencaps = yes";
+				if ($ph1ent['nat_traversal'] == 'off')
+					$forceencaps = 'forceencaps = no';
+				else if ($ph1ent['nat_traversal'] == 'force')
+					$forceencaps = 'forceencaps = yes';
 				else
-					$forceencaps = "forceencaps = no";
+					$forceencaps = 'forceencaps = no';
 
 				$ipseclifetime = 0;
 				$rightsubnet_spec = array();
@@ -840,6 +841,7 @@ EOD;
 		/* Read secrets */
 		mwexec("/usr/local/sbin/ipsec rereadall", false);
 		/* Update configuration changes */
+		mwexec("/usr/local/sbin/ipsec update", false);
 		mwexec("/usr/local/sbin/ipsec reload", false);
 	} else {
 		mwexec("/usr/local/sbin/ipsec start", false); 
@@ -1181,7 +1183,7 @@ function vpn_pppoe_configure(&$pppoecfg) {
 		if (!$pppoecfg['mode'] || ($pppoecfg['mode'] == "off"))
 			return 0;
 
-		echo gettext("Configuring PPPoE VPN service... ");
+		echo gettext("Configuring PPPoE Server service... ");
 	} else {
 		/* kill mpd */
 		killbypid("{$g['varrun_path']}/pppoe{$pppoecfg['pppoeid']}-vpn.pid");

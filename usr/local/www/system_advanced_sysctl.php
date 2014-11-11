@@ -4,8 +4,8 @@
 	system_advanced_misc.php
 	part of pfSense
 	Copyright (C) 2005-2007 Scott Ullrich
-
 	Copyright (C) 2008 Shrew Soft Inc
+        Copyright (C) 2013-2014 Electric Sheep Fencing, LP
 
 	originally part of m0n0wall (http://m0n0.ch/wall)
 	Copyright (C) 2003-2004 Manuel Kasper <mk@neon1.net>.
@@ -47,25 +47,32 @@ require("guiconfig.inc");
 
 $referer = (isset($_SERVER['HTTP_REFERER']) ? $_SERVER['HTTP_REFERER'] : '/system_advanced_sysctl.php');
 
+if (!is_array($config['sysctl']))
+	$config['sysctl'] = array();
 if (!is_array($config['sysctl']['item']))
 	$config['sysctl']['item'] = array();
 
 $a_tunable = &$config['sysctl']['item'];
+$tunables = system_get_sysctls();
 
-if (is_numericint($_GET['id']))
-	$id = $_GET['id'];
-if (isset($_POST['id']) && is_numericint($_POST['id']))
-	$id = $_POST['id'];
+if (isset($_GET['id']))
+	$id = htmlspecialchars_decode($_GET['id']);
+if (isset($_POST['id']))
+	$id = htmlspecialchars_decode($_POST['id']);
 
 $act = $_GET['act'];
 if (isset($_POST['act']))
 	$act = $_POST['act'];
 
 if ($act == "edit") {
-	if ($a_tunable[$id]) {
+	if (isset($a_tunable[$id])) {
 		$pconfig['tunable'] = $a_tunable[$id]['tunable'];
 		$pconfig['value'] = $a_tunable[$id]['value'];
 		$pconfig['descr'] = $a_tunable[$id]['descr'];
+	} else if (isset($tunables[$id])) {
+		$pconfig['tunable'] = $tunables[$id]['tunable'];
+		$pconfig['value'] = $tunables[$id]['value'];
+		$pconfig['descr'] = $tunables[$id]['descr'];
 	}
 }
 
@@ -111,7 +118,7 @@ if ($_POST) {
 		$tunableent['value'] = $_POST['value'];
 		$tunableent['descr'] = $_POST['descr'];
 
-		if (isset($id) && $a_tunable[$id])
+		if (isset($id) && isset($a_tunable[$id]))
 			$a_tunable[$id] = $tunableent;
 		else
 			$a_tunable[] = $tunableent;
@@ -175,7 +182,11 @@ include("head.inc");
 							<td width="60%" class="listhdrr"><?=gettext("Description"); ?></td>
 							<td width="20%" class="listhdrr"><?=gettext("Value"); ?></td>
 						</tr>
-						<?php $i = 0; foreach ($config['sysctl']['item'] as $tunable): ?>
+						<?php foreach ($tunables as $i => $tunable):
+
+								if (!isset($tunable['modified']))
+									$i = $tunable['tunable'];
+						?>
 						<tr>
 							<td class="listlr" ondblclick="document.location='system_advanced_sysctl.php?act=edit&amp;id=<?=$i;?>';">
 								<?php echo $tunable['tunable']; ?>
@@ -185,10 +196,6 @@ include("head.inc");
 							</td>
 							<td class="listr" align="left" ondblclick="document.location='system_advanced_sysctl.php?act=edit&amp;id=<?=$i;?>';">
 								<?php echo $tunable['value']; ?>
-								<?php 
-									if($tunable['value'] == "default") 
-										echo "(" . get_default_sysctl_value($tunable['tunable']) . ")"; 
-								?>
 							</td>
 							<td class="list nowrap">
 								<table border="0" cellspacing="0" cellpadding="1" summary="edit delete">
@@ -198,16 +205,18 @@ include("head.inc");
 												<img src="./themes/<?= $g['theme']; ?>/images/icons/icon_e.gif" width="17" height="17" border="0" alt="" />
 											</a>
 										</td>
+							<?php if (isset($tunable['modified'])): ?>
 										<td valign="middle">
 											<a href="system_advanced_sysctl.php?act=del&amp;id=<?=$i;?>" onclick="return confirm('<?=gettext("Do you really want to delete this entry?"); ?>')">
 												<img src="./themes/<?= $g['theme']; ?>/images/icons/icon_x.gif" width="17" height="17" border="0" alt="" />
 											</a>
 										</td>
+							<?php endif; ?>
 									</tr>
 								</table>
 							</td>
 						</tr>
-						<?php $i++; endforeach; ?>
+						<?php endforeach; unset($tunables); ?>
 						<tr>
 						<td class="list" colspan="3">
 							</td>

@@ -2,11 +2,12 @@
 /*
 	status_ovpenvpn.php
 
-    Copyright (C) 2010 Jim Pingle
+    Copyright (C) 2005 Scott Ullrich, Colin Smith
     Copyright (C) 2008 Shrew Soft Inc.
+    Copyright (C) 2010 Jim Pingle
+    Copyright (C) 2013-2014 Electric Sheep Fencing, LP
 
     AJAX bits borrowed from diag_dump_states.php
-    Copyright (C) 2005 Scott Ullrich, Colin Smith
 
     All rights reserved.
 
@@ -31,7 +32,6 @@
 	ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 	POSSIBILITY OF SUCH DAMAGE.
 */
-/* DISABLE_PHP_LINT_CHECKING */
 /*
 	pfSense_MODULE:	openvpn
 */

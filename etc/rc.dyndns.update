@@ -37,7 +37,7 @@ require_once("shaper.inc");
 
 /* Interface IP address has changed */
 
-if (isset($_GET))
+if (isset($_GET['dyndns']))
 	$argument = $_GET['dyndns'];
 else
 	$argument = trim($argv[1], " \n");

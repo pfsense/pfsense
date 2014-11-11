@@ -3040,7 +3040,7 @@ msgstr "Erro: não pôde abrir mpd.secret em vpn_pptpd_configure()."
 #: etc/inc/vpn.inc:1279 etc/inc/vpn.inc:1285 etc/inc/vpn.inc:1283
 #: etc/inc/vpn.inc:1295 etc/inc/vpn.inc:1308 etc/inc/vpn.inc:1307
 #: etc/inc/vpn.inc:1309
-msgid "Configuring PPPoE VPN service... "
+msgid "Configuring PPPoE Server service... "
 msgstr "Configurando serviço PPPoE da VPN..."
 
 #: etc/inc/vpn.inc:1303 etc/inc/vpn.inc:1309 etc/inc/vpn.inc:1307
@@ -8683,7 +8683,7 @@ msgstr "Lamento, não podemos localizar uma interface com uma subrede corresponde
 #: usr/local/www/firewall_virtual_ip_edit.php:168
 #: usr/local/www/firewall_virtual_ip_edit.php:182
 #: usr/local/www/firewall_virtual_ip_edit.php:184
-msgid "For this type of vip a carp parent is not allowed."
+msgid "A CARP parent interface can only be used with IP Alias type Virtual IPs."
 msgstr "Para este tipo de VIP, um carp pai não é permitido."
 
 #: usr/local/www/firewall_virtual_ip_edit.php:188
@@ -11962,7 +11962,7 @@ msgstr "Zona Captive Portal"
 
 #: usr/local/www/status_captiveportal.php:157
 #: usr/local/www/status_captiveportal.php:143
-msgid "Captiveportal status"
+msgid "Captive Portal status"
 msgstr "Status Captive Portal"
 
 #: usr/local/www/status_captiveportal.php:164
@@ -23326,7 +23326,7 @@ msgstr "adicione uma nova instância pppoe"
 
 #: usr/local/www/vpn_pppoe.php:131 usr/local/www/vpn_pppoe.php:132
 #: usr/local/www/vpn_pppoe.php:133
-msgid "edit pppoe instance"
+msgid "edit PPPoE instance"
 msgstr "editar instância pppoe"
 
 #: usr/local/www/vpn_pppoe.php:132 usr/local/www/vpn_pppoe.php:133
@@ -36304,8 +36304,8 @@ msgid "Wireless (hostapd) log entries"
 msgstr "Wireless (hostapd) registro de logs"
 
 #: usr/local/www/services_captiveportal_zones.php:37
-msgid "Captiveportal"
-msgstr "Captiveportal"
+msgid "Captive Portal"
+msgstr "Captive Portal"
 
 #: usr/local/www/services_captiveportal_zones.php:37
 msgid "Zones"
@@ -36321,7 +36321,7 @@ msgstr "A lista de entrada do CaptivePortal foi modificada"
 #: usr/local/www/services_captiveportal_zones.php:61
 #: usr/local/www/services_captiveportal_zones.php:102
 msgid "add a new captiveportal instance"
-msgstr "adicionar uma nova instância do Captiveportal"
+msgstr "adicionar uma nova instância do Captive Portal"
 
 #: usr/local/www/services_captiveportal_zones.php:88
 #: usr/local/www/services_captiveportal_zones.php:89
@@ -36346,8 +36346,8 @@ msgstr "Já existe"
 #: usr/local/www/services_captiveportal_zones_edit.php:96
 #: usr/local/www/services_captiveportal_zones_edit.php:98
 #: usr/local/www/services_captiveportal_zones_edit.php:94
-msgid "Edit Captiveportal Zones"
-msgstr "Editar Zonas do Captiveportal"
+msgid "Edit Captive Portal Zones"
+msgstr "Editar Zonas do Captive Portal"
 
 #: usr/local/www/services_captiveportal_zones_edit.php:103
 msgid "Zone name. Cannot contain spaces."

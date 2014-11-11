@@ -2,6 +2,7 @@
 /* $Id$ */
 /*
 	interfaces.php
+        Copyright (C) 2013-2014 Electric Sheep Fencing, LP
 	Copyright (C) 2004-2008 Scott Ullrich
 	Copyright (C) 2006 Daniel S. Haischt.
 	Copyright (C) 2008-2010 Ermal Luçi

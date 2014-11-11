@@ -1,4 +1,4 @@
-#!/usr/local/bin/php -f 
+#!/usr/local/bin/php -f
 <?php
 
 	/* upgrade embedded users serial console */
@@ -14,7 +14,7 @@
 	}
 
 	$newslicedir = "";
-	if ($argv[1] != "")
+	if (isset($argv[1]) && $argv[1] != "")
 		$newslicedir = '/tmp/' . $argv[1];
 
 	if($g['enableserial_force'] || file_exists("{$newslicedir}/enableserial_force")) {
@@ -24,10 +24,5 @@
 
 	system("echo \"Adding serial port settings ({$newslicedir})...\" >> /conf/upgrade_log.txt");
 	setup_serial_port("upgrade", $newslicedir);
-		
-	$files_to_process = file("/etc/pfSense.obsoletedfiles");
-	foreach($files_to_process as $filename) 
-		if(file_exists($filename)) 
-			exec("/bin/rm -f $filename");
 
 ?>

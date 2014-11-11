@@ -2,8 +2,10 @@
 /* $Id$ */
 /*
 	pkg_mgr.php
+        Copyright (C) 2013-2014 Electric Sheep Fencing, LP
 	Copyright (C) 2004-2012 Scott Ullrich <sullrich@gmail.com>
 	Copyright (C) 2013 Marcello Coutinho
+        Copyright (C) 2013-2014 Electric Sheep Fencing, LP
 
 	All rights reserved.
 

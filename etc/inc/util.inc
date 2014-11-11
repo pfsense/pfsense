@@ -826,7 +826,7 @@ function is_inrange($test, $start, $end) {
 }
 
 /* XXX: return the configured carp interface list */
-function get_configured_carp_interface_list($carpinterface = "", $family = "inet") {
+function get_configured_carp_interface_list($carpinterface = '', $family = 'inet', $what = 'ip') {
 	global $config;
 
 	$iflist = array();
@@ -838,10 +838,33 @@ function get_configured_carp_interface_list($carpinterface = "", $family = "inet
 			case "carp":
 				if (!empty($carpinterface)) {
 					if ($carpinterface == "{$vip['interface']}_vip{$vip['vhid']}") {
-						if ($family == "inet" && is_ipaddrv4($vip['subnet']))
-							return $vip['subnet'];
-						else if ($family == "inet6" && is_ipaddrv6($vip['subnet']))
-							return $vip['subnet'];
+						switch ($what) {
+						case 'subnet':
+							if ($family == 'inet' && is_ipaddrv4($vip['subnet']))
+								return "{$vip['subnet']}/{$vip['subnet_bits']}";
+							else if ($family == 'inet6' && is_ipaddrv6($vip['subnet']))
+								return "{$vip['subnet']}/{$vip['subnet_bits']}";
+							break;
+						case 'iface':
+							if ($family == 'inet' && is_ipaddrv4($vip['subnet']))
+								return $vip['interface'];
+							else if ($family == 'inet6' && is_ipaddrv6($vip['subnet']))
+								return $vip['interface'];
+							break;
+						case 'vip':
+							if ($family == 'inet' && is_ipaddrv4($vip['subnet']))
+								return $vip;
+							else if ($family == 'inet6' && is_ipaddrv6($vip['subnet']))
+								return $vip;
+							break;
+						case 'ip':
+						default:
+							if ($family == 'inet' && is_ipaddrv4($vip['subnet']))
+								return $vip['subnet'];
+							else if ($family == 'inet6' && is_ipaddrv6($vip['subnet']))
+								return $vip['subnet'];
+							break;
+						}
 					}
 				} else {
 					$iflist["{$vip['interface']}_vip{$vip['vhid']}"] = $vip['subnet'];
@@ -2073,6 +2096,20 @@ function post_redirect($page, $params) {
 	}
 	print "</form><script type=\"text/javascript\">document.formredir.submit();</script>\n";
 	print "</body></html>\n";
+}
+
+/* Locate disks that can be queried for S.M.A.R.T. data. */
+function get_smart_drive_list() {
+	$disk_list = explode(" ", get_single_sysctl("kern.disks"));
+	foreach ($disk_list as $id => $disk) {
+		// We only want certain kinds of disks for S.M.A.R.T.
+		// 1 is a match, 0 is no match, False is any problem processing the regex
+		if (preg_match("/^(ad|da|ada).*[0-9]{1,2}$/", $disk) !== 1) {
+			unset($disk_list[$id]);
+		}
+	}
+	sort($disk_list);
+	return $disk_list;
 }
 
 ?>

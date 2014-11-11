@@ -1,5 +1,8 @@
 <?php
 
+/*        Copyright (C) 2013-2014 Electric Sheep Fencing, LP */
+
+
 $nocsrf = true;
 
 require_once("guiconfig.inc");

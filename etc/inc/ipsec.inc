@@ -463,13 +463,13 @@ function ipsec_smp_dump_status() {
 	global $config, $g, $custom_listtags;
 
 	if (!file_exists("{$g['varrun_path']}/charon.xml")) {
-		log_error("IPsec daemon seems to have issues or not running!");
+		log_error("IPsec daemon not running or has a problem!");
 		return;
 	}
 
 	$fd = @fsockopen("unix://{$g['varrun_path']}/charon.xml");
 	if (!$fd) {
-		log_error("Could not read status from ipsec");
+		log_error("Could not read status from IPsec");
 		return;
 	}
 	$query = '<?xml version="1.0"?><message xmlns="http://www.strongswan.org/smp/1.0" type="request" id="1">';
@@ -607,7 +607,7 @@ function ipsec_dump_mobile() {
 	$_gb = exec("/usr/local/sbin/ipsec stroke leases > {$g['tmp_path']}/strongswan_leases.xml");
 
 	if (!file_exists("{$g['tmp_path']}/strongswan_leases.xml")) {
-		log_error(gettext("IPsec daemon seems to have issues or not running! Could not display mobile user stats!"));
+		log_error(gettext("Unable to find IPsec daemon leases file. Could not display mobile user stats!"));
 		return array();
 	}
 

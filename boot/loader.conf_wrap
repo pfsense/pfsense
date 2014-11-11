@@ -4,7 +4,6 @@ loader_color="NO"
 console=comconsole
 autoboot_delay="5"
 hw.ata.wc="0"
-kern.ipc.nmbclusters="0"
 beastie_disable="YES"
 vm.kmem_size="435544320"
 vm.kmem_size_max="535544320"

@@ -1,5 +1,6 @@
 <?php
 /*
+        Copyright (C) 2013-2014 Electric Sheep Fencing, LP
 	Copyright 2012 mkirbst @ pfSense Forum
 	Part of pfSense widgets (https://www.pfsense.org)
 	All rights reserved.
@@ -42,7 +43,7 @@ require_once("/usr/local/www/widgets/include/smart_status.inc");
 <?php
 $devs = array();
 ## Get all adX, daX, and adaX (IDE, SCSI, and AHCI) devices currently installed
-exec("ls /dev | grep '^\(ad\|da\|ada\)[0-9]\{1,2\}$'", $devs); ## From SMART status page
+$devs = get_smart_drive_list();
 
 if(count($devs) > 0)  {
 	foreach($devs as $dev)  {	## for each found drive do

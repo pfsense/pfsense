@@ -3368,7 +3368,7 @@ msgstr "エラー： vpn_pptpd_configure.()にmpd.secretを開くことができ
 
 #: etc/inc/vpn.inc:1279 etc/inc/vpn.inc:1285 etc/inc/vpn.inc:1283
 #: etc/inc/vpn.inc:1295 etc/inc/vpn.inc:1308 etc/inc/vpn.inc:1307
-msgid "Configuring PPPoE VPN service... "
+msgid "Configuring PPPoE Server service... "
 msgstr "PPPoEのVPNサービスの設定..."
 
 #: etc/inc/vpn.inc:1303 etc/inc/vpn.inc:1309 etc/inc/vpn.inc:1307
@@ -10102,7 +10102,7 @@ msgstr "「申し訳ありませんが、我々は%s.用一致するサブネッ
 #: usr/local/www/firewall_virtual_ip_edit.php:168
 #: usr/local/www/firewall_virtual_ip_edit.php:182
 #: usr/local/www/firewall_virtual_ip_edit.php:182
-msgid "For this type of vip a carp parent is not allowed."
+msgid "A CARP parent interface can only be used with IP Alias type Virtual IPs."
 msgstr "VIPこの種のコイ親が許可されていません。"
 
 #: usr/local/www/firewall_virtual_ip_edit.php:188
@@ -14122,8 +14122,8 @@ msgstr "キャプティブポータルゾーン"
 #: usr/local/www/status_captiveportal.php:157
 #: usr/local/www/status_captiveportal.php:143
 #: usr/local/www/status_captiveportal.php:143
-msgid "Captiveportal status"
-msgstr "Captiveportal状況"
+msgid "Captive Portal status"
+msgstr "Captive Portal状況"
 
 #: usr/local/www/status_captiveportal.php:164
 #: usr/local/www/status_captiveportal.php:167
@@ -27498,7 +27498,7 @@ msgstr "新しいのPPPoEインスタンスを追加"
 
 #: usr/local/www/vpn_pppoe.php:131 usr/local/www/vpn_pppoe.php:132
 #: usr/local/www/vpn_pppoe.php:133 usr/local/www/vpn_pppoe.php:133
-msgid "edit pppoe instance"
+msgid "edit PPPoE instance"
 msgstr "編集のPPPoEインスタンス"
 
 #: usr/local/www/vpn_pppoe.php:132 usr/local/www/vpn_pppoe.php:133
@@ -43007,8 +43007,8 @@ msgstr "ワイヤレス（ hostapdの）ログエントリ"
 
 #: usr/local/www/services_captiveportal_zones.php:37
 #: usr/local/www/services_captiveportal_zones.php:37
-msgid "Captiveportal"
-msgstr "Captiveportal"
+msgid "Captive Portal"
+msgstr "Captive Portal"
 
 #: usr/local/www/services_captiveportal_zones.php:37
 #: usr/local/www/services_captiveportal_zones.php:37
@@ -43058,8 +43058,8 @@ msgstr "すでに存在しています"
 #: usr/local/www/services_captiveportal_zones_edit.php:98
 #: usr/local/www/services_captiveportal_zones_edit.php:94
 #: usr/local/www/services_captiveportal_zones_edit.php:94
-msgid "Edit Captiveportal Zones"
-msgstr "編集Captiveportalゾーン"
+msgid "Edit Captive Portal Zones"
+msgstr "編集Captive Portalゾーン"
 
 #: usr/local/www/services_captiveportal_zones_edit.php:103
 msgid "Zone name. Cannot contain spaces."

@@ -5,6 +5,8 @@
     firewall_virtual_ip_edit.php
     part of pfSense (https://www.pfsense.org/)
 
+    Copyright (C) 2013-2014 Electric Sheep Fencing, LP
+
     Copyright (C) 2005 Bill Marquette <bill.marquette@gmail.com>.
     All rights reserved.
 
@@ -166,7 +168,8 @@ if ($_POST) {
 	/* make sure new ip is within the subnet of a valid ip
 	 * on one of our interfaces (wan, lan optX)
 	 */
-	if ($_POST['mode'] == 'carp') {
+	switch ($_POST['mode']) {
+	case 'carp':
 		/* verify against reusage of vhids */
 		$idtracker = 0;
 		foreach($config['virtualip']['vip'] as $vip) {
@@ -187,10 +190,36 @@ if ($_POST) {
 			$subnet = gen_subnetv6($parent_ip, $parent_sn);
 		}
 
-		if ($_POST['interface'] == "lo0")
+		if ($_POST['interface'] == 'lo0')
 			$input_errors[] = gettext("For this type of vip localhost is not allowed.");
-	} else if ($_POST['mode'] != 'ipalias' && $_POST['interface'] == "lo0")
-		$input_errors[] = gettext("For this type of vip localhost is not allowed.");
+		else if (strpos($_POST['interface'], '_vip'))
+			$input_errors[] = gettext("A CARP parent interface can only be used with IP Alias type Virtual IPs.");
+		break;
+	case 'ipalias':
+		if (strstr($_POST['interface'], "_vip")) {
+			if (is_ipaddrv4($_POST['subnet'])) {
+				$parent_ip = get_interface_ip($_POST['interface']);
+				$parent_sn = get_interface_subnet($_POST['interface']);
+				$subnet = gen_subnet($parent_ip, $parent_sn);
+			} else if (is_ipaddrv6($_POST['subnet'])) {
+				$parent_ip = get_interface_ipv6($_POST['interface']);
+				$parent_sn = get_interface_subnetv6($_POST['interface']);
+				$subnet = gen_subnetv6($parent_ip, $parent_sn);
+			}
+			if (isset($parent_ip) && !ip_in_subnet($_POST['subnet'], "{$subnet}/{$parent_sn}") &&
+			    !ip_in_interface_alias_subnet(link_carp_interface_to_parent($_POST['interface']), $_POST['subnet'])) {
+				$cannot_find = $_POST['subnet'] . "/" . $_POST['subnet_bits'] ;
+				$input_errors[] = sprintf(gettext("Sorry, we could not locate an interface with a matching subnet for %s.  Please add an IP alias in this subnet on this interface."),$cannot_find);
+			}
+		}
+		break;
+	default:
+		if ($_POST['interface'] == 'lo0')
+			$input_errors[] = gettext("For this type of vip localhost is not allowed.");
+		else if (strpos($_POST['interface'], '_vip'))
+			$input_errors[] = gettext("A CARP parent interface can only be used with IP Alias type Virtual IPs.");
+		break;
+	}
 
 	if (!$input_errors) {
 		$vipent = array();
@@ -370,7 +399,10 @@ function typesel_change() {
 					<select name="interface" class="formselect">
 					<?php 
 					$interfaces = get_configured_interface_with_descr(false, true);
-					$interfaces['lo0'] = "Localhost";
+					$carplist = get_configured_carp_interface_list();
+					foreach ($carplist as $cif => $carpip)
+						$interfaces[$cif] = $carpip . ' (' . get_vip_descr($carpip) . ')';
+					$interfaces['lo0'] = 'Localhost';
 					foreach ($interfaces as $iface => $ifacename): ?>
 						<option value="<?=$iface;?>" <?php if ($iface == $pconfig['interface']) echo "selected=\"selected\""; ?>>
 						<?=htmlspecialchars($ifacename);?>

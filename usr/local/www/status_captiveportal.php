@@ -5,6 +5,7 @@
 	part of m0n0wall (http://m0n0.ch/wall)
 	
 	Copyright (C) 2003-2004 Manuel Kasper <mk@neon1.net>.
+        Copyright (C) 2013-2014 Electric Sheep Fencing, LP
 	All rights reserved.
 	
 	Redistribution and use in source and binary forms, with or without
@@ -147,7 +148,7 @@ $mac_man = load_mac_manufacturer_table();
   <tr><td colspan="5"><br /></td></tr>
 <?php if (!empty($cpzone)): ?>
   <tr>
-	<td colspan="5" valign="top" class="listtopic"><?=gettext("Captiveportal status");?></td>
+	<td colspan="5" valign="top" class="listtopic"><?=gettext("Captive Portal status");?></td>
   </tr>
   <tr>
     <td class="listhdrr"><a href="?zone=<?=$cpzone?>&amp;order=ip&amp;showact=<?=htmlspecialchars($_GET['showact']);?>"><?=gettext("IP address");?></a></td>
@@ -175,9 +176,9 @@ $mac_man = load_mac_manufacturer_table();
 		?>&nbsp;
 	</td>
     <td class="listr"><?=htmlspecialchars($cpent[4]);?>&nbsp;</td>
-    <td class="listr"><?=htmlspecialchars(date("m/d/Y H:i:s", $cpent[0]));?></td>
 	<?php if ($_GET['showact']):
 	$last_act = captiveportal_get_last_activity($cpent[2], $cpent[3]); ?>
+    <td class="listr"><?=htmlspecialchars(date("m/d/Y H:i:s", $cpent[0]));?></td>
     <td class="listr"><?php if ($last_act != 0) echo htmlspecialchars(date("m/d/Y H:i:s", $last_act));?></td>
 	<?php else: ?>
     <td class="listr" colspan="2"><?=htmlspecialchars(date("m/d/Y H:i:s", $cpent[0]));?></td>

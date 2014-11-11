@@ -1,6 +1,8 @@
 <?php
 /*
 	$Id: thermal_sensors.widget.php
+        Copyright (C) 2013-2014 Electric Sheep Fencing, LP
+
 	Description: Thermal Sensors Widget.
 		NOTE: depends on proper cofing in System >> Advanced >> Miscellaneous tab >> Thermal Sensors section.
 

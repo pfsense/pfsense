@@ -39,8 +39,10 @@ require_once("interfaces.inc");
 function handle_argument_group($iface, $argument2) {
 	global $config;	
 
-	if (!is_array($config['interfaces'][$iface]))
+	if (!is_array($config['interfaces'][$iface])) {
+		log_error("Cannot find interface configuration for {$iface}");
 		return;
+	}
 
 	$ipaddr = $config['interfaces'][$iface]['ipaddr'];
 	$ip6addr = $config['interfaces'][$iface]['ipaddrv6'];
@@ -85,12 +87,12 @@ function handle_argument_group($iface, $argument2) {
 
 global $g;
 if (!file_exists("{$g['varrun_path']}/booting") && empty($g['booting'])) {
-if (isset($_GET)) {
+if (isset($_GET['interface'])) {
 	if (!empty($_GET['interface']))
-		handle_argument_group($_GET['interface'], $_GET['action']);
+		handle_argument_group(convert_real_interface_to_friendly_interface_name($_GET['interface']), $_GET['action']);
 } else {
 	if ($argc < 3) {
-		log_error("HOTPLUG event: The number of required parameters not passed!");
+		log_error("HOTPLUG event: The required number of parameters not passed!");
 		exit;
 	}
 	$action = $argv[1];
@@ -99,7 +101,7 @@ if (isset($_GET)) {
 	case "stop":
 		break;
 	default:
-		log_error("HOTPLUG event: The action parameter passed is wrong($action) only start/stop/up/down are allowed!");
+		log_error("HOTPLUG event: Action parameter ($action) passed is wrong - only start/stop/up/down are allowed!");
 		exit;
 		/* NOTREACHED */
 		break;

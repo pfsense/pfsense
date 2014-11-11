@@ -2,6 +2,7 @@
 /*
     carp_status.php
     Copyright (C) 2004 Scott Ullrich
+    Copyright (C) 2013-2014 Electric Sheep Fencing, LP
     All rights reserved.
 
     Redistribution and use in source and binary forms, with or without
@@ -79,6 +80,10 @@ if($_POST['disablecarp'] <> "") {
 				case "carp":
 					interface_carp_configure($vip);
 					sleep(1);
+					break;
+				case 'ipalias':
+					if (strpos($vip['interface'], '_vip'))
+						interface_ipalias_configure($vip);
 					break;
 				}
 			}

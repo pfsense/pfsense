@@ -1,6 +1,8 @@
 <?php
 /*
 	wake_on_lan.widget.php
+        Copyright (C) 2013-2014 Electric Sheep Fencing, LP
+
 	Copyright (C) 2010 Yehuda Katz
 
 	Redistribution and use in source and binary forms, with or without

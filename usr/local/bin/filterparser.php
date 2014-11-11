@@ -7,6 +7,7 @@
 	originally based on m0n0wall (http://m0n0.ch/wall)
 
 	Copyright (C) 2009 Jim Pingle <myfirstname>@<mylastname>.org
+        Copyright (C) 2013-2014 Electric Sheep Fencing, LP
 	All rights reserved.
 
 	Redistribution and use in source and binary forms, with or without

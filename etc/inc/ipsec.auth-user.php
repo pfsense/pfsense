@@ -5,6 +5,7 @@
 
     Copyright (C) 2008 Shrew Soft Inc
     Copyright (C) 2010 Ermal Luçi
+    Copyright (C) 2013-2014 Electric Sheep Fencing, LP
     All rights reserved.
 
     Redistribution and use in source and binary forms, with or without
@@ -28,7 +29,6 @@
     ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
     POSSIBILITY OF SUCH DAMAGE.
 
-	DISABLE_PHP_LINT_CHECKING
 */
 /*
 	pfSense_BUILDER_BINARIES:	

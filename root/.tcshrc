@@ -19,3 +19,12 @@ if ($term == "xterm" || $term == "vt100" || $term == "vt102" || $term == "vt220"
 	bindkey "\e[7~" beginning-of-line  # Home rxvt/konsole
 	bindkey "\e[8~" end-of-line        # End rxvt/konsole
 endif
+
+set http_proxy=`/usr/local/bin/xmllint --xpath 'string(//pfsense/system/proxyurl)' /conf/config.xml`
+if (${http_proxy} != "") then
+	set http_proxy_port=`/usr/local/bin/xmllint --xpath 'string(//pfsense/system/proxyport)' /conf/config.xml`
+	if (${http_proxy_port} != "") then
+		set http_proxy="${http_proxy}:${http_proxy_port}"
+	endif
+	setenv HTTP_PROXY ${http_proxy}
+endif

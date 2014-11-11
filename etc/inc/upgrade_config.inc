@@ -3282,30 +3282,8 @@ function upgrade_104_to_105() {
 }
 
 function upgrade_105_to_106() {
-	global $config;
 
-	if (is_array($config['virtualip']) && is_array($config['virtualip']['vip'])) {
-		foreach ($config['virtualip']['vip'] as $vipidx => $vip) {
-			if ($vip['mode'] == "ipalias" && strstr($vip['interface'], "_vip")) {
-				/* Convert to a carp with same properties as its carp version */
-				$converted = false;
-				foreach ($config['virtualip']['vip'] as $bvip) {
-					if ($bvip['mode'] == "carp" && "{$bvip['interface']}_vip{$bvip['vhid']}" == $vip['interface']) {
-						$ipaaddr = $vip['subnet'];
-						$ipamask = $vip['subnet_bits'];
-						$config['virtualip']['vip'][$vipidx] = $bvip;
-						$config['virtualip']['vip'][$vipidx]['subnet'] = $ipaaddr;
-						$config['virtualip']['vip'][$vipidx]['subnet_bits'] = $ipamask;
-						$converted = true;
-						break;
-					}
-				}
-				if ($converted === false)
-					log_error("WARNING: IPalias {$vip['subnet']}/{$vip['subnet_bits']} was not completed successfully. Upgrading it yourself is the only remaining option!");
-			}
-		}
-		unset($vip, $bvip, $vipidx);
-	}
+	/* NOTE: This entry can be reused for something else since the upgrade code was reverted */
 }
 
 function upgrade_106_to_107() {

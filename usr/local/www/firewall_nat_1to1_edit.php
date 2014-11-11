@@ -7,6 +7,8 @@
 	Copyright (C) 2003-2004 Manuel Kasper <mk@neon1.net>.
 	All rights reserved.
 
+        Copyright (C) 2013-2014 Electric Sheep Fencing, LP
+
 	Redistribution and use in source and binary forms, with or without
 	modification, are permitted provided that the following conditions are met:
 
@@ -307,7 +309,7 @@ if ($input_errors)
 							$interfaces['pptp'] = "PPTP VPN";
 
 					if (is_pppoe_server_enabled() && have_ruleint_access("pppoe"))
-						$interfaces['pppoe'] = "PPPoE VPN";
+						$interfaces['pppoe'] = "PPPoE Server";
 
 					/* add ipsec interfaces */
 					if (isset($config['ipsec']['enable']) || isset($config['ipsec']['client']['enable']))

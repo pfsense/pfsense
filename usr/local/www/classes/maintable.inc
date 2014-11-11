@@ -32,7 +32,6 @@
 	pfSense_MODULE:	guiutils
 */
 
-/* DISABLE_PHP_LINT_CHECKING */
 
 class MainTable {
 	private $headers = array();

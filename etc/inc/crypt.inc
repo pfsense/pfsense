@@ -29,7 +29,6 @@
 	pfSense_BUILDER_BINARIES:	/usr/bin/openssl
 	pfSense_MODULE:	crypto
 
-    DISABLE_PHP_LINT_CHECKING
 */
 
 	function crypt_data($val, $pass, $opt) {

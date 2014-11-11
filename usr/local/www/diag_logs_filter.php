@@ -4,6 +4,7 @@
 	diag_logs_filter.php
 	part of pfSense 
 	Copyright (C) 2004-2009 Scott Ullrich
+        Copyright (C) 2013-2014 Electric Sheep Fencing, LP
 	originally based on m0n0wall (http://m0n0.ch/wall)
 
 	Copyright (C) 2003-2009 Manuel Kasper <mk@neon1.net>,
@@ -252,7 +253,7 @@ include("head.inc");
 								$interfaces['pptp'] = "PPTP VPN";
 
 							if (is_pppoe_server_enabled() && have_ruleint_access("pppoe"))
-								$interfaces['pppoe'] = "PPPoE VPN";
+								$interfaces['pppoe'] = "PPPoE Server";
 
 							/* add ipsec interfaces */
 							if (isset($config['ipsec']['enable']) || isset($config['ipsec']['client']['enable']))

@@ -1741,6 +1741,10 @@ function services_dnsmasq_configure() {
 		else
 			sleep(1);
 
+                /* generate hosts file */
+                if(system_hosts_generate()!=0)
+                        $return = 1;
+
 		$args = "";
 
 		if (isset($config['dnsmasq']['regdhcp'])) {
@@ -2267,6 +2271,13 @@ function configure_cron() {
 		$crontab_contents .= "# " . gettext("pfSense specific crontab entries") . "\n";
 		$crontab_contents .= "# " .gettext( "Created:") . " " . date("F j, Y, g:i a") . "\n";
 		$crontab_contents .= "#\n";
+
+		if (isset($config['system']['proxyurl']) && !empty($config['system']['proxyurl'])) {
+			$http_proxy = $config['system']['proxyurl'];
+			if (isset($config['system']['proxyport']) && !empty($config['system']['proxyport']))
+				$http_proxy .= ':' . $config['system']['proxyport'];
+			$crontab_contents .= "HTTP_PROXY={$http_proxy}";
+		}
 
 		foreach ($config['cron']['item'] as $item) {
 			$crontab_contents .= "\n{$item['minute']}\t";

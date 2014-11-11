@@ -2,6 +2,7 @@
 /* $Id$ */
 /*
 	Copyright (C) 2008 Ermal Luçi
+        Copyright (C) 2013-2014 Electric Sheep Fencing, LP
 	All rights reserved.
 
 	Redistribution and use in source and binary forms, with or without

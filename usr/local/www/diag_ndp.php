@@ -4,7 +4,7 @@
 	part of the pfSense project	(https://www.pfsense.org)
 	Copyright (C) 2004-2010 Scott Ullrich <sullrich@gmail.com>
 	Copyright (C) 2011 Seth Mos <seth.mos@dds.nl>
-	
+	All rights reserved.
 
 	originally part of m0n0wall (http://m0n0.ch/wall)
 	Copyright (C) 2005 Paul Taylor (paultaylor@winndixie.com) and Manuel Kasper <mk@neon1.net>.

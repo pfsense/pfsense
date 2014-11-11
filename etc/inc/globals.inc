@@ -153,7 +153,11 @@ $sysctls = array("net.inet.ip.portrange.first" => "1024",
 	"net.inet.udp.checksum" => 1,
 	"net.bpf.zerocopy_enable" => 1,
 	"net.inet.icmp.reply_from_interface" => 1,
-	"vfs.forcesync" => "0"
+	"vfs.forcesync" => "0",
+	"net.enc.out.ipsec_bpf_mask" => "0x0001",
+	"net.enc.out.ipsec_filter_mask" => "0x0001",
+	"net.enc.in.ipsec_bpf_mask" => "0x0002",
+	"net.enc.in.ipsec_filter_mask" => "0x0002"
 );
 
 /* Include override values for the above if needed. If the file doesn't exist, don't try to load it. */

@@ -2,11 +2,15 @@
 /*
 	Part of pfSense
 
-	Copyright (C) 2006, Eric Friesen
+        Copyright (C) 2013-2014 Electric Sheep Fencing, LP
 	All rights reserved
 
 	Some modifications:
 	Copyright (C) 2010 - Jim Pingle
+
+	Copyright (C) 2006, Eric Friesen
+	All rights reserved
+
 */
 
 require("guiconfig.inc");
@@ -276,8 +280,7 @@ switch($action) {
 	// Default page, prints the forms to view info, test, etc...
 	default:
 	{
-		// Get all AD* and DA* (IDE and SCSI) devices currently installed and stores them in the $devs array
-		exec("ls /dev | grep '^\(ad\|da\|ada\)[0-9]\{1,2\}$'", $devs);
+		$devs = get_smart_drive_list();
 		?>
 		<table width="100%" border="0" cellpadding="0" cellspacing="0" summary="default page">
 			<tr>

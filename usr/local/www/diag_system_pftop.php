@@ -3,6 +3,7 @@
 /*
     diag_system_pftop.php
     Copyright (C) 2008-2009 Scott Ullrich
+    Copyright (C) 2013-2014 Electric Sheep Fencing, LP
     All rights reserved.
 
     Redistribution and use in source and binary forms, with or without

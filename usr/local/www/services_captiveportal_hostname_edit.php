@@ -1,6 +1,7 @@
 <?php 
 /*
 	services_captiveportal_hostname_edit.php
+        Copyright (C) 2013-2014 Electric Sheep Fencing, LP
 	Copyright (C) 2011 Scott Ullrich <sullrich@gmail.com>
 	All rights reserved.
 

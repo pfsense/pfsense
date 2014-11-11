@@ -2,8 +2,9 @@
 /* $Id$ */
 /*
 	status_dhcpv6_leases.php
-	Copyright (C) 2004-2009 Scott Ullrich
+        Copyright (C) 2013-2014 Electric Sheep Fencing, LP
 	Copyright (C) 2011 Seth Mos
+	Copyright (C) 2004-2009 Scott Ullrich
 	All rights reserved.
 
 	originally part of m0n0wall (http://m0n0.ch/wall)

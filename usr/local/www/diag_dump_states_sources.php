@@ -1,6 +1,7 @@
 <?php
 /*
 	diag_dump_states.php
+        Copyright (C) 2013-2014 Electric Sheep Fencing, LP
 	Copyright (C) 2005-2009 Scott Ullrich
 	Copyright (C) 2005 Colin Smith
 	All rights reserved.

@@ -3,6 +3,7 @@
 /*
 	status_interfaces.php
 	part of pfSense
+        Copyright (C) 2013-2014 Electric Sheep Fencing, LP
 	Copyright (C) 2009 Scott Ullrich <sullrich@gmail.com>.
 	All rights reserved.
 

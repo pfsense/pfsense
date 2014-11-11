@@ -3,7 +3,8 @@
 /*
 	system_firmware_settings.php
        	part of pfSense
-		Copyright (C) 2008 Scott Ullrich <sullrich@gmail.com>
+        Copyright (C) 2013-2014 Electric Sheep Fencing, LP
+	Copyright (C) 2008 Scott Ullrich <sullrich@gmail.com>
         Copyright (C) 2005 Colin Smith
 
 	Redistribution and use in source and binary forms, with or without

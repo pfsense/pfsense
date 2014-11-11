@@ -3,8 +3,9 @@
 	vpn_pppoe_edit.php
 	part of pfSense
 
-	Copyright (C) 2005 Scott Ullrich (sullrich@gmail.com)
+        Copyright (C) 2013-2014 Electric Sheep Fencing, LP
 	Copyright (C) 2010 Ermal Luçi
+	Copyright (C) 2005 Scott Ullrich (sullrich@gmail.com)
 	All rights reserved.
 
 	Redistribution and use in source and binary forms, with or without

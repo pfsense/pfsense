@@ -1,6 +1,7 @@
 <?php
 /*
 	diag_tables.php
+        Copyright (C) 2013-2014 Electric Sheep Fencing, LP
 	Copyright (C) 2010 Jim Pingle
 
 	Portions borrowed from diag_dump_states.php:

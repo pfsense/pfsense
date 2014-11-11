@@ -3,6 +3,7 @@
 	vpn_l2tp.php
 	part of pfSense
 
+        Copyright (C) 2013-2014 Electric Sheep Fencing, LP
 	Copyright (C) 2005 Scott Ullrich (sullrich@gmail.com)
 	All rights reserved.
 

@@ -3,6 +3,7 @@
 /*
 	system_advanced_notifications.php
 	part of pfSense
+        Copyright (C) 2013-2014 Electric Sheep Fencing, LP
 	Copyright (C) 2009 Scott Ullrich <sullrich@gmail.com>
 
 	Redistribution and use in source and binary forms, with or without

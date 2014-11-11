@@ -627,7 +627,7 @@ function local_group_set($group, $reset = false) {
 	if (!$reset && !empty($group['member']) && count($group['member']) > 0)
 		$group_members = implode(",",$group['member']);
 
-	if (empty($group_members))
+	if (empty($group_name))
 		return;
 
 	/* read from group db */

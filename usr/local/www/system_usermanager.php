@@ -177,6 +177,24 @@ else if ($_POST['act'] == "new") {
 	$pconfig['lifetime'] = 3650;
 }
 
+if(isset($_POST['dellall_x'])) {
+
+	$del_users = $_POST['delete_check'];
+
+	if(!empty($del_users)) {
+		foreach($del_users as $userid) {
+			if (isset($a_user[$userid]) && $a_user[$userid]['scope'] != "system") {
+				conf_mount_rw();
+				local_user_del($a_user[$userid]);
+				conf_mount_ro();
+				unset($a_user[$userid]);
+			}
+		}
+		$savemsg = gettext("Selected users removed successfully!");
+		write_config($savemsg);
+	}
+}
+
 if ($_POST['save']) {
 	unset($input_errors);
 	$pconfig = $_POST;
@@ -377,6 +395,13 @@ include("head.inc");
 
 <script type="text/javascript">
 //<![CDATA[
+
+function checkall_checkbox(checked) {
+	var cbs = document.getElementsByName('delete_check[]');
+	if (cbs != null)
+		for (var i = 0; i < cbs.length; i++)
+			cbs[i].checked = checked;
+}
 
 function setall_selected(id) {
 	selbox = document.getElementById(id);
@@ -875,7 +900,7 @@ function sshkeyClicked(obj) {
 								<th width="25%" class="listhdrr"><?=gettext("Full name"); ?></th>
 								<th width="5%" class="listhdrr"><?=gettext("Disabled"); ?></th>
 								<th width="25%" class="listhdrr"><?=gettext("Groups"); ?></th>
-								<th width="10%" class="list"></th>
+								<th width="10%" class="list"><input type="checkbox" onClick="checkall_checkbox(this.checked)"> <?=gettext("check all")?></th>
 							</tr>
 						</thead>
 						<tfoot>
@@ -886,6 +911,7 @@ function sshkeyClicked(obj) {
 										src="/themes/<?=$g['theme'];?>/images/icons/icon_plus.gif"
 										onclick="document.getElementById('act').value='<?php echo "new";?>';"
 										title="<?=gettext("add user");?>" />
+									<input type="image" src="/themes/<?= $g['theme'];?>/images/icons/icon_x.gif" name="dellall" title="<?=gettext('Delete selected users')?>" onClick="return confirm('<?=gettext("Do you really want to delete selected Users?");?>')" />
 								</td>
 							</tr>
 							<tr>
@@ -951,6 +977,7 @@ function sshkeyClicked(obj) {
 											document.getElementById('act').value='<?php echo "deluser";?>';
 											return confirm('<?=gettext("Do you really want to delete this user?");?>');"
 										title="<?=gettext("delete user");?>" />
+									<input type='checkbox' id='check_<?=$i?>' name='delete_check[]' value='<?=$i?>' />
 <?php
 								endif;
 ?>

@@ -193,7 +193,7 @@ if ($_POST) {
 		if ($_POST['interface'] == 'lo0')
 			$input_errors[] = gettext("For this type of vip localhost is not allowed.");
 		else if (strpos($_POST['interface'], '_vip'))
-			$input_errors[] = gettext("For this type of vip a carp parent is not allowed.");
+			$input_errors[] = gettext("A CARP parent interface can only be used with IP Alias type Virtual IPs.");
 		break;
 	case 'ipalias':
 		if (strstr($_POST['interface'], "_vip")) {
@@ -217,7 +217,7 @@ if ($_POST) {
 		if ($_POST['interface'] == 'lo0')
 			$input_errors[] = gettext("For this type of vip localhost is not allowed.");
 		else if (strpos($_POST['interface'], '_vip'))
-			$input_errors[] = gettext("For this type of vip a carp parent is not allowed.");
+			$input_errors[] = gettext("A CARP parent interface can only be used with IP Alias type Virtual IPs.");
 		break;
 	}
 

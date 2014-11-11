@@ -8951,7 +8951,7 @@ msgstr ""
 #: usr/local/www/firewall_virtual_ip_edit.php:177
 #: usr/local/www/firewall_virtual_ip_edit.php:176
 #: usr/local/www/firewall_virtual_ip_edit.php:168
-msgid "For this type of vip a carp parent is not allowed."
+msgid "A CARP parent interface can only be used with IP Alias type Virtual IPs."
 msgstr "Bu tür sanal IP için CARP ebeveyne izin verilmez."
 
 #: usr/local/www/firewall_virtual_ip_edit.php:188

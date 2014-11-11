@@ -8683,7 +8683,7 @@ msgstr "Lamento, não podemos localizar uma interface com uma subrede corresponde
 #: usr/local/www/firewall_virtual_ip_edit.php:168
 #: usr/local/www/firewall_virtual_ip_edit.php:182
 #: usr/local/www/firewall_virtual_ip_edit.php:184
-msgid "For this type of vip a carp parent is not allowed."
+msgid "A CARP parent interface can only be used with IP Alias type Virtual IPs."
 msgstr "Para este tipo de VIP, um carp pai não é permitido."
 
 #: usr/local/www/firewall_virtual_ip_edit.php:188

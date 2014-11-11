@@ -55,7 +55,7 @@ function backup_vip_config_section() {
 	$temp = array();
 	$temp['vip'] = array();
 	foreach($config['virtualip']['vip'] as $section) {
-		if ($section['mode'] != "carp")
+		if (($section['mode'] == 'proxyarp' || $section['mode'] == 'ipalias') && !(strpos($section['interface'], '_vip') || strpos($section['interface'], 'lo0')))
 			continue;
 		if ($section['advskew'] <> "") {
 			$section_val = intval($section['advskew']);

@@ -995,16 +995,18 @@ function interface_gif_configure(&$gif, $gifkey = "") {
 	else
 		log_error(gettext("could not bring gifif up -- variable not defined"));
 
-	$iflist = get_configured_interface_list();
-	foreach($iflist as $ifname) {
-		if($config['interfaces'][$ifname]['if'] == $gifif) {
-			if(get_interface_gateway($ifname)) {
-				system_routing_configure($ifname);
-				break;
-			}
-			if(get_interface_gateway_v6($ifname)) {
-				system_routing_configure($ifname);
-				break;
+	if (!$g['booting']) {
+		$iflist = get_configured_interface_list();
+		foreach($iflist as $ifname) {
+			if($config['interfaces'][$ifname]['if'] == $gifif) {
+				if(get_interface_gateway($ifname)) {
+					system_routing_configure($ifname);
+					break;
+				}
+				if(get_interface_gateway_v6($ifname)) {
+					system_routing_configure($ifname);
+					break;
+				}
 			}
 		}
 	}

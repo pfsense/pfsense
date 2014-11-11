@@ -6,6 +6,9 @@
 	Copyright (C) 2003-2005 Bob Zoller (bob@kludgebox.com) and Manuel Kasper <mk@neon1.net>.
 	All rights reserved.
 
+        Copyright (C) 2013-2014 Electric Sheep Fencing, LP
+	All rights reserved.
+
 	Redistribution and use in source and binary forms, with or without
 	modification, are permitted provided that the following conditions are met:
 

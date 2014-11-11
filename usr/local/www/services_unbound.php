@@ -4,6 +4,7 @@
 	services_unbound.php
 	part of the pfSense project (https://www.pfsense.org)
 	Copyright (C) 2014	Warren Baker (warren@pfsense.org)
+        Copyright (C) 2013-2014 Electric Sheep Fencing, LP
 	All rights reserved.
 
 	Redistribution and use in source and binary forms, with or without

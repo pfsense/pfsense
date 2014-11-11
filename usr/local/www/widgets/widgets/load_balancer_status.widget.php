@@ -1,5 +1,7 @@
 <?php
 /*
+        Copyright (C) 2013-2014 Electric Sheep Fencing, LP
+
 	Copyright 2010 Jim Pingle
 	Portions copied from status_lb_pool.php, status_lb_vs.php, and vslb.inc:
 	Copyright (C) 2010 Seth Mos <seth.mos@dds.nl>.

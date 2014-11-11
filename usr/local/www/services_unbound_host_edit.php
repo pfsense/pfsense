@@ -4,6 +4,7 @@
 	services_unbound_edit_host.php
 	part of the pfSense project (https://www.pfsense.org)
 	Copyright (C) 2014 Warren Baker (warren@decoy.co.za)
+        Copyright (C) 2013-2014 Electric Sheep Fencing, LP
 	All rights reserved.
 	
 	Copyright (C) 2003-2004 Bob Zoller <bob@kludgebox.com> and Manuel Kasper <mk@neon1.net>.

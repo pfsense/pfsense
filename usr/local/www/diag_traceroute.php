@@ -3,6 +3,7 @@
 	diag_traceroute.php
 	part of m0n0wall (http://m0n0.ch/wall)
 
+        Copyright (C) 2013-2014 Electric Sheep Fencing, LP
 	Copyright (C) 2005 Paul Taylor (paultaylor@winndixie.com) and Manuel Kasper <mk@neon1.net>.
 	All rights reserved.
 

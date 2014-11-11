@@ -1,5 +1,6 @@
 <?php 
 /*
+        Copyright (C) 2013-2014 Electric Sheep Fencing, LP
 	Copyright (C) 2007 Marcel Wiget <mwiget@mac.com>.
 	All rights reserved. 
 	

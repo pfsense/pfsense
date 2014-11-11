@@ -4,6 +4,8 @@ require_once("guiconfig.inc");
 
 /*
 	pfSense_MODULE:	shell
+        Copyright (C) 2013-2014 Electric Sheep Fencing, LP
+
 */
 // Fetch a list of directories and files inside a given directory
 function get_content($dir) {

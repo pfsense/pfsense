@@ -1,5 +1,6 @@
 <?php
 /*
+        Copyright (C) 2013-2014 Electric Sheep Fencing, LP
 	Copyright 2012 mkirbst @ pfSense Forum
 	Part of pfSense widgets (https://www.pfsense.org)
 	All rights reserved.

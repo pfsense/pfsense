@@ -2,12 +2,12 @@
 /*
 	status_ovpenvpn.php
 
-    Copyright (C) 2013-2014 Electric Sheep Fencing, LP
-    Copyright (C) 2010 Jim Pingle
+    Copyright (C) 2005 Scott Ullrich, Colin Smith
     Copyright (C) 2008 Shrew Soft Inc.
+    Copyright (C) 2010 Jim Pingle
+    Copyright (C) 2013-2014 Electric Sheep Fencing, LP
 
     AJAX bits borrowed from diag_dump_states.php
-    Copyright (C) 2005 Scott Ullrich, Colin Smith
 
     All rights reserved.
 

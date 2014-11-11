@@ -1,5 +1,6 @@
 <?php
 /* Redirector for Contextual Help System
+ * Copyright (C) 2013-2014 Electric Sheep Fencing, LP
  * (c) 2009 Jim Pingle <jimp@pfsense.org>
  *
  */

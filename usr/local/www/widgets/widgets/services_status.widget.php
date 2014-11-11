@@ -1,6 +1,8 @@
 <?php
 /*
     services_status.widget.php
+    Copyright (C) 2013-2014 Electric Sheep Fencing, LP
+
     Copyright (C) 2004, 2005 Scott Ullrich
     All rights reserved.
 

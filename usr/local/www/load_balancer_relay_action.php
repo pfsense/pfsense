@@ -4,6 +4,7 @@
 	load_balancer_protocol.php
 	part of pfSense (https://www.pfsense.org/)
 
+        Copyright (C) 2013-2014 Electric Sheep Fencing, LP
 	Copyright (C) 2008 Bill Marquette <bill.marquette@gmail.com>.
 	All rights reserved.
 

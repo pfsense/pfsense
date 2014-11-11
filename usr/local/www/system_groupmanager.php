@@ -115,6 +115,24 @@ if ($act == "edit") {
 	}
 }
 
+if(isset($_POST['dellall_x'])) {
+
+	$del_groups = $_POST['delete_check'];
+
+	if(!empty($del_groups)) {
+		foreach($del_groups as $groupid) {
+			if(isset($a_group[$groupid]) && $a_group[$groupid]['scope'] != "system") {
+				conf_mount_rw();
+				local_group_del($a_group[$groupid]);
+				conf_mount_ro();
+				unset($a_group[$groupid]);
+			}
+		}
+		$savemsg = gettext("Selected groups removed successfully!");
+		write_config($savemsg);
+	}
+}
+
 if (isset($_POST['save'])) {
 
 	unset($input_errors);
@@ -190,6 +208,13 @@ include("head.inc");
 <?php include("fbegin.inc"); ?>
 <script type="text/javascript">
 //<![CDATA[
+
+function checkall_checkbox(checked) {
+	var cbs = document.getElementsByName('delete_check[]');
+	if (cbs != null)
+		for (var i = 0; i < cbs.length; i++)
+			cbs[i].checked = checked;
+}
 
 function setall_selected(id) {
 	selbox = document.getElementById(id);
@@ -451,7 +476,7 @@ function presubmit() {
 								<th width="25%" class="listhdrr"><?=gettext("Group name");?></th>
 								<th width="25%" class="listhdrr"><?=gettext("Description");?></th>
 								<th width="30%" class="listhdrr"><?=gettext("Member Count");?></th>
-								<th width="10%" class="list"></th>
+								<th width="10%" class="list"><input type="checkbox" onClick="checkall_checkbox(this.checked)"> <?=gettext("check all")?></th>
 							</tr>
 						</thead>
 						<tfoot>
@@ -462,6 +487,7 @@ function presubmit() {
 										src="/themes/<?=$g['theme'];?>/images/icons/icon_plus.gif"
 										onclick="document.getElementById('act').value='<?php echo "new";?>';"
 										title="<?=gettext("add group");?>" />
+									<input type="image" src="/themes/<?= $g['theme'];?>/images/icons/icon_x.gif" name="dellall" title="<?=gettext('Delete selected groups')?>" onClick="return confirm('<?=gettext("Do you really want to delete selected groups?");?>')" />
 								</td>
 							</tr>
 							<tr>
@@ -525,6 +551,7 @@ function presubmit() {
 											document.getElementById('act').value='<?php echo "delgroup";?>';
 											return confirm('<?=gettext("Do you really want to delete this group?");?>');"
 										title="<?=gettext("delete group");?>" />
+									<input type='checkbox' id='check_<?=$i?>' name='delete_check[]' value='<?=$i?>' />
 <?php
 								endif;
 ?>

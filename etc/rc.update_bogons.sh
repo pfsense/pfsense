@@ -84,14 +84,6 @@ if [ "$proc_error" != "" ]; then
 	exit
 fi
 
-HTTP_PROXY=`/usr/local/bin/xmllint --xpath 'string(//pfsense/system/proxyurl)' /conf/config.xml`
-if [ "${HTTP_PROXY}" != "" ]; then
-	HTTP_PROXY_PORT=`/usr/local/bin/xmllint --xpath 'string(//pfsense/system/proxyport)' /conf/config.xml`
-	if [ "${HTTP_PROXY_PORT}" != "" ]; then
-		HTTP_PROXY="${HTTP_PROXY}:${HTTP_PROXY_PORT}"
-	fi
-	export HTTP_PROXY
-fi
 BOGON_V4_CKSUM=`/usr/bin/fetch -T 30 -q -o - "${v4urlcksum}" | awk '{ print $4 }'`
 ON_DISK_V4_CKSUM=`md5 /tmp/bogons | awk '{ print $4 }'`
 BOGON_V6_CKSUM=`/usr/bin/fetch -T 30 -q -o - "${v6urlcksum}" | awk '{ print $4 }'`

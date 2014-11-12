@@ -280,7 +280,7 @@ if (is_array($config['hasync'])) {
 	$hasync = $config['hasync'];
 
 	if (empty($hasync['synchronizetoip'])) {
-		log_error("Config sync not being done because of missing sync IP (this is normal on secondary systems).");
+		/* this gets hit on every filter sync on the secondary, a log here creates a lot of log spam and I never saw it actually log anything useful */
 		exit;
 	}
 

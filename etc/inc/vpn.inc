@@ -569,7 +569,7 @@ EOD;
 					$ealgosp1 .= "!";
 				}
 
-				if (isset($ph1ent['dpd_enable']) && $ph1ent['dpd_delay'] && $ph1ent['dpd_maxfail']) {
+				if ($ph1ent['dpd_delay'] && $ph1ent['dpd_maxfail']) {
 					if ($passive == "route")
 						$dpdline = "dpdaction = restart";
 					else

@@ -413,7 +413,7 @@ $ipv6_num_prefix_ids = pow(2, $ipv6_delegation_length);
 if ($_POST['apply']) {
 	unset($input_errors);
 	if (!is_subsystem_dirty('interfaces'))
-		$intput_errors[] = gettext("You have already applied your settings!");
+		$input_errors[] = gettext("You have already applied your settings!");
 	else {
 		unlink_if_exists("{$g['tmp_path']}/config.cache");
 		clear_subsystem_dirty('interfaces');

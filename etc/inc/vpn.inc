@@ -537,8 +537,7 @@ EOD;
 				if (!empty($ph1ent['iketype']) && $ph1ent['iketype'] != "ikev1") {
 					$keyexchange = "ikev2";
 					//$passive = "start";
-				} else
-					$passive = "route";
+				}
 
 				if (isset($ph1ent['mobile'])) {
 					$right_spec = "%any";
@@ -570,7 +569,7 @@ EOD;
 					$ealgosp1 .= "!";
 				}
 
-				if ($ph1ent['dpd_delay'] && $ph1ent['dpd_maxfail']) {
+				if (isset($ph1ent['dpd_enable']) && $ph1ent['dpd_delay'] && $ph1ent['dpd_maxfail']) {
 					if ($passive == "route")
 						$dpdline = "dpdaction = restart";
 					else

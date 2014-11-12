@@ -61,36 +61,28 @@ if (isset($config['ipsec']['phase1'])){?>
 		if ($ph2ent['remoteid']['type'] == "mobile")
 			continue;
 		ipsec_lookup_phase1($ph2ent,$ph1ent);
-		$ipsecstatus = false;
 
-		$tun_disabled = "false";
-		$foundsrc = false;
-		$founddst = false;
+		if (!isset($ph1ent['disabled']) && !isset($ph2ent['disabled'])) {
 
-		if (isset($ph1ent['disabled']) || isset($ph2ent['disabled'])) {
-			$tun_disabled = "true";
-			continue;
-		}
+			if (is_array($ipsec_status['query']) &&
+			    is_array($ipsec_status['query']['ikesalist']) &&
+			    is_array($ipsec_status['query']['ikesalist']['ikesa']) &&
+			    ipsec_phase1_status($ipsec_status['query']['ikesalist']['ikesa'], $ph1ent['ikeid'])) {
+				/* tunnel is up */
+				$iconfn = "true";
+				$activecounter++;
+			} else {
+				/* tunnel is down */
+				$iconfn = "false";
+				$inactivecounter++;
+			}
 
-		if (is_array($ipsec_status['query']) &&
-		    is_array($ipsec_status['query']['ikesalist']) &&
-		    is_array($ipsec_status['query']['ikesalist']['ikesa']) &&
-		    ipsec_phase1_status($ipsec_status['query']['ikesalist']['ikesa'], $ph1ent['ikeid'])) {
-			/* tunnel is up */
-			$iconfn = "true";
-			$activecounter++;
-		} else {
-			/* tunnel is down */
-			$iconfn = "false";
-			$inactivecounter++;
-		}
-
-		$ipsec_detail_array[] = array('src' => convert_friendly_interface_to_friendly_descr($ph1ent['interface']),
+			$ipsec_detail_array[] = array('src' => convert_friendly_interface_to_friendly_descr($ph1ent['interface']),
 					'dest' => $ph1ent['remote-gateway'],
 					'remote-subnet' => ipsec_idinfo_to_text($ph2ent['remoteid']),
 					'descr' => $ph2ent['descr'],
-					'status' => $iconfn,
-					'disabled' => $tun_disabled);
+					'status' => $iconfn);
+		}
 	}
 }
 
@@ -122,32 +114,20 @@ if (isset($config['ipsec']['phase1'])){?>
 			<div class="widgetsubheader" style="display:table-cell;width:30px">Status</div>
 		</div>
 		<div style="max-height:105px;overflow:auto;">
-	<?php
-	foreach ($ipsec_detail_array as $ipsec) :
 
-		if ($ipsec['disabled'] == "true"){
-			$spans = "<span class=\"gray\">";
-			$spane = "</span>";
-		}
-		else {
-			$spans = $spane = "";
-		}
-
-		?>
-
+	<?php foreach ($ipsec_detail_array as $ipsec) : ?>
+	
 		<div style="display:table-row;">
 			<div class="listlr" style="display:table-cell;width:39px">
-				<?php echo $spans;?>
-					<?php echo htmlspecialchars($ipsec['src']);?>
-				<?php echo $spane;?>
+				<?php echo htmlspecialchars($ipsec['src']);?>
 			</div>
-			<div class="listr"  style="display:table-cell;width:100px"><?php echo $spans;?>
+			<div class="listr"  style="display:table-cell;width:100px">
 				<?php echo $ipsec['remote-subnet'];?>
 				<br />
-				(<?php echo htmlspecialchars($ipsec['dest']);?>)<?php echo $spane;?>
+				(<?php echo htmlspecialchars($ipsec['dest']);?>)
 			</div>
-			<div class="listr"  style="display:table-cell;width:90px"><?php echo $spans;?><?php echo htmlspecialchars($ipsec['descr']);?><?php echo $spane;?></div>
-			<div class="listr"  style="display:table-cell;width:37px" align="center"><?php echo $spans;?>
+			<div class="listr"  style="display:table-cell;width:90px"></div>
+			<div class="listr"  style="display:table-cell;width:37px" align="center">
 			<?php
 
 			if($ipsec['status'] == "true") {
@@ -159,8 +139,8 @@ if (isset($config['ipsec']['phase1'])){?>
 			}
 
 			echo "<img src ='/themes/{$g['theme']}/images/icons/icon_{$iconfn}.gif' alt='Tunnel status' width='11' height='11' />";
-
-			?><?php echo $spane;?></div>
+			?>
+			</div>
 		</div>
 	<?php endforeach; ?>
 	</div>

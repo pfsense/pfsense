@@ -40727,7 +40727,7 @@ msgstr "Você somente pode ter uma interface configurada como %s ou 6to4."
 
 #: usr/local/www/interfaces.php:648 usr/local/www/interfaces.php:644
 #: usr/local/www/interfaces.php:649
-msgid "MTU of a vlan should not be bigger than parent interface."
+msgid "The MTU of a VLAN cannot be greater than that of its parent interface."
 msgstr ""
 
 #: usr/local/www/interfaces.php:663 usr/local/www/interfaces.php:659

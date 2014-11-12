@@ -43,38 +43,42 @@
 		conf_mount_rw();
 	}
 
+	$sshConfigDir = "/etc/ssh";
+
 	$keys = array(
-		'ssh_host_key',
-		'ssh_host_key.pub',
-		'ssh_host_dsa_key',
-		'ssh_host_dsa_key.pub',
-		'ssh_host_rsa_key',
-		'ssh_host_rsa_key.pub',
-		'ssh_host_ecdsa_key',
-		'ssh_host_ecdsa_key.pub',
-		'ssh_host_ed25519_key',
-		'ssh_host_ed25519_key.pub'
+		array('type' => 'rsa1',    'suffix' => ''),
+		array('type' => 'rsa',     'suffix' => 'rsa_'),
+		array('type' => 'dsa',     'suffix' => 'dsa_'),
+		array('type' => 'ecdsa',   'suffix' => 'ecdsa_'),
+		array('type' => 'ed25519', 'suffix' => 'ed25519_')
 	);
 
+	$keyfiles = array();
+	foreach ($keys as $key) {
+		$keyfiles[] = "ssh_host_{$key['suffix']}key";
+		$keyfiles[] = "ssh_host_{$key['suffix']}key.pub";
+	}
+
 	/* restore ssh data for nanobsd platform */
-	if($g['platform'] == "nanobsd" and file_exists("/conf/sshd/ssh_host_key") and !file_exists("/etc/ssh/ssh_host_key.pub")) {
+	if($g['platform'] == "nanobsd" and file_exists("/conf/sshd/ssh_host_key") and !file_exists("{$sshConfigDir}/ssh_host_key.pub")) {
 		echo "Restoring SSH from /conf/sshd/";
-		exec("/bin/cp -p /conf/sshd/* /etc/ssh/");
+		exec("/bin/cp -p /conf/sshd/* {$sshConfigDir}/");
 
 		/* make sure host private key permissions aren't too open so sshd won't complain */
-		foreach($keys as $f2c) {
-			if(file_exists("/etc/ssh/{$f2c}"))
-				chmod("/etc/ssh/{$f2c}", 0600);
+		foreach($keyfiles as $f2c) {
+			if(file_exists("{$sshConfigDir}/{$f2c}"))
+				chmod("{$sshConfigDir}/{$f2c}", 0600);
 		}
 	}
 
 	/*    if any of these files are 0 bytes then they are corrupted.
 	 *    remove them
 	 */
-	foreach($keys as $f2c) {
-		if (file_exists("/etc/ssh/{$f2c}") && filesize("/etc/ssh/{$f2c}") == 0) {
-			unlink_if_exists('/etc/ssh/ssh_host*');
-			break;
+	foreach($keyfiles as $f2c) {
+		if (!file_exists("{$sshConfigDir}/{$f2c}") || filesize("{$sshConfigDir}/{$f2c}") == 0) {
+			/* Make sure we remove both files */
+			unlink_if_exists($sshConfigDir . '/' . basename($f2c, ".pub"));
+			unlink_if_exists($sshConfigDir . '/' . $f2c);
 		}
 	}
 
@@ -87,8 +91,6 @@
 		/* Login related files. */
 		@touch("/var/log/lastlog");
 	}
-
-	$sshConfigDir = "/etc/ssh";
 
 	if (is_array($config['system']['ssh']) && !empty($config['system']['ssh']['port']))
 		$sshport = $config['system']['ssh']['port'];
@@ -124,15 +126,15 @@
 	$sshconf .= "VersionAddendum \n";
 	
 	/* Apply package SSHDCond settings if config file exists */
-	if (file_exists("/etc/sshd_extra")) {
-		$fdExtra = fopen("/etc/sshd_extra", 'r');
+	if (file_exists("{$sshConfigDir}d_extra")) {
+		$fdExtra = fopen("{$sshConfigDir}d_extra", 'r');
 		$szExtra = fread($fdExtra, 1048576); // Read up to 1MB from extra file
 		$sshconf .= $szExtra;
 		fclose($fdExtra);
 	}
 
 	/* Write the new sshd config file */
-	@file_put_contents("/etc/ssh/sshd_config", $sshconf);
+	@file_put_contents("{$sshConfigDir}/sshd_config", $sshconf);
 
 	/* mop up from a badly implemented ssh keys -> cf backup */
 	if($config['ssh']['dsa_key'] <> "") {
@@ -150,30 +152,27 @@
 
 	/* are we already running?  if so exit */
 	if(is_subsystem_dirty('sshdkeys')) {
-		unset($keys);
+		unset($keys, $keyfiles);
 		return;
 	}
 	
 	// Check for all needed key files. If any are missing, the keys need to be regenerated.
-	$generate_keys = false;
-	foreach ($keys as $f2c) {
-		if (!file_exists("/etc/ssh/{$f2c}")) {
-			$generate_keys = true;
-			break;
+	$generate_keys = array();
+	foreach ($keys as $key) {
+		if (!file_exists("{$sshConfigDir}/ssh_host_{$key['suffix']}key") ||
+		    !file_exists("{$sshConfigDir}/ssh_host_{$key['suffix']}key.pub")) {
+			$generate_keys[] = $key;
 		}
 	}
 
-	if ($generate_keys) {
+	if (!empty($generate_keys)) {
 		/* remove previous keys and regen later */
-		file_notice("SSH", "{$g['product_name']} has started creating your SSH keys.  SSH Startup will be delayed.  Please note that reloading the filter rules and changes will be delayed until this operation is completed.", "SSH KeyGen", "");
-		unlink_if_exists('/etc/ssh/ssh_host_*');
+		file_notice("SSH", "{$g['product_name']} has started creating missing SSH keys.  SSH Startup will be delayed.  Please note that reloading the filter rules and changes will be delayed until this operation is completed.", "SSH KeyGen", "");
 		mark_subsystem_dirty('sshdkeys');
 		echo " Generating Keys:\n";
-		$_gb = exec("/usr/bin/nice -n20 /usr/bin/ssh-keygen -t rsa1 -N '' -f $sshConfigDir/ssh_host_key");
-		$_gb = exec("/usr/bin/nice -n20 /usr/bin/ssh-keygen -t rsa -N '' -f $sshConfigDir/ssh_host_rsa_key");
-		$_gb = exec("/usr/bin/nice -n20 /usr/bin/ssh-keygen -t dsa -N '' -f $sshConfigDir/ssh_host_dsa_key");
-		$_gb = exec("/usr/bin/nice -n20 /usr/bin/ssh-keygen -t ecdsa -N '' -f $sshConfigDir/ssh_host_ecdsa_key");
-		$_gb = exec("/usr/bin/nice -n20 /usr/bin/ssh-keygen -t ed25519 -N '' -f $sshConfigDir/ssh_host_ed25519_key");
+		foreach ($generate_keys as $key) {
+			$_gb = exec("/usr/bin/nice -n20 /usr/bin/ssh-keygen -t {$key['type']} -N '' -f {$sshConfigDir}/ssh_host_{$key['suffix']}key");
+		}
 		clear_subsystem_dirty('sshdkeys');
 		file_notice("SSH", "{$g['product_name']} has completed creating your SSH keys.  SSH is now started.", "SSH Startup", "");
 	}
@@ -197,8 +196,8 @@
 	if($g['platform'] == "nanobsd") {
 		if(!is_dir("/conf/sshd"))
 			mkdir("/conf/sshd", 0750);
-		$_gb = exec("/bin/cp -p /etc/ssh/ssh_host* /conf/sshd");
+		$_gb = exec("/bin/cp -p {$sshConfigDir}/ssh_host* /conf/sshd");
 	}
 	conf_mount_ro();
-	unset($keys);
+	unset($keys, $keyfiles);
 ?>

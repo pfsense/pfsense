@@ -346,15 +346,8 @@ function ipsec_lookup_phase1(& $ph2ent,& $ph1ent) {
  */
 function ipsec_phase1_status($ipsec_status, $ikeid) {
 
-	if (!is_array($ipsec_status['query']))
-		return false;
-	if (!is_array($ipsec_status['query']['ikesalist']))
-		return false;
-	if (!is_array($ipsec_status['query']['ikesalist']['ikesa']))
-		return false;
-
-	foreach ($ipsec_status['query']['ikesalist']['ikesa'] as $ike) {
-		if ($ike['id'] != "con{$ikeid}")
+	foreach ($ipsec_status as $ike) {
+		if ($ike['id'] != $ikeid)
 			continue;
 		if ($ike['status'] == 'established')
 			return true;

@@ -75,7 +75,7 @@ if (isset($config['ipsec']['phase1'])){?>
 		if (is_array($ipsec_status['query']) &&
 		    is_array($ipsec_status['query']['ikesalist']) &&
 		    is_array($ipsec_status['query']['ikesalist']['ikesa']) &&
-		    ipsec_phase1_status($ipsec_status['query']['ikesalist']['ikesa'], $ph1ent)) {
+		    ipsec_phase1_status($ipsec_status['query']['ikesalist']['ikesa'], $ph1ent['ikeid'])) {
 			/* tunnel is up */
 			$iconfn = "true";
 			$activecounter++;

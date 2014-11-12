@@ -502,6 +502,9 @@ if ($_POST['apply']) {
 			break;
 		}
 	}
+	if(is_numeric($_POST['descr'])) {
+		$input_errors[] = gettext("The interface description cannot contain only numbers.");
+	}
 	/* input validation */
 	if (isset($config['dhcpd']) && isset($config['dhcpd'][$if]['enable']) && (! preg_match("/^staticv4/", $_POST['type'])))
 		$input_errors[] = gettext("The DHCP Server is active on this interface and it can be used only with a static IP configuration. Please disable the DHCP Server service on this interface first, then change the interface configuration.");

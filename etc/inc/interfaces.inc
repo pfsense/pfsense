@@ -4443,39 +4443,24 @@ function get_real_interface($interface = "wan", $family = "all", $realv6iface = 
 
 /* Guess the physical interface by providing a IP address */
 function guess_interface_from_ip($ipaddress) {
-	if(! is_ipaddr($ipaddress)) {
+
+	$family = '';
+	if(is_ipaddrv4($ipaddress))
+		$family = 'inet';
+	if (empty($family) && is_ipaddrv6($ipaddress))
+		$family = 'inet6';
+
+	if (empty($family))
 		return false;
-	}
-	if(is_ipaddrv4($ipaddress)) {
-		/* create a route table we can search */
-		exec("/usr/bin/netstat -rnWf inet", $output, $ret);
-		foreach($output as $line) {
-			if(preg_match("/^[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+\/[0-9]+[ ]+link[#]/", $line)) {
-				$fields = preg_split("/[ ]+/", $line);
-				if(ip_in_subnet($ipaddress, $fields[0])) {
-					return $fields[5];
-				}
-			}
-		}
-	}
-	/* FIXME: This works from cursory testing, regexp might need fine tuning */
-	if(is_ipaddrv6($ipaddress)) {
-		/* create a route table we can search */
-		exec("/usr/bin/netstat -rnWf inet6", $output, $ret);
-		foreach($output as $line) {
-			if(preg_match("/[0-9a-f]+[:]+[0-9a-f]+[:]+[\/][0-9]+/", $line)) {
-				$fields = preg_split("/[ ]+/", $line);
-				if(ip_in_subnet($ipaddress, $fields[0])) {
-					return $fields[5];
-				}
-			}
-		}
-	}
-	$ret = exec_command("/sbin/route -n get {$ipaddress} | /usr/bin/awk '/interface/ { print \$2; };'");
-	if(empty($ret)) {
-		return false;
-	}
-	return $ret;
+
+	/* create a route table we can search */
+	$output = '';
+	$_gb = exec("/sbin/route -n get -{$family} " . escapeshellarg($ipaddress) . " | /usr/bin/awk '/interface/ { print \$2; };'", $output);
+	$output[0] = trim($output[0], " \n");
+	if (!empty($output[0]))
+		return $output[0];
+
+	return false;
 }
 
 /*

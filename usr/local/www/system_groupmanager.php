@@ -471,7 +471,7 @@ function presubmit() {
 								<th width="25%" class="listhdrr"><?=gettext("Group name");?></th>
 								<th width="25%" class="listhdrr"><?=gettext("Description");?></th>
 								<th width="30%" class="listhdrr"><?=gettext("Member Count");?></th>
-								<th width="10%" class="list"><input type="checkbox" onClick="checkall_checkbox(this.checked)"> <?=gettext("check all")?></th>
+								<th width="10%" class="list"></th>
 							</tr>
 						</thead>
 						<tfoot>

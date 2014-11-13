@@ -64,8 +64,7 @@ function unbound_optimization() {
 		$optimization['key_cache_slabs'] = "key-cache-slabs: 4";
 	}
 
-	// Memory usage default of 4MB
-	$optimization['msg_cache_size'] = "msg-cache-size: 4m";
+	// Size of the RRset cache
 	$optimization['rrset_cache_size'] = "rrset-cache-size: 8m";
 
 	// More outgoing connections per thread otherwise assign a default of 4096 for a single thread
@@ -178,19 +177,19 @@ EOF;
 
 	// Add custom Unbound options
 	if ($config['unbound']['custom_options']) {
-		$custom_option = "# Unbound custom option";
+		$custom_options = "# Unbound custom options\n";
 		foreach (preg_split('/\s+/', $config['unbound']['custom_options']) as $ent)
-			$custom_option .= $ent."\n";
+			$custom_options .= $ent."\n";
 	}
 
 	// Server configuration variables
 	$port = (is_port($config['unbound']['port'])) ? $config['unbound']['port'] : "53";
-	$hide_id = ($config['unbound']['hide_id'] == "on") ? "yes" : "no";
-	$hide_version = ($config['unbound']['hide_version'] == "on") ? "yes" : "no";
-	$harden_glue = ($config['unbound']['harden_glue'] == "on") ? "yes" : "no";
-	$harden_dnssec_stripped = ($config['unbound']['harden_dnssec_stripped'] == "on") ? "yes" : "no";
-	$prefetch = ($config['unbound']['prefetch'] == "on") ? "yes" : "no";
-	$prefetch_key = ($config['unbound']['prefetch_key'] == "on") ? "yes" : "no";
+	$hide_identity = isset($config['unbound']['hideidentity']) ? "yes" : "no";
+	$hide_version = isset($config['unbound']['hideversion']) ? "yes" : "no";
+	$harden_glue = isset($config['unbound']['hardenglue']) ? "yes" : "no";
+	$harden_dnssec_stripped = isset($config['unbound']['dnssecstripped']) ? "yes" : "no";
+	$prefetch = isset($config['unbound']['prefetch']) ? "yes" : "no";
+	$prefetch_key = isset($config['unbound']['prefetchkey']) ? "yes" : "no";
 	$outgoing_num_tcp = (!empty($config['unbound']['outgoing_num_tcp'])) ? $config['unbound']['outgoing_num_tcp'] : "10";
 	$incoming_num_tcp = (!empty($config['unbound']['incoming_num_tcp'])) ? $config['unbound']['incoming_num_tcp'] : "10";
 	$edns_buffer_size = (!empty($config['unbound']['edns_buffer_size'])) ? $config['unbound']['edns_buffer_size'] : "4096";
@@ -202,7 +201,10 @@ EOF;
 	$infra_lame_ttl = (!empty($config['unbound']['infra_lame_ttl'])) ? $config['unbound']['infra_lame_ttl'] : "900";
 	$infra_cache_numhosts = (!empty($config['unbound']['infra_cache_numhosts'])) ? $config['unbound']['infra_cache_numhosts'] : "10000";
 	$unwanted_reply_threshold = (!empty($config['unbound']['unwanted_reply_threshold'])) ? $config['unbound']['unwanted_reply_threshold'] : "0";
-	$verbosity = isset($config['unbound']['loglevel']) ? $config['unbound']['loglevel'] : 1;
+	if ($unwanted_reply_threshold == "disabled")
+		$unwanted_reply_threshold = "0";
+	$msg_cache_size = (!empty($config['unbound']['msgcachesize'])) ? $config['unbound']['msgcachesize'] : "4";
+	$verbosity = isset($config['unbound']['log_verbosity']) ? $config['unbound']['log_verbosity'] : 1;
 
 	// Set up forwarding if it configured
 	if (isset($config['unbound']['forwarding'])) {
@@ -250,31 +252,34 @@ pidfile: "/var/run/unbound.pid"
 use-syslog: yes
 port: {$port}
 verbosity: {$verbosity}
+hide-identity: {$hide_identity}
+hide-version: {$hide_version}
 harden-referral-path: no
+harden-glue: {$harden_glue}
 do-ip4: yes
 do-ip6: yes
 do-udp: yes
 do-tcp: yes
 do-daemonize: yes
 module-config: "{$module_config}"
-unwanted-reply-threshold: 0
-num-queries-per-thread: 1024
-jostle-timeout: 200
-infra-host-ttl: 900
-infra-lame-ttl: 900
-infra-cache-numhosts: 10000
-outgoing-num-tcp: 10
-incoming-num-tcp: 10
-edns-buffer-size: 4096
+unwanted-reply-threshold: {$unwanted_reply_threshold}
+num-queries-per-thread: {$num_queries_per_thread}
+jostle-timeout: {$jostle_timeout}
+infra-host-ttl: {$infra_host_ttl}
+infra-lame-ttl: {$infra_lame_ttl}
+infra-cache-numhosts: {$infra_cache_numhosts}
+outgoing-num-tcp: {$outgoing_num_tcp}
+incoming-num-tcp: {$incoming_num_tcp}
+edns-buffer-size: {$edns_buffer_size}
 cache-max-ttl: {$cache_max_ttl}
 cache-min-ttl: {$cache_min_ttl}
-harden-dnssec-stripped: yes
+harden-dnssec-stripped: {$harden_dnssec_stripped}
+msg-cache-size: {$msg_cache_size}m
 {$optimization['number_threads']}
 {$optimization['msg_cache_slabs']}
 {$optimization['rrset_cache_slabs']}
 {$optimization['infra_cache_slabs']}
 {$optimization['key_cache_slabs']}
-{$optimization['msg_cache_size']}
 {$optimization['rrset_cache_size']}
 {$optimization['outgoing_range']}
 {$optimization['so_rcvbuf']}

@@ -574,7 +574,7 @@ function local_user_set_groups($user, $new_groups = NULL ) {
 
 	/* determine which memberships to add */
 	foreach ($new_groups as $groupname) {
-		if (in_array($groupname,$cur_groups))
+		if ($groupname == '' || in_array($groupname,$cur_groups))
 			continue;
 		$group = & $config['system']['group'][$groupindex[$groupname]];
 		$group['member'][] = $user['uid'];

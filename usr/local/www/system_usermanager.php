@@ -385,6 +385,14 @@ function setall_selected(id) {
 		selbox.options[index].selected = true;
 }
 
+function delete_empty(id) {
+	selbox = document.getElementById(id);
+	count = selbox.options.length;
+	for (index = 0; index<count; index++)
+		if (selbox.options[index].value == '')
+			selbox.remove(index);
+}
+
 function clear_selected(id) {
 	selbox = document.getElementById(id);
 	count = selbox.options.length;
@@ -426,6 +434,8 @@ function move_selected(srcid, dstid) {
 }
 
 function presubmit() {
+	delete_empty('groups');
+	delete_empty('notgroups');
 	clear_selected('notgroups');
 	setall_selected('groups');
 }

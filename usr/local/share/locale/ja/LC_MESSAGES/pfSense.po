@@ -48379,7 +48379,7 @@ msgstr "あなただけの1インタフェースは6to4のように設定され�
 
 #: usr/local/www/interfaces.php:648 usr/local/www/interfaces.php:644
 #: usr/local/www/interfaces.php:644
-msgid "MTU of a vlan should not be bigger than parent interface."
+msgid "The MTU of a VLAN cannot be greater than that of its parent interface."
 msgstr "VLANのMTUは、親インターフェイスよりも大きくすべきではない。"
 
 #: usr/local/www/interfaces.php:663 usr/local/www/interfaces.php:659

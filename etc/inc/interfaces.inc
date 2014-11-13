@@ -995,16 +995,18 @@ function interface_gif_configure(&$gif, $gifkey = "") {
 	else
 		log_error(gettext("could not bring gifif up -- variable not defined"));
 
-	$iflist = get_configured_interface_list();
-	foreach($iflist as $ifname) {
-		if($config['interfaces'][$ifname]['if'] == $gifif) {
-			if(get_interface_gateway($ifname)) {
-				system_routing_configure($ifname);
-				break;
-			}
-			if(get_interface_gateway_v6($ifname)) {
-				system_routing_configure($ifname);
-				break;
+	if (!$g['booting']) {
+		$iflist = get_configured_interface_list();
+		foreach($iflist as $ifname) {
+			if($config['interfaces'][$ifname]['if'] == $gifif) {
+				if(get_interface_gateway($ifname)) {
+					system_routing_configure($ifname);
+					break;
+				}
+				if(get_interface_gateway_v6($ifname)) {
+					system_routing_configure($ifname);
+					break;
+				}
 			}
 		}
 	}
@@ -4441,39 +4443,24 @@ function get_real_interface($interface = "wan", $family = "all", $realv6iface = 
 
 /* Guess the physical interface by providing a IP address */
 function guess_interface_from_ip($ipaddress) {
-	if(! is_ipaddr($ipaddress)) {
+
+	$family = '';
+	if(is_ipaddrv4($ipaddress))
+		$family = 'inet';
+	if (empty($family) && is_ipaddrv6($ipaddress))
+		$family = 'inet6';
+
+	if (empty($family))
 		return false;
-	}
-	if(is_ipaddrv4($ipaddress)) {
-		/* create a route table we can search */
-		exec("/usr/bin/netstat -rnWf inet", $output, $ret);
-		foreach($output as $line) {
-			if(preg_match("/^[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+\/[0-9]+[ ]+link[#]/", $line)) {
-				$fields = preg_split("/[ ]+/", $line);
-				if(ip_in_subnet($ipaddress, $fields[0])) {
-					return $fields[5];
-				}
-			}
-		}
-	}
-	/* FIXME: This works from cursory testing, regexp might need fine tuning */
-	if(is_ipaddrv6($ipaddress)) {
-		/* create a route table we can search */
-		exec("/usr/bin/netstat -rnWf inet6", $output, $ret);
-		foreach($output as $line) {
-			if(preg_match("/[0-9a-f]+[:]+[0-9a-f]+[:]+[\/][0-9]+/", $line)) {
-				$fields = preg_split("/[ ]+/", $line);
-				if(ip_in_subnet($ipaddress, $fields[0])) {
-					return $fields[5];
-				}
-			}
-		}
-	}
-	$ret = exec_command("/sbin/route -n get {$ipaddress} | /usr/bin/awk '/interface/ { print \$2; };'");
-	if(empty($ret)) {
-		return false;
-	}
-	return $ret;
+
+	/* create a route table we can search */
+	$output = '';
+	$_gb = exec("/sbin/route -n get -{$family} " . escapeshellarg($ipaddress) . " | /usr/bin/awk '/interface/ { print \$2; };'", $output);
+	$output[0] = trim($output[0], " \n");
+	if (!empty($output[0]))
+		return $output[0];
+
+	return false;
 }
 
 /*
@@ -5115,7 +5102,7 @@ function is_altq_capable($int) {
 	 */
 	$capable = array("ae", "age", "alc", "ale", "an", "ath", "aue", "axe", "awi", "bce",
 			"bfe", "bge", "bridge", "cas", "dc", "de", "ed", "em", "ep", "epair", "et", "fxp", "gem",
-			"hme", "igb", "ipw", "iwi", "ixgbe", "jme", "le", "lem", "msk", "mxge", "my", "nfe",
+			"hme", "hn", "igb", "ipw", "iwi", "ixgbe", "jme", "le", "lem", "msk", "mxge", "my", "nfe",
 			"nge", "npe", "nve", "ral", "re", "rl", "rum", "run", "bwn", "sf", "sge", "sis", "sk",
 			"ste", "stge", "ti", "txp", "udav", "ural", "vge", "vr", "vte", "wi", "xl",
 			"ndis", "tun", "ovpns", "ovpnc", "vlan", "pppoe", "pptp", "ng",

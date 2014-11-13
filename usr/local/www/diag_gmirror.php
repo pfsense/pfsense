@@ -297,7 +297,7 @@ if ($_GET["error"] && ($_GET["error"] != 0))
 								<td width="40%" class="listr">
 							<?PHP	$oldmirror = gmirror_get_consumer_metadata_mirror($consumer['name']);
 								if ($oldmirror): ?>
-									<a href="diag_gmirror.php?action=activate&amp;consumer=<?PHP echo htmlspecialchars($consumer['name']); ?>&amp;mirror=<?PHP echo htmlspecialchars($oldmirror); ?>">[<?PHP echo gettext("Reactivate on:"); ?> <?PHP echo htmlspecialchars($oldmirror); ?>]</a>
+									<a href="diag_gmirror.php?action=activate&amp;consumer=<?PHP echo htmlspecialchars($consumer['name']); ?>&amp;mirror=<?PHP echo htmlspecialchars($oldmirror); ?>">[<?PHP echo gettext("Reactivate on:") . ' ' . htmlspecialchars($oldmirror); ?>]</a>
 									<br /><a href="diag_gmirror.php?action=clear&amp;consumer=<?PHP echo htmlspecialchars($consumer['name']); ?>">[<?PHP echo gettext("Remove metadata from disk"); ?>]</a>
 							<?PHP	else: ?>
 							<?PHP	foreach ($mirror_list as $mirror):

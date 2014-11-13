@@ -413,7 +413,7 @@ $ipv6_num_prefix_ids = pow(2, $ipv6_delegation_length);
 if ($_POST['apply']) {
 	unset($input_errors);
 	if (!is_subsystem_dirty('interfaces'))
-		$intput_errors[] = gettext("You have already applied your settings!");
+		$input_errors[] = gettext("You have already applied your settings!");
 	else {
 		unlink_if_exists("{$g['tmp_path']}/config.cache");
 		clear_subsystem_dirty('interfaces');
@@ -501,6 +501,9 @@ if ($_POST['apply']) {
 			$input_errors[] = gettext("An interface with the specified description already exists.");
 			break;
 		}
+	}
+	if(is_numeric($_POST['descr'])) {
+		$input_errors[] = gettext("The interface description cannot contain only numbers.");
 	}
 	/* input validation */
 	if (isset($config['dhcpd']) && isset($config['dhcpd'][$if]['enable']) && (! preg_match("/^staticv4/", $_POST['type'])))
@@ -731,7 +734,7 @@ if ($_POST['apply']) {
 			$parent_if = convert_real_interface_to_friendly_interface_name($parent_realhwif);
 			if (!empty($parent_if) && !empty($config['interfaces'][$parent_if]['mtu'])) {
 				if ($_POST['mtu'] > intval($config['interfaces'][$parent_if]['mtu']))
-					$input_errors[] = gettext("MTU of a vlan should not be bigger than parent interface.");
+					$input_errors[] = gettext("The MTU of a VLAN cannot be greater than that of its parent interface.");
 			}
 		} else {
 			foreach ($config['interfaces'] as $idx => $ifdata) {

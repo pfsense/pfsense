@@ -537,8 +537,7 @@ EOD;
 				if (!empty($ph1ent['iketype']) && $ph1ent['iketype'] != "ikev1") {
 					$keyexchange = "ikev2";
 					//$passive = "start";
-				} else
-					$passive = "route";
+				}
 
 				if (isset($ph1ent['mobile'])) {
 					$right_spec = "%any";
@@ -599,6 +598,8 @@ EOD;
 				case 'xauth_rsa_server':
 					$authentication = "leftauth = pubkey\n\trightauth = pubkey";
 					$authentication .= "\n\trightauth2 = xauth-generic";
+					if (!empty($ph1ent['certref']))
+						$authentication .= "\n\tleftcert={$certpath}/cert-{$ph1ent['ikeid']}.crt";
 					break;
 				case 'xauth_psk_server':
 					$authentication = "leftauth = psk\n\trightauth = psk";
@@ -609,10 +610,14 @@ EOD;
 					break;
 				case 'rsasig':
 					$authentication = "leftauth = pubkey\n\trightauth = pubkey";
+					if (!empty($ph1ent['certref']))
+						$authentication .= "\n\tleftcert={$certpath}/cert-{$ph1ent['ikeid']}.crt";
 					break;
 				case 'hybrid_rsa_server':
 					$authentication = "leftauth = xauth-generic\n\trightauth = pubkey";
 					$authentication .= "\n\trightauth2 = xauth";
+					if (!empty($ph1ent['certref']))
+						$authentication .= "\n\tleftcert={$certpath}/cert-{$ph1ent['ikeid']}.crt";
 					break;
 				}
 

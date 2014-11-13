@@ -4430,7 +4430,7 @@ function dnqueue_find_nextnumber() {
 	$found = false;
 	foreach ($dnused as $dnnum) {
 		if (($dnnum - $dnnumber) > 1) {
-			$dnnumber = $dnnum + 1;
+			$dnnumber = $dnnum - 1;
 			$found = true;
 			break;
 		} else
@@ -4456,7 +4456,7 @@ function dnpipe_find_nextnumber() {
 	$found = false;
 	foreach ($dnused as $dnnum) {
 		if (($dnnum - $dnnumber) > 1) {
-			$dnnumber = $dnnum + 1;
+			$dnnumber = $dnnum - 1;
 			$found = true;
 			break;
 		} else

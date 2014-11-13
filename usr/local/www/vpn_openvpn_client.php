@@ -356,12 +356,16 @@ function mode_change() {
 			document.getElementById("tls").style.display="";
 			document.getElementById("tls_ca").style.display="";
 			document.getElementById("tls_cert").style.display="";
+			document.getElementById("userpass").style.display="";
+			document.getElementById("userpassheader").style.display="";
 			document.getElementById("psk").style.display="none";
 			break;
 		case "p2p_shared_key":
 			document.getElementById("tls").style.display="none";
 			document.getElementById("tls_ca").style.display="none";
 			document.getElementById("tls_cert").style.display="none";
+			document.getElementById("userpass").style.display="none";
+			document.getElementById("userpassheader").style.display="none";
 			document.getElementById("psk").style.display="";
 			break;
 	}
@@ -666,10 +670,10 @@ if ($savemsg)
 					<tr>
 						<td colspan="2" class="list" height="12"></td>
 					</tr>
-					<tr>
+					<tr id='userpassheader'>
 						<td colspan="2" valign="top" class="listtopic"><?=gettext("User Authentication Settings"); ?></td>
 					</tr>
-					<tr>
+					<tr id='userpass'>
 						<td width="22%" valign="top" class="vncell"><?=gettext("User name/pass"); ?></td>
 						<td width="78%" class="vtable">
 							<?=gettext("Leave empty when no user name and password are needed."); ?>

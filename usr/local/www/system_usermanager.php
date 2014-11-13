@@ -930,7 +930,7 @@ function sshkeyClicked(obj) {
 ?>
 								<tr ondblclick="document.getElementById('act').value='<?php echo "edit";?>';
 									document.getElementById('userid').value='<?=$i;?>';
-									document.iform2.submit();">
+									document.iform2.submit();" id="fr<?=$i?>">
 								<td class="list" id="frd<?=$i?>">
 								<?php if($userent['scope'] != "system") : ?>
 									<input type="checkbox" id="frc<?=$i?>" onclick="fr_bgcolor(<?=$i?>)" name="delete_check[]" value="<?=$i?>" />

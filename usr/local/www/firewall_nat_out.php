@@ -644,7 +644,7 @@ if (is_subsystem_dirty('natconf'))
 								"If hybrid outbound NAT is selected, mappings you specify on this page will " .
 								"be used, followed by the automatically generated ones. <br /><br />" .
 								"If disable outbound NAT is selected, no rules will be used. <br /><br />" .
-								"If a target address other than a WAN-type interface's IP address is used, " .
+								"If a target address other than an interface's IP address is used, " .
 								"then depending on the way the WAN connection is setup, a "); ?>
 								<a href="firewall_virtual_ip.php"><?=gettext("Virtual IP"); ?></a>
 								<?= gettext(" may also be required.") ?>

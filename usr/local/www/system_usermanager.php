@@ -934,7 +934,7 @@ function sshkeyClicked(obj) {
 								<td class="list" id="frd<?=$i?>">
 									<input type="checkbox" id="frc<?=$i?>" onclick="fr_bgcolor(<?=$i?>)" name="delete_check[]" value="<?=$i?>" />
 								</td>
-								<td class="listlr">
+								<td class="listlr" id="frd<?=$i?>" onclick="fr_toggle('<?=$i;?>')">
 									<table border="0" cellpadding="0" cellspacing="0" summary="icons">
 										<tr>
 											<td align="left" valign="middle">
@@ -952,9 +952,9 @@ function sshkeyClicked(obj) {
 										</tr>
 									</table>
 								</td>
-								<td class="listr"><?=htmlspecialchars($userent['descr']);?>&nbsp;</td>
-								<td class="listr"><?php if(isset($userent['disabled'])) echo "*"; ?></td>
-								<td class="listbg">
+								<td class="listr" id="frd<?=$i?>" onclick="fr_toggle('<?=$i;?>')"><?=htmlspecialchars($userent['descr']);?>&nbsp;</td>
+								<td class="listr" id="frd<?=$i?>" onclick="fr_toggle('<?=$i;?>')"><?php if(isset($userent['disabled'])) echo "*"; ?></td>
+								<td class="listbg" onclick="fr_toggle('<?=$i;?>')">
 									<?=implode(",",local_user_get_groups($userent));?>
 									&nbsp;
 								</td>

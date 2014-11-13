@@ -2,6 +2,7 @@
 /*
 	gmirror.inc
 	Copyright (C) 2009-2014 Jim Pingle
+	Copyright (C) 2013-2014 Electric Sheep Fencing, LP
 
 	Redistribution and use in source and binary forms, with or without
 	modification, are permitted provided that the following conditions are met:
@@ -107,6 +108,7 @@ function gmirror_get_disks() {
 /* List all potential gmirror consumers */
 function gmirror_get_unused_consumers() {
 	$consumerlist = "";
+	$disklist = gmirror_get_disks();
 	/* Get a list of consumers, exclude existing mirrors and diskid entries */
 	exec("/sbin/geom part status -s | /usr/bin/egrep -v '(mirror|diskid)' | /usr/bin/awk '{print $1, $3;}'", $consumerlist);
 	$all_consumers = array();
@@ -114,6 +116,11 @@ function gmirror_get_unused_consumers() {
 		$parts = explode(" ", $cl);
 		foreach ($parts as $part)
 			$all_consumers[] = $part;
+	}
+	foreach ($disklist as $d) {
+		if (!is_consumer_used($d) && !in_array($d, $all_consumers)) {
+			$all_consumers[] = $d;
+		}
 	}
 	return $all_consumers;
 }
@@ -290,6 +297,9 @@ function gmirror_get_all_unused_consumer_sizes_on_disk($disk) {
 		return array();
 	$output = "";
 	exec("/sbin/geom part list " . escapeshellarg($disk) . " | /usr/bin/egrep '(Name:|Mediasize:)' | /usr/bin/cut -c4- | /usr/bin/sed -l -e 'N;s/\\nMediasize://;P;D;' | /usr/bin/cut -c7-", $output);
+	if (empty($output)) {
+		exec("/sbin/geom disk list " . escapeshellarg($disk) . " | /usr/bin/egrep '(Name:|Mediasize:)' | /usr/bin/cut -c4- | /usr/bin/sed -l -e 'N;s/\\nMediasize://;P;D;' | /usr/bin/cut -c7-", $output);
+	}
 	$disk_contents = array();
 	foreach ($output as $line) {
 		list($name, $size, $humansize) = explode(" ", $line, 3);

@@ -47,10 +47,21 @@ require_once("captiveportal.inc");
 
 <?php
 
-if (($_GET['act'] == "del") && (!empty($_GET['zone']))) {
-	$cpzone = $_GET['zone'];
+if (!is_array($config['captiveportal']))
+        $config['captiveportal'] = array();
+$a_cp =& $config['captiveportal'];
+
+$cpzone = $_GET['zone'];
+if (isset($_POST['zone']))
+        $cpzone = $_POST['zone'];
+
+if (isset($cpzone) && !empty($cpzone) && isset($a_cp[$cpzone]['zoneid']))
+	$cpzoneid = $a_cp[$cpzone]['zoneid'];
+
+if (($_GET['act'] == "del") && !empty($cpzone) && isset($cpzoneid)) {
 	captiveportal_disconnect_client($_GET['id']);
 }
+unset($cpzone);
 
 flush();
 
@@ -58,10 +69,6 @@ function clientcmp($a, $b) {
 	global $order;
 	return strcmp($a[$order], $b[$order]);
 }
-
-if (!is_array($config['captiveportal']))
-        $config['captiveportal'] = array();
-$a_cp =& $config['captiveportal'];
 
 $cpdb_all = array();
 

@@ -206,15 +206,9 @@ include("head.inc");
 
 <body link="#000000" vlink="#000000" alink="#000000" onload="<?= $jsevents["body"]["onload"] ?>">
 <?php include("fbegin.inc"); ?>
+<script type="text/javascript" src="/javascript/row_toggle.js"></script>
 <script type="text/javascript">
 //<![CDATA[
-
-function checkall_checkbox(checked) {
-	var cbs = document.getElementsByName('delete_check[]');
-	if (cbs != null)
-		for (var i = 0; i < cbs.length; i++)
-			cbs[i].checked = checked;
-}
 
 function setall_selected(id) {
 	selbox = document.getElementById(id);
@@ -473,6 +467,7 @@ function presubmit() {
 					<table class="sortable" width="100%" border="0" cellpadding="0" cellspacing="0" summary="">
 						<thead>
 							<tr>
+								<th width="5%" class="list">&nbsp;</th>
 								<th width="25%" class="listhdrr"><?=gettext("Group name");?></th>
 								<th width="25%" class="listhdrr"><?=gettext("Description");?></th>
 								<th width="30%" class="listhdrr"><?=gettext("Member Count");?></th>
@@ -481,7 +476,7 @@ function presubmit() {
 						</thead>
 						<tfoot>
 							<tr>
-								<td class="list" colspan="3"></td>
+								<td class="list" colspan="4"></td>
 								<td class="list">
 									<input type="image" name="addcert" width="17" height="17" border="0"
 										src="/themes/<?=$g['theme'];?>/images/icons/icon_plus.gif"
@@ -491,7 +486,7 @@ function presubmit() {
 								</td>
 							</tr>
 							<tr>
-								<td colspan="3">
+								<td colspan="4">
 									<p>
 										<?=gettext("Additional webConfigurator groups can be added here.
 										Group permissions can be assigned which are inherited by users who are members of the group.
@@ -515,8 +510,13 @@ function presubmit() {
 ?>
 							<tr ondblclick="document.getElementById('act').value='<?php echo "edit";?>';
 								document.getElementById('groupid').value='<?=$i;?>';
-								document.iform2.submit();">
-								<td class="listlr">
+								document.iform2.submit();" id="fr<?=$i?>">
+								<td class="list" id="frd<?=$i?>">
+								<?php if($group['scope'] != "system") : ?>
+									<input type="checkbox" id="frc<?=$i?>" onclick="fr_bgcolor(<?=$i?>)" name="delete_check[]" value="<?=$i?>" />
+								<?php endif; ?>
+								</td>
+								<td class="listlr" id="frd<?=$i?>" onclick="fr_toggle(<?=$i?>)">
 									<table border="0" cellpadding="0" cellspacing="0" summary="">
 										<tr>
 											<td align="left" valign="middle">
@@ -528,10 +528,10 @@ function presubmit() {
 										</tr>
 									</table>
 								</td>
-								<td class="listr">
+								<td class="listr" id="frd<?=$i?>" onclick="fr_toggle(<?=$i?>)">
 									<?=htmlspecialchars($group['description']);?>&nbsp;
 								</td>
-								<td class="listbg">
+								<td class="listbg" onclick="fr_toggle(<?=$i?>)">
 									<?=$groupcount;?>
 								</td>
 								<td valign="middle" class="list nowrap">
@@ -551,7 +551,6 @@ function presubmit() {
 											document.getElementById('act').value='<?php echo "delgroup";?>';
 											return confirm('<?=gettext("Do you really want to delete this group?");?>');"
 										title="<?=gettext("delete group");?>" />
-									<input type='checkbox' id='check_<?=$i?>' name='delete_check[]' value='<?=$i?>' />
 <?php
 								endif;
 ?>

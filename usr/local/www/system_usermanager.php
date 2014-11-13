@@ -381,6 +381,7 @@ include("head.inc");
 <link rel="stylesheet" type="text/css" href="/javascript/jquery-ui-timepicker-addon/css/jquery-ui-timepicker-addon.css" />
 <link rel="stylesheet" type="text/css" href="/javascript/jquery/jquery-ui-1.11.1.css" />
 
+<script type="text/javascript" src="/javascript/row_toggle.js"></script>
 <script type="text/javascript">
 //<![CDATA[
 	jQuery(function() {
@@ -395,13 +396,6 @@ include("head.inc");
 
 <script type="text/javascript">
 //<![CDATA[
-
-function checkall_checkbox(checked) {
-	var cbs = document.getElementsByName('delete_check[]');
-	if (cbs != null)
-		for (var i = 0; i < cbs.length; i++)
-			cbs[i].checked = checked;
-}
 
 function setall_selected(id) {
 	selbox = document.getElementById(id);
@@ -896,16 +890,17 @@ function sshkeyClicked(obj) {
 					<table class="sortable" width="100%" border="0" cellpadding="0" cellspacing="0" summary="">
 						<thead>
 							<tr>
+								<th width="5%" class="list">&nbsp;</th>
 								<th width="25%" class="listhdrr"><?=gettext("Username"); ?></th>
 								<th width="25%" class="listhdrr"><?=gettext("Full name"); ?></th>
 								<th width="5%" class="listhdrr"><?=gettext("Disabled"); ?></th>
 								<th width="25%" class="listhdrr"><?=gettext("Groups"); ?></th>
-								<th width="10%" class="list"><input type="checkbox" onClick="checkall_checkbox(this.checked)"> <?=gettext("check all")?></th>
+								<th width="10%" class="list"></th>
 							</tr>
 						</thead>
 						<tfoot>
 							<tr>
-								<td class="list" colspan="4"></td>
+								<td class="list" colspan="5"></td>
 								<td class="list">
 									<input type="image" name="addcert" width="17" height="17" border="0"
 										src="/themes/<?=$g['theme'];?>/images/icons/icon_plus.gif"
@@ -915,7 +910,7 @@ function sshkeyClicked(obj) {
 								</td>
 							</tr>
 							<tr>
-								<td colspan="4">
+								<td colspan="5">
 									<p>
 										<?=gettext("Additional users can be added here. User permissions for accessing " .
 										"the webConfigurator can be assigned directly or inherited from group memberships. " .
@@ -936,6 +931,9 @@ function sshkeyClicked(obj) {
 								<tr ondblclick="document.getElementById('act').value='<?php echo "edit";?>';
 									document.getElementById('userid').value='<?=$i;?>';
 									document.iform2.submit();">
+								<td class="list" id="frd<?=$i?>">
+									<input type="checkbox" id="frc<?=$i?>" onclick="fr_bgcolor(<?=$i?>)" name="delete_check[]" value="<?=$i?>" />
+								</td>
 								<td class="listlr">
 									<table border="0" cellpadding="0" cellspacing="0" summary="icons">
 										<tr>
@@ -977,7 +975,6 @@ function sshkeyClicked(obj) {
 											document.getElementById('act').value='<?php echo "deluser";?>';
 											return confirm('<?=gettext("Do you really want to delete this user?");?>');"
 										title="<?=gettext("delete user");?>" />
-									<input type='checkbox' id='check_<?=$i?>' name='delete_check[]' value='<?=$i?>' />
 <?php
 								endif;
 ?>

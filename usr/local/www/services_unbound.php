@@ -41,6 +41,7 @@
 
 require_once("guiconfig.inc");
 require_once("unbound.inc");
+require_once("system.inc");
 
 if (!is_array($config['unbound'])) {
 	$config['unbound'] = array();
@@ -105,6 +106,8 @@ if ($_POST) {
 		}
 		/* Update resolv.conf in case the interface bindings exclude localhost. */
 		system_resolvconf_generate();
+		/* Start or restart dhcpleases when it's necessary */
+		system_dhcpleases_configure();
 	} else {
 		if (isset($_POST['enable']) && isset($config['dnsmasq']['enable'])) {
 			$input_errors[] = "The system dns-forwarder is still active. Disable it before enabling the DNS Resolver.";

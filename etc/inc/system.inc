@@ -394,19 +394,29 @@ function system_dhcpleases_configure() {
 		mwexec("/bin/mkdir -p {$g['dhcpd_chroot_path']}/var/db");
 		if (!file_exists("{$g['dhcpd_chroot_path']}/var/db/dhcpd.leases"))
 			@touch("{$g['dhcpd_chroot_path']}/var/db/dhcpd.leases");
-		if (isvalidpid("{$g['varrun_path']}/dhcpleases.pid"))
-			sigkillbypid("{$g['varrun_path']}/dhcpleases.pid", "HUP");
-		else {
-			/* To ensure we do not start multiple instances of dhcpleases, perform some clean-up first. */
-			if (is_process_running("dhcpleases"))
-				mwexec('/bin/pkill dhcpleases');
-			@unlink("{$g['varrun_path']}/dhcpleases.pid");
-			if (isset($config['unbound']['enable']))
-				$dns_pid = "unbound.pid";
-			else
-				$dns_pid = "dnsmasq.pid";
-			mwexec("/usr/local/sbin/dhcpleases -l {$g['dhcpd_chroot_path']}/var/db/dhcpd.leases -d {$config['system']['domain']} -p {$g['varrun_path']}/{$dns_pid} -h {$g['varetc_path']}/hosts");
+
+		if (isset($config['unbound']['enable']))
+			$dns_pid = "unbound.pid";
+		else
+			$dns_pid = "dnsmasq.pid";
+
+		$pidfile = "{$g['varrun_path']}/dhcpleases.pid";
+		if (isvalidpid($pidfile)) {
+			/* Make sure dhcpleases is using correct unbound or dnsmasq */
+
+			$_gb = exec("/bin/pgrep -F {$pidfile} -f {$dns_pid}", $output, $retval);
+			if (intval($retval) == 0) {
+				sigkillbypid($pidfile, "HUP");
+				return;
+			} else
+				sigkillbypid($pidfile, "TERM");
 		}
+
+		/* To ensure we do not start multiple instances of dhcpleases, perform some clean-up first. */
+		if (is_process_running("dhcpleases"))
+			mwexec('/bin/pkill dhcpleases');
+		@unlink("{$g['varrun_path']}/dhcpleases.pid");
+		mwexec("/usr/local/sbin/dhcpleases -l {$g['dhcpd_chroot_path']}/var/db/dhcpd.leases -d {$config['system']['domain']} -p {$g['varrun_path']}/{$dns_pid} -h {$g['varetc_path']}/hosts");
 	} else {
 		sigkillbypid("{$g['varrun_path']}/dhcpleases.pid", "TERM");
 		@unlink("{$g['varrun_path']}/dhcpleases.pid");

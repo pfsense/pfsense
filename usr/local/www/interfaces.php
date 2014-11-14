@@ -2412,7 +2412,7 @@ $types6 = array("none" => gettext("None"), "staticv6" => gettext("Static IPv6"),
 							<td colspan="2" style="padding: 0px;">
 								<table width="100%" border="0" cellpadding="6" cellspacing="0" summary="6rd">
 									<tr>
-										<td colspan="2" valign="top" class="listtopic"><?=gettext("6RD Rapid Deployment"); ?></td>
+										<td colspan="2" valign="top" class="listtopic"><?=gettext("6RD Configuration"); ?></td>
 									</tr>
 									<tr>
 										<td width="22%" valign="top" class="vncell"><?=gettext("6RD prefix"); ?></td>

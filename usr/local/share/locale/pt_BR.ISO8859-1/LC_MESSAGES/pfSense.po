@@ -38217,7 +38217,7 @@ msgstr "Se você deixar este campo em branco, o adaptadores de MTU padrão será us
 #: usr/local/www/interfaces.php:1768 usr/local/www/interfaces.php:1756
 #: usr/local/www/interfaces.php:1774 usr/local/www/interfaces.php:1820
 #: usr/local/www/interfaces.php:1812 usr/local/www/interfaces.php:1848
-msgid "6RD Rapid Deployment"
+msgid "6RD Configuration"
 msgstr "Desenvolvimento rápido 6RD"
 
 #: usr/local/www/interfaces.php:1771 usr/local/www/interfaces.php:1759

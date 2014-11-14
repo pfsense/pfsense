@@ -40635,7 +40635,7 @@ msgstr ""
 
 #: usr/local/www/interfaces.php:1768 usr/local/www/interfaces.php:1756
 #: usr/local/www/interfaces.php:1774
-msgid "6RD Rapid Deployment"
+msgid "6RD Configuration"
 msgstr "6'ıncı Hızlı Dağıtım"
 
 #: usr/local/www/interfaces.php:1771 usr/local/www/interfaces.php:1759

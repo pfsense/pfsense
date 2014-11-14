@@ -45275,7 +45275,7 @@ msgstr "「このフィールドを空白のままにすると、アダプタの
 #: usr/local/www/interfaces.php:1768 usr/local/www/interfaces.php:1756
 #: usr/local/www/interfaces.php:1774 usr/local/www/interfaces.php:1820
 #: usr/local/www/interfaces.php:1812 usr/local/www/interfaces.php:1812
-msgid "6RD Rapid Deployment"
+msgid "6RD Configuration"
 msgstr "6RDのRapid Deployment"
 
 #: usr/local/www/interfaces.php:1771 usr/local/www/interfaces.php:1759

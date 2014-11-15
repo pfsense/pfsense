@@ -194,7 +194,7 @@ EOD;
 			if ($gateway['monitor'] == $gateway['gateway']) {
 				/* link locals really need a different src ip */
 				if (is_linklocal($gateway['gateway'])) {
-					if (!strpos($gateway['gateway']))
+					if (!strpos($gateway['gateway'], '%'))
 						$gateway['gateway'] .= '%' . $gateway['interface'];
 					$gwifip = find_interface_ipv6_ll($gateway['interface'], true);
 				} else {

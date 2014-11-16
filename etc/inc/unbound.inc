@@ -158,9 +158,12 @@ EOF;
 	}
 
 	// Allow DNS Rebind for forwarded domains
-	if ((isset($config['unbound']['domainoverrides']) && is_array($config['unbound']['domainoverrides'])) && !isset($config['system']['webgui']['nodnsrebindcheck'])) {
-		$private_domains = "# Set private domains in case authoritative name server returns a Private IP address\n";
-		$private_domains .= unbound_add_domain_overrides(true);
+	if (isset($config['unbound']['domainoverrides']) && is_array($config['unbound']['domainoverrides'])) {
+		if (!isset($config['system']['webgui']['nodnsrebindcheck'])) {
+			$private_domains = "# Set private domains in case authoritative name server returns a Private IP address\n";
+			$private_domains .= unbound_add_domain_overrides("private");
+		}
+		$reverse_zones .= unbound_add_domain_overrides("reverse");
 	}
 
 	// Configure static Host entries
@@ -246,6 +249,7 @@ EOD;
 # Server configuration
 ##
 server:
+{$reverse_zones}
 chroot: {$g['unbound_chroot_path']}
 username: "unbound"
 directory: "{$g['unbound_chroot_path']}"
@@ -433,7 +437,7 @@ function do_as_unbound_user($cmd) {
 	}
 }
 
-function unbound_add_domain_overrides($pvt=false) {
+function unbound_add_domain_overrides($pvt_rev="") {
 	global $config, $g;
 
 	$domains = $config['unbound']['domainoverrides'];
@@ -450,9 +454,13 @@ function unbound_add_domain_overrides($pvt=false) {
 	// Domain overrides that have multiple entries need multiple stub-addr: added
 	$domain_entries = "";
 	foreach($result as $domain=>$ips) {
-		if ($pvt == true) {
+		if ($pvt_rev == "private") {
 			$domain_entries .= "private-domain: \"$domain\"\n";
 			$domain_entries .= "domain-insecure: \"$domain\"\n";
+		} else if ($pvt_rev == "reverse") {
+			if ((substr($domain,-14) == ".in-addr.arpa.") || (substr($domain,-13) == ".in-addr.arpa")) {
+				$domain_entries .= "local-zone: \"$domain\" typetransparent\n";
+			}
 		} else {
 			$domain_entries .= "stub-zone:\n";
 			$domain_entries .= "\tname: \"$domain\"\n";
@@ -462,7 +470,7 @@ function unbound_add_domain_overrides($pvt=false) {
 		}
 	}
 
-	if ($pvt == true)
+	if ($pvt_rev == true)
 		return $domain_entries;
 	else
 		file_put_contents("{$g['unbound_chroot_path']}/domainoverrides.conf", $domain_entries);

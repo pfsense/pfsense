@@ -72,10 +72,6 @@ if($config['installedpackages']['olsrd']) {
 	}
 }
 
-if (!$_GET['if'])
-	$savemsg = gettext("The DHCPv6 Server can only be enabled on interfaces configured with static IP addresses") .
-		   gettext("Only interfaces configured with a static IP will be shown") . ".";
-
 $iflist = get_configured_interface_with_descr();
 $iflist = array_merge($iflist, get_configured_pppoe_server_interfaces());
 
@@ -521,6 +517,7 @@ include("head.inc");
 		}
 	}
 	if ($tabscounter == 0) {
+		echo "<b>" . gettext("The DHCPv6 Server can only be enabled on interfaces configured with a static IPv6 address. This system has none.") . "<br/><br/>";
 		echo "</td></tr></table></form>";
 		include("fend.inc");
 		echo "</body>";

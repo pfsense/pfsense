@@ -107,10 +107,7 @@ if($config['installedpackages']['olsrd']) {
 				break;
 			}
 	}
-}
-
-if (!$_GET['if'])
-	$savemsg = gettext("The DHCP Server can only be enabled on interfaces configured with static IP addresses") . ".<br/><br/>" . gettext("Only interfaces configured with a static IP will be shown") . ".";
+}	
 
 $iflist = get_configured_interface_with_descr();
 
@@ -758,6 +755,7 @@ include("head.inc");
 		$tabscounter++;
 	}
 	if ($tabscounter == 0) {
+		echo "<b>" . gettext("The DHCP Server can only be enabled on interfaces configured with a static IPv4 address. This system has none.") . "<br/><br/>";
 		echo "</td></tr></table></form>";
 		include("fend.inc");
 		echo "</body>";

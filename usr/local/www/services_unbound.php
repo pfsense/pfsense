@@ -110,15 +110,15 @@ if ($_POST) {
 		system_dhcpleases_configure();
 	} else {
 		if (isset($_POST['enable']) && isset($config['dnsmasq']['enable'])) {
-			$input_errors[] = "The system dns-forwarder is still active. Disable it before enabling the DNS Resolver.";
+			$input_errors[] = "The DNS Forwarder is enabled. Disable it before enabling the DNS Resolver.";
 		}
 
 		if (empty($_POST['active_interface'])) {
-			$input_errors[] = "A single network interface needs to be selected for the DNS Resolver to bind to.";
+			$input_errors[] = "One or more Network Interfaces must be selected for binding.";
 		}
 
 		if (empty($_POST['outgoing_interface'])) {
-			$input_errors[] = "A single outgoing network interface needs to be selected for the DNS Resolver to use for outgoing DNS requests.";
+			$input_errors[] = "One or more Outgoing Network Interfaces must be selected.";
 		}
 
 		if ($_POST['port']) {
@@ -225,7 +225,7 @@ function show_advanced_dns() {
 <?php if ($input_errors) print_input_errors($input_errors); ?>
 <?php if ($savemsg) print_info_box($savemsg); ?>
 <?php if (is_subsystem_dirty('unbound')): ?><br/>
-<?php print_info_box_np(gettext("The configuration for the DNS Resolver, has been changed") . ".<br />" . gettext("You must apply the changes in order for them to take effect."));?><br />
+<?php print_info_box_np(gettext("The configuration of the DNS Resolver has been changed") . ".<br />" . gettext("You must apply changes for them to take effect."));?><br />
 <?php endif; ?>
 <table width="100%" border="0" cellpadding="0" cellspacing="0" summary="services unbound">
 	<tbody>
@@ -275,7 +275,7 @@ function show_advanced_dns() {
 									?>
 									<?=gettext("Interface IPs used by the DNS Resolver for responding to queries from clients. If an interface has both IPv4 and IPv6 IPs, both are used. Queries to other interface IPs not selected below are discarded. The default behavior is to respond to queries on every available IPv4 and IPv6 address.");?>
 									<br /><br />
-									<select id="active_interface" name="active_interface[]" multiple="multiple" size="3">
+									<select id="active_interface" name="active_interface[]" multiple="multiple" size="<?php echo $size; ?>">
 										<option value="" <?php if (empty($pconfig['active_interface']) || empty($pconfig['active_interface'][0])) echo 'selected="selected"'; ?>>All</option>
 										<?php
 											foreach ($interface_addresses as $laddr):
@@ -300,7 +300,7 @@ function show_advanced_dns() {
 									?>
 									<?=gettext("Utilize different network interface(s) that the DNS Resolver will use to send queries to authoritative servers and receive their replies. By default all interfaces are used.");?>
 									<br /><br />
-									<select id="outgoing_interface" name="outgoing_interface[]" multiple="multiple" size="3">
+									<select id="outgoing_interface" name="outgoing_interface[]" multiple="multiple" size="<?php echo $size; ?>">
 										<option value="" <?php if (empty($pconfig['outgoing_interface']) || empty($pconfig['outgoing_interface'][0])) echo 'selected="selected"'; ?>>All</option>
 										<?php
 											foreach ($interface_addresses as $laddr):

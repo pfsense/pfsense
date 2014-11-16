@@ -1773,6 +1773,10 @@ function services_dnsmasq_configure() {
 						$listen_addresses .= " --listen-address={$tmpaddrll6[0]} ";
 					} else 
 						$listen_addresses .= " --listen-address={$interface} ";
+				} else if (strstr($interface, "_vip")) {
+					$laddr = get_configured_carp_interface_list($interface);
+					if (is_ipaddr($laddr)) 
+						$listen_addresses .= " --listen-address={$laddr} ";
 				} else {
 					$if = get_real_interface($interface);
 					if (does_interface_exist($if)) {

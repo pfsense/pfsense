@@ -579,6 +579,8 @@ EOPP;
 			$dnscfg .= "	option domain-name-servers {$ifcfgip};";
 			if ($newzone['domain-name'] && is_array($syscfg['dnsserver']) && ($syscfg['dnsserver'][0]))
 				$newzone['dns-servers'] = $syscfg['dnsserver'];
+		} else if (isset($config['unbound']['enable'])) {
+			$dnscfg .= "	option domain-name-servers {$ifcfgip};";
 		} else if (!empty($dns_arrv4)) {
 			$dnscfg .= "	option domain-name-servers " . join(",", $dns_arrv4) . ";";
 			if ($newzone['domain-name'])

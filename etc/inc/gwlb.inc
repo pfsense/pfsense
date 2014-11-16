@@ -561,6 +561,7 @@ function return_gateways_array($disabled = false, $localhost = false, $inactive 
 				$ctype = strtoupper($ifcfg['ipaddr']);
 				break;
 			default:
+				$tunnelif = substr($ifcfg['if'], 0, 3);
 				if (substr($ifcfg['if'], 0, 4) ==  "ovpn") {
 					// if current iface is an ovpn server endpoint then skip it
 					if (substr($ifcfg['if'], 4, 1) == 's')

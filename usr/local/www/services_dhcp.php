@@ -555,6 +555,8 @@ if (isset($_POST['submit']) || isset($_POST['apply'])) {
 		$retvaldns = services_unbound_configure();
 		if ($retvaldns == 0)
 			clear_subsystem_dirty('unbound');
+			clear_subsystem_dirty('hosts');
+			clear_subsystem_dirty('staticmaps');
 	} else {
 		$retvaldhcp = services_dhcpd_configure();
 		if ($retvaldhcp == 0)

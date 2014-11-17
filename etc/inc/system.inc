@@ -286,9 +286,13 @@ function system_hosts_generate() {
 	}
 
 	$syscfg = $config['system'];
-	$dnsmasqcfg = $config['dnsmasq'];
+	if (isset($config['unbound']) && isset($config['unbound']['enable']))
+		$dnsmasqcfg = $config['unbound'];
+	else
+		$dnsmasqcfg = $config['dnsmasq'];
 
-	$hosts = "127.0.0.1	localhost localhost.{$syscfg['domain']}\n";
+	$hosts =  "127.0.0.1	localhost localhost.{$syscfg['domain']}\n";
+	$hosts .= "::1		localhost localhost.{$syscfg['domain']}\n";
 	$lhosts = "";
 	$dhosts = "";
 
@@ -395,15 +399,17 @@ function system_dhcpleases_configure() {
 		if (!file_exists("{$g['dhcpd_chroot_path']}/var/db/dhcpd.leases"))
 			@touch("{$g['dhcpd_chroot_path']}/var/db/dhcpd.leases");
 
-		if (isset($config['unbound']['enable']))
+		if (isset($config['unbound']['enable'])) {
 			$dns_pid = "unbound.pid";
-		else
+			$unbound_conf = "-u {$g['unbound_chroot_path']}/dhcpleases_entries.conf";
+		} else {
 			$dns_pid = "dnsmasq.pid";
+			$unbound_conf = "";
+		}
 
 		$pidfile = "{$g['varrun_path']}/dhcpleases.pid";
 		if (isvalidpid($pidfile)) {
 			/* Make sure dhcpleases is using correct unbound or dnsmasq */
-
 			$_gb = exec("/bin/pgrep -F {$pidfile} -f {$dns_pid}", $output, $retval);
 			if (intval($retval) == 0) {
 				sigkillbypid($pidfile, "HUP");
@@ -414,12 +420,12 @@ function system_dhcpleases_configure() {
 
 		/* To ensure we do not start multiple instances of dhcpleases, perform some clean-up first. */
 		if (is_process_running("dhcpleases"))
-			mwexec('/bin/pkill dhcpleases');
-		@unlink("{$g['varrun_path']}/dhcpleases.pid");
-		mwexec("/usr/local/sbin/dhcpleases -l {$g['dhcpd_chroot_path']}/var/db/dhcpd.leases -d {$config['system']['domain']} -p {$g['varrun_path']}/{$dns_pid} -h {$g['varetc_path']}/hosts");
+			sigkillbyname('dhcpleases', "TERM");
+		@unlink($pidfile);
+		mwexec("/usr/local/sbin/dhcpleases -l {$g['dhcpd_chroot_path']}/var/db/dhcpd.leases -d {$config['system']['domain']} -p {$g['varrun_path']}/{$dns_pid} {$unbound_conf} -h {$g['varetc_path']}/hosts");
 	} else {
-		sigkillbypid("{$g['varrun_path']}/dhcpleases.pid", "TERM");
-		@unlink("{$g['varrun_path']}/dhcpleases.pid");
+		sigkillbypid($pidfile, "TERM");
+		@unlink($pidfile);
 	}
 }
 

@@ -470,7 +470,7 @@ function unbound_add_domain_overrides($pvt_rev="") {
 		}
 	}
 
-	if ($pvt_rev == true)
+	if ($pvt_rev != "")
 		return $domain_entries;
 	else
 		file_put_contents("{$g['unbound_chroot_path']}/domainoverrides.conf", $domain_entries);

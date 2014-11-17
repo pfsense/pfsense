@@ -1132,7 +1132,7 @@ function captiveportal_allowedip_configure() {
 function captiveportal_get_last_activity($ip, $mac = NULL) {
 	global $cpzoneid;
 
-	$ipfwoutput = pfSense_ipfw_getTablestats($cpzoneid, 1, $ip, $mac);
+	$ipfwoutput = pfSense_ipfw_getTablestats($cpzoneid, IP_FW_TABLE_XLISTENTRY, $ip, $mac);
 	/* Reading only from one of the tables is enough of approximation. */
 	if (is_array($ipfwoutput)) {
 		return $ipfwoutput['timestamp'];

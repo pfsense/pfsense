@@ -642,7 +642,7 @@ function local_group_set($group, $reset = false) {
 		$group_op = "groupmod";
 
 	/* add or mod group db */
-	$cmd = "/usr/sbin/pw {$group_op} {$group_name} -g {$group_gid} -M {$group_members} 2>&1";
+	$cmd = "/usr/sbin/pw {$group_op} {$group_name} -g {$group_gid} -M '{$group_members}' 2>&1";
 
 	if($debug)
 		log_error(sprintf(gettext("Running: %s"), $cmd));

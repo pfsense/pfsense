@@ -54,6 +54,7 @@ require("captiveportal.inc");
 require_once("rrd.inc");
 
 function interface_assign_description($portinfo, $portname) {
+	global $ovpn_descrs;
 	if ($portinfo['isvlan']) {
 		$descr = sprintf(gettext('VLAN %1$s on %2$s'),$portinfo['tag'],$portinfo['if']);
 		if ($portinfo['descr'])

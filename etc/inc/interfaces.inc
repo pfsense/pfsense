@@ -3438,7 +3438,7 @@ function interface_6rd_configure($interface = "wan", $wancfg) {
 
 	$wanif = get_real_interface($interface);
 	$ip4address = find_interface_ip($wanif);
-	if ((!is_ipaddrv4($ip4address)) || (is_private_ip($ip4address))) {
+	if (!is_ipaddrv4($ip4address)) {
 		log_error("The interface IPv4 '{$ip4address}' address on interface '{$wanif}' is not public, not configuring 6RD tunnel");
 		return false;
 	}
@@ -3450,6 +3450,7 @@ function interface_6rd_configure($interface = "wan", $wancfg) {
 	/* create the long prefix notation for math, save the prefix length */
 	$rd6prefix = explode("/", $wancfg['prefix-6rd']);
 	$rd6prefixlen = $rd6prefix[1];
+	$rd6brgw = "{$rd6prefix[0]}{$wancfg['gateway-6rd']}";
 	$rd6prefix = Net_IPv6::uncompress($rd6prefix[0]);
 
 	/* binary presentation of the prefix for all 128 bits. */
@@ -3465,7 +3466,6 @@ function interface_6rd_configure($interface = "wan", $wancfg) {
 	/* convert the 128 bits for the broker address back into a valid IPv6 address */
 	$rd6prefix = convert_128bit_to_ipv6($rd6prefixbin);
 
-	$rd6brgw = "{$rd6prefix}{$wancfg['gateway-6rd']}";
 
 	/* XXX: need to extend to support variable prefix size for v4 */
 	if (!is_module_loaded("if_stf"))
@@ -3476,14 +3476,10 @@ function interface_6rd_configure($interface = "wan", $wancfg) {
 	$tmpstfiface = pfSense_interface_create("stf");
 	pfSense_interface_rename($tmpstfiface, $stfiface);
 	pfSense_interface_flags($stfiface, IFF_LINK2);
-	if ($wancfg['prefix-6rd-v4plen'] > 0)
-		$rd6prefixlen += intval($wancfg['prefix-6rd-v4plen']);
-	else
-		$rd6prefixlen += 32;
 	mwexec("/sbin/ifconfig {$stfiface} inet6 {$rd6prefix}/{$rd6prefixlen}");
 	mwexec("/sbin/ifconfig {$stfiface} stfv4br " . escapeshellarg($wancfg['gateway-6rd']));
 	if ($wancfg['prefix-6rd-v4plen'] >= 0 && $wancfg['prefix-6rd-v4plen'] <= 32)
-		mwexec("/sbin/ifconfig {$stfiface} stfv4net {$ip4address}/{$wancfg['prefix-6rd-v4plen']}");
+		mwexec("/sbin/ifconfig {$stfiface} stfv4net {$ip4address}/" . escapeshellarg($wancfg['prefix-6rd-v4plen']));
 	if ($g['debug'])
 		log_error("Created 6rd interface {$stfiface} {$rd6prefix}/{$rd6prefixlen}");
 

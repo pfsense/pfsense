@@ -130,10 +130,10 @@ EOF;
 		$active_interfaces = explode(",", $config['unbound']['active_interface']);
 		foreach($active_interfaces as $ubif) {
 			$intip = get_interface_ip($ubif);
-			if (!is_null($intip))
+			if (is_ipaddr($intip))
 				$bindints .= "interface: $intip\n";
 			$intip = get_interface_ipv6($ubif);
-			if (!is_null($intip))
+			if (is_ipaddr($intip))
 				$bindints .= "interface: $intip\n";
 		}
 	} else {

@@ -241,7 +241,7 @@ outputJavaScriptFileInline("javascript/base64.js");
 	<?php if($_GET['action'] == "load"): ?>
 		jQuery(window).load(
 			function() {
-				jQuery("#fbTarget").val("<?=$_GET['path'];?>");
+				jQuery("#fbTarget").val("<?=htmlspecialchars($_GET['path']);?>");
 				loadFile();
 			}
 		);

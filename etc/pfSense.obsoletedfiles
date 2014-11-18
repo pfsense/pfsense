@@ -514,6 +514,10 @@
 /usr/lib/pam_tacplus.so.4
 /usr/lib/pam_unix.so.3
 /usr/lib/pam_unix.so.4
+/usr/lib/private/libunbound.a
+/usr/lib/private/libunbound.so
+/usr/lib/private/libunbound.so.5
+/usr/lib/private/libunbound_p.a
 /usr/lib/snmp_bridge.so.5
 /usr/lib/snmp_hostres.so.4
 /usr/lib/snmp_hostres.so.5
@@ -1053,6 +1057,7 @@
 /usr/sbin/config_unlock.sh
 /usr/sbin/freebsd-update
 /usr/sbin/ispcvt
+/usr/sbin/local-unbound-setup
 /usr/sbin/manctl
 /usr/sbin/nsupdate
 /usr/sbin/ntp-keygen
@@ -1156,6 +1161,11 @@
 /usr/sbin/pppstats
 /usr/sbin/praudit
 /usr/sbin/sliplogin
+/usr/sbin/unbound
+/usr/sbin/unbound-anchor
+/usr/sbin/unbound-checkconf
+/usr/sbin/unbound-control
+/usr/sbin/unbound-control-setup
 /usr/sbin/usbdevs
 /usr/sbin/wicontrol
 /usr/share/man

@@ -26,8 +26,8 @@
 	ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 	POSSIBILITY OF SUCH DAMAGE.
 
-	pfSense_BUILDER_BINARIES:   /usr/local/sbin/unbound  /usr/local/sbin/unbound-anchor    /usr/local/sbin/unbound-checkconf
-	pfSense_BUILDER_BINARIES:   /usr/local/sbin/unbound-control    /usr/local/sbin/unbound-control-setup
+	pfSense_BUILDER_BINARIES:   /usr/sbin/unbound  /usr/sbin/unbound-anchor    /usr/sbin/unbound-checkconf
+	pfSense_BUILDER_BINARIES:   /usr/sbin/unbound-control    /usr/sbin/unbound-control-setup
 	pfSense_MODULE: unbound
 */
 
@@ -422,16 +422,16 @@ function do_as_unbound_user($cmd) {
 
 	switch ($cmd) {
 	case "start":
-		mwexec("/usr/local/sbin/unbound -c {$g['unbound_chroot_path']}/unbound.conf");
+		mwexec("/usr/sbin/unbound -c {$g['unbound_chroot_path']}/unbound.conf");
 		break;
 	case "stop":
-		mwexec("echo '/usr/local/sbin/unbound-control stop' | /usr/bin/su -m unbound", true);
+		mwexec("echo '/usr/sbin/unbound-control stop' | /usr/bin/su -m unbound", true);
 		break;
 	case "unbound-anchor":
-		mwexec("echo '/usr/local/sbin/unbound-anchor -a {$g['unbound_chroot_path']}/root.key' | /usr/bin/su -m unbound", true);
+		mwexec("echo '/usr/sbin/unbound-anchor -a {$g['unbound_chroot_path']}/root.key' | /usr/bin/su -m unbound", true);
 		break;
 	case "unbound-control-setup":
-		mwexec("echo '/usr/local/sbin/unbound-control-setup -d {$g['unbound_chroot_path']}' | /usr/bin/su -m unbound", true);
+		mwexec("echo '/usr/sbin/unbound-control-setup -d {$g['unbound_chroot_path']}' | /usr/bin/su -m unbound", true);
 		break;
 	default:
 		break;

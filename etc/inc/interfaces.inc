@@ -5099,7 +5099,7 @@ function is_altq_capable($int) {
 			"bfe", "bge", "bridge", "cas", "dc", "de", "ed", "em", "ep", "epair", "et", "fxp", "gem",
 			"hme", "hn", "igb", "ipw", "iwi", "ixgbe", "jme", "le", "lem", "msk", "mxge", "my", "nfe",
 			"nge", "npe", "nve", "ral", "re", "rl", "rum", "run", "bwn", "sf", "sge", "sis", "sk",
-			"ste", "stge", "ti", "txp", "udav", "ural", "vge", "vr", "vte", "wi", "xl",
+			"ste", "stge", "ti", "txp", "udav", "ural", "vge", "vmx", "vr", "vte", "wi", "xl",
 			"ndis", "tun", "ovpns", "ovpnc", "vlan", "pppoe", "pptp", "ng",
 			"l2tp", "ppp", "vtnet");
 

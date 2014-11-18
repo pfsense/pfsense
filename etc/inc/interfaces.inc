@@ -3450,7 +3450,7 @@ function interface_6rd_configure($interface = "wan", $wancfg) {
 	/* create the long prefix notation for math, save the prefix length */
 	$rd6prefix = explode("/", $wancfg['prefix-6rd']);
 	$rd6prefixlen = $rd6prefix[1];
-	$rd6brgw = "{$rd6prefix[0]}{$wancfg['gateway-6rd']}";
+	$rd6brgw = rtrim($rd6prefix[0], ':') . ":{$wancfg['gateway-6rd']}";
 	$rd6prefix = Net_IPv6::uncompress($rd6prefix[0]);
 
 	/* binary presentation of the prefix for all 128 bits. */

@@ -130,10 +130,10 @@ EOF;
 		$active_interfaces = explode(",", $config['unbound']['active_interface']);
 		foreach($active_interfaces as $ubif) {
 			$intip = get_interface_ip($ubif);
-			if (is_ipaddr($intip))
+			if (is_ipaddrv4($intip))
 				$bindints .= "interface: $intip\n";
 			$intip = get_interface_ipv6($ubif);
-			if (is_ipaddr($intip))
+			if (is_ipaddrv6($intip))
 				$bindints .= "interface: $intip\n";
 		}
 	} else {
@@ -586,13 +586,13 @@ function unbound_acls_config() {
 	$bindints = "";
 	foreach($active_interfaces as $ubif => $ifdesc) {
 		$ifip = get_interface_ip($ubif);
-		if (!is_null($ifip)) {
+		if (is_ipaddrv4($ifip)) {
 			$subnet_bits = get_interface_subnet($ubif);
 			$subnet_ip = gen_subnet($ifip, $subnet_bits);
 			$aclcfg .= "access-control: {$subnet_ip}/{$subnet_bits} allow\n";
 		}
 		$ifip = get_interface_ipv6($ubif);
-		if (!is_null($ifip)) {
+		if (is_ipaddrv6($ifip)) {
 			$subnet_bits = get_interface_subnetv6($ubif);
 			$subnet_ip = gen_subnetv6($ifip, $subnet_bits);
 			$aclcfg .= "access-control: {$subnet_ip}/{$subnet_bits} allow\n";

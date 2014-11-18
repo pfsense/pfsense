@@ -86,8 +86,15 @@ if ($_POST) {
 	
 	do_input_validation($_POST, $reqdfields, $reqdfieldsn, $input_errors);
 	
-	if (($_POST['host'] && !is_hostname($_POST['host']))) 
-		$input_errors[] = gettext("The hostname can only contain the characters A-Z, 0-9 and '-'.");
+	if ($_POST['host']) {
+		if (!is_hostname($_POST['host'])) { 
+			$input_errors[] = gettext("The hostname can only contain the characters A-Z, 0-9 and '-'. It may not start or end with '-'.");
+		} else {
+			if (!is_unqualified_hostname($_POST['host'])) {
+				$input_errors[] = gettext("A valid hostname is specified, but the domain name part should be omitted");
+			}
+		}
+	}
 
 	if (($_POST['domain'] && !is_domain($_POST['domain']))) 
 		$input_errors[] = gettext("A valid domain must be specified.");
@@ -124,8 +131,14 @@ if ($_POST) {
 
 		var_dump(array('fields' => $aliasreqdfields, 'names' => $aliasreqdfieldsn, 'alias' => $alias));
 		do_input_validation($_POST, $aliasreqdfields, $aliasreqdfieldsn, $input_errors);
-		if (($alias['host'] && !is_hostname($alias['host']))) {
-			$input_errors[] = gettext("Hostnames in alias list can only contain the characters A-Z, 0-9 and '-'.");
+		if ($alias['host']) {
+			if (!is_hostname($alias['host'])) {
+				$input_errors[] = gettext("Hostnames in an alias list can only contain the characters A-Z, 0-9 and '-'. They may not start or end with '-'.");
+			} else {
+				if (!is_unqualified_hostname($alias['host'])) {
+					$input_errors[] = gettext("A valid alias hostname is specified, but the domain name part should be omitted");
+				}
+			}
 		}
 		if (($alias['domain'] && !is_domain($alias['domain']))) {
 			$input_errors[] = gettext("A valid domain must be specified in alias list.");

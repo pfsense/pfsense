@@ -3,7 +3,7 @@
 <copyright>
 /* $Id$ */
 /*
-	setup.xml
+	setup_wizard.xml
         part of pfSense (https://www.pfsense.org/)
 
 	Copyright (C) 2004, 2005 Scott Ullrich
@@ -121,7 +121,7 @@
 	</stepbeforeformdisplay>
 	<stepsubmitphpaction>
 		<![CDATA[
-		if(empty($_POST['hostname']) || !is_hostname($_POST['hostname'])) {
+		if(empty($_POST['hostname']) || !is_unqualified_hostname($_POST['hostname'])) {
 			print_info_box_np("Hostname is invalid. Please press back in your browser window and correct.");
 			die;
 		}

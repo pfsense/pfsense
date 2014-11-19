@@ -783,6 +783,8 @@ function openvpn_reconfigure($mode, $settings) {
 
 	if ($settings['resolve_retry'])
 		$conf .= "resolv-retry infinite\n";
+	else if ($mode == 'client')
+		$conf .= "resolv-retry 2\n";
 
 	if ($settings['dynamic_ip']) {
 		$conf .= "persist-remote-ip\n";

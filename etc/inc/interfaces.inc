@@ -2927,13 +2927,7 @@ function interface_vlan_adapt_mtu($vlanifs, $mtu) {
 		$assignedport = convert_real_interface_to_friendly_interface_name($vlan['vlanif']);
 		if (!empty($assignedport)) {
 			if (!empty($config['interfaces'][$assignedport]['mtu'])) {
-				/*
-				* XXX: This is really never going to happen just keep the code for safety and readbility.
-				* It never happens since interface_vlan_mtu_configured finds the biggest mtu on vlans.
-				* Also if it has a lower mtu configured just respect user choice.
-				*/
-				if (intval($config['interfaces'][$assignedport]['mtu']) > $mtu)
-					pfSense_interface_mtu($vlan['vlanif'], $mtu);
+				pfSense_interface_mtu($vlan['vlanif'], $mtu);
 			} else {
 				if (get_interface_mtu($vlan['vlanif']) != $mtu)
 					pfSense_interface_mtu($vlan['vlanif'], $mtu);
@@ -3148,8 +3142,10 @@ function interface_configure($interface = "wan", $reloadall = false, $linkupeven
 			$assignedparent = convert_real_interface_to_friendly_interface_name($realhwif);
 			if (!empty($assignedparent) && !empty($config['interfaces'][$assignedparent]['mtu']))
 				$parentmtu = $config['interfaces'][$assignedparent]['mtu'];
-			else
-				$parentmtu = interface_vlan_mtu_configured($realhwif, $wancfg['mtu']);
+			else {
+				$parentmtu = get_interface_mtu($realhwif);
+				$parentmtu = interface_vlan_mtu_configured($realhwif, $parentmtu);
+			}
 
 			if ($wancfg['mtu'] > $parentmtu) {
 				if (get_interface_mtu($realhwif) != $wancfg['mtu'])

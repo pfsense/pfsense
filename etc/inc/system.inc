@@ -159,7 +159,7 @@ function system_resolvconf_generate($dynupdate = false) {
 	} else {
 		// Do not create blank search/domain lines, it can break tools like dig.
 		if($syscfg['domain'])
-			$resolvconf = "search {$syscfg['domain']}\n";
+			$resolvconf .= "search {$syscfg['domain']}\n";
 	}
 	if (is_array($syscfg['dnsserver'])) {
 		foreach ($syscfg['dnsserver'] as $ns) {

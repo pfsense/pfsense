@@ -381,7 +381,7 @@ EOD;
 				$strongswan .= "\t\t28672 = {$a_client['login_banner']}\n";
 
 			if (isset($a_client['save_passwd']))
-				$strongswan .= "\t\t28673 = yes\n";
+				$strongswan .= "\t\t28673 = 1\n";
 
 			if ($a_client['pfs_group'])
 				$strongswan .= "\t\t28679 = {$a_client['pfs_group']}\n";

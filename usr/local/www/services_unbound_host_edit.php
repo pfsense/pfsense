@@ -131,7 +131,6 @@ if ($_POST) {
 		$aliasreqdfields = array('aliasdomain' . $idx);
 		$aliasreqdfieldsn = array(gettext("Alias Domain"));
 
-		var_dump(array('fields' => $aliasreqdfields, 'names' => $aliasreqdfieldsn, 'alias' => $alias));
 		do_input_validation($_POST, $aliasreqdfields, $aliasreqdfieldsn, $input_errors);
 		if ($alias['host']) {
 			if (!is_hostname($alias['host'])) {

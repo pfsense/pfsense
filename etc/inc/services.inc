@@ -1895,6 +1895,10 @@ function services_unbound_configure() {
 		else
 			sleep(1);
 
+		/* generate hosts file */
+		if(system_hosts_generate()!=0)
+			$return = 1;
+
 		require_once('/etc/inc/unbound.inc');
 		sync_unbound_service();
 		if ($g['booting'])

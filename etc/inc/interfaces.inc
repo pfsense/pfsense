@@ -3326,7 +3326,7 @@ function interface_track6_6rd_configure($interface = "lan", $lancfg) {
 
 	$ip4address = get_interface_ip($lancfg['track6-interface']);
 	if (!is_ipaddrv4($ip4address)) { /* XXX: This should not be needed by 6rd || (is_private_ip($ip4address))) { */
-		log_error("The interface IPv4 '{$ip4address}' address on interface '{$lancfg['track6-interface']}' is not public, not configuring 6RD tunnel");
+		log_error("The interface IPv4 '{$ip4address}' address on interface '{$lancfg['track6-interface']}' is not valid, not configuring 6RD tunnel");
 		return;
 	}
 	$hexwanv4 = return_hex_ipv4($ip4address);

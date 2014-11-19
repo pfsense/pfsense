@@ -534,9 +534,12 @@ EOD;
 				$ikeid = $ph1ent['ikeid'];
 				$keyexchange = "ikev1";
 				$passive = "route";
-				if (!empty($ph1ent['iketype']) && $ph1ent['iketype'] != "ikev1") {
-					$keyexchange = "ikev2";
-					//$passive = "start";
+				if (!empty($ph1ent['iketype']) {
+					if ($ph1ent['iketype'] == "ikev2") {
+						$keyexchange = "ikev2";
+						//$passive = "start";
+					} else if ($ph1ent['iketype'] == "auto")
+						$keyexchange = "ike";
 				}
 
 				if (isset($ph1ent['mobile'])) {

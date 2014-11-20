@@ -256,7 +256,7 @@ if ($_GET) {
 					if($pkgtodo['name']) {
 						update_output_window($static_output);
 						uninstall_package($pkgtodo['name']);
-						install_package($pkgtodo['name']);
+						install_package($pkgtodo['name'], '', true);
 					}
 				}
 				update_status(gettext("All packages reinstalled."));

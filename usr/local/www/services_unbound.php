@@ -465,6 +465,27 @@ function show_advanced_dns() {
 				</tr>
 			</table>
 	</tr>
+	<?php if ($hostent['aliases']['item'] && is_array($hostent['aliases']['item'])): ?>
+	<?php foreach ($hostent['aliases']['item'] as $alias): ?>
+	<tr>
+		<td class="listlr" ondblclick="document.location='services_unbound_host_edit.php?id=<?=$i;?>';">
+			<?=strtolower($alias['host']);?>&nbsp;
+		</td>
+		<td class="listr" ondblclick="document.location='services_unbound_host_edit.php?id=<?=$i;?>';">
+			<?=strtolower($alias['domain']);?>&nbsp;
+		</td>
+		<td class="listr" ondblclick="document.location='services_unbound_host_edit.php?id=<?=$i;?>';">
+			Alias for <?=$hostent['host'] ? $hostent['host'] . '.' . $hostent['domain'] : $hostent['domain'];?>&nbsp;
+		</td>
+		<td class="listbg" ondblclick="document.location='services_unbound_host_edit.php?id=<?=$i;?>';">
+			<?=htmlspecialchars($alias['description']);?>&nbsp;
+		</td>
+		<td valign="middle" class="list nowrap">
+			<a href="services_unbound_host_edit.php?id=<?=$i;?>"><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_e.gif" width="17" height="17" border="0" alt="edit" /></a>
+		</td>
+	</tr>
+	<?php endforeach; ?>
+	<?php endif; ?>
 	<?php $i++; endforeach; ?>
 	<tr style="display:none"><td></td></tr>
 	</tbody>

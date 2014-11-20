@@ -388,15 +388,13 @@ function sync_package($pkg_name, $sync_depends = true, $show_message = false) {
 		$pkg_id = get_pkg_id($pkg_name);
 		if($pkg_id == -1)
 			return -1; // This package doesn't really exist - exit the function.
-	} else {
+	} else
 		$pkg_id = $pkg_name;
-		if(empty($config['installedpackages']['package'][$pkg_id]))
-			return;  // No package belongs to the pkg_id passed to this function.
-	}
-	if (is_array($config['installedpackages']['package'][$pkg_id]))
-		$package =& $config['installedpackages']['package'][$pkg_id];
-	else
-		return; /* empty package tag */
+
+	if(!is_array($config['installedpackages']['package'][$pkg_id]))
+		return;  // No package belongs to the pkg_id passed to this function.
+
+	$package =& $config['installedpackages']['package'][$pkg_id];
 	if(!file_exists("/usr/local/pkg/" . $package['configurationfile'])) {
 		log_error(sprintf(gettext("The %s package is missing its configuration file and must be reinstalled."), $package['name']));
 		force_remove_package($package['name']);

@@ -4294,13 +4294,16 @@ function get_parent_interface($interface, $avoidrecurse = false) {
 			case "static":
 			default:
 				// Handle _vlans
-				if (stristr($realif,"_vlan"))
-					if (is_array($config['vlans']['vlan']))
-						foreach ($config['vlans']['vlan'] as $vlanidx => $vlan)
-							if ($ifcfg['if'] == $vlan['vlanif']){
+				if (strpos($realif, '_vlan') !== FALSE) {
+					if (is_array($config['vlans']['vlan'])) {
+						foreach ($config['vlans']['vlan'] as $vlanidx => $vlan) {
+							if ($ifcfg['if'] == $vlan['vlanif']) {
 								$parents[0] = $vlan['if'];
 								break;
 							}
+						}
+					}
+				}
 				break;
 		}
 	}

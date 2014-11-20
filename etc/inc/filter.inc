@@ -1692,8 +1692,19 @@ function filter_nat_rules_generate() {
 						$remote_subnet = "any";
 					if (is_ipaddr($natlocal_subnet) && !is_ipaddr($local_subnet) )
 						$nattype = "nat";
-					else
-						$nattype = "binat";
+					else {
+						if (is_ipaddr($natlocal_subnet) || is_ipaddr($local_subnet))
+							$nattype = "nat";
+						else {
+							list($natnet, $natmask) = explode('/', $natlocal_subnet);
+							list($locnet, $locmask) = explode('/', $local_subnet);
+							if (intval($natmask) != intval($locmask))
+								$nattype = "nat";
+							else
+								$nattype = "binat";
+							unset($natnet, $natmask, $locnet, $locmask);
+						}
+					}
 					$natrules .= "{$nattype} on enc0 from {$local_subnet} to {$remote_subnet} -> {$natlocal_subnet}\n";
 				}
 			}

@@ -563,10 +563,18 @@ function return_gateways_array($disabled = false, $localhost = false, $inactive 
 			default:
 				$tunnelif = substr($ifcfg['if'], 0, 3);
 				if (substr($ifcfg['if'], 0, 4) ==  "ovpn") {
-					// if current iface is an ovpn server endpoint then skip it
-					if (substr($ifcfg['if'], 4, 1) == 's')
-						continue 2;							
-
+					// if current iface is an ovpn server endpoint then check its type, skip tap only
+					if (substr($ifcfg['if'], 4, 1) == 's') {
+						$ovpnid = substr($ifcfg['if'], 5);
+						if (is_array($config['openvpn']['openvpn-server'])) {
+							foreach ($config['openvpn']['openvpn-server'] as & $ovpnserverconf) {
+								if ($ovpnserverconf['vpnid'] == $ovpnid) {
+									if ($ovpnserverconf['dev_mode'] == "tap")
+										continue 3;
+								}
+							}
+						}
+					}
 					$ctype = "VPNv4";
 				} else if ($tunnelif == "gif" || $tunnelif == "gre")
 					$ctype = "TUNNELv4";
@@ -640,10 +648,18 @@ function return_gateways_array($disabled = false, $localhost = false, $inactive 
 			default:
 				$tunnelif = substr($ifcfg['if'], 0, 3);
 				if (substr($ifcfg['if'], 0, 4) ==  "ovpn") {
-					// if current iface is an ovpn server endpoint then skip it
-					if (substr($ifcfg['if'], 4, 1) == 's') 
-						continue 2;							
-
+					// if current iface is an ovpn server endpoint then check its type, skip tap only
+					if (substr($ifcfg['if'], 4, 1) == 's') {
+						$ovpnid = substr($ifcfg['if'], 5);
+						if (is_array($config['openvpn']['openvpn-server'])) {
+							foreach ($config['openvpn']['openvpn-server'] as & $ovpnserverconf) {
+								if ($ovpnserverconf['vpnid'] == $ovpnid) {
+									if ($ovpnserverconf['dev_mode'] == "tap")
+										continue 3;
+								}
+							}
+						}
+					}
 					$ctype = "VPNv6";
 				} else if ($tunnelif == "gif" || $tunnelif == "gre")
 					$ctype = "TUNNELv6";

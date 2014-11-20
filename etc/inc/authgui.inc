@@ -179,7 +179,7 @@ function display_login_form() {
    port forwards WebGUI access from WAN to an internal IP on the router. */
 global $FilterIflist, $nifty_background;
 $local_ip = false;
-if(strstr($_SERVER['HTTP_HOST'], ":")) {
+if (strpos($_SERVER['HTTP_HOST'], ":") === FALSE) {
 	$http_host_port = explode(":", $_SERVER['HTTP_HOST']);
 	$http_host = $http_host_port[0];
 } else {
@@ -191,32 +191,34 @@ if (empty($FilterIflist)) {
 	filter_generate_optcfg_array();
 }
 foreach ($FilterIflist as $iflist) {
-	if($iflist['ip'] == $http_host)
+	if ($iflist['ip'] == $http_host)
 		$local_ip = true;
-	if($iflist['ipv6'] == $http_host)
+	else if ($iflist['ipv6'] == $http_host)
 		$local_ip = true;
+	else if (is_array($iflist['vips'])) {
+		foreach ($iflist['vips'] as $vip) {
+			if ($vip['ip'] == $http_host) {
+				$local_ip = true;
+				break;
+			}
+		}
+		unset($vip);
+	}
+	if ($local_ip == true)
+		break;
 }
 unset($FilterIflist);
+unset($iflist);
 
-if($config['virtualip']) {
-	if($config['virtualip']['vip']) {
-		foreach($config['virtualip']['vip'] as $vip) {
-			if($vip['subnet'] == $http_host)
-				$local_ip = true;
-		}
-	}
-}
 if (is_array($config['openvpn']['openvpn-server'])) {
 	foreach ($config['openvpn']['openvpn-server'] as $ovpns) {
 		if (is_ipaddrv4($http_host) && !empty($ovpns['tunnel_network']) && ip_in_subnet($http_host, $ovpns['tunnel_network'])) {
 			$local_ip = true;
-			break;
-		}
-
-		if (is_ipaddrv6($http_host) && !empty($ovpns['tunnel_networkv6']) && ip_in_subnet($http_host, $ovpns['tunnel_networkv6'])) {
+		} else if (is_ipaddrv6($http_host) && !empty($ovpns['tunnel_networkv6']) && ip_in_subnet($http_host, $ovpns['tunnel_networkv6'])) {
 			$local_ip = true;
-			break;
 		}
+		if ($local_ip == true)
+			break;
 	}
 }
 setcookie("cookie_test", time() + 3600);

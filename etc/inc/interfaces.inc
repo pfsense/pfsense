@@ -3049,7 +3049,7 @@ function interface_configure($interface = "wan", $reloadall = false, $linkupeven
 	$options = pfSense_get_interface_addresses($realhwif);
 
 	/* skip vlans for checksumming and polling */
-	if (!stristr($realif, "_vlan") && is_array($options)) {
+	if (is_array($options)) {
 		$flags_on = 0;
 		$flags_off = 0;
 		if(isset($config['system']['disablechecksumoffloading'])) {

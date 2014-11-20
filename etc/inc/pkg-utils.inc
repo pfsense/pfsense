@@ -1247,7 +1247,7 @@ function pkg_reinstall_all() {
 				uninstall_package($pkgtodo['name']);
 				log_error(gettext("Finished uninstalling package") . " {$pkgtodo['name']}");
 				log_error(gettext("Reinstalling package") . " {$pkgtodo['name']}");
-				install_package($pkgtodo['name']);
+				install_package($pkgtodo['name'], '', true);
 				log_error(gettext("Finished installing package") . " {$pkgtodo['name']}");
 			}
 		}

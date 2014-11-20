@@ -664,6 +664,7 @@ function install_package($package, $pkg_info = "", $force_install = false) {
 	if (!install_package_xml($package)) {
 		uninstall_package($package);
 		write_config($changedesc);
+		log_error(sprintf(gettext("Failed to install package: %s.") . $pkg_info['name']));
 		$static_output .= gettext("Failed to install package.") . "\n";
 		update_output_window($static_output);
 		return -1;
@@ -671,6 +672,7 @@ function install_package($package, $pkg_info = "", $force_install = false) {
 		$static_output .= gettext("Writing configuration... ");
 		update_output_window($static_output);
 		write_config($changedesc);
+		log_error(sprintf(gettext("Succefully installed package: %s.") . $pkg_info['name']));
 		$static_output .= gettext("done.") . "\n";
 		update_output_window($static_output);
 		if($pkg_info['after_install_info']) 

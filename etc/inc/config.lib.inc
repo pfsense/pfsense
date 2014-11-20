@@ -746,7 +746,10 @@ function cleanup_backupcache($lock = false) {
 			unlink($backup);
 			continue;
 		}
-		$tocheck = array_shift(explode('.', array_pop(explode('-', $backup))));
+		$backupexp = explode('-', $backup);
+		$backupexp = explode('.', array_pop($backupexp));
+		$tocheck = array_shift($backupexp);
+		unset($backupexp);
 		if(!in_array($tocheck, $baktimes)) {
 			$i = true;
 			if($g['booting'])

@@ -77,9 +77,10 @@ define("CRON_HOURLY_PATTERN", "0 * * * *");
 if (!is_array($pconfig))
 	$pconfig = array();
 
+if (!is_array($config['ppps']))
+	$config['ppps'] = array();
 if (!is_array($config['ppps']['ppp']))
 	$config['ppps']['ppp'] = array();
-
 $a_ppps = &$config['ppps']['ppp'];
 
 function remove_bad_chars($string) {
@@ -100,6 +101,7 @@ if ($if == "wan" && !$wancfg['descr'])
 else if ($if == "lan" && !$wancfg['descr'])
 	$wancfg['descr'] = "LAN";
 
+/* NOTE: The code here is used to set the $pppid for the curious */
 foreach ($a_ppps as $pppid => $ppp) {
 	if ($wancfg['if'] == $ppp['if'])
 		break;
@@ -900,21 +902,31 @@ if ($_POST['apply']) {
 		unset($wancfg['pptp_username']);
 		unset($wancfg['pptp_password']);
 		unset($wancfg['provider']);
-		if ($wancfg['ipaddr'] != "ppp")
-			unset($wancfg['ondemand']);
+		unset($wancfg['ondemand']);
 		unset($wancfg['timeout']);
 		if (empty($wancfg['pppoe']['pppoe-reset-type']))
 			unset($wancfg['pppoe']['pppoe-reset-type']);
 		unset($wancfg['local']);
 
 		unset($wancfg['remote']);
-		unset($a_ppps[$pppid]['apn']);
-		unset($a_ppps[$pppid]['phone']);
-		unset($a_ppps[$pppid]['localip']);
-		unset($a_ppps[$pppid]['subnet']);
-		unset($a_ppps[$pppid]['gateway']);
-		unset($a_ppps[$pppid]['pppoe-reset-type']);
-		unset($a_ppps[$pppid]['provider']);
+		if (is_array($a_ppps[$pppid]) && in_array($wancfg['ipaddr'], array("ppp", "pppoe", "pptp", "l2tp"))) {
+			if ($wancfg['ipaddr'] != 'ppp') {
+				unset($a_ppps[$pppid]['apn']);
+				unset($a_ppps[$pppid]['phone']);
+				unset($a_ppps[$pppid]['provider']);
+			}
+			if (in_array($wancfg['ipaddr'], array("ppp", "pppoe", "pptp", "l2tp"))) {
+				unset($a_ppps[$pppid]['localip']);
+				unset($a_ppps[$pppid]['subnet']);
+				unset($a_ppps[$pppid]['gateway']);
+			}
+			if ($wancfg['ipaddr'] != 'pppoe')
+				unset($a_ppps[$pppid]['pppoe-reset-type']);
+			if ($wancfg['type'] != $_POST['type']) {
+				unset($a_ppps[$pppid]['ondemand']);
+				unset($a_ppps[$pppid]['idletimeout']);
+			}
+		}
 
 		$wancfg['descr'] = remove_bad_chars($_POST['descr']);
 		$wancfg['enable'] =  $_POST['enable']  == "yes" ? true : false;
@@ -969,8 +981,6 @@ if ($_POST['apply']) {
 				$a_ppps[$pppid]['apn'] = $_POST['apn'];
 				$wancfg['if'] = $_POST['type'] . $_POST['ptpid'];
 				$wancfg['ipaddr'] = $_POST['type'];
-				unset($a_ppps[$pppid]['ondemand']);
-				unset($a_ppps[$pppid]['idletimeout']);
 				break;
 
 			case "pppoe":

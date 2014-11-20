@@ -169,6 +169,27 @@ if(function_exists("display_error_form") && !isset($config['system']['webgui']['
 						break;
 					}
 				}
+
+				if (is_ipaddrv4($referrer_host)) {
+					$tunnelnetworkkey = 'tunnel_network';
+				} else if (is_ipaddrv6($referrer_host)) {
+					$tunnelnetworkkey = 'tunnel_networkv6';
+				}
+				if ($tunnelnetworkkey) {
+					foreach (array('openvpn-server', 'openvpn-client') as $openvpntype) {
+						$ovpns = $config['openvpn'][$openvpntype];
+						if (is_array($ovpns)) {
+							foreach ($ovpns as $ovpn) {
+								$tunnel_network = $ovpn[$tunnelnetworkkey];
+								if (!empty($tunnel_network) && ip_in_subnet($referrer_host, $tunnel_network)) {
+									$found_host = true;
+									break 2;
+								}
+							}
+						}
+					}
+				}
+
 				if($referrer_host == "127.0.0.1" || $referrer_host == "localhost") {
 					// allow SSH port forwarded connections and links from localhost
 					$found_host = true;

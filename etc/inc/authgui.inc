@@ -206,16 +206,22 @@ if($config['virtualip']) {
 		}
 	}
 }
-if (is_array($config['openvpn']['openvpn-server'])) {
-	foreach ($config['openvpn']['openvpn-server'] as $ovpns) {
-		if (is_ipaddrv4($http_host) && !empty($ovpns['tunnel_network']) && ip_in_subnet($http_host, $ovpns['tunnel_network'])) {
-			$local_ip = true;
-			break;
-		}
-
-		if (is_ipaddrv6($http_host) && !empty($ovpns['tunnel_networkv6']) && ip_in_subnet($http_host, $ovpns['tunnel_networkv6'])) {
-			$local_ip = true;
-			break;
+if (is_ipaddrv4($http_host)) {
+	$tunnelnetworkkey = 'tunnel_network';
+} else if (is_ipaddrv6($http_host)) {
+	$tunnelnetworkkey = 'tunnel_networkv6';
+}
+if ($tunnelnetworkkey) {
+	foreach (array('openvpn-server', 'openvpn-client') as $openvpntype) {
+		$ovpns = $config['openvpn'][$openvpntype];
+		if (is_array($ovpns)) {
+			foreach ($ovpns as $ovpn) {
+				$tunnel_network = $ovpn[$tunnelnetworkkey];
+				if (!empty($tunnel_network) && ip_in_subnet($http_host, $tunnel_network)) {
+					$local_ip = true;
+					break 2;
+				}
+			}
 		}
 	}
 }

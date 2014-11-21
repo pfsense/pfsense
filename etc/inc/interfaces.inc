@@ -1167,8 +1167,13 @@ function interface_vip_bring_down($vip) {
 		break;
 	case "carp":
 		$vipif = "{$vip['interface']}_vip{$vip['vhid']}";
-		if (does_interface_exist($vipif))
-			pfSense_interface_destroy($vipif);
+		/* XXX: Is enough to delete ip address? */
+		if (does_interface_exist($vipif)) {
+			if (is_ipaddrv6($vip['subnet']))
+				mwexec("/sbin/ifconfig {$vipif} inet6 " . escapeshellarg($vip['subnet']) . " delete");
+			else
+				pfSense_interface_deladdress($vipif, $vip['subnet']);
+		}
 		break;
 	}
 }

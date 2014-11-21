@@ -153,14 +153,18 @@ include("head.inc");
                   <td width="78%" class="vtable">
                     <select name="members[]" multiple="multiple" size="4" class="formselect">
                       <?php
+						$rowIndex = 0;     	
 						foreach ($portlist as $ifn => $ifinfo) {
 							if (array_key_exists($ifn, $realifchecklist))
 								continue;
+							$rowIndex++;
 							echo "<option value=\"{$ifn}\"";
 							if (stristr($pconfig['members'], $ifn))
 								echo " selected=\"selected\"";
 							echo ">". $ifn ."(".$ifinfo['mac'] .")</option>";
 						}
+						if ($rowIndex == 0)
+							echo "<option></option>";
 				?>
                     </select>
 			<br />
@@ -177,6 +181,8 @@ include("head.inc");
 				echo " selected=\"selected\"";
 			echo ">".strtoupper($proto)."</option>";
 		}
+		if (!count($proto))
+			echo "<option></option>";
 		?>
                     </select>
                     <br />

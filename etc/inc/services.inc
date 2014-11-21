@@ -1864,6 +1864,8 @@ function services_dnsmasq_configure() {
 		mwexec_bg($cmd);
 		unset($args);
 
+        system_dhcpleases_configure();
+
 		if ($g['booting'])
 			echo gettext("done.") . "\n";
 	}
@@ -1903,6 +1905,8 @@ function services_unbound_configure() {
 		sync_unbound_service();
 		if ($g['booting'])
 			echo gettext("done.") . "\n";
+
+        system_dhcpleases_configure();
 	}
 
 	if (!$g['booting']) {

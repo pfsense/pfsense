@@ -672,7 +672,7 @@ function install_package($package, $pkg_info = "", $force_install = false) {
 		$static_output .= gettext("Writing configuration... ");
 		update_output_window($static_output);
 		write_config($changedesc);
-		log_error(sprintf(gettext("Succefully installed package: %s."), $pkg_info['name']));
+		log_error(sprintf(gettext("Successfully installed package: %s."), $pkg_info['name']));
 		$static_output .= gettext("done.") . "\n";
 		update_output_window($static_output);
 		if($pkg_info['after_install_info']) 

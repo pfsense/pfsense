@@ -120,7 +120,8 @@ if ($_POST) {
 		update_if_changed("ipaddr", $vsent['ipaddr'], $_POST['ipaddr']);
 		update_if_changed("mode", $vsent['mode'], $_POST['mode']);
 		update_if_changed("relay protocol", $vsent['relay_protocol'], $_POST['relay_protocol']);
-
+        update_if_changed("sticky connection", $vsent['sticky_connection'], (int)$_POST['sticky_connection']);
+        
 		if($_POST['sitedown'] == "")
 			unset($vsent['sitedown']);
 
@@ -203,6 +204,12 @@ include("head.inc");
 					</script>
                   </td>
 			</tr>
+            <tr>
+                <td valign="top" class="vncell">Sticky Connection</td>
+                <td class="vtable" colspan="2"><input type="checkbox" name="sticky_connection" value="1" <?=$pconfig['sticky_connection']=='1'?' checked="checked"':''?>/>
+                    <br />Use this option to discard global sticky connection which is that beneficial for pools that has no relation others.
+                </td>
+            </tr>
                 <tr align="left">
 		  			<td width="22%" valign="top" class="vncellreq"><?=gettext("Virtual Server Pool"); ?></td>
 					<td width="78%" class="vtable" colspan="2">

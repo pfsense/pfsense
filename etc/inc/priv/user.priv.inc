@@ -57,7 +57,7 @@ $priv_list['user-ipsec-xauth-dialin'] = array();
 $priv_list['user-ipsec-xauth-dialin']['name'] = "User - VPN - IPsec xauth Dialin";
 $priv_list['user-ipsec-xauth-dialin']['descr'] = "Indicates whether the user is allowed to dial in via IPsec xauth ".
 										"(Note: Does not allow shell access, but may allow ".
-										"the user to create ssh tunnels)";
+										"the user to create SSH tunnels)";
 
 $priv_list['user-l2tp-dialin'] = array();
 $priv_list['user-l2tp-dialin']['name'] = "User - VPN - L2TP Dialin";

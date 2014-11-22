@@ -319,7 +319,7 @@ EOD;
 		if (is_array($a_client) && isset($a_client['enable'])) {
 			$strongswan .= "\t\tattr {\n";
 			if ($a_client['pool_address'] && $a_client['pool_netbits'])
-				$strongswan .= "\t\tsubnet = {$a_client['pool_address']}/{$a_client['pool_netbits']}\n";
+				$strongswan .= "\t\t\tsubnet = {$a_client['pool_address']}/{$a_client['pool_netbits']}\n";
 
 			$cfgservers = array();
 			if (!empty($a_client['dns_server1']))
@@ -332,7 +332,7 @@ EOD;
 				$cfgservers[] = $a_client['dns_server4'];
 
 			if (!empty($cfgservers))
-				$strongswan .= "\t\tdns = " . implode(",", $cfgservers) . "\n";
+				$strongswan .= "\t\t\tdns = " . implode(",", $cfgservers) . "\n";
 			unset($cfgservers);
 			$cfgservers = array();
 			if (!empty($a_client['wins_server1']))
@@ -340,7 +340,7 @@ EOD;
 			if (!empty($a_client['wins_server2']))
 				$cfgservers[] = $a_client['wins_server2'];
 			if (!empty($cfgservers))
-				$strongswan .= "\t\tnbns = " . implode(",", $cfgservers) . "\n";
+				$strongswan .= "\t\t\tnbns = " . implode(",", $cfgservers) . "\n";
 			unset($cfgservers);
 
 			if (isset($a_client['net_list'])) {
@@ -360,37 +360,37 @@ EOD;
 				}
 
 				if (!empty($net_list)) {
-					$strongswan .= "\t\tsplit-include = {$net_list}\n";
+					$strongswan .= "\t\t\tsplit-include = {$net_list}\n";
 					unset($net_list);
 				}
 			}
 
 			if (!empty($a_client['dns_domain'])) {
-				$strongswan .= "\t\t# Search domain and default domain\n";
-				$strongswan .= "\t\t28674 = {$a_client['dns_domain']}\n";
+				$strongswan .= "\t\t\t# Search domain and default domain\n";
+				$strongswan .= "\t\t\t28674 = {$a_client['dns_domain']}\n";
 				if (empty($a_client['dns_split']))
-					$strongswan .= "\t\t28675 = {$a_client['dns_domain']}";
+					$strongswan .= "\t\t\t28675 = {$a_client['dns_domain']}";
 				$strongswan .= "\n";
 			}
 
 			if (!empty($a_client['dns_split'])) {
-				$strongswan .= "\t\t28675 = {$a_client['dns_split']}\n";
+				$strongswan .= "\t\t\t28675 = {$a_client['dns_split']}\n";
 			}
 
 			if (!empty($a_client['login_banner']))
-				$strongswan .= "\t\t28672 = {$a_client['login_banner']}\n";
+				$strongswan .= "\t\t\t28672 = {$a_client['login_banner']}\n";
 
 			if (isset($a_client['save_passwd']))
-				$strongswan .= "\t\t28673 = 1\n";
+				$strongswan .= "\t\t\t28673 = 1\n";
 
 			if ($a_client['pfs_group'])
-				$strongswan .= "\t\t28679 = {$a_client['pfs_group']}\n";
+				$strongswan .= "\t\t\t28679 = {$a_client['pfs_group']}\n";
 			$strongswan .= "\t\t}\n";
 
 			if ($a_client['user_source'] != "none") {
-				$strongswan .= "\txauth-generic {\n";
-				$strongswan .= "\t\tscript = /etc/inc/ipsec.auth-user.php\n";
-				$strongswan .= "\t\tauthcfg = ";
+				$strongswan .= "\t\txauth-generic {\n";
+				$strongswan .= "\t\t\tscript = /etc/inc/ipsec.auth-user.php\n";
+				$strongswan .= "\t\t\tauthcfg = ";
 				$firstsed = 0;
 				$authcfgs = explode(",", $a_client['user_source']);
 				foreach ($authcfgs as $authcfg) {
@@ -402,7 +402,7 @@ EOD;
 					$firstsed = 1;
 				}
 				$strongswan .= "\n";
-				$strongswan .= "\t}\n";
+				$strongswan .= "\t\t}\n";
 			}
 		}
 

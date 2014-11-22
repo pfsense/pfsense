@@ -914,8 +914,9 @@ if ($_POST['apply']) {
 				unset($a_ppps[$pppid]['apn']);
 				unset($a_ppps[$pppid]['phone']);
 				unset($a_ppps[$pppid]['provider']);
+				unset($a_ppps[$pppid]['ondemand']);
 			}
-			if (in_array($wancfg['ipaddr'], array("ppp", "pppoe", "pptp", "l2tp"))) {
+			if (in_array($wancfg['ipaddr'], array("pppoe", "pptp", "l2tp"))) {
 				unset($a_ppps[$pppid]['localip']);
 				unset($a_ppps[$pppid]['subnet']);
 				unset($a_ppps[$pppid]['gateway']);
@@ -923,7 +924,6 @@ if ($_POST['apply']) {
 			if ($wancfg['ipaddr'] != 'pppoe')
 				unset($a_ppps[$pppid]['pppoe-reset-type']);
 			if ($wancfg['type'] != $_POST['type']) {
-				unset($a_ppps[$pppid]['ondemand']);
 				unset($a_ppps[$pppid]['idletimeout']);
 			}
 		}

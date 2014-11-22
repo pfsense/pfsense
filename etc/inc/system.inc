@@ -381,8 +381,6 @@ function system_hosts_generate() {
 		unbound_hosts_generate();
 	}
 
-	system_dhcpleases_configure();
-
 	return 0;
 }
 

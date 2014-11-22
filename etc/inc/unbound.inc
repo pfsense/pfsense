@@ -427,6 +427,9 @@ function do_as_unbound_user($cmd) {
 	case "stop":
 		mwexec("echo '/usr/local/sbin/unbound-control stop' | /usr/bin/su -m unbound", true);
 		break;
+	case "reload":
+		mwexec("echo '/usr/local/sbin/unbound-control reload' | /usr/bin/su -m unbound", true);
+		break;
 	case "unbound-anchor":
 		mwexec("echo '/usr/local/sbin/unbound-anchor -a {$g['unbound_chroot_path']}/root.key' | /usr/bin/su -m unbound", true);
 		break;

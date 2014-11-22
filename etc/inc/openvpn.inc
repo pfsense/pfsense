@@ -842,9 +842,16 @@ function openvpn_restart($mode, $settings) {
 		/* send a term signal to the process */
 		posix_kill($pid, SIGTERM);
 
-		/* wait until the process exits */
-		while(posix_kill($pid, 0))
+		/* wait until the process exits, or timeout and kill it */
+		$i = 0;
+		while(posix_kill($pid, 0)) {
 			usleep(250000);
+			if ($i > 10) {
+				log_error("OpenVPN ID $mode_id PID $pid still running, killing.");
+				posix_kill($pid, SIGKILL);
+			}
+			$i++;
+		}
 	}
 
 	if (isset($settings['disable']))

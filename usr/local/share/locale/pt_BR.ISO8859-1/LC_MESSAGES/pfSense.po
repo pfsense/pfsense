@@ -30165,7 +30165,7 @@ msgstr "Você precisa vincular cada cliente OpenVPN para habilitar seu daemon de 
 
 #: usr/local/www/status_openvpn.php:308 usr/local/www/status_openvpn.php:311
 #: usr/local/www/status_openvpn.php:359 usr/local/www/status_openvpn.php:389
-msgid "No OpenVPN instance defined"
+msgid "No OpenVPN instances defined"
 msgstr "Nenhuma instância do OpenVPN definida"
 
 #: usr/local/www/system_advanced_admin.php:87

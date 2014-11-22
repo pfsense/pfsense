@@ -35716,7 +35716,7 @@ msgstr ""あなたは、その管理デーモンを有効にするために、�
 #: usr/local/www/status_openvpn.php:308 usr/local/www/status_openvpn.php:311
 #: usr/local/www/status_openvpn.php:359 usr/local/www/status_openvpn.php:389
 #: usr/local/www/status_openvpn.php:389
-msgid "No OpenVPN instance defined"
+msgid "No OpenVPN instances defined"
 msgstr "定義されたのOpenVPNインスタンスません"
 
 #: usr/local/www/system_advanced_admin.php:87

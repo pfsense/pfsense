@@ -414,6 +414,7 @@ function filter_generate_scrubing() {
 			$maxmss = $config['system']['maxmss'];
 
 		$scrubrules .= "scrub from any to <vpn_networks> max-mss {$maxmss}\n";
+		$scrubrules .= "scrub from <vpn_networks> to any max-mss {$maxmss}\n";
 	}
 	/* disable scrub option */
 	foreach ($FilterIflist as $scrubif => $scrubcfg) {

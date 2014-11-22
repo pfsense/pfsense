@@ -849,6 +849,7 @@ function openvpn_restart($mode, $settings) {
 			if ($i > 10) {
 				log_error("OpenVPN ID $mode_id PID $pid still running, killing.");
 				posix_kill($pid, SIGKILL);
+				usleep(500000);
 			}
 			$i++;
 		}

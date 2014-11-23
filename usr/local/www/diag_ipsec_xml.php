@@ -53,7 +53,7 @@ $a_phase2 = &$config['ipsec']['phase2'];
 
 $status = ipsec_smp_dump_status();
 
-if (is_array($status['query']) && $status['query']['ikesalist'] && $status['query']['ikesalist']['ikesa'])) {
+if (is_array($status['query']) && $status['query']['ikesalist'] && $status['query']['ikesalist']['ikesa']) {
 	foreach ($a_phase2 as $ph2ent) {
 		ipsec_lookup_phase1($ph2ent,$ph1ent);
 		$tunnel = array();

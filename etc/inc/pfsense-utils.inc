@@ -340,6 +340,7 @@ function setup_microcode() {
 	$iflist = get_configured_interface_list(false, true);
 	foreach($iflist as $if => $ifdescr)
 		enable_hardware_offloading($if);
+	unset($iflist);
 }
 
 /****f* pfsense-utils/get_carp_status

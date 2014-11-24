@@ -540,6 +540,9 @@ function service_control_start($name, $extras) {
 		case 'dnsmasq':
 			services_dnsmasq_configure();
 			break;
+		case 'unbound':
+			services_unbound_configure();
+			break;
 		case 'dhcpd':
 			services_dhcpd_configure();
 			break;

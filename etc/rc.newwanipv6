@@ -80,6 +80,10 @@ if (empty($interface)) {
 	return;
 }
 
+//Do not process while booting
+if ($g['booting'] && $config['interfaces'][$interface]['ipaddrv6'] != "dhcp6")
+	return;
+
 /*
  * NOTE: Take care of openvpn and similar if you generate the event to reconfigure an interface.
  *	i.e. OpenVPN might be in tap mode and not have an ip.
@@ -115,10 +119,6 @@ if (!empty($new_domain_name))
 /* write current WAN IPv6 to file */
 if (is_ipaddrv6($curwanipv6))
 	@file_put_contents("{$g['vardb_path']}/{$interface}_ipv6", $curwanipv6);
-
-//Do not process while booting
-if ($g['booting'])
-	return;
 
 log_error("rc.newwanipv6: on (IP address: {$curwanipv6}) (interface: {$interface}) (real interface: {$interface_real}).");
 

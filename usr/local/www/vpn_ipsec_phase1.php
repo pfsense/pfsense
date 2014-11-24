@@ -416,6 +416,15 @@ function myidsel_change() {
 			document.getElementById('myid_data').style.visibility = 'visible';
 }
 
+function iketype_change() {
+	index = document.iform.iketype.selectedIndex;
+	value = document.iform.iketype.options[index].value;
+	if (value == 'ikev2')
+			document.getElementById('negmode').style.display= 'none';
+	else
+			document.getElementById('negmode').style.display = '';
+}
+
 function peeridsel_change() {
 	index = document.iform.peerid_type.selectedIndex;
 	value = document.iform.peerid_type.options[index].value;
@@ -567,7 +576,7 @@ function dpdchkbox_change() {
 					<tr>
 						<td width="22%" valign="top" class="vncellreq"><?=gettext("Key Exchange version"); ?></td>
 						<td width="78%" class="vtable">
-							<select name="iketype" class="formselect">
+							<select name="iketype" class="formselect" onchange='iketype_change()'>
 							<?php
 								$keyexchange = array("ikev1" => "V1", "ikev2" => "V2", "auto" => "Auto");
 								foreach ($keyexchange as $kidx => $name):
@@ -683,7 +692,7 @@ function dpdchkbox_change() {
 							</span>
 						</td>
 					</tr>
-					<tr>
+					<tr id='negmode' >
 						<td width="22%" valign="top" class="vncellreq"><?=gettext("Negotiation mode"); ?></td>
 						<td width="78%" class="vtable">
 							<select name="mode" class="formselect">
@@ -930,6 +939,7 @@ function dpdchkbox_change() {
 ?>
 myidsel_change();
 peeridsel_change();
+iketype_change();
 methodsel_change();
 ealgosel_change(<?=$keyset;?>);
 dpdchkbox_change();

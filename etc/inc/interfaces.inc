@@ -706,10 +706,10 @@ function interface_lagg_configure($lagg) {
 			if ($ifdata['if'] != $laggif)
 				continue;
 
-			if (isset($ifdata['mtu']) && !empty($ifdata['mtu'])) {
+			if (isset($ifdata['mtu']) && !empty($ifdata['mtu']))
 				$lagg_mtu = $ifdata['mtu'];
-				break;
-			}
+
+			break;
 		}
 	}
 
@@ -719,16 +719,6 @@ function interface_lagg_configure($lagg) {
 		foreach ($members as $member) {
 			$opts = pfSense_get_interface_addresses($member);
 			$mtu = $opts['mtu'];
-			if (!isset($opts['caps']['txcsum']))
-				$commontx = false;
-			if (!isset($opts['caps']['rxcsum']))
-				$commonrx = false;
-			if (!isset($opts['caps']['tso4']))
-				$commontso4 = false;
-			if (!isset($opts['caps']['tso6']))
-				$commontso6 = false;
-			if (!isset($opts['caps']['lro']))
-				$commonlro = false;
 			if ($smallermtu == 0 && !empty($mtu))
 				$smallermtu = $mtu;
 			else if (!empty($mtu) && $mtu < $smallermtu)
@@ -741,10 +731,8 @@ function interface_lagg_configure($lagg) {
 	if ($lagg_mtu == 0)
 		$lagg_mtu = 1500;
 
-	$checklist = get_interface_list();
-
 	foreach ($members as $member) {
-		if (!array_key_exists($member, $checklist))
+		if (!does_interface_exist($member))
 			continue;
 		/* make sure the parent interface is up */
 		pfSense_interface_mtu($member, $lagg_mtu);

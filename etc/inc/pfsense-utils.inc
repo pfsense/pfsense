@@ -143,6 +143,45 @@ function get_dns_servers() {
 	return array_unique($dns_servers);
 }
 
+function hardware_offloading_applyflags($iface) {
+	global $config;
+
+	$flags_on = 0;
+	$flags_off = 0;
+	$options = pfSense_get_interface_addresses($iface);
+
+	if(isset($config['system']['disablechecksumoffloading'])) {
+		if (isset($options['encaps']['txcsum']))
+			$flags_off |= IFCAP_TXCSUM;
+		if (isset($options['encaps']['rxcsum']))
+			$flags_off |= IFCAP_RXCSUM;
+	} else {
+		if (isset($options['caps']['txcsum']))
+			$flags_on |= IFCAP_TXCSUM;
+		if (isset($options['caps']['rxcsum']))
+			$flags_on |= IFCAP_RXCSUM;
+	}
+
+	if(isset($config['system']['disablesegmentationoffloading']))
+		$flags_off |= IFCAP_TSO;
+	else if (isset($options['caps']['tso']) || isset($options['caps']['tso4']) || isset($options['caps']['tso6']))
+		$flags_on |= IFCAP_TSO;
+
+	if(isset($config['system']['disablelargereceiveoffloading']))
+		$flags_off |= IFCAP_LRO;
+	else if (isset($options['caps']['lro']))
+		$flags_on |= IFCAP_LRO;
+
+	/* if the NIC supports polling *AND* it is enabled in the GUI */
+	if (!isset($config['system']['polling']))
+		$flags_off |= IFCAP_POLLING;
+	else if (isset($options['caps']['polling']))
+		$flags_on |= IFCAP_POLLING;
+
+	pfSense_interface_capabilities($iface, -$flags_off);
+	pfSense_interface_capabilities($iface, $flags_on);
+}
+
 /****f* pfsense-utils/enable_hardware_offloading
  * NAME
  *   enable_hardware_offloading - Enable a NIC's supported hardware features.
@@ -156,21 +195,28 @@ function get_dns_servers() {
 function enable_hardware_offloading($interface) {
 	global $g, $config;
 
-	if(isset($config['system']['do_not_use_nic_microcode']))
-		return;
-
-	/* translate wan, lan, opt -> real interface if needed */
 	$int = get_real_interface($interface);
 	if(empty($int))
 		return;
-	$int_family = preg_split("/[0-9]+/", $int);
-	$supported_ints = array('fxp');
-	if (in_array($int_family, $supported_ints)) {
-		if(does_interface_exist($int))
-			pfSense_interface_flags($int, IFF_LINK0);
+
+	if (!isset($config['system']['do_not_use_nic_microcode'])) {
+		/* translate wan, lan, opt -> real interface if needed */
+		$int_family = preg_split("/[0-9]+/", $int);
+		$supported_ints = array('fxp');
+		if (in_array($int_family, $supported_ints)) {
+			if(does_interface_exist($int))
+				pfSense_interface_flags($int, IFF_LINK0);
+		}
 	}
 
-	return;
+	/* This is mostly for vlans and ppp types */
+	$realhwif = get_parent_interface($interface);
+	if ($realhwif[0] == $int)
+		hardware_offloading_applyflags($int);
+	else {
+		hardware_offloading_applyflags($realhwif[0]);
+		hardware_offloading_applyflags($int);
+	}
 }
 
 /****f* pfsense-utils/interface_supports_polling
@@ -291,9 +337,8 @@ function setup_polling() {
 function setup_microcode() {
 
 	/* if list */
-	$ifs = get_interface_arr();
-
-	foreach($ifs as $if)
+	$iflist = get_configured_interface_list(false, true);
+	foreach($iflist as $if => $ifdescr)
 		enable_hardware_offloading($if);
 }
 

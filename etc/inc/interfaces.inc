@@ -511,29 +511,6 @@ function interface_bridge_configure(&$bridge, $checkmember = 0) {
 	if ($smallermtu == 0)
 		$smallermtu = 1500;
 
-	$flags_on = 0;
-	$flags_off = 0;
-	if (isset($config['system']['disablechecksumoffloading']) || ($commonrx === false))
-		$flags_off |= IFCAP_RXCSUM;
-	else
-		$flags_on |= IFCAP_RXCSUM;
-	if (isset($config['system']['disablechecksumoffloading']) || ($commontx === false))
-		$flags_off |= IFCAP_TXCSUM;
-	else
-		$flags_on |= IFCAP_TXCSUM;
-	if (isset($config['system']['disablesegmentationoffloading']) || ($commontso4 === false))
-		$flags_off |= IFCAP_TSO4;
-	else
-		$flags_on |= IFCAP_TSO4;
-	if (isset($config['system']['disablesegmentationoffloading']) || ($commontso6 === false))
-		$flags_off |= IFCAP_TSO6;
-	else
-		$flags_on |= IFCAP_TSO6;
-	if (isset($config['system']['disablelargereceiveoffloading']) || ($commonlro === false))
-		$flags_off |= IFCAP_LRO;
-	else
-		$flags_on |= IFCAP_LRO;
-
 	if ($g['booting'] || !empty($bridge['bridgeif'])) {
 		pfSense_interface_destroy($bridge['bridgeif']);
 		pfSense_interface_create($bridge['bridgeif']);
@@ -556,10 +533,9 @@ function interface_bridge_configure(&$bridge, $checkmember = 0) {
 		}
 		/* make sure the parent interface is up */
 		pfSense_interface_mtu($realif, $smallermtu);
-		pfSense_interface_capabilities($realif, -$flags_off);
-		pfSense_interface_capabilities($realif, $flags_on);
 		interfaces_bring_up($realif);
-		pfSense_bridge_add_member($bridge['bridgeif'], $realif);
+		enable_hardware_offloading($member);
+		pfSense_bridge_add_member($bridge['bridgeif'], $realif, true);
 	}
 
 	if (isset($bridge['enablestp'])) {
@@ -668,45 +644,21 @@ function interface_bridge_configure(&$bridge, $checkmember = 0) {
 		log_error(gettext("bridgeif not defined -- could not bring interface up"));
 }
 
-function interface_bridge_add_member($bridgeif, $interface) {
+function interface_bridge_add_member($bridgeif, $interface, $flagsapplied = false) {
 
 	if (!does_interface_exist($bridgeif) || !does_interface_exist($interface))
 		return;
 
-	$mtu = get_interface_mtu($bridgeif);
-	$mtum = get_interface_mtu($interface);
+	if ($flagsapplied == false) {
+		$mtu = get_interface_mtu($bridgeif);
+		$mtum = get_interface_mtu($interface);
+		if ($mtu != $mtum && !(substr($interface, 0, 3) == "gif" && $mtu <= 1500))
+			pfSense_interface_mtu($interface, $mtu);
 
-	if ($mtu != $mtum && !(substr($interface, 0, 3) == "gif" && $mtu <= 1500))
-		pfSense_interface_mtu($interface, $mtu);
+		hardware_offloading_applyflags($interface);
+		interfaces_bring_up($interface);
+	}
 
-	$options = pfSense_get_interface_addresses($bridgeif);
-	$flags_on = 0;
-	$flags_off = 0;
-	if (isset($options['encaps']['txcsum']))
-		$flags_on |= IFCAP_TXCSUM;
-	else
-		$flags_off |= IFCAP_TXCSUM;
-	if (isset($options['encaps']['rxcsum']))
-		$flags_on |= IFCAP_RXCSUM;
-	else
-		$flags_off |= IFCAP_RXCSUM;
-	if (isset($options['encaps']['tso4']))
-		$flags_on |= IFCAP_TSO4;
-	else
-		$flags_off |= IFCAP_TSO4;
-	if (isset($options['encaps']['tso6']))
-		$flags_on |= IFCAP_TSO6;
-	else
-		$flags_off |= IFCAP_TSO6;
-	if (isset($options['encaps']['lro']))
-		$flags_on |= IFCAP_LRO;
-	else
-		$flags_off |= IFCAP_LRO;
-
-	pfSense_interface_capabilities($interface, -$flags_off);
-	pfSense_interface_capabilities($interface, $flags_on);
-
-	interfaces_bring_up($interface);
 	pfSense_bridge_add_member($bridgeif, $interface);
 }
 
@@ -789,29 +741,6 @@ function interface_lagg_configure($lagg) {
 	if ($lagg_mtu == 0)
 		$lagg_mtu = 1500;
 
-	$flags_on = 0;
-	$flags_off = 0;
-	if (isset($config['system']['disablechecksumoffloading']) || ($commonrx === false))
-		$flags_off |= IFCAP_RXCSUM;
-	else
-		$flags_on |= IFCAP_RXCSUM;
-	if (isset($config['system']['disablechecksumoffloading']) || ($commontx === false))
-		$flags_off |= IFCAP_TXCSUM;
-	else
-		$flags_on |= IFCAP_TXCSUM;
-	if (isset($config['system']['disablesegmentationoffloading']) || ($commontso4 === false))
-		$flags_off |= IFCAP_TSO4;
-	else
-		$flags_on |= IFCAP_TSO4;
-	if (isset($config['system']['disablesegmentationoffloading']) || ($commontso6 === false))
-		$flags_off |= IFCAP_TSO6;
-	else
-		$flags_on |= IFCAP_TSO6;
-	if (isset($config['system']['disablelargereceiveoffloading']) || ($commonlro === false))
-		$flags_off |= IFCAP_LRO;
-	else
-		$flags_on |= IFCAP_LRO;
-
 	$checklist = get_interface_list();
 
 	foreach ($members as $member) {
@@ -819,11 +748,12 @@ function interface_lagg_configure($lagg) {
 			continue;
 		/* make sure the parent interface is up */
 		pfSense_interface_mtu($member, $lagg_mtu);
-		pfSense_interface_capabilities($member, -$flags_off);
-		pfSense_interface_capabilities($member, $flags_on);
 		interfaces_bring_up($member);
-		mwexec("/sbin/ifconfig {$laggif} laggport {$member}");
+		hardware_offloading_applyflags($member);
+		mwexec("/sbin/ifconfig " . escapeshellarg($laggif) . " laggport " . escapeshellarg($member));
 	}
+	pfSense_interface_capabilities($laggif, -$flags_off);
+	pfSense_interface_capabilities($laggif, $flags_on);
 
 	mwexec("/sbin/ifconfig {$laggif} laggproto " . escapeshellarg($lagg['proto']));
 
@@ -3050,43 +2980,9 @@ function interface_configure($interface = "wan", $reloadall = false, $linkupeven
 			$cmd .= " mediaopt " . escapeshellarg($wancfg['mediaopt']);
 		mwexec($cmd);
 	}
-	$options = pfSense_get_interface_addresses($realhwif);
 
-	/* skip vlans for checksumming and polling */
-	if (is_array($options)) {
-		$flags_on = 0;
-		$flags_off = 0;
-		if(isset($config['system']['disablechecksumoffloading'])) {
-			if (isset($options['encaps']['txcsum']))
-				$flags_off |= IFCAP_TXCSUM;
-			if (isset($options['encaps']['rxcsum']))
-				$flags_off |= IFCAP_RXCSUM;
-		} else {
-			if (isset($options['caps']['txcsum']))
-				$flags_on |= IFCAP_TXCSUM;
-			if (isset($options['caps']['rxcsum']))
-				$flags_on |= IFCAP_RXCSUM;
-		}
-
-		if(isset($config['system']['disablesegmentationoffloading']))
-			$flags_off |= IFCAP_TSO;
-		else if (isset($options['caps']['tso']) || isset($options['caps']['tso4']) || isset($options['caps']['tso6']))
-			$flags_on |= IFCAP_TSO;
-
-		if(isset($config['system']['disablelargereceiveoffloading']))
-			$flags_off |= IFCAP_LRO;
-		else if (isset($options['caps']['lro']))
-			$flags_on |= IFCAP_LRO;
-
-		/* if the NIC supports polling *AND* it is enabled in the GUI */
-		if (!isset($config['system']['polling']))
-			$flags_off |= IFCAP_POLLING;
-		else if (isset($options['caps']['polling']))
-			$flags_on |= IFCAP_POLLING;
-
-		pfSense_interface_capabilities($realhwif, -$flags_off);
-		pfSense_interface_capabilities($realhwif, $flags_on);
-	}
+	/* Apply hw offloading policies as configured */
+	enable_hardware_offloading($interface);
 
 	/* invalidate interface/ip/sn cache */
 	get_interface_arr(true);

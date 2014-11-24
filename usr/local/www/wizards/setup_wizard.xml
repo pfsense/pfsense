@@ -85,7 +85,7 @@
 		<field>
 			<name>DNS Resolver Behavior</name>
 			<type>text</type>
-			<description>The default behavior of the DNS Resolver will ignore manually configured DNS servers and query root DNS servers directly. To use the manually configured DNS servers below, visit Services &gt; DNS Resolver and enable DNS Query Forwarding after completing the wizard.</description>
+			<description>The default behavior of the DNS Resolver will ignore manually configured DNS servers for client queries and query root DNS servers directly. To use the manually configured DNS servers below for client queries, visit Services &gt; DNS Resolver and enable DNS Query Forwarding after completing the wizard.</description>
 		</field>
 		<field>
 			<name>Primary DNS Server</name>

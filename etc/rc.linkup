@@ -93,7 +93,7 @@ if (isset($_GET['interface'])) {
 } else {
 	if ($argc < 3) {
 		log_error("HOTPLUG event: The required number of parameters not passed!");
-		exit;
+		return;
 	}
 	$action = $argv[1];
 	switch($action) {
@@ -102,13 +102,19 @@ if (isset($_GET['interface'])) {
 		break;
 	default:
 		log_error("HOTPLUG event: Action parameter ($action) passed is wrong - only start/stop/up/down are allowed!");
-		exit;
+		return;
 		/* NOTREACHED */
 		break;
 	}
-	$interface = convert_real_interface_to_friendly_interface_name($argv[2]);
-	if (!empty($interface))
-		handle_argument_group($interface, $action);
+	if (!empty($argv[2])) {
+		if (substr($argv[2], 0, 4) == 'ovpn') {
+			log_error("Ignoring link event for ovpn interface");
+			return;
+		}
+		$interface = convert_real_interface_to_friendly_interface_name($argv[2]);
+		if (!empty($interface))
+			handle_argument_group($interface, $action);
+	}
 }
 }
 

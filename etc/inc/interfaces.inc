@@ -2919,18 +2919,6 @@ function interface_configure($interface = "wan", $reloadall = false, $linkupeven
 	if ($wancfg['spoofmac'] && ($wancfg['spoofmac'] != $mac)) {
 		mwexec("/sbin/ifconfig " . escapeshellarg($realhwif) .
 			" link " . escapeshellarg($wancfg['spoofmac']));
-
-		/*
-		 * All vlans need to spoof their parent mac address, too.  see
-		 * ticket #1514: http://cvstrac.pfsense.com/tktview?tn=1514,33
-		 */
-		if (is_array($config['vlans']['vlan'])) {
-			foreach ($config['vlans']['vlan'] as $vlan) {
-				if ($vlan['if'] == $realhwif)
-					mwexec("/sbin/ifconfig " . escapeshellarg($vlan['vlanif']) .
-					" link " . escapeshellarg($wancfg['spoofmac']));
-			}
-		}
 	}  else {
 
 		if ($mac == "ff:ff:ff:ff:ff:ff") {
@@ -2960,7 +2948,7 @@ function interface_configure($interface = "wan", $reloadall = false, $linkupeven
 	/* Apply hw offloading policies as configured */
 	enable_hardware_offloading($interface);
 
-	/* invalidate interface/ip/sn cache */
+	/* invaldate interface/ip/sn cache */
 	get_interface_arr(true);
 	unset($interface_ip_arr_cache[$realif]);
 	unset($interface_sn_arr_cache[$realif]);

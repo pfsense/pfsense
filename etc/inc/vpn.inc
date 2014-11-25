@@ -800,7 +800,6 @@ EOD;
 					$ipsecconf .=<<<EOD
 
 conn con{$ph1ent['ikeid']}
-	aggressive = {$aggressive}
 	fragmentation = yes
 	keyexchange = {$keyexchange}
 	{$reauth}
@@ -837,6 +836,8 @@ EOD;
 						$ipsecconf .= "\t{$authentication}\n";
 					if (!empty($peerid_spec))
 						$ipsecconf .= "\trightid = {$peerid_spec}\n";
+					if ($keyexchange == 'ikev1')
+						aggressive = {$aggressive}
 			}
 		}
 	}

@@ -42,6 +42,11 @@
 	pfSense_MODULE:	config
 */
 
+if (php_sapi_name() == 'fpm-fcgi') {
+	log_error("config.inc is called from GUI interface which is wrong, please report this!");
+	return;
+}
+
 if($g['booting']) echo ".";
 
 /* do not load this file twice. */

@@ -489,16 +489,6 @@ function interface_bridge_configure(&$bridge, $checkmember = 0) {
 			if ($mtu <= 1500)
 				continue;
 		}
-		if (!isset($opts['caps']['txcsum']))
-			$commontx = false;
-		if (!isset($opts['caps']['rxcsum']))
-			$commonrx = false;
-		if (!isset($opts['caps']['tso4']))
-			$commontso4 = false;
-		if (!isset($opts['caps']['tso6']))
-			$commontso6 = false;
-		if (!isset($opts['caps']['lro']))
-			$commonlro = false;
 		if ($smallermtu == 0 && !empty($mtu))
 			$smallermtu = $mtu;
 		else if (!empty($mtu) && $mtu < $smallermtu)
@@ -519,6 +509,10 @@ function interface_bridge_configure(&$bridge, $checkmember = 0) {
 		$bridgeif = pfSense_interface_create("bridge");
 		$bridge['bridgeif'] = $bridgeif;
 	}
+
+	$bridgemtu = interface_find_child_cfgmtu($bridge['bridgeif']);
+	if ($bridgemtu > $smallermtu)
+		$smallermtu = $bridgemtu;
 
 	$checklist = get_configured_interface_list();
 

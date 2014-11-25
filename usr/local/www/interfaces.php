@@ -734,7 +734,7 @@ if ($_POST['apply']) {
 			// Need code to handle MLPPP if we ever use $realhwif for MLPPP handling
 			$parent_realhwif = $realhwif_array[0];
 			$parent_if = convert_real_interface_to_friendly_interface_name($parent_realhwif);
-			if (!empty($parent_if) && !empty($config['interfaces'][$parent_if]['mtu'])) {
+			if (!empty($parent_if) && $parent_if != $if && !empty($config['interfaces'][$parent_if]['mtu'])) {
 				if ($_POST['mtu'] > intval($config['interfaces'][$parent_if]['mtu']))
 					$input_errors[] = gettext("The MTU of a VLAN cannot be greater than that of its parent interface.");
 			}

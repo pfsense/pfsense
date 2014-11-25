@@ -321,7 +321,14 @@ include("head.inc");
 		?>
 		</td>
 	</tr>
-	<?php endif; endif; if ($ifinfo['media']): ?>
+	<?php endif; endif; if ($ifinfo['mtu']): ?>
+	<tr>
+		<td width="22%" class="vncellt"><?=gettext("MTU");?></td>
+		<td width="78%" class="listr">
+			<?=htmlspecialchars($ifinfo['mtu']);?>
+		</td>
+	</tr>
+	<?php endif; if ($ifinfo['media']): ?>
 	<tr>
 		<td width="22%" class="vncellt"><?=gettext("Media");?></td>
 		<td width="78%" class="listr">

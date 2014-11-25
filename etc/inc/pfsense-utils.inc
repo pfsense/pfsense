@@ -1233,6 +1233,7 @@ function get_interface_info($ifdescr) {
 	if (empty($ifinfo['status']))
 		$ifinfo['status'] = "down";
 	$ifinfo['macaddr'] = $ifinfotmp['macaddr'];
+	$ifinfo['mtu'] = $ifinfotmp['mtu'];
 	$ifinfo['ipaddr'] = $ifinfotmp['ipaddr'];
 	$ifinfo['subnet'] = $ifinfotmp['subnet'];
 	$ifinfo['linklocal'] = get_interface_linklocal($ifdescr);

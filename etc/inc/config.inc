@@ -43,6 +43,8 @@
 */
 
 if (php_sapi_name() == 'fpm-fcgi') {
+	if (!function_exists('log_error'))
+		require_once("/etc/inc/util.inc");
 	log_error("config.inc is called from GUI interface which is wrong, please report this!");
 	return;
 }

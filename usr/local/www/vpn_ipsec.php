@@ -346,7 +346,10 @@ include("head.inc");
 						</td>
 						<td class="listr" onclick="fr_toggle(<?=$i;?>)" id="frd<?=$i;?>">
 							<?=$spans;?>
-							<?=$ph1ent['mode'];?>
+							<?php
+							if (empty($ph1ent['iketype']) || $ph1ent['iketype'] == "ikev1")
+								echo "{$ph1ent['mode']}";
+							?>
 							<?=$spane;?>
 						</td>
 						<td class="listr" onclick="fr_toggle(<?=$i;?>)" id="frd<?=$i;?>">

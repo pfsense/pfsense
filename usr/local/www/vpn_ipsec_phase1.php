@@ -585,7 +585,7 @@ function dpdchkbox_change() {
 									<?=htmlspecialchars($name);?>
 								</option>
 							<?php endforeach; ?>
-							</select> <br /> <span class="vexpl"><?=gettext("Select the KeyExchange Protocol version to be used. Usually known as IKEv1 or IKEv2."); ?>.</span>
+							</select> <br /> <span class="vexpl"><?=gettext("Select the Internet Key Exchange protocol version to be used, IKEv1 or IKEv2"); ?>.</span>
 						</td>
 					</tr>
 					<tr>

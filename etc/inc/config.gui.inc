@@ -77,6 +77,12 @@ if(file_exists("/debugging")) {
 
 $config = parse_config();
 
+/* set timezone */
+$timezone = $config['system']['timezone'];
+if (!$timezone)
+        $timezone = "Etc/UTC";
+date_default_timezone_set("$timezone");
+
 if($config_parsed == true) {
 	/* process packager manager custom rules */
 	if(is_dir("/usr/local/pkg/parse_config")) {

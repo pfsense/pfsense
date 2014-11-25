@@ -4555,7 +4555,7 @@ function link_interface_to_vlans($int, $action = "") {
 			if ($int == $vlan['if']) {
 				if ($action == "update") {
 					interfaces_bring_up($int);
-				} else if ($action == "")
+				} else
 					$ifaces[$vlan['tag']] = $vlan;
 			}
 		}

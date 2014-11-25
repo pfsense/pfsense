@@ -2940,7 +2940,7 @@ function interface_configure($interface = "wan", $reloadall = false, $linkupeven
 	/* Apply hw offloading policies as configured */
 	enable_hardware_offloading($interface);
 
-	/* invaldate interface/ip/sn cache */
+	/* invalidate interface/ip/sn cache */
 	get_interface_arr(true);
 	unset($interface_ip_arr_cache[$realif]);
 	unset($interface_sn_arr_cache[$realif]);

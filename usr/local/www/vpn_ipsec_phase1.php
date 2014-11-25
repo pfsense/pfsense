@@ -329,6 +329,10 @@ if ($_POST) {
 	if (!$input_errors) {
 		$ph1ent['ikeid'] = $pconfig['ikeid'];
 		$ph1ent['iketype'] = $pconfig['iketype'];
+		if ($pconfig['iketype'] != 'ikev1')
+			unset($ph1ent['mode']);
+		else
+			$ph1ent['mode'] = $pconfig['mode'];
 		$ph1ent['disabled'] = $pconfig['disabled'] ? true : false;
 		$ph1ent['interface'] = $pconfig['interface'];
 		/* if the remote gateway changed and the interface is not WAN then remove route */
@@ -344,7 +348,6 @@ if ($_POST) {
 		else
 			$ph1ent['remote-gateway'] = $pconfig['remotegw'];
 
-		$ph1ent['mode'] = $pconfig['mode'];
 		$ph1ent['protocol'] = $pconfig['protocol'];
 
 		$ph1ent['myid_type'] = $pconfig['myid_type'];

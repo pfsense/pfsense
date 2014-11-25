@@ -60,7 +60,6 @@ function gmirror_get_status() {
 function gmirror_get_status_single($mirror) {
 	$status = "";
 	$mirror_status = gmirror_get_status();
-	var_dump($mirror_status);
 	return $mirror_status[$mirror]['status'];
 }
 

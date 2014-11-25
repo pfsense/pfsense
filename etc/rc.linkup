@@ -44,6 +44,11 @@ function handle_argument_group($iface, $argument2) {
 		return;
 	}
 
+	if (!isset($config['interfaces'][$interface]['enable'])) {
+		log_error("Linkup detected on disabled interface...Ignoring");
+		return;
+	}
+
 	$ipaddr = $config['interfaces'][$iface]['ipaddr'];
 	$ip6addr = $config['interfaces'][$iface]['ipaddrv6'];
 	$staticv4 = false;

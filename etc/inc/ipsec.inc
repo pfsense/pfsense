@@ -369,14 +369,6 @@ function ipsec_phase2_status(&$ipsec_status, &$phase2) {
 }
 
 /*
- * Return ISAKMP SA details
- */
-function ipsec_lookup_isakmp_sa($in_srcip,$in_dstip) {
-	/* TODO : use racconctl to lookup iskamp SA */
-	return NULL;
-}
-
-/*
  * Return IPsec SA details
  */
 function ipsec_lookup_ipsec_sa(& $spd,& $sad,$dir,$in_srcip,$in_dstip,$in_srcid,$in_dstid) {

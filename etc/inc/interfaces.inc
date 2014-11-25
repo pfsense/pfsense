@@ -700,19 +700,7 @@ function interface_lagg_configure($lagg) {
 		$laggif = pfSense_interface_create("lagg");
 
 	/* Check if MTU was defined for this lagg interface */
-	$lagg_mtu = 0;
-	if (is_array($config['interfaces'])) {
-		foreach ($config['interfaces'] as $ifname => $ifdata) {
-			if ($ifdata['if'] != $laggif)
-				continue;
-
-			if (isset($ifdata['mtu']) && !empty($ifdata['mtu']))
-				$lagg_mtu = $ifdata['mtu'];
-
-			break;
-		}
-	}
-
+	$lagg_mtu = interface_find_child_cfgmtu($laggif);
 	if ($lagg_mtu == 0) {
 		/* Calculate smaller mtu and enforce it */
 		$smallermtu = 0;
@@ -4072,8 +4060,6 @@ function convert_real_interface_to_friendly_interface_name($interface = "wan") {
 
 	if ($interface == "enc0")
 		return 'IPsec';
-
-	return NULL;
 }
 
 /* attempt to resolve interface to friendly descr */
@@ -4541,6 +4527,58 @@ function link_interface_to_track6($int, $action = "") {
 		}
 		return $list;
 	}
+}
+
+function interface_find_child_cfgmtu($realiface) {
+	global $config;
+
+	$interface = convert_real_interface_to_friendly_interface_name($realiface);
+	$vlans = link_interface_to_vlans($realiface);
+	$bridge = link_interface_to_bridge($realiface);
+	if (!empty($interface)) {
+		$gifs = link_interface_to_gif($interface);
+		$gres = link_interface_to_gre($interface);
+	} else {
+		$gifs = array();
+		$gres = array();
+	}
+
+	$mtu = 0;
+	foreach ($vlans as $vlan) {
+		$ifass = convert_real_interface_to_friendly_interface_name($vlan['vlanif']);
+		if (empty($ifass))
+			continue;
+		if (!empty($config['interfaces'][$ifass]['mtu'])) {
+			if (intval($config['interfaces'][$ifass]['mtu']) > $mtu)
+				$mtu = intval($config['interfaces'][$ifass]['mtu']);
+		}
+	}
+	foreach ($gifs as $vlan) {
+		$ifass = convert_real_interface_to_friendly_interface_name($vlan['gifif']);
+		if (empty($ifass))
+			continue;
+		if (!empty($config['interfaces'][$ifass]['mtu'])) {
+			if (intval($config['interfaces'][$ifass]['mtu']) > $mtu)
+				$mtu = intval($config['interfaces'][$ifass]['mtu']);
+		}
+	}
+	foreach ($gres as $vlan) {
+		$ifass = convert_real_interface_to_friendly_interface_name($vlan['greif']);
+		if (empty($ifass))
+			continue;
+		if (!empty($config['interfaces'][$ifass]['mtu'])) {
+			if (intval($config['interfaces'][$ifass]['mtu']) > $mtu)
+				$mtu = intval($config['interfaces'][$ifass]['mtu']);
+		}
+	}
+	$ifass = convert_real_interface_to_friendly_interface_name($bridge);
+	if (!empty($ifass) && !empty($config['interfaces'][$ifass]['mtu'])) {
+		if (intval($config['interfaces'][$ifass]['mtu']) > $mtu)
+			$mtu = intval($config['interfaces'][$ifass]['mtu']);
+	}
+	unset($vlans, $bridge, $gifs, $gres, $ifass, $vlan);
+
+	return $mtu;
 }
 
 function link_interface_to_vlans($int, $action = "") {

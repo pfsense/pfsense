@@ -837,7 +837,7 @@ EOD;
 					if (!empty($peerid_spec))
 						$ipsecconf .= "\trightid = {$peerid_spec}\n";
 					if ($keyexchange == 'ikev1')
-						aggressive = {$aggressive}
+						$ipsecconf .= "\taggressive = {$aggressive}\n";
 			}
 		}
 	}

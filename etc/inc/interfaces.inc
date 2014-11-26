@@ -2760,12 +2760,15 @@ function find_dhcp6c_process($interface) {
 	return intval($pid);
 }
 
-function interface_vlan_mtu_configured($realhwif, $mtu) {
+function interface_vlan_mtu_configured($realhwif, $mtu, $vlanskip = '') {
 	global $config;
 
 	if (is_array($config['vlans']) && is_array($config['vlans']['vlan'])) {
 		foreach ($config['vlans']['vlan'] as $vlan) {
 			if ($vlan['if'] != $realhwif)
+				continue;
+			/* Skip the vlans needed to be skiped. */
+			if (!empty($vlanskip) && $vlanskip == $vlan['vlanif'])
 				continue;
 			$assignedport = convert_real_interface_to_friendly_interface_name($vlan['vlanif']);
 			if (!empty($assignedport) && !empty($config['interfaces'][$assignedport]['mtu'])) {
@@ -3000,7 +3003,7 @@ function interface_configure($interface = "wan", $reloadall = false, $linkupeven
 				$parentmtu = $config['interfaces'][$assignedparent]['mtu'];
 			else {
 				$parentmtu = get_interface_mtu($realhwif);
-				$parentmtu = interface_vlan_mtu_configured($realhwif, $parentmtu);
+				$parentmtu = interface_vlan_mtu_configured($realhwif, $parentmtu, $realif);
 			}
 
 			if ($wancfg['mtu'] > $parentmtu) {

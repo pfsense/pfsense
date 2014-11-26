@@ -51,8 +51,8 @@ ob_start(null, "1000");
 
 
 ## Load Essential Includes
-require_once('functions.inc');
 require_once('guiconfig.inc');
+require_once('functions.inc');
 require_once('notices.inc');
 require_once("pkg-utils.inc");
 

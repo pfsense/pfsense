@@ -3001,7 +3001,7 @@ function interface_configure($interface = "wan", $reloadall = false, $linkupeven
 				if ($wancfg['mtu'] > $parentmtu)
 					log_error("There is a conflict on MTU between parent {$realhwif} and VLAN({$realif})");
 			} else
-				$parentmtu = get_interface_mtu($realhwif);
+				$parentmtu = 0;
 
 			$parentmtu = interface_vlan_mtu_configured($realhwif, $parentmtu);
 

@@ -1454,7 +1454,7 @@ function interface_ppps_configure($interface) {
 		$descr = isset($ifcfg['descr']) ? $ifcfg['descr'] : strtoupper($interface);
 		echo "starting {$pppif} link...";
 		// Do not re-configure the interface if we are booting and it's already been started
-		if(file_exists("{$g['varrun_path']}/{$ppp['type']}_{$interface}.pid"))
+		if(isvalidpid("{$g['varrun_path']}/{$ppp['type']}_{$interface}.pid"))
 			return 0;
 	}
 
@@ -1825,6 +1825,7 @@ EOD;
 	/* wait for upto 10 seconds for the interface to appear (ppp(oe)) */
 	$i = 0;
 	while($i < 10) {
+		unset($out);
 		exec("/sbin/ifconfig " . escapeshellarg($ppp['if']) . " 2>&1", $out, $ret);
 		if($ret == 0)
 			break;

@@ -2760,24 +2760,6 @@ function find_dhcp6c_process($interface) {
 	return intval($pid);
 }
 
-function interface_vlan_mtu_configured($realhwif, $mtu) {
-	global $config;
-
-	if (is_array($config['vlans']) && is_array($config['vlans']['vlan'])) {
-		foreach ($config['vlans']['vlan'] as $vlan) {
-			if ($vlan['if'] != $realhwif)
-				continue;
-			$assignedport = convert_real_interface_to_friendly_interface_name($vlan['vlanif']);
-			if (!empty($assignedport) && !empty($config['interfaces'][$assignedport]['mtu'])) {
-				if (intval($config['interfaces'][$assignedport]['mtu']) > $mtu)
-					$mtu = $config['interfaces'][$assignedport]['mtu'];
-			}
-		}
-	}
-
-	return $mtu;
-}
-
 function interface_virtual_create($interface) {
 	global $config;
 
@@ -2816,6 +2798,24 @@ function interface_virtual_create($interface) {
 	} else if (substr($interface, 0, 6) == "bridge") {
 		interfaces_bridge_configure(0, $interface);
 	}
+}
+
+function interface_vlan_mtu_configured($realhwif, $mtu) {
+	global $config;
+
+	if (is_array($config['vlans']) && is_array($config['vlans']['vlan'])) {
+		foreach ($config['vlans']['vlan'] as $vlan) {
+			if ($vlan['if'] != $realhwif)
+				continue;
+			$assignedport = convert_real_interface_to_friendly_interface_name($vlan['vlanif']);
+			if (!empty($assignedport) && !empty($config['interfaces'][$assignedport]['mtu'])) {
+				if (intval($config['interfaces'][$assignedport]['mtu']) > $mtu)
+					$mtu = $config['interfaces'][$assignedport]['mtu'];
+			}
+		}
+	}
+
+	return $mtu;
 }
 
 function interface_vlan_adapt_mtu($vlanifs, $mtu) {

@@ -126,8 +126,8 @@
 	$sshconf .= "VersionAddendum \n";
 	
 	/* Apply package SSHDCond settings if config file exists */
-	if (file_exists("{$sshConfigDir}d_extra")) {
-		$fdExtra = fopen("{$sshConfigDir}d_extra", 'r');
+	if (file_exists("/etc/sshd_extra")) {
+		$fdExtra = fopen("/etc/sshd_extra", 'r');
 		$szExtra = fread($fdExtra, 1048576); // Read up to 1MB from extra file
 		$sshconf .= $szExtra;
 		fclose($fdExtra);

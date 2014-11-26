@@ -592,9 +592,8 @@ function unbound_acls_config() {
 	foreach($active_interfaces as $ubif => $ifdesc) {
 		$ifip = get_interface_ip($ubif);
 		if (is_ipaddrv4($ifip)) {
-			$subnet_bits = get_interface_subnet($ubif);
-			$subnet_ip = gen_subnet($ifip, $subnet_bits);
-			$aclcfg .= "access-control: {$subnet_ip}/{$subnet_bits} allow\n";
+			// IPv4 is handled via NAT networks below
+			continue;
 		}
 		$ifip = get_interface_ipv6($ubif);
 		if (is_ipaddrv6($ifip)) {

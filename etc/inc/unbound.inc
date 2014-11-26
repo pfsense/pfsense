@@ -120,6 +120,7 @@ function unbound_generate_config() {
 # For DNS Rebinding prevention
 private-address: 10.0.0.0/8
 private-address: 172.16.0.0/12
+private-address: 169.254.0.0/16
 private-address: 192.168.0.0/16
 private-address: fd00::/8
 private-address: fe80::/10

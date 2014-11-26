@@ -2770,7 +2770,7 @@ function interface_vlan_mtu_configured($realhwif, $mtu) {
 			$assignedport = convert_real_interface_to_friendly_interface_name($vlan['vlanif']);
 			if (!empty($assignedport) && !empty($config['interfaces'][$assignedport]['mtu'])) {
 				if (intval($config['interfaces'][$assignedport]['mtu']) > $mtu)
-					$mtu = $portmtu;
+					$mtu = $config['interfaces'][$assignedport]['mtu'];
 			}
 		}
 	}

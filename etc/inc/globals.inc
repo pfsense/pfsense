@@ -167,6 +167,8 @@ if (file_exists("/etc/inc/globals_override.inc"))
 
 if (file_exists("{$g['varrun_path']}/booting"))
         $g['booting'] = true;
+else
+	unset($g['booting']);
 
 $config_parsed = false;
 

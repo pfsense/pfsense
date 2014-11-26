@@ -5115,7 +5115,7 @@ function get_wireless_channel_info($interface) {
  *   $tmp       - Returns the mtu of an interface
  ******/
 function get_interface_mtu($interface) {
-	$mtu = pfSense_get_interface_addresses($interface);
+	$mtu = pfSense_interface_getmtu($interface);
 	return $mtu['mtu'];
 }
 

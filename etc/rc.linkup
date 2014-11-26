@@ -45,7 +45,8 @@ function handle_argument_group($iface, $argument2) {
 	}
 
 	if (!isset($config['interfaces'][$iface]['enable'])) {
-		log_error("Linkup detected on disabled interface...Ignoring");
+		if (!platform_booting())
+			log_error("Linkup detected on disabled interface...Ignoring");
 		return;
 	}
 

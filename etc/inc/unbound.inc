@@ -34,6 +34,8 @@
 /* include all configuration functions */
 require_once("config.inc");
 require_once("functions.inc");
+require_once("filter.inc");
+require_once("shaper.inc");
 
 /* Optimize Unbound for environment */
 function unbound_optimization() {
@@ -600,6 +602,15 @@ function unbound_acls_config() {
 			$subnet_ip = gen_subnetv6($ifip, $subnet_bits);
 			$aclcfg .= "access-control: {$subnet_ip}/{$subnet_bits} allow\n";
 		}
+	}
+	
+	if (empty($FilterIflist)) {
+		filter_generate_optcfg_array();
+	}
+	$natnetworks_array = array();
+	$natnetworks_array = filter_nat_rules_automatic_tonathosts();
+	foreach ($natnetworks_array as $allowednet) {
+		$aclcfg .= "access-control: $allowednet allow \n";	
 	}
 
 	// Configure the custom ACLs

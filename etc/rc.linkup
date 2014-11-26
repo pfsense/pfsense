@@ -44,7 +44,7 @@ function handle_argument_group($iface, $argument2) {
 		return;
 	}
 
-	if (!isset($config['interfaces'][$interface]['enable'])) {
+	if (!isset($config['interfaces'][$iface]['enable'])) {
 		log_error("Linkup detected on disabled interface...Ignoring");
 		return;
 	}

@@ -115,6 +115,8 @@ if ($_POST) {
 
 		if (empty($_POST['active_interface'])) {
 			$input_errors[] = "One or more Network Interfaces must be selected for binding.";
+		} else if (!isset($config['system']['dnslocalhost']) && !in_array("lo0", $_POST['active_interface'])) {
+			$input_errors[] = "This system is configured to use the DNS Resolver as its DNS server, so Localhost must be selected in Network Interfaces.";
 		}
 
 		if (empty($_POST['outgoing_interface'])) {

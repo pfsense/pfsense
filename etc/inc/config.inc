@@ -94,121 +94,117 @@ if(file_exists("/debugging")) {
 	$g['debug'] = true;
 }
 
-if(platform_booting()) echo ".";
-if(platform_booting() && file_exists("/cf/conf/config.xml")) {
-	$config_contents = file_get_contents("/cf/conf/config.xml");
-	if(stristr($config_contents, "<m0n0wall>") == true) {
-		if(platform_booting()) echo ".";
-		/* user has just upgraded to m0n0wall, replace root xml tags */
-		log_error(gettext("Upgrading m0n0wall configuration to pfSense... "));
-		$config_contents = str_replace("m0n0wall","pfsense", $config_contents);
-		if (!config_validate("{$g['conf_path']}/config.xml"))
-			log_error(gettext("ERROR!  Could not convert m0n0wall -> pfsense in config.xml"));
-		conf_mount_rw();
-		$fd = fopen("/cf/conf/config.xml", "w");
-		fwrite($fd, $config_contents);
-		fclose($fd);
-		conf_mount_ro();
-	}
-}
-
-/* if our config file exists bail out, we're already set. */
-else if (platform_booting() and !file_exists($g['cf_conf_path'] . "/config.xml")  ) {
-	if(platform_booting()) echo ".";
-	/* find the device where config.xml resides and write out an fstab */
-	unset($cfgdevice);
-	if(platform_booting()) echo ".";
-	/* check if there's already an fstab (NFS booting?) */
-	if (!file_exists("{$g['etc_path']}/fstab")) {
-		if(platform_booting()) echo ".";
-		if (strstr($g['platform'], "cdrom")) {
-			/* config is on floppy disk for CD-ROM version */
-			$cfgdevice = $cfgpartition = "fd0";
-			$_gb = exec('/sbin/dmesg -a', $dmesg);
-			if(preg_match("/da0/", $dmesg) == true) {
-				$cfgdevice = $cfgpartition = "da0" ;
-				if (mwexec("/sbin/mount -r /dev/{$cfgdevice} /cf")) {
-					/* could not mount, fallback to floppy */
-					$cfgdevice = $cfgpartition = "fd0";
-				}
-			}
-			$cfgfstype = "msdosfs";
-			echo gettext("CDROM build") . "\n";
-			echo "   " . gettext("CFG:") . " {$cfgpartition}\n";
-			echo "   " . gettext("CFG:") . " {$cfgpartition}\n";
-			echo "  " . gettext("TYPE:") . " {$cfgfstype}\n";
-		} else {
-			if(platform_booting()) echo ".";
-			/* probe kernel known disks until we find one with config.xml */
-			$disks = explode(" ", get_single_sysctl("kern.disks"));
-			foreach ($disks as $mountdisk) {
-				/* skip mfs mounted filesystems */
-				if (strstr($mountdisk, "md"))
-					continue;
-				if (mwexec("/sbin/mount -r /dev/{$mountdisk}a {$g['cf_path']}") == 0) {
-					if (file_exists("{$g['cf_conf_path']}/config.xml")) {
-						/* found it */
-						$cfgdevice = $mountdisk;
-						$cfgpartition = $cfgdevice . "a";
-						$cfgfstype = "ufs";
-						printf(gettext("Found configuration on %s.%s"), $cfgdevice, "\n");
-					}
-
-					mwexec("/sbin/umount -f {$g['cf_path']}");
-
-					if ($cfgdevice)
-						break;
-				}
-				if (mwexec("/sbin/mount -r /dev/{$mountdisk}d {$g['cf_path']}") == 0) {
-					if(platform_booting()) echo ".";
-					if (file_exists("{$g['cf_conf_path']}/config.xml")) {
-						/* found it */
-						$cfgdevice = $mountdisk;
-						$cfgpartition = $cfgdevice . "d";
-						$cfgfstype = "ufs";
-						printf(gettext("Found configuration on %s.%s"), $cfgdevice, "\n");
-					}
-
-					mwexec("/sbin/umount -f {$g['cf_path']}");
-
-					if ($cfgdevice)
-						break;
-				}
-			}
+if(platform_booting()) {
+	echo ".";
+	if(file_exists("/cf/conf/config.xml")) {
+		$config_contents = file_get_contents("/cf/conf/config.xml");
+		if(stristr($config_contents, "<m0n0wall>") == true) {
+			echo ".";
+			/* user has just upgraded to m0n0wall, replace root xml tags */
+			log_error(gettext("Upgrading m0n0wall configuration to pfSense... "));
+			$config_contents = str_replace("m0n0wall","pfsense", $config_contents);
+			if (!config_validate("{$g['conf_path']}/config.xml"))
+				log_error(gettext("ERROR!  Could not convert m0n0wall -> pfsense in config.xml"));
+			conf_mount_rw();
+			file_put_contents("/cf/conf/config.xml", $config_contents);
+			conf_mount_ro();
 		}
-		if(platform_booting()) echo ".";
-		if (!$cfgdevice) {
-			$last_backup = discover_last_backup();
-			if($last_backup) {
-				log_error(gettext("No config.xml found, attempting last known config restore."));
-				file_notice("config.xml", gettext("No config.xml found, attempting last known config restore."), "pfSenseConfigurator", "");
-				restore_backup("/cf/conf/backup/{$last_backup}");
+		unset($config_contents);
+	}
+	/* if our config file exists bail out, we're already set. */
+	else if (!file_exists($g['cf_conf_path'] . "/config.xml")  ) {
+		echo ".";
+		/* find the device where config.xml resides and write out an fstab */
+		unset($cfgdevice);
+		echo ".";
+		/* check if there's already an fstab (NFS booting?) */
+		if (!file_exists("{$g['etc_path']}/fstab")) {
+			echo ".";
+			if (strstr($g['platform'], "cdrom")) {
+				/* config is on floppy disk for CD-ROM version */
+				$cfgdevice = $cfgpartition = "fd0";
+				$_gb = exec('/sbin/dmesg -a', $dmesg);
+				if(preg_match("/da0/", $dmesg) == true) {
+					$cfgdevice = $cfgpartition = "da0" ;
+					if (mwexec("/sbin/mount -r /dev/{$cfgdevice} /cf")) {
+						/* could not mount, fallback to floppy */
+						$cfgdevice = $cfgpartition = "fd0";
+					}
+				}
+				unset($dmesg);
+				$cfgfstype = "msdosfs";
+				echo gettext("CDROM build") . "\n";
+				echo "   " . gettext("CFG:") . " {$cfgpartition}\n";
+				echo "   " . gettext("CFG:") . " {$cfgpartition}\n";
+				echo "  " . gettext("TYPE:") . " {$cfgfstype}\n";
 			} else {
-				log_error(gettext("No config.xml or config backups found, resetting to factory defaults."));
-				restore_backup('/conf.default/config.xml');
+				echo ".";
+				/* probe kernel known disks until we find one with config.xml */
+				$disks = explode(" ", get_single_sysctl("kern.disks"));
+				foreach ($disks as $mountdisk) {
+					/* skip mfs mounted filesystems */
+					if (strstr($mountdisk, "md"))
+						continue;
+					if (mwexec("/sbin/mount -r /dev/{$mountdisk}a {$g['cf_path']}") == 0) {
+						if (file_exists("{$g['cf_conf_path']}/config.xml")) {
+							/* found it */
+							$cfgdevice = $mountdisk;
+							$cfgpartition = $cfgdevice . "a";
+							$cfgfstype = "ufs";
+							printf(gettext("Found configuration on %s.%s"), $cfgdevice, "\n");
+						}
+
+						mwexec("/sbin/umount -f {$g['cf_path']}");
+
+						if ($cfgdevice)
+							break;
+					}
+					if (mwexec("/sbin/mount -r /dev/{$mountdisk}d {$g['cf_path']}") == 0) {
+						if(platform_booting()) echo ".";
+						if (file_exists("{$g['cf_conf_path']}/config.xml")) {
+							/* found it */
+							$cfgdevice = $mountdisk;
+							$cfgpartition = $cfgdevice . "d";
+							$cfgfstype = "ufs";
+							printf(gettext("Found configuration on %s.%s"), $cfgdevice, "\n");
+						}
+
+						mwexec("/sbin/umount -f {$g['cf_path']}");
+
+						if ($cfgdevice)
+							break;
+					}
+				}
 			}
+			echo ".";
+			if (!$cfgdevice) {
+				$last_backup = discover_last_backup();
+				if($last_backup) {
+					log_error(gettext("No config.xml found, attempting last known config restore."));
+					file_notice("config.xml", gettext("No config.xml found, attempting last known config restore."), "pfSenseConfigurator", "");
+					restore_backup("/cf/conf/backup/{$last_backup}");
+				} else {
+					log_error(gettext("No config.xml or config backups found, resetting to factory defaults."));
+					restore_backup('/conf.default/config.xml');
+				}
+			}
+
+			/* write device name to a file for rc.firmware */
+			file_put_contents("{$g['varetc_path']}/cfdevice", $cfgdevice . "\n");
+
+			/* write out an fstab */
+
+			$fstab = "/dev/{$cfgpartition} {$g['cf_path']} {$cfgfstype} ro,noatime 1 1\n";
+			$fstab .= "proc /proc procfs rw 0 0\n";
+			file_put_contents("{$g['etc_path']}/fstab", $fstab);
 		}
-
-		/* write device name to a file for rc.firmware */
-		$fd = fopen("{$g['varetc_path']}/cfdevice", "w");
-		fwrite($fd, $cfgdevice . "\n");
-		fclose($fd);
-
-		/* write out an fstab */
-		$fd = fopen("{$g['etc_path']}/fstab", "w");
-
-		$fstab = "/dev/{$cfgpartition} {$g['cf_path']} {$cfgfstype} ro,noatime 1 1\n";
-		$fstab .= "proc /proc procfs rw 0 0\n";
-
-		fwrite($fd, $fstab);
-		fclose($fd);
+		echo ".";
+		/* mount all filesystems */
+		mwexec("/sbin/mount -a");
 	}
-	if(platform_booting()) echo ".";
-	/* mount all filesystems */
-	mwexec("/sbin/mount -a");
+	echo ".";
 }
 
-if(platform_booting()) echo ".";
 $config = parse_config();
 
 /* set timezone */

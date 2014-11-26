@@ -2678,7 +2678,7 @@ EOD;
 
 		/* bring the clones back up that were previously up */
 		foreach ($clones_up as $clone_if) {
-			mwexec("{$ifconfig} " . escapeshellarg($clone_if) . " up");
+			interfaces_bring_up($clone_if);
 
 			/*
 			 * Rerun the setup script for the interface if it isn't this interface, the interface
@@ -4009,7 +4009,7 @@ function get_current_wan_address($interface = "wan") {
 /*
  * convert_real_interface_to_friendly_interface_name($interface): convert fxp0 -> wan, etc.
  */
-function convert_real_interface_to_friendly_interface_name($interface = "wan") {
+function convert_real_interface_to_friendly_interface_name($interface = "wan", $checkparent = false) {
 	global $config;
 
 	if (stripos($interface, "_vip")) {
@@ -4031,6 +4031,9 @@ function convert_real_interface_to_friendly_interface_name($interface = "wan") {
 
 		if (get_real_interface($if) == $interface)
 			return $if;
+
+		if ($checkparent == false)
+			continue;
 
 		$int = get_parent_interface($if, true);
 		if (is_array($int)) {

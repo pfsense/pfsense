@@ -184,7 +184,7 @@ function system_resolvconf_generate($dynupdate = false) {
 	fwrite($fd, $resolvconf);
 	fclose($fd);
 
-	if (!$g['booting']) {
+	if (!platform_booting()) {
 		/* restart dhcpd (nameservers may have changed) */
 		if (!$dynupdate)
 			services_dhcpd_configure();
@@ -714,7 +714,7 @@ function system_syslogd_start() {
 
 	$syslogcfg = $config['syslog'];
 
-	if ($g['booting'])
+	if (platform_booting())
 		echo gettext("Starting syslog...");
 
 	if (is_process_running("fifolog_writer"))
@@ -894,7 +894,7 @@ EOD;
 	else
 		$retval = mwexec_bg("/usr/sbin/syslogd -s -c -c -l {$g['dhcpd_chroot_path']}/var/run/log -P {$g['varrun_path']}/syslog.pid {$syslogd_extra}");
 
-	if ($g['booting'])
+	if (platform_booting())
 		echo gettext("done.") . "\n";
 
 	return $retval;
@@ -941,7 +941,7 @@ function system_webgui_create_certificate() {
 function system_webgui_start() {
 	global $config, $g;
 
-	if ($g['booting'])
+	if (platform_booting())
 		echo gettext("Starting webConfigurator...");
 
 	chdir($g['www_path']);
@@ -984,7 +984,7 @@ function system_webgui_start() {
 	/* attempt to start lighthttpd */
 	$res = mwexec("/usr/local/sbin/lighttpd -f {$g['varetc_path']}/lighty-webConfigurator.conf");
 
-	if ($g['booting']) {
+	if (platform_booting()) {
 		if ($res == 0)
 			echo gettext("done.") . "\n";
 		else
@@ -1379,7 +1379,7 @@ function system_timezone_configure() {
 
 	$syscfg = $config['system'];
 
-	if ($g['booting'])
+	if (platform_booting())
 		echo gettext("Setting timezone...");
 
 	/* extract appropriate timezone file */
@@ -1405,7 +1405,7 @@ function system_timezone_configure() {
 	mwexec("sync");
 	conf_mount_ro();
 
-	if ($g['booting'])
+	if (platform_booting())
 		echo gettext("done.") . "\n";
 }
 
@@ -1760,7 +1760,7 @@ function system_ntp_configure($start_ntpd=true) {
 function sync_system_time() {
 	global $config, $g;
 
-	if ($g['booting'])
+	if (platform_booting())
 		echo gettext("Syncing system time before startup...");
 
 	/* foreach through servers and write out to ntpd.conf */
@@ -1768,7 +1768,7 @@ function sync_system_time() {
 		mwexec("/usr/local/sbin/ntpdate -s $ts");
 	}
 	
-	if ($g['booting'])
+	if (platform_booting())
 		echo gettext("done.") . "\n";
 	
 }
@@ -1896,7 +1896,7 @@ function system_set_harddisk_standby() {
 	}
 
 	if (isset($config['system']['harddiskstandby'])) {
-		if ($g['booting']) {
+		if (platform_booting()) {
 			echo gettext('Setting hard disk standby... ');
 		}
 
@@ -1908,13 +1908,13 @@ function system_set_harddisk_standby() {
 			if (set_single_sysctl('hw.ata.standby', (int)$standby)) {
 				// Reinitialize ATA-drives
 				mwexec('/usr/local/sbin/atareinit');
-				if ($g['booting']) {
+				if (platform_booting()) {
 					echo gettext("done.") . "\n";
 				}
-			} else if ($g['booting']) {
+			} else if (platform_booting()) {
 				echo gettext("failed!") . "\n";
 			}
-		} else if ($g['booting']) {
+		} else if (platform_booting()) {
 			echo gettext("failed!") . "\n";
 		}
 	}

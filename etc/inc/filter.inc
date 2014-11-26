@@ -116,7 +116,7 @@ function filter_configure() {
 	 * NOTE: Check here for bootup status since this should not be triggered during bootup.
 	 *	 The reason is that rc.bootup calls filter_configure_sync directly which does this too.
 	 */
-	if (!$g['booting'])
+	if (!platform_booting())
 		send_event("filter reload");
 }
 
@@ -170,16 +170,16 @@ function filter_configure_sync($delete_states_if_needed = true) {
 	}
 	/* Get interface list to work with. */
 	filter_generate_optcfg_array();
-	if($g['booting'] == true)
+	if(platform_booting() == true)
 		echo gettext("Configuring firewall");
 
 	/* generate aliases */
-	if($g['booting'] == true)
+	if(platform_booting() == true)
 		echo ".";
 	update_filter_reload_status(gettext("Creating aliases"));
 	$aliases = filter_generate_aliases();
 	$gateways = filter_generate_gateways();
-	if($g['booting'] == true)
+	if(platform_booting() == true)
 		echo ".";
 	update_filter_reload_status(gettext("Generating Limiter rules"));
 	$dummynet_rules = filter_generate_dummynet_rules();
@@ -187,19 +187,19 @@ function filter_configure_sync($delete_states_if_needed = true) {
 	update_filter_reload_status(gettext("Generating NAT rules"));
 	/* generate nat rules */
 	$natrules = filter_nat_rules_generate();
-	if($g['booting'] == true)
+	if(platform_booting() == true)
 		echo ".";
 	update_filter_reload_status(gettext("Generating filter rules"));
 	/* generate pfctl rules */
 	$pfrules = filter_rules_generate();
 	/* generate altq, limiter */
-	if($g['booting'] == true)
+	if(platform_booting() == true)
 		echo ".";
 	update_filter_reload_status(gettext("Generating ALTQ queues"));
 	$altq_queues = filter_generate_altq_queues();
 	update_filter_reload_status(gettext("Generating Layer7 rules"));
 	generate_layer7_files();
-	if($g['booting'] == true)
+	if(platform_booting() == true)
 		echo ".";
 	update_filter_reload_status(gettext("Loading filter rules"));
 	/* enable pf if we need to, otherwise disable */
@@ -209,7 +209,7 @@ function filter_configure_sync($delete_states_if_needed = true) {
 		mwexec("/sbin/pfctl -d", true);
 		unlink_if_exists("{$g['tmp_path']}/filter_loading");
 		update_filter_reload_status(gettext("Filter is disabled.  Not loading rules."));
-		if($g['booting'] == true)
+		if(platform_booting() == true)
 			echo gettext("done.") . "\n";
 		unlock($filterlck);
 		return;
@@ -379,7 +379,7 @@ function filter_configure_sync($delete_states_if_needed = true) {
 	else
 		filter_tdr_install_cron(false);
 
-	if($g['booting'] == true)
+	if(platform_booting() == true)
 		echo ".";
 
 	if($delete_states_if_needed) {
@@ -397,7 +397,7 @@ function filter_configure_sync($delete_states_if_needed = true) {
 	}
 
 	update_filter_reload_status(gettext("Done"));
-	if($g['booting'] == true)
+	if(platform_booting() == true)
 		echo gettext("done.") . "\n";
 
 	unlock($filterlck);
@@ -3349,7 +3349,7 @@ function tdr_install_cron($should_install) {
 function filter_tdr_install_cron($should_install) {
 	global $config, $g;
 
-	if($g['booting']==true)
+	if(platform_booting()==true)
 		return;
 
 	if (!is_array($config['cron']))

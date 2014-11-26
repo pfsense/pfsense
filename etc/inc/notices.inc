@@ -267,7 +267,7 @@ function are_notices_pending($category = "all") {
  ******/
 function notify_via_smtp($message, $force = false) {
 	global $config, $g;
-	if($g['booting'])
+	if(platform_booting())
 		return;
 
 	if(isset($config['notifications']['smtp']['disable']) && !$force)

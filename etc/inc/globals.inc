@@ -165,10 +165,17 @@ $sysctls = array("net.inet.ip.portrange.first" => "1024",
 if (file_exists("/etc/inc/globals_override.inc"))
 	@include("globals_override.inc");
 
-if (file_exists("{$g['varrun_path']}/booting"))
-        $g['booting'] = true;
-else
-	unset($g['booting']);
+function platform_booting() {
+	global $g;
+
+	if (file_exists("{$g['varrun_path']}/booting"))
+        	return true;
+
+	if ($g['booting'])
+		return true;
+
+	return false;
+}
 
 $config_parsed = false;
 

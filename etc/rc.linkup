@@ -94,8 +94,7 @@ function handle_argument_group($iface, $argument2) {
 	}
 }
 
-global $g;
-if (!file_exists("{$g['varrun_path']}/booting") && empty($g['booting'])) {
+if (platform_booting()) {
 if (isset($_GET['interface'])) {
 	if (!empty($_GET['interface']))
 		handle_argument_group(convert_real_interface_to_friendly_interface_name($_GET['interface']), $_GET['action']);

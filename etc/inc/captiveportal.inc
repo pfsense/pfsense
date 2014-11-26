@@ -186,7 +186,7 @@ function captiveportal_configure_zone($cpcfg) {
 	
 	if (isset($cpcfg['enable'])) {
 
-		if ($g['booting']) {
+		if (platform_booting()) {
 			echo "Starting captive portal({$cpcfg['zone']})... ";
 
 			/* remove old information */
@@ -332,7 +332,7 @@ EOD;
 		unlink_if_exists("{$g['vardb_path']}/captiveportal_radius_{$cpzone}.db");
 		captiveportal_init_radius_servers();
 
-		if ($g['booting']) {
+		if (platform_booting()) {
 			/* send Accounting-On to server */
 			captiveportal_send_server_accounting();
 			echo "done\n";
@@ -349,7 +349,7 @@ EOD;
 		captiveportal_radius_stop_all();
 
 		/* send Accounting-Off to server */
-		if (!$g['booting']) {
+		if (!platform_booting()) {
 			captiveportal_send_server_accounting(true);
 		}
 
@@ -1045,7 +1045,7 @@ function captiveportal_allowedip_configure_entry($ipent, $ishostname = false) {
 	 *  easy such as hostname vs ip address add this check
 	 */
 	if ($ishostname === true) {
-		if (!$g['booting']) {
+		if (!platform_booting()) {
 			$ipaddress = gethostbyname($ipent['hostname']);
 			if (!is_ipaddr($ipaddress)) 
 				return;

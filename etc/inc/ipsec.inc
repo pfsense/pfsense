@@ -197,7 +197,7 @@ function ipsec_get_phase1_dst(& $ph1ent) {
 		return false;
 	$rg = $ph1ent['remote-gateway'];
 	if (!is_ipaddr($rg)) {
-		if(! $g['booting'])
+		if(! platform_booting())
 			return resolve_retry($rg);
 	}
 	if(!is_ipaddr($rg))

@@ -232,7 +232,7 @@ function resync_all_package_configs($show_message = false) {
 		if($show_message == true)
 			echo " " . $package['name'];
 		get_pkg_depends($package['name'], "all");
-		if($g['booting'] != true)
+		if(platform_booting() != true)
 			stop_service(get_pkg_internal_name($package));
 		sync_package($idx, true, true);
 		if($pkg_interface == "console") 
@@ -1020,7 +1020,7 @@ function delete_package_xml($pkg) {
 				foreach($pkg_config['service'] as $service) {
 					foreach($services as $key => $instservice) {
 						if($instservice['name'] == $service['name']) {
-							if($g['booting'] != true)
+							if(platform_booting() != true)
 								stop_service($service['name']);
 							if($service['rcfile']) {
 								$prefix = RCFILEPREFIX;

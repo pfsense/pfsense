@@ -281,7 +281,7 @@ function services_radvd_configure($blacklist = array()) {
 	/* write radvd.conf */
 	if (!@file_put_contents("{$g['varetc_path']}/radvd.conf", $radvdconf)) {
 		log_error("Error: cannot open radvd.conf in services_radvd_configure().\n");
-		if ($g['booting'])
+		if (platform_booting())
 			printf("Error: cannot open radvd.conf in services_radvd_configure().\n");
 	}
 	unset($radvdconf);
@@ -367,7 +367,7 @@ function services_dhcpdv4_configure() {
 				break;
 			}
 
-	if ($g['booting']) {
+	if (platform_booting()) {
 		/* restore the leases, if we have them */
 		if (file_exists("{$g['cf_conf_path']}/dhcpleases.tgz")) {
 			$dhcprestore = "";
@@ -400,7 +400,7 @@ function services_dhcpdv4_configure() {
 		}
 	}
 
-	if ($g['booting'])
+	if (platform_booting())
 		echo gettext("Starting DHCP service...");
 	else
 		sleep(1);
@@ -913,7 +913,7 @@ EOD;
 			join(" ", $dhcpdifs));
 	}
 
-	if ($g['booting'])
+	if (platform_booting())
 		print "done.\n";
 
 	return 0;
@@ -1003,7 +1003,7 @@ function services_dhcpdv6_configure($blacklist = array()) {
 	if (!is_dhcpv6_server_enabled())
 		return 0;
 
-	if ($g['booting']) {
+	if (platform_booting()) {
 		if ($g['platform'] != "pfSense") {
 			/* restore the leases, if we have them */
 			if (file_exists("{$g['cf_conf_path']}/dhcp6leases.tgz")) {
@@ -1026,7 +1026,7 @@ function services_dhcpdv6_configure($blacklist = array()) {
 	$Iflist = array_merge($Iflist, get_configured_pppoe_server_interfaces());
 
 
-	if ($g['booting'])
+	if (platform_booting())
 		echo "Starting DHCPv6 service...";
 	else
 		sleep(1);
@@ -1303,7 +1303,7 @@ EOD;
 	/* write dhcpdv6.conf */
 	if (!@file_put_contents("{$g['dhcpd_chroot_path']}/etc/dhcpdv6.conf", $dhcpdv6conf)) {
 		log_error("Error: cannot open {$g['dhcpd_chroot_path']}/etc/dhcpdv6.conf in services_dhcpdv6_configure().\n");
-		if ($g['booting'])
+		if (platform_booting())
 			printf("Error: cannot open {$g['dhcpd_chroot_path']}/etc/dhcpdv6.conf in services_dhcpdv6_configure().\n");
 		unset($dhcpdv6conf);
 		return 1;
@@ -1324,7 +1324,7 @@ EOD;
 			join(" ", $dhcpdv6ifs));
 		mwexec("/usr/local/sbin/dhcpleases6 -c \"/usr/local/bin/php -f /usr/local/sbin/prefixes.php|/bin/sh\" -l {$g['dhcpd_chroot_path']}/var/db/dhcpd6.leases");
 	}
-	if ($g['booting'])
+	if (platform_booting())
 		print gettext("done.") . "\n";
 
 	return 0;
@@ -1406,7 +1406,7 @@ function services_dhcrelay_configure() {
 	if (!isset($dhcrelaycfg['enable']))
 		return 0;
 
-	if ($g['booting'])
+	if (platform_booting())
 		echo gettext("Starting DHCP relay service...");
 	else
 		sleep(1);
@@ -1528,7 +1528,7 @@ function services_dhcrelay6_configure() {
 	if (!isset($dhcrelaycfg['enable']))
 		return 0;
 
-	if ($g['booting'])
+	if (platform_booting())
 		echo gettext("Starting DHCPv6 relay service...");
 	else
 		sleep(1);
@@ -1669,7 +1669,7 @@ function services_dyndns_configure($int = "") {
 	$dyndnscfg = $config['dyndnses']['dyndns'];
 	$gwgroups = return_gateway_groups_array();
 	if (is_array($dyndnscfg)) {
-		if ($g['booting'])
+		if (platform_booting())
 			echo gettext("Starting DynDNS clients...");
 
 		foreach ($dyndnscfg as $dyndns) {
@@ -1682,7 +1682,7 @@ function services_dyndns_configure($int = "") {
 			}
 		}
 
-		if ($g['booting'])
+		if (platform_booting())
 			echo gettext("done.") . "\n";
 	}
 
@@ -1738,7 +1738,7 @@ function services_dnsmasq_configure() {
 
 	if (isset($config['dnsmasq']['enable'])) {
 
-		if ($g['booting'])
+		if (platform_booting())
 			echo gettext("Starting DNS forwarder...");
 		else
 			sleep(1);
@@ -1866,11 +1866,11 @@ function services_dnsmasq_configure() {
 
         system_dhcpleases_configure();
 
-		if ($g['booting'])
+		if (platform_booting())
 			echo gettext("done.") . "\n";
 	}
 
-	if (!$g['booting']) {
+	if (!platform_booting()) {
 		if(services_dhcpd_configure()!=0)
 			$return = 1;
 	}
@@ -1892,7 +1892,7 @@ function services_unbound_configure() {
 		sigkillbypid("{$g['varrun_path']}/unbound.pid", "TERM");
 
 	if (isset($config['unbound']['enable'])) {
-		if ($g['booting'])
+		if (platform_booting())
 			echo gettext("Starting DNS Resolver...");
 		else
 			sleep(1);
@@ -1903,13 +1903,13 @@ function services_unbound_configure() {
 
 		require_once('/etc/inc/unbound.inc');
 		sync_unbound_service();
-		if ($g['booting'])
+		if (platform_booting())
 			echo gettext("done.") . "\n";
 
         system_dhcpleases_configure();
 	}
 
-	if (!$g['booting']) {
+	if (!platform_booting()) {
 		if (services_dhcpd_configure()!=0)
 			$return = 1;
 	}
@@ -1932,7 +1932,7 @@ function services_snmpd_configure() {
 
 	if (isset($config['snmpd']['enable'])) {
 
-		if ($g['booting'])
+		if (platform_booting())
 			echo gettext("Starting SNMP daemon... ");
 
 		/* generate snmpd.conf */
@@ -2114,7 +2114,7 @@ EOD;
 		mwexec("/usr/sbin/bsnmpd -c {$g['varetc_path']}/snmpd.conf" .
 			"{$bindlan} -p {$g['varrun_path']}/snmpd.pid");
 
-		if ($g['booting'])
+		if (platform_booting())
 			echo gettext("done.") . "\n";
 	}
 

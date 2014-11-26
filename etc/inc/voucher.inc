@@ -492,11 +492,11 @@ function voucher_configure($sync = false) {
 
 	if (is_array($config['voucher'])) {
 		foreach ($config['voucher'] as $voucherzone => $vcfg) {
-			if ($g['booting'])
+			if (platform_booting())
 			    echo gettext("Enabling voucher support... ");
 			$cpzone = $voucherzone;
 			$error = voucher_configure_zone($sync);
-			if ($g['booting']) {
+			if (platform_booting()) {
 				if ($error)
 					echo "error\n";
 				else
@@ -541,7 +541,7 @@ function voucher_configure_zone($sync = false) {
         @chmod("{$g['varetc_path']}/voucher_{$cpzone}.cfg", 0600);
 	unlock($voucherlck);
 
-        if (($g['booting'] || $sync == true) && is_array($config['voucher'][$cpzone]['roll'])) {
+        if ((platform_booting() || $sync == true) && is_array($config['voucher'][$cpzone]['roll'])) {
 
 		$voucherlck = lock("voucher{$cpzone}", LOCK_EX);
 

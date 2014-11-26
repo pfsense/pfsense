@@ -95,7 +95,7 @@ function handle_argument_group($iface, $argument2) {
 	}
 }
 
-if (platform_booting()) {
+if (!platform_booting()) {
 	if (isset($_GET['interface'])) {
 		if (!empty($_GET['interface']))
 			$realiface = $_GET['interface'];

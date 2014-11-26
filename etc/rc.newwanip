@@ -163,7 +163,7 @@ switch($config['interfaces'][$interface]['ipaddrv6']) {
 /* Check Gif tunnels */
 if (!empty($gif)) {
 	foreach($gif as $giftun) {
-		$confif = convert_real_interface_to_friendly_interface_name($gif['gifif']);
+		$confif = convert_real_interface_to_friendly_interface_name($giftun['gifif']);
 		if (!empty($confif)) {
 			interface_configure($confif);
 			system_routing_configure($confif);
@@ -171,8 +171,8 @@ if (!empty($gif)) {
 	}
 }
 if (!empty($gre)) {
-	foreach($gre as $giftun) {
-		$confif = convert_real_interface_to_friendly_interface_name($gif['greif']);
+	foreach($gre as $gretun) {
+		$confif = convert_real_interface_to_friendly_interface_name($gretun['greif']);
 		if (!empty($confif)) {
 			interface_configure($confif);
 			system_routing_configure($confif);

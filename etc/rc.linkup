@@ -96,15 +96,18 @@ function handle_argument_group($iface, $argument2) {
 }
 
 if (platform_booting()) {
-if (isset($_GET['interface'])) {
-	if (!empty($_GET['interface']))
-		handle_argument_group(convert_real_interface_to_friendly_interface_name($_GET['interface']), $_GET['action']);
-} else {
-	if ($argc < 3) {
-		log_error("HOTPLUG event: The required number of parameters not passed!");
-		return;
+	if (isset($_GET['interface'])) {
+		if (!empty($_GET['interface']))
+			$realiface = $_GET['interface'];
+		$action = $_GET['action'];
+	} else {
+		if ($argc < 3) {
+			log_error("HOTPLUG event: The required number of parameters not passed!");
+			return;
+		}
+		$action = $argv[1];
+		$realiface = $argv[2];
 	}
-	$action = $argv[1];
 	switch($action) {
 	case "start":
 	case "stop":
@@ -115,16 +118,15 @@ if (isset($_GET['interface'])) {
 		/* NOTREACHED */
 		break;
 	}
-	if (!empty($argv[2])) {
-		if (substr($argv[2], 0, 4) == 'ovpn') {
+	if (!empty($realiface)) {
+		if (substr($realiface, 0, 4) == 'ovpn') {
 			log_error("Ignoring link event for ovpn interface");
 			return;
 		}
-		$interface = convert_real_interface_to_friendly_interface_name($argv[2]);
+		$interface = convert_real_interface_to_friendly_interface_name($realiface);
 		if (!empty($interface))
 			handle_argument_group($interface, $action);
 	}
-}
 }
 
 ?>

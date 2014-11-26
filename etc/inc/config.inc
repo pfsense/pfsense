@@ -42,6 +42,9 @@
 	pfSense_MODULE:	config
 */
 
+if (!function_exists('platform_booting'))
+	require_once('globals.inc');
+
 if(platform_booting()) echo ".";
 
 /* do not load this file twice. */

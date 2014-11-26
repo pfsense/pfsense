@@ -1450,13 +1450,15 @@ function interface_ppps_configure($interface) {
 		$type = $ppp['type'];
 	$upper_type = strtoupper($ppp['type']);
 
+	/* XXX: This does not make sense and may create trouble
+	 * comment it for now to be removed later on.
 	if (platform_booting()) {
 		$descr = isset($ifcfg['descr']) ? $ifcfg['descr'] : strtoupper($interface);
 		echo "starting {$pppif} link...";
-		// Do not re-configure the interface if we are booting and it's already been started
 		if(isvalidpid("{$g['varrun_path']}/{$ppp['type']}_{$interface}.pid"))
 			return 0;
 	}
+	*/
 
 	$ports = explode(',',$ppp['ports']);
 	if ($type != "modem") {

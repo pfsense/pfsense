@@ -600,9 +600,20 @@ function unbound_acls_config() {
 			$subnet_bits = get_interface_subnetv6($ubif);
 			$subnet_ip = gen_subnetv6($ifip, $subnet_bits);
 			$aclcfg .= "access-control: {$subnet_ip}/{$subnet_bits} allow\n";
+			// add for IPv6 static routes to local networks
+			// for safety, we include only routes reachable on an interface with no
+			// gateway specified - read: not an Internet connection. 
+			$static_routes = get_staticroutes();
+			foreach ($static_routes as $route) {
+				if ((lookup_gateway_interface_by_name($route['gateway']) == $ubif) && !interface_has_gateway($ubif)) {
+					// route is on this interface, interface doesn't have gateway, add it
+					$aclcfg .= "access-control: {$route['network']} allow\n";
+				}
+			}
 		}
 	}
 	
+	// Generate IPv4 access-control entries using the same logic as automatic outbound NAT
 	if (empty($FilterIflist)) {
 		filter_generate_optcfg_array();
 	}

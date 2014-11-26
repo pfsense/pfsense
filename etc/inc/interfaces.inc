@@ -4524,31 +4524,37 @@ function interface_find_child_cfgmtu($realiface) {
 	}
 
 	$mtu = 0;
-	foreach ($vlans as $vlan) {
-		$ifass = convert_real_interface_to_friendly_interface_name($vlan['vlanif']);
-		if (empty($ifass))
-			continue;
-		if (!empty($config['interfaces'][$ifass]['mtu'])) {
-			if (intval($config['interfaces'][$ifass]['mtu']) > $mtu)
-				$mtu = intval($config['interfaces'][$ifass]['mtu']);
+	if (is_array($vlans)) {
+		foreach ($vlans as $vlan) {
+			$ifass = convert_real_interface_to_friendly_interface_name($vlan['vlanif']);
+			if (empty($ifass))
+				continue;
+			if (!empty($config['interfaces'][$ifass]['mtu'])) {
+				if (intval($config['interfaces'][$ifass]['mtu']) > $mtu)
+					$mtu = intval($config['interfaces'][$ifass]['mtu']);
+			}
 		}
 	}
-	foreach ($gifs as $vlan) {
-		$ifass = convert_real_interface_to_friendly_interface_name($vlan['gifif']);
-		if (empty($ifass))
-			continue;
-		if (!empty($config['interfaces'][$ifass]['mtu'])) {
-			if (intval($config['interfaces'][$ifass]['mtu']) > $mtu)
-				$mtu = intval($config['interfaces'][$ifass]['mtu']);
+	if (is_array($gifs)) {
+		foreach ($gifs as $vlan) {
+			$ifass = convert_real_interface_to_friendly_interface_name($vlan['gifif']);
+			if (empty($ifass))
+				continue;
+			if (!empty($config['interfaces'][$ifass]['mtu'])) {
+				if (intval($config['interfaces'][$ifass]['mtu']) > $mtu)
+					$mtu = intval($config['interfaces'][$ifass]['mtu']);
+			}
 		}
 	}
-	foreach ($gres as $vlan) {
-		$ifass = convert_real_interface_to_friendly_interface_name($vlan['greif']);
-		if (empty($ifass))
-			continue;
-		if (!empty($config['interfaces'][$ifass]['mtu'])) {
-			if (intval($config['interfaces'][$ifass]['mtu']) > $mtu)
-				$mtu = intval($config['interfaces'][$ifass]['mtu']);
+	if (is_array($gres)) {
+		foreach ($gres as $vlan) {
+			$ifass = convert_real_interface_to_friendly_interface_name($vlan['greif']);
+			if (empty($ifass))
+				continue;
+			if (!empty($config['interfaces'][$ifass]['mtu'])) {
+				if (intval($config['interfaces'][$ifass]['mtu']) > $mtu)
+					$mtu = intval($config['interfaces'][$ifass]['mtu']);
+			}
 		}
 	}
 	$ifass = convert_real_interface_to_friendly_interface_name($bridge);

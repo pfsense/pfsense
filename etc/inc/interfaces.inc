@@ -2760,15 +2760,12 @@ function find_dhcp6c_process($interface) {
 	return intval($pid);
 }
 
-function interface_vlan_mtu_configured($realhwif, $mtu, $vlanskip = '') {
+function interface_vlan_mtu_configured($realhwif, $mtu) {
 	global $config;
 
 	if (is_array($config['vlans']) && is_array($config['vlans']['vlan'])) {
 		foreach ($config['vlans']['vlan'] as $vlan) {
 			if ($vlan['if'] != $realhwif)
-				continue;
-			/* Skip the vlans needed to be skiped. */
-			if (!empty($vlanskip) && $vlanskip == $vlan['vlanif'])
 				continue;
 			$assignedport = convert_real_interface_to_friendly_interface_name($vlan['vlanif']);
 			if (!empty($assignedport) && !empty($config['interfaces'][$assignedport]['mtu'])) {
@@ -3006,14 +3003,11 @@ function interface_configure($interface = "wan", $reloadall = false, $linkupeven
 				$parentmtu = interface_vlan_mtu_configured($realhwif, $parentmtu, $realif);
 			}
 
-			if ($wancfg['mtu'] > $parentmtu) {
-				if (get_interface_mtu($realhwif) != $wancfg['mtu'])
-					pfSense_interface_mtu($realhwif, $wancfg['mtu']);
+			if (get_interface_mtu($realhwif) != $wancfg['mtu'])
+				pfSense_interface_mtu($realhwif, $wancfg['mtu']);
 
-				/* All vlans need to use the same mtu value as their parent. */
-				interface_vlan_adapt_mtu(link_interface_to_vlans($realhwif), $wancfg['mtu']);
-			} else
-				pfSense_interface_mtu($realif, $wancfg['mtu']);
+			/* All vlans need to use the same mtu value as their parent. */
+			interface_vlan_adapt_mtu(link_interface_to_vlans($realhwif), $wancfg['mtu']);
 		} else if (substr($realif, 0, 4) == 'lagg') {
 			/* LAGG interface must be destroyed and re-created to change MTU */
 			if ($wancfg['mtu'] != get_interface_mtu($realif)) {

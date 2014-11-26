@@ -123,7 +123,7 @@ if (platform_booting()) {
 			log_error("Ignoring link event for ovpn interface");
 			return;
 		}
-		$interface = convert_real_interface_to_friendly_interface_name($realiface);
+		$interface = convert_real_interface_to_friendly_interface_name($realiface, true);
 		if (!empty($interface))
 			handle_argument_group($interface, $action);
 	}

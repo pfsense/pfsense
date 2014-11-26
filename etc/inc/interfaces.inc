@@ -2829,7 +2829,7 @@ function interface_vlan_adapt_mtu($vlanifs, $mtu) {
 		$assignedport = convert_real_interface_to_friendly_interface_name($vlan['vlanif']);
 		if (!empty($assignedport)) {
 			if (!empty($config['interfaces'][$assignedport]['mtu'])) {
-				pfSense_interface_mtu($vlan['vlanif'], $mtu);
+				pfSense_interface_mtu($vlan['vlanif'], $config['interfaces'][$assignedport]['mtu']);
 			} else {
 				if (get_interface_mtu($vlan['vlanif']) != $mtu)
 					pfSense_interface_mtu($vlan['vlanif'], $mtu);
@@ -2996,18 +2996,20 @@ function interface_configure($interface = "wan", $reloadall = false, $linkupeven
 	if (!empty($wancfg['mtu'])) {
 		if (stristr($realif, "_vlan")) {
 			$assignedparent = convert_real_interface_to_friendly_interface_name($realhwif);
-			if (!empty($assignedparent) && !empty($config['interfaces'][$assignedparent]['mtu']))
+			if (!empty($assignedparent) && !empty($config['interfaces'][$assignedparent]['mtu'])) {
 				$parentmtu = $config['interfaces'][$assignedparent]['mtu'];
-			else {
+				if ($wancfg['mtu'] > $parentmtu)
+					log_error("There is a conflict on MTU between parent {$realhwif} and VLAN({$realif})");
+			} else
 				$parentmtu = get_interface_mtu($realhwif);
-				$parentmtu = interface_vlan_mtu_configured($realhwif, $parentmtu, $realif);
-			}
 
-			if (get_interface_mtu($realhwif) != $wancfg['mtu'])
-				pfSense_interface_mtu($realhwif, $wancfg['mtu']);
+			$parentmtu = interface_vlan_mtu_configured($realhwif, $parentmtu);
+
+			if (get_interface_mtu($realhwif) != $parentmtu)
+				pfSense_interface_mtu($realhwif, $parentmtu);
 
 			/* All vlans need to use the same mtu value as their parent. */
-			interface_vlan_adapt_mtu(link_interface_to_vlans($realhwif), $wancfg['mtu']);
+			interface_vlan_adapt_mtu(link_interface_to_vlans($realhwif), $parentmtu);
 		} else if (substr($realif, 0, 4) == 'lagg') {
 			/* LAGG interface must be destroyed and re-created to change MTU */
 			if ($wancfg['mtu'] != get_interface_mtu($realif)) {
@@ -3025,7 +3027,10 @@ function interface_configure($interface = "wan", $reloadall = false, $linkupeven
 				pfSense_interface_mtu($realif, $wancfg['mtu']);
 
 			/* This case is needed when the parent of vlans is being configured */
-			interface_vlan_adapt_mtu(link_interface_to_vlans($realif), $wancfg['mtu']);
+			$vlans = link_interface_to_vlans($realif);
+			if (is_array($vlans))
+				interface_vlan_adapt_mtu($vlans, $wancfg['mtu']);
+			unset($vlans);
 		}
 		/* XXX: What about gre/gif/.. ? */
 	}

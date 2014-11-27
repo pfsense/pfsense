@@ -417,6 +417,7 @@ if ($_POST) {
 										$config['system']['enableserial'] = true;
 										write_config("Restore serial console enabling in configuration.");
 									}
+									unset($loaderconf);
 								}
 								/* extract out rrd items, unset from $config when done */
 								if($config['rrddata']) {

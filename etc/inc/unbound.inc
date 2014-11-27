@@ -37,6 +37,18 @@ require_once("functions.inc");
 require_once("filter.inc");
 require_once("shaper.inc");
 
+function create_unbound_chroot_path() {
+	global $config, $g;
+
+	// Configure chroot
+	if (!is_dir($g['unbound_chroot_path'])) {
+		mkdir($g['unbound_chroot_path']);
+		chown($g['unbound_chroot_path'], "unbound");
+		chgrp($g['unbound_chroot_path'], "unbound");
+	}
+
+}
+
 /* Optimize Unbound for environment */
 function unbound_optimization() {
 	global $config;
@@ -325,6 +337,7 @@ include: {$g['unbound_chroot_path']}/remotecontrol.conf
 
 EOD;
 
+	create_unbound_chroot_path();
 	file_put_contents("{$g['unbound_chroot_path']}/unbound.conf", $unboundconf);
 
 	return 0;
@@ -346,6 +359,7 @@ remote-control:
 
 EOF;
 
+		create_unbound_chroot_path();
 		file_put_contents("{$g['unbound_chroot_path']}/remotecontrol.conf", $remotcfg);
 
 		// Generate our keys
@@ -383,12 +397,7 @@ function read_hosts() {
 function sync_unbound_service() {
 	global $config, $g;
 
-	// Configure chroot
-	if (!is_dir($g['unbound_chroot_path'])) {
-		mkdir($g['unbound_chroot_path']);
-		chown($g['unbound_chroot_path'], "unbound");
-		chgrp($g['unbound_chroot_path'], "unbound");
-	}
+	create_unbound_chroot_path();
 
 	// Configure our Unbound service
 	do_as_unbound_user("unbound-anchor");
@@ -479,8 +488,10 @@ function unbound_add_domain_overrides($pvt_rev="") {
 
 	if ($pvt_rev != "")
 		return $domain_entries;
-	else
+	else {
+		create_unbound_chroot_path();
 		file_put_contents("{$g['unbound_chroot_path']}/domainoverrides.conf", $domain_entries);
+	}
 }
 
 function unbound_add_host_entries() {
@@ -504,6 +515,7 @@ function unbound_add_host_entries() {
 	}
 
 	// Write out entries
+	create_unbound_chroot_path();
 	file_put_contents("{$g['unbound_chroot_path']}/host_entries.conf", $unbound_entries);
 
 	/* dhcpleases will write to this config file, make sure it exists */
@@ -636,6 +648,7 @@ function unbound_acls_config() {
 		}
 	}
 	// Write out Access list
+	create_unbound_chroot_path();
 	file_put_contents("{$g['unbound_chroot_path']}/access_lists.conf", $aclcfg);
 
 }

@@ -1299,6 +1299,25 @@ function interfaces_carp_set_maintenancemode($carp_maintenancemode){
 	}
 }
 
+function interface_isppp_type($interface) {
+	global $config;
+
+	if (!is_array($config['interfaces'][$interface]))
+		return false;
+
+	switch ($config['interfaces'][$interface]['ipaddr']) {
+	case 'pptp':
+	case 'l2tp':
+	case 'pppoe':
+	case 'ppp':
+		return true;
+		break;
+	default:
+		return false;
+		break;
+	}
+}
+
 function interfaces_ptpid_used($ptpid) {
 	global $config;
 

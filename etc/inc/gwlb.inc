@@ -187,8 +187,14 @@ EOD;
 			 */
 			if (is_ipaddrv4($gateway['gateway']) && $gateway['monitor'] != $gateway['gateway']) {
 				log_error("Removing static route for monitor {$gateway['monitor']} and adding a new route through {$gateway['gateway']}");
-				mwexec("/sbin/route change -host " . escapeshellarg($gateway['monitor']) .
-					" " . escapeshellarg($gateway['gateway']), true);
+				if (interface_isppp_type($gateway['friendlyiface']))
+					mwexec("/sbin/route change -host " . escapeshellarg($gateway['monitor']) .
+						" -iface " . escapeshellarg($gateway['interface']), true);
+				else
+					mwexec("/sbin/route change -host " . escapeshellarg($gateway['monitor']) .
+						" " . escapeshellarg($gateway['gateway']), true);
+
+				pfSense_kill_states("0.0.0.0/0", $gateway['monitor'], $gateway['interface'], "icmp");
 			}
 		} else if ($gateway['ipprotocol'] == "inet6") { // This is an IPv6 gateway...
 			if ($gateway['monitor'] == $gateway['gateway']) {
@@ -226,8 +232,14 @@ EOD;
 			 */
 			if ($gateway['gateway'] != $gateway['monitor']) {
 				log_error("Removing static route for monitor {$gateway['monitor']} and adding a new route through {$gateway['gateway']}");
-				mwexec("/sbin/route change -host -inet6 " . escapeshellarg($gateway['monitor']) .
-					" " . escapeshellarg($gateway['gateway']), true);
+				if (interface_isppp_type($gateway['friendlyiface']))
+					mwexec("/sbin/route change -host -inet6 " . escapeshellarg($gateway['monitor']) .
+						" -iface " . escapeshellarg($gateway['interface']), true);
+				else
+					mwexec("/sbin/route change -host -inet6 " . escapeshellarg($gateway['monitor']) .
+						" " . escapeshellarg($gateway['gateway']), true);
+
+				pfSense_kill_states("::0.0.0.0/0", $gateway['monitor'], $gateway['interface'], "icmpv6");
 			}
 		} else
 			continue;

@@ -2046,7 +2046,8 @@ function upgrade_054_to_055() {
 		unset($rrdold);
 	}
 	/* let apinger recreate required files */
-	setup_gateways_monitor();
+	if (!platform_booting())
+		setup_gateways_monitor();
 
 	/* build a list of traffic and packets databases */
 	$databases = return_dir_as_array($rrddbpath, '/-(traffic|packets)\.rrd$/');

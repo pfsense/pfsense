@@ -228,7 +228,7 @@ if [ "$PLATFORM" = "cdrom" ] ; then
 fi
 
 # make some directories in /var
-/bin/mkdir -p $varrunpath /var/log /var/etc /var/db/entropy /var/at/jobs/ /var/empty 2>/dev/null
+/bin/mkdir -p $varrunpath /var/log /var/etc /var/db/entropy /var/db/rrd /var/at/jobs/ /var/empty 2>/dev/null
 /bin/rm -rf $varrunpath/*
 if [ "$PLATFORM" != "pfSense" ]; then
 	/bin/rm /var/log/* 2>/dev/null

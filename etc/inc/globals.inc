@@ -168,11 +168,8 @@ if (file_exists("/etc/inc/globals_override.inc"))
 function platform_booting() {
 	global $g;
 
-	if (file_exists("{$g['varrun_path']}/booting"))
+	if ($g['booting'] || file_exists("{$g['varrun_path']}/booting"))
         	return true;
-
-	if ($g['booting'])
-		return true;
 
 	return false;
 }

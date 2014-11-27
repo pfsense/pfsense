@@ -533,7 +533,7 @@ $types = array("select" => gettext("Select"), "ppp" => "PPP", "pppoe" => "PPPoE"
 		</tr>
 
 		<tr style="display:none" name="phone_num" id="phone_num">
-			<td width="22%" valign="top" class="vncell"><?= gettext("Phone Number"); ?></td>
+			<td width="22%" valign="top" class="vncellreq"><?= gettext("Phone Number"); ?></td>
 			<td width="78%" class="vtable">
 				<input name="phone" type="text" class="formfld unknown" id="phone" size="40" value="<?=htmlspecialchars($pconfig['phone']);?>" />
 				<br /><span class="vexpl"><?= gettext("Note: Typically *99# for GSM networks and #777 for CDMA networks"); ?></span>

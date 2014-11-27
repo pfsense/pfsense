@@ -15259,7 +15259,7 @@ msgstr "Você realmente deseja excluir os mapeamentos selecionados?"
 #: usr/local/www/firewall_nat_out.php:470
 #: usr/local/www/firewall_nat_out.php:477
 #: usr/local/www/firewall_nat_out.php:476
-msgid "With automatic outbound NAT enabled, a mapping is automatically created for each interface's subnet (except WAN-type connections) and the rules on this page are ignored.<br/><br/> If manual outbound NAT is enabled, outbound NAT rules will not be automatically generated and only the mappings you specify on this page will be used. <br/><br/> If a target address other than a WAN-type interface's IP address is used, then depending on the way the WAN connection is setup, a "
+msgid "With automatic outbound NAT enabled, a mapping is automatically created for each interface's subnet (except WAN-type connections) and the rules on this page are ignored.<br/><br/> If manual outbound NAT is enabled, outbound NAT rules will not be automatically generated and only the mappings you specify on this page will be used. <br/><br/> If a target address other than an interface's IP address is used, then depending on the way the WAN connection is setup, a "
 msgstr "Com regras automáticas de saída NAT habilitadas, um mapeamento é automaticamente criado para a subrede de cada interface (exceto conexões WAN) e as regras nesta página são ignoradas.<br/><br/> Se geração manual de regras de saída NAT estiver habilitado, regras de saída NAT não serão geradas automaticamente e apenas os mapeamentos nesta página serão utilizados. <br/><br/> Se um endereço alvo diferente de endereços IP WAN são utilizados. dependendo de como a conexão WAN está configurada, um"
 
 #: usr/local/www/firewall_nat_out.php:469
@@ -30165,7 +30165,7 @@ msgstr "Você precisa vincular cada cliente OpenVPN para habilitar seu daemon de 
 
 #: usr/local/www/status_openvpn.php:308 usr/local/www/status_openvpn.php:311
 #: usr/local/www/status_openvpn.php:359 usr/local/www/status_openvpn.php:389
-msgid "No OpenVPN instance defined"
+msgid "No OpenVPN instances defined"
 msgstr "Nenhuma instância do OpenVPN definida"
 
 #: usr/local/www/system_advanced_admin.php:87
@@ -38217,7 +38217,7 @@ msgstr "Se você deixar este campo em branco, o adaptadores de MTU padrão será us
 #: usr/local/www/interfaces.php:1768 usr/local/www/interfaces.php:1756
 #: usr/local/www/interfaces.php:1774 usr/local/www/interfaces.php:1820
 #: usr/local/www/interfaces.php:1812 usr/local/www/interfaces.php:1848
-msgid "6RD Rapid Deployment"
+msgid "6RD Configuration"
 msgstr "Desenvolvimento rápido 6RD"
 
 #: usr/local/www/interfaces.php:1771 usr/local/www/interfaces.php:1759

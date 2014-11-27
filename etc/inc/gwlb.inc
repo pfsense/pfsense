@@ -194,7 +194,7 @@ EOD;
 			if ($gateway['monitor'] == $gateway['gateway']) {
 				/* link locals really need a different src ip */
 				if (is_linklocal($gateway['gateway'])) {
-					if (!strpos($gateway['gateway']))
+					if (!strpos($gateway['gateway'], '%'))
 						$gateway['gateway'] .= '%' . $gateway['interface'];
 					$gwifip = find_interface_ipv6_ll($gateway['interface'], true);
 				} else {
@@ -561,13 +561,23 @@ function return_gateways_array($disabled = false, $localhost = false, $inactive 
 				$ctype = strtoupper($ifcfg['ipaddr']);
 				break;
 			default:
+				$tunnelif = substr($ifcfg['if'], 0, 3);
 				if (substr($ifcfg['if'], 0, 4) ==  "ovpn") {
-					// if current iface is an ovpn server endpoint then skip it
-					if (substr($ifcfg['if'], 4, 1) == 's')
-						continue 2;							
-
+					// if current iface is an ovpn server endpoint then check its type, skip tap only
+					if (substr($ifcfg['if'], 4, 1) == 's') {
+						$ovpnid = substr($ifcfg['if'], 5);
+						if (is_array($config['openvpn']['openvpn-server'])) {
+							foreach ($config['openvpn']['openvpn-server'] as & $ovpnserverconf) {
+								if ($ovpnserverconf['vpnid'] == $ovpnid) {
+									if ($ovpnserverconf['dev_mode'] == "tap")
+										continue 3;
+								}
+							}
+						}
+					}
 					$ctype = "VPNv4";
-				}
+				} else if ($tunnelif == "gif" || $tunnelif == "gre")
+					$ctype = "TUNNELv4";
 				break;
 		}
 		$ctype = "_". strtoupper($ctype);
@@ -638,10 +648,18 @@ function return_gateways_array($disabled = false, $localhost = false, $inactive 
 			default:
 				$tunnelif = substr($ifcfg['if'], 0, 3);
 				if (substr($ifcfg['if'], 0, 4) ==  "ovpn") {
-					// if current iface is an ovpn server endpoint then skip it
-					if (substr($ifcfg['if'], 4, 1) == 's') 
-						continue 2;							
-
+					// if current iface is an ovpn server endpoint then check its type, skip tap only
+					if (substr($ifcfg['if'], 4, 1) == 's') {
+						$ovpnid = substr($ifcfg['if'], 5);
+						if (is_array($config['openvpn']['openvpn-server'])) {
+							foreach ($config['openvpn']['openvpn-server'] as & $ovpnserverconf) {
+								if ($ovpnserverconf['vpnid'] == $ovpnid) {
+									if ($ovpnserverconf['dev_mode'] == "tap")
+										continue 3;
+								}
+							}
+						}
+					}
 					$ctype = "VPNv6";
 				} else if ($tunnelif == "gif" || $tunnelif == "gre")
 					$ctype = "TUNNELv6";
@@ -849,7 +867,7 @@ function return_gateway_groups_array() {
 			$tiers_count = count($tiers);
 			if ($tiers_count == 0) {
 				/* Oh dear, we have no members! Engage Plan B */
-				if (!$g['booting']) {
+				if (!platform_booting()) {
 					$msg = gettext("Gateways status could not be determined, considering all as up/active. (Group: {$group['name']})");
 					log_error($msg);
 					notify_via_growl($msg);

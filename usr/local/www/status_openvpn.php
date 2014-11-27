@@ -393,7 +393,7 @@ if ($DisplayNote) {
 }
 
 if ((empty($clients)) && (empty($servers)) && (empty($sk_servers))) {
-	echo gettext("No OpenVPN instance defined");
+	echo gettext("No OpenVPN instances defined");
 }
 ?>
 </form>

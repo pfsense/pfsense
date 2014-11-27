@@ -44,6 +44,12 @@ function handle_argument_group($iface, $argument2) {
 		return;
 	}
 
+	if (!isset($config['interfaces'][$iface]['enable'])) {
+		if (!platform_booting())
+			log_error("Linkup detected on disabled interface...Ignoring");
+		return;
+	}
+
 	$ipaddr = $config['interfaces'][$iface]['ipaddr'];
 	$ip6addr = $config['interfaces'][$iface]['ipaddrv6'];
 	$staticv4 = false;
@@ -60,11 +66,15 @@ function handle_argument_group($iface, $argument2) {
 		$friendly = convert_friendly_interface_to_friendly_descr($iface);
 		log_error("Hotplug event detected for {$friendly}({$iface}) but ignoring since interface is configured with static IP ({$ipaddr} {$ip6addr})");
 		interfaces_staticarp_configure($iface);
-		$iface = get_real_interface($iface);
-		interfaces_bring_up($iface);
-		/* NOTE: Do not generate event for OpenVPN since the daemon does that for us. */
-		if (($argument2 == "start" || $argument2 == "up") && substr($iface, 0, 4) != "ovpn")
-			send_event("interface newip {$iface}");
+		switch ($argument2) {
+		case 'start':
+		case 'up':
+			$iface = get_real_interface($iface);
+			/* NOTE: Do not generate event for OpenVPN since the daemon does that for us. */
+			if (substr($iface, 0, 4) != "ovpn")
+				send_event("interface newip {$iface}");
+			break;
+		}
 	} else {
 		switch ($argument2) {
 		case "stop":
@@ -85,31 +95,38 @@ function handle_argument_group($iface, $argument2) {
 	}
 }
 
-global $g;
-if (!file_exists("{$g['varrun_path']}/booting") && empty($g['booting'])) {
-if (isset($_GET['interface'])) {
-	if (!empty($_GET['interface']))
-		handle_argument_group(convert_real_interface_to_friendly_interface_name($_GET['interface']), $_GET['action']);
-} else {
-	if ($argc < 3) {
-		log_error("HOTPLUG event: The required number of parameters not passed!");
-		exit;
+if (!platform_booting()) {
+	if (isset($_GET['interface'])) {
+		if (!empty($_GET['interface']))
+			$realiface = $_GET['interface'];
+		$action = $_GET['action'];
+	} else {
+		if ($argc < 3) {
+			log_error("HOTPLUG event: The required number of parameters not passed!");
+			return;
+		}
+		$action = $argv[1];
+		$realiface = $argv[2];
 	}
-	$action = $argv[1];
 	switch($action) {
 	case "start":
 	case "stop":
 		break;
 	default:
 		log_error("HOTPLUG event: Action parameter ($action) passed is wrong - only start/stop/up/down are allowed!");
-		exit;
+		return;
 		/* NOTREACHED */
 		break;
 	}
-	$interface = convert_real_interface_to_friendly_interface_name($argv[2]);
-	if (!empty($interface))
-		handle_argument_group($interface, $action);
-}
+	if (!empty($realiface)) {
+		if (substr($realiface, 0, 4) == 'ovpn') {
+			log_error("Ignoring link event for ovpn interface");
+			return;
+		}
+		$interface = convert_real_interface_to_friendly_interface_name($realiface, true);
+		if (!empty($interface))
+			handle_argument_group($interface, $action);
+	}
 }
 
 ?>

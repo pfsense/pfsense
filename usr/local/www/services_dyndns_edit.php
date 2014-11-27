@@ -116,8 +116,9 @@ if ($_POST) {
 		else
 			$host_to_check = $_POST['host'];
 
-		if (!is_domain($host_to_check))
-			$input_errors[] = gettext("The Hostname contains invalid characters.");
+		if ($pconfig['type'] != "custom" && $pconfig['type'] != "custom-v6")
+			if (!is_domain($host_to_check))
+				$input_errors[] = gettext("The hostname contains invalid characters.");
 
 		unset($host_to_check);
 	}

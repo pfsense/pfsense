@@ -41,6 +41,7 @@
 
 require_once("guiconfig.inc");
 require_once("unbound.inc");
+require_once("system.inc");
 
 if (!is_array($config['unbound'])) {
 	$config['unbound'] = array();
@@ -105,17 +106,21 @@ if ($_POST) {
 		}
 		/* Update resolv.conf in case the interface bindings exclude localhost. */
 		system_resolvconf_generate();
+		/* Start or restart dhcpleases when it's necessary */
+		system_dhcpleases_configure();
 	} else {
 		if (isset($_POST['enable']) && isset($config['dnsmasq']['enable'])) {
-			$input_errors[] = "The system dns-forwarder is still active. Disable it before enabling the DNS Resolver.";
+			$input_errors[] = "The DNS Forwarder is enabled. Disable it before enabling the DNS Resolver.";
 		}
 
 		if (empty($_POST['active_interface'])) {
-			$input_errors[] = "A single network interface needs to be selected for the DNS Resolver to bind to.";
+			$input_errors[] = "One or more Network Interfaces must be selected for binding.";
+		} else if (!isset($config['system']['dnslocalhost']) && !in_array("lo0", $_POST['active_interface'])) {
+			$input_errors[] = "This system is configured to use the DNS Resolver as its DNS server, so Localhost must be selected in Network Interfaces.";
 		}
 
 		if (empty($_POST['outgoing_interface'])) {
-			$input_errors[] = "A single outgoing network interface needs to be selected for the DNS Resolver to use for outgoing DNS requests.";
+			$input_errors[] = "One or more Outgoing Network Interfaces must be selected.";
 		}
 
 		if ($_POST['port']) {
@@ -222,7 +227,7 @@ function show_advanced_dns() {
 <?php if ($input_errors) print_input_errors($input_errors); ?>
 <?php if ($savemsg) print_info_box($savemsg); ?>
 <?php if (is_subsystem_dirty('unbound')): ?><br/>
-<?php print_info_box_np(gettext("The configuration for the DNS Resolver, has been changed") . ".<br />" . gettext("You must apply the changes in order for them to take effect."));?><br />
+<?php print_info_box_np(gettext("The configuration of the DNS Resolver has been changed") . ".<br />" . gettext("You must apply changes for them to take effect."));?><br />
 <?php endif; ?>
 <table width="100%" border="0" cellpadding="0" cellspacing="0" summary="services unbound">
 	<tbody>
@@ -272,7 +277,7 @@ function show_advanced_dns() {
 									?>
 									<?=gettext("Interface IPs used by the DNS Resolver for responding to queries from clients. If an interface has both IPv4 and IPv6 IPs, both are used. Queries to other interface IPs not selected below are discarded. The default behavior is to respond to queries on every available IPv4 and IPv6 address.");?>
 									<br /><br />
-									<select id="active_interface" name="active_interface[]" multiple="multiple" size="3">
+									<select id="active_interface" name="active_interface[]" multiple="multiple" size="<?php echo $size; ?>">
 										<option value="" <?php if (empty($pconfig['active_interface']) || empty($pconfig['active_interface'][0])) echo 'selected="selected"'; ?>>All</option>
 										<?php
 											foreach ($interface_addresses as $laddr):
@@ -297,7 +302,7 @@ function show_advanced_dns() {
 									?>
 									<?=gettext("Utilize different network interface(s) that the DNS Resolver will use to send queries to authoritative servers and receive their replies. By default all interfaces are used.");?>
 									<br /><br />
-									<select id="outgoing_interface" name="outgoing_interface[]" multiple="multiple" size="3">
+									<select id="outgoing_interface" name="outgoing_interface[]" multiple="multiple" size="<?php echo $size; ?>">
 										<option value="" <?php if (empty($pconfig['outgoing_interface']) || empty($pconfig['outgoing_interface'][0])) echo 'selected="selected"'; ?>>All</option>
 										<?php
 											foreach ($interface_addresses as $laddr):
@@ -368,7 +373,7 @@ function show_advanced_dns() {
 									<div id="showadv" <?php if (empty($pconfig['custom_options'])) echo "style='display:none'"; ?>>
 										<strong><?=gettext("Advanced");?><br /></strong>
 										<textarea rows="6" cols="78" name="custom_options" id="custom_options"><?=htmlspecialchars($pconfig['custom_options']);?></textarea><br />
-										<?=gettext("Enter any additional options you would like to add to the DNS Resolver configuration here, separated by a space or newline"); ?><br />
+										<?=gettext("Enter any additional configuration parameters to add to the DNS Resolver configuration here, separated by a newline"); ?><br />
 									</div>
 								</td>
 							</tr>
@@ -462,6 +467,27 @@ function show_advanced_dns() {
 				</tr>
 			</table>
 	</tr>
+	<?php if ($hostent['aliases']['item'] && is_array($hostent['aliases']['item'])): ?>
+	<?php foreach ($hostent['aliases']['item'] as $alias): ?>
+	<tr>
+		<td class="listlr" ondblclick="document.location='services_unbound_host_edit.php?id=<?=$i;?>';">
+			<?=strtolower($alias['host']);?>&nbsp;
+		</td>
+		<td class="listr" ondblclick="document.location='services_unbound_host_edit.php?id=<?=$i;?>';">
+			<?=strtolower($alias['domain']);?>&nbsp;
+		</td>
+		<td class="listr" ondblclick="document.location='services_unbound_host_edit.php?id=<?=$i;?>';">
+			Alias for <?=$hostent['host'] ? $hostent['host'] . '.' . $hostent['domain'] : $hostent['domain'];?>&nbsp;
+		</td>
+		<td class="listbg" ondblclick="document.location='services_unbound_host_edit.php?id=<?=$i;?>';">
+			<?=htmlspecialchars($alias['description']);?>&nbsp;
+		</td>
+		<td valign="middle" class="list nowrap">
+			<a href="services_unbound_host_edit.php?id=<?=$i;?>"><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_e.gif" width="17" height="17" border="0" alt="edit" /></a>
+		</td>
+	</tr>
+	<?php endforeach; ?>
+	<?php endif; ?>
 	<?php $i++; endforeach; ?>
 	<tr style="display:none"><td></td></tr>
 	</tbody>

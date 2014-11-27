@@ -59,10 +59,13 @@ if (!is_array($config['captiveportal']))
         $config['captiveportal'] = array();
 $a_cp =& $config['captiveportal'];
 
+if (isset($cpzone) && !empty($cpzone) && isset($a_cp[$cpzone]['zoneid']))
+	$cpzoneid = $a_cp[$cpzone]['zoneid'];
+
 $pgtitle = array(gettext("Services"),gettext("Captive portal"), $a_cp[$cpzone]['zone']);
 $shortcut_section = "captiveportal";
 
-if ($_GET['act'] == "del") {
+if ($_GET['act'] == "del" && !empty($cpzone) && isset($cpzoneid)) {
 	$a_allowedips =& $config['captiveportal'][$cpzone]['allowedip'];
 	if ($a_allowedips[$_GET['id']]) {
 		$ipent = $a_allowedips[$_GET['id']];
@@ -70,9 +73,9 @@ if ($_GET['act'] == "del") {
 		if (isset($config['captiveportal'][$cpzone]['enable'])) {
 			$mask = (!empty($ipent['sn'])) ? $ipent['sn'] : 32;
 			
-			$ipfw = pfSense_ipfw_getTablestats($cpzone, 3, $ipent['ip'], $mask);
-			pfSense_ipfw_Tableaction($cpzone, IP_FW_TABLE_XDEL, 3, $ipent['ip'], $mask);
-			pfSense_ipfw_Tableaction($cpzone, IP_FW_TABLE_XDEL, 4, $ipent['ip'], $mask);
+			$ipfw = pfSense_ipfw_getTablestats($cpzoneid, 3, $ipent['ip'], $mask);
+			pfSense_ipfw_Tableaction($cpzoneid, IP_FW_TABLE_XDEL, 3, $ipent['ip'], $mask);
+			pfSense_ipfw_Tableaction($cpzoneid, IP_FW_TABLE_XDEL, 4, $ipent['ip'], $mask);
 			
 			if (is_array($ipfw)) {
 				captiveportal_free_dn_ruleno($ipfw['dnpipe']);

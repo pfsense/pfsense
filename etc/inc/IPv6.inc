@@ -150,7 +150,7 @@ class Net_IPv6
      * @access public
      * @static     
      */
-    function separate($ip) 
+    static function separate($ip) 
     {
         
         $addr = $ip;
@@ -188,7 +188,7 @@ class Net_IPv6
      * @access public
      * @static
      */
-    function removeNetmaskSpec($ip)
+    static function removeNetmaskSpec($ip)
     {
 
         $elements = Net_IPv6::separate($ip);
@@ -214,7 +214,7 @@ class Net_IPv6
      * @see removeNetmaskSpec()
      * @deprecated
      */
-    function removePrefixLength($ip)
+    static function removePrefixLength($ip)
     {
         $pos = strrpos($ip, '/');
 
@@ -240,7 +240,7 @@ class Net_IPv6
      * @access public
      * @static
      */
-    function getNetmaskSpec($ip) 
+    static function getNetmaskSpec($ip) 
     {
 
         $elements = Net_IPv6::separate($ip);
@@ -266,7 +266,7 @@ class Net_IPv6
      * @static
      * @deprecated
      */
-    function getPrefixLength($ip) 
+    static function getPrefixLength($ip) 
     {
         if (preg_match("/^([0-9a-fA-F:]{2,39})\/(\d{1,3})*$/", 
                         $ip, $matches)) {
@@ -296,7 +296,7 @@ class Net_IPv6
      * @access public
      * @static
      */
-    function getNetmask($ip, $bits = null)
+    static function getNetmask($ip, $bits = null)
     {
         if (null==$bits) {
 
@@ -346,7 +346,7 @@ class Net_IPv6
      * @access public
      * @static
      */
-    function isInNetmask($ip, $netmask, $bits=null)
+    static function isInNetmask($ip, $netmask, $bits=null)
     {
         // try to get the bit count
 
@@ -429,7 +429,7 @@ class Net_IPv6
      * @see    NET_IPV6_LOOPBACK  
      * @see    NET_IPV6_UNKNOWN_TYPE
      */
-    function getAddressType($ip) 
+    static function getAddressType($ip) 
     {
         $ip    = Net_IPv6::removeNetmaskSpec($ip);
         $binip = Net_IPv6::_ip2Bin($ip);
@@ -537,7 +537,7 @@ class Net_IPv6
      * @static
      * @author Pascal Uhlmann
      */
-    function uncompress($ip, $leadingZeros = false)
+    static function uncompress($ip, $leadingZeros = false)
     {
 
         $prefix = Net_IPv6::getPrefixLength($ip);
@@ -683,7 +683,7 @@ class Net_IPv6
      * @static
      * @author elfrink at introweb dot nl
      */
-    function compress($ip, $force = false)  
+    static function compress($ip, $force = false)  
     {
         
         if(false !== strpos($ip, '::')) { // its already compressed
@@ -772,7 +772,7 @@ class Net_IPv6
      * @author koyama at hoge dot org
      * @todo This method may become a part of compress() in a further releases
      */
-    function recommendedFormat($ip)
+    static function recommendedFormat($ip)
     {
         $compressed = self::compress($ip, true);
         // RFC5952 4.2.2
@@ -800,7 +800,7 @@ class Net_IPv6
      * @static
      * @author Manuel Schmitt
      */
-    function isCompressible($ip) 
+    static function isCompressible($ip) 
     {
 
         return (bool)($ip != Net_IPv6::compress($address));
@@ -828,7 +828,7 @@ class Net_IPv6
      * @access public
      * @static
      */
-    function SplitV64($ip, $uncompress = true)
+    static function SplitV64($ip, $uncompress = true)
     {
         $ip = Net_IPv6::removeNetmaskSpec($ip);
 
@@ -867,7 +867,7 @@ class Net_IPv6
      * @access public
      * @static
      */
-    function checkIPv6($ip)
+    static function checkIPv6($ip)
     {
 
         $elements = Net_IPv6::separate($ip);
@@ -978,7 +978,7 @@ class Net_IPv6
      * @author Nicholas Williams
      */
 
-    function parseAddress($ipToParse, $bits = null)
+    static function parseAddress($ipToParse, $bits = null)
     {
 
         $ip      = null;
@@ -1034,7 +1034,7 @@ class Net_IPv6
      * @access private
      @ @since 1.1.0
      */
-    function _ip2Bin($ip) 
+    static function _ip2Bin($ip) 
     {
         $binstr = '';
 
@@ -1065,7 +1065,7 @@ class Net_IPv6
      * @access private
      @ @since 1.1.0
      */
-    function _bin2Ip($bin)
+    static function _bin2Ip($bin)
     {
         $ip = "";
 

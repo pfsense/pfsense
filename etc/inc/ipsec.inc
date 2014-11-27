@@ -60,9 +60,6 @@ $peer_identifier_list = array(
 
 $p1_ealgos = array(
 	'aes' => array( 'name' => 'AES', 'keysel' => array( 'lo' => 128, 'hi' => 256, 'step' => 64 ) ),
-	'aes128gcm' => array( 'name' => 'AES128-GCM', 'keysel' => array( 'lo' => 64, 'hi' => 128, 'step' => 32 ) ),
-	'aes192gcm' => array( 'name' => 'AES192-GCM', 'keysel' => array( 'lo' => 64, 'hi' => 128, 'step' => 32 ) ),
-	'aes256gcm' => array( 'name' => 'AES256-GCM', 'keysel' => array( 'lo' => 64, 'hi' => 128, 'step' => 32 ) ),
 	'blowfish' => array( 'name' => 'Blowfish', 'keysel' => array( 'lo' => 128, 'hi' => 256, 'step' => 64 ) ),
 	'3des' => array( 'name' => '3DES' ),
 	'cast128' => array( 'name' => 'CAST128' ),
@@ -200,7 +197,7 @@ function ipsec_get_phase1_dst(& $ph1ent) {
 		return false;
 	$rg = $ph1ent['remote-gateway'];
 	if (!is_ipaddr($rg)) {
-		if(! $g['booting'])
+		if(! platform_booting())
 			return resolve_retry($rg);
 	}
 	if(!is_ipaddr($rg))
@@ -344,7 +341,7 @@ function ipsec_lookup_phase1(& $ph2ent,& $ph1ent) {
 /*
  * Check phase1 communications status
  */
-function ipsec_phase1_status($ipsec_status, $ikeid) {
+function ipsec_phase1_status(&$ipsec_status, $ikeid) {
 
 	foreach ($ipsec_status as $ike) {
 		if ($ike['id'] != $ikeid)
@@ -360,20 +357,12 @@ function ipsec_phase1_status($ipsec_status, $ikeid) {
 /*
  * Check phase2 communications status
  */
-function ipsec_phase2_status($ipsec_status, &$phase2) {
+function ipsec_phase2_status(&$ipsec_status, &$phase2) {
 
 	if (ipsec_lookup_phase1($ph2ent,$ph1ent))
 		return ipsec_phase1_status($ipsec_status, $ph1ent['ikeid']);
 
 	return false;
-}
-
-/*
- * Return ISAKMP SA details
- */
-function ipsec_lookup_isakmp_sa($in_srcip,$in_dstip) {
-	/* TODO : use racconctl to lookup iskamp SA */
-	return NULL;
 }
 
 /*

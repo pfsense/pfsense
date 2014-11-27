@@ -1,8 +1,7 @@
 <?xml version="1.0"?>
-<!-- pfSense default system configuration -->
 <pfsense>
-	<version>9.9</version>
-	<lastchange></lastchange>
+	<version>11.1</version>
+	<lastchange/>
 	<theme>pfsense_ng</theme>
 	<system>
 		<optimization>normal</optimization>
@@ -41,13 +40,9 @@
 		<timeservers>0.pfsense.pool.ntp.org</timeservers>
 		<webgui>
 			<protocol>https</protocol>
+			<loginautocomplete/>
 		</webgui>
 		<disablenatreflection>yes</disablenatreflection>
-		<!-- <disableconsolemenu/> -->
-		<!-- <disablefirmwarecheck/> -->
-		<!-- <shellcmd></shellcmd> -->
-		<!-- <earlyshellcmd></earlyshellcmd> -->
-		<!-- <harddiskstandby></harddiskstandby> -->
 		<disablesegmentationoffloading/>
 		<disablelargereceiveoffloading/>
 		<ipv6allow/>
@@ -62,87 +57,34 @@
 	<interfaces>
 		<wan>
 			<enable/>
-			<if>vr1</if>
-			<mtu></mtu>
+			<if>em0</if>
+			<mtu/>
 			<ipaddr>dhcp</ipaddr>
 			<ipaddrv6>dhcp6</ipaddrv6>
-			<!-- *or* ipv4-address *or* 'pppoe' *or* 'pptp' *or* 'bigpond' -->
-			<subnet></subnet>
-			<gateway></gateway>
+			<subnet/>
+			<gateway/>
 			<blockpriv/>
 			<blockbogons/>
-			<dhcphostname></dhcphostname>
-			<media></media>
-			<mediaopt></mediaopt>
-			<dhcp6-duid></dhcp6-duid>
+			<dhcphostname/>
+			<media/>
+			<mediaopt/>
+			<dhcp6-duid/>
 			<dhcp6-ia-pd-len>0</dhcp6-ia-pd-len>
-			<!--
-			<wireless>
-				*see below (opt[n])*
-			</wireless>
-			-->
 		</wan>
 		<lan>
 			<enable/>
-			<if>vr0</if>
+			<if>em1</if>
 			<ipaddr>192.168.1.1</ipaddr>
 			<subnet>24</subnet>
 			<ipaddrv6>track6</ipaddrv6>
 			<subnetv6>64</subnetv6>
-			<media></media>
-			<mediaopt></mediaopt>
+			<media/>
+			<mediaopt/>
 			<track6-interface>wan</track6-interface>
 			<track6-prefix-id>0</track6-prefix-id>
-			<!--
-			<wireless>
-				*see below (opt[n])*
-			</wireless>
-			-->
 		</lan>
-		<!--
-		<opt[n]>
-			<enable/>
-			<descr></descr>
-			<if></if>
-			<ipaddr></ipaddr>
-			<subnet></subnet>
-			<media></media>
-			<mediaopt></mediaopt>
-			<bridge>lan|wan|opt[n]</bridge>
-			<wireless>
-				<mode>hostap *or* bss *or* ibss</mode>
-				<ssid></ssid>
-				<channel></channel>
-				<wep>
-					<enable/>
-					<key>
-						<txkey/>
-						<value></value>
-					</key>
-				</wep>
-			</wireless>
-		</opt[n]>
-		-->
 	</interfaces>
-	<!--
-	<vlans>
-		<vlan>
-			<tag></tag>
-			<if></if>
-			<descr></descr>
-		</vlan>
-	</vlans>
-	-->
-	<staticroutes>
-		<!--
-		<route>
-			<interface>lan|opt[n]|pptp</interface>
-			<network>xxx.xxx.xxx.xxx/xx</network>
-			<gateway>xxx.xxx.xxx.xxx</gateway>
-			<descr></descr>
-		</route>
-		-->
-	</staticroutes>
+	<staticroutes/>
 	<dhcpd>
 		<lan>
 			<enable/>
@@ -150,151 +92,32 @@
 				<from>192.168.1.100</from>
 				<to>192.168.1.199</to>
 			</range>
-			<!--
-			<winsserver>xxx.xxx.xxx.xxx</winsserver>
-			<defaultleasetime></defaultleasetime>
-			<maxleasetime></maxleasetime>
-			<gateway>xxx.xxx.xxx.xxx</gateway>
-			<domain></domain>
-			<dnsserver></dnsserver>
-			<ntpserver>xxx.xxx.xxx.xxx</ntpserver>
-			<next-server></next-server>
-			<filename></filename>
-			<filename32></filename32>
-			<filename64></filename64>
-			-->
 		</lan>
-		<!--
-		<opt[n]>
-			...
-		</opt[n]>
-		-->
-		<!--
-		<staticmap>
-			<mac>xx:xx:xx:xx:xx:xx</mac>
-			<ipaddr>xxx.xxx.xxx.xxx</ipaddr>
-			<descr></descr>
-		</staticmap>
-		-->
 	</dhcpd>
 	<pptpd>
-		<mode><!-- off *or* server *or* redir --></mode>
+		<mode/>
 		<redir/>
 		<localip/>
 		<remoteip/>
-		<!-- <accounting/> -->
-		<!--
-		<user>
-			<name></name>
-			<password></password>
-		</user>
-		-->
 	</pptpd>
-	<dnsmasq>
-		<enable/>
-		<!--
-		<hosts>
-			<host></host>
-			<domain></domain>
-			<ip></ip>
-			<descr></descr>
-		</hosts>
-		-->
-	</dnsmasq>
 	<snmpd>
-		<!-- <enable/> -->
 		<syslocation/>
 		<syscontact/>
 		<rocommunity>public</rocommunity>
 	</snmpd>
 	<diag>
 		<ipv6nat>
-			<!-- <enable/> -->
 			<ipaddr/>
 		</ipv6nat>
 	</diag>
-	<bridge>
-		<!-- <filteringbridge/> -->
-	</bridge>
-	<syslog>
-		<!--
-		<reverse/>
-		<enable/>
-		<remoteserver>xxx.xxx.xxx.xxx</remoteserver>
-		<filter/>
-		<dhcp/>
-		<system/>
-		<nologdefaultblock/>
-		-->
-	</syslog>
-	<!--
-	<captiveportal>
-		<enable/>
-		<interface>lan|opt[n]</interface>
-		<idletimeout>minutes</idletimeout>
-		<timeout>minutes</timeout>
-		<page>
-			<htmltext></htmltext>
-			<errtext></errtext>
-		</page>
-		<httpslogin/>
-		<httpsname></httpsname>
-		<redirurl></redirurl>
-		<radiusip></radiusip>
-		<radiusport></radiusport>
-		<radiuskey></radiuskey>
-		<nomacfilter/>
-	</captiveportal>
-	-->
+	<bridge/>
+	<syslog/>
 	<nat>
 		<outbound>
 			<mode>automatic</mode>
-			<!--
-			<rule>
-				<interface></interface>
-				<source>
-					<network>xxx.xxx.xxx.xxx/xx</network>
-				</source>
-				<destination>
-					<not/>
-					<any/>
-					*or*
-					<network>xxx.xxx.xxx.xxx/xx</network>
-				</destination>
-				<target>xxx.xxx.xxx.xxx</target>
-				<descr></descr>
-			</rule>
-			-->
 		</outbound>
-		<!--
-		<rule>
-			<interface></interface>
-			<external-address></external-address>
-			<protocol></protocol>
-			<external-port></external-port>
-			<target></target>
-			<local-port></local-port>
-			<descr></descr>
-		</rule>
-		-->
-		<!--
-		<onetoone>
-			<interface></interface>
-			<external>xxx.xxx.xxx.xxx</external>
-			<internal>xxx.xxx.xxx.xxx</internal>
-			<subnet></subnet>
-			<descr></descr>
-		</onetoone>
-		-->
-		<!--
-		<servernat>
-			<ipaddr></ipaddr>
-			<descr></descr>
-		</servernat>
-		-->
 	</nat>
 	<filter>
-		<!-- <tcpidletimeout></tcpidletimeout> -->
 		<rule>
 			<type>pass</type>
 			<ipprotocol>inet</ipprotocol>
@@ -321,172 +144,11 @@
 				<any/>
 			</destination>
 		</rule>
-		<!-- rule syntax:
-		<rule>
-			<disabled/>
-			<id>[0-9]*</id>
-			<type>pass|block|reject</type>
-			<ipprotocol>inet|inet6</ipprotocol>
-			<descr>...</descr>
-			<interface>lan|opt[n]|wan|pptp</interface>
-			<protocol>tcp|udp|tcp/udp|...</protocol>
-			<icmptype></icmptype>
-			<source>
-				<not/>
-
-				<address>xxx.xxx.xxx.xxx(/xx) or alias</address>
-				*or*
-				<network>lan|opt[n]|pptp</network>
-				*or*
-				<any/>
-
-				<port>a[-b]</port>
-			</source>
-			<destination>
-				*same as for source*
-			</destination>
-			<frags/>
-			<log/>
-		</rule>
-		-->
 	</filter>
-	<shaper>
-		<!-- <enable/> -->
-		<!-- <schedulertype>hfsc</schedulertype> -->
-		<!-- rule syntax:
-		<rule>
-			<disabled/>
-			<descr></descr>
-
-			<targetpipe>number (zero based)</targetpipe>
-			*or*
-			<targetqueue>number (zero based)</targetqueue>
-
-			<interface>lan|wan|opt[n]|pptp</interface>
-			<protocol>tcp|udp</protocol>
-			<direction>in|out</direction>
-			<source>
-				<not/>
-
-				<address>xxx.xxx.xxx.xxx(/xx)</address>
-				*or*
-				<network>lan|opt[n]|pptp</network>
-				*or*
-				<any/>
-
-				<port>a[-b]</port>
-			</source>
-			<destination>
-				*same as for source*
-			</destination>
-
-			<iplen>from[-to]</iplen>
-			<iptos>(!)lowdelay,throughput,reliability,mincost,congestion</iptos>
-			<tcpflags>(!)fin,syn,rst,psh,ack,urg</tcpflags>
-		</rule>
-		<pipe>
-			<descr></descr>
-			<bandwidth></bandwidth>
-			<delay></delay>
-			<mask>source|destination</mask>
-		</pipe>
-		<queue>
-			<descr></descr>
-			<targetpipe>number (zero based)</targetpipe>
-			<weight></weight>
-			<mask>source|destination</mask>
-		</queue>
-		-->
-	</shaper>
-	<ipsec>
-		<!-- <enable/> -->
-		<!-- syntax:
-		<tunnel>
-			<disabled/>
-			<auto/>
-			<descr></descr>
-			<interface>lan|wan|opt[n]</interface>
-			<local-subnet>
-				<address>xxx.xxx.xxx.xxx(/xx)</address>
-				*or*
-				<network>lan|opt[n]</network>
-			</local-subnet>
-			<remote-subnet>xxx.xxx.xxx.xxx/xx</remote-subnet>
-			<remote-gateway></remote-gateway>
-			<p1>
-				<mode></mode>
-				<myident>
-					<myaddress/>
-					*or*
-					<address>xxx.xxx.xxx.xxx</address>
-					*or*
-					<fqdn>the.fq.dn</fqdn>
-				</myident>
-				<encryption-algorithm></encryption-algorithm>
-				<hash-algorithm></hash-algorithm>
-				<dhgroup></dhgroup>
-				<lifetime></lifetime>
-				<pre-shared-key></pre-shared-key>
-			</p1>
-			<p2>
-				<protocol></protocol>
-				<encryption-algorithm-option></encryption-algorithm-option>
-				<hash-algorithm-option></hash-algorithm-option>
-				<pfsgroup></pfsgroup>
-				<lifetime></lifetime>
-			</p2>
-		</tunnel>
-		<mobileclients>
-			<enable/>
-			<p1>
-				<mode></mode>
-				<myident>
-					<myaddress/>
-					*or*
-					<address>xxx.xxx.xxx.xxx</address>
-					*or*
-					<fqdn>the.fq.dn</fqdn>
-				</myident>
-				<encryption-algorithm></encryption-algorithm>
-				<hash-algorithm></hash-algorithm>
-				<dhgroup></dhgroup>
-				<lifetime></lifetime>
-			</p1>
-			<p2>
-				<protocol></protocol>
-				<encryption-algorithm-option></encryption-algorithm-option>
-				<hash-algorithm-option></hash-algorithm-option>
-				<pfsgroup></pfsgroup>
-				<lifetime></lifetime>
-			</p2>
-		</mobileclients>
-		<mobilekey>
-			<ident></ident>
-			<pre-shared-key></pre-shared-key>
-		</mobilekey>
-		-->
-	</ipsec>
-	<aliases>
-		<!--
-		<alias>
-			<name></name>
-			<address>xxx.xxx.xxx.xxx(/xx)</address>
-			<descr></descr>
-		</alias>
-		-->
-	</aliases>
-	<proxyarp>
-		<!--
-		<proxyarpnet>
-			<network>xxx.xxx.xxx.xxx/xx</network>
-			*or*
-			<range>
-				<from>xxx.xxx.xxx.xxx</from>
-				<to>xxx.xxx.xxx.xxx</to>
-			</range>
-		</proxyarpnet>
-		-->
-	</proxyarp>
+	<shaper/>
+	<ipsec/>
+	<aliases/>
+	<proxyarp/>
 	<cron>
 		<item>
 			<minute>1,31</minute>
@@ -543,15 +205,7 @@
 			<command>/usr/bin/nice -n20 /etc/rc.update_urltables</command>
 		</item>
 	</cron>
-	<wol>
-		<!--
-		<wolentry>
-			<interface>lan|opt[n]</interface>
-			<mac>xx:xx:xx:xx:xx:xx</mac>
-			<descr></descr>
-		</wolentry>
-		-->
-	</wol>
+	<wol/>
 	<rrd>
 		<enable/>
 	</rrd>
@@ -593,7 +247,7 @@
 			<type>send</type>
 			<descr><![CDATA[Generic SMTP]]></descr>
 			<options>
-				<send></send>
+				<send/>
 				<expect>220 *</expect>
 			</options>
 		</monitor_type>
@@ -601,4 +255,13 @@
 	<widgets>
 		<sequence>system_information-container:col1:show,captive_portal_status-container:col1:close,carp_status-container:col1:close,cpu_graphs-container:col1:close,gateways-container:col1:close,gmirror_status-container:col1:close,installed_packages-container:col1:close,interface_statistics-container:col1:close,interfaces-container:col2:show,ipsec-container:col2:close,load_balancer_status-container:col2:close,log-container:col2:close,picture-container:col2:close,rss-container:col2:close,services_status-container:col2:close,traffic_graphs-container:col2:close</sequence>
 	</widgets>
+	<openvpn/>
+	<dnshaper/>
+	<unbound>
+		<enable/>
+		<dnssec/>
+		<active_interface/>
+		<outgoing_interface/>
+		<custom_options/>
+	</unbound>
 </pfsense>

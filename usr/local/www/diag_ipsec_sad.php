@@ -53,6 +53,16 @@ include("head.inc");
 
 $sad = ipsec_dump_sad();
 
+/* delete any SA? */
+if ($_GET['act'] == "del") {
+	$fd = @popen("/sbin/setkey -c > /dev/null 2>&1", "w");
+	if ($fd) {
+		fwrite($fd, "delete {$_GET['src']} {$_GET['dst']} {$_GET['proto']} {$_GET['spi']} ;\n");
+		pclose($fd);
+		sleep(1);
+	}
+}
+
 ?>
 
 <body link="#0000CC" vlink="#0000CC" alink="#0000CC">
@@ -96,6 +106,15 @@ $sad = ipsec_dump_sad();
 							<td class="listr"><?=htmlspecialchars($sa['aalgo']);?></td>
 							<td class="listr"><?=htmlspecialchars($sa['data']);?></td>
 							<td class="list nowrap">
+								<?php
+									$args = "src=" . rawurlencode($sa['src']);
+									$args .= "&amp;dst=" . rawurlencode($sa['dst']);
+									$args .= "&amp;proto=" . rawurlencode($sa['proto']);
+									$args .= "&amp;spi=" . rawurlencode("0x" . $sa['spi']);
+								?>
+								<a href="diag_ipsec_sad.php?act=del&amp;<?=$args;?>" onclick="return confirm('<?=gettext("Do you really want to delete this security association?"); ?>')">
+									<img src="/themes/<?= $g['theme']; ?>/images/icons/icon_x.gif" width="17" height="17" border="0" alt="delete" />
+								</a>
 							</td>
 						</tr>
 						<?php endforeach; ?>

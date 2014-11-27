@@ -250,7 +250,7 @@ function get_services() {
 	if (isset($config['unbound']['enable'])) {
 		$pconfig = array();
 		$pconfig['name'] = "unbound";
-		$pconfig['description'] = gettext("Unbound DNS Forwarder");
+		$pconfig['description'] = gettext("Unbound DNS Resolver");
 		$services[] = $pconfig;
 	}
 
@@ -539,6 +539,9 @@ function service_control_start($name, $extras) {
 			break;
 		case 'dnsmasq':
 			services_dnsmasq_configure();
+			break;
+		case 'unbound':
+			services_unbound_configure();
 			break;
 		case 'dhcpd':
 			services_dhcpd_configure();

@@ -139,8 +139,8 @@ function system_resolvconf_generate($dynupdate = false) {
 
 	$syscfg = $config['system'];
 
-	if (((isset($config['dnsmasq']['enable']) && (empty($config['dnsmasq']['interface']) || in_array("lo0", explode(",", $config['dnsmasq']['interface']))))
-		|| (isset($config['unbound']['enable'])) && (empty($config['unbound']['active_interface']) || in_array("lo0", explode(",", $config['unbound']['active_interface']))))
+	if (((isset($config['dnsmasq']['enable']) && (!isset($config['dnsmasq']['port']) || $config['dnsmasq']['port'] == "53") && (empty($config['dnsmasq']['interface']) || in_array("lo0", explode(",", $config['dnsmasq']['interface']))))
+		|| (isset($config['unbound']['enable'])) && (!isset($config['unbound']['port']) || $config['unbound']['port'] == "53") && (empty($config['unbound']['active_interface']) || in_array("lo0", explode(",", $config['unbound']['active_interface']))))
 		&& !isset($config['system']['dnslocalhost']))
 		$resolvconf .= "nameserver 127.0.0.1\n";
 
@@ -159,7 +159,7 @@ function system_resolvconf_generate($dynupdate = false) {
 	} else {
 		// Do not create blank search/domain lines, it can break tools like dig.
 		if($syscfg['domain'])
-			$resolvconf = "search {$syscfg['domain']}\n";
+			$resolvconf .= "search {$syscfg['domain']}\n";
 	}
 	if (is_array($syscfg['dnsserver'])) {
 		foreach ($syscfg['dnsserver'] as $ns) {
@@ -184,7 +184,7 @@ function system_resolvconf_generate($dynupdate = false) {
 	fwrite($fd, $resolvconf);
 	fclose($fd);
 
-	if (!$g['booting']) {
+	if (!platform_booting()) {
 		/* restart dhcpd (nameservers may have changed) */
 		if (!$dynupdate)
 			services_dhcpd_configure();
@@ -286,9 +286,13 @@ function system_hosts_generate() {
 	}
 
 	$syscfg = $config['system'];
-	$dnsmasqcfg = $config['dnsmasq'];
+	if (isset($config['unbound']) && isset($config['unbound']['enable']))
+		$dnsmasqcfg = $config['unbound'];
+	else
+		$dnsmasqcfg = $config['dnsmasq'];
 
-	$hosts = "127.0.0.1	localhost localhost.{$syscfg['domain']}\n";
+	$hosts =  "127.0.0.1	localhost localhost.{$syscfg['domain']}\n";
+	$hosts .= "::1		localhost localhost.{$syscfg['domain']}\n";
 	$lhosts = "";
 	$dhosts = "";
 
@@ -377,8 +381,6 @@ function system_hosts_generate() {
 		unbound_hosts_generate();
 	}
 
-	system_dhcpleases_configure();
-
 	return 0;
 }
 
@@ -394,22 +396,34 @@ function system_dhcpleases_configure() {
 		mwexec("/bin/mkdir -p {$g['dhcpd_chroot_path']}/var/db");
 		if (!file_exists("{$g['dhcpd_chroot_path']}/var/db/dhcpd.leases"))
 			@touch("{$g['dhcpd_chroot_path']}/var/db/dhcpd.leases");
-		if (isvalidpid("{$g['varrun_path']}/dhcpleases.pid"))
-			sigkillbypid("{$g['varrun_path']}/dhcpleases.pid", "HUP");
-		else {
-			/* To ensure we do not start multiple instances of dhcpleases, perform some clean-up first. */
-			if (is_process_running("dhcpleases"))
-				mwexec('/bin/pkill dhcpleases');
-			@unlink("{$g['varrun_path']}/dhcpleases.pid");
-			if (isset($config['unbound']['enable']))
-				$dns_pid = "unbound.pid";
-			else
-				$dns_pid = "dnsmasq.pid";
-			mwexec("/usr/local/sbin/dhcpleases -l {$g['dhcpd_chroot_path']}/var/db/dhcpd.leases -d {$config['system']['domain']} -p {$g['varrun_path']}/{$dns_pid} -h {$g['varetc_path']}/hosts");
+
+		if (isset($config['unbound']['enable'])) {
+			$dns_pid = "unbound.pid";
+			$unbound_conf = "-u {$g['unbound_chroot_path']}/dhcpleases_entries.conf";
+		} else {
+			$dns_pid = "dnsmasq.pid";
+			$unbound_conf = "";
 		}
+
+		$pidfile = "{$g['varrun_path']}/dhcpleases.pid";
+		if (isvalidpid($pidfile)) {
+			/* Make sure dhcpleases is using correct unbound or dnsmasq */
+			$_gb = exec("/bin/pgrep -F {$pidfile} -f {$dns_pid}", $output, $retval);
+			if (intval($retval) == 0) {
+				sigkillbypid($pidfile, "HUP");
+				return;
+			} else
+				sigkillbypid($pidfile, "TERM");
+		}
+
+		/* To ensure we do not start multiple instances of dhcpleases, perform some clean-up first. */
+		if (is_process_running("dhcpleases"))
+			sigkillbyname('dhcpleases', "TERM");
+		@unlink($pidfile);
+		mwexec("/usr/local/sbin/dhcpleases -l {$g['dhcpd_chroot_path']}/var/db/dhcpd.leases -d {$config['system']['domain']} -p {$g['varrun_path']}/{$dns_pid} {$unbound_conf} -h {$g['varetc_path']}/hosts");
 	} else {
-		sigkillbypid("{$g['varrun_path']}/dhcpleases.pid", "TERM");
-		@unlink("{$g['varrun_path']}/dhcpleases.pid");
+		sigkillbypid($pidfile, "TERM");
+		@unlink($pidfile);
 	}
 }
 
@@ -700,7 +714,7 @@ function system_syslogd_start() {
 
 	$syslogcfg = $config['syslog'];
 
-	if ($g['booting'])
+	if (platform_booting())
 		echo gettext("Starting syslog...");
 
 	if (is_process_running("fifolog_writer"))
@@ -880,7 +894,7 @@ EOD;
 	else
 		$retval = mwexec_bg("/usr/sbin/syslogd -s -c -c -l {$g['dhcpd_chroot_path']}/var/run/log -P {$g['varrun_path']}/syslog.pid {$syslogd_extra}");
 
-	if ($g['booting'])
+	if (platform_booting())
 		echo gettext("done.") . "\n";
 
 	return $retval;
@@ -927,7 +941,7 @@ function system_webgui_create_certificate() {
 function system_webgui_start() {
 	global $config, $g;
 
-	if ($g['booting'])
+	if (platform_booting())
 		echo gettext("Starting webConfigurator...");
 
 	chdir($g['www_path']);
@@ -970,7 +984,7 @@ function system_webgui_start() {
 	/* attempt to start lighthttpd */
 	$res = mwexec("/usr/local/sbin/lighttpd -f {$g['varetc_path']}/lighty-webConfigurator.conf");
 
-	if ($g['booting']) {
+	if (platform_booting()) {
 		if ($res == 0)
 			echo gettext("done.") . "\n";
 		else
@@ -1365,7 +1379,7 @@ function system_timezone_configure() {
 
 	$syscfg = $config['system'];
 
-	if ($g['booting'])
+	if (platform_booting())
 		echo gettext("Setting timezone...");
 
 	/* extract appropriate timezone file */
@@ -1391,7 +1405,7 @@ function system_timezone_configure() {
 	mwexec("sync");
 	conf_mount_ro();
 
-	if ($g['booting'])
+	if (platform_booting())
 		echo gettext("done.") . "\n";
 }
 
@@ -1746,7 +1760,7 @@ function system_ntp_configure($start_ntpd=true) {
 function sync_system_time() {
 	global $config, $g;
 
-	if ($g['booting'])
+	if (platform_booting())
 		echo gettext("Syncing system time before startup...");
 
 	/* foreach through servers and write out to ntpd.conf */
@@ -1754,7 +1768,7 @@ function sync_system_time() {
 		mwexec("/usr/local/sbin/ntpdate -s $ts");
 	}
 	
-	if ($g['booting'])
+	if (platform_booting())
 		echo gettext("done.") . "\n";
 	
 }
@@ -1882,7 +1896,7 @@ function system_set_harddisk_standby() {
 	}
 
 	if (isset($config['system']['harddiskstandby'])) {
-		if ($g['booting']) {
+		if (platform_booting()) {
 			echo gettext('Setting hard disk standby... ');
 		}
 
@@ -1894,13 +1908,13 @@ function system_set_harddisk_standby() {
 			if (set_single_sysctl('hw.ata.standby', (int)$standby)) {
 				// Reinitialize ATA-drives
 				mwexec('/usr/local/sbin/atareinit');
-				if ($g['booting']) {
+				if (platform_booting()) {
 					echo gettext("done.") . "\n";
 				}
-			} else if ($g['booting']) {
+			} else if (platform_booting()) {
 				echo gettext("failed!") . "\n";
 			}
-		} else if ($g['booting']) {
+		} else if (platform_booting()) {
 			echo gettext("failed!") . "\n";
 		}
 	}

@@ -157,7 +157,7 @@ function vpn_ipsec_configure($ipchg = false)
 			mkdir("{$g['varetc_path']}/ipsec/ipsec.d/reqs");
 		
 
-		if ($g['booting'])
+		if (platform_booting())
 			echo gettext("Configuring IPsec VPN... ");
 
 		/* fastforwarding is not compatible with ipsec tunnels */
@@ -198,7 +198,7 @@ function vpn_ipsec_configure($ipchg = false)
 				if (!is_ipaddr($rg)) {
 					$filterdns_list[] = "{$rg}";
 					add_hostname_to_watch($rg);
-					if(! $g['booting'])
+					if (!platform_booting())
 						$rg = resolve_retry($rg);
 					if (!is_ipaddr($rg))
 						continue;
@@ -319,7 +319,7 @@ EOD;
 		if (is_array($a_client) && isset($a_client['enable'])) {
 			$strongswan .= "\t\tattr {\n";
 			if ($a_client['pool_address'] && $a_client['pool_netbits'])
-				$strongswan .= "\t\tsubnet = {$a_client['pool_address']}/{$a_client['pool_netbits']}\n";
+				$strongswan .= "\t\t\tsubnet = {$a_client['pool_address']}/{$a_client['pool_netbits']}\n";
 
 			$cfgservers = array();
 			if (!empty($a_client['dns_server1']))
@@ -332,7 +332,7 @@ EOD;
 				$cfgservers[] = $a_client['dns_server4'];
 
 			if (!empty($cfgservers))
-				$strongswan .= "\t\tdns = " . implode(",", $cfgservers) . "\n";
+				$strongswan .= "\t\t\tdns = " . implode(",", $cfgservers) . "\n";
 			unset($cfgservers);
 			$cfgservers = array();
 			if (!empty($a_client['wins_server1']))
@@ -340,7 +340,7 @@ EOD;
 			if (!empty($a_client['wins_server2']))
 				$cfgservers[] = $a_client['wins_server2'];
 			if (!empty($cfgservers))
-				$strongswan .= "\t\tnbns = " . implode(",", $cfgservers) . "\n";
+				$strongswan .= "\t\t\tnbns = " . implode(",", $cfgservers) . "\n";
 			unset($cfgservers);
 
 			if (isset($a_client['net_list'])) {
@@ -360,37 +360,37 @@ EOD;
 				}
 
 				if (!empty($net_list)) {
-					$strongswan .= "\t\tsplit-include = {$net_list}\n";
+					$strongswan .= "\t\t\tsplit-include = {$net_list}\n";
 					unset($net_list);
 				}
 			}
 
 			if (!empty($a_client['dns_domain'])) {
-				$strongswan .= "\t\t# Search domain and default domain\n";
-				$strongswan .= "\t\t28674 = {$a_client['dns_domain']}\n";
+				$strongswan .= "\t\t\t# Search domain and default domain\n";
+				$strongswan .= "\t\t\t28674 = {$a_client['dns_domain']}\n";
 				if (empty($a_client['dns_split']))
-					$strongswan .= "\t\t28675 = {$a_client['dns_domain']}";
+					$strongswan .= "\t\t\t28675 = {$a_client['dns_domain']}";
 				$strongswan .= "\n";
 			}
 
 			if (!empty($a_client['dns_split'])) {
-				$strongswan .= "\t\t28675 = {$a_client['dns_split']}\n";
+				$strongswan .= "\t\t\t28675 = {$a_client['dns_split']}\n";
 			}
 
 			if (!empty($a_client['login_banner']))
-				$strongswan .= "\t\t28672 = {$a_client['login_banner']}\n";
+				$strongswan .= "\t\t\t28672 = {$a_client['login_banner']}\n";
 
 			if (isset($a_client['save_passwd']))
-				$strongswan .= "\t\t28673 = yes\n";
+				$strongswan .= "\t\t\t28673 = 1\n";
 
 			if ($a_client['pfs_group'])
-				$strongswan .= "\t\t28679 = {$a_client['pfs_group']}\n";
+				$strongswan .= "\t\t\t28679 = {$a_client['pfs_group']}\n";
 			$strongswan .= "\t\t}\n";
 
 			if ($a_client['user_source'] != "none") {
-				$strongswan .= "\txauth-generic {\n";
-				$strongswan .= "\t\tscript = /etc/inc/ipsec.auth-user.php\n";
-				$strongswan .= "\t\tauthcfg = ";
+				$strongswan .= "\t\txauth-generic {\n";
+				$strongswan .= "\t\t\tscript = /etc/inc/ipsec.auth-user.php\n";
+				$strongswan .= "\t\t\tauthcfg = ";
 				$firstsed = 0;
 				$authcfgs = explode(",", $a_client['user_source']);
 				foreach ($authcfgs as $authcfg) {
@@ -402,7 +402,7 @@ EOD;
 					$firstsed = 1;
 				}
 				$strongswan .= "\n";
-				$strongswan .= "\t}\n";
+				$strongswan .= "\t\t}\n";
 			}
 		}
 
@@ -440,7 +440,7 @@ EOD;
 				if (isset($ph1ent['disabled']))
 					continue;
 
-				if (strpos($ph1ent['authentication_method'], 'rsa') || $ph1ent['authentication_method'] == 'eap-tls') {
+				if (strstr($ph1ent['authentication_method'], 'rsa') || $ph1ent['authentication_method'] == 'eap-tls') {
 					$certline = '';
 
 					$ikeid = $ph1ent['ikeid'];
@@ -534,9 +534,12 @@ EOD;
 				$ikeid = $ph1ent['ikeid'];
 				$keyexchange = "ikev1";
 				$passive = "route";
-				if (!empty($ph1ent['iketype']) && $ph1ent['iketype'] != "ikev1") {
-					$keyexchange = "ikev2";
-					//$passive = "start";
+				if (!empty($ph1ent['iketype'])) {
+					if ($ph1ent['iketype'] == "ikev2") {
+						$keyexchange = "ikev2";
+						//$passive = "start";
+					} else if ($ph1ent['iketype'] == "auto")
+						$keyexchange = "ike";
 				}
 
 				if (isset($ph1ent['mobile'])) {
@@ -797,7 +800,6 @@ EOD;
 					$ipsecconf .=<<<EOD
 
 conn con{$ph1ent['ikeid']}
-	aggressive = {$aggressive}
 	fragmentation = yes
 	keyexchange = {$keyexchange}
 	{$reauth}
@@ -834,6 +836,8 @@ EOD;
 						$ipsecconf .= "\t{$authentication}\n";
 					if (!empty($peerid_spec))
 						$ipsecconf .= "\trightid = {$peerid_spec}\n";
+					if ($keyexchange == 'ikev1')
+						$ipsecconf .= "\taggressive = {$aggressive}\n";
 			}
 		}
 	}
@@ -877,7 +881,7 @@ EOD;
 		@unlink("{$g['varrun_path']}/filterdns-ipsec.pid");
 	}
 
-	if ($g['booting'])
+	if (platform_booting())
 		echo "done\n";
 
 	return count($filterdns_list);
@@ -949,7 +953,7 @@ function vpn_pptpd_configure() {
 	$syscfg = $config['system'];
 	$pptpdcfg = $config['pptpd'];
 
-	if ($g['booting']) {
+	if (platform_booting()) {
 		if (!$pptpdcfg['mode'] || ($pptpdcfg['mode'] == "off"))
 			return 0;
 
@@ -1160,7 +1164,7 @@ EOD;
 			break;
 	}
 
-	if ($g['booting'])
+	if (platform_booting())
 		echo "done\n";
 
 	return 0;
@@ -1184,7 +1188,7 @@ function vpn_pppoe_configure(&$pppoecfg) {
 	if (!is_dir("{$g['varetc_path']}/pppoe{$pppoecfg['pppoeid']}-vpn"))
 		mkdir("{$g['varetc_path']}/pppoe{$pppoecfg['pppoeid']}-vpn");
 
-	if ($g['booting']) {
+	if (platform_booting()) {
 		if (!$pppoecfg['mode'] || ($pppoecfg['mode'] == "off"))
 			return 0;
 
@@ -1380,7 +1384,7 @@ EOD;
 			break;
 	}
 
-	if ($g['booting'])
+	if (platform_booting())
 		echo gettext("done") . "\n";
 
 	return 0;
@@ -1396,7 +1400,7 @@ function vpn_l2tp_configure() {
 	if (!is_dir("{$g['varetc_path']}/l2tp-vpn"))
 		mkdir("{$g['varetc_path']}/l2tp-vpn");
 
-	if ($g['booting']) {
+	if (platform_booting()) {
 		if (!$l2tpcfg['mode'] || ($l2tpcfg['mode'] == "off"))
 			return 0;
 
@@ -1577,7 +1581,7 @@ EOD;
 			break;
 	}
 
-	if ($g['booting'])
+	if (platform_booting())
 		echo "done\n";
 
 	return 0;

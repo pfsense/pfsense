@@ -497,7 +497,7 @@ function verify_before_install() {
 	}
 	if(!$bootmanager) 
 		$bootmanager = $_REQUEST['bootmanager'];
-	echo "\n<!--" . print_r($_REQUEST, true) . " -->\n";
+	// echo "\n<!--" . print_r($_REQUEST, true) . " -->\n";
 	$disk = pcsysinstall_get_disk_info(htmlspecialchars($_REQUEST['disk']));
 	$disksize = format_bytes($disk['size'] * 1048576);
 	// Loop through posted items and create an array
@@ -535,7 +535,7 @@ function verify_before_install() {
 		$tmparray['encpass'] = $_REQUEST['encpass' . $x];
 		$disks[] = $tmparray;
 	}
-	echo "\n<!-- " . print_r($disks, true) . " --> \n";
+	// echo "\n<!-- " . print_r($disks, true) . " --> \n";
 	$bootmanagerupper = strtoupper($bootmanager);
 	echo <<<EOFAMBAC
 	<form method="post" action="installer.php">
@@ -595,11 +595,11 @@ EOFAMBACBAF;
 													foreach($disks as $disk) {
 														$desc = pcsysinstall_get_disk_info($disk['disk']);
 														echo "<tr>";
-														echo "<td>&nbsp;&nbsp;&nbsp;{$disk['mountpoint']}</td>";
-														echo "<td>{$disk['fstype']}</td>";
-														echo "<td>{$disk['disk']} {$desc['desc']}</td>";
-														echo "<td>{$disk['size']}</td>";
-														echo "<td>{$disk['encpass']}</td>";
+														echo "<td>&nbsp;&nbsp;&nbsp;" . htmlspecialchars($disk['mountpoint']) . "</td>";
+														echo "<td>" . htmlspecialchars($disk['fstype']) . "</td>";
+														echo "<td>" . htmlspecialchars($disk['disk']) . " " . htmlspecialchars($desc['desc']) . "</td>";
+														echo "<td>" . htmlspecialchars($disk['size']) . "</td>";
+														echo "<td>" . htmlspecialchars($disk['encpass']) . "</td>";
 														echo "</tr>";
 													}
 
@@ -970,7 +970,7 @@ EOF;
 		$first_disk_size = $size - $swap_size;
 
 		// Debugging
-		echo "\n\n<!-- $first_disk - " . print_r($disk_info, true) . " - $size  - $first_disk_size -->\n\n";
+		// echo "\n\n<!-- $first_disk - " . print_r($disk_info, true) . " - $size  - $first_disk_size -->\n\n";
 
 		// Check to see if a on disk layout exists
 		if(file_exists("/tmp/webInstaller_disk_layout.txt")) {

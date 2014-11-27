@@ -90,7 +90,7 @@ function remove_special_characters($string) {
 function carp_check_version($url, $username, $password, $port = 80, $method = 'pfsense.host_firmware_version') {
 	global $config, $g;
 
-	if(file_exists("{$g['varrun_path']}/booting") || $g['booting'])
+	if(file_exists("{$g['varrun_path']}/booting") || platform_booting())
 		return;
 
 	$params = array(
@@ -140,7 +140,7 @@ function carp_check_version($url, $username, $password, $port = 80, $method = 'p
 function carp_sync_xml($url, $username, $password, $sections, $port = 80, $method = 'pfsense.restore_config_section') {
 	global $config, $g;
 
-	if(file_exists("{$g['varrun_path']}/booting") || $g['booting'])
+	if(file_exists("{$g['varrun_path']}/booting") || platform_booting())
 		return;
 
 	update_filter_reload_status("Syncing CARP data to {$url}");
@@ -271,8 +271,7 @@ function carp_sync_xml($url, $username, $password, $sections, $port = 80, $metho
 	}
 }
 
-global $g;
-if (file_exists("{$g['varrun_path']}/booting") || $g['booting'])
+if (platform_booting())
 	return;
 
 if (is_array($config['hasync'])) {

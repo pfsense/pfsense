@@ -97,7 +97,7 @@ if ($_POST) {
 	if (($_POST['gateway']) && is_ipaddr($_POST['network'])) {
 		if (!isset($a_gateways[$_POST['gateway']]))
 			$input_errors[] = gettext("A valid gateway must be specified.");
-		if(!validate_address_family($_POST['network'], lookup_gateway_ip_by_name($_POST['gateway'])))
+		if(!validate_address_family($_POST['network'], $_POST['gateway']))
 			$input_errors[] = gettext("The gateway '{$a_gateways[$_POST['gateway']]['gateway']}' is a different Address Family as network '{$_POST['network']}'.");
 	}
 

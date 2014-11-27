@@ -107,10 +107,7 @@ if($config['installedpackages']['olsrd']) {
 				break;
 			}
 	}
-}
-
-if (!$_GET['if'])
-	$savemsg = gettext("The DHCP Server can only be enabled on interfaces configured with static IP addresses") . ".<br/><br/>" . gettext("Only interfaces configured with a static IP will be shown") . ".";
+}	
 
 $iflist = get_configured_interface_with_descr();
 
@@ -558,6 +555,8 @@ if (isset($_POST['submit']) || isset($_POST['apply'])) {
 		$retvaldns = services_unbound_configure();
 		if ($retvaldns == 0)
 			clear_subsystem_dirty('unbound');
+			clear_subsystem_dirty('hosts');
+			clear_subsystem_dirty('staticmaps');
 	} else {
 		$retvaldhcp = services_dhcpd_configure();
 		if ($retvaldhcp == 0)
@@ -758,6 +757,7 @@ include("head.inc");
 		$tabscounter++;
 	}
 	if ($tabscounter == 0) {
+		echo "<b>" . gettext("The DHCP Server can only be enabled on interfaces configured with a static IPv4 address. This system has none.") . "<br/><br/>";
 		echo "</td></tr></table></form>";
 		include("fend.inc");
 		echo "</body>";

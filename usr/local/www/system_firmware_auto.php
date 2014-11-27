@@ -73,7 +73,7 @@ include("head.inc");
 <?php include("fbegin.inc"); ?>
 
 <form action="system_firmware_auto.php" method="post">
-<table width="100%" border="0" cellpadding="6" cellspacing="0" summary="firmware auto-check">
+<table width="100%" border="0" cellpadding="0" cellspacing="0" summary="firmware auto-check">
 	<tr>
 		<td>
 		<?php

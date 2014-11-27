@@ -317,8 +317,8 @@ if ($_POST) {
 			$input_errors[] = gettext("A numeric value must be specified for DPD retries.");
 	}
 
-	if (!empty($pconfig['iketype']) && $pconfig['iketype'] != "ikev1" && $pconfig['iketype'] != "ikev2")
-		$input_errors[] = gettext("Valid arguments for IKE type is v1 or v2");
+	if (!empty($pconfig['iketype']) && $pconfig['iketype'] != "ikev1" && $pconfig['iketype'] != "ikev2" && $pconfig['iketype'] != "auto")
+		$input_errors[] = gettext("Valid arguments for IKE type is v1 or v2 or auto");
 
 	/* build our encryption algorithms array */
 	$pconfig['ealgo'] = array();
@@ -329,6 +329,10 @@ if ($_POST) {
 	if (!$input_errors) {
 		$ph1ent['ikeid'] = $pconfig['ikeid'];
 		$ph1ent['iketype'] = $pconfig['iketype'];
+		if ($pconfig['iketype'] != 'ikev1')
+			unset($ph1ent['mode']);
+		else
+			$ph1ent['mode'] = $pconfig['mode'];
 		$ph1ent['disabled'] = $pconfig['disabled'] ? true : false;
 		$ph1ent['interface'] = $pconfig['interface'];
 		/* if the remote gateway changed and the interface is not WAN then remove route */
@@ -344,7 +348,6 @@ if ($_POST) {
 		else
 			$ph1ent['remote-gateway'] = $pconfig['remotegw'];
 
-		$ph1ent['mode'] = $pconfig['mode'];
 		$ph1ent['protocol'] = $pconfig['protocol'];
 
 		$ph1ent['myid_type'] = $pconfig['myid_type'];
@@ -414,6 +417,15 @@ function myidsel_change() {
 			document.getElementById('myid_data').style.visibility = 'hidden';
 	else
 			document.getElementById('myid_data').style.visibility = 'visible';
+}
+
+function iketype_change() {
+	index = document.iform.iketype.selectedIndex;
+	value = document.iform.iketype.options[index].value;
+	if (value == 'ikev2')
+			document.getElementById('negmode').style.display= 'none';
+	else
+			document.getElementById('negmode').style.display = '';
 }
 
 function peeridsel_change() {
@@ -567,16 +579,16 @@ function dpdchkbox_change() {
 					<tr>
 						<td width="22%" valign="top" class="vncellreq"><?=gettext("Key Exchange version"); ?></td>
 						<td width="78%" class="vtable">
-							<select name="iketype" class="formselect">
+							<select name="iketype" class="formselect" onchange='iketype_change()'>
 							<?php
-								$keyexchange = array("ikev1" => "V1", "ikev2" => "V2");
+								$keyexchange = array("ikev1" => "V1", "ikev2" => "V2", "auto" => "Auto");
 								foreach ($keyexchange as $kidx => $name):
 							?>
 								<option value="<?=$kidx;?>" <?php if ($kidx == $pconfig['iketype']) echo "selected=\"selected\""; ?>>
 									<?=htmlspecialchars($name);?>
 								</option>
 							<?php endforeach; ?>
-							</select> <br /> <span class="vexpl"><?=gettext("Select the KeyExchange Protocol version to be used. Usually known as IKEv1 or IKEv2."); ?>.</span>
+							</select> <br /> <span class="vexpl"><?=gettext("Select the Internet Key Exchange protocol version to be used, IKEv1 or IKEv2"); ?>.</span>
 						</td>
 					</tr>
 					<tr>
@@ -683,7 +695,7 @@ function dpdchkbox_change() {
 							</span>
 						</td>
 					</tr>
-					<tr>
+					<tr id='negmode' >
 						<td width="22%" valign="top" class="vncellreq"><?=gettext("Negotiation mode"); ?></td>
 						<td width="78%" class="vtable">
 							<select name="mode" class="formselect">
@@ -930,6 +942,7 @@ function dpdchkbox_change() {
 ?>
 myidsel_change();
 peeridsel_change();
+iketype_change();
 methodsel_change();
 ealgosel_change(<?=$keyset;?>);
 dpdchkbox_change();

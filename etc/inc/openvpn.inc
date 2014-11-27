@@ -783,6 +783,8 @@ function openvpn_reconfigure($mode, $settings) {
 
 	if ($settings['resolve_retry'])
 		$conf .= "resolv-retry infinite\n";
+	else if ($mode == 'client')
+		$conf .= "resolv-retry 2\n";
 
 	if ($settings['dynamic_ip']) {
 		$conf .= "persist-remote-ip\n";
@@ -840,9 +842,17 @@ function openvpn_restart($mode, $settings) {
 		/* send a term signal to the process */
 		posix_kill($pid, SIGTERM);
 
-		/* wait until the process exits */
-		while(posix_kill($pid, 0))
+		/* wait until the process exits, or timeout and kill it */
+		$i = 0;
+		while(posix_kill($pid, 0)) {
 			usleep(250000);
+			if ($i > 10) {
+				log_error("OpenVPN ID $mode_id PID $pid still running, killing.");
+				posix_kill($pid, SIGKILL);
+				usleep(500000);
+			}
+			$i++;
+		}
 	}
 
 	if (isset($settings['disable']))
@@ -865,7 +875,7 @@ function openvpn_restart($mode, $settings) {
 	openvpn_clear_route($mode, $settings);
 	mwexec_bg("/usr/local/sbin/openvpn --config " . escapeshellarg($fpath));
 
-	if (!$g['booting'])
+	if (!platform_booting())
 		send_event("filter reload");
 }
 

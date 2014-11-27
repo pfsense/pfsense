@@ -81,7 +81,7 @@ if (empty($interface)) {
 }
 
 //Do not process while booting
-if ($g['booting'] && $config['interfaces'][$interface]['ipaddrv6'] != "dhcp6")
+if (platform_booting() && $config['interfaces'][$interface]['ipaddrv6'] != "dhcp6")
 	return;
 
 /*

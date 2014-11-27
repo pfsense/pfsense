@@ -38,6 +38,18 @@ require_once("pkg-utils.inc");
 require_once("pfsense-utils.inc");
 require_once("service-utils.inc");
 
+if (file_exists("{$g['tmp_path']}/.rc.start_packages.running")) {
+        $stat = stat("{$g['tmp_path']}/.rc.start_packages.running");
+        if (time() - $stat['mtime'] >= 90)
+                @unlink("{$g['tmp_path']}/.rc.start_packages.running");
+        else {
+                log_error("Skipping STARTing packages process because previous/another instance is already running");
+                return;
+        }
+}
+
+@file_put_contents("{$g['tmp_path']}/.rc.start_packages.running", "");
+
 log_error("Restarting/Starting all packages.");
 
 $rcfiles = glob(RCFILEPREFIX . "*.sh");
@@ -71,4 +83,5 @@ if ($shell) {
 	pclose($shell);
 }
 
+@unlink("{$g['tmp_path']}/.rc.start_packages.running");
 ?>

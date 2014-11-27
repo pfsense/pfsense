@@ -245,6 +245,7 @@ if ($_GET) {
 			@file_put_contents("/tmp/{$pkgid}.info", $static_output);
 			$pkgid = htmlspecialchars($pkgid);
 			echo "<script type='text/javascript'>document.location=\"pkg_mgr_install.php?mode=installedinfo&pkg={$pkgid}\";</script>";
+			send_event("service restart packages");
 			break;
 		case 'reinstallall':
 			if (is_array($config['installedpackages']) && is_array($config['installedpackages']['package'])) {
@@ -256,13 +257,14 @@ if ($_GET) {
 					if($pkgtodo['name']) {
 						update_output_window($static_output);
 						uninstall_package($pkgtodo['name']);
-						install_package($pkgtodo['name']);
+						install_package($pkgtodo['name'], '', true);
 					}
 				}
 				update_status(gettext("All packages reinstalled."));
 				$static_output .= "\n" . gettext("All packages reinstalled.");
 				update_output_window($static_output);
 				filter_configure();
+				send_event("service restart packages");
 			} else
 				update_output_window(gettext("No packages are installed."));
 			break;

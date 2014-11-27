@@ -2021,7 +2021,7 @@ function upgrade_054_to_055() {
 		$xmldump = "{$database}.old.xml";
 		$xmldumpnew = "{$database}.new.xml";
 
-		if ($g['booting'])
+		if (platform_booting())
 			echo "Migrate RRD database {$database} to new format for IPv6 \n";
 		mwexec("$rrdtool tune {$rrddbpath}{$database} -r roundtrip:delay 2>&1");
 
@@ -2057,7 +2057,7 @@ function upgrade_054_to_055() {
 		$xmldumptmp = "{$database}.tmp.xml";
 		$xmldumpnew = "{$database}.new.xml";
 
-		if ($g['booting'])
+		if (platform_booting())
 			echo "Migrate RRD database {$database} to new format \n";
 		/* rename DS source */
 		mwexec("$rrdtool tune {$rrddbpath}/{$database} -r in:inpass 2>&1");
@@ -2111,7 +2111,7 @@ function upgrade_054_to_055() {
 	/* The function will restore the rrd.tgz so we will save it after */
 	exec("cd /; LANG=C NO_REMOUNT=1 RRDDBPATH='{$rrddbpath}' CF_CONF_PATH='{$g['cf_conf_path']}' /etc/rc.backup_rrd.sh");
 	unlink_if_exists("{$g['vardb_path']}/rrd/*.xml");
-	if ($g['booting'])
+	if (platform_booting())
 		echo "Updating configuration...";
 }
 
@@ -2676,7 +2676,7 @@ function upgrade_080_to_081() {
 		$xmldump = "{$database}.old.xml";
 		$xmldumpnew = "{$database}.new.xml";
 
-		if ($g['booting'])
+		if (platform_booting())
 			echo "Migrate RRD database {$database} to new format for IPv6.\n";
 
 		/* dump contents to xml and move database out of the way */
@@ -2796,7 +2796,7 @@ function upgrade_080_to_081() {
 	/* Let's save the RRD graphs after we run enable RRD graphing */
 	/* The function will restore the rrd.tgz so we will save it after */
 	exec("cd /; LANG=C NO_REMOUNT=1 RRDDBPATH='{$rrddbpath}' CF_CONF_PATH='{$g['cf_conf_path']}' /etc/rc.backup_rrd.sh");
-	if ($g['booting'])
+	if (platform_booting())
 		echo "Updating configuration...";
 	foreach($config['filter']['rule'] as & $rule) {
 		if (isset($rule['protocol']) && !empty($rule['protocol']))
@@ -3119,7 +3119,7 @@ function upgrade_095_to_096() {
 	$databases = return_dir_as_array($rrddbpath, '/-(traffic|packets)\.rrd$/');
 	rsort($databases);
 	foreach($databases as $database) {
-		if ($g['booting'])
+		if (platform_booting())
 			echo "Update RRD database {$database}.\n";
 
 		$cmd = "{$rrdtool} tune {$rrddbpath}/{$database}";

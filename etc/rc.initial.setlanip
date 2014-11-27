@@ -460,6 +460,8 @@ if (!$dry_run) {
 	interface_reconfigure(strtolower($upperifname));
 	echo "\n Reloading filter...";
 	filter_configure_sync();
+	echo "\n Reloading routing configuration...";
+	system_routing_configure();
 	if($restart_dhcpd) {
 		echo "\n DHCPD..."; 
 		services_dhcpd_configure();

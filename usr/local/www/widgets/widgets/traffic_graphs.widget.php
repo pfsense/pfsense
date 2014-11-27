@@ -143,6 +143,7 @@ if (isset($a_config["scale_type"])) {
 </script>
 
 <?php
+$graphcounter = 0;
 foreach ($ifdescrs as $ifname => $ifdescr) {
 	$ifinfo = get_interface_info($ifname);
 	if ($shown[$ifname]) {
@@ -150,6 +151,7 @@ foreach ($ifdescrs as $ifname => $ifdescr) {
 		$showgraphbutton = "none";
 		$graphdisplay = "inline";
 		$interfacevalue = "show";
+		$graphcounter++;
 	} else {
 		$mingraphbutton = "none";
 		$showgraphbutton = "inline";
@@ -171,7 +173,7 @@ foreach ($ifdescrs as $ifname => $ifdescr) {
 				<div style="clear:both;"></div>
 			</div>
 			<div id="<?=$ifname;?>graphdiv" style="display:<?php echo $graphdisplay;?>">
-				<object data="graph.php?ifnum=<?=$ifname;?>&amp;ifname=<?=rawurlencode($ifdescr);?>&amp;timeint=<?=$refreshinterval;?>&amp;initdelay=<?=($graphcounter+1) * 2;?>" height="100%" width="100%">
+				<object data="graph.php?ifnum=<?=$ifname;?>&amp;ifname=<?=rawurlencode($ifdescr);?>&amp;timeint=<?=$refreshinterval;?>&amp;initdelay=<?=$graphcounter * 2;?>" height="100%" width="100%">
 					<param name="id" value="graph" />
 					<param name="type" value="image/svg+xml" />
 					<param name="pluginspage" value="http://www.adobe.com/svg/viewer/install/auto" />

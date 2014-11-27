@@ -41,7 +41,6 @@ require_once("shaper.inc");
 require_once("ipsec.inc");
 require_once("vpn.inc");
 
-$pconfig['noinstalllanspd'] = $config['system']['noinstalllanspd'];
 $pconfig['preferoldsa_enable'] = isset($config['ipsec']['preferoldsa']);
 foreach ($ipsec_loglevels as $lkey => $ldescr) {
 	if (!empty($config['ipsec']["ipsec_{$lkey}"]))
@@ -58,14 +57,6 @@ if ($_POST) {
 	$pconfig = $_POST;
 
 	if (!$input_errors) {
-
-		if($_POST['noinstalllanspd'] == "yes") {
-			if (!isset($pconfig['noinstalllanspd']))
-			$config['system']['noinstalllanspd'] = true;
-		} else {
-			if (isset($config['system']['noinstalllanspd']))
-			unset($config['system']['noinstalllanspd']);
-		}
 
 		if($_POST['preferoldsa_enable'] == "yes")
 			$config['ipsec']['preferoldsa'] = true;
@@ -168,16 +159,6 @@ function maxmss_checked(obj) {
 				<table width="100%" border="0" cellpadding="6" cellspacing="0" summary="main area">
 					<tr>
 						<td colspan="2" valign="top" class="listtopic"><?=gettext("IPsec Advanced Settings"); ?></td>
-					</tr>
-					<tr>
-						<td width="22%" valign="top" class="vncell"><?=gettext("LAN security associations"); ?></td>
-						<td width="78%" class="vtable">
-							<input name="noinstalllanspd" type="checkbox" id="noinstalllanspd" value="yes" <?php if ($pconfig['noinstalllanspd']) echo "checked=\"checked\""; ?> />
-							<strong><?=gettext("Do not install LAN SPD"); ?></strong>
-							<br />
-							<?=gettext("By default, if IPsec is enabled negating SPD are inserted to provide protection. " .
-							"This behaviour can be changed by enabling this setting which will prevent installing these SPDs."); ?>
-						</td>
 					</tr>
 					<tr>
 						<td width="22%" valign="top" class="vncell"><?=gettext("Security Associations"); ?></td>

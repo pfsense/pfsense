@@ -44,6 +44,7 @@ require("guiconfig.inc");
 require_once("functions.inc");
 require_once("filter.inc");
 require_once("shaper.inc");
+require_once("system.inc");
 
 $pconfig['enable'] = isset($config['dnsmasq']['enable']);
 $pconfig['regdhcp'] = isset($config['dnsmasq']['regdhcp']);
@@ -119,6 +120,8 @@ if ($_POST) {
 		filter_configure();
 		/* Update resolv.conf in case the interface bindings exclude localhost. */
 		system_resolvconf_generate();
+		/* Start or restart dhcpleases when it's necessary */
+		system_dhcpleases_configure();
 
 		if ($retval == 0)
 			clear_subsystem_dirty('hosts');

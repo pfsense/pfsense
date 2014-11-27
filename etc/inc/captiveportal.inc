@@ -186,7 +186,7 @@ function captiveportal_configure_zone($cpcfg) {
 	
 	if (isset($cpcfg['enable'])) {
 
-		if ($g['booting']) {
+		if (platform_booting()) {
 			echo "Starting captive portal({$cpcfg['zone']})... ";
 
 			/* remove old information */
@@ -332,7 +332,7 @@ EOD;
 		unlink_if_exists("{$g['vardb_path']}/captiveportal_radius_{$cpzone}.db");
 		captiveportal_init_radius_servers();
 
-		if ($g['booting']) {
+		if (platform_booting()) {
 			/* send Accounting-On to server */
 			captiveportal_send_server_accounting();
 			echo "done\n";
@@ -349,7 +349,7 @@ EOD;
 		captiveportal_radius_stop_all();
 
 		/* send Accounting-Off to server */
-		if (!$g['booting']) {
+		if (!platform_booting()) {
 			captiveportal_send_server_accounting(true);
 		}
 
@@ -710,8 +710,9 @@ function captiveportal_prune_old() {
 						$cpentry[2], // clientip
 						$cpentry[3], // clientmac
 						10); // NAS Request
-					$_gb = @pfSense_ipfw_Tableaction($cpzoneid, IP_FW_TABLE_XZEROENTRY, 1, $cpentry[2], $cpentry[3]);
-					$_gb = @pfSense_ipfw_Tableaction($cpzoneid, IP_FW_TABLE_XZEROENTRY, 2, $cpentry[2], $cpentry[3]);
+					$clientsn = (is_ipaddrv6($cpentry[2])) ? 128 : 32;
+					$_gb = @pfSense_ipfw_Tableaction($cpzoneid, IP_FW_TABLE_XZEROENTRY, 1, $cpentry[2], $clientsn, $cpentry[3]);
+					$_gb = @pfSense_ipfw_Tableaction($cpzoneid, IP_FW_TABLE_XZEROENTRY, 2, $cpentry[2], $clientsn, $cpentry[3]);
 					RADIUS_ACCOUNTING_START($cpentry[1], // ruleno
 						$cpentry[4], // username
 						$cpentry[5], // sessionid
@@ -857,8 +858,9 @@ function captiveportal_disconnect($dbent, $radiusservers,$term_cause = 1,$stop_t
 	
 	if (is_ipaddr($dbent[2])) {
 		/* Delete client's ip entry from tables 1 and 2. */
-		$_gb = @pfSense_ipfw_Tableaction($cpzoneid, IP_FW_TABLE_XDEL, 1, $dbent[2], $dbent[3]);
-		$_gb = @pfSense_ipfw_Tableaction($cpzoneid, IP_FW_TABLE_XDEL, 2, $dbent[2], $dbent[3]);
+		$clientsn = (is_ipaddrv6($dbent[2])) ? 128 : 32;
+		pfSense_ipfw_Tableaction($cpzoneid, IP_FW_TABLE_XDEL, 1, $dbent[2], $clientsn, $dbent[3]);
+		pfSense_ipfw_Tableaction($cpzoneid, IP_FW_TABLE_XDEL, 2, $dbent[2], $clientsn, $dbent[3]);
 		/* XXX: Redundant?! Ensure all pf(4) states are killed. */
 		$_gb = @pfSense_kill_states($dbent[2]);
 		$_gb = @pfSense_kill_srcstates($dbent[2]);
@@ -1043,7 +1045,7 @@ function captiveportal_allowedip_configure_entry($ipent, $ishostname = false) {
 	 *  easy such as hostname vs ip address add this check
 	 */
 	if ($ishostname === true) {
-		if (!$g['booting']) {
+		if (!platform_booting()) {
 			$ipaddress = gethostbyname($ipent['hostname']);
 			if (!is_ipaddr($ipaddress)) 
 				return;
@@ -1127,10 +1129,10 @@ function captiveportal_allowedip_configure() {
 }
 
 /* get last activity timestamp given client IP address */
-function captiveportal_get_last_activity($ip, $mac = NULL) {
+function captiveportal_get_last_activity($ip, $mac = NULL, $table = 1) {
 	global $cpzoneid;
 
-	$ipfwoutput = pfSense_ipfw_getTablestats($cpzoneid, 1, $ip, $mac);
+	$ipfwoutput = pfSense_ipfw_getTablestats($cpzoneid, IP_FW_TABLE_XLISTENTRY, $table, $ip, $mac);
 	/* Reading only from one of the tables is enough of approximation. */
 	if (is_array($ipfwoutput)) {
 		return $ipfwoutput['timestamp'];
@@ -1930,7 +1932,10 @@ function portal_allow($clientip,$clientmac,$username,$password = null, $attribut
 				if ($attributes['voucher'])
 					$mac['logintype'] = "voucher";
 			}
-			$mac['descr'] =  "Auto added pass-through MAC for user {$username}";
+			if ($username = "unauthenticated")
+				$mac['descr'] =  "Auto-added";
+			else
+				$mac['descr'] =  "Auto-added for user {$username}";
 			if (!empty($bw_up))
 				$mac['bw_up'] = $bw_up;
 			if (!empty($bw_down))

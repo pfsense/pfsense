@@ -171,7 +171,7 @@ if ($_POST) {
 		if (!is_hostname($_POST['hostname'])) {
 			$input_errors[] = gettext("The hostname can only contain the characters A-Z, 0-9 and '-'.");
 		} else {
-			if (strpos($_POST['hostname'],'.')) {
+			if (!is_unqualified_hostname($_POST['hostname'])) {
 				$input_errors[] = gettext("A valid hostname is specified, but the domain name part should be omitted");
 			}
 		}

@@ -177,6 +177,24 @@ else if ($_POST['act'] == "new") {
 	$pconfig['lifetime'] = 3650;
 }
 
+if(isset($_POST['dellall_x'])) {
+
+	$del_users = $_POST['delete_check'];
+
+	if(!empty($del_users)) {
+		foreach($del_users as $userid) {
+			if (isset($a_user[$userid]) && $a_user[$userid]['scope'] != "system") {
+				conf_mount_rw();
+				local_user_del($a_user[$userid]);
+				conf_mount_ro();
+				unset($a_user[$userid]);
+			}
+		}
+		$savemsg = gettext("Selected users removed successfully!");
+		write_config($savemsg);
+	}
+}
+
 if ($_POST['save']) {
 	unset($input_errors);
 	$pconfig = $_POST;
@@ -363,6 +381,7 @@ include("head.inc");
 <link rel="stylesheet" type="text/css" href="/javascript/jquery-ui-timepicker-addon/css/jquery-ui-timepicker-addon.css" />
 <link rel="stylesheet" type="text/css" href="/javascript/jquery/jquery-ui-1.11.1.css" />
 
+<script type="text/javascript" src="/javascript/row_toggle.js"></script>
 <script type="text/javascript">
 //<![CDATA[
 	jQuery(function() {
@@ -881,6 +900,7 @@ function sshkeyClicked(obj) {
 					<table class="sortable" width="100%" border="0" cellpadding="0" cellspacing="0" summary="">
 						<thead>
 							<tr>
+								<th width="5%" class="list">&nbsp;</th>
 								<th width="25%" class="listhdrr"><?=gettext("Username"); ?></th>
 								<th width="25%" class="listhdrr"><?=gettext("Full name"); ?></th>
 								<th width="5%" class="listhdrr"><?=gettext("Disabled"); ?></th>
@@ -890,16 +910,17 @@ function sshkeyClicked(obj) {
 						</thead>
 						<tfoot>
 							<tr>
-								<td class="list" colspan="4"></td>
+								<td class="list" colspan="5"></td>
 								<td class="list">
 									<input type="image" name="addcert" width="17" height="17" border="0"
 										src="/themes/<?=$g['theme'];?>/images/icons/icon_plus.gif"
 										onclick="document.getElementById('act').value='<?php echo "new";?>';"
 										title="<?=gettext("add user");?>" />
+									<input type="image" src="/themes/<?= $g['theme'];?>/images/icons/icon_x.gif" name="dellall" title="<?=gettext('Delete selected users')?>" onClick="return confirm('<?=gettext("Do you really want to delete selected Users?");?>')" />
 								</td>
 							</tr>
 							<tr>
-								<td colspan="4">
+								<td colspan="5">
 									<p>
 										<?=gettext("Additional users can be added here. User permissions for accessing " .
 										"the webConfigurator can be assigned directly or inherited from group memberships. " .
@@ -919,8 +940,13 @@ function sshkeyClicked(obj) {
 ?>
 								<tr ondblclick="document.getElementById('act').value='<?php echo "edit";?>';
 									document.getElementById('userid').value='<?=$i;?>';
-									document.iform2.submit();">
-								<td class="listlr">
+									document.iform2.submit();" id="fr<?=$i?>">
+								<td class="list" id="frd<?=$i?>">
+								<?php if($userent['scope'] != "system") : ?>
+									<input type="checkbox" id="frc<?=$i?>" onclick="fr_bgcolor(<?=$i?>)" name="delete_check[]" value="<?=$i?>" />
+								<?php endif; ?>
+								</td>
+								<td class="listlr" id="frd<?=$i?>" onclick="fr_toggle('<?=$i;?>')">
 									<table border="0" cellpadding="0" cellspacing="0" summary="icons">
 										<tr>
 											<td align="left" valign="middle">
@@ -938,9 +964,9 @@ function sshkeyClicked(obj) {
 										</tr>
 									</table>
 								</td>
-								<td class="listr"><?=htmlspecialchars($userent['descr']);?>&nbsp;</td>
-								<td class="listr"><?php if(isset($userent['disabled'])) echo "*"; ?></td>
-								<td class="listbg">
+								<td class="listr" id="frd<?=$i?>" onclick="fr_toggle('<?=$i;?>')"><?=htmlspecialchars($userent['descr']);?>&nbsp;</td>
+								<td class="listr" id="frd<?=$i?>" onclick="fr_toggle('<?=$i;?>')"><?php if(isset($userent['disabled'])) echo "*"; ?></td>
+								<td class="listbg" onclick="fr_toggle('<?=$i;?>')">
 									<?=implode(",",local_user_get_groups($userent));?>
 									&nbsp;
 								</td>

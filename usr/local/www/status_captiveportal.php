@@ -50,12 +50,6 @@ $cpzone = $_GET['zone'];
 if (isset($_POST['zone']))
 	$cpzone = $_POST['zone'];
 
-if ($_GET['act'] == "del" && !empty($cpzone)) {
-	captiveportal_disconnect_client($_GET['id']);
-	header("Location: status_captiveportal.php?zone={$cpzone}");
-	exit;
-}
-
 $pgtitle = array(gettext("Status: Captive portal"));
 $shortcut_section = "captiveportal";
 
@@ -65,6 +59,15 @@ $a_cp =& $config['captiveportal'];
 
 if (count($a_cp) == 1)
  $cpzone = current(array_keys($a_cp));
+
+if (isset($cpzone) && !empty($cpzone) && isset($a_cp[$cpzone]['zoneid']))
+	$cpzoneid = $a_cp[$cpzone]['zoneid'];
+
+if ($_GET['act'] == "del" && !empty($cpzone) && isset($cpzoneid) && isset($_GET['id'])) {
+	captiveportal_disconnect_client($_GET['id']);
+	header("Location: status_captiveportal.php?zone={$cpzone}");
+	exit;
+}
 
 include("head.inc");
 

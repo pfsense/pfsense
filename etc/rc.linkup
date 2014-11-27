@@ -36,6 +36,9 @@ require_once("filter.inc");
 require_once("shaper.inc");	
 require_once("interfaces.inc");
 
+if (platform_booting())
+	return;
+
 function handle_argument_group($iface, $argument2) {
 	global $config;	
 
@@ -95,51 +98,49 @@ function handle_argument_group($iface, $argument2) {
 	}
 }
 
-if (!platform_booting()) {
-	if (isset($_GET['interface'])) {
-		if (!empty($_GET['interface']))
-			$realiface = $_GET['interface'];
-		$action = $_GET['action'];
-	} else {
-		if ($argc < 3) {
-			log_error("HOTPLUG event: The required number of parameters not passed!");
-			return;
-		}
-		$action = $argv[1];
-		$realiface = $argv[2];
-	}
-	switch($action) {
-	case "start":
-	case "stop":
-		break;
-	default:
-		log_error("HOTPLUG event: Action parameter ($action) passed is wrong - only start/stop/up/down are allowed!");
+if (isset($_GET['interface'])) {
+	if (!empty($_GET['interface']))
+		$realiface = $_GET['interface'];
+	$action = $_GET['action'];
+} else {
+	if ($argc < 3) {
+		log_error("HOTPLUG event: The required number of parameters not passed!");
 		return;
-		/* NOTREACHED */
-		break;
 	}
-	if (!empty($realiface)) {
-		if (substr($realiface, 0, 4) == 'ovpn') {
-			log_error("Ignoring link event for ovpn interface");
-			return;
-		}
-		$interface = convert_real_interface_to_friendly_interface_name($realiface);
-		if (!empty($interface))
-			handle_argument_group($interface, $action);
-		if ($action == 'start') {
-			/* Check if there is any child on this one as ppp types and trigger them */
-			if (is_array($config['ppps']['ppp'])) {
-				foreach ($config['ppps']['ppp'] as $pppidx => $ppp) {
-					if ($ppp['type'] == 'ppp')
-						continue;
-					$ports = explode(',', $ppp['ports']);
-					foreach ($ports as $pid => $parent_if) {
-						/* The loop here is because ppp types can have real and assigned interfaces as members */
-						$tmpiface = get_real_interface($parent_if);
-						$tmpiface = convert_real_interface_to_friendly_interface_name($realiface);
-						if (!empty($tmpiface))
-							interface_configure($tmpiface, true, true);
-					}
+	$action = $argv[1];
+	$realiface = $argv[2];
+}
+switch($action) {
+case "start":
+case "stop":
+	break;
+default:
+	log_error("HOTPLUG event: Action parameter ($action) passed is wrong - only start/stop/up/down are allowed!");
+	return;
+	/* NOTREACHED */
+	break;
+}
+if (!empty($realiface)) {
+	if (substr($realiface, 0, 4) == 'ovpn') {
+		log_error("Ignoring link event for ovpn interface");
+		return;
+	}
+	$interface = convert_real_interface_to_friendly_interface_name($realiface);
+	if (!empty($interface))
+		handle_argument_group($interface, $action);
+	if ($action == 'start') {
+		/* Check if there is any child on this one as ppp types and trigger them */
+		if (is_array($config['ppps']['ppp'])) {
+			foreach ($config['ppps']['ppp'] as $pppidx => $ppp) {
+				if ($ppp['type'] == 'ppp')
+					continue;
+				$ports = explode(',', $ppp['ports']);
+				foreach ($ports as $pid => $parent_if) {
+					/* The loop here is because ppp types can have real and assigned interfaces as members */
+					$tmpiface = get_real_interface($parent_if);
+					$tmpiface = convert_real_interface_to_friendly_interface_name($realiface);
+					if (!empty($tmpiface))
+						interface_configure($tmpiface, true, true);
 				}
 			}
 		}

@@ -123,9 +123,25 @@ if (!platform_booting()) {
 			log_error("Ignoring link event for ovpn interface");
 			return;
 		}
-		$interface = convert_real_interface_to_friendly_interface_name($realiface, true);
+		$interface = convert_real_interface_to_friendly_interface_name($realiface);
 		if (!empty($interface))
 			handle_argument_group($interface, $action);
+		if ($action == 'start') {
+			/* Check if there is any child on this one as ppp types and trigger them */
+			if (is_array($config['ppps']['ppp'])) {
+				foreach ($config['ppps']['ppp'] as $pppidx => $ppp) {
+					if ($ppp['type'] == 'ppp')
+						continue;
+					$ports = explode(',', $ppp['ports']);
+					foreach ($ports as $pid => $parent_if) {
+						$tmpiface = get_real_interface($parent_if);
+						$tmpiface = convert_real_interface_to_friendly_interface_name($realiface);
+						if (!empty($tmpiface))
+							interface_configure($tmpiface, true, true);
+					}
+				}
+			}
+		}
 	}
 }
 

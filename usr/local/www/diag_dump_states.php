@@ -46,8 +46,8 @@ require_once("interfaces.inc");
 /* handle AJAX operations */
 if(isset($_POST['action']) && $_POST['action'] == "remove") {
 	if (isset($_POST['srcip']) && isset($_POST['dstip']) && is_ipaddr($_POST['srcip']) && is_ipaddr($_POST['dstip'])) {
-		$retval = mwexec("/sbin/pfctl -k " . escapeshellarg($_POST['srcip']) . " -k " . escapeshellarg($_POST['dstip']));
-		echo htmlentities("|{$_POST['srcip']}|{$_POST['dstip']}|{$retval}|");
+		$retval = pfSense_kill_states($_POST['srcip'], $_POST['dstip']);
+		echo htmlentities("|{$_POST['srcip']}|{$_POST['dstip']}|0|");
 	} else {
 		echo gettext("invalid input");
 	}
@@ -56,16 +56,16 @@ if(isset($_POST['action']) && $_POST['action'] == "remove") {
 
 if (isset($_POST['filter']) && isset($_POST['killfilter'])) {
 	if (is_ipaddr($_POST['filter'])) {
-		$tokill = escapeshellarg($_POST['filter'] . "/32");
+		$tokill = $_POST['filter'] . "/32";
 	} elseif (is_subnet($_POST['filter'])) {
-		$tokill = escapeshellarg($_POST['filter']);
+		$tokill = $_POST['filter'];
 	} else {
 		// Invalid filter
 		$tokill = "";
 	}
 	if (!empty($tokill)) {
-		$retval = mwexec("/sbin/pfctl -k {$tokill} -k 0/0");
-		$retval = mwexec("/sbin/pfctl -k 0.0.0.0/0 -k {$tokill}");
+		$retval = pfSense_kill_states($tokill);
+		$retval = pfSense_kill_states("0.0.0.0/0", $tokill);
 	}
 }
 

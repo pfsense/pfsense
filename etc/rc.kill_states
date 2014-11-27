@@ -78,12 +78,12 @@ if (!isset($config['system']['kill_states'])) {
 				continue;
 
 			$cleared_states[] = "{$src},{$dst}";
-			mwexec("/sbin/pfctl -k {$src} -k {$dst}", true);
+			pfSense_kill_states($src, $dst);
 		}
 
-		mwexec("/sbin/pfctl -k 0.0.0.0/0 -k {$local_ip}/{$subnet_bits}", true);
-		mwexec("/sbin/pfctl -k {$local_ip}/{$subnet_bits}", true);
-		mwexec("/sbin/pfctl -K {$local_ip}/{$subnet_bits}", true);
+		pfSense_kill_states("0.0.0.0/0", "{$local_ip}/{$subnet_bits}");
+		pfSense_kill_states("{$local_ip}/{$subnet_bits}");
+		pfSense_kill_srcstates("{$local_ip}/{$subnet_bits}");
 	}
 	log_error("rc.kill_states: Removing states for interface {$interface}");
 	mwexec("/sbin/pfctl -i {$interface} -Fs", true);

@@ -189,7 +189,7 @@ if (!is_ipaddr($oldip) || $curwanip != $oldip || !is_ipaddrv4($config['interface
 	/* IP changed, kill states accordingly */
 	if ($curwanip != $oldip) {
 		log_error("IP has changed, killing states on former IP $oldip.");
-		mwexec_bg("/sbin/pfctl -k $oldip");
+		pfSense_kill_states($oldip);
 		if (isset($config['system']['ip_change_kill_states'])) {
 			/* hidden config option to wipe all states if needed */
 			log_error("Killing all states post-IP change.");

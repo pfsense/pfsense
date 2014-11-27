@@ -151,13 +151,6 @@ target default {
 
 EOD;
 
-	if (is_dir("{$g['tmp_path']}"))
-		chmod("{$g['tmp_path']}", 01777);
-	if (!is_dir("{$g['vardb_path']}/rrd"))
-		mkdir("{$g['vardb_path']}/rrd", 0775);
-
-	@chown("{$g['vardb_path']}/rrd", "nobody");
-
 	$monitor_ips = array();
 	foreach($gateways_arr as $name => $gateway) {
 		/* Do not monitor if such was requested */

@@ -310,6 +310,13 @@ function enable_rrd_graphing() {
 			}
 		}
 
+		if (platform_booting()) {
+			if (!is_dir("{$g['vardb_path']}/rrd"))
+				mkdir("{$g['vardb_path']}/rrd", 0775);
+
+			@chown("{$g['vardb_path']}/rrd", "nobody");
+		}
+
 		/* process all real and pseudo interfaces */
 		foreach ($ifdescrs as $ifname => $ifdescr) {
 			$temp = get_real_interface($ifname);
@@ -930,6 +937,7 @@ function enable_rrd_graphing() {
 # Create gateway quality RRD with settings suitable for pfSense graph set.
 function create_gateway_quality_rrd($rrd_file) {
 	global $g;
+
 	$rrdinterval = 60;
 	$valid = $rrdinterval * 2;
 	$rrdtool = "/usr/bin/nice -n20 /usr/local/bin/rrdtool";
@@ -950,6 +958,11 @@ function create_gateway_quality_rrd($rrd_file) {
 
 	/* enter UNKNOWN values in the RRD so it knows we rebooted. */
 	if(platform_booting()) {
+		if (!is_dir("{$g['vardb_path']}/rrd"))
+			mkdir("{$g['vardb_path']}/rrd", 0775);
+
+		@chown("{$g['vardb_path']}/rrd", "nobody");
+
 		mwexec("$rrdtool update $rrd_file N:U:U");
 	}
 	unset($rrdtool, $rrdinterval, $valid, $rrd_file);

@@ -1748,8 +1748,10 @@ function start_devd() {
 
 	if ($g['platform'] == 'jail')
 		return;
-	exec("/sbin/devd");
+	/* Use the undocumented -q options of devd to quite its log spamming */
+	$_gb = exec("/sbin/devd -q");
 	sleep(1);
+	unset($_gb);
 }
 
 function is_interface_vlan_mismatch() {

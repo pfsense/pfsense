@@ -134,6 +134,7 @@ if (!platform_booting()) {
 						continue;
 					$ports = explode(',', $ppp['ports']);
 					foreach ($ports as $pid => $parent_if) {
+						/* The loop here is because ppp types can have real and assigned interfaces as members */
 						$tmpiface = get_real_interface($parent_if);
 						$tmpiface = convert_real_interface_to_friendly_interface_name($realiface);
 						if (!empty($tmpiface))

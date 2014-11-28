@@ -186,7 +186,7 @@ function services_radvd_configure($blacklist = array()) {
 			foreach($dhcpv6ifconf['radnsserver'] as $server)
 				if (is_ipaddrv6($server))
 					$dnslist[] = $server;
-		} elseif (isset($config['dnsmasq']['enable'])) {
+		} elseif (isset($config['dnsmasq']['enable']) || isset($config['unbound']['enable'])) {
 			$dnslist[] = get_interface_ipv6($realif);
 		} elseif (is_array($config['system']['dnsserver']) && !empty($config['system']['dnsserver'])) {
 			foreach($config['system']['dnsserver'] as $server) {
@@ -259,7 +259,7 @@ function services_radvd_configure($blacklist = array()) {
 
 		/* add DNS servers */
 		$dnslist = array();
-		if (isset($config['dnsmasq']['enable'])) {
+		if (isset($config['dnsmasq']['enable']) || isset($config['unbound']['enable'])) {
 			$dnslist[] = $ifcfgipv6;
 		} elseif (is_array($config['system']['dnsserver']) && !empty($config['system']['dnsserver'])) {
 			foreach($config['system']['dnsserver'] as $server) {
@@ -1153,7 +1153,7 @@ EOD;
 
 		if (is_array($dhcpv6ifconf['dnsserver']) && ($dhcpv6ifconf['dnsserver'][0])) {
 			$dnscfgv6 .= "	option dhcp6.name-servers " . join(",", $dhcpv6ifconf['dnsserver']) . ";";
-		} else if ((isset($config['dnsmasq']['enable'])) && (is_ipaddrv6($ifcfgipv6))) {
+		} else if (((isset($config['dnsmasq']['enable'])) || isset($config['unbound']['enable'])) && (is_ipaddrv6($ifcfgipv6))) {
 			$dnscfgv6 .= "	option dhcp6.name-servers {$ifcfgipv6};";
 		} else if (is_array($syscfg['dnsserver']) && ($syscfg['dnsserver'][0])) {
 			$dns_arrv6 = array();

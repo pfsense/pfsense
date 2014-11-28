@@ -45,8 +45,6 @@
 if (!function_exists('platform_booting'))
 	require_once('globals.inc');
 
-if(platform_booting()) echo ".";
-
 /* do not load this file twice. */
 //if (in_array("/etc/inc/config.inc", get_included_files()))
 //	return;
@@ -65,22 +63,16 @@ else
 
 /* include globals from notices.inc /utility/XML parser files */
 require_once("notices.inc");
-if(platform_booting()) echo ".";
 require_once("util.inc");
-if(platform_booting()) echo ".";
 require_once("IPv6.inc");
-if(platform_booting()) echo ".";
 require_once('config.lib.inc');
-if(platform_booting()) echo ".";
 if(file_exists("/cf/conf/use_xmlreader"))
 	require_once("xmlreader.inc");
 else
 	require_once("xmlparse.inc");
-if(platform_booting()) echo ".";
 require_once("crypt.inc");
 
 /* read platform */
-if(platform_booting()) echo ".";
 if (file_exists("{$g['etc_path']}/platform")) {
 	$g['platform'] = chop(file_get_contents("{$g['etc_path']}/platform"));
 } else {
@@ -94,7 +86,7 @@ if(file_exists("/debugging")) {
 	$g['debug'] = true;
 }
 
-if(platform_booting()) {
+if(platform_booting() && php_sapi_name() != 'fpm-cgi') {
 	echo ".";
 	if(file_exists("/cf/conf/config.xml")) {
 		$config_contents = file_get_contents("/cf/conf/config.xml");

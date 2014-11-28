@@ -68,6 +68,7 @@ $pconfig['apinger_debug'] = isset($config['system']['apinger_debug']);
 $pconfig['use_mfs_tmpvar'] = isset($config['system']['use_mfs_tmpvar']);
 $pconfig['use_mfs_tmp_size'] = $config['system']['use_mfs_tmp_size'];
 $pconfig['use_mfs_var_size'] = $config['system']['use_mfs_var_size'];
+$pconfig['use_rootfs_for_rrd_xml'] = isset($config['system']['use_rootfs_for_rrd_xml']);
 $pconfig['pkg_nochecksig'] = isset($config['system']['pkg_nochecksig']);
 
 $pconfig['powerd_ac_mode'] = "hadp";
@@ -213,6 +214,11 @@ if ($_POST) {
 		$config['system']['use_mfs_tmp_size'] = $_POST['use_mfs_tmp_size'];
 		$config['system']['use_mfs_var_size'] = $_POST['use_mfs_var_size'];
 
+		if($_POST['use_rootfs_for_rrd_xml'] == "yes")
+			$config['system']['use_rootfs_for_rrd_xml'] = true;
+		else
+			unset($config['system']['use_rootfs_for_rrd_xml']);
+
 		if (isset($_POST['rrdbackup'])) {
 			$config['system']['rrdbackup'] = $_POST['rrdbackup'];
 			install_cron_job("/etc/rc.backup_rrd.sh", ($config['system']['rrdbackup'] > 0), $minute="0", "*/{$config['system']['rrdbackup']}");
@@ -265,11 +271,13 @@ function sticky_checked(obj) {
 }
 function tmpvar_checked(obj) {
 	if (obj.checked) {
+		jQuery('#use_rootfs_for_rrd_xml').attr('disabled',false);
 		jQuery('#use_mfs_tmp_size').attr('disabled',false);
 		jQuery('#use_mfs_var_size').attr('disabled',false);
 		jQuery('#rrdbackup').attr('disabled',false);
 		jQuery('#dhcpbackup').attr('disabled',false);
 	} else {
+		jQuery('#use_rootfs_for_rrd_xml').attr('disabled','true');
 		jQuery('#use_mfs_tmp_size').attr('disabled','true');
 		jQuery('#use_mfs_var_size').attr('disabled','true');
 		jQuery('#rrdbackup').attr('disabled','true');
@@ -566,6 +574,17 @@ function tmpvar_checked(obj) {
 									<br />
 									<?=gettext("Set the size, in MB, for the /var RAM disk. " .
 									"Leave blank for 60MB. Do not set lower than 60."); ?>
+								</td>
+							</tr>
+							<tr>
+								<td width="22%" valign="top" class="vncell"><?=gettext("Use root file sys for RRD XML"); ?></td>
+								<td width="78%" class="vtable">
+									<input name="use_rootfs_for_rrd_xml" type="checkbox" id="use_rootfs_for_rrd_xml" value="yes" <?php if ($pconfig['use_rootfs_for_rrd_xml']) echo "checked=\"checked\""; ?> " <?php if (($g['platform'] == "pfSense") && ($pconfig['use_mfs_tmpvar'] == false)) echo "disabled=\"disabled\""; ?> />
+									<strong><?=gettext("Use root file system for RRD XML"); ?></strong><br />
+									<?=gettext("On shutdown and periodic backup of RRD data, the RRD files are first converted to XML. Then the XML files are compressed into a single tar.gz file and then deleted. " .
+									"The XML can take a lot of space (10 to 100MB). On low memory systems there may not be enough space in /var for these files. " . 
+									"Setting this will cause these transitory XML files to be written to /rrdxmltmp on the disk/CF/SD media. " .
+									"This will cause more writes to the media, but may be necessary if your system has low memory and you wish to preserve RRD data."); ?>
 								</td>
 							</tr>
 							<tr>

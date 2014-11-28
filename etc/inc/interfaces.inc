@@ -1823,12 +1823,10 @@ EOD;
 	}
 	/* wait for upto 10 seconds for the interface to appear (ppp(oe)) */
 	$i = 0;
-	while($i < 10) {
-		unset($out);
-		exec("/sbin/ifconfig " . escapeshellarg($ppp['if']) . " 2>&1", $out, $ret);
-		if($ret == 0)
+	while($i < 3) {
+		sleep(10);
+		if (does_interface_exist($ppp['if'], true))
 			break;
-		sleep(1);
 		$i++;
 	}
 
@@ -2883,7 +2881,7 @@ function interface_configure($interface = "wan", $reloadall = false, $linkupeven
 		$interface_to_check = $realhwif;
 
 	/* Need to check that the interface exists or not in the case where its coming back from disabled state see #3270 */
-	if (in_array(substr($realif, 0, 3), array("gre", "gif")) || !does_interface_exist($interface_to_check))
+	if (!platform_booting() && (in_array(substr($realif, 0, 3), array("gre", "gif")) || !does_interface_exist($interface_to_check)))
 		interface_virtual_create($interface_to_check);
 
 	/* Disable Accepting router advertisements unless specifically requested */

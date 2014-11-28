@@ -415,9 +415,6 @@ EODD;
 			return;
 
 		echo gettext("One moment while we reload the settings...");
-
-		$g['booting'] = false;
-
 		echo gettext(" done!") . "\n";
 
 		touch("{$g['tmp_path']}/assign_complete");

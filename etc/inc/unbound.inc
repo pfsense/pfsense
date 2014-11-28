@@ -143,13 +143,18 @@ EOF;
 	$bindints = "";
 	if (!empty($config['unbound']['active_interface'])) {
 		$active_interfaces = explode(",", $config['unbound']['active_interface']);
-		foreach($active_interfaces as $ubif) {
-			$intip = get_interface_ip($ubif);
-			if (is_ipaddrv4($intip))
-				$bindints .= "interface: $intip\n";
-			$intip = get_interface_ipv6($ubif);
-			if (is_ipaddrv6($intip))
-				$bindints .= "interface: $intip\n";
+		if (in_array("all", $active_interfaces, true)) {
+			$bindints .= "interface: 0.0.0.0\n";
+			$bindints .= "interface: ::0\n";
+		} else {
+			foreach($active_interfaces as $ubif) {
+				$intip = get_interface_ip($ubif);
+				if (is_ipaddrv4($intip))
+					$bindints .= "interface: $intip\n";
+				$intip = get_interface_ipv6($ubif);
+				if (is_ipaddrv6($intip))
+					$bindints .= "interface: $intip\n";
+			}	
 		}
 	} else {
 		$bindints .= "interface: 0.0.0.0\n";

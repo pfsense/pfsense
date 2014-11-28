@@ -1,7 +1,7 @@
 #!/usr/local/bin/php -f
 <?php
 /*
-	rc.newwanip
+	rc.kill_states
 	Copyright (C) 2013 Renato Botelho (garga@pfsense.org)
 	part of pfSense (https://www.pfsense.org)
 

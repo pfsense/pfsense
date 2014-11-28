@@ -175,6 +175,9 @@ function platform_booting($on_console = false) {
 	return false;
 }
 
+if (file_exists("{$g['cf_conf_path']}/enableserial_force"))
+	$g['enableserial_force'] = true;
+
 $config_parsed = false;
 
 ?>

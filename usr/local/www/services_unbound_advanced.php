@@ -79,6 +79,10 @@ $pconfig['infra_cache_numhosts'] = isset($config['unbound']['infra_cache_numhost
 $pconfig['unwanted_reply_threshold'] = isset($config['unbound']['unwanted_reply_threshold']) ? $config['unbound']['unwanted_reply_threshold'] : 'disabled';
 $pconfig['log_verbosity'] = isset($config['unbound']['log_verbosity']) ? $config['unbound']['log_verbosity'] : "1";
 
+if (isset($config['unbound']['disable_auto_added_access_control'])) {
+	$pconfig['disable_auto_added_access_control'] = true;
+}
+
 if ($_POST) {
 	$pconfig = $_POST;
 
@@ -132,6 +136,11 @@ if ($_POST) {
 		$config['unbound']['infra_cache_numhosts'] = $_POST['infra_cache_numhosts'];
 		$config['unbound']['unwanted_reply_threshold'] = $_POST['unwanted_reply_threshold'];
 		$config['unbound']['log_verbosity'] = $_POST['log_verbosity'];
+		if (isset($_POST['disable_auto_added_access_control'])) {
+			$config['unbound']['disable_auto_added_access_control'] = true;
+		} else {
+			unset($config['unbound']['disable_auto_added_access_control']);
+		}
 		write_config("DNS Resolver configured.");
 
 		mark_subsystem_dirty('unbound');
@@ -404,7 +413,11 @@ include_once("head.inc");
 								</td>
 							</tr>
 							<tr>
-								<td colspan="2">&nbsp;</td>
+								<td width="22%" valign="top" class="vncell"><?=gettext("Disable auto-added access control");?></td>
+								<td width="78%" class="vtable">
+									<input name="disable_auto_added_access_control" type="checkbox" id="disable_auto_added_access_control" value="yes" <?php if (isset($pconfig['disable_auto_added_access_control'])) echo "checked=\"checked\"";?> />
+									<?=gettext("Check this box to disable the automatically-added access control entries. By default, IPv4 and IPv6 networks residing on internal interfaces of this system are permitted. Allowed networks must be manually configured on the Access Lists tab if the auto-added entries are disabled.");?>
+								</td>
 							</tr>
 							<tr>
 								<td width="22%"></td>

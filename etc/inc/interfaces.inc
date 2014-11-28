@@ -2879,14 +2879,8 @@ function interface_configure($interface = "wan", $reloadall = false, $linkupeven
 	}
 
 	$interface_to_check = $realif;
-	switch ($wancfg['ipaddr']) {
-	case 'pppoe':
-	case 'l2tp':
-	case 'pptp':
-	case 'ppp':
+	if (interface_isppp_type($interface))
 		$interface_to_check = $realhwif;
-		break;
-	}
 
 	/* Need to check that the interface exists or not in the case where its coming back from disabled state see #3270 */
 	if (in_array(substr($realif, 0, 3), array("gre", "gif")) || !does_interface_exist($interface_to_check))

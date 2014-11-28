@@ -50,12 +50,20 @@ function restore_rrd() {
 	global $g, $config;
 
 	$rrddbpath = "/var/db/rrd/";
+	$rrd_xml_path = "/rrdxmltmp";
 	$rrdtool = "/usr/bin/nice -n20 /usr/local/bin/rrdtool";
 
 	$rrdrestore = "";
 	$rrdreturn = "";
 	if (file_exists("{$g['cf_conf_path']}/rrd.tgz")) {
-		foreach (glob("{$rrddbpath}/*.xml") as $xml_file) {
+		if (isset($config['system']['use_rootfs_for_rrd_xml'])) {
+			$rrd_xml_path = "/rrdxmltmp";
+			safe_mkdir($rrd_xml_path);
+		} else {
+			$rrd_xml_path = $rrddbpath;
+		}
+
+		foreach (glob("{$rrd_xml_path}/*.xml") as $xml_file) {
 			@unlink($xml_file);
 		}
 		$_gb = exec("cd /;LANG=C /usr/bin/tar -xzf {$g['cf_conf_path']}/rrd.tgz 2>&1", $rrdrestore, $rrdreturn);
@@ -64,8 +72,8 @@ function restore_rrd() {
 			log_error("RRD restore failed exited with $rrdreturn, the error is: $rrdrestore\n");
 		}
 		unset($rrdrestore);
-		foreach (glob("{$rrddbpath}/*.xml") as $xml_file) {
-			$rrd_file = preg_replace('/\.xml$/', ".rrd", $xml_file);
+		foreach (glob("{$rrd_xml_path}/*.xml") as $xml_file) {
+			$rrd_file = $rrddbpath . basename($xml_file, ".xml") . ".rrd";
 			if (file_exists("{$rrd_file}")) {
 				@unlink($rrd_file);
 			}

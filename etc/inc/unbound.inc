@@ -604,6 +604,8 @@ function unbound_acls_config() {
 		// Add our networks for active interfaces including localhost
 		if (!empty($config['unbound']['active_interface']))
 			$active_interfaces = array_flip(explode(",", $config['unbound']['active_interface']));
+			if (in_array("all", $active_interfaces, true))
+				$active_interfaces = get_configured_interface_with_descr();
 		else
 			$active_interfaces = get_configured_interface_with_descr();
 	
@@ -612,7 +614,6 @@ function unbound_acls_config() {
 			$ifip = get_interface_ip($ubif);
 			if (is_ipaddrv4($ifip)) {
 				// IPv4 is handled via NAT networks below
-				continue;
 			}
 			$ifip = get_interface_ipv6($ubif);
 			if (is_ipaddrv6($ifip)) {

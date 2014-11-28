@@ -89,7 +89,7 @@ if ($_POST) {
 			$input_errors[] = gettext("You must specify a valid webConfigurator port number");
 
 	if ($_POST['max_procs'])
-		if(!is_numeric($_POST['max_procs']) || ($_POST['max_procs'] < 1) || ($_POST['max_procs'] > 500))
+		if(!is_numericint($_POST['max_procs']) || ($_POST['max_procs'] < 1) || ($_POST['max_procs'] > 500))
 			$input_errors[] = gettext("Max Processes must be a number 1 or greater");
 
 	if ($_POST['althostnames']) {
@@ -150,7 +150,7 @@ if ($_POST) {
 		else
 			unset($config['system']['enableserial']);
 
-		if (is_numeric($_POST['serialspeed']))
+		if (is_numericint($_POST['serialspeed']))
 			$config['system']['serialspeed'] = $_POST['serialspeed'];
 		else
 			unset($config['system']['serialspeed']);

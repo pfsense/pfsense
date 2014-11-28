@@ -139,35 +139,13 @@ function interface_netgraph_needed($interface = "wan") {
 				break;
 		}
 	}
-	if ($found == false) {
-		if (!empty($config['interfaces'][$interface])) {
-			switch ($config['interfaces'][$interface]['ipaddr']) {
-			case "ppp":
-			case "pppoe":
-			case "l2tp":
-			case "pptp":
-				$found = true;
-				break;
-			default:
-				$found = false;
-				break;
-			}
-		}
-	}
+	if ($found == false)
+		$found = interface_isppp_type($interface);
+
 	if ($found == false) {
 		$realif = get_real_interface($interface);
 		if (is_array($config['ppps']['ppp']) && count($config['ppps']['ppp'])) {
 			foreach ($config['ppps']['ppp'] as $pppid => $ppp) {
-
-/* This if block doesn't do anything. It can be deleted.
-PPP interfaces are found above in the previous if ($found == false) block.
-This block of code is only entered for OPTx interfaces that are configured for PPPoE modem access, so $realif != $ppp['if']
-
-				if ($realif == $ppp['if']) {
-					$found = true;
-					break;
-				}
-*/
 				$ports = explode(',',$ppp['ports']);
 				foreach($ports as $pid => $port){
 					$port = get_real_interface($port);

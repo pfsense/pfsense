@@ -792,7 +792,7 @@ function fixup_default_gateway($ipprotocol, $gateways_status, $gateways_arr) {
 			}
 			mwexec("/sbin/route change {$inetfamily} default {$gateways_arr[$upgw]['gateway']}");
 		}
-	} else if (!empty($dftgwname)) {
+	} else if (!empty($dfltgwname)) {
 		$defaultgw = trim(exec("/sbin/route -n get -{$ipprotocol} default | /usr/bin/awk '/gateway:/ {print $2}'"), " \n");
 		if ($ipprotocol == 'inet6' && !is_ipaddrv6($gateways_arr[$dfltgwname]['gateway']))
 			return;

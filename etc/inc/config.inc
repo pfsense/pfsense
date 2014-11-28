@@ -86,7 +86,7 @@ if(file_exists("/debugging")) {
 	$g['debug'] = true;
 }
 
-if(platform_booting() && php_sapi_name() != 'fpm-fcgi') {
+if(platform_booting(true)) {
 	echo ".";
 	if(file_exists("/cf/conf/config.xml")) {
 		$config_contents = file_get_contents("/cf/conf/config.xml");

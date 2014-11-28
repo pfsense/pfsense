@@ -119,7 +119,7 @@ if (file_exists("{$g['vardb_path']}/{$interface}_cacheip"))
 /* regenerate resolv.conf if DNS overrides are allowed */
 system_resolvconf_generate(true);
 
-/* write current WAN IP to file */
+/* write the current interface IP to file */
 if (is_ipaddr($curwanip))
 	@file_put_contents("{$g['vardb_path']}/{$interface}_ip", $curwanip);
 

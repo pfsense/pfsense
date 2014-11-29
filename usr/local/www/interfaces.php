@@ -716,6 +716,8 @@ if ($_POST['apply']) {
 	if (($_POST['spoofmac'] && !is_macaddr($_POST['spoofmac'])))
 		$input_errors[] = gettext("A valid MAC address must be specified.");
 	if ($_POST['mtu']) {
+		if (!is_numericint($_POST['mtu']))
+			$input_errors[] = "MTU must be an integer.";
 		if (substr($wancfg['if'], 0, 3) == 'gif') {
 			$min_mtu = 1280;
 			$max_mtu = 8192;
@@ -725,7 +727,7 @@ if ($_POST['apply']) {
 		}
 
 		if ($_POST['mtu'] < $min_mtu || $_POST['mtu'] > $max_mtu)
-			$input_errors[] = sprintf(gettext("The MTU must be from %d to %d bytes."), $min_mtu, $max_mtu);
+			$input_errors[] = sprintf(gettext("The MTU must be between %d and %d bytes."), $min_mtu, $max_mtu);
 
 		unset($min_mtu, $max_mtu);
 
@@ -751,12 +753,13 @@ if ($_POST['apply']) {
 					continue;
 
 				if (isset($ifdata['mtu']) && $ifdata['mtu'] > $_POST['mtu'])
-					$input_errors[] = sprintf(gettext("Interface %s (VLAN) has MTU set to a bigger value"), $ifdata['descr']);
+					$input_errors[] = sprintf(gettext("Interface %s (VLAN) has MTU set to a larger value"), $ifdata['descr']);
 			}
 		}
 	}
-	if ($_POST['mss'] && ($_POST['mss'] < 576))
-		$input_errors[] = gettext("The MSS must be greater than 576 bytes.");
+	if ($_POST['mss'] <> '')
+		if (!is_numericint($_POST['mss']) || ($_POST['mss'] < 576 || $_POST['mss'] > 65535))
+			$input_errors[] = gettext("The MSS must be an integer between 576 and 65535 bytes.");
 	/* Wireless interface? */
 	if (isset($wancfg['wireless'])) {
 		$reqdfields = array("mode");

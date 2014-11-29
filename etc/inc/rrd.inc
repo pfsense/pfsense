@@ -80,7 +80,7 @@ function restore_rrd() {
 				continue;
 			}
 			unset($output);
-			@unlink($xml_file);
+			@unlink("/{$xml_file}");
 		}
 		unset($rrdrestore);
 		@unlink("{$g['tmp_path']}/rrd_restore");

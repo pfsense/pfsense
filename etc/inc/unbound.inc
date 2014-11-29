@@ -602,11 +602,11 @@ function unbound_acls_config() {
 		$aclcfg = "access-control: 127.0.0.1/32 allow\n";
 		$aclcfg .= "access-control: ::1 allow\n";
 		// Add our networks for active interfaces including localhost
-		if (!empty($config['unbound']['active_interface']))
+		if (!empty($config['unbound']['active_interface'])) {
 			$active_interfaces = array_flip(explode(",", $config['unbound']['active_interface']));
 			if (in_array("all", $active_interfaces, true))
 				$active_interfaces = get_configured_interface_with_descr();
-		else
+		} else
 			$active_interfaces = get_configured_interface_with_descr();
 	
 		$bindints = "";

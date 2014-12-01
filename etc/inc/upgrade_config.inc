@@ -2044,6 +2044,8 @@ function upgrade_054_to_055() {
 		mwexec("$rrdtool restore -f {$g['tmp_path']}/{$xmldumpnew} {$rrddbpath}/{$database} 2>&1");
 
 		unset($rrdold);
+		@unlink("{$g['tmp_path']}/{$xmldump}");
+		@unlink("{$g['tmp_path']}/{$xmldumpnew}");
 	}
 	/* let apinger recreate required files */
 	if (!platform_booting())
@@ -2106,6 +2108,8 @@ function upgrade_054_to_055() {
 		mwexec("/bin/sync");
 		mwexec("$rrdtool resize {$rrddbpath}/{$database} 3 GROW 2000;/bin/mv resize.rrd {$rrddbpath}/{$database} 2>&1");
 		unset($rrdxmlarray);
+		@unlink("{$g['tmp_path']}/{$xmldump}");
+		@unlink("{$g['tmp_path']}/{$xmldumpnew}");
 	}
 	if (!platform_booting())
 		enable_rrd_graphing();

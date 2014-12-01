@@ -140,7 +140,7 @@ function system_resolvconf_generate($dynupdate = false) {
 	$syscfg = $config['system'];
 
 	if (((isset($config['dnsmasq']['enable']) && (!isset($config['dnsmasq']['port']) || $config['dnsmasq']['port'] == "53") && (empty($config['dnsmasq']['interface']) || in_array("lo0", explode(",", $config['dnsmasq']['interface']))))
-		|| (isset($config['unbound']['enable'])) && (!isset($config['unbound']['port']) || $config['unbound']['port'] == "53") && (empty($config['unbound']['active_interface']) || in_array("lo0", explode(",", $config['unbound']['active_interface']))))
+		|| (isset($config['unbound']['enable'])) && (!isset($config['unbound']['port']) || $config['unbound']['port'] == "53") && (empty($config['unbound']['active_interface']) || in_array("lo0", explode(",", $config['unbound']['active_interface'])) || in_array("all", explode(",", $config['unbound']['active_interface']), true)))
 		&& !isset($config['system']['dnslocalhost']))
 		$resolvconf .= "nameserver 127.0.0.1\n";
 

@@ -2377,7 +2377,7 @@ function filter_generate_user_rule($rule) {
 			if (is_ipaddrv6($rg))
 				$aline['reply'] = "reply-to ( {$ifcfg['ifv6']} {$rg} ) ";
 			else if ($rule['interface'] <> "pptp")
-				log_error("Could not find IPv6 gateway for interface({$rule['interface']}).");
+				log_error(sprintf(gettext("Could not find IPv6 gateway for interface (%s)."), $rule['interface']));
 		} else {
 			$rg = get_interface_gateway($rule['interface']);
 			if (is_ipaddrv4($rg))

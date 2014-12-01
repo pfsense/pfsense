@@ -58,27 +58,30 @@ function restore_rrd() {
 		foreach (glob("{$rrddbpath}/*.xml") as $xml_file) {
 			@unlink($xml_file);
 		}
-		$_gb = exec("cd /;LANG=C /usr/bin/tar -xzf {$g['cf_conf_path']}/rrd.tgz 2>&1", $rrdrestore, $rrdreturn);
-		$rrdrestore = implode(" ", $rrdrestore);
+		unset($rrdrestore);
+		$_gb = exec("cd /;LANG=C /usr/bin/tar -tf {$g['cf_conf_path']}/rrd.tgz", $rrdrestore, $rrdreturn);
 		if($rrdreturn != 0) {
 			log_error("RRD restore failed exited with $rrdreturn, the error is: $rrdrestore\n");
 		}
-		unset($rrdrestore);
-		foreach (glob("{$rrddbpath}/*.xml") as $xml_file) {
-			$rrd_file = preg_replace('/\.xml$/', ".rrd", $xml_file);
-			if (file_exists("{$rrd_file}")) {
+		foreach ($rrdrestore as $xml_file) {
+			$rrd_file = '/' . substr($xml_file, 0, -4) . '.rrd';
+			if (file_exists("{$rrd_file}"))
 				@unlink($rrd_file);
+			file_put_contents("{$g['tmp_path']}/rrd_restore", $xml_file);
+			$_gb = exec("cd /;LANG=C /usr/bin/tar -xf {$g['cf_conf_path']}/rrd.tgz -T {$g['tmp_path']}/rrd_restore");
+			if (!file_exists("/{$xml_file}")) {
+				log_error("Could not extract {$xml_file} RRD xml file from archive!");
+				continue;
 			}
-			$output = array();
-			$status = null;
-			$_gb = exec("$rrdtool restore -f '{$xml_file}' '{$rrd_file}'", $output, $status);
+			$_gb = exec("$rrdtool restore -f '/{$xml_file}' '{$rrd_file}'", $output, $status);
 			if ($status) {
 				log_error("rrdtool restore -f '{$xml_file}' '{$rrd_file}' failed returning {$status}.");
 				continue;
 			}
 			unset($output);
-			@unlink($xml_file);
+			@unlink("/{$xml_file}");
 		}
+		unset($rrdrestore);
 		/* If this backup is still there on a full install, but we aren't going to use ram disks, remove the archive since this is a transition. */
 		if (($g['platform'] == "pfSense") && !isset($config['system']['use_mfs_tmpvar'])) {
 			unlink_if_exists("{$g['cf_conf_path']}/rrd.tgz");

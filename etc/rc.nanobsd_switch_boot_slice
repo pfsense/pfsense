@@ -12,7 +12,7 @@ nanobsd_detect_slice_info();
 
 if ($g['platform'] != "nanobsd") {
 	echo "This script can only be used on NanoBSD (embedded) images.\n";
-	exit(1);
+	return 1;
 }
 
 echo "Boot slice  : {$BOOTFLASH} ({$BOOT_DEVICE})\n";

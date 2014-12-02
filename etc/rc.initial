@@ -133,7 +133,7 @@ case ${opmode} in
         /usr/local/sbin/pftop
         ;;
 10)
-		/usr/sbin/tcpdump -s 256 -v -S -l -n -e -ttt -i pflog0
+		/usr/local/sbin/clog -f /var/log/filter.log
 		;;
 11 | 111)
 		/etc/rc.restart_webgui

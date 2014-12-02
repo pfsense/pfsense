@@ -102,8 +102,6 @@ function system_get_sysctls() {
 			continue;
 
 		$disp_sysctl[$sysctl] = array('tunable' => $sysctl, 'value' => $value, 'descr' => get_sysctl_descr($sysctl));
-		
-		
 	}
 	unset($disp_cache);
 	return $disp_sysctl;

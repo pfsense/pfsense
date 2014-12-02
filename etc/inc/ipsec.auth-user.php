@@ -102,7 +102,7 @@ if (!$username || !$password) {
 		return;
 	} else {
 		closelog();
-		exit(-1);
+		return (-1);
 	}
 }
 
@@ -116,7 +116,7 @@ if (($strictusercn === true) && ($common_name != $username)) {
 		return;
 	} else {
 		closelog();
-		exit(1);
+		return (1);
 	}
 }
 
@@ -148,7 +148,7 @@ if ($authenticated == false) {
 		return;
 	} else {
 		closelog();
-		exit(-1);
+		return (-1);
 	}
 }
 
@@ -161,6 +161,6 @@ closelog();
 if (isset($_GET['username']))
 	echo "OK";
 else
-	exit(0);
+	return (0);
 
 ?>

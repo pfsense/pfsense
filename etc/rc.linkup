@@ -110,6 +110,7 @@ if (isset($_GET['interface'])) {
 	$action = $argv[1];
 	$realiface = $argv[2];
 }
+
 switch($action) {
 case "start":
 case "stop":
@@ -120,11 +121,13 @@ default:
 	/* NOTREACHED */
 	break;
 }
+
 if (!empty($realiface)) {
 	if (substr($realiface, 0, 4) == 'ovpn') {
 		log_error("Ignoring link event for ovpn interface");
 		return;
 	}
+	$rclinkuplock = lock("rclinkup{$realiface}", LOCK_EX);
 	$interface = convert_real_interface_to_friendly_interface_name($realiface);
 	if (!empty($interface))
 		handle_argument_group($interface, $action);
@@ -145,6 +148,6 @@ if (!empty($realiface)) {
 			}
 		}
 	}
+	unlock($rclinkuplock);
 }
-
 ?>

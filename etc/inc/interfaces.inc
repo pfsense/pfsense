@@ -1205,7 +1205,7 @@ function interface_bring_down($interface = "wan", $destroy = false, $ifacecfg = 
 			interface_ipalias_cleanup($interface, "inet6");
 			if ($destroy == true)
 				pfSense_interface_flags($realif, -IFF_UP);
-			mwexec("/usr/sbin/arp -d -i " . escapeshellarg($realif) . " -a");
+			//mwexec("/usr/sbin/arp -d -i " . escapeshellarg($realif) . " -a");
 		}
 		$track6 = link_interface_to_track6($interface);
 		break;

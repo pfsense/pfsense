@@ -3142,7 +3142,7 @@ function interface_track6_configure($interface = "lan", $wancfg, $linkupevent = 
 		break;
 	}
 
-	if (!platform_booting() && $linkupevent == false) {
+	if ($linkupevent == false) {
 		if (!function_exists('services_dhcpd_configure'))
 			require_once("services.inc");
 

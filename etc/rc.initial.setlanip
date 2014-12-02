@@ -404,9 +404,9 @@ function console_configure_dhcpd($version = 4) {
 }
 
 if (console_configure_dhcpd(4) == 0)
-	return;
+	return 0;
 if (console_configure_dhcpd(6) == 0)
-	return;
+	return 0;
 	
 //*****************************************************************************
 

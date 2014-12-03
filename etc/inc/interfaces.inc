@@ -3147,6 +3147,9 @@ function interface_track6_configure($interface = "lan", $wancfg, $linkupevent = 
 			require_once("services.inc");
 
 		services_dhcpd_configure("inet6");
+		
+		if (isset($config['unbound']['enable']))
+			services_unbound_configure();
 	}
 
 	return 0;

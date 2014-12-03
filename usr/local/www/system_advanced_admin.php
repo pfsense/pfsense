@@ -59,6 +59,7 @@ $pconfig['noantilockout'] = isset($config['system']['webgui']['noantilockout']);
 $pconfig['nodnsrebindcheck'] = isset($config['system']['webgui']['nodnsrebindcheck']);
 $pconfig['nohttpreferercheck'] = isset($config['system']['webgui']['nohttpreferercheck']);
 $pconfig['beast_protection'] = isset($config['system']['webgui']['beast_protection']);
+$pconfig['pagenamefirst'] = isset($config['system']['webgui']['pagenamefirst']);
 $pconfig['loginautocomplete'] = isset($config['system']['webgui']['loginautocomplete']);
 $pconfig['althostnames'] = $config['system']['webgui']['althostnames'];
 $pconfig['enableserial'] = $config['system']['enableserial'];
@@ -174,6 +175,11 @@ if ($_POST) {
 			$config['system']['webgui']['beast_protection'] = true;
 		else
 			unset($config['system']['webgui']['beast_protection']);
+
+		if ($_POST['pagenamefirst'] == "yes")
+			$config['system']['webgui']['pagenamefirst'] = true;
+		else
+			unset($config['system']['webgui']['pagenamefirst']);
 
 		if ($_POST['loginautocomplete'] == "yes")
 			$config['system']['webgui']['loginautocomplete'] = true;
@@ -495,6 +501,17 @@ function prot_change() {
 									<?php echo gettext("This option is off by default because Hifn accelerators do NOT work with this option, and the GUI will not function. " .
 									"It is possible that other accelerators have a similar problem that is not yet known/documented. " .
 									"More information on BEAST is available from <a target='_blank' href='https://en.wikipedia.org/wiki/Transport_Layer_Security#BEAST_attack'>Wikipedia</a>."); ?>
+								</td>
+							</tr>
+							<tr>
+								<td width="22%" valign="top" class="vncell"><?=gettext("Browser tab text"); ?></td>
+								<td width="78%" class="vtable">
+									<input name="pagenamefirst" type="checkbox" id="pagenamefirst" value="yes" <?php if ($pconfig['pagenamefirst']) echo "checked=\"checked\""; ?> />
+									<strong><?=gettext("Display page name first in browser tab"); ?></strong>
+									<br />
+									<?php echo gettext("When this is unchecked, the browser tab shows the host name followed by the current page. "); ?>
+									<br />
+									<?php echo gettext("Check this box to display the current page followed by the host name."); ?>
 								</td>
 							</tr>
 							<tr>

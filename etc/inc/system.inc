@@ -612,9 +612,8 @@ function system_staticroutes_configure($interface = "", $update_dns = false) {
 			foreach ($ips as $ip) {
 				if (is_ipaddrv4($ip))
 					$ip .= "/32";
-				else if (is_ipaddrv6($ip))
-					$ip .= "/128";
-
+				// do NOT do the same check here on v6, is_ipaddrv6 returns true when including the CIDR mask. doing so breaks v6 routes
+					
 				$inet = (is_subnetv6($ip) ? "-inet6" : "-inet");
 
 				$cmd = "/sbin/route change {$inet} {$blackhole} " . escapeshellarg($ip) . " ";

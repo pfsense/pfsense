@@ -1,7 +1,7 @@
 <?php
 /* $Id$ */
 /*
-    pkg_mgr.php
+    pkg_mgr_installed.php
     Copyright (C) 2013-2014 Electric Sheep Fencing, LP
     Copyright (C) 2004-2012 Scott Ullrich <sullrich@gmail.com>
     All rights reserved.
@@ -173,16 +173,16 @@ include("head.inc");
 											else
 												$pkgver = "<a target='_blank' href='$changeloglink'>{$pkg['version']}</a>";
 										}
+										$pkgdescr = $currentvers[$pkg['name']]['descr'];
 									} else {
 										// unknown available package version
-										$pkgver = "";
-										if(!strcmp($pkg['version'], $latest_package)) {
-											$tdclass = "listr";
-											if ($g['disablepackagehistory'])
-												$pkgver = "<a>{$pkg['version']}</a>";
-											else
-												$pkgver = "<a target='_blank' href='$changeloglink'>{$pkg['version']}</a>";
-											}
+										$tdclass = "listbg";
+										if ($g['disablepackagehistory'])
+											$pkgver = "<a><font color='#ffffff'>" . gettext("Latest") .": ". gettext("N/A") . "</font><br />";
+										else
+											$pkgver = "<a target='_blank' href='$changeloglink'><font color='#ffffff'>" . gettext("Latest") .": ". gettext("N/A") . "<br />";
+										$pkgver .= gettext("Installed") .": ". $pkg['version']."</font></a>";
+										$pkgdescr = $pkg['descr'];
 									}
 									/* Check package info link */
 									if($pkg['pkginfolink']){
@@ -209,7 +209,7 @@ include("head.inc");
 									echo "<td class='{$tdclass}' ".domTT_title(gettext("Click on ".ucfirst($pkg['name'])." version to check its change log."),"return").">{$pkgver}</td>";
 							?>
 							<td class="listbg" style="overflow:hidden; text-align:justify;" <?=domTT_title(gettext("Click package info for more details about ".ucfirst($pkg['name'])." package."))?>>
-									<?=$currentvers[$pkg['name']]['descr'];?>
+									<?=$pkgdescr;?>
 							<?php if (! $g['disablepackageinfo']): ?>
 							<br /><br />
 							<a target='_blank' href='<?=$pkginfolink?>' style='align:center;color:#ffffff; filter:Glow(color=#ff0000, strength=12);'><?=$pkginfo?></a>

@@ -148,12 +148,17 @@ EOF;
 			$bindints .= "interface: ::0\n";
 		} else {
 			foreach($active_interfaces as $ubif) {
-				$intip = get_interface_ip($ubif);
-				if (is_ipaddrv4($intip))
-					$bindints .= "interface: $intip\n";
-				$intip = get_interface_ipv6($ubif);
-				if (is_ipaddrv6($intip))
-					$bindints .= "interface: $intip\n";
+				if (is_ipaddr($ubif)) {
+					//$bindints .= "interface: $ubif\n";  -- until redmine #4062 is fixed, then uncomment this. 
+				} else {
+					$intip = get_interface_ip($ubif);
+					if (is_ipaddrv4($intip))
+						$bindints .= "interface: $intip\n";
+					$intip = get_interface_ipv6($ubif);
+					if (is_ipaddrv6($intip))
+						if (substr($intip, 0, 4) != "fe80")  // skipping link local for the moment to not break people's configs: https://redmine.pfsense.org/issues/4062
+							$bindints .= "interface: $intip\n";
+				}
 			}	
 		}
 	} else {

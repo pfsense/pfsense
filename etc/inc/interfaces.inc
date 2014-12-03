@@ -4795,6 +4795,10 @@ function ip_in_interface_alias_subnet($interface, $ipalias) {
 }
 
 function get_interface_ip($interface = "wan") {
+	// if we get passed an IP for some reason, return the IP. 
+	if (is_ipaddr($interface))
+		return $interface;
+	
 	$realif = get_failover_interface($interface);
 	if (!$realif) {
 		if (strstr($interface, "_vip"))
@@ -4812,6 +4816,10 @@ function get_interface_ip($interface = "wan") {
 
 function get_interface_ipv6($interface = "wan", $flush = false) {
 	global $config;
+
+	// if we get passed an IP for some reason, return the IP. 
+	if (is_ipaddr($interface))
+		return $interface;
 
 	$realif = get_failover_interface($interface, "inet6");
 	if (!$realif) {

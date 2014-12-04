@@ -100,7 +100,7 @@ if(!isset($config['ntpd']['noquery'])) {
 		$ntpq_servers[] = $server;
 	}
 
-	exec("/usr/local/sbin/ntpq -c $inet_version clockvar", $ntpq_clockvar_output);
+	exec("/usr/local/sbin/ntpq -c clockvar $inet_version", $ntpq_clockvar_output);
 	foreach ($ntpq_clockvar_output as $line) {
 		if (substr($line, 0, 9) == "timecode=") {
 			$tmp = explode('"', $line);

@@ -276,7 +276,7 @@ if (isset($_POST['add_x']) && isset($_POST['if_add'])) {
 				' interfaces:'), $portname, count($ifnames));
 
 			foreach ($portifmap[$portname] as $ifn)
-				$errstr .= " " . $ifn;
+				$errstr .= " " . convert_friendly_interface_to_friendly_descr(strtolower($ifn)) . " (" . $ifn . ")";
 
 			$input_errors[] = $errstr;
 		} else if (count($ifnames) == 1 && preg_match('/^bridge[0-9]/', $portname) && is_array($config['bridges']['bridged']) && count($config['bridges']['bridged'])) {

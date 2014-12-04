@@ -202,8 +202,7 @@ function vpn_ipsec_configure($ipchg = false)
 				if (!is_ipaddr($rg)) {
 					$filterdns_list[] = "{$rg}";
 					add_hostname_to_watch($rg);
-					if (!platform_booting())
-						$rg = resolve_retry($rg);
+					$rg = resolve_retry($rg);
 					if (!is_ipaddr($rg))
 						continue;
 				}

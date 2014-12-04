@@ -442,6 +442,7 @@ system_syslogd_start();
 
 /* done */
 unset($g['booting']);
+@unlink("{$g['varrun_path']}/booting");
 
 /* If there are ipsec dynamic hosts try again to reload the tunnels as rc.newipsecdns does */
 if ($ipsec_dynamic_hosts) {

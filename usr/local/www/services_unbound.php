@@ -272,7 +272,7 @@ function show_advanced_dns() {
 								<td width="22%" valign="top" class="vncellreq"><?=gettext("Network Interfaces"); ?></td>
 								<td width="78%" class="vtable">
 									<?php
-										$interface_addresses = get_possible_listen_ips(true);
+										$interface_addresses = get_possible_listen_ips(false);
 										$size=count($interface_addresses)+1;
 									?>
 									<?=gettext("Interface IPs used by the DNS Resolver for responding to queries from clients. If an interface has both IPv4 and IPv6 IPs, both are used. Queries to other interface IPs not selected below are discarded. The default behavior is to respond to queries on every available IPv4 and IPv6 address.");?>
@@ -297,7 +297,7 @@ function show_advanced_dns() {
 								<td width="22%" valign="top" class="vncellreq"><?=gettext("Outgoing Network Interfaces"); ?></td>
 								<td width="78%" class="vtable">
 									<?php
-										$interface_addresses = get_possible_listen_ips(true);
+										$interface_addresses = get_possible_listen_ips(false);
 										$size=count($interface_addresses)+1;
 									?>
 									<?=gettext("Utilize different network interface(s) that the DNS Resolver will use to send queries to authoritative servers and receive their replies. By default all interfaces are used.");?>

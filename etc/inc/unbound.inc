@@ -156,7 +156,7 @@ EOF;
 						$bindints .= "interface: $intip\n";
 					$intip = get_interface_ipv6($ubif);
 					if (is_ipaddrv6($intip))
-						if (substr($intip, 0, 4) != "fe80")  // skipping link local for the moment to not break people's configs: https://redmine.pfsense.org/issues/4062
+						if (!is_linklocal($intip))  // skipping link local for the moment to not break people's configs: https://redmine.pfsense.org/issues/4062
 							$bindints .= "interface: $intip\n";
 				}
 			}	

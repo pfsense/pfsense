@@ -197,6 +197,15 @@ if (!is_ipaddr($oldip) || $curwanip != $oldip || !is_ipaddrv4($config['interface
 		}
 	}
 	
+	/*
+	 * XXX: Some services (e.g. dyndns, see ticket #4066) depends of
+	 * filter_configure() to be called before, otherwise pass out
+	 * route-to rules have the old ip set in 'from' and connection
+	 * do not go through correct link
+	 */
+	filter_configure();
+	sleep(1);
+
 	/* reconfigure static routes (kernel may have deleted them) */
 	system_routing_configure($interface);
 
@@ -229,9 +238,9 @@ if (!is_ipaddr($oldip) || $curwanip != $oldip || !is_ipaddrv4($config['interface
 	services_snmpd_configure();
 
 	restart_packages();
+} else {
+	/* signal filter reload */
+	filter_configure();
 }
-
-/* signal filter reload */
-filter_configure();
 
 ?>

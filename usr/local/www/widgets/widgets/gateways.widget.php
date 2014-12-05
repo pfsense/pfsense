@@ -123,7 +123,7 @@ $counter = 1;
 					$online = gettext("Unknown");
 					$bgcolor = "#ADD8E6";  // lightblue
 				}
-				echo "<td class=\"ellipsis\" bgcolor=\"$bgcolor\" align=\"center\">$online</td>\n";
+				echo "<td class=\"ellipsis\" bgcolor=\"$bgcolor\" align=\"center\" id=\"gateway$counter\">$online</td>\n";
 				$counter++;
 			?>
 	</tr>

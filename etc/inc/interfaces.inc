@@ -1844,8 +1844,10 @@ EOD;
 		if(preg_match("/zte/i", implode("\n", $usbmodemoutput))) {
 			$mondev  = substr(basename($port), 0, -1) . "1";
 		}
-		log_error("Starting 3gstats.php on device '{$mondev}' for interface '{$interface}'");
-		mwexec_bg("/usr/local/bin/3gstats.php {$mondev} {$interface}");
+		if($mondev != '') {
+			log_error("Starting 3gstats.php on device '{$mondev}' for interface '{$interface}'");
+			mwexec_bg("/usr/local/bin/3gstats.php {$mondev} {$interface}");
+		}
 	}
 
 	return 1;

@@ -677,7 +677,7 @@ ul#wzdnav a:active {
 }
 .listn {
 	font-size: 11px;
-	padding-right: 16px;
+	padding-right: 6px;
 	padding-left: 6px;
 	padding-top: 4px;
 	padding-bottom: 4px;
@@ -687,7 +687,7 @@ ul#wzdnav a:active {
 	border-bottom: 1px solid #999999;
 	font-size: 11px;
 	background-color: #990000;
-	padding-right: 16px;
+	padding-right: 6px;
 	padding-left: 6px;
 	padding-top: 4px;
 	padding-bottom: 4px;
@@ -697,14 +697,14 @@ ul#wzdnav a:active {
         border-bottom: 1px solid #999999;
         font-size: 11px;
         background-color: #999999;
-        padding-right: 16px;
+        padding-right: 6px;
         padding-left: 6px;
         padding-top: 4px;
         padding-bottom: 4px;
 }
 .listhdr {
 	background-color: #BBBBBB;
-	padding-right: 16px;
+	padding-right: 6px;
 	padding-left: 6px;
 	font-weight: bold;
 	border-bottom: 1px solid #999999;
@@ -717,7 +717,7 @@ ul#wzdnav a:active {
 }
 .listhdrr {
 	background-color: #BBBBBB;
-	padding-right: 16px;
+	padding-right: 6px;
 	padding-left: 6px;
 	font-weight: bold;
 	border-right: 1px solid #999999;

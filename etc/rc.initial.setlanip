@@ -401,6 +401,7 @@ function console_configure_dhcpd($version = 4) {
 			$restart_dhcpd = true;
 		}
 	}
+	return 1;
 }
 
 if (console_configure_dhcpd(4) == 0)

@@ -6,14 +6,10 @@ require("globals.inc");
 require("config.inc");
 require("functions.inc");
 
-$g['booting'] = true;
-
 echo "Starting the {$g['product_name']} console firmware update system";
 
 require("functions.inc");
 echo ".";
-
-$g['booting'] = false;
 
 if(isset($config['system']['firmware']['alturl']['enable']))
 	$updater_url = "{$config['system']['firmware']['alturl']['firmwareurl']}";

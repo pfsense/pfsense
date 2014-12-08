@@ -205,7 +205,6 @@
 /etc/rc.parse-isc-dhcpd
 /etc/rc.sendmail
 /etc/rrdtool.core
-/etc/ssl/cert.pem
 /etc/ttys_wrap
 /etc/usbd.conf
 /etc/version_base

@@ -45,8 +45,12 @@
 require_once("guiconfig.inc");
 
 if(!isset($config['ntpd']['noquery'])) {
+	if (isset($config['system']['ipv6allow']))
+		$inet_version = "";
+	else
+		$inet_version = " -4";
 
-	exec("/usr/local/sbin/ntpq -pn | /usr/bin/tail +3", $ntpq_output);
+	exec("/usr/local/sbin/ntpq -pn $inet_version | /usr/bin/tail +3", $ntpq_output);
 
 	$ntpq_servers = array();
 	foreach ($ntpq_output as $line) {
@@ -96,7 +100,7 @@ if(!isset($config['ntpd']['noquery'])) {
 		$ntpq_servers[] = $server;
 	}
 
-	exec("/usr/local/sbin/ntpq -c clockvar", $ntpq_clockvar_output);
+	exec("/usr/local/sbin/ntpq -c clockvar $inet_version", $ntpq_clockvar_output);
 	foreach ($ntpq_clockvar_output as $line) {
 		if (substr($line, 0, 9) == "timecode=") {
 			$tmp = explode('"', $line);

@@ -102,8 +102,6 @@ function system_get_sysctls() {
 			continue;
 
 		$disp_sysctl[$sysctl] = array('tunable' => $sysctl, 'value' => $value, 'descr' => get_sysctl_descr($sysctl));
-		
-		
 	}
 	unset($disp_cache);
 	return $disp_sysctl;
@@ -140,7 +138,7 @@ function system_resolvconf_generate($dynupdate = false) {
 	$syscfg = $config['system'];
 
 	if (((isset($config['dnsmasq']['enable']) && (!isset($config['dnsmasq']['port']) || $config['dnsmasq']['port'] == "53") && (empty($config['dnsmasq']['interface']) || in_array("lo0", explode(",", $config['dnsmasq']['interface']))))
-		|| (isset($config['unbound']['enable'])) && (!isset($config['unbound']['port']) || $config['unbound']['port'] == "53") && (empty($config['unbound']['active_interface']) || in_array("lo0", explode(",", $config['unbound']['active_interface']))))
+		|| (isset($config['unbound']['enable'])) && (!isset($config['unbound']['port']) || $config['unbound']['port'] == "53") && (empty($config['unbound']['active_interface']) || in_array("lo0", explode(",", $config['unbound']['active_interface'])) || in_array("all", explode(",", $config['unbound']['active_interface']), true)))
 		&& !isset($config['system']['dnslocalhost']))
 		$resolvconf .= "nameserver 127.0.0.1\n";
 
@@ -614,9 +612,8 @@ function system_staticroutes_configure($interface = "", $update_dns = false) {
 			foreach ($ips as $ip) {
 				if (is_ipaddrv4($ip))
 					$ip .= "/32";
-				else if (is_ipaddrv6($ip))
-					$ip .= "/128";
-
+				// do NOT do the same check here on v6, is_ipaddrv6 returns true when including the CIDR mask. doing so breaks v6 routes
+					
 				$inet = (is_subnetv6($ip) ? "-inet6" : "-inet");
 
 				$cmd = "/sbin/route change {$inet} {$blackhole} " . escapeshellarg($ip) . " ";
@@ -1331,9 +1328,9 @@ EOD;
 
 		if (isset($config['system']['webgui']['beast_protection'])) {
 			$lighty_config .= "ssl.honor-cipher-order = \"enable\"\n";
-			$lighty_config .= "ssl.cipher-list = \"ECDHE-RSA-AES256-SHA384:AES256-SHA256:RC4-SHA:RC4:HIGH:!MD5:!aNULL:!EDH:!AESGCM\"\n";
+			$lighty_config .= "ssl.cipher-list = \"ECDHE-RSA-AES256-SHA384:AES256-SHA256:HIGH:!MD5:!aNULL:!EDH:!AESGCM\"\n";
 		} else {
-			$lighty_config .= "ssl.cipher-list = \"DHE-RSA-CAMELLIA256-SHA:DHE-DSS-CAMELLIA256-SHA:CAMELLIA256-SHA:DHE-DSS-AES256-SHA:AES256-SHA:DHE-RSA-CAMELLIA128-SHA:DHE-DSS-CAMELLIA128-SHA:CAMELLIA128-SHA:DHE-RSA-AES128-SHA:DHE-DSS-AES128-SHA:AES128-SHA:RC4-SHA:RC4-MD5:!aNULL:!eNULL:!3DES:@STRENGTH\"\n";
+			$lighty_config .= "ssl.cipher-list = \"DHE-RSA-CAMELLIA256-SHA:DHE-DSS-CAMELLIA256-SHA:CAMELLIA256-SHA:DHE-DSS-AES256-SHA:AES256-SHA:DHE-RSA-CAMELLIA128-SHA:DHE-DSS-CAMELLIA128-SHA:CAMELLIA128-SHA:DHE-RSA-AES128-SHA:DHE-DSS-AES128-SHA:AES128-SHA:!aNULL:!eNULL:!3DES:@STRENGTH\"\n";
 		}
 
 		if(!(empty($ca) || (strlen(trim($ca)) == 0)))

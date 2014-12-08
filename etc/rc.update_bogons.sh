@@ -14,7 +14,7 @@ process_url() {
 	local filename=${url##*/}
 	local ext=${filename#*.}
 	
-	/usr/bin/fetch -a -T 30 -q -o $file "${url}"
+	/usr/bin/fetch -a -w 600 -T 30 -q -o $file "${url}"
 	
 	if [ ! -f $file ]; then
 		echo "Could not download ${url}" | logger

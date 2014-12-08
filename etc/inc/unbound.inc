@@ -37,6 +37,18 @@ require_once("functions.inc");
 require_once("filter.inc");
 require_once("shaper.inc");
 
+function create_unbound_chroot_path() {
+	global $config, $g;
+
+	// Configure chroot
+	if (!is_dir($g['unbound_chroot_path'])) {
+		mkdir($g['unbound_chroot_path']);
+		chown($g['unbound_chroot_path'], "unbound");
+		chgrp($g['unbound_chroot_path'], "unbound");
+	}
+
+}
+
 /* Optimize Unbound for environment */
 function unbound_optimization() {
 	global $config;
@@ -131,13 +143,23 @@ EOF;
 	$bindints = "";
 	if (!empty($config['unbound']['active_interface'])) {
 		$active_interfaces = explode(",", $config['unbound']['active_interface']);
-		foreach($active_interfaces as $ubif) {
-			$intip = get_interface_ip($ubif);
-			if (is_ipaddrv4($intip))
-				$bindints .= "interface: $intip\n";
-			$intip = get_interface_ipv6($ubif);
-			if (is_ipaddrv6($intip))
-				$bindints .= "interface: $intip\n";
+		if (in_array("all", $active_interfaces, true)) {
+			$bindints .= "interface: 0.0.0.0\n";
+			$bindints .= "interface: ::0\n";
+		} else {
+			foreach($active_interfaces as $ubif) {
+				if (is_ipaddr($ubif)) {
+					//$bindints .= "interface: $ubif\n";  -- until redmine #4062 is fixed, then uncomment this. 
+				} else {
+					$intip = get_interface_ip($ubif);
+					if (is_ipaddrv4($intip))
+						$bindints .= "interface: $intip\n";
+					$intip = get_interface_ipv6($ubif);
+					if (is_ipaddrv6($intip))
+						if (!is_linklocal($intip))  // skipping link local for the moment to not break people's configs: https://redmine.pfsense.org/issues/4062
+							$bindints .= "interface: $intip\n";
+				}
+			}	
 		}
 	} else {
 		$bindints .= "interface: 0.0.0.0\n";
@@ -325,6 +347,7 @@ include: {$g['unbound_chroot_path']}/remotecontrol.conf
 
 EOD;
 
+	create_unbound_chroot_path();
 	file_put_contents("{$g['unbound_chroot_path']}/unbound.conf", $unboundconf);
 
 	return 0;
@@ -346,6 +369,7 @@ remote-control:
 
 EOF;
 
+		create_unbound_chroot_path();
 		file_put_contents("{$g['unbound_chroot_path']}/remotecontrol.conf", $remotcfg);
 
 		// Generate our keys
@@ -383,12 +407,7 @@ function read_hosts() {
 function sync_unbound_service() {
 	global $config, $g;
 
-	// Configure chroot
-	if (!is_dir($g['unbound_chroot_path'])) {
-		mkdir($g['unbound_chroot_path']);
-		chown($g['unbound_chroot_path'], "unbound");
-		chgrp($g['unbound_chroot_path'], "unbound");
-	}
+	create_unbound_chroot_path();
 
 	// Configure our Unbound service
 	do_as_unbound_user("unbound-anchor");
@@ -479,8 +498,10 @@ function unbound_add_domain_overrides($pvt_rev="") {
 
 	if ($pvt_rev != "")
 		return $domain_entries;
-	else
+	else {
+		create_unbound_chroot_path();
 		file_put_contents("{$g['unbound_chroot_path']}/domainoverrides.conf", $domain_entries);
+	}
 }
 
 function unbound_add_host_entries() {
@@ -504,6 +525,7 @@ function unbound_add_host_entries() {
 	}
 
 	// Write out entries
+	create_unbound_chroot_path();
 	file_put_contents("{$g['unbound_chroot_path']}/host_entries.conf", $unbound_entries);
 
 	/* dhcpleases will write to this config file, make sure it exists */
@@ -581,47 +603,54 @@ EOF;
 function unbound_acls_config() {
 	global $g, $config;
 
-	$aclcfg = "access-control: 127.0.0.1/32 allow\n";
-	$aclcfg .= "access-control: ::1 allow\n";
-	// Add our networks for active interfaces including localhost
-	if (!empty($config['unbound']['active_interface']))
-		$active_interfaces = array_flip(explode(",", $config['unbound']['active_interface']));
-	else
-		$active_interfaces = get_configured_interface_with_descr();
-
-	$bindints = "";
-	foreach($active_interfaces as $ubif => $ifdesc) {
-		$ifip = get_interface_ip($ubif);
-		if (is_ipaddrv4($ifip)) {
-			// IPv4 is handled via NAT networks below
-			continue;
-		}
-		$ifip = get_interface_ipv6($ubif);
-		if (is_ipaddrv6($ifip)) {
-			$subnet_bits = get_interface_subnetv6($ubif);
-			$subnet_ip = gen_subnetv6($ifip, $subnet_bits);
-			$aclcfg .= "access-control: {$subnet_ip}/{$subnet_bits} allow\n";
-			// add for IPv6 static routes to local networks
-			// for safety, we include only routes reachable on an interface with no
-			// gateway specified - read: not an Internet connection. 
-			$static_routes = get_staticroutes();
-			foreach ($static_routes as $route) {
-				if ((lookup_gateway_interface_by_name($route['gateway']) == $ubif) && !interface_has_gateway($ubif)) {
-					// route is on this interface, interface doesn't have gateway, add it
-					$aclcfg .= "access-control: {$route['network']} allow\n";
+	if (!isset($config['unbound']['disable_auto_added_access_control'])) {
+		$aclcfg = "access-control: 127.0.0.1/32 allow\n";
+		$aclcfg .= "access-control: ::1 allow\n";
+		// Add our networks for active interfaces including localhost
+		if (!empty($config['unbound']['active_interface'])) {
+			$active_interfaces = array_flip(explode(",", $config['unbound']['active_interface']));
+			if (in_array("all", $active_interfaces, true))
+				$active_interfaces = get_configured_interface_with_descr();
+		} else
+			$active_interfaces = get_configured_interface_with_descr();
+	
+		$bindints = "";
+		foreach($active_interfaces as $ubif => $ifdesc) {
+			$ifip = get_interface_ip($ubif);
+			if (is_ipaddrv4($ifip)) {
+				// IPv4 is handled via NAT networks below
+			}
+			$ifip = get_interface_ipv6($ubif);
+			if (is_ipaddrv6($ifip)) {
+				if (!is_linklocal($ifip)) {
+					$subnet_bits = get_interface_subnetv6($ubif);
+					$subnet_ip = gen_subnetv6($ifip, $subnet_bits);
+					// only add LAN-type interfaces 
+					if (!interface_has_gateway($ubif))
+						$aclcfg .= "access-control: {$subnet_ip}/{$subnet_bits} allow\n";
+				}
+				// add for IPv6 static routes to local networks
+				// for safety, we include only routes reachable on an interface with no
+				// gateway specified - read: not an Internet connection. 
+				$static_routes = get_staticroutes();
+				foreach ($static_routes as $route) {
+					if ((lookup_gateway_interface_by_name($route['gateway']) == $ubif) && !interface_has_gateway($ubif)) {
+						// route is on this interface, interface doesn't have gateway, add it
+						$aclcfg .= "access-control: {$route['network']} allow\n";
+					}
 				}
 			}
 		}
-	}
-	
-	// Generate IPv4 access-control entries using the same logic as automatic outbound NAT
-	if (empty($FilterIflist)) {
-		filter_generate_optcfg_array();
-	}
-	$natnetworks_array = array();
-	$natnetworks_array = filter_nat_rules_automatic_tonathosts();
-	foreach ($natnetworks_array as $allowednet) {
-		$aclcfg .= "access-control: $allowednet allow \n";	
+		
+		// Generate IPv4 access-control entries using the same logic as automatic outbound NAT
+		if (empty($FilterIflist)) {
+			filter_generate_optcfg_array();
+		}
+		$natnetworks_array = array();
+		$natnetworks_array = filter_nat_rules_automatic_tonathosts();
+		foreach ($natnetworks_array as $allowednet) {
+			$aclcfg .= "access-control: $allowednet allow \n";	
+		}	
 	}
 
 	// Configure the custom ACLs
@@ -636,6 +665,7 @@ function unbound_acls_config() {
 		}
 	}
 	// Write out Access list
+	create_unbound_chroot_path();
 	file_put_contents("{$g['unbound_chroot_path']}/access_lists.conf", $aclcfg);
 
 }

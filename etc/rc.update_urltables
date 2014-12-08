@@ -6,7 +6,7 @@ require_once("pfsense-utils.inc");
 
 if (!is_array($config['aliases']['alias'])) {
 	// No aliases
-	exit;
+	return;
 }
 
 // Gather list of urltable aliases

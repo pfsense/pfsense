@@ -228,7 +228,7 @@ if [ "$PLATFORM" = "cdrom" ] ; then
 fi
 
 # make some directories in /var
-/bin/mkdir -p $varrunpath /var/log /var/etc /var/db/entropy /var/at/jobs/ /var/empty 2>/dev/null
+/bin/mkdir -p $varrunpath /var/log /var/etc /var/db/entropy /var/db/rrd /var/at/jobs/ /var/empty 2>/dev/null
 /bin/rm -rf $varrunpath/*
 if [ "$PLATFORM" != "pfSense" ]; then
 	/bin/rm /var/log/* 2>/dev/null
@@ -413,9 +413,11 @@ echo -n "Launching the init system..."
 /usr/bin/touch $varrunpath/booting
 /etc/rc.bootup
 
-# /etc/rc.bootup unset $g['booting'], remove file right now to be
-# consistent
-/bin/rm $varrunpath/booting
+# /etc/rc.bootup unset $g['booting'], and removes file
+# Be sure the file is removed to not create troubles after
+if [ -f $varrunpath/booting ]; then
+	/bin/rm $varrunpath/booting
+fi
 
 # If a shell was selected from recovery 
 # console then just drop to the shell now.

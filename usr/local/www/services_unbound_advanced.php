@@ -79,7 +79,12 @@ $pconfig['infra_cache_numhosts'] = isset($config['unbound']['infra_cache_numhost
 $pconfig['unwanted_reply_threshold'] = isset($config['unbound']['unwanted_reply_threshold']) ? $config['unbound']['unwanted_reply_threshold'] : 'disabled';
 $pconfig['log_verbosity'] = isset($config['unbound']['log_verbosity']) ? $config['unbound']['log_verbosity'] : "1";
 
+if (isset($config['unbound']['disable_auto_added_access_control'])) {
+	$pconfig['disable_auto_added_access_control'] = true;
+}
+
 if ($_POST) {
+	unset($input_errors);
 	$pconfig = $_POST;
 
 	if ($_POST['apply']) {
@@ -89,6 +94,45 @@ if ($_POST) {
 			clear_subsystem_dirty('unbound');
 		}
 	} else {
+		if (isset($_POST['msgcachesize']) && !in_array($_POST['msgcachesize'], array('4', '10', '20', '50', '100', '250', '512'), true)) {
+			$input_errors[] = "A valid value for Message Cache Size must be specified.";
+		}
+		if (isset($_POST['outgoing_num_tcp']) && !in_array($_POST['outgoing_num_tcp'], array('0', '10', '20', '30', '40', '50'), true)) {
+			$input_errors[] = "A valid value must be specified for Outgoing TCP Buffers.";
+		}
+		if (isset($_POST['outgoing_num_tcp']) && !in_array($_POST['incoming_num_tcp'], array('0', '10', '20', '30', '40', '50'), true)) {
+			$input_errors[] = "A valid value must be specified for Incoming TCP Buffers.";
+		}
+		if (isset($_POST['edns_buffer_size']) && !in_array($_POST['edns_buffer_size'], array('512', '1480', '4096'), true)) {
+			$input_errors[] = "A valid value must be specified for EDNS Buffer Size.";
+		}
+		if (isset($_POST['num_queries_per_thread']) && !in_array($_POST['num_queries_per_thread'], array('512', '1024', '2048'), true)) {
+			$input_errors[] = "A valid value must be specified for Number of queries per thread.";
+		}
+		if (isset($_POST['jostle_timeout']) && !in_array($_POST['jostle_timeout'], array('100', '200', '500', '1000'), true)) {
+			$input_errors[] = "A valid value must be specified for Jostle Timeout.";
+		}
+		if (isset($_POST['cache_max_ttl']) && (!is_numericint($_POST['cache_max_ttl']) || ($_POST['cache_max_ttl'] < 0))) {
+			$input_errors[] = "'Maximum TTL for RRsets and messages' must be a positive integer.";
+		}
+		if (isset($_POST['cache_min_ttl']) && (!is_numericint($_POST['cache_min_ttl']) || ($_POST['cache_min_ttl'] < 0))) {
+			$input_errors[] = "'Minimum TTL for RRsets and messages' must be a positive integer.";
+		}
+		if (isset($_POST['infra_host_ttl']) && !in_array($_POST['infra_host_ttl'], array('60', '120', '300', '600', '900'), true)) {
+			$input_errors[] = "A valid value must be specified for TTL for Host cache entries.";
+		}
+		if (isset($_POST['infra_lame_ttl']) && !in_array($_POST['infra_lame_ttl'], array('60', '120', '300', '600', '900'), true)) {
+			$input_errors[] = "A valid value must be specified for TTL for lame delegation.";
+		}
+		if (isset($_POST['infra_cache_numhosts']) && !in_array($_POST['infra_cache_numhosts'], array('1000', '5000', '10000', '20000', '50000'), true)) {
+			$input_errors[] = "A valid value must be specified for Number of Hosts to cache.";
+		}
+		if (isset($_POST['unwanted_reply_threshold']) && !in_array($_POST['unwanted_reply_threshold'], array('disabled', '5000000', '10000000', '20000000', '40000000', '50000000'), true)) {
+			$input_errors[] = "A valid value must be specified for Unwanted Reply Threshold.";
+		}
+		if (isset($_POST['log_verbosity']) && !in_array($_POST['log_verbosity'], array('0', '1', '2', '3', '4', '5'), true)) {
+			$input_errors[] = "A valid value must be specified for Log level verbosity.";
+		}
 		if (isset($_POST['hideidentity'])) {
 			$config['unbound']['hideidentity'] = true;
 		} else {
@@ -132,6 +176,11 @@ if ($_POST) {
 		$config['unbound']['infra_cache_numhosts'] = $_POST['infra_cache_numhosts'];
 		$config['unbound']['unwanted_reply_threshold'] = $_POST['unwanted_reply_threshold'];
 		$config['unbound']['log_verbosity'] = $_POST['log_verbosity'];
+		if (isset($_POST['disable_auto_added_access_control'])) {
+			$config['unbound']['disable_auto_added_access_control'] = true;
+		} else {
+			unset($config['unbound']['disable_auto_added_access_control']);
+		}
 		write_config("DNS Resolver configured.");
 
 		mark_subsystem_dirty('unbound');
@@ -404,7 +453,11 @@ include_once("head.inc");
 								</td>
 							</tr>
 							<tr>
-								<td colspan="2">&nbsp;</td>
+								<td width="22%" valign="top" class="vncell"><?=gettext("Disable auto-added access control");?></td>
+								<td width="78%" class="vtable">
+									<input name="disable_auto_added_access_control" type="checkbox" id="disable_auto_added_access_control" value="yes" <?php if (isset($pconfig['disable_auto_added_access_control'])) echo "checked=\"checked\"";?> />
+									<?=gettext("Check this box to disable the automatically-added access control entries. By default, IPv4 and IPv6 networks residing on internal interfaces of this system are permitted. Allowed networks must be manually configured on the Access Lists tab if the auto-added entries are disabled.");?>
+								</td>
 							</tr>
 							<tr>
 								<td width="22%"></td>

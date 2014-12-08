@@ -38,7 +38,7 @@ if (isset($options["h"]) || isset($options["help"])) {
 	echo "usage: /etc/rc.initial.setlanip [option ...]\n";
 	echo "  -h, --help       show this message\n";
 	echo "  -n, --dry-run    do not make any configuration changes\n";
-	exit(0);
+	return 0;
 }
 
 $dry_run = isset($options["n"]) || isset($options["dry-run"]);
@@ -146,9 +146,9 @@ if ($count > 1) {
 }
 	
 if($intnum < 1) 
-	exit;
+	return;
 if($intnum > $count)
-	exit;
+	return;
 		
 $index = 1;
 foreach ($ifdescrs as $ifname => $ifdesc) {
@@ -161,7 +161,7 @@ foreach ($ifdescrs as $ifname => $ifdesc) {
 }	
 if(!$interface) {
 	echo "Invalid interface!\n";
-	exit;
+	return;
 }
 
 $ifaceassigned = "";
@@ -365,7 +365,7 @@ function console_configure_dhcpd($version = 4) {
 				$dhcpstartip = chop(fgets($fp));
 				if ($dhcpstartip === "") {
 					fclose($fp);
-					exit(0);
+					return 0;
 				}
 				$is_ipaddr = ($version === 6) ? is_ipaddrv6($dhcpstartip) : is_ipaddrv4($dhcpstartip);
 				$is_inrange = is_inrange($dhcpstartip, $subnet_start, $subnet_end);
@@ -378,7 +378,7 @@ function console_configure_dhcpd($version = 4) {
 				$dhcpendip = chop(fgets($fp));
 				if ($dhcpendip === "") {
 					fclose($fp);
-					exit(0);
+					return 0;
 				}
 				$is_ipaddr = ($version === 6) ? is_ipaddrv6($dhcpendip) : is_ipaddrv4($dhcpendip);
 				$is_inrange = is_inrange($dhcpendip, $subnet_start, $subnet_end);
@@ -401,10 +401,13 @@ function console_configure_dhcpd($version = 4) {
 			$restart_dhcpd = true;
 		}
 	}
+	return 1;
 }
 
-console_configure_dhcpd(4);
-console_configure_dhcpd(6);
+if (console_configure_dhcpd(4) == 0)
+	return 0;
+if (console_configure_dhcpd(6) == 0)
+	return 0;
 	
 //*****************************************************************************
 

@@ -119,7 +119,7 @@ if (file_exists("{$g['vardb_path']}/{$interface}_cacheip"))
 /* regenerate resolv.conf if DNS overrides are allowed */
 system_resolvconf_generate(true);
 
-/* write current WAN IP to file */
+/* write the current interface IP to file */
 if (is_ipaddr($curwanip))
 	@file_put_contents("{$g['vardb_path']}/{$interface}_ip", $curwanip);
 
@@ -189,7 +189,7 @@ if (!is_ipaddr($oldip) || $curwanip != $oldip || !is_ipaddrv4($config['interface
 	/* IP changed, kill states accordingly */
 	if ($curwanip != $oldip) {
 		log_error("IP has changed, killing states on former IP $oldip.");
-		mwexec_bg("/sbin/pfctl -k $oldip");
+		pfSense_kill_states($oldip);
 		if (isset($config['system']['ip_change_kill_states'])) {
 			/* hidden config option to wipe all states if needed */
 			log_error("Killing all states post-IP change.");
@@ -197,6 +197,14 @@ if (!is_ipaddr($oldip) || $curwanip != $oldip || !is_ipaddrv4($config['interface
 		}
 	}
 	
+	/*
+	 * Some services (e.g. dyndns, see ticket #4066) depends of
+	 * filter_configure() to be called before, otherwise pass out
+	 * route-to rules have the old ip set in 'from' and connection
+	 * do not go through correct link
+	 */
+	filter_configure_sync();
+
 	/* reconfigure static routes (kernel may have deleted them) */
 	system_routing_configure($interface);
 
@@ -229,9 +237,9 @@ if (!is_ipaddr($oldip) || $curwanip != $oldip || !is_ipaddrv4($config['interface
 	services_snmpd_configure();
 
 	restart_packages();
+} else {
+	/* signal filter reload */
+	filter_configure();
 }
-
-/* signal filter reload */
-filter_configure();
 
 ?>

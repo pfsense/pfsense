@@ -187,8 +187,14 @@ EOD;
 			 */
 			if (is_ipaddrv4($gateway['gateway']) && $gateway['monitor'] != $gateway['gateway']) {
 				log_error("Removing static route for monitor {$gateway['monitor']} and adding a new route through {$gateway['gateway']}");
-				mwexec("/sbin/route change -host " . escapeshellarg($gateway['monitor']) .
-					" " . escapeshellarg($gateway['gateway']), true);
+				if (interface_isppp_type($gateway['friendlyiface']))
+					mwexec("/sbin/route change -host " . escapeshellarg($gateway['monitor']) .
+						" -iface " . escapeshellarg($gateway['interface']), true);
+				else
+					mwexec("/sbin/route change -host " . escapeshellarg($gateway['monitor']) .
+						" " . escapeshellarg($gateway['gateway']), true);
+
+				pfSense_kill_states("0.0.0.0/0", $gateway['monitor'], $gateway['interface'], "icmp");
 			}
 		} else if ($gateway['ipprotocol'] == "inet6") { // This is an IPv6 gateway...
 			if ($gateway['monitor'] == $gateway['gateway']) {
@@ -226,8 +232,14 @@ EOD;
 			 */
 			if ($gateway['gateway'] != $gateway['monitor']) {
 				log_error("Removing static route for monitor {$gateway['monitor']} and adding a new route through {$gateway['gateway']}");
-				mwexec("/sbin/route change -host -inet6 " . escapeshellarg($gateway['monitor']) .
-					" " . escapeshellarg($gateway['gateway']), true);
+				if (interface_isppp_type($gateway['friendlyiface']))
+					mwexec("/sbin/route change -host -inet6 " . escapeshellarg($gateway['monitor']) .
+						" -iface " . escapeshellarg($gateway['interface']), true);
+				else
+					mwexec("/sbin/route change -host -inet6 " . escapeshellarg($gateway['monitor']) .
+						" " . escapeshellarg($gateway['gateway']), true);
+
+				pfSense_kill_states("::0.0.0.0/0", $gateway['monitor'], $gateway['interface'], "icmpv6");
 			}
 		} else
 			continue;
@@ -336,13 +348,6 @@ EOD;
 	}
 	@file_put_contents("{$g['varetc_path']}/apinger.conf", $apingerconfig);
 	unset($apingerconfig);
-
-	if (is_dir("{$g['tmp_path']}"))
-		chmod("{$g['tmp_path']}", 01777);
-	if (!is_dir("{$g['vardb_path']}/rrd"))
-		mkdir("{$g['vardb_path']}/rrd", 0775);
-
-	@chown("{$g['vardb_path']}/rrd", "nobody");
 
  	/* Restart apinger process */
 	if (isvalidpid("{$g['varrun_path']}/apinger.pid"))
@@ -787,7 +792,7 @@ function fixup_default_gateway($ipprotocol, $gateways_status, $gateways_arr) {
 			}
 			mwexec("/sbin/route change {$inetfamily} default {$gateways_arr[$upgw]['gateway']}");
 		}
-	} else if (!empty($dftgwname)) {
+	} else if (!empty($dfltgwname)) {
 		$defaultgw = trim(exec("/sbin/route -n get -{$ipprotocol} default | /usr/bin/awk '/gateway:/ {print $2}'"), " \n");
 		if ($ipprotocol == 'inet6' && !is_ipaddrv6($gateways_arr[$dfltgwname]['gateway']))
 			return;

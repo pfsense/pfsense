@@ -139,35 +139,13 @@ function interface_netgraph_needed($interface = "wan") {
 				break;
 		}
 	}
-	if ($found == false) {
-		if (!empty($config['interfaces'][$interface])) {
-			switch ($config['interfaces'][$interface]['ipaddr']) {
-			case "ppp":
-			case "pppoe":
-			case "l2tp":
-			case "pptp":
-				$found = true;
-				break;
-			default:
-				$found = false;
-				break;
-			}
-		}
-	}
+	if ($found == false)
+		$found = interface_isppp_type($interface);
+
 	if ($found == false) {
 		$realif = get_real_interface($interface);
 		if (is_array($config['ppps']['ppp']) && count($config['ppps']['ppp'])) {
 			foreach ($config['ppps']['ppp'] as $pppid => $ppp) {
-
-/* This if block doesn't do anything. It can be deleted.
-PPP interfaces are found above in the previous if ($found == false) block.
-This block of code is only entered for OPTx interfaces that are configured for PPPoE modem access, so $realif != $ppp['if']
-
-				if ($realif == $ppp['if']) {
-					$found = true;
-					break;
-				}
-*/
 				$ports = explode(',',$ppp['ports']);
 				foreach($ports as $pid => $port){
 					$port = get_real_interface($port);
@@ -443,7 +421,7 @@ function interfaces_bridge_configure($checkmember = 0, $realif = "") {
 				}
 			}
 			else if ($checkmember == 2) {
-				if (strstr($bridge['if'], "_vip"))
+				if (!strstr($bridge['if'], "_vip"))
 					continue;
 				$members = explode(',', $bridge['members']);
 				foreach ($members as $member) {
@@ -747,7 +725,7 @@ function interfaces_gre_configure($checkparent = 0, $realif = "") {
 					continue;
 			}
 			else if ($checkparent == 2) {
-				if (strstr($gre['if'], "_vip"))
+				if (!strstr($gre['if'], "_vip"))
 					continue;
 				if (empty($config['interfaces'][$gre['if']]) || $config['interfaces'][$gre['if']]['ipaddrv6'] != "track6")
 					continue;
@@ -828,7 +806,7 @@ function interfaces_gif_configure($checkparent = 0, $realif = "") {
 					continue;
 			}
 			else if ($checkparent == 2) {
-				if (strstr($gif['if'], "_vip"))
+				if (!strstr($gif['if'], "_vip"))
 					continue;
 				if (empty($config['interfaces'][$gif['if']]) || $config['interfaces'][$gif['if']]['ipaddrv6'] != "track6")
 					continue;
@@ -1200,7 +1178,7 @@ function interface_bring_down($interface = "wan", $destroy = false, $ifacecfg = 
 			interface_ipalias_cleanup($interface, "inet6");
 			if ($destroy == true)
 				pfSense_interface_flags($realif, -IFF_UP);
-			mwexec("/usr/sbin/arp -d -i " . escapeshellarg($realif) . " -a");
+			//mwexec("/usr/sbin/arp -d -i " . escapeshellarg($realif) . " -a");
 		}
 		$track6 = link_interface_to_track6($interface);
 		break;
@@ -1227,7 +1205,7 @@ function interface_bring_down($interface = "wan", $destroy = false, $ifacecfg = 
 			interface_ipalias_cleanup($interface, "inet6");
 			if ($destroy == true)
 				pfSense_interface_flags($realif, -IFF_UP);
-			mwexec("/usr/sbin/arp -d -i " . escapeshellarg($realif) . " -a");
+			//mwexec("/usr/sbin/arp -d -i " . escapeshellarg($realif) . " -a");
 		}
 		$track6 = link_interface_to_track6($interface);
 		break;
@@ -1296,6 +1274,25 @@ function interfaces_carp_set_maintenancemode($carp_maintenancemode){
 		if ($vip['mode'] == "carp") {
 			interface_carp_configure($vip);
 		}
+	}
+}
+
+function interface_isppp_type($interface) {
+	global $config;
+
+	if (!is_array($config['interfaces'][$interface]))
+		return false;
+
+	switch ($config['interfaces'][$interface]['ipaddr']) {
+	case 'pptp':
+	case 'l2tp':
+	case 'pppoe':
+	case 'ppp':
+		return true;
+		break;
+	default:
+		return false;
+		break;
 	}
 }
 
@@ -1826,12 +1823,10 @@ EOD;
 	}
 	/* wait for upto 10 seconds for the interface to appear (ppp(oe)) */
 	$i = 0;
-	while($i < 10) {
-		unset($out);
-		exec("/sbin/ifconfig " . escapeshellarg($ppp['if']) . " 2>&1", $out, $ret);
-		if($ret == 0)
+	while($i < 3) {
+		sleep(10);
+		if (does_interface_exist($ppp['if'], true))
 			break;
-		sleep(1);
 		$i++;
 	}
 
@@ -1849,8 +1844,10 @@ EOD;
 		if(preg_match("/zte/i", implode("\n", $usbmodemoutput))) {
 			$mondev  = substr(basename($port), 0, -1) . "1";
 		}
-		log_error("Starting 3gstats.php on device '{$mondev}' for interface '{$interface}'");
-		mwexec_bg("/usr/local/bin/3gstats.php {$mondev} {$interface}");
+		if($mondev != '') {
+			log_error("Starting 3gstats.php on device '{$mondev}' for interface '{$interface}'");
+			mwexec_bg("/usr/local/bin/3gstats.php {$mondev} {$interface}");
+		}
 	}
 
 	return 1;
@@ -2882,17 +2879,11 @@ function interface_configure($interface = "wan", $reloadall = false, $linkupeven
 	}
 
 	$interface_to_check = $realif;
-	switch ($wancfg['ipaddr']) {
-	case 'pppoe':
-	case 'l2tp':
-	case 'pptp':
-	case 'ppp':
+	if (interface_isppp_type($interface))
 		$interface_to_check = $realhwif;
-		break;
-	}
 
 	/* Need to check that the interface exists or not in the case where its coming back from disabled state see #3270 */
-	if (in_array(substr($realif, 0, 3), array("gre", "gif")) || !does_interface_exist($interface_to_check))
+	if (!platform_booting() && (in_array(substr($realif, 0, 3), array("gre", "gif")) || !does_interface_exist($interface_to_check)))
 		interface_virtual_create($interface_to_check);
 
 	/* Disable Accepting router advertisements unless specifically requested */
@@ -3153,9 +3144,12 @@ function interface_track6_configure($interface = "lan", $wancfg, $linkupevent = 
 		break;
 	}
 
-	if (!platform_booting() && $linkupevent == false) {
+	if ($linkupevent == false) {
 		if (!function_exists('services_dhcpd_configure'))
 			require_once("services.inc");
+
+		if (isset($config['unbound']['enable']))
+			services_unbound_configure();
 
 		services_dhcpd_configure("inet6");
 	}
@@ -4806,6 +4800,7 @@ function ip_in_interface_alias_subnet($interface, $ipalias) {
 }
 
 function get_interface_ip($interface = "wan") {
+	
 	$realif = get_failover_interface($interface);
 	if (!$realif) {
 		if (strstr($interface, "_vip"))

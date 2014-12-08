@@ -903,8 +903,6 @@ function reload_interfaces() {
 function reload_all_sync() {
 	global $config, $g;
 
-	$g['booting'] = false;
-
 	/* parse config.xml again */
 	$config = parse_config(true);
 

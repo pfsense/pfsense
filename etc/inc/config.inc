@@ -45,42 +45,34 @@
 if (!function_exists('platform_booting'))
 	require_once('globals.inc');
 
-if(platform_booting()) echo ".";
-
 /* do not load this file twice. */
 //if (in_array("/etc/inc/config.inc", get_included_files()))
 //	return;
 
 // Set the memory limit to 128M on i386.  When someone has something like 500+ tunnels
-// the parser needs quite a bit of ram.   Do not remove this line unless you 
+// the parser needs quite a bit of ram.   Do not remove this line unless you
 // know what you are doing.  If in doubt, check with dev@ _/FIRST/_!
-if(!$ARCH) 
+if(!$ARCH)
 	$ARCH = php_uname("m");
 
 // Set memory limit to 256M on amd64.
-if($ARCH == "amd64") 
+if($ARCH == "amd64")
 	ini_set("memory_limit","256M");
 else
 	ini_set("memory_limit","128M");
 
 /* include globals from notices.inc /utility/XML parser files */
 require_once("notices.inc");
-if(platform_booting()) echo ".";
 require_once("util.inc");
-if(platform_booting()) echo ".";
 require_once("IPv6.inc");
-if(platform_booting()) echo ".";
 require_once('config.lib.inc');
-if(platform_booting()) echo ".";
 if(file_exists("/cf/conf/use_xmlreader"))
 	require_once("xmlreader.inc");
 else
 	require_once("xmlparse.inc");
-if(platform_booting()) echo ".";
 require_once("crypt.inc");
 
 /* read platform */
-if(platform_booting()) echo ".";
 if (file_exists("{$g['etc_path']}/platform")) {
 	$g['platform'] = chop(file_get_contents("{$g['etc_path']}/platform"));
 } else {
@@ -94,7 +86,7 @@ if(file_exists("/debugging")) {
 	$g['debug'] = true;
 }
 
-if(platform_booting()) {
+if(platform_booting(true)) {
 	echo ".";
 	if(file_exists("/cf/conf/config.xml")) {
 		$config_contents = file_get_contents("/cf/conf/config.xml");

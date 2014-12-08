@@ -111,7 +111,7 @@ function parse_config($parse = false) {
 		}
 	}
 
-	if (platform_booting())
+	if (platform_booting(true))
 		echo ".";
 
 	// Check for encrypted config.xml
@@ -127,7 +127,7 @@ function parse_config($parse = false) {
 	}
 	if ($parse == true) {
 		if(!file_exists($g['conf_path'] . "/config.xml")) {
-			if (platform_booting())
+			if (platform_booting(true))
 				echo ".";
 			log_error("No config.xml found, attempting last known config restore.");
 			file_notice("config.xml", "No config.xml found, attempting last known config restore.", "pfSenseConfigurator", "");
@@ -154,7 +154,7 @@ function parse_config($parse = false) {
 		generate_config_cache($config);
 	}
 
-	if (platform_booting())
+	if (platform_booting(true))
 		echo ".";
 
 	$config_parsed = true;

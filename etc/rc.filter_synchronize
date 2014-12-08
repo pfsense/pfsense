@@ -117,7 +117,7 @@ function carp_check_version($url, $username, $password, $port = 80, $method = 'p
 					$error = "An authentication failure occurred while trying to access {$url}:{$port} ({$method}).";
 					log_error($error);
 					file_notice("sync_settings", $error, "Settings Sync", "");
-					exit;
+					return false;
 				}
 			} else {
 				if (!isset($parsed_response['config_version']) ||
@@ -260,7 +260,7 @@ function carp_sync_xml($url, $username, $password, $sections, $port = 80, $metho
 				$error = "An authentication failure occurred while trying to access {$url}:{$port} ($method).";
 				log_error($error);
 				file_notice("sync_settings", $error, "Settings Sync", "");
-				exit;
+				return -1;
 			} else {
 				log_error("XMLRPC sync successfully completed with {$url}:{$port}.");
 				update_filter_reload_status("XMLRPC sync successfully completed with {$url}:{$port}.");
@@ -280,7 +280,7 @@ if (is_array($config['hasync'])) {
 
 	if (empty($hasync['synchronizetoip'])) {
 		/* this gets hit on every filter sync on the secondary, a log here creates a lot of log spam and I never saw it actually log anything useful */
-		exit;
+		return;
 	}
 
 	/*
@@ -396,7 +396,7 @@ if (is_array($config['hasync'])) {
 
 	if (count($sections) <= 0) {
 		log_error("Nothing has been configured to be synched. Skipping....");
-		exit;
+		return;
 	}
 
 	if (empty($hasync['username']))
@@ -405,10 +405,11 @@ if (is_array($config['hasync'])) {
 		$username = $hasync['username'];
 
 	if (!carp_check_version($synchronizetoip, $username, $hasync['password'], $port))
-		exit;
+		return;
 
 	update_filter_reload_status("Signaling CARP reload signal...");
-	carp_sync_xml($synchronizetoip, $username, $hasync['password'], $sections, $port);
+	if (carp_sync_xml($synchronizetoip, $username, $hasync['password'], $sections, $port) == -1)
+		return;
 	$cli = new XML_RPC_Client('/xmlrpc.php', $synchronizetoip, $port);
 	$params = array(
 	  XML_RPC_encode($hasync['password'])

@@ -1768,11 +1768,9 @@ $types6 = array("none" => gettext("None"), "staticv6" => gettext("Static IPv6"),
 											<select name="subnet" class="formselect" id="subnet">
 												<?php
 												for ($i = 32; $i > 0; $i--) {
-													if($i <> 31) {
 														echo "<option value=\"{$i}\" ";
 														if ($i == $pconfig['subnet']) echo "selected=\"selected\"";
 														echo ">" . $i . "</option>";
-													}
 												}
 												?>
 											</select>
@@ -2004,11 +2002,9 @@ $types6 = array("none" => gettext("None"), "staticv6" => gettext("Static IPv6"),
 											<select name="alias-subnet" class="formselect" id="alias-subnet">
 												<?php
 												for ($i = 32; $i > 0; $i--) {
-													if($i <> 31) {
 														echo "<option value=\"{$i}\" ";
 														if ($i == $pconfig['alias-subnet']) echo "selected=\"selected\"";
 														echo ">" . $i . "</option>";
-													}
 												}
 												?>
 											</select>

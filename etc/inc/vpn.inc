@@ -963,7 +963,8 @@ function vpn_pptpd_configure() {
 		if (!$pptpdcfg['mode'] || ($pptpdcfg['mode'] == "off"))
 			return 0;
 
-		echo gettext("Configuring PPTP VPN service... ");
+		if (platform_booting(true))
+			echo gettext("Configuring PPTP VPN service... ");
 	} else {
 		/* kill mpd */
 		killbypid("{$g['varrun_path']}/pptp-vpn.pid");

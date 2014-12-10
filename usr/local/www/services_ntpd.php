@@ -374,7 +374,7 @@ include("head.inc");
 					<input name="nomodify" type="checkbox" class="formcheckbox" id="nomodify"<?php if(!$pconfig['nomodify']) echo " checked=\"checked\""; ?> />
 					<?php echo gettext("Deny state modifications (i.e. run time configuration) by ntpq and ntpdc (default: enabled)."); ?>
 					<br />
-					<input name="noquery" type="checkbox" class="formcheckbox" id="noquery"<?php if($pconfig['noquery']) echo " checked=\"checked\""; ?> />>
+					<input name="noquery" type="checkbox" class="formcheckbox" id="noquery"<?php if($pconfig['noquery']) echo " checked=\"checked\""; ?> />
 					<?php echo gettext("Disable ntpq and ntpdc queries (default: disabled)."); ?>
 					<br />
 					<input name="noserve" type="checkbox" class="formcheckbox" id="noserve"<?php if($pconfig['noserve']) echo " checked=\"checked\""; ?> />

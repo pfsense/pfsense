@@ -31,6 +31,11 @@ if [ "$PLATFORM" = "pfSense" ]; then
 	/etc/rc.dumpon
 fi
 
+# Setup ddb on all platforms. On full install it will save the dump, on NanoBSD it will print to console and auto-reboot.
+if [ ! -z "`sysctl -Nq debug.ddb.scripting.scripts`" ]; then
+	/sbin/ddb /etc/ddb.conf
+fi
+
 if [ -e /root/force_fsck ]; then
 	echo "Forcing filesystem check..."
 	/sbin/fsck -y -t ufs /

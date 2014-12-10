@@ -28,8 +28,3 @@ if [ "${works}" != "true" ]; then
 	echo "No suitable dump device was found." 1>&2
 	exit
 fi
-
-# ddb
-if [ ! -z "`sysctl -Nq debug.ddb.scripting.scripts`" ]; then
-	/sbin/ddb /etc/ddb.conf
-fi

@@ -290,24 +290,24 @@ include("head.inc");
 									<td>
 										<input onmouseover="fr_insline(<?=$i;?>, true)" onmouseout="fr_insline(<?=$i;?>, false)" name="move_<?=$i;?>"
 											src="/themes/<?= $g['theme']; ?>/images/icons/icon_left.gif"
-											title="<?=gettext("move selected rules before this rule");?>"
+											title="<?=gettext("move selected routes before this route");?>"
 											type="image" style="height:17;width:17;border:0" />
 									</td>
 									<td>
 										<a href="system_routes_edit.php?id=<?=$i;?>">
-											<img src="/themes/<?= $g['theme']; ?>/images/icons/icon_e.gif" width="17" height="17" border="0" title="<?=gettext("edit rule");?>" alt="edit" />
+											<img src="/themes/<?= $g['theme']; ?>/images/icons/icon_e.gif" width="17" height="17" border="0" title="<?=gettext("edit route");?>" alt="edit" />
 										</a>
 									</td>
 								</tr>
 								<tr>
 									<td align="center" valign="middle">
-										<a href="system_routes.php?act=del&amp;id=<?=$i;?>" onclick="return confirm('<?=gettext("Do you really want to delete this rule?");?>')">
-											<img src="./themes/<?= $g['theme']; ?>/images/icons/icon_x.gif" width="17" height="17" border="0" title="<?=gettext("delete rule");?>" alt="delete" />
+										<a href="system_routes.php?act=del&amp;id=<?=$i;?>" onclick="return confirm('<?=gettext("Do you really want to delete this route?");?>')">
+											<img src="./themes/<?= $g['theme']; ?>/images/icons/icon_x.gif" width="17" height="17" border="0" title="<?=gettext("delete route");?>" alt="delete" />
 										</a>
 									</td>
 									<td>
 										<a href="system_routes_edit.php?dup=<?=$i;?>">
-											<img src="/themes/<?= $g['theme']; ?>/images/icons/icon_plus.gif" title="<?=gettext("add a new rule based on this one");?>" width="17" height="17" border="0" alt="duplicate" />
+											<img src="/themes/<?= $g['theme']; ?>/images/icons/icon_plus.gif" title="<?=gettext("add a new route based on this one");?>" width="17" height="17" border="0" alt="duplicate" />
 										</a>
 									</td>
 								</tr>
@@ -348,7 +348,7 @@ include("head.inc");
 									if ($i == 0):
 ?>
 										<img src="/themes/<?= $g['theme']; ?>/images/icons/icon_x_d.gif" width="17" height="17"
-											title="<?=gettext("delete selected rules");?>" border="0" alt="delete" />
+											title="<?=gettext("delete selected routes");?>" border="0" alt="delete" />
 <?php
 									else:
 ?>

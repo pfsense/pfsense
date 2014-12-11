@@ -42,7 +42,7 @@ function get_gatewaystats() {
 		$isfirst = false;
 		$data .= $gw['name'] . ",";
 		if ($gateways_status[$gname]) {
-			$data .= lookup_gateway_ip_by_name($gname) . ",";
+			$data .= "<b>" . lookup_gateway_ip_by_name($gname) . "</b>,";
 			$gws = $gateways_status[$gname];
 			switch(strtolower($gws['status'])) {
 			case "none":
@@ -73,7 +73,7 @@ function get_gatewaystats() {
 			$bgcolor = "#ADD8E6";  // lightblue
 		}
 		$data .= ($online == "Pending") ? "{$online},{$online}," : "{$gws['delay']},{$gws['loss']},";
-		$data .= "{$online}/{$bgcolor}";
+		$data .= "{$online}^{$bgcolor}";
 	}
 	return $data;
 }

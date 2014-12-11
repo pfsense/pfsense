@@ -1020,11 +1020,13 @@ include("head.inc");
 
 				foreach ($icmptypes as $icmptype => $descr): ?>
 					<option value="<?=$icmptype;?>" <?php if ($icmptype == $pconfig['icmptype']) echo "selected=\"selected\""; ?>><?=htmlspecialchars($descr);?></option>
-<?php 			endforeach; ?>
-			</select>
-			<br />
-			<span class="vexpl"><?=gettext("If you selected ICMP for the protocol above, you may specify an ICMP type here.");?></span>
-		</td>
+<?php
+				endforeach;
+?>
+				</select>
+				<br />
+				<span class="vexpl"><?=gettext("If you selected ICMP for the protocol above, you may specify an ICMP type here.");?></span>
+			</td>
 		</tr>
 		<tr>
 			<td width="22%" valign="top" class="vncellreq"><?=gettext("Source");?></td>

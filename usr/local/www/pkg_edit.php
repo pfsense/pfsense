@@ -1051,7 +1051,7 @@ function display_row($trc, $value, $fieldname, $type, $rowhelper, $size) {
 					$fieldname .= '[]';
 					$multiple = 'multiple="multiple"';
 					}
-				$input = "<select id='{$rowhelper['fieldname']}' name=\"{$fieldname}\" {$size} {$multiple}>\n";
+				$input = "<select id='{$rowhelper['fieldname']}{$trc}' name=\"{$fieldname}{$trc}\" {$size} {$multiple}>\n";
 				if(is_array($value))
 					$values = $value;
 				else
@@ -1060,7 +1060,7 @@ function display_row($trc, $value, $fieldname, $type, $rowhelper, $size) {
 					$selected = (in_array($iface['ip'], $values) ? 'selected="selected"' : '');
 					$input .= "<option value=\"{$iface['ip']}\" {$selected}>{$iface['description']}</option>\n";
 					}
-				$input .= "</select>\n<br />" . fixup_string($rowhelper['description']) . "\n";
+				$input .= "</select>\n<br />\n";
 				if(isset($rowhelper['advancedfield']) && isset($adv_filed_count))
 					$advanced .= $input;
 				else

@@ -111,16 +111,28 @@ function proto_change() {
 
 	if (document.iform.proto.selectedIndex == 3) {
 		document.iform.icmptype.disabled = 0;
+		document.iform.icmp6type.disabled = 0;
 	} else {
 		document.iform.icmptype.disabled = 1;
+		document.iform.icmp6type.disabled = 1;
 	}
 
 	ext_change();
 
 	if(document.iform.proto.selectedIndex == 3 || document.iform.proto.selectedIndex == 4) {
-		document.getElementById("icmpbox").style.display = '';
+		if(document.iform.ipprotocol.selectedIndex == 0) { // IPv4
+			document.getElementById("icmpbox").style.display = '';
+			document.getElementById("icmp6box").style.display = 'none';
+		} else if(document.iform.ipprotocol.selectedIndex == 1) { // IPv6
+			document.getElementById("icmpbox").style.display = 'none';
+			document.getElementById("icmp6box").style.display = '';
+		} else { // IPv4 + IPv6
+			document.getElementById("icmpbox").style.display = 'none';
+			document.getElementById("icmp6box").style.display = 'none';
+		}
 	} else {
 		document.getElementById("icmpbox").style.display = 'none';
+		document.getElementById("icmp6box").style.display = 'none';
 	}
 
 	if(document.iform.proto.selectedIndex >= 0 && document.iform.proto.selectedIndex <= 2) {

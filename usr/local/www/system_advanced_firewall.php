@@ -4,8 +4,8 @@
 	system_advanced_firewall.php
 	part of pfSense
 	Copyright (C) 2005-2007 Scott Ullrich
-
 	Copyright (C) 2008 Shrew Soft Inc
+        Copyright (C) 2013-2014 Electric Sheep Fencing, LP
 
 	originally part of m0n0wall (http://m0n0.ch/wall)
 	Copyright (C) 2003-2004 Manuel Kasper <mk@neon1.net>.
@@ -40,7 +40,7 @@
 ##|*IDENT=page-system-advanced-firewall
 ##|*NAME=System: Advanced: Firewall and NAT page
 ##|*DESCR=Allow access to the 'System: Advanced: Firewall and NAT' page.
-##|*MATCH=system_advanced.php*
+##|*MATCH=system_advanced_firewall.php*
 ##|-PRIV
 
 require("guiconfig.inc");
@@ -60,7 +60,6 @@ $pconfig['maximumstates'] = $config['system']['maximumstates'];
 $pconfig['aliasesresolveinterval'] = $config['system']['aliasesresolveinterval'];
 $old_aliasesresolveinterval = $config['system']['aliasesresolveinterval'];
 $pconfig['checkaliasesurlcert'] = isset($config['system']['checkaliasesurlcert']);
-$pconfig['maximumtables'] = $config['system']['maximumtables'];
 $pconfig['maximumtableentries'] = $config['system']['maximumtableentries'];
 $pconfig['disablereplyto'] = isset($config['system']['disablereplyto']);
 $pconfig['disablenegate'] = isset($config['system']['disablenegate']);
@@ -92,9 +91,6 @@ if ($_POST) {
 	}
 	if ($_POST['aliasesresolveinterval'] && !is_numericint($_POST['aliasesresolveinterval'])) {
 		$input_errors[] = gettext("The Aliases Hostname Resolve Interval value must be an integer.");
-	}
-	if ($_POST['maximumtables'] && !is_numericint($_POST['maximumtables'])) {
-		$input_errors[] = gettext("The Firewall Maximum Tables value must be an integer.");
 	}
 	if ($_POST['maximumtableentries'] && !is_numericint($_POST['maximumtableentries'])) {
 		$input_errors[] = gettext("The Firewall Maximum Table Entries value must be an integer.");
@@ -152,7 +148,6 @@ if ($_POST) {
 		$config['system']['optimization'] = $_POST['optimization'];
 		$config['system']['maximumstates'] = $_POST['maximumstates'];
 		$config['system']['aliasesresolveinterval'] = $_POST['aliasesresolveinterval'];
-		$config['system']['maximumtables'] = $_POST['maximumtables'];
 		$config['system']['maximumtableentries'] = $_POST['maximumtableentries'];
 
 		if($_POST['natreflection'] == "proxy") {
@@ -290,9 +285,9 @@ function update_description(itemnum) {
 								<strong><?=gettext("NOTE:");?>&nbsp;</strong>
 							</span>
 							<?=gettext("The options on this page are intended for use by advanced users only.");?>
-							<br/>
+							<br />
 						</span>
-						<br/>
+						<br />
 						<table width="100%" border="0" cellpadding="6" cellspacing="0" summary="main area">
 							<tr>
 								<td colspan="2" valign="top" class="listtopic"><?=gettext("Firewall Advanced");?></td>
@@ -301,7 +296,7 @@ function update_description(itemnum) {
 								<td width="22%" valign="top" class="vncell"><?=gettext("IP Do-Not-Fragment compatibility");?></td>
 								<td width="78%" class="vtable">
 									<input name="scrubnodf" type="checkbox" id="scrubnodf" value="yes" <?php if (isset($config['system']['scrubnodf'])) echo "checked=\"checked\""; ?> />
-									<strong><?=gettext("Clear invalid DF bits instead of dropping the packets");?></strong><br/>
+									<strong><?=gettext("Clear invalid DF bits instead of dropping the packets");?></strong><br />
 									<?=gettext("This allows for communications with hosts that generate fragmented " .
 									"packets with the don't fragment (DF) bit set. Linux NFS is known to " .
 									"do this. This will cause the filter to not drop such packets but " .
@@ -312,7 +307,7 @@ function update_description(itemnum) {
 								<td width="22%" valign="top" class="vncell"><?=gettext("IP Random id generation");?></td>
 								<td width="78%" class="vtable">
 									<input name="scrubrnid" type="checkbox" id="scrubrnid" value="yes" <?php if (isset($config['system']['scrubrnid'])) echo "checked=\"checked\""; ?> />
-									<strong><?=gettext("Insert a stronger id into IP header of packets passing through the filter.");?></strong><br/>
+									<strong><?=gettext("Insert a stronger id into IP header of packets passing through the filter.");?></strong><br />
 									<?=gettext("Replaces the IP identification field of packets with random values to " .
 									"compensate for operating systems that use predictable values. " .
 									"This option only applies to packets that are not fragmented after the " .
@@ -328,14 +323,14 @@ function update_description(itemnum) {
 										<option value="aggressive"<?php if($config['system']['optimization']=="aggressive") echo " selected=\"selected\""; ?>><?=gettext("aggressive");?></option>
 										<option value="conservative"<?php if($config['system']['optimization']=="conservative") echo " selected=\"selected\""; ?>><?=gettext("conservative");?></option>
 									</select>
-									<br/>
-									<textarea readonly="readonly" cols="60" rows="2" id="info" name="info"style="padding:5px; border:1px dashed #990000; background-color: #ffffff; color: #000000; font-size: 8pt;"></textarea>
+									<br />
+									<textarea readonly="readonly" cols="60" rows="2" id="info" name="info" style="padding:5px; border:1px dashed #990000; background-color: #ffffff; color: #000000; font-size: 8pt;"></textarea>
 									<script type="text/javascript">
 									//<![CDATA[
 										update_description(document.forms[0].optimization.selectedIndex);
 									//]]>
 									</script>
-									<br/>
+									<br />
 									<?=gettext("Select the type of state table optimization to use");?>
 								</td>
 							</tr>
@@ -344,10 +339,10 @@ function update_description(itemnum) {
 								<td width="78%" class="vtable">
 									<input name="disablefilter" type="checkbox" id="disablefilter" value="yes" <?php if (isset($config['system']['disablefilter'])) echo "checked=\"checked\""; ?> />
 									<strong><?=gettext("Disable all packet filtering.");?></strong>
-									<br/>
+									<br />
 									<span class="vexpl"><?php printf(gettext("Note:  This converts %s into a routing only platform!"), $g['product_name']);?><br />
 										<?=gettext("Note:  This will also turn off NAT!");?>
-										<br/><?=gettext("If you only want to disable NAT, and not firewall rules, visit the");?> <a href="firewall_nat_out.php"><?=gettext("Outbound NAT");?></a> <?=gettext("page");?>.
+										<br /><?=gettext("If you only want to disable NAT, and not firewall rules, visit the");?> <a href="firewall_nat_out.php"><?=gettext("Outbound NAT");?></a> <?=gettext("page");?>.
 									</span>
 								</td>
 							</tr>
@@ -356,21 +351,21 @@ function update_description(itemnum) {
 								<td width="78%" class="vtable">
 									<input name="disablescrub" type="checkbox" id="disablescrub" value="yes" <?php if (isset($config['system']['disablescrub'])) echo "checked=\"checked\""; ?> />
 									<strong><?=gettext("Disables the PF scrubbing option which can sometimes interfere with NFS and PPTP traffic.");?></strong>
-									<br/>
+									<br />
 								</td>
 							</tr>
 							<tr>
 								<td width="22%" valign="top" class="vncell"><?=gettext("Firewall Adaptive Timeouts");?></td>
 								<td width="78%" class="vtable">
 									<strong><?=gettext("Timeouts for states can be scaled adaptively as the number of state table entries grows.");?></strong>
-									<br/>
+									<br />
 									<input name="adaptivestart" type="text" id="adaptivestart" value="<?php echo $pconfig['adaptivestart']; ?>" />
-									<br/><?=gettext("When the number of state entries exceeds this value, adaptive scaling begins.  All timeout values are scaled linearly with factor (adaptive.end - number of states) / (adaptive.end - adaptive.start).");?>
+									<br /><?=gettext("When the number of state entries exceeds this value, adaptive scaling begins.  All timeout values are scaled linearly with factor (adaptive.end - number of states) / (adaptive.end - adaptive.start).");?>
 
-									<br/>
+									<br />
 									<input name="adaptiveend" type="text" id="adaptiveend" value="<?php echo $pconfig['adaptiveend']; ?>" />
-									<br/><?=gettext("When reaching this number of state entries, all timeout values become zero, effectively purging all state entries immediately.  This value is used to define the scale factor, it should not actually be reached (set a lower state limit, see below).");?>
-									<br/>
+									<br /><?=gettext("When reaching this number of state entries, all timeout values become zero, effectively purging all state entries immediately.  This value is used to define the scale factor, it should not actually be reached (set a lower state limit, see below).");?>
+									<br />
 									<span class="vexpl"><?=gettext("Note:  Leave this blank for the default(0).");?></span>
 								</td>
 							</tr>
@@ -378,35 +373,19 @@ function update_description(itemnum) {
 								<td width="22%" valign="top" class="vncell"><?=gettext("Firewall Maximum States");?></td>
 								<td width="78%" class="vtable">
 									<input name="maximumstates" type="text" id="maximumstates" value="<?php echo $pconfig['maximumstates']; ?>" />
-									<br/>
+									<br />
 									<strong><?=gettext("Maximum number of connections to hold in the firewall state table.");?></strong>
-									<br/>
+									<br />
 									<span class="vexpl"><?=gettext("Note:  Leave this blank for the default.  On your system the default size is:");?> <?= pfsense_default_state_size() ?></span>
-								</td>
-							</tr>
-							<tr>
-								<td width="22%" valign="top" class="vncell"><?=gettext("Firewall Maximum Tables");?></td>
-								<td width="78%" class="vtable">
-									<input name="maximumtables" type="text" id="maximumtables" value="<?php echo $pconfig['maximumtables']; ?>" />
-									<br/>
-									<strong><?=gettext("Maximum number of tables for systems such as aliases, sshlockout, snort, etc, combined.");?></strong>
-									<br/><?php echo gettext("This is the actual number of tables, not the number of entries inside the tables (see below)");?>
-									<br/>
-									<span class="vexpl">
-										<?=gettext("Note:  Leave this blank for the default.");?>
-										<?php if (empty($pconfig['maximumtables'])): ?>
-											<?= gettext("On your system the default size is:");?> <?= pfsense_default_tables_size(); ?>
-										<?php endif; ?>
-									</span>
 								</td>
 							</tr>
 							<tr>
 								<td width="22%" valign="top" class="vncell"><?=gettext("Firewall Maximum Table Entries");?></td>
 								<td width="78%" class="vtable">
 									<input name="maximumtableentries" type="text" id="maximumtableentries" value="<?php echo $pconfig['maximumtableentries']; ?>" />
-									<br/>
+									<br />
 									<strong><?=gettext("Maximum number of table entries for systems such as aliases, sshlockout, snort, etc, combined.");?></strong>
-									<br/>
+									<br />
 									<span class="vexpl">
 										<?=gettext("Note:  Leave this blank for the default.");?>
 										<?php if (empty($pconfig['maximumtableentries'])): ?>
@@ -420,11 +399,11 @@ function update_description(itemnum) {
 								<td width="78%" class="vtable">
 									<input name="bypassstaticroutes" type="checkbox" id="bypassstaticroutes" value="yes" <?php if ($pconfig['bypassstaticroutes']) echo "checked=\"checked\""; ?> />
 									<strong><?=gettext("Bypass firewall rules for traffic on the same interface");?></strong>
-									<br/>
+									<br />
 									<?=gettext("This option only applies if you have defined one or more static routes. If it is enabled, traffic that enters and " .
 									"leaves through the same interface will not be checked by the firewall. This may be desirable in some situations where " .
 									"multiple subnets are connected to the same interface.");?>
-									<br/>
+									<br />
 								</td>
 							</tr>
 							<tr>
@@ -462,9 +441,9 @@ function update_description(itemnum) {
 								<td width="22%" valign="top" class="vncell"><?=gettext("Aliases Hostnames Resolve Interval");?></td>
 								<td width="78%" class="vtable">
 									<input name="aliasesresolveinterval" type="text" id="aliasesresolveinterval" value="<?php echo $pconfig['aliasesresolveinterval']; ?>" />
-									<br/>
+									<br />
 									<strong><?=gettext("Interval, in seconds, that will be used to resolve hostnames configured on aliases.");?></strong>
-									<br/>
+									<br />
 									<span class="vexpl"><?=gettext("Note:  Leave this blank for the default (300s).");?></span>
 								</td>
 							</tr>
@@ -492,7 +471,7 @@ function update_description(itemnum) {
 									<option value="weekly" <?php if ($pconfig['bogonsinterval'] == 'weekly') echo "selected=\"selected\""; ?>><?=gettext("Weekly"); ?></option>
 									<option value="daily" <?php if ($pconfig['bogonsinterval'] == 'daily') echo "selected=\"selected\""; ?>><?=gettext("Daily"); ?></option>
 									</select>
-									<br/>
+									<br />
 									<?=gettext("The frequency of updating the lists of IP addresses that are reserved (but not RFC 1918) or not yet assigned by IANA.");?>
 								</td>
 							</tr>
@@ -511,22 +490,22 @@ function update_description(itemnum) {
 									<option value="proxy" <?php if (!isset($config['system']['disablenatreflection']) && !isset($config['system']['enablenatreflectionpurenat'])) echo "selected=\"selected\""; ?>><?=gettext("Enable (NAT + Proxy)"); ?></option>
 									<option value="purenat" <?php if (!isset($config['system']['disablenatreflection']) && isset($config['system']['enablenatreflectionpurenat'])) echo "selected=\"selected\""; ?>><?=gettext("Enable (Pure NAT)"); ?></option>
 									</select>
-									<br/>
+									<br />
 									<strong><?=gettext("When enabled, this automatically creates additional NAT redirect rules for access to port forwards on your external IP addresses from within your internal networks.");?></strong>
-									<br/><br/>
+									<br /><br />
 									<?=gettext("The NAT + proxy mode uses a helper program to send packets to the target of the port forward.  It is useful in setups where the interface and/or gateway IP used for communication with the target cannot be accurately determined at the time the rules are loaded.  Reflection rules are not created for ranges larger than 500 ports and will not be used for more than 1000 ports total between all port forwards.  Only TCP and UDP protocols are supported.");?>
-									<br/><br/>
+									<br /><br />
 									<?=gettext("The pure NAT mode uses a set of NAT rules to direct packets to the target of the port forward.  It has better scalability, but it must be possible to accurately determine the interface and gateway IP used for communication with the target at the time the rules are loaded.  There are no inherent limits to the number of ports other than the limits of the protocols.  All protocols available for port forwards are supported.");?>
-									<br/><br/>
+									<br /><br />
 									<?=gettext("Individual rules may be configured to override this system setting on a per-rule basis.");?>
 								</td>
 							</tr>
 							<tr>
 								<td width="22%" valign="top" class="vncell"><?=gettext("Reflection Timeout");?></td>
 								<td width="78%" class="vtable">
-									<input name="reflectiontimeout" id="reflectiontimeout" value="<?php echo $config['system']['reflectiontimeout']; ?>" /><br/>
+									<input name="reflectiontimeout" id="reflectiontimeout" value="<?php echo $config['system']['reflectiontimeout']; ?>" /><br />
 									<strong><?=gettext("Enter value for Reflection timeout in seconds.");?></strong>
-									<br/><br/>
+									<br /><br />
 									<?=gettext("Note: Only applies to Reflection on port forwards in NAT + proxy mode.");?>
 								</td>
 							</tr>
@@ -535,9 +514,9 @@ function update_description(itemnum) {
 								<td width="78%" class="vtable">
 									<input name="enablebinatreflection" type="checkbox" id="enablebinatreflection" value="yes" <?php if (isset($config['system']['enablebinatreflection'])) echo "checked=\"checked\""; ?> />
 									<strong><?=gettext("Enables the automatic creation of additional NAT redirect rules for access to 1:1 mappings of your external IP addresses from within your internal networks.");?></strong>
-									<br/><br/>
+									<br /><br />
 									<?=gettext("Note: Reflection on 1:1 mappings is only for the inbound component of the 1:1 mappings.  This functions the same as the pure NAT mode for port forwards.  For more details, refer to the pure NAT mode description above.");?>
-									<br/><br/>
+									<br /><br />
 									<?=gettext("Individual rules may be configured to override this system setting on a per-rule basis.");?>
 								</td>
 							</tr>
@@ -546,9 +525,9 @@ function update_description(itemnum) {
 								<td width="78%" class="vtable">
 									<input name="enablenatreflectionhelper" type="checkbox" id="enablenatreflectionhelper" value="yes" <?php if (isset($config['system']['enablenatreflectionhelper'])) echo "checked=\"checked\""; ?> />
 									<strong><?=gettext("Automatically create outbound NAT rules which assist inbound NAT rules that direct traffic back out to the same subnet it originated from.");?></strong>
-									<br/>
+									<br />
 									<?=gettext("Required for full functionality of the pure NAT mode of NAT Reflection for port forwards or NAT Reflection for 1:1 NAT.");?>
-									<br/><br/>
+									<br /><br />
 									<?=gettext("Note: This only works for assigned interfaces.  Other interfaces require manually creating the outbound NAT rules that direct the reply packets back through the router.");?>
 								</td>
 							</tr>
@@ -558,10 +537,15 @@ function update_description(itemnum) {
 									<select name="tftpinterface[]" multiple="multiple" class="formselect" size="3">
 <?php
 										$ifdescs = get_configured_interface_with_descr();
+										$rowIndex = 0;
 										foreach ($ifdescs as $ifent => $ifdesc):
+											$rowIndex++;
 ?>
 											<option value="<?=$ifent;?>" <?php if (in_array($ifent, $pconfig['tftpinterface'])) echo "selected=\"selected\""; ?>><?=gettext($ifdesc);?></option>
-<?php									endforeach; ?>
+<?php									endforeach;
+										if ($rowIndex == 0)
+											echo "<option></option>";
+ ?>
 									</select>
 									<strong><?=gettext("Choose the interfaces where you want TFTP proxy helper to be enabled.");?></strong>
 								</td>

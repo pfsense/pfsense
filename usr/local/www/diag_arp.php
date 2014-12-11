@@ -1,8 +1,9 @@
 <?php
 /*
 	diag_arp.php
-	part of the pfSense project	(http://www.pfsense.org)
+	part of the pfSense project	(https://www.pfsense.org)
 	Copyright (C) 2004-2009 Scott Ullrich <sullrich@gmail.com>
+        Copyright (C) 2013-2014 Electric Sheep Fencing, LP
 
 	originally part of m0n0wall (http://m0n0.ch/wall)
 	Copyright (C) 2005 Paul Taylor (paultaylor@winndixie.com) and Manuel Kasper <mk@neon1.net>.
@@ -249,7 +250,7 @@ function _getHostName($mac,$ip) {
 	else if ($dhcpip[$ip])
 		return $dhcpip[$ip];
 	else{
-		exec("host -W 1 $ip", $output);
+		exec("host -W 1 " . escapeshellarg($ip), $output);
 		if (preg_match('/.*pointer ([A-Za-z0-9.-]+)\..*/',$output[0],$matches)) {
 			if ($matches[1] <> $ip)
 				return $matches[1]; 
@@ -268,8 +269,8 @@ include("head.inc");
 <?php include("fbegin.inc"); ?>
 
 <div id="loading">
-	<img src="/themes/<?=$g['theme'];?>/images/misc/loader.gif"><?= gettext("Loading, please wait..."); ?>
-	<p/>&nbsp;
+	<img src="/themes/<?=$g['theme'];?>/images/misc/loader.gif" alt="loader" /><?= gettext("Loading, please wait..."); ?>
+	<p>&nbsp;</p>
 </div>
 
 <?php
@@ -305,10 +306,10 @@ $data = msort($data, "dnsresolve");
 // Load MAC-Manufacturer table
 $mac_man = load_mac_manufacturer_table();
 ?>
-<table width="100%" border="0" cellpadding="0" cellspacing="0">
+<table width="100%" border="0" cellpadding="0" cellspacing="0" summary="diag arp">
 	<tr>
 		<td>
-			<table class="tabcont sortable" width="100%" border="0" cellpadding="0" cellspacing="0">
+			<table class="tabcont sortable" width="100%" border="0" cellpadding="0" cellspacing="0" summary="tabcont">
 				<tr>
 					<td class="listhdrr"><?= gettext("IP address"); ?></td>
 					<td class="listhdrr"><?= gettext("MAC address"); ?></td>
@@ -324,7 +325,7 @@ $mac_man = load_mac_manufacturer_table();
 						$mac=trim($entry['mac']);
 						$mac_hi = strtoupper($mac[0] . $mac[1] . $mac[3] . $mac[4] . $mac[6] . $mac[7]);
 						print $mac;
-						if(isset($mac_man[$mac_hi])){ print "<br/><font size=\"-2\"><i>{$mac_man[$mac_hi]}</i></font>"; }
+						if(isset($mac_man[$mac_hi])){ print "<br /><font size=\"-2\"><i>{$mac_man[$mac_hi]}</i></font>"; }
 						?>
 						</td>
 						<td class="listr">
@@ -339,12 +340,16 @@ $mac_man = load_mac_manufacturer_table();
 		</td>
 	</tr>
 	<tr>
-		<td><br/><?= gettext("NOTE: Local IPv6 peers use") ?> <a href="diag_ndp.php"><?= gettext("NDP") ?></a> <?= gettext("instead of ARP") ?>.</td>
+		<td><br /><?= gettext("NOTE: Local IPv6 peers use") ?> <a href="diag_ndp.php"><?= gettext("NDP") ?></a> <?= gettext("instead of ARP") ?>.</td>
 	</tr>
 </table>
 
 <?php include("fend.inc"); ?>
 
 <script type="text/javascript">
+//<![CDATA[
 	jQuery('#loading').html('');
+//]]>
 </script>
+</body>
+</html>

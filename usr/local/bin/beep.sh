@@ -9,11 +9,6 @@ fi
 # Standard note length
 NOTELENGTH="25"
 
-# Embedded uses 100HZ
-if [ "$PFSENSETYPE" = "embedded" ]; then
-	NOTELENGTH="10"
-fi
-
 # this is super annoying in VMware, exit if in VMware
 if [ -f /var/log/dmesg.boot ]; then
 	VMWCOUNT=`/usr/bin/grep -c VMware /var/log/dmesg.boot`

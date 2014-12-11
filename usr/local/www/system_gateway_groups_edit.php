@@ -2,9 +2,10 @@
 /* $Id$ */
 /*
 	system_gateway_groups_edit.php
-	part of pfSense (http://pfsense.com)
+	part of pfSense (https://www.pfsense.org)
 	
 	Copyright (C) 2010 Seth Mos <seth.mos@dds.nl>.
+        Copyright (C) 2013-2014 Electric Sheep Fencing, LP
 	All rights reserved.
 	
 	Redistribution and use in source and binary forms, with or without
@@ -43,6 +44,8 @@ require("guiconfig.inc");
 require_once("ipsec.inc");
 require_once("vpn.inc");
 
+$referer = (isset($_SERVER['HTTP_REFERER']) ? $_SERVER['HTTP_REFERER'] : '/system_gateway_groups.php');
+
 if (!is_array($config['gateways']['gateway_group']))
 	$config['gateways']['gateway_group'] = array();
 
@@ -55,13 +58,13 @@ $categories = array('down' => gettext("Member Down"),
                     'downlatency' => gettext("High Latency"),
                     'downlosslatency' => gettext("Packet Loss or High Latency"));
 
-$id = $_GET['id'];
-if (isset($_POST['id']))
+if (is_numericint($_GET['id']))
+	$id = $_GET['id'];
+if (isset($_POST['id']) && is_numericint($_POST['id']))
 	$id = $_POST['id'];
 
-if (isset($_GET['dup'])) {
+if (isset($_GET['dup']) && is_numericint($_GET['dup']))
 	$id = $_GET['dup'];
-}
 
 if (isset($id) && $a_gateway_groups[$id]) {
 	$pconfig['name'] = $a_gateway_groups[$id]['name'];
@@ -70,7 +73,7 @@ if (isset($id) && $a_gateway_groups[$id]) {
 	$pconfig['trigger'] = $a_gateway_groups[$id]['trigger'];
 }
 
-if (isset($_GET['dup']))
+if (isset($_GET['dup']) && is_numericint($_GET['dup']))
 	unset($id);
 
 if ($_POST) {
@@ -232,7 +235,7 @@ jQuery(function ($) {
                   <td width="22%" valign="top" class="vncellreq"><?=gettext("Group Name"); ?></td>
                   <td width="78%" class="vtable"> 
                     <input name="name" type="text" class="formfld unknown" id="name" size="20" value="<?=htmlspecialchars($pconfig['name']);?>" />
-                    <br/> <span class="vexpl"><?=gettext("Group Name"); ?></span></td>
+                    <br /> <span class="vexpl"><?=gettext("Group Name"); ?></span></td>
                 </tr>
 		<tr>
                   <td width="22%" valign="top" class="vncellreq"><?=gettext("Gateway Priority"); ?></td>
@@ -307,7 +310,7 @@ jQuery(function ($) {
 		 	}
 		?>
 			</table>
-			<br/><span class="vexpl">
+			<br /><span class="vexpl">
 			<strong><?=gettext("Link Priority"); ?></strong> <br />
 			<?=gettext("The priority selected here defines in what order failover and balancing of links will be done. " .
 			"Multiple links of the same priority will balance connections until all links in the priority will be exhausted. " .
@@ -330,18 +333,19 @@ jQuery(function ($) {
 				}
 			?>
 			</select>
-                    <br/> <span class="vexpl"><?=gettext("When to trigger exclusion of a member"); ?></span></td>
+                    <br /> <span class="vexpl"><?=gettext("When to trigger exclusion of a member"); ?></span></td>
                 </tr>
 		<tr>
                   <td width="22%" valign="top" class="vncell"><?=gettext("Description"); ?></td>
                   <td width="78%" class="vtable"> 
                     <input name="descr" type="text" class="formfld unknown" id="descr" size="40" value="<?=htmlspecialchars($pconfig['descr']);?>" />
-                    <br/> <span class="vexpl"><?=gettext("You may enter a description here for your reference (not parsed)."); ?></span></td>
+                    <br /> <span class="vexpl"><?=gettext("You may enter a description here for your reference (not parsed)."); ?></span></td>
                 </tr>
                 <tr>
                   <td width="22%" valign="top">&nbsp;</td>
                   <td width="78%"> 
-                    <input name="Submit" type="submit" class="formbtn" value="<?=gettext("Save");?>" /> <input type="button" value="<?=gettext("Cancel"); ?>" class="formbtn"  onclick="history.back()" />
+                    <input name="Submit" type="submit" class="formbtn" value="<?=gettext("Save");?>" />
+                    <input type="button" class="formbtn" value="<?=gettext("Cancel");?>" onclick="window.location.href='<?=$referer;?>'" />
                     <?php if (isset($id) && $a_gateway_groups[$id]): ?>
                     <input name="id" type="hidden" value="<?=htmlspecialchars($id);?>" />
                     <?php endif; ?>

@@ -2,11 +2,12 @@
 /* $Id$ */
 /*
 	status_dhcpv6_leases.php
-	Copyright (C) 2004-2009 Scott Ullrich
+        Copyright (C) 2013-2014 Electric Sheep Fencing, LP
 	Copyright (C) 2011 Seth Mos
+	Copyright (C) 2004-2009 Scott Ullrich
 	All rights reserved.
 
-	originially part of m0n0wall (http://m0n0.ch/wall)
+	originally part of m0n0wall (http://m0n0.ch/wall)
 	Copyright (C) 2003-2004 Manuel Kasper <mk@neon1.net>.
 	All rights reserved.
 
@@ -379,7 +380,7 @@ if ($_GET['order'])
 /* only print pool status when we have one */
 if(count($pools) > 0) {
 ?>
-<table class="tabcont sortable" width="100%" border="0" cellpadding="0" cellspacing="0">
+<table class="tabcont sortable" width="100%" border="0" cellpadding="0" cellspacing="0" summary="dhcp leases">
 	<tr>
 		<td class="listhdrr"><?=gettext("Failover Group"); ?></a></td>
 		<td class="listhdrr"><?=gettext("My State"); ?></a></td>
@@ -390,11 +391,11 @@ if(count($pools) > 0) {
 <?php
 foreach ($pools as $data) {
 	echo "<tr>\n";
-	echo "<td class=\"listlr\">{$fspans}{$data['name']}{$fspane}&nbsp;</td>\n";
-	echo "<td class=\"listr\">{$fspans}{$data['mystate']}{$fspane}&nbsp;</td>\n";
-	echo "<td class=\"listr\">{$fspans}" . adjust_gmt($data['mydate']) . "{$fspane}&nbsp;</td>\n";
-	echo "<td class=\"listr\">{$fspans}{$data['peerstate']}{$fspane}&nbsp;</td>\n";
-	echo "<td class=\"listr\">{$fspans}" . adjust_gmt($data['peerdate']) . "{$fspane}&nbsp;</td>\n";
+	echo "<td class=\"listlr\">{$fspans}{$data['name']}{$fspane}</td>\n";
+	echo "<td class=\"listr\">{$fspans}{$data['mystate']}{$fspane}</td>\n";
+	echo "<td class=\"listr\">{$fspans}" . adjust_gmt($data['mydate']) . "{$fspane}</td>\n";
+	echo "<td class=\"listr\">{$fspans}{$data['peerstate']}{$fspane}</td>\n";
+	echo "<td class=\"listr\">{$fspans}" . adjust_gmt($data['peerdate']) . "{$fspane}</td>\n";
 	echo "<td class=\"list\" valign=\"middle\" width=\"17\">&nbsp;</td>\n";
 	echo "<td class=\"list\" valign=\"middle\" width=\"17\">&nbsp;</td>\n";
 	echo "</tr>\n";
@@ -408,9 +409,9 @@ foreach ($pools as $data) {
 }
 ?>
 
-<p>
+<br/>
 
-<table class="tabcont sortable" width="100%" border="0" cellpadding="0" cellspacing="0">
+<table class="tabcont sortable" width="100%" border="0" cellpadding="0" cellspacing="0" summary="dhcp leases">
   <tr>
     <td class="listhdrr"><a href="#"><?=gettext("IPv6 address"); ?></a></td>
     <td class="listhdrr"><a href="#"><?=gettext("IAID"); ?></a></td>
@@ -426,9 +427,10 @@ foreach ($leases as $data) {
 	if (($data['act'] == "active") || ($data['act'] == "static") || ($_GET['all'] == 1)) {
 		if ($data['act'] != "active" && $data['act'] != "static") {
 			$fspans = "<span class=\"gray\">";
-			$fspane = "</span>";
+			$fspane = "&nbsp;</span>";
 		} else {
-			$fspans = $fspane = "";
+			$fspans = "";
+			$fspane = "&nbsp;";
 		}
 
 		if ($data['act'] == "static") {
@@ -449,53 +451,53 @@ foreach ($leases as $data) {
 			$data['if'] = convert_real_interface_to_friendly_interface_name(guess_interface_from_ip($data['ip']));
 		}
 		echo "<tr>\n";
-		echo "<td class=\"listlr\">{$fspans}{$data['ip']}{$fspane}&nbsp;</td>\n";
-		echo "<td class=\"listr\">{$fspans}{$data['iaid']}{$fspane}&nbsp;</td>\n";
-		echo "<td class=\"listr\">{$fspans}{$data['duid']}{$fspane}&nbsp;</td>\n";
+		echo "<td class=\"listlr\">{$fspans}{$data['ip']}{$fspane}</td>\n";
+		echo "<td class=\"listr\">{$fspans}{$data['iaid']}{$fspane}</td>\n";
+		echo "<td class=\"listr\">{$fspans}{$data['duid']}{$fspane}</td>\n";
 		echo "<td class=\"listr\">{$fspans}";
 		if (!empty($data['hostname'])) {
-			echo htmlentities($data['hostname']) . "<br/>";
+			echo htmlentities($data['hostname']) . "<br />";
 		}
 
 		$mac=trim($ndpdata[$data['ip']]['mac']);
 		if (!empty($mac)) {
 			$mac_hi = strtoupper($mac[0] . $mac[1] . $mac[3] . $mac[4] . $mac[6] . $mac[7]);
 			print htmlentities($mac);
-			if(isset($mac_man[$mac_hi])){ print "<br/><font size=\"-2\"><i>{$mac_man[$mac_hi]}</i></font>"; }
+			if(isset($mac_man[$mac_hi])){ print "<br /><font size=\"-2\"><i>{$mac_man[$mac_hi]}</i></font>"; }
 		}
 
 		echo "{$fspane}&nbsp;</td>\n";
 		if ($data['type'] != "static") {
-			echo "<td class=\"listr\">{$fspans}" . adjust_gmt($data['start']) . "{$fspane}&nbsp;</td>\n";
-			echo "<td class=\"listr\">{$fspans}" . adjust_gmt($data['end']) . "{$fspane}&nbsp;</td>\n";
+			echo "<td class=\"listr\">{$fspans}" . adjust_gmt($data['start']) . "{$fspane}</td>\n";
+			echo "<td class=\"listr\">{$fspans}" . adjust_gmt($data['end']) . "{$fspane}</td>\n";
 		} else {
-			echo "<td class=\"listr\">{$fspans} n/a {$fspane}&nbsp;</td>\n";
-			echo "<td class=\"listr\">{$fspans} n/a {$fspane}&nbsp;</td>\n";
+			echo "<td class=\"listr\">{$fspans} n/a {$fspane}</td>\n";
+			echo "<td class=\"listr\">{$fspans} n/a {$fspane}</td>\n";
 		}
-		echo "<td class=\"listr\">{$fspans}{$data['online']}{$fspane}&nbsp;</td>\n";
-		echo "<td class=\"listr\">{$fspans}{$data['act']}{$fspane}&nbsp;</td>\n";
+		echo "<td class=\"listr\">{$fspans}{$data['online']}{$fspane}</td>\n";
+		echo "<td class=\"listr\">{$fspans}{$data['act']}{$fspane}</td>\n";
 
 		if ($data['type'] == "dynamic") {
-			echo "<td valign=\"middle\"><a href=\"services_dhcpv6_edit.php?if={$data['if']}&duid={$data['duid']}&hostname={$data['hostname']}\">";
-			echo "<img src=\"/themes/{$g['theme']}/images/icons/icon_plus.gif\" width=\"17\" height=\"17\" border=\"0\" title=\"" . gettext("add a static mapping for this MAC address") ."\"></a></td>\n";
+			echo "<td valign=\"middle\"><a href=\"services_dhcpv6_edit.php?if={$data['if']}&amp;duid={$data['duid']}&amp;hostname={$data['hostname']}\">";
+			echo "<img src=\"/themes/{$g['theme']}/images/icons/icon_plus.gif\" width=\"17\" height=\"17\" border=\"0\" title=\"" . gettext("add a static mapping for this MAC address") ."\" alt=\"add\" /></a></td>\n";
 		} else {
 			echo "<td class=\"list\" valign=\"middle\">";
-			echo "<img src=\"/themes/{$g['theme']}/images/icons/icon_plus_mo.gif\" width=\"17\" height=\"17\" border=\"0\"></td>\n";
+			echo "<img src=\"/themes/{$g['theme']}/images/icons/icon_plus_mo.gif\" width=\"17\" height=\"17\" border=\"0\" alt=\"add\" /></td>\n";
 		}
 
 		/* Only show the button for offline dynamic leases */
 		if (($data['type'] == "dynamic") && ($data['online'] != "online")) {
-			echo "<td class=\"list\" valign=\"middle\"><a href=\"status_dhcpv6_leases.php?deleteip={$data['ip']}&all=" . htmlspecialchars($_GET['all']) . "\">";
-			echo "<img src=\"/themes/{$g['theme']}/images/icons/icon_x.gif\" width=\"17\" height=\"17\" border=\"0\" title=\"" . gettext("delete this DHCP lease") . "\"></a></td>\n";
+			echo "<td class=\"list\" valign=\"middle\"><a href=\"status_dhcpv6_leases.php?deleteip={$data['ip']}&amp;all=" . htmlspecialchars($_GET['all']) . "\">";
+			echo "<img src=\"/themes/{$g['theme']}/images/icons/icon_x.gif\" width=\"17\" height=\"17\" border=\"0\" title=\"" . gettext("delete this DHCP lease") . "\" alt=\"delete\" /></a></td>\n";
 		}
 		echo "</tr>\n";
 	}
 }
 ?>
 </table>
-<p>
+<br/>
 <h3>Delegated Prefixes</h3>
-<table class="tabcont sortable" width="100%" border="0" cellpadding="0" cellspacing="0">
+<table class="tabcont sortable" width="100%" border="0" cellpadding="0" cellspacing="0" summary="prefixes">
 	<tr>
 		<td class="listhdrr"><a href="#"><?=gettext("IPv6 Prefix"); ?></a></td>
 		<td class="listhdrr"><a href="#"><?=gettext("IAID"); ?></a></td>
@@ -509,9 +511,10 @@ foreach ($prefixes as $data) {
 	if (($data['act'] == "active") || ($data['act'] == "static") || ($_GET['all'] == 1)) {
 		if ($data['act'] != "active" && $data['act'] != "static") {
 			$fspans = "<span class=\"gray\">";
-			$fspane = "</span>";
+			$fspane = "&nbsp;</span>";
 		} else {
-			$fspans = $fspane = "";
+			$fspans = "";
+			$fspane = "&nbsp;";
 		}
 
 		if ($data['act'] == "static") {
@@ -533,33 +536,33 @@ foreach ($prefixes as $data) {
 		}
 		echo "<tr>\n";
 		if ($mappings[$data['iaid'] . $data['duid']]) {
-			$dip = "<br/>Routed To: {$mappings[$data['iaid'] . $data['duid']]}";
+			$dip = "<br />Routed To: {$mappings[$data['iaid'] . $data['duid']]}";
 		}
-		echo "<td class=\"listlr\">{$fspans}{$data['prefix']}{$dip}{$fspane}&nbsp;</td>\n";
-		echo "<td class=\"listr\">{$fspans}{$data['iaid']}{$fspane}&nbsp;</td>\n";
-		echo "<td class=\"listr\">{$fspans}{$data['duid']}{$fspane}&nbsp;</td>\n";
+		echo "<td class=\"listlr\">{$fspans}{$data['prefix']}{$dip}{$fspane}</td>\n";
+		echo "<td class=\"listr\">{$fspans}{$data['iaid']}{$fspane}</td>\n";
+		echo "<td class=\"listr\">{$fspans}{$data['duid']}{$fspane}</td>\n";
 		if ($data['type'] != "static") {
-			echo "<td class=\"listr\">{$fspans}" . adjust_gmt($data['start']) . "{$fspane}&nbsp;</td>\n";
-			echo "<td class=\"listr\">{$fspans}" . adjust_gmt($data['end']) . "{$fspane}&nbsp;</td>\n";
+			echo "<td class=\"listr\">{$fspans}" . adjust_gmt($data['start']) . "{$fspane}</td>\n";
+			echo "<td class=\"listr\">{$fspans}" . adjust_gmt($data['end']) . "{$fspane}</td>\n";
 		} else {
-			echo "<td class=\"listr\">{$fspans} n/a {$fspane}&nbsp;</td>\n";
-			echo "<td class=\"listr\">{$fspans} n/a {$fspane}&nbsp;</td>\n";
+			echo "<td class=\"listr\">{$fspans} n/a {$fspane}</td>\n";
+			echo "<td class=\"listr\">{$fspans} n/a {$fspane}</td>\n";
 		}
-		echo "<td class=\"listr\">{$fspans}{$data['act']}{$fspane}&nbsp;</td>\n";
+		echo "<td class=\"listr\">{$fspans}{$data['act']}{$fspane}</td>\n";
 		echo "</tr>\n";
 	}
 }
 ?>
 </table>
-<p>
-<form action="status_dhcpv6_leases.php" method="GET">
-<input type="hidden" name="order" value="<?=htmlspecialchars($_GET['order']);?>">
+<br/>
+<form action="status_dhcpv6_leases.php" method="get">
+<input type="hidden" name="order" value="<?=htmlspecialchars($_GET['order']);?>" />
 <?php if ($_GET['all']): ?>
-<input type="hidden" name="all" value="0">
-<input type="submit" class="formbtn" value="<?=gettext("Show active and static leases only"); ?>">
+<input type="hidden" name="all" value="0" />
+<input type="submit" class="formbtn" value="<?=gettext("Show active and static leases only"); ?>" />
 <?php else: ?>
-<input type="hidden" name="all" value="1">
-<input type="submit" class="formbtn" value="<?=gettext("Show all configured leases"); ?>">
+<input type="hidden" name="all" value="1" />
+<input type="submit" class="formbtn" value="<?=gettext("Show all configured leases"); ?>" />
 <?php endif; ?>
 </form>
 <?php if($leases == 0): ?>

@@ -5,6 +5,7 @@
 	part of m0n0wall (http://m0n0.ch/wall)
 	
 	Copyright (C) 2003-2004 Bob Zoller <bob@kludgebox.com> and Manuel Kasper <mk@neon1.net>.
+        Copyright (C) 2013-2014 Electric Sheep Fencing, LP
 	All rights reserved.
 	
 	Redistribution and use in source and binary forms, with or without
@@ -54,13 +55,16 @@ function hosts_sort() {
 
 require("guiconfig.inc");
 
+$referer = (isset($_SERVER['HTTP_REFERER']) ? $_SERVER['HTTP_REFERER'] : '/services_dnsmasq.php');
+
 if (!is_array($config['dnsmasq']['hosts'])) 
 	$config['dnsmasq']['hosts'] = array();
 
 $a_hosts = &$config['dnsmasq']['hosts'];
 
-$id = $_GET['id'];
-if (isset($_POST['id']))
+if (is_numericint($_GET['id']))
+	$id = $_GET['id'];
+if (isset($_POST['id']) && is_numericint($_POST['id']))
 	$id = $_POST['id'];
 
 if (isset($id) && $a_hosts[$id]) {
@@ -82,8 +86,15 @@ if ($_POST) {
 	
 	do_input_validation($_POST, $reqdfields, $reqdfieldsn, $input_errors);
 	
-	if (($_POST['host'] && !is_hostname($_POST['host']))) 
-		$input_errors[] = gettext("The hostname can only contain the characters A-Z, 0-9 and '-'.");
+	if ($_POST['host']) {
+		if (!is_hostname($_POST['host'])) { 
+			$input_errors[] = gettext("The hostname can only contain the characters A-Z, 0-9 and '-'. It may not start or end with '-'.");
+		} else {
+			if (!is_unqualified_hostname($_POST['host'])) {
+				$input_errors[] = gettext("A valid hostname is specified, but the domain name part should be omitted");
+			}
+		}
+	}
 
 	if (($_POST['domain'] && !is_domain($_POST['domain']))) 
 		$input_errors[] = gettext("A valid domain must be specified.");
@@ -118,10 +129,15 @@ if ($_POST) {
 		$aliasreqdfields = array('aliasdomain' . $idx);
 		$aliasreqdfieldsn = array(gettext("Alias Domain"));
 
-		var_dump(array('fields' => $aliasreqdfields, 'names' => $aliasreqdfieldsn, 'alias' => $alias));
 		do_input_validation($_POST, $aliasreqdfields, $aliasreqdfieldsn, $input_errors);
-		if (($alias['host'] && !is_hostname($alias['host']))) {
-			$input_errors[] = gettext("Hostnames in alias list can only contain the characters A-Z, 0-9 and '-'.");
+		if ($alias['host']) {
+			if (!is_hostname($alias['host'])) {
+				$input_errors[] = gettext("Hostnames in an alias list can only contain the characters A-Z, 0-9 and '-'. They may not start or end with '-'.");
+			} else {
+				if (!is_unqualified_hostname($alias['host'])) {
+					$input_errors[] = gettext("A valid alias hostname is specified, but the domain name part should be omitted");
+				}
+			}
 		}
 		if (($alias['domain'] && !is_domain($alias['domain']))) {
 			$input_errors[] = gettext("A valid domain must be specified in alias list.");
@@ -176,6 +192,7 @@ include("head.inc");
 </script>
 
 <script type="text/javascript">
+//<![CDATA[
 	rowname[0] = "aliashost";
 	rowtype[0] = "textbox";
 	rowsize[0] = "20";
@@ -185,47 +202,48 @@ include("head.inc");
 	rowname[2] = "aliasdescription";
 	rowtype[2] = "textbox";
 	rowsize[2] = "20";
+//]]>
 </script>
 
 <?php if ($input_errors) print_input_errors($input_errors); ?>
         <form action="services_dnsmasq_edit.php" method="post" name="iform" id="iform">
-        <table width="100%" border="0" cellpadding="6" cellspacing="0">
+        <table width="100%" border="0" cellpadding="6" cellspacing="0" summary="dns edit">
 				<tr>
 					<td colspan="2" valign="top" class="listtopic"><?=gettext("Edit DNS Forwarder entry");?></td>
 				</tr>	
                 <tr>
                   <td width="22%" valign="top" class="vncell"><?=gettext("Host");?></td>
                   <td width="78%" class="vtable"> 
-                    <input name="host" type="text" class="formfld" id="host" size="40" value="<?=htmlspecialchars($pconfig['host']);?>">
-                    <br> <span class="vexpl"><?=gettext("Name of the host, without".
-                   " domain part"); ?><br>
+                    <input name="host" type="text" class="formfld" id="host" size="40" value="<?=htmlspecialchars($pconfig['host']);?>" />
+                    <br /> <span class="vexpl"><?=gettext("Name of the host, without".
+                   " domain part"); ?><br />
                    <?=gettext("e.g."); ?> <em><?=gettext("myhost"); ?></em></span></td>
                 </tr>
 				<tr>
                   <td width="22%" valign="top" class="vncellreq"><?=gettext("Domain");?></td>
                   <td width="78%" class="vtable"> 
-                    <input name="domain" type="text" class="formfld" id="domain" size="40" value="<?=htmlspecialchars($pconfig['domain']);?>">
-                    <br> <span class="vexpl"><?=gettext("Domain of the host"); ?><br>
+                    <input name="domain" type="text" class="formfld" id="domain" size="40" value="<?=htmlspecialchars($pconfig['domain']);?>" />
+                    <br /> <span class="vexpl"><?=gettext("Domain of the host"); ?><br />
                    <?=gettext("e.g."); ?> <em><?=gettext("example.com"); ?></em></span></td>
                 </tr>
 				<tr>
                   <td width="22%" valign="top" class="vncellreq"><?=gettext("IP address");?></td>
                   <td width="78%" class="vtable"> 
-                    <input name="ip" type="text" class="formfld" id="ip" size="40" value="<?=htmlspecialchars($pconfig['ip']);?>">
-                    <br> <span class="vexpl"><?=gettext("IP address of the host"); ?><br>
+                    <input name="ip" type="text" class="formfld" id="ip" size="40" value="<?=htmlspecialchars($pconfig['ip']);?>" />
+                    <br /> <span class="vexpl"><?=gettext("IP address of the host"); ?><br />
                    <?=gettext("e.g."); ?> <em>192.168.100.100</em> <?=gettext("or"); ?> <em>fd00:abcd::1</em></span></td>
                 </tr>
 				<tr>
                   <td width="22%" valign="top" class="vncell"><?=gettext("Description");?></td>
                   <td width="78%" class="vtable"> 
-                    <input name="descr" type="text" class="formfld" id="descr" size="40" value="<?=htmlspecialchars($pconfig['descr']);?>">
-                    <br> <span class="vexpl"><?=gettext("You may enter a description here".
+                    <input name="descr" type="text" class="formfld" id="descr" size="40" value="<?=htmlspecialchars($pconfig['descr']);?>" />
+                    <br /> <span class="vexpl"><?=gettext("You may enter a description here".
                    " for your reference (not parsed).");?></span></td>
                 </tr>
 				<tr>
                   <td width="22%" valign="top" class="vncell"><div id="addressnetworkport"><?=gettext("Aliases"); ?></div></td>
                   <td width="78%" class="vtable">
-                    <table id="maintable">
+                    <table id="maintable" summary="aliases">
                       <tbody>
                         <tr>
                           <td colspan="4">
@@ -272,19 +290,22 @@ include("head.inc");
                       <img border="0" src="/themes/<?= $g['theme']; ?>/images/icons/icon_plus.gif" alt="" title="<?=gettext("add another entry");?>" />
                     </a>
                     <script type="text/javascript">
+                    //<![CDATA[
                       field_counter_js = 3;
                       rows = 1;
                       totalrows = <?php echo $counter; ?>;
                       loaded = <?php echo $counter; ?>;
+                    //]]>
                     </script>
                   </td>
                 </tr>
                 <tr>
                   <td width="22%" valign="top">&nbsp;</td>
                   <td width="78%"> 
-                    <input name="Submit" type="submit" class="formbtn" value="<?=gettext("Save");?>"> <input class="formbtn" type="button" value="<?=gettext("Cancel");?>" onclick="history.back()">
+                    <input name="Submit" type="submit" class="formbtn" value="<?=gettext("Save");?>" />
+                    <input type="button" class="formbtn" value="<?=gettext("Cancel");?>" onclick="window.location.href='<?=$referer;?>'" />
                     <?php if (isset($id) && $a_hosts[$id]): ?>
-                    <input name="id" type="hidden" value="<?=htmlspecialchars($id);?>">
+                    <input name="id" type="hidden" value="<?=htmlspecialchars($id);?>" />
                     <?php endif; ?>
                   </td>
                 </tr>

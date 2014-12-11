@@ -4,6 +4,7 @@
 	interfaces_wireless_edit.php
 
 	Copyright (C) 2010 Erik Fonnesbeck
+        Copyright (C) 2013-2014 Electric Sheep Fencing, LP
 	All rights reserved.
 
 	Redistribution and use in source and binary forms, with or without
@@ -40,6 +41,8 @@
 
 require("guiconfig.inc");
 
+$referer = (isset($_SERVER['HTTP_REFERER']) ? $_SERVER['HTTP_REFERER'] : '/interfaces_wireless.php');
+
 if (!is_array($config['wireless']))
 	$config['wireless'] = array();
 if (!is_array($config['wireless']['clone']))
@@ -65,8 +68,9 @@ function clone_compare($a, $b) {
 
 $portlist = get_interface_list();
 
-$id = $_GET['id'];
-if (isset($_POST['id']))
+if (is_numericint($_GET['id']))
+	$id = $_GET['id'];
+if (isset($_POST['id']) && is_numericint($_POST['id']))
 	$id = $_POST['id'];
 
 if (isset($id) && $a_clones[$id]) {
@@ -187,14 +191,15 @@ include("head.inc");
                   <td width="22%" valign="top" class="vncell"><?=gettext("Description");?></td>
                   <td width="78%" class="vtable">
                     <input name="descr" type="text" class="formfld unknown" id="descr" size="40" value="<?=htmlspecialchars($pconfig['descr']);?>" />
-                    <br/> <span class="vexpl"><?=gettext("You may enter a description here ".
+                    <br /> <span class="vexpl"><?=gettext("You may enter a description here ".
                     "for your reference (not parsed).");?></span></td>
                 </tr>
                 <tr>
                   <td width="22%" valign="top">&nbsp;</td>
                   <td width="78%">
                     <input type="hidden" name="cloneif" value="<?=htmlspecialchars($pconfig['cloneif']); ?>" />
-                    <input name="Submit" type="submit" class="formbtn" value="<?=gettext("Save");?>" /> <input type="button" value="<?=gettext("Cancel");?>" onclick="history.back()" />
+                    <input name="Submit" type="submit" class="formbtn" value="<?=gettext("Save");?>" />
+                    <input type="button" class="formbtn" value="<?=gettext("Cancel");?>" onclick="window.location.href='<?=$referer;?>'" />
                     <?php if (isset($id) && $a_clones[$id]): ?>
                     <input name="id" type="hidden" value="<?=htmlspecialchars($id);?>" />
                     <?php endif; ?>

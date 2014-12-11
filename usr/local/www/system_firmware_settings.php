@@ -3,8 +3,9 @@
 /*
 	system_firmware_settings.php
        	part of pfSense
-		Copyright (C) 2008 Scott Ullrich <sullrich@gmail.com>
         Copyright (C) 2005 Colin Smith
+	Copyright (C) 2008 Scott Ullrich <sullrich@gmail.com>
+        Copyright (C) 2013-2014 Electric Sheep Fencing, LP
 
 	Redistribution and use in source and binary forms, with or without
 	modification, are permitted provided that the following conditions are met:
@@ -80,9 +81,9 @@ $pgtitle = array(gettext("System"),gettext("Firmware"),gettext("Settings"));
 $closehead = false;
 include("head.inc");
 
-exec("/usr/bin/fetch -q -o /tmp/manifest \"{$g['update_manifest']}\"");
-if(file_exists("/tmp/manifest")) {
-	$preset_urls_split = explode("\n", file_get_contents("/tmp/manifest"));
+exec("/usr/bin/fetch -q -o {$g['tmp_path']}/manifest \"{$g['update_manifest']}\"");
+if(file_exists("{$g['tmp_path']}/manifest")) {
+	$preset_urls_split = explode("\n", file_get_contents("{$g['tmp_path']}/manifest"));
 }
 
 ?>
@@ -150,21 +151,21 @@ function enable_altfirmwareurl(enable_over) {
 					}
 				?>
 			</select>
-		<br/><br/><?php echo sprintf(gettext("Entries denoted by \"Current architecture\" match the architecture of your current installation, such as %s. Changing architectures during an upgrade is not recommended, and may require a manual reboot after the update completes."), php_uname("m")); ?>
+		<br /><br /><?php echo sprintf(gettext("Entries denoted by \"Current architecture\" match the architecture of your current installation, such as %s. Changing architectures during an upgrade is not recommended, and may require a manual reboot after the update completes."), php_uname("m")); ?>
 		</td>
 	</tr>
 <?php endif; ?>
 	<tr>
 		<td valign="top" class="vncell"><?=gettext("Firmware Auto Update URL"); ?></td>
 		<td class="vtable">
-			<input name="alturlenable" type="checkbox" id="alturlenable" value="yes" onclick="enable_altfirmwareurl()" <?php if(isset($curcfg['alturl']['enable'])) echo "checked=\"checked\""; ?> /> <?=gettext("Use a URL server for firmware upgrades other than") . " " . $g['product_website']; ?><br />
+			<input name="alturlenable" type="checkbox" id="alturlenable" value="yes" onclick="enable_altfirmwareurl()" <?php if(isset($curcfg['alturl']['enable'])) echo "checked=\"checked\""; ?> /> <?=gettext("Use an unofficial server for firmware upgrades") ?><br />
 			<table summary="alternative Base URL">
 			<tr><td><?=gettext("Base URL:"); ?></td><td><input name="firmwareurl" type="text" class="formfld url" id="firmwareurl" size="64" value="<?php if($curcfg['alturl']['firmwareurl']) echo $curcfg['alturl']['firmwareurl']; else echo $g['']; ?>" /></td></tr>
 			</table>
 			<span class="vexpl">
 				<?=gettext("This is where"); ?> <?php echo $g['product_name'] ?> <?=gettext("will check for newer firmware versions when the"); ?> <a href="system_firmware_check.php"><?=gettext("System: Firmware: Auto Update"); ?></a> <?=gettext("page is viewed."); ?>
-				<br/>
-				<b><?=gettext("NOTE:"); ?></b> <?php printf(gettext("When a custom URL is enabled, the system will not verify the digital signature from %s."), $g['product_website']); ?>
+				<br />
+				<b><?=gettext("NOTE:"); ?></b> <?php printf(gettext("When a custom URL is configured, the system will not verify the image has an official digital signature")); ?>
 				</span>
 				</td>
 	</tr>
@@ -216,7 +217,7 @@ function enable_altfirmwareurl(enable_over) {
 	<tr>
 		<td width="22%" valign="top" class="vncell"><?=gettext("Repository URL"); ?></td>
 		<td width="78%" class="vtable">
-			<input name="repositoryurl" type="input" class="formfld url" id="repositoryurl" size="64" value="<?php if ($gitcfg['repositoryurl']) echo $gitcfg['repositoryurl']; ?>" />
+			<input name="repositoryurl" type="text" class="formfld url" id="repositoryurl" size="64" value="<?php if ($gitcfg['repositoryurl']) echo $gitcfg['repositoryurl']; ?>" />
 <?php if($lastrepositoryurl): ?>
 			<br />
 			<?=sprintf(gettext("The most recently used repository was %s"), $lastrepositoryurl); ?>
@@ -242,7 +243,7 @@ function enable_altfirmwareurl(enable_over) {
 	<tr>
 		<td width="22%" valign="top" class="vncell"><?=gettext("Branch name"); ?></td>
 		<td width="78%" class="vtable">
-			<input name="branch" type="input" class="formfld unknown" id="branch" size="64" value="<?php if ($gitcfg['branch']) echo $gitcfg['branch']; ?>" />
+			<input name="branch" type="text" class="formfld unknown" id="branch" size="64" value="<?php if ($gitcfg['branch']) echo $gitcfg['branch']; ?>" />
 <?php if($lastbranch): ?>
 			<br />
 			<?=sprintf(gettext("The most recently used branch was %s"), $lastbranch); ?>

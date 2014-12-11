@@ -1,8 +1,10 @@
 <?php
 /*
         $Id$
+        Copyright (C) 2013-2014 Electric Sheep Fencing, LP
+
         Copyright 2007 Scott Dale
-        Part of pfSense widgets (www.pfsense.com)
+        Part of pfSense widgets (https://www.pfsense.org)
         originally based on m0n0wall (http://m0n0.ch/wall)
 
         Copyright (C) 2004-2005 T. Lechat <dev@lechat.org>, Manuel Kasper <mk@neon1.net>
@@ -49,6 +51,7 @@ if (isset($config['ipsec']['phase1'])){?>
 	$spd = ipsec_dump_spd();
 	$sad = ipsec_dump_sad();
 	$mobile = ipsec_dump_mobile();
+	$ipsec_status = ipsec_smp_dump_status();
 
 	$activecounter = 0;
 	$inactivecounter = 0;
@@ -58,33 +61,33 @@ if (isset($config['ipsec']['phase1'])){?>
 		if ($ph2ent['remoteid']['type'] == "mobile")
 			continue;
 		ipsec_lookup_phase1($ph2ent,$ph1ent);
-		$ipsecstatus = false;
 
-		$tun_disabled = "false";
-		$foundsrc = false;
-		$founddst = false;
+		if (!isset($ph1ent['disabled']) && !isset($ph2ent['disabled'])) {
+			if (is_array($ipsec_status['query']) &&
+			    is_array($ipsec_status['query']['ikesalist']) &&
+			    is_array($ipsec_status['query']['ikesalist']['ikesa'])) {
+				foreach ($ipsec_status['query']['ikesalist']['ikesa'] as $ikeid => $ikesa) {
+					if ($ph1ent['ikeid'] == substr($ikesa['peerconfig'], 3)) {
+						$ikeid = $ikesa['id'];
+						if (ipsec_phase1_status($ipsec_status['query']['ikesalist']['ikesa'], $ikeid)) {
+							/* tunnel is up */
+							$iconfn = "true";
+							$activecounter++;						
+						} else {
+							/* tunnel is down */
+							$iconfn = "false";
+							$inactivecounter++;
+						}
+					}
+				}
+			}
 
-		if (isset($ph1ent['disabled']) || isset($ph2ent['disabled'])) {
-			$tun_disabled = "true";
-			continue;
-		}
-
-		if(ipsec_phase2_status($spd,$sad,$ph1ent,$ph2ent)) {
-			/* tunnel is up */
-			$iconfn = "true";
-			$activecounter++;
-		} else {
-			/* tunnel is down */
-			$iconfn = "false";
-			$inactivecounter++;
-		}
-
-		$ipsec_detail_array[] = array('src' => $ph1ent['interface'],
+			$ipsec_detail_array[] = array('src' => convert_friendly_interface_to_friendly_descr($ph1ent['interface']),
 					'dest' => $ph1ent['remote-gateway'],
 					'remote-subnet' => ipsec_idinfo_to_text($ph2ent['remoteid']),
 					'descr' => $ph2ent['descr'],
-					'status' => $iconfn,
-					'disabled' => $tun_disabled);
+					'status' => $iconfn);
+		}
 	}
 }
 
@@ -101,7 +104,7 @@ if (isset($config['ipsec']['phase1'])){?>
 	<tr>
 		<td class="listlr"><?php echo $activecounter; ?></td>
 		<td class="listr"><?php echo $inactivecounter; ?></td>
-		<td class="listr"><?php echo count($mobile); ?></td>
+		<td class="listr"><?php if (is_array($mobile['pool'])) echo htmlspecialchars($mobile['pool'][0]['usage']); else echo 0; ?></td>
 	</tr>
 	</table>
 	</div>
@@ -116,32 +119,20 @@ if (isset($config['ipsec']['phase1'])){?>
 			<div class="widgetsubheader" style="display:table-cell;width:30px">Status</div>
 		</div>
 		<div style="max-height:105px;overflow:auto;">
-	<?php
-	foreach ($ipsec_detail_array as $ipsec) :
 
-		if ($ipsec['disabled'] == "true"){
-			$spans = "<span class=\"gray\">";
-			$spane = "</span>";
-		}
-		else {
-			$spans = $spane = "";
-		}
-
-		?>
-
+	<?php foreach ($ipsec_detail_array as $ipsec) : ?>
+	
 		<div style="display:table-row;">
 			<div class="listlr" style="display:table-cell;width:39px">
-				<?php echo $spans;?>
-					<?php echo htmlspecialchars($ipsec['src']);?>
-				<?php echo $spane;?>
+				<?php echo htmlspecialchars($ipsec['src']);?>
 			</div>
-			<div class="listr"  style="display:table-cell;width:100px"><?php echo $spans;?>
+			<div class="listr"  style="display:table-cell;width:100px">
 				<?php echo $ipsec['remote-subnet'];?>
-				<br/>
-				(<?php echo htmlspecialchars($ipsec['dest']);?>)<?php echo $spane;?>
+				<br />
+				(<?php echo htmlspecialchars($ipsec['dest']);?>)
 			</div>
-			<div class="listr"  style="display:table-cell;width:90px"><?php echo $spans;?><?php echo htmlspecialchars($ipsec['descr']);?><?php echo $spane;?></div>
-			<div class="listr"  style="display:table-cell;width:37px" align="center"><?php echo $spans;?>
+			<div class="listr"  style="display:table-cell;width:90px"></div>
+			<div class="listr"  style="display:table-cell;width:37px" align="center">
 			<?php
 
 			if($ipsec['status'] == "true") {
@@ -153,8 +144,8 @@ if (isset($config['ipsec']['phase1'])){?>
 			}
 
 			echo "<img src ='/themes/{$g['theme']}/images/icons/icon_{$iconfn}.gif' alt='Tunnel status' width='11' height='11' />";
-
-			?><?php echo $spane;?></div>
+			?>
+			</div>
 		</div>
 	<?php endforeach; ?>
 	</div>
@@ -163,26 +154,33 @@ if (isset($config['ipsec']['phase1'])){?>
 <div id="ipsec-mobile" style="display:none;background-color:#EEEEEE;">
 	<div style="padding: 10px">
 		<div style="display:table-row;">
-			<div class="widgetsubheader" style="display:table-cell;width:140px">User/Time</div>
-			<div class="widgetsubheader" style="display:table-cell;width:130px">Local/Remote</div>
-			<div class="widgetsubheader" style="display:table-cell;width:30px">&nbsp;</div>
+			<div class="widgetsubheader" style="display:table-cell;width:140px">User</div>
+			<div class="widgetsubheader" style="display:table-cell;width:130px">IP</div>
+			<div class="widgetsubheader" style="display:table-cell;width:30px">Status</div>
 		</div>
 		<div style="max-height:105px;overflow:auto;">
-<?php	foreach ($mobile as $muser) : ?>
+<?php
+	if (is_array($mobile['pool'])):
+	foreach ($mobile['pool'] as $pool):
+		if (is_array($pool['lease'])): 
+			foreach ($pool['lease'] as $muser) : ?>
 		<div style="display:table-row;">
 			<div class="listlr" style="display:table-cell;width:139px">
-				<?php echo htmlspecialchars($muser['username']);?><br/>
-				<?php echo htmlspecialchars($muser['logintime']);?>
+				<?php echo htmlspecialchars($muser['id']);?><br />
 			</div>
 			<div class="listr"  style="display:table-cell;width:130px">
-				<?php echo htmlspecialchars($muser['local']);?><br/>
-				<?php echo htmlspecialchars($muser['remote']);?>
+				<?php echo htmlspecialchars($muser['host']);?><br />
 			</div>
-			<div class="listr"  style="display:table-cell;width:30px" align="center">
-				<a href="diag_ipsec.php?act=disconnect&amp;user=<?php echo $muser['username']; ?>"><img src='/themes/<?php echo $g['theme']; ?>/images/icons/icon_x.gif' height='17' width='17' border='0' alt='x' /></a>
+			<div class="listr"  style="display:table-cell;width:30px">
+				<?php echo htmlspecialchars($muser['status']);?><br/>
 			</div>
 		</div>
-<?php	endforeach; ?>
+<?php
+			endforeach;
+		endif;
+	endforeach;
+	endif;
+?>
 		</div>
 	</div>
 </div>

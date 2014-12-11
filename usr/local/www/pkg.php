@@ -2,7 +2,9 @@
 /* $Id$ */
 /*
     pkg.php
+    Copyright (C) 2013-2014 Electric Sheep Fencing, LP
     Copyright (C) 2004-2012 Scott Ullrich <sullrich@gmail.com>
+    Copyright (C) 2013-2014 Electric Sheep Fencing, LP
     All rights reserved.
 
     Redistribution and use in source and binary forms, with or without
@@ -64,7 +66,7 @@ if($xml == "") {
 }
 
 if($pkg['donotsave'] <> "") {
-	Header("Location: pkg_edit.php?xml=" . $xml);
+	header("Location: pkg_edit.php?xml=" . $xml);
 	exit;
 }
 

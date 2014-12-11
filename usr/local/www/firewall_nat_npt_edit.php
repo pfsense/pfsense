@@ -2,8 +2,9 @@
 /* $Id$ */
 /*
 	firewall_nat_npt_edit.php
-	part of pfSense (http://pfsense.org)
+	part of pfSense (https://www.pfsense.org)
 	
+        Copyright (C) 2013-2014 Electric Sheep Fencing, LP
 	Copyright (C) 2011 Seth Mos <seth.mos@dds.nl>.
 	All rights reserved.
 	
@@ -58,6 +59,8 @@ require_once("interfaces.inc");
 require_once("filter.inc");
 require("shaper.inc");
 
+$referer = (isset($_SERVER['HTTP_REFERER']) ? $_SERVER['HTTP_REFERER'] : '/firewall_nat_npt.php');
+
 $ifdisp = get_configured_interface_with_descr();
 foreach ($ifdisp as $kif => $kdescr) {
         $specialsrcdst[] = "{$kif}";
@@ -69,8 +72,9 @@ if (!is_array($config['nat']['npt'])) {
 }
 $a_npt = &$config['nat']['npt'];
 
-$id = $_GET['id'];
-if (isset($_POST['id']))
+if (is_numericint($_GET['id']))
+	$id = $_GET['id'];
+if (isset($_POST['id']) && is_numericint($_POST['id']))
 	$id = $_POST['id'];
 
 if (isset($id) && $a_npt[$id]) {
@@ -184,7 +188,7 @@ include("head.inc");
 
 					if ($config['pppoe']['mode'] == "server")
 						if(have_ruleint_access("pppoe"))
-							$interfaces['pppoe'] = "PPPoE VPN";
+							$interfaces['pppoe'] = "PPPoE Server";
 
 					/* add ipsec interfaces */
 					if (isset($config['ipsec']['enable']) || isset($config['ipsec']['mobileclients']['enable']))
@@ -201,8 +205,8 @@ include("head.inc");
 					<?=htmlspecialchars($ifacename);?>
 					</option>
 					<?php endforeach; ?>
-				</select><br/>
-			  <span class="vexpl"><?=gettext("Choose which interface this rule applies to"); ?>.<br/>
+				</select><br />
+			  <span class="vexpl"><?=gettext("Choose which interface this rule applies to"); ?>.<br />
 			  <?=gettext("Hint: in most cases, you'll want to use WAN here"); ?>.</span></td>
 		</tr>
 		<tr>
@@ -227,7 +231,7 @@ include("head.inc");
                                                 </td>
                                         </tr>
                                 </table>
-			<br/>
+			<br />
                      <span class="vexpl"><?=gettext("Enter the internal (LAN) ULA IPv6 Prefix for the Network Prefix translation. The prefix size specified for the internal IPv6 prefix will be applied to the 
 external prefix."); 
 ?></span>
@@ -257,21 +261,22 @@ external prefix.");
                                                 </td>
                                         </tr>
                                 </table>
-			<br/>
-                     <span class="vexpl"><?=gettext("Enter the Global Unicast routable IPv6 prefix here"); ?><br/></span>
+			<br />
+                     <span class="vexpl"><?=gettext("Enter the Global Unicast routable IPv6 prefix here"); ?><br /></span>
                      </td>
                 </tr>
                 <tr> 
                   <td width="22%" valign="top" class="vncell"><?=gettext("Description"); ?></td>
                   <td width="78%" class="vtable"> 
                     <input name="descr" type="text" class="formfld unknown" id="descr" size="40" value="<?=htmlspecialchars($pconfig['descr']);?>" />
-                    <br/> <span class="vexpl"><?=gettext("You may enter a description here " .
+                    <br /> <span class="vexpl"><?=gettext("You may enter a description here " .
                     "for your reference (not parsed)."); ?></span></td>
                 </tr>
                 <tr> 
                   <td width="22%" valign="top">&nbsp;</td>
                   <td width="78%"> 
-                    <input name="Submit" type="submit" class="formbtn" value="<?=gettext("Save"); ?>" /> <input type="button" class="formbtn" value="<?=gettext("Cancel"); ?>" onclick="history.back()" />
+                    <input name="Submit" type="submit" class="formbtn" value="<?=gettext("Save"); ?>" />
+                    <input type="button" class="formbtn" value="<?=gettext("Cancel");?>" onclick="window.location.href='<?=$referer;?>'" />
                     <?php if (isset($id) && $a_npt[$id]): ?>
                     <input name="id" type="hidden" value="<?=htmlspecialchars($id);?>" />
                     <?php endif; ?>

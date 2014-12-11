@@ -1,10 +1,10 @@
 <?php
 /* $Id$ */
 /*
-    part of pfSense (http://www.pfsense.org/)
-
-	Copyright (C) 2007 Scott Ullrich <sullrich@gmail.com>
-	All rights reserved.
+    part of pfSense (https://www.pfsense.org/)
+    Copyright (C) 2007 Scott Ullrich <sullrich@gmail.com>
+    Copyright (C) 2013-2014 Electric Sheep Fencing, LP
+    All rights reserved.
 
     Redistribution and use in source and binary forms, with or without
     modification, are permitted provided that the following conditions are met:
@@ -73,7 +73,7 @@ if($_GET) {
                         }
             </STYLE>
         </head>
-<script language="JavaScript">
+<script type="text/javascript">
 function post_choices() {
 
 	var ous = <?php echo count($ous); ?>;
@@ -110,7 +110,7 @@ function post_choices() {
 				$CHECKED=" CHECKED";
 			else 
 				$CHECKED="";
-			echo "			<tr><td><input type='checkbox' value='{$ou}' id='ou' name='ou[]'{$CHECKED}> {$ou}<br/></td></tr>\n";
+			echo "			<tr><td><input type='checkbox' value='{$ou}' id='ou' name='ou[]'{$CHECKED}> {$ou}<br /></td></tr>\n";
 		}
 	}
 ?>

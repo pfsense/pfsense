@@ -49,8 +49,9 @@ define("RCFILEPREFIX", "/usr/local/etc/rc.d/");
 function write_rcfile($params) {
 	global $g;
 
+	safe_mkdir(RCFILEPREFIX);
 	$rcfile_fullname = RCFILEPREFIX . $params['file'];
-	if (!file_exists($rcfile_fullname) && !touch($rcfile_fullname))
+	if (!file_exists($rcfile_fullname) && !is_link($rcfile_fullname) && !touch($rcfile_fullname))
 		return false;
 
 	if (!is_writable($rcfile_fullname) || empty($params['start']))
@@ -67,7 +68,7 @@ function write_rcfile($params) {
 		$tokill =& $params['stop'];
 	} else if(!empty($params['executable'])) {
 		/* just nuke the executable */
-		$tokill = "/usr/bin/killall {$params['executable']}";
+		$tokill = "/usr/bin/killall " . escapeshellarg($params['executable']);
 	} else {
 		/* make an educated guess (bad) */
 		$tokill = array_pop(explode('/', array_shift(explode(' ', $params['start']))));
@@ -79,7 +80,8 @@ function write_rcfile($params) {
 	/* begin rcfile logic */
 	$towrite .= "case \$1 in\n\tstart)\n\t\trc_start\n\t\t;;\n\tstop)\n\t\trc_stop\n\t\t;;\n\trestart)\n\t\trc_stop\n\t\trc_start\n\t\t;;\nesac\n\n";
 
-	file_put_contents($rcfile_fullname, $towrite);
+	@file_put_contents($rcfile_fullname, $towrite);
+	unset($towrite);
 	@chmod("{$rcfile_fullname}", 0755);
 
 	return;
@@ -91,16 +93,7 @@ function start_service($name) {
 	if (empty($name))
 		return;
 
-	/* make sure service is stopped before starting */
-	stop_service($name);
-	sleep(2);
-
-	$rcfile_fullname = RCFILEPREFIX . $name . '.sh';
-	if(file_exists($rcfile_fullname)) {
-		mwexec_bg("/bin/sh {$rcfile_fullname} start");
-		return;
-	}
-	if($config['installedpackages']['service']) {
+	if (is_array($config['installedpackages']) && is_array($config['installedpackages']['service'])) {
 		foreach($config['installedpackages']['service'] as $service) {
 			if(strtolower($service['name']) == strtolower($name)) {
 				if($service['rcfile']) {
@@ -108,7 +101,7 @@ function start_service($name) {
 					if (!empty($service['prefix'])) {
 						$prefix =& $service['prefix'];
 					}
-					if(file_exists("{$prefix}{$service['rcfile']}")) {
+					if(file_exists("{$prefix}{$service['rcfile']}") || is_link("{$prefix}{$service['rcfile']}")) {
 						mwexec_bg("{$prefix}{$service['rcfile']} start");
 					}
 				}
@@ -126,7 +119,7 @@ function stop_service($name) {
 	if (empty($name))
 		return;
 
-	if ($config['installedpackages']['service']) {
+	if (is_array($config['installedpackages']) && is_array($config['installedpackages']['service'])) {
 		foreach($config['installedpackages']['service'] as $service) {
 			if(strtolower($service['name']) == strtolower($name)) {
 				if($service['rcfile']) {
@@ -134,7 +127,7 @@ function stop_service($name) {
 					if(!empty($service['prefix'])) {
 						$prefix =& $service['prefix'];
 					}
-					if(file_exists("{$prefix}{$service['rcfile']}")) {
+					if(file_exists("{$prefix}{$service['rcfile']}") || is_link("{$prefix}{$service['rcfile']}")) {
 						mwexec("{$prefix}{$service['rcfile']} stop");
 					}
 					return;
@@ -142,18 +135,10 @@ function stop_service($name) {
 				if (!empty($service['stopcmd']))
 					eval($service['stopcmd']);
 
-				if(!($service['rcfile'] or $service['stopcmd'])) {
-					if(is_process_running("{$service['executable']}"))
-						mwexec("/usr/bin/killall {$service['executable']}");
-					return;
-				}
 				break;
 			}
 		}
 	}
-	/* finally if we get here lets simply kill the service name */
-	if(is_process_running("{$name}"))
-		mwexec("/usr/bin/killall {$name}");
 }
 
 function restart_service($name) {
@@ -165,7 +150,7 @@ function restart_service($name) {
 	stop_service($name);
 	start_service($name);
 
-	if($config['installedpackages']['service']) {
+	if (is_array($config['installedpackages']) && is_array($config['installedpackages']['service'])) {
 		foreach($config['installedpackages']['service'] as $service) {
 			if(strtolower($service['name']) == strtolower($name)) {
 				if($service['restartcmd']) {
@@ -186,7 +171,7 @@ function is_pid_running($pidfile) {
 
 function is_dhcp_running($interface) {
 	$status = find_dhclient_process($interface);
-	if($status <> "")
+	if($status != 0)
 		return true;
 	return false;
 }
@@ -202,10 +187,13 @@ function is_service_enabled($service_name) {
 	global $config;
 	if ($service_name == "")
 		return false;
-	if (isset($config['installedpackages'][$service_name]['config'][0]['enable']) &&
-		((empty($config['installedpackages'][$service_name]['config'][0]['enable'])) ||
-		 ($config['installedpackages'][$service_name]['config'][0]['enable'] === 'off')))
-		return false;
+	if (is_array($config['installedpackages'])) {
+		if (isset($config['installedpackages'][$service_name]['config'][0]['enable']) &&
+			((empty($config['installedpackages'][$service_name]['config'][0]['enable'])) ||
+			($config['installedpackages'][$service_name]['config'][0]['enable'] === 'off'))) {
+			return false;
+		}
+	}
 	return true;
 }
 
@@ -245,17 +233,24 @@ function get_services() {
 	/*    Add services that are in the base.
 	 *
 	 */
-	if(is_radvd_enabled()) {
+	if (is_radvd_enabled()) {
 		$pconfig = array();
 		$pconfig['name'] = "radvd";
 		$pconfig['description'] = gettext("Router Advertisement Daemon");
 		$services[] = $pconfig;
 	}
 
-	if(isset($config['dnsmasq']['enable'])) {
+	if (isset($config['dnsmasq']['enable'])) {
 		$pconfig = array();
 		$pconfig['name'] = "dnsmasq";
 		$pconfig['description'] = gettext("DNS Forwarder");
+		$services[] = $pconfig;
+	}
+
+	if (isset($config['unbound']['enable'])) {
+		$pconfig = array();
+		$pconfig['name'] = "unbound";
+		$pconfig['description'] = gettext("Unbound DNS Resolver");
 		$services[] = $pconfig;
 	}
 
@@ -284,21 +279,21 @@ function get_services() {
 			$iflist[$if] = $if;
 	}
 
-	if(isset($config['dhcrelay']['enable'])) {
+	if (isset($config['dhcrelay']['enable'])) {
 		$pconfig = array();
 		$pconfig['name'] = "dhcrelay";
 		$pconfig['description'] = gettext("DHCP Relay");
 		$services[] = $pconfig;
 	}
 
-	if(isset($config['dhcrelay6']['enable'])) {
+	if (isset($config['dhcrelay6']['enable'])) {
 		$pconfig = array();
 		$pconfig['name'] = "dhcrelay6";
 		$pconfig['description'] = gettext("DHCPv6 Relay");
 		$services[] = $pconfig;
 	}
 
-	if(is_dhcp_server_enabled()) {
+	if (is_dhcp_server_enabled()) {
 		$pconfig = array();
 		$pconfig['name'] = "dhcpd";
 		$pconfig['description'] = gettext("DHCP Service");
@@ -313,7 +308,7 @@ function get_services() {
 		$services[] = $pconfig;
 	}
 
-	if(isset($config['snmpd']['enable'])) {
+	if (isset($config['snmpd']['enable'])) {
 		$pconfig = array();
 		$pconfig['name'] = "bsnmpd";
 		$pconfig['description'] = gettext("SNMP Service");
@@ -343,8 +338,15 @@ function get_services() {
 
 	if (isset($config['ipsec']['enable'])) {
 		$pconfig = array();
-		$pconfig['name'] = "racoon";
+		$pconfig['name'] = "ipsec";
 		$pconfig['description'] = gettext("IPsec VPN");
+		$services[] = $pconfig;
+	}
+
+	if (isset($config['system']['enablesshd'])) {
+		$pconfig = array();
+		$pconfig['name'] = "sshd";
+		$pconfig['description'] = gettext("Secure Shell Daemon");
 		$services[] = $pconfig;
 	}
 
@@ -431,6 +433,9 @@ function get_service_status($service) {
 		case "dhcrelay6":
 			$running = is_pid_running("{$g['varrun_path']}/dhcrelay6.pid");
 			break;
+		case 'ipsec':
+			$running = is_pid_running("{$g['varrun_path']}/charon.pid");
+			break;
 		default:
 			$running = is_service_running($service['name']);
 	}
@@ -442,23 +447,19 @@ function get_service_status_icon($service, $withtext = true, $smallicon = false)
 	$output = "";
 	if(get_service_status($service)) {
 		$statustext = gettext("Running");
-		$output .= '<td class="listr" align="center">' . "\n";
 		$output .= "<img style=\"vertical-align:middle\" title=\"" . sprintf(gettext("%s Service is"),$service["name"]) . " {$statustext}\" src=\"/themes/" . $g["theme"] . "/images/icons/";
 		$output .= ($smallicon) ? "icon_pass.gif" : "icon_service_running.gif";
-		$output .= "\" alt=\"status\" />";
+		$output .= "\" alt=\"status\" />&nbsp;";
 		if ($withtext)
-			$output .= "&nbsp;&nbsp;" . $statustext;
-		$output .= "</td>\n";
+			$output .= "&nbsp;" . $statustext;
 	} else {
 		$service_enabled = is_service_enabled($service['name']);
 		$statustext = ($service_enabled) ? gettext("Stopped") : gettext("Disabled");
-		$output .= '<td class="listbg" align="center">' . "\n";
 		$output .= "<img style=\"vertical-align:middle\" title=\"" . sprintf(gettext("%s Service is"),$service["name"]) . " {$statustext}\" src=\"/themes/" . $g["theme"] . "/images/icons/";
 		$output .= ($smallicon) ? "icon_block.gif" : "icon_service_stopped.gif";
-		$output .= "\" alt=\"status\" />";
+		$output .= "\" alt=\"status\" />&nbsp;";
 		if ($withtext)
-			$output .= "&nbsp;&nbsp;" . "<font color=\"white\">{$statustext}</font>";
-		$output .= "</td>\n";
+			$output .= "&nbsp;<font color=\"white\">{$statustext}</font>";
 	}
 	return $output;
 }
@@ -517,7 +518,7 @@ function service_control_start($name, $extras) {
 			services_radvd_configure();
 			break;
 		case 'captiveportal':
-			$zone = $extras['zone'];
+			$zone = htmlspecialchars($extras['zone']);
 			captiveportal_init_webgui_zonename($zone);
 			break;
 		case 'ntpd':
@@ -539,6 +540,9 @@ function service_control_start($name, $extras) {
 		case 'dnsmasq':
 			services_dnsmasq_configure();
 			break;
+		case 'unbound':
+			services_unbound_configure();
+			break;
 		case 'dhcpd':
 			services_dhcpd_configure();
 			break;
@@ -548,13 +552,16 @@ function service_control_start($name, $extras) {
 		case 'miniupnpd':
 			upnp_action('start');
 			break;
-		case 'racoon':
+		case 'ipsec':
 			vpn_ipsec_force_reload();
 			break;
+		case 'sshd':
+			send_event("service restart sshd");
+			break;
 		case 'openvpn':
-			$vpnmode = isset($extras['vpnmode']) ? $extras['vpnmode'] : $extras['mode'];
+			$vpnmode = isset($extras['vpnmode']) ? htmlspecialchars($extras['vpnmode']) : htmlspecialchars($extras['mode']);
 			if (($vpnmode == "server") || ($vpnmode == "client")) {
-				$id = isset($extras['vpnid']) ? $extras['vpnid'] : $extras['id'];
+				$id = isset($extras['vpnid']) ? htmlspecialchars($extras['vpnid']) : htmlspecialchars($extras['id']);
 				$configfile = "{$g['varetc_path']}/openvpn/{$vpnmode}{$id}.conf";
 				if (file_exists($configfile))
 					openvpn_restart_by_vpnid($vpnmode, $id);
@@ -576,7 +583,7 @@ function service_control_stop($name, $extras) {
 			killbypid("{$g['varrun_path']}/radvd.pid");
 			break;
 		case 'captiveportal':
-			$zone = $extras['zone'];
+			$zone = htmlspecialchars($extras['zone']);
 			killbypid("{$g['varrun_path']}/lighty-{$zone}-CaptivePortal.pid");
 			killbypid("{$g['varrun_path']}/lighty-{$zone}-CaptivePortal-SSL.pid");
 			break;
@@ -607,6 +614,9 @@ function service_control_stop($name, $extras) {
 		case 'dnsmasq':
 			killbypid("{$g['varrun_path']}/dnsmasq.pid");
 			break;
+		case 'unbound':
+			killbypid("{$g['varrun_path']}/unbound.pid");
+			break;
 		case 'igmpproxy':
 			killbyname("igmpproxy");
 			break;
@@ -616,13 +626,13 @@ function service_control_stop($name, $extras) {
 		case 'sshd':
 			killbyname("sshd");
 			break;
-		case 'racoon':
-			exec("killall -9 racoon");
+		case 'ipsec':
+			exec("/usr/local/sbin/ipsec stop");
 			break;
 		case 'openvpn':
-			$vpnmode = $extras['vpnmode'];
+			$vpnmode = htmlspecialchars($extras['vpnmode']);
 			if (($vpnmode == "server") or ($vpnmode == "client")) {
-				$id = $extras['id'];
+				$id = htmlspecialchars($extras['id']);
 				$pidfile = "{$g['varrun_path']}/openvpn_{$vpnmode}{$id}.pid";
 				killbypid($pidfile);
 			}
@@ -636,6 +646,7 @@ function service_control_stop($name, $extras) {
 	}
 	return sprintf(gettext("%s has been stopped."), htmlspecialchars($name));
 }
+
 function service_control_restart($name, $extras) {
 	global $g;
 	switch($name) {
@@ -643,7 +654,7 @@ function service_control_restart($name, $extras) {
 			services_radvd_configure();
 			break;
 		case 'captiveportal':
-			$zone = $extras['zone'];
+			$zone = htmlspecialchars($extras['zone']);
 			killbypid("{$g['varrun_path']}/lighty-{$zone}-CaptivePortal.pid");
 			killbypid("{$g['varrun_path']}/lighty-{$zone}-CaptivePortal-SSL.pid");
 			captiveportal_init_webgui_zonename($zone);
@@ -668,6 +679,9 @@ function service_control_restart($name, $extras) {
 		case 'dnsmasq':
 			services_dnsmasq_configure();
 			break;
+		case 'unbound':
+			services_unbound_configure();
+			break;
 		case 'dhcpd':
 			services_dhcpd_configure();
 			break;
@@ -677,13 +691,16 @@ function service_control_restart($name, $extras) {
 		case 'miniupnpd':
 			upnp_action('restart');
 			break;
-		case 'racoon':
+		case 'ipsec':
 			vpn_ipsec_force_reload();
 			break;
+		case 'sshd':
+			send_event("service restart sshd");
+			break;
 		case 'openvpn':
-			$vpnmode = $extras['vpnmode'];
+			$vpnmode = htmlspecialchars($extras['vpnmode']);
 			if ($vpnmode == "server" || $vpnmode == "client") {
-				$id = $extras['id'];
+				$id = htmlspecialchars($extras['id']);
 				$configfile = "{$g['varetc_path']}/openvpn/{$vpnmode}{$id}.conf";
 				if (file_exists($configfile))
 					openvpn_restart_by_vpnid($vpnmode, $id);

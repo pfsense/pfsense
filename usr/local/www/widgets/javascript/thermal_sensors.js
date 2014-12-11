@@ -278,33 +278,16 @@ function pulsateThermalSensorsItems(itemsToPulsate) {
 }
 
 function getSensorFriendlyName(sensorFullName){
+	var rzone = /^hw\.acpi\.thermal\.tz([0-9]+)\.temperature$/;
+	var rcore = /^dev\.cpu\.([0-9]+)\.temperature$/;
 
-	var friendlyName = "";
-	
-	switch (sensorFullName) {
-		case "hw.acpi.thermal.tz0.temperature":
-			friendlyName = "Zone 0";
-			break;
-		case "hw.acpi.thermal.tz1.temperature":
-			friendlyName = "Zone 1";
-			break;
-		case "dev.cpu.0.temperature":
-			friendlyName = "Core 0";
-			break;
-		case "dev.cpu.1.temperature":
-			friendlyName = "Core 1";
-			break;
-		case "dev.cpu.2.temperature":
-			friendlyName = "Core 2";
-			break;
-		case "dev.cpu.3.temperature":
-			friendlyName = "Core 3";
-			break;
-		default:
-			friendlyName = sensorFullName;
-	}
+	if (rzone.test(sensorFullName))
+		return "Zone " + rzone.exec(sensorFullName)[1];
 
-	return friendlyName;
+	if (rcore.test(sensorFullName))
+		return "Core " + rcore.exec(sensorFullName)[1];
+
+	return sensorFullName;
 }
 
 function getThermalSensorValue(stringValue){

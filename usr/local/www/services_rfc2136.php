@@ -1,7 +1,8 @@
 <?php
 /* $Id$ */
 /*
-	Copyright (C) 2008 Ermal Luçi
+	Copyright (C) 2008 Ermal LuÃ§i
+        Copyright (C) 2013-2014 Electric Sheep Fencing, LP
 	All rights reserved.
 
 	Redistribution and use in source and binary forms, with or without
@@ -60,7 +61,7 @@ include("head.inc");
 <?php include("fbegin.inc"); ?>
 <form action="services_rfc2136.php" method="post" name="iform" id="iform">
 <?php if ($input_errors) print_input_errors($input_errors); ?>
-<table width="100%" border="0" cellpadding="0" cellspacing="0">
+<table width="100%" border="0" cellpadding="0" cellspacing="0" summary="rfc2136">
   <tr>
 	<td>
 <?php
@@ -74,7 +75,7 @@ include("head.inc");
   <tr>
 	<td>
 	  <div id="mainarea">
-	  <table class="tabcont" width="100%" border="0" cellpadding="0" cellspacing="0">
+	  <table class="tabcont" width="100%" border="0" cellpadding="0" cellspacing="0" summary="main area">
 		<tr>
 		  <td width="5%"  class="listhdrr"><?=gettext("If");?></td>
 		  <td width="15%" class="listhdrr"><?=gettext("Server");?></td>
@@ -102,7 +103,7 @@ include("head.inc");
 		  <td class="listr">
 		  <?php
 			if (!isset($rfc2136['enable']))
-				echo "<span class=\"gray\">".htmlspecialchars($rfc2136['server'])."</span>";
+				echo "<span class=\"gray\">" . htmlspecialchars($rfc2136['server']) . "</span>";
 			else
 				echo htmlspecialchars($rfc2136['server']);
 		  ?>
@@ -110,7 +111,7 @@ include("head.inc");
 		  <td class="listr">
 		  <?php
 			if (!isset($rfc2136['enable']))
-				echo "<span class=\"gray\">".htmlspecialchars($rfc2136['host'])."</span>";
+				echo "<span class=\"gray\">" . htmlspecialchars($rfc2136['host']) . "</span>";
 			else
 				echo htmlspecialchars($rfc2136['host']);
 		  ?>
@@ -155,24 +156,24 @@ include("head.inc");
 		  <td class="listbg">
 		  <?php
 			if (!isset($rfc2136['enable']))
-				echo "<span class=\"gray\">".htmlspecialchars($rfc2136['descr'])."</span>";
+				echo "<span class=\"gray\">" . htmlspecialchars($rfc2136['descr']) . "</span>";
 			else
 				echo htmlspecialchars($rfc2136['descr']);
 		  ?>
 		  </td>
-		  <td valign="middle" nowrap class="list">
-			<a href="services_rfc2136_edit.php?id=<?=$i;?>"><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_e.gif" width="17" height="17" border="0"></a>
-			&nbsp;<a href="services_rfc2136.php?act=del&amp;id=<?=$i;?>" onclick="return confirm('<?=gettext("Do you really want to delete this client?");?>')"><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_x.gif" width="17" height="17" border="0"></a>
+		  <td valign="middle" class="list nowrap">
+			<a href="services_rfc2136_edit.php?id=<?=$i;?>"><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_e.gif" width="17" height="17" border="0" alt="edit" /></a>
+			&nbsp;<a href="services_rfc2136.php?act=del&amp;id=<?=$i;?>" onclick="return confirm('<?=gettext("Do you really want to delete this client?");?>')"><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_x.gif" width="17" height="17" border="0" alt="delete" /></a>
 		  </td>
 		</tr>
 		<?php $i++; endforeach; ?>
 		<tr>
 		  <td class="list" colspan="5">&nbsp;</td>
-		  <td class="list"> <a href="services_rfc2136_edit.php"><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_plus.gif" width="17" height="17" border="0"></a></td>
+		  <td class="list"><a href="services_rfc2136_edit.php"><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_plus.gif" width="17" height="17" border="0" alt="add" /></a></td>
 		</tr>
 		<tr>
 		  <td colspan="3" class="list">
-			<p class="vexpl"><span class="red"><strong><br></strong></span></p>
+			<p class="vexpl"><span class="red"><strong><br /></strong></span></p>
 		  </td>
 		  <td class="list">&nbsp;</td>
 		</tr>

@@ -2,8 +2,9 @@
 /* $Id$ */
 /*
         load_balancer_protocol_edit.php
-        part of pfSense (http://www.pfsense.com/)
+        part of pfSense (https://www.pfsense.org/)
 
+        Copyright (C) 2013-2014 Electric Sheep Fencing, LP
         Copyright (C) 2008 Bill Marquette <bill.marquette@gmail.com>.
         All rights reserved.
 
@@ -40,15 +41,18 @@
 ##|-PRIV
 
 require("guiconfig.inc");
+
+$referer = (isset($_SERVER['HTTP_REFERER']) ? $_SERVER['HTTP_REFERER'] : '/load_balancer_relay_action.php');
+
 if (!is_array($config['load_balancer']['lbaction'])) {
 	$config['load_balancer']['lbaction'] = array();
 }
 $a_action = &$config['load_balancer']['lbaction'];
 
-if (isset($_POST['id']))
-	$id = $_POST['id'];
-else
+if (is_numericint($_GET['id']))
 	$id = $_GET['id'];
+if (isset($_POST['id']) && is_numericint($_POST['id']))
+	$id = $_POST['id'];
 
 if (isset($id) && $a_action[$id]) {
   $pconfig = array();
@@ -186,7 +190,7 @@ include("head.inc");
 
 <body link="#0000CC" vlink="#0000CC" alink="#0000CC">
 
-<script language="javascript">
+<script type="text/javascript">
 
 function updateProtocol(m) {
   // Default to HTTP
@@ -498,7 +502,7 @@ jQuery(document).ready(function() {
 	}
 ?>
 				</select>
-<br/>
+<br />
 <table><tr>
 <td><div id="input_action_value"><?=gettext("Value"); ?>&nbsp;<input id="option_action_value" name="option_action_value" type="text" <?if(isset($pconfig['options']['value'])) echo "value=\"{$pconfig['options']['value']}\"";?>size="20"></div></td>
 <td><div id="action_action_value"></div></td>
@@ -551,7 +555,8 @@ jQuery(document).ready(function() {
 		<tr align="left">
 			<td width="22%" valign="top">&nbsp;</td>
 			<td width="78%">
-				<input name="Submit" type="submit" class="formbtn" value="<?=gettext("Save"); ?>"><input type="button" class="formbtn" value="<?=gettext("Cancel"); ?>" onclick="history.back()">
+				<input name="Submit" type="submit" class="formbtn" value="<?=gettext("Save"); ?>">
+				<input type="button" class="formbtn" value="<?=gettext("Cancel");?>" onclick="window.location.href='<?=$referer;?>'" />
 				<?php if (isset($id) && $a_action[$id] && $_GET['act'] != 'dup'): ?>
 				<input name="id" type="hidden" value="<?=htmlspecialchars($id);?>">
 				<?php endif; ?>
@@ -559,7 +564,7 @@ jQuery(document).ready(function() {
 		</tr>
 	</table>
 	</form>
-<br>
+<br />
 <?php include("fend.inc"); ?>
 </body>
 </html>

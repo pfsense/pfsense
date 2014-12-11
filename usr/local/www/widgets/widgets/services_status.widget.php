@@ -1,6 +1,8 @@
 <?php
 /*
     services_status.widget.php
+    Copyright (C) 2013-2014 Electric Sheep Fencing, LP
+
     Copyright (C) 2004, 2005 Scott Ullrich
     All rights reserved.
 
@@ -41,7 +43,7 @@ require_once("/usr/local/www/widgets/include/services_status.inc");
 $services = get_services();
 
 if(isset($_POST['servicestatusfilter'])) {
-	$config['widgets']['servicestatusfilter'] = $_POST['servicestatusfilter'];
+	$config['widgets']['servicestatusfilter'] = htmlspecialchars($_POST['servicestatusfilter'], ENT_QUOTES | ENT_HTML401);
 	write_config("Saved Service Status Filter via Dashboard");
 	header("Location: ../../index.php");
 }
@@ -73,15 +75,19 @@ if (count($services) > 0) {
 		if (empty($service['description']))
 			$service['description'] = get_pkg_descr($service['name']);
 		$service_desc = explode(".",$service['description']);
-		echo '<tr><td class="listlr">' . $service['name'] . '</td>' . "\n";
-		echo '<td class="listr">' . $service_desc[0] . '</td>' . "\n";
-		echo get_service_status_icon($service, false, true);
-		echo '<td valign="middle" class="list nowrap">';
-		echo get_service_control_links($service);
-		echo "</td></tr>\n";
+		echo "<tr><td class=\"listlr\">" . $service['name'] . "</td>\n";
+		echo "<td class=\"listr\">" . $service_desc[0] . "</td>\n";
+		// if service is running then listr else listbg
+		$bgclass = null;
+		if (get_service_status($service))
+			$bgclass = "listr";
+		else
+			$bgclass = "listbg";
+		echo "<td class=\"" . $bgclass . "\" align=\"center\">" . get_service_status_icon($service, false, true) . "</td>\n";
+		echo "<td valign=\"middle\" class=\"list nowrap\">" . get_service_control_links($service) . "</td></tr>\n";
 	}
 } else {
-	echo "<tr><td colspan=\"3\" align=\"center\">" . gettext("No services found") . ".</td></tr>\n";
+	echo "<tr><td colspan=\"3\" align=\"center\">" . gettext("No services found") . " . </td></tr>\n";
 }
 ?>
 </table>

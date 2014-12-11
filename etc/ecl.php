@@ -2,6 +2,7 @@
 /*  
 	external config loader
 	Copyright (C) 2010 Scott Ullrich
+        Copyright (C) 2013-2014 Electric Sheep Fencing, LP
 	All rights reserved.
 
 	Redistribution and use in source and binary forms, with or without
@@ -50,7 +51,7 @@ function get_swap_disks() {
 function get_disk_slices($disk) {
 	global $g, $debug;
 	$slices_array = array();
-	$slices = trim(exec("/bin/ls /dev/{$disk}s* 2>/dev/null"));
+	$slices = trim(exec("/bin/ls " . escapeshellarg("/dev/" . $disk . "s*") . " 2>/dev/null"));
 	$slices = str_replace("/dev/", "", $slices);
 	if($slices == "ls: No match.") 
 		return;
@@ -61,9 +62,8 @@ function get_disk_slices($disk) {
 function get_disks() {
 	global $g, $debug;
 	$disks_array = array();
-	$disks = exec("/sbin/sysctl kern.disks | cut -d':' -f2");
-	$disks_s = explode(" ", $disks);
-	foreach($disks_s as $disk) 
+	$disks_s = explode(" ", get_single_sysctl("kern.disks"));
+	foreach($disks_s as $disk)
 		if(trim($disk))
 			$disks_array[] = $disk;
 	return $disks_array;
@@ -91,7 +91,7 @@ function test_config($file_location) {
 		return;
 	// config.xml was found.  ensure it is sound.
 	$root_obj = trim("<{$g['xml_rootobj']}>");
-	$xml_file_head = exec("/usr/bin/head -2 {$file_location} | /usr/bin/tail -n1");
+	$xml_file_head = exec("/usr/bin/head -2 " . escapeshellarg($file_location) . " | /usr/bin/tail -n1");
 	if($debug) {
 		echo "\nroot obj  = $root_obj";
 		echo "\nfile head = $xml_file_head";

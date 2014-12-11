@@ -61,9 +61,8 @@ fi
 product=`grep product_name /etc/inc/globals.inc | cut -d'"' -f4`
 hidebanner=`grep hidebanner /etc/inc/globals.inc | cut -d'"' -f4`
 
-# Check to see if SSH is listening.
-SSHD=`/usr/bin/sockstat -4l | grep "*.22" | wc -l`
-if [ "$SSHD" -gt 0 ]; then
+# Check to see if SSH is running.
+if pgrep -q -a -F /var/run/sshd.pid sshd >/dev/null 2>&1; then
 	sshd_option="14) Disable Secure Shell (sshd)";
 else
 	sshd_option="14) Enable Secure Shell (sshd)";
@@ -82,16 +81,16 @@ fi
 
 # display a cheap menu
 echo ""
-echo ""
-echo " 0) Logout (SSH only)                  8) Shell"
-echo " 1) Assign Interfaces                  9) pfTop"
-echo " 2) Set interface(s) IP address       10) Filter Logs"
-echo " 3) Reset webConfigurator password    11) Restart webConfigurator"
-echo " 4) Reset to factory defaults         12) ${product} Developer Shell"
-echo " 5) Reboot system                     13) Upgrade from console"
-echo " 6) Halt system                       ${sshd_option}"
-echo " 7) Ping host                         15) Restore recent configuration"
-echo " ${option98}"
+echo " 0) Logout (SSH only)                  9) pfTop"
+echo " 1) Assign Interfaces                 10) Filter Logs"
+echo " 2) Set interface(s) IP address       11) Restart webConfigurator"
+echo " 3) Reset webConfigurator password    12) ${product} Developer Shell"
+echo " 4) Reset to factory defaults         13) Upgrade from console"
+echo " 5) Reboot system                     ${sshd_option}"
+echo " 6) Halt system                       15) Restore recent configuration"
+echo " 7) Ping host                         16) Restart PHP-FPM"
+echo " 8) Shell"
+echo " ${option98} "
 
 if [ "${option99}" != "" ]; then
 	/bin/echo "${option99}"
@@ -134,10 +133,10 @@ case ${opmode} in
         /usr/local/sbin/pftop
         ;;
 10)
-		/usr/sbin/tcpdump -s 256 -v -S -l -n -e -ttt -i pflog0
+		/usr/local/sbin/clog -f /var/log/filter.log
 		;;
 11 | 111)
-		/usr/bin/killall -9 php; /usr/bin/killall -9 lighttpd; /etc/rc.restart_webgui
+		/etc/rc.restart_webgui
 		;;
 12)
 		/usr/local/sbin/pfSsh.php
@@ -152,7 +151,7 @@ case ${opmode} in
 		/etc/rc.restore_config_backup
 		;;
 16)
-		/etc/rc.banner
+		/etc/rc.php-fpm_restart
 		;;
 98)
 		if [ ! -f /tmp/config_moved ]; then
@@ -161,7 +160,7 @@ case ${opmode} in
 		;;
 99)
 		if [ -e /dev/ukbd0 ]; then
-	    	env TERM=cons25 /scripts/lua_installer
+			env TERM=cons25 /scripts/lua_installer
 		else
 			/scripts/lua_installer
 		fi

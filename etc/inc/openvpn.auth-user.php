@@ -5,7 +5,8 @@
     openvpn.auth-user.php
 
     Copyright (C) 2008 Shrew Soft Inc
-    Copyright (C) 2010 Ermal Luçi
+    Copyright (C) 2010 Ermal LuÃ§i
+    Copyright (C) 2013-2014 Electric Sheep Fencing, LP
     All rights reserved.
 
     Redistribution and use in source and binary forms, with or without
@@ -29,7 +30,6 @@
     ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
     POSSIBILITY OF SUCH DAMAGE.
 
-	DISABLE_PHP_LINT_CHECKING
 */
 /*
 	pfSense_BUILDER_BINARIES:	
@@ -57,11 +57,10 @@ function getNasID()
 {
     global $g;
 
-    $nasId = "";
-    exec("/bin/hostname", $nasId);
-    if(!$nasId[0])
-        $nasId[0] = "{$g['product_name']}";
-    return $nasId[0];
+    $nasId = gethostname();
+    if(empty($nasId))
+        $nasId = $g['product_name'];
+    return $nasId;
 }
 }
 
@@ -83,14 +82,30 @@ function getNasIP()
 /* setup syslog logging */
 openlog("openvpn", LOG_ODELAY, LOG_AUTH);
 
-/* read data from environment */
-$username = getenv("username");
-$password = getenv("password");
-$common_name = getenv("common_name");
+if (isset($_GET)) {
+	$authmodes = explode(",", $_GET['authcfg']);
+	$username = $_GET['username'];
+	$password = urldecode($_GET['password']);
+	$common_name = $_GET['cn'];
+	$modeid = $_GET['modeid'];
+	$strictusercn = $_GET['strictcn'] == "false" ? false : true;
+} else {
+	/* read data from environment */
+	$username = getenv("username");
+	$password = getenv("password");
+	$common_name = getenv("common_name");
+}
 
 if (!$username || !$password) {
 	syslog(LOG_ERR, "invalid user authentication environment");
-	exit(-1);
+	if (isset($_GET)) {
+		echo "FAILED";
+		closelog();
+		return;
+	} else {
+		closelog();
+		return (-1);
+	}
 }
 
 /* Replaced by a sed with propper variables used below(ldap parameters). */
@@ -105,7 +120,26 @@ $authenticated = false;
 
 if (($strictusercn === true) && ($common_name != $username)) {
 	syslog(LOG_WARNING, "Username does not match certificate common name ({$username} != {$common_name}), access denied.\n");
-	exit(1);
+	if (isset($_GET)) {
+		echo "FAILED";
+		closelog();
+		return;
+	} else {
+		closelog();
+		return (1);
+	}
+}
+
+if (!is_array($authmodes)) {
+	syslog(LOG_WARNING, "No authentication server has been selected to authenticate against. Denying authentication for user {$username}");
+	if (isset($_GET)) {
+		echo "FAILED";
+		closelog();
+		return;
+	} else {
+		closelog();
+		return (1);
+	}
 }
 
 $attributes = array();
@@ -121,7 +155,14 @@ foreach ($authmodes as $authmode) {
 
 if ($authenticated == false) {
 	syslog(LOG_WARNING, "user '{$username}' could not authenticate.\n");
-	exit(-1);
+	if (isset($_GET)) {
+		echo "FAILED";
+		closelog();
+		return;
+	} else {
+		closelog();
+		return (-1);
+	}
 }
 
 if (file_exists("/etc/inc/openvpn.attributes.php"))
@@ -136,7 +177,7 @@ if (is_array($attributes['dns-servers'])) {
 }
 if (is_array($attributes['routes'])) {
         foreach ($attributes['routes'] as $route)
-                        $content .= "push \"route {$route} vpn_gateway\"\n";
+		$content .= "push \"route {$route} vpn_gateway\"\n";
 }
 
 if (isset($attributes['framed_ip'])) {
@@ -155,7 +196,11 @@ if (!empty($content))
         @file_put_contents("{$g['tmp_path']}/{$username}", $content);
 
 syslog(LOG_NOTICE, "user '{$username}' authenticated\n");
+closelog();
 
-exit(0);
+if (isset($_GET))
+	echo "OK";
+else
+	return (0);
 
 ?>

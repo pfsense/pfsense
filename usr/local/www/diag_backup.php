@@ -3,6 +3,7 @@
 /*
 	diag_backup.php
 	Copyright (C) 2004-2009 Scott Ullrich
+        Copyright (C) 2013-2014 Electric Sheep Fencing, LP
 	All rights reserved.
 
 	originally part of m0n0wall (http://m0n0.ch/wall)
@@ -134,7 +135,7 @@ function restore_rrddata() {
 
 function add_base_packages_menu_items() {
 	global $g, $config;
-	$base_packages = explode($g['base_packages'], ",");
+	$base_packages = explode(",", $g['base_packages']);
 	$modified_config = false;
 	foreach($base_packages as $bp) {
 		$basepkg_path = "/usr/local/pkg/{$bp}";
@@ -187,7 +188,7 @@ function spit_out_select_items($name, $showall) {
 		       "interfaces" => gettext("Interfaces"),
 		       "ipsec" => gettext("IPSEC"),
 		       "nat" => gettext("NAT"),
-		       "ovpn" => gettext("OpenVPN"),
+		       "openvpn" => gettext("OpenVPN"),
 		       "installedpackages" => gettext("Package Manager"),
 		       "pptpd" => gettext("PPTP Server"),
 		       "rrddata" => gettext("RRD Data"),
@@ -203,26 +204,28 @@ function spit_out_select_items($name, $showall) {
 		);
 
 	$select  = "<select name=\"{$name}\" id=\"{$name}\">";
-	$select .= "<option VALUE=\"\">" . gettext("ALL") . "</option>";
+	$select .= "<option value=\"\">" . gettext("ALL") . "</option>";
 
 	if($showall == true)
 		foreach($areas as $area => $areaname)
-			$select .= "<option value='{$area}'>{$areaname}</option>\n";
+			$select .= "<option value=\"{$area}\">{$areaname}</option>\n";
 	else
 		foreach($areas as $area => $areaname)
 			if($area === "rrddata" || check_and_returnif_section_exists($area) == true)
-				$select .= "<option value='{$area}'>{$areaname}</option>\n";
+				$select .= "<option value=\"{$area}\">{$areaname}</option>\n";
 
 	$select .= "</select>\n";
 
 	if ($name === "backuparea") {
 		$select .= <<<END_SCRIPT_BLOCK
-			<script type='text/javascript'>
+			<script type="text/javascript">
+			//<![CDATA[
 				jQuery(function (\$) {
 					$("#{$name}").change(function () {
 						backuparea_change(this);
 					}).trigger("change");
 				});
+			//]]>
 			</script>
 END_SCRIPT_BLOCK;
 	}
@@ -408,6 +411,14 @@ if ($_POST) {
 								if(file_exists("{$g['tmp_path']}/config.cache"))
 									unlink("{$g['tmp_path']}/config.cache");
 								$config = parse_config(true);
+								if (file_exists("/boot/loader.conf")) {
+									$loaderconf = file_get_contents("/boot/loader.conf");
+									if (strpos($loaderconf, "comconsole")) {
+										$config['system']['enableserial'] = true;
+										write_config("Restore serial console enabling in configuration.");
+									}
+									unset($loaderconf);
+								}
 								/* extract out rrd items, unset from $config when done */
 								if($config['rrddata']) {
 									restore_rrddata();
@@ -586,8 +597,8 @@ include("head.inc");
 
 <body link="#0000CC" vlink="#0000CC" alink="#0000CC">
 <?php include("fbegin.inc"); ?>
-<script language="JavaScript">
-<!--
+<script type="text/javascript">
+//<![CDATA[
 
 function encrypt_change() {
 
@@ -614,19 +625,19 @@ function backuparea_change(obj) {
 		document.getElementById("dotnotbackuprrd").disabled = false;
 	}
 }
-//-->
+//]]>
 </script>
 
 <?php if ($input_errors) print_input_errors($input_errors); ?>
 <?php if ($savemsg) print_info_box($savemsg); ?>
-<?php if (is_subsystem_dirty('restore')): ?><p>
+<?php if (is_subsystem_dirty('restore')): ?><br/>
 <form action="reboot.php" method="post">
-<input name="Submit" type="hidden" value=" Yes ">
-<?php print_info_box(gettext("The firewall configuration has been changed.") . "<br/>" . gettext("The firewall is now rebooting."));?><br>
+<input name="Submit" type="hidden" value="Yes" />
+<?php print_info_box(gettext("The firewall configuration has been changed.") . "<br />" . gettext("The firewall is now rebooting."));?><br />
 </form>
 <?php endif; ?>
 <form action="diag_backup.php" method="post" name="iform" enctype="multipart/form-data">
-<table width="100%" border="0" cellspacing="0" cellpadding="0">
+<table width="100%" border="0" cellspacing="0" cellpadding="0" summary="diag backup">
 	<tr>
 		<td>
 <?php
@@ -640,7 +651,7 @@ function backuparea_change(obj) {
 	<tr>
 		<td>
 			<div id="mainarea">
-			<table class="tabcont" align="center" width="100%" border="0" cellpadding="6" cellspacing="0">
+			<table class="tabcont" align="center" width="100%" border="0" cellpadding="6" cellspacing="0" summary="main area">
 				<tr>
 					<td colspan="2" class="listtopic"><?=gettext("Backup configuration"); ?></td>
 				</tr>
@@ -651,7 +662,7 @@ function backuparea_change(obj) {
 						<table>
 							<tr>
 								<td>
-									<input name="nopackages" type="checkbox" class="formcheckbox" id="nopackages">
+									<input name="nopackages" type="checkbox" class="formcheckbox" id="nopackages" />
 								</td>
 								<td>
 									<span class="vexpl"><?=gettext("Do not backup package information."); ?></span>
@@ -661,7 +672,7 @@ function backuparea_change(obj) {
 						<table>
 							<tr>
 								<td>
-									<input name="encrypt" type="checkbox" class="formcheckbox" id="nopackages" onClick="encrypt_change()">
+									<input name="encrypt" type="checkbox" class="formcheckbox" id="nopackages" onclick="encrypt_change()" />
 								</td>
 								<td>
 									<span class="vexpl"><?=gettext("Encrypt this configuration file."); ?></span>
@@ -669,7 +680,7 @@ function backuparea_change(obj) {
 							</tr>
 							<tr>
 								<td>
-									<input name="donotbackuprrd" type="checkbox" class="formcheckbox" id="dotnotbackuprrd" checked>
+									<input name="donotbackuprrd" type="checkbox" class="formcheckbox" id="dotnotbackuprrd" checked="checked" />
 								</td>
 								<td>
 									<span class="vexpl"><?=gettext("Do not backup RRD data (NOTE: RRD Data can consume 4+ megabytes of config.xml space!)"); ?></span>
@@ -694,7 +705,7 @@ function backuparea_change(obj) {
 								</td>
 							</tr>
 						</table>
-						<p><input name="Submit" type="submit" class="formbtn" id="download" value="<?=gettext("Download configuration"); ?>"></p>
+						<p><input name="Submit" type="submit" class="formbtn" id="download" value="<?=gettext("Download configuration"); ?>" /></p>
 					</td>
 				</tr>
 				<tr>
@@ -709,11 +720,11 @@ function backuparea_change(obj) {
 						<?=gettext("Open a"); ?> <?=$g['[product_name']?> <?=gettext("configuration XML file and click the button below to restore the configuration."); ?>
 						<br /><br />
 						<?=gettext("Restore area:"); ?> <?php spit_out_select_items("restorearea", true); ?>
-						<p><input name="conffile" type="file" class="formbtn" id="conffile" size="40"></p>
+						<p><input name="conffile" type="file" class="formbtn" id="conffile" size="40" /></p>
 						<table>
 							<tr>
 								<td>
-									<input name="decrypt" type="checkbox" class="formcheckbox" id="nopackages" onClick="decrypt_change()">
+									<input name="decrypt" type="checkbox" class="formcheckbox" id="nopackages" onclick="decrypt_change()" />
 								</td>
 								<td>
 									<span class="vexpl"><?=gettext("Configuration file is encrypted."); ?></span>
@@ -738,7 +749,7 @@ function backuparea_change(obj) {
 								</td>
 							</tr>
 						</table>
-						<p><input name="Submit" type="submit" class="formbtn" id="restore" value="<?=gettext("Restore configuration"); ?>"></p>
+						<p><input name="Submit" type="submit" class="formbtn" id="restore" value="<?=gettext("Restore configuration"); ?>" /></p>
 						<p><strong><span class="red"><?=gettext("Note:"); ?></span></strong><br /><?=gettext("The firewall will reboot after restoring the configuration."); ?><br /></p>
 					</td>
 				</tr>
@@ -754,14 +765,15 @@ function backuparea_change(obj) {
 					<td width="78%" class="vtable">
 						<?php if ($config['installedpackages']['package'] != "") { ?>
 							<p><?=gettext("Click this button to reinstall all system packages.  This may take a while."); ?> <br /><br />
-							<input name="Submit" type="submit" class="formbtn" id="reinstallpackages" value="<?=gettext("Reinstall packages"); ?>">
-							<br/>
-							<br/>
+							<input name="Submit" type="submit" class="formbtn" id="reinstallpackages" value="<?=gettext("Reinstall packages"); ?>" />
+							<br />
+							<br />
 						<?php } ?>
 						<?php if (is_subsystem_dirty("packagelock")) { ?>
 							<p><?=gettext("Click this button to clear the package lock if a package fails to reinstall properly after an upgrade."); ?> <br /><br />
-							<input name="Submit" type="submit" class="formbtn" id="clearpackagelock" value="<?=gettext("Clear Package Lock"); ?>">
+							<input name="Submit" type="submit" class="formbtn" id="clearpackagelock" value="<?=gettext("Clear Package Lock"); ?>" />
 						<?php } ?>
+							</p>
 					</td>
 				</tr>
 				<?php } ?>
@@ -772,11 +784,11 @@ function backuparea_change(obj) {
 </table>
 </form>
 
-<script language="JavaScript">
-<!--
+<script type="text/javascript">
+//<![CDATA[
 encrypt_change();
 decrypt_change();
-//-->
+//]]>
 </script>
 
 <?php include("fend.inc"); ?>

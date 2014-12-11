@@ -2,6 +2,7 @@
 /*
 	diag_nanobsd.php
 	Copyright (C) 2009 Scott Ullrich <sullrich@gmail.com>
+        Copyright (C) 2013-2014 Electric Sheep Fencing, LP
 	All rights reserved.
 
 	Redistribution and use in source and binary forms, with or without
@@ -28,7 +29,7 @@
 
 /*	
 	pfSense_BUILDER_BINARIES:	/sbin/mount	/sbin/glabel	/usr/bin/grep	/usr/bin/cut	/usr/bin/head	/bin/cp
-	pfSense_BUILDER_BINARIES:	/usr/sbin/boot0cfg	/bin/mkdir	/sbin/fsck_ufs	/sbin/mount	/sbin/sysctl	/bin/dd	/sbin/tunefs
+	pfSense_BUILDER_BINARIES:	/usr/sbin/boot0cfg	/bin/mkdir	/sbin/fsck_ufs	/sbin/mount	/bin/dd	/sbin/tunefs
 	pfSense_MODULE:	nanobsd
 */
 
@@ -108,14 +109,11 @@ if ($_POST['changero']) {
 }
 
 if ($_POST['setrw']) {
-	if (isset($_POST['nanobsd_force_rw'])) {
-		if (!is_writable("/")) {
-			conf_mount_rw();
-		}
+	conf_mount_rw();
+	if (isset($_POST['nanobsd_force_rw']))
 		$config['system']['nanobsd_force_rw'] = true;
-	} else {
+	else
 		unset($config['system']['nanobsd_force_rw']);
-	}
 
 	write_config("Changed Permanent Read/Write Setting");
 	conf_mount_ro();
@@ -139,7 +137,7 @@ if ($savemsg)
 						<strong><?=gettext("NOTE:")?>&nbsp;</strong>
 					</span>
 					<?=gettext("The options on this page are intended for use by advanced users only.")?>
-					<br/>&nbsp;
+					<br />&nbsp;
 				</span>
 				<p/>
 				<table width="100%" border="0" cellpadding="6" cellspacing="0">
@@ -157,8 +155,8 @@ if ($savemsg)
 						<td width="78%" class="vtable">
 							<form action="diag_nanobsd.php" method="post" name="iform">
 								<?=gettext("Bootup slice is currently:");?> <?php echo $ACTIVE_SLICE; ?>
-								<br/><br/><?=gettext("This will switch the bootup slice to the alternate slice.");?>
-								<br/>
+								<br /><br /><?=gettext("This will switch the bootup slice to the alternate slice.");?>
+								<br />
 								<input type='hidden' name='bootslice' value='switch'>
 								<input type='submit' value='Switch Slice'></form>
 						</td>
@@ -175,21 +173,22 @@ if ($savemsg)
 							<form action="diag_nanobsd.php" method="post" name="iform">
 							<?php if (is_writable("/")) {
 								$refcount = refcount_read(1000);
-								if ($refcount == 1) {
+								/* refcount_read returns -1 when shared memory section does not exist */
+								if ($refcount == 1 || $refcount == -1) {
 									$refdisplay = "";
 								} else {
 									$refdisplay = " (reference count " . $refcount . ")";
 								}
 								echo gettext("Read/Write") . $refdisplay;
 								if (!isset($config['system']['nanobsd_force_rw']))
-									echo "<br/><input type='submit' name='changero' value='" . gettext("Switch to Read-Only") . "'>";
+									echo "<br /><input type='submit' name='changero' value='" . gettext("Switch to Read-Only") . "'>";
 							} else {
 								echo gettext("Read-Only");
 								if (!isset($config['system']['nanobsd_force_rw']))
-									echo "<br/><input type='submit' name='changero' value='" . gettext("Switch to Read/Write") . "'>";
+									echo "<br /><input type='submit' name='changero' value='" . gettext("Switch to Read/Write") . "'>";
 							} ?>
 							</form>
-							<br/><?php echo gettext("NOTE: This setting is only temporary, and can be switched dynamically in the background."); ?>
+							<br /><?php echo gettext("NOTE: This setting is only temporary, and can be switched dynamically in the background."); ?>
 						</td>
 					</tr>
 					<tr>
@@ -197,7 +196,7 @@ if ($savemsg)
 						<td valign="top" class="vncell">
 							<form action="diag_nanobsd.php" method="post" name="iform">
 								<input type="checkbox" name="nanobsd_force_rw" <?php if (isset($config['system']['nanobsd_force_rw'])) echo "checked"; ?>> <?php echo gettext("Keep media mounted read/write at all times.") ?>
-								<br/><input type='submit' name='setrw' value='<?php echo gettext("Save") ?>'>
+								<br /><input type='submit' name='setrw' value='<?php echo gettext("Save") ?>'>
 							</form>
 						</td>
 					</tr>
@@ -217,12 +216,11 @@ if ($savemsg)
 										<?php echo "{$COMPLETE_BOOT_PATH} -> {$TOFLASH}"; ?>
 									</option>
 								</select>
-								<br/>
+								<br />
 								<?=gettext("This will duplicate the bootup slice to the alternate slice.  Use this if you would like to duplicate the known good working boot partition to the alternate.");?>
+								<br /><input type='submit' name='duplicateslice' value='<?php echo gettext("Duplicate slice") ?>'>
+							</form>
 						</td>
-					</tr>
-					<tr>
-						<td valign="top" class="">&nbsp;</td><td><br/><input type='submit' value='Duplicate slice'></form></td>
 					</tr>
 					<tr>
 						<td colspan="2" valign="top" class="">&nbsp;</td>
@@ -247,15 +245,15 @@ if ($savemsg)
 						<td width="22%" valign="top" class="vncell"><?=gettext("View previous upgrade log");?></td>
 						<td width="78%" class="vtable">
 						<?php
-							if($_POST['viewupgradelog']) {
+							if ($_POST['viewupgradelog']) {
 								echo "<textarea name='log' cols='80' rows='40'>";
-								echo file_get_contents("/conf/upgrade_log.txt");
+								echo str_ireplace("pfsense", $g['product_name'], file_get_contents("/conf/upgrade_log.txt"));
 								echo "\nFile list:\n";
-								echo file_get_contents("/conf/file_upgrade_log.txt");
+								echo str_ireplace("pfsense", $g['product_name'], file_get_contents("/conf/file_upgrade_log.txt"));
 								echo "\nMisc log:\n";
-								echo file_get_contents("/conf/firmware_update_misc_log.txt");
+								echo str_ireplace("pfsense", $g['product_name'], file_get_contents("/conf/firmware_update_misc_log.txt"));
 								echo "\nfdisk/bsdlabel log:\n";
-								echo file_get_contents("/conf/fdisk_upgrade_log.txt");
+								echo str_ireplace("pfsense", $g['product_name'], file_get_contents("/conf/fdisk_upgrade_log.txt"));
 								echo "</textarea>";
 							} else {
 								echo "<form action='diag_nanobsd.php' method='post' name='iform'>";

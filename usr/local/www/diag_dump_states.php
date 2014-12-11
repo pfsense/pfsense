@@ -1,8 +1,9 @@
 <?php
 /*
 	diag_dump_states.php
-	Copyright (C) 2005-2009 Scott Ullrich
 	Copyright (C) 2005 Colin Smith
+	Copyright (C) 2005-2009 Scott Ullrich
+        Copyright (C) 2013-2014 Electric Sheep Fencing, LP
 	All rights reserved.
 
 	Redistribution and use in source and binary forms, with or without
@@ -40,28 +41,32 @@
 ##|-PRIV
 
 require_once("guiconfig.inc");
+require_once("interfaces.inc");
 
 /* handle AJAX operations */
-if($_GET['action']) {
-	if($_GET['action'] == "remove") {
-		if (is_ipaddr($_GET['srcip']) and is_ipaddr($_GET['dstip'])) {
-			$retval = mwexec("/sbin/pfctl -k " . escapeshellarg($_GET['srcip']) . " -k " . escapeshellarg($_GET['dstip']));
-			echo htmlentities("|{$_GET['srcip']}|{$_GET['dstip']}|{$retval}|");
-		} else {
-			echo gettext("invalid input");
-		}
-		exit;
+if(isset($_POST['action']) && $_POST['action'] == "remove") {
+	if (isset($_POST['srcip']) && isset($_POST['dstip']) && is_ipaddr($_POST['srcip']) && is_ipaddr($_POST['dstip'])) {
+		$retval = pfSense_kill_states($_POST['srcip'], $_POST['dstip']);
+		echo htmlentities("|{$_POST['srcip']}|{$_POST['dstip']}|0|");
+	} else {
+		echo gettext("invalid input");
 	}
+	return;
 }
 
-if ($_GET['filter'] && ($_GET['killfilter'] == "Kill")) {
-	if (is_ipaddr($_GET['filter'])) {
-		$tokill = escapeshellarg($_GET['filter'] . "/32");
-	} elseif (is_subnet($_GET['filter'])) {
-		$tokill = escapeshellarg($_GET['filter']);
+if (isset($_POST['filter']) && isset($_POST['killfilter'])) {
+	if (is_ipaddr($_POST['filter'])) {
+		$tokill = $_POST['filter'] . "/32";
+	} elseif (is_subnet($_POST['filter'])) {
+		$tokill = $_POST['filter'];
+	} else {
+		// Invalid filter
+		$tokill = "";
 	}
-	$retval = mwexec("/sbin/pfctl -k {$tokill} -k 0/0");
-	$retval = mwexec("/sbin/pfctl -k 0.0.0.0/0 -k {$tokill}");
+	if (!empty($tokill)) {
+		$retval = pfSense_kill_states($tokill);
+		$retval = pfSense_kill_states("0.0.0.0/0", $tokill);
+	}
 }
 
 $pgtitle = array(gettext("Diagnostics"),gettext("Show States"));
@@ -71,9 +76,9 @@ include("head.inc");
 
 <body link="#0000CC" vlink="#0000CC" alink="#0000CC" onload="<?=$jsevents["body"]["onload"];?>">
 <?php include("fbegin.inc"); ?>
-<form action="diag_dump_states.php" method="get" name="iform">
 
 <script type="text/javascript">
+//<![CDATA[
 	function removeState(srcip, dstip) {
 		var busy = function(index,icon) {
 			jQuery(icon).bind("onclick","");
@@ -84,9 +89,16 @@ include("head.inc");
 		jQuery('img[name="i:' + srcip + ":" + dstip + '"]').each(busy);
 
 		jQuery.ajax(
-			"<?=$_SERVER['SCRIPT_NAME'];?>" +
-				"?action=remove&srcip=" + srcip + "&dstip=" + dstip,
-			{ type: "get", complete: removeComplete }
+			"<?=$_SERVER['SCRIPT_NAME'];?>",
+			{
+				type: "post",
+				data: {
+					action: "remove",
+					srcip: srcip,
+					dstip: dstip
+				},
+				complete: removeComplete
+			}
 		);
 	}
 
@@ -97,13 +109,14 @@ include("head.inc");
 			return;
 		}
 
-		jQuery('tr[name="r:' + values[1] + ":" + values[2] + '"]').each(
+		jQuery('tr[id="r:' + values[1] + ":" + values[2] + '"]').each(
 			function(index,row) { jQuery(row).fadeOut(1000); }
 		);
 	}
+//]]>
 </script>
 
-<table width="100%" border="0" cellpadding="0" cellspacing="0">
+<table width="100%" border="0" cellpadding="0" cellspacing="0" summary="tabcon">
 	<tr>
 		<td>
 		<?php
@@ -126,20 +139,20 @@ include("head.inc");
 	$current_statecount=`pfctl -si | grep "current entries" | awk '{ print $3 }'`;
 ?>
 
-<table class="tabcont" width="100%" border="0" cellspacing="0" cellpadding="0">
+<table class="tabcont" width="100%" border="0" cellspacing="0" cellpadding="0" summary="states">
 	<tr>
 		<td>
-			<form action="<?=$_SERVER['SCRIPT_NAME'];?>" method="get">
-			<table class="tabcont" width="100%" border="0" cellspacing="0" cellpadding="0">
+			<form action="<?=$_SERVER['SCRIPT_NAME'];?>" method="post" name="iform">
+			<table class="tabcont" width="100%" border="0" cellspacing="0" cellpadding="0" summary="filter">
 				<tr>
 					<td>
 						<?=gettext("Current total state count");?>: <?= $current_statecount ?>
 					</td>
 					<td style="font-weight:bold;" align="right">
 						<?=gettext("Filter expression:");?>
-						<input type="text" name="filter" class="formfld search" value="<?=htmlspecialchars($_GET['filter']);?>" size="30" />
+						<input type="text" name="filter" class="formfld search" value="<?=htmlspecialchars($_POST['filter']);?>" size="30" />
 						<input type="submit" class="formbtn" value="<?=gettext("Filter");?>" />
-					<?php if (is_ipaddr($_GET['filter']) || is_subnet($_GET['filter'])): ?>
+					<?php if (isset($_POST['filter']) && (is_ipaddr($_POST['filter']) || is_subnet($_POST['filter']))): ?>
 						<input type="submit" class="formbtn" name="killfilter" value="<?=gettext("Kill");?>" />
 					<?php endif; ?>
 					</td>
@@ -150,10 +163,11 @@ include("head.inc");
 	</tr>
 	<tr>
 		<td>
-			<table class="tabcont sortable" width="100%" border="0" cellspacing="0" cellpadding="0">
+			<table class="tabcont sortable" width="100%" border="0" cellspacing="0" cellpadding="0" summary="results">
 				<thead>
 				<tr>
-					<th class="listhdrr" width="10%"><?=gettext("Proto");?></th>
+					<th class="listhdrr" width="5%"><?=gettext("Int");?></th>
+					<th class="listhdrr" width="5%"><?=gettext("Proto");?></th>
 					<th class="listhdrr" width="65"><?=gettext("Source -> Router -> Destination");?></th>
 					<th class="listhdr" width="24%"><?=gettext("State");?></th>
 					<th class="list sort_ignore" width="1%"></th>
@@ -163,17 +177,21 @@ include("head.inc");
 <?php
 $row = 0;
 /* get our states */
-$grepline = ($_GET['filter']) ? "| grep " . escapeshellarg(htmlspecialchars($_GET['filter'])) : "";
+$grepline = (isset($_POST['filter'])) ? "| /usr/bin/egrep " . escapeshellarg(htmlspecialchars($_POST['filter'])) : "";
 $fd = popen("/sbin/pfctl -s state {$grepline}", "r" );
 while ($line = chop(fgets($fd))) {
 	if($row >= 10000)
 		break;
 
 	$line_split = preg_split("/\s+/", $line);
-	$type  = array_shift($line_split);
+
+	$iface  = array_shift($line_split);
 	$proto = array_shift($line_split);
 	$state = array_pop($line_split);
 	$info  = implode(" ", $line_split);
+
+	// We may want to make this optional, with a large state table, this could get to be expensive.
+	$iface = convert_real_interface_to_friendly_descr($iface);
 
 	/* break up info and extract $srcip and $dstip */
 	$ends = preg_split("/\<?-\>?/", $info);
@@ -183,8 +201,9 @@ while ($line = chop(fgets($fd))) {
 	$dstip = trim($parts[0]);
 
 ?>
-	<tr valign="top" name="r:<?= $srcip ?>:<?= $dstip ?>">
-			<td class="listlr"><?= $proto ?></td>
+	<tr valign="top" id="r:<?= $srcip ?>:<?= $dstip ?>">
+			<td class="listlr"><?= $iface ?></td>
+			<td class="listr"><?= $proto ?></td>
 			<td class="listr"><?= $info ?></td>
 			<td class="listr"><?= $state ?></td>
 			<td class="list">
@@ -214,7 +233,7 @@ pclose($fd);
 	</tr>
 	<tr>
 		<td class="list" colspan="4" align="center" valign="top">
-		<?php if (!empty($_GET['filter'])): ?>
+		<?php if (isset($_POST['filter']) && !empty($_POST['filter'])): ?>
 			<?=gettext("States matching current filter")?>: <?= $row ?>
 		<?php endif; ?>
 		</td>

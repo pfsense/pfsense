@@ -4,7 +4,8 @@
     ipsec.auth-user.php
 
     Copyright (C) 2008 Shrew Soft Inc
-    Copyright (C) 2010 Ermal Luçi
+    Copyright (C) 2010 Ermal LuÃ§i
+    Copyright (C) 2013-2014 Electric Sheep Fencing, LP
     All rights reserved.
 
     Redistribution and use in source and binary forms, with or without
@@ -28,14 +29,13 @@
     ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
     POSSIBILITY OF SUCH DAMAGE.
 
-	DISABLE_PHP_LINT_CHECKING
 */
 /*
 	pfSense_BUILDER_BINARIES:	
 	pfSense_MODULE:	openvpn
 */
 /*
- * racoon calls this script to authenticate a user
+ * ipsec calls this script to authenticate a user
  * based on a username and password. We lookup these
  * in our config.xml file and check the credentials.
  */
@@ -56,11 +56,10 @@ function getNasID()
 {
     global $g;
 
-    $nasId = "";
-    exec("/bin/hostname", $nasId);
-    if(!$nasId[0])
-        $nasId[0] = "{$g['product_name']}";
-    return $nasId[0];
+    $nasId = gethostname();
+    if(empty($nasId))
+        $nasId = $g['product_name'];
+    return $nasId;
 }
 }
 
@@ -80,32 +79,45 @@ function getNasIP()
 }
 }
 /* setup syslog logging */
-openlog("racoon", LOG_ODELAY, LOG_AUTH);
+openlog("charon", LOG_ODELAY, LOG_AUTH);
 
-/* read data from environment */
-$username = getenv("username");
-$password = getenv("password");
-$common_name = getenv("common_name");
+if (isset($_GET['username'])) {
+	$authmodes = explode(",", $_GET['authcfg']);
+	$username = $_GET['username'];
+	$password = $_GET['password'];
+	$common_name = $_GET['cn'];
+} else {
+	/* read data from environment */
+	$username = getenv("username");
+	$password = getenv("password");
+	$common_name = getenv("common_name");
+	$authmodes = explode(",", getenv("authcfg"));
+}
 
 if (!$username || !$password) {
 	syslog(LOG_ERR, "invalid user authentication environment");
-	exit(-1);
-}
-
-/* Replaced by a sed with propper variables used below(ldap parameters). */
-//<template>
-
-if (file_exists("{$g['varetc_path']}/ipsec/{$modeid}.ca")) {
-	//putenv("LDAPTLS_CACERT={$g['varetc_path']}/ipsec/{$ikeid}.crt");
-	putenv("LDAPTLS_CACERTDIR={$g['varetc_path']}/ipsec");
-	putenv("LDAPTLS_REQCERT=never");
+	if (isset($_GET['username'])) {
+		echo "FAILED";
+		closelog();
+		return;
+	} else {
+		closelog();
+		exit (-1);
+	}
 }
 
 $authenticated = false;
 
 if (($strictusercn === true) && ($common_name != $username)) {
 	syslog(LOG_WARNING, "Username does not match certificate common name ({$username} != {$common_name}), access denied.\n");
-	exit(1);
+	if (isset($_GET['username'])) {
+		echo "FAILED";
+		closelog();
+		return;
+	} else {
+		closelog();
+		exit (1);
+	}
 }
 
 $attributes = array();
@@ -120,7 +132,7 @@ foreach ($authmodes as $authmode) {
 			$user = getUserEntry($username); 
 			if (!is_array($user) || !userHasPrivilege($user, "user-ipsec-xauth-dialin")) {
 				$authenticated = false;
-				syslog(LOG_WARNING, "user '{$username}' cannot authenticate through IPSec since the required privileges are missing.\n");
+				syslog(LOG_WARNING, "user '{$username}' cannot authenticate through IPsec since the required privileges are missing.\n");
 				continue;
 			}
 		}
@@ -130,14 +142,25 @@ foreach ($authmodes as $authmode) {
 
 if ($authenticated == false) {
 	syslog(LOG_WARNING, "user '{$username}' could not authenticate.\n");
-	exit(-1);
+	if (isset($_GET['username'])) {
+		echo "FAILED";
+		closelog();
+		return;
+	} else {
+		closelog();
+		exit (-1);
+	}
 }
 
 if (file_exists("/etc/inc/ipsec.attributes.php"))
         include_once("/etc/inc/ipsec.attributes.php");
         
 syslog(LOG_NOTICE, "user '{$username}' authenticated\n");
+closelog();
 
-exit(0);
+if (isset($_GET['username']))
+	echo "OK";
+else
+	exit (0);
 
 ?>

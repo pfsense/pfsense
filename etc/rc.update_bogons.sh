@@ -2,7 +2,7 @@
 
 # Update bogons file
 # Part of the pfSense project
-# www.pfsense.com
+# https://www.pfsense.org
 
 # Global variables
 proc_error=""
@@ -14,7 +14,7 @@ process_url() {
 	local filename=${url##*/}
 	local ext=${filename#*.}
 	
-	/usr/bin/fetch -q -o $file "${url}"
+	/usr/bin/fetch -a -w 600 -T 30 -q -o $file "${url}"
 	
 	if [ ! -f $file ]; then
 		echo "Could not download ${url}" | logger
@@ -70,8 +70,8 @@ if [ -f /var/etc/bogon_custom ]; then
 fi
 
 # Set default values if not overriden
-v4url=${v4url:-"http://files.pfsense.org/lists/fullbogons-ipv4.txt"}
-v6url=${v6url:-"http://files.pfsense.org/lists/fullbogons-ipv6.txt"}
+v4url=${v4url:-"https://files.pfsense.org/lists/fullbogons-ipv4.txt"}
+v6url=${v6url:-"https://files.pfsense.org/lists/fullbogons-ipv6.txt"}
 v4urlcksum=${v4urlcksum:-"${v4url}.md5"}
 v6urlcksum=${v6urlcksum:-"${v6url}.md5"}
 
@@ -84,9 +84,9 @@ if [ "$proc_error" != "" ]; then
 	exit
 fi
 
-BOGON_V4_CKSUM=`/usr/bin/fetch -q -o - "${v4urlcksum}" | awk '{ print $4 }'`
+BOGON_V4_CKSUM=`/usr/bin/fetch -T 30 -q -o - "${v4urlcksum}" | awk '{ print $4 }'`
 ON_DISK_V4_CKSUM=`md5 /tmp/bogons | awk '{ print $4 }'`
-BOGON_V6_CKSUM=`/usr/bin/fetch -q -o - "${v6urlcksum}" | awk '{ print $4 }'`
+BOGON_V6_CKSUM=`/usr/bin/fetch -T 30 -q -o - "${v6urlcksum}" | awk '{ print $4 }'`
 ON_DISK_V6_CKSUM=`md5 /tmp/bogonsv6 | awk '{ print $4 }'`
 
 if [ "$BOGON_V4_CKSUM" = "$ON_DISK_V4_CKSUM" ] || [ "$BOGON_V6_CKSUM" = "$ON_DISK_V6_CKSUM" ]; then

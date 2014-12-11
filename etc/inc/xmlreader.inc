@@ -36,35 +36,44 @@
 
 /* The following items will be treated as arrays in config.xml */
 function listtags() {
-  /* Please keep this list alpha sorted and no longer than 80 characters
-   * I know it's a pain, but it's a pain to find stuff too if it's not
-   */
-	$ret = explode(" ",
-                "alias aliasurl allowedip authserver bridged ca cacert cert crl clone config ".
-                "container columnitem depends_on_package disk dnsserver dnsupdate ".
-                "domainoverrides dyndns earlyshellcmd element encryption-algorithm-option ".
-                "field fieldname hash-algorithm-option gateway_item gateway_group gif gre ".
-                "group hosts member ifgroupentry igmpentry interface_array item key lagg " .
-                "lbaction lbpool l7rules lbprotocol ".
-                "member menu tab mobilekey monitor_type mount ntpserver onetoone ".
-                "openvpn-server openvpn-client openvpn-csc " .
-                "option package passthrumac phase1 phase2 ppp pppoe priv proxyarpnet qinqentry queue ".
-                "pages pipe roll route row rrddatafile rule schedule service servernat servers ".
-                "serversdisabled earlyshellcmd shellcmd staticmap subqueue timerange ".
-                "tunnel user vip virtual_server vlan winsserver wolentry widget npt pool"
-                );
+	/*
+         * Please keep this list alpha sorted and no longer than 80 characters
+         * I know it's a pain, but it's a pain to find stuff too if it's not
+         */
+	$ret = array(
+		'acls', 'alias', 'aliasurl', 'allowedip', 'allowedhostname', 'authserver',
+		'bridged', 'build_port_path',
+		'ca', 'cacert', 'cert', 'crl', 'clone', 'config', 'container', 'columnitem',
+		'depends_on_package', 'disk', 'dnsserver', 'dnsupdate', 'domainoverrides', 'dyndns',
+		'earlyshellcmd', 'element', 'encryption-algorithm-option',
+		'field', 'fieldname',
+		'gateway_item', 'gateway_group', 'gif', 'gre', 'group',
+		'hash-algorithm-option', 'hosts', 'member', 'ifgroupentry', 'igmpentry', 'interface_array', 'item', 'key',
+		'lagg', 'lbaction', 'lbpool', 'l7rules', 'lbprotocol',
+		'member', 'menu', 'tab', 'mobilekey', 'monitor_type', 'mount',
+		'npt', 'ntpserver',
+		'onetoone', 'openvpn-server', 'openvpn-client', 'openvpn-csc', 'option',
+		'package', 'passthrumac', 'phase1', 'phase2', 'ppp', 'pppoe', 'priv', 'proxyarpnet', 'pool',
+		'qinqentry', 'queue',
+		'pages', 'pipe', 'radnsserver', 'roll', 'route', 'row', 'rrddatafile', 'rule',
+		'schedule', 'service', 'servernat', 'servers',
+		'serversdisabled', 'shellcmd', 'staticmap', 'subqueue',
+		'timerange', 'tunnel', 'user', 'vip', 'virtual_server', 'vlan',
+		'winsserver', 'wolentry', 'widget'
+	);
 	return array_flip($ret);
 }
 
 /* Package XML tags that should be treat as a list not as a traditional array */
 function listtags_pkg() {
-	$ret = array("depends_on_package", "onetoone", "queue", "rule", "servernat", "alias", "additional_files_needed", "tab", "template", "menu", "rowhelperfield", "service", "step", "package", "columnitem", "option", "item", "field", "package", "file");
+	$ret = array('depends_on_package', 'onetoone', 'queue', 'rule', 'servernat', 'alias', 'additional_files_needed', 'tab', 'template', 'menu', 'rowhelperfield', 'service', 'step', 'package', 'columnitem', 'option', 'item', 'field', 'package', 'file');
 
 	return array_flip($ret);
 }
 
 function add_elements(&$cfgarray, &$parser) {
         global $listtags;
+
         while ($parser->read()) {
                 switch ($parser->nodeType) {
                 case XMLReader::WHITESPACE:
@@ -72,13 +81,40 @@ function add_elements(&$cfgarray, &$parser) {
                         break;
                 case XMLReader::ELEMENT:
                         if (isset($listtags[strtolower($parser->name)])) {
-                        	if (!$parser->isEmptyElement)
-                                        add_elements($cfgarray[$parser->name][], $parser);
+				$cfgref =& $cfgarray[$parser->name][count($cfgarray[$parser->name])];
+                        	if (!$parser->isEmptyElement) {
+                                        add_elements($cfgref, $parser);
+				} else
+					$cfgref = array();
+					
                         } else {
-                        	if ($parser->isEmptyElement)
-					$cfgarray[$parser->name] = "";
-				else
-                        		add_elements($cfgarray[$parser->name], $parser);
+				if (isset($cfgarray[$parser->name]) && (!is_array($cfgarray[$parser->name]) || !isset($cfgarray[$parser->name][0]))) {
+					$nodebkp = $cfgarray[$parser->name];
+					$cfgarray[$parser->name] = array();
+					$cfgarray[$parser->name][] = $nodebkp;
+					$cfgref =& $cfgarray[$parser->name][0];
+					unset($nodebkp);
+				} else
+					$cfgref =& $cfgarray[$parser->name];
+
+                        	if ($parser->isEmptyElement) {
+					if (is_array($cfgref))
+						$cfgref[] = array();
+					else
+						$cfgref = "";
+				} else {
+					if (is_array($cfgref)) {
+						$cfgref =& $cfgarray[$parser->name][count($cfgarray[$parser->name])];
+						add_elements($cfgref, $parser);
+					} else
+						add_elements($cfgref, $parser);
+				}
+			}
+
+			$i = 0;
+			while ($parser->moveToAttributeNo($i)) {
+				$cfgref[$parser->name] = $parser->value;
+				$i++;
 			}
                         break;
                 case XMLReader::TEXT:
@@ -96,6 +132,7 @@ function add_elements(&$cfgarray, &$parser) {
 
 function parse_xml_config($cffile, $rootobj, $isstring = "false") {
 	global $listtags;
+
 	$listtags = listtags();
         if (isset($GLOBALS['custom_listtags'])) {
           foreach($GLOBALS['custom_listtags'] as $tag) {
@@ -108,6 +145,7 @@ function parse_xml_config($cffile, $rootobj, $isstring = "false") {
 
 function parse_xml_config_pkg($cffile, $rootobj, $isstring = "false") {
 	global $listtags;
+
 	$listtags = listtags_pkg();
         if (isset($GLOBALS['custom_listtags_pkg'])) {
           foreach($GLOBALS['custom_listtags_pkg'] as $tag) {
@@ -118,6 +156,7 @@ function parse_xml_config_pkg($cffile, $rootobj, $isstring = "false") {
 }
 
 function parse_xml_config_raw($cffile, $rootobj, $isstring = "false") {
+	global $listtags;
 
 	$parsedcfg = array();
 
@@ -184,6 +223,7 @@ function dump_xml_config_sub(& $writer, $arr) {
 
 function dump_xml_config($arr, $rootobj) {
 	global $listtags;
+
 	$listtags = listtags();
         if (isset($GLOBALS['custom_listtags'])) {
           foreach($GLOBALS['custom_listtags'] as $tag) {
@@ -195,6 +235,7 @@ function dump_xml_config($arr, $rootobj) {
 
 function dump_xml_config_pkg($arr, $rootobj) {
 	global $listtags;
+
 	$listtags = listtags_pkg();
         if (isset($GLOBALS['custom_listtags_pkg'])) {
           foreach($GLOBALS['custom_listtags_pkg'] as $tag) {
@@ -218,6 +259,7 @@ function dump_xml_config_raw($arr, $rootobj) {
         $writer->endElement();
         $writer->endDocument();
         $xmlconfig = $writer->outputMemory(true);
+
         return $xmlconfig;
 }
 

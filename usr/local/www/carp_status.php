@@ -2,6 +2,7 @@
 /*
     carp_status.php
     Copyright (C) 2004 Scott Ullrich
+    Copyright (C) 2013-2014 Electric Sheep Fencing, LP
     All rights reserved.
 
     Redistribution and use in source and binary forms, with or without
@@ -34,11 +35,11 @@
 ##|-PRIV
 
 /*
-	pfSense_BUILDER_BINARIES:	/sbin/sysctl	
 	pfSense_MODULE:	carp
 */
 
 require_once("guiconfig.inc");
+require_once("globals.inc");
 
 function gentitle_pkg($pgname) {
 	global $config;
@@ -50,44 +51,50 @@ unset($carp_interface_count_cache);
 unset($interface_ip_arr_cache);
 
 $status = get_carp_status();
+$status = intval($status);
+if($_POST['carp_maintenancemode'] <> "") {
+	interfaces_carp_set_maintenancemode(!isset($config["virtualip_carp_maintenancemode"]));
+}
 if($_POST['disablecarp'] <> "") {
-	if($status == true) {
-		mwexec("/sbin/sysctl net.inet.carp.allow=0");
+	if($status > 0) {
+		set_single_sysctl('net.inet.carp.allow', '0');
 		if(is_array($config['virtualip']['vip'])) {
 			$viparr = &$config['virtualip']['vip'];
-                	foreach ($viparr as $vip) {
-                               	switch ($vip['mode']) {
-                                       	case "carp":
-                                       		interface_vip_bring_down($vip);
-                                       		sleep(1);
-                                       	break;
-                               	}
-                	}
-        	}
+			foreach ($viparr as $vip) {
+				switch ($vip['mode']) {
+				case "carp":
+					interface_vip_bring_down($vip);
+					sleep(1);
+					break;
+				}
+			}
+		}
 		$savemsg = sprintf(gettext("%s IPs have been disabled. Please note that disabling does not survive a reboot."), $carp_counter);
+		$status = 0;
 	} else {
 		$savemsg = gettext("CARP has been enabled.");
 		if(is_array($config['virtualip']['vip'])) {
-                        $viparr = &$config['virtualip']['vip'];
-                        foreach ($viparr as $vip) {
+			$viparr = &$config['virtualip']['vip'];
+			foreach ($viparr as $vip) {
 				switch ($vip['mode']) {
-					case "carp":
-						interface_carp_configure($vip);
-						sleep(1);
+				case "carp":
+					interface_carp_configure($vip);
+					sleep(1);
 					break;
-					case "ipalias":
-						if (strstr($vip['interface'], "_vip"))
-							interface_ipalias_configure($vip);
+				case 'ipalias':
+					if (strpos($vip['interface'], '_vip'))
+						interface_ipalias_configure($vip);
 					break;
-                                }
-                        }
-                }
-		interfaces_carp_setup();
-		mwexec("/sbin/sysctl net.inet.carp.allow=1");
+				}
+			}
+		}
+		interfaces_sync_setup();
+		set_single_sysctl('net.inet.carp.allow', '1');
+		$status = 1;
 	}
 }
 
-$status = get_carp_status();
+$carp_detected_problems = ((get_single_sysctl("net.inet.carp.demotion")) > 0);
 
 $pgtitle = array(gettext("Status"),gettext("CARP"));
 $shortcut_section = "carp";
@@ -100,8 +107,11 @@ include("head.inc");
 <form action="carp_status.php" method="post">
 <?php if ($savemsg) print_info_box($savemsg); ?>
 
+<?PHP	if ($carp_detected_problems) print_info_box(gettext("CARP has detected a problem and this unit has been demoted to BACKUP status.") . "<br />" . gettext("Check link status on all interfaces with configured CARP VIPs.")); ?>
+
+
 <div id="mainlevel">
-	<table width="100%" border="0" cellpadding="0" cellspacing="0">
+	<table width="100%" border="0" cellpadding="0" cellspacing="0" summary="carp status">
 		<tr>
 			<td>
 <?php
@@ -115,33 +125,37 @@ include("head.inc");
 				}
 			}
 			if($carpcount > 0) {
-				if($status == false) {
-					$carp_enabled = false;
-					echo "<input type=\"submit\" name=\"disablecarp\" id=\"disablecarp\" value=\"" . gettext("Enable Carp") . "\">";
-				} else {
+				if($status > 0) {
 					$carp_enabled = true;
-					echo "<input type=\"submit\" name=\"disablecarp\" id=\"disablecarp\" value=\"" . gettext("Disable Carp") . "\">";
+					echo "<input type=\"submit\" name=\"disablecarp\" id=\"disablecarp\" value=\"" . gettext("Temporarily Disable CARP") . "\" />";
+				} else {
+					$carp_enabled = false;
+					echo "<input type=\"submit\" name=\"disablecarp\" id=\"disablecarp\" value=\"" . gettext("Enable CARP") . "\" />";
+				}
+				if(isset($config["virtualip_carp_maintenancemode"])) {
+					echo "<input type=\"submit\" name=\"carp_maintenancemode\" id=\"carp_maintenancemode\" value=\"" . gettext("Leave Persistent CARP Maintenance Mode") . "\" />";
+				} else {
+					echo "<input type=\"submit\" name=\"carp_maintenancemode\" id=\"carp_maintenancemode\" value=\"" . gettext("Enter Persistent CARP Maintenance Mode") . "\" />";
 				}
 			}
 ?>
 
-			<p>
-			<table class="tabcont sortable" width="100%" border="0" cellpadding="6" cellspacing="0">
+			<br/><br/>
+			<table class="tabcont sortable" width="100%" border="0" cellpadding="6" cellspacing="0" summary="results">
 				<tr>
-					<td class="listhdrr"><b><center><?=gettext("CARP Interface"); ?></center></b></td>
-					<td class="listhdrr"><b><center><?=gettext("Virtual IP"); ?></center></b></td>
-					<td class="listhdrr"><b><center><?=gettext("Status"); ?></center></b></td>
+					<td class="listhdrr" align="center"><?=gettext("CARP Interface"); ?></td>
+					<td class="listhdrr" align="center"><?=gettext("Virtual IP"); ?></td>
+					<td class="listhdrr" align="center"><?=gettext("Status"); ?></td>
 				</tr>
 <?php
 				if ($carpcount == 0) {
-					echo "</td></tr></table></table></div><center><br>" . gettext("Could not locate any defined CARP interfaces.");
+					echo "</table></td></tr></table></div></form><center><br />" . gettext("Could not locate any defined CARP interfaces.");
 					echo "</center>";
 
 					include("fend.inc");
 					echo "</body></html>";
-					exit;
+					return;
 				}
-
 				if(is_array($config['virtualip']['vip'])) {
 					foreach($config['virtualip']['vip'] as $carp) {
 						if ($carp['mode'] != "carp")
@@ -152,25 +166,24 @@ include("head.inc");
 						$vhid = $carp['vhid'];
 						$advskew = $carp['advskew'];
 						$advbase = $carp['advbase'];
-						$carp_int = "{$carp['interface']}_vip{$vhid}";
-						$status = get_carp_interface_status($carp_int);
+						$status = get_carp_interface_status("{$carp['interface']}_vip{$carp['vhid']}");
 						echo "<tr>";
-						$align = "valign='middle'";
+						$align = "style=\"vertical-align:middle\"";
 						if($carp_enabled == false) {
-							$icon = "<img {$align} src='/themes/".$g['theme']."/images/icons/icon_block.gif'>";
+							$icon = "<img {$align} src=\"/themes/".$g['theme']."/images/icons/icon_block.gif\" alt=\"disabled\" />";
 							$status = "DISABLED";
 						} else {
 							if($status == "MASTER") {
-								$icon = "<img {$align} src='/themes/".$g['theme']."/images/icons/icon_pass.gif'>";
+								$icon = "<img {$align} src=\"/themes/".$g['theme']."/images/icons/icon_pass.gif\" alt=\"master\" />";
 							} else if($status == "BACKUP") {
-								$icon = "<img {$align} src='/themes/".$g['theme']."/images/icons/icon_pass_d.gif'>";
+								$icon = "<img {$align} src=\"/themes/".$g['theme']."/images/icons/icon_pass_d.gif\" alt=\"backup\" />";
 							} else if($status == "INIT") {
-								$icon = "<img {$align} src='/themes/".$g['theme']."/images/icons/icon_log.gif'>";
+								$icon = "<img {$align} src=\"/themes/".$g['theme']."/images/icons/icon_log.gif\" alt=\"init\" />";
 							}
 						}
-						echo "<td class=\"listlr\"><center>" . $carp_int . "&nbsp;</td>";
-						echo "<td class=\"listlr\"><center>" . $ipaddress . "&nbsp;</td>";
-						echo "<td class=\"listlr\"><center>{$icon}&nbsp;&nbsp;" . $status . "&nbsp;</td>";
+						echo "<td class=\"listlr\" align=\"center\">" . convert_friendly_interface_to_friendly_descr($carp['interface']) . "@{$vhid} &nbsp;</td>";
+						echo "<td class=\"listlr\" align=\"center\">" . $ipaddress . "&nbsp;</td>";
+						echo "<td class=\"listlr\" align=\"center\">{$icon}&nbsp;&nbsp;" . $status . "&nbsp;</td>";
 						echo "</tr>";
 					}
 				}
@@ -180,19 +193,16 @@ include("head.inc");
 		</tr>
 	</table>
 </div>
+</form>
 
-<p/>
-
-<span class="vexpl">
+<p class="vexpl">
 <span class="red"><strong><?=gettext("Note"); ?>:</strong></span>
 <br />
 <?=gettext("You can configure high availability sync settings"); ?> <a href="system_hasync.php"><?=gettext("here"); ?></a>.
-</span>
-
-<p/>
+</p>
 
 <?php
-	echo "<br>" . gettext("pfSync nodes") . ":<br>";
+	echo "<br />" . gettext("pfSync nodes") . ":<br />";
 	echo "<pre>";
 	system("/sbin/pfctl -vvss | /usr/bin/grep creator | /usr/bin/cut -d\" \" -f7 | /usr/bin/sort -u");
 	echo "</pre>";

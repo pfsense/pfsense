@@ -255,7 +255,7 @@ class Auth_RADIUS extends PEAR {
     function dumpAttributes()
     {
         foreach ($this->attributes as $name => $data) {
-            echo "$name:$data<br>\n";
+            echo "$name:$data<br />\n";
         }
     }
 
@@ -644,6 +644,16 @@ class Auth_RADIUS extends PEAR {
                     }
                 }
 
+		elseif ($vendor == 9) { /* RADIUS_VENDOR_CISCO */
+			switch ($attrv) {
+			case 1: /* Cisco-AVPair */
+				if (!is_array($this->attributes['ciscoavpair']))
+					$this->attributes['ciscoavpair'] = array();
+				$this->attributes['ciscoavpair'][] = radius_cvt_string($datav);
+				break;
+			}
+		}
+
                 elseif ($vendor == 8744) { /* Colubris / HP MSM wireless */
                     //documented at http://bizsupport1.austin.hp.com/bc/docs/support/SupportManual/c02704528/c02704528.pdf pg 15-67
                     if ($attrv == 0) { /* Colubris AV-Pair */
@@ -676,7 +686,7 @@ class Auth_RADIUS extends PEAR {
                 break;
 
             case 85: /* Acct-Interim-Interval: RFC 2869 */
-                $this->attributes['interim_interval'] = radius_cvt_int($datav[1]);
+                $this->attributes['interim_interval'] = radius_cvt_int($data);
                 break;
             }
         }

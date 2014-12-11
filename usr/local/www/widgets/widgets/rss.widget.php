@@ -1,8 +1,10 @@
 <?php
 /*
         $Id$
+        Copyright (C) 2013-2014 Electric Sheep Fencing, LP
+
         Copyright 2009 Scott Ullrich
-        Part of pfSense widgets (www.pfsense.com)
+        Part of pfSense widgets (https://www.pfsense.org)
 
         Redistribution and use in source and binary forms, with or without
         modification, are permitted provided that the following conditions are met:
@@ -33,12 +35,12 @@ require_once("pfsense-utils.inc");
 require_once("functions.inc");
 
 if($_POST['rssfeed']) {
-	$config['widgets']['rssfeed'] = str_replace("\n", ",", $_POST['rssfeed']);
-	$config['widgets']['rssmaxitems'] = str_replace("\n", ",", $_POST['rssmaxitems']);
-	$config['widgets']['rsswidgetheight'] = $_POST['rsswidgetheight'];
-	$config['widgets']['rsswidgettextlength'] = $_POST['rsswidgettextlength'];
+	$config['widgets']['rssfeed'] = str_replace("\n", ",", htmlspecialchars($_POST['rssfeed'], ENT_QUOTES | ENT_HTML401));
+	$config['widgets']['rssmaxitems'] = str_replace("\n", ",", htmlspecialchars($_POST['rssmaxitems'], ENT_QUOTES | ENT_HTML401));
+	$config['widgets']['rsswidgetheight'] = htmlspecialchars($_POST['rsswidgetheight'], ENT_QUOTES | ENT_HTML401);
+	$config['widgets']['rsswidgettextlength'] = htmlspecialchars($_POST['rsswidgettextlength'], ENT_QUOTES | ENT_HTML401);
 	write_config("Saved RSS Widget feed via Dashboard");
-	Header("Location: /");
+	header("Location: /");
 }
 
 // Use saved feed and max items
@@ -48,16 +50,16 @@ if($config['widgets']['rssfeed'])
 if($config['widgets']['rssmaxitems'])
 	$max_items =  $config['widgets']['rssmaxitems'];
 
-if($config['widgets']['rsswidgetheight'])
+if(is_numeric($config['widgets']['rsswidgetheight']))
 	$rsswidgetheight =  $config['widgets']['rsswidgetheight'];
 
-if($config['widgets']['rsswidgettextlength'])
+if(is_numeric($config['widgets']['rsswidgettextlength']))
 	$rsswidgettextlength =  $config['widgets']['rsswidgettextlength'];
 
 // Set a default feed if none exists
 if(!$rss_feed_s) {
-	$rss_feed_s = "http://blog.pfsense.org";
-	$config['widgets']['rssfeed'] = "http://blog.pfsense.org";
+	$rss_feed_s = "https://blog.pfsense.org";
+	$config['widgets']['rssfeed'] = "https://blog.pfsense.org";
 }
 
 if(!$max_items)
@@ -81,7 +83,7 @@ else
 <div id="rss-settings" class="widgetconfigdiv" style="display:none;">
 	<form action="/widgets/widgets/rss.widget.php" method="post" name="iformc">
 		<textarea name="rssfeed" class="formfld unknown textarea_widget" id="rssfeed" cols="40" rows="3"><?=$textarea_txt;?></textarea>
-		<br/>
+		<br />
 		<table summary="rss widget">
 			<tr>
 				<td align="right">
@@ -161,11 +163,11 @@ else
 	foreach($feed->get_items() as $item) {
 		$feed = $item->get_feed();
 		$feed->strip_htmltags();
-		echo "<a target='blank' href='" . $item->get_permalink() . "'>" . $item->get_title() . "</a><br/>";
+		echo "<a target='blank' href='" . $item->get_permalink() . "'>" . $item->get_title() . "</a><br />";
 		$content = $item->get_content();
 		$content = strip_tags($content);
-		echo textLimit($content, $rsswidgettextlength) . "<br/>";
-		echo "Source: <a target='_blank' href='" . $item->get_permalink() . "'><img src='" . $feed->get_favicon() . "' alt='" . $feed->get_title() . "' title='" . $feed->get_title() . "' border='0' width='16' height='16' /></a><br/>";
+		echo textLimit($content, $rsswidgettextlength) . "<br />";
+		echo "Source: <a target='_blank' href='" . $item->get_permalink() . "'><img src='" . $feed->get_favicon() . "' alt='" . $feed->get_title() . "' title='" . $feed->get_title() . "' border='0' width='16' height='16' /></a><br />";
 		$counter++;
 		if($counter > $max_items)
 			break;

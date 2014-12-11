@@ -2,6 +2,7 @@
 /*
 	edit.php
 	Copyright (C) 2004, 2005 Scott Ullrich
+        Copyright (C) 2013-2014 Electric Sheep Fencing, LP
 	All rights reserved.
 
 	Redistribution and use in source and binary forms, with or without
@@ -86,17 +87,19 @@ if($_POST['action']) {
 	exit;
 }
 
+$closehead = false;
 require("head.inc");
 outputCSSFileInline("code-syntax-highlighter/SyntaxHighlighter.css");
 outputJavaScriptFileInline("filebrowser/browser.js");
 outputJavaScriptFileInline("javascript/base64.js");
 
 ?>
-
+</head>
 <body link="#000000" vlink="#000000" alink="#000000">
 <?php include("fbegin.inc"); ?>
 
 <script type="text/javascript">	
+//<![CDATA[
 	function loadFile() {
 		jQuery("#fileStatus").html("<?=gettext("Loading file"); ?> ...");
 		jQuery("#fileStatusBox").show(500);
@@ -159,6 +162,7 @@ outputJavaScriptFileInline("javascript/base64.js");
 			}
 		);
 	}
+//]]>
 </script>
 
 <!-- file status box -->
@@ -170,12 +174,12 @@ outputJavaScriptFileInline("javascript/base64.js");
 
 <br />
 
-<table width="100%" border="0" cellpadding="0" cellspacing="0">
+<table width="100%" border="0" cellpadding="0" cellspacing="0" summary="file editor">
 	<tr>
 		<td class="tabcont" align="center">
 
 <!-- controls -->
-<table width="100%" cellpadding="9" cellspacing="9">
+<table width="100%" cellpadding="9" cellspacing="9" summary="controls">
 	<tr>
 		<td align="center" class="list">
 			<?=gettext("Save / Load from path"); ?>:
@@ -197,11 +201,18 @@ outputJavaScriptFileInline("javascript/base64.js");
 <div id="fbBrowser" style="display:none; border:1px dashed gray; width:98%;"></div>
 
 <!-- file viewer/editor -->
-<table width="100%">
+<table width="100%" summary="file editor">
 	<tr>
 		<td valign="top">
 			<div style="background:#eeeeee;" id="fileOutput">
-				<textarea id="fileContent" name="fileContent" style="width:100%;" rows="30" wrap="off"></textarea>
+				<script type="text/javascript">
+				//<![CDATA[
+				window.onload=function(){
+					document.getElementById("fileContent").wrap='off';
+				}
+				//]]>
+				</script>
+				<textarea id="fileContent" name="fileContent" style="width:100%;" rows="30" cols=""></textarea>
 			</div>
 		</td>
 	</tr>
@@ -217,6 +228,7 @@ outputJavaScriptFileInline("javascript/base64.js");
 <script type="text/javascript" src="/code-syntax-highlighter/shBrushPhp.js"></script>
 <script type="text/javascript" src="/code-syntax-highlighter/shBrushXml.js"></script>
 <script type="text/javascript">
+//<![CDATA[
 	jQuery(window).load(
 		function() {
 			jQuery("#fbTarget").focus();
@@ -229,11 +241,12 @@ outputJavaScriptFileInline("javascript/base64.js");
 	<?php if($_GET['action'] == "load"): ?>
 		jQuery(window).load(
 			function() {
-				jQuery("#fbTarget").val("<?=$_GET['path'];?>");
+				jQuery("#fbTarget").val("<?=htmlspecialchars($_GET['path']);?>");
 				loadFile();
 			}
 		);
 	<?php endif; ?>
+//]]>
 </script>
 
 <?php include("fend.inc"); ?>

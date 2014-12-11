@@ -3,9 +3,10 @@
 /*
 	diag_ipsec_spd.php
 	Copyright (C) 2004-2009 Scott Ullrich
+        Copyright (C) 2013-2014 Electric Sheep Fencing, LP
 	All rights reserved.
 
-	originially part of m0n0wall (http://m0n0.ch/wall)
+	originally part of m0n0wall (http://m0n0.ch/wall)
 	Copyright (C) 2003-2004 Manuel Kasper <mk@neon1.net>.
 	All rights reserved.
 
@@ -32,7 +33,7 @@
 */
 
 /*
-	pfSense_BUILDER_BINARIES:	/usr/local/sbin/setkey
+	pfSense_BUILDER_BINARIES:	/sbin/setkey
 	pfSense_MODULE:	ipsec
 */
 
@@ -50,30 +51,21 @@ $pgtitle = array(gettext("Status"),gettext("IPsec"),gettext("SPD"));
 $shortcut_section = "ipsec";
 include("head.inc");
 
-/* delete any SP? */
-if ($_GET['act'] == "del") {
-	$fd = @popen("/usr/local/sbin/setkey -c > /dev/null 2>&1", "w");
-	if ($fd) {
-		fwrite($fd, "spddelete {$_GET['srcid']} {$_GET['dstid']} any -P {$_GET['dir']} ;\n");
-		pclose($fd);
-		sleep(1);
-	}
-}
-
 $spd = ipsec_dump_spd();
 ?>
 
 <body link="#0000CC" vlink="#0000CC" alink="#0000CC">
 	<?php include("fbegin.inc"); ?>
-	<table width="100%" border="0" cellpadding="0" cellspacing="0">
+	<table width="100%" border="0" cellpadding="0" cellspacing="0" summary="status ipsec spd">
 		<tr>
 			<td>
 				<?php
 					$tab_array = array();
 					$tab_array[0] = array(gettext("Overview"), false, "diag_ipsec.php");
-					$tab_array[1] = array(gettext("SAD"), false, "diag_ipsec_sad.php");
-					$tab_array[2] = array(gettext("SPD"), true, "diag_ipsec_spd.php");
-					$tab_array[3] = array(gettext("Logs"), false, "diag_logs_ipsec.php");
+					$tab_array[1] = array(gettext("Leases"), false, "diag_ipsec_leases.php");
+					$tab_array[2] = array(gettext("SAD"), false, "diag_ipsec_sad.php");
+					$tab_array[3] = array(gettext("SPD"), true, "diag_ipsec_spd.php");
+					$tab_array[4] = array(gettext("Logs"), false, "diag_logs_ipsec.php");
 					display_top_tabs($tab_array);
 				?>
 			</td>
@@ -81,49 +73,46 @@ $spd = ipsec_dump_spd();
 		<tr>
 			<td>
 				<div id="mainarea" style="background:#eeeeee">
-					<table class="tabcont sortable" width="100%" border="0" cellpadding="6" cellspacing="0">
+					<table class="tabcont sortable" width="100%" border="0" cellpadding="6" cellspacing="0" summary="main area">
 						<?php if (count($spd)): ?>
 						<tr>
-							<td nowrap class="listhdrr"><?= gettext("Source"); ?></td>
-							<td nowrap class="listhdrr"><?= gettext("Destination"); ?></td>
-							<td nowrap class="listhdrr"><?= gettext("Direction"); ?></td>
-							<td nowrap class="listhdrr"><?= gettext("Protocol"); ?></td>
-							<td nowrap class="listhdrr"><?= gettext("Tunnel endpoints"); ?></td>
-							<td nowrap class="list"></td>
+							<td class="listhdrr nowrap"><?= gettext("Source"); ?></td>
+							<td class="listhdrr nowrap"><?= gettext("Destination"); ?></td>
+							<td class="listhdrr nowrap"><?= gettext("Direction"); ?></td>
+							<td class="listhdrr nowrap"><?= gettext("Protocol"); ?></td>
+							<td class="listhdrr nowrap"><?= gettext("Tunnel endpoints"); ?></td>
+							<td class="list nowrap"></td>
 						</tr>
 						<?php foreach ($spd as $sp): ?>
 						<tr>
 							<td class="listlr" valign="top"><?=htmlspecialchars($sp['srcid']);?></td>
 							<td class="listr" valign="top"><?=htmlspecialchars($sp['dstid']);?></td>
 							<td class="listr" valign="top">
-								<img src="/themes/<?= $g['theme']; ?>/images/icons/icon_<?=$sp['dir'];?>.gif" width="11" height="11" style="margin-top: 2px">
+								<img src="/themes/<?= $g['theme']; ?>/images/icons/icon_<?=$sp['dir'];?>.gif" width="11" height="11" style="margin-top: 2px" alt="direction" />
 							</td>
 							<td class="listr" valign="top"><?=htmlspecialchars(strtoupper($sp['proto']));?></td>
 							<td class="listr" valign="top"><?=htmlspecialchars($sp['src']);?> -> <?=htmlspecialchars($sp['dst']);?></td>
-							<td class="list" nowrap>
+							<td class="list nowrap">
 								<?php
 									$args = "srcid=".rawurlencode($sp['srcid']);
-									$args .= "&dstid=".rawurlencode($sp['dstid']);
-									$args .= "&dir=".rawurlencode($sp['dir']);
+									$args .= "&amp;dstid=".rawurlencode($sp['dstid']);
+									$args .= "&amp;dir=".rawurlencode($sp['dir']);
 								?>
-								<a href="diag_ipsec_spd.php?act=del&<?=$args;?>" onclick="return confirm('<?= gettext("Do you really want to delete this security policy?"); ?>')">
-									<img src="/themes/<?= $g['theme']; ?>/images/icons/icon_x.gif" width="17" height="17" border="0">
-								</a>
 							</td>
 						</tr>
 						<?php endforeach; ?>
 					</table>
-					<br>
-					<table class="tabcont" border="0" cellspacing="0" cellpadding="6">
+					<br />
+					<table class="tabcont" border="0" cellspacing="0" cellpadding="6" summary="policies">
 						<tr>
-							<td width="16"><img src="/themes/<?= $g['theme']; ?>/images/icons/icon_in.gif" width="11" height="11"></td>
+							<td width="16"><img src="/themes/<?= $g['theme']; ?>/images/icons/icon_in.gif" width="11" height="11" alt="in" /></td>
 							<td><?= gettext("incoming (as seen by firewall)"); ?></td>
 						</tr>
 						<tr>
 							<td colspan="5" height="4"></td>
 						</tr>
 						<tr>
-							<td><img src="/themes/<?= $g['theme']; ?>/images/icons/icon_out.gif" width="11" height="11"></td>
+							<td><img src="/themes/<?= $g['theme']; ?>/images/icons/icon_out.gif" width="11" height="11" alt="out" /></td>
 							<td><?= gettext("outgoing (as seen by firewall)"); ?></td>
 						</tr>
 						<?php else: ?>
@@ -139,13 +128,11 @@ $spd = ipsec_dump_spd();
 		</tr>
 	</table>
 
-<p>
-<span class="vexpl">
-<span class="red"><strong><?= gettext("Note:"); ?><br></strong></span>
+<p class="vexpl">
+<span class="red"><strong><?= gettext("Note:"); ?><br /></strong></span>
 <?= gettext("You can configure your IPsec"); ?> <a href="vpn_ipsec.php"><?= gettext("here."); ?></a>
-</span>
+</p>
 
 <?php include("fend.inc"); ?>
 </body>
 </html>
-

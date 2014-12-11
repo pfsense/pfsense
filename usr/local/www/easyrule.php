@@ -2,6 +2,7 @@
 /*
 	easyrule.php
 
+        Copyright (C) 2013-2014 Electric Sheep Fencing, LP
 	Copyright (C) 2009-2010 Jim Pingle (jpingle@gmail.com)
 	Originally Sponsored By Anathematic @ pfSense Forums
 	All rights reserved.
@@ -31,7 +32,14 @@
 	pfSense_MODULE:	filter
 */
 
-$pgtitle = gettext("Status : EasyRule");
+##|+PRIV
+##|*IDENT=page-firewall-easyrule
+##|*NAME=Firewall: Easy Rule add/status page
+##|*DESCR=Allow access to the 'Firewall: Easy Rule' add/status page.
+##|*MATCH=easyrule.php*
+##|-PRIV
+
+$pgtitle = gettext("Firewall: EasyRule");
 require_once("guiconfig.inc");
 require_once("easyrule.inc");
 require_once("filter.inc");
@@ -65,13 +73,13 @@ include("head.inc"); ?>
 <?php if ($input_errors) print_input_errors($input_errors); ?>
 
 <?php if ($message) { ?>
-<br/>
+<br />
 <?=gettext("Message"); ?>: <?php echo $message; ?>
-<br/>
+<br />
 <?php } else { ?>
 <?=gettext("This is the Easy Rule status page, mainly used to display errors when adding rules. " .
 "If you are seeing this, there apparently was not an error, and you navigated to the " .
-"page directly without telling it what to do"); ?>.<br/><br/>
+"page directly without telling it what to do"); ?>.<br /><br />
 <?=gettext("This page is meant to be called from the block/pass buttons on the Firewall Logs page"); ?>, <a href="diag_logs_filter.php"><?=gettext("Status"); ?> &gt; <?=gettext("System Logs, " .
 "Firewall Tab"); ?></a>.
 <br />

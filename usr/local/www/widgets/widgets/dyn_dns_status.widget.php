@@ -6,6 +6,9 @@
     Copyright (C) 2013 Stanley P. Miller \ stan-qaz
     All rights reserved.
 
+    Copyright (C) 2013-2014 Electric Sheep Fencing, LP
+    All rights reserved.
+
     Redistribution and use in source and binary forms, with or without
     modification, are permitted provided that the following conditions are met:
 
@@ -105,7 +108,7 @@ if($_REQUEST['getdyndnsstatus']) {
 		}
 		?>
 		</td>
-		<td class="listlr">
+		<td class="listr">
 		<?php
 		$types = explode(",", DYNDNS_PROVIDER_DESCRIPTIONS);
 		$vals = explode(" ", DYNDNS_PROVIDER_VALUES);
@@ -127,7 +130,7 @@ if($_REQUEST['getdyndnsstatus']) {
 			echo htmlspecialchars($dyndns['host']);
 		?>
 		</td>
-		<td class="listlr">
+		<td class="listr">
 		<div id='dyndnsstatus<?php echo $i; ?>'><?php echo gettext("Checking ..."); ?></div>
 		</td>
 	</tr>

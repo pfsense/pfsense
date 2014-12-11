@@ -1,6 +1,7 @@
 <?php
 /*
 	Copyright (C) 2007 Marcel Wiget <mwiget@mac.com>.
+        Copyright (C) 2013-2014 Electric Sheep Fencing, LP
 	All rights reserved.
 
 	Redistribution and use in source and binary forms, with or without
@@ -63,8 +64,9 @@ if (!is_array($config['voucher'][$cpzone]['roll'])) {
 $a_roll = &$config['voucher'][$cpzone]['roll'];
 
 include("head.inc");
-include("fbegin.inc");
 ?>
+<body>
+<?php include("fbegin.inc"); ?>
 
 <form action="status_captiveportal_voucher_rolls.php" method="post" enctype="multipart/form-data" name="iform" id="iform">
 <table width="100%" border="0" cellpadding="0" cellspacing="0" summary="tab pane">
@@ -132,3 +134,5 @@ include("fbegin.inc");
 </table>
 </form>
 <?php include("fend.inc"); ?>
+</body>
+</html>

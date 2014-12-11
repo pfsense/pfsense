@@ -34,7 +34,7 @@
  */
 
 /*
-	pfSense_BUILDER_BINARIES:	/sbin/sysctl	/sbin/ifconfig	/sbin/pfctl	/usr/local/bin/php /usr/bin/netstat
+	pfSense_BUILDER_BINARIES:	/sbin/ifconfig	/sbin/pfctl	/usr/local/bin/php /usr/bin/netstat
 	pfSense_BUILDER_BINARIES:	/bin/df	/usr/bin/grep	/usr/bin/awk	/bin/rm	/usr/sbin/pwd_mkdb	/usr/bin/host
 	pfSense_BUILDER_BINARIES:	/sbin/kldload
 	pfSense_MODULE:	utils
@@ -143,6 +143,45 @@ function get_dns_servers() {
 	return array_unique($dns_servers);
 }
 
+function hardware_offloading_applyflags($iface) {
+	global $config;
+
+	$flags_on = 0;
+	$flags_off = 0;
+	$options = pfSense_get_interface_addresses($iface);
+
+	if(isset($config['system']['disablechecksumoffloading'])) {
+		if (isset($options['encaps']['txcsum']))
+			$flags_off |= IFCAP_TXCSUM;
+		if (isset($options['encaps']['rxcsum']))
+			$flags_off |= IFCAP_RXCSUM;
+	} else {
+		if (isset($options['caps']['txcsum']))
+			$flags_on |= IFCAP_TXCSUM;
+		if (isset($options['caps']['rxcsum']))
+			$flags_on |= IFCAP_RXCSUM;
+	}
+
+	if(isset($config['system']['disablesegmentationoffloading']))
+		$flags_off |= IFCAP_TSO;
+	else if (isset($options['caps']['tso']) || isset($options['caps']['tso4']) || isset($options['caps']['tso6']))
+		$flags_on |= IFCAP_TSO;
+
+	if(isset($config['system']['disablelargereceiveoffloading']))
+		$flags_off |= IFCAP_LRO;
+	else if (isset($options['caps']['lro']))
+		$flags_on |= IFCAP_LRO;
+
+	/* if the NIC supports polling *AND* it is enabled in the GUI */
+	if (!isset($config['system']['polling']))
+		$flags_off |= IFCAP_POLLING;
+	else if (isset($options['caps']['polling']))
+		$flags_on |= IFCAP_POLLING;
+
+	pfSense_interface_capabilities($iface, -$flags_off);
+	pfSense_interface_capabilities($iface, $flags_on);
+}
+
 /****f* pfsense-utils/enable_hardware_offloading
  * NAME
  *   enable_hardware_offloading - Enable a NIC's supported hardware features.
@@ -156,21 +195,28 @@ function get_dns_servers() {
 function enable_hardware_offloading($interface) {
 	global $g, $config;
 
-	if(isset($config['system']['do_not_use_nic_microcode']))
-		return;
-
-	/* translate wan, lan, opt -> real interface if needed */
 	$int = get_real_interface($interface);
 	if(empty($int))
 		return;
-	$int_family = preg_split("/[0-9]+/", $int);
-	$supported_ints = array('fxp');
-	if (in_array($int_family, $supported_ints)) {
-		if(does_interface_exist($int))
-			pfSense_interface_flags($int, IFF_LINK0);
+
+	if (!isset($config['system']['do_not_use_nic_microcode'])) {
+		/* translate wan, lan, opt -> real interface if needed */
+		$int_family = preg_split("/[0-9]+/", $int);
+		$supported_ints = array('fxp');
+		if (in_array($int_family, $supported_ints)) {
+			if(does_interface_exist($int))
+				pfSense_interface_flags($int, IFF_LINK0);
+		}
 	}
 
-	return;
+	/* This is mostly for vlans and ppp types */
+	$realhwif = get_parent_interface($interface);
+	if ($realhwif[0] == $int)
+		hardware_offloading_applyflags($int);
+	else {
+		hardware_offloading_applyflags($realhwif[0]);
+		hardware_offloading_applyflags($int);
+	}
 }
 
 /****f* pfsense-utils/interface_supports_polling
@@ -265,16 +311,16 @@ function setup_polling() {
 	global $g, $config;
 
 	if (isset($config['system']['polling']))
-		mwexec("/sbin/sysctl kern.polling.idle_poll=1");
+		set_single_sysctl("kern.polling.idle_poll", "1");
 	else
-		mwexec("/sbin/sysctl kern.polling.idle_poll=0");
+		set_single_sysctl("kern.polling.idle_poll", "0");
 
 	if($config['system']['polling_each_burst'])
-		mwexec("/sbin/sysctl kern.polling.each_burst={$config['system']['polling_each_burst']}");
+		set_single_sysctl("kern.polling.each_burst", $config['system']['polling_each_burst']);
 	if($config['system']['polling_burst_max'])
-		mwexec("/sbin/sysctl kern.polling.burst_max={$config['system']['polling_burst_max']}");
+		set_single_sysctl("kern.polling.burst_max", $config['system']['polling_burst_max']);
 	if($config['system']['polling_user_frac'])
-		mwexec("/sbin/sysctl kern.polling.user_frac={$config['system']['polling_user_frac']}");
+		set_single_sysctl("kern.polling.user_frac", $config['system']['polling_user_frac']);
 }
 
 /****f* pfsense-utils/setup_microcode
@@ -291,10 +337,10 @@ function setup_polling() {
 function setup_microcode() {
 
 	/* if list */
-	$ifs = get_interface_arr();
-
-	foreach($ifs as $if)
+	$iflist = get_configured_interface_list(false, true);
+	foreach($iflist as $if => $ifdescr)
 		enable_hardware_offloading($if);
+	unset($iflist);
 }
 
 /****f* pfsense-utils/get_carp_status
@@ -305,7 +351,7 @@ function setup_microcode() {
  ******/
 function get_carp_status() {
 	/* grab the current status of carp */
-	$status = `/sbin/sysctl -n net.inet.carp.allow`;
+	$status = get_single_sysctl('net.inet.carp.allow');
 	return (intval($status) > 0);
 }
 
@@ -324,7 +370,11 @@ function convert_ip_to_network_format($ip, $subnet) {
  */
 function get_carp_interface_status($carpinterface) {
 	$carp_query = "";
-	exec("/sbin/ifconfig $carpinterface | /usr/bin/grep -v grep | /usr/bin/grep carp:", $carp_query);
+
+	/* XXX: Need to fidn a better way for this! */
+	list ($interface, $vhid) = explode("_vip", $carpinterface);
+	$interface = get_real_interface($interface);
+	exec("/sbin/ifconfig $interface | /usr/bin/grep -v grep | /usr/bin/grep carp: | /usr/bin/grep 'vhid {$vhid}'", $carp_query);
 	foreach($carp_query as $int) {
 		if(stristr($int, "MASTER"))
 			return gettext("MASTER");
@@ -340,17 +390,17 @@ function get_carp_interface_status($carpinterface) {
  * get_pfsync_interface_status($pfsyncinterface): returns the status of a pfsync
  */
 function get_pfsync_interface_status($pfsyncinterface) {
-	$result = does_interface_exist($pfsyncinterface);
-	if($result <> true) return;
-	$status = exec_command("/sbin/ifconfig {$pfsyncinterface} | /usr/bin/awk '/pfsync:/ {print \$5}'");
-	return $status;
+	if (!does_interface_exist($pfsyncinterface))
+		return;
+
+	return exec_command("/sbin/ifconfig {$pfsyncinterface} | /usr/bin/awk '/pfsync:/ {print \$5}'");
 }
 
 /*
  * add_rule_to_anchor($anchor, $rule): adds the specified rule to an anchor
  */
 function add_rule_to_anchor($anchor, $rule, $label) {
-	mwexec("echo " . $rule . " | /sbin/pfctl -a " . $anchor . ":" . $label . " -f -");
+	mwexec("echo " . escapeshellarg($rule) . " | /sbin/pfctl -a " . escapeshellarg($anchor) . ":" . escapeshellarg($label) . " -f -");
 }
 
 /*
@@ -619,7 +669,7 @@ if (!function_exists('php_check_syntax')){
 if (!function_exists('php_check_syntax')){
 	function php_check_syntax($code_to_check, &$errormessage){
 		return false;
-		$command = "/usr/local/bin/php -l " . $code_to_check;
+		$command = "/usr/local/bin/php -l " . escapeshellarg($code_to_check);
 		$output = exec_command($command);
 		if (stristr($output, "Errors parsing") == false) {
 			echo "false\n";
@@ -661,17 +711,19 @@ function rmdir_recursive($path,$follow_links=false) {
 }
 
 /*
- * call_pfsense_method(): Call a method exposed by the pfsense.com XMLRPC server.
+ * call_pfsense_method(): Call a method exposed by the pfsense.org XMLRPC server.
  */
 function call_pfsense_method($method, $params, $timeout = 0) {
 	global $g, $config;
 
-	$ip = gethostbyname($g['product_website']);
-	if($ip == $g['product_website'])
+	$xmlrpc_base_url = get_active_xml_rpc_base_url();
+	$xmlrpc_path = $g['xmlrpcpath'];
+	
+	$xmlrpcfqdn = preg_replace("(https?://)", "", $xmlrpc_base_url);
+	$ip = gethostbyname($xmlrpcfqdn);
+	if($ip == $xmlrpcfqdn)
 		return false;
 
-	$xmlrpc_base_url = isset($config['system']['altpkgrepo']['enable']) ? $config['system']['altpkgrepo']['xmlrpcbaseurl'] : $g['xmlrpcbaseurl'];
-	$xmlrpc_path = $g['xmlrpcpath'];
 	$msg = new XML_RPC_Message($method, array(XML_RPC_Encode($params)));
 	$port = 0;
 	$proxyurl = "";
@@ -711,17 +763,22 @@ function call_pfsense_method($method, $params, $timeout = 0) {
  */
 function check_firmware_version($tocheck = "all", $return_php = true) {
 	global $g, $config;
-
-	$ip = gethostbyname($g['product_website']);
-	if($ip == $g['product_website'])
+	
+	$xmlrpc_base_url = get_active_xml_rpc_base_url();
+	$xmlrpcfqdn = preg_replace("(https?://)", "", $xmlrpc_base_url);
+	$ip = gethostbyname($xmlrpcfqdn);
+	if($ip == $xmlrpcfqdn)
 		return false;
-
+	$version = php_uname('r');
+	$version = explode('-', $version);
 	$rawparams = array("firmware" => array("version" => trim(file_get_contents('/etc/version'))),
-		"kernel"   => array("version" => trim(file_get_contents('/etc/version_kernel'))),
-		"base"     => array("version" => trim(file_get_contents('/etc/version_base'))),
+		"kernel"   => array("version" => $version[0]),
+		"base"     => array("version" => $version[0]),
 		"platform" => trim(file_get_contents('/etc/platform')),
 		"config_version" => $config['version']
 		);
+	unset($version);
+
 	if($tocheck == "all") {
 		$params = $rawparams;
 	} else {
@@ -749,10 +806,12 @@ function check_firmware_version($tocheck = "all", $return_php = true) {
 function host_firmware_version($tocheck = "") {
 	global $g, $config;
 
+	$os_version = trim(substr(php_uname("r"), 0, strpos(php_uname("r"), '-')));
+
 	return array(
 		"firmware" => array("version" => trim(file_get_contents('/etc/version', " \n"))),
-		"kernel"   => array("version" => trim(file_get_contents('/etc/version_kernel', " \n"))),
-		"base"     => array("version" => trim(file_get_contents('/etc/version_base', " \n"))),
+		"kernel"   => array("version" => $os_version),
+		"base"     => array("version" => $os_version),
 		"platform" => trim(file_get_contents('/etc/platform', " \n")),
 		"config_version" => $config['version']
 	);
@@ -844,8 +903,6 @@ function reload_interfaces() {
 function reload_all_sync() {
 	global $config, $g;
 
-	$g['booting'] = false;
-
 	/* parse config.xml again */
 	$config = parse_config(true);
 
@@ -889,78 +946,6 @@ function reload_all_sync() {
 	send_event("service restart webgui");
 }
 
-function auto_login() {
-	global $config;
-
-	if(isset($config['system']['disableconsolemenu']))
-		$status = false;
-	else
-		$status = true;
-
-	$gettytab = file_get_contents("/etc/gettytab");
-	$getty_split = explode("\n", $gettytab);
-	$getty_update_needed = false;
-	$getty_search_str = ":ht:np:sp#115200";
-	$getty_al_str = ":al=root:";
-	$getty_al_search_str = $getty_search_str . $getty_al_str;
-	/* Check if gettytab is already OK, if so then do not rewrite it. */
-	foreach($getty_split as $gs) {
-		if(stristr($gs, $getty_search_str)) {
-			if($status == true) {
-				if(!stristr($gs, $getty_al_search_str)) {
-					$getty_update_needed = true;
-				}
-			} else {
-				if(stristr($gs, $getty_al_search_str)) {
-					$getty_update_needed = true;
-				}
-			}
-		}
-	}
-
-	if (!$getty_update_needed) {
-		return;
-	}
-
-	conf_mount_rw();
-	$fd = false;
-	$tries = 0;
-	while (!$fd && $tries < 100) {
-		$fd = fopen("/etc/gettytab", "w");
-		$tries++;
-
-	}
-	if (!$fd) {
-		conf_mount_ro();
-		if ($status) {
-			log_error(gettext("Enabling auto login was not possible."));
-		} else {
-			log_error(gettext("Disabling auto login was not possible."));
-		}
-		return;
-	}
-	foreach($getty_split as $gs) {
-		if(stristr($gs, $getty_search_str)) {
-			if($status == true) {
-				fwrite($fd, "	".$getty_al_search_str."\n");
-			} else {
-				fwrite($fd, "	".$getty_search_str."\n");
-			}
-		} else {
-			fwrite($fd, "{$gs}\n");
-		}
-	}
-	fclose($fd);
-
-	if ($status) {
-		log_error(gettext("Enabled console auto login, console menu is NOT password protected."));
-	} else {
-		log_error(gettext("Disabled console auto login, console menu is password protected."));
-	}
-
-	conf_mount_ro();
-}
-
 function setup_serial_port($when="save", $path="") {
 	global $g, $config;
 	conf_mount_rw();
@@ -975,25 +960,26 @@ function setup_serial_port($when="save", $path="") {
 	else
 		$boot_config = "";
 
-	if(($g['platform'] != "cdrom") && ($g['platform'] != "nanobsd")) {
+	$serialspeed = (is_numeric($config['system']['serialspeed'])) ? $config['system']['serialspeed'] : "115200";
+	if ($g['platform'] != "cdrom") {
 		$boot_config_split = explode("\n", $boot_config);
 		$fd = fopen($boot_config_file,"w");
 		if($fd) {
 			foreach($boot_config_split as $bcs) {
-				if(stristr($bcs, "-D")) {
+				if(stristr($bcs, "-D") || stristr($bcs, "-h")) {
 					/* DONT WRITE OUT, WE'LL DO IT LATER */
 				} else {
 					if($bcs <> "")
 						fwrite($fd, "{$bcs}\n");
 				}
 			}
-			if(isset($config['system']['enableserial'])) {
-				fwrite($fd, "-D");
-			}
+			if (($g['platform'] == "nanobsd") && !file_exists("/etc/nano_use_vga.txt"))
+				fwrite($fd, "-S{$serialspeed} -h");
+			else if (is_serial_enabled())
+				fwrite($fd, "-S{$serialspeed} -D");
 			fclose($fd);
 		}
-	}
-	if($g['platform'] != "cdrom") {
+
 		/* serial console - write out /boot/loader.conf */
 		if ($when == "upgrade")
 			system("echo \"Reading {$loader_conf_file}...\" >> /conf/upgrade_log.txt");
@@ -1011,16 +997,23 @@ function setup_serial_port($when="save", $path="") {
 					&& (stripos($bcs, "hw.usb.no_pf") === false))
 					$new_boot_config[] = $bcs;
 
-			$serialspeed = (is_numeric($config['system']['serialspeed'])) ? $config['system']['serialspeed'] : "9600";
-			if(isset($config['system']['enableserial'])) {
+			if (($g['platform'] == "nanobsd") && !file_exists("/etc/nano_use_vga.txt")) {
+				$new_boot_config[] = 'boot_serial="YES"';
+				$new_boot_config[] = 'console="comconsole"';
+			} else if (is_serial_enabled()) {
 				$new_boot_config[] = 'boot_multicons="YES"';
 				$new_boot_config[] = 'boot_serial="YES"';
-				$new_boot_config[] = 'comconsole_speed="' . $serialspeed . '"';
-				$new_boot_config[] = 'console="comconsole,vidconsole"';
-			} elseif ($g['platform'] == "nanobsd") {
-				$new_boot_config[] = 'comconsole_speed="' . $serialspeed . '"';
+				$primaryconsole = isset($g['primaryconsole_force']) ? $g['primaryconsole_force'] : $config['system']['primaryconsole'];
+				switch ($primaryconsole) {
+					case "video":
+						$new_boot_config[] = 'console="vidconsole,comconsole"';
+						break;
+					case "serial":
+					default:
+						$new_boot_config[] = 'console="comconsole,vidconsole"';
+				}
 			}
-
+			$new_boot_config[] = 'comconsole_speed="' . $serialspeed . '"';
 			$new_boot_config[] = 'hw.usb.no_pf="1"';
 
 			file_put_contents($loader_conf_file, implode("\n", $new_boot_config) . "\n");
@@ -1029,22 +1022,46 @@ function setup_serial_port($when="save", $path="") {
 	$ttys = file_get_contents("/etc/ttys");
 	$ttys_split = explode("\n", $ttys);
 	$fd = fopen("/etc/ttys", "w");
-	foreach($ttys_split as $tty) {
-		if(stristr($tty, "ttyd0") or stristr($tty, "ttyu0")) {
-			if(isset($config['system']['enableserial'])) {
-				fwrite($fd, "ttyu0	\"/usr/libexec/getty bootupcli\"	cons25	on	secure\n");
-			} else {
-				fwrite($fd, "ttyu0	\"/usr/libexec/getty bootupcli\"	cons25	off	secure\n");
-			}
-		} else {
-			fwrite($fd, $tty . "\n");
-		}
+
+	$on_off = (is_serial_enabled() ? 'on' : 'off');
+
+	if (isset($config['system']['disableconsolemenu'])) {
+		$console_type = 'Pc';
+		$serial_type = 'std.' . $serialspeed;
+	} else {
+		$console_type = 'al.Pc';
+		$serial_type = 'al.' . $serialspeed;
 	}
+	foreach($ttys_split as $tty) {
+		if (stristr($tty, "ttyv0"))
+			fwrite($fd, "ttyv0	\"/usr/libexec/getty {$console_type}\"	cons25	on	secure\n");
+		else if (stristr($tty, "ttyu0"))
+			fwrite($fd, "ttyu0	\"/usr/libexec/getty {$serial_type}\"	cons25	{$on_off}	secure\n");
+		else
+			fwrite($fd, $tty . "\n");
+	}
+	unset($on_off, $console_type, $serial_type);
 	fclose($fd);
-	auto_login();
+	reload_ttys();
 
 	conf_mount_ro();
 	return;
+}
+
+function is_serial_enabled() {
+	global $g, $config;
+
+	if (!isset($g['enableserial_force']) &&
+	    !isset($config['system']['enableserial']) &&
+	    ($g['platform'] == "pfSense" || $g['platform'] == "cdrom" || file_exists("/etc/nano_use_vga.txt")))
+		return false;
+
+	return true;
+}
+
+function reload_ttys() {
+	// Send a HUP signal to init will make it reload /etc/ttys
+	posix_kill(1, SIGHUP);
 }
 
 function print_value_list($list, $count = 10, $separator = ",") {
@@ -1214,6 +1231,7 @@ function get_interface_info($ifdescr) {
 	if (empty($ifinfo['status']))
 		$ifinfo['status'] = "down";
 	$ifinfo['macaddr'] = $ifinfotmp['macaddr'];
+	$ifinfo['mtu'] = $ifinfotmp['mtu'];
 	$ifinfo['ipaddr'] = $ifinfotmp['ipaddr'];
 	$ifinfo['subnet'] = $ifinfotmp['subnet'];
 	$ifinfo['linklocal'] = get_interface_linklocal($ifdescr);
@@ -1277,7 +1295,7 @@ function get_interface_info($ifdescr) {
 	/* DHCP? -> see if dhclient is up */
 	case "dhcp":
 		/* see if dhclient is up */
-		if (find_dhclient_process($ifinfo['if']) <> "")
+		if (find_dhclient_process($ifinfo['if']) != 0)
 			$ifinfo['dhcplink'] = "up";
 		else
 			$ifinfo['dhcplink'] = "down";
@@ -1442,14 +1460,14 @@ function get_interface_info($ifdescr) {
 
 //returns cpu speed of processor. Good for determining capabilities of machine
 function get_cpu_speed() {
-	return exec("sysctl hw.clockrate | awk '{ print $2 }'");
+	return get_single_sysctl("hw.clockrate");
 }
 
 function get_uptime_sec() {
 	$boottime = "";
 	$matches = "";
-	exec("/sbin/sysctl -n kern.boottime", $boottime);
-	preg_match("/sec = (\d+)/", $boottime[0], $matches);
+	$boottime = get_single_sysctl("kern.boottime");
+	preg_match("/sec = (\d+)/", $boottime, $matches);
 	$boottime = $matches[1];
 	if(intval($boottime) == 0)
 		return 0;
@@ -1466,7 +1484,7 @@ function add_hostname_to_watch($hostname) {
 	if((is_fqdn($hostname)) && (!is_ipaddr($hostname))) {
 		$domrecords = array();
 		$domips = array();
-		exec("host -t A $hostname", $domrecords, $rethost);
+		exec("host -t A " . escapeshellarg($hostname), $domrecords, $rethost);
 		if($rethost == 0) {
 			foreach($domrecords as $domr) {
 				$doml = explode(" ", $domr);
@@ -1543,7 +1561,7 @@ function compare_hostname_to_dnscache($hostname) {
 	if((is_fqdn($hostname)) && (!is_ipaddr($hostname))) {
 		$domrecords = array();
 		$domips = array();
-		exec("host -t A $hostname", $domrecords, $rethost);
+		exec("host -t A " . escapeshellarg($hostname), $domrecords, $rethost);
 		if($rethost == 0) {
 			foreach($domrecords as $domr) {
 				$doml = explode(" ", $domr);
@@ -1615,7 +1633,7 @@ function load_thermal_hardware() {
  ******/
 function isvm() {
 	$virtualenvs = array("vmware", "parallels", "qemu", "bochs", "plex86");
-	$bios_product = trim(`/bin/kenv | /usr/bin/awk -F= '/smbios.system.product/ {print $2}'`);
+	$bios_product = trim(`/bin/kenv smbios.system.product`);
 	foreach ($virtualenvs as $virtualenv)
 		if (stripos($bios_product, $virtualenv) !== false)
 			return true;
@@ -1624,7 +1642,7 @@ function isvm() {
 }
 
 function get_freebsd_version() {
-	$version = php_uname("r");
+	$version = explode(".", php_uname("r"));
 	return $version[0];
 }
 
@@ -1686,6 +1704,7 @@ function download_file_with_progress_bar($url_file, $destination_file, $readbody
 	curl_setopt($ch, CURLOPT_NOPROGRESS, '1');
 	curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, $connect_timeout);
 	curl_setopt($ch, CURLOPT_TIMEOUT, $timeout);
+	curl_setopt($ch, CURLOPT_USERAGENT, $g['product_name'] . '/' . rtrim(file_get_contents("/etc/version")));
 
 	if (!empty($config['system']['proxyurl'])) {
 		curl_setopt($ch, CURLOPT_PROXY, $config['system']['proxyurl']);
@@ -1874,8 +1893,10 @@ function update_alias_names_upon_change($section, $field, $new_alias_name, $orig
 function update_alias_url_data() {
 	global $config, $g;
 
+	$updated = false;
+
 	/* item is a url type */
-	$lockkey = lock('config');
+	$lockkey = lock('aliasurl');
 	if (is_array($config['aliases']['alias'])) {
 		foreach ($config['aliases']['alias'] as $x => $alias) {
 			if (empty($alias['aliasurl']))
@@ -1888,77 +1909,114 @@ function update_alias_url_data() {
 				$temp_filename = tempnam("{$g['tmp_path']}/", "alias_import");
 				unlink($temp_filename);
 				$verify_ssl = isset($config['system']['checkaliasesurlcert']);
-				mwexec("/bin/mkdir -p {$temp_filename}");
+				mkdir($temp_filename);
 				download_file($alias_url, $temp_filename . "/aliases", $verify_ssl);
 
 				/* if the item is tar gzipped then extract */
-				if (stristr($alias_url, ".tgz"))
-					process_alias_tgz($temp_filename);
-				else if (stristr($alias_url, ".zip"))
-					process_alias_unzip($temp_filename);
+				if (stripos($alias_url, '.tgz')) {
+					if (!process_alias_tgz($temp_filename))
+						continue;
+				} else if (stripos($alias_url, '.zip')) {
+					if (!process_alias_unzip($temp_filename))
+						continue;
+				}
 				if (file_exists("{$temp_filename}/aliases")) {
-					$file_contents = file_get_contents("{$temp_filename}/aliases");
-					$file_contents = str_replace("#", "\n#", $file_contents);
-					$file_contents_split = explode("\n", $file_contents);
-					foreach ($file_contents_split as $fc) {
-						$tmp = trim($fc);
-						if (stristr($fc, "#")) {
-							$tmp_split = explode("#", $tmp);
-							$tmp = trim($tmp_split[0]);
-						}
-						if (trim($tmp) <> "") {
-							if ($isfirst == 1)
-								$address .= " ";
-							$address .= $tmp;
-							$isfirst = 1;
-						}
+					$fd = @fopen("{$temp_filename}/aliases", 'r');
+					if (!$fd) {
+						log_error(gettext("Could not process aliases from alias: {$alias_url}"));
+						continue;
 					}
+					/* NOTE: fgetss() is not a typo RTFM before being smart */
+					while (($fc = fgetss($fd)) !== FALSE) {
+						$tmp = trim($fc, " \t\n\r");
+						if (empty($tmp))
+							continue;
+						$tmp_str = strstr($tmp, '#', true);
+						if (!empty($tmp_str))
+							$tmp = $tmp_str;
+						if ($isfirst == 1)
+							$address .= ' ';
+						$address .= $tmp;
+						$isfirst = 1;
+					}
+					fclose($fd);
 					mwexec("/bin/rm -rf {$temp_filename}");
 				}
 			}
-			if($isfirst > 0) {
+			if (!empty($address)) {
 				$config['aliases']['alias'][$x]['address'] = $address;
 				$updated = true;
 			}
 		}
 	}
-	if ($updated)
-		write_config();
 	unlock($lockkey);
+
+	/* Report status to callers as well */
+	return $updated;
 }
 
 function process_alias_unzip($temp_filename) {
-	if(!file_exists("/usr/local/bin/unzip"))
-		return;
-	mwexec("/bin/mv {$temp_filename}/aliases {$temp_filename}/aliases.zip");
+	if(!file_exists("/usr/local/bin/unzip")) {
+		log_error(gettext("Alias archive is a .zip file which cannot be decompressed because utility is missing!"));
+		return false;
+	}
+	rename("{$temp_filename}/aliases", "{$temp_filename}/aliases.zip");
 	mwexec("/usr/local/bin/unzip {$temp_filename}/aliases.tgz -d {$temp_filename}/aliases/");
 	unlink("{$temp_filename}/aliases.zip");
 	$files_to_process = return_dir_as_array("{$temp_filename}/");
 	/* foreach through all extracted files and build up aliases file */
-	$fd = fopen("{$temp_filename}/aliases", "w");
+	$fd = @fopen("{$temp_filename}/aliases", "w");
+	if (!$fd) {
+		log_error(gettext("Could not open {$temp_filename}/aliases for writing!"));
+		return false;
+	}
 	foreach($files_to_process as $f2p) {
-		$file_contents = file_get_contents($f2p);
-		fwrite($fd, $file_contents);
+		$tmpfd = @fopen($f2p, 'r');
+		if (!$tmpfd) {
+			log_error(gettext("The following file could not be read {$f2p} from {$temp_filename}"));
+			continue;
+		}
+		while (($tmpbuf = fread($tmpfd, 65536)) !== FALSE)
+			fwrite($fd, $tmpbuf);
+		fclose($tmpfd);
 		unlink($f2p);
 	}
 	fclose($fd);
+	unset($tmpbuf);
+
+	return true;
 }
 
 function process_alias_tgz($temp_filename) {
-	if(!file_exists("/usr/bin/tar"))
-		return;
-	mwexec("/bin/mv {$temp_filename}/aliases {$temp_filename}/aliases.tgz");
+	if(!file_exists('/usr/bin/tar')) {
+		log_error(gettext("Alias archive is a .tar/tgz file which cannot be decompressed because utility is missing!"));
+		return false;
+	}
+	rename("{$temp_filename}/aliases", "{$temp_filename}/aliases.tgz");
 	mwexec("/usr/bin/tar xzf {$temp_filename}/aliases.tgz -C {$temp_filename}/aliases/");
 	unlink("{$temp_filename}/aliases.tgz");
 	$files_to_process = return_dir_as_array("{$temp_filename}/");
 	/* foreach through all extracted files and build up aliases file */
-	$fd = fopen("{$temp_filename}/aliases", "w");
+	$fd = @fopen("{$temp_filename}/aliases", "w");
+	if (!$fd) {
+		log_error(gettext("Could not open {$temp_filename}/aliases for writing!"));
+		return false;
+	}
 	foreach($files_to_process as $f2p) {
-		$file_contents = file_get_contents($f2p);
-		fwrite($fd, $file_contents);
+		$tmpfd = @fopen($f2p, 'r');
+		if (!$tmpfd) {
+			log_error(gettext("The following file could not be read {$f2p} from {$temp_filename}"));
+			continue;
+		}
+		while (($tmpbuf = fread($tmpfd, 65536)) !== FALSE)
+			fwrite($fd, $tmpbuf);
+		fclose($tmpfd);
 		unlink($f2p);
 	}
 	fclose($fd);
+	unset($tmpbuf);
+
+	return true;
 }
 
 function version_compare_dates($a, $b) {
@@ -2069,7 +2127,7 @@ function process_alias_urltable($name, $url, $freq, $forceupdate=false) {
 
 	// If the file doesn't exist or is older than update_freq days, fetch a new copy.
 	if (!file_exists($urltable_filename)
-		|| ((time() - filemtime($urltable_filename)) > ($freq * 86400))
+		|| ((time() - filemtime($urltable_filename)) > ($freq * 86400 - 90))
 		|| $forceupdate) {
 
 		// Try to fetch the URL supplied
@@ -2085,7 +2143,7 @@ function process_alias_urltable($name, $url, $freq, $forceupdate=false) {
 			}
 			unlink_if_exists($urltable_filename . ".tmp");
 		} else
-			mwexec("/usr/bin/touch {$urltable_filename}");
+			touch($urltable_filename);
 		conf_mount_ro();
 		return true;
 	} else {
@@ -2143,7 +2201,7 @@ function nanobsd_switch_boot_slice() {
 	$ACOMPLETE_PATH="{$BOOT_DRIVE}s{$ASLICE}a";
 	$ABOOTFLASH="{$BOOT_DRIVE}s{$AOLDSLICE}";
 	conf_mount_rw();
-	exec("sysctl kern.geom.debugflags=16");
+	set_single_sysctl("kern.geom.debugflags", "16");
 	exec("gpart set -a active -i {$ASLICE} {$BOOT_DRIVE}");
 	exec("/usr/sbin/boot0cfg -s {$ASLICE} -v /dev/{$BOOT_DRIVE}");
 	// We can't update these if they are mounted now.
@@ -2151,7 +2209,7 @@ function nanobsd_switch_boot_slice() {
 		exec("/sbin/tunefs -L ${AGLABEL_SLICE} /dev/$ACOMPLETE_PATH");
 		nanobsd_update_fstab($AGLABEL_SLICE, $ACOMPLETE_PATH, $AOLD_UFS_ID, $AUFS_ID);
 	}
-	exec("/sbin/sysctl kern.geom.debugflags=0");
+	set_single_sysctl("kern.geom.debugflags", "0");
 	conf_mount_ro();
 }
 function nanobsd_clone_slice() {
@@ -2162,12 +2220,12 @@ function nanobsd_clone_slice() {
 
 	for ($i = 0; $i < ob_get_level(); $i++) { ob_end_flush(); }
 	ob_implicit_flush(1);
-	exec("/sbin/sysctl kern.geom.debugflags=16");
+	set_single_sysctl("kern.geom.debugflags", "16");
 	exec("/bin/dd if=/dev/zero of=/dev/{$TOFLASH} bs=1m count=1");
 	exec("/bin/dd if=/dev/{$BOOTFLASH} of=/dev/{$TOFLASH} bs=64k");
 	exec("/sbin/tunefs -L {$GLABEL_SLICE} /dev/{$COMPLETE_PATH}");
 	$status = nanobsd_update_fstab($GLABEL_SLICE, $COMPLETE_PATH, $OLD_UFS_ID, $UFS_ID);
-	exec("/sbin/sysctl kern.geom.debugflags=0");
+	set_single_sysctl("kern.geom.debugflags", "0");
 	if($status) {
 		return false;
 	} else {
@@ -2178,10 +2236,10 @@ function nanobsd_update_fstab($gslice, $complete_path, $oldufs, $newufs) {
 	$tmppath = "/tmp/{$gslice}";
 	$fstabpath = "/tmp/{$gslice}/etc/fstab";
 
-	exec("/bin/mkdir {$tmppath}");
+	mkdir($tmppath);
 	exec("/sbin/fsck_ufs -y /dev/{$complete_path}");
 	exec("/sbin/mount /dev/ufs/{$gslice} {$tmppath}");
-	exec("/bin/cp /etc/fstab {$fstabpath}");
+	copy("/etc/fstab", $fstabpath);
 
 	if (!file_exists($fstabpath)) {
 		$fstab = <<<EOF
@@ -2196,7 +2254,7 @@ EOF;
 		$status = exec("sed -i \"\" \"s/pfsense{$oldufs}/pfsense{$newufs}/g\" {$fstabpath}");
 	}
 	exec("/sbin/umount {$tmppath}");
-	exec("/bin/rmdir {$tmppath}");
+	rmdir($tmppath);
 
 	return $status;
 }
@@ -2497,12 +2555,22 @@ function load_mac_manufacturer_table() {
  *   is_ipaddr_configured
  * INPUTS
  *   IP Address to check.
+ *   If ignore_if is a VIP (not carp), vip array index is passed after string _virtualip
  * RESULT
  *   returns true if the IP Address is
  *   configured and present on this device.
 */
 function is_ipaddr_configured($ipaddr, $ignore_if = "", $check_localip = false, $check_subnets = false) {
 	global $config;
+
+	$pos = strpos($ignore_if, '_virtualip');
+	if ($pos !== false) {
+		$ignore_vip_id = substr($ignore_if, $pos+10);
+		$ignore_vip_if = substr($ignore_if, 0, $pos);
+	} else {
+		$ignore_vip_id = -1;
+		$ignore_vip_if = $ignore_if;
+	}
 
 	$isipv6 = is_ipaddrv6($ipaddr);
 
@@ -2530,8 +2598,7 @@ function is_ipaddr_configured($ipaddr, $ignore_if = "", $check_localip = false, 
 			$interface_list_ips = get_configured_ip_addresses();
 
 		foreach($interface_list_ips as $if => $ilips) {
-			/* Also ignore CARP interfaces, it'll be checked below */
-			if (($ignore_if == $if) || preg_match('/_vip[0-9]/', $if))
+			if ($ignore_if == $if)
 				continue;
 			if (strcasecmp($ipaddr, $ilips) == 0)
 				return true;
@@ -2540,7 +2607,8 @@ function is_ipaddr_configured($ipaddr, $ignore_if = "", $check_localip = false, 
 
 	$interface_list_vips = get_configured_vips_list(true);
 	foreach ($interface_list_vips as $id => $vip) {
-		if ($ignore_if == "vip_{$id}")
+		/* Skip CARP interfaces here since they were already checked above */
+		if ($id == $ignore_vip_id || (strstr($ignore_if, '_vip') && $ignore_vip_if == $vip['if']))
 			continue;
 		if (strcasecmp($ipaddr, $vip['ipaddr']) == 0)
 			return true;
@@ -2578,7 +2646,7 @@ function pfSense_handle_custom_code($src_dir) {
 	}
 }
 
-function set_language($lang = 'en_US', $encoding = "ISO8859-1") {
+function set_language($lang = 'en_US', $encoding = "UTF-8") {
 	putenv("LANG={$lang}.{$encoding}");
 	setlocale(LC_ALL, "{$lang}.{$encoding}");
 	textdomain("pfSense");
@@ -2630,7 +2698,7 @@ $g_languages = array (
 	"zh_TW" => array("codeset" => "UTF-8", "desc" => gettext("Chinese (Traditional)")),
 	"nl"    => array("codeset" => "UTF-8", "desc" => gettext("Dutch")),
 	"da"    => array("codeset" => "UTF-8", "desc" => gettext("Danish")),
-	"en_US" => array("codeset" => "ISO-8859-1", "desc" => gettext("English")),
+	"en_US" => array("codeset" => "UTF-8", "desc" => gettext("English")),
 	"fi"    => array("codeset" => "UTF-8", "desc" => gettext("Finnish")),
 	"fr"    => array("codeset" => "UTF-8", "desc" => gettext("French")),
 	"de"    => array("codeset" => "UTF-8", "desc" => gettext("German")),
@@ -2846,6 +2914,53 @@ function get_pppoes_child_interfaces($ifpattern) {
 	}
 	return $if_arr;
 
+}
+
+/****f* pfsense-utils/pkg_call_plugins
+ * NAME
+ *   pkg_call_plugins
+ * INPUTS
+ *   $plugin_type value used to search in package configuration if the plugin is used, also used to create the function name
+ *   $plugin_params parameters to pass to the plugin function for passing multiple parameters a array can be used.
+ * RESULT
+ *   returns associative array results from the plugin calls for each package
+ * NOTES
+ *   This generic function can be used to notify or retrieve results from functions that are defined in packages.
+ ******/
+function pkg_call_plugins($plugin_type, $plugin_params) {
+	global $g, $config;
+	$results = array();
+	if (!is_array($config['installedpackages']['package']))
+		return $results;
+	foreach ($config['installedpackages']['package'] as $package) {
+		if(!file_exists("/usr/local/pkg/" . $package['configurationfile']))
+			continue;
+		$pkg_config = parse_xml_config_pkg("/usr/local/pkg/" . $package['configurationfile'], 'packagegui');
+		$pkgname = substr(reverse_strrchr($package['configurationfile'], "."),0,-1);
+		if (is_array($pkg_config['plugins']['item']))
+			foreach ($pkg_config['plugins']['item'] as $plugin) {
+				if ($plugin['type'] == $plugin_type) {
+					if (file_exists($pkg_config['include_file']))
+						require_once($pkg_config['include_file']);
+					else
+						continue;
+					$plugin_function = $pkgname . '_'. $plugin_type;
+					$results[$pkgname] = @eval($plugin_function($plugin_params));
+				}
+			}
+	}
+	return $results;
+}
+
+/* Function to find and return the active XML RPC base URL to avoid code duplication */
+function get_active_xml_rpc_base_url() {
+	global $config, $g;
+	/* If the user has activated the option to enable an alternate xmlrpcbaseurl, and it's not empty, then use it */
+	if (isset($config['system']['altpkgrepo']['enable']) && !empty($config['system']['altpkgrepo']['xmlrpcbaseurl'])) {
+		return $config['system']['altpkgrepo']['xmlrpcbaseurl'];
+	} else {
+		return $g['xmlrpcbaseurl'];
+	}
 }
 
 ?>

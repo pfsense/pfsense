@@ -3,7 +3,8 @@
 /*
 	interfaces_bridge.php
 
-	Copyright (C) 2008 Ermal Luçi
+        Copyright (C) 2013-2014 Electric Sheep Fencing, LP
+	Copyright (C) 2008 Ermal LuÃ§i
 	All rights reserved.
 
 	Redistribution and use in source and binary forms, with or without
@@ -60,16 +61,19 @@ function bridge_inuse($num) {
 
 if ($_GET['act'] == "del") {
 	if (!isset($_GET['id']))
-		$input_errors[] = getext("Wrong parameters supplied");
+		$input_errors[] = gettext("Wrong parameters supplied");
 	else if (empty($a_bridges[$_GET['id']]))
-		$input_errors[] = getext("Wrong index supplied");
+		$input_errors[] = gettext("Wrong index supplied");
 	/* check if still in use */
 	else if (bridge_inuse($_GET['id'])) {
 		$input_errors[] = gettext("This bridge cannot be deleted because it is assigned as an interface.");
-	} elseif (!does_interface_exist($a_bridges[$_GET['id']]['bridgeif'])) {
-		$input_errors[] = gettext("Invalid bridge interface.");
 	} else {
-		mwexec("/sbin/ifconfig " . $a_bridges[$_GET['id']]['bridgeif'] . " destroy");
+		if (!does_interface_exist($a_bridges[$_GET['id']]['bridgeif'])) {
+			log_error("Bridge interface does not exist, skipping ifconfig destroy.");
+		} else {
+			mwexec("/sbin/ifconfig " . $a_bridges[$_GET['id']]['bridgeif'] . " destroy");
+		}
+		
 		unset($a_bridges[$_GET['id']]);
 
 		write_config();
@@ -148,7 +152,7 @@ include("head.inc");
 				</tr>
 				<tr>
 				<td colspan="3" class="list"><p class="vexpl"><span class="red"><strong>
-				  <?=gettext("Note:"); ?><br/>
+				  <?=gettext("Note:"); ?><br />
 				  </strong></span>
 				  <?=gettext("Here you can configure bridging of interfaces."); ?></p>
 				  </td>

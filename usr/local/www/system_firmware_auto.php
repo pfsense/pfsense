@@ -2,8 +2,9 @@
 /* $Id$ */
 /*
 	system_firmware_auto.php
-	Copyright (C) 2008 Scott Ullrich <sullrich@gmail.com>
 	Copyright (C) 2005 Scott Ullrich
+	Copyright (C) 2008 Scott Ullrich <sullrich@gmail.com>
+        Copyright (C) 2013-2014 Electric Sheep Fencing, LP
 
 	Based originally on system_firmware.php
 	(C)2003-2004 Manuel Kasper
@@ -72,7 +73,7 @@ include("head.inc");
 <?php include("fbegin.inc"); ?>
 
 <form action="system_firmware_auto.php" method="post">
-<table width="100%" border="0" cellpadding="6" cellspacing="0" summary="firmware auto-check">
+<table width="100%" border="0" cellpadding="0" cellspacing="0" summary="firmware auto-check">
 	<tr>
 		<td>
 		<?php
@@ -109,10 +110,19 @@ include("head.inc");
 										</tr>
 									</table>
 									<br />
+									<script type="text/javascript">
+									//<![CDATA[
+									window.onload=function(){
+										document.getElementById("status").wrap='hard';
+										document.getElementById("output").wrap='hard';
+									}
+									//]]>
+									</script>
 									<!-- status box -->
-									<textarea cols="90" rows="1" name="status" id="status" wrap="hard"><?=gettext("Beginning firmware upgrade"); ?>.</textarea>
+									<textarea cols="90" rows="1" name="status" id="status"><?=gettext("Beginning firmware upgrade"); ?>.</textarea>
+									<br />
 									<!-- command output box -->
-									<textarea cols="90" rows="25" name="output" id="output" wrap="hard"></textarea>
+									<textarea cols="90" rows="25" name="output" id="output"></textarea>
 								</td>
 							</tr>
 						</table>

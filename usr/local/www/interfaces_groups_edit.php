@@ -1,6 +1,7 @@
 <?php
 /*
-	Copyright (C) 2009 Ermal Luçi
+        Copyright (C) 2013-2014 Electric Sheep Fencing, LP
+	Copyright (C) 2009 Ermal LuÃ§i
 	Copyright (C) 2004 Scott Ullrich
 	All rights reserved.
 
@@ -31,9 +32,9 @@
 */
 
 ##|+PRIV
-##|*IDENT=page-interfacess-groups
+##|*IDENT=page-interfaces-groups-edit
 ##|*NAME=Interfaces: Groups: Edit page
-##|*DESCR=Edit Interface groups
+##|*DESCR=Allow access to the 'Interfaces: Groups: Edit' page.
 ##|*MATCH=interfaces_groups_edit.php*
 ##|-PRIV
 
@@ -49,17 +50,19 @@ if (!is_array($config['ifgroups']['ifgroupentry']))
 
 $a_ifgroups = &$config['ifgroups']['ifgroupentry'];
 
-if (isset($_GET['id']))
+if (is_numericint($_GET['id']))
 	$id = $_GET['id'];
-if (isset($_POST['id']))
+if (isset($_POST['id']) && is_numericint($_POST['id']))
 	$id = $_POST['id'];
 
 if (isset($id) && $a_ifgroups[$id]) {
 	$pconfig['ifname'] = $a_ifgroups[$id]['ifname'];
 	$pconfig['members'] = $a_ifgroups[$id]['members'];
 	$pconfig['descr'] = html_entity_decode($a_ifgroups[$id]['descr']);
-
 }
+
+$iflist = get_configured_interface_with_descr();
+$iflist_disabled = get_configured_interface_with_descr(false, true);
 
 if ($_POST) {
 
@@ -74,8 +77,7 @@ if ($_POST) {
 	if (preg_match("/([^a-zA-Z])+/", $_POST['ifname'], $match))
 		$input_errors[] = gettext("Only letters A-Z are allowed as the group name.");
 
-	$ifaces = get_configured_interface_with_descr();
-	foreach ($ifaces as $gif => $gdescr) {
+	foreach ($iflist as $gif => $gdescr) {
 		if ($gdescr == $_POST['ifname'] || $gif == $_POST['ifname'])
 			$input_errors[] = "The specified group name is already used by an interface. Please choose another name.";
 	}
@@ -200,7 +202,6 @@ var addRowTo = (function() {
 		<?php
                         $innerHTML="\"<input type='hidden' value='\" + totalrows +\"' name='\" + rowname[i] + \"_row-\" + totalrows + \"' /><select size='1' name='\" + rowname[i] + totalrows + \"'>\" +\"";
 
-			$iflist = get_configured_interface_with_descr();
                         foreach ($iflist as $ifnam => $ifdescr)
                                 $innerHTML .= "<option value='{$ifnam}'>{$ifdescr}<\/option>";
 			$innerHTML .= "<\/select>\";";
@@ -251,7 +252,7 @@ function removeRow(el) {
   <tr>
     <td valign="top" class="vncellreq"><?=gettext("Group Name");?></td>
     <td class="vtable">
-	<input class="formfld unknown" name="ifname" id="ifname" value="<?=htmlspecialchars($pconfig['ifname']);?>" />
+	<input class="formfld unknown" name="ifname" id="ifname" maxlength="15" value="<?=htmlspecialchars($pconfig['ifname']);?>" />
 	<br />
 	<?=gettext("No numbers or spaces are allowed. Only characters in a-zA-Z");?>
     </td>
@@ -288,12 +289,20 @@ function removeRow(el) {
 	<td class="vtable">
 	        <select name="members<?php echo $tracker; ?>" class="formselect" id="members<?php echo $tracker; ?>">
 			<?php
+				$found = false;
 				foreach ($iflist as $ifnam => $ifdescr) {
 					echo "<option value=\"{$ifnam}\"";
-					if ($ifnam == $members)
+					if ($ifnam == $members) {
+						$found = true;
 						echo " selected=\"selected\"";
+					}
 					echo ">{$ifdescr}</option>";
 				}
+
+				if ($found === false)
+					foreach ($iflist_disabled as $ifnam => $ifdescr)
+						if ($ifnam == $members)
+							echo "<option value=\"{$ifnam}\" selected=\"selected\">{$ifdescr}</option>";
 			?>
                         </select>
 	</td>
@@ -312,6 +321,10 @@ function removeRow(el) {
 			<a onclick="javascript:addRowTo('maintable'); return false;" href="#">
         <img border="0" src="/themes/<?= $g['theme']; ?>/images/icons/icon_plus.gif" alt="" title="<?=gettext("add another entry");?>" />
       </a>
+		<br /><br />
+		<strong><?PHP echo gettext("NOTE:");?></strong>
+		<?PHP echo gettext("Rules for WAN type interfaces in groups do not contain the reply-to mechanism upon which Multi-WAN typically relies.");?>
+		<a href="https://doc.pfsense.org/index.php/Interface_Groups"><?PHP echo gettext("More Information");?></a>
 		</td>
   </tr>
   <tr>
@@ -336,6 +349,10 @@ function removeRow(el) {
 //]]>
 </script>
 
-<?php include("fend.inc"); ?>
+<?php
+	unset($iflist);
+	unset($iflist_disabled);
+	include("fend.inc");
+?>
 </body>
 </html>

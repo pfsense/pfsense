@@ -2,6 +2,8 @@
 /*
     headjs.php
 
+    Copyright (C) 2013-2014 Electric Sheep Fencing, LP
+
     Redistribution and use in source and binary forms, with or without
     modification, are permitted provided that the following conditions are met:
 
@@ -37,7 +39,7 @@
 require_once("guiconfig.inc");
 
 function getHeadJS() {
-  global $_SERVER, $HTTP_SERVER_VARS, $g, $use_loader_tab_gif;
+  global $g, $use_loader_tab_gif;
 
   if(!$use_loader_tab_gif)
     $loader_gif = "/themes/{$g['theme']}/images/misc/loader.gif";

@@ -3,7 +3,7 @@
 /* $Id$ */
 /*
 	rc.update_alias_url-data.sh
-	part of pfSense (http://pfSense.org)
+	part of pfSense (https://www.pfsense.org)
 	
 	Copyright (C) 2010 Scott Ullrich <sullrich@gmail.com>
 	All rights reserved.
@@ -36,6 +36,8 @@
 require_once("config.inc");
 require_once("functions.inc");
 
-update_alias_url_data();
-
+if (update_alias_url_data()) {
+	write_config();
+	send_event("filter reload");
+}
 ?>

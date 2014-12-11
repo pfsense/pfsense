@@ -251,6 +251,7 @@ function step9_stepbeforeformdisplay() {
 		$state = $pconfig['step6']['state'];
 		$city = $pconfig['step6']['city'];
 		$org = $pconfig['step6']['organization'];
+		$email = $pconfig['step6']['email'];
 	} else {
 		$ca = lookup_ca($pconfig['step6']['authcertca']);
 		$cavl = cert_get_subject_array($ca['crt']);
@@ -258,6 +259,7 @@ function step9_stepbeforeformdisplay() {
 		$state = $cavl[1]['v'];
 		$city = $cavl[2]['v'];
 		$org = $cavl[3]['v'];
+		$email = $cavl[4]['v'];
 	}
 	$fields =& $pkg['step'][$stepid]['fields']['field'];
 
@@ -274,6 +276,9 @@ function step9_stepbeforeformdisplay() {
 			break;
 		case 'organization':
 			$fields[$idx]['value'] = $org;
+			break;
+		case 'email':
+			$fields[$idx]['value'] = $email;
 			break;
 		}
 	}
@@ -303,7 +308,7 @@ function step9_submitphpaction() {
 		$input_errors[] = "Please do not use special characters in Certificate field names.";
 	} elseif (in_array($_POST['descr'], $certnames) || in_array($_POST['descr'], $certcns)) {
 		$stepid--;
-		$savemsg = "Please enter a different name for the Certicicate. A Certificate with that name/common name already exists.";	
+		$savemsg = "Please enter a different name for the Certificate. A Certificate with that name/common name already exists.";	
 	} elseif (strlen($_POST['country']) != 2) {
 		$stepid--;
 		$savemsg = "Please enter only a two-letter ISO country code";
@@ -321,6 +326,24 @@ function step10_stepbeforeformdisplay() {
 			$pkg['step'][$stepid]['fields']['field'][$idx]['options']['option'] = array();
 			$cipherlist = openvpn_get_cipherlist();
 			foreach ($cipherlist as $name => $desc) {
+				$opt = array();
+				$opt['name'] = $desc;
+				$opt['value'] = $name;
+			$pkg['step'][$stepid]['fields']['field'][$idx]['options']['option'][] = $opt;
+			}
+		} else if ($field['name'] == "digest") {
+			$pkg['step'][$stepid]['fields']['field'][$idx]['options']['option'] = array();
+			$digestlist = openvpn_get_digestlist();
+			foreach ($digestlist as $name => $desc) {
+				$opt = array();
+				$opt['name'] = $desc;
+				$opt['value'] = $name;
+			$pkg['step'][$stepid]['fields']['field'][$idx]['options']['option'][] = $opt;
+			}
+		} else if ($field['name'] == "compression") {
+			global $openvpn_compression_modes;
+			$pkg['step'][$stepid]['fields']['field'][$idx]['options']['option'] = array();
+			foreach ($openvpn_compression_modes as $name => $desc) {
 				$opt = array();
 				$opt['name'] = $desc;
 				$opt['value'] = $name;
@@ -368,7 +391,7 @@ function step10_submitphpaction() {
 
 	$portused = openvpn_port_used($_POST['protocol'], $_POST['interface'], $_POST['localport']);
 	if ($portused != 0)
-		$input_errors[] = "The specified 'Local port' is in use. Please select another value";
+		$input_errors[] = "The specified 'Local port' is in use. Please enter a port not already in use.";
 
 	if (!isset($_POST['generatetlskey']) && isset($_POST['tlsauthentication']))
 		if (!strstr($_POST['tlssharedkey'], "-----BEGIN OpenVPN Static key V1-----") ||
@@ -412,7 +435,7 @@ function step12_submitphpaction() {
 	$pconfig = $config['ovpnserver'];
 
 	if (!is_array($config['ovpnserver'])) {
-		$message = "No configuration found please retry again.";
+		$message = "No configuration found, please try again.";
 		header("Location:wizard.php?xml=openvpn_wizard.xml&stepid=1&message={$message}");
 		exit;
 	}
@@ -595,6 +618,7 @@ function step12_submitphpaction() {
 		$server['netbios_enable'] = $pconfig['step10']['nbtenable'];
 	}
 	$server['crypto'] = $pconfig['step10']['crypto'];
+	$server['digest'] = $pconfig['step10']['digest'];
 	$server['engine'] = $pconfig['step10']['engine'];
 
 	if (isset($pconfig['step11']['ovpnrule'])) {

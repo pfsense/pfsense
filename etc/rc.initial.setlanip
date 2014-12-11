@@ -38,7 +38,7 @@ if (isset($options["h"]) || isset($options["help"])) {
 	echo "usage: /etc/rc.initial.setlanip [option ...]\n";
 	echo "  -h, --help       show this message\n";
 	echo "  -n, --dry-run    do not make any configuration changes\n";
-	exit(0);
+	return 0;
 }
 
 $dry_run = isset($options["n"]) || isset($options["dry-run"]);
@@ -146,9 +146,9 @@ if ($count > 1) {
 }
 	
 if($intnum < 1) 
-	exit;
+	return;
 if($intnum > $count)
-	exit;
+	return;
 		
 $index = 1;
 foreach ($ifdescrs as $ifname => $ifdesc) {
@@ -161,7 +161,7 @@ foreach ($ifdescrs as $ifname => $ifdesc) {
 }	
 if(!$interface) {
 	echo "Invalid interface!\n";
-	exit;
+	return;
 }
 
 $ifaceassigned = "";
@@ -253,67 +253,83 @@ function console_configure_ip_address($version) {
 	}
 		
 	if($isintdhcp == false or $interface <> "wan") {
-		do {
-			echo "\n" . sprintf(gettext("Enter the new %s %s address.  Press <ENTER> for none:"),
-			                    $upperifname, $label_IPvX) . "\n> ";
-			$intip = chop(fgets($fp));
-			$is_ipaddr = ($version === 6) ? is_ipaddrv6($intip) : is_ipaddrv4($intip);
-			if ($is_ipaddr && is_ipaddr_configured($intip, $interface, true)) {
-				$ip_conflict = true;
-				echo gettext("This IP address conflicts with another interface or a VIP") . "\n";
-			} else
-				$ip_conflict = false;
-		} while (($ip_conflict === true) || !($is_ipaddr || $intip == ''));
-		if ($intip != '') {
-			echo "\n" . sprintf(gettext("Subnet masks are entered as bit counts (as in CIDR notation) in %s."),
-			                    $g['product_name']) . "\n";
-			if ($version === 6) {
-				echo "e.g. ffff:ffff:ffff:ffff:ffff:ffff:ffff:ff00 = 120\n";
-				echo "     ffff:ffff:ffff:ffff:ffff:ffff:ffff:0    = 112\n";
-				echo "     ffff:ffff:ffff:ffff:ffff:ffff:0:0       =  96\n";
-				echo "     ffff:ffff:ffff:ffff:ffff:0:0:0          =  80\n";
-				echo "     ffff:ffff:ffff:ffff:0:0:0:0             =  64\n";
-			} else {
-				echo "e.g. 255.255.255.0 = 24\n";
-				echo "     255.255.0.0   = 16\n";
-				echo "     255.0.0.0     = 8\n";
-			}
+		while(true) {
 			do {
-				$upperifname = strtoupper($interface);
-				echo "\n" . sprintf(gettext("Enter the new %s %s subnet bit count:"),
-				                    $upperifname, $label_IPvX) . "\n> ";
-				$intbits = chop(fgets($fp));
-				$restart_dhcpd = true;
-			} while (!is_numeric($intbits) || ($intbits < 1) || ($intbits > $maxbits));
-
-			if ($version === 6) {
-				$subnet = gen_subnetv6($intip, $intbits);
-			} else {
-				$subnet = gen_subnet($intip, $intbits);
-			}
-			do {
-				echo "\n" . sprintf(gettext("Enter the new %s %s gateway address.  Press <ENTER> for none:"),
-				                    $upperifname, $label_IPvX) . "\n> ";
-				$gwip = chop(fgets($fp));
-				$is_ipaddr = ($version === 6) ? is_ipaddrv6($gwip) : is_ipaddrv4($gwip);
-				$is_in_subnet = $is_ipaddr && ip_in_subnet($gwip, $subnet . "/" . $intbits);
-				if ($gwip != '') {
-					if (!$is_ipaddr) {
-						echo sprintf(gettext("not an %s IP address!"), $label_IPvX) . "\n";
-					} else if (!$is_in_subnet) {
-						echo gettext("not in subnet!") . "\n";
-					}
+				echo "\n" . sprintf(gettext("Enter the new %s %s address.  Press <ENTER> for none:"),
+						    $upperifname, $label_IPvX) . "\n> ";
+				$intip = chop(fgets($fp));
+				$is_ipaddr = ($version === 6) ? is_ipaddrv6($intip) : is_ipaddrv4($intip);
+				if ($is_ipaddr && is_ipaddr_configured($intip, $interface, true)) {
+					$ip_conflict = true;
+					echo gettext("This IP address conflicts with another interface or a VIP") . "\n";
+				} else
+					$ip_conflict = false;
+			} while (($ip_conflict === true) || !($is_ipaddr || $intip == ''));
+			if ($intip != '') {
+				echo "\n" . sprintf(gettext("Subnet masks are entered as bit counts (as in CIDR notation) in %s."),
+						    $g['product_name']) . "\n";
+				if ($version === 6) {
+					echo "e.g. ffff:ffff:ffff:ffff:ffff:ffff:ffff:ff00 = 120\n";
+					echo "     ffff:ffff:ffff:ffff:ffff:ffff:ffff:0    = 112\n";
+					echo "     ffff:ffff:ffff:ffff:ffff:ffff:0:0       =  96\n";
+					echo "     ffff:ffff:ffff:ffff:ffff:0:0:0          =  80\n";
+					echo "     ffff:ffff:ffff:ffff:0:0:0:0             =  64\n";
+				} else {
+					echo "e.g. 255.255.255.0 = 24\n";
+					echo "     255.255.0.0   = 16\n";
+					echo "     255.0.0.0     = 8\n";
 				}
-			} while (!($gwip == '' || ($is_ipaddr && $is_in_subnet)));
+				do {
+					$upperifname = strtoupper($interface);
+					echo "\n" . sprintf(gettext("Enter the new %s %s subnet bit count:"),
+							    $upperifname, $label_IPvX) . "\n> ";
+					$intbits = chop(fgets($fp));
+					$intbits_ok = is_numeric($intbits) && (($intbits >= 1) || ($intbits <= $maxbits));
+					$restart_dhcpd = true;
 
-			if ($gwip != '') {
-				$inet_type = ($version === 6) ? "inet6" : "inet";
-				$gwname = add_gateway_to_config($interface, $gwip, $inet_type);
+					if ($version === 4 && $intbits < $maxbits) {
+						if ($intip == gen_subnet($intip, $intbits)) {
+							echo gettext("You cannot set network address to an interface");
+							continue 2;
+							$intbits_ok = false;
+						} else if ($intip == gen_subnet_max($intip, $intbits)) {
+							echo gettext("You cannot set broadcast address to an interface");
+							continue 2;
+							$intbits_ok = false;
+						}
+					}
+				} while (!$intbits_ok);
+
+				if ($version === 6) {
+					$subnet = gen_subnetv6($intip, $intbits);
+				} else {
+					$subnet = gen_subnet($intip, $intbits);
+				}
+				do {
+					echo "\n" . sprintf(gettext("For a WAN, enter the new %s %s upstream gateway address."), $upperifname, $label_IPvX) . "\n" .
+								gettext("For a LAN, press <ENTER> for none:") . "\n> ";
+					$gwip = chop(fgets($fp));
+					$is_ipaddr = ($version === 6) ? is_ipaddrv6($gwip) : is_ipaddrv4($gwip);
+					$is_in_subnet = $is_ipaddr && ip_in_subnet($gwip, $subnet . "/" . $intbits);
+					if ($gwip != '') {
+						if (!$is_ipaddr) {
+							echo sprintf(gettext("not an %s IP address!"), $label_IPvX) . "\n";
+						} else if (!$is_in_subnet) {
+							echo gettext("not in subnet!") . "\n";
+						}
+					}
+				} while (!($gwip == '' || ($is_ipaddr && $is_in_subnet)));
+
+				if ($gwip != '') {
+					$inet_type = ($version === 6) ? "inet6" : "inet";
+					$gwname = add_gateway_to_config($interface, $gwip, $inet_type);
+				}
 			}
+			$ifppp = console_get_interface_from_ppp(get_real_interface($interface));
+			if (!empty($ifppp))
+				$ifaceassigned = $ifppp;
+			break;
 		}
-		$ifppp = console_get_interface_from_ppp(get_real_interface($interface));
-		if (!empty($ifppp))
-			$ifaceassigned = $ifppp;
 	}
 
 	return array($intip, $intbits, $gwname);
@@ -333,7 +349,7 @@ $config['interfaces'][$interface]['gatewayv6'] = $gwname6;
 $config['interfaces'][$interface]['enable']    = true;
 
 function console_configure_dhcpd($version = 4) {
-	global $g, $config, $restart_dhcpd, $fp, $interface, $dry_run;
+	global $g, $config, $restart_dhcpd, $fp, $interface, $dry_run, $intip, $intbits, $intip6, $intbits6;
 
 	$label_IPvX = ($version === 6) ? "IPv6"    : "IPv4";
 	$dhcpd      = ($version === 6) ? "dhcpdv6" : "dhcpd";
@@ -341,45 +357,57 @@ function console_configure_dhcpd($version = 4) {
 	if($g['services_dhcp_server_enable'])
 		$yn = prompt_for_enable_dhcp_server($version);
 	if ($yn == "y") {
+		$subnet_start = ($version === 6) ? gen_subnetv6($intip6, $intbits6) : gen_subnet($intip, $intbits);
+		$subnet_end = ($version === 6) ? gen_subnetv6_max($intip6, $intbits6) : gen_subnet_max($intip, $intbits);
 		do {
-			echo sprintf(gettext("Enter the start address of the %s client address range:"), $label_IPvX) . " ";
-			$dhcpstartip = chop(fgets($fp));
-			if ($dhcpstartip === "") {
-				fclose($fp);
-				exit(0);
-			}
-			$is_ipaddr = ($version === 6) ? is_ipaddrv6($dhcpstartip) : is_ipaddrv4($dhcpstartip);
-		} while (!$is_ipaddr);
+			do {
+				echo sprintf(gettext("Enter the start address of the %s client address range:"), $label_IPvX) . " ";
+				$dhcpstartip = chop(fgets($fp));
+				if ($dhcpstartip === "") {
+					fclose($fp);
+					return 0;
+				}
+				$is_ipaddr = ($version === 6) ? is_ipaddrv6($dhcpstartip) : is_ipaddrv4($dhcpstartip);
+				$is_inrange = is_inrange($dhcpstartip, $subnet_start, $subnet_end);
+				if (!$is_inrange)
+					echo gettext("This IP address must be in the interface's subnet") . "\n";
+			} while (!$is_ipaddr || !$is_inrange);
 
-		do {
-			echo sprintf(gettext("Enter the end address of the %s client address range:"), $label_IPvX) . " ";
-			$dhcpendip = chop(fgets($fp));
-			if ($dhcpendip === "") {
-				fclose($fp);
-				exit(0);
-			}
-			$is_ipaddr = ($version === 6) ? is_ipaddrv6($dhcpendip) : is_ipaddrv4($dhcpendip);
-		} while (!$is_ipaddr);
+			do {
+				echo sprintf(gettext("Enter the end address of the %s client address range:"), $label_IPvX) . " ";
+				$dhcpendip = chop(fgets($fp));
+				if ($dhcpendip === "") {
+					fclose($fp);
+					return 0;
+				}
+				$is_ipaddr = ($version === 6) ? is_ipaddrv6($dhcpendip) : is_ipaddrv4($dhcpendip);
+				$is_inrange = is_inrange($dhcpendip, $subnet_start, $subnet_end);
+				if (!$is_inrange)
+					echo gettext("This IP address must be in the interface's subnet") . "\n";
+				$not_inorder = ($version === 6) ? (inet_pton($dhcpendip) < inet_pton($dhcpstartip)) : ip_less_than($dhcpendip, $dhcpstartip);
+				if ($not_inorder) {
+					echo gettext("The end address of the DHCP range must be >= the start address") . "\n";
+				}
+			} while (!$is_ipaddr || !$is_inrange);
+		} while ($not_inorder);
 		$restart_dhcpd = true;
 		$config[$dhcpd][$interface]['enable'] = true;
 		$config[$dhcpd][$interface]['range']['from'] = $dhcpstartip;
 		$config[$dhcpd][$interface]['range']['to'] = $dhcpendip;
 	} else {
-		/* TODO - this line is causing a "Fatal error: Cannot unset
-		   string offsets in /etc/rc.initial.setlanip" on below line
-		   number */
-		if($config[$dhcpd][$interface]) 
+		if(isset($config[$dhcpd][$interface]['enable'])) {
 			unset($config[$dhcpd][$interface]['enable']);
-		echo "Disabling DHCPD...";
-		if (!$dry_run) {
-			services_dhcpd_configure();
+			printf(gettext("Disabling %s DHCPD..."), $label_IPvX);
+			$restart_dhcpd = true;
 		}
-		echo "Done!\n";
 	}
+	return 1;
 }
 
-console_configure_dhcpd(4);
-console_configure_dhcpd(6);
+if (console_configure_dhcpd(4) == 0)
+	return 0;
+if (console_configure_dhcpd(6) == 0)
+	return 0;
 	
 //*****************************************************************************
 
@@ -424,7 +452,7 @@ if(!$config['interfaces']['lan']) {
 	unset($config['nat']);
 	if (!$dry_run) {
 		system("rm /var/dhcpd/var/db/* >/dev/null 2>/dev/null");
-		services_dhcpd_configure();
+		$restart_dhcpd = true;
 	}
 }
 
@@ -433,15 +461,16 @@ if (!$dry_run) {
 	echo "\nPlease wait while the changes are saved to {$upperifname}...";
 	write_config(sprintf(gettext("%s IP configuration from console menu"), $interface));
 	interface_reconfigure(strtolower($upperifname));
-	echo " Reloading filter...";
+	echo "\n Reloading filter...";
 	filter_configure_sync();
-	echo "\n";
+	echo "\n Reloading routing configuration...";
+	system_routing_configure();
 	if($restart_dhcpd) {
-		echo " DHCPD..."; 
+		echo "\n DHCPD..."; 
 		services_dhcpd_configure();
 	}
 	if($restart_webgui) {
-		echo " restarting webConfigurator... ";
+		echo "\n Restarting webConfigurator... ";
 		mwexec("/etc/rc.restart_webgui");
 	}
 }
@@ -466,7 +495,7 @@ if ($intip6 != '') {
 }
 
 if ($intip != '' || $intip6 != '') {
-	if (count($ifdescrs) == "1" or $interface = "lan") {
+	if (count($ifdescrs) == "1" or $interface == "lan") {
 		if ($debug) {
 			echo "ifdescrs count is " . count($ifdescrs) . "\n";
 			echo "interface is {$interface} \n";

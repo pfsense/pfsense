@@ -1,8 +1,12 @@
 <?php
 /*
         $Id$
+
+        Copyright (C) 2013-2014 Electric Sheep Fencing, LP
+        All rights reserved.
+
         Copyright 2007 Scott Dale
-        Part of pfSense widgets (www.pfsense.com)
+        Part of pfSense widgets (https://www.pfsense.org)
         originally based on m0n0wall (http://m0n0.ch/wall)
 
         Copyright (C) 2004-2005 T. Lechat <dev@lechat.org>, Manuel Kasper <mk@neon1.net>
@@ -58,7 +62,7 @@ require_once("functions.inc");
     last_val_span = new Array();
 </script>
 <div style='display: block; margin-left: auto; margin-right: auto' class="GraphLink" id="GraphOutput"></div>
-<script language="javascript" type="text/javascript">
+<script type="text/javascript">
 
     // Graph 1
     graph[0]         = GraphInitialize('GraphOutput', 200, 50, 4);

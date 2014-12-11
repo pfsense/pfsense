@@ -2,6 +2,7 @@
 /*
     services_status.php
     Copyright (C) 2004, 2005 Scott Ullrich
+    Copyright (C) 2013-2014 Electric Sheep Fencing, LP
     All rights reserved.
 
     Redistribution and use in source and binary forms, with or without
@@ -41,16 +42,20 @@ require_once("guiconfig.inc");
 require_once("service-utils.inc");
 require_once("shortcuts.inc");
 
-if (!empty($_GET['service'])) {
+$service_name = '';
+if (isset($_GET['service']))
+	$service_name = htmlspecialchars($_GET['service']);
+
+if (!empty($service_name)) {
 	switch ($_GET['mode']) {
 		case "restartservice":
-			$savemsg = service_control_restart($_GET['service'], $_GET);
+			$savemsg = service_control_restart($service_name, $_GET);
 			break;
 		case "startservice":
-			$savemsg = service_control_start($_GET['service'], $_GET);
+			$savemsg = service_control_start($service_name, $_GET);
 			break;
 		case "stopservice":
-			$savemsg = service_control_stop($_GET['service'], $_GET);
+			$savemsg = service_control_stop($service_name, $_GET);
 			break;
 	}
 	sleep(5);
@@ -93,11 +98,16 @@ if (count($services) > 0) {
 			continue;
 		if (empty($service['description']))
 			$service['description'] = get_pkg_descr($service['name']);
-		echo '<tr><td class="listlr" width="20%">' . $service['name'] . '</td>' . "\n";
-		echo '<td class="listr" width="55%">' . $service['description'] . '</td>' . "\n";
-		echo get_service_status_icon($service, true, true);
-		echo '<td valign="middle" class="list nowrap">';
-		echo get_service_control_links($service);
+		echo "<tr><td class=\"listlr\" width=\"20%\">" . $service['name'] . "</td>\n";
+		echo "<td class=\"listr\" width=\"55%\">" . $service['description'] . "</td>\n";
+		// if service is running then listr else listbg
+		$bgclass = null;
+		if (get_service_status($service))
+			$bgclass = "listr";
+		else
+			$bgclass = "listbg";
+		echo "<td class=\"" . $bgclass . "\" align=\"center\">" . get_service_status_icon($service, true, true) . "</td>\n";
+		echo "<td valign=\"middle\" class=\"list nowrap\">" . get_service_control_links($service);
 		$scut = get_shortcut_by_service_name($service['name']);
 		if (!empty($scut)) {
 			echo get_shortcut_main_link($scut, true, $service);
@@ -107,7 +117,7 @@ if (count($services) > 0) {
 		echo "</td></tr>\n";
 	}
 } else {
-	echo "<tr><td colspan=\"3\" align=\"center\">" . gettext("No services found") . ".</td></tr>\n";
+	echo "<tr><td colspan=\"3\" align=\"center\">" . gettext("No services found") . " . </td></tr>\n";
 }
 
 ?>

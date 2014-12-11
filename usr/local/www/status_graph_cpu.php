@@ -4,6 +4,7 @@
 	part of m0n0wall (http://m0n0.ch/wall)
 	
 	Copyright (C) 2003-2006 Manuel Kasper <mk@neon1.net>.
+        Copyright (C) 2013-2014 Electric Sheep Fencing, LP
 	All rights reserved.
 	
 	Redistribution and use in source and binary forms, with or without
@@ -50,5 +51,5 @@ $pgtitle = gettext("Status: CPU Graph");
 <embed src="graph_cpu.php" type="image/svg+xml"
 		width="550" height="275" pluginspage="http://www.adobe.com/svg/viewer/install/auto" />
 </div>
-<br><span class="red"><strong><?=gettext("Note"); ?>:</strong></span> <?=gettext("if you can't see the graph, you may have to install the"); ?> <a href="http://www.adobe.com/svg/viewer/install/" target="_blank"><?=gettext("Adobe SVG viewer"); ?></a>.
+<br /><span class="red"><strong><?=gettext("Note"); ?>:</strong></span> <?=gettext("if you can't see the graph, you may have to install the"); ?> <a href="http://www.adobe.com/svg/viewer/install/" target="_blank"><?=gettext("Adobe SVG viewer"); ?></a>.
 <?php include("fend.inc"); ?>

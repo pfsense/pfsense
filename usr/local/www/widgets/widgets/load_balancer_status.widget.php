@@ -1,11 +1,13 @@
 <?php
 /*
+        Copyright (C) 2013-2014 Electric Sheep Fencing, LP
+
 	Copyright 2010 Jim Pingle
 	Portions copied from status_lb_pool.php, status_lb_vs.php, and vslb.inc:
 	Copyright (C) 2010 Seth Mos <seth.mos@dds.nl>.
 	Copyright (C) 2005-2008 Bill Marquette
 
-	Part of pfSense widgets (www.pfsense.com)
+	Part of pfSense widgets (https://www.pfsense.org)
 	originally based on m0n0wall (http://m0n0.ch/wall)
 
 	Copyright (C) 2004-2005 T. Lechat <dev@lechat.org>, Manuel Kasper <mk@neon1.net>
@@ -86,15 +88,15 @@ if (!$nentries)
 		}
 		?>
 		<td class="listlr">
-			<?=$vsent['name'];?><br/>
+			<?=$vsent['name'];?><br />
 			<span style="background-color: <?=$bgcolor?>; display: block"><i><?=$rdr_a[$vsent['name']]['status']?></i></span>
-			<?=$vsent['ipaddr'].":".$vsent['port'];?><br/>
+			<?=$vsent['ipaddr'].":".$vsent['port'];?><br />
 		</td>
 		<td class="listr" align="center" >
 		<table border="0" cellpadding="0" cellspacing="2" summary="status">
 		<?php
 		foreach ($a_pool as $pool) {
-			if ($pool['name'] == $vsent['pool']) {
+			if ($pool['name'] == $vsent['poolname']) {
 				$pool_hosts=array();
 				foreach ((array) $pool['servers'] as $server) {
 					$svr['ip']['addr']=$server;
@@ -125,7 +127,7 @@ if (!$nentries)
 								$checked = "checked";
 						}
 						echo "<tr>";
-						echo "<td bgcolor={$bgcolor}>&nbsp;{$server['ip']['addr']}:{$pool['port']}&nbsp;</td><td bgcolor={$bgcolor}>&nbsp;";
+						echo "<td bgcolor=\"{$bgcolor}\">&nbsp;{$server['ip']['addr']}:{$pool['port']}&nbsp;</td><td bgcolor=\"{$bgcolor}\">&nbsp;";
 						if($server['ip']['avail'])
 						  echo " ({$server['ip']['avail']}) ";
 						echo "&nbsp;</td></tr>";

@@ -2,9 +2,10 @@
 /*
 	firewall_schedule.php
 	Copyright (C) 2004 Scott Ullrich
+        Copyright (C) 2013-2014 Electric Sheep Fencing, LP
 	All rights reserved.
 
-	originially part of m0n0wall (http://m0n0.ch/wall)
+	originally part of m0n0wall (http://m0n0.ch/wall)
 	Copyright (C) 2003-2004 Manuel Kasper <mk@neon1.net>.
 	All rights reserved.
 
@@ -157,7 +158,7 @@ include("head.inc");
 									$currentDay++;
 									if (($currentDay != $nextDay) || ($tempmontharray[$arraycounter] != $tempmontharray[$arraycounter+1])){
 										if ($firstPrint)
-											$dayFriendly .= "<br/>";
+											$dayFriendly .= "<br />";
 										$currentDay--;
 										if ($currentDay != $firstDay)
 											$dayFriendly .= $monthArray[$firstmonth-1] . " " . $firstDay . " - " . $currentDay ;
@@ -191,7 +192,7 @@ include("head.inc");
 										$currentDay++;
 										if ($currentDay != $nextDay){
 											if ($firstprint)
-												$dayFriendly .= "<br/>";
+												$dayFriendly .= "<br />";
 											$currentDay--;
 											if ($currentDay != $firstDay)
 												$dayFriendly .= $dayArray[$firstDay-1] . " - " . $dayArray[$currentDay-1];
@@ -237,7 +238,7 @@ include("head.inc");
 </tr>
 <tr>
   <td class="tabcont" colspan="3">
-   <p><span class="vexpl"><span class="red"><strong><?=gettext("Note:");?><br/></strong></span><?=gettext("Schedules act as placeholders for time ranges to be used in Firewall Rules.");?></span></p>
+   <p><span class="vexpl"><span class="red"><strong><?=gettext("Note:");?><br /></strong></span><?=gettext("Schedules act as placeholders for time ranges to be used in Firewall Rules.");?></span></p>
   </td>
 </tr>
 </table>

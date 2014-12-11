@@ -4,127 +4,56 @@
 
 PFSENSETYPE=`cat /etc/platform`
 
-# check in two places for the old kernel type, since it could have been moved elsewhere in the upgrade process.
-if [ -f /boot/kernel/pfsense_kernel.txt ]; then
-	OLDKERNEL=`cat /boot/kernel/pfsense_kernel.txt`
-else
-	OLDKERNEL=`cat /tmp/pfsense_kernel.txt`
-fi
-
-# Massage the existing kernel into one that actually exists.
-#	Leaving old entries so we can bring back other kernels later if desired.
-case "$OLDKERNEL" in
-	"wrap")
-	KERNELTYPE=wrap
-	;;
-	"wrap_vga")
-	KERNELTYPE=wrap_vga
-	;;
-	"Developers")
-	KERNELTYPE=SMP
-	;;
-	"UP")
-	KERNELTYPE=SMP
-	;;
-	"SMP")
-	KERNELTYPE=SMP
-	;;
-	*)
-	if [ "${PFSENSETYPE}" = "pfSense" ]; then
-		KERNELTYPE=SMP
-	elif [ "${PFSENSETYPE}" = "nanobsd" ]; then
-		KERNELTYPE=WRAP
-	fi
-	;;
-esac
-
-# Overwrite the old kernel type with what we're using now to reflect what is about to be written out.
-echo ${KERNELTYPE} > /boot/kernel/pfsense_kernel.txt
-HAVE_KERNEL=false
-
-case "${KERNELTYPE}" in
-	"wrap")
-		if [ -f /kernels/kernel_wrap.gz ]; then
-			HAVE_KERNEL=true
-			tar xzpf /kernels/kernel_wrap.gz --exclude loader.conf -C /boot/
-			cp /etc/ttys_wrap /etc/ttys
-		fi
-		;;
-	"wrap_vga")
-		if [ -f /kernels/kernel_wrap_vga.gz ]; then
-			HAVE_KERNEL=true
-			tar xzpf /kernels/kernel_wrap_vga.gz --exclude loader.conf -C /boot/
-		fi
-		;;
-	"Developers")
-		if [ -f /kernels/kernel_Dev.gz ]; then
-			HAVE_KERNEL=true
-			tar xzpf /kernels/kernel_Dev.gz --exclude loader.conf -C /boot/
-		fi
-		;;
-	"UP")
-		if [ -f /kernels/kernel_uniprocessor.gz ]; then
-			HAVE_KERNEL=true
-			tar xzpf /kernels/kernel_uniprocessor.gz --exclude loader.conf -C /boot/
-		fi
-		;;
-	"SMP")
-		if [ -f /kernels/kernel_SMP.gz ]; then
-			HAVE_KERNEL=true
-			tar xzpf /kernels/kernel_SMP.gz --exclude loader.conf -C /boot/
-		fi
-		;;
-esac
-
-if [ ${HAVE_KERNEL} = "false" ]; then
-	echo "ERROR: Unable to locate a kernel upgrade file!"
-	sleep 5
-fi
-
-if [ $PFSENSETYPE = "pfSense" ] || [ $PFSENSETYPE = "nanobsd" ]; then
+if [ "${PFSENSETYPE}" = "pfSense" -o "${PFSENSETYPE}" = "nanobsd" ]; then
 	touch /conf/needs_package_sync
 fi
 
 # Detect interactive logins and display the shell
 detect_command='[ -n "$SSH_TTY" -o "$TERM" = "cons25" ] && exec /etc/rc.initial'
-echo "$detect_command" > $CVS_CO_DIR/root/.shrc
-echo "$detect_command" >> $CVS_CO_DIR/root/.profile
+echo "${detect_command}" > ${CVS_CO_DIR}/root/.shrc
+echo "${detect_command}" >> ${CVS_CO_DIR}/root/.profile
+
+if [ "${PFSENSETYPE}" = "nanobsd" ]; then
+	ROOT=/tmp/${1}/
+else
+	ROOT=/
+fi
 
 # Now turn on or off serial console as needed
-echo "Checking for /tmp/$1/tmp/post_upgrade_command.php... " >> /conf/upgrade_log.txt
-if [ -x /tmp/$1/tmp/post_upgrade_command.php ]; then
-	echo "Running /tmp/$1/tmp/post_upgrade_command.php $1" >> /conf/upgrade_log.txt
-	/tmp/$1/tmp/post_upgrade_command.php $1 >> /conf/upgrade_log.txt 2>&1
-elif [ -f /tmp/post_upgrade_command.php ]; then
-	echo "Running /tmp/post_upgrade_command.php $1" >> /conf/upgrade_log.txt
-	/tmp/post_upgrade_command.php $1
+echo "Checking for ${ROOT}tmp/post_upgrade_command.php... " >> /conf/upgrade_log.txt
+if [ -x ${ROOT}tmp/post_upgrade_command.php ]; then
+	echo "Running ${ROOT}tmp/post_upgrade_command.php $1" >> /conf/upgrade_log.txt
+	${ROOT}tmp/post_upgrade_command.php $1 >> /conf/upgrade_log.txt 2>&1
 fi
 
 # Remove any previous MD5 sum files
-rm -f /root/*.md5
-
-# File moved to pfSense php shell (pfSsh.php)
-rm -rf /usr/local/sbin/cvs_sync.sh
-
-if [ $PFSENSETYPE = "embedded" ]; then
-	cp /etc/ttys_wrap /etc/ttys
-fi
-
-if [ -f /usr/local/sbin/php ]; then
-	rm /usr/local/sbin/php
-fi
+rm -f /root/*.md5 >/dev/null 2>&1
 
 # Fixup permissions on installed files
-if [ "${PFSENSETYPE}" = "nanobsd" ]; then
-	MTREECHKDIR=/tmp/${1}/
-else
-	MTREECHKDIR=/
+if [ -f ${ROOT}etc/installed_filesystem.mtree ]; then
+	/usr/sbin/mtree -U -e -q -f ${ROOT}etc/installed_filesystem.mtree -p ${ROOT} > /conf/mtree.log
 fi
-if [ -f ${MTREECHKDIR}etc/installed_filesystem.mtree ]; then
-	/usr/sbin/mtree -U -e -q -f ${MTREECHKDIR}etc/installed_filesystem.mtree -p ${MTREECHKDIR} > /conf/mtree.log;
-fi;
 
 # Make sure to preserve existing time zone
-if [ "${PFSENSETYPE}" = "nanobsd" ] && [ -f /etc/localtime ]; then
-	/bin/cp -p /etc/localtime /tmp/${1}/etc/localtime 2>/dev/null
+if [ "${PFSENSETYPE}" = "nanobsd" -a -f /etc/localtime ]; then
+	/bin/cp -p /etc/localtime ${ROOT}etc/localtime 2>/dev/null
 fi
+
+# Files may contain spaces
+oIFS=${IFS}
+IFS="
+"
+# Obsolete files - nanobsd doesn't need it since a new image is installed
+# on the other partition
+if [ "${PFSENSETYPE}" != "nanobsd" -a -f /etc/pfSense.obsoletedfiles ]; then
+	for f in $(cat /etc/pfSense.obsoletedfiles); do
+		if [ -n "${f}" -a -f "${f}" ]; then
+			rm -f "${f}"
+		elif [ -n "${f}" -a -d "${f}" ]; then
+			rm -rf "${f}"
+		fi
+	done
+fi
+
+# Restore IFS
+IFS=${oIFS}

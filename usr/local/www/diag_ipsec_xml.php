@@ -4,6 +4,7 @@
 	diag_ipsec_xml.php
 	Copyright (C) 2007 pfSense Project
 	Copyright (C) 2010 Seth Mos
+        Copyright (C) 2013-2014 Electric Sheep Fencing, LP
 	All rights reserved.
 
 	Parts of this code was originally based on vpn_ipsec_sad.php
@@ -50,15 +51,14 @@ $ipsec_status = array();
 
 $a_phase2 = &$config['ipsec']['phase2'];
 
-$spd = ipsec_dump_spd();
-$sad = ipsec_dump_sad();
+$status = ipsec_smp_dump_status();
 
-if(is_array($a_phase2)) {
+if (is_array($status['query']) && $status['query']['ikesalist'] && $status['query']['ikesalist']['ikesa']) {
 	foreach ($a_phase2 as $ph2ent) {
 		ipsec_lookup_phase1($ph2ent,$ph1ent);
 		$tunnel = array();
 		if (!isset($ph2ent['disabled']) && !isset($ph1ent['disabled'])) {
-			if(ipsec_phase2_status($spd,$sad,$ph1ent,$ph2ent))
+			if(ipsec_phase1_status($status['query']['ikesalist']['ikesa'], $ph1ent['ikeid']))
 				$tunnel['state'] = "up";
 			elseif(!isset($config['ipsec']['enable']))
 				$tunnel['state'] = "disabled";

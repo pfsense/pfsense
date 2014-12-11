@@ -15,7 +15,7 @@ if [ ! -d "${dumpdir}" ]; then
 	exit
 fi
 
-if savecore -C "${dumpdir}" "${dumpdev}" >/dev/null; then
+if savecore -C "${dumpdev}" >/dev/null; then
 	savecore ${dumpdir} ${dumpdev}
 else
 	echo 'No core dumps found.'

@@ -3,6 +3,7 @@
 	$Id$
 
         xmlrpc.php
+        Copyright (C) 2013-2014 Electric Sheep Fencing, LP
         Copyright (C) 2009, 2010 Scott Ullrich
         Copyright (C) 2005 Colin Smith
         All rights reserved.
@@ -244,7 +245,7 @@ function restore_config_section_xmlrpc($raw_params) {
 				}
 				unset($oldvips["{$vip['interface']}_vip{$vip['vhid']}"]);
 			} else if ($vip['mode'] == "ipalias" && strstr($vip['interface'], "_vip") && isset($oldvips[$vip['subnet']])) {
-				if ($oldvips[$vip['subnet']] = "{$vip['interface']}{$vip['subnet']}{$vip['subnet_bits']}") {
+				if ($oldvips[$vip['subnet']] == "{$vip['interface']}{$vip['subnet']}{$vip['subnet_bits']}") {
 					if (does_vip_exist($vip)) {
 						unset($oldvips[$vip['subnet']]);
 						continue; // Skip reconfiguring this vips since nothing has changed.
@@ -269,11 +270,16 @@ function restore_config_section_xmlrpc($raw_params) {
 		}
 		/* Cleanup remaining old carps */
 		foreach ($oldvips as $oldvipif => $oldvippar) {
-			if (!is_ipaddr($oldvipif) && does_interface_exist($oldvipif))
-					pfSense_interface_destroy($oldvipif);
+			$oldvipif = get_real_interface($oldvippar['interface']);
+			if (!empty($oldvipif)) {
+				if (is_ipaddrv6($oldvipif))
+					 mwexec("/sbin/ifconfig " . escapeshellarg($oldvipif) . " inet6 " . escapeshellarg($oldvipar['subnet']) . " delete");
+				else
+					pfSense_interface_deladdress($oldvipif, $oldvipar['subnet']);
+			}
 		}
 		if ($carp_setuped == true)
-			interfaces_carp_setup();
+			interfaces_sync_setup();
 		if ($anyproxyarp == true)
 			interface_proxyarp_configure();
 	}
@@ -356,7 +362,7 @@ $filter_configure_sig = array(
 );
 
 function filter_configure_xmlrpc($raw_params) {
-	global $xmlrpc_g;
+	global $xmlrpc_g, $config;
 
 	$params = xmlrpc_params_to_php($raw_params);
 	if(!xmlrpc_auth($params)) {
@@ -369,8 +375,15 @@ function filter_configure_xmlrpc($raw_params) {
 	relayd_configure();
 	require_once("openvpn.inc");
 	openvpn_resync_all();
-	services_dhcpd_configure();
-	services_dnsmasq_configure();
+	if (isset($config['dnsmasq']['enable']))
+		services_dnsmasq_configure();
+	elseif (isset($config['unbound']['enable']))
+		services_unbound_configure();
+	else
+		# Both calls above run services_dhcpd_configure(), then we just
+		# need to call it when them are not called to avoid restart dhcpd
+		# twice, as described on ticket #3797
+		services_dhcpd_configure();
 	local_sync_accounts();
 
 	return $xmlrpc_g['return']['true'];
@@ -480,7 +493,8 @@ function get_notices_xmlrpc($raw_params) {
 		xmlrpc_authfail();
 		return $xmlrpc_g['return']['authfail'];
 	}
-	require("notices.inc");
+	if(!function_exists("get_notices"))
+		require("notices.inc");
 	if(!$params) {
 		$toreturn = get_notices();
 	} else {

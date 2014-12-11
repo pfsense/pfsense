@@ -116,7 +116,7 @@ $system_menu = msort(array_merge($system_menu, return_ext_menu("System")),0);
 // Interfaces
 $interfaces_menu = array();
 if (!isset($config['system']['webgui']['noassigninterfaces']))
-	$interfaces_menu[] = array("(assign)", "/interfaces_assign.php");
+	$interfaces_menu[] = array(gettext("(assign)"), "/interfaces_assign.php");
 $opts = get_configured_interface_with_descr(false, true);
 foreach ($opts as $oif => $odescr)
 	if (!isset($config['interfaces'][$oif]['ovpn']))
@@ -137,6 +137,7 @@ $firewall_menu = msort(array_merge($firewall_menu, return_ext_menu("Firewall")),
 $services_menu = array();
 $services_menu[] = array(gettext("Captive Portal"), "/services_captiveportal.php");
 $services_menu[] = array(gettext("DNS Forwarder"), "/services_dnsmasq.php");
+$services_menu[] = array(gettext("DNS Resolver"), "/services_unbound.php");
 $services_menu[] = array(gettext("DHCP Relay"), "/services_dhcp_relay.php");
 $services_menu[] = array(gettext("DHCPv6 Relay"), "/services_dhcpv6_relay.php");
 if($g['services_dhcp_server_enable']) {
@@ -153,7 +154,7 @@ if(count($config['interfaces']) > 1) {
 	/* no use for UPnP in single-interface deployments
 	remove to reduce user confusion
 	*/
-	$services_menu[] = array(gettext("UPnP &amp; NAT-PMP"), "/pkg_edit.php?xml=miniupnpd.xml&amp;id=0");
+	$services_menu[] = array(gettext("UPnP &amp; NAT-PMP"), "/pkg_edit.php?xml=miniupnpd.xml");
 }
 $services_menu[] = array(gettext("Wake on LAN"), "/services_wol.php");
 $services_menu = msort(array_merge($services_menu, return_ext_menu("Services")),0);
@@ -188,7 +189,7 @@ $status_menu[] = array(gettext("RRD Graphs"), "/status_rrd_graph.php");
 $status_menu[] = array(gettext("Services"), "/status_services.php");
 $status_menu[] = array(gettext("System Logs"), "/diag_logs.php");
 $status_menu[] = array(gettext("Traffic Graph"), "/status_graph.php?if=wan");
-if(count($config['interfaces']) > 1) 
+if(count($config['interfaces']) > 1)
 	$status_menu[] = array(gettext("UPnP &amp; NAT-PMP"), "/status_upnp.php");
 $ifentries = get_configured_interface_with_descr();
 foreach ($ifentries as $ent => $entdesc) {
@@ -209,6 +210,10 @@ $diagnostics_menu[] = array(gettext("Command Prompt"), "/exec.php");
 $diagnostics_menu[] = array(gettext("DNS Lookup"), "/diag_dns.php");
 $diagnostics_menu[] = array(gettext("Edit File"), "/edit.php");
 $diagnostics_menu[] = array(gettext("Factory Defaults"), "/diag_defaults.php");
+
+if(file_exists("/var/run/gmirror_active"))
+	$diagnostics_menu[] = array(gettext("GEOM Mirrors"), "/diag_gmirror.php" );
+
 $diagnostics_menu[] = array(gettext("Halt System"), "/halt.php" );
 $diagnostics_menu[] = array(gettext("Limiter Info"), "/diag_limiter_info.php" );
 $diagnostics_menu[] = array(gettext("NDP Table"), "/diag_ndp.php" );
@@ -232,23 +237,27 @@ if($g['platform'] == "nanobsd")
 
 if (isset($config['system']['developer'])) {
 	$diagnostics_menu[] = array(gettext("Restart HTTPD"), "/restart_httpd.php", "style" => "font-weight: bold; color: yellow;");
-	
+
 }
 $diagnostics_menu = msort(array_merge($diagnostics_menu, return_ext_menu("Diagnostics")),0);
+
+$gold_menu = array();
+$gold_menu[] = array(gettext("pfSense Gold"), "https://www.pfsense.org/gold");
+$gold_menu = msort(array_merge($gold_menu, return_ext_menu("Gold")),0);
 
 if(! $g['disablehelpmenu']) {
 	$help_menu = array();
 	$help_menu[] = array(gettext("About this Page"), $helpurl);
-	if($g['product_name'] == "pfSense") 
-		$help_menu[] = array(gettext("Bug Database"), "http://www.pfsense.org/j.php?jumpto=redmine");
-	$help_menu[] = array(gettext("User Forum"), "http://www.pfsense.org/j.php?jumpto=forum");
-	$help_menu[] = array(gettext("Documentation"), "http://www.pfsense.org/j.php?jumpto=doc");
-	$help_menu[] = array(gettext("Developers Wiki"), "http://www.pfsense.org/j.php?jumpto=devwiki");
-	$help_menu[] = array(gettext("Paid Support"), "http://www.pfsense.org/j.php?jumpto=portal");
-	$help_menu[] = array(gettext("pfSense Book"), "http://www.pfsense.org/j.php?jumpto=book");
-	$help_menu[] = array(gettext("Search portal"), "http://www.pfsense.org/j.php?jumpto=searchportal");
-	$help_menu[] = array(gettext("FreeBSD Handbook"), "http://www.pfsense.org/j.php?jumpto=fbsdhandbook");
-	$help_menu = msort(array_merge($help_menu, return_ext_menu("Help")),0);	
+	if($g['product_name'] == "pfSense")
+	$help_menu[] = array(gettext("Bug Database"), "https://www.pfsense.org/j.php?jumpto=redmine");
+	$help_menu[] = array(gettext("User Forum"), "https://www.pfsense.org/j.php?jumpto=forum");
+	$help_menu[] = array(gettext("Documentation"), "https://www.pfsense.org/j.php?jumpto=doc");
+	$help_menu[] = array(gettext("Developers Wiki"), "https://www.pfsense.org/j.php?jumpto=devwiki");
+	$help_menu[] = array(gettext("Paid Support"), "https://www.pfsense.org/j.php?jumpto=portal");
+	$help_menu[] = array(gettext("pfSense Book"), "https://www.pfsense.org/j.php?jumpto=book");
+	$help_menu[] = array(gettext("Search portal"), "https://www.pfsense.org/j.php?jumpto=searchportal");
+	$help_menu[] = array(gettext("FreeBSD Handbook"), "https://www.pfsense.org/j.php?jumpto=fbsdhandbook");
+	$help_menu = msort(array_merge($help_menu, return_ext_menu("Help")),0);
 }
 
 ?>
@@ -324,6 +333,14 @@ if(! $g['disablehelpmenu']) {
 						<ul id="diag" class="subdrop">
 						<?php
 							output_menu($diagnostics_menu);
+						?>
+						</ul>
+					</li>
+					<li class="drop">
+						<div><?php echo gettext("Gold"); ?></div>
+						<ul id="gold" class="subdrop">
+						<?php
+							output_menu($gold_menu, "_blank");
 						?>
 						</ul>
 					</li>

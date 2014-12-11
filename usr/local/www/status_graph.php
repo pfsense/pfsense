@@ -3,6 +3,7 @@
 /*
 	status_graph.php
 	Part of pfSense
+        Copyright (C) 2013-2014 Electric Sheep Fencing, LP
 	Copyright (C) 2004 Scott Ullrich
 	All rights reserved.
 
@@ -41,6 +42,8 @@
 ##|*DESCR=Allow access to the 'Status: Traffic Graph' page.
 ##|*MATCH=status_graph.php*
 ##|*MATCH=bandwidth_by_ip.php*
+##|*MATCH=graph.php*
+##|*MATCH=ifstats.php*
 ##|-PRIV
 
 require("guiconfig.inc");
@@ -79,7 +82,7 @@ if ($_GET['if']) {
 		}
 	}
 	if ($found === false) {
-		Header("Location: status_graph.php");
+		header("Location: status_graph.php");
 		exit;
 	}
 } else {
@@ -115,9 +118,10 @@ include("head.inc");
 ?>
 
 <body link="#0000CC" vlink="#0000CC" alink="#0000CC">
+<?php include("fbegin.inc"); ?>
 
-<script language="javascript" type="text/javascript">
-
+<script type="text/javascript">
+//<![CDATA[
 function updateBandwidth(){
     var hostinterface = jQuery("#if").val();
 	var sorting = jQuery("#sort").val();
@@ -190,11 +194,9 @@ function updateBandwidthHosts(data){
     
     setTimeout('updateBandwidth()', 1000);
 }
-
-
+//]]>
 </script>
 
-<?php include("fbegin.inc"); ?>
 <?php
 
 /* link the ipsec interface magically */
@@ -208,7 +210,7 @@ if (isset($config['ipsec']['enable']) || isset($config['ipsec']['client']['enabl
 <?php
 foreach ($ifdescrs as $ifn => $ifd) {
 	echo "<option value=\"$ifn\"";
-	if ($ifn == $curif) echo " selected";
+	if ($ifn == $curif) echo " selected=\"selected\"";
 	echo ">" . htmlspecialchars($ifd) . "</option>\n";
 }
 ?>
@@ -216,28 +218,34 @@ foreach ($ifdescrs as $ifn => $ifd) {
 , Sort by: 
 <select id="sort" name="sort" class="formselect" style="z-index: -10;" onchange="document.form1.submit()">
 	<option value="">Bw In</option>
-	<option value="out"<?php if ($cursort == "out") echo " selected";?>>Bw Out</option>
+	<option value="out"<?php if ($cursort == "out") echo " selected=\"selected\"";?>>Bw Out</option>
 </select>
 , Filter: 
 <select id="filter" name="filter" class="formselect" style="z-index: -10;" onchange="document.form1.submit()">
-	<option value="">All</option>
-	<option value="local"<?php if ($curfilter == "local") echo " selected";?>>Local</option>
-	<option value="remote"<?php if ($curfilter == "remote") echo " selected";?>>Remote</option>
+	<option value="local"<?php if ($curfilter == "local") echo " selected=\"selected\"";?>>Local</option>
+	<option value="remote"<?php if ($curfilter == "remote") echo " selected=\"selected\"";?>>Remote</option>
+	<option value="all"<?php if ($curfilter == "all") echo " selected=\"selected\"";?>>All</option>
 </select>
 , Display: 
 <select id="hostipformat" name="hostipformat" class="formselect" style="z-index: -10;" onchange="document.form1.submit()">
 	<option value="">IP Address</option>
 	<option value="hostname"<?php if ($curhostipformat == "hostname") echo " selected";?>>Host Name</option>
-	<option value="fqdn"<?php if ($curhostipformat == "fqdn") echo " selected";?>>FQDN</option>
+	<option value="fqdn"<?php if ($curhostipformat == "fqdn") echo " selected=\"selected\"";?>>FQDN</option>
 </select>
 </form>
-<p>
+<p>&nbsp;</p>
 <div id="niftyOutter">
     <div id="col1" style="float: left; width: 46%; padding: 5px; position: relative;">
-        <embed src="graph.php?ifnum=<?=htmlspecialchars($curif);?>&ifname=<?=rawurlencode($ifdescrs[htmlspecialchars($curif)]);?>" type="image/svg+xml" width="<?=$width;?>" height="<?=$height;?>" pluginspage="http://www.adobe.com/svg/viewer/install/auto" />
+        <object	data="graph.php?ifnum=<?=htmlspecialchars($curif);?>&amp;ifname=<?=rawurlencode($ifdescrs[htmlspecialchars($curif)]);?>">
+          <param name="id" value="graph" />
+          <param name="type" value="image/svg+xml" />
+          <param name="width" value="<? echo $width; ?>" />
+          <param name="height" value="<? echo $height; ?>" />
+          <param name="pluginspage" value="http://www.adobe.com/svg/viewer/install/auto" />
+        </object>
     </div>
     <div id="col2" style="float: right; width: 48%; padding: 5px; position: relative;">
-        <table width="100%" border="0" cellspacing="0" cellpadding="0">
+        <table width="100%" border="0" cellspacing="0" cellpadding="0" summary="status">
             <tr>
                 <td class="listtopic" valign="top"><?=(($curhostipformat=="") ? gettext("Host IP") : gettext("Host Name or IP")); ?></td>
                 <td class="listtopic" valign="top"><?=gettext("Bandwidth In"); ?></td>
@@ -327,12 +335,14 @@ foreach ($ifdescrs as $ifn => $ifd) {
 	</div>
 	<div style="clear: both;"></div>
 </div>
-<p><span class="red"><strong><?=gettext("Note"); ?>:</strong></span> <?=gettext("the"); ?> <a href="http://www.adobe.com/svg/viewer/install/" target="_blank"><?=gettext("Adobe SVG Viewer"); ?></a>, <?=gettext("Firefox 1.5 or later or other browser supporting SVG is required to view the graph"); ?>.
+<p><span class="red"><strong><?=gettext("Note"); ?>:</strong></span> <?=gettext("the"); ?> <a href="http://www.adobe.com/svg/viewer/install/" target="_blank"><?=gettext("Adobe SVG Viewer"); ?></a>, <?=gettext("Firefox 1.5 or later or other browser supporting SVG is required to view the graph"); ?>.</p>
 
 <?php include("fend.inc"); ?>
 
 <script type="text/javascript">
+//<![CDATA[
 jQuery(document).ready(updateBandwidth);
+//]]>
 </script>
 </body>
 </html>

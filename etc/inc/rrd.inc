@@ -36,10 +36,9 @@
 
 function dump_rrd_to_xml($rrddatabase, $xmldumpfile) {
 	$rrdtool = "/usr/bin/nice -n20 /usr/local/bin/rrdtool";
-	if(file_exists($xmldumpfile))
-		mwexec("rm {$xmldumpfile}");
+	unlink_if_exists($xmldumpfile);
 
-	exec("$rrdtool dump {$rrddatabase} {$xmldumpfile} 2>&1", $dumpout, $dumpret);
+	exec("$rrdtool dump " . escapeshellarg($rrddatabase) . " {$xmldumpfile} 2>&1", $dumpout, $dumpret);
 	if ($dumpret <> 0) {
 		$dumpout = implode(" ", $dumpout);
 		log_error(sprintf(gettext('RRD dump failed exited with %1$s, the error is: %2$s'), $dumpret, $dumpout));
@@ -59,27 +58,32 @@ function restore_rrd() {
 		foreach (glob("{$rrddbpath}/*.xml") as $xml_file) {
 			@unlink($xml_file);
 		}
-		$_gb = exec("cd /;LANG=C /usr/bin/tar -xzf {$g['cf_conf_path']}/rrd.tgz 2>&1", $rrdrestore, $rrdreturn);
-		$rrdrestore = implode(" ", $rrdrestore);
+		unset($rrdrestore);
+		$_gb = exec("cd /;LANG=C /usr/bin/tar -tf {$g['cf_conf_path']}/rrd.tgz", $rrdrestore, $rrdreturn);
 		if($rrdreturn != 0) {
 			log_error("RRD restore failed exited with $rrdreturn, the error is: $rrdrestore\n");
+			return;
 		}
-		unset($rrdrestore);
-		foreach (glob("{$rrddbpath}/*.xml") as $xml_file) {
-			$rrd_file = preg_replace('/\.xml$/', ".rrd", $xml_file);
-			if (file_exists("{$rrd_file}")) {
+		foreach ($rrdrestore as $xml_file) {
+			$rrd_file = '/' . substr($xml_file, 0, -4) . '.rrd';
+			if (file_exists("{$rrd_file}"))
 				@unlink($rrd_file);
+			file_put_contents("{$g['tmp_path']}/rrd_restore", $xml_file);
+			$_gb = exec("cd /;LANG=C /usr/bin/tar -xf {$g['cf_conf_path']}/rrd.tgz -T {$g['tmp_path']}/rrd_restore");
+			if (!file_exists("/{$xml_file}")) {
+				log_error("Could not extract {$xml_file} RRD xml file from archive!");
+				continue;
 			}
-			$output = array();
-			$status = null;
-			$_gb = exec("$rrdtool restore -f '{$xml_file}' '{$rrd_file}'", $output, $status);
+			$_gb = exec("$rrdtool restore -f '/{$xml_file}' '{$rrd_file}'", $output, $status);
 			if ($status) {
 				log_error("rrdtool restore -f '{$xml_file}' '{$rrd_file}' failed returning {$status}.");
 				continue;
 			}
 			unset($output);
-			@unlink($xml_file);
+			@unlink("/{$xml_file}");
 		}
+		unset($rrdrestore);
+		@unlink("{$g['tmp_path']}/rrd_restore");
 		/* If this backup is still there on a full install, but we aren't going to use ram disks, remove the archive since this is a transition. */
 		if (($g['platform'] == "pfSense") && !isset($config['system']['use_mfs_tmpvar'])) {
 			unlink_if_exists("{$g['cf_conf_path']}/rrd.tgz");
@@ -201,7 +205,7 @@ function migrate_rrd_format($rrdoldxml, $rrdnewxml) {
 function enable_rrd_graphing() {
 	global $config, $g, $altq_list_queues;
 
-	if($g['booting'])
+	if(platform_booting())
 		echo gettext("Generating RRD graphs...");
 
 	$rrddbpath = "/var/db/rrd/";
@@ -221,6 +225,7 @@ function enable_rrd_graphing() {
 	$vpnusers = "-vpnusers.rrd";
 	$captiveportalconcurrent = "-concurrent.rrd";
 	$captiveportalloggedin = "-loggedin.rrd";
+	$ntpd = "ntpd.rrd";
 
 	$rrdtool = "/usr/bin/nice -n20 /usr/local/bin/rrdtool";
 	$netstat = "/usr/bin/netstat";
@@ -233,6 +238,7 @@ function enable_rrd_graphing() {
 	$spamd_gather = "/usr/local/bin/spamd_gather_stats.php";
 	$ifconfig = "/sbin/ifconfig";
 	$captiveportal_gather = "/usr/local/bin/captiveportal_gather_stats.php";
+	$ntpq = "/usr/local/sbin/ntpq";
 
 	$rrdtrafficinterval = 60;
 	$rrdwirelessinterval = 60;
@@ -248,6 +254,7 @@ function enable_rrd_graphing() {
 	$rrdcellularinterval = 60;
 	$rrdvpninterval = 60;
 	$rrdcaptiveportalinterval = 60;
+	$rrdntpdinterval = 60;
 
 	$trafficvalid = $rrdtrafficinterval * 2;
 	$wirelessvalid = $rrdwirelessinterval * 2;
@@ -263,6 +270,7 @@ function enable_rrd_graphing() {
 	$cellularvalid = $rrdcellularinterval * 2;
 	$vpnvalid = $rrdvpninterval * 2;
 	$captiveportalvalid = $rrdcaptiveportalinterval * 2;
+	$ntpdvalid = $rrdntpdinterval * 2;
 
 	/* Assume 2*10GigE for now */
 	$downstream = 2500000000;
@@ -279,7 +287,7 @@ function enable_rrd_graphing() {
 		}
 		chown($rrddbpath, "nobody");
 
-		if ($g['booting']) {
+		if (platform_booting()) {
 			restore_rrd();
 		}
 
@@ -305,6 +313,13 @@ function enable_rrd_graphing() {
 				$serverid = "ovpns" . $server['vpnid'];
 				$ifdescrs[$serverid] = "{$server['description']}";
 			}
+		}
+
+		if (platform_booting()) {
+			if (!is_dir("{$g['vardb_path']}/rrd"))
+				mkdir("{$g['vardb_path']}/rrd", 0775);
+
+			@chown("{$g['vardb_path']}/rrd", "nobody");
 		}
 
 		/* process all real and pseudo interfaces */
@@ -335,7 +350,7 @@ function enable_rrd_graphing() {
 			}
 
 			/* enter UNKNOWN values in the RRD so it knows we rebooted. */
-			if($g['booting']) {
+			if(platform_booting()) {
 				mwexec("$rrdtool update $rrddbpath$ifname$traffic N:U:U:U:U:U:U:U:U");
 			}
 
@@ -368,7 +383,7 @@ function enable_rrd_graphing() {
 			}
 
 			/* enter UNKNOWN values in the RRD so it knows we rebooted. */
-			if($g['booting']) {
+			if(platform_booting()) {
 				mwexec("$rrdtool update $rrddbpath$ifname$packets N:U:U:U:U:U:U:U:U");
 			}
 
@@ -397,7 +412,7 @@ function enable_rrd_graphing() {
 				}
 
 				/* enter UNKNOWN values in the RRD so it knows we rebooted. */
-				if($g['booting']) {
+				if(platform_booting()) {
 					mwexec("$rrdtool update $rrddbpath$ifname$wireless N:U:U:U");
 				}
 
@@ -422,7 +437,7 @@ function enable_rrd_graphing() {
 				}
 
 				/* enter UNKNOWN values in the RRD so it knows we rebooted. */
-				if($g['booting']) {
+				if(platform_booting()) {
 					mwexec("$rrdtool update $rrddbpath$ifname$vpnusers N:U");
 				}
 
@@ -504,7 +519,7 @@ function enable_rrd_graphing() {
 					unset($rrdcreate);
 				}
 
-				if($g['booting']) {
+				if(platform_booting()) {
 					$rrdqcommand = "-t ";
 					$rrducommand = "N";
 					$qi = 0;
@@ -572,7 +587,7 @@ function enable_rrd_graphing() {
 				}
 
 				/* enter UNKNOWN values in the RRD so it knows we rebooted. */
-				if($g['booting']) {
+				if(platform_booting()) {
 					mwexec("$rrdtool update $rrddbpath$ifname$cellular N:U:U:U");
 				}
 
@@ -606,7 +621,7 @@ function enable_rrd_graphing() {
 		}
 
 		/* enter UNKNOWN values in the RRD so it knows we rebooted. */
-		if($g['booting']) {
+		if(platform_booting()) {
 			mwexec("$rrdtool update $rrddbpath$ifname$states N:U:U:U:U:U");
 		}
 
@@ -641,7 +656,7 @@ function enable_rrd_graphing() {
 		}
 
 		/* enter UNKNOWN values in the RRD so it knows we rebooted. */
-		if($g['booting']) {
+		if(platform_booting()) {
 			mwexec("$rrdtool update $rrddbpath$ifname$proc N:U:U:U:U:U");
 		}
 
@@ -679,7 +694,7 @@ function enable_rrd_graphing() {
 		}
 
 		/* enter UNKNOWN values in the RRD so it knows we rebooted. */
-		if($g['booting']) {
+		if(platform_booting()) {
 			mwexec("$rrdtool update $rrddbpath$ifname$mem N:U:U:U:U:U");
 		}
 
@@ -716,7 +731,7 @@ function enable_rrd_graphing() {
 		}
 
 		/* enter UNKNOWN values in the RRD so it knows we rebooted. */
-		if($g['booting']) {
+		if(platform_booting()) {
 			mwexec("$rrdtool update $rrddbpath$ifname$mbuf N:U:U:U:U");
 		}
 
@@ -793,7 +808,7 @@ function enable_rrd_graphing() {
 				}
 
 				/* enter UNKNOWN values in the RRD so it knows we rebooted. */
-				if($g['booting']) {
+				if(platform_booting()) {
 					mwexec("$rrdtool update $concurrent_filename N:U");
 				}
 
@@ -829,7 +844,7 @@ function enable_rrd_graphing() {
 				}
 
 				/* enter UNKNOWN values in the RRD so it knows we rebooted. */
-				if($g['booting']) {
+				if(platform_booting()) {
 					mwexec("$rrdtool update $loggedin_filename N:U");
 				}
 
@@ -841,6 +856,56 @@ function enable_rrd_graphing() {
 
 			}
 		}
+		/* End Captive Portal statistics */
+
+		/* NTP, set up the ntpd rrd file */
+		if (isset($config['ntpd']['statsgraph'])) {
+			/* set up the ntpd rrd file */
+			if (!file_exists("$rrddbpath$ntpd")) {
+				$rrdcreate = "$rrdtool create $rrddbpath$ntpd --step $rrdntpdinterval ";
+				$rrdcreate .= "DS:offset:GAUGE:$ntpdvalid:0:1000 ";
+				$rrdcreate .= "DS:sjit:GAUGE:$ntpdvalid:0:1000 ";
+				$rrdcreate .= "DS:cjit:GAUGE:$ntpdvalid:0:1000 ";
+				$rrdcreate .= "DS:wander:GAUGE:$ntpdvalid:0:1000 ";
+				$rrdcreate .= "DS:freq:GAUGE:$ntpdvalid:0:1000 ";
+				$rrdcreate .= "DS:disp:GAUGE:$ntpdvalid:0:1000 ";
+				$rrdcreate .= "RRA:MIN:0.5:1:1200 ";
+				$rrdcreate .= "RRA:MIN:0.5:5:720 ";
+				$rrdcreate .= "RRA:MIN:0.5:60:1860 ";
+				$rrdcreate .= "RRA:MIN:0.5:1440:2284 ";
+				$rrdcreate .= "RRA:AVERAGE:0.5:1:1200 ";
+				$rrdcreate .= "RRA:AVERAGE:0.5:5:720 ";
+				$rrdcreate .= "RRA:AVERAGE:0.5:60:1860 ";
+				$rrdcreate .= "RRA:AVERAGE:0.5:1440:2284 ";
+				$rrdcreate .= "RRA:MAX:0.5:1:1200 ";
+				$rrdcreate .= "RRA:MAX:0.5:5:720 ";
+				$rrdcreate .= "RRA:MAX:0.5:60:1860 ";
+				$rrdcreate .= "RRA:MAX:0.5:1440:2284 ";
+
+				create_new_rrd($rrdcreate);
+				unset($rrdcreate);
+			}
+
+			/* enter UNKNOWN values in the RRD so it knows we rebooted. */
+			if(platform_booting()) {
+			mwexec("$rrdtool update $rrddbpath$ntpd N:U:U:U:U:U:U");
+			}
+
+			/* the ntp stats gathering function. */
+			$rrdupdatesh .= "\n";
+			$rrdupdatesh .= "$ntpq -c rv | $awk 'BEGIN{ RS=\",\"}{ print }' >> /tmp/ntp-rrdstats.$$\n";
+			$rrdupdatesh .= "NOFFSET=`grep offset /tmp/ntp-rrdstats.$$ | awk 'BEGIN{FS=\"=\"}{print $2}'`\n";
+			$rrdupdatesh .= "NFREQ=`grep frequency /tmp/ntp-rrdstats.$$ | awk 'BEGIN{FS=\"=\"}{print $2}'`\n";
+			$rrdupdatesh .= "NSJIT=`grep sys_jitter /tmp/ntp-rrdstats.$$ | awk 'BEGIN{FS=\"=\"}{print $2}'`\n";
+			$rrdupdatesh .= "NCJIT=`grep clk_jitter /tmp/ntp-rrdstats.$$ | awk 'BEGIN{FS=\"=\"}{print $2}'`\n";
+			$rrdupdatesh .= "NWANDER=`grep clk_wander /tmp/ntp-rrdstats.$$ | awk 'BEGIN{FS=\"=\"}{print $2}'`\n";
+			$rrdupdatesh .= "NDISPER=`grep rootdisp /tmp/ntp-rrdstats.$$ | awk 'BEGIN{FS=\"=\"}{print $2}'`\n";
+			$rrdupdatesh .= "$rrdtool update $rrddbpath$ntpd \N:\${NOFFSET}:\${NSJIT}:\${NCJIT}:\${NWANDER}:\${NFREQ}:\${NDISPER}\n";
+			$rrdupdatesh .= "rm /tmp/ntp-rrdstats.$$\n";
+			$rrdupdatesh .= "\n";
+
+		}
+		/* End NTP statistics */
 
 		$rrdupdatesh .= "sleep 60\n";
 		$rrdupdatesh .= "done\n";
@@ -869,9 +934,43 @@ function enable_rrd_graphing() {
 		chown($database, "nobody");
 	}
 
-	if($g['booting'])
+	if(platform_booting())
 		echo gettext("done.") . "\n";
 
+}
+
+# Create gateway quality RRD with settings suitable for pfSense graph set.
+function create_gateway_quality_rrd($rrd_file) {
+	global $g;
+
+	$rrdinterval = 60;
+	$valid = $rrdinterval * 2;
+	$rrdtool = "/usr/bin/nice -n20 /usr/local/bin/rrdtool";
+
+	/* GATEWAY QUALITY, set up the rrd file */
+	if (!file_exists("$rrd_file")) {
+		$rrdcreate = "$rrdtool create $rrd_file --step $rrdinterval ";
+		$rrdcreate .= "DS:loss:GAUGE:$valid:0:100 ";
+		$rrdcreate .= "DS:delay:GAUGE:$valid:0:100000 ";
+		$rrdcreate .= "RRA:AVERAGE:0.5:1:1200 ";
+		$rrdcreate .= "RRA:AVERAGE:0.5:5:720 ";
+		$rrdcreate .= "RRA:AVERAGE:0.5:60:1860 ";
+		$rrdcreate .= "RRA:AVERAGE:0.5:1440:2284 ";
+
+		create_new_rrd($rrdcreate);
+		unset($rrdcreate);
+	}
+
+	/* enter UNKNOWN values in the RRD so it knows we rebooted. */
+	if(platform_booting()) {
+		if (!is_dir("{$g['vardb_path']}/rrd"))
+			mkdir("{$g['vardb_path']}/rrd", 0775);
+
+		@chown("{$g['vardb_path']}/rrd", "nobody");
+
+		mwexec("$rrdtool update $rrd_file N:U:U");
+	}
+	unset($rrdtool, $rrdinterval, $valid, $rrd_file);
 }
 
 function kill_traffic_collector() {

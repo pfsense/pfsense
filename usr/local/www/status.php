@@ -5,8 +5,12 @@
  *
  * (modified for m0n0wall by Manuel Kasper <mk@neon1.net>)
  * (modified for pfSense by Scott Ullrich geekgod@pfsense.com)
+ *
  */
 /*
+        Copyright (C) 2013-2014 Electric Sheep Fencing, LP
+	All rights reserved.
+
 	Redistribution and use in source and binary forms, with or without
 	modification, are permitted provided that the following conditions are met:
 
@@ -29,7 +33,7 @@
 	POSSIBILITY OF SUCH DAMAGE.
 */
 /*
-	pfSense_BUILDER_BINARIES:	/usr/bin/vmstat	/usr/bin/netstat	/sbin/dmesg	/sbin/mount	/usr/local/sbin/setkey	/usr/local/sbin/pftop	
+	pfSense_BUILDER_BINARIES:	/usr/bin/vmstat	/usr/bin/netstat	/sbin/dmesg	/sbin/mount	/sbin/setkey	/usr/local/sbin/pftop	
 	pfSense_BUILDER_BINARIES:	/sbin/pfctl	/sbin/sysctl	/usr/bin/top	/usr/bin/netstat	/sbin/pfctl	/sbin/ifconfig
 	pfSense_MODULE:	support
 */
@@ -65,6 +69,16 @@ function doCmdT($title, $command) {
 				$line = preg_replace("/<password>.*?<\\/password>/", "<password>xxxxx</password>", $line);
 				$line = preg_replace("/<pre-shared-key>.*?<\\/pre-shared-key>/", "<pre-shared-key>xxxxx</pre-shared-key>", $line);
 				$line = preg_replace("/<rocommunity>.*?<\\/rocommunity>/", "<rocommunity>xxxxx</rocommunity>", $line);
+				$line = preg_replace("/<prv>.*?<\\/prv>/", "<prv>xxxxx</prv>", $line);
+				$line = preg_replace("/<ipsecpsk>.*?<\\/ipsecpsk>/", "<ipsecpsk>xxxxx</ipsecpsk>", $line);
+				$line = preg_replace("/<md5-hash>.*?<\\/md5-hash>/", "<md5-hash>xxxxx</md5-hash>", $line);
+				$line = preg_replace("/<md5password>.*?<\\/md5password>/", "<md5password>xxxxx</md5password>", $line);
+				$line = preg_replace("/<nt-hash>.*?<\\/nt-hash>/", "<nt-hash>xxxxx</nt-hash>", $line);
+				$line = preg_replace("/<radius_secret>.*?<\\/radius_secret>/", "<radius_secret>xxxxx</radius_secret>", $line);
+				$line = preg_replace("/<ldap_bindpw>.*?<\\/ldap_bindpw>/", "<ldap_bindpw>xxxxx</ldap_bindpw>", $line);
+				$line = preg_replace("/<passwordagain>.*?<\\/passwordagain>/", "<passwordagain>xxxxx</passwordagain>", $line);
+				$line = preg_replace("/<crypto_password>.*?<\\/crypto_password>/", "<crypto_password>xxxxx</crypto_password>", $line);
+				$line = preg_replace("/<crypto_password2>.*?<\\/crypto_password2>/", "<crypto_password2>xxxxx</crypto_password2>", $line);
 				$line = str_replace("\t", "    ", $line);
 				echo htmlspecialchars($line,ENT_NOQUOTES);
 			}
@@ -138,10 +152,12 @@ defCmdT("top | head -n5", "/usr/bin/top | /usr/bin/head -n5");
 
 defCmdT("sysctl hw.physmem","/sbin/sysctl hw.physmem");
 
-if (isset($config['captiveportal']) && is_array($config['captiveportal']))
-	foreach ($config['captiveportal'] as $cpZone => $cpdata)
+if (isset($config['captiveportal']) && is_array($config['captiveportal'])) {
+	foreach ($config['captiveportal'] as $cpZone => $cpdata) {
 		if (isset($cpdata['enable']))
-			defCmdT("ipfw -x {$cpZone} show", "/sbin/ipfw -x {$cpZone} show");
+			defCmdT("ipfw -x {$cpdata['zoneid']} show", "/sbin/ipfw -x {$cpdata['zoneid']} show");
+	}
+}
 
 defCmdT("pfctl -sn", "/sbin/pfctl -sn");
 defCmdT("pfctl -sr", "/sbin/pfctl -sr");
@@ -174,20 +190,19 @@ defCmdT("resolv.conf","cat /etc/resolv.conf");
 
 defCmdT("Processes","ps xauww");
 defCmdT("dhcpd.conf","cat /var/dhcpd/etc/dhcpd.conf");
-defCmdT("ez-ipupdate.cache","cat /conf/ez-ipupdate.cache");
 
 defCmdT("df","/bin/df");
 
-defCmdT("racoon.conf","cat /var/etc/racoon.conf");
-defCmdT("SPD","/usr/local/sbin/setkey -DP");
-defCmdT("SAD","/usr/local/sbin/setkey -D");
+defCmdT("ipsec.conf","cat /var/etc/ipsec/ipsec.conf");
+defCmdT("SPD","/sbin/setkey -DP");
+defCmdT("SAD","/sbin/setkey -D");
 
 if(isset($config['system']['usefifolog']))  {
 	defCmdT("last 200 system log entries","/usr/sbin/fifolog_reader /var/log/system.log 2>&1 | tail -n 200");
 	defCmdT("last 50 filter log entries","/usr/sbin/fifolog_reader /var/log/filter.log 2>&1 | tail -n 50");
 } else {
-	defCmdT("last 200 system log entries","/usr/sbin/clog /var/log/system.log 2>&1 | tail -n 200");
-	defCmdT("last 50 filter log entries","/usr/sbin/clog /var/log/filter.log 2>&1 | tail -n 50");
+	defCmdT("last 200 system log entries","/usr/local/sbin/clog /var/log/system.log 2>&1 | tail -n 200");
+	defCmdT("last 50 filter log entries","/usr/local/sbin/clog /var/log/filter.log 2>&1 | tail -n 50");
 }
 	
 defCmd("ls /conf");

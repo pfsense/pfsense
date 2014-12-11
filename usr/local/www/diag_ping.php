@@ -6,6 +6,9 @@
 	Copyright (C) 2003-2005 Bob Zoller (bob@kludgebox.com) and Manuel Kasper <mk@neon1.net>.
 	All rights reserved.
 
+        Copyright (C) 2013-2014 Electric Sheep Fencing, LP
+	All rights reserved.
+
 	Redistribution and use in source and binary forms, with or without
 	modification, are permitted provided that the following conditions are met:
 
@@ -85,25 +88,25 @@ if (!isset($do_ping)) {
 include("head.inc"); ?>
 <body link="#000000" vlink="#000000" alink="#000000">
 <?php include("fbegin.inc"); ?>
-<table width="100%" border="0" cellpadding="0" cellspacing="0">
+<table width="100%" border="0" cellpadding="0" cellspacing="0" summary="ping">
 <tr><td>
 <?php if ($input_errors) print_input_errors($input_errors); ?>
 <form action="diag_ping.php" method="post" name="iform" id="iform">
-<table width="100%" border="0" cellpadding="6" cellspacing="0">
+<table width="100%" border="0" cellpadding="6" cellspacing="0" summary="tabcont">
 <tr>
 	<td colspan="2" valign="top" class="listtopic"><?=gettext("Ping"); ?></td>
 </tr>
 <tr>
 	<td width="22%" valign="top" class="vncellreq"><?=gettext("Host"); ?></td>
 	<td width="78%" class="vtable">
-		<?=$mandfldhtml;?><input name="host" type="text" class="formfldunknown" id="host" size="20" value="<?=htmlspecialchars($host);?>"></td>
+		<?=$mandfldhtml;?><input name="host" type="text" class="formfldunknown" id="host" size="20" value="<?=htmlspecialchars($host);?>" /></td>
 </tr>
 <tr>
 	<td width="22%" valign="top" class="vncellreq"><?=gettext("IP Protocol"); ?></td>
 	<td width="78%" class="vtable">
 		<select name="ipproto" class="formselect">
-			<option value="ipv4" <?php if ($ipproto == "ipv4") echo 'selected="selected"' ?>>IPv4</option>
-			<option value="ipv6" <?php if ($ipproto == "ipv6") echo 'selected="selected"' ?>>IPv6</option>
+			<option value="ipv4" <?php if ($ipproto == "ipv4") echo "selected=\"selected\"" ?>>IPv4</option>
+			<option value="ipv6" <?php if ($ipproto == "ipv6") echo "selected=\"selected\"" ?>>IPv6</option>
 		</select>
 	</td>
 </tr>
@@ -116,7 +119,7 @@ include("head.inc"); ?>
 			foreach ($sourceips as $sip):
 				$selected = "";
 				if (!link_interface_to_bridge($sip['value']) && ($sip['value'] == $sourceip))
-					$selected = 'selected="selected"';
+					$selected = "selected=\"selected\"";
 		?>
 			<option value="<?=$sip['value'];?>" <?=$selected;?>>
 				<?=htmlspecialchars($sip['name']);?>
@@ -130,7 +133,7 @@ include("head.inc"); ?>
 	<td width="78%" class="vtable">
 		<select name="count" class="formfld" id="count">
 		<?php for ($i = 1; $i <= MAX_COUNT; $i++): ?>
-			<option value="<?=$i;?>" <?php if ($i == $count) echo "selected"; ?>><?=$i;?></option>
+			<option value="<?=$i;?>" <?php if ($i == $count) echo "selected=\"selected\""; ?>><?=$i;?></option>
 		<?php endfor; ?>
 		</select>
 	</td>
@@ -138,15 +141,24 @@ include("head.inc"); ?>
 <tr>
 	<td width="22%" valign="top">&nbsp;</td>
 	<td width="78%">
-		<input name="Submit" type="submit" class="formbtn" value="<?=gettext("Ping"); ?>">
+		<input name="Submit" type="submit" class="formbtn" value="<?=gettext("Ping"); ?>" />
 	</td>
 </tr>
 <tr>
 	<td valign="top" colspan="2">
 	<?php if ($do_ping) {
-		echo "<font face='terminal' size='2'>";
-		echo "<strong>" . gettext("Ping output") . ":</strong><br>";
-		echo('<pre>');
+		echo "<font face=\"terminal\" size=\"2\">";
+		echo "<strong>" . gettext("Ping output") . ":</strong><br />";
+?>
+		<script type="text/javascript">
+		//<![CDATA[
+		window.onload=function(){
+			document.getElementById("pingCaptured").wrap='off';
+		}
+		//]]>
+		</script>
+<?php
+		echo "<textarea id=\"pingCaptured\" style=\"width:98%\" name=\"code\" rows=\"15\" cols=\"66\" readonly=\"readonly\">";
 		$ifscope = '';
 		$command = "/sbin/ping";
 		if ($ipproto == "ipv6") {
@@ -166,7 +178,7 @@ include("head.inc"); ?>
 		$cmd = "{$command} {$srcip} -c" . escapeshellarg($count) . " " . escapeshellarg($host);
 		//echo "Ping command: {$cmd}\n";
 		system($cmd);
-		echo('</pre>');
+		echo('</textarea>&nbsp;</font>');
 	}
 	?>
 	</td>
@@ -180,3 +192,5 @@ include("head.inc"); ?>
 </td></tr>
 </table>
 <?php include("fend.inc"); ?>
+</body>
+</html>

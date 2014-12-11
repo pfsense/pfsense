@@ -2,10 +2,11 @@
 /* $Id$ */
 /*
 	status_dhcp_leases.php
+        Copyright (C) 2013-2014 Electric Sheep Fencing, LP
 	Copyright (C) 2004-2009 Scott Ullrich
 	All rights reserved.
 
-	originially part of m0n0wall (http://m0n0.ch/wall)
+	originally part of m0n0wall (http://m0n0.ch/wall)
 	Copyright (C) 2003-2004 Manuel Kasper <mk@neon1.net>.
 	All rights reserved.
 
@@ -93,38 +94,32 @@ include("head.inc");
 <?php
 
 function leasecmp($a, $b) {
-        return strcmp($a[$_GET['order']], $b[$_GET['order']]);
+	return strcmp($a[$_GET['order']], $b[$_GET['order']]);
 }
 
 function adjust_gmt($dt) {
-	global $config; 
+	global $config;
 	$dhcpd = $config['dhcpd'];
-	foreach ($dhcpd as $dhcpleaseinlocaltime) {
-		$dhcpleaseinlocaltime = $dhcpleaseinlocaltime['dhcpleaseinlocaltime'];
-		if ($dhcpleaseinlocaltime == "yes") 
+	foreach ($dhcpd as $dhcpditem) {
+		$dhcpleaseinlocaltime = $dhcpditem['dhcpleaseinlocaltime'];
+		if ($dhcpleaseinlocaltime == "yes")
 			break;
 	}
-	$timezone = $config['system']['timezone'];
-	$ts = strtotime($dt . " GMT");
 	if ($dhcpleaseinlocaltime == "yes") {
-		$this_tz = new DateTimeZone($timezone); 
-		$dhcp_lt = new DateTime(strftime("%I:%M:%S%p", $ts), $this_tz); 
-		$offset = $this_tz->getOffset($dhcp_lt);
-		$ts = $ts + $offset;
+		$ts = strtotime($dt . " GMT");
 		return strftime("%Y/%m/%d %I:%M:%S%p", $ts);
-	}
-	else
-		return strftime("%Y/%m/%d %H:%M:%S", $ts);
+	} else
+		return $dt;
 }
 
 function remove_duplicate($array, $field)
 {
-  foreach ($array as $sub)
-   $cmp[] = $sub[$field];
-  $unique = array_unique(array_reverse($cmp,true));
-  foreach ($unique as $k => $rien)
-   $new[] = $array[$k];
-  return $new;
+	foreach ($array as $sub)
+		$cmp[] = $sub[$field];
+	$unique = array_unique(array_reverse($cmp,true));
+	foreach ($unique as $k => $rien)
+		$new[] = $array[$k];
+	return $new;
 }
 
 $awk = "/usr/bin/awk";
@@ -137,15 +132,14 @@ $splitpattern = "'BEGIN { RS=\"}\";} {for (i=1; i<=NF; i++) printf \"%s \", \$i;
 exec("/bin/cat {$leasesfile} | {$awk} {$cleanpattern} | {$awk} {$splitpattern}", $leases_content);
 $leases_count = count($leases_content);
 exec("/usr/sbin/arp -an", $rawdata);
-$arpdata = array();
+$arpdata_ip = array();
+$arpdata_mac = array();
 foreach ($rawdata as $line) {
 	$elements = explode(' ',$line);
 	if ($elements[3] != "(incomplete)") {
 		$arpent = array();
-		$arpent['ip'] = trim(str_replace(array('(',')'),'',$elements[1]));
-		// $arpent['mac'] = trim($elements[3]);
-		// $arpent['interface'] = trim($elements[5]);
-	$arpdata[] = $arpent['ip'];
+		$arpdata_ip[] = trim(str_replace(array('(',')'),'',$elements[1]));
+		$arpdata_mac[] = strtolower(trim($elements[3]));
 	}
 }
 unset($rawdata);
@@ -162,7 +156,7 @@ foreach($leases_content as $lease) {
 	/* walk the fields */
 	$f = 0;
 	$fcount = count($data);
-	/* with less then 20 fields there is nothing useful */
+	/* with less than 20 fields there is nothing useful */
 	if($fcount < 20) {
 		$i++;
 		continue;
@@ -235,7 +229,7 @@ foreach($leases_content as $lease) {
 			case "hardware":
 				$leases[$l]['mac'] = $data[$f+2];
 				/* check if it's online and the lease is active */
-				if (in_array($leases[$l]['ip'], $arpdata)) {
+				if (in_array($leases[$l]['ip'], $arpdata_ip)) {
 					$leases[$l]['online'] = 'online';
 				} else {
 					$leases[$l]['online'] = 'offline';
@@ -278,7 +272,7 @@ if(count($pools) > 0) {
 }
 
 foreach($config['interfaces'] as $ifname => $ifarr) {
-	if (is_array($config['dhcpd'][$ifname]) && 
+	if (is_array($config['dhcpd'][$ifname]) &&
 		is_array($config['dhcpd'][$ifname]['staticmap'])) {
 		foreach($config['dhcpd'][$ifname]['staticmap'] as $static) {
 			$slease = array();
@@ -289,12 +283,7 @@ foreach($config['interfaces'] as $ifname => $ifarr) {
 			$slease['end'] = "";
 			$slease['hostname'] = htmlentities($static['hostname']);
 			$slease['act'] = "static";
-			$online = exec("/usr/sbin/arp -an |/usr/bin/grep {$slease['mac']}| /usr/bin/wc -l|/usr/bin/awk '{print $1;}'");
-			if ($online == 1) {
-				$slease['online'] = 'online';
-			} else {
-				$slease['online'] = 'offline';
-			}
+			$slease['online'] = in_array(strtolower($slease['mac']), $arpdata_mac) ? 'online' : 'offline';
 			$leases[] = $slease;
 		}
 	}
@@ -306,7 +295,7 @@ if ($_GET['order'])
 /* only print pool status when we have one */
 if(count($pools) > 0) {
 ?>
-<table class="tabcont sortable" width="100%" border="0" cellpadding="0" cellspacing="0">
+<table class="tabcont sortable" width="100%" border="0" cellpadding="0" cellspacing="0" summary="dhcp leases">
   <tr>
     <td class="listhdrr"><?=gettext("Failover Group"); ?></a></td>
     <td class="listhdrr"><?=gettext("My State"); ?></a></td>
@@ -317,11 +306,11 @@ if(count($pools) > 0) {
 <?php
 foreach ($pools as $data) {
 	echo "<tr>\n";
-	echo "<td class=\"listlr\">{$fspans}{$data['name']}{$fspane}&nbsp;</td>\n";
-	echo "<td class=\"listr\">{$fspans}{$data['mystate']}{$fspane}&nbsp;</td>\n";
-	echo "<td class=\"listr\">{$fspans}" . adjust_gmt($data['mydate']) . "{$fspane}&nbsp;</td>\n";
-	echo "<td class=\"listr\">{$fspans}{$data['peerstate']}{$fspane}&nbsp;</td>\n";
-	echo "<td class=\"listr\">{$fspans}" . adjust_gmt($data['peerdate']) . "{$fspane}&nbsp;</td>\n";
+	echo "<td class=\"listlr\">{$fspans}{$data['name']}{$fspane}</td>\n";
+	echo "<td class=\"listr\">{$fspans}{$data['mystate']}{$fspane}</td>\n";
+	echo "<td class=\"listr\">{$fspans}" . adjust_gmt($data['mydate']) . "{$fspane}</td>\n";
+	echo "<td class=\"listr\">{$fspans}{$data['peerstate']}{$fspane}</td>\n";
+	echo "<td class=\"listr\">{$fspans}" . adjust_gmt($data['peerdate']) . "{$fspane}</td>\n";
 	echo "<td class=\"list\" valign=\"middle\" width=\"17\">&nbsp;</td>\n";
 	echo "<td class=\"list\" valign=\"middle\" width=\"17\">&nbsp;</td>\n";
 	echo "</tr>\n";
@@ -335,9 +324,9 @@ foreach ($pools as $data) {
 }
 ?>
 
-<p>
+<br/>
 
-<table class="tabcont sortable" width="100%" border="0" cellpadding="0" cellspacing="0">
+<table class="tabcont sortable" width="100%" border="0" cellpadding="0" cellspacing="0" summary="dhcp leases">
   <tr>
     <td class="listhdrr"><a href="#"><?=gettext("IP address"); ?></a></td>
     <td class="listhdrr"><a href="#"><?=gettext("MAC address"); ?></a></td>
@@ -354,19 +343,22 @@ foreach ($leases as $data) {
 	if (($data['act'] == "active") || ($data['act'] == "static") || ($_GET['all'] == 1)) {
 		if ($data['act'] != "active" && $data['act'] != "static") {
 			$fspans = "<span class=\"gray\">";
-			$fspane = "</span>";
+			$fspane = "&nbsp;</span>";
 		} else {
-			$fspans = $fspane = "";
+			$fspans = "";
+			$fspane = "&nbsp;";
 		}
-                $lip = ip2ulong($data['ip']);
+		$lip = ip2ulong($data['ip']);
 		if ($data['act'] == "static") {
 			foreach ($config['dhcpd'] as $dhcpif => $dhcpifconf) {
 				if(is_array($dhcpifconf['staticmap'])) {
+					$staticmap_array_index = 0;
 					foreach ($dhcpifconf['staticmap'] as $staticent) {
 						if ($data['ip'] == $staticent['ipaddr']) {
 							$data['if'] = $dhcpif;
 							break;
 						}
+						$staticmap_array_index++;
 					}
 				}
 				/* exit as soon as we have an interface */
@@ -375,6 +367,7 @@ foreach ($leases as $data) {
 			}
 		} else {
 			foreach ($config['dhcpd'] as $dhcpif => $dhcpifconf) {
+<<<<<<< HEAD
 				if (is_array($dhcpifconf['range']) && ($lip >= ip2ulong($dhcpifconf['range']['from'])) && ($lip <= ip2ulong($dhcpifconf['range']['to']))) {
  					$data['if'] = $dhcpif;
 						break;
@@ -386,67 +379,80 @@ foreach ($leases as $data) {
 							$data['if'] = $dhcpif;
                 	}	
                 }                  
-			}
-                }		
-		echo "<tr>\n";
-                echo "<td class=\"listlr\">{$fspans}{$data['ip']}{$fspane}&nbsp;</td>\n";
-		$mac=$data['mac']; 
-		$mac_hi = strtoupper($mac[0] . $mac[1] . $mac[3] . $mac[4] . $mac[6] . $mac[7]);
-                if ($data['online'] != "online") {
-			if(isset($mac_man[$mac_hi])){ // Manufacturer for this MAC is defined
-	                        echo "<td class=\"listr\">{$fspans}<a href=\"services_wol.php?if={$data['if']}&mac=$mac\" title=\"" . gettext("$mac - send Wake on LAN packet to this MAC address") ."\">{$mac}</a><br/><font size=\"-2\"><i>{$mac_man[$mac_hi]}</i></font>{$fspane}&nbsp;</td>\n";
-			}else{	
-                        	echo "<td class=\"listr\">{$fspans}<a href=\"services_wol.php?if={$data['if']}&mac={$data['mac']}\" title=\"" . gettext("send Wake on LAN packet to this MAC address") ."\">{$data['mac']}</a>{$fspane}&nbsp;</td>\n";
-			}
-                }else{
-			if(isset($mac_man[$mac_hi])){ // Manufacturer for this MAC is defined
-				echo "<td class=\"listr\">{$fspans}{$mac}<br/><font size=\"-2\"><i>{$mac_man[$mac_hi]}</i></font>{$fspane}&nbsp;</td>\n";
-	                }else{
-                		echo "<td class=\"listr\">{$fspans}{$data['mac']}{$fspane}&nbsp;</td>\n";
-			}
-                }
-                echo "<td class=\"listr\">{$fspans}"  . htmlentities($data['hostname']) . "{$fspane}&nbsp;</td>\n";
-				if ($data['type'] != "static") {
-					echo "<td class=\"listr\">{$fspans}" . adjust_gmt($data['start']) . "{$fspane}&nbsp;</td>\n";
-					echo "<td class=\"listr\">{$fspans}" . adjust_gmt($data['end']) . "{$fspane}&nbsp;</td>\n";
-				} else {
-					echo "<td class=\"listr\">{$fspans} n/a {$fspane}&nbsp;</td>\n";
-					echo "<td class=\"listr\">{$fspans} n/a {$fspane}&nbsp;</td>\n";
+=======
+				if (!is_array($dhcpifconf['range']))
+					continue;
+				if (($lip >= ip2ulong($dhcpifconf['range']['from'])) && ($lip <= ip2ulong($dhcpifconf['range']['to']))) {
+					$data['if'] = $dhcpif;
+					break;
 				}
-                echo "<td class=\"listr\">{$fspans}{$data['online']}{$fspane}&nbsp;</td>\n";
-                echo "<td class=\"listr\">{$fspans}{$data['act']}{$fspane}&nbsp;</td>\n";
-		
+>>>>>>> upstream/master
+			}
+		}
+		echo "<tr>\n";
+		echo "<td class=\"listlr\">{$fspans}{$data['ip']}{$fspane}</td>\n";
+		$mac=$data['mac'];
+		$mac_hi = strtoupper($mac[0] . $mac[1] . $mac[3] . $mac[4] . $mac[6] . $mac[7]);
+		if ($data['online'] != "online") {
+			if(isset($mac_man[$mac_hi])){ // Manufacturer for this MAC is defined
+				echo "<td class=\"listr\">{$fspans}<a href=\"services_wol.php?if={$data['if']}&amp;mac=$mac\" title=\"" . gettext("$mac - send Wake on LAN packet to this MAC address") ."\">{$mac}</a><br /><font size=\"-2\"><i>{$mac_man[$mac_hi]}</i></font>{$fspane}</td>\n";
+			} else {
+				echo "<td class=\"listr\">{$fspans}<a href=\"services_wol.php?if={$data['if']}&amp;mac={$data['mac']}\" title=\"" . gettext("send Wake on LAN packet to this MAC address") ."\">{$data['mac']}</a>{$fspane}</td>\n";
+			}
+		} else {
+			if(isset($mac_man[$mac_hi])){ // Manufacturer for this MAC is defined
+				echo "<td class=\"listr\">{$fspans}{$mac}<br /><font size=\"-2\"><i>{$mac_man[$mac_hi]}</i></font>{$fspane}</td>\n";
+			} else {
+				echo "<td class=\"listr\">{$fspans}{$data['mac']}{$fspane}</td>\n";
+			}
+		}
+		echo "<td class=\"listr\">{$fspans}"  . htmlentities($data['hostname']) . "{$fspane}</td>\n";
+		if ($data['type'] != "static") {
+			echo "<td class=\"listr\">{$fspans}" . adjust_gmt($data['start']) . "{$fspane}</td>\n";
+			echo "<td class=\"listr\">{$fspans}" . adjust_gmt($data['end']) . "{$fspane}</td>\n";
+		} else {
+			echo "<td class=\"listr\">{$fspans} n/a {$fspane}</td>\n";
+			echo "<td class=\"listr\">{$fspans} n/a {$fspane}</td>\n";
+		}
+		echo "<td class=\"listr\">{$fspans}{$data['online']}{$fspane}</td>\n";
+		echo "<td class=\"listr\">{$fspans}{$data['act']}{$fspane}</td>\n";
+		echo "<td valign=\"middle\">&nbsp;";
 		if ($data['type'] == "dynamic") {
+<<<<<<< HEAD
 			echo "<td valign=\"middle\"><a href=\"services_dhcp_edit.php?if={$data['if']}&mac={$data['mac']}&hostname={$data['hostname']}&ipaddr={$data['ip']}\">";
 			echo "<img src=\"/themes/{$g['theme']}/images/icons/icon_plus.gif\" width=\"17\" height=\"17\" border=\"0\" title=\"" . gettext("add a static mapping for this MAC address") ."\"></a></td>\n";
+=======
+			echo "<a href=\"services_dhcp_edit.php?if={$data['if']}&amp;mac={$data['mac']}&amp;hostname={$data['hostname']}\">";
+			echo "<img src=\"/themes/{$g['theme']}/images/icons/icon_plus.gif\" width=\"17\" height=\"17\" border=\"0\" title=\"" . gettext("add a static mapping for this MAC address") ."\" alt=\"add\" /></a>&nbsp;\n";
+>>>>>>> upstream/master
 		} else {
-                	echo "<td class=\"list\" valign=\"middle\">";
-			echo "<img src=\"/themes/{$g['theme']}/images/icons/icon_plus_mo.gif\" width=\"17\" height=\"17\" border=\"0\"></td>\n";
+			echo "<a href=\"services_dhcp_edit.php?if={$data['if']}&amp;id={$staticmap_array_index}\">";
+			echo "<img src=\"/themes/{$g['theme']}/images/icons/icon_e.gif\" width=\"17\" height=\"17\" border=\"0\" title=\"" . gettext("edit the static mapping for this entry") ."\" alt=\"add\" />&nbsp;\n";
 		}
 
-                echo "<td valign=\"middle\"><a href=\"services_wol_edit.php?if={$data['if']}&mac={$data['mac']}&descr={$data['hostname']}\">";
-		echo "<img src=\"/themes/{$g['theme']}/images/icons/icon_wol_all.gif\" width=\"17\" height=\"17\" border=\"0\" title=\"" . gettext("add a Wake on LAN mapping for this MAC address") ."\"></a></td>\n";
+		echo "<a href=\"services_wol_edit.php?if={$data['if']}&amp;mac={$data['mac']}&amp;descr={$data['hostname']}\">";
+		echo "<img src=\"/themes/{$g['theme']}/images/icons/icon_wol_all.gif\" width=\"17\" height=\"17\" border=\"0\" title=\"" . gettext("add a Wake on LAN mapping for this MAC address") ."\" alt=\"add\" /></a>&nbsp;\n";
 
 		/* Only show the button for offline dynamic leases */
 		if (($data['type'] == "dynamic") && ($data['online'] != "online")) {
-			echo "<td class=\"list\" valign=\"middle\"><a href=\"status_dhcp_leases.php?deleteip={$data['ip']}&all=" . htmlspecialchars($_GET['all']) . "\">";
-			echo "<img src=\"/themes/{$g['theme']}/images/icons/icon_x.gif\" width=\"17\" height=\"17\" border=\"0\" title=\"" . gettext("delete this DHCP lease") . "\"></a></td>\n";
+			echo "<a href=\"status_dhcp_leases.php?deleteip={$data['ip']}&amp;all=" . htmlspecialchars($_GET['all']) . "\">";
+			echo "<img src=\"/themes/{$g['theme']}/images/icons/icon_x.gif\" width=\"17\" height=\"17\" border=\"0\" title=\"" . gettext("delete this DHCP lease") . "\" alt=\"delete\" /></a>&nbsp;\n";
 		}
-                echo "</tr>\n";
+	echo "</td></tr>\n";
 	}
 }
 
 ?>
 </table>
-<p>
+<br/>
 <form action="status_dhcp_leases.php" method="get">
-<input type="hidden" name="order" value="<?=htmlspecialchars($_GET['order']);?>">
+<input type="hidden" name="order" value="<?=htmlspecialchars($_GET['order']);?>" />
 <?php if ($_GET['all']): ?>
-<input type="hidden" name="all" value="0">
-<input type="submit" class="formbtn" value="<?=gettext("Show active and static leases only"); ?>">
+<input type="hidden" name="all" value="0" />
+<input type="submit" class="formbtn" value="<?=gettext("Show active and static leases only"); ?>" />
 <?php else: ?>
-<input type="hidden" name="all" value="1">
-<input type="submit" class="formbtn" value="<?=gettext("Show all configured leases"); ?>">
+<input type="hidden" name="all" value="1" />
+<input type="submit" class="formbtn" value="<?=gettext("Show all configured leases"); ?>" />
 <?php endif; ?>
 </form>
 <?php if($leases == 0): ?>

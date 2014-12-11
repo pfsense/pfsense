@@ -5,6 +5,7 @@
 	part of m0n0wall (http://m0n0.ch/wall)
 
 	Copyright (C) 2003-2004 Manuel Kasper <mk@neon1.net>.
+        Copyright (C) 2013-2014 Electric Sheep Fencing, LP
 	All rights reserved.
 
 	Redistribution and use in source and binary forms, with or without
@@ -41,6 +42,8 @@
 
 require("guiconfig.inc");
 
+$referer = (isset($_SERVER['HTTP_REFERER']) ? $_SERVER['HTTP_REFERER'] : '/interfaces_vlan.php');
+
 if (!is_array($config['vlans']['vlan']))
 	$config['vlans']['vlan'] = array();
 
@@ -54,8 +57,9 @@ if (is_array($config['laggs']['lagg']) && count($config['laggs']['lagg'])) {
                 $portlist[$lagg['laggif']] = $lagg;
 }
 
-$id = $_GET['id'];
-if (isset($_POST['id']))
+if (is_numericint($_GET['id']))
+	$id = $_GET['id'];
+if (isset($_POST['id']) && is_numericint($_POST['id']))
 	$id = $_POST['id'];
 
 if (isset($id) && $a_vlans[$id]) {
@@ -175,28 +179,29 @@ include("head.inc");
 						}
 		      ?>
                     </select>
-			<br/>
+			<br />
 			<span class="vexpl"><?=gettext("Only VLAN capable interfaces will be shown.");?></span></td>
                 </tr>
 				<tr>
                   <td valign="top" class="vncellreq"><?=gettext("VLAN tag ");?></td>
                   <td class="vtable">
                     <input name="tag" type="text" class="formfld unknown" id="tag" size="6" value="<?=htmlspecialchars($pconfig['tag']);?>" />
-                    <br/>
+                    <br />
                     <span class="vexpl"><?=gettext("802.1Q VLAN tag (between 1 and 4094) ");?></span></td>
 			    </tr>
 				<tr>
                   <td width="22%" valign="top" class="vncell"><?=gettext("Description");?></td>
                   <td width="78%" class="vtable">
                     <input name="descr" type="text" class="formfld unknown" id="descr" size="40" value="<?=htmlspecialchars($pconfig['descr']);?>" />
-                    <br/> <span class="vexpl"><?=gettext("You may enter a description here ".
+                    <br /> <span class="vexpl"><?=gettext("You may enter a description here ".
                     "for your reference (not parsed).");?></span></td>
                 </tr>
                 <tr>
                   <td width="22%" valign="top">&nbsp;</td>
                   <td width="78%">
 		    <input type="hidden" name="vlanif" value="<?=htmlspecialchars($pconfig['vlanif']); ?>" />
-                    <input name="Submit" type="submit" class="formbtn" value="<?=gettext("Save");?>" /> <input type="button" value="<?=gettext("Cancel");?>" onclick="history.back()" />
+                    <input name="Submit" type="submit" class="formbtn" value="<?=gettext("Save");?>" />
+                    <input type="button" class="formbtn" value="<?=gettext("Cancel");?>" onclick="window.location.href='<?=$referer;?>'" />
                     <?php if (isset($id) && $a_vlans[$id]): ?>
                     <input name="id" type="hidden" value="<?=htmlspecialchars($id);?>" />
                     <?php endif; ?>

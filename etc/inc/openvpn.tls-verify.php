@@ -5,6 +5,7 @@
 	openvpn.tls-verify.php
 
 	Copyright (C) 2011 Jim Pingle
+        Copyright (C) 2013-2014 Electric Sheep Fencing, LP
 	All rights reserved.
 
 	Redistribution and use in source and binary forms, with or without
@@ -28,7 +29,6 @@
 	ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 	POSSIBILITY OF SUCH DAMAGE.
 
-	DISABLE_PHP_LINT_CHECKING
 */
 /*
 	pfSense_BUILDER_BINARIES:	
@@ -49,8 +49,15 @@ require_once("interfaces.inc");
 openlog("openvpn", LOG_ODELAY, LOG_AUTH);
 
 /* read data from command line */
-$cert_depth = intval($argv[1]);
-$cert_subject = $argv[2];
+if (isset($_GET)) {
+	$cert_depth = $_GET['certdepth'];
+	$cert_subject = urldecode($_GET['certsubject']);
+	$allowed_depth = $_GET['depth'];
+	$server_cn = $_GET['servercn'];
+} else {
+	$cert_depth = intval($argv[1]);
+	$cert_subject = $argv[2];
+}
 
 /* Reserved for future use in case we decide to verify CNs and such as well
 $subj = explode("/", $cert_subject);
@@ -66,12 +73,23 @@ foreach ($subj at $s) {
 
 if (isset($allowed_depth) && ($cert_depth > $allowed_depth)) {
 	syslog(LOG_WARNING, "Certificate depth {$cert_depth} exceeded max allowed depth of {$allowed_depth}.\n");
-	exit(1);
+	if (isset($_GET)) {
+		echo "FAILED";
+		closelog();
+		return;
+	} else {
+		closelog();
+		exit(1);
+	}
 }
 
 // Debug
 //syslog(LOG_WARNING, "Found certificate {$argv[2]} with depth {$cert_depth}\n");
 
-exit(0);
+closelog();
+if (isset($_GET))
+	echo "OK";
+else
+	exit(0);
 
 ?>

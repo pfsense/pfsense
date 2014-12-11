@@ -30,11 +30,15 @@
 	POSSIBILITY OF SUCH DAMAGE.
 */
 /*
-	pfSense_BUILDER_BINARIES:	/usr/sbin/fifolog_reader	/usr/bin/tail	/usr/sbin/clog
+	pfSense_BUILDER_BINARIES:	/usr/sbin/fifolog_reader	/usr/bin/tail	/usr/local/sbin/clog
 	pfSense_MODULE:	filter
 */
 
 require 'config.inc';
+
+global $buffer_rules_rdr, $buffer_rules_normal;
+$buffer_rules_rdr = array();
+$buffer_rules_normal = array();
 
 /* format filter logs */
 function conv_log_filter($logfile, $nentries, $tail = 50, $filtertext = "", $filterinterface = null) {
@@ -47,22 +51,17 @@ function conv_log_filter($logfile, $nentries, $tail = 50, $filtertext = "", $fil
 	if ($filtertext)
 		$tail = 5000;
 
-	/* FreeBSD 8 splits pf log lines into two lines, so we need to at least
-	 * tail twice as many, plus some extra to account for unparseable lines */
-	$tail = $tail * 2 + 50;
-
 	/* Always do a reverse tail, to be sure we're grabbing the 'end' of the log. */
 	$logarr = "";
 
 	if(isset($config['system']['usefifolog']))
-		exec("/usr/sbin/fifolog_reader {$logfile} | /usr/bin/tail -r -n {$tail}", $logarr);
+		exec("/usr/sbin/fifolog_reader " . escapeshellarg($logfile) . " | /usr/bin/grep 'filterlog:' | /usr/bin/tail -r -n {$tail}", $logarr);
 	else
-		exec("/usr/sbin/clog {$logfile} | grep -v \"CLOG\" | grep -v \"\033\" | /usr/bin/tail -r -n {$tail}", $logarr);
+		exec("/usr/local/sbin/clog " . escapeshellarg($logfile) . " | grep -v \"CLOG\" | grep -v \"\033\" | /usr/bin/grep 'filterlog:' | /usr/bin/tail -r -n {$tail}", $logarr);
 
 	$filterlog = array();
 	$counter = 0;
 
-	$logarr = array_reverse(collapse_filter_lines(array_reverse($logarr)));
 	$filterinterface = strtoupper($filterinterface);
 	foreach ($logarr as $logent) {
 		if($counter >= $nentries)
@@ -82,117 +81,175 @@ function conv_log_filter($logfile, $nentries, $tail = 50, $filtertext = "", $fil
 	return isset($config['syslog']['reverse']) ? $filterlog : array_reverse($filterlog);
 }
 
+function escape_filter_regex($filtertext) {
+	/* If the caller (user) has not already put a backslash before a slash, to escape it in the regex, */
+	/* then this will do it. Take out any "\/" already there, then turn all ordinary "/" into "\/".  */
+	return str_replace('/', '\/', str_replace('\/', '/', $filtertext));
+}
+
 function match_filter_line($flent, $filtertext = "") {
 	if (!$filtertext)
 		return true;
-	$filtertext = str_replace(' ', '\s+', $filtertext);
-	return preg_match("/{$filtertext}/i", implode(" ", array_values($flent)));
+	$filtertext = escape_filter_regex(str_replace(' ', '\s+', $filtertext));
+	return @preg_match("/{$filtertext}/i", implode(" ", array_values($flent)));
 }
 
 function match_filter_field($flent, $fields) {
-	foreach ($fields as $field) {
-		if ($fields[$field] == "All") continue;
-		if ((strpos($fields[$field], '!') === 0)) {
-			$fields[$field] = substr($fields[$field], 1);
-			if (preg_match("/act/i", $field)) {
-				if ( (in_arrayi($flent[$field], explode(",", str_replace(" ", ",", $fields[$field]))) ) ) return false;
-			} else if ( (preg_match("/{$fields[$field]}/i", $flent[$field])) ) return false;
+	foreach ($fields as $key => $field) {
+		if ($field == "All")
+			continue;
+		if ((strpos($field, '!') === 0)) {
+			$field = substr($field, 1);
+			if (strtolower($key) == 'act') {
+				if (in_arrayi($flent[$key], explode(" ", $field)))
+					return false;
+			} else {
+				$field_regex = escape_filter_regex($field);
+				if (@preg_match("/{$field_regex}/i", $flent[$key]))
+					return false;
+			}
+		} else {
+			if (strtolower($key) == 'act') {
+				if (!in_arrayi($flent[$key], explode(" ", $field)))
+					return false;
+			} else {
+				$field_regex = escape_filter_regex($field);
+				if (!@preg_match("/{$field_regex}/i", $flent[$key]))
+					return false;
+			}
 		}
-		else {
-			if (preg_match("/act/i", $field)) {
-				if ( !(in_arrayi($flent[$field], explode(",", str_replace(" ", ",", $fields[$field]))) ) ) return false;
-			} else if ( !(preg_match("/{$fields[$field]}/i", $flent[$field])) ) return false;
-		}
-	}	
+	}
 	return true;
 }
 
 // Case Insensitive in_array function
 function in_arrayi($needle, $haystack) {
-    return in_array(strtolower($needle), array_map('strtolower', $haystack));
-}
-
-function collapse_filter_lines($logarr) {
-	$lastline = "";
-	$collapsed = array();
-	/* Stick a blank entry at the end to be sure we always fully parse the last entry */
-	$logarr[] = "";
-	foreach ($logarr as $logent) {
-		$line_split = "";
-		preg_match("/.*\spf:\s(.*)/", $logent, $line_split);
-		if (substr($line_split[1], 0, 4) != "    ") {
-			if (($lastline != "") && (substr($lastline, 0, 1) != " ")) {
-				$collapsed[] = $lastline;
-			}
-			$lastline = $logent;
-		} else {
-			$lastline .= substr($line_split[1], 3);
-		}
-	}
-	//print_r($collapsed);
-	return $collapsed;
+	return in_array(strtolower($needle), array_map('strtolower', $haystack));
 }
 
 function parse_filter_line($line) {
 	global $config, $g;
+
+	$flent = array();
 	$log_split = "";
-	preg_match("/(.*)\s(.*)\spf:\s.*\srule\s(.*)\(match\)\:\s(.*)\s(\w+)\son\s(\w+)\:\s\((.*)\)\s(.*)\s>\s(.*)\:\s(.*)/", $line, $log_split);
 
-	list($all, $flent['time'], $host, $rule, $flent['act'], $flent['direction'], $flent['realint'], $details, $src, $dst, $leftovers) = $log_split;
+	if (!preg_match("/(.*)\s(.*)\sfilterlog:\s(.*)$/", $line, $log_split))
+		return "";
 
-	list($flent['srcip'], $flent['srcport']) = parse_ipport($src);
-	list($flent['dstip'], $flent['dstport']) = parse_ipport($dst);
+	list($all, $flent['time'], $host, $rule) = $log_split;
 
-	$flent['src'] = $flent['srcip'];
-	$flent['dst'] = $flent['dstip'];
+	$rule_data = explode(",", $rule);
+	$field = 0;
 
-	if ($flent['srcport'])
-		$flent['src'] .= ':' . $flent['srcport'];
-	if ($flent['dstport'])
-		$flent['dst'] .= ':' . $flent['dstport'];
-
+	$flent['rulenum'] = $rule_data[$field++];
+	$flent['subrulenum'] = $rule_data[$field++];
+	$flent['anchor'] = $rule_data[$field++];
+	$flent['tracker'] = $rule_data[$field++];
+	$flent['realint'] = $rule_data[$field++];
 	$flent['interface']  = convert_real_interface_to_friendly_descr($flent['realint']);
+	$flent['reason'] = $rule_data[$field++];
+	$flent['act'] = $rule_data[$field++];
+	$flent['direction'] = $rule_data[$field++];
+	$flent['version'] = $rule_data[$field++];
 
-	$tmp = explode("/", $rule);
-	$flent['rulenum'] = $tmp[0];
-
-	$proto = array(" ", "(?)");
-	/* Attempt to determine the protocol, based on several possible patterns.
-	 * The value returned by strpos() must be strictly checkeded against the
-	 * boolean FALSE because it could return a valid answer of 0 upon success. */
-	if (!(strpos($details, 'proto ') === FALSE)) {
-		preg_match("/.*\sproto\s(.*)\s\(/", $details, $proto);
-	} elseif (!(strpos($details, 'next-header ') === FALSE)) {
-		preg_match("/.*\snext-header\s(.*)\s\(/", $details, $proto);
-	} elseif (!(strpos($details, 'proto: ') === FALSE)) {
-		preg_match("/.*\sproto\:(.*)\s\(/", $details, $proto);
-	} elseif (!(strpos($leftovers, 'sum ok] ') === FALSE)) {
-		preg_match("/.*\ssum ok]\s(.*)\,\s.*/", $leftovers, $proto);
-	} elseif (!(strpos($line, 'sum ok] ') === FALSE)) {
-		preg_match("/.*\ssum ok]\s(.*)\,\s.*/", $line, $proto);
-	}
-	$proto = explode(" ", trim($proto[1]));
-	$flent['proto'] = rtrim($proto[0], ",");
-
-	/* If we're dealing with TCP, try to determine the flags/control bits */
-	$flent['tcpflags'] = "";
-	if ($flent['proto'] == "TCP") {
-		$flags = preg_split('/[, ]/', $leftovers);
-		$flent['tcpflags'] = str_replace(".", "A", substr($flags[1], 1, -1));
-	} elseif ($flent['proto'] == "Options") {
-		/* Then there must be some info we missed */
-		if (!(strpos($leftovers, 'sum ok] ') === FALSE)) {
-			preg_match("/.*\ssum ok]\s(.*)\,\s.*/", $leftovers, $proto);
-		} elseif (!(strpos($line, 'sum ok] ') === FALSE)) {
-			preg_match("/.*\ssum ok]\s(.*)\,\s.*/", $line, $proto);
+	if ($flent['version'] == '4' || $flent['version'] == '6') {
+		if ($flent['version'] == '4') {
+			$flent['tos'] = $rule_data[$field++];
+			$flent['ecn'] = $rule_data[$field++];
+			$flent['ttl'] = $rule_data[$field++];
+			$flent['id'] = $rule_data[$field++];
+			$flent['offset'] = $rule_data[$field++];
+			$flent['flags'] = $rule_data[$field++];
+			$flent['protoid'] = $rule_data[$field++];
+			$flent['proto'] = strtoupper($rule_data[$field++]);
+		} else {
+			$flent['class'] = $rule_data[$field++];
+			$flent['flowlabel'] = $rule_data[$field++];
+			$flent['hlim'] = $rule_data[$field++];
+			$flent['proto'] = $rule_data[$field++];
+			$flent['protoid'] = $rule_data[$field++];
 		}
-		$proto = explode(" ", trim($proto[1]));
-		$flent['proto'] = rtrim($proto[0], ",");
-		/* If it's still 'Options', then just ignore it. */
-		if ($flent['proto'] == "Options")
-			$flent['proto'] = "none";
-	} elseif (($flent['proto'] == "unknown") && (!(strpos($line, ':  pfsync') === FALSE))) {
-		$flent['proto'] = "PFSYNC";
+
+		$flent['length'] = $rule_data[$field++];
+		$flent['srcip'] = $rule_data[$field++];
+		$flent['dstip'] = $rule_data[$field++];
+
+		if ($flent['protoid'] == '6' || $flent['protoid'] == '17') { // TCP or UDP
+			$flent['srcport'] = $rule_data[$field++];
+			$flent['dstport'] = $rule_data[$field++];
+
+			$flent['src'] = $flent['srcip'] . ':' . $flent['srcport'];
+			$flent['dst'] = $flent['dstip'] . ':' . $flent['dstport'];
+
+			$flent['datalen'] = $rule_data[$field++];
+			if ($flent['protoid'] == '6') { // TCP
+				$flent['tcpflags'] = $rule_data[$field++];
+				$flent['seq'] = $rule_data[$field++];
+				$flent['ack'] = $rule_data[$field++];
+				$flent['window'] = $rule_data[$field++];
+				$flent['urg'] = $rule_data[$field++];
+				$flent['options'] = explode(";",$rule_data[$field++]);
+			}
+		} else if ($flent['protoid'] == '1') { // ICMP
+			$flent['src'] = $flent['srcip'];
+			$flent['dst'] = $flent['dstip'];
+
+			$flent['icmp_type'] = $rule_data[$field++];
+
+			switch ($flent['icmp_type']) {
+			case "request":
+			case "reply":
+				$flent['icmp_id'] = $rule_data[$field++];
+				$flent['icmp_seq'] = $rule_data[$field++];
+				break;
+			case "unreachproto":
+				$flent['icmp_dstip'] = $rule_data[$field++];
+				$flent['icmp_protoid'] = $rule_data[$field++];
+				break;
+			case "unreachport":
+				$flent['icmp_dstip'] = $rule_data[$field++];
+				$flent['icmp_protoid'] = $rule_data[$field++];
+				$flent['icmp_port'] = $rule_data[$field++];
+				break;
+			case "unreach":
+			case "timexceed":
+			case "paramprob":
+			case "redirect":
+			case "maskreply":
+				$flent['icmp_descr'] = $rule_data[$field++];
+				break;
+			case "needfrag":
+				$flent['icmp_dstip'] = $rule_data[$field++];
+				$flent['icmp_mtu'] = $rule_data[$field++];
+				break;
+			case "tstamp":
+				$flent['icmp_id'] = $rule_data[$field++];
+				$flent['icmp_seq'] = $rule_data[$field++];
+				break;
+			case "tstampreply":
+				$flent['icmp_id'] = $rule_data[$field++];
+				$flent['icmp_seq'] = $rule_data[$field++];
+				$flent['icmp_otime'] = $rule_data[$field++];
+				$flent['icmp_rtime'] = $rule_data[$field++];
+				$flent['icmp_ttime'] = $rule_data[$field++];
+				break;
+			default :
+				$flent['icmp_descr'] = $rule_data[$field++];
+				break;
+			}
+
+		} else if ($flent['protoid'] == '112') { // CARP
+			$flent['type'] = $rule_data[$field++];
+			$flent['ttl'] = $rule_data[$field++];
+			$flent['vhid'] = $rule_data[$field++];
+			$flent['version'] = $rule_data[$field++];
+			$flent['advskew'] = $rule_data[$field++];
+			$flent['advbase'] = $rule_data[$field++];
+		}
+	} else {
+		if($g['debug'])
+			log_error(sprintf(gettext("There was a error parsing rule number: %s.   Please report to mailing list or forum."), $flent['rulenum']));
+		return "";
 	}
 
 	/* If there is a src, a dst, and a time, then the line should be usable/good */
@@ -204,39 +261,6 @@ function parse_filter_line($line) {
 		}
 		return "";
 	}
-}
-
-function parse_ipport($addr) {
-	$addr = trim(rtrim($addr, ":"));
-	if (substr($addr, 0, 4) == "kip ")
-		$addr = substr($addr, 4);
-	$port = '';
-	if (substr_count($addr, '.') > 1) {
-		/* IPv4 */
-		$addr_split = explode(".", $addr);
-		$ip = "{$addr_split[0]}.{$addr_split[1]}.{$addr_split[2]}.{$addr_split[3]}";
-
-		if ($ip == "...")
-			return array($addr, '');
-
-		if($addr_split[4] != "") {
-			$port_split = explode(":", $addr_split[4]);
-			$port = $port_split[0];
-		}
-	} else {
-		/* IPv6 */
-		$addr = explode(" ", $addr);
-		$addr = rtrim($addr[0], ":");
-		$addr_split = explode(".", $addr);
-		if (count($addr_split) > 1) {
-			$ip   = $addr_split[0];
-			$port = $addr_split[1];
-		} else {
-			$ip   = $addr;
-		}
-	}
-
-	return array($ip, $port);
 }
 
 function get_port_with_service($port, $proto) {
@@ -253,30 +277,71 @@ function get_port_with_service($port, $proto) {
 	return ':' . $portstr;
 }
 
-function find_rule_by_number($rulenum, $type="rules") {
+function find_rule_by_number($rulenum, $trackernum, $type="block") {
+	global $g;
+
 	/* Passing arbitrary input to grep could be a Very Bad Thing(tm) */
-	if (!(is_numeric($rulenum)))
+	if (!is_numeric($rulenum) || !is_numeric($trackernum) || !in_array($type, array('pass', 'block', 'match', 'rdr')))
 		return;
+
+	if ($trackernum == "0")
+		$lookup_pattern = "^@{$rulenum}\([0-9]+\)[[:space:]]{$type}[[:space:]].*[[:space:]]log[[:space:]]";
+	else
+		$lookup_pattern = "^@[0-9]+\({$trackernum}\)[[:space:]]{$type}[[:space:]].*[[:space:]]log[[:space:]]";
+
 	/* At the moment, miniupnpd is the only thing I know of that
 	   generates logging rdr rules */
+	unset($buffer);
 	if ($type == "rdr")
-		return `pfctl -vvsn -a "miniupnpd" | grep '^@{$rulenum} '`;
-	else
-		return `pfctl -vvsr | grep '^@{$rulenum} '`;
+		$_gb = exec("/sbin/pfctl -vvPsn -a \"miniupnpd\" | /usr/bin/egrep " . escapeshellarg("^@{$rulenum}"), $buffer);
+	else {
+		if (file_exists("{$g['tmp_path']}/rules.debug"))
+			$_gb = exec("/sbin/pfctl -vvPnf {$g['tmp_path']}/rules.debug 2>/dev/null | /usr/bin/egrep " . escapeshellarg($lookup_pattern), $buffer);
+		else
+			$_gb = exec("/sbin/pfctl -vvPsr | /usr/bin/egrep " . escapeshellarg($lookup_pattern), $buffer);
+	}
+	if (is_array($buffer))
+		return $buffer[0];
+
+	return "";
 }
 
 function buffer_rules_load() {
-    global $buffer_rules_rdr, $buffer_rules_normal;
-	$buffer = explode("\n",`pfctl -vvsn -a "miniupnpd" | grep '^@'`);
-	foreach ($buffer as $line) {
-		list($key, $value) = explode (" ", $line, 2);
-		$buffer_rules_rdr[$key] = $value;
-	}	
-	$buffer = explode("\n",`pfctl -vvsr | grep '^@'`);
-	foreach ($buffer as $line) {
-		list($key, $value) = explode (" ", $line, 2);
-		$buffer_rules_normal[$key] = $value;
-	}	
+	global $g, $buffer_rules_rdr, $buffer_rules_normal;
+	unset($buffer, $buffer_rules_rdr, $buffer_rules_normal);
+	/* Redeclare globals after unset to work around PHP */
+	global $buffer_rules_rdr, $buffer_rules_normal;
+	$buffer_rules_rdr = array();
+	$buffer_rules_normal = array();
+
+	$_gb = exec("/sbin/pfctl -vvPsn -a \"miniupnpd\" | grep '^@'", $buffer);
+	if (is_array($buffer)) {
+		foreach ($buffer as $line) {
+			list($key, $value) = explode (" ", $line, 2);
+			$buffer_rules_rdr[$key] = $value;
+		}
+	}
+	unset($buffer, $_gb);
+	if (file_exists("{$g['tmp_path']}/rules.debug"))
+		$_gb = exec("/sbin/pfctl -vvPnf {$g['tmp_path']}/rules.debug 2>/dev/null | /usr/bin/egrep '^@[0-9]+\([0-9]+\)[[:space:]].*[[:space:]]log[[:space:]]' | /usr/bin/egrep -v '^@[0-9]+\([0-9]+\)[[:space:]](nat|rdr|binat|no|scrub)'", $buffer);
+	else
+		$_gb = exec("/sbin/pfctl -vvPsr | /usr/bin/egrep '^@[0-9]+\([0-9]+\)[[:space:]].*[[:space:]]log[[:space:]]'", $buffer);
+
+	if (is_array($buffer)) {
+		foreach ($buffer as $line) {
+			list($key, $value) = explode (" ", $line, 2);
+			# pfctl rule number output with tracker number: @dd(dddddddddd)
+			$matches = array();
+			if (preg_match('/\@(?P<rulenum>\d+)\((?<trackernum>\d+)\)/', $key, $matches) == 1) {
+				if ($matches['trackernum'] > 0)
+					$key = $matches['trackernum'];
+				else
+					$key = "@{$matches['rulenum']}";
+			}
+			$buffer_rules_normal[$key] = $value;
+		}
+	}
+	unset($_gb, $buffer);
 }
 
 function buffer_rules_clear() {
@@ -284,19 +349,24 @@ function buffer_rules_clear() {
 	unset($GLOBALS['buffer_rules_rdr']);
 }
 
-function find_rule_by_number_buffer($rulenum, $type){
-    global $g, $buffer_rules_rdr, $buffer_rules_normal;
-	
+function find_rule_by_number_buffer($rulenum, $trackernum, $type){
+	global $g, $buffer_rules_rdr, $buffer_rules_normal;
+
+	if ($trackernum == "0")
+		$lookup_key = "@{$rulenum}";
+	else
+		$lookup_key = $trackernum;
+
 	if ($type == "rdr")	{
-		$ruleString = $buffer_rules_rdr["@".$rulenum];
+		$ruleString = $buffer_rules_rdr[$lookup_key];
 		//TODO: get the correct 'description' part of a RDR log line. currently just first 30 characters..
 		$rulename = substr($ruleString,0,30);
 	} else {
-		$ruleString = $buffer_rules_normal["@".$rulenum];
+		$ruleString = $buffer_rules_normal[$lookup_key];
 		list(,$rulename,) = explode("\"",$ruleString);
 		$rulename = str_replace("USER_RULE: ",'<img src="/themes/'.$g['theme'].'/images/icons/icon_frmfld_user.png" width="11" height="12" title="USER_RULE" alt="USER_RULE"/> ',$rulename);
 	}
-	return $rulename." (@".$rulenum.")";
+	return "{$rulename} ({$lookup_key})";
 }
 
 function find_action_image($action) {
@@ -307,20 +377,6 @@ function find_action_image($action) {
 		return "/themes/{$g['theme']}/images/icons/icon_reject.gif";
 	else
 		return "/themes/{$g['theme']}/images/icons/icon_block.gif";
-}
-
-function is_first_row($rownum, $totalrows) {
-	global $config;
-	if(isset($config['syslog']['reverse'])) {
-		/* Honor reverse logging setting */
-		if($rownum == 0)
-			return " id=\"firstrow\"";
-	} else {
-		/* non-reverse logging */
-		if($rownum == $totalrows - 1)
-			return " id=\"firstrow\"";
-	}
-	return "";
 }
 
 /* AJAX specific handlers */
@@ -334,7 +390,7 @@ function handle_ajax($nentries, $tail = 50) {
 			$lastsawtime = $_POST['lastsawtime'];
 		/*  compare lastsawrule's time stamp to filter logs.
 		 *  afterwards return the newer records so that client
-                 *  can update AJAX interface screen.
+		 *  can update AJAX interface screen.
 		 */
 		$new_rules = "";
 		$filterlog = conv_log_filter($filter_logfile, $nentries, $tail);

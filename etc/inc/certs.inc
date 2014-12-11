@@ -26,7 +26,6 @@
         ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
         POSSIBILITY OF SUCH DAMAGE.
 
-		DISABLE_PHP_LINT_CHECKING
 		pfSense_MODULE:	certificate_managaer
 */
 
@@ -270,27 +269,41 @@ function cert_import(& $cert, $crt_str, $key_str) {
 
 function cert_create(& $cert, $caref, $keylen, $lifetime, $dn, $type="user", $digest_alg = "sha256") {
 
-	$ca =& lookup_ca($caref);
-	if (!$ca)
-		return false;
+	$cert['type'] = $type;
 
-	$ca_str_crt = base64_decode($ca['crt']);
-	$ca_str_key = base64_decode($ca['prv']);
-	$ca_res_crt = openssl_x509_read($ca_str_crt);
-	$ca_res_key = openssl_pkey_get_private(array(0 => $ca_str_key, 1 => ""));
-	if(!$ca_res_key) return false;
-	$ca_serial = ++$ca['serial'];
+	if ($type != "self-signed") {
+		$cert['caref'] = $caref;
+		$ca =& lookup_ca($caref);
+		if (!$ca)
+			return false;
+
+		$ca_str_crt = base64_decode($ca['crt']);
+		$ca_str_key = base64_decode($ca['prv']);
+		$ca_res_crt = openssl_x509_read($ca_str_crt);
+		$ca_res_key = openssl_pkey_get_private(array(0 => $ca_str_key, 1 => ""));
+		if(!$ca_res_key) return false;
+		$ca_serial = ++$ca['serial'];
+	}
 
 	switch ($type) {
 		case "ca":
 			$cert_type = "v3_ca";
 			break;
 		case "server":
+		case "self-signed":
 			$cert_type = "server";
 			break;
 		default:
 			$cert_type = "usr_cert";
 			break;
+	}
+
+	// in case of using Subject Alternative Names use other sections (with postfix '_san')
+	// pass subjectAltName over environment variable 'SAN'
+	if ($dn['subjectAltName']) {
+		putenv("SAN={$dn['subjectAltName']}"); // subjectAltName can be set _only_ via configuration file
+		$cert_type .= '_san';
+		unset($dn['subjectAltName']);
 	}
 
 	$args = array(
@@ -304,11 +317,20 @@ function cert_create(& $cert, $caref, $keylen, $lifetime, $dn, $type="user", $di
 	$res_key = openssl_pkey_new($args);
 	if(!$res_key) return false;
 
+	// If this is a self-signed cert, blank out the CA and sign with the cert's key
+	if ($type == "self-signed") {
+		$ca           = null;
+		$ca_res_crt   = null;
+		$ca_res_key   = $res_key;
+		$ca_serial    = 0;
+		$cert['type'] = "server";
+	}
+
 	// generate a certificate signing request
 	$res_csr = openssl_csr_new($dn, $res_key, $args);
 	if(!$res_csr) return false;
 
-	// self sign the certificate
+	// sign the certificate using an internal CA
 	$res_crt = openssl_csr_sign($res_csr, $ca_res_crt, $ca_res_key, $lifetime,
 				 $args, $ca_serial);
 	if(!$res_crt) return false;
@@ -319,10 +341,8 @@ function cert_create(& $cert, $caref, $keylen, $lifetime, $dn, $type="user", $di
 		return false;
 
 	// return our certificate information
-	$cert['caref'] = $caref;
 	$cert['crt'] = base64_encode($str_crt);
 	$cert['prv'] = base64_encode($str_key);
-	$cert['type'] = $type;
 
 	return true;
 }
@@ -449,10 +469,16 @@ function cert_get_issuer($str_crt, $decode = true) {
 
 	ksort($components);
 	foreach ($components as $a => $v) {
-		if (!strlen($issuer))
-			$issuer = "{$a}={$v}";
-		else
-			$issuer = "{$a}={$v}, {$issuer}";
+		if (is_array($v)) {
+			ksort($v);
+			foreach ($v as $w) {
+				$aissuer = "{$a}={$w}";
+				$issuer = (strlen($issuer)) ? "{$aissuer}, {$issuer}" : $aissuer;
+			}
+		} else {
+			$aissuer = "{$a}={$v}";
+			$issuer = (strlen($issuer)) ? "{$aissuer}, {$issuer}" : $aissuer;
+		}
 	}
 
 	return $issuer;
@@ -493,6 +519,16 @@ function cert_get_dates($str_crt, $decode = true) {
 	if ($crt_details['validTo_time_t'] > 0)
 		$end = date('r', $crt_details['validTo_time_t']);
 	return array($start, $end);
+}
+
+function cert_get_serial($str_crt, $decode = true) {
+	if ($decode)
+		$str_crt = base64_decode($str_crt);
+	$crt_details = openssl_x509_parse($str_crt);
+	if (isset($crt_details['serialNumber']) && !empty($crt_details['serialNumber']))
+		return $crt_details['serialNumber'];
+	else
+		return NULL;
 }
 
 function prv_get_modulus($str_crt, $decode = true){
@@ -645,6 +681,22 @@ function cert_unrevoke($cert, & $crl) {
 	return false;
 }
 
+/* Compare two certificates to see if they match. */
+function cert_compare($cert1, $cert2) {
+	/* Ensure two certs are identical by first checking that their issuers match, then
+		subjects, then serial numbers, and finally the moduli. Anything less strict
+		could accidentally count two similar, but different, certificates as
+		being identical. */
+	$c1 = base64_decode($cert1['crt']);
+	$c2 = base64_decode($cert2['crt']);
+	if ((cert_get_issuer($c1, false) == cert_get_issuer($c2, false))
+		&& (cert_get_subject($c1, false) == cert_get_subject($c2, false))
+		&& (cert_get_serial($c1, false) == cert_get_serial($c2, false))
+		&& (cert_get_modulus($c1, false) == cert_get_modulus($c2, false)))
+		return true;
+	return false;
+}
+
 function is_cert_revoked($cert, $crlref = "") {
 	global $config;
 	if (!is_array($config['crl']))
@@ -655,7 +707,7 @@ function is_cert_revoked($cert, $crlref = "") {
 		if (!is_array($crl['cert']))
 			return false;
 		foreach ($crl['cert'] as $rcert) {
-			if (($rcert['refid'] == $cert['refid']) || ($rcert['descr'] == $cert['descr']))
+			if (cert_compare($rcert, $cert))
 				return true;
 		}
 	} else {
@@ -663,7 +715,7 @@ function is_cert_revoked($cert, $crlref = "") {
 			if (!is_array($crl['cert']))
 				continue;
 			foreach ($crl['cert'] as $rcert) {
-				if (($rcert['refid'] == $cert['refid']) || ($rcert['descr'] == $cert['descr']))
+				if (cert_compare($rcert, $cert))
 					return true;
 			}
 		}

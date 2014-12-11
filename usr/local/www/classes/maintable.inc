@@ -1,7 +1,7 @@
 <?php
 /* $Id$ */
 /*
-        part of pfSense (http://www.pfsense.com/)
+        part of pfSense (https://www.pfsense.org/)
 
         Copyright (C) 2008 Bill Marquette <bill.marquette@gmail.com>.
         All rights reserved.
@@ -32,7 +32,6 @@
 	pfSense_MODULE:	guiutils
 */
 
-/* DISABLE_PHP_LINT_CHECKING */
 
 class MainTable {
 	private $headers = array();
@@ -119,14 +118,14 @@ class MainTable {
 				echo "  <td class=\"{$cl}\" onclick=\"fr_toggle({$cur_row})\" id=\"frd{$cur_row}\" ondblclick=\"document.location='{$this->edit_uri}?id={$cur_row}'\">\n";
 				if (is_array($row[$this->cname[$col]])) {
 					foreach ($row[$this->cname[$col]] as $data) {
-						echo "    {$data}<br/>\n";
+						echo "    {$data}<br />\n";
 					}
 				} else {
 					echo "    " . $row[$this->cname[$col]] . "\n";
 				}
 				echo "  </td>\n";
 			}
-			echo "  <td class=\"listbg\" onclick=\"fr_toggle({$cur_row})\" id=\"frd{$cur_row}\" ondblclick=\"document.location=\'{$this->edit_uri}?id={$cur_row}\'\">\n";
+			echo "  <td class=\"listbg\" onclick=\"fr_toggle({$cur_row})\" id=\"frd{$cur_row}\" ondblclick=\"document.location='{$this->edit_uri}?id={$cur_row}'\">\n";
 			echo "    <font color=\"#FFFFFF\">{$row[$this->cname[$this->columns - 1]]}</font>\n";
 			echo "  </td>\n";
 			echo "  <td class=\"list nowrap\">\n";
@@ -180,7 +179,7 @@ class MainTable {
 				break;
 			}
 			case "del": {
-				echo "<a href=\"{$this->my_uri}?act=del&amp;id={$row}\" onclick=\"return confirm(\'Do you really want to delete this entry?\')\"><img src=\"/themes/{$g['theme']}/images/icons/icon_x.gif\" width=\"17\" height=\"17\" border=\"0\" title=\"Delete entry\" alt=\"delete\" /></a>";
+				echo "<a href=\"{$this->my_uri}?act=del&amp;id={$row}\" onclick=\"return confirm('Do you really want to delete this entry?')\"><img src=\"/themes/{$g['theme']}/images/icons/icon_x.gif\" width=\"17\" height=\"17\" border=\"0\" title=\"Delete entry\" alt=\"delete\" /></a>";
 				break;
 			}
 			case "dup": {

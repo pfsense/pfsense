@@ -7,14 +7,19 @@ $g['theme'] = get_current_theme();
 
 $pagetitle = gentitle( $pgtitle );
 
+if (isset($config['system']['webgui']['pagenamefirst']))
+	$tabtitle = $pagetitle . " - " . $config['system']['hostname'] . "." . $config['system']['domain'];
+else
+	$tabtitle = $config['system']['hostname'] . "." . $config['system']['domain'] . " - " . $pagetitle;
 ?>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" lang="<?=system_get_language_code();?>" xml:lang="<?=system_get_language_code();?>">
 <head>
-	<title><?php echo($config['system']['hostname'] . "." . $config['system']['domain'] . " - " . $pagetitle); ?></title>
+	<title><?php echo($tabtitle); ?></title>
 	<meta http-equiv="Content-Type" content="text/html; charset=<?=system_get_language_codeset();?>" />
 	<link rel="apple-touch-icon" href="/themes/<?php echo $g['theme']; ?>/apple-touch-icon.png"/>
+	<link rel="shortcut icon" href="/themes/<?php echo $g['theme']; ?>/images/icons/favicon.ico"/>
 		<?php 
 		if (file_exists("{$g['www_path']}/themes/{$g['theme']}/table.css")):
 			echo "<link type=\"text/css\" rel=\"stylesheet\" href=\"/themes/{$g['theme']}/table.css\" />";
@@ -32,9 +37,11 @@ $pagetitle = gentitle( $pgtitle );
 		<link rel="stylesheet" type="text/css" href="/niftycssCode.css" />
 		<link rel="stylesheet" type="text/css" href="/niftycssprintCode.css" media="print" />
 		<link rel="stylesheet" type="text/css" href="/themes/<?=$g['theme']?>/new_tab_menu.css" media="all" />
+		<link rel="stylesheet" type="text/css" href="javascript/jquery/jquery-ui-1.11.1.css" />
 		<script type="text/javascript" src="/javascript/niftyjsCode.js"></script>
-		<script type="text/javascript" src="/javascript/jquery.js"></script>
-		<script type="text/javascript" src="/javascript/jquery/jquery-ui.custom.min.js"></script>
+		<script type="text/javascript" src="/javascript/jquery-1.11.1.min.js"></script>
+		<script type="text/javascript" src="/javascript/jquery-migrate-1.2.1.min.js"></script>
+		<script type="text/javascript" src="/javascript/jquery/jquery-ui-1.11.1.min.js"></script>
 		<script type="text/javascript">
 		//<![CDATA[
 			var theme = "<?php echo $g['theme']; ?>";

@@ -1,8 +1,10 @@
 <?php
 /*
 	$Id$
+        Copyright (C) 2013-2014 Electric Sheep Fencing, LP
+
 	Copyright 2007 Scott Dale
-	Part of pfSense widgets (www.pfsense.com)
+	Part of pfSense widgets (https://www.pfsense.org)
 	originally based on m0n0wall (http://m0n0.ch/wall)
 
 	Copyright (C) 2004-2005 T. Lechat <dev@lechat.org>, Manuel Kasper <mk@neon1.net>
@@ -59,6 +61,9 @@ if ($_POST) {
 	if (isset($_POST["refreshinterval"])) {
 		$a_config["refreshinterval"] = $_POST["refreshinterval"];
 	}
+	if (isset($_POST["scale_type"])) {
+		$a_config["scale_type"] = $_POST["scale_type"];
+	}
 	$a_config["shown"]["item"] = array();
 	foreach ($ifdescrs as $ifname => $ifdescr) {
 		$state = $_POST["shown"][$ifname];
@@ -86,38 +91,59 @@ if (isset($a_config["refreshinterval"])) {
 	$refreshinterval = 10;
 }
 
-?>
-<input type="hidden" id="traffic_graphs-config" name="traffic_graphs-config" value="">
+if (isset($a_config["scale_type"])) {
+        $scale_type = $a_config["scale_type"];
+} else {
+        $scale_type = "up";
+}
 
-<?php
-	//set variables for traffic graph
-	$width = "100%";
-	$height = "150";
 ?>
+<input type="hidden" id="traffic_graphs-config" name="traffic_graphs-config" value="" />
 
-<div id="traffic_graphs-settings" name="traffic_graphs-settings" class="widgetconfigdiv" style="display:none;">
+<div id="traffic_graphs-settings" class="widgetconfigdiv" style="display:none;">
 <form action="/widgets/widgets/traffic_graphs.widget.php" method="post" name="iform" id="iform">
 	<?php foreach ($ifdescrs as $ifname => $ifdescr) { ?>
 		<input type="hidden" name="shown[<?= $ifname ?>]" value="<?= $shown[$ifname] ? "show" : "hide" ?>" />
 	<?php } ?>
+	Default AutoScale:
+		<?php 
+			$scale_type_up="checked=\"checked\"";
+			$scale_type_follow="";
+			if (isset($config["widgets"]["trafficgraphs"]["scale_type"])) {
+				$selected_radio = $config["widgets"]["trafficgraphs"]["scale_type"];
+				if ($selected_radio == "up") {
+					$scale_type_up = "checked=\"checked\"";
+					$scale_type_follow="";
+				}
+				else if ($selected_radio == "follow") {
+					$scale_type_up="";
+					$scale_type_follow = "checked=\"checked\"";
+				}
+			}
+		?>
+	<input name="scale_type" class="radio" type="radio" id="scale_type_up" value="up" <?php echo $scale_type_up; ?> onchange="updateGraphDisplays();" /> <span>up</span>
+	<input name="scale_type" class="radio" type="radio" id="scale_type_follow" value="follow" <?php echo $scale_type_follow; ?> onchange="updateGraphDisplays();" /> <span>follow</span><br /><br />
 	Refresh Interval:
 	<select name="refreshinterval" class="formfld" id="refreshinterval" onchange="updateGraphDisplays();">
 		<?php for ($i = 1; $i <= 10; $i += 1) { ?>
-			<option value="<?= $i ?>" <?php if ($refreshinterval == $i) echo "selected='selected'";?>><?= $i ?></option>
+			<option value="<?= $i ?>" <?php if ($refreshinterval == $i) echo "selected=\"selected\"";?>><?= $i ?></option>
 		<?php } ?>
-	</select>&nbsp; Seconds<br>&nbsp; &nbsp; &nbsp; <b>Note:</b> changing this setting will increase CPU utilization<br><br>
-	<input id="submit" name="submit" type="submit" onclick="return updatePref();" class="formbtn" value="Save Settings" />
+	</select>&nbsp; Seconds<br />&nbsp; &nbsp; &nbsp; <b>Note:</b> changing this setting will increase CPU utilization<br /><br />
+	<input id="submit_settings" name="submit_settings" type="submit" onclick="return updatePref();" class="formbtn" value="Save Settings" />
 </form>
 </div>
 
-<script language="javascript" type="text/javascript">
+<script type="text/javascript">
+//<![CDATA[
 	d = document;
 	selectIntLink = "traffic_graphs-configure";
 	textlink = d.getElementById(selectIntLink);
 	textlink.style.display = "inline";
+//]]>
 </script>
 
 <?php
+$graphcounter = 0;
 foreach ($ifdescrs as $ifname => $ifdescr) {
 	$ifinfo = get_interface_info($ifname);
 	if ($shown[$ifname]) {
@@ -125,6 +151,7 @@ foreach ($ifdescrs as $ifname => $ifdescr) {
 		$showgraphbutton = "none";
 		$graphdisplay = "inline";
 		$interfacevalue = "show";
+		$graphcounter++;
 	} else {
 		$mingraphbutton = "none";
 		$showgraphbutton = "inline";
@@ -135,7 +162,7 @@ foreach ($ifdescrs as $ifname => $ifdescr) {
 		<div id="<?=$ifname;?>trafficdiv" style="padding: 5px">
 			<div id="<?=$ifname;?>topic" class="widgetsubheader">
 				<div style="float:left;width:49%">
-					<span onClick="location.href='/status_graph.php?if=<?=$ifname;?>'" style="cursor:pointer">Current <?=$ifdescr;?> Traffic</span>
+					<span onclick="location.href='/status_graph.php?if=<?=$ifname;?>'" style="cursor:pointer">Current <?=$ifdescr;?> Traffic</span>
 				</div>
 				<div align="right" style="float:right;width:49%">
 					<div id="<?=$ifname;?>graphdiv-min" onclick='return trafficminimizeDiv("<?= $ifname ?>", true);'
@@ -146,7 +173,11 @@ foreach ($ifdescrs as $ifname => $ifdescr) {
 				<div style="clear:both;"></div>
 			</div>
 			<div id="<?=$ifname;?>graphdiv" style="display:<?php echo $graphdisplay;?>">
-				<embed id="graph" src="graph.php?ifnum=<?=$ifname;?>&ifname=<?=rawurlencode($ifdescr);?>&timeint=<?=$refreshinterval;?>&initdelay=<?=($graphcounter+1) * 2;?>" type="image/svg+xml" width="100%" height="100%" pluginspage="http://www.adobe.com/svg/viewer/install/auto" />
+				<object data="graph.php?ifnum=<?=$ifname;?>&amp;ifname=<?=rawurlencode($ifdescr);?>&amp;timeint=<?=$refreshinterval;?>&amp;initdelay=<?=$graphcounter * 2;?>" height="100%" width="100%">
+					<param name="id" value="graph" />
+					<param name="type" value="image/svg+xml" />
+					<param name="pluginspage" value="http://www.adobe.com/svg/viewer/install/auto" />
+				</object>
 			</div>
 		</div>
 	<?php }

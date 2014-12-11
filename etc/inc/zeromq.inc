@@ -1,7 +1,7 @@
 <?php 
 /*
 	zeromq.inc
-	part of the pfSense project (http://www.pfsense.com)
+	part of the pfSense project (https://www.pfsense.org)
 	Copyright 2010 Scott Ullrich <sullrich@gmail.com>
 	All rights reserved.
 
@@ -260,7 +260,10 @@ function filter_configure_zeromq($raw_params) {
 	require_once("openvpn.inc");
 	openvpn_resync_all();
 	services_dhcpd_configure();
-	services_dnsmasq_configure();
+	if (isset($config['dnsmasq']['enable']))
+		services_dnsmasq_configure();
+	elseif (isset($config['unbound']['enable']))
+		services_unbound_configure();
 	local_sync_accounts();
 	return ZEROMQ_FASLE;
 }
@@ -270,7 +273,7 @@ function interfaces_carp_configure_zeromq($raw_params) {
 	$params = $raw_params;
 	if(zeromq_auth($raw_params) == false) 
 		return ZEROMQ_AUTH_FAIL;
-	interfaces_carp_setup();
+	interfaces_sync_setup();
 	interfaces_vips_configure();
 	return ZEROMQ_FASLE;
 }
@@ -297,7 +300,8 @@ function get_notices_zeromq($raw_params) {
 	$params = $raw_params;
 	if(zeromq_auth($raw_params) == false)
 		return ZEROMQ_AUTH_FAIL;
-	require("notices.inc");
+	if(!function_exists("get_notices"))
+		require("notices.inc");
 	if(!$params) {
 		$toreturn = get_notices();
 	} else {

@@ -2,8 +2,9 @@
 /* $Id$ */
 /*
 	firewall_rules.php
-	part of pfSense (http://www.pfsense.com)
+	part of pfSense (https://www.pfsense.org)
 	Copyright (C) 2005 Scott Ullrich (sullrich@gmail.com)
+        Copyright (C) 2013-2014 Electric Sheep Fencing, LP
 
 	originally part of m0n0wall (http://m0n0.ch/wall)
 	Copyright (C) 2003-2004 Manuel Kasper <mk@neon1.net>.
@@ -105,7 +106,7 @@ if($_REQUEST['dragdroporder']) {
 	// Overwrite filter rules with newly created items
 	$config['filter']['rule'] = array_merge($a_filter_before, $a_filter_order, $a_filter_after);
 	// Write configuration
-	$config = write_config("Drag and drop firewall rules ordering update.");
+	$config = write_config(gettext("Drag and drop firewall rules ordering update."));
 	// Redirect back to page
 	mark_subsystem_dirty('filter');
 	$undo = array();
@@ -118,7 +119,7 @@ if($_REQUEST['dragdroporder']) {
 	}
 	foreach($undo as $dt)
 		$undotxt .= "&dragtable[]={$dt}";
-	Header("Location: firewall_rules.php?if=" . $_REQUEST['if'] . "&undodrag=true" . $undotxt);
+	header("Location: firewall_rules.php?if=" . $_REQUEST['if'] . "&undodrag=true" . $undotxt);
 	exit;
 }
 
@@ -200,7 +201,7 @@ if ($_POST) {
 
 		pfSense_handle_custom_code("/usr/local/pkg/firewall_rules/apply");
 
-		$savemsg = sprintf(gettext("The settings have been applied. The firewall rules are now reloading in the background.<br/>You can also %s monitor %s the reload progress"),"<a href='status_filter_reload.php'>","</a>");
+		$savemsg = sprintf(gettext("The settings have been applied. The firewall rules are now reloading in the background.<br />You can also %s monitor %s the reload progress"),"<a href='status_filter_reload.php'>","</a>");
 	}
 }
 
@@ -301,22 +302,22 @@ include("head.inc");
 <?php include("fbegin.inc"); ?>
 <form action="firewall_rules.php" method="post">
 
-<script type="text/javascript" language="javascript" src="/javascript/row_toggle.js"></script>
+<script type="text/javascript" src="/javascript/row_toggle.js"></script>
 <?php if ($savemsg) print_info_box($savemsg); ?>
 <?php if (is_subsystem_dirty('filter')): ?><p>
 <?php
 if($_REQUEST['undodrag']) {
 	foreach($_REQUEST['dragtable'] as $dt)
 		$dragtable .= "&dragtable[]={$dt}";
-	print_info_box_np_undo(gettext("The firewall rule configuration has been changed.<br/>You must apply the changes in order for them to take effect."), "apply" , gettext("Apply changes") , "firewall_rules.php?if={$_REQUEST['if']}&dragdroporder=true&{$dragtable}");
+	print_info_box_np_undo(gettext("The firewall rule configuration has been changed.<br />You must apply the changes in order for them to take effect."), "apply" , gettext("Apply changes") , "firewall_rules.php?if={$_REQUEST['if']}&dragdroporder=true&{$dragtable}");
 } else {
-	print_info_box_np(gettext("The firewall rule configuration has been changed.<br/>You must apply the changes in order for them to take effect."));
+	print_info_box_np(gettext("The firewall rule configuration has been changed.<br />You must apply the changes in order for them to take effect."));
 }
 ?>
-<br/>
+<br />
 <?php endif; ?>
 <div id="loading" style="visibity:hidden">
-	<img src="/themes/<?=$g['theme']?>/images/misc/loader.gif" alt="loader" /> Loading, please wait...
+    <img src="/themes/<?=$g['theme']?>/images/misc/loader.gif" alt="loader" /> <?php echo gettext("Loading, please wait..."); ?>
 	<p>&nbsp;</p>
 </div>
 <?php
@@ -397,7 +398,7 @@ if($_REQUEST['undodrag']) {
 					(((count($config['interfaces']) > 1) && ($if == 'lan'))
 					|| ((count($config['interfaces']) == 1) && ($if == 'wan')))):
 
-					$alports = implode('<br/>', filter_get_antilockout_ports(true));
+					$alports = implode('<br />', filter_get_antilockout_ports(true));
 			?>
 			<tr valign="top" id="antilockout">
 			<td class="list">&nbsp;</td>
@@ -511,6 +512,8 @@ if($_REQUEST['undodrag']) {
 					$iconfn = "block";
 				else if ($filterent['type'] == "reject")
 					$iconfn = "reject";
+				else if ($filterent['type'] == "match")
+					$iconfn = "match";
 				else
 					$iconfn = "pass";
 				if (isset($filterent['disabled'])) {
@@ -528,7 +531,7 @@ if($_REQUEST['undodrag']) {
 				if (isset($filterent['disabled']))
 					$iconfnlog .= "_d";
 			?>
-			<br/><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_<?=$iconfnlog;?>.gif" width="11" height="15" border="0" alt="icon" />
+			<br /><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_<?=$iconfnlog;?>.gif" width="11" height="15" border="0" alt="icon" />
 <?php endif; ?>
 			</td>
 			<?php
@@ -652,7 +655,7 @@ if($_REQUEST['undodrag']) {
 									}
 									$timeFriendly = $starttime . " - " . $stoptime;
 									$description = $timerange['rangedescr'];
-									$sched_content .= $dayFriendly . "; " . $timeFriendly . "<br/>";
+									$sched_content .= $dayFriendly . "; " . $timeFriendly . "<br />";
 								}
 							}
 							$sched_caption_escaped = str_replace("'", "\'", $schedule['descr']);
@@ -781,10 +784,10 @@ if($_REQUEST['undodrag']) {
 			<td class="listlr" colspan="10" align="center" valign="middle">
 			<span class="gray">
 	<?php if ($_REQUEST['if'] == "FloatingRules"): ?>
-				<?=gettext("No floating rules are currently defined."); ?><br/><br/>
+				<?=gettext("No floating rules are currently defined."); ?><br /><br />
 	<?php else: ?>
-				<?=gettext("No rules are currently defined for this interface"); ?><br/>
-				<?=gettext("All incoming connections on this interface will be blocked until you add pass rules."); ?><br/><br/>
+				<?=gettext("No rules are currently defined for this interface"); ?><br />
+				<?=gettext("All incoming connections on this interface will be blocked until you add pass rules."); ?><br /><br />
 	<?php endif; ?>
 				<?=gettext("Click the"); ?> <a href="firewall_rules_edit.php?if=<?=htmlspecialchars($if);?>"><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_plus.gif" title="<?=gettext("add new rule");?>" border="0" width="17" height="17" align="middle" alt="add" /></a><?=gettext(" button to add a new rule.");?></span>
 			</td>
@@ -829,20 +832,26 @@ if($_REQUEST['undodrag']) {
 		<table class="tabcont" width="100%" border="0" cellspacing="0" cellpadding="0" summary="icons">
 			<tr>
 				<td width="16"><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_pass.gif" width="11" height="11" alt="pass" /></td>
-				<td><?=gettext("pass");?></td>
+				<td width="100"><?=gettext("pass");?></td>
+				<td width="14"></td>
+				<td width="16"><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_match.gif" width="11" height="11" alt="match" /></td>
+				<td width="100"><?=gettext("match");?></td>
 				<td width="14"></td>
 				<td width="16"><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_block.gif" width="11" height="11" alt="block" /></td>
-				<td><?=gettext("block");?></td>
+				<td width="100"><?=gettext("block");?></td>
 				<td width="14"></td>
 				<td width="16"><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_reject.gif" width="11" height="11" alt="reject" /></td>
-				<td><?=gettext("reject");?></td>
+				<td width="100"><?=gettext("reject");?></td>
 				<td width="14"></td>
 				<td width="16"><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_log.gif" width="11" height="11" alt="log" /></td>
-				<td><?=gettext("log");?></td>
+				<td width="100"><?=gettext("log");?></td>
 			</tr>
 			<tr>
 				<td><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_pass_d.gif" width="11" height="11" alt="pass disabled" /></td>
 				<td class="nowrap"><?=gettext("pass (disabled)");?></td>
+				<td>&nbsp;</td>
+				<td><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_match_d.gif" width="11" height="11" alt="match disabled" /></td>
+				<td class="nowrap"><?=gettext("match (disabled)");?></td>
 				<td>&nbsp;</td>
 				<td><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_block_d.gif" width="11" height="11" alt="block disabled" /></td>
 				<td class="nowrap"><?=gettext("block (disabled)");?></td>
@@ -858,7 +867,7 @@ if($_REQUEST['undodrag']) {
 					<p>&nbsp;</p>
 					<strong>
 						<span class="red"><?=gettext("Hint:");?></span>
-					</strong><br/>
+					</strong><br />
 					<ul>
 					<?php if ("FloatingRules" != $if): ?>
 						<li><?=gettext("Rules are evaluated on a first-match basis (i.e. " .

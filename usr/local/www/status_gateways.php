@@ -2,9 +2,10 @@
 /* $Id$ */
 /*
 	status_gateways.php
-	part of pfSense (http://www.pfsense.com/)
+	part of pfSense (https://www.pfsense.org/)
 
 	Copyright (C) 2010 Seth Mos <seth.mos@dds.nl>.
+        Copyright (C) 2013-2014 Electric Sheep Fencing, LP
 	All rights reserved.
 
 	Redistribution and use in source and binary forms, with or without
@@ -115,7 +116,10 @@ include("head.inc");
                         <?php
 				if ($gateways_status[$gname]) {
 					$status = $gateways_status[$gname];
-					if (stristr($status['status'], "down")) {
+					if (stristr($status['status'], "force_down")) {
+						$online = gettext("Offline (forced)");
+						$bgcolor = "#F08080";  // lightcoral
+					} elseif (stristr($status['status'], "down")) {
 						$online = gettext("Offline");
 						$bgcolor = "#F08080";  // lightcoral
 					} elseif (stristr($status['status'], "loss")) {
@@ -138,7 +142,7 @@ include("head.inc");
 				echo "<tr><td><table width='100%'><tr><td bgcolor=\"$bgcolor\">&nbsp;$online&nbsp;</td></tr><tr><td>";
 				$lastchange = $gateways_status[$gname]['lastcheck'];
 				if(!empty($lastchange)) {
-					echo gettext("Last check:") . '<br/>' . $lastchange;
+					echo gettext("Last check:") . '<br />' . $lastchange;
 				}
 				echo "</td></tr></table></td></tr>";
                         ?>
@@ -149,7 +153,8 @@ include("head.inc");
 		<?php } ?>
               </table>
 	   </div>
-	</table>
+</td></tr>
+</table>
 
 <?php include("fend.inc"); ?>
 </body>

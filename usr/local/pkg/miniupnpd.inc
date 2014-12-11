@@ -71,12 +71,12 @@
 		return true;	
 	}
 
-	function before_form_miniupnpd($pkg) {
+	function before_form_miniupnpd(&$pkg) {
 		global $config;
 
 	}
 
-	function validate_form_miniupnpd($post, $input_errors) {
+	function validate_form_miniupnpd($post, &$input_errors) {
 		if($post['enable'] && (!$post['enable_upnp'] && !$post['enable_natpmp']))
 			$input_errors[] = 'At least one of \'UPnP\' or \'NAT-PMP\' must be allowed';
 		if($post['iface_array'])
@@ -159,7 +159,7 @@
 					$bits = find_interface_subnet($if);
 					/* check that the interface has an ip address before adding parameters */
 					if (is_ipaddr($addr)) {
-						$config_text .= "listening_ip={$addr}/{$bits}\n";
+						$config_text .= "listening_ip={$if}\n";
 						if(!$ifaces_active) {
 							$webgui_ip = $addr;
 							$ifaces_active = $iface;

@@ -6,6 +6,9 @@
 	Copyright (C) 2005 Colin Smith
 	All rights reserved.
 
+        Copyright (C) 2013-2014 Electric Sheep Fencing, LP
+	All rights reserved.
+
 	Redistribution and use in source and binary forms, with or without
 	modification, are permitted provided that the following conditions are met:
 
@@ -73,9 +76,11 @@ if(!$apkg) { // If we aren't looking for a specific package, locate the first pa
 		}
 	}
 } elseif($apkg) {
-	$pkgwithlogging = true;
 	$apkgid = get_pkg_id($apkg);
-	$i = $apkgid;
+	if ($apkgid != -1) {
+		$pkgwithlogging = true;
+		$i = $apkgid;
+	}
 }
 
 $pgtitle = array(gettext("Status"),gettext("Package logs"));

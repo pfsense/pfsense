@@ -3,7 +3,7 @@
 /*
 	rc.newwanip
 	Copyright (C) 2006 Scott Ullrich (sullrich@gmail.com)
-	part of pfSense (http://www.pfsense.com)
+	part of pfSense (https://www.pfsense.org)
 
 	Originally part of m0n0wall (http://m0n0.ch)
 	Copyright (C) 2003-2005 Manuel Kasper <mk@neon1.net>.
@@ -44,8 +44,8 @@ require_once("IPv6.inc");
 require_once("rrd.inc");
 
 // Do not process while booting
-if($g['booting'])
-	exit;
+if (platform_booting())
+	return;
 
 function restart_packages() {
 	global $oldip, $curwanip, $g;
@@ -53,16 +53,19 @@ function restart_packages() {
 	/* restart packages */
 	system_ntp_configure(false);
 	mwexec_bg("/usr/local/sbin/ntpdate_sync_once.sh", true);
-	log_error("{$g['product_name']} package system has detected an ip change $oldip ->  $curwanip ... Restarting packages.");
+	log_error("{$g['product_name']} package system has detected an IP change or dynamic WAN reconnection - $oldip ->  $curwanip - Restarting packages.");
 	send_event("service reload packages");
 }
 
 /* Interface IP address has changed */
-$argument = str_replace("\n", "", $argv[1]);
+if (isset($_GET['interface']))
+	$argument = $_GET['interface'];
+else
+	$argument = str_replace("\n", "", $argv[1]);
 
-log_error("rc.newwanip: Informational is starting {$argument}.");
+log_error("rc.newwanip: Info: starting on {$argument}.");
 
-if(empty($argument)) {
+if (empty($argument)) {
 	$interface = "wan";
 	$interface_real = get_real_interface();
 } else {
@@ -70,30 +73,43 @@ if(empty($argument)) {
 	$interface_real = $argument;
 }
 
-if(empty($argument))
+$interface_descr = convert_friendly_interface_to_friendly_descr($interface);
+
+/* If the interface is configured and not enabled, bail. We do not need to change settings for disabled interfaces. #3313 */
+if (is_array($config['interfaces'][$interface]) && !isset($config['interfaces'][$interface]['enable'])) {
+	log_error("Interface is disabled, nothing to do.");
+	return;
+}
+
+if (empty($argument))
 	$curwanip = get_interface_ip();
 else {
 	$curwanip = find_interface_ip($interface_real, true);
 	if($curwanip == "")
 		$curwanip = get_interface_ip($interface);
-	if (($curwanip == "") && !(isset($config['interfaces'][$interface]['ipaddr']))) {
-		log_error("Interface does not have an IP address, nothing to do.");
-		return;
+}
+
+log_error("rc.newwanip: on (IP address: {$curwanip}) (interface: {$interface_descr}[{$interface}]) (real interface: {$interface_real}).");
+
+/*
+ * NOTE: Take care of openvpn, no-ip or similar interfaces if you generate the event to reconfigure an interface.
+ *      i.e. OpenVPN might be in tap mode and not have an ip.
+ */
+if ($curwanip == "0.0.0.0" || !is_ipaddr($curwanip)) {
+	if (substr($interface_real, 0, 4) != "ovpn") {
+		if (!empty($config['interfaces'][$interface]['ipaddr'])) {
+			log_error("rc.newwanip: Failed to update {$interface} IP, restarting...");
+			send_event("interface reconfigure {$interface}");
+			return;
+		}
 	}
 }
 
-log_error("rc.newwanip: on (IP address: {$curwanip}) (interface: {$interface}) (real interface: {$interface_real}).");
-
-if($curwanip == "0.0.0.0" || !is_ipaddr($curwanip)) {
-	log_error("rc.newwanip: Failed to update {$interface} IP, restarting...");
-	send_event("interface reconfigure {$interface}");
-	exit;
-}
-
+/* XXX: This really possible? */
 if (empty($interface)) {
 	filter_configure();
 	restart_packages();
-	exit;
+	return;
 }
 
 $oldip = "0.0.0.0";
@@ -103,8 +119,9 @@ if (file_exists("{$g['vardb_path']}/{$interface}_cacheip"))
 /* regenerate resolv.conf if DNS overrides are allowed */
 system_resolvconf_generate(true);
 
-/* write current WAN IP to file */
-file_put_contents("{$g['vardb_path']}/{$interface}_ip", $curwanip);
+/* write the current interface IP to file */
+if (is_ipaddr($curwanip))
+	@file_put_contents("{$g['vardb_path']}/{$interface}_ip", $curwanip);
 
 link_interface_to_vips($interface, "update");
 
@@ -144,20 +161,21 @@ switch($config['interfaces'][$interface]['ipaddrv6']) {
 }
 
 /* Check Gif tunnels */
-if(is_array($config['gifs']['gif'])){
-	foreach($config['gifs']['gif'] as $gif) {
-		if($gif['if'] == $interface) {
-			foreach($config['interfaces'] as $ifname => $ifparent) {
-				// echo "interface $ifparent, ifname $ifname, gif {$gif['gifif']}\n";
-				if(($ifparent['if'] == $gif['gifif']) && (isset($ifparent['enable']))) {
-					// echo "Running routing configure for $ifname\n";
-					$gif['gifif'] = interface_gif_configure($gif);
-					$confif = convert_real_interface_to_friendly_interface_name($gif['gifif']);
-					if ($confif <> "")
-						interface_configure($confif);
-					system_routing_configure($ifname);
-				}
-			}
+if (!empty($gif)) {
+	foreach($gif as $giftun) {
+		$confif = convert_real_interface_to_friendly_interface_name($giftun['gifif']);
+		if (!empty($confif)) {
+			interface_configure($confif);
+			system_routing_configure($confif);
+		}
+	}
+}
+if (!empty($gre)) {
+	foreach($gre as $gretun) {
+		$confif = convert_real_interface_to_friendly_interface_name($gretun['greif']);
+		if (!empty($confif)) {
+			interface_configure($confif);
+			system_routing_configure($confif);
 		}
 	}
 }
@@ -168,13 +186,33 @@ if(is_array($config['gifs']['gif'])){
  * could be failing back in which case we need to switch IPs back anyhow.
  */
 if (!is_ipaddr($oldip) || $curwanip != $oldip || !is_ipaddrv4($config['interfaces'][$interface]['ipaddr'])) {
+	/* IP changed, kill states accordingly */
+	if ($curwanip != $oldip) {
+		log_error("IP has changed, killing states on former IP $oldip.");
+		pfSense_kill_states($oldip);
+		if (isset($config['system']['ip_change_kill_states'])) {
+			/* hidden config option to wipe all states if needed */
+			log_error("Killing all states post-IP change.");
+			filter_flush_state_table();
+		}
+	}
+	
+	/*
+	 * Some services (e.g. dyndns, see ticket #4066) depends of
+	 * filter_configure() to be called before, otherwise pass out
+	 * route-to rules have the old ip set in 'from' and connection
+	 * do not go through correct link
+	 */
+	filter_configure_sync();
+
 	/* reconfigure static routes (kernel may have deleted them) */
 	system_routing_configure($interface);
 
 	/* reconfigure our gateway monitor */
 	setup_gateways_monitor();
 
-	file_put_contents("{$g['vardb_path']}/{$interface}_cacheip", $curwanip);
+	if (is_ipaddr($curwanip))
+		@file_put_contents("{$g['vardb_path']}/{$interface}_cacheip", $curwanip);
 
 	/* perform RFC 2136 DNS update */
 	services_dnsupdate_process($interface);
@@ -199,9 +237,9 @@ if (!is_ipaddr($oldip) || $curwanip != $oldip || !is_ipaddrv4($config['interface
 	services_snmpd_configure();
 
 	restart_packages();
+} else {
+	/* signal filter reload */
+	filter_configure();
 }
-
-/* signal filter reload */
-filter_configure();
 
 ?>

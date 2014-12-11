@@ -5,6 +5,9 @@
     Copyright (C) 2007 Sam Wenham
     All rights reserved.
 
+    Copyright (C) 2013-2014 Electric Sheep Fencing, LP
+    All rights reserved.
+
     Redistribution and use in source and binary forms, with or without
     modification, are permitted provided that the following conditions are met:
 
@@ -49,14 +52,13 @@ $carp_enabled = get_carp_status();
 			$netmask = $carp['subnet_bits'];
 			$vhid = $carp['vhid'];
 			$advskew = $carp['advskew'];
-			$carp_int = "{$carp['interface']}_vip{$vhid}";
-			$status = get_carp_interface_status($carp_int);
+			$status = get_carp_interface_status("{$carp['interface']}_vip{$vhid}");
 ?>
 <tr>
 	<td class="vncellt" width="35%">
 		<img src="./themes/<?= $g['theme']; ?>/images/icons/icon_cablenic.gif" alt="cablenic" />&nbsp;
 		<strong><a href="/system_hasync.php">
-		<span style="color:#000000"><?=htmlspecialchars($carp_int);?></span></a></strong>
+		<span style="color:#000000"><?=htmlspecialchars(convert_friendly_interface_to_friendly_descr($carp['interface']) . "@{$vhid}");?></span></a></strong>
 	</td>
 	<td width="65%"  class="listr">
 <?php
@@ -75,7 +77,7 @@ $carp_enabled = get_carp_status();
 			if ($ipaddress){ ?> &nbsp;
 				<?=htmlspecialchars($status);?> &nbsp;
 				<?=htmlspecialchars($ipaddress);}?>
-</tr><?php	}
+</td></tr><?php	}
 	} else { ?>
 		<tr><td class="listr">No CARP Interfaces Defined. Click <a href="carp_status.php">here</a> to configure CARP.</td></tr>
 <?php	} ?>

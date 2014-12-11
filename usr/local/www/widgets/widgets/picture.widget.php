@@ -1,8 +1,9 @@
 <?php
 /*
         $Id$
+        Copyright (C) 2013-2014 Electric Sheep Fencing, LP
         Copyright 2009 Scott Ullrich
-        Part of pfSense widgets (www.pfsense.com)
+        Part of pfSense widgets (https://www.pfsense.org)
 
         Redistribution and use in source and binary forms, with or without
         modification, are permitted provided that the following conditions are met:
@@ -61,7 +62,7 @@ if($_POST) {
 			$config['widgets']['picturewidget'] = base64_encode($data);
 			$config['widgets']['picturewidget_filename'] = $_FILES['pictfile']['name'];
 			write_config("Picture widget saved via Dashboard.");
-			Header("Location: /index.php");
+			header("Location: /index.php");
 			exit;
 		}
 	}

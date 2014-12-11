@@ -3,6 +3,7 @@
 	graph.php
 	part of m0n0wall (http://m0n0.ch/wall)
 	
+        Copyright (C) 2013-2014 Electric Sheep Fencing, LP
 	Copyright (C) 2004-2006 T. Lechat <dev@lechat.org>, Manuel Kasper <mk@neon1.net>
 	and Jonathan Watt <jwatt@jwatt.org>.
 	All rights reserved.
@@ -55,7 +56,11 @@ $ifnum = get_real_interface($ifnum);
 $ifname=@$_GET["ifname"]?$_GET["ifname"]:"Interface $ifnum";  //Interface name that will be showed on top right of graph
 
 /********* Other conf *******/
-$scale_type="up";               //Autoscale default setup : "up" = only increase scale; "follow" = increase and decrease scale according to current graphed datas
+if (isset($config["widgets"]["trafficgraphs"]["scale_type"]))
+	$scale_type = $config["widgets"]["trafficgraphs"]["scale_type"];
+else
+	$scale_type = "up";
+
 $nb_plot=120;                   //NB plot in graph
 if ($_GET["timeint"])
 	$time_interval = $_GET["timeint"];		//Refresh time Interval

@@ -2,6 +2,7 @@
 /*
     getstats.php
     Copyright (C) 2009 Bill Marquette
+    Copyright (C) 2013-2014 Electric Sheep Fencing, LP
     All rights reserved.
 
     Redistribution and use in source and binary forms, with or without

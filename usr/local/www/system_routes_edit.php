@@ -2,9 +2,10 @@
 /*
 	system_routes_edit.php
 	part of m0n0wall (http://m0n0.ch/wall)
-
+	part of pfSense
 	Copyright (C) 2003-2004 Manuel Kasper <mk@neon1.net>.
 	Copyright (C) 2010 Scott Ullrich
+        Copyright (C) 2013-2014 Electric Sheep Fencing, LP
 	All rights reserved.
 
 	Redistribution and use in source and binary forms, with or without
@@ -39,23 +40,12 @@
 ##|*MATCH=system_routes_edit.php*
 ##|-PRIV
 
-function staticroutecmp($a, $b) {
-	return strcmp($a['network'], $b['network']);
-}
-
-function staticroutes_sort() {
-	global $g, $config;
-
-	if (!is_array($config['staticroutes']['route']))
-		return;
-
-	usort($config['staticroutes']['route'], "staticroutecmp");
-}
-
 require_once("guiconfig.inc");
 require_once("filter.inc");
 require_once("util.inc");
 require_once("gwlb.inc");
+
+$referer = (isset($_SERVER['HTTP_REFERER']) ? $_SERVER['HTTP_REFERER'] : '/system_routes.php');
 
 if (!is_array($config['staticroutes']['route']))
 	$config['staticroutes']['route'] = array();
@@ -63,13 +53,13 @@ if (!is_array($config['staticroutes']['route']))
 $a_routes = &$config['staticroutes']['route'];
 $a_gateways = return_gateways_array(true, true);
 
-$id = $_GET['id'];
-if (isset($_POST['id']))
+if (is_numericint($_GET['id']))
+	$id = $_GET['id'];
+if (isset($_POST['id']) && is_numericint($_POST['id']))
 	$id = $_POST['id'];
 
-if (isset($_GET['dup'])) {
+if (isset($_GET['dup']) && is_numericint($_GET['dup']))
 	$id = $_GET['dup'];
-}
 
 if (isset($id) && $a_routes[$id]) {
 	list($pconfig['network'],$pconfig['network_subnet']) =
@@ -79,7 +69,7 @@ if (isset($id) && $a_routes[$id]) {
 	$pconfig['disabled'] = isset($a_routes[$id]['disabled']);
 }
 
-if (isset($_GET['dup']))
+if (isset($_GET['dup']) && is_numericint($_GET['dup']))
 	unset($id);
 
 if ($_POST) {
@@ -107,7 +97,7 @@ if ($_POST) {
 	if (($_POST['gateway']) && is_ipaddr($_POST['network'])) {
 		if (!isset($a_gateways[$_POST['gateway']]))
 			$input_errors[] = gettext("A valid gateway must be specified.");
-		if(!validate_address_family($_POST['network'], lookup_gateway_ip_by_name($_POST['gateway'])))
+		if(!validate_address_family($_POST['network'], $_POST['gateway']))
 			$input_errors[] = gettext("The gateway '{$a_gateways[$_POST['gateway']]['gateway']}' is a different Address Family as network '{$_POST['network']}'.");
 	}
 
@@ -209,7 +199,6 @@ if ($_POST) {
 				}
 		}
 		file_put_contents("{$g['tmp_path']}/.system_routes.apply", serialize($toapplylist));
-		staticroutes_sort();
 
 		mark_subsystem_dirty('staticroutes');
 
@@ -242,13 +231,13 @@ include("head.inc");
 					<input name="network" type="text" class="formfldalias ipv4v6" id="network" size="20" value="<?=htmlspecialchars($pconfig['network']);?>" />
 					/
 					<select name="network_subnet" class="formselect ipv4v6" id="network_subnet">
-					<?php for ($i = 129; $i >= 1; $i--): ?>
+					<?php for ($i = 128; $i >= 1; $i--): ?>
 						<option value="<?=$i;?>" <?php if ($i == $pconfig['network_subnet']) echo "selected=\"selected\""; ?>>
 							<?=$i;?>
 						</option>
 					<?php endfor; ?>
 					</select>
-					<br/><span class="vexpl"><?=gettext("Destination network for this static route"); ?></span>
+					<br /><span class="vexpl"><?=gettext("Destination network for this static route"); ?></span>
 				</td>
 			</tr>
 			<tr>
@@ -334,13 +323,14 @@ include("head.inc");
 				<td width="22%" valign="top" class="vncell"><?=gettext("Description"); ?></td>
 				<td width="78%" class="vtable">
 					<input name="descr" type="text" class="formfld unknown" id="descr" size="40" value="<?=htmlspecialchars($pconfig['descr']);?>" />
-					<br/><span class="vexpl"><?=gettext("You may enter a description here for your reference (not parsed)."); ?></span>
+					<br /><span class="vexpl"><?=gettext("You may enter a description here for your reference (not parsed)."); ?></span>
 				</td>
 			</tr>
 			<tr>
 				<td width="22%" valign="top">&nbsp;</td>
 				<td width="78%">
-					<input id="save" name="Submit" type="submit" class="formbtn" value="<?=gettext("Save");?>" /> <input id="cancel" type="button" value="<?=gettext("Cancel"); ?>" class="formbtn"  onclick="history.back()" />
+					<input id="save" name="Submit" type="submit" class="formbtn" value="<?=gettext("Save");?>" />
+					<input type="button" class="formbtn" value="<?=gettext("Cancel");?>" onclick="window.location.href='<?=$referer;?>'" />
 					<?php if (isset($id) && $a_routes[$id]): ?>
 						<input name="id" type="hidden" value="<?=htmlspecialchars($id);?>" />
 					<?php endif; ?>

@@ -4,6 +4,7 @@
 	status_rrd_graph.php
 	Part of pfSense
 	Copyright (C) 2007 Seth Mos <seth.mos@dds.nl>
+        Copyright (C) 2013-2014 Electric Sheep Fencing, LP
 	All rights reserved.
 
 	Redistribution and use in source and binary forms, with or without
@@ -132,6 +133,14 @@ if ($_GET['option']) {
 		case "captiveportal":
 			$curoption = "allgraphs";
 			break;
+		case "ntpd":
+			if(isset($config['ntpd']['statsgraph'])) {
+				$curoption = "allgraphs";
+			} else {
+				$curoption = "processor";
+				$curcat = "system";
+			}
+			break;
 		default:
 			$curoption = "wan";
 			break;
@@ -229,21 +238,24 @@ foreach($databases as $database) {
 	if(stristr($database, "captiveportal-") && is_array($config['captiveportal'])) {
 		$captiveportal = true;
 	}
+	if(stristr($database, "ntpd") && isset($config['ntpd']['statsgraph'])) {
+		$ntpd = true;
+	}
 }
 /* append the existing array to the header */
 $ui_databases = array_merge($dbheader, $databases);
 $custom_databases = array_merge($dbheader_custom, $databases);
 
-$graphs = array("8hour", "day", "week", "month", "quarter", "year", "4year");
+$graphs = array("eighthour", "day", "week", "month", "quarter", "year", "fouryear");
 $periods = array("absolute" => gettext("Absolute Timespans"), "current" => gettext("Current Period"), "previous" => gettext("Previous Period"));
 $graph_length = array(
-	"8hour" => 28800,
+	"eighthour" => 28800,
 	"day" => 86400,
 	"week" => 604800,
 	"month" => 2678400,
 	"quarter" => 7948800,
 	"year" => 31622400,
-	"4year" => 126230400);
+	"fouryear" => 126230400);
 
 $pgtitle = array(gettext("Status"),gettext("RRD Graphs"));
 
@@ -274,10 +286,10 @@ include("head.inc");
 
 <?php if ($curcat === "custom") { ?>
 	<link rel="stylesheet" type="text/css" href="/javascript/jquery-ui-timepicker-addon/css/jquery-ui-timepicker-addon.css" />
-	<?php if (file_exists("{$g['www_path']}/themes/{$g['theme']}/jquery-ui.custom.css")) { ?>
-		<link rel="stylesheet" type="text/css" href="/themes/<?= $g['theme'] ?>/jquery-ui.custom.css" />
+	<?php if (file_exists("{$g['www_path']}/themes/{$g['theme']}/jquery-ui-1.11.1.css")) { ?>
+		<link rel="stylesheet" type="text/css" href="/themes/<?= $g['theme'] ?>/jquery-ui-1.11.1.css" />
 	<?php } else { ?>
-		<link rel="stylesheet" type="text/css" href="/javascript/jquery/jquery-ui.custom.css" />
+		<link rel="stylesheet" type="text/css" href="/javascript/jquery/jquery-ui-1.11.1.css" />
 	<?php } ?>
 	<script type="text/javascript" src="/javascript/jquery-ui-timepicker-addon/js/jquery-ui-timepicker-addon.js"></script>
 	<script type="text/javascript">
@@ -320,7 +332,7 @@ function get_dates($curperiod, $graph) {
 				$offset = 0;
 		}
 		switch($graph) {
-			case "8hour":
+			case "eighthour":
 				if($curhour < 24)
 					$starthour = 16;
 				if($curhour < 16)
@@ -374,14 +386,14 @@ function get_dates($curperiod, $graph) {
 				if($offset != 0)
 					$end = mktime(0, 0, 0, 1, 0, (($curyear + $offset) +1));
 				break;
-			case "4year":
+			case "fouryear":
 				$start = mktime(0, 0, 0, 1, 0, (($curyear - 3) + $offset));
 				if($offset != 0)
 					$end = mktime(0, 0, 0, 1, 0, (($curyear + $offset) +1));
 				break;
 		}
 	}
-	// echo "start $start ". date('l jS \of F Y h:i:s A', $start) .", end $end ". date('l jS \of F Y h:i:s A', $end) ."<br>";
+	// echo "start $start ". date('l jS \of F Y h:i:s A', $start) .", end $end ". date('l jS \of F Y h:i:s A', $end) ."<br />";
 	$dates = array();
 	$dates['start'] = $start;
 	$dates['end'] = $end;
@@ -429,6 +441,10 @@ function get_dates($curperiod, $graph) {
 				if($captiveportal) {
 					if($curcat == "captiveportal") { $tabactive = True; } else { $tabactive = False; }
 				        $tab_array[] = array("Captive Portal", $tabactive, "status_rrd_graph.php?cat=captiveportal");
+				}
+				if($ntpd) {
+					if($curcat == "ntpd") { $tabactive = True; } else { $tabactive = False; }
+				        $tab_array[] = array("NTP", $tabactive, "status_rrd_graph.php?cat=ntpd");
 				}
 				if($curcat == "custom") { $tabactive = True; } else { $tabactive = False; }
 			        $tab_array[] = array(gettext("Custom"), $tabactive, "status_rrd_graph.php?cat=custom");

@@ -5,6 +5,7 @@
 	part of m0n0wall (http://m0n0.ch/wall)
 	
 	Copyright (C) 2003-2004 Manuel Kasper <mk@neon1.net>.
+        Copyright (C) 2013-2014 Electric Sheep Fencing, LP
 	All rights reserved.
 	
 	Redistribution and use in source and binary forms, with or without
@@ -51,13 +52,16 @@ function wol_sort() {
 
 require("guiconfig.inc");
 
+$referer = (isset($_SERVER['HTTP_REFERER']) ? $_SERVER['HTTP_REFERER'] : '/services_wol.php');
+
 if (!is_array($config['wol']['wolentry'])) {
 	$config['wol']['wolentry'] = array();
 }
 $a_wol = &$config['wol']['wolentry'];
 
-$id = $_GET['id'];
-if (isset($_POST['id']))
+if (is_numericint($_GET['id']))
+	$id = $_GET['id'];
+if (isset($_POST['id']) && is_numericint($_POST['id']))
 	$id = $_POST['id'];
 
 if (isset($id) && $a_wol[$id]) {
@@ -118,7 +122,7 @@ include("head.inc");
 <?php include("fbegin.inc"); ?>
 <?php if ($input_errors) print_input_errors($input_errors); ?>
             <form action="services_wol_edit.php" method="post" name="iform" id="iform">
-              <table width="100%" border="0" cellpadding="6" cellspacing="0">
+              <table width="100%" border="0" cellpadding="6" cellspacing="0" summary="wol edit">
 				<tr>
 					<td colspan="2" valign="top" class="listtopic"><?=gettext("Edit WOL entry");?></td>
 				</tr>	
@@ -129,34 +133,35 @@ include("head.inc");
                       <?php 
 					  $interfaces = get_configured_interface_with_descr();
 					  foreach ($interfaces as $iface => $ifacename): ?>
-                      <option value="<?=$iface;?>" <?php if (!link_interface_to_bridge($iface) && $iface == $pconfig['interface']) echo "selected"; ?>> 
+                      <option value="<?=$iface;?>" <?php if (!link_interface_to_bridge($iface) && $iface == $pconfig['interface']) echo "selected=\"selected\""; ?>> 
                       <?=htmlspecialchars($ifacename);?>
                       </option>
                       <?php endforeach; ?>
-                    </select> <br>
+                    </select> <br />
                     <span class="vexpl"><?=gettext("Choose which interface this host is connected to.");?></span></td>
                 </tr>
 				<tr>
                   <td width="22%" valign="top" class="vncellreq"><?=gettext("MAC address");?></td>
                   <td width="78%" class="vtable"> 
-                    <input name="mac" type="text" class="formfld" id="mac" size="20" value="<?=htmlspecialchars($pconfig['mac']);?>">
-                    <br> 
+                    <input name="mac" type="text" class="formfld" id="mac" size="20" value="<?=htmlspecialchars($pconfig['mac']);?>" />
+                    <br /> 
                     <span class="vexpl"><?=gettext("Enter a MAC address  in the following format: ".
-                    "xx:xx:xx:xx:xx:xx");?><em></em></span></td>
+                    "xx:xx:xx:xx:xx:xx");?></span></td>
                 </tr>
 				<tr>
                   <td width="22%" valign="top" class="vncell"><?=gettext("Description");?></td>
                   <td width="78%" class="vtable"> 
-                    <input name="descr" type="text" class="formfld" id="descr" size="40" value="<?=htmlspecialchars($pconfig['descr']);?>">
-                    <br> <span class="vexpl"><?=gettext("You may enter a description here".
+                    <input name="descr" type="text" class="formfld" id="descr" size="40" value="<?=htmlspecialchars($pconfig['descr']);?>" />
+                    <br /> <span class="vexpl"><?=gettext("You may enter a description here".
                    " for your reference (not parsed).");?></span></td>
                 </tr>
                 <tr>
                   <td width="22%" valign="top">&nbsp;</td>
                   <td width="78%"> 
-                    <input name="Submit" type="submit" class="formbtn" value="<?=gettext("Save");?>"> <input class="formbtn" type="button" value="<?=gettext("Cancel");?>" onclick="history.back()">
+                    <input name="Submit" type="submit" class="formbtn" value="<?=gettext("Save");?>" />
+                    <input type="button" class="formbtn" value="<?=gettext("Cancel");?>" onclick="window.location.href='<?=$referer;?>'" />
                     <?php if (isset($id) && $a_wol[$id]): ?>
-                    <input name="id" type="hidden" value="<?=htmlspecialchars($id);?>">
+                    <input name="id" type="hidden" value="<?=htmlspecialchars($id);?>" />
                     <?php endif; ?>
                   </td>
                 </tr>

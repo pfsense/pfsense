@@ -61,7 +61,7 @@ function led_blink($led, $speed=0) {
  * Letters a-j are off from 1/10s to 1s
  */
 function led_pattern($led, $pattern, $repeat=true) {
-	/*  End with a . to stop after one interation. */
+	/*  End with a . to stop after one iteration. */
 	$end = $repeat ? "" : ".";
 	return led_ctl($led, "s{$pattern}{$end}");
 }

@@ -78,11 +78,11 @@ msgstr "geçerli bir aralık değil"
 #: etc/inc/auth.inc:100 etc/inc/auth.inc:100
 msgid ""
 "Potential DNS Rebind attack detected, see http://en.wikipedia.org/wiki/"
-"DNS_rebinding<br/>Try accessing the router by IP address instead of by "
+"DNS_rebinding<br />Try accessing the router by IP address instead of by "
 "hostname."
 msgstr ""
 "Muhtemel DNS tekrar bağlama saldırısı tesbit edildi, açıklama: "
-"http://en.wikipedia.org/wiki/DNS_rebinding<br/> Router e host adı yerine IP "
+"http://en.wikipedia.org/wiki/DNS_rebinding<br /> Router e host adı yerine IP "
 "adresi ile giriş yapmayı deneyin."
 
 #: etc/inc/auth.inc:115 etc/inc/auth.inc:115
@@ -213,14 +213,14 @@ msgstr ""
 #: etc/inc/auth.inc:1144 etc/inc/auth.inc:1153 etc/inc/auth.inc:1157
 #: etc/inc/auth.inc:1163
 #, php-format
-msgid "Radius start: %s<br>\n"
-msgstr "Radius başladı: %s<br>\n"
+msgid "Radius start: %s<br />\n"
+msgstr "Radius başladı: %s<br />\n"
 
 #: etc/inc/auth.inc:1155 etc/inc/auth.inc:1164 etc/inc/auth.inc:1168
 #: etc/inc/auth.inc:1174
 #, php-format
-msgid "Radius send failed: %s<br>\n"
-msgstr "Radius başarısız gönderme: %s<br>\n"
+msgid "Radius send failed: %s<br />\n"
+msgstr "Radius başarısız gönderme: %s<br />\n"
 
 #: etc/inc/auth.inc:1159 etc/inc/auth.inc:1170 etc/inc/auth.inc:1174
 #: etc/inc/auth.inc:1180
@@ -1479,7 +1479,7 @@ msgid "Could not write Igmpproxy configuration file!"
 msgstr "Igmpproxy yapılandırma dosyasına yazılamıyor!"
 
 #: etc/inc/services.inc:956
-msgid "Started Igmpproxy service sucsesfully."
+msgid "Started Igmpproxy service successfully."
 msgstr "Igmpproxy servisi başarıyla çalıştırıldı."
 
 #: etc/inc/services.inc:980 etc/inc/services.inc:1109
@@ -2959,8 +2959,8 @@ msgstr "Hata: vpn_pptpd_configure(). içinde mpd.secret açılamadı."
 
 #: etc/inc/vpn.inc:1279 etc/inc/vpn.inc:1285 etc/inc/vpn.inc:1283
 #: etc/inc/vpn.inc:1295
-msgid "Configuring PPPoE VPN service... "
-msgstr "PPPoE VPN servisi yapılandırılıyor..."
+msgid "Configuring PPPoE Server service... "
+msgstr "PPPoE Server servisi yapılandırılıyor..."
 
 #: etc/inc/vpn.inc:1303 etc/inc/vpn.inc:1309 etc/inc/vpn.inc:1307
 #: etc/inc/vpn.inc:1319
@@ -3220,11 +3220,11 @@ msgstr "Giriş"
 #: etc/inc/authgui.inc:242 etc/inc/authgui.inc:240 etc/inc/authgui.inc:263
 msgid ""
 "You are accessing this router by an IP address not configured locally, which "
-"may be forwarded by NAT or other means. <br/><br/>If you did not setup this "
+"may be forwarded by NAT or other means. <br /><br />If you did not setup this "
 "forwarding, you may be the target of a man-in-the-middle attack."
 msgstr ""
 "Bu yönlendiriciye yerelde ayarlanmamış, NAT veya başka bir yöntemle "
-"yönlendirilmiş olabilecek bir IP adresinden erişiyorsunuz. <br/><br/>Eğer "
+"yönlendirilmiş olabilecek bir IP adresinden erişiyorsunuz. <br /><br />Eğer "
 "böyle bir yönlendirme ayarlamadıysanız, bir MitM (man-in-the-middle / araya "
 "girilmesi) saldırısı altında olabilirsiniz."
 
@@ -3671,17 +3671,17 @@ msgstr ""
 
 #: etc/inc/gwlb.inc:501 etc/inc/gwlb.inc:727 etc/inc/gwlb.inc:750
 #, php-format
-msgid "MONITOR: %s is down, removing from routing group"
+msgid "MONITOR: %s is down, omitting from routing group"
 msgstr "İZLEME: %s kapalı, yönlendirme grubundan kaldırılıyor."
 
 #: etc/inc/gwlb.inc:505 etc/inc/gwlb.inc:731 etc/inc/gwlb.inc:754
 #, php-format
-msgid "MONITOR: %s has packet loss, removing from routing group"
+msgid "MONITOR: %s has packet loss, omitting from routing group"
 msgstr "İZLEME: %s paket kaybı var, yönlendirme grubundan kaldırılıyor."
 
 #: etc/inc/gwlb.inc:509 etc/inc/gwlb.inc:735 etc/inc/gwlb.inc:758
 #, php-format
-msgid "MONITOR: %s has high latency, removing from routing group"
+msgid "MONITOR: %s has high latency, omitting from routing group"
 msgstr "İZLEME: %s gecikme oranı yüksek, yönlendirme grubundan kaldırılıyor."
 
 #: etc/inc/gwlb.inc:526 etc/inc/gwlb.inc:752 etc/inc/gwlb.inc:775
@@ -8536,7 +8536,7 @@ msgstr "başka giriş ekle"
 #: usr/local/www/firewall_shaper_vinterface.php:102
 msgid ""
 "This pipe/queue is referenced in filter rules, please remove references from "
-"there before deleteing."
+"there before deleting."
 msgstr ""
 "Bu kuyruk / boru filitre kurallarında kullanımda, lütfen silmeden önce "
 "kullanımda olan kuralı kaldırınız."
@@ -8951,7 +8951,7 @@ msgstr ""
 #: usr/local/www/firewall_virtual_ip_edit.php:177
 #: usr/local/www/firewall_virtual_ip_edit.php:176
 #: usr/local/www/firewall_virtual_ip_edit.php:168
-msgid "For this type of vip a carp parent is not allowed."
+msgid "A CARP parent interface can only be used with IP Alias type Virtual IPs."
 msgstr "Bu tür sanal IP için CARP ebeveyne izin verilmez."
 
 #: usr/local/www/firewall_virtual_ip_edit.php:188
@@ -9545,10 +9545,10 @@ msgstr "Aktarma Eylemi"
 #: usr/local/www/load_balancer_relay_action.php:116
 #: usr/local/www/load_balancer_relay_action.php:116
 msgid ""
-"The load balancer configuration has been changed.<br>You must apply the "
+"The load balancer configuration has been changed.<br />You must apply the "
 "changes in order for them to take effect."
 msgstr ""
-"Yük dengeleyici yapılandırması değiştirildi.<br>Değişiklikleri uygulayarak "
+"Yük dengeleyici yapılandırması değiştirildi.<br />Değişiklikleri uygulayarak "
 "etkin hale gelmelerini sağlayabilirsiniz."
 
 #: usr/local/www/load_balancer_relay_action.php:128
@@ -10599,7 +10599,7 @@ msgstr "IPsec VPN"
 #: usr/local/www/diag_logs_ipsec.php:123
 #, php-format
 msgid "Last %s  IPsec log entries"
-msgstr "IPSec son %s günlük girdisi"
+msgstr "IPsec son %s günlük girdisi"
 
 #: usr/local/www/diag_logs_ipsec.php:135 usr/local/www/diag_logs_ppp.php:99
 #: usr/local/www/diag_logs_ipsec.php:134 usr/local/www/diag_logs_ppp.php:98
@@ -12429,7 +12429,7 @@ msgstr "Hizmet Portalı Alanı"
 
 #: usr/local/www/status_captiveportal.php:157
 #: usr/local/www/status_captiveportal.php:143
-msgid "Captiveportal status"
+msgid "Captive Portal status"
 msgstr "Hizmet Portalı durumu"
 
 #: usr/local/www/status_captiveportal.php:164
@@ -13906,8 +13906,7 @@ msgstr "Grup için bu isim kullanılamaz."
 #: usr/local/www/firewall_aliases_edit.php:145
 #: usr/local/www/firewall_aliases_edit.php:145
 msgid ""
-"The alias name must be less than 32 characters long and may only consist of "
-"the characters"
+"The alias name must be less than 32 characters long, may not consist of only numbers, and may only contain the following characters "
 msgstr "Grup adı sadece karakterlerden oluşmalıdır ve 32 karakteri geçmemelidir"
 
 #: usr/local/www/firewall_aliases_edit.php:187
@@ -15745,17 +15744,17 @@ msgstr "Seçili eşlemeleri silmek istediğinize emin misiniz?"
 msgid ""
 "With automatic outbound NAT enabled, a mapping is automatically created for "
 "each interface's subnet (except WAN-type connections) and the rules on this "
-"page are ignored.<br/><br/> If manual outbound NAT is enabled, outbound NAT "
+"page are ignored.<br /><br /> If manual outbound NAT is enabled, outbound NAT "
 "rules will not be automatically generated and only the mappings you specify "
-"on this page will be used. <br/><br/> If a target address other than a WAN-"
+"on this page will be used. <br /><br /> If a target address other than a WAN-"
 "type interface's IP address is used, then depending on the way the WAN "
 "connection is setup, a "
 msgstr ""
 "Dışa otomatik NAT etkinleştirildiğinde, WAN türü bağlantılar hariç her "
 "arabirimin alt ağı için otomatik olarak bir eşleme oluşturulur ve bu "
-"sayfadaki kurallar gözardı edilir.<br/><br/>Eğer elle NAT "
+"sayfadaki kurallar gözardı edilir.<br /><br />Eğer elle NAT "
 "etkinleştirilmişse, otomatik NAT kuralları oluşturulmaz ve sadece bu sayfada "
-"belirttiğiniz eşlemeler kullanılır.<br/><br/>WAN türü dışındaki bir "
+"belirttiğiniz eşlemeler kullanılır.<br /><br />WAN türü dışındaki bir "
 "arabirimin IP adresi hedef adres olarak kullanılırsa, WAN bağlantı "
 "yapılandırmasına bağlı olarak bir "
 
@@ -16260,20 +16259,20 @@ msgstr "Adres maskesi yanıtı"
 #, php-format
 msgid ""
 "The settings have been applied. The firewall rules are now reloading in the "
-"background.<br/>You can also %s monitor %s the reload progress"
+"background.<br />You can also %s monitor %s the reload progress"
 msgstr ""
 "Yapılandırma uygulandı. Güvenlik duvarı kuralları arka planda "
-"yükleniyor.<br/>Aynı zamanda %2$s yükleme durumunu %1$s izleyebilirsiniz"
+"yükleniyor.<br />Aynı zamanda %2$s yükleme durumunu %1$s izleyebilirsiniz"
 
 #: usr/local/www/firewall_rules.php:315 usr/local/www/firewall_rules.php:317
 #: usr/local/www/firewall_rules.php:319 usr/local/www/firewall_rules.php:321
 #: usr/local/www/firewall_rules.php:312 usr/local/www/firewall_rules.php:314
 #: usr/local/www/firewall_rules.php:312 usr/local/www/firewall_rules.php:314
 msgid ""
-"The firewall rule configuration has been changed.<br>You must apply the "
+"The firewall rule configuration has been changed.<br />You must apply the "
 "changes in order for them to take effect."
 msgstr ""
-"Güvenlik duvarı kuralları değiştirildi.<br/>Değişiklikleri uygulayarak etkin "
+"Güvenlik duvarı kuralları değiştirildi.<br />Değişiklikleri uygulayarak etkin "
 "hale gelmelerini sağlayabilirsiniz."
 
 #: usr/local/www/firewall_rules.php:338 usr/local/www/firewall_rules.php:342
@@ -20265,10 +20264,10 @@ msgstr ""
 #: usr/local/www/interfaces_assign.php:384
 #: usr/local/www/interfaces_assign.php:390
 msgid ""
-"The interface configuration has been changed.<br>You must apply the changes "
+"The interface configuration has been changed.<br />You must apply the changes "
 "in order for them to take effect."
 msgstr ""
-"Arabirim yapılandırması değiştirildi.<br> Değişiklikleri uygulayarak etkin "
+"Arabirim yapılandırması değiştirildi.<br /> Değişiklikleri uygulayarak etkin "
 "hale gelmelerini sağlayabilirsiniz."
 
 #: usr/local/www/interfaces_assign.php:421
@@ -22302,7 +22301,7 @@ msgstr "HATA: Geçersiz yapılandırma alındı."
 #: usr/local/www/vpn_ipsec.php:139 usr/local/www/vpn_ipsec_mobile.php:330
 #: usr/local/www/vpn_ipsec_keys.php:85
 msgid "The IPsec tunnel configuration has been changed"
-msgstr "IPSec tünel yapılandırması değiştirildi"
+msgstr "IPsec tünel yapılandırması değiştirildi"
 
 #: usr/local/www/vpn_ipsec.php:141 usr/local/www/vpn_ipsec_keys.php:93
 #: usr/local/www/vpn_ipsec_mobile.php:318
@@ -23980,7 +23979,7 @@ msgstr "yeni PPPoE ekle"
 
 #: usr/local/www/vpn_pppoe.php:131 usr/local/www/vpn_pppoe.php:132
 #: usr/local/www/vpn_pppoe.php:133
-msgid "edit pppoe instance"
+msgid "edit PPPoE instance"
 msgstr "PPPoE düzenle"
 
 #: usr/local/www/vpn_pppoe.php:132 usr/local/www/vpn_pppoe.php:133
@@ -26824,10 +26823,10 @@ msgstr "Bu MAC adresi için kayıt bulunamadı:"
 #: usr/local/www/services_captiveportal_mac.php:146
 #: usr/local/www/services_captiveportal_mac.php:156
 msgid ""
-"The captive portal MAC address configuration has been changed.<br>You must "
+"The captive portal MAC address configuration has been changed.<br />You must "
 "apply the changes in order for them to take effect."
 msgstr ""
-"Hizmet Portalı MAC adres yapılandırması değiştirildi.<br>Değişiklikleri "
+"Hizmet Portalı MAC adres yapılandırması değiştirildi.<br />Değişiklikleri "
 "uygulayarak etkin hale gelmelerini sağlayabilirsiniz."
 
 #: usr/local/www/services_captiveportal_mac.php:180
@@ -31167,7 +31166,7 @@ msgstr "Eşik"
 #: usr/local/www/services_igmpproxy_edit.php:213
 msgid ""
 "Defines the TTL threshold for  the  network  interface.  Packets with  a "
-"lower TTL than the threshols value will be ignored. This setting is "
+"lower TTL than the threshold value will be ignored. This setting is "
 "optional, and by default the threshold is 1."
 msgstr ""
 "Ağ arabiriminin TTL eşiğini tanımlar. Belirtilen eşiğin altında TTLsi olan "
@@ -31704,7 +31703,7 @@ msgstr ""
 
 #: usr/local/www/status_openvpn.php:308 usr/local/www/status_openvpn.php:311
 #: usr/local/www/status_openvpn.php:359
-msgid "No OpenVPN instance defined"
+msgid "No OpenVPN instances defined"
 msgstr "OpenVPN tanımı yapılmamış"
 
 #: usr/local/www/system_advanced_admin.php:87
@@ -37746,11 +37745,11 @@ msgstr "Çift Bağlantı"
 #: usr/local/www/vpn_openvpn_server.php:1352
 msgid ""
 "Allow multiple concurrent connections from clients using the same Common "
-"Name.<br/>NOTE: This is not generally recommended, but may be needed for "
+"Name.<br />NOTE: This is not generally recommended, but may be needed for "
 "some scenarios."
 msgstr ""
 "Aynı Genel Adı kullanan istemcilerin birlikte birden fazla bağlantısına izin "
-"ver.<br/>NOT: Genellikle önerilmez, ancak bazı durumlarda gerekebilir."
+"ver.<br />NOT: Genellikle önerilmez, ancak bazı durumlarda gerekebilir."
 
 #: usr/local/www/vpn_openvpn_server.php:1158
 #: usr/local/www/vpn_openvpn_server.php:1300
@@ -38526,7 +38525,7 @@ msgstr "Kablosuz (hostapd) günlük girdileri"
 
 #: usr/local/www/services_captiveportal_zones.php:37
 #: usr/local/www/services_captiveportal_zones.php:37
-msgid "Captiveportal"
+msgid "Captive Portal"
 msgstr "Hizmet Portalı"
 
 #: usr/local/www/services_captiveportal_zones.php:37
@@ -38576,7 +38575,7 @@ msgstr "zaten mevcut"
 #: usr/local/www/services_captiveportal_zones_edit.php:96
 #: usr/local/www/services_captiveportal_zones_edit.php:98
 #: usr/local/www/services_captiveportal_zones_edit.php:94
-msgid "Edit Captiveportal Zones"
+msgid "Edit Captive Portal Zones"
 msgstr "Hizmet Portalı Bölgelerini düzenle"
 
 #: usr/local/www/services_captiveportal_zones_edit.php:103
@@ -40636,7 +40635,7 @@ msgstr ""
 
 #: usr/local/www/interfaces.php:1768 usr/local/www/interfaces.php:1756
 #: usr/local/www/interfaces.php:1774
-msgid "6RD Rapid Deployment"
+msgid "6RD Configuration"
 msgstr "6'ıncı Hızlı Dağıtım"
 
 #: usr/local/www/interfaces.php:1771 usr/local/www/interfaces.php:1759
@@ -41260,7 +41259,7 @@ msgid ""
 "MS-CHAPv2 which has been compromised. If you continue to use PPTP be aware "
 "that intercepted traffic can be decrypted by a third party, so it should be "
 "considered unencrypted. We advise migrating to another VPN type such as "
-"OpenVPN or IPsec.<br/><br/><a href=\"https://isc.sans.edu/diary/End+of+Days"
+"OpenVPN or IPsec.<br /><br /><a href=\"https://isc.sans.edu/diary/End+of+Days"
 "+for+MS-CHAPv2/13807\">Read More</a>"
 msgstr ""
 
@@ -42914,7 +42913,7 @@ msgstr ""
 
 #: usr/local/www/vpn_ipsec_phase2.php:192
 msgid "Mobile IPsec only supports Tunnel mode."
-msgstr "Mobil IPSec yalnızca tünel modu destekler."
+msgstr "Mobil IPsec yalnızca tünel modu destekler."
 
 #: usr/local/www/vpn_ipsec_phase2.php:287
 msgid "Phase 1 is using IPv4. You cannot use Tunnel IPv6 on Phase 2."

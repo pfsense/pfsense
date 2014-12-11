@@ -4,6 +4,7 @@
 	part of pfSense
 
 	Copyright (C) 2006 Scott Ullrich (sullrich@gmail.com)
+        Copyright (C) 2013-2014 Electric Sheep Fencing, LP
 	All rights reserved.
 
 	Redistribution and use in source and binary forms, with or without
@@ -54,13 +55,16 @@ function  l2tp_users_sort()  {
 require("guiconfig.inc");
 require_once("vpn.inc");
 
+$referer = (isset($_SERVER['HTTP_REFERER']) ? $_SERVER['HTTP_REFERER'] : '/vpn_l2tp_users.php');
+
 if (!is_array($config['l2tp']['user'])) {
 	$config['l2tp']['user'] = array();
 }
 $a_secret = &$config['l2tp']['user'];
 
-$id = $_GET['id'];
-if (isset($_POST['id']))
+if (is_numericint($_GET['id']))
+	$id = $_GET['id'];
+if (isset($_POST['id']) && is_numericint($_POST['id']))
 	$id = $_POST['id'];
 
 if (isset($id) && $a_secret[$id]) {
@@ -150,12 +154,13 @@ include("head.inc");
 			<div id="inputerrors"></div>
             <form action="vpn_l2tp_users_edit.php" method="post" name="iform" id="iform">
               <div id="mainarea">
-	          <table class="tabcont" width="100%" border="0" cellpadding="6" cellspacing="0">
+	          <table class="tabcont" width="100%" border="0" cellpadding="6" cellspacing="0" summary="vpn l2tp users edit">
                 <tr>
                   <td width="22%" valign="top" class="vncellreq"><?=gettext("Username");?></td>
                   <td width="78%" class="vtable">
 					<?=$mandfldhtml;?><input name="usernamefld" type="text" class="formfld user" id="usernamefld" size="20" value="<?=htmlspecialchars($pconfig['usernamefld']);?>" />
                   </td>
+                </tr>
                 <tr>
                   <td width="22%" valign="top" class="vncellreq"><?=gettext("Password");?></td>
                   <td width="78%" class="vtable">
@@ -175,7 +180,7 @@ include("head.inc");
                   <td width="22%" valign="top">&nbsp;</td>
                   <td width="78%">
                     <input id="submit" name="Submit" type="submit" class="formbtn" value="<?=gettext('Save');?>" />
-                    <input id="cancelbutton" name="cancelbutton" type="button" class="formbtn" value="<?=gettext("Cancel");?>" onclick="history.back()" />
+                    <input type="button" class="formbtn" value="<?=gettext("Cancel");?>" onclick="window.location.href='<?=$referer;?>'" />
                     <?php if (isset($id) && $a_secret[$id]): ?>
                     <input name="id" type="hidden" value="<?=htmlspecialchars($id);?>" />
                     <?php endif; ?>

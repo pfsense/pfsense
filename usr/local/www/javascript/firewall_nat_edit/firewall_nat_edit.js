@@ -1,4 +1,4 @@
-<!--
+//<![CDATA[
 var portsenabled = 1;
 var dstenabled = 1;
 var showsource = 0;
@@ -200,4 +200,4 @@ function dst_change( iface, old_iface, old_dst ) {
 		document.iform.dsttype.value = iface.concat("ip");
 	}
 }
-//-->
+//]]>

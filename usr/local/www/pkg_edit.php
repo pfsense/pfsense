@@ -2,7 +2,9 @@
 /* $Id$ */
 /*
     pkg_edit.php
+    Copyright (C) 2013-2014 Electric Sheep Fencing, LP
     Copyright (C) 2004-2012 Scott Ullrich <sullrich@gmail.com>
+    Copyright (C) 2013-2014 Electric Sheep Fencing, LP
     All rights reserved.
 
     Redistribution and use in source and binary forms, with or without
@@ -65,11 +67,14 @@ function domTT_title($title_msg){
 $xml = htmlspecialchars($_GET['xml']);
 if($_POST['xml']) $xml = htmlspecialchars($_POST['xml']);
 
-if($xml == "") {
-            print_info_box_np(gettext("ERROR: No package defined."));
+$xml_fullpath = realpath('/usr/local/pkg/' . $xml);
+
+if ($xml == "" || $xml_fullpath === false ||
+    substr($xml_fullpath, 0, strlen('/usr/local/pkg/')) != '/usr/local/pkg/') {
+            print_info_box_np(gettext("ERROR: No valid package defined."));
             die;
 } else {
-            $pkg = parse_xml_config_pkg("/usr/local/pkg/" . $xml, "packagegui");
+            $pkg = parse_xml_config_pkg($xml_fullpath, "packagegui");
 }
 
 if($pkg['include_file'] <> "") {
@@ -98,7 +103,7 @@ if(!$id && !$_POST)
 	$id = "0";
 
 if(!is_numeric($id)) {
-	Header("Location: /");
+	header("Location: /");
 	exit;
 }
 
@@ -237,7 +242,7 @@ if ($_POST) {
 			if($pkg['aftersaveredirect'] <> "") {
 			    pfSenseHeader($pkg['aftersaveredirect']);
 			} elseif(!$pkg['adddeleteeditpagefields']) {
-			    pfSenseHeader("pkg_edit.php?xml={$xml}&id=0");
+			    pfSenseHeader("pkg_edit.php?xml={$xml}&amp;id=0");
 			} elseif(!$pkg['preoutput']) {
 			    pfSenseHeader("pkg.php?xml=" . $xml);
 			}
@@ -258,10 +263,15 @@ else
 	$title = gettext("Package Editor");
 
 $pgtitle = $title;
-include("head.inc");
 
-if ($pkg['custom_php_after_head_command'])
+if ($pkg['custom_php_after_head_command']) {
+	$closehead = false;
+	include("head.inc");
 	eval($pkg['custom_php_after_head_command']);
+	echo "</head>\n";
+}
+else
+	include("head.inc");
 
 ?>
 
@@ -295,8 +305,10 @@ if ($pkg['custom_php_after_head_command'])
 		//delete current line jQuery function
 		jQuery('#maintable td .delete').live('click', function() {
 			//do not remove first line
-			if (jQuery("#maintable tr").length > 2)
+			if (jQuery("#maintable tr").length > 2){
 				jQuery(this).parent().parent().remove();
+				return false;
+			}
 	    });
 	    
 		//add new line jQuery function
@@ -306,6 +318,7 @@ if ($pkg['custom_php_after_head_command'])
 			var new_row=jQuery("table#maintable tr:last").html().replace(/(name|id)="(\w+)(\d+)"/g,"$1='$2"+c_id+"'");
 			//apply new id to created line rowhelperid
 			jQuery("table#maintable tr:last").after("<tr>"+new_row+"<\/tr>");
+			return false;
 	    });
 		// Call enablechange function
 		enablechange();
@@ -430,7 +443,7 @@ if ($pkg['tabs'] <> "") {
 	if ($pkg['advanced_options'] == "enabled") {
 		$adv_filed_count = 0;
 		$advanced = "<td>&nbsp;</td>";
-		$advanced .= "<tr><td colspan=\"2\" class=\"listtopic\">". gettext("Advanced features") . "<br/></td></tr>\n";
+		$advanced .= "<tr><td colspan=\"2\" class=\"listtopic\">". gettext("Advanced features") . "<br /></td></tr>\n";
 		}		
 	foreach ($pkg['fields']['field'] as $pkga) {
 		if ($pkga['type'] == "sorting") 
@@ -438,7 +451,7 @@ if ($pkg['tabs'] <> "") {
 
 		if ($pkga['type'] == "listtopic") {
 			$input = "<tr id='td_{$pkga['fieldname']}'><td>&nbsp;</td></tr>";
-			$input .= "<tr id='tr_{$pkga['fieldname']}'><td colspan=\"2\" class=\"listtopic\">{$pkga['name']}<br/></td></tr>\n";
+			$input .= "<tr id='tr_{$pkga['fieldname']}'><td colspan=\"2\" class=\"listtopic\">{$pkga['name']}<br /></td></tr>\n";
 			if(isset($pkga['advancedfield']) && isset($adv_filed_count)) {
 				$advanced .= $input;
 				$adv_filed_count++;
@@ -520,7 +533,7 @@ if ($pkg['tabs'] <> "") {
 			case "input":
 				$size = ($pkga['size'] ? " size='{$pkga['size']}' " : "");
 				$input = "<input {$size} id='{$pkga['fieldname']}' name='{$pkga['fieldname']}' class='formfld unknown' value=\"" . htmlspecialchars($value) ."\" />\n";
-				$input .= "<br/>" . fixup_string($pkga['description']) . "\n";
+				$input .= "<br />" . fixup_string($pkga['description']) . "\n";
 				if(isset($pkga['advancedfield']) && isset($adv_filed_count)) {
 					$js_array[] = $pkga['fieldname'];
 					$advanced .= display_advanced_field($pkga['fieldname']).$input ."</div>\n";
@@ -532,7 +545,7 @@ if ($pkg['tabs'] <> "") {
 			case "password":
 				$size = ($pkga['size'] ? " size='{$pkga['size']}' " : "");
 				$input = "<input " . $size . " id='" . $pkga['fieldname'] . "' type='password' name='" . $pkga['fieldname'] . "' class='formfld pwd' value=\"" . htmlspecialchars($value) . "\" />\n";
-				$input .= "<br/>" . fixup_string($pkga['description']) . "\n";
+				$input .= "<br />" . fixup_string($pkga['description']) . "\n";
 				if(isset($pkga['advancedfield']) && isset($adv_filed_count)) {
 					$js_array[] = $pkga['fieldname'];
 					$advanced .= display_advanced_field($pkga['fieldname']).$input ."</div>\n";
@@ -626,7 +639,7 @@ if ($pkg['tabs'] <> "") {
 					$input .= "\t<option value=\"{$vpn['descr']}\">{$vpn['descr']}</option>\n";
 					}
 				$input .= "</select>\n";
-				$input .= "<br/>" . fixup_string($pkga['description']) . "\n";
+				$input .= "<br />" . fixup_string($pkga['description']) . "\n";
 
 				if(isset($pkga['advancedfield']) && isset($adv_filed_count)) {
 					$js_array[] = $pkga['fieldname'];
@@ -643,7 +656,7 @@ if ($pkg['tabs'] <> "") {
 				if (isset($pkga['enablefields']) || isset($pkga['checkenablefields']))
 					$onclick = ' onclick="javascript:enablechange();"';
 				$input = "<input id='{$pkga['fieldname']}' type='checkbox' name='{$pkga['fieldname']}' {$checkboxchecked} {$onclick} {$onchange} />\n";
-				$input .= "<br/>" . fixup_string($pkga['description']) . "\n";
+				$input .= "<br />" . fixup_string($pkga['description']) . "\n";
 
 				if(isset($pkga['advancedfield']) && isset($adv_filed_count)) {
 					$js_array[] = $pkga['fieldname'];
@@ -663,7 +676,7 @@ if ($pkg['tabs'] <> "") {
 					$value = base64_decode($value);
 				$wrap =($pkga['wrap'] == "off" ? 'wrap="off" style="white-space:nowrap;"' : '');		  
 				$input = "<textarea {$rows} {$cols} name='{$pkga['fieldname']}'{$wrap}>{$value}</textarea>\n";
-				$input .= "<br/>" . fixup_string($pkga['description']) . "\n";
+				$input .= "<br />" . fixup_string($pkga['description']) . "\n";
 				if(isset($pkga['advancedfield']) && isset($adv_filed_count)) {
 					$js_array[] = $pkga['fieldname'];
 					$advanced .= display_advanced_field($pkga['fieldname']).$input;
@@ -793,7 +806,7 @@ if ($pkg['tabs'] <> "") {
 				if(isset($pkga['placeonbottom']))
 					$pkg_buttons .= $input;
 				else
-					echo $input ."\n<br/>" . fixup_string($pkga['description']) . "\n";;
+					echo $input ."\n<br />" . fixup_string($pkga['description']) . "\n";
 				break;
 
 			case "rowhelper":
@@ -868,9 +881,9 @@ if ($pkg['tabs'] <> "") {
 				<tbody></tbody>
 				</table>
 	
-				<!-- <br/><a onclick="javascript:addRowTo('maintable'); return false;" href="#"><img border="0" src="./themes/<?#= $g['theme']; ?>/images/icons/icon_plus.gif" alt="add" /></a>-->
-				<br/><a class="add" href="#"><img border="0" src="./themes/<?= $g['theme']; ?>/images/icons/icon_plus.gif" alt="add" /></a>
-				<br/><?php if($pkga['description'] != "") echo $pkga['description']; ?>
+				<!-- <br /><a onclick="javascript:addRowTo('maintable'); return false;" href="#"><img border="0" src="./themes/<?#= $g['theme']; ?>/images/icons/icon_plus.gif" alt="add" /></a>-->
+				<br /><a class="add" href="#"><img border="0" src="./themes/<?= $g['theme']; ?>/images/icons/icon_plus.gif" alt="add" /></a>
+				<br /><?php if($pkga['description'] != "") echo $pkga['description']; ?>
 				<script type="text/javascript">
 				//<![CDATA[
 				field_counter_js = <?= $fieldcounter ?>;
@@ -896,7 +909,7 @@ if ($pkg['tabs'] <> "") {
      	else{
 			$input= "</td></tr>";
 			if($pkga['usecolspan2'])
-				$input.= "</tr><br/>";
+				$input.= "</tr><br />";
 	     	}
    	 	if(isset($pkga['advancedfield']) && isset($adv_filed_count))
 			$advanced .= "{$input}\n";
@@ -926,7 +939,7 @@ if ($pkg['tabs'] <> "") {
 		echo "<input name='id' type='hidden' value=\"" . htmlspecialchars($id) . "\" />";
 		echo "<input name='Submit' type='submit' class='formbtn' value=\"" . htmlspecialchars($savevalue) . "\" />\n{$pkg_buttons}\n";
 		if (!$only_edit){
-			echo "<input class='formbtn' type='button' value='".gettext("Cancel")."' onclick='history.back()' />";
+			echo "<input class=\"formbtn\" type=\"button\" value=\"".gettext("Cancel")."\" onclick=\"window.location.href='" . $_SERVER['HTTP_REFERER'] . "'\" />";
 			}
 		?>
 	</div>

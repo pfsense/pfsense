@@ -2,6 +2,7 @@
 /* $Id$ */
 /*
 	index.php
+        Copyright (C) 2013-2014 Electric Sheep Fencing, LP
 	Copyright (C) 2004-2012 Scott Ullrich
 	All rights reserved.
 
@@ -50,9 +51,10 @@ ob_start(null, "1000");
 
 
 ## Load Essential Includes
-require_once('functions.inc');
 require_once('guiconfig.inc');
+require_once('functions.inc');
 require_once('notices.inc');
+require_once("pkg-utils.inc");
 
 if(isset($_REQUEST['closenotice'])){
 	close_notice($_REQUEST['closenotice']);
@@ -481,6 +483,10 @@ echo $jscriptstr;
 	if(!file_exists("/usr/local/www/themes/{$g['theme']}/no_big_logo"))
 		echo "<center><img src=\"./themes/".$g['theme']."/images/logobig.jpg\" alt=\"big logo\" /></center><br />";
 
+/* Print package server mismatch warning. See https://redmine.pfsense.org/issues/484 */
+if (!verify_all_package_servers())
+	print_info_box(package_server_mismatch_message());
+
 if ($savemsg)
 	print_info_box($savemsg);
 
@@ -532,9 +538,9 @@ pfSense_handle_custom_code("/usr/local/pkg/dashboard/pre_dashboard");
 			</div>
 			<div style="clear:both;"></div>
 			<p>
-			<?=gettext("This page allows you to customize the information you want to be displayed!");?><br/>
-			<?=gettext("To get started click the");?> <img src="./themes/<?= $g['theme']; ?>/images/icons/icon_plus.gif" alt="plus" /> <?=gettext("icon to add widgets.");?><br/>
-			<br/>
+			<?=gettext("This page allows you to customize the information you want to be displayed!");?><br />
+			<?=gettext("To get started click the");?> <img src="./themes/<?= $g['theme']; ?>/images/icons/icon_plus.gif" alt="plus" /> <?=gettext("icon to add widgets.");?><br />
+			<br />
 			<?=gettext("You can move any widget around by clicking and dragging the title.");?>
 			</p>
 	</div>
@@ -667,9 +673,11 @@ pfSense_handle_custom_code("/usr/local/pkg/dashboard/pre_dashboard");
 					<?php
 				}
 				else { ?>
-					<script language="javascript" type="text/javascript">
+					<script type="text/javascript">
+					//<![CDATA[
 					var colpos = "<?=$colpos[$widgetcounter]?>";
-					createColumn(colpos);					
+					createColumn(colpos);
+					//]]>
 					</script>
 				<?php }
 			}		
@@ -766,7 +774,7 @@ pfSense_handle_custom_code("/usr/local/pkg/dashboard/pre_dashboard");
 		$jsincludefiles[] = $filename;
 	}
 	foreach($jsincludefiles as $jsincludename) {
-		if(!stristr($jsincludename, ".js"))
+		if(!preg_match('/\.js$/', $jsincludename))
 			continue;
 		echo "<script src='{$directory}{$jsincludename}' type='text/javascript'></script>\n";
 	}

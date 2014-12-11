@@ -1,6 +1,8 @@
 <?php
 /*
 	$Id: thermal_sensors.widget.php
+        Copyright (C) 2013-2014 Electric Sheep Fencing, LP
+
 	Description: Thermal Sensors Widget.
 		NOTE: depends on proper cofing in System >> Advanced >> Miscellaneous tab >> Thermal Sensors section.
 
@@ -271,9 +273,9 @@ function getBoolValueFromConfig(&$configArray, $valueKey, $defaultValue) {
 </div>
 
 <!-- needed to display the widget settings menu -->
-<script language="javascript" type="text/javascript">
-
+<script type="text/javascript">
+//<![CDATA[
 	textlink = jQuery("#thermal_sensors-configure");
 	textlink.css({display: "inline"});
-
+//]]>
 </script>

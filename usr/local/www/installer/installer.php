@@ -1,7 +1,8 @@
 <?php
 /*
 	installer.php (pfSense webInstaller)
-	part of pfSense (http://www.pfsense.com/)
+	part of pfSense (https://www.pfsense.org/)
+        Copyright (C) 2013-2014 Electric Sheep Fencing, LP
 	Copyright (C) 2010 Scott Ullrich <sullrich@gmail.com>
 	All rights reserved.
 
@@ -35,7 +36,7 @@ require("guiconfig.inc");
 define('PC_SYSINSTALL', '/usr/sbin/pc-sysinstall/pc-sysinstall/pc-sysinstall.sh');
 
 if($g['platform'] == "pfSense" or $g['platform'] == "nanobsd") {
-	Header("Location: /");
+	header("Location: /");
 	exit;
 }
 
@@ -94,7 +95,7 @@ function easy_install($fstype = "UFS+S") {
 	$bootmanager = "bsd";
 	file_put_contents("/tmp/webInstaller_disk_layout.txt", serialize($disk_setup));
 	file_put_contents("/tmp/webInstaller_disk_bootmanager.txt", serialize($bootmanager));
-	Header("Location: installer.php?state=verify_before_install");
+	header("Location: installer.php?state=verify_before_install");
 	exit;
 }
 
@@ -404,15 +405,13 @@ EOF;
 
 function body_html() {
 	global $g, $fstype, $savemsg;
-	$pfSversion = str_replace("\n", "", file_get_contents("/etc/version"));
-	if(strstr($pfSversion, "1.2")) 
-		$one_two = true;
 	$pgtitle = array("{$g['product_name']}", gettext("Installer"));
 	include("head.inc");
 	echo <<<EOF
 	<body link="#0000CC" vlink="#0000CC" alink="#0000CC">
-	<script type="text/javascript" src="/javascript/jquery.js"></script>
-	<script type="text/javascript" src="/javascript/jquery/jquery-ui.custom.min.js"></script>
+	<script type="text/javascript" src="/javascript/jquery-1.11.1.min.js"></script>
+	<script type="text/javascript" src="/javascript/jquery-migrate-1.2.1.min.js"></script>
+	<script type="text/javascript" src="/javascript/jquery/jquery-ui-1.11.1.min.js"></script>
 	<script type="text/javascript">
 		function getinstallerprogress() {
 			url = '/installer/installer.php';
@@ -498,7 +497,7 @@ function verify_before_install() {
 	}
 	if(!$bootmanager) 
 		$bootmanager = $_REQUEST['bootmanager'];
-	echo "\n<!--" . print_r($_REQUEST, true) . " -->\n";
+	// echo "\n<!--" . print_r($_REQUEST, true) . " -->\n";
 	$disk = pcsysinstall_get_disk_info(htmlspecialchars($_REQUEST['disk']));
 	$disksize = format_bytes($disk['size'] * 1048576);
 	// Loop through posted items and create an array
@@ -536,7 +535,7 @@ function verify_before_install() {
 		$tmparray['encpass'] = $_REQUEST['encpass' . $x];
 		$disks[] = $tmparray;
 	}
-	echo "\n<!-- " . print_r($disks, true) . " --> \n";
+	// echo "\n<!-- " . print_r($disks, true) . " --> \n";
 	$bootmanagerupper = strtoupper($bootmanager);
 	echo <<<EOFAMBAC
 	<form method="post" action="installer.php">
@@ -596,11 +595,11 @@ EOFAMBACBAF;
 													foreach($disks as $disk) {
 														$desc = pcsysinstall_get_disk_info($disk['disk']);
 														echo "<tr>";
-														echo "<td>&nbsp;&nbsp;&nbsp;{$disk['mountpoint']}</td>";
-														echo "<td>{$disk['fstype']}</td>";
-														echo "<td>{$disk['disk']} {$desc['desc']}</td>";
-														echo "<td>{$disk['size']}</td>";
-														echo "<td>{$disk['encpass']}</td>";
+														echo "<td>&nbsp;&nbsp;&nbsp;" . htmlspecialchars($disk['mountpoint']) . "</td>";
+														echo "<td>" . htmlspecialchars($disk['fstype']) . "</td>";
+														echo "<td>" . htmlspecialchars($disk['disk']) . " " . htmlspecialchars($desc['desc']) . "</td>";
+														echo "<td>" . htmlspecialchars($disk['size']) . "</td>";
+														echo "<td>" . htmlspecialchars($disk['encpass']) . "</td>";
 														echo "</tr>";
 													}
 
@@ -619,7 +618,7 @@ echo <<<EOFAMB
 						<input type="button" value="Cancel" onClick="javascript:document.location='installer.php?state=custominstall';"> &nbsp;&nbsp;
 EOFAMB;
 						if(!$error_txt) 
-						echo "<input type=\"submit\" value=\"Begin installation\"> <br/>&nbsp;";
+						echo "<input type=\"submit\" value=\"Begin installation\"> <br />&nbsp;";
 echo <<<EOFAMBASDF
 
 					</center>
@@ -670,7 +669,7 @@ function installing_gui() {
 													</table>
 												</div>
 												<div id='pbdiv'>
-													<br/>
+													<br />
 													<center>
 													<table id='pbtable' height='15' width='640' border='0' colspacing='0' cellpadding='0' cellspacing='0'>
 														<tr>
@@ -687,7 +686,7 @@ function installing_gui() {
 															</td>
 														</tr>
 													</table>
-													<br/>
+													<br />
 												</div>
 												<textarea name='installeroutput' id='installeroutput' rows="31" cols="90">
 												</textarea>
@@ -716,7 +715,7 @@ function page_table_start($pgtitle = "") {
 		$pgtitle = "{$g['product_name']} installer";
 	echo <<<EOF
 	<center>
-		<img border="0" src="/themes/{$g['theme']}/images/logo.gif"></a><br/>
+		<img border="0" src="/themes/{$g['theme']}/images/logo.gif"></a><br />
 		<table cellpadding="6" cellspacing="0" width="550" style="border:1px solid #000000">
 		<tr height="10" bgcolor="#990000">
 			<td style="border-bottom:1px solid #000000">
@@ -971,13 +970,13 @@ EOF;
 		$first_disk_size = $size - $swap_size;
 
 		// Debugging
-		echo "\n\n<!-- $first_disk - " . print_r($disk_info, true) . " - $size  - $first_disk_size -->\n\n";
+		// echo "\n\n<!-- $first_disk - " . print_r($disk_info, true) . " - $size  - $first_disk_size -->\n\n";
 
 		// Check to see if a on disk layout exists
 		if(file_exists("/tmp/webInstaller_disk_layout.txt")) {
 			$disks_restored = unserialize(file_get_contents("/tmp/webInstaller_disk_layout.txt"));
 			$restored_layout_from_file = true;
-			$restored_layout_txt = "<br/>* The previous disk layout was restored from a previous session";
+			$restored_layout_txt = "<br />* The previous disk layout was restored from a previous session";
 		}
 
 		// If we restored disk layout(s) from a file then build the rows
@@ -1045,8 +1044,8 @@ EOF;
 											NOTES:
 										</strong>
 									</span>
-									<br/>* Sizes are in megabytes.
-									<br/>* Mount points named /conf are not allowed.  Use /cf if you want to make a configuration slice/mount.
+									<br />* Sizes are in megabytes.
+									<br />* Mount points named /conf are not allowed.  Use /cf if you want to make a configuration slice/mount.
 									{$restored_layout_txt}
 								</span>
 								</strong>
@@ -1091,7 +1090,7 @@ function installer_main() {
 			    		<td>
 							<center>
 							<div id="mainarea">
-								<br/>
+								<br />
 								<center>
 								Please select an installer option to begin:
 								<p/>

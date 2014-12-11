@@ -73,7 +73,7 @@ Autocompleter.Base = Class.create({
         Effect.Appear(update,{duration:0.15});
       };
     this.options.onHide = this.options.onHide ||
-      function(element, update){ new Effect.Fade(update,{duration:0.15}) };
+      function(element, update){ new Effect.Fade(update,{duration:0.15}); };
 
     if(typeof(this.options.tokens) == 'string')
       this.options.tokens = new Array(this.options.tokens);

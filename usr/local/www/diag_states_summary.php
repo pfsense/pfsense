@@ -1,7 +1,8 @@
 <?php
 /*
 	diag_states_summary.php
-	Copyright (C) 2010 Jim Pingle
+        Copyright (C) 2013-2014 Electric Sheep Fencing, LP
+	Copyright (C) 2010-2014 Jim Pingle
 
 	Portions borrowed from diag_dump_states.php:
 	Copyright (C) 2005-2009 Scott Ullrich
@@ -64,10 +65,20 @@ $row = 0;
 if(count($states) > 0) {
 	foreach($states as $line) {
 		$line_split = preg_split("/\s+/", $line);
-		$type  = array_shift($line_split);
+		$iface = array_shift($line_split);
 		$proto = array_shift($line_split);
 		$state = array_pop($line_split);
 		$info  = implode(" ", $line_split);
+
+		/* Handle NAT cases
+			Replaces an external IP + NAT by the internal IP */
+		if (strpos($info, ') ->') !== FALSE) {
+			/* Outbound NAT */
+			$info = preg_replace('/(\S+) \((\S+)\)/U', "$2", $info);
+		} elseif (strpos($info, ') <-') !== FALSE) {
+			/* Inbound NAT/Port Forward */
+			$info = preg_replace('/(\S+) \((\S+)\)/U', "$1", $info);
+		}
 
 		/* break up info and extract $srcip and $dstip */
 		$ends = preg_split("/\<?-\>?/", $info);
@@ -82,7 +93,7 @@ if(count($states) > 0) {
 
 		/* Handle IPv6 */
 		$parts = explode(":", $srcinfo);
-		$partcount = count($parts);		
+		$partcount = count($parts);
 		if ($partcount <= 2) {
 			$srcip = trim($parts[0]);
 			$srcport = trim($parts[1]);
@@ -91,9 +102,9 @@ if(count($states) > 0) {
 			$srcip = $matches[1];
 			$srcport = trim($matches[3]);
 		}
-		
+
 		$parts = explode(":", $dstinfo);
-		$partcount = count($parts);		
+		$partcount = count($parts);
 		if ($partcount <= 2) {
 			$dstip = trim($parts[0]);
 			$dstport = trim($parts[1]);
@@ -136,7 +147,7 @@ function build_port_info($portarr, $proto) {
 function print_summary_table($label, $iparr, $sort = TRUE) { ?>
 
 <h3><?php echo $label; ?></h3>
-<table class="tabcont" width="100%" border="0" cellspacing="0" cellpadding="0">
+<table class="tabcont" width="100%" border="0" cellspacing="0" cellpadding="0" summary="states summary">
 	<tr>
 		<td class="listhdrr"><?=gettext("IP");?></td>
 		<td class="listhdrr"># <?=gettext("States");?></td>
@@ -149,21 +160,21 @@ function print_summary_table($label, $iparr, $sort = TRUE) { ?>
 		uksort($iparr, "sort_by_ip");
 	foreach($iparr as $ip => $ipinfo) { ?>
 	<tr>
-		<td class='vncell'><?php echo $ip; ?></td>
-		<td class='vncell'><?php echo $ipinfo['seen']; ?></td>
-		<td class='vncell'>&nbsp;</td>
-		<td class='vncell'>&nbsp;</td>
-		<td class='vncell'>&nbsp;</td>
-		<td class='vncell'>&nbsp;</td>
+		<td class="vncell"><?php echo $ip; ?></td>
+		<td class="vncell"><?php echo $ipinfo['seen']; ?></td>
+		<td class="vncell">&nbsp;</td>
+		<td class="vncell">&nbsp;</td>
+		<td class="vncell">&nbsp;</td>
+		<td class="vncell">&nbsp;</td>
 	</tr>
 	<?php foreach($ipinfo['protos'] as $proto => $protoinfo) { ?>
 	<tr>
-		<td class='list'>&nbsp;</td>
-		<td class='list'>&nbsp;</td>
-		<td class='listlr'><?php echo $proto; ?></td>
-		<td class='listr' align="center"><?php echo $protoinfo['seen']; ?></td>
-		<td class='listr' align="center"><span title="<?php echo build_port_info($protoinfo['srcports'], $proto); ?>"><?php echo count($protoinfo['srcports']); ?></span></td>
-		<td class='listr' align="center"><span title="<?php echo build_port_info($protoinfo['dstports'], $proto); ?>"><?php echo count($protoinfo['dstports']); ?></span></td>
+		<td class="list">&nbsp;</td>
+		<td class="list">&nbsp;</td>
+		<td class="listlr"><?php echo $proto; ?></td>
+		<td class="listr" align="center"><?php echo $protoinfo['seen']; ?></td>
+		<td class="listr" align="center"><span title="<?php echo build_port_info($protoinfo['srcports'], $proto); ?>"><?php echo count($protoinfo['srcports']); ?></span></td>
+		<td class="listr" align="center"><span title="<?php echo build_port_info($protoinfo['dstports'], $proto); ?>"><?php echo count($protoinfo['dstports']); ?></span></td>
 	</tr>
 	<?php } ?>
 <?php } ?>
@@ -176,6 +187,7 @@ function print_summary_table($label, $iparr, $sort = TRUE) { ?>
 $pgtitle = array(gettext("Diagnostics"),gettext("State Table Summary"));
 require_once("guiconfig.inc");
 include("head.inc");
+echo "<body>";
 include("fbegin.inc");
 
 
@@ -186,3 +198,5 @@ print_summary_table(gettext("By IP Pair"), $pairipinfo, FALSE);
 ?>
 
 <?php include("fend.inc"); ?>
+</body>
+</html>

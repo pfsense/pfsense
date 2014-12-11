@@ -1,5 +1,8 @@
 <?php
 
+/*        Copyright (C) 2013-2014 Electric Sheep Fencing, LP */
+
+
 $nocsrf = true;
 
 require_once("guiconfig.inc");
@@ -60,7 +63,7 @@ $sk_servers = openvpn_get_active_servers("p2p");
 $clients = openvpn_get_active_clients();
 ?>
 
-<br/>
+<br />
 <script type="text/javascript">
 	function killClient(mport, remipp) {
 		var busy = function(index,icon) {
@@ -248,10 +251,10 @@ $clients = openvpn_get_active_clients();
 }
 
 if ($DisplayNote) {
-	echo "<br/><b>NOTE:</b> You need to bind each OpenVPN client to enable its management daemon: use 'Local port' setting in the OpenVPN client screen";
+	echo "<br /><b>NOTE:</b> You need to bind each OpenVPN client to enable its management daemon: use 'Local port' setting in the OpenVPN client screen";
 }
 
 if ((empty($clients)) && (empty($servers)) && (empty($sk_servers))) {
-	echo "No OpenVPN instance defined";
+	echo "No OpenVPN instances defined";
 }
 ?>

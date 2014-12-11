@@ -7,8 +7,9 @@
 	Copyright (C) 2003-2004 Manuel Kasper <mk@neon1.net>.
 	All rights reserved.
 
-	part of pfSense (http://www.pfsense.org)
+	part of pfSense (https://www.pfsense.org)
 	Copyright (C) 2010 Seth Mos <seth.mos@dds.nl>.
+        Copyright (C) 2013-2014 Electric Sheep Fencing, LP
 	All rights reserved.
 
 	Redistribution and use in source and binary forms, with or without
@@ -47,7 +48,7 @@
 require("guiconfig.inc");
 
 if(!$g['services_dhcp_server_enable']) {
-	Header("Location: /");
+	header("Location: /");
 	exit;
 }
 
@@ -96,7 +97,7 @@ if (is_array($config['dhcpdv6'][$if])) {
 		$pconfig['rapriority'] = "medium";
 	$pconfig['rainterface'] = $config['dhcpdv6'][$if]['rainterface'];
 	$pconfig['radomainsearchlist'] = $config['dhcpdv6'][$if]['radomainsearchlist'];
-	list($pconfig['radns1'],$pconfig['radns2']) = $config['dhcpdv6'][$if]['radnsserver'];
+	list($pconfig['radns1'],$pconfig['radns2'],$pconfig['radns3'],$pconfig['radns4']) = $config['dhcpdv6'][$if]['radnsserver'];
 	$pconfig['rasamednsasdhcp6'] = isset($config['dhcpdv6'][$if]['rasamednsasdhcp6']);
 
 	$pconfig['subnets'] = $config['dhcpdv6'][$if]['subnets']['item'];
@@ -145,8 +146,8 @@ if ($_POST) {
 		}
 	}
 
-	if (($_POST['radns1'] && !is_ipaddrv6($_POST['radns1'])) || ($_POST['radns2'] && !is_ipaddrv6($_POST['radns2'])))
-		$input_errors[] = gettext("A valid IPv6 address must be specified for the primary/secondary DNS servers.");
+	if (($_POST['radns1'] && !is_ipaddrv6($_POST['radns1'])) || ($_POST['radns2'] && !is_ipaddrv6($_POST['radns2'])) || ($_POST['radns3'] && !is_ipaddrv6($_POST['radns3'])) || ($_POST['radns4'] && !is_ipaddrv6($_POST['radns4'])))
+		$input_errors[] = gettext("A valid IPv6 address must be specified for each of the DNS servers.");
 	if ($_POST['radomainsearchlist']) {
 		$domain_array=preg_split("/[ ;]+/",$_POST['radomainsearchlist']);
 		foreach ($domain_array as $curdomain) {
@@ -171,6 +172,10 @@ if ($_POST) {
 			$config['dhcpdv6'][$if]['radnsserver'][] = $_POST['radns1'];
 		if ($_POST['radns2'])
 			$config['dhcpdv6'][$if]['radnsserver'][] = $_POST['radns2'];
+		if ($_POST['radns3'])
+			$config['dhcpdv6'][$if]['radnsserver'][] = $_POST['radns3'];
+		if ($_POST['radns4'])
+			$config['dhcpdv6'][$if]['radnsserver'][] = $_POST['radns4'];
 
 		$config['dhcpdv6'][$if]['rasamednsasdhcp6'] = ($_POST['rasamednsasdhcp6']) ? true : false;
 
@@ -202,6 +207,7 @@ include("head.inc");
 <script type="text/javascript" src="/javascript/suggestions.js">
 </script>
 <script type="text/javascript">
+//<![CDATA[
 	rowname[0] = "subnet_address";
 	rowtype[0] = "textbox";
 	rowsize[0] = "30";
@@ -215,12 +221,13 @@ include("head.inc");
 		obj.setAttribute('autocomplete', 'off');
 		objAlias[totalrows - 1] = new AutoSuggestControl(obj, new StateSuggestions(addressarray));
 	}
+//]]>
 </script>
 
 <form action="services_router_advertisements.php" method="post" name="iform" id="iform">
 <?php if ($input_errors) print_input_errors($input_errors); ?>
 <?php if ($savemsg) print_info_box($savemsg); ?>
-<table width="100%" border="0" cellpadding="0" cellspacing="0">
+<table width="100%" border="0" cellpadding="0" cellspacing="0" summary="router advert">
 <tr><td>
 <?php
 	/* active tabs */
@@ -260,13 +267,13 @@ display_top_tabs($tab_array);
 <tr>
 <td>
 	<div id="mainarea">
-		<table class="tabcont" width="100%" border="0" cellpadding="6" cellspacing="0">
+		<table class="tabcont" width="100%" border="0" cellpadding="6" cellspacing="0" summary="main area">
 			<tr>
 			<td width="22%" valign="top" class="vncellreq"><?=gettext("Router Advertisements");?></td>
 			<td width="78%" class="vtable">
 				<select name="ramode" id="ramode">
 					<?php foreach($advertise_modes as $name => $value) { ?>
-					<option value="<?=$name ?>" <?php if ($pconfig['ramode'] == $name) echo "selected"; ?> > <?=$value ?></option>
+					<option value="<?=$name ?>" <?php if ($pconfig['ramode'] == $name) echo "selected=\"selected\""; ?> > <?=$value ?></option>
 					<?php } ?>
 				</select><br />
 			<strong><?php printf(gettext("Select the Operating Mode for the Router Advertisement (RA) Daemon."))?></strong>
@@ -279,7 +286,7 @@ display_top_tabs($tab_array);
 			<td width="78%" class="vtable">
 				<select name="rapriority" id="rapriority">
 					<?php foreach($priority_modes as $name => $value) { ?>
-					<option value="<?=$name ?>" <?php if ($pconfig['rapriority'] == $name) echo "selected"; ?> > <?=$value ?></option>
+					<option value="<?=$name ?>" <?php if ($pconfig['rapriority'] == $name) echo "selected=\"selected\""; ?> > <?=$value ?></option>
 					<?php } ?>
 				</select><br />
 			<strong><?php printf(gettext("Select the Priority for the Router Advertisement (RA) Daemon."))?></strong>
@@ -300,8 +307,8 @@ display_top_tabs($tab_array);
 			<td width="78%" class="vtable">
 				<select name="rainterface" id="rainterface">
 					<?php foreach($carplistif as $ifname => $vip) { ?>
-					<option value="interface" <?php if ($pconfig['rainterface'] == "interface") echo "selected"; ?> > <?=strtoupper($if); ?></option>
-					<option value="<?=$ifname ?>" <?php if ($pconfig['rainterface'] == $ifname) echo "selected"; ?> > <?="$ifname - $vip"; ?></option>
+					<option value="interface" <?php if ($pconfig['rainterface'] == "interface") echo "selected=\"selected\""; ?> > <?=strtoupper($if); ?></option>
+					<option value="<?=$ifname ?>" <?php if ($pconfig['rainterface'] == $ifname) echo "selected=\"selected\""; ?> > <?="$ifname - $vip"; ?></option>
 					<?php } ?>
 				</select><br />
 			<strong><?php printf(gettext("Select the Interface for the Router Advertisement (RA) Daemon."))?></strong>
@@ -313,7 +320,7 @@ display_top_tabs($tab_array);
 			<td width="22%" valign="top" class="vncell"><?=gettext("RA Subnet(s)");?></td>
 			<td width="78%" class="vtable">
 				<div><?= htmlentities($subnets_help) ?></div>
-				<table id="maintable">
+				<table id="maintable" summary="subnets">
 				<tbody>
 <?php
 				$counter = 0;
@@ -342,11 +349,14 @@ display_top_tabs($tab_array);
 					$counter += 1;
 				}
 ?>
+				<tr style="display:none"><td></td></tr>
 				</tbody>
 				</table>
 				<script type="text/javascript">
+				//<![CDATA[
 					field_counter_js = 2;
 					totalrows = <?= $counter ?>;
+				//]]>
 				</script>
 				<div id="addrowbutton">
 					<a onclick="javascript:addRowTo('maintable'); add_alias_control(); return false;" href="#"><!--
@@ -366,8 +376,10 @@ display_top_tabs($tab_array);
 			<tr>
 			<td width="22%" valign="top" class="vncell"><?=gettext("DNS servers");?></td>
 			<td width="78%" class="vtable">
-				<input name="radns1" type="text" class="formfld unknown" id="radns1" size="28" value="<?=htmlspecialchars($pconfig['radns1']);?>"><br>
-				<input name="radns2" type="text" class="formfld unknown" id="radns2" size="28" value="<?=htmlspecialchars($pconfig['radns2']);?>"><br>
+				<input name="radns1" type="text" class="formfld unknown" id="radns1" size="28" value="<?=htmlspecialchars($pconfig['radns1']);?>" /><br />
+				<input name="radns2" type="text" class="formfld unknown" id="radns2" size="28" value="<?=htmlspecialchars($pconfig['radns2']);?>" /><br />
+				<input name="radns3" type="text" class="formfld unknown" id="radns3" size="28" value="<?=htmlspecialchars($pconfig['radns3']);?>" /><br />
+				<input name="radns4" type="text" class="formfld unknown" id="radns4" size="28" value="<?=htmlspecialchars($pconfig['radns4']);?>" /><br />
 				<?=gettext("NOTE: leave blank to use the system default DNS servers - this interface's IP if DNS forwarder is enabled, otherwise the servers configured on the General page.");?>
 			</td>
 			</tr>
@@ -375,7 +387,7 @@ display_top_tabs($tab_array);
 			<tr>
 			<td width="22%" valign="top" class="vncell"><?=gettext("Domain search list");?></td>
 			<td width="78%" class="vtable">
-				<input name="radomainsearchlist" type="text" class="formfld unknown" id="radomainsearchlist" size="28" value="<?=htmlspecialchars($pconfig['radomainsearchlist']);?>"><br>
+				<input name="radomainsearchlist" type="text" class="formfld unknown" id="radomainsearchlist" size="28" value="<?=htmlspecialchars($pconfig['radomainsearchlist']);?>" /><br />
 				<?=gettext("The RA server can optionally provide a domain search list. Use the semicolon character as separator");?>
 			</td>
 			</tr>
@@ -402,11 +414,11 @@ display_top_tabs($tab_array);
 </table>
 </form>
 
-<script language="JavaScript">
+<script type="text/javascript">
 //<![CDATA[
 	jQuery(function ($) {
 		var $rasamednsasdhcp6 = $("#rasamednsasdhcp6");
-		var $triggered_checkboxes = $("#radns1, #radns2, #radomainsearchlist");
+		var $triggered_checkboxes = $("#radns1, #radns2, #radns3, #radns4, #radomainsearchlist");
 		if ($rasamednsasdhcp6.length !== 1) { return; }
 		var onchange = function () {
 			var checked = $rasamednsasdhcp6.is(":checked");
@@ -428,6 +440,8 @@ display_top_tabs($tab_array);
 		<?php } ?>
 		new AutoSuggestControl(document.getElementById('radns1'), new StateSuggestions(addressarray));
 		new AutoSuggestControl(document.getElementById('radns2'), new StateSuggestions(addressarray));
+		new AutoSuggestControl(document.getElementById('radns3'), new StateSuggestions(addressarray));
+		new AutoSuggestControl(document.getElementById('radns4'), new StateSuggestions(addressarray));
 	}
 	setTimeout(createAutoSuggest, 500);
 //]]>

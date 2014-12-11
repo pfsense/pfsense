@@ -2,8 +2,9 @@
 /* $Id$ */
 /*
 	load_balancer_pool.php
-	part of pfSense (http://www.pfsense.com/)
+	part of pfSense (https://www.pfsense.org/)
 
+        Copyright (C) 2013-2014 Electric Sheep Fencing, LP
 	Copyright (C) 2005-2008 Bill Marquette <bill.marquette@gmail.com>.
 	All rights reserved.
 
@@ -105,10 +106,10 @@ include("head.inc");
 <form action="load_balancer_pool.php" method="post">
 <?php if ($input_errors) print_input_errors($input_errors); ?>
 <?php if ($savemsg) print_info_box($savemsg); ?>
-<?php if (is_subsystem_dirty('loadbalancer')): ?><p>
-<?php print_info_box_np(sprintf(gettext("The load balancer configuration has been changed%sYou must apply the changes in order for them to take effect."), "<br>"));?><br>
+<?php if (is_subsystem_dirty('loadbalancer')): ?><br/>
+<?php print_info_box_np(sprintf(gettext("The load balancer configuration has been changed%sYou must apply the changes in order for them to take effect."), "<br />"));?><br />
 <?php endif; ?>
-<table width="100%" border="0" cellpadding="0" cellspacing="0">
+<table width="100%" border="0" cellpadding="0" cellspacing="0" summary="load balancer pools">
   <tr><td class="tabnavtbl">
   <?php
         /* active tabs */
@@ -123,7 +124,7 @@ include("head.inc");
   <tr>
     <td>
 	<div id="mainarea">
-<?
+<?php
 			$t = new MainTable();
 			$t->edit_uri('load_balancer_pool_edit.php');
 			$t->my_uri('load_balancer_pool.php');
@@ -144,7 +145,7 @@ include("head.inc");
     </td>
   </tr>
   <tr><td>
-	<br/><span class="red"><strong><?=gettext("Hint:");?></strong></span><br/>
+	<br /><span class="red"><strong><?=gettext("Hint:");?></strong></span><br />
 	<?= sprintf(gettext("The Load Balancer in %s 2.0 is for server load balancing, not Multi-WAN. For load balancing or failover for multiple WANs, use "), $g['product_name']);?>
 	<a href="/system_gateway_groups.php"><?= gettext("Gateway Groups"); ?></a>
   </td></tr>

@@ -3,7 +3,7 @@
 /* $Id$ */
 /*
     rc.start_packages
-    part of pfSense (http://www.pfSense.com)
+    part of pfSense (https://www.pfsense.org)
     Copyright (C) 2004 Scott Ullrich
     All rights reserved.
 
@@ -38,8 +38,19 @@ require_once("pkg-utils.inc");
 require_once("pfsense-utils.inc");
 require_once("service-utils.inc");
 
+if (file_exists("{$g['tmp_path']}/.rc.start_packages.running")) {
+        $stat = stat("{$g['tmp_path']}/.rc.start_packages.running");
+        if (time() - $stat['mtime'] >= 90)
+                @unlink("{$g['tmp_path']}/.rc.start_packages.running");
+        else {
+                log_error("Skipping STARTing packages process because previous/another instance is already running");
+                return;
+        }
+}
+
+@file_put_contents("{$g['tmp_path']}/.rc.start_packages.running", "");
+
 log_error("Restarting/Starting all packages.");
-setup_library_paths();
 
 $rcfiles = glob(RCFILEPREFIX . "*.sh");
 if (!$rcfiles)
@@ -51,9 +62,9 @@ else {
 }
 
 if (is_array($config['installedpackages']['package'])) {
-	foreach($config['installedpackages']['package'] as $package) {
+	foreach($config['installedpackages']['package'] as $pkgid => $package) {
 		echo " Starting package {$package['name']}...";
-		sync_package($package['name']);
+		sync_package($pkgid);
 		$internal_name = get_pkg_internal_name($package);
 		start_service($internal_name);
 		unset($rcfiles[RCFILEPREFIX . strtolower($internal_name) . ".sh"]);
@@ -72,4 +83,5 @@ if ($shell) {
 	pclose($shell);
 }
 
+@unlink("{$g['tmp_path']}/.rc.start_packages.running");
 ?>

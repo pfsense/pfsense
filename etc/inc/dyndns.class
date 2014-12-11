@@ -29,6 +29,7 @@
 	 *    - CloudFlare (www.cloudflare.com)
  	 *    - Eurodns (eurodns.com)
  	 *    - GratisDNS (gratisdns.dk)
+	 *    - City Network (citynetwork.se)
 	 * +----------------------------------------------------+
 	 *  Requirements:
 	 *    - PHP version 4.0.2 or higher with the CURL Library and the PCRE Library
@@ -69,6 +70,8 @@
 	 *  CloudFlare     - Last Tested: 30 May 2013
   	 *  Eurodns	   - Last Tested: 27 June 2013
   	 *  GratisDNS      - Last Tested: 15 August 2012
+	 *  OVH DynHOST	   - Last Tested: NEVER
+	 *  City Network   - Last Tested: 13 November 2013
 	 * +====================================================+
 	 *
 	 * @author 	E.Kristensen
@@ -236,6 +239,8 @@
 				case 'cloudflare':
 				case 'eurodns':
 				case 'gratisdns':
+				case 'ovh-dynhost':
+                case 'citynetwork':
 					$this->_update();
 					if($this->_dnsDummyUpdateDone == true) {
 						// If a dummy update was needed, then sleep a while and do the update again to put the proper address back.
@@ -281,7 +286,6 @@
 					if ($this->_dnsVerboseLog)
 						log_error("DynDNS: ({$this->_dnsHost}) DNS update() starting.");
 					if (isset($this->_dnsWildcard) && $this->_dnsWildcard != "OFF") $this->_dnsWildcard = "ON";
-					curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, FALSE);
 					curl_setopt($ch, CURLOPT_USERPWD, $this->_dnsUser.':'.$this->_dnsPass);
 					$server = "https://members.dyndns.org/nic/update";
 					$port = "";
@@ -307,7 +311,6 @@
 					$post_data['domain'] = 'dyn.dhs.org';
 					$post_data['hostname'] = $this->_dnsHost;
 					$post_data['submit'] = 'Update';
-					curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, FALSE);
 					$server = "https://members.dhs.org/nic/hosts";
 					$port = "";
 					if($this->_dnsServer)
@@ -321,8 +324,7 @@
 				case 'noip':
 				case 'noip-free':
 					$needsIP = TRUE;
-					curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, FALSE);
-					$server = "http://dynupdate.no-ip.com/ducupdate.php";
+					$server = "https://dynupdate.no-ip.com/ducupdate.php";
 					$port = "";
 					if($this->_dnsServer)
 						$server = $this->_dnsServer;
@@ -342,9 +344,8 @@
 					break;
 				case 'easydns':
 					$needsIP = TRUE;
-					curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, FALSE);
 					curl_setopt($ch, CURLOPT_USERPWD, $this->_dnsUser.':'.$this->_dnsPass);
-					$server = "http://members.easydns.com/dyn/dyndns.php";
+					$server = "https://members.easydns.com/dyn/dyndns.php";
 					$port = "";
 					if($this->_dnsServer)
 						$server = $this->_dnsServer;
@@ -354,7 +355,6 @@
 					break;
 				case 'hn':
 					$needsIP = TRUE;
-					curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, FALSE);
 					curl_setopt($ch, CURLOPT_USERPWD, $this->_dnsUser.':'.$this->_dnsPass);
 					$server = "http://dup.hn.org/vanity/update";
 					$port = "";
@@ -366,8 +366,6 @@
 					break;
 				case 'zoneedit':
 					$needsIP = FALSE;
-					curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, FALSE);
-					curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, FALSE);
 					curl_setopt($ch, CURLOPT_USERPWD, $this->_dnsUser.':'.$this->_dnsPass);
 
 					$server = "https://dynamic.zoneedit.com/auth/dynamic.html";
@@ -380,7 +378,7 @@
 					break;
 				case 'dyns':
 					$needsIP = FALSE;
-					$server = "http://www.dyns.cx/postscript011.php";
+					$server = "https://www.dyns.cx/postscript011.php";
 					$port = "";
 					if($this->_dnsServer)
 						$server = $this->_dnsServer;
@@ -428,22 +426,20 @@
 					break;
 				case 'freedns':
 					$needIP = FALSE;
-					curl_setopt($ch, CURLOPT_URL, 'http://freedns.afraid.org/dynamic/update.php?' . $this->_dnsPass);
+					curl_setopt($ch, CURLOPT_URL, 'https://freedns.afraid.org/dynamic/update.php?' . $this->_dnsPass);
 					break;
 				case 'dnsexit':
 					$needsIP = TRUE;
-					curl_setopt($ch, CURLOPT_URL, 'http://www.dnsexit.com/RemoteUpdate.sv?login='.$this->_dnsUser. '&password='.$this->_dnsPass.'&host='.$this->_dnsHost.'&myip='.$this->_dnsIP);
+					curl_setopt($ch, CURLOPT_URL, 'https://www.dnsexit.com/RemoteUpdate.sv?login='.$this->_dnsUser. '&password='.$this->_dnsPass.'&host='.$this->_dnsHost.'&myip='.$this->_dnsIP);
 					break;
 				case 'loopia':
 					$needsIP = TRUE;
-					curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, FALSE);
 					curl_setopt($ch, CURLOPT_USERPWD, $this->_dnsUser.':'.$this->_dnsPass);
 					curl_setopt($ch, CURLOPT_URL, 'https://dns.loopia.se/XDynDNSServer/XDynDNS.php?hostname='.$this->_dnsHost.'&myip='.$this->_dnsIP);
 					break;
 				case 'opendns':
 					$needsIP = FALSE;
 					if (isset($this->_dnsWildcard) && $this->_dnsWildcard != "OFF") $this->_dnsWildcard = "ON";
-					curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, FALSE);
 					curl_setopt($ch, CURLOPT_USERPWD, $this->_dnsUser.':'.$this->_dnsPass);
 					$server = "https://updates.opendns.com/nic/update?hostname=". $this->_dnsHost;
 					$port = "";
@@ -456,7 +452,7 @@
 
 				case 'staticcling':
 					$needsIP = FALSE;
-					curl_setopt($ch, CURLOPT_URL, 'http://www.staticcling.org/update.html?login='.$this->_dnsUser.'&pass='.$this->_dnsPass);
+					curl_setopt($ch, CURLOPT_URL, 'https://www.staticcling.org/update.html?login='.$this->_dnsUser.'&pass='.$this->_dnsPass);
 					break;	                    
 				case 'dnsomatic':
 					/* Example syntax 
@@ -466,7 +462,6 @@
 					if ($this->_dnsVerboseLog)
 						log_error("DNS-O-Matic: DNS update() starting.");
 					if (isset($this->_dnsWildcard) && $this->_dnsWildcard != "OFF") $this->_dnsWildcard = "ON";
-					curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, FALSE);
 					/*
 					Reference: https://www.dnsomatic.com/wiki/api
 						DNS-O-Matic usernames are 3-25 characters.
@@ -490,7 +485,6 @@
 					$needsIP = FALSE;
 					if ($this->_dnsVerboseLog)
 						log_error("Namecheap ({$this->_dnsHost}): DNS update() starting.");
-					curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, FALSE);
 					$dparts = explode(".", trim($this->_dnsHost));
 					$domain_part_count = ($dparts[count($dparts)-1] == "uk") ? 3 : 2;
 					$domain_offset = count($dparts) - $domain_part_count;
@@ -506,8 +500,8 @@
 					if ($this->_dnsVerboseLog)
 						log_error("HE.net ({$this->_dnsHost}): DNS update() starting.");
 					$server = "https://dyn.dns.he.net/nic/update?";
-					curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, FALSE);
 					curl_setopt($ch, CURLOPT_IPRESOLVE, CURL_IPRESOLVE_V4 );
+					curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, FALSE);
 					curl_setopt($ch, CURLOPT_URL, $server . 'hostname=' . $this->_dnsHost . '&password=' . $this->_dnsPass . '&myip=' . $this->_dnsIP);
 					break;
 				case 'he-net-tunnelbroker':
@@ -515,7 +509,6 @@
 					if ($this->_dnsVerboseLog)
 						log_error("HE.net Tunnelbroker: DNS update() starting.");
 					$server = "https://ipv4.tunnelbroker.net/ipv4_end.php?";
-					curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, FALSE);
 					curl_setopt($ch, CURLOPT_USERPWD, $this->_dnsUser . ':' . $this->_dnsPass);
 					curl_setopt($ch, CURLOPT_URL, $server . 'tid=' . $this->_dnsHost);
 					break;
@@ -524,7 +517,6 @@
 					if ($this->_dnsVerboseLog)
 						log_error("SelfHost: DNS update() starting.");
 					if (isset($this->_dnsWildcard) && $this->_dnsWildcard != "OFF") $this->_dnsWildcard = "ON";
-					curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, FALSE);
 					curl_setopt($ch, CURLOPT_USERPWD, $this->_dnsUser.':'.$this->_dnsPass);
 					$server = "https://carol.selfhost.de/nic/update";
 					$port = "";
@@ -615,15 +607,13 @@
 					$needsIP = TRUE;
 					$dnsServer ='www.cloudflare.com';
 					$dnsHost = str_replace(' ','', $this->_dnsHost);
-					$URL = "https://{$dnsServer}/api.html?a=DIUP&email={$this->_dnsUser}&tkn={$this->_dnsPass}&ip={$this->dnsIP}&hosts={$dnsHost}";
-					curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, FALSE);
+					$URL = "https://{$dnsServer}/api.html?a=DIUP&email={$this->_dnsUser}&tkn={$this->_dnsPass}&ip={$this->_dnsIP}&hosts={$dnsHost}";
 					curl_setopt($ch, CURLOPT_URL, $URL);
 					break;
 				case 'eurodns':		
 					$needsIP = TRUE;
 					if ($this->_dnsVerboseLog)
 						log_error("EuroDynDns ({$this->_dnsHost}) DNS update() starting.");
-					curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, FALSE);
 					curl_setopt($ch, CURLOPT_USERPWD, $this->_dnsUser.':'.$this->_dnsPass);
 					$server = "https://eurodyndns.org/update/";
 					$port = "";
@@ -636,9 +626,35 @@
 					if ($this->_dnsVerboseLog)
 						log_error("GratisDNS.dk ({$this->_dnsHost}): DNS update() starting.");
 					$server = "https://ssl.gratisdns.dk/ddns.phtml";
-					curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, FALSE);
 					list($hostname, $domain) = explode(".", $this->_dnsHost, 2);
 					curl_setopt($ch, CURLOPT_URL, $server . '?u=' . $this->_dnsUser . '&p=' . $this->_dnsPass . '&h=' . $this->_dnsHost . '&d=' . $domain);
+					break;
+				case 'ovh-dynhost':
+					$needsIP = FALSE;
+					if ($this->_dnsVerboseLog)
+						log_error("OVH DynHOST: ({$this->_dnsHost}) DNS update() starting.");
+					if (isset($this->_dnsWildcard) && $this->_dnsWildcard != "OFF") $this->_dnsWildcard = "ON";
+					curl_setopt($ch, CURLOPT_USERPWD, $this->_dnsUser.':'.$this->_dnsPass);
+					$server = "https://www.ovh.com/nic/update";
+					$port = "";
+					if($this->_dnsServer)
+						$server = $this->_dnsServer;
+					if($this->_dnsPort)
+						$port = ":" . $this->_dnsPort;
+					curl_setopt($ch, CURLOPT_URL, $server .$port . '?system=dyndns&hostname=' . $this->_dnsHost . '&myip=' . $this->_dnsIP . '&wildcard='.$this->_dnsWildcard . '&mx=' . $this->_dnsMX . '&backmx=NO');
+					break;
+				case 'citynetwork':
+					$needsIP = TRUE;
+					if ($this->_dnsVerboseLog)
+						log_error("City Network: ({$this->_dnsHost}) DNS update() starting.");
+					curl_setopt($ch, CURLOPT_USERPWD, $this->_dnsUser.':'.$this->_dnsPass);
+					$server = 'https://dyndns.citynetwork.se/nic/update';
+					$port = "";
+					if($this->_dnsServer)
+						$server = $this->_dnsServer;
+					if($this->_dnsPort)
+						$port = ":" . $this->_dnsPort;
+					curl_setopt($ch, CURLOPT_URL, $server .$port . '?hostname=' . $this->_dnsHost . '&myip=' . $this->_dnsIP);
 					break;
 				default:
 					break;
@@ -689,6 +705,26 @@
 						$this->_debug($data);
 					}
 					break;
+				case 'citynetwork':
+					if (preg_match('/notfqdn/i', $data)) {
+						$status = "phpDynDNS ({$this->_dnsHost}): (Error) Not A FQDN!";
+					} else if (preg_match('/nohost/i', $data)) {
+						$status = "phpDynDNS ({$this->_dnsHost}): (Error) No such host";
+					} else if (preg_match('/nochg/i', $data)) {
+						$status = "phpDynDNS ({$this->_dnsHost}): (Success) No Change In IP Address";
+						$successful_update = true;
+					} else if (preg_match('/good/i', $data)) {
+						$status = "phpDynDNS ({$this->_dnsHost}): (Success) IP Address Changed Successfully! (".$this->_dnsIP.")";
+						$successful_update = true;
+					} else if (preg_match('/badauth/i', $data)) {
+						$status = "phpDynDNS ({$this->_dnsHost}): (Error) User Authorization Failed";
+					} else {
+						$status = "phpDynDNS ({$this->_dnsHost}): (Unknown Response)";
+						log_error("phpDynDNS ({$this->_dnsHost}): PAYLOAD: {$data}");
+						$this->_debug($data);
+					}
+					break;
+				case 'ovh-dynhost':
 				case 'dyndns':
 					if (preg_match('/notfqdn/i', $data)) {
 						$status = "phpDynDNS ({$this->_dnsHost}): (Error) Not A FQDN!";
@@ -1205,7 +1241,7 @@
 		/*
 		 * Private Function (added 12 July 05) [beta]
 		 *   - Detect whether or not IP needs to be updated.
-		 *      | Written Specifically for pfSense (pfsense.com) may
+		 *      | Written Specifically for pfSense (https://www.pfsense.org) may
 		 *      | work with other systems. pfSense base is FreeBSD.
 		 */
 		function _detectChange() {
@@ -1335,7 +1371,7 @@
 					$try++;
 				}
 				if ($try >= 3) {
-					log_error("Dyndns debug information ({$this->_dnsHost}): Could not resolve {$hosttocheck} to ip using interface ip {$ip_address}.");
+					log_error("Dyndns debug information ({$this->_dnsHost}): Could not resolve {$hosttocheck} to IP using interface IP {$ip_address}.");
 					return 0;
 				}
 				$ip_ch = curl_init("http://{$checkip}");
@@ -1344,6 +1380,9 @@
 				curl_setopt($ip_ch, CURLOPT_INTERFACE, $ip_address);
 				curl_setopt($ip_ch, CURLOPT_CONNECTTIMEOUT, '30');
 				curl_setopt($ip_ch, CURLOPT_TIMEOUT, 120);
+				if ($this->_useIPv6 == false) {
+					curl_setopt($ip_ch, CURLOPT_IPRESOLVE, CURL_IPRESOLVE_V4);
+				}
 				$ip_result_page = curl_exec($ip_ch);
 				curl_close($ip_ch);
 				$ip_result_decoded = urldecode($ip_result_page);

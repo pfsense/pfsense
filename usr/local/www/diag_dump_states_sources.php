@@ -1,8 +1,9 @@
 <?php
 /*
 	diag_dump_states.php
-	Copyright (C) 2005-2009 Scott Ullrich
 	Copyright (C) 2005 Colin Smith
+	Copyright (C) 2005-2009 Scott Ullrich
+        Copyright (C) 2013-2014 Electric Sheep Fencing, LP
 	All rights reserved.
 
 	Redistribution and use in source and binary forms, with or without
@@ -72,6 +73,7 @@ include("head.inc");
 <form action="diag_dump_states_sources.php" method="get" name="iform">
 
 <script type="text/javascript">
+//<![CDATA[
 	function removeSource(srcip, dstip) {
 		var busy = function(index,icon) {
 			jQuery(icon).bind("onclick","");
@@ -99,6 +101,7 @@ include("head.inc");
 			function(index,row) { jQuery(row).fadeOut(1000); }
 		);
 	}
+//]]>
 </script>
 
 <table width="100%" border="0" cellpadding="0" cellspacing="0">
@@ -130,7 +133,7 @@ include("head.inc");
 						<?=gettext("Filter expression:");?>
 						<input type="text" name="filter" class="formfld search" value="<?=htmlspecialchars($_GET['filter']);?>" size="30" />
 						<input type="submit" class="formbtn" value="<?=gettext("Filter");?>" />
-					<td>
+					</td>
 				</tr>
 			</table>
 			</form>
@@ -174,8 +177,8 @@ if(count($sources) > 0) {
 				<td class='listr'><?php echo $rate;?></td>
 				<td class='list'>
 				<img src='/themes/<?php echo $g['theme']; ?>/images/icons/icon_x.gif' height='17' width='17' border='0'
-					onclick="removeSource(<?php echo "'{$srcip}', '{$dstip}'"; ?>);" style='cursor:pointer;
-					name='i:<?php echo "{$srcip}:{$dstip}"; ?>
+					onclick="removeSource(<?php echo "'{$srcip}', '{$dstip}'"; ?>);" style='cursor:pointer;'
+					name='i:<?php echo "{$srcip}:{$dstip}"; ?>'
 					title='<?php echo gettext("Remove all source tracking entries from") . " {$srcip} " . gettext("to") . " {$dstip}";?>' alt='' />
 				</td>
 			  </tr>

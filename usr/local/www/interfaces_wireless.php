@@ -4,6 +4,7 @@
 	interfaces_wireless.php
 
 	Copyright (C) 2010 Erik Fonnesbeck
+        Copyright (C) 2013-2014 Electric Sheep Fencing, LP
 	All rights reserved.
 
 	Redistribution and use in source and binary forms, with or without
@@ -133,7 +134,7 @@ include("head.inc");
 			</tr>
 				<tr>
 				<td colspan="3" class="list"><p class="vexpl"><span class="red"><strong>
-				  <?=gettext("Note");?>:<br/>
+				  <?=gettext("Note");?>:<br />
 				  </strong></span>
 				  <?=gettext("Here you can configure clones of wireless interfaces, which can be assigned as separate independent interfaces. Only available on wireless chipsets that support this, with limitations on the number that can be created in each mode.");?></p>
 				  </td>

@@ -55,18 +55,20 @@ function backup_vip_config_section() {
 	$temp = array();
 	$temp['vip'] = array();
 	foreach($config['virtualip']['vip'] as $section) {
-		if(($section['mode'] == "proxyarp" || $section['mode'] == "ipalias") && !(strstr($section['interface'], "_vip") || strstr($section['interface'], "lo0")))
+		if (($section['mode'] == 'proxyarp' || $section['mode'] == 'ipalias') &&
+		    (strpos($section['interface'], '_vip') === FALSE) &&
+		    (strpos($section['interface'], 'lo0') === FALSE))
 			continue;
-		if($section['advskew'] <> "") {
+		if ($section['advskew'] <> "") {
 			$section_val = intval($section['advskew']);
 			$section_val=$section_val+100;
-			if($section_val > 254)
+			if ($section_val > 254)
 				$section_val = 254;
 			$section['advskew'] = $section_val;
 		}
-		if($section['advbase'] <> "") {
+		if ($section['advbase'] <> "") {
 			$section_val = intval($section['advbase']);
-			if($section_val > 254)
+			if ($section_val > 254)
 				$section_val = 254;
 			$section['advbase'] = $section_val;
 		}
@@ -90,7 +92,7 @@ function remove_special_characters($string) {
 function carp_check_version($url, $username, $password, $port = 80, $method = 'pfsense.host_firmware_version') {
 	global $config, $g;
 
-	if(file_exists("{$g['varrun_path']}/booting") || $g['booting'])
+	if(file_exists("{$g['varrun_path']}/booting") || platform_booting())
 		return;
 
 	$params = array(
@@ -117,7 +119,7 @@ function carp_check_version($url, $username, $password, $port = 80, $method = 'p
 					$error = "An authentication failure occurred while trying to access {$url}:{$port} ({$method}).";
 					log_error($error);
 					file_notice("sync_settings", $error, "Settings Sync", "");
-					exit;
+					return false;
 				}
 			} else {
 				if (!isset($parsed_response['config_version']) ||
@@ -140,7 +142,7 @@ function carp_check_version($url, $username, $password, $port = 80, $method = 'p
 function carp_sync_xml($url, $username, $password, $sections, $port = 80, $method = 'pfsense.restore_config_section') {
 	global $config, $g;
 
-	if(file_exists("{$g['varrun_path']}/booting") || $g['booting'])
+	if(file_exists("{$g['varrun_path']}/booting") || platform_booting())
 		return;
 
 	update_filter_reload_status("Syncing CARP data to {$url}");
@@ -149,12 +151,12 @@ function carp_sync_xml($url, $username, $password, $sections, $port = 80, $metho
 	$config_copy = $config;
 
 	/* strip out nosync items */
-	if (is_array($config_copy['nat']['advancedoutbound']['rule'])) {
-		$rulescnt = count($config_copy['nat']['advancedoutbound']['rule']);
+	if (is_array($config_copy['nat']['outbound']['rule'])) {
+		$rulescnt = count($config_copy['nat']['outbound']['rule']);
 		for ($x = 0; $x < $rulescnt; $x++) {
-			$config_copy['nat']['advancedoutbound']['rule'][$x]['descr'] = remove_special_characters($config_copy['nat']['advancedoutbound']['rule'][$x]['descr']);
-			if (isset ($config_copy['nat']['advancedoutbound']['rule'][$x]['nosync']))
-				unset ($config_copy['nat']['advancedoutbound']['rule'][$x]);
+			$config_copy['nat']['outbound']['rule'][$x]['descr'] = remove_special_characters($config_copy['nat']['outbound']['rule'][$x]['descr']);
+			if (isset ($config_copy['nat']['outbound']['rule'][$x]['nosync']))
+				unset ($config_copy['nat']['outbound']['rule'][$x]);
 		}
 	}
 	if (is_array($config_copy['nat']['rule'])) {
@@ -260,7 +262,7 @@ function carp_sync_xml($url, $username, $password, $sections, $port = 80, $metho
 				$error = "An authentication failure occurred while trying to access {$url}:{$port} ($method).";
 				log_error($error);
 				file_notice("sync_settings", $error, "Settings Sync", "");
-				exit;
+				return -1;
 			} else {
 				log_error("XMLRPC sync successfully completed with {$url}:{$port}.");
 				update_filter_reload_status("XMLRPC sync successfully completed with {$url}:{$port}.");
@@ -271,8 +273,7 @@ function carp_sync_xml($url, $username, $password, $sections, $port = 80, $metho
 	}
 }
 
-global $g;
-if (file_exists("{$g['varrun_path']}/booting") || $g['booting'])
+if (platform_booting())
 	return;
 
 if (is_array($config['hasync'])) {
@@ -280,8 +281,8 @@ if (is_array($config['hasync'])) {
 	$hasync = $config['hasync'];
 
 	if (empty($hasync['synchronizetoip'])) {
-		log_error("Config sync not being done because of missing sync IP (this is normal on secondary systems).");
-		exit;
+		/* this gets hit on every filter sync on the secondary, a log here creates a lot of log spam and I never saw it actually log anything useful */
+		return;
 	}
 
 	/*
@@ -397,7 +398,7 @@ if (is_array($config['hasync'])) {
 
 	if (count($sections) <= 0) {
 		log_error("Nothing has been configured to be synched. Skipping....");
-		exit;
+		return;
 	}
 
 	if (empty($hasync['username']))
@@ -406,10 +407,11 @@ if (is_array($config['hasync'])) {
 		$username = $hasync['username'];
 
 	if (!carp_check_version($synchronizetoip, $username, $hasync['password'], $port))
-		exit;
+		return;
 
 	update_filter_reload_status("Signaling CARP reload signal...");
-	carp_sync_xml($synchronizetoip, $username, $hasync['password'], $sections, $port);
+	if (carp_sync_xml($synchronizetoip, $username, $hasync['password'], $sections, $port) == -1)
+		return;
 	$cli = new XML_RPC_Client('/xmlrpc.php', $synchronizetoip, $port);
 	$params = array(
 	  XML_RPC_encode($hasync['password'])

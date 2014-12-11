@@ -383,7 +383,7 @@ function datePicker(options) {
                 return o.killEvent(e);
         };
         o.trueBody = function() {
-                return
+                return;
         };
         o.resize = function() {
                 if(!o.created || !o.getElem()) return;

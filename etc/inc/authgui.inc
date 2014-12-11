@@ -39,6 +39,8 @@
 
 include_once("auth.inc");
 include_once("priv.inc");
+if (!function_exists('platform_booting'))
+	require_once('globals.inc');
 
 /* Authenticate user - exit if failed */
 if (!session_auth()) {
@@ -51,7 +53,7 @@ if (!session_auth()) {
  * We give them access only to the appropriate pages based on
  * the user or group privileges.
  */
-$allowedpages = getAllowedPages($HTTP_SERVER_VARS['AUTH_USER']);
+$allowedpages = getAllowedPages($_SESSION['Username']);
 
 /*
  * redirect to first allowed page if requesting a wrong url
@@ -110,9 +112,10 @@ function display_error_form($http_code, $desc) {
    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
 	<head>
-		<script type="text/javascript" src="/javascript/jquery.js"></script>
+		<script type="text/javascript" src="/javascript/jquery-1.11.1.min.js"></script>
+		<script type="text/javascript" src="/javascript/jquery-migrate-1.2.1.min.js"></script>
 		<title><?=$http_code?></title>
-		<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+		<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 		<link rel="shortcut icon" href="/themes/<?= $g['theme'] ?>/images/icons/favicon.ico" />
 		<?php if (file_exists("{$g['www_path']}/themes/{$g['theme']}/login.css")): ?>
 		<link rel="stylesheet" type="text/css" href="/themes/<?= $g['theme'] ?>/login.css" media="all" />
@@ -178,7 +181,7 @@ function display_login_form() {
    port forwards WebGUI access from WAN to an internal IP on the router. */
 global $FilterIflist, $nifty_background;
 $local_ip = false;
-if(strstr($_SERVER['HTTP_HOST'], ":")) {
+if (strpos($_SERVER['HTTP_HOST'], ":") === FALSE) {
 	$http_host_port = explode(":", $_SERVER['HTTP_HOST']);
 	$http_host = $http_host_port[0];
 } else {
@@ -190,29 +193,35 @@ if (empty($FilterIflist)) {
 	filter_generate_optcfg_array();
 }
 foreach ($FilterIflist as $iflist) {
-	if($iflist['ip'] == $http_host)
+	if ($iflist['ip'] == $http_host)
 		$local_ip = true;
-	if($iflist['ipv6'] == $http_host)
+	else if ($iflist['ipv6'] == $http_host)
 		$local_ip = true;
-}
-if($config['virtualip']) {
-	if($config['virtualip']['vip']) {
-		foreach($config['virtualip']['vip'] as $vip) {
-			if($vip['subnet'] == $http_host)
+	else if (is_array($iflist['vips'])) {
+		foreach ($iflist['vips'] as $vip) {
+			if ($vip['ip'] == $http_host) {
 				$local_ip = true;
+				break;
+			}
 		}
+		unset($vip);
 	}
+	if ($local_ip == true)
+		break;
 }
-if (is_array($config['openvpn']['openvpn-server'])) {
-	foreach ($config['openvpn']['openvpn-server'] as $ovpns) {
-		if (is_ipaddrv4($http_host) && !empty($ovpns['tunnel_network']) && ip_in_subnet($http_host, $ovpns['tunnel_network'])) {
-			$local_ip = true;
-			break;
-		}
+unset($FilterIflist);
+unset($iflist);
 
-		if (is_ipaddrv6($http_host) && !empty($ovpns['tunnel_networkv6']) && ip_in_subnet($http_host, $ovpns['tunnel_networkv6'])) {
-			$local_ip = true;
-			break;
+if ($local_ip == false) {
+	if (is_array($config['openvpn']['openvpn-server'])) {
+		foreach ($config['openvpn']['openvpn-server'] as $ovpns) {
+			if (is_ipaddrv4($http_host) && !empty($ovpns['tunnel_network']) && ip_in_subnet($http_host, $ovpns['tunnel_network'])) {
+				$local_ip = true;
+			} else if (is_ipaddrv6($http_host) && !empty($ovpns['tunnel_networkv6']) && ip_in_subnet($http_host, $ovpns['tunnel_networkv6'])) {
+				$local_ip = true;
+			}
+			if ($local_ip == true)
+				break;
 		}
 	}
 }
@@ -225,7 +234,8 @@ $have_cookies = isset($_COOKIE["cookie_test"]);
    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
 	<head>
-		<script type="text/javascript" src="/javascript/jquery.js"></script>
+		<script type="text/javascript" src="/javascript/jquery-1.11.1.min.js"></script>
+		<script type="text/javascript" src="/javascript/jquery-migrate-1.2.1.min.js"></script>
 		<script type="text/javascript">
 		//<![CDATA[
 		$(document).ready(function() { jQuery('#usernamefld').focus(); });
@@ -233,7 +243,7 @@ $have_cookies = isset($_COOKIE["cookie_test"]);
 		</script>
 
 		<title><?=gettext("Login"); ?></title>
-		<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+		<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 		<link rel="shortcut icon" href="/themes/<?= $g['theme'] ?>/images/icons/favicon.ico" />
 		<?php if (file_exists("{$g['www_path']}/themes/{$g['theme']}/login.css")): ?>
 		<link rel="stylesheet" type="text/css" href="/themes/<?= $g['theme'] ?>/login.css" media="all" />
@@ -260,11 +270,11 @@ $have_cookies = isset($_COOKIE["cookie_test"]);
 			<?php 
 				if(is_ipaddr($http_host) && !$local_ip && !isset($config['system']['webgui']['nohttpreferercheck'])) {
 					$nifty_background = "#999";
-					print_info_box(gettext("You are accessing this router by an IP address not configured locally, which may be forwarded by NAT or other means. <br/><br/>If you did not setup this forwarding, you may be the target of a man-in-the-middle attack.")); 
+					print_info_box(gettext("You are accessing this router by an IP address not configured locally, which may be forwarded by NAT or other means. <br /><br />If you did not setup this forwarding, you may be the target of a man-in-the-middle attack.")); 
 				}
-				$noautocomplete = isset($config['system']['webgui']['noautocomplete']) ? 'autocomplete="off"' : '';
+				$loginautocomplete = isset($config['system']['webgui']['loginautocomplete']) ? '' : 'autocomplete="off"';
 			?>
-			<form id="iform" name="iform" method="post" <?= $noautocomplete ?> action="<?=$_SERVER['SCRIPT_NAME'];?>">
+			<form id="iform" name="iform" method="post" <?= $loginautocomplete ?> action="<?=$_SERVER['SCRIPT_NAME'];?>">
 				<h1>&nbsp;</h1>
 				<div id="inputerrors"><?=$_SESSION['Login_Error'];?></div>
 				<p>
@@ -287,7 +297,7 @@ $have_cookies = isset($_COOKIE["cookie_test"]);
 					</span>
 
 					<?php if (!$have_cookies && isset($_POST['login'])): ?>
-					<br/><br/>
+					<br /><br />
 					<span style="text-align:center; font-weight: normal ; font-style: italic; color: #ff0000">
 						<?= gettext("Your browser must support cookies to login."); ?>
 					</span>

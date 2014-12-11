@@ -2,8 +2,9 @@
 /* $Id$ */
 /*
         load_balancer_pool_edit.php
-        part of pfSense (http://www.pfsense.com/)
+        part of pfSense (https://www.pfsense.org/)
 
+        Copyright (C) 2013-2014 Electric Sheep Fencing, LP
         Copyright (C) 2005-2008 Bill Marquette <bill.marquette@gmail.com>.
         All rights reserved.
 
@@ -40,16 +41,20 @@
 ##|-PRIV
 
 require("guiconfig.inc");
+require_once("filter.inc");
+require_once("util.inc");
+
+$referer = (isset($_SERVER['HTTP_REFERER']) ? $_SERVER['HTTP_REFERER'] : '/load_balancer_pool.php');
 
 if (!is_array($config['load_balancer']['lbpool'])) {
 	$config['load_balancer']['lbpool'] = array();
 }
 $a_pool = &$config['load_balancer']['lbpool'];
 
-if (isset($_POST['id']))
-	$id = $_POST['id'];
-else
+if (is_numericint($_GET['id']))
 	$id = $_GET['id'];
+if (isset($_POST['id']) && is_numericint($_POST['id']))
+	$id = $_POST['id'];
 
 if (isset($id) && $a_pool[$id]) {
 	$pconfig['name'] = $a_pool[$id]['name'];
@@ -84,6 +89,12 @@ if ($_POST) {
 
 	if (strpos($_POST['name'], " ") !== false)
 		$input_errors[] = gettext("You cannot use spaces in the 'name' field.");
+
+	if (in_array($_POST['name'], $reserved_table_names))
+		$input_errors[] = sprintf(gettext("The name '%s' is a reserved word and cannot be used."), $_POST['name']);
+
+	if (is_alias($_POST['name']))
+		$input_errors[] = sprintf(gettext("Sorry, an alias is already named %s."), $_POST['name']);
 
 	if (!is_portoralias($_POST['port']))
 		$input_errors[] = gettext("The port must be an integer between 1 and 65535, or a port alias.");
@@ -164,51 +175,54 @@ include("head.inc");
 ?>
 
 <body link="#0000CC" vlink="#0000CC" alink="#0000CC">
-<script language="javascript">
+<?php include("fbegin.inc"); ?>
+<script type="text/javascript">
+//<![CDATA[
 function clearcombo(){
   for (var i=document.iform.serversSelect.options.length-1; i>=0; i--){
     document.iform.serversSelect.options[i] = null;
   }
   document.iform.serversSelect.selectedIndex = -1;
 }
+//]]>
 </script>
 
 <script type="text/javascript" src="/javascript/autosuggest.js"></script>
 <script type="text/javascript" src="/javascript/suggestions.js"></script>
-<?php include("fbegin.inc"); ?>
+
 <?php if ($input_errors) print_input_errors($input_errors); ?>
 
 	<form action="load_balancer_pool_edit.php" method="post" name="iform" id="iform">
-	<table width="100%" border="0" cellpadding="6" cellspacing="0">
+	<table width="100%" border="0" cellpadding="6" cellspacing="0" summary="load balancer pool entry">
 		<tr>
 			<td colspan="2" valign="top" class="listtopic"><?=gettext("Add/edit Load Balancer - Pool entry"); ?></td>
 		</tr>
 		<tr align="left">
 			<td width="22%" valign="top" class="vncellreq"><?=gettext("Name"); ?></td>
 			<td width="78%" class="vtable" colspan="2">
-				<input name="name" type="text" <?if(isset($pconfig['name'])) echo "value=\"{$pconfig['name']}\"";?> size="16" maxlength="16">
+				<input name="name" type="text" <?if(isset($pconfig['name'])) echo "value=\"{$pconfig['name']}\"";?> size="16" maxlength="16" />
 			</td>
 		</tr>
 		<tr align="left">
 			<td width="22%" valign="top" class="vncellreq"><?=gettext("Mode"); ?></td>
 			<td width="78%" class="vtable" colspan="2">
-				<select id="mode" name="mode" onChange="enforceFailover(); checkPoolControls();">
-					<option value="loadbalance" <?if(!isset($pconfig['mode']) || ($pconfig['mode'] == "loadbalance")) echo "selected";?>><?=gettext("Load Balance");?></option>
-					<option value="failover"  <?if($pconfig['mode'] == "failover") echo "selected";?>><?=gettext("Manual Failover");?></option>
+				<select id="mode" name="mode" onchange="enforceFailover(); checkPoolControls();">
+					<option value="loadbalance" <?if(!isset($pconfig['mode']) || ($pconfig['mode'] == "loadbalance")) echo "selected=\"selected\"";?>><?=gettext("Load Balance");?></option>
+					<option value="failover"  <?if($pconfig['mode'] == "failover") echo "selected=\"selected\"";?>><?=gettext("Manual Failover");?></option>
 				</select>
 			</td>
 		</tr>
 		<tr align="left">
 			<td width="22%" valign="top" class="vncell"><?=gettext("Description"); ?></td>
 			<td width="78%" class="vtable" colspan="2">
-				<input name="descr" type="text" <?if(isset($pconfig['descr'])) echo "value=\"{$pconfig['descr']}\"";?>size="64">
+				<input name="descr" type="text" <?if(isset($pconfig['descr'])) echo "value=\"{$pconfig['descr']}\"";?> size="64" />
 			</td>
 		</tr>
 
 		<tr align="left">
 			<td width="22%" valign="top" id="monitorport_text" class="vncellreq"><?=gettext("Port"); ?></td>
 			<td width="78%" class="vtable" colspan="2">
-				<input class="formfldalias" id="port" name="port" type="text" <?if(isset($pconfig['port'])) echo "value=\"{$pconfig['port']}\"";?> size="16" maxlength="16"><br>
+				<input class="formfldalias" id="port" name="port" type="text" <?if(isset($pconfig['port'])) echo "value=\"{$pconfig['port']}\"";?> size="16" maxlength="16" /><br />
 				<div id="monitorport_desc">
 					<?=gettext("This is the port your servers are listening on."); ?><br />
 					<?=gettext("You may also specify a port alias listed in Firewall -&gt; Aliases here."); ?>
@@ -224,7 +238,7 @@ function clearcombo(){
 		<tr align="left">
 			<td width="22%" valign="top" id="retry_text" class="vncell"><?=gettext("Retry"); ?></td>
 			<td width="78%" class="vtable" colspan="2">
-				<input name="retry" type="text" <?if(isset($pconfig['retry'])) echo "value=\"{$pconfig['retry']}\"";?> size="16" maxlength="16"><br>
+				<input name="retry" type="text" <?if(isset($pconfig['retry'])) echo "value=\"{$pconfig['retry']}\"";?> size="16" maxlength="16" /><br />
 				<div id="retry_desc"><?=gettext("Optionally specify how many times to retry checking a server before declaring it down."); ?></div>
 			</td>
 		</tr>
@@ -242,7 +256,7 @@ function clearcombo(){
 					<?php
 						foreach ($config['load_balancer']['monitor_type'] as $monitor) {
 							if ($monitor['name'] == $pconfig['monitor']) {
-								$selected=" selected";
+								$selected=" selected=\"selected\"";
 							} else {
 								$selected = "";
 							}
@@ -258,8 +272,8 @@ function clearcombo(){
 		<tr align="left">
 			<td width="22%" valign="top" class="vncellreq"><?=gettext("Server IP Address"); ?></td>
 			<td width="78%" class="vtable" colspan="2">
-				<input name="ipaddr" type="text" size="16" style="float: left;"> 
-				<input class="formbtn" type="button" name="button1" value="<?=gettext("Add to pool"); ?>" onclick="AddServerToPool(document.iform); enforceFailover(); checkPoolControls();"><br>
+				<input name="ipaddr" type="text" size="16" style="float: left;" /> 
+				<input class="formbtn" type="button" name="button1" value="<?=gettext("Add to pool"); ?>" onclick="AddServerToPool(document.iform); enforceFailover(); checkPoolControls();" /><br />
 			</td>
 		</tr>
 		<tr>
@@ -271,47 +285,41 @@ function clearcombo(){
 		<tr>
 			<td width="22%" valign="top" class="vncellreq"><?=gettext("Members"); ?></td>
 			<td width="78%" class="vtable" colspan="2" valign="top">
-				<table>
+				<table summary="members">
 					<tbody>
 					<tr>
-						<td>
-							<center>
+						<td align="center">
 								<b><?=gettext("Pool Disabled"); ?></b>
-							<p/>
-							<select id="serversDisabledSelect" name="serversdisabled[]" multiple="true" size="5">
-							
+							<br/>
+							<select id="serversDisabledSelect" name="serversdisabled[]" multiple="multiple" size="5">
 <?php
 	if (is_array($pconfig['serversdisabled'])) {
 		foreach($pconfig['serversdisabled'] as $svrent) {
 			if($svrent != '') echo "    <option value=\"{$svrent}\">{$svrent}</option>\n";
 		}
 	}
-	echo "</select>";
 ?>
-							<p/>
+							</select>
 							<input class="formbtn" type="button" name="removeDisabled" value="<?=gettext("Remove"); ?>" onclick="RemoveServerFromPool(document.iform, 'serversdisabled[]');" />
 						</td>
 
 						<td valign="middle">
-							<input class="formbtn" type="button" id="moveToEnabled" name="moveToEnabled" value=">" onclick="moveOptions(document.iform.serversDisabledSelect, document.iform.serversSelect); checkPoolControls();" /><br/>
+							<input class="formbtn" type="button" id="moveToEnabled" name="moveToEnabled" value=">" onclick="moveOptions(document.iform.serversDisabledSelect, document.iform.serversSelect); checkPoolControls();" /><br />
 							<input class="formbtn" type="button" id="moveToDisabled" name="moveToDisabled" value="<" onclick="moveOptions(document.iform.serversSelect, document.iform.serversDisabledSelect); checkPoolControls();" />
 						</td>
 
-						<td>
-							<center>
+						<td align="center">
 								<b><?=gettext("Enabled (default)"); ?></b>
-							<p/>
-							<select id="serversSelect" name="servers[]" multiple="true" size="5">
-							
+							<br/>
+							<select id="serversSelect" name="servers[]" multiple="multiple" size="5">
 <?php
 if (is_array($pconfig['servers'])) {
 	foreach($pconfig['servers'] as $svrent) {
 		echo "    <option value=\"{$svrent}\">{$svrent}</option>\n";
 	}
 }
-echo "</select>";
 ?>
-							<p/>
+							</select>
 							<input class="formbtn" type="button" name="removeEnabled" value="<?=gettext("Remove"); ?>" onclick="RemoveServerFromPool(document.iform, 'servers[]');" />
 						</td>
 					</tr>
@@ -322,17 +330,17 @@ echo "</select>";
 		<tr align="left">
 			<td width="22%" valign="top">&nbsp;</td>
 			<td width="78%">
-				<br/>
-				<input name="Submit" type="submit" class="formbtn" value="<?=gettext("Save"); ?>" onClick="AllServers('serversSelect', true); AllServers('serversDisabledSelect', true);"> 
-				<input type="button" class="formbtn" value="<?=gettext("Cancel"); ?>" onclick="history.back()">
+				<br />
+				<input name="Submit" type="submit" class="formbtn" value="<?=gettext("Save"); ?>" onclick="AllServers('serversSelect', true); AllServers('serversDisabledSelect', true);" /> 
+				<input type="button" class="formbtn" value="<?=gettext("Cancel");?>" onclick="window.location.href='<?=$referer;?>'" />
 				<?php if (isset($id) && $a_pool[$id] && $_GET['act'] != 'dup'): ?>
-				<input name="id" type="hidden" value="<?=htmlspecialchars($id);?>">
+				<input name="id" type="hidden" value="<?=htmlspecialchars($id);?>" />
 				<?php endif; ?>
 			</td>
 		</tr>
 	</table>
 	</form>
-<br>
+<br />
 <?php include("fend.inc"); ?>
 </body>
 </html>

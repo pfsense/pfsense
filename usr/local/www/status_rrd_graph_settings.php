@@ -4,6 +4,7 @@
 	status_rrd_graph.php
 	Part of pfSense
 	Copyright (C) 2007 Seth Mos <seth.mos@dds.nl>
+        Copyright (C) 2013-2014 Electric Sheep Fencing, LP
 	All rights reserved.
 
 	Redistribution and use in source and binary forms, with or without
@@ -56,6 +57,11 @@ $categories = array('system' => gettext("System"),
 		'quality' => gettext("Quality"),
 		'queues' => gettext("Queues"),
 		'captiveportal' => gettext("Captive Portal"));
+
+if(isset($config['ntpd']['statsgraph'])) {
+	$categories['ntpd'] = gettext("NTP");
+}
+
 $styles = array('inverse' => gettext("Inverse"),
 		'absolute' => gettext("Absolute"));
 $periods = array("absolute" => gettext("Absolute Timespans"),
@@ -155,6 +161,10 @@ include("head.inc");
 					if($curcat == "captiveportal") { $tabactive = True; } else { $tabactive = False; }
 						$tab_array[] = array(gettext("Captive Portal"), $tabactive, "status_rrd_graph.php?cat=captiveportal");
 				}
+				if(isset($config['ntpd']['statsgraph'])) {
+					if($curcat == "ntpd") { $tabactive = True; } else { $tabactive = False; }
+				        $tab_array[] = array("NTP", $tabactive, "status_rrd_graph.php?cat=ntpd");
+				}
 				if($curcat == "custom") { $tabactive = True; } else { $tabactive = False; }
 			        $tab_array[] = array(gettext("Custom"), $tabactive, "status_rrd_graph.php?cat=custom");
 				if($curcat == "settings") { $tabactive = True; } else { $tabactive = False; }
@@ -234,7 +244,7 @@ include("head.inc");
 			</tr>
 			<tr>
 				<td width="22%" height="53" valign="top">&nbsp;</td>
-				<td width="78%"><strong><span class="red"><?=gettext("Note:");?></span></strong><br/>
+				<td width="78%"><strong><span class="red"><?=gettext("Note:");?></span></strong><br />
 					<?=gettext("Graphs will not be allowed to be recreated within a 1 minute interval, please " .
 					"take this into account after changing the style.");?>
 				</td>

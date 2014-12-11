@@ -1,34 +1,33 @@
 <?php
 /* $Id$ */
 /*
-    part of pfSense (http://www.pfsense.org/)
+	part of pfSense (https://www.pfsense.org/)
 
 	Copyright (C) 2007 Scott Ullrich <sullrich@gmail.com>
+	Copyright (C) 2007 Bill Marquette <bill.marquette@gmail.com>
+        Copyright (C) 2013-2014 Electric Sheep Fencing, LP
 	All rights reserved.
 
-    Copyright (C) 2007 Bill Marquette <bill.marquette@gmail.com>
-    All rights reserved.
+	Redistribution and use in source and binary forms, with or without
+	modification, are permitted provided that the following conditions are met:
 
-    Redistribution and use in source and binary forms, with or without
-    modification, are permitted provided that the following conditions are met:
+	1. Redistributions of source code must retain the above copyright notice,
+	   this list of conditions and the following disclaimer.
 
-    1. Redistributions of source code must retain the above copyright notice,
-       this list of conditions and the following disclaimer.
+	2. Redistributions in binary form must reproduce the above copyright
+	   notice, this list of conditions and the following disclaimer in the
+	   documentation and/or other materials provided with the distribution.
 
-    2. Redistributions in binary form must reproduce the above copyright
-       notice, this list of conditions and the following disclaimer in the
-       documentation and/or other materials provided with the distribution.
-
-    THIS SOFTWARE IS PROVIDED ``AS IS'' AND ANY EXPRESS OR IMPLIED WARRANTIES,
-    INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY
-    AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE
-    AUTHOR BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY,
-    OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
-    SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
-    INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
-    CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
-    ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
-    POSSIBILITY OF SUCH DAMAGE.
+	THIS SOFTWARE IS PROVIDED ``AS IS'' AND ANY EXPRESS OR IMPLIED WARRANTIES,
+	INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY
+	AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE
+	AUTHOR BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY,
+	OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+	SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+	INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+	CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+	ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+	POSSIBILITY OF SUCH DAMAGE.
 */
 /*
 	pfSense_MODULE:	auth
@@ -107,70 +106,70 @@ include("head.inc");
 	}
 ?>
 
-  <table width="100%" border="0" cellpadding="0" cellspacing="0" summary="user manager settings">
-    <tr>
-      <td class="tabnavtbl">
+	<table width="100%" border="0" cellpadding="0" cellspacing="0" summary="user manager settings">
+		<tr>
+			<td class="tabnavtbl">
 <?php
-    $tab_array = array();
-    $tab_array[] = array(gettext("Users"), false, "system_usermanager.php");
-    $tab_array[] = array(gettext("Groups"), false, "system_groupmanager.php");
-    $tab_array[] = array(gettext("Settings"), true, "system_usermanager_settings.php");
-    $tab_array[] = array(gettext("Servers"), false, "system_authservers.php");
-    display_top_tabs($tab_array);
+				$tab_array = array();
+				$tab_array[] = array(gettext("Users"), false, "system_usermanager.php");
+				$tab_array[] = array(gettext("Groups"), false, "system_groupmanager.php");
+				$tab_array[] = array(gettext("Settings"), true, "system_usermanager_settings.php");
+				$tab_array[] = array(gettext("Servers"), false, "system_authservers.php");
+				display_top_tabs($tab_array);
 
-/* Default to pfsense backend type if none is defined */
-if(!$pconfig['backend'])
-	$pconfig['backend'] = "pfsense";
-
+				/* Default to pfsense backend type if none is defined */
+				if(!$pconfig['backend'])
+					$pconfig['backend'] = "pfsense";
 ?>
-      </td>
-    </tr>
-    <tr>
-       <td>
-            <div id="mainarea">
-            <form id="iform" name="iform" action="system_usermanager_settings.php" method="post">
-              <table class="tabcont" width="100%" border="0" cellspacing="0" cellpadding="6" summary="main area">
-		<tr>
-                        <td width="22%" valign="top" class="vncell"><?=gettext("Session Timeout"); ?></td>
-                        <td width="78%" class="vtable">
-				<input name="session_timeout" id="session_timeout" type="text" size="8" value="<?=htmlspecialchars($pconfig['session_timeout']);?>" />
-                          	<br />
-				<?=gettext("Time in minutes to expire idle management sessions. The default is 4 hours (240 minutes).");?><br/>
-				<?=gettext("Enter 0 to never expire sessions. NOTE: This is a security risk!");?><br />
 			</td>
 		</tr>
 		<tr>
-                        <td width="22%" valign="top" class="vncell"><?=gettext("Authentication Server"); ?></td>
-                        <td width="78%" class="vtable">
-				<select name='authmode' id='authmode' class="formselect" >
-                                        <?php
-						$auth_servers = auth_get_authserver_list();
-                                        	foreach ($auth_servers as $auth_server):
-                                                	$selected = "";
-                                                        if ($auth_server['name'] == $pconfig['authmode'])
-                                                        	$selected = "selected=\"selected\"";
-							if (!isset($pconfig['authmode']) && $auth_server['name'] == "Local Database")
-								$selected = "selected=\"selected\"";
-
-                                        ?>
-                                        <option value="<?=$auth_server['name'];?>" <?=$selected;?>><?=$auth_server['name'];?></option>
-                                        <?php   endforeach; ?>
-                                </select>
+			<td>
+				<div id="mainarea">
+					<form id="iform" name="iform" action="system_usermanager_settings.php" method="post">
+						<table class="tabcont" width="100%" border="0" cellspacing="0" cellpadding="6" summary="main area">
+							<tr>
+								<td width="22%" valign="top" class="vncell"><?=gettext("Session Timeout"); ?></td>
+								<td width="78%" class="vtable">
+									<input name="session_timeout" id="session_timeout" type="text" size="8" value="<?=htmlspecialchars($pconfig['session_timeout']);?>" />
+									<br />
+									<?=gettext("Time in minutes to expire idle management sessions. The default is 4 hours (240 minutes).");?><br />
+									<?=gettext("Enter 0 to never expire sessions. NOTE: This is a security risk!");?><br />
+								</td>
+							</tr>
+							<tr>
+								<td width="22%" valign="top" class="vncell"><?=gettext("Authentication Server"); ?></td>
+								<td width="78%" class="vtable">
+									<select name='authmode' id='authmode' class="formselect" >
+<?php
+									$auth_servers = auth_get_authserver_list();
+									foreach ($auth_servers as $auth_server):
+										$selected = "";
+										if ($auth_server['name'] == $pconfig['authmode'])
+											$selected = "selected=\"selected\"";
+										if (!isset($pconfig['authmode']) && $auth_server['name'] == "Local Database")
+											$selected = "selected=\"selected\"";
+?>
+										<option value="<?=$auth_server['name'];?>" <?=$selected;?>><?=$auth_server['name'];?></option>
+<?php
+									endforeach;
+?>
+									</select>
+								</td>
+							</tr>
+							<tr>
+								<td width="22%" valign="top">&nbsp;</td>
+								<td width="78%">
+									<input id="save" name="save" type="submit" class="formbtn" value="<?=gettext("Save");?>" />
+									<input id="savetest" name="savetest" type="submit" class="formbtn" value="<?=gettext("Save and Test");?>" />
+								</td>
+							</tr>
+						</table>
+					</form>
+				</div>
 			</td>
 		</tr>
-		<tr>
-			<td width="22%" valign="top">&nbsp;</td>
-			<td width="78%">
-				<input id="save" name="save" type="submit" class="formbtn" value="<?=gettext("Save");?>" />
-				<input id="savetest" name="savetest" type="submit" class="formbtn" value="<?=gettext("Save and Test");?>" />
-			</td>
-               	</tr>
-              </table>
-            </form>
-            </div>
-      </td>
-    </tr>
-  </table>
+	</table>
 <?php include("fend.inc");?>
 </body>
 </html>

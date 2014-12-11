@@ -1,8 +1,10 @@
 <?php
 /*
         $Id: interface_statistics.widget.php
+        Copyright (C) 2013-2014 Electric Sheep Fencing, LP
+
         Copyright 2007 Scott Dale
-        Part of pfSense widgets (www.pfsense.com)
+        Part of pfSense widgets (https://www.pfsense.org)
         originally based on m0n0wall (http://m0n0.ch/wall)
 
         Copyright (C) 2004-2005 T. Lechat <dev@lechat.org>, Manuel Kasper <mk@neon1.net>
@@ -80,7 +82,6 @@ require_once("/usr/local/www/widgets/include/interface_statistics.inc");
 
 
 		?>
-		<div style="padding: 5px">
               <div id="int_labels" style="float:left;width:32%">
 				<table width="100%" border="0" cellspacing="0" cellpadding="0" summary="interfaces statistics">
 					<tr><td class="widgetsubheader" style="height:25px">&nbsp;&nbsp;&nbsp;</td></tr>
@@ -211,4 +212,3 @@ require_once("/usr/local/www/widgets/include/interface_statistics.inc");
 						</tr>
 	             </table>
 			</div>
-	</div>

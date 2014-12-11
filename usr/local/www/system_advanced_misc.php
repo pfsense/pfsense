@@ -4,8 +4,8 @@
 	system_advanced_misc.php
 	part of pfSense
 	Copyright (C) 2005-2007 Scott Ullrich
-
 	Copyright (C) 2008 Shrew Soft Inc
+        Copyright (C) 2013-2014 Electric Sheep Fencing, LP
 
 	originally part of m0n0wall (http://m0n0.ch/wall)
 	Copyright (C) 2003-2004 Manuel Kasper <mk@neon1.net>.
@@ -40,14 +40,13 @@
 ##|*IDENT=page-system-advanced-misc
 ##|*NAME=System: Advanced: Miscellaneous page
 ##|*DESCR=Allow access to the 'System: Advanced: Miscellaneous' page.
-##|*MATCH=system_advanced.php*
+##|*MATCH=system_advanced_misc.php*
 ##|-PRIV
 
 require("guiconfig.inc");
 require_once("functions.inc");
 require_once("filter.inc");
 require_once("shaper.inc");
-require_once("ipsec.inc");
 require_once("vpn.inc");
 require_once("vslb.inc");
 
@@ -59,20 +58,17 @@ $pconfig['harddiskstandby'] = $config['system']['harddiskstandby'];
 $pconfig['lb_use_sticky'] = isset($config['system']['lb_use_sticky']);
 $pconfig['srctrack'] = $config['system']['srctrack'];
 $pconfig['gw_switch_default'] = isset($config['system']['gw_switch_default']);
-$pconfig['preferoldsa_enable'] = isset($config['ipsec']['preferoldsa']);
-$pconfig['racoondebug_enable'] = isset($config['ipsec']['racoondebug']);
-$pconfig['failoverforcereload'] = isset($config['ipsec']['failoverforcereload']);
-$pconfig['maxmss_enable'] = isset($config['system']['maxmss_enable']);
-$pconfig['maxmss'] = $config['system']['maxmss'];
 $pconfig['powerd_enable'] = isset($config['system']['powerd_enable']);
 $pconfig['crypto_hardware'] = $config['system']['crypto_hardware'];
 $pconfig['thermal_hardware'] = $config['system']['thermal_hardware'];
 $pconfig['schedule_states'] = isset($config['system']['schedule_states']);
 $pconfig['kill_states'] = isset($config['system']['kill_states']);
 $pconfig['skip_rules_gw_down'] = isset($config['system']['skip_rules_gw_down']);
+$pconfig['apinger_debug'] = isset($config['system']['apinger_debug']);
 $pconfig['use_mfs_tmpvar'] = isset($config['system']['use_mfs_tmpvar']);
 $pconfig['use_mfs_tmp_size'] = $config['system']['use_mfs_tmp_size'];
 $pconfig['use_mfs_var_size'] = $config['system']['use_mfs_var_size'];
+$pconfig['pkg_nochecksig'] = isset($config['system']['pkg_nochecksig']);
 
 $pconfig['powerd_ac_mode'] = "hadp";
 if (!empty($config['system']['powerd_ac_mode']))
@@ -81,6 +77,10 @@ if (!empty($config['system']['powerd_ac_mode']))
 $pconfig['powerd_battery_mode'] = "hadp";
 if (!empty($config['system']['powerd_battery_mode']))
 	$pconfig['powerd_battery_mode'] = $config['system']['powerd_battery_mode'];
+
+$pconfig['powerd_normal_mode'] = "hadp";
+if (!empty($config['system']['powerd_normal_mode']))
+	$pconfig['powerd_normal_mode'] = $config['system']['powerd_normal_mode'];
 
 $crypto_modules = array('glxsb' => gettext("AMD Geode LX Security Block"),
 			'aesni' => gettext("AES-NI CPU-based Acceleration"));
@@ -155,36 +155,10 @@ if ($_POST) {
 		else
 			unset($config['system']['gw_switch_default']);
 
-		if($_POST['preferoldsa_enable'] == "yes")
-			$config['ipsec']['preferoldsa'] = true;
-		elseif (isset($config['ipsec']['preferoldsa']))
-			unset($config['ipsec']['preferoldsa']);
-
-		if($_POST['failoverforcereload'] == "yes")
-			$config['ipsec']['failoverforcereload'] = true;
-		elseif (isset($config['ipsec']['failoverforcereload']))
-			unset($config['ipsec']['failoverforcereload']);
-
-		$need_racoon_restart = false;
-		if($_POST['racoondebug_enable'] == "yes") {
-			if (!isset($config['ipsec']['racoondebug'])) {
-				$config['ipsec']['racoondebug'] = true;
-				$need_racoon_restart = true;
-			}
-		} else {
-			if (isset($config['ipsec']['racoondebug'])) {
-				unset($config['ipsec']['racoondebug']);
-				$need_racoon_restart = true;
-			}
-		}
-
-		if($_POST['maxmss_enable'] == "yes") {
-			$config['system']['maxmss_enable'] = true;
-			$config['system']['maxmss'] = $_POST['maxmss'];
-		} else {
-			unset($config['system']['maxmss_enable']);
-			unset($config['system']['maxmss']);
-		}
+		if($_POST['pkg_nochecksig'] == "yes")
+			$config['system']['pkg_nochecksig'] = true;
+		elseif (isset($config['system']['pkg_nochecksig']))
+			unset($config['system']['pkg_nochecksig']);
 
 		if($_POST['powerd_enable'] == "yes")
 			$config['system']['powerd_enable'] = true;
@@ -193,6 +167,7 @@ if ($_POST) {
 
 		$config['system']['powerd_ac_mode'] = $_POST['powerd_ac_mode'];
 		$config['system']['powerd_battery_mode'] = $_POST['powerd_battery_mode'];
+		$config['system']['powerd_normal_mode'] = $_POST['powerd_normal_mode'];
 
 		if($_POST['crypto_hardware'])
 			$config['system']['crypto_hardware'] = $_POST['crypto_hardware'];
@@ -218,6 +193,17 @@ if ($_POST) {
 			$config['system']['skip_rules_gw_down'] = true;
 		else
 			unset($config['system']['skip_rules_gw_down']);
+
+		$need_apinger_restart = false;
+		if($_POST['apinger_debug'] == "yes") {
+			if (!isset($config['system']['apinger_debug']))
+				$need_apinger_restart = true;
+			$config['system']['apinger_debug'] = true;
+		} else {
+			if (isset($config['system']['apinger_debug']))
+				$need_apinger_restart = true;
+			unset($config['system']['apinger_debug']);
+		}
 
 		if($_POST['use_mfs_tmpvar'] == "yes")
 			$config['system']['use_mfs_tmpvar'] = true;
@@ -249,11 +235,10 @@ if ($_POST) {
 		activate_powerd();
 		load_crypto();
 		load_thermal_hardware();
-		vpn_ipsec_configure_preferoldsa();
-		if ($need_racoon_restart)
-			vpn_ipsec_force_reload();
 		if ($need_relayd_restart)
 			relayd_configure();
+		if ($need_apinger_restart)
+			setup_gateways_monitor();
 	}
 }
 
@@ -277,12 +262,6 @@ function sticky_checked(obj) {
 		jQuery('#srctrack').attr('disabled',false);
 	else
 		jQuery('#srctrack').attr('disabled','true');
-}
-function maxmss_checked(obj) {
-	if (obj.checked)
-		jQuery('#maxmss').attr('disabled',false);
-	else
-		jQuery('#maxmss').attr('disabled','true');
 }
 function tmpvar_checked(obj) {
 	if (obj.checked) {
@@ -323,9 +302,9 @@ function tmpvar_checked(obj) {
 								<strong><?=gettext("NOTE:"); ?>&nbsp;</strong>
 							</span>
 							<?=gettext("The options on this page are intended for use by advanced users only."); ?>
-							<br/>
+							<br />
 						</span>
-						<br/>
+						<br />
 						<table width="100%" border="0" cellpadding="6" cellspacing="0" summary="main area">
 							<tr>
 								<td colspan="2" valign="top" class="listtopic"><?=gettext("Proxy support"); ?></td>
@@ -335,7 +314,7 @@ function tmpvar_checked(obj) {
 								<td width="78%" class="vtable">
 									<input name="proxyurl" id="proxyurl" value="<?php if ($pconfig['proxyurl'] <> "") echo $pconfig['proxyurl']; ?>" class="formfld unknown" />
 									<br />
-									<?php printf(gettext("Proxy url for allowing %s to use this proxy to connect outside."),$g['product']); ?>
+									<?php printf(gettext("Hostname or IP address of proxy server this system will use for its outbound Internet access.")); ?>
 								</td>
 							</tr>
 							<tr>
@@ -343,7 +322,7 @@ function tmpvar_checked(obj) {
 								<td width="78%" class="vtable">
 									<input name="proxyport" id="proxyport" value="<?php if ($pconfig['proxyport'] <> "") echo $pconfig['proxyport']; ?>" class="formfld unknown" />
 									<br />
-									<?php printf(gettext("Proxy port to use when %s connects to the proxy URL configured above. Default is 8080 for http protocol or 443 for ssl."),$g['product']); ?>
+									<?php printf(gettext("Port where proxy server is listening.")); ?>
 								</td>
 							</tr>
 							<tr>
@@ -351,15 +330,15 @@ function tmpvar_checked(obj) {
 								<td width="78%" class="vtable">
 									<input name="proxyuser" id="proxyuser" value="<?php if ($pconfig['proxyuser'] <> "") echo $pconfig['proxyuser']; ?>" class="formfld unknown" />
 									<br />
-									<?php printf(gettext("Proxy username for allowing %s to use this proxy to connect outside"),$g['product']); ?>
+									<?php printf(gettext("Username for authentication to proxy server. Optional, leave blank to not use authentication.")); ?>
 								</td>
 							</tr>
 							<tr>
-								<td width="22%" valign="top" class="vncell"><?=gettext("Proxy Pass"); ?></td>
+								<td width="22%" valign="top" class="vncell"><?=gettext("Proxy Password"); ?></td>
 								<td width="78%" class="vtable">
 									<input type="password" name="proxypass" id="proxypass" value="<?php if ($pconfig['proxypass'] <> "") echo $pconfig['proxypass']; ?>" class="formfld unknown" />
 									<br />
-									<?php printf(gettext("Proxy password for allowing %s to use this proxy to connect outside"),$g['product']); ?>
+									<?php printf(gettext("Password for authentication to proxy server.")); ?>
 								</td>
 							</tr>
 							<tr>
@@ -369,7 +348,7 @@ function tmpvar_checked(obj) {
 								<td width="22%" valign="top" class="vncell"><?=gettext("Load Balancing"); ?></td>
 								<td width="78%" class="vtable">
 									<input name="lb_use_sticky" type="checkbox" id="lb_use_sticky" value="yes" <?php if ($pconfig['lb_use_sticky']) echo "checked=\"checked\""; ?> onclick="sticky_checked(this)" />
-									<strong><?=gettext("Use sticky connections"); ?></strong><br/>
+									<strong><?=gettext("Use sticky connections"); ?></strong><br />
 									<?=gettext("Successive connections will be redirected to the servers " .
 									"in a round-robin manner with connections from the same " .
 									"source being sent to the same web server. This 'sticky " .
@@ -390,9 +369,9 @@ function tmpvar_checked(obj) {
 								<td width="22%" valign="top" class="vncell"><?=gettext("Load Balancing"); ?></td>
 								<td width="78%" class="vtable">
 									<input name="gw_switch_default" type="checkbox" id="gw_switch_default" value="yes" <?php if ($pconfig['gw_switch_default']) echo "checked=\"checked\""; ?> />
-									<strong><?=gettext("Allow default gateway switching"); ?></strong><br/>
-									<?=gettext("If the link where the default gateway resides fails " .
-									"switch the default gateway to another available one."); ?>
+									<strong><?=gettext("Enable default gateway switching"); ?></strong><br />
+									<?=gettext("If the default gateway goes down, " .
+									"switch the default gateway to another available one. This is not enabled by default, as it's unnecessary in most all scenarios, which instead use gateway groups."); ?>
 								</td>
 							</tr>
 							<tr>
@@ -405,8 +384,8 @@ function tmpvar_checked(obj) {
 								<td width="22%" valign="top" class="vncell"><?=gettext("PowerD"); ?></td>
 								<td width="78%" class="vtable">
 									<input name="powerd_enable" type="checkbox" id="powerd_enable" value="yes" <?php if ($pconfig['powerd_enable']) echo "checked=\"checked\""; ?> />
-									<strong><?=gettext("Use PowerD"); ?></strong><br/>
-									<br/>
+									<strong><?=gettext("Use PowerD"); ?></strong><br />
+									<br />
 									<?=gettext("On AC Power Mode"); ?>&nbsp;:&nbsp;
 									<select name="powerd_ac_mode" id="powerd_ac_mode">
 										<option value="hadp"<?php if($pconfig['powerd_ac_mode']=="hadp") echo " selected=\"selected\""; ?>><?=gettext("Hiadaptive");?></option>
@@ -422,7 +401,15 @@ function tmpvar_checked(obj) {
 										<option value="min"<?php if($pconfig['powerd_battery_mode']=="min") echo " selected=\"selected\""; ?>><?=gettext("Minimum");?></option>
 										<option value="max"<?php if($pconfig['powerd_battery_mode']=="max") echo " selected=\"selected\""; ?>><?=gettext("Maximum");?></option>
 									</select>
-									<br/><br/>
+									<br />
+									<?=gettext("On Unknown Power Mode"); ?>&nbsp;:&nbsp;
+									<select name="powerd_normal_mode" id="powerd_normal_mode">
+										<option value="hadp"<?php if($pconfig['powerd_normal_mode']=="hadp") echo " selected=\"selected\""; ?>><?=gettext("Hiadaptive");?></option>
+										<option value="adp"<?php if($pconfig['powerd_normal_mode']=="adp") echo " selected=\"selected\""; ?>><?=gettext("Adaptive");?></option>
+										<option value="min"<?php if($pconfig['powerd_normal_mode']=="min") echo " selected=\"selected\""; ?>><?=gettext("Minimum");?></option>
+										<option value="max"<?php if($pconfig['powerd_normal_mode']=="max") echo " selected=\"selected\""; ?>><?=gettext("Maximum");?></option>
+									</select>
+									<br /><br />
 									<?=gettext("The powerd utility monitors the system state and sets various power control " .
 									"options accordingly.  It offers four modes (maximum, minimum, adaptive " .
 									"and hiadaptive) that can be individually selected while on AC power or batteries. " .
@@ -461,7 +448,7 @@ function tmpvar_checked(obj) {
 										"for IPsec when using a cipher supported by your chip, such as AES-128. OpenVPN " .
 										"should be set for AES-128-CBC and have cryptodev enabled for hardware " .
 										"acceleration."); ?>
-									<br/><br/>
+									<br /><br />
 									<?=gettext("If you do not have a crypto chip in your system, this option will have no " .
 									"effect. To unload the selected module, set this option to 'none' and then reboot."); ?>
 								</td>
@@ -485,7 +472,7 @@ function tmpvar_checked(obj) {
 								<?=gettext("If you have a supported CPU, selecting a themal sensor will load the appropriate " .
 										"driver to read its temperature. Setting this to 'None' will attempt to read the " .
 										"temperature from an ACPI-compliant motherboard sensor instead, if one is present."); ?>
-								<br/><br/>
+								<br /><br />
 								<?=gettext("If you do not have a supported thermal sensor chip in your system, this option will have no " .
 									"effect. To unload the selected module, set this option to 'none' and then reboot."); ?>
 								</td>
@@ -497,49 +484,9 @@ function tmpvar_checked(obj) {
 								<td colspan="2" valign="top" class="listtopic"><?=gettext("IP Security"); ?></td>
 							</tr>
 							<tr>
-								<td width="22%" valign="top" class="vncell"><?=gettext("Security Associations"); ?></td>
+								<td width="22%" valign="top" class="vncell">&nbsp;</td>
 								<td width="78%" class="vtable">
-									<input name="preferoldsa_enable" type="checkbox" id="preferoldsa_enable" value="yes" <?php if ($pconfig['preferoldsa_enable']) echo "checked=\"checked\""; ?> />
-									<strong><?=gettext("Prefer older IPsec SAs"); ?></strong>
-									<br />
-									<?=gettext("By default, if several SAs match, the newest one is " .
-									"preferred if it's at least 30 seconds old. Select this " .
-									"option to always prefer old SAs over new ones."); ?>
-								</td>
-							</tr>
-							<tr>
-								<td width="22%" valign="top" class="vncell"><?=gettext("IPsec Debug"); ?></td>
-								<td width="78%" class="vtable">
-									<input name="racoondebug_enable" type="checkbox" id="racoondebug_enable" value="yes" <?php if ($pconfig['racoondebug_enable']) echo "checked=\"checked\""; ?> />
-									<strong><?=gettext("Start racoon in debug mode"); ?></strong>
-									<br />
-									<?=gettext("Launches racoon in debug mode so that more verbose logs " .
-									"will be generated to aid in troubleshooting."); ?><br/>
-									<?=gettext("NOTE: Changing this setting will restart racoon."); ?>
-								</td>
-							</tr>
-							<tr>
-								<td width="22%" valign="top" class="vncell"><?=gettext("IPsec Reload on Failover"); ?></td>
-								<td width="78%" class="vtable">
-									<input name="failoverforcereload" type="checkbox" id="failoverforcereload" value="yes" <?php if ($pconfig['failoverforcereload']) echo "checked=\"checked\""; ?> />
-									<strong><?=gettext("Force IPsec Reload on Failover"); ?></strong>
-									<br />
-									<?=gettext("In some circumstances using a gateway group as the interface for " .
-									"an IPsec tunnel does not function properly, and IPsec must be forcefully reloaded " .
-									"when a failover occurs. Because this will disrupt all IPsec tunnels, this behavior" .
-									" is disabled by default. Check this box to force IPsec to fully reload on failover."); ?>
-								</td>
-							</tr>
-							<tr>
-								<td width="22%" valign="top" class="vncell"><?=gettext("Maximum MSS"); ?></td>
-								<td width="78%" class="vtable">
-									<input name="maxmss_enable" type="checkbox" id="maxmss_enable" value="yes" <?php if ($pconfig['maxmss_enable'] == true) echo "checked=\"checked\""; ?> onclick="maxmss_checked(this)" />
-									<strong><?=gettext("Enable MSS clamping on VPN traffic"); ?></strong>
-									<br />
-									<input name="maxmss" id="maxmss" value="<?php if ($pconfig['maxmss'] <> "") echo $pconfig['maxmss']; else "1400"; ?>" class="formfld unknown" <?php if ($pconfig['maxmss_enable'] == false) echo "disabled=\"disabled\""; ?> />
-									<br />
-									<?=gettext("Enable MSS clamping on TCP flows over VPN. " .
-									"This helps overcome problems with PMTUD on IPsec VPN links. If left blank, the default value is 1400 bytes. "); ?>
+									<?=gettext("These settings have moved to <a href=\"vpn_ipsec_settings.php\">VPN &gt; IPsec on the Advanced Settings tab</a>."); ?>
 								</td>
 							</tr>
 							<tr>
@@ -553,7 +500,7 @@ function tmpvar_checked(obj) {
 								<td width="78%" class="vtable">
 									<input name="schedule_states" type="checkbox" id="schedule_states" value="yes" <?php if ($pconfig['schedule_states']) echo "checked=\"checked\""; ?> />
 									<br />
-									<?=gettext("By default schedules clear the states of existing connections when the expiration time has come. ".
+									<?=gettext("By default, when a schedule expires, connections permitted by that schedule are killed. ".
 									"This option overrides that behavior by not clearing states for existing connections."); ?>
 								</td>
 							</tr>
@@ -576,9 +523,17 @@ function tmpvar_checked(obj) {
 								<td width="78%" class="vtable">
 									<input name="skip_rules_gw_down" type="checkbox" id="skip_rules_gw_down" value="yes" <?php if ($pconfig['skip_rules_gw_down']) echo "checked=\"checked\""; ?> />
 									<br />
-									<?=gettext("By default, when a rule has a specific gateway set, and this gateway is down, ".
-									"rule is created and traffic is sent to default gateway.This option overrides that behavior ".
-									"and the rule is not created when gateway is down"); ?>
+									<?=gettext("By default, when a rule has a gateway specified and this gateway is down, ".
+									"the rule is created omitting the gateway. This option overrides that behavior by omitting ".
+									"the entire rule instead."); ?>
+								</td>
+							</tr>
+							<tr>
+								<td width="22%" valign="top" class="vncell"><?=gettext("Enable gateway monitoring debug logging"); ?></td>
+								<td width="78%" class="vtable">
+									<input name="apinger_debug" type="checkbox" id="apinger_debug" value="yes" <?php if ($pconfig['apinger_debug']) echo "checked=\"checked\""; ?> />
+									<br />
+									<?=gettext("Enable this setting to log debug information from the gateway monitoring process to the system logs."); ?>
 								</td>
 							</tr>
 							<tr>
@@ -589,7 +544,7 @@ function tmpvar_checked(obj) {
 								<td width="22%" valign="top" class="vncell"><?=gettext("Use RAM Disks"); ?></td>
 								<td width="78%" class="vtable">
 									<input name="use_mfs_tmpvar" type="checkbox" id="use_mfs_tmpvar" value="yes" <?php if ($pconfig['use_mfs_tmpvar']) echo "checked=\"checked\""; ?> onclick="tmpvar_checked(this)" />
-									<strong><?=gettext("Use memory file system for /tmp and /var"); ?></strong><br/>
+									<strong><?=gettext("Use memory file system for /tmp and /var"); ?></strong><br />
 									<?=gettext("Set this if you wish to use /tmp and /var as RAM disks (memory file system disks) on a full install " .
 									"rather than use the hard disk. Setting this will cause the data in /tmp and /var to be lost at reboot, including log data. RRD and DHCP Leases will be retained."); ?>
 								</td>
@@ -623,10 +578,10 @@ function tmpvar_checked(obj) {
 										<option value='<?= $x ?>' <?php if ($config['system']['rrdbackup'] == $x) echo "selected='selected'"; ?>><?= $x ?> <?=gettext("hour"); ?><?php if ($x>1) echo "s"; ?></option>
 									<?php } ?>
 									</select>
-									<br/>
+									<br />
 									<?=gettext("This will periodically backup the RRD data so it can be restored automatically on the next boot. Keep in mind that the more frequent the backup, the more writes will happen to your media.");?>
-									<br/>
-									<br/>
+									<br />
+									<br />
 								</td>
 							</tr>
 							<tr>
@@ -639,10 +594,10 @@ function tmpvar_checked(obj) {
 										<option value='<?= $x ?>' <?php if ($config['system']['dhcpbackup'] == $x) echo "selected='selected'"; ?>><?= $x ?> <?=gettext("hour"); ?><?php if ($x>1) echo "s"; ?></option>
 									<?php } ?>
 									</select>
-									<br/>
+									<br />
 									<?=gettext("This will periodically backup the DHCP leases data so it can be restored automatically on the next boot. Keep in mind that the more frequent the backup, the more writes will happen to your media.");?>
-									<br/>
-									<br/>
+									<br />
+									<br />
 								</td>
 							</tr>
 							<tr>
@@ -668,7 +623,7 @@ function tmpvar_checked(obj) {
 										<option value="<?=$val;?>" <?php if($pconfig['harddiskstandby'] == $val) echo('selected="selected"');?>><?=$min;?> <?=gettext("minutes"); ?></option>
 										<?php endforeach; ?>
 									</select>
-									<br/>
+									<br />
 									<?=gettext("Puts the hard disk into standby mode when the selected amount of time after the last ".
 									"access has elapsed."); ?> <em><?=gettext("Do not set this for CF cards."); ?></em>
 								</td>
@@ -677,6 +632,18 @@ function tmpvar_checked(obj) {
 								<td colspan="2" class="list" height="12">&nbsp;</td>
 							</tr>
 							<?php endif; ?>
+
+							<tr>
+								<td colspan="2" valign="top" class="listtopic"><?=gettext("Package settings"); ?></td>
+							</tr>
+							<tr>
+								<td width="22%" valign="top" class="vncell"><?=gettext("Package signature"); ?></td>
+								<td width="78%" class="vtable">
+									<input name="pkg_nochecksig" type="checkbox" id="pkg_nochecksig" value="yes" <?php if ($pconfig['pkg_nochecksig']) echo "checked=\"checked\""; ?> />
+									<strong><?=gettext("Do NOT check package signature"); ?></strong><br />
+									<?=gettext("Enable this option to allow pfSense to install any package without checking its signature."); ?>
+								</td>
+							</tr>
 
 							<tr>
 								<td width="22%" valign="top">&nbsp;</td>

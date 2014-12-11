@@ -94,39 +94,39 @@ function Fadomatic (element, rate, initialOpacity, minOpacity, maxOpacity) {
 Fadomatic.prototype.fadeOut = function () {
   this._isFadeOut = true;
   this._beginFade();
-}
+};
 
 // Initiates a fade in
 Fadomatic.prototype.fadeIn = function () {
   this._isFadeOut = false;
   this._beginFade();
-}
+};
 
 // Makes the element completely opaque, stops any fade in progress
 Fadomatic.prototype.show = function () {
   this.haltFade();
   this._opacity = this._maxOpacity;
   this._updateOpacity();
-}
+};
 
 // Makes the element completely transparent, stops any fade in progress
 Fadomatic.prototype.hide = function () {
   this.haltFade();
   this._opacity = 0;
   this._updateOpacity();
-}
+};
 
 // Halts any fade in progress
 Fadomatic.prototype.haltFade = function () {
 
   clearInterval(this._intervalId);
-}
+};
 
 // Resumes a fade where it was halted
 Fadomatic.prototype.resumeFade = function () {
 
   this._beginFade();
-}
+};
 
 // Pseudo-private members
 
@@ -135,7 +135,7 @@ Fadomatic.prototype._beginFade = function () {
   this.haltFade();
   var objref = this;
   this._intervalId = setInterval(function() { objref._tickFade(); },Fadomatic.INTERVAL_MILLIS);
-}
+};
 
 Fadomatic.prototype._tickFade = function () {
 
@@ -154,7 +154,7 @@ Fadomatic.prototype._tickFade = function () {
   }
 
   this._updateOpacity();
-}
+};
 
 Fadomatic.prototype._updateVisibility = function () {
   
@@ -163,18 +163,18 @@ Fadomatic.prototype._updateVisibility = function () {
   } else {
     this._element.style.visibility = 'hidden';
   }
-}
+};
 
 Fadomatic.prototype._updateOpacityW3c = function () {
   
   this._element.style.opacity = this._opacity/100;
   this._updateVisibility();
-}
+};
 
 Fadomatic.prototype._updateOpacityMSIE = function () {
   
   this._element.filters.alpha.opacity = this._opacity;
   this._updateVisibility();
-}
+};
 
 Fadomatic.prototype._updateOpacity = null;

@@ -26,6 +26,8 @@
 rc.* text
 *.sql text
 *.mk text
+*.po text
+*.pot text
 
 # Files that will always have CRLF line endings on checkout. (Not sure we have any of these)
 # *.dos text eol=crlf

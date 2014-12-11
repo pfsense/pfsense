@@ -12,19 +12,19 @@
 		<url>/pkg_edit.php?xml=miniupnpd.xml&amp;id=0</url>
 	</menu>
 	<additional_files_needed>
-		<item>http://www.pfsense.org/packages/config/miniupnpd/miniupnpd.inc</item>
+		<item>https://packages.pfsense.org/packages/config/miniupnpd/miniupnpd.inc</item>
 	    <prefix>/usr/local/pkg/</prefix>
 	    <chmod>0755</chmod>
 	</additional_files_needed>
 	<additional_files_needed>
-		<item>http://www.pfsense.org/packages/config/miniupnpd/status_upnp.php</item>
+		<item>https://packages.pfsense.org/packages/config/miniupnpd/status_upnp.php</item>
 	    <prefix>/usr/local/www/</prefix>
 	    <chmod>0755</chmod>
 	</additional_files_needed>
 	<additional_files_needed>
 		<prefix>/usr/local/sbin/</prefix>
 		<chmod>0755</chmod>
-		<item>http://www.pfsense.com/packages/config/miniupnpd/sbin/miniupnpd</item>
+		<item>https://packages.pfsense.org/packages/config/miniupnpd/sbin/miniupnpd</item>
 	</additional_files_needed>
 	<service>
 		<name>miniupnpd</name>
@@ -118,7 +118,7 @@
 		<field>
 			<fielddescr>User specified permissions 1</fielddescr>
 			<fieldname>permuser1</fieldname>
-			<description>Format: [allow or deny] [ext port or range] [int ipaddr or ipaddr/cdir] [int port or range]
+			<description>Format: [allow or deny] [ext port or range] [int ipaddr or ipaddr/CIDR] [int port or range]
 			&lt;br /&gt;Example: allow 1024-65535 192.168.0.0/24 1024-65535</description>
 			<type>input</type>
 			<size>60</size>
@@ -126,30 +126,30 @@
 		<field>
 			<fielddescr>User specified permissions 2</fielddescr>
 			<fieldname>permuser2</fieldname>
-			<description>Format: [allow or deny] [ext port or range] [int ipaddr or ipaddr/cdir] [int port or range]</description>
+			<description>Format: [allow or deny] [ext port or range] [int ipaddr or ipaddr/CIDR] [int port or range]</description>
 			<type>input</type>
 			<size>60</size>
 		</field>
 		<field>
 			<fielddescr>User specified permissions 3</fielddescr>
 			<fieldname>permuser3</fieldname>
-			<description>Format: [allow or deny] [ext port or range] [int ipaddr or ipaddr/cdir] [int port or range]</description>
+			<description>Format: [allow or deny] [ext port or range] [int ipaddr or ipaddr/CIDR] [int port or range]</description>
 			<type>input</type>
 			<size>60</size>
 		</field>
 		<field>
 			<fielddescr>User specified permissions 4</fielddescr>
 			<fieldname>permuser4</fieldname>
-			<description>Format: [allow or deny] [ext port or range] [int ipaddr or ipaddr/cdir] [int port or range]</description>
+			<description>Format: [allow or deny] [ext port or range] [int ipaddr or ipaddr/CIDR] [int port or range]</description>
 			<type>input</type>
 			<size>60</size>
 		</field>	
 	</fields>
 	<custom_php_command_before_form>
-		before_form_miniupnpd(&amp;$pkg);
+		before_form_miniupnpd($pkg);
 	</custom_php_command_before_form>
 	<custom_php_validation_command>
-		validate_form_miniupnpd($_POST, &amp;$input_errors);
+		validate_form_miniupnpd($_POST, $input_errors);
 	</custom_php_validation_command>
 	<custom_php_resync_config_command>
 		sync_package_miniupnpd();

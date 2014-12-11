@@ -29,12 +29,18 @@
 	ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 	POSSIBILITY OF SUCH DAMAGE.
 
-	pfSense_BUILDER_BINARIES:	/usr/local/sbin/setkey
+	pfSense_BUILDER_BINARIES:	/sbin/setkey
 	pfSense_MODULE:	ipsec
 
 */
 
 /* IPsec defines */
+$ipsec_loglevels = array("dmn" => "Daemon", "mgr" => "SA Manager", "ike" => "IKE SA", "chd" => "IKE Child SA",
+	"job" => "Job Processing", "cfg" => "Configuration backend", "knl" => "Kernel Interface",
+	"net" => "Networking", "asn" => "ASN encoding", "enc" => "Message encoding",
+	"imc" => "Integrity checker", "imv" => "Integrity Verifier", "pts" => "Platform Trust Service",
+	"tls" => "TLS handler", "esp" => "IPsec traffic", "lib" => "StrongSwan Lib");
+
 $my_identifier_list = array(
 	'myaddress' => array( 'desc' => gettext('My IP address'), 'mobile' => true ),
 	'address' => array( 'desc' => gettext('IP address'), 'mobile' => true ),
@@ -54,14 +60,17 @@ $peer_identifier_list = array(
 
 $p1_ealgos = array(
 	'aes' => array( 'name' => 'AES', 'keysel' => array( 'lo' => 128, 'hi' => 256, 'step' => 64 ) ),
-	'blowfish' => array( 'name' => 'Blowfish', 'keysel' => array( 'lo' => 128, 'hi' => 256, 'step' => 8 ) ),
+	'blowfish' => array( 'name' => 'Blowfish', 'keysel' => array( 'lo' => 128, 'hi' => 256, 'step' => 64 ) ),
 	'3des' => array( 'name' => '3DES' ),
 	'cast128' => array( 'name' => 'CAST128' ),
 	'des' => array( 'name' => 'DES' ));
 
 $p2_ealgos = array(
 	'aes' => array( 'name' => 'AES', 'keysel' => array( 'lo' => 128, 'hi' => 256, 'step' => 64 ) ),
-	'blowfish' => array( 'name' => 'Blowfish', 'keysel' => array( 'lo' => 128, 'hi' => 256, 'step' => 8 ) ),
+	'aes128gcm' => array( 'name' => 'AES128-GCM', 'keysel' => array( 'lo' => 64, 'hi' => 128, 'step' => 32 ) ),
+	'aes192gcm' => array( 'name' => 'AES192-GCM', 'keysel' => array( 'lo' => 64, 'hi' => 128, 'step' => 32 ) ),
+	'aes256gcm' => array( 'name' => 'AES256-GCM', 'keysel' => array( 'lo' => 64, 'hi' => 128, 'step' => 32 ) ),
+	'blowfish' => array( 'name' => 'Blowfish', 'keysel' => array( 'lo' => 128, 'hi' => 256, 'step' => 64 ) ),
 	'3des' => array( 'name' => '3DES' ),
 	'cast128' => array( 'name' => 'CAST128' ),
 	'des' => array( 'name' => 'DES' ));
@@ -71,7 +80,8 @@ $p1_halgos = array(
 	'sha1' => 'SHA1',
 	'sha256' => 'SHA256',
 	'sha384' => 'SHA384',
-	'sha512' => 'SHA512'
+	'sha512' => 'SHA512',
+	'aesxcbc' => 'AES-XCBC'
 );
 
 $p1_dhgroups = array(
@@ -82,7 +92,10 @@ $p1_dhgroups = array(
 	15 => '15 (3072 bit)',
 	16 => '16 (4096 bit)',
 	17 => '17 (6144 bit)',
-	18 => '18 (8192 bit)'
+	18 => '18 (8192 bit)',
+	22 => '22 (1024(sub 160) bit)',
+	23 => '23 (2048(sub 224) bit)',
+	24 => '24 (2048(sub 256) bit)'
 );
 
 $p2_halgos = array(
@@ -90,13 +103,15 @@ $p2_halgos = array(
 	'hmac_sha1' => 'SHA1',
 	'hmac_sha256' => 'SHA256',
 	'hmac_sha384' => 'SHA384',
-	'hmac_sha512' => 'SHA512'
+	'hmac_sha512' => 'SHA512',
+	'aesxcbc' => 'AES-XCBC'
 );
 
 $p1_authentication_methods = array(
 	'hybrid_rsa_server' => array( 'name' => 'Hybrid RSA + Xauth', 'mobile' => true ),
 	'xauth_rsa_server' => array( 'name' => 'Mutual RSA + Xauth', 'mobile' => true ),
 	'xauth_psk_server' => array( 'name' => 'Mutual PSK + Xauth', 'mobile' => true ),
+	'eap-tls' => array( 'name' => 'EAP-TLS', 'mobile' => true),
 	'rsasig' => array( 'name' => 'Mutual RSA', 'mobile' => false ),
 	'pre_shared_key' => array( 'name' => 'Mutual PSK', 'mobile' => false ) );
 
@@ -152,11 +167,9 @@ function ipsec_get_phase1_src(& $ph1ent) {
 	if ($ph1ent['interface']) {
 		if (!is_ipaddr($ph1ent['interface'])) {
 			if ($ph1ent['protocol'] == "inet6") { 
-				$if = get_failover_interface($ph1ent['interface'], "inet6");
-				$interfaceip = get_interface_ipv6($if);
+				$interfaceip = get_interface_ipv6($ph1ent['interface']);
 			} else {
-				$if = get_failover_interface($ph1ent['interface']);
-				$interfaceip = get_interface_ip($if);
+				$interfaceip = get_interface_ip($ph1ent['interface']);
 			}
 		} else {
 			$interfaceip=$ph1ent['interface'];
@@ -182,7 +195,7 @@ function ipsec_get_phase1_dst(& $ph1ent) {
 		return false;
 	$rg = $ph1ent['remote-gateway'];
 	if (!is_ipaddr($rg)) {
-		if(! $g['booting'])
+		if(! platform_booting())
 			return resolve_retry($rg);
 	}
 	if(!is_ipaddr($rg))
@@ -307,11 +320,11 @@ function ipsec_lookup_phase1(& $ph2ent,& $ph1ent) {
 	global $config;
 
 	if (!is_array($config['ipsec']))
-		return;
+		return false;
 	if (!is_array($config['ipsec']['phase1']))
-		return;
+		return false;
 	if (empty($config['ipsec']['phase1']))
-		return;
+		return false;
 
 	foreach ($config['ipsec']['phase1'] as $ph1tmp) {
 	    if ($ph1tmp['ikeid'] == $ph2ent['ikeid']) {
@@ -326,13 +339,15 @@ function ipsec_lookup_phase1(& $ph2ent,& $ph1ent) {
 /*
  * Check phase1 communications status
  */
-function ipsec_phase1_status(& $ph1ent) {
+function ipsec_phase1_status(&$ipsec_status, $ikeid) {
 
-	$loc_ip = get_ipsec_tunnel_src($ph1ent);
-	$rmt_ip = $ph1ent['remote-gateway'];
-
-	if (ipsec_lookup_ipsakmp_sa($loc_ip,$rmt_ip))
-		return true;
+	foreach ($ipsec_status as $ike) {
+		if ($ike['id'] != $ikeid)
+			continue;
+		if ($ike['status'] == 'established')
+			return true;
+		break;
+	}
 
 	return false;
 }
@@ -340,33 +355,12 @@ function ipsec_phase1_status(& $ph1ent) {
 /*
  * Check phase2 communications status
  */
-function ipsec_phase2_status(& $spd,& $sad,& $ph1ent,& $ph2ent) {
+function ipsec_phase2_status(&$ipsec_status, &$phase2) {
 
-	$loc_ip = ipsec_get_phase1_src($ph1ent);
-	$rmt_ip = ipsec_get_phase1_dst($ph1ent);
-
-	$loc_id = ipsec_idinfo_to_cidr($ph2ent['localid'],true,$ph2ent['mode']);
-	if (!empty($ph2ent['natlocalid']))
-		$natloc_id = ipsec_idinfo_to_cidr($ph2ent['natlocalid'],true,$ph2ent['mode']);
-	$rmt_id = ipsec_idinfo_to_cidr($ph2ent['remoteid'],true,$ph2ent['mode']);
-
-	/* check for established SA in both directions */
-	if( ipsec_lookup_ipsec_sa($spd,$sad,"out",$loc_ip,$rmt_ip,$loc_id,$rmt_id)) {
-		if (empty($ph2ent['natlocalid']) && ipsec_lookup_ipsec_sa($spd,$sad,"in",$rmt_ip,$loc_ip,$rmt_id,$loc_id))
-			return true;
-		else if (!empty($ph2ent['natlocalid']) && ipsec_lookup_ipsec_sa($spd,$sad,"out",$loc_ip,$rmt_ip,$loc_id,$rmt_id))
-			return true;
-	}
+	if (ipsec_lookup_phase1($ph2ent,$ph1ent))
+		return ipsec_phase1_status($ipsec_status, $ph1ent['ikeid']);
 
 	return false;
-}
-
-/*
- * Return ISAKMP SA details
- */
-function ipsec_lookup_isakmp_sa($in_srcip,$in_dstip) {
-	/* TODO : use racconctl to lookup iskamp SA */
-	return NULL;
 }
 
 /*
@@ -452,12 +446,47 @@ function ipsec_lookup_ipsec_sa(& $spd,& $sad,$dir,$in_srcip,$in_dstip,$in_srcid,
 	return NULL;
 }
 
+function ipsec_smp_dump_status() {
+	global $config, $g, $custom_listtags;
+
+	if (!file_exists("{$g['varrun_path']}/charon.xml")) {
+		log_error("IPsec daemon not running or has a problem!");
+		return;
+	}
+
+	$fd = @fsockopen("unix://{$g['varrun_path']}/charon.xml");
+	if (!$fd) {
+		log_error("Could not read status from IPsec");
+		return;
+	}
+	$query = '<?xml version="1.0"?><message xmlns="http://www.strongswan.org/smp/1.0" type="request" id="1">';
+	$query .= '<query><ikesalist/></query></message>';
+
+	@fwrite($fd, $query);
+	$response = "";
+	while (!strstr($sread, "</message>")) {
+		$sread = fgets($fd);
+		$response .= $sread;
+	}
+	fclose($fd);
+
+	@file_put_contents("{$g['tmp_path']}/smp_status.xml", $response);
+	unset($response, $sread);
+
+	$custom_listtags = array('ikesa', 'childsa', 'network', 'auth');
+	$response = parse_xml_config("{$g['tmp_path']}/smp_status.xml", "message");
+	@unlink("{$g['tmp_path']}/smp_status.xml");
+	unset($custom_listtags);
+
+	return $response;
+}
+
 /*
  * Return dump of SPD table
  */
 function ipsec_dump_spd()
 {
-	$fd = @popen("/usr/local/sbin/setkey -DP", "r");
+	$fd = @popen("/sbin/setkey -DP", "r");
 	$spd = array();
 	if ($fd) {
 		while (!feof($fd)) {
@@ -475,7 +504,8 @@ function ipsec_dump_spd()
 				$cursp['dstid'] = substr($linea[1], 0, strpos($linea[1], "["));
 				$i = 0;
 			} else if (is_array($cursp)) {
-				$linea = explode(" ", trim($line));
+				$line = trim($line, "\t\r\n ");
+				$linea = explode(" ", $line);
 				switch($i)
 				{
 					case 1:
@@ -507,7 +537,7 @@ function ipsec_dump_spd()
  */
 function ipsec_dump_sad()
 {
-	$fd = @popen("/usr/local/sbin/setkey -D", "r");
+	$fd = @popen("/sbin/setkey -D", "r");
 	$sad = array();
 	if ($fd) {
 		while (!feof($fd)) {
@@ -522,31 +552,31 @@ function ipsec_dump_sad()
 					$sad[] = $cursa;
 				$cursa = array();
 				list($cursa['src'],$cursa['dst']) = explode(" ", $line);
-				$i = 0;
 			}
 			else
 			{
-				$linea = explode(" ", trim($line));
-				switch ($i) {
-					case 1:
-						$cursa['proto'] = $linea[0];
-						$cursa['spi'] = substr($linea[2], strpos($linea[2], "x")+1, -1);
-						$reqid = substr($linea[3], strpos($linea[3], "=")+1);
-						$cursa['reqid'] = substr($reqid, 0, strcspn($reqid,"("));
+				$line = trim($line, "\t\n\r ");
+				$linea = explode(" ", $line);
+				foreach ($linea as $idx => $linee) {
+					if ($linee == 'esp' || $linee == 'ah' || $linee[0] == '#')
+						$cursa['proto'] = $linee;
+					else if (substr($linee, 0, 3) == 'spi')
+						$cursa['spi'] = substr($linee, strpos($linee, 'x') + 1, -1);
+					else if (substr($linee, 0, 5) == 'reqid')
+						$cursa['reqid'] = substr($linee, strpos($linee, 'x') + 1, -1);
+					else if (substr($linee, 0, 2) == 'E:') {
+						$cursa['ealgo'] = $linea[$idx + 1];
 						break;
-					case 2:
-						$cursa['ealgo'] = $linea[1];
+					} else if (substr($linee, 0, 2) == 'A:') {
+						$cursa['aalgo'] = $linea[$idx + 1];
 						break;
-					case 3:
-						$cursa['aalgo'] = $linea[1];
+					} else if (substr($linee, 0, 8) == 'current:') {
+						$cursa['data'] = substr($linea[$idx + 1], 0, strpos($linea[$idx + 1], 'bytes') - 1) . ' B';
 						break;
-					case 8:
-						$sadata = explode("(", $linea[1]);
-						$cursa['data'] = $sadata[0] . " B";
-						break;
+					}
+						
 				}
 			}
-			$i++;
 		}
 		if (is_array($cursa) && count($cursa))
 			$sad[] = $cursa;
@@ -560,32 +590,21 @@ function ipsec_dump_sad()
  * Return dump of mobile user list
  */
 function ipsec_dump_mobile() {
-	$command = "/usr/local/sbin/racoonctl show-users";
-	$fd = @popen($command, "r");
-	$mobile = array();
-	if ($fd) {
-		while (!feof($fd)) {
-			$user = array();
-			$line = chop(fgets($fd));
-			if (!$line)
-				continue;
-			if ($line == "User|Source|Destination|CreatedOn|SPI")
-				continue;
+	global $g, $custom_listtags;
 
-			// jim|192.168.20.243:4500|192.168.20.5:24146|2012-05-25 09:54:39|989d10e1e2d4eca4:7243830d5fd2afe7
-			$linea = explode("|", trim($line));
-			$user['username'] = $linea[0];
-			$user['local'] = $linea[1];
-			$user['remote'] = $linea[2];
-			$user['logintime'] = $linea[3];
-			$user['spi'] = $linea[4];
-			if (!empty($user['username']))
-				$mobile[] = $user;
-		}
-		pclose($fd);
+	$_gb = exec("/usr/local/sbin/ipsec stroke leases > {$g['tmp_path']}/strongswan_leases.xml");
+
+	if (!file_exists("{$g['tmp_path']}/strongswan_leases.xml")) {
+		log_error(gettext("Unable to find IPsec daemon leases file. Could not display mobile user stats!"));
+		return array();
 	}
 
-	return $mobile;
+	$custom_listtags = array('lease', 'pool');
+	$response = parse_xml_config("{$g['tmp_path']}/strongswan_leases.xml", "leases");
+	@unlink("{$g['tmp_path']}/strongswan_leases.xml");
+	unset($custom_listtags, $_gb);
+
+	return $response;
 }
 
 function ipsec_mobilekey_sort() {
@@ -615,10 +634,24 @@ function ipsec_get_number_of_phase2($ikeid) {
 	return $nbph2;
 }
 
-function ipsec_disconnect_mobile($username) {
-	if (empty($username))
-		return false;
-	exec("/usr/local/sbin/racoonctl logout-user " . escapeshellarg($username));
+function ipsec_get_descr($ikeid) {
+	global $config;
+
+	if (!isset($config['ipsec']['phase1']) ||
+	    !is_array($config['ipsec']['phase1']))
+		return "";
+
+	$descr = '';
+	$a_phase1 = $config['ipsec']['phase1'];
+	foreach ($a_phase1 as $p1) {
+		if ($p1['ikeid'] == $ikeid) {
+			$descr = $p1['descr'];
+			break;
+		}
+	}
+	unset($a_phase1);
+
+	return $descr;
 }
 
 function ipsec_fixup_ip($ipaddr) {
@@ -626,6 +659,75 @@ function ipsec_fixup_ip($ipaddr) {
 		return Net_IPv6::compress(Net_IPv6::uncompress($ipaddr));
 	else
 		return $ipaddr;
+}
+
+function ipsec_find_id(& $ph1ent, $side = "local", $rgmap = array()) {
+	if ($side == "local") {
+		$id_type = $ph1ent['myid_type'];
+		$id_data = $ph1ent['myid_data'];
+
+		$addr = ipsec_get_phase1_src($ph1ent);
+		if (!$addr)
+			return array();
+	} elseif ($side = "peer") {
+		$id_type = $ph1ent['peerid_type'];
+		$id_data = $ph1ent['peerid_data'];
+
+		if (isset($ph1ent['mobile']))
+			$addr = "%any";
+		else
+			$addr = $ph1ent['remote-gateway'];
+	} else {
+		return array();
+	}
+
+
+	$thisid_type = $id_type;
+	switch ($thisid_type) {
+	case "myaddress":
+		$thisid_type = "address";
+		$thisid_data = $addr;
+		break;
+
+	case "dyn_dns":
+		$thisid_type = "address";
+		$thisid_data = resolve_retry($id_data);
+		break;
+
+	case "peeraddress":
+		$thisid_type = "address";
+		$thisid_data = $rgmap[$ph1ent['remote-gateway']];
+		break;
+
+	case "address";
+		$thisid_data = $id_data;
+		break;
+
+	case "fqdn";
+	case "keyid tag";
+	case "user_fqdn";
+	case "asn1dn";
+		$thisid_data = $id_data;
+		if( $thisid_data )
+			$thisid_data = "{$thisid_data}";
+		break;
+	}
+	return array($thisid_type, $thisid_data);
+}
+
+function ipsec_fixup_network($network) {
+	if (substr($network, -3) == '|/0')
+		$result = substr($network, 0, -3);
+	else {
+		$tmp = explode('|', $network);
+		if (isset($tmp[1]))
+			$result = $tmp[1];
+		else
+			$result = $tmp[0];
+		unset($tmp);
+	}
+
+	return $result;
 }
 
 ?>

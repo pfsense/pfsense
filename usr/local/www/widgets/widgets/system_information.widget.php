@@ -1,8 +1,9 @@
 <?php
 /*
         $Id$
+        Copyright (C) 2013-2014 Electric Sheep Fencing, LP
         Copyright 2007 Scott Dale
-        Part of pfSense widgets (www.pfsense.com)
+        Part of pfSense widgets (https://www.pfsense.org)
         originally based on m0n0wall (http://m0n0.ch/wall)
 
         Copyright (C) 2004-2005 T. Lechat <dev@lechat.org>, Manuel Kasper <mk@neon1.net>
@@ -70,11 +71,12 @@ if($_REQUEST['getupdatestatus']) {
 		else {
 			$needs_system_upgrade = false;
 			if (pfs_version_compare($current_installed_buildtime, $current_installed_version, $remote_version) == -1) {
-				echo "<br/><span class=\"red\" id=\"updatealert\"><b>Update available. </b></span><a href=\"/system_firmware_check.php\">Click Here</a> to view update.";
-				echo "<script type=\"text/javascript\">";
-				echo "jQuery('#updatealert').effect('pulsate',{times: 30},10000);";
-
-				echo "</script>";
+				echo "<br /><span class=\"red\" id=\"updatealert\"><b>Update available. </b></span><a href=\"/system_firmware_check.php\">Click Here</a> to view update.";
+				echo "\n<script type=\"text/javascript\">\n";
+				echo "//<![CDATA[\n";
+				echo "jQuery('#updatealert').effect('pulsate',{times: 30},10000);\n";
+				echo "//]]>\n";
+				echo "</script>\n";
 			} else
 				echo "<br />You are on the latest version.";
 		}
@@ -84,14 +86,21 @@ if($_REQUEST['getupdatestatus']) {
 
 $curcfg = $config['system']['firmware'];
 
+$filesystems = get_mounted_filesystems();
+
 ?>
-<script>
+<script type="text/javascript">
+//<![CDATA[
 	jQuery(function() { 
 		jQuery("#statePB").progressbar( { value: <?php echo get_pfstate(true); ?> } );
 		jQuery("#mbufPB").progressbar( { value: <?php echo get_mbuf(true); ?> } );
 		jQuery("#cpuPB").progressbar( { value:false } );
 		jQuery("#memUsagePB").progressbar( { value: <?php echo mem_usage(); ?> } );
-		jQuery("#diskUsagePB").progressbar( { value: <?php echo disk_usage(); ?> } );
+
+<?PHP $d = 0; ?>
+<?PHP foreach ($filesystems as $fs): ?>
+		jQuery("#diskUsagePB<?php echo $d++; ?>").progressbar( { value: <?php echo $fs['percent_used']; ?> } );
+<?PHP endforeach; ?>
 
 		<?php if($showswap == true): ?>
 			jQuery("#swapUsagePB").progressbar( { value: <?php echo swap_usage(); ?> } );
@@ -100,8 +109,8 @@ $curcfg = $config['system']['firmware'];
                 	jQuery("#tempPB").progressbar( { value: <?php echo get_temp(); ?> } );
 		<?php endif; ?>
 	});
+//]]>
 </script>
-<link rel="stylesheet" href="javascript/jquery/jquery-ui.custom.css" />
 
 <table width="100%" border="0" cellspacing="0" cellpadding="0" summary="system information">
 	<tbody>
@@ -121,7 +130,7 @@ $curcfg = $config['system']['firmware'];
 		<div id="uname"><a href="#" onclick='swapuname(); return false;'><?php echo php_uname("s") . " " . php_uname("r"); ?></a></div>
 		<?php endif; ?>
 		<?php if(!isset($config['system']['firmware']['disablecheck'])): ?>
-		<div id='updatestatus'><br/><?php echo gettext("Obtaining update status"); ?> ...</div>
+		<div id='updatestatus'><br /><?php echo gettext("Obtaining update status"); ?> ...</div>
 		<?php endif; ?>
 			</td>
 		</tr>
@@ -149,7 +158,7 @@ $curcfg = $config['system']['firmware'];
 			<td width="75%" class="listr">
 				<?=htmlspecialchars(nanobsd_friendly_slice_name($BOOT_DEVICE));?> / <?=htmlspecialchars($BOOTFLASH);?> <?php echo $rw; ?>
 				<?php if ($BOOTFLASH != $ACTIVE_SLICE): ?>
-				<br/><br/>Next Boot:<br/>
+				<br /><br />Next Boot:<br />
 				<?=htmlspecialchars(nanobsd_friendly_slice_name($GLABEL_SLICE));?> / <?=htmlspecialchars($ACTIVE_SLICE);?>
 				<?php endif; ?>
 			</td>
@@ -159,10 +168,7 @@ $curcfg = $config['system']['firmware'];
 			<td width="25%" class="vncellt"><?=gettext("CPU Type");?></td>
 			<td width="75%" class="listr">
 			<?php 
-				$cpumodel = "";
-				exec("/sbin/sysctl -n hw.model", $cpumodel);
-				$cpumodel = implode(" ", $cpumodel);
-				echo (htmlspecialchars($cpumodel));
+				echo (htmlspecialchars(get_single_sysctl("hw.model")));
 			?>
 			<div id="cpufreq"><?= get_cpufreq(); ?></div>
 		<?php	$cpucount = get_cpu_count();
@@ -194,7 +200,7 @@ $curcfg = $config['system']['firmware'];
 					<?php
 						$dns_servers = get_dns_servers();
 						foreach($dns_servers as $dns) {
-							echo "{$dns}<br/>";
+							echo "{$dns}<br />";
 						}
 					?>
 			</td>
@@ -256,7 +262,7 @@ $curcfg = $config['system']['firmware'];
 			<td width="75%" class="listr">
 				<?php $memUsage = mem_usage(); ?>
 				<div id="memUsagePB"></div>
-				<span id="memusagemeter"><?= $memUsage.'%'; ?></span> of <?= sprintf("%.0f", `/sbin/sysctl -n hw.physmem` / (1024*1024)) ?> MB
+				<span id="memusagemeter"><?= $memUsage.'%'; ?></span> of <?= sprintf("%.0f", get_single_sysctl('hw.physmem') / (1024*1024)) ?> MB
 			</td>
 		</tr>
 		<?php if($showswap == true): ?>
@@ -272,9 +278,13 @@ $curcfg = $config['system']['firmware'];
 		<tr>
 			<td width="25%" class="vncellt"><?=gettext("Disk usage");?></td>
 			<td width="75%" class="listr">
-				<?php $diskusage = disk_usage(); ?>
-				<div id="diskUsagePB"></div>
-				<span id="diskusagemeter"><?= $diskusage.'%'; ?></span> of <?= `/bin/df -h / | /usr/bin/grep -v 'Size' | /usr/bin/awk '{ print $2 }'` ?>
+<?PHP $d = 0; ?>
+<?PHP foreach ($filesystems as $fs): ?>
+				<div id="diskUsagePB<?php echo $d; ?>"></div>
+				<?PHP if (substr(basename($fs['device']), 0, 2) == "md") $fs['type'] .= " in RAM"; ?>
+				<?PHP echo "{$fs['mountpoint']} ({$fs['type']})";?>: <span id="diskusagemeter<?php echo $d++ ?>"><?= $fs['percent_used'].'%'; ?></span> of <?PHP echo $fs['total_size'];?>
+				<br />
+<?PHP endforeach; ?>
 			</td>
 		</tr>
 	</tbody>

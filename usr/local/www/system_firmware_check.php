@@ -3,6 +3,7 @@
 /*
 	system_firmware.php
 	Copyright (C) 2008 Scott Ullrich <sullrich@gmail.com>
+        Copyright (C) 2013-2014 Electric Sheep Fencing, LP
 	All rights reserved.
 
 	originally part of m0n0wall (http://m0n0.ch/wall)
@@ -92,10 +93,17 @@ include("head.inc");
 						</table>
 						<br />
 						<!-- command output box -->
-						<textarea style="border:1;bordercolordark:#000000;bordercolorlight:#000000" cols="90" rows="9" name="output" id="output" wrap="hard"></textarea>
+						<script type="text/javascript">
+						//<![CDATA[
+						window.onload=function(){
+							document.getElementById("output").wrap='hard';
+						}
+						//]]>
+						</script>
+						<textarea style="border:1;bordercolordark:#000000;bordercolorlight:#000000" cols="90" rows="9" name="output" id="output"></textarea>
 						<div id="backupdiv" style="visibility:hidden">
 							<?php if ($g['hidebackupbeforeupgrade'] === false): ?>
-							<br/><input type="checkbox" name="backupbeforeupgrade" id="backupbeforeupgrade" /><?=gettext("Perform full backup prior to upgrade");?>
+							<br /><input type="checkbox" name="backupbeforeupgrade" id="backupbeforeupgrade" /><?=gettext("Perform full backup prior to upgrade");?>
 							<?php endif; ?>
 						</div>
 						<input id='invokeupgrade' style='visibility:hidden' type="submit" value="<?=gettext("Invoke Auto Upgrade"); ?>" />
@@ -181,7 +189,7 @@ if ($g['platform'] == "nanobsd") {
 	$txt .= "  " . gettext("NanoBSD Size") . " : " . trim(file_get_contents("/etc/nanosize.txt")) . "\\n";
 }
 $txt .= "       " . gettext("Built On") .": ".  $current_installed_buildtime . "\\n";
-$txt .= "    " . gettext("New version") .": ".  $remote_version . "\\n\\n";
+$txt .= "    " . gettext("New version") .": ".  htmlspecialchars($remote_version, ENT_QUOTES | ENT_HTML401). "\\n\\n";
 $txt .= "  " . gettext("Update source") .": ".  $updater_url . "\\n";
 update_output_window($txt);
 ?>

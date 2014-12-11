@@ -65,7 +65,7 @@ function rescue_detect_keypress() {
 	  echo "\n\nRecovery mode selected...\n";
 	  passthru("/usr/bin/env TERM=cons25 /bin/tcsh -c /scripts/lua_installer_rescue");
 	} elseif (in_array($key, array("i", "I"))) {
-	  putenv("TERM=cons25");  
+	  putenv("TERM=cons25");
 	  echo "\n\nInstaller mode selected...\n";
 	  passthru("/usr/bin/env TERM=cons25 /bin/tcsh -c /scripts/lua_installer");
 	  if(file_exists("/tmp/install_complete")) {
@@ -73,7 +73,7 @@ function rescue_detect_keypress() {
 		exit;
 	  }
 	} elseif (in_array($key, array("!", "~"))) {
- 		putenv("TERM=cons25");
+		putenv("TERM=cons25");
 		echo "\n\nRecovery shell selected...\n";
 		echo "\n";
 		touch("/tmp/donotbootup");
@@ -248,7 +248,7 @@ interfaces_loopback_configure();
 system_syslogd_start();
 
 echo "Starting Secure Shell Services...";
-mwexec_bg("/etc/sshd");
+send_event("service reload sshd");
 echo "done.\n";
 
 /* setup polling */
@@ -265,6 +265,7 @@ echo "done.\n";
 if(!$debugging)
 	mute_kernel_msgs();
 interfaces_configure();
+interfaces_sync_setup();
 if(!$debugging)
 	unmute_kernel_msgs();
 
@@ -319,6 +320,9 @@ system_routing_enable();
 /* start dnsmasq service */
 services_dnsmasq_configure();
 
+/* start unbound service */
+services_unbound_configure();
+
 /* Do an initial time sync */
 echo "Starting NTP time client...";
 /* At bootup this will just write the config, ntpd will launch from ntpdate_sync_once.sh */
@@ -372,7 +376,7 @@ services_snmpd_configure();
 system_set_harddisk_standby();
 
 /* lock down console if necessary */
-auto_login();
+reload_ttys();
 
 /* load graphing functions */
 enable_rrd_graphing();
@@ -389,16 +393,19 @@ if($config['system']['afterbootupshellcmd'] <> "") {
 if($physmem < $g['minimum_ram_warning']) {
 	require_once("/etc/inc/notices.inc");
 	file_notice("{$g['product_name']}MemoryRequirements", "{$g['product_name']} requires at least {$g['minimum_ram_warning_text']} of RAM.  Expect unusual performance.  This platform is not supported.", "Memory", "", 1);
-	mwexec("/sbin/sysctl net.inet.tcp.recvspace=4096");
-	mwexec("/sbin/sysctl net.inet.tcp.sendspace=4096");
+	set_sysctl(array(
+		"net.inet.tcp.recvspace" => "4096",
+		"net.inet.tcp.sendspace" => "4096"
+	));
 }
 
 /* if we are operating at 1000 then increase timeouts.
    this was never accounted for after moving to 1000 hz */
-$kern_hz = `/sbin/sysctl kern.clockrate | /usr/bin/awk '{ print $5 }' | /usr/bin/cut -d"," -f1`;
-$kern_hz = trim($kern_hz, "\r\n");
+$kern_hz = get_single_sysctl('kern.clockrate');
+$kern_hz = substr($kern_hz, strpos($kern_hz, "hz = ") + 5);
+$kern_hz = substr($kern_hz, 0, strpos($kern_hz, ","));
 if($kern_hz == "1000") 
-	mwexec("/sbin/sysctl net.inet.tcp.rexmit_min=30");
+	set_single_sysctl("net.inet.tcp.rexmit_min" , "30");
 
 /* start the igmpproxy daemon */
 services_igmpproxy_configure();
@@ -408,6 +415,9 @@ upnp_start();
 
 /* If powerd is enabled, lets launch it */
 activate_powerd();
+
+/* Set preferred protocol */
+prefer_ipv4_or_ipv6();
 
 /* Remove the old shutdown binary if we kept it. */
 if (file_exists("/sbin/shutdown.old"))
@@ -432,10 +442,10 @@ system_syslogd_start();
 
 /* done */
 unset($g['booting']);
+@unlink("{$g['varrun_path']}/booting");
 
 /* If there are ipsec dynamic hosts try again to reload the tunnels as rc.newipsecdns does */
 if ($ipsec_dynamic_hosts) {
-	vpn_ipsec_refresh_policies();
 	vpn_ipsec_configure();
 	filter_configure();
 }

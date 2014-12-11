@@ -1991,7 +1991,7 @@ function upgrade_054_to_055() {
 		/* restore the databases, if we have one */
 		if (restore_rrd()) {
 			/* Make sure to move the rrd backup out of the way. We will make a new one after converting. */
-			exec("/bin/mv {$g['cf_conf_path']}/rrd.tgz {$g['cf_conf_path']}/backup");
+			@rename("{$g['cf_conf_path']}/rrd.tgz", "{$g['cf_conf_path']}/backup/rrd.tgz");
 		}
 	}
 
@@ -2021,7 +2021,7 @@ function upgrade_054_to_055() {
 		$xmldump = "{$database}.old.xml";
 		$xmldumpnew = "{$database}.new.xml";
 
-		if ($g['booting'])
+		if (platform_booting())
 			echo "Migrate RRD database {$database} to new format for IPv6 \n";
 		mwexec("$rrdtool tune {$rrddbpath}{$database} -r roundtrip:delay 2>&1");
 
@@ -2044,9 +2044,12 @@ function upgrade_054_to_055() {
 		mwexec("$rrdtool restore -f {$g['tmp_path']}/{$xmldumpnew} {$rrddbpath}/{$database} 2>&1");
 
 		unset($rrdold);
+		@unlink("{$g['tmp_path']}/{$xmldump}");
+		@unlink("{$g['tmp_path']}/{$xmldumpnew}");
 	}
 	/* let apinger recreate required files */
-	setup_gateways_monitor();
+	if (!platform_booting())
+		setup_gateways_monitor();
 
 	/* build a list of traffic and packets databases */
 	$databases = return_dir_as_array($rrddbpath, '/-(traffic|packets)\.rrd$/');
@@ -2057,7 +2060,7 @@ function upgrade_054_to_055() {
 		$xmldumptmp = "{$database}.tmp.xml";
 		$xmldumpnew = "{$database}.new.xml";
 
-		if ($g['booting'])
+		if (platform_booting())
 			echo "Migrate RRD database {$database} to new format \n";
 		/* rename DS source */
 		mwexec("$rrdtool tune {$rrddbpath}/{$database} -r in:inpass 2>&1");
@@ -2105,12 +2108,16 @@ function upgrade_054_to_055() {
 		mwexec("/bin/sync");
 		mwexec("$rrdtool resize {$rrddbpath}/{$database} 3 GROW 2000;/bin/mv resize.rrd {$rrddbpath}/{$database} 2>&1");
 		unset($rrdxmlarray);
+		@unlink("{$g['tmp_path']}/{$xmldump}");
+		@unlink("{$g['tmp_path']}/{$xmldumpnew}");
 	}
-	enable_rrd_graphing();
+	if (!platform_booting())
+		enable_rrd_graphing();
 	/* Let's save the RRD graphs after we run enable RRD graphing */
 	/* The function will restore the rrd.tgz so we will save it after */
 	exec("cd /; LANG=C NO_REMOUNT=1 RRDDBPATH='{$rrddbpath}' CF_CONF_PATH='{$g['cf_conf_path']}' /etc/rc.backup_rrd.sh");
-	if ($g['booting'])
+	unlink_if_exists("{$g['vardb_path']}/rrd/*.xml");
+	if (platform_booting())
 		echo "Updating configuration...";
 }
 
@@ -2657,7 +2664,7 @@ function upgrade_080_to_081() {
 		/* restore the databases, if we have one */
 		if (restore_rrd()) {
 			/* Make sure to move the rrd backup out of the way. We will make a new one after converting. */
-			exec("/bin/mv {$g['cf_conf_path']}/rrd.tgz {$g['cf_conf_path']}/backup");
+			@rename("{$g['cf_conf_path']}/rrd.tgz", "{$g['cf_conf_path']}/backup/rrd.tgz");
 		}
 	}
 
@@ -2675,7 +2682,7 @@ function upgrade_080_to_081() {
 		$xmldump = "{$database}.old.xml";
 		$xmldumpnew = "{$database}.new.xml";
 
-		if ($g['booting'])
+		if (platform_booting())
 			echo "Migrate RRD database {$database} to new format for IPv6.\n";
 
 		/* dump contents to xml and move database out of the way */
@@ -2788,14 +2795,15 @@ function upgrade_080_to_081() {
 		mwexec("$rrdtool restore -f {$g['tmp_path']}/{$xmldumpnew} {$rrddbpath}/{$database} 2>&1");
 		unset($xml);
 		# Default /tmp tmpfs is ~40mb, do not leave temp files around
-		unlink("{$g['tmp_path']}/{$xmldump}");
-		unlink("{$g['tmp_path']}/{$xmldumpnew}");
+		unlink_if_exists("{$g['tmp_path']}/{$xmldump}");
+		unlink_if_exists("{$g['tmp_path']}/{$xmldumpnew}");
 	}
-	enable_rrd_graphing();
+	if (!platform_booting())
+		enable_rrd_graphing();
 	/* Let's save the RRD graphs after we run enable RRD graphing */
 	/* The function will restore the rrd.tgz so we will save it after */
 	exec("cd /; LANG=C NO_REMOUNT=1 RRDDBPATH='{$rrddbpath}' CF_CONF_PATH='{$g['cf_conf_path']}' /etc/rc.backup_rrd.sh");
-	if ($g['booting'])
+	if (platform_booting())
 		echo "Updating configuration...";
 	foreach($config['filter']['rule'] as & $rule) {
 		if (isset($rule['protocol']) && !empty($rule['protocol']))
@@ -2818,6 +2826,9 @@ function upgrade_082_to_083() {
 		$config['captiveportal']['cpzone'] = array();
 		$config['captiveportal']['cpzone'] = $tmpcp;
 		$config['captiveportal']['cpzone']['zoneid'] = 8000;
+		$config['captiveportal']['cpzone']['zone'] = "cpzone";
+		if ($config['captiveportal']['cpzone']['auth_method'] == "radius")
+			$config['captiveportal']['cpzone']['radius_protocol'] = "PAP";
 	}
 	if (!empty($config['voucher'])) {
 		$tmpcp = $config['voucher'];
@@ -3067,7 +3078,8 @@ function upgrade_092_to_093() {
 			rename("{$g['vardb_path']}/rrd/captiveportal-{$suffix}.rrd",
 				"{$g['vardb_path']}/rrd/captiveportal-cpZone-{$suffix}.rrd");
 
-	enable_rrd_graphing();
+	if (!platform_booting())
+		enable_rrd_graphing();
 }
 
 function upgrade_093_to_094() {
@@ -3104,7 +3116,7 @@ function upgrade_095_to_096() {
 		/* restore the databases, if we have one */
 		if (restore_rrd()) {
 			/* Make sure to move the rrd backup out of the way. We will make a new one after converting. */
-			exec("/bin/mv {$g['cf_conf_path']}/rrd.tgz {$g['cf_conf_path']}/backup");
+			@rename("{$g['cf_conf_path']}/rrd.tgz", "{$g['cf_conf_path']}/backup/rrd.tgz");
 		}
 	}
 
@@ -3115,7 +3127,7 @@ function upgrade_095_to_096() {
 	$databases = return_dir_as_array($rrddbpath, '/-(traffic|packets)\.rrd$/');
 	rsort($databases);
 	foreach($databases as $database) {
-		if ($g['booting'])
+		if (platform_booting())
 			echo "Update RRD database {$database}.\n";
 
 		$cmd = "{$rrdtool} tune {$rrddbpath}/{$database}";
@@ -3124,7 +3136,8 @@ function upgrade_095_to_096() {
 		mwexec("{$cmd} 2>&1");
 
 	}
-	enable_rrd_graphing();
+	if (!platform_booting())
+		enable_rrd_graphing();
 	/* Let's save the RRD graphs after we run enable RRD graphing */
 	/* The function will restore the rrd.tgz so we will save it after */
 	exec("cd /; LANG=C NO_REMOUNT=1 RRDDBPATH='{$rrddbpath}' CF_CONF_PATH='{$g['cf_conf_path']}' /etc/rc.backup_rrd.sh");
@@ -3146,17 +3159,331 @@ function upgrade_097_to_098() {
 }
 
 function upgrade_098_to_099() {
-	global $config, $g;
+	global $config;
 
-	if (!is_array($config['captiveportal']))
+	if (empty($config['dhcpd']) || !is_array($config['dhcpd']))
 		return;
 
-	foreach ($config['captiveportal'] as $cpzone => $cp) {
-		if (!is_array($cp['passthrumac']))
-			continue;
-
-		foreach ($cp['passthrumac'] as $idx => $passthrumac)
-			$config['captiveportal'][$cpzone]['passthrumac'][$idx]['action'] = 'pass';
+	foreach ($config['dhcpd'] as & $dhcpifconf) {
+		if (isset($dhcpifconf['next-server'])) {
+			$dhcpifconf['nextserver'] = $dhcpifconf['next-server'];
+			unset($dhcpifconf['next-server']);
+		}
 	}
 }
+
+function upgrade_099_to_100() {
+	require_once("/etc/inc/services.inc");
+	install_cron_job("/usr/bin/nice -n20 newsyslog", false);
+}
+
+function upgrade_100_to_101() {
+	global $config, $g;
+
+	if (!is_array($config['voucher']))
+		return;
+
+	foreach ($config['voucher'] as $cpzone => $cp) {
+		if (!is_array($cp['roll']))
+			continue;
+		foreach ($cp['roll'] as $ridx => $rcfg) {
+			if (!empty($rcfg['comment']))
+				$config['voucher'][$cpzone]['roll'][$ridx]['descr'] = $rcfg['comment'];
+		}
+	}
+}
+
+function upgrade_101_to_102() {
+	global $config, $g;
+
+	if (is_array($config['captiveportal'])) {
+		foreach ($config['captiveportal'] as $cpzone => $cp) {
+			if (!is_array($cp['passthrumac']))
+				continue;
+
+			foreach ($cp['passthrumac'] as $idx => $passthrumac)
+				$config['captiveportal'][$cpzone]['passthrumac'][$idx]['action'] = 'pass';
+		}
+	}
+
+	/* Convert OpenVPN Compression option to the new style */
+	// Nothing to do if there is no OpenVPN tag
+	if (isset($config['openvpn']) && is_array($config['openvpn'])) {
+		if (is_array($config['openvpn']['openvpn-server'])) {
+			foreach ($config['openvpn']['openvpn-server'] as &$vpn) {
+				if (!empty($vpn['compression']))
+					$vpn['compression'] = "adaptive";
+			}
+		}
+		if (is_array($config['openvpn']['openvpn-client'])) {
+			foreach ($config['openvpn']['openvpn-client'] as &$vpn) {
+				if (!empty($vpn['compression']))
+					$vpn['compression'] = "adaptive";
+			}
+		}
+	}
+}
+
+function upgrade_102_to_103() {
+	global $config;
+
+	if (isset($config['nat']['advancedoutbound']['enable'])) {
+		$config['nat']['advancedoutbound']['mode'] = "advanced";
+		unset($config['nat']['advancedoutbound']['enable']);
+	} else
+		$config['nat']['advancedoutbound']['mode'] = "automatic";
+
+	$config['nat']['outbound'] = $config['nat']['advancedoutbound'];
+
+	unset($config['nat']['ipsecpassthru']);
+	unset($config['nat']['advancedoutbound']);
+}
+
+function upgrade_103_to_104() {
+	global $config;
+
+	$changed_privs = array(
+		"page-diag-system-activity" => "page-diagnostics-system-activity",
+		"page-interfacess-groups" => "page-interfaces-groups",
+		"page-interfacess-lagg" => "page-interfaces-lagg",
+		"page-interfacess-qinq" => "page-interfaces-qinq"
+	);
+
+	/* update user privileges */
+	foreach ($config['system']['user'] as & $user) {
+		if (!is_array($user['priv']))
+			continue;
+		foreach ($user['priv'] as & $priv) {
+			if (array_key_exists($priv, $changed_privs))
+				$priv = $changed_privs[$priv];
+		}
+	}
+
+	/* update group privileges */
+	foreach ($config['system']['group'] as & $group) {
+		if (!is_array($group['priv']))
+			continue;
+		foreach ($group['priv'] as & $priv) {
+			if (array_key_exists($priv, $changed_privs))
+				$priv = $changed_privs[$priv];
+		}
+	}
+
+	/* sync all local account information */
+	local_sync_accounts();
+}
+
+function upgrade_104_to_105() {
+	global $config;
+
+	if (is_array($config['captiveportal'])) {
+		$zoneid = 2;
+		foreach ($config['captiveportal'] as $cpzone => $cpcfg) {
+			if (empty($cpfg['zoneid'])) {
+				$config['captiveportal'][$cpzone]['zoneid'] = $zoneid;
+				$zoneid += 2;
+			} else if ($cpcfg['zoneid'] > 4000) {
+				$config['captiveportal'][$cpzone]['zoneid'] = $zoneid;
+				$zoneid += 2;
+			}
+		}
+	}
+}
+
+function upgrade_105_to_106() {
+
+	/* NOTE: This entry can be reused for something else since the upgrade code was reverted */
+}
+
+function upgrade_106_to_107() {
+	global $config;
+
+	if (is_array($config['filter']) && is_array($config['filter']['rule'])) {
+		$tracker = (int)microtime(true);
+		foreach ($config['filter']['rule'] as $ridx => $rule) {
+			if (empty($rule['tracker'])) {
+				$config['filter']['rule'][$ridx]['tracker'] = $tracker;
+				$tracker++;
+			}
+		}
+		unset($tracker, $ridx);
+	}
+	if (is_array($config['nat']) && is_array($config['nat']['rule'])) {
+		$tracker = (int)microtime(true);
+		foreach ($config['nat']['rule'] as $ridx => $rule) {
+			if (empty($rule['tracker'])) {
+				$config['nat']['rule'][$ridx]['tracker'] = $tracker;
+				$tracker++;
+			}
+
+		}
+		unset($tracker, $ridx);
+	}
+}
+
+function upgrade_107_to_108() {
+	global $config;
+
+	if (isset($config['system']['webgui']['noautocomplete']))
+		unset($config['system']['webgui']['noautocomplete']);
+	else
+		$config['system']['webgui']['loginautocomplete'] = true;
+}
+
+function upgrade_108_to_109() {
+	global $config;
+
+	if (!isset($config['filter']['rule']) || !is_array($config['filter']['rule']))
+		return;
+
+	foreach ($config['filter']['rule'] as &$rule) {
+		if (!isset($rule['dscp']) || empty($rule['dscp']))
+			continue;
+
+		$pos = strpos($rule['dscp'], ' ');
+		if ($pos !== false)
+			$rule['dscp'] = substr($rule['dscp'], 0, $pos);
+		unset($pos);
+	}
+}
+
+function upgrade_109_to_110() {
+	global $config;
+
+	if (!is_array($config['ipsec']) || !is_array($config['ipsec']['phase2']))
+		return;
+
+	foreach ($config['ipsec']['phase2'] as &$rule) {
+		if (!empty($rule['uniqid']))
+			continue;
+
+		$rule['uniqid'] = uniqid();
+	}
+}
+
+function upgrade_110_to_111() {
+	global $config;
+
+	/* Make sure unbound user exist */
+	mwexec('/usr/sbin/pw groupadd -n unbound -g 59', true);
+	mwexec('/usr/sbin/pw useradd -n unbound -c "Unbound DNS Resolver" -d /var/unbound -s /usr/sbin/nologin -u 59 -g 59', true);
+
+	/* cleanup old unbound package stuffs */
+	unlink_if_exists("/usr/local/pkg/unbound.xml");
+	unlink_if_exists("/usr/local/pkg/unbound.inc");
+	unlink_if_exists("/usr/local/pkg/unbound_advanced.xml");
+	unlink_if_exists("/usr/local/www/unbound_status.php");
+	unlink_if_exists("/usr/local/www/unbound_acls.php");
+	unlink_if_exists("/usr/local/bin/unbound_monitor.sh");
+	unlink_if_exists("/usr/local/etc/rc.d/unbound.sh");
+
+	/* Remove old menu and service entries */
+	if (isset($config['installedpackages']['menu']) && is_array($config['installedpackages']['menu'])) {
+		foreach ($config['installedpackages']['menu'] as $idx => $menu) {
+			if ($menu['name'] != 'Unbound DNS')
+				continue;
+
+			unset($config['installedpackages']['menu'][$idx]);
+			break;
+		}
+	}
+
+	if (isset($config['installedpackages']['service']) && is_array($config['installedpackages']['service'])) {
+		foreach ($config['installedpackages']['service'] as $idx => $service) {
+			if ($service['name'] != 'unbound')
+				continue;
+			unset($config['installedpackages']['service'][$idx]);
+			break;
+		}
+	}
+
+	if (!isset($config['installedpackages']['unbound']['config'][0]))
+		return;
+
+	$pkg = $config['installedpackages']['unbound']['config'][0];
+
+	if (isset($config['installedpackages']['unboundadvanced']['config'][0]))
+		$pkg = array_merge($pkg, $config['installedpackages']['unboundadvanced']['config'][0]);
+
+	$new = array();
+
+	/* deal first with boolean fields */
+	$fields = array(
+		"enable" => "enable",
+		"dnssec_status" => "dnssec",
+		"forwarding_mode" => "forwarding",
+		"regdhcp" => "regdhcp",
+		"regdhcpstatic" => "regdhcpstatic",
+		"txtsupport" => "txtsupport",
+		"hide_id" => "hideidentity",
+		"hide_version" => "hideversion",
+		"prefetch" => "prefetch",
+		"prefetch_key" => "prefetchkey",
+		"harden_glue" => "hardenglue",
+		"harden_dnssec_stripped" => "dnssec_stripped");
+
+	foreach ($fields as $oldk => $newk) {
+		if (isset($pkg[$oldk])) {
+			if ($pkg[$oldk] == 'on')
+				$new[$newk] = true;
+			unset($pkg[$oldk]);
+		}
+	}
+
+	$fields = array(
+		"active_interface" => "network_interface",
+		"query_interface" => "outgoing_interface",
+		"unbound_verbosity" => "log_verbosity",
+		"unbound_verbosity" => "log_verbosity",
+		"msg_cache_size" => "msgcachesize",
+		"outgoing_num_tcp" => "outgoing_num_tcp",
+		"incoming_num_tcp" => "incoming_num_tcp",
+		"edns_buffer_size" => "edns_buffer_size",
+		"num_queries_per_thread" => "num_queries_per_thread",
+		"jostle_timeout" => "jostle_timeout",
+		"cache_max_ttl" => "cache_max_ttl",
+		"cache_min_ttl" => "cache_min_ttl",
+		"infra_host_ttl" => "infra_host_ttl",
+		"infra_cache_numhosts" => "infra_cache_numhosts",
+		"unwanted_reply_threshold" => "unwanted_reply_threshold",
+		"custom_options" => "custom_options");
+
+	foreach ($fields as $oldk => $newk) {
+		if (isset($pkg[$oldk])) {
+			$new[$newk] = $pkg[$oldk];
+			unset($pkg[$oldk]);
+		}
+	}
+
+	/* Following options were removed, bring them as custom_options */
+	if (isset($pkg['stats']) && $pkg['stats'] == "on") {
+		if (isset($pkg['stats_interval']))
+			$new['custom_options'] .= (empty($new['custom_options']) ? "" : ";") . "statistics-interval: {$pkg['stats_interval']}";
+		if (isset($pkg['cumulative_stats']))
+			$new['custom_options'] .= (empty($new['custom_options']) ? "" : ";") . "statistics-cumulative: {$pkg['cumulative_stats']}";
+		if (isset($pkg['extended_stats']) && $pkg['extended_stats'] == "on")
+			$new['custom_options'] .= (empty($new['custom_options']) ? "" : ";") . "extended-statistics: yes";
+		else
+			$new['custom_options'] .= (empty($new['custom_options']) ? "" : ";") . "extended-statistics: no";
+	}
+
+	$new['acls'] = array();
+	if (isset($config['installedpackages']['unboundacls']['config']) &&
+	    is_array($config['installedpackages']['unboundacls']['config'])) {
+		foreach ($config['installedpackages']['unboundacls']['config'] as $acl)
+			$new['acls'][] = $acl;
+	}
+
+	$config['unbound'] = $new;
+
+	if(isset($config['installedpackages']['unbound']))
+		unset($config['installedpackages']['unbound']);
+	if(isset($config['installedpackages']['unboundadvanced']))
+		unset($config['installedpackages']['unboundadvanced']);
+	if(isset($config['installedpackages']['unboundacls']))
+		unset($config['installedpackages']['unboundacls']);
+
+	unset($pkg, $new);
+}
+
 ?>

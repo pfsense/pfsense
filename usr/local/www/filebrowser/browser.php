@@ -4,6 +4,8 @@ require_once("guiconfig.inc");
 
 /*
 	pfSense_MODULE:	shell
+        Copyright (C) 2013-2014 Electric Sheep Fencing, LP
+
 */
 // Fetch a list of directories and files inside a given directory
 function get_content($dir) {
@@ -91,25 +93,44 @@ endforeach;
 foreach($files as $file):
 	$ext = strrchr($file, ".");
 
-	    if($ext == ".css" ) $type = "code";
-	elseif($ext == ".html") $type = "code";
-	elseif($ext == ".xml" ) $type = "code";
-	elseif($ext == ".rrd" ) $type = "database";
-	elseif($ext == ".gif" ) $type = "image";
-	elseif($ext == ".jpg" ) $type = "image";
-	elseif($ext == ".png" ) $type = "image";
-	elseif($ext == ".js"  ) $type = "js";
-	elseif($ext == ".pdf" ) $type = "pdf";
-	elseif($ext == ".inc" ) $type = "php";
-	elseif($ext == ".php" ) $type = "php";
-	elseif($ext == ".conf") $type = "system";
-	elseif($ext == ".pid" ) $type = "system";
-	elseif($ext == ".sh"  ) $type = "system";
-	elseif($ext == ".bz2" ) $type = "zip";
-	elseif($ext == ".gz"  ) $type = "zip";
-	elseif($ext == ".tgz" ) $type = "zip";
-	elseif($ext == ".zip" ) $type = "zip";
-	else                    $type = "generic";
+	switch ($ext) {
+	   case ".css":
+	   case ".html":
+	   case ".xml":
+		$type = "code";
+		break;
+	   case ".rrd":
+		$type = "database";
+		break;
+	   case ".gif":
+	   case ".jpg":
+	   case ".png":
+		$type = "image";
+		break;
+	   case ".js":
+		 $type = "js";
+		break;
+	   case ".pdf":
+		$type = "pdf";
+		break;
+	   case ".inc":
+	   case ".php":
+		$type = "php";
+		break;
+	   case ".conf":
+	   case ".pid":
+	   case ".sh":
+		$type = "system";
+		break;
+	   case ".bz2":
+	   case ".gz":
+	   case ".tgz":
+	   case ".zip":
+		$type = "zip";
+		break;
+	   default:
+		$type = "generic";
+	}
 
 	$fqpn = "{$path}/{$file}";
 

@@ -2,9 +2,10 @@
 /* $Id$ */
 /*
 	system_hasync.php
-	part of pfSense (http://www.pfsense.org/)
+	part of pfSense (https://www.pfsense.org/)
 
 	Copyright (C) 2012 Darren Embry <dse@webonastick.com>.
+        Copyright (C) 2013-2014 Electric Sheep Fencing, LP
 	All rights reserved.
 
 	Redistribution and use in source and binary forms, with or without
@@ -40,6 +41,8 @@
 ##|-PRIV
 
 require("guiconfig.inc");
+
+$referer = (isset($_SERVER['HTTP_REFERER']) ? $_SERVER['HTTP_REFERER'] : '/system_hasync.php');
 
 if (!is_array($config['hasync']))
 	$config['hasync'] = array();
@@ -78,7 +81,7 @@ if ($_POST) {
 	$a_hasync['username']        = $pconfig['username'];
 	$a_hasync['password']        = $pconfig['password'];
 	write_config("Updated High Availability Sync configuration");
-	interfaces_carp_setup();
+	interfaces_sync_setup();
 	header("Location: system_hasync.php");
 	exit();
 }
@@ -342,7 +345,7 @@ include("head.inc");
 		<td width="78%">
 			<input name="id" type="hidden" value="0" />
 			<input name="Submit" type="submit" class="formbtn" value="Save" />
-			<input class="formbtn" type="button" value="Cancel" onclick="history.back()" />
+			<input type="button" class="formbtn" value="<?=gettext("Cancel");?>" onclick="window.location.href='<?=$referer;?>'" />
 		</td>
 	</tr>
 	</table>

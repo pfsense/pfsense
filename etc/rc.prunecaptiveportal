@@ -39,8 +39,15 @@ require_once("shaper.inc");
 require_once("captiveportal.inc");
 
 global $g;
+global $cpzone;
+global $cpzoneid;
 
 $cpzone = str_replace("\n", "", $argv[1]);
+if (!is_array($config['captiveportal'][$cpzone])) {
+	log_error("{$cpzone} is not a valid zone in the configuration!");
+	return;
+}
+$cpzoneid = $config['captiveportal'][$cpzone]['zoneid'];
 
 if (file_exists("{$g['tmp_path']}/.rc.prunecaptiveportal.{$cpzone}.running")) {
 	$stat = stat("{$g['tmp_path']}/.rc.prunecaptiveportal.{$cpzone}.running");

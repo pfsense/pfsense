@@ -3,6 +3,7 @@
 /*
 	system_firmware_restorefullbackup.php
 	Copyright (C) 2011 Scott Ullrich
+        Copyright (C) 2013-2014 Electric Sheep Fencing, LP
 	All rights reserved.
 
 	originally part of m0n0wall (http://m0n0.ch/wall)
@@ -59,9 +60,9 @@ if($_GET['backupnow'])
 	mwexec_bg("/etc/rc.create_full_backup");
 
 if($_GET['downloadbackup']) {
-	$filename = $_GET['downloadbackup'];
+	$filename = basename($_GET['downloadbackup']);
 	$path = "/root/{$filename}";
-	if(file_exists("/root/{$filename}")) {
+	if(file_exists($path)) {
 		session_write_close();
 		ob_end_clean();
 		session_cache_limiter('public');
@@ -113,7 +114,7 @@ include("head.inc");
 <?php if (is_subsystem_dirty('restore')): ?><p>
 <form action="reboot.php" method="post">
 <input name="Submit" type="hidden" value="Yes" />
-<?php print_info_box(gettext("The firewall configuration has been changed.") . "<br/>" . gettext("The firewall is now rebooting."));?><br/>
+<?php print_info_box(gettext("The firewall configuration has been changed.") . "<br />" . gettext("The firewall is now rebooting."));?><br />
 </form>
 <?php endif; ?>
 <form action="system_firmware_restorefullbackup.php" method="post">
@@ -178,9 +179,9 @@ include("head.inc");
 ?>
 				<tr>
 					<td width="78%" colspan="3">
-						&nbsp;<br/>
+						&nbsp;<br />
 						<input type="checkbox" name="overwriteconfigxml" id="overwriteconfigxml" checked="checked" /> <?=gettext("do not restore config.xml."); ?>
-						<br/>
+						<br />
 						<input name="Restore" type="submit" class="formbtn" id="restore" value="<?=gettext("Restore"); ?>" />
 					</td>
 				</tr>

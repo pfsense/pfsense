@@ -3,7 +3,8 @@
 	$Id$
 	part of m0n0wall (http://m0n0.ch/wall)
 
-	Copyrigth (C) 2009	    Ermal Luçi
+        Copyright (C) 2013-2014 Electric Sheep Fencing, LP
+	Copyrigth (C) 2009 Ermal LuÃ§i
 	Copyright (C) 2003-2006 Manuel Kasper <mk@neon1.net>.
 	All rights reserved.
 
@@ -44,18 +45,20 @@ header("Cache-Control: post-check=0, pre-check=0", false);
 header("Pragma: no-cache");
 header("Connection: close");
 
-global $cpzone;
+global $cpzone, $cpzoneid;
 
 $cpzone = $_REQUEST['zone'];
 $cpcfg = $config['captiveportal'][$cpzone];
 if (empty($cpcfg)) {
-	log_error("Submission to captiveportal with unkown parameter zone: " . htmlspecialchars($cpzone));
+	log_error("Submission to captiveportal with unknown parameter zone: " . htmlspecialchars($cpzone));
 	portal_reply_page($redirurl, "error", $errormsg);
 	ob_flush();
 	return;
 }
 
-$orig_host = $_ENV['HTTP_HOST'];
+$cpzoneid = $cpcfg['zoneid'];
+
+$orig_host = $_SERVER['HTTP_HOST'];
 /* NOTE: IE 8/9 is buggy and that is why this is needed */
 $orig_request = trim($_REQUEST['redirurl'], " /");
 $clientip = $_SERVER['REMOTE_ADDR'];
@@ -119,19 +122,19 @@ if ($_POST['auth_user2'])
 
 if ($_POST['logout_id']) {
 	echo <<<EOD
-<HTML>
-<HEAD><TITLE>Disconnecting...</TITLE></HEAD>
-<BODY BGCOLOR="#435370">
-<SPAN STYLE="color: #ffffff; font-family: Tahoma, Verdana, Arial, Helvetica, sans-serif; font-size: 11px;">
-<B>You have been disconnected.</B>
-</SPAN>
-<SCRIPT LANGUAGE="JavaScript">
+<html>
+<head><title>Disconnecting...</title></head>
+<body bgcolor="#435370">
+<span style="color: #ffffff; font-family: Tahoma, Verdana, Arial, Helvetica, sans-serif; font-size: 11px;">
+<b>You have been disconnected.</b>
+</span>
+<script type="text/javascript">
 <!--
 setTimeout('window.close();',5000) ;
 -->
-</SCRIPT>
-</BODY>
-</HTML>
+</script>
+</body>
+</html>
 
 EOD;
 	captiveportal_disconnect_client($_POST['logout_id']);

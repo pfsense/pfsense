@@ -19,7 +19,7 @@ $pkg_info = get_pkg_info();
 if ($pkg_info) {
 	echo " Done.\n";
 } else {
-	$xmlrpc_base_url = isset($config['system']['altpkgrepo']['enable']) ? $config['system']['altpkgrepo']['xmlrpcbaseurl'] : $g['xmlrpcbaseurl'];
+	$xmlrpc_base_url = get_active_xml_rpc_base_url();
 	echo "\n" . sprintf(gettext(' >>> Unable to communicate with %1$s. Please verify DNS and interface configuration, and that %2$s has functional Internet connectivity.'), $xmlrpc_base_url, $g['product_name']) . "\n";
 	return;
 }

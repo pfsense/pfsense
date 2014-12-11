@@ -38,7 +38,7 @@
 	POSSIBILITY OF SUCH DAMAGE.
 
 
-	pfSense_BUILDER_BINARIES:	/sbin/mount	/sbin/sysctl	/sbin/umount	/sbin/halt	/sbin/fsck
+	pfSense_BUILDER_BINARIES:	/sbin/mount	/sbin/umount	/sbin/halt	/sbin/fsck
 	pfSense_MODULE:	config
 */
 
@@ -76,6 +76,12 @@ if(file_exists("/debugging")) {
 }
 
 $config = parse_config();
+
+/* set timezone */
+$timezone = $config['system']['timezone'];
+if (!$timezone)
+        $timezone = "Etc/UTC";
+date_default_timezone_set("$timezone");
 
 if($config_parsed == true) {
 	/* process packager manager custom rules */

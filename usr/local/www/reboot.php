@@ -4,6 +4,7 @@
 	reboot.php
 	part of m0n0wall (http://m0n0.ch/wall)
 	
+        Copyright (C) 2013-2014 Electric Sheep Fencing, LP
 	Copyright (C) 2003-2004 Manuel Kasper <mk@neon1.net>.
 	All rights reserved.
 	
@@ -49,10 +50,10 @@ $pgtitle = array(gettext("Diagnostics"),gettext("Reboot System"));
 include("head.inc");
 
 ?>
+<body link="#0000CC" vlink="#0000CC" alink="#0000CC">
 <?php include("fbegin.inc"); ?>
 <?php if ($_POST['Submit'] == " " . gettext("Yes") . " "): ?>
 <meta http-equiv=\"refresh\" content=\"70;url=/\">
-<body link="#0000CC" vlink="#0000CC" alink="#0000CC">
 <?php	print_info_box(gettext("The system is rebooting now. This may take one minute.")); ?>
 <pre>
 <?php 	system_reboot(); ?>
@@ -61,8 +62,8 @@ include("head.inc");
 <form action="reboot.php" method="post">
 	<p><strong><?=gettext("Are you sure you want to reboot the system?");?></strong></p>
 	<p>
-	<input name="Submit" type="submit" class="formbtn" value=" <?=gettext("Yes");?> ">
-	<input name="Submit" type="submit" class="formbtn" value=" <?=gettext("No");?> ">
+	<input name="Submit" type="submit" class="formbtn" value=" <?=gettext("Yes");?> " />
+	<input name="Submit" type="submit" class="formbtn" value=" <?=gettext("No");?> " />
 	</p>
 </form>
 <?php endif; ?>

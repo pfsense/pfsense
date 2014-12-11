@@ -2,9 +2,10 @@
 /* $Id$ */
 /*
 	system_gateway_groups.php
-	part of pfSense (http://pfsense.com)
+	part of pfSense (https://www.pfsense.org)
 
 	Copyright (C) 2010 Seth Mos <seth.mos@dds.nl>.
+        Copyright (C) 2013-2014 Electric Sheep Fencing, LP
 	All rights reserved.
 
 	Redistribution and use in source and binary forms, with or without
@@ -107,8 +108,8 @@ include("head.inc");
 <form action="system_gateway_groups.php" method="post">
 <input type="hidden" name="y1" value="1" />
 <?php if ($savemsg) print_info_box($savemsg); ?>
-<?php if (is_subsystem_dirty('staticroutes')): ?><p>
-<?php print_info_box_np(sprintf(gettext("The gateway configuration has been changed.%sYou must apply the changes in order for them to take effect."), "<br/>"));?><br/></p>
+<?php if (is_subsystem_dirty('staticroutes')): ?><br/>
+<?php print_info_box_np(sprintf(gettext("The gateway configuration has been changed.%sYou must apply the changes in order for them to take effect."), "<br />"));?><br /><br />
 <?php endif; ?>
 	<table width="100%" border="0" cellpadding="0" cellspacing="0" summary="system groups">
 		<tr>
@@ -165,7 +166,7 @@ include("head.inc");
                     <?php
 			foreach($gateway_group['item'] as $item) {
 				$itemsplit = explode("|", $item);
-				echo htmlspecialchars(strtoupper($itemsplit[0])) . "<br/>\n";
+				echo htmlspecialchars(strtoupper($itemsplit[0])) . "<br />\n";
 			}
 		    ?>
                   </td>
@@ -173,7 +174,7 @@ include("head.inc");
 		    <?php
 			foreach($gateway_group['item'] as $item) {
 				$itemsplit = explode("|", $item);
-				echo "Tier ". htmlspecialchars($itemsplit[1]) . "<br/>\n";
+				echo "Tier ". htmlspecialchars($itemsplit[1]) . "<br />\n";
 			}
 		    ?>
                   </td>
@@ -183,7 +184,7 @@ include("head.inc");
                   <td valign="middle" class="list nowrap">
 			<table border="0" cellspacing="0" cellpadding="1" summary="edit">
 			   <tr>
-				<td><a href="system_gateway_groups_edit.php?id=<?=$i;?>"><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_e.gif" width="17" height="17" border="0" alt="edit" /></a>
+				<td><a href="system_gateway_groups_edit.php?id=<?=$i;?>"><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_e.gif" width="17" height="17" border="0" alt="edit" /></a></td>
 				<td><a href="system_gateway_groups.php?act=del&amp;id=<?=$i;?>" onclick="return confirm('<?=gettext("Do you really want to delete this gateway group?");?>')"><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_x.gif" width="17" height="17" border="0" alt="delete" /></a></td>
 			   </tr>
 			   <tr>
@@ -191,10 +192,10 @@ include("head.inc");
 				<td><a href="system_gateway_groups_edit.php?dup=<?=$i;?>"><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_plus.gif" width="17" height="17" border="0" alt="duplicate" /></a></td>
 			   </tr>
 			</table>
-
+                  </td>
 		</tr>
 			  <?php $i++; endforeach; ?>
-                <tr><td>&nbsp;</td></tr>
+                <tr style="display:none;"><td></td></tr>
 		</tbody>
 			</table>
 			</div>

@@ -15,6 +15,7 @@ smmsp:*:25:
 mailnull:*:26:
 guest:*:31:root
 bind:*:53:
+unbound:*:59:
 proxy:*:62:
 _pflogd:*:64:
 _dhcp:*:65:
@@ -25,7 +26,6 @@ network:*:69:
 www:*:80:
 nogroup:*:65533:
 nobody:*:65534:
-admin:*:0:
 audit:*:77:
 _ntp:*:123:
 _relayd:*:913:

@@ -3,7 +3,8 @@
 /*
 	interfaces_gre_edit.php
 
-	Copyright (C) 2008 Ermal Luçi
+        Copyright (C) 2013-2014 Electric Sheep Fencing, LP
+	Copyright (C) 2008 Ermal LuÃ§i
 	All rights reserved.
 
 	Redistribution and use in source and binary forms, with or without
@@ -41,14 +42,16 @@
 require("guiconfig.inc");
 require_once("functions.inc");
 
+$referer = (isset($_SERVER['HTTP_REFERER']) ? $_SERVER['HTTP_REFERER'] : '/interfaces_gre.php');
+
 if (!is_array($config['gres']['gre']))
 	$config['gres']['gre'] = array();
 
 $a_gres = &$config['gres']['gre'];
 
-
-$id = $_GET['id'];
-if (isset($_POST['id']))
+if (is_numericint($_GET['id']))
+	$id = $_GET['id'];
+if (isset($_POST['id']) && is_numericint($_POST['id']))
 	$id = $_POST['id'];
 
 if (isset($id) && $a_gres[$id]) {
@@ -131,6 +134,7 @@ include("head.inc");
 ?>
 
 <body link="#0000CC" vlink="#0000CC" alink="#0000CC">
+<script type="text/javascript" src="/javascript/jquery.ipv4v6ify.js"></script>
 <?php include("fbegin.inc"); ?>
 <?php if ($input_errors) print_input_errors($input_errors); ?>
             <form action="interfaces_gre_edit.php" method="post" name="iform" id="iform">
@@ -147,36 +151,39 @@ include("head.inc");
 						$carplist = get_configured_carp_interface_list();
 						foreach ($carplist as $cif => $carpip)
 							$portlist[$cif] = $carpip." (".get_vip_descr($carpip).")";
+						$aliaslist = get_configured_ip_aliases_list();
+						foreach ($aliaslist as $aliasip => $aliasif)
+							$portlist[$aliasif.'|'.$aliasip] = $aliasip." (".get_vip_descr($aliasip).")";
 					  	foreach ($portlist as $ifn => $ifinfo) {
 							echo "<option value=\"{$ifn}\"";
 							if ($ifn == $pconfig['if'])
 								echo " selected=\"selected\"";
-							echo ">{$ifinfo}</option>";
+							echo ">" . htmlspecialchars($ifinfo) . "</option>\n";
 						}
 		      		?>
                     </select>
-			<br/>
+			<br />
 			<span class="vexpl"><?=gettext("The interface here serves as the local address to be used for the GRE tunnel.");?></span></td>
                 </tr>
 				<tr>
-                  <td valign="top" class="vncellreq"><?=gettext("GRE remote address");?></td>
+                  <td valign="top" class="vncellreq"><?=gettext("Remote tunnel endpoint IP address");?></td>
                   <td class="vtable">
                     <input name="remote-addr" type="text" class="formfld unknown" id="remote-addr" size="16" value="<?=htmlspecialchars($pconfig['remote-addr']);?>" />
-                    <br/>
+                    <br />
                     <span class="vexpl"><?=gettext("Peer address where encapsulated GRE packets will be sent ");?></span></td>
 			    </tr>
 				<tr>
-                  <td valign="top" class="vncellreq"><?=gettext("GRE tunnel local address ");?></td>
+                  <td valign="top" class="vncellreq"><?=gettext("Local tunnel IP address ");?></td>
                   <td class="vtable">
                     <input name="tunnel-local-addr" type="text" class="formfld unknown" id="tunnel-local-addr" size="16" value="<?=htmlspecialchars($pconfig['tunnel-local-addr']);?>" />
-                    <br/>
-                    <span class="vexpl"><?=gettext("Local GRE tunnel endpoint");?></span></td>
+                    <br />
+                    <span class="vexpl"><?=gettext("Local IP address assigned inside this tunnel");?></span></td>
 			    </tr>
 				<tr>
-                  <td valign="top" class="vncellreq"><?=gettext("GRE tunnel remote address ");?></td>
+                  <td valign="top" class="vncellreq"><?=gettext("Remote tunnel IP address ");?></td>
                   <td class="vtable">
-                    <input name="tunnel-remote-addr" type="text" class="formfld unknown" id="tunnel-remote-addr" size="16" value="<?=htmlspecialchars($pconfig['tunnel-remote-addr']);?>" />
-                    <select name="tunnel-remote-net" class="formselect" id="tunnel-remote-net">
+                    <input name="tunnel-remote-addr" type="text" class="formfld unknown ipv4v6" id="tunnel-remote-addr" size="16" value="<?=htmlspecialchars($pconfig['tunnel-remote-addr']);?>" />
+                    <select name="tunnel-remote-net" class="formselect ipv4v6" id="tunnel-remote-net">
                                         <?php
                                         for ($i = 128; $i > 0; $i--) {
 						echo "<option value=\"{$i}\"";
@@ -186,21 +193,21 @@ include("head.inc");
                                         }
                                         ?>
                     </select>
-                    <br/>
-                    <span class="vexpl"><?=gettext("Remote GRE address endpoint. The subnet part is used for the determining the network that is tunneled.");?></span></td>
+                    <br />
+                    <span class="vexpl"><?=gettext("IP address inside this tunnel on the remote end. The subnet part is used for the determining the network that is tunneled.");?></span></td>
 			    </tr>
 				<tr>
-                  <td valign="top" class="vncell"><?=gettext("Mobile tunnel");?></td>
+                  <td valign="top" class="vncell"><?=gettext("Mobile encapsulation");?></td>
                   <td class="vtable">
                     <input name="link0" type="checkbox" id="link0" <?if ($pconfig['link0']) echo "checked=\"checked\"";?> />
-                    <br/>
-                    <span class="vexpl"><?=gettext("Specify which encapsulation method the tunnel should use. ");?></span></td>
+                    <br />
+                    <span class="vexpl"><?=gettext("Check this box to use mobile encapsulation (IP protocol 55, RFC 2004). When unchecked, uses GRE encapsulation (IP protocol 47, RFCs 1701, 1702).");?></span></td>
 			    </tr>
 				<tr>
                   <td valign="top" class="vncell"><?=gettext("Route search type");?></td>
                   <td class="vtable">
                     <input name="link1" type="checkbox" id="link1" <?if ($pconfig['link1']) echo "checked=\"checked\"";?> />
-                    <br/>
+                    <br />
                     <span class="vexpl">
      <?=gettext("For correct operation, the GRE device needs a route to the destination".
     " that is less specific than the one over the tunnel.  (Basically, there".
@@ -212,21 +219,22 @@ include("head.inc");
                   <td valign="top" class="vncell"><?=gettext("WCCP version");?></td>
                   <td class="vtable">
                     <input name="link2" type="checkbox" id="link2" <?if ($pconfig['link2']) echo "checked=\"checked\"";?> />
-                    <br/>
+                    <br />
                     <span class="vexpl"><?=gettext("Check this box for WCCP encapsulation version 2, or leave unchecked for version 1.");?></span></td>
 			    </tr>
 				<tr>
                   <td width="22%" valign="top" class="vncell"><?=gettext("Description");?></td>
                   <td width="78%" class="vtable">
                     <input name="descr" type="text" class="formfld unknown" id="descr" size="40" value="<?=htmlspecialchars($pconfig['descr']);?>" />
-                    <br/> <span class="vexpl"><?=gettext("You may enter a description here".
+                    <br /> <span class="vexpl"><?=gettext("You may enter a description here".
                     " for your reference (not parsed).");?></span></td>
                 </tr>
                 <tr>
                   <td width="22%" valign="top">&nbsp;</td>
                   <td width="78%">
 		    <input type="hidden" name="greif" value="<?=htmlspecialchars($pconfig['greif']); ?>" />
-                    <input name="Submit" type="submit" class="formbtn" value="<?=gettext("Save");?>" /> <input type="button" value="<?=gettext("Cancel");?>" onclick="history.back()" />
+                    <input name="Submit" type="submit" class="formbtn" value="<?=gettext("Save");?>" />
+                    <input type="button" class="formbtn" value="<?=gettext("Cancel");?>" onclick="window.location.href='<?=$referer;?>'" />
                     <?php if (isset($id) && $a_gres[$id]): ?>
                     <input name="id" type="hidden" value="<?=htmlspecialchars($id);?>" />
                     <?php endif; ?>

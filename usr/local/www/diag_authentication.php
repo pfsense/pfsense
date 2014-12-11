@@ -1,9 +1,9 @@
 <?php
 /*
 	diag_authentication.php
-	part of the pfSense project	(http://www.pfsense.org)
-	Copyright (C) 2010 Ermal Luçi
-
+	part of the pfSense project	(https://www.pfsense.org)
+	Copyright (C) 2010 Ermal LuÃ§i
+        Copyright (C) 2013-2014 Electric Sheep Fencing, LP
 	All rights reserved.
 
 	Redistribution and use in source and binary forms, with or without
@@ -78,7 +78,7 @@ include("head.inc");
 <?php if ($input_errors) print_input_errors($input_errors);?>
 <?php if ($savemsg) print_info_box($savemsg);?>
 
-<table width="100%" border="0" cellpadding="0" cellspacing="0">
+<table width="100%" border="0" cellpadding="0" cellspacing="0" summary="diag authentication">
 	<tr>
 		<td class="tabnavtbl"></td>
 	</tr>
@@ -86,17 +86,17 @@ include("head.inc");
 	<td>
 	<div id="mainarea">
 	<form id="iform" name="iform" action="diag_authentication.php" method="post">
-	<table class="tabcont" width="100%" border="0" cellspacing="0" cellpadding="6">
+	<table class="tabcont" width="100%" border="0" cellspacing="0" cellpadding="6" summary="test">
 	<tr>
 		<td width="22%" valign="top" class="vncell"><?=gettext("Authentication Server"); ?></td>
 		<td width="78%" class="vtable">
-			<select name='authmode' id='authmode' class="formselect" >
+			<select name="authmode" id="authmode" class="formselect" >
 			<?php
 				$auth_servers = auth_get_authserver_list();
 				foreach ($auth_servers as $auth_server):
 					$selected = "";
 					if ($auth_server['name'] == $pconfig['authmode'])
-						$selected = "selected";
+						$selected = "selected=\"selected\"";
 			?>
 			<option value="<?=$auth_server['name'];?>" <?=$selected;?>><?=$auth_server['name'];?></option>
 			<?php   endforeach; ?>
@@ -106,13 +106,13 @@ include("head.inc");
 	<tr>
 		<td width="22%" valign="top" class="vncell"><?=gettext("Username"); ?></td>
 		<td width="78%" class="vtable">
-			<input class="formfld unknown" size='20' id='username' name='username' value="<?=htmlspecialchars($pconfig['username']);?>" />
+			<input class="formfld unknown" size="20" id="username" name="username" value="<?=htmlspecialchars($pconfig['username']);?>" />
 		</td>
 	</tr>
 	<tr>
 		<td width="22%" valign="top" class="vncell"><?=gettext("Password"); ?></td>
 		<td width="78%" class="vtable">
-			<input class="formfld pwd" type='password' size='20' id='password' name='password' value="<?=htmlspecialchars($pconfig['password']);?>" />
+			<input class="formfld pwd" type="password" size="20" id="password" name="password" value="<?=htmlspecialchars($pconfig['password']);?>" />
 		</td>
 	</tr>
 	<tr>
@@ -122,7 +122,11 @@ include("head.inc");
 		</td>
 	</tr>
 	</table>
+	</form>
+	</div>
 	</td></tr>
 </table>
 
 <?php include("fend.inc"); ?>
+</body>
+</html>

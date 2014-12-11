@@ -36,25 +36,25 @@ var addRowTo = (function() {
 			size = rowsize[i];
 		td = d.createElement("td");
 		if(typeof(rowtype[i]) == 'function') {
-			td.innerHTML="<INPUT type='hidden' value='" + totalrows +"' name='" + rowname[i] + "_row-" + totalrows + "'></input>" + rowtype[i](rowname[i], size, totalrows) + " ";
+			td.innerHTML="<input type='hidden' value='" + totalrows +"' name='" + rowname[i] + "_row-" + totalrows + "' />" + rowtype[i](rowname[i], size, totalrows) + " ";
 		} else if(rowtype[i] == 'textbox') {
-			td.innerHTML="<INPUT type='hidden' value='" + totalrows +"' name='" + rowname[i] + "_row-" + totalrows + "'></input><input " + rowhelper_onChange + " size='" + rowsize[i] + "' name='" + rowname[i] + totalrows + "' id='" + rowname[i] + totalrows + "'></input> ";
+			td.innerHTML="<input type='hidden' value='" + totalrows +"' name='" + rowname[i] + "_row-" + totalrows + "' /><input " + rowhelper_onChange + " size='" + rowsize[i] + "' name='" + rowname[i] + totalrows + "' id='" + rowname[i] + totalrows + "' /> ";
 		} else if(rowtype[i] == 'textbox,ipv4v6') {
-			td.innerHTML="<INPUT type='hidden' value='" + totalrows +"' name='" + rowname[i] + "_row-" + totalrows + "'></input><input " + rowhelper_onChange + " size='" + rowsize[i] + "' name='" + rowname[i] + totalrows + "' class='ipv4v6' id='" + rowname[i] + totalrows + "'></input> ";
+			td.innerHTML="<input type='hidden' value='" + totalrows +"' name='" + rowname[i] + "_row-" + totalrows + "' /><input " + rowhelper_onChange + " size='" + rowsize[i] + "' name='" + rowname[i] + totalrows + "' class='ipv4v6' id='" + rowname[i] + totalrows + "' /> ";
 		} else if(rowtype[i] == 'select') {
-			td.innerHTML="<INPUT type='hidden' value='" + totalrows +"' name='" + rowname[i] + "_row-" + totalrows + "'></input><select " + rowhelper_onChange + " name='" + rowname[i] + totalrows + "' id='" + rowname[i] + totalrows + "'>" + newrow[i] + "</select> ";
+			td.innerHTML="<input type='hidden' value='" + totalrows +"' name='" + rowname[i] + "_row-" + totalrows + "' /><select " + rowhelper_onChange + " name='" + rowname[i] + totalrows + "' id='" + rowname[i] + totalrows + "'>" + newrow[i] + "</select> ";
 		} else if(rowtype[i] == 'select,ipv4v6') {
-			td.innerHTML="<INPUT type='hidden' value='" + totalrows +"' name='" + rowname[i] + "_row-" + totalrows + "'></input><select " + rowhelper_onChange + " name='" + rowname[i] + totalrows + "' class='ipv4v6' id='" + rowname[i] + totalrows + "'>" + newrow[i] + "</select> ";
+			td.innerHTML="<input type='hidden' value='" + totalrows +"' name='" + rowname[i] + "_row-" + totalrows + "' /><select " + rowhelper_onChange + " name='" + rowname[i] + totalrows + "' class='ipv4v6' id='" + rowname[i] + totalrows + "'>" + newrow[i] + "</select> ";
 		} else if(rowtype[i] == 'interfaces_selection') {
-			td.innerHTML="<INPUT type='hidden' value='" + totalrows +"' name='" + rowname[i] + "_row-" + totalrows + "'></input><select " + rowhelper_onChange + " name='" + rowname[i] + totalrows + "' id='" + rowname[i] + totalrows + "'>" + newrow[i] + "</select> ";
+			td.innerHTML="<input type='hidden' value='" + totalrows +"' name='" + rowname[i] + "_row-" + totalrows + "' /><select " + rowhelper_onChange + " name='" + rowname[i] + totalrows + "' id='" + rowname[i] + totalrows + "'>" + newrow[i] + "</select> ";
 		} else if(rowtype[i] == 'select_source') {
-			td.innerHTML="<INPUT type='hidden' value='" + totalrows +"' name='" + rowname[i] + "_row-" + totalrows + "'></input><select " + rowhelper_onChange + " name='" + rowname[i] + totalrows + "' id='" + rowname[i] + totalrows + "'>" + newrow[i] + "</select> ";
+			td.innerHTML="<input type='hidden' value='" + totalrows +"' name='" + rowname[i] + "_row-" + totalrows + "' /><select " + rowhelper_onChange + " name='" + rowname[i] + totalrows + "' id='" + rowname[i] + totalrows + "'>" + newrow[i] + "</select> ";
 		} else if(rowtype[i] == 'checkbox') {
-			td.innerHTML="<INPUT type='hidden' value='" + totalrows +"' name='" + rowname[i] + "_row-" + totalrows + "'></input><input " + rowhelper_onChange + " type='checkbox'name='" + rowname[i] + totalrows + "' id='" + rowname[i] + totalrows + "'></input> ";
+			td.innerHTML="<input type='hidden' value='" + totalrows +"' name='" + rowname[i] + "_row-" + totalrows + "' /><input " + rowhelper_onChange + " type='checkbox'name='" + rowname[i] + totalrows + "' id='" + rowname[i] + totalrows + "' /> ";
 		} else if(rowtype[i] == 'input') {
-			td.innerHTML="<INPUT type='hidden' value='" + totalrows +"' name='" + rowname[i] + "_row-" + totalrows + "'></input><input " + rowhelper_onChange + " class='formfld unknown' size='" + size + "' name='" + rowname[i] + totalrows + "' id='" + rowname[i] + totalrows + "'></input> ";
+			td.innerHTML="<input type='hidden' value='" + totalrows +"' name='" + rowname[i] + "_row-" + totalrows + "' /><input " + rowhelper_onChange + " class='formfld unknown' size='" + size + "' name='" + rowname[i] + totalrows + "' id='" + rowname[i] + totalrows + "' /> ";
 		} else if(rowtype[i] == 'password') {
-			td.innerHTML="<INPUT type='hidden' value='" + totalrows +"' name='" + rowname[i] + "_row-" + totalrows + "'></input><input " + rowhelper_onChange + " class='formfld pwd' type='password' name='" + rowname[i] + totalrows + "' id='" + rowname[i] + totalrows + "'></input> ";
+			td.innerHTML="<input type='hidden' value='" + totalrows +"' name='" + rowname[i] + "_row-" + totalrows + "' /><input " + rowhelper_onChange + " class='formfld pwd' type='password' name='" + rowname[i] + totalrows + "' id='" + rowname[i] + totalrows + "' /> ";
 		}
 		tr.appendChild(td);
 	}

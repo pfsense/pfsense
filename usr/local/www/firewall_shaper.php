@@ -3,7 +3,8 @@
 /*
 	firewall_shaper.php
 	Copyright (C) 2004, 2005 Scott Ullrich
-	Copyright (C) 2008 Ermal Luçi
+	Copyright (C) 2008 Ermal LuÃ§i
+        Copyright (C) 2013-2014 Electric Sheep Fencing, LP
 	All rights reserved.
 
 	Redistribution and use in source and binary forms, with or without
@@ -402,7 +403,7 @@ include("fbegin.inc");
 
 <?php if ($savemsg) print_info_box($savemsg); ?>
 <?php if (is_subsystem_dirty('shaper')): ?><p>
-<?php print_info_box_np(gettext("The traffic shaper configuration has been changed.")."<br/>".gettext("You must apply the changes in order for them to take effect."));?><br/></p>
+<?php print_info_box_np(gettext("The traffic shaper configuration has been changed.")."<br />".gettext("You must apply the changes in order for them to take effect."));?><br /></p>
 <?php endif; ?>
 <table width="100%" border="0" cellpadding="0" cellspacing="0" summary="traffic shaper">
   <tr><td>

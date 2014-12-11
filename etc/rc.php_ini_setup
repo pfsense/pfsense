@@ -29,7 +29,9 @@
 PLATFORM=`/bin/cat /etc/platform`
 MIN_REALMEM_FOR_APC=512
 
-if [ -d /usr/local/lib/php/20090626 ]; then
+if [ -d /usr/local/lib/php/20121212 ]; then
+	EXTENSIONSDIR="/usr/local/lib/php/20121212/"
+elif [ -d /usr/local/lib/php/20090626 ]; then
 	EXTENSIONSDIR="/usr/local/lib/php/20090626/"
 else
 	EXTENSIONSDIR="/usr/local/lib/php/20060613/"
@@ -53,7 +55,7 @@ REALMEM=`/sbin/sysctl hw.realmem | /usr/bin/awk '{print $2/1048576}' | /usr/bin/
 export REALMEM
 export LOWMEM
 
-if [  "$REALMEM" -lt "$MIN_REALMEM_FOR_APC" ]; then
+if [  ${REALMEM} -lt $MIN_REALMEM_FOR_APC ]; then
 	LOWMEM="TRUE"
 	echo ">>> Under $MIN_REALMEM_FOR_APC megabytes of ram detected.  Not enabling APC."
 	echo ">>> Under $MIN_REALMEM_FOR_APC megabytes of ram detected.  Not enabling APC." | /usr/bin/logger -p daemon.info -i -t rc.php_ini_setup
@@ -79,7 +81,7 @@ else
 fi
 
 # Set upload directory
-if [ "$PLATFORM" = "embedded" -o "$PLATFORM" = "nanobsd" ]; then
+if [ "$PLATFORM" = "nanobsd" ]; then
 	UPLOADTMPDIR=`/usr/bin/grep upload_path /etc/inc/globals.inc | /usr/bin/cut -d'"' -f4`
 else 
 	UPLOADTMPDIR="/tmp"
@@ -122,7 +124,7 @@ PHPMODULES="$PHPMODULES zlib"
 # SQLlite & Database
 PHPMODULES="$PHPMODULES spl"
 PHPMODULES="$PHPMODULES pdo"
-PHPMODULES="$PHPMODULES sqlite"
+PHPMODULES="$PHPMODULES sqlite3"
 # RADIUS
 PHPMODULES="$PHPMODULES radius"
 # ZeroMQ
@@ -135,6 +137,8 @@ PHPMODULES="$PHPMODULES pfSense"
 PHPMODULES="$PHPMODULES json"
 # bcmath
 PHPMODULES="$PHPMODULES bcmath"
+# filter
+PHPMODULES="$PHPMODULES filter"
 
 PHP_ZEND_MODULES="ioncube_loader"
 PHP_ZEND_MODULES_TS="ioncube_loader_ts"
@@ -178,6 +182,8 @@ magic_quotes_gpc = Off
 max_execution_time = 900
 max_input_time = 1800
 register_argc_argv = On
+register_long_arrays = Off
+variables_order = "GPCS"
 file_uploads = On
 upload_tmp_dir = ${UPLOADTMPDIR}
 upload_max_filesize = 200M
@@ -295,6 +301,77 @@ suhosin.memory_limit = 512435456
 
 EOF
 
+
+PHPFPMMAX=3
+if [ $REALMEM -lt 250 ]; then
+	PHPFPMMAX=2
+elif [ ${REALMEM} -gt 1000 ]; then
+	PHPFPMMAX=4
+fi
+
+/bin/cat > /usr/local/lib/php-fpm.conf <<EOF
+
+[global]
+pid = run/php-fpm.pid
+error_log=syslog
+syslog.facility = daemon
+syslog.ident = system
+log_level = error
+daemonize = yes
+events.mechanism = kqueue
+process.max = ${PHPFPMMAX}
+
+[lighty]
+user = root
+group = wheel
+;mode = 0600
+
+listen = /var/run/php-fpm.socket
+listen.owner = root
+listen.group = wheel
+listen.mode = 0600
+
+security.limit_extensions =
+
+; Pass environment variables
+env[PATH] = /bin:/sbin:/usr/bin:/usr/sbin:/usr/local/bin:/usr/local/sbin
+env[LOGNAME] = root
+
+EOF
+
+if [ $REALMEM -lt 350 ]; then
+	/bin/cat >> /usr/local/lib/php-fpm.conf <<EOF
+
+pm = ondemand
+pm.process_idle_timeout = 5
+pm.max_children = $PHPFPMMAX
+pm.max_requests = 500
+
+EOF
+
+elif [ $REALMEM -gt 1000 ]; then
+	/bin/cat >> /usr/local/lib/php-fpm.conf <<EOF
+
+pm = dynamic
+pm.process_idle_timeout = 5
+pm.max_children = $PHPFPMMAX
+pm.start_servers = 1
+pm.max_requests = 500
+pm.min_spare_servers=1
+pm.max_spare_servers=1
+
+EOF
+else
+
+	/bin/cat >> /usr/local/lib/php-fpm.conf <<EOF
+
+pm = static
+pm.max_children = $PHPFPMMAX
+pm.max_requests = 500
+
+EOF
+
+fi
 
 # Copy php.ini file to etc/ too (cli)
 /bin/cp /usr/local/lib/php.ini /usr/local/etc/php.ini

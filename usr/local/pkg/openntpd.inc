@@ -21,7 +21,7 @@ EOD;
 
 function openntpd_get_iface_ip($iface) {
 	$iface = convert_friendly_interface_to_real_interface_name($iface);
-	$line = trim(shell_exec("ifconfig $iface | grep inet | grep -v inet6"));
+	$line = trim(shell_exec("ifconfig " . escapeshellarg($iface) . " | grep inet | grep -v inet6"));
 	list($dummy, $ip, $dummy2, $dummy3) = explode(' ', $line);
 
 	return $ip;

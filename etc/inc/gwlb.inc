@@ -30,6 +30,7 @@
 
  */
 require_once("config.inc");
+require_once("rrd.inc");
 
 /* Returns an array of default values used for apinger.conf */
 function return_apinger_defaults() {
@@ -39,8 +40,11 @@ function return_apinger_defaults() {
 		"losslow" => "10",
 		"losshigh" => "20",
 		"interval" => "1",
-		"down" => "10");
-	}
+		"down" => "10",
+		"avg_delay_samples" => "10",
+		"avg_loss_samples" => "50",
+		"avg_loss_delay_samples" => "20");
+}
 
 /*
  * Creates monitoring configuration file and
@@ -57,10 +61,16 @@ function setup_gateways_monitor() {
 		return;
 	}
 
+	$apinger_debug = "";
+	if (isset($config['system']['apinger_debug']))
+		$apinger_debug = "debug on";
+
 	$apinger_default = return_apinger_defaults();
 	$apingerconfig = <<<EOD
 
 # pfSense apinger configuration file. Automatically Generated!
+
+{$apinger_debug}
 
 ## User and group the pinger should run as
 user "root"
@@ -123,14 +133,14 @@ target default {
 
 	## How many replies should be used to compute average delay
 	## for controlling "delay" alarms
-	avg_delay_samples 10
+	avg_delay_samples {$apinger_default['avg_delay_samples']}
 
 	## How many probes should be used to compute average loss
-	avg_loss_samples 50
+	avg_loss_samples {$apinger_default['avg_loss_samples']}
 
 	## The delay (in samples) after which loss is computed
 	## without this delays larger than interval would be treated as loss
-	avg_loss_delay_samples 20
+	avg_loss_delay_samples {$apinger_default['avg_loss_delay_samples']}
 
 	## Names of the alarms that may be generated for the target
 	alarms "down","delay","loss"
@@ -157,8 +167,14 @@ EOD;
 		if(in_array($gateway['monitor'], $monitor_ips))
 			continue;
 
-		/* Interface ip is needed since apinger will bind a socket to it. */
-		if (is_ipaddrv4($gateway['gateway'])) {
+		/* Interface ip is needed since apinger will bind a socket to it. 
+		 * However the config GUI should already have checked this and when 
+		 * PPoE is used the IP address is set to "dynamic". So using is_ipaddrv4
+		 * or is_ipaddrv6 to identify packet type would be wrong, especially as
+		 * further checks (that can cope with the "dynamic" case) are present inside
+		 * the if block. So using $gateway['ipprotocol'] is the better option.
+		 */
+		if ($gateway['ipprotocol'] == "inet") { // This is an IPv4 gateway...
 			$gwifip = find_interface_ip($gateway['interface'], true);
 			if (!is_ipaddrv4($gwifip))
 				continue; //Skip this target
@@ -171,18 +187,40 @@ EOD;
 			 */
 			if (is_ipaddrv4($gateway['gateway']) && $gateway['monitor'] != $gateway['gateway']) {
 				log_error("Removing static route for monitor {$gateway['monitor']} and adding a new route through {$gateway['gateway']}");
-				mwexec("/sbin/route change -host " . escapeshellarg($gateway['monitor']) .
-					" " . escapeshellarg($gateway['gateway']), true);
+				if (interface_isppp_type($gateway['friendlyiface']))
+					mwexec("/sbin/route change -host " . escapeshellarg($gateway['monitor']) .
+						" -iface " . escapeshellarg($gateway['interface']), true);
+				else
+					mwexec("/sbin/route change -host " . escapeshellarg($gateway['monitor']) .
+						" " . escapeshellarg($gateway['gateway']), true);
+
+				pfSense_kill_states("0.0.0.0/0", $gateway['monitor'], $gateway['interface'], "icmp");
 			}
-		} else if (is_ipaddrv6($gateway['gateway'])) {
-			/* link locals really need a different src ip */
-			if(is_linklocal($gateway['gateway'])) {
-				$gwifip = find_interface_ipv6_ll($gateway['interface'], true);
+		} else if ($gateway['ipprotocol'] == "inet6") { // This is an IPv6 gateway...
+			if ($gateway['monitor'] == $gateway['gateway']) {
+				/* link locals really need a different src ip */
+				if (is_linklocal($gateway['gateway'])) {
+					if (!strpos($gateway['gateway'], '%'))
+						$gateway['gateway'] .= '%' . $gateway['interface'];
+					$gwifip = find_interface_ipv6_ll($gateway['interface'], true);
+				} else {
+					$gwifip = find_interface_ipv6($gateway['interface'], true);
+				}
 			} else {
+				/* 'monitor' has been set, so makes sure it has precedence over
+				 * 'gateway' in defining the source IP. Otherwise if 'gateway'
+				 * is a local link and 'monitor' is global routable then the
+				 * ICMP6 response would not find its way back home...
+				 */
 				$gwifip = find_interface_ipv6($gateway['interface'], true);
 			}
-			if (is_linklocal($gateway['monitor']) && !strstr($gateway['monitor'], '%'))
+
+			/* Make sure srcip and target have scope defined when they are ll */
+			if (is_linklocal($gwifip) && !strpos($gwifip, '%'))
+				$gwifip .= '%' . $gateway['interface'];
+			if (is_linklocal($gateway['monitor']) && !strpos($gateway['monitor'], '%'))
 				$gateway['monitor'] .= "%{$gateway['interface']}";
+
 			if (!is_ipaddrv6($gwifip))
 				continue; //Skip this target
 
@@ -192,10 +230,16 @@ EOD;
 			 * Add static routes for each gateway with their monitor IP
 			 * not strictly necessary but is a added level of protection.
 			 */
-			if (is_ipaddrv6($gateway['gateway']) && $gateway['monitor'] != $gateway['gateway']) {
+			if ($gateway['gateway'] != $gateway['monitor']) {
 				log_error("Removing static route for monitor {$gateway['monitor']} and adding a new route through {$gateway['gateway']}");
-				mwexec("/sbin/route change -host -inet6 " . escapeshellarg($gateway['monitor']) .
-					" " . escapeshellarg($gateway['gateway']), true);
+				if (interface_isppp_type($gateway['friendlyiface']))
+					mwexec("/sbin/route change -host -inet6 " . escapeshellarg($gateway['monitor']) .
+						" -iface " . escapeshellarg($gateway['interface']), true);
+				else
+					mwexec("/sbin/route change -host -inet6 " . escapeshellarg($gateway['monitor']) .
+						" " . escapeshellarg($gateway['gateway']), true);
+
+				pfSense_kill_states("::0.0.0.0/0", $gateway['monitor'], $gateway['interface'], "icmpv6");
 			}
 		} else
 			continue;
@@ -204,8 +248,41 @@ EOD;
 		$apingercfg = "target \"{$gateway['monitor']}\" {\n";
 		$apingercfg .= "	description \"{$name}\"\n";
 		$apingercfg .= "	srcip \"{$gwifip}\"\n";
-		if (!empty($gateway['interval']) && intval($gateway['interval']) > 1)
-			$apingercfg .= "	interval " . intval($gateway['interval']) . "s\n";
+
+		## How often the probe should be sent
+		if (!empty($gateway['interval']) &&  is_numeric($gateway['interval'])) {
+			$interval = intval($gateway['interval']);	# Restrict to Integer
+			if ($interval <  1) $interval =  1;	# Minimum
+			if ($interval != $apinger_default['interval'])	# If not default value
+				$apingercfg .= "	interval " . $interval . "s\n";
+		}
+
+		## How many replies should be used to compute average delay 
+		## for controlling "delay" alarms
+		if (!empty($gateway['avg_delay_samples']) && is_numeric($gateway['avg_delay_samples'])) {
+			$avg_delay_samples = intval($gateway['avg_delay_samples']);	# Restrict to Integer
+			if ($avg_delay_samples <  1) $avg_delay_samples =  1;	# Minimum
+			if ($avg_delay_samples != $apinger_default['avg_delay_samples'])	# If not default value
+				$apingercfg .= "	avg_delay_samples " . $avg_delay_samples . "\n";
+		}
+
+		## How many probes should be used to compute average loss
+		if (!empty($gateway['avg_loss_samples']) && is_numeric($gateway['avg_loss_samples'])) {
+			$avg_loss_samples = intval($gateway['avg_loss_samples']);	# Restrict to Integer
+			if ($avg_loss_samples < 1) $avg_loss_samples = 1;	# Minimum
+			if ($avg_loss_samples != $apinger_default['avg_loss_samples'])	# If not default value
+				$apingercfg .= "	avg_loss_samples " . $avg_loss_samples . "\n";
+		}
+
+		## The delay (in samples) after which loss is computed
+		## without this delays larger than interval would be treated as loss
+		if (!empty($gateway['avg_loss_delay_samples']) && is_numeric($gateway['avg_loss_delay_samples'])) {
+			$avg_loss_delay_samples = intval($gateway['avg_loss_delay_samples']);	# Restrict to Integer
+			if ($avg_loss_delay_samples < 1) $avg_loss_delay_samples = 1;	# Minimum
+			if ($avg_loss_delay_samples != $apinger_default['avg_loss_delay_samples'])	# If not default value
+				$apingercfg .= "	avg_loss_delay_samples " . $avg_loss_delay_samples . "\n";
+		}
+
 		$alarms = "";
 		$alarmscfg = "";
 		$override = false;
@@ -254,23 +331,25 @@ EOD;
 		if ($override == true)
 			$apingercfg .= "\talarms override {$alarms};\n";
 
+		if (isset($gateway['force_down']))
+			$apingercfg .= "\tforce_down on\n";
+
 		$apingercfg .= "	rrd file \"{$g['vardb_path']}/rrd/{$gateway['name']}-quality.rrd\"\n";
 		$apingercfg .= "}\n";
 		$apingercfg .= "\n";
 
 		$apingerconfig .= $alarmscfg;
 		$apingerconfig .= $apingercfg;
+
+		# Create gateway quality RRD with settings more suitable for pfSense graph set, 
+		# since apinger uses default step (300; 5 minutes) and other settings that don't 
+		# match the pfSense gateway quality graph set.
+		create_gateway_quality_rrd("{$g['vardb_path']}/rrd/{$gateway['name']}-quality.rrd");
 	}
 	@file_put_contents("{$g['varetc_path']}/apinger.conf", $apingerconfig);
 	unset($apingerconfig);
 
-	if (is_dir("{$g['tmp_path']}"))
-		chmod("{$g['tmp_path']}", 01777);
-	if (!is_dir("{$g['vardb_path']}/rrd"))
-		mkdir("{$g['vardb_path']}/rrd", 0775);
-
-	@chown("{$g['vardb_path']}/rrd", "nobody");
-
+ 	/* Restart apinger process */
 	if (isvalidpid("{$g['varrun_path']}/apinger.pid"))
 		sigkillbypid("{$g['varrun_path']}/apinger.pid", "HUP");
 	else {
@@ -359,7 +438,7 @@ function return_gateways_status($byname = false) {
 }
 
 /* Return all configured gateways on the system */
-function return_gateways_array($disabled = false, $localhost = false) {
+function return_gateways_array($disabled = false, $localhost = false, $inactive = false) {
 	global $config, $g;
 
 	$gateways_arr = array();
@@ -367,26 +446,34 @@ function return_gateways_array($disabled = false, $localhost = false) {
 	$found_defaultv4 = 0;
 	$found_defaultv6 = 0;
 
+	// Ensure the interface cache is up to date first
+	$interfaces = get_interface_arr(true);
 	$interfaces_v4 = array();
 	$interfaces_v6 = array();
 
-	$i = 0;
+	$i = -1;
 	/* Process/add all the configured gateways. */
 	if (is_array($config['gateways']['gateway_item'])) {
 		foreach ($config['gateways']['gateway_item'] as $gateway) {
-			if (empty($config['interfaces'][$gateway['interface']]))
-				continue;
+			/* Increment it here to do not skip items */
+			$i++;
+
+			if (empty($config['interfaces'][$gateway['interface']])) {
+				if ($inactive === false)
+					continue;
+				else
+					$gateway['inactive'] = true;
+			}
 			$wancfg = $config['interfaces'][$gateway['interface']];
 
 			/* skip disabled interfaces */
-			if (!isset($wancfg['enable']))
+			if ($disabled === false && (!isset($wancfg['enable']) || isset($gateway['disabled'])))
 				continue;
 
 			/* if the gateway is dynamic and we can find the IPv4, Great! */
-			if (empty($gateway['gateway']) || $gateway['gateway'] == "dynamic" || $gateway['gateway'] == "dynamic6") {
+			if (empty($gateway['gateway']) || $gateway['gateway'] == "dynamic") {
 				if ($gateway['ipprotocol'] == "inet") {
 					/* we know which interfaces is dynamic, this should be made a function */
-					$gateway['ipprotocol'] = "inet";
 					$gateway['gateway'] = get_interface_gateway($gateway['interface']);
 					/* no IP address found, set to dynamic */
 					if (!is_ipaddrv4($gateway['gateway']))
@@ -394,14 +481,13 @@ function return_gateways_array($disabled = false, $localhost = false) {
 					$gateway['dynamic'] = true;
 				}
 
-				/* if the gateway is dynamic6 and we can find the IPv6, Great! */
+				/* if the gateway is dynamic and we can find the IPv6, Great! */
 				else if ($gateway['ipprotocol'] == "inet6") {
 					/* we know which interfaces is dynamic, this should be made a function, and for v6 too */
-					$gateway['ipprotocol'] = "inet6";
 					$gateway['gateway'] = get_interface_gateway_v6($gateway['interface']);
-					/* no IPv6 address found, set to dynamic6 */
+					/* no IPv6 address found, set to dynamic */
 					if (!is_ipaddrv6($gateway['gateway']))
-						$gateway['gateway'] = "dynamic6";
+						$gateway['gateway'] = "dynamic";
 					$gateway['dynamic'] = true;
 				}
 			} else {
@@ -422,10 +508,10 @@ function return_gateways_array($disabled = false, $localhost = false) {
 
 			/* special treatment for tunnel interfaces */
 			if ($gateway['ipprotocol'] == "inet6") {
-				$gateway['interface'] = get_real_interface($gateway['interface'], "inet6");
+				$gateway['interface'] = get_real_interface($gateway['interface'], "inet6", false, false);
 				$interfaces_v6[$gateway['friendlyiface']] = $gateway['friendlyiface'];
 			} else {
-				$gateway['interface'] = get_real_interface($gateway['interface']);
+				$gateway['interface'] = get_real_interface($gateway['interface'], "all", false, false);
 				$interfaces_v4[$gateway['friendlyiface']] = $gateway['friendlyiface'];
 			}
 
@@ -443,7 +529,6 @@ function return_gateways_array($disabled = false, $localhost = false) {
 			$gateway['attribute'] = $i;
 
 			$gateways_arr[$gateway['name']] = $gateway;
-			$i++;
 		}
 	}
 	unset($gateway);
@@ -481,8 +566,23 @@ function return_gateways_array($disabled = false, $localhost = false) {
 				$ctype = strtoupper($ifcfg['ipaddr']);
 				break;
 			default:
-				if (substr($ifcfg['if'], 0, 4) ==  "ovpn")
+				$tunnelif = substr($ifcfg['if'], 0, 3);
+				if (substr($ifcfg['if'], 0, 4) ==  "ovpn") {
+					// if current iface is an ovpn server endpoint then check its type, skip tap only
+					if (substr($ifcfg['if'], 4, 1) == 's') {
+						$ovpnid = substr($ifcfg['if'], 5);
+						if (is_array($config['openvpn']['openvpn-server'])) {
+							foreach ($config['openvpn']['openvpn-server'] as & $ovpnserverconf) {
+								if ($ovpnserverconf['vpnid'] == $ovpnid) {
+									if ($ovpnserverconf['dev_mode'] == "tap")
+										continue 3;
+								}
+							}
+						}
+					}
 					$ctype = "VPNv4";
+				} else if ($tunnelif == "gif" || $tunnelif == "gre")
+					$ctype = "TUNNELv4";
 				break;
 		}
 		$ctype = "_". strtoupper($ctype);
@@ -551,8 +651,23 @@ function return_gateways_array($disabled = false, $localhost = false) {
 				$ctype = strtoupper($ifcfg['ipaddrv6']);
 				break;
 			default:
-				if (substr($ifcfg['if'], 0, 4) ==  "ovpn")
+				$tunnelif = substr($ifcfg['if'], 0, 3);
+				if (substr($ifcfg['if'], 0, 4) ==  "ovpn") {
+					// if current iface is an ovpn server endpoint then check its type, skip tap only
+					if (substr($ifcfg['if'], 4, 1) == 's') {
+						$ovpnid = substr($ifcfg['if'], 5);
+						if (is_array($config['openvpn']['openvpn-server'])) {
+							foreach ($config['openvpn']['openvpn-server'] as & $ovpnserverconf) {
+								if ($ovpnserverconf['vpnid'] == $ovpnid) {
+									if ($ovpnserverconf['dev_mode'] == "tap")
+										continue 3;
+								}
+							}
+						}
+					}
 					$ctype = "VPNv6";
+				} else if ($tunnelif == "gif" || $tunnelif == "gre")
+					$ctype = "TUNNELv6";
 				break;
 		}
 		$ctype = "_". strtoupper($ctype);
@@ -580,7 +695,7 @@ function return_gateways_array($disabled = false, $localhost = false) {
 
 		/* Loopback dummy for dynamic interfaces without a IP */
 		if (!is_ipaddrv6($gateway['gateway']) && $gateway['dynamic'] == true)
-			$gateway['gateway'] = "dynamic6";
+			$gateway['gateway'] = "dynamic";
 
 		/* automatically skip known static and dynamic gateways we have a array entry for */
 		foreach($gateways_arr as $gateway_item) {
@@ -609,7 +724,7 @@ function return_gateways_array($disabled = false, $localhost = false) {
 					$found_defaultv4 = 1;
 				}
 			}
-			if (($gateway['friendlyiface'] == "wan") && ($found_defaultv6 == 0) && ($gateway['ipprotocol'] == "inet6")) {
+			else if (($gateway['friendlyiface'] == "wan") && ($found_defaultv6 == 0) && ($gateway['ipprotocol'] == "inet6")) {
 				if (file_exists("{$g['tmp_path']}/{$gateway['interface']}_defaultgwv6")) {
 					$gateway['defaultgw'] = true;
 					$found_defaultv6 = 1;
@@ -642,7 +757,8 @@ function fixup_default_gateway($ipprotocol, $gateways_status, $gateways_arr) {
 	 * NOTE: The code below is meant to replace the default gateway when it goes down.
 	 *	This facilitates services running on pfSense itself and are not handled by a PBR to continue working.
 	 */
-	$upgw = "";
+	$upgw = '';
+	$dfltgwname = '';
 	$dfltgwdown = false;
 	$dfltgwfound = false;
 	foreach ($gateways_arr as $gwname => $gwsttng) {
@@ -665,7 +781,7 @@ function fixup_default_gateway($ipprotocol, $gateways_status, $gateways_arr) {
 			$dfltgwdown = true;
 	}
 	if ($dfltgwdown == true && !empty($upgw)) {
-		if (preg_match("/dynamic/i", $gateways_arr[$upgw]['gateway']))
+		if ($gateways_arr[$upgw]['gateway'] == "dynamic")
 			$gateways_arr[$upgw]['gateway'] = get_interface_gateway($gateways_arr[$upgw]['friendlyiface']);
 		if (is_ipaddr($gateways_arr[$upgw]['gateway'])) {
 			log_error("Default gateway down setting {$upgw} as default!");
@@ -676,15 +792,14 @@ function fixup_default_gateway($ipprotocol, $gateways_status, $gateways_arr) {
 			}
 			mwexec("/sbin/route change {$inetfamily} default {$gateways_arr[$upgw]['gateway']}");
 		}
-	} else {
-		$defaultgw = trim(`/sbin/route -n get -{$ipprotocol} default | /usr/bin/grep gateway | /usr/bin/sed 's/gateway://g'`, " \n");
-		if(is_ipaddrv6($gateways_arr[$dfltgwname]['gateway'])) {
-			$inetfamily = "-inet6";
-		} else {
-			$inetfamily = "-inet";
-		}
+	} else if (!empty($dfltgwname)) {
+		$defaultgw = trim(exec("/sbin/route -n get -{$ipprotocol} default | /usr/bin/awk '/gateway:/ {print $2}'"), " \n");
+		if ($ipprotocol == 'inet6' && !is_ipaddrv6($gateways_arr[$dfltgwname]['gateway']))
+			return;
+		if ($ipprotocol == 'inet' && !is_ipaddrv4($gateways_arr[$dfltgwname]['gateway']))
+			return;
 		if ($defaultgw != $gateways_arr[$dfltgwname]['gateway'])
-			mwexec("/sbin/route change {$inetfamily} default {$gateways_arr[$dfltgwname]['gateway']}");
+			mwexec("/sbin/route change -{$ipprotocol} default {$gateways_arr[$dfltgwname]['gateway']}");
 	}
 }
 
@@ -730,15 +845,15 @@ function return_gateway_groups_array() {
 					$status = $gateways_status[$gwname];
 					$gwdown = false;
 					if (stristr($status['status'], "down")) {
-						$msg = sprintf(gettext("MONITOR: %s is down, removing from routing group {$group['name']}"), $gwname);
+						$msg = sprintf(gettext("MONITOR: %s is down, omitting from routing group {$group['name']}"), $gwname);
 						$gwdown = true;
 					} else if (stristr($status['status'], "loss") && strstr($group['trigger'], "loss")) {
 						/* packet loss */
-						$msg = sprintf(gettext("MONITOR: %s has packet loss, removing from routing group {$group['name']}"), $gwname);
+						$msg = sprintf(gettext("MONITOR: %s has packet loss, omitting from routing group {$group['name']}"), $gwname);
 						$gwdown = true;
 					} else if (stristr($status['status'], "delay") && strstr($group['trigger'] , "latency")) {
 						/* high latency */
-						$msg = sprintf(gettext("MONITOR: %s has high latency, removing from routing group {$group['name']}"), $gwname);
+						$msg = sprintf(gettext("MONITOR: %s has high latency, omitting from routing group {$group['name']}"), $gwname);
 						$gwdown = true;
 					}
 					if ($gwdown == true) {
@@ -757,7 +872,7 @@ function return_gateway_groups_array() {
 			$tiers_count = count($tiers);
 			if ($tiers_count == 0) {
 				/* Oh dear, we have no members! Engage Plan B */
-				if (!$g['booting']) {
+				if (!platform_booting()) {
 					$msg = gettext("Gateways status could not be determined, considering all as up/active. (Group: {$group['name']})");
 					log_error($msg);
 					notify_via_growl($msg);
@@ -782,15 +897,17 @@ function return_gateway_groups_array() {
 						else if (!empty($int))
 							$gatewayip = get_interface_gateway($gateway['friendlyiface']);
 
-						if (!empty($int) && is_ipaddr($gatewayip)) {
-							$groupmember = array();
-							$groupmember['int']  = $int;
-							$groupmember['gwip']  = $gatewayip;
-							$groupmember['weight']  = isset($gateway['weight']) ? $gateway['weight'] : 1;
-							if (is_array($gwvip_arr[$group['name']])&& !empty($gwvip_arr[$group['name']][$member]))
-								$groupmember['vip'] = $gwvip_arr[$group['name']][$member];
+						if (!empty($int)) {
 							$gateway_groups_array[$group['name']]['ipprotocol'] = $gateway['ipprotocol'];
-							$gateway_groups_array[$group['name']][] = $groupmember;
+							if (is_ipaddr($gatewayip)) {
+								$groupmember = array();
+								$groupmember['int']  = $int;
+								$groupmember['gwip']  = $gatewayip;
+								$groupmember['weight']  = isset($gateway['weight']) ? $gateway['weight'] : 1;
+								if (is_array($gwvip_arr[$group['name']])&& !empty($gwvip_arr[$group['name']][$member]))
+									$groupmember['vip'] = $gwvip_arr[$group['name']][$member];
+								$gateway_groups_array[$group['name']][] = $groupmember;
+							}
 						}
 					}
 				}
@@ -874,7 +991,7 @@ function get_interface_gateway($interface, &$dynamic = false) {
 	}
 
 	// for dynamic interfaces we handle them through the $interface_router file.
-	if (!is_ipaddrv4($gw) && !is_ipaddrv4($gwcfg['ipaddr'])) {
+	if (($gw == NULL || !is_ipaddrv4($gw)) && !is_ipaddrv4($gwcfg['ipaddr'])) {
 		$realif = get_real_interface($interface);
 		if (file_exists("{$g['tmp_path']}/{$realif}_router")) {
 				$gw = trim(file_get_contents("{$g['tmp_path']}/{$realif}_router"), " \n");
@@ -904,7 +1021,7 @@ function get_interface_gateway_v6($interface, &$dynamic = false) {
 	}
 
 	// for dynamic interfaces we handle them through the $interface_router file.
-	if (!is_ipaddrv6($gw) && !is_ipaddrv6($gwcfg['ipaddrv6'])) {
+	if (($gw == NULL || !is_ipaddrv6($gw)) && !is_ipaddrv6($gwcfg['ipaddrv6'])) {
 			$realif = get_real_interface($interface);
 			if (file_exists("{$g['tmp_path']}/{$realif}_routerv6")) {
 				$gw = trim(file_get_contents("{$g['tmp_path']}/{$realif}_routerv6"), " \n");

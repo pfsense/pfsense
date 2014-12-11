@@ -2,8 +2,9 @@
 /* $Id$ */
 /*
 	wizard.php
-	Copyright (C) 2004 Scott Ullrich
+        Copyright (C) 2013-2014 Electric Sheep Fencing, LP
 	Copyright (C) 2010 Ermal Luçi
+	Copyright (C) 2004 Scott Ullrich
 	All rights reserved.
 
 	Redistribution and use in source and binary forms, with or without
@@ -41,7 +42,7 @@ require("guiconfig.inc");
 require("functions.inc");
 require_once("filter.inc");
 require("shaper.inc");
-require("rrd.inc");
+require_once("rrd.inc");
 
 function gentitle_pkg($pgname) {
 	global $config;
@@ -308,7 +309,7 @@ function showchange() {
 
 <center>
 
-&nbsp;<br/>
+&nbsp;<br />
 
 <?php
 	if($title == "Reload in progress") {
@@ -592,7 +593,7 @@ function showchange() {
 					echo ":</td>\n";
 				}
 				if($field['size']) $size = " size='" . $field['size'] . "' ";
-				if($field['multiple'] == "yes") $multiple = "MULTIPLE ";
+				if($field['multiple'] == "yes") $multiple = "multiple=\"multiple\" ";
 				if(!$field['dontcombinecells'])
 					echo "<td class=\"vtable\">\n";
 				$onchange = "";
@@ -647,7 +648,7 @@ function showchange() {
 
 				break;
 			case "submit":
-				echo "<td>&nbsp;<br/></td></tr>";
+				echo "<td>&nbsp;<br /></td></tr>";
 				echo "<tr><td colspan=\"2\" align=\"center\">";
 				echo "<input type='submit' name='" . $name . "' value=\"" . htmlspecialchars($field['name']) . "\" />\n";
 
@@ -658,7 +659,7 @@ function showchange() {
 				break;
 			case "listtopic":
 				echo "<td>&nbsp;</td></tr>";
-				echo "<tr><td colspan=\"2\" class=\"listtopic\">" . $field['name'] . "<br /></td>\n";
+				echo "<tr><td colspan=\"2\" class=\"listtopic\">" . $field['name'] . "<br />\n";
 
 				break;
 			case "subnet_select":
@@ -772,7 +773,7 @@ function showchange() {
 		</td>
 	</tr>
 </table>
-<br/>&nbsp;
+<br />&nbsp;
 </div>
 </center>
 </form>
@@ -892,7 +893,9 @@ if($pkg['step'][$stepid]['stepafterformdisplay'] <> "") {
 if($pkg['step'][$stepid]['javascriptafterformdisplay'] <> "") {
 	// handle after form display event.
 	echo "\n<script type=\"text/javascript\">\n";
+	echo "//<![CDATA[\n";
 	echo $pkg['step'][$stepid]['javascriptafterformdisplay'] . "\n";
+	echo "//]]>\n";
 	echo "</script>\n\n";
 }
 
@@ -925,8 +928,7 @@ function fixup_string($string) {
 			$urlport = "";
 		}
 	}
-	$http_host = explode(":", $_SERVER['HTTP_HOST']);
-	$http_host = $http_host[0];
+	$http_host = $_SERVER['SERVER_NAME'];
 	$urlhost = $http_host;
 	// If finishing the setup wizard, check if accessing on a LAN or WAN address that changed
 	if($title == "Reload in progress") {

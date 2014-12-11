@@ -37,7 +37,6 @@
         ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
         POSSIBILITY OF SUCH DAMAGE.
 
-		DISABLE_PHP_LINT_CHECKING
 		pfSense_BUILDER_BINARIES:	/usr/sbin/pw	/bin/cp
 		pfSense_MODULE:	auth
 */
@@ -55,7 +54,7 @@ $security_passed = true;
 /* If this function doesn't exist, we're being called from Captive Portal or 
    another internal subsystem which does not include authgui.inc */
 if (function_exists("display_error_form") && !isset($config['system']['webgui']['nodnsrebindcheck'])) {
-	/* DNS ReBinding attack prevention.  http://redmine.pfsense.org/issues/708 */
+	/* DNS ReBinding attack prevention.  https://redmine.pfsense.org/issues/708 */
 	$found_host = false;
 
 	/* Either a IPv6 address with or without a alternate port */
@@ -104,7 +103,7 @@ if (function_exists("display_error_form") && !isset($config['system']['webgui'][
 
 	if($found_host == false) {
 		if(!security_checks_disabled()) {
-			display_error_form("501", gettext("Potential DNS Rebind attack detected, see http://en.wikipedia.org/wiki/DNS_rebinding<br/>Try accessing the router by IP address instead of by hostname."));
+			display_error_form("501", gettext("Potential DNS Rebind attack detected, see http://en.wikipedia.org/wiki/DNS_rebinding<br />Try accessing the router by IP address instead of by hostname."));
 			exit;
 		}
 		$security_passed = false;
@@ -329,6 +328,11 @@ function local_sync_accounts() {
 			$line = explode(":",fgets($fd));
 			if (((!strncmp($line[0], "_", 1)) || ($line[2] < 2000) || ($line[2] > 65000)) && ($line[0] != "admin"))
 				continue;
+			/*
+			 * If a crontab was created to user, pw userdel will be interactive and
+			 * can cause issues. Just remove crontab before run it when necessary
+			 */
+			unlink_if_exists("/var/cron/tabs/{$line[0]}");
 			$cmd = "/usr/sbin/pw userdel -n '{$line[0]}'";
 			if($debug)
 				log_error(sprintf(gettext("Running: %s"), $cmd));
@@ -570,7 +574,7 @@ function local_user_set_groups($user, $new_groups = NULL ) {
 
 	/* determine which memberships to add */
 	foreach ($new_groups as $groupname) {
-		if (in_array($groupname,$cur_groups))
+		if ($groupname == '' || in_array($groupname,$cur_groups))
 			continue;
 		$group = & $config['system']['group'][$groupindex[$groupname]];
 		$group['member'][] = $user['uid'];
@@ -619,9 +623,12 @@ function local_group_set($group, $reset = false) {
 
 	$group_name = $group['name'];
 	$group_gid = $group['gid'];
-	$group_members = "''";
+	$group_members = '';
 	if (!$reset && !empty($group['member']) && count($group['member']) > 0)
 		$group_members = implode(",",$group['member']);
+
+	if (empty($group_name))
+		return;
 
 	/* read from group db */
 	$fd = popen("/usr/sbin/pw groupshow {$group_name} 2>&1", "r");
@@ -635,7 +642,7 @@ function local_group_set($group, $reset = false) {
 		$group_op = "groupmod";
 
 	/* add or mod group db */
-	$cmd = "/usr/sbin/pw {$group_op} {$group_name} -g {$group_gid} -M {$group_members} 2>&1";
+	$cmd = "/usr/sbin/pw {$group_op} {$group_name} -g {$group_gid} -M '{$group_members}' 2>&1";
 
 	if($debug)
 		log_error(sprintf(gettext("Running: %s"), $cmd));
@@ -1201,7 +1208,7 @@ function radius_backed($username, $passwd, $authcfg, &$attributes = array()) {
 		$retvalue['auth_val'] = 1;
 		$retvalue['error'] = $rauth->getError();
 		if ($debug)
-			printf(gettext("Radius start: %s<br>\n"), $retvalue['error']);
+			printf(gettext("Radius start: %s<br />\n"), $retvalue['error']);
 	}
 
 	// XXX - billm - somewhere in here we need to handle securid challenge/response
@@ -1212,18 +1219,18 @@ function radius_backed($username, $passwd, $authcfg, &$attributes = array()) {
 		$retvalue['auth_val'] = 1;
 		$retvalue['error'] = $result->getMessage();
 		if ($debug)
-			printf(gettext("Radius send failed: %s<br>\n"), $retvalue['error']);
+			printf(gettext("Radius send failed: %s<br />\n"), $retvalue['error']);
 	} else if ($result === true) {
 		if ($rauth->getAttributes())
 			$attributes = $rauth->listAttributes();
 		$retvalue['auth_val'] = 2;
 		if ($debug)
-			printf(gettext("Radius Auth succeeded")."<br>\n");
+			printf(gettext("Radius Auth succeeded")."<br />\n");
 		$ret = true;
 	} else {
 		$retvalue['auth_val'] = 3;
 		if ($debug)
-			printf(gettext("Radius Auth rejected")."<br>\n");
+			printf(gettext("Radius Auth rejected")."<br />\n");
 	}
 
 	// close OO RADIUS_AUTHENTICATION
@@ -1339,35 +1346,39 @@ function authenticate_user($username, $password, $authcfg = NULL, &$attributes =
 }
 
 function session_auth() {
-	global $HTTP_SERVER_VARS, $config, $_SESSION, $page;
+	global $config, $_SESSION, $page;
 
 	// Handle HTTPS httponly and secure flags
-	if($config['system']['webgui']['protocol'] == "https") {
-		$currentCookieParams = session_get_cookie_params();
-		session_set_cookie_params(
-			$currentCookieParams["lifetime"],
-			$currentCookieParams["path"],
-			NULL,
-			true,
-			true
-		);
-	}
+	$currentCookieParams = session_get_cookie_params();
+	session_set_cookie_params(
+		$currentCookieParams["lifetime"],
+		$currentCookieParams["path"],
+		NULL,
+		($config['system']['webgui']['protocol'] == "https"),
+		true
+	);
 
 	if (!session_id())
 		session_start();
+
+	// Detect protocol change
+	if (!isset($_POST['login']) && !empty($_SESSION['Logged_In']) && $_SESSION['protocol'] != $config['system']['webgui']['protocol'])
+		return false;
 
 	/* Validate incoming login request */
 	if (isset($_POST['login']) && !empty($_POST['usernamefld']) && !empty($_POST['passwordfld'])) {
 		$authcfg = auth_get_authserver($config['system']['webgui']['authmode']);
 		if (authenticate_user($_POST['usernamefld'], $_POST['passwordfld'], $authcfg) || 
 		    authenticate_user($_POST['usernamefld'], $_POST['passwordfld'])) {
+			// Generate a new id to avoid session fixation
+			session_regenerate_id();
 			$_SESSION['Logged_In'] = "True";
 			$_SESSION['Username'] = $_POST['usernamefld'];
 			$_SESSION['last_access'] = time();
+			$_SESSION['protocol'] = $config['system']['webgui']['protocol'];
 			if(! isset($config['system']['webgui']['quietlogin'])) {
 				log_auth(sprintf(gettext("Successful login for user '%1\$s' from: %2\$s"), $_POST['usernamefld'], $_SERVER['REMOTE_ADDR']));
 			}
-			$HTTP_SERVER_VARS['AUTH_USER'] = $_SESSION['Username'];
 			if (isset($_POST['postafterlogin']))
 				return true;
 			else {
@@ -1440,7 +1451,7 @@ function session_auth() {
 			return false;
 
 		/* redirect to page the user is on, it'll prompt them to login again */
-		Header("Location: {$scriptName}");
+		header("Location: {$scriptName}");
 
 		return false;
 	}
@@ -1459,7 +1470,6 @@ function session_auth() {
 	if ($_GET['enable_ajax'])
 		unset($_SESSION['NO_AJAX']);
 
-	$HTTP_SERVER_VARS['AUTH_USER'] = $_SESSION['Username'];
 	return true;
 }
 

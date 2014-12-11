@@ -38,7 +38,7 @@ var firebug = {
 			el.button.inspect = new pi.element("A").attribute.addClass("Button").event.addListener("click",d.inspector.toggle).update("Inspect").insert(el.button.container);
 			el.button.maximize = new pi.element("A").attribute.addClass("Button Maximize").event.addListener("click",win.maximize).insert(el.button.container);
 			el.button.minimize = new pi.element("A").attribute.addClass("Button Minimize").event.addListener("click",win.minimize).insert(el.button.container);
-			el.button.close = new pi.element("A").attribute.addClass("Button Close").event.addListener("click",win.close).insert(el.button.container);;
+			el.button.close = new pi.element("A").attribute.addClass("Button Close").event.addListener("click",win.close).insert(el.button.container);
 			
 			if(pi.env.ie||pi.env.webkit){
 				el.button.container.environment.addStyle({ "paddingTop":"12px" });
@@ -386,7 +386,7 @@ var firebug = {
 						d.css.index=d.css.index<0?i:d.css.index;
 						el.button.css.selectbox.child.add(
 							new pi.element("OPTION").attribute.set("value",i).update(uri)
-						)
+						);
 					};
 					d.css.open(d.css.index);
 				}
@@ -563,7 +563,7 @@ var firebug = {
 							
 							d.html.current = [_element,link];
 							
-							return;t
+							return t;
 						}
 						parentLayer = d.html.openHtmlTree(map[t],parentLayer,map[t+1]);
 						t++;

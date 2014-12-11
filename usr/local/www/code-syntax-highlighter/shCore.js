@@ -19,8 +19,8 @@
  **
  * Usage example:
  *
- * <script src="shCore.js" language="javascript"></script>
- * <script src="shBrushXml.js" language="javascript"></script>
+ * <script src="shCore.js" type="text/javascript"></script>
+ * <script src="shBrushXml.js" type="text/javascript"></script>
  *
  * <textarea name="code" language="html">
  * <img src="myimage.gif" border="0">
@@ -98,7 +98,7 @@ dp.sh.Utils.PrintSource = function(sender)
 {
 	var td		= sender.parentNode;
 	var code	= td.processedCode;
-	var iframe	= document.createElement('IFRAME');
+	var iframe	= document.createElement('iframe');
 	var doc		= null;
 	var wnd		= 
 
@@ -204,32 +204,32 @@ dp.sh.Highlighter.prototype.AddBit = function(str, css)
 	str = str.replace(/&/g, '&amp;');
 	str = str.replace(/ /g, '&nbsp;');
 	str = str.replace(/</g, '&lt;');
-	str = str.replace(/\n/gm, '&nbsp;<br>');
+	str = str.replace(/\n/gm, '&nbsp;<br />');
 
 	// when adding a piece of code, check to see if it has line breaks in it 
 	// and if it does, wrap individual line breaks with span tags
 	if(css != null)
 	{
-		var regex = new RegExp('<br>', 'gi');
+		var regex = new RegExp('<br />', 'gi');
 		
 		if(regex.test(str))
 		{
-			var lines = str.split('&nbsp;<br>');
+			var lines = str.split('&nbsp;<br />');
 			
 			str = '';
 			
 			for(var i = 0; i < lines.length; i++)
 			{
-				span			= document.createElement('SPAN');
+				span			= document.createElement('span');
 				span.className	= css;
 				span.innerHTML	= lines[i];
 				
 				this.div.appendChild(span);
 				
-				// don't add a <BR> for the last line
+				// don't add a <br /> for the last line
 				if(i + 1 < lines.length)
 				{
-					this.div.appendChild(document.createElement('BR'));
+					this.div.appendChild(document.createElement('br'));
 				}
 			}
 		}
@@ -339,8 +339,8 @@ dp.sh.Highlighter.prototype.ProcessSmartTabs = function(code)
 
 dp.sh.Highlighter.prototype.SwitchToTable = function()
 {
-	// Safari fix: for some reason lowercase <br> isn't getting picked up, even though 'i' is set
-	var lines	= this.div.innerHTML.split(/<BR>/gi);
+	// Safari fix: for some reason lowercase <br /> isn't getting picked up, even though 'i' is set
+	var lines	= this.div.innerHTML.split(/<br \/>/gi);
 	var row		= null;
 	var cell	= null;
 	var html	= '';
@@ -430,8 +430,8 @@ dp.sh.Highlighter.prototype.Highlight = function(code)
 	
 	this.originalCode	= code;
 	this.code			= Trim(code);
-	this.div			= document.createElement('DIV');
-	this.table			= document.createElement('TABLE');
+	this.div			= document.createElement('div');
+	this.table			= document.createElement('table');
 	this.matches		= new Array();
 	
 	if(this.CssClass != null)
@@ -579,7 +579,7 @@ dp.sh.HighlightAll = function(name, showGutter /* optional */, showControls /* o
 		highlighter.Highlight(element[propertyName]);
 
 		// place the result table inside a div
-		var div = document.createElement('DIV');
+		var div = document.createElement('div');
 		
 		div.className = 'dp-highlighter';
 		div.appendChild(highlighter.table);

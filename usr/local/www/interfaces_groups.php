@@ -1,6 +1,7 @@
 <?php
 /*
-	Copyright (C) 2009 Ermal Luçi
+        Copyright (C) 2013-2014 Electric Sheep Fencing, LP
+	Copyright (C) 2009 Ermal LuÃ§i
 	Copyright (C) 2004 Scott Ullrich
 	All rights reserved.
 
@@ -106,10 +107,11 @@ include("head.inc");
   <td class="listr" ondblclick="document.location='interfaces_groups_edit.php?id=<?=$i;?>';">
       <?php
 	$members_arr = explode(" ", $ifgroupentry['members']);
-	$iflist = get_configured_interface_with_descr();
+	$iflist = get_configured_interface_with_descr(false, true);
 	$memberses_arr = array();
 	foreach ($members_arr as $memb)
 		$memberses_arr[] = $iflist[$memb] ? $iflist[$memb] : $memb;
+	unset($iflist);
 	$memberses = implode(", ", $memberses_arr);
 	echo $memberses;
 	if(count($members_arr) < 10) {
@@ -145,7 +147,7 @@ include("head.inc");
 </tr>
 <tr>
   <td class="tabcont" colspan="3">
-	<p><span class="vexpl"><span class="red"><strong><?=gettext("Note:");?><br/></strong></span><?=gettext("Interface Groups allow you to create rules that apply to multiple interfaces without duplicating the rules. If you remove members from an interface group, the group rules no longer apply to that interface.");?></span></p>
+	<p><span class="vexpl"><span class="red"><strong><?=gettext("Note:");?><br /></strong></span><?=gettext("Interface Groups allow you to create rules that apply to multiple interfaces without duplicating the rules. If you remove members from an interface group, the group rules no longer apply to that interface.");?></span></p>
 	</td>
 </tr>
 	</table>

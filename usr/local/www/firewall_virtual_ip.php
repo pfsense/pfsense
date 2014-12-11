@@ -2,9 +2,10 @@
 /* $Id$ */
 /*
 	firewall_virtual_ip.php
-	part of pfSense (http://www.pfsense.com/)
+	part of pfSense (https://www.pfsense.org/)
 
 	Copyright (C) 2005 Bill Marquette <bill.marquette@gmail.com>.
+        Copyright (C) 2013-2014 Electric Sheep Fencing, LP
 	All rights reserved.
 
 	Includes code from m0n0wall which is:
@@ -140,22 +141,27 @@ if ($_GET['act'] == "del") {
 			}
 
 		if ($a_vip[$_GET['id']]['mode'] == "ipalias") {
+			$subnet = gen_subnet($a_vip[$_GET['id']]['subnet'], $a_vip[$_GET['id']]['subnet_bits']) . "/" . $a_vip[$_GET['id']]['subnet_bits'];
+			$found_if = false;
 			$found_carp = false;
 			$found_other_alias = false;
 
+			if ($subnet == $if_subnet)
+				$found_if = true;
+			
 			$vipiface = $a_vip[$_GET['id']]['interface'];
 			foreach ($a_vip as $vip_id => $vip) {
 				if ($vip_id == $_GET['id'])
 					continue;
 
-				if ($vip['interface'] == $vipiface && ip_in_subnet($vip['subnet'], gen_subnet($a_vip[$_GET['id']]['subnet'], $a_vip[$_GET['id']]['subnet_bits']) . "/" . $a_vip[$_GET['id']]['subnet_bits']))
+				if ($vip['interface'] == $vipiface && ip_in_subnet($vip['subnet'], $subnet))
 					if ($vip['mode'] == "carp")
 						$found_carp = true;
 					else if ($vip['mode'] == "ipalias")
 						$found_other_alias = true;
 			}
 
-			if ($found_carp === true && $found_other_alias === false)
+			if ($found_carp === true && $found_other_alias === false && $found_if === false)
 				$input_errors[] = gettext("This entry cannot be deleted because it is still referenced by a CARP IP with the description") . " {$vip['descr']}.";
 		} else if ($a_vip[$_GET['id']]['mode'] == "carp") {
 			$vipiface = "{$a_vip[$_GET['id']]['interface']}_vip{$a_vip[$_GET['id']]['vhid']}";
@@ -164,7 +170,6 @@ if ($_GET['act'] == "del") {
 					$input_errors[] = gettext("This entry cannot be deleted because it is still referenced by an IP alias entry with the description") . " {$vip['descr']}.";
 			}
 		}
-
 		
 		if (!$input_errors) {
 			if (!session_id())
@@ -192,7 +197,7 @@ if ($_GET['act'] == "del") {
 			exit;
 		}
 	}
-} else if ($_GET['changes'] == "mods")
+} else if ($_GET['changes'] == "mods" && is_numericint($_GET['id']))
 	$id = $_GET['id'];
 
 $pgtitle = array(gettext("Firewall"),gettext("Virtual IP Addresses"));
@@ -210,9 +215,9 @@ include("head.inc");
 		print_info_box($savemsg); 
 	else
 	if (is_subsystem_dirty('vip'))
-		print_info_box_np(gettext("The VIP configuration has been changed.")."<br/>".gettext("You must apply the changes in order for them to take effect."));
+		print_info_box_np(gettext("The VIP configuration has been changed.")."<br />".gettext("You must apply the changes in order for them to take effect."));
 ?>
-<br/>
+<br />
 <table width="100%" border="0" cellpadding="0" cellspacing="0" summary="virtual ip">
   <tr><td class="tabnavtbl">
   <?php
@@ -224,12 +229,12 @@ include("head.inc");
   ?>
   </td></tr>
   <tr>
-	<td><input type="hidden" id="id" name="id" value="<?php echo $id; ?>" /></td>
+	<td><input type="hidden" id="id" name="id" value="<?php echo htmlspecialchars($id); ?>" /></td>
   </tr>
   <tr>
     <td>
 	<div id="mainarea">
-              <table class="tabcont" width="100%" border="0" cellpadding="0" cellspacing="0" summary="main area">
+              <table class="tabcont sortable" width="100%" border="0" cellpadding="0" cellspacing="0" summary="main area">
                 <tr>
                   <td width="30%" class="listhdrr"><?=gettext("Virtual IP address");?></td>
                   <td width="10%" class="listhdrr"><?=gettext("Interface");?></td>
@@ -284,29 +289,31 @@ include("head.inc");
                 </tr>
 		<?php endif; ?>
                 <?php $i++; endforeach; ?>
-                <tr>
-                  <td class="list" colspan="4"></td>
-                  <td class="list">
-                    <table border="0" cellspacing="0" cellpadding="1" summary="edit">
-                      <tr>
-			<td width="17"></td>
-                        <td valign="middle"><a href="firewall_virtual_ip_edit.php"><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_plus.gif" width="17" height="17" border="0" alt="edit" /></a></td>
-                      </tr>
-                    </table>
-                  </td>
-                </tr>
-		<tr>
-		  <td colspan="5">
-		      <p><span class="vexpl"><span class="red"><strong><?=gettext("Note:");?><br/>
-                      </strong></span><?=gettext("The virtual IP addresses defined on this page may be used in");?><a href="firewall_nat.php"> <?=gettext("NAT"); ?> </a><?=gettext("mappings.");?><br/>
-                      <?=gettext("You can check the status of your CARP Virtual IPs and interfaces ");?><a href="carp_status.php"><?=gettext("here");?></a>.</span></p>
-		  </td>
-		</tr>
-              </table>
+			<tfoot>
+				<tr>
+					<td class="list" colspan="4"></td>
+					<td class="list">
+						<table border="0" cellspacing="0" cellpadding="1" summary="edit">
+							<tr>
+								<td width="17"></td>
+								<td valign="middle"><a href="firewall_virtual_ip_edit.php"><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_plus.gif" width="17" height="17" border="0" alt="edit" /></a></td>
+							</tr>
+						</table>
+					</td>
+				</tr>
+				<tr>
+					<td colspan="5">
+					  <p><span class="vexpl"><span class="red"><strong><?=gettext("Note:");?><br />
+							  </strong></span><?=gettext("The virtual IP addresses defined on this page may be used in");?><a href="firewall_nat.php"> <?=gettext("NAT"); ?> </a><?=gettext("mappings.");?><br />
+							  <?=gettext("You can check the status of your CARP Virtual IPs and interfaces ");?><a href="carp_status.php"><?=gettext("here");?></a>.</span></p>
+					</td>
+				</tr>
+			</tfoot>
+		</table>
 	   </div><!-- div:mainarea -->
 	   </td></tr>
 	</table>
-            </form>
+  </form>
 <?php include("fend.inc"); ?>
 </body>
 </html>

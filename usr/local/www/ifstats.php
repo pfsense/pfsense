@@ -2,8 +2,9 @@
 /* $Id$ */
 /*
 	ifstats.php
-	part of pfSense (http://www.pfsense.com)
+	part of pfSense (https://www.pfsense.org)
 
+        Copyright (C) 2013-2014 Electric Sheep Fencing, LP
 	Copyright (C) 2005-2006 Scott Ullrich (sullrich@gmail.com)
 	All rights reserved.
 
@@ -47,7 +48,7 @@
 
 	$realif = get_real_interface($if);
 	if(!$realif)
-		$realif = $if; // Need for IPSec case interface.
+		$realif = $if; // Need for IPsec case interface.
 
 	$ifinfo = pfSense_get_interface_stats($realif);
 

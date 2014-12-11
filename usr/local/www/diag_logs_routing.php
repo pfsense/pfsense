@@ -5,6 +5,7 @@
 	part of pfSense
 
 	Copyright (C) 2012 Jim Pingle <jimp@pfsense.org>.
+        Copyright (C) 2013-2014 Electric Sheep Fencing, LP
 	All rights reserved.
 
 	Redistribution and use in source and binary forms, with or without
@@ -59,7 +60,7 @@ include("head.inc");
 
 <body link="#0000CC" vlink="#0000CC" alink="#0000CC">
 <?php include("fbegin.inc"); ?>
-<table width="100%" border="0" cellpadding="0" cellspacing="0">
+<table width="100%" border="0" cellpadding="0" cellspacing="0" summary="logs system routing">
   <tr><td>
 <?php
 	$tab_array = array();
@@ -92,17 +93,16 @@ include("head.inc");
   <tr>
     <td>
 	<div id="mainarea">
-		<table class="tabcont" width="100%" border="0" cellspacing="0" cellpadding="0">
+		<table class="tabcont" width="100%" border="0" cellspacing="0" cellpadding="0" summary="main area">
 		  <tr>
 			<td colspan="2" class="listtopic">
 			  <?php printf(gettext("Routing daemon log entries"),$nentries);?></td>
 		  </tr>
 		  <?php dump_clog($routing_logfile, $nentries); ?>
-		<tr><td><br><form action="diag_logs_routing.php" method="post">
-<input name="clear" type="submit" class="formbtn" value="<?=gettext("Clear log"); ?>"></td></tr>
+		<tr><td><br /><form action="diag_logs_routing.php" method="post">
+<input name="clear" type="submit" class="formbtn" value="<?=gettext("Clear log"); ?>" /></form></td></tr>
 		</table>
 	</div>
-</form>
 	</td>
   </tr>
 </table>

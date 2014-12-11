@@ -1,7 +1,7 @@
 <?php
 /*
 	util.inc
-	part of the pfSense project (http://www.pfsense.com)
+	part of the pfSense project (https://www.pfsense.org)
 
 	originally part of m0n0wall (http://m0n0.ch/wall)
 	Copyright (C) 2003-2004 Manuel Kasper <mk@neon1.net>.
@@ -52,7 +52,7 @@ function isvalidpid($pidfile) {
 
 function is_process_running($process) {
 	$output = "";
-	exec("/bin/pgrep -anx {$process}", $output, $retval);
+	exec("/bin/pgrep -anx " . escapeshellarg($process), $output, $retval);
 
 	return (intval($retval) == 0);
 }
@@ -65,7 +65,7 @@ function isvalidproc($proc) {
 /* return 1 for success and 0 for a failure */
 function sigkillbypid($pidfile, $sig) {
 	if (file_exists($pidfile))
-		return mwexec("/bin/pkill -{$sig} -F {$pidfile}", true);
+		return mwexec("/bin/pkill " . escapeshellarg("-{$sig}") . " -F {$pidfile}", true);
 
 	return 0;
 }
@@ -73,7 +73,7 @@ function sigkillbypid($pidfile, $sig) {
 /* kill a process by name */
 function sigkillbyname($procname, $sig) {
 	if(isvalidproc($procname))
-		return mwexec("/usr/bin/killall -{$sig} " . escapeshellarg($procname), true);
+		return mwexec("/usr/bin/killall " . escapeshellarg("-{$sig}") . " " . escapeshellarg($procname), true);
 }
 
 /* kill a process by name */
@@ -297,11 +297,18 @@ function refcount_read($reference) {
 }
 
 function is_module_loaded($module_name) {
-	$running = `/sbin/kldstat | grep {$module_name} | /usr/bin/grep -v grep | /usr/bin/wc -l`;
-	if (intval($running) >= 1)
+	$module_name = str_replace(".ko", "", $module_name);
+	$running = 0;
+	$_gb = exec("/sbin/kldstat -qn {$module_name} 2>&1", $_gb, $running);
+	if (intval($running) == 0)
 		return true;
 	else
 		return false;
+}
+
+/* validate non-negative numeric string, or equivalent numeric variable */
+function is_numericint($arg) {
+	return (((is_int($arg) && $arg >= 0) || (is_string($arg) && strlen($arg) > 0 && ctype_digit($arg))) ? true : false);  
 }
 
 /* return the subnet address given a host address and a subnet bit count */
@@ -377,8 +384,8 @@ function ip2ulong($ip) {
 /* Find out how many IPs are contained within a given IP range
  *  e.g. 192.168.0.0 to 192.168.0.255 returns 256
  */
-function ip_range_size($startip, $endip) {
-	if (is_ipaddr($startip) && is_ipaddr($endip)) {
+function ip_range_size_v4($startip, $endip) {
+	if (is_ipaddrv4($startip) && is_ipaddrv4($endip)) {
 		// Operate as unsigned long because otherwise it wouldn't work
 		//   when crossing over from 127.255.255.255 / 128.0.0.0 barrier
 		return abs(ip2ulong($startip) - ip2ulong($endip)) + 1;
@@ -389,7 +396,7 @@ function ip_range_size($startip, $endip) {
 /* Find the smallest possible subnet mask which can contain a given number of IPs
  *  e.g. 512 IPs can fit in a /23, but 513 IPs need a /22
  */
-function find_smallest_cidr($number) {
+function find_smallest_cidr_v4($number) {
 	$smallest = 1;
 	for ($b=32; $b > 0; $b--) {
 		$smallest = ($number <= pow(2,$b)) ? $b : $smallest;
@@ -421,17 +428,52 @@ function ip_greater_than($ip1, $ip2) {
 	return ip2ulong($ip1) > ip2ulong($ip2);
 }
 
-/* Convert a range of IPs to an array of subnets which can contain the range. */
+/* Convert a range of IPv4 addresses to an array of individual addresses. */
+/* Note: IPv6 ranges are not yet supported here. */
+function ip_range_to_address_array($startip, $endip, $max_size = 5000) {
+	if (!is_ipaddrv4($startip) || !is_ipaddrv4($endip)) {
+		return false;
+	}
+
+	if (ip_greater_than($startip, $endip)) {
+		// Swap start and end so we can process sensibly.
+		$temp = $startip;
+		$startip = $endip;
+		$endip = $temp;
+	}
+
+	if (ip_range_size_v4($startip, $endip) > $max_size)
+		return false;
+	
+	// Container for IP addresses within this range.
+	$rangeaddresses = array();
+	$end_int = ip2ulong($endip);
+	for ($ip_int = ip2ulong($startip); $ip_int <= $end_int; $ip_int++) {
+		$rangeaddresses[] = long2ip($ip_int);
+	}
+
+	return $rangeaddresses;
+}
+
+/* Convert a range of IPv4 addresses to an array of subnets which can contain the range. */
+/* Note: IPv6 ranges are not yet supported here. */
 function ip_range_to_subnet_array($startip, $endip) {
-	if (!is_ipaddr($startip) || !is_ipaddr($endip)) {
+	if (!is_ipaddrv4($startip) || !is_ipaddrv4($endip)) {
 		return array();
+	}
+
+	if (ip_greater_than($startip, $endip)) {
+		// Swap start and end so we can process sensibly.
+		$temp = $startip;
+		$startip = $endip;
+		$endip = $temp;
 	}
 
 	// Container for subnets within this range.
 	$rangesubnets = array();
 
 	// Figure out what the smallest subnet is that holds the number of IPs in the given range.
-	$cidr = find_smallest_cidr(ip_range_size($startip, $endip));
+	$cidr = find_smallest_cidr_v4(ip_range_size_v4($startip, $endip));
 
 	// Loop here to reduce subnet size and retest as needed. We need to make sure
 	//   that the target subnet is wholly contained between $startip and $endip.
@@ -466,7 +508,7 @@ function ip_range_to_subnet_array($startip, $endip) {
 		}
 	}
 
-	// Some logic that will recursivly search from $startip to the first IP before the start of the subnet we just found.
+	// Some logic that will recursively search from $startip to the first IP before the start of the subnet we just found.
 	// NOTE: This may never be hit, the way the above algo turned out, but is left for completeness.
 	if ($startip != $targetsub_min) {
 		$rangesubnets = array_merge($rangesubnets, ip_range_to_subnet_array($startip, ip_before($targetsub_min)));
@@ -482,18 +524,20 @@ function ip_range_to_subnet_array($startip, $endip) {
 	return $rangesubnets;
 }
 
+/* returns true if $range is a valid pair of IPv4 or IPv6 addresses separated by a "-"
+   	false - if not a valid pair
+   	true (numeric 4 or 6) - if valid, gives type of addresses */
 function is_iprange($range) {
 	if (substr_count($range, '-') != 1) {
 		return false;
 	}
 	list($ip1, $ip2) = explode ('-', $range);
-	return (is_ipaddr($ip1) && is_ipaddr($ip2));
+	if (is_ipaddrv4($ip1) && is_ipaddrv4($ip2))
+		return 4;
+	if (is_ipaddrv6($ip1) && is_ipaddrv6($ip2))
+		return 6;
+	return false;
 }
-
-function is_numericint($arg) {
-	return (preg_match("/[^0-9]/", $arg) ? false : true);
-}
-
 
 /* returns true if $ipaddr is a valid dotted IPv4 address or a IPv6 */
 function is_ipaddr($ipaddr) {
@@ -533,7 +577,7 @@ function is_ipaddrv4($ipaddr) {
 
 /* returns true if $ipaddr is a valid linklocal address */
 function is_linklocal($ipaddr) {
-	return (substr($ipaddr, 0, 5) == "fe80:");
+	return (strtolower(substr($ipaddr, 0, 5)) == "fe80:");
 }
 
 /* returns scope of a linklocal address */
@@ -593,49 +637,28 @@ function is_ipaddroralias($ipaddr) {
 
 }
 
-/* returns true if $subnet is a valid IPv4 or IPv6 subnet in CIDR format */
+/* returns true if $subnet is a valid IPv4 or IPv6 subnet in CIDR format
+   	false - if not a valid subnet
+   	true (numeric 4 or 6) - if valid, gives type of subnet */
 function is_subnet($subnet) {
-	if(is_subnetv4($subnet)) {
-		return true;
-	}
-	if(is_subnetv6($subnet)) {
-		return true;
+	if (is_string($subnet) && preg_match('/^(?:([0-9.]{7,15})|([0-9a-f:]{2,39}))\/(\d{1,3})$/i', $subnet, $parts)) {
+		if (is_ipaddrv4($parts[1]) && $parts[3] <= 32)
+			return 4;
+		if (is_ipaddrv6($parts[2]) && $parts[3] <= 128)
+			return 6;
 	}
 	return false;
 }
 
-/* returns true if $subnet is a valid IPv4 subnet in CIDR format */
+/* same as is_subnet() but accepts IPv4 only */
 function is_subnetv4($subnet) {
-	if (!is_string($subnet))
-		return false;
-
-	list($hp,$np) = explode('/', $subnet);
-
-	if (!is_ipaddrv4($hp))
-		return false;
-
-	if (!is_numeric($np) || ($np < 1) || ($np > 32))
-		return false;
-
-	return true;
+	return (is_subnet($subnet) == 4);
 }
 
-/* returns true if $subnet is a valid IPv6 subnet in CIDR format */
+/* same as is_subnet() but accepts IPv6 only */
 function is_subnetv6($subnet) {
-	if (!is_string($subnet))
-		return false;
-
-	list($hp,$np) = explode('/', $subnet);
-
-	if (!is_ipaddrv6($hp))
-		return false;
-
-	if (!is_numeric($np) || ($np < 1) || ($np > 128))
-		return false;
-
-	return true;
+	return (is_subnet($subnet) == 6);
 }
-
 
 /* returns true if $subnet is a valid subnet in CIDR format or an alias thereof */
 function is_subnetoralias($subnet) {
@@ -647,7 +670,18 @@ function is_subnetoralias($subnet) {
 		return is_subnet($subnet);
 }
 
-/* returns true if $hostname is a valid hostname */
+/* returns true if $hostname is just a valid hostname (top part without any of the domain part) */
+function is_unqualified_hostname($hostname) {
+	if (!is_string($hostname))
+		return false;
+
+	if (preg_match('/^(?:[a-z0-9_]|[a-z0-9_][a-z0-9_\-]*[a-z0-9_])$/i', $hostname))
+		return true;
+	else
+		return false;
+}
+
+/* returns true if $hostname is a valid hostname, with or without being a fully-qualified domain name. */
 function is_hostname($hostname) {
 	if (!is_string($hostname))
 		return false;
@@ -663,7 +697,7 @@ function is_domain($domain) {
 	if (!is_string($domain))
 		return false;
 
-	if (preg_match('/^(?:(?:[a-z0-9]|[a-z0-9][a-z0-9\-]*[a-z0-9])\.)*(?:[a-z0-9]|[a-z0-9][a-z0-9\-]*[a-z0-9])$/i', $domain))
+	if (preg_match('/^(?:(?:[a-z_0-9]|[a-z_0-9][a-z_0-9\-]*[a-z_0-9])\.)*(?:[a-z_0-9]|[a-z_0-9][a-z_0-9\-]*[a-z_0-9\.])$/i', $domain))
 		return true;
 	else
 		return false;
@@ -675,30 +709,33 @@ function is_macaddr($macaddr, $partial=false) {
 	return preg_match('/^[0-9A-F]{2}(?:[:][0-9A-F]{2}){'.$repeat.'}$/i', $macaddr) == 1 ? true : false;
 }
 
-/* returns true if $name is a valid name for an alias */
-/* returns NULL if a reserved word is used */
+/* returns true if $name is a valid name for an alias
+   returns NULL if a reserved word is used
+   returns FALSE for bad chars in the name - this allows calling code to determine what the problem was.
+   aliases cannot be:
+   	bad chars: anything except a-z 0-9 and underscore
+   	bad names: empty string, pure numeric, pure underscore
+   	reserved words: pre-defined service/protocol/port names which should not be ambiguous, and the words "port" and  "pass" */
+
 function is_validaliasname($name) {
 	/* Array of reserved words */
 	$reserved = array("port", "pass");
-	if (in_array($name, $reserved, true))
-		return; /* return NULL */
-	if (!preg_match("/[^a-zA-Z0-9_]/", $name) && (strlen($name) < 32))
-		return true;
-	else
+
+	if (!is_string($name) || strlen($name) >= 32 || preg_match('/(^_*$|^\d*$|[^a-z0-9_])/i', $name))
 		return false;
+	if (in_array($name, $reserved, true) || getservbyname($name, "tcp") || getservbyname($name, "udp") || getprotobyname($name))
+		return; /* return NULL */
+	return true;
 }
 
 /* returns true if $port is a valid TCP/UDP port */
 function is_port($port) {
-	$tmpports = explode(":", $port);
-	foreach($tmpports as $tmpport) {
-		if (getservbyname($tmpport, "tcp") || getservbyname($tmpport, "udp"))
-			continue;
-		if (!ctype_digit($tmpport))
-			return false;
-		else if ((intval($tmpport) < 1) || (intval($tmpport) > 65535))
-			return false;
-	}
+	if (getservbyname($port, "tcp") || getservbyname($port, "udp"))
+		return true;
+	if (!ctype_digit($port))
+		return false;
+	else if ((intval($port) < 1) || (intval($port) > 65535))
+		return false;
 	return true;
 }
 
@@ -812,8 +849,13 @@ function is_inrange_v6($test, $start, $end) {
 		return false;
 }
 
-/* return the configured carp interface list */
-function get_configured_carp_interface_list() {
+/* returns true if $test is in the range between $start and $end */
+function is_inrange($test, $start, $end) {
+	return is_ipaddrv6($test) ? is_inrange_v6($test, $start, $end) : is_inrange_v4($test, $start, $end);
+}
+
+/* XXX: return the configured carp interface list */
+function get_configured_carp_interface_list($carpinterface = '', $family = 'inet', $what = 'ip') {
 	global $config;
 
 	$iflist = array();
@@ -823,8 +865,39 @@ function get_configured_carp_interface_list() {
 		foreach ($viparr as $vip) {
 			switch ($vip['mode']) {
 			case "carp":
-				$vipif = "{$vip['interface']}_vip{$vip['vhid']}";
-				$iflist[$vipif] = $vip['subnet'];
+				if (!empty($carpinterface)) {
+					if ($carpinterface == "{$vip['interface']}_vip{$vip['vhid']}") {
+						switch ($what) {
+						case 'subnet':
+							if ($family == 'inet' && is_ipaddrv4($vip['subnet']))
+								return "{$vip['subnet']}/{$vip['subnet_bits']}";
+							else if ($family == 'inet6' && is_ipaddrv6($vip['subnet']))
+								return "{$vip['subnet']}/{$vip['subnet_bits']}";
+							break;
+						case 'iface':
+							if ($family == 'inet' && is_ipaddrv4($vip['subnet']))
+								return $vip['interface'];
+							else if ($family == 'inet6' && is_ipaddrv6($vip['subnet']))
+								return $vip['interface'];
+							break;
+						case 'vip':
+							if ($family == 'inet' && is_ipaddrv4($vip['subnet']))
+								return $vip;
+							else if ($family == 'inet6' && is_ipaddrv6($vip['subnet']))
+								return $vip;
+							break;
+						case 'ip':
+						default:
+							if ($family == 'inet' && is_ipaddrv4($vip['subnet']))
+								return $vip['subnet'];
+							else if ($family == 'inet6' && is_ipaddrv6($vip['subnet']))
+								return $vip['subnet'];
+							break;
+						}
+					}
+				} else {
+					$iflist["{$vip['interface']}_vip{$vip['vhid']}"] = $vip['subnet'];
+				}
 				break;
 			}
 		}
@@ -862,8 +935,12 @@ function get_configured_vips_list() {
 
 	if(is_array($config['virtualip']['vip'])) {
 		$viparr = &$config['virtualip']['vip'];
-		foreach ($viparr as $vip)
-			$alias_list[] = array("ipaddr" => $vip['subnet'], "if" => $vip['interface']);
+		foreach ($viparr as $vip) {
+			if ($vip['mode'] == "carp")
+				$alias_list[] = array("ipaddr" => $vip['subnet'], "if" => "{$vip['interface']}_vip{$vip['vhid']}");
+			else
+				$alias_list[] = array("ipaddr" => $vip['subnet'], "if" => $vip['interface']);
+		}
 	}
 
 	return $alias_list;
@@ -1164,7 +1241,7 @@ function log_auth($error) {
  ******/
 function exec_command($command) {
 	$output = array();
-	exec($command . ' 2>&1 ', $output);
+	exec($command . ' 2>&1', $output);
 	return(implode("\n", $output));
 }
 
@@ -1193,7 +1270,9 @@ function mwexec($command, $mute = false, $clearsigmask = false) {
 	if(($retval <> 0) && ($mute === false)) {
 		$output = implode(" ", $oarr);
 		log_error(sprintf(gettext("The command '%1\$s' returned exit code '%2\$d', the output was '%3\$s' "), $command, $retval, $output));
+		unset($output);
 	}
+	unset($oarr);
 	return $retval;
 }
 
@@ -1267,7 +1346,7 @@ function alias_expand($name) {
 
 	if (isset($aliastable[$name]))
 		return "\${$name}";
-	else if (is_ipaddr($name) || is_subnet($name) || is_port($name))
+	else if (is_ipaddr($name) || is_subnet($name) || is_port($name) || is_portrange($name))
 		return "{$name}";
 	else
 		return null;
@@ -1390,9 +1469,9 @@ function verify_digital_signature($fname) {
 
 /* obtain MAC address given an IP address by looking at the ARP table */
 function arp_get_mac_by_ip($ip) {
-	mwexec("/sbin/ping -c 1 -t 1 {$ip}", true);
+	mwexec("/sbin/ping -c 1 -t 1 " . escapeshellarg($ip), true);
 	$arpoutput = "";
-	exec("/usr/sbin/arp -n {$ip}", $arpoutput);
+	exec("/usr/sbin/arp -n " . escapeshellarg($ip), $arpoutput);
 
 	if ($arpoutput[0]) {
 		$arpi = explode(" ", $arpoutput[0]);
@@ -1577,6 +1656,22 @@ function get_sysctl($names) {
 }
 
 /*
+ * get_single_sysctl($name)
+ * Wrapper for get_sysctl() to simplify read of a single sysctl value
+ * return the value for sysctl $name or empty string if it doesn't exist
+ */
+function get_single_sysctl($name) {
+	if (empty($name))
+		return "";
+
+	$value = get_sysctl($name);
+	if (empty($value) || !isset($value[$name]))
+		return "";
+
+	return $value[$name];
+}
+
+/*
  * set_sysctl($value_list)
  * Set sysctl OID's listed as key/value pairs and return
  * an array with keys set for those that succeeded
@@ -1610,6 +1705,23 @@ function set_sysctl($values) {
 }
 
 /*
+ * set_single_sysctl($name, $value)
+ * Wrapper to set_sysctl() to make it simple to set only one sysctl
+ * returns boolean meaning if it suceed
+ */
+function set_single_sysctl($name, $value) {
+	if (empty($name))
+		return false;
+
+	$result = set_sysctl(array($name => $value));
+
+	if (!isset($result[$name]) || $result[$name] != $value)
+		return false;
+
+	return true;
+}
+
+/*
  *     get_memory()
  *     returns an array listing the amount of
  *     memory installed in the hardware
@@ -1617,9 +1729,8 @@ function set_sysctl($values) {
  *     [1] real (actual) memory of the system, should be the size of the RAM card/s - e.g. 256 MBytes
  */
 function get_memory() {
-
-	$physmem = trim(`sysctl -n hw.physmem`, " \n");
-	$realmem = trim(`sysctl -n hw.realmem`, " \n");
+	$physmem = get_single_sysctl("hw.physmem");
+	$realmem = get_single_sysctl("hw.realmem");
 	/* convert from bytes to megabytes */
 	return array(($physmem/1048576),($realmem/1048576));
 }
@@ -1655,8 +1766,10 @@ function start_devd() {
 
 	if ($g['platform'] == 'jail')
 		return;
-	exec("/sbin/devd");
+	/* Use the undocumented -q options of devd to quite its log spamming */
+	$_gb = exec("/sbin/devd -q");
 	sleep(1);
+	unset($_gb);
 }
 
 function is_interface_vlan_mismatch() {
@@ -1693,9 +1806,7 @@ function is_interface_mismatch() {
 		}
 	}
 
-	if ($g['minimum_nic_count'] > $i) {
-		$do_assign = true;
-	} else if (file_exists("{$g['tmp_path']}/assign_complete"))
+	if (file_exists("{$g['tmp_path']}/assign_complete"))
 		$do_assign = false;
 
 	if (!empty($missing_interfaces) && $do_assign)
@@ -1778,79 +1889,6 @@ function msort($array, $id="id", $sort_ascending=true) {
 		return $temp_array;
 	} else {
 		return array_reverse($temp_array);
-	}
-}
-
-/****f* util/color
- * NAME
- *   color - outputs a color code to the ansi terminal if supported
- * INPUTS
- *   color code or color name
- * RESULT
- *   Outputs the ansi color sequence for the color specified.  Default resets terminal.
- ******/
-function color($color = "0m") {
-	/*
-		Color codes available:
-		 0m reset; clears all colors and styles (to white on black)
-		 1m bold on (see below)
-		 3m italics on
-		 4m underline on
-		 7m inverse on; reverses foreground & background colors
-		 9m strikethrough on
-		 22m bold off (see below)
-		 23m italics off
-		 24m underline off
-		 27m inverse off
-		 29m strikethrough off
-		 30m set foreground color to black
-		 31m set foreground color to red
-		 32m set foreground color to green
-		 33m set foreground color to yellow
-		 34m set foreground color to blue
-		 35m set foreground color to magenta (purple)
-		 36m set foreground color to cyan
-		 37m set foreground color to white
-		 40m  set background color to black
-		 41m set background color to red
-		 42m set background color to green
-		 43m set background color to yellow
-		 44m set background color to blue
-		 45m set background color to magenta (purple)
-		 46m set background color to cyan
-		 47m set background color to white
-		 49m set background color to default (black)
-	*/
-	// Allow caching of TERM to
-	// speedup subequence requests.
-	global $TERM;
-	if(!$TERM)
-		$TERM=`/usr/bin/env | grep color`;
-	if(!$TERM)
-		$TERM=`/usr/bin/env | grep cons25`;
-	if($TERM) {
-		$ESCAPE=chr(27);
-		switch ($color) {
-			case "black":
-				return "{$ESCAPE}[30m";
-			case "red":
-				return "{$ESCAPE}[31m";
-			case "green":
-				return "{$ESCAPE}[32m";
-			case "yellow":
-				return "{$ESCAPE}[33m";
-			case "blue":
-				return "{$ESCAPE}[34m";
-			case "magenta":
-				return "{$ESCAPE}[35m";
-			case "cyan":
-				return "{$ESCAPE}[36m";
-			case "white":
-				return "{$ESCAPE}[37m";
-			case "default":
-				return "{$ESCAPE}[39m";
-		}
-		return "{$ESCAPE}[{$color}";
 	}
 }
 
@@ -2045,15 +2083,6 @@ function array_exclude($needle, $haystack) {
 	return $result;
 }
 
-function setup_library_paths() {
-	$current_library_paths = explode(":", exec("/sbin/ldconfig -r | /usr/bin/grep 'search directories' | /usr/bin/awk '{print $3;}'"));
-	$pbi_library_paths = array_merge(glob("/usr/pbi/*/lib", GLOB_ONLYDIR), glob("/usr/pbi/*/lib/*", GLOB_ONLYDIR));
-	foreach ($pbi_library_paths as $pbilib) {
-		if (!in_array($pbilib, $current_library_paths))
-			exec("/sbin/ldconfig -m {$pbilib}");
-	}
-}
-
 function get_current_theme() {
 	global $config, $g;
 	/*
@@ -2075,6 +2104,43 @@ function get_current_theme() {
 		if(strstr($_SERVER['HTTP_USER_AGENT'], $useragent))
 			$theme = (empty($g['theme_lowres']) && (is_dir($g["www_path"].'/themes/'.$g['theme_lowres']))) ? "pfsense" : $g['theme_lowres'];
 	return $theme;
+}
+
+/* Define what is preferred, IPv4 or IPv6 */
+function prefer_ipv4_or_ipv6() {
+	global $config;
+
+	if (isset($config['system']['prefer_ipv4']))
+		mwexec("/etc/rc.d/ip6addrctl prefer_ipv4");
+	else
+		mwexec("/etc/rc.d/ip6addrctl prefer_ipv6");
+}
+
+/* Redirect to page passing parameters via POST */
+function post_redirect($page, $params) {
+	if (!is_array($params))
+		return;
+
+	print "<html><body><form action=\"{$page}\" name=\"formredir\" method=\"post\">\n";
+	foreach ($params as $key => $value) {
+		print "<input type=\"hidden\" name=\"{$key}\" value=\"{$value}\" />\n";
+	}
+	print "</form><script type=\"text/javascript\">document.formredir.submit();</script>\n";
+	print "</body></html>\n";
+}
+
+/* Locate disks that can be queried for S.M.A.R.T. data. */
+function get_smart_drive_list() {
+	$disk_list = explode(" ", get_single_sysctl("kern.disks"));
+	foreach ($disk_list as $id => $disk) {
+		// We only want certain kinds of disks for S.M.A.R.T.
+		// 1 is a match, 0 is no match, False is any problem processing the regex
+		if (preg_match("/^(ad|da|ada).*[0-9]{1,2}$/", $disk) !== 1) {
+			unset($disk_list[$id]);
+		}
+	}
+	sort($disk_list);
+	return $disk_list;
 }
 
 ?>

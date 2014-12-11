@@ -52,7 +52,7 @@ if (!$omit_nocacheheaders) {
 	header("Pragma: no-cache");
 }
 
-Header("X-Frame-Options: SAMEORIGIN");
+header("X-Frame-Options: SAMEORIGIN");
 require_once("authgui.inc");
 
 /* parse the configuration and include all configuration functions */
@@ -95,6 +95,19 @@ if(!$ignorefirmwarelock) {
 	}
 }
 
+/* Reserved table names to avoid colision */
+$reserved_table_names = array(
+        "bogons",
+        "bogonsv6",
+        "negate_networks",
+        "snort2c",
+        "sshlockout",
+        "tonatsubnets",
+        "virusprot",
+        "vpn_networks",
+        "webConfiguratorlockout"
+);
+
 $firewall_rules_dscp_types = array("af11",
 				"af12",
 				"af13",
@@ -107,6 +120,7 @@ $firewall_rules_dscp_types = array("af11",
 				"af41",
 				"af42",
 				"af43",
+				"VA",
 				"EF",
 				"cs1",
 				"cs2",
@@ -115,9 +129,9 @@ $firewall_rules_dscp_types = array("af11",
 				"cs5",
 				"cs6",
 				"cs7",
-				"0x01 (reliability, ToS 0x04)",
-				"0x02 (throughput, ToS 0x08)",
-				"0x04 (lowdelay, ToS 0x10)");
+				"0x01",
+				"0x02",
+				"0x04");
 
 $auth_server_types = array(
 	'ldap' => "LDAP",
@@ -165,7 +179,7 @@ $netbios_nodetypes = array(
 	'1' => "b-node",
 	'2' => "p-node",
 	'4' => "m-node",
-	'5' => "h-node");
+	'8' => "h-node");
 
 /* some well knows ports */
 $wkports = array(
@@ -217,7 +231,7 @@ $wkports = array(
 /* TCP flags */
 $tcpflags = array("fin", "syn", "rst", "psh", "ack", "urg", "ece", "cwr");
 
-$specialnets = array("pptp" => "PPTP clients", "pppoe" => "PPPoE clients", "l2tp" => "L2TP clients");
+$specialnets = array("(self)" => "This Firewall", "pptp" => "PPTP clients", "pppoe" => "PPPoE clients", "l2tp" => "L2TP clients");
 
 $spiflist = get_configured_interface_with_descr(false, true);
 foreach ($spiflist as $ifgui => $ifdesc) {
@@ -240,13 +254,13 @@ function do_input_validation($postdata, $reqdfields, $reqdfieldsn, &$input_error
 	/* check for bad control characters */
 	foreach ($postdata as $pn => $pd) {
 		if (is_string($pd) && preg_match("/[\\x00-\\x08\\x0b\\x0c\\x0e-\\x1f]/", $pd)) {
-			$input_errors[] = "The field '" . $pn . "' contains invalid characters.";
+			$input_errors[] = sprintf(gettext("The field %s contains invalid characters."), $pn);
 		}
 	}
 
 	for ($i = 0; $i < count($reqdfields); $i++) {
 		if ($_POST[$reqdfields[$i]] == "" && $_REQUEST[$reqdfields[$i]] == "") {
-			$input_errors[] = "The field '" . $reqdfieldsn[$i] . "' is required.";
+			$input_errors[] = sprintf(gettext("The field %s is required."), $reqdfieldsn[$i]);
 		}
 	}
 }
@@ -261,13 +275,12 @@ function print_input_errors($input_errors) {
 		<td class="inputerrorsleft">
 			<img src="/themes/{$g['theme']}/images/icons/icon_error.gif" alt="errors" />
 		</td>
-		<td class="inputerrorsright errmsg">
-			<p>The following input errors were detected:</p>
-				<ul>
+        <td class="inputerrorsright errmsg">
 EOF;
-		foreach ($input_errors as $ierr) {
-			echo "<li>" . htmlspecialchars($ierr) . "</li>";
-		}
+    echo "<p>" . gettext("The following input errors were detected:") . "</p>\n<ul>";
+	foreach ($input_errors as $ierr) {
+		echo "<li>" . htmlspecialchars($ierr) . "</li>";
+	}
 
 	print <<<EOF2
 				</ul>
@@ -321,7 +334,7 @@ function print_info_box_np($msg, $name="apply",$value="", $showapply=false) {
 	}
 
 	if(!$savebutton) {
-		$savebutton = "<td class=\"infoboxsave\"><input value=\"Close\" type=\"button\" onclick=\"jQuery('#redboxtable').hide();\" /></td>";
+		$savebutton = "<td class=\"infoboxsave\"><input value=\"" . gettext("Close") . "\" type=\"button\" onclick=\"jQuery(this).parents('table[id=redboxtable]').hide();\" /></td>";
 	}
 
 	echo <<<EOFnp
@@ -363,7 +376,7 @@ function print_info_box_np_undo($msg, $name="apply",$value="Apply changes", $und
 
 	if(stristr($msg, "apply") != false || stristr($msg, "save") != false || stristr($msg, "create") != false) {
 		$savebutton = "<td class=\"infoboxsave nowrap\">";
-		$savebutton .= "<input type=\"button\" value=\"Undo\" onclick=\"document.location='{$undo}'\" />";
+		$savebutton .= "<input type=\"button\" value=\"". gettext("Undo") . "\" onclick=\"document.location='{$undo}'\" />";
 		$savebutton .= "<input name=\"{$name}\" type=\"submit\" class=\"formbtn\" id=\"${name}\" value=\"{$value}\" />";
 		$savebutton .= "</td>";
 		if($_POST['if'])
@@ -386,7 +399,7 @@ function print_info_box_np_undo($msg, $name="apply",$value="Apply changes", $und
 
 
 	if(!$savebutton) {
-		$savebutton = "<td class=\"infoboxsave\"><input value=\"Close\" type=\"button\" onclick=\"jQuery('#redboxtable').hide();\" /></td>";
+		$savebutton = "<td class=\"infoboxsave\"><input value=\"" . gettext("Close") . "\" type=\"button\" onclick=\"jQuery(this).parents('table[id=redboxtable]').hide();\" /></td>";
 	}
 
 	echo <<<EOFnp
@@ -432,12 +445,12 @@ function get_std_save_message($ok) {
 	global $d_sysrebootreqd_path;
 	$filter_related = false;
 	$filter_pages = array("nat", "filter");
-	$to_return = "The changes have been applied successfully.";
+	$to_return = gettext("The changes have been applied successfully.");
 	foreach($filter_pages as $fp)
 		if(stristr($_SERVER['SCRIPT_FILENAME'], $fp))
 			$filter_related = true;
 	if($filter_related)
-		$to_return .= "<br/>You can also <a href=\"status_filter_reload.php\">monitor</a> the filter reload progress.";
+		$to_return .= "<br />" . gettext("You can also <a href=\"status_filter_reload.php\">monitor</a> the filter reload progress.");
 	return $to_return;
 }
 
@@ -481,6 +494,10 @@ function pprint_port($port) {
 
 function firewall_check_for_advanced_options(&$item) {
 	$item_set = "";
+	if($item['os'])
+		$item_set .= "os {$item['os']} ";
+	if($item['dscp'])
+		$item_set .= "dscp {$item['dscp']} ";
 	if($item['max'])
 		$item_set .= "max {$item['max']} ";
 	if($item['max-src-nodes'])
@@ -489,22 +506,32 @@ function firewall_check_for_advanced_options(&$item) {
 		$item_set .= "max-src-conn {$item['max-src-conn']} ";
 	if($item['max-src-states'])
 		$item_set .= "max-src-states {$item['max-src-states']} ";
+	if(isset($item['nopfsync']))
+		$item_set .= "nopfsync ";
 	if($item['statetype'] != "keep state" && $item['statetype'] != "")
 		$item_set .= "statetype {$item['statetype']} ";
 	if($item['statetimeout'])
 		$item_set .= "statetimeout {$item['statetimeout']} ";
-	if($item['nosync'])
-		$item_set .= "nosync ";
+	if(isset($item['nosync']))
+		$item_set .= "no XMLRPC Sync ";
 	if($item['max-src-conn-rate'])
 		$item_set .= "max-src-conn-rate {$item['max-src-conn-rate']} ";
 	if($item['max-src-conn-rates'])
 		$item_set .= "max-src-conn-rates {$item['max-src-conn-rates']} ";
+	if($item['vlanprio'])
+		$item_set .= "vlanprio {$item['vlanprio']} ";
+	if($item['vlanprioset'])
+		$item_set .= "vlanprioset {$item['vlanprioset']} ";
 	if($item['gateway'])
 		$item_set .= "gateway {$item['gateway']} ";
 	if($item['dnpipe'])
 		$item_set .= "limiter {$item['dnpipe']} ";
 	if($item['pdnpipe'])
 		$item_set .= "limiter {$item['pdnpipe']} ";
+	if($item['ackqueue'])
+		$item_set .= "ackqueue {$item['ackqueue']} ";
+	if($item['defaultqueue'])
+		$item_set .= "defaultqueue {$item['defaultqueue']} ";
 	if($item['l7container'])
 		$item_set .= "layer7 {$item['l7container']} ";
 	if($item['tag'])
@@ -543,19 +570,37 @@ function update_changedesc($update) {
 	$changecount++;
 }
 
-function clear_log_file($logfile = "/var/log/system.log") {
+function clear_log_file($logfile = "/var/log/system.log", $restart_syslogd = true) {
 	global $config, $g;
-	exec("/usr/bin/killall syslogd");
+	if ($restart_syslogd)
+		exec("/usr/bin/killall syslogd");
 	if(isset($config['system']['disablesyslogclog'])) {
 		unlink($logfile);
 		touch($logfile);
 	} else {
+		$log_size = isset($config['syslog']['logfilesize']) ? $config['syslog']['logfilesize'] : "511488";
 		if(isset($config['system']['usefifolog']))
-			exec("/usr/sbin/fifolog_create -s 511488 {$logfile}");
+			exec("/usr/sbin/fifolog_create -s {$log_size} " . escapeshellarg($logfile));
 		else
-			exec("/usr/sbin/clog -i -s 511488 {$logfile}");
+			exec("/usr/local/sbin/clog -i -s {$log_size} " . escapeshellarg($logfile));
 	}
+	if ($restart_syslogd)
+		system_syslogd_start();
+}
+
+function clear_all_log_files() {
+	global $g;
+	exec("/usr/bin/killall syslogd");
+
+	$log_files = array("system", "filter", "dhcpd", "vpn", "pptps", "poes", "l2tps", "openvpn", "portalauth", "ipsec", "ppp", "relayd", "wireless", "lighttpd", "ntpd", "gateways", "resolver", "routing");
+	foreach ($log_files as $lfile) {
+		clear_log_file("{$g['varlog_path']}/{$lfile}.log", false);
+	}
+
 	system_syslogd_start();
+	killbyname("dhcpd");
+	services_dhcpd_configure();
+	return;
 }
 
 function dump_clog($logfile, $tail, $withorig = true, $grepfor = "", $grepinvert = "") {
@@ -564,21 +609,21 @@ function dump_clog($logfile, $tail, $withorig = true, $grepfor = "", $grepinvert
 	$logarr = "";
 	$grepline = "  ";
 	if(is_array($grepfor))
-		foreach($grepfor as $agrep)
-			$grepline .= " | grep \"$agrep\"";
+		$grepline .= " | /usr/bin/egrep " . escapeshellarg(implode("|", $grepfor));
 	if(is_array($grepinvert))
-		foreach($grepinvert as $agrep)
-			$grepline .= " | grep -v \"$agrep\"";
-	if(file_exists($logfile) && filesize($logfile) == 0) {
+		$grepline .= " | /usr/bin/egrep -v " . escapeshellarg(implode("|", $grepinvert));
+	if (is_dir($logfile)) {
+		$logarr = array("File $logfile is a directory.");
+	} elseif (file_exists($logfile) && filesize($logfile) == 0) {
 		$logarr = array("Log file started.");
 	} else {
 		if($config['system']['disablesyslogclog']) {
-			exec("cat {$logfile}{$grepline} | /usr/bin/tail {$sor} -n {$tail}", $logarr);
+			exec("cat " . escapeshellarg($logfile) . "{$grepline} | /usr/bin/tail {$sor} -n " . escapeshellarg($tail), $logarr);
 		} else {
 			if(isset($config['system']['usefifolog']))
-				exec("/usr/sbin/fifolog_reader {$logfile}{$grepline} | /usr/bin/tail {$sor} -n {$tail}", $logarr);
+				exec("/usr/sbin/fifolog_reader " . escapeshellarg($logfile) . "{$grepline} | /usr/bin/tail {$sor} -n " . escapeshellarg($tail), $logarr);
 			else
-				exec("/usr/sbin/clog {$logfile}{$grepline}| grep -v \"CLOG\" | grep -v \"\033\" | /usr/bin/tail {$sor} -n {$tail}", $logarr);
+				exec("/usr/local/sbin/clog " . escapeshellarg($logfile) . "{$grepline}| grep -v \"CLOG\" | grep -v \"\033\" | /usr/bin/tail {$sor} -n " . escapeshellarg($tail), $logarr);
 		}
 	}
 	foreach ($logarr as $logent) {
@@ -609,18 +654,16 @@ function return_clog($logfile, $tail, $withorig = true, $grepfor = "", $grepinve
 	$logarr = "";
 	$grepline = "  ";
 	if(is_array($grepfor))
-		foreach($grepfor as $agrep)
-			$grepline .= " | grep \"$agrep\"";
+		$grepline .= " | /usr/bin/egrep " . escapeshellarg(implode("|", $grepfor));
 	if(is_array($grepinvert))
-		foreach($grepinvert as $agrep)
-			$grepline .= " | grep -v \"$agrep\"";
+		$grepline .= " | /usr/bin/egrep -v " . escapeshellarg(implode("|", $grepinvert));
 	if($config['system']['disablesyslogclog']) {
-		exec("cat {$logfile}{$grepline} | /usr/bin/tail {$sor} -n {$tail}", $logarr);
+		exec("cat " . escapeshellarg($logfile) . "{$grepline} | /usr/bin/tail {$sor} -n " . escapeshellarg($tail), $logarr);
 	} else {
 		if(isset($config['system']['usefifolog'])) {
-			exec("/usr/sbin/fifolog_reader {$logfile}{$grepline} | /usr/bin/tail {$sor} -n {$tail}", $logarr);
+			exec("/usr/sbin/fifolog_reader " . escapeshellarg($logfile) . "{$grepline} | /usr/bin/tail {$sor} -n " . escapeshellarg($tail), $logarr);
 		} else {
-			exec("/usr/sbin/clog {$logfile}{$grepline}| grep -v \"CLOG\" | grep -v \"\033\" | /usr/bin/tail {$sor} -n {$tail}", $logarr);
+			exec("/usr/local/sbin/clog " . escapeshellarg($logfile) . "{$grepline}| grep -v \"CLOG\" | grep -v \"\033\" | /usr/bin/tail {$sor} -n " . escapeshellarg($tail), $logarr);
 		}
 	}
 	return($logarr);
@@ -873,6 +916,7 @@ function print_rfc2616_select($tag, $current){
 		}
 		echo "<option value=\"{$code}\"{$sel}>{$message}</option>\n";
 	}
+	echo "</select>\n";
 }
 
 // Useful debugging function, much cleaner than print_r
@@ -911,7 +955,6 @@ function echo_array($array,$return_me=false){
  *   null
  ******/
 function display_top_tabs(& $tab_array, $no_drop_down = false) {
-	global $HTTP_SERVER_VARS;
 	global $config;
 	global $g;
 	global $tab_array_indent;
@@ -967,7 +1010,7 @@ function display_top_tabs(& $tab_array, $no_drop_down = false) {
 	// If the character count of the tab names is > 670
 	// then show a select item dropdown menubox.
 	if($tabcharcount > $tab_array_char_limit) {
-		echo "Currently viewing: ";
+		echo gettext("Currently viewing: ");
 		echo "<select name=\"TabSelect\" onchange=\"tabs_will_go(this)\">\n";
 		foreach ($tab_array as $ta) {
 			if($ta[1]=="true")
@@ -1065,7 +1108,7 @@ function alias_info_popup($alias_id){
 				$alias_objects_with_details .= "</tr>";
 			}
 			if ($counter > 10002) {
-				$alias_objects_with_details .= "<tr><td colspan=\"3\"> listing only first 10k items</td><tr>";
+				$alias_objects_with_details .= "<tr><td colspan=\"3\"> ". gettext("listing only first 10k items") . "</td><tr>";
 			}
 		}
 		else{

@@ -1,6 +1,6 @@
 /*
 	NetUtils.js
-	part of pfSense (http://www.pfsense.com)
+	part of pfSense (https://www.pfsense.org)
 	Various helper functions for IPv6 support.
 
 	Copyright (C) 2007 Simon Cornelius P. Umacob <simoncpu@gmail.com>

@@ -38,7 +38,7 @@
 	POSSIBILITY OF SUCH DAMAGE.
 
 
-	pfSense_BUILDER_BINARIES:	/sbin/mount	/sbin/sysctl	/sbin/umount	/sbin/halt	/sbin/fsck
+	pfSense_BUILDER_BINARIES:	/sbin/mount	/sbin/umount	/sbin/halt	/sbin/fsck
 	pfSense_MODULE:	config
 */
 
@@ -85,7 +85,7 @@ EOD;
 		$iflist = array();
 	} else {
 		foreach ($iflist as $iface => $ifa) {
-			echo sprintf("% -6s%s %s %s\n", $iface, $ifa['mac'],
+			echo sprintf("% -7s%s %s %s\n", $iface, $ifa['mac'],
 				$ifa['up'] ? "  (up)" : "(down)", $ifa['dmesg']);
 		}
 	}
@@ -191,13 +191,6 @@ EOD;
 	
 		echo <<<EOD
 	
-*NOTE*  {$g['product_name']} requires {$g['minimum_nic_count_text']} assigned interface(s) to function.
-        If you do not have {$g['minimum_nic_count_text']} interfaces you CANNOT continue. 
-
-        If you do not have at least {$g['minimum_nic_count']} *REAL* network interface card(s)
-        or one interface with multiple VLANs then {$g['product_name']}
-        *WILL NOT* function correctly.
-
 If you do not know the names of your interfaces, you may choose to use
 auto-detection. In that case, disconnect all interfaces now before
 hitting 'a' to initiate auto detection.
@@ -231,12 +224,8 @@ EOD;
 			}
 			
 			if($lanif == "") {
-				if($g['minimum_nic_count'] < 2) {
-					break;	
-				} else {
-					fclose($fp);
-					return;
-				}
+				/* It is OK to have just a WAN, without a LAN so break if the user does not want LAN. */
+				break;
 			}
 	
 			if ($lanif === "a")
@@ -324,7 +313,7 @@ EOD;
 				$config['interfaces']['lan'] = array();
 			$config['interfaces']['lan']['if'] = $lanif;
 			$config['interfaces']['lan']['enable'] = true;
-		} elseif (!$g['booting'] && !$auto_assign) {
+		} elseif (!platform_booting() && !$auto_assign) {
 
 echo <<<EODD
 
@@ -422,13 +411,10 @@ EODD;
 
 		fclose($fp);
 
-		if($g['booting'])
+		if(platform_booting())
 			return;
 
 		echo gettext("One moment while we reload the settings...");
-
-		$g['booting'] = false;
-
 		echo gettext(" done!") . "\n";
 
 		touch("{$g['tmp_path']}/assign_complete");

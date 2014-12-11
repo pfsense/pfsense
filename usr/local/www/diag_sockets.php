@@ -3,6 +3,7 @@
 /* $Id$ */
 /*
 	diag_sockets.php
+        Copyright (C) 2013-2014 Electric Sheep Fencing, LP
 	Copyright (C) 2012
 	All rights reserved.
 
@@ -55,7 +56,7 @@ $showAllOption = $showAll ? "" : "?showAll";
 
 ?>
 <div id="mainarea">
-<table class="tabcont" width="100%">
+<table class="tabcont" width="100%" summary="diag sockets">
 <tr>
 <td>Information about listening sockets for both <a href="#IPv4">IPv4</a> and <a href="#IPv6">IPv6</a>.</td>
 </tr>
@@ -63,7 +64,7 @@ $showAllOption = $showAll ? "" : "?showAll";
 <td>For explanation about the meaning of the information listed for each socket click <a href="#about">here</a>.</td>
 </tr>
 <tr>
-<td><input type="button" value="<?=$showAllText?>" ONCLICK="window.location.href='diag_sockets.php<?=$showAllOption?>'"/>To show information about both listening and connected sockets click this.</td>
+<td><input type="button" value="<?=$showAllText?>" onclick="window.location.href='diag_sockets.php<?=$showAllOption?>'"/>To show information about both listening and connected sockets click this.</td>
 </tr>
 </table>
 
@@ -81,10 +82,10 @@ $showAllOption = $showAll ? "" : "?showAll";
 		$name = ($tabindex == 0 ? 'IPv4' : 'IPv6');
 ?>
 <a name="<?=$name;?>"></a>
-<table style="padding-top:0px; padding-bottom:0px; padding-left:0px; padding-right:0px" width="100%" border="0" cellpadding="0" cellspacing="0">
-<tr><td class="listtopic" colspan="<?=$elements?>"><strong><?=$name;?></strong></font></td></tr>
+<table style="padding-top:0px; padding-bottom:0px; padding-left:0px; padding-right:0px" width="100%" border="0" cellpadding="0" cellspacing="0" summary="tab">
+<tr><td class="listtopic" colspan="<?=$elements?>"><strong><?=$name;?></strong></td></tr>
 <tr><td>
-<table class="tabcont sortable" id="sortabletable" width="100%" cellspacing="0" cellpadding="6" border="0">
+<table class="tabcont sortable" id="sortabletable" width="100%" cellspacing="0" cellpadding="6" border="0" summary="results">
 <?php
 		foreach (explode("\n", $table) as $i => $line) {
 			if ($i == 0)
@@ -94,7 +95,7 @@ $showAllOption = $showAll ? "" : "?showAll";
 
 			if (trim($line) == "")
 				continue;
-			print("<tr id=\"$i\">\n");
+			print("<tr id=\"$name$i\">\n");
 			$j = 0;
 			foreach (explode(' ', $line) as $entry) {
 				if ($entry == '' || $entry == "ADDRESS") continue;
@@ -113,15 +114,15 @@ $showAllOption = $showAll ? "" : "?showAll";
 <?php
 	} 
 ?>
-</table>
-<br/>
+
+<br />
 <a name="about"></a>
-<table class="tabcont" width="100%" border="0" cellpadding="0" cellspacing="0" border="1">
+<table class="tabcont" width="100%" border="0" cellpadding="0" cellspacing="0" summary="info">
 	<tr><td colspan="2" class="listtopic" >Socket information explanation</td></tr>
-<tr><td colspan="2"  class="">
-This page show the output for the commands: "sockstat -4lL" and "sockstat -6lL".<br/>
-Or in case of showing all sockets the output for: "sockstat -4" and "sockstat -6".<br/>
-<br/>
+<tr><td colspan="2" class="listhdrr">
+This page show the output for the commands: "sockstat -4lL" and "sockstat -6lL".<br />
+Or in case of showing all sockets the output for: "sockstat -4" and "sockstat -6".<br />
+<br />
 The information listed for each socket is:</td></tr>
 	<tr><td class="listlr">USER	      </td><td class="listr">The user who owns the socket.</td></tr>
 	<tr><td class="listlr">COMMAND	      </td><td class="listr">The command which holds the socket.</td></tr>
@@ -136,3 +137,5 @@ The information listed for each socket is:</td></tr>
 <?php
 include('fend.inc');
 ?>
+</body>
+</html>

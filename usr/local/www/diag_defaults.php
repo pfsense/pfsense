@@ -3,9 +3,10 @@
 /*
 	diag_defaults.php
 	Copyright (C) 2004-2009 Scott Ullrich
+        Copyright (C) 2013-2014 Electric Sheep Fencing, LP
 	All rights reserved.
 
-	originially part of m0n0wall (http://m0n0.ch/wall)
+	originally part of m0n0wall (http://m0n0.ch/wall)
 	Copyright (C) 2003-2004 Manuel Kasper <mk@neon1.net>.
 	All rights reserved.
 
@@ -67,7 +68,7 @@ include("head.inc");
 </pre>
 <?php else: ?>
 <form action="diag_defaults.php" method="post">
-	<p><strong> <?=gettext("If you click") . " &quot;" . gettext("Yes") . "&quot;, " . gettext("the firewall will:")?>
+	<p><strong> <?=gettext("If you click") . " &quot;" . gettext("Yes") . "&quot;, " . gettext("the firewall will:")?></strong></p>
 	<ul>
 		<li><?=gettext("Reset to factory defaults");?></li>
 		<li><?=gettext("LAN IP address will be reset to 192.168.1.1");?></li>
@@ -77,10 +78,10 @@ include("head.inc");
 		<li><?=gettext("webConfigurator admin username will be reset to 'admin'");?></li>
 		<li><?=gettext("webConfigurator admin password will be reset to");?> '<?=$g['factory_shipped_password']?>'</li>
 	</ul>
-	<?=gettext("Are you sure you want to proceed?");?></strong></p>
+	<p><strong><?=gettext("Are you sure you want to proceed?");?></strong></p>
 	<p>
-		<input name="Submit" type="submit" class="formbtn" value=" <?=gettext("Yes");?> ">
-		<input name="Submit" type="submit" class="formbtn" value=" <?=gettext("No");?> ">
+		<input name="Submit" type="submit" class="formbtn" value=" <?=gettext("Yes");?> " />
+		<input name="Submit" type="submit" class="formbtn" value=" <?=gettext("No");?> " />
 	</p>
 </form>
 <?php endif; ?>

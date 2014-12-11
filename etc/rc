@@ -31,6 +31,11 @@ if [ "$PLATFORM" = "pfSense" ]; then
 	/etc/rc.dumpon
 fi
 
+# Setup ddb on all platforms. On full install it will save the dump, on NanoBSD it will print to console and auto-reboot.
+if [ ! -z "`sysctl -Nq debug.ddb.scripting.scripts`" ]; then
+	/sbin/ddb /etc/ddb.conf
+fi
+
 if [ -e /root/force_fsck ]; then
 	echo "Forcing filesystem check..."
 	/sbin/fsck -y -t ufs /
@@ -39,38 +44,29 @@ if [ -e /root/force_fsck ]; then
 	fi
 fi
 
-if [ -e /root/TRIM_set -o -e /root/TRIM_unset ]; then
-	TUNEFS_STATUS=`/sbin/tunefs -p / 2>&1 | /usr/bin/grep trim: | /usr/bin/awk '{print $4;}'`
-	if [ -e /root/TRIM_set ] && [ "${TUNEFS_STATUS}" = "disabled" ]; then
-		echo "Enabling TRIM support"
-		/sbin/tunefs -t enable /
-		if [ "$PLATFORM" = "nanobsd" ]; then
-			/sbin/tunefs -t enable /cf
-		fi
-		echo "Rebooting in 5 seconds after enabling TRIM..."
-		sleep 5
-		/sbin/reboot
-	elif [ -e /root/TRIM_unset ] && [ "${TUNEFS_STATUS}" = "enabled" ]; then
-		echo "Disabling TRIM support"
-		/sbin/tunefs -t disable /
-		if [ "$PLATFORM" = "nanobsd" ]; then
-			/sbin/tunefs -t disable /cf
-		fi
-		echo "Rebooting in 5 seconds after disabling TRIM..."
-		sleep 5
-		/sbin/reboot
+if [ "${PLATFORM}" = "nanobsd" ]; then
+	kldstat -qm zfs
+	if [ $? = 0 ]; then
+		kldunload zfs
 	fi
 fi
 
 # Mount memory file system if it exists
 echo "Mounting filesystems..."
 
+kldstat -qm zfs
 # Handle ZFS read-only case
 if [ "$PLATFORM" = "pfSense" ]; then
-	if [ -f /usr/bin/grep ]; then
-		ZFSROOT=`/sbin/zfs mount | /usr/bin/grep ' /$' | /usr/bin/cut -d ' ' -f 1`
-		if [ "$ZFSROOT" != "" ]; then
-			/sbin/zfs set readonly=off $ZFSROOT
+	kldstat -qm zfs
+	if [ $? = 0 ]; then
+		ZFSFSAVAILABLE=$(/sbin/zfs mount 2>/dev/null | wc -l)
+		if [ $ZFSAVAILABLE -eq 0 ]; then
+			kldunload zfs
+		elif [ -f /usr/bin/grep ]; then
+			ZFSROOT=`/sbin/zfs mount | /usr/bin/grep ' /$' | /usr/bin/cut -d ' ' -f 1`
+			if [ "$ZFSROOT" != "" ]; then
+				/sbin/zfs set readonly=off $ZFSROOT
+			fi
 		fi
 	fi
 fi
@@ -81,9 +77,26 @@ else
 	# Mount /. If it fails run a fsck.
 	if [ "$PLATFORM" = "nanobsd" ]; then
 		export PKG_TMPDIR=/root/
-		/sbin/mount -uw / || (/sbin/fsck -y /; /sbin/fsck -y /cf; /sbin/mount -uw /)
-	else 
-		/sbin/mount -a || (/sbin/fsck -y /; /sbin/mount -a)
+		/sbin/mount -uw / 2>/dev/null
+		mount_rc=$?
+		attempts=0
+		while [ ${mount_rc} != 0 -a ${attempts} -lt 3 ]; do
+			/sbin/fsck -y /
+			/sbin/fsck -y /cf
+			/sbin/mount -uw / 2>/dev/null
+			mount_rc=$?
+			attempts=$((attempts+1))
+		done
+	else
+		/sbin/mount -a 2>/dev/null
+		mount_rc=$?
+		attempts=0
+		while [ ${mount_rc} != 0 -a ${attempts} -lt 3 ]; do
+			/sbin/fsck -y /
+			/sbin/mount -a 2>/dev/null
+			mount_rc=$?
+			attempts=$((attempts+1))
+		done
 	fi
 
 	# If /conf is a directory, convert it to a symlink to /cf/conf
@@ -101,13 +114,21 @@ else
 		# If it fails to mount then run a fsck -y
 		if grep -q cf /etc/fstab; then
 			/sbin/mount -w /cf 2>/dev/null
-			/sbin/mount -uw /cf || \
-				(/sbin/umount /cf; /sbin/fsck -y /cf; /sbin/mount -w /cf)
+			/sbin/mount -uw /cf 2>/dev/null
+			mount_rc=$?
+			attempts=0
+			while [ ${mount_rc} != 0 -a ${attempts} -lt 3 ]; do
+				/sbin/umount /cf
+				/sbin/fsck -y /cf
+				/sbin/mount -w /cf 2>/dev/null
+				mount_rc=$?
+				attempts=$((attempts+1))
+			done
 		fi
 	fi
 
 	USE_MFS_TMPVAR=`/usr/bin/grep -c use_mfs_tmpvar /cf/conf/config.xml`
-	if [ "${PLATFORM}" = "nanobsd" ] || [ "${PLATFORM}" = "embedded" ] || [ ${USE_MFS_TMPVAR} -gt 0 ]; then
+	if [ "${PLATFORM}" = "nanobsd" ] || [ ${USE_MFS_TMPVAR} -gt 0 ]; then
 		/etc/rc.embedded
 	fi
 fi
@@ -160,8 +181,6 @@ fi
 
 if [ "$PLATFORM" = "cdrom" ] ; then
 	# do nothing for cdrom platform
-elif [ "$PLATFORM" = "embedded" ] ; then
-    # do nothing for embedded platform
 elif [ "$PLATFORM" = "nanobsd" ] || [ ${USE_MFS_TMPVAR} -gt 0 ]; then
 	# Ensure that old-style PKG packages can be persistent across reboots
 	/bin/mkdir -p /root/var/db/pkg
@@ -183,8 +202,16 @@ else
 		/bin/mkdir -p /var/db/pkg
 		/bin/mv /root/var/db/pkg /var/db/pkg
 		/bin/mkdir -p /var/db/pbi
-		/bin/mv /root/var/db/pkg /var/db/pbi
+		/bin/mv /root/var/db/pbi /var/db/pbi
 	fi
+fi
+
+# Copy PBI keys
+if ls /usr/local/share/pbi-keys/*.ssl >/dev/null 2>&1; then
+	if [ ! -d "/var/db/pbi/keys" ]; then
+		mkdir -p /var/db/pbi/keys
+	fi
+	cp -f /usr/local/share/pbi-keys/*.ssl /var/db/pbi/keys
 fi
 
 if [ "$PLATFORM" = "cdrom" ] ; then
@@ -206,7 +233,7 @@ if [ "$PLATFORM" = "cdrom" ] ; then
 fi
 
 # make some directories in /var
-/bin/mkdir -p $varrunpath /var/log /var/etc /var/db/entropy /var/at/jobs/ /var/empty 2>/dev/null
+/bin/mkdir -p $varrunpath /var/log /var/etc /var/db/entropy /var/db/rrd /var/at/jobs/ /var/empty 2>/dev/null
 /bin/rm -rf $varrunpath/*
 if [ "$PLATFORM" != "pfSense" ]; then
 	/bin/rm /var/log/* 2>/dev/null
@@ -217,12 +244,6 @@ fi
 /bin/rm -rf /var/tmp/*
 
 echo -n "Creating symlinks..."
-# Make sure symlink is correct on embedded
-if [ "$PLATFORM" = "embedded" ] ; then
-	/bin/rm /conf
-	/bin/ln -s /cf/conf/ /conf
-fi
-
 # Make sure symlink is correct on nanobsd
 if [ "$PLATFORM" = "nanobsd" ] ; then
 	/bin/rm /conf
@@ -301,6 +322,12 @@ echo -n "."
 DISABLESYSLOGCLOG=`/usr/bin/grep -c disablesyslogclog /cf/conf/config.xml`
 ENABLEFIFOLOG=`/usr/bin/grep -c usefifolog /cf/conf/config.xml`
 LOG_FILES="system filter dhcpd vpn pptps poes l2tps openvpn portalauth ipsec ppp relayd wireless lighttpd ntpd gateways resolver routing"
+
+DEFAULT_LOG_FILE_SIZE=`/usr/local/bin/xmllint --xpath 'string(//pfsense/syslog/logfilesize)' /conf/config.xml`
+if [ ! ${DEFAULT_LOG_FILE_SIZE} ]; then
+	DEFAULT_LOG_FILE_SIZE=511488
+fi
+
 for logfile in $LOG_FILES; do
 	if [ "$DISABLESYSLOGCLOG" -gt "0" ]; then 
 		/usr/bin/touch /var/log/$logfile.log
@@ -308,9 +335,9 @@ for logfile in $LOG_FILES; do
 		if [ ! -f /var/log/$logfile.log ]; then
 			if [ "$ENABLEFIFOLOG" -gt "0" ]; then
 				# generate fifolog files
-				/usr/sbin/fifolog_create -s 511488 /var/log/$logfile.log
+				/usr/sbin/fifolog_create -s ${DEFAULT_LOG_FILE_SIZE} /var/log/$logfile.log
 			else 
-				/usr/sbin/clog -i -s 512144 /var/log/$logfile.log
+				/usr/local/sbin/clog -i -s ${DEFAULT_LOG_FILE_SIZE} /var/log/$logfile.log
 			fi
 		fi
 	fi 
@@ -332,6 +359,7 @@ cd $varrunpath && /bin/cp /dev/null utmp && /bin/chmod 644 utmp
 
 echo -n "."
 /sbin/ldconfig -elf /usr/lib /usr/local/lib /lib
+/etc/rc.d/ldconfig start 2>/dev/null
 
 # Make sure /etc/rc.conf doesn't exist.
 if [ -f /etc/rc.conf ]; then
@@ -356,33 +384,22 @@ fi
 
 echo "done."
 
-# Ensure gettytab is of a sane size
-if [ `/bin/ls -la /etc/gettytab | /usr/bin/awk '{ print $5'}` -lt 512 ]; then
-	echo ">>> Restoring /etc/gettytab due to unusal size"
-	echo ">>> Restoring /etc/gettytab due to unusal size" | /usr/bin/logger
-	/bin/cp /etc/gettytab.bak /etc/gettytab
-fi
-
 # Recreate capabilities DB
 /usr/bin/cap_mkdb /etc/login.conf
 
 # Run the php.ini setup file and populate
 # /usr/local/etc/php.ini and /usr/local/lib/php.ini
 /etc/rc.php_ini_setup 2>/tmp/php_errors.txt
-
-# Launch external configuration loader for supported platforms
-if [ "$PLATFORM" = "embedded" ]; then
-	/usr/local/bin/php -q /etc/ecl.php
-fi
+/usr/local/sbin/php-fpm -c /usr/local/lib/php.ini -y /usr/local/lib/php-fpm.conf -RD 2>&1 >/dev/null
 
 # Launch external configuration loader for supported platforms
 if [ "$PLATFORM" = "nanobsd" ]; then
-	/usr/local/bin/php -q /etc/ecl.php
+	/usr/local/sbin/fcgicli -f /etc/ecl.php
 fi
 
 # Launch external configuration loader for supported platforms
 if [ "$PLATFORM" = "pfSense" ]; then
-	/usr/local/bin/php -q /etc/ecl.php
+	/usr/local/sbin/fcgicli -f /etc/ecl.php
 fi
 
 if [ -f /etc/rc.custom_boot_early ]; then
@@ -391,6 +408,7 @@ if [ -f /etc/rc.custom_boot_early ]; then
 	echo "Done"
 fi
 
+export fcgipath=/var/run/php-fpm.socket
 /usr/bin/nice -n20 /usr/local/sbin/check_reload_status
 
 # let the PHP-based configuration subsystem set up the system now
@@ -399,6 +417,12 @@ echo -n "Launching the init system..."
 /bin/rm -f /root/lighttpd*
 /usr/bin/touch $varrunpath/booting
 /etc/rc.bootup
+
+# /etc/rc.bootup unset $g['booting'], and removes file
+# Be sure the file is removed to not create troubles after
+if [ -f $varrunpath/booting ]; then
+	/bin/rm $varrunpath/booting
+fi
 
 # If a shell was selected from recovery 
 # console then just drop to the shell now.
@@ -412,7 +436,7 @@ cd /tmp && /usr/sbin/cron -s 2>/dev/null
 echo "done."
 
 # Start packages
-/etc/rc.start_packages
+/usr/local/sbin/fcgicli -f /etc/rc.start_packages
 
 /bin/rm -rf /usr/local/pkg/pf/CVS
 
@@ -420,15 +444,28 @@ echo "done."
 /usr/local/bin/minicron 240 $varrunpath/ping_hosts.pid /usr/local/bin/ping_hosts.sh
 
 # Start account expire handler every hour
-/usr/local/bin/minicron 3600 $varrunpath/expire_accounts.pid /etc/rc.expireaccounts
+/usr/local/bin/minicron 3600 $varrunpath/expire_accounts.pid '/usr/local/sbin/fcgicli -f /etc/rc.expireaccounts'
 
 # Start alias url updater every 24 hours
-/usr/local/bin/minicron 86400 $varrunpath/update_alias_url_data.pid /etc/rc.update_alias_url_data
+/usr/local/bin/minicron 86400 $varrunpath/update_alias_url_data.pid '/usr/local/sbin/fcgicli -f /etc/rc.update_alias_url_data'
 
 /bin/chmod a+rw /tmp/.
 
+# Check for GEOM mirrors
+GMIRROR_STATUS=`/sbin/gmirror status`
+if [ "${GMIRROR_STATUS}" != "" ]; then
+	# Using a flag file at bootup saves an expensive exec/check on each page load.
+	/usr/bin/touch /var/run/gmirror_active
+	# Setup monitoring/notifications
+	/usr/local/bin/minicron 60 /var/run/gmirror_status_check.pid /usr/local/sbin/gmirror_status_check.php
+fi
+
+# Log product version to syslog
+BUILDTIME=`cat /etc/version.buildtime`
+ARCH=`uname -m`
+echo "$product ($PLATFORM) $version $ARCH $BUILDTIME"
+
 echo "Bootup complete"
-/bin/rm $varrunpath/booting
 
 /usr/local/bin/beep.sh start 2>&1 >/dev/null
 

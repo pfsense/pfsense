@@ -227,14 +227,14 @@ function GraphDraw(graph) {
 	if(graph['scale_type'] == GL_STATIC)
 		var getMargin = function(i) {
 			return graph['vals'][i] + 'px';
-		}
+		};
 	else
 		var getMargin = function(i) {
 			var h = graph['height'];
 			var s = graph['scale'];
 			var v = graph['vals'][i];
 			return (h - Math.round((h - v) * s)) + 'px';
-		}
+		};
 
 	graph['spans'][count - 1].css("display", "none");
 

@@ -2,8 +2,9 @@
 /* $Id$ */
 /*
         load_balancer_protocol_edit.php
-        part of pfSense (http://www.pfsense.com/)
+        part of pfSense (https://www.pfsense.org/)
 
+        Copyright (C) 2013-2014 Electric Sheep Fencing, LP
         Copyright (C) 2008 Bill Marquette <bill.marquette@gmail.com>.
         All rights reserved.
 
@@ -41,15 +42,17 @@
 
 require("guiconfig.inc");
 
+$referer = (isset($_SERVER['HTTP_REFERER']) ? $_SERVER['HTTP_REFERER'] : '/load_balancer_relay_protocol.php');
+
 if (!is_array($config['load_balancer']['lbprotocol'])) {
 	$config['load_balancer']['lbprotocol'] = array();
 }
 $a_protocol = &$config['load_balancer']['lbprotocol'];
 
-if (isset($_POST['id']))
-	$id = $_POST['id'];
-else
+if (is_numericint($_GET['id']))
 	$id = $_GET['id'];
+if (isset($_POST['id']) && is_numericint($_POST['id']))
+	$id = $_POST['id'];
 
 if (isset($id) && $a_protocol[$id]) {
 	$pconfig = $a_protocol[$id];
@@ -142,7 +145,7 @@ include("head.inc");
 $types = array("http" => gettext("HTTP"), "tcp" => gettext("TCP"), "dns" => gettext("DNS"));
 ?>
 <body link="#0000CC" vlink="#0000CC" alink="#0000CC">
-<script language="javascript">
+<script type="text/javascript">
 function updateType(t){
 	switch(t) {
 <?php
@@ -233,7 +236,7 @@ jQuery(document).ready(function(){
 						<td>
 							<center>
 							<b><?=gettext("Available Actions"); ?></b>
-							<br/>
+							<br />
 							<select id="available_action" name="available_action[]" multiple="true" size="5">
 <?php
 if (is_array($config['load_balancer']['lbaction'])) {
@@ -243,11 +246,11 @@ if (is_array($config['load_balancer']['lbaction'])) {
 }
 echo "</select>";
 ?>
-							<br/>
+							<br />
 						</td>
 						<td valign="middle">
 							<center>
-								<input class="formbtn" type="button" name="copyToEnabled" value="<?=gettext("Add"); ?>" onclick="copyOption($('available_action'), $('lbaction'));" /><br/>
+								<input class="formbtn" type="button" name="copyToEnabled" value="<?=gettext("Add"); ?>" onclick="copyOption($('available_action'), $('lbaction'));" /><br />
 								<input class="formbtn" type="button" name="removeFromEnabled" value="<?=gettext("Remove"); ?>" onclick="deleteOption($('lbaction'));" />
 							</center>
 						</td>
@@ -255,7 +258,7 @@ echo "</select>";
 						<td>
 							<center>
 							<b><?=gettext("Enabled Actions"); ?></b>
-							<br/>
+							<br />
 							<select id="lbaction" name="lbaction[]" multiple="true" size="5">
 <?php
 if (is_array($pconfig['lbaction'])) {
@@ -265,7 +268,7 @@ if (is_array($pconfig['lbaction'])) {
 }
 echo "</select>";
 ?>
-							<br/>
+							<br />
 						</td>
 					</tr>
 					</tbody>
@@ -275,7 +278,8 @@ echo "</select>";
 		<tr align="left">
 			<td width="22%" valign="top">&nbsp;</td>
 			<td width="78%">
-				<input name="Submit" type="submit" class="formbtn" value="<?=gettext("Save"); ?>" onClick="AllOptions($('lbaction'), true); AllOptions($('available_action'), false);"><input type="button" class="formbtn" value="<?=gettext("Cancel"); ?>" onclick="history.back()">
+				<input name="Submit" type="submit" class="formbtn" value="<?=gettext("Save"); ?>" onClick="AllOptions($('lbaction'), true); AllOptions($('available_action'), false);">
+				<input type="button" class="formbtn" value="<?=gettext("Cancel");?>" onclick="window.location.href='<?=$referer;?>'" />
 				<?php if (isset($id) && $a_protocol[$id] && $_GET['act'] != 'dup'): ?>
 				<input name="id" type="hidden" value="<?=htmlspecialchars($id);?>">
 				<?php endif; ?>
@@ -283,7 +287,7 @@ echo "</select>";
 		</tr>
 	</table>
 	</form>
-<br>
+<br />
 <?php include("fend.inc"); ?>
 </body>
 </html>

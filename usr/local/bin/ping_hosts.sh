@@ -40,7 +40,7 @@ if [ -f /var/db/pkgpinghosts ]; then
 	PKGHOSTS="/var/db/pkgpinghosts"
 fi
 
-cat $PKGHOSTS $HOSTS $IPSECHOSTS >/tmp/tmpHOSTS
+cat $PKGHOSTS $HOSTS $CURRENTIPSECHOSTS >/tmp/tmpHOSTS
 
 if [ ! -d /var/db/pingstatus ]; then
 	/bin/mkdir -p /var/db/pingstatus
@@ -75,29 +75,31 @@ for TOPING in $PINGHOSTS ; do
 	fi
 	echo Processing $DSTIP
 	# Look for a service being down
+	# Read in previous status
+	PREVIOUSSTATUS=""
+	if [ -f "/var/db/pingstatus/${DSTIP}" ]; then
+		PREVIOUSSTATUS=`cat /var/db/pingstatus/$DSTIP`
+	fi
 	$PINGCMD -c $COUNT -S $SRCIP $DSTIP
 	if [ $? -eq 0 ]; then
 		# Host is up
-		# Read in previous status
-		PREVIOUSSTATUS=`cat /var/db/pingstatus/$DSTIP`
-		if [ "$PREVIOUSSTATUS" = "DOWN" ]; then
+		if [ "$PREVIOUSSTATUS" != "UP" ]; then
 			# Service restored
+			echo "UP" > /var/db/pingstatus/$DSTIP
 			if [ "$SERVICERESTOREDSCRIPT" != "" ]; then
 				echo "$DSTIP is UP, previous state was DOWN .. Running $SERVICERESTOREDSCRIPT"
 				echo "$DSTIP is UP, previous state was DOWN .. Running $SERVICERESTOREDSCRIPT" | logger -p daemon.info -i -t PingMonitor
-				echo "UP" > /var/db/pingstatus/$DSTIP
 				sh -c $SERVICERESTOREDSCRIPT
 			fi
 		fi
 	else
 		# Host is down
-		PREVIOUSSTATUS=`cat /var/db/pingstatus/$DSTIP`
-		if [ "$PREVIOUSSTATUS" = "UP" ]; then
+		if [ "$PREVIOUSSTATUS" != "DOWN" ]; then
 			# Service is down
+			echo "DOWN" > /var/db/pingstatus/$DSTIP
 			if [ "$FAILURESCRIPT" != "" ]; then
 				echo "$DSTIP is DOWN, previous state was UP ..  Running $FAILURESCRIPT"
 				echo "$DSTIP is DOWN, previous state was UP ..  Running $FAILURESCRIPT" | logger -p daemon.info -i -t PingMonitor
-				echo "DOWN" > /var/db/pingstatus/$DSTIP
 				sh -c $FAILURESCRIPT
 			fi
 		fi
@@ -108,7 +110,7 @@ for TOPING in $PINGHOSTS ; do
 	echo "Ping returned $?"
 	echo $PINGTIME > /var/db/pingmsstatus/$DSTIP
 	if [ "$THRESHOLD" != "" ]; then
-		if [ "$PINGTIME" -gt "$THRESHOLD" ]; then
+		if [ $(echo "${PINGTIME} > ${THRESHOLD}" | /usr/bin/bc) -eq 1 ]; then
 			echo "$DSTIP has exceeded ping threshold $PINGTIME / $THRESHOLD .. Running $FAILURESCRIPT"
 			echo "$DSTIP has exceeded ping threshold $PINGTIME / $THRESHOLD .. Running $FAILURESCRIPT" | logger -p daemon.info -i -t PingMonitor
 			sh -c $FAILURESCRIPT
@@ -118,8 +120,8 @@ for TOPING in $PINGHOSTS ; do
 	#WANTIME=`rrdtool fetch /var/db/rrd/wan-quality.rrd AVERAGE -r 120 -s -1min -e -1min | grep ":" | cut -f3 -d" " | cut -d"e" -f1`
 	echo "Checking wan ping time $WANTIME"
 	echo $WANTIME > /var/db/wanaverage
-	if [ "$WANTHRESHOLD" != "" ]; then
-		if [ "$WANTIME" -gt "$WANTHRESHOLD" ]; then
+	if [ "$WANTHRESHOLD" != "" -a "$WANTIME" != "" ]; then
+		if [ $(echo "${WANTIME} > ${WANTHRESHOLD}" | /usr/bin/bc) -eq 1 ]; then
 			echo "$DSTIP has exceeded wan ping threshold $WANTIME / $WANTHRESHOLD .. Running $FAILURESCRIPT"
 			echo "$DSTIP has exceeded wan ping threshold $WANTIME / $WANTHRESHOLD .. Running $FAILURESCRIPT" | logger -p daemon.info -i -t PingMonitor
 			sh -c $FAILURESCRIPT

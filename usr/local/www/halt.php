@@ -3,6 +3,7 @@
 /*
 	halt.php
 	part of pfSense
+        Copyright (C) 2013-2014 Electric Sheep Fencing, LP
 	Copyright (C) 2004 Scott Ullrich
 	All rights reserved.
 
@@ -66,8 +67,8 @@ include('head.inc');
 <form action="halt.php" method="post">
 	<p><strong><?=gettext("Are you sure you want to halt the system?");?></strong></p>
 	<p>
-	<input name="Submit" type="submit" class="formbtn" value=" <?=gettext("Yes"); ?> ">
-	<input name="Submit" type="submit" class="formbtn" value=" <?=gettext("No"); ?> ">
+	<input name="Submit" type="submit" class="formbtn" value=" <?=gettext("Yes"); ?> " />
+	<input name="Submit" type="submit" class="formbtn" value=" <?=gettext("No"); ?> " />
 	</p>
 </form>
 <?php endif; ?>

@@ -1,7 +1,8 @@
 <?php
 /* $Id$ */
 /*
-    Copyright (C) 2011 Ermal Luçi
+    Copyright (C) 2013-2014 Electric Sheep Fencing, LP
+    Copyright (C) 2011 Ermal LuÃ§i
     system_usermanager.php
 
     Redistribution and use in source and binary forms, with or without
@@ -54,9 +55,12 @@ if (isset($_POST['save'])) {
 		$input_errors[] = gettext("The passwords do not match.");
 
 	if (!$input_errors) {
+		if (!session_id())
+			session_start();
 		// all values are okay --> saving changes
-		$config['system']['user'][$userindex[$HTTP_SERVER_VARS['AUTH_USER']]]['password'] = crypt(trim($_POST['passwordfld1']));
-		local_user_set($config['system']['user'][$userindex[$HTTP_SERVER_VARS['AUTH_USER']]]);
+		$config['system']['user'][$userindex[$_SESSION['Username']]]['password'] = crypt(trim($_POST['passwordfld1']));
+		local_user_set($config['system']['user'][$userindex[$_SESSION['Username']]]);
+		session_commit();
 
 		write_config();
 
@@ -101,7 +105,11 @@ if ($islocal == false) {
                 <form action="system_usermanager_passwordmg.php" method="post" name="iform" id="iform">
                         <table width="100%" border="0" cellpadding="6" cellspacing="0" summary="main area">
                                 <tr>
-                                        <td colspan="2" valign="top" class="listtopic"><?=$HTTP_SERVER_VARS['AUTH_USER']?>'s <?=gettext("Password"); ?></td>
+<?php if (!session_id())
+		session_start();
+?>
+                                        <td colspan="2" valign="top" class="listtopic"><?=$_SESSION['Username']?>'s <?=gettext("Password"); ?></td>
+<?php session_commit(); ?>
                                 </tr>
                                 <tr>
                                         <td width="22%" valign="top" class="vncell" rowspan="2"><?=gettext("Password"); ?></td>
@@ -113,7 +121,7 @@ if ($islocal == false) {
                                         <td width="78%" class="vtable">
                                                 <input name="passwordfld2" type="password" class="formfld pwd" id="passwordfld2" size="20" />
                                                 &nbsp;<?=gettext("(confirmation)");?>
-                                                <br/>
+                                                <br />
                                                 <span class="vexpl">
                                                         <?=gettext("Select a new password");?>
                                                 </span>

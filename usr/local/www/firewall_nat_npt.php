@@ -2,9 +2,12 @@
 /* $Id$ */
 /*
 	firewall_nat_npt.php
-	part of pfSense (http://pfsense.org)
+	part of pfSense (https://www.pfsense.org)
 
 	Copyright (C) 2011 Seth Mos <seth.mos@dds.nl>.
+	All rights reserved.
+
+        Copyright (C) 2013-2014 Electric Sheep Fencing, LP
 	All rights reserved.
 
 	Redistribution and use in source and binary forms, with or without
@@ -84,9 +87,9 @@ include("head.inc");
 <form action="firewall_nat_npt.php" method="post">
 <?php if ($savemsg) print_info_box($savemsg); ?>
 <?php if (is_subsystem_dirty('natconf')): ?>
-<?php print_info_box_np(gettext("The NAT configuration has been changed") . ".<br/>" . gettext("You must apply the changes in order for them to take effect."));?><br/>
+<?php print_info_box_np(gettext("The NAT configuration has been changed") . ".<br />" . gettext("You must apply the changes in order for them to take effect."));?><br />
 <?php endif; ?>
-<table width="100%" border="0" cellpadding="0" cellspacing="0" summary="firwall nat npt">  <tr><td>
+<table width="100%" border="0" cellpadding="0" cellspacing="0" summary="firewall nat npt">  <tr><td>
 <?php
 	$tab_array = array();
 	$tab_array[] = array(gettext("Port Forward"), false, "firewall_nat.php");

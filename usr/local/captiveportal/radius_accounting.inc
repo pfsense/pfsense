@@ -114,7 +114,7 @@ function RADIUS_ACCOUNTING_START($ruleno, $username, $sessionid, $radiusservers,
          * $status = $racct->start();
          * if(PEAR::isError($status)) {
          *    if ($debug)
-         *        printf("Radius start: %s<br>\n", $status->getMessage());
+         *        printf("Radius start: %s<br />\n", $status->getMessage());
          *        exit;
          * }
          */
@@ -176,7 +176,7 @@ function RADIUS_ACCOUNTING_STOP($ruleno,$username,$sessionid,$start_time,$radius
     $radiusvendor = $config['captiveportal'][$cpzone]['radiusvendor'] ? $config['captiveportal'][$cpzone]['radiusvendor'] : null;
     $stop_time = (empty($stop_time)) ? time() : $stop_time;
     $session_time = $stop_time - $start_time;
-    $volume = getVolume($clientip);
+    $volume = getVolume($clientip, $clientmac);
     $volume['input_bytes_radius'] = remainder($volume['input_bytes']);
     $volume['input_gigawords'] = gigawords($volume['input_bytes']);
     $volume['output_bytes_radius'] = remainder($volume['output_bytes']);

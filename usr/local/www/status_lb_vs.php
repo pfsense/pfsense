@@ -2,9 +2,10 @@
 /* $Id$ */
 /*
 	status_lb_vs.php
-	part of pfSense (http://www.pfsense.com/)
+	part of pfSense (https://www.pfsense.org/)
 
 	Copyright (C) 2010 Seth Mos <seth.mos@dds.nl>.
+        Copyright (C) 2013-2014 Electric Sheep Fencing, LP
 	All rights reserved.
 
 	Redistribution and use in source and binary forms, with or without
@@ -59,7 +60,7 @@ include("head.inc");
 ?>
 <body link="#0000CC" vlink="#0000CC" alink="#0000CC">
 <?php include("fbegin.inc"); ?>
-<table width="100%" border="0" cellpadding="0" cellspacing="0">
+<table width="100%" border="0" cellpadding="0" cellspacing="0" summary="status load balancer virtual servers">
   <tr><td class="tabnavtbl">
   <?php
         /* active tabs */
@@ -72,10 +73,10 @@ include("head.inc");
   <tr>
     <td>
 	<div id="mainarea">
-              <table class="tabcont sortable" width="100%" border="0" cellpadding="0" cellspacing="0">
+              <table class="tabcont sortable" width="100%" border="0" cellpadding="0" cellspacing="0" summary="main area">
                 <tr>
                   <td width="10%" class="listhdrr"><?=gettext("Name"); ?></td>
-				  <td width="20%" class="listhdrr"><?=gettext("Address"); ?></td>
+		  <td width="20%" class="listhdrr"><?=gettext("Address"); ?></td>
                   <td width="10%" class="listhdrr"><?=gettext("Servers"); ?></td>
                   <td width="25%" class="listhdrr"><?=gettext("Status"); ?></td>
                   <td width="25%" class="listhdr"><?=gettext("Description"); ?></td>
@@ -90,10 +91,10 @@ include("head.inc");
                                 <br />
                   </td>
                   <td class="listr" align="center" >
-			<table border="0" cellpadding="0" cellspacing="2">
+			<table border="0" cellpadding="0" cellspacing="2" summary="servers">
                         <?php
 			foreach ($a_pool as $vipent) {
-				if ($vipent['name'] == $vsent['pool']) {
+				if ($vipent['name'] == $vsent['poolname']) {
 					foreach ((array) $vipent['servers'] as $server) {
 						print "<tr><td> {$server} </td></tr>";
 					}
@@ -117,17 +118,17 @@ include("head.inc");
                       $rdr_a[$vsent['name']]['status'] = 'Unknown - relayd not running?';
                   }
                   ?>
-                  <td class="listr" nowrap>
-			<table border="0" cellpadding="3" cellspacing="2">
+                  <td class="listr nowrap">
+			<table border="0" cellpadding="3" cellspacing="2" summary="status">
 				<tr><td bgcolor="<?=$bgcolor?>"><?=$rdr_a[$vsent['name']]['status']?> </td></tr>
 			</table>
 			<?php
 			if (!empty($rdr_a[$vsent['name']]['total']))
 				echo "Total Sessions: {$rdr_a[$vsent['name']]['total']}\n";
 			if (!empty($rdr_a[$vsent['name']]['last']))
-				echo "<br/>Last: {$rdr_a[$vsent['name']]['last']}\n";
+				echo "<br />Last: {$rdr_a[$vsent['name']]['last']}\n";
 			if (!empty($rdr_a[$vsent['name']]['average']))
-				echo "<br/>Average: {$rdr_a[$vsent['name']]['average']}\n";
+				echo "<br />Average: {$rdr_a[$vsent['name']]['average']}\n";
 			?>
                   </td>
                   <td class="listbg" >
@@ -137,7 +138,8 @@ include("head.inc");
 		<?php $i++; endforeach; ?>
              </table>
 	   </div>
-	</table>
+</td></tr>
+</table>
 
 <?php include("fend.inc"); ?>
 </body>

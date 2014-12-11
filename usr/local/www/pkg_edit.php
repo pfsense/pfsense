@@ -883,7 +883,7 @@ if ($pkg['tabs'] <> "") {
 
 				<!-- <br /><a onclick="javascript:addRowTo('maintable'); return false;" href="#"><img border="0" src="./themes/<?#= $g['theme']; ?>/images/icons/icon_plus.gif" alt="add" /></a>-->
 				<br /><a class="add" href="#"><img border="0" src="./themes/<?= $g['theme']; ?>/images/icons/icon_plus.gif" alt="add" /></a>
-				<br /><?php if($pkga['description'] != "") echo $pkga['description']; ?>
+				<br /><?php if($pkga['rowhelper']['description'] != "") echo $pkga['rowhelper']['description']; ?>
 				<script type="text/javascript">
 				//<![CDATA[
 				field_counter_js = <?= $fieldcounter ?>;

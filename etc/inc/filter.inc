@@ -57,6 +57,67 @@ $filterdns = array();
 /* Used for aliases and interface macros */
 $aliases = "";
 
+/* ICMP v4 types */
+$icmptypes = array(
+	""		=> gettext("any"),
+	"echoreq"	=> gettext("Echo request"),
+	"echorep"	=> gettext("Echo reply"),
+	"unreach"	=> gettext("Destination unreachable"),
+	"squench"	=> gettext("Source quench"),
+	"redir"		=> gettext("Redirect"),
+	"althost"	=> gettext("Alternate Host"),
+	"routeradv"	=> gettext("Router advertisement"),
+	"routersol"	=> gettext("Router solicitation"),
+	"timex"		=> gettext("Time exceeded"),
+	"paramprob"	=> gettext("Invalid IP header"),
+	"timereq"	=> gettext("Timestamp"),
+	"timerep"	=> gettext("Timestamp reply"),
+	"inforeq"	=> gettext("Information request"),
+	"inforep"	=> gettext("Information reply"),
+	"maskreq"	=> gettext("Address mask request"),
+	"maskrep"	=> gettext("Address mask reply"),
+	"trace"		=> gettext("Traceroute"),
+	"dataconv"	=> gettext("Datagram conversion error"),
+	"mobredir"	=> gettext("Mobile host redirect"),
+	"ipv6-where"	=> gettext("IPv6 where-are-you"),
+	"ipv6-here"	=> gettext("IPv6 I-am-here"),
+	"mobregreq"	=> gettext("Mobile registration request"),
+	"mobregrep"	=> gettext("Mobile registration reply"),
+	"skip"		=> gettext("SKIP"),
+	"photuris"	=> gettext("Photuris")
+);
+
+/* ICMP v6 types */
+$icmp6types = array(
+	""		=> gettext("any"),
+	"unreach"	=> gettext("Destination unreachable"),
+	"toobig"	=> gettext("Packet too big"),
+	"timex"		=> gettext("Time exceeded"),
+	"paramprob"	=> gettext("Parameter problem"),
+	"echoreq"	=> gettext("Echo request"),
+	"echorep"	=> gettext("Echo reply"),
+	"groupqry"	=> gettext("Group membership query"),
+	"listqry"	=> gettext("Multicast listener query"),
+	"grouprep"	=> gettext("Group membership report"),
+	"listenrep"	=> gettext("Multicast listener report"),
+	"groupterm"	=> gettext("Group membership termination"),
+	"listendone"	=> gettext("Multicast listener done"),
+	"routersol"	=> gettext("Router solicitation"),
+	"routeradv"	=> gettext("Router advertisement"),
+	"neighbrsol"	=> gettext("Neighbor solicitation"),
+	"neighbradv"	=> gettext("Neighbor advertisement"),
+	"redir"		=> gettext("Redirect"),
+	"routrrenum"	=> gettext("Router renumbering"),
+	"wrureq"	=> gettext("Who are you request"),
+	"wrurep"	=> gettext("Who are you reply"),
+	"fqdnreq"	=> gettext("FQDN query"),
+	"fqdnrep"	=> gettext("FQDN reply"),
+	"niqry"		=> gettext("Node information request"),
+	"nirep"		=> gettext("Node information reply"),
+	"mtraceresp"	=> gettext("mtrace resp"),
+	"mtrace"	=> gettext("mtrace messages")
+);
+
 global $tracker;
 $tracker = 1000000000;
 

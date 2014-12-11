@@ -409,9 +409,6 @@ if (isset($wancfg['wireless'])) {
 	}
 }
 
-$ipv6_delegation_length = calculate_ipv6_delegation_length($pconfig['track6-interface']);
-$ipv6_num_prefix_ids = pow(2, $ipv6_delegation_length);
-
 if ($_POST['apply']) {
 	unset($input_errors);
 	if (!is_subsystem_dirty('interfaces'))
@@ -469,11 +466,6 @@ if ($_POST['apply']) {
 
 	unset($input_errors);
 	$pconfig = $_POST;
-
-	if (isset($_POST['track6-interface'])) {
-		$ipv6_delegation_length = calculate_ipv6_delegation_length($_POST['track6-interface']);
-		$ipv6_num_prefix_ids = pow(2, $ipv6_delegation_length);
-	}
 
 	if (is_numeric("0x" . $_POST['track6-prefix-id--hex']))
 		$pconfig['track6-prefix-id'] = intval($_POST['track6-prefix-id--hex'], 16);
@@ -614,8 +606,17 @@ if ($_POST['apply']) {
 				$input_errors[] = gettext("You must enter a valid hexadecimal number for the IPv6 prefix ID.");
 			} else {
 				$track6_prefix_id = intval($_POST['track6-prefix-id--hex'], 16);
-				if ($track6_prefix_id < 0 || $track6_prefix_id >= $ipv6_num_prefix_ids) {
-					$input_errors[] = gettext("You specified an IPv6 prefix ID that is out of range.");
+				if ($track6_prefix_id < 0 || $track6_prefix_id >= $_POST['ipv6-num-prefix-ids-' . $_POST['track6-interface']]) {
+					$input_errors[] = gettext("You specified an IPv6 prefix ID that is out of range. ({$_POST['track6-interface']}) - ({$_POST['ipv6-num-prefix-ids-' . $_POST['track6-interface']]}) - ({$ipv6_delegation_length})");
+				} else {
+					foreach ($ifdescrs as $ifent => $ifdescr) {
+						if ($if == $ifent)
+							continue;
+						if ($config['interfaces'][$ifent]['ipaddrv6'] == 'track6' &&
+						    $config['interfaces'][$ifent]['track6-interface'] == $_POST['track6-interface'] &&
+						    $config['interfaces'][$ifent]['track6-prefix-id'] == $track6_prefix_id)
+							$input_errors[] = sprintf(gettext("This track6 prefix id is already being used in %s."), $ifdescr);
+					}
 				}
 			}
 			break;
@@ -1481,6 +1482,7 @@ $types6 = array("none" => gettext("None"), "staticv6" => gettext("Static IPv6"),
 			}
 			case "track6": {
 				jQuery('#none, #dhcp6, #staticv6, #_6rd, #_6to4, #slaac').hide();
+				update_track6_prefix();
 				break;
 			}
 		}
@@ -1607,6 +1609,17 @@ $types6 = array("none" => gettext("None"), "staticv6" => gettext("Static IPv6"),
 				jQuery('#password').val(password);
 			}
 		});
+	}
+
+	function update_track6_prefix() {
+		var iface = jQuery("#track6-interface").val();
+		if (iface == null)
+			return;
+		var track6_prefix_ids = jQuery('#ipv6-num-prefix-ids-' + iface).val();
+		if (track6_prefix_ids == null)
+			return;
+		track6_prefix_ids = parseInt(track6_prefix_ids).toString(16);
+		jQuery('#track6-prefix-id-range').html('(<b>hexadecimal</b> from 0 to ' + track6_prefix_ids + ')');
 	}
 
 //]]>
@@ -2502,7 +2515,7 @@ $types6 = array("none" => gettext("None"), "staticv6" => gettext("Static IPv6"),
 									<tr>
 										<td width="22%" valign="top" class="vncell"><?=gettext("IPv6 Interface"); ?></td>
 										<td width="78%" class="vtable">
-										<select name='track6-interface' class='formselect' >
+										<select name="track6-interface" id='track6-interface' class='formselect' onchange="update_track6_prefix();">
 										<?php
 											$interfaces = get_configured_interface_with_descr(false, true);
 											$dynv6ifs = array();
@@ -2511,24 +2524,32 @@ $types6 = array("none" => gettext("None"), "staticv6" => gettext("Static IPv6"),
 													case "6to4":
 													case "6rd":
 													case "dhcp6":
-														$dynv6ifs[$iface] = $ifacename;
+														$dynv6ifs[$iface] = array(
+															'name' => $ifacename,
+															'ipv6_num_prefix_ids' => pow(2, calculate_ipv6_delegation_length($iface)) - 1
+														);
 														break;
 													default:
 														continue;
 												}
 											}
 											$rowIndex = 0;
-											foreach($dynv6ifs as $iface => $ifacename) {
+											foreach($dynv6ifs as $iface => $ifacedata) {
 												$rowIndex++;
 												echo "<option value=\"{$iface}\"";
 												if ($iface == $pconfig['track6-interface'])
 													echo " selected=\"selected\"";
-												echo ">" . htmlspecialchars($ifacename) . "</option>";
+												echo ">" . htmlspecialchars($ifacedata['name']) . "</option>";
 											}
 											if ($rowIndex == 0)
 												echo "<option></option>";
 										?>
 										</select> <br />
+										<?php
+											foreach($dynv6ifs as $iface => $ifacedata) {
+												echo "<input type=\"hidden\" name=\"ipv6-num-prefix-ids-{$iface}\" id=\"ipv6-num-prefix-ids-{$iface}\" value=\"{$ifacedata['ipv6_num_prefix_ids']}\">\n";
+											}
+										?>
 											<br />
 											<?=gettext("This selects the dynamic IPv6 WAN interface to track for configuration") ?><br />
 										</td>
@@ -2542,10 +2563,12 @@ $types6 = array("none" => gettext("None"), "staticv6" => gettext("Static IPv6"),
 												$track6_prefix_id_hex = sprintf("%x", $pconfig['track6-prefix-id']);
 											?>
 											<input name="track6-prefix-id--hex" type="text" class="formfld unknown" id="track6-prefix-id--hex" size="8" value="<?= $track6_prefix_id_hex ?>" />
+											<span id="track6-prefix-id-range"></span>
+											<input type="hidden" id="track6-prefix-id-max" value="0"></input>
 											<br />
 											<?= gettext("The value in this field is the (Delegated) IPv6 prefix id. This determines the configurable network ID based on the dynamic IPv6 connection"); ?>
 											<br />
-											<?= sprintf(gettext("Enter a <b>hexadecimal</b> value between %x and %x here, default value is 0."), 0, $ipv6_num_prefix_ids - 1); ?>
+											<?= gettext("default value is 0."); ?>
 										</td>
 									</tr>
 									<tr>

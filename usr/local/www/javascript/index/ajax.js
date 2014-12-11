@@ -111,7 +111,7 @@ function updateGatewayStats(x){
 	if (widgetActive("gateways")){
 		gateways_split = x.split(",");
 		for (var y=0; y<gateways_split.length; y++){
-			gateways_field_split = gateways_split[y].split("/");
+			gateways_field_split = gateways_split[y].split("^");
 			if(jQuery('#gateway' + (y + 1))) {
 				jQuery('#gateway' + (y + 1)).html(gateways_field_split[0]);
 				if(gateways_field_split[1]) {

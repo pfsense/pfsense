@@ -284,7 +284,7 @@ function console_configure_ip_address($version) {
 					echo "\n" . sprintf(gettext("Enter the new %s %s subnet bit count:"),
 							    $upperifname, $label_IPvX) . "\n> ";
 					$intbits = chop(fgets($fp));
-					$intbits_ok = is_numeric($intbits) && (($intbits >= 1) || ($intbits <= $maxbits));
+					$intbits_ok = is_numeric($intbits) && (($intbits >= 1) && ($intbits <= $maxbits));
 					$restart_dhcpd = true;
 
 					if ($version === 4 && $intbits < $maxbits) {

@@ -94,7 +94,7 @@ if ($_POST) {
 	if (preg_match("/[^a-zA-Z0-9\.\-_]/", $_POST['passwordfld']))
 		$input_errors[] = gettext("The password contains invalid characters.");
 
-	if (($_POST['passwordfld']) && ($_POST['passwordfld'] != $_POST['password2'])) {
+	if (($_POST['passwordfld']) && ($_POST['passwordfld'] != $_POST['passwordfld2'])) {
 		$input_errors[] = gettext("The passwords do not match.");
 	}
 	if (($_POST['ip'] && !is_ipaddr($_POST['ip']))) {
@@ -165,7 +165,7 @@ include("head.inc");
                   <td width="22%" valign="top" class="vncellreq"><?=gettext("Password");?></td>
                   <td width="78%" class="vtable">
                     <?=$mandfldhtml;?><input name="passwordfld" type="password" class="formfld pwd" id="passwordfld" size="20" />
-                    <br /><?=$mandfldhtml;?><input name="password2" type="password" class="formfld pwd" id="password2" size="20" />
+                    <br /><?=$mandfldhtml;?><input name="passwordfld2" type="password" class="formfld pwd" id="passwordfld2" size="20" />
                     &nbsp;(<?=gettext("confirmation");?>)<?php if (isset($id) && $a_secret[$id]): ?><br />
                     <span class="vexpl"><?=gettext("If you want to change the users password, enter it here twice.");?></span>
                     <?php endif; ?></td>

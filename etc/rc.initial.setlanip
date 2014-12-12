@@ -91,7 +91,11 @@ function prompt_for_enable_dhcp_server($version = 4) {
 			echo "\n" . sprintf(gettext("Do you want to enable the %s server on %s? [y|n]"),
 			                    $label_DHCP, $upperifname) . "  ";
 			$yn = strtolower(chop(fgets($fp)));
-			if ($yn[0] == "y" or $yn[0] == "n")
+			if ($yn == "yes")
+				$yn = "y";
+			if ($yn == "no")
+				$yn = "n";
+			if ($yn == "y" or $yn == "n")
 				$good = true;
 		} while (!$good);
 	}
@@ -238,10 +242,20 @@ function console_configure_ip_address($version) {
 	$upperifname = strtoupper($interface);
 
 	if($interface == "wan") {
-		echo sprintf(gettext("Configure %s address %s interface via %s?  [y|n]"),
-		             $label_IPvX, $upperifname, $label_DHCP) . "\n> ";
-		$intdhcp = chop(fgets($fp));
-		if(strtolower($intdhcp) == "y" || strtolower($intdhcp) == "yes") {
+		do {
+			$good = false;
+			echo sprintf(gettext("Configure %s address %s interface via %s?  [y|n]"),
+						 $label_IPvX, $upperifname, $label_DHCP) . "\n> ";
+			$yn = strtolower(chop(fgets($fp)));
+			if ($yn == "yes")
+				$yn = "y";
+			if ($yn == "no")
+				$yn = "n";
+			if ($yn == "y" or $yn == "n")
+				$good = true;
+		} while (!$good);
+
+		if ($yn == "y") {
 			$ifppp = console_get_interface_from_ppp(get_real_interface("wan"));
 			if (!empty($ifppp))
 				$ifaceassigned = $ifppp;
@@ -417,7 +431,11 @@ if ($config['system']['webgui']['protocol'] == "https") {
 		$good = false;
 		echo "\n" . gettext("Do you want to revert to HTTP as the webConfigurator protocol? (y/n)") . " ";
 		$yn = strtolower(chop(fgets($fp)));
-		if ($yn[0] == "y" or $yn[0] == "n")
+		if ($yn == "yes")
+			$yn = "y";
+		if ($yn == "no")
+			$yn = "n";
+		if ($yn == "y" or $yn == "n")
 			$good = true;
 	} while (!$good);
 
@@ -425,6 +443,24 @@ if ($config['system']['webgui']['protocol'] == "https") {
 		$config['system']['webgui']['protocol'] = "http";
 		$restart_webgui = true;
 	}
+}
+
+do {
+	$good = false;
+	echo "\n" . gettext("Do you want to apply these changes? (y/n)") . " ";
+	$yn = strtolower(chop(fgets($fp)));
+	if ($yn == "yes")
+		$yn = "y";
+	if ($yn == "no")
+		$yn = "n";
+	if ($yn == "y" or $yn == "n")
+		$good = true;
+} while (!$good);
+
+if (!($yn == "y")) {
+	echo "\n" . gettext("Changes have not been applied.");
+	fclose($fp);
+	return 0;
 }
 
 if (isset($config['system']['webgui']['noantilockout'])) {

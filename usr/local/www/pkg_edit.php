@@ -1051,7 +1051,7 @@ function display_row($trc, $value, $fieldname, $type, $rowhelper, $size) {
 					$fieldname .= '[]';
 					$multiple = 'multiple="multiple"';
 					}
-				$input = "<select id='{$rowhelper['fieldname']}{$trc}' name=\"{$fieldname}{$trc}\" {$size} {$multiple}>\n";
+				$input = "<select style='height:22px;' id='{$rowhelper['fieldname']}{$trc}' name=\"{$fieldname}{$trc}\" {$size} {$multiple}>\n";
 				if(is_array($value))
 					$values = $value;
 				else

@@ -61,7 +61,7 @@ function console_prompt_for_yn ($prompt_text) {
 	$good_answer = false;
 
 	do {
-		echo "\n" . gettext($prompt_text) . " (y/n) ";
+		echo "\n" . $prompt_text . " (y/n) ";
 		$yn = strtolower(chop(fgets($fp)));
 		if (($yn == "y") || ($yn == "yes")) {
 			$boolean_answer = true;
@@ -423,13 +423,13 @@ if (console_configure_dhcpd(6) == 0)
 
 if ($config['system']['webgui']['protocol'] == "https") {
 
-	if (console_prompt_for_yn ("Do you want to revert to HTTP as the webConfigurator protocol?")) {
+	if (console_prompt_for_yn (gettext("Do you want to revert to HTTP as the webConfigurator protocol?"))) {
 		$config['system']['webgui']['protocol'] = "http";
 		$restart_webgui = true;
 	}
 }
 
-if (!(console_prompt_for_yn ("Do you want to apply these changes?"))) {
+if (!(console_prompt_for_yn (gettext("Do you want to apply these changes?")))) {
 	echo "\n" . gettext("Changes have not been applied.\n");
 	fclose($fp);
 	return 0;

@@ -43,6 +43,13 @@
 require("guiconfig.inc");
 
 if ($_POST) {
+	unset($input_errors);
+
+	/* input validation */
+	if(($_POST['alturlenable'] == "yes") && (empty($_POST['firmwareurl']))) {
+		$input_errors[] = gettext("A Firmware Auto Update Base URL must be specified when \"Use an unofficial server for firmware upgrades\" is enabled.");
+	}
+
 	if (!$input_errors) {
 		if($_POST['alturlenable'] == "yes") {
 			$config['system']['firmware']['alturl']['enable'] = true;

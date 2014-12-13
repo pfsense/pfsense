@@ -146,6 +146,7 @@ EOF;
 		if (in_array("all", $active_interfaces, true)) {
 			$bindints .= "interface: 0.0.0.0\n";
 			$bindints .= "interface: ::0\n";
+			$bindints .= "interface-automatic: yes\n";
 		} else {
 			foreach($active_interfaces as $ubif) {
 				if (is_ipaddr($ubif)) {

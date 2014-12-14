@@ -103,21 +103,19 @@ foreach ($ifdescrs as $ifdescr => $ifname):
 	</tr>
 	<tr>
 		<td class="listr">
-			<strong>
 <?php
 		if($ifinfo['ipaddr'] != ""):
 ?>
-			<div id="<?php echo $ifname;?>-ip" style="display:inline"><?=htmlspecialchars($ifinfo['ipaddr']);?> </div>
+			<div id="<?php echo $ifname;?>-ip" style="display:inline"><strong><?=htmlspecialchars($ifinfo['ipaddr']);?> </strong></div>
 			<br />
 <?php
 		endif;
 		if ($ifinfo['ipaddrv6'] != ""):
 ?>
-			<div id="<?php echo $ifname;?>-ipv6" style="display:inline"><?=htmlspecialchars($ifinfo['ipaddrv6']);?> </div>
+			<div id="<?php echo $ifname;?>-ipv6" style="display:inline"><strong><?=htmlspecialchars($ifinfo['ipaddrv6']);?> </strong></div>
 <?php
 		endif;
 ?>
-			</strong>
 		</td>
 	</tr>
 <?php

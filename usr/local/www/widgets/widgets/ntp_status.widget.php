@@ -215,7 +215,7 @@ function clockTimeString($inDate, $showSeconds) {
 ?>
 
 <script type="text/javascript">
-<!--
+//<![CDATA[
 /* set up variables used to init clock in BODY's onLoad handler;
    should be done as early as possible */
 var clockLocalStartTime = new Date();
@@ -225,12 +225,12 @@ var clockServerStartTime = new Date(<?php echo(getServerDateItems($gDate))?>);
    will be overridden by next JavaScript1.2 block */
 function clockInit() {
 }
-//-->
+//]]>
 </script>
 
 
 <script type="text/javascript">
-<!--
+//<![CDATA[
 /*** simpleFindObj, by Andrew Shearer
 
 Efficiently finds an object by name/id, using whichever of the IE,
@@ -450,10 +450,10 @@ function clockUpdate()
 }
 
 /*** End of Clock ***/
-//-->
   window.onload=clockInit(clockLocalStartTime, clockServerStartTime);clockOnLoad();
   window.onunload=clockOnUnload()
   clockUpdate();
+//]]>
 </script>
 
 
@@ -483,6 +483,7 @@ function clockUpdate()
 </div>
 
 <script type="text/javascript">
+//<![CDATA[
 	function ntp_getstatus() {
 		scroll(0,0);
 		var url = "/widgets/widgets/ntp_status.widget.php";
@@ -504,4 +505,5 @@ function clockUpdate()
 	}
 	// Do the first status check 1 second after the dashboard opens
 	setTimeout('ntp_getstatus()', 1000);
+//]]>
 </script>

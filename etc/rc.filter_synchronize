@@ -384,8 +384,12 @@ if (is_array($config['hasync'])) {
 	if ($hasync['synchronizeauthservers'] != "") {
 		$sections[] = 'authserver';
 	}
-	if ($hasync['synchronizednsforwarder'] != "" and is_array($config['dnsmasq']))
-		$sections[] = 'dnsmasq';
+	if ($hasync['synchronizednsforwarder'] != "") {
+		if (is_array($config['dnsmasq']))
+			$sections[] = 'dnsmasq';
+		if (is_array($config['unbound']))
+			$sections[] = 'unbound';
+	}
 	if ($hasync['synchronizeschedules'] != "" || $hasync['synchronizerules'] != "") {
 		if (!is_array($config['schedules']))
 			$config['schedules'] = array();

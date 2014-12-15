@@ -322,11 +322,11 @@ include("head.inc");
 		</td>
 	</tr>
 	<tr valign="top">
-		<td width="22%" class="vncell">Synchronize DNS Forwarder</td>
+		<td width="22%" class="vncell">Synchronize DNS Forwarder / Resolver</td>
 		<td class="vtable">
 			<input id='synchronizednsforwarder' type='checkbox' name='synchronizednsforwarder' value='on' <?php if ($pconfig['synchronizednsforwarder'] === "on") echo "checked='checked'"; ?> />
 			<br />
-			When this option is enabled, this system will automatically sync the DNS Forwarder configuration to the other HA host when changes are made.
+			When this option is enabled, this system will automatically sync the DNS Forwarder and DNS Resolver configuration to the other HA host when changes are made.
 		</td>
 	</tr>
 	<tr valign="top">

@@ -79,7 +79,7 @@ if ($_POST) {
 	$a_hasync['pfsyncinterface'] = $pconfig['pfsyncinterface'];
 	$a_hasync['synchronizetoip'] = $pconfig['synchronizetoip'];
 	$a_hasync['username']        = $pconfig['username'];
-	$a_hasync['password']        = $pconfig['password'];
+	$a_hasync['password']        = $pconfig['passwordfld'];
 	write_config("Updated High Availability Sync configuration");
 	interfaces_sync_setup();
 	header("Location: system_hasync.php");
@@ -93,7 +93,7 @@ $pconfig['pfsyncpeerip']    = $a_hasync['pfsyncpeerip'];
 $pconfig['pfsyncinterface'] = $a_hasync['pfsyncinterface'];
 $pconfig['synchronizetoip'] = $a_hasync['synchronizetoip'];
 $pconfig['username']        = $a_hasync['username'];
-$pconfig['password']        = $a_hasync['password'];
+$pconfig['passwordfld']     = $a_hasync['password'];
 
 $ifaces = get_configured_interface_with_descr();
 $ifaces["lo0"] = "loopback";

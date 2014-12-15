@@ -178,7 +178,7 @@ include("head.inc");
 	<tr valign="top">
 		<td width="22%" class="vncell">Remote System Password</td>
 		<td class="vtable">
-			<input  id='password' type='password'  name='password' class='formfld pwd' value='<?= htmlentities($pconfig['password']); ?>' />
+			<input  id='passwordfld' type='password'  name='passwordfld' class='formfld pwd' value='<?= htmlentities($pconfig['passwordfld']); ?>' />
 			<br />
 			Enter the webConfigurator password of the system entered above for synchronizing your configuration.<br />
 			<br />

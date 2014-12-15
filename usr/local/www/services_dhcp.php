@@ -1049,11 +1049,11 @@ include("head.inc");
 					<br/>
 					<input name="ddnsdomain" type="text" class="formfld unknown" id="ddnsdomain" size="20" value="<?=htmlspecialchars($pconfig['ddnsdomain']);?>" /><br />
 					<?=gettext("Note: Leave blank to disable dynamic DNS registration.");?><br />
-					<?=gettext("Enter the dynamic DNS domain which will be used to register client names in the DNS server.");?>
+					<?=gettext("Enter the dynamic DNS domain which will be used to register client names in the DNS server.");?><br />
 					<input name="ddnsdomainprimary" type="text" class="formfld unknown" id="ddnsdomainprimary" size="20" value="<?=htmlspecialchars($pconfig['ddnsdomainprimary']);?>" /><br />
 					<?=gettext("Enter the primary domain name server IP address for the dynamic domain name.");?><br />
 					<input name="ddnsdomainkeyname" type="text" class="formfld unknown" id="ddnsdomainkeyname" size="20" value="<?=htmlspecialchars($pconfig['ddnsdomainkeyname']);?>" /><br />
-					<?=gettext("Enter the dynamic DNS domain key name which will be used to register client names in the DNS server.");?>
+					<?=gettext("Enter the dynamic DNS domain key name which will be used to register client names in the DNS server.");?><br />
 					<input name="ddnsdomainkey" type="text" class="formfld unknown" id="ddnsdomainkey" size="20" value="<?=htmlspecialchars($pconfig['ddnsdomainkey']);?>" /><br />
 					<?=gettext("Enter the dynamic DNS domain key secret which will be used to register client names in the DNS server.");?>
 				</div>
@@ -1067,7 +1067,7 @@ include("head.inc");
 				</div>
 				<div id="showmaccontrol" style="display:none">
 					<input name="mac_allow" type="text" class="formfld unknown" id="mac_allow" size="20" value="<?=htmlspecialchars($pconfig['mac_allow']);?>" /><br />
-					<?=gettext("Enter a list of partial MAC addresses to allow, comma separated, no spaces, such as ");?>00:00:00,01:E5:FF
+					<?=gettext("Enter a list of partial MAC addresses to allow, comma separated, no spaces, such as ");?>00:00:00,01:E5:FF<br />
 					<input name="mac_deny" type="text" class="formfld unknown" id="mac_deny" size="20" value="<?=htmlspecialchars($pconfig['mac_deny']);?>" /><br />
 					<?=gettext("Enter a list of partial MAC addresses to deny access, comma separated, no spaces, such as ");?>00:00:00,01:E5:FF
 				</div>

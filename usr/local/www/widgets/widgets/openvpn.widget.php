@@ -65,6 +65,7 @@ $clients = openvpn_get_active_clients();
 
 <br />
 <script type="text/javascript">
+//<![CDATA[
 	function killClient(mport, remipp) {
 		var busy = function(index,icon) {
 			jQuery(icon).bind("onclick","");
@@ -92,6 +93,7 @@ $clients = openvpn_get_active_clients();
 			function(index,row) { jQuery(row).fadeOut(1000); }
 		);
 	}
+//]]>
 </script>
 
 <?php foreach ($servers as $server): ?>
@@ -180,7 +182,7 @@ $clients = openvpn_get_active_clients();
 				/* tunnel is down */
 				$iconfn = "interface_down";
 			}
-			echo "<img src ='/themes/{$g['theme']}/images/icons/icon_{$iconfn}.gif'>";
+			echo "<img src ='/themes/{$g['theme']}/images/icons/icon_{$iconfn}.gif' alt='' />";
 			?>
 			</td>
 		</tr>
@@ -230,7 +232,7 @@ $clients = openvpn_get_active_clients();
 				/* tunnel is down */
 				$iconfn = "interface_down";
 			}
-			echo "<img src ='/themes/{$g['theme']}/images/icons/icon_{$iconfn}.gif'>";
+			echo "<img src ='/themes/{$g['theme']}/images/icons/icon_{$iconfn}.gif' alt='' />";
 			?>
 			</td>
 		</tr>

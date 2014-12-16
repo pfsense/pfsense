@@ -225,11 +225,8 @@ $helppages = array(
 	'services_dhcpv6.php' => 'https://doc.pfsense.org/index.php/DHCPv6_Server',
 	'services_dhcpv6_edit.php' => 'https://doc.pfsense.org/index.php/DHCPv6_Server',
 	'services_router_advertisements.php' => 'https://doc.pfsense.org/index.php/Router_Advertisements',
-
-	/* Below here are pages that may need some cleanup or have not been fully looked at yet */
-
-	'carp_status.php' => 'https://doc.pfsense.org/index.php/Category:CARP',
-	'system_hasync.php' => 'https://doc.pfsense.org/index.php/Category:CARP', /* FIXME? */
+	'carp_status.php' => 'https://doc.pfsense.org/index.php/CARP_Status',
+	'system_hasync.php' => 'https://doc.pfsense.org/index.php/High_Availability',
 
 	/* From here down are packages. Not checking these as strictly, 
 	any information is better than nothing. */

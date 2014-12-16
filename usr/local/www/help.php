@@ -227,6 +227,9 @@ $helppages = array(
 	'services_router_advertisements.php' => 'https://doc.pfsense.org/index.php/Router_Advertisements',
 	'carp_status.php' => 'https://doc.pfsense.org/index.php/CARP_Status',
 	'system_hasync.php' => 'https://doc.pfsense.org/index.php/High_Availability',
+	'services_unbound.php' => 'https://doc.pfsense.org/index.php/Unbound_DNS_Resolver',
+	'services_unbound_advanced.php' => 'https://doc.pfsense.org/index.php/Unbound_DNS_Resolver#Advanced_Settings_Tab',
+	'services_unbound_acls.php' => 'https://doc.pfsense.org/index.php/Unbound_DNS_Resolver#Access_Lists_Tab',
 
 	/* From here down are packages. Not checking these as strictly, 
 	any information is better than nothing. */

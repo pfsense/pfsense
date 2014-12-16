@@ -112,7 +112,7 @@ if ($_POST) {
 
 	/* input validation */
 	$reqdfields = explode(" ", "duid");
-	$reqdfieldsn = array(gettext("DUID Identifier"));
+	$reqdfieldsn = array(gettext("DUID"));
 	
 	do_input_validation($_POST, $reqdfields, $reqdfieldsn, $input_errors);
 
@@ -132,7 +132,7 @@ if ($_POST) {
 		$input_errors[] = gettext("A valid IPv6 address must be specified.");
 	}
 	if (empty($_POST['duid'])) {
-		$input_errors[] = gettext("A valid DUID Identifier must be specified.");
+		$input_errors[] = gettext("A valid DUID must be specified.");
 	}
 	
 	/* check for overlaps */
@@ -141,7 +141,7 @@ if ($_POST) {
 			continue;
 
 		if ((($mapent['hostname'] == $_POST['hostname']) && $mapent['hostname'])  || ($mapent['duid'] == $_POST['duid'])) {
-			$input_errors[] = gettext("This Hostname, IP or DUID Identifier already exists.");
+			$input_errors[] = gettext("This Hostname, IP or DUID already exists.");
 			break;
 		}
 	}
@@ -198,11 +198,11 @@ include("head.inc");
 					<td colspan="2" valign="top" class="listtopic"><?=gettext("Static DHCPv6 Mapping");?></td>
 				</tr>	
                 <tr> 
-                  <td width="22%" valign="top" class="vncellreq"><?=gettext("DUID Identifier");?></td>
+                  <td width="22%" valign="top" class="vncellreq"><?=gettext("DUID");?></td>
                   <td width="78%" class="vtable"> 
                     <input name="duid" type="text" class="formfld unknown" id="duid" size="40" value="<?=htmlspecialchars($pconfig['duid']);?>" />
                     <br />
-                    <span class="vexpl"><?=gettext("Enter a DUID Identifier in the following format: ");?><br />
+                    <span class="vexpl"><?=gettext("Enter a DUID in the following format: ");?><br />
 "DUID-LLT - ETH -- TIME --- ---- address ----" <br />
 "xx:xx:xx:xx:xx:xx:xx:xx:xx:xx:xx:xx:xx:xx"</span></td>
                 </tr>

@@ -1055,7 +1055,12 @@ function interface_vip_bring_down($vip) {
 	global $g;
 
 	if (strpos($vip['interface'], '_vip')) {
-		$carpvip = get_configured_carp_interface_list($vip['interface'], 'inet' . (is_ipaddrv6($vip['subnet']) ? '6' : ''), 'vip');
+		if (is_ipaddrv6($vip['subnet']))
+			$family = 'inet6';
+		else
+			$family = 'inet';
+
+		$carpvip = get_configured_carp_interface_list($vip['interface'], $family, 'vip');
 		$iface = $carpvip['interface'];
 	} else
 		$iface = $vip['interface'];

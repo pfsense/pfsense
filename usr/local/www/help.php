@@ -220,13 +220,11 @@ $helppages = array(
 	'load_balancer_setting.php' => 'https://doc.pfsense.org/index.php/Inbound_Load_Balancing#Advanced_Settings',
 	'status_lb_pool.php' => 'https://doc.pfsense.org/index.php/Inbound_Load_Balancing_Status',
 	'status_lb_vs.php' => 'https://doc.pfsense.org/index.php/Inbound_Load_Balancing_Status',
-
 	'services_dhcpv6_relay.php' => 'https://doc.pfsense.org/index.php/DHCP_Relay',
 	'status_dhcpv6_leases.php' => 'https://doc.pfsense.org/index.php/DHCPv6_Leases',
-
-	'services_dhcpv6.php' => 'https://doc.pfsense.org/index.php/Category:IPv6',
-	'services_dhcpv6_edit.php' => 'https://doc.pfsense.org/index.php/Category:IPv6',
-	'services_router_advertisements.php' => 'https://doc.pfsense.org/index.php/Category:IPv6',
+	'services_dhcpv6.php' => 'https://doc.pfsense.org/index.php/DHCPv6_Server',
+	'services_dhcpv6_edit.php' => 'https://doc.pfsense.org/index.php/DHCPv6_Server',
+	'services_router_advertisements.php' => 'https://doc.pfsense.org/index.php/Router_Advertisements',
 
 	/* Below here are pages that may need some cleanup or have not been fully looked at yet */
 

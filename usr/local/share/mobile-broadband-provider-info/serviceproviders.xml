@@ -1,4 +1,4 @@
-<?xml version="1.0"?>
+<?xml version="1.0" encoding='utf-8'?>
 <!-- -*- Mode: XML; tab-width: 4; indent-tabs-mode: t; c-basic-offset: 4 -*- -->
 <!DOCTYPE serviceproviders SYSTEM "serviceproviders.2.dtd">
 
@@ -61,6 +61,18 @@ conceived.
 				<username>etisalat.ae</username>
 				<password>etisalat.ae</password>
 			</apn>
+			<apn value="etisalat">
+				<usage type="mms"/>
+				<name>etisalat MMS</name>
+				<mmsc>http://10.99.52.150/servlets/mms</mmsc>
+				<mmsproxy>10.12.0.30:8080</mmsproxy>
+			</apn>
+			<apn value="etisalat">
+				<usage type="mms"/>
+				<name>etisalat MMS</name>
+				<mmsc>http://mms/servlets/mms</mmsc>
+				<mmsproxy>10.12.0.32:8080</mmsproxy>
+			</apn>
 		</gsm>
 	</provider>
 	<provider>
@@ -73,6 +85,12 @@ conceived.
 			<apn value="du">
 				<plan type="postpaid"/>
 				<usage type="internet"/>
+			</apn>
+			<apn value="du">
+				<usage type="mms"/>
+				<name>du MMS</name>
+				<mmsc>http://mms.du.ae</mmsc>
+				<mmsproxy>10.19.18.4:8080</mmsproxy>
 			</apn>
 		</gsm>
 	</provider>
@@ -110,6 +128,20 @@ conceived.
 				<usage type="internet"/>
 				<name>Vodafone Web</name>
 			</apn>
+			<apn value="mms">
+				<usage type="mms"/>
+				<name>Vodafone MMS</name>
+				<username>vodafone</username>
+				<password>vodafone</password>
+				<mmsc>http://217.31.233.18:6001/MM1Servlet</mmsc>
+				<mmsproxy>217.31.233.18:9401</mmsproxy>
+			</apn>
+			<apn value="portalnmms">
+				<usage type="mms"/>
+				<name>Vodafone MMS</name>
+				<mmsc>http://mms1.live.vodafone.in/mms/</mmsc>
+				<mmsproxy>10.10.1.100:9401</mmsproxy>
+			</apn>
 		</gsm>
 	</provider>
 </country>
@@ -126,6 +158,20 @@ conceived.
 				<username>internet</username>
 				<password>internet</password>
 			</apn>
+			<apn value="mms.beeline.ua">
+				<usage type="mms"/>
+				<name>Beeline MMS</name>
+				<mmsc>http://mms/</mmsc>
+				<mmsproxy>10.11.8.18:8080</mmsproxy>
+			</apn>
+			<apn value="mms">
+				<usage type="mms"/>
+				<name>Beeline MMS</name>
+				<username>mms</username>
+				<password>mms</password>
+				<mmsc>http://mms</mmsc>
+				<mmsproxy>10.16.70.199:8080</mmsproxy>
+			</apn>
 		</gsm>
 	</provider>
 	<provider>
@@ -141,6 +187,66 @@ conceived.
 				<plan type="postpaid"/>
 				<usage type="internet"/>
 				<name>Mobile Broadband</name>
+			</apn>
+			<apn value="mms">
+				<usage type="mms"/>
+				<name>Orange MMS</name>
+				<mmsc>http://mms.orange.nl:8002</mmsc>
+				<mmsproxy>10.250.255.183:5080</mmsproxy>
+			</apn>
+			<apn value="orangemms">
+				<usage type="mms"/>
+				<name>Orange MMS</name>
+				<username>orange</username>
+				<password>orange</password>
+				<mmsc>http://mms.orange.es</mmsc>
+				<mmsproxy>wapmms.orange.es:8080</mmsproxy>
+			</apn>
+			<apn value="mms">
+				<usage type="mms"/>
+				<name>Orange MMS</name>
+				<mmsc>http://192.168.151.3:8002</mmsc>
+				<mmsproxy>192.168.151.2:8080</mmsproxy>
+			</apn>
+			<apn value="orange.mms">
+				<usage type="mms"/>
+				<name>Orange MMS</name>
+				<username>mms</username>
+				<password>mms</password>
+				<mmsc>http://mmsc.orange.at/mms/wapenc</mmsc>
+				<mmsproxy>194.24.128.118:8080</mmsproxy>
+			</apn>
+			<apn value="orangemms">
+				<usage type="mms"/>
+				<name>Orange MMS</name>
+				<mmsc>http://mms.orange.co.uk/</mmsc>
+				<mmsproxy>192.168.224.10:8080</mmsproxy>
+			</apn>
+			<apn value="mms.orange.dk">
+				<usage type="mms"/>
+				<name>Orange MMS</name>
+				<mmsc>http://mms.orange.dk:8002</mmsc>
+				<mmsproxy>172.18.251.11:8080</mmsproxy>
+			</apn>
+			<apn value="mms.orange.md">
+				<usage type="mms"/>
+				<name>Orange MMS</name>
+				<mmsc>http://mms/mms</mmsc>
+				<mmsproxy>192.168.127.125:3128</mmsproxy>
+			</apn>
+			<apn value="mms.orange.jo">
+				<usage type="mms"/>
+				<name>Orange MMS</name>
+				<username>mmc</username>
+				<password>mmc</password>
+				<mmsc>http://172.16.1.96/servlets/mms</mmsc>
+				<mmsproxy>172.16.1.2:8080</mmsproxy>
+			</apn>
+			<apn value="orangerun.acte">
+				<usage type="mms"/>
+				<name>Orange MMS</name>
+				<mmsc>http://mms.orange.re</mmsc>
+				<mmsproxy>192.168.10.200:8080</mmsproxy>
 			</apn>
 		</gsm>
 	</provider>
@@ -192,9 +298,14 @@ conceived.
 		<name>Unitel</name>
 		<gsm>
 			<network-id mcc="631" mnc="02"/>
-			<apn value="internet.unitel.co.ao" >
+			<apn value="internet.unitel.co.ao">
 				<plan type="postpaid"/>
 				<usage type="internet"/>
+			</apn>
+			<apn value="unitel">
+				<usage type="mms"/>
+				<name>unitel mms</name>
+				<mmsc>http//mms.unitel.com</mmsc>
 			</apn>
 		</gsm>
 	</provider>
@@ -235,6 +346,20 @@ conceived.
 				<dns>172.25.7.6</dns>
 				<dns>172.25.7.7</dns>
 			</apn>
+			<apn value="mms">
+				<usage type="mms"/>
+				<name>Personal MMS</name>
+				<username>mms</username>
+				<password>mms</password>
+				<mmsc>http://mms.personal.com/</mmsc>
+				<mmsproxy>172.25.7.31:8080</mmsproxy>
+			</apn>
+			<apn value="mms">
+				<usage type="mms"/>
+				<name>MMS Personal</name>
+				<mmsc>http://mms</mmsc>
+				<mmsproxy>172.16.192.7:8080</mmsproxy>
+			</apn>
 		</gsm>
 	</provider>
 	<provider>
@@ -258,6 +383,14 @@ conceived.
 				<name>GPRS</name>
 				<username>clarogprs</username>
 				<password>clarogprs999</password>
+			</apn>
+			<apn value="mms.claro.com.br">
+				<usage type="mms"/>
+				<name>Claro Foto</name>
+				<username>claro</username>
+				<password>claro</password>
+				<mmsc>http://mms.claro.com.br/</mmsc>
+				<mmsproxy>200.169.126.10:8799</mmsproxy>
 			</apn>
 		</gsm>
 	</provider>
@@ -316,6 +449,14 @@ conceived.
 				<username>mobile@aon.at</username>
 				<password>ppp</password>
 			</apn>
+			<apn value="free.A1.net">
+				<usage type="mms"/>
+				<name>A1MMS</name>
+				<username>ppp@A1plus.at</username>
+				<password>ppp</password>
+				<mmsc>http://mmsc.A1.net</mmsc>
+				<mmsproxy>gateway.A1.net:8001</mmsproxy>
+			</apn>
 		</gsm>
 	</provider>
 	<provider>
@@ -355,6 +496,14 @@ conceived.
 				<username>data@bob.at</username>
 				<password>ppp</password>
 			</apn>
+			<apn value="mms.bob.at">
+				<usage type="mms"/>
+				<name>data bob MMS</name>
+				<username>data@bob.at</username>
+				<password>ppp</password>
+				<mmsc>http://mmsc.bob.at</mmsc>
+				<mmsproxy>194.48.124.7:8001</mmsproxy>
+			</apn>
 		</gsm>
 	</provider>
 	<provider>
@@ -384,6 +533,22 @@ conceived.
 				<username>t-mobile</username>
 				<password>tm</password>
 			</apn>
+			<apn value="general.t-mobile.uk">
+				<usage type="mms"/>
+				<name>T-Mobile MMS</name>
+				<username>user</username>
+				<password>wap</password>
+				<mmsc>http://mmsc.t-mobile.co.uk:8002</mmsc>
+				<mmsproxy>149.254.201.135:8080</mmsproxy>
+			</apn>
+			<apn value="wap.voicestream.com">
+				<usage type="mms"/>
+				<name>MMS</name>
+				<username>nokia</username>
+				<password>6600</password>
+				<mmsc>http://216.155.174.84/servlets/mms</mmsc>
+				<mmsproxy>216.155.165.50:8080</mmsproxy>
+			</apn>
 		</gsm>
 	</provider>
 	<provider>
@@ -401,6 +566,14 @@ conceived.
 				<password>web</password>
 				<dns>213.162.69.170</dns>
 				<dns>213.162.65.2</dns>
+			</apn>
+			<apn value="mms">
+				<usage type="mms"/>
+				<name>tele ring mms</name>
+				<username>wap@telering.at</username>
+				<password>wap</password>
+				<mmsc>http://relay.mms.telering.at</mmsc>
+				<mmsproxy>212.95.31.50:8080</mmsproxy>
 			</apn>
 		</gsm>
 	</provider>
@@ -467,6 +640,38 @@ conceived.
 				<dns>213.94.78.17</dns>
 				<dns>213.94.78.16</dns>
 			</apn>
+			<apn value="drei.at">
+				<usage type="mms"/>
+				<name>3MMS</name>
+				<mmsc>http://mmsc</mmsc>
+				<mmsproxy>213.94.78.133:8799</mmsproxy>
+			</apn>
+			<apn value="three.co.uk">
+				<usage type="mms"/>
+				<name>3 MMS</name>
+				<mmsc>http://mms.um.three.co.uk:10021/mmsc</mmsc>
+				<mmsproxy>mms.three.co.uk:8799</mmsproxy>
+			</apn>
+			<apn value="mobile.three.com.hk">
+				<usage type="mms"/>
+				<name>3MMS</name>
+				<mmsc>http://mms.um.three.com.hk:10021/mmsc</mmsc>
+				<mmsproxy>172.20.97.116:8799</mmsproxy>
+			</apn>
+			<apn value="3services">
+				<usage type="mms"/>
+				<name>3 MMS</name>
+				<mmsc>http://mmsc.three.net.au:10021/mmsc</mmsc>
+				<mmsproxy>mmscprox.three.net.au:8799</mmsproxy>
+			</apn>
+			<apn value="3mms">
+				<usage type="mms"/>
+				<name>3mms</name>
+				<username>3mms</username>
+				<password>3mms</password>
+				<mmsc>http://mms.three.co.id</mmsc>
+				<mmsproxy>10.4.0.10:3128</mmsproxy>
+			</apn>
 		</gsm>
 	</provider>
 	<provider>
@@ -488,6 +693,14 @@ conceived.
 				<plan type="prepaid"/>
 				<usage type="internet"/>
 			</apn>
+			<apn value="gprsmms">
+				<usage type="mms"/>
+				<name>T-Mobile MMS</name>
+				<username>t-mobile</username>
+				<password>tm</password>
+				<mmsc>http://mmsc.t-mobile.at/servlets/mms</mmsc>
+				<mmsproxy>10.12.0.20:80</mmsproxy>
+			</apn>
 		</gsm>
 	</provider>
 </country>
@@ -502,6 +715,12 @@ conceived.
 		<gsm>
 			<network-id mcc="505" mnc="02"/>
 			<apn value="internet"/>
+			<apn value="mms">
+				<usage type="mms"/>
+				<name>Optus MMS</name>
+				<mmsc>http://mmsc.optus.com.au:8002/</mmsc>
+				<mmsproxy>61.88.190.10:8070</mmsproxy>
+			</apn>
 		</gsm>
 	</provider>
 	<provider>
@@ -532,7 +751,7 @@ conceived.
 		</gsm>
 	</provider>
 	<provider>
-		<name>Crazy John's</name>
+		<name>Crazy John&apos;s</name>
 		<gsm>
 			<network-id mcc="505" mnc="03"/>
 			<network-id mcc="505" mnc="38"/>
@@ -547,6 +766,12 @@ conceived.
 				<plan type="postpaid"/>
 				<usage type="wap"/>
 				<name>Crazy WAP/MMS</name>
+			</apn>
+			<apn value="purtona.wap">
+				<usage type="mms"/>
+				<name>Crazy MMS</name>
+				<mmsc>http://purtona.mms/mmssend</mmsc>
+				<mmsproxy>10.202.2.20:8080</mmsproxy>
 			</apn>
 		</gsm>
 	</provider>
@@ -799,6 +1024,12 @@ conceived.
 				<name>Telstra BigPond</name>
 				<!-- username/password per-user -->
 			</apn>
+			<apn value="telstra.mms">
+				<usage type="mms"/>
+				<name>Telstra MMS</name>
+				<mmsc>http://mmsc.telstra.com:8002</mmsc>
+				<mmsproxy>10.1.1.180:80</mmsproxy>
+			</apn>
 		</gsm>
 	</provider>
 	<provider>
@@ -873,7 +1104,7 @@ conceived.
 	</provider>
 	<provider>
 		<name>Westnet</name>
-		<!-- http://myhelp.westnet.com.au/pages/releaseview.action;jsessionid=2C8E8DAB3826667BAA24105E467B31DF?pageId=17073209#FAQs-WestnetMobilePhone-link31 -->
+		<!-- http://myhelp.westnet.com.au/pages/releaseview.action?pageId=17073209#FAQs-WestnetMobilePhone-link31 -->
 		<gsm>
 			<network-id mcc="505" mnc="02"/>
 			<apn value="yesinternet">
@@ -895,6 +1126,12 @@ conceived.
 			<apn value="internet">
 				<plan type="postpaid"/>
 				<usage type="internet"/>
+			</apn>
+			<apn value="mms">
+				<usage type="mms"/>
+				<name>Azercell MMS</name>
+				<mmsc>http://mms.azercell.com/cMMSC/post</mmsc>
+				<mmsproxy>10.0.154.101:8080</mmsproxy>
 			</apn>
 		</gsm>
 	</provider>
@@ -932,6 +1169,12 @@ conceived.
 			<apn value="mms.bhmobile.ba">
 				<plan type="postpaid"/>
 				<usage type="mms"/>
+			</apn>
+			<apn value="mms.bhmobile.ba">
+				<usage type="mms"/>
+				<name>BHMobileMMS</name>
+				<mmsc>http://mms.bhmobile.ba/cmmsc/post</mmsc>
+				<mmsproxy>195.222.56.41:8080</mmsproxy>
 			</apn>
 		</gsm>
 	</provider>
@@ -977,6 +1220,12 @@ conceived.
 				<dns>81.93.67.2</dns>
 				<dns>81.93.67.3</dns>
 			</apn>
+			<apn value="mobismms">
+				<usage type="mms"/>
+				<name>mobismms</name>
+				<mmsc>http://mmsc.065mobis.com/mms/wapenc</mmsc>
+				<mmsproxy>192.168.61.11:80</mmsproxy>
+			</apn>
 		</gsm>
 	</provider>
 	<provider>
@@ -989,6 +1238,12 @@ conceived.
 			<apn value="gprs.eronet.ba">
 				<plan type="postpaid"/>
 				<usage type="internet"/>
+			</apn>
+			<apn value="mms.eronet.ba">
+				<usage type="mms"/>
+				<name>ERONET MMS</name>
+				<mmsc>http://mms.gprs.eronet.ba/mms/wapenc</mmsc>
+				<mmsproxy>10.12.3.11:8080</mmsproxy>
 			</apn>
 		</gsm>
 	</provider>
@@ -1020,6 +1275,12 @@ conceived.
 				<name>Internet</name>
 				<dns>192.168.23.7</dns>
 			</apn>
+			<apn value="wap">
+				<usage type="mms"/>
+				<name>AKTEL-MMS 2 0</name>
+				<mmsc>http://192.168.23.4/was</mmsc>
+				<mmsproxy>192.168.23.7:9028</mmsproxy>
+			</apn>
 		</gsm>
 	</provider>
 	<provider>
@@ -1031,6 +1292,12 @@ conceived.
 				<usage type="internet"/>
 				<name>Web</name>
 				<dns>10.10.55.34</dns>
+			</apn>
+			<apn value="blmms">
+				<usage type="mms"/>
+				<name>blmms</name>
+				<mmsc>http://mmsc1:10021/mmsc/01</mmsc>
+				<mmsproxy>10.10.55.34:8799</mmsproxy>
 			</apn>
 		</gsm>
 	</provider>
@@ -1044,10 +1311,16 @@ conceived.
 				<dns>202.56.4.120</dns>
 				<dns>202.56.4.121</dns>
 			</apn>
+			<apn value="gpmms">
+				<usage type="mms"/>
+				<name>GP MMS</name>
+				<mmsc>http://mms.gpsurf.net/servlets/mms</mmsc>
+				<mmsproxy>10.128.1.2:8080</mmsproxy>
+			</apn>
 		</gsm>
 	</provider>
 	<provider>
-		<name>Warid</name>
+		<name>Airtel (Warid)</name>
 		<gsm>
 			<network-id mcc="470" mnc="07"/>
 			<apn value="internet">
@@ -1055,6 +1328,30 @@ conceived.
 				<usage type="internet"/>
 				<name>Internet</name>
 				<dns>10.6.0.2</dns>
+			</apn>
+			<apn value="mms">
+				<usage type="mms"/>
+				<name>Airtel MMS</name>
+				<mmsc>http://10.6.0.21/servlets/mms</mmsc>
+				<mmsproxy>10.6.0.2:8080</mmsproxy>
+			</apn>
+		</gsm>
+	</provider>
+	<provider>
+		<!-- http://www.teletalk.com.bd/cpoint/3G/MMS_Internet_service.php -->
+		<name>Teletalk</name>
+		<gsm>
+			<network-id mcc="470" mnc="04"/>
+			<apn value="wap">
+				<plan type="prepaid"/>
+				<usage type="internet"/>
+				<name>Internet</name>
+			</apn>
+			<apn value="mms">
+				<usage type="mms"/>
+				<name>Airtel MMS</name>
+				<mmsc>http://10.5.4.22:38090/was</mmsc>
+				<mmsproxy>10.5.4.40:8080</mmsproxy>
 			</apn>
 		</gsm>
 	</provider>
@@ -1115,6 +1412,12 @@ conceived.
 				<dns>212.65.63.10</dns>
 				<dns>212.65.63.145</dns>
 			</apn>
+			<apn value="mms.be">
+				<usage type="mms"/>
+				<name>Mobistar MMS</name>
+				<mmsc>http://mmsc.mobistar.be</mmsc>
+				<mmsproxy>212.65.63.143:8080</mmsproxy>
+			</apn>
 		</gsm>
 	</provider>
 	<provider>
@@ -1168,6 +1471,14 @@ conceived.
 				<dns>195.238.2.21</dns>
 				<dns>195.238.2.22</dns>
 			</apn>
+			<apn value="event.proximus.be">
+				<usage type="mms"/>
+				<name>MMS</name>
+				<username>mms</username>
+				<password>mms</password>
+				<mmsc>http://mmsc.proximus.be/mms</mmsc>
+				<mmsproxy>10.55.14.75:8080</mmsproxy>
+			</apn>
 		</gsm>
 	</provider>
 	<provider>
@@ -1183,6 +1494,14 @@ conceived.
 				<password>base</password>
 				<dns>195.130.131.139</dns>
 				<dns>212.53.4.4</dns>
+			</apn>
+			<apn value="mms.base.be">
+				<usage type="mms"/>
+				<name>BASE MMS</name>
+				<username>base</username>
+				<password>base</password>
+				<mmsc>http://mmsc.base.be</mmsc>
+				<mmsproxy>217.72.235.1:8080</mmsproxy>
 			</apn>
 		</gsm>
 	</provider>
@@ -1231,6 +1550,13 @@ conceived.
 				<username>globul</username>
 				<dns>192.168.88.11</dns>
 			</apn>
+			<apn value="mms.globul.bg">
+				<usage type="mms"/>
+				<name>GLOBUL MMS GPRS</name>
+				<username>mms</username>
+				<mmsc>http://mmsc1.mms.globul.bg:8002</mmsc>
+				<mmsproxy>192.168.87.11:8004</mmsproxy>
+			</apn>
 		</gsm>
 	</provider>
 	<provider>
@@ -1247,6 +1573,14 @@ conceived.
 				<usage type="internet"/>
 				<dns>213.226.7.34</dns>
 				<dns>213.226.7.35</dns>
+			</apn>
+			<apn value="mms-gprs.mtel.bg">
+				<usage type="mms"/>
+				<name>MMS M-Tel GPRS</name>
+				<username>mtel</username>
+				<password>mtel</password>
+				<mmsc>http://mmsc/</mmsc>
+				<mmsproxy>10.150.0.33:8080</mmsproxy>
 			</apn>
 		</gsm>
 	</provider>
@@ -1274,6 +1608,14 @@ conceived.
 				<password>vivatel</password>
 				<dns>192.168.123.123</dns>
 			</apn>
+			<apn value="mms.vivacom.bg">
+				<usage type="mms"/>
+				<name>vivacom MMS</name>
+				<username>mms</username>
+				<password>mms</password>
+				<mmsc>http://mmsc.vivacom.bg</mmsc>
+				<mmsproxy>192.168.123.123:8080</mmsproxy>
+			</apn>
 		</gsm>
 	</provider>
 </country>
@@ -1290,6 +1632,14 @@ conceived.
 				<name>oNet</name>
 				<username>wap</username>
 				<password>wap</password>
+			</apn>
+			<apn value="mms.batelco.com">
+				<usage type="mms"/>
+				<name>Batelco MMS</name>
+				<username>wap</username>
+				<password>wap</password>
+				<mmsc>http://192.168.36.10/servlets/mms</mmsc>
+				<mmsproxy>192.168.1.2:80</mmsproxy>
 			</apn>
 		</gsm>
 	</provider>
@@ -1310,6 +1660,14 @@ conceived.
 				<name>eGO</name>
 				<username>hsdpa</username>
 				<password>hsdpa</password>
+			</apn>
+			<apn value="http://172.18.83.129">
+				<usage type="mms"/>
+				<name>mms</name>
+				<username>mms</username>
+				<password>mms</password>
+				<mmsc>http://172.18.83.129</mmsc>
+				<mmsproxy>172.18.85.34:80</mmsproxy>
 			</apn>
 		</gsm>
 	</provider>
@@ -1340,6 +1698,14 @@ conceived.
 				<usage type="internet"/>
 				<username>BrT</username>
 				<password>BrT</password>
+			</apn>
+			<apn value="mms.brt.br">
+				<usage type="mms"/>
+				<name>BrT MMS</name>
+				<username>brt</username>
+				<password>brt</password>
+				<mmsc>http://mms.brasiltelecom.com.br/</mmsc>
+				<mmsproxy>200.96.8.29:8080</mmsproxy>
 			</apn>
 		</gsm>
 	</provider>
@@ -1384,6 +1750,14 @@ conceived.
 				<username>ctbc</username>
 				<password>1212</password>
 			</apn>
+			<apn value="mms.ctbc.br">
+				<usage type="mms"/>
+				<name>CTBC MMS</name>
+				<username>ctbc</username>
+				<password>1212</password>
+				<mmsc>http://mms.ctbccelular.com.br/was</mmsc>
+				<mmsproxy>172.29.7.70:8080</mmsproxy>
+			</apn>
 		</gsm>
 	</provider>
 	<provider>
@@ -1409,6 +1783,14 @@ conceived.
 				<username>oiwap</username>
 				<password>oioioi</password>
 			</apn>
+			<apn value="mmsgprs.oi.com.br">
+				<usage type="mms"/>
+				<name>Oi MMS</name>
+				<username>oimms</username>
+				<password>oioioi</password>
+				<mmsc>http://200.222.42.204:8002</mmsc>
+				<mmsproxy>192.168.10.50:3128</mmsproxy>
+			</apn>
 		</gsm>
 	</provider>
 	<provider>
@@ -1430,6 +1812,20 @@ conceived.
 				<password>tim</password>
 				<dns>10.223.246.102</dns>
 				<dns>10.223.246.103</dns>
+			</apn>
+			<apn value="unico.tim.it">
+				<usage type="mms"/>
+				<name>iTIM</name>
+				<mmsc>http://mms.tim.it/servlets/mms</mmsc>
+				<mmsproxy>213.230.130.89:80</mmsproxy>
+			</apn>
+			<apn value="timbrasil.br">
+				<usage type="mms"/>
+				<name>TIM MMS</name>
+				<username>tim</username>
+				<password>tim</password>
+				<mmsc>http://mms.tim.br</mmsc>
+				<mmsproxy>200.179.66.242:8080</mmsproxy>
 			</apn>
 		</gsm>
 	</provider>
@@ -1463,6 +1859,14 @@ conceived.
 				<username>vivo</username>
 				<password>vivo</password>
 			</apn>
+			<apn value="mms.vivo.com.br">
+				<usage type="mms"/>
+				<name>Vivo MMS</name>
+				<username>vivo</username>
+				<password>vivo</password>
+				<mmsc>http://termnat.vivomms.com.br:8088/mms</mmsc>
+				<mmsproxy>200.142.130.104:80</mmsproxy>
+			</apn>
 		</gsm>
 	</provider>
 </country>
@@ -1491,6 +1895,12 @@ conceived.
 				<plan type="postpaid"/>
 				<usage type="internet"/>
 			</apn>
+			<apn value="bmobilemms">
+				<usage type="mms"/>
+				<name>B-mobile MMS</name>
+				<mmsc>http://mms.bmobile.com.bn/was</mmsc>
+				<mmsproxy>129.9.10.20:6500</mmsproxy>
+			</apn>
 		</gsm>
 	</provider>
 	<provider>
@@ -1502,6 +1912,14 @@ conceived.
 				<usage type="internet"/>
 				<username>wap</username>
 				<password>wap</password>
+			</apn>
+			<apn value="mms.movistar.es">
+				<usage type="mms"/>
+				<name>Movistar MMS</name>
+				<username>MOVISTAR@mms</username>
+				<password>MOVISTAR</password>
+				<mmsc>http://mms.movistar.com</mmsc>
+				<mmsproxy>10.138.255.5:8080</mmsproxy>
 			</apn>
 		</gsm>
 	</provider>
@@ -1573,6 +1991,12 @@ conceived.
 				<username>vmi</username>
 				<password>vmi</password>
 			</apn>
+			<apn value="mms.velcom.by">
+				<usage type="mms"/>
+				<name>VELCOM MMS</name>
+				<mmsc>http://mms.velcom.by/servlets/mms</mmsc>
+				<mmsproxy>10.200.15.15:8080</mmsproxy>
+			</apn>
 		</gsm>
 	</provider>
 	<provider>
@@ -1587,6 +2011,32 @@ conceived.
 				<usage type="internet"/>
 				<username>mts</username>
 				<password>mts</password>
+			</apn>
+			<apn value="mms">
+				<usage type="mms"/>
+				<name>MTS MMS</name>
+				<mmsc>http://mms.mts064.telekom.yu/mms/wapenc</mmsc>
+				<mmsproxy>172.17.85.131:8080</mmsproxy>
+			</apn>
+			<apn value="mms.mts.ru">
+				<usage type="mms"/>
+				<name>MTS MMS</name>
+				<username>mts</username>
+				<password>mts</password>
+				<mmsc>http://mmsc/</mmsc>
+				<mmsproxy>192.168.192.192:9201</mmsproxy>
+			</apn>
+			<apn value="mms.umc.ua">
+				<usage type="mms"/>
+				<name>UMC MMS GPRS</name>
+				<mmsc>http://mmsc:8002/</mmsc>
+				<mmsproxy>192.168.10.10:8080</mmsproxy>
+			</apn>
+			<apn value="sp.mts">
+				<usage type="mms"/>
+				<name>MTS MMS</name>
+				<mmsc>http://mmsc2.mts.net</mmsc>
+				<mmsproxy>209.4.229.90:9401</mmsproxy>
 			</apn>
 		</gsm>
 	</provider>
@@ -1616,6 +2066,12 @@ conceived.
 				<plan type="postpaid"/>
 				<usage type="internet"/>
 			</apn>
+			<apn value="mms">
+				<usage type="mms"/>
+				<name>life:) MMS</name>
+				<mmsc>http://mms.life.com.ua/cmmsc/post</mmsc>
+				<mmsproxy>212.58.162.230:8080</mmsproxy>
+			</apn>
 		</gsm>
 	</provider>
 </country>
@@ -1640,6 +2096,12 @@ conceived.
 				<plan type="postpaid"/>
 				<usage type="internet"/>
 			</apn>
+			<apn value="mms.mascom">
+				<usage type="mms"/>
+				<name>Mascom MMS</name>
+				<mmsc>http://192.168.33.50/mms</mmsc>
+				<mmsproxy>192.168.33.138:8080</mmsproxy>
+			</apn>
 		</gsm>
 	</provider>
 </country>
@@ -1658,6 +2120,12 @@ conceived.
 				<dns>204.92.15.211</dns>
 				<dns>207.181.101.4</dns>
 			</apn>
+			<apn value="mms.fido.ca">
+				<usage type="mms"/>
+				<name>Fido MMS</name>
+				<mmsc>http://mms.fido.ca</mmsc>
+				<mmsproxy>mm1.fido.ca:80</mmsproxy>
+			</apn>
 		</gsm>
 	</provider>
 	<provider>
@@ -1671,6 +2139,14 @@ conceived.
 				<password>wap</password>
 				<dns>207.181.101.4</dns>
 				<dns>207.181.101.5</dns>
+			</apn>
+			<apn value="media.com">
+				<usage type="mms"/>
+				<name>Rogers Media</name>
+				<username>media</username>
+				<password>mda01</password>
+				<mmsc>http://mms.gprs.rogers.com</mmsc>
+				<mmsproxy>10.128.1.69:80</mmsproxy>
 			</apn>
 		</gsm>
 	</provider>
@@ -1695,6 +2171,12 @@ conceived.
 				<plan type="postpaid"/>
 				<usage type="internet"/>
 				<name>Mobile Fast Web</name>
+			</apn>
+			<apn value="pda.bell.ca">
+				<usage type="mms"/>
+				<name>Bell MMS</name>
+				<mmsc>http://mms.bell.ca/mms/wapenc</mmsc>
+				<mmsproxy>web.wireless.bell.ca:80</mmsproxy>
 			</apn>
 		</gsm>
 		<cdma>
@@ -1751,6 +2233,12 @@ conceived.
 				<usage type="internet"/>
 				<name>Mobile Web/Smartphone</name>
 			</apn>
+			<apn value="sp.telus.com">
+				<usage type="mms"/>
+				<name>TELUS MMS</name>
+				<mmsc>http://aliasredirect.net/proxy/mmsc</mmsc>
+				<mmsproxy>74.49.0.18:80</mmsproxy>
+			</apn>
 		</gsm>
 		<cdma>
 			<sid value="16422"/>
@@ -1788,6 +2276,12 @@ conceived.
 				<usage type="internet"/>
 				<name>IHVM</name>
 			</apn>
+			<apn value="media.videotron">
+				<usage type="mms"/>
+				<name>Media</name>
+				<mmsc>http://media.videotron.com</mmsc>
+				<mmsproxy>10.208.89.17:8080</mmsproxy>
+			</apn>
 		</gsm>
 	</provider>
 	<provider>
@@ -1803,6 +2297,20 @@ conceived.
 				<plan type="postpaid"/>
 				<usage type="internet"/>
 				<name>Mobile (add-on for phone)</name>
+			</apn>
+			<apn value="mnet.b-online.gr">
+				<usage type="mms"/>
+				<name>WIND MMS</name>
+				<username>mms</username>
+				<password>mms</password>
+				<mmsc>http://192.168.200.95/servlets/mms</mmsc>
+				<mmsproxy>192.168.200.11:9401</mmsproxy>
+			</apn>
+			<apn value="mms.windmobile.ca">
+				<usage type="mms"/>
+				<name>MMS</name>
+				<mmsc>http://mms.windmobile.ca</mmsc>
+				<mmsproxy>74.115.197.70:8080</mmsproxy>
 			</apn>
 		</gsm>
 	</provider>
@@ -1820,6 +2328,12 @@ conceived.
 				<usage type="internet"/>
 				<name>Mobile Broadband</name>
 			</apn>
+			<apn value="mms.davewireless.com">
+				<usage type="mms"/>
+				<name>MoMMS</name>
+				<mmsc>http://mms.mobilicity.net</mmsc>
+				<mmsproxy>10.100.3.4:8080</mmsproxy>
+			</apn>
 		</gsm>
 	</provider>
 </country>
@@ -1836,6 +2350,12 @@ conceived.
 				<username>vodalive</username>
 				<dns>172.24.97.1</dns>
 			</apn>
+			<apn value="vodalive">
+				<usage type="mms"/>
+				<name>Vodalive</name>
+				<mmsc>http://172.24.97.1/mmsc</mmsc>
+				<mmsproxy>172.24.97.1:3128</mmsproxy>
+			</apn>
 		</gsm>
 	</provider>
 </country>
@@ -1850,6 +2370,12 @@ conceived.
 		<name>Orange</name>
 		<gsm>
 			<network-id mcc="228" mnc="03"/>
+			<balance-check>
+				<ussd>#121#</ussd>
+			</balance-check>
+			<balance-top-up>
+				<ussd replacement="CODE">#121*CODE#</ussd>
+			</balance-top-up>
 			<apn value="mobileoffice3g">
 				<plan type="postpaid"/>
 				<usage type="internet"/>
@@ -1894,6 +2420,14 @@ conceived.
 				<username>mms</username>
 				<password>mms</password>
 			</apn>
+			<apn value="mms.sunrise.ch">
+				<usage type="mms"/>
+				<name>Sunrise MMS</name>
+				<username>mms</username>
+				<password>mms</password>
+				<mmsc>http://mmsc.sunrise.ch</mmsc>
+				<mmsproxy>212.35.34.75:8080</mmsproxy>
+			</apn>
 		</gsm>
 	</provider>
 	<provider>
@@ -1927,6 +2461,12 @@ conceived.
 				<usage type="internet"/>
 				<name>Swisscom MMS</name>
 			</apn>
+			<apn value="event.swisscom.ch">
+				<usage type="mms"/>
+				<name>Swisscom MMS</name>
+				<mmsc>http://mms.natel.ch:8079</mmsc>
+				<mmsproxy>192.168.210.2:8080</mmsproxy>
+			</apn>
 		</gsm>
 	</provider>
 	<provider>
@@ -1955,6 +2495,21 @@ conceived.
 				<plan type="postpaid"/>
 				<usage type="internet"/>
 				<dns>172.16.100.5</dns>
+			</apn>
+			<apn value="fast-mms">
+				<usage type="mms"/>
+				<name>MTN MMS</name>
+				<username>mms</username>
+				<mmsc>http://192.168.97.1/mmsc</mmsc>
+				<mmsproxy>192.168.97.1:3130</mmsproxy>
+			</apn>
+			<apn value="myMTN">
+				<usage type="mms"/>
+				<name>MTN-MMS</name>
+				<username>mtnmms</username>
+				<password>mtnmms</password>
+				<mmsc>http://mms.mtn.co.za/mms/wapenc</mmsc>
+				<mmsproxy>196.11.240.241:8080</mmsproxy>
 			</apn>
 		</gsm>
 	</provider>
@@ -1986,6 +2541,14 @@ conceived.
 				<username>clarochile</username>
 				<password>clarochile</password>
 			</apn>
+			<apn value="mms.clarochile.cl">
+				<usage type="mms"/>
+				<name>MMS CLARO</name>
+				<username>clarochile</username>
+				<password>clarochile</password>
+				<mmsc>http://mms.clarochile.cl</mmsc>
+				<mmsproxy>172.23.200.200:8080</mmsproxy>
+			</apn>
 		</gsm>
 	</provider>
 	<provider>
@@ -2006,6 +2569,14 @@ conceived.
 				<username>entelpcs</username>
 				<password>entelpcs</password>
 			</apn>
+			<apn value="mms.entelpcs.cl">
+				<usage type="mms"/>
+				<name>MMS Entel PCS</name>
+				<username>entelmms</username>
+				<password>entelpcs</password>
+				<mmsc>http://mmsc.entelpcs.cl</mmsc>
+				<mmsproxy>10.99.0.10:8080</mmsproxy>
+			</apn>
 		</gsm>
 	</provider>
 	<provider>
@@ -2025,6 +2596,22 @@ conceived.
 				<name>WAP</name>
 				<username>wap</username>
 				<password>wap</password>
+			</apn>
+			<apn value="dst.mms">
+				<usage type="mms"/>
+				<name>DSTMMS</name>
+				<username>mms</username>
+				<password>mms</password>
+				<mmsc>http://mms.dst.com.bn/mmsc</mmsc>
+				<mmsproxy>10.100.6.101:3130</mmsproxy>
+			</apn>
+			<apn value="dst.mms">
+				<usage type="mms"/>
+				<name>DSTMMS</name>
+				<username>mms</username>
+				<password>mms</password>
+				<mmsc>http://mms.dst.com.bn/mmsc</mmsc>
+				<mmsproxy>10.100.6.101:3130</mmsproxy>
 			</apn>
 		</gsm>
 	</provider>
@@ -2080,6 +2667,12 @@ conceived.
 				<password>guest</password>
 				<dns>211.136.20.203</dns>
 			</apn>
+			<apn value="cmwap">
+				<usage type="mms"/>
+				<name>移动彩信</name>
+				<mmsc>http://mmsc.monternet.com</mmsc>
+				<mmsproxy>10.0.0.172:80</mmsproxy>
+			</apn>
 		</gsm>
 	</provider>
 	<provider>
@@ -2090,6 +2683,12 @@ conceived.
 				<plan type="postpaid"/>
 				<usage type="internet"/>
 				<username>uninet</username>
+			</apn>
+			<apn value="3gwap">
+				<usage type="mms"/>
+				<name>联通彩信</name>
+				<mmsc>http://mmsc.myuni.com.cn</mmsc>
+				<mmsproxy>10.0.0.172:80</mmsproxy>
 			</apn>
 		</gsm>
 	</provider>
@@ -2132,6 +2731,12 @@ conceived.
 				<plan type="postpaid"/>
 				<usage type="internet"/>
 				<name>Kolbi 3g</name>
+			</apn>
+			<apn value="mms.ideasclaro">
+				<usage type="mms"/>
+				<name>MMS CLARO CR</name>
+				<mmsc>http://mms.ideasclaro.com:8002</mmsc>
+				<mmsproxy>216.230.133.66:8080</mmsproxy>
 			</apn>
 		</gsm>
 	</provider>
@@ -2184,6 +2789,14 @@ conceived.
 				<plan type="postpaid"/>
 				<usage type="internet"/>
 			</apn>
+			<apn value="mms.sentelgsm.com">
+				<usage type="mms"/>
+				<name>Tigo MMS</name>
+				<username>tigo</username>
+				<password>tigo</password>
+				<mmsc>http://mms.tigo.sn</mmsc>
+				<mmsproxy>172.16.16.16:8080</mmsproxy>
+			</apn>
 		</gsm>
 	</provider>
 	<provider>
@@ -2212,6 +2825,14 @@ conceived.
 				<usage type="internet"/>
 				<name>LTE (4G)</name>
 			</apn>
+			<apn value="mms.colombiamovil.com.co">
+				<usage type="mms"/>
+				<name>TIGO multimedia</name>
+				<username>mms-cm1900</username>
+				<password>mms-cm1900</password>
+				<mmsc>http://mms.ola.com.co</mmsc>
+				<mmsproxy>190.102.206.48:8080</mmsproxy>
+			</apn>
 		</gsm>
 	</provider>
 	<provider>
@@ -2222,6 +2843,14 @@ conceived.
 			<apn value="web.vmc.net.co">
 				<plan type="postpaid"/>
 				<usage type="internet"/>
+			</apn>
+			<apn value="mms.movistar.com.co">
+				<usage type="mms"/>
+				<name>movistar MMS</name>
+				<username>movistar</username>
+				<password>movistar</password>
+				<mmsc>http://mms.movistar.com.co</mmsc>
+				<mmsproxy>192.168.222.7:9001</mmsproxy>
 			</apn>
 		</gsm>
 	</provider>
@@ -2245,6 +2874,12 @@ conceived.
 				<plan type="prepaid"/>
 				<usage type="internet"/>
 				<name>Prepaid</name>
+			</apn>
+			<apn value="cytamobile">
+				<usage type="mms"/>
+				<name>CytaMMS</name>
+				<mmsc>http://mmsc.cyta.com.cy</mmsc>
+				<mmsproxy>212.31.96.161:8080</mmsproxy>
 			</apn>
 		</gsm>
 	</provider>
@@ -2300,6 +2935,12 @@ conceived.
 				<usage type="internet"/>
 				<name>Prepaid</name>
 			</apn>
+			<apn value="mms">
+				<usage type="mms"/>
+				<name>02 MMS</name>
+				<mmsc>http://mms.o2active.cz:8002</mmsc>
+				<mmsproxy>160.218.160.218:8080</mmsproxy>
+			</apn>
 		</gsm>
 	</provider>
 	<provider>
@@ -2347,6 +2988,14 @@ conceived.
 				<name xml:lang="de">Tages-Flatrate</name>
 				<username>eplus</username>
 				<password>gprs</password>
+			</apn>
+			<apn value="mms.eplus.de">
+				<usage type="mms"/>
+				<name>E-plus MMS</name>
+				<username>mms</username>
+				<password>eplus</password>
+				<mmsc>http://mms/eplus/</mmsc>
+				<mmsproxy>212.23.97.153:5080</mmsproxy>
 			</apn>
 		</gsm>
 	</provider>
@@ -2401,6 +3050,12 @@ conceived.
 				<plan type="prepaid"/>
 				<usage type="internet"/>
 				<name>BILDmobil Speedstick (Surfpakete)</name>
+			</apn>
+			<apn value="event.vodafone.de">
+				<usage type="mms"/>
+				<name>VF DE MMS</name>
+				<mmsc>http://139.7.24.1/servlets/mms</mmsc>
+				<mmsproxy>139.7.29.17:80</mmsproxy>
 			</apn>
 		</gsm>
 	</provider>
@@ -2463,6 +3118,12 @@ conceived.
 				<dns>195.182.110.132</dns>
 				<dns>62.134.11.4</dns>
 			</apn>
+			<apn value="internet">
+				<usage type="mms"/>
+				<name>o2 MMS</name>
+				<mmsc>http://10.81.0.7:8002</mmsc>
+				<mmsproxy>195.182.114.52:8080</mmsproxy>
+			</apn>
 		</gsm>
 	</provider>
 	<provider>
@@ -2512,6 +3173,14 @@ conceived.
 				<password>tm</password>
 				<dns>10.74.83.22</dns>
 				<dns>193.254.160.1</dns>
+			</apn>
+			<apn value="internet.t-mobile">
+				<usage type="mms"/>
+				<name>T-Mobile MMS</name>
+				<username>t-mobile</username>
+				<password>tm</password>
+				<mmsc>http://mms.t-mobile.de/servlets/mms</mmsc>
+				<mmsproxy>172.28.23.131:8008</mmsproxy>
 			</apn>
 		</gsm>
 	</provider>
@@ -2607,137 +3276,6 @@ conceived.
 				<password>simyo</password>
 				<dns>212.23.97.2</dns>
 				<dns>212.23.97.3</dns>
-			</apn>
-		</gsm>
-	</provider>
-	<provider>
-		<!-- This configuration is valid for all vistream retailers like
-		     solomo, igge & ko, sdt.net, Südkurier-Tel etc.-->
-		<name>vistream</name>
-		<gsm>
-			<network-id mcc="262" mnc="16"/>
-			<balance-check>
-				<ussd>*100#</ussd>
-			</balance-check>
-			<apn value="internet.vistream.net">
-				<plan type="postpaid"/>
-				<usage type="internet"/>
-				<username>web</username>
-				<password>vistream</password>
-			</apn>
-		</gsm>
-	</provider>
-	<provider>
-		<name>solomo</name>
-		<gsm>
-			<network-id mcc="262" mnc="16"/>
-			<balance-check>
-				<ussd>*100#</ussd>
-			</balance-check>
-			<apn value="internet.vistream.net">
-				<plan type="postpaid"/>
-				<usage type="internet"/>
-				<username>web</username>
-				<password>vistream</password>
-			</apn>
-		</gsm>
-	</provider>
-	<provider>
-		<name>Materna BR</name>
-		<gsm>
-			<network-id mcc="262" mnc="16"/>
-			<apn value="internet.vistream.net">
-				<plan type="postpaid"/>
-				<usage type="internet"/>
-				<username>web</username>
-				<password>vistream</password>
-			</apn>
-		</gsm>
-	</provider>
-	<provider>
-		<name>sdt.net</name>
-		<gsm>
-			<network-id mcc="262" mnc="16"/>
-			<apn value="internet.vistream.net">
-				<plan type="postpaid"/>
-				<usage type="internet"/>
-				<username>web</username>
-				<password>vistream</password>
-			</apn>
-		</gsm>
-	</provider>
-	<provider>
-		<name>igge &amp; ko</name>
-		<gsm>
-			<network-id mcc="262" mnc="16"/>
-			<apn value="internet.vistream.net">
-				<plan type="postpaid"/>
-				<usage type="internet"/>
-				<username>web</username>
-				<password>vistream</password>
-			</apn>
-		</gsm>
-	</provider>
-	<provider>
-		<name>PTT mobile</name>
-		<gsm>
-			<network-id mcc="262" mnc="16"/>
-			<apn value="internet.vistream.net">
-				<plan type="postpaid"/>
-				<usage type="internet"/>
-				<username>web</username>
-				<password>vistream</password>
-			</apn>
-		</gsm>
-	</provider>
-	<provider>
-		<name>TouristMobile</name>
-		<gsm>
-			<network-id mcc="262" mnc="16"/>
-			<apn value="internet.vistream.net">
-				<plan type="postpaid"/>
-				<usage type="internet"/>
-				<username>web</username>
-				<password>vistream</password>
-			</apn>
-		</gsm>
-	</provider>
-	<provider>
-		<name>SunSIM</name>
-		<gsm>
-			<network-id mcc="262" mnc="16"/>
-			<balance-check>
-				<ussd>*100#</ussd>
-			</balance-check>
-			<apn value="internet.vistream.net">
-				<plan type="postpaid"/>
-				<usage type="internet"/>
-				<username>web</username>
-				<password>vistream</password>
-			</apn>
-		</gsm>
-	</provider>
-	<provider>
-		<name>SüdkurierTel</name>
-		<gsm>
-			<network-id mcc="262" mnc="16"/>
-			<apn value="internet.vistream.net">
-				<plan type="postpaid"/>
-				<usage type="internet"/>
-				<username>web</username>
-				<password>vistream</password>
-			</apn>
-		</gsm>
-	</provider>
-	<provider>
-		<name>NetCologne</name>
-		<gsm>
-			<network-id mcc="262" mnc="03"/>
-			<apn value="internet.netcologne.de">
-				<plan type="postpaid"/>
-				<usage type="internet"/>
-				<username>web</username>
-				<password>password</password>
 			</apn>
 		</gsm>
 	</provider>
@@ -2842,6 +3380,12 @@ conceived.
 				<usage type="internet"/>
 				<name>Mobile Internet</name>
 			</apn>
+			<apn value="data.tre.dk">
+				<usage type="mms"/>
+				<name>3mms</name>
+				<mmsc>http://mms.3.dk</mmsc>
+				<mmsproxy>mmsproxy.3.dk:8799</mmsproxy>
+			</apn>
 		</gsm>
 	</provider>
 
@@ -2870,6 +3414,12 @@ conceived.
 				<usage type="internet"/>
 				<dns>212.88.64.199</dns>
 				<dns>212.88.64.14</dns>
+			</apn>
+			<apn value="telenor">
+				<usage type="mms"/>
+				<name>Telenor MMS</name>
+				<mmsc>http://mms.telenor.dk</mmsc>
+				<mmsproxy>212.88.64.8:8080</mmsproxy>
 			</apn>
 		</gsm>
 	</provider>
@@ -2914,6 +3464,12 @@ conceived.
 				<plan type="postpaid"/>
 				<usage type="internet"/>
 			</apn>
+			<apn value="mms.tdc.fi">
+				<usage type="mms"/>
+				<name>TDC MMS</name>
+				<mmsc>http://mmsc.tdc.fi</mmsc>
+				<mmsproxy>10.1.12.2:8080</mmsproxy>
+			</apn>
 		</gsm>
 	</provider>
 	<provider>
@@ -2941,6 +3497,12 @@ conceived.
 				<plan type="postpaid"/>
 				<usage type="internet"/>
 			</apn>
+			<apn value="www.mms.mtelia.dk">
+				<usage type="mms"/>
+				<name>Telia MMS</name>
+				<mmsc>http://mms.telia.dk</mmsc>
+				<mmsproxy>193.209.134.131:8080</mmsproxy>
+			</apn>
 		</gsm>
 	</provider>
 	<provider>
@@ -2963,6 +3525,12 @@ conceived.
 				<usage type="internet"/>
 				<dns>194.239.134.83</dns>
 				<dns>193.162.153.164</dns>
+			</apn>
+			<apn value="mms">
+				<usage type="mms"/>
+				<name>Telmore MMS</name>
+				<mmsc>http://192.168.241.114:8002</mmsc>
+				<mmsproxy>194.182.251.15:8080</mmsproxy>
 			</apn>
 		</gsm>
 	</provider>
@@ -3060,6 +3628,13 @@ conceived.
 				<plan type="postpaid"/>
 				<usage type="internet"/>
 			</apn>
+			<apn value="djezzy.mms">
+				<usage type="mms"/>
+				<name>MMS djezzy</name>
+				<username>mms</username>
+				<password>mms</password>
+				<mmsproxy>172.24.97.158:8799</mmsproxy>
+			</apn>
 		</gsm>
 	</provider>
 	<provider>
@@ -3071,6 +3646,14 @@ conceived.
 				<usage type="internet"/>
 				<username>internet</username>
 				<password>internet</password>
+			</apn>
+			<apn value="mms">
+				<usage type="mms"/>
+				<name>Mobilis MMS</name>
+				<username>mms</username>
+				<password>mms</password>
+				<mmsc>http://172.25.49.9/servlets/mms</mmsc>
+				<mmsproxy>172.25.49.2:8080</mmsproxy>
 			</apn>
 		</gsm>
 	</provider>
@@ -3084,6 +3667,14 @@ conceived.
 				<name>WEB</name>
 				<username>nedjma</username>
 				<password>nedjma</password>
+			</apn>
+			<apn value="nedjmaMMS">
+				<usage type="mms"/>
+				<name>Nedjma MMS</name>
+				<username>mms</username>
+				<password>mms</password>
+				<mmsc>http://10.10.111.1</mmsc>
+				<mmsproxy>192.168.52.3:3128</mmsproxy>
 			</apn>
 		</gsm>
 	</provider>
@@ -3101,6 +3692,14 @@ conceived.
 				<username>movistar</username>
 				<password>movistar</password>
 			</apn>
+			<apn value="mms.movistar.com.ec">
+				<usage type="mms"/>
+				<name>movistar MMS</name>
+				<username>movistar</username>
+				<password>movistar</password>
+				<mmsc>http://mms.movistar.com.ec:8088/mms/</mmsc>
+				<mmsproxy>10.3.5.50:9001</mmsproxy>
+			</apn>
 		</gsm>
 	</provider>
 	<provider>
@@ -3110,6 +3709,14 @@ conceived.
 			<apn value="internet.porta.com.ec">
 				<plan type="postpaid"/>
 				<usage type="internet"/>
+			</apn>
+			<apn value="mms.porta.com.ec">
+				<usage type="mms"/>
+				<name>MMS Porta</name>
+				<username>portamms</username>
+				<password>portamms2003</password>
+				<mmsc>http://iesmms.porta.com.ec</mmsc>
+				<mmsproxy>216.250.208.94:8799</mmsproxy>
 			</apn>
 		</gsm>
 	</provider>
@@ -3126,6 +3733,12 @@ conceived.
 				<usage type="internet"/>
 				<dns>217.71.32.116</dns>
 				<dns>217.71.32.115</dns>
+			</apn>
+			<apn value="mms.emt.ee">
+				<usage type="mms"/>
+				<name>EMT MMS</name>
+				<mmsc>http://mms.emt.ee/servlets/mms</mmsc>
+				<mmsproxy>217.71.32.82:8080</mmsproxy>
 			</apn>
 		</gsm>
 	</provider>
@@ -3148,6 +3761,18 @@ conceived.
 				<usage type="internet"/>
 				<dns>194.204.0.1</dns>
 			</apn>
+			<apn value="mms">
+				<usage type="mms"/>
+				<name>Elisa MMS</name>
+				<mmsc>http://mms.elisa.fi</mmsc>
+				<mmsproxy>213.161.41.57:80</mmsproxy>
+			</apn>
+			<apn value="mms">
+				<usage type="mms"/>
+				<name>Elisa MMS</name>
+				<mmsc>http://194.204.2.10</mmsc>
+				<mmsproxy>194.204.2.6:8000</mmsproxy>
+			</apn>
 		</gsm>
 	</provider>
 	<provider>
@@ -3159,6 +3784,14 @@ conceived.
 				<usage type="internet"/>
 				<username>wap</username>
 				<password>wap</password>
+			</apn>
+			<apn value="internet.tele2.fi">
+				<usage type="mms"/>
+				<name>Tele2 MMS</name>
+				<username>wap</username>
+				<password>wap</password>
+				<mmsc>http://mmsc.tele2.fi</mmsc>
+				<mmsproxy>193.12.40.19:80</mmsproxy>
 			</apn>
 		</gsm>
 	</provider>
@@ -3191,6 +3824,12 @@ conceived.
 				<plan type="postpaid"/>
 				<usage type="internet"/>
 			</apn>
+			<apn value="Etisalat">
+				<usage type="mms"/>
+				<name>Etisalat MMS</name>
+				<mmsc>http://10.71.131.7:38090/</mmsc>
+				<mmsproxy>10.71.130.29:8080</mmsproxy>
+			</apn>
 		</gsm>
 	</provider>
 	<provider>
@@ -3202,6 +3841,12 @@ conceived.
 				<usage type="internet"/>
 				<dns>80.75.166.250</dns>
 				<dns>163.121.163.201</dns>
+			</apn>
+			<apn value="mobinilmms">
+				<usage type="mms"/>
+				<name>MobiNil MMS</name>
+				<mmsc>http://10.7.13.24:8002/</mmsc>
+				<mmsproxy>62.241.155.45:8080</mmsproxy>
 			</apn>
 		</gsm>
 	</provider>
@@ -3222,10 +3867,19 @@ conceived.
 		</gsm>
 	</provider>
 	<provider>
+		<name>Lebara</name>
+		<gsm>
+			<apn value="gprsmov.lebaramobile.es">
+				<plan type="prepaid"/>
+				<usage type="internet"/>
+			</apn>
+		</gsm>
+	</provider>
+	<provider>
 		<name>Másmovil</name>
 		<gsm>
 			<network-id mcc="214" mnc="03"/>
-			<apn value="internetmas" >
+			<apn value="internetmas">
 				<plan type="postpaid"/>
 				<usage type="internet"/>
 			</apn>
@@ -3235,14 +3889,15 @@ conceived.
 		<name>móbil R (Mundo-R)</name>
 		<gsm>
 			<network-id mcc="214" mnc="17"/>
-			<apn value="internet.mundo-r.com" >
+			<apn value="internet.mundo-r.com">
 				<plan type="postpaid"/>
 				<usage type="internet"/>
 			</apn>
 		</gsm>
 	</provider>
 	<provider>
-		<name>moviData</name>
+		<!-- http://www.happymovil.es/es/prepago/internet-movil -->
+		<name>Happy Móvil/moviData</name>
 		<gsm>
 			<network-id mcc="214" mnc="03"/>
 			<apn value="INTERNETTPH">
@@ -3305,7 +3960,7 @@ conceived.
 		</gsm>
 	</provider>
 	<provider>
-		<name>Simyo/Blau</name>
+		<name>Simyo</name>
 		<gsm>
 			<network-id mcc="214" mnc="19"/>
 			<apn value="gprs-service.com">
@@ -3384,6 +4039,14 @@ conceived.
 				<dns>212.73.32.3</dns>
 				<dns>212.73.32.67</dns>
 			</apn>
+			<apn value="mms.vodafone.net">
+				<usage type="mms"/>
+				<name>MMS VODAFONE</name>
+				<username>wap@wap</username>
+				<password>wap125</password>
+				<mmsc>http://mmsc.vodafone.es/servlets/mms</mmsc>
+				<mmsproxy>212.73.32.10:80</mmsproxy>
+			</apn>
 		</gsm>
 	</provider>
 	<provider>
@@ -3401,6 +4064,12 @@ conceived.
 				<usage type="internet"/>
 				<dns>213.248.76.210</dns>
 				<dns>213.248.100.54</dns>
+			</apn>
+			<apn value="mms">
+				<usage type="mms"/>
+				<name>Yoigo MMS</name>
+				<mmsc>http://mmss/</mmsc>
+				<mmsproxy>193.209.134.141:80</mmsproxy>
 			</apn>
 		</gsm>
 	</provider>
@@ -3426,6 +4095,19 @@ conceived.
 		</gsm>
 	</provider>
 	<provider>
+		<!-- from http://www.tuenti.com/movil/apn-tuenti-movil-android -->
+		<name>Tuenti Móvil</name>
+		<gsm>
+			<network-id mcc="214" mnc="05"/>
+			<apn value="tuenti.com">
+				<plan type="postpaid"/>
+				<usage type="internet"/>
+				<username>tuenti</username>
+				<password>tuenti</password>
+			</apn>
+		</gsm>
+	</provider>
+	<provider>
 		<!-- from http://www.eroskimovil.es/geomv/c/pub/en/servicios/datos -->
 		<name>Eroski Móvil</name>
 		<gsm>
@@ -3434,6 +4116,31 @@ conceived.
 				<name>Eroski Móvil GPRS</name>
 				<username>wap@wap</username>
 				<password>wap125</password>
+			</apn>
+		</gsm>
+	</provider>
+	<provider>
+		<!-- from http://www.llamayamovil.com/internet -->
+		<name>LlamaYa móvil</name>
+		<gsm>
+			<network-id mcc="214" mnc="03"/>
+			<apn value="moreinternet">
+				<plan type="postpaid"/>
+				<usage type="internet"/>
+			</apn>
+		</gsm>
+	</provider>
+	<provider>
+		<!-- MVNO operating on Orange's network -->
+		<!-- www.amena.com -->
+		<name>Amena</name>
+		<gsm>
+			<network-id mcc="214" mnc="03"/>
+			<apn value="orangeworld">
+				<plan type="postpaid"/>
+				<usage type="internet"/>
+				<username>orange</username>
+				<password>orange</password>
 			</apn>
 		</gsm>
 	</provider>
@@ -3483,6 +4190,16 @@ conceived.
 <!-- Finland -->
 <country code="fi">
 	<provider>
+		<name>Kuiri</name>
+		<gsm>
+			<network-id mcc="244" mnc="31"/>
+			<apn value="kuirinet">
+			<usage type="internet"/>
+				<name>Kuiri Internet</name>
+			</apn>
+		</gsm>
+	</provider>
+	<provider>
 		<name>Dna</name>
 		<gsm>
 			<network-id mcc="244" mnc="03"/>
@@ -3504,6 +4221,14 @@ conceived.
 				<name>dna internet</name>
 				<dns>217.78.192.22</dns>
 				<dns>217.78.192.78</dns>
+			</apn>
+			<apn value="mms">
+				<usage type="mms"/>
+				<name>dna MMS</name>
+				<username>dna</username>
+				<password>mms</password>
+				<mmsc>http://mmsc.dnafinland.fi</mmsc>
+				<mmsproxy>10.1.1.2:8080</mmsproxy>
 			</apn>
 		</gsm>
 	</provider>
@@ -3594,6 +4319,12 @@ conceived.
 				<dns>195.74.0.47</dns>
 				<dns>195.197.54.100</dns>
 			</apn>
+			<apn value="mms.saunalahti.fi">
+				<usage type="mms"/>
+				<name>Saunalahti MMS</name>
+				<mmsc>http://mms.saunalahti.fi:8002/</mmsc>
+				<mmsproxy>62.142.4.197:8080</mmsproxy>
+			</apn>
 		</gsm>
 	</provider>
 	<provider>
@@ -3621,6 +4352,12 @@ conceived.
 				<name>Prointernet (public IP)</name>
 				<dns>192.89.123.230</dns>
 				<dns>192.89.123.231</dns>
+			</apn>
+			<apn value="telefinland">
+				<usage type="mms"/>
+				<name>TeleFinland MMS</name>
+				<mmsc>http://mms.sonera.net:8002</mmsc>
+				<mmsproxy>195.156.25.33:8080</mmsproxy>
 			</apn>
 		</gsm>
 	</provider>
@@ -3714,6 +4451,12 @@ conceived.
 				<name>Contrat Pro Data</name>
 				<dns>62.201.129.99</dns>
 			</apn>
+			<apn value="mmsbouygtel.com">
+				<usage type="mms"/>
+				<name>Bouygues MMS</name>
+				<mmsc>http://mms.bouyguestelecom.fr/mms/wapenc</mmsc>
+				<mmsproxy>62.201.129.226:8080</mmsproxy>
+			</apn>
 		</gsm>
 	</provider>
 	<provider>
@@ -3733,6 +4476,12 @@ conceived.
 				<usage type="mms"/>
 				<name>Free-Mobile</name>
 			</apn>
+			<apn value="mmsfree">
+				<usage type="mms"/>
+				<name>MMS Free</name>
+				<mmsc>http://mms.free.fr</mmsc>
+				<mmsproxy>10.0.0.10:8080</mmsproxy>
+			</apn>
 		</gsm>
 	</provider>
 	<provider>
@@ -3745,6 +4494,9 @@ conceived.
 			<balance-check>
 				<ussd>#123#</ussd>
 			</balance-check>
+			<balance-top-up>
+				<ussd replacement="CODE">#124*CODE#</ussd>
+			</balance-top-up>
 
 			<apn value="orange.fr">
 				<plan type="postpaid"/>
@@ -3845,6 +4597,12 @@ conceived.
 				<usage type="internet"/>
 				<name>Internet (Neuf Telecom)</name>
 			</apn>
+			<apn value="mms65">
+				<usage type="mms"/>
+				<name>mms65</name>
+				<mmsc>http://mms65</mmsc>
+				<mmsproxy>10.143.156.8</mmsproxy>
+			</apn>
 		</gsm>
 	</provider>
 	<provider>
@@ -3874,6 +4632,14 @@ conceived.
 				<username>orange</username>
 				<password>orange</password>
 			</apn>
+			<apn value="orange.acte">
+				<usage type="mms"/>
+				<name>Orange acte</name>
+				<username>orange</username>
+				<password>orange</password>
+				<mmsc>http://mms.orange.fr</mmsc>
+				<mmsproxy>192.168.10.200:8080</mmsproxy>
+			</apn>
 		</gsm>
 	</provider>
 </country>
@@ -3889,6 +4655,14 @@ conceived.
 				<usage type="internet"/>
 				<username>web</username>
 				<password>web</password>
+			</apn>
+			<apn value="asdamobiles.co.uk">
+				<usage type="mms"/>
+				<name>ASDA MMS</name>
+				<username>wap</username>
+				<password>wap</password>
+				<mmsc>http://mms.asdamobiles.co.uk/servlets/mms</mmsc>
+				<mmsproxy>212.183.137.12:8799</mmsproxy>
 			</apn>
 		</gsm>
 	</provider>
@@ -3920,6 +4694,14 @@ conceived.
 				<name>Mobile Broadband</name>
 				<username>giffgaff</username>
 				<password>password</password>
+			</apn>
+			<apn value="wap.o2.co.uk">
+				<usage type="mms"/>
+				<name>O2 MMS</name>
+				<username>o2wap</username>
+				<password>password</password>
+				<mmsc>http://mmsc.mms.o2.co.uk:8002</mmsc>
+				<mmsproxy>193.113.200.195:8080</mmsproxy>
 			</apn>
 		</gsm>
 	</provider>
@@ -4052,6 +4834,20 @@ conceived.
 				<usage type="internet"/>
 				<username>user</username>
 			</apn>
+			<apn value="orange.acte">
+				<usage type="mms"/>
+				<name>VM acte GPRS</name>
+				<username>orange</username>
+				<password>orange</password>
+				<mmsc>http://mms.orange.fr</mmsc>
+				<mmsproxy>192.168.10.200:8080</mmsproxy>
+			</apn>
+			<apn value="vmms">
+				<usage type="mms"/>
+				<name>Virgin MMS</name>
+				<mmsc>http://mms.virginmobile.co.za</mmsc>
+				<mmsproxy>196.31.116.242:8080</mmsproxy>
+			</apn>
 		</gsm>
 	</provider>
 	<provider>
@@ -4168,7 +4964,13 @@ conceived.
 				<plan type="postpaid"/>
 				<usage type="internet"/>
 				<dns>212.72.130.20</dns>
-				<dns>212.72.152.001</dns>
+				<dns>212.72.152.1</dns>
+			</apn>
+			<apn value="mms">
+				<usage type="mms"/>
+				<name>Geo MMS</name>
+				<mmsc>http://mms.geocell.com.ge/cmmsc/post</mmsc>
+				<mmsproxy>10.11.240.7:8080</mmsproxy>
 			</apn>
 		</gsm>
 	</provider>
@@ -4200,6 +5002,12 @@ conceived.
 				<usage type="internet"/>
 				<name>Internet</name>
 			</apn>
+			<apn value="mms">
+				<usage type="mms"/>
+				<name>Lifestyle MMS</name>
+				<mmsc>http://mmsc.gprs.cw.com/</mmsc>
+				<mmsproxy>10.0.3.101:80</mmsproxy>
+			</apn>
 		</gsm>
 	</provider>
 	<provider>
@@ -4211,6 +5019,13 @@ conceived.
 				<usage type="internet"/>
 				<dns>212.9.0.135</dns>
 				<dns>212.9.0.136</dns>
+			</apn>
+			<apn value="mms">
+				<usage type="mms"/>
+				<name>pepperMMS</name>
+				<username>mms</username>
+				<mmsc>http://mmsc.surfmail.com/mmsc</mmsc>
+				<mmsproxy>212.9.19.199:3130</mmsproxy>
 			</apn>
 		</gsm>
 	</provider>
@@ -4300,6 +5115,12 @@ conceived.
 				<plan type="postpaid"/>
 				<usage type="internet"/>
 			</apn>
+			<apn value="mms">
+				<usage type="mms"/>
+				<name>Cosmote MMS</name>
+				<mmsc>http://mmsc.cosmote.gr:8002</mmsc>
+				<mmsproxy>10.10.10.20:8080</mmsproxy>
+			</apn>
 		</gsm>
 	</provider>
 	<provider>
@@ -4388,6 +5209,12 @@ conceived.
 				<username>web</username>
 				<password>web</password>
 			</apn>
+			<apn value="q-mms.myq.gr">
+				<usage type="mms"/>
+				<name>Q-Telecom MMS</name>
+				<mmsc>http://mms.myq.gr</mmsc>
+				<mmsproxy>192.168.80.134:8080</mmsproxy>
+			</apn>
 		</gsm>
 	</provider>
 </country>
@@ -4413,6 +5240,12 @@ conceived.
 				<usage type="internet"/>
 				<username>Wap</username>
 				<password>Wap</password>
+			</apn>
+			<apn value="mms.tigo.gt">
+				<usage type="mms"/>
+				<name>MMS TIGO</name>
+				<mmsc>http://mms</mmsc>
+				<mmsproxy>10.16.17.12:8888</mmsproxy>
 			</apn>
 		</gsm>
 	</provider>
@@ -4454,6 +5287,14 @@ conceived.
 				<username>web</username>
 				<password>web</password>
 			</apn>
+			<apn value="wap.digicelgy.com">
+				<usage type="mms"/>
+				<name>Digicel Guyana MMS</name>
+				<username>wap</username>
+				<password>wap</password>
+				<mmsc>http://mmc.digicelgy.com/servlets/mms</mmsc>
+				<mmsproxy>172.20.6.12:8080</mmsproxy>
+			</apn>
 		</gsm>
 	</provider>
 </country>
@@ -4471,6 +5312,12 @@ conceived.
 				<dns>202.84.255.1</dns>
 				<dns>203.116.254.150</dns>
 			</apn>
+			<apn value="hkcsl">
+				<usage type="mms"/>
+				<name>CSL MMS</name>
+				<mmsc>http://192.168.58.171:8002</mmsc>
+				<mmsproxy>192.168.59.51:8080</mmsproxy>
+			</apn>
 		</gsm>
 	</provider>
 	<provider>
@@ -4481,6 +5328,12 @@ conceived.
 				<plan type="postpaid"/>
 				<usage type="internet"/>
 			</apn>
+			<apn value="peoples.mms">
+				<usage type="mms"/>
+				<name>CMHK MMS</name>
+				<mmsc>http://mms.hk.chinamobile.com/mms</mmsc>
+				<mmsproxy>172.31.31.36:8080</mmsproxy>
+			</apn>
 		</gsm>
 	</provider>
 	<provider>
@@ -4490,6 +5343,12 @@ conceived.
 			<apn value="peoples.net">
 				<plan type="postpaid"/>
 				<usage type="internet"/>
+			</apn>
+			<apn value="SmarTone-Vodafone">
+				<usage type="mms"/>
+				<name>picturemail</name>
+				<mmsc>http://mms.smartone-vodafone.com/server</mmsc>
+				<mmsproxy>10.9.9.9:8080</mmsproxy>
 			</apn>
 		</gsm>
 	</provider>
@@ -4522,6 +5381,18 @@ conceived.
 				<plan type="postpaid"/>
 				<usage type="internet"/>
 				<name>PCCW 3G</name>
+			</apn>
+			<apn value="pccwmms">
+				<usage type="mms"/>
+				<name>PCCW MMS</name>
+				<mmsc>http://mmsc.mms.pccwmobile.com:8002/</mmsc>
+				<mmsproxy>10.131.2.8:8080</mmsproxy>
+			</apn>
+			<apn value="pccw">
+				<usage type="mms"/>
+				<name>PCCW 3G MMS</name>
+				<mmsc>http://3gmms.pccwmobile.com:8080/was</mmsc>
+				<mmsproxy>10.140.14.10:8080</mmsproxy>
 			</apn>
 		</gsm>
 	</provider>
@@ -4619,6 +5490,12 @@ conceived.
 				<dns>212.91.97.3</dns>
 				<dns>212.91.97.4</dns>
 			</apn>
+			<apn value="mms.vipnet.hr">
+				<usage type="mms"/>
+				<name>MMS</name>
+				<mmsc>http://mms.vipnet.hr/servlets/mms</mmsc>
+				<mmsproxy>212.91.99.91:8080</mmsproxy>
+			</apn>
 		</gsm>
 	</provider>
 	<provider>
@@ -4629,7 +5506,7 @@ conceived.
 				<plan type="postpaid"/>
 				<usage type="internet"/>
 				<username>AAIEDU</username>
-				<password></password>
+				<password/>
 			</apn>
 		</gsm>
 	</provider>
@@ -4641,7 +5518,13 @@ conceived.
 				<plan type="postpaid"/>
 				<usage type="internet"/>
 				<username>AAIEDU</username>
-				<password></password>
+				<password/>
+			</apn>
+			<apn value="internet.tele2.hr">
+				<usage type="mms"/>
+				<name>Tele2 MMS</name>
+				<mmsc>http://mmsc.tele2.hr</mmsc>
+				<mmsproxy>193012040066:8080</mmsproxy>
 			</apn>
 		</gsm>
 	</provider>
@@ -4670,6 +5553,12 @@ conceived.
 				<name>mobilinternet</name>
 				<dns>217.79.128.40</dns>
 				<dns>217.79.128.45</dns>
+			</apn>
+			<apn value="mms">
+				<usage type="mms"/>
+				<name>Pannon MMS</name>
+				<mmsc>http://mmsc.pgsm.hu/</mmsc>
+				<mmsproxy>84.225.255.1:8080</mmsproxy>
 			</apn>
 		</gsm>
 	</provider>
@@ -4744,7 +5633,7 @@ conceived.
 	</provider>
 	<provider>
 		<name>Invitel</name>
-                <!-- MVNO operating on Telenor's network -->
+		<!-- MVNO operating on Telenor's network -->
 		<gsm>
 			<apn value="invitel.mobilnet">
 				<plan type="postpaid"/>
@@ -4788,6 +5677,14 @@ conceived.
 				<username>axis</username>
 				<password>123456</password>
 			</apn>
+			<apn value="AXISmms">
+				<usage type="mms"/>
+				<name>AXISmms</name>
+				<username>AXIS</username>
+				<password>123456</password>
+				<mmsc>http://mmsc.axis</mmsc>
+				<mmsproxy>10.8.3.8:8080</mmsproxy>
+			</apn>
 		</gsm>
 	</provider>
 	<provider>
@@ -4821,6 +5718,14 @@ conceived.
 				<name>Matrix 3G/3.5G</name>
 				<username>indosat</username>
 				<password>indosat</password>
+			</apn>
+			<apn value="indosatmms">
+				<usage type="mms"/>
+				<name>IndosatMMS</name>
+				<username>indosat</username>
+				<password>indosat</password>
+				<mmsc>http://mmsc.indosat.com</mmsc>
+				<mmsproxy>10.19.19.19:8080</mmsproxy>
 			</apn>
 		</gsm>
 		<cdma>
@@ -4862,6 +5767,14 @@ conceived.
 				<username>foo</username>
 				<password>bar</password>
 			</apn>
+			<apn value="mms">
+				<usage type="mms"/>
+				<name>TSEL-MMS</name>
+				<username>wap</username>
+				<password>wap123</password>
+				<mmsc>http://mms.telkomsel.com</mmsc>
+				<mmsproxy>10.1.89.150:8000</mmsproxy>
+			</apn>
 		</gsm>
 	</provider>
 	<provider>
@@ -4875,6 +5788,14 @@ conceived.
 				<password>proxl</password>
 				<dns>202.152.254.245</dns>
 				<dns>202.152.254.246</dns>
+			</apn>
+			<apn value="www.xlmms.net">
+				<usage type="mms"/>
+				<name>XL-MMS</name>
+				<username>xlgprs</username>
+				<password>proxl</password>
+				<mmsc>http://mmc.xl.net.id/servlets/mms</mmsc>
+				<mmsproxy>202.152.240.50:8080</mmsproxy>
 			</apn>
 		</gsm>
 	</provider>
@@ -4949,6 +5870,12 @@ conceived.
 				<usage type="internet"/>
 				<name>Old Config Internet and MMS</name>
 			</apn>
+			<apn value="internet">
+				<usage type="mms"/>
+				<name>O2 MMS</name>
+				<mmsc>http://mmsc.mms.o2.ie:8002</mmsc>
+				<mmsproxy>62.40.32.40:8080</mmsproxy>
+			</apn>
 		</gsm>
 	</provider>
 	<provider>
@@ -4995,6 +5922,14 @@ conceived.
 				<dns>212.129.64.220</dns>
 				<dns>212.129.64.221</dns>
 			</apn>
+			<apn value="mms.mymeteor.ie">
+				<usage type="mms"/>
+				<name>MMS over GPRS</name>
+				<username>my</username>
+				<password>wap</password>
+				<mmsc>http://mms.mymeteor.ie</mmsc>
+				<mmsproxy>10.85.85.85:8799</mmsproxy>
+			</apn>
 		</gsm>
 	</provider>
 	<provider>
@@ -5034,6 +5969,12 @@ conceived.
 				<dns>172.31.140.69</dns>
 				<dns>172.30.140.69</dns>
 			</apn>
+			<apn value="3ireland.ie">
+				<usage type="mms"/>
+				<name>3MMS</name>
+				<mmsc>http://mms.um.3ireland.ie:10021/mmsc</mmsc>
+				<mmsproxy>mms.3ireland.ie:8799</mmsproxy>
+			</apn>
 		</gsm>
 	</provider>
 </country>
@@ -5047,6 +5988,12 @@ conceived.
 			<apn value="internetg">
 				<plan type="postpaid"/>
 				<usage type="internet"/>
+			</apn>
+			<apn value="mms">
+				<usage type="mms"/>
+				<name>Cellcom MMS</name>
+				<mmsc>http://mms.cellcom.co.il</mmsc>
+				<mmsproxy>vwapm2.ain.co.il:8080</mmsproxy>
 			</apn>
 		</gsm>
 	</provider>
@@ -5104,6 +6051,14 @@ conceived.
 				<username>pcl@3g</username>
 				<password>pcl</password>
 			</apn>
+			<apn value="mms.pelephone.net.il">
+				<usage type="mms"/>
+				<name>Multimedia Pelephone</name>
+				<username>pcl@3g</username>
+				<password>pcl</password>
+				<mmsc>mmsu.pelephone.net.il</mmsc>
+				<mmsproxy>10.170.9.54:9093</mmsproxy>
+			</apn>
 		</gsm>
 	</provider>
 	<provider>
@@ -5139,6 +6094,14 @@ conceived.
 			<apn value="3gpronto">
 				<plan type="postpaid"/>
 				<usage type="internet"/>
+			</apn>
+			<apn value="mms.manxpronto.net">
+				<usage type="mms"/>
+				<name>Pronto MMS</name>
+				<username>mms</username>
+				<password>mms</password>
+				<mmsc>http://mms.manxpronto.net:8002</mmsc>
+				<mmsproxy>195.10.99.46:80</mmsproxy>
 			</apn>
 		</gsm>
 	</provider>
@@ -5206,6 +6169,24 @@ conceived.
 				<plan type="prepaid"/>
 				<usage type="internet"/>
 				<name>GPRS (Prepaid)</name>
+			</apn>
+			<apn value="aircelmms">
+				<usage type="mms"/>
+				<name>Aircel MMS</name>
+				<mmsc>http://172.17.83.67/servlets/mms</mmsc>
+				<mmsproxy>172.17.83.69:8080</mmsproxy>
+			</apn>
+			<apn value="aircelmms.po">
+				<usage type="mms"/>
+				<name>Aircel MMS</name>
+				<mmsc>http://mmsc/mmrelay.app</mmsc>
+				<mmsproxy>192.168.35.196:8081</mmsproxy>
+			</apn>
+			<apn value="aircelmms">
+				<usage type="mms"/>
+				<name>Aircel MMS</name>
+				<mmsc>http://mmsc/mmrelay.app</mmsc>
+				<mmsproxy>192.168.35.196:8081</mmsproxy>
 			</apn>
 		</gsm>
 	</provider>
@@ -5353,6 +6334,12 @@ conceived.
 				<dns>218.248.240.208</dns>
 				<dns>218.248.240.135</dns>
 			</apn>
+			<apn value="bsnlmms">
+				<usage type="mms"/>
+				<name>BSNL MMS</name>
+				<mmsc>http://bsnlmmsc.in:8514</mmsc>
+				<mmsproxy>10.210.10.11:8080</mmsproxy>
+			</apn>
 		</gsm>
 	</provider>
 	<provider>
@@ -5376,6 +6363,18 @@ conceived.
 			<apn value="internet">
 				<plan type="postpaid"/>
 				<usage type="internet"/>
+			</apn>
+			<apn value="mms">
+				<usage type="mms"/>
+				<name>MMS Idea GPRS</name>
+				<mmsc>http://mms.idea.pl</mmsc>
+				<mmsproxy>192.168.6.104:8080</mmsproxy>
+			</apn>
+			<apn value="mmsc">
+				<usage type="mms"/>
+				<name>Idea MMS</name>
+				<mmsc>http://10.4.42.21:8002</mmsc>
+				<mmsproxy>10.4.42.15:8080</mmsproxy>
 			</apn>
 		</gsm>
 	</provider>
@@ -5415,6 +6414,12 @@ conceived.
 				<username>mtnl</username>
 				<password>mtnl123</password>
 			</apn>
+			<apn value="mmsmtnldel">
+				<usage type="mms"/>
+				<name>MTNL MMS</name>
+				<mmsc>http://172.16.31.136/mms/</mmsc>
+				<mmsproxy>172.16.31.136:9401</mmsproxy>
+			</apn>
 		</gsm>
 	</provider>
 	<provider>
@@ -5442,6 +6447,18 @@ conceived.
 				<plan type="postpaid"/>
 				<usage type="internet"/>
 				<name>Netconnect (RCOMNET)</name>
+			</apn>
+			<apn value="mms">
+				<usage type="mms"/>
+				<name>RMMS</name>
+				<mmsc>http://10.239.221.47/mms/</mmsc>
+				<mmsproxy>10.239.221.7:8080</mmsproxy>
+			</apn>
+			<apn value="rcommms">
+				<usage type="mms"/>
+				<name>Reliance MMS</name>
+				<mmsc>http://mmsc.rcom.co.in/mms/</mmsc>
+				<mmsproxy>10.239.221.5:8080</mmsproxy>
 			</apn>
 		</gsm>
 		<cdma>
@@ -5486,6 +6503,12 @@ conceived.
 				<usage type="internet"/>
 				<name>kar</name>
 			</apn>
+			<apn value="mmsc">
+				<usage type="mms"/>
+				<name>Idea MMS</name>
+				<mmsc>http://10.4.42.21:8002/</mmsc>
+				<mmsproxy>10.4.42.15:8080</mmsproxy>
+			</apn>
 		</gsm>
 	</provider>
 	<provider>
@@ -5521,6 +6544,12 @@ conceived.
 				<plan type="postpaid"/>
 				<usage type="internet"/>
 				<name>Internet</name>
+			</apn>
+			<apn value="TATA.DOCOMO.MMS">
+				<usage type="mms"/>
+				<name>TATA DOCOMO MMS</name>
+				<mmsc>http://mmsc/</mmsc>
+				<mmsproxy>10.124.26.94:8799</mmsproxy>
 			</apn>
 		</gsm>
 	</provider>
@@ -5593,6 +6622,12 @@ conceived.
 				<plan type="postpaid"/>
 				<usage type="internet"/>
 			</apn>
+			<apn value="mtnirancell">
+				<usage type="mms"/>
+				<name>Irancell-MMS</name>
+				<mmsc>http://mms:8002</mmsc>
+				<mmsproxy>10.131.26.138:9200</mmsproxy>
+			</apn>
 		</gsm>
 	</provider>
 </country>
@@ -5646,6 +6681,12 @@ conceived.
 				<dns>192.168.190.54</dns>
 				<dns>192.168.190.55</dns>
 			</apn>
+			<apn value="mms.nova.is">
+				<usage type="mms"/>
+				<name>Nova MMS</name>
+				<mmsc>http://mmsc.nova.is</mmsc>
+				<mmsproxy>10.10.2.60:8080</mmsproxy>
+			</apn>
 		</gsm>
 	</provider>
 	<provider>
@@ -5657,6 +6698,12 @@ conceived.
 				<usage type="internet"/>
 				<dns>194.105.224.1</dns>
 				<dns>212.30.200.200</dns>
+			</apn>
+			<apn value="mms.simi.is">
+				<usage type="mms"/>
+				<name>Siminn MMS</name>
+				<mmsc>http://mms.simi.is/servlets/mms</mmsc>
+				<mmsproxy>213.167.138.200:9201</mmsproxy>
 			</apn>
 		</gsm>
 	</provider>
@@ -5725,6 +6772,12 @@ conceived.
 				<dns>193.70.152.25</dns>
 				<dns>193.70.192.25</dns>
 			</apn>
+			<apn value="mms.wind">
+				<usage type="mms"/>
+				<name>WIND MMS</name>
+				<mmsc>http://mms.wind.it</mmsc>
+				<mmsproxy>212.245.244.100:8080</mmsproxy>
+			</apn>
 		</gsm>
 	</provider>
 	<provider primary="true">
@@ -5761,6 +6814,12 @@ conceived.
 				<dns>213.140.2.43</dns>
 				<dns>213.140.2.49</dns>
 			</apn>
+			<apn value="tre.it">
+				<usage type="mms"/>
+				<name>3 MMS</name>
+				<mmsc>http://10.216.59.240:10021/mmsc</mmsc>
+				<mmsproxy>wsb.treumts.it:8799</mmsproxy>
+			</apn>
 		</gsm>
 	</provider>
 	<provider>
@@ -5770,6 +6829,12 @@ conceived.
 			<apn value="internet.postemobile.it">
 				<plan type="postpaid"/>
 				<usage type="internet"/>
+			</apn>
+			<apn value="mms.postemobile.it">
+				<usage type="mms"/>
+				<name>PosteMobile MMS</name>
+				<mmsc>http://mms.postemobile.it/servlets/mms</mmsc>
+				<mmsproxy>10.128.224.10:80</mmsproxy>
 			</apn>
 		</gsm>
 	</provider>
@@ -5794,6 +6859,42 @@ conceived.
 				<plan type="prepaid"/>
 				<usage type="internet"/>
 				<name>Megabip Internet</name>
+			</apn>
+		</gsm>
+	</provider>
+	<provider primary="true">
+		<!-- Full MVNO with an own MNC code -->
+		<name>Nòverca</name>
+		<gsm>
+			<network-id mcc="222" mnc="07"/>
+			<apn value="web.noverca.it">
+				<plan type="prepaid"/>
+				<usage type="internet"/>
+				<name>Noverca WEB</name>
+			</apn>
+			<apn value="mms.noverca.it">
+				<usage type="mms"/>
+				<name>Noverca MMS</name>
+				<mmsc>http://mms.noverca.it/</mmsc>
+				<mmsproxy>10.248.1.12:80</mmsproxy>
+			</apn>
+			<apn value="wap.noverca.it">
+				<plan type="postpaid"/>
+				<usage type="wap"/>
+				<name>Noverca WAP</name>
+				<gateway>10.248.1.12:80</gateway>
+			</apn>
+		</gsm>
+	</provider>
+	<provider>
+		<!-- MVNO operating on TIM's network -->
+		<name>Tiscali</name>
+		<gsm>
+			<network-id mcc="222" mnc="01"/>
+			<apn value="tiscalimobileinternet">
+				<plan type="prepaid"/>
+				<usage type="internet"/>
+				<name>Tiscali Internet</name>
 			</apn>
 		</gsm>
 	</provider>
@@ -5896,6 +6997,12 @@ conceived.
 				<name>Mobile Broadband</name>
 				<username>Zain</username>
 				<password>Zain</password>
+			</apn>
+			<apn value="Zain">
+				<usage type="mms"/>
+				<name>Zain-MMS</name>
+				<mmsc>http://10.122.200.12:8002</mmsc>
+				<mmsproxy>10.122.200.10:8080</mmsproxy>
 			</apn>
 		</gsm>
 	</provider>
@@ -6043,6 +7150,11 @@ conceived.
 				<plan type="postpaid"/>
 				<usage type="internet"/>
 			</apn>
+			<apn value="mms.yu.co.ke">
+				<usage type="mms"/>
+				<name>YU mms</name>
+				<mmsc>http://mms.yu.co.ke</mmsc>
+			</apn>
 		</gsm>
 	</provider>
 	<provider>
@@ -6068,6 +7180,14 @@ conceived.
 				<usage type="internet"/>
 				<username>web</username>
 				<password>web</password>
+			</apn>
+			<apn value="mms.safaricom.com">
+				<usage type="mms"/>
+				<name>Safaricom MMS</name>
+				<username>saf</username>
+				<password>data</password>
+				<mmsc>http://mms.gprs.safaricom.com</mmsc>
+				<mmsproxy>172.22.2.38:8080</mmsproxy>
 			</apn>
 		</gsm>
 	</provider>
@@ -6102,6 +7222,9 @@ conceived.
 		<name>Beeline</name>
 		<gsm>
 			<network-id mcc="437" mnc="01"/>
+			<balance-check>
+				<ussd>*102#</ussd>
+			</balance-check>
 			<apn value="internet.beeline.kg">
 				<plan type="postpaid"/>
 				<usage type="internet"/>
@@ -6112,6 +7235,9 @@ conceived.
 		<name>MegaCom</name>
 		<gsm>
 			<network-id mcc="437" mnc="05"/>
+			<balance-check>
+				<ussd>*500#</ussd>
+			</balance-check>
 			<apn value="internet">
 				<plan type="postpaid"/>
 				<usage type="internet"/>
@@ -6122,6 +7248,9 @@ conceived.
 		<name>O!</name>
 		<gsm>
 			<network-id mcc="437" mnc="09"/>
+			<balance-check>
+				<ussd>*100#</ussd>
+			</balance-check>
 			<apn value="internet">
 				<plan type="postpaid"/>
 				<usage type="internet"/>
@@ -6170,6 +7299,22 @@ conceived.
 				<username>mobitel</username>
 				<password>mobitel</password>
 			</apn>
+			<apn value="internet">
+				<usage type="mms"/>
+				<name>Mobitel MMS</name>
+				<username>mobitel</username>
+				<password>internet</password>
+				<mmsc>http://mms.mobitel.si/servlets/mms</mmsc>
+				<mmsproxy>213.229.249.40:8080</mmsproxy>
+			</apn>
+			<apn value="mms">
+				<usage type="mms"/>
+				<name>GPRS MMS</name>
+				<username>mobitel</username>
+				<password>mobitel</password>
+				<mmsc>http://mms.mobitel.com.kh/mmsc</mmsc>
+				<mmsproxy>203.144.95.98:3130</mmsproxy>
+			</apn>
 		</gsm>
 	</provider>
 	<provider>
@@ -6185,6 +7330,12 @@ conceived.
 			<!-- in reality any APN value works -->
 			<apn value="hellowww">
 				<usage type="internet"/>
+			</apn>
+			<apn value="hellomms">
+				<usage type="mms"/>
+				<name>Hellow MMS</name>
+				<mmsc>http://mms.iq2mobile.com</mmsc>
+				<mmsproxy>192.168.205.20:8088</mmsproxy>
 			</apn>
 		</gsm>
 	</provider>
@@ -6314,6 +7465,12 @@ conceived.
 				<plan type="postpaid"/>
 				<usage type="internet"/>
 			</apn>
+			<apn value="mms.sktelecom.com">
+				<usage type="mms"/>
+				<name>SKT MMS</name>
+				<mmsc>http://omms.nate.com:9082/oma_mms</mmsc>
+				<mmsproxy>smart.nate.com:9093</mmsproxy>
+			</apn>
 		</gsm>
 		<cdma>
 			<!-- cid: 1501 -->
@@ -6350,6 +7507,12 @@ conceived.
 				<plan type="postpaid"/>
 				<usage type="internet"/>
 			</apn>
+			<apn value="mms.wataniya.com">
+				<usage type="mms"/>
+				<name>MMS Action</name>
+				<mmsc>http://action.wataniya.com</mmsc>
+				<mmsproxy>194.126.53.64:8080</mmsproxy>
+			</apn>
 		</gsm>
 	</provider>
 	<provider>
@@ -6359,6 +7522,12 @@ conceived.
 			<apn value="viva">
 				<plan type="postpaid"/>
 				<usage type="internet"/>
+			</apn>
+			<apn value="viva">
+				<usage type="mms"/>
+				<name>MMS</name>
+				<mmsc>http://172.16.128.80:38090/was</mmsc>
+				<mmsproxy>172.16.128.228:8080</mmsproxy>
 			</apn>
 		</gsm>
 	</provider>
@@ -6380,12 +7549,18 @@ conceived.
 		</gsm>
 	</provider>
 	<provider>
-		<name>K'CELL</name>
+		<name>K&apos;CELL</name>
 		<gsm>
 			<network-id mcc="401" mnc="02"/>
 			<apn value="internet">
 				<plan type="postpaid"/>
 				<usage type="internet"/>
+			</apn>
+			<apn value="mms">
+				<usage type="mms"/>
+				<name>kcell mms</name>
+				<mmsc>http://192.168.75.10:6001/MM1Servlet</mmsc>
+				<mmsproxy>195.47.255.15:8080</mmsproxy>
 			</apn>
 		</gsm>
 	</provider>
@@ -6490,6 +7665,13 @@ conceived.
 				<plan type="postpaid"/>
 				<usage type="internet"/>
 			</apn>
+			<apn value="mms.mtctouch.com.lb">
+				<usage type="mms"/>
+				<name>mtctouch MMS</name>
+				<username>mtctouch</username>
+				<mmsc>http://mms:8088/mms/</mmsc>
+				<mmsproxy>192.168.4.103:8080</mmsproxy>
+			</apn>
 		</gsm>
 	</provider>
 </country>
@@ -6503,6 +7685,12 @@ conceived.
 			<apn value="internet">
 				<plan type="postpaid"/>
 				<usage type="internet"/>
+			</apn>
+			<apn value="multimedia">
+				<usage type="mms"/>
+				<name>MMS Postpaid</name>
+				<mmsc>http://mmsc</mmsc>
+				<mmsproxy>10.20.5.34:8799</mmsproxy>
 			</apn>
 		</gsm>
 	</provider>
@@ -6543,6 +7731,18 @@ conceived.
 				<plan type="prepaid"/>
 				<usage type="internet"/>
 				<name>Prepaid (Kitbb)</name>
+			</apn>
+			<apn value="www.dialogsl.com">
+				<usage type="mms"/>
+				<name>Dialog - Go MMS</name>
+				<mmsc>http://192.168.122.130:3130/mmsc</mmsc>
+				<mmsproxy>192.168.122.2:8080</mmsproxy>
+			</apn>
+			<apn value="ppwap">
+				<usage type="mms"/>
+				<name>Go MMS for KIT</name>
+				<mmsc>http://mms.dialog.lk:3130/mmsc</mmsc>
+				<mmsproxy>192.168.122.2:8080</mmsproxy>
 			</apn>
 		</gsm>
 	</provider>
@@ -6604,6 +7804,14 @@ conceived.
 				<dns>213.226.131.131</dns>
 				<dns>193.219.88.36</dns>
 			</apn>
+			<apn value="mms">
+				<usage type="mms"/>
+				<name>BITE mms</name>
+				<username>mms@mms</username>
+				<password>mms</password>
+				<mmsc>http://mmsc/servlets/mms</mmsc>
+				<mmsproxy>192.168.150.2:8080</mmsproxy>
+			</apn>
 		</gsm>
 	</provider>
 	<provider>
@@ -6613,6 +7821,22 @@ conceived.
 			<apn value="internet.tele2.lt">
 				<plan type="postpaid"/>
 				<usage type="internet"/>
+			</apn>
+			<apn value="mms.tele2.lt">
+				<usage type="mms"/>
+				<name>Tele2 MMS</name>
+				<username>wap</username>
+				<password>wap</password>
+				<mmsc>http://mmsc.tele2.lt</mmsc>
+				<mmsproxy>193.12.40.29:8080</mmsproxy>
+			</apn>
+			<apn value="mms.tele2.lv">
+				<usage type="mms"/>
+				<name>Tele2 MMS</name>
+				<username>wap</username>
+				<password>wap</password>
+				<mmsc>http://mmsc.tele2.lv</mmsc>
+				<mmsproxy>193.12.40.38:8080</mmsproxy>
 			</apn>
 		</gsm>
 	</provider>
@@ -6636,6 +7860,14 @@ conceived.
 				<dns>194.176.32.129</dns>
 				<dns>195.22.175.1</dns>
 			</apn>
+			<apn value="gprs.mms.lt">
+				<usage type="mms"/>
+				<name>Omnitel MMS</name>
+				<username>mms</username>
+				<password>mms</password>
+				<mmsc>http://mms.omnitel.net:8002/</mmsc>
+				<mmsproxy>194.176.32.149:8080</mmsproxy>
+			</apn>
 		</gsm>
 	</provider>
 </country>
@@ -6651,6 +7883,14 @@ conceived.
 				<usage type="internet"/>
 				<dns>194.154.192.101</dns>
 				<dns>194.154.192.102</dns>
+			</apn>
+			<apn value="mms.pt.lu">
+				<usage type="mms"/>
+				<name>Luxgsm MMS</name>
+				<username>mms</username>
+				<password>mms</password>
+				<mmsc>http://mmsc.pt.lu</mmsc>
+				<mmsproxy>194.154.192.88:8080</mmsproxy>
 			</apn>
 		</gsm>
 	</provider>
@@ -6674,6 +7914,20 @@ conceived.
 				<dns>212.66.70.3</dns>
 				<dns>212.66.75.7</dns>
 			</apn>
+			<apn value="mms">
+				<usage type="mms"/>
+				<name>Tango MMS</name>
+				<username>tango</username>
+				<password>tango</password>
+				<mmsc>http://mms.tango.lu/</mmsc>
+				<mmsproxy>212.66.75.3:8080</mmsproxy>
+			</apn>
+			<apn value="mms.li">
+				<usage type="mms"/>
+				<name>Tango MMS</name>
+				<mmsc>mms.tele2.li</mmsc>
+				<mmsproxy>212.66.75.9:8080</mmsproxy>
+			</apn>
 		</gsm>
 	</provider>
 	<provider>
@@ -6695,6 +7949,12 @@ conceived.
 			<apn value="vox.lu">
 				<plan type="postpaid"/>
 				<usage type="internet"/>
+			</apn>
+			<apn value="vox.lu">
+				<usage type="mms"/>
+				<name>VOX mms GPRS</name>
+				<mmsc>http://mms.vox.lu</mmsc>
+				<mmsproxy>proxy.vox.lu:8080</mmsproxy>
 			</apn>
 		</gsm>
 	</provider>
@@ -6721,6 +7981,13 @@ conceived.
 				<plan type="postpaid"/>
 				<usage type="internet"/>
 				<name>O!Karte</name>
+			</apn>
+			<apn value="mms.lmt.lv">
+				<usage type="mms"/>
+				<name>LMT MMS</name>
+				<username>lmt</username>
+				<password>lmt</password>
+				<mmsc>http://mmsc.lmt.lv/mmsc</mmsc>
 			</apn>
 		</gsm>
 	</provider>
@@ -6785,6 +8052,12 @@ conceived.
 				<usage type="internet"/>
 				<name>Pre-payé</name>
 			</apn>
+			<apn value="Mmsiam">
+				<usage type="mms"/>
+				<name>MMSIAM</name>
+				<mmsc>http://mms:8002/</mmsc>
+				<mmsproxy>10.16.35.50:8080</mmsproxy>
+			</apn>
 		</gsm>
 	</provider>
 	<provider>
@@ -6805,6 +8078,14 @@ conceived.
 				<username>MEDINET</username>
 				<password>MEDINET</password>
 			</apn>
+			<apn value="mms.meditel.ma">
+				<usage type="mms"/>
+				<name>GPRS MMS</name>
+				<username>MEDIMMS</username>
+				<password>MEDIMMS</password>
+				<mmsc>http://mms.meditel.ma:8088/mms</mmsc>
+				<mmsproxy>10.8.8.9:8080</mmsproxy>
+			</apn>
 		</gsm>
 	</provider>
 	<provider>
@@ -6815,6 +8096,12 @@ conceived.
 				<plan type="postpaid"/>
 				<usage type="internet"/>
 				<name>INWI</name>
+			</apn>
+			<apn value="mms.wana.ma">
+				<usage type="mms"/>
+				<name>MMS</name>
+				<mmsc>http://mms.wana.ma:38090</mmsc>
+				<mmsproxy>10.86.0.10:8080</mmsproxy>
 			</apn>
 		</gsm>
 	</provider>
@@ -6832,6 +8119,12 @@ conceived.
 				<name>Internet</name>
 				<username>gprs</username>
 				<password>gprs</password>
+			</apn>
+			<apn value="mms">
+				<usage type="mms"/>
+				<name>Moldcell MMS</name>
+				<mmsc>http://mms.moldcell.md/cmmsc/post</mmsc>
+				<mmsproxy>10.0.10.10:9401</mmsproxy>
 			</apn>
 		</gsm>
 	</provider>
@@ -6880,6 +8173,14 @@ conceived.
 				<plan type="postpaid"/>
 				<usage type="internet"/>
 			</apn>
+			<apn value="mms.promonte.com">
+				<usage type="mms"/>
+				<name>ProMMS</name>
+				<username>mms</username>
+				<password>mms</password>
+				<mmsc>http://mm.vor.promonte.com</mmsc>
+				<mmsproxy>192.168.246.5:8080</mmsproxy>
+			</apn>
 		</gsm>
 	</provider>
 	<provider>
@@ -6919,6 +8220,14 @@ conceived.
 			<apn value="gprsinternet">
 				<plan type="postpaid"/>
 				<usage type="internet"/>
+			</apn>
+			<apn value="mtelmms">
+				<usage type="mms"/>
+				<name>mtelmms</name>
+				<username>mms</username>
+				<password>068</password>
+				<mmsc>http://mmsmtel.com/mms/wapenc</mmsc>
+				<mmsproxy>172.17.85.131:8080</mmsproxy>
 			</apn>
 		</gsm>
 	</provider>
@@ -7029,6 +8338,12 @@ conceived.
 				<plan type="postpaid"/>
 				<usage type="internet"/>
 			</apn>
+			<apn value="mms">
+				<usage type="mms"/>
+				<name>MMS MobiCom</name>
+				<mmsc>http://mms</mmsc>
+				<mmsproxy>10.10.10.10:8080</mmsproxy>
+			</apn>
 		</gsm>
 	</provider>
 </country>
@@ -7046,6 +8361,14 @@ conceived.
 				<username>hutchison</username>
 				<password>1234</password>
 			</apn>
+			<apn value="mms.hutchisonmacau.com">
+				<usage type="mms"/>
+				<name>HutchisonMMS</name>
+				<username>hutchison</username>
+				<password>1234</password>
+				<mmsc>http://10.30.15.51:10021/mmsc</mmsc>
+				<mmsproxy>10.30.15.53:8080</mmsproxy>
+			</apn>
 		</gsm>
 	</provider>
 	<provider>
@@ -7056,6 +8379,12 @@ conceived.
 			<apn value="ctm-mobile">
 				<plan type="postpaid"/>
 				<usage type="internet"/>
+			</apn>
+			<apn value="ctmmms">
+				<usage type="mms"/>
+				<name>CTMMMS</name>
+				<mmsc>http://mms.wap.ctm.net:8002</mmsc>
+				<mmsproxy>192.168.99.3:8080</mmsproxy>
 			</apn>
 		</gsm>
 	</provider>
@@ -7088,6 +8417,12 @@ conceived.
 				<usage type="internet"/>
 				<name>Internet</name>
 			</apn>
+			<apn value="mms">
+				<usage type="mms"/>
+				<name>Cosmofon MMS</name>
+				<mmsc>http://195.167.65.220:8002</mmsc>
+				<mmsproxy>10.10.10.20:8080</mmsproxy>
+			</apn>
 		</gsm>
 	</provider>
 	<provider>
@@ -7119,6 +8454,12 @@ conceived.
 				<plan type="prepaid"/>
 				<usage type="internet"/>
 				<name>Prepaid</name>
+			</apn>
+			<apn value="gomms">
+				<usage type="mms"/>
+				<name>go mms</name>
+				<mmsc>http://mmsc</mmsc>
+				<mmsproxy>10.20.20.129:8080</mmsproxy>
 			</apn>
 		</gsm>
 	</provider>
@@ -7161,6 +8502,12 @@ conceived.
 			<apn value="internet.dhimobile">
 				<plan type="postpaid"/>
 				<usage type="internet"/>
+			</apn>
+			<apn value="mms.dhimobile">
+				<usage type="mms"/>
+				<name>DhiMMS</name>
+				<mmsc>http://mmsc.dhimobile.com.mv</mmsc>
+				<mmsproxy>172.24.97.4:8080</mmsproxy>
 			</apn>
 		</gsm>
 	</provider>
@@ -7208,6 +8555,14 @@ conceived.
 				<username>webgprs</username>
 				<password>webgprs2002</password>
 			</apn>
+			<apn value="mms.itelcel.com">
+				<usage type="mms"/>
+				<name>Mensajes Multimedia</name>
+				<username>mmsgprs</username>
+				<password>mmsgprs2003</password>
+				<mmsc>http://mms.itelcel.com/servlets/mms</mmsc>
+				<mmsproxy>148.233.151.240:8080</mmsproxy>
+			</apn>
 		</gsm>
 	</provider>
 	<provider>
@@ -7252,6 +8607,12 @@ conceived.
 				<usage type="internet"/>
 				<name>Broadband</name>
 			</apn>
+			<apn value="digimms">
+				<usage type="mms"/>
+				<name>DiGi MMS</name>
+				<mmsc>http://mms.digi.com.my/servlets/mms</mmsc>
+				<mmsproxy>203.92.128.160:80</mmsproxy>
+			</apn>
 		</gsm>
 	</provider>
 	<provider>
@@ -7282,6 +8643,14 @@ conceived.
 				<dns>10.213.17.1</dns>
 				<dns>10.213.17.2</dns>
 			</apn>
+			<apn value="unet">
+				<usage type="mms"/>
+				<name>Maxis 3G MMS</name>
+				<username>maxis</username>
+				<password>wap</password>
+				<mmsc>http://172.16.74.100:10021/mmsc</mmsc>
+				<mmsproxy>202.75.133.49:80</mmsproxy>
+			</apn>
 		</gsm>
 	</provider>
 	<provider>
@@ -7301,6 +8670,12 @@ conceived.
 				<usage type="internet"/>
 				<name>Celcom 3G</name>
 			</apn>
+			<apn value="celcom3g">
+				<usage type="mms"/>
+				<name>Celcom 3G MMS</name>
+				<mmsc>http://mms.celcom.net.my</mmsc>
+				<mmsproxy>10.128.1.242:8080</mmsproxy>
+			</apn>
 		</gsm>
 	</provider>
 </country>
@@ -7318,6 +8693,12 @@ conceived.
 				<password>guest</password>
 				<dns>212.96.24.2</dns>
 				<dns>212.96.24.1</dns>
+			</apn>
+			<apn value="mms.mcel.mz">
+				<usage type="mms"/>
+				<name>mCel MMS</name>
+				<mmsc>http://mcelmms</mmsc>
+				<mmsproxy>10.1.4.35:8080</mmsproxy>
 			</apn>
 		</gsm>
 	</provider>
@@ -7369,6 +8750,14 @@ conceived.
 				<plan type="postpaid"/>
 				<usage type="internet"/>
 				<name>Leo</name>
+			</apn>
+			<apn value="mms">
+				<usage type="mms"/>
+				<name>Cell One MMS</name>
+				<username>cellone</username>
+				<password>cellone</password>
+				<mmsc>mms.cellone.com.na</mmsc>
+				<mmsproxy>41.223.80.10:8080</mmsproxy>
 			</apn>
 		</gsm>
 	</provider>
@@ -7542,6 +8931,12 @@ conceived.
 				<plan type="postpaid"/>
 				<usage type="internet"/>
 			</apn>
+			<apn value="portalmmm.nl">
+				<usage type="mms"/>
+				<name>KPN MMS</name>
+				<mmsc>http://mp.mobiel.kpn/mmsc</mmsc>
+				<mmsproxy>10.10.100.20:5080</mmsproxy>
+			</apn>
 		</gsm>
 	</provider>
 	<provider>
@@ -7551,6 +8946,12 @@ conceived.
 			<apn value="multimedia.lebara.nl">
 				<plan type="prepaid"/>
 				<usage type="internet"/>
+			</apn>
+			<apn value="internet">
+				<usage type="mms"/>
+				<name>Telfort MMS</name>
+				<mmsc>http://mms</mmsc>
+				<mmsproxy>193.113.200.195:8080</mmsproxy>
 			</apn>
 		</gsm>
 	</provider>
@@ -7570,11 +8971,11 @@ conceived.
 		<name>KPN NL</name>
 		<gsm>
 			<network-id mcc="204" mnc="08"/>
-			<apn value="prepaidinternet" >
+			<apn value="prepaidinternet">
 				<plan type="postpaid"/>
 				<usage type="internet"/>
 			</apn>
-			<apn value="fastinternet" >
+			<apn value="fastinternet">
 				<plan type="postpaid"/>
 				<usage type="internet"/>
 			</apn>
@@ -7626,6 +9027,12 @@ conceived.
 				<usage type="internet"/>
 				<dns>193.78.240.12</dns>
 				<dns>193.79.242.39</dns>
+			</apn>
+			<apn value="mms.ben">
+				<usage type="mms"/>
+				<name>Ben MMS</name>
+				<mmsc>http://benmms</mmsc>
+				<mmsproxy>10.10.10.11:8080</mmsproxy>
 			</apn>
 		</gsm>
 	</provider>
@@ -7697,6 +9104,13 @@ conceived.
 				<username>vodafone</username>
 				<password>vodafone</password>
 			</apn>
+			<apn value="m2m.global.vodafone.nl">
+				<usage type="internet"/>
+				<name>M2M</name>
+				<username>web</username>
+				<password>web</password>
+				<authentication method="pap"/>
+			</apn>
 		</gsm>
 	</provider>
 	<provider>
@@ -7731,6 +9145,14 @@ conceived.
 				<dns>212.169.123.67</dns>
 				<dns>212.45.188.254</dns>
 			</apn>
+			<apn value="mms.netcom.no">
+				<usage type="mms"/>
+				<name>NetCom mms</name>
+				<username>mms</username>
+				<password>netcom</password>
+				<mmsc>http://mms/</mmsc>
+				<mmsproxy>212.169.66.4:8080</mmsproxy>
+			</apn>
 		</gsm>
 	</provider>
 	<provider>
@@ -7743,6 +9165,14 @@ conceived.
 				<usage type="internet"/>
 				<username>chess</username>
 				<password>chess</password>
+			</apn>
+			<apn value="mms.netcom.no">
+				<usage type="mms"/>
+				<name>Chess MMS</name>
+				<username>chess</username>
+				<password>chess</password>
+				<mmsc>http://mms/</mmsc>
+				<mmsproxy>212.169.66.4:8080</mmsproxy>
 			</apn>
 		</gsm>
 	</provider>
@@ -7770,6 +9200,14 @@ conceived.
 				<dns>212.17.131.3</dns>
 				<dns>148.122.161.2</dns>
 			</apn>
+			<apn value="mms.ventelo.no">
+				<usage type="mms"/>
+				<name>Ventelo MMS</name>
+				<username>ventelo</username>
+				<password>1111</password>
+				<mmsc>http://mmsc/</mmsc>
+				<mmsproxy>10.10.10.11:8080</mmsproxy>
+			</apn>
 		</gsm>
 	</provider>
 	<provider>
@@ -7790,6 +9228,12 @@ conceived.
 			<network-id mcc="242" mnc="05"/>
 			<apn value="internet">
 				<usage type="internet"/>
+			</apn>
+			<apn value="mms">
+				<usage type="mms"/>
+				<name>NWN MMS</name>
+				<mmsc>http://mms.nwn.no</mmsc>
+				<mmsproxy>89.254.65.20:80</mmsproxy>
 			</apn>
 		</gsm>
 	</provider>
@@ -7932,6 +9376,12 @@ conceived.
 				<usage type="internet"/>
 				<name>XT mobile (One Office/Remote Office)</name>
 			</apn>
+			<apn value="wap.telecom.co.nz">
+				<usage type="mms"/>
+				<name>TelecomMMS</name>
+				<mmsc>http://lsmmsc.xtra.co.nz</mmsc>
+				<mmsproxy>210.55.11.73:8080</mmsproxy>
+			</apn>
 		</gsm>
 	</provider>
 	<provider>
@@ -7975,6 +9425,12 @@ conceived.
 				<dns>118.148.1.10</dns>
 				<dns>118.148.1.20</dns>
 			</apn>
+			<apn value="mms">
+				<usage type="mms"/>
+				<name>mms</name>
+				<mmsc>http://mms.2degrees.net.nz:48090</mmsc>
+				<mmsproxy>118.148.1.118:8080</mmsproxy>
+			</apn>
 		</gsm>
 	</provider>
 	<provider>
@@ -8017,6 +9473,13 @@ conceived.
 				<usage type="internet"/>
 				<name>Internet (old)</name>
 			</apn>
+			<apn value="MMS">
+				<usage type="mms"/>
+				<name>Oman Mobile MMS</name>
+				<username>MMS</username>
+				<password>MMS</password>
+				<mmsproxy>192.168.203.35:8080</mmsproxy>
+			</apn>
 		</gsm>
 	</provider>
 	<provider>
@@ -8026,6 +9489,14 @@ conceived.
 			<apn value="isp.nawras.com.om">
 				<plan type="postpaid"/>
 				<usage type="internet"/>
+			</apn>
+			<apn value="mms.nawras.com.om">
+				<usage type="mms"/>
+				<name>Nawras MMS</name>
+				<username>test</username>
+				<password>test</password>
+				<mmsc>http://10.128.240.16/servlets/mms</mmsc>
+				<mmsproxy>10.128.240.19:8080</mmsproxy>
 			</apn>
 		</gsm>
 	</provider>
@@ -8040,6 +9511,12 @@ conceived.
 			<apn value="apn01.cwpanama.com.pa">
 				<plan type="postpaid"/>
 				<usage type="internet"/>
+			</apn>
+			<apn value="apn02.cwpanama.com.pa">
+				<usage type="mms"/>
+				<name>MMS</name>
+				<mmsc>http://mms.zonamovil.com.pa</mmsc>
+				<mmsproxy>172.25.3.5:8080</mmsproxy>
 			</apn>
 		</gsm>
 	</provider>
@@ -8100,6 +9577,12 @@ conceived.
 				<plan type="postpaid"/>
 				<usage type="internet"/>
 			</apn>
+			<apn value="mms">
+				<usage type="mms"/>
+				<name>Vini MMS</name>
+				<mmsc>http://mms.vini.pf/mmsc</mmsc>
+				<mmsproxy>172.20.10.16:9201</mmsproxy>
+			</apn>
 		</gsm>
 	</provider>
 </country>
@@ -8113,6 +9596,23 @@ conceived.
 			<apn value="internet">
 				<plan type="postpaid"/>
 				<usage type="internet"/>
+			</apn>
+		</gsm>
+	</provider>
+</country>
+
+<!-- Papua New Guinea -->
+<country code="pg">
+	<provider>
+		<name>Digicel</name>
+		<gsm>
+			<network-id mcc="537" mnc="03"/>
+			<apn value="internet.digicelpng.com">
+				<plan type="prepaid"/>
+				<usage type="internet"/>
+				<name>Prepaid</name>
+				<dns>10.149.64.77</dns>
+				<dns>8.8.8.8</dns>
 			</apn>
 		</gsm>
 	</provider>
@@ -8151,6 +9651,12 @@ conceived.
 				<dns>203.127.225.10</dns>
 				<dns>203.127.225.11</dns>
 			</apn>
+			<apn value="mms.globe.com.ph">
+				<usage type="mms"/>
+				<name>myGlobe MMS</name>
+				<mmsc>http://192.40.100.22:10021/mmsc</mmsc>
+				<mmsproxy>192.40.100.20:8080</mmsproxy>
+			</apn>
 		</gsm>
 	</provider>
 	<provider>
@@ -8165,6 +9671,12 @@ conceived.
 				<dns>202.57.96.3</dns>
 				<dns>202.57.96.4</dns>
 			</apn>
+			<apn value="mms">
+				<usage type="mms"/>
+				<name>SmartMMS</name>
+				<mmsc>http://10.102.61.238:8002</mmsc>
+				<mmsproxy>10.102.61.46:8080</mmsproxy>
+			</apn>
 		</gsm>
 	</provider>
 	<provider>
@@ -8174,6 +9686,12 @@ conceived.
 			<apn value="minternet">
 				<plan type="postpaid"/>
 				<usage type="internet"/>
+			</apn>
+			<apn value="mms">
+				<usage type="mms"/>
+				<name>Sun MMS</name>
+				<mmsc>http://mmscenter.suncellular.com.ph</mmsc>
+				<mmsproxy>202.138.159.78:8080</mmsproxy>
 			</apn>
 		</gsm>
 	</provider>
@@ -8231,6 +9749,14 @@ conceived.
 				<username>ufone</username>
 				<password>ufone</password>
 			</apn>
+			<apn value="ufone.mms">
+				<usage type="mms"/>
+				<name>Ufone MMS</name>
+				<username>ufone</username>
+				<password>ufone</password>
+				<mmsc>http://www.ufonemms.com:80</mmsc>
+				<mmsproxy>172.16.13.27:8080</mmsproxy>
+			</apn>
 		</gsm>
 	</provider>
 	<provider>
@@ -8240,6 +9766,12 @@ conceived.
 			<apn value="warid">
 				<plan type="postpaid"/>
 				<usage type="internet"/>
+			</apn>
+			<apn value="zongmms">
+				<usage type="mms"/>
+				<name>ZONG MMS</name>
+				<mmsc>http://10.81.6.11:8080</mmsc>
+				<mmsproxy>10.81.6.33:8000</mmsproxy>
 			</apn>
 		</gsm>
 	</provider>
@@ -8287,6 +9819,12 @@ conceived.
 				<dns>213.158.194.1</dns>
 				<dns>213.158.193.38</dns>
 			</apn>
+			<apn value="mms">
+				<usage type="mms"/>
+				<name>T-Mobile.pl MMS</name>
+				<mmsc>http://mms/servlets/mms</mmsc>
+				<mmsproxy>213.158.194.226:8080</mmsproxy>
+			</apn>
 		</gsm>
 	</provider>
 	<provider primary="true">
@@ -8304,6 +9842,12 @@ conceived.
 				<plan type="postpaid"/>
 				<plan type="prepaid"/>
 				<usage type="internet"/>
+			</apn>
+			<apn value="mms">
+				<usage type="mms"/>
+				<name>MMS</name>
+				<mmsc>http://10.10.28.164/mms/wapenc</mmsc>
+				<mmsproxy>10.10.25.5:8080</mmsproxy>
 			</apn>
 		</gsm>
 	</provider>
@@ -8395,6 +9939,12 @@ conceived.
 				<name xml:lang="pl">iPlus optimizer z kompresją danych</name>
 				<dns>212.2.96.51</dns>
 				<dns>212.2.96.52</dns>
+			</apn>
+			<apn value="mms.plusgsm.pl">
+				<usage type="mms"/>
+				<name>MMS GPRS</name>
+				<mmsc>http://mms.plusgsm.pl:8002</mmsc>
+				<mmsproxy>212.2.96.16:8080</mmsproxy>
 			</apn>
 		</gsm>
 	</provider>
@@ -8620,6 +10170,12 @@ conceived.
 				<dns>62.169.67.172</dns>
 				<dns>62.169.67.171</dns>
 			</apn>
+			<apn value="umts">
+				<usage type="mms"/>
+				<name>Optimus MMS</name>
+				<mmsc>http://mmsc:10021/mmsc</mmsc>
+				<mmsproxy>62.169.66.5:8799</mmsproxy>
+			</apn>
 		</gsm>
 	</provider>
 	<provider>
@@ -8672,6 +10228,14 @@ conceived.
 				<dns>194.65.3.20</dns>
 				<dns>194.65.3.21</dns>
 			</apn>
+			<apn value="mmsc.tmn.pt">
+				<usage type="mms"/>
+				<name>MMSgprs</name>
+				<username>tmn</username>
+				<password>tmnnet</password>
+				<mmsc>http://mmsc/</mmsc>
+				<mmsproxy>10.111.2.16:8080</mmsproxy>
+			</apn>
 		</gsm>
 	</provider>
 	<provider>
@@ -8716,6 +10280,14 @@ conceived.
 				<username>vas</username>
 				<password>vas</password>
 			</apn>
+			<apn value="vas.zon.pt">
+				<usage type="mms"/>
+				<name>ZON MMS</name>
+				<username>vas</username>
+				<password>vas</password>
+				<mmsc>http://mms/servlets/mms</mmsc>
+				<mmsproxy>213.30.27.63:8799</mmsproxy>
+			</apn>
 		</gsm>
 	</provider>
 </country>
@@ -8729,6 +10301,12 @@ conceived.
 			<apn value="vox.wap">
 				<plan type="postpaid"/>
 				<usage type="internet"/></apn>
+			<apn value="vox.mms">
+				<usage type="mms"/>
+				<name>e-magen</name>
+				<mmsc>http:/mms.vox.com.py/mmsc</mmsc>
+				<mmsproxy>172.24.97.29:8080</mmsproxy>
+			</apn>
 		</gsm>
 	</provider>
 	<provider>
@@ -8804,6 +10382,14 @@ conceived.
 				<username>gprs</username>
 				<password>gprs</password>
 			</apn>
+			<apn value="mms.qtel">
+				<usage type="mms"/>
+				<name>Qtel MMS</name>
+				<username>mms</username>
+				<password>mms</password>
+				<mmsc>http://mmsr.qtelmms.qa</mmsc>
+				<mmsproxy>10.23.8.3:8080</mmsproxy>
+			</apn>
 		</gsm>
 	</provider>
 </country>
@@ -8836,6 +10422,14 @@ conceived.
 				<plan type="postpaid"/>
 				<usage type="internet"/>
 				<name>SFR ipnet</name>
+			</apn>
+			<apn value="mmssfr">
+				<usage type="mms"/>
+				<name>MMSGPRS</name>
+				<username>mms</username>
+				<password>mms</password>
+				<mmsc>http://mms</mmsc>
+				<mmsproxy>10.0.224.145</mmsproxy>
 			</apn>
 		</gsm>
 	</provider>
@@ -8933,6 +10527,12 @@ conceived.
 				<username>telenor</username>
 				<password>gprs</password>
 			</apn>
+			<apn value="mms">
+				<usage type="mms"/>
+				<name>Telenor MMS</name>
+				<mmsc>http://mms.telenor.rs/servlets/mms</mmsc>
+				<mmsproxy>217.65.192.33:8080</mmsproxy>
+			</apn>
 		</gsm>
 	</provider>
 	<provider>
@@ -8946,6 +10546,14 @@ conceived.
 				<password>064</password>
 				<dns>195.178.38.3</dns>
 			</apn>
+			<apn value="mms">
+				<usage type="mms"/>
+				<name>MMS</name>
+				<username>mts</username>
+				<password>"064"</password>
+				<mmsc>http://mms.mts064.telekom.yu/mms/wapenc</mmsc>
+				<mmsproxy>172.17.85.131:9201</mmsproxy>
+			</apn>
 		</gsm>
 	</provider>
 	<provider>
@@ -8957,6 +10565,14 @@ conceived.
 				<usage type="internet"/>
 				<username>vipmobile</username>
 				<password>vipmobile</password>
+			</apn>
+			<apn value="vipmobile.mms">
+				<usage type="mms"/>
+				<name>Vip MMS</name>
+				<username>vipmobile</username>
+				<password>vipmobile</password>
+				<mmsc>http://mmsc.vipmobile.rs</mmsc>
+				<mmsproxy>212.15.182.82:8080</mmsproxy>
 			</apn>
 		</gsm>
 	</provider>
@@ -9000,6 +10616,13 @@ conceived.
 				<password>bwc</password>
 				<dns>81.18.113.2</dns>
 				<dns>81.18.112.50</dns>
+			</apn>
+			<apn value="mms.bwc.ru">
+				<usage type="mms"/>
+				<name>MMS</name>
+				<username>bwc</username>
+				<mmsc>http://mmsc/mms</mmsc>
+				<mmsproxy>10.10.17.2:9201</mmsproxy>
 			</apn>
 		</gsm>
 	</provider>
@@ -9078,6 +10701,14 @@ conceived.
 				<username>gdata</username>
 				<password>gdata</password>
 			</apn>
+			<apn value="mms">
+				<usage type="mms"/>
+				<name>МегаФон MMS</name>
+				<username>mms</username>
+				<password>mms</password>
+				<mmsc>http://mmsc:8002</mmsc>
+				<mmsproxy>10.10.10.10:8080</mmsproxy>
+			</apn>
 		</gsm>
 	</provider>
 	<provider>
@@ -9102,6 +10733,12 @@ conceived.
 				<usage type="internet"/>
 				<dns>80.243.64.67</dns>
 				<dns>80.243.68.34</dns>
+			</apn>
+			<apn value="mms.ntc">
+				<usage type="mms"/>
+				<name>MMS</name>
+				<mmsc>http://mmsc.vntc.ru/was</mmsc>
+				<mmsproxy>80.243.64.68:8080</mmsproxy>
 			</apn>
 		</gsm>
 	</provider>
@@ -9272,6 +10909,12 @@ conceived.
 				<plan type="postpaid"/>
 				<usage type="internet"/>
 			</apn>
+			<apn value="mnc039.mcc250.gprs">
+				<usage type="mms"/>
+				<name>mms</name>
+				<mmsc>mms.usi.ru</mmsc>
+				<mmsproxy>192.168.168.192:8080</mmsproxy>
+			</apn>
 		</gsm>
 	</provider>
 </country>
@@ -9292,6 +10935,12 @@ conceived.
 				<usage type="internet"/>
 				<name>Prepaid</name>
 			</apn>
+			<apn value="mms1">
+				<usage type="mms"/>
+				<name>mobily MMS (Postpaid)</name>
+				<mmsc>http://10.3.3.133:9090/was</mmsc>
+				<mmsproxy>10.3.2.133:8080</mmsproxy>
+			</apn>
 		</gsm>
 	</provider>
 	<provider>
@@ -9303,6 +10952,18 @@ conceived.
 				<usage type="internet"/>
 				<dns>212.118.133.101</dns>
 				<dns>212.118.133.102</dns>
+			</apn>
+			<apn value="mms.net.sa">
+				<usage type="mms"/>
+				<name>MMS</name>
+				<mmsc>http://mms.net.sa:8002</mmsc>
+				<mmsproxy>10.1.1.1:8080</mmsproxy>
+			</apn>
+			<apn value="mms.net.sa">
+				<usage type="mms"/>
+				<name>ALJAWAL MMS</name>
+				<mmsc>http://mms.net.sa:8002</mmsc>
+				<mmsproxy>10.1.1.1:8080</mmsproxy>
 			</apn>
 		</gsm>
 	</provider>
@@ -9361,6 +11022,12 @@ conceived.
 				<usage type="internet"/>
 				<name>Glocalnet Internet</name>
 			</apn>
+			<apn value="services.glocalnet.se">
+				<usage type="mms"/>
+				<name>Glocalnet MMS</name>
+				<mmsc>http://mms</mmsc>
+				<mmsproxy>172.30.253.241:8799</mmsproxy>
+			</apn>
 		</gsm>
 	</provider>
 	<provider>
@@ -9372,6 +11039,12 @@ conceived.
 			<apn value="halebop.telia.se">
 				<plan type="postpaid"/>
 				<usage type="internet"/>
+			</apn>
+			<apn value="mms.telia.se">
+				<usage type="mms"/>
+				<name>Halebop MMS</name>
+				<mmsc>http://mmss/</mmsc>
+				<mmsproxy>193.209.134.132:80</mmsproxy>
 			</apn>
 		</gsm>
 	</provider>
@@ -9440,6 +11113,12 @@ conceived.
 				<usage type="internet"/>
 				<name>Tele2 Comviq 3G (7,2 Mbit/s)</name>
 			</apn>
+			<apn value="internet.tele2.se">
+				<usage type="mms"/>
+				<name>Tele2 MMS</name>
+				<mmsc>http://mmsc.tele2.se</mmsc>
+				<mmsproxy>130.244.202.30:8080</mmsproxy>
+			</apn>
 		</gsm>
 	</provider>
 	<provider>
@@ -9453,6 +11132,12 @@ conceived.
 				<plan type="postpaid"/>
 				<usage type="internet"/>
 				<name>Mobiflex</name>
+			</apn>
+			<apn value="mms.telia.se">
+				<usage type="mms"/>
+				<name>Telia MMS</name>
+				<mmsc>http://mmss/</mmsc>
+				<mmsproxy>193.209.134.132:80</mmsproxy>
 			</apn>
 		</gsm>
 	</provider>
@@ -9484,6 +11169,12 @@ conceived.
 				<usage type="internet"/>
 				<name>Mobilt Bredband</name>
 			</apn>
+			<apn value="sp-services">
+				<usage type="mms"/>
+				<name>Cellmobile MMS</name>
+				<mmsc>http://mms</mmsc>
+				<mmsproxy>172.30.253.241:8799</mmsproxy>
+			</apn>
 		</gsm>
 	</provider>
 	<provider>
@@ -9513,6 +11204,12 @@ conceived.
 			<apn value="internet.se">
 				<plan type="postpaid"/>
 				<usage type="internet"/>
+			</apn>
+			<apn value="data.tre.se">
+				<usage type="mms"/>
+				<name>3mms</name>
+				<mmsc>http://mms.tre.se</mmsc>
+				<mmsproxy>mmsproxy.tre.se:8799</mmsproxy>
 			</apn>
 		</gsm>
 	</provider>
@@ -9608,6 +11305,14 @@ conceived.
 				<usage type="internet"/>
 				<name>M Card (prepaid)</name>
 			</apn>
+			<apn value="miworld">
+				<usage type="mms"/>
+				<name>M1 MMS</name>
+				<username>+65</username>
+				<password>user123</password>
+				<mmsc>http://mmsgw:8002/</mmsc>
+				<mmsproxy>172.16.14.10:8080</mmsproxy>
+			</apn>
 		</gsm>
 	</provider>
 	<provider>
@@ -9620,6 +11325,14 @@ conceived.
 				<usage type="internet"/>
 				<dns>165.21.100.88</dns>
 				<dns>165.21.83.88</dns>
+			</apn>
+			<apn value="e-ideas">
+				<usage type="mms"/>
+				<name>IDEAS MMS</name>
+				<username>65IDEAS</username>
+				<password>IDEAS</password>
+				<mmsc>http://mms.singtel.com:10021/mmsc</mmsc>
+				<mmsproxy>165.21.42.84:8080</mmsproxy>
 			</apn>
 		</gsm>
 	</provider>
@@ -9644,6 +11357,12 @@ conceived.
 				<plan type="postpaid"/>
 				<usage type="internet"/>
 				<name>MaxMobile Broadband (postpaid)</name>
+			</apn>
+			<apn value="shmms">
+				<usage type="mms"/>
+				<name>Gee! MMS</name>
+				<mmsc>http://mms.starhubgee.com.sg:8002/</mmsc>
+				<mmsproxy>10.12.1.80:80</mmsproxy>
 			</apn>
 		</gsm>
 	</provider>
@@ -9690,6 +11409,14 @@ conceived.
 				<dns>121.30.86.130</dns>
 				<dns>193.189.160.11</dns>
 			</apn>
+			<apn value="mms.simobil.si">
+				<usage type="mms"/>
+				<name>SI mobil MMS</name>
+				<username>simobil</username>
+				<password>internet</password>
+				<mmsc>http://mmc/</mmsc>
+				<mmsproxy>80.95.224.46:9201</mmsproxy>
+			</apn>
 		</gsm>
 	</provider>
 	<provider>
@@ -9699,6 +11426,12 @@ conceived.
 			<apn value="internet.t-2.net">
 				<plan type="postpaid"/>
 				<usage type="internet"/>
+			</apn>
+			<apn value="mms.t-2.net">
+				<usage type="mms"/>
+				<name>T2 MMS</name>
+				<mmsc>http://www.mms.t-2.net:8002</mmsc>
+				<mmsproxy>172.20.18.137:8080</mmsproxy>
 			</apn>
 		</gsm>
 	</provider>
@@ -9716,6 +11449,14 @@ conceived.
 				<usage type="internet"/>
 				<dns>195.91.0.17</dns>
 				<dns>194.154.227.17</dns>
+			</apn>
+			<apn value="mms">
+				<usage type="mms"/>
+				<name>T-Mobile MMS</name>
+				<username>mms</username>
+				<password>mms</password>
+				<mmsc>http://mms</mmsc>
+				<mmsproxy>192.168.1.1:8080</mmsproxy>
 			</apn>
 		</gsm>
 	</provider>
@@ -9741,6 +11482,12 @@ conceived.
 				<name>Internet</name>
 				<dns>160.218.161.60</dns>
 				<dns>194.228.211.33</dns>
+			</apn>
+			<apn value="o2mms">
+				<usage type="mms"/>
+				<name>O2 SK MMS</name>
+				<mmsc>http://mms.o2world.sk:8002</mmsc>
+				<mmsproxy>10.97.1.11:8080</mmsproxy>
 			</apn>
 		</gsm>
 	</provider>
@@ -9783,6 +11530,12 @@ conceived.
 			<apn value="wap.digicelsv.com">
 				<plan type="postpaid"/>
 				<usage type="internet"/>
+			</apn>
+			<apn value="wap.digicelsv.com">
+				<usage type="mms"/>
+				<name>Digicel El Salvador MMS</name>
+				<mmsc>http://172.26.5.132/servlets/mms</mmsc>
+				<mmsproxy>172.26.5.12:8080</mmsproxy>
 			</apn>
 		</gsm>
 	</provider>
@@ -9869,6 +11622,12 @@ conceived.
 				<dns>202.183.255.20</dns>
 				<dns>202.183.255.21</dns>
 			</apn>
+			<apn value="multimedia">
+				<usage type="mms"/>
+				<name>AIS-GPRS-3 MMS</name>
+				<mmsc>http://mms.mobilelife.co.th</mmsc>
+				<mmsproxy>203.170.229.34:8080</mmsproxy>
+			</apn>
 		</gsm>
 	</provider>
 	<provider>
@@ -9880,6 +11639,12 @@ conceived.
 				<usage type="internet"/>
 				<dns>202.44.202.2</dns>
 				<dns>203.44.144.33</dns>
+			</apn>
+			<apn value="mms">
+				<usage type="mms"/>
+				<name>DTAC-GPRS-3 MMS</name>
+				<mmsc>http://mms.dtac.co.th:8002/</mmsc>
+				<mmsproxy>203.155.200.133:8080</mmsproxy>
 			</apn>
 		</gsm>
 	</provider>
@@ -9893,13 +11658,21 @@ conceived.
 				<username>true</username>
 				<password>true</password>
 			</apn>
+			<apn value="mms">
+				<usage type="mms"/>
+				<name>True GPRS 3 MMS</name>
+				<username>true</username>
+				<password>true</password>
+				<mmsc>http://mms.trueworld.net:8002/</mmsc>
+				<mmsproxy>10.4.7.39:8080</mmsproxy>
+			</apn>
 		</gsm>
 	</provider>
 	<provider>
 		<name>TOT 3G</name>
 		<gsm>
 			<network-id mcc="520" mnc="15"/>
-			<apn value="internet" >
+			<apn value="internet">
 				<plan type="postpaid"/>
 				<usage type="internet"/>
 			</apn>
@@ -9958,6 +11731,14 @@ conceived.
 				<usage type="internet"/>
 				<name>WEB DATA</name>
 			</apn>
+			<apn value="mms.tn">
+				<usage type="mms"/>
+				<name>MMS</name>
+				<username>mms@tt1</username>
+				<password>mms</password>
+				<mmsc>http://mms</mmsc>
+				<mmsproxy>213.150.186.106:8080</mmsproxy>
+			</apn>
 		</gsm>
 	</provider>
 	<provider>
@@ -9968,6 +11749,14 @@ conceived.
 				<name>Internet</name>
 				<username>internet</username>
 				<password>internet</password>
+			</apn>
+			<apn value="mms.tunisiana.com">
+				<usage type="mms"/>
+				<name>mms tunisiana</name>
+				<username>mms</username>
+				<password>mms</password>
+				<mmsc>http://mmsc.tunisiana.com</mmsc>
+				<mmsproxy>10.3.2.100:80</mmsproxy>
 			</apn>
 		</gsm>
 	</provider>
@@ -9994,6 +11783,14 @@ conceived.
 				<dns>212.156.4.1</dns>
 				<dns>212.156.4.4</dns>
 			</apn>
+			<apn value="mms">
+				<usage type="mms"/>
+				<name>Avea MMS</name>
+				<username>mms</username>
+				<password>mms</password>
+				<mmsc>http://mms.avea.com.tr/servlets/mms</mmsc>
+				<mmsproxy>213.161.151.201:8080</mmsproxy>
+			</apn>
 		</gsm>
 	</provider>
 	<provider>
@@ -10011,6 +11808,14 @@ conceived.
 				<plan type="postpaid"/>
 				<usage type="internet"/>
 				<name>Turkcell 3G</name>
+			</apn>
+			<apn value="mms">
+				<usage type="mms"/>
+				<name>Turkcell MMS</name>
+				<username>mms</username>
+				<password>mms</password>
+				<mmsc>http://mms.turkcell.com.tr/servlets/mms</mmsc>
+				<mmsproxy>212.252.169.217:8080</mmsproxy>
 			</apn>
 		</gsm>
 	</provider>
@@ -10056,6 +11861,14 @@ conceived.
 				<username>wap</username>
 				<password>wap</password>
 			</apn>
+			<apn value="wap.digiceltt.com">
+				<usage type="mms"/>
+				<name>Digicel Trinidad MMS</name>
+				<username>wap</username>
+				<password>wap</password>
+				<mmsc>http://mmc.digiceltt.com/servlets/mms</mmsc>
+				<mmsproxy>172.20.6.12:8080</mmsproxy>
+			</apn>
 		</gsm>
 	</provider>
 	<provider>
@@ -10067,6 +11880,12 @@ conceived.
 				<usage type="internet"/>
 				<username>wap</username>
 				<password>wap</password>
+			</apn>
+			<apn value="mms">
+				<usage type="mms"/>
+				<name>Bmobile mms</name>
+				<mmsc>http://192.168.210.104/mmrelay.app</mmsc>
+				<mmsproxy>192.168.210.104:8080</mmsproxy>
 			</apn>
 		</gsm>
 	</provider>
@@ -10091,6 +11910,12 @@ conceived.
 				<plan type="postpaid"/>
 				<usage type="internet"/>
 			</apn>
+			<apn value="emome">
+				<usage type="mms"/>
+				<name>CHT MMS</name>
+				<mmsc>http://mms.emome.net:8002</mmsc>
+				<mmsproxy>10.1.1.1:8080</mmsproxy>
+			</apn>
 		</gsm>
 	</provider>
 	<provider>
@@ -10101,6 +11926,12 @@ conceived.
 			<apn value="internet">
 				<plan type="postpaid"/>
 				<usage type="internet"/>
+			</apn>
+			<apn value="fetnet01">
+				<usage type="mms"/>
+				<name>遠傳影音訊息</name>
+				<mmsc>http://mms</mmsc>
+				<mmsproxy>210.241.199.199:9201</mmsproxy>
 			</apn>
 		</gsm>
 	</provider>
@@ -10113,6 +11944,12 @@ conceived.
 				<plan type="postpaid"/>
 				<usage type="internet"/>
 			</apn>
+			<apn value="mms">
+				<usage type="mms"/>
+				<name>catch MMS</name>
+				<mmsc>http://mms</mmsc>
+				<mmsproxy>211.78.224.100:8080</mmsproxy>
+			</apn>
 		</gsm>
 	</provider>
 	<provider>
@@ -10124,6 +11961,12 @@ conceived.
 				<plan type="postpaid"/>
 				<usage type="internet"/>
 			</apn>
+			<apn value="vibo">
+				<usage type="mms"/>
+				<name>VIBO行動網-MMS</name>
+				<mmsc>http://mms</mmsc>
+				<mmsproxy>172.24.128.36:8080</mmsproxy>
+			</apn>
 		</gsm>
 	</provider>
 	<provider>
@@ -10134,6 +11977,11 @@ conceived.
 			<apn value="vibo">
 				<plan type="postpaid"/>
 				<usage type="internet"/>
+			</apn>
+			<apn value="MMS">
+				<usage type="mms"/>
+				<name>Vodacom MMS</name>
+				<mmsproxy>10.154.0.12</mmsproxy>
 			</apn>
 		</gsm>
 	</provider>
@@ -10228,6 +12076,14 @@ conceived.
 				<plan type="postpaid"/>
 				<usage type="internet"/>
 				<name>Internet 3G</name>
+			</apn>
+			<apn value="mms.kyivstar.net">
+				<usage type="mms"/>
+				<name>Kyivstar MMS</name>
+				<username>mms</username>
+				<password>mms</password>
+				<mmsc>http://mms.kyivstar.net</mmsc>
+				<mmsproxy>10.10.10.10:8080</mmsproxy>
 			</apn>
 		</gsm>
 	</provider>
@@ -10353,6 +12209,12 @@ conceived.
 				<plan type="postpaid"/>
 				<usage type="internet"/>
 			</apn>
+			<apn value="3g.utel.ua">
+				<usage type="mms"/>
+				<name>Utel MMS</name>
+				<mmsc>http://10.212.1.4/mms/wapenc</mmsc>
+				<mmsproxy>10.212.3.148:8080</mmsproxy>
+			</apn>
 		</gsm>
 	</provider>
 	<provider>
@@ -10398,6 +12260,11 @@ conceived.
 				<plan type="postpaid"/>
 				<usage type="internet"/>
 			</apn>
+			<apn value="mms.warid.co.ug">
+				<usage type="mms"/>
+				<name>warid mms</name>
+				<mmsc>http://mms.waridtel.co.ug</mmsc>
+			</apn>
 		</gsm>
 	</provider>
     <provider>
@@ -10413,6 +12280,12 @@ conceived.
 				<plan type="postpaid"/>
 				<usage type="internet"/>
 				<name>Mobile Internet</name>
+			</apn>
+			<apn value="utwap">
+				<usage type="mms"/>
+				<name>Ug Telcom MMS</name>
+				<mmsc>http://mmsc.ugandatelecom.com/</mmsc>
+				<mmsproxy>10.76.101.51:8080</mmsproxy>
 			</apn>
 		</gsm>
 	</provider>
@@ -10470,6 +12343,14 @@ conceived.
 				<plan type="postpaid"/>
 				<usage type="internet"/>
 				<name>LTE</name>
+			</apn>
+			<apn value="wap.cingular">
+				<usage type="mms"/>
+				<name>AT&amp;T MMS</name>
+				<username>WAP@CINGULARGPRS.COM</username>
+				<password>CINGULAR1</password>
+				<mmsc>http://mmsc.cingular.com</mmsc>
+				<mmsproxy>wireless.cingular.com:80</mmsproxy>
 			</apn>
 		</gsm>
 	</provider>
@@ -10531,6 +12412,13 @@ conceived.
 				<usage type="internet"/>
 				<username>cbw</username>
 			</apn>
+			<apn value="wap.gocbw.com">
+				<usage type="mms"/>
+				<name>CBW MMS</name>
+				<username>cbw</username>
+				<mmsc>http://mms.gocbw.com:8088/mms</mmsc>
+				<mmsproxy>216.68.79.202:80</mmsproxy>
+			</apn>
 		</gsm>
 	</provider>
 	<provider>
@@ -10590,7 +12478,7 @@ conceived.
 	</provider>
 	<provider>
 		<name>Boost Mobile (Prepaid)</name>
-		<cdma />
+		<cdma/>
 	</provider>
 	<provider>
 		<name>Verizon</name>
@@ -10921,6 +12809,18 @@ conceived.
 		<gsm>
 			<!-- Former Western Wireless (roaming only) -->
 			<network-id mcc="310" mnc="590"/>
+			<apn value="MMS">
+				<usage type="mms"/>
+				<name>Picture Message</name>
+				<mmsc>http://mms.mycellonephone.com/highland/mms.php</mmsc>
+				<mmsproxy>66.255.55.23:80</mmsproxy>
+			</apn>
+			<apn value="cellular1wap">
+				<usage type="mms"/>
+				<name>CellularOne MMS</name>
+				<mmsc>http://mmsc</mmsc>
+				<mmsproxy>172.23.1.252:8799</mmsproxy>
+			</apn>
 		</gsm>
 		<cdma>
 			<!-- Assignments taken from IFAST: http://www.ifast.org/files/NationalSID.htm -->
@@ -11137,18 +13037,18 @@ conceived.
 	</provider>
 	<provider>
 		<name>Leap Wireless</name>
-		<cdma />
+		<cdma/>
 	</provider>
 	<provider>
 		<name>Cricket Communications</name>
 		<gsm>
 			<network-id mcc="310" mnc="000"/>
 		</gsm>
-		<cdma />
+		<cdma/>
 	</provider>
 	<provider>
 		<name>Jump Mobile (Prepaid)</name>
-		<cdma />
+		<cdma/>
 	</provider>
 	<provider>
 		<name>MetroPCS</name>
@@ -11230,6 +13130,10 @@ conceived.
 				<plan type="prepaid"/>
 				<usage type="internet"/>
 			</apn>
+			<apn value="tfdata">
+				<plan type="prepaid"/>
+				<usage type="internet"/>
+			</apn>
 		</gsm>
 	</provider>
 </country>
@@ -11261,6 +13165,12 @@ conceived.
 				<name>GPRS</name>
 				<dns>200.40.30.245</dns>
 				<dns>200.40.220.245</dns>
+			</apn>
+			<apn value="mms">
+				<usage type="mms"/>
+				<name>mmsANCEL</name>
+				<mmsc>http://mmsc.mms.ancelutil.com.uy</mmsc>
+				<mmsproxy>200.40.246.2:3128</mmsproxy>
 			</apn>
 		</gsm>
 	</provider>
@@ -11337,8 +13247,8 @@ conceived.
 		<gsm>
 			<network-id mcc="434" mnc="05"/>
 			<apn value="internet">
-				<username></username>
-				<password></password>
+				<username/>
+				<password/>
 			</apn>
 		</gsm>
 	</provider>
@@ -11373,6 +13283,12 @@ conceived.
 				<usage type="internet"/>
 				<dns>57.67.127.195</dns>
 			</apn>
+			<apn value="expresate.digitel.ve">
+				<usage type="mms"/>
+				<name>MMS</name>
+				<mmsc>http://mms.412.com.ve/servlets/mms</mmsc>
+				<mmsproxy>10.99.0.10:8080</mmsproxy>
+			</apn>
 		</gsm>
 	</provider>
 	<provider>
@@ -11384,6 +13300,12 @@ conceived.
 				<usage type="internet"/>
 				<dns>200.44.32.12</dns>
 				<dns>200.11.248.12</dns>
+			</apn>
+			<apn value="mm.movilnet.com.ve">
+				<usage type="mms"/>
+				<name>MMS</name>
+				<mmsc>http://mms2.movilnet.com.ve/servlets/mms</mmsc>
+				<mmsproxy>192.168.16.12:8080</mmsproxy>
 			</apn>
 		</gsm>
 	</provider>
@@ -11413,6 +13335,14 @@ conceived.
 				<username>mms</username>
 				<password>mms</password>
 			</apn>
+			<apn value="m-i090">
+				<usage type="mms"/>
+				<name>Mobifone MMS</name>
+				<username>mms</username>
+				<password>mms</password>
+				<mmsc>http://203.162.21.114/mmsc</mmsc>
+				<mmsproxy>203.162.21.114:3130</mmsproxy>
+			</apn>
 		</gsm>
 	</provider>
 	<provider>
@@ -11432,6 +13362,14 @@ conceived.
 				<name>Mobile Broadband</name>
 				<username>mms</username>
 				<password>mms</password>
+			</apn>
+			<apn value="m3-mms">
+				<usage type="mms"/>
+				<name>Vinaphone MMS</name>
+				<username>mms</username>
+				<password>mms</password>
+				<mmsc>http://mms.vinaphone.com.vn</mmsc>
+				<mmsproxy>10.1.10.46:8000</mmsproxy>
 			</apn>
 		</gsm>
 	</provider>
@@ -11460,6 +13398,12 @@ conceived.
 				<usage type="internet"/>
 				<name>D-com 3G</name>
 			</apn>
+			<apn value="v-mms">
+				<usage type="mms"/>
+				<name>Viettel MMS</name>
+				<mmsc>http://mms.viettelmobile.com.vn/mms/wapenc</mmsc>
+				<mmsproxy>192.168.233.10:8080</mmsproxy>
+			</apn>
 		</gsm>
 	</provider>
 	<provider>
@@ -11469,6 +13413,12 @@ conceived.
 			<apn value="internet">
 				<plan type="postpaid"/>
 				<usage type="internet"/>
+			</apn>
+			<apn value="mms">
+				<usage type="mms"/>
+				<name>Vietnamobile MMS</name>
+				<mmsc>http://10.10.128.58/servlets/mms</mmsc>
+				<mmsproxy>10.10.128.44:8080</mmsproxy>
 			</apn>
 		</gsm>
 	</provider>
@@ -11569,6 +13519,12 @@ conceived.
 				<dns>196.207.32.69</dns>
 				<dns>196.43.45.190</dns>
 			</apn>
+			<apn value="mms.vodacom.net">
+				<usage type="mms"/>
+				<name>Vlive!MMS</name>
+				<mmsc>http://mmsc.vodacom4me.co.za</mmsc>
+				<mmsproxy>196.6.128.13:8080</mmsproxy>
+			</apn>
 		</gsm>
 	</provider>
 	<provider>
@@ -11605,6 +13561,12 @@ conceived.
 			<apn value="internet">
 				<plan type="postpaid"/>
 				<usage type="internet"/>
+			</apn>
+			<apn value="mms">
+				<usage type="mms"/>
+				<name>8 ta mms</name>
+				<mmsc>http://mms.8ta.com:38090/was</mmsc>
+				<mmsproxy>10.148.29.101:8080</mmsproxy>
 			</apn>
 		</gsm>
 	</provider>

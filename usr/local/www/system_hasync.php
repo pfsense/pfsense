@@ -79,7 +79,7 @@ if ($_POST) {
 	$a_hasync['pfsyncinterface'] = $pconfig['pfsyncinterface'];
 	$a_hasync['synchronizetoip'] = $pconfig['synchronizetoip'];
 	$a_hasync['username']        = $pconfig['username'];
-	$a_hasync['password']        = $pconfig['password'];
+	$a_hasync['password']        = $pconfig['passwordfld'];
 	write_config("Updated High Availability Sync configuration");
 	interfaces_sync_setup();
 	header("Location: system_hasync.php");
@@ -93,7 +93,7 @@ $pconfig['pfsyncpeerip']    = $a_hasync['pfsyncpeerip'];
 $pconfig['pfsyncinterface'] = $a_hasync['pfsyncinterface'];
 $pconfig['synchronizetoip'] = $a_hasync['synchronizetoip'];
 $pconfig['username']        = $a_hasync['username'];
-$pconfig['password']        = $a_hasync['password'];
+$pconfig['passwordfld']     = $a_hasync['password'];
 
 $ifaces = get_configured_interface_with_descr();
 $ifaces["lo0"] = "loopback";
@@ -178,7 +178,7 @@ include("head.inc");
 	<tr valign="top">
 		<td width="22%" class="vncell">Remote System Password</td>
 		<td class="vtable">
-			<input  id='password' type='password'  name='password' class='formfld pwd' value='<?= htmlentities($pconfig['password']); ?>' />
+			<input  id='passwordfld' type='password'  name='passwordfld' class='formfld pwd' value='<?= htmlentities($pconfig['passwordfld']); ?>' />
 			<br />
 			Enter the webConfigurator password of the system entered above for synchronizing your configuration.<br />
 			<br />
@@ -322,11 +322,11 @@ include("head.inc");
 		</td>
 	</tr>
 	<tr valign="top">
-		<td width="22%" class="vncell">Synchronize DNS Forwarder</td>
+		<td width="22%" class="vncell">Synchronize DNS Forwarder / Resolver</td>
 		<td class="vtable">
 			<input id='synchronizednsforwarder' type='checkbox' name='synchronizednsforwarder' value='on' <?php if ($pconfig['synchronizednsforwarder'] === "on") echo "checked='checked'"; ?> />
 			<br />
-			When this option is enabled, this system will automatically sync the DNS Forwarder configuration to the other HA host when changes are made.
+			When this option is enabled, this system will automatically sync the DNS Forwarder and DNS Resolver configuration to the other HA host when changes are made.
 		</td>
 	</tr>
 	<tr valign="top">

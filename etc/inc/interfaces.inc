@@ -1054,7 +1054,18 @@ function interface_reconfigure($interface = "wan", $reloadall = false) {
 function interface_vip_bring_down($vip) {
 	global $g;
 
-	$vipif = get_real_interface($vip['interface']);
+	if (strpos($vip['interface'], '_vip')) {
+		if (is_ipaddrv6($vip['subnet']))
+			$family = 'inet6';
+		else
+			$family = 'inet';
+
+		$carpvip = get_configured_carp_interface_list($vip['interface'], $family, 'vip');
+		$iface = $carpvip['interface'];
+	} else
+		$iface = $vip['interface'];
+
+	$vipif = get_real_interface($iface);
 	switch ($vip['mode']) {
 	case "proxyarp":
 		if (file_exists("{$g['varrun_path']}/choparp_{$vipif}.pid"))

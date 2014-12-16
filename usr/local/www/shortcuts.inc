@@ -225,6 +225,11 @@ $shortcuts['resolver']['main'] = "services_dnsmasq.php";
 $shortcuts['resolver']['log'] = "diag_logs_resolver.php";
 $shortcuts['resolver']['service'] = "dnsmasq";
 
+$shortcuts['unbound'] = array();
+$shortcuts['unbound']['main'] = "services_unbound.php";
+$shortcuts['unbound']['log'] = "diag_logs_resolver.php";
+$shortcuts['unbound']['service'] = "unbound";
+
 $shortcuts['wireless'] = array();
 $shortcuts['wireless']['main'] = "interfaces_wireless.php";
 $shortcuts['wireless']['log'] = "diag_logs_wireless.php";

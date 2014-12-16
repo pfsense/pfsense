@@ -691,9 +691,14 @@ if ($_POST) {
 		else
 			unset($filterent['protocol']);
 
-		if ($_POST['proto'] == "icmp" && $_POST['icmptype'])
-			$filterent['icmptype'] = $_POST['icmptype'];
-		else
+		if ($_POST['proto'] == "icmp") {
+			if ($filterent['ipprotocol'] == 'inet6' && $_POST['icmp6type'])
+				$filterent['icmptype'] = $_POST['icmp6type'];
+			else if ($filterent['ipprotocol'] != 'inet6' && $_POST['icmptype'])
+				$filterent['icmptype'] = $_POST['icmptype'];
+			else
+				unset($filterent['icmptype']);
+		} else
 			unset($filterent['icmptype']);
 
 		pconfig_to_address($filterent['source'], $_POST['src'],
@@ -966,7 +971,7 @@ include("head.inc");
 		<tr>
 			<td width="22%" valign="top" class="vncellreq"><?=gettext("TCP/IP Version");?></td>
 			<td width="78%" class="vtable">
-				<select name="ipprotocol" class="formselect">
+				<select name="ipprotocol" class="formselect" onchange="proto_change()">
 					<?php      $ipproto = array('inet' => 'IPv4','inet6' => 'IPv6', 'inet46' => 'IPv4+IPv6' );
 				foreach ($ipproto as $proto => $name): ?>
 				<option value="<?=$proto;?>"
@@ -998,33 +1003,32 @@ include("head.inc");
 			<td class="vtable">
 				<select <?=$edit_disabled;?> name="icmptype" class="formselect">
 <?php
-				$icmptypes = array(
-				"" => gettext("any"),
-				"echoreq" => gettext("Echo request"),
-				"echorep" => gettext("Echo reply"),
-				"unreach" => gettext("Destination unreachable"),
-				"squench" => gettext("Source quench"),
-				"redir" => gettext("Redirect"),
-				"althost" => gettext("Alternate Host"),
-				"routeradv" => gettext("Router advertisement"),
-				"routersol" => gettext("Router solicitation"),
-				"timex" => gettext("Time exceeded"),
-				"paramprob" => gettext("Invalid IP header"),
-				"timereq" => gettext("Timestamp"),
-				"timerep" => gettext("Timestamp reply"),
-				"inforeq" => gettext("Information request"),
-				"inforep" => gettext("Information reply"),
-				"maskreq" => gettext("Address mask request"),
-				"maskrep" => gettext("Address mask reply")
-				);
-
-				foreach ($icmptypes as $icmptype => $descr): ?>
+				foreach ($icmptypes as $icmptype => $descr):
+?>
 					<option value="<?=$icmptype;?>" <?php if ($icmptype == $pconfig['icmptype']) echo "selected=\"selected\""; ?>><?=htmlspecialchars($descr);?></option>
-<?php 			endforeach; ?>
-			</select>
-			<br />
-			<span class="vexpl"><?=gettext("If you selected ICMP for the protocol above, you may specify an ICMP type here.");?></span>
-		</td>
+<?php
+				endforeach;
+?>
+				</select>
+				<br />
+				<span class="vexpl"><?=gettext("If you selected ICMP for the protocol above, you may specify an ICMP type here.");?></span>
+			</td>
+		</tr>
+		<tr id="icmp6box">
+			<td valign="top" class="vncell"><?=gettext("ICMPv6 type");?></td>
+			<td class="vtable">
+				<select <?=$edit_disabled;?> name="icmp6type" class="formselect">
+<?php
+				foreach ($icmp6types as $icmptype => $descr):
+?>
+					<option value="<?=$icmptype;?>" <?php if ($icmptype == $pconfig['icmptype']) echo "selected=\"selected\""; ?>><?=htmlspecialchars($descr);?></option>
+<?php
+				endforeach;
+?>
+				</select>
+				<br />
+				<span class="vexpl"><?=gettext("If you selected ICMP for the protocol above, you may specify an ICMP type here.");?></span>
+			</td>
 		</tr>
 		<tr>
 			<td width="22%" valign="top" class="vncellreq"><?=gettext("Source");?></td>

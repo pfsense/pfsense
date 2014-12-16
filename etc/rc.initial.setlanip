@@ -55,6 +55,27 @@ require_once("filter.inc");
 require_once("shaper.inc");
 require_once("rrd.inc");
 
+function console_prompt_for_yn ($prompt_text) {
+	global $fp;
+
+	$good_answer = false;
+
+	do {
+		echo "\n" . $prompt_text . " (y/n) ";
+		$yn = strtolower(chop(fgets($fp)));
+		if (($yn == "y") || ($yn == "yes")) {
+			$boolean_answer = true;
+			$good_answer = true;
+		}
+		if (($yn == "n") || ($yn == "no")) {
+			$boolean_answer = false;
+			$good_answer = true;
+		}
+	} while (!$good_answer);
+
+	return $boolean_answer;
+}
+
 function console_get_interface_from_ppp($realif) {
 	global $config;
 
@@ -74,7 +95,7 @@ function prompt_for_enable_dhcp_server($version = 4) {
 	global $config, $fp, $interface;
 	if($interface == "wan") {
 		if($config['interfaces']['lan']) 
-			return "n";
+			return false;
 	}
 	/* only allow DHCP server to be enabled when static IP is
 	   configured on this interface */
@@ -83,19 +104,13 @@ function prompt_for_enable_dhcp_server($version = 4) {
 	} else {
 		$is_ipaddr = is_ipaddrv4($config['interfaces'][$interface]['ipaddr']);
 	}
-	if ($is_ipaddr) {
-		$label_DHCP = ($version === 6) ? "DHCP6" : "DHCP";
-		do {
-			$good = false;
-			$upperifname = strtoupper($interface);
-			echo "\n" . sprintf(gettext("Do you want to enable the %s server on %s? [y|n]"),
-			                    $label_DHCP, $upperifname) . "  ";
-			$yn = strtolower(chop(fgets($fp)));
-			if ($yn[0] == "y" or $yn[0] == "n")
-				$good = true;
-		} while (!$good);
+	if (!($is_ipaddr)) {
+		return false;
 	}
-	return $yn;
+
+	$label_DHCP = ($version === 6) ? "DHCP6" : "DHCP";
+	$upperifname = strtoupper($interface);
+	return console_prompt_for_yn (sprintf(gettext("Do you want to enable the %s server on %s?"), $label_DHCP, $upperifname));
 }
 
 function get_interface_config_description($iface) {
@@ -238,10 +253,7 @@ function console_configure_ip_address($version) {
 	$upperifname = strtoupper($interface);
 
 	if($interface == "wan") {
-		echo sprintf(gettext("Configure %s address %s interface via %s?  [y|n]"),
-		             $label_IPvX, $upperifname, $label_DHCP) . "\n> ";
-		$intdhcp = chop(fgets($fp));
-		if(strtolower($intdhcp) == "y" || strtolower($intdhcp) == "yes") {
+		if (console_prompt_for_yn (sprintf(gettext("Configure %s address %s interface via %s?"), $label_IPvX, $upperifname, $label_DHCP))) {
 			$ifppp = console_get_interface_from_ppp(get_real_interface("wan"));
 			if (!empty($ifppp))
 				$ifaceassigned = $ifppp;
@@ -281,10 +293,10 @@ function console_configure_ip_address($version) {
 				}
 				do {
 					$upperifname = strtoupper($interface);
-					echo "\n" . sprintf(gettext("Enter the new %s %s subnet bit count:"),
-							    $upperifname, $label_IPvX) . "\n> ";
+					echo "\n" . sprintf(gettext("Enter the new %s %s subnet bit count (1 to %s):"),
+							    $upperifname, $label_IPvX, $maxbits) . "\n> ";
 					$intbits = chop(fgets($fp));
-					$intbits_ok = is_numeric($intbits) && (($intbits >= 1) || ($intbits <= $maxbits));
+					$intbits_ok = is_numeric($intbits) && (($intbits >= 1) && ($intbits <= $maxbits));
 					$restart_dhcpd = true;
 
 					if ($version === 4 && $intbits < $maxbits) {
@@ -354,9 +366,7 @@ function console_configure_dhcpd($version = 4) {
 	$label_IPvX = ($version === 6) ? "IPv6"    : "IPv4";
 	$dhcpd      = ($version === 6) ? "dhcpdv6" : "dhcpd";
 
-	if($g['services_dhcp_server_enable'])
-		$yn = prompt_for_enable_dhcp_server($version);
-	if ($yn == "y") {
+	if($g['services_dhcp_server_enable'] && prompt_for_enable_dhcp_server($version)) {
 		$subnet_start = ($version === 6) ? gen_subnetv6($intip6, $intbits6) : gen_subnet($intip, $intbits);
 		$subnet_end = ($version === 6) ? gen_subnetv6_max($intip6, $intbits6) : gen_subnet_max($intip, $intbits);
 		do {
@@ -413,15 +423,7 @@ if (console_configure_dhcpd(6) == 0)
 
 if ($config['system']['webgui']['protocol'] == "https") {
 
-	do {
-		$good = false;
-		echo "\n" . gettext("Do you want to revert to HTTP as the webConfigurator protocol? (y/n)") . " ";
-		$yn = strtolower(chop(fgets($fp)));
-		if ($yn[0] == "y" or $yn[0] == "n")
-			$good = true;
-	} while (!$good);
-
-	if ($yn == "y") {
+	if (console_prompt_for_yn (gettext("Do you want to revert to HTTP as the webConfigurator protocol?"))) {
 		$config['system']['webgui']['protocol'] = "http";
 		$restart_webgui = true;
 	}

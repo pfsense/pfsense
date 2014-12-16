@@ -211,6 +211,18 @@ function restore_config_section_xmlrpc($raw_params) {
 		}
 	}
 
+	/*
+	 * Make sure it doesn't end up with both dnsmasq and unbound enabled
+	 * simultaneously in secondary
+	 * */
+	if (isset($params[0]['unbound']['enable']) && isset($config['dnsmasq']['enable'])) {
+		unset($config['dnsmasq']['enable']);
+		services_dnsmasq_configure();
+	} else if (isset($params[0]['dnsmasq']['enable']) && isset($config['unbound']['enable'])) {
+		unset($config['unbound']['enable']);
+		services_unbound_configure();
+	}
+
         // For vip section, first keep items sent from the master
 	$config = array_merge_recursive_unique($config, $params[0]);
 

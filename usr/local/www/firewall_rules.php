@@ -123,26 +123,6 @@ if($_REQUEST['dragdroporder']) {
 	exit;
 }
 
-$icmptypes = array(
-	"" => gettext("any"),
-	"echoreq" => gettext("Echo request"),
-	"echorep" => gettext("Echo reply"),
-	"unreach" => gettext("Destination unreachable"),
-	"squench" => gettext("Source quench"),
-	"redir" => gettext("Redirect"),
-	"althost" => gettext("Alternate Host"),
-	"routeradv" => gettext("Router advertisement"),
-	"routersol" => gettext("Router solicitation"),
-	"timex" => gettext("Time exceeded"),
-	"paramprob" => gettext("Invalid IP header"),
-	"timereq" => gettext("Timestamp"),
-	"timerep" => gettext("Timestamp reply"),
-	"inforeq" => gettext("Information request"),
-	"inforep" => gettext("Information reply"),
-	"maskreq" => gettext("Address mask request"),
-	"maskrep" => gettext("Address mask reply")
-);
-
 /* add group interfaces */
 if (is_array($config['ifgroups']['ifgroupentry']))
 	foreach($config['ifgroups']['ifgroupentry'] as $ifgen)
@@ -714,7 +694,9 @@ if($_REQUEST['undodrag']) {
 				if (isset($filterent['protocol'])) {
 					echo strtoupper($filterent['protocol']);
 					if (strtoupper($filterent['protocol']) == "ICMP" && !empty($filterent['icmptype'])) {
-						echo ' <span style="cursor: help;" title="ICMP type: ' . $icmptypes[$filterent['icmptype']] . '"><u>';
+						echo ' <span style="cursor: help;" title="ICMP type: ' .
+							( $filterent['ipprotocol'] == "inet6" ?  $icmp6types[$filterent['icmptype']] : $icmptypes[$filterent['icmptype']] ) .
+							'"><u>';
 						echo $filterent['icmptype'];
 						echo '</u></span>';
 					}

@@ -55,7 +55,9 @@ function backup_vip_config_section() {
 	$temp = array();
 	$temp['vip'] = array();
 	foreach($config['virtualip']['vip'] as $section) {
-		if (($section['mode'] == 'proxyarp' || $section['mode'] == 'ipalias') && !(strpos($section['interface'], '_vip') || strpos($section['interface'], 'lo0')))
+		if (($section['mode'] == 'proxyarp' || $section['mode'] == 'ipalias') &&
+		    (strpos($section['interface'], '_vip') === FALSE) &&
+		    (strpos($section['interface'], 'lo0') === FALSE))
 			continue;
 		if ($section['advskew'] <> "") {
 			$section_val = intval($section['advskew']);
@@ -382,8 +384,12 @@ if (is_array($config['hasync'])) {
 	if ($hasync['synchronizeauthservers'] != "") {
 		$sections[] = 'authserver';
 	}
-	if ($hasync['synchronizednsforwarder'] != "" and is_array($config['dnsmasq']))
-		$sections[] = 'dnsmasq';
+	if ($hasync['synchronizednsforwarder'] != "") {
+		if (is_array($config['dnsmasq']))
+			$sections[] = 'dnsmasq';
+		if (is_array($config['unbound']))
+			$sections[] = 'unbound';
+	}
 	if ($hasync['synchronizeschedules'] != "" || $hasync['synchronizerules'] != "") {
 		if (!is_array($config['schedules']))
 			$config['schedules'] = array();

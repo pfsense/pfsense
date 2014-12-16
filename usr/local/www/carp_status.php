@@ -64,6 +64,7 @@ if($_POST['disablecarp'] <> "") {
 				switch ($vip['mode']) {
 				case "carp":
 					interface_vip_bring_down($vip);
+					interface_ipalias_cleanup("{$vip['interface']}_vip{$vip['vhid']}");
 					sleep(1);
 					break;
 				}

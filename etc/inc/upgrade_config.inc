@@ -3458,13 +3458,13 @@ function upgrade_110_to_111() {
 	/* Following options were removed, bring them as custom_options */
 	if (isset($pkg['stats']) && $pkg['stats'] == "on") {
 		if (isset($pkg['stats_interval']))
-			$new['custom_options'] .= (empty($new['custom_options']) ? "" : ";") . "statistics-interval: {$pkg['stats_interval']}";
+			$new['custom_options'] .= (empty($new['custom_options']) ? "" : "\n") . "statistics-interval: {$pkg['stats_interval']}";
 		if (isset($pkg['cumulative_stats']))
-			$new['custom_options'] .= (empty($new['custom_options']) ? "" : ";") . "statistics-cumulative: {$pkg['cumulative_stats']}";
+			$new['custom_options'] .= (empty($new['custom_options']) ? "" : "\n") . "statistics-cumulative: {$pkg['cumulative_stats']}";
 		if (isset($pkg['extended_stats']) && $pkg['extended_stats'] == "on")
-			$new['custom_options'] .= (empty($new['custom_options']) ? "" : ";") . "extended-statistics: yes";
+			$new['custom_options'] .= (empty($new['custom_options']) ? "" : "\n") . "extended-statistics: yes";
 		else
-			$new['custom_options'] .= (empty($new['custom_options']) ? "" : ";") . "extended-statistics: no";
+			$new['custom_options'] .= (empty($new['custom_options']) ? "" : "\n") . "extended-statistics: no";
 	}
 
 	$new['acls'] = array();

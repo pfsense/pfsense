@@ -125,9 +125,13 @@ $counter = 1;
 				}
 				echo "<td class=\"listr ellipsis\" align=\"center\" id=\"gateway$counter\">$online</td>\n";
 				?>
+				<td style="display:none;">
 				<script type="text/javascript">
+				//<![CDATA[
 					jQuery('#gateway<?php echo $counter;?>').css('background-color',"<?php echo $bgcolor;?>");
+				//]]>
 				</script>
+				</td>
 				<?php
 				$counter++;
 			?>

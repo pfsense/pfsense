@@ -202,6 +202,7 @@ if ($_GET['act'] == "del") {
 
 $closehead = false;
 $pgtitle = array(gettext("Services"),gettext("DNS Resolver"));
+$shortcut_section = "unbound";
 include_once("head.inc");
 
 ?>

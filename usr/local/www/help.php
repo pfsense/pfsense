@@ -205,13 +205,21 @@ $helppages = array(
 	'diag_testport.php' => 'https://doc.pfsense.org/index.php/Test_Port',
 	'firewall_nat_npt.php' => 'https://doc.pfsense.org/index.php/NPt',
 	'firewall_nat_npt_edit.php' => 'https://doc.pfsense.org/index.php/NPt',
-	'load_balancer_setting.php' => 'https://doc.pfsense.org/index.php/Category:Load_balancing',
 	'services_captiveportal_zones.php' => 'https://doc.pfsense.org/index.php/Captive_Portal',
 	'services_captiveportal_zones_edit.php' => 'https://doc.pfsense.org/index.php/Captive_Portal',
 	'status_captiveportal_expire.php' => 'https://doc.pfsense.org/index.php/Captive_Portal',
 	'services_ntpd.php' => 'https://doc.pfsense.org/index.php/NTP_Server',
 	'status_ntpd.php' => 'https://doc.pfsense.org/index.php/NTP_Server',
 	'system_firmware_restorefullbackup.php' => 'https://doc.pfsense.org/index.php/Full_Backup',
+	'load_balancer_monitor.php' => 'https://doc.pfsense.org/index.php/Inbound_Load_Balancing',
+	'load_balancer_monitor_edit.php' => 'https://doc.pfsense.org/index.php/Inbound_Load_Balancing',
+	'load_balancer_pool.php' => 'https://doc.pfsense.org/index.php/Inbound_Load_Balancing#Set_up_Load_Balancing_Pool',
+	'load_balancer_pool_edit.php' => 'https://doc.pfsense.org/index.php/Inbound_Load_Balancing#Set_up_Load_Balancing_Pool',
+	'load_balancer_virtual_server.php' => 'https://doc.pfsense.org/index.php/Inbound_Load_Balancing#Set_up_Virtual_Server',
+	'load_balancer_virtual_server_edit.php' => 'https://doc.pfsense.org/index.php/Inbound_Load_Balancing#Set_up_Virtual_Server',
+	'load_balancer_setting.php' => 'https://doc.pfsense.org/index.php/Inbound_Load_Balancing#Advanced_Settings',
+	'status_lb_pool.php' => 'https://doc.pfsense.org/index.php/Inbound_Load_Balancing_Status',
+	'status_lb_vs.php' => 'https://doc.pfsense.org/index.php/Inbound_Load_Balancing_Status',
 
 	/* New Files for 2.1 that still need better pages/links. */
 	'services_dhcpv6.php' => 'https://doc.pfsense.org/index.php/Category:IPv6',
@@ -224,20 +232,6 @@ $helppages = array(
 
 	'carp_status.php' => 'https://doc.pfsense.org/index.php/Category:CARP',
 	'system_hasync.php' => 'https://doc.pfsense.org/index.php/Category:CARP', /* FIXME? */
-
-	'load_balancer_monitor.php' => 'https://doc.pfsense.org/index.php/Category:Load_balancing',
-	'load_balancer_monitor_edit.php' => 'https://doc.pfsense.org/index.php/Category:Load_balancing',
-	'load_balancer_pool.php' => 'https://doc.pfsense.org/index.php/Category:Load_balancing',
-	'load_balancer_pool_edit.php' => 'https://doc.pfsense.org/index.php/Category:Load_balancing',
-	'load_balancer_relay_action.php' => 'https://doc.pfsense.org/index.php/Category:Load_balancing',
-	'load_balancer_relay_action_edit.php' => 'https://doc.pfsense.org/index.php/Category:Load_balancing',
-	'load_balancer_relay_protocol.php' => 'https://doc.pfsense.org/index.php/Category:Load_balancing',
-	'load_balancer_relay_protocol_edit.php' => 'https://doc.pfsense.org/index.php/Category:Load_balancing',
-	'load_balancer_virtual_server.php' => 'https://doc.pfsense.org/index.php/Category:Load_balancing',
-	'load_balancer_virtual_server_edit.php' => 'https://doc.pfsense.org/index.php/Category:Load_balancing',
-	'status_lb_pool.php' => 'https://doc.pfsense.org/index.php/Category:Load_balancing',
-	'status_lb_vs.php' => 'https://doc.pfsense.org/index.php/Category:Load_balancing',
-
 
 	/* From here down are packages. Not checking these as strictly, 
 	any information is better than nothing. */

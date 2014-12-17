@@ -14,8 +14,8 @@ $helppages = array(
 	/* These pages are confirmed to work and have usable content */
 	'index.php' => 'https://doc.pfsense.org/index.php/Dashboard',
 	'license.php' => 'https://www.pfsense.org/about-pfsense/#legal',
-	'miniupnpd.xml' => 'https://doc.pfsense.org/index.php/What_is_UPnP',
-	'status_upnp.php' => 'https://doc.pfsense.org/index.php/What_is_UPnP',
+	'miniupnpd.xml' => 'https://doc.pfsense.org/index.php/What_are_UPnP_and_NAT-PMP',
+	'status_upnp.php' => 'https://doc.pfsense.org/index.php/What_are_UPnP_and_NAT-PMP',
 	'firewall_virtual_ip.php' => 'https://doc.pfsense.org/index.php/What_are_Virtual_IP_Addresses',
 	'firewall_virtual_ip_edit.php' => 'https://doc.pfsense.org/index.php/What_are_Virtual_IP_Addresses',
 	'firewall_aliases.php' => 'https://doc.pfsense.org/index.php/Aliases',

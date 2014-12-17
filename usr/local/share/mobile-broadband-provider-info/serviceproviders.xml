@@ -4200,65 +4200,18 @@ conceived.
 		</gsm>
 	</provider>
 	<provider>
-		<name>Dna</name>
+		<name>DNA</name>
 		<gsm>
 			<network-id mcc="244" mnc="03"/>
-			<!-- Phone number dependent:
-			 - Numbers beginning with 044 XXXXXXX turn in to 044 6 XXXXXXX
-			 - Numbers beginning with 041 XXXXXXX turn in to 041 6 XXXXXXX
-			 - Others case by case
-			 http://www.dna.fi/Yrityksille/Matkaviestinpalvelut/LiittymienLisapalvelut/dnafaksivastaaja/Documents/dna_vastaaja_kayttohje_120310.pdf
-			<voicemail/> -->
-			<balance-check>
-				<ussd>*100#</ussd>
-				<dtmf>0800412582</dtmf>
-				<sms text="SALDO">14000</sms>
-			</balance-check>
-
+			<apn value="data.dna.fi">
+				<plan type="postpaid"/>
+				<usage type="internet"/>
+				<name>Postpaid (contract) public IP address for 3G/4G dongles</name>
+			</apn>
 			<apn value="internet">
 				<plan type="postpaid"/>
 				<usage type="internet"/>
-				<name>dna internet</name>
-				<dns>217.78.192.22</dns>
-				<dns>217.78.192.78</dns>
-			</apn>
-			<apn value="mms">
-				<usage type="mms"/>
-				<name>dna MMS</name>
-				<username>dna</username>
-				<password>mms</password>
-				<mmsc>http://mmsc.dnafinland.fi</mmsc>
-				<mmsproxy>10.1.1.2:8080</mmsproxy>
-			</apn>
-		</gsm>
-	</provider>
-	<provider>
-		<name>Dna</name>
-		<gsm>
-			<network-id mcc="244" mnc="04"/>
-			<apn value="internet">
-				<usage type="internet"/>
-				<name>dna internet</name>
-			</apn>
-		</gsm>
-	</provider>
-	<provider>
-		<name>Dna</name>
-		<gsm>
-			<network-id mcc="244" mnc="12"/>
-			<apn value="internet">
-				<usage type="internet"/>
-				<name>dna internet</name>
-			</apn>
-		</gsm>
-	</provider>
-	<provider>
-		<name>Dna</name>
-		<gsm>
-			<network-id mcc="244" mnc="13"/>
-			<apn value="internet">
-				<usage type="internet"/>
-				<name>dna internet</name>
+				<name>Postpaid (contract) NAT (available for all subscribers)</name>
 			</apn>
 		</gsm>
 	</provider>

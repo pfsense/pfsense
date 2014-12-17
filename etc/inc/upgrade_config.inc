@@ -3486,4 +3486,18 @@ function upgrade_110_to_111() {
 	unset($pkg, $new);
 }
 
+function upgrade_111_to_112() {
+	global $config;
+
+	$config['cron']['item'][] = array(
+		'minute' => '*/60',
+		'hour' => '*',
+		'mday' => '*',
+		'month' => '*',
+		'wday' => '*',
+		'who' => 'root',
+		'command' => '/usr/bin/nice -n20 /usr/local/sbin/expiretable -v -t 3600 webConfiguratorlockout'
+	);
+}
+
 ?>

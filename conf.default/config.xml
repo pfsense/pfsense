@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
 <pfsense>
-	<version>11.1</version>
+	<version>11.2</version>
 	<lastchange/>
 	<theme>pfsense_ng</theme>
 	<system>
@@ -176,6 +176,15 @@
 			<wday>*</wday>
 			<who>root</who>
 			<command>/usr/bin/nice -n20 /usr/local/sbin/expiretable -v -t 3600 sshlockout</command>
+		</item>
+		<item>
+			<minute>*/60</minute>
+			<hour>*</hour>
+			<mday>*</mday>
+			<month>*</month>
+			<wday>*</wday>
+			<who>root</who>
+			<command>/usr/bin/nice -n20 /usr/local/sbin/expiretable -v -t 3600 webConfiguratorlockout</command>
 		</item>
 		<item>
 			<minute>1</minute>

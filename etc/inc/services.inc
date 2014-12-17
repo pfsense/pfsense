@@ -458,6 +458,9 @@ EOD;
 	 */
 	foreach ($dhcpdcfg as $dhcpif => $dhcpifconf) {
 
+		if (!isset($config['interfaces'][$dhcpif]['enable']))
+			continue;
+
 		interfaces_staticarp_configure($dhcpif);
 
 		if (!isset($dhcpifconf['enable']))
@@ -1122,7 +1125,7 @@ EOD;
 
 		$ifcfgv6 = $config['interfaces'][$dhcpv6if];
 
-		if (!isset($dhcpv6ifconf['enable']) || !isset($Iflist[$dhcpv6if]))
+		if (!isset($dhcpv6ifconf['enable']) || !isset($Iflist[$dhcpv6if]) || !isset($ifcfgv6['enable']))
 			continue;
 		$ifcfgipv6 = get_interface_ipv6($dhcpv6if);
 		$ifcfgsnv6 = get_interface_subnetv6($dhcpv6if);
@@ -1273,7 +1276,7 @@ EOD;
 			$dhcpdv6conf .= dhcpdzones($ddns_zones, $dhcpv6ifconf);
 		}
 
-		if ($config['dhcpdv6'][$dhcpv6if]['ramode'] <> "unmanaged") {
+		if ($config['dhcpdv6'][$dhcpv6if]['ramode'] <> "unmanaged" && isset($config['interfaces'][$dhcpv6if]['enable'])) {
 			if(preg_match("/poes/si", $dhcpv6if)) {
 				/* magic here */
 				$dhcpdv6ifs = array_merge($dhcpdv6ifs, get_pppoes_child_interfaces($dhcpv6if));

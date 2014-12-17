@@ -887,9 +887,9 @@ EOD;
 	}
 
 	if (isvalidpid("{$g['varrun_path']}/syslog.pid"))
-		sigkillbypid("{$g['varrun_path']}/syslog.pid", "HUP");
-	else
-		$retval = mwexec_bg("/usr/sbin/syslogd -s -c -c -l {$g['dhcpd_chroot_path']}/var/run/log -P {$g['varrun_path']}/syslog.pid {$syslogd_extra}");
+		sigkillbypid("{$g['varrun_path']}/syslog.pid", "TERM");
+	
+	$retval = mwexec_bg("/usr/sbin/syslogd -s -c -c -l {$g['dhcpd_chroot_path']}/var/run/log -P {$g['varrun_path']}/syslog.pid {$syslogd_extra}");
 
 	if (platform_booting())
 		echo gettext("done.") . "\n";

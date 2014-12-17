@@ -423,8 +423,12 @@ if ($_POST['apply']) {
 				if (isset($config['interfaces'][$ifapply]['enable'])) {
 					interface_bring_down($ifapply, false, $ifcfgo);
 					interface_configure($ifapply, true);
-				} else
+				} else {
 					interface_bring_down($ifapply, true, $ifcfgo);
+					if (isset($config['dhcpd'][$ifapply]['enable']) ||
+					    isset($config['dhcpdv6'][$ifapply]['enable']))
+						services_dhcpd_configure();
+				}
 			}
 		}
 		/* restart snmp so that it binds to correct address */

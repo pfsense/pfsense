@@ -686,8 +686,13 @@ function is_hostname($hostname) {
 	if (!is_string($hostname))
 		return false;
 
-	if (preg_match('/^(?:(?:[a-z0-9_]|[a-z0-9_][a-z0-9_\-]*[a-z0-9_])\.)*(?:[a-z0-9_]|[a-z0-9_][a-z0-9_\-]*[a-z0-9_])$/i', $hostname))
-		return true;
+	if (is_domain($hostname))
+		if ((substr_count($hostname, ".") == 1) && ($hostname[strlen($hostname)-1] == ".")) {
+			/* Only a single dot at the end like "test." - hosts cannot be directly in the root domain. */
+			return false;
+		} else {
+			return true;
+		}
 	else
 		return false;
 }

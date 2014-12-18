@@ -433,9 +433,14 @@ echo get_shortcut_log_link($shortcut_section, true);
 
 <?php
 /* if upgrade in progress, alert user */
-if(is_subsystem_dirty('packagelock')) {
-	$pgtitle = array(gettext("System"),gettext("Package Manager"));
-	print_info_box(gettext("Packages are currently being reinstalled in the background.<p>Do not make changes in the GUI until this is complete.") . "<p><img src='/themes/{$g['theme']}/images/icons/icon_fw-update.gif' alt='firmware update' />");
+if (is_subsystem_dirty('packagelock') || (file_exists('/conf/needs_package_sync') && platform_booting())) {
+	if (file_exists('/conf/needs_package_sync') && platform_booting()) {
+		$info_text = sprintf(gettext("%s is booting then packages will be reinstalled in the background.<p>Do not make changes in the GUI until this is complete."), $g['product_name']);
+	} else {
+		$pgtitle = array(gettext("System"),gettext("Package Manager"));
+		$info_text = gettext("Packages are currently being reinstalled in the background.<p>Do not make changes in the GUI until this is complete.");
+	}
+	print_info_box($info_text . "<p><img src='/themes/{$g['theme']}/images/icons/icon_fw-update.gif' alt='firmware update' />");
 }
 	$pgtitle_output = true;
 ?>

@@ -145,11 +145,10 @@ if (!is_array($config['widgets'])) {
 	if(file_exists('/conf/needs_package_sync')) {
 		if($config['installedpackages'] <> '' && is_array($config['installedpackages']['package'])) {
 			if($g['platform'] == "pfSense" || $g['platform'] == "nanobsd") {
-				if (platform_booting()) {
-					## User has logged into webGUI quickly while system is booting.
-					## The package reinstall will be done by the boot script real soon now.
-					## The code in fbegin.inc will put up the reinstalling notice.
-				} else {
+				## If the user has logged into webGUI quickly while the system is booting then do not redirect them to
+				## the package reinstall page. That is about to be done by the boot script anyway.
+				## The code in fbegin.inc will put up a notice to the user.
+				if (!platform_booting()) {
 					header('Location: pkg_mgr_install.php?mode=reinstallall');
 					exit;
 				}

@@ -446,14 +446,11 @@ function openvpn_reconfigure($mode, $settings) {
 		/* add the device to the openvpn group */
 		mwexec("/sbin/ifconfig " . escapeshellarg($devname) . " group openvpn");
 
-		foreach ($config['interfaces'] as $ifname => $ifdata) {
-			if ($ifdata['if'] == $devname) {
-				$grouptmp = link_interface_to_group($ifname);
-				if (!empty($grouptmp))
-					array_walk($grouptmp, 'interface_group_add_member');
-				break;
-			}
-		}
+		$ifname = convert_real_interface_to_friendly_interface_name($devname);
+		$grouptmp = link_interface_to_group($ifname);
+		if (!empty($grouptmp))
+			array_walk($grouptmp, 'interface_group_add_member');
+		unset($grouptmp, $ifname);
 	}
 
 	$pfile = $g['varrun_path'] . "/openvpn_{$mode_id}.pid";

@@ -495,7 +495,7 @@ EOD;
 		if (is_array($config['system']) && is_array($config['system']['user'])) {
 			foreach ($config['system']['user'] as $user) {
 				if (!empty($user['ipsecpsk'])) {
-					$pskconf .= "{$user['name']} : PSK \"{$user['ipsecpsk']}\"\n";
+					$pskconf .= "{$myid} {$user['name']} : PSK \"{$user['ipsecpsk']}\"\n";
 				}
 			}
 			unset($user);
@@ -506,7 +506,7 @@ EOD;
 			foreach ($ipseccfg['mobilekey'] as $key) {
 				if ($key['ident'] == "allusers")
 					$key['ident'] = '';
-				$pskconf .= "{$key['ident']} : PSK \"{$key['pre-shared-key']}\"\n";
+				$pskconf .= "{$myid} {$key['ident']} : PSK \"{$key['pre-shared-key']}\"\n";
 			}
 			unset($key);
 		}

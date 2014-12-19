@@ -714,7 +714,7 @@ EOD;
 							$left_spec = "%any";
 						} else {
 							$tmpsubnet = ipsec_get_phase1_src($ph1ent);
-							if ($leftsubnet_spec[$tmpsubnet])
+							if (empty($leftsubnet_spec[$tmpsubnet]))
 								$leftsubnet_spec[$tmpsubnet] = $tmpsubnet;
 						}
 

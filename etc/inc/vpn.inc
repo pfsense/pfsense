@@ -808,19 +808,19 @@ EOD;
 				$ipsecconnect .=<<<EOD
 
 conn con{$ph1ent['ikeid']}
-fragmentation = yes
-keyexchange = {$keyexchange}
-{$reauth}
-{$forceencaps}
-{$rekey}
-reqid = {$ikeid}
-installpolicy = yes
-{$tunneltype}
-{$dpdline}
-auto = {$passive}
-left = {$left_spec}
-right = {$right_spec}
-leftid = {$myid_data}
+	fragmentation = yes
+	keyexchange = {$keyexchange}
+	{$reauth}
+	{$forceencaps}
+	{$rekey}
+	reqid = {$ikeid}
+	installpolicy = yes
+	{$tunneltype}
+	{$dpdline}
+	auto = {$passive}
+	left = {$left_spec}
+	right = {$right_spec}
+	leftid = {$myid_data}
 
 EOD;
 

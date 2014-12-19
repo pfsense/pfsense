@@ -1417,7 +1417,7 @@ function system_ntp_setup_gps($serialport) {
 	conf_mount_rw();
 	// Create symlink that ntpd requires
 	unlink_if_exists($gps_device);
-	symlink($serialport, $gps_device);
+	@symlink($serialport, $gps_device);
 
 	/* Send the following to the GPS port to initialize the GPS */
 	if (is_array($config['ntpd']) && is_array($config['ntpd']['gps']) && !empty($config['ntpd']['gps']['type'])) {
@@ -1511,7 +1511,7 @@ function system_ntp_configure($start_ntpd=true) {
 	$ntpcfg .= "\n";
 
 	/* Add PPS configuration */
-	if (!empty($config['ntpd']['pps'])
+	if (is_array($config['ntpd']['pps']) && !empty($config['ntpd']['pps']['port'])
 		&& file_exists('/dev/'.$config['ntpd']['pps']['port'])
 		&& system_ntp_setup_pps($config['ntpd']['pps']['port'])) {
 		$ntpcfg .= "\n";
@@ -1550,7 +1550,7 @@ function system_ntp_configure($start_ntpd=true) {
 	/* End PPS configuration */
 
 	/* Add GPS configuration */
-	if (!empty($config['ntpd']['gps'])
+	if (is_array($config['ntpd']['gps']) && !empty($config['ntpd']['gps']['port'])
 		&& file_exists('/dev/'.$config['ntpd']['gps']['port'])
 		&& system_ntp_setup_gps($config['ntpd']['gps']['port'])) {
 		$ntpcfg .= "\n";
@@ -1608,7 +1608,7 @@ function system_ntp_configure($start_ntpd=true) {
 			$ntpcfg .= $config['ntpd']['gps']['refid'];
 		}
 		$ntpcfg .= "\n";
-	}elseif (!empty($config['ntpd']['gpsport'])
+	}elseif (is_array($config['ntpd']) && !empty($config['ntpd']['gpsport'])
 		&& file_exists('/dev/'.$config['ntpd']['gpsport'])
 		&& system_ntp_setup_gps($config['ntpd']['gpsport'])) {
 		/* This handles a 2.1 and earlier config */

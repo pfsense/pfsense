@@ -805,7 +805,6 @@ EOD;
 		}
 
 				$ipsecconf .=<<<EOD
-				$ipsecconnect .=<<<EOD
 
 conn con{$ph1ent['ikeid']}
 	fragmentation = yes

@@ -112,8 +112,7 @@ foreach ($ifdescrs as $ifdescr => $ifname):
 	</tr>
 	<tr>
 		<td class="listr">
-			<div id="<?php echo $ifname;?>-ip" style="display:inline"><strong><?=htmlspecialchars($ifinfo['ipaddr']);?> </strong></div>
-			<br />
+			<div id="<?php echo $ifname;?>-ip" style="display:inline"><strong><?=htmlspecialchars($ifinfo['ipaddr']);?> </strong><?php if ($ifinfo['ipaddr']) echo "<br />";?></div>
 			<div id="<?php echo $ifname;?>-ipv6" style="display:inline"><strong><?=htmlspecialchars($ifinfo['ipaddrv6']);?> </strong></div>
 		</td>
 	</tr>

@@ -336,7 +336,10 @@ function get_interfacestatus() {
 		}
 		$data .= ",";
 		if ($ifinfo['ipaddr'])
-			$data .= htmlspecialchars($ifinfo['ipaddr']);
+			$data .= "<strong>" . htmlspecialchars($ifinfo['ipaddr']) . "</strong>";
+		$data .= ",";
+		if ($ifinfo['ipaddrv6'])
+			$data .= "<strong>" . htmlspecialchars($ifinfo['ipaddrv6']) . "</strong>";
 		$data .= ",";
 		if ($ifinfo['status'] != "down")
 			$data .= htmlspecialchars($ifinfo['media']);

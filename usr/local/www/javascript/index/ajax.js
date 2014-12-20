@@ -156,14 +156,16 @@ function updateInterfaces(x){
 					jQuery('#' + details[0] + '-down').css("display","none");
 					jQuery('#' + details[0] + '-block').css("display","none");
 					jQuery('#' + details[0] + '-ip').html(details[2]);
-					jQuery('#' + details[0] + '-media').html(details[3]);
+					jQuery('#' + details[0] + '-ipv6').html(details[3]);
+					jQuery('#' + details[0] + '-media').html(details[4]);
 					break;
 				case "down":
 					jQuery('#' + details[0] + '-down').css("display","inline");
 					jQuery('#' + details[0] + '-up').css("display","none");
 					jQuery('#' + details[0] + '-block').css("display","none");
 					jQuery('#' + details[0] + '-ip').html(details[2]);
-					jQuery('#' + details[0] + '-media').html(details[3]);
+					jQuery('#' + details[0] + '-ipv6').html(details[3]);
+					jQuery('#' + details[0] + '-media').html(details[4]);
 					break;
 				case "block":
 						jQuery('#' + details[0] + '-block').css("display","inline");

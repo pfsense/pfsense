@@ -38,6 +38,7 @@
 ##|*MATCH=system_usermanager_passwordmg.php*
 ##|-PRIV
 
+require_once("auth.inc");
 require_once("certs.inc");
 require_once("guiconfig.inc");
 
@@ -58,8 +59,11 @@ if (isset($_POST['save'])) {
 		if (!session_id())
 			session_start();
 		// all values are okay --> saving changes
-		$config['system']['user'][$userindex[$_SESSION['Username']]]['password'] = crypt(trim($_POST['passwordfld1']));
-		local_user_set($config['system']['user'][$userindex[$_SESSION['Username']]]);
+
+		$userent =& $config['system']['user'][$userindex[$_SESSION['Username']]];
+		local_user_set_password($userent, $_POST['passwordfld1']);
+		local_user_set($userent);
+		unset($userent);
 		session_commit();
 
 		write_config();

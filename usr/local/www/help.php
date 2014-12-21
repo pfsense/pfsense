@@ -14,8 +14,8 @@ $helppages = array(
 	/* These pages are confirmed to work and have usable content */
 	'index.php' => 'https://doc.pfsense.org/index.php/Dashboard',
 	'license.php' => 'https://www.pfsense.org/about-pfsense/#legal',
-	'miniupnpd.xml' => 'https://doc.pfsense.org/index.php/What_is_UPnP',
-	'status_upnp.php' => 'https://doc.pfsense.org/index.php/What_is_UPnP',
+	'miniupnpd.xml' => 'https://doc.pfsense.org/index.php/What_are_UPnP_and_NAT-PMP',
+	'status_upnp.php' => 'https://doc.pfsense.org/index.php/What_are_UPnP_and_NAT-PMP',
 	'firewall_virtual_ip.php' => 'https://doc.pfsense.org/index.php/What_are_Virtual_IP_Addresses',
 	'firewall_virtual_ip_edit.php' => 'https://doc.pfsense.org/index.php/What_are_Virtual_IP_Addresses',
 	'firewall_aliases.php' => 'https://doc.pfsense.org/index.php/Aliases',
@@ -42,9 +42,9 @@ $helppages = array(
 	'diag_confbak.php' => 'https://doc.pfsense.org/index.php/Configuration_History',
 	'diag_defaults.php' => 'https://doc.pfsense.org/index.php/Factory_Defaults',
 	'firewall_shaper.php' => 'https://doc.pfsense.org/index.php/Traffic_Shaping_Guide',
-	'firewall_shaper_layer7.php' => 'https://doc.pfsense.org/index.php/Traffic_Shaping_Guide',
+	'firewall_shaper_layer7.php' => 'https://doc.pfsense.org/index.php/Layer_7',
 	'firewall_shaper_queues.php' => 'https://doc.pfsense.org/index.php/Traffic_Shaping_Guide',
-	'firewall_shaper_vinterface.php' => 'https://doc.pfsense.org/index.php/Traffic_Shaping_Guide',
+	'firewall_shaper_vinterface.php' => 'https://doc.pfsense.org/index.php/Limiters',
 	'firewall_shaper_wizards.php' => 'https://doc.pfsense.org/index.php/Traffic_Shaping_Guide',
 	'status_queues.php' => 'https://doc.pfsense.org/index.php/Traffic_Shaping_Guide',
 	'status_dhcp_leases.php' => 'https://doc.pfsense.org/index.php/DHCP_Leases',
@@ -162,10 +162,12 @@ $helppages = array(
 	'diag_ipsec_spd.php' => 'https://doc.pfsense.org/index.php/IPsec_Status',
 	'vpn_ipsec.php' => 'https://doc.pfsense.org/index.php/IPsec_Tunnels',
 	'vpn_ipsec_mobile.php' => 'https://doc.pfsense.org/index.php/IPsec_Mobile_Clients',
+	'diag_ipsec_leases.php' => 'https://doc.pfsense.org/index.php/IPsec_Mobile_Clients',
 	'vpn_ipsec_phase1.php' => 'https://doc.pfsense.org/index.php/IPsec_Tunnels',
 	'vpn_ipsec_phase2.php' => 'https://doc.pfsense.org/index.php/IPsec_Tunnels',
 	'vpn_ipsec_keys.php' => 'https://doc.pfsense.org/index.php/IPsec_Tunnels',
 	'vpn_ipsec_keys_edit.php' => 'https://doc.pfsense.org/index.php/IPsec_Tunnels',
+	'vpn_ipsec_settings.php' => 'https://doc.pfsense.org/index.php/Advanced_IPsec_Settings',
 	'services_captiveportal.php' => 'https://doc.pfsense.org/index.php/Captive_Portal',
 	'services_captiveportal_filemanager.php' => 'https://doc.pfsense.org/index.php/Captive_Portal',
 	'services_captiveportal_ip.php' => 'https://doc.pfsense.org/index.php/Captive_Portal',
@@ -187,7 +189,7 @@ $helppages = array(
 	'openvpn-client-export.xml' => 'https://doc.pfsense.org/index.php/OpenVPN_Client_Exporter', /* Package */
 	'vpn_openvpn_export.php' => 'https://doc.pfsense.org/index.php/OpenVPN_Client_Exporter', /* Package */
 	'diag_authentication.php' => 'https://doc.pfsense.org/index.php/User_Authentication_Servers',
-	'diag_limiter_info.php' => 'https://doc.pfsense.org/index.php/Traffic_Shaping_Guide#Display_Pipes',
+	'diag_limiter_info.php' => 'https://doc.pfsense.org/index.php/Limiters',
 	'diag_pf_info.php' => 'https://doc.pfsense.org/index.php/Packet_Filter_Information',
 	'diag_smart.php' => 'https://doc.pfsense.org/index.php/SMART_Status',
 	'diag_states_summary.php' => 'https://doc.pfsense.org/index.php/States_Summary',
@@ -210,6 +212,8 @@ $helppages = array(
 	'status_captiveportal_expire.php' => 'https://doc.pfsense.org/index.php/Captive_Portal',
 	'services_ntpd.php' => 'https://doc.pfsense.org/index.php/NTP_Server',
 	'status_ntpd.php' => 'https://doc.pfsense.org/index.php/NTP_Server',
+	'services_ntpd_gps.php' => 'https://doc.pfsense.org/index.php/NTP_Server',
+	'services_ntpd_pps.php' => 'https://doc.pfsense.org/index.php/NTP_Server',
 	'system_firmware_restorefullbackup.php' => 'https://doc.pfsense.org/index.php/Full_Backup',
 	'load_balancer_monitor.php' => 'https://doc.pfsense.org/index.php/Inbound_Load_Balancing',
 	'load_balancer_monitor_edit.php' => 'https://doc.pfsense.org/index.php/Inbound_Load_Balancing',
@@ -225,11 +229,14 @@ $helppages = array(
 	'services_dhcpv6.php' => 'https://doc.pfsense.org/index.php/DHCPv6_Server',
 	'services_dhcpv6_edit.php' => 'https://doc.pfsense.org/index.php/DHCPv6_Server',
 	'services_router_advertisements.php' => 'https://doc.pfsense.org/index.php/Router_Advertisements',
-
-	/* Below here are pages that may need some cleanup or have not been fully looked at yet */
-
-	'carp_status.php' => 'https://doc.pfsense.org/index.php/Category:CARP',
-	'system_hasync.php' => 'https://doc.pfsense.org/index.php/Category:CARP', /* FIXME? */
+	'carp_status.php' => 'https://doc.pfsense.org/index.php/CARP_Status',
+	'system_hasync.php' => 'https://doc.pfsense.org/index.php/High_Availability',
+	'services_unbound.php' => 'https://doc.pfsense.org/index.php/Unbound_DNS_Resolver',
+	'services_unbound_advanced.php' => 'https://doc.pfsense.org/index.php/Unbound_DNS_Resolver#Advanced_Settings_Tab',
+	'services_unbound_acls.php' => 'https://doc.pfsense.org/index.php/Unbound_DNS_Resolver#Access_Lists_Tab',
+	'services_unbound_domainoverride_edit.php' => 'https://doc.pfsense.org/index.php/Unbound_DNS_Resolver',
+	'services_unbound_host_edit.php' => 'https://doc.pfsense.org/index.php/Unbound_DNS_Resolver',
+	'diag_gmirror.php' => 'https://doc.pfsense.org/index.php/Create_a_Software_RAID1_%28gmirror%29',
 
 	/* From here down are packages. Not checking these as strictly, 
 	any information is better than nothing. */
@@ -261,16 +268,13 @@ $helppages = array(
 	'darkstat.xml' => 'https://doc.pfsense.org/index.php/How_can_I_monitor_bandwidth_usage',
 	'rate.xml' => 'https://doc.pfsense.org/index.php/How_can_I_monitor_bandwidth_usage',
 	'ntop.xml' => 'https://doc.pfsense.org/index.php/How_can_I_monitor_bandwidth_usage',
+	'ntopng.xml' => 'https://doc.pfsense.org/index.php/How_can_I_monitor_bandwidth_usage',
 	'vnstat.xml' => 'https://doc.pfsense.org/index.php/How_can_I_monitor_bandwidth_usage',
 	'widentd.xml' => 'https://doc.pfsense.org/index.php/Widentd_package',
 	'tinydns.xml' => 'https://doc.pfsense.org/index.php/Tinydns_package',
 	'tinydns_domains.xml' => 'https://doc.pfsense.org/index.php/Tinydns_package',
 	'tinydns_sync.xml' => 'https://doc.pfsense.org/index.php/Tinydns_package',
 	'blinkled.xml' => 'https://doc.pfsense.org/index.php/BlinkLED_Package',
-	'freeswitch.xml' => 'https://doc.pfsense.org/index.php/FreeSWITCH',
-	'freeswitch_modules.xml' => 'https://doc.pfsense.org/index.php/FreeSWITCH',
-	'dialplan.default.xml' => 'https://doc.pfsense.org/index.php/FreeSWITCH',
-	'dialplan.public.xml' => 'https://doc.pfsense.org/index.php/FreeSWITCH',
 	'havp.xml' => 'https://doc.pfsense.org/index.php/HAVP_Package_for_HTTP_Anti-Virus_Scanning',
 	'havp_avset.xml' => 'https://doc.pfsense.org/index.php/HAVP_Package_for_HTTP_Anti-Virus_Scanning',
 	'havp_blacklist.xml' => 'https://doc.pfsense.org/index.php/HAVP_Package_for_HTTP_Anti-Virus_Scanning',
@@ -315,75 +319,6 @@ $helppages = array(
 	'unbound.xml' => 'https://doc.pfsense.org/index.php/Unbound_package',
 
 );
-
-/*
-Filename list (2.0 box as of 2009-11-15), entries with help maps should be
-removed. Also, files which cannot normally be accessed by a user can
-be removed.(e.g. xmlrpc.php)
-
-Below this is a list of .xml files from built-in and add-on packages
-
-
-
-Package .xml files (some may not be needed)
-	'apache_mod_security.xml' => '',
-	'apache_mod_security_settings.xml' => '',
-	'arpwatch.xml' => '',
-	'assp.xml' => '',
-	'backup.xml' => '',
-	'bsdstats.xml' => '',
-	'cron.xml' => '',
-	'ddns.xml' => '',
-	'denyhosts.xml' => '',
-	'dnsblacklist.xml' => '',
-	'dyntables.xml' => '',
-	'fit123.xml' => '',
-	'freeradius.xml' => '',
-	'freeradiusclients.xml' => '',
-	'freeradiussettings.xml' => '',
-	'frickin.xml' => '',
-	'haproxy.xml' => '',
-	'hula.xml' => '',
-	'ifdepd.xml' => '',
-	'ifstated.xml' => '',
-	'igmpproxy.xml' => '',
-	'imspector.xml' => '',
-	'lcdproc.xml' => '',
-	'lcdproc_screens.xml' => '',
-	'lightsquid.xml' => '',
-	'messages_de.xml' => '',
-	'messages_en.xml' => '',
-	'mtr-nox11.xml' => '',
-	'netio-newpkg.xml' => '',
-	'netio.xml' => '',
-	'netioserver-newpkg.xml' => '',
-	'netioserver.xml' => '',
-	'new_zone_wizard.xml' => '',
-	'nmap.xml' => '',
-	'notes.xml' => '',
-	'nrpe2.xml' => '',
-	'nut.xml' => '',
-	'per-user-bandwidth-distribution.xml' => '',
-	'pfstat.xml' => '',
-	'phpmrss.xml' => '',
-	'phpsysinfo.xml' => '',
-	'powerdns.xml' => '',
-	'pure-ftpd.xml' => '',
-	'pure-ftpdsettings.xml' => '',
-	'quagga.xml' => '',
-	'routed.xml' => '',
-	'shellcmd.xml' => '',
-	'spamd.xml' => '',
-	'spamd_outlook.xml' => '',
-	'spamd_settings.xml' => '',
-	'spamd_whitelist.xml' => '',
-	'sshterm.xml' => '',
-	'tftp.xml' => '',
-	'upclient.xml' => '',
-	'viralator.xml' => '',
-	'zabbix-agent.xml' => '',
-
- */
 
 $pagename = "";
 /* Check for parameter "page". */

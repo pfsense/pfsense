@@ -141,7 +141,9 @@ if (!empty($realiface)) {
 				foreach ($ports as $pid => $parent_if) {
 					/* The loop here is because ppp types can have real and assigned interfaces as members */
 					$tmpiface = get_real_interface($parent_if);
-					$tmpiface = convert_real_interface_to_friendly_interface_name($tmpiface);
+					if ($tmpiface != $realiface)
+						continue;
+					$tmpiface = convert_real_interface_to_friendly_interface_name($ppp['if']);
 					if (!empty($tmpiface))
 						interface_configure($tmpiface, true, true);
 				}

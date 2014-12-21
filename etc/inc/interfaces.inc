@@ -3974,7 +3974,7 @@ function interface_group_setup(&$groupname /* The parameter is an array */) {
 	$members = explode(" ", $groupname['members']);
 	foreach($members as $ifs) {
 		$realif = get_real_interface($ifs);
-		if ($realif)
+		if ($realif && does_interface_exist($realif))
 			mwexec("/sbin/ifconfig {$realif} group {$groupname['ifname']}");
 	}
 
@@ -3995,7 +3995,8 @@ function is_interface_group($if) {
 
 function interface_group_add_member($interface, $groupname) {
 	$interface = get_real_interface($interface);
-	mwexec("/sbin/ifconfig {$interface} group " . escapeshellarg($groupname), true);
+	if (does_interface_exist($interface))
+		mwexec("/sbin/ifconfig {$interface} group " . escapeshellarg($groupname), true);
 }
 
 /* COMPAT Function */

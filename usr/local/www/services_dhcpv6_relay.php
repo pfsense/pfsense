@@ -58,9 +58,12 @@ $iflist = get_configured_interface_with_descr();
  */
 $dhcpd_enabled = false;
 if (is_array($config['dhcpdv6'])) {
-	foreach($config['dhcpdv6'] as $dhcp) 
-		if (isset($dhcp['enable'])) 
+	foreach($config['dhcpdv6'] as $dhcp) {
+		if (isset($dhcp['enable']) && isset($config['interfaces'][$dhcpif]['enable'])) {
 			$dhcpd_enabled = true;
+			break;
+		}
+	}
 }
 
 if ($_POST) {

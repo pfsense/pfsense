@@ -994,10 +994,10 @@ function enable_change(enable_change) {
 			list($host) = explode(":", $_SERVER['HTTP_HOST']);
 			$zoneid = $pconfig['zoneid'] ? $pconfig['zoneid'] : 8000;
 			if ($pconfig['httpslogin_enable']) {
-				$port = $pconfig['listenporthttps'] ? $pconfig['listenporthttps'] : ($zoneid + 1);
+				$port = $pconfig['listenporthttps'] ? $pconfig['listenporthttps'] : ($zoneid + 8001);
 				$href = "https://{$host}:{$port}";
 			} else {
-				$port = $pconfig['listenporthttp']  ? $pconfig['listenporthttp']  : $zoneid;
+				$port = $pconfig['listenporthttp']  ? $pconfig['listenporthttp']  : ($zoneid + 8000);
 				$href = "http://{$host}:{$port}";
 			}
 		?>

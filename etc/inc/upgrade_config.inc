@@ -3455,6 +3455,9 @@ function upgrade_110_to_111() {
 		}
 	}
 
+	if (isset($new['custom_options']) && !empty($new['custom_options']))
+		$new['custom_options'] = str_replace(';', "\n", $new['custom_options']);
+
 	/* Following options were removed, bring them as custom_options */
 	if (isset($pkg['stats']) && $pkg['stats'] == "on") {
 		if (isset($pkg['stats_interval']))
@@ -3484,6 +3487,20 @@ function upgrade_110_to_111() {
 		unset($config['installedpackages']['unboundacls']);
 
 	unset($pkg, $new);
+}
+
+function upgrade_111_to_112() {
+	global $config;
+
+	$config['cron']['item'][] = array(
+		'minute' => '*/60',
+		'hour' => '*',
+		'mday' => '*',
+		'month' => '*',
+		'wday' => '*',
+		'who' => 'root',
+		'command' => '/usr/bin/nice -n20 /usr/local/sbin/expiretable -v -t 3600 webConfiguratorlockout'
+	);
 }
 
 ?>

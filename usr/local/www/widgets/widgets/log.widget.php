@@ -105,11 +105,30 @@ else
 
 /* Called by the AJAX updater */
 function format_log_line(row) {
-	var line = '<td class="listMRlr" align="center">' + row[0] + '<\/td>' +
-		'<td class="listMRr ellipsis" title="' + row[1] + '">' + row[1].slice(0,-3) + '<\/td>' +
-		'<td class="listMRr ellipsis" title="' + row[2] + '">' + row[2] + '<\/td>' +
-		'<td class="listMRr ellipsis" title="' + row[3] + '">' + row[3] + '<\/td>' +
-		'<td class="listMRr ellipsis" title="' + row[4] + '">' + row[4] + '<\/td>';
+	var rrText = "<?php echo gettext("Reverse Resolve with DNS"); ?>";
+
+	if ( row[8] == '6' ) {
+		srcIP = '[' + row[3] + ']';
+		dstIP = '[' + row[5] + ']';
+	} else {
+		srcIP = row[3];
+		dstIP = row[5];
+	}
+
+	if ( row[4] == '' )
+		srcPort = '';
+	else
+		srcPort = ':' + row[4];
+	if ( row[6] == '' )
+		dstPort = '';
+	else
+		dstPort = ':' + row[6];
+
+	var line = '<td class="listMRlr" align="center">' + row[0] + '</td>' +
+		'<td class="listMRr ellipsis" title="' + row[1] + '">' + row[1].slice(0,-3) + '</td>' +
+		'<td class="listMRr ellipsis" title="' + row[2] + '">' + row[2] + '</td>' +
+		'<td class="listMRr ellipsis" title="' + srcIP + srcPort + '"><a href="diag_dns.php?host=' + row[3] + '" title="' + rrText + '">' + srcIP + '</a></td>' +
+		'<td class="listMRr ellipsis" title="' + dstIP + dstPort + '"><a href="diag_dns.php?host=' + row[5] + '" title="' + rrText + '">' + dstIP + '</a>' + dstPort + '</td>';
 
 	var nentriesacts = "<?php echo $nentriesacts; ?>";
 	var nentriesinterfaces = "<?php echo $nentriesinterfaces; ?>";
@@ -188,6 +207,24 @@ function format_log_line(row) {
 	foreach ($filterlog as $filterent):
 	$evenRowClass = $rowIndex % 2 ? " listMReven" : " listMRodd";
 	$rowIndex++;
+	if ($filterent['version'] == '6') {
+		$srcIP = "[" . htmlspecialchars($filterent['srcip']) . "]";
+		$dstIP = "[" . htmlspecialchars($filterent['dstip']) . "]";
+	} else {
+		$srcIP = htmlspecialchars($filterent['srcip']);
+		$dstIP = htmlspecialchars($filterent['dstip']);
+	}
+
+	if ($filterent['srcport'])
+		$srcPort = ":" . htmlspecialchars($filterent['srcport']);
+	else
+		$srcPort = "";
+
+	if ($filterent['dstport'])
+		$dstPort = ":" . htmlspecialchars($filterent['dstport']);
+	else
+		$dstPort = "";
+
 	?>
 		<tr class="<?=$evenRowClass?>">
 			<td class="listMRlr nowrap" align="center">
@@ -197,19 +234,18 @@ function format_log_line(row) {
 			</td>
 			<td class="listMRr ellipsis nowrap" title="<?php echo htmlspecialchars($filterent['time']);?>"><?php echo substr(htmlspecialchars($filterent['time']),0,-3);?></td>
 			<td class="listMRr ellipsis nowrap" title="<?php echo htmlspecialchars($filterent['interface']);?>"><?php echo htmlspecialchars($filterent['interface']);?></td>
-			<td class="listMRr ellipsis nowrap" title="<?php echo htmlspecialchars($filterent['src']);?>">
+			<td class="listMRr ellipsis nowrap" title="<?php echo $srcIP . $srcPort;?>">
 				<a href="diag_dns.php?host=<?php echo "{$filterent['srcip']}"; ?>" title="<?=gettext("Reverse Resolve with DNS");?>">
-				<?php echo htmlspecialchars($filterent['srcip']);?></a></td>
-			<td class="listMRr ellipsis nowrap" title="<?php echo htmlspecialchars($filterent['dst']);?>">
+				<?php echo $srcIP;?></a></td>
+			<td class="listMRr ellipsis nowrap" title="<?php echo $dstIP . $dstPort;?>">
 				<a href="diag_dns.php?host=<?php echo "{$filterent['dstip']}"; ?>" title="<?=gettext("Reverse Resolve with DNS");?>">
-				<?php echo htmlspecialchars($filterent['dstip']);?></a><?php echo ":" . htmlspecialchars($filterent['dstport']);?></td>
+				<?php echo $dstIP;?></a><?php echo $dstPort;?></td>
 			<?php
 				if ($filterent['proto'] == "TCP")
 					$filterent['proto'] .= ":{$filterent['tcpflags']}";
 			?>
 		</tr>
 	<?php endforeach; ?>
-		<tr style="display:none;"><td></td></tr>
 	</tbody>
 </table>
 

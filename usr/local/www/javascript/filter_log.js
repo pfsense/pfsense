@@ -59,7 +59,7 @@ function fetch_new_rules_callback(callback_data) {
 	for(var x=0; x<data_split.length-1; x++) {
 		/* loop through rows */
 		row_split = data_split[x].split("||");
-		lastsawtime = row_split[6];
+		lastsawtime = row_split[9];
 
 		var tmp = format_log_line(row_split);
 		if ( !(tmp) ) continue;

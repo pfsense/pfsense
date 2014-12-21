@@ -105,11 +105,18 @@ else
 
 /* Called by the AJAX updater */
 function format_log_line(row) {
-	var line = '<td class="listMRlr" align="center">' + row[0] + '<\/td>' +
-		'<td class="listMRr ellipsis" title="' + row[1] + '">' + row[1].slice(0,-3) + '<\/td>' +
-		'<td class="listMRr ellipsis" title="' + row[2] + '">' + row[2] + '<\/td>' +
-		'<td class="listMRr ellipsis" title="' + row[3] + '">' + row[3] + '<\/td>' +
-		'<td class="listMRr ellipsis" title="' + row[4] + '">' + row[4] + '<\/td>';
+	var rrText = "<?php echo gettext("Reverse Resolve with DNS"); ?>";
+	var row4parts = row[4].split(':');
+	if ( row4parts.length == 1 )
+		destPort = '';
+	else
+		destPort = ':' + row4parts[1];
+
+	var line = '<td class="listMRlr" align="center">' + row[0] + '</td>' +
+		'<td class="listMRr ellipsis" title="' + row[1] + '">' + row[1].slice(0,-3) + '</td>' +
+		'<td class="listMRr ellipsis" title="' + row[2] + '">' + row[2] + '</td>' +
+		'<td class="listMRr ellipsis" title="' + row[3] + '"><a href="diag_dns.php?host=' + row[3] + '" title="' + rrText + '">' + row[3] + '</a></td>' +
+		'<td class="listMRr ellipsis" title="' + row[4] + '"><a href="diag_dns.php?host=' + row4parts[0] + '" title="' + rrText + '">' + row4parts[0] + '</a>' + destPort + '</td>';
 
 	var nentriesacts = "<?php echo $nentriesacts; ?>";
 	var nentriesinterfaces = "<?php echo $nentriesinterfaces; ?>";
@@ -202,14 +209,13 @@ function format_log_line(row) {
 				<?php echo htmlspecialchars($filterent['srcip']);?></a></td>
 			<td class="listMRr ellipsis nowrap" title="<?php echo htmlspecialchars($filterent['dst']);?>">
 				<a href="diag_dns.php?host=<?php echo "{$filterent['dstip']}"; ?>" title="<?=gettext("Reverse Resolve with DNS");?>">
-				<?php echo htmlspecialchars($filterent['dstip']);?></a><?php echo ":" . htmlspecialchars($filterent['dstport']);?></td>
+				<?php echo htmlspecialchars($filterent['dstip']);?></a><?php if ($filterent['dstport']) echo ":" . htmlspecialchars($filterent['dstport']);?></td>
 			<?php
 				if ($filterent['proto'] == "TCP")
 					$filterent['proto'] .= ":{$filterent['tcpflags']}";
 			?>
 		</tr>
 	<?php endforeach; ?>
-		<tr style="display:none;"><td></td></tr>
 	</tbody>
 </table>
 

@@ -1017,10 +1017,10 @@ function enable_change(enable_change) {
 					gettext('Upload an HTML/PHP file for the portal page here (leave blank to keep the current one). ' .
 							'Make sure to include a form (POST to %1$s) with a submit button (%2$s) and a hidden field with %3$s and %4$s. ' .
 							'Include the %5$s and %6$s and/or %7$s input fields if authentication is enabled, otherwise it will always fail.'),
-					'&quot;$PORTAL_ACTION&quot;',
+					'&quot;$PORTAL_ACTION$&quot;',
 					"name=&quot;accept&quot;",
 					"name=&quot;redirurl&quot;",
-					'value=&quot;$PORTAL_REDIRURL&quot;',
+					'value=&quot;$PORTAL_REDIRURL$&quot;',
 					"&quot;auth_user&quot;",
 					"&quot;auth_pass&quot;",
 					"&quot;auth_voucher&quot;");

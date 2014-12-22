@@ -182,6 +182,15 @@ function system_resolvconf_generate($dynupdate = false) {
 	fwrite($fd, $resolvconf);
 	fclose($fd);
 
+	// Prevent resolvconf(8) from rewriting our resolv.conf
+	$fd = fopen("{$g['varetc_path']}/resolvconf.conf", "w");
+	if (!$fd) {
+		printf("Error: cannot open resolvconf.conf in system_resolvconf_generate().\n");
+		return 1;
+	}
+	fwrite($fd, "resolv_conf=\"/dev/null\"\n");
+	fclose($fd);
+
 	if (!platform_booting()) {
 		/* restart dhcpd (nameservers may have changed) */
 		if (!$dynupdate)

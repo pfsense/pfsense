@@ -571,6 +571,22 @@ function ipsec_get_descr($ikeid) {
 	return $descr;
 }
 
+function ipsec_get_phase1($ikeid) {
+        global $config;
+
+        if (!isset($config['ipsec']['phase1']) ||
+            !is_array($config['ipsec']['phase1']))
+                return '';
+
+        $a_phase1 = $config['ipsec']['phase1'];
+        foreach ($a_phase1 as $p1) {
+                if ($p1['ikeid'] == $ikeid) {
+                        return $p1;
+                }
+        }
+        unset($a_phase1);
+}
+
 function ipsec_fixup_ip($ipaddr) {
 	if (is_ipaddrv6($ipaddr) || is_subnetv6($ipaddr))
 		return Net_IPv6::compress(Net_IPv6::uncompress($ipaddr));

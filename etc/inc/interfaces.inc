@@ -3079,7 +3079,7 @@ function interface_configure($interface = "wan", $reloadall = false, $linkupeven
 			system_routing_configure($interface);
 
 			/* reload ipsec tunnels */
-			vpn_ipsec_configure();
+			send_event("service reload ipsecdns");
 
 			/* restart dnsmasq or unbound */
 			if (isset($config['dnsmasq']['enable']))

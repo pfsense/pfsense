@@ -134,7 +134,11 @@ $status = ipsec_smp_dump_status();
 	if (is_array($status['query']) && is_array($status['query']['ikesalist']) && is_array($status['query']['ikesalist']['ikesa'])):
 		foreach ($status['query']['ikesalist']['ikesa'] as $ikeid => $ikesa):
 			$con_id = substr($ikesa['peerconfig'], 3);
-			$ipsecconnected[$con_id] = $con_id;
+			if ($ikesa['version'] == 1) {
+				$ph1idx = substr($con_id, 0, strrpos(substr($con_id, 0, -1), '00'));
+				$ipsecconnected[$ph1idx] = $ph1idx;
+			} else
+				$ipsecconnected[$con_id] = $con_id;
 
 			if (ipsec_phase1_status($status['query']['ikesalist']['ikesa'], $ikesa['id']))
 				$icon = "pass";

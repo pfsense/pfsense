@@ -1,7 +1,7 @@
 <?php
 /* $Id$ */
 /*
-	diag_logs_filter.php
+	diag_logs_filter_dynamic.php
 	part of pfSesne
 	Copyright (C) 2004-2009 Scott Ullrich
         Copyright (C) 2013-2014 Electric Sheep Fencing, LP
@@ -83,11 +83,29 @@ include("head.inc");
 ?>
 	/* Called by the AJAX updater */
 	function format_log_line(row) {
-		var i = 0;
-		var line = '<td class="listMRlr nowrap" align="center">' + row[i++] + '<\/td>';
-		while (i < 6) {
-			line += '<td class="listMRr nowrap">' + row[i++] + '<\/td>';
+		if ( row[8] == '6' ) {
+			srcIP = '[' + row[3] + ']';
+			dstIP = '[' + row[5] + ']';
+		} else {
+			srcIP = row[3];
+			dstIP = row[5];
 		}
+
+		if ( row[4] == '' )
+			srcPort = '';
+		else
+			srcPort = ':' + row[4];
+		if ( row[6] == '' )
+			dstPort = '';
+		else
+			dstPort = ':' + row[6];
+
+		var line = '<td class="listMRlr" align="center">' + row[0] + '</td>' +
+			'<td class="listMRr nowrap">' + row[1] + '</td>' +
+			'<td class="listMRr nowrap">' + row[2] + '</td>' +
+			'<td class="listMRr nowrap">' + srcIP + srcPort + '</td>' +
+			'<td class="listMRr nowrap">' + dstIP + dstPort + '</td>' +
+			'<td class="listMRr nowrap">' + row[7] + '</td>';
 		return line;
 	}
 //]]>
@@ -145,7 +163,25 @@ include("head.inc");
 			$rowIndex = 0;
 			foreach ($filterlog as $filterent):
 			$evenRowClass = $rowIndex % 2 ? " listMReven" : " listMRodd";
-			$rowIndex++;?>
+			$rowIndex++;
+			if ($filterent['version'] == '6') {
+				$srcIP = "[" . htmlspecialchars($filterent['srcip']) . "]";
+				$dstIP = "[" . htmlspecialchars($filterent['dstip']) . "]";
+			} else {
+				$srcIP = htmlspecialchars($filterent['srcip']);
+				$dstIP = htmlspecialchars($filterent['dstip']);
+			}
+
+			if ($filterent['srcport'])
+				$srcPort = ":" . htmlspecialchars($filterent['srcport']);
+			else
+				$srcPort = "";
+
+			if ($filterent['dstport'])
+				$dstPort = ":" . htmlspecialchars($filterent['dstport']);
+			else
+				$dstPort = "";
+			?>
 			<tr class="<?=$evenRowClass?>">
 				<td class="listMRlr nowrap" align="center">
 				<a href="#" onclick="javascript:getURL('diag_logs_filter.php?getrulenum=<?php echo "{$filterent['rulenum']},{$filterent['act']}"; ?>', outputrule);">
@@ -154,8 +190,8 @@ include("head.inc");
 				</td>
 				<td class="listMRr nowrap"><?php echo htmlspecialchars($filterent['time']);?></td>
 				<td class="listMRr nowrap"><?php echo htmlspecialchars($filterent['interface']);?></td>
-				<td class="listMRr nowrap"><?php echo htmlspecialchars($filterent['src']);?></td>
-				<td class="listMRr nowrap"><?php echo htmlspecialchars($filterent['dst']);?></td>
+				<td class="listMRr nowrap"><?php echo $srcIP . $srcPort;?></td>
+				<td class="listMRr nowrap"><?php echo $dstIP . $dstPort;?></td>
 				<?php
 					if ($filterent['proto'] == "TCP")
 						$filterent['proto'] .= ":{$filterent['tcpflags']}";
@@ -163,7 +199,6 @@ include("head.inc");
 				<td class="listMRr nowrap"><?php echo htmlspecialchars($filterent['proto']);?></td>
 			</tr>
 			<?php endforeach; ?>
-			<tr style="display:none;"><td></td></tr>
 			</tbody>
 		</table>
 	</div>

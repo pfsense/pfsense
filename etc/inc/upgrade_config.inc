@@ -3503,4 +3503,20 @@ function upgrade_111_to_112() {
 	);
 }
 
+function upgrade_112_to_113() {
+	global $config;
+
+	if (isset($config['notifications']['smtp']['ssl']) &&
+	    $config['notifications']['smtp']['ssl'] == "checked")
+		$config['notifications']['smtp']['ssl'] = true;
+	else
+		unset($config['notifications']['smtp']['ssl']);
+
+	if (isset($config['notifications']['smtp']['tls']) &&
+	    $config['notifications']['smtp']['tls'] == "checked")
+		$config['notifications']['smtp']['tls'] = true;
+	else
+		unset($config['notifications']['smtp']['tls']);
+}
+
 ?>

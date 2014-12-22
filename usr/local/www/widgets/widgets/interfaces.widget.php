@@ -59,19 +59,22 @@ foreach ($ifdescrs as $ifdescr => $ifname):
 		$icon = 'cablenic';
 
 	if ($ifinfo['status'] == "up" || $ifinfo['status'] == "associated") {
-		$status = '-up';
-		$status_text = 'up';
-		$status_icon = 'icon_interface_up.gif';
+		$known_status = true;
+		$up_display = "inline";
+		$down_display = "none";
+		$block_display = "none";
 	} elseif ($ifinfo['status'] == "no carrier") {
-		$status = '-down';
-		$status_text = 'down';
-		$status_icon = 'icon_interface_down.gif';
+		$known_status = true;
+		$up_display = "none";
+		$down_display = "inline";
+		$block_display = "none";
 	} elseif ($ifinfo['status'] == "down") {
-		$status = '-block';
-		$status_text = 'disabled';
-		$status_icon = 'icon_block.gif';
+		$known_status = true;
+		$up_display = "none";
+		$down_display = "none";
+		$block_display = "inline";
 	} else
-		$status = '';
+		$known_status = false;
 ?>
 	<tr>
 		<td class="vncellt" rowspan="2">
@@ -85,16 +88,22 @@ foreach ($ifdescrs as $ifdescr => $ifname):
 ?>
 		</td>
 <?php
-	if ($status === ''):
-		echo htmlspecialchars($ifinfo['status']);
-	else:
+	if ($known_status):
 ?>
 		<td rowspan="2" class="listr" align="center">
-			<div id="<?php echo $ifname . $status;?>" style="display:inline" >
-				<img src="./themes/<?= $g['theme']; ?>/images/icons/<?=$status_icon;?>" title="<?=$ifname;?> is <?=$status_text;?>" alt="<?=$status;?>" />
+			<div id="<?php echo $ifname . "-up";?>" style="display:<?=$up_display;?>" >
+				<img src="./themes/<?= $g['theme']; ?>/images/icons/icon_interface_up.gif" title="<?=$ifname;?> is up" alt="up" />
+			</div>
+			<div id="<?php echo $ifname . "-down";?>" style="display:<?=$down_display;?>" >
+				<img src="./themes/<?= $g['theme']; ?>/images/icons/icon_interface_down.gif" title="<?=$ifname;?> is down" alt="down" />
+			</div>
+			<div id="<?php echo $ifname . "-block";?>" style="display:<?=$block_display;?>" >
+				<img src="./themes/<?= $g['theme']; ?>/images/icons/icon_block.gif" title="<?=$ifname;?> is disabled" alt="block" />
 			</div>
 		</td>
 <?php
+	else:
+		echo htmlspecialchars($ifinfo['status']);
 	endif;
 ?>
 		<td class="listr">
@@ -103,19 +112,8 @@ foreach ($ifdescrs as $ifdescr => $ifname):
 	</tr>
 	<tr>
 		<td class="listr">
-<?php
-		if($ifinfo['ipaddr'] != ""):
-?>
-			<div id="<?php echo $ifname;?>-ip" style="display:inline"><strong><?=htmlspecialchars($ifinfo['ipaddr']);?> </strong></div>
-			<br />
-<?php
-		endif;
-		if ($ifinfo['ipaddrv6'] != ""):
-?>
+			<div id="<?php echo $ifname;?>-ip" style="display:inline"><strong><?=htmlspecialchars($ifinfo['ipaddr']);?> </strong><?php if ($ifinfo['ipaddr']) echo "<br />";?></div>
 			<div id="<?php echo $ifname;?>-ipv6" style="display:inline"><strong><?=htmlspecialchars($ifinfo['ipaddrv6']);?> </strong></div>
-<?php
-		endif;
-?>
 		</td>
 	</tr>
 <?php

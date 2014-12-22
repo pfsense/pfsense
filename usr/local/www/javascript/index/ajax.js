@@ -150,25 +150,31 @@ function updateInterfaces(x){
 		interfaces_split = x.split("~");
 		interfaces_split.each(function(iface){
 			details = iface.split(",");
+			if (details[2] == '')
+				ipv4_details = '';
+			else
+				ipv4_details = details[2] + '<br />';
 			switch(details[1]) {
 				case "up":
 					jQuery('#' + details[0] + '-up').css("display","inline");
 					jQuery('#' + details[0] + '-down').css("display","none");
 					jQuery('#' + details[0] + '-block').css("display","none");
-					jQuery('#' + details[0] + '-ip').html(details[2]);
-					jQuery('#' + details[0] + '-media').html(details[3]);
+					jQuery('#' + details[0] + '-ip').html(ipv4_details);
+					jQuery('#' + details[0] + '-ipv6').html(details[3]);
+					jQuery('#' + details[0] + '-media').html(details[4]);
 					break;
 				case "down":
 					jQuery('#' + details[0] + '-down').css("display","inline");
 					jQuery('#' + details[0] + '-up').css("display","none");
 					jQuery('#' + details[0] + '-block').css("display","none");
-					jQuery('#' + details[0] + '-ip').html(details[2]);
-					jQuery('#' + details[0] + '-media').html(details[3]);
+					jQuery('#' + details[0] + '-ip').html(ipv4_details);
+					jQuery('#' + details[0] + '-ipv6').html(details[3]);
+					jQuery('#' + details[0] + '-media').html(details[4]);
 					break;
 				case "block":
-						jQuery('#' + details[0] + '-block').css("display","inline");
-						jQuery('#' + details[0] + '-down').css("display","none");
-						jQuery('#' + details[0] + '-up').css("display","none");
+					jQuery('#' + details[0] + '-block').css("display","inline");
+					jQuery('#' + details[0] + '-down').css("display","none");
+					jQuery('#' + details[0] + '-up').css("display","none");
 					break;
 			}
 		});

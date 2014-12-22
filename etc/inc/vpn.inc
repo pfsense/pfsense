@@ -109,10 +109,6 @@ function vpn_ipsec_configure($ipchg = false)
 
 	$syscfg = $config['system'];
 	$ipseccfg = $config['ipsec'];
-	$a_phase1 = $config['ipsec']['phase1'];
-	$a_phase2 = $config['ipsec']['phase2'];
-	$a_client = $config['ipsec']['client'];
-
 	if (!isset($ipseccfg['enable'])) {
 		/* try to stop charon */
 		mwexec("/usr/local/sbin/ipsec stop");
@@ -128,6 +124,10 @@ function vpn_ipsec_configure($ipchg = false)
 
 		return 0;
 	}
+
+	$a_phase1 = $config['ipsec']['phase1'];
+	$a_phase2 = $config['ipsec']['phase2'];
+	$a_client = $config['ipsec']['client'];
 
 	$certpath = "{$g['varetc_path']}/ipsec/ipsec.d/certs";
 	$capath = "{$g['varetc_path']}/ipsec/ipsec.d/cacerts";
@@ -670,6 +670,7 @@ EOD;
 
 					$localid_type = $ph2ent['localid']['type'];
 					$leftsubnet_data = ipsec_idinfo_to_cidr($ph2ent['localid'], false, $ph2ent['mode']);
+
 					/* Do not print localid in some cases, such as a pure-psk or psk/xauth single phase2 mobile tunnel */
 					if (($localid_type == "none" || $localid_type == "mobile")
 					    && isset($ph1ent['mobile']) && (ipsec_get_number_of_phase2($ikeid)==1)) {
@@ -696,16 +697,13 @@ EOD;
 						}
 					}
 
-					if (empty($leftsubnet_spec[$leftsubnet_data]))
-						$leftsubnet_spec[$leftsubnet_data] = $leftsubnet_data;
+					$leftsubnet_spec[] = $leftsubnet_data;
 
 					if (!isset($ph2ent['mobile'])) {
 						$tmpsubnet = ipsec_idinfo_to_cidr($ph2ent['remoteid'], false, $ph2ent['mode']);
-						if (empty($rightsubnet_spec[$tmpsubnet]))
-							$rightsubnet_spec[$tmpsubnet] = $tmpsubnet;
+						$rightsubnet_spec[] = $tmpsubnet;
 					} else if (!empty($a_client['pool_address'])) {
-						if (empty($rightsubnet_spec["{$a_client['pool_address']}/{$a_client['pool_netbits']}"]))
-							$rightsubnet_spec["{$a_client['pool_address']}/{$a_client['pool_netbits']}"] = "{$a_client['pool_address']}/{$a_client['pool_netbits']}";
+						$rightsubnet_spec[] = "{$a_client['pool_address']}/{$a_client['pool_netbits']}";
 					}
 				} else {
 					$tunneltype = "type = transport";
@@ -715,13 +713,11 @@ EOD;
 						$left_spec = "%any";
 					} else {
 						$tmpsubnet = ipsec_get_phase1_src($ph1ent);
-						if (empty($leftsubnet_spec[$tmpsubnet]))
-							$leftsubnet_spec[$tmpsubnet] = $tmpsubnet;
+						$leftsubnet_spec[] = $tmpsubnet;
 					}
 
 					if (!isset($ph2ent['mobile'])) {
-						if (empty($rightsubnet_spec[$right_spec]))
-							$rightsubnet_spec[$right_spec] = $right_spec;
+						$rightsubnet_spec[] = $right_spec;
 					}
 				}
 
@@ -804,15 +800,12 @@ EOD;
 			}
 		}
 
-				$ipsecconf .=<<<EOD
-
-conn con{$ph1ent['ikeid']}
+			$ipsecconnect =<<<EOD
 	fragmentation = yes
 	keyexchange = {$keyexchange}
 	{$reauth}
 	{$forceencaps}
 	{$rekey}
-	reqid = {$ikeid}
 	installpolicy = yes
 	{$tunneltype}
 	{$dpdline}
@@ -823,28 +816,59 @@ conn con{$ph1ent['ikeid']}
 
 EOD;
 
-				if (!empty($ikelifeline))
-					$ipsecconf .= "\t{$ikelifeline}\n";
-				if ($ipseclifetime > 0)
-					$ipsecconf .= "\tlifetime = {$ipseclifetime}s\n";
-				if (!empty($rightsourceip))
-					$ipsecconf .= "{$rightsourceip}";
-				if (!empty($ealgosp1))
-					$ipsecconf .= "\t{$ealgosp1}\n";
-				if (!empty($ealgoAHsp2arr))
-					$ipsecconf .= "\tah = " . join(',', $ealgoAHsp2arr) . "!\n";
-				if (!empty($ealgoESPsp2arr))
-					$ipsecconf .= "\tesp = " . join(',', $ealgoESPsp2arr) . "!\n";
-				if (!empty($authentication))
-					$ipsecconf .= "\t{$authentication}\n";
-				if (!empty($peerid_spec))
-					$ipsecconf .= "\trightid = {$peerid_spec}\n";
-				if ($keyexchange == 'ikev1')
-					$ipsecconf .= "\taggressive = {$aggressive}\n";
-				if (!empty($rightsubnet_spec))
-					$ipsecconf .= "\trightsubnet = " . join(",", $rightsubnet_spec) . "\n";
-				if (!empty($leftsubnet_spec))
-					$ipsecconf .= "\tleftsubnet = " . join(",", $leftsubnet_spec) . "\n";
+			if (!empty($ikelifeline))
+				$ipsecconnect .= "\t{$ikelifeline}\n";
+			if ($ipseclifetime > 0)
+				$ipsecconnect .= "\tlifetime = {$ipseclifetime}s\n";
+			if (!empty($rightsourceip))
+				$ipsecconnect .= "{$rightsourceip}";
+			if (!empty($ealgosp1))
+				$ipsecconnect .= "\t{$ealgosp1}\n";
+			if (!empty($ealgoAHsp2arr))
+				$ipsecconnect .= "\tah = " . join(',', $ealgoAHsp2arr) . "!\n";
+			if (!empty($ealgoESPsp2arr))
+				$ipsecconnect .= "\tesp = " . join(',', $ealgoESPsp2arr) . "!\n";
+			if (!empty($authentication))
+				$ipsecconnect .= "\t{$authentication}\n";
+			if (!empty($peerid_spec))
+				$ipsecconnect .= "\trightid = {$peerid_spec}\n";
+			if ($keyexchange == 'ikev1')
+				$ipsecconnect .= "\taggressive = {$aggressive}\n";
+
+			if (!isset($ph1ent['mobile']) && $keyexchange == 'ikev1') {
+				if (!empty($rightsubnet_spec)) {
+					$ipsecfin = '';
+					foreach ($rightsubnet_spec as $idx => $rsubnet) {
+						$ipsecfin .= "\nconn con{$ph1ent['ikeid']}00{$idx}\n";
+						$ipsecfin .= "\treqid = {$ikeid}000{$idx}\n";
+						$ipsecfin .= $ipsecconnect;
+						$ipsecfin .= "\trightsubnet = {$rsubnet}\n";
+						$ipsecfin .= "\tleftsubnet = " . $leftsubnet_spec[$idx] . "\n";
+					}
+				} else
+					log_error("No phase2 specifications for tunnel with REQID = {$ikeid}");
+			} else {
+				$ipsecfin = "\nconn con{$ph1ent['ikeid']}\n";
+				$ipsecfin .= "\treqid = {$ikeid}\n";
+				$ipsecfin .= $ipsecconnect;
+				if (!empty($rightsubnet_spec)) {
+					$tempsubnets = array();
+					foreach ($rightsubnet_spec as $rightsubnet)
+						$tempsubnets[$rightsubnet] = $rightsubnet;
+					$ipsecfin .= "\trightsubnet = " . join(",", $tempsubnets) . "\n";
+					unset($tempsubnets, $rightsubnet);
+				}
+				if (!empty($leftsubnet_spec)) {
+					$tempsubnets = array();
+					foreach ($leftsubnet_spec as $leftsubnet)
+						$tempsubnets[$leftsubnet] = $leftsubnet;
+					$ipsecfin .= "\tleftsubnet = " . join(",", $leftsubnet_spec) . "\n";
+					unset($tempsubnets, $leftsubnet);
+				}
+			}
+			$ipsecconf .= $ipsecfin;
+			unset($ipsecfin);
+
 		}
 	}
 

@@ -448,6 +448,23 @@ function captiveportal_init_webgui_zone($cpcfg) {
 	}
 }
 
+function captiveportal_init_rules_byinterface($interface) {
+	global $cpzone, $cpzoneid, $config;
+
+	if (!is_array($config['captiveportal']))
+		return;
+
+	foreach ($config['captiveportal'] as $cpkey => $cp) {
+		$cpzone = $cpkey;
+		$cpzoneid = $cp['zoneid'];
+		$cpinterfaces = explode(",", $cp['interface']);
+		if (in_array($interface, $cpinterfaces)) {
+			captiveportal_init_rules();
+			break;
+		}
+	}
+}
+
 /* reinit will disconnect all users, be careful! */
 function captiveportal_init_rules($reinit = false) {
 	global $config, $g, $cpzone, $cpzoneid;

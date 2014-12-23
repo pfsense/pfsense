@@ -60,10 +60,10 @@ if (isset($config['ipsec']['phase1'])) { ?>
 		$ipsec_status['query'] = array();
 		$ipsec_status['query']['ikesalist'] = array();
 		$ipsec_status['query']['ikesalist']['ikesa'] = array();
-	} else if (is_array($ipsec_status['query']['ikesalist'])) {
+	} else if (!is_array($ipsec_status['query']['ikesalist'])) {
 		$ipsec_status['query']['ikesalist'] = array();
 		$ipsec_status['query']['ikesalist']['ikesa'] = array();
-	} else if (is_array($ipsec_status['query']['ikesalist']['ikesa']))
+	} else if (!is_array($ipsec_status['query']['ikesalist']['ikesa']))
 		$ipsec_status['query']['ikesalist']['ikesa'] = array();
 
 	$ipsec_detail_array = array();

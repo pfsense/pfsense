@@ -599,8 +599,6 @@ function prot_change() {
 								<td width="78%" class="vtable">
 									<input name="disableconsolemenu" type="checkbox" id="disableconsolemenu" value="yes" <?php if ($pconfig['disableconsolemenu']) echo "checked=\"checked\""; ?>  />
 									<strong><?=gettext("Password protect the console menu"); ?></strong>
-									<br />
-									<span class="vexpl"><?=gettext("Changes to this option will take effect after a reboot."); ?></span>
 								</td>
 							</tr>
 							<tr>

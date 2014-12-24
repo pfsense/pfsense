@@ -86,8 +86,10 @@ if (isset($config['ipsec']['phase1'])) { ?>
 		} else
 			$ikeid = "con{$ph1ent['ikeid']}";
 
+		$found = false;
 		foreach ($ipsec_status['query']['ikesalist']['ikesa'] as $ikeid => $ikesa) {
 			if ($ikeid == $ikesa['peerconfig']) {
+				$found = true;
 				$ph2ikeid = $ikesa['id'];
 				if (ipsec_phase1_status($ipsec_status['query']['ikesalist']['ikesa'], $ph2ikeid)) {
 					/* tunnel is up */
@@ -99,6 +101,12 @@ if (isset($config['ipsec']['phase1'])) { ?>
 					$inactivecounter++;
 				}
 			}
+		}
+
+		if ($found === false) {
+			/* tunnel is down */
+			$iconfn = "false";
+			$inactivecounter++;
 		}
 
 		$ipsec_detail_array[] = array('src' => convert_friendly_interface_to_friendly_descr($ph1ent['interface']),

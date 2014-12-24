@@ -1614,7 +1614,7 @@ function getVolume($ip, $mac = NULL) {
 	// Initialize vars properly, since we don't want NULL vars
 	$volume['input_pkts'] = $volume['input_bytes'] = $volume['output_pkts'] = $volume['output_bytes'] = 0 ;
 
-	$ipfw = pfSense_ipfw_getTablestats($cpzoneid, 1, $ip, $mac);
+	$ipfw = pfSense_ipfw_getTablestats($cpzoneid, IP_FW_TABLE_XLISTENTRY, 1, $ip, $mac);
 	if (is_array($ipfw)) {
 		if ($reverse) {
 			$volume['output_pkts'] = $ipfw['packets'];
@@ -1626,7 +1626,7 @@ function getVolume($ip, $mac = NULL) {
 		}
 	}
 
-	$ipfw = pfSense_ipfw_getTablestats($cpzoneid, 2, $ip);
+	$ipfw = pfSense_ipfw_getTablestats($cpzoneid, IP_FW_TABLE_XLISTENTRY, 2, $ip, $mac);
 	if (is_array($ipfw)) {
 		if ($reverse) {
 			$volume['input_pkts'] = $ipfw['packets'];

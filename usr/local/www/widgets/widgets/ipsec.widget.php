@@ -73,7 +73,7 @@ if (isset($config['ipsec']['phase1'])) { ?>
 			continue;
 		ipsec_lookup_phase1($ph2ent,$ph1ent);
 
-		if (isset($ph1ent['disabled']) && isset($ph2ent['disabled']))
+		if (isset($ph1ent['disabled']) || isset($ph2ent['disabled']))
 			continue;
 
 		$ph2number = ipsec_get_number_of_phase2($ph1ent['ikeid']);

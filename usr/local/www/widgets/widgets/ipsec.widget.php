@@ -87,7 +87,7 @@ if (isset($config['ipsec']['phase1'])) { ?>
 			$ikeid = "con{$ph1ent['ikeid']}";
 
 		$found = false;
-		foreach ($ipsec_status['query']['ikesalist']['ikesa'] as $ikeid => $ikesa) {
+		foreach ($ipsec_status['query']['ikesalist']['ikesa'] as $ikesa) {
 			if ($ikeid == $ikesa['peerconfig']) {
 				$found = true;
 				$ph2ikeid = $ikesa['id'];

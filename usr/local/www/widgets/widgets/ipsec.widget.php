@@ -71,13 +71,13 @@ if (isset($config['ipsec']['phase1'])) { ?>
 	foreach ($config['ipsec']['phase2'] as $ph2ent){
 		if ($ph2ent['remoteid']['type'] == "mobile")
 			continue;
-		ipsec_lookup_phase1($ph2ent,$ph1ent);
+		if (!ipsec_lookup_phase1($ph2ent,$ph1ent))
+			continue;
 
 		if (isset($ph1ent['disabled']) || isset($ph2ent['disabled']))
 			continue;
 
-		$ph2number = ipsec_get_number_of_phase2($ph1ent['ikeid']);
-		if ($ph1ent['iketype'] == 'ikev1' && $ph2number > 1) {
+		if ($ph1ent['iketype'] == 'ikev1') {
 			if (!isset($ikev1num[$ph1ent['ikeid']]))
 				$ikev1num[$ph1ent['ikeid']] = 0;
 			else

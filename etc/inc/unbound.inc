@@ -227,7 +227,6 @@ EOF;
 	$cache_max_ttl = (!empty($config['unbound']['cache_max_ttl'])) ? $config['unbound']['cache_max_ttl'] : "86400";
 	$cache_min_ttl = (!empty($config['unbound']['cache_min_ttl'])) ? $config['unbound']['cache_min_ttl'] : "0";
 	$infra_host_ttl = (!empty($config['unbound']['infra_host_ttl'])) ? $config['unbound']['infra_host_ttl'] : "900";
-	$infra_lame_ttl = (!empty($config['unbound']['infra_lame_ttl'])) ? $config['unbound']['infra_lame_ttl'] : "900";
 	$infra_cache_numhosts = (!empty($config['unbound']['infra_cache_numhosts'])) ? $config['unbound']['infra_cache_numhosts'] : "10000";
 	$unwanted_reply_threshold = (!empty($config['unbound']['unwanted_reply_threshold'])) ? $config['unbound']['unwanted_reply_threshold'] : "0";
 	if ($unwanted_reply_threshold == "disabled")
@@ -296,7 +295,6 @@ unwanted-reply-threshold: {$unwanted_reply_threshold}
 num-queries-per-thread: {$num_queries_per_thread}
 jostle-timeout: {$jostle_timeout}
 infra-host-ttl: {$infra_host_ttl}
-infra-lame-ttl: {$infra_lame_ttl}
 infra-cache-numhosts: {$infra_cache_numhosts}
 outgoing-num-tcp: {$outgoing_num_tcp}
 incoming-num-tcp: {$incoming_num_tcp}

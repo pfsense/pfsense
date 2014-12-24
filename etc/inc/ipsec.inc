@@ -515,6 +515,10 @@ function ipsec_dump_mobile() {
 		return array();
 	}
 
+	/* This is needed for fixing #4130 */
+	if (filesize("{$g['tmp_path']}/strongswan_leases.xml") < 200)
+		return array();
+
 	$custom_listtags = array('lease', 'pool');
 	$response = parse_xml_config("{$g['tmp_path']}/strongswan_leases.xml", "leases");
 	@unlink("{$g['tmp_path']}/strongswan_leases.xml");

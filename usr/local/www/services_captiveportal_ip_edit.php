@@ -152,7 +152,7 @@ if ($_POST) {
 			$cpzoneid = $a_cp[$cpzone]['zoneid'];
 			unset($ipfw);
 			if (isset($oldip) && isset($oldmask)) {
-				$ipfw = pfSense_ipfw_getTablestats($cpzoneid, 3, $oldip, $oldmask);
+				$ipfw = pfSense_ipfw_getTablestats($cpzoneid, IP_FW_TABLE_XLISTENTRY, 3, $oldip);
 				$rules .= "table 3 delete {$oldip}/{$oldmask}\n";
 				$rules .= "table 4 delete {$oldip}/{$oldmask}\n";
 				if (is_array($ipfw)) {

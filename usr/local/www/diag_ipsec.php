@@ -137,8 +137,9 @@ $status = ipsec_smp_dump_status();
 			if ($ikesa['version'] == 1) {
 				$ph1idx = substr($con_id, 0, strrpos(substr($con_id, 0, -1), '00'));
 				$ipsecconnected[$ph1idx] = $ph1idx;
-			} else
-				$ipsecconnected[$con_id] = $con_id;
+			} else {
+				$ipsecconnected[$con_id] = $ph1idx = $con_id;
+			}
 
 			if (ipsec_phase1_status($status['query']['ikesalist']['ikesa'], $ikesa['id']))
 				$icon = "pass";
@@ -150,7 +151,7 @@ $status = ipsec_smp_dump_status();
 			<tr>
 				<td class="listlr">
 <?php
-					echo htmlspecialchars(ipsec_get_descr($con_id));
+					echo htmlspecialchars(ipsec_get_descr($ph1idx));
 ?>
 				</td>
 				<td class="listr">

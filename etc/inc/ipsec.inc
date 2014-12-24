@@ -555,19 +555,15 @@ function ipsec_get_descr($ikeid) {
 
 	if (!isset($config['ipsec']['phase1']) ||
 	    !is_array($config['ipsec']['phase1']))
-		return "";
+		return '';
 
-	$descr = '';
-	$a_phase1 = $config['ipsec']['phase1'];
-	foreach ($a_phase1 as $p1) {
+	foreach ($config['ipsec']['phase1'] as $p1) {
 		if ($p1['ikeid'] == $ikeid) {
-			$descr = $p1['descr'];
-			break;
+			return $p1['descr'];
 		}
 	}
-	unset($a_phase1);
 
-	return $descr;
+	return '';
 }
 
 function ipsec_get_phase1($ikeid) {

@@ -28565,7 +28565,7 @@ msgstr "Firefox 1.5 ou versão mais recente ou outro browser que suporte SVG é re
 
 #: usr/local/www/carp_status.php:71 usr/local/www/carp_status.php:67
 #, php-format
-msgid "%s IPs have been disabled. Please note that disabling does not survive a reboot."
+msgid "%s IPs have been disabled. Please note that disabling does not survive a reboot and some configuration changes will re-enable."
 msgstr "%s IPs foram desabilitados. Por favor, estas alterações não estarão disponíveis no próximo boot."
 
 #: usr/local/www/carp_status.php:73 usr/local/www/carp_status.php:69

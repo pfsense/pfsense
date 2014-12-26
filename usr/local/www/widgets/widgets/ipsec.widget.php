@@ -68,57 +68,59 @@ if (isset($config['ipsec']['phase1'])) { ?>
 
 	$ipsec_detail_array = array();
 	$ikev1num = array();
-	foreach ($config['ipsec']['phase2'] as $ph2ent){
-		if ($ph2ent['remoteid']['type'] == "mobile")
-			continue;
-		if (!ipsec_lookup_phase1($ph2ent,$ph1ent))
-			continue;
+	if (isset($config['ipsec']['phase2'])) {
+		foreach ($config['ipsec']['phase2'] as $ph2ent) {
+			if ($ph2ent['remoteid']['type'] == "mobile")
+				continue;
+			if (!ipsec_lookup_phase1($ph2ent,$ph1ent))
+				continue;
 
-		if (isset($ph1ent['disabled']) || isset($ph2ent['disabled']))
-			continue;
+			if (isset($ph1ent['disabled']) || isset($ph2ent['disabled']))
+				continue;
 
-		if ($ph1ent['iketype'] == 'ikev1') {
-			if (!isset($ikev1num[$ph1ent['ikeid']]))
-				$ikev1num[$ph1ent['ikeid']] = 0;
-			else
-				$ikev1num[$ph1ent['ikeid']]++;
-			$ikeid = "con{$ph1ent['ikeid']}00" . $ikev1num[$ph1ent['ikeid']];
-		} else
-			$ikeid = "con{$ph1ent['ikeid']}";
+			if ($ph1ent['iketype'] == 'ikev1') {
+				if (!isset($ikev1num[$ph1ent['ikeid']]))
+					$ikev1num[$ph1ent['ikeid']] = 0;
+				else
+					$ikev1num[$ph1ent['ikeid']]++;
+				$ikeid = "con{$ph1ent['ikeid']}00" . $ikev1num[$ph1ent['ikeid']];
+			} else
+				$ikeid = "con{$ph1ent['ikeid']}";
 
-		$found = false;
-		foreach ($ipsec_status['query']['ikesalist']['ikesa'] as $ikesa) {
-			if ($ikeid == $ikesa['peerconfig']) {
-				$found = true;
-				$ph2ikeid = $ikesa['id'];
-				if (ipsec_phase1_status($ipsec_status['query']['ikesalist']['ikesa'], $ph2ikeid)) {
-					/* tunnel is up */
-					$iconfn = "true";
-					$activecounter++;
-				} else {
-					/* tunnel is down */
-					$iconfn = "false";
-					$inactivecounter++;
+			$found = false;
+			foreach ($ipsec_status['query']['ikesalist']['ikesa'] as $ikesa) {
+				if ($ikeid == $ikesa['peerconfig']) {
+					$found = true;
+					$ph2ikeid = $ikesa['id'];
+					if (ipsec_phase1_status($ipsec_status['query']['ikesalist']['ikesa'], $ph2ikeid)) {
+						/* tunnel is up */
+						$iconfn = "true";
+						$activecounter++;
+					} else {
+						/* tunnel is down */
+						$iconfn = "false";
+						$inactivecounter++;
+					}
 				}
 			}
-		}
 
-		if ($found === false) {
-			/* tunnel is down */
-			$iconfn = "false";
-			$inactivecounter++;
-		}
+			if ($found === false) {
+				/* tunnel is down */
+				$iconfn = "false";
+				$inactivecounter++;
+			}
 
-		$ipsec_detail_array[] = array('src' => convert_friendly_interface_to_friendly_descr($ph1ent['interface']),
-				'dest' => $ph1ent['remote-gateway'],
-				'remote-subnet' => ipsec_idinfo_to_text($ph2ent['remoteid']),
-				'descr' => $ph2ent['descr'],
-				'status' => $iconfn);
+			$ipsec_detail_array[] = array('src' => convert_friendly_interface_to_friendly_descr($ph1ent['interface']),
+					'dest' => $ph1ent['remote-gateway'],
+					'remote-subnet' => ipsec_idinfo_to_text($ph2ent['remoteid']),
+					'descr' => $ph2ent['descr'],
+					'status' => $iconfn);
+		}
 	}
 	unset($ikev1num);
 }
 
-	if (isset($config['ipsec']['phase2'])){ ?>
+	if (isset($config['ipsec']['phase2'])) { ?>
 
 <div id="ipsec-Overview" style="display:block;background-color:#EEEEEE;">
 	<div>
@@ -158,11 +160,13 @@ if (isset($config['ipsec']['phase1'])) { ?>
 				<br />
 				(<?php echo htmlspecialchars($ipsec['dest']);?>)
 			</div>
-			<div class="listr"  style="display:table-cell;width:90px"></div>
+			<div class="listr"  style="display:table-cell;width:90px">
+				<?php echo htmlspecialchars($ipsec['descr']);?>
+			</div>
 			<div class="listr"  style="display:table-cell;width:37px" align="center">
 			<?php
 
-			if($ipsec['status'] == "true") {
+			if ($ipsec['status'] == "true") {
 				/* tunnel is up */
 				$iconfn = "interface_up";
 			} else {

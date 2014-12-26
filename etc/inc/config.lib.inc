@@ -924,13 +924,12 @@ function pfSense_clear_globals() {
 		$errtype = $error["type"];
 		if ($errtype != E_NOTICE) {
 			// there are a lot of 'innocent' errors.. so skip reporting E_NOTICE
-		$errfile = $error["file"];
+			$errfile = $error["file"];
 			$errline = $error["line"];
 			$errstr  = $error["message"];
 			$str = "PHP ERROR Type:$errtype, File:$errfile, Line: $errline, Message: $errstr";
 			print($str);
 			log_error($str);
-			file_notice("phperror", $str, "General", "", 2);
 		}
 	}
 		

@@ -949,9 +949,6 @@ function reload_all_sync() {
 function setup_serial_port($when="save", $path="") {
 	global $g, $config;
 	conf_mount_rw();
-	$prefix = "";
-	if (($when == "upgrade") && (!empty($path)) && is_dir($path.'/boot/'))
-		$prefix = "/tmp/{$path}";
 	$boot_config_file = "{$path}/boot.config";
 	$loader_conf_file = "{$path}/boot/loader.conf";
 	/* serial console - write out /boot.config */

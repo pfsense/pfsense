@@ -184,6 +184,18 @@ function restore_config_section_xmlrpc($raw_params) {
 		return $xmlrpc_g['return']['authfail'];
 	}
 
+	/*
+	 * Make sure it doesn't end up with both dnsmasq and unbound enabled
+	 * simultaneously in secondary
+	 * */
+	if (isset($params[0]['unbound']['enable']) && isset($config['dnsmasq']['enable'])) {
+		unset($config['dnsmasq']['enable']);
+		services_dnsmasq_configure();
+	} else if (isset($params[0]['dnsmasq']['enable']) && isset($config['unbound']['enable'])) {
+		unset($config['unbound']['enable']);
+		services_unbound_configure();
+	}
+
 	// Some sections should just be copied and not merged or we end
 	//   up unable to sync the deletion of the last item in a section
 	$sync_full = array('dnsmasq', 'unbound', 'ipsec', 'aliases', 'wol', 'load_balancer', 'openvpn', 'cert', 'ca', 'crl', 'schedules', 'filter', 'nat', 'dhcpd', 'dhcpv6');
@@ -209,18 +221,6 @@ function restore_config_section_xmlrpc($raw_params) {
 					$vipbackup[] = $vip;
 			}
 		}
-	}
-
-	/*
-	 * Make sure it doesn't end up with both dnsmasq and unbound enabled
-	 * simultaneously in secondary
-	 * */
-	if (isset($params[0]['unbound']['enable']) && isset($config['dnsmasq']['enable'])) {
-		unset($config['dnsmasq']['enable']);
-		services_dnsmasq_configure();
-	} else if (isset($params[0]['dnsmasq']['enable']) && isset($config['unbound']['enable'])) {
-		unset($config['unbound']['enable']);
-		services_unbound_configure();
 	}
 
         // For vip section, first keep items sent from the master

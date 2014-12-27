@@ -120,7 +120,7 @@ if ($_POST) {
 }
 
 $pgtitle = array(gettext("Services"),gettext("DNS forwarder"),gettext("Edit Domain Override"));
-$shortcut_section = "resolver";
+$shortcut_section = "forwarder";
 include("head.inc");
 
 ?>

@@ -145,6 +145,7 @@ if ($_POST) {
 
 $closehead = false;
 $pgtitle = "Services: DNS Resolver: Access Lists";
+$shortcut_section = "resolver";
 include("head.inc");
 
 ?>

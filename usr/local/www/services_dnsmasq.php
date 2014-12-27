@@ -151,7 +151,7 @@ if ($_GET['act'] == "del") {
 
 $closehead = false;
 $pgtitle = array(gettext("Services"),gettext("DNS forwarder"));
-$shortcut_section = "resolver";
+$shortcut_section = "forwarder";
 include("head.inc");
 
 ?>

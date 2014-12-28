@@ -65,7 +65,11 @@ if ($filtertext)
 	$filtertextmeta="?filtertext=$filtertext";
 
 $pgtitle = array(gettext("Status"),gettext("System logs"),gettext("Resolver"));
-$shortcut_section = "resolver";
+if (isset($config['dnsmasq']['enable']))
+	$shortcut_section = "forwarder";
+else
+	$shortcut_section = "resolver";
+
 include("head.inc");
 
 ?>

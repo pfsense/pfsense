@@ -821,6 +821,24 @@ function is_valid_shaperbw($val) {
 }
 
 /* returns true if $test is in the range between $start and $end */
+function is_validmask_v4($mask) {
+	//from http://forums.devnetwork.net/viewtopic.php?f=1&t=114832
+	return ($bin = decbin(ip2long($mask))) && strpos($bin, '0') && !strpos($bin, '01');
+}
+function mask2cidr_v4($mask) {
+
+	$mask = split( "[.]", $mask );
+	$bits = 0;
+
+	foreach ($mask as $octect) {
+		$bin = decbin($octect);
+		$bin = str_replace ( "0" , "" , $bin);
+		$bits = $bits + strlen($bin);
+		}
+	return $bits;
+}
+
+/* returns true if $test is in the range between $start and $end */
 function is_inrange_v4($test, $start, $end) {
 	if ( (ip2ulong($test) <= ip2ulong($end)) && (ip2ulong($test) >= ip2ulong($start)) )
 		return true;

@@ -120,6 +120,7 @@ if (isset($id) && $a_maps[$id]) {
 } else {
 	$pconfig['mac'] = $_GET['mac'];
 	$pconfig['cid'] = $_GET['cid'];
+	$pconfig['ipaddr'] = $_GET['ipaddr'];
 	$pconfig['hostname'] = $_GET['hostname'];
 	$pconfig['filename'] = $_GET['filename'];
 	$pconfig['rootpath'] = $_GET['rootpath'];
@@ -198,29 +199,33 @@ if ($_POST) {
 	}
 
 	/* make sure it's not within the dynamic subnet */
+	$range_match=0;
 	if ($_POST['ipaddr']) {
 		$dynsubnet_start = ip2ulong($config['dhcpd'][$if]['range']['from']);
 		$dynsubnet_end = ip2ulong($config['dhcpd'][$if]['range']['to']);
 		if ((ip2ulong($_POST['ipaddr']) >= $dynsubnet_start) &&
 			(ip2ulong($_POST['ipaddr']) <= $dynsubnet_end)) {
-			$input_errors[] = sprintf(gettext("The IP address must not be within the DHCP range for this interface."));
+				$range_match++;
 		}
-
+		//check pool ranges
 		foreach ($a_pools as $pidx => $p) {
-			if (is_inrange_v4($_POST['ipaddr'], $p['range']['from'], $p['range']['to'])) {
-				$input_errors[] = gettext("The IP address must not be within the range configured on a DHCP pool for this interface.");
-				break;
+			if (is_inrange_v4($_POST['ipaddr'], $p['range']['from'], $p['range']['to']))
+				$range_match++;
 			}
-		}
+		//check pool subnets
+		foreach ($a_pools as $pidx => $p) {
+			if (ip_in_subnet($_POST['ipaddr'],$p['custom_subnet']."/".mask2cidr_v4($p['custom_subnet_mask'])))
+				$range_match++;
+     		}
 
 		$lansubnet_start = ip2ulong(long2ip32(ip2long($ifcfgip) & gen_subnet_mask_long($ifcfgsn)));
 		$lansubnet_end = ip2ulong(long2ip32(ip2long($ifcfgip) | (~gen_subnet_mask_long($ifcfgsn))));
-		if ((ip2ulong($_POST['ipaddr']) < $lansubnet_start) ||
-			(ip2ulong($_POST['ipaddr']) > $lansubnet_end)) {
-			$input_errors[] = sprintf(gettext("The IP address must lie in the %s subnet."),$ifcfgdescr);
+		if ((ip2ulong($_POST['ipaddr']) > $lansubnet_start) && (ip2ulong($_POST['ipaddr']) < $lansubnet_end)) {
+			$range_match++;
 		}
 	}
-
+	if ($range_match ==0)
+		$input_errors[] = sprintf(gettext("The IP address does not match any configured range or pool."),$ifcfgdescr);
 	if (($_POST['gateway'] && !is_ipaddrv4($_POST['gateway'])))
 		$input_errors[] = gettext("A valid IP address must be specified for the gateway.");
 	if (($_POST['wins1'] && !is_ipaddrv4($_POST['wins1'])) || ($_POST['wins2'] && !is_ipaddrv4($_POST['wins2'])))

@@ -308,7 +308,7 @@ function is_module_loaded($module_name) {
 
 /* validate non-negative numeric string, or equivalent numeric variable */
 function is_numericint($arg) {
-	return (((is_int($arg) && $arg >= 0) || (is_string($arg) && strlen($arg) > 0 && ctype_digit($arg))) ? true : false);  
+	return (((is_int($arg) && $arg >= 0) || (is_string($arg) && strlen($arg) > 0 && ctype_digit($arg))) ? true : false);
 }
 
 /* return the subnet address given a host address and a subnet bit count */
@@ -444,7 +444,7 @@ function ip_range_to_address_array($startip, $endip, $max_size = 5000) {
 
 	if (ip_range_size_v4($startip, $endip) > $max_size)
 		return false;
-	
+
 	// Container for IP addresses within this range.
 	$rangeaddresses = array();
 	$end_int = ip2ulong($endip);

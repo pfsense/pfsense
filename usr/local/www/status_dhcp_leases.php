@@ -377,8 +377,8 @@ foreach ($leases as $data) {
                 	if (is_ipaddrv4($iface_pool['custom_subnet']) && is_validmask_v4($iface_pool['custom_subnet_mask']) &&
                 		is_innet_v4($iface_pool['custom_subnet']."/".mask2cidr_v4($iface_pool['custom_subnet_mask']),$data['ip']))
 							$data['if'] = $dhcpif;
-                	}	
-                }                  
+                	}
+                }
 =======
 				if (!is_array($dhcpifconf['range']))
 					continue;

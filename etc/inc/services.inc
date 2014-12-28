@@ -44,8 +44,8 @@ define('DYNDNS_PROVIDER_DESCRIPTIONS', 'City Network,CloudFlare,Custom,Custom (v
 /* implement ipv6 route advertising deamon */
 function services_radvd_configure($blacklist = array()) {
 	global $config, $g;
-	
-	if ($g['platform'] == 'jail') 
+
+	if ($g['platform'] == 'jail')
 		return;
 
 	if(isset($config['system']['developerspew'])) {
@@ -162,7 +162,7 @@ function services_radvd_configure($blacklist = array()) {
 				$radvdconf .= "\t\tAdvOnLink on;\n";
 				$radvdconf .= "\t\tAdvAutonomous on;\n";
 				$radvdconf .= "\t\tAdvRouterAddr on;\n";
-				break;				
+				break;
 		}
 		$radvdconf .= "\t};\n";
 
@@ -236,7 +236,7 @@ function services_radvd_configure($blacklist = array()) {
 		$radvdifs[$realif] = $realif;
 
 		$autotype = $config['interfaces'][$trackif]['ipaddrv6'];
-	
+
 		if ($g['debug'])
 			log_error("configuring RA on {$if} for type {$autotype} radvd subnet {$subnetv6}/{$ifcfgsnv6}");
 
@@ -590,7 +590,7 @@ EOPP;
 				$newzone['dns-servers'] = $dns_arrv4;
 		}
 
-		/* Create classes - These all contain comma separated lists. Join them into one 
+		/* Create classes - These all contain comma separated lists. Join them into one
 		   big comma separated string then split them all up. */
 		$all_mac_strings = array();
 		if (is_array($dhcpifconf['pool'])) {
@@ -732,13 +732,13 @@ EOPP;
 			}
 			$pool_dhcpconf .= "		range {$poolconf['range']['from']} {$poolconf['range']['to']};\n";
 			$pool_dhcpconf .= "	}\n\n";
-			
+
 			if (is_ipaddr($poolconf['custom_subnet']))
 				$custom_dhcpconf[$poolconf['custom_subnet'].$poolconf['custom_subnet_mask']].= $pool_dhcpconf;
 			else
 				$dhcpdconf .= $pool_dhcpconf;
 		}
-		
+
 // End of settings inside pools
 
 		if ($dhcpifconf['gateway'] && $dhcpifconf['gateway'] != "none") {
@@ -932,7 +932,7 @@ EOD;
 		@touch("{$g['dhcpd_chroot_path']}/var/db/dhcpd.leases");
 
 	/* make sure there isn't a stale dhcpd.pid file, which can make dhcpd fail to start.   */
-	/* if we get here, dhcpd has been killed and is not started yet                        */ 
+	/* if we get here, dhcpd has been killed and is not started yet                        */
 	unlink_if_exists("{$g['dhcpd_chroot_path']}{$g['varrun_path']}/dhcpd.pid");
 
 	/* fire up dhcpd in a chroot */
@@ -1196,7 +1196,7 @@ EOD;
 
 		if ($dhcpv6ifconf['domain']) {
 			$newzone = array();
-			$newzone['domain-name'] = $dhcpv6ifconf['domain']; 
+			$newzone['domain-name'] = $dhcpv6ifconf['domain'];
 			$newzone['dns-servers'][] = $dhcpv6ifconf['ddnsdomainprimary'];
 			$ddns_zones[] = $newzone;
 		}
@@ -1799,11 +1799,11 @@ function services_dnsmasq_configure() {
 					if (is_linklocal($interface) && strstr($interface, "%")) {
 						$tmpaddrll6 = explode("%", $interface);
 						$listen_addresses .= " --listen-address={$tmpaddrll6[0]} ";
-					} else 
+					} else
 						$listen_addresses .= " --listen-address={$interface} ";
 				} else if (strstr($interface, "_vip")) {
 					$laddr = get_configured_carp_interface_list($interface);
-					if (is_ipaddr($laddr)) 
+					if (is_ipaddr($laddr))
 						$listen_addresses .= " --listen-address={$laddr} ";
 				} else {
 					$if = get_real_interface($interface);
@@ -1843,7 +1843,7 @@ function services_dnsmasq_configure() {
 			$args .= " --server=/10.in-addr.arpa/ ";
 			$args .= " --server=/168.192.in-addr.arpa/ ";
 			/* Unfortunately the 172.16.0.0/12 range does not map nicely to the in-addr.arpa scheme. */
-			for ($subnet_num = 16; $subnet_num < 32; $subnet_num++) { 
+			for ($subnet_num = 16; $subnet_num < 32; $subnet_num++) {
 				$args .= " --server=/" . $subnet_num . ".172.in-addr.arpa/ ";
 			}
 		}
@@ -2169,12 +2169,12 @@ function services_dnsupdate_process($int = "", $updatehost = "", $forced = false
 
 			/* determine interface name */
 			$if = get_real_interface($dnsupdate['interface']);
-			
+
 			if (isset($dnsupdate['usepublicip']))
                                 $wanip = dyndnsCheckIP($dnsupdate['interface']);
                         else
                                 $wanip = get_interface_ip($dnsupdate['interface']);
-			
+
 			$wanipv6 = get_interface_ipv6($dnsupdate['interface']);
 			$cacheFile = "{$g['conf_path']}/dyndns_{$dnsupdate['interface']}_rfc2136_" . escapeshellarg($dnsupdate['host']) . "_{$dnsupdate['server']}.cache";
 			$currentTime = time();

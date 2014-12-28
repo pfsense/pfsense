@@ -108,7 +108,7 @@ if($config['installedpackages']['olsrd']) {
 				break;
 			}
 	}
-}	
+}
 
 $iflist = get_configured_interface_with_descr();
 
@@ -345,7 +345,7 @@ if (isset($_POST['submit'])) {
 			$input_errors[] = gettext("You cannot use the network address in the starting subnet range.");
 		if(gen_subnet_max($parent_ip, $parent_sn) == $_POST['range_to'])
 			$input_errors[] = gettext("You cannot use the broadcast address in the ending subnet range.");
-		
+
 		// Disallow a range that includes the virtualip
 		if (is_array($config['virtualip']['vip'])) {
 			foreach($config['virtualip']['vip'] as $vip) {
@@ -833,7 +833,7 @@ include("head.inc");
 			<?php if (is_numeric($pool) || $act == "newpool"): ?>
 			<input name="custom_subnet_mask" type="text" class="formfld unknown" id="custom_subnet_mask" size="20" value="<?=htmlspecialchars($pconfig['custom_subnet_mask']);?>"><br>
 				Leave empty to use default subnet mask for <?=htmlspecialchars($iflist[$if])?>:&nbsp;
-				
+
 				<?php endif;?>
 				<?=gen_subnet_mask($ifcfgsn);?>
 			</td>

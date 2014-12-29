@@ -892,7 +892,9 @@ include("head.inc");
 					<table border="0" cellspacing="0" cellpadding="1" summary="pool">
 					<tr>
 					<td valign="middle" width="17"></td>
+					<?php if(isset($config['dhcpd'][$if])):?>
 					<td valign="middle"><a href="services_dhcp.php?if=<?=htmlspecialchars($if);?>&amp;act=newpool"><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_plus.gif" width="17" height="17" border="0" alt="plus" /></a></td>
+					<?php endif;?>
 					</tr>
 					</table>
 					</td>
@@ -931,7 +933,9 @@ include("head.inc");
 					<table border="0" cellspacing="0" cellpadding="1" summary="add">
 					<tr>
 					<td valign="middle" width="17"></td>
+					<?php if(isset($config['dhcpd'][$if])):?>
 					<td valign="middle"><a href="services_dhcp.php?if=<?=htmlspecialchars($if);?>&amp;act=newpool"><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_plus.gif" width="17" height="17" border="0" alt="add" /></a></td>
+					<?php endif;?>
 					</tr>
 					</table>
 				</td>
@@ -1269,7 +1273,9 @@ include("head.inc");
 			<table border="0" cellspacing="0" cellpadding="1" summary="add">
 			<tr>
 			<td valign="middle" width="17"></td>
+			<?php if(isset($config['dhcpd'][$if])):?>
 			<td valign="middle"><a href="services_dhcp_edit.php?if=<?=htmlspecialchars($if);?>"><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_plus.gif" width="17" height="17" border="0" alt="add" /></a></td>
+			<?php endif;?>
 			</tr>
 			</table>
 			</td>
@@ -1313,7 +1319,9 @@ include("head.inc");
 			<table border="0" cellspacing="0" cellpadding="1" summary="add">
 			<tr>
 			<td valign="middle" width="17"></td>
+			<?php if(isset($config['dhcpd'][$if])):?>
 			<td valign="middle"><a href="services_dhcp_edit.php?if=<?=htmlspecialchars($if);?>"><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_plus.gif" width="17" height="17" border="0" alt="add" /></a></td>
+			<?php endif;?>
 			</tr>
 			</table>
 		</td>

@@ -2,7 +2,7 @@
 /*
 	$Id$
 
-        Copyright (C) 2013-2014 Electric Sheep Fencing, LP
+	Copyright (C) 2013-2014 Electric Sheep Fencing, LP
 	Copyright 2007 Scott Dale
 	Part of pfSense widgets (https://www.pfsense.org)
 	originally based on m0n0wall (http://m0n0.ch/wall)
@@ -51,7 +51,7 @@ if(is_array($config['installedpackages']['package'])) {
 $updateavailable = false;
 ?>
 
-<table width="100%" border="0" cellpadding="6" cellspacing="0" summary="installed packages">
+<table>
 	<tr>
 		<td width="15%" class="listhdrr">Package Name</td>
 		<td width="15%" class="listhdrr">Category</td>
@@ -93,7 +93,7 @@ $updateavailable = false;
 						<b>Update Available!</b></div><div style="float:left">
 						Current: <?php echo $latest_package; ?><br />
 						Installed: <?php echo $pkg['version']; ?></div><div style="float:right">
-					<a href="pkg_mgr_install.php?mode=reinstallpkg&amp;pkg=<?= $pkg['name']; ?>"><img title="Update this package." src="./themes/<?= $g['theme']; ?>/images/icons/icon_reinstall_pkg.gif" width="17" height="17" border="0" alt="reinstall" /></a>
+					<a href="pkg_mgr_install.php?mode=reinstallpkg&amp;pkg=<?= $pkg['name']; ?>"><img title="Update this package." src="./themes/<?= $g['theme']; ?>/images/icons/icon_reinstall_pkg.gif" alt="reinstall" /></a>
 					</div>
 					<?php
 					$y++;

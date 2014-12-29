@@ -1,34 +1,34 @@
 <?php
 /*
-    services_status.widget.php
-    Copyright (C) 2013-2014 Electric Sheep Fencing, LP
+	services_status.widget.php
+	Copyright (C) 2013-2014 Electric Sheep Fencing, LP
 
-    Copyright (C) 2004, 2005 Scott Ullrich
-    All rights reserved.
+	Copyright (C) 2004, 2005 Scott Ullrich
+	All rights reserved.
 
-    services_status.widget.php
-    Copyright (C) 2007 Sam Wenham
+	services_status.widget.php
+	Copyright (C) 2007 Sam Wenham
 
-    Redistribution and use in source and binary forms, with or without
-    modification, are permitted provided that the following conditions are met:
+	Redistribution and use in source and binary forms, with or without
+	modification, are permitted provided that the following conditions are met:
 
-    1. Redistributions of source code must retain the above copyright notice,
-       this list of conditions and the following disclaimer.
+	1. Redistributions of source code must retain the above copyright notice,
+	   this list of conditions and the following disclaimer.
 
-    2. Redistributions in binary form must reproduce the above copyright
-       notice, this list of conditions and the following disclaimer in the
-       documentation and/or other materials provided with the distribution.
+	2. Redistributions in binary form must reproduce the above copyright
+	   notice, this list of conditions and the following disclaimer in the
+	   documentation and/or other materials provided with the distribution.
 
-    THIS SOFTWARE IS PROVIDED ``AS IS'' AND ANY EXPRESS OR IMPLIED WARRANTIES,
-    INClUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY
-    AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE
-    AUTHOR BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY,
-    OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
-    SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
-    INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
-    CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
-    ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
-    POSSIBILITY OF SUCH DAMAGE.
+	THIS SOFTWARE IS PROVIDED ``AS IS'' AND ANY EXPRESS OR IMPLIED WARRANTIES,
+	INClUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY
+	AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE
+	AUTHOR BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY,
+	OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+	SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+	INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+	CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+	ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+	POSSIBILITY OF SUCH DAMAGE.
 */
 
 $nocsrf = true;
@@ -54,16 +54,18 @@ if(isset($_POST['servicestatusfilter'])) {
 		Comma separated list of services to NOT display in the widget<br />
 		<input type="text" size="30" name="servicestatusfilter" class="formfld unknown" id="servicestatusfilter" value="<?= $config['widgets']['servicestatusfilter'] ?>" />
 		<input id="submitd" name="submitd" type="submit" class="formbtn" value="Save" />
-    </form>
+	</form>
 </div>
 
-<table width="100%" border="0" cellpadding="0" cellspacing="0" summary="services">
+<table class="table table-striped">
+<thead>
 	<tr>
-	  <td class="widgetsubheader" align="center"><b>Service</b></td>
-	  <td class="widgetsubheader" align="center"><b>Description</b></td>
-	  <td class="widgetsubheader" align="center"><b>Status</b></td>
-	  <td class="widgetsubheader">&nbsp;</td>
+		<th>Service</td>
+		<th>Description</td>
+		<th>Action</td>
 	</tr>
+</thead>
+<tbody>
 <?php
 $skipservices = explode(",", $config['widgets']['servicestatusfilter']);
 
@@ -72,24 +74,24 @@ if (count($services) > 0) {
 	foreach($services as $service) {
 		if((!$service['name']) || (in_array($service['name'], $skipservices)) || (!is_service_enabled($service['name'])))
 			continue;
+
 		if (empty($service['description']))
 			$service['description'] = get_pkg_descr($service['name']);
+
 		$service_desc = explode(".",$service['description']);
-		echo "<tr><td class=\"listlr\">" . $service['name'] . "</td>\n";
-		echo "<td class=\"listr\">" . $service_desc[0] . "</td>\n";
-		// if service is running then listr else listbg
-		$bgclass = null;
-		if (get_service_status($service))
-			$bgclass = "listr";
-		else
-			$bgclass = "listbg";
-		echo "<td class=\"" . $bgclass . "\" align=\"center\">" . get_service_status_icon($service, false, true) . "</td>\n";
-		echo "<td valign=\"middle\" class=\"list nowrap\">" . get_service_control_links($service) . "</td></tr>\n";
+?>
+		<tr>
+			<th><i class="icon icon-<?=get_service_status($service)? 'ok' : 'remove'?>"></i> <?=$service['name']?></th>
+			<td><?=$service_desc[0]?></td>
+			<td><?=get_service_control_links($service)?></td>
+		</tr>
+<?php
 	}
 } else {
 	echo "<tr><td colspan=\"3\" align=\"center\">" . gettext("No services found") . " . </td></tr>\n";
 }
 ?>
+</tbody>
 </table>
 
 <!-- needed to display the widget settings menu -->

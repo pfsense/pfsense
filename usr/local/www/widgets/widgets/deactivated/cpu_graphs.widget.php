@@ -39,7 +39,7 @@ require_once("guiconfig.inc");
 require_once("pfsense-utils.inc");
 require_once("functions.inc");
 ?>
-<link  href="/themes/<?=$g['theme'];?>/graphlink.css"  rel="stylesheet"  type="text/css"  />  
+<link  href="/themes/<?=$g['theme'];?>/graphlink.css"  rel="stylesheet"  type="text/css"  />
 <script src="/widgets/javascript/cpu_graphs.js" type="text/javascript"></script>
 <script type="text/javascript">
     /* initialize the graph */

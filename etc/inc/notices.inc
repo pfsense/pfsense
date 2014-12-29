@@ -201,7 +201,8 @@ function dump_xml_notices() {
 function print_notices($notices, $category = "all") {
 	foreach($notices as $notice) {
 		if($category != "all") {
-			if(in_array($notice['category'], $category)) $categories[] = $notice['category'];
+			if(in_array($notice['category'], $category))
+				$categories[] = $notice['category'];
 		} else {
 			$categories[] = $notice['category'];
 		}
@@ -209,7 +210,7 @@ function print_notices($notices, $category = "all") {
 	$categories = array_unique($categories);
 	sort($categories);
 	foreach($categories as $category) {
-		$toreturn .= "<ul><li>{$category}<ul>";
+		$toreturn .= '<li><a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">'.$category.'<span class="caret"></span></a><ul class="dropdown-menu" role="menu">';
 		foreach($notices as $notice) {
 			if(strtolower($notice['category']) == strtolower($category)) {
 				if($notice['id'] != "") {
@@ -221,9 +222,9 @@ function print_notices($notices, $category = "all") {
 				}
 			}
 		}
-		$toreturn .= "</ul></li></ul>";
+		$toreturn .= "</ul></li>";
 	}
-	return $toreturn;
+	return '<ul class="dropdown-menu" role="menu">'. $toreturn .'</ul>';
 }
 
 /****f* notices/print_notice_box
@@ -314,12 +315,12 @@ function send_smtp_message($message, $subject = "(no subject)") {
 	$smtp->debug = 0;
 	$smtp->html_debug = 0;
 	$smtp->localhost=$config['system']['hostname'].".".$config['system']['domain'];
-	
+
 	if($config['notifications']['smtp']['fromaddress'])
 		$from = $config['notifications']['smtp']['fromaddress'];
-	
+
 	// Use SMTP Auth if fields are filled out
-	if($config['notifications']['smtp']['username'] && 
+	if($config['notifications']['smtp']['username'] &&
 	   $config['notifications']['smtp']['password']) {
 		$smtp->authentication_mechanism = "PLAIN";
 		$smtp->user = $config['notifications']['smtp']['username'];
@@ -369,7 +370,7 @@ function notify_via_growl($message, $force=false) {
 	$growl_password = $config['notifications']['growl']['password'];
 	$growl_name = $config['notifications']['growl']['name'];
 	$growl_notification = $config['notifications']['growl']['notification_name'];
-	
+
 	if(!empty($growl_ip)) {
 		$growl = new Growl($growl_ip, $growl_password, $growl_name);
 		$growl->notify("{$growl_notification}", gettext(sprintf("%s (%s) - Notification", $g['product_name'], $hostname)), "{$message}");
@@ -396,7 +397,7 @@ function register_via_growl() {
 	$growl_password = $config['notifications']['growl']['password'];
 	$growl_name = $config['notifications']['growl']['name'];
 	$growl_notification = $config['notifications']['growl']['notification_name'];
-	
+
 	if($growl_ip) {
 	  $growl = new Growl($growl_ip, $growl_password, $growl_name);
 		$growl->addNotification($growl_notification);

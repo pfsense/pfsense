@@ -1,6 +1,6 @@
 <?php
 
-/*        Copyright (C) 2013-2014 Electric Sheep Fencing, LP */
+/*		Copyright (C) 2013-2014 Electric Sheep Fencing, LP */
 
 
 $nocsrf = true;
@@ -98,7 +98,7 @@ $clients = openvpn_get_active_clients();
 
 <?php foreach ($servers as $server): ?>
 
-<table style="padding-top:0px; padding-bottom:0px; padding-left:0px; padding-right:0px" width="100%" border="0" cellpadding="0" cellspacing="0">
+<table>
 	<tr>
 		<td colspan="6" class="listtopic">
 			<?=$server['name'];?> Client connections
@@ -106,10 +106,10 @@ $clients = openvpn_get_active_clients();
 	</tr>
 	<tr>
 		<td>
-			<table style="padding-top:0px; padding-bottom:0px; padding-left:0px; padding-right:0px" class="tabcont sortable" width="100%" border="0" cellpadding="0" cellspacing="0" sortableMultirow="2">
+			<table>
 			<tr>
-				<td class="listhdrr">Name/Time</td>
-				<td class="listhdrr">Real/Virtual IP</td>
+				<th>Name/Time</td>
+				<th>Real/Virtual IP</td>
 			</tr>
 			<?php $rowIndex = 0;
 			foreach ($server['conns'] as $conn):
@@ -125,9 +125,9 @@ $clients = openvpn_get_active_clients();
 				</td>
 				<td class='listMR' rowspan="2">
 					<img src='/themes/<?php echo $g['theme']; ?>/images/icons/icon_x.gif' height='17' width='17' border='0'
-					   onclick="killClient('<?php echo $server['mgmt']; ?>', '<?php echo $conn['remote_host']; ?>');" style='cursor:pointer;'
-					   name='<?php echo "i:{$server['mgmt']}:{$conn['remote_host']}"; ?>'
-					   title='Kill client connection from <?php echo $conn['remote_host']; ?>' alt='' />
+						onclick="killClient('<?php echo $server['mgmt']; ?>', '<?php echo $conn['remote_host']; ?>');" style='cursor:pointer;'
+						name='<?php echo "i:{$server['mgmt']}:{$conn['remote_host']}"; ?>'
+						title='Kill client connection from <?php echo $conn['remote_host']; ?>' alt='' />
 				</td>
 			</tr>
 			<tr name='<?php echo "r:{$server['mgmt']}:{$conn['remote_host']}"; ?>' class="<?=$evenRowClass?>">
@@ -152,17 +152,17 @@ $clients = openvpn_get_active_clients();
 
 <?php endforeach; ?>
 <?php if (!empty($sk_servers)) { ?>
-<table style="padding-top:0px; padding-bottom:0px; padding-left:0px; padding-right:0px" width="100%" border="0" cellpadding="0" cellspacing="0">
+<table>
 	<tr>
 		<td colspan="6" class="listtopic">
 			Peer to Peer Server Instance Statistics
 		</td>
 	</tr>
 	<tr>
-		<table style="padding-top:0px; padding-bottom:0px; padding-left:0px; padding-right:0px" class="tabcont sortable" width="100%" border="0" cellpadding="0" cellspacing="0">
+		<table>
 		<tr>
-			<td class="listhdrr">Name/Time</td>
-			<td class="listhdrr">Remote/Virtual IP</td>
+			<th>Name/Time</td>
+			<th>Remote/Virtual IP</td>
 		</tr>
 
 <?php foreach ($sk_servers as $sk_server): ?>
@@ -202,17 +202,17 @@ $clients = openvpn_get_active_clients();
 <?php
 } ?>
 <?php if (!empty($clients)) { ?>
-<table style="padding-top:0px; padding-bottom:0px; padding-left:0px; padding-right:0px" width="100%" border="0" cellpadding="0" cellspacing="0">
+<table>
 	<tr>
 		<td colspan="6" class="listtopic">
 			Client Instance Statistics
 		</td>
 	</tr>
 	<tr>
-		<table style="padding-top:0px; padding-bottom:0px; padding-left:0px; padding-right:0px" class="tabcont sortable" width="100%" border="0" cellpadding="0" cellspacing="0">
+		<table>
 		<tr>
-			<td class="listhdrr">Name/Time</td>
-			<td class="listhdrr">Remote/Virtual IP</td>
+			<th>Name/Time</td>
+			<th>Remote/Virtual IP</td>
 		</tr>
 
 <?php foreach ($clients as $client): ?>

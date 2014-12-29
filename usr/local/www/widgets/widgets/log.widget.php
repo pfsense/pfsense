@@ -1,7 +1,7 @@
 <?php
 /*
 	$Id$
-        Copyright (C) 2013-2014 Electric Sheep Fencing, LP
+	Copyright (C) 2013-2014 Electric Sheep Fencing, LP
 
 	Copyright 2007 Scott Dale
 	Part of pfSense widgets (https://www.pfsense.org)
@@ -16,7 +16,7 @@
 
 	1. Redistributions of source code must retain the above copyright notice,
 	   this list of conditions and the following disclaimer.
-	
+
 	2. Redistributions in binary form must reproduce the above copyright
 	   notice, this list of conditions and the following disclaimer in the
 	   documentation and/or other materials provided with the distribution.
@@ -46,7 +46,7 @@ if(is_numeric($_POST['filterlogentries'])) {
 	$config['widgets']['filterlogentries'] = $_POST['filterlogentries'];
 
 	$acts = array();
-	if ($_POST['actpass'])   $acts[] = "Pass";
+	if ($_POST['actpass'])	$acts[] = "Pass";
 	if ($_POST['actblock'])  $acts[] = "Block";
 	if ($_POST['actreject']) $acts[] = "Reject";
 
@@ -70,7 +70,7 @@ $nentries = isset($config['widgets']['filterlogentries']) ? $config['widgets']['
 
 //set variables for log
 
-$nentriesacts       = isset($config['widgets']['filterlogentriesacts'])       ? $config['widgets']['filterlogentriesacts']       : 'All';
+$nentriesacts		= isset($config['widgets']['filterlogentriesacts'])		? $config['widgets']['filterlogentriesacts']		: 'All';
 $nentriesinterfaces = isset($config['widgets']['filterlogentriesinterfaces']) ? $config['widgets']['filterlogentriesinterfaces'] : 'All';
 
 $filterfieldsarray = array(
@@ -79,7 +79,7 @@ $filterfieldsarray = array(
 );
 
 $filter_logfile = "{$g['varlog_path']}/filter.log";
-$filterlog = conv_log_filter($filter_logfile, $nentries, 50, $filterfieldsarray);        //Get log entries
+$filterlog = conv_log_filter($filter_logfile, $nentries, 50, $filterfieldsarray);		//Get log entries
 
 /* AJAX related routines */
 handle_ajax($nentries, $nentries + 20);
@@ -136,7 +136,7 @@ function format_log_line(row) {
 	var Action = row[0].match(/alt=.*?(pass|block|reject)/i).join("").match(/pass|block|reject/i).join("");
 	var Interface = row[2];
 
-	if ( !(in_arrayi(Action,	nentriesacts.replace      (/\s+/g, ',').split(',') ) ) && (nentriesacts != 'All') )			return false;
+	if ( !(in_arrayi(Action,	nentriesacts.replace		(/\s+/g, ',').split(',') ) ) && (nentriesacts != 'All') )			return false;
 	if ( !(in_arrayi(Interface,	nentriesinterfaces.replace(/\s+/g, ',').split(',') ) ) && (nentriesinterfaces != 'All') )	return false;
 
 	return line;
@@ -159,7 +159,7 @@ function format_log_line(row) {
 		$Include_Act = explode(" ", $nentriesacts);
 		if ($nentriesinterfaces == "All") $nentriesinterfaces = "";
 ?>
-		<input id="actpass"   name="actpass"   type="checkbox" value="Pass"   <?php if (in_arrayi('Pass',   $Include_Act)) echo "checked=\"checked\""; ?> /> Pass
+		<input id="actpass"	name="actpass"	type="checkbox" value="Pass"	<?php if (in_arrayi('Pass',	$Include_Act)) echo "checked=\"checked\""; ?> /> Pass
 		<input id="actblock"  name="actblock"  type="checkbox" value="Block"  <?php if (in_arrayi('Block',  $Include_Act)) echo "checked=\"checked\""; ?> /> Block
 		<input id="actreject" name="actreject" type="checkbox" value="Reject" <?php if (in_arrayi('Reject', $Include_Act)) echo "checked=\"checked\""; ?> /> Reject
 		<br />
@@ -184,7 +184,7 @@ function format_log_line(row) {
 	</form>
 </div>
 
-<table width="100%" border="0" cellpadding="0" cellspacing="0" style="table-layout: fixed;" summary="logs">
+<table>
 	<colgroup>
 		<col style='width:  7%;' />
 		<col style='width: 23%;' />
@@ -194,11 +194,11 @@ function format_log_line(row) {
 	</colgroup>
 	<thead>
 		<tr>
-			<td class="listhdrr"><?=gettext("Act");?></td>
-			<td class="listhdrr"><?=gettext("Time");?></td>
-			<td class="listhdrr"><?=gettext("IF");?></td>
-			<td class="listhdrr"><?=gettext("Source");?></td>
-			<td class="listhdrr"><?=gettext("Destination");?></td>
+			<th><?=gettext("Act");?></td>
+			<th><?=gettext("Time");?></td>
+			<th><?=gettext("IF");?></td>
+			<th><?=gettext("Source");?></td>
+			<th><?=gettext("Destination");?></td>
 		</tr>
 	</thead>
 	<tbody id='filter-log-entries'>

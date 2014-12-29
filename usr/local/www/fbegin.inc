@@ -88,20 +88,19 @@ function output_menu($arrayitem, $target = null) {
 			if ($item['style']) {
 				$attr .= sprintf(" style=\"%s\"", htmlentities($item['style']));
 			}
-			echo "<li>\n";
-			printf("<a %s>%s</a>\n", $attr, $item[0]);
-			echo "</li>\n";
+
+			echo "<li>". sprintf("<a %s>%s</a>", $attr, $item[0]). "</li>\n";
 		}
 	}
 }
 
 // System
 $system_menu = array();
+$system_menu[] = array(gettext("Logout"), "/index.php?logout");
 $system_menu[] = array(gettext("Advanced"), "/system_advanced_admin.php");
 $system_menu[] = array(gettext("Firmware"), "/system_firmware.php");
 $system_menu[] = array(gettext("General Setup"), "/system.php");
 $system_menu[] = array(gettext("High Avail. Sync"), "/system_hasync.php");
-$system_menu[] = array(gettext("Logout"), "/index.php?logout");
 if ($g['platform'] == "pfSense" or $g['platform'] == "nanobsd")
 	$system_menu[] = array(gettext("Packages"), "/pkg_mgr_installed.php");
 $system_menu[] = array(gettext("Setup Wizard"), "/wizard.php?xml=setup_wizard.xml");
@@ -249,7 +248,7 @@ if(! $g['disablehelpmenu']) {
 	$help_menu = array();
 	$help_menu[] = array(gettext("About this Page"), $helpurl);
 	if($g['product_name'] == "pfSense")
-	$help_menu[] = array(gettext("Bug Database"), "https://www.pfsense.org/j.php?jumpto=redmine");
+		$help_menu[] = array(gettext("Bug Database"), "https://www.pfsense.org/j.php?jumpto=redmine");
 	$help_menu[] = array(gettext("User Forum"), "https://www.pfsense.org/j.php?jumpto=forum");
 	$help_menu[] = array(gettext("Documentation"), "https://www.pfsense.org/j.php?jumpto=doc");
 	$help_menu[] = array(gettext("Developers Wiki"), "https://www.pfsense.org/j.php?jumpto=devwiki");
@@ -261,144 +260,108 @@ if(! $g['disablehelpmenu']) {
 }
 
 ?>
+<nav class="navbar navbar-fixed-top navbar-inverse">
+	<div class="container">
+		<div class="navbar-header">
+			<button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
+				<span class="sr-only">Toggle navigation</span>
+				<span class="icon-bar"></span>
+				<span class="icon-bar"></span>
+				<span class="icon-bar"></span>
+			</button>
 
-<div id="wrapper">
-	<div id="header">
-		<div id="header-left"><a href="/index.php" id="status-link"><img src="/themes/<?= $g['theme']; ?>/images/transparent.gif" border="0" alt="transparent" /></a></div>
-		<div id="header-right">
-			<div class="container">
-				<div class="left">webConfigurator</div>
-				<div class="right" id="menu_messages">
-<?php
-				echo get_menu_messages();
-?>
-	</div>
-			</div>
+			<a class="navbar-brand" href="/"><img src="/logo.png" alt="pfSense" /></a>
 		</div>
-	</div> <!-- Header DIV -->
-	<div id="content">
-		<div id="left">
-			<div id="navigation" style="z-index:1000;">
-				<ul id="menu">
-					<li class="firstdrop">
-						<div><?php echo gettext("System"); ?></div>
-						<ul class="subdrop">
-						<?php
-							output_menu($system_menu);
-						?>
-						</ul>
-					</li>
-					<li class="drop">
-						<div><?php echo gettext("Interfaces"); ?></div>
-						<ul class="subdrop">
-						<?php
-							output_menu($interfaces_menu);
-						?>
-						</ul>
-					</li>
-					<li class="drop">
-						<div><?php echo gettext("Firewall"); ?></div>
-						<ul class="subdrop">
-						<?php
-							output_menu($firewall_menu);
-						?>
-						</ul>
-					</li>
-					<li class="drop">
-						<div><?php echo gettext("Services"); ?></div>
-						<ul class="subdrop">
-						<?php
-							output_menu($services_menu);
-						?>
-						</ul>
-					</li>
-					<li class="drop">
-						<div><?php echo gettext("VPN"); ?></div>
-						<ul class="subdrop">
-						<?php
-							output_menu($vpn_menu);
-						?>
-						</ul>
-					</li>
-					<li class="drop">
-						<div><?php echo gettext("Status"); ?></div>
-						<ul class="subdrop">
-						<?php
-							output_menu($status_menu);
-						?>
-						</ul>
-					</li>
-					<li class="drop">
-						<div><?php echo gettext("Diagnostics"); ?></div>
-						<ul id="diag" class="subdrop">
-						<?php
-							output_menu($diagnostics_menu);
-						?>
-						</ul>
-					</li>
-					<li class="drop">
-						<div><?php echo gettext("Gold"); ?></div>
-						<ul id="gold" class="subdrop">
-						<?php
-							output_menu($gold_menu, "_blank");
-						?>
-						</ul>
-					</li>
-					<?php if(! $g['disablehelpmenu']): ?>
-					<li class="lastdrop">
-						<div><?php echo gettext("Help"); ?></div>
-						<ul id="help" class="subdrop">
-						<?php
-							output_menu($help_menu, "_blank");
-						?>
-						</ul>
-					</li>
-					<?php endif; ?>
-				</ul>
-			</div>
 
-		</div> <!-- Left DIV -->
+		<div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+			<ul class="nav navbar-nav">
+				<li class="dropdown">
+					<a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false"><?=gettext("System"); ?>
+						<span class="caret"></span>
+					</a>
 
-		<div id="right">
+					<ul class="dropdown-menu" role="menu"><?=output_menu($system_menu)?></ul>
+				</li>
+				<li class="dropdown">
+					<a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false"><?=gettext("Interfaces"); ?>
+						<span class="caret"></span>
+					</a>
 
+					<ul class="dropdown-menu" role="menu"><?=output_menu($interfaces_menu)?></ul>
+				</li>
+				<li class="dropdown">
+					<a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false"><?=gettext("Firewall"); ?>
+						<span class="caret"></span>
+					</a>
+
+					<ul class="dropdown-menu" role="menu"><?=output_menu($firewall_menu)?></ul>
+				</li>
+				<li class="dropdown">
+					<a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false"><?=gettext("Services"); ?>
+						<span class="caret"></span>
+					</a>
+
+					<ul class="dropdown-menu" role="menu"><?=output_menu($services_menu)?></ul>
+				</li>
+				<li class="dropdown">
+					<a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false"><?=gettext("VPN"); ?>
+						<span class="caret"></span>
+					</a>
+
+					<ul class="dropdown-menu" role="menu"><?=output_menu($vpn_menu)?></ul>
+				</li>
+				<li class="dropdown">
+					<a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false"><?=gettext("Status"); ?>
+						<span class="caret"></span>
+					</a>
+
+					<ul class="dropdown-menu" role="menu"><?=output_menu($status_menu)?></ul>
+				</li>
+				<li class="dropdown">
+					<a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false"><?=gettext("Diagnostics"); ?>
+						<span class="caret"></span>
+					</a>
+
+					<ul class="dropdown-menu" role="menu"><?=output_menu($diagnostics_menu)?></ul>
+				</li>
+				<li class="dropdown">
+					<a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false"><?=gettext("Gold"); ?>
+						<span class="caret"></span>
+					</a>
+
+					<ul class="dropdown-menu" role="menu"><?=output_menu($gold_menu, "_blank")?></ul>
+				</li>
+
+				<?php if(are_notices_pending()):?>
+					<?php $notices = get_notices(); ?>
+					<li class="dropdown">
+						<a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false"><?=gettext("Notices"); ?>
+							<span class="badge"><?=count($notices)?></span>
+							<span class="caret"></span>
+						</a>
+
+						<?=print_notices($notices)?>
+					</li>
+				<?php endif; ?>
+
+				<?php if(! $g['disablehelpmenu']): ?>
+					<li class="dropdown">
+						<a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false"><?=gettext("Help"); ?>
+							<span class="caret"></span>
+						</a>
+
+						<ul class="dropdown-menu" role="menu"><?=output_menu($help_menu, "_blank"); ?></ul>
+					</li>
+				<?php endif; ?>
+			</ul>
+		</div>
+	</div>
+</nav>
+<div class="container">
+	<h1><?=genhtmltitle($pgtitle);?></h1>
 <?php
-echo "\t<script type=\"text/javascript\" src=\"javascript/domTT/domLib.js\"></script>\n";
-echo "\t<script type=\"text/javascript\" src=\"javascript/domTT/domTT.js\"></script>\n";
-echo "\t<script type=\"text/javascript\" src=\"javascript/domTT/behaviour.js\"></script>\n";
-echo "\t<script type=\"text/javascript\" src=\"javascript/domTT/fadomatic.js\"></script>\n";
-	/* display a top alert bar if need be */
-	$need_alert_display = false;
-	$found_notices = are_notices_pending();
-	if($found_notices == true) {
-		$notices = get_notices();
-		if(!$notices) {
-			$need_alert_display = true;
-			$display_text = print_notices($notices) . "<br />";
-		}
-	}
-	if($need_alert_display == true) {
-                echo "<div style=\"background-color:#000000\" id=\"roundalert\">";
-                echo "<table summary=\"round alert\">";
-		echo "<tr><td><font color=\"#ffffff\">";
-		echo "&nbsp;&nbsp;<img align=\"middle\" src=\"/top_notification.gif\" alt=\"notification\" />&nbsp;&nbsp;&nbsp;";
-		echo $display_text;
-		echo "</font></td>";
-		echo "</tr>";
-		echo "</table>";
-		echo "</div>";
-	}
-
-function add_to_menu($url, $name) {
-	if (isAllowedPage($url))
-		echo "<li><a href=\"{$url}\" class=\"navlnk\">{$name}</a></li>\n";
-}
-
-?>
-
-<div>
-<span class="pgtitle"><a href="<?= htmlentities($_SERVER['REQUEST_URI']) ?>"><?=genhtmltitle($pgtitle);?></a></span>
-<span style="float:right; margin: 0 0 20px 20px">
-<?php
+/*
+//FIXME
 if (!$hide_service_status && !empty($shortcuts[$shortcut_section]['service'])) {
 	$ssvc = array();
 	switch ($shortcut_section) {
@@ -421,15 +384,14 @@ if (!$hide_service_status && !empty($shortcuts[$shortcut_section]['service'])) {
 echo get_shortcut_main_link($shortcut_section, true);
 echo get_shortcut_status_link($shortcut_section, true);
 echo get_shortcut_log_link($shortcut_section, true);
-
+*/
 ?>
-<?php if(! $g['disablehelpicon']): ?>
 
-<a href="<?php echo $helpurl; ?>" title="<?php echo gettext("Help for items on this page"); ?>"><img style="vertical-align:middle" src="/themes/<?php echo $g['theme']; ?>/images/icons/icon_help.gif" border="0" alt="help" /></a>
+<?php if(! $g['disablehelpicon']): ?>
+	<a href="<?=$helpurl?>" title="<?=gettext("Help for items on this page")?>">
+		<i class="icon-large icon-question-sign"></i>
+	</a>
 <?php endif; ?>
-</span>
-</div>
-<br />
 
 <?php
 /* if upgrade in progress, alert user */

@@ -2,26 +2,17 @@
 	pfSense_MODULE:	footer
 -->
 
-		</div> <!-- Right DIV -->
-	
-	</div> <!-- Content DIV -->
-	
-	<div id="footer">
-	<a target="_blank" href="<?=$g['product_website_footer']?>" class="redlnk"><?=$g['product_name']?></a> is &copy;
-	 <?=$g['product_copyright_years']?> by <a href="<?=$g['product_copyright_url']?>" class="tblnk"><?=$g['product_copyright']?></a>. All Rights Reserved.
-	[<a href="/license.php" class="tblnk">view license</a>] 
-	</div> <!-- Footer DIV -->
+</div>
 
-</div> <!-- Wrapper Div -->
+<footer class="footer">
+	<div class="container">
+		<p class="text-muted">
+			<a target="_blank" href="<?=$g['product_website_footer']?>"><?=$g['product_name']?></a> is &copy;
+			<?=$g['product_copyright_years']?> by <a href="<?=$g['product_copyright_url']?>" class="tblnk"><?=$g['product_copyright']?></a>. All Rights Reserved.
+			[<a href="/license.php" class="tblnk">view license</a>]
+		</p>
+	</div>
+</footer>
 
-<?php outputJavaScriptFileInline("/usr/local/www/themes/{$g['theme']}/bottom-loader.js");
-/* Disable form autocomplete on all but the login screen. */
-if (basename($_SERVER["SCRIPT_FILENAME"] != "index.php") && !$allowautocomplete): ?>
-<script type="text/javascript">
-//<![CDATA[
-(function ($) {
-	$("input").attr("autocomplete","off");
-})(jQuery);
-//]]>
-</script>
-<?php endif; ?>
+<script src="/jquery/jquery-1.11.1.min.js"></script>
+<script src="/bootstrap/js/bootstrap.min.js"></script>

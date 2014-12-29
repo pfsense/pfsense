@@ -97,15 +97,15 @@ if(!$ignorefirmwarelock) {
 
 /* Reserved table names to avoid colision */
 $reserved_table_names = array(
-        "bogons",
-        "bogonsv6",
-        "negate_networks",
-        "snort2c",
-        "sshlockout",
-        "tonatsubnets",
-        "virusprot",
-        "vpn_networks",
-        "webConfiguratorlockout"
+		"bogons",
+		"bogonsv6",
+		"negate_networks",
+		"snort2c",
+		"sshlockout",
+		"tonatsubnets",
+		"virusprot",
+		"vpn_networks",
+		"webConfiguratorlockout"
 );
 
 $firewall_rules_dscp_types = array("af11",
@@ -275,9 +275,9 @@ function print_input_errors($input_errors) {
 		<td class="inputerrorsleft">
 			<img src="/themes/{$g['theme']}/images/icons/icon_error.gif" alt="errors" />
 		</td>
-        <td class="inputerrorsright errmsg">
+		<td class="inputerrorsright errmsg">
 EOF;
-    echo "<p>" . gettext("The following input errors were detected:") . "</p>\n<ul>";
+	echo "<p>" . gettext("The following input errors were detected:") . "</p>\n<ul>";
 	foreach ($input_errors as $ierr) {
 		echo "<li>" . htmlspecialchars($ierr) . "</li>";
 	}
@@ -312,63 +312,15 @@ function print_info_box_np($msg, $name="apply",$value="", $showapply=false) {
 		$nifty_background = "#FFF";
 
 	if(stristr($msg, gettext("apply")) != false || stristr($msg, gettext("save")) != false || stristr($msg, gettext("create")) != false || $showapply) {
-		$savebutton = "<td class=\"infoboxsave\">";
-		$savebutton .= "<input name=\"{$name}\" type=\"submit\" class=\"formbtn\" id=\"${name}\" value=\"{$value}\" />";
+		$dismiss = "alert-dismissible";
+		$button = '<button type="submit" class="btn btn-primary" name="login" value="'.$value.'">'.$name.'</button>';
+
 		if($_POST['if'])
 			$savebutton .= "<input type=\"hidden\" name=\"if\" value=\"" . htmlspecialchars($_POST['if']) . "\" />";
-		$savebutton.="</td>";
-	}
-	$nifty_redbox = "#990000";
-	$nifty_blackbox = "#000000";
+	} else
+		$button = '<button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>';
 
-	$themename = $g['theme'];
-
-	if(file_exists("/usr/local/www/themes/{$themename}/tabcontrols.php")) {
-		$toeval = file_get_contents("/usr/local/www/themes/{$themename}/tabcontrols.php");
-		eval($toeval);
-	}
-
-	if(file_exists("/usr/local/www/themes/{$themename}/infobox.php")) {
-		$toeval = file_get_contents("/usr/local/www/themes/{$themename}/infobox.php");
-		eval($toeval);
-	}
-
-	if(!$savebutton) {
-		$savebutton = "<td class=\"infoboxsave\"><input value=\"" . gettext("Close") . "\" type=\"button\" onclick=\"jQuery(this).parents('table[id=redboxtable]').hide();\" /></td>";
-	}
-
-	echo <<<EOFnp
-	<table class="infobox" id="redboxtable" summary="red box table">
-		<tr>
-			<td>
-				<div class="infoboxnp" id="redbox">
-					<table class="infoboxnptable2" summary="message">
-						<tr>
-							<td class="infoboxnptd">
-								&nbsp;&nbsp;&nbsp;<img class="infoboxnpimg" src="/themes/{$g['theme']}/images/icons/icon_exclam.gif" alt="exclamation" />
-							</td>
-							<td class="infoboxnptd2">
-								<b>{$msg}</b>
-							</td>
-							{$savebutton}
-						</tr>
-					</table>
-				</div>
-				<div>
-					<p>&nbsp;</p>
-				</div>
-			</td>
-		</tr>
-	</table>
-	<script type="text/javascript">
-	//<![CDATA[
-		NiftyCheck();
-		Rounded("div#redbox","all","{$nifty_background}","{$nifty_redbox}","smooth");
-		Rounded("td#blackbox","all","{$nifty_background}","{$nifty_blackbox}","smooth");
-	//]]>
-	</script>
-EOFnp;
-
+	echo '<div class="alert alert-warning" role="alert">'.$msg.'</div>';
 }
 
 function print_info_box_np_undo($msg, $name="apply",$value="Apply changes", $undo) {
@@ -950,7 +902,7 @@ function echo_array($array,$return_me=false){
  * NAME
  *   display_top_tabs - display tabs with rounded edges
  * INPUTS
- *   $text      - array of tabs
+ *   $text	  - array of tabs
  * RESULT
  *   null
  ******/

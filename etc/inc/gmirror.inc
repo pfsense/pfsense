@@ -52,7 +52,7 @@ function gmirror_get_status() {
 			}
 		}
 	}
-	/* Return an hash of mirrors and components */	
+	/* Return an hash of mirrors and components */
 	return $mirrors;
 }
 
@@ -69,22 +69,22 @@ function gmirror_html_status() {
 	$output = "";
 	if (count($mirrors) > 0) {
 		$output .= "<tr>\n";
-		$output .= "<td width=\"40%\" class=\"vncellt\">Name</td>\n";
-		$output .= "<td width=\"40%\" class=\"vncellt\">Status</td>\n";
-		$output .= "<td width=\"20%\" class=\"vncellt\">Component</td>\n";
+		$output .= "<th>Name</td>\n";
+		$output .= "<th>Status</td>\n";
+		$output .= "<th>Component</td>\n";
 		$output .= "</tr>\n";
 		foreach ($mirrors as $mirror => $name) {
 			$components = count($name["components"]);
 			$output .= "<tr>\n";
-			$output .= "<td width=\"40%\" rowspan=\"{$components}\" class=\"listr\">{$name['name']}</td>\n";
-			$output .= "<td width=\"40%\" rowspan=\"{$components}\" class=\"listr\">{$name['status']}</td>\n";
-			$output .= "<td width=\"20%\" class=\"listr\">{$name['components'][0]}</td>\n";
+			$output .= "<td rowspan=\"{$components}\">{$name['name']}</td>\n";
+			$output .= "<td rowspan=\"{$components}\" class=\"listr\">{$name['status']}</td>\n";
+			$output .= "<td>{$name['components'][0]}</td>\n";
 			$output .= "</tr>\n";
 			if (count($name["components"]) > 1) {
 				$morecomponents = array_slice($name["components"], 1);
 				foreach ($morecomponents as $component) {
 					$output .= "<tr>\n";
-					$output .= "<td width=\"20%\" class=\"listr\">{$component}</td>\n";
+					$output .= "<td>{$component}</td>\n";
 					$output .= "</tr>\n";
 				}
 			}

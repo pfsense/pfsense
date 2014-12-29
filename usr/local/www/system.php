@@ -5,18 +5,18 @@
 	part of m0n0wall (http://m0n0.ch/wall)
 
 	Copyright (C) 2003-2004 Manuel Kasper <mk@neon1.net>.
-        Copyright (C) 2013-2014 Electric Sheep Fencing, LP
+		Copyright (C) 2013-2014 Electric Sheep Fencing, LP
 	All rights reserved.
 
 	Redistribution and use in source and binary forms, with or without
 	modification, are permitted provided that the following conditions are met:
 
 	1. Redistributions of source code must retain the above copyright notice,
-	   this list of conditions and the following disclaimer.
+		this list of conditions and the following disclaimer.
 
 	2. Redistributions in binary form must reproduce the above copyright
-	   notice, this list of conditions and the following disclaimer in the
-	   documentation and/or other materials provided with the distribution.
+		notice, this list of conditions and the following disclaimer in the
+		documentation and/or other materials provided with the distribution.
 
 	THIS SOFTWARE IS PROVIDED ``AS IS'' AND ANY EXPRESS OR IMPLIED WARRANTIES,
 	INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY
@@ -99,7 +99,7 @@ foreach($interfaces as $interface) {
 if ($_POST) {
 
 	$changecount++;
-	
+
 	unset($input_errors);
 	$pconfig = $_POST;
 
@@ -190,7 +190,7 @@ if ($_POST) {
 
 		/* pfSense themes */
 		if (! $g['disablethemeselection']) {
-			update_if_changed("System Theme", $config['theme'], $_POST['theme']);	
+			update_if_changed("System Theme", $config['theme'], $_POST['theme']);
 		}
 
 		/* XXX - billm: these still need updating after figuring out how to check if they actually changed */
@@ -279,7 +279,7 @@ if ($_POST) {
 
 		// Reload the filter - plugins might need to be run.
 		$retval |= filter_configure();
-		
+
 		$savemsg = get_std_save_message($retval);
 	}
 
@@ -290,8 +290,7 @@ $pgtitle = array(gettext("System"),gettext("General Setup"));
 include("head.inc");
 
 ?>
-
-<body link="#0000CC" vlink="#0000CC" alink="#0000CC">
+<body id="system">
 <?php
 	include("fbegin.inc");
 	if ($input_errors)
@@ -299,127 +298,115 @@ include("head.inc");
 	if ($savemsg)
 		print_info_box($savemsg);
 ?>
-	<form action="system.php" method="post">
-		<table width="100%" border="0" cellpadding="6" cellspacing="0" summary="general setup">
-                        <tr>
-                                <td id="mainarea">
-                                        <div class="tabcont">
-			<table width="100%" border="0" cellpadding="6" cellspacing="0" summary="main area">
-			<tr>
-				<td colspan="2" valign="top" class="listtopic"><?=gettext("System"); ?></td>
-			</tr>
-			<tr>
-				<td width="22%" valign="top" class="vncellreq"><?=gettext("Hostname"); ?></td>
-				<td width="78%" class="vtable"> <input name="hostname" type="text" class="formfld unknown" id="hostname" size="40" value="<?=htmlspecialchars($pconfig['hostname']);?>" />
-					<br />
-					<span class="vexpl">
+
+	<div id="container">
+		<form class="form-horizontal" action="system.php" method="post">
+			<h2><?=gettext("System"); ?></h2>
+			<div class="form-group">
+				<label for="hostname" class="col-sm-2 control-label"><?=gettext("Hostname"); ?></label>
+				<div class="col-sm-10">
+					<input type="text" class="form-control" id="hostname" value="<?=htmlspecialchars($pconfig['hostname']);?>" placeholder="firewall">
+					<span class="help-block">
 						<?=gettext("Name of the firewall host, without domain part"); ?>
-						<br />
-						<?=gettext("e.g."); ?> <em>firewall</em>
 					</span>
-				</td>
-			</tr>
-			<tr>
-				<td width="22%" valign="top" class="vncellreq"><?=gettext("Domain"); ?></td>
-				<td width="78%" class="vtable"> <input name="domain" type="text" class="formfld unknown" id="domain" size="40" value="<?=htmlspecialchars($pconfig['domain']);?>" />
-					<br />
-					<span class="vexpl">
+				</div>
+			</div>
+
+			<div class="form-group">
+				<label for="domain" class="col-sm-2 control-label"><?=gettext("Domain"); ?></label>
+				<div class="col-sm-10">
+					<input type="text" class="form-control" id="domain" value="<?=htmlspecialchars($pconfig['domain']);?>" placeholder="mycorp.com, home, office, private, etc.">
+					<span class="help-block">
 						<?=gettext("Do not use 'local' as a domain name. It will cause local hosts running mDNS (avahi, bonjour, etc.) to be unable to resolve local hosts not running mDNS."); ?>
-						<br />
-						<?=gettext("e.g."); ?> <em><?=gettext("mycorp.com, home, office, private, etc."); ?></em>
 					</span>
-				</td>
-			</tr>
-			<tr>
-				<td width="22%" valign="top" class="vncell"><?=gettext("DNS servers"); ?></td>
-				<td width="78%" class="vtable">
-						<br />
-						<table summary="dns servers and gateways">
-							<tr>
-								<td><b><?=gettext("DNS Server"); ?></b></td>
-								<?php if ($multiwan): ?>
-								<td><b><?=gettext("Use gateway"); ?></b></td>
-								<?php endif; ?>
-							</tr>
-							<?php
-								for ($dnscounter=1; $dnscounter<5; $dnscounter++):
-									$fldname="dns{$dnscounter}gw";
-							?>
-							<tr>
-								<td>
-									<input name="dns<?php echo $dnscounter;?>" type="text" class="formfld unknown" id="dns<?php echo $dnscounter;?>" size="28" value="<?php echo $pconfig['dns'.$dnscounter];?>" />
-								</td>
-								<td>
-<?php if ($multiwan): ?>
-									<select name='<?=$fldname;?>'>
-										<?php
-											$gwname = "none";
-											$dnsgw = "dns{$dnscounter}gw";
+				</div>
+			</div>
+
+			<h2><?=gettext("DNS servers"); ?></h2>
+			<div class="form-group">
+				<?php for ($dnscounter=1; $dnscounter<5; $dnscounter++): ?>
+					<label for="dns_server_<?=$dnscounter?>" class="col-sm-2 control-label"><?=gettext("DNS Server"); ?></label>
+					<div class="input-group row col-sm-10">
+						<div class="col-xs-4">
+							<input type="text" class="form-control" id="dns_server_<?=$dnscounter?>" value="<?=htmlspecialchars($pconfig['dns'.$dnscounter]);?>">
+						</div>
+
+						<?php if ($multiwan): ?>
+							<div class="col-xs-4">
+								<select name='<?=$fldname;?>'>
+									<?php
+										$gwname = "none";
+										$dnsgw = "dns{$dnscounter}gw";
+										if ($pconfig[$dnsgw] == $gwname) {
+											$selected = "selected=\"selected\"";
+										} else {
+											$selected = "";
+										}
+										echo "<option value='$gwname' $selected>$gwname</option>\n";
+										foreach($arr_gateways as $gwname => $gwitem) {
+											//echo $pconfig[$dnsgw];
+											if((is_ipaddrv4(lookup_gateway_ip_by_name($pconfig[$dnsgw])) && (is_ipaddrv6($gwitem['gateway'])))) {
+												continue;
+											}
+											if((is_ipaddrv6(lookup_gateway_ip_by_name($pconfig[$dnsgw])) && (is_ipaddrv4($gwitem['gateway'])))) {
+												continue;
+											}
 											if($pconfig[$dnsgw] == $gwname) {
 												$selected = "selected=\"selected\"";
 											} else {
 												$selected = "";
 											}
-											echo "<option value='$gwname' $selected>$gwname</option>\n";
-											foreach($arr_gateways as $gwname => $gwitem) {
-												//echo $pconfig[$dnsgw];
-												if((is_ipaddrv4(lookup_gateway_ip_by_name($pconfig[$dnsgw])) && (is_ipaddrv6($gwitem['gateway'])))) {
-													continue;
-												}
-												if((is_ipaddrv6(lookup_gateway_ip_by_name($pconfig[$dnsgw])) && (is_ipaddrv4($gwitem['gateway'])))) {
-													continue;
-												}
-												if($pconfig[$dnsgw] == $gwname) {
-													$selected = "selected=\"selected\"";
-												} else {
-													$selected = "";
-												}
-												echo "<option value='$gwname' $selected>$gwname - {$gwitem['friendlyiface']} - {$gwitem['gateway']}</option>\n";
-											}
-										?>
-									</select>
-<?php endif; ?>
-								</td>
-							</tr>
-							<?php endfor; ?>
-						</table>
-						<br />
-						<span class="vexpl">
-							<?=gettext("Enter IP addresses to be used by the system for DNS resolution. " .
+											echo "<option value='$gwname' $selected>$gwname - {$gwitem['friendlyiface']} - {$gwitem['gateway']}</option>\n";
+										}
+									?>
+								</select>
+							</div>
+						<?php endif; ?>
+					</div>
+				<?php endfor; ?>
+
+				<span class="help-block">
+					<?=gettext("Enter IP addresses to be used by the system for DNS resolution. " .
 							"These are also used for the DHCP service, DNS forwarder and for PPTP VPN clients."); ?>
-							<br />
-							<?php if($multiwan): ?>
-							<br />
-							<?=gettext("In addition, optionally select the gateway for each DNS server. " .
+					<br />
+					<?php if($multiwan): ?>
+					<br />
+					<?=gettext("In addition, optionally select the gateway for each DNS server. " .
 							"When using multiple WAN connections there should be at least one unique DNS server per gateway."); ?>
-							<br />
-							<?php endif; ?>
-							<br />
-							<input name="dnsallowoverride" type="checkbox" id="dnsallowoverride" value="yes" <?php if ($pconfig['dnsallowoverride']) echo "checked=\"checked\""; ?> />
-							<strong>
-								<?=gettext("Allow DNS server list to be overridden by DHCP/PPP on WAN"); ?>
-							</strong>
-							<br />
-							<?php printf(gettext("If this option is set, %s will " .
-							"use DNS servers assigned by a DHCP/PPP server on WAN " .
-							"for its own purposes (including the DNS forwarder). " .
-							"However, they will not be assigned to DHCP and PPTP " .
-							"VPN clients."), $g['product_name']); ?>
-							<br />
-							<br />
-							<input name="dnslocalhost" type="checkbox" id="dnslocalhost" value="yes" <?php if ($pconfig['dnslocalhost']) echo "checked=\"checked\""; ?> />
-							<strong>
-								<?=gettext("Do not use the DNS Forwarder as a DNS server for the firewall"); ?>
-							</strong>
-							<br />
-							<?=gettext("By default localhost (127.0.0.1) will be used as the first DNS server where the DNS Forwarder or DNS Resolver is enabled and set to listen on Localhost, so system can use the local DNS service to perform lookups. ".
-							"Checking this box omits localhost from the list of DNS servers."); ?>
-						</span>
-				</td>
-			</tr>
-			<tr>
-				<td width="22%" valign="top" class="vncell"><?=gettext("Time zone"); ?></td>
-				<td width="78%" class="vtable">
+					<br />
+					<?php endif; ?>
+				</span>
+			</div>
+
+			<div class="form-group">
+				<label for="dnsallowoverride" class="col-sm-2 control-label"><?=gettext("Allow DNS server list to be overridden by DHCP/PPP on WAN"); ?></label>
+				<div class="col-sm-10">
+					<input name="dnsallowoverride" type="checkbox" id="dnsallowoverride" value="yes" <?php if ($pconfig['dnsallowoverride']) echo "checked=\"checked\""; ?> />
+					<span class="help-block">
+						<?php printf(gettext("If this option is set, %s will " .
+						"use DNS servers assigned by a DHCP/PPP server on WAN " .
+						"for its own purposes (including the DNS forwarder). " .
+						"However, they will not be assigned to DHCP and PPTP " .
+						"VPN clients."), $g['product_name']); ?>
+					</span>
+				</div>
+			</div>
+
+			<div class="form-group">
+				<label for="dnslocalhost" class="col-sm-2 control-label"><?=gettext("Do not use the DNS Forwarder as a DNS server for the firewall"); ?></label>
+				<div class="col-sm-10">
+					<input name="dnslocalhost" type="checkbox" id="dnslocalhost" value="yes" <?php if ($pconfig['dnslocalhost']) echo "checked=\"checked\""; ?> />
+					<span class="help-block">
+						<?=gettext("By default localhost (127.0.0.1) will be used as the first DNS server where the DNS Forwarder or DNS Resolver is enabled and set to listen on Localhost, so system can use the local DNS service to perform lookups. ".
+						"Checking this box omits localhost from the list of DNS servers."); ?>
+					</span>
+				</div>
+			</div>
+
+			<h2><?=gettext("Localization"); ?></h2>
+			<div class="form-group">
+				<label for="timezone" class="col-sm-2 control-label"><?=gettext("Time zone"); ?></label>
+				<div class="col-sm-10">
 					<select name="timezone" id="timezone">
 						<?php foreach ($timezonelist as $value): ?>
 						<?php if(strstr($value, "GMT")) continue; ?>
@@ -428,40 +415,29 @@ include("head.inc");
 						</option>
 						<?php endforeach; ?>
 					</select>
-					<br />
-					<span class="vexpl">
+
+					<span class="help-block">
 						<?=gettext("Select the location closest to you"); ?>
 					</span>
-				</td>
-			</tr>
-<!--
-			<tr>
-				<td width="22%" valign="top" class="vncell">Time update interval</td>
-				<td width="78%" class="vtable">
-					<input name="timeupdateinterval" type="text" class="formfld unknown" id="timeupdateinterval" size="4" value="<?=htmlspecialchars($pconfig['timeupdateinterval']);?>" />
-					<br />
-					<span class="vexpl">
-						Minutes between network time sync. 300 recommended,
-						or 0 to disable
-					</span>
-				</td>
-			</tr>
--->
-			<tr>
-				<td width="22%" valign="top" class="vncell"><?=gettext("NTP time server"); ?></td>
-				<td width="78%" class="vtable">
-					<input name="timeservers" type="text" class="formfld unknown" id="timeservers" size="40" value="<?=htmlspecialchars($pconfig['timeservers']);?>" />
-					<br />
-					<span class="vexpl">
+				</div>
+			</div>
+
+			<div class="form-group">
+				<label for="timeservers" class="col-sm-2 control-label"><?=gettext("NTP time server"); ?></label>
+				<div class="col-sm-10">
+					<input name="timeservers" type="text" id="timeservers" value="<?=htmlspecialchars($pconfig['timeservers']);?>" />
+
+					<span class="help-block">
 						<?=gettext("Use a space to separate multiple hosts (only one " .
 						"required). Remember to set up at least one DNS server " .
 						"if you enter a host name here!"); ?>
 					</span>
-				</td>
-			</tr>
-			<tr>
-				<td width="22%" valign="top" class="vncell"><?php echo gettext("Language");?></td>
-				<td width="78%" class="vtable">
+				</div>
+			</div>
+
+			<div class="form-group">
+				<label for="language" class="col-sm-2 control-label"><?=gettext("Language"); ?></label>
+				<div class="col-sm-10">
 					<select name="language">
 						<?php
 						foreach(get_locale_list() as $lcode => $ldesc) {
@@ -472,59 +448,15 @@ include("head.inc");
 						}
 						?>
 					</select>
-					<strong>
-						<?=gettext("Choose a language for the webConfigurator"); ?>
-					</strong>
-				</td>
-			</tr>
-			<tr>
-				<td colspan="2" class="list" height="12">&nbsp;</td>
-			</tr>
-			<?php if (! $g['disablethemeselection']): ?>
-			<tr>
-				<td colspan="2" valign="top" class="listtopic"><?=gettext("Theme"); ?></td>
-			</tr>
-			<tr>
-				<td width="22%" valign="top" class="vncell">&nbsp;</td>
-				<td width="78%" class="vtable">
-					<select name="theme">
-						<?php
-							$files = return_dir_as_array("/usr/local/www/themes/");
-							foreach($files as $f):
-								if ((substr($f, 0, 1) == "_") && !isset($config['system']['developer']))
-									continue;
-								if ($f == "CVS")
-									continue;
-								$curtheme = "pfsense";
-								if ($config['theme'])
-									$curtheme = $config['theme'];
-								$selected = "";
-								if($f == $curtheme)
-									$selected = " selected=\"selected\"";
-						?>
-						<option <?=$selected;?>><?=$f;?></option>
-						<?php endforeach; ?>
-					</select>
-					<strong>
-						<?=gettext("This will change the look and feel of"); ?>
-						<?=$g['product_name'];?>.
-					</strong>
-				</td>
-			</tr>
-			<?php endif; ?>
-			<tr>
-				<td colspan="2" class="list" height="12">&nbsp;</td>
-			</tr>			
-			<tr>
-				<td width="22%" valign="top">&nbsp;</td>
-				<td width="78%">
-					<input name="Submit" type="submit" class="formbtn" value="<?=gettext("Save");?>" />
-				</td>
-			</tr>
-		</table>
+
+					<span class="help-block">
+							<?=gettext("Choose a language for the webConfigurator"); ?>
+					</span>
+				</div>
+			</div>
+
+			<button type="submit" class="btn btn-primary"><?=gettext("Save");?></button>
 		</div>
-		</td></tr>
-		</table>
 	</form>
 <?php include("fend.inc"); ?>
 </body>

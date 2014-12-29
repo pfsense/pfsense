@@ -1,7 +1,7 @@
 <?php
 /*
 	$Id$
-        Copyright (C) 2013-2014 Electric Sheep Fencing, LP
+	Copyright (C) 2013-2014 Electric Sheep Fencing, LP
 
 	Copyright 2007 Scott Dale
 	Part of pfSense widgets (https://www.pfsense.org)
@@ -92,9 +92,9 @@ if (isset($a_config["refreshinterval"])) {
 }
 
 if (isset($a_config["scale_type"])) {
-        $scale_type = $a_config["scale_type"];
+		$scale_type = $a_config["scale_type"];
 } else {
-        $scale_type = "up";
+		$scale_type = "up";
 }
 
 ?>
@@ -106,7 +106,7 @@ if (isset($a_config["scale_type"])) {
 		<input type="hidden" name="shown[<?= $ifname ?>]" value="<?= $shown[$ifname] ? "show" : "hide" ?>" />
 	<?php } ?>
 	Default AutoScale:
-		<?php 
+		<?php
 			$scale_type_up="checked=\"checked\"";
 			$scale_type_follow="";
 			if (isset($config["widgets"]["trafficgraphs"]["scale_type"])) {
@@ -121,8 +121,8 @@ if (isset($a_config["scale_type"])) {
 				}
 			}
 		?>
-	<input name="scale_type" class="radio" type="radio" id="scale_type_up" value="up" <?php echo $scale_type_up; ?> onchange="updateGraphDisplays();" /> <span>up</span>
-	<input name="scale_type" class="radio" type="radio" id="scale_type_follow" value="follow" <?php echo $scale_type_follow; ?> onchange="updateGraphDisplays();" /> <span>follow</span><br /><br />
+	<input name="scale_type" class="radio" type="radio" id="scale_type_up" value="up" <?php echo $scale_type_up; ?> onchange="updateGraphDisplays();" /><span>up</span>
+	<input name="scale_type" class="radio" type="radio" id="scale_type_follow" value="follow" <?php echo $scale_type_follow; ?> onchange="updateGraphDisplays();" /><span>follow</span><br /><br />
 	Refresh Interval:
 	<select name="refreshinterval" class="formfld" id="refreshinterval" onchange="updateGraphDisplays();">
 		<?php for ($i = 1; $i <= 10; $i += 1) { ?>

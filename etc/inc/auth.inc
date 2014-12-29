@@ -51,7 +51,7 @@ if(!$do_not_include_config_gui_inc)
 // Will be changed to false if security checks fail
 $security_passed = true;
 
-/* If this function doesn't exist, we're being called from Captive Portal or 
+/* If this function doesn't exist, we're being called from Captive Portal or
    another internal subsystem which does not include authgui.inc */
 if (function_exists("display_error_form") && !isset($config['system']['webgui']['nodnsrebindcheck'])) {
 	/* DNS ReBinding attack prevention.  https://redmine.pfsense.org/issues/708 */
@@ -117,8 +117,22 @@ if(function_exists("display_error_form") && !isset($config['system']['webgui']['
 			if($_SERVER['HTTP_REFERER'] == file_get_contents("{$g['tmp_path']}/setupwizard_lastreferrer")) {
 				unlink("{$g['tmp_path']}/setupwizard_lastreferrer");
 				header("Refresh: 1; url=index.php");
-				echo "<!DOCTYPE html PUBLIC \"-//W3C//DTD XHTML 1.0 Transitional//EN\"\n        \"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd\">";
-				echo "<html><head><title>" . gettext("Redirecting...") . "</title></head><body>" . gettext("Redirecting to the dashboard...") . "</body></html>";
+?>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<link rel="stylesheet" href="/bootstrap/css/pfSense.css" />
+	<title><?=gettext("Redirecting..."); ?></title>
+</head>
+<body id="error" class="no-menu">
+	<div id="jumbotron">
+		<div class="container">
+			<p><?=gettext("Redirecting to the dashboard...")?></p>
+		</div>
+	</div>
+</body>
+</html>
+<?php
 				exit;
 			}
 		}
@@ -389,7 +403,7 @@ function local_user_set(& $user) {
 
 	conf_mount_rw();
 
-	$home_base = "/home/";	
+	$home_base = "/home/";
 	$user_uid = $user['uid'];
 	$user_name = $user['name'];
 	$user_home = "{$home_base}{$user_name}";
@@ -397,7 +411,7 @@ function local_user_set(& $user) {
 	$user_group = "nobody";
 
 	// Ensure $home_base exists and is writable
-	if (!is_dir($home_base)) 
+	if (!is_dir($home_base))
 		mkdir($home_base, 0755);
 
 	$lock_account = false;
@@ -448,7 +462,7 @@ function local_user_set(& $user) {
 		$user_op = "usermod";
 	}
 
-	$comment = str_replace(array(":", "!", "@"), " ", $user['descr']); 
+	$comment = str_replace(array(":", "!", "@"), " ", $user['descr']);
 	/* add or mod pw db */
 	$cmd = "/usr/sbin/pw {$user_op} -q -u {$user_uid} -n {$user_name}".
 			" -g {$user_group} -s {$user_shell} -d {$user_home}".
@@ -482,7 +496,7 @@ function local_user_set(& $user) {
 
 	$un = $lock_account ? "" : "un";
 	exec("/usr/sbin/pw {$un}lock {$user_name} -q");
-	
+
 	conf_mount_ro();
 }
 
@@ -554,7 +568,7 @@ function local_user_get_groups($user, $all = false) {
 	sort($groups);
 
 	return $groups;
-	
+
 }
 
 function local_user_set_groups($user, $new_groups = NULL ) {
@@ -771,7 +785,7 @@ function ldap_test_bind($authcfg) {
 	ldap_set_option($ldap, LDAP_OPT_REFERRALS, 0);
 	ldap_set_option($ldap, LDAP_OPT_DEREF, LDAP_DEREF_SEARCHING);
 	ldap_set_option($ldap, LDAP_OPT_PROTOCOL_VERSION, (int)$ldapver);
- 
+
 	$ldapbindun = isset($authcfg['ldap_utf8']) ? utf8_encode($ldapbindun) : $ldapbindun;
 	$ldapbindpw = isset($authcfg['ldap_utf8']) ? utf8_encode($ldapbindpw) : $ldapbindpw;
 	if ($ldapanon == true) {
@@ -889,23 +903,23 @@ function ldap_get_user_ous($show_complete_ou=true, $authcfg) {
 
 function ldap_get_groups($username, $authcfg) {
 	global $debug, $config;
-	
+
 	if(!function_exists("ldap_connect"))
 		return;
-	
-	if(!$username) 
+
+	if(!$username)
 		return false;
 
 	if(!isset($authcfg['ldap_nostrip_at']) && stristr($username, "@")) {
 		$username_split = explode("@", $username);
-		$username = $username_split[0];		
+		$username = $username_split[0];
 	}
 
 	if(stristr($username, "\\")) {
 		$username_split = explode("\\", $username);
-		$username = $username_split[0];        
-	}    
-	
+		$username = $username_split[0];
+	}
+
 	//log_error("Getting LDAP groups for {$username}.");
         if ($authcfg) {
                 if (strstr($authcfg['ldap_urltype'], "Standard"))
@@ -953,7 +967,7 @@ function ldap_get_groups($username, $authcfg) {
 		log_error(sprintf(gettext("ERROR! ldap_get_groups() Could not connect to server %s."), $ldapname));
                 return memberof;
         }
-    
+
 	ldap_set_option($ldap, LDAP_OPT_REFERRALS, 0);
 	ldap_set_option($ldap, LDAP_OPT_DEREF, LDAP_DEREF_SEARCHING);
 	ldap_set_option($ldap, LDAP_OPT_PROTOCOL_VERSION, (int)$ldapver);
@@ -985,8 +999,8 @@ function ldap_get_groups($username, $authcfg) {
 	$search    = @$ldapfunc($ldap, $ldapdn, $ldapfilter, array($ldapgroupattribute));
 	$info      = @ldap_get_entries($ldap, $search);
 
-	$countem = $info["count"];	
-	
+	$countem = $info["count"];
+
 	if(is_array($info[0][$ldapgroupattribute])) {
 		/* Iterate through the groups and throw them into an array */
 		foreach ($info[0][$ldapgroupattribute] as $member) {
@@ -996,14 +1010,14 @@ function ldap_get_groups($username, $authcfg) {
 			}
 		}
 	}
-	
+
 	/* Time to close LDAP connection */
 	@ldap_unbind($ldap);
-	
+
 	$groups = print_r($memberof,true);
-	
+
 	//log_error("Returning groups ".$groups." for user $username");
-	
+
 	return $memberof;
 }
 
@@ -1013,8 +1027,8 @@ function ldap_format_host($host) {
 
 function ldap_backed($username, $passwd, $authcfg) {
 	global $debug, $config;
-	
-	if(!$username) 
+
+	if(!$username)
 		return;
 
 	if(!function_exists("ldap_connect"))
@@ -1022,11 +1036,11 @@ function ldap_backed($username, $passwd, $authcfg) {
 
 	if(!isset($authcfg['ldap_nostrip_at']) && stristr($username, "@")) {
 		$username_split = explode("@", $username);
-		$username = $username_split[0];        
+		$username = $username_split[0];
 	}
 	if(stristr($username, "\\")) {
 		$username_split = explode("\\", $username);
-		$username = $username_split[0];        
+		$username = $username_split[0];
 	}
 
 	if ($authcfg) {
@@ -1056,9 +1070,9 @@ function ldap_backed($username, $passwd, $authcfg) {
                 }
                 else
                 {
-                        $ldapfilter = 
+                        $ldapfilter =
 "(&({$ldapnameattribute}={$username})({$ldapextendedquery}))";
-                } 
+                }
                 $ldaptype           = "";
                 $ldapver            = $authcfg['ldap_protver'];
 		$ldapname	    = $authcfg['name'];
@@ -1066,7 +1080,7 @@ function ldap_backed($username, $passwd, $authcfg) {
 	} else
 		return false;
 
-	/* first check if there is even an LDAP server populated */ 
+	/* first check if there is even an LDAP server populated */
 	if(!$ldapserver) {
 		if ($ldapfallback) {
 			log_error(gettext("ERROR! ldap_backed() called with no LDAP authentication server defined.  Defaulting to local user database. Visit System -> User Manager."));
@@ -1076,7 +1090,7 @@ function ldap_backed($username, $passwd, $authcfg) {
 
 		return false;
 	}
-	
+
         /* Setup CA environment if needed. */
         ldap_setup_caenv($authcfg);
 
@@ -1109,10 +1123,10 @@ function ldap_backed($username, $passwd, $authcfg) {
 		log_error(sprintf(gettext("ERROR! Could not bind to server %s."), $ldapname));
 		return false;
 	}
-	
+
 	/* Get LDAP Authcontainers and split em up. */
 	$ldac_splits = explode(";", $ldapauthcont);
-	
+
 	/* setup the usercount so we think we havn't found anyone yet */
 	$usercount  = 0;
 
@@ -1160,7 +1174,7 @@ function ldap_backed($username, $passwd, $authcfg) {
 	if ($usercount != 1){
 		@ldap_unbind($ldap);
 		log_error(gettext("ERROR! Either LDAP search failed, or multiple users were found."));
-		return false;                         
+		return false;
 	}
 
 	/* Now lets bind as the user we found */
@@ -1241,7 +1255,7 @@ function radius_backed($username, $passwd, $authcfg, &$attributes = array()) {
 
 function get_user_expiration_date($username) {
 	$user = getUserEntry($username);
-	if ($user['expires']) 
+	if ($user['expires'])
 		return $user['expires'];
 }
 
@@ -1368,7 +1382,7 @@ function session_auth() {
 	/* Validate incoming login request */
 	if (isset($_POST['login']) && !empty($_POST['usernamefld']) && !empty($_POST['passwordfld'])) {
 		$authcfg = auth_get_authserver($config['system']['webgui']['authmode']);
-		if (authenticate_user($_POST['usernamefld'], $_POST['passwordfld'], $authcfg) || 
+		if (authenticate_user($_POST['usernamefld'], $_POST['passwordfld'], $authcfg) ||
 		    authenticate_user($_POST['usernamefld'], $_POST['passwordfld'])) {
 			// Generate a new id to avoid session fixation
 			session_regenerate_id();
@@ -1409,7 +1423,7 @@ function session_auth() {
 			$_GET['logout'] = true;
 			$_SESSION['Logout'] = true;
 		} else
-			$_SESSION['last_access'] = time();	
+			$_SESSION['last_access'] = time();
 	} else if (intval($config['system']['webgui']['session_timeout']) == 0) {
 		/* only update if it wasn't ajax */
 		if (!isAjax())

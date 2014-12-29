@@ -75,7 +75,7 @@ if (!isAllowedPage($_SERVER['REQUEST_URI'])) {
 		display_error_form("201", gettext("No page assigned to this user! Click here to logout."));
 		exit;
 	}
-} else 
+} else
 	$_SESSION['Post_Login'] = true;
 
 /*
@@ -89,7 +89,7 @@ if (!$_SESSION['Post_Login']) {
 	exit;
 }
 
-/* 
+/*
  * Close session data to allow other scripts from same host to come in.
  * A session can be reactivated from calling session_start again
  */
@@ -107,49 +107,21 @@ function display_error_form($http_code, $desc) {
 	}
 
 ?>
-
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
-   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
-	<head>
-		<script type="text/javascript" src="/javascript/jquery-1.11.1.min.js"></script>
-		<script type="text/javascript" src="/javascript/jquery-migrate-1.2.1.min.js"></script>
-		<title><?=$http_code?></title>
-		<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-		<link rel="shortcut icon" href="/themes/<?= $g['theme'] ?>/images/icons/favicon.ico" />
-		<?php if (file_exists("{$g['www_path']}/themes/{$g['theme']}/login.css")): ?>
-		<link rel="stylesheet" type="text/css" href="/themes/<?= $g['theme'] ?>/login.css" media="all" />
-		<?php else: ?>
-		<link rel="stylesheet" type="text/css" href="/themes/<?= $g['theme'] ?>/all.css" media="all" />
-		<?php endif; ?>
-		<script type="text/javascript">
-		//<![CDATA[
-			function page_load() {}
-			function clearError() {
-				if($('#inputerrors'))
-				$('#inputerrors').html('');
-			}
-			<?php
-				require("headjs.php");
-				echo getHeadJS();
-			?>
-		//]]>
-		</script>
-		<script type="text/javascript" src="/themes/<?= $g['theme'] ?>/javascript/niftyjsCode.js"></script>
-	</head>
-	<body onload="page_load();">
-		<div id="errordesc">
-			<h1>&nbsp</h1>
-			<a href="/index.php?logout">
-			<p id="errortext" style="vertical-align: middle; text-align: center;">
-				<span style="color: #000000; font-weight: bold;">
-					<?=$desc;?>
-				</span>
-			</p>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<link rel="stylesheet" href="/bootstrap/css/pfSense.css" />
+	<title><?=gettext("Error: not allowed"); ?></title>
+</head>
+<body id="error" class="no-menu">
+	<div id="jumbotron">
+		<div class="container">
+			<!-- FIXME: We really need to POST the logout action -->
+			<div class="alert alert-danger" role="alert"><a href="index.php?logout"><?=$desc;?></a></div>
 		</div>
-	</body>
+	</div>
+</body>
 </html>
-
 <?php
 
 } // end function
@@ -177,7 +149,7 @@ function display_login_form() {
 		exit;
 	}
 
-/* Check against locally configured IP addresses, which will catch when someone 
+/* Check against locally configured IP addresses, which will catch when someone
    port forwards WebGUI access from WAN to an internal IP on the router. */
 global $FilterIflist, $nifty_background;
 $local_ip = false;
@@ -229,88 +201,48 @@ setcookie("cookie_test", time() + 3600);
 $have_cookies = isset($_COOKIE["cookie_test"]);
 
 ?>
-
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
-   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
-	<head>
-		<script type="text/javascript" src="/javascript/jquery-1.11.1.min.js"></script>
-		<script type="text/javascript" src="/javascript/jquery-migrate-1.2.1.min.js"></script>
-		<script type="text/javascript">
-		//<![CDATA[
-		$(document).ready(function() { jQuery('#usernamefld').focus(); });
-		//]]>
-		</script>
-
-		<title><?=gettext("Login"); ?></title>
-		<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-		<link rel="shortcut icon" href="/themes/<?= $g['theme'] ?>/images/icons/favicon.ico" />
-		<?php if (file_exists("{$g['www_path']}/themes/{$g['theme']}/login.css")): ?>
-		<link rel="stylesheet" type="text/css" href="/themes/<?= $g['theme'] ?>/login.css" media="all" />
-		<?php else: ?>
-		<link rel="stylesheet" type="text/css" href="/themes/<?= $g['theme'] ?>/all.css" media="all" />
-		<?php endif; ?>
-		<script type="text/javascript">
-		//<![CDATA[
-			function page_load() {}
-			function clearError() {
-				if($('#inputerrors'))
-				$('#inputerrors').html('');
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<link rel="stylesheet" href="/bootstrap/css/pfSense.css" />
+	<title><?=gettext("Login"); ?></title>
+</head>
+<body id="login" class="no-menu">
+	<div id="jumbotron">
+		<div class="container">
+		<?php
+			if(is_ipaddr($http_host) && !$local_ip && !isset($config['system']['webgui']['nohttpreferercheck'])) {
+				$nifty_background = "#999";
+				print_info_box(gettext("You are accessing this router by an IP address not configured locally, which may be forwarded by NAT or other means. <br /><br />If you did not setup this forwarding, you may be the target of a man-in-the-middle attack."));
 			}
-			<?php
-				require("headjs.php");
-				echo getHeadJS();
-			?>
-		//]]>
-		</script>
-		<script type="text/javascript" src="/themes/<?= $g['theme'] ?>/javascript/niftyjsCode.js"></script>
-	</head>
-	<body onload="page_load()">
-		<div id="login">
-			<?php 
-				if(is_ipaddr($http_host) && !$local_ip && !isset($config['system']['webgui']['nohttpreferercheck'])) {
-					$nifty_background = "#999";
-					print_info_box(gettext("You are accessing this router by an IP address not configured locally, which may be forwarded by NAT or other means. <br /><br />If you did not setup this forwarding, you may be the target of a man-in-the-middle attack.")); 
-				}
-				$loginautocomplete = isset($config['system']['webgui']['loginautocomplete']) ? '' : 'autocomplete="off"';
-			?>
-			<form id="iform" name="iform" method="post" <?= $loginautocomplete ?> action="<?=$_SERVER['SCRIPT_NAME'];?>">
-				<h1>&nbsp;</h1>
-				<div id="inputerrors"><?=$_SESSION['Login_Error'];?></div>
-				<p>
-					<span style="text-align:left">
-						<?=gettext("Username:"); ?><br />
-						<input onclick="clearError();" onchange="clearError();" id="usernamefld" type="text" name="usernamefld" class="formfld user" tabindex="1" />
-					</span>
-				</p>
-				<p>
-					<br />
-					<span style="text-align:left">
-						<?=gettext("Password:"); ?> <br />
-						<input onclick="clearError();" onchange="clearError();" id="passwordfld" type="password" name="passwordfld" class="formfld pwd" tabindex="2" />
-					</span>
-				</p>
-				<p>
-					<br />
-					<span style="text-align:center; font-weight: normal ; font-style: italic">
-						<?=gettext("Enter username and password to login."); ?>
-					</span>
 
-					<?php if (!$have_cookies && isset($_POST['login'])): ?>
-					<br /><br />
-					<span style="text-align:center; font-weight: normal ; font-style: italic; color: #ff0000">
-						<?= gettext("Your browser must support cookies to login."); ?>
-					</span>
-					<?php endif; ?>
-				</p>        
-				<p>
-					<span style="text-align:center">
-						<input type="submit" name="login" class="formbtn" value="<?=gettext("Login"); ?>" tabindex="3" />
-					</span>
-				</p>
-			</form>
+			$loginautocomplete = isset($config['system']['webgui']['loginautocomplete']) ? '' : 'autocomplete="off"';
+		?>
+
+		<form id="iform" name="iform" method="post" <?= $loginautocomplete ?> action="<?=$_SERVER['SCRIPT_NAME'];?>">
+		<?php if (!empty($_SESSION['Login_Error'])): ?>
+			<div class="alert alert-danger" role="alert"><?=$_SESSION['Login_Error'];?></div>
+		<?php endif ?>
+
+			<div class="form-group">
+				<label for="inputEmail">Username</label>
+				<input type="text" class="form-control" name="usernamefld" placeholder="Username">
+			</div>
+			<div class="form-group">
+				<label for="inputPassword">Password</label>
+				<input type="password" class="form-control" name="passwordfld" placeholder="Password">
+			</div>
+			<button type="submit" class="btn btn-primary" name="login">Login</button>
+
+			<?php if (!$have_cookies && isset($_POST['login'])): ?>
+			<div class="alert alert-warning">
+				<?= gettext("Your browser must support cookies to login."); ?>
+			</div>
+			<?php endif; ?>
+		</form>
 		</div>
-	</body>
+	</div>
+</body>
 </html>
 <?php
 } // end function

@@ -1,6 +1,6 @@
 <?php
 /*
-        Copyright (C) 2013-2014 Electric Sheep Fencing, LP
+	Copyright (C) 2013-2014 Electric Sheep Fencing, LP
 
 	Copyright 2010 Jim Pingle
 	Portions copied from status_lb_pool.php, status_lb_vs.php, and vslb.inc:
@@ -64,13 +64,16 @@ if (!$nentries)
 
 ?>
 
-<table bgcolor="#990000" width="100%" border="0" cellspacing="0" cellpadding="0" summary="load balancer">
+<table class="table">
+<thead>
 	<tr>
-		<td width="10%" class="listhdrr">Server</td>
-		<td width="10%" class="listhdrr">Pool</td>
-		<td width="30%" class="listhdr">Description</td>
+		<th>Server</th>
+		<th>Pool</th>
+		<th>Description</th>
 	</tr>
-	<?php $i = 0; foreach ($a_vs as $vsent): ?>
+</thead>
+<tbody>
+	<?php foreach ($a_vs as $vsent): ?>
 	<tr>
 		<?php
 		switch (trim($rdr_a[$vsent['name']]['status'])) {
@@ -84,35 +87,37 @@ if (!$nentries)
 				break;
 			default:
 				$bgcolor = "#D3D3D3";  // lightgray
-				 $rdr_a[$vsent['name']]['status'] = 'Unknown - relayd not running?';
+				$rdr_a[$vsent['name']]['status'] = 'Unknown - relayd not running?';
 		}
 		?>
-		<td class="listlr">
+		<td>
 			<?=$vsent['name'];?><br />
 			<span style="background-color: <?=$bgcolor?>; display: block"><i><?=$rdr_a[$vsent['name']]['status']?></i></span>
 			<?=$vsent['ipaddr'].":".$vsent['port'];?><br />
 		</td>
-		<td class="listr" align="center" >
-		<table border="0" cellpadding="0" cellspacing="2" summary="status">
-		<?php
-		foreach ($a_pool as $pool) {
-			if ($pool['name'] == $vsent['poolname']) {
-				$pool_hosts=array();
-				foreach ((array) $pool['servers'] as $server) {
-					$svr['ip']['addr']=$server;
-					$svr['ip']['state']=$relay_hosts[$pool['name'].":".$pool['port']][$server]['state'];
-					$svr['ip']['avail']=$relay_hosts[$pool['name'].":".$pool['port']][$server]['avail'];
-					$pool_hosts[]=$svr;
-				}
-				foreach ((array) $pool['serversdisabled'] as $server) {
-					$svr['ip']['addr']="$server";
-					$svr['ip']['state']='disabled';
-					$svr['ip']['avail']='disabled';
-					$pool_hosts[]=$svr;
-				}
-				asort($pool_hosts);
-				foreach ((array) $pool_hosts as $server) {
-					if($server['ip']['addr']!="") {
+		<td>
+			<table>
+			<?php
+			foreach ($a_pool as $pool) {
+				if ($pool['name'] == $vsent['poolname']) {
+					$pool_hosts=array();
+					foreach ((array) $pool['servers'] as $server) {
+						$svr['ip']['addr']=$server;
+						$svr['ip']['state']=$relay_hosts[$pool['name'].":".$pool['port']][$server]['state'];
+						$svr['ip']['avail']=$relay_hosts[$pool['name'].":".$pool['port']][$server]['avail'];
+						$pool_hosts[]=$svr;
+					}
+					foreach ((array) $pool['serversdisabled'] as $server) {
+						$svr['ip']['addr']="$server";
+						$svr['ip']['state']='disabled';
+						$svr['ip']['avail']='disabled';
+						$pool_hosts[]=$svr;
+					}
+					asort($pool_hosts);
+					foreach ((array) $pool_hosts as $server) {
+						if(empty($server['ip']['addr']))
+							continue;
+
 						switch ($server['ip']['state']) {
 							case 'up':
 								$bgcolor = "#90EE90";  // lightgreen
@@ -126,21 +131,24 @@ if (!$nentries)
 								$bgcolor = "#F08080";  // lightcoral
 								$checked = "checked";
 						}
-						echo "<tr>";
-						echo "<td bgcolor=\"{$bgcolor}\">&nbsp;{$server['ip']['addr']}:{$pool['port']}&nbsp;</td><td bgcolor=\"{$bgcolor}\">&nbsp;";
-						if($server['ip']['avail'])
-						  echo " ({$server['ip']['avail']}) ";
-						echo "&nbsp;</td></tr>";
+?>
+				<tr style="background-color: <?=$bgcolor?>">
+					<td><?=$server['ip']['addr']?>:<?=$pool['port']?></td>
+					<td>
+						<?php if($server['ip']['avail']): ?>
+						({$server['ip']['avail']})
+						<?php endif; ?>
+					</td>
+				</tr>
+<?php
 					}
 				}
 			}
-		}
-		?>
-		</table>
+?>
+			</table>
 		</td>
-		<td class="listbg" >
-			<font color="#FFFFFF"><?=$vsent['descr'];?></font>
-		</td>
+		<td><?=$vsent['descr'];?></td>
 	</tr>
-	<?php $i++; endforeach; ?>
+	<?php endforeach; ?>
+</tbody>
 </table>

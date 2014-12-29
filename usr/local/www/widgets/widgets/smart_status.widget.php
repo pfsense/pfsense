@@ -1,6 +1,6 @@
 <?php
 /*
-        Copyright (C) 2013-2014 Electric Sheep Fencing, LP
+	Copyright (C) 2013-2014 Electric Sheep Fencing, LP
 	Copyright 2012 mkirbst @ pfSense Forum
 	Part of pfSense widgets (https://www.pfsense.org)
 	All rights reserved.
@@ -33,7 +33,7 @@ require_once("functions.inc");
 require_once("/usr/local/www/widgets/include/smart_status.inc");
 ?>
 
-<table width="100%" border="0" cellpadding="0" cellspacing="0" summary="smart status">
+<table>
 	<tr>
 		<td class="widgetsubheader" align="center"><b><?php echo gettext("Drive") ?></b></td>
 		<td class="widgetsubheader" align="center"><b><?php echo gettext("Ident") ?></b></td>
@@ -47,7 +47,7 @@ $devs = get_smart_drive_list();
 
 if(count($devs) > 0)  {
 	foreach($devs as $dev)  {	## for each found drive do
-		$dev_ident = exec("diskinfo -v /dev/$dev | grep ident   | awk '{print $1}'"); ## get identifier from drive
+		$dev_ident = exec("diskinfo -v /dev/$dev | grep ident	| awk '{print $1}'"); ## get identifier from drive
 		$dev_state = trim(exec("smartctl -H /dev/$dev | awk -F: '/^SMART overall-health self-assessment test result/ {print $2;exit}
 /^SMART Health Status/ {print $2;exit}'")); ## get SMART state from drive
 		switch ($dev_state) {

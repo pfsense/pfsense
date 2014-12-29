@@ -383,10 +383,6 @@ if (isset($_POST['submit'])) {
 			$subnet_start = ip2ulong(long2ip32(ip2long($parent_ip) & gen_subnet_mask_long($parent_sn)));
 			$subnet_end = ip2ulong(long2ip32(ip2long($parent_ip) | (~gen_subnet_mask_long($parent_sn))));
 
-			//if ((ip2ulong($_POST['range_from']) < $subnet_start) || (ip2ulong($_POST['range_from']) > $subnet_end) ||
-			//   (ip2ulong($_POST['range_to']) < $subnet_start) || (ip2ulong($_POST['range_to']) > $subnet_end)) {
-			//	$input_errors[] = gettext("The specified range lies outside of the current subnet.");
-			//}
 			$parent_ip2=long2ip32(ip2long($parent_ip) & gen_subnet_mask_long($parent_sn));
 			if (!is_innet_v4("{$parent_ip}/{$parent_sn}",$_POST['range_from']) ||
 				!is_innet_v4("{$parent_ip}/{$parent_sn}",$_POST['range_to']))
@@ -420,17 +416,7 @@ if (isset($_POST['submit'])) {
 
 			$dynsubnet_start = ip2ulong($_POST['range_from']);
 			$dynsubnet_end = ip2ulong($_POST['range_to']);
-			/*if (is_array($a_maps)) {
-				foreach ($a_maps as $map) {
-					if (empty($map['ipaddr']))
-						continue;
-					if ((ip2ulong($map['ipaddr']) > $dynsubnet_start) &&
-						(ip2ulong($map['ipaddr']) < $dynsubnet_end)) {
-						$input_errors[] = sprintf(gettext("The DHCP range cannot overlap any static DHCP mappings."));
-						break;
-					}
-				}
-			}*/
+
 		}
 	}
 

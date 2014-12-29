@@ -198,28 +198,34 @@ if ($_POST) {
 	}
 
 	/* make sure it's not within the dynamic subnet */
+	$range_match=0;
 	if ($_POST['ipaddr']) {
 		$dynsubnet_start = ip2ulong($config['dhcpd'][$if]['range']['from']);
 		$dynsubnet_end = ip2ulong($config['dhcpd'][$if]['range']['to']);
 		if ((ip2ulong($_POST['ipaddr']) >= $dynsubnet_start) &&
 			(ip2ulong($_POST['ipaddr']) <= $dynsubnet_end)) {
-			$input_errors[] = sprintf(gettext("The IP address must not be within the DHCP range for this interface."));
+			$range_match++;
 		}
 
+		//check pool ranges
 		foreach ($a_pools as $pidx => $p) {
-			if (is_inrange_v4($_POST['ipaddr'], $p['range']['from'], $p['range']['to'])) {
-				$input_errors[] = gettext("The IP address must not be within the range configured on a DHCP pool for this interface.");
-				break;
+			if (is_inrange_v4($_POST['ipaddr'], $p['range']['from'], $p['range']['to']))
+				$range_match++;
 			}
-		}
+
+		//check pool subnets
+		foreach ($a_pools as $pidx => $p) {
+			if (is_innet_v4($p['custom_subnet']."/".mask2cidr_v4($p['custom_subnet_mask']),$_POST['ipaddr']))
+				$range_match++;
+	 		}
 
 		$lansubnet_start = ip2ulong(long2ip32(ip2long($ifcfgip) & gen_subnet_mask_long($ifcfgsn)));
 		$lansubnet_end = ip2ulong(long2ip32(ip2long($ifcfgip) | (~gen_subnet_mask_long($ifcfgsn))));
-		if ((ip2ulong($_POST['ipaddr']) < $lansubnet_start) ||
-			(ip2ulong($_POST['ipaddr']) > $lansubnet_end)) {
-			$input_errors[] = sprintf(gettext("The IP address must lie in the %s subnet."),$ifcfgdescr);
+		if ((ip2ulong($_POST['ipaddr']) > $lansubnet_start) && (ip2ulong($_POST['ipaddr']) < $lansubnet_end))
+			$range_match++;
 		}
-	}
+	if ($range_match == 0)
+		$input_errors[] = sprintf(gettext("The IP address does not match any configured range or pool."),$ifcfgdescr);
 
 	if (($_POST['gateway'] && !is_ipaddrv4($_POST['gateway'])))
 		$input_errors[] = gettext("A valid IP address must be specified for the gateway.");
@@ -232,9 +238,10 @@ if ($_POST) {
 		if(!ip_in_subnet($_POST['gateway'], gen_subnet($parent_ip, $parent_sn) . "/" . $parent_sn) && !ip_in_interface_alias_subnet($_POST['if'], $_POST['gateway']))
 			$input_errors[] = sprintf(gettext("The gateway address %s does not lie within the chosen interface's subnet."), $_POST['gateway']);
 	}
-	if (($_POST['dns1'] && !is_ipaddrv4($_POST['dns1'])) || ($_POST['dns2'] && !is_ipaddrv4($_POST['dns2'])) || ($_POST['dns3'] && !is_ipaddrv4($_POST['dns3'])) || ($_POST['dns4'] && !is_ipaddrv4($_POST['dns4'])))
-		$input_errors[] = gettext("A valid IP address must be specified for each of the DNS servers.");
-
+	for ($dns = 1; $dns <= 4; $dns++){
+		if ($_POST["dns{$dns}"] && !is_ipaddrv4($_POST["dns{$dns}"]))
+			$input_errors[] = gettext("A valid IP address must be specified for each of the DNS servers.");
+		}
 	if ($_POST['deftime'] && (!is_numeric($_POST['deftime']) || ($_POST['deftime'] < 60)))
 		$input_errors[] = gettext("The default lease time must be at least 60 seconds.");
 	if ($_POST['maxtime'] && (!is_numeric($_POST['maxtime']) || ($_POST['maxtime'] < 60) || ($_POST['maxtime'] <= $_POST['deftime'])))
@@ -283,14 +290,10 @@ if ($_POST) {
 			$mapent['winsserver'][] = $_POST['wins2'];
 
 		unset($mapent['dnsserver']);
-		if ($_POST['dns1'])
-			$mapent['dnsserver'][] = $_POST['dns1'];
-		if ($_POST['dns2'])
-			$mapent['dnsserver'][] = $_POST['dns2'];
-		if ($_POST['dns3'])
-			$mapent['dnsserver'][] = $_POST['dns3'];
-		if ($_POST['dns4'])
-			$mapent['dnsserver'][] = $_POST['dns4'];
+		for ($dns=1;$dns<=4;$dns++){
+			if ($_POST["dns{$dns}"])
+				$mapent['dnsserver'][] = $_POST["dns{$dns}"];
+			}
 
 		$mapent['gateway'] = $_POST['gateway'];
 		$mapent['domain'] = $_POST['domain'];

@@ -367,13 +367,18 @@ foreach ($leases as $data) {
 			}
 		} else {
 			foreach ($config['dhcpd'] as $dhcpif => $dhcpifconf) {
-				if (!is_array($dhcpifconf['range']))
-					continue;
-				if (($lip >= ip2ulong($dhcpifconf['range']['from'])) && ($lip <= ip2ulong($dhcpifconf['range']['to']))) {
+				if (is_array($dhcpifconf['range']) && ($lip >= ip2ulong($dhcpifconf['range']['from'])) && ($lip <= ip2ulong($dhcpifconf['range']['to']))) {
 					$data['if'] = $dhcpif;
 					break;
 				}
-			}
+				if(is_array($dhcpifconf['pool'])){
+					foreach ($dhcpifconf['pool'] as $iface_pool){
+						if (is_ipaddrv4($iface_pool['custom_subnet']) && is_validmask_v4($iface_pool['custom_subnet_mask']) &&
+							is_innet_v4($iface_pool['custom_subnet']."/".mask2cidr_v4($iface_pool['custom_subnet_mask']),$data['ip']))
+								$data['if'] = $dhcpif;
+						}
+					}
+				}
 		}
 		echo "<tr>\n";
 		echo "<td class=\"listlr\">{$fspans}{$data['ip']}{$fspane}</td>\n";

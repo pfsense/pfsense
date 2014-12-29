@@ -5,7 +5,7 @@
 
 	Copyright (C) 2007 Scott Ullrich <sullrich@gmail.com>
 	Copyright (C) 2007 Bill Marquette <bill.marquette@gmail.com>
-        Copyright (C) 2013-2014 Electric Sheep Fencing, LP
+        Copyright (C) 2013-2015 Electric Sheep Fencing, LP
 	All rights reserved.
 
 	Redistribution and use in source and binary forms, with or without

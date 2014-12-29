@@ -3,7 +3,7 @@
 /*
 	pkg_mgr_settings.php
 	part of pfSense
-        Copyright (C) 2013-2014 Electric Sheep Fencing, LP
+        Copyright (C) 2013-2015 Electric Sheep Fencing, LP
 	Copyright (C) 2009 Jim Pingle <jimp@pfsense.org>
     	Copyright (C) 2004-2010 Scott Ullrich <sullrich@gmail.com>
         Copyright (C) 2005 Colin Smith

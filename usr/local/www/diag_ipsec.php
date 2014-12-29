@@ -4,7 +4,7 @@
 	diag_ipsec.php
 	Copyright (C) 2004-2009 Scott Ullrich
 	Copyright (C) 2008 Shrew Soft Inc <mgrooms@shrew.net>.
-        Copyright (C) 2013-2014 Electric Sheep Fencing, LP
+        Copyright (C) 2013-2015 Electric Sheep Fencing, LP
 	All rights reserved.
 
 	Parts of this code was originally based on vpn_ipsec_sad.php

@@ -819,8 +819,8 @@ $priv_list['page-services-captiveportal-voucher-edit']['match'] = array();
 $priv_list['page-services-captiveportal-voucher-edit']['match'][] = "services_captiveportal_vouchers_edit.php*";
 
 $priv_list['page-services-captiveportal-zones'] = array();
-$priv_list['page-services-captiveportal-zones']['name'] = gettext("WebCfg - Services: Captiveprotal Zones page");
-$priv_list['page-services-captiveportal-zones']['descr'] = gettext("Allow access to the 'Services: CaptivePortal Zones' page.");
+$priv_list['page-services-captiveportal-zones']['name'] = gettext("WebCfg - Services: Captive portal Zones page");
+$priv_list['page-services-captiveportal-zones']['descr'] = gettext("Allow access to the 'Services: Captive portal Zones' page.");
 $priv_list['page-services-captiveportal-zones']['match'] = array();
 $priv_list['page-services-captiveportal-zones']['match'][] = "services_captiveportal_zones.php*";
 
@@ -945,7 +945,7 @@ $priv_list['page-services-rfc2136clients']['match'] = array();
 $priv_list['page-services-rfc2136clients']['match'][] = "services_rfc2136.php*";
 
 $priv_list['page-services-router-advertisements'] = array();
-$priv_list['page-services-router-advertisements']['name'] = gettext("Webcfg - Services: Router advertisementspage");
+$priv_list['page-services-router-advertisements']['name'] = gettext("Webcfg - Services: Router Advertisements page");
 $priv_list['page-services-router-advertisements']['descr'] = gettext("Allow access to the 'Services: Router Advertisements' page.");
 $priv_list['page-services-router-advertisements']['match'] = array();
 $priv_list['page-services-router-advertisements']['match'][] = "services_router_advertisements.php*";
@@ -993,7 +993,7 @@ $priv_list['page-status-captiveportal-expire']['match'] = array();
 $priv_list['page-status-captiveportal-expire']['match'][] = "status_captiveportal_expire.php*";
 
 $priv_list['page-status-captiveportal-test'] = array();
-$priv_list['page-status-captiveportal-test']['name'] = gettext("WebCfg - Status: Captive portal test Vouchers page");
+$priv_list['page-status-captiveportal-test']['name'] = gettext("WebCfg - Status: Captive portal Test Vouchers page");
 $priv_list['page-status-captiveportal-test']['descr'] = gettext("Allow access to the 'Status: Captive portal Test Vouchers' page.");
 $priv_list['page-status-captiveportal-test']['match'] = array();
 $priv_list['page-status-captiveportal-test']['match'][] = "status_captiveportal_test.php*";
@@ -1141,7 +1141,7 @@ $priv_list['page-system-advanced-misc']['match'] = array();
 $priv_list['page-system-advanced-misc']['match'][] = "system_advanced_misc.php*";
 
 $priv_list['page-system-advanced-network'] = array();
-$priv_list['page-system-advanced-network']['name'] = gettext("WebCfg - System: Advanced: Network page");
+$priv_list['page-system-advanced-network']['name'] = gettext("WebCfg - System: Advanced: Networking page");
 $priv_list['page-system-advanced-network']['descr'] = gettext("Allow access to the 'System: Advanced: Networking' page.");
 $priv_list['page-system-advanced-network']['match'] = array();
 $priv_list['page-system-advanced-network']['match'][] = "system_advanced_network.php*";

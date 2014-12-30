@@ -27,6 +27,10 @@ body.no-menu #jumbotron .container {
 	background: url("/logo.png") no-repeat;
 }
 
+tr.disabled {
+	opacity: .5;
+}
+
 .footer {
 	position: absolute;
 	bottom: 0;

@@ -61,10 +61,6 @@ if(isset($_REQUEST['closenotice'])){
 	echo get_menu_messages();
 	exit;
 }
-if ($_REQUEST['act'] == 'alias_info_popup' && !preg_match("/\D/",$_REQUEST['aliasid'])){
-	alias_info_popup($_REQUEST['aliasid']);
-	exit;
-}
 
 if($g['disablecrashreporter'] != true) {
 	// Check to see if we have a crash report

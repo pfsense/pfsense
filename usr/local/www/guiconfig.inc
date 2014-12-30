@@ -1003,114 +1003,64 @@ function add_package_tabs($tabgroup, & $tab_array) {
 
 function alias_info_popup($alias_id){
 	global $config;
+
+	if (!is_array($config['aliases']['alias'][$alias_id]))
+		return;
+
 	$maxlength = 60;
-	$close_title="title='".gettext('move mouse out this alias to hide')."'";
-	if (is_array($config['aliases']['alias'][$alias_id])){
-		$alias_name=$config['aliases']['alias'][$alias_id];
-		$alias_objects_with_details = "<table width=\"100%\" border=\"0\" cellpadding=\"2\" cellspacing=\"0\" summary=\"alias info popup\">";
-		if ($alias_name['url']) {
-			// TODO: Change it when pf supports tables with ports
-			if ($alias_name['type'] == "urltable") {
-				exec("/sbin/pfctl -t {$alias_name['name']} -T show | wc -l", $total_entries);
-				$counter=preg_replace("/\D/","",$total_entries[0]);
-				exec("/sbin/pfctl -t {$alias_name['name']} -T show | head -10002", $alias_addresses);
-			} else {
-				$urlfn = alias_expand_urltable($alias_name['name']);
-				$alias_addresses = explode("\n", file_get_contents($urlfn));
-				$counter = count($alias_addresses);
-			}
-			$alias_objects_with_details .= "<tr><td colspan=\"3\" $close_title class=\"vncell\">{$alias_name['url']}</td></tr>";
-			$x=0;
-			foreach ($alias_addresses as $alias_ports_address ) {
-				switch ($x) {
-				case 0:
-					$x++;
-					$alias_objects_with_details .= "<tr><td $close_title class=\"vncell\" width=\"33%\" style=\"background: #FFFFFF;color: #000000;\">{$alias_ports_address}</td>";
-					break;
-				case 1:
-					$x++;
-					$alias_objects_with_details .= "<td $close_title class=\"vncell\" width=\"33%\" style=\"background: #FFFFFF;color: #000000;\">{$alias_ports_address}</td>";
-					break;
-				default:
-					$x=0;
-					$alias_objects_with_details .= "<td  $close_title class=\"vncell\" width=\"33%\" style=\"background: #FFFFFF;color: #000000;\">{$alias_ports_address}</td><tr>";
-					break;
-				}
-			}
-			for ($y = $x; $y <= $x; $y++) {
-				$alias_objects_with_details .= "<td $close_title class=\"vncell\" width=\"33%\">&nbsp;</td>";
-			}
-			if ($x > 0) {
-				$alias_objects_with_details .= "</tr>";
-			}
-			if ($counter > 10002) {
-				$alias_objects_with_details .= "<tr><td colspan=\"3\"> ". gettext("listing only first 10k items") . "</td><tr>";
-			}
+	$alias = $config['aliases']['alias'][$alias_id];
+	$content = "";
+
+	if ($alias['url'])
+	{
+		// TODO: Change it when pf supports tables with ports
+		if ($alias['type'] == "urltable") {
+			exec("/sbin/pfctl -t {$alias['name']} -T show | wc -l", $total_entries);
+			$counter=preg_replace("/\D/","",$total_entries[0]);
+			exec("/sbin/pfctl -t {$alias['name']} -T show | head -10002", $alias_addresses);
+		} else {
+			$urlfn = alias_expand_urltable($alias['name']);
+			$alias_addresses = explode("\n", file_get_contents($urlfn));
+			$counter = count($alias_addresses);
 		}
-		else{
-			$alias_addresses = explode (" ", $alias_name['address']);
-			$alias_details = explode ("||", $alias_name['detail']);
-			$counter = 0;
-			foreach ($alias_addresses as $alias_ports_address) {
-				$alias_objects_with_details .= "<tr><td $close_title width=\"5%\" class=\"vncell\" style=\"background: #FFFFFF;color: #000000;\">{$alias_addresses[$counter]}</td>";
-				$alias_detail_default = strpos ($alias_details[$counter],"Entry added");
-				if ($alias_details[$counter] != "" && $alias_detail_default === False)
-					$alias_objects_with_details .="<td $close_title width=\"95%\" class=\"vncell\" style=\"background: #FFFFFF;color: #000000;\">{$alias_details[$counter]}</td>";
-				else
-					$alias_objects_with_details .="<td $close_title width=\"95%\" class=\"vncell\" style=\"background: #FFFFFF;color: #000000;\">&nbsp;</td>";
-				$alias_objects_with_details .= "</tr>";
-				$counter++;
-			}
-		}
-		$alias_objects_with_details .= "</table>";
+
+		$content .= '<h5>'. $alias['url'] .'</h5><ul><li>'. implode('</li><li>', $alias_ports_address) .'</li></ul>';
+
+		if ($counter > 10002)
+			$content .= '<i>'. gettext("listing only first 10k items") .'</i>';
 	}
-	$alias_descr_substr = $alias_name['descr'];
-	if ($strlength >= $maxlength)
-		$alias_descr_substr = substr($alias_descr_substr, 0, $maxlength) . "...";
-	$item_text = ($counter > 1 ? "items" : "item");
-	$alias_caption = "{$alias_descr_substr} - {$counter} {$item_text}<a href=\"/firewall_aliases_edit.php?id={$alias_id}\" title=\"".gettext('edit this alias')."\">&nbsp;&nbsp;edit </a>";
-	$strlength = strlen ($alias_caption);
-	print "<h1>{$alias_caption}</h1>" . $alias_objects_with_details;
+	else
+	{
+		$alias_addresses = explode (" ", $alias['address']);
+		$alias_details = explode ("||", $alias['detail']);
+
+		$content .= '<ul><li>'. implode('</li><li>', $alias_addresses) .'</li></ul>';
+	}
+
+	if (strlen($alias['descr']) >= $maxlength)
+		$alias['descr'] = substr($alias['descr'], 0, $maxlength) . '&hellip;';
+
+	return $content;
 }
 
-function rule_popup($src,$srcport,$dst,$dstport){
-	global $config,$g;
-	$aliases_array = array();
-	if ($config['aliases']['alias'] <> "" and is_array($config['aliases']['alias'])) {
-		$descriptions = array ();
-		foreach ($config['aliases']['alias'] as $alias_id=>$alias_name){
-			$loading_image="<a><img src=\'/themes/{$g['theme']}/images/misc/loader.gif\' alt=\'loader\' /> " .gettext("loading...")."</a>";
-			switch ($alias_name['type']){
-			case "port":
-				$width="250";
-				break;
-			case "urltable":
-				$width="500";
-				break;
-			default:
-				$width="350";
-				break;
-			}
-			$span_begin = "<span style=\"cursor: help;\" onmouseover=\"var response_html=domTT_activate(this, event, 'id','ttalias_{$alias_id}','content','{$loading_image}', 'trail', true, 'delay', 300, 'fade', 'both', 'fadeMax', 93, 'styleClass', 'niceTitle','type','velcro','width',{$width});alias_popup('{$alias_id}','{$g['theme']}','".gettext('loading...')."');\" onmouseout=\"this.style.color = ''; domTT_mouseout(this, event);\"><u>";
-			$span_end = "</u></span>";
-			if ($alias_name['name'] == $src) {
-				$descriptions['src'] = $span_begin;
-				$descriptions['src_end'] = $span_end;
-			}
-			if ($alias_name['name'] == $srcport) {
-				$descriptions['srcport'] = $span_begin;
-				$descriptions['srcport_end'] = $span_end;
-			}
-			if ($alias_name['name'] == $dst ) {
-				$descriptions['dst'] = $span_begin;
-				$descriptions['dst_end'] = $span_end;
-			}
-			if ($alias_name['name'] == $dstport) {
-				$descriptions['dstport'] = $span_begin;
-				$descriptions['dstport_end'] = $span_end;
-			}
-		}
-		return $descriptions;
+function rule_columns_with_alias($src, $srcport, $dst, $dstport){
+	global $config;
+
+	if ($config['aliases']['alias'] == "" || !is_array($config['aliases']['alias']))
+		return;
+
+	$columns = array();
+	foreach ($config['aliases']['alias'] as $alias_id => $alias_name){
+		if ($alias_name['name'] == $src)
+			$columns['src'] = $alias_id;
+		elseif ($alias_name['name'] == $srcport)
+			$columns['srcport'] = $alias_id;
+		elseif ($alias_name['name'] == $dst )
+			$columns['dst'] = $alias_id;
+		elseif ($alias_name['name'] == $dstport)
+			$columns['dstport'] = $alias_id;
+
+		return $columns;
 	}
 }
 

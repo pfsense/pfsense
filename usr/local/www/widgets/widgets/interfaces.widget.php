@@ -51,10 +51,7 @@ foreach ($ifdescrs as $ifdescr => $ifname):
 	if ($ifinfo['ppplink']) {
 		$icon = 'headphones';
 	} else if (is_interface_wireless($ifdescr)) {
-		if($ifinfo['status'] == "associated")
-			$icon = 'signal';
-		else
-			$icon = 'plane';
+		$icon = 'signal';
 	} else
 		$icon = 'inbox';
 

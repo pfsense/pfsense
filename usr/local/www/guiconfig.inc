@@ -942,14 +942,6 @@ function display_top_tabs(& $tab_array, $no_drop_down = false) {
 	$nifty_tabs_corners = "#FFF";
 	$font_color = "white";
 
-	/* if tabcontrols.php exist for a theme, allow it to be overriden */
-	$themename = $config['theme'];
-	$filename = "/usr/local/www/themes/{$themename}/tabcontrols.php";
-	if(file_exists($filename)) {
-		$eval_code = file_get_contents($filename);
-		eval($eval_code);
-	}
-
 	$tabcharcount = 0;
 	foreach ($tab_array as $ta)
 		$tabcharcount = $tabcharcount + strlen($ta[0]);
@@ -961,7 +953,7 @@ function display_top_tabs(& $tab_array, $no_drop_down = false) {
 
 	// If the character count of the tab names is > 670
 	// then show a select item dropdown menubox.
-	if($tabcharcount > $tab_array_char_limit) {
+	if($tabcharcount > $tab_array_char_limit): ?>
 		echo gettext("Currently viewing: ");
 		echo "<select name=\"TabSelect\" onchange=\"tabs_will_go(this)\">\n";
 		foreach ($tab_array as $ta) {
@@ -979,21 +971,13 @@ function display_top_tabs(& $tab_array, $no_drop_down = false) {
 		echo " function tabs_will_go(obj){ document.location = obj.value; }\n";
 		echo "//]]>\n";
 		echo "</script>";
-	}  else {
-		echo "<div class=\"newtabmenu\" style=\"margin:{$tab_array_space}px {$tab_array_indent}px; width:775px;\">\n";
-		echo "<!-- Tabbed bar code-->\n";
-		echo "<ul class=\"newtabmenu\">\n";
-		$tabscounter = 0;
-		foreach ($tab_array as $ta) {
-			if ($ta[1] == true) {
-				echo "  <li class=\"newtabmenu_active\"><a href=\"{$ta[2]}\"><span>{$ta[0]}</span></a></li>\n";
-			} else {
-				echo "  <li><a href=\"{$ta[2]}\"><span>{$ta[0]}</span></a></li>\n";
-			}
-			$tabscounter++;
-		}
-		echo "</ul>\n</div>\n";
-	}
+<? else: ?>
+	<ul class="nav nav-tabs">
+		<?php foreach ($tab_array as $ta): ?>
+			<li role="presentation"<?=($ta[1] ? ' class="active"' : '')?>><a href="<?=$ta[2]?>"><?=$ta[0]?></a></li>
+		<?php endforeach; ?>
+	</ul>
+<?php endif;
 }
 
 function add_package_tabs($tabgroup, & $tab_array) {

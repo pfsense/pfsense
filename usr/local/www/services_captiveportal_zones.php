@@ -28,8 +28,8 @@
 
 ##|+PRIV
 ##|*IDENT=page-services-captiveportal-zones
-##|*NAME=Services: Captiveprotal Zones page
-##|*DESCR=Allow access to the 'Services: CaptivePortal Zones' page.
+##|*NAME=Services: Captive portal Zones page
+##|*DESCR=Allow access to the 'Services: Captive portal Zones' page.
 ##|*MATCH=services_captiveportal_zones.php*
 ##|-PRIV
 

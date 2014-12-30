@@ -488,9 +488,9 @@ EOD;
 				$peerid = ($peerid_data != "allusers") ? trim($peerid_data) : "";
 				if (!empty($ph1ent['pre-shared-key'])) {
 					if ($myid_type == 'fqdn' && !empty($myid_data))
-						$pskconf .= "@{$myid} {$peerid} : PSK 00" . base64_encode(trim($ph1ent['pre-shared-key'])) . "\n";
+						$pskconf .= "@{$myid} {$peerid} : PSK 0s" . base64_encode(trim($ph1ent['pre-shared-key'])) . "\n";
 					else
-						$pskconf .= "{$myid} {$peerid} : PSK 00" . base64_encode(trim($ph1ent['pre-shared-key'])) . "\n";
+						$pskconf .= "{$myid} {$peerid} : PSK 0s" . base64_encode(trim($ph1ent['pre-shared-key'])) . "\n";
 				}
 			}
 		}
@@ -500,7 +500,7 @@ EOD;
 	if (is_array($config['system']) && is_array($config['system']['user'])) {
 		foreach ($config['system']['user'] as $user) {
 			if (!empty($user['ipsecpsk'])) {
-				$pskconf .= "%any {$user['name']} : PSK 00" . base64_encode($user['ipsecpsk']) . "\n";
+				$pskconf .= "%any {$user['name']} : PSK 0s" . base64_encode($user['ipsecpsk']) . "\n";
 			}
 		}
 		unset($user);

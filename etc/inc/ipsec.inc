@@ -382,9 +382,16 @@ function ipsec_smp_dump_status() {
 	$response = "";
 	while (!strstr($sread, "</message>")) {
 		$sread = fgets($fd);
+		if ($sread === false)
+			break;
 		$response .= $sread;
 	}
 	fclose($fd);
+
+	if ($sread === false) {
+		log_error("Error during reading of status from IPsec");
+		return;
+	}
 
 	@file_put_contents("{$g['tmp_path']}/smp_status.xml", $response);
 	unset($response, $sread);

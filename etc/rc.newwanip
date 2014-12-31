@@ -210,6 +210,9 @@ if (!is_ipaddr($oldip) || $curwanip != $oldip || !is_ipaddrv4($config['interface
 
 	/* reconfigure our gateway monitor */
 	setup_gateways_monitor();
+	
+	/* reload unbound */
+	services_unbound_configure();
 
 	if (is_ipaddr($curwanip))
 		@file_put_contents("{$g['vardb_path']}/{$interface}_cacheip", $curwanip);

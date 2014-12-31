@@ -2750,6 +2750,9 @@ function filter_rules_generate() {
 	$saved_tracker = $tracker;
 
 	if(!isset($config['system']['ipv6allow'])) {
+		$ipfrules .= "# Allow IPv6 on loopback\n";
+		$ipfrules .= "pass in {$log['pass']} on \$loopback inet6 all tracker {$increment_tracker($tracker)} label \"pass IPv6 loopback\"\n";
+		$ipfrules .= "pass out {$log['pass']} on \$loopback inet6 all tracker {$increment_tracker($tracker)} label \"pass IPv6 loopback\"\n";
 		$ipfrules .= "# Block all IPv6\n";
 		$ipfrules .= "block in {$log['block']} quick inet6 all tracker {$increment_tracker($tracker)} label \"Block all IPv6\"\n";
 		$ipfrules .= "block out {$log['block']} quick inet6 all tracker {$increment_tracker($tracker)} label \"Block all IPv6\"\n";

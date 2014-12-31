@@ -3519,4 +3519,16 @@ function upgrade_112_to_113() {
 		unset($config['notifications']['smtp']['tls']);
 }
 
+function upgrade_113_to_114() {
+	global $config;
+
+	if (!isset($config['ipsec']['phase1']) ||
+	    !is_array($config['ipsec']['phase1']))
+		return;
+
+	foreach($config['ipsec']['phase1'] as &$ph1ent)
+		if (!isset($ph1ent['iketype']))
+			$ph1ent['iketype'] = 'ikev1';
+}
+
 ?>

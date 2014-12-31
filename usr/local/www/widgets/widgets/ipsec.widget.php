@@ -78,7 +78,7 @@ if (isset($config['ipsec']['phase1'])) { ?>
 			if (isset($ph1ent['disabled']) || isset($ph2ent['disabled']))
 				continue;
 
-			if ($ph1ent['iketype'] == 'ikev1') {
+			if (empty($ph1ent['iketype']) || $ph1ent['iketype'] == 'ikev1') {
 				if (!isset($ikev1num[$ph1ent['ikeid']]))
 					$ikev1num[$ph1ent['ikeid']] = 0;
 				else

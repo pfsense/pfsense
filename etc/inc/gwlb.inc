@@ -180,6 +180,9 @@ EOD;
 			if (!is_ipaddrv4($gwifip))
 				continue; //Skip this target
 
+			if ($gwifip == "0.0.0.0")
+				continue; //Skip this target - the gateway is still waiting for DHCP
+
 			/*
 			 * If the gateway is the same as the monitor we do not add a
 			 * route as this will break the routing table.

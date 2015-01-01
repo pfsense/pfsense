@@ -2,7 +2,7 @@
 /*
 	diag_testport.php
 	Copyright (C) 2013 Jim P (jimp@pfsense.org)
-        Copyright (C) 2013-2015 Electric Sheep Fencing, LP
+	Copyright (C) 2013-2015 Electric Sheep Fencing, LP
 	All rights reserved.
 
 	Portions based on diag_ping.php

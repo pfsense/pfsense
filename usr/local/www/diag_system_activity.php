@@ -1,7 +1,7 @@
 <?php
 /* $Id$ */
 /*
-    diag_cpu_activity.php
+    diag_system_activity.php
     Copyright (C) 2013-2015 Electric Sheep Fencing, LP
 
     Copyright (C) 2008-2009 Scott Ullrich

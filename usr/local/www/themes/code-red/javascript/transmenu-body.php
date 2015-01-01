@@ -2,7 +2,7 @@
 /* $Id$ */
 /* ========================================================================== */
 /*
-  transmenu.php
+  transmenu-body.php
   Copyright (C) 2006 Daniel S. Haischt <me@daniel.stefan.haischt.name>
   All rights reserved.
 

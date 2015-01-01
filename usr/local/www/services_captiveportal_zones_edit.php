@@ -1,6 +1,6 @@
 <?php
 /*
-	services_captiveportal_mac_edit.php
+	services_captiveportal_zones_edit.php
 	Copyright (C) 2011 Ermal Luci
 	Copyright (C) 2013-2015 Electric Sheep Fencing, LP
 	All rights reserved.

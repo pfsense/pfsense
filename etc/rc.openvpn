@@ -1,7 +1,7 @@
 #!/usr/local/bin/php -f
 <?php
 /*
-	$Id$
+	rc.openvpn
 	part of m0n0wall (http://m0n0.ch/wall)
 	
 	Copyright (C) 2007 Manuel Kasper <mk@neon1.net>.

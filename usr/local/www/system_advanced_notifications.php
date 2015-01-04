@@ -75,6 +75,8 @@ if ($config['notifications']['smtp']['username'])
 	$pconfig['smtpusername'] = $config['notifications']['smtp']['username'];
 if ($config['notifications']['smtp']['password'])
 	$pconfig['smtppassword'] = $config['notifications']['smtp']['password'];
+if ($config['notifications']['smtp']['authentication_mechanism'])
+	$pconfig['smtpauthmech'] = $config['notifications']['smtp']['authentication_mechanism'];
 if ($config['notifications']['smtp']['fromaddress'])
 	$pconfig['smtpfromaddress'] = $config['notifications']['smtp']['fromaddress'];
 
@@ -126,6 +128,7 @@ if ($_POST) {
 		$config['notifications']['smtp']['notifyemailaddress'] = $_POST['smtpnotifyemailaddress'];
 		$config['notifications']['smtp']['username'] = $_POST['smtpusername'];
 		$config['notifications']['smtp']['password'] = $_POST['smtppassword'];
+		$config['notifications']['smtp']['authentication_mechanism'] = $_POST['smtpauthmech'];
 		$config['notifications']['smtp']['fromaddress'] = $_POST['smtpfromaddress'];
 
 		if($_POST['disable_smtp'] == "yes")
@@ -305,6 +308,23 @@ include("head.inc");
 							<td width="78%" class="vtable">
 								<input name='smtppassword' type='password' value='<?php echo htmlspecialchars($pconfig['smtppassword']); ?>' /><br />
 								<?=gettext("Enter the e-mail address password for SMTP authentication."); ?>
+							</td>
+						</tr>
+						<tr>
+							<td width="22%" valign="top" class="vncell"><?=gettext("Notification E-Mail auth mechanism"); ?></td>
+							<td width="78%" class="vtable">
+								<select name='smtpauthmech' id='smtpauthmech' class="formselect">
+								<?php
+									foreach ($smtp_authentication_mechanisms as $name => $desc):
+										$selected = "";
+										if ($pconfig['smtpauthmech'] == $name)
+											$selected = "selected=\"selected\"";
+								?>
+								<option value="<?=$name;?>" <?=$selected;?>><?=$desc;?></option>
+								<?php endforeach; ?>
+								</select>
+								<br />
+								<?=gettext("Select the authentication mechanism used by the SMTP server. Most work with PLAIN, some servers like Exchange or Office365 might require LOGIN."); ?>
 							</td>
 						</tr>
 						<tr>

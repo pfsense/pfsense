@@ -607,108 +607,108 @@ include("head.inc");
 			</div>
 
 			<div class="form-group">
-				<label for="nopackages" class="col-sm-2 control-label"><?=gettext("Do not backup package information.")?></label>
+				<label for="nopackages" class="col-sm-2 control-label"><?=gettext("Skip packages")?></label>
 				<div class="col-sm-10">
-					<input name="nopackages" type="checkbox" />
+					<input name="nopackages" type="checkbox" /> <?=gettext("Do not backup package information.")?>
 				</div>
 			</div>
 
 			<div class="form-group">
-				<label for="donotbackuprrd" class="col-sm-2 control-label"><?=gettext("Do not backup RRD data (NOTE: RRD Data can consume 4+ megabytes of config.xml space!)")?></label>
+				<label for="donotbackuprrd" class="col-sm-2 control-label"><?=gettext("Skip RRD data")?></label>
 				<div class="col-sm-10">
-					<input name="donotbackuprrd" type="checkbox" checked="checked" />
+					<input name="donotbackuprrd" type="checkbox" checked="checked" /> <?=gettext("Do not backup RRD data (NOTE: RRD Data can consume 4+ megabytes of config.xml space!)")?>
 				</div>
 			</div>
 
 			<div class="form-group">
-				<label for="encrypt" class="col-sm-2 control-label"><?=gettext("Encrypt this configuration file.")?></label>
+				<label for="encrypt" class="col-sm-2 control-label"><?=gettext("Encryption")?></label>
 				<div class="col-sm-10">
 					<input name="encrypt" type="checkbox" data-toggle="collapse" href="#encryptOptions" aria-expanded="false" aria-controls="encryptOptions" />
-
-					<div class="collapse"id="encryptOptions">
-						<input name="encrypt_password" type="password" placeholder="Password" /><br/>
-						<input name="encrypt_passconf" type="password" placeholder="Confirm password" />
-					</div>
+					<?=gettext("Encrypt this configuration file.")?>
 				</div>
 			</div>
 
-			<input name="Submit" type="submit" class="btn btn-default" value="<?=gettext("Download configuration as XML")?>" />
-</form>
-
-<form action="diag_backup.php" method="post" name="iform" enctype="multipart/form-data">
-				<tr>
-					<td><?=gettext("Restore configuration")?></td>
-				</tr>
-				<tr>
-					<td>&nbsp;</td>
-					<td>
-						<?=gettext("Open a")?><?=$g['[product_name']?><?=gettext("configuration XML file and click the button below to restore the configuration.")?>
-						<br /><br />
-						<?=gettext("Restore area:")?><?php spit_out_select_items("restorearea", true)?>
-						<p><input name="conffile" type="file" class="formbtn" id="conffile" size="40" /></p>
-						<table>
-							<tr>
-								<td>
-									<input name="decrypt" type="checkbox" class="formcheckbox" id="nopackages" onclick="decrypt_change()" />
-								</td>
-								<td>
-									<span><?=gettext("Configuration file is encrypted.")?></span>
-								</td>
-							</tr>
-						</table>
-						<table>
-							<tr>
-								<td>
-									<span><?=gettext("Password :")?></span>
-								</td>
-								<td>
-									<input name="decrypt_password" type="password" class="formfld pwd" size="20" value="" />
-								</td>
-							</tr>
-							<tr>
-								<td>
-									<span><?=gettext("confirm :")?></span>
-								</td>
-								<td>
-									<input name="decrypt_passconf" type="password" class="formfld pwd" size="20" value="" />
-								</td>
-							</tr>
-						</table>
-						<p><input name="Submit" type="submit" class="formbtn" id="restore" value="<?=gettext("Restore configuration")?>" /></p>
-						<p><strong><span><?=gettext("Note:")?></span></strong><br /><?=gettext("The firewall will reboot after restoring the configuration.")?><br /></p>
-					</td>
-				</tr>
-				<?php if (($config['installedpackages']['package'] != "") || (is_subsystem_dirty("packagelock"))) {?>
-				<tr>
-					<td>&nbsp;</td>
-				</tr>
-				<tr>
-					<td><?=gettext("Package Functions")?></td>
-				</tr>
-				<tr>
-					<td>&nbsp;</td>
-					<td>
-						<?php if ($config['installedpackages']['package'] != "") {?>
-							<p><?=gettext("Click this button to reinstall all system packages.  This may take a while.")?><br /><br />
-							<input name="Submit" type="submit" class="formbtn" id="reinstallpackages" value="<?=gettext("Reinstall packages")?>" />
-							<br />
-							<br />
-						<?php }?>
-						<?php if (is_subsystem_dirty("packagelock")) {?>
-							<p><?=gettext("Click this button to clear the package lock if a package fails to reinstall properly after an upgrade.")?><br /><br />
-							<input name="Submit" type="submit" class="formbtn" id="clearpackagelock" value="<?=gettext("Clear Package Lock")?>" />
-						<?php }?>
-							</p>
-					</td>
-				</tr>
-				<?php }?>
-			</table>
+			<div class="form-group collapse" id="encryptOptions">
+				<label for="donotbackuprrd" class="col-sm-2 control-label"><?=gettext("Password")?></label>
+				<div class="col-sm-10">
+					<input name="encrypt_password" type="password" class="form-control" placeholder="Password" /><br/>
+					<input name="encrypt_passconf" type="password" class="form-control" placeholder="Confirm password" />
+				</div>
 			</div>
-		</td>
-	</tr>
-</table>
-</form>
 
+			<div class="form-group">
+				<div class="col-sm-offset-2 col-sm-10">
+					<input name="Submit" type="submit" class="btn btn-primary" value="<?=gettext("Download configuration as XML")?>" />
+				</div>
+			</div>
+		</form>
+
+		<form class="form-horizontal" action="diag_backup.php" method="post" name="iform" enctype="multipart/form-data">
+			<h2><?=gettext("Restore configuration"); ?></h2>
+			<?=gettext("Open a")?><?=$g['[product_name']?><?=gettext("configuration XML file and click the button below to restore the configuration.")?>
+
+			<div class="form-group">
+				<label for="restorearea" class="col-sm-2 control-label"><?=gettext("Restore area"); ?></label>
+				<div class="col-sm-10">
+					<?php spit_out_select_items("restorearea", false)?>
+				</div>
+			</div>
+
+			<div class="form-group">
+				<label for="conffile" class="col-sm-2 control-label"><?=gettext("Configuration file"); ?></label>
+				<div class="col-sm-10">
+					<input name="conffile" type="file" class="form-control" />
+				</div>
+			</div>
+
+			<div class="form-group">
+				<label for="encrypt" class="col-sm-2 control-label"><?=gettext("Encryption")?></label>
+				<div class="col-sm-10">
+					<input name="encrypt" type="checkbox" data-toggle="collapse" href="#decryptOptions" aria-expanded="false" aria-controls="decryptOptions" />
+					<?=gettext("Decrypt this configuration file.")?>
+				</div>
+			</div>
+
+			<div class="form-group collapse" id="decryptOptions">
+				<label for="decrypt_password" class="col-sm-2 control-label"><?=gettext("Password")?></label>
+				<div class="col-sm-10">
+					<input name="decrypt_password" type="password" class="form-control" placeholder="Password" /><br/>
+					<input name="decrypt_passconf" type="password" class="form-control" placeholder="Confirm password" />
+				</div>
+			</div>
+
+			<div class="form-group">
+				<div class="col-sm-offset-2 col-sm-10">
+					<input name="Submit" type="submit" class="btn btn-danger" value="<?=gettext("Restore configuration")?>" />
+					<p><?=gettext("Note:")?><br /><?=gettext("The firewall will reboot after restoring the configuration.")?></p>
+				</div>
+			</div>
+		</form>
+
+		<?php if (($config['installedpackages']['package'] != "") || (is_subsystem_dirty("packagelock"))) {?>
+			<form class="form-horizontal" action="diag_backup.php" method="post" name="iform" enctype="multipart/form-data">
+				<h2><?=gettext("Package Functions")?></h2>
+
+				<?php if ($config['installedpackages']['package'] != ""): ?>
+					<div class="form-group">
+						<div class="col-sm-offset-2 col-sm-10">
+							<input name="Submit" type="submit" class="formbtn" id="reinstallpackages" value="<?=gettext("Reinstall packages")?>" />
+							<p><?=gettext("Click this button to reinstall all system packages.  This may take a while.")?><br /><br />
+						</div>
+					</div>
+				<?php endif; ?>
+
+				<?php if (is_subsystem_dirty("packagelock")): ?>
+					<div class="form-group">
+						<div class="col-sm-offset-2 col-sm-10">
+							<input name="Submit" type="submit" class="formbtn" id="clearpackagelock" value="<?=gettext("Clear Package Lock")?>" />
+							<p><?=gettext("Click this button to clear the package lock if a package fails to reinstall properly after an upgrade.")?><br /><br />
+						</div>
+					</div>
+				<?php endif; ?>
+			</form>
+		<?php }?>
+	</div>
 <?php include("fend.inc")?>
 </body>
 </html>

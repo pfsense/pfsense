@@ -1064,6 +1064,18 @@ function rule_columns_with_alias($src, $srcport, $dst, $dstport){
 	}
 }
 
+function form_output_row($name, $label, $content){
+var_dump($content);die;
+?>
+<div class="form-group">
+	<label for="<?=$name?>" class="col-sm-2 control-label"><?=gettext($label); ?></label>
+	<div class="col-sm-10">
+		<?=$content?>
+	</div>
+</div>
+<?php
+}
+
 $timezone = $config['system']['timezone'];
 if (!$timezone)
 	$timezone = "Etc/UTC";

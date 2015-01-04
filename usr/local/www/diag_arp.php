@@ -3,7 +3,7 @@
 	diag_arp.php
 	part of the pfSense project	(https://www.pfsense.org)
 	Copyright (C) 2004-2009 Scott Ullrich <sullrich@gmail.com>
-        Copyright (C) 2013-2014 Electric Sheep Fencing, LP
+	Copyright (C) 2013-2014 Electric Sheep Fencing, LP
 
 	originally part of m0n0wall (http://m0n0.ch/wall)
 	Copyright (C) 2005 Paul Taylor (paultaylor@winndixie.com) and Manuel Kasper <mk@neon1.net>.
@@ -253,7 +253,7 @@ function _getHostName($mac,$ip) {
 		exec("host -W 1 " . escapeshellarg($ip), $output);
 		if (preg_match('/.*pointer ([A-Za-z0-9.-]+)\..*/',$output[0],$matches)) {
 			if ($matches[1] <> $ip)
-				return $matches[1]; 
+				return $matches[1];
 		}
 	}
 	return "";
@@ -263,29 +263,17 @@ $pgtitle = array(gettext("Diagnostics"),gettext("ARP Table"));
 include("head.inc");
 
 ?>
-
-<body link="#000000" vlink="#000000" alink="#000000">
-
-<?php include("fbegin.inc"); ?>
-
-<div id="loading">
-	<img src="/themes/<?=$g['theme'];?>/images/misc/loader.gif" alt="loader" /><?= gettext("Loading, please wait..."); ?>
-	<p>&nbsp;</p>
-</div>
-
+<body>
+<?php include("fbegin.inc")?>
 <?php
-
-// Flush buffers out to client so that they see Loading, please wait....
-for ($i = 0; $i < ob_get_level(); $i++) { ob_end_flush(); }
-ob_implicit_flush(1);
 
 // Resolve hostnames and replace Z_ with "".  The intention
 // is to sort the list by hostnames, alpha and then the non
 // resolvable addresses will appear last in the list.
 $dnsavailable=1;
-$dns = trim(_getHostName("", "8.8.8.8")); 
+$dns = trim(_getHostName("", "8.8.8.8"));
 if ($dns == ""){
-	$dns = trim(_getHostName("", "8.8.4.4")); 
+	$dns = trim(_getHostName("", "8.8.4.4"));
 	if ($dns == "") $dnsavailable =0;
 }
 
@@ -306,50 +294,38 @@ $data = msort($data, "dnsresolve");
 // Load MAC-Manufacturer table
 $mac_man = load_mac_manufacturer_table();
 ?>
-<table width="100%" border="0" cellpadding="0" cellspacing="0" summary="diag arp">
-	<tr>
-		<td>
-			<table class="tabcont sortable" width="100%" border="0" cellpadding="0" cellspacing="0" summary="tabcont">
-				<tr>
-					<td class="listhdrr"><?= gettext("IP address"); ?></td>
-					<td class="listhdrr"><?= gettext("MAC address"); ?></td>
-					<td class="listhdrr"><?= gettext("Hostname"); ?></td>
-					<td class="listhdr"><?= gettext("Interface"); ?></td>
-					<td class="list"></td>
-				</tr>
-				<?php foreach ($data as $entry): ?>
-					<tr>
-						<td class="listlr"><?=$entry['ip'];?></td>
-						<td class="listr">
-						<?php
-						$mac=trim($entry['mac']);
-						$mac_hi = strtoupper($mac[0] . $mac[1] . $mac[3] . $mac[4] . $mac[6] . $mac[7]);
-						print $mac;
-						if(isset($mac_man[$mac_hi])){ print "<br /><font size=\"-2\"><i>{$mac_man[$mac_hi]}</i></font>"; }
-						?>
-						</td>
-						<td class="listr">
-							<?php
-							echo trim(str_replace("Z_ ", "", $entry['dnsresolve']));
-							?>
-						</td>
-						<td class="listr"><?=$hwif[$entry['interface']];?></td>
-					</tr>
-				<?php endforeach; ?>
-			</table>
-		</td>
-	</tr>
-	<tr>
-		<td><br /><?= gettext("NOTE: Local IPv6 peers use") ?> <a href="diag_ndp.php"><?= gettext("NDP") ?></a> <?= gettext("instead of ARP") ?>.</td>
-	</tr>
+<table class="table table-striped">
+	<thead>
+		<tr>
+			<td><?= gettext("Interface")?></td>
+			<td><?= gettext("IP address")?></td>
+			<td><?= gettext("MAC address")?></td>
+			<td><?= gettext("Hostname")?></td>
+			<td></td>
+		</tr>
+	</thead>
+	<tbody>
+	<?php foreach ($data as $entry): ?>
+		<tr>
+			<td><?=$hwif[$entry['interface']]?></td>
+			<td><?=$entry['ip']?></td>
+			<td>
+				<?=trim($entry['mac'])?>
+			<?php
+				$mac = trim($entry['mac']);
+				$mac_hi = strtoupper($mac[0] . $mac[1] . $mac[3] . $mac[4] . $mac[6] . $mac[7]);
+
+				if (isset($mac_man[$mac_hi]))
+					print '('. $mac_man[$mac_hi] .'(';
+?>
+			</td>
+			<td><?=trim(str_replace("Z_ ", "", $entry['dnsresolve']))?></td>
+		</tr>
+	<?php endforeach?>
+	</tbody>
 </table>
+<p><?= gettext("NOTE: Local IPv6 peers use")?> <a href="diag_ndp.php"><?= gettext("NDP")?></a> <?= gettext("instead of ARP")?>.</p>
 
-<?php include("fend.inc"); ?>
-
-<script type="text/javascript">
-//<![CDATA[
-	jQuery('#loading').html('');
-//]]>
-</script>
+<?php include("fend.inc")?>
 </body>
 </html>

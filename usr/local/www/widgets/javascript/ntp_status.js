@@ -5,7 +5,6 @@ function ntpWidgetUpdateFromServer(){
 		data: 'updateme=yes',
 		dataType: 'html',
 		success: function(data){
-			console.log(data);
 			$('#ntp_status_widget').html(data);
 		}
 	});
@@ -15,7 +14,7 @@ function ntpWidgetUpdateDisplay(){
 	// Javascript handles overflowing
 	ntpServerTime.setSeconds(ntpServerTime.getSeconds()+1);
 
-	$('#ntpStatusClock').html(ntpServerTime);
+	$('#ntpStatusClock').html(ntpServerTime.toString());
 }
 
 $(document).ready(function(){

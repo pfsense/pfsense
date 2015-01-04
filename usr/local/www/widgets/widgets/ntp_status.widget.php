@@ -140,7 +140,7 @@ if (isset($config['ntpd']['gps']['type']) && ($config['ntpd']['gps']['type'] == 
 		<td id="ntpStatusClock">
 			<script>var ntpServerTime = new Date('<?=date_format(date_create(), 'c')?>');</script>
 			<!-- display initial value before javascript takes over -->
-			<?=date_format(date_create(), 'D j Y H:i:s \G\M\T O (T)');?>
+			<?=gmdate('D j Y H:i:s \G\M\T O (T)');?>
 		</td>
 	</tr>
 	<tr>

@@ -32,21 +32,7 @@ $nocsrf = true;
 require_once("guiconfig.inc");
 require_once("gmirror.inc");
 
-if ($_GET['textonly'] == "true") {
-	header("Cache-Control: no-cache");
-	echo gmirror_html_status();
-	exit;
-}
 ?>
-<table>
-	<tbody id="gmirror_status_table">
-		<?php echo gmirror_html_status(); ?>
-	</tbody>
-</table>
-
-<script type="text/javascript">
-//<![CDATA[
-	var gmirrorupdater = new Ajax.PeriodicalUpdater('gmirror_status_table', '/widgets/widgets/gmirror_status.widget.php?textonly=true',
-	{ method: 'get', frequency: 5 } );
-//]]>
-</script>
+<div id="gmirror_status">
+	<?=gmirror_html_status()?>
+</div>

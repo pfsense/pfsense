@@ -67,33 +67,39 @@ function gmirror_get_status_single($mirror) {
 function gmirror_html_status() {
 	$mirrors = gmirror_get_status();
 	$output = "";
-	if (count($mirrors) > 0) {
-		$output .= "<tr>\n";
-		$output .= "<th>Name</td>\n";
-		$output .= "<th>Status</td>\n";
-		$output .= "<th>Component</td>\n";
-		$output .= "</tr>\n";
-		foreach ($mirrors as $mirror => $name) {
-			$components = count($name["components"]);
-			$output .= "<tr>\n";
-			$output .= "<td rowspan=\"{$components}\">{$name['name']}</td>\n";
-			$output .= "<td rowspan=\"{$components}\" class=\"listr\">{$name['status']}</td>\n";
-			$output .= "<td>{$name['components'][0]}</td>\n";
-			$output .= "</tr>\n";
-			if (count($name["components"]) > 1) {
-				$morecomponents = array_slice($name["components"], 1);
-				foreach ($morecomponents as $component) {
-					$output .= "<tr>\n";
-					$output .= "<td>{$component}</td>\n";
-					$output .= "</tr>\n";
-				}
-			}
-		}
-	} else {
-		$output .= "<tr><td colspan=\"3\" class=\"listr\">No Mirrors Found</td></tr>\n";
+	if (count($mirrors) < 1) {
+?>
+<div class="alert">
+	<p>No Mirrors Found</p>
+</div>
+<?php
+		return;
 	}
-	// $output .= "<tr><td colspan=\"3\" class=\"listr\">Updated at " . date("F j, Y, g:i:s a") . "</td></tr>\n";
-	return $output;
+
+?>
+<table class="table table-striped">
+	<thead>
+		<tr>
+			<th>Name</td>
+			<th>Status</td>
+			<th>Component</td>
+		</tr>
+	</thead>
+	<tbody>
+<?php foreach ($mirrors as $mirror => $name): ?>
+		<tr>
+			<td rowspan="<?=count($name["components"])?>"><?=$name['name']?></td>
+			<td rowspan="<?=count($name["components"])?>"><?=$name['status']?></td>
+			<td><?=$name['components'][0]?></td>
+		</tr>
+<?php if (count($name["components"]) > 1): ?>
+		<?php foreach (array_slice($name["components"], 1) as $component): ?>
+			<tr>
+				<td><?=$component?></td>
+			</tr>
+		<?php endforeach; ?>
+	<?php endif; ?>
+<?php endforeach;
 }
 
 /* List all disks in the system (potential gmirror targets) */

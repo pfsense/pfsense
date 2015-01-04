@@ -43,6 +43,16 @@ require_once("globals.inc");
 require_once("led.inc");
 
 $notice_path = $g['tmp_path'] . '/notices';
+$smtp_authentication_mechanisms = array(
+	'PLAIN' => 'PLAIN',
+	'LOGIN' => 'LOGIN');
+/* Other SMTP Authentication Mechanisms that could be supported.
+ * Note that MD5 is no longer considered secure.
+ *	'GSSAPI' => 'GSSAPI ' . gettext("Generic Security Services Application Program Interface")
+ *	'DIGEST-MD5' => 'DIGEST-MD5 ' . gettext("Digest access authentication")
+ *	'MD5' => 'MD5'
+ *	'CRAM-MD5' => 'CRAM-MD5'
+*/
 
 /****f* notices/file_notice
  * NAME
@@ -321,7 +331,11 @@ function send_smtp_message($message, $subject = "(no subject)") {
 	// Use SMTP Auth if fields are filled out
 	if($config['notifications']['smtp']['username'] && 
 	   $config['notifications']['smtp']['password']) {
-		$smtp->authentication_mechanism = "PLAIN";
+		if (isset($config['notifications']['smtp']['authentication_mechanism'])) {
+			$smtp->authentication_mechanism = $config['notifications']['smtp']['authentication_mechanism'];
+		} else {
+			$smtp->authentication_mechanism = "PLAIN";
+		}
 		$smtp->user = $config['notifications']['smtp']['username'];
 		$smtp->password = $config['notifications']['smtp']['password'];
 	}

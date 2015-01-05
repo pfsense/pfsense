@@ -205,7 +205,7 @@ EOF;
 
 	// Add custom Unbound options
 	if ($config['unbound']['custom_options']) {
-		$custom_options_source = explode("\n", $config['unbound']['custom_options']);
+		$custom_options_source = explode("\n", base64_decode($config['unbound']['custom_options']));
 		$custom_options = "# Unbound custom options\n";
 		foreach ($custom_options_source as $ent)
 			$custom_options .= $ent."\n";

@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
 <pfsense>
-	<version>11.4</version>
+	<version>11.5</version>
 	<lastchange/>
 	<theme>pfsense_ng</theme>
 	<system>

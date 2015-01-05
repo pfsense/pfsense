@@ -3532,4 +3532,11 @@ function upgrade_113_to_114() {
 			$ph1ent['iketype'] = 'ikev1';
 }
 
+function upgrade_114_to_115() {
+	global $config;
+
+	if (isset($config['unbound']['custom_options']))
+		$config['unbound']['custom_options'] = base64_encode($config['unbound']['custom_options']);
+}
+
 ?>

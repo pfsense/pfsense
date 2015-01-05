@@ -81,7 +81,7 @@ if (isset($config['unbound']['txtsupport'])) {
 }
 
 $pconfig['port'] = $config['unbound']['port'];
-$pconfig['custom_options'] = $config['unbound']['custom_options'];
+$pconfig['custom_options'] = base64_decode($config['unbound']['custom_options']);
 
 if (empty($config['unbound']['active_interface'])) {
 	$pconfig['active_interface'] = array();
@@ -171,7 +171,7 @@ if ($_POST) {
 			$a_unboundcfg['outgoing_interface'] = implode(",", $_POST['outgoing_interface']);
 		}
 
-		$a_unboundcfg['custom_options'] = str_replace("\r\n", "\n", $_POST['custom_options']);
+		$a_unboundcfg['custom_options'] = base64_encode(str_replace("\r\n", "\n", $_POST['custom_options']));
 
 		if (!$input_errors) {
 			write_config("DNS Resolver configured.");

@@ -3457,7 +3457,7 @@ function upgrade_110_to_111() {
 	}
 
 	if (isset($new['custom_options']) && !empty($new['custom_options']))
-		$new['custom_options'] = str_replace(';', "\n", $new['custom_options']);
+		$new['custom_options'] = str_replace("\r\n", "\n", $new['custom_options']);
 
 	/* Following options were removed, bring them as custom_options */
 	if (isset($pkg['stats']) && $pkg['stats'] == "on") {

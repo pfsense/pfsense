@@ -357,7 +357,7 @@ function gen_subnetv4_max($ipaddr, $bits) {
 /* same as gen_subnet_max() but validates IPv6 only */
 function gen_subnetv6_max($ipaddr, $bits) {
 	if (is_ipaddrv6($ipaddr) && is_numericint($bits) && $bits <= 128) {
-		$endip_bin = substr(Net_IPv6::_ip2Bin($ip), 0, $bits) . str_repeat('1', 128 - $bits);
+		$endip_bin = substr(Net_IPv6::_ip2Bin($ipaddr), 0, $bits) . str_repeat('1', 128 - $bits);
 		return Net_IPv6::compress(Net_IPv6::_bin2Ip($endip_bin));
 	}
 	return "";

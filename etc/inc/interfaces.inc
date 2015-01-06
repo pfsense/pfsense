@@ -1262,22 +1262,10 @@ function interfaces_carp_set_maintenancemode($carp_maintenancemode){
 	if (isset($config["virtualip_carp_maintenancemode"]) && $carp_maintenancemode == false) {
 		unset($config["virtualip_carp_maintenancemode"]);
 		write_config("Leave CARP maintenance mode");
-		if(is_array($config['virtualip']['vip'])) {
-			$viparr = &$config['virtualip']['vip'];
-			foreach ($viparr as $vip) {
-				switch ($vip['mode']) {
-				case "carp":
-					interface_vip_bring_down($vip);
-					//sleep(1);
-					break;
-				}
-			}
-		}
-	} else {
-		if (!isset($config["virtualip_carp_maintenancemode"]) && $carp_maintenancemode == true) {
-			$config["virtualip_carp_maintenancemode"] = true;
-			write_config("Enter CARP maintenance mode");
-		}
+	} else
+	if (!isset($config["virtualip_carp_maintenancemode"]) && $carp_maintenancemode == true) {
+		$config["virtualip_carp_maintenancemode"] = true;
+		write_config("Enter CARP maintenance mode");
 	}
 
 	$viparr = &$config['virtualip']['vip'];

@@ -225,7 +225,7 @@ function ipsec_idinfo_to_cidr(& $idinfo, $addrbits = false, $mode = "") {
 			break; /* NOTREACHED */
 		case "none":
 		case "mobile":
-			return "0.0.0.0/0";
+			return '0.0.0.0/0';
 			break; /* NOTREACHED */
 		default:
 			if (empty($mode) && !empty($idinfo['mode']))

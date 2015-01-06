@@ -1,9 +1,9 @@
 <?php
 /* $Id$ */
 /*
-	diag_logs.php
+	diag_logs_ppp.php
 	Copyright (C) 2004-2009 Scott Ullrich
-        Copyright (C) 2013-2014 Electric Sheep Fencing, LP
+	Copyright (C) 2013-2015 Electric Sheep Fencing, LP
 	All rights reserved.
 
 	originally part of m0n0wall (http://m0n0.ch/wall)

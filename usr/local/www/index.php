@@ -2,7 +2,7 @@
 /* $Id$ */
 /*
 	index.php
-        Copyright (C) 2013-2014 Electric Sheep Fencing, LP
+	Copyright (C) 2013-2015 Electric Sheep Fencing, LP
 	Copyright (C) 2004-2012 Scott Ullrich
 	All rights reserved.
 
@@ -145,8 +145,13 @@ if (!is_array($config['widgets'])) {
 	if(file_exists('/conf/needs_package_sync')) {
 		if($config['installedpackages'] <> '' && is_array($config['installedpackages']['package'])) {
 			if($g['platform'] == "pfSense" || $g['platform'] == "nanobsd") {
-				header('Location: pkg_mgr_install.php?mode=reinstallall');
-				exit;
+				## If the user has logged into webGUI quickly while the system is booting then do not redirect them to
+				## the package reinstall page. That is about to be done by the boot script anyway.
+				## The code in fbegin.inc will put up a notice to the user.
+				if (!platform_booting()) {
+					header('Location: pkg_mgr_install.php?mode=reinstallall');
+					exit;
+				}
 			}
 		} else {
 			conf_mount_rw();

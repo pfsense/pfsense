@@ -3,7 +3,7 @@
 /*
 	diag_backup.php
 	Copyright (C) 2004-2009 Scott Ullrich
-        Copyright (C) 2013-2014 Electric Sheep Fencing, LP
+	Copyright (C) 2013-2015 Electric Sheep Fencing, LP
 	All rights reserved.
 
 	originally part of m0n0wall (http://m0n0.ch/wall)
@@ -182,6 +182,7 @@ function spit_out_select_items($name, $showall) {
 		       "captiveportal" => gettext("Captive Portal"),
 		       "voucher" => gettext("Captive Portal Vouchers"),
 		       "dnsmasq" => gettext("DNS Forwarder"),
+		       "unbound" => gettext("DNS Resolver"),
 		       "dhcpd" => gettext("DHCP Server"),
 		       "dhcpdv6" => gettext("DHCPv6 Server"),
 		       "filter" => gettext("Firewall Rules"),

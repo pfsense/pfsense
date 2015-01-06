@@ -949,9 +949,7 @@ function reload_all_sync() {
 function setup_serial_port($when="save", $path="") {
 	global $g, $config;
 	conf_mount_rw();
-	$prefix = "";
-	if (($when == "upgrade") && (!empty($path)) && is_dir($path.'/boot/'))
-		$prefix = "/tmp/{$path}";
+	$ttys_file = "{$path}/etc/ttys";
 	$boot_config_file = "{$path}/boot.config";
 	$loader_conf_file = "{$path}/boot/loader.conf";
 	/* serial console - write out /boot.config */
@@ -1019,9 +1017,9 @@ function setup_serial_port($when="save", $path="") {
 			file_put_contents($loader_conf_file, implode("\n", $new_boot_config) . "\n");
 		}
 	}
-	$ttys = file_get_contents("/etc/ttys");
+	$ttys = file_get_contents($ttys_file);
 	$ttys_split = explode("\n", $ttys);
-	$fd = fopen("/etc/ttys", "w");
+	$fd = fopen($ttys_file, "w");
 
 	$on_off = (is_serial_enabled() ? 'on' : 'off');
 
@@ -1042,7 +1040,8 @@ function setup_serial_port($when="save", $path="") {
 	}
 	unset($on_off, $console_type, $serial_type);
 	fclose($fd);
-	reload_ttys();
+	if ($when != "upgrade")
+		reload_ttys();
 
 	conf_mount_ro();
 	return;

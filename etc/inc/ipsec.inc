@@ -342,11 +342,10 @@ function ipsec_lookup_phase1(& $ph2ent,& $ph1ent) {
 function ipsec_phase1_status(&$ipsec_status, $ikeid) {
 
 	foreach ($ipsec_status as $ike) {
-		if ($ike['id'] != $ikeid)
-			continue;
-		if ($ike['status'] == 'established')
-			return true;
-		break;
+		if ($ike['id'] == $ikeid) {
+			if ($ike['status'] == 'established')
+				return true;
+		}
 	}
 
 	return false;
@@ -383,9 +382,16 @@ function ipsec_smp_dump_status() {
 	$response = "";
 	while (!strstr($sread, "</message>")) {
 		$sread = fgets($fd);
+		if ($sread === false)
+			break;
 		$response .= $sread;
 	}
 	fclose($fd);
+
+	if ($sread === false) {
+		log_error("Error during reading of status from IPsec");
+		return;
+	}
 
 	@file_put_contents("{$g['tmp_path']}/smp_status.xml", $response);
 	unset($response, $sread);
@@ -516,6 +522,10 @@ function ipsec_dump_mobile() {
 		return array();
 	}
 
+	/* This is needed for fixing #4130 */
+	if (filesize("{$g['tmp_path']}/strongswan_leases.xml") < 200)
+		return array();
+
 	$custom_listtags = array('lease', 'pool');
 	$response = parse_xml_config("{$g['tmp_path']}/strongswan_leases.xml", "leases");
 	@unlink("{$g['tmp_path']}/strongswan_leases.xml");
@@ -556,19 +566,31 @@ function ipsec_get_descr($ikeid) {
 
 	if (!isset($config['ipsec']['phase1']) ||
 	    !is_array($config['ipsec']['phase1']))
-		return "";
+		return '';
 
-	$descr = '';
-	$a_phase1 = $config['ipsec']['phase1'];
-	foreach ($a_phase1 as $p1) {
+	foreach ($config['ipsec']['phase1'] as $p1) {
 		if ($p1['ikeid'] == $ikeid) {
-			$descr = $p1['descr'];
-			break;
+			return $p1['descr'];
 		}
 	}
-	unset($a_phase1);
 
-	return $descr;
+	return '';
+}
+
+function ipsec_get_phase1($ikeid) {
+        global $config;
+
+        if (!isset($config['ipsec']['phase1']) ||
+            !is_array($config['ipsec']['phase1']))
+                return '';
+
+        $a_phase1 = $config['ipsec']['phase1'];
+        foreach ($a_phase1 as $p1) {
+                if ($p1['ikeid'] == $ikeid) {
+                        return $p1;
+                }
+        }
+        unset($a_phase1);
 }
 
 function ipsec_fixup_ip($ipaddr) {

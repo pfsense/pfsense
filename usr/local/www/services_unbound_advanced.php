@@ -4,7 +4,7 @@
 	services_unbound_advanced.php
 	part of the pfSense project (https://www.pfsense.org)
 	Copyright (C) 2011	Warren Baker (warren@pfsense.org)
-        Copyright (C) 2013-2014 Electric Sheep Fencing, LP
+	Copyright (C) 2013-2015 Electric Sheep Fencing, LP
 	All rights reserved.
 
 	Redistribution and use in source and binary forms, with or without
@@ -74,7 +74,6 @@ $pconfig['jostle_timeout'] = isset($config['unbound']['jostle_timeout']) ? $conf
 $pconfig['cache_max_ttl'] = isset($config['unbound']['cache_max_ttl']) ? $config['unbound']['cache_max_ttl'] : '86400';
 $pconfig['cache_min_ttl'] = isset($config['unbound']['cache_min_ttl']) ? $config['unbound']['cache_min_ttl'] : '0';
 $pconfig['infra_host_ttl'] = isset($config['unbound']['infra_host_ttl']) ? $config['unbound']['infra_host_ttl'] : '900';
-$pconfig['infra_lame_ttl'] = isset($config['unbound']['infra_lame_ttl']) ? $config['unbound']['infra_lame_ttl'] : '900';
 $pconfig['infra_cache_numhosts'] = isset($config['unbound']['infra_cache_numhosts']) ? $config['unbound']['infra_cache_numhosts'] : '10000';
 $pconfig['unwanted_reply_threshold'] = isset($config['unbound']['unwanted_reply_threshold']) ? $config['unbound']['unwanted_reply_threshold'] : 'disabled';
 $pconfig['log_verbosity'] = isset($config['unbound']['log_verbosity']) ? $config['unbound']['log_verbosity'] : "1";
@@ -120,9 +119,6 @@ if ($_POST) {
 		}
 		if (isset($_POST['infra_host_ttl']) && !in_array($_POST['infra_host_ttl'], array('60', '120', '300', '600', '900'), true)) {
 			$input_errors[] = "A valid value must be specified for TTL for Host cache entries.";
-		}
-		if (isset($_POST['infra_lame_ttl']) && !in_array($_POST['infra_lame_ttl'], array('60', '120', '300', '600', '900'), true)) {
-			$input_errors[] = "A valid value must be specified for TTL for lame delegation.";
 		}
 		if (isset($_POST['infra_cache_numhosts']) && !in_array($_POST['infra_cache_numhosts'], array('1000', '5000', '10000', '20000', '50000'), true)) {
 			$input_errors[] = "A valid value must be specified for Number of Hosts to cache.";
@@ -172,7 +168,6 @@ if ($_POST) {
 		$config['unbound']['cache_max_ttl'] = $_POST['cache_max_ttl'];
 		$config['unbound']['cache_min_ttl'] = $_POST['cache_min_ttl'];
 		$config['unbound']['infra_host_ttl'] = $_POST['infra_host_ttl'];
-		$config['unbound']['infra_lame_ttl'] = $_POST['infra_lame_ttl'];
 		$config['unbound']['infra_cache_numhosts'] = $_POST['infra_cache_numhosts'];
 		$config['unbound']['unwanted_reply_threshold'] = $_POST['unwanted_reply_threshold'];
 		$config['unbound']['log_verbosity'] = $_POST['log_verbosity'];
@@ -189,6 +184,7 @@ if ($_POST) {
 
 $closehead = false;
 $pgtitle = array(gettext("Services"),gettext("DNS Resolver"),gettext("Advanced"));
+$shortcut_section = "resolver";
 include_once("head.inc");
 
 ?>
@@ -392,20 +388,7 @@ include_once("head.inc");
 											<option value="600" <?php if ($pconfig['infra_host_ttl'] == "600") echo "selected=\"selected\""; ?>>10 minutes</option>
 											<option value="900" <?php if ($pconfig['infra_host_ttl'] == "900") echo "selected=\"selected\""; ?>>15 minutes</option>
 										</select><br />
-										<?=gettext("Time to live for entries in the host cache. The host cache contains roundtrip timing and EDNS support information. The default is 15 minutes.");?>
-								</td>
-							</tr>
-							<tr>
-								<td width="22%" valign="top" class="vncell"><?=gettext("TTL for lame delegation");?></td>
-								<td width="78%" class="vtable">
-										<select id="infra_lame_ttl" name="infra_lame_ttl">
-											<option value="60"  <?php if ($pconfig['infra_lame_ttl'] == "60")  echo "selected=\"selected\""; ?>>1 minute</option>
-											<option value="120" <?php if ($pconfig['infra_lame_ttl'] == "120") echo "selected=\"selected\""; ?>>2 minutes</option>
-											<option value="300" <?php if ($pconfig['infra_lame_ttl'] == "300") echo "selected=\"selected\""; ?>>5 minutes</option>
-											<option value="600" <?php if ($pconfig['infra_lame_ttl'] == "600") echo "selected=\"selected\""; ?>>10 minutes</option>
-											<option value="900" <?php if ($pconfig['infra_lame_ttl'] == "900") echo "selected=\"selected\""; ?>>15 minutes</option>
-										</select><br />
-										<?=gettext("Time to live for when a delegation is considered to be lame. The default is 15 minutes.");?>
+										<?=gettext("Time to live for entries in the host cache. The host cache contains roundtrip timing, lameness and EDNS support information. The default is 15 minutes.");?>
 								</td>
 							</tr>
 							<tr>

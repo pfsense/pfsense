@@ -448,6 +448,23 @@ function captiveportal_init_webgui_zone($cpcfg) {
 	}
 }
 
+function captiveportal_init_rules_byinterface($interface) {
+	global $cpzone, $cpzoneid, $config;
+
+	if (!is_array($config['captiveportal']))
+		return;
+
+	foreach ($config['captiveportal'] as $cpkey => $cp) {
+		$cpzone = $cpkey;
+		$cpzoneid = $cp['zoneid'];
+		$cpinterfaces = explode(",", $cp['interface']);
+		if (in_array($interface, $cpinterfaces)) {
+			captiveportal_init_rules();
+			break;
+		}
+	}
+}
+
 /* reinit will disconnect all users, be careful! */
 function captiveportal_init_rules($reinit = false) {
 	global $config, $g, $cpzone, $cpzoneid;
@@ -1597,7 +1614,7 @@ function getVolume($ip, $mac = NULL) {
 	// Initialize vars properly, since we don't want NULL vars
 	$volume['input_pkts'] = $volume['input_bytes'] = $volume['output_pkts'] = $volume['output_bytes'] = 0 ;
 
-	$ipfw = pfSense_ipfw_getTablestats($cpzoneid, 1, $ip, $mac);
+	$ipfw = pfSense_ipfw_getTablestats($cpzoneid, IP_FW_TABLE_XLISTENTRY, 1, $ip, $mac);
 	if (is_array($ipfw)) {
 		if ($reverse) {
 			$volume['output_pkts'] = $ipfw['packets'];
@@ -1609,7 +1626,7 @@ function getVolume($ip, $mac = NULL) {
 		}
 	}
 
-	$ipfw = pfSense_ipfw_getTablestats($cpzoneid, 2, $ip);
+	$ipfw = pfSense_ipfw_getTablestats($cpzoneid, IP_FW_TABLE_XLISTENTRY, 2, $ip, $mac);
 	if (is_array($ipfw)) {
 		if ($reverse) {
 			$volume['input_pkts'] = $ipfw['packets'];
@@ -1783,8 +1800,11 @@ function portal_mac_radius($clientmac,$clientip) {
 function captiveportal_reapply_attributes($cpentry, $attributes) {
 	global $config, $cpzone, $g;
 
-	$dwfaultbw_up = isset($config['captiveportal'][$cpzone]['bwdefaultup']) ? $config['captiveportal'][$cpzone]['bwdefaultup'] : 0;
-	$dwfaultbw_down = isset($config['captiveportal'][$cpzone]['bwdefaultdn']) ? $config['captiveportal'][$cpzone]['bwdefaultdn'] : 0;
+	if (isset($config['captiveportal'][$cpzone]['peruserbw'])) {
+		$dwfaultbw_up = isset($config['captiveportal'][$cpzone]['bwdefaultup']) ? $config['captiveportal'][$cpzone]['bwdefaultup'] : 0;
+		$dwfaultbw_down = isset($config['captiveportal'][$cpzone]['bwdefaultdn']) ? $config['captiveportal'][$cpzone]['bwdefaultdn'] : 0;
+	} else
+		$dwfaultbw_up = $dwfaultbw_down = 0;
 	$bw_up = isset($attributes['bw_up']) ? round(intval($attributes['bw_up'])/1000, 2) : $dwfaultbw_up;
 	$bw_down = isset($attributes['bw_down']) ? round(intval($attributes['bw_down'])/1000, 2) : $dwfaultbw_down;
 	$bw_up_pipeno = $cpentry[1];
@@ -1961,8 +1981,11 @@ function portal_allow($clientip,$clientmac,$username,$password = null, $attribut
 				return;
 			}
 
-			$dwfaultbw_up = isset($config['captiveportal'][$cpzone]['bwdefaultup']) ? $config['captiveportal'][$cpzone]['bwdefaultup'] : 0;
-			$dwfaultbw_down = isset($config['captiveportal'][$cpzone]['bwdefaultdn']) ? $config['captiveportal'][$cpzone]['bwdefaultdn'] : 0;
+			if (isset($config['captiveportal'][$cpzone]['peruserbw'])) {
+				$dwfaultbw_up = isset($config['captiveportal'][$cpzone]['bwdefaultup']) ? $config['captiveportal'][$cpzone]['bwdefaultup'] : 0;
+				$dwfaultbw_down = isset($config['captiveportal'][$cpzone]['bwdefaultdn']) ? $config['captiveportal'][$cpzone]['bwdefaultdn'] : 0;
+			} else
+				$dwfaultbw_up = $dwfaultbw_down = 0;
 			$bw_up = isset($attributes['bw_up']) ? round(intval($attributes['bw_up'])/1000, 2) : $dwfaultbw_up;
 			$bw_down = isset($attributes['bw_down']) ? round(intval($attributes['bw_down'])/1000, 2) : $dwfaultbw_down;
 

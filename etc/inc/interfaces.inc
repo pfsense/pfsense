@@ -1262,22 +1262,10 @@ function interfaces_carp_set_maintenancemode($carp_maintenancemode){
 	if (isset($config["virtualip_carp_maintenancemode"]) && $carp_maintenancemode == false) {
 		unset($config["virtualip_carp_maintenancemode"]);
 		write_config("Leave CARP maintenance mode");
-		if(is_array($config['virtualip']['vip'])) {
-			$viparr = &$config['virtualip']['vip'];
-			foreach ($viparr as $vip) {
-				switch ($vip['mode']) {
-				case "carp":
-					interface_vip_bring_down($vip);
-					//sleep(1);
-					break;
-				}
-			}
-		}
-	} else {
-		if (!isset($config["virtualip_carp_maintenancemode"]) && $carp_maintenancemode == true) {
-			$config["virtualip_carp_maintenancemode"] = true;
-			write_config("Enter CARP maintenance mode");
-		}
+	} else
+	if (!isset($config["virtualip_carp_maintenancemode"]) && $carp_maintenancemode == true) {
+		$config["virtualip_carp_maintenancemode"] = true;
+		write_config("Enter CARP maintenance mode");
 	}
 
 	$viparr = &$config['virtualip']['vip'];
@@ -3079,7 +3067,7 @@ function interface_configure($interface = "wan", $reloadall = false, $linkupeven
 			system_routing_configure($interface);
 
 			/* reload ipsec tunnels */
-			vpn_ipsec_configure();
+			send_event("service reload ipsecdns");
 
 			/* restart dnsmasq or unbound */
 			if (isset($config['dnsmasq']['enable']))
@@ -3090,9 +3078,10 @@ function interface_configure($interface = "wan", $reloadall = false, $linkupeven
 			/* update dyndns */
 			send_event("service reload dyndns {$interface}");
 
-			/* XXX: which CPZONE? Needed? */
 			/* reload captive portal */
-			captiveportal_init_rules();
+			if (!function_exists('captiveportal_init_rules_byinterface'))
+				require_once('captiveportal.inc');
+			captiveportal_init_rules_byinterface($interface);
 		}
 	}
 

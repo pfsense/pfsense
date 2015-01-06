@@ -4,7 +4,7 @@
 	diag_ipsec.php
 	Copyright (C) 2004-2009 Scott Ullrich
 	Copyright (C) 2008 Shrew Soft Inc <mgrooms@shrew.net>.
-        Copyright (C) 2013-2014 Electric Sheep Fencing, LP
+	Copyright (C) 2013-2015 Electric Sheep Fencing, LP
 	All rights reserved.
 
 	Parts of this code was originally based on vpn_ipsec_sad.php
@@ -55,8 +55,20 @@ require("ipsec.inc");
 
 if ($_GET['act'] == 'connect') {
 	if (ctype_digit($_GET['ikeid'])) {
-		mwexec("/usr/local/sbin/ipsec down con" . escapeshellarg($_GET['ikeid']));
-		mwexec("/usr/local/sbin/ipsec up con" . escapeshellarg($_GET['ikeid']));
+		$ph1ent = ipsec_get_phase1($_GET['ikeid']);
+		if (!empty($ph1ent)) {
+			if (empty($ph1ent['iketype']) || $ph1ent['iketype'] == 'ikev1') {
+				$ph2entries = ipsec_get_number_of_phase2($_GET['ikeid']);
+				for ($i = 0; $i < $ph2entries; $i++) {
+					$connid = escapeshellarg("con{$_GET['ikeid']}00{$i}");
+					mwexec("/usr/local/sbin/ipsec down {$connid}");
+					mwexec("/usr/local/sbin/ipsec up {$connid}");
+				}
+			} else {
+				mwexec("/usr/local/sbin/ipsec down con" . escapeshellarg($_GET['ikeid']));
+				mwexec("/usr/local/sbin/ipsec up con" . escapeshellarg($_GET['ikeid']));
+			}
+		}
 	}
 } else if ($_GET['act'] == 'ikedisconnect') {
 	if (ctype_digit($_GET['ikeid'])) {
@@ -122,7 +134,12 @@ $status = ipsec_smp_dump_status();
 	if (is_array($status['query']) && is_array($status['query']['ikesalist']) && is_array($status['query']['ikesalist']['ikesa'])):
 		foreach ($status['query']['ikesalist']['ikesa'] as $ikeid => $ikesa):
 			$con_id = substr($ikesa['peerconfig'], 3);
-			$ipsecconnected[$con_id] = $con_id;
+			if ($ikesa['version'] == 1) {
+				$ph1idx = substr($con_id, 0, strrpos(substr($con_id, 0, -1), '00'));
+				$ipsecconnected[$ph1idx] = $ph1idx;
+			} else {
+				$ipsecconnected[$con_id] = $ph1idx = $con_id;
+			}
 
 			if (ipsec_phase1_status($status['query']['ikesalist']['ikesa'], $ikesa['id']))
 				$icon = "pass";
@@ -134,7 +151,7 @@ $status = ipsec_smp_dump_status();
 			<tr>
 				<td class="listlr">
 <?php
-					echo htmlspecialchars(ipsec_get_descr($con_id));
+					echo htmlspecialchars(ipsec_get_descr($ph1idx));
 ?>
 				</td>
 				<td class="listr">

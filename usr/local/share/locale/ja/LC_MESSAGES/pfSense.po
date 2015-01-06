@@ -1,5 +1,5 @@
 # Language translation for pfSense project.
-# Copyright (C) 2011-2014 Electric Sheep Fencing LLC
+# Copyright (C) 2011-2015 Electric Sheep Fencing LLC
 # This file is distributed under the same license as the pfSense package.
 # Kiyo Takami and Isaac (.ike) Levy, 2013.
 #

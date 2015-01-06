@@ -273,6 +273,11 @@ if [ ! -L /etc/resolv.conf ]; then
     /bin/ln -s /var/etc/resolv.conf /etc/resolv.conf
 fi
 
+if [ ! -L /etc/resolvconf.conf ]; then
+    /bin/rm -rf /etc/resolvconf.conf
+    /bin/ln -s /var/etc/resolvconf.conf /etc/resolvconf.conf
+fi
+
 # Setup compatibility link for packages that
 # have trouble overriding the PREFIX configure
 # argument since we build our packages in a

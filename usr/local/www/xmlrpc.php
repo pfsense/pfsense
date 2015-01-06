@@ -1,33 +1,31 @@
 <?php
 /*
-	$Id$
+	xmlrpc.php
+	Copyright (C) 2013-2015 Electric Sheep Fencing, LP
+	Copyright (C) 2009, 2010 Scott Ullrich
+	Copyright (C) 2005 Colin Smith
+	All rights reserved.
 
-        xmlrpc.php
-        Copyright (C) 2013-2014 Electric Sheep Fencing, LP
-        Copyright (C) 2009, 2010 Scott Ullrich
-        Copyright (C) 2005 Colin Smith
-        All rights reserved.
+	Redistribution and use in source and binary forms, with or without
+	modification, are permitted provided that the following conditions are met:
 
-        Redistribution and use in source and binary forms, with or without
-        modification, are permitted provided that the following conditions are met:
+	1. Redistributions of source code must retain the above copyright notice,
+	   this list of conditions and the following disclaimer.
 
-        1. Redistributions of source code must retain the above copyright notice,
-           this list of conditions and the following disclaimer.
+	2. Redistributions in binary form must reproduce the above copyright
+	   notice, this list of conditions and the following disclaimer in the
+	   documentation and/or other materials provided with the distribution.
 
-        2. Redistributions in binary form must reproduce the above copyright
-           notice, this list of conditions and the following disclaimer in the
-           documentation and/or other materials provided with the distribution.
-
-        THIS SOFTWARE IS PROVIDED ``AS IS'' AND ANY EXPRESS OR IMPLIED WARRANTIES,
-        INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY
-        AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE
-        AUTHOR BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY,
-        OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
-        SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
-        INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
-        CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
-        ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
-        POSSIBILITY OF SUCH DAMAGE.
+	THIS SOFTWARE IS PROVIDED ``AS IS'' AND ANY EXPRESS OR IMPLIED WARRANTIES,
+	INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY
+	AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE
+	AUTHOR BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY,
+	OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+	SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+	INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+	CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+	ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+	POSSIBILITY OF SUCH DAMAGE.
 */
 
 ##|+PRIV
@@ -184,9 +182,21 @@ function restore_config_section_xmlrpc($raw_params) {
 		return $xmlrpc_g['return']['authfail'];
 	}
 
+	/*
+	 * Make sure it doesn't end up with both dnsmasq and unbound enabled
+	 * simultaneously in secondary
+	 * */
+	if (isset($params[0]['unbound']['enable']) && isset($config['dnsmasq']['enable'])) {
+		unset($config['dnsmasq']['enable']);
+		services_dnsmasq_configure();
+	} else if (isset($params[0]['dnsmasq']['enable']) && isset($config['unbound']['enable'])) {
+		unset($config['unbound']['enable']);
+		services_unbound_configure();
+	}
+
 	// Some sections should just be copied and not merged or we end
 	//   up unable to sync the deletion of the last item in a section
-	$sync_full = array('ipsec', 'aliases', 'wol', 'load_balancer', 'openvpn', 'cert', 'ca', 'crl', 'schedules', 'filter', 'nat', 'dhcpd', 'dhcpv6');
+	$sync_full = array('dnsmasq', 'unbound', 'ipsec', 'aliases', 'wol', 'load_balancer', 'openvpn', 'cert', 'ca', 'crl', 'schedules', 'filter', 'nat', 'dhcpd', 'dhcpv6');
 	$sync_full_done = array();
 	foreach ($sync_full as $syncfull) {
 		if (isset($params[0][$syncfull])) {
@@ -209,18 +219,6 @@ function restore_config_section_xmlrpc($raw_params) {
 					$vipbackup[] = $vip;
 			}
 		}
-	}
-
-	/*
-	 * Make sure it doesn't end up with both dnsmasq and unbound enabled
-	 * simultaneously in secondary
-	 * */
-	if (isset($params[0]['unbound']['enable']) && isset($config['dnsmasq']['enable'])) {
-		unset($config['dnsmasq']['enable']);
-		services_dnsmasq_configure();
-	} else if (isset($params[0]['dnsmasq']['enable']) && isset($config['unbound']['enable'])) {
-		unset($config['unbound']['enable']);
-		services_unbound_configure();
 	}
 
         // For vip section, first keep items sent from the master

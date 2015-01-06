@@ -2,7 +2,7 @@
 /*
 	vpn_ipsec_settings.php
 
-	Copyright (C) 2014 Electric Sheep Fencing, LLC
+	Copyright (C) 2015 Electric Sheep Fencing, LLC
 	All rights reserved.
 
 	Redistribution and use in source and binary forms, with or without

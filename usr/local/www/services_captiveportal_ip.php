@@ -3,7 +3,7 @@
 	services_captiveportal_ip.php
 	part of m0n0wall (http://m0n0.ch/wall)
 
-        Copyright (C) 2013-2014 Electric Sheep Fencing, LP
+	Copyright (C) 2013-2015 Electric Sheep Fencing, LP
 	Copyright (C) 2004 Dinesh Nair <dinesh@alphaque.com>
 	All rights reserved.
 
@@ -73,7 +73,7 @@ if ($_GET['act'] == "del" && !empty($cpzone) && isset($cpzoneid)) {
 		if (isset($config['captiveportal'][$cpzone]['enable'])) {
 			$mask = (!empty($ipent['sn'])) ? $ipent['sn'] : 32;
 			
-			$ipfw = pfSense_ipfw_getTablestats($cpzoneid, 3, $ipent['ip'], $mask);
+			$ipfw = pfSense_ipfw_getTablestats($cpzoneid, IP_FW_TABLE_XLISTENTRY, 3, $ipent['ip']);
 			pfSense_ipfw_Tableaction($cpzoneid, IP_FW_TABLE_XDEL, 3, $ipent['ip'], $mask);
 			pfSense_ipfw_Tableaction($cpzoneid, IP_FW_TABLE_XDEL, 4, $ipent['ip'], $mask);
 			

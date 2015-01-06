@@ -2,7 +2,7 @@
 /*
     carp_status.php
     Copyright (C) 2004 Scott Ullrich
-    Copyright (C) 2013-2014 Electric Sheep Fencing, LP
+    Copyright (C) 2013-2015 Electric Sheep Fencing, LP
     All rights reserved.
 
     Redistribution and use in source and binary forms, with or without
@@ -70,7 +70,7 @@ if($_POST['disablecarp'] <> "") {
 				}
 			}
 		}
-		$savemsg = sprintf(gettext("%s IPs have been disabled. Please note that disabling does not survive a reboot."), $carp_counter);
+		$savemsg = sprintf(gettext("%s IPs have been disabled. Please note that disabling does not survive a reboot and some configuration changes will re-enable."), $carp_counter);
 		$status = 0;
 	} else {
 		$savemsg = gettext("CARP has been enabled.");

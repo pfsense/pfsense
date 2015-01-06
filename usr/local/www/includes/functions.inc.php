@@ -1,7 +1,8 @@
 <?
 /*
+	functions.inc.php
 	pfSense_MODULE:	ajax
-        Copyright (C) 2013-2014 Electric Sheep Fencing, LP
+	Copyright (C) 2013-2015 Electric Sheep Fencing, LP
 */
 
 if(Connection_Aborted()) {
@@ -336,7 +337,10 @@ function get_interfacestatus() {
 		}
 		$data .= ",";
 		if ($ifinfo['ipaddr'])
-			$data .= htmlspecialchars($ifinfo['ipaddr']);
+			$data .= "<strong>" . htmlspecialchars($ifinfo['ipaddr']) . "</strong>";
+		$data .= ",";
+		if ($ifinfo['ipaddrv6'])
+			$data .= "<strong>" . htmlspecialchars($ifinfo['ipaddrv6']) . "</strong>";
 		$data .= ",";
 		if ($ifinfo['status'] != "down")
 			$data .= htmlspecialchars($ifinfo['media']);

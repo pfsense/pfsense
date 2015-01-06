@@ -2,10 +2,10 @@
 /* $Id$ */
 /*
 	system_firmware_settings.php
-       	part of pfSense
-        Copyright (C) 2005 Colin Smith
+	part of pfSense
+	Copyright (C) 2005 Colin Smith
 	Copyright (C) 2008 Scott Ullrich <sullrich@gmail.com>
-        Copyright (C) 2013-2014 Electric Sheep Fencing, LP
+	Copyright (C) 2013-2015 Electric Sheep Fencing, LP
 
 	Redistribution and use in source and binary forms, with or without
 	modification, are permitted provided that the following conditions are met:

@@ -76,22 +76,6 @@ a {
 	text-decoration: none;
 }
 
-a:link {
-	color: #0000CC;
-}
-
-a:visited {
-	color: #0000CC;
-}
-
-a:active {
-	color: #0000CC;
-}
-
-a:hover {
-	color: #0000CC;
-}
-
 form input {
 	font-size: 1.1em;
 }

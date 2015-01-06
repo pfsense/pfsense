@@ -3,7 +3,7 @@
 	vpn_openvpn_server.php
 
 	Copyright (C) 2008 Shrew Soft Inc.
-        Copyright (C) 2013-2014 Electric Sheep Fencing, LP
+	Copyright (C) 2013-2015 Electric Sheep Fencing, LP
 	All rights reserved. 
 
 	Redistribution and use in source and binary forms, with or without
@@ -801,12 +801,12 @@ if ($savemsg)
 							<?php $authmodes = explode(",", $pconfig['authmode']); ?>
                                                         <?php
 								$auth_servers = auth_get_authserver_list();
-                                                                foreach ($auth_servers as $auth_server):
+                                                                foreach ($auth_servers as $auth_server_key => $auth_server):
                                                                         $selected = "";
-                                                                        if (in_array($auth_server['name'], $authmodes))
+                                                                        if (in_array($auth_server_key, $authmodes))
                                                                                 $selected = "selected=\"selected\"";
                                                         ?>
-                                                                <option value="<?=$auth_server['name'];?>" <?=$selected;?>><?=$auth_server['name'];?></option>
+                                                                <option value="<?=$auth_server_key;?>" <?=$selected;?>><?=$auth_server['name'];?></option>
                                                         <?php 	endforeach; ?>
                                                         </select>
                                                 </td>

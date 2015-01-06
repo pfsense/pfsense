@@ -5,7 +5,7 @@
 	part of pfSense (https://www.pfsense.org/)
 
 	Copyright (C) 2005 Bill Marquette <bill.marquette@gmail.com>.
-        Copyright (C) 2013-2014 Electric Sheep Fencing, LP
+	Copyright (C) 2013-2015 Electric Sheep Fencing, LP
 	All rights reserved.
 
 	Includes code from m0n0wall which is:

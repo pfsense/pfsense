@@ -2,7 +2,7 @@
 /*
 	easyrule.php
 
-        Copyright (C) 2013-2014 Electric Sheep Fencing, LP
+	Copyright (C) 2013-2015 Electric Sheep Fencing, LP
 	Copyright (C) 2009-2010 Jim Pingle (jpingle@gmail.com)
 	Originally Sponsored By Anathematic @ pfSense Forums
 	All rights reserved.

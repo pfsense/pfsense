@@ -1,7 +1,9 @@
 <?php
 /* $Id$ */
 /*
-        Copyright (C) 2013-2014 Electric Sheep Fencing, LP
+	services_ntpd_gps.php
+
+	Copyright (C) 2013-2015 Electric Sheep Fencing, LP
 	Copyright (C) 2013	Dagorlad
 	Copyright (C) 2012	Jim Pingle
 	All rights reserved.

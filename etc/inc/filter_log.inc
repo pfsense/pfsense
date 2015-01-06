@@ -404,7 +404,7 @@ function handle_ajax($nentries, $tail = 50) {
 					$log_row['proto'] .= ":{$log_row['tcpflags']}";
 
 				$img = "<a href=\"#\" onClick=\"javascript:getURL('diag_logs_filter.php?getrulenum={$log_row['rulenum']},{$log_row['rulenum']}', outputrule);\">{$img}</a>";
-				$new_rules .= "{$img}||{$log_row['time']}||{$log_row['interface']}||{$log_row['srcip']}||{$log_row['dst']}||{$log_row['proto']}||" . time() . "||\n";
+				$new_rules .= "{$img}||{$log_row['time']}||{$log_row['interface']}||{$log_row['srcip']}||{$log_row['srcport']}||{$log_row['dstip']}||{$log_row['dstport']}||{$log_row['proto']}||{$log_row['version']}||" . time() . "||\n";
 			}
 		}
 		echo $new_rules;

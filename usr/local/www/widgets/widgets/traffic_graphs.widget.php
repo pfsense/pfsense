@@ -1,7 +1,7 @@
 <?php
 /*
-	$Id$
-        Copyright (C) 2013-2014 Electric Sheep Fencing, LP
+	traffic_graphs.widget.php
+	Copyright (C) 2013-2015 Electric Sheep Fencing, LP
 
 	Copyright 2007 Scott Dale
 	Part of pfSense widgets (https://www.pfsense.org)

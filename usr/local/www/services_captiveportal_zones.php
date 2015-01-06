@@ -1,6 +1,8 @@
 <?php
 /*
-        Copyright (C) 2013-2014 Electric Sheep Fencing, LP
+	services_captiveportal_zones.php
+
+	Copyright (C) 2013-2015 Electric Sheep Fencing, LP
 
 	All rights reserved.
 
@@ -28,8 +30,8 @@
 
 ##|+PRIV
 ##|*IDENT=page-services-captiveportal-zones
-##|*NAME=Services: Captiveprotal Zones page
-##|*DESCR=Allow access to the 'Services: CaptivePortal Zones' page.
+##|*NAME=Services: Captive portal Zones page
+##|*DESCR=Allow access to the 'Services: Captive portal Zones' page.
 ##|*MATCH=services_captiveportal_zones.php*
 ##|-PRIV
 

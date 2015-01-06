@@ -2,7 +2,7 @@
 /*
 	diag_testport.php
 	Copyright (C) 2013 Jim P (jimp@pfsense.org)
-        Copyright (C) 2013-2014 Electric Sheep Fencing, LP
+	Copyright (C) 2013-2015 Electric Sheep Fencing, LP
 	All rights reserved.
 
 	Portions based on diag_ping.php
@@ -50,10 +50,10 @@ $pgtitle = array(gettext("Diagnostics"), gettext("Test Port"));
 require("guiconfig.inc");
 
 define('NC_TIMEOUT', 10);
+$do_testport = false;
 
 if ($_POST || $_REQUEST['host']) {
 	unset($input_errors);
-	unset($do_testport);
 
 	/* input validation */
 	$reqdfields = explode(" ", "host port");
@@ -68,7 +68,7 @@ if ($_POST || $_REQUEST['host']) {
 		$input_errors[] = gettext("Please enter a valid port number.");
 	}
 
-	if (!is_numeric($_REQUEST['srcport']) || !is_port($_REQUEST['srcport'])) {
+	if (($_REQUEST['srcport'] != "") && (!is_numeric($_REQUEST['srcport']) || !is_port($_REQUEST['srcport']))) {
 		$input_errors[] = gettext("Please enter a valid source port number, or leave the field blank.");
 	}
 
@@ -81,21 +81,16 @@ if ($_POST || $_REQUEST['host']) {
 
 	if (!$input_errors) {
 		$do_testport = true;
-		$host = $_REQUEST['host'];
-		$sourceip = $_REQUEST['sourceip'];
-		$port = $_REQUEST['port'];
-		$srcport = $_REQUEST['srcport'];
-		$showtext = isset($_REQUEST['showtext']);
-		$ipprotocol = $_REQUEST['ipprotocol'];
 		$timeout = NC_TIMEOUT;
 	}
-}
-if (!isset($do_testport)) {
-	$do_testport = false;
-	$host = '';
-	$port = '';
-	$srcport = '';
-	unset($showtext);
+	
+	/* Save these request vars even if there were input errors. Then the fields are refilled for the user to correct. */
+	$host = $_REQUEST['host'];
+	$sourceip = $_REQUEST['sourceip'];
+	$port = $_REQUEST['port'];
+	$srcport = $_REQUEST['srcport'];
+	$showtext = isset($_REQUEST['showtext']);
+	$ipprotocol = $_REQUEST['ipprotocol'];
 }
 
 include("head.inc"); ?>

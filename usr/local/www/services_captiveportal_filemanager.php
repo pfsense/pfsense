@@ -3,7 +3,7 @@
 	services_captiveportal_filemanager.php
 	part of m0n0wall (http://m0n0.ch/wall)
 
-        Copyright (C) 2013-2014 Electric Sheep Fencing, LP
+	Copyright (C) 2013-2015 Electric Sheep Fencing, LP
 	Copyright (C) 2005-2006 Jonathan De Graeve (jonathan.de.graeve@imelda.be)
 	and Paul Taylor (paultaylor@winn-dixie.com).
 	All rights reserved.

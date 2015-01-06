@@ -1,7 +1,7 @@
 <?php 
 /*
 	captive_portal_status.widget.php
-        Copyright (C) 2013-2014 Electric Sheep Fencing, LP
+	Copyright (C) 2013-2015 Electric Sheep Fencing, LP
 	All rights reserved.
 
 	Copyright (C) 2007 Sam Wenham

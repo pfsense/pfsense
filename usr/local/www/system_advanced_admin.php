@@ -5,7 +5,7 @@
 	part of pfSense
 	Copyright (C) 2005-2010 Scott Ullrich
 	Copyright (C) 2008 Shrew Soft Inc
-        Copyright (C) 2013-2014 Electric Sheep Fencing, LP
+	Copyright (C) 2013-2015 Electric Sheep Fencing, LP
 
 	originally part of m0n0wall (http://m0n0.ch/wall)
 	Copyright (C) 2003-2004 Manuel Kasper <mk@neon1.net>.
@@ -599,8 +599,6 @@ function prot_change() {
 								<td width="78%" class="vtable">
 									<input name="disableconsolemenu" type="checkbox" id="disableconsolemenu" value="yes" <?php if ($pconfig['disableconsolemenu']) echo "checked=\"checked\""; ?>  />
 									<strong><?=gettext("Password protect the console menu"); ?></strong>
-									<br />
-									<span class="vexpl"><?=gettext("Changes to this option will take effect after a reboot."); ?></span>
 								</td>
 							</tr>
 							<tr>

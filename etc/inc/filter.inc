@@ -1755,17 +1755,13 @@ function filter_nat_rules_generate() {
 					if (is_ipaddr($natlocal_subnet) && !is_ipaddr($local_subnet) )
 						$nattype = "nat";
 					else {
-						if (is_ipaddr($natlocal_subnet) || is_ipaddr($local_subnet))
+						list($natnet, $natmask) = explode('/', $natlocal_subnet);
+						list($locnet, $locmask) = explode('/', $local_subnet);
+						if (intval($natmask) != intval($locmask))
 							$nattype = "nat";
-						else {
-							list($natnet, $natmask) = explode('/', $natlocal_subnet);
-							list($locnet, $locmask) = explode('/', $local_subnet);
-							if (intval($natmask) != intval($locmask))
-								$nattype = "nat";
-							else
-								$nattype = "binat";
-							unset($natnet, $natmask, $locnet, $locmask);
-						}
+						else
+							$nattype = "binat";
+						unset($natnet, $natmask, $locnet, $locmask);
 					}
 					$natrules .= "{$nattype} on enc0 from {$local_subnet} to {$remote_subnet} -> {$natlocal_subnet}\n";
 				}
@@ -2750,6 +2746,9 @@ function filter_rules_generate() {
 	$saved_tracker = $tracker;
 
 	if(!isset($config['system']['ipv6allow'])) {
+		$ipfrules .= "# Allow IPv6 on loopback\n";
+		$ipfrules .= "pass in {$log['pass']} quick on \$loopback inet6 all tracker {$increment_tracker($tracker)} label \"pass IPv6 loopback\"\n";
+		$ipfrules .= "pass out {$log['pass']} quick on \$loopback inet6 all tracker {$increment_tracker($tracker)} label \"pass IPv6 loopback\"\n";
 		$ipfrules .= "# Block all IPv6\n";
 		$ipfrules .= "block in {$log['block']} quick inet6 all tracker {$increment_tracker($tracker)} label \"Block all IPv6\"\n";
 		$ipfrules .= "block out {$log['block']} quick inet6 all tracker {$increment_tracker($tracker)} label \"Block all IPv6\"\n";
@@ -3685,7 +3684,7 @@ function filter_generate_ipsec_rules($log = array()) {
 			}
 
 			if (strpos($ph1ent['interface'], "_vip"))
-				list($parentinterface, $vhid) = explode("_vhid", $ph1ent['interface']);
+				list($parentinterface, $vhid) = explode("_vip", $ph1ent['interface']);
 			else
 				$parentinterface = $ph1ent['interface'];
 			if (empty($FilterIflist[$parentinterface]['descr'])) {
@@ -3694,21 +3693,27 @@ function filter_generate_ipsec_rules($log = array()) {
 			}
 
 			unset($gateway);
-			/* add endpoint routes to correct gateway on interface */
+			/* add endpoint routes to correct gateway on interface if the
+			remote endpoint is not on this interface's subnet  */
 			if((is_ipaddrv4($rgip)) && (interface_has_gateway($parentinterface))) {
-				$gateway = get_interface_gateway($parentinterface);
-				$interface = $FilterIflist[$parentinterface]['if'];
-
-				$route_to = " route-to ( $interface $gateway ) ";
-				$reply_to = " reply-to ( $interface $gateway ) ";
-
+				$parentifsubnet = get_interface_ip($parentinterface) . "/" . get_interface_subnet($parentinterface);
+				if (!ip_in_subnet($rgip, $parentifsubnet)) {
+					$gateway = get_interface_gateway($parentinterface);
+					$interface = $FilterIflist[$parentinterface]['if'];
+	
+					$route_to = " route-to ( $interface $gateway ) ";
+					$reply_to = " reply-to ( $interface $gateway ) ";	
+				}
 			}
 			if((is_ipaddrv6($rgip)) && (interface_has_gatewayv6($parentinterface))) {
-				$gateway = get_interface_gateway_v6($parentinterface);
-				$interface = $FilterIflist[$parentinterface]['if'];
-
-				$route_to = " route-to ( $interface $gateway ) ";
-				$reply_to = " reply-to ( $interface $gateway ) ";
+				$parentifsubnet = get_interface_ipv6($parentinterface) . "/" . get_interface_subnetv6($parentinterface);
+				if (!ip_in_subnet($rgip, $parentifsubnet)) {
+					$gateway = get_interface_gateway_v6($parentinterface);
+					$interface = $FilterIflist[$parentinterface]['if'];
+	
+					$route_to = " route-to ( $interface $gateway ) ";
+					$reply_to = " reply-to ( $interface $gateway ) ";
+				}
 			}
 
 			/* Just in case */

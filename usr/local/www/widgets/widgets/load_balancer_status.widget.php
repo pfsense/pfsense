@@ -1,6 +1,7 @@
 <?php
 /*
-        Copyright (C) 2013-2014 Electric Sheep Fencing, LP
+	load_balancer_status.widget.php
+	Copyright (C) 2013-2015 Electric Sheep Fencing, LP
 
 	Copyright 2010 Jim Pingle
 	Portions copied from status_lb_pool.php, status_lb_vs.php, and vslb.inc:

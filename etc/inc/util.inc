@@ -311,44 +311,56 @@ function is_numericint($arg) {
 	return (((is_int($arg) && $arg >= 0) || (is_string($arg) && strlen($arg) > 0 && ctype_digit($arg))) ? true : false);  
 }
 
-/* return the subnet address given a host address and a subnet bit count */
+/* Generate the (human readable) ipv4 or ipv6 subnet address (i.e., netmask, or subnet start IP) 
+   given an (human readable) ipv4 or ipv6 host address and subnet bit count */
 function gen_subnet($ipaddr, $bits) {
-	if (!is_ipaddr($ipaddr) || !is_numeric($bits))
-		return "";
-	return long2ip(ip2long($ipaddr) & gen_subnet_mask_long($bits));
+	if (($sn = gen_subnetv6($ipaddr, $bits)) == '')
+		$sn = gen_subnetv4($ipaddr, $bits);  // try to avoid rechecking IPv4/v6
+	return $sn;
 }
 
-/* return the subnet address given a host address and a subnet bit count */
+/* same as gen_subnet() but accepts IPv4 only */
+function gen_subnetv4($ipaddr, $bits) {
+	if (is_ipaddrv4($ipaddr) && is_numericint($bits) && $bits <= 32) {
+		if ($bits == 0)
+			return '0.0.0.0';  // avoids <<32
+		return long2ip(ip2long($ipaddr) & ((0xFFFFFFFF << (32 - $bits)) & 0xFFFFFFFF));
+	}
+	return "";
+}
+
+/* same as gen_subnet() but accepts IPv6 only */
 function gen_subnetv6($ipaddr, $bits) {
-	if (!is_ipaddrv6($ipaddr) || !is_numeric($bits))
-		return "";
-
-	$address = Net_IPv6::getNetmask($ipaddr, $bits);
-	$address = Net_IPv6::compress($address);
-	return $address;
+	if (is_ipaddrv6($ipaddr) && is_numericint($bits) && $bits <= 128)
+		return Net_IPv6::compress(Net_IPv6::getNetmask($ipaddr, $bits));
+	return "";
 }
 
-/* return the highest (broadcast) address in the subnet given a host address and a subnet bit count */
+/* Generate the (human readable) ipv4 or ipv6 subnet end address (i.e., highest address, end IP, or IPv4 broadcast address)
+   given an (human readable) ipv4 or ipv6 host address and subnet bit count. */
 function gen_subnet_max($ipaddr, $bits) {
-	if (!is_ipaddr($ipaddr) || !is_numeric($bits))
-		return "";
-
-	return long2ip32(ip2long($ipaddr) | ~gen_subnet_mask_long($bits));
+	if (($sn = gen_subnetv6_max($ipaddr, $bits)) == '')
+		$sn = gen_subnetv4_max($ipaddr, $bits);  // try to avoid rechecking IPv4/v6
+	return $sn;
 }
 
-/* Generate end number for a given ipv6 subnet mask */
+/* same as gen_subnet_max() but validates IPv4 only */
+function gen_subnetv4_max($ipaddr, $bits) {
+	if (is_ipaddrv4($ipaddr) && is_numericint($bits) && $bits <= 32) {
+		if ($bits == 32)
+			return $ipaddr;
+		return long2ip(ip2long($ipaddr) | (0xFFFFFFFF >> $bits));
+	}
+	return "";
+}
+
+/* same as gen_subnet_max() but validates IPv6 only */
 function gen_subnetv6_max($ipaddr, $bits) {
-	if(!is_ipaddrv6($ipaddr))
-		return false;
-
-	$mask = Net_IPv6::getNetmask('FFFF:FFFF:FFFF:FFFF:FFFF:FFFF:FFFF:FFFF',$bits);
-
-	$inet_ip = (binary)inet_pton($ipaddr);
-	$inet_mask = (binary)inet_pton($mask);
-
-	$inet_end = $inet_ip | ~$inet_mask;
-
-	return (inet_ntop($inet_end));
+	if (is_ipaddrv6($ipaddr) && is_numericint($bits) && $bits <= 128) {
+		$endip_bin = substr(Net_IPv6::_ip2Bin($ipaddr), 0, $bits) . str_repeat('1', 128 - $bits);
+		return Net_IPv6::compress(Net_IPv6::_bin2Ip($endip_bin));
+	}
+	return "";
 }
 
 /* returns a subnet mask (long given a bit count) */
@@ -686,8 +698,13 @@ function is_hostname($hostname) {
 	if (!is_string($hostname))
 		return false;
 
-	if (preg_match('/^(?:(?:[a-z0-9_]|[a-z0-9_][a-z0-9_\-]*[a-z0-9_])\.)*(?:[a-z0-9_]|[a-z0-9_][a-z0-9_\-]*[a-z0-9_])$/i', $hostname))
-		return true;
+	if (is_domain($hostname))
+		if ((substr_count($hostname, ".") == 1) && ($hostname[strlen($hostname)-1] == ".")) {
+			/* Only a single dot at the end like "test." - hosts cannot be directly in the root domain. */
+			return false;
+		} else {
+			return true;
+		}
 	else
 		return false;
 }

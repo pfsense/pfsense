@@ -4,7 +4,7 @@
 	diag_logs_resolver.php
 	Copyright (C) 2004-2009 Scott Ullrich
 	Copyright (C) 2012 Seth Mos
-        Copyright (C) 2013-2014 Electric Sheep Fencing, LP
+	Copyright (C) 2013-2015 Electric Sheep Fencing, LP
 	All rights reserved.
 
 	originally part of m0n0wall (http://m0n0.ch/wall)
@@ -65,7 +65,11 @@ if ($filtertext)
 	$filtertextmeta="?filtertext=$filtertext";
 
 $pgtitle = array(gettext("Status"),gettext("System logs"),gettext("Resolver"));
-$shortcut_section = "resolver";
+if (isset($config['dnsmasq']['enable']))
+	$shortcut_section = "forwarder";
+else
+	$shortcut_section = "resolver";
+
 include("head.inc");
 
 ?>

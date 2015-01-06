@@ -225,7 +225,15 @@ if ($local_ip == false) {
 		}
 	}
 }
-setcookie("cookie_test", time() + 3600);
+setcookie(
+	"cookie_test",
+	'',
+	time() + 3600,
+	'/',
+	NULL,
+	($config['system']['webgui']['protocol'] == "https"),
+	true
+);
 $have_cookies = isset($_COOKIE["cookie_test"]);
 
 ?>

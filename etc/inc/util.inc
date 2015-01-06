@@ -318,7 +318,7 @@ function gen_subnet($ipaddr, $bits) {
 		$sn = gen_subnetv4($ipaddr, $bits);  // try to avoid rechecking IPv4/v6
 	return $sn;
 }
-								
+
 /* same as gen_subnet() but accepts IPv4 only */
 function gen_subnetv4($ipaddr, $bits) {
 	if (is_ipaddrv4($ipaddr) && is_numericint($bits) && $bits <= 32) {
@@ -336,7 +336,7 @@ function gen_subnetv6($ipaddr, $bits) {
 	return "";
 }
 
-/* Generate the (human readable) ipv4 or ipv6 subnet end address (i.e., highest address, end IP, or IPv4 broadcast address) 
+/* Generate the (human readable) ipv4 or ipv6 subnet end address (i.e., highest address, end IP, or IPv4 broadcast address)
    given an (human readable) ipv4 or ipv6 host address and subnet bit count. */
 function gen_subnet_max($ipaddr, $bits) {
 	if (($sn = gen_subnetv6_max($ipaddr, $bits)) == '')

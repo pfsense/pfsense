@@ -261,7 +261,7 @@ function maxmss_checked(obj) {
 							<input name="compression" type="checkbox" id="compression" value="yes" <?php if ($pconfig['compression']) echo "checked=\"checked\""; ?> />
 							<strong><?=gettext("Enable IPCompression"); ?></strong>
 							<br />
-							<?=gettext("IPComp compression of content is proposed on the connectio.n "); ?>
+							<?=gettext("IPComp compression of content is proposed on the connection."); ?>
 						</td>
 					</tr>
 					<tr>

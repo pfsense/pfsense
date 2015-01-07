@@ -286,6 +286,11 @@ function vpn_ipsec_configure($ipchg = false)
 		log_error("WARNING: Setting i_dont_care_about_security_and_use_aggressive_mode_psk option because a phase 1 is configured using aggressive mode with pre-shared keys. This is not a secure configuration.");
 		$i_dont_care_about_security_and_use_aggressive_mode_psk = "i_dont_care_about_security_and_use_aggressive_mode_psk=yes";
 	} 
+
+	$unity_enabled = 'no';
+	if (isset($config['ipsec']['unityplugin']))
+		$unity_enabled = 'yes';
+
 	$strongswan = <<<EOD
 
 # Automatically generated config file - DO NOT MODIFY. Changes will be overwritten. 
@@ -302,7 +307,7 @@ init_limit_half_open = 1000
 install_routes = no
 {$i_dont_care_about_security_and_use_aggressive_mode_psk}
 {$accept_unencrypted}
-cisco_unity = yes
+cisco_unity = {$unity_enabled}
 
 # And two loggers using syslog. The subsections define the facility to log
 # to, currently one of: daemon, auth.

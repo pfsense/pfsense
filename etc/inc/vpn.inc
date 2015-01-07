@@ -825,7 +825,7 @@ EOD;
 
 EOD;
 
-			if (isset($config['ipsec']['commpression'])) {
+			if (isset($config['ipsec']['compression'])) {
 				$ipsecconnect .= '\tcompress = yes\n';
 				$enablecompression = true;
 			}

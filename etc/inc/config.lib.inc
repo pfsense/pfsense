@@ -919,6 +919,20 @@ function get_config_backup_count() {
 function pfSense_clear_globals() {
 	global $config, $FilterIfList, $GatewaysList, $filterdns, $aliases, $aliastable;
 
+	$error = error_get_last();
+	if( $error !== NULL) {
+		$errtype = $error["type"];
+		if ($errtype != E_NOTICE) {
+			// there are a lot of 'innocent' errors.. so skip reporting E_NOTICE
+			$errfile = $error["file"];
+			$errline = $error["line"];
+			$errstr  = $error["message"];
+			$str = "PHP ERROR Type:$errtype, File:$errfile, Line: $errline, Message: $errstr";
+			print($str);
+			log_error($str);
+		}
+	}
+		
 	if (isset($FilterIfList))
 		unset($FilterIfList);
 

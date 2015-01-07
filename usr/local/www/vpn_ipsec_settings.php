@@ -46,7 +46,7 @@ foreach ($ipsec_loglevels as $lkey => $ldescr) {
 	if (!empty($config['ipsec']["ipsec_{$lkey}"]))
 		$pconfig["ipsec_{$lkey}"] = $config['ipsec']["ipsec_{$lkey}"];
 }
-$pconfig['failoverforcereload'] = isset($config['ipsec']['failoverforcereload']);
+$pconfig['commpression'] = isset($config['ipsec']['commpression']);
 $pconfig['acceptunencryptedmainmode'] = isset($config['ipsec']['acceptunencryptedmainmode']);
 $pconfig['maxmss_enable'] = isset($config['system']['maxmss_enable']);
 $pconfig['maxmss'] = $config['system']['maxmss'];
@@ -129,10 +129,10 @@ if ($_POST) {
 			}
 		}
 
-		if($_POST['failoverforcereload'] == "yes")
-			$config['ipsec']['failoverforcereload'] = true;
-		elseif (isset($config['ipsec']['failoverforcereload']))
-			unset($config['ipsec']['failoverforcereload']);
+		if($_POST['commpression'] == "yes")
+			$config['ipsec']['commpression'] = true;
+		elseif (isset($config['ipsec']['commpression']))
+			unset($config['ipsec']['commpression']);
 
 		if($_POST['acceptunencryptedmainmode'] == "yes")
 			$config['ipsec']['acceptunencryptedmainmode'] = true;
@@ -256,15 +256,12 @@ function maxmss_checked(obj) {
 						</td>
 					</tr>
 					<tr>
-						<td width="22%" valign="top" class="vncell"><?=gettext("IPsec Reload on Failover"); ?></td>
+						<td width="22%" valign="top" class="vncell"><?=gettext("IP Compression"); ?></td>
 						<td width="78%" class="vtable">
-							<input name="failoverforcereload" type="checkbox" id="failoverforcereload" value="yes" <?php if ($pconfig['failoverforcereload']) echo "checked=\"checked\""; ?> />
-							<strong><?=gettext("Force IPsec Reload on Failover"); ?></strong>
+							<input name="commpression" type="checkbox" id="commpression" value="yes" <?php if ($pconfig['commpression']) echo "checked=\"checked\""; ?> />
+							<strong><?=gettext("Enable IPCompression"); ?></strong>
 							<br />
-							<?=gettext("In some circumstances using a gateway group as the interface for " .
-							"an IPsec tunnel does not function properly, and IPsec must be forcefully reloaded " .
-							"when a failover occurs. Because this will disrupt all IPsec tunnels, this behavior" .
-							" is disabled by default. Check this box to force IPsec to fully reload on failover."); ?>
+							<?=gettext("IPComp compression of content is proposed on the connectio.n "); ?>
 						</td>
 					</tr>
 					<tr>

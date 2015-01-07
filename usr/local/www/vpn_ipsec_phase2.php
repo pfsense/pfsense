@@ -259,13 +259,13 @@ if ($_POST) {
 				if (isset($pconfig['localid_address'])) $entered_local['address'] = $pconfig['localid_address'];
 				if (isset($pconfig['localid_netbits'])) $entered_local['netbits'] = $pconfig['localid_netbits'];
 				$entered_localid_data = ipsec_idinfo_to_cidr($entered_local, false, $pconfig['mode']);
-				list($entered_local_network, $entered_local_mask) = split("/", $entered_localid_data);
+				list($entered_local_network, $entered_local_mask) = explode('/', $entered_localid_data);
 				$entered_remote = array();
 				$entered_remote['type'] = $pconfig['remoteid_type'];
 				if (isset($pconfig['remoteid_address'])) $entered_remote['address'] = $pconfig['remoteid_address'];
 				if (isset($pconfig['remoteid_netbits'])) $entered_remote['netbits'] = $pconfig['remoteid_netbits'];
 				$entered_remoteid_data = ipsec_idinfo_to_cidr($entered_remote, false, $pconfig['mode']);
-				list($entered_remote_network, $entered_remote_mask) = split("/", $entered_remoteid_data);
+				list($entered_remote_network, $entered_remote_mask) = explode('/', $entered_remoteid_data);
 				if ($phase1['protocol'] == "inet6") { 
 					$if = get_failover_interface($phase1['interface'], "inet6");
 					$interfaceip = get_interface_ipv6($if);

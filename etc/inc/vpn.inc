@@ -287,9 +287,9 @@ function vpn_ipsec_configure($ipchg = false)
 		$i_dont_care_about_security_and_use_aggressive_mode_psk = "i_dont_care_about_security_and_use_aggressive_mode_psk=yes";
 	} 
 
-	$unity_enabled = 'no';
+	$unity_enabled = 'yes';
 	if (isset($config['ipsec']['unityplugin']))
-		$unity_enabled = 'yes';
+		$unity_enabled = 'no';
 
 	$strongswan = <<<EOD
 

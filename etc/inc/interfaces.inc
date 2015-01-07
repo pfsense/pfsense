@@ -3559,7 +3559,7 @@ function DHCP6_Config_File_Advanced($interface, $wancfg, $wanif) {
 
 	$send_options = "";
 	if ($wancfg['adv_dhcp6_interface_statement_send_options'] != '') {
-		$options = split(",", $wancfg['adv_dhcp6_interface_statement_send_options']);
+		$options = explode(',', $wancfg['adv_dhcp6_interface_statement_send_options']);
 		foreach ($options as $option) {
 			$send_options .= "\tsend " . trim($option) . ";\n";
 		}
@@ -3567,7 +3567,7 @@ function DHCP6_Config_File_Advanced($interface, $wancfg, $wanif) {
 
 	$request_options = "";
 	if ($wancfg['adv_dhcp6_interface_statement_request_options'] != '') {
-		$options = split(",", $wancfg['adv_dhcp6_interface_statement_request_options']);
+		$options = explode(',', $wancfg['adv_dhcp6_interface_statement_request_options']);
 		foreach ($options as $option) {
 			$request_options .= "\trequest " . trim($option) . ";\n";
 		}
@@ -3817,7 +3817,7 @@ function DHCP_Config_File_Advanced($interface, $wancfg, $wanif) {
 
 	$send_options = "";
 	if ($wancfg['adv_dhcp_send_options'] != '') {
-		$options = split(",", $wancfg['adv_dhcp_send_options']);
+		$options = explode(',', $wancfg['adv_dhcp_send_options']);
 		foreach ($options as $option) {
 			$send_options .= "\tsend " . trim($option) . ";\n";
 		}
@@ -3835,7 +3835,7 @@ function DHCP_Config_File_Advanced($interface, $wancfg, $wanif) {
 
 	$option_modifiers = "";
 	if ($wancfg['adv_dhcp_option_modifiers'] != '') {
-		$modifiers = split(",", $wancfg['adv_dhcp_option_modifiers']);
+		$modifiers = explode(',', $wancfg['adv_dhcp_option_modifiers']);
 		foreach ($modifiers as $modifier) {
 			$option_modifiers .= "\t" . trim($modifier) . ";\n";
 		}

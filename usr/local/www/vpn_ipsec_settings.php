@@ -46,7 +46,7 @@ foreach ($ipsec_loglevels as $lkey => $ldescr) {
 	if (!empty($config['ipsec']["ipsec_{$lkey}"]))
 		$pconfig["ipsec_{$lkey}"] = $config['ipsec']["ipsec_{$lkey}"];
 }
-$pconfig['commpression'] = isset($config['ipsec']['commpression']);
+$pconfig['compression'] = isset($config['ipsec']['compression']);
 $pconfig['acceptunencryptedmainmode'] = isset($config['ipsec']['acceptunencryptedmainmode']);
 $pconfig['maxmss_enable'] = isset($config['system']['maxmss_enable']);
 $pconfig['maxmss'] = $config['system']['maxmss'];
@@ -129,10 +129,10 @@ if ($_POST) {
 			}
 		}
 
-		if($_POST['commpression'] == "yes")
-			$config['ipsec']['commpression'] = true;
-		elseif (isset($config['ipsec']['commpression']))
-			unset($config['ipsec']['commpression']);
+		if($_POST['compression'] == "yes")
+			$config['ipsec']['compression'] = true;
+		elseif (isset($config['ipsec']['compression']))
+			unset($config['ipsec']['compression']);
 
 		if($_POST['acceptunencryptedmainmode'] == "yes")
 			$config['ipsec']['acceptunencryptedmainmode'] = true;
@@ -258,7 +258,7 @@ function maxmss_checked(obj) {
 					<tr>
 						<td width="22%" valign="top" class="vncell"><?=gettext("IP Compression"); ?></td>
 						<td width="78%" class="vtable">
-							<input name="commpression" type="checkbox" id="commpression" value="yes" <?php if ($pconfig['commpression']) echo "checked=\"checked\""; ?> />
+							<input name="compression" type="checkbox" id="compression" value="yes" <?php if ($pconfig['compression']) echo "checked=\"checked\""; ?> />
 							<strong><?=gettext("Enable IPCompression"); ?></strong>
 							<br />
 							<?=gettext("IPComp compression of content is proposed on the connectio.n "); ?>

@@ -59,7 +59,7 @@ if($_REQUEST['getdyndnsstatus']) {
 		$filename = "{$g['conf_path']}/dyndns_{$dyndns['interface']}{$dyndns['type']}" . escapeshellarg($dyndns['host']) . "{$dyndns['id']}.cache";
 		if (file_exists($filename)) {
 			$ipaddr = dyndnsCheckIP($dyndns['interface']);
-			$cached_ip_s = split(":", file_get_contents($filename));
+			$cached_ip_s = explode(':', file_get_contents($filename));
 			$cached_ip = $cached_ip_s[0];
 			if ($ipaddr <> $cached_ip)
 				echo "<font color='red'>";

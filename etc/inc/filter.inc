@@ -3635,12 +3635,6 @@ function filter_generate_ipsec_rules($log = array()) {
 	$increment_tracker = 'filter_rule_tracker';
 
 	$ipfrules = "\n# VPN Rules\n";
-	/* Is IP Compression enabled? */
-	if(isset($config['ipsec']['ipcomp']))
-		set_single_sysctl("net.inet.ipcomp.ipcomp_enable" , "1");
-	else
-		set_single_sysctl("net.inet.ipcomp.ipcomp_enable" , "0");
-
 	if(isset($config['ipsec']['enable']) &&
 		is_array($config['ipsec']['phase1'])) {
 		/* step through all phase1 entries */

@@ -203,7 +203,7 @@ if ($_GET) {
 	unset($input_errors);
 
 	if ($addnewaltq) {
-		$altq =& new altq_root_queue();
+		$altq = new altq_root_queue();
 		$altq->SetInterface($interface);
 		
 		switch ($altq->GetBwscale()) {

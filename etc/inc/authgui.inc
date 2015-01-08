@@ -227,7 +227,7 @@ if ($local_ip == false) {
 }
 setcookie(
 	"cookie_test",
-	'',
+	'cookie_test',
 	time() + 3600,
 	'/',
 	NULL,

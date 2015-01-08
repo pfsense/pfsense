@@ -833,7 +833,7 @@ EOD;
 EOD;
 
 			if (isset($config['ipsec']['compression'])) {
-				$ipsecconnect .= '\tcompress = yes\n';
+				$ipsecconnect .= "\tcompress = yes\n";
 				$enablecompression = true;
 			}
 			if (!empty($ikelifeline))

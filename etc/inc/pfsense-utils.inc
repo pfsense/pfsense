@@ -1889,6 +1889,45 @@ function update_alias_names_upon_change($section, $field, $new_alias_name, $orig
 
 }
 
+function parse_aliases_file($filename, $type = "url", $max_items = -1) {
+	/*
+	 * $filename = file to process for example blocklist like DROP:  http://www.spamhaus.org/drop/drop.txt
+	 * $type = if set to 'url' then subnets and ips will be returned,
+	 *         if set to 'url_ports' port-ranges and ports will be returned
+	 * $max_items = sets the maximum amount of valid items to load, -1 the default defines there is no limit.
+	 *
+	 * RETURNS an array of ip subnets and ip's or ports and port-ranges, returns NULL upon a error conditions (file not found)
+	 */
+
+	$fd = @fopen($filename, 'r');
+	if (!$fd) {
+		log_error(gettext("Could not process aliases from alias: {$alias_url}"));
+		return null;
+	}
+	$items = array();
+	/* NOTE: fgetss() is not a typo RTFM before being smart */
+	while (($fc = fgetss($fd)) !== FALSE) {
+		$tmp = trim($fc, " \t\n\r");
+		if (empty($tmp))
+			continue;
+		$tmp_str = strstr($tmp, '#', true);
+		if (!empty($tmp_str))
+			$tmp = $tmp_str;
+		$tmp_str = strstr($tmp, ' ', true);
+		if (!empty($tmp_str))
+			$tmp = $tmp_str;
+		$valid = ($type == "url" && (is_ipaddr($tmp) || is_subnet($tmp))) ||
+		         ($type == "url_ports" && (is_port($tmp) || is_portrange($tmp)));
+		if ($valid) {
+			$items[] = $tmp;
+			if (count($items) == $max_items)
+				break;
+		}
+	}
+	fclose($fd);
+	return $items;
+}
+
 function update_alias_url_data() {
 	global $config, $g;
 
@@ -1901,8 +1940,7 @@ function update_alias_url_data() {
 			if (empty($alias['aliasurl']))
 				continue;
 
-			$address = "";
-			$isfirst = 0;
+			$address = null;
 			foreach ($alias['aliasurl'] as $alias_url) {
 				/* fetch down and add in */
 				$temp_filename = tempnam("{$g['tmp_path']}/", "alias_import");
@@ -1920,30 +1958,12 @@ function update_alias_url_data() {
 						continue;
 				}
 				if (file_exists("{$temp_filename}/aliases")) {
-					$fd = @fopen("{$temp_filename}/aliases", 'r');
-					if (!$fd) {
-						log_error(gettext("Could not process aliases from alias: {$alias_url}"));
-						continue;
-					}
-					/* NOTE: fgetss() is not a typo RTFM before being smart */
-					while (($fc = fgetss($fd)) !== FALSE) {
-						$tmp = trim($fc, " \t\n\r");
-						if (empty($tmp))
-							continue;
-						$tmp_str = strstr($tmp, '#', true);
-						if (!empty($tmp_str))
-							$tmp = $tmp_str;
-						if ($isfirst == 1)
-							$address .= ' ';
-						$address .= $tmp;
-						$isfirst = 1;
-					}
-					fclose($fd);
+					$address = parse_aliases_file("{$temp_filename}/aliases", $alias['type'], 3000);
 					mwexec("/bin/rm -rf {$temp_filename}");
 				}
 			}
-			if (!empty($address)) {
-				$config['aliases']['alias'][$x]['address'] = $address;
+			if ($address != null) {
+				$config['aliases']['alias'][$x]['address'] = implode(" ", $address);
 				$updated = true;
 			}
 		}

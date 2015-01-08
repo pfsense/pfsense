@@ -171,13 +171,11 @@ if ($_POST) {
 
 	if (preg_match("/urltable/i", $_POST['type'])) {
 		$address = "";
-		$isfirst = 0;
 
 		/* item is a url table type */
 		if ($_POST['address0']) {
 			/* fetch down and add in */
 			$_POST['address0'] = trim($_POST['address0']);
-			$isfirst = 0;
 			$address[] = $_POST['address0'];
 			$alias['url'] = $_POST['address0'];
 			$alias['updatefreq'] = $_POST['address_subnet0'] ? $_POST['address_subnet0'] : 7;
@@ -199,8 +197,6 @@ if ($_POST) {
 				$final_address_details[] = sprintf(gettext("Entry added %s"), date('r'));
 		}
 	} else if ($_POST['type'] == "url" || $_POST['type'] == "url_ports") {
-		$isfirst = 0;
-		$address_count = 2;
 		$desc_fmt_err_found = false;
 
 		/* item is a url type */
@@ -208,7 +204,6 @@ if ($_POST) {
 			$_POST['address' . $x] = trim($_POST['address' . $x]);
 			if($_POST['address' . $x]) {
 				/* fetch down and add in */
-				$isfirst = 0;
 				$temp_filename = tempnam("{$g['tmp_path']}/", "alias_import");
 				unlink_if_exists($temp_filename);
 				$verify_ssl = isset($config['system']['checkaliasesurlcert']);
@@ -241,31 +236,8 @@ if ($_POST) {
 					$final_address_details[] = sprintf(gettext("Entry added %s"), date('r'));
 
 				if(file_exists("{$temp_filename}/aliases")) {
-					$file_contents = file_get_contents("{$temp_filename}/aliases");
-					$file_contents = str_replace("#", "\n#", $file_contents);
-					$file_contents_split = explode("\n", $file_contents);
-					foreach($file_contents_split as $fc) {
-						// Stop at 3000 items, aliases larger than that tend to break both pf and the WebGUI.
-						if ($address_count >= 3000)
-							break;
-						$tmp = trim($fc);
-						if(stristr($fc, "#")) {
-							$tmp_split = explode("#", $tmp);
-							$tmp = trim($tmp_split[0]);
-						}
-						$tmp = trim($tmp);
-						if ($_POST['type'] == "url")
-							$is_valid = (is_ipaddr($tmp) || is_subnet($tmp));
-						else
-							$is_valid = (is_port($tmp) || is_portrange($tmp));
-
-						if (!empty($tmp) && $is_valid) {
-							$address[] = $tmp;
-							$isfirst = 1;
-							$address_count++;
-						}
-					}
-					if($isfirst == 0) {
+					$address = parse_aliases_file("{$temp_filename}/aliases", $_POST['type'], 3000);
+					if($address == null) {
 						/* nothing was found */
 						$input_errors[] = sprintf(gettext("You must provide a valid URL. Could not fetch usable data from '%s'."), $_POST['address' . $x]);
 					}

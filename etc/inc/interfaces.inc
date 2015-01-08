@@ -5149,6 +5149,10 @@ function is_jumbo_capable($iface) {
 	if (isset($capable['caps']['vlanmtu']))
 		return true;
 
+	// hack for some lagg modes missing vlanmtu, but work fine w/VLANs
+	if (substr($iface, 0, 4) == "lagg")
+		return true;
+
 	return false;
 }
 

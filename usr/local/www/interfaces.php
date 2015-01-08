@@ -619,7 +619,7 @@ if ($_POST['apply']) {
 						if ($config['interfaces'][$ifent]['ipaddrv6'] == 'track6' &&
 						    $config['interfaces'][$ifent]['track6-interface'] == $_POST['track6-interface'] &&
 						    $config['interfaces'][$ifent]['track6-prefix-id'] == $track6_prefix_id)
-							$input_errors[] = sprintf(gettext("This track6 prefix id is already being used in %s."), $ifdescr);
+							$input_errors[] = sprintf(gettext("This track6 prefix ID is already being used in %s."), $ifdescr);
 					}
 				}
 			}
@@ -2570,7 +2570,7 @@ $types6 = array("none" => gettext("None"), "staticv6" => gettext("Static IPv6"),
 											<span id="track6-prefix-id-range"></span>
 											<input type="hidden" id="track6-prefix-id-max" value="0"></input>
 											<br />
-											<?= gettext("The value in this field is the (Delegated) IPv6 prefix id. This determines the configurable network ID based on the dynamic IPv6 connection"); ?>
+											<?= gettext("The value in this field is the (Delegated) IPv6 prefix ID. This determines the configurable network ID based on the dynamic IPv6 connection"); ?>
 											<br />
 											<?= gettext("default value is 0."); ?>
 										</td>

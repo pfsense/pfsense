@@ -592,7 +592,6 @@
 /usr/local/lib/libcrypto.so
 /usr/local/lib/libcrypto.so.8
 /usr/local/lib/libcurl.so.3
-/usr/local/lib/libcurl.so.4
 /usr/local/lib/libcurl.so.5
 /usr/local/lib/libcurl.so.6
 /usr/local/lib/libczmq.so.0

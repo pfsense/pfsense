@@ -130,7 +130,7 @@ else if ($_POST) {
 			$l7r = $layer7_rules_list[$name];
 			$_POST['divert_port'] = $l7r->GetRPort();
 		} else {
-			$l7r =& new layer7();
+			$l7r = new layer7();
 			$_POST['divert_port'] = $l7r->gen_divert_port();
 		}
 		for($i=0; $_POST['protocol'][$i] <> ""; $i++) {

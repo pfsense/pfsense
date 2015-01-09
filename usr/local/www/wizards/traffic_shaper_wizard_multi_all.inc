@@ -719,7 +719,7 @@ function apply_all_choosen_items() {
 	for ($i = 0; $i < $steps; $i++) {
 
 		$tmppath = array();
-		$altq = new altq_root_queue();
+		$altq =& new altq_root_queue();
 
 		$altq->SetInterface($config['ezshaper']['step2']["conn{$i}interface"]);
 		$interfacelist[] = $config['ezshaper']['step2']["conn{$i}interface"];
@@ -817,9 +817,9 @@ function apply_all_choosen_items() {
 
 		if ($sched != "PRIQ") {
 			if ($sched == "CBQ")
-				$q = new cbq_queue();
+				$q =& new cbq_queue();
 			else if ($sched == "HFSC")
-				$q = new hfsc_queue();
+				$q =& new hfsc_queue();
 			$tmpcf = array();
 			$tmpcf['name'] = "qInternet";
 			//$tmpcf['priority'] = 6;
@@ -851,11 +851,11 @@ function apply_all_choosen_items() {
 		}
 
 		if ($sched == "PRIQ")
-			$q = new priq_queue();
+			$q =& new priq_queue();
 		else if ($sched == "CBQ")
-			$q = new cbq_queue();
+			$q =& new cbq_queue();
 		else if ($sched == "HFSC")
-			$q = new hfsc_queue();
+			$q =& new hfsc_queue();
 		$tmpcf = array();
 		$tmpcf['name'] = "qACK";
 		$tmpcf['priority'] = 6;
@@ -881,11 +881,11 @@ function apply_all_choosen_items() {
 		$qtmp->wconfig();
 
 		if ($sched == "PRIQ")
-			$q = new priq_queue();
+			$q =& new priq_queue();
 		else if ($sched == "CBQ")
-			$q = new cbq_queue();
+			$q =& new cbq_queue();
 		else if ($sched == "HFSC")
-			$q = new hfsc_queue();
+			$q =& new hfsc_queue();
 		$tmpcf = array();
 		if ($p2pcatchall)
 			$tmpcf['name'] = "qOthersDefault";
@@ -913,11 +913,11 @@ function apply_all_choosen_items() {
 
 			if ($p2p) {
 				if ($sched == "PRIQ")
-					$q = new priq_queue();
+					$q =& new priq_queue();
 				else if ($sched == "CBQ")
-					$q = new cbq_queue();
+					$q =& new cbq_queue();
 				else if ($sched == "HFSC")
-					$q = new hfsc_queue();
+					$q =& new hfsc_queue();
 				$tmpcf = array();
 				$tmpcf['name'] = "qP2P";
 				$tmpcf['priority'] = 1;
@@ -963,11 +963,11 @@ function apply_all_choosen_items() {
 
 			if ($voip) {
 				if ($sched == "PRIQ")
-					$q = new priq_queue();
+					$q =& new priq_queue();
 				else if ($sched == "CBQ")
-					$q = new cbq_queue();
+					$q =& new cbq_queue();
 				else if ($sched == "HFSC")
-					$q = new hfsc_queue();
+					$q =& new hfsc_queue();
 				$tmpcf = array();
 				$tmpcf['name'] = "qVoIP";
 				$tmpcf['priority'] = 7;
@@ -1003,11 +1003,11 @@ function apply_all_choosen_items() {
 
 			if ($games) {
 				if ($sched == "PRIQ")
-					$q = new priq_queue();
+					$q =& new priq_queue();
 				else if ($sched == "CBQ")
-					$q = new cbq_queue();
+					$q =& new cbq_queue();
 				else if ($sched == "HFSC")
-					$q = new hfsc_queue();
+					$q =& new hfsc_queue();
 				$tmpcf = array();
 				$tmpcf['name'] = "qGames";
 				$tmpcf['priority'] = 5;
@@ -1034,11 +1034,11 @@ function apply_all_choosen_items() {
 
 			if ($otherpriority) {
 				if ($sched == "PRIQ")
-					$q = new priq_queue();
+					$q =& new priq_queue();
 				else if ($sched == "CBQ")
-					$q = new cbq_queue();
+					$q =& new cbq_queue();
 				else if ($sched == "HFSC")
-					$q = new hfsc_queue();
+					$q =& new hfsc_queue();
 				$tmpcf = array();
 				$tmpcf['name'] = "qOthersHigh";
 				$tmpcf['priority'] = 4;
@@ -1064,11 +1064,11 @@ function apply_all_choosen_items() {
 
 
 				if ($sched == "PRIQ")
-					$q = new priq_queue();
+					$q =& new priq_queue();
 				else if ($sched == "CBQ")
-					$q = new cbq_queue();
+					$q =& new cbq_queue();
 				else if ($sched == "HFSC")
-					$q = new hfsc_queue();
+					$q =& new hfsc_queue();
 				$tmpcf = array();
 				$tmpcf['name'] = "qOthersLow";
 				$tmpcf['priority'] = 2;
@@ -1118,7 +1118,7 @@ function apply_all_choosen_items() {
 	for ($i = 0; $i < $localint; $i++) {
 
 		$tmppath = array();
-		$altq = new altq_root_queue();
+		$altq =& new altq_root_queue();
 
 		$altq->SetInterface($config['ezshaper']['step2']["local{$i}interface"]);
 		$altq->SetScheduler($config['ezshaper']['step2']["local{$i}downloadscheduler"]);
@@ -1215,11 +1215,11 @@ function apply_all_choosen_items() {
 
 		if (!$p2pcatchall) {
 			if ($sched == "PRIQ")
-				$q = new priq_queue();
+				$q =& new priq_queue();
 			else if ($sched == "CBQ")
-				$q = new cbq_queue();
+				$q =& new cbq_queue();
 			else if ($sched == "HFSC")
-				$q = new hfsc_queue();
+				$q =& new hfsc_queue();
 			$tmpcf = array();
 			$tmpcf['name'] = "qLink";
 			$tmpcf['priority'] = 2;
@@ -1245,9 +1245,9 @@ function apply_all_choosen_items() {
 
 		if ($sched != "PRIQ") {
 			if ($sched == "CBQ")
-				$q = new cbq_queue();
+				$q =& new cbq_queue();
 			else if ($sched == "HFSC")
-				$q = new hfsc_queue();
+				$q =& new hfsc_queue();
 			$tmpcf = array();
 			$tmpcf['name'] = "qInternet";
 			//$tmpcf['priority'] = 6;
@@ -1275,11 +1275,11 @@ function apply_all_choosen_items() {
 		}
 
 			if ($sched == "PRIQ")
-				$q = new priq_queue();
+				$q =& new priq_queue();
 			else if ($sched == "CBQ")
-				$q = new cbq_queue();
+				$q =& new cbq_queue();
 			else if ($sched == "HFSC")
-			$q = new hfsc_queue();
+			$q =& new hfsc_queue();
 			$tmpcf = array();
 			$tmpcf['name'] = "qACK";
 			$tmpcf['priority'] = 6;
@@ -1306,11 +1306,11 @@ function apply_all_choosen_items() {
 
 			if ($p2p) {
 				if ($sched == "PRIQ")
-					$q = new priq_queue();
+					$q =& new priq_queue();
 				else if ($sched == "CBQ")
-					$q = new cbq_queue();
+					$q =& new cbq_queue();
 				else if ($sched == "HFSC")
-					$q = new hfsc_queue();
+					$q =& new hfsc_queue();
 				$tmpcf = array();
 				$tmpcf['name'] = "qP2P";
 				$tmpcf['priority'] = 1;
@@ -1356,11 +1356,11 @@ function apply_all_choosen_items() {
 
 			if ($voip) {
 				if ($sched == "PRIQ")
-					$q = new priq_queue();
+					$q =& new priq_queue();
 				else if ($sched == "CBQ")
-					$q = new cbq_queue();
+					$q =& new cbq_queue();
 				else if ($sched == "HFSC")
-					$q = new hfsc_queue();
+					$q =& new hfsc_queue();
 				$tmpcf = array();
 				$tmpcf['name'] = "qVoIP";
 				$tmpcf['priority'] = 7;
@@ -1396,11 +1396,11 @@ function apply_all_choosen_items() {
 
 			if ($games) {
 				if ($sched == "PRIQ")
-					$q = new priq_queue();
+					$q =& new priq_queue();
 				else if ($sched == "CBQ")
-					$q = new cbq_queue();
+					$q =& new cbq_queue();
 				else if ($sched == "HFSC")
-					$q = new hfsc_queue();
+					$q =& new hfsc_queue();
 				$tmpcf = array();
 				$tmpcf['name'] = "qGames";
 				$tmpcf['priority'] = 5;
@@ -1427,11 +1427,11 @@ function apply_all_choosen_items() {
 
 			if ($otherpriority) {
 				if ($sched == "PRIQ")
-					$q = new priq_queue();
+					$q =& new priq_queue();
 				else if ($sched == "CBQ")
-					$q = new cbq_queue();
+					$q =& new cbq_queue();
 				else if ($sched == "HFSC")
-					$q = new hfsc_queue();
+					$q =& new hfsc_queue();
 				$tmpcf = array();
 				$tmpcf['name'] = "qOthersHigh";
 				$tmpcf['priority'] = 4;
@@ -1457,11 +1457,11 @@ function apply_all_choosen_items() {
 
 
 				if ($sched == "PRIQ")
-					$q = new priq_queue();
+					$q =& new priq_queue();
 				else if ($sched == "CBQ")
-					$q = new cbq_queue();
+					$q =& new cbq_queue();
 				else if ($sched == "HFSC")
-					$q = new hfsc_queue();
+					$q =& new hfsc_queue();
 				$tmpcf = array();
 				$tmpcf['name'] = "qOthersLow";
 				$tmpcf['priority'] = 3;

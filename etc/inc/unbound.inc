@@ -81,13 +81,6 @@ function unbound_optimization() {
 	// Size of the RRset cache
 	$optimization['rrset_cache_size'] = "rrset-cache-size: 8m";
 
-	// More outgoing connections per thread otherwise assign a default of 4096 for a single thread
-	if ($numprocs > 0) {
-		$or = (1024/$numprocs) - 50;
-		$optimization['outgoing_range'] = "outgoing-range: {$or}";
-	} else
-		$optimization['outgoing_range'] = "outgoing-range: {4096}";
-
 	/*
 	 * Larger socket buffer for busy servers
 	 * Check that it is set to 4MB (by default the OS has it configured to 4MB)
@@ -313,7 +306,7 @@ msg-cache-size: {$msg_cache_size}m
 {$optimization['infra_cache_slabs']}
 {$optimization['key_cache_slabs']}
 {$optimization['rrset_cache_size']}
-{$optimization['outgoing_range']}
+outgoing-range: 4096
 {$optimization['so_rcvbuf']}
 {$anchor_file}
 prefetch: {$prefetch}

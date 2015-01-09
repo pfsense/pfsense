@@ -2761,8 +2761,8 @@ function filter_rules_generate() {
 # block IPv4 link-local. Per RFC 3927, link local "MUST NOT" be forwarded by a routing device,
 # and clients "MUST NOT" send such packets to a router. FreeBSD won't route 169.254./16, but
 # route-to can override that, causing problems such as in redmine #2073
-block in {$log['block']} quick from 169.254.0.0/16 to any
-block in {$log['block']} quick from any to 169.254.0.0/16 
+block in {$log['block']} quick from 169.254.0.0/16 to any tracker {$increment_tracker($tracker)} label "Block IPv4 link-local"
+block in {$log['block']} quick from any to 169.254.0.0/16 tracker {$increment_tracker($tracker)} label "Block IPv4 link-local"
 #---------------------------------------------------------------------------
 # default deny rules
 #---------------------------------------------------------------------------

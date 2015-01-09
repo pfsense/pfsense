@@ -41,7 +41,7 @@ require_once("ipsec.inc");
 
 if (isset($config['ipsec']['phase1'])) { ?>
 	<div>&nbsp;</div>
-	<?php
+<?php
 	$tab_array = array();
 	$tab_array[0] = array("Overview", true, "ipsec-Overview");
 	$tab_array[1] = array("Tunnels", false, "ipsec-tunnel");
@@ -70,11 +70,11 @@ if (isset($config['ipsec']['phase1'])) { ?>
 	$ikev1num = array();
 	if (isset($config['ipsec']['phase2'])) {
 		foreach ($config['ipsec']['phase2'] as $ph2ent) {
-			if ($ph2ent['remoteid']['type'] == "mobile")
-				continue;
 			if (!ipsec_lookup_phase1($ph2ent,$ph1ent))
 				continue;
 
+			if ($ph2ent['remoteid']['type'] == "mobile" || isset($ph1ent['mobile'])))
+				continue;
 			if (isset($ph1ent['disabled']) || isset($ph2ent['disabled']))
 				continue;
 
@@ -91,8 +91,7 @@ if (isset($config['ipsec']['phase1'])) { ?>
 			foreach ($ipsec_status['query']['ikesalist']['ikesa'] as $ikesa) {
 				if ($ikeid == $ikesa['peerconfig']) {
 					$found = true;
-					$ph2ikeid = $ikesa['id'];
-					if (ipsec_phase1_status($ipsec_status['query']['ikesalist']['ikesa'], $ph2ikeid)) {
+					if (ipsec_phase1_status($ipsec_status['query']['ikesalist']['ikesa'], $ikesa['id'])) {
 						/* tunnel is up */
 						$iconfn = "true";
 						$activecounter++;

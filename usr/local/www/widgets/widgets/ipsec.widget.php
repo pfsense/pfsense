@@ -79,11 +79,11 @@ if (isset($config['ipsec']['phase1'])) { ?>
 				continue;
 
 			if (empty($ph1ent['iketype']) || $ph1ent['iketype'] == 'ikev1') {
-				if (!isset($ikev1num[$ph1ent['ikeid']]))
+				if (!isset($ikenum[$ph1ent['ikeid']]))
 					$ikenum[$ph1ent['ikeid']] = 0;
 				else
 					$ikenum[$ph1ent['ikeid']]++;
-				$ikeid = "con{$ph1ent['ikeid']}00" . $ikev1num[$ph1ent['ikeid']];
+				$ikeid = "con{$ph1ent['ikeid']}00" . $ikenum[$ph1ent['ikeid']];
 			} else {
 				if (isset($ikenum[$ph1ent['ikeid']]))
 					continue;
@@ -120,7 +120,7 @@ if (isset($config['ipsec']['phase1'])) { ?>
 					'status' => $iconfn);
 		}
 	}
-	unset($ikev1num);
+	unset($ikenum);
 }
 
 	if (isset($config['ipsec']['phase2'])) { ?>

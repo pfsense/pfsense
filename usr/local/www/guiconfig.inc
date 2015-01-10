@@ -501,7 +501,6 @@ function firewall_check_for_advanced_options(&$item) {
 }
 
 function gentitle($title) {
-	global $navlevelsep;
 	if(!is_array($title))
 		return $title;
 	else
@@ -509,8 +508,17 @@ function gentitle($title) {
 }
 
 function genhtmltitle($title) {
-	global $config;
-	return gentitle($title);
+	if(!is_array($title))
+		return $title;
+
+	$bc = '<ol class="breadcrumb">';
+
+	foreach ($title as $el)
+		$bc .= '<li>'.$el.'</li>';
+
+	$bc .= '</ol>';
+
+	return $bc;
 }
 
 /* update the changedesc and changecount(er) variables */

@@ -310,7 +310,7 @@ $mac_man = load_mac_manufacturer_table();
 				$mac_hi = strtoupper($mac[0] . $mac[1] . $mac[3] . $mac[4] . $mac[6] . $mac[7]);
 
 				if (isset($mac_man[$mac_hi]))
-					print '('. $mac_man[$mac_hi] .'(';
+					print '<small>('. $mac_man[$mac_hi] .')</small>';
 ?>
 			</td>
 			<td><?=trim(str_replace("Z_ ", "", $entry['dnsresolve']))?></td>

@@ -278,7 +278,7 @@ if(! $g['disablehelpmenu']) {
 <nav class="navbar navbar-fixed-top navbar-inverse">
 	<div class="container">
 		<div class="navbar-header">
-			<button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
+			<button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#pf-navbar">
 				<span class="sr-only">Toggle navigation</span>
 				<span class="icon-bar"></span>
 				<span class="icon-bar"></span>
@@ -288,7 +288,7 @@ if(! $g['disablehelpmenu']) {
 			<a class="navbar-brand" href="/"><img src="/logo.png" alt="pfSense" /></a>
 		</div>
 
-		<div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+		<div class="collapse navbar-collapse" id="pf-navbar">
 			<ul class="nav navbar-nav">
 				<li class="dropdown">
 					<a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false"><?=gettext("System"); ?>
@@ -373,7 +373,7 @@ if(! $g['disablehelpmenu']) {
 	</div>
 </nav>
 <div class="container">
-	<h1><?=genhtmltitle($pgtitle);?></h1>
+	<?=genhtmltitle($pgtitle);?>
 <?php
 /*
 //FIXME

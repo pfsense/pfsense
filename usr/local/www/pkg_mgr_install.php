@@ -3,7 +3,7 @@
 /*
 	pkg_mgr_install.php
 	part of pfSense (https://www.pfsense.org)
-        Copyright (C) 2013-2014 Electric Sheep Fencing, LP
+		Copyright (C) 2013-2014 Electric Sheep Fencing, LP
 	Copyright (C) 2004-2010 Scott Ullrich <sullrich@gmail.com>
  	Copyright (C) 2005 Colin Smith
 	All rights reserved.
@@ -55,9 +55,6 @@ $static_output = "";
 $static_status = "";
 $sendto = "output";
 
-$pgtitle = array(gettext("System"),gettext("Package Manager"),gettext("Install Package"));
-include("head.inc");
-
 if ($_POST) {
 	if (isset($_POST['pkgcancel']) || (empty($_POST['id']) && $_POST['mode'] != 'reinstallall')) {
 		header("Location: pkg_mgr_installed.php");
@@ -70,7 +67,7 @@ if ($_POST) {
 		break;
 	case 'installedinfo':
 	case 'reinstallxml':
-        case 'reinstallpkg':
+		case 'reinstallpkg':
 	case 'delete':
 		if (empty($_GET['pkg'])) {
 			header("Location: pkg_mgr_installed.php");
@@ -86,24 +83,17 @@ if ($_POST) {
 	}
 }
 
-?>
+$pgtitle = array(gettext("System"),gettext("Package Manager"),gettext("Install Package"));
+include("head.inc");
 
-<body link="#0000CC" vlink="#0000CC" alink="#0000CC">
-<?php include("fbegin.inc"); ?>
-	<form action="pkg_mgr_install.php" method="post">
-		<div id="mainareapkg">
-			<table width="100%" border="0" cellpadding="0" cellspacing="0" summary="package manager install">
-				<tr>
-					<td>
-						<?php
-							$tab_array = array();
-							$tab_array[] = array(gettext("Available packages"), false, "pkg_mgr.php");
-							$tab_array[] = array(gettext("Installed packages"), false, "pkg_mgr_installed.php");
-							$tab_array[] = array(gettext("Package Installer"), true, "");
-							display_top_tabs($tab_array);
-						?>
-					</td>
-				</tr>
+$tab_array = array();
+$tab_array[] = array(gettext("Available packages"), false, "pkg_mgr.php");
+$tab_array[] = array(gettext("Installed packages"), false, "pkg_mgr_installed.php");
+$tab_array[] = array(gettext("Package Installer"), true, "");
+display_top_tabs($tab_array);
+?>
+<form action="pkg_mgr_install.php" method="post" class="form-horizontal">
+	<h2>Add / remove package</h2>
 <?php if ((empty($_GET['mode']) && $_GET['id']) || (!empty($_GET['mode']) && (!empty($_GET['pkg']) || $_GET['mode'] == 'reinstallall') && ($_GET['mode'] != 'installedinfo' && $_GET['mode'] != 'showlog'))):
 	if (empty($_GET['mode']) && $_GET['id']) {
 		$pkgname = str_replace(array("<", ">", ";", "&", "'", '"', '.', '/'), "", htmlspecialchars_decode($_GET['id'], ENT_QUOTES | ENT_HTML401));
@@ -114,6 +104,7 @@ if ($_POST) {
 	} else if ($_GET['mode'] == 'reinstallall') {
 		$pkgmode = 'reinstallall';
 	}
+
 	switch ($pkgmode) {
 	case 'reinstallall':
 		$pkgname = 'All packages';
@@ -131,60 +122,35 @@ if ($_POST) {
 		break;
 	}
 ?>
-				<tr>
-					<td class="tabcont" align="center">
-						<table style="height:15;colspacing:0" width="420" border="0" cellpadding="0" cellspacing="0" summary="images">
-							<tr>
-								<td class="tabcont" align="center">Package: <b><?=$pkgname;?></b> will be <?=$pkgtxt;?>.<br/>
-								Please confirm the action.<br/>
-								</td>
-								<td class="tabcont" align="center">
-									<input type="hidden" name="id" value="<?=$pkgname;?>" />
-									<input type="hidden" name="mode" value="<?=$pkgmode;?>" />
-									<input type="submit" name="pkgconfirm" id="pkgconfirm" value="Confirm"/>
-									<input type="submit" name="pkgcancel" id="pkgcancel" value="Cancel"/>
-								</td>
-							</tr>
-						</table>
-					</td>
-				</tr>
-<?php endif; if (!empty($_POST['id']) || $_GET['mode'] == 'showlog' || ($_GET['mode'] == 'installedinfo' && !empty($_GET['pkg']))): ?>
-				<tr>
-					<td class="tabcont" align="center">
-						<table style="height:15;colspacing:0" width="420" border="0" cellpadding="0" cellspacing="0" summary="images">
-							<tr>
-								<td style="background:url('./themes/<?=$g['theme'];?>/images/misc/bar_left.gif')" height="15" width="5"></td>
-								<td>
-									<table id="progholder" style="height:15;colspacing:0" width="410" border="0" cellpadding="0" cellspacing="0" summary="progress bar">
-										<tr><td style="background:url('./themes/<?=$g['theme'];?>/images/misc/bar_gray.gif')" valign="top" align="left">
-											<img src='./themes/<?= $g['theme']; ?>/images/misc/bar_blue.gif' width="0" height="15" name="progressbar" id="progressbar" alt="progress bar" />
-										</td></tr>
-									</table>
-								</td>
-								<td style="background:url('./themes/<?=$g['theme'];?>/images/misc/bar_right.gif')" height="15" width="5">
-								</td>
-							</tr>
-						</table>
-						<br />
-						<!-- status box -->
-						<textarea cols="80" rows="1" name="status" id="status" wrap="hard"><?=gettext("Beginning package installation.");?></textarea>
-						<br />
-						<!-- command output box -->
-						<textarea cols="80" rows="35" name="output" id="output" wrap="hard"></textarea>
-					</td>
-				</tr>
-<?php endif; ?>
-			</table>
+	<div class="panel panel-default">
+		<div class="panel-body">
+			<p>Package: <b><?=$pkgname;?></b> will be <?=$pkgtxt;?>.</p>
 		</div>
-	</form>
-<?php include("fend.inc"); ?>
-<script type="text/javascript">
-//<![CDATA[
-NiftyCheck();
-Rounded("div#mainareapkg","bl br","#FFF","#eeeeee","smooth");
-//]]>
-</script>
+		<div class="panel-footer">
+			<input type="hidden" name="id" value="<?=$pkgname;?>" />
+			<input type="hidden" name="mode" value="<?=$pkgmode;?>" />
+			<input type="submit" name="pkgconfirm" class="btn btn-primary" value="Confirm"/>
+			<input type="submit" name="pkgcancel" class="btn" value="Cancel"/>
+		</div>
+	</div>
+<?php endif;?>
 
+<?php if (!empty($_POST['id']) || $_GET['mode'] == 'showlog' || ($_GET['mode'] == 'installedinfo' && !empty($_GET['pkg']))):?>
+	<div class="panel panel-default">
+		<div class="panel-heading">
+			<h2 id="status"><?=gettext("Beginning package installation.")?></h2>
+		</div>
+
+		<div class="panel-body">
+			<textarea rows="15" class="form-control" id="output"></textarea>
+
+			<div class="progress">
+				<div id="progressbar" class="progress-bar progress-bar-striped" role="progressbar" aria-valuemin="0" aria-valuemax="100" style="width: 1%"><span class="sr-only">1% Complete</span></div>
+			</div>
+		</div>
+	</div>
+<?php endif?>
+</form>
 <?php
 
 ob_flush();
@@ -279,7 +245,7 @@ if ($_GET) {
 				$status_a = gettext(sprintf("Installation of %s completed.", $pkgid));
 				update_status($status_a);
 				$status = get_after_install_info($pkgid);
-				if($status) 
+				if($status)
 					$static_output .= "\n" . gettext("Installation completed.") . "\n{$pkgid} " . gettext("setup instructions") . ":\n{$status}";
 				else
 					$static_output .= "\n" . gettext("Installation completed.   Please check to make sure that the package is configured from the respective menu then start the package.");
@@ -302,7 +268,5 @@ if ($_GET) {
 	/* Restore to read only fs */
 	conf_mount_ro();
 }
-?>
 
-</body>
-</html>
+include('foot.inc')?>

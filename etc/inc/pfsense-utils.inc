@@ -718,7 +718,7 @@ function call_pfsense_method($method, $params, $timeout = 0) {
 
 	$xmlrpc_base_url = get_active_xml_rpc_base_url();
 	$xmlrpc_path = $g['xmlrpcpath'];
-	
+
 	$xmlrpcfqdn = preg_replace("(https?://)", "", $xmlrpc_base_url);
 	$ip = gethostbyname($xmlrpcfqdn);
 	if($ip == $xmlrpcfqdn)
@@ -763,7 +763,7 @@ function call_pfsense_method($method, $params, $timeout = 0) {
  */
 function check_firmware_version($tocheck = "all", $return_php = true) {
 	global $g, $config;
-	
+
 	$xmlrpc_base_url = get_active_xml_rpc_base_url();
 	$xmlrpcfqdn = preg_replace("(https?://)", "", $xmlrpc_base_url);
 	$ip = gethostbyname($xmlrpcfqdn);
@@ -1792,12 +1792,12 @@ function update_output_window($text) {
 	global $pkg_interface;
 	$log = preg_replace("/\n/", "\\n", $text);
 	if($pkg_interface != "console") {
-		echo "\n<script type=\"text/javascript\">";
-		echo "\n//<![CDATA[";
-		echo "\nthis.document.forms[0].output.value = \"" . $log . "\";";
-		echo "\nthis.document.forms[0].output.scrollTop = this.document.forms[0].output.scrollHeight;";
-		echo "\n//]]>";
-		echo "\n</script>";
+?>
+<script>
+	document.getElementById("output").textContent="<?=htmlspecialchars($log)?>";
+	document.getElementById("output").scrollTop = document.getElementById("output").scrollHeight;
+</script>
+<?php
 	}
 	/* ensure that contents are written out */
 	ob_flush();
@@ -1811,12 +1811,9 @@ function update_status($status) {
 	if($pkg_interface == "console") {
 		echo "\r{$status}";
 	} else {
-		echo "\n<script type=\"text/javascript\">";
-		echo "\n//<![CDATA[";
-		echo "\nthis.document.forms[0].status.value=\"" . $status . "\";";
-		echo "\n//]]>";
-		echo "\n</script>";
+		echo '<script>document.getElementById("status").innerText="'. htmlspecialchars($status).'";</script>';
 	}
+
 	/* ensure that contents are written out */
 	ob_flush();
 }
@@ -1828,11 +1825,7 @@ function update_progress_bar($percent, $first_time) {
 	global $pkg_interface;
 	if($percent > 100) $percent = 1;
 	if($pkg_interface <> "console") {
-		echo "\n<script type=\"text/javascript\">";
-		echo "\n//<![CDATA[";
-		echo "\ndocument.progressbar.style.width='" . $percent . "%';";
-		echo "\n//]]>";
-		echo "\n</script>";
+		echo '<script>document.getElementById("progressbar").style.width="'. $percent.'%";</script>';
 	} else {
 		if(!($first_time))
 			echo "\x08\x08\x08\x08\x08";

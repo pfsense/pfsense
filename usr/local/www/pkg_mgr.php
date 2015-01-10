@@ -92,7 +92,6 @@ if (! empty($_GET))
 	if (isset($_GET['ver']))
 		$requested_version = htmlspecialchars($_GET['ver']);
 
-$closehead = false;
 $pgtitle = array(gettext("System"),gettext("Package Manager"));
 include("head.inc");
 
@@ -157,103 +156,94 @@ if($pkg_info) {
 	if (count($categories) > 1)
 		display_top_tabs($tab_array);
 }
-?>
-<table class="table table-striped">
-<thead>
-<tr>
-	<th><?=gettext("Name")?></th>
+
+if(!$pkg_info || !is_array($pkg_keys)):?>
+	<div class="alert alert-warning">
+		<?=gettext("There are currently no packages available for installation.")?>
+	</div>
+<?php else: ?>
+	<table class="table table-striped">
+	<thead>
+	<tr>
+		<th><?=gettext("Name")?></th>
+<?php if ($show_category):?>
+		<th><?=gettext("Category")?></th>
+<?php endif;?>
+		<th><?=gettext("Status")?></th>
+<?php if (!$g['disablepackagehistory']):?>
+		<th><?=gettext("Version")?></th>
+<?php endif;?>
+		<th><?=gettext("Platform")?></th>
+		<th><?=gettext("Description")?></th>
+	</tr>
+	</thead>
+	<tbody>
 <?php
-	if ($show_category)
-		print '<th>'.gettext("Category").'</th>'."\n";
+	foreach($pkg_keys as $key):
+		$index = &$pkg_info[$key];
+		if(get_pkg_id($index['name']) >= 0 )
+			continue;
+
+		if (package_skip_tests($index,$requested_version))
+			continue;
+
+		/* get history/changelog git dir */
+		$commit_dir=explode("/",$index['config_file']);
+		$changeloglink = "https://github.com/pfsense/pfsense-packages/commits/master/config/";
+		if ($commit_dir[(count($commit_dir)-2)] == "config")
+			$changeloglink .= $commit_dir[(count($commit_dir)-1)];
+		else
+			$changeloglink .= $commit_dir[(count($commit_dir)-2)];
+
+		if ($menu_category != "All" && $index['category'] != $menu_category && !($menu_category == "Other" && !in_array($index['category'], $visible_categories)))
+			continue;
 ?>
-	<th><?=gettext("Status")?></th>
-	<th><?=gettext("Description")?></th>
-	<th></th>
-</tr>
-<thead>
-<tbody>
+		<tr>
+			<td>
+<?php if ($index['website']):?>
+				<a title="<?=gettext("Visit official website")?>" target="_blank" href="<?=htmlspecialchars($index['website'])?>">
+<?php endif; ?>
+					<?=htmlspecialchars($index['name'])?>
+				</a>
+			</td>
+<?php if ($show_category):?>
+			<td>
+				<?=gettext($index['category'])?>
+			</td>
+<?php endif;?>
+			<td>
+				<?=ucfirst(strtolower($index['status']))?>
+			</td>
+<?php if (!$g['disablepackagehistory']):?>
+			<td>
+				<a target="_blank" title="<?=gettext("View changelog")?>" href="<?=htmlspecialchars($changeloglink)?>">
+					<?=htmlspecialchars($index['version'])?>
+				</a>
+			</td>
+<?php endif;?>
+			<td>
+				<?=$index['required_version']?>
+				<?php if ($index['maximum_version']):?>
+					(&lt; $index['maximum_version'])
+				<?php endif;?>
+			</td>
+			<td>
+				<?=$index['descr']?>
+			</td>
+			<td>
+				<a title="<?=gettext("Click to install")?>" href="pkg_mgr_install.php?id=<?=$index['name']?>">
+					<i class="icon icon-download"></i>
+				</a>
+<?php if(!$g['disablepackageinfo'] && $index['pkginfolink'] && $index['pkginfolink'] != $index['website']):?>
+				<a target="_blank" title="<?=gettext("View more inforation")?>" href="<?=htmlspecialchars($index['pkginfolink'])?>">
+					<i class="icon icon-question-sign"></i>
+				</a>
+<?php endif;?>
+			</td>
+		</tr>
 <?php
-		if(!$pkg_info) {
-			echo "<tr><td><center>" . gettext("There are currently no packages available for installation.") . "</td></tr>";
-		} else {
-			if(is_array($pkg_keys)) {
-				foreach($pkg_keys as $key):
-					$index = &$pkg_info[$key];
-					if(get_pkg_id($index['name']) >= 0 )
-						continue;
-
-					if (package_skip_tests($index,$requested_version))
-						continue;
-
-					/* get history/changelog git dir */
-					$commit_dir=explode("/",$index['config_file']);
-					$changeloglink = "https://github.com/pfsense/pfsense-packages/commits/master/config/";
-					if ($commit_dir[(count($commit_dir)-2)] == "config")
-						$changeloglink .= $commit_dir[(count($commit_dir)-1)];
-					else
-						$changeloglink .= $commit_dir[(count($commit_dir)-2)];
-
-					/* Check package info link */
-					if($index['pkginfolink']) {
-						$pkginfolink = $index['pkginfolink'];
-						$pkginfo=gettext("Package info");
-					} else {
-						$pkginfolink = "https://forum.pfsense.org/index.php/board,15.0.html";
-						$pkginfo=gettext("No package info, check the forum");
-					}
-
-					if ($menu_category == "All" || $index['category'] == $menu_category || ($menu_category == "Other" && !in_array($index['category'],$visible_categories)) ):
-?>
-						<tr valign="top" class="<?=$index['category']?>">
-						<td>>
-							<a target="_blank" href="<?=$index['website']?>"><?=$index['name']?></a>
-						</td>
-<?php
-						if ($show_category)
-							print '<td>'.gettext($index['category']).'</td>'."\n";
-
-						if ($g['disablepackagehistory']) {
-							print '<td>'."\n";
-						} else {
-							print '<td class="listr" ';
-							domTT_title(gettext("Click ").ucfirst($index['name']).gettext(" version to check its change log."));
-							print ">\n";
-						}
-
-						print "{$index['status']} <br />\n";
-
-						if ($g['disablepackagehistory'])
-							echo"<a>{$index['version']}</a>";
-						else
-							echo "<a target='_blank' href='{$changeloglink}'>{$index['version']}</a>";
-?>
-						<br />
-						<?=gettext("platform") .": ". $index['required_version']?>
-						<br />
-						<?=$index['maximum_version']?>
-						</td>
-						<td>>
-						<?=$index['descr']?>
-<?php
-						if (! $g['disablepackageinfo']):
-?>
-							<br /><br />
-							<a target='_blank' href='<?=$pkginfolink?>' style='align:center;color:#ffffff; filter:Glow(color=#ff0000, strength=12);'><?=$pkginfo?></a>
-<?php
-						endif;
-?>
-						</td>
-						<td>
-							<a href="pkg_mgr_install.php?id=<?=$index['name']?>"><img <?=domTT_title(gettext("Install ".ucfirst($index['name'])." package."))?> src="./themes/<?=$g['theme']?>/images/icons/icon_plus.gif" alt="add" /></a>
-						</td></tr>
-<?php
-					endif;
-				endforeach;
-			} else {
-				echo "<tr><td>" . gettext("There are currently no packages available for installation.") . "</td></tr>";
-			} /* if(is_array($pkg_keys)) */
-		} /* if(!$pkg_info) */
-?>
+	endforeach;
+endif;?>
 </tbody>
 </table>
-<?php include("foot.inc");?>
+<?php include("foot.inc")?>

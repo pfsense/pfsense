@@ -83,7 +83,7 @@ $g['platform'] = trim(file_get_contents("/etc/platform"));
 if(!is_dir("/usr/local/pkg") or !is_dir("/usr/local/pkg/pf")) {
 	conf_mount_rw();
 	safe_mkdir("/usr/local/pkg");
-	safe_mkdir("/usr/local/pkg/pf");	
+	safe_mkdir("/usr/local/pkg/pf");
 	conf_mount_ro();
 }
 
@@ -95,11 +95,11 @@ if(!is_dir("/usr/local/pkg") or !is_dir("/usr/local/pkg/pf")) {
  * RESULT
  *   none
  * NOTES
- *   
+ *
  ******/
 function remove_freebsd_package($packagestring) {
-	// The packagestring passed in must be the full PBI package name, 
-	// as displayed by the pbi_info utility. e.g. "package-1.2.3_4-i386" 
+	// The packagestring passed in must be the full PBI package name,
+	// as displayed by the pbi_info utility. e.g. "package-1.2.3_4-i386"
 	// It must NOT have ".pbi" on the end.
 	$links = get_pbi_binaries(escapeshellarg($packagestring));
 	foreach($links as $link)
@@ -177,8 +177,8 @@ function get_pkg_info($pkgs = 'all', $info = 'all') {
 
 	$freebsd_machine = php_uname("m");
 	$params = array(
-		"pkg" => $pkgs, 
-		"info" => $info, 
+		"pkg" => $pkgs,
+		"info" => $info,
 		"freebsd_version" => get_freebsd_version(),
 		"freebsd_machine" => $freebsd_machine
 	);
@@ -191,7 +191,7 @@ function get_pkg_sizes($pkgs = 'all') {
 
 	$freebsd_machine = php_uname("m");
 	$params = array(
-		"pkg" => $pkgs, 
+		"pkg" => $pkgs,
 		"freebsd_version" => get_freebsd_version(),
 		"freebsd_machine" => $freebsd_machine
 	);
@@ -235,7 +235,7 @@ function resync_all_package_configs($show_message = false) {
 		if(platform_booting() != true)
 			stop_service(get_pkg_internal_name($package));
 		sync_package($idx, true, true);
-		if($pkg_interface == "console") 
+		if($pkg_interface == "console")
 			echo "\n" . gettext("Syncing packages:");
 	}
 
@@ -251,7 +251,7 @@ function resync_all_package_configs($show_message = false) {
  *				package is installed.
  */
 function is_freebsd_pkg_installed($pkg) {
-	if(!$pkg) 
+	if(!$pkg)
 		return;
 	$output = "";
 	$_gb = exec("/usr/local/sbin/pbi_info " . escapeshellarg($pkg) . ' 2>/dev/null', $output, $retval);
@@ -300,7 +300,7 @@ function get_pkg_depends($pkg_name, $filetype = ".xml", $format = "files", $retu
 			else
 				$prefix = "/usr/local/pkg/";
 			// Ensure that the prefix exists to avoid installation errors.
-			if(!is_dir($prefix)) 
+			if(!is_dir($prefix))
 				exec("/bin/mkdir -p {$prefix}");
 			if(!file_exists($prefix . $depend_file))
 				log_error(sprintf(gettext("The %s package is missing required dependencies and must be reinstalled."), $package['name']));
@@ -376,12 +376,12 @@ function force_remove_package($pkg_name) {
 function sync_package($pkg_name, $sync_depends = true, $show_message = false) {
 	global $config, $config_parsed;
 	global $builder_package_install;
-	
-	// If this code is being called by pfspkg_installer 
+
+	// If this code is being called by pfspkg_installer
 	// which the builder system uses then return (ignore).
 	if($builder_package_install)
 		return;
-	
+
 	if(empty($config['installedpackages']['package']))
 		return;
 	if(!is_numeric($pkg_name)) {
@@ -443,7 +443,7 @@ function sync_package($pkg_name, $sync_depends = true, $show_message = false) {
 					if(isset($item_config['nosync']))
 						continue;
 					if (!empty($item_config['include_file'])) {
-						if (file_exists($item_config['include_file']))	
+						if (file_exists($item_config['include_file']))
 							require_once($item_config['include_file']);
 						else {
 							log_error("Not calling package sync code for dependency {$item_config['name']} of {$package['name']} because some include files are missing.");
@@ -604,7 +604,7 @@ function install_package($package, $pkg_info = "", $force_install = false) {
 	/* safe side. Write config below will send to ro again. */
 	conf_mount_rw();
 
-	if($pkg_interface == "console") 	
+	if($pkg_interface == "console")
 		echo "\n";
 	/* fetch package information if needed */
 	if(empty($pkg_info) or !is_array($pkg_info[$package])) {
@@ -618,17 +618,17 @@ function install_package($package, $pkg_info = "", $force_install = false) {
 	if (!$force_install) {
 		$compatible = true;
 		$version = rtrim(file_get_contents("/etc/version"));
-		
+
 		if (isset($pkg_info['required_version']))
 			$compatible = (pfs_version_compare("", $version, $pkg_info['required_version']) >= 0);
 		if (isset($pkg_info['maximum_version']))
 			$compatible = $compatible && (pfs_version_compare("", $version, $pkg_info['maximum_version']) <= 0);
-		
+
 		if (!$compatible) {
 			log_error(sprintf(gettext('Package %s is not supported on this version.'), $pkg_info['name']));
 			$static_output .= sprintf(gettext("Package %s is not supported on this version."), $pkg_info['name']);
 			update_status($static_output);
-			
+
 			conf_mount_ro();
 			return -1;
 		}
@@ -675,8 +675,8 @@ function install_package($package, $pkg_info = "", $force_install = false) {
 		log_error(sprintf(gettext("Successfully installed package: %s."), $pkg_info['name']));
 		$static_output .= gettext("done.") . "\n";
 		update_output_window($static_output);
-		if($pkg_info['after_install_info']) 
-			update_output_window($pkg_info['after_install_info']);	
+		if($pkg_info['after_install_info'])
+			update_output_window($pkg_info['after_install_info']);
 	}
 }
 
@@ -709,8 +709,8 @@ function install_package_xml($pkg) {
 		$static_output .= sprintf(gettext("The %s package is not installed.%sInstallation aborted."), $pkg, "\n\n");
 		update_output_window($static_output);
 		if($pkg_interface <> "console") {
-			echo "\n<script type=\"text/javascript\">document.progressbar.style.visibility='hidden';</script>";
-			echo "\n<script type=\"text/javascript\">document.progholder.style.visibility='hidden';</script>";
+			echo "\n<script>document.getElementById('progressbar').style.visibility='hidden';</script>";
+			echo "\n<script>document.getElementById('progholder').style.visibility='hidden';</script>";
 		}
 		sleep(1);
 		return false;
@@ -719,7 +719,7 @@ function install_package_xml($pkg) {
 
 	/* pkg_add the package and its dependencies */
 	if($pkg_info['depends_on_package_base_url'] != "") {
-		if($pkg_interface == "console") 
+		if($pkg_interface == "console")
 			echo "\n";
 		update_status(gettext("Installing") . " " . $pkg_info['name'] . " " . gettext("and its dependencies."));
 		$static_output .= gettext("Downloading") . " " . $pkg_info['name'] . " " . gettext("and its dependencies... ");
@@ -736,8 +736,8 @@ function install_package_xml($pkg) {
 					update_output_window($static_output);
 					pkg_debug(gettext("Package WAS NOT installed properly.") . "\n");
 					if($pkg_interface <> "console") {
-						echo "\n<script type=\"text/javascript\">document.progressbar.style.visibility='hidden';</script>";
-						echo "\n<script type=\"text/javascript\">document.progholder.style.visibility='hidden';</script>";
+						echo "\n<script>document.getElementById('progressbar').style.visibility='hidden';</script>";
+						echo "\n<script>document.getElementById('progholder').style.visibility='hidden';</script>";
 					}
 					sleep(1);
 					return false;
@@ -893,8 +893,8 @@ function install_package_xml($pkg) {
 		update_output_window($static_output);
 		pkg_debug(gettext("Unable to load package configuration. Installation aborted.") ."\n");
 		if($pkg_interface <> "console") {
-			echo "\n<script type=\"text/javascript\">document.progressbar.style.visibility='hidden';</script>";
-			echo "\n<script type=\"text/javascript\">document.progholder.style.visibility='hidden';</script>";
+			echo "\n<script>document.getElementById('progressbar').style.visibility='hidden';</script>";
+			echo "\n<script>document.getElementById('progholder').style.visibility='hidden';</script>";
 		}
 		sleep(1);
 		return false;
@@ -919,9 +919,9 @@ function does_package_depend($pkg) {
 	$pkg_var_db_dir = glob("/var/db/pkg/{$pkg}*");
 	// If this package has dependency then return true
 	foreach($pkg_var_db_dir as $pvdd) {
-		if (file_exists("{$vardb}/{$pvdd}/+REQUIRED_BY") && count(file("{$vardb}/{$pvdd}/+REQUIRED_BY")) > 0) 
+		if (file_exists("{$vardb}/{$pvdd}/+REQUIRED_BY") && count(file("{$vardb}/{$pvdd}/+REQUIRED_BY")) > 0)
 			return true;
-	}	
+	}
 	// Did not find a record of dependencies, so return false.
 	return false;
 }
@@ -929,7 +929,7 @@ function does_package_depend($pkg) {
 function delete_package($pkg) {
 	global $config, $g, $static_output, $vardb;
 
-	if(!$pkg) 
+	if(!$pkg)
 		return;
 
 	// Note: $pkg has the full PBI package name followed by ".pbi". Strip off ".pbi".
@@ -959,8 +959,8 @@ function delete_package_xml($pkg) {
 		$static_output .= sprintf(gettext("The %s package is not installed.%sDeletion aborted."), $pkg, "\n\n");
 		update_output_window($static_output);
 		if($pkg_interface <> "console") {
-			echo "\n<script type=\"text/javascript\">document.progressbar.style.visibility='hidden';</script>";
-			echo "\n<script type=\"text/javascript\">document.progholder.style.visibility='hidden';</script>";
+			echo "\n<script>document.getElementById('progressbar').style.visibility='hidden';</script>";
+			echo "\n<script>document.getElementById('progholder').style.visibility='hidden';</script>";
 		}
 		ob_flush();
 		sleep(1);
@@ -1133,7 +1133,7 @@ function delete_package_xml($pkg) {
 		$static_output .= "done.\n";
 		update_output_window($static_output);
 	}
-	
+
 	conf_mount_ro();
 	/* remove config.xml entries */
 	$static_output .= gettext("Configuration... ");
@@ -1311,32 +1311,32 @@ function package_skip_tests($index,$requested_version){
 
 	/* Get pfsense version*/
 	$version = rtrim(file_get_contents("/etc/version"));
-	
+
 	if($g['platform'] == "nanobsd")
-		if($index['noembedded']) 
+		if($index['noembedded'])
 			return true;
-						
+
 	/* If we are on not on HEAD, and the package wants it, skip */
 	if ($version <> "HEAD" && $index['required_version'] == "HEAD" && $requested_version <> "other")
 		return true;
-							
+
 	/* If there is no required version, and the requested package version is not 'none', then skip */
 	if (empty($index['required_version']) && $requested_version <> "none")
 		return true;
-							
+
 	/* If the requested version is not 'other', and the required version is newer than what we have, skip. */
 	if($requested_version <> "other" && (pfs_version_compare("", $version, $index['required_version']) < 0))
 		return true;
-							
+
 	/* If the requestion version is 'other' and we are on the version requested, skip. */
 	if($requested_version == "other" && (pfs_version_compare("", $version, $index['required_version']) == 0))
 		return true;
-							
+
 	/* Package is only for an older version, lets skip */
 	if($index['maximum_version'] && (pfs_version_compare("", $version, $index['maximum_version']) > 0))
 		return true;
-		
-	/* Do not skip package list */	
+
+	/* Do not skip package list */
 	return false;
 }
 

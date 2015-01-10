@@ -101,8 +101,6 @@ $pgtitle = array(gettext("Status"),gettext("CARP"));
 $shortcut_section = "carp";
 include("head.inc");
 ?>
-<body>
-<?php include("fbegin.inc")?>
 <form action="carp_status.php" method="post">
 <?php if ($savemsg) print_info_box($savemsg)?>
 <?php if ($carp_detected_problems) print_info_box(gettext("CARP has detected a problem and this unit has been demoted to BACKUP status.") . "<br />" . gettext("Check link status on all interfaces with configured CARP VIPs."))?>
@@ -178,7 +176,4 @@ if ($carpcount > 0):
 ?>
 </ul>
 
-<?php include("fend.inc")?>
-
-</body>
-</html>
+<?php include("foot.inc")?>

@@ -580,8 +580,6 @@ $pgtitle = array(gettext("Diagnostics"),gettext("Backup/restore"));
 include("head.inc");
 
 ?>
-<body>
-<?php include("fbegin.inc")?>
 <?php if ($input_errors) print_input_errors($input_errors)?>
 <?php if ($savemsg) print_info_box($savemsg)?>
 <?php if (is_subsystem_dirty('restore')):?><br/>
@@ -709,9 +707,7 @@ include("head.inc");
 			</form>
 		<?php }?>
 	</div>
-<?php include("fend.inc")?>
-</body>
-</html>
+<?php include("foot.inc")?>
 <?php
 
 if (is_subsystem_dirty('restore'))

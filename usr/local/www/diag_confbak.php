@@ -110,14 +110,8 @@ unset($confvers['versions']);
 $pgtitle = array(gettext("Diagnostics"),gettext("Configuration History"));
 include("head.inc");
 
-?>
-
-<body id="diag_confbak">
-	<div id="container">
-<?php
-	include("fbegin.inc");
-	if($savemsg)
-		print_info_box($savemsg);
+if($savemsg)
+	print_info_box($savemsg);
 ?>
 	<?php if ($diff):?>
 		<h3><?=gettext("Configuration diff from")?><?=date(gettext("n/j/y H:i:s"), $oldtime)?><?=gettext("to")?><?=date(gettext("n/j/y H:i:s"), $newtime)?></h3>
@@ -253,6 +247,4 @@ include("head.inc");
 	</table>
 	</form>
 </div>
-<?php include("fend.inc")?>
-</body>
-</html>
+<?php include("foot.inc")?>

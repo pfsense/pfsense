@@ -262,11 +262,6 @@ function _getHostName($mac,$ip) {
 $pgtitle = array(gettext("Diagnostics"),gettext("ARP Table"));
 include("head.inc");
 
-?>
-<body>
-<?php include("fbegin.inc")?>
-<?php
-
 // Resolve hostnames and replace Z_ with "".  The intention
 // is to sort the list by hostnames, alpha and then the non
 // resolvable addresses will appear last in the list.
@@ -297,11 +292,10 @@ $mac_man = load_mac_manufacturer_table();
 <table class="table table-striped">
 	<thead>
 		<tr>
-			<td><?= gettext("Interface")?></td>
-			<td><?= gettext("IP address")?></td>
-			<td><?= gettext("MAC address")?></td>
-			<td><?= gettext("Hostname")?></td>
-			<td></td>
+			<th><?= gettext("Interface")?></th>
+			<th><?= gettext("IP address")?></th>
+			<th><?= gettext("MAC address")?></th>
+			<th><?= gettext("Hostname")?></th>
 		</tr>
 	</thead>
 	<tbody>
@@ -326,6 +320,4 @@ $mac_man = load_mac_manufacturer_table();
 </table>
 <p><?= gettext("NOTE: Local IPv6 peers use")?> <a href="diag_ndp.php"><?= gettext("NDP")?></a> <?= gettext("instead of ARP")?>.</p>
 
-<?php include("fend.inc")?>
-</body>
-</html>
+<?php include("foot.inc")?>

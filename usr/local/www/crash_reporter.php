@@ -76,8 +76,6 @@ $crash_report_header .= "\nCrash report details:\n";
 
 exec("/usr/bin/grep -vi warning /tmp/PHP_errors.log", $php_errors);
 ?>
-<body class="crash_reporter">
-<?php include("fbegin.inc")?>
 <?php
 	if (gettext($_POST['Submit']) == "Yes") {
 		echo gettext("Processing...");
@@ -148,7 +146,4 @@ exec("/usr/bin/grep -vi warning /tmp/PHP_errors.log", $php_errors);
 	}
 ?>
 
-<?php include("fend.inc")?>
-
-</body>
-</html>
+<?php include("foot.inc")?>

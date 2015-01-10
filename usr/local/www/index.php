@@ -129,7 +129,7 @@ if(file_exists('/conf/needs_package_sync')) {
 		if($g['platform'] == "pfSense" || $g['platform'] == "nanobsd") {
 			## If the user has logged into webGUI quickly while the system is booting then do not redirect them to
 			## the package reinstall page. That is about to be done by the boot script anyway.
-			## The code in fbegin.inc will put up a notice to the user.
+			## The code in head.inc will put up a notice to the user.
 			if (!platform_booting()) {
 				header('Location: pkg_mgr_install.php?mode=reinstallall');
 				exit;
@@ -238,12 +238,6 @@ foreach($phpincludefiles as $includename) {
 $pgtitle = array(gettext("Status: Dashboard"));
 include("head.inc");
 
-?>
-<body class="index">
-
-<?php
-include("fbegin.inc");
-
 /* Print package server mismatch warning. See https://redmine.pfsense.org/issues/484 */
 if (!verify_all_package_servers())
 	print_info_box(package_server_mismatch_message());
@@ -314,12 +308,8 @@ foreach ($widgets as $widgetname => $widgetconfig){
 <?php
 }
 
-include("fend.inc");
-
 //build list of javascript include files
 foreach (glob('widgets/javascript/*.js') as $file)
 	echo '<script src="'.$file.'"></script>';
-?>
 
-</body>
-</html>
+include("foot.inc")?>

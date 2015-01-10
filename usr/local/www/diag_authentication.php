@@ -71,9 +71,6 @@ $shortcut_section = "authentication";
 include("head.inc");
 
 ?>
-
-<body>
-<?php include("fbegin.inc")?>
 <?php if ($input_errors) print_input_errors($input_errors)?>
 <?php if ($savemsg) print_info_box($savemsg)?>
 	<div id="container">
@@ -112,6 +109,4 @@ include("head.inc");
 		</form>
 	</div>
 </div>
-<?php include("fend.inc")?>
-</body>
-</html>
+<?php include("foot.inc")?>

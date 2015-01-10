@@ -105,8 +105,8 @@ else
 	$pconfig['localid_type'] = "lan";
 	$pconfig['remoteid_type'] = "network";
 	$pconfig['proto'] = "esp";
-	$pconfig['ealgos'] = explode(",", "3des,blowfish,cast128,aes");
-	$pconfig['halgos'] = explode(",", "hmac_sha1,hmac_md5");
+	$pconfig['ealgos'] = explode(",", "aes");
+	$pconfig['halgos'] = explode(",", "hmac_sha1");
 	$pconfig['pfsgroup'] = "0";
 	$pconfig['lifetime'] = "3600";
 	$pconfig['uniqid'] = uniqid();

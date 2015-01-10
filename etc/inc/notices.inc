@@ -190,43 +190,6 @@ function dump_xml_notices() {
 	return $xml;
 }
 
-/****f* notices/print_notices
- * NAME
- *   print_notices
- * INPUTS
- *	 $notices, $category
- * RESULT
- *   prints notices to the GUI
- ******/
-function print_notices($notices, $category = "all") {
-	foreach($notices as $notice) {
-		if($category != "all") {
-			if(in_array($notice['category'], $category))
-				$categories[] = $notice['category'];
-		} else {
-			$categories[] = $notice['category'];
-		}
-	}
-	$categories = array_unique($categories);
-	sort($categories);
-	foreach($categories as $category) {
-		$toreturn .= '<li><a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">'.$category.'<span class="caret"></span></a><ul class="dropdown-menu" role="menu">';
-		foreach($notices as $notice) {
-			if(strtolower($notice['category']) == strtolower($category)) {
-				if($notice['id'] != "") {
-					if($notice['url'] != "") {
-						$toreturn .= "<li><a href={$notice['url']}>{$notice['id']}</a> - {$notice['notice']}</li>";
-					} else {
-						$toreturn .= "<li>{$notice['id']} - {$notice['notice']}</li>";
-					}
-				}
-			}
-		}
-		$toreturn .= "</ul></li>";
-	}
-	return '<ul class="dropdown-menu" role="menu">'. $toreturn .'</ul>';
-}
-
 /****f* notices/print_notice_box
  * NAME
  *   print_notice_box

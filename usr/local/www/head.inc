@@ -350,12 +350,9 @@ if(! $g['disablehelpmenu']) {
 				<?php if(are_notices_pending()):?>
 					<?php $notices = get_notices(); ?>
 					<li class="dropdown">
-						<a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false"><?=gettext("Notices"); ?>
+						<a href="#" data-toggle="modal" data-target="#notices" role="button" aria-expanded="false"><?=gettext("Notices"); ?>
 							<span class="badge"><?=count($notices)?></span>
-							<span class="caret"></span>
 						</a>
-
-						<?=print_notices($notices)?>
 					</li>
 				<?php endif; ?>
 
@@ -371,6 +368,58 @@ if(! $g['disablehelpmenu']) {
 			</ul>
 		</div>
 	</div>
+
+	<div class="modal fade" id="notices" role="dialog" aria-labelledby="noticesTitle" aria-hidden="true">
+		<div class="modal-dialog">
+			<div class="modal-content">
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+						<span aria-hidden="true">&times;</span>
+					</button>
+
+					<h3 class="modal-title" id="myModalLabel">Notices</h3>
+				</div>
+
+				<div class="modal-body">
+<?php
+$noticeCategories = array();
+foreach($notices as $time => $notice)
+{
+	if (!isset($noticeCategories[ $notice['category'] ]))
+		$noticeCategories[ $notice['category'] ] = array();
+
+	$notice['time'] = $time;
+	array_push($noticeCategories[ $notice['category'] ], $notice);
+}
+
+foreach($noticeCategories as $category => $catNotices):?>
+	<h4><?=$category?></h4>
+	<ul>
+<?php
+	foreach($catNotices as $notice):
+?>
+	<li>
+		<b>
+<?php if (!empty($notice['url'])):?>
+		<a href="<?=$notice['url']?>"><?=$notice['id']?></a> -
+<?php endif;?>
+		</b>
+		<?=$notice['notice']?>
+		<i>@ <?=date('Y-m-d H:i:s', $notice['time'])?></i>
+	</li>
+<?php 	endforeach;?>
+</ul>
+<?php endforeach;?>
+				</div>
+
+				<div class="modal-footer">
+					<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+					<a type="button" class="btn btn-primary" href="/?closenotice=all">Mark all as read</a>
+				</div>
+			</div>
+		</div>
+	</div>
+
 </nav>
 <div class="container">
 	<?=genhtmltitle($pgtitle);?>

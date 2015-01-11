@@ -194,11 +194,8 @@ if (isset($config['ipsec']['phase2'])): ?>
 		</table>
 	<?php endif;?>
 <?php else: ?>
-
-<div class="alert alert-info" role="alert">
-	<p>
-		There are no configured IPsec Tunnels.<br/><br/>
-		<a href="vpn_ipsec.php" class="alert-link">You can configure your IPsec here</a>.
-	</p>
-</div>
+	<div class="panel panel-warning">
+		<div class="panel-heading"><h3 class="panel-title">There are no configured IPsec Tunnels</h3></div>
+		<div class="panel-body">You can configure your IPsec <a href="vpn_ipsec.php">here</a>.</div>
+	</div>
 <?php endif; ?>

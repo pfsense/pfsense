@@ -317,7 +317,7 @@ if ($savemsg)
 			</div>
 		</div>
 
-		<h2><?=gettext("DNS servers"); ?></h2>
+		<h2><?=gettext("DNS server settings"); ?></h2>
 		<div class="form-group">
 			<?php for ($dnscounter=1; $dnscounter<5; $dnscounter++): ?>
 				<label for="dns_server_<?=$dnscounter?>" class="col-sm-2 control-label"><?=gettext("DNS Server"); ?></label>
@@ -374,9 +374,10 @@ if ($savemsg)
 		</div>
 
 		<div class="form-group">
-			<label for="dnsallowoverride" class="col-sm-2 control-label"><?=gettext("Allow DNS server list to be overridden by DHCP/PPP on WAN"); ?></label>
+			<label for="dnsallowoverride" class="col-sm-2 control-label"><?=gettext("DNS server override")?></label>
 			<div class="col-sm-10">
 				<input name="dnsallowoverride" type="checkbox" id="dnsallowoverride" value="yes" <?php if ($pconfig['dnsallowoverride']) echo "checked=\"checked\""; ?> />
+				<label for="dnsallowoverride" ><?=gettext("Allow DNS server list to be overridden by DHCP/PPP on WAN"); ?></label>
 				<span class="help-block">
 					<?php printf(gettext("If this option is set, %s will " .
 					"use DNS servers assigned by a DHCP/PPP server on WAN " .
@@ -388,9 +389,10 @@ if ($savemsg)
 		</div>
 
 		<div class="form-group">
-			<label for="dnslocalhost" class="col-sm-2 control-label"><?=gettext("Do not use the DNS Forwarder as a DNS server for the firewall"); ?></label>
+			<label for="dnslocalhost" class="col-sm-2 control-label"><?=gettext("Disable DNS forwarder"); ?></label>
 			<div class="col-sm-10">
 				<input name="dnslocalhost" type="checkbox" id="dnslocalhost" value="yes" <?php if ($pconfig['dnslocalhost']) echo "checked=\"checked\""; ?> />
+				<label for="dnslocalhost" ><?=gettext("Do not use the DNS Forwarder as a DNS server for the firewall"); ?></label>
 				<span class="help-block">
 					<?=gettext("By default localhost (127.0.0.1) will be used as the first DNS server where the DNS Forwarder or DNS Resolver is enabled and set to listen on Localhost, so system can use the local DNS service to perform lookups. ".
 						"Checking this box omits localhost from the list of DNS servers."); ?>
@@ -402,7 +404,7 @@ if ($savemsg)
 		<div class="form-group">
 			<label for="timezone" class="col-sm-2 control-label"><?=gettext("Time zone"); ?></label>
 			<div class="col-sm-10">
-				<select name="timezone" id="timezone">
+				<select name="timezone" id="timezone" class="form-control">
 					<?php foreach ($timezonelist as $value): ?>
 					<?php if(strstr($value, "GMT")) continue; ?>
 					<option value="<?=htmlspecialchars($value);?>" <?php if ($value == $pconfig['timezone']) echo "selected=\"selected\""; ?>>
@@ -420,7 +422,7 @@ if ($savemsg)
 		<div class="form-group">
 			<label for="timeservers" class="col-sm-2 control-label"><?=gettext("NTP time server"); ?></label>
 			<div class="col-sm-10">
-				<input name="timeservers" type="text" id="timeservers" value="<?=htmlspecialchars($pconfig['timeservers']);?>" />
+				<input name="timeservers" type="text" id="timeservers" value="<?=htmlspecialchars($pconfig['timeservers']);?>" class="form-control" />
 
 				<span class="help-block">
 					<?=gettext("Use a space to separate multiple hosts (only one " .
@@ -433,7 +435,7 @@ if ($savemsg)
 		<div class="form-group">
 			<label for="language" class="col-sm-2 control-label"><?=gettext("Language"); ?></label>
 			<div class="col-sm-10">
-				<select name="language">
+				<select name="language" class="form-control">
 					<?php
 					foreach(get_locale_list() as $lcode => $ldesc) {
 						$selected = ' selected="selected"';
@@ -450,7 +452,11 @@ if ($savemsg)
 			</div>
 		</div>
 
-		<button type="submit" class="btn btn-primary"><?=gettext("Save");?></button>
+		<div class="form-group">
+			<div class="col-sm-offset-2 col-sm-10">
+				<button type="submit" class="btn btn-primary"><?=gettext("Save");?></button>
+			</div>
+		</div>
 	</div>
 </form>
 <?php include("foot.inc"); ?>

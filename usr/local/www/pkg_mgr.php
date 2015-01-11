@@ -230,13 +230,9 @@ if(!$pkg_info || !is_array($pkg_keys)):?>
 				<?=$index['descr']?>
 			</td>
 			<td>
-				<a title="<?=gettext("Click to install")?>" href="pkg_mgr_install.php?id=<?=$index['name']?>">
-					<i class="icon icon-download"></i>
-				</a>
+				<a title="<?=gettext("Click to install")?>" href="pkg_mgr_install.php?id=<?=$index['name']?>" class="btn btn-success">install</a>
 <?php if(!$g['disablepackageinfo'] && $index['pkginfolink'] && $index['pkginfolink'] != $index['website']):?>
-				<a target="_blank" title="<?=gettext("View more inforation")?>" href="<?=htmlspecialchars($index['pkginfolink'])?>">
-					<i class="icon icon-question-sign"></i>
-				</a>
+				<a target="_blank" title="<?=gettext("View more inforation")?>" href="<?=htmlspecialchars($index['pkginfolink'])?>" class="btn btn-default">info</a>
 <?php endif;?>
 			</td>
 		</tr>

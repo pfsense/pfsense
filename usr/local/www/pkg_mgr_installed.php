@@ -161,19 +161,11 @@ if(!is_array($config['installedpackages']['package'])):?>
 			<?=$pkgdescr?>
 		</td>
 		<td>
-			<a href="pkg_mgr_install.php?mode=delete&amp;pkg=<?=$pkg['name']?>">
-				<i class="icon icon-remove"></i>
-			</a>
-			<a title="<?=gettext("Click to reinstall")?>" href="pkg_mgr_install.php?mode=reinstallpkg&amp;pkg=<?=$pkg['name']?>">
-				<i class="icon icon-retweet"></i>
-			</a>
-			<a title="<?=gettext("Click to reinstall GUI components")?>" href="pkg_mgr_install.php?mode=reinstallxml&amp;pkg=<?=$pkg['name']?>">
-				<i class="icon icon-share"></i>
-			</a>
+			<a href="pkg_mgr_install.php?mode=delete&amp;pkg=<?=$pkg['name']?>" class="btn btn-danger">remove</a>
+			<a href="pkg_mgr_install.php?mode=reinstallpkg&amp;pkg=<?=$pkg['name']?>" class="btn btn-info">reinstall</a>
+			<a href="pkg_mgr_install.php?mode=reinstallxml&amp;pkg=<?=$pkg['name']?>" class="btn btn-info"><?=gettext("reinstall GUI")?></a>
 <?php if(!$g['disablepackageinfo'] && $pkg['pkginfolink'] && $pkg['pkginfolink'] != $pkg['website']):?>
-			<a target="_blank" title="<?=gettext("View more inforation")?>" href="<?=htmlspecialchars($pkg['pkginfolink'])?>">
-				<i class="icon icon-question-sign"></i>
-			</a>
+			<a target="_blank" title="<?=gettext("View more inforation")?>" href="<?=htmlspecialchars($pkg['pkginfolink'])?>" class="btn btn-default">info</a>
 <?php endif;?>
 		</td>
 	</tr>

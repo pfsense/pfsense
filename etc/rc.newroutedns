@@ -1,6 +1,7 @@
 #!/usr/local/bin/php -f
 <?php
 /*
+	rc.newroutedns
 	Copyright (C) 2013 Renato Botelho <garga@pfsense.org>.
 	All rights reserved.
 

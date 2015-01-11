@@ -1,15 +1,15 @@
 <?php
 /*
-	status_ovpenvpn.php
+	status_openvpn.php
 
-    Copyright (C) 2005 Scott Ullrich, Colin Smith
-    Copyright (C) 2008 Shrew Soft Inc.
-    Copyright (C) 2010 Jim Pingle
-    Copyright (C) 2013-2014 Electric Sheep Fencing, LP
+	Copyright (C) 2005 Scott Ullrich, Colin Smith
+	Copyright (C) 2008 Shrew Soft Inc.
+	Copyright (C) 2010 Jim Pingle
+	Copyright (C) 2013-2015 Electric Sheep Fencing, LP
 
-    AJAX bits borrowed from diag_dump_states.php
+	AJAX bits borrowed from diag_dump_states.php
 
-    All rights reserved.
+	All rights reserved.
 
 	Redistribution and use in source and binary forms, with or without
 	modification, are permitted provided that the following conditions are met:

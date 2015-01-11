@@ -4,7 +4,7 @@
 	diag_ipsec.php
 	Copyright (C) 2004-2009 Scott Ullrich
 	Copyright (C) 2008 Shrew Soft Inc <mgrooms@shrew.net>.
-        Copyright (C) 2013-2014 Electric Sheep Fencing, LP
+	Copyright (C) 2013-2015 Electric Sheep Fencing, LP
 	All rights reserved.
 
 	Parts of this code was originally based on vpn_ipsec_sad.php
@@ -57,7 +57,7 @@ if ($_GET['act'] == 'connect') {
 	if (ctype_digit($_GET['ikeid'])) {
 		$ph1ent = ipsec_get_phase1($_GET['ikeid']);
 		if (!empty($ph1ent)) {
-			if ($ph1ent['iketype'] == 'ikev1') {
+			if (empty($ph1ent['iketype']) || $ph1ent['iketype'] == 'ikev1') {
 				$ph2entries = ipsec_get_number_of_phase2($_GET['ikeid']);
 				for ($i = 0; $i < $ph2entries; $i++) {
 					$connid = escapeshellarg("con{$_GET['ikeid']}00{$i}");

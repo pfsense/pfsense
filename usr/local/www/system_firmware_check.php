@@ -1,9 +1,9 @@
 <?php
 /* $Id$ */
 /*
-	system_firmware.php
+	system_firmware_check.php
 	Copyright (C) 2008 Scott Ullrich <sullrich@gmail.com>
-        Copyright (C) 2013-2014 Electric Sheep Fencing, LP
+	Copyright (C) 2013-2015 Electric Sheep Fencing, LP
 	All rights reserved.
 
 	originally part of m0n0wall (http://m0n0.ch/wall)

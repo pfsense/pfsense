@@ -6,7 +6,7 @@
 	Copyright (C) 2013 Stanley P. Miller \ stan-qaz
 	All rights reserved.
 
-	Copyright (C) 2013-2014 Electric Sheep Fencing, LP
+	Copyright (C) 2013-2015 Electric Sheep Fencing, LP
 	All rights reserved.
 
 	Redistribution and use in source and binary forms, with or without
@@ -59,7 +59,7 @@ if($_REQUEST['getdyndnsstatus']) {
 		$filename = "{$g['conf_path']}/dyndns_{$dyndns['interface']}{$dyndns['type']}" . escapeshellarg($dyndns['host']) . "{$dyndns['id']}.cache";
 		if (file_exists($filename)) {
 			$ipaddr = dyndnsCheckIP($dyndns['interface']);
-			$cached_ip_s = split(":", file_get_contents($filename));
+			$cached_ip_s = explode(':', file_get_contents($filename));
 			$cached_ip = $cached_ip_s[0];
 			if ($ipaddr <> $cached_ip)
 				echo "<font color='red'>";

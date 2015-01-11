@@ -97,8 +97,12 @@ function unbound_optimization() {
 			if ($tunable['tunable'] == 'kern.ipc.maxsockbuf') {
 				$so = floor(($tunable['value']/1024/1024)-1);
 				// Check to ensure that the number is not a negative
-				if ($so > 0)
+				if ($so > 0) {
+					// Limit to 8MB, users might set maxsockbuf very high for other reasons.
+					// We do not want unbound to fail because of that.
+					$so = min($so, 8);
 					$optimization['so_rcvbuf'] = "so-rcvbuf: {$so}m";
+				}
 				else
 					unset($optimization['so_rcvbuf']);
 			}
@@ -205,7 +209,7 @@ EOF;
 
 	// Add custom Unbound options
 	if ($config['unbound']['custom_options']) {
-		$custom_options_source = explode("\n", $config['unbound']['custom_options']);
+		$custom_options_source = explode("\n", base64_decode($config['unbound']['custom_options']));
 		$custom_options = "# Unbound custom options\n";
 		foreach ($custom_options_source as $ent)
 			$custom_options .= $ent."\n";

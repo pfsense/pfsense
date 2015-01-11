@@ -1,6 +1,8 @@
 <?php
 /*
-        Copyright (C) 2013-2014 Electric Sheep Fencing, LP
+	services_captiveportal_zones.php
+
+	Copyright (C) 2013-2015 Electric Sheep Fencing, LP
 
 	All rights reserved.
 

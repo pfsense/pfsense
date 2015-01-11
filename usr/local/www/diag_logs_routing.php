@@ -5,7 +5,7 @@
 	part of pfSense
 
 	Copyright (C) 2012 Jim Pingle <jimp@pfsense.org>.
-        Copyright (C) 2013-2014 Electric Sheep Fencing, LP
+	Copyright (C) 2013-2015 Electric Sheep Fencing, LP
 	All rights reserved.
 
 	Redistribution and use in source and binary forms, with or without

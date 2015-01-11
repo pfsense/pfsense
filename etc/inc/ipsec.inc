@@ -225,7 +225,7 @@ function ipsec_idinfo_to_cidr(& $idinfo, $addrbits = false, $mode = "") {
 			break; /* NOTREACHED */
 		case "none":
 		case "mobile":
-			return "0.0.0.0/0";
+			return '0.0.0.0/0';
 			break; /* NOTREACHED */
 		default:
 			if (empty($mode) && !empty($idinfo['mode']))
@@ -382,9 +382,16 @@ function ipsec_smp_dump_status() {
 	$response = "";
 	while (!strstr($sread, "</message>")) {
 		$sread = fgets($fd);
+		if ($sread === false)
+			break;
 		$response .= $sread;
 	}
 	fclose($fd);
+
+	if ($sread === false) {
+		log_error("Error during reading of status from IPsec");
+		return;
+	}
 
 	@file_put_contents("{$g['tmp_path']}/smp_status.xml", $response);
 	unset($response, $sread);
@@ -609,39 +616,41 @@ function ipsec_find_id(& $ph1ent, $side = "local", $rgmap = array()) {
 			$addr = "%any";
 		else
 			$addr = $ph1ent['remote-gateway'];
-	} else {
+	} else
 		return array();
-	}
 
 
 	$thisid_type = $id_type;
 	switch ($thisid_type) {
-	case "myaddress":
-		$thisid_type = "address";
+	case 'myaddress':
+		$thisid_type = 'address';
 		$thisid_data = $addr;
 		break;
-
-	case "dyn_dns":
-		$thisid_type = "address";
-		$thisid_data = resolve_retry($id_data);
+	case 'dyn_dns':
+		$thisid_type = 'dns';
+		$thisid_data = $id_data;
 		break;
-
-	case "peeraddress":
-		$thisid_type = "address";
+	case 'peeraddress':
+		$thisid_type = 'address';
 		$thisid_data = $rgmap[$ph1ent['remote-gateway']];
 		break;
-
-	case "address";
+	case 'address';
 		$thisid_data = $id_data;
 		break;
-
-	case "fqdn";
-	case "keyid tag";
-	case "user_fqdn";
-	case "asn1dn";
+	case 'fqdn';
+		$thisid_data = "{$id_data}";
+		break;
+	case 'keyid tag';
+		$thisid_type = 'keyid';
+		$thisid_data = "{$thisid_data}";
+		break;
+	case 'user_fqdn';
+		$thisid_type = 'userfqdn';
+		$thisid_data = "{$id_data}";
+		break;
+	case 'asn1dn';
 		$thisid_data = $id_data;
-		if( $thisid_data )
-			$thisid_data = "{$thisid_data}";
+		$thisid_data = "{$id_data}";
 		break;
 	}
 	return array($thisid_type, $thisid_data);

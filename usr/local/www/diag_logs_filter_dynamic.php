@@ -4,7 +4,7 @@
 	diag_logs_filter_dynamic.php
 	part of pfSesne
 	Copyright (C) 2004-2009 Scott Ullrich
-        Copyright (C) 2013-2014 Electric Sheep Fencing, LP
+	Copyright (C) 2013-2015 Electric Sheep Fencing, LP
 	originally based on m0n0wall (http://m0n0.ch/wall)
 
 	Copyright (C) 2003-2004 Manuel Kasper <mk@neon1.net>.

@@ -1,6 +1,6 @@
 <?php
 /*
-	easyrule.inc.php
+	easyrule.inc
 
 	Copyright (C) 2009-2010 Jim Pingle (jpingle@gmail.com)
 	Originally Sponsored By Anathematic @ pfSense Forums

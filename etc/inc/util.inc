@@ -311,44 +311,56 @@ function is_numericint($arg) {
 	return (((is_int($arg) && $arg >= 0) || (is_string($arg) && strlen($arg) > 0 && ctype_digit($arg))) ? true : false);  
 }
 
-/* return the subnet address given a host address and a subnet bit count */
+/* Generate the (human readable) ipv4 or ipv6 subnet address (i.e., netmask, or subnet start IP) 
+   given an (human readable) ipv4 or ipv6 host address and subnet bit count */
 function gen_subnet($ipaddr, $bits) {
-	if (!is_ipaddr($ipaddr) || !is_numeric($bits))
-		return "";
-	return long2ip(ip2long($ipaddr) & gen_subnet_mask_long($bits));
+	if (($sn = gen_subnetv6($ipaddr, $bits)) == '')
+		$sn = gen_subnetv4($ipaddr, $bits);  // try to avoid rechecking IPv4/v6
+	return $sn;
 }
 
-/* return the subnet address given a host address and a subnet bit count */
+/* same as gen_subnet() but accepts IPv4 only */
+function gen_subnetv4($ipaddr, $bits) {
+	if (is_ipaddrv4($ipaddr) && is_numericint($bits) && $bits <= 32) {
+		if ($bits == 0)
+			return '0.0.0.0';  // avoids <<32
+		return long2ip(ip2long($ipaddr) & ((0xFFFFFFFF << (32 - $bits)) & 0xFFFFFFFF));
+	}
+	return "";
+}
+
+/* same as gen_subnet() but accepts IPv6 only */
 function gen_subnetv6($ipaddr, $bits) {
-	if (!is_ipaddrv6($ipaddr) || !is_numeric($bits))
-		return "";
-
-	$address = Net_IPv6::getNetmask($ipaddr, $bits);
-	$address = Net_IPv6::compress($address);
-	return $address;
+	if (is_ipaddrv6($ipaddr) && is_numericint($bits) && $bits <= 128)
+		return Net_IPv6::compress(Net_IPv6::getNetmask($ipaddr, $bits));
+	return "";
 }
 
-/* return the highest (broadcast) address in the subnet given a host address and a subnet bit count */
+/* Generate the (human readable) ipv4 or ipv6 subnet end address (i.e., highest address, end IP, or IPv4 broadcast address)
+   given an (human readable) ipv4 or ipv6 host address and subnet bit count. */
 function gen_subnet_max($ipaddr, $bits) {
-	if (!is_ipaddr($ipaddr) || !is_numeric($bits))
-		return "";
-
-	return long2ip32(ip2long($ipaddr) | ~gen_subnet_mask_long($bits));
+	if (($sn = gen_subnetv6_max($ipaddr, $bits)) == '')
+		$sn = gen_subnetv4_max($ipaddr, $bits);  // try to avoid rechecking IPv4/v6
+	return $sn;
 }
 
-/* Generate end number for a given ipv6 subnet mask */
+/* same as gen_subnet_max() but validates IPv4 only */
+function gen_subnetv4_max($ipaddr, $bits) {
+	if (is_ipaddrv4($ipaddr) && is_numericint($bits) && $bits <= 32) {
+		if ($bits == 32)
+			return $ipaddr;
+		return long2ip(ip2long($ipaddr) | (0xFFFFFFFF >> $bits));
+	}
+	return "";
+}
+
+/* same as gen_subnet_max() but validates IPv6 only */
 function gen_subnetv6_max($ipaddr, $bits) {
-	if(!is_ipaddrv6($ipaddr))
-		return false;
-
-	$mask = Net_IPv6::getNetmask('FFFF:FFFF:FFFF:FFFF:FFFF:FFFF:FFFF:FFFF',$bits);
-
-	$inet_ip = (binary)inet_pton($ipaddr);
-	$inet_mask = (binary)inet_pton($mask);
-
-	$inet_end = $inet_ip | ~$inet_mask;
-
-	return (inet_ntop($inet_end));
+	if (is_ipaddrv6($ipaddr) && is_numericint($bits) && $bits <= 128) {
+		$endip_bin = substr(Net_IPv6::_ip2Bin($ipaddr), 0, $bits) . str_repeat('1', 128 - $bits);
+		return Net_IPv6::compress(Net_IPv6::_bin2Ip($endip_bin));
+	}
+	return "";
 }
 
 /* returns a subnet mask (long given a bit count) */
@@ -426,6 +438,16 @@ function ip_greater_than($ip1, $ip2) {
 	// Compare as unsigned long because otherwise it wouldn't work
 	//   when crossing over from 127.255.255.255 / 128.0.0.0 barrier
 	return ip2ulong($ip1) > ip2ulong($ip2);
+}
+
+/* compare two IP addresses */
+function ipcmp($a, $b) {
+	if (ip_less_than($a, $b))
+		return -1;
+	else if (ip_greater_than($a, $b))
+		return 1;
+	else
+		return 0;
 }
 
 /* Convert a range of IPv4 addresses to an array of individual addresses. */
@@ -668,6 +690,84 @@ function is_subnetoralias($subnet) {
 		return true;
 	else
 		return is_subnet($subnet);
+}
+
+function subnet_size($subnet) {
+	if (is_subnetv4($subnet)) {
+		list ($ip, $bits) = explode("/", $subnet);
+		return round(exp(log(2) * (32 - $bits)));
+	}
+	else if (is_subnetv6($subnet)) {
+		list ($ip, $bits) = explode("/", $subnet);
+		return round(exp(log(2) * (128 - $bits)));
+	}
+	else {
+		return 0;
+	}
+}
+
+
+function subnet_expand($subnet) {
+	if (is_subnetv4($subnet)) {
+		return subnetv4_expand($subnet);
+	} else if (is_subnetv6($subnet)) {
+		return subnetv6_expand($subnet);
+	} else {
+		return $subnet;
+	}
+}
+
+function subnetv4_expand($subnet) {
+	$result = array();
+	list ($ip, $bits) = explode("/", $subnet);
+	$net  = ip2long($ip);
+	$mask = (0xffffffff << (32 - $bits));
+	$net &= $mask;
+	$size = round(exp(log(2) * (32 - $bits)));
+	for ($i = 0; $i < $size; $i += 1) {
+		$result[] = long2ip($net | $i);
+	}
+	return $result;
+}
+
+/* find out whether two subnets overlap */
+function check_subnets_overlap($subnet1, $bits1, $subnet2, $bits2) {
+
+	if (!is_numeric($bits1))
+		$bits1 = 32;
+	if (!is_numeric($bits2))
+		$bits2 = 32;
+
+	if ($bits1 < $bits2)
+		$relbits = $bits1;
+	else
+		$relbits = $bits2;
+
+	$sn1 = gen_subnet_mask_long($relbits) & ip2long($subnet1);
+	$sn2 = gen_subnet_mask_long($relbits) & ip2long($subnet2);
+
+	return ($sn1 == $sn2);
+}
+
+/* find out whether two IPv6 subnets overlap */
+function check_subnetsv6_overlap($subnet1, $bits1, $subnet2, $bits2) {
+	$sub1_min = gen_subnetv6($subnet1, $bits1);
+	$sub1_max = gen_subnetv6_max($subnet1, $bits1);
+	$sub2_min = gen_subnetv6($subnet2, $bits2);
+	$sub2_max = gen_subnetv6_max($subnet2, $bits2);
+
+	return (is_inrange_v6($sub1_min, $sub2_min, $sub2_max) || is_inrange_v6($sub1_max, $sub2_min, $sub2_max) || is_inrange_v6($sub2_min, $sub1_min, $sub1_max));
+}
+
+/* return true if $addr is in $subnet, false if not */
+function ip_in_subnet($addr,$subnet) {
+	if(is_ipaddrv6($addr)) {
+		return (Net_IPv6::isInNetmask($addr, $subnet));
+	} else { /* XXX: Maybe check for IPv4 */
+		list($ip, $mask) = explode('/', $subnet);
+		$mask = (0xffffffff << (32 - $mask)) & 0xffffffff;
+		return ((ip2long($addr) & $mask) == (ip2long($ip) & $mask));
+	}
 }
 
 /* returns true if $hostname is just a valid hostname (top part without any of the domain part) */
@@ -1355,93 +1455,6 @@ function alias_expand_urltable($name) {
 		}
 	}
 	return null;
-}
-
-function subnet_size($subnet) {
-	if (is_subnetv4($subnet)) {
-		list ($ip, $bits) = explode("/", $subnet);
-		return round(exp(log(2) * (32 - $bits)));
-	}
-	else if (is_subnetv6($subnet)) {
-		list ($ip, $bits) = explode("/", $subnet);
-		return round(exp(log(2) * (128 - $bits)));
-	}
-	else {
-		return 0;
-	}
-}
-
-function subnet_expand($subnet) {
-	if (is_subnetv4($subnet)) {
-		return subnetv4_expand($subnet);
-	} else if (is_subnetv6($subnet)) {
-		return subnetv6_expand($subnet);
-	} else {
-		return $subnet;
-	}
-}
-
-function subnetv4_expand($subnet) {
-	$result = array();
-	list ($ip, $bits) = explode("/", $subnet);
-	$net  = ip2long($ip);
-	$mask = (0xffffffff << (32 - $bits));
-	$net &= $mask;
-	$size = round(exp(log(2) * (32 - $bits)));
-	for ($i = 0; $i < $size; $i += 1) {
-		$result[] = long2ip($net | $i);
-	}
-	return $result;
-}
-
-/* find out whether two subnets overlap */
-function check_subnets_overlap($subnet1, $bits1, $subnet2, $bits2) {
-
-	if (!is_numeric($bits1))
-		$bits1 = 32;
-	if (!is_numeric($bits2))
-		$bits2 = 32;
-
-	if ($bits1 < $bits2)
-		$relbits = $bits1;
-	else
-		$relbits = $bits2;
-
-	$sn1 = gen_subnet_mask_long($relbits) & ip2long($subnet1);
-	$sn2 = gen_subnet_mask_long($relbits) & ip2long($subnet2);
-
-	return ($sn1 == $sn2);
-}
-
-/* find out whether two IPv6 subnets overlap */
-function check_subnetsv6_overlap($subnet1, $bits1, $subnet2, $bits2) {
-	$sub1_min = gen_subnetv6($subnet1, $bits1);
-	$sub1_max = gen_subnetv6_max($subnet1, $bits1);
-	$sub2_min = gen_subnetv6($subnet2, $bits2);
-	$sub2_max = gen_subnetv6_max($subnet2, $bits2);
-
-	return (is_inrange_v6($sub1_min, $sub2_min, $sub2_max) || is_inrange_v6($sub1_max, $sub2_min, $sub2_max) || is_inrange_v6($sub2_min, $sub1_min, $sub1_max));
-}
-
-/* compare two IP addresses */
-function ipcmp($a, $b) {
-	if (ip_less_than($a, $b))
-		return -1;
-	else if (ip_greater_than($a, $b))
-		return 1;
-	else
-		return 0;
-}
-
-/* return true if $addr is in $subnet, false if not */
-function ip_in_subnet($addr,$subnet) {
-	if(is_ipaddrv6($addr)) {
-		return (Net_IPv6::isInNetmask($addr, $subnet));
-	} else { /* XXX: Maybe check for IPv4 */
-		list($ip, $mask) = explode('/', $subnet);
-		$mask = (0xffffffff << (32 - $mask)) & 0xffffffff;
-		return ((ip2long($addr) & $mask) == (ip2long($ip) & $mask));
-	}
 }
 
 /* verify (and remove) the digital signature on a file - returns 0 if OK */

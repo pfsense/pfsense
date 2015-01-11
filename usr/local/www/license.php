@@ -2,7 +2,7 @@
 /* $Id$ */
 /*
     license.php
-    Copyright (C) 2013-2014 Electric Sheep Fencing, LP
+    Copyright (C) 2013-2015 Electric Sheep Fencing, LP
     All rights reserved
 
     Redistribution and use in source and binary forms, with or without
@@ -49,7 +49,7 @@ include("head.inc");
             <p><strong><?=$g['product_name'];?> <?=gettext("is Copyright");?> &copy; <?=$g['product_copyright_years'];?> <?=gettext("by");?> <?=$g['product_copyright'];?><br />
               <?=gettext("All rights reserved");?>.</strong></p>
 
-            <p><strong><?=gettext("m0n0wall is Copyright ");?>&copy; <?=gettext("2002-2014 by Manuel Kasper");?>
+            <p><strong><?=gettext("m0n0wall is Copyright ");?>&copy; <?=gettext("2002-2015 by Manuel Kasper");?>
               (<a href="mailto:mk@neon1.net">mk@neon1.net</a>).<br />
               <?=gettext("All rights reserved");?>.</strong></p>
             <p> <?=gettext("Redistribution and use in source and binary forms, with or without");?><br />
@@ -88,10 +88,10 @@ include("head.inc");
               <?php printf(gettext("The authors of %s would like to thank the authors of these " .
               "software packages for their efforts"),$g['product_name']);?>.</p>
             <p>FreeBSD (<a href="http://www.freebsd.org" target="_blank">http://www.freebsd.org</a>)<br />
-              <?=gettext("Copyright");?> &copy;<?=gettext("1992-2014 The FreeBSD Project. All rights reserved");?>.<br />
+              <?=gettext("Copyright");?> &copy;<?=gettext("1992-2015 The FreeBSD Project. All rights reserved");?>.<br />
               <br />
               <?=gettext("This product includes PHP, freely available from");?> <a href="http://www.php.net/" target="_blank">http://www.php.net</a>.<br />
-              <?=gettext("Copyright"); ?> &copy; <?=gettext("1999-2014 The PHP Group. All rights reserved.");?>.<br />
+              <?=gettext("Copyright"); ?> &copy; <?=gettext("1999-2015 The PHP Group. All rights reserved.");?>.<br />
               <br />
               <?=gettext("LightTPD"); ?> (<a href="http://www.lighttpd.net" target="_blank">http://www.lighttpd.net)</a><br />
               <?=gettext("Copyright"); ?> &copy;<?=gettext("2004, Jan Knescke, incremental");?><jan@kneschke.de>

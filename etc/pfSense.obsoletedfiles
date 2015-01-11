@@ -592,7 +592,6 @@
 /usr/local/lib/libcrypto.so
 /usr/local/lib/libcrypto.so.8
 /usr/local/lib/libcurl.so.3
-/usr/local/lib/libcurl.so.4
 /usr/local/lib/libcurl.so.5
 /usr/local/lib/libcurl.so.6
 /usr/local/lib/libczmq.so.0
@@ -645,7 +644,6 @@
 /usr/local/lib/libpng.so.6
 /usr/local/lib/libracoon.so.0
 /usr/local/lib/libreadline.so.5
-/usr/local/lib/libreadline.so.6
 /usr/local/lib/libsqlite3.so.8
 /usr/local/lib/libssl.a
 /usr/local/lib/libssl.so

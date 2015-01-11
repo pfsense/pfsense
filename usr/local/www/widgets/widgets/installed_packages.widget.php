@@ -1,6 +1,6 @@
 <?php
 /*
-	$Id$
+	installed_packages.widget.php
 
 	Copyright (C) 2013-2014 Electric Sheep Fencing, LP
 	Copyright 2007 Scott Dale

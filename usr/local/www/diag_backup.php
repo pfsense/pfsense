@@ -3,7 +3,7 @@
 /*
 	diag_backup.php
 	Copyright (C) 2004-2009 Scott Ullrich
-	Copyright (C) 2013-2014 Electric Sheep Fencing, LP
+	Copyright (C) 2013-2015 Electric Sheep Fencing, LP
 	All rights reserved.
 
 	originally part of m0n0wall (http://m0n0.ch/wall)
@@ -204,7 +204,7 @@ function spit_out_select_items($name, $showall) {
 		"wol" => gettext("Wake on LAN")
 	);
 
-	$select  = "<select name=\"{$name}\" id=\"{$name}\" multiple=\"multiple\">";
+	$select  = "<select name=\"{$name}\" id=\"{$name}\">";
 	$select .= "<option value=\"\">" . gettext("ALL") . "</option>";
 
 	if($showall == true)

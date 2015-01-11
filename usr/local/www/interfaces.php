@@ -2,7 +2,7 @@
 /* $Id$ */
 /*
 	interfaces.php
-        Copyright (C) 2013-2014 Electric Sheep Fencing, LP
+	Copyright (C) 2013-2015 Electric Sheep Fencing, LP
 	Copyright (C) 2004-2008 Scott Ullrich
 	Copyright (C) 2006 Daniel S. Haischt.
 	Copyright (C) 2008-2010 Ermal Luçi
@@ -610,7 +610,7 @@ if ($_POST['apply']) {
 				$input_errors[] = gettext("You must enter a valid hexadecimal number for the IPv6 prefix ID.");
 			} else {
 				$track6_prefix_id = intval($_POST['track6-prefix-id--hex'], 16);
-				if ($track6_prefix_id < 0 || $track6_prefix_id >= $_POST['ipv6-num-prefix-ids-' . $_POST['track6-interface']]) {
+				if ($track6_prefix_id < 0 || $track6_prefix_id > $_POST['ipv6-num-prefix-ids-' . $_POST['track6-interface']]) {
 					$input_errors[] = gettext("You specified an IPv6 prefix ID that is out of range. ({$_POST['track6-interface']}) - ({$_POST['ipv6-num-prefix-ids-' . $_POST['track6-interface']]}) - ({$ipv6_delegation_length})");
 				} else {
 					foreach ($ifdescrs as $ifent => $ifdescr) {
@@ -619,7 +619,7 @@ if ($_POST['apply']) {
 						if ($config['interfaces'][$ifent]['ipaddrv6'] == 'track6' &&
 						    $config['interfaces'][$ifent]['track6-interface'] == $_POST['track6-interface'] &&
 						    $config['interfaces'][$ifent]['track6-prefix-id'] == $track6_prefix_id)
-							$input_errors[] = sprintf(gettext("This track6 prefix id is already being used in %s."), $ifdescr);
+							$input_errors[] = sprintf(gettext("This track6 prefix ID is already being used in %s."), $ifdescr);
 					}
 				}
 			}
@@ -1785,11 +1785,9 @@ $types6 = array("none" => gettext("None"), "staticv6" => gettext("Static IPv6"),
 											<select name="subnet" class="formselect" id="subnet">
 												<?php
 												for ($i = 32; $i > 0; $i--) {
-													if($i <> 31) {
-														echo "<option value=\"{$i}\" ";
-														if ($i == $pconfig['subnet']) echo "selected=\"selected\"";
-														echo ">" . $i . "</option>";
-													}
+													echo "<option value=\"{$i}\" ";
+													if ($i == $pconfig['subnet']) echo "selected=\"selected\"";
+													echo ">" . $i . "</option>";
 												}
 												?>
 											</select>
@@ -1891,11 +1889,9 @@ $types6 = array("none" => gettext("None"), "staticv6" => gettext("Static IPv6"),
 											<select name="subnetv6" class="formselect" id="subnetv6">
 												<?php
 												for ($i = 128; $i > 0; $i--) {
-													if($i <> 127) {
-														echo "<option value=\"{$i}\" ";
-														if ($i == $pconfig['subnetv6']) echo "selected=\"selected\"";
-														echo ">" . $i . "</option>";
-													}
+													echo "<option value=\"{$i}\" ";
+													if ($i == $pconfig['subnetv6']) echo "selected=\"selected\"";
+													echo ">" . $i . "</option>";
 												}
 												?>
 											</select>
@@ -2021,11 +2017,9 @@ $types6 = array("none" => gettext("None"), "staticv6" => gettext("Static IPv6"),
 											<select name="alias-subnet" class="formselect" id="alias-subnet">
 												<?php
 												for ($i = 32; $i > 0; $i--) {
-													if($i <> 31) {
-														echo "<option value=\"{$i}\" ";
-														if ($i == $pconfig['alias-subnet']) echo "selected=\"selected\"";
-														echo ">" . $i . "</option>";
-													}
+													echo "<option value=\"{$i}\" ";
+													if ($i == $pconfig['alias-subnet']) echo "selected=\"selected\"";
+													echo ">" . $i . "</option>";
 												}
 												?>
 											</select>
@@ -2570,7 +2564,7 @@ $types6 = array("none" => gettext("None"), "staticv6" => gettext("Static IPv6"),
 											<span id="track6-prefix-id-range"></span>
 											<input type="hidden" id="track6-prefix-id-max" value="0"></input>
 											<br />
-											<?= gettext("The value in this field is the (Delegated) IPv6 prefix id. This determines the configurable network ID based on the dynamic IPv6 connection"); ?>
+											<?= gettext("The value in this field is the (Delegated) IPv6 prefix ID. This determines the configurable network ID based on the dynamic IPv6 connection"); ?>
 											<br />
 											<?= gettext("default value is 0."); ?>
 										</td>

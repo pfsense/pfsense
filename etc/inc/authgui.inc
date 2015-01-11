@@ -4,37 +4,37 @@
 	Copyright (C) 2007, 2008 Scott Ullrich <sullrich@gmail.com>
 	All rights reserved.
 
-        Copyright (C) 2005-2006 Bill Marquette <bill.marquette@gmail.com>
-        All rights reserved.
+	Copyright (C) 2005-2006 Bill Marquette <bill.marquette@gmail.com>
+	All rights reserved.
 
-        Copyright (C) 2006 Paul Taylor <paultaylor@winn-dixie.com>.
-        All rights reserved.
+	Copyright (C) 2006 Paul Taylor <paultaylor@winn-dixie.com>.
+	All rights reserved.
 
-        Copyright (C) 2003-2006 Manuel Kasper <mk@neon1.net>.
-        All rights reserved.
+	Copyright (C) 2003-2006 Manuel Kasper <mk@neon1.net>.
+	All rights reserved.
 
-        Redistribution and use in source and binary forms, with or without
-        modification, are permitted provided that the following conditions are met:
+	Redistribution and use in source and binary forms, with or without
+	modification, are permitted provided that the following conditions are met:
 
-        1. Redistributions of source code must retain the above copyright notice,
-           this list of conditions and the following disclaimer.
+	1. Redistributions of source code must retain the above copyright notice,
+	   this list of conditions and the following disclaimer.
 
-        2. Redistributions in binary form must reproduce the above copyright
-           notice, this list of conditions and the following disclaimer in the
-           documentation and/or other materials provided with the distribution.
+	2. Redistributions in binary form must reproduce the above copyright
+	   notice, this list of conditions and the following disclaimer in the
+	   documentation and/or other materials provided with the distribution.
 
-        THIS SOFTWARE IS PROVIDED ``AS IS'' AND ANY EXPRESS OR IMPLIED WARRANTIES,
-        INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY
-        AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE
-        AUTHOR BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY,
-        OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
-        SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
-        INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
-        CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
-        ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
-        POSSIBILITY OF SUCH DAMAGE.
+	THIS SOFTWARE IS PROVIDED ``AS IS'' AND ANY EXPRESS OR IMPLIED WARRANTIES,
+	INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY
+	AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE
+	AUTHOR BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY,
+	OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+	SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+	INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+	CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+	ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+	POSSIBILITY OF SUCH DAMAGE.
 
-		pfSense_MODULE: authgui
+	pfSense_MODULE: authgui
 */
 
 include_once("auth.inc");
@@ -197,8 +197,6 @@ if ($local_ip == false) {
 		}
 	}
 }
-setcookie("cookie_test", time() + 3600);
-$have_cookies = isset($_COOKIE["cookie_test"]);
 
 ?>
 <!DOCTYPE html>
@@ -234,14 +232,26 @@ $have_cookies = isset($_COOKIE["cookie_test"]);
 			</div>
 			<button type="submit" class="btn btn-primary" name="login">Login</button>
 
-			<?php if (!$have_cookies && isset($_POST['login'])): ?>
-			<div class="alert alert-warning">
+			<div class="alert alert-warning" class="hidden" id="no_cookies">
 				<?= gettext("Your browser must support cookies to login."); ?>
 			</div>
-			<?php endif; ?>
 		</form>
 		</div>
 	</div>
+
+	<script>
+	$(function() {
+		document.cookie=
+			"cookie_test=1" +
+			"<?php echo $config['system']['webgui']['protocol'] == 'https' ? '; secure' : '';?>";
+
+		if (document.cookie.indexOf("cookie_test") == -1)
+			document.getElementById("no_cookies").className = '';
+
+		// Delete it
+		document.cookie = "cookie_test=1; expires=Thu, 01-Jan-1970 00:00:01 GMT";
+	});
+	</script>
 </body>
 </html>
 <?php

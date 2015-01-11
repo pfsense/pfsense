@@ -1,5 +1,6 @@
 <?php
 /*
+	upgrade_config.inc
 	Copyright (C) 2004-2009 Scott Ullrich <sullrich@gmail.com>
 	All rights reserved.
 
@@ -10,24 +11,24 @@
 	Redistribution and use in source and binary forms, with or without
 	modification, are permitted provided that the following conditions are met:
 
-1. Redistributions of source code must retain the above copyright notice,
-	this list of conditions and the following disclaimer.
+	1. Redistributions of source code must retain the above copyright notice,
+	   this list of conditions and the following disclaimer.
 
 	2. Redistributions in binary form must reproduce the above copyright
-	notice, this list of conditions and the following disclaimer in the
-	documentation and/or other materials provided with the distribution.
+	   notice, this list of conditions and the following disclaimer in the
+	   documentation and/or other materials provided with the distribution.
 
 	THIS SOFTWARE IS PROVIDED ``AS IS'' AND ANY EXPRESS OR IMPLIED WARRANTIES,
 	INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY
 	AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE
 	AUTHOR BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY,
-OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+	OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
 	SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
 	INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
 	CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
 	ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 	POSSIBILITY OF SUCH DAMAGE.
-	*/
+*/
 
 /*
 	pfSense_BUILDER_BINARIES:	/usr/bin/find	/bin/cd	/usr/local/bin/rrdtool	/usr/bin/nice
@@ -3456,7 +3457,7 @@ function upgrade_110_to_111() {
 	}
 
 	if (isset($new['custom_options']) && !empty($new['custom_options']))
-		$new['custom_options'] = str_replace(';', "\n", $new['custom_options']);
+		$new['custom_options'] = str_replace("\r\n", "\n", $new['custom_options']);
 
 	/* Following options were removed, bring them as custom_options */
 	if (isset($pkg['stats']) && $pkg['stats'] == "on") {
@@ -3517,6 +3518,25 @@ function upgrade_112_to_113() {
 		$config['notifications']['smtp']['tls'] = true;
 	else
 		unset($config['notifications']['smtp']['tls']);
+}
+
+function upgrade_113_to_114() {
+	global $config;
+
+	if (!isset($config['ipsec']['phase1']) ||
+	    !is_array($config['ipsec']['phase1']))
+		return;
+
+	foreach($config['ipsec']['phase1'] as &$ph1ent)
+		if (!isset($ph1ent['iketype']))
+			$ph1ent['iketype'] = 'ikev1';
+}
+
+function upgrade_114_to_115() {
+	global $config;
+
+	if (isset($config['unbound']['custom_options']))
+		$config['unbound']['custom_options'] = base64_encode($config['unbound']['custom_options']);
 }
 
 ?>

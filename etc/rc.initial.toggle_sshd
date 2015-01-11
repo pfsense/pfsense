@@ -1,6 +1,7 @@
 #! /usr/local/bin/php -f
 <?php
 /*
+	rc.initial.toggle_sshd
 	sshd - Modified to work on disk based system
 	Copyright 2004 Scott K Ullrich
 

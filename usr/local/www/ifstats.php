@@ -4,7 +4,7 @@
 	ifstats.php
 	part of pfSense (https://www.pfsense.org)
 
-        Copyright (C) 2013-2014 Electric Sheep Fencing, LP
+	Copyright (C) 2013-2015 Electric Sheep Fencing, LP
 	Copyright (C) 2005-2006 Scott Ullrich (sullrich@gmail.com)
 	All rights reserved.
 

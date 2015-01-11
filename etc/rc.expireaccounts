@@ -2,7 +2,7 @@
 <?php
 /* $Id$ */
 /*
-	rc.exireaccounts
+	rc.expireaccounts
 	part of pfSense
 	
 	Copyright (C) 2009 Shrew Soft Inc.

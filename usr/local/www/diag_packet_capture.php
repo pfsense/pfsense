@@ -1,7 +1,7 @@
 <?php
 /*
-
-        Copyright (C) 2013-2014 Electric Sheep Fencing, LP
+    diag_packet_capture.php
+	Copyright (C) 2013-2015 Electric Sheep Fencing, LP
 	All rights reserved
 
 	Redistribution and use in source and binary forms, with or without

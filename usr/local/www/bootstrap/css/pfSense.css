@@ -34,6 +34,10 @@ body.index a[data-toggle][aria-expanded="true"] i {
 	background-position: -24px -96px;
 }
 
+.ui-sortable-handle {
+	cursor: move;
+}
+
 tr.disabled {
 	opacity: .5;
 }

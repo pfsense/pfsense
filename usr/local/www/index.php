@@ -85,8 +85,8 @@ if($g['disablecrashreporter'] != true) {
 ##build list of widgets
 foreach (glob("/usr/local/www/widgets/widgets/*.widget.php") as $file)
 {
-	list($name, $ext) = explode('.widget.php', basename($file), 2);
-	$widgets[ $name ] = array('name' => ucwords(str_replace('_', ' ', $name)));
+	$name = basename($file, '.widget.php');
+	$widgets[ $name ] = array('name' => ucwords(str_replace('_', ' ', $name)), 'display' => 'none');
 }
 
 ##insert the system information widget as first, so as to be displayed first
@@ -98,7 +98,7 @@ if (!is_array($config['widgets'])) {
 	$config['widgets'] = array();
 }
 
-if ($_POST && $_POST['submit']) {
+if ($_POST && $_POST['sequence']) {
 	$config['widgets']['sequence'] = $_POST['sequence'];
 
 	foreach($widgets as $widgetname => $widgetconfig){
@@ -249,12 +249,16 @@ pfSense_handle_custom_code("/usr/local/pkg/dashboard/pre_dashboard");
 
 ?>
 
-<div class="panel panel-default">
-	<div class="panel-heading"><h3><?=gettext("Available Widgets"); ?></h3></div>
-	<div class="panel-body">
-<?php foreach($widgets as $widgetname => $widgetconfig): ?>
-		<div class="col-sm-3"><a href="#"><i class="icon icon-plus"></i> <?=$widgetconfig['name']?></a></div>
-<?php endforeach; ?>
+<div class="col-md-12">
+	<div class="panel panel-default">
+		<div class="panel-heading"><h4><?=gettext("Available Widgets"); ?></h4></div>
+		<div class="panel-body">
+	<?php foreach($widgets as $widgetname => $widgetconfig): ?>
+		<?php if ($widgetconfig['display'] == 'none'): ?>
+			<div class="col-sm-3"><a href="#"><i class="icon icon-plus"></i> <?=$widgetconfig['name']?></a></div>
+		<?php endif; ?>
+	<?php endforeach; ?>
+		</div>
 	</div>
 </div>
 
@@ -280,17 +284,37 @@ pfSense_handle_custom_code("/usr/local/pkg/dashboard/pre_dashboard");
 </div>
 </div>
 
+<div class="col-md-12 hidden" id="widgetSequence">
+	<form action="/" method="post" id="widgetSequence">
+		<input type="hidden" name="sequence" value="" />
+
+		<button type="submit" class="btn btn-default">Store widget configuration</button>
+	</form>
+</div>
+
 <?php
-foreach ($widgets as $widgetname => $widgetconfig){
-	//FIXME: do something with stored config
+$widgetColumns = array();
+foreach ($widgets as $widgetname => $widgetconfig)
+{
+	if ($widgetconfig['display'] == 'none')
+		continue;
+
+	if (!isset($widgetColumns[ $widgetconfig['col'] ]))
+		$widgetColumns[ $widgetconfig['col'] ] = array();
+
+	$widgetColumns[ $widgetconfig['col'] ][ $widgetname ] = $widgetconfig;
+}
 ?>
-	<div class="col-md-6">
-		<div class="panel panel-default">
+
+<?php foreach ($widgetColumns as $column => $columnWidgets):?>
+<div class="col-md-6" id="widgets-<?=$column?>">
+	<?php foreach ($columnWidgets as $widgetname => $widgetconfig):?>
+		<div class="panel panel-default" id="widget-<?=$widgetname?>">
 			<div class="panel-heading">
 				<?=$widgetconfig['name']?>
 				<span style="float: right">
 					<a href="#"><i class="icon icon-wrench"></i></a>
-					<a data-toggle="collapse" href="#widget-<?=$widgetname?>">
+					<a data-toggle="collapse" href="#widget-<?=$widgetname?> .panel-body">
 						<?php if ($widgetconfig['display'] == 'close'): ?>
 							<i class="icon icon-plus-sign"></i>
 						<?php else: ?>
@@ -300,14 +324,15 @@ foreach ($widgets as $widgetname => $widgetconfig){
 					<a href="#"><i class="icon icon-remove-sign"></i></a>
 				</span>
 			</div>
-			<div class="panel-body collapse<?=($widgetconfig['display']=='close' ? '' : ' in')?>" id="widget-<?=$widgetname?>">
+			<div class="panel-body collapse<?=($widgetconfig['display']=='close' ? '' : ' in')?>">
 				<?php include('/usr/local/www/widgets/widgets/'. $widgetname.'.widget.php'); ?>
 			</div>
 		</div>
-	</div>
-<?php
-}
+	<?php endforeach; ?>
+</div>
+<?php endforeach; ?>
 
+<?php
 //build list of javascript include files
 foreach (glob('widgets/javascript/*.js') as $file)
 	echo '<script src="'.$file.'"></script>';

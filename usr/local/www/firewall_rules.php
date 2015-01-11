@@ -276,11 +276,6 @@ include("head.inc");
 $nrules = 0;
 
 ?>
-<body id="firewall_rules">
-<?php
-	include("fbegin.inc");
-?>
-
 <form action="firewall_rules.php" method="post">
 
 <?php if ($savemsg) print_info_box($savemsg);?>
@@ -360,7 +355,6 @@ display_top_tabs($tab_array);
 		<td></td>
 		<td><?=gettext("Anti-Lockout Rule");?></td>
 		<td>
-			<a href="#" title="<?=gettext("move selected rules before this rule");?>"><i class="icon icon-chevron-down"></i></a>
 			<a href="system_advanced_admin.php" title="<?=gettext("edit rule");?>"><i class="icon icon-pencil"></i></a>
 			<a href="#" title="<?=gettext("copy this rule");?>"><i class="icon icon-random"></i></a>
 		</td>
@@ -382,7 +376,6 @@ display_top_tabs($tab_array);
 		<td></td>
 		<td><?=gettext("Block private networks");?></td>
 		<td>
-			<a href="#" title="<?=gettext("move selected rules before this rule");?>"><i class="icon icon-chevron-down"></i></a>
 			<a href="system_advanced_admin.php" title="<?=gettext("edit rule");?>"><i class="icon icon-pencil"></i></a>
 			<a href="#" title="<?=gettext("copy this rule");?>"><i class="icon icon-random"></i></a>
 		</td>
@@ -403,7 +396,6 @@ display_top_tabs($tab_array);
 		<td>*</td>
 		<td><?=gettext("Block bogon networks");?></td>
 		<td>
-			<a href="#" title="<?=gettext("move selected rules before this rule");?>"><i class="icon icon-chevron-down"></i></a>
 			<a href="system_advanced_admin.php" title="<?=gettext("edit rule");?>"><i class="icon icon-pencil"></i></a>
 			<a href="#" title="<?=gettext("copy this rule");?>"><i class="icon icon-random"></i></a>
 		</td>
@@ -693,7 +685,6 @@ display_top_tabs($tab_array);
 		<?=htmlspecialchars($filterent['descr']);?>
 	</td>
 	<td>
-		<a href="#" title="<?=gettext("move selected rules before this rule");?>"><i class="icon icon-chevron-down"></i></a>
 		<a href="firewall_rules_edit.php?id=<?=$i;?>" title="<?=gettext("edit rule");?>"><i class="icon icon-pencil"></i></a>
 		<a href="firewall_rules_edit.php?dup=<?=$i;?>" title="<?=gettext("copy this rule");?>"><i class="icon icon-random"></i></a>
 		<a href="firewall_rules.php?act=del&amp;if=<?=htmlspecialchars($if);?>&amp;id=<?=$i;?>"><i class="icon icon-delete"></i></a>
@@ -722,9 +713,6 @@ display_top_tabs($tab_array);
 	<?=gettext("add new rule");?>
 </a>
 <?php if ($i > 0): ?>
-	<a href="#" role="button" class="btn btn-info">
-		<?=gettext("move selected rules to end");?>
-	</a>
 	<a href="#" role="button" class="btn btn-danger">
 		<?=gettext("delete selected rules");?>
 	</a>
@@ -758,6 +746,4 @@ display_top_tabs($tab_array);
 </p>
 	<input type="hidden" name="if" value="<?=htmlspecialchars($if);?>" />
 </form>
-<?php include("fend.inc");?>
-</body>
-</html>
+<?php include("foot.inc");?>

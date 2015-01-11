@@ -289,175 +289,168 @@ if ($_POST) {
 $pgtitle = array(gettext("System"),gettext("General Setup"));
 include("head.inc");
 
+if ($input_errors)
+	print_input_errors($input_errors);
+if ($savemsg)
+	print_info_box($savemsg);
 ?>
-<body id="system">
-<?php
-	include("fbegin.inc");
-	if ($input_errors)
-		print_input_errors($input_errors);
-	if ($savemsg)
-		print_info_box($savemsg);
-?>
-
-	<div id="container">
-		<form class="form-horizontal" action="system.php" method="post">
-			<h2><?=gettext("System"); ?></h2>
-			<div class="form-group">
-				<label for="hostname" class="col-sm-2 control-label"><?=gettext("Hostname"); ?></label>
-				<div class="col-sm-10">
-					<input type="text" class="form-control" id="hostname" value="<?=htmlspecialchars($pconfig['hostname']);?>" placeholder="firewall">
-					<span class="help-block">
-						<?=gettext("Name of the firewall host, without domain part"); ?>
-					</span>
-				</div>
+<div id="container">
+	<form class="form-horizontal" action="system.php" method="post">
+		<h2><?=gettext("System"); ?></h2>
+		<div class="form-group">
+			<label for="hostname" class="col-sm-2 control-label"><?=gettext("Hostname"); ?></label>
+			<div class="col-sm-10">
+				<input type="text" class="form-control" id="hostname" value="<?=htmlspecialchars($pconfig['hostname']);?>" placeholder="firewall">
+				<span class="help-block">
+					<?=gettext("Name of the firewall host, without domain part"); ?>
+				</span>
 			</div>
+		</div>
 
-			<div class="form-group">
-				<label for="domain" class="col-sm-2 control-label"><?=gettext("Domain"); ?></label>
-				<div class="col-sm-10">
-					<input type="text" class="form-control" id="domain" value="<?=htmlspecialchars($pconfig['domain']);?>" placeholder="mycorp.com, home, office, private, etc.">
-					<span class="help-block">
-						<?=gettext("Do not use 'local' as a domain name. It will cause local hosts running mDNS (avahi, bonjour, etc.) to be unable to resolve local hosts not running mDNS."); ?>
-					</span>
-				</div>
+		<div class="form-group">
+			<label for="domain" class="col-sm-2 control-label"><?=gettext("Domain"); ?></label>
+			<div class="col-sm-10">
+				<input type="text" class="form-control" id="domain" value="<?=htmlspecialchars($pconfig['domain']);?>" placeholder="mycorp.com, home, office, private, etc.">
+				<span class="help-block">
+					<?=gettext("Do not use 'local' as a domain name. It will cause local hosts running mDNS (avahi, bonjour, etc.) to be unable to resolve local hosts not running mDNS."); ?>
+				</span>
 			</div>
+		</div>
 
-			<h2><?=gettext("DNS servers"); ?></h2>
-			<div class="form-group">
-				<?php for ($dnscounter=1; $dnscounter<5; $dnscounter++): ?>
-					<label for="dns_server_<?=$dnscounter?>" class="col-sm-2 control-label"><?=gettext("DNS Server"); ?></label>
-					<div class="input-group row col-sm-10">
+		<h2><?=gettext("DNS servers"); ?></h2>
+		<div class="form-group">
+			<?php for ($dnscounter=1; $dnscounter<5; $dnscounter++): ?>
+				<label for="dns_server_<?=$dnscounter?>" class="col-sm-2 control-label"><?=gettext("DNS Server"); ?></label>
+				<div class="input-group row col-sm-10">
+					<div class="col-xs-4">
+						<input type="text" class="form-control" id="dns_server_<?=$dnscounter?>" value="<?=htmlspecialchars($pconfig['dns'.$dnscounter]);?>">
+					</div>
+
+					<?php if ($multiwan): ?>
 						<div class="col-xs-4">
-							<input type="text" class="form-control" id="dns_server_<?=$dnscounter?>" value="<?=htmlspecialchars($pconfig['dns'.$dnscounter]);?>">
-						</div>
-
-						<?php if ($multiwan): ?>
-							<div class="col-xs-4">
-								<select name='<?=$fldname;?>'>
-									<?php
-										$gwname = "none";
-										$dnsgw = "dns{$dnscounter}gw";
-										if ($pconfig[$dnsgw] == $gwname) {
+							<select class="form-control" name="<?=$fldname;?>">
+								<?php
+									$gwname = "none";
+									$dnsgw = "dns{$dnscounter}gw";
+									if ($pconfig[$dnsgw] == $gwname) {
+										$selected = "selected=\"selected\"";
+									} else {
+										$selected = "";
+									}
+									echo "<option value='$gwname' $selected>$gwname</option>\n";
+									foreach($arr_gateways as $gwname => $gwitem) {
+										//echo $pconfig[$dnsgw];
+										if((is_ipaddrv4(lookup_gateway_ip_by_name($pconfig[$dnsgw])) && (is_ipaddrv6($gwitem['gateway'])))) {
+											continue;
+										}
+										if((is_ipaddrv6(lookup_gateway_ip_by_name($pconfig[$dnsgw])) && (is_ipaddrv4($gwitem['gateway'])))) {
+											continue;
+										}
+										if($pconfig[$dnsgw] == $gwname) {
 											$selected = "selected=\"selected\"";
 										} else {
 											$selected = "";
 										}
-										echo "<option value='$gwname' $selected>$gwname</option>\n";
-										foreach($arr_gateways as $gwname => $gwitem) {
-											//echo $pconfig[$dnsgw];
-											if((is_ipaddrv4(lookup_gateway_ip_by_name($pconfig[$dnsgw])) && (is_ipaddrv6($gwitem['gateway'])))) {
-												continue;
-											}
-											if((is_ipaddrv6(lookup_gateway_ip_by_name($pconfig[$dnsgw])) && (is_ipaddrv4($gwitem['gateway'])))) {
-												continue;
-											}
-											if($pconfig[$dnsgw] == $gwname) {
-												$selected = "selected=\"selected\"";
-											} else {
-												$selected = "";
-											}
-											echo "<option value='$gwname' $selected>$gwname - {$gwitem['friendlyiface']} - {$gwitem['gateway']}</option>\n";
-										}
-									?>
-								</select>
-							</div>
-						<?php endif; ?>
-					</div>
-				<?php endfor; ?>
-
-				<span class="help-block">
-					<?=gettext("Enter IP addresses to be used by the system for DNS resolution. " .
-							"These are also used for the DHCP service, DNS forwarder and for PPTP VPN clients."); ?>
-					<br />
-					<?php if($multiwan): ?>
-					<br />
-					<?=gettext("In addition, optionally select the gateway for each DNS server. " .
-							"When using multiple WAN connections there should be at least one unique DNS server per gateway."); ?>
-					<br />
+										echo "<option value='$gwname' $selected>$gwname - {$gwitem['friendlyiface']} - {$gwitem['gateway']}</option>\n";
+									}
+								?>
+							</select>
+						</div>
 					<?php endif; ?>
+				</div>
+			<?php endfor; ?>
+
+			<span class="help-block">
+				<?=gettext("Enter IP addresses to be used by the system for DNS resolution. " .
+							"These are also used for the DHCP service, DNS forwarder and for PPTP VPN clients."); ?>
+				<br />
+				<?php if($multiwan): ?>
+				<br />
+				<?=gettext("In addition, optionally select the gateway for each DNS server. " .
+							"When using multiple WAN connections there should be at least one unique DNS server per gateway."); ?>
+				<br />
+				<?php endif; ?>
+			</span>
+		</div>
+
+		<div class="form-group">
+			<label for="dnsallowoverride" class="col-sm-2 control-label"><?=gettext("Allow DNS server list to be overridden by DHCP/PPP on WAN"); ?></label>
+			<div class="col-sm-10">
+				<input name="dnsallowoverride" type="checkbox" id="dnsallowoverride" value="yes" <?php if ($pconfig['dnsallowoverride']) echo "checked=\"checked\""; ?> />
+				<span class="help-block">
+					<?php printf(gettext("If this option is set, %s will " .
+					"use DNS servers assigned by a DHCP/PPP server on WAN " .
+					"for its own purposes (including the DNS forwarder). " .
+					"However, they will not be assigned to DHCP and PPTP " .
+					"VPN clients."), $g['product_name']); ?>
 				</span>
 			</div>
+		</div>
 
-			<div class="form-group">
-				<label for="dnsallowoverride" class="col-sm-2 control-label"><?=gettext("Allow DNS server list to be overridden by DHCP/PPP on WAN"); ?></label>
-				<div class="col-sm-10">
-					<input name="dnsallowoverride" type="checkbox" id="dnsallowoverride" value="yes" <?php if ($pconfig['dnsallowoverride']) echo "checked=\"checked\""; ?> />
-					<span class="help-block">
-						<?php printf(gettext("If this option is set, %s will " .
-						"use DNS servers assigned by a DHCP/PPP server on WAN " .
-						"for its own purposes (including the DNS forwarder). " .
-						"However, they will not be assigned to DHCP and PPTP " .
-						"VPN clients."), $g['product_name']); ?>
-					</span>
-				</div>
-			</div>
-
-			<div class="form-group">
-				<label for="dnslocalhost" class="col-sm-2 control-label"><?=gettext("Do not use the DNS Forwarder as a DNS server for the firewall"); ?></label>
-				<div class="col-sm-10">
-					<input name="dnslocalhost" type="checkbox" id="dnslocalhost" value="yes" <?php if ($pconfig['dnslocalhost']) echo "checked=\"checked\""; ?> />
-					<span class="help-block">
-						<?=gettext("By default localhost (127.0.0.1) will be used as the first DNS server where the DNS Forwarder or DNS Resolver is enabled and set to listen on Localhost, so system can use the local DNS service to perform lookups. ".
+		<div class="form-group">
+			<label for="dnslocalhost" class="col-sm-2 control-label"><?=gettext("Do not use the DNS Forwarder as a DNS server for the firewall"); ?></label>
+			<div class="col-sm-10">
+				<input name="dnslocalhost" type="checkbox" id="dnslocalhost" value="yes" <?php if ($pconfig['dnslocalhost']) echo "checked=\"checked\""; ?> />
+				<span class="help-block">
+					<?=gettext("By default localhost (127.0.0.1) will be used as the first DNS server where the DNS Forwarder or DNS Resolver is enabled and set to listen on Localhost, so system can use the local DNS service to perform lookups. ".
 						"Checking this box omits localhost from the list of DNS servers."); ?>
-					</span>
-				</div>
+				</span>
 			</div>
+		</div>
 
-			<h2><?=gettext("Localization"); ?></h2>
-			<div class="form-group">
-				<label for="timezone" class="col-sm-2 control-label"><?=gettext("Time zone"); ?></label>
-				<div class="col-sm-10">
-					<select name="timezone" id="timezone">
-						<?php foreach ($timezonelist as $value): ?>
-						<?php if(strstr($value, "GMT")) continue; ?>
-						<option value="<?=htmlspecialchars($value);?>" <?php if ($value == $pconfig['timezone']) echo "selected=\"selected\""; ?>>
-							<?=htmlspecialchars($value);?>
-						</option>
-						<?php endforeach; ?>
-					</select>
+		<h2><?=gettext("Localization"); ?></h2>
+		<div class="form-group">
+			<label for="timezone" class="col-sm-2 control-label"><?=gettext("Time zone"); ?></label>
+			<div class="col-sm-10">
+				<select name="timezone" id="timezone">
+					<?php foreach ($timezonelist as $value): ?>
+					<?php if(strstr($value, "GMT")) continue; ?>
+					<option value="<?=htmlspecialchars($value);?>" <?php if ($value == $pconfig['timezone']) echo "selected=\"selected\""; ?>>
+						<?=htmlspecialchars($value);?>
+					</option>
+					<?php endforeach; ?>
+				</select>
 
-					<span class="help-block">
-						<?=gettext("Select the location closest to you"); ?>
-					</span>
-				</div>
+				<span class="help-block">
+					<?=gettext("Select the location closest to you"); ?>
+				</span>
 			</div>
+		</div>
 
-			<div class="form-group">
-				<label for="timeservers" class="col-sm-2 control-label"><?=gettext("NTP time server"); ?></label>
-				<div class="col-sm-10">
-					<input name="timeservers" type="text" id="timeservers" value="<?=htmlspecialchars($pconfig['timeservers']);?>" />
+		<div class="form-group">
+			<label for="timeservers" class="col-sm-2 control-label"><?=gettext("NTP time server"); ?></label>
+			<div class="col-sm-10">
+				<input name="timeservers" type="text" id="timeservers" value="<?=htmlspecialchars($pconfig['timeservers']);?>" />
 
-					<span class="help-block">
-						<?=gettext("Use a space to separate multiple hosts (only one " .
+				<span class="help-block">
+					<?=gettext("Use a space to separate multiple hosts (only one " .
 						"required). Remember to set up at least one DNS server " .
 						"if you enter a host name here!"); ?>
-					</span>
-				</div>
+				</span>
 			</div>
-
-			<div class="form-group">
-				<label for="language" class="col-sm-2 control-label"><?=gettext("Language"); ?></label>
-				<div class="col-sm-10">
-					<select name="language">
-						<?php
-						foreach(get_locale_list() as $lcode => $ldesc) {
-							$selected = ' selected="selected"';
-							if($lcode != $pconfig['language'])
-								$selected = '';
-							echo "<option value=\"{$lcode}\"{$selected}>{$ldesc}</option>";
-						}
-						?>
-					</select>
-
-					<span class="help-block">
-							<?=gettext("Choose a language for the webConfigurator"); ?>
-					</span>
-				</div>
-			</div>
-
-			<button type="submit" class="btn btn-primary"><?=gettext("Save");?></button>
 		</div>
-	</form>
-<?php include("fend.inc"); ?>
-</body>
-</html>
+
+		<div class="form-group">
+			<label for="language" class="col-sm-2 control-label"><?=gettext("Language"); ?></label>
+			<div class="col-sm-10">
+				<select name="language">
+					<?php
+					foreach(get_locale_list() as $lcode => $ldesc) {
+						$selected = ' selected="selected"';
+						if($lcode != $pconfig['language'])
+							$selected = '';
+						echo "<option value=\"{$lcode}\"{$selected}>{$ldesc}</option>";
+					}
+					?>
+				</select>
+
+				<span class="help-block">
+						<?=gettext("Choose a language for the webConfigurator"); ?>
+				</span>
+			</div>
+		</div>
+
+		<button type="submit" class="btn btn-primary"><?=gettext("Save");?></button>
+	</div>
+</form>
+<?php include("foot.inc"); ?>

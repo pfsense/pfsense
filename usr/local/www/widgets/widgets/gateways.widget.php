@@ -41,23 +41,20 @@ $a_gateways = return_gateways_array();
 $gateways_status = array();
 $gateways_status = return_gateways_status(true);
 
-$counter = 1;
-
 ?>
 <table class="table table-striped">
 <thead>
-	<tr>
-		<th>Name</td>
-		<th>RTT</td>
-		<th>Loss</td>
-		<th>Status</td>
-	</tr>
-	</thead>
-	<tbody>
+<tr>
+	<th>Name</td>
+	<th>RTT</td>
+	<th>Loss</td>
+	<th>Status</td>
+</tr>
+</thead>
+<tbody>
 <?php foreach ($a_gateways as $gname => $gateway): ?>
 	<tr>
-		<td><?=htmlspecialchars($gateway['name'])?></td>
-		<td colspan="3">
+		<td>
 <?php
 	$if_gw = '';
 	if (is_ipaddr($gateway['gateway']))
@@ -68,10 +65,10 @@ $counter = 1;
 		if($gateway['ipprotocol'] == "inet6")
 			$if_gw = get_interface_gateway_v6($gateway['friendlyiface']);
 	}
-	echo ($if_gw == '' ? '~' : htmlspecialchars($if_gw));
 ?>
+			<?=htmlspecialchars($gateway['name'])?><br />
+			<i><?=($if_gw == '' ? '~' : htmlspecialchars($if_gw));?></i>
 		</td>
-	</tr>
 <?php
 	if ($gateways_status[$gname]) {
 		if (stristr($gateways_status[$gname]['status'], "force_down")) {
@@ -98,24 +95,10 @@ $counter = 1;
 		$bgcolor = "#ADD8E6";  // lightblue
 	}
 ?>
-	<tr style="background-color: <?=$bgcolor?>">
-		<td><?php
-			if ($gateways_status[$gname])
-				echo htmlspecialchars($gateways_status[$gname]['delay']);
-			else
-				echo gettext("Pending");
-		?></td>
-		<td><?php
-			if ($gateways_status[$gname])
-				echo htmlspecialchars($gateways_status[$gname]['loss']);
-			else
-				echo gettext("Pending");
-		?></td>
-			<td><?=$online?></td>
-			<?php
-			$counter++;
-		?>
+		<td><?=($gateways_status[$gname] ? htmlspecialchars($gateways_status[$gname]['delay']) : gettext("Pending"))?></td>
+		<td><?=($gateways_status[$gname] ? htmlspecialchars($gateways_status[$gname]['loss']) : gettext("Pending"))?></td>
+		<td style="background-color: <?=$bgcolor?>"><?=$online?></td>
 	</tr>
-	<?php endforeach; ?>
-	</tbody>
+<?php endforeach; ?>
+</tbody>
 </table>

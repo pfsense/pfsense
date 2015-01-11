@@ -196,7 +196,7 @@ if (isset($_POST['add_x']) && isset($_POST['if_add'])) {
 	/* Be sure this port is not being used */
 	$portused = false;
 	foreach ($config['interfaces'] as $ifname => $ifdata) {
-		if ($ifdata['if'] == $_PORT['if_add']) {
+		if ($ifdata['if'] == $_POST['if_add']) {
 			$portused = true;
 			break;
 		}

@@ -194,14 +194,6 @@ function captiveportal_configure_zone($cpcfg) {
 		} else
 			captiveportal_syslog("Reconfiguring captive portal({$cpcfg['zone']}).");
 
-		if (is_array($cpcfg['passthrumac'])) {
-			$nentries = count($cpcfg['passthrumac']);
-			if ($nentries > 2000) {
-				if (!set_time_limit(0))
-					log_error("Execution time limit may be reached while reconfiguring zone = {$cpzone} due to many passthruogh entries!");
-			}
-		}
-					
 		/* init ipfw rules */
 		captiveportal_init_rules(true);
 
@@ -389,8 +381,6 @@ EOD;
 		}
 	}
 
-	/* XXX: Same as in rc.php_init_setup */
-	set_time_limit(900);
 	unlock($captiveportallck);
 	
 	return 0;

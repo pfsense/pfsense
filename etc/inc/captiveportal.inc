@@ -194,6 +194,14 @@ function captiveportal_configure_zone($cpcfg) {
 		} else
 			captiveportal_syslog("Reconfiguring captive portal({$cpcfg['zone']}).");
 
+		if (is_array($cpcfg['passthrumac'])) {
+			$nentries = count($cpcfg['passthrumac']);
+			if ($nentries > 2000) {
+				if (!set_time_limit(0))
+					log_error("Execution time limit may be reached while reconfiguring zone = {$cpzone} due to many passthrugh entries!");
+			}
+		}
+					
 		/* init ipfw rules */
 		captiveportal_init_rules(true);
 
@@ -381,6 +389,8 @@ EOD;
 		}
 	}
 
+	/* XXX: Same as in rc.php_init_setup */
+	set_time_limit(900);
 	unlock($captiveportallck);
 	
 	return 0;
@@ -474,6 +484,7 @@ function captiveportal_init_rules($reinit = false) {
 
 	captiveportal_load_modules();
 	mwexec("/sbin/ipfw zone {$cpzoneid} create", true);
+	captiveportal_flush_dn_ruleno($cpzone);
 
 	$cpips = array();
 	$ifaces = get_configured_interface_list();
@@ -1474,6 +1485,26 @@ function captiveportal_free_dn_ruleno($ruleno) {
 		$rules[$ruleno] = false;
 		$ruleno++;
 		$rules[$ruleno] = false;
+		file_put_contents("{$g['vardb_path']}/captiveportaldn.rules", serialize($rules));
+		unset($rules);
+	}
+	unlock($cpruleslck);
+}
+
+/*
+ * To avoid allocating more ids than needed to a zone need
+ * to flush them before loading/creating new ruleset
+ */
+function captiveportal_flush_dn_ruleno($cpzone) {
+	global $config, $g;
+
+	$cpruleslck = lock("captiveportalrulesdn", LOCK_EX);
+	if (file_exists("{$g['vardb_path']}/captiveportaldn.rules")) {
+		$rules = unserialize(file_get_contents("{$g['vardb_path']}/captiveportaldn.rules"));
+		foreach ($rules as $idx => $zone) {
+			if ($zone == $cpzone)
+				$rules[$idx] = false;
+		}
 		file_put_contents("{$g['vardb_path']}/captiveportaldn.rules", serialize($rules));
 		unset($rules);
 	}

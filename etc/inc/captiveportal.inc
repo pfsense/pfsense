@@ -484,7 +484,10 @@ function captiveportal_init_rules($reinit = false) {
 
 	captiveportal_load_modules();
 	mwexec("/sbin/ipfw zone {$cpzoneid} create", true);
+
+	/* Cleanup so nothing is leaked */
 	captiveportal_free_dnrules();
+	unlink_if_exists("{$g['vardb_path']}/captiveportal_{$cpzone}.rules");
 
 	$cpips = array();
 	$ifaces = get_configured_interface_list();

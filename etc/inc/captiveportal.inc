@@ -484,7 +484,7 @@ function captiveportal_init_rules($reinit = false) {
 
 	captiveportal_load_modules();
 	mwexec("/sbin/ipfw zone {$cpzoneid} create", true);
-	captiveportal_flush_dn_ruleno($cpzone);
+	captiveportal_free_dnrules();
 
 	$cpips = array();
 	$ifaces = get_configured_interface_list();
@@ -1485,26 +1485,6 @@ function captiveportal_free_dn_ruleno($ruleno) {
 		$rules[$ruleno] = false;
 		$ruleno++;
 		$rules[$ruleno] = false;
-		file_put_contents("{$g['vardb_path']}/captiveportaldn.rules", serialize($rules));
-		unset($rules);
-	}
-	unlock($cpruleslck);
-}
-
-/*
- * To avoid allocating more ids than needed to a zone need
- * to flush them before loading/creating new ruleset
- */
-function captiveportal_flush_dn_ruleno($cpzone) {
-	global $config, $g;
-
-	$cpruleslck = lock("captiveportalrulesdn", LOCK_EX);
-	if (file_exists("{$g['vardb_path']}/captiveportaldn.rules")) {
-		$rules = unserialize(file_get_contents("{$g['vardb_path']}/captiveportaldn.rules"));
-		foreach ($rules as $idx => $zone) {
-			if ($zone == $cpzone)
-				$rules[$idx] = false;
-		}
 		file_put_contents("{$g['vardb_path']}/captiveportaldn.rules", serialize($rules));
 		unset($rules);
 	}

@@ -339,8 +339,14 @@ if ($_POST) {
 		$newcp['preauthurl'] = $_POST['preauthurl'];
 		$newcp['blockedmacsurl'] = $_POST['blockedmacsurl'];
 		$newcp['peruserbw'] = $_POST['peruserbw'] ? true : false;
-		$newcp['bwdefaultdn'] = $_POST['bwdefaultdn'];
-		$newcp['bwdefaultup'] = $_POST['bwdefaultup'];
+		if (isset($_POST['bwdefaultdn']))
+			$newcp['bwdefaultdn'] = $_POST['bwdefaultdn'];
+		else
+			unset($newcp['bwdefaultdn']);
+		if (isset($_POST['bwdefaultup']))
+			$newcp['bwdefaultup'] = $_POST['bwdefaultup'];
+		else
+			unset($newcp['bwdefaultup']);
 		$newcp['certref'] = $_POST['certref'];
 		$newcp['nohttpsforwards'] = $_POST['nohttpsforwards'] ? true : false;
 		$newcp['logoutwin_enable'] = $_POST['logoutwin_enable'] ? true : false;

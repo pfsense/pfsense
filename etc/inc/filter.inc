@@ -822,7 +822,7 @@ function filter_get_vpns_list() {
 						continue;
 					$ph2ent['remoteid']['mode'] = $ph2ent['mode'];
 					$vpns_subnet = ipsec_idinfo_to_cidr($ph2ent['remoteid']);
-					if ($vpns_subnet == "0.0.0.0/0")
+					if (!is_subnet($vpns_subnet) || $vpns_subnet == "0.0.0.0/0")
 						continue;
 					$vpns_arr[] = $vpns_subnet;
 				}
@@ -1515,7 +1515,7 @@ function filter_nat_rules_outbound_automatic($src) {
 		$natent['interface'] = $if;
 		$natent['source']['network'] = $src;
 		$natent['dstport'] = "500";
-		$natent['target'] = $ifcfg['ip'];
+		$natent['target'] = "";
 		$natent['destination']['any'] = true;
 		$natent['staticnatport'] = true;
 		$natent['descr'] = gettext('Auto created rule for ISAKMP');
@@ -1525,7 +1525,7 @@ function filter_nat_rules_outbound_automatic($src) {
 		$natent['interface'] = $if;
 		$natent['source']['network'] = $src;
 		$natent['sourceport'] = "";
-		$natent['target'] = $ifcfg['ip'];
+		$natent['target'] = "";
 		$natent['destination']['any'] = true;
 		$natent['natport'] = "";
 		$natent['descr'] = gettext('Auto created rule');
@@ -2761,8 +2761,8 @@ function filter_rules_generate() {
 # block IPv4 link-local. Per RFC 3927, link local "MUST NOT" be forwarded by a routing device,
 # and clients "MUST NOT" send such packets to a router. FreeBSD won't route 169.254./16, but
 # route-to can override that, causing problems such as in redmine #2073
-block in {$log['block']} quick from 169.254.0.0/16 to any
-block in {$log['block']} quick from any to 169.254.0.0/16 
+block in {$log['block']} quick from 169.254.0.0/16 to any tracker {$increment_tracker($tracker)} label "Block IPv4 link-local"
+block in {$log['block']} quick from any to 169.254.0.0/16 tracker {$increment_tracker($tracker)} label "Block IPv4 link-local"
 #---------------------------------------------------------------------------
 # default deny rules
 #---------------------------------------------------------------------------
@@ -3635,12 +3635,6 @@ function filter_generate_ipsec_rules($log = array()) {
 	$increment_tracker = 'filter_rule_tracker';
 
 	$ipfrules = "\n# VPN Rules\n";
-	/* Is IP Compression enabled? */
-	if(isset($config['ipsec']['ipcomp']))
-		set_single_sysctl("net.inet.ipcomp.ipcomp_enable" , "1");
-	else
-		set_single_sysctl("net.inet.ipcomp.ipcomp_enable" , "0");
-
 	if(isset($config['ipsec']['enable']) &&
 		is_array($config['ipsec']['phase1'])) {
 		/* step through all phase1 entries */
@@ -3725,14 +3719,14 @@ function filter_generate_ipsec_rules($log = array()) {
 			/* Add rules to allow IKE to pass */
 			$shorttunneldescr = substr($descr, 0, 35);
 				$ipfrules .= <<<EOD
-pass out {$log['pass']} on \${$FilterIflist[$parentinterface]['descr']} $route_to proto udp from any to {$rgip} port = 500 tracker {$increment_tracker($tracker)} keep state label "IPsec: {$shorttunneldescr} - outbound isakmp"
+pass out {$log['pass']} $route_to proto udp from any to {$rgip} port = 500 tracker {$increment_tracker($tracker)} keep state label "IPsec: {$shorttunneldescr} - outbound isakmp"
 pass in {$log['pass']} on \${$FilterIflist[$parentinterface]['descr']} $reply_to proto udp from {$rgip} to any port = 500 tracker {$increment_tracker($tracker)} keep state label "IPsec: {$shorttunneldescr} - inbound isakmp"
 
 EOD;
 			/* If NAT-T is enabled, add additional rules */
 			if($ph1ent['nat_traversal'] != "off" ) {
 				$ipfrules .= <<<EOD
-pass out {$log['pass']} on \${$FilterIflist[$parentinterface]['descr']} $route_to proto udp from any to {$rgip} port = 4500 tracker {$increment_tracker($tracker)} keep state label "IPsec: {$shorttunneldescr} - outbound nat-t"
+pass out {$log['pass']} $route_to proto udp from any to {$rgip} port = 4500 tracker {$increment_tracker($tracker)} keep state label "IPsec: {$shorttunneldescr} - outbound nat-t"
 pass in {$log['pass']} on \${$FilterIflist[$parentinterface]['descr']} $reply_to proto udp from {$rgip} to any port = 4500 tracker {$increment_tracker($tracker)} keep state label "IPsec: {$shorttunneldescr} - inbound nat-t"
 
 EOD;
@@ -3740,14 +3734,14 @@ EOD;
 			/* Add rules to allow the protocols in use */
 			if($prot_used_esp == true) {
 				$ipfrules .= <<<EOD
-pass out {$log['pass']} on \${$FilterIflist[$parentinterface]['descr']} $route_to proto esp from any to {$rgip} tracker {$increment_tracker($tracker)} keep state label "IPsec: {$shorttunneldescr} - outbound esp proto"
+pass out {$log['pass']} $route_to proto esp from any to {$rgip} tracker {$increment_tracker($tracker)} keep state label "IPsec: {$shorttunneldescr} - outbound esp proto"
 pass in {$log['pass']} on \${$FilterIflist[$parentinterface]['descr']} $reply_to proto esp from {$rgip} to any tracker {$increment_tracker($tracker)} keep state label "IPsec: {$shorttunneldescr} - inbound esp proto"
 
 EOD;
 			}
 			if($prot_used_ah == true) {
 				$ipfrules .= <<<EOD
-pass out {$log['pass']} on \${$FilterIflist[$parentinterface]['descr']} $route_to proto ah from any to {$rgip} tracker {$increment_tracker($tracker)} keep state label "IPsec: {$shorttunneldescr} - outbound ah proto"
+pass out {$log['pass']} $route_to proto ah from any to {$rgip} tracker {$increment_tracker($tracker)} keep state label "IPsec: {$shorttunneldescr} - outbound ah proto"
 pass in {$log['pass']} on \${$FilterIflist[$parentinterface]['descr']} $reply_to proto ah from {$rgip} to any tracker {$increment_tracker($tracker)} keep state label "IPsec: {$shorttunneldescr} - inbound ah proto"
 
 EOD;

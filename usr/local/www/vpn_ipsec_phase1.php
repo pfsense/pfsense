@@ -123,12 +123,12 @@ if (isset($p1index) && $a_phase1[$p1index]) {
 	$pconfig['interface'] = "wan";
 	if($config['interfaces']['lan'])
 		$pconfig['localnet'] = "lan";
-	$pconfig['mode'] = "aggressive";
+	$pconfig['mode'] = "main";
 	$pconfig['protocol'] = "inet";
 	$pconfig['myid_type'] = "myaddress";
 	$pconfig['peerid_type'] = "peeraddress";
 	$pconfig['authentication_method'] = "pre_shared_key";
-	$pconfig['ealgo'] = array( name => "3des" );
+	$pconfig['ealgo'] = array( name => "aes" );
 	$pconfig['halgo'] = "sha1";
 	$pconfig['dhgroup'] = "2";
 	$pconfig['lifetime'] = "28800";
@@ -137,8 +137,10 @@ if (isset($p1index) && $a_phase1[$p1index]) {
 	$pconfig['iketype'] = "ikev1";
 
 	/* mobile client */
-	if($_GET['mobile'])
+	if($_GET['mobile']) {
 		$pconfig['mobile']=true;
+                $pconfig['mode'] = "aggressive";
+	}
 }
 
 if (isset($_GET['dup']) && is_numericint($_GET['dup']))

@@ -2120,22 +2120,6 @@ function interface_carp_configure(&$vip) {
 		return;
 	}
 
-	if (is_ipaddrv4($vip['subnet'])) {
-		/* Ensure a IP on this interface exists prior to configuring CARP. */
-		$ww_subnet_ip = find_interface_ip($realif);
-		if (!is_ipaddrv4($ww_subnet_ip)) {
-			file_notice("CARP", sprintf(gettext("Interface does not have required IP address in the subnet of virtual IP address %s. Skipping this VIP."), $vip['subnet']), "Firewall: Virtual IP", "");
-			return;
-		}
-	} else if (is_ipaddrv6($vip['subnet'])) {
-		/* Ensure a IP on this interface exists prior to configuring CARP. */
-		$ww_subnet_ip = find_interface_ipv6($realif);
-		if (!is_ipaddrv6($ww_subnet_ip)) {
-			file_notice("CARP", sprintf(gettext("Interface does not have required IPv6 address in the subnet of virtual IPv6 address %s. Skipping this VIP."), $vip['subnet']), "Firewall: Virtual IP", "");
-			return;
-		}
-	}
-
 	$vip_password = $vip['password'];
 	$vip_password = escapeshellarg(addslashes(str_replace(" ", "", $vip_password)));
 	if ($vip['password'] != "")
@@ -3036,15 +3020,19 @@ function interface_configure($interface = "wan", $reloadall = false, $linkupeven
 	if (!platform_booting()) {
 		link_interface_to_vips($interface, "update");
 
-		unset($gre);
-		$gre = link_interface_to_gre($interface);
-		if (!empty($gre))
-			array_walk($gre, 'interface_gre_configure');
+		if ($tunnelif != 'gre') {
+			unset($gre);
+			$gre = link_interface_to_gre($interface);
+			if (!empty($gre))
+				array_walk($gre, 'interface_gre_configure');
+		}
 
-		unset($gif);
-		$gif = link_interface_to_gif($interface);
-		if (!empty($gif))
-			array_walk($gif, 'interface_gif_configure');
+		if ($tunnelif != 'gif') {
+			unset($gif);
+			$gif = link_interface_to_gif($interface);
+			if (!empty($gif))
+				array_walk($gif, 'interface_gif_configure');
+		}
 
 		if ($linkupevent == false || substr($realif, 0, 4) == "ovpn") {
 			unset($bridgetmp);
@@ -3575,7 +3563,7 @@ function DHCP6_Config_File_Advanced($interface, $wancfg, $wanif) {
 
 	$send_options = "";
 	if ($wancfg['adv_dhcp6_interface_statement_send_options'] != '') {
-		$options = split(",", $wancfg['adv_dhcp6_interface_statement_send_options']);
+		$options = explode(',', $wancfg['adv_dhcp6_interface_statement_send_options']);
 		foreach ($options as $option) {
 			$send_options .= "\tsend " . trim($option) . ";\n";
 		}
@@ -3583,7 +3571,7 @@ function DHCP6_Config_File_Advanced($interface, $wancfg, $wanif) {
 
 	$request_options = "";
 	if ($wancfg['adv_dhcp6_interface_statement_request_options'] != '') {
-		$options = split(",", $wancfg['adv_dhcp6_interface_statement_request_options']);
+		$options = explode(',', $wancfg['adv_dhcp6_interface_statement_request_options']);
 		foreach ($options as $option) {
 			$request_options .= "\trequest " . trim($option) . ";\n";
 		}
@@ -3833,7 +3821,7 @@ function DHCP_Config_File_Advanced($interface, $wancfg, $wanif) {
 
 	$send_options = "";
 	if ($wancfg['adv_dhcp_send_options'] != '') {
-		$options = split(",", $wancfg['adv_dhcp_send_options']);
+		$options = explode(',', $wancfg['adv_dhcp_send_options']);
 		foreach ($options as $option) {
 			$send_options .= "\tsend " . trim($option) . ";\n";
 		}
@@ -3851,7 +3839,7 @@ function DHCP_Config_File_Advanced($interface, $wancfg, $wanif) {
 
 	$option_modifiers = "";
 	if ($wancfg['adv_dhcp_option_modifiers'] != '') {
-		$modifiers = split(",", $wancfg['adv_dhcp_option_modifiers']);
+		$modifiers = explode(',', $wancfg['adv_dhcp_option_modifiers']);
 		foreach ($modifiers as $modifier) {
 			$option_modifiers .= "\t" . trim($modifier) . ";\n";
 		}
@@ -5163,6 +5151,10 @@ function is_jumbo_capable($iface) {
 	$capable = pfSense_get_interface_addresses($iface);
 
 	if (isset($capable['caps']['vlanmtu']))
+		return true;
+
+	// hack for some lagg modes missing vlanmtu, but work fine w/VLANs
+	if (substr($iface, 0, 4) == "lagg")
 		return true;
 
 	return false;

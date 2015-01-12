@@ -38283,7 +38283,7 @@ msgstr "Prefixo ID IPv6"
 #: usr/local/www/interfaces.php:1853 usr/local/www/interfaces.php:1841
 #: usr/local/www/interfaces.php:1862 usr/local/www/interfaces.php:1908
 #: usr/local/www/interfaces.php:1898 usr/local/www/interfaces.php:1934
-msgid "The value in this field is the (Delegated) IPv6 prefix id. This determines the configurable network ID based on the dynamic IPv6 connection"
+msgid "The value in this field is the (Delegated) IPv6 prefix ID. This determines the configurable network ID based on the dynamic IPv6 connection"
 msgstr ""
 
 #: usr/local/www/interfaces.php:1855 usr/local/www/interfaces.php:1843

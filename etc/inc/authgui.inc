@@ -225,16 +225,6 @@ if ($local_ip == false) {
 		}
 	}
 }
-setcookie(
-	"cookie_test",
-	'',
-	time() + 3600,
-	'/',
-	NULL,
-	($config['system']['webgui']['protocol'] == "https"),
-	true
-);
-$have_cookies = isset($_COOKIE["cookie_test"]);
 
 ?>
 
@@ -304,13 +294,11 @@ $have_cookies = isset($_COOKIE["cookie_test"]);
 						<?=gettext("Enter username and password to login."); ?>
 					</span>
 
-					<?php if (!$have_cookies && isset($_POST['login'])): ?>
-					<br /><br />
-					<span style="text-align:center; font-weight: normal ; font-style: italic; color: #ff0000">
+					<span style="text-align:center; font-weight: normal ; font-style: italic; color: #ff0000; display:none" id="no_cookies">
+						<br /><br />
 						<?= gettext("Your browser must support cookies to login."); ?>
 					</span>
-					<?php endif; ?>
-				</p>        
+				</p>
 				<p>
 					<span style="text-align:center">
 						<input type="submit" name="login" class="formbtn" value="<?=gettext("Login"); ?>" tabindex="3" />
@@ -318,6 +306,19 @@ $have_cookies = isset($_COOKIE["cookie_test"]);
 				</p>
 			</form>
 		</div>
+		<script type="text/javascript">
+		//<![CDATA[
+		document.cookie=
+			"cookie_test=1" +
+			"<?php echo $config['system']['webgui']['protocol'] == 'https' ? '; secure' : '';?>";
+
+		if (document.cookie.indexOf("cookie_test") == -1)
+			document.getElementById("no_cookies").style.display="";
+
+		// Delete it
+		document.cookie = "cookie_test=1; expires=Thu, 01-Jan-1970 00:00:01 GMT";
+		//]]>
+		</script>
 	</body>
 </html>
 <?php

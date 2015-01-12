@@ -45348,7 +45348,7 @@ msgstr "IPv6のプレフィックス番号"
 #: usr/local/www/interfaces.php:1862 usr/local/www/interfaces.php:1908
 #: usr/local/www/interfaces.php:1898 usr/local/www/interfaces.php:1898
 msgid ""
-"The value in this field is the (Delegated) IPv6 prefix id. This determines "
+"The value in this field is the (Delegated) IPv6 prefix ID. This determines "
 "the configurable network ID based on the dynamic IPv6 connection"
 msgstr ""このフィールドの値は、 （委任） IPv6プレフィックスIDです。これが決定「動的なIPv6接続に基づいて構成可能なネットワークIDを"
 

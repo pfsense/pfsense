@@ -302,15 +302,13 @@ function local_backed($username, $passwd) {
 
 	if ($user['password'])
 	{
-		$passwd = crypt($passwd, $user['password']);
-		if ($passwd == $user['password'])
+		if (crypt($passwd, $user['password']) == $user['password'])
 			return true;
 	}
 
 	if ($user['md5-hash'])
 	{
-		$passwd = md5($passwd);
-		if ($passwd == $user['md5-hash'])
+		if (md5($passwd) == $user['md5-hash'])
 			return true;
 	}
 

@@ -194,6 +194,14 @@ function captiveportal_configure_zone($cpcfg) {
 		} else
 			captiveportal_syslog("Reconfiguring captive portal({$cpcfg['zone']}).");
 
+		if (is_array($cpcfg['passthrumac'])) {
+			$nentries = count($cpcfg['passthrumac']);
+			if ($nentries > 2000) {
+				if (!set_time_limit(0))
+					log_error("Execution time limit may be reached while reconfiguring zone = {$cpzone} due to many passthrough entries!");
+			}
+		}
+					
 		/* init ipfw rules */
 		captiveportal_init_rules(true);
 
@@ -381,6 +389,8 @@ EOD;
 		}
 	}
 
+	/* XXX: Same as in rc.php_init_setup */
+	set_time_limit(900);
 	unlock($captiveportallck);
 	
 	return 0;
@@ -474,6 +484,7 @@ function captiveportal_init_rules($reinit = false) {
 
 	captiveportal_load_modules();
 	mwexec("/sbin/ipfw zone {$cpzoneid} create", true);
+	captiveportal_free_dnrules();
 
 	$cpips = array();
 	$ifaces = get_configured_interface_list();
@@ -962,12 +973,12 @@ function captiveportal_passthrumac_configure_entry($macent, $pipeinrule = false)
 	$bwUp = 0;
 	if (!empty($macent['bw_up']))
 		$bwUp = $macent['bw_up'];
-	else if (isset($config['captiveportal'][$cpzone]['bwdefaultup']))
+	else if (!empty($config['captiveportal'][$cpzone]['bwdefaultup']))
 		$bwUp = $config['captiveportal'][$cpzone]['bwdefaultup'];
 	$bwDown = 0;
 	if (!empty($macent['bw_down']))
 		$bwDown = $macent['bw_down'];
-	else if (isset($config['captiveportal'][$cpzone]['bwdefaultdn']))
+	else if (!empty($config['captiveportal'][$cpzone]['bwdefaultdn']))
 		$bwDown = $config['captiveportal'][$cpzone]['bwdefaultdn'];
 
 	$ruleno = captiveportal_get_next_ipfw_ruleno();
@@ -1028,12 +1039,8 @@ function captiveportal_passthrumac_configure($lock = false) {
 	$rules = "";
 
 	if (is_array($config['captiveportal'][$cpzone]['passthrumac'])) {
-		$nentries = count($config['captiveportal'][$cpzone]['passthrumac']);
 		foreach ($config['captiveportal'][$cpzone]['passthrumac'] as $macent) {
-			if ($nentries > 100)
-				$rules .= captiveportal_passthrumac_configure_entry($macent, true);
-			else
-				$rules .= captiveportal_passthrumac_configure_entry($macent);
+			$rules .= captiveportal_passthrumac_configure_entry($macent, true);
 		}
 	}
 
@@ -1076,12 +1083,12 @@ function captiveportal_allowedip_configure_entry($ipent, $ishostname = false) {
 	$enBwup = 0;
 	if (!empty($ipent['bw_up']))
 		$enBwup = intval($ipent['bw_up']);
-	else if (isset($config['captiveportal'][$cpzone]['bwdefaultup']))
+	else if (!empty($config['captiveportal'][$cpzone]['bwdefaultup']))
 		$enBwup = $config['captiveportal'][$cpzone]['bwdefaultup'];
 	$enBwdown = 0;
 	if (!empty($ipent['bw_down']))
 		$enBwdown = intval($ipent['bw_down']);
-	else if (isset($config['captiveportal'][$cpzone]['bwdefaultdn']))
+	else if (!empty($config['captiveportal'][$cpzone]['bwdefaultdn']))
 		$enBwdown = $config['captiveportal'][$cpzone]['bwdefaultdn'];
 
 	$pipeno = captiveportal_get_next_dn_ruleno();
@@ -1801,12 +1808,12 @@ function captiveportal_reapply_attributes($cpentry, $attributes) {
 	global $config, $cpzone, $g;
 
 	if (isset($config['captiveportal'][$cpzone]['peruserbw'])) {
-		$dwfaultbw_up = isset($config['captiveportal'][$cpzone]['bwdefaultup']) ? $config['captiveportal'][$cpzone]['bwdefaultup'] : 0;
-		$dwfaultbw_down = isset($config['captiveportal'][$cpzone]['bwdefaultdn']) ? $config['captiveportal'][$cpzone]['bwdefaultdn'] : 0;
+		$dwfaultbw_up = !empty($config['captiveportal'][$cpzone]['bwdefaultup']) ? $config['captiveportal'][$cpzone]['bwdefaultup'] : 0;
+		$dwfaultbw_down = !empty($config['captiveportal'][$cpzone]['bwdefaultdn']) ? $config['captiveportal'][$cpzone]['bwdefaultdn'] : 0;
 	} else
 		$dwfaultbw_up = $dwfaultbw_down = 0;
-	$bw_up = isset($attributes['bw_up']) ? round(intval($attributes['bw_up'])/1000, 2) : $dwfaultbw_up;
-	$bw_down = isset($attributes['bw_down']) ? round(intval($attributes['bw_down'])/1000, 2) : $dwfaultbw_down;
+	$bw_up = !empty($attributes['bw_up']) ? round(intval($attributes['bw_up'])/1000, 2) : $dwfaultbw_up;
+	$bw_down = !empty($attributes['bw_down']) ? round(intval($attributes['bw_down'])/1000, 2) : $dwfaultbw_down;
 	$bw_up_pipeno = $cpentry[1];
 	$bw_down_pipeno = $cpentry[1]+1;
 
@@ -1982,12 +1989,12 @@ function portal_allow($clientip,$clientmac,$username,$password = null, $attribut
 			}
 
 			if (isset($config['captiveportal'][$cpzone]['peruserbw'])) {
-				$dwfaultbw_up = isset($config['captiveportal'][$cpzone]['bwdefaultup']) ? $config['captiveportal'][$cpzone]['bwdefaultup'] : 0;
-				$dwfaultbw_down = isset($config['captiveportal'][$cpzone]['bwdefaultdn']) ? $config['captiveportal'][$cpzone]['bwdefaultdn'] : 0;
+				$dwfaultbw_up = !empty($config['captiveportal'][$cpzone]['bwdefaultup']) ? $config['captiveportal'][$cpzone]['bwdefaultup'] : 0;
+				$dwfaultbw_down = !empty($config['captiveportal'][$cpzone]['bwdefaultdn']) ? $config['captiveportal'][$cpzone]['bwdefaultdn'] : 0;
 			} else
 				$dwfaultbw_up = $dwfaultbw_down = 0;
-			$bw_up = isset($attributes['bw_up']) ? round(intval($attributes['bw_up'])/1000, 2) : $dwfaultbw_up;
-			$bw_down = isset($attributes['bw_down']) ? round(intval($attributes['bw_down'])/1000, 2) : $dwfaultbw_down;
+			$bw_up = !empty($attributes['bw_up']) ? round(intval($attributes['bw_up'])/1000, 2) : $dwfaultbw_up;
+			$bw_down = !empty($attributes['bw_down']) ? round(intval($attributes['bw_down'])/1000, 2) : $dwfaultbw_down;
 
 			$bw_up_pipeno = $pipeno;
 			$bw_down_pipeno = $pipeno + 1;

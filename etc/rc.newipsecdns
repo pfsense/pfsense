@@ -54,8 +54,5 @@ $ipseclck = lock('ipsecdns', LOCK_EX);
 
 vpn_ipsec_configure();
 
-if (isset($config['ipsec']['failoverforcereload']))
-	vpn_ipsec_force_reload();
-
 unlock($ipseclck);
 ?>

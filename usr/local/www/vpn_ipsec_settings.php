@@ -46,7 +46,8 @@ foreach ($ipsec_loglevels as $lkey => $ldescr) {
 	if (!empty($config['ipsec']["ipsec_{$lkey}"]))
 		$pconfig["ipsec_{$lkey}"] = $config['ipsec']["ipsec_{$lkey}"];
 }
-$pconfig['failoverforcereload'] = isset($config['ipsec']['failoverforcereload']);
+$pconfig['unityplugin'] = isset($config['ipsec']['unityplugin']);
+$pconfig['compression'] = isset($config['ipsec']['compression']);
 $pconfig['acceptunencryptedmainmode'] = isset($config['ipsec']['acceptunencryptedmainmode']);
 $pconfig['maxmss_enable'] = isset($config['system']['maxmss_enable']);
 $pconfig['maxmss'] = $config['system']['maxmss'];
@@ -129,10 +130,15 @@ if ($_POST) {
 			}
 		}
 
-		if($_POST['failoverforcereload'] == "yes")
-			$config['ipsec']['failoverforcereload'] = true;
-		elseif (isset($config['ipsec']['failoverforcereload']))
-			unset($config['ipsec']['failoverforcereload']);
+		if($_POST['compression'] == "yes")
+			$config['ipsec']['compression'] = true;
+		elseif (isset($config['ipsec']['compression']))
+			unset($config['ipsec']['compression']);
+
+		if($_POST['unityplugin'] == "yes")
+			$config['ipsec']['unityplugin'] = true;
+		elseif (isset($config['ipsec']['unityplugin']))
+			unset($config['ipsec']['unityplugin']);
 
 		if($_POST['acceptunencryptedmainmode'] == "yes")
 			$config['ipsec']['acceptunencryptedmainmode'] = true;
@@ -256,15 +262,12 @@ function maxmss_checked(obj) {
 						</td>
 					</tr>
 					<tr>
-						<td width="22%" valign="top" class="vncell"><?=gettext("IPsec Reload on Failover"); ?></td>
+						<td width="22%" valign="top" class="vncell"><?=gettext("IP Compression"); ?></td>
 						<td width="78%" class="vtable">
-							<input name="failoverforcereload" type="checkbox" id="failoverforcereload" value="yes" <?php if ($pconfig['failoverforcereload']) echo "checked=\"checked\""; ?> />
-							<strong><?=gettext("Force IPsec Reload on Failover"); ?></strong>
+							<input name="compression" type="checkbox" id="compression" value="yes" <?php if ($pconfig['compression']) echo "checked=\"checked\""; ?> />
+							<strong><?=gettext("Enable IPCompression"); ?></strong>
 							<br />
-							<?=gettext("In some circumstances using a gateway group as the interface for " .
-							"an IPsec tunnel does not function properly, and IPsec must be forcefully reloaded " .
-							"when a failover occurs. Because this will disrupt all IPsec tunnels, this behavior" .
-							" is disabled by default. Check this box to force IPsec to fully reload on failover."); ?>
+							<?=gettext("IPComp compression of content is proposed on the connection."); ?>
 						</td>
 					</tr>
 					<tr>
@@ -289,6 +292,15 @@ function maxmss_checked(obj) {
 							<br />
 							<?=gettext("Enable MSS clamping on TCP flows over VPN. " .
 							"This helps overcome problems with PMTUD on IPsec VPN links. If left blank, the default value is 1400 bytes. "); ?>
+						</td>
+					</tr>
+					<tr>
+						<td width="22%" valign="top" class="vncell"><?=gettext("Disable Cisco Extensions"); ?></td>
+						<td width="78%" class="vtable">
+							<input name="unityplugin" type="checkbox" id="unityplugin" value="yes" <?php if ($pconfig['unityplugin'] == true) echo "checked=\"checked\""; ?> />
+							<strong><?=gettext("Disable Unity Plugin"); ?></strong>
+							<br />
+							<?=gettext("Disable Unity Plugin which provides Cisco Extension support as Split-Include, Split-Exclude, Split-Dns, ..."); ?>
 						</td>
 					</tr>
 					<tr>

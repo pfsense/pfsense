@@ -13973,7 +13973,7 @@ msgstr "IPv6 ön-eki kimliği için geçerli bir ondalık numara girmelisiniz."
 
 #: usr/local/www/interfaces.php:618
 #, php-format
-msgid "This track6 prefix id is already being used in %s."
+msgid "This track6 prefix ID is already being used in %s."
 msgstr ""
 
 #: usr/local/www/interfaces.php:631
@@ -14779,7 +14779,7 @@ msgstr "IPv6 Ön-ek kimliği"
 
 #: usr/local/www/interfaces.php:2569
 msgid ""
-"The value in this field is the (Delegated) IPv6 prefix id. This determines "
+"The value in this field is the (Delegated) IPv6 prefix ID. This determines "
 "the configurable network ID based on the dynamic IPv6 connection"
 msgstr ""
 "Bu alandaki değer (yetkilendirimiş) IPv6 ön-ek kimliğidir. Bu dinamik IPv6 "

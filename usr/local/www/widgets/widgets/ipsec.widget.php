@@ -41,7 +41,7 @@ require_once("ipsec.inc");
 
 if (isset($config['ipsec']['phase1'])) { ?>
 	<div>&nbsp;</div>
-	<?php
+<?php
 	$tab_array = array();
 	$tab_array[0] = array("Overview", true, "ipsec-Overview");
 	$tab_array[1] = array("Tunnels", false, "ipsec-tunnel");
@@ -67,32 +67,35 @@ if (isset($config['ipsec']['phase1'])) { ?>
 		$ipsec_status['query']['ikesalist']['ikesa'] = array();
 
 	$ipsec_detail_array = array();
-	$ikev1num = array();
+	$ikenum = array();
 	if (isset($config['ipsec']['phase2'])) {
 		foreach ($config['ipsec']['phase2'] as $ph2ent) {
-			if ($ph2ent['remoteid']['type'] == "mobile")
-				continue;
 			if (!ipsec_lookup_phase1($ph2ent,$ph1ent))
 				continue;
 
+			if ($ph2ent['remoteid']['type'] == "mobile" || isset($ph1ent['mobile']))
+				continue;
 			if (isset($ph1ent['disabled']) || isset($ph2ent['disabled']))
 				continue;
 
 			if (empty($ph1ent['iketype']) || $ph1ent['iketype'] == 'ikev1') {
-				if (!isset($ikev1num[$ph1ent['ikeid']]))
-					$ikev1num[$ph1ent['ikeid']] = 0;
+				if (!isset($ikenum[$ph1ent['ikeid']]))
+					$ikenum[$ph1ent['ikeid']] = 0;
 				else
-					$ikev1num[$ph1ent['ikeid']]++;
-				$ikeid = "con{$ph1ent['ikeid']}00" . $ikev1num[$ph1ent['ikeid']];
-			} else
+					$ikenum[$ph1ent['ikeid']]++;
+				$ikeid = "con{$ph1ent['ikeid']}00" . $ikenum[$ph1ent['ikeid']];
+			} else {
+				if (isset($ikenum[$ph1ent['ikeid']]))
+					continue;
 				$ikeid = "con{$ph1ent['ikeid']}";
+				$ikenum[$ph1ent['ikeid']] = true;
+			}
 
 			$found = false;
 			foreach ($ipsec_status['query']['ikesalist']['ikesa'] as $ikesa) {
 				if ($ikeid == $ikesa['peerconfig']) {
 					$found = true;
-					$ph2ikeid = $ikesa['id'];
-					if (ipsec_phase1_status($ipsec_status['query']['ikesalist']['ikesa'], $ph2ikeid)) {
+					if ($ikesa['status'] == 'established') {
 						/* tunnel is up */
 						$iconfn = "true";
 						$activecounter++;
@@ -117,7 +120,7 @@ if (isset($config['ipsec']['phase1'])) { ?>
 					'status' => $iconfn);
 		}
 	}
-	unset($ikev1num);
+	unset($ikenum);
 }
 
 	if (isset($config['ipsec']['phase2'])) { ?>

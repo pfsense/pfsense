@@ -619,7 +619,7 @@ if ($_POST['apply']) {
 						if ($config['interfaces'][$ifent]['ipaddrv6'] == 'track6' &&
 						    $config['interfaces'][$ifent]['track6-interface'] == $_POST['track6-interface'] &&
 						    $config['interfaces'][$ifent]['track6-prefix-id'] == $track6_prefix_id)
-							$input_errors[] = sprintf(gettext("This track6 prefix id is already being used in %s."), $ifdescr);
+							$input_errors[] = sprintf(gettext("This track6 prefix ID is already being used in %s."), $ifdescr);
 					}
 				}
 			}
@@ -1785,11 +1785,9 @@ $types6 = array("none" => gettext("None"), "staticv6" => gettext("Static IPv6"),
 											<select name="subnet" class="formselect" id="subnet">
 												<?php
 												for ($i = 32; $i > 0; $i--) {
-													if($i <> 31) {
-														echo "<option value=\"{$i}\" ";
-														if ($i == $pconfig['subnet']) echo "selected=\"selected\"";
-														echo ">" . $i . "</option>";
-													}
+													echo "<option value=\"{$i}\" ";
+													if ($i == $pconfig['subnet']) echo "selected=\"selected\"";
+													echo ">" . $i . "</option>";
 												}
 												?>
 											</select>
@@ -1891,11 +1889,9 @@ $types6 = array("none" => gettext("None"), "staticv6" => gettext("Static IPv6"),
 											<select name="subnetv6" class="formselect" id="subnetv6">
 												<?php
 												for ($i = 128; $i > 0; $i--) {
-													if($i <> 127) {
-														echo "<option value=\"{$i}\" ";
-														if ($i == $pconfig['subnetv6']) echo "selected=\"selected\"";
-														echo ">" . $i . "</option>";
-													}
+													echo "<option value=\"{$i}\" ";
+													if ($i == $pconfig['subnetv6']) echo "selected=\"selected\"";
+													echo ">" . $i . "</option>";
 												}
 												?>
 											</select>
@@ -2021,11 +2017,9 @@ $types6 = array("none" => gettext("None"), "staticv6" => gettext("Static IPv6"),
 											<select name="alias-subnet" class="formselect" id="alias-subnet">
 												<?php
 												for ($i = 32; $i > 0; $i--) {
-													if($i <> 31) {
-														echo "<option value=\"{$i}\" ";
-														if ($i == $pconfig['alias-subnet']) echo "selected=\"selected\"";
-														echo ">" . $i . "</option>";
-													}
+													echo "<option value=\"{$i}\" ";
+													if ($i == $pconfig['alias-subnet']) echo "selected=\"selected\"";
+													echo ">" . $i . "</option>";
 												}
 												?>
 											</select>
@@ -2570,7 +2564,7 @@ $types6 = array("none" => gettext("None"), "staticv6" => gettext("Static IPv6"),
 											<span id="track6-prefix-id-range"></span>
 											<input type="hidden" id="track6-prefix-id-max" value="0"></input>
 											<br />
-											<?= gettext("The value in this field is the (Delegated) IPv6 prefix id. This determines the configurable network ID based on the dynamic IPv6 connection"); ?>
+											<?= gettext("The value in this field is the (Delegated) IPv6 prefix ID. This determines the configurable network ID based on the dynamic IPv6 connection"); ?>
 											<br />
 											<?= gettext("default value is 0."); ?>
 										</td>

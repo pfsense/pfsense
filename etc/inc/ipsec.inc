@@ -634,21 +634,21 @@ function ipsec_find_id(& $ph1ent, $side = "local", $rgmap = array()) {
 		$thisid_type = 'address';
 		$thisid_data = $rgmap[$ph1ent['remote-gateway']];
 		break;
-	case 'address';
+	case 'address':
 		$thisid_data = $id_data;
 		break;
-	case 'fqdn';
+	case 'fqdn':
 		$thisid_data = "{$id_data}";
 		break;
-	case 'keyid tag';
+	case 'keyid tag':
 		$thisid_type = 'keyid';
 		$thisid_data = "{$thisid_data}";
 		break;
-	case 'user_fqdn';
+	case 'user_fqdn':
 		$thisid_type = 'userfqdn';
 		$thisid_data = "{$id_data}";
 		break;
-	case 'asn1dn';
+	case 'asn1dn':
 		$thisid_data = $id_data;
 		$thisid_data = "{$id_data}";
 		break;

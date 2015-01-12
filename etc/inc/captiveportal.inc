@@ -198,7 +198,7 @@ function captiveportal_configure_zone($cpcfg) {
 			$nentries = count($cpcfg['passthrumac']);
 			if ($nentries > 2000) {
 				if (!set_time_limit(0))
-					log_error("Execution time limit may be reached while reconfiguring zone = {$cpzone} due to many passthrugh entries!");
+					log_error("Execution time limit may be reached while reconfiguring zone = {$cpzone} due to many passthrough entries!");
 			}
 		}
 					

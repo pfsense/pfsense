@@ -1,10 +1,9 @@
 #!/usr/local/bin/php -f
 <?php
-/* $Id$ */
 /*
-    rc.captiveportal_configure
+    rc.captiveportal_configure_mac
     part of pfSense (https://www.pfsense.org)
-    Copyright (C) 2004 Scott Ullrich
+    Copyright (C) 2015 Ermal LUÇi
     All rights reserved.
 
     Redistribution and use in source and binary forms, with or without

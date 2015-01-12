@@ -1028,13 +1028,9 @@ function captiveportal_passthrumac_configure($lock = false) {
 	$rules = "";
 
 	if (is_array($config['captiveportal'][$cpzone]['passthrumac'])) {
-		$nentries = count($config['captiveportal'][$cpzone]['passthrumac']);
-		foreach ($config['captiveportal'][$cpzone]['passthrumac'] as $macent) {
-			if ($nentries > 100)
-				$rules .= captiveportal_passthrumac_configure_entry($macent, true);
-			else
-				$rules .= captiveportal_passthrumac_configure_entry($macent);
-		}
+		$tmprules = array_map('captiveportal_passthrumac_configure_entry', $config['captiveportal'][$cpzone]['passthrumac']);
+		$rules = implode("\n", $tmprules);
+		unset($tmprules);
 	}
 
 	return $rules;

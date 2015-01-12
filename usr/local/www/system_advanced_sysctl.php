@@ -196,6 +196,10 @@ include("head.inc");
 							</td>
 							<td class="listr" align="left" ondblclick="document.location='system_advanced_sysctl.php?act=edit&amp;id=<?=$i;?>';">
 								<?php echo $tunable['value']; ?>
+								<?php 
+									if($tunable['value'] == "default") 
+										echo "(" . get_default_sysctl_value($tunable['tunable']) . ")"; 
+								?>
 							</td>
 							<td class="list nowrap">
 								<table border="0" cellspacing="0" cellpadding="1" summary="edit delete">

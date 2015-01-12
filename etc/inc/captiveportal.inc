@@ -1053,7 +1053,7 @@ function captiveportal_passthrumac_configure($filename = false, $startindex = 0,
 				if ($remainder > 0)
 					mwexec_bg("/usr/local/sbin/fcgicli -f /etc/rc.captiveportal_configure_mac -d \"cpzone={$cpzone}&startidx=" . ($i * 1000) . "&stopidx=" . (($i* 1000) + $remainder) ."\"");
 			} else {
-				foreach ($config['captiveportal'][$cpzone]['passthrumac'] as $macent) {
+				foreach ($config['captiveportal'][$cpzone]['passthrumac'] as $macent)
 					$rules .= captiveportal_passthrumac_configure_entry($macent, true);
 			}
 		}

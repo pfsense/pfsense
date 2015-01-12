@@ -198,7 +198,7 @@ function captiveportal_configure_zone($cpcfg) {
 			$nentries = count($cpcfg['passthrumac']);
 			if ($nentries > 2000) {
 				if (!set_time_limit(0))
-					log_error("Execution time limit may be reached while reconfiguring zone = {$cpzone} due to many passthrough entries!");
+					log_error("Execution time limit may be reached while reconfiguring zone = {$cpzone} due to many passthruogh entries!");
 			}
 		}
 					
@@ -1036,14 +1036,36 @@ function captiveportal_passthrumac_delete_entry($macent) {
 	return $rules;
 }
 
-function captiveportal_passthrumac_configure($lock = false) {
+function captiveportal_passthrumac_configure($filename = false, $startindex = 0, $stopindex = 0) {
 	global $config, $g, $cpzone;
 
 	$rules = "";
 
 	if (is_array($config['captiveportal'][$cpzone]['passthrumac'])) {
-		foreach ($config['captiveportal'][$cpzone]['passthrumac'] as $macent) {
-			$rules .= captiveportal_passthrumac_configure_entry($macent, true);
+		if ($stopindex > 0) {
+			$fd = fopen($filename, "w");
+			for ($idx = $startindex; $idx <= $stopindex; $idx++) {
+				if (isset($config['captiveportal'][$cpzone]['passthrumac'][$idx])) {
+					$rules = captiveportal_passthrumac_configure_entry($config['captiveportal'][$cpzone]['passthrumac'][$idx]);
+					fwrite($fd, $rules);
+				}
+			}
+			fclose($fd);
+
+			return;
+		} else {
+			$nentries = count($config['captiveportal'][$cpzone]['passthrumac']);
+			if ($nentries > 2000) {
+				$nloops = $nentries / 1000;
+				$remainder= $nentries % 1000;
+				for ($i = 0; $i < $nloops; $i++)
+					mwexec_bg("/usr/local/sbin/fcgicli -f /etc/rc.captiveportal_configure_mac -d \"cpzone={$cpzone}&startidx=" . ($i * 1000) . "&stopidx=" . ((($i+1) * 1000) - 1) . "\"");
+				if ($remainder > 0)
+					mwexec_bg("/usr/local/sbin/fcgicli -f /etc/rc.captiveportal_configure_mac -d \"cpzone={$cpzone}&startidx=" . ($i * 1000) . "&stopidx=" . (($i* 1000) + $remainder) ."\"");
+			} else {
+				foreach ($config['captiveportal'][$cpzone]['passthrumac'] as $macent) {
+					$rules .= captiveportal_passthrumac_configure_entry($macent, true);
+			}
 		}
 	}
 

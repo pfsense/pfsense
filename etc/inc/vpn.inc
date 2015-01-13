@@ -668,6 +668,7 @@ EOD;
 			$ipseclifetime = 0;
 			$rightsubnet_spec = array();
 			$leftsubnet_spec = array();
+			$reqids = array();
 			$ealgoAHsp2arr = array();
 			$ealgoESPsp2arr = array();
 		if (is_array($a_phase2) && count($a_phase2)) {
@@ -807,6 +808,7 @@ EOD;
 					}
 				}
 
+				$reqids[] = $ph2ent['reqid'];
 
 				if (!empty($ph2ent['lifetime'])) {
 					if ($ipseclifetime == 0 || intval($ipseclifetime) > intval($ph2ent['lifetime']))
@@ -860,6 +862,7 @@ EOD;
 					$ipsecfin = '';
 					foreach ($rightsubnet_spec as $idx => $rsubnet) {
 						$ipsecfin .= "\nconn con{$ph1ent['ikeid']}00{$idx}\n";
+						$ipsecfin .= "\treqid = " . $reqids[$idx] . "\n";
 						$ipsecfin .= $ipsecconnect;
 						$ipsecfin .= "\trightsubnet = {$rsubnet}\n";
 						$ipsecfin .= "\tleftsubnet = " . $leftsubnet_spec[$idx] . "\n";
@@ -868,6 +871,7 @@ EOD;
 					log_error("No phase2 specifications for tunnel with REQID = {$ikeid}");
 			} else {
 				$ipsecfin = "\nconn con{$ph1ent['ikeid']}\n";
+				$ipsecfin .= "\treqid = " . $reqids[0] . "\n";
 				$ipsecfin .= $ipsecconnect;
 				if (!empty($rightsubnet_spec)) {
 					$tempsubnets = array();

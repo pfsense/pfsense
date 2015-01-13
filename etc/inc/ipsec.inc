@@ -671,4 +671,27 @@ function ipsec_fixup_network($network) {
 	return $result;
 }
 
+function ipsec_new_reqid() {
+	global $config;
+
+	if (!is_array($config['ipsec']) || !is_array($config['ipsec']['phase2']))
+		return;
+
+	$ipsecreqid = lock('ipsecreqids', LOCK_EX);
+	$keyids = array();
+	$keyid = 1;
+	foreach ($config['ipsec']['phase2'] as $ph2)
+		$keyids[$ph2['reqid']] = $ph2['reqid'];
+
+	for ($i = 1; $i < 16000; $i++) {
+		if (!isset($keyids[$i])) {
+			$keyid = $i;
+			break;
+		}
+	}
+	unlock($ipsecreqid);
+
+	return $keyid;
+}
+
 ?>

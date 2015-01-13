@@ -93,6 +93,7 @@ if ($ph2found === true)
 	$pconfig['pfsgroup'] = $ph2['pfsgroup'];
 	$pconfig['lifetime'] = $ph2['lifetime'];
 	$pconfig['pinghost'] = $ph2['pinghost'];
+	$pconfig['reqid'] = $ph2['reqid'];
 
 	if (isset($ph2['mobile']))
 		$pconfig['mobile'] = true;
@@ -320,6 +321,10 @@ if ($_POST) {
 		$ph2ent['uniqid'] = $pconfig['uniqid'];
 		$ph2ent['mode'] = $pconfig['mode'];
 		$ph2ent['disabled'] = $pconfig['disabled'] ? true : false;
+		if (!isset($pconfig['reqid']))
+			$ph2ent['reqid'] = ipsec_new_reqid();
+		else
+			$ph2ent['reqid'] = $pconfig['reqid'];
 
 		if(($ph2ent['mode'] == "tunnel") || ($ph2ent['mode'] == "tunnel6")){
 			if (!empty($pconfig['natlocalid_address']))
@@ -832,6 +837,9 @@ function change_protocol() {
 						<?php endif; ?>
 							<input name="Submit" type="submit" class="formbtn" value="<?=gettext("Save"); ?>" />
 							<input name="ikeid" type="hidden" value="<?=htmlspecialchars($pconfig['ikeid']);?>" />
+						<?php if (!empty($pconfig['reqid'])): ?>
+							<input name="reqid" type="hidden" value="<?=htmlspecialchars($pconfig['reqid']);?>" />
+						<?php endif; ?>
 							<input name="uniqid" type="hidden" value="<?=htmlspecialchars($pconfig['uniqid']);?>" />
 						</td>
 					</tr>

@@ -862,7 +862,8 @@ EOD;
 					$ipsecfin = '';
 					foreach ($rightsubnet_spec as $idx => $rsubnet) {
 						$ipsecfin .= "\nconn con{$ph1ent['ikeid']}00{$idx}\n";
-						$ipsecfin .= "\treqid = " . $reqids[$idx] . "\n";
+						if (!empty($reqids[$idx]))
+							$ipsecfin .= "\treqid = " . $reqids[$idx] . "\n";
 						$ipsecfin .= $ipsecconnect;
 						$ipsecfin .= "\trightsubnet = {$rsubnet}\n";
 						$ipsecfin .= "\tleftsubnet = " . $leftsubnet_spec[$idx] . "\n";
@@ -871,7 +872,8 @@ EOD;
 					log_error("No phase2 specifications for tunnel with REQID = {$ikeid}");
 			} else {
 				$ipsecfin = "\nconn con{$ph1ent['ikeid']}\n";
-				$ipsecfin .= "\treqid = " . $reqids[0] . "\n";
+				if (!empty($reqids[$idx]))
+					$ipsecfin .= "\treqid = " . $reqids[0] . "\n";
 				$ipsecfin .= $ipsecconnect;
 				if (!empty($rightsubnet_spec)) {
 					$tempsubnets = array();

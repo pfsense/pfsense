@@ -460,7 +460,7 @@ include("head.inc");
 
 									$iconfn = "pass";
 									$spans = $spane = "";
-									if (isset($ph2ent['disabled'])) {
+									if (isset($ph2ent['disabled']) || isset($ph1ent['disabled'])) {
 										$spans = "<span class=\"gray\">";
 										$spane = "</span>";
 										$iconfn .= "_d";

@@ -165,7 +165,7 @@ foreach ($filterlog as $fe) {
 }
 
 include("head.inc"); ?>
-<body link="#000000" vlink="#000000" alink="#000000">
+<body link="#0000CC" vlink="#0000CC" alink="#0000CC">
 <script src="/javascript/filter_log.js" type="text/javascript"></script>
 <script type="text/javascript" src="/protochart/prototype.js"></script>
 <script type="text/javascript" src="/protochart/ProtoChart.js"></script>

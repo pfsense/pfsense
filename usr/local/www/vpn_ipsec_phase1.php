@@ -371,8 +371,12 @@ if ($_POST) {
 
 		if (isset($pconfig['reauth_enable']))
 			$ph1ent['reauth_enable'] = true;
+		else
+			unset($ph1ent['reauth_enable']);
 		if (isset($pconfig['rekey_enable']))
 			$ph1ent['rekey_enable'] = true;
+		else
+			unset($ph1ent['rekey_enable']);
 
 		if (isset($pconfig['dpd_enable'])) {
 			$ph1ent['dpd_delay'] = $pconfig['dpd_delay'];

@@ -91,7 +91,7 @@ if ($_POST) {
 include("head.inc");
 ?>
 
-<body link="#000000" vlink="#000000" alink="#000000" onload="<?= $jsevents["body"]["onload"] ?>">
+<body link="#0000CC" vlink="#0000CC" alink="#0000CC" onload="<?= $jsevents["body"]["onload"] ?>">
 <?php include("fbegin.inc");?>
 <?php if ($input_errors) print_input_errors($input_errors);?>
 <?php if ($savemsg) print_info_box($savemsg);?>

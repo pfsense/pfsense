@@ -627,9 +627,16 @@ EOD;
 				}
 				break;
 			case 'eap-tls':
-				$authentication = "leftauth=eap-tls\n\trightauth=eap-tls";
-				if (!empty($ph1ent['certref']))
-					$authentication .= "\n\tleftcert={$certpath}/cert-{$ph1ent['ikeid']}.crt";
+				if (isset($ph1ent['mobile'])) {
+					$authentication = "eap_identity=%identity\n\t";
+					$authentication .= "leftauth=pubkey\n\trightauth=eap-tls";
+					if (!empty($ph1ent['certref']))
+						$authentication .= "\n\tleftcert={$certpath}/cert-{$ph1ent['ikeid']}.crt";
+				} else
+					$authentication = "leftauth=eap-tls\n\trightauth=eap-tls";
+					if (!empty($ph1ent['certref']))
+						$authentication .= "\n\tleftcert={$certpath}/cert-{$ph1ent['ikeid']}.crt";
+				}
 				break;
 			case 'xauth_rsa_server':
 				$authentication = "leftauth = pubkey\n\trightauth = pubkey";

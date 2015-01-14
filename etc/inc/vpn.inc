@@ -632,7 +632,7 @@ EOD;
 					$authentication .= "leftauth=pubkey\n\trightauth=eap-tls";
 					if (!empty($ph1ent['certref']))
 						$authentication .= "\n\tleftcert={$certpath}/cert-{$ph1ent['ikeid']}.crt";
-				} else
+				} else {
 					$authentication = "leftauth=eap-tls\n\trightauth=eap-tls";
 					if (!empty($ph1ent['certref']))
 						$authentication .= "\n\tleftcert={$certpath}/cert-{$ph1ent['ikeid']}.crt";

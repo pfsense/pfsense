@@ -530,25 +530,21 @@ add 65307 deny layer2 not mac-type ip,ipv6
 EOD;
 
 	$rulenum = 65310;
-	$ipcount = 0;
-	$ips = "";
-	foreach ($cpips as $cpip) {
-		if($ipcount == 0) {
-			$ips = "{$cpip} ";
-		} else {
-			$ips .= "or {$cpip} ";
-		}
-		$ipcount++;
+	
+	$ip_chunks = array_chunk($cpips, 100); /* prevent long rules by forming chunks of 100 ips (interfaces) */
+	foreach ($ip_chunks as $ip_chunk) {
+		$ips = join($ip_chunk, " or ");
+	
+		$ips = "{ 255.255.255.255 or {$ips} }";
+		$cprules .= "add {$rulenum} pass ip from any to {$ips} in\n";
+		$rulenum++;
+		$cprules .= "add {$rulenum} pass ip from {$ips} to any out\n";
+		$rulenum++;
+		$cprules .= "add {$rulenum} pass icmp from {$ips} to any out icmptype 0\n";
+		$rulenum++;
+		$cprules .= "add {$rulenum} pass icmp from any to {$ips} in icmptype 8 \n";
+		$rulenum++;
 	}
-	$ips = "{ 255.255.255.255 or {$ips} }";
-	$cprules .= "add {$rulenum} pass ip from any to {$ips} in\n";
-	$rulenum++;
-	$cprules .= "add {$rulenum} pass ip from {$ips} to any out\n";
-	$rulenum++;
-	$cprules .= "add {$rulenum} pass icmp from {$ips} to any out icmptype 0\n";
-	$rulenum++;
-	$cprules .= "add {$rulenum} pass icmp from any to {$ips} in icmptype 8 \n";
-	$rulenum++;
 	/* Allowed ips */
 	$cprules .= "add {$rulenum} pipe tablearg ip from table(3) to any in\n";
 	$rulenum++;

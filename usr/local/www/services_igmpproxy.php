@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 /* $Id$ */
 /*
 	services_igmpproxy.php
@@ -157,8 +157,8 @@ include("head.inc");
     </td>
   </tr>
 <tr>
-  <td class="tabcont" colspan="4">
-   <p><span class="vexpl"><span class="red"><strong><?=gettext("Note:");?><br /></strong></span><?=gettext("Please add the interface for upstream, the allowed subnets, and the downstream interfaces you would like the proxy to allow. Only one 'upstream' interface can be configured.");?></span></p>
+  <td class="list" colspan="4">
+   <p class="vexpl"><span class="red"><strong><?=gettext("Note:");?><br /></strong></span><?=gettext("Please add the interface for upstream, the allowed subnets, and the downstream interfaces you would like the proxy to allow. Only one 'upstream' interface can be configured.");?></p>
   </td>
 </tr>
 </table>

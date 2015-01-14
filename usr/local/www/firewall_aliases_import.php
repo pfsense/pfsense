@@ -165,12 +165,8 @@ include("head.inc");
 <?php include("fbegin.inc"); ?>
 <?php if ($input_errors) print_input_errors($input_errors); ?>
 <form action="firewall_aliases_import.php" method="post" name="iform" id="iform">
-<table width="100%" border="0" cellpadding="6" cellspacing="0" summary="firewall alias import">
-                <tr>
-                        <td id="mainarea">
-                                <div class="tabcont">
 <div id="inputerrors"></div>
-<table width="100%" border="0" cellpadding="6" cellspacing="0" summary="main area">
+<table class="tabcont" width="100%" border="0" cellpadding="6" cellspacing="0" summary="firewall alias import">
 	<tr>
 		<td colspan="2" valign="top" class="listtopic"><?=gettext("Alias Import"); ?></td>
 	</tr>
@@ -218,13 +214,8 @@ include("head.inc");
 			<input id="submit" name="Submit" type="submit" class="formbtn" value="<?=gettext("Save"); ?>" />
 			<input type="button" class="formbtn" value="<?=gettext("Cancel");?>" onClick="window.location.href='<?=$referer;?>'" />
 		</td>
-    </div>
 	</tr>
 </table>
-</td>
-</tr>
-</table>
-
 </form>
 
 <?php include("fend.inc"); ?>

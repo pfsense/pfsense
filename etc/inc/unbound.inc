@@ -60,23 +60,19 @@ function unbound_optimization() {
 	 * Use 1 to disable threading, if for some reason this sysctl fails.
 	 */
 	$numprocs = intval(get_single_sysctl('kern.smp.cpus'));
-	if ($numprocs > 0)
+	if ($numprocs > 1) {
 		$optimization['number_threads'] = "num-threads: {$numprocs}";
-	else
+		$optimize_num = pow(2,floor(log($numprocs,2)));
+	} else {
 		$optimization['number_threads'] = "num-threads: 1";
+		$optimize_num = 4;
+	}
 
 	// Slabs to help reduce lock contention.
-	if ($numprocs > 4) {
-		$optimization['msg_cache_slabs'] = "msg-cache-slabs: {$numprocs}";
-		$optimization['rrset_cache_slabs'] = "rrset-cache-slabs: {$numprocs}";
-		$optimization['infra_cache_slabs'] = "infra-cache-slabs: {$numprocs}";
-		$optimization['key_cache_slabs'] = "key-cache-slabs: {$numprocs}";
-	} else {
-		$optimization['msg_cache_slabs'] = "msg-cache-slabs: 4";
-		$optimization['rrset_cache_slabs'] = "rrset-cache-slabs: 4";
-		$optimization['infra_cache_slabs'] = "infra-cache-slabs: 4";
-		$optimization['key_cache_slabs'] = "key-cache-slabs: 4";
-	}
+	$optimization['msg_cache_slabs'] = "msg-cache-slabs: {$optimize_num}";
+	$optimization['rrset_cache_slabs'] = "rrset-cache-slabs: {$optimize_num}";
+	$optimization['infra_cache_slabs'] = "infra-cache-slabs: {$optimize_num}";
+	$optimization['key_cache_slabs'] = "key-cache-slabs: {$optimize_num}";
 
 	// Size of the RRset cache
 	$optimization['rrset_cache_size'] = "rrset-cache-size: 8m";

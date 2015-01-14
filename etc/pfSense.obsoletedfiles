@@ -642,6 +642,7 @@
 /usr/local/lib/libpcreposix.so.0
 /usr/local/lib/libpng.so.5
 /usr/local/lib/libpng.so.6
+/usr/local/lib/libpng15.so.15
 /usr/local/lib/libracoon.so.0
 /usr/local/lib/libreadline.so.5
 /usr/local/lib/libsqlite3.so.8

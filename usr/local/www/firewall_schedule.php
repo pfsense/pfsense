@@ -238,7 +238,7 @@ include("head.inc");
 </tr>
 <tr>
   <td class="tabcont" colspan="3">
-   <p><span class="vexpl"><span class="red"><strong><?=gettext("Note:");?><br /></strong></span><?=gettext("Schedules act as placeholders for time ranges to be used in Firewall Rules.");?></span></p>
+   <p class="vexpl"><span class="red"><strong><?=gettext("Note:");?><br /></strong></span><?=gettext("Schedules act as placeholders for time ranges to be used in Firewall Rules.");?></p>
   </td>
 </tr>
 </table>

@@ -55,6 +55,7 @@ if (isset($_POST['id']) && is_numericint($_POST['id']))
 
 if (isset($id) && $a_secret[$id]) {
 	$pconfig['ident'] = $a_secret[$id]['ident'];
+	$pconfig['type'] = $a_secret[$id]['type'];
 	$pconfig['psk'] = $a_secret[$id]['pre-shared-key'];
 }
 
@@ -99,6 +100,7 @@ if ($_POST) {
 			$secretent = $a_secret[$id];
 	
 		$secretent['ident'] = $_POST['ident'];
+		$secretent['type'] = $_POST['type'];
 		$secretent['pre-shared-key'] = $_POST['psk'];
 		$text = "";
 		
@@ -130,6 +132,9 @@ include("head.inc");
 <?php if ($input_errors) print_input_errors($input_errors); ?>
             <form action="vpn_ipsec_keys_edit.php" method="post" name="iform" id="iform">
               <table width="100%" border="0" cellpadding="6" cellspacing="0" summary="vpn ipsec keys edit">
+		<tr>
+			<td colspan="2" valign="top" class="listtopic">Edit pre-shared secret</td>
+		</tr>
                 <tr> 
                   <td valign="top" class="vncellreq"><?=gettext("Identifier"); ?></td>
                   <td class="vtable">
@@ -138,6 +143,21 @@ include("head.inc");
 <?=gettext("This can be either an IP address, fully qualified domain name or an e-mail address"); ?>.       
                   </td>
                 </tr>
+                <tr> 
+                  <td width="22%" valign="top" class="vncellreq"><?=gettext("Secret type"); ?></td>
+                  <td width="78%" class="vtable"> 
+			<select name="type" class="formselect">
+			<?php
+				foreach ($ipsec_preshared_key_type as $value => $descr) {
+					echo "<option value='{$value}' ";
+					if ($pconfig['type'] == $value)
+						echo "selected=\"selected\"";
+					echo ">{$descr}</option>";
+				}
+			?>
+			</select>
+		  </td>
+		</tr>
                 <tr> 
                   <td width="22%" valign="top" class="vncellreq"><?=gettext("Pre-Shared Key"); ?></td>
                   <td width="78%" class="vtable"> 

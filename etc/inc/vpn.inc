@@ -516,7 +516,9 @@ EOD;
 		foreach ($ipseccfg['mobilekey'] as $key) {
 			if ($key['ident'] == "allusers")
 				$key['ident'] = '%any';
-			$pskconf .= "%any {$key['ident']} : PSK 0s" . base64_encode($key['pre-shared-key']) . "\n";
+			if (empty($key['type']))
+				$key['type'] = 'PSK';
+			$pskconf .= "%any {$key['ident']} : {$key['type']} 0s" . base64_encode($key['pre-shared-key']) . "\n";
 		}
 		unset($key);
 	}
@@ -616,6 +618,14 @@ EOD;
 
 			$authentication = "";
 			switch ($ph1ent['authentication_method']) {
+			case 'eap-mschapv2':
+				if (isset($ph1ent['mobile'])) {
+					$authentication = "eap_identity=%any\n\t";
+					$authentication .= "leftauth=pubkey\n\trightauth=eap-mschapv2";
+					if (!empty($ph1ent['certref']))
+						$authentication .= "\n\tleftcert={$certpath}/cert-{$ph1ent['ikeid']}.crt";
+				}
+				break;
 			case 'eap-tls':
 				if (isset($ph1ent['mobile'])) {
 					$authentication = "eap_identity=%identity\n\t";

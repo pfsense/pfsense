@@ -1783,10 +1783,10 @@ function services_dnsmasq_configure() {
 				} else {
 					$if = get_real_interface($interface);
 					if (does_interface_exist($if)) {
-						$laddr = find_interface_ip($if);
+						$laddr = get_interface_ip($interface);
 						if (is_ipaddrv4($laddr))
 							$listen_addresses .= " --listen-address={$laddr} ";
-						$laddr6 = find_interface_ipv6($if);
+						$laddr6 = get_interface_ipv6($interface);
 						if (is_ipaddrv6($laddr6) && !isset($config['dnsmasq']['strictbind'])) {
 							/*
 							 * XXX: Since dnsmasq does not support link-local address
@@ -2029,7 +2029,7 @@ EOD;
 			} else {
 				$if = get_real_interface($config['snmpd']['bindip']);
 				if (does_interface_exist($if))
-					$bind_to_ip = find_interface_ip($if);
+					$bind_to_ip = get_interface_ip($config['snmpd']['bindip']);
 			}
 		}
 

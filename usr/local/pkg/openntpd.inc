@@ -19,14 +19,6 @@ EOD;
 	write_rcfile($rcfile);
 }
 
-function openntpd_get_iface_ip($iface) {
-	$iface = convert_friendly_interface_to_real_interface_name($iface);
-	$line = trim(shell_exec("ifconfig " . escapeshellarg($iface) . " | grep inet | grep -v inet6"));
-	list($dummy, $ip, $dummy2, $dummy3) = explode(' ', $line);
-
-	return $ip;
-}
-
 function openntpd_resync() {
 	global $g, $config;
 
@@ -37,7 +29,7 @@ function openntpd_resync() {
 		$conf = '';
 
 		$ifaces = explode(',', $settings['interface']);
-		$ips = array_map('openntpd_get_iface_ip', $ifaces);
+		$ips = array_map('get_interface_ip', $ifaces);
 		foreach ($ips as $ip)
 			$conf .= "listen on $ip\n";
 
@@ -45,7 +37,7 @@ function openntpd_resync() {
 		foreach ($servers as $server)
 			$conf .= "servers $server\n";
 
-		file_put_contents($config_file, $conf);
+		@file_put_contents($config_file, $conf);
 	}
 	else {
 		if (file_exists($config_file))

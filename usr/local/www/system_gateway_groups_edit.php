@@ -51,7 +51,6 @@ if (!is_array($config['gateways']['gateway_group']))
 
 $a_gateway_groups = &$config['gateways']['gateway_group'];
 $a_gateways = return_gateways_array();
-$carplist = get_configured_carp_interface_list();
 
 $categories = array('down' => gettext("Member Down"),
                     'downloss' => gettext("Packet Loss"),
@@ -248,6 +247,7 @@ jQuery(function ($) {
 				<td class="listhdrr">Description</td>
 			</tr>
 		<?php
+			$carplist = get_configured_carp_interface_list($interface);
 			foreach($a_gateways as $gwname => $gateway) {
 				if(!empty($pconfig['item'])) {
 					$af = explode("|", $pconfig['item'][0]);
@@ -296,8 +296,6 @@ jQuery(function ($) {
 				echo "<option value='address' {$selected['address']} >" . gettext("Interface Address") . "</option>\n";
 				foreach($carplist as $vip => $address) {
 					echo "<!-- $vip - $address - $interface -->\n";
-					if(!preg_match("/^{$interface}_/i", $vip))
-						continue;
 					if(($gateway['ipprotocol'] == "inet") && (!is_ipaddrv4($address)))
 						continue;
 					if(($gateway['ipprotocol'] == "inet6") && (!is_ipaddrv6($address)))

@@ -953,7 +953,7 @@ function get_configured_carp_interface_list($carpinterface = '', $family = 'inet
 			switch ($vip['mode']) {
 			case "carp":
 				if (!empty($carpinterface)) {
-					if ($carpinterface == "{$vip['interface']}_vip{$vip['vhid']}") {
+					if ($carpinterface == "_vip{$vip['uniqid']}") {
 						switch ($what) {
 						case 'subnet':
 							if ($family == 'inet' && is_ipaddrv4($vip['subnet']))
@@ -983,7 +983,7 @@ function get_configured_carp_interface_list($carpinterface = '', $family = 'inet
 						}
 					}
 				} else {
-					$iflist["{$vip['interface']}_vip{$vip['vhid']}"] = $vip['subnet'];
+					$iflist["_vip{$vip['uniqid']}"] = $vip['subnet'];
 				}
 				break;
 			}

@@ -452,7 +452,8 @@ EOD;
 			if (isset($ph1ent['disabled']))
 				continue;
 
-			if (strstr($ph1ent['authentication_method'], 'rsa') || $ph1ent['authentication_method'] == 'eap-tls') {
+			if (strstr($ph1ent['authentication_method'], 'rsa') ||
+			    in_array($ph1ent['authentication_method'], array('eap-mschapv2', 'eap-tls'))) {
 				$certline = '';
 
 				$ikeid = $ph1ent['ikeid'];

@@ -163,7 +163,7 @@ include("head.inc");
 							continue;
 						$ipaddress = $carp['subnet'];
 						$vhid = $carp['vhid'];
-						$status = get_carp_interface_status("_vhid{$carp['uniqid']}");
+						$status = get_carp_interface_status("_vip{$carp['uniqid']}");
 						echo "<tr>";
 						$align = "style=\"vertical-align:middle\"";
 						if($carp_enabled == false) {

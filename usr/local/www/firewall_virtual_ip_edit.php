@@ -95,10 +95,12 @@ if (isset($id) && $a_vip[$id]) {
 	$pconfig['descr'] = $a_vip[$id]['descr'];
 	$pconfig['type'] = $a_vip[$id]['type'];
 	$pconfig['interface'] = $a_vip[$id]['interface'];
+	$pconfig['uniqid'] = $a_vip[$id]['interface'];
 } else {
 	$lastvhid = find_last_used_vhid();
 	$lastvhid++;
 	$pconfig['vhid'] = $lastvhid;
+	$pconfig['uniqid'] = uniqid();
 }
 
 if ($_POST) {
@@ -240,6 +242,7 @@ if ($_POST) {
 		/* CARP specific fields */
 		if ($_POST['mode'] === "carp") {
 			$vipent['vhid'] = $_POST['vhid'];
+			$vipent['vhid'] = $_POST['uinqid'];
 			$vipent['advskew'] = $_POST['advskew'];
 			$vipent['advbase'] = $_POST['advbase'];
 			$vipent['password'] = $_POST['password'];
@@ -511,6 +514,7 @@ function typesel_change() {
                     <?php if (isset($id) && $a_vip[$id]): ?>
                     <input name="id" type="hidden" value="<?=htmlspecialchars($id);?>" />
                     <?php endif; ?>
+                    <input name="uniqid" type="hidden" value="<?=$pconfig['uniqid'];?>" />
                   </td>
                 </tr>
 				<tr>

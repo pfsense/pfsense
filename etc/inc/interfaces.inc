@@ -4072,7 +4072,7 @@ function convert_friendly_interface_to_friendly_descr($interface) {
 			else
 				$ifdesc = strtoupper($config['interfaces'][$interface]['descr']);
 			break;
-		} else if (substr($interface, 0, 4) == '_vip')) {
+		} else if (substr($interface, 0, 4) == '_vip') {
 			if (is_array($config['virtualip']['vip'])) {
 				foreach ($config['virtualip']['vip'] as $counter => $vip) {
 					if ($vip['mode'] == "carp")  {
@@ -4081,7 +4081,7 @@ function convert_friendly_interface_to_friendly_descr($interface) {
 					}
 				}
 			}
-		} else if (substr($interface, 0, 5) == '_lloc')) {
+		} else if (substr($interface, 0, 5) == '_lloc') {
 			return get_interface_linklocal($interface);
 		} else {
 			/* if list */

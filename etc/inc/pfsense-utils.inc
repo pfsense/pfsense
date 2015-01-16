@@ -2625,7 +2625,7 @@ function is_ipaddr_configured($ipaddr, $ignore_if = "", $check_localip = false, 
 	$interface_list_vips = get_configured_vips_list(true);
 	foreach ($interface_list_vips as $id => $vip) {
 		/* Skip CARP interfaces here since they were already checked above */
-		if ($id == $ignore_vip_id || (substr($ignore_if, 0, 4) == '_vip') && substr($ignore_vip_if, 5)  == $vip['uniqdid']))
+		if ($id == $ignore_vip_id || (substr($ignore_if, 0, 4) == '_vip') && substr($ignore_vip_if, 5)  == $vip['uniqdid'])
 			continue;
 		if (strcasecmp($ipaddr, $vip['ipaddr']) == 0)
 			return true;

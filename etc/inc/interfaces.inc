@@ -729,9 +729,7 @@ function interfaces_gre_configure($checkparent = 0, $realif = "") {
 					continue;
 			}
 			else if ($checkparent == 2) {
-				if (substr($gre['if'], 0, 4) == '_vip')
-					continue;
-				if (substr($gre['if'], 0, 5) == '_lloc')
+				if (substr($gre['if'], 0, 4) != '_vip' && substr($gre['if'], 0, 5) != '_lloc')
 					continue;
 				if (empty($config['interfaces'][$gre['if']]) || $config['interfaces'][$gre['if']]['ipaddrv6'] != "track6")
 					continue;
@@ -814,9 +812,7 @@ function interfaces_gif_configure($checkparent = 0, $realif = "") {
 					continue;
 			}
 			else if ($checkparent == 2) {
-				if (substr($gif['if'], 0, 4) == '_vip')
-					continue;
-				if (substr($gif['if'], 0, 5) == '_lloc')
+				if (substr($gif['if'], 0, 4) != '_vip' && substr($gif['if'], 0, 5) == '_lloc')
 					continue;
 				if (empty($config['interfaces'][$gif['if']]) || $config['interfaces'][$gif['if']]['ipaddrv6'] != "track6")
 					continue;

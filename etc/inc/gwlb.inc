@@ -989,7 +989,7 @@ function lookup_gateway_interface_by_name($name) {
 function get_interface_gateway($interface, &$dynamic = false) {
 	global $config, $g;
 
-	if (substr($interface, 0, 4) == 'vip')
+	if (substr($interface, 0, 4) == '_vip')
 		$interface = get_configured_carp_interface_list($interface, 'inet6', 'iface');
 
 	$gw = NULL;
@@ -1022,7 +1022,7 @@ function get_interface_gateway($interface, &$dynamic = false) {
 function get_interface_gateway_v6($interface, &$dynamic = false) {
 	global $config, $g;
 
-	if (substr($interface, 0, 4) == 'vip')
+	if (substr($interface, 0, 4) == '_vip')
 		$interface = get_configured_carp_interface_list($interface, 'inet6', 'iface');
 
 	$gw = NULL;

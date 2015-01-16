@@ -138,11 +138,7 @@ if ($carpcount > 0):
 		if ($carp['mode'] != "carp")
 			continue;
 		$ipaddress = $carp['subnet'];
-		$password = $carp['password'];
-		$netmask = $carp['subnet_bits'];
 		$vhid = $carp['vhid'];
-		$advskew = $carp['advskew'];
-		$advbase = $carp['advbase'];
 		$status = get_carp_interface_status("{$carp['interface']}_vip{$carp['vhid']}");
 		if($carp_enabled == false) {
 			$icon = 'remove-sign';
@@ -162,9 +158,9 @@ if ($carpcount > 0):
 			<td><?=convert_friendly_interface_to_friendly_descr($carp['interface'])?>@<?=$vhid?></td>
 			<td><?=$ipaddress?></td>
 			<td><i class="icon icon-<?=$icon?>">$status</td>
-		</tr>
+	</tr>
 <?php }?>
-	</table>
+</table>
 </form>
 <?php endif?>
 

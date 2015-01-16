@@ -71,10 +71,18 @@ if ($_POST) {
 	if ($_POST['apply']) {
 		$retval = 0;
 
-		$rules = captiveportal_passthrumac_configure();
-		$savemsg = get_std_save_message($retval);
-		if ($retval == 0)
-			clear_subsystem_dirty('passthrumac');
+		if (is_array($a_cp[$cpzone]['passthrumac'])) {
+			$cpzoneid = $a_cp[$cpzone]['cpzoneid'];
+			$rules = captiveportal_passthrumac_configure();
+			if (!empty($rules)) {
+				@file_put_contents("{$g['tmp_path']}/passthrumac_gui", $rules);
+				mwexec("/sbin/ipfw -x {$cpzoneid} {$g['tmp_path']}/passthrumac_gui");
+				@unlink("{$g['tmp_path']}/passthrumac_gui");
+			}
+			$savemsg = get_std_save_message($retval);
+			if ($retval == 0)
+				clear_subsystem_dirty('passthrumac');
+		}
 	}
 
 	if ($_POST['postafterlogin']) {

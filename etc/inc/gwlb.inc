@@ -446,6 +446,7 @@ function return_gateways_array($disabled = false, $localhost = false, $inactive 
 	global $config, $g;
 
 	$gateways_arr = array();
+	$gateways_arr_temp = array();
 
 	$found_defaultv4 = 0;
 	$found_defaultv6 = 0;
@@ -471,7 +472,7 @@ function return_gateways_array($disabled = false, $localhost = false, $inactive 
 			$wancfg = $config['interfaces'][$gateway['interface']];
 
 			/* skip disabled interfaces */
-			if ($disabled === false && (!isset($wancfg['enable']) || isset($gateway['disabled'])))
+			if ($disabled === false && (!isset($wancfg['enable'])))
 				continue;
 
 			/* if the gateway is dynamic and we can find the IPv4, Great! */
@@ -532,7 +533,13 @@ function return_gateways_array($disabled = false, $localhost = false, $inactive 
 			/* include the gateway index as the attribute */
 			$gateway['attribute'] = $i;
 
-			$gateways_arr[$gateway['name']] = $gateway;
+			/* Remember all the gateway names, even ones to be skipped because they are disabled. */
+			/* Then we can easily know and match them later when attempting to add dynamic gateways to the list. */
+			$gateways_arr_temp[$gateway['name']] = $gateway;
+
+			/* skip disabled gateways if the caller has not asked for them to be returned. */
+			if (!($disabled === false && isset($gateway['disabled'])))
+				$gateways_arr[$gateway['name']] = $gateway;
 		}
 	}
 	unset($gateway);
@@ -609,8 +616,8 @@ function return_gateways_array($disabled = false, $localhost = false, $inactive 
 		if (!is_ipaddrv4($gateway['gateway']) && $gateway['dynamic'] == true)
 			$gateway['gateway'] = "dynamic";
 
-		/* automatically skip known static and dynamic gateways we have a array entry for */
-		foreach($gateways_arr as $gateway_item) {
+		/* automatically skip known static and dynamic gateways that were previously processed */
+		foreach($gateways_arr_temp as $gateway_item) {
 			if ((($ifname == $gateway_item['friendlyiface'] && $friendly == $gateway_item['name'])&& ($gateway['ipprotocol'] == $gateway_item['ipprotocol'])) ||
 				($ifname == $gateway_item['friendlyiface'] && $gateway_item['dynamic'] == true) && ($gateway['ipprotocol'] == $gateway_item['ipprotocol']))
 					continue 2;
@@ -701,8 +708,8 @@ function return_gateways_array($disabled = false, $localhost = false, $inactive 
 		if (!is_ipaddrv6($gateway['gateway']) && $gateway['dynamic'] == true)
 			$gateway['gateway'] = "dynamic";
 
-		/* automatically skip known static and dynamic gateways we have a array entry for */
-		foreach($gateways_arr as $gateway_item) {
+		/* automatically skip known static and dynamic gateways that were previously processed */
+		foreach($gateways_arr_temp as $gateway_item) {
 			if ((($ifname == $gateway_item['friendlyiface'] && $friendly == $gateway_item['name']) && ($gateway['ipprotocol'] == $gateway_item['ipprotocol'])) ||
 				($ifname == $gateway_item['friendlyiface'] && $gateway_item['dynamic'] == true) && ($gateway['ipprotocol'] == $gateway_item['ipprotocol']))
 					continue 2;
@@ -982,8 +989,10 @@ function lookup_gateway_interface_by_name($name) {
 function get_interface_gateway($interface, &$dynamic = false) {
 	global $config, $g;
 
-	$gw = NULL;
+	if (substr($interface, 0, 4) == '_vip')
+		$interface = get_configured_carp_interface_list($interface, 'inet6', 'iface');
 
+	$gw = NULL;
 	$gwcfg = $config['interfaces'][$interface];
 	if (!empty($gwcfg['gateway']) && is_array($config['gateways']['gateway_item'])) {
 		foreach($config['gateways']['gateway_item'] as $gateway) {
@@ -1012,6 +1021,9 @@ function get_interface_gateway($interface, &$dynamic = false) {
 
 function get_interface_gateway_v6($interface, &$dynamic = false) {
 	global $config, $g;
+
+	if (substr($interface, 0, 4) == '_vip')
+		$interface = get_configured_carp_interface_list($interface, 'inet6', 'iface');
 
 	$gw = NULL;
 	$gwcfg = $config['interfaces'][$interface];

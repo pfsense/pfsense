@@ -420,15 +420,17 @@ function enable_change(whichone) {
 				<select name="bindip" class="formselect">
 					<option value="">All</option>
 				<?php  $listenips = get_possible_listen_ips();
-					foreach ($listenips as $lip):
+					foreach ($listenips as $lip => $ldescr):
 						$selected = "";
-						if ($lip['value'] == $pconfig['bindip'])
+						if ($lip == $pconfig['bindip'])
 							$selected = "selected=\"selected\"";
 				?>
-					<option value="<?=$lip['value'];?>" <?=$selected;?>>
+					<option value="<?=$ldescr;?>" <?=$selected;?>>
 						<?=htmlspecialchars($lip['name']);?>
 					</option>
-				<?php endforeach; ?>
+				<?php endforeach;
+				    unset($listenips);
+				?>
 				</select>
 			</td>
 		</tr>

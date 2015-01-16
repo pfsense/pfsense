@@ -227,7 +227,6 @@ function vpn_ipsec_configure($ipchg = false)
 					if ($ph2ent['pinghost']) {
 						if (!is_array($iflist))
 							$iflist = get_configured_interface_list();
-						$viplist = get_configured_vips_list();
 						$srcip = null;
 						$local_subnet = ipsec_idinfo_to_cidr($ph2ent['localid'], true, $ph2ent['mode']);
 						if(is_ipaddrv6($ph2ent['pinghost'])) {
@@ -253,6 +252,7 @@ function vpn_ipsec_configure($ipchg = false)
 						}
 						/* if no valid src IP was found in configured interfaces, try the vips */
 						if (is_null($srcip)) {
+							$viplist = get_configured_vips_list();
 							foreach ($viplist as $vip) {
 								if (ip_in_subnet($vip['ipaddr'], $local_subnet)) {
 									$srcip = $vip['ipaddr'];
@@ -452,7 +452,8 @@ EOD;
 			if (isset($ph1ent['disabled']))
 				continue;
 
-			if (strstr($ph1ent['authentication_method'], 'rsa') || $ph1ent['authentication_method'] == 'eap-tls') {
+			if (strstr($ph1ent['authentication_method'], 'rsa') ||
+			    in_array($ph1ent['authentication_method'], array('eap-mschapv2', 'eap-tls'))) {
 				$certline = '';
 
 				$ikeid = $ph1ent['ikeid'];
@@ -516,7 +517,9 @@ EOD;
 		foreach ($ipseccfg['mobilekey'] as $key) {
 			if ($key['ident'] == "allusers")
 				$key['ident'] = '%any';
-			$pskconf .= "%any {$key['ident']} : PSK 0s" . base64_encode($key['pre-shared-key']) . "\n";
+			if (empty($key['type']))
+				$key['type'] = 'PSK';
+			$pskconf .= "%any {$key['ident']} : {$key['type']} 0s" . base64_encode($key['pre-shared-key']) . "\n";
 		}
 		unset($key);
 	}
@@ -616,10 +619,25 @@ EOD;
 
 			$authentication = "";
 			switch ($ph1ent['authentication_method']) {
+			case 'eap-mschapv2':
+				if (isset($ph1ent['mobile'])) {
+					$authentication = "eap_identity=%any\n\t";
+					$authentication .= "leftauth=pubkey\n\trightauth=eap-mschapv2";
+					if (!empty($ph1ent['certref']))
+						$authentication .= "\n\tleftcert={$certpath}/cert-{$ph1ent['ikeid']}.crt";
+				}
+				break;
 			case 'eap-tls':
-				$authentication = "leftauth=eap-tls\n\trightauth=eap-tls";
-				if (!empty($ph1ent['certref']))
-					$authentication .= "\n\tleftcert={$certpath}/cert-{$ph1ent['ikeid']}.crt";
+				if (isset($ph1ent['mobile'])) {
+					$authentication = "eap_identity=%identity\n\t";
+					$authentication .= "leftauth=pubkey\n\trightauth=eap-tls";
+					if (!empty($ph1ent['certref']))
+						$authentication .= "\n\tleftcert={$certpath}/cert-{$ph1ent['ikeid']}.crt";
+				} else {
+					$authentication = "leftauth=eap-tls\n\trightauth=eap-tls";
+					if (!empty($ph1ent['certref']))
+						$authentication .= "\n\tleftcert={$certpath}/cert-{$ph1ent['ikeid']}.crt";
+				}
 				break;
 			case 'xauth_rsa_server':
 				$authentication = "leftauth = pubkey\n\trightauth = pubkey";
@@ -668,6 +686,7 @@ EOD;
 			$ipseclifetime = 0;
 			$rightsubnet_spec = array();
 			$leftsubnet_spec = array();
+			$reqids = array();
 			$ealgoAHsp2arr = array();
 			$ealgoESPsp2arr = array();
 		if (is_array($a_phase2) && count($a_phase2)) {
@@ -807,6 +826,7 @@ EOD;
 					}
 				}
 
+				$reqids[] = $ph2ent['reqid'];
 
 				if (!empty($ph2ent['lifetime'])) {
 					if ($ipseclifetime == 0 || intval($ipseclifetime) > intval($ph2ent['lifetime']))
@@ -860,6 +880,8 @@ EOD;
 					$ipsecfin = '';
 					foreach ($rightsubnet_spec as $idx => $rsubnet) {
 						$ipsecfin .= "\nconn con{$ph1ent['ikeid']}00{$idx}\n";
+						if (!empty($reqids[$idx]))
+							$ipsecfin .= "\treqid = " . $reqids[$idx] . "\n";
 						$ipsecfin .= $ipsecconnect;
 						$ipsecfin .= "\trightsubnet = {$rsubnet}\n";
 						$ipsecfin .= "\tleftsubnet = " . $leftsubnet_spec[$idx] . "\n";
@@ -868,6 +890,8 @@ EOD;
 					log_error("No phase2 specifications for tunnel with REQID = {$ikeid}");
 			} else {
 				$ipsecfin = "\nconn con{$ph1ent['ikeid']}\n";
+				if (!empty($reqids[$idx]))
+					$ipsecfin .= "\treqid = " . $reqids[0] . "\n";
 				$ipsecfin .= $ipsecconnect;
 				if (!empty($rightsubnet_spec)) {
 					$tempsubnets = array();
@@ -905,7 +929,6 @@ EOD;
 		mwexec("/usr/local/sbin/ipsec rereadall", false);
 		/* Update configuration changes */
 		mwexec("/usr/local/sbin/ipsec update", false);
-		mwexec("/usr/local/sbin/ipsec reload", false);
 	} else {
 		mwexec("/usr/local/sbin/ipsec start", false); 
 	}

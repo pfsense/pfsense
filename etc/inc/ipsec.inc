@@ -112,8 +112,14 @@ $p1_authentication_methods = array(
 	'xauth_rsa_server' => array( 'name' => 'Mutual RSA + Xauth', 'mobile' => true ),
 	'xauth_psk_server' => array( 'name' => 'Mutual PSK + Xauth', 'mobile' => true ),
 	'eap-tls' => array( 'name' => 'EAP-TLS', 'mobile' => true),
+	'eap-mschapv2' => array( 'name' => 'EAP-MSChapv2', 'mobile' => true),
 	'rsasig' => array( 'name' => 'Mutual RSA', 'mobile' => false ),
 	'pre_shared_key' => array( 'name' => 'Mutual PSK', 'mobile' => false ) );
+
+$ipsec_preshared_key_type = array(
+	'PSK' => 'PSK',
+	'EAP' => 'EAP'
+	);
 
 $p2_modes = array(
 	'tunnel' => 'Tunnel IPv4',
@@ -634,21 +640,21 @@ function ipsec_find_id(& $ph1ent, $side = "local", $rgmap = array()) {
 		$thisid_type = 'address';
 		$thisid_data = $rgmap[$ph1ent['remote-gateway']];
 		break;
-	case 'address';
+	case 'address':
 		$thisid_data = $id_data;
 		break;
-	case 'fqdn';
+	case 'fqdn':
 		$thisid_data = "{$id_data}";
 		break;
-	case 'keyid tag';
+	case 'keyid tag':
 		$thisid_type = 'keyid';
 		$thisid_data = "{$thisid_data}";
 		break;
-	case 'user_fqdn';
+	case 'user_fqdn':
 		$thisid_type = 'userfqdn';
 		$thisid_data = "{$id_data}";
 		break;
-	case 'asn1dn';
+	case 'asn1dn':
 		$thisid_data = $id_data;
 		$thisid_data = "{$id_data}";
 		break;
@@ -669,6 +675,29 @@ function ipsec_fixup_network($network) {
 	}
 
 	return $result;
+}
+
+function ipsec_new_reqid() {
+	global $config;
+
+	if (!is_array($config['ipsec']) || !is_array($config['ipsec']['phase2']))
+		return;
+
+	$ipsecreqid = lock('ipsecreqids', LOCK_EX);
+	$keyids = array();
+	$keyid = 1;
+	foreach ($config['ipsec']['phase2'] as $ph2)
+		$keyids[$ph2['reqid']] = $ph2['reqid'];
+
+	for ($i = 1; $i < 16000; $i++) {
+		if (!isset($keyids[$i])) {
+			$keyid = $i;
+			break;
+		}
+	}
+	unlock($ipsecreqid);
+
+	return $keyid;
 }
 
 ?>

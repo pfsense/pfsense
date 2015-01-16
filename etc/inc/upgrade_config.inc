@@ -3539,4 +3539,17 @@ function upgrade_114_to_115() {
 		$config['unbound']['custom_options'] = base64_encode($config['unbound']['custom_options']);
 }
 
+function upgrade_115_to_116() {
+	global $config;
+
+	if (!is_array($config['ipsec']) || !is_array($config['ipsec']['phase2']))
+                return;
+
+        $keyid = 1;
+        foreach ($config['ipsec']['phase2'] as $idx => $ph2) {
+                $config['ipsec']['phase2'][$idx]['reqid'] = $keyid;
+		$keyid++;
+	}
+}
+
 ?>

@@ -509,7 +509,9 @@ function gentitle($title) {
 
 function genhtmltitle($title) {
 	if(!is_array($title))
-		return $title;
+		return '<h1 class="page-header">' . $title . '</h1>';
+
+	$heading = '<h1 class="page-header">' . end($title) . '</h1>';
 
 	$bc = '<ol class="breadcrumb">';
 
@@ -518,7 +520,7 @@ function genhtmltitle($title) {
 
 	$bc .= '</ol>';
 
-	return $bc;
+	return $heading . $bc;
 }
 
 /* update the changedesc and changecount(er) variables */

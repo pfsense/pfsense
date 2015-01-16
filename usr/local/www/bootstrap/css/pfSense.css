@@ -42,10 +42,28 @@ tr.disabled {
 	opacity: .5;
 }
 
+/** Page header with title and breadcrumb */
+.header {
+	position: relative;
+}
+
+.header .page-header {
+	margin-top: 0;
+}
+
+.header .help-icon {
+	position: absolute;
+	right: 0;
+	top: 15px;
+}
+
+/** Page footer */
 .footer {
 	position: absolute;
 	bottom: 0;
 	width: 100%;
 	height: 60px;
 	background-color: #f5f5f5;
+	padding-top: 21px;
+	text-align: center;
 }

@@ -7,3 +7,4 @@ upload.sh
 .buildpath
 .project
 .settings/
+.idea

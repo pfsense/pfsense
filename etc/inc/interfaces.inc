@@ -812,7 +812,7 @@ function interfaces_gif_configure($checkparent = 0, $realif = "") {
 					continue;
 			}
 			else if ($checkparent == 2) {
-				if (substr($gif['if'], 0, 4) != '_vip' && substr($gif['if'], 0, 5) == '_lloc')
+				if (substr($gif['if'], 0, 4) != '_vip' && substr($gif['if'], 0, 5) != '_lloc')
 					continue;
 				if (empty($config['interfaces'][$gif['if']]) || $config['interfaces'][$gif['if']]['ipaddrv6'] != "track6")
 					continue;

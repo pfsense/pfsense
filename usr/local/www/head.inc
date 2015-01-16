@@ -424,33 +424,33 @@ foreach($noticeCategories as $category => $catNotices):?>
 <div class="container">
 	<header class="header">
 		<?=genhtmltitle($pgtitle);?>
-	<?php
-	/*
-	//FIXME
-	if (!$hide_service_status && !empty($shortcuts[$shortcut_section]['service'])) {
-		$ssvc = array();
-		switch ($shortcut_section) {
-			case "openvpn":
-				$ssvc = find_service_by_openvpn_vpnid($vpnid);
-				break;
-			case "captiveportal":
-				$ssvc = find_service_by_cp_zone($cpzone);
-				break;
-			default:
-				$ssvc = find_service_by_name($shortcuts[$shortcut_section]['service']);
+<?php
+/*
+//FIXME
+if (!$hide_service_status && !empty($shortcuts[$shortcut_section]['service'])) {
+	$ssvc = array();
+	switch ($shortcut_section) {
+		case "openvpn":
+			$ssvc = find_service_by_openvpn_vpnid($vpnid);
+			break;
+		case "captiveportal":
+			$ssvc = find_service_by_cp_zone($cpzone);
+			break;
+		default:
+			$ssvc = find_service_by_name($shortcuts[$shortcut_section]['service']);
 
-		}
-		if (!empty($ssvc)) {
-			echo get_service_status_icon($ssvc, false);
-			echo get_service_control_links($ssvc, true);
-		}
 	}
+	if (!empty($ssvc)) {
+		echo get_service_status_icon($ssvc, false);
+		echo get_service_control_links($ssvc, true);
+	}
+}
 
-	echo get_shortcut_main_link($shortcut_section, true);
-	echo get_shortcut_status_link($shortcut_section, true);
-	echo get_shortcut_log_link($shortcut_section, true);
-	*/
-	?>
+echo get_shortcut_main_link($shortcut_section, true);
+echo get_shortcut_status_link($shortcut_section, true);
+echo get_shortcut_log_link($shortcut_section, true);
+*/
+?>
 
 	<?php if(! $g['disablehelpicon']): ?>
 		<a href="<?=$helpurl?>" title="<?=gettext("Help for items on this page")?>" class="help-icon">

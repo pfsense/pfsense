@@ -208,37 +208,52 @@ if ($local_ip == false) {
 <body id="login" class="no-menu">
 	<div id="jumbotron">
 		<div class="container">
-		<?php
-			if(is_ipaddr($http_host) && !$local_ip && !isset($config['system']['webgui']['nohttpreferercheck'])) {
-				$nifty_background = "#999";
-				print_info_box(gettext("You are accessing this router by an IP address not configured locally, which may be forwarded by NAT or other means. <br /><br />If you did not setup this forwarding, you may be the target of a man-in-the-middle attack."));
-			}
+<?php
+	if(is_ipaddr($http_host) && !$local_ip && !isset($config['system']['webgui']['nohttpreferercheck'])) {
+		$nifty_background = "#999";
+		print_info_box(gettext("You are accessing this router by an IP address not configured locally, which may be forwarded by NAT or other means. <br /><br />If you did not setup this forwarding, you may be the target of a man-in-the-middle attack."));
+	}
 
-			$loginautocomplete = isset($config['system']['webgui']['loginautocomplete']) ? '' : 'autocomplete="off"';
-		?>
+	$loginautocomplete = isset($config['system']['webgui']['loginautocomplete']) ? '' : 'autocomplete="off"';
+?>
 
-		<form id="iform" name="iform" method="post" <?= $loginautocomplete ?> action="<?=$_SERVER['SCRIPT_NAME'];?>">
-		<?php if (!empty($_SESSION['Login_Error'])): ?>
-			<div class="alert alert-danger" role="alert"><?=$_SESSION['Login_Error'];?></div>
-		<?php endif ?>
-
-			<div class="form-group">
-				<label for="inputEmail">Username</label>
-				<input type="text" class="form-control" name="usernamefld" placeholder="Username">
+		<div class="panel panel-default">
+			<div class="panel-heading">
+				<h2 class="panel-title">Login to pfSense</h2>
 			</div>
-			<div class="form-group">
-				<label for="inputPassword">Password</label>
-				<input type="password" class="form-control" name="passwordfld" placeholder="Password">
-			</div>
-			<button type="submit" class="btn btn-primary" name="login">Login</button>
 
-			<div class="alert alert-warning" class="hidden" id="no_cookies">
-				<?= gettext("Your browser must support cookies to login."); ?>
+			<div class="panel-body">
+<?php if (!empty($_SESSION['Login_Error'])): ?>
+				<div class="alert alert-danger" role="alert"><?=$_SESSION['Login_Error'];?></div>
+<?php endif ?>
+				<div class="alert alert-warning" class="hidden" id="no_cookies"><?= gettext("Your browser must support cookies to login."); ?></div>
+
+				<form method="post" <?= $loginautocomplete ?> action="<?=$_SERVER['SCRIPT_NAME'];?>" class="form-horizontal">
+					<div class="form-group">
+						<label for="usernamefld" class="col-sm-3 control-label">Username</label>
+						<div class="col-sm-7">
+							<input type="text" class="form-control" name="usernamefld" placeholder="Enter your username">
+						</div>
+					</div>
+
+					<div class="form-group">
+						<label for="passwordfld" class="col-sm-3 control-label">Password</label>
+						<div class="col-sm-7">
+							<input type="password" class="form-control" name="passwordfld" placeholder="Enter your password">
+						</div>
+					</div>
+
+					<div class="form-group">
+						<div class="col-sm-offset-3 col-sm-7">
+							<button type="submit" class="btn btn-primary" name="login">Login</button>
+						</div>
+					</div>
+				</form>
 			</div>
-		</form>
 		</div>
 	</div>
 
+	<script src="/jquery/jquery-1.11.1.min.js"></script>
 	<script>
 	$(function() {
 		document.cookie=

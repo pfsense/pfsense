@@ -18,13 +18,20 @@ body {
 
 body.no-menu #jumbotron {
 	padding: 100px;
-	background: #3c3c3c no-repeat;
+	background-image: linear-gradient(to bottom,#3c3c3c 0,#222 100%)
+}
+
+body.no-menu {
+	background: url("/logo-black.png") no-repeat;
+	background-position-x: center;
+}
+
+body.no-menu #jumbotron {
+	margin-top: 75px;
 }
 
 body.no-menu #jumbotron .container {
 	width: 450px;
-	padding-top: 50px;
-	background: url("/logo.png") no-repeat;
 }
 
 body#index .icons {

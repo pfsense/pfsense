@@ -27,11 +27,8 @@ body.no-menu #jumbotron .container {
 	background: url("/logo.png") no-repeat;
 }
 
-body.index a[data-toggle][aria-expanded="false"] i {
-	background-position: 0 -96px;
-}
-body.index a[data-toggle][aria-expanded="true"] i {
-	background-position: -24px -96px;
+body#index .icons {
+	float: right;
 }
 
 .ui-sortable-handle {

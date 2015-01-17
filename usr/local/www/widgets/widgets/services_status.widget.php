@@ -43,20 +43,11 @@ require_once("/usr/local/www/widgets/include/services_status.inc");
 $services = get_services();
 
 if(isset($_POST['servicestatusfilter'])) {
-	$config['widgets']['servicestatusfilter'] = htmlspecialchars($_POST['servicestatusfilter'], ENT_QUOTES | ENT_HTML401);
+	$config['widgets']['servicestatusfilter'] = htmlspecialchars(implode(',', $_POST['servicestatusfilter']), ENT_QUOTES | ENT_HTML401);
 	write_config("Saved Service Status Filter via Dashboard");
-	header("Location: ../../index.php");
+	header("Location: /");
 }
 ?>
-<input type="hidden" id="services_status-config" name="services_status-config" value="" />
-<div id="services_status-settings" class="widgetconfigdiv" style="display:none;">
-	<form action="/widgets/widgets/services_status.widget.php" method="post" name="iformd">
-		Comma separated list of services to NOT display in the widget<br />
-		<input type="text" size="30" name="servicestatusfilter" class="formfld unknown" id="servicestatusfilter" value="<?= $config['widgets']['servicestatusfilter'] ?>" />
-		<input id="submitd" name="submitd" type="submit" class="formbtn" value="Save" />
-	</form>
-</div>
-
 <table class="table table-striped">
 <thead>
 	<tr>
@@ -96,11 +87,24 @@ if (count($services) > 0) {
 </tbody>
 </table>
 
-<!-- needed to display the widget settings menu -->
-<script type="text/javascript">
-//<![CDATA[
-	selectIntLink = "services_status-configure";
-	textlink = document.getElementById(selectIntLink);
-	textlink.style.display = "inline";
-//]]>
-</script>
+<!-- close the body we're wrapped in and add a configuration-panel -->
+</div><div class="panel-footer collapse">
+
+<form action="/widgets/widgets/services_status.widget.php" method="post" class="form-horizontal">
+	<div class="form-group">
+		<label for="inputPassword3" class="col-sm-3 control-label">Hidden services</label>
+		<div class="col-sm-6">
+			<select multiple="multiple" name="servicestatusfilter" class="form-control" height="5">
+			<?php foreach ($services as $service): ?>
+				<option <?=(in_array($service['name'], $skipservices)?'selected="selected"':'')?>><?=$service['name']?></option>
+			<?php endforeach; ?>
+			</select>
+		</div>
+	</div>
+
+	<div class="form-group">
+		<div class="col-sm-offset-3 col-sm-6">
+			<button type="submit" class="btn btn-default">Save</button>
+		</div>
+	</div>
+</form>

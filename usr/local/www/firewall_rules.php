@@ -340,7 +340,7 @@ display_top_tabs($tab_array);
 	?>
 	<tr id="antilockout">
 		<td></td>
-		<td><i class="icon icon-ok-circle"></i></td>
+		<td title="<?=gettext("This rule passes traffic")?>"><i class="icon icon-ok"></i></td>
 		<td></td>
 		<?php
 			pfSense_handle_custom_code("/usr/local/pkg/firewall_rules/pre_id_tr_antilockout");
@@ -355,8 +355,7 @@ display_top_tabs($tab_array);
 		<td></td>
 		<td><?=gettext("Anti-Lockout Rule");?></td>
 		<td>
-			<a href="system_advanced_admin.php" title="<?=gettext("edit rule");?>"><i class="icon icon-pencil"></i></a>
-			<a href="#" title="<?=gettext("copy this rule");?>"><i class="icon icon-random"></i></a>
+			<a href="system_advanced_admin.php" class="btn btn-primary">edit</a>
 		</td>
 	</tr>
 <?php endif;?>
@@ -364,7 +363,7 @@ display_top_tabs($tab_array);
 <?php if (isset($config['interfaces'][$if]['blockpriv'])): ?>
 	<tr id="frrfc1918">
 		<td></td>
-		<td><i class="icon icon-remove-circle"></i></td>
+		<td title="<?=gettext("This rule blocks traffic")?>"><i class="icon icon-remove"></i></td>
 		<td></td>
 		<td>*</td>
 		<td><?=gettext("RFC 1918 networks");?></td>
@@ -376,15 +375,14 @@ display_top_tabs($tab_array);
 		<td></td>
 		<td><?=gettext("Block private networks");?></td>
 		<td>
-			<a href="system_advanced_admin.php" title="<?=gettext("edit rule");?>"><i class="icon icon-pencil"></i></a>
-			<a href="#" title="<?=gettext("copy this rule");?>"><i class="icon icon-random"></i></a>
+			<a href="system_advanced_admin.php" class="btn btn-primary" title="<?=gettext("edit rule");?>">edit</a>
 		</td>
 	</tr>
 <?php endif;?>
 <?php if (isset($config['interfaces'][$if]['blockbogons'])): ?>
 	<tr id="frrfc1918">
 		<td></td>
-		<td><i class="icon icon-remove-circle"></i></td>
+		<td title="<?=gettext("This rule blocks traffic")?>"><i class="icon icon-remove"></i></td>
 		<td></td>
 		<td>*</td>
 		<td><?=gettext("Reserved/not assigned by IANA");?></td>
@@ -396,8 +394,7 @@ display_top_tabs($tab_array);
 		<td>*</td>
 		<td><?=gettext("Block bogon networks");?></td>
 		<td>
-			<a href="system_advanced_admin.php" title="<?=gettext("edit rule");?>"><i class="icon icon-pencil"></i></a>
-			<a href="#" title="<?=gettext("copy this rule");?>"><i class="icon icon-random"></i></a>
+			<a href="system_advanced_admin.php" class="btn btn-primary">edit</a>
 		</td>
 	</tr>
 <?php endif;?>
@@ -685,9 +682,9 @@ display_top_tabs($tab_array);
 		<?=htmlspecialchars($filterent['descr']);?>
 	</td>
 	<td>
-		<a href="firewall_rules_edit.php?id=<?=$i;?>" title="<?=gettext("edit rule");?>"><i class="icon icon-pencil"></i></a>
-		<a href="firewall_rules_edit.php?dup=<?=$i;?>" title="<?=gettext("copy this rule");?>"><i class="icon icon-random"></i></a>
-		<a href="firewall_rules.php?act=del&amp;if=<?=htmlspecialchars($if);?>&amp;id=<?=$i;?>"><i class="icon icon-delete"></i></a>
+		<a href="firewall_rules_edit.php?id=<?=$i;?>" class="btn btn-primary">edit</a>
+		<a href="firewall_rules_edit.php?dup=<?=$i;?>" class="btn btn-default">copy</a>
+		<a href="firewall_rules.php?act=del&amp;if=<?=htmlspecialchars($if);?>&amp;id=<?=$i;?>" class="btn btn-danger">delete</a>
 	</td>
 	</tr>
 	<?php endfor;?>
@@ -710,11 +707,11 @@ display_top_tabs($tab_array);
 </table>
 
 <a href="firewall_rules_edit.php?if=<?=htmlspecialchars($if);?>" role="button" class="btn btn-success">
-	<?=gettext("add new rule");?>
+	<?=gettext("add new");?>
 </a>
 <?php if ($i > 0): ?>
 	<a href="#" role="button" class="btn btn-danger">
-		<?=gettext("delete selected rules");?>
+		<?=gettext("delete selected");?>
 	</a>
 	<!-- onclick="return confirm('<?=gettext('Do you really want to delete the selected rules?');?>')" />-->
 <?php endif;?>

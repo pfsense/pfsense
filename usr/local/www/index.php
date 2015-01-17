@@ -312,16 +312,17 @@ foreach ($widgets as $widgetname => $widgetconfig)
 		<div class="panel panel-default" id="widget-<?=$widgetname?>">
 			<div class="panel-heading">
 				<?=$widgetconfig['name']?>
-				<span style="float: right">
-					<a href="#"><i class="icon icon-wrench"></i></a>
-					<a data-toggle="collapse" href="#widget-<?=$widgetname?> .panel-body">
-						<?php if ($widgetconfig['display'] == 'close'): ?>
-							<i class="icon icon-plus-sign"></i>
-						<?php else: ?>
-							<i class="icon icon-minus-sign"></i>
-						<?php endif; ?>
+				<span class="icons">
+					<a data-toggle="collapse" href="#widget-<?=$widgetname?> .panel-footer" class="config hidden">
+						<i class="icon icon-wrench"></i>
 					</a>
-					<a href="#"><i class="icon icon-remove-sign"></i></a>
+					<a data-toggle="collapse" href="#widget-<?=$widgetname?> .panel-body">
+						<!--  actual icon is determined in css based on state of body -->
+						<i class="icon icon-plus-sign"></i>
+					</a>
+					<a data-toggle="close" href="#widget-<?=$widgetname?>">
+						<i class="icon icon-remove-sign"></i>
+					</a>
 				</span>
 			</div>
 			<div class="panel-body collapse<?=($widgetconfig['display']=='close' ? '' : ' in')?>">

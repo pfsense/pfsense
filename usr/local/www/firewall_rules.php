@@ -340,7 +340,7 @@ display_top_tabs($tab_array);
 	?>
 	<tr id="antilockout">
 		<td></td>
-		<td title="<?=gettext("This rule passes traffic")?>"><i class="icon icon-ok"></i></td>
+		<td title="<?=gettext("traffic is passed")?>"><i class="icon icon-ok"></i></td>
 		<td></td>
 		<?php
 			pfSense_handle_custom_code("/usr/local/pkg/firewall_rules/pre_id_tr_antilockout");
@@ -363,7 +363,7 @@ display_top_tabs($tab_array);
 <?php if (isset($config['interfaces'][$if]['blockpriv'])): ?>
 	<tr id="frrfc1918">
 		<td></td>
-		<td title="<?=gettext("This rule blocks traffic")?>"><i class="icon icon-remove"></i></td>
+		<td title="<?=gettext("traffic is blocked")?>"><i class="icon icon-remove"></i></td>
 		<td></td>
 		<td>*</td>
 		<td><?=gettext("RFC 1918 networks");?></td>
@@ -382,7 +382,7 @@ display_top_tabs($tab_array);
 <?php if (isset($config['interfaces'][$if]['blockbogons'])): ?>
 	<tr id="frrfc1918">
 		<td></td>
-		<td title="<?=gettext("This rule blocks traffic")?>"><i class="icon icon-remove"></i></td>
+		<td title="<?=gettext("traffic is blocked")?>"><i class="icon icon-remove"></i></td>
 		<td></td>
 		<td>*</td>
 		<td><?=gettext("Reserved/not assigned by IANA");?></td>
@@ -413,7 +413,7 @@ display_top_tabs($tab_array);
 	<td>
 		<input type="checkbox" id="frc<?=$i?>" name="rule[]" value="<?=$i?>" />
 	</td>
-	<td>
+	<td title="<?=gettext("traffic is ").$filterent['type']."ed"?>">
 	<?php
 		if ($filterent['type'] == "block")
 			$iconfn = "remove";
@@ -424,19 +424,15 @@ display_top_tabs($tab_array);
 		else
 			$iconfn = "ok";
 	?>
-	<a href="?if=<?=htmlspecialchars($if);?>&amp;act=toggle&amp;id=<?=$i;?>" title="Toggle">
-		<i class="icon icon-<?=$iconfn?>"></i>
-	</a>
+	<i class="icon icon-<?=$iconfn?>"></i>
 	<?php
 		$isadvset = firewall_check_for_advanced_options($filterent);
-		if($isadvset)
-			print '<i class="icon icon-cog" title="'. gettext("advanced settings set") .': '. $isadvset .'"></i>';
+		if ($isadvset)
+			print '<i class="icon icon-cog" title="'. gettext("advanced setting") .': '. $isadvset .'"></i>';
 
-		if (isset($filterent['log'])):
+		if (isset($filterent['log']))
 			print '<i class="icon icon-tasks" title="'. gettext("traffic is logged") .'"></i>';
 	?>
-
-<?php endif;?>
 	</td>
 	<?php
 		$alias = rule_columns_with_alias(
@@ -684,7 +680,8 @@ display_top_tabs($tab_array);
 	<td>
 		<a href="firewall_rules_edit.php?id=<?=$i;?>" class="btn btn-primary">edit</a>
 		<a href="firewall_rules_edit.php?dup=<?=$i;?>" class="btn btn-default">copy</a>
-		<a href="firewall_rules.php?act=del&amp;if=<?=htmlspecialchars($if);?>&amp;id=<?=$i;?>" class="btn btn-danger">delete</a>
+		<a href="?act=toggle&amp;if=<?=htmlspecialchars($if);?>&amp;id=<?=$i;?>" class="btn btn-default">disable</a>
+		<a href="?act=del&amp;if=<?=htmlspecialchars($if);?>&amp;id=<?=$i;?>" class="btn btn-danger">delete</a>
 	</td>
 	</tr>
 	<?php endfor;?>

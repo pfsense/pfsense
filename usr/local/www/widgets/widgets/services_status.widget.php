@@ -43,7 +43,11 @@ require_once("/usr/local/www/widgets/include/services_status.inc");
 $services = get_services();
 
 if(isset($_POST['servicestatusfilter'])) {
-	$config['widgets']['servicestatusfilter'] = htmlspecialchars(implode(',', $_POST['servicestatusfilter']), ENT_QUOTES | ENT_HTML401);
+	$validNames = array();
+	foreach ($services as $service)
+		array_push($validNames, $service['name']);
+
+	$config['widgets']['servicestatusfilter'] = implode(',', array_intersect($validNames, $_POST['servicestatusfilter']));
 	write_config("Saved Service Status Filter via Dashboard");
 	header("Location: /");
 }

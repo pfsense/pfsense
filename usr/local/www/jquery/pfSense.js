@@ -1,4 +1,7 @@
 $(function() {
+	// Enable popovers globally
+	$('[data-toggle="popover"]').popover()
+
 	switch ($(document.body).attr('id')) {
 		case 'index':
 			// Hide configuration button for panels without configuration
@@ -36,6 +39,7 @@ $(function() {
 					$('.container .col-md-6').each(function(idx, col){
 						$('.panel', col).each(function(idx, widget){
 							isOpen = $('.panel-body', widget).hasClass('in');
+
 							sequence += widget.id.split('-')[1] +':'+ col.id.split('-')[1] +':'+ (isOpen ? 'open' : 'close') +','; 
 						});
 					});

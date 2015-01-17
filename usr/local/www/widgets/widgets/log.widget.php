@@ -69,7 +69,6 @@ if(is_numeric($_POST['filterlogentries'])) {
 $nentries = isset($config['widgets']['filterlogentries']) ? $config['widgets']['filterlogentries'] : 5;
 
 //set variables for log
-
 $nentriesacts		= isset($config['widgets']['filterlogentriesacts'])		? $config['widgets']['filterlogentriesacts']		: 'All';
 $nentriesinterfaces = isset($config['widgets']['filterlogentriesinterfaces']) ? $config['widgets']['filterlogentriesinterfaces'] : 'All';
 
@@ -85,7 +84,6 @@ $filterlog = conv_log_filter($filter_logfile, $nentries, 50, $filterfieldsarray)
 handle_ajax($nentries, $nentries + 20);
 
 ?>
-
 <script type="text/javascript">
 //<![CDATA[
 lastsawtime = '<?php echo time(); ?>';
@@ -144,116 +142,107 @@ function format_log_line(row) {
 //]]>
 </script>
 <script src="/javascript/filter_log.js" type="text/javascript"></script>
-<input type="hidden" id="log-config" name="log-config" value="" />
 
-<div id="log-settings" class="widgetconfigdiv" style="display:none;">
-	<form action="/widgets/widgets/log.widget.php" method="post" name="iforma">
-		Number of lines to display:
-		<select name="filterlogentries" class="formfld unknown" id="filterlogentries">
-		<?php for ($i = 1; $i <= 20; $i++) { ?>
-			<option value="<?php echo $i;?>" <?php if ($nentries == $i) echo "selected=\"selected\"";?>><?php echo $i;?></option>
-		<?php } ?>
-		</select>
-
-<?php
-		$Include_Act = explode(" ", $nentriesacts);
-		if ($nentriesinterfaces == "All") $nentriesinterfaces = "";
-?>
-		<input id="actpass"	name="actpass"	type="checkbox" value="Pass"	<?php if (in_arrayi('Pass',	$Include_Act)) echo "checked=\"checked\""; ?> /> Pass
-		<input id="actblock"  name="actblock"  type="checkbox" value="Block"  <?php if (in_arrayi('Block',  $Include_Act)) echo "checked=\"checked\""; ?> /> Block
-		<input id="actreject" name="actreject" type="checkbox" value="Reject" <?php if (in_arrayi('Reject', $Include_Act)) echo "checked=\"checked\""; ?> /> Reject
-		<br />
-		Interfaces:
-		<select id="filterlogentriesinterfaces" name="filterlogentriesinterfaces" class="formselect">
-			<option value="All">ALL</option>
-<?php
-		$interfaces = get_configured_interface_with_descr();
-		foreach ($interfaces as $iface => $ifacename):
-?>
-			<option value="<?=$iface;?>" <?php if ($nentriesinterfaces == $iface) echo "selected=\"selected\"";?>>
-				<?=htmlspecialchars($ifacename);?>
-			</option>
-<?php
-		endforeach;
-		unset($interfaces);
-		unset($Include_Act);
-?>
-		</select>
-
-		<input id="submita" name="submita" type="submit" class="formbtn" value="Save" />
-	</form>
-</div>
-
-<table>
-	<colgroup>
-		<col style='width:  7%;' />
-		<col style='width: 23%;' />
-		<col style='width: 11%;' />
-		<col style='width: 28%;' />
-		<col style='width: 31%;' />
-	</colgroup>
+<table class="table table-striped">
 	<thead>
 		<tr>
-			<th><?=gettext("Act");?></td>
-			<th><?=gettext("Time");?></td>
-			<th><?=gettext("IF");?></td>
-			<th><?=gettext("Source");?></td>
-			<th><?=gettext("Destination");?></td>
+			<th><?=gettext("Act");?></th>
+			<th><?=gettext("Time");?></th>
+			<th><?=gettext("IF");?></th>
+			<th><?=gettext("Source");?></th>
+			<th><?=gettext("Destination");?></th>
 		</tr>
 	</thead>
-	<tbody id='filter-log-entries'>
-	<?php
-	$rowIndex = 0;
+	<tbody>
+<?php
 	foreach ($filterlog as $filterent):
-	$evenRowClass = $rowIndex % 2 ? " listMReven" : " listMRodd";
-	$rowIndex++;
-	if ($filterent['version'] == '6') {
-		$srcIP = "[" . htmlspecialchars($filterent['srcip']) . "]";
-		$dstIP = "[" . htmlspecialchars($filterent['dstip']) . "]";
-	} else {
-		$srcIP = htmlspecialchars($filterent['srcip']);
-		$dstIP = htmlspecialchars($filterent['dstip']);
-	}
+		if ($filterent['version'] == '6') {
+			$srcIP = "[" . htmlspecialchars($filterent['srcip']) . "]";
+			$dstIP = "[" . htmlspecialchars($filterent['dstip']) . "]";
+		} else {
+			$srcIP = htmlspecialchars($filterent['srcip']);
+			$dstIP = htmlspecialchars($filterent['dstip']);
+		}
 
-	if ($filterent['srcport'])
-		$srcPort = ":" . htmlspecialchars($filterent['srcport']);
-	else
-		$srcPort = "";
+		if ($filterent['srcport'])
+			$srcPort = ":" . htmlspecialchars($filterent['srcport']);
+		else
+			$srcPort = "";
 
-	if ($filterent['dstport'])
-		$dstPort = ":" . htmlspecialchars($filterent['dstport']);
-	else
-		$dstPort = "";
+		if ($filterent['dstport'])
+			$dstPort = ":" . htmlspecialchars($filterent['dstport']);
+		else
+			$dstPort = "";
 
-	?>
-		<tr class="<?=$evenRowClass?>">
-			<td class="listMRlr nowrap" align="center">
-			<a href="#" onclick="javascript:getURL('diag_logs_filter.php?getrulenum=<?php echo "{$filterent['rulenum']},{$filterent['tracker']},{$filterent['act']}"; ?>', outputrule);">
-			<img border="0" src="<?php echo find_action_image($filterent['act']);?>" width="11" height="11" alt="<?php echo $filterent['act'];?>" title="<?php echo $filterent['act'];?>" />
-			</a>
+		if ($filterent['act'] == "block")
+			$iconfn = "remove";
+		else if ($filterent['act'] == "reject")
+			$iconfn = "fire";
+		else if ($filterent['act'] == "match")
+			$iconfn = "filter";
+		else
+			$iconfn = "ok";
+
+		$rule = find_rule_by_number($filterent['rulenum'], $filterent['tracker'], $filterent['act']);
+?>
+		<tr>
+			<td>
+				<a role="button" data-toggle="popover" data-trigger="hover" data-title="Rule that triggered this action" data-content="<?=htmlspecialchars($rule)?>">
+					<i class="icon icon-<?=$iconfn?>"></i>
+				</a>
 			</td>
-			<td class="listMRr ellipsis nowrap" title="<?php echo htmlspecialchars($filterent['time']);?>"><?php echo substr(htmlspecialchars($filterent['time']),0,-3);?></td>
-			<td class="listMRr ellipsis nowrap" title="<?php echo htmlspecialchars($filterent['interface']);?>"><?php echo htmlspecialchars($filterent['interface']);?></td>
-			<td class="listMRr ellipsis nowrap" title="<?php echo $srcIP . $srcPort;?>">
-				<a href="diag_dns.php?host=<?php echo "{$filterent['srcip']}"; ?>" title="<?=gettext("Reverse Resolve with DNS");?>">
-				<?php echo $srcIP;?></a></td>
-			<td class="listMRr ellipsis nowrap" title="<?php echo $dstIP . $dstPort;?>">
-				<a href="diag_dns.php?host=<?php echo "{$filterent['dstip']}"; ?>" title="<?=gettext("Reverse Resolve with DNS");?>">
-				<?php echo $dstIP;?></a><?php echo $dstPort;?></td>
-			<?php
-				if ($filterent['proto'] == "TCP")
-					$filterent['proto'] .= ":{$filterent['tcpflags']}";
-			?>
+			<td><?=substr(htmlspecialchars($filterent['time']),0,-3)?></td>
+			<td><?=htmlspecialchars($filterent['interface']);?></td>
+			<td>
+				<a href="diag_dns.php?host=<?=$filterent['srcip']?>" title="<?=gettext("Reverse Resolve with DNS")?>">
+					<?=$srcIP?>
+				</a>:<?=$srcPort?>
+			</td>
+			<td>
+				<a href="diag_dns.php?host=<?=$filterent['dstip']?>" title="<?=gettext("Reverse Resolve with DNS");?>">
+					<?=$dstIP?>
+				</a>:<?=$dstPort?>
+			</td>
 		</tr>
 	<?php endforeach; ?>
 	</tbody>
 </table>
 
-<!-- needed to display the widget settings menu -->
-<script type="text/javascript">
-//<![CDATA[
-	selectIntLink = "log-configure";
-	textlink = document.getElementById(selectIntLink);
-	textlink.style.display = "inline";
-//]]>
-</script>
+<!-- close the body we're wrapped in and add a configuration-panel -->
+</div><div class="panel-footer collapse">
+
+<form action="/widgets/widgets/log.widget.php" method="post">
+	Number of lines to display:
+	<select name="filterlogentries" class="formfld unknown" id="filterlogentries">
+	<?php for ($i = 1; $i <= 20; $i++) { ?>
+		<option value="<?php echo $i;?>" <?php if ($nentries == $i) echo "selected=\"selected\"";?>><?php echo $i;?></option>
+	<?php } ?>
+	</select>
+
+<?php
+	$Include_Act = explode(" ", $nentriesacts);
+	if ($nentriesinterfaces == "All") $nentriesinterfaces = "";
+?>
+	<input id="actpass"	name="actpass"	type="checkbox" value="Pass"	<?php if (in_arrayi('Pass',	$Include_Act)) echo "checked=\"checked\""; ?> /> Pass
+	<input id="actblock"  name="actblock"  type="checkbox" value="Block"  <?php if (in_arrayi('Block',  $Include_Act)) echo "checked=\"checked\""; ?> /> Block
+	<input id="actreject" name="actreject" type="checkbox" value="Reject" <?php if (in_arrayi('Reject', $Include_Act)) echo "checked=\"checked\""; ?> /> Reject
+	<br />
+	Interfaces:
+	<select id="filterlogentriesinterfaces" name="filterlogentriesinterfaces" class="formselect">
+		<option value="All">ALL</option>
+<?php
+	$interfaces = get_configured_interface_with_descr();
+	foreach ($interfaces as $iface => $ifacename):
+?>
+		<option value="<?=$iface;?>" <?php if ($nentriesinterfaces == $iface) echo "selected=\"selected\"";?>>
+			<?=htmlspecialchars($ifacename);?>
+		</option>
+<?php
+	endforeach;
+	unset($interfaces);
+	unset($Include_Act);
+?>
+	</select>
+
+	<input id="submita" name="submita" type="submit" class="formbtn" value="Save" />
+</form>

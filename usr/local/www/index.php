@@ -99,7 +99,7 @@ if (!is_array($config['widgets'])) {
 }
 
 if ($_POST && $_POST['sequence']) {
-	$config['widgets']['sequence'] = $_POST['sequence'];
+	$config['widgets']['sequence'] = rtrim($_POST['sequence'], ',');
 
 	foreach($widgets as $widgetname => $widgetconfig){
 		if ($_POST[$widgetname . '-config']){
@@ -108,7 +108,7 @@ if ($_POST && $_POST['sequence']) {
 	}
 
 	write_config(gettext("Widget configuration has been changed."));
-	header("Location: index.php");
+	header("Location: /");
 	exit;
 }
 
@@ -210,7 +210,7 @@ if ($config['widgets'] && $config['widgets']['sequence'] != "") {
 	}
 
 	##add widgets that may not be in the saved configuration, in case they are to be displayed later
-	$widgets = array_merge($widgets, $widgetsfromconfig);
+	$widgets = $widgetsfromconfig + $widgets;
 
 	##find custom configurations of a particular widget and load its info to $pconfig
 	foreach($widgets as $widgetname => $widgetconfig){
@@ -251,7 +251,7 @@ pfSense_handle_custom_code("/usr/local/pkg/dashboard/pre_dashboard");
 
 <div class="col-md-12">
 	<div class="panel panel-default">
-		<div class="panel-heading"><h4><?=gettext("Available Widgets"); ?></h4></div>
+		<div class="panel-heading"><?=gettext("Available Widgets"); ?></div>
 		<div class="panel-body">
 	<?php foreach($widgets as $widgetname => $widgetconfig): ?>
 		<?php if ($widgetconfig['display'] == 'none'): ?>

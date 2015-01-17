@@ -73,6 +73,7 @@ if($_POST) {
 </div><div class="panel-footer collapse">
 
 <form action="/widgets/widgets/picture.widget.php" method="post" enctype="multipart/form-data" class="form-inline">
-	<input name="pictfile" type="file" class="form-control" placeholder="Upload picture"/>
+	<label for="pictfile">New picture: </label>
+	<input name="pictfile" type="file" class="form-control" />
 	<button type="submit" class="btn btn-default">Upload</button>
 </form>

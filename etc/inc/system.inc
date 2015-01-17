@@ -2029,6 +2029,18 @@ function system_identify_specific_platform() {
 	if ($g['platform'] == 'generic-pc-cdrom')
 		return array('name' => 'generic-pc-cdrom', 'descr' => gettext("Generic PC (CD-ROM)"));
 	
+	/* Try to guess from smbios strings */
+	unset($output);
+	$_gb = exec('/bin/kenv smbios.system.product', $output);
+	switch ($output[0]) {
+	case 'FW7541':
+		return (array('name' => 'FW7541', 'descr' => 'Netgate FW7541'));
+		break;
+	case 'APU':
+		return (array('name' => 'APU', 'descr' => 'Netgate APU'));
+		break;
+	}
+
 	/* the rest of the code only deals with 'embedded' platforms */
 	if ($g['platform'] != 'nanobsd')
 		return array('name' => $g['platform'], 'descr' => $g['platform']);

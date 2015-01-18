@@ -78,7 +78,7 @@ if ($_POST) {
 
 	/* input validation */
 	$reqdfields = explode(" ", "sysprivs");
-	$reqdfieldsn = array(gettext("Selected priveleges"));
+	$reqdfieldsn = array(gettext("Selected privileges"));
 
 	do_input_validation($_POST, $reqdfields, $reqdfieldsn, $input_errors);
 
@@ -160,7 +160,7 @@ function update_description() {
 	if ($savemsg)
 		print_info_box($savemsg);
 ?>
-<table width="100%" border="0" cellpadding="0" cellspacing="0" summary="group manager add priveleges">
+<table width="100%" border="0" cellpadding="0" cellspacing="0" summary="group manager add privileges">
 	<tr>
 		<td>
 		<?php

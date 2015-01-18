@@ -261,12 +261,12 @@ if ($_POST['save']) {
 	}
 
 	/*
-	 * Check for a valid expirationdate if one is set at all (valid means,
+	 * Check for a valid expiration date if one is set at all (valid means,
 	 * DateTime puts out a time stamp so any DateTime compatible time
 	 * format may be used. to keep it simple for the enduser, we only
 	 * claim to accept MM/DD/YYYY as inputs. Advanced users may use inputs
 	 * like "+1 day", which will be converted to MM/DD/YYYY based on "now".
-	 * Otherwhise such an entry would lead to an invalid expiration data.
+	 * Otherwise such an entry would lead to an invalid expiration data.
 	 */
 	if ($_POST['expires']){
 		try {
@@ -304,7 +304,7 @@ if ($_POST['save']) {
 			local_user_del($userent);
 		}
 
-		/* the user password was mofified */
+		/* the user password was modified */
 		if ($_POST['passwordfld1'])
 			local_user_set_password($userent, $_POST['passwordfld1']);
 

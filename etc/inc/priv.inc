@@ -192,7 +192,7 @@ function isAllowed($username, $page) {
 			if ($user['uid']==0)
 				return true;
 
-	/* user privelege access check */
+	/* user privilege access check */
 	if (cmp_page_matches($page, $_SESSION['page-match']))
 		return true;
 
@@ -216,7 +216,7 @@ function isAllowedPage($page) {
 			if ($user['uid']==0)
 				return true;
 
-	/* user privelege access check */
+	/* user privilege access check */
 	return cmp_page_matches($page, $_SESSION['page-match']);
 }
 

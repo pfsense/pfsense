@@ -78,70 +78,22 @@ $filterfieldsarray = array(
 );
 
 $filter_logfile = "{$g['varlog_path']}/filter.log";
-$filterlog = conv_log_filter($filter_logfile, $nentries, 50, $filterfieldsarray);		//Get log entries
 
 /* AJAX related routines */
-handle_ajax($nentries, $nentries + 20);
+if (isset($_POST['lastsawtime'])) {
+	$filterlog = conv_log_filter($filter_logfile, $nentries, $nentries + 20);
 
-?>
-<script type="text/javascript">
-//<![CDATA[
-lastsawtime = '<?php echo time(); ?>';
-var lines = Array();
-var timer;
-var updateDelay = 30000;
-var isBusy = false;
-var isPaused = false;
-var nentries = <?php echo $nentries; ?>;
-
-<?php
-if(isset($config['syslog']['reverse']))
-	echo "var isReverse = true;\n";
-else
-	echo "var isReverse = false;\n";
-?>
-
-/* Called by the AJAX updater */
-function format_log_line(row) {
-	var rrText = "<?php echo gettext("Reverse Resolve with DNS"); ?>";
-
-	if ( row[8] == '6' ) {
-		srcIP = '[' + row[3] + ']';
-		dstIP = '[' + row[5] + ']';
-	} else {
-		srcIP = row[3];
-		dstIP = row[5];
+	foreach ($filterlog as $idx => $row) {
+		if (strtotime($log_row['time']) <= $_POST['lastsawtime'])
+			unset($filterlog[$idx]);
 	}
-
-	if ( row[4] == '' )
-		srcPort = '';
-	else
-		srcPort = ':' + row[4];
-	if ( row[6] == '' )
-		dstPort = '';
-	else
-		dstPort = ':' + row[6];
-
-	var line = '<td class="listMRlr" align="center">' + row[0] + '</td>' +
-		'<td class="listMRr ellipsis" title="' + row[1] + '">' + row[1].slice(0,-3) + '</td>' +
-		'<td class="listMRr ellipsis" title="' + row[2] + '">' + row[2] + '</td>' +
-		'<td class="listMRr ellipsis" title="' + srcIP + srcPort + '"><a href="diag_dns.php?host=' + row[3] + '" title="' + rrText + '">' + srcIP + '</a></td>' +
-		'<td class="listMRr ellipsis" title="' + dstIP + dstPort + '"><a href="diag_dns.php?host=' + row[5] + '" title="' + rrText + '">' + dstIP + '</a>' + dstPort + '</td>';
-
-	var nentriesacts = "<?php echo $nentriesacts; ?>";
-	var nentriesinterfaces = "<?php echo $nentriesinterfaces; ?>";
-
-	var Action = row[0].match(/alt=.*?(pass|block|reject)/i).join("").match(/pass|block|reject/i).join("");
-	var Interface = row[2];
-
-	if ( !(in_arrayi(Action,	nentriesacts.replace		(/\s+/g, ',').split(',') ) ) && (nentriesacts != 'All') )			return false;
-	if ( !(in_arrayi(Interface,	nentriesinterfaces.replace(/\s+/g, ',').split(',') ) ) && (nentriesinterfaces != 'All') )	return false;
-
-	return line;
 }
-//]]>
+else
+	$filterlog = conv_log_filter($filter_logfile, $nentries, 50, $filterfieldsarray);
+?>
+<script>
+	var logWidgetLastRefresh = <?=time()?>;
 </script>
-<script src="/javascript/filter_log.js" type="text/javascript"></script>
 
 <table class="table table-striped">
 	<thead>
@@ -164,16 +116,6 @@ function format_log_line(row) {
 			$dstIP = htmlspecialchars($filterent['dstip']);
 		}
 
-		if ($filterent['srcport'])
-			$srcPort = ":" . htmlspecialchars($filterent['srcport']);
-		else
-			$srcPort = "";
-
-		if ($filterent['dstport'])
-			$dstPort = ":" . htmlspecialchars($filterent['dstport']);
-		else
-			$dstPort = "";
-
 		if ($filterent['act'] == "block")
 			$iconfn = "remove";
 		else if ($filterent['act'] == "reject")
@@ -186,63 +128,75 @@ function format_log_line(row) {
 		$rule = find_rule_by_number($filterent['rulenum'], $filterent['tracker'], $filterent['act']);
 ?>
 		<tr>
-			<td>
-				<a role="button" data-toggle="popover" data-trigger="hover" data-title="Rule that triggered this action" data-content="<?=htmlspecialchars($rule)?>">
-					<i class="icon icon-<?=$iconfn?>"></i>
-				</a>
-			</td>
-			<td><?=substr(htmlspecialchars($filterent['time']),0,-3)?></td>
+			<td><a role="button" data-toggle="popover" data-trigger="hover"
+				data-title="Rule that triggered this action"
+				data-content="<?=htmlspecialchars($rule)?>"> <i
+					class="icon icon-<?=$iconfn?>"></i>
+			</a></td>
+			<td title="<?=htmlspecialchars($filterent['time'])?>"><?=substr(htmlspecialchars($filterent['time']),0,-3)?></td>
 			<td><?=htmlspecialchars($filterent['interface']);?></td>
-			<td>
-				<a href="diag_dns.php?host=<?=$filterent['srcip']?>" title="<?=gettext("Reverse Resolve with DNS")?>">
-					<?=$srcIP?>
-				</a>:<?=$srcPort?>
+			<td><a href="diag_dns.php?host=<?=$filterent['srcip']?>"
+				title="<?=gettext("Reverse Resolve with DNS")?>"><?=$srcIP?></a>:<?=htmlspecialchars($filterent['srcport'])?>
 			</td>
-			<td>
-				<a href="diag_dns.php?host=<?=$filterent['dstip']?>" title="<?=gettext("Reverse Resolve with DNS");?>">
-					<?=$dstIP?>
-				</a>:<?=$dstPort?>
+			<td><a href="diag_dns.php?host=<?=$filterent['dstip']?>"
+				title="<?=gettext("Reverse Resolve with DNS");?>"><?=$dstIP?></a>:<?=htmlspecialchars($filterent['dstport'])?>
 			</td>
 		</tr>
 	<?php endforeach; ?>
 	</tbody>
 </table>
 
+<?php
+
+/* for AJAX response, we only need the panel-body */
+if (isset($_POST['lastsawtime']))
+	exit;
+?>
+
 <!-- close the body we're wrapped in and add a configuration-panel -->
-</div><div class="panel-footer collapse">
+</div>
+<div class="panel-footer collapse">
 
-<form action="/widgets/widgets/log.widget.php" method="post">
-	Number of lines to display:
-	<select name="filterlogentries" class="formfld unknown" id="filterlogentries">
-	<?php for ($i = 1; $i <= 20; $i++) { ?>
-		<option value="<?php echo $i;?>" <?php if ($nentries == $i) echo "selected=\"selected\"";?>><?php echo $i;?></option>
-	<?php } ?>
-	</select>
+	<form action="/widgets/widgets/log.widget.php" method="post"
+		class="form-horizontal">
+		<div class="form-group">
+			<label for="filterlogentries" class="col-sm-4 control-label">Number
+				of entries</label>
+			<div class="col-sm-6">
+				<input type="number" name="filterlogentries" value="<?=$nentries?>"
+					min="1" max="20" class="form-control" />
+			</div>
+		</div>
 
-<?php
-	$Include_Act = explode(" ", $nentriesacts);
-	if ($nentriesinterfaces == "All") $nentriesinterfaces = "";
-?>
-	<input id="actpass"	name="actpass"	type="checkbox" value="Pass"	<?php if (in_arrayi('Pass',	$Include_Act)) echo "checked=\"checked\""; ?> /> Pass
-	<input id="actblock"  name="actblock"  type="checkbox" value="Block"  <?php if (in_arrayi('Block',  $Include_Act)) echo "checked=\"checked\""; ?> /> Block
-	<input id="actreject" name="actreject" type="checkbox" value="Reject" <?php if (in_arrayi('Reject', $Include_Act)) echo "checked=\"checked\""; ?> /> Reject
-	<br />
-	Interfaces:
-	<select id="filterlogentriesinterfaces" name="filterlogentriesinterfaces" class="formselect">
-		<option value="All">ALL</option>
-<?php
-	$interfaces = get_configured_interface_with_descr();
-	foreach ($interfaces as $iface => $ifacename):
-?>
-		<option value="<?=$iface;?>" <?php if ($nentriesinterfaces == $iface) echo "selected=\"selected\"";?>>
-			<?=htmlspecialchars($ifacename);?>
-		</option>
-<?php
-	endforeach;
-	unset($interfaces);
-	unset($Include_Act);
-?>
-	</select>
+		<div class="form-group">
+			<label class="col-sm-4 control-label">Filter actions</label>
+			<div class="col-sm-6 checkbox">
+			<?php $include_acts = explode(" ", strtolower($nentriesacts)); ?>
+			<label><input name="actpass" type="checkbox" value="Pass"
+					<?=(in_array('pass', $include_acts) ? 'checked="checked"':'')?> />Pass</label>
+				<label><input name="actblock" type="checkbox" value="Block"
+					<?=(in_array('block', $include_acts) ? 'checked="checked"':'')?> />Block</label>
+				<label><input name="actreject" type="checkbox" value="Reject"
+					<?=(in_array('reject', $include_acts) ? 'checked="checked"':'')?> />Reject</label>
+			</div>
+		</div>
 
-	<input id="submita" name="submita" type="submit" class="formbtn" value="Save" />
-</form>
+		<div class="form-group">
+			<label for="filterlogentriesinterfaces"
+				class="col-sm-4 control-label">Filter interface</label>
+			<div class="col-sm-6 checkbox">
+				<select name="filterlogentriesinterfaces" class="form-control">
+			<?php foreach (array("All" => "ALL") + get_configured_interface_with_descr() as $iface => $ifacename):?>
+				<option value="<?=$iface?>"
+						<?=($nentriesinterfaces==$iface?'selected="selected"':'')?>><?=htmlspecialchars($ifacename)?></option>
+			<?php endforeach;?>
+			</select>
+			</div>
+		</div>
+
+		<div class="form-group">
+			<div class="col-sm-offset-4 col-sm-6">
+				<button type="submit" class="btn btn-default">Save</button>
+			</div>
+		</div>
+	</form>

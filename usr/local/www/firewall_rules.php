@@ -271,7 +271,6 @@ if (isset($_POST['del_x'])) {
 	}
 }
 
-$pgtitle = array(gettext("System"),gettext("General Setup"));
 include("head.inc");
 $nrules = 0;
 

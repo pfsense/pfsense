@@ -91,6 +91,13 @@ function is_specialnet($net) {
 
 
 if (($argc > 1) && !empty($argv[1])) {
+
+	# Automagically derive an alternate alias name from the scripts name
+	# This allows for using alternate alias lists with just a symlink
+	if (($alias = basename($argv[0])) != 'easyrule') {
+		$blockaliasname = ucfirst($alias).'Rules';
+	}
+
 	$message = "";
 	switch ($argv[1]) {
 		case 'block':

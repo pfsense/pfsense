@@ -167,16 +167,32 @@ function easyrule_block_alias_add($host, $int = 'wan') {
 	}
 
 	if (isset($id) && $a_aliases[$id]) {
-		/* Make sure this IP isn't already in the list. */
-		if (in_array($host.'/'.$mask, explode(" ", $a_aliases[$id]['address'])))
-			return true;
+
+		// Catch case when the list is empty
+		if (empty($a_aliases[$id]['address'])) {
+			$a_address = array();
+			$a_detail = array();
+		} else {
+			$a_address = explode(" ", $a_aliases[$id]['address']);
+
+			/* Make sure this IP isn't already in the list. */
+			if (in_array($host.'/'.$mask, $a_address)) {
+				return true;
+			}
+			$a_detail = explode("||", $a_aliases[$id]['detail']);
+		}
+
 		/* Since the alias already exists, just add to it. */
 		$alias['name']    = $a_aliases[$id]['name'];
 		$alias['type']    = $a_aliases[$id]['type'];
 		$alias['descr']   = $a_aliases[$id]['descr'];
 
-		$alias['address'] = $a_aliases[$id]['address'] . ' ' . $host . '/' . $mask;
-		$alias['detail']  = $a_aliases[$id]['detail'] . gettext('Entry added') . ' ' . date('r') . '||';
+		$a_address[] = $host.'/'.$mask;
+		$a_detail[] = gettext('Entry added') . ' ' . date('r');
+
+		$alias['address'] = join(" ", $a_address);
+		$alias['detail']  = join("||", $a_detail);
+
 	} else {
 		/* Create a new alias with all the proper information */
 	 	$alias['name']    = $blockaliasname . strtoupper($int);

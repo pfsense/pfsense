@@ -234,20 +234,20 @@ if ($local_ip == false) {
 						<form method="post" <?= $loginautocomplete ?> action="<?=$_SERVER['SCRIPT_NAME'];?>" class="form-horizontal">
 							<div class="form-group">
 								<label for="usernamefld" class="col-sm-3 control-label">Username</label>
-								<div class="col-sm-7">
+								<div class="col-sm-9 col-md-7">
 									<input type="text" class="form-control" name="usernamefld" placeholder="Enter your username">
 								</div>
 							</div>
 
 							<div class="form-group">
 								<label for="passwordfld" class="col-sm-3 control-label">Password</label>
-								<div class="col-sm-7">
+								<div class="col-sm-9 col-md-7">
 									<input type="password" class="form-control" name="passwordfld" placeholder="Enter your password">
 								</div>
 							</div>
 
 							<div class="form-group">
-								<div class="col-sm-offset-3 col-sm-7">
+								<div class="col-sm-offset-3 col-sm-9 col-md-7">
 									<button type="submit" class="btn btn-primary" name="login">Login</button>
 								</div>
 							</div>

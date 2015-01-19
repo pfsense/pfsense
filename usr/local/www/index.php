@@ -251,42 +251,40 @@ pfSense_handle_custom_code("/usr/local/pkg/dashboard/pre_dashboard");
 
 ?>
 
-<div class="col-md-12">
-	<div class="panel panel-default">
-		<div class="panel-heading"><?=gettext("Available Widgets"); ?></div>
-		<div class="panel-body">
-	<?php foreach($widgets as $widgetname => $widgetconfig): ?>
-		<?php if ($widgetconfig['display'] == 'none'): ?>
-			<div class="col-sm-3"><a href="#"><i class="icon icon-plus"></i> <?=$widgetconfig['name']?></a></div>
-		<?php endif; ?>
-	<?php endforeach; ?>
-		</div>
+<div class="panel panel-default">
+	<div class="panel-heading"><?=gettext("Available Widgets"); ?></div>
+	<div class="panel-body">
+<?php foreach($widgets as $widgetname => $widgetconfig): ?>
+	<?php if ($widgetconfig['display'] == 'none'): ?>
+		<div class="col-sm-3"><a href="#"><i class="icon icon-plus"></i> <?=$widgetconfig['name']?></a></div>
+	<?php endif; ?>
+<?php endforeach; ?>
 	</div>
 </div>
 
 <div class="modal fade">
-<div class="modal-dialog">
-<div class="modal-content">
-	<div class="modal-header">
-		<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-		<h4 class="modal-title"><?=gettext("Welcome to the Dashboard page"); ?>!</h4>
+	<div class="modal-dialog">
+		<div class="modal-content">
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+				<h4 class="modal-title"><?=gettext("Welcome to the Dashboard page"); ?>!</h4>
+			</div>
+			<div class="modal-body">
+				<p>
+					<?=gettext("This page allows you to customize the information you want to be displayed!");?>
+					<?=gettext("To get started click the");?> FIXME <?=gettext("icon to add widgets.");?><br />
+					<br />
+					<?=gettext("You can move any widget around by clicking and dragging the title.");?>
+				</p>
+			</div>
+			<div class="modal-footer">
+				<button type="button" class="btn btn-default btn-primary" data-dismiss="modal">Close</button>
+			</div>
+		</div>
 	</div>
-	<div class="modal-body">
-		<p>
-			<?=gettext("This page allows you to customize the information you want to be displayed!");?>
-			<?=gettext("To get started click the");?> FIXME <?=gettext("icon to add widgets.");?><br />
-			<br />
-			<?=gettext("You can move any widget around by clicking and dragging the title.");?>
-		</p>
-	</div>
-	<div class="modal-footer">
-		<button type="button" class="btn btn-default btn-primary" data-dismiss="modal">Close</button>
-	</div>
-</div>
-</div>
 </div>
 
-<div class="col-md-12 hidden" id="widgetSequence">
+<div class="hidden" id="widgetSequence">
 	<form action="/" method="post" id="widgetSequence">
 		<input type="hidden" name="sequence" value="" />
 
@@ -308,9 +306,10 @@ foreach ($widgets as $widgetname => $widgetconfig)
 }
 ?>
 
+<div class="row">
 <?php foreach ($widgetColumns as $column => $columnWidgets):?>
-<div class="col-md-6" id="widgets-<?=$column?>">
-	<?php foreach ($columnWidgets as $widgetname => $widgetconfig):?>
+	<div class="col-md-6" id="widgets-<?=$column?>">
+<?php foreach ($columnWidgets as $widgetname => $widgetconfig):?>
 		<div class="panel panel-default" id="widget-<?=$widgetname?>">
 			<div class="panel-heading">
 				<?=$widgetconfig['name']?>
@@ -331,9 +330,10 @@ foreach ($widgets as $widgetname => $widgetconfig)
 				<?php include('/usr/local/www/widgets/widgets/'. $widgetname.'.widget.php'); ?>
 			</div>
 		</div>
-	<?php endforeach; ?>
-</div>
 <?php endforeach; ?>
+	</div>
+<?php endforeach; ?>
+</div>
 
 <?php
 //build list of javascript include files

@@ -1989,8 +1989,15 @@ function system_check_reset_button() {
 
 	$specplatform = system_identify_specific_platform();
 
-	if ($specplatform['name'] != "wrap" && $specplatform['name'] != "alix")
+	switch ($specplatform['name']) {
+	case 'alix':
+	case 'wrap':
+	case 'FW7541':
+	case 'APU':
+		break;
+	default:
 		return 0;
+	}
 
 	$retval = mwexec("/usr/local/sbin/" . $specplatform['name'] . "resetbtn");
 

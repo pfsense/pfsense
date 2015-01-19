@@ -304,6 +304,7 @@ foreach ($iflist as $ifent => $ifname) {
 
 display_top_tabs($tab_array);
 ?>
+<div class="table-responsive">
 <table class="table table-striped">
 <?php
 	pfSense_handle_custom_code("/usr/local/pkg/firewall_rules/before_first_tr");
@@ -327,6 +328,7 @@ display_top_tabs($tab_array);
 	pfSense_handle_custom_code("/usr/local/pkg/firewall_rules/pre_desc_tablehead");
 ?>
 		<th><?=gettext("Description");?></th>
+		<th></th>
 	</tr>
 	</thead>
 	<tbody>
@@ -354,7 +356,7 @@ display_top_tabs($tab_array);
 		<td></td>
 		<td><?=gettext("Anti-Lockout Rule");?></td>
 		<td>
-			<a href="system_advanced_admin.php" class="btn btn-primary">edit</a>
+			<a href="system_advanced_admin.php" class="btn btn-xs btn-primary">edit</a>
 		</td>
 	</tr>
 <?php endif;?>
@@ -374,7 +376,7 @@ display_top_tabs($tab_array);
 		<td></td>
 		<td><?=gettext("Block private networks");?></td>
 		<td>
-			<a href="system_advanced_admin.php" class="btn btn-primary" title="<?=gettext("edit rule");?>">edit</a>
+			<a href="system_advanced_admin.php" class="btn btn-xs btn-primary" title="<?=gettext("edit rule");?>">edit</a>
 		</td>
 	</tr>
 <?php endif;?>
@@ -393,7 +395,7 @@ display_top_tabs($tab_array);
 		<td>*</td>
 		<td><?=gettext("Block bogon networks");?></td>
 		<td>
-			<a href="system_advanced_admin.php" class="btn btn-primary">edit</a>
+			<a href="system_advanced_admin.php" class="btn btn-xs btn-primary">edit</a>
 		</td>
 	</tr>
 <?php endif;?>
@@ -677,30 +679,30 @@ display_top_tabs($tab_array);
 		<?=htmlspecialchars($filterent['descr']);?>
 	</td>
 	<td>
-		<a href="firewall_rules_edit.php?id=<?=$i;?>" class="btn btn-primary">edit</a>
-		<a href="firewall_rules_edit.php?dup=<?=$i;?>" class="btn btn-default">copy</a>
-		<a href="?act=toggle&amp;if=<?=htmlspecialchars($if);?>&amp;id=<?=$i;?>" class="btn btn-default">disable</a>
-		<a href="?act=del&amp;if=<?=htmlspecialchars($if);?>&amp;id=<?=$i;?>" class="btn btn-danger">delete</a>
+		<a href="firewall_rules_edit.php?id=<?=$i;?>" class="btn btn-xs btn-primary">edit</a>
+		<a href="firewall_rules_edit.php?dup=<?=$i;?>" class="btn btn-xs btn-default">copy</a>
+		<a href="?act=toggle&amp;if=<?=htmlspecialchars($if);?>&amp;id=<?=$i;?>" class="btn btn-xs btn-warning"><?=(isset($filterent['disabled']) ? 'enable' : 'disable')?></a>
+		<a href="?act=del&amp;if=<?=htmlspecialchars($if);?>&amp;id=<?=$i;?>" class="btn btn-xs btn-danger">delete</a>
 	</td>
 	</tr>
 	<?php endfor;?>
 </tbody>
 </table>
+</div>
 
 <?php if ($nrules == 0): ?>
 	<div class="alert alert-warning" role="alert">
+		<p>
 		<?php if ($_REQUEST['if'] == "FloatingRules"): ?>
 			<?=gettext("No floating rules are currently defined.");?>
 		<?php else: ?>
 			<?=gettext("No rules are currently defined for this interface");?><br />
 			<?=gettext("All incoming connections on this interface will be blocked until you add pass rules.");?>
 		<?php endif;?>
-			</p>
-			<?=gettext("Click the button to add a new rule.");?></span>
+			<?=gettext("Click the button to add a new rule.");?>
+		</p>
 	</div>
 <?php endif;?>
-</tbody>
-</table>
 
 <a href="firewall_rules_edit.php?if=<?=htmlspecialchars($if);?>" role="button" class="btn btn-success">
 	<?=gettext("add new");?>

@@ -17,21 +17,16 @@ body {
 }
 
 body.no-menu #jumbotron {
-	padding: 100px;
+	padding: 100px 0;
 	background-image: linear-gradient(to bottom,#3c3c3c 0,#222 100%)
 }
 
 body.no-menu {
-	background: url("/logo-black.png") no-repeat;
-	background-position-x: center;
+	background: url("/logo-black.png") no-repeat center 30px;
 }
 
 body.no-menu #jumbotron {
 	margin-top: 75px;
-}
-
-body.no-menu #jumbotron .container {
-	width: 450px;
 }
 
 body#index .icons {

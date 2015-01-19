@@ -156,10 +156,12 @@ if(file_exists('/conf/trigger_initial_wizard')) {
 <body id="loading-wizard" class="no-menu">
 	<div id="jumbotron">
 		<div class="container">
-			<p><?=sprintf(gettext("Welcome to %s!\n"),$g['product_name'])?></p>
-			<p><?=gettext("One moment while we start the initial setup wizard.")?></p>
-			<p><?=gettext("Embedded platform users: Please be patient, the wizard takes a little longer to run than the normal GUI.")?></p>
-			<p><?=sprintf(gettext("To bypass the wizard, click on the %s logo on the initial page."),$g['product_name'])?></p>
+			<div class="col-sm-offset-3 col-sm-6 col-xs-12">
+				<p><?=sprintf(gettext("Welcome to %s!\n"),$g['product_name'])?></p>
+				<p><?=gettext("One moment while we start the initial setup wizard.")?></p>
+				<p><?=gettext("Embedded platform users: Please be patient, the wizard takes a little longer to run than the normal GUI.")?></p>
+				<p><?=sprintf(gettext("To bypass the wizard, click on the %s logo on the initial page."),$g['product_name'])?></p>
+			</div>
 		</div>
 	</div>
 </body>

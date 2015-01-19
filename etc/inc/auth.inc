@@ -127,7 +127,9 @@ if(function_exists("display_error_form") && !isset($config['system']['webgui']['
 <body id="error" class="no-menu">
 	<div id="jumbotron">
 		<div class="container">
-			<p><?=gettext("Redirecting to the dashboard...")?></p>
+			<div class="col-sm-offset-3 col-sm-6 col-xs-12">
+				<p><?=gettext("Redirecting to the dashboard...")?></p>
+			</div>
 		</div>
 	</div>
 </body>

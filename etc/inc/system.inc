@@ -1984,8 +1984,6 @@ function enable_watchdog() {
 
 function system_check_reset_button() {
 	global $g;
-	if($g['platform'] != "nanobsd")
-		return 0;
 
 	$specplatform = system_identify_specific_platform();
 

@@ -280,7 +280,7 @@ function enable_change(enable_over) {
 $tab_array = array();
 $tab_array[0] = array(gettext("Configuration"), true, "vpn_l2tp.php");
 $tab_array[1] = array(gettext("Users"), false, "vpn_l2tp_users.php");
-display_top_tabs($tab_array);
+display_top_tabs($tab_array, false, 'pills');
 ?>
 
 	<div class="panel panel-default">
@@ -495,6 +495,9 @@ foreach ($interfaces as $iface => $ifacename): ?>
 		</div>
 	</div>
 
+<?php
+	// TODO: Is it possible to detect available rules and only show warning if there are no (relevant) rules set?
+?>
 	<div class="alert alert-danger">
 		<strong><?=gettext("Note:")?></strong> <?=gettext("Don't forget to add a firewall rule to permit traffic from L2TP clients!")?>
 	</div>

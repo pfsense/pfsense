@@ -41,6 +41,15 @@ tr.disabled {
 	opacity: .5;
 }
 
+.nav-pills {
+	margin-bottom: 20px;
+}
+
+/** Form validation */
+.input-errors ul {
+	margin-top: 20px;
+}
+
 /** Page header with title and breadcrumb */
 .header {
 	position: relative;

@@ -181,11 +181,14 @@ function vpn_ipsec_configure($ipchg = false)
 				continue;
 
 			if (strpos($ph1ent['interface'], '_vip')) {
-                                $interface = explode('_vip', $ph1ent['interface']);
-                                $vpninterface = $vpninterface[0];
-                        } else
-                                $vpninterface = $ph1ent['interface'];
-                        $ifacesuse[] = get_real_interface($vpninterface);
+				$vpninterface = explode('_vip', $ph1ent['interface']);
+				$ifacesuse[] = get_real_interface($vpninterface[0]);
+                        } else {
+                                $vpninterface = get_failover_interface($ph1ent['interface']);
+				if (!empty($vpninterface))
+					$ifacesuse[] = $vpninterface;
+			}
+				
 
 			if ($ph1ent['mode'] == "aggressive" && ($ph1ent['authentication_method'] == "pre_shared_key" || $ph1ent['authentication_method'] == "xauth_psk_server")) 
 				$aggressive_mode_psk = true;

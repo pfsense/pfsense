@@ -95,7 +95,14 @@ function services_radvd_configure($blacklist = array()) {
 			}
 		}
 
-		$realif = get_real_interface($dhcpv6if, "inet6");
+		if (strstr($dhcpv6if, "_vip")) {
+			// CARP IP, find parent
+			$ifparent = link_carp_interface_to_parent($dhcpv6if);
+			$realif = convert_friendly_interface_to_real_interface_name($ifparent);
+		} else {
+			$realif = get_real_interface($dhcpv6if, "inet6");
+		}
+		
 		if (isset($radvdifs[$realif]))
 			continue;
 
@@ -220,7 +227,14 @@ function services_radvd_configure($blacklist = array()) {
 		if (empty($config['interfaces'][$trackif]))
 			continue;
 
-		$realif = get_real_interface($if, "inet6");
+		if (strstr($if, "_vip")) {
+			// CARP IP, find parent
+			$ifparent = link_carp_interface_to_parent($if);
+			$realif = convert_friendly_interface_to_real_interface_name($ifparent);
+		} else {
+			$realif = get_real_interface($if, "inet6");
+		}
+		
 		/* prevent duplicate entries, manual overrides */
 		if (isset($radvdifs[$realif]))
 			continue;

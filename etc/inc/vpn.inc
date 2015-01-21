@@ -302,7 +302,7 @@ function vpn_ipsec_configure($ipchg = false)
 		$unity_enabled = 'no';
 
 	if (!empty($ifacesuse))
-		$ifacesuse = 'interfaces_use = ' . implode(',', $ifacesuse);
+		$ifacesuse = 'interfaces_use = ' . implode(',', array_unique($ifacesuse));
 	else
 		$ifacesuse = '';
 

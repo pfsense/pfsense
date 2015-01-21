@@ -72,17 +72,16 @@ if ($_POST) {
 		$retval = 0;
 
 		if (is_array($a_cp[$cpzone]['passthrumac'])) {
-			if (count($a_cp[$cpzone]['passthrumac']) > 2000)
-				set_time_limit(0);
 			$cpzoneid = $a_cp[$cpzone]['cpzoneid'];
 			$rules = captiveportal_passthrumac_configure();
-			@file_put_contents("{$g['tmp_path']}/passthrumac_gui", $rules);
-			mwexec("/sbin/ipfw -x {$cpzoneid} {$g['tmp_path']}/passthrumac_gui");
+			if (!empty($rules)) {
+				@file_put_contents("{$g['tmp_path']}/passthrumac_gui", $rules);
+				mwexec("/sbin/ipfw -x {$cpzoneid} {$g['tmp_path']}/passthrumac_gui");
+				@unlink("{$g['tmp_path']}/passthrumac_gui");
+			}
 			$savemsg = get_std_save_message($retval);
 			if ($retval == 0)
 				clear_subsystem_dirty('passthrumac');
-			@unlink("{$g['tmp_path']}/passthrumac_gui");
-			set_time_limit(900);
 		}
 	}
 

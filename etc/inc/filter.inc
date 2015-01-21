@@ -3678,7 +3678,7 @@ function filter_generate_ipsec_rules($log = array()) {
 			}
 
 			if (strpos($ph1ent['interface'], "_vip"))
-				list($parentinterface, $vhid) = explode("_vip", $ph1ent['interface']);
+				$parentinterface = get_configured_carp_interface_list($ph1ent['interface'], '', 'iface');
 			else
 				$parentinterface = $ph1ent['interface'];
 			if (empty($FilterIflist[$parentinterface]['descr'])) {

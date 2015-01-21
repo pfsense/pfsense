@@ -52,7 +52,7 @@ $a_secret = &$config['ipsec']['mobilekey'];
 $userkeys = array();
 foreach ($config['system']['user'] as $id => $user) {
 	if (!empty($user['ipsecpsk'])) {
-		$userkeys[] = array('ident' => $user['name'], 'pre-shared-key' => $user['ipsecpsk'], 'id' => $id);;
+		$userkeys[] = array('ident' => $user['name'], 'type' => 'PSK', 'pre-shared-key' => $user['ipsecpsk'], 'id' => $id);;
 	}
 }
 
@@ -110,6 +110,7 @@ if (is_subsystem_dirty('ipsec'))
               <table class="tabcont" width="100%" border="0" cellpadding="0" cellspacing="0" summary="main area">
                 <tr> 
                   <td class="listhdrr"><?=gettext("Identifier"); ?></td>
+                  <td class="listhdrr"><?=gettext("Type"); ?></td>
                   <td class="listhdr"><?=gettext("Pre-Shared Key"); ?></td>
                   <td class="list">
 			<table border="0" cellspacing="0" cellpadding="1" summary="add key">
@@ -128,6 +129,14 @@ if (is_subsystem_dirty('ipsec'))
 					echo gettext("ANY USER");
 				else
 					echo htmlspecialchars($secretent['ident']);
+			?>
+		</td>
+		<td class="listlr gray">
+			<?php
+				if (empty($secretent['type']))
+					echo 'PSK';
+				else
+					echo htmlspecialchars($secretent['type']);
 			?>
 		</td>
 		<td class="listr gray">
@@ -150,6 +159,14 @@ if (is_subsystem_dirty('ipsec'))
                   <td class="listlr">
                     <?=htmlspecialchars($secretent['ident']);?>
                   </td>
+		<td class="listlr">
+			<?php
+				if (empty($secretent['type']))
+					echo 'PSK';
+				else
+					echo htmlspecialchars($secretent['type']);
+			?>
+		</td>
                   <td class="listr">
                     <?=htmlspecialchars($secretent['pre-shared-key']);?>
                   </td>
@@ -158,7 +175,7 @@ if (is_subsystem_dirty('ipsec'))
 				</tr>
 			  <?php $i++; endforeach; ?>
                 <tr> 
-                  <td class="list" colspan="2"></td>
+                  <td class="list" colspan="3"></td>
                   <td class="list">
 			<table border="0" cellspacing="0" cellpadding="1" summary="add key">
 			    <tr>

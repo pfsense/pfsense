@@ -412,7 +412,8 @@ function interfaces_bridge_configure($checkmember = 0, $realif = "") {
 				continue;
 
 			if ($checkmember == 1) {
-				if (strstr($bridge['if'], "_vip"))
+				/* XXX: It should not be possible no? */
+				if (strstr($bridge['if'], '_vip'))
 					continue;
 				$members = explode(',', $bridge['members']);
 				foreach ($members as $member) {
@@ -421,6 +422,7 @@ function interfaces_bridge_configure($checkmember = 0, $realif = "") {
 				}
 			}
 			else if ($checkmember == 2) {
+				/* XXX: It should not be possible no? */
 				if (!strstr($bridge['if'], "_vip"))
 					continue;
 				$members = explode(',', $bridge['members']);
@@ -719,13 +721,15 @@ function interfaces_gre_configure($checkparent = 0, $realif = "") {
 				continue;
 
 			if ($checkparent == 1) {
-				if (strstr($gre['if'], "_vip"))
+				if (substr($gre['if'], 0, 4) == '_vip')
+					continue;
+				if (substr($gre['if'], 0, 5) == '_lloc')
 					continue;
 				if (!empty($config['interfaces'][$gre['if']]) && $config['interfaces'][$gre['if']]['ipaddrv6'] == "track6")
 					continue;
 			}
 			else if ($checkparent == 2) {
-				if (!strstr($gre['if'], "_vip"))
+				if (substr($gre['if'], 0, 4) != '_vip' && substr($gre['if'], 0, 5) != '_lloc')
 					continue;
 				if (empty($config['interfaces'][$gre['if']]) || $config['interfaces'][$gre['if']]['ipaddrv6'] != "track6")
 					continue;
@@ -800,13 +804,15 @@ function interfaces_gif_configure($checkparent = 0, $realif = "") {
 				continue;
 
 			if ($checkparent == 1) {
-				if (strstr($gif['if'], "_vip"))
+				if (substr($gif['if'], 0, 4) == '_vip')
+					continue;
+				if (substr($gif['if'], 0, 5) == '_lloc')
 					continue;
 				if (!empty($config['interfaces'][$gif['if']]) && $config['interfaces'][$gif['if']]['ipaddrv6'] == "track6")
 					continue;
 			}
 			else if ($checkparent == 2) {
-				if (!strstr($gif['if'], "_vip"))
+				if (substr($gif['if'], 0, 4) != '_vip' && substr($gif['if'], 0, 5) != '_lloc')
 					continue;
 				if (empty($config['interfaces'][$gif['if']]) || $config['interfaces'][$gif['if']]['ipaddrv6'] != "track6")
 					continue;
@@ -825,7 +831,7 @@ function interface_gif_configure(&$gif, $gifkey = "") {
 		return -1;
 
 	$realif = get_real_interface($gif['if']);
-	$ipaddr = $gif['ipaddr'];
+	$ipaddr = get_interface_ip($gif['if']);
 
 	if (is_ipaddrv4($gif['remote-addr'])) {
 		if (is_ipaddrv4($ipaddr))
@@ -4062,7 +4068,7 @@ function convert_friendly_interface_to_friendly_descr($interface) {
 			else
 				$ifdesc = strtoupper($config['interfaces'][$interface]['descr']);
 			break;
-		} else if (stristr($interface, "_vip")) {
+		} else if (substr($interface, 0, 4) == '_vip') {
 			if (is_array($config['virtualip']['vip'])) {
 				foreach ($config['virtualip']['vip'] as $counter => $vip) {
 					if ($vip['mode'] == "carp")  {
@@ -4071,6 +4077,8 @@ function convert_friendly_interface_to_friendly_descr($interface) {
 					}
 				}
 			}
+		} else if (substr($interface, 0, 5) == '_lloc') {
+			return get_interface_linklocal($interface);
 		} else {
 			/* if list */
 			$ifdescrs = get_configured_interface_with_descr(false, true);
@@ -4209,11 +4217,20 @@ function get_real_interface($interface = "wan", $family = "all", $realv6iface = 
 		$wanif = "ppp";
 		break;
 	default:
-		// If a real interface was alread passed simply
-		// pass the real interface back.  This encourages
-		// the usage of this function in more cases so that
-		// we can combine logic for more flexibility.
-		if(does_interface_exist($interface, $flush)) {
+		if (substr($interface, 0, 4) == '_vip') {
+			$wanif = get_configured_carp_interface_list($interface, '', 'iface');
+			if (!empty($wanif))
+				$wanif = get_real_interface($wanif, $family);
+			break;
+		} else if (substr($interface, 0, 5) == '_lloc') {
+			$interface = substr($interface, 5);
+		} else if (does_interface_exist($interface, $flush)) {
+			/*
+			 * If a real interface was alread passed simply
+			 * pass the real interface back.  This encourages
+			 * the usage of this function in more cases so that
+			 * we can combine logic for more flexibility.
+			 */
 			$wanif = $interface;
 			break;
 		}
@@ -4579,7 +4596,7 @@ function link_interface_to_vlans($int, $action = "") {
 	}
 }
 
-function link_interface_to_vips($int, $action = "") {
+function link_interface_to_vips($int, $action = "", $vhid = '') {
 	global $config;
 
 	if (is_array($config['virtualip']['vip'])) {
@@ -4588,8 +4605,10 @@ function link_interface_to_vips($int, $action = "") {
 			if ($int == $vip['interface']) {
 				if ($action == "update")
 					interfaces_vips_configure($int);
-				else
-					$result[] = $vip;
+				else {
+					if (empty($vhid) || ($vhid == $vip['vhid']))
+						$result[] = $vip;
+				}
 			}
 		}
 		return $result;
@@ -4788,15 +4807,60 @@ function ip_in_interface_alias_subnet($interface, $ipalias) {
 	return false;
 }
 
+function get_possible_listen_ips($include_ipv6_link_local=false) {
+
+	$interfaces = get_configured_interface_with_descr();
+	foreach ($interfaces as $iface => $ifacename) {
+		if ($include_ipv6_link_local) {
+			/* This is to avoid going though added ll below */
+			if (substr($iface, 0, 5) == '_lloc')
+				continue;
+			$llip = find_interface_ipv6_ll(get_real_interface($iface));
+			if (!empty($llip)) {
+				$interfaces["_lloc{$iface}"] = "{$ifacename} IPv6 Link-Local";
+			}
+		}
+	}
+	/* XXX: Maybe use array_merge below? */
+	$carplist = get_configured_carp_interface_list();
+	foreach ($carplist as $cif => $carpip)
+		$interfaces[$cif] = $carpip . ' (' . get_vip_descr($carpip) . ')';
+	$aliaslist = get_configured_ip_aliases_list();
+	foreach ($aliaslist as $aliasip => $aliasif)
+		$interfaces[$aliasip] = $aliasip . ' (' . get_vip_descr($aliasip) . ')';
+
+	$interfaces['lo0'] = 'Localhost';
+
+	return $interfaces;
+}
+                
+function get_possible_traffic_source_addresses($include_ipv6_link_local=false) {
+	global $config;
+
+	$sourceips = get_possible_listen_ips($include_ipv6_link_local);
+	foreach (array('server', 'client') as $mode) {
+		if (is_array($config['openvpn']["openvpn-{$mode}"])) {
+			foreach ($config['openvpn']["openvpn-{$mode}"] as $id => $setting) {
+				if (!isset($setting['disable'])) {
+					$vpn = array();
+					$vpn['value'] = 'ovpn' . substr($mode, 0, 1) . $setting['vpnid'];
+					$vpn['name'] = gettext("OpenVPN") . " ".$mode.": ".htmlspecialchars($setting['description']);
+					$sourceips[] = $vpn;
+				}
+			}
+		}
+	}
+	return $sourceips;
+}
+
 function get_interface_ip($interface = "wan") {
 	
 	$realif = get_failover_interface($interface);
-	if (!$realif) {
-		if (strstr($interface, "_vip"))
-			return get_configured_carp_interface_list($interface);
-		else
-			return null;
-	}
+	if (!$realif)
+		return null;
+
+	if (substr($realif, 0, 4) == '_vip')
+		return get_configured_carp_interface_list($realif, 'inet', 'ip');
 
 	$curip = find_interface_ip($realif);
 	if ($curip && is_ipaddr($curip) && ($curip != "0.0.0.0"))
@@ -4808,13 +4872,15 @@ function get_interface_ip($interface = "wan") {
 function get_interface_ipv6($interface = "wan", $flush = false) {
 	global $config;
 
-	$realif = get_failover_interface($interface, "inet6");
-	if (!$realif) {
-		if (strstr($interface, "_vip"))
-			return get_configured_carp_interface_list($interface, "inet6");
-		else
-			return null;
-	}
+	$realif = get_failover_interface($interface, 'inet6');
+	if (!$realif)
+		return null;
+
+	if (substr($realif, 0, 4) == '_vip')
+		return get_configured_carp_interface_list($realif, 'inet6', 'ip');
+	else if (substr($realif, 0, 5) == '_lloc')
+		return get_interface_linklocal($interface);
+
 
 	/*
 	 * NOTE: On the case when only the prefix is requested,
@@ -4827,7 +4893,7 @@ function get_interface_ipv6($interface = "wan", $flush = false) {
 		case 'pptp':
 		case 'ppp':
 			if ($config['interfaces'][$interface]['ipaddrv6'] == 'dhcp6')
-				$realif = get_real_interface($interface, "inet6", true);
+				$realif = get_real_interface($interface, 'inet6', true);
 			break;
 		}
 		if (isset($config['interfaces'][$interface]['dhcp6prefixonly'])) {
@@ -4846,14 +4912,14 @@ function get_interface_ipv6($interface = "wan", $flush = false) {
 
 function get_interface_linklocal($interface = "wan") {
 
-	$realif = get_failover_interface($interface, "inet6");
-	if (!$realif) {
-		if (strstr($interface, "_vip")) {
-			list($interface, $vhid) = explode("_vip", $interface);
-			$realif = get_real_interface($interface);
-		} else
-			return null;
-	}
+	$realif = get_failover_interface($interface, 'inet6');
+	if (!$realif)
+		return null;
+
+	if (substr($interface, 0, 4) == '_vip')
+		$realif = get_real_interface($interface);
+	else if (substr($interface, 0, 5) == '_lloc')
+		$realif = get_real_interface(substr($interface, 5));
 
 	$curip = find_interface_ipv6_ll($realif);
 	if ($curip && is_ipaddrv6($curip) && ($curip != "::"))
@@ -4863,14 +4929,13 @@ function get_interface_linklocal($interface = "wan") {
 }
 
 function get_interface_subnet($interface = "wan") {
+
+	if (substr($interface, 0, 4) == '_vip')
+		return get_configured_carp_interface_list($interface, 'inet', 'subnet');
+
 	$realif = get_real_interface($interface);
-	if (!$realif) {
-		if (strstr($interface, "_vip")) {
-			list($interface, $vhid) = explode("_vip", $interface);
-			$realif = get_real_interface($interface);
-		} else
-			return null;
-	}
+	if (!$realif)
+		return null;
 
 	$cursn = find_interface_subnet($realif);
 	if (!empty($cursn))
@@ -4880,16 +4945,15 @@ function get_interface_subnet($interface = "wan") {
 }
 
 function get_interface_subnetv6($interface = "wan") {
-	global $config;
 
-	$realif = get_real_interface($interface, "inet6");
-	if (!$realif) {
-		if (strstr($interface, "_vip")) {
-			list($interface, $vhid) = explode("_vip", $interface);
-			$realif = get_real_interface($interface);
-		} else
-			return null;
-	}
+	if (substr($interface, 0, 4) == '_vip')
+		return get_configured_carp_interface_list($interface, 'inet6', 'subnet');
+	else if (substr($interface, 0, 5) == '_lloc')
+		$interface = substr($interface, 5);
+
+	$realif = get_real_interface($interface, 'inet6');
+	if (!$realif)
+		return null;
 
 	$cursn = find_interface_subnetv6($realif);
 	if (!empty($cursn))
@@ -5263,7 +5327,7 @@ function get_failover_interface($interface, $family = "all") {
 	$a_groups = return_gateway_groups_array();
 	if (is_array($a_groups[$interface])) {
 		/* we found a gateway group, fetch the interface or vip */
-		if ($a_groups[$interface][0]['vip'] <> "")
+		if (!empty($a_groups[$interface][0]['vip']))
 			return $a_groups[$interface][0]['vip'];
 		else
 			return $a_groups[$interface][0]['int'];

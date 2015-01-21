@@ -162,6 +162,10 @@ if ($_POST) {
 	// Only require PSK here for normal PSK tunnels (not mobile) or xauth.
 	// For RSA methods, require the CA/Cert.
 	switch ($method) {
+		case 'eap-mschapv2':
+			if ($pconfig['iketype'] != 'ikev2')
+				$input_errors[] = gettext("EAP-MSChapv2 can only be used with IKEv2 type VPNs.");
+			break;
 		case "eap-tls":
 			if ($pconfig['iketype'] != 'ikev2')
 				$input_errors[] = gettext("EAP-TLS can only be used with IKEv2 type VPNs.");
@@ -371,8 +375,12 @@ if ($_POST) {
 
 		if (isset($pconfig['reauth_enable']))
 			$ph1ent['reauth_enable'] = true;
+		else
+			unset($ph1ent['reauth_enable']);
 		if (isset($pconfig['rekey_enable']))
 			$ph1ent['rekey_enable'] = true;
+		else
+			unset($ph1ent['rekey_enable']);
 
 		if (isset($pconfig['dpd_enable'])) {
 			$ph1ent['dpd_delay'] = $pconfig['dpd_delay'];
@@ -444,6 +452,7 @@ function methodsel_change() {
 	value = document.iform.authentication_method.options[index].value;
 
 	switch (value) {
+	case 'eap-mschapv2':
 	case 'eap-tls':
 		document.getElementById('opt_psk').style.display = 'none';
 		document.getElementById('opt_peerid').style.display = '';

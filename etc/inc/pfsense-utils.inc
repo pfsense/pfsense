@@ -369,18 +369,16 @@ function convert_ip_to_network_format($ip, $subnet) {
  * get_carp_interface_status($carpinterface): returns the status of a carp ip
  */
 function get_carp_interface_status($carpinterface) {
-	$carp_query = "";
 
-	/* XXX: Need to fidn a better way for this! */
-	list ($interface, $vhid) = explode("_vip", $carpinterface);
 	$interface = get_real_interface($interface);
-	exec("/sbin/ifconfig $interface | /usr/bin/grep -v grep | /usr/bin/grep carp: | /usr/bin/grep 'vhid {$vhid}'", $carp_query);
+	$carp_query = '';
+	$_gb = exec("/sbin/ifconfig $interface | /usr/bin/grep -v grep | /usr/bin/grep carp: | /usr/bin/head -n 1", $carp_query);
 	foreach($carp_query as $int) {
-		if(stristr($int, "MASTER"))
+		if (stripos($int, "MASTER"))
 			return gettext("MASTER");
-		if(stristr($int, "BACKUP"))
+		if (stripos($int, "BACKUP"))
 			return gettext("BACKUP");
-		if(stristr($int, "INIT"))
+		if (stripos($int, "INIT"))
 			return gettext("INIT");
 	}
 	return;
@@ -2627,7 +2625,7 @@ function is_ipaddr_configured($ipaddr, $ignore_if = "", $check_localip = false, 
 	$interface_list_vips = get_configured_vips_list(true);
 	foreach ($interface_list_vips as $id => $vip) {
 		/* Skip CARP interfaces here since they were already checked above */
-		if ($id == $ignore_vip_id || (strstr($ignore_if, '_vip') && $ignore_vip_if == $vip['if']))
+		if ($id == $ignore_vip_id || (substr($ignore_if, 0, 4) == '_vip') && substr($ignore_vip_if, 5)  == $vip['uniqdid'])
 			continue;
 		if (strcasecmp($ipaddr, $vip['ipaddr']) == 0)
 			return true;

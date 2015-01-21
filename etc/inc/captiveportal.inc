@@ -194,14 +194,6 @@ function captiveportal_configure_zone($cpcfg) {
 		} else
 			captiveportal_syslog("Reconfiguring captive portal({$cpcfg['zone']}).");
 
-		if (is_array($cpcfg['passthrumac'])) {
-			$nentries = count($cpcfg['passthrumac']);
-			if ($nentries > 2000) {
-				if (!set_time_limit(0))
-					log_error("Execution time limit may be reached while reconfiguring zone = {$cpzone} due to many passthrough entries!");
-			}
-		}
-					
 		/* init ipfw rules */
 		captiveportal_init_rules(true);
 
@@ -389,8 +381,6 @@ EOD;
 		}
 	}
 
-	/* XXX: Same as in rc.php_init_setup */
-	set_time_limit(900);
 	unlock($captiveportallck);
 	
 	return 0;
@@ -484,7 +474,10 @@ function captiveportal_init_rules($reinit = false) {
 
 	captiveportal_load_modules();
 	mwexec("/sbin/ipfw zone {$cpzoneid} create", true);
+
+	/* Cleanup so nothing is leaked */
 	captiveportal_free_dnrules();
+	unlink_if_exists("{$g['vardb_path']}/captiveportal_{$cpzone}.rules");
 
 	$cpips = array();
 	$ifaces = get_configured_interface_list();
@@ -520,10 +513,12 @@ function captiveportal_init_rules($reinit = false) {
 	if ($reinit == false)
 		$captiveportallck = lock("captiveportal{$cpzone}");
 
-	$cprules =	"add 65291 allow pfsync from any to any\n";
-	$cprules .= "add 65292 allow carp from any to any\n";
+	$cprules = <<<EOD
 
-	$cprules .= <<<EOD
+flush
+add 65291 allow pfsync from any to any
+add 65292 allow carp from any to any
+
 # layer 2: pass ARP
 add 65301 pass layer2 mac-type arp,rarp
 # pfsense requires for WPA
@@ -537,17 +532,16 @@ add 65307 deny layer2 not mac-type ip,ipv6
 EOD;
 
 	$rulenum = 65310;
-	$ipcount = 0;
+	/* These tables contain host ips */
+	$cprules .= "add {$rulenum} pass ip from any to table(100) in\n";
+	$rulenum++;
+	$cprules .= "add {$rulenum} pass ip from table(100) to any out\n";
+	$rulenum++;
 	$ips = "";
 	foreach ($cpips as $cpip) {
-		if($ipcount == 0) {
-			$ips = "{$cpip} ";
-		} else {
-			$ips .= "or {$cpip} ";
-		}
-		$ipcount++;
+		$cprules .= "table 100 add {$cpip}\n";
 	}
-	$ips = "{ 255.255.255.255 or {$ips} }";
+	$cprules .= "table 100 add 255.255.255.255\n";
 	$cprules .= "add {$rulenum} pass ip from any to {$ips} in\n";
 	$rulenum++;
 	$cprules .= "add {$rulenum} pass ip from {$ips} to any out\n";
@@ -609,11 +603,10 @@ EOD;
 	$cprules .= captiveportal_allowedhostname_configure();
 	
 	/* load rules */
-	$cprules = "flush\n{$cprules}";
 	file_put_contents("{$g['tmp_path']}/ipfw_{$cpzone}.cp.rules", $cprules);
 	mwexec("/sbin/ipfw -x {$cpzoneid} -q {$g['tmp_path']}/ipfw_{$cpzone}.cp.rules", true);
 	//@unlink("{$g['tmp_path']}/ipfw_{$cpzone}.cp.rules");
-	unset($cprules, $tmprules);
+	unset($cprules);
 
 	if ($reinit == false)
 		unlock($captiveportallck);
@@ -1033,14 +1026,36 @@ function captiveportal_passthrumac_delete_entry($macent) {
 	return $rules;
 }
 
-function captiveportal_passthrumac_configure($lock = false) {
+function captiveportal_passthrumac_configure($filename = false, $startindex = 0, $stopindex = 0) {
 	global $config, $g, $cpzone;
 
 	$rules = "";
 
 	if (is_array($config['captiveportal'][$cpzone]['passthrumac'])) {
-		foreach ($config['captiveportal'][$cpzone]['passthrumac'] as $macent) {
-			$rules .= captiveportal_passthrumac_configure_entry($macent, true);
+		if ($stopindex > 0) {
+			$fd = fopen($filename, "w");
+			for ($idx = $startindex; $idx <= $stopindex; $idx++) {
+				if (isset($config['captiveportal'][$cpzone]['passthrumac'][$idx])) {
+					$rules = captiveportal_passthrumac_configure_entry($config['captiveportal'][$cpzone]['passthrumac'][$idx]);
+					fwrite($fd, $rules);
+				}
+			}
+			fclose($fd);
+
+			return;
+		} else {
+			$nentries = count($config['captiveportal'][$cpzone]['passthrumac']);
+			if ($nentries > 2000) {
+				$nloops = $nentries / 1000;
+				$remainder= $nentries % 1000;
+				for ($i = 0; $i < $nloops; $i++)
+					mwexec_bg("/usr/local/sbin/fcgicli -f /etc/rc.captiveportal_configure_mac -d \"cpzone={$cpzone}&startidx=" . ($i * 1000) . "&stopidx=" . ((($i+1) * 1000) - 1) . "\"");
+				if ($remainder > 0)
+					mwexec_bg("/usr/local/sbin/fcgicli -f /etc/rc.captiveportal_configure_mac -d \"cpzone={$cpzone}&startidx=" . ($i * 1000) . "&stopidx=" . (($i* 1000) + $remainder) ."\"");
+			} else {
+				foreach ($config['captiveportal'][$cpzone]['passthrumac'] as $macent)
+					$rules .= captiveportal_passthrumac_configure_entry($macent, true);
+			}
 		}
 	}
 

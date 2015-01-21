@@ -272,22 +272,21 @@ function show_advanced_dns() {
 							<tr>
 								<td width="22%" valign="top" class="vncellreq"><?=gettext("Network Interfaces"); ?></td>
 								<td width="78%" class="vtable">
-									<?php
-										$interface_addresses = get_possible_listen_ips(false);
-										$size=count($interface_addresses)+1;
-									?>
+								<?php
+									$interface_addresses = get_possible_listen_ips(true);
+								?>
 									<?=gettext("Interface IPs used by the DNS Resolver for responding to queries from clients. If an interface has both IPv4 and IPv6 IPs, both are used. Queries to other interface IPs not selected below are discarded. The default behavior is to respond to queries on every available IPv4 and IPv6 address.");?>
 									<br /><br />
 									<select id="active_interface" name="active_interface[]" multiple="multiple" size="<?php echo $size; ?>">
 										<option value="all" <?php if (empty($pconfig['active_interface']) || empty($pconfig['active_interface'][0]) || in_array("all", $pconfig['active_interface'], true)) echo 'selected="selected"'; ?>>All</option>
 										<?php
-											foreach ($interface_addresses as $laddr):
+											foreach ($interface_addresses as $laddr => ldescr):
 												$selected = "";
-												if (in_array($laddr['value'], $pconfig['active_interface']))
+												if (in_array($laddr, $pconfig['active_interface']))
 													$selected = 'selected="selected"';
 										?>
-										<option value="<?=$laddr['value'];?>" <?=$selected;?>>
-											<?=htmlspecialchars($laddr['name']);?>
+										<option value="<?=$laddr;?>" <?=$selected;?>>
+											<?=htmlspecialchars($ldescr);?>
 										</option>
 										<?php endforeach; ?>
 									</select>
@@ -297,10 +296,6 @@ function show_advanced_dns() {
 							<tr>
 								<td width="22%" valign="top" class="vncellreq"><?=gettext("Outgoing Network Interfaces"); ?></td>
 								<td width="78%" class="vtable">
-									<?php
-										$interface_addresses = get_possible_listen_ips(false);
-										$size=count($interface_addresses)+1;
-									?>
 									<?=gettext("Utilize different network interface(s) that the DNS Resolver will use to send queries to authoritative servers and receive their replies. By default all interfaces are used.");?>
 									<br /><br />
 									<select id="outgoing_interface" name="outgoing_interface[]" multiple="multiple" size="<?php echo $size; ?>">
@@ -308,13 +303,15 @@ function show_advanced_dns() {
 										<?php
 											foreach ($interface_addresses as $laddr):
 												$selected = "";
-												if (in_array($laddr['value'], $pconfig['outgoing_interface']))
+												if (in_array($laddr, $pconfig['outgoing_interface']))
 												$selected = 'selected="selected"';
 										?>
-										<option value="<?=$laddr['value'];?>" <?=$selected;?>>
-											<?=htmlspecialchars($laddr['name']);?>
+										<option value="<?=$laddr;?>" <?=$selected;?>>
+											<?=htmlspecialchars($ldescr);?>
 										</option>
-										<?php endforeach; ?>
+										<?php endforeach;
+							   unset($interface_addresses);
+										?>
 									</select>
 									<br /><br />
 								</td>

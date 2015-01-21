@@ -112,8 +112,14 @@ $p1_authentication_methods = array(
 	'xauth_rsa_server' => array( 'name' => 'Mutual RSA + Xauth', 'mobile' => true ),
 	'xauth_psk_server' => array( 'name' => 'Mutual PSK + Xauth', 'mobile' => true ),
 	'eap-tls' => array( 'name' => 'EAP-TLS', 'mobile' => true),
+	'eap-mschapv2' => array( 'name' => 'EAP-MSChapv2', 'mobile' => true),
 	'rsasig' => array( 'name' => 'Mutual RSA', 'mobile' => false ),
 	'pre_shared_key' => array( 'name' => 'Mutual PSK', 'mobile' => false ) );
+
+$ipsec_preshared_key_type = array(
+	'PSK' => 'PSK',
+	'EAP' => 'EAP'
+	);
 
 $p2_modes = array(
 	'tunnel' => 'Tunnel IPv4',
@@ -669,6 +675,29 @@ function ipsec_fixup_network($network) {
 	}
 
 	return $result;
+}
+
+function ipsec_new_reqid() {
+	global $config;
+
+	if (!is_array($config['ipsec']) || !is_array($config['ipsec']['phase2']))
+		return;
+
+	$ipsecreqid = lock('ipsecreqids', LOCK_EX);
+	$keyids = array();
+	$keyid = 1;
+	foreach ($config['ipsec']['phase2'] as $ph2)
+		$keyids[$ph2['reqid']] = $ph2['reqid'];
+
+	for ($i = 1; $i < 16000; $i++) {
+		if (!isset($keyids[$i])) {
+			$keyid = $i;
+			break;
+		}
+	}
+	unlock($ipsecreqid);
+
+	return $keyid;
 }
 
 ?>

@@ -162,12 +162,8 @@ include("head.inc");
 						if ($carp['mode'] != "carp")
 							continue;
 						$ipaddress = $carp['subnet'];
-						$password = $carp['password'];
-						$netmask = $carp['subnet_bits'];
 						$vhid = $carp['vhid'];
-						$advskew = $carp['advskew'];
-						$advbase = $carp['advbase'];
-						$status = get_carp_interface_status("{$carp['interface']}_vip{$carp['vhid']}");
+						$status = get_carp_interface_status("_vip{$carp['uniqid']}");
 						echo "<tr>";
 						$align = "style=\"vertical-align:middle\"";
 						if($carp_enabled == false) {

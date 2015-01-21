@@ -92,7 +92,7 @@ function post_choices() {
 }
 </script>
 
- <body link="#000000" vlink="#000000" alink="#000000" >
+ <body link="#0000CC" vlink="#0000CC" alink="#0000CC" >
  <form method="post" action="system_usermanager_settings_ldapacpicker.php">	
 <?php if (empty($ous)): ?>
 	<p><?=gettext("Could not connect to the LDAP server. Please check your LDAP configuration.");?></p>

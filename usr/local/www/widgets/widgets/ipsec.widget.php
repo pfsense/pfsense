@@ -93,8 +93,18 @@ if (isset($config['ipsec']['phase1'])) { ?>
 
 			$found = false;
 			foreach ($ipsec_status['query']['ikesalist']['ikesa'] as $ikesa) {
-				if ($ikeid == $ikesa['peerconfig']) {
+				if (isset($ikesa['childsalist']) && isset($ikesa['childsalist']['childsa'])) {
+					foreach($ikesa['childsalist']['childsa'] as $childsa) {
+						if ($ikeid == $childsa['childconfig']) {
+							$found = true;
+							break;
+						}
+					}
+				} else if ($ikeid == $ikesa['peerconfig']) {
 					$found = true;
+				}
+
+				if ($found === true) {
 					if ($ikesa['status'] == 'established') {
 						/* tunnel is up */
 						$iconfn = "true";
@@ -104,6 +114,7 @@ if (isset($config['ipsec']['phase1'])) { ?>
 						$iconfn = "false";
 						$inactivecounter++;
 					}
+					break;
 				}
 			}
 

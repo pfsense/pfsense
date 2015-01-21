@@ -45,21 +45,26 @@ if (!strstr($argument, "@"))
 list($vhid, $iface) = explode("@", $argument);
 
 $friendly = convert_real_interface_to_friendly_interface_name($iface);
-$carp_iface = "{$friendly}_vip${vhid}";
-$friendly_descr = convert_friendly_interface_to_friendly_descr($carp_iface);
-$notificationmsg = sprintf('Carp cluster member "%2$s (%1$s)" has resumed the state "MASTER" for vhid %s', $argument, $friendly_descr, $vhid);
+$friendly_descr = convert_friendly_interface_to_friendly_descr($friendly);
+$vips = link_interface_to_vips($friendly, '', $vhid);
+$carp_iface = "{$friendly}_vip{$vhid}";
+foreach ($vips as $vip) {
+	$notificationmsg = sprintf('Carp cluster member "{$friendly_descr)(%2$s): {$vip['subnet']} (%1$s)" has resumed the state "MASTER" for vhid %s', $argument, $vip['descr'], $vhid);
 
-notify_via_smtp($notificationmsg);
-notify_via_growl($notificationmsg);
-log_error($notificationmsg);
+	notify_via_smtp($notificationmsg);
+	notify_via_growl($notificationmsg);
+	log_error($notificationmsg);
+}
 
 /* Start OpenVPN clients running on this VIP, since they should be in the stopped state while the VIP is CARP Backup. */
 global $config;
 if (is_array($config['openvpn']) && is_array($config['openvpn']['openvpn-client'])) {
 	foreach ($config['openvpn']['openvpn-client'] as $settings) {
-		if ($settings['interface'] == $carp_iface) {
-			log_error("Starting OpenVPN client instance on {$friendly_descr} because of transition to CARP master.");
-			openvpn_restart('client', $settings);
+		foreach ($vips as $vip) {
+			if ($settings['interface'] == "_vip{$vip['uniqid']}") {
+				log_error("Starting OpenVPN client instance on {$friendly_descr} because of transition to CARP master.");
+				openvpn_restart('client', $settings);
+			}
 		}
 	}
 }

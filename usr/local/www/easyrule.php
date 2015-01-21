@@ -65,7 +65,7 @@ if(stristr($retval, "error") == true)
     $message = $retval;
 
 include("head.inc"); ?>
-<body link="#000000" vlink="#000000" alink="#000000">
+<body link="#0000CC" vlink="#0000CC" alink="#0000CC">
 <?php include("fbegin.inc"); ?>
 <table width="100%" border="0" cellpadding="0" cellspacing="0">
 	<tr>

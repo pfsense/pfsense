@@ -97,6 +97,8 @@ function services_radvd_configure($blacklist = array()) {
 
 		if (strstr($dhcpv6if, "_vip")) {
 			// CARP IP, find parent
+			if (get_carp_interface_status($dhcpv6if) != "MASTER")
+				continue;
 			$ifparent = link_carp_interface_to_parent($dhcpv6if);
 			$realif = convert_friendly_interface_to_real_interface_name($ifparent);
 		} else {

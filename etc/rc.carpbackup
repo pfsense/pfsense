@@ -69,6 +69,21 @@ if (is_array($config['openvpn']) && is_array($config['openvpn']['openvpn-client'
 	}
 }
 
+/* Reconfigure radvd when necessary */
+if (isset($config['dhcpdv6']) && is_array($config['dhcpdv6'])) {
+	$found = false;
+	foreach ($config['dhcpdv6'] as $dhcpv6if => $dhcpv6ifconf) {
+		if ($dhcpv6ifconf['rainterface'] != $carp_iface)
+			continue;
+
+		$found = true;
+		break;
+	}
+
+	if ($found === true)
+		services_radvd_configure();
+}
+
 $pluginparams = array();
 $pluginparams['type'] = 'carp';
 $pluginparams['event'] = 'rc.carpbackup';

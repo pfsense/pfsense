@@ -47,6 +47,7 @@ require_once("config.inc");
 require_once("functions.inc");
 require_once("filter.inc");
 require_once("radius.inc");
+require_once("sip2.inc");
 require_once("voucher.inc");
 
 function get_default_captive_portal_html() {
@@ -54,7 +55,7 @@ function get_default_captive_portal_html() {
 
 	$htmltext = <<<EOD
 <html> 
-<body> 
+<body onLoad="document.getElementById('auth_user').focus();">
 <form method="post" action="\$PORTAL_ACTION\$"> 
 	<input name="redirurl" type="hidden" value="\$PORTAL_REDIRURL\$">
 	<input name="zone" type="hidden" value="\$PORTAL_ZONE\$">
@@ -96,7 +97,7 @@ function get_default_captive_portal_html() {
 								<table>
 									<tr><td colspan="2"><center>Welcome to the {$g['product_name']} Captive Portal!</td></tr>
 									<tr><td>&nbsp;</td></tr>
-									<tr><td align="right">Username:</td><td><input name="auth_user" type="text" style="border: 1px dashed;"></td></tr>
+									<tr><td align="right">Username:</td><td><input name="auth_user" id="auth_user" type="text" style="border: 1px dashed;"></td></tr>
 									<tr><td align="right">Password:</td><td><input name="auth_pass" type="password" style="border: 1px dashed;"></td></tr>
 									<tr><td>&nbsp;</td></tr>
 

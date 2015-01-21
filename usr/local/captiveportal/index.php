@@ -154,6 +154,32 @@ EOD;
 	captiveportal_logportalauth("unauthenticated",$clientmac,$clientip,"ACCEPT");
 	portal_allow($clientip, $clientmac, "unauthenticated");
 
+} else if ($_POST['accept'] && $cpcfg['auth_method'] == "SIP2") {
+
+        $sip2 = new sip2;
+        $sip2->userid = $_POST['auth_user'];
+        $sip2->password = $_POST['auth_pass'];
+        $sip2->connect();
+        $sip2->login();
+
+        if ($sip2->fines() && ($sip2->fines() > $cpcfg['sip2threshold'])) {
+                captiveportal_logportalauth($_POST['auth_user'],$clientmac,$clientip,"FAILURE - Bill due: $" . $sip2->fines());
+                portal_reply_page($redirurl, "error", "You have an outstanding bill in the amount of $" . $sip2->fines());
+                exit;
+        } else {
+                $loginok = $sip2->authenticate();
+        }
+
+        $sip2->disconnect();
+
+      if ($loginok){
+          captiveportal_logportalauth($_POST['auth_user'],$clientmac,$clientip,"LOGIN");
+          portal_allow($clientip, $clientmac,$_POST['auth_user']);
+      } else {
+          captiveportal_logportalauth($_POST['auth_user'],$clientmac,$clientip,"FAILURE");
+          portal_reply_page($redirurl, "error");
+      }
+
 } else if (isset($config['voucher'][$cpzone]['enable']) && $_POST['accept'] && $_POST['auth_voucher']) {
 	$voucher = trim($_POST['auth_voucher']);
 	$timecredit = voucher_auth($voucher);

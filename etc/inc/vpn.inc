@@ -171,6 +171,7 @@ function vpn_ipsec_configure($ipchg = false)
 	$listeniflist = array();
 	$aggressive_mode_psk = false;
 	unset($iflist);
+	$ifacesuse = array();
 	if (is_array($a_phase1) && count($a_phase1)) {
 
 		$ipsecpinghosts = "";
@@ -178,6 +179,8 @@ function vpn_ipsec_configure($ipchg = false)
 		foreach ($a_phase1 as $ph1ent) {
 			if (isset($ph1ent['disabled']))
 				continue;
+
+			$ifacesuse[] = get_real_interface($ph1ent['interface']);
 
 			if ($ph1ent['mode'] == "aggressive" && ($ph1ent['authentication_method'] == "pre_shared_key" || $ph1ent['authentication_method'] == "xauth_psk_server")) 
 				$aggressive_mode_psk = true;
@@ -291,6 +294,11 @@ function vpn_ipsec_configure($ipchg = false)
 	if (isset($config['ipsec']['unityplugin']))
 		$unity_enabled = 'no';
 
+	if (!empty($ifacesuse))
+		$ifacesuse = 'interfaces_use = ' . implode(',', $ifacesuse);
+	else
+		$ifacesuse = '';
+
 	$strongswan = <<<EOD
 
 # Automatically generated config file - DO NOT MODIFY. Changes will be overwritten. 
@@ -308,6 +316,7 @@ install_routes = no
 {$i_dont_care_about_security_and_use_aggressive_mode_psk}
 {$accept_unencrypted}
 cisco_unity = {$unity_enabled}
+{$ifacesuse}
 
 # And two loggers using syslog. The subsections define the facility to log
 # to, currently one of: daemon, auth.

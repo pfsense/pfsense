@@ -588,7 +588,7 @@ EOD;
 				else
 					$sourcehost = $rgmap['remote-gateway'];
 
-				if (is_ipaddrv4($sourcehost)) {
+				if ($ph1ent['protocol'] == 'inet') {
 					if (strpos($ph1ent['interface'], '_vip')) {
 						$vpninterface = explode('_vip', $ph1ent['interface']);
 						$ifacesuse = get_real_interface($vpninterface[0]);
@@ -609,7 +609,7 @@ EOD;
 							}
 						}
 					}
-				} else if (is_ipaddrv6($sourcehost)) {
+				} else if ($ph1ent['protocol'] == 'inet6') {
 					if (strpos($ph1ent['interface'], '_vip')) {
 						$vpninterface = explode('_vip', $ph1ent['interface']);
 						$ifacesuse = get_real_interface($vpninterface[0]);

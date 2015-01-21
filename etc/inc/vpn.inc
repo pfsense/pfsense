@@ -583,7 +583,12 @@ EOD;
 				$passive = 'add';
 			} else {
 				$right_spec = $ph1ent['remote-gateway'];
-				if (is_ipaddrv4($right_spec)) {
+				if (is_ipaddr($right_spec))
+					$sourcehost = $right_spec;
+				else
+					$sourcehost = $rgmap['remote-gateway'];
+
+				if (is_ipaddrv4($sourcehost)) {
 					if (strpos($ph1ent['interface'], '_vip')) {
 						$vpninterface = explode('_vip', $ph1ent['interface']);
 						$ifacesuse = get_real_interface($vpninterface[0]);
@@ -604,7 +609,7 @@ EOD;
 							}
 						}
 					}
-				} else if (is_ipaddrv6($right_spec)) {
+				} else if (is_ipaddrv6($sourcehost)) {
 					if (strpos($ph1ent['interface'], '_vip')) {
 						$vpninterface = explode('_vip', $ph1ent['interface']);
 						$ifacesuse = get_real_interface($vpninterface[0]);

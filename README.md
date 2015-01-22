@@ -31,7 +31,7 @@ The Bootstrap grid system is used for defining columns. We've chosen the 'small'
 
 An example:
 
-```
+```html
 <form class="form-horizontal">
 	<div class="panel panel-default">
 		<div class="panel-heading">

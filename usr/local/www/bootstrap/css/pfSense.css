@@ -9,7 +9,7 @@ html {
 
 body {
 	padding-top: 70px;
-	margin-bottom: 60px;
+	margin-bottom: 80px;
 }
 
 .navbar-brand {
@@ -39,6 +39,15 @@ body#index .icons {
 
 tr.disabled {
 	opacity: .5;
+}
+
+.nav-pills {
+	margin-bottom: 20px;
+}
+
+/** Form validation */
+.input-errors ul {
+	margin-top: 20px;
 }
 
 /** Page header with title and breadcrumb */

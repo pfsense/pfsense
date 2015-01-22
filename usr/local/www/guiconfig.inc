@@ -266,30 +266,16 @@ function do_input_validation($postdata, $reqdfields, $reqdfieldsn, &$input_error
 }
 
 function print_input_errors($input_errors) {
-	global $g;
+	echo '<div class="alert alert-danger input-errors">';
+	echo '<p>' . gettext('The following input errors were detected:') . '</p>';
+	echo '<ul>';
 
-	print <<<EOF
-	<div id="inputerrorsdiv">
-	<table border="0" cellspacing="0" cellpadding="4" width="100%" summary="input errors">
-	<tr>
-		<td class="inputerrorsleft">
-			<img src="/themes/{$g['theme']}/images/icons/icon_error.gif" alt="errors" />
-		</td>
-		<td class="inputerrorsright errmsg">
-EOF;
-	echo "<p>" . gettext("The following input errors were detected:") . "</p>\n<ul>";
 	foreach ($input_errors as $ierr) {
-		echo "<li>" . htmlspecialchars($ierr) . "</li>";
+		echo '<li>' . htmlspecialchars($ierr) . '</li>';
 	}
 
-	print <<<EOF2
-				</ul>
-		</td></tr>
-	</table>
-	</div>
-	&nbsp;<br />
-EOF2;
-
+	echo '</ul>';
+	echo '</div>';
 }
 
 function verify_gzip_file($fname) {
@@ -916,7 +902,7 @@ function echo_array($array,$return_me=false){
  * RESULT
  *   null
  ******/
-function display_top_tabs(& $tab_array, $no_drop_down = false) {
+function display_top_tabs(& $tab_array, $no_drop_down = false, $type = 'tabs') {
 	global $config;
 	global $g;
 	global $tab_array_indent;
@@ -982,7 +968,7 @@ function display_top_tabs(& $tab_array, $no_drop_down = false) {
 		echo "//]]>\n";
 		echo "</script>";
 <? else: ?>
-	<ul class="nav nav-tabs">
+	<ul class="nav nav-<?= $type ?>">
 		<?php foreach ($tab_array as $ta): ?>
 			<li role="presentation"<?=($ta[1] ? ' class="active"' : '')?>><a href="<?=$ta[2]?>"><?=$ta[0]?></a></li>
 		<?php endforeach; ?>

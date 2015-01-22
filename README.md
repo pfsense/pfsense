@@ -26,10 +26,10 @@ The Bootstrap grid system is used for defining columns. We've chosen the 'small'
 ## Forms
 
 * Every form should have at least one 'panel' which contains the form fields. If certain fields can be grouped together, you can add multiple panels to a form.
-* A field consists out of an outer wrapper `.form-group` which contains a `label` and the `input`
+* A field consists of an outer wrapper `.form-group` which contains a `label` and the `input`
 * The submit button should be placed outside of the panels to prevent confusion (e.g., the save button saves the whole form and not just the last panel).
 
-An example:
+An example (which omits everything but relevant Bootstrap classes):
 
 ```html
 <form class="form-horizontal">

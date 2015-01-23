@@ -54,7 +54,7 @@ An example (which omits everything but relevant Bootstrap classes):
                 </div>
 			</div>
 			<div class="form-group">
-                <label for="second-input" class="col-sm-2 control-label">Checkboxl</label>
+                <label for="second-input" class="col-sm-2 control-label">Checkbox</label>
                 <div class="col-sm-10 checkbox">
                 	<label>
                     	<input type="checkbox" id="checkbox" /> Checkbox description

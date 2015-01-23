@@ -42,6 +42,7 @@ require("functions.inc");
 require("guiconfig.inc");
 require_once("ipsec.inc");
 require_once("vpn.inc");
+require_once("filter.inc");
 
 if (!is_array($config['ipsec']['phase1']))
 	$config['ipsec']['phase1'] = array();
@@ -162,6 +163,10 @@ if ($_POST) {
 	// Only require PSK here for normal PSK tunnels (not mobile) or xauth.
 	// For RSA methods, require the CA/Cert.
 	switch ($method) {
+		case 'eap-mschapv2':
+			if ($pconfig['iketype'] != 'ikev2')
+				$input_errors[] = gettext("EAP-MSChapv2 can only be used with IKEv2 type VPNs.");
+			break;
 		case "eap-tls":
 			if ($pconfig['iketype'] != 'ikev2')
 				$input_errors[] = gettext("EAP-TLS can only be used with IKEv2 type VPNs.");
@@ -448,6 +453,7 @@ function methodsel_change() {
 	value = document.iform.authentication_method.options[index].value;
 
 	switch (value) {
+	case 'eap-mschapv2':
 	case 'eap-tls':
 		document.getElementById('opt_psk').style.display = 'none';
 		document.getElementById('opt_peerid').style.display = '';

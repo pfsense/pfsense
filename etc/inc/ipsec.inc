@@ -29,7 +29,7 @@
 	ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 	POSSIBILITY OF SUCH DAMAGE.
 
-	pfSense_BUILDER_BINARIES:	/sbin/setkey
+	pfSense_BUILDER_BINARIES:	/sbin/setkey	/sbin/route
 	pfSense_MODULE:	ipsec
 
 */
@@ -112,8 +112,14 @@ $p1_authentication_methods = array(
 	'xauth_rsa_server' => array( 'name' => 'Mutual RSA + Xauth', 'mobile' => true ),
 	'xauth_psk_server' => array( 'name' => 'Mutual PSK + Xauth', 'mobile' => true ),
 	'eap-tls' => array( 'name' => 'EAP-TLS', 'mobile' => true),
+	'eap-mschapv2' => array( 'name' => 'EAP-MSChapv2', 'mobile' => true),
 	'rsasig' => array( 'name' => 'Mutual RSA', 'mobile' => false ),
 	'pre_shared_key' => array( 'name' => 'Mutual PSK', 'mobile' => false ) );
+
+$ipsec_preshared_key_type = array(
+	'PSK' => 'PSK',
+	'EAP' => 'EAP'
+	);
 
 $p2_modes = array(
 	'tunnel' => 'Tunnel IPv4',

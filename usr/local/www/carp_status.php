@@ -60,11 +60,28 @@ if($_POST['disablecarp'] <> "") {
 		set_single_sysctl('net.inet.carp.allow', '0');
 		if(is_array($config['virtualip']['vip'])) {
 			$viparr = &$config['virtualip']['vip'];
+			$found_dhcpdv6 = false;
 			foreach ($viparr as $vip) {
+				$carp_iface = "{$vip['interface']}_vip{$vip['vhid']}";
 				switch ($vip['mode']) {
 				case "carp":
 					interface_vip_bring_down($vip);
-					interface_ipalias_cleanup("{$vip['interface']}_vip{$vip['vhid']}");
+					interface_ipalias_cleanup($carp_iface);
+
+					/*
+					 * Reconfigure radvd when necessary
+					 * XXX: Is it the best way to do it?
+					 */
+					if (isset($config['dhcpdv6']) && is_array($config['dhcpdv6'])) {
+						foreach ($config['dhcpdv6'] as $dhcpv6if => $dhcpv6ifconf) {
+							if ($dhcpv6ifconf['rainterface'] != $carp_iface)
+								continue;
+
+							services_radvd_configure();
+							break;
+						}
+					}
+
 					sleep(1);
 					break;
 				}
@@ -162,12 +179,8 @@ include("head.inc");
 						if ($carp['mode'] != "carp")
 							continue;
 						$ipaddress = $carp['subnet'];
-						$password = $carp['password'];
-						$netmask = $carp['subnet_bits'];
 						$vhid = $carp['vhid'];
-						$advskew = $carp['advskew'];
-						$advbase = $carp['advbase'];
-						$status = get_carp_interface_status("{$carp['interface']}_vip{$carp['vhid']}");
+						$status = get_carp_interface_status("_vip{$carp['uniqid']}");
 						echo "<tr>";
 						$align = "style=\"vertical-align:middle\"";
 						if($carp_enabled == false) {

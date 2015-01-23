@@ -761,13 +761,14 @@ function check_subnetsv6_overlap($subnet1, $bits1, $subnet2, $bits2) {
 
 /* return true if $addr is in $subnet, false if not */
 function ip_in_subnet($addr,$subnet) {
-	if(is_ipaddrv6($addr)) {
+	if(is_ipaddrv6($addr) && is_subnetv6($subnet)) {
 		return (Net_IPv6::isInNetmask($addr, $subnet));
-	} else { /* XXX: Maybe check for IPv4 */
+	} else if (is_ipaddrv4($addr) && is_subnetv4($subnet)) {
 		list($ip, $mask) = explode('/', $subnet);
 		$mask = (0xffffffff << (32 - $mask)) & 0xffffffff;
 		return ((ip2long($addr) & $mask) == (ip2long($ip) & $mask));
 	}
+	return false;
 }
 
 /* returns true if $hostname is just a valid hostname (top part without any of the domain part) */
@@ -953,7 +954,7 @@ function get_configured_carp_interface_list($carpinterface = '', $family = 'inet
 			switch ($vip['mode']) {
 			case "carp":
 				if (!empty($carpinterface)) {
-					if ($carpinterface == "{$vip['interface']}_vip{$vip['vhid']}") {
+					if ($carpinterface == "_vip{$vip['uniqid']}") {
 						switch ($what) {
 						case 'subnet':
 							if ($family == 'inet' && is_ipaddrv4($vip['subnet']))
@@ -983,7 +984,7 @@ function get_configured_carp_interface_list($carpinterface = '', $family = 'inet
 						}
 					}
 				} else {
-					$iflist["{$vip['interface']}_vip{$vip['vhid']}"] = $vip['subnet'];
+					$iflist["_vip{$vip['uniqid']}"] = $vip['subnet'];
 				}
 				break;
 			}

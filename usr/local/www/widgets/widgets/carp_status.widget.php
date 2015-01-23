@@ -52,7 +52,7 @@ $carp_enabled = get_carp_status();
 			$netmask = $carp['subnet_bits'];
 			$vhid = $carp['vhid'];
 			$advskew = $carp['advskew'];
-			$status = get_carp_interface_status("{$carp['interface']}_vip{$vhid}");
+			$status = get_carp_interface_status("_vip{$carp['uniqid']}");
 ?>
 <tr>
 	<td class="vncellt" width="35%">

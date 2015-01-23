@@ -270,21 +270,22 @@ function show_advanced_dns() {
 		<td width="78%" class="vtable">
 		<?php
 			$interface_addresses = get_possible_listen_ips(true);
-			$size=count($interface_addresses)+1;
 		?>
 			<?=gettext("Interface IPs used by the DNS Forwarder for responding to queries from clients. If an interface has both IPv4 and IPv6 IPs, both are used. Queries to other interface IPs not selected below are discarded. The default behavior is to respond to queries on every available IPv4 and IPv6 address.");?>
 			<br /><br />
-			<select id="interface" name="interface[]" multiple="multiple" class="formselect" size="<?php echo $size; ?>">
+			<select id="interface" name="interface[]" multiple="multiple" class="formselect" size="5">
 				<option value="" <?php if (empty($pconfig['interface']) || empty($pconfig['interface'][0])) echo 'selected="selected"'; ?>>All</option>
-			<?php  foreach ($interface_addresses as $laddr):
+			<?php  foreach ($interface_addresses as $laddr => $ldescr):
 					$selected = "";
-					if (in_array($laddr['value'], $pconfig['interface']))
+					if (in_array($laddr, $pconfig['interface']))
 						$selected = 'selected="selected"';
 			?>
-				<option value="<?=$laddr['value'];?>" <?=$selected;?>>
-					<?=htmlspecialchars($laddr['name']);?>
+				<option value="<?=$laddr;?>" <?=$selected;?>>
+					<?=htmlspecialchars($ldescr);?>
 				</option>
-			<?php endforeach; ?>
+			<?php endforeach; 
+			   unset($interface_addresses);
+			?>
 			</select>
 			<br /><br />
 		</td>

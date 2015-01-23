@@ -95,7 +95,16 @@ function services_radvd_configure($blacklist = array()) {
 			}
 		}
 
-		$realif = get_real_interface($dhcpv6if, "inet6");
+		if (strstr($dhcpv6if, "_vip")) {
+			// CARP IP, check if it's enabled and find parent
+			if (!get_carp_status() || get_carp_interface_status($dhcpv6if) != "MASTER")
+				continue;
+			$ifparent = link_carp_interface_to_parent($dhcpv6if);
+			$realif = convert_friendly_interface_to_real_interface_name($ifparent);
+		} else {
+			$realif = get_real_interface($dhcpv6if, "inet6");
+		}
+		
 		if (isset($radvdifs[$realif]))
 			continue;
 
@@ -220,7 +229,14 @@ function services_radvd_configure($blacklist = array()) {
 		if (empty($config['interfaces'][$trackif]))
 			continue;
 
-		$realif = get_real_interface($if, "inet6");
+		if (strstr($if, "_vip")) {
+			// CARP IP, find parent
+			$ifparent = link_carp_interface_to_parent($if);
+			$realif = convert_friendly_interface_to_real_interface_name($ifparent);
+		} else {
+			$realif = get_real_interface($if, "inet6");
+		}
+		
 		/* prevent duplicate entries, manual overrides */
 		if (isset($radvdifs[$realif]))
 			continue;
@@ -1783,10 +1799,10 @@ function services_dnsmasq_configure() {
 				} else {
 					$if = get_real_interface($interface);
 					if (does_interface_exist($if)) {
-						$laddr = find_interface_ip($if);
+						$laddr = get_interface_ip($interface);
 						if (is_ipaddrv4($laddr))
 							$listen_addresses .= " --listen-address={$laddr} ";
-						$laddr6 = find_interface_ipv6($if);
+						$laddr6 = get_interface_ipv6($interface);
 						if (is_ipaddrv6($laddr6) && !isset($config['dnsmasq']['strictbind'])) {
 							/*
 							 * XXX: Since dnsmasq does not support link-local address
@@ -2029,7 +2045,7 @@ EOD;
 			} else {
 				$if = get_real_interface($config['snmpd']['bindip']);
 				if (does_interface_exist($if))
-					$bind_to_ip = find_interface_ip($if);
+					$bind_to_ip = get_interface_ip($config['snmpd']['bindip']);
 			}
 		}
 

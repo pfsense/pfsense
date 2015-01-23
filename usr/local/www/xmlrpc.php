@@ -213,9 +213,9 @@ function restore_config_section_xmlrpc($raw_params) {
 			foreach ($config['virtualip']['vip'] as $vipindex => $vip) {
 				if ($vip['mode'] == "carp")
 					$oldvips["{$vip['interface']}_vip{$vip['vhid']}"] = "{$vip['password']}{$vip['advskew']}{$vip['subnet']}{$vip['subnet_bits']}{$vip['advbase']}";
-				else if ($vip['mode'] == "ipalias" && (strstr($vip['interface'], "_vip") || strstr($vip['interface'], "lo0")))
+				else if ($vip['mode'] == "ipalias" && (substr($vip['interface'], 0, 4) == '_vip') || strpos($vip['interface'], "lo0")))
 					$oldvips[$vip['subnet']] = "{$vip['interface']}{$vip['subnet']}{$vip['subnet_bits']}";
-				else if (($vip['mode'] == "ipalias" || $vip['mode'] == 'proxyarp') && !(strstr($vip['interface'], "_vip") || strstr($vip['interface'], "lo0")))
+				else if (($vip['mode'] == "ipalias" || $vip['mode'] == 'proxyarp') && !(substr($vip['interface'], 0, 4) == '_vip') || strpos($vip['interface'], "lo0")))
 					$vipbackup[] = $vip;
 			}
 		}

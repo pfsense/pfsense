@@ -43,10 +43,6 @@ require_once("openvpn.inc");
 require_once("IPv6.inc");
 require_once("rrd.inc");
 
-// Do not process while booting
-if (platform_booting())
-	return;
-
 function restart_packages() {
 	global $oldip, $curwanip, $g;
 
@@ -89,7 +85,8 @@ else {
 		$curwanip = get_interface_ip($interface);
 }
 
-log_error("rc.newwanip: on (IP address: {$curwanip}) (interface: {$interface_descr}[{$interface}]) (real interface: {$interface_real}).");
+if (!platform_booting())
+	log_error("rc.newwanip: on (IP address: {$curwanip}) (interface: {$interface_descr}[{$interface}]) (real interface: {$interface_real}).");
 
 /*
  * NOTE: Take care of openvpn, no-ip or similar interfaces if you generate the event to reconfigure an interface.
@@ -107,6 +104,8 @@ if ($curwanip == "0.0.0.0" || !is_ipaddr($curwanip)) {
 
 /* XXX: This really possible? */
 if (empty($interface)) {
+	if (platform_booting())
+		return;
 	filter_configure();
 	restart_packages();
 	return;
@@ -117,7 +116,8 @@ if (file_exists("{$g['vardb_path']}/{$interface}_cacheip"))
 	$oldip = file_get_contents("{$g['vardb_path']}/{$interface}_cacheip");
 
 /* regenerate resolv.conf if DNS overrides are allowed */
-system_resolvconf_generate(true);
+if (!platform_booting())
+	system_resolvconf_generate(true);
 
 /* write the current interface IP to file */
 if (is_ipaddr($curwanip))
@@ -142,6 +142,10 @@ unset($bridgetmp);
 $bridgetmp = link_interface_to_bridge($interface);
 if (!empty($bridgetmp))
 	interface_bridge_add_member($bridgetmp, $interface_real);
+
+// Do not process while booting
+if (platform_booting())
+	return;
 
 /* make new hosts file */
 system_hosts_generate();

@@ -3,7 +3,7 @@ pfSense on bootstrap
 
 We are migrating pfSense to Bootstrap. You can help! Please respect these code-guidelines:
 
-* use tabs (tabstop=4) for indenting (except the license-header which contains 3 lines that are indented with "\t   ")
+* use tabs (tabstop=4) for indenting (except the license-header which contains 3 lines that are indented with "\t<SP><SP><SP>")
 * no trailing whitespace
 * limited echoing of HTML from php, please use proper templating syntax instead (eg. foreach/endforeach)
 * limited attributes on elements; _no style attributes_
@@ -12,6 +12,29 @@ We are migrating pfSense to Bootstrap. You can help! Please respect these code-g
 * we use icons for status-indication and buttons for actions
 
 If you feel adventurous you can sometimes rewrite some PHP & javascript code as well; but try to keep this to a minimum.
+
+# Development setup
+
+We suggest you setup a development enviroment for testing your changes. This can be done with either Virtualbox or Qemu. 
+
+## Qemu
+
+Use libvirt to setup a FreeBSD-10 machine with 2 NICs. Boot the latest pfSense.iso and install it. I've attached both NICs to the virbr0 that libvirt offers by default. One interface can be used as WAN (where pfSense will use dhcp and should get a NATted ip on your local network), the other as a LAN interface with a fixed IP address.
+
+## Virtualbox
+
+..
+
+## Post install tasks
+
+Disable the dhcp server (on the LAN interface) of your pfSense install and you're good to go. Start the ssh-daemon, login and setup public-key authentication (for the root user). Execute `pkg install rsync` and create a script to upload your changes from your development environment to your pfSense install:
+
+```bash
+#!/bin/sh
+
+rsync -xav --delete `dirname $0`/usr/local/www/ root@192.168.122.100:/usr/local/www/
+rsync -xav --delete `dirname $0`/etc/inc/ root@192.168.122.100:/etc/inc/
+```
 
 # Cleaner
 
@@ -47,19 +70,19 @@ An example (which omits everything but relevant Bootstrap classes):
 				</div>
 			</div>
 			<div class="form-group">
-                <label for="second-input" class="col-sm-2 control-label">Second label</label>
-                <div class="col-sm-10">
-                    <input class="form-control" id="second-input" />
-                    <span class="help-block">What's this all about?</span>
-                </div>
+				<label for="second-input" class="col-sm-2 control-label">Second label</label>
+				<div class="col-sm-10">
+					<input class="form-control" id="second-input" />
+					<span class="help-block">What's this all about?</span>
+				</div>
 			</div>
 			<div class="form-group">
-                <label for="second-input" class="col-sm-2 control-label">Checkbox</label>
-                <div class="col-sm-10 checkbox">
-                	<label>
-                    	<input type="checkbox" id="checkbox" /> Checkbox description
-                    </label>	
-                </div>
+				<label for="second-input" class="col-sm-2 control-label">Checkbox</label>
+				<div class="col-sm-10 checkbox">
+					<label>
+						<input type="checkbox" id="checkbox" /> Checkbox description
+					</label>
+				</div>
 			</div>
 
 			<!-- And more form-groups -->

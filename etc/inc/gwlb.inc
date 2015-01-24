@@ -990,7 +990,7 @@ function get_interface_gateway($interface, &$dynamic = false) {
 	global $config, $g;
 
 	if (substr($interface, 0, 4) == '_vip')
-		$interface = get_configured_carp_interface_list($interface, 'inet6', 'iface');
+		$interface = get_configured_carp_interface_list($interface, 'inet', 'iface');
 
 	$gw = NULL;
 	$gwcfg = $config['interfaces'][$interface];

@@ -53,7 +53,7 @@ function xmlrpc_loop_detect() {
 		$synchronizetoip = $config['hasync']['synchronizetoip'];
 	if($synchronizetoip) {
 		if($synchronizetoip == $_SERVER['REMOTE_ADDR'])
-			return true;	
+			return true;
 	}
 
 	return false;
@@ -213,9 +213,9 @@ function restore_config_section_xmlrpc($raw_params) {
 			foreach ($config['virtualip']['vip'] as $vipindex => $vip) {
 				if ($vip['mode'] == "carp")
 					$oldvips["{$vip['interface']}_vip{$vip['vhid']}"] = "{$vip['password']}{$vip['advskew']}{$vip['subnet']}{$vip['subnet_bits']}{$vip['advbase']}";
-				else if ($vip['mode'] == "ipalias" && (substr($vip['interface'], 0, 4) == '_vip') || strpos($vip['interface'], "lo0")))
+				else if ($vip['mode'] == "ipalias" && (substr($vip['interface'], 0, 4) == '_vip') || strpos($vip['interface'], "lo0"))
 					$oldvips[$vip['subnet']] = "{$vip['interface']}{$vip['subnet']}{$vip['subnet_bits']}";
-				else if (($vip['mode'] == "ipalias" || $vip['mode'] == 'proxyarp') && !(substr($vip['interface'], 0, 4) == '_vip') || strpos($vip['interface'], "lo0")))
+				else if (($vip['mode'] == "ipalias" || $vip['mode'] == 'proxyarp') && !(substr($vip['interface'], 0, 4) == '_vip') || strpos($vip['interface'], "lo0"))
 					$vipbackup[] = $vip;
 			}
 		}
@@ -238,7 +238,7 @@ function restore_config_section_xmlrpc($raw_params) {
 	$mergedkeys = implode(",", array_merge(array_keys($params[0]), $sync_full_done));
 	write_config(sprintf(gettext("Merged in config (%s sections) from XMLRPC client."),$mergedkeys));
 
-	/* 
+	/*
 	 * The real work on handling the vips specially
 	 * This is a copy of intefaces_vips_configure with addition of not reloading existing/not changed carps
 	 */
@@ -525,7 +525,7 @@ $server = new XML_RPC_Server(
 			'docstring' => $exec_shell_doc),
 		'pfsense.exec_php' => array('function' => 'exec_php_xmlrpc',
 			'signature' => $exec_php_sig,
-			'docstring' => $exec_php_doc),	
+			'docstring' => $exec_php_doc),
 		'pfsense.filter_configure' => array('function' => 'filter_configure_xmlrpc',
 			'signature' => $filter_configure_sig,
 			'docstring' => $filter_configure_doc),
@@ -542,7 +542,7 @@ $server = new XML_RPC_Server(
 			'docstring' => $merge_config_section_doc),
 		'pfsense.merge_installedpackages_section_xmlrpc' => array('function' => 'merge_installedpackages_section_xmlrpc',
 			'signature' => $merge_config_section_sig,
-			'docstring' => $merge_config_section_doc),							
+			'docstring' => $merge_config_section_doc),
 		'pfsense.check_firmware_version' => array('function' => 'check_firmware_version_xmlrpc',
 			'signature' => $check_firmware_version_sig,
 			'docstring' => $check_firmware_version_doc),

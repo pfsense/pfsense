@@ -375,11 +375,11 @@ function get_carp_interface_status($carpinterface) {
 	$_gb = exec("/sbin/ifconfig $interface | /usr/bin/grep -v grep | /usr/bin/grep carp: | /usr/bin/head -n 1", $carp_query);
 	foreach($carp_query as $int) {
 		if (stripos($int, "MASTER"))
-			return gettext("MASTER");
+			return "MASTER";
 		if (stripos($int, "BACKUP"))
-			return gettext("BACKUP");
+			return "BACKUP";
 		if (stripos($int, "INIT"))
-			return gettext("INIT");
+			return "INIT";
 	}
 	return;
 }

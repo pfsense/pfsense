@@ -59,10 +59,16 @@ tr.disabled {
 	margin-top: 0;
 }
 
-.header .help-icon {
+.header .context-links {
 	position: absolute;
 	right: 0;
 	top: 15px;
+}
+
+.header .context-links li {
+	float: left;
+	display: inline;
+	margin-left: 10px;
 }
 
 /** Page footer */

@@ -424,9 +424,10 @@ foreach($noticeCategories as $category => $catNotices):?>
 <div class="container">
 	<header class="header">
 		<?=genhtmltitle($pgtitle);?>
+
+		<ul class="context-links">
 <?php
-/*
-//FIXME
+
 if (!$hide_service_status && !empty($shortcuts[$shortcut_section]['service'])) {
 	$ssvc = array();
 	switch ($shortcut_section) {
@@ -441,22 +442,25 @@ if (!$hide_service_status && !empty($shortcuts[$shortcut_section]['service'])) {
 
 	}
 	if (!empty($ssvc)) {
-		echo get_service_status_icon($ssvc, false);
-		echo get_service_control_links($ssvc, true);
+		echo '<li>'. get_service_status_icon($ssvc, false). '</li>';
+		echo '<li>'. get_service_control_links($ssvc, false). '</li>';
 	}
 }
 
-echo get_shortcut_main_link($shortcut_section, true);
-echo get_shortcut_status_link($shortcut_section, true);
-echo get_shortcut_log_link($shortcut_section, true);
-*/
-?>
+echo '<li>'. get_shortcut_main_link($shortcut_section, false). '</li>';
+echo '<li>'. get_shortcut_status_link($shortcut_section, false). '</li>';
+echo '<li>'. get_shortcut_log_link($shortcut_section, false). '</li>';
 
+?>
 	<?php if(! $g['disablehelpicon']): ?>
-		<a href="<?=$helpurl?>" title="<?=gettext("Help for items on this page")?>" class="help-icon">
-			<i class="icon-large icon-question-sign"></i>
-		</a>
+		<li>
+			<a href="<?=$helpurl?>" title="<?=gettext("Help for items on this page")?>" class="help-icon">
+				<i class="icon-large icon-question-sign"></i>
+			</a>
+		</li>
 	<?php endif; ?>
+		</ul>
+
 	</header>
 
 <?php

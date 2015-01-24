@@ -42,14 +42,14 @@ $shortcuts = array();
 /* Load and process custom shortcuts. */
 function get_shortcut_files($directory) {
 	$dir_array = array();
-	if(!is_dir($directory)) 
+	if(!is_dir($directory))
 		return;
 	if ($dh = opendir($directory)) {
 		while (($file = readdir($dh)) !== false) {
 			$canadd = 0;
-			if($file == ".") 
+			if($file == ".")
 				$canadd = 1;
-			if($file == "..") 
+			if($file == "..")
 				$canadd = 1;
 			if($canadd == 0)
 				array_push($dir_array, $file);
@@ -93,7 +93,7 @@ function get_shortcut_main_link($shortcut_section, $addspace = true, $service = 
 			break;
 	}
 	if(!empty($link) && ($_SERVER['REQUEST_URI'] != "/{$link}"))
-		return "{$space}<a href=\"{$link}\" title=\"" . gettext("Main page for this section") . "\"><img style=\"vertical-align:middle\" src=\"/themes/{$g['theme']}/images/icons/icon_plus.gif\" border=\"0\" alt=\"plus\" /></a>";
+		return "{$space}<a href=\"{$link}\" title=\"" . gettext("Main page for this section") . "\"><i class=\"icon icon-home\"></i></a>";
 }
 
 function get_shortcut_status_link($shortcut_section, $addspace = true, $service = array()) {
@@ -117,26 +117,26 @@ function get_shortcut_status_link($shortcut_section, $addspace = true, $service 
 			break;
 	}
 	if(!empty($link))
-		return "{$space}<a href=\"{$link}\" title=\"" . gettext("Status of items on this page") . "\"><img style=\"vertical-align:middle\" src=\"/themes/{$g['theme']}/images/icons/icon_service_status.gif\" border=\"0\" alt=\"status\" /></a>";
+		return "{$space}<a href=\"{$link}\" title=\"" . gettext("Status of items on this page") . "\"><i class=\"icon icon-wrench\"></i></a>";
 }
 
 function get_shortcut_log_link($shortcut_section, $addspace = true) {
 	global $g, $shortcuts;
 	$space = ($addspace) ? "&nbsp;" : "" ;
 	if(!empty($shortcut_section) && !empty($shortcuts[$shortcut_section]['log'])) {
-		return "{$space}<a href=\"{$shortcuts[$shortcut_section]['log']}\" title=\"" . gettext("Log entries for items on this page") . "\"><img style=\"vertical-align:middle\" src=\"/themes/{$g['theme']}/images/icons/icon_logs.gif\" border=\"0\" alt=\"logs\" /></a>";
+		return "{$space}<a href=\"{$shortcuts[$shortcut_section]['log']}\" title=\"" . gettext("Log entries for items on this page") . "\"><i class=\"icon icon-list-alt\"></i></a>";
 	}
 }
 
 // Load shortcuts
 $dir_array = get_shortcut_files("/usr/local/www/shortcuts");
-foreach ($dir_array as $file) 
-	if (!is_dir("/usr/local/www/shortcuts/{$file}") && stristr($file,".inc")) 
+foreach ($dir_array as $file)
+	if (!is_dir("/usr/local/www/shortcuts/{$file}") && stristr($file,".inc"))
 		include("/usr/local/www/shortcuts/{$file}");
 if(is_dir("/usr/local/pkg/shortcuts")) {
 	$dir_array = get_shortcut_files("/usr/local/pkg/shortcuts");
-	foreach ($dir_array as $file) 
-		if (!is_dir("/usr/local/pkg/shortcuts/{$file}") && stristr($file,".inc")) 
+	foreach ($dir_array as $file)
+		if (!is_dir("/usr/local/pkg/shortcuts/{$file}") && stristr($file,".inc"))
 			include("/usr/local/pkg/shortcuts/{$file}");
 }
 

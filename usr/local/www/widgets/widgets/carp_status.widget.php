@@ -52,6 +52,7 @@ $carp_enabled = get_carp_status();
 			$netmask = $carp['subnet_bits'];
 			$vhid = $carp['vhid'];
 			$advskew = $carp['advskew'];
+			$dontadvskew = $carp['dontadvskew'];
 			$status = get_carp_interface_status("_vip{$carp['uniqid']}");
 ?>
 <tr>

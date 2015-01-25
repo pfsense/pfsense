@@ -212,7 +212,7 @@ function restore_config_section_xmlrpc($raw_params) {
 		if (is_array($config['virtualip']['vip'])) {
 			foreach ($config['virtualip']['vip'] as $vipindex => $vip) {
 				if ($vip['mode'] == "carp")
-					$oldvips["{$vip['interface']}_vip{$vip['vhid']}"] = "{$vip['password']}{$vip['advskew']}{$vip['subnet']}{$vip['subnet_bits']}{$vip['advbase']}";
+					$oldvips["{$vip['interface']}_vip{$vip['vhid']}"] = "{$vip['password']}{$vip['advskew']}{$vip['subnet']}{$vip['subnet_bits']}{$vip['advbase']}{$vip['dontadvskew']}";
 				else if ($vip['mode'] == "ipalias" && (substr($vip['interface'], 0, 4) == '_vip') || strpos($vip['interface'], "lo0")))
 					$oldvips[$vip['subnet']] = "{$vip['interface']}{$vip['subnet']}{$vip['subnet_bits']}";
 				else if (($vip['mode'] == "ipalias" || $vip['mode'] == 'proxyarp') && !(substr($vip['interface'], 0, 4) == '_vip') || strpos($vip['interface'], "lo0")))
@@ -247,7 +247,7 @@ function restore_config_section_xmlrpc($raw_params) {
 		$anyproxyarp = false;
 		foreach ($config['virtualip']['vip'] as $vip) {
 			if ($vip['mode'] == "carp" && isset($oldvips["{$vip['interface']}_vip{$vip['vhid']}"])) {
-				if ($oldvips["{$vip['interface']}_vip{$vip['vhid']}"] == "{$vip['password']}{$vip['advskew']}{$vip['subnet']}{$vip['subnet_bits']}{$vip['advbase']}") {
+				if ($oldvips["{$vip['interface']}_vip{$vip['vhid']}"] == "{$vip['password']}{$vip['advskew']}{$vip['subnet']}{$vip['subnet_bits']}{$vip['advbase']}{$vip['dontadvskew']}") {
 					if (does_vip_exist($vip)) {
 						unset($oldvips["{$vip['interface']}_vip{$vip['vhid']}"]);
 						continue; // Skip reconfiguring this vips since nothing has changed.

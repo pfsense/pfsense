@@ -59,7 +59,7 @@ function backup_vip_config_section() {
 		    (strpos($section['interface'], '_vip') === FALSE) &&
 		    (strpos($section['interface'], 'lo0') === FALSE))
 			continue;
-		if ($section['advskew'] <> "") {
+		if (($section['advskew'] <> "") && ($section['dontadvskew'] <> "ignore")) {
 			$section_val = intval($section['advskew']);
 			$section_val=$section_val+100;
 			if ($section_val > 254)

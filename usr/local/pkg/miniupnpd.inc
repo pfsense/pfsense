@@ -98,26 +98,29 @@
 			$input_errors[] = 'You must specify a valid traffic shaping queue.';
 
 		/* user permissions validation */
-		for($i=1; $i<=4; $i++) {
-			if($post["permuser{$i}"]) {
-				$perm = explode(' ',$post["permuser{$i}"]);
+		if($post["permuser"]) {
+			/* explode permission entries separated by comma */
+			$subperm = explode(',',$post["permuser"]);
+			foreach($subperm as $eachentry) {
+				/* explode each entry */
+				$perm = explode(' ',$eachentry);
 				/* should explode to 4 args */
 				if(count($perm) != 4) {
-					$input_errors[] = "You must follow the specified format in the 'User specified permissions {$i}' field";
+					$input_errors[] = "You must follow the specified format in the 'User specified permissions entry '$eachentry'";
 				} else {
 					/* must with allow or deny */
 					if(!($perm[0] == 'allow' || $perm[0] == 'deny'))
-						$input_errors[] = "You must begin with allow or deny in the 'User specified permissions {$i}' field";
+						$input_errors[] = "You must begin with allow or deny in the 'User specified permissions entry '$eachentry'";
 					/* verify port or port range */
 					if(!upnp_validate_port($perm[1]) || !upnp_validate_port($perm[3]))
 						$input_errors[] = "You must specify a port or port range between 0 and 65535 in the 'User specified
-							permissions {$i}' field";
+							permissions entry '$eachentry'";
 					/* verify ip address */
 					if(!upnp_validate_ip($perm[2],true))
-						$input_errors[] = "You must specify a valid ip address in the 'User specified permissions {$i}' field";
+						$input_errors[] = "You must specify a valid ip address in the 'User specified permissions entry '$eachentry'";
 				}
 			}
-		}		
+		}	
 	}
 
 	function sync_package_miniupnpd() {
@@ -209,9 +212,11 @@
 				$config_text .= "model_number=".file_get_contents("/etc/version")."\n";
 	
 				/* upnp access restrictions */
-				for($i=1; $i<=4; $i++) {
-					if($upnp_config["permuser{$i}"])
-						$config_text .= "{$upnp_config["permuser{$i}"]}\n";
+				if($upnp_config["permuser"]) {
+					$subperm = explode(',',$upnp_config["permuser"]);
+					foreach($subperm as $eachentry) {
+						$config_text .= "$eachentry\n";
+					}
 				}
 
 				if($upnp_config['permdefault'])

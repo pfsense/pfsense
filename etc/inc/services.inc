@@ -41,7 +41,7 @@
 define('DYNDNS_PROVIDER_VALUES', 'citynetwork cloudflare custom custom-v6 dhs dnsexit dnsomatic dyndns dyndns-custom dyndns-static dyns easydns eurodns freedns gratisdns he-net he-net-v6 he-net-tunnelbroker loopia namecheap noip noip-free ods opendns ovh-dynhost route53 selfhost zoneedit');
 define('DYNDNS_PROVIDER_DESCRIPTIONS', 'City Network,CloudFlare,Custom,Custom (v6),DHS,DNSexit,DNS-O-Matic,DynDNS (dynamic),DynDNS (custom),DynDNS (static),DyNS,easyDNS,Euro Dns,freeDNS,GratisDNS,HE.net,HE.net (v6),HE.net Tunnelbroker,Loopia,Namecheap,No-IP,No-IP (free),ODS.org,OpenDNS,OVH DynHOST,Route 53,SelfHost,ZoneEdit');
 
-/* implement ipv6 route advertising deamon */
+/* implement ipv6 route advertising daemon */
 function services_radvd_configure($blacklist = array()) {
 	global $config, $g;
 	
@@ -1660,7 +1660,7 @@ function services_dyndns_configure_client($conf) {
 		$dnsHost = $conf['host'],
 		$dnsUser = $conf['username'],
 		$dnsPass = $conf['password'],
-		$dnsWilcard = $conf['wildcard'],
+		$dnsWildcard = $conf['wildcard'],
 		$dnsMX = $conf['mx'],
 		$dnsIf = "{$conf['interface']}",
 		$dnsBackMX = NULL,

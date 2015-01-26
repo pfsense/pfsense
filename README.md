@@ -27,6 +27,8 @@ Create a new virtual machine (FreeBSD 64 bit) and follow the wizard to configure
 
 Once saved, you can start the machine. Virtualbox will ask you to configure a bootable medium. Use the latest available .iso, follow the standard installation steps and set up the configuration as described in the Qemu instructions.
 
+When finished, don't forget to remove the installation disk from your machine. Otherwise, it'll keep booting the installer instead of your installation.
+
 ## Post install tasks
 
 Disable the dhcp server (on the LAN interface) of your pfSense install and you're good to go. Start the ssh-daemon, login and setup public-key authentication (for the root user). Execute `pkg install rsync` and create a script to upload your changes from your development environment to your pfSense install:

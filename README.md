@@ -15,7 +15,7 @@ If you feel adventurous you can sometimes rewrite some PHP & javascript code as 
 
 # Development setup
 
-We suggest you setup a development enviroment for testing your changes. This can be done with either Virtualbox or Qemu. 
+We suggest you setup a development enviroment for testing your changes. This can be done with either Virtualbox or Qemu.
 
 ## Qemu
 
@@ -23,7 +23,11 @@ Use libvirt to setup a FreeBSD-10 machine with 2 NICs. Boot the latest pfSense.i
 
 ## Virtualbox
 
-..
+Create a new virtual machine (FreeBSD 64 bit) and follow the wizard to configure the amount of RAM (512MB) and create a virtual HDD (8GB will do). When finished, don't start the machine but open the settings dialog and configure two network adapters. Both should be configured as 'Bridged Adapter', attached to your active network connection.
+
+Once saved, you can start the machine. Virtualbox will ask you to configure a bootable medium. Use the latest available .iso, follow the standard installation steps and set up the configuration as described in the Qemu instructions.
+
+When finished, don't forget to remove the installation disk from your machine. Otherwise, it'll keep booting the installer instead of your installation.
 
 ## Post install tasks
 

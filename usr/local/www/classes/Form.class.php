@@ -1,11 +1,20 @@
 <?php
 
-foreach (glob('Form/*.class.php') as $file)
-	require($file);
+require_once('classes/Form/Element.class.php');
+require_once('classes/Form/Input.class.php');
+foreach (glob('classes/Form/*.class.php') as $file)
+	require_once($file);
 
-class Form
+class Form extends Form_Element
 {
 	protected $_sections = array();
+	protected $_labelWidth = 2;
+	protected $_submit;
+
+	public function __construct()
+	{
+		$this->setSubmit(new Form_Input('Save', 'submit', 'Save'))->removeClass('form-control')->addClass('btn btn-primary');
+	}
 
 	public function add(Form_Section $section)
 	{
@@ -15,13 +24,41 @@ class Form
 		return $section;
 	}
 
+	public function setLabelWidth($size)
+	{
+		if ($size < 1 || $size > 12)
+			throw new Exception('Incorrect size, pass a number between 1 and 12');
+
+		$this->_labelWidth = (int)$size;
+	}
+
+	public function getLabelWidth()
+	{
+		return $this->_labelWidth;
+	}
+
+	public function setSubmit(Form_Input $submit)
+	{
+		$this->_submit = $submit;
+
+		return $submit;
+	}
+
+	protected function _setParent()
+	{
+		throw new Exception('Form does not have a parent');
+	}
+
 	public function __toString()
 	{
 		$sections = implode('', $this->_sections);
+		$submit = isset($this->_submit) ? '<div class="col-sm-offset-'. $this->_labelWidth .'">'. $this->_submit .'</div>' : '';
 
 		return <<<EOT
 	<form class="form-horizontal" method="post">
 		{$sections}
+
+		{$submit}
 	</form>
 EOT;
 	}

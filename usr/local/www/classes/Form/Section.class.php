@@ -1,9 +1,8 @@
 <?php
 
-class Form_Section
+class Form_Section extends Form_Element
 {
 	protected $_title;
-	protected $_parent;
 	protected $_groups = array();
 
 	public function __construct($title)
@@ -30,10 +29,10 @@ class Form_Section
 		return $input;
 	}
 
-	// Should be used by Form* classes only, that's why it has _ prefix
-	public function _setParent(Form $parent)
+	// Potentially allow overloading
+	public function getLabelWidth()
 	{
-		$this->_parent = $parent;
+		return $this->_parent->getLabelWidth();
 	}
 
 	public function __toString()

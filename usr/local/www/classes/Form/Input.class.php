@@ -1,6 +1,6 @@
 <?php
 
-class Form_Input
+class Form_Input extends Form_Element
 {
 	protected $_title;
 	protected $_name;
@@ -8,7 +8,6 @@ class Form_Input
 	protected $_help;
 	protected $_columnWidth;
 	protected $_columnClasses = array();
-	protected $_parent;
 
 	public function __construct($title, $type = 'text', $value = null, array $attributes = array())
 	{
@@ -18,11 +17,14 @@ class Form_Input
 		if (isset($value))
 			$attributes['value'] = $value;
 
-		$attributes['class'] .= ' form-control';
-
-		$this->_title = $title;
-		$this->_name = preg_replace('~[^a-z0-9_]+~', '-', strtolower($title));
 		$this->_attributes = $attributes;
+		$this->addClass('form-control');
+
+		if (isset($title))
+		{
+			$this->_title = $title;
+			$this->_name = preg_replace('~[^a-z0-9_]+~', '-', strtolower($title));
+		}
 	}
 
 	public function forceName($name)
@@ -62,12 +64,6 @@ class Form_Input
 		$this->_columnWidth = (int)$count;
 	}
 
-	// Should be used by Form* classes only, that's why it has _ prefix
-	public function _setParent(Form_Group $parent)
-	{
-		$this->_parent = $parent;
-	}
-
 	public function addColumnClass($class)
 	{
 		array_push($this->_columnClasses, $class);
@@ -75,8 +71,13 @@ class Form_Input
 
 	protected function _getInput()
 	{
-		$html = '<input';
-		foreach ($this->_attributes as $key => $value)
+		$html = '<input '. $this->getHtmlClass();
+
+		$attributes = $this->_attributes;
+		if (isset($this->_name))
+			$attributes['name'] = $this->_name;
+
+		foreach ($attributes as $key => $value)
 			$html .= ' '.$key.'="'. htmlspecialchars($value).'"';
 
 		return $html .'/>';

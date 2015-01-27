@@ -1,13 +1,11 @@
 <?php
 
-class Form_Group
+class Form_Group extends Form_Element
 {
 	protected $_title;
 	protected $_inputs = array();
 	protected $_labelTarget;
-	protected $_labelWidth = 2;
 	protected $_help;
-	protected $_parent;
 
 	public function __construct($title)
 	{
@@ -31,9 +29,10 @@ class Form_Group
 		$this->_labelTarget = $input;
 	}
 
-	public function setLabelWidth($count)
+    // Potentially allow overloading
+	public function getLabelWidth()
 	{
-		$this->_labelWidth = (int)$count;
+		return $this->_parent->getLabelWidth();
 	}
 
 	public function setHelp($help)
@@ -43,16 +42,10 @@ class Form_Group
 		return $this;
 	}
 
-	// Should be used by Form* classes only, that's why it has _ prefix
-	public function _setParent(Form_Section $parent)
-	{
-		$this->_parent = $parent;
-	}
-
 	public function __toString()
 	{
 		// Automatically determine width for inputs without explicit set
-		$spaceLeft = 12 - $this->_labelWidth;
+		$spaceLeft = 12 - $this->getLabelWidth();
 		$missingWidth = array();
 
 		foreach ($this->_inputs as $input)
@@ -70,11 +63,11 @@ class Form_Group
 
 		$target = $this->_labelTarget->getName();
 		$inputs = implode('', $this->_inputs);
-		$help = isset($this->_help) ? '<div class="col-sm-'. (12 - $this->_labelWidth) .' col-sm-offset-'.$this->_labelWidth.'"><span class="help-block">'. gettext($this->_help). '</span></div>' : '';
+		$help = isset($this->_help) ? '<div class="col-sm-'. (12 - $this->getLabelWidth()) .' col-sm-offset-'. $this->getLabelWidth() .'"><span class="help-block">'. gettext($this->_help). '</span></div>' : '';
 
 		return <<<EOT
 	<div class="form-group">
-		<label for="{$target}" class="col-sm-{$this->_labelWidth} control-label">
+		<label for="{$target}" class="col-sm-{$this->getLabelWidth()} control-label">
 			{$this->_title}
 		</label>
 

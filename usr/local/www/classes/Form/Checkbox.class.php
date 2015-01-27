@@ -8,10 +8,8 @@ class Form_Checkbox extends Form_Input
 	{
 		parent::__construct($title, 'checkbox');
 
-		// Checkboxes shouldn't get class form-control
-		unset($this->_attributes['class']);
-
 		$this->_description = $description;
+		$this->removeClass('form-control');
 
 		if ($checked)
 			$this->_attributes['checked'] = 'checked';

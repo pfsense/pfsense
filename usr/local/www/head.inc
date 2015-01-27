@@ -22,6 +22,7 @@ else
 <head>
 	<link rel="stylesheet" href="/bootstrap/css/pfSense.css" />
 	<title><?= $tabtitle ?></title>
+	<script>var events = events || [];</script>
 </head>
 <body id="<?=basename($_SERVER['SCRIPT_NAME'], '.php')?>">
 <?php

@@ -1,7 +1,12 @@
 	<!--
 		pfSense_MODULE:	footer
 	-->
-
+<?php
+/*
+ * We put jquery in the footer; it is the preferred position for speed
+ * and helps developers to use events[] instead of executing scripts directly.
+ */
+?>
 	</div>
 
 	<footer class="footer">

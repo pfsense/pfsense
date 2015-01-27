@@ -36,3 +36,24 @@ require_once("gmirror.inc");
 <div id="gmirror_status">
 	<?=gmirror_html_status()?>
 </div>
+
+<script>
+function gmirrorStatusUpdateFromServer(){
+	$.ajax({
+		type: 'get',
+		url: '/widgets/widgets/gmirror_status.widget.php',
+		dataType: 'html',
+		dataFilter: function(raw){
+			// We reload the entire widget, strip this block of javascript from it
+			return raw.replace(/<script>([\s\S]*)<\/script>/gi, '');
+		},
+		success: function(data){
+			$('#gmirror_status').html(data);
+		}
+	});
+}
+
+events.push(function(){
+	setInterval('gmirrorStatusUpdateFromServer()', 60*1000);
+});
+</script>

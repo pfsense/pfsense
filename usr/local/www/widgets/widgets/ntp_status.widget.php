@@ -133,7 +133,6 @@ if (isset($config['ntpd']['gps']['type']) && ($config['ntpd']['gps']['type'] == 
 	}
 }
 ?>
-
 <table class="table" id="ntp_status_widget">
 	<tr>
 		<th>Server Time</th>
@@ -178,3 +177,33 @@ if (isset($config['ntpd']['gps']['type']) && ($config['ntpd']['gps']['type'] == 
 		<?php endif; ?>
 	<?php endif; ?>
 </table>
+
+<script>
+function ntpWidgetUpdateFromServer(){
+	$.ajax({
+		type: 'get',
+		url: '/widgets/widgets/ntp_status.widget.php',
+		dataFilter: function(raw){
+			// We reload the entire widget, strip this block of javascript from it
+			return raw.replace(/<script>([\s\S]*)<\/script>/gi, '');
+		},
+		dataType: 'html',
+		success: function(data){
+			console.log(data);
+			$('#ntp_status_widget').html(data);
+		}
+	});
+}
+
+function ntpWidgetUpdateDisplay(){
+	// Javascript handles overflowing
+	ntpServerTime.setSeconds(ntpServerTime.getSeconds()+1);
+
+	$('#ntpStatusClock').html(ntpServerTime.toString());
+}
+
+events.push(function(){
+	setInterval('ntpWidgetUpdateFromServer()', 60*1000);
+	setInterval('ntpWidgetUpdateDisplay()', 1000);
+});
+</script>

@@ -284,3 +284,25 @@ $filesystems = get_mounted_filesystems();
 		</tr>
 	</tbody>
 </table>
+
+<script>
+function systemStatusGetUpdateStatus() {
+	$.ajax({
+		type: 'get',
+		url: '/widgets/widgets/system_information.widget.php',
+		data: 'getupdatestatus=1',
+		dataFilter: function(raw){
+			// We reload the entire widget, strip this block of javascript from it
+			return raw.replace(/<script>([\s\S]*)<\/script>/gi, '');
+		},
+		dataType: 'html',
+		success: function(data){
+			$('#widget-system_information #updatestatus').html(data);
+		}
+	});
+}
+
+events.push(function(){
+	setTimeout('systemStatusGetUpdateStatus()', 4000);
+});
+</script>

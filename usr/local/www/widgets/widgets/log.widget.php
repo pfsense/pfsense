@@ -149,9 +149,31 @@ else
 <?php
 
 /* for AJAX response, we only need the panel-body */
-if (isset($_POST['lastsawtime']))
+if (isset($_GET['lastsawtime']))
 	exit;
 ?>
+
+<script>
+function logWidgetUpdateFromServer(){
+	$.ajax({
+		type: 'get',
+		url: '/widgets/widgets/log.widget.php',
+		data: 'lastsawtime='+logWidgetLastRefresh,
+		dataFilter: function(raw){
+			// We reload the entire widget, strip this block of javascript from it
+			return raw.replace(/<script>([\s\S]*)<\/script>/gi, '');
+		},
+		dataType: 'html',
+		success: function(data){
+			$('#widget-log .panel-body').html(data);
+		}
+	});
+}
+
+events.push(function(){
+	setInterval('logWidgetUpdateFromServer()', 60*1000);
+});
+</script>
 
 <!-- close the body we're wrapped in and add a configuration-panel -->
 </div>

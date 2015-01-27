@@ -1018,7 +1018,7 @@ if ($savemsg)
 									</td>
 									<td>
 										<span class="vexpl">
-											<?=gettext("Don't add or remove routes automatically. Instead pass routes to "); ?> <strong>--route-up</strong> <?=gettext("script using environmental variables"); ?>.
+											<?=gettext("This option effectively bars the server from adding routes to the client's routing table, however note that this option still allows the server to set the TCP/IP properties of the client's TUN/TAP interface"); ?>.
 										</span>
 									</td>
 								</tr>
@@ -1037,7 +1037,7 @@ if ($savemsg)
 									</td>
 									<td>
 										<span class="vexpl">
-											<?=gettext("This option effectively bars the server from adding routes to the client's routing table, however note that this option still allows the server to set the TCP/IP properties of the client's TUN/TAP interface"); ?>.
+											<?=gettext("Don't add or remove routes automatically. Instead pass routes to "); ?> <strong>--route-up</strong> <?=gettext("script using environmental variables"); ?>.
 										</span>
 									</td>
 								</tr>

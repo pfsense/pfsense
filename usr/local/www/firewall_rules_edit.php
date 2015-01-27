@@ -1098,7 +1098,7 @@ include("head.inc");
 				</div>
 			</td>
 		</tr>
-		<tr style="display:none" id="sprtable">
+		<tr id="sprtable">
 			<td width="22%" valign="top" class="vncellreq"><?=gettext("Source port range");?></td>
 			<td width="78%" class="vtable">
 				<table border="0" cellspacing="0" cellpadding="0">

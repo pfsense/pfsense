@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 /*
 	interfaces_groups.php
 
@@ -148,8 +148,8 @@ include("head.inc");
   </td>
 </tr>
 <tr>
-  <td class="tabcont" colspan="3">
-	<p><span class="vexpl"><span class="red"><strong><?=gettext("Note:");?><br /></strong></span><?=gettext("Interface Groups allow you to create rules that apply to multiple interfaces without duplicating the rules. If you remove members from an interface group, the group rules no longer apply to that interface.");?></span></p>
+  <td colspan="3" class="list">
+	<p class="vexpl"><span class="red"><strong><?=gettext("Note:");?><br /></strong></span><?=gettext("Interface Groups allow you to create rules that apply to multiple interfaces without duplicating the rules. If you remove members from an interface group, the group rules no longer apply to that interface.");?></p>
 	</td>
 </tr>
 	</table>

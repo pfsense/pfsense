@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 /* $Id$ */
 /*
 	interfaces_gre.php
@@ -135,8 +135,8 @@ include("head.inc");
                   <td class="list"> <a href="interfaces_gre_edit.php"><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_plus.gif" width="17" height="17" border="0" alt="add" /></a></td>
 				</tr>
         <tr>
-                <td class="tabcont" colspan="3">
-                    <p><span class="vexpl"><span class="red"><strong><?=gettext("Note:");?><br /></strong></span><?=gettext("Here you can configure Generic Routing Encapsulation (GRE - RFC 2784) tunnels.");?></span></p>
+                <td colspan="3" class="list">
+                    <p class="vexpl"><span class="red"><strong><?=gettext("Note:");?><br /></strong></span><?=gettext("Here you can configure Generic Routing Encapsulation (GRE - RFC 2784) tunnels.");?></p>
                     </td>
                 </tr>
               </table>

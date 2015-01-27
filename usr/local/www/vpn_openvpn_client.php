@@ -1116,7 +1116,6 @@ if ($savemsg)
 					<td width="10%" class="listhdrr"><?=gettext("Protocol"); ?></td>
 					<td width="30%" class="listhdrr"><?=gettext("Server"); ?></td>
 					<td width="40%" class="listhdrr"><?=gettext("Description"); ?></td>
-					<td width="10%" class="list"></td>
 				</tr>
 				</thead>
 				<tfoot>

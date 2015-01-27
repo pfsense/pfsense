@@ -1,5 +1,6 @@
 <?php
-class FormCheckbox extends FormInput
+
+class Form_Checkbox extends Form_Input
 {
 	protected $_description;
 

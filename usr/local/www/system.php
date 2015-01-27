@@ -299,9 +299,21 @@ if ($savemsg)
 
 require('classes/Form.class.php');
 $form = new Form;
-$section = new FormSection('System');
-$section->addInput(new FormInput('Hostname', 'text', $pconfig['hostname'], ['placeholder' => 'pfSense']))->setHelp('Name of the firewall host, without domain part');
-$section->addInput(new FormInput('Domain', 'text', $pconfig['domain'], ['placeholder' => 'mycorp.com, home, office, private, etc.']))->setHelp('Do not use \'local\' as a domain name. It will cause local hosts running mDNS (avahi, bonjour, etc.) to be unable to resolve local hosts not running mDNS.');
+$section = new Form_Section('System');
+$section->addInput(new Form_Input(
+	'Hostname',
+	'text',
+	$pconfig['hostname'],
+	['placeholder' => 'pfSense']
+))->setHelp('Name of the firewall host, without domain part');
+$section->addInput(new Form_Input(
+	'Domain',
+	'text',
+	$pconfig['domain'],
+	['placeholder' => 'mycorp.com, home, office, private, etc.']
+))->setHelp('Do not use \'local\' as a domain name. It will cause local '.
+	'hosts running mDNS (avahi, bonjour, etc.) to be unable to resolve '.
+	'local hosts not running mDNS.');
 $form->add($section);
 
 $section = new FormSection('DNS server settings');
@@ -346,35 +358,45 @@ $section->addInput(new FormCheckbox(
 	'DNS server override',
 	'Allow DNS server list to be overridden by DHCP/PPP on WAN',
 	$pconfig['dnsallowoverride']
-))->setHelp(sprintf(gettext("If this option is set, %s will " .
-	"use DNS servers assigned by a DHCP/PPP server on WAN " .
-	"for its own purposes (including the DNS forwarder). " .
-	"However, they will not be assigned to DHCP and PPTP " .
-	"VPN clients."), $g['product_name']));
+))->setHelp(sprintf(gettext('If this option is set, %s will use DNS servers'.
+	'assigned by a DHCP/PPP server on WAN for its own purposes (including '.
+	'the DNS forwarder). However, they will not be assigned to DHCP and PPTP '.
+	'VPN clients.'), $g['product_name']));
 
 $section->addInput(new FormCheckbox(
 	'Disable DNS forwarder',
 	'Do not use the DNS Forwarder as a DNS server for the firewall',
 	$pconfig['dnslocalhost']
-))->setHelp("By default localhost (127.0.0.1) will be used as the first DNS server where the DNS Forwarder or DNS Resolver is enabled and set to listen on Localhost, so system can use the local DNS service to perform lookups. ".
-	"Checking this box omits localhost from the list of DNS servers.");
+))->setHelp('By default localhost (127.0.0.1) will be used as the first DNS'.
+	'server where the DNS Forwarder or DNS Resolver is enabled and set to '.
+	'listen on Localhost, so system can use the local DNS service to perform'.
+	'lookups. Checking this box omits localhost from the list of DNS servers.');
 
 $form->add($section);
 
 $section = new FormSection('Localization');
-$section->addInput(new FormSelect('Timezone', $pconfig['timezone'], $timezonelist))->setHelp('Select the location closest to you');
-$section->addInput(new FormInput('Timeservers', 'text', $pconfig['timeservers']))->setHelp('Use a space to separate multiple hosts (only one required). Remember to set up at least one DNS server if you enter a host name here!');
-$section->addInput(new FormSelect('Language', $pconfig['language'], get_locale_list()))->setHelp('Choose a language for the webConfigurator');
+$section->addInput(new FormSelect(
+	'Timezone',
+	$pconfig['timezone'],
+	$timezonelist
+))->setHelp('Select the location closest to you');
+$section->addInput(new FormInput(
+	'Timeservers',
+	'text',
+	$pconfig['timeservers']
+))->setHelp('Use a space to separate multiple hosts (only one required). '.
+	'Remember to set up at least one DNS server if you enter a host name here!');
+$section->addInput(new FormSelect(
+	'Language',
+	$pconfig['language'],
+	get_locale_list()
+))->setHelp('Choose a language for the webConfigurator');
 
 $form->add($section);
 
 print $form;
 return;
 ?>
-				</div>
-			</div>
-		</div>
-
 		<div class="col-sm-offset-2 col-sm-10">
 			<button type="submit" class="btn btn-primary"><?=gettext("Save");?></button>
 		</div>

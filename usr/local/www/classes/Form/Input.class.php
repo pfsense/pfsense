@@ -1,5 +1,6 @@
 <?php
-class FormInput
+
+class Form_Input
 {
 	protected $_title;
 	protected $_name;
@@ -62,7 +63,7 @@ class FormInput
 	}
 
 	// Should be used by Form* classes only, that's why it has _ prefix
-	public function _setParent(FormGroup $parent)
+	public function _setParent(Form_Group $parent)
 	{
 		$this->_parent = $parent;
 	}

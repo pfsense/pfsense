@@ -1,5 +1,6 @@
 <?php
-class FormSelect extends FormInput
+
+class Form_Select extends Form_Input
 {
 	protected $_values;
 

@@ -1,5 +1,6 @@
 <?php
-class FormSection
+
+class Form_Section
 {
 	protected $_title;
 	protected $_parent;
@@ -10,7 +11,7 @@ class FormSection
 		$this->_title = $title;
 	}
 
-	public function add(FormGroup $group)
+	public function add(Form_Group $group)
 	{
 		array_push($this->_groups, $group);
 		$group->_setParent($this);
@@ -19,9 +20,9 @@ class FormSection
 	}
 
 	// Shortcut, adds a group for the specified input
-	public function addInput(FormInput $input)
+	public function addInput(Form_Input $input)
 	{
-		$group = new FormGroup($input->getTitle());
+		$group = new Form_Group($input->getTitle());
 		$group->add($input);
 
 		$this->add($group);

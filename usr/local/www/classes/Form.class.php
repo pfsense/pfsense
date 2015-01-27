@@ -1,13 +1,13 @@
 <?php
 
-foreach (array('FormSection', 'FormGroup', 'FormInput', 'FormSelect', 'FormCheckbox') as $class)
-	require($class.'.class.php');
+foreach (glob('Form/*.class.php') as $file)
+	require($file);
 
 class Form
 {
 	protected $_sections = array();
 
-	public function add(FormSection $section)
+	public function add(Form_Section $section)
 	{
 		array_push($this->_sections, $section);
 		$section->_setParent($this);

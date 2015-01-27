@@ -1,5 +1,6 @@
 <?php
-class FormGroup
+
+class Form_Group
 {
 	protected $_title;
 	protected $_inputs = array();
@@ -13,7 +14,7 @@ class FormGroup
 		$this->_title = gettext($title);
 	}
 
-	public function add(FormInput $input)
+	public function add(Form_Input $input)
 	{
 		array_push($this->_inputs, $input);
 		$input->_setParent($this);
@@ -25,7 +26,7 @@ class FormGroup
 		return $input;
 	}
 
-	public function setLabelTarget(FormInput $input)
+	public function setLabelTarget(Form_Input $input)
 	{
 		$this->_labelTarget = $input;
 	}
@@ -43,7 +44,7 @@ class FormGroup
 	}
 
 	// Should be used by Form* classes only, that's why it has _ prefix
-	public function _setParent(FormSection $parent)
+	public function _setParent(Form_Section $parent)
 	{
 		$this->_parent = $parent;
 	}

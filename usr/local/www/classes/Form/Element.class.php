@@ -19,12 +19,17 @@ class Form_Element
 		return $this;
 	}
 
-	public function getHtmlClass()
+	public function getHtmlClass($wrapped = true)
 	{
 		if (empty($this->_classes))
 				return '';
 
-		return ' class="'. implode(' ', array_keys($this->_classes)).'" ';
+		$list = implode(' ', array_keys($this->_classes));
+
+		if (!$wrapped)
+			return $list;
+
+		return 'class="'. $list .'"';
 	}
 
 	protected function _setParent(Form_Element $parent)

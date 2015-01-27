@@ -29,7 +29,7 @@ class Form_Group extends Form_Element
 		$this->_labelTarget = $input;
 	}
 
-    // Potentially allow overloading
+	// Potentially allow overloading
 	public function getLabelWidth()
 	{
 		return $this->_parent->getLabelWidth();
@@ -50,7 +50,7 @@ class Form_Group extends Form_Element
 
 		foreach ($this->_inputs as $input)
 		{
-			$width = $input->getColumnWidth();
+			$width = $input->getWidth();
 
 			if (isset($width))
 				$spaceLeft -= $width;

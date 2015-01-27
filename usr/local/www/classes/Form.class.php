@@ -52,13 +52,17 @@ class Form extends Form_Element
 	public function __toString()
 	{
 		$sections = implode('', $this->_sections);
-		$submit = isset($this->_submit) ? '<div class="col-sm-offset-'. $this->_labelWidth .'">'. $this->_submit .'</div>' : '';
+
+		if (isset($this->_submit))
+		{
+			$this->_submit->setWidth(12 - $this->getLabelWidth());
+			$this->_submit->addColumnClass('col-sm-offset-'. $this->_labelWidth);
+			$sections .= $this->_submit;
+		}
 
 		return <<<EOT
 	<form class="form-horizontal" method="post">
 		{$sections}
-
-		{$submit}
 	</form>
 EOT;
 	}

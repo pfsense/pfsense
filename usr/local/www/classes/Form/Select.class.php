@@ -16,7 +16,7 @@ class Form_Select extends Form_Input
 
 	protected function _getInput()
 	{
-		$element = 'select'. $this->getHtmlClass();
+		$element = 'select';
 		foreach ($this->_attributes as $key => $value)
 			$element .= ' '.$key.'="'. htmlspecialchars($value).'"';
 

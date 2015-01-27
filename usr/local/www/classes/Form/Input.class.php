@@ -51,27 +51,48 @@ class Form_Input extends Form_Element
 		return $this;
 	}
 
-	public function getColumnWidth()
+	public function getWidth()
 	{
 		return $this->_columnWidth;
 	}
 
-	public function setWidth($count, $soft = false)
+	public function setWidth($size)
 	{
-		if ($soft && isset($this->_columnWidth))
-			return;
+		if ($size < 1 || $size > 12)
+			throw new Exception('Incorrect size, pass a number between 1 and 12');
 
-		$this->_columnWidth = (int)$count;
+		$this->removeColumnClass('col-sm-'. $this->_columnWidth);
+
+		$this->_columnWidth = (int)$size;
+
+		$this->addColumnClass('col-sm-'. $this->_columnWidth);
 	}
 
 	public function addColumnClass($class)
 	{
-		array_push($this->_columnClasses, $class);
+		$this->_columnClasses[$class] = true;
+
+		return $this;
+	}
+
+	public function removeColumnClass($class)
+	{
+		unset($this->_columnClasses[$class]);
+
+		return $this;
+	}
+
+	public function getColumnHtmlClass()
+	{
+		if (empty($this->_columnClasses))
+				return '';
+
+		return 'class="'. implode(' ', array_keys($this->_columnClasses)).'"';
 	}
 
 	protected function _getInput()
 	{
-		$html = '<input '. $this->getHtmlClass();
+		$html = '<input';
 
 		$attributes = $this->_attributes;
 		if (isset($this->_name))
@@ -85,12 +106,13 @@ class Form_Input extends Form_Element
 
 	public function __toString()
 	{
+		$this->_attributes['class'] = $this->getHtmlClass(false);
+
 		$input = $this->_getInput();
-		$columnClasses = implode(' ', $this->_columnClasses);
 		$help = isset($this->_help) ? '<span class="help-block">'. gettext($this->_help). '</span>' : '';
 
 		return <<<EOT
-	<div class="col-sm-{$this->_columnWidth} {$columnClasses}">
+	<div {$this->getColumnHtmlClass()}>
 		{$input}
 
 		{$help}

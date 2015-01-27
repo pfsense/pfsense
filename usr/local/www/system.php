@@ -395,11 +395,5 @@ $section->addInput(new Form_Select(
 $form->add($section);
 
 print $form;
-return;
-?>
-		<div class="col-sm-offset-2 col-sm-10">
-			<button type="submit" class="btn btn-primary"><?=gettext("Save");?></button>
-		</div>
-	</form>
-</div>
-<?php include("foot.inc"); ?>
+
+include("foot.inc");

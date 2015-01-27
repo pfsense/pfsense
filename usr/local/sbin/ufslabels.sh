@@ -48,7 +48,7 @@ get_ufsid() {
 
 find_fs_device(){
 	unset DEV
-	DEV=`/usr/bin/grep -e "[[:blank:]]${1}[[:blank:]]" ${FSTAB} | awk '{print $1;}'`
+	DEV=`/usr/bin/grep -e "[[:blank:]]*${1}[[:blank:]]" ${FSTAB} | awk '{print $1;}'`
 	DEV=${DEV##/dev/}
 }
 
@@ -67,7 +67,7 @@ do
 		if [ ${LEN} -ne 16 ]; then
 			echo "Invalid UFS ID for FS ${FS} ($UFSID), skipping"
 		else
-			/usr/bin/sed -i'' -e "s/${DEV}/ufsid\/${UFSID}/g" ${FSTAB}.tmp
+			/usr/bin/sed -i '' -e "s/${DEV}/ufsid\/${UFSID}/g" ${FSTAB}.tmp
 			NEED_CHANGES=true
 		fi
 	else
@@ -86,7 +86,7 @@ do
 		SWAPDEV=${DEV}
 		echo "FS: Swap slice ${SWAPNUM} on device ${SWAPDEV}"
 		if [ "${SWAPDEV}" != "" ]; then
-			/usr/bin/sed -i'' -e "s/${SWAPDEV}/label\/swap${SWAPNUM}/g" ${FSTAB}.tmp
+			/usr/bin/sed -i '' -e "s/${SWAPDEV}/label\/swap${SWAPNUM}/g" ${FSTAB}.tmp
 			NEED_CHANGES=true
 		fi
 		SWAPNUM=`expr ${SWAPNUM} + 1`

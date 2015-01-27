@@ -61,11 +61,11 @@ find_fs_device() {
 	DEV=${DEV##/dev/}
 }
 
-FSTAB=/etc/fstab
+FSTAB=${DESTDIR}/etc/fstab
 unset NEED_CHANGES
 cp ${FSTAB} ${FSTAB}.tmp
 
-ALL_FILESYSTEMS=$(/usr/bin/awk '/ufs/ && !(/dev\/mirror\// || /dev\/ufsid\// || /dev\/label\// || /dev\/geom\//) {print $2}' /etc/fstab)
+ALL_FILESYSTEMS=$(/usr/bin/awk '/ufs/ && !(/dev\/mirror\// || /dev\/ufsid\// || /dev\/label\// || /dev\/geom\//) {print $2}' ${DESTDIR}/etc/fstab)
 
 for FS in ${ALL_FILESYSTEMS}
 do
@@ -86,7 +86,7 @@ do
 	echo "FS: ${FS} on device ${DEV} with ufsid ${UFSID}"
 done
 
-ALL_SWAPFS=$(/usr/bin/awk '/swap/ && !(/dev\/mirror\// || /dev\/ufsid\// || /dev\/label\// || /dev\/geom\//) {print $1}' /etc/fstab)
+ALL_SWAPFS=$(/usr/bin/awk '/swap/ && !(/dev\/mirror\// || /dev\/ufsid\// || /dev\/label\// || /dev\/geom\//) {print $1}' ${DESTDIR}/etc/fstab)
 SWAPNUM=0
 for SFS in ${ALL_SWAPFS}
 do

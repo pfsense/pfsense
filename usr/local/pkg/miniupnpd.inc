@@ -98,7 +98,8 @@
 			$input_errors[] = 'You must specify a valid traffic shaping queue.';
 
 		/* user permissions validation */
-		for ($i=0; $i<500; $i++){
+		$j = substr_count(implode(array_keys($post)), "permuser");
+		for ($i=0; $i<$j; $i++){
 			if($post["permuser{$i}"]) {
 				$perm = explode(' ',$post["permuser{$i}"]);
 				/* should explode to 4 args */

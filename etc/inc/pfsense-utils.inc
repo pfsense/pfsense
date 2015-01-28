@@ -375,11 +375,11 @@ function get_carp_interface_status($carpinterface) {
 	$_gb = exec("/sbin/ifconfig $interface | /usr/bin/grep -v grep | /usr/bin/grep carp: | /usr/bin/head -n 1", $carp_query);
 	foreach($carp_query as $int) {
 		if (stripos($int, "MASTER"))
-			return gettext("MASTER");
+			return "MASTER";
 		if (stripos($int, "BACKUP"))
-			return gettext("BACKUP");
+			return "BACKUP";
 		if (stripos($int, "INIT"))
-			return gettext("INIT");
+			return "INIT";
 	}
 	return;
 }
@@ -1019,7 +1019,7 @@ function setup_serial_port($when="save", $path="") {
 	$ttys_split = explode("\n", $ttys);
 	$fd = fopen($ttys_file, "w");
 
-	$on_off = (is_serial_enabled() ? 'on' : 'off');
+	$on_off = (is_serial_enabled() ? 'onifconsole' : 'off');
 
 	if (isset($config['system']['disableconsolemenu'])) {
 		$console_type = 'Pc';
@@ -1031,9 +1031,10 @@ function setup_serial_port($when="save", $path="") {
 	foreach($ttys_split as $tty) {
 		if (stristr($tty, "ttyv0"))
 			fwrite($fd, "ttyv0	\"/usr/libexec/getty {$console_type}\"	cons25	on	secure\n");
-		else if (stristr($tty, "ttyu0"))
-			fwrite($fd, "ttyu0	\"/usr/libexec/getty {$serial_type}\"	cons25	{$on_off}	secure\n");
-		else
+		else if (stristr($tty, "ttyu")) {
+			$ttyn = substr($tty, 0, 5);
+			fwrite($fd, "{$ttyn}	\"/usr/libexec/getty {$serial_type}\"	cons25	{$on_off}	secure\n");
+		} else
 			fwrite($fd, $tty . "\n");
 	}
 	unset($on_off, $console_type, $serial_type);

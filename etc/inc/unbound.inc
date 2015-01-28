@@ -2,7 +2,7 @@
 /*
 	unbound.inc
 	part of the pfSense project (https://www.pfsense.org)
-	Copyright (C) 2014 Warren Baker <warren@decoy.co.za>
+	Copyright (C) 2015 Warren Baker <warren@percol8.co.za>
 	All rights reserved.
 
 	Redistribution and use in source and binary forms, with or without
@@ -226,6 +226,7 @@ EOF;
 		$unwanted_reply_threshold = "0";
 	$msg_cache_size = (!empty($config['unbound']['msgcachesize'])) ? $config['unbound']['msgcachesize'] : "4";
 	$verbosity = isset($config['unbound']['log_verbosity']) ? $config['unbound']['log_verbosity'] : 1;
+	$use_caps = isset($config['unbound']['use_caps']) ? "yes" : "no";
 
 	// Set up forwarding if it configured
 	if (isset($config['unbound']['forwarding'])) {
@@ -307,6 +308,7 @@ outgoing-range: 4096
 {$anchor_file}
 prefetch: {$prefetch}
 prefetch-key: {$prefetch_key}
+use-caps-for-id: {$use_caps}
 # Statistics
 {$statistics}
 # Interface IP(s) to bind to
@@ -601,7 +603,7 @@ function unbound_acls_config() {
 		// Add our networks for active interfaces including localhost
 		if (!empty($config['unbound']['active_interface'])) {
 			$active_interfaces = array_flip(explode(",", $config['unbound']['active_interface']));
-			if (in_array("all", $active_interfaces, true))
+			if (in_array("all", $active_interfaces))
 				$active_interfaces = get_configured_interface_with_descr();
 		} else
 			$active_interfaces = get_configured_interface_with_descr();

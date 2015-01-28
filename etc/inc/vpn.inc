@@ -122,6 +122,8 @@ function vpn_ipsec_configure($ipchg = false)
 		mwexec("/sbin/ifconfig enc0 down");
 		set_single_sysctl("net.inet.ip.ipsec_in_use", "0");
 
+		filter_configure();
+
 		return 0;
 	}
 
@@ -171,6 +173,7 @@ function vpn_ipsec_configure($ipchg = false)
 	$listeniflist = array();
 	$aggressive_mode_psk = false;
 	unset($iflist);
+	$ifacesuse = array();
 	if (is_array($a_phase1) && count($a_phase1)) {
 
 		$ipsecpinghosts = "";
@@ -179,6 +182,15 @@ function vpn_ipsec_configure($ipchg = false)
 			if (isset($ph1ent['disabled']))
 				continue;
 
+			if (strpos($ph1ent['interface'], '_vip')) {
+				$vpninterface = explode('_vip', $ph1ent['interface']);
+				$ifacesuse[] = get_real_interface($vpninterface[0]);
+                        } else {
+                                $vpninterface = get_failover_interface($ph1ent['interface']);
+				if (!empty($vpninterface))
+					$ifacesuse[] = $vpninterface;
+			}
+				
 			if ($ph1ent['mode'] == "aggressive" && ($ph1ent['authentication_method'] == "pre_shared_key" || $ph1ent['authentication_method'] == "xauth_psk_server")) 
 				$aggressive_mode_psk = true;
 
@@ -291,6 +303,11 @@ function vpn_ipsec_configure($ipchg = false)
 	if (isset($config['ipsec']['unityplugin']))
 		$unity_enabled = 'no';
 
+	if (!empty($ifacesuse))
+		$ifacesuse = 'interfaces_use = ' . implode(',', array_unique($ifacesuse));
+	else
+		$ifacesuse = '';
+
 	$strongswan = <<<EOD
 
 # Automatically generated config file - DO NOT MODIFY. Changes will be overwritten. 
@@ -308,6 +325,7 @@ install_routes = no
 {$i_dont_care_about_security_and_use_aggressive_mode_psk}
 {$accept_unencrypted}
 cisco_unity = {$unity_enabled}
+{$ifacesuse}
 
 # And two loggers using syslog. The subsections define the facility to log
 # to, currently one of: daemon, auth.
@@ -565,8 +583,61 @@ EOD;
 			if (isset($ph1ent['mobile'])) {
 				$right_spec = "%any";
 				$passive = 'add';
-			} else
+			} else {
 				$right_spec = $ph1ent['remote-gateway'];
+				if (is_ipaddr($right_spec))
+					$sourcehost = $right_spec;
+				else
+					$sourcehost = $rgmap['remote-gateway'];
+
+				if ($ph1ent['protocol'] == 'inet') {
+					if (strpos($ph1ent['interface'], '_vip')) {
+						$vpninterface = explode('_vip', $ph1ent['interface']);
+						$ifacesuse = get_real_interface($vpninterface[0]);
+						$vpninterface = $vpninterface[0];
+					} else {
+						$ifacesuse = get_failover_interface($ph1ent['interface']);
+						$vpninterface = convert_real_interface_to_friendly_interface_name($ifacesuse);
+					}
+					
+					if (!empty($ifacesuse) && interface_has_gateway($vpninterface)) {
+						$gatewayip = get_interface_gateway($vpninterface);
+						$interfaceip = get_interface_ip($vpninterface);
+						$subnet_bits = get_interface_subnet($vpninterface);
+						$subnet_ip = gen_subnetv4($interfaceip, $subnet_bits);
+						/* if the remote gateway is in the local subnet, then don't add a route */
+						if (!ip_in_subnet($sourcehost, "{$subnet_ip}/{$subnet_bits}")) {
+							if (is_ipaddrv4($gatewayip)) {
+								// log_error("IPSEC interface is not WAN but {$ifacesuse}, adding static route for VPN endpoint {$rgip} via {$gatewayip}");
+								mwexec("/sbin/route change -host {$sourcehost} {$gatewayip}", true);
+							}
+						}
+					}
+				} else if ($ph1ent['protocol'] == 'inet6') {
+					if (strpos($ph1ent['interface'], '_vip')) {
+						$vpninterface = explode('_vip', $ph1ent['interface']);
+						$ifacesuse = get_real_interface($vpninterface[0]);
+						$vpninterface = $vpninterface[0];
+					} else {
+						$ifacesuse = get_failover_interface($ph1ent['interface']);
+						$vpninterface = convert_real_interface_to_friendly_interface_name($ifacesuse);
+					}
+					
+					if (!empty($ifacesuse) && interface_has_gateway($vpninterface)) {
+						$gatewayip = get_interface_gateway_v6($vpninterface);
+						$interfaceip = get_interface_ipv6($vpninterface);
+						$subnet_bits = get_interface_subnetv6($vpninterface);
+						$subnet_ip = gen_subnetv6($interfaceip, $subnet_bits);
+						/* if the remote gateway is in the local subnet, then don't add a route */
+						if (!ip_in_subnet($sourcehost, "{$subnet_ip}/{$subnet_bits}")) {
+							if (is_ipaddrv6($gatewayip)) {
+								// log_error("IPSEC interface is not WAN but {$ifacesuse}, adding static route for VPN endpoint {$rgip} via {$gatewayip}");
+								mwexec("/sbin/route change -inet6 -host {$sourcehost} {$gatewayip}", true);
+							}
+						}
+					}
+				}
+			}
 
 			list ($myid_type, $myid_data) = ipsec_find_id($ph1ent, 'local');
 			if ($myid_type != 'address')

@@ -1229,7 +1229,7 @@ function interface_bring_down($interface = "wan", $destroy = false, $ifacecfg = 
 	}
 
 	if (!empty($track6) && is_array($track6)) {
-		if (!function_exists('services_dhcp_configure'))
+		if (!function_exists('services_dhcpd_configure'))
 			require_once('services.inc');
 		/* Bring down radvd and dhcp6 on these interfaces */
 		services_dhcpd_configure('inet6', $track6);

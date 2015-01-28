@@ -122,6 +122,8 @@ function vpn_ipsec_configure($ipchg = false)
 		mwexec("/sbin/ifconfig enc0 down");
 		set_single_sysctl("net.inet.ip.ipsec_in_use", "0");
 
+		filter_configure();
+
 		return 0;
 	}
 

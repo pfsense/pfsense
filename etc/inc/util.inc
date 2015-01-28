@@ -349,7 +349,7 @@ function gen_subnetv4_max($ipaddr, $bits) {
 	if (is_ipaddrv4($ipaddr) && is_numericint($bits) && $bits <= 32) {
 		if ($bits == 32)
 			return $ipaddr;
-		return long2ip(ip2long($ipaddr) | (0xFFFFFFFF >> $bits));
+		return long2ip32(ip2long($ipaddr) | ~gen_subnet_mask_long($bits));
 	}
 	return "";
 }

@@ -52,55 +52,36 @@ The Bootstrap grid system is used for defining columns. We've chosen the 'small'
 
 ## Forms
 
-* Every form should have at least one 'panel' which contains the form fields. If certain fields can be grouped together, you can add multiple panels to a form.
-* A field consists of an outer wrapper `.form-group` which contains a `label` and the `input`
-* The submit button should be placed outside of the panels to prevent confusion (e.g., the save button saves the whole form and not just the last panel).
-* Checkboxes are placed within a label (see example below). The wrapping div needs an additional `.checkbox` class
-* Additional field descriptions can be placed in the `.help-block` `span`
+After determining the proper layout for forms we decided to create wrappers in PHP to create all forms. This de-duplicates all of the current HTML, making this migration a bit harder but any future updates infinitely easier (since all forms can be updated centrally). This is what the form-code should look like:
 
-An example (which omits everything but relevant Bootstrap classes):
+```php
+require('classes/Form.class.php');
+$form = new Form;
 
-```html
-<form class="form-horizontal">
-	<div class="panel panel-default">
-		<div class="panel-heading">
-			<h2 class="panel-title">Form or panel heading</h2>
-		</div>
-		<div class="panel-body">
-			<div class="form-group">
-				<label for="input" class="col-sm-2 control-label">Labeltext</label>
-				<div class="col-sm-10">
-					<input class="form-control" id="input" />
-				</div>
-			</div>
-			<div class="form-group">
-				<label for="second-input" class="col-sm-2 control-label">Second label</label>
-				<div class="col-sm-10">
-					<input class="form-control" id="second-input" />
-					<span class="help-block">What's this all about?</span>
-				</div>
-			</div>
-			<div class="form-group">
-				<label for="second-input" class="col-sm-2 control-label">Checkbox</label>
-				<div class="col-sm-10 checkbox">
-					<label>
-						<input type="checkbox" id="checkbox" /> Checkbox description
-					</label>
-				</div>
-			</div>
+$section = new Form_Section('System');
 
-			<!-- And more form-groups -->
+$section->addInput(new Form_Input(
+    'Hostname',
+    'text',
+    $pconfig['hostname'],
+    ['placeholder' => 'pfSense']
+))->setHelp('Name of the firewall host, without domain part');
 
-		</div>
-	</div>
+$section->addInput(new Form_Input(
+    'Domain',
+    'text',
+    $pconfig['domain'],
+    ['placeholder' => 'mycorp.com, home, office, private, etc.']
+))->setHelp('Do not use \'local\' as a domain name. It will cause local '.
+    'hosts running mDNS (avahi, bonjour, etc.) to be unable to resolve '.
+    'local hosts not running mDNS.');
 
-	<!-- And more panels -->
+$form->add($section);
 
-	<div class="col-sm-10 col-sm-offset-2">
-		<input type="submit" class="btn btn-primary" value="Save" />
-	</div>
-</form>
+print $form;
 ```
+
+Please make sure the referenced $_POST fields in the php-code above this code are also updated since they are automatically generated
 
 ## Tables
 

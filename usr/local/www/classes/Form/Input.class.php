@@ -68,6 +68,13 @@ class Form_Input extends Form_Element
 		$this->addColumnClass('col-sm-'. $this->_columnWidth);
 	}
 
+	public function setAttribute($key, $value)
+	{
+		$this->_attributes[ $key ] = $value;
+
+		return $this;
+	}
+
 	public function addColumnClass($class)
 	{
 		$this->_columnClasses[$class] = true;

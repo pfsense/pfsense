@@ -102,10 +102,10 @@ if ($_POST) {
 	if (!empty($_POST['thermal_hardware']) && !array_key_exists($_POST['thermal_hardware'], $thermal_hardware_modules))
 		$input_errors[] = gettext("Please select a valid Thermal Hardware Sensor.");
 
-	if (!empty($_POST['use_mfs_tmp_size']) && (!is_numeric($_POST['use_mfs_tmp_size']) || ($_POST['use_mfs_tmp_size'] <= 40)))
+	if (!empty($_POST['use_mfs_tmp_size']) && (!is_numeric($_POST['use_mfs_tmp_size']) || ($_POST['use_mfs_tmp_size'] < 40)))
 		$input_errors[] = gettext("/tmp Size must be numeric and should not be less than 40MB.");
 
-	if (!empty($_POST['use_mfs_var_size']) && (!is_numeric($_POST['use_mfs_var_size']) || ($_POST['use_mfs_var_size'] <= 60)))
+	if (!empty($_POST['use_mfs_var_size']) && (!is_numeric($_POST['use_mfs_var_size']) || ($_POST['use_mfs_var_size'] < 60)))
 		$input_errors[] = gettext("/var Size must be numeric and should not be less than 60MB.");
 
 	if (!$input_errors) {

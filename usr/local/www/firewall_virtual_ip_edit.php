@@ -86,6 +86,7 @@ if (isset($id) && $a_vip[$id]) {
 	$pconfig['mode'] = $a_vip[$id]['mode'];
 	$pconfig['vhid'] = $a_vip[$id]['vhid'];
 	$pconfig['advskew'] = $a_vip[$id]['advskew'];
+	$pconfig['dontadvskew'] = $a_vip[$id]['dontadvskew'];
 	$pconfig['advbase'] = $a_vip[$id]['advbase'];
 	$pconfig['password'] = $a_vip[$id]['password'];
 	$pconfig['range'] = $a_vip[$id]['range'];
@@ -244,6 +245,7 @@ if ($_POST) {
 			$vipent['vhid'] = $_POST['vhid'];
 			$vipent['vhid'] = $_POST['uinqid'];
 			$vipent['advskew'] = $_POST['advskew'];
+			$vipent['dontadvskew'] = $_POST['dontadvskew'];
 			$vipent['advbase'] = $_POST['advbase'];
 			$vipent['password'] = $_POST['password'];
 		}
@@ -325,6 +327,7 @@ function enable_change() {
 	document.iform.password.disabled = $mode != "carp";
 	document.iform.vhid.disabled     = $mode != "carp";
 	document.iform.advskew.disabled  = $mode != "carp";
+	document.iform.dontadvskew.disabled  = $mode != "carp";
 	document.iform.advbase.disabled  = $mode != "carp";
 	document.iform.type.disabled     = $mode in {"carp":1,"ipalias":1};
 	
@@ -489,13 +492,14 @@ function typesel_change() {
                       			</option>
                             <?php endfor; ?>
                       		</select>
-					Skew: <select id='advskew' name='advskew'>
+					Skew: <select id='advskew' name='advskew'> 
                             <?php for ($i = 0; $i <= 254; $i++): ?>
                             	<option value="<?=$i;?>" <?php if ($i == $pconfig['advskew']) echo "selected=\"selected\""; ?>>
                             <?=$i;?>
                       			</option>
                             <?php endfor; ?>
                       		</select>
+				Disable sync skew: <input type="checkbox" id='dontadvskew' name='dontadvskew' value="ignore"> <i id="typenote"><?=gettext("Do not disable unless you know what you are doing?");?></i>
 				<br /><br />
 				<?=gettext("The frequency that this machine will advertise.  0 means usually master. Otherwise the lowest combination of both values in the cluster determines the master.");?>
 				  </td>

@@ -66,7 +66,7 @@ After determining the proper layout for forms we decided to create wrappers in P
 require('classes/Form.class.php');
 $form = new Form;
 
-$section = new Form_Section('Form or panel heading');
+$section = new Form_Section('System');
 
 $section->addInput(new Form_Input(
     'Hostname',
@@ -91,7 +91,7 @@ print $form;
 
 Please make sure the referenced $_POST fields in the php-code above this code are also updated since they are automatically generated
 
-The PHP code above will result in something like this (with everything but relevant Bootstrap classes omitted for this example):
+The PHP code will output HTML something like this (with everything but relevant Bootstrap classes omitted for this example):
 
 ```html
 <form class="form-horizontal">

@@ -103,7 +103,10 @@ class Form_Input extends Form_Element
 
 		$attributes = $this->_attributes;
 		if (isset($this->_name))
+		{
 			$attributes['name'] = $this->_name;
+			$attributes['id'] = $this->_name;
+		}
 
 		foreach ($attributes as $key => $value)
 			$html .= ' '.$key.'="'. htmlspecialchars($value).'"';

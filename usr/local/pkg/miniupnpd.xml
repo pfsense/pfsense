@@ -35,13 +35,13 @@
 		<field>
 			<name>UPnP &amp; NAT-PMP Settings</name>
 			<type>listtopic</type>
-			<enablefields>enable_upnp,enable_natpmp,iface_array,overridewanip,upnpqueue,logpackets,sysuptime,permdefault,permuser1,permuser2,permuser3,permuser4</enablefields>
+			<enablefields>enable_upnp,enable_natpmp,ext_iface,iface_array,download,upload,overridewanip,upnpqueue,logpackets,sysuptime,permdefault</enablefields>
 		</field>
 		<field>
 			<fielddescr>Enable UPnP &amp; NAT-PMP</fielddescr>
 			<fieldname>enable</fieldname>
 			<type>checkbox</type>
-			<enablefields>enable_upnp,enable_natpmp,iface_array,overridewanip,upnpqueue,logpackets,sysuptime,permdefault,permuser1,permuser2,permuser3,permuser4</enablefields>
+			<enablefields>enable_upnp,enable_natpmp,ext_iface,iface_array,download,upload,overridewanip,upnpqueue,logpackets,sysuptime,permdefault</enablefields>
 		</field>			
 		<field>
 			<fielddescr>Allow UPnP Port Mapping</fielddescr>

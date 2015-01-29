@@ -98,12 +98,19 @@ $tcpflags = array("syn", "ack", "fin", "rst", "psh", "urg", "ece", "cwr");
 
 if(file_exists("/etc/platform")) {
 	$arch = php_uname("m");
-	/* Do not remove this, it is not needed for the snapshots URL but is needed later for the -RELEASE/stable URLs */
-	//$arch = ($arch == "i386") ? "" : '/' . $arch;
+	$current_version = trim(file_get_contents("{$g['etc_path']}/version"));
 
-	/* Full installs and NanoBSD use the same update directory and manifest in 2.x */
-	$g['update_url']="https://snapshots.pfsense.org/FreeBSD_releng/10.1/{$arch}/pfSense_HEAD/.updaters/";
-	$g['update_manifest']="https://updates.pfSense.org/manifest";
+	if (strstr($current_version, "-RELEASE")) {
+		/* This is only necessary for RELEASE */
+		$arch = ($arch == "i386") ? "" : '/' . $arch;
+		/* Full installs and NanoBSD use the same update directory and manifest in 2.x */
+		$g['update_url']="https://updates.pfsense.org/_updaters{$arch}";
+		$g['update_manifest']="https://updates.pfsense.org/manifest";
+	} else {
+		/* Full installs and NanoBSD use the same update directory and manifest in 2.x */
+		$g['update_url']="https://snapshots.pfsense.org/FreeBSD_releng/10.1/{$arch}/pfSense_HEAD/.updaters/";
+		$g['update_manifest']="https://updates.pfSense.org/manifest";
+	}
 
 	$g['platform'] = trim(file_get_contents("/etc/platform"));
 	if($g['platform'] == "nanobsd") {

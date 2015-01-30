@@ -117,6 +117,7 @@
 		</field>
 		<field>
 			<fielddescr>User specified permissions</fielddescr>
+			<fieldname>none</fieldname>
 			<description>Format: [allow or deny] [ext port or range] [int ipaddr or ipaddr/CIDR] [int port or range]
 			&lt;br /&gt;Example: allow 1024-65535 192.168.0.0/24 1024-65535</description>
 			<type>rowhelper</type>

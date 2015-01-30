@@ -122,6 +122,7 @@ if (!empty($_GET['dup'])) {
 	unset($uindex);
 	unset($p2index);
 	$pconfig['uniqid'] = uniqid();
+	$pconfig['reqid'] = ipsec_new_reqid();
 }
 
 if ($_POST) {

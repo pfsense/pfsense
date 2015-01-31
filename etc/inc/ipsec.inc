@@ -58,6 +58,10 @@ $peer_identifier_list = array(
 	'asn1dn' => array( 'desc' => gettext('ASN.1 distinguished Name'), 'mobile' => true ),
 	'keyid tag' => array( 'desc' =>gettext('KeyID tag'), 'mobile' => true ));
 
+$ipsec_idhandling = array(
+	'yes' => 'YES', 'no' => 'NO', 'never' => 'NEVER', 'keep' => 'KEEP'
+	);
+
 $p1_ealgos = array(
 	'aes' => array( 'name' => 'AES', 'keysel' => array( 'lo' => 128, 'hi' => 256, 'step' => 64 ) ),
 	'blowfish' => array( 'name' => 'Blowfish', 'keysel' => array( 'lo' => 128, 'hi' => 256, 'step' => 64 ) ),

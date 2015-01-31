@@ -6,7 +6,7 @@ class Form_Select extends Form_Input
 
 	public function __construct($title, $value, array $values, $allowMultiple = false)
 	{
-		parent::__construct($title);
+		parent::__construct($title, null);
 
 		if ($allowMultiple)
 			$this->_attributes['multiple'] = 'multiple';
@@ -16,10 +16,7 @@ class Form_Select extends Form_Input
 
 	protected function _getInput()
 	{
-		$element = 'select';
-
-		foreach ($this->_attributes as $key => $value)
-			$element .= ' '.$key.'="'. htmlspecialchars($value).'"';
+		$element = preg_replace('~^<input(.*)/>$~', 'select\1', parent::_getInput());
 
 		$options = '';
 		foreach ($this->_values as $value => $name)

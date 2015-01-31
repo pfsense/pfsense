@@ -67,7 +67,7 @@ class Form_Input extends Form_Element
 		$this->addColumnClass('col-sm-'. $this->_columnWidth);
 	}
 
-	public function setAttribute($key, $value)
+	public function setAttribute($key, $value = null)
 	{
 		$this->_attributes[ $key ] = $value;
 
@@ -101,7 +101,7 @@ class Form_Input extends Form_Element
 		$html = '<input';
 
 		foreach ($this->_attributes as $key => $value)
-			$html .= ' '.$key.'="'. htmlspecialchars($value).'"';
+			$html .= ' '.$key. (isset($value) ? '="'. htmlspecialchars($value).'"' : '');
 
 		return $html .'/>';
 	}

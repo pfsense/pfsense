@@ -10,6 +10,7 @@ class Form_Checkbox extends Form_Input
 
 		$this->_description = $description;
 		$this->removeClass('form-control');
+		$this->addColumnClass('checkbox');
 
 		if ($checked)
 			$this->_attributes['checked'] = 'checked';
@@ -22,7 +23,6 @@ class Form_Checkbox extends Form_Input
 
 	protected function _getInput()
 	{
-		$this->addColumnClass('checkbox');
 		$input = parent::_getInput();
 
 		if (!isset($this->_description))

@@ -468,7 +468,7 @@ $section->addInput(new Form_Input(
 	'SSH port',
 	'number',
 	$pconfig['sshport'],
-	['min' => 1, 'max' => 65535]
+	['min' => 1, 'max' => 65535, 'placeholder' => 22]
 ))->setHelp('Note: Leave this blank for the default of 22.');
 
 

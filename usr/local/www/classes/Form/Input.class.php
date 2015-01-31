@@ -6,6 +6,7 @@ class Form_Input extends Form_Element
 	protected $_name;
 	protected $_attributes;
 	protected $_help;
+	protected $_helpParams = array();
 	protected $_columnWidth;
 	protected $_columnClasses = array();
 
@@ -44,9 +45,10 @@ class Form_Input extends Form_Element
 		return $this->_name;
 	}
 
-	public function setHelp($help)
+	public function setHelp($help, array $params = array())
 	{
 		$this->_help = $help;
+		$this->_helpParams = $params;
 
 		return $this;
 	}
@@ -119,7 +121,16 @@ class Form_Input extends Form_Element
 		$this->_attributes['class'] = $this->getHtmlClass(false);
 
 		$input = $this->_getInput();
-		$help = isset($this->_help) ? '<span class="help-block">'. gettext($this->_help). '</span>' : '';
+
+		if (isset($this->_help))
+		{
+			$help = gettext($this->_help);
+
+			if (!empty($this->_helpParams))
+				$help = call_user_func_array('sprintf', array_merge([$help], $this->_helpParams));
+
+			$help = '<span class="help-block">'. $help .'</span>';
+		}
 
 		return <<<EOT
 	<div {$this->getColumnHtmlClass()}>

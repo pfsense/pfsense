@@ -27,7 +27,7 @@ class Form_Select extends Form_Input
 
 		$options = '';
 		foreach ($this->_values as $value => $name)
-			$options .= '<option value="'. htmlspecialchars($value) .'">'. $name .'</option>';
+			$options .= '<option value="'. htmlspecialchars($value) .'">'. gettext($name) .'</option>';
 
 		return <<<EOT
 	<{$element}>

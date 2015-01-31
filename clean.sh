@@ -10,6 +10,6 @@ sed -i -e 's/> </></g' \
  -e 's/<?php include("fbegin.inc"); ?>//g' \
  -e 's/<?php include("fend.inc"); ?>/<?php include("foot.inc"); ?>/g' \
  -e 's/<?php echo /<?=/g' \
- -e 's/;?\s*?>/?>/g' \
+ -e 's/;\s*?>/?>/g' \
  -e 's/<?\s*=\s*/<?=/g' \
   $1

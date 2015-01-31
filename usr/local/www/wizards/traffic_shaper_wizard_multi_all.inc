@@ -599,6 +599,10 @@ function step3_stepsubmitphpaction() {
 		}
 	}
 
+	/* This is necessary since the wizard expects pecnefined fields. */
+	unset($config['ezshaper']['step3']);
+	$config['ezshaper']['step3'] = array();
+
 	for ($i = 0; $i < $localint; $i++) {
 		$config['ezshaper']['step3']["local{$i}download"] = $_POST["local{$i}download"];
 		$config['ezshaper']['step3']["local{$i}downloadspeed"] = $_POST["local{$i}downloadspeed"];

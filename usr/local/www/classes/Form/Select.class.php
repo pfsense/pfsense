@@ -3,6 +3,7 @@
 class Form_Select extends Form_Input
 {
 	protected $_values;
+	protected $_value;
 
 	public function __construct($title, $value, array $values, $allowMultiple = false)
 	{
@@ -11,6 +12,7 @@ class Form_Select extends Form_Input
 		if ($allowMultiple)
 			$this->_attributes['multiple'] = 'multiple';
 
+		$this->_value = $value;
 		$this->_values = $values;
 	}
 
@@ -20,7 +22,10 @@ class Form_Select extends Form_Input
 
 		$options = '';
 		foreach ($this->_values as $value => $name)
-			$options .= '<option value="'. htmlspecialchars($value) .'">'. gettext($name) .'</option>';
+		{
+			$selected = (is_array($this->_value) && in_array($value, $this->_value) || $this->_value == $value);
+			$options .= '<option value="'. htmlspecialchars($value) .'"'.($selected ? ' selected' : '').'>'. gettext($name) .'</option>';
+		}
 
 		return <<<EOT
 	<{$element}>

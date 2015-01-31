@@ -84,7 +84,7 @@ openlog("openvpn", LOG_ODELAY, LOG_AUTH);
 
 if (isset($_GET)) {
 	$authmodes = explode(",", $_GET['authcfg']);
-	$username = $_GET['username'];
+	$username = base64_decode(str_replace('%3D', '=', $_GET['username']));
 	$password = base64_decode(str_replace('%3D', '=', $_GET['password']));
 	$common_name = $_GET['cn'];
 	$modeid = $_GET['modeid'];

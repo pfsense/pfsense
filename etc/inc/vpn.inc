@@ -597,6 +597,9 @@ EOD;
 				$right_spec = "%any";
 				$passive = 'add';
 			} else {
+				if (isset($ph1ent['responderonly']))
+					$passive = 'add';
+
 				$right_spec = $ph1ent['remote-gateway'];
 				if (is_ipaddr($right_spec))
 					$sourcehost = $right_spec;

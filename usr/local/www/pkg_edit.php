@@ -811,7 +811,7 @@ if ($pkg['tabs'] <> "") {
 			case "schedule_selection":
 				$input = "<select id='{$pkga['fieldname']}' name='{$pkga['fieldname']}'>\n";
 				$schedules = array();
-				$schedules[] = "none";//leave none to leave UPnP enabled all the time
+				$schedules[] = "none";
 				if(is_array($config['schedules']['schedule'])) {
 					foreach ($config['schedules']['schedule'] as $schedule) {
 						if ($schedule['name'] <> "")

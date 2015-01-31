@@ -3,7 +3,6 @@
 class Form_Input extends Form_Element
 {
 	protected $_title;
-	protected $_name;
 	protected $_attributes;
 	protected $_help;
 	protected $_helpParams = array();
@@ -12,25 +11,23 @@ class Form_Input extends Form_Element
 
 	public function __construct($title, $type = 'text', $value = null, array $attributes = array())
 	{
+		$this->_title = $title;
+		$this->addClass('form-control');
+
 		if (isset($type))
 			$attributes['type'] = $type;
 
 		if (isset($value))
 			$attributes['value'] = $value;
 
+		$attributes['name'] = preg_replace('~[^a-z0-9_]+~', '-', strtolower($title));
+		$attributes['id'] = $attributes['name'];
 		$this->_attributes = $attributes;
-		$this->addClass('form-control');
-
-		if (isset($title))
-		{
-			$this->_title = $title;
-			$this->_name = preg_replace('~[^a-z0-9_]+~', '-', strtolower($title));
-		}
 	}
 
 	public function forceName($name)
 	{
-		$this->_name = $name;
+		$this->setAttribute('name', $this->_name);
 
 		return $this;
 	}
@@ -42,7 +39,7 @@ class Form_Input extends Form_Element
 
 	public function getName()
 	{
-		return $this->_name;
+		return $this->_attributes['name'];
 	}
 
 	public function setHelp($help, array $params = array())
@@ -103,14 +100,7 @@ class Form_Input extends Form_Element
 	{
 		$html = '<input';
 
-		$attributes = $this->_attributes;
-		if (isset($this->_name))
-		{
-			$attributes['name'] = $this->_name;
-			$attributes['id'] = $this->_name;
-		}
-
-		foreach ($attributes as $key => $value)
+		foreach ($this->_attributes as $key => $value)
 			$html .= ' '.$key.'="'. htmlspecialchars($value).'"';
 
 		return $html .'/>';

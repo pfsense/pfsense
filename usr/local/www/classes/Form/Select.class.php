@@ -18,11 +18,7 @@ class Form_Select extends Form_Input
 	{
 		$element = 'select';
 
-		$attributes = $this->_attributes;
-		if (isset($this->_name))
-			$attributes['name'] = $this->_name;
-
-		foreach ($attributes as $key => $value)
+		foreach ($this->_attributes as $key => $value)
 			$element .= ' '.$key.'="'. htmlspecialchars($value).'"';
 
 		$options = '';

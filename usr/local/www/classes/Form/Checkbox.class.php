@@ -17,7 +17,7 @@ class Form_Checkbox extends Form_Input
 
 	public function displayAsRadio()
 	{
-		$this->setAttribute('type', 'radio');
+		return $this->setAttribute('type', 'radio');
 	}
 
 	protected function _getInput()

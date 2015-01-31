@@ -112,7 +112,8 @@ if ($_POST['create']) {
 
 if ($_POST['apply']) {
 	$retval = 0;
-	$retval = vpn_ipsec_configure();
+	/* NOTE: #4353 Always restart ipsec when mobile clients settings change */
+	$retval = vpn_ipsec_configure(true);
 	$savemsg = get_std_save_message($retval);
 	if ($retval >= 0)
 		if (is_subsystem_dirty('ipsec'))
@@ -226,8 +227,6 @@ if ($_POST['submit']) {
 
 		if ($pconfig['login_banner_enable'])
 			$client['login_banner'] = $pconfig['login_banner'];
-
-//		$echo "login banner = {$pconfig['login_banner']}";
 
 		$a_client = $client;
 		

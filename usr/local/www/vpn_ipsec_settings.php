@@ -130,20 +130,34 @@ if ($_POST) {
 			}
 		}
 
-		if($_POST['compression'] == "yes")
+		$needsrestart = false;
+
+		if($_POST['compression'] == "yes") {
+			if (!isset($config['ipsec']['compression']))
+				$needsrestart = true;
 			$config['ipsec']['compression'] = true;
-		elseif (isset($config['ipsec']['compression']))
+		} elseif (isset($config['ipsec']['compression'])) {
+			$needsrestart = true;
 			unset($config['ipsec']['compression']);
+		}
 
-		if($_POST['unityplugin'] == "yes")
+		if($_POST['unityplugin'] == "yes") {
+			if (!isset($config['ipsec']['unityplugin']))
+				$needsrestart = true;
 			$config['ipsec']['unityplugin'] = true;
-		elseif (isset($config['ipsec']['unityplugin']))
+		} elseif (isset($config['ipsec']['unityplugin'])) {
+			$needsrestart = true;
 			unset($config['ipsec']['unityplugin']);
+		}
 
-		if($_POST['acceptunencryptedmainmode'] == "yes")
+		if($_POST['acceptunencryptedmainmode'] == "yes") {
+			if (!isset($config['ipsec']['acceptunencryptedmainmode']))
+				$needsrestart = true;
 			$config['ipsec']['acceptunencryptedmainmode'] = true;
-		elseif (isset($config['ipsec']['acceptunencryptedmainmode']))
+		} elseif (isset($config['ipsec']['acceptunencryptedmainmode'])) {
+			$needsrestart = true;
 			unset($config['ipsec']['acceptunencryptedmainmode']);
+		}
 
 		if($_POST['maxmss_enable'] == "yes") {
 			$config['system']['maxmss_enable'] = true;
@@ -163,7 +177,7 @@ if ($_POST) {
 			$savemsg = gettext($retval);
 
 		vpn_ipsec_configure_preferoldsa();
-		vpn_ipsec_configure();
+		vpn_ipsec_configure($needsrestart);
 		vpn_ipsec_configure_loglevels();
 
 //		header("Location: vpn_ipsec_settings.php");

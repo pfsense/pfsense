@@ -94,7 +94,7 @@ function vpn_ipsec_convert_to_modp($index)
 	return $convertion;
 }
 
-function vpn_ipsec_configure($ipchg = false)
+function vpn_ipsec_configure($restart = false)
 {
 	global $config, $g, $sa, $sn, $p1_ealgos, $p2_ealgos;
 
@@ -293,9 +293,15 @@ function vpn_ipsec_configure($ipchg = false)
 	if (isset($config['ipsec']['acceptunencryptedmainmode']))
 		$accept_unencrypted = "accept_unencrypted_mainmode_messages = yes";
 
+	$stronconf = '';
+	if (file_exists("{$g['varetc_path']}/ipsec/strongswan.conf"))
+		$stronconf = file_get_contents("{$g['varetc_path']}/ipsec/strongswan.conf");
+
 	$i_dont_care_about_security_and_use_aggressive_mode_psk = "";
 	if ($aggressive_mode_psk) {
 		log_error("WARNING: Setting i_dont_care_about_security_and_use_aggressive_mode_psk option because a phase 1 is configured using aggressive mode with pre-shared keys. This is not a secure configuration.");
+		if (!empty($stronconf) && strpos($stronconf, 'i_dont_care_about_security_and_use_aggressive_mode_psk') === FALSE)
+			$restart = true;
 		$i_dont_care_about_security_and_use_aggressive_mode_psk = "i_dont_care_about_security_and_use_aggressive_mode_psk=yes";
 	} 
 
@@ -307,6 +313,8 @@ function vpn_ipsec_configure($ipchg = false)
 		$ifacesuse = 'interfaces_use = ' . implode(',', array_unique($ifacesuse));
 	else
 		$ifacesuse = '';
+
+	unset($strongconf);
 
 	$strongswan = <<<EOD
 
@@ -993,13 +1001,17 @@ EOD;
 		set_single_sysctl('net.inet.ipcomp.ipcomp_enable', 0);
 
 	/* mange process */
-	if (isvalidpid("{$g['varrun_path']}/charon.pid")) {
-		/* Read secrets */
-		mwexec("/usr/local/sbin/ipsec rereadall", false);
-		/* Update configuration changes */
-		mwexec("/usr/local/sbin/ipsec update", false);
+	if ($restart === true) {
+		mwexec("/usr/local/sbin/ipsec restart", false); 
 	} else {
-		mwexec("/usr/local/sbin/ipsec start", false); 
+		if (isvalidpid("{$g['varrun_path']}/charon.pid")) {
+			/* Read secrets */
+			mwexec("/usr/local/sbin/ipsec rereadall", false);
+			/* Update configuration changes */
+			mwexec("/usr/local/sbin/ipsec update", false);
+		} else {
+			mwexec("/usr/local/sbin/ipsec start", false); 
+		}
 	}
 
 	if ($natfilterrules == true)

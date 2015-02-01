@@ -252,7 +252,7 @@ if ($_POST) {
 		$mode = "reinstallpackages";
 	else if (stristr($_POST['Submit'], gettext("Clear Package Lock")))
 		$mode = "clearpackagelock";
-	else if (stristr($_POST['Submit'], gettext("Download")))
+	else if (stristr($_POST['Submit'], gettext("Download configuration")))
 		$mode = "download";
 	else if (stristr($_POST['Submit'], gettext("Restore version")))
 		$mode = "restore_ver";

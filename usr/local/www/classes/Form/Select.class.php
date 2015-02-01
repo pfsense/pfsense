@@ -10,7 +10,10 @@ class Form_Select extends Form_Input
 		parent::__construct($title, null);
 
 		if ($allowMultiple)
+		{
 			$this->_attributes['multiple'] = 'multiple';
+			$this->_attributes['name'] .= '[]';
+		}
 
 		$this->_value = $value;
 		$this->_values = $values;

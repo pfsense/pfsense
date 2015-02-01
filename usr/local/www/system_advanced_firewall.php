@@ -49,10 +49,8 @@ require_once("filter.inc");
 require_once("shaper.inc");
 
 $pconfig['disablefilter'] = $config['system']['disablefilter'];
-$pconfig['rfc959workaround'] = $config['system']['rfc959workaround'];
 $pconfig['scrubnodf'] = $config['system']['scrubnodf'];
 $pconfig['scrubrnid'] = $config['system']['scrubrnid'];
-$pconfig['tcpidletimeout'] = $config['filter']['tcpidletimeout'];
 $pconfig['optimization'] = $config['filter']['optimization'];
 $pconfig['adaptivestart'] = $config['system']['adaptivestart'];
 $pconfig['adaptiveend'] = $config['system']['adaptiveend'];
@@ -95,9 +93,6 @@ if ($_POST) {
 	if ($_POST['firewall-maximum-table-entries'] && !is_numericint($_POST['firewall-maximum-table-entries'])) {
 		$input_errors[] = gettext("The Firewall Maximum Table Entries value must be an integer.");
 	}
-	if ($_POST['tcpidletimeout'] && !is_numericint($_POST['tcpidletimeout'])) {
-		$input_errors[] = gettext("The TCP idle timeout must be an integer.");
-	}
 	if ($_POST['reflection-timeout'] && !is_numericint($_POST['reflection-timeout'])) {
 		$input_errors[] = gettext("The Reflection timeout must be an integer.");
 	}
@@ -116,10 +111,6 @@ if ($_POST) {
 			$config['system']['disablevpnrules'] = true;
 		else
 			unset($config['system']['disablevpnrules']);
-		if($_POST['rfc959workaround'] == "yes")
-			$config['system']['rfc959workaround'] = "enabled";
-		else
-			unset($config['system']['rfc959workaround']);
 
 		if($_POST['ip-do-not-fragment-compatibility'] == "yes")
 			$config['system']['scrubnodf'] = "enabled";
@@ -145,7 +136,7 @@ if ($_POST) {
 		else
 			unset($config['system']['checkaliasesurlcert']);
 
-		$config['system']['optimization'] = $_POST['optimization'];
+		$config['system']['optimization'] = $_POST['firewall-optimization-options'];
 		$config['system']['maximumstates'] = $_POST['firewall-maximum-states'];
 		$config['system']['aliasesresolveinterval'] = $_POST['aliases-hostnames-resolve-interval'];
 		$config['system']['maximumtableentries'] = $_POST['firewall-maximum-table-entries'];
@@ -193,8 +184,8 @@ if ($_POST) {
 		else
 			unset($config['system']['disablescrub']);
 
-		if ($_POST['tftpinterface'])
-			$config['system']['tftpinterface'] = implode(",", $_POST['tftpinterface']);
+		if ($_POST['tftp-proxy'])
+			$config['system']['tftpinterface'] = implode(",", $_POST['tftp-proxy']);
 		else
 			unset($config['system']['tftpinterface']);
 

@@ -89,8 +89,8 @@ if ($_POST) {
 		if(!is_port($_POST['tcp-port']))
 			$input_errors[] = gettext("You must specify a valid webConfigurator port number");
 
-	if ($_POST['max_procs'])
-		if(!is_numericint($_POST['max_procs']) || ($_POST['max_procs'] < 1) || ($_POST['max_procs'] > 500))
+	if ($_POST['max-processes'])
+		if(!is_numericint($_POST['max-processes']) || ($_POST['max-processes'] < 1) || ($_POST['max-processes'] > 500))
 			$input_errors[] = gettext("Max Processes must be a number 1 or greater");
 
 	if ($_POST['alternate-hostnames']) {
@@ -120,7 +120,7 @@ if ($_POST) {
 			$restart_webgui = true;
 		if (update_if_changed("webgui certificate", $config['system']['webgui']['ssl-certref'], $_POST['ssl-certificate']))
 			$restart_webgui = true;
-		if (update_if_changed("webgui max processes", $config['system']['webgui']['max_procs'], $_POST['max_procs']))
+		if (update_if_changed("webgui max processes", $config['system']['webgui']['max_procs'], $_POST['max-processes']))
 			$restart_webgui = true;
 
 		if ($_POST['webgui-redirect'] == "yes") {

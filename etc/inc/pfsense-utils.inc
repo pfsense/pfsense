@@ -1682,7 +1682,7 @@ function download_file($url, $destination, $verify_ssl = false, $connect_timeout
 }
 
 function download_file_with_progress_bar($url_file, $destination_file, $readbody = 'read_body', $connect_timeout=60, $timeout=0) {
-	global $ch, $fout, $file_size, $downloaded, $config, $first_progress_update;
+	global $ch, $fout, $file_size, $downloaded, $config, $first_progress_update, $g;
 	$file_size  = 1;
 	$downloaded = 1;
 	$first_progress_update = TRUE;

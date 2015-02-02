@@ -314,7 +314,7 @@ function vpn_ipsec_configure($restart = false)
 	else
 		$ifacesuse = '';
 
-	unset($strongconf);
+	unset($stronconf);
 
 	$strongswan = <<<EOD
 

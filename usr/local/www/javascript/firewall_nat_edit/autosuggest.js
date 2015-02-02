@@ -314,6 +314,7 @@ AutoSuggestControl.prototype.showSuggestions = function (aSuggestions /*:Array*/
     
     this.layer.style.left = this.getLeft() + "px";
     this.layer.style.top = (this.getTop()+this.textbox.offsetHeight) + "px";
+    this.layer.style.width = this.textbox.offsetWidth + "px";
     this.layer.style.visibility = "visible";
 
 };

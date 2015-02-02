@@ -111,7 +111,7 @@ if ($_POST) {
 
 	do_input_validation($_POST, $reqdfields, $reqdfieldsn, $input_errors);
 
-	if (isset($_POST['host'])) {
+	if (isset($_POST['host']) && in_array("host", $reqdfields)) {
 		/* Namecheap can have a @. in hostname */
 		if ($pconfig['type'] == "namecheap" && substr($_POST['host'], 0, 2) == '@.')
 			$host_to_check = substr($_POST['host'], 2);

@@ -980,7 +980,7 @@ EOD;
 				if (!empty($reqids[$idx]))
 					$ipsecfin .= "\treqid = " . $reqids[0] . "\n";
 				$ipsecfin .= $ipsecconnect;
-				if (!empty($rightsubnet_spec)) {
+				if (!isset($ph1ent['mobile']) && !empty($rightsubnet_spec)) {
 					$tempsubnets = array();
 					foreach ($rightsubnet_spec as $rightsubnet)
 						$tempsubnets[$rightsubnet] = $rightsubnet;

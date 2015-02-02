@@ -836,13 +836,11 @@ function is_validaliasname($name) {
 
 /* returns true if $port is a valid TCP/UDP port */
 function is_port($port) {
+	if (ctype_digit($port) && ((intval($port) >= 1) && (intval($port) <= 65535)))
+		return true;
 	if (getservbyname($port, "tcp") || getservbyname($port, "udp"))
 		return true;
-	if (!ctype_digit($port))
-		return false;
-	else if ((intval($port) < 1) || (intval($port) > 65535))
-		return false;
-	return true;
+	return false;
 }
 
 /* returns true if $portrange is a valid TCP/UDP portrange ("<port>:<port>") */

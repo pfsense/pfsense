@@ -902,10 +902,10 @@ function dpdchkbox_change() {
 						</td>
 					</tr>
 					<tr>
-						<td width="22%" valign="top" class="vncell"><?=gettext("Only repsonder");?></td>
+						<td width="22%" valign="top" class="vncell"><?=gettext("Responder Only");?></td>
 						<td width="78%" class="vtable">
 							<input name="responderonly" type="checkbox" id="responderonly" value="yes" <?php if (isset($pconfig['responderonly'])) echo "checked=\"checked\""; ?> />
-							<?=gettext("Whether a connection should be passive on a connection and just wait connectivity from the other peer.."); ?><br />
+							<?=gettext("Enable this option to never initiate this connection from this side, only respond to incoming requests."); ?><br />
 						</td>
 					</tr>
 					<tr>

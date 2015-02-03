@@ -41220,11 +41220,11 @@ msgid "Request a IPv6 prefix/information through the IPv4 connectivity link"
 msgstr ""
 
 #: usr/local/www/interfaces.php:1815
-msgid "Request only a IPv6 prefix"
+msgid "Request only an IPv6 prefix"
 msgstr "Requesita somente um prefixo IPv6"
 
 #: usr/local/www/interfaces.php:1818
-msgid "Only request a IPv6 prefix, do not request a IPv6 address"
+msgid "Only request an IPv6 prefix, do not request an IPv6 address"
 msgstr ""
 
 #: etc/inc/pkg-utils.inc:1267

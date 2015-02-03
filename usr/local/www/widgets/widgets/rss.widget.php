@@ -157,7 +157,6 @@ else
 	$feed->set_cache_location("/tmp/simplepie/");
 	$feed->set_feed_url($rss_feed_s);
 	$feed->init();
-	$feed->set_output_encoding('latin-1');
 	$feed->handle_content_type();
 	$counter = 1;
 	foreach($feed->get_items() as $item) {

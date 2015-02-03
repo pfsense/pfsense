@@ -2500,20 +2500,25 @@ function filter_generate_user_rule($rule) {
 		$aline['icmp-type'] = "icmp-type {$rule['icmptype']} ";
 	if (($rule['protocol'] == "icmp") && $rule['icmptype'] && ($rule['ipprotocol'] == "inet6"))
 		$aline['icmp6-type'] = "icmp6-type {$rule['icmptype']} ";
-	if (!empty($rule['tag']))
-		$aline['tag'] = " tag " .$rule['tag']. " ";
+	if (!empty($rule['tag'])) {
+		if (ctype_digit($rule['tag']))
+			$aline['tag'] = " tag \"" .$rule['tag']. "\" ";
+		else
+			$aline['tag'] = " tag " .$rule['tag']. " ";
+	}
 	if (!empty($rule['tagged']))
 		$aline['tagged'] = " tagged " .$rule['tagged'] . " ";
 	if (!empty($rule['dscp'])) {
 		switch (strtolower($rule['dscp'])) {
-			case 'va':  $aline['dscp'] = " dscp 44 "; break;
-			case 'cs1': $aline['dscp'] = " dscp 8 ";  break;
-			case 'cs2': $aline['dscp'] = " dscp 16 "; break;
-			case 'cs3': $aline['dscp'] = " dscp 24 "; break;
-			case 'cs4': $aline['dscp'] = " dscp 32 "; break;
-			case 'cs5': $aline['dscp'] = " dscp 40 "; break;
-			case 'cs6': $aline['dscp'] = " dscp 48 "; break;
-			case 'cs7': $aline['dscp'] = " dscp 56 "; break;
+			case 'va':  $aline['dscp'] = " dscp \"44\" "; break;
+			case 'VA':  $aline['dscp'] = " dscp \"44\" "; break;
+			case 'cs1': $aline['dscp'] = " dscp \"8\" ";  break;
+			case 'cs2': $aline['dscp'] = " dscp \"16\" "; break;
+			case 'cs3': $aline['dscp'] = " dscp \"24\" "; break;
+			case 'cs4': $aline['dscp'] = " dscp \"32\" "; break;
+			case 'cs5': $aline['dscp'] = " dscp \"40\" "; break;
+			case 'cs6': $aline['dscp'] = " dscp \"48\" "; break;
+			case 'cs7': $aline['dscp'] = " dscp \"56\" "; break;
 			default:    $aline['dscp'] = " dscp " . $rule['dscp'] . " "; break;
 		}
 	}

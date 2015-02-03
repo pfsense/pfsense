@@ -3296,7 +3296,11 @@ function interface_6rd_configure($interface = "wan", $wancfg) {
 	$rd6prefix = explode("/", $wancfg['prefix-6rd']);
 	$rd6prefixlen = $rd6prefix[1];
 	$brgw = explode('.', $wancfg['gateway-6rd']);
-	$rd6brgw = rtrim($rd6prefix[0], ':') . ':' . dechex($brgw[0]) . dechex($brgw[1]) . ':' . dechex($brgw[2]) . dechex($brgw[3]) . '::';
+	$rd6brgw = substr(Net_IPv6::_ip2Bin($rd6prefix[0]), 0, $rd6prefixlen);
+	$rd6brgw .= str_pad(decbin($brgw[0]), 8, '0', STR_PAD_LEFT) . str_pad(decbin($brgw[1]), 8, '0', STR_PAD_LEFT) . str_pad(decbin($brgw[2]), 8, '0', STR_PAD_LEFT) . str_pad(decbin($brgw[3]), 8, '0', STR_PAD_LEFT);
+	if (strlen($rd6brgw) < 128)
+		$rd6brgw = str_pad($rd6brgw, 128, '0', STR_PAD_RIGHT);
+	$rd6brgw = Net_IPv6::compress(Net_IPv6::_bin2Ip($rd6brgw));
 	unset($brgw);
 	$rd6prefix = Net_IPv6::uncompress($rd6prefix[0]);
 

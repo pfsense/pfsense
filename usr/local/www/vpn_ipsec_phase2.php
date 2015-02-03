@@ -122,6 +122,7 @@ if (!empty($_GET['dup'])) {
 	unset($uindex);
 	unset($p2index);
 	$pconfig['uniqid'] = uniqid();
+	$pconfig['reqid'] = ipsec_new_reqid();
 }
 
 if ($_POST) {
@@ -141,7 +142,7 @@ if ($_POST) {
 	}
 
 	do_input_validation($_POST, $reqdfields, $reqdfieldsn, $input_errors);
-
+	
 	if(($pconfig['mode'] == "tunnel") || ($pconfig['mode'] == "tunnel6")) 
 	{
 		switch ($pconfig['localid_type']) {
@@ -299,8 +300,14 @@ if ($_POST) {
 		if (!count($ealgos)) {
 			$input_errors[] = gettext("At least one encryption algorithm must be selected.");
 		} else {
-			if (empty($pconfig['halgos'])) {
-				foreach ($ealgos as $ealgo) {
+			foreach ($ealgos as $ealgo) {
+				if (isset($config['system']['crypto_hardware'])) {
+					if ($config['system']['crypto_hardware'] == "glxsb") {
+					    if ($ealgo['name'] == "aes" && $ealgo['keylen'] != "128")
+						$input_errors[] = gettext("Only 128 bit AES can be used where the glxsb crypto accelerator is enabled.");
+					}
+				}
+				if (empty($pconfig['halgos'])) {
 					if (!strpos($ealgo['name'], "gcm")) {
 						$input_errors[] = gettext("At least one hashing algorithm needs to be selected.");
 						break;

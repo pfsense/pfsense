@@ -238,6 +238,9 @@ function parse_filter_line($line) {
 				break;
 			}
 
+		} else if ($flent['protoid'] == '2') { // IGMP
+			$flent['src'] = $flent['srcip'];
+			$flent['dst'] = $flent['dstip'];
 		} else if ($flent['protoid'] == '112') { // CARP
 			$flent['type'] = $rule_data[$field++];
 			$flent['ttl'] = $rule_data[$field++];

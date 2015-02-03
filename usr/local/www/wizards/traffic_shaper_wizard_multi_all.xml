@@ -129,7 +129,8 @@
 				</options>
 			</field>
 			<field>
-				<name>Upstream SIP Server</name>
+				<displayname>Upstream SIP Server</displayname>
+				<name>upstream_sip_server</name>
 				<type>inputalias</type>
 				<description>(Optional) If this is chosen, the provider field will be overridden.  This allows you to provide the IP address of the &lt;strong&gt;remote&lt;/strong&gt; PBX or SIP Trunk to prioritize.  &lt;br /&gt;NOTE: You can also use a Firewall Alias in this location.</description>
 				<bindstofield>ezshaper-&gt;step3-&gt;address</bindstofield>

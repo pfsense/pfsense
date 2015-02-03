@@ -113,6 +113,8 @@ if (isset($p1index) && $a_phase1[$p1index]) {
 		$pconfig['reauth_enable'] = true;
 	if (isset($a_phase1[$p1index]['rekey_enable']))
 		$pconfig['rekey_enable'] = true;
+	if (isset($a_phase1[$p1index]['responderonly']))
+		$pconfig['responderonly'] = true;
 
 	if ($a_phase1[$p1index]['dpd_delay'] &&	$a_phase1[$p1index]['dpd_maxfail']) {
 		$pconfig['dpd_enable'] = true;
@@ -326,6 +328,13 @@ if ($_POST) {
 
 	if (!empty($pconfig['iketype']) && $pconfig['iketype'] != "ikev1" && $pconfig['iketype'] != "ikev2" && $pconfig['iketype'] != "auto")
 		$input_errors[] = gettext("Valid arguments for IKE type is v1 or v2 or auto");
+                
+        if (!empty($_POST['ealgo']) && isset($config['system']['crypto_hardware'])) {
+            if ($config['system']['crypto_hardware'] == "glxsb") {
+                if ($_POST['ealgo'] == "aes" && $_POST['ealgo_keylen'] != "128")
+                    $input_errors[] = gettext("Only 128 bit AES can be used where the glxsb crypto accelerator is enabled.");
+            }
+        }
 
 	/* build our encryption algorithms array */
 	$pconfig['ealgo'] = array();
@@ -382,6 +391,11 @@ if ($_POST) {
 			$ph1ent['rekey_enable'] = true;
 		else
 			unset($ph1ent['rekey_enable']);
+
+		if (isset($pconfig['responderonly']))
+			$ph1ent['responderonly'] = true;
+		else
+			unset($ph1ent['responderonly']);
 
 		if (isset($pconfig['dpd_enable'])) {
 			$ph1ent['dpd_delay'] = $pconfig['dpd_delay'];
@@ -885,6 +899,13 @@ function dpdchkbox_change() {
 						<td width="78%" class="vtable">
 							<input name="reauth_enable" type="checkbox" id="reauth_enable" value="yes" <?php if (isset($pconfig['reauth_enable'])) echo "checked=\"checked\""; ?> />
 							<?=gettext("Whether rekeying of an IKE_SA should also reauthenticate the peer. In IKEv1, reauthentication is always done."); ?><br />
+						</td>
+					</tr>
+					<tr>
+						<td width="22%" valign="top" class="vncell"><?=gettext("Only repsonder");?></td>
+						<td width="78%" class="vtable">
+							<input name="responderonly" type="checkbox" id="responderonly" value="yes" <?php if (isset($pconfig['responderonly'])) echo "checked=\"checked\""; ?> />
+							<?=gettext("Whether a connection should be passive on a connection and just wait connectivity from the other peer.."); ?><br />
 						</td>
 					</tr>
 					<tr>

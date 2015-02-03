@@ -2224,10 +2224,10 @@ $types6 = array("none" => gettext("None"), "staticv6" => gettext("Static IPv6"),
 										</td>
 									</tr>
 									<tr style='display:none' id="basicdhcp6_show_dhcp6_prefix_only">
-										<td width="22%" valign="top" class="vncell"><?=gettext("Request only a IPv6 prefix"); ?></td>
+										<td width="22%" valign="top" class="vncell"><?=gettext("Request only an IPv6 prefix"); ?></td>
 										<td width="78%" class="vtable">
 											<input name="dhcp6prefixonly" type="checkbox" id="dhcp6prefixonly" value="yes" <?php if ($pconfig['dhcp6prefixonly'] == true) echo "checked=\"checked\""; ?> />
-											<?=gettext("Only request a IPv6 prefix, do not request a IPv6 address"); ?>
+											<?=gettext("Only request an IPv6 prefix, do not request an IPv6 address"); ?>
 										</td>
 									</tr>
 									<tr style='display:none' id="basicdhcp6_show_dhcp6_prefix_delegation_size">

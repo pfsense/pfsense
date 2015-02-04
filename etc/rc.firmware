@@ -145,8 +145,8 @@ pfSenseNanoBSDupgrade)
 
 	# Prevent full upgrade file from being used to upgrade
 	if [ `echo $IMG | grep "full"` ]; then
-		echo "You cannot use a full file for upgrade.  Please use a file labeled nanobsd upgrade."
-		file_notice "NanoBSDUpgradeFailure" "You have attemped to use a full NanoBSD installation file as an upgrade.  Please use a NanoBSD file labeled 'upgrade' instead."
+		echo "You cannot use a full file for upgrade.  Please use a file labelled nanobsd upgrade."
+		file_notice "NanoBSDUpgradeFailure" "You have attempted to use a full NanoBSD installation file as an upgrade.  Please use a NanoBSD file labelled 'upgrade' instead."
 		rm -f $IMG
 		/etc/rc.conf_mount_ro		
 		exit 1
@@ -176,7 +176,7 @@ pfSenseNanoBSDupgrade)
 	REAL_BOOT_DEVICE=`/sbin/glabel list | /usr/bin/grep -B2 ufs/${BOOT_DEVICE} | /usr/bin/head -n 1 | /usr/bin/cut -f3 -d' '`
 	# grab the boot device, example ad1, ad0
 	BOOT_DRIVE=`/sbin/glabel list | /usr/bin/grep -B2 ufs/pfsense | /usr/bin/head -n 1 | /usr/bin/cut -f3 -d' ' | /usr/bin/cut -d's' -f1`
-	# test the slice.  if we are on slice 1 we need to flash 2 and vica versa
+	# test the slice.  if we are on slice 1 we need to flash 2 and vice versa
 	if [ `echo $REAL_BOOT_DEVICE | /usr/bin/grep "s1"` ]; then 
 		SLICE="2"
 		OLDSLICE="1"
@@ -195,7 +195,7 @@ pfSenseNanoBSDupgrade)
 		OLD_UFS_ID="1"
 	fi
 
-	# Output specifc information that this script is using
+	# Output specific information that this script is using
 	echo "SLICE         ${SLICE}" >> /conf/upgrade_log.txt
 	echo "OLDSLICE      ${OLDSLICE}" >> /conf/upgrade_log.txt
 	echo "TOFLASH       ${TOFLASH}" >> /conf/upgrade_log.txt
@@ -207,9 +207,9 @@ pfSenseNanoBSDupgrade)
 	NEW_IMG_SIZE=`echo $((\`gzip -l ${IMG} | grep -v compressed | awk '{ print $2}'\` / 1024 / 1024))`
 	SIZE=`/sbin/fdisk ${COMPLETE_PATH} | /usr/bin/grep Meg | /usr/bin/awk '{ print $5 }' | /usr/bin/cut -d"(" -f2`
 	# USB slices are under-reported even more than CF slices when viewed
-	#   directly, instead of when looking at the entire disk. Compensate
-	#   by adding exactly 6MB. 4MB was consistently 2MB too few, and
-	#   was resulting in failing upgrades on USB Flash based installs.
+	# directly, instead of when looking at the entire disk. Compensate
+	# by adding exactly 6MB. 4MB was consistently 2MB too few, and
+	# was resulting in failing upgrades on USB Flash based installs.
 	SIZE=`expr $SIZE + 6`
 	if [ "$SIZE" -lt "$NEW_IMG_SIZE" ]; then
 		file_notice "UpgradeFailure" "Upgrade failed due to the upgrade image being larger than the partition that is configured on disk.  Halting. Size on disk: $SIZE < Size of new image: $NEW_IMG_SIZE"
@@ -250,7 +250,7 @@ pfSenseNanoBSDupgrade)
 	echo "/usr/bin/gzip -dc $IMG | /bin/dd of=/dev/${TOFLASH} obs=64k" >> /conf/upgrade_log.txt
 	/usr/bin/gzip -dc $IMG | /bin/dd of=/dev/${TOFLASH} obs=64k >> /conf/upgrade_log.txt 2>&1
 
-	# Grab a after upgrade look at fdisk
+	# Grab an after upgrade look at fdisk
 	echo "" >> /conf/fdisk_upgrade_log.txt
 	echo "After upgrade fdisk/bsdlabel" >> /conf/upgrade_log.txt
 	fdisk $BOOT_DRIVE >> /conf/fdisk_upgrade_log.txt
@@ -364,7 +364,7 @@ pfSenseNanoBSDupgrade)
 	date >> /conf/upgrade_log.txt
 	echo "" >> /conf/upgrade_log.txt
 
-	# Trigger a package reinstallation on reobot
+	# Trigger a package reinstallation on reboot
 	touch /conf/needs_package_sync
 
 	# remount /cf ro
@@ -391,7 +391,7 @@ pfSenseupgrade)
 		exit
 	fi
 
-	# wait 1 seconds before beginning
+	# wait 1 second before beginning
 	sleep 1
 
 	# Log that we are really doing a pfSense upgrade

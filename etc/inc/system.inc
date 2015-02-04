@@ -2036,7 +2036,7 @@ function system_identify_specific_platform() {
 	
 	/* Try to guess from smbios strings */
 	unset($output);
-	$_gb = exec('/bin/kenv smbios.system.product', $output);
+	$_gb = exec('/bin/kenv smbios.system.product 2>/dev/null', $output);
 	switch ($output[0]) {
 	case 'FW7541':
 		return (array('name' => 'FW7541', 'descr' => 'Netgate FW7541'));

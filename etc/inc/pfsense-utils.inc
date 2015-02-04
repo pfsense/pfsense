@@ -1630,10 +1630,14 @@ function load_thermal_hardware() {
  *   returns true if machine is running under a virtual environment
  ******/
 function isvm() {
-	$virtualenvs = array("vmware", "parallels", "qemu", "bochs", "plex86");
-	$bios_product = trim(`/bin/kenv smbios.system.product`);
+	$virtualenvs = array("vmware", "parallels", "qemu", "bochs", "plex86", "VirtualBox");
+	$_gb = exec('/bin/kenv smbios.system.product 2>/dev/null', $output, $rc);
+
+	if ($rc != 0 || !isset($output[0]))
+		return false;
+
 	foreach ($virtualenvs as $virtualenv)
-		if (stripos($bios_product, $virtualenv) !== false)
+		if (stripos($output[0], $virtualenv) !== false)
 			return true;
 
 	return false;

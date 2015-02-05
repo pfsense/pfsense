@@ -3552,4 +3552,20 @@ function upgrade_115_to_116() {
 	}
 }
 
+function upgrade_116_to_117() {
+    global $config;
+
+	if (!isset($config['installedpackages']['miniupnpd']['config'][0]))
+		return;
+
+	$miniupnpd =& $config['installedpackages']['miniupnpd']['config'][0];
+
+	$miniupnpd['row'] = array();
+
+	for ($i = 1; $i <= 4; $i++) {
+		if (isset($miniupnpd["permuser{$i}"]) && !empty($miniupnpd["permuser{$i}"]))
+			$miniupnpd['row'][] = array('permuser' => $miniupnpd["permuser{$i}"]);
+		unset($miniupnpd["permuser{$i}"]);
+	}
+}
 ?>

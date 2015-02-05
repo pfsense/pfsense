@@ -1646,7 +1646,7 @@ l2tp_standard:
 	set iface down-script /usr/local/sbin/vpn-linkdown
 	set link yes acfcomp protocomp
 	set link no pap chap
-	set link enable chap
+	{$paporchap}
 	set link keep-alive 10 180
 
 EOD;

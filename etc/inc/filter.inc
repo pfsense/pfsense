@@ -2891,8 +2891,8 @@ EOD;
 			if (count($cpiplist) > 0 && count($cpiflist) > 0) {
 				$cpinterface = implode(" ", $cpiflist);
 				$cpaddresses = implode(" ", $cpiplist);
-				$listenporthttps = $cpcfg['listenporthttps'] ? $cpcfg['listenporthttps'] : ($cpcfg['zoneid'] + 1);
-				$listenporthttp  = $cpcfg['listenporthttp']  ? $cpcfg['listenporthttp']  : $cpcfg['zoneid'];
+				$listenporthttps = $cpcfg['listenporthttps'] ? $cpcfg['listenporthttps'] : 8000 + ($cpcfg['zoneid'] + 1);
+				$listenporthttp  = $cpcfg['listenporthttp']  ? $cpcfg['listenporthttp']  : 8000 + $cpcfg['zoneid'];
 				$portalias = $listenporthttps;
 				$portalias .= " {$listenporthttp}";
 				$ipfrules .= "pass in {$log['pass']} quick on { {$cpinterface} } proto tcp from any to { {$cpaddresses} } port { {$portalias} } tracker {$increment_tracker($tracker)} keep state(sloppy)\n";

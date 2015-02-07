@@ -18023,7 +18023,7 @@ msgid "RADIUS Authentication"
 msgstr ""
 
 #: usr/local/www/services_captiveportal.php:689
-msgid "Radius Protocol"
+msgid "RADIUS Protocol"
 msgstr ""
 
 #: usr/local/www/services_captiveportal.php:694 usr/local/www/vpn_l2tp.php:392

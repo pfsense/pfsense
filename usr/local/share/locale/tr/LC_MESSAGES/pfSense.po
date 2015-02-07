@@ -18985,7 +18985,7 @@ msgid "RADIUS Authentication"
 msgstr "RADIUS Kimlik Doğrulama"
 
 #: usr/local/www/services_captiveportal.php:689
-msgid "Radius Protocol"
+msgid "RADIUS Protocol"
 msgstr "Radius Protokol"
 
 #: usr/local/www/services_captiveportal.php:694 usr/local/www/vpn_l2tp.php:392

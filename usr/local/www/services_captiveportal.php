@@ -692,7 +692,7 @@ function enable_change(enable_change) {
 		  <td>&nbsp;</td>
                 </tr>
 <tr>
-                  <td width="22%" valign="top" class="vncell"><?=gettext("Radius Protocol"); ?></td>
+                  <td width="22%" valign="top" class="vncell"><?=gettext("RADIUS Protocol"); ?></td>
                   <td width="78%" class="vtable">
                     <table cellpadding="0" cellspacing="0" summary="radius">
                     <tr>

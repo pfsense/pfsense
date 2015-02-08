@@ -620,26 +620,25 @@ function is_literalipaddrv6($ipaddr) {
 	return is_ipaddrv6($ipaddr);
 }
 
+/* returns true if $ipport is a valid IPv4:port or [Literal IPv6]:port
+   	false - if not a valid IP+port
+   	true (numeric 4 or 6) - if valid, gives type of IP */
 function is_ipaddrwithport($ipport) {
-	$parts = explode(":", $ipport);
-	$port = array_pop($parts);
-	if (count($parts) == 1) {
-		return is_ipaddrv4($parts[0]) && is_port($port);
-	} elseif (count($parts) > 1) {
-		return is_literalipaddrv6(implode(":", $parts)) && is_port($port);
-	} else {
-		return false;
-	}
+	if (is_string($ipport) && preg_match('/^(?:([^:]+)|\[(.*:.*)\]):([^:])+$/', $ipport, $parts))
+		if (is_port($parts[3])) {
+			if (is_ipaddrv4($parts[1]))
+				return 4;
+			if (is_ipaddrv6($parts[2]))
+				return 6; // shortcut test of IPv6 literal IP by pre-checking '[]' within regex
+		}
+	return false;
 }
 
+/* returns true if $hostport is a valid hostname:port */
 function is_hostnamewithport($hostport) {
-	$parts = explode(":", $hostport);
-	$port = array_pop($parts);
-	if (count($parts) == 1) {
-		return is_hostname($parts[0]) && is_port($port);
-	} else {
-		return false;
-	}
+	if (is_string($hostport) && preg_match('/^(.+):([^:])+$/', $hostport, $parts))
+		return (is_port($parts[2]) && is_hostname($parts[1]));
+	return false;
 }
 
 /* returns true if $ipaddr is a valid dotted IPv4 address or an alias thereof */

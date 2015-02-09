@@ -319,7 +319,8 @@ function _onTypeChange(type){
 				    <span class="red"><strong><?=gettext("Note:");?><br /></strong>
 				    </span>
 					<?=gettext("Enter the complete host/domain name.  example:  myhost.dyndns.org");?><br />
-					<?=gettext("For he.net tunnelbroker, enter your tunnel ID");?>
+					<?=gettext("he.net tunnelbroker: Enter your tunnel ID");?><br />
+					<?=gettext("GleSYS: Enter your record ID");?>
 				    </span>
 		          </td>
 				</tr>
@@ -359,8 +360,9 @@ function _onTypeChange(type){
                   <td width="78%" class="vtable">
                     <input name="username" type="text" class="formfld user" id="username" size="20" value="<?=htmlspecialchars($pconfig['username']);?>" />
                     <br /><?= gettext("Username is required for all types except Namecheap, FreeDNS and Custom Entries.");?>
-		    <br /><?= gettext("Route 53: Enter your Access Key ID.");?>
-		    <br /><?= gettext("For Custom Entries, Username and Password represent HTTP Authentication username and passwords.");?>
+                    <br /><?= gettext("Route 53: Enter your Access Key ID.");?>
+                    <br /><?= gettext("GleSYS: Enter your API user.");?>
+                    <br /><?= gettext("For Custom Entries, Username and Password represent HTTP Authentication username and passwords.");?>
                   </td>
                 </tr>
                 <tr>
@@ -369,7 +371,8 @@ function _onTypeChange(type){
                     <input name="password" type="password" class="formfld pwd" id="password" size="20" value="<?=htmlspecialchars($pconfig['password']);?>" />
                     <br />
                     <?=gettext("FreeDNS (freedns.afraid.org): Enter your \"Authentication Token\" provided by FreeDNS.");?>
-		    <br /><?= gettext("Route 53: Enter your Secret Access Key.");?>
+                    <br /><?= gettext("Route 53: Enter your Secret Access Key.");?>
+                    <br /><?= gettext("GleSYS: Enter your API key.");?>
                   </td>
                 </tr>
 

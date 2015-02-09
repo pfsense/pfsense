@@ -383,9 +383,11 @@ function long2ip32($ip) {
 	return long2ip($ip & 0xFFFFFFFF);
 }
 
-/* Convert IP address to long int, truncated to 32-bits to avoid sign extension on 64-bit platforms. */
+/* Convert IP address to long int, truncated to 32-bits to avoid sign extension on 64-bit platforms. 
+   Returns '' if not valid IPv4. */
 function ip2long32($ip) {
-	return ( ip2long($ip) & 0xFFFFFFFF );
+	$a = ip2long($ip);
+	return ($a === False ? '' : $a & 0xFFFFFFFF);
 }
 
 /* Convert IP address to unsigned long int. */
@@ -597,9 +599,27 @@ function is_ipaddrv4($ipaddr) {
 		return false;
 }
 
-/* returns true if $ipaddr is a valid linklocal address */
+/* returns true if $ipaddr is a valid linklocal address 
+   TODO: does not validate %interface (if any) other than to check [a-z0-9]+  */
+   
 function is_linklocal($ipaddr) {
-	return (strtolower(substr($ipaddr, 0, 5)) == "fe80:");
+	if (!is_string($ipaddr))
+		return '';
+	if (($ip4 = ip2long32($ipaddr)) !== false) {
+		// IPv4 ?
+		list($local4lo, $local4hi) = array(ip2long32('169.254.1.0'), ip2long32('169.254.254.255'));
+		if ($ip4 >= $local4lo && $ip4 <= $local4hi)
+			return 4;
+	} elseif (preg_match('/^([0-9a-f:]{2,39})(%([0-9a-z]+))?$/i', $ipaddr, $ip6)) {
+		// IPv6 ?
+		// not attempting to validate interface part $ip6[3] (if any) at present, as long as it's plausible (%[0-9a-z]+)
+
+		// linklocal requires '1111111010' and 54 zero bits (fe80::), see rfc4291 2.5.6
+		$iptest = substr(Net_IPv6::_Ip2Bin($ip6[1]),0,64);
+		if ($iptest == '1111111010' . str_repeat('0',54))
+			return 6;
+	}
+	return '';
 }
 
 /* returns scope of a linklocal address */

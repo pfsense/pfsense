@@ -1727,12 +1727,12 @@ function system_ntp_configure($start_ntpd=true) {
 	}
 	
 
-	if (empty($config['ntpd']['interface']))
+	if (empty($config['ntpd']['interface'])) {
 		if (is_array($config['installedpackages']['openntpd']) && !empty($config['installedpackages']['openntpd']['config'][0]['interface']))
 			$interfaces = explode(",", $config['installedpackages']['openntpd']['config'][0]['interface']);
 		else
 			$interfaces = array();
-	else
+	} else
 		$interfaces = explode(",", $config['ntpd']['interface']);
 
 	if (is_array($interfaces) && count($interfaces)) {

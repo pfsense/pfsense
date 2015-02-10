@@ -254,14 +254,14 @@ include_once("head.inc");
 								<td width="22%" valign="top" class="vncell"><?=gettext("Prefetch DNS Key Support");?></td>
 								<td width="78%" class="vtable">
 									<input name="prefetchkey" type="checkbox" id="prefetchkey" value="yes" <?php if (isset($pconfig['prefetchkey'])) echo "checked=\"checked\"";?> /><br />
-									<?=sprintf(gettext("DNSKEY's are fetched earlier in the validation process when a %sDelegation signer%s is encountered. This helps lower the latency of requests but does utilize a little more CPU."), "<a href='http://en.wikipedia.org/wiki/List_of_DNS_record_types'>", "</a>");?>
+									<?=sprintf(gettext("DNSKEYs are fetched earlier in the validation process when a %sDelegation signer%s is encountered. This helps lower the latency of requests but does utilize a little more CPU."), "<a href='http://en.wikipedia.org/wiki/List_of_DNS_record_types'>", "</a>");?>
 								</td>
 							</tr>
 							<tr>
 								<td width="22%" valign="top" class="vncell"><?=gettext("Harden Glue");?></td>
 								<td width="78%" class="vtable">
 									<input name="hardenglue" type="checkbox" id="hardenglue" value="yes" <?php if (isset($pconfig['hardenglue'])) echo "checked=\"checked\"";?> /><br />
-									<?=gettext("Only trust glue if it is within the servers authority.");?>
+									<?=gettext("Only trust glue if it is within the server's authority.");?>
 								</td>
 							</tr>
 							<tr>

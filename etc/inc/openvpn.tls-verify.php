@@ -49,7 +49,7 @@ require_once("interfaces.inc");
 openlog("openvpn", LOG_ODELAY, LOG_AUTH);
 
 /* read data from command line */
-if (isset($_GET)) {
+if (isset($_GET['certdepth'])) {
 	$cert_depth = $_GET['certdepth'];
 	$cert_subject = urldecode($_GET['certsubject']);
 	$allowed_depth = $_GET['depth'];
@@ -73,7 +73,7 @@ foreach ($subj at $s) {
 
 if (isset($allowed_depth) && ($cert_depth > $allowed_depth)) {
 	syslog(LOG_WARNING, "Certificate depth {$cert_depth} exceeded max allowed depth of {$allowed_depth}.\n");
-	if (isset($_GET)) {
+	if (isset($_GET['certdepth'])) {
 		echo "FAILED";
 		closelog();
 		return;
@@ -87,7 +87,7 @@ if (isset($allowed_depth) && ($cert_depth > $allowed_depth)) {
 //syslog(LOG_WARNING, "Found certificate {$argv[2]} with depth {$cert_depth}\n");
 
 closelog();
-if (isset($_GET))
+if (isset($_GET['certdepth']))
 	echo "OK";
 else
 	exit(0);

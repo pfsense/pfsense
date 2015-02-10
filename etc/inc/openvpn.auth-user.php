@@ -82,7 +82,7 @@ function getNasIP()
 /* setup syslog logging */
 openlog("openvpn", LOG_ODELAY, LOG_AUTH);
 
-if (isset($_GET)) {
+if (isset($_GET['username'])) {
 	$authmodes = explode(",", $_GET['authcfg']);
 	$username = base64_decode(str_replace('%3D', '=', $_GET['username']));
 	$password = base64_decode(str_replace('%3D', '=', $_GET['password']));
@@ -98,7 +98,7 @@ if (isset($_GET)) {
 
 if (!$username || !$password) {
 	syslog(LOG_ERR, "invalid user authentication environment");
-	if (isset($_GET)) {
+	if (isset($_GET['username'])) {
 		echo "FAILED";
 		closelog();
 		return;
@@ -120,7 +120,7 @@ $authenticated = false;
 
 if (($strictusercn === true) && ($common_name != $username)) {
 	syslog(LOG_WARNING, "Username does not match certificate common name ({$username} != {$common_name}), access denied.\n");
-	if (isset($_GET)) {
+	if (isset($_GET['username'])) {
 		echo "FAILED";
 		closelog();
 		return;
@@ -132,7 +132,7 @@ if (($strictusercn === true) && ($common_name != $username)) {
 
 if (!is_array($authmodes)) {
 	syslog(LOG_WARNING, "No authentication server has been selected to authenticate against. Denying authentication for user {$username}");
-	if (isset($_GET)) {
+	if (isset($_GET['username'])) {
 		echo "FAILED";
 		closelog();
 		return;
@@ -155,7 +155,7 @@ foreach ($authmodes as $authmode) {
 
 if ($authenticated == false) {
 	syslog(LOG_WARNING, "user '{$username}' could not authenticate.\n");
-	if (isset($_GET)) {
+	if (isset($_GET['username'])) {
 		echo "FAILED";
 		closelog();
 		return;
@@ -198,7 +198,7 @@ if (!empty($content))
 syslog(LOG_NOTICE, "user '{$username}' authenticated\n");
 closelog();
 
-if (isset($_GET))
+if (isset($_GET['username']))
 	echo "OK";
 else
 	return (0);

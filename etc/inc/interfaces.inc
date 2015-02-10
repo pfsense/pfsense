@@ -2931,6 +2931,52 @@ function interface_configure($interface = "wan", $reloadall = false, $linkupeven
 	unset($interface_snv6_arr_cache[$realif]);
 
 	$tunnelif = substr($realif, 0, 3);
+
+	if (does_interface_exist($wancfg['if']))
+		interfaces_bring_up($wancfg['if']);
+
+	if (!empty($wancfg['mtu'])) {
+		if (stristr($realif, "_vlan")) {
+			$assignedparent = convert_real_interface_to_friendly_interface_name($realhwif);
+			if (!empty($assignedparent) && !empty($config['interfaces'][$assignedparent]['mtu'])) {
+				$parentmtu = $config['interfaces'][$assignedparent]['mtu'];
+				if ($wancfg['mtu'] > $parentmtu)
+					log_error("There is a conflict on MTU between parent {$realhwif} and VLAN({$realif})");
+			} else
+				$parentmtu = 0;
+
+			$parentmtu = interface_vlan_mtu_configured($realhwif, $parentmtu);
+
+			if (get_interface_mtu($realhwif) != $parentmtu)
+				pfSense_interface_mtu($realhwif, $parentmtu);
+
+			/* All vlans need to use the same mtu value as their parent. */
+			interface_vlan_adapt_mtu(link_interface_to_vlans($realhwif), $parentmtu);
+		} else if (substr($realif, 0, 4) == 'lagg') {
+			/* LAGG interface must be destroyed and re-created to change MTU */
+			if ($wancfg['mtu'] != get_interface_mtu($realif)) {
+				if (isset($config['laggs']['lagg']) && is_array($config['laggs']['lagg'])) {
+					foreach ($config['laggs']['lagg'] as $lagg) {
+						if ($lagg['laggif'] == $realif) {
+							interface_lagg_configure($lagg);
+							break;
+						}
+					}
+				}
+			}
+		} else {
+			if ($wancfg['mtu'] != get_interface_mtu($realif))
+				pfSense_interface_mtu($realif, $wancfg['mtu']);
+
+			/* This case is needed when the parent of vlans is being configured */
+			$vlans = link_interface_to_vlans($realif);
+			if (is_array($vlans))
+				interface_vlan_adapt_mtu($vlans, $wancfg['mtu']);
+			unset($vlans);
+		}
+		/* XXX: What about gre/gif/.. ? */
+	}
+
 	switch ($wancfg['ipaddr']) {
 	case 'dhcp':
 		interface_dhcp_configure($interface);
@@ -2975,51 +3021,6 @@ function interface_configure($interface = "wan", $reloadall = false, $linkupeven
 		}
 		break;
 	}
-
-	if (!empty($wancfg['mtu'])) {
-		if (stristr($realif, "_vlan")) {
-			$assignedparent = convert_real_interface_to_friendly_interface_name($realhwif);
-			if (!empty($assignedparent) && !empty($config['interfaces'][$assignedparent]['mtu'])) {
-				$parentmtu = $config['interfaces'][$assignedparent]['mtu'];
-				if ($wancfg['mtu'] > $parentmtu)
-					log_error("There is a conflict on MTU between parent {$realhwif} and VLAN({$realif})");
-			} else
-				$parentmtu = 0;
-
-			$parentmtu = interface_vlan_mtu_configured($realhwif, $parentmtu);
-
-			if (get_interface_mtu($realhwif) != $parentmtu)
-				pfSense_interface_mtu($realhwif, $parentmtu);
-
-			/* All vlans need to use the same mtu value as their parent. */
-			interface_vlan_adapt_mtu(link_interface_to_vlans($realhwif), $parentmtu);
-		} else if (substr($realif, 0, 4) == 'lagg') {
-			/* LAGG interface must be destroyed and re-created to change MTU */
-			if ($wancfg['mtu'] != get_interface_mtu($realif)) {
-				if (isset($config['laggs']['lagg']) && is_array($config['laggs']['lagg'])) {
-					foreach ($config['laggs']['lagg'] as $lagg) {
-						if ($lagg['laggif'] == $realif) {
-							interface_lagg_configure($lagg);
-							break;
-						}
-					}
-				}
-			}
-		} else {
-			if ($wancfg['mtu'] != get_interface_mtu($realif))
-				pfSense_interface_mtu($realif, $wancfg['mtu']);
-
-			/* This case is needed when the parent of vlans is being configured */
-			$vlans = link_interface_to_vlans($realif);
-			if (is_array($vlans))
-				interface_vlan_adapt_mtu($vlans, $wancfg['mtu']);
-			unset($vlans);
-		}
-		/* XXX: What about gre/gif/.. ? */
-	}
-
-	if (does_interface_exist($wancfg['if']))
-		interfaces_bring_up($wancfg['if']);
 
 	interface_netgraph_needed($interface);
 

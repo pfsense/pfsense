@@ -295,14 +295,17 @@ function notify_via_smtp($message, $force = false) {
 	fwrite($fd, $message);
 	fclose($fd);
 
-	send_smtp_message($message, "{$config['system']['hostname']}.{$config['system']['domain']} - Notification");
+	send_smtp_message($message, "{$config['system']['hostname']}.{$config['system']['domain']} - Notification", $force);
 	return;
 }
 
-function send_smtp_message($message, $subject = "(no subject)") {
+function send_smtp_message($message, $subject = "(no subject)", $force = false) {
 	global $config, $g;
 	require_once("sasl.inc");
 	require_once("smtp.inc");
+
+	if(isset($config['notifications']['smtp']['disable']) && !$force)
+		return;
 
 	if(!$config['notifications']['smtp']['ipaddress'])
 		return;

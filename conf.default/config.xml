@@ -272,5 +272,9 @@
 		<active_interface/>
 		<outgoing_interface/>
 		<custom_options/>
+		<hideidentity/>
+		<hideversion/>
+		<hardenglue/>
+		<dnssecstripped/>
 	</unbound>
 </pfsense>

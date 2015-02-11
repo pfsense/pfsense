@@ -1869,7 +1869,7 @@ function upgrade_052_to_053() {
 	if (!is_array($config['cert']))
 		$config['cert'] = array();
 
-	/* migrate advanced admin page webui ssl to certifcate mngr */
+	/* migrate advanced admin page webui ssl to certificate manager */
 	if ($config['system']['webgui']['certificate'] &&
 	$config['system']['webgui']['private-key']) {
 
@@ -2631,7 +2631,7 @@ function upgrade_078_to_079() {
 function upgrade_079_to_080() {
 	global $config;
 
-	/* Upgrade config in 1.2.3 specifying a username other than admin for synching. */
+	/* Upgrade config in 1.2.3 specifying a username other than admin for syncing. */
 	if (!empty($config['system']['username']) && is_array($config['installedpackages']['carpsettings']) &&
 		is_array($config['installedpackages']['carpsettings']['config'])) {
 		$config['installedpackages']['carpsettings']['config'][0]['username'] = $config['system']['username'];
@@ -2985,7 +2985,7 @@ function upgrade_088_to_089() {
 	if (!is_array($config['cert']))
 		$config['cert'] = array();
 
-	/* migrate captive portal ssl to certifcate mngr */
+	/* migrate captive portal ssl to certificate manager */
 	if (is_array($config['captiveportal'])) {
 		foreach ($config['captiveportal'] as $id => &$setting) {
 			if (isset($setting['httpslogin'])) {

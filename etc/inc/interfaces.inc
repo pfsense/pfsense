@@ -171,7 +171,7 @@ function interface_netgraph_needed($interface = "wan") {
 		pfSense_ngctl_detach("{$realif}:", $realif);
 	}
 	/* NOTE: We make sure for this on interface_ppps_configure()
-	 *	no need to do it here agan.
+	 *	no need to do it here again.
 	 *	else
 	 *		pfSense_ngctl_attach(".", $realif);
 	 */
@@ -1513,7 +1513,7 @@ function interface_ppps_configure($interface) {
 				}
 				break;
 			default:
-				log_error(sprintf(gettext("Unkown %s configured as ppp interface."), $type));
+				log_error(sprintf(gettext("Unknown %s configured as ppp interface."), $type));
 				break;
 		}
 	}
@@ -2119,7 +2119,7 @@ function interface_carp_configure(&$vip) {
 	if ($vip['mode'] != "carp")
 		return;
 
-	/* NOTE: Maybe its useless nowdays */
+	/* NOTE: Maybe its useless nowadays */
 	$realif = get_real_interface($vip['interface']);
 	if (!does_interface_exist($realif)) {
 		file_notice("CARP", sprintf(gettext("Interface specified for the virtual IP address %s does not exist. Skipping this VIP."), $vip['subnet']), "Firewall: Virtual IP", "");
@@ -2375,7 +2375,7 @@ function interface_wireless_configure($if, &$wl, &$wlcfg) {
 		$wlcmd[] = "-mediaopt adhoc";
 	}
 
-	/* Not neccesary to set BSS mode as this is default if adhoc and/or hostap is NOT set */
+	/* Not necessary to set BSS mode as this is default if adhoc and/or hostap is NOT set */
 
 	/* handle hide ssid option */
 	if(isset($wlcfg['hidessid']['enable'])) {
@@ -3126,10 +3126,10 @@ function interface_track6_configure($interface = "lan", $wancfg, $linkupevent = 
 	case "dhcp6":
 		if ($linkupevent == true) {
 			/* 
-			 * NOTE: Usually come here from rc.linkup calling so just call directly intead of generating event
+			 * NOTE: Usually come here from rc.linkup calling so just call directly instead of generating event
 			 * 	Instead of disrupting all other v4 configuration just restart DHCPv6 client for now
 			 *
-			 * XXX: Probably DHCPv6 client should handle this autmagically itself?
+			 * XXX: Probably DHCPv6 client should handle this automagically itself?
 			 */
 			$parentrealif = get_real_interface($wancfg['track6-interface']);
 			$pidv6 = find_dhcp6c_process($parentrealif);
@@ -3913,7 +3913,7 @@ function DHCP_Config_File_Substitutions($wancfg, $wanif, $dhclientconf) {
 				$res = stripos($dhclientconf, $various_mac_type . $various_mac_case . $various_mac_delimiter);
 				if ($res !== false) {
 
-					/* Get MAC Address as ASCII String With Colon (:) Celimiters */
+					/* Get MAC Address as ASCII String With Colon (:) delimiters */
 					if ("$various_mac_case" == "U") $dhcpclientconf_mac = strtoupper(get_interface_mac($wanif));
 					if ("$various_mac_case" == "L") $dhcpclientconf_mac = strtolower(get_interface_mac($wanif));
 
@@ -4231,7 +4231,7 @@ function get_real_interface($interface = "wan", $family = "all", $realv6iface = 
 			$interface = substr($interface, 5);
 		} else if (does_interface_exist($interface, $flush)) {
 			/*
-			 * If a real interface was alread passed simply
+			 * If a real interface was already passed simply
 			 * pass the real interface back.  This encourages
 			 * the usage of this function in more cases so that
 			 * we can combine logic for more flexibility.

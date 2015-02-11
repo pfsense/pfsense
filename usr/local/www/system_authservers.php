@@ -464,12 +464,13 @@ function select_clicked() {
 						<tr>
 							<td width="22%" valign="top" class="vncellreq"><?=gettext("Descriptive name");?></td>
 							<td width="78%" class="vtable">
-							<?php if (!isset($id)): ?>
-								<input name="name" type="text" class="formfld unknown" id="name" size="20" value="<?=htmlspecialchars($pconfig['name']);?>"/>
-							<?php else: ?>
-                                                                <strong><?=htmlspecialchars($pconfig['name']);?></strong>
-                                                                <input name='name' type='hidden' id='name' value="<?=htmlspecialchars($pconfig['name']);?>"/>
-                                                                <?php endif; ?>
+								<?php if (!isset($id)): ?>
+									<input name="name" type="text" class="formfld unknown" id="name" size="20" value="<?=htmlspecialchars($pconfig['name']);?>"/>
+									<?= gettext("NOTE: Do NOT use the term 'local' anywhere in here unless you are utilising a local authentication mechanism."); ?>
+								<?php else: ?>
+									<strong><?=htmlspecialchars($pconfig['name']);?></strong>
+									<input name='name' type='hidden' id='name' value="<?=htmlspecialchars($pconfig['name']);?>"/>
+								<?php endif; ?>
 							</td>
 						</tr>
 						<tr>

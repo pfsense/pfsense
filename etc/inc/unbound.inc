@@ -74,9 +74,6 @@ function unbound_optimization() {
 	$optimization['infra_cache_slabs'] = "infra-cache-slabs: {$optimize_num}";
 	$optimization['key_cache_slabs'] = "key-cache-slabs: {$optimize_num}";
 
-	// Size of the RRset cache
-	$optimization['rrset_cache_size'] = "rrset-cache-size: 8m";
-
 	/*
 	 * Larger socket buffer for busy servers
 	 * Check that it is set to 4MB (by default the OS has it configured to 4MB)
@@ -258,6 +255,9 @@ EOD;
 	} else
 		$forward_conf = "";
 
+	// Size of the RRset cache == 2 * msg-cache-size per Unbound's recommendations
+	$rrset_cache_size = $msg_cache_size * 2;
+
 	$unboundconf = <<<EOD
 ##########################
 # Unbound Configuration
@@ -297,12 +297,13 @@ cache-max-ttl: {$cache_max_ttl}
 cache-min-ttl: {$cache_min_ttl}
 harden-dnssec-stripped: {$harden_dnssec_stripped}
 msg-cache-size: {$msg_cache_size}m
+rrset-cache-size: {$rrset_cache_size}m
+
 {$optimization['number_threads']}
 {$optimization['msg_cache_slabs']}
 {$optimization['rrset_cache_slabs']}
 {$optimization['infra_cache_slabs']}
 {$optimization['key_cache_slabs']}
-{$optimization['rrset_cache_size']}
 outgoing-range: 4096
 {$optimization['so_rcvbuf']}
 {$anchor_file}

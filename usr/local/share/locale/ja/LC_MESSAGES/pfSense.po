@@ -44831,7 +44831,7 @@ msgstr "ポータルHTTP（S ）サーバ「この設定では、キャプティ
 #: usr/local/www/services_captiveportal.php:601
 #: usr/local/www/services_captiveportal.php:617
 #: usr/local/www/services_captiveportal.php:617
-msgid "Radius Protocol"
+msgid "RADIUS Protocol"
 msgstr "半径プロトコル"
 
 #: usr/local/www/services_captiveportal.php:611

@@ -2891,8 +2891,8 @@ EOD;
 			if (count($cpiplist) > 0 && count($cpiflist) > 0) {
 				$cpinterface = implode(" ", $cpiflist);
 				$cpaddresses = implode(" ", $cpiplist);
-				$listenporthttps = $cpcfg['listenporthttps'] ? $cpcfg['listenporthttps'] : ($cpcfg['zoneid'] + 1);
-				$listenporthttp  = $cpcfg['listenporthttp']  ? $cpcfg['listenporthttp']  : $cpcfg['zoneid'];
+				$listenporthttps = $cpcfg['listenporthttps'] ? $cpcfg['listenporthttps'] : 8000 + ($cpcfg['zoneid'] + 1);
+				$listenporthttp  = $cpcfg['listenporthttp']  ? $cpcfg['listenporthttp']  : 8000 + $cpcfg['zoneid'];
 				$portalias = $listenporthttps;
 				$portalias .= " {$listenporthttp}";
 				$ipfrules .= "pass in {$log['pass']} quick on { {$cpinterface} } proto tcp from any to { {$cpaddresses} } port { {$portalias} } tracker {$increment_tracker($tracker)} keep state(sloppy)\n";
@@ -2978,7 +2978,6 @@ EOD;
 # block anything from private networks on interfaces with the option set
 block in $privnetlog quick on \${$oc['descr']} from 10.0.0.0/8 to any tracker {$increment_tracker($tracker)} label "{$fix_rule_label("Block private networks from {$oc['descr']} block 10/8")}"
 block in $privnetlog quick on \${$oc['descr']} from 127.0.0.0/8 to any tracker {$increment_tracker($tracker)} label "{$fix_rule_label("Block private networks from {$oc['descr']} block 127/8")}"
-block in $privnetlog quick on \${$oc['descr']} from 100.64.0.0/10 to any tracker {$increment_tracker($tracker)} label "{$fix_rule_label("Block private networks from {$oc['descr']} block 100.64/10")}"
 block in $privnetlog quick on \${$oc['descr']} from 172.16.0.0/12 to any tracker {$increment_tracker($tracker)} label "{$fix_rule_label("Block private networks from {$oc['descr']} block 172.16/12")}"
 block in $privnetlog quick on \${$oc['descr']} from 192.168.0.0/16 to any tracker {$increment_tracker($tracker)} label "{$fix_rule_label("Block private networks from {$oc['descr']} block 192.168/16")}"
 block in $privnetlog quick on \${$oc['descr']} from fc00::/7 to any tracker {$increment_tracker($tracker)} label "{$fix_rule_label("Block ULA networks from {$oc['descr']} block fc00::/7")}"

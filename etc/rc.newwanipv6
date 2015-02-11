@@ -122,7 +122,7 @@ if (is_ipaddrv6($curwanipv6))
 
 log_error("rc.newwanipv6: on (IP address: {$curwanipv6}) (interface: {$interface}) (real interface: {$interface_real}).");
 
-$oldipv6 = "";
+$oldipv6 = '';
 if (file_exists("{$g['vardb_path']}/{$interface}_cacheipv6"))
 	$oldipv6 = file_get_contents("{$g['vardb_path']}/{$interface}_cacheipv6");
 
@@ -144,7 +144,7 @@ setup_gateways_monitor();
 /* signal filter reload */
 filter_configure();
 
-if (is_ipaddrv6($oldipv6)) {
+if (empty($oldipv6) || is_ipaddrv6($oldipv6)) {
 	if ($curwanipv6 == $oldipv6) {
 		// Still need to sync VPNs on PPPoE and such, as even with the same IP the VPN software is unhappy with the IP disappearing.
 		if (in_array($config['interfaces'][$interface]['ipaddrv6'], array('pppoe', 'pptp', 'ppp'))) {
@@ -156,12 +156,11 @@ if (is_ipaddrv6($oldipv6)) {
 				openvpn_resync_all($interface);
 		}
 		return;
-	} else if (does_interface_exist($interface_real))
+	} else if (does_interface_exist($interface_real) && !empty($oldipv6))
 		mwexec("/sbin/ifconfig {$interface_real} inet6 {$oldipv6} delete");
 
 	file_put_contents("{$g['vardb_path']}/{$interface}_cacheipv6", $curwanipv6);
 }
-
 
 /* reload unbound */
 services_unbound_configure();

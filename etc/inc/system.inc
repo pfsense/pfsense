@@ -307,15 +307,26 @@ function system_hosts_generate() {
 		$cfgip = get_interface_ip("lan");
 		if (is_ipaddr($cfgip))
 			$hosts .= "{$cfgip}	{$syscfg['hostname']}.{$syscfg['domain']} {$syscfg['hostname']}\n";
+		$cfgipv6 = get_interface_ipv6("lan");
+		if (is_ipaddrv6($cfgipv6))
+			$hosts .= "{$cfgipv6}	{$syscfg['hostname']}.{$syscfg['domain']} {$syscfg['hostname']}\n";
 	} else {
 		$sysiflist = get_configured_interface_list();
+		$hosts_if_found = false;
 		foreach ($sysiflist as $sysif) {
 			if (!interface_has_gateway($sysif)) {
 				$cfgip = get_interface_ip($sysif);
 				if (is_ipaddr($cfgip)) {
 					$hosts .= "{$cfgip}	{$syscfg['hostname']}.{$syscfg['domain']} {$syscfg['hostname']}\n";
-					break;
+					$hosts_if_found = true;
 				}
+				$cfgipv6 = get_interface_ipv6($sysif);
+				if (is_ipaddrv6($cfgipv6)) {
+					$hosts .= "{$cfgipv6}	{$syscfg['hostname']}.{$syscfg['domain']} {$syscfg['hostname']}\n";
+					$hosts_if_found = true;
+				}
+				if ($hosts_if_found == true)
+					break;
 			}
 		}
 	}
@@ -928,7 +939,7 @@ function system_webgui_create_certificate() {
 		'organizationName' => "{$g['product_name']} webConfigurator Self-Signed Certificate",
 		'emailAddress' => "admin@{$config['system']['hostname']}.{$config['system']['domain']}",
 		'commonName' => "{$config['system']['hostname']}-{$cert['refid']}");
-	$old_err_level = error_reporting(0); /* otherwise openssl_ functions throw warings directly to a page screwing menu tab */
+	$old_err_level = error_reporting(0); /* otherwise openssl_ functions throw warnings directly to a page screwing menu tab */
 	if (!cert_create($cert, null, 2048, 2000, $dn, "self-signed", "sha256")){
 		while($ssl_err = openssl_error_string()){
 			log_error("Error creating WebGUI Certificate: openssl library returns: " . $ssl_err);
@@ -1224,7 +1235,7 @@ mimetype.assign             = (
 url.access-deny             = ( "~", ".inc" )
 
 
-######### Options that are good to be but not neccesary to be changed #######
+######### Options that are good to be but not necessary to be changed #######
 
 ## bind to port (default: 80)
 
@@ -1716,12 +1727,12 @@ function system_ntp_configure($start_ntpd=true) {
 	}
 	
 
-	if (empty($config['ntpd']['interface']))
+	if (empty($config['ntpd']['interface'])) {
 		if (is_array($config['installedpackages']['openntpd']) && !empty($config['installedpackages']['openntpd']['config'][0]['interface']))
 			$interfaces = explode(",", $config['installedpackages']['openntpd']['config'][0]['interface']);
 		else
 			$interfaces = array();
-	else
+	} else
 		$interfaces = explode(",", $config['ntpd']['interface']);
 
 	if (is_array($interfaces) && count($interfaces)) {
@@ -1735,7 +1746,7 @@ function system_ntp_configure($start_ntpd=true) {
 		}
 	}
 
-	/* open configuration for wrting or bail */
+	/* open configuration for writing or bail */
 	if (!@file_put_contents("{$g['varetc_path']}/ntpd.conf", $ntpcfg)) {
 		log_error("Could not open {$g['varetc_path']}/ntpd.conf for writing");
 		return;
@@ -2036,7 +2047,7 @@ function system_identify_specific_platform() {
 	
 	/* Try to guess from smbios strings */
 	unset($output);
-	$_gb = exec('/bin/kenv smbios.system.product', $output);
+	$_gb = exec('/bin/kenv smbios.system.product 2>/dev/null', $output);
 	switch ($output[0]) {
 	case 'FW7541':
 		return (array('name' => 'FW7541', 'descr' => 'Netgate FW7541'));
@@ -2066,7 +2077,14 @@ function system_identify_specific_platform() {
 		
 	if (preg_match("/Soekris net55../", $dmesg, $matches))
 		return array('name' => 'net55xx', 'descr' => $matches[0]);
-	
+
+	unset($dmesg);
+
+	$dmesg_boot = system_get_dmesg_boot();
+	if (strpos($dmesg_boot, "PC Engines ALIX") !== false)
+		return array('name' => 'alix', 'descr' => gettext('PC Engines ALIX'));
+	unset($dmesg_boot);
+
 	/* unknown embedded platform */
 	return array('name' => 'embedded', 'descr' => gettext('embedded (unknown)'));
 }

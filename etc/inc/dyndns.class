@@ -30,6 +30,7 @@
  	 *    - Eurodns (eurodns.com)
  	 *    - GratisDNS (gratisdns.dk)
 	 *    - City Network (citynetwork.se)
+	 *	  - GleSYS (glesys.com)
 	 * +----------------------------------------------------+
 	 *  Requirements:
 	 *    - PHP version 4.0.2 or higher with the CURL Library and the PCRE Library
@@ -72,6 +73,7 @@
   	 *  GratisDNS      - Last Tested: 15 August 2012
 	 *  OVH DynHOST	   - Last Tested: NEVER
 	 *  City Network   - Last Tested: 13 November 2013
+	 *  GleSYS			- Last Tested: 3 February 2015
 	 * +====================================================+
 	 *
 	 * @author 	E.Kristensen
@@ -211,6 +213,7 @@
 				$this->_error(10);
 			} else {
 				switch ($this->_dnsService) {
+				case 'glesys':
 				case 'dnsomatic':
 				case 'dyndns':
 				case 'dyndns-static':
@@ -279,6 +282,17 @@
 			}
 
 			switch ($this->_dnsService) {
+				case 'glesys':
+					$needsIP = TRUE;
+					if ($this->_dnsVerboseLog)
+						log_error("DynDNS: ({$this->_dnsHost}) DNS update() starting.");
+					$server = 'https://api.glesys.com/domain/updaterecord/format/json';
+					curl_setopt($ch, CURLOPT_USERPWD, $this->_dnsUser.':'.$this->_dnsPass);
+					$post_data['recordid'] = $this->_dnsHost;
+					$post_data['data'] = $this->_dnsIP;
+					curl_setopt($ch, CURLOPT_URL, $server);
+					curl_setopt($ch, CURLOPT_POSTFIELDS, $post_data);
+					break;
 				case 'dyndns':
 				case 'dyndns-static':
 				case 'dyndns-custom':
@@ -683,6 +697,16 @@
 				return;
 			}
 			switch ($this->_dnsService) {
+				case 'glesys':
+					if (preg_match('/Record updated/i', $data)) {
+						$status = "GleSYS ({$this->_dnsHost}): (Success) IP Address Changed Successfully! (".$this->_dnsIP.")";
+						$successful_update = true;
+					} else {
+						$status = "GleSYS ({$this->_dnsHost}): (Unknown Response)";
+						log_error("GleSYS ({$this->_dnsHost}): PAYLOAD: {$data}");
+						$this->_debug($data);
+					}
+					break;
 				case 'dnsomatic':
 					if (preg_match('/badauth/i', $data)) {
 						$status = "DNS-O-Matic ({$this->_dnsHost}): The DNS-O-Matic username or password specified are incorrect. No updates will be distributed to services until this is resolved.";

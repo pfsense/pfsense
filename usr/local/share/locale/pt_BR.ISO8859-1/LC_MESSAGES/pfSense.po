@@ -37850,7 +37850,7 @@ msgstr "Esta configuração limita o número de conexões simultâneas ao HTTP portal
 #: usr/local/www/services_captiveportal.php:600
 #: usr/local/www/services_captiveportal.php:601
 #: usr/local/www/services_captiveportal.php:617
-msgid "Radius Protocol"
+msgid "RADIUS Protocol"
 msgstr "Protocolo Radius"
 
 #: usr/local/www/services_captiveportal.php:611

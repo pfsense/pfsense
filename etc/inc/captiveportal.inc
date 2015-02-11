@@ -785,7 +785,7 @@ function captiveportal_prune_old() {
 	captiveportal_prune_old_automac();
 
 	if ($voucher_needs_sync == true)
-		/* Triger a sync of the vouchers on config */
+		/* Trigger a sync of the vouchers on config */
 		send_event("service sync vouchers");
 
 	/* write database */

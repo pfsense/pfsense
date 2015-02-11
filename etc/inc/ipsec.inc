@@ -35,12 +35,14 @@
 */
 
 /* IPsec defines */
+global $ipsec_loglevels;
 $ipsec_loglevels = array("dmn" => "Daemon", "mgr" => "SA Manager", "ike" => "IKE SA", "chd" => "IKE Child SA",
 	"job" => "Job Processing", "cfg" => "Configuration backend", "knl" => "Kernel Interface",
 	"net" => "Networking", "asn" => "ASN encoding", "enc" => "Message encoding",
 	"imc" => "Integrity checker", "imv" => "Integrity Verifier", "pts" => "Platform Trust Service",
 	"tls" => "TLS handler", "esp" => "IPsec traffic", "lib" => "StrongSwan Lib");
 
+global $my_identifier_list;
 $my_identifier_list = array(
 	'myaddress' => array( 'desc' => gettext('My IP address'), 'mobile' => true ),
 	'address' => array( 'desc' => gettext('IP address'), 'mobile' => true ),
@@ -50,6 +52,7 @@ $my_identifier_list = array(
 	'keyid tag' => array( 'desc' => gettext('KeyID tag'), 'mobile' => true ),
 	'dyn_dns' => array( 'desc' => gettext('Dynamic DNS'), 'mobile' => true ));
 
+global $peer_identifier_list;
 $peer_identifier_list = array(
 	'peeraddress' => array( 'desc' => gettext('Peer IP address'), 'mobile' => false ),
 	'address' => array( 'desc' => gettext('IP address'), 'mobile' => false ),
@@ -58,10 +61,12 @@ $peer_identifier_list = array(
 	'asn1dn' => array( 'desc' => gettext('ASN.1 distinguished Name'), 'mobile' => true ),
 	'keyid tag' => array( 'desc' =>gettext('KeyID tag'), 'mobile' => true ));
 
+global $ipsec_idhandling;
 $ipsec_idhandling = array(
 	'yes' => 'YES', 'no' => 'NO', 'never' => 'NEVER', 'keep' => 'KEEP'
 	);
 
+global $p1_ealgos;
 $p1_ealgos = array(
 	'aes' => array( 'name' => 'AES', 'keysel' => array( 'lo' => 128, 'hi' => 256, 'step' => 64 ) ),
 	'blowfish' => array( 'name' => 'Blowfish', 'keysel' => array( 'lo' => 128, 'hi' => 256, 'step' => 64 ) ),
@@ -69,6 +74,7 @@ $p1_ealgos = array(
 	'cast128' => array( 'name' => 'CAST128' ),
 	'des' => array( 'name' => 'DES' ));
 
+global $p2_ealgos;
 $p2_ealgos = array(
 	'aes' => array( 'name' => 'AES', 'keysel' => array( 'lo' => 128, 'hi' => 256, 'step' => 64 ) ),
 	'aes128gcm' => array( 'name' => 'AES128-GCM', 'keysel' => array( 'lo' => 64, 'hi' => 128, 'step' => 32 ) ),
@@ -79,6 +85,7 @@ $p2_ealgos = array(
 	'cast128' => array( 'name' => 'CAST128' ),
 	'des' => array( 'name' => 'DES' ));
 
+global $p1_halgos;
 $p1_halgos = array(
 	'md5' => 'MD5',
 	'sha1' => 'SHA1',
@@ -88,6 +95,7 @@ $p1_halgos = array(
 	'aesxcbc' => 'AES-XCBC'
 );
 
+global $p1_dhgroups;
 $p1_dhgroups = array(
 	1  => '1 (768 bit)',
 	2  => '2 (1024 bit)',
@@ -102,6 +110,7 @@ $p1_dhgroups = array(
 	24 => '24 (2048(sub 256) bit)'
 );
 
+global $p2_halgos;
 $p2_halgos = array(
 	'hmac_md5' => 'MD5',
 	'hmac_sha1' => 'SHA1',
@@ -111,6 +120,7 @@ $p2_halgos = array(
 	'aesxcbc' => 'AES-XCBC'
 );
 
+global $p1_authentication_methods;
 $p1_authentication_methods = array(
 	'hybrid_rsa_server' => array( 'name' => 'Hybrid RSA + Xauth', 'mobile' => true ),
 	'xauth_rsa_server' => array( 'name' => 'Mutual RSA + Xauth', 'mobile' => true ),
@@ -120,20 +130,24 @@ $p1_authentication_methods = array(
 	'rsasig' => array( 'name' => 'Mutual RSA', 'mobile' => false ),
 	'pre_shared_key' => array( 'name' => 'Mutual PSK', 'mobile' => false ) );
 
+global $ipsec_preshared_key_type;
 $ipsec_preshared_key_type = array(
 	'PSK' => 'PSK',
 	'EAP' => 'EAP'
 	);
 
+global $p2_modes;
 $p2_modes = array(
 	'tunnel' => 'Tunnel IPv4',
 	'tunnel6' => 'Tunnel IPv6',
 	'transport' => 'Transport');
 
+global $p2_protos;
 $p2_protos = array(
 	'esp' => 'ESP',
 	'ah' => 'AH');
 
+global $p2_pfskeygroups;
 $p2_pfskeygroups = array(
 	0 => 'off',
 	1  => '1 (768 bit)',

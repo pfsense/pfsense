@@ -171,7 +171,7 @@ function interface_netgraph_needed($interface = "wan") {
 		pfSense_ngctl_detach("{$realif}:", $realif);
 	}
 	/* NOTE: We make sure for this on interface_ppps_configure()
-	 *	no need to do it here agan.
+	 *	no need to do it here again.
 	 *	else
 	 *		pfSense_ngctl_attach(".", $realif);
 	 */
@@ -422,9 +422,6 @@ function interfaces_bridge_configure($checkmember = 0, $realif = "") {
 				}
 			}
 			else if ($checkmember == 2) {
-				/* XXX: It should not be possible no? */
-				if (!strstr($bridge['if'], "_vip"))
-					continue;
 				$members = explode(',', $bridge['members']);
 				foreach ($members as $member) {
 					if (empty($config['interfaces'][$bridge['if']]) || $config['interfaces'][$bridge['if']]['ipaddrv6'] != "track6")
@@ -729,9 +726,8 @@ function interfaces_gre_configure($checkparent = 0, $realif = "") {
 					continue;
 			}
 			else if ($checkparent == 2) {
-				if (substr($gre['if'], 0, 4) != '_vip' && substr($gre['if'], 0, 5) != '_lloc')
-					continue;
-				if (empty($config['interfaces'][$gre['if']]) || $config['interfaces'][$gre['if']]['ipaddrv6'] != "track6")
+				if ((substr($gre['if'], 0, 4) != '_vip' && substr($gre['if'], 0, 5) != '_lloc') &&
+					(empty($config['interfaces'][$gre['if']]) || $config['interfaces'][$gre['if']]['ipaddrv6'] != "track6"))
 					continue;
 			}
 			/* XXX: Maybe we should report any errors?! */
@@ -812,9 +808,8 @@ function interfaces_gif_configure($checkparent = 0, $realif = "") {
 					continue;
 			}
 			else if ($checkparent == 2) {
-				if (substr($gif['if'], 0, 4) != '_vip' && substr($gif['if'], 0, 5) != '_lloc')
-					continue;
-				if (empty($config['interfaces'][$gif['if']]) || $config['interfaces'][$gif['if']]['ipaddrv6'] != "track6")
+				if ((substr($gif['if'], 0, 4) != '_vip' && substr($gif['if'], 0, 5) != '_lloc') &&
+				    (empty($config['interfaces'][$gif['if']]) || $config['interfaces'][$gif['if']]['ipaddrv6'] != "track6"))
 					continue;
 			}
 			/* XXX: Maybe we should report any errors?! */
@@ -1513,7 +1508,7 @@ function interface_ppps_configure($interface) {
 				}
 				break;
 			default:
-				log_error(sprintf(gettext("Unkown %s configured as ppp interface."), $type));
+				log_error(sprintf(gettext("Unknown %s configured as ppp interface."), $type));
 				break;
 		}
 	}
@@ -2119,7 +2114,7 @@ function interface_carp_configure(&$vip) {
 	if ($vip['mode'] != "carp")
 		return;
 
-	/* NOTE: Maybe its useless nowdays */
+	/* NOTE: Maybe its useless nowadays */
 	$realif = get_real_interface($vip['interface']);
 	if (!does_interface_exist($realif)) {
 		file_notice("CARP", sprintf(gettext("Interface specified for the virtual IP address %s does not exist. Skipping this VIP."), $vip['subnet']), "Firewall: Virtual IP", "");
@@ -2375,7 +2370,7 @@ function interface_wireless_configure($if, &$wl, &$wlcfg) {
 		$wlcmd[] = "-mediaopt adhoc";
 	}
 
-	/* Not neccesary to set BSS mode as this is default if adhoc and/or hostap is NOT set */
+	/* Not necessary to set BSS mode as this is default if adhoc and/or hostap is NOT set */
 
 	/* handle hide ssid option */
 	if(isset($wlcfg['hidessid']['enable'])) {
@@ -2931,6 +2926,52 @@ function interface_configure($interface = "wan", $reloadall = false, $linkupeven
 	unset($interface_snv6_arr_cache[$realif]);
 
 	$tunnelif = substr($realif, 0, 3);
+
+	if (does_interface_exist($wancfg['if']))
+		interfaces_bring_up($wancfg['if']);
+
+	if (!empty($wancfg['mtu'])) {
+		if (stristr($realif, "_vlan")) {
+			$assignedparent = convert_real_interface_to_friendly_interface_name($realhwif);
+			if (!empty($assignedparent) && !empty($config['interfaces'][$assignedparent]['mtu'])) {
+				$parentmtu = $config['interfaces'][$assignedparent]['mtu'];
+				if ($wancfg['mtu'] > $parentmtu)
+					log_error("There is a conflict on MTU between parent {$realhwif} and VLAN({$realif})");
+			} else
+				$parentmtu = 0;
+
+			$parentmtu = interface_vlan_mtu_configured($realhwif, $parentmtu);
+
+			if (get_interface_mtu($realhwif) != $parentmtu)
+				pfSense_interface_mtu($realhwif, $parentmtu);
+
+			/* All vlans need to use the same mtu value as their parent. */
+			interface_vlan_adapt_mtu(link_interface_to_vlans($realhwif), $parentmtu);
+		} else if (substr($realif, 0, 4) == 'lagg') {
+			/* LAGG interface must be destroyed and re-created to change MTU */
+			if ($wancfg['mtu'] != get_interface_mtu($realif)) {
+				if (isset($config['laggs']['lagg']) && is_array($config['laggs']['lagg'])) {
+					foreach ($config['laggs']['lagg'] as $lagg) {
+						if ($lagg['laggif'] == $realif) {
+							interface_lagg_configure($lagg);
+							break;
+						}
+					}
+				}
+			}
+		} else {
+			if ($wancfg['mtu'] != get_interface_mtu($realif))
+				pfSense_interface_mtu($realif, $wancfg['mtu']);
+
+			/* This case is needed when the parent of vlans is being configured */
+			$vlans = link_interface_to_vlans($realif);
+			if (is_array($vlans))
+				interface_vlan_adapt_mtu($vlans, $wancfg['mtu']);
+			unset($vlans);
+		}
+		/* XXX: What about gre/gif/.. ? */
+	}
+
 	switch ($wancfg['ipaddr']) {
 	case 'dhcp':
 		interface_dhcp_configure($interface);
@@ -2975,51 +3016,6 @@ function interface_configure($interface = "wan", $reloadall = false, $linkupeven
 		}
 		break;
 	}
-
-	if (!empty($wancfg['mtu'])) {
-		if (stristr($realif, "_vlan")) {
-			$assignedparent = convert_real_interface_to_friendly_interface_name($realhwif);
-			if (!empty($assignedparent) && !empty($config['interfaces'][$assignedparent]['mtu'])) {
-				$parentmtu = $config['interfaces'][$assignedparent]['mtu'];
-				if ($wancfg['mtu'] > $parentmtu)
-					log_error("There is a conflict on MTU between parent {$realhwif} and VLAN({$realif})");
-			} else
-				$parentmtu = 0;
-
-			$parentmtu = interface_vlan_mtu_configured($realhwif, $parentmtu);
-
-			if (get_interface_mtu($realhwif) != $parentmtu)
-				pfSense_interface_mtu($realhwif, $parentmtu);
-
-			/* All vlans need to use the same mtu value as their parent. */
-			interface_vlan_adapt_mtu(link_interface_to_vlans($realhwif), $parentmtu);
-		} else if (substr($realif, 0, 4) == 'lagg') {
-			/* LAGG interface must be destroyed and re-created to change MTU */
-			if ($wancfg['mtu'] != get_interface_mtu($realif)) {
-				if (isset($config['laggs']['lagg']) && is_array($config['laggs']['lagg'])) {
-					foreach ($config['laggs']['lagg'] as $lagg) {
-						if ($lagg['laggif'] == $realif) {
-							interface_lagg_configure($lagg);
-							break;
-						}
-					}
-				}
-			}
-		} else {
-			if ($wancfg['mtu'] != get_interface_mtu($realif))
-				pfSense_interface_mtu($realif, $wancfg['mtu']);
-
-			/* This case is needed when the parent of vlans is being configured */
-			$vlans = link_interface_to_vlans($realif);
-			if (is_array($vlans))
-				interface_vlan_adapt_mtu($vlans, $wancfg['mtu']);
-			unset($vlans);
-		}
-		/* XXX: What about gre/gif/.. ? */
-	}
-
-	if (does_interface_exist($wancfg['if']))
-		interfaces_bring_up($wancfg['if']);
 
 	interface_netgraph_needed($interface);
 
@@ -3125,10 +3121,10 @@ function interface_track6_configure($interface = "lan", $wancfg, $linkupevent = 
 	case "dhcp6":
 		if ($linkupevent == true) {
 			/* 
-			 * NOTE: Usually come here from rc.linkup calling so just call directly intead of generating event
+			 * NOTE: Usually come here from rc.linkup calling so just call directly instead of generating event
 			 * 	Instead of disrupting all other v4 configuration just restart DHCPv6 client for now
 			 *
-			 * XXX: Probably DHCPv6 client should handle this autmagically itself?
+			 * XXX: Probably DHCPv6 client should handle this automagically itself?
 			 */
 			$parentrealif = get_real_interface($wancfg['track6-interface']);
 			$pidv6 = find_dhcp6c_process($parentrealif);
@@ -3912,7 +3908,7 @@ function DHCP_Config_File_Substitutions($wancfg, $wanif, $dhclientconf) {
 				$res = stripos($dhclientconf, $various_mac_type . $various_mac_case . $various_mac_delimiter);
 				if ($res !== false) {
 
-					/* Get MAC Address as ASCII String With Colon (:) Celimiters */
+					/* Get MAC Address as ASCII String With Colon (:) delimiters */
 					if ("$various_mac_case" == "U") $dhcpclientconf_mac = strtoupper(get_interface_mac($wanif));
 					if ("$various_mac_case" == "L") $dhcpclientconf_mac = strtolower(get_interface_mac($wanif));
 
@@ -4230,7 +4226,7 @@ function get_real_interface($interface = "wan", $family = "all", $realv6iface = 
 			$interface = substr($interface, 5);
 		} else if (does_interface_exist($interface, $flush)) {
 			/*
-			 * If a real interface was alread passed simply
+			 * If a real interface was already passed simply
 			 * pass the real interface back.  This encourages
 			 * the usage of this function in more cases so that
 			 * we can combine logic for more flexibility.

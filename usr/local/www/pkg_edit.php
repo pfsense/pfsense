@@ -808,6 +808,32 @@ if ($pkg['tabs'] <> "") {
 					echo $input ."\n<br />" . fixup_string($pkga['description']) . "\n";
 				break;
 
+			case "schedule_selection":
+				$input = "<select id='{$pkga['fieldname']}' name='{$pkga['fieldname']}'>\n";
+				$schedules = array();
+				$schedules[] = "none";
+				if(is_array($config['schedules']['schedule'])) {
+					foreach ($config['schedules']['schedule'] as $schedule) {
+						if ($schedule['name'] <> "")
+							$schedules[] = $schedule['name'];
+					}
+				}
+				foreach($schedules as $schedule) {
+					$selected = ($value == $schedule ? "selected=\"selected\"" : "");
+					if($schedule == "none")
+						$input .= "<option value=\"\" {$selected}>{$schedule}</option>\n";
+					else
+						$input .= "<option value=\"{$schedule}\" {$selected}>{$schedule}</option>\n";
+				}
+				$input .= "</select>\n<br />\n" . fixup_string($pkga['description']) . "\n";
+				if(isset($pkga['advancedfield']) && isset($adv_filed_count)) {
+					$js_array[] = $pkga['fieldname'];
+					$advanced .= display_advanced_field($pkga['fieldname']).$input;
+					$advanced .= "</div>\n";
+				} else
+					echo $input;
+				break;
+				
 			case "rowhelper":
 				#$rowhelpername=($fields['fieldname'] ? $fields['fieldname'] : "row");
 				$rowhelpername="row";

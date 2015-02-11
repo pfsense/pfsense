@@ -344,7 +344,7 @@ function show_source_port_range() {
 					</td></tr>
 					<tr><td valign="top" class="vncell" width="20%"><?=gettext("Valid time"); ?></td>
 					<td class="vtable" width="80%">
-					<input name="maxage" type="text" class="formfld unkown" id="maxage" size="8" value="<?=htmlspecialchars($pconfig['maxage']);?>" /> <?=gettext("seconds"); ?>
+					<input name="maxage" type="text" class="formfld unknown" id="maxage" size="8" value="<?=htmlspecialchars($pconfig['maxage']);?>" /> <?=gettext("seconds"); ?>
 					<br />
 					<span class="vexpl">
 	     <?=gettext("Set the time that a Spanning Tree Protocol configuration is " .
@@ -354,7 +354,7 @@ function show_source_port_range() {
 					</td></tr>
 					<tr><td valign="top" class="vncell" width="20%"><?=gettext("Forward time"); ?> </td>
 					<td class="vtable" width="80%">
-					<input name="fwdelay" type="text" class="formfld unkown" id="fwdelay" size="8" value="<?=htmlspecialchars($pconfig['fwdelay']);?>" /> <?=gettext("seconds"); ?>
+					<input name="fwdelay" type="text" class="formfld unknown" id="fwdelay" size="8" value="<?=htmlspecialchars($pconfig['fwdelay']);?>" /> <?=gettext("seconds"); ?>
 					<br />
 					<span class="vexpl">
 	     <?=gettext("Set the time that must pass before an interface begins forwarding " .
@@ -363,7 +363,7 @@ function show_source_port_range() {
 					</td></tr>
 					<tr><td valign="top" class="vncell" width="20%"><?=gettext("Hello time"); ?></td>
 					<td class="vtable" width="80%">
-					<input name="hellotime" type="text" class="formfld unkown" size="8" id="hellotime" value="<?=htmlspecialchars($pconfig['hellotime']);?>" /> <?=gettext("seconds"); ?>
+					<input name="hellotime" type="text" class="formfld unknown" size="8" id="hellotime" value="<?=htmlspecialchars($pconfig['hellotime']);?>" /> <?=gettext("seconds"); ?>
 					<br />
 					<span class="vexpl">
 	     <?=gettext("Set the time between broadcasting of Spanning Tree Protocol configuration messages.  The hello time may only be changed when " .
@@ -372,7 +372,7 @@ function show_source_port_range() {
 					</td></tr>
 					<tr><td valign="top" class="vncell" width="20%"><?=gettext("Priority"); ?></td>
 					<td class="vtable" width="80%">
-					<input name="priority" type="text" class="formfld unkown" id="priority" value="<?=htmlspecialchars($pconfig['priority']);?>" />
+					<input name="priority" type="text" class="formfld unknown" id="priority" value="<?=htmlspecialchars($pconfig['priority']);?>" />
 					<br />
 					<span class="vexpl">
 	     <?=gettext("Set the bridge priority for Spanning Tree.  The default is 32768. " .
@@ -381,7 +381,7 @@ function show_source_port_range() {
 					</td></tr>
 					<tr><td valign="top" class="vncell" width="20%"><?=gettext("Hold count"); ?></td>
 					<td class="vtable" width="80%">
-					<input name="holdcnt" type="text" class="formfld unkown" id="holdcnt" value="<?=htmlspecialchars($pconfig['holdcnt']);?>" />
+					<input name="holdcnt" type="text" class="formfld unknown" id="holdcnt" value="<?=htmlspecialchars($pconfig['holdcnt']);?>" />
 					<br />
 					<span class="vexpl">
 	     <?=gettext("Set the transmit hold count for Spanning Tree.  This is the number" .
@@ -393,7 +393,7 @@ function show_source_port_range() {
 					<td class="vtable" width="80%">
 					<table summary="priority">
 					<?php foreach ($ifacelist as $ifn => $ifdescr)
-							echo "<tr><td>{$ifdescr}</td><td><input size=\"5\" name=\"{$ifn}\" type=\"text\" class=\"formfld unkown\" id=\"{$ifn}\" value=\"{$ifpriority[$ifn]}\" /></td></tr>";
+							echo "<tr><td>{$ifdescr}</td><td><input size=\"5\" name=\"{$ifn}\" type=\"text\" class=\"formfld unknown\" id=\"{$ifn}\" value=\"{$ifpriority[$ifn]}\" /></td></tr>";
 					?>
 					<tr><td></td></tr>
 					</table>
@@ -407,7 +407,7 @@ function show_source_port_range() {
 					<td class="vtable" width="80%">
 					<table summary="path cost">
 					<?php $i = 0; foreach ($ifacelist as $ifn => $ifdescr)
-							echo "<tr><td>{$ifdescr}</td><td><input size=\"8\" name=\"{$ifn}{$i}\" type=\"text\" class=\"formfld unkown\" id=\"{$ifn}{$i}\" value=\"{$ifpathcost[$ifn]}\" /></td></tr>";
+							echo "<tr><td>{$ifdescr}</td><td><input size=\"8\" name=\"{$ifn}{$i}\" type=\"text\" class=\"formfld unknown\" id=\"{$ifn}{$i}\" value=\"{$ifpathcost[$ifn]}\" /></td></tr>";
 					?>
 					<tr><td></td></tr>
 					</table>
@@ -424,7 +424,7 @@ function show_source_port_range() {
                 <tr style="display:none" id="sprtable2">
                   <td valign="top" class="vncell"><?=gettext("Cache size"); ?></td>
 					<td class="vtable">
-						<input name="maxaddr" size="10" type="text" class="formfld unkown" id="maxaddr" value="<?=htmlspecialchars($pconfig['maxaddr']);?>" /> <?=gettext("entries"); ?>
+						<input name="maxaddr" size="10" type="text" class="formfld unknown" id="maxaddr" value="<?=htmlspecialchars($pconfig['maxaddr']);?>" /> <?=gettext("entries"); ?>
 					<br /><span class="vexpl">
 <?=gettext("Set the size of the bridge address cache to size.	The default is " .
 	     ".100 entries."); ?>
@@ -434,7 +434,7 @@ function show_source_port_range() {
                 <tr style="display:none" id="sprtable3">
                   <td valign="top" class="vncell"><?=gettext("Cache entry expire time"); ?></td>
 				  <td>
-					<input name="timeout" type="text" class="formfld unkown" id="timeout" size="10" value="<?=htmlspecialchars($pconfig['timeout']);?>" /> <?=gettext("seconds"); ?>
+					<input name="timeout" type="text" class="formfld unknown" id="timeout" size="10" value="<?=htmlspecialchars($pconfig['timeout']);?>" /> <?=gettext("seconds"); ?>
 					<br /><span class="vexpl">
 	     <?=gettext("Set the timeout of address cache entries to this number of seconds.  If " .
 	     "seconds is zero, then address cache entries will not be expired. " .

@@ -956,9 +956,9 @@ function get_configured_carp_interface_list($carpinterface = '', $family = 'inet
 						switch ($what) {
 						case 'subnet':
 							if ($family == 'inet' && is_ipaddrv4($vip['subnet']))
-								return "{$vip['subnet']}/{$vip['subnet_bits']}";
+								return $vip['subnet_bits'];
 							else if ($family == 'inet6' && is_ipaddrv6($vip['subnet']))
-								return "{$vip['subnet']}/{$vip['subnet_bits']}";
+								return $vip['subnet_bits'];
 							break;
 						case 'iface':
 							if ($family == 'inet' && is_ipaddrv4($vip['subnet']))

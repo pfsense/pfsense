@@ -4790,7 +4790,7 @@ function ip_in_interface_alias_subnet($interface, $ipalias) {
 function get_interface_ip($interface = "wan") {
 	
 	$realif = get_failover_interface($interface);
-	if (!$realif) {
+	if (empty($realif)) {
 		if (strstr($interface, "_vip"))
 			return get_configured_carp_interface_list($interface);
 		else
@@ -4808,7 +4808,7 @@ function get_interface_ipv6($interface = "wan", $flush = false) {
 	global $config;
 
 	$realif = get_failover_interface($interface, "inet6");
-	if (!$realif) {
+	if (empty($realif)) {
 		if (strstr($interface, "_vip"))
 			return get_configured_carp_interface_list($interface, "inet6");
 		else
@@ -4863,10 +4863,9 @@ function get_interface_linklocal($interface = "wan") {
 
 function get_interface_subnet($interface = "wan") {
 	$realif = get_real_interface($interface);
-	if (!$realif) {
+	if (empty($realif)) {
 		if (strstr($interface, "_vip")) {
-			list($interface, $vhid) = explode("_vip", $interface);
-			$realif = get_real_interface($interface);
+			return get_configured_carp_interface_list($interface, 'inet', 'subnet');
 		} else
 			return null;
 	}
@@ -4882,10 +4881,9 @@ function get_interface_subnetv6($interface = "wan") {
 	global $config;
 
 	$realif = get_real_interface($interface, "inet6");
-	if (!$realif) {
+	if (empty($realif)) {
 		if (strstr($interface, "_vip")) {
-			list($interface, $vhid) = explode("_vip", $interface);
-			$realif = get_real_interface($interface);
+			return get_configured_carp_interface_list($interface, 'inet6', 'subnet');
 		} else
 			return null;
 	}

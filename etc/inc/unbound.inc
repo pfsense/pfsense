@@ -304,7 +304,6 @@ rrset-cache-size: {$rrset_cache_size}m
 {$optimization['rrset_cache_slabs']}
 {$optimization['infra_cache_slabs']}
 {$optimization['key_cache_slabs']}
-{$optimization['rrset_cache_size']}
 outgoing-range: 4096
 {$optimization['so_rcvbuf']}
 {$anchor_file}

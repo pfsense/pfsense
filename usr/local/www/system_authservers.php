@@ -532,24 +532,24 @@ function select_clicked() {
 						</tr>
 						<tr id="tls_ca">
 							<td width="22%" valign="top" class="vncell"><?=gettext("Peer Certificate Authority"); ?></td>
-                                                        <td width="78%" class="vtable">
-                                                        <?php if (count($a_ca)): ?>
+							<td width="78%" class="vtable">
+							<?php if (count($a_ca)): ?>
 								<select id='ldap_caref' name='ldap_caref' class="formselect">
-                                                        <?php
-                                                                foreach ($a_ca as $ca):
-                                                                        $selected = "";
-                                                                        if ($pconfig['ldap_caref'] == $ca['refid'])
-                                                                                $selected = "selected=\"selected\"";
-                                                        ?>
-									<option value="<?=$ca['refid'];?>" <?=$selected;?>><?=$ca['descr'];?></option>
-                                                        <?php	endforeach; ?>
+									<?php
+										foreach ($a_ca as $ca):
+											$selected = "";
+											if ($pconfig['ldap_caref'] == $ca['refid'])
+													$selected = "selected=\"selected\"";
+									?>
+										<option value="<?=$ca['refid'];?>" <?=$selected;?>><?=$ca['descr'];?></option>
+									<?php	endforeach; ?>
 								</select>
-								<br /><span><?=gettext("This option is used if 'SSL Encrypted' option is choosen.");?> <br />
+								<br /><span><?=gettext("This option is used if 'SSL Encrypted' option is chosen.");?><br />
 								<?=gettext("It must match with the CA in the AD otherwise problems will arise.");?></span>
-                                                        <?php else: ?>
-                                                                <b>No Certificate Authorities defined.</b> <br />Create one under <a href="system_camanager.php">System &gt; Cert Manager</a>.
-                                                        <?php endif; ?>
-                                                        </td>
+							<?php else: ?>
+									<b>No Certificate Authorities defined.</b> <br />Create one under <a href="system_camanager.php">System &gt; Cert Manager</a>.
+							<?php endif; ?>
+							</td>
 						</tr>
 						<tr>
 							<td width="22%" valign="top" class="vncellreq"><?=gettext("Protocol version");?></td>

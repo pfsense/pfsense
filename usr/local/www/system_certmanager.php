@@ -339,7 +339,7 @@ if ($_POST) {
 
 				$cert['descr'] = $pconfig['descr'];
 
-				$old_err_level = error_reporting(0); /* otherwise openssl_ functions throw warings directly to a page screwing menu tab */
+				$old_err_level = error_reporting(0); /* otherwise openssl_ functions throw warnings directly to a page screwing menu tab */
 
 				if ($pconfig['method'] == "import")
 					cert_import($cert, $pconfig['cert'], $pconfig['key']);

@@ -422,9 +422,6 @@ function interfaces_bridge_configure($checkmember = 0, $realif = "") {
 				}
 			}
 			else if ($checkmember == 2) {
-				/* XXX: It should not be possible no? */
-				if (!strstr($bridge['if'], "_vip"))
-					continue;
 				$members = explode(',', $bridge['members']);
 				foreach ($members as $member) {
 					if (empty($config['interfaces'][$bridge['if']]) || $config['interfaces'][$bridge['if']]['ipaddrv6'] != "track6")
@@ -729,9 +726,8 @@ function interfaces_gre_configure($checkparent = 0, $realif = "") {
 					continue;
 			}
 			else if ($checkparent == 2) {
-				if (substr($gre['if'], 0, 4) != '_vip' && substr($gre['if'], 0, 5) != '_lloc')
-					continue;
-				if (empty($config['interfaces'][$gre['if']]) || $config['interfaces'][$gre['if']]['ipaddrv6'] != "track6")
+				if ((substr($gre['if'], 0, 4) != '_vip' && substr($gre['if'], 0, 5) != '_lloc') &&
+					(empty($config['interfaces'][$gre['if']]) || $config['interfaces'][$gre['if']]['ipaddrv6'] != "track6"))
 					continue;
 			}
 			/* XXX: Maybe we should report any errors?! */
@@ -812,9 +808,8 @@ function interfaces_gif_configure($checkparent = 0, $realif = "") {
 					continue;
 			}
 			else if ($checkparent == 2) {
-				if (substr($gif['if'], 0, 4) != '_vip' && substr($gif['if'], 0, 5) != '_lloc')
-					continue;
-				if (empty($config['interfaces'][$gif['if']]) || $config['interfaces'][$gif['if']]['ipaddrv6'] != "track6")
+				if ((substr($gif['if'], 0, 4) != '_vip' && substr($gif['if'], 0, 5) != '_lloc') &&
+				    (empty($config['interfaces'][$gif['if']]) || $config['interfaces'][$gif['if']]['ipaddrv6'] != "track6"))
 					continue;
 			}
 			/* XXX: Maybe we should report any errors?! */

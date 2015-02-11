@@ -87,6 +87,11 @@ if ($_POST) {
 	$config['dnsmasq']['custom_options'] = str_replace("\r\n", "\n", $_POST['custom_options']);
 	$config['dnsmasq']['strictbind'] = ($_POST['strictbind']) ? true : false;
 
+	if (isset($_POST['enable']) && isset($config['unbound']['enable'])) {
+		if ($_POST['port'] == $config['unbound']['port'])
+			$input_errors[] = "The DNS Resolver is enabled using this port. Choose a non-conflicting port, or disable DNS Resolver.";
+	}
+	
 	if ($_POST['port'])
 		if(is_port($_POST['port']))
 			$config['dnsmasq']['port'] = $_POST['port'];

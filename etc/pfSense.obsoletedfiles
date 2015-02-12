@@ -533,14 +533,10 @@
 /usr/libexec/make_index
 /usr/local/bin/after_installation_routines.sh
 /usr/local/bin/atareinit
-/usr/local/bin/athstats
 /usr/local/bin/bsdiff
 /usr/local/bin/bspatch
 /usr/local/bin/c_rehash
 /usr/local/bin/checkreload.sh
-/usr/local/bin/cryptokeytest
-/usr/local/bin/cryptostats
-/usr/local/bin/cryptotest
 /usr/local/bin/ez-ipupdate
 /usr/local/bin/hifnstats
 /usr/local/bin/ipsecstats

@@ -140,6 +140,9 @@ if ($_POST) {
 		if($_POST['lb_use_sticky'] == "yes") {
 			if (!isset($config['system']['lb_use_sticky'])) {
 				$config['system']['lb_use_sticky'] = true;
+				$need_relayd_restart = true;
+			}
+			if ($config['system']['srctrack'] != $_POST['srctrack']) {
 				$config['system']['srctrack'] = $_POST['srctrack'];
 				$need_relayd_restart = true;
 			}

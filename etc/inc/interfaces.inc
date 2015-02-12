@@ -171,7 +171,7 @@ function interface_netgraph_needed($interface = "wan") {
 		pfSense_ngctl_detach("{$realif}:", $realif);
 	}
 	/* NOTE: We make sure for this on interface_ppps_configure()
-	 *	no need to do it here agan.
+	 *	no need to do it here again.
 	 *	else
 	 *		pfSense_ngctl_attach(".", $realif);
 	 */
@@ -421,8 +421,6 @@ function interfaces_bridge_configure($checkmember = 0, $realif = "") {
 				}
 			}
 			else if ($checkmember == 2) {
-				if (!strstr($bridge['if'], "_vip"))
-					continue;
 				$members = explode(',', $bridge['members']);
 				foreach ($members as $member) {
 					if (empty($config['interfaces'][$bridge['if']]) || $config['interfaces'][$bridge['if']]['ipaddrv6'] != "track6")
@@ -725,9 +723,7 @@ function interfaces_gre_configure($checkparent = 0, $realif = "") {
 					continue;
 			}
 			else if ($checkparent == 2) {
-				if (!strstr($gre['if'], "_vip"))
-					continue;
-				if (empty($config['interfaces'][$gre['if']]) || $config['interfaces'][$gre['if']]['ipaddrv6'] != "track6")
+				if (!strstr($gre['if'], "_vip") && (empty($config['interfaces'][$gre['if']]) || $config['interfaces'][$gre['if']]['ipaddrv6'] != "track6"))
 					continue;
 			}
 			/* XXX: Maybe we should report any errors?! */
@@ -806,9 +802,7 @@ function interfaces_gif_configure($checkparent = 0, $realif = "") {
 					continue;
 			}
 			else if ($checkparent == 2) {
-				if (!strstr($gif['if'], "_vip"))
-					continue;
-				if (empty($config['interfaces'][$gif['if']]) || $config['interfaces'][$gif['if']]['ipaddrv6'] != "track6")
+				if (!strstr($gif['if'], "_vip") && (empty($config['interfaces'][$gif['if']]) || $config['interfaces'][$gif['if']]['ipaddrv6'] != "track6"))
 					continue;
 			}
 			/* XXX: Maybe we should report any errors?! */
@@ -1507,7 +1501,7 @@ function interface_ppps_configure($interface) {
 				}
 				break;
 			default:
-				log_error(sprintf(gettext("Unkown %s configured as ppp interface."), $type));
+				log_error(sprintf(gettext("Unknown %s configured as ppp interface."), $type));
 				break;
 		}
 	}
@@ -2113,7 +2107,7 @@ function interface_carp_configure(&$vip) {
 	if ($vip['mode'] != "carp")
 		return;
 
-	/* NOTE: Maybe its useless nowdays */
+	/* NOTE: Maybe its useless nowadays */
 	$realif = get_real_interface($vip['interface']);
 	if (!does_interface_exist($realif)) {
 		file_notice("CARP", sprintf(gettext("Interface specified for the virtual IP address %s does not exist. Skipping this VIP."), $vip['subnet']), "Firewall: Virtual IP", "");
@@ -2369,7 +2363,7 @@ function interface_wireless_configure($if, &$wl, &$wlcfg) {
 		$wlcmd[] = "-mediaopt adhoc";
 	}
 
-	/* Not neccesary to set BSS mode as this is default if adhoc and/or hostap is NOT set */
+	/* Not necessary to set BSS mode as this is default if adhoc and/or hostap is NOT set */
 
 	/* handle hide ssid option */
 	if(isset($wlcfg['hidessid']['enable'])) {
@@ -3120,10 +3114,10 @@ function interface_track6_configure($interface = "lan", $wancfg, $linkupevent = 
 	case "dhcp6":
 		if ($linkupevent == true) {
 			/* 
-			 * NOTE: Usually come here from rc.linkup calling so just call directly intead of generating event
+			 * NOTE: Usually come here from rc.linkup calling so just call directly instead of generating event
 			 * 	Instead of disrupting all other v4 configuration just restart DHCPv6 client for now
 			 *
-			 * XXX: Probably DHCPv6 client should handle this autmagically itself?
+			 * XXX: Probably DHCPv6 client should handle this automagically itself?
 			 */
 			$parentrealif = get_real_interface($wancfg['track6-interface']);
 			$pidv6 = find_dhcp6c_process($parentrealif);
@@ -3907,7 +3901,7 @@ function DHCP_Config_File_Substitutions($wancfg, $wanif, $dhclientconf) {
 				$res = stripos($dhclientconf, $various_mac_type . $various_mac_case . $various_mac_delimiter);
 				if ($res !== false) {
 
-					/* Get MAC Address as ASCII String With Colon (:) Celimiters */
+					/* Get MAC Address as ASCII String With Colon (:) delimiters */
 					if ("$various_mac_case" == "U") $dhcpclientconf_mac = strtoupper(get_interface_mac($wanif));
 					if ("$various_mac_case" == "L") $dhcpclientconf_mac = strtolower(get_interface_mac($wanif));
 
@@ -4214,7 +4208,7 @@ function get_real_interface($interface = "wan", $family = "all", $realv6iface = 
 		$wanif = "ppp";
 		break;
 	default:
-		// If a real interface was alread passed simply
+		// If a real interface was already passed simply
 		// pass the real interface back.  This encourages
 		// the usage of this function in more cases so that
 		// we can combine logic for more flexibility.
@@ -4796,7 +4790,7 @@ function ip_in_interface_alias_subnet($interface, $ipalias) {
 function get_interface_ip($interface = "wan") {
 	
 	$realif = get_failover_interface($interface);
-	if (!$realif) {
+	if (empty($realif)) {
 		if (strstr($interface, "_vip"))
 			return get_configured_carp_interface_list($interface);
 		else
@@ -4814,7 +4808,7 @@ function get_interface_ipv6($interface = "wan", $flush = false) {
 	global $config;
 
 	$realif = get_failover_interface($interface, "inet6");
-	if (!$realif) {
+	if (empty($realif)) {
 		if (strstr($interface, "_vip"))
 			return get_configured_carp_interface_list($interface, "inet6");
 		else
@@ -4869,10 +4863,9 @@ function get_interface_linklocal($interface = "wan") {
 
 function get_interface_subnet($interface = "wan") {
 	$realif = get_real_interface($interface);
-	if (!$realif) {
+	if (empty($realif)) {
 		if (strstr($interface, "_vip")) {
-			list($interface, $vhid) = explode("_vip", $interface);
-			$realif = get_real_interface($interface);
+			return get_configured_carp_interface_list($interface, 'inet', 'subnet');
 		} else
 			return null;
 	}
@@ -4888,10 +4881,9 @@ function get_interface_subnetv6($interface = "wan") {
 	global $config;
 
 	$realif = get_real_interface($interface, "inet6");
-	if (!$realif) {
+	if (empty($realif)) {
 		if (strstr($interface, "_vip")) {
-			list($interface, $vhid) = explode("_vip", $interface);
-			$realif = get_real_interface($interface);
+			return get_configured_carp_interface_list($interface, 'inet6', 'subnet');
 		} else
 			return null;
 	}

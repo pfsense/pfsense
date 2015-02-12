@@ -939,7 +939,7 @@ function system_webgui_create_certificate() {
 		'organizationName' => "{$g['product_name']} webConfigurator Self-Signed Certificate",
 		'emailAddress' => "admin@{$config['system']['hostname']}.{$config['system']['domain']}",
 		'commonName' => "{$config['system']['hostname']}-{$cert['refid']}");
-	$old_err_level = error_reporting(0); /* otherwise openssl_ functions throw warings directly to a page screwing menu tab */
+	$old_err_level = error_reporting(0); /* otherwise openssl_ functions throw warnings directly to a page screwing menu tab */
 	if (!cert_create($cert, null, 2048, 2000, $dn, "self-signed", "sha256")){
 		while($ssl_err = openssl_error_string()){
 			log_error("Error creating WebGUI Certificate: openssl library returns: " . $ssl_err);
@@ -1235,7 +1235,7 @@ mimetype.assign             = (
 url.access-deny             = ( "~", ".inc" )
 
 
-######### Options that are good to be but not neccesary to be changed #######
+######### Options that are good to be but not necessary to be changed #######
 
 ## bind to port (default: 80)
 
@@ -1746,7 +1746,7 @@ function system_ntp_configure($start_ntpd=true) {
 		}
 	}
 
-	/* open configuration for wrting or bail */
+	/* open configuration for writing or bail */
 	if (!@file_put_contents("{$g['varetc_path']}/ntpd.conf", $ntpcfg)) {
 		log_error("Could not open {$g['varetc_path']}/ntpd.conf for writing");
 		return;

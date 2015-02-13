@@ -362,10 +362,10 @@ if(! $g['disablehelpmenu']) {
 		<div id="right">
 
 <?php
-echo "\t<script type=\"text/javascript\" src=\"javascript/domTT/domLib.js\"></script>\n";
-echo "\t<script type=\"text/javascript\" src=\"javascript/domTT/domTT.js\"></script>\n";
-echo "\t<script type=\"text/javascript\" src=\"javascript/domTT/behaviour.js\"></script>\n";
-echo "\t<script type=\"text/javascript\" src=\"javascript/domTT/fadomatic.js\"></script>\n";
+echo "\t<script type=\"text/javascript\" src=\"/javascript/domTT/domLib.js\"></script>\n";
+echo "\t<script type=\"text/javascript\" src=\"/javascript/domTT/domTT.js\"></script>\n";
+echo "\t<script type=\"text/javascript\" src=\"/javascript/domTT/behaviour.js\"></script>\n";
+echo "\t<script type=\"text/javascript\" src=\"/javascript/domTT/fadomatic.js\"></script>\n";
 	/* display a top alert bar if need be */
 	$need_alert_display = false;
 	$found_notices = are_notices_pending();

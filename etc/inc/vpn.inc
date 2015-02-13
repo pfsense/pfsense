@@ -405,24 +405,24 @@ EOD;
 
 		if (!empty($a_client['dns_domain'])) {
 			$strongswan .= "\t\t\t# Search domain and default domain\n";
-			$strongswan .= "\t\t\t28674 = {$a_client['dns_domain']}\n";
+			$strongswan .= "\t\t\t28674 = \"{$a_client['dns_domain']}\"\n";
 			if (empty($a_client['dns_split']))
-				$strongswan .= "\t\t\t28675 = {$a_client['dns_domain']}";
+				$strongswan .= "\t\t\t28675 = \"{$a_client['dns_domain']}\"";
 			$strongswan .= "\n";
 		}
 
 		if (!empty($a_client['dns_split'])) {
-			$strongswan .= "\t\t\t28675 = {$a_client['dns_split']}\n";
+			$strongswan .= "\t\t\t28675 = \"{$a_client['dns_split']}\"\n";
 		}
 
 		if (!empty($a_client['login_banner']))
-			$strongswan .= "\t\t\t28672 = {$a_client['login_banner']}\n";
+			$strongswan .= "\t\t\t28672 = \"{$a_client['login_banner']}\"\n";
 
 		if (isset($a_client['save_passwd']))
 			$strongswan .= "\t\t\t28673 = 1\n";
 
 		if ($a_client['pfs_group'])
-			$strongswan .= "\t\t\t28679 = {$a_client['pfs_group']}\n";
+			$strongswan .= "\t\t\t28679 = \"{$a_client['pfs_group']}\"\n";
 		$strongswan .= "\t\t}\n";
 
 		if ($a_client['user_source'] != "none") {

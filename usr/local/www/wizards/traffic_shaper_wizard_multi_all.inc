@@ -349,7 +349,7 @@ function step2_stepsubmitphpaction() {
 		}
 	}
 
-	/* This is necessary since the wizard expects pecnefined fields. */
+	/* This is necessary since the wizard expects predefined fields. */
 	unset($config['ezshaper']['step2']);
 	$config['ezshaper']['step2'] = array();
 
@@ -599,7 +599,7 @@ function step3_stepsubmitphpaction() {
 		}
 	}
 
-	/* This is necessary since the wizard expects pecnefined fields. */
+	/* This is necessary since the wizard expects predefined fields. */
 	unset($config['ezshaper']['step3']);
 	$config['ezshaper']['step3'] = array();
 
@@ -675,7 +675,7 @@ function step8_stepsubmitphpaction() {
 	global $g, $config;
 
 	/* save the new configuration */
-	apply_all_choosen_items();
+	apply_all_chosen_items();
 
 	/* reset rrd queues */
 	system("rm -f /var/db/rrd/*queuedrops.rrd");
@@ -693,7 +693,7 @@ function step8_stepsubmitphpaction() {
 	exit;
 }
 
-function apply_all_choosen_items() {
+function apply_all_chosen_items() {
 	global $config, $g, $altq_list_queues, $gamesplist, $voiplist, $othersplist, $p2plist;
 
 	require_once("wizardapp.inc");
@@ -705,7 +705,7 @@ function apply_all_choosen_items() {
 	 */
 	if(isset($config['shaper']['queue']))
 		unset($config['shaper']['queue']);
-	/* XXX: This is ecnundant, because this should be handled by converter at startup. */
+	/* XXX: This is redundant, because this should be handled by converter at startup. */
 	if(isset($config['shaper']['rule']))
 		unset($config['shaper']['rule']);
 	foreach ($config['filter']['rule'] as $key => $rule)
@@ -1161,7 +1161,7 @@ function apply_all_choosen_items() {
 					$factor = wizard_get_bandwidthtype_scale($voipbwunit);
 				$remainbw += floatval($voipbw) * $factor;
 			} else
-				$remainbw += 32000; /* 32Kbit/s reserved for HFSC linksharing */
+				$remainbw += 32000; /* 32Kbit/s reserved for HFSC link sharing */
 		}
 		if ($config['ezshaper']['step4']['enable']) {
 			$penalty = true;
@@ -1682,7 +1682,7 @@ function apply_all_choosen_items() {
 						if ($otherclient[1] == "tcp")
 							$rule['ackqueue'] = 'qACK';
 					} else
-						$loop = 1; /* It automitaclly goes to default queue */
+						$loop = 1; /* It automatically goes to default queue */
 					break;
 				default:
 					$loop = 1;

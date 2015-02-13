@@ -395,8 +395,8 @@ function filter_configure_sync($delete_states_if_needed = true) {
 			sigkillbypid("{$g['varrun_path']}/filterdns.pid", "HUP");
 		else {
 			/*
-			 * FilterDNS has three debugging levels. The default choosen is 1.
-			 * Availabe are level 2 and greater then 2.
+			 * FilterDNS has three debugging levels. The default chosen is 1.
+			 * Available are level 2 and greater then 2.
 			 */
 			if (isset($config['system']['aliasesresolveinterval']) && is_numeric($config['system']['aliasesresolveinterval']))
 				$resolve_interval = $config['system']['aliasesresolveinterval'];
@@ -534,7 +534,7 @@ function filter_generate_nested_alias($name, $alias, &$aliasnesting, &$aliasaddr
 					}
 				}
 			}
-			/* We already expanded this alias so there is no neccessity to do it again. */
+			/* We already expanded this alias so there is no necessity to do it again. */
 			else if(!isset($aliasnesting[$address]))
 				$tmpline = filter_generate_nested_alias($name, $aliastable[$address], $aliasnesting, $aliasaddrnesting);
 		} else if(!isset($aliasaddrnesting[$address])) {
@@ -658,7 +658,7 @@ function filter_generate_aliases() {
 		foreach ($config['aliases']['alias'] as $aliased) {
 			$extralias = "";
 			/*
-			 * XXX: i am not sure what this does so i am commenting it out for now, because as it is
+			 * XXX: i am not sure what this does so I am commenting it out for now, because as it is
 			 * its quite dangerous!
 			 * $ip = find_interface_ip($aliased['address']);
 			 * $extraalias = " " . link_ip_to_carp_interface($ip);
@@ -2849,7 +2849,7 @@ EOD;
 
 	/*
 	 * Support for allow limiting of TCP connections by establishment rate
-	 * Useful for protecting against sudden outburts, etc.
+	 * Useful for protecting against sudden outbursts, etc.
 	 */
 	$ipfrules .= "block in {$log['block']} quick from <virusprot> to any tracker 1000000400 label \"virusprot overload table\"\n";
 
@@ -3107,7 +3107,7 @@ EOD;
 
 	/*
 	 * NB: The loopback rules are needed here since the antispoof would take precedence then.
-	 *	If you ever add the 'quick' keyword to the antispoof rules above move the looback
+	 *	If you ever add the 'quick' keyword to the antispoof rules above move the loopback
 	 *	rules before them.
 	 */
 	$ipfrules .= <<<EOD

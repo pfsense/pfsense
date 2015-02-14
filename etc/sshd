@@ -123,8 +123,8 @@
 	/* Run the server on another port if we have one defined */
 	$sshconf .= "Port $sshport\n";
 	/* Hide FreeBSD version */
-	$sshconf .= "VersionAddendum \n";
-	
+	$sshconf .= "VersionAddendum none\n";
+
 	/* Apply package SSHDCond settings if config file exists */
 	if (file_exists("/etc/sshd_extra")) {
 		$fdExtra = fopen("/etc/sshd_extra", 'r');

@@ -692,11 +692,20 @@ function get_after_install_info($package) {
 }
 
 function eval_once($toeval) {
-	global $evaled;
+	global $evaled, $static_output;
 	if(!$evaled) $evaled = array();
 	$evalmd5 = md5($toeval);
 	if(!in_array($evalmd5, $evaled)) {
-		@eval($toeval);
+		try {
+			if (!is_function($toeval)){
+				$static_output .= "\nFunction not found '$toeval'\n";
+				update_output_window($static_output);
+			} else
+				@eval($toeval);
+		} catch(Exception $e){
+			$static_output .= "\nError during executing '$toeval' :" . $e->getMessage() . "\n";
+			update_output_window($static_output);
+		}
 		$evaled[] = $evalmd5;
 	}
 	return;

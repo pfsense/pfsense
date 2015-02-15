@@ -193,7 +193,8 @@ include("head.inc");
 								$icon = "<img {$align} src=\"/themes/".$g['theme']."/images/icons/icon_pass_d.gif\" alt=\"backup\" />";
 							} else if($status == "INIT") {
 								$icon = "<img {$align} src=\"/themes/".$g['theme']."/images/icons/icon_log.gif\" alt=\"init\" />";
-							}
+							} else
+								$icon = "";
 						}
 						echo "<td class=\"listlr\" align=\"center\">" . convert_friendly_interface_to_friendly_descr($carp['interface']) . "@{$vhid} &nbsp;</td>";
 						echo "<td class=\"listlr\" align=\"center\">" . $ipaddress . "&nbsp;</td>";

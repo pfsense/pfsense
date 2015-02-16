@@ -148,12 +148,14 @@ if ($_POST) {
 		elseif (isset($config['ntpd']['notrap']))
 			unset($config['ntpd']['notrap']);
 
-		if ((empty($_POST['statsgraph'])) != (isset($config['ntpd']['statsgraph'])));
-			enable_rrd_graphing();
+		if ((empty($_POST['statsgraph'])) == (isset($config['ntpd']['statsgraph'])))
+			$enable_rrd_graphing = true;
 		if (!empty($_POST['statsgraph']))
 			$config['ntpd']['statsgraph'] = $_POST['statsgraph'];
 		elseif (isset($config['ntpd']['statsgraph']))
 			unset($config['ntpd']['statsgraph']);
+		if (!empty($enable_rrd_graphing))
+			enable_rrd_graphing();
 
 		if (!empty($_POST['leaptxt']))
 			$config['ntpd']['leapsec'] = base64_encode($_POST['leaptxt']);

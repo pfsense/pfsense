@@ -561,13 +561,15 @@ function is_iprange($range) {
 	return false;
 }
 
-/* returns true if $ipaddr is a valid dotted IPv4 address or a IPv6 */
+/* returns true if $ipaddr is a valid dotted IPv4 address or a IPv6
+   	false - not valid
+   	true (numeric 4 or 6) - if valid, gives type of address */
 function is_ipaddr($ipaddr) {
 	if(is_ipaddrv4($ipaddr)) {
-		return true;
+		return 4;
 	}
 	if(is_ipaddrv6($ipaddr)) {
-		return true;
+		return 6;
 	}
 	return false;
 }
@@ -597,7 +599,7 @@ function is_ipaddrv4($ipaddr) {
 		return false;
 }
 
-/* returns true if $ipaddr is a valid linklocal address */
+/* returns true if $ipaddr is a valid IPv6 linklocal address */
 function is_linklocal($ipaddr) {
 	return (strtolower(substr($ipaddr, 0, 5)) == "fe80:");
 }
@@ -620,16 +622,24 @@ function is_literalipaddrv6($ipaddr) {
 	return is_ipaddrv6($ipaddr);
 }
 
+/* returns true if $iport is a valid IPv4/IPv6 address + port
+   	false - not valid
+   	true (numeric 4 or 6) - if valid, gives type of address */
 function is_ipaddrwithport($ipport) {
-	$parts = explode(":", $ipport);
-	$port = array_pop($parts);
-	if (count($parts) == 1) {
-		return is_ipaddrv4($parts[0]) && is_port($port);
-	} elseif (count($parts) > 1) {
-		return is_literalipaddrv6(implode(":", $parts)) && is_port($port);
-	} else {
+	$c = strrpos($ipport, ":");
+	if ($c === false)
+		return false;  // can't split at final colon if no colon exists
+	
+	if (!is_port(substr($ipport, $c + 1)))
+		return false;  // no valid port after last colon
+
+	$ip = substr($ipport, 0, $c);  // else is text before last colon a valid IP
+	if (is_literalipaddrv6($ip))
+		return 6;
+	elseif (is_ipaddrv4($ip))
+		return 4;
+	else
 		return false;
-	}
 }
 
 function is_hostnamewithport($hostport) {

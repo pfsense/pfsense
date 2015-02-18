@@ -251,7 +251,7 @@ function _getHostName($mac,$ip) {
 		return $dhcpip[$ip];
 	else{
 		exec("host -W 1 " . escapeshellarg($ip), $output);
-		if (preg_match('/.*pointer ([A-Za-z0-9.-]+)\..*/',$output[0],$matches)) {
+		if (preg_match('/.*pointer ([A-Za-z_0-9.-]+)\..*/',$output[0],$matches)) {
 			if ($matches[1] <> $ip)
 				return $matches[1]; 
 		}

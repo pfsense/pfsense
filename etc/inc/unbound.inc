@@ -277,7 +277,6 @@ port: {$port}
 verbosity: {$verbosity}
 hide-identity: {$hide_identity}
 hide-version: {$hide_version}
-harden-referral-path: no
 harden-glue: {$harden_glue}
 do-ip4: yes
 do-ip6: yes

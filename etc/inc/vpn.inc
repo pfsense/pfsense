@@ -769,6 +769,11 @@ EOD;
 				$forceencaps = 'forceencaps = yes';
 			else
 				$forceencaps = 'forceencaps = no';
+				
+			if ($ph1ent['mobike'] == 'on')
+				$mobike = 'mobike = yes';
+			else
+				$mobike = 'mobike = no';
 
 			$ipseclifetime = 0;
 			$rightsubnet_spec = array();
@@ -928,6 +933,7 @@ EOD;
 	keyexchange = {$keyexchange}
 	{$reauth}
 	{$forceencaps}
+	{$mobike}
 	{$rekey}
 	installpolicy = yes
 	{$tunneltype}

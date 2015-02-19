@@ -877,6 +877,7 @@
 /usr/local/www/auto_complete_helper.js
 /usr/local/www/csrf/csrf-secret.php
 /usr/local/www/datetimepicker.js
+/usr/local/www/dfly-pg.gif
 /usr/local/www/dfuife.cgi
 /usr/local/www/dfuife.css
 /usr/local/www/dfuife.js
@@ -896,6 +897,7 @@
 /usr/local/www/firewall_shaper_edit.php
 /usr/local/www/firewall_shaper_queues_edit.php
 /usr/local/www/fred.png
+/usr/local/www/fred-bg.png
 /usr/local/www/ifstats.cgi
 /usr/local/www/includes/javascript.inc.php
 /usr/local/www/includes/log.inc.php

@@ -877,6 +877,9 @@
 /usr/local/www/auto_complete_helper.js
 /usr/local/www/csrf/csrf-secret.php
 /usr/local/www/datetimepicker.js
+/usr/local/www/dfuife.cgi
+/usr/local/www/dfuife.css
+/usr/local/www/dfuife.js
 /usr/local/www/diag_dhcp_leases.php
 /usr/local/www/diag_logs_slbd.php
 /usr/local/www/diag_showbogons.php

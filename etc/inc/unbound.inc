@@ -504,6 +504,7 @@ function unbound_add_host_entries() {
 	$unbound_entries = "local-zone: \"{$config['system']['domain']}\" transparent\n";
 
 	$hosts = read_hosts();
+	$added_ptr = array();
 	foreach ($hosts as $host) {
 		if (is_ipaddrv4($host['ipaddr']))
 			$type = 'A';
@@ -512,7 +513,10 @@ function unbound_add_host_entries() {
 		else
 			continue;
 
-		$unbound_entries .= "local-data-ptr: \"{$host['ipaddr']} {$host['fqdn']}\"\n";
+		if(!$added_ptr[$host['ip']]) {
+			$unbound_entries .= "local-data-ptr: \"{$host['ipaddr']} {$host['fqdn']}\"\n";
+			$added_ptr[$host['ip']] = true;
+		}
 		$unbound_entries .= "local-data: \"{$host['fqdn']} {$type} {$host['ipaddr']}\"\n";
 		if (isset($host['name']))
 			$unbound_entries .= "local-data: \"{$host['name']} {$type} {$host['ipaddr']}\"\n";

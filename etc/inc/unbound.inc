@@ -411,12 +411,16 @@ function unbound_add_host_entries() {
 		$hosts = $dnscfg['hosts'];
 		$host_entries = "";
 		$added_item = array();
+		$added_ptr = array();
 		foreach ($hosts as $host) {
 			$current_host = $host['host'];
 			if ($host['host'] != "")
 				$host['host'] = $host['host'].".";
 			if(!$added_item[$current_host]) {
-				$host_entries .= "local-data-ptr: \"{$host['ip']} {$host['host']}{$host['domain']}\"\n";
+				if(!$added_ptr[$host['ip']]) {
+					$host_entries .= "local-data-ptr: \"{$host['ip']} {$host['host']}{$host['domain']}\"\n";
+					$added_ptr[$host['ip']] = true;
+				}
 				if (is_ipaddrv6($host['ip']))
 					$host_entries .= "local-data: \"{$host['host']}{$host['domain']} IN AAAA {$host['ip']}\"\n";
 				else

@@ -77,9 +77,9 @@ $p1_ealgos = array(
 global $p2_ealgos;
 $p2_ealgos = array(
 	'aes' => array( 'name' => 'AES', 'keysel' => array( 'lo' => 128, 'hi' => 256, 'step' => 64 ) ),
-	'aes128gcm' => array( 'name' => 'AES128-GCM', 'keysel' => array( 'lo' => 64, 'hi' => 128, 'step' => 32 ) ),
-	'aes192gcm' => array( 'name' => 'AES192-GCM', 'keysel' => array( 'lo' => 64, 'hi' => 128, 'step' => 32 ) ),
-	'aes256gcm' => array( 'name' => 'AES256-GCM', 'keysel' => array( 'lo' => 64, 'hi' => 128, 'step' => 32 ) ),
+	'aes128gcm16' => array( 'name' => 'AES128-GCM' ),
+	'aes192gcm16' => array( 'name' => 'AES192-GCM' ),
+	'aes256gcm16' => array( 'name' => 'AES256-GCM' ),
 	'blowfish' => array( 'name' => 'Blowfish', 'keysel' => array( 'lo' => 128, 'hi' => 256, 'step' => 64 ) ),
 	'3des' => array( 'name' => '3DES' ),
 	'cast128' => array( 'name' => 'CAST128' ),
@@ -105,6 +105,9 @@ $p1_dhgroups = array(
 	16 => '16 (4096 bit)',
 	17 => '17 (6144 bit)',
 	18 => '18 (8192 bit)',
+	19 => '19 (nist ecp256)',
+	20 => '20 (nist ecp384)',
+	21 => '21 (nist ecp521)',
 	22 => '22 (1024(sub 160) bit)',
 	23 => '23 (2048(sub 224) bit)',
 	24 => '24 (2048(sub 256) bit)'

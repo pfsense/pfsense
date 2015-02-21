@@ -1407,7 +1407,7 @@ if ($has_created_time || $has_updated_time)
 
 	if ($has_created_time)
 	{
-		$form->addInput(new Form_StaticText(
+		$section->addInput(new Form_StaticText(
 			'Created',
 			date('n/j/y H:i:s', $a_filter[$id]['created']['time']) . gettext('by') .'<b>'. $a_filter[$id]['created']['username'] .'</b>'
 		));
@@ -1415,7 +1415,7 @@ if ($has_created_time || $has_updated_time)
 
 	if ($has_updated_time)
 	{
-		$form->addInput(new Form_StaticText(
+		$section->addInput(new Form_StaticText(
 			'Updated',
 			date('n/j/y H:i:s', $a_filter[$id]['updated']['time']) . gettext('by') .'<b>'. $a_filter[$id]['updated']['username'] .'</b>'
 		));

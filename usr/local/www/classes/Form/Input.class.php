@@ -27,7 +27,7 @@ class Form_Input extends Form_Element
 
 	public function forceName($name)
 	{
-		$this->setAttribute('name', $this->_name);
+		$this->setAttribute('name', $name);
 
 		return $this;
 	}

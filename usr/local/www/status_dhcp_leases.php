@@ -354,7 +354,7 @@ foreach ($leases as $data) {
 				if(is_array($dhcpifconf['staticmap'])) {
 					$staticmap_array_index = 0;
 					foreach ($dhcpifconf['staticmap'] as $staticent) {
-						if ($data['ip'] == $staticent['ipaddr']) {
+						if (($data['ip'] && ($data['ip'] == $staticent['ipaddr'])) || ($data['mac'] && ($data['mac'] == $staticent['mac']))) {
 							$data['if'] = $dhcpif;
 							break;
 						}

@@ -370,7 +370,7 @@ if ($_POST) {
 		if ($_POST['disable'] == "yes")
 			$server['disable'] = true;
 		$server['mode'] = $pconfig['mode'];
-		if (!empty($pconfig['authmode']))
+		if (!empty($pconfig['authmode']) && (($pconfig['mode'] == "server_user") || ($pconfig['mode'] == "server_tls_user")))
 			$server['authmode'] = implode(",", $pconfig['authmode']);
 		$server['protocol'] = $pconfig['protocol'];
 		$server['dev_mode'] = $pconfig['dev_mode'];
@@ -795,22 +795,26 @@ if ($savemsg)
 						</td>
 					</tr>
 					<tr id="authmodetr" style="display:none">
-                                                <td width="22%" valign="top" class="vncellreq"><?=gettext("Backend for authentication");?></td>
-                                                        <td width="78%" class="vtable">
-                                                        <select name='authmode[]' id='authmode' class="formselect" multiple="multiple" size="<?php echo count($auth_servers); ?>">
-							<?php $authmodes = explode(",", $pconfig['authmode']); ?>
-                                                        <?php
+						<td width="22%" valign="top" class="vncellreq"><?=gettext("Backend for authentication");?></td>
+						<td width="78%" class="vtable">
+							<select name='authmode[]' id='authmode' class="formselect" multiple="multiple" size="<?php echo count($auth_servers); ?>">
+							<?php
+								$authmodes = explode(",", $pconfig['authmode']);
 								$auth_servers = auth_get_authserver_list();
-                                                                foreach ($auth_servers as $auth_server_key => $auth_server):
-                                                                        $selected = "";
-                                                                        if (in_array($auth_server_key, $authmodes))
-                                                                                $selected = "selected=\"selected\"";
-                                                        ?>
-                                                                <option value="<?=$auth_server_key;?>" <?=$selected;?>><?=$auth_server['name'];?></option>
-                                                        <?php 	endforeach; ?>
-                                                        </select>
-                                                </td>
-                                        </tr>
+								// If no authmodes set then default to selecting the first entry in auth_servers
+								if (empty($authmodes[0]) && !empty(key($auth_servers)))
+									$authmodes[0] = key($auth_servers);
+
+								foreach ($auth_servers as $auth_server_key => $auth_server):
+									$selected = "";
+									if (in_array($auth_server_key, $authmodes))
+										$selected = "selected=\"selected\"";
+							?>
+								<option value="<?=$auth_server_key;?>" <?=$selected;?>><?=$auth_server['name'];?></option>
+							<?php endforeach; ?>
+							</select>
+						</td>
+					</tr>
 					<tr>
 						<td width="22%" valign="top" class="vncellreq"><?=gettext("Protocol");?></td>
 							<td width="78%" class="vtable">

@@ -274,17 +274,21 @@ if(count($pools) > 0) {
 foreach($config['interfaces'] as $ifname => $ifarr) {
 	if (is_array($config['dhcpd'][$ifname]) &&
 		is_array($config['dhcpd'][$ifname]['staticmap'])) {
+		$staticmap_array_index = 0;
 		foreach($config['dhcpd'][$ifname]['staticmap'] as $static) {
 			$slease = array();
 			$slease['ip'] = $static['ipaddr'];
 			$slease['type'] = "static";
 			$slease['mac'] = $static['mac'];
+			$slease['if'] = $ifname;
 			$slease['start'] = "";
 			$slease['end'] = "";
 			$slease['hostname'] = htmlentities($static['hostname']);
 			$slease['act'] = "static";
 			$slease['online'] = in_array(strtolower($slease['mac']), $arpdata_mac) ? 'online' : 'offline';
+			$slease['staticmap_array_index'] = $staticmap_array_index;
 			$leases[] = $slease;
+			$staticmap_array_index++;
 		}
 	}
 }
@@ -349,23 +353,7 @@ foreach ($leases as $data) {
 			$fspane = "&nbsp;";
 		}
 		$lip = ip2ulong($data['ip']);
-		if ($data['act'] == "static") {
-			foreach ($config['dhcpd'] as $dhcpif => $dhcpifconf) {
-				if(is_array($dhcpifconf['staticmap'])) {
-					$staticmap_array_index = 0;
-					foreach ($dhcpifconf['staticmap'] as $staticent) {
-						if ($data['ip'] == $staticent['ipaddr']) {
-							$data['if'] = $dhcpif;
-							break;
-						}
-						$staticmap_array_index++;
-					}
-				}
-				/* exit as soon as we have an interface */
-				if ($data['if'] != "")
-					break;
-			}
-		} else {
+		if ($data['act'] != "static") {
 			foreach ($config['dhcpd'] as $dhcpif => $dhcpifconf) {
 				if (!is_array($dhcpifconf['range']))
 					continue;
@@ -407,7 +395,7 @@ foreach ($leases as $data) {
 			echo "<a href=\"services_dhcp_edit.php?if={$data['if']}&amp;mac={$data['mac']}&amp;hostname={$data['hostname']}\">";
 			echo "<img src=\"/themes/{$g['theme']}/images/icons/icon_plus.gif\" width=\"17\" height=\"17\" border=\"0\" title=\"" . gettext("add a static mapping for this MAC address") ."\" alt=\"add\" /></a>&nbsp;\n";
 		} else {
-			echo "<a href=\"services_dhcp_edit.php?if={$data['if']}&amp;id={$staticmap_array_index}\">";
+			echo "<a href=\"services_dhcp_edit.php?if={$data['if']}&amp;id={$data['staticmap_array_index']}\">";
 			echo "<img src=\"/themes/{$g['theme']}/images/icons/icon_e.gif\" width=\"17\" height=\"17\" border=\"0\" title=\"" . gettext("edit the static mapping for this entry") ."\" alt=\"add\" />&nbsp;\n";
 		}
 

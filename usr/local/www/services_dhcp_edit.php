@@ -368,7 +368,7 @@ include("head.inc");
             <form action="services_dhcp_edit.php" method="post" name="iform" id="iform">
               <table class="tabcont" width="100%" border="0" cellpadding="6" cellspacing="0" summary="static mapping">
 				<tr>
-					<td colspan="2" valign="top" class="listtopic"><?=gettext("Static DHCP Mapping");?></td>
+					<td colspan="2" valign="top" class="listtopic"><?=sprintf(gettext("Static DHCP Mapping on %s"),$ifcfgdescr);?></td>
 				</tr>
                 <tr>
                   <td width="22%" valign="top" class="vncell"><?=gettext("MAC address");?></td>

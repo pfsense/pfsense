@@ -44,8 +44,8 @@ define('DYNDNS_PROVIDER_DESCRIPTIONS', 'City Network,CloudFlare,Custom,Custom (v
 /* implement ipv6 route advertising daemon */
 function services_radvd_configure($blacklist = array()) {
 	global $config, $g;
-	
-	if ($g['platform'] == 'jail') 
+
+	if ($g['platform'] == 'jail')
 		return;
 
 	if(isset($config['system']['developerspew'])) {
@@ -171,7 +171,7 @@ function services_radvd_configure($blacklist = array()) {
 				$radvdconf .= "\t\tAdvOnLink on;\n";
 				$radvdconf .= "\t\tAdvAutonomous on;\n";
 				$radvdconf .= "\t\tAdvRouterAddr on;\n";
-				break;				
+				break;
 		}
 		$radvdconf .= "\t};\n";
 
@@ -252,7 +252,7 @@ function services_radvd_configure($blacklist = array()) {
 		$radvdifs[$realif] = $realif;
 
 		$autotype = $config['interfaces'][$trackif]['ipaddrv6'];
-	
+
 		if ($g['debug'])
 			log_error("configuring RA on {$if} for type {$autotype} radvd subnet {$subnetv6}/{$ifcfgsnv6}");
 
@@ -606,7 +606,7 @@ EOPP;
 				$newzone['dns-servers'] = $dns_arrv4;
 		}
 
-		/* Create classes - These all contain comma separated lists. Join them into one 
+		/* Create classes - These all contain comma separated lists. Join them into one
 		   big comma separated string then split them all up. */
 		$all_mac_strings = array();
 		if (is_array($dhcpifconf['pool'])) {
@@ -630,18 +630,29 @@ EOPP;
 		$dhcpdconf .= "subnet {$subnet} netmask {$subnetmask} {\n";
 
 // Setup pool options
+		$custom_dhcpconf=array();
 		foreach($all_pools as $poolconf) {
-			$dhcpdconf .= "	pool {\n";
+			$pool_dhcpconf="";
+			if ($poolconf['disablepool'])
+				continue;
+			if (is_ipaddr($poolconf['custom_subnet']) && !array_key_exists($poolconf['custom_subnet'].$poolconf['custom_subnet_mask'],$custom_dhcpconf))
+				$custom_dhcpconf[$poolconf['custom_subnet'].$poolconf['custom_subnet_mask']].= "subnet {$poolconf['custom_subnet']} netmask {$poolconf['custom_subnet_mask']} {\n";
+			$pool_dhcpconf .= "	pool {\n";
 			/* is failover dns setup? */
 			if (is_array($poolconf['dnsserver']) && $poolconf['dnsserver'][0] <> "") {
-				$dhcpdconf .= "		option domain-name-servers {$poolconf['dnsserver'][0]}";
+				$pool_dhcpconf .= "		option domain-name-servers {$poolconf['dnsserver'][0]}";
 				if($poolconf['dnsserver'][1] <> "")
+<<<<<<< HEAD
+					$pool_dhcpconf .= ",{$poolconf['dnsserver'][1]}";
+				$pool_dhcpconf .= ";\n";
+=======
 					$dhcpdconf .= ",{$poolconf['dnsserver'][1]}";
 				if($poolconf['dnsserver'][2] <> "")
 					$dhcpdconf .= ",{$poolconf['dnsserver'][2]}";
 				if($poolconf['dnsserver'][3] <> "")
 					$dhcpdconf .= ",{$poolconf['dnsserver'][3]}";
 				$dhcpdconf .= ";\n";
+>>>>>>> upstream/master
 			}
 
 			/* allow/deny MACs */
@@ -649,26 +660,31 @@ EOPP;
 			foreach ($mac_allow_list as $mac) {
 				if (empty($mac))
 					continue;
-				$dhcpdconf .= "		allow members of \"" . str_replace(':', '', $mac) . "\";\n";
+				$pool_dhcpconf .= "		allow members of \"" . str_replace(':', '', $mac) . "\";\n";
 			}
 			$mac_deny_list = array_unique(explode(',', $poolconf['mac_deny']));
 			foreach ($mac_deny_list as $mac) {
 				if (empty($mac))
 					continue;
-				$dhcpdconf .= "		deny members of \"" . str_replace(':', '', $mac) . "\";\n";
+				$pool_dhcpconf .= "		deny members of \"" . str_replace(':', '', $mac) . "\";\n";
 			}
 
 			if($poolconf['failover_peerip'] <> "")
-				$dhcpdconf .= "		deny dynamic bootp clients;\n";
+				$pool_dhcpconf .= "		deny dynamic bootp clients;\n";
 
 			if (isset($poolconf['denyunknown']))
-			   $dhcpdconf .= "		deny unknown-clients;\n";
+			   $pool_dhcpconf .= "		deny unknown-clients;\n";
 
+<<<<<<< HEAD
+			if ($poolconf['gateway'] && ($poolconf['gateway'] != $dhcpifconf['gateway']))
+				$pool_dhcpconf .= "		option routers {$poolconf['gateway']};\n";
+=======
 			if ($poolconf['gateway'] && $poolconf['gateway'] != "none" && ($poolconf['gateway'] != $dhcpifconf['gateway']))
 				$dhcpdconf .= "		option routers {$poolconf['gateway']};\n";
+>>>>>>> upstream/master
 
 			if($dhcpifconf['failover_peerip'] <> "") {
-				$dhcpdconf .= "		failover peer \"dhcp_{$dhcpif}\";\n";
+				$pool_dhcpconf .= "		failover peer \"dhcp_{$dhcpif}\";\n";
 			}
 
 			$pdnscfg = "";
@@ -690,49 +706,55 @@ EOPP;
 			if (is_array($poolconf['dnsserver']) && ($poolconf['dnsserver'][0]) && ($poolconf['dnsserver'][0] != $dhcpifconf['dnsserver'][0])) {
 				$pdnscfg .= "		option domain-name-servers " . join(",", $poolconf['dnsserver']) . ";\n";
 			}
-			$dhcpdconf .= "{$pdnscfg}";
+			$pool_dhcpconf .= "{$pdnscfg}";
 
 			// default-lease-time
 			if ($poolconf['defaultleasetime'] && ($poolconf['defaultleasetime'] != $dhcpifconf['defaultleasetime']))
-				$dhcpdconf .= "		default-lease-time {$poolconf['defaultleasetime']};\n";
+				$pool_dhcpconf .= "		default-lease-time {$poolconf['defaultleasetime']};\n";
 
 			// max-lease-time
 			if ($poolconf['maxleasetime'] && ($poolconf['maxleasetime'] != $dhcpifconf['maxleasetime']))
-				$dhcpdconf .= "		max-lease-time {$poolconf['maxleasetime']};\n";
+				$pool_dhcpconf .= "		max-lease-time {$poolconf['maxleasetime']};\n";
 
 			// netbios-name*
 			if (is_array($poolconf['winsserver']) && $poolconf['winsserver'][0] && ($poolconf['winsserver'][0] != $dhcpifconf['winsserver'][0])) {
-				$dhcpdconf .= "		option netbios-name-servers " . join(",", $poolconf['winsserver']) . ";\n";
-				$dhcpdconf .= "		option netbios-node-type 8;\n";
+				$pool_dhcpconf .= "		option netbios-name-servers " . join(",", $poolconf['winsserver']) . ";\n";
+				$pool_dhcpconf .= "		option netbios-node-type 8;\n";
 			}
 
 			// ntp-servers
 			if (is_array($poolconf['ntpserver']) && $poolconf['ntpserver'][0] && ($poolconf['ntpserver'][0] != $dhcpifconf['ntpserver'][0]))
-				$dhcpdconf .= "		option ntp-servers " . join(",", $poolconf['ntpserver']) . ";\n";
+				$pool_dhcpconf .= "		option ntp-servers " . join(",", $poolconf['ntpserver']) . ";\n";
 
 			// tftp-server-name
 			if (!empty($poolconf['tftp']) && ($poolconf['tftp'] != $dhcpifconf['tftp']))
-				$dhcpdconf .= "		option tftp-server-name \"{$poolconf['tftp']}\";\n";
+				$pool_dhcpconf .= "		option tftp-server-name \"{$poolconf['tftp']}\";\n";
 
 			// ldap-server
 			if (!empty($poolconf['ldap']) && ($poolconf['ldap'] != $dhcpifconf['ldap']))
-				$dhcpdconf .= "		option ldap-server \"{$poolconf['ldap']}\";\n";
+				$pool_dhcpconf .= "		option ldap-server \"{$poolconf['ldap']}\";\n";
 
 			// net boot information
 			if(isset($poolconf['netboot'])) {
 				if (!empty($poolconf['nextserver']) && ($poolconf['nextserver'] != $dhcpifconf['nextserver'])) {
-					$dhcpdconf .= "		next-server {$poolconf['nextserver']};\n";
+					$pool_dhcpconf .= "		next-server {$poolconf['nextserver']};\n";
 				}
 				if (!empty($poolconf['filename']) && ($poolconf['filename'] != $dhcpifconf['filename'])) {
-					$dhcpdconf .= "		filename \"{$poolconf['filename']}\";\n";
+					$pool_dhcpconf .= "		filename \"{$poolconf['filename']}\";\n";
 				}
 				if (!empty($poolconf['rootpath']) && ($poolconf['rootpath'] != $dhcpifconf['rootpath'])) {
-					$dhcpdconf .= "		option root-path \"{$poolconf['rootpath']}\";\n";
+					$pool_dhcpconf .= "		option root-path \"{$poolconf['rootpath']}\";\n";
 				}
 			}
-			$dhcpdconf .= "		range {$poolconf['range']['from']} {$poolconf['range']['to']};\n";
-			$dhcpdconf .= "	}\n\n";
+			$pool_dhcpconf .= "		range {$poolconf['range']['from']} {$poolconf['range']['to']};\n";
+			$pool_dhcpconf .= "	}\n\n";
+
+			if (is_ipaddr($poolconf['custom_subnet']))
+				$custom_dhcpconf[$poolconf['custom_subnet'].$poolconf['custom_subnet_mask']].= $pool_dhcpconf;
+			else
+				$dhcpdconf .= $pool_dhcpconf;
 		}
+
 // End of settings inside pools
 
 		if ($dhcpifconf['gateway'] && $dhcpifconf['gateway'] != "none") {
@@ -890,6 +912,9 @@ EOD;
 				$i++;
 			}
 		}
+	foreach ($custom_dhcpconf as $cvalue){
+			$dhcpdconf .=$cvalue."\n}";
+			}
 
 		$dhcpdifs[] = get_real_interface($dhcpif);
 		if ($newzone['domain-name'])
@@ -923,7 +948,7 @@ EOD;
 		@touch("{$g['dhcpd_chroot_path']}/var/db/dhcpd.leases");
 
 	/* make sure there isn't a stale dhcpd.pid file, which can make dhcpd fail to start.   */
-	/* if we get here, dhcpd has been killed and is not started yet                        */ 
+	/* if we get here, dhcpd has been killed and is not started yet                        */
 	unlink_if_exists("{$g['dhcpd_chroot_path']}{$g['varrun_path']}/dhcpd.pid");
 
 	/* fire up dhcpd in a chroot */
@@ -1187,7 +1212,7 @@ EOD;
 
 		if ($dhcpv6ifconf['domain']) {
 			$newzone = array();
-			$newzone['domain-name'] = $dhcpv6ifconf['domain']; 
+			$newzone['domain-name'] = $dhcpv6ifconf['domain'];
 			$newzone['dns-servers'][] = $dhcpv6ifconf['ddnsdomainprimary'];
 			$ddns_zones[] = $newzone;
 		}
@@ -1790,11 +1815,11 @@ function services_dnsmasq_configure() {
 					if (is_linklocal($interface) && strstr($interface, "%")) {
 						$tmpaddrll6 = explode("%", $interface);
 						$listen_addresses .= " --listen-address={$tmpaddrll6[0]} ";
-					} else 
+					} else
 						$listen_addresses .= " --listen-address={$interface} ";
 				} else if (strstr($interface, "_vip")) {
 					$laddr = get_configured_carp_interface_list($interface);
-					if (is_ipaddr($laddr)) 
+					if (is_ipaddr($laddr))
 						$listen_addresses .= " --listen-address={$laddr} ";
 				} else {
 					$if = get_real_interface($interface);
@@ -1834,7 +1859,7 @@ function services_dnsmasq_configure() {
 			$args .= " --server=/10.in-addr.arpa/ ";
 			$args .= " --server=/168.192.in-addr.arpa/ ";
 			/* Unfortunately the 172.16.0.0/12 range does not map nicely to the in-addr.arpa scheme. */
-			for ($subnet_num = 16; $subnet_num < 32; $subnet_num++) { 
+			for ($subnet_num = 16; $subnet_num < 32; $subnet_num++) {
 				$args .= " --server=/" . $subnet_num . ".172.in-addr.arpa/ ";
 			}
 		}
@@ -2160,12 +2185,12 @@ function services_dnsupdate_process($int = "", $updatehost = "", $forced = false
 
 			/* determine interface name */
 			$if = get_real_interface($dnsupdate['interface']);
-			
+
 			if (isset($dnsupdate['usepublicip']))
                                 $wanip = dyndnsCheckIP($dnsupdate['interface']);
                         else
                                 $wanip = get_interface_ip($dnsupdate['interface']);
-			
+
 			$wanipv6 = get_interface_ipv6($dnsupdate['interface']);
 			$cacheFile = "{$g['conf_path']}/dyndns_{$dnsupdate['interface']}_rfc2136_" . escapeshellarg($dnsupdate['host']) . "_{$dnsupdate['server']}.cache";
 			$currentTime = time();

@@ -308,7 +308,7 @@ function is_module_loaded($module_name) {
 
 /* validate non-negative numeric string, or equivalent numeric variable */
 function is_numericint($arg) {
-	return (((is_int($arg) && $arg >= 0) || (is_string($arg) && strlen($arg) > 0 && ctype_digit($arg))) ? true : false);  
+	return (((is_int($arg) && $arg >= 0) || (is_string($arg) && strlen($arg) > 0 && ctype_digit($arg))) ? true : false);
 }
 
 /* Generate the (human readable) ipv4 or ipv6 subnet address (i.e., netmask, or subnet start IP) 
@@ -466,7 +466,7 @@ function ip_range_to_address_array($startip, $endip, $max_size = 5000) {
 
 	if (ip_range_size_v4($startip, $endip) > $max_size)
 		return false;
-	
+
 	// Container for IP addresses within this range.
 	$rangeaddresses = array();
 	$end_int = ip2ulong($endip);
@@ -917,6 +917,24 @@ function group_ports($ports) {
 /* returns true if $val is a valid shaper bandwidth value */
 function is_valid_shaperbw($val) {
 	return (preg_match("/^(\d+(?:\.\d+)?)([MKG]?b|%)$/", $val));
+}
+
+/* returns true if $test is in the range between $start and $end */
+function is_validmask_v4($mask) {
+	//from http://forums.devnetwork.net/viewtopic.php?f=1&t=114832
+	return ($bin = decbin(ip2long($mask))) && strpos($bin, '0') && !strpos($bin, '01');
+}
+function mask2cidr_v4($mask) {
+
+	$mask = split( "[.]", $mask );
+	$bits = 0;
+
+	foreach ($mask as $octect) {
+		$bin = decbin($octect);
+		$bin = str_replace ( "0" , "" , $bin);
+		$bits = $bits + strlen($bin);
+		}
+	return $bits;
 }
 
 /* returns true if $test is in the range between $start and $end */

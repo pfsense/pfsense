@@ -1884,7 +1884,7 @@ if ($savemsg)
 					$i++;
 					endforeach;
 				?>
-				<tr style="dispaly:none;"><td></td></tr>
+				<tr style="display:none;"><td></td></tr>
 				</tbody>
 			</table>
 

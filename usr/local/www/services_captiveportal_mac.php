@@ -122,7 +122,7 @@ if ($_POST) {
 				@unlink("{$g['tmp_path']}/{$uniqid}_tmp");
 				unset($a_passthrumacs[$idx]);
 				write_config();
-				echo gettext("The entry was sucessfully deleted") . "\n";
+				echo gettext("The entry was successfully deleted") . "\n";
 			} else
 				echo gettext("No entry exists for this mac address:") . " " .  $_POST['delmac'] . "\n";
 		}

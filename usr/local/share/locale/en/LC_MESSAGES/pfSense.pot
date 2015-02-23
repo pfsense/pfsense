@@ -13978,7 +13978,7 @@ msgstr ""
 msgid ""
 "<a target=\"FreeBSD_DHCP\" href=\"http://www.freebsd.org/cgi/man.cgi?"
 "query=dhcp6c.conf&amp;sektion=5&amp;apropos=0&amp;manpath=FreeBSD"
-"+Ports#Interface_statement\">Interface Statement</a>"
+"+10.1-RELEASE+and+Ports#Interface_statement\">Interface Statement</a>"
 msgstr ""
 
 #: usr/local/www/interfaces.php:2265
@@ -14025,7 +14025,7 @@ msgstr ""
 msgid ""
 "<a target=\"FreeBSD_DHCP\" href=\"http://www.freebsd.org/cgi/man.cgi?"
 "query=dhcp6c.conf&amp;sektion=5&amp;apropos=0&amp;manpath=FreeBSD"
-"+Ports#Identity_association_statement\">Identity Association Statement</a>"
+"+10.1-RELEASE+and+Ports#Identity_association_statement\">Identity Association Statement</a>"
 msgstr ""
 
 #: usr/local/www/interfaces.php:2299
@@ -14080,7 +14080,7 @@ msgstr ""
 msgid ""
 "<a target=\"FreeBSD_DHCP\" href=\"http://www.freebsd.org/cgi/man.cgi?"
 "query=dhcp6c.conf&amp;sektion=5&amp;apropos=0&amp;manpath=FreeBSD"
-"+Ports#Prefix_interface_statement\">Prefix Interface Statement</a>"
+"+10.1-RELEASE+and+Ports#Prefix_interface_statement\">Prefix Interface Statement</a>"
 msgstr ""
 
 #: usr/local/www/interfaces.php:2338
@@ -14099,7 +14099,7 @@ msgstr ""
 msgid ""
 "<a target=\"FreeBSD_DHCP\" href=\"http://www.freebsd.org/cgi/man.cgi?"
 "query=dhcp6c.conf&amp;sektion=5&amp;apropos=0&amp;manpath=FreeBSD"
-"+Ports#Authentication_statement\">Authentication Statement</a>"
+"+10.1-RELEASE+and+Ports#Authentication_statement\">Authentication Statement</a>"
 msgstr ""
 
 #: usr/local/www/interfaces.php:2351
@@ -14122,7 +14122,7 @@ msgstr ""
 msgid ""
 "<a target=\"FreeBSD_DHCP\" href=\"http://www.freebsd.org/cgi/man.cgi?"
 "query=dhcp6c.conf&amp;sektion=5&amp;apropos=0&amp;manpath=FreeBSD"
-"+Ports#Keyinfo_statement\">Keyinfo Statement</a>"
+"+10.1-RELEASE+and+Ports#Keyinfo_statement\">Keyinfo Statement</a>"
 msgstr ""
 
 #: usr/local/www/interfaces.php:2367
@@ -14148,7 +14148,7 @@ msgstr ""
 #: usr/local/www/interfaces.php:2383
 msgid ""
 "<a target=\"FreeBSD_DHCP\" href=\"http://www.freebsd.org/cgi/man.cgi?"
-"query=dhcp6c.conf&amp;sektion=5&amp;apropos=0&amp;manpath=FreeBSD+Ports"
+"query=dhcp6c.conf&amp;sektion=5&amp;apropos=0&amp;manpath=FreeBSD+10.1-RELEASE+and+Ports"
 "\">Configuration File</a> Override"
 msgstr ""
 

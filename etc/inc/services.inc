@@ -458,13 +458,13 @@ EOD;
 		$dhcpdconf .= "always-broadcast on\n";
 
 	$dhcpdifs = array();
-	$add_routers = false;
+	$enable_add_routers = false;
 	$gateways_arr = return_gateways_array();
 	/* only add a routers line if the system has any IPv4 gateway at all */
 	/* a static route has a gateway, manually overriding this field always works */
 	foreach($gateways_arr as $gwitem) {
 		if($gwitem['ipprotocol'] == "inet") {
-			$add_routers = true;
+			$enable_add_routers = true;
 			break;
 		}
 	}
@@ -741,6 +741,7 @@ EOPP;
 		} elseif ($dhcpifconf['gateway'] == "none") {
 			$add_routers = false;
 		} else {
+			$add_routers = $enable_add_routers;
 			$routers = $ifcfgip;
 		}
 		if($add_routers)

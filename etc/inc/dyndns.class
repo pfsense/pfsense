@@ -629,7 +629,7 @@
 					if ($this->_dnsVerboseLog)
 						log_error("EuroDynDns ({$this->_dnsHost}) DNS update() starting.");
 					curl_setopt($ch, CURLOPT_USERPWD, $this->_dnsUser.':'.$this->_dnsPass);
-					$server = "https://eurodyndns.org/update/";
+					$server = "https://update.eurodyndns.org/update/";
 					$port = "";
 					if($this->_dnsPort)
 						$port = ":" . $this->_dnsPort;

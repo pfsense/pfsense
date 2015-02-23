@@ -2257,7 +2257,7 @@ $types6 = array("none" => gettext("None"), "staticv6" => gettext("Static IPv6"),
 
 									<tr style='display:none' id="show_adv_dhcp6_interface_statement">
 										<td width="22%" valign="top" class="vncell">
-											<?=gettext("<a target=\"FreeBSD_DHCP\" href=\"http://www.freebsd.org/cgi/man.cgi?query=dhcp6c.conf&amp;sektion=5&amp;apropos=0&amp;manpath=FreeBSD+Ports#Interface_statement\">Interface Statement</a>"); ?>
+											<?=gettext("<a target=\"FreeBSD_DHCP\" href=\"http://www.freebsd.org/cgi/man.cgi?query=dhcp6c.conf&amp;sektion=5&amp;apropos=0&amp;manpath=FreeBSD+10.1-RELEASE+and+Ports#Interface_statement\">Interface Statement</a>"); ?>
 											<br /><br />
 											<input name="adv_dhcp6_interface_statement_information_only_enable" type="checkbox" id="adv_dhcp6_interface_statement_information_only_enable" value="" onclick="show_adv_dhcp6_config(this)" />
 											<?=gettext("Information Only"); ?>
@@ -2289,7 +2289,7 @@ $types6 = array("none" => gettext("None"), "staticv6" => gettext("Static IPv6"),
 
 									<tr style='display:none' id="show_adv_dhcp6_id_assoc_statement">
 										<td width="22%" valign="top" class="vncell">
-											<?=gettext("<a target=\"FreeBSD_DHCP\" href=\"http://www.freebsd.org/cgi/man.cgi?query=dhcp6c.conf&amp;sektion=5&amp;apropos=0&amp;manpath=FreeBSD+Ports#Identity_association_statement\">Identity Association Statement</a>"); ?>
+											<?=gettext("<a target=\"FreeBSD_DHCP\" href=\"http://www.freebsd.org/cgi/man.cgi?query=dhcp6c.conf&amp;sektion=5&amp;apropos=0&amp;manpath=FreeBSD+10.1-RELEASE+and+Ports#Identity_association_statement\">Identity Association Statement</a>"); ?>
 										</td>
 										<td width="78%" class="vtable">
 
@@ -2330,7 +2330,7 @@ $types6 = array("none" => gettext("None"), "staticv6" => gettext("Static IPv6"),
 
 									<tr style='display:none' id="show_adv_dhcp6_prefix_interface_statement">
 										<td width="22%" valign="top" class="vncell">
-											<?=gettext("<a target=\"FreeBSD_DHCP\" href=\"http://www.freebsd.org/cgi/man.cgi?query=dhcp6c.conf&amp;sektion=5&amp;apropos=0&amp;manpath=FreeBSD+Ports#Prefix_interface_statement\">Prefix Interface Statement</a>"); ?>
+											<?=gettext("<a target=\"FreeBSD_DHCP\" href=\"http://www.freebsd.org/cgi/man.cgi?query=dhcp6c.conf&amp;sektion=5&amp;apropos=0&amp;manpath=FreeBSD+10.1-RELEASE+and+Ports#Prefix_interface_statement\">Prefix Interface Statement</a>"); ?>
 										</td>
 										<td width="78%" class="vtable">
 											<?=gettext("Prefix Interface "); ?>
@@ -2343,7 +2343,7 @@ $types6 = array("none" => gettext("None"), "staticv6" => gettext("Static IPv6"),
 
 									<tr style='display:none' id="show_adv_dhcp6_authentication_statement">
 										<td width="22%" valign="top" class="vncell">
-											<?=gettext("<a target=\"FreeBSD_DHCP\" href=\"http://www.freebsd.org/cgi/man.cgi?query=dhcp6c.conf&amp;sektion=5&amp;apropos=0&amp;manpath=FreeBSD+Ports#Authentication_statement\">Authentication Statement</a>"); ?>
+											<?=gettext("<a target=\"FreeBSD_DHCP\" href=\"http://www.freebsd.org/cgi/man.cgi?query=dhcp6c.conf&amp;sektion=5&amp;apropos=0&amp;manpath=FreeBSD+10.1-RELEASE+and+Ports#Authentication_statement\">Authentication Statement</a>"); ?>
 										</td>
 										<td width="78%" class="vtable">
 											<?=gettext("<i>authname</i>"); ?>
@@ -2359,7 +2359,7 @@ $types6 = array("none" => gettext("None"), "staticv6" => gettext("Static IPv6"),
 
 									<tr style='display:none' id="show_adv_dhcp6_key_info_statement">
 										<td width="22%" valign="top" class="vncell">
-											<?=gettext("<a target=\"FreeBSD_DHCP\" href=\"http://www.freebsd.org/cgi/man.cgi?query=dhcp6c.conf&amp;sektion=5&amp;apropos=0&amp;manpath=FreeBSD+Ports#Keyinfo_statement\">Keyinfo Statement</a>"); ?>
+											<?=gettext("<a target=\"FreeBSD_DHCP\" href=\"http://www.freebsd.org/cgi/man.cgi?query=dhcp6c.conf&amp;sektion=5&amp;apropos=0&amp;manpath=FreeBSD+10.1-RELEASE+and+Ports#Keyinfo_statement\">Keyinfo Statement</a>"); ?>
 										</td>
 										<td width="78%" class="vtable">
 											<?=gettext("<i>keyname</i>"); ?>
@@ -2378,7 +2378,7 @@ $types6 = array("none" => gettext("None"), "staticv6" => gettext("Static IPv6"),
 
 									<tr style='display:none' id="show_adv_dhcp6_config_file_override">
 										<td width="22%" valign="top" class="vncell">
-											<?=gettext("<a target=\"FreeBSD_DHCP\" href=\"http://www.freebsd.org/cgi/man.cgi?query=dhcp6c.conf&amp;sektion=5&amp;apropos=0&amp;manpath=FreeBSD+Ports\">Configuration File</a> Override"); ?>
+											<?=gettext("<a target=\"FreeBSD_DHCP\" href=\"http://www.freebsd.org/cgi/man.cgi?query=dhcp6c.conf&amp;sektion=5&amp;apropos=0&amp;manpath=FreeBSD+10.1-RELEASE+and+Ports\">Configuration File</a> Override"); ?>
 										</td>
 										<td width="78%" class="vtable">
  											<input name="adv_dhcp6_config_file_override_path"   type="text" class="formfld unknown" id="adv_dhcp6_config_file_override_path"  size="86" value="<?=htmlspecialchars($pconfig['adv_dhcp6_config_file_override_path']);?>" />

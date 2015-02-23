@@ -108,6 +108,7 @@ if (isset($p1index) && $a_phase1[$p1index]) {
 
 	$pconfig['descr'] = $a_phase1[$p1index]['descr'];
 	$pconfig['nat_traversal'] = $a_phase1[$p1index]['nat_traversal'];
+        $pconfig['mobike'] = $a_phase1[$p1index]['mobike'];
 
 	if (isset($a_phase1[$p1index]['reauth_enable']))
 		$pconfig['reauth_enable'] = true;
@@ -136,6 +137,7 @@ if (isset($p1index) && $a_phase1[$p1index]) {
 	$pconfig['dhgroup'] = "2";
 	$pconfig['lifetime'] = "28800";
 	$pconfig['nat_traversal'] = 'on';
+        $pconfig['mobike'] = 'off';
 	$pconfig['dpd_enable'] = true;
 	$pconfig['iketype'] = "ikev1";
 
@@ -382,6 +384,7 @@ if ($_POST) {
 		$ph1ent['authentication_method'] = $pconfig['authentication_method'];
 		$ph1ent['descr'] = $pconfig['descr'];
 		$ph1ent['nat_traversal'] = $pconfig['nat_traversal'];
+                $ph1ent['mobike'] = $pconfig['mobike'];
 
 		if (isset($pconfig['reauth_enable']))
 			$ph1ent['reauth_enable'] = true;
@@ -447,10 +450,17 @@ function myidsel_change() {
 function iketype_change() {
 	index = document.iform.iketype.selectedIndex;
 	value = document.iform.iketype.options[index].value;
-	if (value == 'ikev2')
+	if (value == 'ikev2') {
 			document.getElementById('negmode').style.display= 'none';
-	else
+                        document.getElementById('mobike').style.display= '';
+                        document.getElementById('natt').style.display= 'none';
+                        document.getElementById('disablereauth').style.display= '';
+        } else {
 			document.getElementById('negmode').style.display = '';
+                        document.getElementById('mobike').style.display = 'none';
+                        document.getElementById('natt').style.display= '';
+                        document.getElementById('disablereauth').style.display= 'none';
+        }
 }
 
 function peeridsel_change() {
@@ -894,7 +904,7 @@ function dpdchkbox_change() {
 							<?=gettext("Whether a connection should be renegotiated when it is about to expire."); ?><br />
 						</td>
 					</tr>
-					<tr>
+					<tr id='disablereauth'>
 						<td width="22%" valign="top" class="vncell"><?=gettext("Disable Reauth");?></td>
 						<td width="78%" class="vtable">
 							<input name="reauth_enable" type="checkbox" id="reauth_enable" value="yes" <?php if (isset($pconfig['reauth_enable'])) echo "checked=\"checked\""; ?> />
@@ -908,7 +918,7 @@ function dpdchkbox_change() {
 							<?=gettext("Enable this option to never initiate this connection from this side, only respond to incoming requests."); ?><br />
 						</td>
 					</tr>
-					<tr>
+					<tr id='natt'>
 						<td width="22%" valign="top" class="vncell"><?=gettext("NAT Traversal"); ?></td>
 						<td width="78%" class="vtable">
 							<select name="nat_traversal" class="formselect">
@@ -919,6 +929,19 @@ function dpdchkbox_change() {
 							<span class="vexpl">
 								<?=gettext("Set this option to enable the use of NAT-T (i.e. the encapsulation of ESP in UDP packets) if needed, " .
 								"which can help with clients that are behind restrictive firewalls"); ?>.
+							</span>
+						</td>
+                                        </tr>
+                                        <tr id='mobike'>
+                                                <td width="22%" valign="top" class="vncell"><?=gettext("MOBIKE"); ?></td>
+                                                <td width="78%" class="vtable">
+							<select name="mobike" class="formselect">
+								<option value="on" <?php if ($pconfig['mobike'] == 'on') echo "selected=\"selected\""; ?>><?=gettext("Enable"); ?></option>
+								<option value="off" <?php if ($pconfig['mobike'] != 'on') echo "selected=\"selected\""; ?>><?=gettext("Disable"); ?></option>
+							</select>
+							<br />
+							<span class="vexpl">
+								<?=gettext("Set this option to control the use of MOBIKE"); ?>.
 							</span>
 						</td>
 					</tr>

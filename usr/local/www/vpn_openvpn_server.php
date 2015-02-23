@@ -89,7 +89,7 @@ if ($_GET['act'] == "del") {
 	$savemsg = gettext("Server successfully deleted")."<br />";
 }
 
-if($_GET['act']=="new"){
+if($_GET['act']=="new") {
 	$pconfig['autokey_enable'] = "yes";
 	$pconfig['tlsauth_enable'] = "yes";
 	$pconfig['autotls_enable'] = "yes";
@@ -104,7 +104,7 @@ if($_GET['act']=="new"){
 	$pconfig['digest'] = "SHA1";
 }
 
-if($_GET['act']=="edit"){
+if($_GET['act']=="edit") {
 
 	if (isset($id) && $a_server[$id]) {
 		$pconfig['disable'] = isset($a_server[$id]['disable']);
@@ -370,7 +370,7 @@ if ($_POST) {
 		if ($_POST['disable'] == "yes")
 			$server['disable'] = true;
 		$server['mode'] = $pconfig['mode'];
-		if (!empty($pconfig['authmode']))
+		if (!empty($pconfig['authmode']) && (($pconfig['mode'] == "server_user") || ($pconfig['mode'] == "server_tls_user")))
 			$server['authmode'] = implode(",", $pconfig['authmode']);
 		$server['protocol'] = $pconfig['protocol'];
 		$server['dev_mode'] = $pconfig['dev_mode'];
@@ -547,7 +547,7 @@ function mode_change() {
 			document.getElementById("inter_client_communication").style.display="none";
 			break;
 		case "server_user":
-                case "server_tls_user":
+		case "server_tls_user":
 			document.getElementById("authmodetr").style.display="";
 			document.getElementById("client_opts").style.display="";
 			document.getElementById("remote_optsv4").style.display="none";
@@ -795,22 +795,26 @@ if ($savemsg)
 						</td>
 					</tr>
 					<tr id="authmodetr" style="display:none">
-                                                <td width="22%" valign="top" class="vncellreq"><?=gettext("Backend for authentication");?></td>
-                                                        <td width="78%" class="vtable">
-                                                        <select name='authmode[]' id='authmode' class="formselect" multiple="multiple" size="<?php echo count($auth_servers); ?>">
-							<?php $authmodes = explode(",", $pconfig['authmode']); ?>
-                                                        <?php
+						<td width="22%" valign="top" class="vncellreq"><?=gettext("Backend for authentication");?></td>
+						<td width="78%" class="vtable">
+							<select name='authmode[]' id='authmode' class="formselect" multiple="multiple" size="<?php echo count($auth_servers); ?>">
+							<?php
+								$authmodes = explode(",", $pconfig['authmode']);
 								$auth_servers = auth_get_authserver_list();
-                                                                foreach ($auth_servers as $auth_server_key => $auth_server):
-                                                                        $selected = "";
-                                                                        if (in_array($auth_server_key, $authmodes))
-                                                                                $selected = "selected=\"selected\"";
-                                                        ?>
-                                                                <option value="<?=$auth_server_key;?>" <?=$selected;?>><?=$auth_server['name'];?></option>
-                                                        <?php 	endforeach; ?>
-                                                        </select>
-                                                </td>
-                                        </tr>
+								// If no authmodes set then default to selecting the first entry in auth_servers
+								if (empty($authmodes[0]) && !empty(key($auth_servers)))
+									$authmodes[0] = key($auth_servers);
+
+								foreach ($auth_servers as $auth_server_key => $auth_server):
+									$selected = "";
+									if (in_array($auth_server_key, $authmodes))
+										$selected = "selected=\"selected\"";
+							?>
+								<option value="<?=$auth_server_key;?>" <?=$selected;?>><?=$auth_server['name'];?></option>
+							<?php endforeach; ?>
+							</select>
+						</td>
+					</tr>
 					<tr>
 						<td width="22%" valign="top" class="vncellreq"><?=gettext("Protocol");?></td>
 							<td width="78%" class="vtable">
@@ -824,28 +828,28 @@ if ($savemsg)
 								<option value="<?=$prot;?>" <?=$selected;?>><?=$prot;?></option>
 							<?php endforeach; ?>
 							</select>
-							</td>
+						</td>
 					</tr>
 					<tr>
 						<td width="22%" valign="top" class="vncellreq"><?=gettext("Device Mode"); ?></td>
 						<td width="78%" class="vtable">
 							<select name="dev_mode" class="formselect" onchange='tuntap_change()'>
-                                                        <?php
-                                                                foreach ($openvpn_dev_mode as $device):
-                                                                       $selected = "";
-                                                                       if (! empty($pconfig['dev_mode'])) {
-                                                                               if ($pconfig['dev_mode'] == $device)
-                                                                                       $selected = "selected=\"selected\"";
-                                                                       } else {
-                                                                               if ($device == "tun")
-                                                                                       $selected = "selected=\"selected\"";
-                                                                       }
-                                                        ?>
-                                                                <option value="<?=$device;?>" <?=$selected;?>><?=$device;?></option>
-                                                        <?php endforeach; ?>
-                                                        </select>
-                                                        </td>
-                                        </tr>
+							<?php
+								foreach ($openvpn_dev_mode as $device):
+									$selected = "";
+									if (! empty($pconfig['dev_mode'])) {
+										if ($pconfig['dev_mode'] == $device)
+											$selected = "selected=\"selected\"";
+									} else {
+										if ($device == "tun")
+											$selected = "selected=\"selected\"";
+									}
+							?>
+								<option value="<?=$device;?>" <?=$selected;?>><?=$device;?></option>
+							<?php endforeach; ?>
+							</select>
+						</td>
+					</tr>
 					<tr>
 						<td width="22%" valign="top" class="vncellreq"><?=gettext("Interface"); ?></td>
 						<td width="78%" class="vtable">
@@ -994,20 +998,20 @@ if ($savemsg)
 							<?php if (count($a_cert)): ?>
 							<select name='certref' class="formselect">
 							<?php
-							foreach ($a_cert as $cert):
-								$selected = "";
-								$caname = "";
-								$inuse = "";
-								$revoked = "";
-								$ca = lookup_ca($cert['caref']);
-								if ($ca)
-									$caname = " (CA: {$ca['descr']})";
-								if ($pconfig['certref'] == $cert['refid'])
-									$selected = "selected=\"selected\"";
-								if (cert_in_use($cert['refid']))
-									$inuse = " *In Use";
-								if (is_cert_revoked($cert))
-								$revoked = " *Revoked";
+								foreach ($a_cert as $cert):
+									$selected = "";
+									$caname = "";
+									$inuse = "";
+									$revoked = "";
+									$ca = lookup_ca($cert['caref']);
+									if ($ca)
+										$caname = " (CA: {$ca['descr']})";
+									if ($pconfig['certref'] == $cert['refid'])
+										$selected = "selected=\"selected\"";
+									if (cert_in_use($cert['refid']))
+										$inuse = " *In Use";
+									if (is_cert_revoked($cert))
+									$revoked = " *Revoked";
 							?>
 								<option value="<?=$cert['refid'];?>" <?=$selected;?>><?=$cert['descr'] . $caname . $inuse . $revoked;?></option>
 							<?php endforeach; ?>
@@ -1071,13 +1075,13 @@ if ($savemsg)
 								<?php
 									$cipherlist = openvpn_get_cipherlist();
 									foreach ($cipherlist as $name => $desc):
-									$selected = "";
-									if ($name == $pconfig['crypto'])
-										$selected = " selected=\"selected\"";
+										$selected = "";
+										if ($name == $pconfig['crypto'])
+											$selected = " selected=\"selected\"";
 								?>
-								<option value="<?=$name;?>"<?=$selected?>>
-									<?=htmlspecialchars($desc);?>
-								</option>
+									<option value="<?=$name;?>"<?=$selected?>>
+										<?=htmlspecialchars($desc);?>
+									</option>
 								<?php endforeach; ?>
 							</select>
 						</td>
@@ -1089,13 +1093,13 @@ if ($savemsg)
 								<?php
 									$digestlist = openvpn_get_digestlist();
 									foreach ($digestlist as $name => $desc):
-									$selected = "";
-									if ($name == $pconfig['digest'])
-										$selected = " selected=\"selected\"";
+										$selected = "";
+										if ($name == $pconfig['digest'])
+											$selected = " selected=\"selected\"";
 								?>
-								<option value="<?=$name;?>"<?=$selected?>>
-									<?=htmlspecialchars($desc);?>
-								</option>
+									<option value="<?=$name;?>"<?=$selected?>>
+										<?=htmlspecialchars($desc);?>
+									</option>
 								<?php endforeach; ?>
 							</select>
 							<br /><?PHP echo gettext("NOTE: Leave this set to SHA1 unless all clients are set to match. SHA1 is the default for OpenVPN."); ?>
@@ -1108,13 +1112,13 @@ if ($savemsg)
 								<?php
 									$engines = openvpn_get_engines();
 									foreach ($engines as $name => $desc):
-									$selected = "";
-									if ($name == $pconfig['engine'])
-										$selected = " selected=\"selected\"";
+										$selected = "";
+										if ($name == $pconfig['engine'])
+											$selected = " selected=\"selected\"";
 								?>
-								<option value="<?=$name;?>"<?=$selected?>>
-									<?=htmlspecialchars($desc);?>
-								</option>
+									<option value="<?=$name;?>"<?=$selected?>>
+										<?=htmlspecialchars($desc);?>
+									</option>
 								<?php endforeach; ?>
 							</select>
 						</td>
@@ -1128,11 +1132,11 @@ if ($savemsg)
 								<option value="">Do Not Check</option>
 								<?php
 									foreach ($openvpn_cert_depths as $depth => $depthdesc):
-									$selected = "";
-									if ($depth == $pconfig['cert_depth'])
-										$selected = " selected=\"selected\"";
+										$selected = "";
+										if ($depth == $pconfig['cert_depth'])
+											$selected = " selected=\"selected\"";
 								?>
-								<option value="<?= $depth ?>" <?= $selected ?>><?= $depthdesc ?></option>
+									<option value="<?= $depth ?>" <?= $selected ?>><?= $depthdesc ?></option>
 								<?php endforeach; ?>
 							</select>
 							</td></tr>
@@ -1177,7 +1181,7 @@ if ($savemsg)
 							"communications between this server and client " .
 							"hosts expressed using CIDR (eg. 10.0.8.0/24). " .
 							"The first network address will be assigned to " .
-							"the	server virtual interface. The remaining " .
+							"the server virtual interface. The remaining " .
 							"network addresses can optionally be assigned " .
 							"to connecting clients. (see Address Pool)"); ?>
 						</td>
@@ -1351,11 +1355,11 @@ if ($savemsg)
 							<select name="compression" class="formselect">
 								<?php
 									foreach ($openvpn_compression_modes as $cmode => $cmodedesc):
-									$selected = "";
-									if ($cmode == $pconfig['compression'])
-										$selected = " selected=\"selected\"";
+										$selected = "";
+										if ($cmode == $pconfig['compression'])
+											$selected = " selected=\"selected\"";
 								?>
-								<option value="<?= $cmode ?>" <?= $selected ?>><?= $cmodedesc ?></option>
+									<option value="<?= $cmode ?>" <?= $selected ?>><?= $cmodedesc ?></option>
 								<?php endforeach; ?>
 							</select>
 							<br />
@@ -1690,7 +1694,7 @@ if ($savemsg)
 										<input name="netbios_scope" type="text" class="formfld unknown" id="netbios_scope" size="30" value="<?=htmlspecialchars($pconfig['netbios_scope']);?>" />
 										<br />
 										<?=gettext("A NetBIOS Scope	ID provides an extended naming " .
-										"service for	NetBIOS over TCP/IP. The NetBIOS " .
+										"service for NetBIOS over TCP/IP. The NetBIOS " .
 										"scope ID isolates NetBIOS traffic on a single " .
 										"network to only those nodes with the same " .
 										"NetBIOS scope ID"); ?>.
@@ -1785,8 +1789,8 @@ if ($savemsg)
 					</tr>
 
 					<tr id="comboboxVerbosityLevel">
-							<td width="22%" valign="top" class="vncell"><?=gettext("Verbosity level");?></td>
-							<td width="78%" class="vtable">
+						<td width="22%" valign="top" class="vncell"><?=gettext("Verbosity level");?></td>
+						<td width="78%" class="vtable">
 							<select name="verbosity_level" class="formselect">
 							<?php
 								foreach ($openvpn_verbosity_level as $verb_value => $verb_desc):
@@ -1803,7 +1807,7 @@ if ($savemsg)
 							<strong>default</strong>-<strong>4</strong> -- <?=gettext("Normal usage range"); ?>. <br />
 							<strong>5</strong> -- <?=gettext("Output R and W characters to the console for each packet read and write, uppercase is used for TCP/UDP packets and lowercase is used for TUN/TAP packets"); ?>. <br />
 							<strong>6</strong>-<strong>11</strong> -- <?=gettext("Debug info range"); ?>.
-							</td>
+						</td>
 					</tr>
 
 				</table>
@@ -1880,7 +1884,7 @@ if ($savemsg)
 					$i++;
 					endforeach;
 				?>
-				<tr style="dispaly:none;"><td></td></tr>
+				<tr style="display:none;"><td></td></tr>
 				</tbody>
 			</table>
 
@@ -1914,10 +1918,10 @@ tuntap_change();
 /* local utility functions */
 
 function set_checked($var,& $chk) {
-    if($var)
-        $chk = "checked=\"checked\"";
-    else
-        $chk = "";
+	if($var)
+		$chk = "checked=\"checked\"";
+	else
+		$chk = "";
 }
 
 ?>

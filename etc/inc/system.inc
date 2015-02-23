@@ -906,8 +906,17 @@ EOD;
 		$syslogd_extra = "-f {$g['varetc_path']}/syslog.conf {$sourceip}";
 	}
 
-	if (isvalidpid("{$g['varrun_path']}/syslog.pid"))
+	if (isvalidpid("{$g['varrun_path']}/syslog.pid")) {
 		sigkillbypid("{$g['varrun_path']}/syslog.pid", "TERM");
+		usleep(100000); // syslogd often doesn't respond to a TERM quickly enough for the starting of syslogd below to be successful
+	}
+	
+	if (isvalidpid("{$g['varrun_path']}/syslog.pid")) {
+		// if it still hasn't responded to the TERM, KILL it. 
+		sigkillbypid("{$g['varrun_path']}/syslog.pid", "KILL");
+		usleep(100000); 
+	}
+
 	
 	$retval = mwexec_bg("/usr/sbin/syslogd -s -c -c -l {$g['dhcpd_chroot_path']}/var/run/log -P {$g['varrun_path']}/syslog.pid {$syslogd_extra}");
 

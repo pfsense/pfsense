@@ -458,13 +458,13 @@ EOD;
 		$dhcpdconf .= "always-broadcast on\n";
 
 	$dhcpdifs = array();
-	$add_routers = false;
+	$enable_add_routers = false;
 	$gateways_arr = return_gateways_array();
 	/* only add a routers line if the system has any IPv4 gateway at all */
 	/* a static route has a gateway, manually overriding this field always works */
 	foreach($gateways_arr as $gwitem) {
 		if($gwitem['ipprotocol'] == "inet") {
-			$add_routers = true;
+			$enable_add_routers = true;
 			break;
 		}
 	}
@@ -741,6 +741,7 @@ EOPP;
 		} elseif ($dhcpifconf['gateway'] == "none") {
 			$add_routers = false;
 		} else {
+			$add_routers = $enable_add_routers;
 			$routers = $ifcfgip;
 		}
 		if($add_routers)
@@ -1091,8 +1092,8 @@ function services_dhcpdv6_configure($blacklist = array()) {
 
 				$dhcpdv6cfg[$ifname]['prefixrange']['from'] = Net_IPv6::compress($range['start']);
 				$dhcpdv6cfg[$ifname]['prefixrange']['to'] = Net_IPv6::compress($range['end']);
-				$dhcpdv6cfg[$ifname]['dns6ip'] = get_interface_ipv6($ifname);
 			}
+			$dhcpdv6cfg[$ifname]['dns6ip'] = get_interface_ipv6($ifname);
 		}
 	}
 
@@ -1210,7 +1211,7 @@ EOD;
 			$dhcpdv6conf .= "	prefix6 {$dhcpv6ifconf['prefixrange']['from']} {$dhcpv6ifconf['prefixrange']['to']} /{$dhcpv6ifconf['prefixrange']['prefixlength']};\n";
 		}
 		if (is_ipaddrv6($dhcpv6ifconf['dns6ip'])) {
-			$dhcpdv6conf .= "       option dhcp6.name-servers {$dhcpv6ifconf['dns6ip']};\n";
+			$dhcpdv6conf .= "	option dhcp6.name-servers {$dhcpv6ifconf['dns6ip']};\n";
 		}
     		// default-lease-time
 		if ($dhcpv6ifconf['defaultleasetime'])

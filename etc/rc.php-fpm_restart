@@ -8,6 +8,8 @@ sleep 2
 # /usr/local/etc/php.ini and /usr/local/lib/php.ini
 /etc/rc.conf_mount_rw
 /etc/rc.php_ini_setup 2>/tmp/php_errors.txt
+/bin/rm -f /var/run/php-fpm.pid 2>/dev/null
+/bin/rm -f /var/run/php-fpm.socket 2>/dev/null
 /etc/rc.conf_mount_ro
 echo ">>> Restarting php-fpm" | /usr/bin/logger -p daemon.info -i -t rc.php-fpm_restart
 echo ">>> Starting php-fpm"

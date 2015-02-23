@@ -395,8 +395,8 @@ function filter_configure_sync($delete_states_if_needed = true) {
 			sigkillbypid("{$g['varrun_path']}/filterdns.pid", "HUP");
 		else {
 			/*
-			 * FilterDNS has three debugging levels. The default choosen is 1.
-			 * Availabe are level 2 and greater then 2.
+			 * FilterDNS has three debugging levels. The default chosen is 1.
+			 * Available are level 2 and greater then 2.
 			 */
 			if (isset($config['system']['aliasesresolveinterval']) && is_numeric($config['system']['aliasesresolveinterval']))
 				$resolve_interval = $config['system']['aliasesresolveinterval'];
@@ -534,7 +534,7 @@ function filter_generate_nested_alias($name, $alias, &$aliasnesting, &$aliasaddr
 					}
 				}
 			}
-			/* We already expanded this alias so there is no neccessity to do it again. */
+			/* We already expanded this alias so there is no necessity to do it again. */
 			else if(!isset($aliasnesting[$address]))
 				$tmpline = filter_generate_nested_alias($name, $aliastable[$address], $aliasnesting, $aliasaddrnesting);
 		} else if(!isset($aliasaddrnesting[$address])) {
@@ -658,7 +658,7 @@ function filter_generate_aliases() {
 		foreach ($config['aliases']['alias'] as $aliased) {
 			$extralias = "";
 			/*
-			 * XXX: i am not sure what this does so i am commenting it out for now, because as it is
+			 * XXX: i am not sure what this does so I am commenting it out for now, because as it is
 			 * its quite dangerous!
 			 * $ip = find_interface_ip($aliased['address']);
 			 * $extraalias = " " . link_ip_to_carp_interface($ip);
@@ -2849,7 +2849,7 @@ EOD;
 
 	/*
 	 * Support for allow limiting of TCP connections by establishment rate
-	 * Useful for protecting against sudden outburts, etc.
+	 * Useful for protecting against sudden outbursts, etc.
 	 */
 	$ipfrules .= "block in {$log['block']} quick from <virusprot> to any tracker 1000000400 label \"virusprot overload table\"\n";
 
@@ -2903,6 +2903,20 @@ EOD;
 
 	$bogontableinstalled = 0;
 	foreach ($FilterIflist as $on => $oc) {
+		$saved_tracker += 10;
+		$tracker = $saved_tracker;
+
+		if(isset($config['system']['ipv6allow']) && ($oc['type6'] == "slaac" || $oc['type6'] == "dhcp6")) {
+			// The DHCPv6 client rules ***MUST BE ABOVE BOGONSV6!***  https://redmine.pfsense.org/issues/3395 
+			$ipfrules .= <<<EOD
+# allow our DHCPv6 client out to the {$oc['descr']}
+pass in {$log['pass']} quick on \${$oc['descr']} proto udp from fe80::/10 port = 546 to fe80::/10 port = 546 tracker {$increment_tracker($tracker)} label "{$fix_rule_label("allow dhcpv6 client in {$oc['descr']}")}"
+pass in {$log['pass']} quick on \${$oc['descr']} proto udp from any port = 547 to any port = 546 tracker {$increment_tracker($tracker)} label "{$fix_rule_label("allow dhcpv6 client in {$oc['descr']}")}"
+pass out {$log['pass']} quick on \${$oc['descr']} proto udp from any port = 546 to any port = 547 tracker {$increment_tracker($tracker)} label "{$fix_rule_label("allow dhcpv6 client out {$oc['descr']}")}"
+
+EOD;
+		}
+
 		/* XXX: Not static but give a step of 1000 for each interface to at least be able to match rules. */
 		$saved_tracker += 1000;
 		$tracker = $saved_tracker;
@@ -2931,20 +2945,6 @@ block in $bogonlog quick on \${$oc['descr']} from <bogonsv6> to any tracker {$in
 
 EOD;
 			}
-		}
-
-
-		$saved_tracker += 10;
-		$tracker = $saved_tracker;
-
-		if(isset($config['system']['ipv6allow']) && ($oc['type6'] == "slaac" || $oc['type6'] == "dhcp6")) {
-			$ipfrules .= <<<EOD
-# allow our DHCPv6 client out to the {$oc['descr']}
-pass in {$log['pass']} quick on \${$oc['descr']} proto udp from fe80::/10 port = 546 to fe80::/10 port = 546 tracker {$increment_tracker($tracker)} label "{$fix_rule_label("allow dhcpv6 client in {$oc['descr']}")}"
-pass in {$log['pass']} quick on \${$oc['descr']} proto udp from any port = 547 to any port = 546 tracker {$increment_tracker($tracker)} label "{$fix_rule_label("allow dhcpv6 client in {$oc['descr']}")}"
-pass out {$log['pass']} quick on \${$oc['descr']} proto udp from any port = 546 to any port = 547 tracker {$increment_tracker($tracker)} label "{$fix_rule_label("allow dhcpv6 client out {$oc['descr']}")}"
-
-EOD;
 		}
 
 		$saved_tracker += 10;
@@ -3107,7 +3107,7 @@ EOD;
 
 	/*
 	 * NB: The loopback rules are needed here since the antispoof would take precedence then.
-	 *	If you ever add the 'quick' keyword to the antispoof rules above move the looback
+	 *	If you ever add the 'quick' keyword to the antispoof rules above move the loopback
 	 *	rules before them.
 	 */
 	$ipfrules .= <<<EOD

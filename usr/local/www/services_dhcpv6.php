@@ -568,7 +568,6 @@ display_top_tabs($tab_array);
 			<td width="78%" class="vtable">
 			<?php
 				$range_from = gen_subnetv6($ifcfgip, $ifcfgsn);
-				$range_from++;
 				echo $range_from;
 
 			?>

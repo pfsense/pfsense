@@ -191,7 +191,13 @@ if (isset($attributes['framed_ip'])) {
                 $content .= "ifconfig-push {$attributes['framed_ip']} ". long2ip((ip2long($attributes['framed_ip']) + 1));
 //      }
 }
-    
+
+if (isset($attributes['framed_route'])) {  
+	file_put_contents("{$g['varetc_path']}/openvpn-csc/{$username}", "iroute {$attributes['framed_route']}\n");  
+	syslog(LOG_NOTICE, "'{$username}' iroute '{$attributes['framed_route']}' created\n");
+}
+
+
 if (!empty($content))
         @file_put_contents("{$g['tmp_path']}/{$username}", $content);
 

@@ -513,9 +513,9 @@ function unbound_add_host_entries() {
 		else
 			continue;
 
-		if(!$added_ptr[$host['ip']]) {
+		if(!$added_ptr[$host['ipaddr']]) {
 			$unbound_entries .= "local-data-ptr: \"{$host['ipaddr']} {$host['fqdn']}\"\n";
-			$added_ptr[$host['ip']] = true;
+			$added_ptr[$host['ipaddr']] = true;
 		}
 		$unbound_entries .= "local-data: \"{$host['fqdn']} {$type} {$host['ipaddr']}\"\n";
 		if (isset($host['name']))

@@ -41,10 +41,10 @@ require_once("service-utils.inc");
 if (file_exists("{$g['tmp_path']}/.rc.start_packages.running")) {
 		$stat = stat("{$g['tmp_path']}/.rc.start_packages.running");
 		if (time() - $stat['mtime'] >= 90) {
-				@unlink("{$g['tmp_path']}/.rc.start_packages.running");
+			@unlink("{$g['tmp_path']}/.rc.start_packages.running");
 		} else {
-				log_error("Skipping STARTing packages process because previous/another instance is already running");
-				return;
+			log_error("Skipping STARTing packages process because previous/another instance is already running");
+			return;
 		}
 }
 

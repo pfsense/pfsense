@@ -39,7 +39,7 @@ function rescue_detect_keypress() {
 	$timeout=9;
 	echo "\n";
 	echo "[ Press R to enter recovery mode or ]\n";
-	echo "[	 press I to launch the installer  ]\n\n";
+	echo "[  press I to launch the installer  ]\n\n";
 	echo "(R)ecovery mode can assist by rescuing config.xml\n";
 	echo "from a broken hard disk installation, etc.\n\n";
 	echo "(I)nstaller may be invoked now if you do \n";

@@ -30,7 +30,8 @@
  	 *    - Eurodns (eurodns.com)
  	 *    - GratisDNS (gratisdns.dk)
 	 *    - City Network (citynetwork.se)
-	 *	  - GleSYS (glesys.com)
+	 *    - GleSYS (glesys.com)
+	 *    - DNSimple (dnsimple.com)
 	 * +----------------------------------------------------+
 	 *  Requirements:
 	 *    - PHP version 4.0.2 or higher with the CURL Library and the PCRE Library
@@ -67,13 +68,14 @@
 	 *  HE.net Tunnel   - Last Tested: 28 June 2011
 	 *  SelfHost        - Last Tested: 26 December 2011
 	 *  Amazon Route 53 - Last tested: 01 April 2012
-	 *  DNS-O-Matic     - Last Tested: 9 September 2010
-	 *  CloudFlare      - Last Tested: 30 May 2013
-  	 *  Eurodns         - Last Tested: 27 June 2013
-  	 *  GratisDNS       - Last Tested: 15 August 2012
-	 *  OVH DynHOST     - Last Tested: NEVER
-	 *  City Network    - Last Tested: 13 November 2013
-	 *  GleSYS          - Last Tested: 3 February 2015
+	 *  DNS-O-Matic	   - Last Tested: 9 September 2010
+	 *  CloudFlare     - Last Tested: 30 May 2013
+  	 *  Eurodns	   - Last Tested: 27 June 2013
+  	 *  GratisDNS      - Last Tested: 15 August 2012
+	 *  OVH DynHOST	   - Last Tested: NEVER
+	 *  City Network   - Last Tested: 13 November 2013
+	 *  GleSYS			- Last Tested: 3 February 2015
+	 *  DNSimple	   - Last Tested: 09 February 2015
 	 * +====================================================+
 	 *
 	 * @author 	E.Kristensen
@@ -243,7 +245,8 @@
 				case 'eurodns':
 				case 'gratisdns':
 				case 'ovh-dynhost':
-                case 'citynetwork':
+                		case 'citynetwork':
+                		case 'dnsimple':
 					$this->_update();
 					if($this->_dnsDummyUpdateDone == true) {
 						// If a dummy update was needed, then sleep a while and do the update again to put the proper address back.
@@ -669,6 +672,21 @@
 					if($this->_dnsPort)
 						$port = ":" . $this->_dnsPort;
 					curl_setopt($ch, CURLOPT_URL, $server .$port . '?hostname=' . $this->_dnsHost . '&myip=' . $this->_dnsIP);
+					break;
+				case 'dnsimple':
+					/* Uses DNSimple's REST API
+					   Requires username and Account API token passed in header
+					   Piggybacks on Route 53's ZoneID field for DNSimple record ID
+					   Data sent as JSON */
+					$needsIP = TRUE;
+					$server = 'https://api.dnsimple.com/v1/domains/';
+					$token = $this->_dnsUser . ':' . $this->_dnsPass;
+					$jsondata = '{"record":{"content":"' . $this->_dnsIP . '","ttl":"' . $this->_dnsTTL . '"}}';
+					curl_setopt($ch, CURLOPT_HEADER, 1);
+					curl_setopt($ch, CURLOPT_CUSTOMREQUEST, "PUT");
+					curl_setopt($ch, CURLOPT_HTTPHEADER, array('Accept: application/json','Content-Type: application/json','X-DNSimple-Token: ' . $token));
+					curl_setopt($ch, CURLOPT_URL, $server . $this->_dnsHost . '/records/' . $this->_dnsZoneID);
+					curl_setopt($ch, CURLOPT_POSTFIELDS, $jsondata);
 					break;
 				default:
 					break;
@@ -1191,8 +1209,33 @@
 					        $this->_debug($data);
 					}
 					break;
+				case 'dnsimple':
+					/* Responds with HTTP 200 on success.
+					   Responds with HTTP 4xx on error.
+					   Returns JSON data as body */
+					$header_size = curl_getinfo($ch, CURLINFO_HEADER_SIZE);
+					$header = substr($data, 0, $header_size);
+					$body = substr($data, $header_size);
+					if (preg_match("/Status: 200\s/i", $header)) {
+						$status = "phpDynDNS ({$this->_dnsHost}): (Success) IP Address Updated Successfully!";
+						$successful_update = true;
+					} else if (preg_match("/Status: 4\d\d\s/i", $header)) {
+						$arrbody = json_decode($body, true);
+						$message = $arrbody['message'] . ".";
+						if (isset($arrbody['errors']['content'])) {
+							foreach($arrbody['errors']['content'] as $key => $content) {
+								$message .= " " . $content . ".";
+							}
+						}
+						$status = "phpDynDNS ({$this->_dnsHost}): (Error) " . $message;
+					} else {
+						$status = "phpDynDNS ({$this->_dnsHost}): (Unknown Response)";
+						log_error("phpDynDNS ({$this->_dnsHost}): PAYLOAD: {$body}");
+						$this->_debug($body);
+					}
+					break;
 			}
-			
+
 			if($successful_update == true) {
 				/* Write WAN IP to cache file */
 				$wan_ip = $this->_checkIP();

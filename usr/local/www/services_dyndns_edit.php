@@ -205,6 +205,7 @@ function _onTypeChange(type){
 			document.getElementById("r53_zoneid").style.display='none';
 			document.getElementById("r53_ttl").style.display='none';
 			break;
+		case "dnsimple":
 		case "route53":
 			document.getElementById("_resulttr").style.display = 'none';
 			document.getElementById("_urltr").style.display = 'none';
@@ -320,7 +321,8 @@ function _onTypeChange(type){
 				    </span>
 					<?=gettext("Enter the complete host/domain name.  example:  myhost.dyndns.org");?><br />
 					<?=gettext("he.net tunnelbroker: Enter your tunnel ID");?><br />
-					<?=gettext("GleSYS: Enter your record ID");?>
+					<?=gettext("GleSYS: Enter your record ID");?><br />
+					<?= gettext("DNSimple: Enter only the domain name.");?>
 				    </span>
 		          </td>
 				</tr>
@@ -373,6 +375,7 @@ function _onTypeChange(type){
                     <?=gettext("FreeDNS (freedns.afraid.org): Enter your \"Authentication Token\" provided by FreeDNS.");?>
                     <br /><?= gettext("Route 53: Enter your Secret Access Key.");?>
                     <br /><?= gettext("GleSYS: Enter your API key.");?>
+                    <br /><?= gettext("DNSimple: Enter your API token.");?>
                   </td>
                 </tr>
 
@@ -381,6 +384,7 @@ function _onTypeChange(type){
                   <td width="78%" class="vtable">
                     <input name="zoneid" type="text" class="formfld user" id="zoneid" size="20" value="<?=htmlspecialchars($pconfig['zoneid']);?>" />
                     <br /><?= gettext("Enter Zone ID that you received when you created your domain in Route 53.");?>
+                    <br /><?= gettext("DNSimple: Enter the Record ID of record to update.");?>
                   </td>
                 </tr>
                 <tr id="_urltr">

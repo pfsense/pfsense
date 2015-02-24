@@ -40,15 +40,15 @@
 	do {
 		$dirs = array();
 		$dirs = return_dir_as_array("/var/db/pfi/");
-		if(!is_array($dirs)) {
+		if (!is_array($dirs)) {
 			echo "\nNo capable storage devices detected.\n";
 			fclose($fp);
 			return;
 		}
 		echo "\nDevices capable of config.xml storage:\n";
-		foreach($dirs as $dir) {
+		foreach ($dirs as $dir) {
 			preg_match_all("/capable\_(.*)/",$dir,$match_array);
-			echo $match_array[1][0] . " ";	
+			echo $match_array[1][0] . " ";
 		}
 		echo "\n\n";
 		echo "Enter the device that you wish the";
@@ -58,13 +58,13 @@
 		if ($move_config_to_device == "") {
 			fclose($fp);
 			return 0;
-		}		
+		}
 	} while (!$move_config_to_device);
-	
+
 	mwexec("/bin/mkdir -p /tmp/mnt/cf");
 
 	$status = mwexec("/sbin/mount -w -t msdosfs /dev/{$move_config_to_device} /tmp/mnt/cf");
-	if(!$status) {
+	if (!$status) {
 		echo "Error while mounting {$move_config_to_device}.\n";
 		fclose($fp);
 		return;
@@ -79,7 +79,7 @@
 	echo " nullfs... ";
 	system("/sbin/umount /cf/conf");
 	system("/sbin/umount /conf");
-        mwexec("/bin/rm -rf /conf/*.*");
+	mwexec("/bin/rm -rf /conf/*.*");
 	/* use nullfs to mount */
 	system("/sbin/mount_nullfs /tmp/mnt/cf/conf /conf");
 	system("/sbin/mount_nullfs /tmp/mnt/cf /cf");

@@ -50,15 +50,16 @@ function restart_packages() {
 	/* restart packages */
 	system_ntp_configure(false);
 	mwexec_bg("/usr/local/sbin/ntpdate_sync_once.sh", true);
-	log_error("{$g['product_name']} package system has detected an IP change or dynamic WAN reconnection - $oldipv6 -> $curwanipv6 - Restarting packages.");		
+	log_error("{$g['product_name']} package system has detected an IP change or dynamic WAN reconnection - $oldipv6 -> $curwanipv6 - Restarting packages.");
 	send_event("service reload packages");
 }
 
 /* Interface IP address has changed */
-if (isset($_GET['interface'])) 
+if (isset($_GET['interface'])) {
 	$argument = $_GET['interface'];
-else
+} else {
 	$argument = trim($argv[1], " \n\t");
+}
 
 log_error("rc.newwanipv6: Info: starting on {$argument}.");
 
@@ -81,54 +82,65 @@ if (empty($interface)) {
 }
 
 //Do not process while booting
-if (platform_booting() && $config['interfaces'][$interface]['ipaddrv6'] != "dhcp6")
+if (platform_booting() && $config['interfaces'][$interface]['ipaddrv6'] != "dhcp6") {
 	return;
+}
 
 /*
  * NOTE: Take care of openvpn and similar if you generate the event to reconfigure an interface.
  *	i.e. OpenVPN might be in tap mode and not have an ip.
  */
 if ((empty($curwanipv6) || !is_ipaddrv6($curwanipv6)) && substr($interface_real, 0, 4) != "ovpn") {
-        log_error("rc.newwanipv6: Failed to update {$interface_descr}[{$interface}] IPv6, restarting...");
+	log_error("rc.newwanipv6: Failed to update {$interface_descr}[{$interface}] IPv6, restarting...");
 	// send_event("interface reconfigure {$interface}");
-        return;
+	return;
 }
 
-if (isset($_GET['dmips']))
+if (isset($_GET['dmips'])) {
 	$new_domain_name_servers = $_GET['dmips'];
-else
+} else {
 	$new_domain_name_servers = getenv("new_domain_name_servers");
+}
+
 if (!empty($new_domain_name_servers)) {
 	$name_servers = explode(" ", $new_domain_name_servers);
 	$valid_ns = array();
-	foreach($name_servers as $ns) {
-		if (is_ipaddrv6(trim($ns)))
+	foreach ($name_servers as $ns) {
+		if (is_ipaddrv6(trim($ns))) {
 			$valid_ns[] = trim($ns);
+		}
 	}
 
-	if (count($valid_ns > 0))
+	if (count($valid_ns > 0)) {
 		file_put_contents("{$g['varetc_path']}/nameserver_v6{$interface}", implode("\n", $valid_ns));
+	}
 }
-if (isset($_GET['dmnames']))
+if (isset($_GET['dmnames'])) {
 	$new_domain_name = $_GET['dmnames'];
-else
+} else {
 	$new_domain_name = getenv("new_domain_name");
-if (!empty($new_domain_name))
+}
+
+if (!empty($new_domain_name)) {
 	file_put_contents("{$g['varetc_path']}/searchdomain_v6{$interface}", $new_domain_name);
+}
 
 /* write current WAN IPv6 to file */
-if (is_ipaddrv6($curwanipv6))
+if (is_ipaddrv6($curwanipv6)) {
 	@file_put_contents("{$g['vardb_path']}/{$interface}_ipv6", $curwanipv6);
+}
 
 log_error("rc.newwanipv6: on (IP address: {$curwanipv6}) (interface: {$interface}) (real interface: {$interface_real}).");
 
 $oldipv6 = '';
-if (file_exists("{$g['vardb_path']}/{$interface}_cacheipv6"))
+if (file_exists("{$g['vardb_path']}/{$interface}_cacheipv6")) {
 	$oldipv6 = file_get_contents("{$g['vardb_path']}/{$interface}_cacheipv6");
+}
 
 $grouptmp = link_interface_to_group($interface);
-if (!empty($grouptmp))
+if (!empty($grouptmp)) {
 	array_walk($grouptmp, 'interface_group_add_member');
+}
 
 link_interface_to_track6($interface, "update");
 
@@ -152,19 +164,21 @@ if (empty($oldipv6) || is_ipaddrv6($oldipv6)) {
 			vpn_ipsec_force_reload($interface);
 
 			/* start OpenVPN server & clients */
-			if (substr($interface_real, 0, 4) != "ovpn")
+			if (substr($interface_real, 0, 4) != "ovpn") {
 				openvpn_resync_all($interface);
+			}
 		}
 		return;
-	} else if (does_interface_exist($interface_real) && !empty($oldipv6))
+	} else if (does_interface_exist($interface_real) && !empty($oldipv6)) {
 		mwexec("/sbin/ifconfig {$interface_real} inet6 {$oldipv6} delete");
+	}
 
 	file_put_contents("{$g['vardb_path']}/{$interface}_cacheipv6", $curwanipv6);
 }
 
 /* reload unbound */
 services_unbound_configure();
-	
+
 /* perform RFC 2136 DNS update */
 services_dnsupdate_process($interface);
 
@@ -175,8 +189,9 @@ services_dyndns_configure($interface);
 vpn_ipsec_force_reload($interface);
 
 /* start OpenVPN server & clients */
-if (substr($interface_real, 0, 4) != "ovpn")
+if (substr($interface_real, 0, 4) != "ovpn") {
 	openvpn_resync_all($interface);
+}
 
 /* reload graphing functions */
 enable_rrd_graphing();

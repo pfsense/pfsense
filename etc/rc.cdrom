@@ -12,9 +12,9 @@ partsize="6m"
 export VARMFS_COPYDBPKG=yes
 
 for i in tmp varmfs etcmfs; do
-       if [ -f /etc/rc.d/$i ]; then
-			sh /etc/rc.d/$i start
-       fi
+	if [ -f /etc/rc.d/$i ]; then
+		sh /etc/rc.d/$i start
+	fi
 done
 
 # Start PFI
@@ -24,13 +24,13 @@ done
 # a tiny mfs under /conf and populate with stock
 # configuration.
 if [ ! -f /conf/config.xml ]; then
-       echo -n "Generating a MFS /conf partition... "
-       device=$(mdconfig -a -t malloc -s ${partsize})
-       newfs /dev/${device} > /dev/null 2>&1
-       mount /dev/${device} /conf
-       cp /conf.default/* /conf
-       mount_nullfs /conf /cf/conf
-       echo "done."
+	echo -n "Generating a MFS /conf partition... "
+	device=$(mdconfig -a -t malloc -s ${partsize})
+	newfs /dev/${device} > /dev/null 2>&1
+	mount /dev/${device} /conf
+	cp /conf.default/* /conf
+	mount_nullfs /conf /cf/conf
+	echo "done."
 fi
 
 echo -n "Generating a MFS /home partition... "

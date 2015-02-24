@@ -9,10 +9,11 @@ unset($confvers['versions']);
 $fp = fopen('php://stdin', 'r');
 
 function print_backup_info($backup_info, $number) {
-	if($backup_info['time'] != 0)
+	if($backup_info['time'] != 0) {
 		$date = date(gettext("n/j/y H:i:s"), $backup_info['time']);
-	else
+	} else {
 		$date = gettext("Unknown");
+	}
 
 	list($page, $reason) = explode(": ", $backup_info['description'], 2);
 	if (empty($reason)) {
@@ -35,8 +36,9 @@ function list_backups($which="all", $return=false) {
 	}
 
 	for ($c = count($confvers)-1; $c >= 0; $c--) {
-		if (is_numeric($which) && ($c != $which))
+		if (is_numeric($which) && ($c != $which)) {
 			continue;
+		}
 		print_backup_info($confvers[$c], $c+1);
 		echo "\n";
 	}
@@ -70,7 +72,7 @@ function restore_history_backup($number) {
 		$confirm = strtoupper(chop(fgets($fp)));
 		if ($confirm == gettext("Y")) {
 			conf_mount_rw();
-			if(config_restore($g['conf_path'] . '/backup/config-' . $thisbackup['time'] . '.xml') == 0) {
+			if (config_restore($g['conf_path'] . '/backup/config-' . $thisbackup['time'] . '.xml') == 0) {
 				echo "\n";
 				echo sprintf(gettext('Successfully reverted to timestamp %1$s with description "%2$s".'), date(gettext("n/j/y H:i:s"), $thisbackup['time']), $thisbackup['description']);
 				echo "\n" . gettext("You may need to reboot the firewall or restart services before the restored configuration is fully active.") . "\n\n";
@@ -79,10 +81,10 @@ function restore_history_backup($number) {
 			}
 			conf_mount_ro();
 		} else {
-			echo gettext("Restore canceled.") . "\n";
+			echo gettext("Restore cancelled.") . "\n";
 		}
 	} else {
-		echo gettext("Restore canceled due to invalid input.") . "\n";
+		echo gettext("Restore cancelled due to invalid input.") . "\n";
 	}
 }
 

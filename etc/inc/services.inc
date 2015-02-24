@@ -1826,18 +1826,34 @@ function services_dnsmasq_configure() {
 		}
 
 		/* If selected, then first forward reverse lookups for private IPv4 addresses to nowhere. */
-		/* If any of these are duplicated by a user-specified domain override (e.g. 10.in-addr.arpa) then */
-		/* the user-specified entry made later on the command line below will be the one that is effective. */
+		/* Only make entries for reverse domains that do not have a matching domain override. */
 		if (isset($config['dnsmasq']['no_private_reverse'])) {
 			/* Note: Carrier Grade NAT (CGN) addresses 100.64.0.0/10 are intentionally not here. */
 			/* End-users should not be aware of CGN addresses, so reverse lookups for these should not happen. */
 			/* Just the pfSense WAN might get a CGN address from an ISP. */
-			$args .= " --server=/10.in-addr.arpa/ ";
-			$args .= " --server=/168.192.in-addr.arpa/ ";
-			/* Unfortunately the 172.16.0.0/12 range does not map nicely to the in-addr.arpa scheme. */
-			for ($subnet_num = 16; $subnet_num < 32; $subnet_num++) { 
-				$args .= " --server=/" . $subnet_num . ".172.in-addr.arpa/ ";
+
+			// Build an array of domain overrides to help in checking for matches.
+			$override_a = array();
+			if (isset($config['dnsmasq']['domainoverrides']) && is_array($config['dnsmasq']['domainoverrides'])) {
+				foreach ($config['dnsmasq']['domainoverrides'] as $override) {
+					$override_a[$override['domain']] = "y";
+				}
 			}
+
+			// Build an array of the private reverse lookup domain names
+			$reverse_domain_a = array("10.in-addr.arpa", "168.192.in-addr.arpa");
+			// Unfortunately the 172.16.0.0/12 range does not map nicely to the in-addr.arpa scheme.
+			for ($subnet_num = 16; $subnet_num < 32; $subnet_num++) { 
+				$reverse_domain_a[] = "$subnet_num.172.in-addr.arpa";
+			}
+
+			// Set the --server parameter to nowhere for each reverse domain name that was not specifically specified in a domain override.
+			foreach ($reverse_domain_a as $reverse_domain) { 
+				if (!isset($override_a[$reverse_domain]))
+					$args .= " --server=/$reverse_domain/ ";
+			}
+			unset($override_a);
+			unset($reverse_domain_a);
 		}
 
 		/* Setup forwarded domains */

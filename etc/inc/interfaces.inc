@@ -3452,6 +3452,7 @@ function interface_dhcpv6_configure($interface = "wan", $wancfg) {
 		$dhcp6cconf .= "	script \"{$g['varetc_path']}/dhcp6c_{$interface}_script.sh\"; # we'd like some nameservers please\n";
 		$dhcp6cconf .= "};\n";
 	} else {
+		$trackiflist = array();
 		$iflist = link_interface_to_track6($interface);
 		foreach ($iflist as $ifname => $ifcfg) {
 			if (is_numeric($ifcfg['track6-prefix-id']))
@@ -3488,9 +3489,10 @@ function interface_dhcpv6_configure($interface = "wan", $wancfg) {
 				$dhcp6cconf .= "		sla-len {$wancfg['dhcp6-ia-pd-len']};\n";
 				$dhcp6cconf .= "	};\n";
 			}
-			unset($preflen, $iflist, $ifcfg, $ifname, $trackiflist);
+			unset($preflen, $iflist, $ifcfg, $ifname);
 			$dhcp6cconf .= "};\n";
 		}
+		unset($trackiflist);
 	}
 
 	// DHCP6 Config File Advanced

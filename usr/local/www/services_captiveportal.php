@@ -210,6 +210,13 @@ if ($_POST) {
 		$reqdfields = explode(" ", "zone cinterface");
 		$reqdfieldsn = array(gettext("Zone name"), gettext("Interface"));
 
+		if (isset($_POST['auth_method']) && $_POST['auth_method'] == "radius") {
+			$reqdfields[] = "radius_protocol";
+			$reqdfieldsn[] = gettext("RADIUS Protocol");
+			$reqdfields[] = "radiusip";
+			$reqdfieldsn[] = gettext("Primary RADIUS server IP address");
+		}
+
 		do_input_validation($_POST, $reqdfields, $reqdfieldsn, $input_errors);
 
 		/* make sure no interfaces are bridged or used on other zones */

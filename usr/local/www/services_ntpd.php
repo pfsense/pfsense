@@ -154,7 +154,7 @@ if ($_POST) {
 			$config['ntpd']['statsgraph'] = $_POST['statsgraph'];
 		elseif (isset($config['ntpd']['statsgraph']))
 			unset($config['ntpd']['statsgraph']);
-		if (!empty($enable_rrd_graphing))
+		if (isset($enable_rrd_graphing))
 			enable_rrd_graphing();
 
 		if (!empty($_POST['leaptxt']))

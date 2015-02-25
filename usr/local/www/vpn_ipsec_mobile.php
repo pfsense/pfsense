@@ -146,7 +146,7 @@ if ($_POST['submit']) {
 
 	if ($pconfig['dns_split_enable']) {
 		if (!empty($pconfig['dns_split'])) {
-			$domain_array=preg_split("/[ ,]+/",$pconfig['dns_split']);
+			$domain_array=explode(' ', $pconfig['dns_split']);
 			foreach ($domain_array as $curdomain) {
 				if (!is_domain($curdomain)) {
 					$input_errors[] = gettext("A valid split DNS domain list must be specified.");

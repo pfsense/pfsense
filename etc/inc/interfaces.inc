@@ -2196,8 +2196,6 @@ function interface_wireless_clone($realif, $wlcfg) {
 		$newif = trim($out[0]);
 		// Rename the interface to {$parentnic}_wlan{$number}#: EX: ath0_wlan0
 		pfSense_interface_rename($newif, $realif);
-		// FIXME: not sure what ngctl is for. Doesn't work.
-		// mwexec("/usr/sbin/ngctl name {$newif}: {$realif}", false);
 		file_put_contents("{$g['tmp_path']}/{$realif}_oldmac", get_interface_mac($realif));
 	}
 	return true;

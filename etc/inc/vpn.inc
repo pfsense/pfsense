@@ -407,13 +407,6 @@ EOD;
 			$strongswan .= "\t\t\t# Search domain and default domain\n";
 			$strongswan .= "\t\t\t28674 = \"{$a_client['dns_domain']}\"\n";
 			if (empty($a_client['dns_split'])) {
-				$ipsec_dns = explode(',', $a_client['dns_domain']);
-				foreach ($ipsec_dns as $ipsecidx => $ipsecdns) {
-					$ipsec_dns[$ipsecidx] = trim($ipsecdns);
-				}
-				$a_client['dns_domain'] = implode(' ', $ipsec_dns);
-				unset($ipsec_dns);
-
 				$strongswan .= "\t\t\t28675 = \"{$a_client['dns_domain']}\"";
 			}
 			$strongswan .= "\n";

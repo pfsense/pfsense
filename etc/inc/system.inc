@@ -2012,6 +2012,7 @@ function system_check_reset_button() {
 	case 'wrap':
 	case 'FW7541':
 	case 'APU':
+	case 'C2358':
 		break;
 	default:
 		return 0;
@@ -2063,6 +2064,9 @@ function system_identify_specific_platform() {
 		break;
 	case 'APU':
 		return (array('name' => 'APU', 'descr' => 'Netgate APU'));
+		break;
+	case 'RCC-VE':
+		return (array('name' => 'C2358', 'descr' => 'Netgate C2358'));
 		break;
 	}
 

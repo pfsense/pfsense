@@ -415,12 +415,13 @@ EOD;
 		if (!empty($a_client['dns_split'])) {
 			$ipsec_dns = explode(',', $a_client['dns_split']);
 			foreach ($ipsec_dns as $ipsecidx => $ipsecdns) {
-				$ipsec_dns[$ipsecidx] = trim($ipsecdns);
+				$ipsecdns = trime($ipsecdns);
+				$ipsec_dns[$ipsecidx] = "\"{$ipsecdns}\"";
 			}
 			$a_client['dns_split'] = implode(' ', $ipsec_dns);
 			unset($ipsec_dns);
 
-			$strongswan .= "\t\t\t28675 = \"{$a_client['dns_split']}\"\n";
+			$strongswan .= "\t\t\t28675 = {$a_client['dns_split']}\n";
 		}
 
 		if (!empty($a_client['login_banner']))

@@ -134,9 +134,10 @@ function interface_netgraph_needed($interface = "wan") {
 		foreach ($config['pppoes']['pppoe'] as $pppoe) {
 			if ($pppoe['mode'] != "server")
 				continue;
-			if ($pppoe['interface'] == $interface)
+			if ($pppoe['interface'] == $interface) {
 				$found = true;
 				break;
+			}
 		}
 	}
 	if ($found == false)

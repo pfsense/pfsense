@@ -611,7 +611,8 @@ if ($_POST['apply']) {
 			} else {
 				$track6_prefix_id = intval($_POST['track6-prefix-id--hex'], 16);
 				if ($track6_prefix_id < 0 || $track6_prefix_id > $_POST['ipv6-num-prefix-ids-' . $_POST['track6-interface']]) {
-					$input_errors[] = gettext("You specified an IPv6 prefix ID that is out of range. ({$_POST['track6-interface']}) - ({$_POST['ipv6-num-prefix-ids-' . $_POST['track6-interface']]}) - ({$ipv6_delegation_length})");
+					$input_errors[] = gettext("You specified an IPv6 prefix ID that is out of range.") .
+						" ({$_POST['track6-interface']}) - (0) - (" . sprintf('%x', $_POST['ipv6-num-prefix-ids-' . $_POST['track6-interface']]) . ")";
 				} else {
 					foreach ($ifdescrs as $ifent => $ifdescr) {
 						if ($if == $ifent)

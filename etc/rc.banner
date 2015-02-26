@@ -42,50 +42,51 @@
 	$product = $g['product_name'];
 	$machine = trim(`uname -m`);
 	$hideplatform = $g['hideplatform'];
-	
-	if(!$hideplatform) 
+
+	if (!$hideplatform) {
 		$platformbanner = "-{$platform}";
-	
+	}
+
 	print "*** Welcome to {$product} {$version}{$platformbanner} ({$machine}) on {$hostname} ***\n";
 
 	$iflist = get_configured_interface_with_descr(false, true);
-	foreach($iflist as $ifname => $friendly) {
+	foreach ($iflist as $ifname => $friendly) {
 		/* point to this interface's config */
 		$ifconf = $config['interfaces'][$ifname];
 		/* look for 'special cases' */
-		switch($ifconf['ipaddr']) {
-		case "dhcp":
-			$class = "/DHCP4";
-			break;
-		case "pppoe":
-			$class = "/PPPoE";
-			break;
-		case "pptp":
-			$class = "/PPTP";
-			break;
-		case "l2tp":
-			$class = "/L2TP";
-			break;
-		default:
-			$class = "";
-			break;
+		switch ($ifconf['ipaddr']) {
+			case "dhcp":
+				$class = "/DHCP4";
+				break;
+			case "pppoe":
+				$class = "/PPPoE";
+				break;
+			case "pptp":
+				$class = "/PPTP";
+				break;
+			case "l2tp":
+				$class = "/L2TP";
+				break;
+			default:
+				$class = "";
+				break;
 		}
-		switch($ifconf['ipaddrv6']) {
-		case "dhcp6":
-			$class6 = "/DHCP6";
-			break;
-		case "slaac":
-			$class6 = "/SLAAC";
-			break;
-		case "6rd":
-			$class6 = "/6RD";
-			break;
-		case "6to4":
-			$class6 = "/6to4";
-			break;
-		case "track6":
-			$class6 = "/t6";
-			break;
+		switch ($ifconf['ipaddrv6']) {
+			case "dhcp6":
+				$class6 = "/DHCP6";
+				break;
+			case "slaac":
+				$class6 = "/SLAAC";
+				break;
+			case "6rd":
+				$class6 = "/6RD";
+				break;
+			case "6to4":
+				$class6 = "/6to4";
+				break;
+			case "track6":
+				$class6 = "/t6";
+				break;
 		}
 		$ipaddr = get_interface_ip($ifname);
 		$subnet = get_interface_subnet($ifname);

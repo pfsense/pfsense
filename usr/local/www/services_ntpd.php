@@ -297,10 +297,10 @@ include("head.inc");
 						
 						echo "<input name=\"server{$i}\" class=\"formfld unknown\" id=\"server{$i}\" size=\"30\" value=\"{$timeservers[$i]}\" type=\"text\" />&emsp;";
 						echo "\n<input name=\"servprefer{$i}\" class=\"formcheckbox\" id=\"servprefer{$i}\" onclick=\"CheckOffOther('servprefer{$i}', 'servselect{$i}')\" type=\"checkbox\"";
-						if (substr_count($config['ntpd']['prefer'], $timeservers[$i])) echo " checked=\"checked\"";
+						if (isset($config['ntpd']['prefer']) && isset($timeservers[$i]) && substr_count($config['ntpd']['prefer'], $timeservers[$i])) echo " checked=\"checked\"";
 						echo " />&nbsp;prefer&emsp;";
 						echo "\n<input name=\"servselect{$i}\" class=\"formcheckbox\" id=\"servselect{$i}\" onclick=\"CheckOffOther('servselect{$i}', 'servprefer{$i}')\" type=\"checkbox\"";
-						if (substr_count($config['ntpd']['noselect'], $timeservers[$i])) echo " checked=\"checked\"";
+						if (isset($config['ntpd']['noselect']) && isset($timeservers[$i]) && substr_count($config['ntpd']['noselect'], $timeservers[$i])) echo " checked=\"checked\"";
 						echo " />&nbsp;noselect\n<br />\n</div>\n";
 					}
 					?>

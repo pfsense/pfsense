@@ -54,10 +54,11 @@ function restart_packages() {
 }
 
 /* Interface IP address has changed */
-if (isset($_GET['interface']))
+if (isset($_GET['interface'])) {
 	$argument = $_GET['interface'];
-else
+} else {
 	$argument = str_replace("\n", "", $argv[1]);
+}
 
 log_error("rc.newwanip: Info: starting on {$argument}.");
 
@@ -77,16 +78,18 @@ if (is_array($config['interfaces'][$interface]) && !isset($config['interfaces'][
 	return;
 }
 
-if (empty($argument))
+if (empty($argument)) {
 	$curwanip = get_interface_ip();
-else {
+} else {
 	$curwanip = find_interface_ip($interface_real, true);
-	if($curwanip == "")
+	if($curwanip == "") {
 		$curwanip = get_interface_ip($interface);
+	}
 }
 
-if (!platform_booting())
+if (!platform_booting()) {
 	log_error("rc.newwanip: on (IP address: {$curwanip}) (interface: {$interface_descr}[{$interface}]) (real interface: {$interface_real}).");
+}
 
 /*
  * NOTE: Take care of openvpn, no-ip or similar interfaces if you generate the event to reconfigure an interface.
@@ -104,54 +107,64 @@ if ($curwanip == "0.0.0.0" || !is_ipaddr($curwanip)) {
 
 /* XXX: This really possible? */
 if (empty($interface)) {
-	if (platform_booting())
+	if (platform_booting()) {
 		return;
+	}
 	filter_configure();
 	restart_packages();
 	return;
 }
 
 $oldip = "0.0.0.0";
-if (file_exists("{$g['vardb_path']}/{$interface}_cacheip"))
+if (file_exists("{$g['vardb_path']}/{$interface}_cacheip")) {
 	$oldip = file_get_contents("{$g['vardb_path']}/{$interface}_cacheip");
+}
 
 /* regenerate resolv.conf if DNS overrides are allowed */
-if (!platform_booting())
+if (!platform_booting()) {
 	system_resolvconf_generate(true);
+}
 
 /* write the current interface IP to file */
-if (is_ipaddr($curwanip))
+if (is_ipaddr($curwanip)) {
 	@file_put_contents("{$g['vardb_path']}/{$interface}_ip", $curwanip);
+}
 
 link_interface_to_vips($interface, "update");
 
 unset($gre);
 $gre = link_interface_to_gre($interface);
-if (!empty($gre))
+if (!empty($gre)) {
 	array_walk($gre, 'interface_gre_configure');
+}
+
 unset($gif);
 $gif = link_interface_to_gif($interface);
-if (!empty($gif))
+if (!empty($gif)) {
 	array_walk($gif, 'interface_gif_configure');
+}
 
 $grouptmp = link_interface_to_group($interface);
-if (!empty($grouptmp))
+if (!empty($grouptmp)) {
 	array_walk($grouptmp, 'interface_group_add_member');
+}
 
 unset($bridgetmp);
 $bridgetmp = link_interface_to_bridge($interface);
-if (!empty($bridgetmp))
+if (!empty($bridgetmp)) {
 	interface_bridge_add_member($bridgetmp, $interface_real);
+}
 
 // Do not process while booting
-if (platform_booting())
+if (platform_booting()) {
 	return;
+}
 
 /* make new hosts file */
 system_hosts_generate();
 
-/* check tunneled IPv6 interface tracking */
-switch($config['interfaces'][$interface]['ipaddrv6']) {
+/* check tunnelled IPv6 interface tracking */
+switch ($config['interfaces'][$interface]['ipaddrv6']) {
 	case "6to4":
 		interface_6to4_configure($interface, $config['interfaces'][$interface]);
 		break;
@@ -159,14 +172,15 @@ switch($config['interfaces'][$interface]['ipaddrv6']) {
 		interface_6rd_configure($interface, $config['interfaces'][$interface]);
 		break;
 	case "dhcp6":
-		if (isset($config['interfaces'][$interface]['dhcp6usev4iface']))
+		if (isset($config['interfaces'][$interface]['dhcp6usev4iface'])) {
 			interface_dhcpv6_configure($interface, $config['interfaces'][$interface]);
+		}
 		break;
 }
 
 /* Check Gif tunnels */
 if (!empty($gif)) {
-	foreach($gif as $giftun) {
+	foreach ($gif as $giftun) {
 		$confif = convert_real_interface_to_friendly_interface_name($giftun['gifif']);
 		if (!empty($confif)) {
 			interface_configure($confif);
@@ -200,9 +214,9 @@ if (!is_ipaddr($oldip) || $curwanip != $oldip || !is_ipaddrv4($config['interface
 			filter_flush_state_table();
 		}
 	}
-	
+
 	/*
-	 * Some services (e.g. dyndns, see ticket #4066) depends of
+	 * Some services (e.g. dyndns, see ticket #4066) depend on
 	 * filter_configure() to be called before, otherwise pass out
 	 * route-to rules have the old ip set in 'from' and connection
 	 * do not go through correct link
@@ -214,12 +228,13 @@ if (!is_ipaddr($oldip) || $curwanip != $oldip || !is_ipaddrv4($config['interface
 
 	/* reconfigure our gateway monitor */
 	setup_gateways_monitor();
-	
+
 	/* reload unbound */
 	services_unbound_configure();
 
-	if (is_ipaddr($curwanip))
+	if (is_ipaddr($curwanip)) {
 		@file_put_contents("{$g['vardb_path']}/{$interface}_cacheip", $curwanip);
+	}
 
 	/* perform RFC 2136 DNS update */
 	services_dnsupdate_process($interface);
@@ -231,8 +246,9 @@ if (!is_ipaddr($oldip) || $curwanip != $oldip || !is_ipaddrv4($config['interface
 	vpn_ipsec_force_reload($interface);
 
 	/* start OpenVPN server & clients */
-	if (substr($interface_real, 0, 4) != "ovpn")
+	if (substr($interface_real, 0, 4) != "ovpn") {
 		openvpn_resync_all($interface);
+	}
 
 	/* reload graphing functions */
 	enable_rrd_graphing();

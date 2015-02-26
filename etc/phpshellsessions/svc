@@ -13,10 +13,11 @@ function usage() {
 
 global $g, $config, $argv, $command_split;
 
-if(is_array($command_split))
+if (is_array($command_split)) {
 	$args = array_slice($command_split, 2);
-else
+} else {
 	$args = array_slice($argv, 3);
+}
 
 if (empty($args[0])) {
 	usage();

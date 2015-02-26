@@ -54,24 +54,27 @@
 function encrypted_configxml() {
 	global $g, $config;
 
-	if (!file_exists($g['conf_path'] . "/config.xml"))
+	if (!file_exists($g['conf_path'] . "/config.xml")) {
 		return;
+	}
 
-	if (!platform_booting())
+	if (!platform_booting()) {
 		return;
+	}
 
-	$configtxt = file_get_contents($g['conf_path'] . "/config.xml");			
-	if(tagfile_deformat($configtxt, $configtxt, "config.xml")) {
+	$configtxt = file_get_contents($g['conf_path'] . "/config.xml");
+	if (tagfile_deformat($configtxt, $configtxt, "config.xml")) {
 		$fp = fopen('php://stdin', 'r');
 		$data = "";
 		echo "\n\n*** Encrypted config.xml detected ***\n";
-		while($data == "") {
+		while ($data == "") {
 			echo "\nEnter the password to decrypt config.xml: ";
 			$decrypt_password = chop(fgets($fp));
 			$data = decrypt_data($configtxt, $decrypt_password);
-			if(!strstr($data, "<pfsense>"))
+			if (!strstr($data, "<pfsense>")) {
 				$data = "";
-			if($data) {
+			}
+			if ($data) {
 				$fd = fopen($g['conf_path'] . "/config.xml.tmp", "w");
 				fwrite($fd, $data);
 				fclose($fd);
@@ -101,7 +104,7 @@ function parse_config($parse = false) {
 
 	if (!file_exists("{$g['conf_path']}/config.xml") || filesize("{$g['conf_path']}/config.xml") == 0) {
 		$last_backup = discover_last_backup();
-		if($last_backup) {
+		if ($last_backup) {
 			log_error(gettext("No config.xml found, attempting last known config restore."));
 			file_notice("config.xml", gettext("No config.xml found, attempting last known config restore."), "pfSenseConfigurator", "");
 			restore_backup("{$g['conf_path']}/backup/{$last_backup}");
@@ -117,35 +120,38 @@ function parse_config($parse = false) {
 	// Check for encrypted config.xml
 	encrypted_configxml();
 
-	if(!$parse) {
+	if (!$parse) {
 		if (file_exists($g['tmp_path'] . '/config.cache')) {
 			$config = unserialize(file_get_contents($g['tmp_path'] . '/config.cache'));
-			if (is_null($config))
+			if (is_null($config)) {
 				$parse = true;
-		} else
+			}
+		} else {
 			$parse = true;
+		}
 	}
 	if ($parse == true) {
-		if(!file_exists($g['conf_path'] . "/config.xml")) {
-			if (platform_booting(true))
+		if (!file_exists($g['conf_path'] . "/config.xml")) {
+			if (platform_booting(true)) {
 				echo ".";
+			}
 			log_error("No config.xml found, attempting last known config restore.");
 			file_notice("config.xml", "No config.xml found, attempting last known config restore.", "pfSenseConfigurator", "");
 			$last_backup = discover_last_backup();
-			if ($last_backup)
+			if ($last_backup) {
 				restore_backup("/cf/conf/backup/{$last_backup}");
-			else {
+			} else {
 				log_error(gettext("Could not restore config.xml."));
 				unlock($lockkey);
 				die(gettext("Config.xml is corrupted and is 0 bytes.  Could not restore a previous backup."));
 			}
 		}
 		$config = parse_xml_config($g['conf_path'] . '/config.xml', array($g['xml_rootobj'], 'pfsense'));
-		if($config == -1) {
+		if ($config == -1) {
 			$last_backup = discover_last_backup();
-			if ($last_backup)
+			if ($last_backup) {
 				restore_backup("/cf/conf/backup/{$last_backup}");
-			else {
+			} else {
 				log_error(gettext("Could not restore config.xml."));
 				unlock($lockkey);
 				die("Config.xml is corrupted and is 0 bytes.  Could not restore a previous backup.");
@@ -154,8 +160,9 @@ function parse_config($parse = false) {
 		generate_config_cache($config);
 	}
 
-	if (platform_booting(true))
+	if (platform_booting(true)) {
 		echo ".";
+	}
 
 	$config_parsed = true;
 	unlock($lockkey);
@@ -181,10 +188,10 @@ function generate_config_cache($config) {
 	fclose($configcache);
 	unset($configcache);
 	/* Used for config.extra.xml */
-	if(file_exists($g['tmp_path'] . '/config.extra.cache') && $config_extra) {
+	if (file_exists($g['tmp_path'] . '/config.extra.cache') && $config_extra) {
 		$configcacheextra = fopen($g['tmp_path'] . '/config.extra.cache', "w");
 		fwrite($configcacheextra, serialize($config_extra));
-		fclose($configcacheextra);		
+		fclose($configcacheextra);
 		unset($configcacheextra);
 	}
 }
@@ -193,8 +200,8 @@ function discover_last_backup() {
 	$backups = glob('/cf/conf/backup/*.xml');
 	$last_backup = "";
 	$last_mtime = 0;
-	foreach($backups as $backup) {
-		if(filemtime($backup) > $last_mtime) {
+	foreach ($backups as $backup) {
+		if (filemtime($backup) > $last_mtime) {
 			$last_mtime = filemtime($backup);
 			$last_backup = $backup;
 		}
@@ -226,8 +233,9 @@ function restore_backup($file) {
 function parse_config_bootup() {
 	global $config, $g;
 
-	if (platform_booting())
+	if (platform_booting()) {
 		echo ".";
+	}
 
 	$lockkey = lock('config');
 	if (!file_exists("{$g['conf_path']}/config.xml")) {
@@ -244,12 +252,12 @@ function parse_config_bootup() {
 				}
 			} else {
 				$last_backup = discover_last_backup();
-				if($last_backup) {
+				if ($last_backup) {
 					log_error("No config.xml found, attempting last known config restore.");
 					file_notice("config.xml", gettext("No config.xml found, attempting last known config restore."), "pfSenseConfigurator", "");
 					restore_backup("/cf/conf/backup/{$last_backup}");
 				}
-				if(!file_exists("{$g['conf_path']}/config.xml")) {
+				if (!file_exists("{$g['conf_path']}/config.xml")) {
 					echo sprintf(gettext("XML configuration file not found.  %s cannot continue booting."), $g['product_name']) . "\n";
 					unlock($lockkey);
 					mwexec("/sbin/halt");
@@ -267,7 +275,7 @@ function parse_config_bootup() {
 
 	if (filesize("{$g['conf_path']}/config.xml") == 0) {
 		$last_backup = discover_last_backup();
-		if($last_backup) {
+		if ($last_backup) {
 			log_error(gettext("No config.xml found, attempting last known config restore."));
 			file_notice("config.xml", gettext("No config.xml found, attempting last known config restore."), "pfSenseConfigurator", "");
 			restore_backup("{$g['conf_path']}/backup/{$last_backup}");
@@ -311,31 +319,34 @@ function conf_mount_rw() {
 	global $g, $config;
 
 	/* do not mount on cdrom platform */
-	if($g['platform'] == "cdrom" or $g['platform'] == "pfSense")
+	if ($g['platform'] == "cdrom" or $g['platform'] == "pfSense") {
 		return;
+	}
 
-	if ((refcount_reference(1000) > 1) && is_writable("/"))
+	if ((refcount_reference(1000) > 1) && is_writable("/")) {
 		return;
+	}
 
 	$status = mwexec("/sbin/mount -u -w -o sync,noatime {$g['cf_path']}");
-	if($status <> 0) {
-		if (platform_booting())
+	if ($status <> 0) {
+		if (platform_booting()) {
 			echo gettext("Disk is dirty.  Running fsck -y") . "\n";
+		}
 		mwexec("/sbin/fsck -y {$g['cf_path']}");
 		$status = mwexec("/sbin/mount -u -w -o sync,noatime {$g['cf_path']}");
 	}
 
 	/*    if the platform is soekris or wrap or pfSense, lets mount the
 	 *    compact flash cards root.
-         */
+	*/
 	$status = mwexec("/sbin/mount -u -w -o sync,noatime /");
 	/* we could not mount this correctly.  kick off fsck */
-	if($status <> 0) {
+	if ($status <> 0) {
 		log_error(gettext("File system is dirty.  Launching FSCK for /"));
 		mwexec("/sbin/fsck -y /");
 		$status = mwexec("/sbin/mount -u -w -o sync,noatime /");
 	}
-	
+
 	mark_subsystem_dirty('mount');
 }
 
@@ -351,17 +362,21 @@ function conf_mount_ro() {
 	/* Do not trust $g['platform'] since this can be clobbered during factory reset. */
 	$platform = trim(file_get_contents("/etc/platform"));
 	/* do not umount on cdrom or pfSense platforms */
-	if($platform == "cdrom" or $platform == "pfSense")
+	if ($platform == "cdrom" or $platform == "pfSense") {
 		return;
+	}
 
-	if (refcount_unreference(1000) > 0)
+	if (refcount_unreference(1000) > 0) {
 		return;
+	}
 
-	if(isset($config['system']['nanobsd_force_rw']))
+	if (isset($config['system']['nanobsd_force_rw'])) {
 		return;
+	}
 
-	if (platform_booting())
+	if (platform_booting()) {
 		return;
+	}
 
 	clear_subsystem_dirty('mount');
 	/* sync data, then force a remount of /cf */
@@ -393,45 +408,51 @@ function convert_config() {
 	if (is_array($config['cron'])) {
 		$cron_item_count = count($config['cron']['item']);
 		for($x=0; $x<$cron_item_count; $x++) {
-			if(stristr($config['cron']['item'][$x]['command'], "rc.update_bogons.sh")) {
-				if($config['cron']['item'][$x]['hour'] == "*" ) {
-				$config['cron']['item'][$x]['hour'] = "3";
+			if (stristr($config['cron']['item'][$x]['command'], "rc.update_bogons.sh")) {
+				if ($config['cron']['item'][$x]['hour'] == "*" ) {
+					$config['cron']['item'][$x]['hour'] = "3";
 					write_config(gettext("Updated bogon update frequency to 3am"));
 					log_error(gettext("Updated bogon update frequency to 3am"));
-				}       
+				}
 			}
 		}
 	}
-	if ($config['version'] == $g['latest_config'])
+	if ($config['version'] == $g['latest_config']) {
 		return;		/* already at latest version */
+	}
 
 	// Save off config version
 	$prev_version = $config['version'];
-	
+
 	include_once('auth.inc');
 	include_once('upgrade_config.inc');
-	if (file_exists("/etc/inc/upgrade_config_custom.inc"))
+	if (file_exists("/etc/inc/upgrade_config_custom.inc")) {
 		include_once("upgrade_config_custom.inc");
+	}
 	/* Loop and run upgrade_VER_to_VER() until we're at current version */
 	while ($config['version'] < $g['latest_config']) {
 		$cur = $config['version'] * 10;
 		$next = $cur + 1;
 		$migration_function = sprintf('upgrade_%03d_to_%03d', $cur, $next);
-		if (function_exists($migration_function))
+		if (function_exists($migration_function)) {
 			$migration_function();
+		}
 		$migration_function = "{$migration_function}_custom";
-		if (function_exists($migration_function))
+		if (function_exists($migration_function)) {
 			$migration_function();
+		}
 		$config['version'] = sprintf('%.1f', $next / 10);
-		if (platform_booting())
+		if (platform_booting()) {
 			echo ".";
+		}
 	}
 
 	$now = date("H:i:s");
 	log_error(sprintf(gettext("Ended Configuration upgrade at %s"), $now));
 
-	if ($prev_version != $config['version'])
+	if ($prev_version != $config['version']) {
 		write_config(sprintf(gettext('Upgraded config version level from %1$s to %2$s'), $prev_version, $config['version']));
+	}
 }
 
 /****f* config/safe_write_file
@@ -457,7 +478,7 @@ function safe_write_file($file, $content, $force_binary) {
 	if (!$fd) {
 		// Unable to open temporary file for writing
 		return false;
-        }
+	}
 	if (!fwrite($fd, $content)) {
 		// Unable to write to temporary file
 		fclose($fd);
@@ -495,8 +516,9 @@ function write_config($desc="Unknown", $backup = true) {
 	global $config, $g;
 
 	if (!empty($_SERVER['REMOTE_ADDR'])) {
-		if (!session_id())
+		if (!session_id()) {
 			@session_start();
+		}
 		if (!empty($_SESSION['Username']) && ($_SESSION['Username'] != "admin")) {
 			$user = getUserEntry($_SESSION['Username']);
 			if (is_array($user) && userHasPrivilege($user, "user-config-readonly")) {
@@ -506,11 +528,13 @@ function write_config($desc="Unknown", $backup = true) {
 		}
 	}
 
-	if (!isset($argc))
+	if (!isset($argc)) {
 		session_commit();
+	}
 
-	if($backup)
+	if ($backup) {
 		backup_config();
+	}
 
 	$config['revision'] = make_config_revision_entry($desc);
 
@@ -527,7 +551,7 @@ function write_config($desc="Unknown", $backup = true) {
 		file_notice("config.xml", sprintf(gettext("Unable to open %s/config.xml for writing in write_config()%s"), $g['cf_conf_path'], "\n"));
 		return -1;
 	}
-	
+
 	cleanup_backupcache(true);
 
 	/* re-read configuration */
@@ -544,10 +568,12 @@ function write_config($desc="Unknown", $backup = true) {
 				echo "\n\n Configuration could not be validated. A previous configuration was restored. \n";
 				echo "\n The failed configuration file has been saved as {$g['conf_path']}/config.xml.bad \n\n";
 			}
-		} else
+		} else {
 			log_error(gettext("Could not restore config.xml."));
-	} else
+		}
+	} else {
 		generate_config_cache($config);
+	}
 
 	unlock($lockkey);
 
@@ -559,7 +585,7 @@ function write_config($desc="Unknown", $backup = true) {
 	/* sync carp entries to other firewalls */
 	carp_sync_client();
 
-	if(is_dir("/usr/local/pkg/write_config")) {
+	if (is_dir("/usr/local/pkg/write_config")) {
 		/* process packager manager custom rules */
 		run_plugins("/usr/local/pkg/write_config/");
 	}
@@ -577,8 +603,9 @@ function reset_factory_defaults($lock = false) {
 	global $g;
 
 	conf_mount_rw();
-	if (!$lock)
+	if (!$lock) {
 		$lockkey = lock('config', LOCK_EX);
+	}
 
 	/* create conf directory, if necessary */
 	safe_mkdir("{$g['cf_conf_path']}");
@@ -600,8 +627,9 @@ function reset_factory_defaults($lock = false) {
 
 	/* call the wizard */
 	touch("/conf/trigger_initial_wizard");
-	if (!$lock)
+	if (!$lock) {
 		unlock($lockkey);
+	}
 	conf_mount_ro();
 	setup_serial_port();
 	return 0;
@@ -610,13 +638,14 @@ function reset_factory_defaults($lock = false) {
 function config_restore($conffile) {
 	global $config, $g;
 
-	if (!file_exists($conffile))
+	if (!file_exists($conffile)) {
 		return 1;
+	}
 
 	backup_config();
 
 	conf_mount_rw();
-	
+
 	$lockkey = lock('config', LOCK_EX);
 
 	unlink_if_exists("{$g['tmp_path']}/config.cache");
@@ -638,16 +667,19 @@ function config_restore($conffile) {
 function config_install($conffile) {
 	global $config, $g;
 
-	if (!file_exists($conffile))
+	if (!file_exists($conffile)) {
 		return 1;
+	}
 
-	if (!config_validate("{$conffile}"))
+	if (!config_validate("{$conffile}")) {
 		return 1;
+	}
 
-	if (platform_booting())
+	if (platform_booting()) {
 		echo gettext("Installing configuration...") . "\n";
-	else
+	} else {
 		log_error(gettext("Installing configuration ...."));
+	}
 
 	conf_mount_rw();
 	$lockkey = lock('config', LOCK_EX);
@@ -657,13 +689,14 @@ function config_install($conffile) {
 	disable_security_checks();
 
 	/* unlink cache file if it exists */
-	if(file_exists("{$g['tmp_path']}/config.cache"))
+	if (file_exists("{$g['tmp_path']}/config.cache")) {
 		unlink("{$g['tmp_path']}/config.cache");
+	}
 
 	unlock($lockkey);
 	conf_mount_ro();
 
-    return 0;
+	return 0;
 }
 
 /*
@@ -723,8 +756,9 @@ function cleanup_backupcache($lock = false) {
 
 	$revisions = get_config_backup_count();
 
-	if (!$lock)
+	if (!$lock) {
 		$lockkey = lock('config');
+	}
 
 	conf_mount_rw();
 
@@ -740,9 +774,9 @@ function cleanup_backupcache($lock = false) {
 	$bakfiles = glob($g['cf_conf_path'] . "/backup/config-*");
 	$tocache = array();
 
-	foreach($bakfiles as $backup) { // Check for backups in the directory not represented in the cache.
+	foreach ($bakfiles as $backup) { // Check for backups in the directory not represented in the cache.
 		$backupsize = filesize($backup);
-		if($backupsize == 0) {
+		if ($backupsize == 0) {
 			unlink($backup);
 			continue;
 		}
@@ -750,39 +784,45 @@ function cleanup_backupcache($lock = false) {
 		$backupexp = explode('.', array_pop($backupexp));
 		$tocheck = array_shift($backupexp);
 		unset($backupexp);
-		if(!in_array($tocheck, $baktimes)) {
+		if (!in_array($tocheck, $baktimes)) {
 			$i = true;
-			if (platform_booting())
+			if (platform_booting()) {
 				echo ".";
+			}
 			$newxml = parse_xml_config($backup, array($g['xml_rootobj'], 'pfsense'));
-			if($newxml == "-1") {
+			if ($newxml == "-1") {
 				log_error(sprintf(gettext("The backup cache file %s is corrupted.  Unlinking."), $backup));
 				unlink($backup);
 				log_error(sprintf(gettext("The backup cache file %s is corrupted.  Unlinking."), $backup));
 				continue;
 			}
-			if($newxml['revision']['description'] == "")
+			if ($newxml['revision']['description'] == "") {
 				$newxml['revision']['description'] = "Unknown";
-			if($newxml['version'] == "")
+			}
+			if ($newxml['version'] == "") {
 				$newxml['version'] = "?";
+			}
 			$tocache[$tocheck] = array('description' => $newxml['revision']['description'], 'version' => $newxml['version'], 'filesize' => $backupsize);
 		}
 	}
-	foreach($backups as $checkbak) {
-		if(count(preg_grep('/' . $checkbak['time'] . '/i', $bakfiles)) != 0) {
+	foreach ($backups as $checkbak) {
+		if (count(preg_grep('/' . $checkbak['time'] . '/i', $bakfiles)) != 0) {
 			$newbaks[] = $checkbak;
 		} else {
 			$i = true;
 			if (platform_booting()) print " " . $tocheck . "r";
 		}
 	}
-	foreach($newbaks as $todo) $tocache[$todo['time']] = array('description' => $todo['description'], 'version' => $todo['version'], 'filesize' => $todo['filesize']);
-	if(is_int($revisions) and (count($tocache) > $revisions)) {
+	foreach ($newbaks as $todo) {
+		$tocache[$todo['time']] = array('description' => $todo['description'], 'version' => $todo['version'], 'filesize' => $todo['filesize']);
+	}
+	if (is_int($revisions) and (count($tocache) > $revisions)) {
 		$toslice = array_slice(array_keys($tocache), 0, $revisions);
-		foreach($toslice as $sliced)
+		foreach ($toslice as $sliced) {
 			$newcache[$sliced] = $tocache[$sliced];
-		foreach($tocache as $version => $versioninfo) {
-			if(!in_array($version, array_keys($newcache))) {
+		}
+		foreach ($tocache as $version => $versioninfo) {
+			if (!in_array($version, array_keys($newcache))) {
 				unlink_if_exists($g['conf_path'] . '/backup/config-' . $version . '.xml');
 			}
 		}
@@ -793,20 +833,22 @@ function cleanup_backupcache($lock = false) {
 	fclose($bakout);
 	conf_mount_ro();
 
-	if (!$lock)
+	if (!$lock) {
 		unlock($lockkey);
+	}
 }
 
 function get_backups() {
 	global $g;
-	if(file_exists("{$g['cf_conf_path']}/backup/backup.cache")) {
+	if (file_exists("{$g['cf_conf_path']}/backup/backup.cache")) {
 		$confvers = unserialize(file_get_contents("{$g['cf_conf_path']}/backup/backup.cache"));
 		$bakvers = array_keys($confvers);
 		$toreturn = array();
 		sort($bakvers);
 		// 	$bakvers = array_reverse($bakvers);
-		foreach(array_reverse($bakvers) as $bakver)
+		foreach (array_reverse($bakvers) as $bakver) {
 			$toreturn[] = array('time' => $bakver, 'description' => $confvers[$bakver]['description'], 'version' => $confvers[$bakver]['version'], 'filesize' => $confvers[$bakver]['filesize']);
+		}
 	} else {
 		return false;
 	}
@@ -817,37 +859,38 @@ function get_backups() {
 function backup_config() {
 	global $config, $g;
 
-	if($g['platform'] == "cdrom")
+	if ($g['platform'] == "cdrom") {
 		return;
+	}
 
 	conf_mount_rw();
 
 	/* Create backup directory if needed */
 	safe_mkdir("{$g['cf_conf_path']}/backup");
 
-    if($config['revision']['time'] == "") {
-            $baktime = 0;
-    } else {
-            $baktime = $config['revision']['time'];
-    }
-    if($config['revision']['description'] == "") {
-            $bakdesc = "Unknown";
-    } else {
-            $bakdesc = $config['revision']['description'];
-    }
+	if ($config['revision']['time'] == "") {
+		$baktime = 0;
+	} else {
+		$baktime = $config['revision']['time'];
+	}
+	if ($config['revision']['description'] == "") {
+		$bakdesc = "Unknown";
+	} else {
+		$bakdesc = $config['revision']['description'];
+	}
 
 	$bakver = ($config['version'] == "") ? "?" : $config['version'];
 	$bakfilename = $g['cf_conf_path'] . '/backup/config-' . $baktime . '.xml';
 	copy($g['cf_conf_path'] . '/config.xml', $bakfilename);
-    if(file_exists($g['cf_conf_path'] . '/backup/backup.cache')) {
-            $backupcache = unserialize(file_get_contents($g['cf_conf_path'] . '/backup/backup.cache'));
-    } else {
-            $backupcache = array();
-    }
+	if (file_exists($g['cf_conf_path'] . '/backup/backup.cache')) {
+		$backupcache = unserialize(file_get_contents($g['cf_conf_path'] . '/backup/backup.cache'));
+	} else {
+		$backupcache = array();
+	}
 	$backupcache[$baktime] = array('description' => $bakdesc, 'version' => $bakver, 'filesize' => filesize($bakfilename));
-    $bakout = fopen($g['cf_conf_path'] . '/backup/backup.cache', "w");
-    fwrite($bakout, serialize($backupcache));
-    fclose($bakout);
+	$bakout = fopen($g['cf_conf_path'] . '/backup/backup.cache', "w");
+	fwrite($bakout, serialize($backupcache));
+	fclose($bakout);
 
 	conf_mount_ro();
 
@@ -874,33 +917,40 @@ function set_device_perms() {
 function get_config_user() {
 	if (empty($_SESSION["Username"])) {
 		$username = getenv("USER");
-		if (empty($conuser) || $conuser == "root")
+		if (empty($conuser) || $conuser == "root") {
 			$username = "(system)";
-	} else
+		}
+	} else {
 		$username = $_SESSION["Username"];
+	}
 
-	if (!empty($_SERVER['REMOTE_ADDR']))
+	if (!empty($_SERVER['REMOTE_ADDR'])) {
 		$username .= '@' . $_SERVER['REMOTE_ADDR'];
+	}
 
 	return $username;
 }
 
 function make_config_revision_entry($desc = null, $override_user = null) {
-	if (empty($override_user))
+	if (empty($override_user)) {
 		$username = get_config_user();
-	else
+	} else {
 		$username = $override_user;
+	}
 
 	$revision = array();
 
-	if (time() > mktime(0, 0, 0, 9, 1, 2004))       /* make sure the clock settings are plausible */
+	if (time() > mktime(0, 0, 0, 9, 1, 2004)) {     /* make sure the clock settings are plausible */
 		$revision['time'] = time();
+	}
 
 	/* Log the running script so it's not entirely unlogged what changed */
-	if ($desc == "Unknown")
+	if ($desc == "Unknown") {
 		$desc = sprintf(gettext("%s made unknown change"), $_SERVER['SCRIPT_NAME']);
-	if (!empty($desc))
+	}
+	if (!empty($desc)) {
 		$revision['description'] = "{$username}: " . $desc;
+	}
 	$revision['username'] = $username;
 	return $revision;
 }
@@ -920,9 +970,9 @@ function pfSense_clear_globals() {
 	global $config, $FilterIfList, $GatewaysList, $filterdns, $aliases, $aliastable;
 
 	$error = error_get_last();
-	
-	if ( $error !== NULL) {
-		if ( $error['type'] != E_NOTICE ) {
+
+	if ($error !== NULL) {
+		if ($error['type'] != E_NOTICE) {
 			$errorstr = "PHP ERROR: Type: {$error['type']}, File: {$error['file']}, Line: {$error['line']}, Message: {$error['message']}";
 			// XXX: comment out for now, should re-enable post-2.2
 			//print($errorstr);
@@ -930,21 +980,26 @@ function pfSense_clear_globals() {
 		}
 	}
 
-	if (isset($FilterIfList))
+	if (isset($FilterIfList)) {
 		unset($FilterIfList);
+	}
 
-	if (isset($GatewaysList))
+	if (isset($GatewaysList)) {
 		unset($GatewaysList);
+	}
 
 	/* Used for the hostname dns resolver */
-	if (isset($filterdns))
+	if (isset($filterdns)) {
 		unset($filterdns);
+	}
 
 	/* Used for aliases and interface macros */
-	if (isset($aliases))
+	if (isset($aliases)) {
 		unset($aliases);
-	if (isset($aliastable))
+	}
+	if (isset($aliastable)) {
 		unset($aliastable);
+	}
 
 	unset($config);
 }

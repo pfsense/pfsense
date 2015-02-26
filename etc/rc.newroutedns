@@ -34,15 +34,17 @@ require_once("functions.inc");
 require_once("system.inc");
 
 /* make sure to wait until the boot scripts have finished */
-if (file_exists("{$g['varrun_path']}/booting"))
+if (file_exists("{$g['varrun_path']}/booting")) {
 	return;
+}
 
 $staticroutes = get_staticroutes();
 
-if (count($staticroutes))
+if (count($staticroutes)) {
 	log_error("Static Routes: One or more aliases used for routing has changed its IP. Refreshing.");
-else
+} else {
 	return;
+}
 
 $routelck = lock('routedns', LOCK_EX);
 

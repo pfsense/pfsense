@@ -1162,6 +1162,7 @@ if ($_POST['apply']) {
 					$wancfg['track6-prefix-id'] = 0;
 				break;
 			case "none":
+				$wancfg['ipaddrv6'] = "";
 				break;
 		}
 		handle_pppoe_reset($_POST);
@@ -1884,7 +1885,7 @@ $types6 = array("none" => gettext("None"), "staticv6" => gettext("Static IPv6"),
 									<tr>
 										<td width="22%" valign="top" class="vncellreq"><?=gettext("IPv6 address"); ?></td>
 										<td width="78%" class="vtable">
-											<input name="ipaddrv6" type="text" class="formfld unknown" id="ipaddrv6" size="28" value="<?=htmlspecialchars($pconfig['ipaddrv6']);?>" />
+											<input name="ipaddrv6" type="text" class="formfld unknown" id="ipaddrv6" size="28" value="<?=(empty($_POST['ipaddrv6'])) ? htmlspecialchars($pconfig['ipaddrv6']) : $_POST['ipaddrv6'];?>" />
 											/
 											<select name="subnetv6" class="formselect" id="subnetv6">
 												<?php

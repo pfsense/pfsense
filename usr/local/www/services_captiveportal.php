@@ -186,6 +186,14 @@ if ($a_cp[$cpzone]) {
 	$pconfig['radiusvendor'] = $a_cp[$cpzone]['radiusvendor'];
 	$pconfig['radiussession_timeout'] = isset($a_cp[$cpzone]['radiussession_timeout']);
 	$pconfig['radiussrcip_attribute'] = $a_cp[$cpzone]['radiussrcip_attribute'];
+	$pconfig['sip2server'] = $a_cp[$cpzone]['sip2server'];
+	$pconfig['sip2port'] = $a_cp[$cpzone]['sip2port'];
+	$pconfig['sip2login'] = $a_cp[$cpzone]['sip2login'];
+	$pconfig['sip2password'] = $a_cp[$cpzone]['sip2password'];
+	$pconfig['sip2institution'] = $a_cp[$cpzone]['sip2institution'];
+	$pconfig['sip2location'] = $a_cp[$cpzone]['sip2location'];
+	$pconfig['sip2threshold'] = $a_cp[$cpzone]['sip2threshold'];
+	$pconfig['sip2skipcrc'] = $a_cp[$cpzone]['sip2skipcrc'];
 	$pconfig['passthrumacadd'] = isset($a_cp[$cpzone]['passthrumacadd']);
 	$pconfig['passthrumacaddusername'] = isset($a_cp[$cpzone]['passthrumacaddusername']);
 	$pconfig['radmac_format'] = $a_cp[$cpzone]['radmac_format'];
@@ -299,6 +307,15 @@ if ($_POST) {
 	if (($_POST['radiusacctport'] && !is_port($_POST['radiusacctport']))) {
 		$input_errors[] = sprintf(gettext("A valid port number must be specified. [%s]"), $_POST['radiusacctport']);
 	}
+	if (($_POST['sip2server'] && !is_ipaddr($_POST['sip2server']))) {
+            $input_errors[] = sprintf(gettext("A valid IP address must be specified. [%s]"), $_POST['sip2server']);
+    }
+    if (($_POST['sip2port'] && !is_port($_POST['sip2port']))) {
+            $input_errors[] = sprintf(gettext("A valid port number must be specified. [%s]"), $_POST['sip2port']);
+    }
+     if (($_POST['sip2threshold'] && !is_numeric($_POST['sip2threshold']))) {
+            $input_errors[] = sprintf(gettext("A valid numeric amount must be specified. (no decimals or $) [%s]"), $_POST['sip2threshold']);
+    }
 	if ($_POST['maxproc'] && (!is_numeric($_POST['maxproc']) || ($_POST['maxproc'] < 4) || ($_POST['maxproc'] > 100))) {
 		$input_errors[] = gettext("The maximum number of concurrent connections per client IP address may not be larger than the global maximum.");
 	}
@@ -392,6 +409,14 @@ if ($_POST) {
 		$newcp['radiussession_timeout'] = $_POST['radiussession_timeout'] ? true : false;
 		$newcp['radiussrcip_attribute'] = $_POST['radiussrcip_attribute'];
 		$newcp['passthrumacadd'] = $_POST['passthrumacadd'] ? true : false;
+		$newcp['sip2server'] = $_POST['sip2server'];
+        $newcp['sip2port'] = $_POST['sip2port'];
+        $newcp['sip2login'] = $_POST['sip2login'];
+        $newcp['sip2password'] = $_POST['sip2password'];
+        $newcp['sip2threshold'] = $_POST['sip2threshold'];
+        $newcp['sip2institution'] = $_POST['sip2institution'];
+        $newcp['sip2location'] = $_POST['sip2location'];
+        $newcp['sip2skipcrc'] = $_POST['sip2skipcrc'];
 		$newcp['passthrumacaddusername'] = $_POST['passthrumacaddusername'] ? true : false;
 		$newcp['radmac_format'] = $_POST['radmac_format'] ? $_POST['radmac_format'] : false;
 		$newcp['reverseacct'] = $_POST['reverseacct'] ? true : false;
@@ -434,11 +459,12 @@ include("head.inc");
 <script type="text/javascript">
 //<![CDATA[
 function enable_change(enable_change) {
-	var endis, radius_endis;
+	var endis, radius_endis, sip2_endis;
 	endis = !(document.iform.enable.checked || enable_change);
 	localauth_endis = !((!endis && document.iform.auth_method[1].checked) || enable_change);
 	radius_endis = !((!endis && document.iform.auth_method[2].checked) || enable_change);
 	https_endis = !((!endis && document.iform.httpslogin_enable.checked) || enable_change);
+	sip2_endis = !((!endis && document.iform.auth_method[3].checked) || enable_change);
 
 	document.iform.cinterface.disabled = endis;
 	//document.iform.maxproc.disabled = endis;
@@ -465,6 +491,15 @@ function enable_change(enable_change) {
 	document.iform.radiuskey3.disabled = radius_endis;
 	document.iform.radiuskey4.disabled = radius_endis;
 	document.iform.radacct_enable.disabled = radius_endis;
+	document.iform.sip2server.disabled = sip2_endis;
+    document.iform.sip2port.disabled = sip2_endis;
+    document.iform.sip2login.disabled = sip2_endis;
+    document.iform.sip2password.disabled = sip2_endis;
+    document.iform.sip2port.disabled = sip2_endis;
+    document.iform.sip2threshold.disabled = sip2_endis;
+    document.iform.sip2institution.disabled = sip2_endis;
+    document.iform.sip2location.disabled = sip2_endis;
+    document.iform.sip2skipcrc.disabled = sip2_endis;
 	document.iform.peruserbw.disabled = endis;
 	document.iform.bwdefaultdn.disabled = endis;
 	document.iform.bwdefaultup.disabled = endis;
@@ -723,6 +758,10 @@ function enable_change(enable_change) {
                       </tr>
                     </table>
                   </td>
+				</tr>
+              <tr>
+                <td colspan="2"><input name="auth_method" type="radio" id="auth_method" value="SIP2" onClick="enable_change(false)" <?php if($pconfig['auth_method']=="SIP2") echo "checked"; ?>>
+    <?=gettext("SIP2 authentication"); ?></td>
                   </tr><tr>
                   <td>&nbsp;</td>
                   <td>&nbsp;</td>
@@ -957,6 +996,47 @@ function enable_change(enable_change) {
 					<?=gettext("unformatted:"); ?> 001122334455
 				</td>
 			</tr>
+			<tr>
+                    <td colspan="2" class="list" height="12"></td>
+            </tr>
+            <tr>
+                    <td colspan="2" valign="top" class="optsect_t2">SIP2 Connectivity</td>
+            </tr>
+
+            <tr>
+                    <td class="vncell" valign="top">SIP2 Server</td>
+                    <td class="vtable"><input name="sip2server" type="text" class="formfld unknown" id="sip2server" size="30" value="<?=htmlspecialchars($pconfig['sip2server']);?>"></td>
+            </tr>
+            <tr>
+                    <td class="vncell" valign="top">SIP2 Port</td>
+                    <td class="vtable"><input name="sip2port" type="text" class="formfld unknown" id="sip2port" size="6" value="<?=htmlspecialchars($pconfig['sip2port']);?>"><br>
+                    Leave this field blank to use the default port (6002).</td>
+            </tr>
+            <tr>
+                    <td class="vncell" valign="top">SIP2 Login</td>
+                    <td class="vtable"><input name="sip2login" type="text" class="formfld unknown" id="sip2login" size="30" value="<?=htmlspecialchars($pconfig['sip2login']);?>"></td>
+            </tr>
+            <tr>
+                    <td class="vncell" valign="top">SIP2 Password</td>
+                    <td class="vtable"><input name="sip2password" type="text" class="formfld unknown" id="sip2password" size="30" value="<?=htmlspecialchars($pconfig['sip2password']);?>"></td>
+            </tr>
+            <tr>
+                    <td class="vncell" valign="top">SIP2 Institution</td>
+                    <td class="vtable"><input name="sip2institution" type="text" class="formfld unknown" id="sip2institution" size="30" value="<?=htmlspecialchars($pconfig['sip2institution']);?>"></td>
+            </tr>
+            <tr>
+                    <td class="vncell" valign="top">SIP2 Location</td>
+                    <td class="vtable"><input name="sip2location" type="text" class="formfld unknown" id="sip2location" size="30" value="<?=htmlspecialchars($pconfig['sip2location']);?>"><br>
+                    optional</td>
+            <tr>
+                    <td class="vncell" valign="top">SIP2 Fine Threshold</td>
+                    <td class="vtable"><input name="sip2threshold" type="text" class="formfld unknown" id="sip2threshold" size="6" value="<?=htmlspecialchars($pconfig['sip2threshold']);?>"><br>
+                    Patrons account must be below this amount to authenticate. Leave blank to disable.</td>
+            </tr>
+            <tr>
+                    <td class="vncell" valign="top">CRC Check</td>
+                    <td class="vtable"><input name="sip2skipcrc" type="checkbox" id="sip2skipcrc" value="no" onClick="enable_change(false)" <?php if ($pconfig['sip2skipcrc']) echo "checked"; ?>><strong><?=gettext("Disable CRC Check"); ?></strong><br></td>
+            </tr>
 		</table>
 		</td>
 	</tr>

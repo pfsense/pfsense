@@ -42,8 +42,9 @@
 	pfSense_MODULE:	config
 */
 
-if (!function_exists('platform_booting'))
+if (!function_exists('platform_booting')) {
 	require_once('globals.inc');
+}
 
 /* do not load this file twice. */
 //if (in_array("/etc/inc/config.inc", get_included_files()))
@@ -52,24 +53,27 @@ if (!function_exists('platform_booting'))
 // Set the memory limit to 128M on i386.  When someone has something like 500+ tunnels
 // the parser needs quite a bit of ram.   Do not remove this line unless you
 // know what you are doing.  If in doubt, check with dev@ _/FIRST/_!
-if(!$ARCH)
+if (!$ARCH) {
 	$ARCH = php_uname("m");
+}
 
 // Set memory limit to 256M on amd64.
-if($ARCH == "amd64")
+if ($ARCH == "amd64") {
 	ini_set("memory_limit","256M");
-else
+} else {
 	ini_set("memory_limit","128M");
+}
 
 /* include globals from notices.inc /utility/XML parser files */
 require_once("notices.inc");
 require_once("util.inc");
 require_once("IPv6.inc");
 require_once('config.lib.inc');
-if(file_exists("/cf/conf/use_xmlreader"))
+if (file_exists("/cf/conf/use_xmlreader")) {
 	require_once("xmlreader.inc");
-else
+} else {
 	require_once("xmlparse.inc");
+}
 require_once("crypt.inc");
 
 /* read platform */
@@ -81,22 +85,23 @@ if (file_exists("{$g['etc_path']}/platform")) {
 
 /* if /debugging exists, lets set $debugging
    so we can output more information */
-if(file_exists("/debugging")) {
+if (file_exists("/debugging")) {
 	$debugging = true;
 	$g['debug'] = true;
 }
 
-if(platform_booting(true)) {
+if (platform_booting(true)) {
 	echo ".";
-	if(file_exists("/cf/conf/config.xml")) {
+	if (file_exists("/cf/conf/config.xml")) {
 		$config_contents = file_get_contents("/cf/conf/config.xml");
-		if(stristr($config_contents, "<m0n0wall>") == true) {
+		if (stristr($config_contents, "<m0n0wall>") == true) {
 			echo ".";
-			/* user has just upgraded to m0n0wall, replace root xml tags */
+			/* user has just upgraded from m0n0wall, replace root xml tags */
 			log_error(gettext("Upgrading m0n0wall configuration to pfSense... "));
 			$config_contents = str_replace("m0n0wall","pfsense", $config_contents);
-			if (!config_validate("{$g['conf_path']}/config.xml"))
+			if (!config_validate("{$g['conf_path']}/config.xml")) {
 				log_error(gettext("ERROR!  Could not convert m0n0wall -> pfsense in config.xml"));
+			}
 			conf_mount_rw();
 			file_put_contents("/cf/conf/config.xml", $config_contents);
 			conf_mount_ro();
@@ -116,7 +121,7 @@ if(platform_booting(true)) {
 				/* config is on floppy disk for CD-ROM version */
 				$cfgdevice = $cfgpartition = "fd0";
 				$_gb = exec('/sbin/dmesg -a', $dmesg);
-				if(preg_match("/da0/", $dmesg) == true) {
+				if (preg_match("/da0/", $dmesg) == true) {
 					$cfgdevice = $cfgpartition = "da0" ;
 					if (mwexec("/sbin/mount -r /dev/{$cfgdevice} /cf")) {
 						/* could not mount, fallback to floppy */
@@ -135,8 +140,9 @@ if(platform_booting(true)) {
 				$disks = explode(" ", get_single_sysctl("kern.disks"));
 				foreach ($disks as $mountdisk) {
 					/* skip mfs mounted filesystems */
-					if (strstr($mountdisk, "md"))
+					if (strstr($mountdisk, "md")) {
 						continue;
+					}
 					if (mwexec("/sbin/mount -r /dev/{$mountdisk}a {$g['cf_path']}") == 0) {
 						if (file_exists("{$g['cf_conf_path']}/config.xml")) {
 							/* found it */
@@ -148,11 +154,14 @@ if(platform_booting(true)) {
 
 						mwexec("/sbin/umount -f {$g['cf_path']}");
 
-						if ($cfgdevice)
+						if ($cfgdevice) {
 							break;
+						}
 					}
 					if (mwexec("/sbin/mount -r /dev/{$mountdisk}d {$g['cf_path']}") == 0) {
-						if(platform_booting()) echo ".";
+						if (platform_booting()) {
+							echo ".";
+						}
 						if (file_exists("{$g['cf_conf_path']}/config.xml")) {
 							/* found it */
 							$cfgdevice = $mountdisk;
@@ -163,15 +172,16 @@ if(platform_booting(true)) {
 
 						mwexec("/sbin/umount -f {$g['cf_path']}");
 
-						if ($cfgdevice)
+						if ($cfgdevice) {
 							break;
+						}
 					}
 				}
 			}
 			echo ".";
 			if (!$cfgdevice) {
 				$last_backup = discover_last_backup();
-				if($last_backup) {
+				if ($last_backup) {
 					log_error(gettext("No config.xml found, attempting last known config restore."));
 					file_notice("config.xml", gettext("No config.xml found, attempting last known config restore."), "pfSenseConfigurator", "");
 					restore_backup("/cf/conf/backup/{$last_backup}");
@@ -201,13 +211,14 @@ $config = parse_config();
 
 /* set timezone */
 $timezone = $config['system']['timezone'];
-if (!$timezone)
+if (!$timezone) {
 	$timezone = "Etc/UTC";
+}
 date_default_timezone_set("$timezone");
 
-if($config_parsed == true) {
+if ($config_parsed == true) {
 	/* process packager manager custom rules */
-	if(is_dir("/usr/local/pkg/parse_config")) {
+	if (is_dir("/usr/local/pkg/parse_config")) {
 		run_plugins("/usr/local/pkg/parse_config/");
 	}
 }

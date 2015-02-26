@@ -45,20 +45,22 @@
 require_once("globals.inc");
 
 /* do not load this file twice. */
-if($config_parsed == true)
+if ($config_parsed == true) {
 	return;
-else
+} else {
 	$config_parsed = true;
+}
 
 /* include globals from notices.inc /utility/XML parser files */
 require_once('config.lib.inc');
 require_once("notices.inc");
 require_once("util.inc");
 require_once("IPv6.inc");
-if(file_exists("/cf/conf/use_xmlreader"))
+if (file_exists("/cf/conf/use_xmlreader")) {
 	require_once("xmlreader.inc");
-else
+} else {
 	require_once("xmlparse.inc");
+}
 require_once("crypt.inc");
 
 /* read platform */
@@ -70,7 +72,7 @@ if (file_exists("{$g['etc_path']}/platform")) {
 
 /* if /debugging exists, lets set $debugging
    so we can output more information */
-if(file_exists("/debugging")) {
+if (file_exists("/debugging")) {
 	$debugging = true;
 	$g['debug'] = true;
 }
@@ -79,13 +81,14 @@ $config = parse_config();
 
 /* set timezone */
 $timezone = $config['system']['timezone'];
-if (!$timezone)
-        $timezone = "Etc/UTC";
+if (!$timezone) {
+	$timezone = "Etc/UTC";
+}
 date_default_timezone_set("$timezone");
 
-if($config_parsed == true) {
+if ($config_parsed == true) {
 	/* process packager manager custom rules */
-	if(is_dir("/usr/local/pkg/parse_config")) {
+	if (is_dir("/usr/local/pkg/parse_config")) {
 		run_plugins("/usr/local/pkg/parse_config/");
 	}
 }

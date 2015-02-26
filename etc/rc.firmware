@@ -29,7 +29,7 @@ fi
 file_notice() {
 	/usr/local/bin/php -q -d auto_prepend_file=config.inc <<ENDOFF
 	<?php
-		require_once("globals.inc");		
+		require_once("globals.inc");
 		require_once("functions.inc");
 		file_notice("$1", "$2", "$1", "");
 	?>
@@ -39,7 +39,7 @@ ENDOFF
 output_env_to_log() {
 	date >> /conf/upgrade_log.txt
 	echo "" >> /conf/upgrade_log.txt
-	
+
 	ls -lah /dev/ >> /conf/upgrade_log.txt
 	echo "" >> /conf/upgrade_log.txt
 
@@ -59,7 +59,7 @@ output_env_to_log() {
 backup_chflags() {
 	TOPROCESS="bin lib libexec sbin usr"
 	for files in $TOPROCESS; do
-		/usr/sbin/mtree -Pcp /${files} | bzip2 -9 > /tmp/chflags.dist.${files}.bz2 2>> /conf/upgrade_log.txt 
+		/usr/sbin/mtree -Pcp /${files} | bzip2 -9 > /tmp/chflags.dist.${files}.bz2 2>> /conf/upgrade_log.txt
 	done
 }
 
@@ -89,30 +89,30 @@ binary_update() {
 	remove_chflags
 	cd /tmp/patches
 	for i in `/usr/bin/tar tvzf $TGZ | egrep -v "(^d|_md5)" | nawk '{print $9;}'`;
-	 do
-	   FILE=`basename ${i}`
-	   echo "Working on ${i}"
-	   # Untar patch file and md5 files
-	   /usr/bin/tar xzf ${TGZ} ${i} ${i}.old_file_md5 ${i}.new_patch_md5 ${i}.new_file_md5 2>>${ERR_F}
+	do
+		FILE=`basename ${i}`
+		echo "Working on ${i}"
+		# Untar patch file and md5 files
+		/usr/bin/tar xzf ${TGZ} ${i} ${i}.old_file_md5 ${i}.new_patch_md5 ${i}.new_file_md5 2>>${ERR_F}
 
-	   # Apply patch - oldfile newfile patchfile
-	   /usr/local/bin/bspatch /${i} /tmp/patched/${FILE} /tmp/patches/${i} 2>>${ERR_F}
+		# Apply patch - oldfile newfile patchfile
+		/usr/local/bin/bspatch /${i} /tmp/patched/${FILE} /tmp/patches/${i} 2>>${ERR_F}
 
-	   OLD_FILE_MD5=`cat /tmp/patches/${i}.old_file_md5 2>/dev/null`
-	   NEW_PATCH_MD5=`cat /tmp/patches/${i}.new_patch_md5 2>/dev/null`
-	   NEW_FILE_MD5=`cat /tmp/patches/${i}.new_file_md5 2>/dev/null`
-	   PATCHED_MD5=`/sbin/md5 -q /tmp/patched/${FILE} 2>/dev/null`
+		OLD_FILE_MD5=`cat /tmp/patches/${i}.old_file_md5 2>/dev/null`
+		NEW_PATCH_MD5=`cat /tmp/patches/${i}.new_patch_md5 2>/dev/null`
+		NEW_FILE_MD5=`cat /tmp/patches/${i}.new_file_md5 2>/dev/null`
+		PATCHED_MD5=`/sbin/md5 -q /tmp/patched/${FILE} 2>/dev/null`
 
-	   if [ "$PATCHED_MD5" = "$NEW_PATCH_MD5" ]; then
-		/usr/bin/install -S  /tmp/patched/${FILE} /${i}
-	   else
-		#echo "${i} file does not match intended final md5."
-		echo "${i} file does not match intended final md5." >> ${ERR_F}
-	   fi
+		if [ "$PATCHED_MD5" = "$NEW_PATCH_MD5" ]; then
+			/usr/bin/install -S  /tmp/patched/${FILE} /${i}
+		else
+			#echo "${i} file does not match intended final md5."
+			echo "${i} file does not match intended final md5." >> ${ERR_F}
+		fi
 
-	   /bin/rm /tmp/patched/${FILE} >> ${ERR_F}
-	   /bin/rm /tmp/patches/${i} >> ${ERR_F}
-	   /bin/rm /tmp/patches/${i}.* >> ${ERR_F}
+		/bin/rm /tmp/patched/${FILE} >> ${ERR_F}
+		/bin/rm /tmp/patches/${i} >> ${ERR_F}
+		/bin/rm /tmp/patches/${i}.* >> ${ERR_F}
 	done
 	/bin/rm -rf /tmp/patched /tmp/patches >> ${ERR_F}
 	restore_chflags
@@ -123,7 +123,7 @@ enable)
 	touch /conf/upgrade_log.txt
 	echo "" >> /conf/upgrade_log.txt
 	echo "Enable" >> /conf/upgrade_log.txt
-	echo "" >> /conf/upgrade_log.txt		
+	echo "" >> /conf/upgrade_log.txt
 	/etc/rc.conf_mount_ro
 	;;
 auto)
@@ -148,7 +148,7 @@ pfSenseNanoBSDupgrade)
 		echo "You cannot use a full file for upgrade.  Please use a file labelled nanobsd upgrade."
 		file_notice "NanoBSDUpgradeFailure" "You have attempted to use a full NanoBSD installation file as an upgrade.  Please use a NanoBSD file labelled 'upgrade' instead."
 		rm -f $IMG
-		/etc/rc.conf_mount_ro		
+		/etc/rc.conf_mount_ro
 		exit 1
 	fi
 
@@ -157,7 +157,7 @@ pfSenseNanoBSDupgrade)
 	echo "NanoBSD Firmware upgrade in progress..."  >> /conf/upgrade_log.txt 2>&1
 	echo "NanoBSD Firmware upgrade in progress..." | wall
 	/etc/rc.notify_message -e -g -m "NanoBSD Firmware upgrade in progress..."
-	
+
 	# backup config
 	/bin/mkdir -p /tmp/configbak
 	cp -Rp /conf/* /tmp/configbak 2>/dev/null
@@ -177,7 +177,7 @@ pfSenseNanoBSDupgrade)
 	# grab the boot device, example ad1, ad0
 	BOOT_DRIVE=`/sbin/glabel list | /usr/bin/grep -B2 ufs/pfsense | /usr/bin/head -n 1 | /usr/bin/cut -f3 -d' ' | /usr/bin/cut -d's' -f1`
 	# test the slice.  if we are on slice 1 we need to flash 2 and vice versa
-	if [ `echo $REAL_BOOT_DEVICE | /usr/bin/grep "s1"` ]; then 
+	if [ `echo $REAL_BOOT_DEVICE | /usr/bin/grep "s1"` ]; then
 		SLICE="2"
 		OLDSLICE="1"
 		TOFLASH="${BOOT_DRIVE}s${SLICE}"
@@ -187,7 +187,7 @@ pfSenseNanoBSDupgrade)
 		OLD_UFS_ID="0"
 	else
 		SLICE="1"
-		OLDSLICE="2"		
+		OLDSLICE="2"
 		TOFLASH="${BOOT_DRIVE}s${SLICE}"
 		COMPLETE_PATH="${BOOT_DRIVE}s${SLICE}a"
 		GLABEL_SLICE="pfsense0"
@@ -202,7 +202,7 @@ pfSenseNanoBSDupgrade)
 	echo "COMPLETE_PATH ${COMPLETE_PATH}" >> /conf/upgrade_log.txt
 	echo "GLABEL_SLICE  ${GLABEL_SLICE}" >> /conf/upgrade_log.txt
 
-	# First ensure the new file can fit inside the 
+	# First ensure the new file can fit inside the
 	# slice that we are going to be operating on.
 	NEW_IMG_SIZE=`echo $((\`gzip -l ${IMG} | grep -v compressed | awk '{ print $2}'\` / 1024 / 1024))`
 	SIZE=`/sbin/fdisk ${COMPLETE_PATH} | /usr/bin/grep Meg | /usr/bin/awk '{ print $5 }' | /usr/bin/cut -d"(" -f2`
@@ -218,13 +218,13 @@ pfSenseNanoBSDupgrade)
 		rm -f /var/run/firmwarelock.dirty
 		rm -f /var/run/firmware.lock
 		rm -f ${IMG}
-		/etc/rc.conf_mount_ro		
+		/etc/rc.conf_mount_ro
 		exit 1
 	fi
 
 	# Output environment information to log file
 	output_env_to_log
-	
+
 	# Grab a before upgrade look at fdisk
 	echo "" >> /conf/fdisk_upgrade_log.txt
 	echo "Before upgrade fdisk/bsdlabel" >> /conf/fdisk_upgrade_log.txt
@@ -234,7 +234,7 @@ pfSenseNanoBSDupgrade)
 	bsdlabel -A ${BOOT_DRIVE}s3 >> /conf/fdisk_upgrade_log.txt
 	echo "---------------------------------------------------------------" >> /conf/fdisk_upgrade_log.txt
 	echo "" >> /conf/fdisk_upgrade_log.txt
-	
+
 	# Log that we are really doing a NanoBSD upgrade
 	echo "" >> /conf/upgrade_log.txt
 	echo "NanoBSD upgrade starting" >> /conf/upgrade_log.txt
@@ -242,7 +242,7 @@ pfSenseNanoBSDupgrade)
 
 	# Remove TOFLASH and get ready for new flash image
 	echo "" >> /conf/upgrade_log.txt
-	echo "dd if=/dev/zero of=/dev/${TOFLASH} bs=1m count=1" >> /conf/upgrade_log.txt	
+	echo "dd if=/dev/zero of=/dev/${TOFLASH} bs=1m count=1" >> /conf/upgrade_log.txt
 	dd if=/dev/zero of=/dev/${TOFLASH} bs=1m count=1 >> /conf/upgrade_log.txt 2>&1
 
 	# Stream gzipped image to dd and explode image to new area
@@ -259,7 +259,7 @@ pfSenseNanoBSDupgrade)
 	bsdlabel -A ${BOOT_DRIVE}s3 >> /conf/fdisk_upgrade_log.txt
 	echo "---------------------------------------------------------------" >> /conf/fdisk_upgrade_log.txt
 	echo "" >> /conf/fdisk_upgrade_log.txt
-	
+
 	# Ensure that our new system is sound and bail if it is not and file a notice
 	echo "" >> /conf/upgrade_log.txt
 	echo "/sbin/fsck_ufs -y /dev/${COMPLETE_PATH}" >> /conf/upgrade_log.txt
@@ -269,7 +269,7 @@ pfSenseNanoBSDupgrade)
 		rm -f $IMG
 		rm -f /var/run/firmwarelock.dirty
 		rm -f /var/run/firmware.lock
-		/etc/rc.conf_mount_ro		
+		/etc/rc.conf_mount_ro
 		exit 1
 	fi
 
@@ -297,7 +297,7 @@ pfSenseNanoBSDupgrade)
 		cp /boot/loader.conf.local /tmp/$GLABEL_SLICE/boot/loader.conf.local
 	fi
 
-	# If /tmp/$GLABEL_SLICE/tmp/post_upgrade_command exists 
+	# If /tmp/$GLABEL_SLICE/tmp/post_upgrade_command exists
 	# after update then execute the command.
 	echo "Checking for post_upgrade_command..." >> /conf/upgrade_log.txt
 	if [ -f /tmp/$GLABEL_SLICE/tmp/post_upgrade_command ]; then
@@ -327,7 +327,7 @@ pfSenseNanoBSDupgrade)
 
 	# Unmount newly prepared slice
 	umount /tmp/$GLABEL_SLICE
-	
+
 	sync
 
 	# Set active mount slice in fdisk
@@ -417,7 +417,7 @@ pfSenseupgrade)
 	remove_chflags
 
 	# Do we have a pre-upgrade hook in the update file?
-	if [ `tar tvzf $IMG | grep /tmp/pre_upgrade_command | wc -l` -gt 0 ]; then 
+	if [ `tar tvzf $IMG | grep /tmp/pre_upgrade_command | wc -l` -gt 0 ]; then
 		tar xzvf $IMG -C / ./tmp/pre_upgrade_command >> /conf/upgrade_log.txt 2>&1
 		chmod a+rx /tmp/pre_upgrade_command >> /conf/upgrade_log.txt 2>&1
 		sh /tmp/pre_upgrade_command >> /conf/upgrade_log.txt 2>&1
@@ -426,7 +426,7 @@ pfSenseupgrade)
 	echo "Firmware upgrade in progress..."  >> /conf/upgrade_log.txt 2>&1
 	echo "Firmware upgrade in progress..."  | wall
 	/etc/rc.notify_message -e -g -m "Firmware upgrade in progress..."
-	
+
 	# backup config
 	[ -d /tmp/configbak ] && rm -rf /tmp/configbak
 	/bin/mkdir -p /tmp/configbak
@@ -443,17 +443,17 @@ pfSenseupgrade)
 	/usr/local/sbin/check_reload_status
 	echo "Image installed $IMG." >> /conf/upgrade_log.txt 2>&1
 
-    # process custom image if its passed
-    if [ $# -eq 3 ]; then
-	    if [ -f $CUSTOMIMG ]; then
-	        echo "Custom image $CUSTOMIMG found." >> /conf/upgrade_log.txt 2>&1
-	        echo "Custom image ($CUSTOMIMG) found." >> /conf/upgrade_log.txt 2>&1
-	        PWD_DIR=`pwd`
-	        cd / && /usr/bin/tar xzPUf $CUSTOMIMG >> /conf/upgrade_log.txt 2>&1
-	        cd $PWD_DIR
-	        echo "Custom image $CUSTOMIMG installed." >> /conf/upgrade_log.txt 2>&1
-	    fi
-    fi
+	# process custom image if its passed
+	if [ $# -eq 3 ]; then
+		if [ -f $CUSTOMIMG ]; then
+			echo "Custom image $CUSTOMIMG found." >> /conf/upgrade_log.txt 2>&1
+			echo "Custom image ($CUSTOMIMG) found." >> /conf/upgrade_log.txt 2>&1
+			PWD_DIR=`pwd`
+			cd / && /usr/bin/tar xzPUf $CUSTOMIMG >> /conf/upgrade_log.txt 2>&1
+			cd $PWD_DIR
+			echo "Custom image $CUSTOMIMG installed." >> /conf/upgrade_log.txt 2>&1
+		fi
+	fi
 
 	# restore config
 	cp -Rp /tmp/configbak/* /conf 2>/dev/null

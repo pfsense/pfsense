@@ -4,20 +4,20 @@
 /*
 	rc.prunecaptiveportal
 	part of m0n0wall (http://m0n0.ch/wall)
-	
+
 	Copyright (C) 2003-2004 Manuel Kasper <mk@neon1.net>.
 	All rights reserved.
-	
+
 	Redistribution and use in source and binary forms, with or without
 	modification, are permitted provided that the following conditions are met:
-	
+
 	1. Redistributions of source code must retain the above copyright notice,
 	   this list of conditions and the following disclaimer.
-	
+
 	2. Redistributions in binary form must reproduce the above copyright
 	   notice, this list of conditions and the following disclaimer in the
 	   documentation and/or other materials provided with the distribution.
-	
+
 	THIS SOFTWARE IS PROVIDED ``AS IS'' AND ANY EXPRESS OR IMPLIED WARRANTIES,
 	INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY
 	AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE
@@ -31,7 +31,7 @@
 */
 
 /* parse the configuration and include all functions used below */
-/* config.inc retrives the util.inc and globals.inc */
+/* config.inc retrieves the util.inc and globals.inc */
 require_once("config.inc");
 require_once("functions.inc");
 require_once("filter.inc");
@@ -51,10 +51,10 @@ $cpzoneid = $config['captiveportal'][$cpzone]['zoneid'];
 
 if (file_exists("{$g['tmp_path']}/.rc.prunecaptiveportal.{$cpzone}.running")) {
 	$stat = stat("{$g['tmp_path']}/.rc.prunecaptiveportal.{$cpzone}.running");
-	if (time() - $stat['mtime'] >= 120)
+	if (time() - $stat['mtime'] >= 120) {
 		@unlink("{$g['tmp_path']}/.rc.prunecaptiveportal.{$cpzone}.running");
-	else {
-		log_error("Skipping CP prunning process because previous/another instance is already running");
+	} else {
+		log_error("Skipping CP pruning process because previous/another instance is already running");
 		return;
 	}
 }

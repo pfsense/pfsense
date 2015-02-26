@@ -6,7 +6,7 @@ if ! /usr/bin/lockf -s -t 30 /tmp/config.lock /usr/bin/true; then
 fi
 
 product=`cat /etc/inc/globals.inc | grep product_name | cut -d'"' -f4`
-        
+
 echo
 echo "${product} is now shutting down ..."
 echo

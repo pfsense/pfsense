@@ -415,7 +415,7 @@ EOD;
 		if (!empty($a_client['dns_split'])) {
 			$ipsec_dns = explode(',', $a_client['dns_split']);
 			foreach ($ipsec_dns as $ipsecidx => $ipsecdns) {
-				$ipsecdns = trime($ipsecdns);
+				$ipsecdns = trim($ipsecdns);
 				$ipsec_dns[$ipsecidx] = "\"{$ipsecdns}\"";
 			}
 			$a_client['dns_split'] = implode(' ', $ipsec_dns);

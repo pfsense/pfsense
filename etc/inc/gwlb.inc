@@ -269,18 +269,24 @@ EOD;
 		## How often the probe should be sent
 		if (!empty($gateway['interval']) &&  is_numeric($gateway['interval'])) {
 			$interval = intval($gateway['interval']);	# Restrict to Integer
-			if ($interval <  1) $interval =  1;	# Minimum
-			if ($interval != $apinger_default['interval'])	# If not default value
+			if ($interval <  1) {
+				$interval =  1;	# Minimum
+			}
+			if ($interval != $apinger_default['interval']) {	# If not default value
 				$apingercfg .= "	interval " . $interval . "s\n";
+			}
 		}
 
 		## How many replies should be used to compute average delay
 		## for controlling "delay" alarms
 		if (!empty($gateway['avg_delay_samples']) && is_numeric($gateway['avg_delay_samples'])) {
 			$avg_delay_samples = intval($gateway['avg_delay_samples']);	# Restrict to Integer
-			if ($avg_delay_samples <  1) $avg_delay_samples =  1;	# Minimum
-			if ($avg_delay_samples != $apinger_default['avg_delay_samples'])	# If not default value
+			if ($avg_delay_samples <  1) {
+				$avg_delay_samples =  1;	# Minimum
+			}
+			if ($avg_delay_samples != $apinger_default['avg_delay_samples']) {	# If not default value
 				$apingercfg .= "	avg_delay_samples " . $avg_delay_samples . "\n";
+			}
 		}
 
 		## How many probes should be used to compute average loss
@@ -667,7 +673,7 @@ function return_gateways_array($disabled = false, $localhost = false, $inactive 
 		/* automatically skip known static and dynamic gateways that were previously processed */
 		foreach ($gateways_arr_temp as $gateway_item) {
 			if ((($ifname == $gateway_item['friendlyiface'] && $friendly == $gateway_item['name'])&& ($gateway['ipprotocol'] == $gateway_item['ipprotocol'])) ||
-				($ifname == $gateway_item['friendlyiface'] && $gateway_item['dynamic'] == true) && ($gateway['ipprotocol'] == $gateway_item['ipprotocol'])) {
+			    (($ifname == $gateway_item['friendlyiface'] && $gateway_item['dynamic'] == true) && ($gateway['ipprotocol'] == $gateway_item['ipprotocol']))) {
 				continue 2;
 			}
 		}
@@ -770,7 +776,7 @@ function return_gateways_array($disabled = false, $localhost = false, $inactive 
 		/* automatically skip known static and dynamic gateways that were previously processed */
 		foreach ($gateways_arr_temp as $gateway_item) {
 			if ((($ifname == $gateway_item['friendlyiface'] && $friendly == $gateway_item['name']) && ($gateway['ipprotocol'] == $gateway_item['ipprotocol'])) ||
-				($ifname == $gateway_item['friendlyiface'] && $gateway_item['dynamic'] == true) && ($gateway['ipprotocol'] == $gateway_item['ipprotocol'])) {
+			    (($ifname == $gateway_item['friendlyiface'] && $gateway_item['dynamic'] == true) && ($gateway['ipprotocol'] == $gateway_item['ipprotocol']))) {
 				continue 2;
 			}
 		}

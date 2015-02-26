@@ -74,7 +74,7 @@ function conv_log_filter($logfile, $nentries, $tail = 50, $filtertext = "", $fil
 		$flent = parse_filter_line($logent);
 		if (!$filterinterface || ($filterinterface == $flent['interface'])) {
 			if ((($flent != "") && (!is_array($filtertext)) && (match_filter_line ($flent, $filtertext))) ||
-				(($flent != "") && ( is_array($filtertext)) && (match_filter_field($flent, $filtertext)))) {
+			    (($flent != "") && ( is_array($filtertext)) && (match_filter_field($flent, $filtertext)))) {
 				$counter++;
 				$filterlog[] = $flent;
 			}

@@ -161,8 +161,8 @@ function filter_pflog_start($kill_first = false) {
 		$mt = microtime();
 		echo "filter_pflog_start() being called $mt\n";
 	}
-	if (!file_exists("{$g['varrun_path']}/filterlog.pid") ||
-		!isvalidpid("{$g['varrun_path']}/filterlog.pid")) {
+	if ((!file_exists("{$g['varrun_path']}/filterlog.pid")) ||
+	    (!isvalidpid("{$g['varrun_path']}/filterlog.pid"))) {
 		mwexec("/usr/local/sbin/filterlog -i pflog0 -p {$g['varrun_path']}/filterlog.pid");
 	}
 }
@@ -513,8 +513,11 @@ function filter_generate_scrubing() {
 			continue;
 		}
 		/* set up MSS clamping */
-		if ($scrubcfg['mss'] <> "" && is_numeric($scrubcfg['mss']) && $scrubcfg['if'] != "pppoe" && $scrubcfg['if'] != "pptp" &&
-			$scrubif['if'] != "l2tp") {
+		if (($scrubcfg['mss'] <> "") &&
+		    (is_numeric($scrubcfg['mss'])) &&
+		    ($scrubcfg['if'] != "pppoe") &&
+		    ($scrubcfg['if'] != "pptp") &&
+		    ($scrubif['if'] != "l2tp")) {
 			$mssclamp = "max-mss " . (intval($scrubcfg['mss'] - 40));
 		} else {
 			$mssclamp = "";
@@ -1596,9 +1599,9 @@ function filter_nat_rules_automatic_tonathosts($with_descr = false) {
 	}
 
 	/* IPsec mode_cfg subnet */
-	if (isset($config['ipsec']['client']['enable']) &&
-		!empty($config['ipsec']['client']['pool_address']) &&
-		!empty($config['ipsec']['client']['pool_netbits'])) {
+	if ((isset($config['ipsec']['client']['enable'])) &&
+	    (!empty($config['ipsec']['client']['pool_address'])) &&
+	    (!empty($config['ipsec']['client']['pool_netbits']))) {
 		$tonathosts[] = "{$config['ipsec']['client']['pool_address']}/{$config['ipsec']['client']['pool_netbits']}";
 		$descriptions[] = gettext("IPsec client");
 	}
@@ -1810,8 +1813,8 @@ function filter_nat_rules_generate() {
 			 * If reflection is enabled, turn on extra redirections
 			 * for this rule by adding other interfaces to an rdr rule.
 			 */
-			if ((isset($config['system']['enablebinatreflection']) || $rule['natreflection'] == "enable")
-			   && $rule['natreflection'] != "disable") {
+			if ((isset($config['system']['enablebinatreflection']) || $rule['natreflection'] == "enable") &&
+			    ($rule['natreflection'] != "disable")) {
 				$nat_if_list = filter_get_reflection_interfaces($natif);
 			} else {
 				$nat_if_list = array();
@@ -1970,9 +1973,9 @@ function filter_nat_rules_generate() {
 	}
 
 	/* outbound rules */
-	if (!isset($config['nat']['outbound']['mode']) ||
-		$config['nat']['outbound']['mode'] == "automatic" ||
-		$config['nat']['outbound']['mode'] == "hybrid") {
+	if ((!isset($config['nat']['outbound']['mode'])) ||
+	    ($config['nat']['outbound']['mode'] == "automatic") ||
+	    ($config['nat']['outbound']['mode'] == "hybrid")) {
 		$natrules .= "\n# Outbound NAT rules (automatic)\n";
 		/* standard outbound rules (one for each interface) */
 		update_filter_reload_status(gettext("Creating outbound NAT rules"));
@@ -2026,9 +2029,9 @@ function filter_nat_rules_generate() {
 	}
 
 	/* DIAG: add ipv6 NAT, if requested */
-	if (isset($config['diag']['ipv6nat']['enable']) &&
-		is_ipaddr($config['diag']['ipv6nat']['ipaddr']) &&
-		is_array($FilterIflist['wan'])) {
+	if ((isset($config['diag']['ipv6nat']['enable'])) &&
+	    (is_ipaddr($config['diag']['ipv6nat']['ipaddr'])) &&
+	    (is_array($FilterIflist['wan']))) {
 		/* XXX: FIX ME!	 IPV6 */
 		$natrules .= "rdr on \${$FilterIflist['wan']['descr']} proto ipv6 from any to any -> {$config['diag']['ipv6nat']['ipaddr']}\n";
 	}
@@ -2514,8 +2517,9 @@ function filter_generate_address(& $rule, $target = "source", $isnat = false) {
 						}
 						break;
 				}
-				if (isset($rule[$target]['not']) && !is_subnet($src) &&
-					(strpos($src, '{') === false)) {
+				if ((isset($rule[$target]['not'])) &&
+				    (!is_subnet($src)) &&
+				    (strpos($src, '{') === false)) {
 					$src = " !{$src}";
 				}
 			}
@@ -2577,10 +2581,10 @@ function filter_generate_user_rule($rule) {
 				$items .= $oc['descr'] . " ";
 			}
 			return "# array key \"{$rule['interface']}\" does not exist for \"" . $rule['descr'] . "\" in array: {{$items}}";
-	} else if ((array_key_exists($rule['interface'], $FilterIflist))
-		&& (is_array($FilterIflist[$rule['interface']]))
-		&& (is_array($FilterIflist[$rule['interface']][0]))) {
-		/* Currently this only case for this is the pppoe server. There should be an existing macro with this name. */
+	} else if ((array_key_exists($rule['interface'], $FilterIflist)) &&
+	    (is_array($FilterIflist[$rule['interface']])) &&
+	    (is_array($FilterIflist[$rule['interface']][0]))) {
+		/* Currently the only case for this is the pppoe server. There should be an existing macro with this name. */
 		$aline['interface'] = " on \$" . $rule['interface'] . " ";
 	} else {
 		$aline['interface'] = " on \$" . $FilterIflist[$rule['interface']]['descr'] . " ";
@@ -2588,7 +2592,7 @@ function filter_generate_user_rule($rule) {
 	$ifcfg = $FilterIflist[$rule['interface']];
 	if ($pptpdcfg['mode'] != "server") {
 		if (($rule['source']['network'] == "pptp") ||
-			($rule['destination']['network'] == "pptp")) {
+		    ($rule['destination']['network'] == "pptp")) {
 			return "# source network or destination network == pptp on " . $rule['descr'];
 		}
 	}
@@ -2860,15 +2864,17 @@ function filter_generate_user_rule($rule) {
 
 		if ($noadvoptions == false || $l7_present) {
 			if ((isset($rule['source-track']) and $rule['source-track'] <> "") or
-				(isset($rule['max']) and $rule['max'] <> "") or
-				(isset($rule['max-src-nodes']) and $rule['max-src-nodes'] <> "") or
-				(isset($rule['max-src-states']) and $rule['max-src-states'] <> "") or
-				((in_array($rule['protocol'], array("tcp","tcp/udp"))) and
-				 ((isset($rule['statetimeout']) and $rule['statetimeout'] <> "") or
-				  (isset($rule['max-src-conn']) and $rule['max-src-conn'] <> "") or
-				  (isset($rule['max-src-conn-rate']) and $rule['max-src-conn-rate'] <> "") or
-				  (isset($rule['max-src-conn-rates']) and $rule['max-src-conn-rates'] <> ""))) or
-				isset($rule['sloppy']) or isset($rule['nopfsync']) or $l7_present) {
+			    (isset($rule['max']) and $rule['max'] <> "") or
+			    (isset($rule['max-src-nodes']) and $rule['max-src-nodes'] <> "") or
+			    (isset($rule['max-src-states']) and $rule['max-src-states'] <> "") or
+			    ((in_array($rule['protocol'], array("tcp","tcp/udp"))) and
+			     ((isset($rule['statetimeout']) and $rule['statetimeout'] <> "") or
+			      (isset($rule['max-src-conn']) and $rule['max-src-conn'] <> "") or
+			      (isset($rule['max-src-conn-rate']) and $rule['max-src-conn-rate'] <> "") or
+			      (isset($rule['max-src-conn-rates']) and $rule['max-src-conn-rates'] <> ""))) or
+			    (isset($rule['sloppy'])) or
+			    (isset($rule['nopfsync'])) or
+			    ($l7_present)) {
 				$aline['flags'] .= "( ";
 				if (isset($rule['sloppy'])) {
 					$aline['flags'] .= "sloppy ";
@@ -2885,24 +2891,24 @@ function filter_generate_user_rule($rule) {
 				if (isset($rule['max-src-nodes']) and $rule['max-src-nodes'] <> "") {
 					$aline['flags'] .= "max-src-nodes " . $rule['max-src-nodes'] . " ";
 				}
-				if ((in_array($rule['protocol'], array("tcp","tcp/udp")))
-						and isset($rule['max-src-conn'])
-						and $rule['max-src-conn'] <> "") {
+				if ((in_array($rule['protocol'], array("tcp","tcp/udp"))) and
+				    (isset($rule['max-src-conn'])) and
+				    ($rule['max-src-conn'] <> "")) {
 					$aline['flags'] .= "max-src-conn " . $rule['max-src-conn'] . " ";
 				}
 				if (isset($rule['max-src-states']) and $rule['max-src-states'] <> "") {
 					$aline['flags'] .= "max-src-states " . $rule['max-src-states'] . " ";
 				}
-				if ((in_array($rule['protocol'], array("tcp","tcp/udp")))
-						and isset($rule['statetimeout'])
-						and $rule['statetimeout'] <> "") {
+				if ((in_array($rule['protocol'], array("tcp","tcp/udp"))) and
+				    (isset($rule['statetimeout'])) and
+				    ($rule['statetimeout'] <> "")) {
 					$aline['flags'] .= "tcp.established " . $rule['statetimeout'] . " ";
 				}
-				if ((in_array($rule['protocol'], array("tcp","tcp/udp")))
-						and isset($rule['max-src-conn-rate'])
-						and $rule['max-src-conn-rate'] <> ""
-						and isset($rule['max-src-conn-rates'])
-						and $rule['max-src-conn-rates'] <> "") {
+				if ((in_array($rule['protocol'], array("tcp","tcp/udp"))) and
+				    (isset($rule['max-src-conn-rate'])) and
+				    ($rule['max-src-conn-rate'] <> "") and
+				    (isset($rule['max-src-conn-rates'])) and
+				    ($rule['max-src-conn-rates'] <> "")) {
 					$aline['flags'] .= "max-src-conn-rate " . $rule['max-src-conn-rate'] . " ";
 					$aline['flags'] .= "/" . $rule['max-src-conn-rates'] . ", overload <virusprot> flush global ";
 				}
@@ -3363,8 +3369,9 @@ EOD;
 				}
 				break;
 			default:
-				if ((is_array($config['dhcpdv6'][$on]) && isset($config['dhcpdv6'][$on]['enable'])) || isset($oc['track6-interface'])
-					|| (is_array($config['dhcrelay6']) && !empty($config['dhcrelay6']['interface']) && in_array($on, explode(',', $config['dhcrelay6']['interface'])))) {
+				if ((is_array($config['dhcpdv6'][$on]) && isset($config['dhcpdv6'][$on]['enable'])) ||
+				    (isset($oc['track6-interface'])) ||
+				    (is_array($config['dhcrelay6']) && !empty($config['dhcrelay6']['interface']) && in_array($on, explode(',', $config['dhcrelay6']['interface'])))) {
 					$ipfrules .= <<<EOD
 # allow access to DHCPv6 server on {$oc['descr']}
 # We need inet6 icmp for stateless autoconfig and dhcpv6
@@ -3505,8 +3512,8 @@ EOD;
 	$tracker = $saved_tracker;
 	if (isset($config['nat']['rule']) && is_array($config['nat']['rule'])) {
 		foreach ($config['nat']['rule'] as $rule) {
-			if ((!isset($config['system']['disablenatreflection']) || $rule['natreflection'] == "enable")
-			   && $rule['natreflection'] != "disable") {
+			if ((!isset($config['system']['disablenatreflection']) || $rule['natreflection'] == "enable") &&
+			    ($rule['natreflection'] != "disable")) {
 				$ipfrules .= "# NAT Reflection rules\n";
 				$ipfrules .= <<<EOD
 pass in {$log['pass']} inet tagged PFREFLECT tracker {$increment_tracker($tracker)} keep state label "NAT REFLECT: Allow traffic to localhost"
@@ -3958,8 +3965,8 @@ function filter_generate_ipsec_rules($log = array()) {
 	$increment_tracker = 'filter_rule_tracker';
 
 	$ipfrules = "\n# VPN Rules\n";
-	if (isset($config['ipsec']['enable']) &&
-		is_array($config['ipsec']['phase1'])) {
+	if ((isset($config['ipsec']['enable'])) &&
+	    (is_array($config['ipsec']['phase1']))) {
 		/* step through all phase1 entries */
 		foreach ($config['ipsec']['phase1'] as $ph1ent) {
 			$tracker += 10;

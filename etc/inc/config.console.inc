@@ -385,7 +385,7 @@ EODD;
 		}
 		if (preg_match($g['wireless_regex'], $lanif)) {
 			if (is_array($config['interfaces']['lan']) &&
-				(!is_array($config['interfaces']['lan']['wireless']))) {
+			    !is_array($config['interfaces']['lan']['wireless'])) {
 				$config['interfaces']['lan']['wireless'] = array();
 			}
 		} else {
@@ -401,7 +401,7 @@ EODD;
 		$config['interfaces']['wan']['enable'] = true;
 		if (preg_match($g['wireless_regex'], $wanif)) {
 			if (is_array($config['interfaces']['wan']) &&
-				(!is_array($config['interfaces']['wan']['wireless']))) {
+			    !is_array($config['interfaces']['wan']['wireless'])) {
 				$config['interfaces']['wan']['wireless'] = array();
 			}
 		} else {
@@ -535,7 +535,7 @@ EOD;
 
 		if ($vlan['if']) {
 			if (!array_key_exists($vlan['if'], $iflist) or
-				!is_jumbo_capable($vlan['if'])) {
+			    !is_jumbo_capable($vlan['if'])) {
 				printf(gettext("%sInvalid interface name '%s'%s"), "\n", $vlan['if'], "\n");
 				continue;
 			}

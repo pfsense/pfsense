@@ -361,8 +361,8 @@
 						$port = ":" . $this->_dnsPort;
 					}
 					if (($this->_dnsService == "noip-free") &&
-						($this->_forceUpdateNeeded == true) &&
-						($this->_dnsDummyUpdateDone == false)) {
+					    ($this->_forceUpdateNeeded == true) &&
+					    ($this->_dnsDummyUpdateDone == false)) {
 						// Update the IP to a dummy value to force No-IP free accounts to see a change.
 						$iptoset = "192.168.1.1";
 						$this->_dnsDummyUpdateDone = true;

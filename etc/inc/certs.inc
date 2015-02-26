@@ -223,7 +223,7 @@ function ca_create(& $ca, $keylen, $lifetime, $dn, $digest_alg = "sha256") {
 
 	// export our certificate data
 	if (!openssl_pkey_export($res_key, $str_key) ||
-		!openssl_x509_export($res_crt, $str_crt)) {
+	    !openssl_x509_export($res_crt, $str_crt)) {
 		return false;
 	}
 
@@ -276,7 +276,7 @@ function ca_inter_create(& $ca, $keylen, $lifetime, $dn, $caref, $digest_alg = "
 
 	// export our certificate data
 	if (!openssl_pkey_export($res_key, $str_key) ||
-		!openssl_x509_export($res_crt, $str_crt)) {
+	    !openssl_x509_export($res_crt, $str_crt)) {
 		return false;
 	}
 
@@ -385,7 +385,7 @@ function cert_create(& $cert, $caref, $keylen, $lifetime, $dn, $type="user", $di
 
 	// export our certificate data
 	if (!openssl_pkey_export($res_key, $str_key) ||
-		!openssl_x509_export($res_crt, $str_crt)) {
+	    !openssl_x509_export($res_crt, $str_crt)) {
 		return false;
 	}
 
@@ -419,7 +419,7 @@ function csr_generate(& $cert, $keylen, $dn, $digest_alg = "sha256") {
 
 	// export our request data
 	if (!openssl_pkey_export($res_key, $str_key) ||
-		!openssl_csr_export($res_csr, $str_csr)) {
+	    !openssl_csr_export($res_csr, $str_csr)) {
 		return false;
 	}
 
@@ -664,8 +664,8 @@ function is_ipsec_cert($certref) {
 
 function is_webgui_cert($certref) {
 	global $config;
-	if (($config['system']['webgui']['ssl-certref'] == $certref)
-		&& ($config['system']['webgui']['protocol'] != "http")) {
+	if (($config['system']['webgui']['ssl-certref'] == $certref) &&
+	    ($config['system']['webgui']['protocol'] != "http")) {
 		return true;
 	}
 }
@@ -779,10 +779,10 @@ function cert_compare($cert1, $cert2) {
 		being identical. */
 	$c1 = base64_decode($cert1['crt']);
 	$c2 = base64_decode($cert2['crt']);
-	if ((cert_get_issuer($c1, false) == cert_get_issuer($c2, false))
-		&& (cert_get_subject($c1, false) == cert_get_subject($c2, false))
-		&& (cert_get_serial($c1, false) == cert_get_serial($c2, false))
-		&& (cert_get_modulus($c1, false) == cert_get_modulus($c2, false))) {
+	if ((cert_get_issuer($c1, false) == cert_get_issuer($c2, false)) &&
+	    (cert_get_subject($c1, false) == cert_get_subject($c2, false)) &&
+	    (cert_get_serial($c1, false) == cert_get_serial($c2, false)) &&
+	    (cert_get_modulus($c1, false) == cert_get_modulus($c2, false))) {
 		return true;
 	}
 	return false;

@@ -73,11 +73,11 @@ if (function_exists("display_error_form") && !isset($config['system']['webgui'][
 		$http_host = $http_host[0];
 	}
 	if (is_ipaddr($http_host) or $_SERVER['SERVER_ADDR'] == "127.0.0.1" or
-		strcasecmp($http_host, "localhost") == 0 or $_SERVER['SERVER_ADDR'] == "::1") {
+	    strcasecmp($http_host, "localhost") == 0 or $_SERVER['SERVER_ADDR'] == "::1") {
 		$found_host = true;
 	}
 	if (strcasecmp($http_host, $config['system']['hostname'] . "." . $config['system']['domain']) == 0 or
-		strcasecmp($http_host, $config['system']['hostname']) == 0) {
+	    strcasecmp($http_host, $config['system']['hostname']) == 0) {
 		$found_host = true;
 	}
 
@@ -134,8 +134,8 @@ if (function_exists("display_error_form") && !isset($config['system']['webgui'][
 		$referrer_host = parse_url($_SERVER['HTTP_REFERER'], PHP_URL_HOST);
 		$referrer_host = str_replace(array("[", "]"), "", $referrer_host);
 		if ($referrer_host) {
-			if (strcasecmp($referrer_host, $config['system']['hostname'] . "." . $config['system']['domain']) == 0
-					|| strcasecmp($referrer_host, $config['system']['hostname']) == 0) {
+			if (strcasecmp($referrer_host, $config['system']['hostname'] . "." . $config['system']['domain']) == 0 ||
+			    strcasecmp($referrer_host, $config['system']['hostname']) == 0) {
 				$found_host = true;
 			}
 
@@ -1492,7 +1492,7 @@ function session_auth() {
 	if (isset($_POST['login']) && !empty($_POST['usernamefld']) && !empty($_POST['passwordfld'])) {
 		$authcfg = auth_get_authserver($config['system']['webgui']['authmode']);
 		if (authenticate_user($_POST['usernamefld'], $_POST['passwordfld'], $authcfg) ||
-			authenticate_user($_POST['usernamefld'], $_POST['passwordfld'])) {
+		    authenticate_user($_POST['usernamefld'], $_POST['passwordfld'])) {
 			// Generate a new id to avoid session fixation
 			session_regenerate_id();
 			$_SESSION['Logged_In'] = "True";

@@ -656,7 +656,7 @@ function captiveportal_prune_old() {
 
 	/* Is there any job to do? */
 	if (!$timeout && !$idletimeout && !isset($cpcfg['reauthenticate']) &&
-		!isset($cpcfg['radiussession_timeout']) && !isset($vcpcfg['enable'])) {
+	    !isset($cpcfg['radiussession_timeout']) && !isset($vcpcfg['enable'])) {
 		return;
 	}
 
@@ -1232,8 +1232,8 @@ function captiveportal_init_radius_servers() {
 	global $config, $g, $cpzone;
 
 	/* generate radius server database */
-	if ($config['captiveportal'][$cpzone]['radiusip'] && (!isset($config['captiveportal'][$cpzone]['auth_method']) ||
-		($config['captiveportal'][$cpzone]['auth_method'] == "radius"))) {
+	if ($config['captiveportal'][$cpzone]['radiusip'] &&
+	    (!isset($config['captiveportal'][$cpzone]['auth_method']) || $config['captiveportal'][$cpzone]['auth_method'] == "radius")) {
 		$radiusip = $config['captiveportal'][$cpzone]['radiusip'];
 		$radiusip2 = ($config['captiveportal'][$cpzone]['radiusip2']) ? $config['captiveportal'][$cpzone]['radiusip2'] : null;
 		$radiusip3 = ($config['captiveportal'][$cpzone]['radiusip3']) ? $config['captiveportal'][$cpzone]['radiusip3'] : null;
@@ -2316,7 +2316,7 @@ function captiveportal_blocked_mac($mac) {
 
 	foreach ($config['captiveportal'][$cpzone]['passthrumac'] as $passthrumac) {
 		if (($passthrumac['action'] == 'block') &&
-			($passthrumac['mac'] == strtolower($mac))) {
+		    ($passthrumac['mac'] == strtolower($mac))) {
 			return true;
 		}
 	}

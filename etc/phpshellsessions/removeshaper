@@ -13,8 +13,9 @@ unset($queue);
 unset($altq);
 
 foreach ($config['filter']['rule'] as $key => $rule) {
-	if (isset($rule['wizard']) && $rule['wizard'] == "yes")
+	if (isset($rule['wizard']) && $rule['wizard'] == "yes") {
 		unset($config['filter']['rule'][$key]);
+	}
 }
 if (write_config()) {
 	echo gettext("Shaper Successfully Removed.\n");

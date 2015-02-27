@@ -46,13 +46,14 @@ function gmirror_get_status() {
 				$currentmirror = basename($all[0]);
 				$mirrors[$currentmirror]['name'] = basename($all[0]);
 				$mirrors[$currentmirror]['status'] = $all[1];
-				if (!is_array($mirrors[$currentmirror]['components']))
+				if (!is_array($mirrors[$currentmirror]['components'])) {
 					$mirrors[$currentmirror]['components'] = array();
+				}
 				$mirrors[$currentmirror]['components'][] = $all[2];
 			}
 		}
 	}
-	/* Return an hash of mirrors and components */	
+	/* Return an hash of mirrors and components */
 	return $mirrors;
 }
 
@@ -113,8 +114,9 @@ function gmirror_get_unused_consumers() {
 	$all_consumers = array();
 	foreach ($consumerlist as $cl) {
 		$parts = explode(" ", $cl);
-		foreach ($parts as $part)
+		foreach ($parts as $part) {
 			$all_consumers[] = $part;
+		}
 	}
 	foreach ($disklist as $d) {
 		if (!is_consumer_used($d) && !in_array($d, $all_consumers)) {
@@ -134,8 +136,9 @@ function gmirror_get_mirrors() {
 
 /* List all consumers for a given mirror */
 function gmirror_get_consumers_in_mirror($mirror) {
-	if (!is_valid_mirror($mirror))
+	if (!is_valid_mirror($mirror)) {
 		return array();
+	}
 
 	$consumers = array();
 	exec("/sbin/gmirror status -s " . escapeshellarg($mirror) . " | /usr/bin/awk '{print $3;}'", $consumers);
@@ -144,8 +147,9 @@ function gmirror_get_consumers_in_mirror($mirror) {
 
 /* Test if a given consumer is a member of an existing mirror */
 function is_consumer_in_mirror($consumer, $mirror) {
-	if (!is_valid_consumer($consumer) || !is_valid_mirror($mirror))
+	if (!is_valid_consumer($consumer) || !is_valid_mirror($mirror)) {
 		return false;
+	}
 
 	$mirrorconsumers = gmirror_get_consumers_in_mirror($mirror);
 	return in_array(basename($consumer), $mirrorconsumers);
@@ -169,8 +173,9 @@ function is_consumer_used($consumer) {
 	$mirrors = gmirror_get_mirrors();
 	foreach ($mirrors as $mirror) {
 		$consumers = gmirror_get_consumers_in_mirror($mirror);
-		if (in_array($consumer, $consumers))
+		if (in_array($consumer, $consumers)) {
 			return true;
+		}
 	}
 	return false;
 }
@@ -188,36 +193,41 @@ function is_valid_consumer($consumer) {
 
 /* Remove all disconnected drives from a mirror */
 function gmirror_forget_disconnected($mirror) {
-	if (!is_valid_mirror($mirror))
+	if (!is_valid_mirror($mirror)) {
 		return false;
+	}
 	return mwexec("/sbin/gmirror forget " . escapeshellarg($mirror));
 }
 
 /* Insert another consumer into a mirror */
 function gmirror_insert_consumer($mirror, $consumer) {
-	if (!is_valid_mirror($mirror) || !is_valid_consumer($consumer))
+	if (!is_valid_mirror($mirror) || !is_valid_consumer($consumer)) {
 		return false;
+	}
 	return mwexec("/sbin/gmirror insert " . escapeshellarg($mirror) . " " . escapeshellarg($consumer));
 }
 
 /* Remove consumer from a mirror and clear its metadata */
 function gmirror_remove_consumer($mirror, $consumer) {
-	if (!is_valid_mirror($mirror) || !is_valid_consumer($consumer))
+	if (!is_valid_mirror($mirror) || !is_valid_consumer($consumer)) {
 		return false;
+	}
 	return mwexec("/sbin/gmirror remove " . escapeshellarg($mirror) . " " . escapeshellarg($consumer));
 }
 
 /* Wipe geom info from drive (if mirror is not running) */
 function gmirror_clear_consumer($consumer) {
-	if (!is_valid_consumer($consumer))
+	if (!is_valid_consumer($consumer)) {
 		return false;
+	}
 	return mwexec("/sbin/gmirror clear " . escapeshellarg($consumer));
 }
 
 /* Find the balance method used by a given mirror */
 function gmirror_get_mirror_balance($mirror) {
-	if (!is_valid_mirror($mirror))
+	if (!is_valid_mirror($mirror)) {
 		return false;
+	}
 	$balancemethod = "";
 	exec("/sbin/gmirror list " . escapeshellarg($mirror) . " | /usr/bin/grep '^Balance:' | /usr/bin/awk '{print $2;}'", $balancemethod);
 	return $balancemethod[0];
@@ -226,22 +236,25 @@ function gmirror_get_mirror_balance($mirror) {
 /* Change balance algorithm of the mirror */
 function gmirror_configure_balance($mirror, $balancemethod) {
 	global $balance_methods;
-	if (!is_valid_mirror($mirror) || !in_array($balancemethod, $balance_methods))
+	if (!is_valid_mirror($mirror) || !in_array($balancemethod, $balance_methods)) {
 		return false;
+	}
 	return mwexec("/sbin/gmirror configure -b " . escapeshellarg($balancemethod) . " " . escapeshellarg($mirror));
 }
 
 /* Force a mirror member to rebuild */
 function gmirror_force_rebuild($mirror, $consumer) {
-	if (!is_valid_mirror($mirror) || !is_valid_consumer($consumer))
+	if (!is_valid_mirror($mirror) || !is_valid_consumer($consumer)) {
 		return false;
+	}
 	return mwexec("/sbin/gmirror rebuild " . escapeshellarg($mirror) . " " . escapeshellarg($consumer));
 }
 
 /* Show all metadata on the physical consumer */
 function gmirror_get_consumer_metadata($consumer) {
-	if (!is_valid_consumer($consumer))
+	if (!is_valid_consumer($consumer)) {
 		return array();
+	}
 	$output = "";
 	exec("/sbin/gmirror dump " . escapeshellarg($consumer), $output);
 	return array_map('trim', $output);
@@ -254,8 +267,9 @@ function gmirror_consumer_has_metadata($consumer) {
 
 /* Find the mirror to which this consumer belongs */
 function gmirror_get_consumer_metadata_mirror($consumer) {
-	if (!is_valid_consumer($consumer))
+	if (!is_valid_consumer($consumer)) {
 		return array();
+	}
 	$metadata = gmirror_get_consumer_metadata($consumer);
 	foreach ($metadata as $line) {
 		if (substr($line, 0, 5) == "name:") {
@@ -267,22 +281,25 @@ function gmirror_get_consumer_metadata_mirror($consumer) {
 
 /* Deactivate consumer, removing it from service in the mirror, but leave metadata intact */
 function gmirror_deactivate_consumer($mirror, $consumer) {
-	if (!is_valid_mirror($mirror) || !is_valid_consumer($consumer))
+	if (!is_valid_mirror($mirror) || !is_valid_consumer($consumer)) {
 		return false;
+	}
 	return mwexec("/sbin/gmirror deactivate " . escapeshellarg($mirror) . " " . escapeshellarg($consumer));
 }
 
 /* Reactivate a deactivated consumer */
 function gmirror_activate_consumer($mirror, $consumer) {
-	if (!is_valid_mirror($mirror) || !is_valid_consumer($consumer))
+	if (!is_valid_mirror($mirror) || !is_valid_consumer($consumer)) {
 		return false;
+	}
 	return mwexec("/sbin/gmirror activate " . escapeshellarg($mirror) . " " . escapeshellarg($consumer));
 }
 
 /* Find the size of the given mirror */
 function gmirror_get_mirror_size($mirror) {
-	if (!is_valid_mirror($mirror))
+	if (!is_valid_mirror($mirror)) {
 		return false;
+	}
 	$mirrorsize = "";
 	exec("/sbin/gmirror list " . escapeshellarg($mirror) . " | /usr/bin/grep 'Mediasize:' | /usr/bin/head -n 1 | /usr/bin/awk '{print $2;}'", $mirrorsize);
 	return $mirrorsize[0];
@@ -292,8 +309,9 @@ function gmirror_get_mirror_size($mirror) {
 	list output is a little odd, we can't get the output for just the disk, if the disk contains
 	slices those get output also. */
 function gmirror_get_all_unused_consumer_sizes_on_disk($disk) {
-	if (!is_valid_disk($disk) || !is_consumer_unused($disk))
+	if (!is_valid_disk($disk) || !is_consumer_unused($disk)) {
 		return array();
+	}
 	$output = "";
 	exec("/sbin/geom part list " . escapeshellarg($disk) . " | /usr/bin/egrep '(Name:|Mediasize:)' | /usr/bin/cut -c4- | /usr/bin/sed -l -e 'N;s/\\nMediasize://;P;D;' | /usr/bin/cut -c7-", $output);
 	if (empty($output)) {
@@ -315,8 +333,9 @@ function gmirror_get_all_unused_consumer_sizes_on_disk($disk) {
 function gmirror_get_unused_consumer_size($consumer) {
 	$consumersizes = gmirror_get_all_unused_consumer_sizes_on_disk($consumer);
 	foreach ($consumersizes as $csize) {
-		if ($csize['name'] == $consumer)
+		if ($csize['name'] == $consumer) {
 			return $csize['size'];
+		}
 	}
 	return -1;
 }

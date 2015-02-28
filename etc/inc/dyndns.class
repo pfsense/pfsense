@@ -355,7 +355,7 @@
 					$server = "https://dynupdate.no-ip.com/ducupdate.php";
 					$port = "";
 					if ($this->_dnsServer) {
-						$server = $this->_dnsServer
+						$server = $this->_dnsServer;
 					}
 					if ($this->_dnsPort) {
 						$port = ":" . $this->_dnsPort;

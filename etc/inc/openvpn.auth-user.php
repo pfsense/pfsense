@@ -32,7 +32,7 @@
 
 */
 /*
-	pfSense_BUILDER_BINARIES:	
+	pfSense_BUILDER_BINARIES:
 	pfSense_MODULE:	openvpn
 */
 /*
@@ -55,12 +55,13 @@ require_once("interfaces.inc");
 if (!function_exists("getNasID")) {
 function getNasID()
 {
-    global $g;
+	global $g;
 
-    $nasId = gethostname();
-    if(empty($nasId))
-        $nasId = $g['product_name'];
-    return $nasId;
+	$nasId = gethostname();
+	if (empty($nasId)) {
+		$nasId = $g['product_name'];
+	}
+	return $nasId;
 }
 }
 
@@ -73,10 +74,11 @@ function getNasID()
 if (!function_exists("getNasIP")) {
 function getNasIP()
 {
-    $nasIp = get_interface_ip();
-    if(!$nasIp)
-        $nasIp = "0.0.0.0";
-    return $nasIp;
+	$nasIp = get_interface_ip();
+	if (!$nasIp) {
+		$nasIp = "0.0.0.0";
+	}
+	return $nasIp;
 }
 }
 /* setup syslog logging */
@@ -108,7 +110,7 @@ if (!$username || !$password) {
 	}
 }
 
-/* Replaced by a sed with propper variables used below(ldap parameters). */
+/* Replaced by a sed with proper variables used below(ldap parameters). */
 //<template>
 
 if (file_exists("{$g['varetc_path']}/openvpn/{$modeid}.ca")) {
@@ -145,12 +147,14 @@ if (!is_array($authmodes)) {
 $attributes = array();
 foreach ($authmodes as $authmode) {
 	$authcfg = auth_get_authserver($authmode);
-	if (!$authcfg && $authmode != "local")
+	if (!$authcfg && $authmode != "local") {
 		continue;
+	}
 
 	$authenticated = authenticate_user($username, $password, $authcfg, $attributes);
-	if ($authenticated == true)
+	if ($authenticated == true) {
 		break;
+	}
 }
 
 if ($authenticated == false) {
@@ -165,42 +169,47 @@ if ($authenticated == false) {
 	}
 }
 
-if (file_exists("/etc/inc/openvpn.attributes.php"))
-        include_once("/etc/inc/openvpn.attributes.php");
-        
+if (file_exists("/etc/inc/openvpn.attributes.php")) {
+	include_once("/etc/inc/openvpn.attributes.php");
+}
+
 $content = "";
 if (is_array($attributes['dns-servers'])) {
-        foreach ($attributes['dns-servers'] as $dnssrv) {
-                if (is_ipaddr($dnssrv))
-                        $content .= "push \"dhcp-option DNS {$dnssrv}\"\n";
-        }
+	foreach ($attributes['dns-servers'] as $dnssrv) {
+		if (is_ipaddr($dnssrv)) {
+			$content .= "push \"dhcp-option DNS {$dnssrv}\"\n";
+		}
+	}
 }
 if (is_array($attributes['routes'])) {
-        foreach ($attributes['routes'] as $route)
+	foreach ($attributes['routes'] as $route) {
 		$content .= "push \"route {$route} vpn_gateway\"\n";
+	}
 }
 
 if (isset($attributes['framed_ip'])) {
 /* XXX: only use when TAP windows driver >= 8.2.x */
-/*      if (isset($attributes['framed_mask'])) {
-                $content .= "topology subnet\n";
-                $content .= "ifconfig-push {$attributes['framed_ip']} {$attributes['framed_mask']}";
-        } else {
+/*	if (isset($attributes['framed_mask'])) {
+		$content .= "topology subnet\n";
+		$content .= "ifconfig-push {$attributes['framed_ip']} {$attributes['framed_mask']}";
+	} else {
 */
-                $content .= "topology net30\n";
-                $content .= "ifconfig-push {$attributes['framed_ip']} ". long2ip((ip2long($attributes['framed_ip']) + 1));
-//      }
+	$content .= "topology net30\n";
+	$content .= "ifconfig-push {$attributes['framed_ip']} ". long2ip((ip2long($attributes['framed_ip']) + 1));
+//	}
 }
-    
-if (!empty($content))
-        @file_put_contents("{$g['tmp_path']}/{$username}", $content);
+
+if (!empty($content)) {
+	@file_put_contents("{$g['tmp_path']}/{$username}", $content);
+}
 
 syslog(LOG_NOTICE, "user '{$username}' authenticated\n");
 closelog();
 
-if (isset($_GET['username']))
+if (isset($_GET['username'])) {
 	echo "OK";
-else
+} else {
 	return (0);
+}
 
 ?>

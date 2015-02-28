@@ -1,37 +1,35 @@
 <?php
 /****h* pfSense/notices
- * NAME
- *   notices.inc - pfSense notice utilities
- * DESCRIPTION
- *   This include contains the pfSense notice facilities.
- * HISTORY
- *   $Id$
- ******
- *
- * Copyright (C) 2009 Scott Ullrich (sullrich@gmail.com)
- * Copyright (C) 2005 Colin Smith (ethethlay@gmail.com)
- * All rights reserved.
- * Redistribution and use in source and binary forms, with or without
- * modification, are permitted provided that the following conditions are met:
- *
- * 1. Redistributions of source code must retain the above copyright notice,
- * this list of conditions and the following disclaimer.
- *
- * 2. Redistributions in binary form must reproduce the above copyright
- * notice, this list of conditions and the following disclaimer in the
- * documentation and/or other materials provided with the distribution.
- *
- * THIS SOFTWARE IS PROVIDED ``AS IS'' AND ANY EXPRESS OR IMPLIED WARRANTIES,
- * INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY
- * AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE
- * AUTHOR BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY,
- * OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
- * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
- * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
- * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
- * RISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
- * POSSIBILITY OF SUCH DAMAGE.
- *
+	NAME
+		notices.inc - pfSense notice utilities
+	DESCRIPTION
+		This include contains the pfSense notice facilities.
+	HISTORY
+		$Id$
+
+	Copyright (C) 2009 Scott Ullrich (sullrich@gmail.com)
+	Copyright (C) 2005 Colin Smith (ethethlay@gmail.com)
+	All rights reserved.
+	Redistribution and use in source and binary forms, with or without
+	modification, are permitted provided that the following conditions are met:
+
+	1. Redistributions of source code must retain the above copyright notice,
+	   this list of conditions and the following disclaimer.
+
+	2. Redistributions in binary form must reproduce the above copyright
+	   notice, this list of conditions and the following disclaimer in the
+	   documentation and/or other materials provided with the distribution.
+
+	THIS SOFTWARE IS PROVIDED ``AS IS'' AND ANY EXPRESS OR IMPLIED WARRANTIES,
+	INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY
+	AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE
+	AUTHOR BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY,
+	OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+	SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+	INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+	CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+	RISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+	POSSIBILITY OF SUCH DAMAGE.
  */
 
 /*
@@ -71,7 +69,9 @@ function file_notice($id, $notice, $category = "General", $url = "", $priority =
 	 *	       0 = informational, 1 = warning, 2 = error, etc. This may also be arbitrary,
 	 */
 	global $notice_path;
-	if(!$queue = get_notices()) $queue = array();
+	if (!$queue = get_notices()) {
+		$queue = array();
+	}
 	$queuekey = time();
 	$toqueue = array(
 				'id'		=> $id,
@@ -82,7 +82,7 @@ function file_notice($id, $notice, $category = "General", $url = "", $priority =
 			);
 	$queue[$queuekey] = $toqueue;
 	$queueout = fopen($notice_path, "w");
-	if(!$queueout) {
+	if (!$queueout) {
 		log_error(printf(gettext("Could not open %s for writing"), $notice_path));
 		return;
 	}
@@ -90,8 +90,9 @@ function file_notice($id, $notice, $category = "General", $url = "", $priority =
 	fclose($queueout);
 	log_error("New alert found: $notice");
 	/* soekris */
-	if(file_exists("/dev/led/error"))
+	if (file_exists("/dev/led/error")) {
 		exec("/bin/echo 1 > /dev/led/error");
+	}
 	/* wrap & alix */
 	led_normalize();
 	led_morse(1, 'sos');
@@ -111,13 +112,16 @@ function file_notice($id, $notice, $category = "General", $url = "", $priority =
 function get_notices($category = "all") {
 	global $g;
 
-	if(file_exists("{$g['tmp_path']}/notices")) {
+	if (file_exists("{$g['tmp_path']}/notices")) {
 		$queue = unserialize(file_get_contents("{$g['tmp_path']}/notices"));
-		if(!$queue) return false;
-		if($category != 'all') {
-			foreach($queue as $time => $notice) {
-				if(strtolower($notice['category']) == strtolower($category))
+		if (!$queue) {
+			return false;
+		}
+		if ($category != 'all') {
+			foreach ($queue as $time => $notice) {
+				if (strtolower($notice['category']) == strtolower($category)) {
 					$toreturn[$time] = $notice;
+				}
 			}
 			return $toreturn;
 		} else {
@@ -140,35 +144,38 @@ function close_notice($id) {
 	global $notice_path;
 	require_once("util.inc");
 	/* soekris */
-	if(file_exists("/dev/led/error"))
+	if (file_exists("/dev/led/error")) {
 		exec("/bin/echo 0 > /dev/led/error");
+	}
 	/* wrap & alix */
 	led_normalize();
 	$ids = array();
-	if(!$notices = get_notices()) return;
-	if($id == "all") {
+	if (!$notices = get_notices()) {
+		return;
+	}
+	if ($id == "all") {
 		unlink_if_exists($notice_path);
 		return;
 	}
-	foreach(array_keys($notices) as $time) {
-		if($id == $time) {
+	foreach (array_keys($notices) as $time) {
+		if ($id == $time) {
 			unset($notices[$id]);
 			break;
 		}
 	}
-	foreach($notices as $key => $notice) {
+	foreach ($notices as $key => $notice) {
 		$ids[$key] = $notice['id'];
 	}
-	foreach($ids as $time => $tocheck) {
-		if($id == $tocheck) {
+	foreach ($ids as $time => $tocheck) {
+		if ($id == $tocheck) {
 			unset($notices[$time]);
 			break;
 		}
 	}
-	if(count($notices) != 0) {
+	if (count($notices) != 0) {
 		$queueout = fopen($notice_path, "w");
-        	fwrite($queueout, serialize($notices));
-        	fclose($queueout);
+		fwrite($queueout, serialize($notices));
+		fclose($queueout);
 	} else {
 		unlink_if_exists($notice_path);
 	}
@@ -185,14 +192,17 @@ function close_notice($id) {
  *   Outputs notices in XML formatted text
  ******/
 function dump_xml_notices() {
-	if(file_exists("/cf/conf/use_xmlreader"))
+	if (file_exists("/cf/conf/use_xmlreader")) {
 		require_once("xmlreader.inc");
-	else
+	} else {
 		require_once("xmlparse.inc");
+	}
 	global $notice_path, $listtags;
 	$listtags[] = 'notice';
-	if(!$notices = get_notices()) return;
-	foreach($notices as $time => $notice) {
+	if (!$notices = get_notices()) {
+		return;
+	}
+	foreach ($notices as $time => $notice) {
 		$notice['time'] = $time;
 		$toput['notice'][] = $notice;
 	}
@@ -209,21 +219,23 @@ function dump_xml_notices() {
  *   prints notices to the GUI
  ******/
 function print_notices($notices, $category = "all") {
-	foreach($notices as $notice) {
-		if($category != "all") {
-			if(in_array($notice['category'], $category)) $categories[] = $notice['category'];
+	foreach ($notices as $notice) {
+		if ($category != "all") {
+			if (in_array($notice['category'], $category)) {
+				$categories[] = $notice['category'];
+			}
 		} else {
 			$categories[] = $notice['category'];
 		}
 	}
 	$categories = array_unique($categories);
 	sort($categories);
-	foreach($categories as $category) {
+	foreach ($categories as $category) {
 		$toreturn .= "<ul><li>{$category}<ul>";
-		foreach($notices as $notice) {
-			if(strtolower($notice['category']) == strtolower($category)) {
-				if($notice['id'] != "") {
-					if($notice['url'] != "") {
+		foreach ($notices as $notice) {
+			if (strtolower($notice['category']) == strtolower($category)) {
+				if ($notice['id'] != "") {
+					if ($notice['url'] != "") {
 						$toreturn .= "<li><a href={$notice['url']}>{$notice['id']}</a> - {$notice['notice']}</li>";
 					} else {
 						$toreturn .= "<li>{$notice['id']} - {$notice['notice']}</li>";
@@ -246,7 +258,9 @@ function print_notices($notices, $category = "all") {
  ******/
 function print_notice_box($category = "all") {
 	$notices = get_notices();
-	if(!$notices) return;
+	if (!$notices) {
+		return;
+	}
 	print_info_box_np(print_notices($notices, $category));
 	return;
 }
@@ -261,7 +275,7 @@ function print_notice_box($category = "all") {
  ******/
 function are_notices_pending($category = "all") {
 	global $notice_path;
-	if(file_exists($notice_path)) {
+	if (file_exists($notice_path)) {
 		return true;
 	}
 	return false;
@@ -277,17 +291,20 @@ function are_notices_pending($category = "all") {
  ******/
 function notify_via_smtp($message, $force = false) {
 	global $config, $g;
-	if(platform_booting())
+	if (platform_booting()) {
 		return;
+	}
 
-	if(isset($config['notifications']['smtp']['disable']) && !$force)
+	if (isset($config['notifications']['smtp']['disable']) && !$force) {
 		return;
+	}
 
 	/* Do NOT send the same message twice */
-	if(file_exists("/var/db/notices_lastmsg.txt")) {
+	if (file_exists("/var/db/notices_lastmsg.txt")) {
 		$lastmsg = trim(file_get_contents("/var/db/notices_lastmsg.txt"));
-		if($lastmsg == $message)
+		if ($lastmsg == $message) {
 			return;
+		}
 	}
 
 	/* Store last message sent to avoid spamming */
@@ -304,14 +321,17 @@ function send_smtp_message($message, $subject = "(no subject)", $force = false) 
 	require_once("sasl.inc");
 	require_once("smtp.inc");
 
-	if(isset($config['notifications']['smtp']['disable']) && !$force)
+	if (isset($config['notifications']['smtp']['disable']) && !$force) {
 		return;
+	}
 
-	if(!$config['notifications']['smtp']['ipaddress'])
+	if (!$config['notifications']['smtp']['ipaddress']) {
 		return;
+	}
 
-	if(!$config['notifications']['smtp']['notifyemailaddress'])
+	if (!$config['notifications']['smtp']['notifyemailaddress']) {
 		return;
+	}
 
 	$smtp = new smtp_class;
 
@@ -327,13 +347,14 @@ function send_smtp_message($message, $subject = "(no subject)", $force = false) 
 	$smtp->debug = 0;
 	$smtp->html_debug = 0;
 	$smtp->localhost=$config['system']['hostname'].".".$config['system']['domain'];
-	
-	if($config['notifications']['smtp']['fromaddress'])
+
+	if ($config['notifications']['smtp']['fromaddress']) {
 		$from = $config['notifications']['smtp']['fromaddress'];
-	
+	}
+
 	// Use SMTP Auth if fields are filled out
-	if($config['notifications']['smtp']['username'] && 
-	   $config['notifications']['smtp']['password']) {
+	if ($config['notifications']['smtp']['username'] &&
+	    $config['notifications']['smtp']['password']) {
 		if (isset($config['notifications']['smtp']['authentication_mechanism'])) {
 			$smtp->authentication_mechanism = $config['notifications']['smtp']['authentication_mechanism'];
 		} else {
@@ -350,7 +371,7 @@ function send_smtp_message($message, $subject = "(no subject)", $force = false) 
 		"Date: ".date("r")
 	);
 
-	if($smtp->SendMessage($from, preg_split('/\s*,\s*/', trim($to)), $headers, $message)) {
+	if ($smtp->SendMessage($from, preg_split('/\s*,\s*/', trim($to)), $headers, $message)) {
 		log_error(sprintf(gettext("Message sent to %s OK"), $to));
 		return;
 	} else {
@@ -371,14 +392,16 @@ function notify_via_growl($message, $force=false) {
 	require_once("growl.class");
 	global $config,$g;
 
-	if (isset($config['notifications']['growl']['disable']) && !$force)
+	if (isset($config['notifications']['growl']['disable']) && !$force) {
 		return;
+	}
 
 	/* Do NOT send the same message twice */
-	if(file_exists("/var/db/growlnotices_lastmsg.txt")) {
+	if (file_exists("/var/db/growlnotices_lastmsg.txt")) {
 		$lastmsg = trim(file_get_contents("/var/db/growlnotices_lastmsg.txt"));
-		if($lastmsg == $message)
+		if ($lastmsg == $message) {
 			return;
+		}
 	}
 
 	$hostname = $config['system']['hostname'] . "." . $config['system']['domain'];
@@ -386,8 +409,8 @@ function notify_via_growl($message, $force=false) {
 	$growl_password = $config['notifications']['growl']['password'];
 	$growl_name = $config['notifications']['growl']['name'];
 	$growl_notification = $config['notifications']['growl']['notification_name'];
-	
-	if(!empty($growl_ip)) {
+
+	if (!empty($growl_ip)) {
 		$growl = new Growl($growl_ip, $growl_password, $growl_name);
 		$growl->notify("{$growl_notification}", gettext(sprintf("%s (%s) - Notification", $g['product_name'], $hostname)), "{$message}");
 	}
@@ -413,9 +436,9 @@ function register_via_growl() {
 	$growl_password = $config['notifications']['growl']['password'];
 	$growl_name = $config['notifications']['growl']['name'];
 	$growl_notification = $config['notifications']['growl']['notification_name'];
-	
-	if($growl_ip) {
-	  $growl = new Growl($growl_ip, $growl_password, $growl_name);
+
+	if ($growl_ip) {
+		$growl = new Growl($growl_ip, $growl_password, $growl_name);
 		$growl->addNotification($growl_notification);
 		$growl->register();
 	}

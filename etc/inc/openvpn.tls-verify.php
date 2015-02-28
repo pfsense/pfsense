@@ -31,7 +31,7 @@
 
 */
 /*
-	pfSense_BUILDER_BINARIES:	
+	pfSense_BUILDER_BINARIES:
 	pfSense_MODULE:	openvpn
 */
 /*
@@ -63,8 +63,9 @@ if (isset($_GET['certdepth'])) {
 $subj = explode("/", $cert_subject);
 foreach ($subj at $s) {
 	list($n, $v) = explode("=", $s);
-	if ($n == "CN")
+	if ($n == "CN") {
 		$common_name = $v;
+	}
 }
 */
 
@@ -87,9 +88,10 @@ if (isset($allowed_depth) && ($cert_depth > $allowed_depth)) {
 //syslog(LOG_WARNING, "Found certificate {$argv[2]} with depth {$cert_depth}\n");
 
 closelog();
-if (isset($_GET['certdepth']))
+if (isset($_GET['certdepth'])) {
 	echo "OK";
-else
+} else {
 	exit(0);
+}
 
 ?>

@@ -1,7 +1,7 @@
 <?php
 /*
 	ipsec.attributes.php
-	Copyright (C) 2011-2012         Ermal Luçi
+	Copyright (C) 2011-2012 Ermal Luçi
 	Copyright (C) 2013-2015 Electric Sheep Fencing, LP
 	All rights reserved.
 
@@ -29,13 +29,15 @@
 
 if (empty($common_name)) {
 	$common_name = getenv("common_name");
-	if (empty($common_name))
+	if (empty($common_name)) {
 		$common_name = getenv("username");
+	}
 }
 
 function cisco_to_cidr($addr) {
-	if (!is_ipaddr($addr))
+	if (!is_ipaddr($addr)) {
 		return 0;
+	}
 	$mask = decbin(~ip2long($addr));
 	$mask = substr($mask, -32);
 	$k = 0;
@@ -46,19 +48,21 @@ function cisco_to_cidr($addr) {
 }
 
 function cisco_extract_index($prule) {
-	
+
 	$index = explode("#", $prule);
-	if (is_numeric($index[1]))
+	if (is_numeric($index[1])) {
 		return intval($index[1]);
-	else
+	} else {
 		syslog(LOG_WARNING, "Error parsing rule {$prule}: Could not extract index");
+	}
 	return -1;;
 }
 
 function parse_cisco_acl($attribs) {
 	global $attributes;
-	if (!is_array($attribs))
+	if (!is_array($attribs)) {
 		return "";
+	}
 
 	$devname = "enc0";
 	$finalrules = "";
@@ -70,29 +74,31 @@ function parse_cisco_acl($attribs) {
 			$dir = "";
 			if (strstr($rule[0], "inacl")) {
 				$dir = "in";
-			} else if (strstr($rule[0], "outacl"))
+			} else if (strstr($rule[0], "outacl")) {
 				$dir = "out";
-			else if (strstr($rule[0], "dns-servers")) {
+			} else if (strstr($rule[0], "dns-servers")) {
 				$attributes['dns-servers'] = explode(" ", $rule[1]);
 				continue;
 			} else if (strstr($rule[0], "route")) {
-				if (!is_array($attributes['routes']))
+				if (!is_array($attributes['routes'])) {
 					$attributes['routes'] = array();
+				}
 				$attributes['routes'][] = $rule[1];
 				continue;
-			}	
+			}
 			$rindex = cisco_extract_index($rule[0]);
-			if ($rindex < 0)
+			if ($rindex < 0) {
 				continue;
+			}
 
 			$rule = $rule[1];
 			$rule = explode(" ", $rule);
 			$tmprule = "";
 			$index = 0;
 			$isblock = false;
-			if ($rule[$index] == "permit")
+			if ($rule[$index] == "permit") {
 				$tmprule = "pass {$dir} quick on {$devname} ";
-			else if ($rule[$index] == "deny") {
+			} else if ($rule[$index] == "deny") {
 				//continue;
 				$isblock = true;
 				$tmprule = "block {$dir} quick on {$devname} ";
@@ -103,11 +109,10 @@ function parse_cisco_acl($attribs) {
 			$index++;
 
 			switch ($rule[$index]) {
-			case "tcp":
-			case "udp":
-				$tmprule .= "proto {$rule[$index]} ";
-				break;
-				
+				case "tcp":
+				case "udp":
+					$tmprule .= "proto {$rule[$index]} ";
+					break;
 			}
 
 			$index++;
@@ -116,8 +121,9 @@ function parse_cisco_acl($attribs) {
 				$index++;
 				$tmprule .= "from {$rule[$index]} ";
 				$index++;
-				if ($isblock == true)
+				if ($isblock == true) {
 					$isblock = false;
+				}
 			} else if (trim($rule[$index]) == "any") {
 				$tmprule .= "from any";
 				$index++;
@@ -127,16 +133,18 @@ function parse_cisco_acl($attribs) {
 				$netmask = cisco_to_cidr($rule[$index]);
 				$tmprule .= "/{$netmask} ";
 				$index++;
-				if ($isblock == true)
+				if ($isblock == true) {
 					$isblock = false;
+				}
 			}
 			/* Destination */
 			if (trim($rule[$index]) == "host") {
 				$index++;
 				$tmprule .= "to {$rule[$index]} ";
 				$index++;
-				if ($isblock == true)
+				if ($isblock == true) {
 					$isblock = false;
+				}
 			} else if (trim($rule[$index]) == "any") {
 				$index++;
 				$tmprule .= "to any";
@@ -146,30 +154,36 @@ function parse_cisco_acl($attribs) {
 				$netmask = cisco_to_cidr($rule[$index]);
 				$tmprule .= "/{$netmask} ";
 				$index++;
-				if ($isblock == true)
+				if ($isblock == true) {
 					$isblock = false;
+				}
 			}
 
-			if ($isblock == true)
+			if ($isblock == true) {
 				continue;
+			}
 
-			if ($dir == "in")
+			if ($dir == "in") {
 				$inrules[$rindex] = $tmprule;
-			else if ($dir == "out")
+			} else if ($dir == "out") {
 				$outrules[$rindex] = $tmprule;
+			}
 		}
 
 
 		$state = "";
-		if (!empty($outrules))
+		if (!empty($outrules)) {
 			$state = "no state";
+		}
 		ksort($inrules, SORT_NUMERIC);
-		foreach ($inrules as $inrule)
+		foreach ($inrules as $inrule) {
 			$finalrules .= "{$inrule} {$state}\n";
+		}
 		if (!empty($outrules)) {
 			ksort($outrules, SORT_NUMERIC);
-			foreach ($outrules as $outrule)
+			foreach ($outrules as $outrule) {
 				$finalrules .= "{$outrule} {$state}\n";
+			}
 		}
 	}
 	return $finalrules;

@@ -31,7 +31,7 @@
 
 */
 /*
-	pfSense_BUILDER_BINARIES:	
+	pfSense_BUILDER_BINARIES:
 	pfSense_MODULE:	openvpn
 */
 /*
@@ -54,12 +54,13 @@ require_once("interfaces.inc");
 if (!function_exists("getNasID")) {
 function getNasID()
 {
-    global $g;
+	global $g;
 
-    $nasId = gethostname();
-    if(empty($nasId))
-        $nasId = $g['product_name'];
-    return $nasId;
+	$nasId = gethostname();
+	if (empty($nasId)) {
+		$nasId = $g['product_name'];
+	}
+	return $nasId;
 }
 }
 
@@ -72,10 +73,11 @@ function getNasID()
 if (!function_exists("getNasIP")) {
 function getNasIP()
 {
-    $nasIp = get_interface_ip();
-    if(!$nasIp)
-        $nasIp = "0.0.0.0";
-    return $nasIp;
+	$nasIp = get_interface_ip();
+	if (!$nasIp) {
+		$nasIp = "0.0.0.0";
+	}
+	return $nasIp;
 }
 }
 /* setup syslog logging */
@@ -123,13 +125,14 @@ if (($strictusercn === true) && ($common_name != $username)) {
 $attributes = array();
 foreach ($authmodes as $authmode) {
 	$authcfg = auth_get_authserver($authmode);
-	if (!$authcfg && $authmode != "local")
+	if (!$authcfg && $authmode != "local") {
 		continue;
+	}
 
 	$authenticated = authenticate_user($username, $password, $authcfg, $attributes);
 	if ($authenticated == true) {
 		if (stristr($authmode, "local")) {
-			$user = getUserEntry($username); 
+			$user = getUserEntry($username);
 			if (!is_array($user) || !userHasPrivilege($user, "user-ipsec-xauth-dialin")) {
 				$authenticated = false;
 				syslog(LOG_WARNING, "user '{$username}' cannot authenticate through IPsec since the required privileges are missing.\n");
@@ -152,15 +155,17 @@ if ($authenticated == false) {
 	}
 }
 
-if (file_exists("/etc/inc/ipsec.attributes.php"))
-        include_once("/etc/inc/ipsec.attributes.php");
-        
+if (file_exists("/etc/inc/ipsec.attributes.php")) {
+	include_once("/etc/inc/ipsec.attributes.php");
+}
+
 syslog(LOG_NOTICE, "user '{$username}' authenticated\n");
 closelog();
 
-if (isset($_GET['username']))
+if (isset($_GET['username'])) {
 	echo "OK";
-else
+} else {
 	exit (0);
+}
 
 ?>

@@ -178,7 +178,7 @@ class PEAR
      * but is included for forward compatibility, so subclass
      * destructors should always call it.
      *
-     * See the note in the class desciption about output from
+     * See the note in the class description about output from
      * destructors.
      *
      * @access public
@@ -403,7 +403,7 @@ class PEAR
     }
 
     /**
-     * This method deletes all occurences of the specified element from
+     * This method deletes all occurrences of the specified element from
      * the expected error codes stack.
      *
      * @param  mixed $error_code error code that should be deleted
@@ -698,7 +698,7 @@ class PEAR
     }
 
     /**
-    * OS independant PHP extension load. Remember to take care
+    * OS independent PHP extension load. Remember to take care
     * on the correct extension name for case sensitive OSes.
     *
     * @param string $ext The extension name
@@ -819,7 +819,7 @@ function _PEAR_call_destructors()
 /**
  * Standard PEAR error class for PHP 4
  *
- * This class is supserseded by {@link PEAR_Exception} in PHP 5
+ * This class is superseded by {@link PEAR_Exception} in PHP 5
  *
  * @category   pear
  * @package    PEAR

@@ -32,7 +32,7 @@ define('ZEROMQ_TRUE', 'true');
 define('ZEROMQ_FASLE', 'false');
 
 $do_not_include_config_gui_inc = true;
-require("auth.inc");
+require_once("auth.inc");
 
 //$debug = true; 
 

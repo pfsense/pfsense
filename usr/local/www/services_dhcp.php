@@ -1119,14 +1119,40 @@ include("head.inc");
 					<input style="vertical-align:middle" type="checkbox" value="yes" name="netboot" id="netboot" <?php if($pconfig['netboot']) echo " checked=\"checked\""; ?> />&nbsp;
 					<b><?=gettext("Enables network booting.");?></b>
 					<br/>
-					<?=gettext("Enter the IP of the"); ?> <b><?=gettext("next-server"); ?></b>
-					<input name="nextserver" type="text" class="formfld unknown" id="nextserver" size="20" value="<?=htmlspecialchars($pconfig['nextserver']);?>" /><br />
-					<?=gettext("and the default bios filename");?>
-						<input name="filename" type="text" class="formfld unknown" id="filename" size="20" value="<?=htmlspecialchars($pconfig['filename']);?>" /><br />
-					<?=gettext("and the UEFI 32bit filename  ");?>
-						<input name="filename32" type="text" class="formfld unknown" id="filename32" size="20" value="<?=htmlspecialchars($pconfig['filename32']);?>" /><br />
-					<?=gettext("and the UEFI 64bit filename  ");?>
-						<input name="filename64" type="text" class="formfld unknown" id="filename64" size="20" value="<?=htmlspecialchars($pconfig['filename64']);?>" /><br />
+					<table border="0" cellspacing="0" cellpadding="2" summary="network booting">
+						<tr>
+							<td>
+								<?=gettext("Enter the IP of the"); ?> <b><?=gettext("next-server"); ?></b>
+							</td>
+							<td>
+								<input name="nextserver" type="text" class="formfld unknown" id="nextserver" size="20" value="<?=htmlspecialchars($pconfig['nextserver']);?>" /><br />
+							</td>
+						</tr>
+						<tr>
+							<td>
+								<?=gettext("and the default bios filename");?>
+							</td>
+							<td>
+								<input name="filename" type="text" class="formfld unknown" id="filename" size="20" value="<?=htmlspecialchars($pconfig['filename']);?>" /><br />
+							</td>
+						</tr>
+						<tr>
+							<td>
+								<?=gettext("and the UEFI 32bit filename  ");?>
+							</td>
+							<td>
+								<input name="filename32" type="text" class="formfld unknown" id="filename32" size="20" value="<?=htmlspecialchars($pconfig['filename32']);?>" /><br />
+							</td>
+						</tr>
+						<tr>
+							<td>
+								<?=gettext("and the UEFI 64bit filename  ");?>
+							</td>
+							<td>
+								<input name="filename64" type="text" class="formfld unknown" id="filename64" size="20" value="<?=htmlspecialchars($pconfig['filename64']);?>" /><br />
+							</td>
+						</tr>
+					</table>
 					<?=gettext("Note: You need both a filename and a boot server configured for this to work!");?>
 					<?=gettext("You will need all three filenames and a boot server configured for UEFI to work!");?>
 					<?=gettext("Enter the"); ?> <b><?=gettext("root-path"); ?></b>-<?=gettext("string");?>

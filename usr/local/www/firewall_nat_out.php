@@ -64,8 +64,6 @@ if (!isset($config['nat']['outbound']['mode']))
 $mode = $config['nat']['outbound']['mode'];
 
 if ($_POST['apply']) {
-	write_config();
-
 	$retval = 0;
 	$retval |= filter_configure();
 

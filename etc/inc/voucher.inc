@@ -284,7 +284,7 @@ function voucher_expire($voucher_received) {
 					$unsetindexes[] = $cpentry[5];
 				}
 			} else
-				captiveportal_syslog("$voucher ($roll/$nr): not found on any registererd Roll");
+				captiveportal_syslog("$voucher ($roll/$nr): not found on any registered Roll");
 		} else
 			// hmm, thats weird ... not what I expected
 			captiveportal_syslog("$voucher invalid: {$output[0]}!!");
@@ -296,7 +296,7 @@ function voucher_expire($voucher_received) {
 			voucher_write_active_db($roll, $active);
 		unset($active_vouchers);
 
-		/* Triger a sync of the vouchers on config */
+		/* Trigger a sync of the vouchers on config */
 		send_event("service sync vouchers");
 	}
 
@@ -412,8 +412,8 @@ function voucher_auth($voucher_received, $test = 0) {
 					}
 				}
 			} else {
-				$test_result[] = "$voucher ($roll/$nr): not found on any registererd Roll";
-				captiveportal_syslog("$voucher ($roll/$nr): not found on any registererd Roll");
+				$test_result[] = "$voucher ($roll/$nr): not found on any registered Roll";
+				captiveportal_syslog("$voucher ($roll/$nr): not found on any registered Roll");
 			}
 		} else {
 			// hmm, thats weird ... not what I expected
@@ -480,7 +480,7 @@ function voucher_auth($voucher_received, $test = 0) {
 	$active_vouchers[$first_voucher_roll][$first_voucher] = "$timestamp,$minutes";
 	voucher_write_active_db($first_voucher_roll, $active_vouchers[$first_voucher_roll]);
 
-	/* Triger a sync of the vouchers on config */
+	/* Trigger a sync of the vouchers on config */
 	send_event("service sync vouchers");
 
 	unlock($voucherlck);
@@ -560,7 +560,7 @@ function voucher_configure_zone($sync = false) {
                         $timestamp = $activent['timestamp'];
                         $minutes = $activent['minutes'];
                         // its tempting to check for expired timestamps, but during
-                        // bootup, we most likely don't have the correct time time.
+                        // bootup, we most likely don't have the correct time.
                         $active_vouchers[$voucher] = "$timestamp,$minutes";
                     }
                 }
@@ -613,7 +613,7 @@ function voucher_read_active_db($roll) {
 			if ($dirty) { // if we found expired entries, lets save our snapshot
 				voucher_write_active_db($roll, $active);
 
-				/* Triger a sync of the vouchers on config */
+				/* Trigger a sync of the vouchers on config */
 				send_event("service sync vouchers");
 			}
 		}
@@ -735,7 +735,7 @@ function voucher_save_db_to_config_zone() {
 
     unlock($voucherlck);
 
-    write_config("Synching vouchers");
+    write_config("Syncing vouchers");
     return;
 }
 

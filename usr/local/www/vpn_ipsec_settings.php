@@ -41,7 +41,6 @@ require_once("shaper.inc");
 require_once("ipsec.inc");
 require_once("vpn.inc");
 
-$pconfig['preferoldsa_enable'] = isset($config['ipsec']['preferoldsa']);
 foreach ($ipsec_loglevels as $lkey => $ldescr) {
 	if (!empty($config['ipsec']["ipsec_{$lkey}"]))
 		$pconfig["ipsec_{$lkey}"] = $config['ipsec']["ipsec_{$lkey}"];
@@ -115,11 +114,6 @@ if ($_POST) {
 	
 	if (!$input_errors) {
 
-		if($_POST['preferoldsa_enable'] == "yes")
-			$config['ipsec']['preferoldsa'] = true;
-		elseif (isset($config['ipsec']['preferoldsa']))
-			unset($config['ipsec']['preferoldsa']);
-
 		if (is_array($config['ipsec'])) {
 			foreach ($ipsec_loglevels as $lkey => $ldescr) {
 				if (empty($_POST["ipsec_{$lkey}"])) {
@@ -130,20 +124,40 @@ if ($_POST) {
 			}
 		}
 
-		if($_POST['compression'] == "yes")
+		$needsrestart = false;
+
+		if($_POST['compression'] == "yes") {
+			if (!isset($config['ipsec']['compression']))
+				$needsrestart = true;
 			$config['ipsec']['compression'] = true;
-		elseif (isset($config['ipsec']['compression']))
+		} elseif (isset($config['ipsec']['compression'])) {
+			$needsrestart = true;
 			unset($config['ipsec']['compression']);
+		}
 
-		if($_POST['unityplugin'] == "yes")
+		if($_POST['unityplugin'] == "yes") {
+			if (!isset($config['ipsec']['unityplugin']))
+				$needsrestart = true;
 			$config['ipsec']['unityplugin'] = true;
-		elseif (isset($config['ipsec']['unityplugin']))
+		} elseif (isset($config['ipsec']['unityplugin'])) {
+			$needsrestart = true;
 			unset($config['ipsec']['unityplugin']);
+		}
 
-		if($_POST['acceptunencryptedmainmode'] == "yes")
+		if($_POST['acceptunencryptedmainmode'] == "yes") {
+			if (!isset($config['ipsec']['acceptunencryptedmainmode']))
+				$needsrestart = true;
 			$config['ipsec']['acceptunencryptedmainmode'] = true;
-		elseif (isset($config['ipsec']['acceptunencryptedmainmode']))
+		} elseif (isset($config['ipsec']['acceptunencryptedmainmode'])) {
+			$needsrestart = true;
 			unset($config['ipsec']['acceptunencryptedmainmode']);
+		}
+
+		if(!empty($_POST['uniqueids'])) {
+			$config['ipsec']['uniqueids'] = $_POST['uniqueids'];
+		} else {
+			unset($config['ipsec']['uniqueids']);
+		}
 
 		if($_POST['maxmss_enable'] == "yes") {
 			$config['system']['maxmss_enable'] = true;
@@ -162,8 +176,7 @@ if ($_POST) {
 		else
 			$savemsg = gettext($retval);
 
-		vpn_ipsec_configure_preferoldsa();
-		vpn_ipsec_configure();
+		vpn_ipsec_configure($needsrestart);
 		vpn_ipsec_configure_loglevels();
 
 //		header("Location: vpn_ipsec_settings.php");
@@ -223,17 +236,6 @@ function maxmss_checked(obj) {
 						<td colspan="2" valign="top" class="listtopic"><?=gettext("IPsec Advanced Settings"); ?></td>
 					</tr>
 					<tr>
-						<td width="22%" valign="top" class="vncell"><?=gettext("Security Associations"); ?></td>
-						<td width="78%" class="vtable">
-							<input name="preferoldsa_enable" type="checkbox" id="preferoldsa_enable" value="yes" <?php if ($pconfig['preferoldsa_enable']) echo "checked=\"checked\""; ?> />
-							<strong><?=gettext("Prefer older IPsec SAs"); ?></strong>
-							<br />
-							<?=gettext("By default, if several SAs match, the newest one is " .
-							"preferred if it's at least 30 seconds old. Select this " .
-							"option to always prefer old SAs over new ones."); ?>
-						</td>
-					</tr>
-					<tr>
 						<td width="22%" valign="top" class="vncell"><?=gettext("IPsec Debug"); ?></td>
 						<td width="78%" class="vtable">
 							<strong><?=gettext("Start IPsec in debug mode based on sections selected"); ?></strong>
@@ -259,6 +261,29 @@ function maxmss_checked(obj) {
 							</table>
 							<br /><?=gettext("Launches IPsec in debug mode so that more verbose logs " .
 							"will be generated to aid in troubleshooting."); ?>
+						</td>
+					</tr>
+					<tr>
+						<td width="22%" valign="top" class="vncell"><?=gettext("Unique IDs"); ?></td>
+						<td width="78%" class="vtable">
+							<strong><?=gettext("Handle IDs as: "); ?></strong>
+							<?php	echo "<select name=\"uniqueids\" id=\"uniqueids\">\n";
+								foreach ($ipsec_idhandling as $value => $lvalue) {
+									echo "<option value=\"{$value}\" ";
+									 if ($pconfig['uniqueids'] == $value)
+										echo "selected=\"selected\"";
+									echo ">{$lvalue}</option>\n";
+								}
+							?>
+								</select>
+							<br />
+							<?=gettext("whether a particular participant ID should be kept unique, with any new IKE_SA using an ID " .
+								"deemed to replace all old ones using that ID. Participant IDs normally are unique, so a new " .
+								"IKE_SA using the same ID is almost invariably intended to replace an old one. " .
+								"The difference between <b>no</b> and <b>never</b> is that the old IKE_SAs will be replaced when receiving an " .
+								"INITIAL_CONTACT notify if the option is no but will ignore these notifies if <b>never</b> is configured. " .
+								"The daemon also accepts the value <b>keep</b> to reject " .
+								"new IKE_SA setups and keep the duplicate established earlier."); ?>
 						</td>
 					</tr>
 					<tr>

@@ -98,7 +98,8 @@
 			$input_errors[] = 'You must specify a valid traffic shaping queue.';
 
 		/* user permissions validation */
-		for($i=1; $i<=4; $i++) {
+		$j = substr_count(implode(array_keys($post)), "permuser");
+		for ($i=0; $i<$j; $i++){
 			if($post["permuser{$i}"]) {
 				$perm = explode(' ',$post["permuser{$i}"]);
 				/* should explode to 4 args */
@@ -209,9 +210,9 @@
 				$config_text .= "model_number=".file_get_contents("/etc/version")."\n";
 	
 				/* upnp access restrictions */
-				for($i=1; $i<=4; $i++) {
-					if($upnp_config["permuser{$i}"])
-						$config_text .= "{$upnp_config["permuser{$i}"]}\n";
+				foreach($upnp_config['row'] as $row){
+					if($row['permuser'])
+						$config_text .= "{$row["permuser"]}\n";
 				}
 
 				if($upnp_config['permdefault'])

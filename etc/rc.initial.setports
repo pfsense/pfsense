@@ -44,8 +44,8 @@
 	set_networking_interfaces_ports();
 
 	reload_interfaces_sync();
-	
+
 	/* reload graphing functions */
-    enable_rrd_graphing();	
+	enable_rrd_graphing();
 
 ?>

@@ -2,22 +2,22 @@
 <?php
 /* $Id$ */
 /*
-	rc.update_alias_url_data.sh
+	rc.update_alias_url_data
 	part of pfSense (https://www.pfsense.org)
-	
+
 	Copyright (C) 2010 Scott Ullrich <sullrich@gmail.com>
 	All rights reserved.
-	
+
 	Redistribution and use in source and binary forms, with or without
 	modification, are permitted provided that the following conditions are met:
-	
+
 	1. Redistributions of source code must retain the above copyright notice,
 	   this list of conditions and the following disclaimer.
-	
+
 	2. Redistributions in binary form must reproduce the above copyright
 	   notice, this list of conditions and the following disclaimer in the
 	   documentation and/or other materials provided with the distribution.
-	
+
 	THIS SOFTWARE IS PROVIDED ``AS IS'' AND ANY EXPRESS OR IMPLIED WARRANTIES,
 	INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY
 	AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE
@@ -31,7 +31,7 @@
 */
 
 /* parse the configuration and include all functions used below */
-/* config.inc retrives the util.inc and globals.inc */
+/* config.inc retrieves the util.inc and globals.inc */
 
 require_once("config.inc");
 require_once("functions.inc");

@@ -39,6 +39,7 @@ require("functions.inc");
 require("guiconfig.inc");
 require_once("ipsec.inc");
 require_once("vpn.inc");
+require_once("filter.inc");
 
 if (!is_array($config['ipsec']['phase1']))
 	$config['ipsec']['phase1'] = array();
@@ -111,7 +112,8 @@ if ($_POST['create']) {
 
 if ($_POST['apply']) {
 	$retval = 0;
-	$retval = vpn_ipsec_configure();
+	/* NOTE: #4353 Always restart ipsec when mobile clients settings change */
+	$retval = vpn_ipsec_configure(true);
 	$savemsg = get_std_save_message($retval);
 	if ($retval >= 0)
 		if (is_subsystem_dirty('ipsec'))
@@ -144,7 +146,7 @@ if ($_POST['submit']) {
 
 	if ($pconfig['dns_split_enable']) {
 		if (!empty($pconfig['dns_split'])) {
-			$domain_array=preg_split("/[ ,]+/",$pconfig['dns_split']);
+			$domain_array=explode(' ', $pconfig['dns_split']);
 			foreach ($domain_array as $curdomain) {
 				if (!is_domain($curdomain)) {
 					$input_errors[] = gettext("A valid split DNS domain list must be specified.");
@@ -225,8 +227,6 @@ if ($_POST['submit']) {
 
 		if ($pconfig['login_banner_enable'])
 			$client['login_banner'] = $pconfig['login_banner'];
-
-//		$echo "login banner = {$pconfig['login_banner']}";
 
 		$a_client = $client;
 		

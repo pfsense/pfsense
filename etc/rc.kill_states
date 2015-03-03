@@ -51,8 +51,9 @@ if (empty($interface) || !does_interface_exist($interface)) {
 if (!empty($local_ip)) {
 	list($local_ip, $subnet_bits) = explode("/", $local_ip);
 
-	if (empty($subnet_bits))
+	if (empty($subnet_bits)) {
 		$subnet_bits = "32";
+	}
 
 	if (!is_ipaddr($local_ip)) {
 		log_error("rc.kill_states: Invalid IP address '{$local_ip}'");
@@ -67,15 +68,17 @@ if (!isset($config['system']['kill_states'])) {
 			"/usr/bin/egrep '\-> +{$local_ip}:[0-9]+ +\->'");
 
 		$cleared_states = array();
-		foreach(explode("\n", $nat_states) as $nat_state) {
-			if (preg_match_all('/([\d\.]+):[\d]+[\s->]+/i', $nat_state, $matches, PREG_SET_ORDER) != 3)
+		foreach (explode("\n", $nat_states) as $nat_state) {
+			if (preg_match_all('/([\d\.]+):[\d]+[\s->]+/i', $nat_state, $matches, PREG_SET_ORDER) != 3) {
 				continue;
+			}
 
 			$src = $matches[0][1];
 			$dst = $matches[2][1];
 
-			if (empty($src) || empty($dst) || in_array("{$src},{$dst}", $cleared_states))
+			if (empty($src) || empty($dst) || in_array("{$src},{$dst}", $cleared_states)) {
 				continue;
+			}
 
 			$cleared_states[] = "{$src},{$dst}";
 			pfSense_kill_states($src, $dst);

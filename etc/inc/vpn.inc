@@ -94,7 +94,7 @@ function vpn_ipsec_convert_to_modp($index)
 	return $convertion;
 }
 
-function vpn_ipsec_configure($ipchg = false)
+function vpn_ipsec_configure($restart = false)
 {
 	global $config, $g, $sa, $sn, $p1_ealgos, $p2_ealgos;
 
@@ -104,8 +104,6 @@ function vpn_ipsec_configure($ipchg = false)
 	/* get the automatic ping_hosts.sh ready */
 	unlink_if_exists("{$g['vardb_path']}/ipsecpinghosts");
 	touch("{$g['vardb_path']}/ipsecpinghosts");
-
-	vpn_ipsec_configure_preferoldsa();
 
 	$syscfg = $config['system'];
 	$ipseccfg = $config['ipsec'];
@@ -121,6 +119,8 @@ function vpn_ipsec_configure($ipchg = false)
 		/* disallow IPSEC, it is off */
 		mwexec("/sbin/ifconfig enc0 down");
 		set_single_sysctl("net.inet.ip.ipsec_in_use", "0");
+
+		filter_configure();
 
 		return 0;
 	}
@@ -171,6 +171,7 @@ function vpn_ipsec_configure($ipchg = false)
 	$listeniflist = array();
 	$aggressive_mode_psk = false;
 	unset($iflist);
+	$ifacesuse = array();
 	if (is_array($a_phase1) && count($a_phase1)) {
 
 		$ipsecpinghosts = "";
@@ -179,6 +180,15 @@ function vpn_ipsec_configure($ipchg = false)
 			if (isset($ph1ent['disabled']))
 				continue;
 
+			if (strpos($ph1ent['interface'], '_vip')) {
+				$vpninterface = explode('_vip', $ph1ent['interface']);
+				$ifacesuse[] = get_real_interface($vpninterface[0]);
+                        } else {
+                                $vpninterface = get_failover_interface($ph1ent['interface']);
+				if (!empty($vpninterface))
+					$ifacesuse[] = $vpninterface;
+			}
+				
 			if ($ph1ent['mode'] == "aggressive" && ($ph1ent['authentication_method'] == "pre_shared_key" || $ph1ent['authentication_method'] == "xauth_psk_server")) 
 				$aggressive_mode_psk = true;
 
@@ -281,15 +291,28 @@ function vpn_ipsec_configure($ipchg = false)
 	if (isset($config['ipsec']['acceptunencryptedmainmode']))
 		$accept_unencrypted = "accept_unencrypted_mainmode_messages = yes";
 
+	$stronconf = '';
+	if (file_exists("{$g['varetc_path']}/ipsec/strongswan.conf"))
+		$stronconf = file_get_contents("{$g['varetc_path']}/ipsec/strongswan.conf");
+
 	$i_dont_care_about_security_and_use_aggressive_mode_psk = "";
 	if ($aggressive_mode_psk) {
 		log_error("WARNING: Setting i_dont_care_about_security_and_use_aggressive_mode_psk option because a phase 1 is configured using aggressive mode with pre-shared keys. This is not a secure configuration.");
+		if (!empty($stronconf) && strpos($stronconf, 'i_dont_care_about_security_and_use_aggressive_mode_psk') === FALSE)
+			$restart = true;
 		$i_dont_care_about_security_and_use_aggressive_mode_psk = "i_dont_care_about_security_and_use_aggressive_mode_psk=yes";
 	} 
 
 	$unity_enabled = 'yes';
 	if (isset($config['ipsec']['unityplugin']))
 		$unity_enabled = 'no';
+
+	if (!empty($ifacesuse))
+		$ifacesuse = 'interfaces_use = ' . implode(',', array_unique($ifacesuse));
+	else
+		$ifacesuse = '';
+
+	unset($stronconf);
 
 	$strongswan = <<<EOD
 
@@ -308,6 +331,7 @@ install_routes = no
 {$i_dont_care_about_security_and_use_aggressive_mode_psk}
 {$accept_unencrypted}
 cisco_unity = {$unity_enabled}
+{$ifacesuse}
 
 # And two loggers using syslog. The subsections define the facility to log
 # to, currently one of: daemon, auth.
@@ -379,24 +403,33 @@ EOD;
 
 		if (!empty($a_client['dns_domain'])) {
 			$strongswan .= "\t\t\t# Search domain and default domain\n";
-			$strongswan .= "\t\t\t28674 = {$a_client['dns_domain']}\n";
-			if (empty($a_client['dns_split']))
-				$strongswan .= "\t\t\t28675 = {$a_client['dns_domain']}";
+			$strongswan .= "\t\t\t28674 = \"{$a_client['dns_domain']}\"\n";
+			if (empty($a_client['dns_split'])) {
+				$strongswan .= "\t\t\t28675 = \"{$a_client['dns_domain']}\"";
+			}
 			$strongswan .= "\n";
 		}
 
 		if (!empty($a_client['dns_split'])) {
+			$ipsec_dns = explode(',', $a_client['dns_split']);
+			foreach ($ipsec_dns as $ipsecidx => $ipsecdns) {
+				$ipsecdns = trim($ipsecdns);
+				$ipsec_dns[$ipsecidx] = "\"{$ipsecdns}\"";
+			}
+			$a_client['dns_split'] = implode(' ', $ipsec_dns);
+			unset($ipsec_dns);
+
 			$strongswan .= "\t\t\t28675 = {$a_client['dns_split']}\n";
 		}
 
 		if (!empty($a_client['login_banner']))
-			$strongswan .= "\t\t\t28672 = {$a_client['login_banner']}\n";
+			$strongswan .= "\t\t\t28672 = \"{$a_client['login_banner']}\"\n";
 
 		if (isset($a_client['save_passwd']))
 			$strongswan .= "\t\t\t28673 = 1\n";
 
 		if ($a_client['pfs_group'])
-			$strongswan .= "\t\t\t28679 = {$a_client['pfs_group']}\n";
+			$strongswan .= "\t\t\t28679 = \"{$a_client['pfs_group']}\"\n";
 		$strongswan .= "\t\t}\n";
 
 		if ($a_client['user_source'] != "none") {
@@ -528,6 +561,11 @@ EOD;
 	chmod("{$g['varetc_path']}/ipsec/ipsec.secrets", 0600);
 	unset($pskconf);
 
+	$uniqueids = 'yes';
+	if (!empty($config['ipsec']['uniqueids'])) {
+		if (in_array($uniqueids, $ipsec_idhandling))
+			$uniqueids = $config['ipsec']['uniqueids'];
+	}
 	$natfilterrules = false;
 	/* begin ipsec.conf */
 	$ipsecconf = "";
@@ -535,7 +573,7 @@ EOD;
 	if (is_array($a_phase1) && count($a_phase1))  {
 
 		$ipsecconf .= "# This file is automatically generated. Do not edit\n";
-		$ipsecconf .= "config setup\n\tuniqueids = yes\n";
+		$ipsecconf .= "config setup\n\tuniqueids = {$uniqueids}\n";
 		$ipsecconf .= "\tcharondebug=\"" . vpn_ipsec_configure_loglevels(true) . "\"\n";
 
 		foreach ($a_phase1 as $ph1ent) {
@@ -565,8 +603,64 @@ EOD;
 			if (isset($ph1ent['mobile'])) {
 				$right_spec = "%any";
 				$passive = 'add';
-			} else
+			} else {
+				if (isset($ph1ent['responderonly']))
+					$passive = 'add';
+
 				$right_spec = $ph1ent['remote-gateway'];
+				if (is_ipaddr($right_spec))
+					$sourcehost = $right_spec;
+				else
+					$sourcehost = $rgmap['remote-gateway'];
+
+				if ($ph1ent['protocol'] == 'inet') {
+					if (strpos($ph1ent['interface'], '_vip')) {
+						$vpninterface = explode('_vip', $ph1ent['interface']);
+						$ifacesuse = get_real_interface($vpninterface[0]);
+						$vpninterface = $vpninterface[0];
+					} else {
+						$ifacesuse = get_failover_interface($ph1ent['interface']);
+						$vpninterface = convert_real_interface_to_friendly_interface_name($ifacesuse);
+					}
+					
+					if (!empty($ifacesuse) && interface_has_gateway($vpninterface)) {
+						$gatewayip = get_interface_gateway($vpninterface);
+						$interfaceip = get_interface_ip($vpninterface);
+						$subnet_bits = get_interface_subnet($vpninterface);
+						$subnet_ip = gen_subnetv4($interfaceip, $subnet_bits);
+						/* if the remote gateway is in the local subnet, then don't add a route */
+						if (!ip_in_subnet($sourcehost, "{$subnet_ip}/{$subnet_bits}")) {
+							if (is_ipaddrv4($gatewayip)) {
+								// log_error("IPSEC interface is not WAN but {$ifacesuse}, adding static route for VPN endpoint {$rgip} via {$gatewayip}");
+								mwexec("/sbin/route change -host {$sourcehost} {$gatewayip}", true);
+							}
+						}
+					}
+				} else if ($ph1ent['protocol'] == 'inet6') {
+					if (strpos($ph1ent['interface'], '_vip')) {
+						$vpninterface = explode('_vip', $ph1ent['interface']);
+						$ifacesuse = get_real_interface($vpninterface[0]);
+						$vpninterface = $vpninterface[0];
+					} else {
+						$ifacesuse = get_failover_interface($ph1ent['interface']);
+						$vpninterface = convert_real_interface_to_friendly_interface_name($ifacesuse);
+					}
+					
+					if (!empty($ifacesuse) && interface_has_gateway($vpninterface)) {
+						$gatewayip = get_interface_gateway_v6($vpninterface);
+						$interfaceip = get_interface_ipv6($vpninterface);
+						$subnet_bits = get_interface_subnetv6($vpninterface);
+						$subnet_ip = gen_subnetv6($interfaceip, $subnet_bits);
+						/* if the remote gateway is in the local subnet, then don't add a route */
+						if (!ip_in_subnet($sourcehost, "{$subnet_ip}/{$subnet_bits}")) {
+							if (is_ipaddrv6($gatewayip)) {
+								// log_error("IPSEC interface is not WAN but {$ifacesuse}, adding static route for VPN endpoint {$rgip} via {$gatewayip}");
+								mwexec("/sbin/route change -inet6 -host {$sourcehost} {$gatewayip}", true);
+							}
+						}
+					}
+				}
+			}
 
 			list ($myid_type, $myid_data) = ipsec_find_id($ph1ent, 'local');
 			if ($myid_type != 'address')
@@ -682,6 +776,11 @@ EOD;
 				$forceencaps = 'forceencaps = yes';
 			else
 				$forceencaps = 'forceencaps = no';
+				
+			if ($ph1ent['mobike'] == 'on')
+				$mobike = 'mobike = yes';
+			else
+				$mobike = 'mobike = no';
 
 			$ipseclifetime = 0;
 			$rightsubnet_spec = array();
@@ -841,6 +940,7 @@ EOD;
 	keyexchange = {$keyexchange}
 	{$reauth}
 	{$forceencaps}
+	{$mobike}
 	{$rekey}
 	installpolicy = yes
 	{$tunneltype}
@@ -893,7 +993,7 @@ EOD;
 				if (!empty($reqids[$idx]))
 					$ipsecfin .= "\treqid = " . $reqids[0] . "\n";
 				$ipsecfin .= $ipsecconnect;
-				if (!empty($rightsubnet_spec)) {
+				if (!isset($ph1ent['mobile']) && !empty($rightsubnet_spec)) {
 					$tempsubnets = array();
 					foreach ($rightsubnet_spec as $rightsubnet)
 						$tempsubnets[$rightsubnet] = $rightsubnet;
@@ -924,13 +1024,17 @@ EOD;
 		set_single_sysctl('net.inet.ipcomp.ipcomp_enable', 0);
 
 	/* mange process */
-	if (isvalidpid("{$g['varrun_path']}/charon.pid")) {
-		/* Read secrets */
-		mwexec("/usr/local/sbin/ipsec rereadall", false);
-		/* Update configuration changes */
-		mwexec("/usr/local/sbin/ipsec update", false);
+	if ($restart === true) {
+		mwexec("/usr/local/sbin/ipsec restart", false); 
 	} else {
-		mwexec("/usr/local/sbin/ipsec start", false); 
+		if (isvalidpid("{$g['varrun_path']}/charon.pid")) {
+			/* Read secrets */
+			mwexec("/usr/local/sbin/ipsec rereadall", false);
+			/* Update configuration changes */
+			mwexec("/usr/local/sbin/ipsec update", false);
+		} else {
+			mwexec("/usr/local/sbin/ipsec start", false); 
+		}
 	}
 
 	if ($natfilterrules == true)
@@ -1555,7 +1659,7 @@ l2tp_standard:
 	set iface down-script /usr/local/sbin/vpn-linkdown
 	set link yes acfcomp protocomp
 	set link no pap chap
-	set link enable chap
+	{$paporchap}
 	set link keep-alive 10 180
 
 EOD;
@@ -1663,14 +1767,6 @@ EOD;
 		echo "done\n";
 
 	return 0;
-}
-
-function vpn_ipsec_configure_preferoldsa() {
-	global $config;
-	if(isset($config['ipsec']['preferoldsa']))
-		set_single_sysctl("net.key.preferred_oldsa", "-30");
-	else
-		set_single_sysctl("net.key.preferred_oldsa", "0");
 }
 
 ?>

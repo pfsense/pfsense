@@ -533,14 +533,10 @@
 /usr/libexec/make_index
 /usr/local/bin/after_installation_routines.sh
 /usr/local/bin/atareinit
-/usr/local/bin/athstats
 /usr/local/bin/bsdiff
 /usr/local/bin/bspatch
 /usr/local/bin/c_rehash
 /usr/local/bin/checkreload.sh
-/usr/local/bin/cryptokeytest
-/usr/local/bin/cryptostats
-/usr/local/bin/cryptotest
 /usr/local/bin/ez-ipupdate
 /usr/local/bin/hifnstats
 /usr/local/bin/ipsecstats
@@ -629,9 +625,7 @@
 /usr/local/lib/libmhash.so.2
 /usr/local/lib/libpcre.a
 /usr/local/lib/libpcre.la
-/usr/local/lib/libpcre.so
 /usr/local/lib/libpcre.so.0
-/usr/local/lib/libpcre.so.1
 /usr/local/lib/libpcrecpp.a
 /usr/local/lib/libpcrecpp.la
 /usr/local/lib/libpcrecpp.so
@@ -883,6 +877,10 @@
 /usr/local/www/auto_complete_helper.js
 /usr/local/www/csrf/csrf-secret.php
 /usr/local/www/datetimepicker.js
+/usr/local/www/dfly-pg.gif
+/usr/local/www/dfuife.cgi
+/usr/local/www/dfuife.css
+/usr/local/www/dfuife.js
 /usr/local/www/diag_dhcp_leases.php
 /usr/local/www/diag_logs_slbd.php
 /usr/local/www/diag_showbogons.php
@@ -899,6 +897,7 @@
 /usr/local/www/firewall_shaper_edit.php
 /usr/local/www/firewall_shaper_queues_edit.php
 /usr/local/www/fred.png
+/usr/local/www/fred-bg.png
 /usr/local/www/ifstats.cgi
 /usr/local/www/includes/javascript.inc.php
 /usr/local/www/includes/log.inc.php

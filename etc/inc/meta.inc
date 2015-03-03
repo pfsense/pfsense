@@ -33,7 +33,7 @@
  * followed by the appropriate value or value pair. All markers
  * are prefixed with a ##| sequence. The + suffix is used to
  * denote the beginning of a tag block followed by the tag name.
- * A - suffix is used to denote the end of a tag blaock. Values
+ * A - suffix is used to denote the end of a tag block. Values
  * are denoted using the * suffix and can optionally be expressed
  * as a key value pair. An example of a metadata tag block ...
  *
@@ -48,7 +48,7 @@
  * metadata['<filename>']['INFO']['BLAH'][0] == true
  * metadata['<filename>']['INFO']['TEXT'][0] == "SOME TEXT"
  *
- * NOTE: All statements must be at the begining of a line and
+ * NOTE: All statements must be at the beginning of a line and
  * contiguous for a tag. The example shown above would not be
  * processed due to the extra ' * ' comment chars.
  *
@@ -60,8 +60,9 @@
 
 function list_phpfiles($path, & $found) {
 
-	if (!is_array($found))
+	if (!is_array($found)) {
 		$found = array();
+	}
 
 	$dir = opendir($path);
 	if (!$dir) {
@@ -69,11 +70,13 @@ function list_phpfiles($path, & $found) {
 		return;
 	}
 
-	while($fname = readdir($dir)) {
-		if($fname == "." || $fname == ".." || $fname[0] == '.')
+	while ($fname = readdir($dir)) {
+		if ($fname == "." || $fname == ".." || $fname[0] == '.') {
 			continue;
-		if (fnmatch('*.php', $fname))
+		}
+		if (fnmatch('*.php', $fname)) {
 			$found[] = $fname;
+		}
 	}
 }
 
@@ -83,16 +86,19 @@ function list_phpfiles($path, & $found) {
 
 function read_file_metadata($fpath, & $metadata, $taglist = false) {
 
-	if (!is_array($metadata))
+	if (!is_array($metadata)) {
 		$metadata = array();
+	}
 
-	if ($taglist)
+	if ($taglist) {
 		$taglist = explode(",", $taglist);
+	}
 
 	$fname = $fpath;
 	$slash = strrpos($fname,"/");
-	if ($slash)
+	if ($slash) {
 		$fname = substr($fname,$slash + 1);
+	}
 
 	$fdata = @file_get_contents($fpath);
 	if (!$fdata) {
@@ -107,20 +113,24 @@ function read_file_metadata($fpath, & $metadata, $taglist = false) {
 	while (true) {
 
 		$tagbeg_off = stripos($fdata, "##|+", $offset);
-		if ($tagbeg_off === false)
+		if ($tagbeg_off === false) {
 			break;
+		}
 
 		$tagbeg_trm = stripos($fdata, "\n", $tagbeg_off);
-		if ($tagbeg_trm === false)
+		if ($tagbeg_trm === false) {
 			break;
+		}
 
 		$tagend_off = stripos($fdata, "##|-", $tagbeg_trm);
-		if ($tagend_off === false)
+		if ($tagend_off === false) {
 			break;
+		}
 
 		$tagend_trm = stripos($fdata, "\n", $tagend_off);
-		if ($tagend_trm === false)
+		if ($tagend_trm === false) {
 			break;
+		}
 
 		$tagbeg_len = $tagbeg_trm - $tagbeg_off;
 		$tagend_len = $tagend_trm - $tagend_off;
@@ -146,17 +156,20 @@ function read_file_metadata($fpath, & $metadata, $taglist = false) {
 
 		$offset = $tagend_trm + 1;
 
-		if (is_array($taglist))
-			if (!in_array($tagbeg,$taglist))
+		if (is_array($taglist)) {
+			if (!in_array($tagbeg,$taglist)) {
 				continue;
+			}
+		}
 
 		$vals = array();
 
 		$lines = explode("\n",$mdata);
 		foreach ($lines as $line) {
 
-			if (!strlen($line)) 
+			if (!strlen($line)) {
 				continue;
+			}
 
 			$valtag = stripos($line, "##|*");
 			if ($valtag === false || $valtag) {
@@ -189,12 +202,14 @@ function read_file_metadata($fpath, & $metadata, $taglist = false) {
 			$vals[$vname][] = $vdata;
 		}
 
-		if (count($vals))
+		if (count($vals)) {
 			$tags[$tagbeg] = $vals;
+		}
 	}
 
-	if (count($tags))
+	if (count($tags)) {
 		$metadata[$fname] = $tags;
+	}
 }
 
 ?>

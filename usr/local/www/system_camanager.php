@@ -253,7 +253,7 @@ if ($_POST) {
 			if (!empty($pconfig['key']))
 				$ca['prv']    = base64_encode($pconfig['key']);
 		} else {
-			$old_err_level = error_reporting(0); /* otherwise openssl_ functions throw warings directly to a page screwing menu tab */
+			$old_err_level = error_reporting(0); /* otherwise openssl_ functions throw warnings directly to a page screwing menu tab */
 			if ($pconfig['method'] == "existing")
 				ca_import($ca, $pconfig['cert'], $pconfig['key'], $pconfig['serial']);
 

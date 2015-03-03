@@ -2,4 +2,4 @@
 require_once("config.inc");
 require_once("ipsec.inc");
 require_once("vpn.inc");
-vpn_ipsec_configure();
+vpn_ipsec_configure(true);

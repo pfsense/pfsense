@@ -86,7 +86,7 @@ if ($_POST) {
     if ($_POST['ip']) {
         if (strpos($_POST['ip'],'@') !== false) {
             $ip_details = explode("@", $_POST['ip']);
-            if (!is_ipaddr($ip_details[0]) && !is_port($ip_details[1]))
+            if (!is_ipaddr($ip_details[0]) || !is_port($ip_details[1]))
                 $input_errors[] = gettext("A valid IP address and port must be specified, for example 192.168.100.10@5353.");
         } else if (!is_ipaddr($_POST['ip']))
             $input_errors[] = gettext("A valid IP address must be specified, for example 192.168.100.10.");

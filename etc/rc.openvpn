@@ -3,21 +3,21 @@
 /*
 	rc.openvpn
 	part of m0n0wall (http://m0n0.ch/wall)
-	
+
 	Copyright (C) 2007 Manuel Kasper <mk@neon1.net>.
 	Copyright (C) 2009 Seth Mos <seth.mos@dds.nl>.
 	All rights reserved.
-	
+
 	Redistribution and use in source and binary forms, with or without
 	modification, are permitted provided that the following conditions are met:
-	
+
 	1. Redistributions of source code must retain the above copyright notice,
 	   this list of conditions and the following disclaimer.
-	
+
 	2. Redistributions in binary form must reproduce the above copyright
 	   notice, this list of conditions and the following disclaimer in the
 	   documentation and/or other materials provided with the distribution.
-	
+
 	THIS SOFTWARE IS PROVIDED ``AS IS'' AND ANY EXPRESS OR IMPLIED WARRANTIES,
 	INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY
 	AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE
@@ -54,8 +54,9 @@ function openvpn_resync_if_needed ($mode, $ovpn_settings, $interface) {
 				$new_device = get_failover_interface($ovpn_settings['interface']);
 				if (isset($config['interfaces'][$interface])) {
 					$this_device = $config['interfaces'][$interface]['if'];
-					if (($current_device == $new_device) && ($current_device != $this_device))
+					if (($current_device == $new_device) && ($current_device != $this_device)) {
 						$resync_needed = false;
+					}
 				}
 			}
 		}
@@ -67,26 +68,29 @@ function openvpn_resync_if_needed ($mode, $ovpn_settings, $interface) {
 }
 
 /* make sure to wait until the boot scripts have finished */
-if (file_exists("{$g['varrun_path']}/booting"))
+if (file_exists("{$g['varrun_path']}/booting")) {
 	return;
+}
 
 /* Input argument is a comma-separated list of gateway names, blank or "all". */
-if (isset($_GET['interface']))
+if (isset($_GET['interface'])) {
 	$argument = $_GET['interface'];
-else
+} else {
 	$argument = trim($argv[1], " \n");
+}
 
-if((is_array($config['openvpn']['openvpn-server']) && count($config['openvpn']['openvpn-server'])) || 
-   (is_array($config['openvpn']['openvpn-client']) && count($config['openvpn']['openvpn-client']))) {
+if ((is_array($config['openvpn']['openvpn-server']) && count($config['openvpn']['openvpn-server'])) ||
+	(is_array($config['openvpn']['openvpn-client']) && count($config['openvpn']['openvpn-client']))) {
 	if (empty($argument) || $argument == "all") {
-		$argument = "all"; 
+		$argument = "all";
 		$log_text = "all";
 	} else {
 		$log_text = "endpoints that may use " . $argument;
 	}
 	log_error("OpenVPN: One or more OpenVPN tunnel endpoints may have changed its IP. Reloading " . $log_text . ".");
-} else
+} else {
 	return;
+}
 
 $openvpnlck = try_lock('openvpn', 10);
 if (!$openvpnlck) {
@@ -98,29 +102,32 @@ if (!$openvpnlck) {
 $arg_array = explode(",",$argument);
 foreach ($arg_array as $arg_element) {
 	$gwgroups = array();
-	if ($arg_element == "all")
-		$interface = ""; 
-	else {
+	if ($arg_element == "all") {
+		$interface = "";
+	} else {
 		// e.g. $arg_element = "WANGW", $interface = "wan"
 		$interface = lookup_gateway_interface_by_name($arg_element);
-		if (empty($interface))
+		if (empty($interface)) {
 			$interface = $arg_element;
-		else
+		} else {
 			// e.g. $arg_element = "WANGW", $gwgroups = array of gateway groups that use "wan"
 			$gwgroups = gateway_is_gwgroup_member($arg_element);
+		}
 	}
 
-	if(is_array($config['openvpn']['openvpn-server'])) {
-		foreach($config['openvpn']['openvpn-server'] as &$server) {
-			if ($server['interface'] == $interface || empty($interface) || (!empty($gwgroups) && in_array($server['interface'], $gwgroups)))
+	if (is_array($config['openvpn']['openvpn-server'])) {
+		foreach ($config['openvpn']['openvpn-server'] as &$server) {
+			if ($server['interface'] == $interface || empty($interface) || (!empty($gwgroups) && in_array($server['interface'], $gwgroups))) {
 				openvpn_resync_if_needed('server', $server, $interface);
+			}
 		}
 	}
 
 	if (is_array($config['openvpn']['openvpn-client'])) {
-		foreach($config['openvpn']['openvpn-client'] as &$client) {
-			if ($client['interface'] == $interface || empty($interface) || (!empty($gwgroups) && in_array($client['interface'], $gwgroups)))
+		foreach ($config['openvpn']['openvpn-client'] as &$client) {
+			if ($client['interface'] == $interface || empty($interface) || (!empty($gwgroups) && in_array($client['interface'], $gwgroups))) {
 				openvpn_resync_if_needed('client', $client, $interface);
+			}
 		}
 	}
 }

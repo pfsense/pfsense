@@ -92,7 +92,7 @@ else
 			while (($file = readdir($dh)) !== false) {
 		   		if (is_dir($file)) 
 					continue;
-				echo "\t<script type=\"text/javascript\" src=\"/javascript/{$dir}/{$file}\"></script>\n";
+				echo "\t<script type=\"text/javascript\" src=\"/javascript/{$dir}/{$file}?rev=1\"></script>\n";
 			}
 			closedir($dh);
 		}

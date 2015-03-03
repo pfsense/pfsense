@@ -60,11 +60,28 @@ if($_POST['disablecarp'] <> "") {
 		set_single_sysctl('net.inet.carp.allow', '0');
 		if(is_array($config['virtualip']['vip'])) {
 			$viparr = &$config['virtualip']['vip'];
+			$found_dhcpdv6 = false;
 			foreach ($viparr as $vip) {
+				$carp_iface = "{$vip['interface']}_vip{$vip['vhid']}";
 				switch ($vip['mode']) {
 				case "carp":
 					interface_vip_bring_down($vip);
-					interface_ipalias_cleanup("{$vip['interface']}_vip{$vip['vhid']}");
+					interface_ipalias_cleanup($carp_iface);
+
+					/*
+					 * Reconfigure radvd when necessary
+					 * XXX: Is it the best way to do it?
+					 */
+					if (isset($config['dhcpdv6']) && is_array($config['dhcpdv6'])) {
+						foreach ($config['dhcpdv6'] as $dhcpv6if => $dhcpv6ifconf) {
+							if ($dhcpv6ifconf['rainterface'] != $carp_iface)
+								continue;
+
+							services_radvd_configure();
+							break;
+						}
+					}
+
 					sleep(1);
 					break;
 				}
@@ -176,7 +193,8 @@ include("head.inc");
 								$icon = "<img {$align} src=\"/themes/".$g['theme']."/images/icons/icon_pass_d.gif\" alt=\"backup\" />";
 							} else if($status == "INIT") {
 								$icon = "<img {$align} src=\"/themes/".$g['theme']."/images/icons/icon_log.gif\" alt=\"init\" />";
-							}
+							} else
+								$icon = "";
 						}
 						echo "<td class=\"listlr\" align=\"center\">" . convert_friendly_interface_to_friendly_descr($carp['interface']) . "@{$vhid} &nbsp;</td>";
 						echo "<td class=\"listlr\" align=\"center\">" . $ipaddress . "&nbsp;</td>";

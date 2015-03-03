@@ -945,7 +945,11 @@ include("head.inc");
 <?php 				endforeach; ?>
 				</select>
 				<br />
-				<span class="vexpl"><?=gettext("Choose on which interface packets must come in to match this rule.");?></span>
+				<?php if ($if == "FloatingRules" || isset($pconfig['floating'])): ?>
+					<span class="vexpl"><?=gettext("Choose the interface(s) for this rule.");?></span>
+				<?php else: ?>
+					<span class="vexpl"><?=gettext("Choose which interface packets must be sourced on to match this rule.");?></span>
+				<?php endif; ?>
 			</td>
 		</tr>
 <?php if ($if == "FloatingRules" || isset($pconfig['floating'])): ?>

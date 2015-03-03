@@ -4,10 +4,11 @@ require_once("pkg-utils.inc");
 
 global $g, $config, $argv, $command_split;
 
-if(is_array($command_split))
+if (is_array($command_split)) {
 	$args = array_slice($command_split, 2);
-else
+} else {
 	$args = array_slice($argv, 3);
+}
 
 $pkg_name = $args[0];
 $install_type = empty($args[1]) ? "normal" : $args[1];
@@ -27,13 +28,14 @@ if ($pkg_info) {
 $static_output = "";
 $pkg_interface = "console";
 
-if (empty($pkg_info[$pkg_name]))
+if (empty($pkg_info[$pkg_name])) {
 	echo "\nPackage not found.\n";
-elseif ($install_type == "normal")
+} elseif ($install_type == "normal") {
 	install_package($pkg_name, $pkg_info[$pkg_name], true);
-elseif ($install_type == "xmlonly")
+} elseif ($install_type == "xmlonly") {
 	install_package_xml($pkg_name);
-else
+} else {
 	echo "Invalid install type. Valid values are: normal, xmlonly.\n";
+}
 
 echo "\nDone.\n";

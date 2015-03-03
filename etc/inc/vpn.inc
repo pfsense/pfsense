@@ -105,8 +105,6 @@ function vpn_ipsec_configure($restart = false)
 	unlink_if_exists("{$g['vardb_path']}/ipsecpinghosts");
 	touch("{$g['vardb_path']}/ipsecpinghosts");
 
-	vpn_ipsec_configure_preferoldsa();
-
 	$syscfg = $config['system'];
 	$ipseccfg = $config['ipsec'];
 	if (!isset($ipseccfg['enable'])) {
@@ -1767,14 +1765,6 @@ EOD;
 		echo "done\n";
 
 	return 0;
-}
-
-function vpn_ipsec_configure_preferoldsa() {
-	global $config;
-	if(isset($config['ipsec']['preferoldsa']))
-		set_single_sysctl("net.key.preferred_oldsa", "-30");
-	else
-		set_single_sysctl("net.key.preferred_oldsa", "0");
 }
 
 ?>

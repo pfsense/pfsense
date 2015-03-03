@@ -41,7 +41,6 @@ require_once("shaper.inc");
 require_once("ipsec.inc");
 require_once("vpn.inc");
 
-$pconfig['preferoldsa_enable'] = isset($config['ipsec']['preferoldsa']);
 foreach ($ipsec_loglevels as $lkey => $ldescr) {
 	if (!empty($config['ipsec']["ipsec_{$lkey}"]))
 		$pconfig["ipsec_{$lkey}"] = $config['ipsec']["ipsec_{$lkey}"];
@@ -115,11 +114,6 @@ if ($_POST) {
 	
 	if (!$input_errors) {
 
-		if($_POST['preferoldsa_enable'] == "yes")
-			$config['ipsec']['preferoldsa'] = true;
-		elseif (isset($config['ipsec']['preferoldsa']))
-			unset($config['ipsec']['preferoldsa']);
-
 		if (is_array($config['ipsec'])) {
 			foreach ($ipsec_loglevels as $lkey => $ldescr) {
 				if (empty($_POST["ipsec_{$lkey}"])) {
@@ -182,7 +176,6 @@ if ($_POST) {
 		else
 			$savemsg = gettext($retval);
 
-		vpn_ipsec_configure_preferoldsa();
 		vpn_ipsec_configure($needsrestart);
 		vpn_ipsec_configure_loglevels();
 
@@ -241,17 +234,6 @@ function maxmss_checked(obj) {
 				<table width="100%" border="0" cellpadding="6" cellspacing="0" summary="main area">
 					<tr>
 						<td colspan="2" valign="top" class="listtopic"><?=gettext("IPsec Advanced Settings"); ?></td>
-					</tr>
-					<tr>
-						<td width="22%" valign="top" class="vncell"><?=gettext("Security Associations"); ?></td>
-						<td width="78%" class="vtable">
-							<input name="preferoldsa_enable" type="checkbox" id="preferoldsa_enable" value="yes" <?php if ($pconfig['preferoldsa_enable']) echo "checked=\"checked\""; ?> />
-							<strong><?=gettext("Prefer older IPsec SAs"); ?></strong>
-							<br />
-							<?=gettext("By default, if several SAs match, the newest one is " .
-							"preferred if it's at least 30 seconds old. Select this " .
-							"option to always prefer old SAs over new ones."); ?>
-						</td>
 					</tr>
 					<tr>
 						<td width="22%" valign="top" class="vncell"><?=gettext("IPsec Debug"); ?></td>

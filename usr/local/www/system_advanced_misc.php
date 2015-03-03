@@ -396,7 +396,7 @@ function tmpvar_checked(obj) {
 										<option value="min"<?php if($pconfig['powerd_ac_mode']=="min") echo " selected=\"selected\""; ?>><?=gettext("Minimum");?></option>
 										<option value="max"<?php if($pconfig['powerd_ac_mode']=="max") echo " selected=\"selected\""; ?>><?=gettext("Maximum");?></option>
 									</select>
-									&nbsp;&nbsp;
+									<br />
 									<?=gettext("On Battery Power Mode"); ?>&nbsp;:&nbsp;
 									<select name="powerd_battery_mode" id="powerd_battery_mode">
 										<option value="hadp"<?php if($pconfig['powerd_battery_mode']=="hadp") echo " selected=\"selected\""; ?>><?=gettext("Hiadaptive");?></option>

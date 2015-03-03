@@ -880,7 +880,7 @@ function sshkeyClicked(obj) {
 							<td width="22%" valign="top">&nbsp;</td>
 							<td width="78%">
 								<input id="submit" name="save" type="submit" class="formbtn" value="<?=gettext("Save");?>" />
-								<input type="button" value="<?=gettext("Cancel");?>" onclick="window.location.href='<?=$referer;?>'" />
+								<input type="button" class="formbtn" value="<?=gettext("Cancel");?>" onclick="window.location.href='<?=$referer;?>'" />
 								<?php if (isset($id) && $a_user[$id]): ?>
 								<input name="id" type="hidden" value="<?=htmlspecialchars($id);?>" />
 								<?php endif;?>

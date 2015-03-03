@@ -44,7 +44,7 @@ class UUID {
     const FMT_BINARY     = 102;
     const FMT_QWORD     = 1;    /* Quad-word, 128-bit (not impl.) */
     const FMT_DWORD     = 2;    /* Double-word, 64-bit (not impl.) */
-        const FMT_WORD         = 4;    /* Word, 32-bit (not impl.) */
+    const FMT_WORD         = 4;    /* Word, 32-bit (not impl.) */
     const FMT_SHORT        = 8;    /* Short (not impl.) */
     const FMT_BYTE        = 16;    /* Byte */
     const FMT_DEFAULT     = 16;
@@ -169,7 +169,7 @@ class UUID {
         $raw .= $node;
 
         /* Hash the namespace and node and convert to a byte array */
-        $val = $hash($raw, true);    
+        $val = $hash($raw, true);
         $tmp = unpack('C16', $val);
         foreach (array_keys($tmp) as $key)
             $byte[$key - 1] = $tmp[$key];
@@ -187,7 +187,7 @@ class UUID {
         $field['time_hi'] &= 0x0fff;
         $field['time_hi'] |= ($version << 12);
 
-        return ($field);    
+        return ($field);
     }
     static private function generateNameMD5($ns, $node) {
         return self::generateName($ns, $node, "md5",
@@ -221,7 +221,7 @@ class UUID {
         $uuid['time_low'] = $low;
         $uuid['time_mid'] = $high & 0x0000ffff;
         $uuid['time_hi'] = ($high & 0x0fff) | (self::UUID_TIME << 12);
-        
+
         /*
          * We don't support saved state information and generate
          * a random clock sequence each time.

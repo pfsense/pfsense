@@ -458,7 +458,7 @@ function presubmit() {
 							<td width="22%" valign="top">&nbsp;</td>
 							<td width="78%">
 								<input name="save" type="submit" class="formbtn" value="<?=gettext("Save");?>" />
-								<input type="button" value="<?=gettext("Cancel");?>" onclick="window.location.href='/system_groupmanager.php'" />
+								<input type="button" class="formbtn" value="<?=gettext("Cancel");?>" onclick="window.location.href='/system_groupmanager.php'" />
 								<?php if (isset($id) && $a_group[$id]): ?>
 								<input name="id" type="hidden" value="<?=htmlspecialchars($id);?>" />
 								<input name="gid" type="hidden" value="<?=htmlspecialchars($pconfig['gid']);?>" />

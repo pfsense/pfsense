@@ -389,30 +389,42 @@ function tmpvar_checked(obj) {
 									<input name="powerd_enable" type="checkbox" id="powerd_enable" value="yes" <?php if ($pconfig['powerd_enable']) echo "checked=\"checked\""; ?> />
 									<strong><?=gettext("Use PowerD"); ?></strong><br />
 									<br />
-									<?=gettext("On AC Power Mode"); ?>&nbsp;:&nbsp;
-									<select name="powerd_ac_mode" id="powerd_ac_mode">
-										<option value="hadp"<?php if($pconfig['powerd_ac_mode']=="hadp") echo " selected=\"selected\""; ?>><?=gettext("Hiadaptive");?></option>
-										<option value="adp"<?php if($pconfig['powerd_ac_mode']=="adp") echo " selected=\"selected\""; ?>><?=gettext("Adaptive");?></option>
-										<option value="min"<?php if($pconfig['powerd_ac_mode']=="min") echo " selected=\"selected\""; ?>><?=gettext("Minimum");?></option>
-										<option value="max"<?php if($pconfig['powerd_ac_mode']=="max") echo " selected=\"selected\""; ?>><?=gettext("Maximum");?></option>
-									</select>
-									&nbsp;&nbsp;
-									<?=gettext("On Battery Power Mode"); ?>&nbsp;:&nbsp;
-									<select name="powerd_battery_mode" id="powerd_battery_mode">
-										<option value="hadp"<?php if($pconfig['powerd_battery_mode']=="hadp") echo " selected=\"selected\""; ?>><?=gettext("Hiadaptive");?></option>
-										<option value="adp"<?php if($pconfig['powerd_battery_mode']=="adp") echo " selected=\"selected\""; ?>><?=gettext("Adaptive");?></option>
-										<option value="min"<?php if($pconfig['powerd_battery_mode']=="min") echo " selected=\"selected\""; ?>><?=gettext("Minimum");?></option>
-										<option value="max"<?php if($pconfig['powerd_battery_mode']=="max") echo " selected=\"selected\""; ?>><?=gettext("Maximum");?></option>
-									</select>
+									<table border="0" cellspacing="0" cellpadding="2" summary="powerd">
+										<tr>
+											<td><?=gettext("On AC Power Mode:");?> &nbsp;</td>
+											<td>
+												<select name="powerd_ac_mode" id="powerd_ac_mode">
+													<option value="hadp"<?php if($pconfig['powerd_ac_mode']=="hadp") echo " selected=\"selected\""; ?>><?=gettext("Hiadaptive");?></option>
+													<option value="adp"<?php if($pconfig['powerd_ac_mode']=="adp") echo " selected=\"selected\""; ?>><?=gettext("Adaptive");?></option>
+													<option value="min"<?php if($pconfig['powerd_ac_mode']=="min") echo " selected=\"selected\""; ?>><?=gettext("Minimum");?></option>
+													<option value="max"<?php if($pconfig['powerd_ac_mode']=="max") echo " selected=\"selected\""; ?>><?=gettext("Maximum");?></option>
+												</select>
+											</td>
+										</tr>
+										<tr>
+											<td><?=gettext("On Battery Power Mode:");?> &nbsp;</td>
+											<td>
+												<select name="powerd_battery_mode" id="powerd_battery_mode">
+													<option value="hadp"<?php if($pconfig['powerd_battery_mode']=="hadp") echo " selected=\"selected\""; ?>><?=gettext("Hiadaptive");?></option>
+													<option value="adp"<?php if($pconfig['powerd_battery_mode']=="adp") echo " selected=\"selected\""; ?>><?=gettext("Adaptive");?></option>
+													<option value="min"<?php if($pconfig['powerd_battery_mode']=="min") echo " selected=\"selected\""; ?>><?=gettext("Minimum");?></option>
+													<option value="max"<?php if($pconfig['powerd_battery_mode']=="max") echo " selected=\"selected\""; ?>><?=gettext("Maximum");?></option>
+												</select>
+											</td>
+										</tr>
+										<tr>
+											<td><?=gettext("On Unknown Power Mode:");?> &nbsp;</td>
+											<td>
+											<select name="powerd_normal_mode" id="powerd_normal_mode">
+												<option value="hadp"<?php if($pconfig['powerd_normal_mode']=="hadp") echo " selected=\"selected\""; ?>><?=gettext("Hiadaptive");?></option>
+												<option value="adp"<?php if($pconfig['powerd_normal_mode']=="adp") echo " selected=\"selected\""; ?>><?=gettext("Adaptive");?></option>
+												<option value="min"<?php if($pconfig['powerd_normal_mode']=="min") echo " selected=\"selected\""; ?>><?=gettext("Minimum");?></option>
+												<option value="max"<?php if($pconfig['powerd_normal_mode']=="max") echo " selected=\"selected\""; ?>><?=gettext("Maximum");?></option>
+											</select>
+											</td>
+										</tr>
+									</table>
 									<br />
-									<?=gettext("On Unknown Power Mode"); ?>&nbsp;:&nbsp;
-									<select name="powerd_normal_mode" id="powerd_normal_mode">
-										<option value="hadp"<?php if($pconfig['powerd_normal_mode']=="hadp") echo " selected=\"selected\""; ?>><?=gettext("Hiadaptive");?></option>
-										<option value="adp"<?php if($pconfig['powerd_normal_mode']=="adp") echo " selected=\"selected\""; ?>><?=gettext("Adaptive");?></option>
-										<option value="min"<?php if($pconfig['powerd_normal_mode']=="min") echo " selected=\"selected\""; ?>><?=gettext("Minimum");?></option>
-										<option value="max"<?php if($pconfig['powerd_normal_mode']=="max") echo " selected=\"selected\""; ?>><?=gettext("Maximum");?></option>
-									</select>
-									<br /><br />
 									<?=gettext("The powerd utility monitors the system state and sets various power control " .
 									"options accordingly.  It offers four modes (maximum, minimum, adaptive " .
 									"and hiadaptive) that can be individually selected while on AC power or batteries. " .

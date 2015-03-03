@@ -504,11 +504,11 @@ include("head.inc");
 				<p>
 				<input name="ddnsdomain" type="text" class="formfld unknown" id="ddnsdomain" size="20" value="<?=htmlspecialchars($pconfig['ddnsdomain']);?>" /><br />
 				<?=gettext("Note: Leave blank to disable dynamic DNS registration.");?><br />
-				<?=gettext("Enter the dynamic DNS domain which will be used to register client names in the DNS server.");?>
+				<?=gettext("Enter the dynamic DNS domain which will be used to register client names in the DNS server.");?><br />
 				<input name="ddnsdomainprimary" type="text" class="formfld unknown" id="ddnsdomainprimary" size="20" value="<?=htmlspecialchars($pconfig['ddnsdomainprimary']);?>" /><br />
 				<?=gettext("Enter the primary domain name server IP address for the dynamic domain name.");?><br />
 				<input name="ddnsdomainkeyname" type="text" class="formfld unknown" id="ddnsdomainkeyname" size="20" value="<?=htmlspecialchars($pconfig['ddnsdomainkeyname']);?>" /><br />
-				<?=gettext("Enter the dynamic DNS domain key name which will be used to register client names in the DNS server.");?>
+				<?=gettext("Enter the dynamic DNS domain key name which will be used to register client names in the DNS server.");?><br />
 				<input name="ddnsdomainkey" type="text" class="formfld unknown" id="ddnsdomainkey" size="20" value="<?=htmlspecialchars($pconfig['ddnsdomainkey']);?>" /><br />
 				<?=gettext("Enter the dynamic DNS domain key secret which will be used to register client names in the DNS server.");?>
 				</p>

@@ -110,7 +110,8 @@ if ($_POST) {
 		system_dhcpleases_configure();
 	} else {
 		if (isset($_POST['enable']) && isset($config['dnsmasq']['enable'])) {
-			$input_errors[] = "The DNS Forwarder is enabled. Disable it before enabling the DNS Resolver.";
+			if ($_POST['port'] == $config['dnsmasq']['port'])
+				$input_errors[] = "The DNS Forwarder is enabled using this port. Choose a non-conflicting port, or disable the DNS Forwarder.";
 		}
 
 		if (empty($_POST['active_interface'])) {

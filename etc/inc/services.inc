@@ -118,6 +118,9 @@ function services_radvd_configure($blacklist = array()) {
 
 		$radvdconf .= "# Generated for DHCPv6 Server $dhcpv6if\n";
 		$radvdconf .= "interface {$realif} {\n";
+		if (strstr($realif, "ovpn")) {
+			$radvdconf .= "\tUnicastOnly on;\n";
+		}
 		$radvdconf .= "\tAdvSendAdvert on;\n";
 		$radvdconf .= "\tMinRtrAdvInterval 5;\n";
 		$radvdconf .= "\tMaxRtrAdvInterval 20;\n";

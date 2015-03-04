@@ -659,6 +659,11 @@ function filter_generate_aliases() {
 			$extralias = "";
 			$aliasnesting = array();
 			$aliasaddrnesting = array();
+			if (is_numericint($aliased['name'])) {
+				// skip aliases with numeric-only names. redmine #4289
+				file_notice("Filter_Reload", "Aliases with numeric-only names are not valid. Skipping alias " . $aliased['name']);
+				continue;
+			}
 			$addrlist = filter_generate_nested_alias($aliased['name'], $aliased['address'], $aliasnesting, $aliasaddrnesting);
 			switch ($aliased['type']) {
 			case "host":

@@ -46,6 +46,11 @@ if (isset($_POST['aclid'])) {
 	$id = $_POST['aclid'];
 }
 
+if (!empty($id) && !is_numeric($id)) {
+	pfSenseHeader("services_unbound_acls.php");
+	exit;
+}
+
 $act = $_GET['act'];
 if (isset($_POST['act'])) {
 	$act = $_POST['act'];

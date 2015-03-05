@@ -1460,6 +1460,8 @@ EOD;
 		// SSLv2/3 is deprecated, force use of TLS
 		$lighty_config .= "ssl.use-sslv2 = \"disable\"\n";
 		$lighty_config .= "ssl.use-sslv3 = \"disable\"\n";
+		$lighty_config .= "ssl.ec-curve = \"secp384r1\"\n";
+		$lighty_config .= "ssl.dh-file = \"/etc/dh-parameters.4096\"\n";
 
 		/* Hifn accelerators do NOT work with the BEAST mitigation code. Do not allow it to be enabled if a Hifn card has been detected. */
 		$fd = @fopen("{$g['varlog_path']}/dmesg.boot", "r");
@@ -1479,7 +1481,7 @@ EOD;
 			$lighty_config .= "ssl.honor-cipher-order = \"enable\"\n";
 			$lighty_config .= "ssl.cipher-list = \"ECDHE-RSA-AES256-SHA384:AES256-SHA256:HIGH:!MD5:!aNULL:!EDH:!AESGCM\"\n";
 		} else {
-			$lighty_config .= "ssl.cipher-list = \"DHE-RSA-CAMELLIA256-SHA:DHE-DSS-CAMELLIA256-SHA:CAMELLIA256-SHA:DHE-DSS-AES256-SHA:AES256-SHA:DHE-RSA-CAMELLIA128-SHA:DHE-DSS-CAMELLIA128-SHA:CAMELLIA128-SHA:DHE-RSA-AES128-SHA:DHE-DSS-AES128-SHA:AES128-SHA:!aNULL:!eNULL:!3DES:@STRENGTH\"\n";
+			$lighty_config .= "ssl.cipher-list = \"DHE-RSA-AES256-SHA:DHE-DSS-AES256-SHA:DHE-RSA-CAMELLIA256-SHA:DHE-DSS-CAMELLIA256-SHA:DHE-RSA-AES128-SHA:DHE-DSS-AES128-SHA:DHE-RSA-CAMELLIA128-SHA:DHE-DSS-CAMELLIA128-SHA:AES256-SHA:CAMELLIA256-SHA:AES128-SHA:CAMELLIA128-SHA:!aNULL:!eNULL:!3DES:@STRENGTH\"\n";
 		}
 
 		if (!(empty($ca) || (strlen(trim($ca)) == 0))) {

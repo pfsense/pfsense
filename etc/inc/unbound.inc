@@ -205,7 +205,6 @@ EOF;
 	$port = (is_port($config['unbound']['port'])) ? $config['unbound']['port'] : "53";
 	$hide_identity = isset($config['unbound']['hideidentity']) ? "yes" : "no";
 	$hide_version = isset($config['unbound']['hideversion']) ? "yes" : "no";
-	$harden_glue = isset($config['unbound']['hardenglue']) ? "yes" : "no";
 	$harden_dnssec_stripped = isset($config['unbound']['dnssecstripped']) ? "yes" : "no";
 	$prefetch = isset($config['unbound']['prefetch']) ? "yes" : "no";
 	$prefetch_key = isset($config['unbound']['prefetchkey']) ? "yes" : "no";
@@ -277,7 +276,7 @@ port: {$port}
 verbosity: {$verbosity}
 hide-identity: {$hide_identity}
 hide-version: {$hide_version}
-harden-glue: {$harden_glue}
+harden-glue: yes
 do-ip4: yes
 do-ip6: yes
 do-udp: yes

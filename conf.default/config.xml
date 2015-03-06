@@ -274,7 +274,6 @@
 		<custom_options/>
 		<hideidentity/>
 		<hideversion/>
-		<hardenglue/>
 		<dnssecstripped/>
 	</unbound>
 </pfsense>

@@ -1318,9 +1318,15 @@ function interface_bring_down($interface = "wan", $destroy = false, $ifacecfg = 
 		case "6to4":
 			$realif = "{$interface}_stf";
 			if (does_interface_exist("$realif")) {
-				$ip6 = get_interface_ipv6($interface);
-				if (is_ipaddrv6($ip6)) {
-					mwexec("/sbin/ifconfig " . escapeshellarg($realif) . " inet6 {$ip6} delete", true);
+				/* destroy stf interface if tunnel is being disabled or tunnel type is being changed */
+				if (($ifcfg['ipaddrv6'] == '6rd' && (!isset($config['interfaces'][$interface]['ipaddrv6']) || $config['interfaces'][$interface]['ipaddrv6'] != '6rd')) ||
+					($ifcfg['ipaddrv6'] == '6to4' && (!isset($config['interfaces'][$interface]['ipaddrv6']) || $config['interfaces'][$interface]['ipaddrv6'] != '6to4'))) {
+					$destroy = true;
+				} else {
+					/* get_interface_ipv6() returns empty value if interface is being disabled */
+					$ip6 = get_interface_ipv6($interface);
+					if (is_ipaddrv6($ip6))
+						mwexec("/sbin/ifconfig " . escapeshellarg($realif) . " inet6 {$ip6} delete", true);
 				}
 				interface_ipalias_cleanup($interface, "inet6");
 				if ($destroy == true) {

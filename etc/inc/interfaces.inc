@@ -1170,51 +1170,65 @@ function interface_bring_down($interface = "wan", $destroy = false, $ifacecfg = 
 
 	$track6 = array();
 	switch ($ifcfg['ipaddrv6']) {
-	case "slaac":
-	case "dhcp6":
-		$pidv6 = find_dhcp6c_process($realif);
-		if($pidv6)
-			posix_kill($pidv6, SIGTERM);
-		sleep(3);
-		unlink_if_exists("{$g['varetc_path']}/dhcp6c_{$interface}.conf");
-		if (does_interface_exist($realifv6)) {
-			$ip6 = find_interface_ipv6($realifv6);
-			if (is_ipaddrv6($ip6) && $ip6 != "::")
-				mwexec("/sbin/ifconfig " . escapeshellarg($realifv6) . " inet6 {$ip6} delete", true);
-			interface_ipalias_cleanup($interface, "inet6");
-			if ($destroy == true)
-				pfSense_interface_flags($realif, -IFF_UP);
-			//mwexec("/usr/sbin/arp -d -i " . escapeshellarg($realif) . " -a");
-		}
-		$track6 = link_interface_to_track6($interface);
-		break;
-	case "6rd":
-	case "6to4":
-		$realif = "{$interface}_stf";
-		if(does_interface_exist("$realif")) {
-			$ip6 = get_interface_ipv6($interface);
-			if (is_ipaddrv6($ip6))
-				mwexec("/sbin/ifconfig " . escapeshellarg($realif) . " inet6 {$ip6} delete", true);
-			interface_ipalias_cleanup($interface, "inet6");
-			if ($destroy == true)
-				pfSense_interface_flags($realif, -IFF_UP);
-		}
-		$track6 = link_interface_to_track6($interface);
-		break;
-	default:
-		if(does_interface_exist("$realif")) {
-			$ip6 = get_interface_ipv6($interface);
-			if (is_ipaddrv6($ip6))
-				mwexec("/sbin/ifconfig " . escapeshellarg($realif) . " inet6 {$ip6} delete", true);
-			if (!empty($ifcfg['ipaddrv6']) && is_ipaddrv6($ifcfg['ipaddrv6']))
-				mwexec("/sbin/ifconfig " . escapeshellarg($realif) . " inet6 {$ifcfg['ipaddrv6']} delete", true);
-			interface_ipalias_cleanup($interface, "inet6");
-			if ($destroy == true)
-				pfSense_interface_flags($realif, -IFF_UP);
-			//mwexec("/usr/sbin/arp -d -i " . escapeshellarg($realif) . " -a");
-		}
-		$track6 = link_interface_to_track6($interface);
-		break;
+		case "slaac":
+		case "dhcp6":
+			$pidv6 = find_dhcp6c_process($realif);
+			if ($pidv6) {
+				posix_kill($pidv6, SIGTERM);
+			}
+			sleep(3);
+			unlink_if_exists("{$g['varetc_path']}/dhcp6c_{$interface}.conf");
+			if (does_interface_exist($realifv6)) {
+				$ip6 = find_interface_ipv6($realifv6);
+				if (is_ipaddrv6($ip6) && $ip6 != "::") {
+					mwexec("/sbin/ifconfig " . escapeshellarg($realifv6) . " inet6 {$ip6} delete", true);
+				}
+				interface_ipalias_cleanup($interface, "inet6");
+				if ($destroy == true) {
+					pfSense_interface_flags($realif, -IFF_UP);
+				}
+				//mwexec("/usr/sbin/arp -d -i " . escapeshellarg($realif) . " -a");
+			}
+			$track6 = link_interface_to_track6($interface);
+			break;
+		case "6rd":
+		case "6to4":
+			$realif = "{$interface}_stf";
+			if (does_interface_exist("$realif")) {
+				/* destroy stf interface if tunnel is being disabled or tunnel type is being changed */
+				if (($ifcfg['ipaddrv6'] == '6rd' && (!isset($config['interfaces'][$interface]['ipaddrv6']) || $config['interfaces'][$interface]['ipaddrv6'] != '6rd')) ||
+					($ifcfg['ipaddrv6'] == '6to4' && (!isset($config['interfaces'][$interface]['ipaddrv6']) || $config['interfaces'][$interface]['ipaddrv6'] != '6to4'))) {
+					$destroy = true;
+				} else {
+					/* get_interface_ipv6() returns empty value if interface is being disabled */
+					$ip6 = get_interface_ipv6($interface);
+					if (is_ipaddrv6($ip6))
+						mwexec("/sbin/ifconfig " . escapeshellarg($realif) . " inet6 {$ip6} delete", true);
+				}
+				interface_ipalias_cleanup($interface, "inet6");
+				if ($destroy == true) {
+					pfSense_interface_flags($realif, -IFF_UP);
+				}
+			}
+			$track6 = link_interface_to_track6($interface);
+			break;
+		default:
+			if (does_interface_exist("$realif")) {
+				$ip6 = get_interface_ipv6($interface);
+				if (is_ipaddrv6($ip6)) {
+					mwexec("/sbin/ifconfig " . escapeshellarg($realif) . " inet6 {$ip6} delete", true);
+				}
+				if (!empty($ifcfg['ipaddrv6']) && is_ipaddrv6($ifcfg['ipaddrv6'])) {
+					mwexec("/sbin/ifconfig " . escapeshellarg($realif) . " inet6 {$ifcfg['ipaddrv6']} delete", true);
+				}
+				interface_ipalias_cleanup($interface, "inet6");
+				if ($destroy == true) {
+					pfSense_interface_flags($realif, -IFF_UP);
+				}
+				//mwexec("/usr/sbin/arp -d -i " . escapeshellarg($realif) . " -a");
+			}
+			$track6 = link_interface_to_track6($interface);
+			break;
 	}
 
 	if (!empty($track6) && is_array($track6)) {

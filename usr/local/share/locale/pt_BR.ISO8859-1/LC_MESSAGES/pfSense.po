@@ -16255,7 +16255,7 @@ msgstr "Você não pode associar um gateway IPv6 a uma regra de filtro IPv4"
 #: usr/local/www/firewall_rules_edit.php:323
 #: usr/local/www/firewall_rules_edit.php:329
 #, php-format
-msgid "%s is only valid with protocol tcp."
+msgid "%s is only valid with protocol TCP."
 msgstr "%s é válido somente com o protocolo TCP."
 
 #: usr/local/www/firewall_rules_edit.php:299
@@ -16306,7 +16306,7 @@ msgstr "Você não pode utilizar endereços IPv4 em regras IPv6."
 #: usr/local/www/firewall_rules_edit.php:433
 #: usr/local/www/firewall_rules_edit.php:436
 #: usr/local/www/firewall_rules_edit.php:442
-msgid "OS detection is only valid with protocol tcp."
+msgid "OS detection is only valid with protocol TCP."
 msgstr "Detecção de OS somente é válida com o protocolo tcp."
 
 #: usr/local/www/firewall_rules_edit.php:406

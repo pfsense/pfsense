@@ -382,7 +382,7 @@ EOD;
 			$strongswan .= "\t\t\tnbns = " . implode(",", $cfgservers) . "\n";
 		unset($cfgservers);
 
-		if (isset($a_client['net_list'])) {
+		if (isset($a_client['net_list']) && is_array($a_phase2)) {
 			$net_list = '';
 			foreach ($a_phase2 as $ph2ent) {
 				if (isset($ph2ent['disabled']))

@@ -652,7 +652,13 @@ EOD;
 						$vpninterface = $vpninterface[0];
 					} else {
 						$ifacesuse = get_failover_interface($ph1ent['interface']);
-						$vpninterface = convert_real_interface_to_friendly_interface_name($ifacesuse);
+						if (strpos($ifacesuse, '_vip')) {
+							$vpninterface = explode('_vip', $ifacesuse);
+							$ifacesuse = get_real_interface($vpninterface[0]);
+							$vpninterface = $vpninterface[0];
+						} else {
+							$vpninterface = convert_real_interface_to_friendly_interface_name($ifacesuse);
+						}
 					}
 					
 					if (!empty($ifacesuse) && interface_has_gateway($vpninterface)) {

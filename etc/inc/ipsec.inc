@@ -193,10 +193,11 @@ function ipsec_get_phase1_src(& $ph1ent) {
 
 	if ($ph1ent['interface']) {
 		if (!is_ipaddr($ph1ent['interface'])) {
+                        $if = get_failover_interface($ph1ent['interface']);
 			if ($ph1ent['protocol'] == "inet6") {
-				$interfaceip = get_interface_ipv6($ph1ent['interface']);
+				$interfaceip = get_interface_ipv6($if);
 			} else {
-				$interfaceip = get_interface_ip($ph1ent['interface']);
+				$interfaceip = get_interface_ip($if);
 			}
 		} else {
 			$interfaceip=$ph1ent['interface'];

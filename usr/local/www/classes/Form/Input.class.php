@@ -23,6 +23,8 @@ class Form_Input extends Form_Element
 		$attributes['name'] = preg_replace('~[^a-z0-9_]+~', '-', strtolower($title));
 		$attributes['id'] = $attributes['name'];
 		$this->_attributes = $attributes;
+
+		return $this;
 	}
 
 	public function forceName($name)
@@ -65,6 +67,8 @@ class Form_Input extends Form_Element
 		$this->_columnWidth = (int)$size;
 
 		$this->addColumnClass('col-sm-'. $this->_columnWidth);
+
+		return $this;
 	}
 
 	public function setAttribute($key, $value = null)

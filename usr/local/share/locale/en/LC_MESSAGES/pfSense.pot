@@ -20908,7 +20908,7 @@ msgid ""
 msgstr ""
 
 #: usr/local/www/services_ntpd.php:327
-msgid "Enable rrd graphs of NTP statistics (default: disabled)."
+msgid "Enable RRD graphs of NTP statistics (default: disabled)."
 msgstr ""
 
 #: usr/local/www/services_ntpd.php:333

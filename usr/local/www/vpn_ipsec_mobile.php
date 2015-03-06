@@ -146,6 +146,8 @@ if ($_POST['submit']) {
 
 	if ($pconfig['dns_split_enable']) {
 		if (!empty($pconfig['dns_split'])) {
+			/* Replace multiple spaces by single */
+			$pconfig['dns_split'] = preg_replace('/\s+/', ' ', trim($pconfig['dns_split']));
 			$domain_array=explode(' ', $pconfig['dns_split']);
 			foreach ($domain_array as $curdomain) {
 				if (!is_domain($curdomain)) {
@@ -513,7 +515,7 @@ function login_banner_change() {
 										<input name="dns_split_enable" type="checkbox" id="dns_split_enable" value="yes" <?=$chk;?> onclick="dns_split_change()" />
 									</td>
 									<td>
-										<?=gettext("Provide a list of split DNS domain names to clients. Enter a comma separated list."); ?><br />
+										<?=gettext("Provide a list of split DNS domain names to clients. Enter a space separated list."); ?><br />
 										<?=gettext("NOTE: If left blank, and a default domain is set, it will be used for this value."); ?>
 									</td>
 								</tr>

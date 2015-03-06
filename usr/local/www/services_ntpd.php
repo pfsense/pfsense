@@ -326,7 +326,7 @@ include("head.inc");
 				<td width="22%" valign="top" class="vncellreq">NTP graphs</td>
 				<td width="78%" class="vtable">
 					<input name="statsgraph" type="checkbox" class="formcheckbox" id="statsgraph" <?php if($pconfig['statsgraph']) echo " checked=\"checked\""; ?> />
-					<?php echo gettext("Enable rrd graphs of NTP statistics (default: disabled)."); ?>
+					<?php echo gettext("Enable RRD graphs of NTP statistics (default: disabled)."); ?>
 				</td>
 			</tr>
 			<tr>

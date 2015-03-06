@@ -3738,6 +3738,19 @@ function upgrade_115_to_116() {
 function upgrade_116_to_117() {
 	global $config;
 
+	if (!isset($config['ipsec']['client']) ||
+	    !isset($config['ipsec']['client']['dns_split']) ||
+	    empty($config['ipsec']['client']['dns_split'])) {
+		return;
+	}
+
+	$config['ipsec']['client']['dns_split'] =
+		preg_replace('/\s*,\s*/', ' ', trim($config['ipsec']['client']['dns_split']));
+}
+
+function upgrade_117_to_118() {
+	global $config;
+
 	if (!isset($config['installedpackages']['miniupnpd']['config'][0])) {
 		return;
 	}

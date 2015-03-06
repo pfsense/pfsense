@@ -58,9 +58,6 @@ if (isset($config['unbound']['prefetch'])) {
 if (isset($config['unbound']['prefetchkey'])) {
 	$pconfig['prefetchkey'] = true;
 }
-if (isset($config['unbound']['hardenglue'])) {
-	$pconfig['hardenglue'] = true;
-}
 if (isset($config['unbound']['dnssecstripped'])) {
 	$pconfig['dnssecstripped'] = true;
 }
@@ -152,11 +149,6 @@ if ($_POST) {
 			$config['unbound']['prefetchkey'] = true;
 		} else {
 			unset($config['unbound']['prefetchkey']);
-		}
-		if (isset($_POST['hardenglue'])) {
-			$config['unbound']['hardenglue'] = true;
-		} else {
-			unset($config['unbound']['hardenglue']);
 		}
 		if (isset($_POST['dnssecstripped'])) {
 			$config['unbound']['dnssecstripped'] = true;
@@ -255,13 +247,6 @@ include_once("head.inc");
 								<td width="78%" class="vtable">
 									<input name="prefetchkey" type="checkbox" id="prefetchkey" value="yes" <?php if (isset($pconfig['prefetchkey'])) echo "checked=\"checked\"";?> /><br />
 									<?=sprintf(gettext("DNSKEYs are fetched earlier in the validation process when a %sDelegation signer%s is encountered. This helps lower the latency of requests but does utilize a little more CPU."), "<a href='http://en.wikipedia.org/wiki/List_of_DNS_record_types'>", "</a>");?>
-								</td>
-							</tr>
-							<tr>
-								<td width="22%" valign="top" class="vncell"><?=gettext("Harden Glue");?></td>
-								<td width="78%" class="vtable">
-									<input name="hardenglue" type="checkbox" id="hardenglue" value="yes" <?php if (isset($pconfig['hardenglue'])) echo "checked=\"checked\"";?> /><br />
-									<?=gettext("Only trust glue if it is within the server's authority.");?>
 								</td>
 							</tr>
 							<tr>

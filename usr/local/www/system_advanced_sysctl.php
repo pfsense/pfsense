@@ -230,6 +230,12 @@ if ($act != "edit" ): ?>
 	}
 
 	$form->add($section);
+
+	$form->addGlobal(new Form_Button(
+		'cancel',
+		'Cancel',
+		$referer
+	));
 	print $form;
 
 endif;

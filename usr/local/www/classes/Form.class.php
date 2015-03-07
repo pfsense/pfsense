@@ -13,12 +13,10 @@ class Form extends Form_Element
 
 	public function __construct()
 	{
-		$this->addGlobal(new Form_Input(
+		$this->addGlobal(new Form_Button(
 			'save',
-			'Save',
-			'submit',
 			'Save'
-		))->removeClass('form-control')->addClass('btn btn-primary');
+		));
 	}
 
 	public function add(Form_Section $section)

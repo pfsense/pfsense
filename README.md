@@ -36,8 +36,10 @@ Disable the dhcp server (on the LAN interface) of your pfSense install and you'r
 ```bash
 #!/bin/sh
 
-rsync -xav --delete `dirname $0`/usr/local/www/ root@192.168.122.100:/usr/local/www/
-rsync -xav --delete `dirname $0`/etc/inc/ root@192.168.122.100:/etc/inc/
+HOST=192.168.122.100
+
+rsync -xav --delete `dirname $0`/usr/local/www/ root@$HOST:/usr/local/www/
+rsync -xav --delete `dirname $0`/etc/inc/ root@$HOST:/etc/inc/
 ```
 
 # Cleaner
@@ -69,20 +71,22 @@ $form = new Form;
 $section = new Form_Section('System');
 
 $section->addInput(new Form_Input(
-    'Hostname',
-    'text',
-    $pconfig['hostname'],
-    ['placeholder' => 'pfSense']
+	'hostname',
+	'Hostname',
+	'text',
+	$pconfig['hostname'],
+	['placeholder' => 'pfSense']
 ))->setHelp('Name of the firewall host, without domain part');
 
 $section->addInput(new Form_Input(
-    'Domain',
-    'text',
-    $pconfig['domain'],
-    ['placeholder' => 'mycorp.com, home, office, private, etc.']
+	'domain',
+	'Domain',
+	'text',
+	$pconfig['domain'],
+	['placeholder' => 'mycorp.com, home, office, private, etc.']
 ))->setHelp('Do not use \'local\' as a domain name. It will cause local '.
-    'hosts running mDNS (avahi, bonjour, etc.) to be unable to resolve '.
-    'local hosts not running mDNS.');
+	'hosts running mDNS (avahi, bonjour, etc.) to be unable to resolve '.
+	'local hosts not running mDNS.');
 
 $form->add($section);
 

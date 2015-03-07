@@ -245,6 +245,7 @@ $form = new Form;
 $section = new Form_Section('Firewall Advanced');
 
 $section->addInput(new Form_Checkbox(
+	'ip-do-not-fragment-compatibility',
 	'IP Do-Not-Fragment compatibility',
 	'Clear invalid DF bits instead of dropping the packets',
 	isset($config['system']['scrubnodf'])
@@ -254,6 +255,7 @@ $section->addInput(new Form_Checkbox(
 	'fragment bit.');
 
 $section->addInput(new Form_Checkbox(
+	'ip-random-id-generation',
 	'IP Random id generation',
 	'Insert a stronger id into IP header of packets passing through the filter.',
 	isset($config['system']['scrubrnid'])
@@ -263,6 +265,7 @@ $section->addInput(new Form_Checkbox(
 	'reassembly.');
 
 $section->addInput($input = new Form_Select(
+	'firewall-optimization-options',
 	'Firewall Optimization Options',
 	$config['system']['optimization'],
 	array(
@@ -274,6 +277,7 @@ $section->addInput($input = new Form_Select(
 ))->setHelp('Select the type of state table optimization to use');
 
 $section->addInput(new Form_Checkbox(
+	'disable-firewall',
 	'Disable Firewall',
 	'Disable all packet filtering.',
 	isset($config['system']['disablefilter'])
@@ -283,6 +287,7 @@ $section->addInput(new Form_Checkbox(
 	'NAT</a>page.', [$g["product_name"]]);
 
 $section->addInput(new Form_Checkbox(
+	'disable-firewall-scrub',
 	'Disable Firewall Scrub',
 	'Disables the PF scrubbing option which can sometimes interfere with NFS and PPTP traffic.',
 	isset($config['system']['disablescrub'])
@@ -291,6 +296,7 @@ $section->addInput(new Form_Checkbox(
 $group = new Form_Group('Firewall Adaptive Timeouts');
 
 $group->add(new Form_Input(
+	'adaptive-start',
 	'Adaptive start',
 	'number',
 	$pconfig['adaptivestart'],
@@ -300,6 +306,7 @@ $group->add(new Form_Input(
 	'(adaptive.end - number of states) / (adaptive.end - adaptive.start).');
 
 $group->add(new Form_Input(
+	'adaptive-end',
 	'Adaptive end',
 	'number',
 	$pconfig['adaptiveend'],
@@ -315,6 +322,7 @@ $group->setHelp('Timeouts for states can be scaled adaptively as the number of '
 $section->add($group);
 
 $section->addInput(new Form_Input(
+	'firewall-maximum-states',
 	'Firewall Maximum States',
 	'number',
 	$pconfig['maximumstates'],
@@ -324,6 +332,7 @@ $section->addInput(new Form_Input(
 	'size is: %d', [pfsense_default_state_size()]);
 
 $section->addInput(new Form_Input(
+	'firewall-maximum-table-entries',
 	'Firewall Maximum Table Entries',
 	'text',
 	$pconfig['maximumtableentries'],
@@ -334,6 +343,7 @@ $section->addInput(new Form_Input(
 	[pfsense_default_table_entries_size()]);
 
 $section->addInput(new Form_Checkbox(
+	'static-route-filtering',
 	'Static route filtering',
 	'Bypass firewall rules for traffic on the same interface',
 	$pconfig['bypassstaticroutes']
@@ -343,6 +353,7 @@ $section->addInput(new Form_Checkbox(
 	'situations where multiple subnets are connected to the same interface.');
 
 $section->addInput(new Form_Checkbox(
+	'disable-auto-added-vpn-rules',
 	'Disable Auto-added VPN rules',
 	'Disable all auto-added VPN rules.',
 	isset($config['system']['disablevpnrules'])
@@ -350,6 +361,7 @@ $section->addInput(new Form_Checkbox(
 	'PPTP.</span>');
 
 $section->addInput(new Form_Checkbox(
+	'disable-reply-to',
 	'Disable reply-to',
 	'Disable reply-to on WAN rules',
 	$pconfig['disablereplyto']
@@ -359,6 +371,7 @@ $section->addInput(new Form_Checkbox(
 	'different from the gateway IP of the hosts behind the bridged interface.');
 
 $section->addInput(new Form_Checkbox(
+	'disable-negate-rules',
 	'Disable Negate rules',
 	'Disable Negate rule on policy routing rules',
 	$pconfig['disablenegate']
@@ -368,6 +381,7 @@ $section->addInput(new Form_Checkbox(
 	'networks');
 
 $section->addInput(new Form_Input(
+	'aliases-hostnames-resolve-interval',
 	'Aliases Hostnames Resolve Interval',
 	'text',
 	$pconfig['aliasesresolveinterval'],
@@ -377,6 +391,7 @@ $section->addInput(new Form_Input(
 	'(300s).');
 
 $section->addInput(new Form_Checkbox(
+	'check-certificate-of-aliases-urls',
 	'Check certificate of aliases URLs',
 	'Verify HTTPS certificates when downloading alias URLs',
 	$pconfig['checkaliasesurlcert']
@@ -387,6 +402,7 @@ $form->add($section);
 $section = new Form_Section('Bogon Networks');
 
 $section->addInput(new Form_Select(
+	'update-frequency',
 	'Update Frequency',
 	empty($pconfig['bogonsinterval']) ? 'monthly' : $pconfig['bogonsinterval'],
 	array(
@@ -411,6 +427,7 @@ if (count($config['interfaces']) > 1)
 		$value = 'purenat';
 
 	$section->addInput(new Form_Select(
+		'nat-reflection-mode-for-port-forwards',
 		'NAT Reflection mode for port forwards',
 		$value,
 		array(
@@ -435,6 +452,7 @@ if (count($config['interfaces']) > 1)
 		'this system setting on a per-rule basis.');
 
 	$section->addInput(new Form_Input(
+		'reflection-timeout',
 		'Reflection Timeout',
 		'number',
 		$config['system']['reflectiontimeout'],
@@ -443,6 +461,7 @@ if (count($config['interfaces']) > 1)
 		'applies to Reflection on port forwards in NAT + proxy mode.');
 
 	$section->addInput(new Form_Checkbox(
+		'enable-nat-reflection-for-1-1-nat',
 		'Enable NAT Reflection for 1:1 NAT',
 		'Automatic creation of additional NAT redirect rules from within your internal networks.',
 		isset($config['system']['enablebinatreflection'])
@@ -453,6 +472,7 @@ if (count($config['interfaces']) > 1)
 		'per-rule basis.');
 
 	$section->addInput(new Form_Checkbox(
+		'enable-automatic-outbound-nat-for-reflection',
 		'Enable automatic outbound NAT for Reflection',
 		'Automatic create outbound NAT rules that direct traffic back out to the same subnet it originated from.',
 		isset($config['system']['enablenatreflectionhelper'])
@@ -462,6 +482,7 @@ if (count($config['interfaces']) > 1)
 		'outbound NAT rules that direct the reply packets back through the router.');
 
 	$section->addInput(new Form_Select(
+		'tftp-proxy',
 		'TFTP Proxy',
 		$pconfig['tftpinterface'],
 		get_configured_interface_with_descr(),

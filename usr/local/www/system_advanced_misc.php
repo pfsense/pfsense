@@ -260,6 +260,7 @@ $form = new Form;
 $section = new Form_Section('Proxy support');
 
 $section->addInput(new Form_Input(
+	'proxy-url',
 	'Proxy URL',
 	'text',
 	$pconfig['proxyurl']
@@ -267,12 +268,14 @@ $section->addInput(new Form_Input(
 	'use for its outbound Internet access.');
 
 $section->addInput(new Form_Input(
+	'proxy-port',
 	'Proxy Port',
 	'text',
 	$pconfig['proxyport']
 ))->setHelp('Port where proxy server is listening.');
 
 $section->addInput(new Form_Input(
+	'proxy-username',
 	'Proxy Username',
 	'text',
 	$pconfig['proxyuser']
@@ -280,6 +283,7 @@ $section->addInput(new Form_Input(
 	'leave blank to not use authentication.');
 
 $section->addInput(new Form_Input(
+	'proxy-password',
 	'Proxy Password',
 	'text',
 	$pconfig['proxypass']
@@ -291,6 +295,7 @@ $section = new Form_Section('Load Balancing');
 $group = new Form_Group('Load Balancing');
 
 $group->add(new Form_Checkbox(
+	'use-sticky-connections',
 	'Use sticky connections',
 	'Use sticky connections',
 	$pconfig['lb_use_sticky']
@@ -303,6 +308,7 @@ $group->add(new Form_Checkbox(
 	'restart the Load Balancing service.');
 
 $group->add(new Form_Input(
+	'source-tracking-timeout',
 	'Source tracking timeout',
 	'number',
 	$pconfig['srctrack'],
@@ -315,6 +321,7 @@ $group->add(new Form_Input(
 $section->add($group);
 
 $section->addInput(new Form_Checkbox(
+	'default-gateway-switching',
 	'Default gateway switching',
 	'Enable default gateway switching',
 	$pconfig['gw_switch_default']
@@ -326,6 +333,7 @@ $form->add($section);
 $section = new Form_Section('Power savings');
 
 $section->addInput(new Form_Checkbox(
+	'powerd',
 	'PowerD',
 	'Enable PowerD',
 	$pconfig['powerd_enable']
@@ -351,18 +359,21 @@ $modes = array(
 );
 
 $section->addInput(new Form_Select(
+	'ac-power',
 	'AC Power',
 	$pconfig['powerd_ac_mode'],
 	$modes
 ));
 
 $section->addInput(new Form_Select(
+	'battery-power',
 	'Battery Power',
 	$pconfig['powerd_battery_mode'],
 	$modes
 ));
 
 $section->addInput(new Form_Select(
+	'unknown-power',
 	'Unknown Power',
 	$pconfig['powerd_normal_mode'],
 	$modes
@@ -372,6 +383,7 @@ $form->add($section);
 $section = new Form_Section('Cryptographic & Thermal Hardware');
 
 $section->addInput(new Form_Select(
+	'cryptographic-hardware',
 	'Cryptographic Hardware',
 	$pconfig['crypto_hardware'],
 	$crypto_modules
@@ -386,6 +398,7 @@ $section->addInput(new Form_Select(
 	'unload the selected module, set this option to "none" and then reboot.');
 
 $section->addInput(new Form_Select(
+	'thermal-sensors',
 	'Thermal Sensors',
 	$pconfig['thermal_hardware'],
 	array('' => 'None/ACPI') + $thermal_hardware_modules
@@ -401,6 +414,7 @@ $form->add($section);
 $section = new Form_Section('Schedules');
 
 $section->addInput(new Form_Checkbox(
+	'schedule-states',
 	'Schedule States',
 	'Do not kill connections when schedule expires',
 	$pconfig['schedule_states']
@@ -412,6 +426,7 @@ $form->add($section);
 $section = new Form_Section('Gateway Monitoring');
 
 $section->addInput(new Form_Checkbox(
+	'state-killing-on-gateway-failure',
 	'State Killing on Gateway Failure',
 	'Flush states for a gateway that goes down',
 	$pconfig['kill_states']
@@ -419,6 +434,7 @@ $section->addInput(new Form_Checkbox(
 	'if this box is not checked. Check this box to disable this behavior.');
 
 $section->addInput(new Form_Checkbox(
+	'skip-rules-when-gateway-is-down',
 	'Skip rules when gateway is down',
 	'Do not create rules when gateway is down',
 	$pconfig['skip_rules_gw_down']
@@ -427,6 +443,7 @@ $section->addInput(new Form_Checkbox(
 	'behavior by omitting the entire rule instead.');
 
 $section->addInput(new Form_Checkbox(
+	'gateway-monitoring-logging',
 	'Gateway monitoring logging',
 	'Enable debug logging',
 	$pconfig['apinger_debug']
@@ -437,6 +454,7 @@ $form->add($section);
 $section = new Form_Section('RAM Disk Settings (Reboot to Apply Changes)');
 
 $section->addInput(new Form_Checkbox(
+	'use-ram-disks',
 	'Use RAM Disks',
 	'Use memory file system for /tmp and /var',
 	($pconfig['use_mfs_tmpvar'] || $g['platform'] != "pfSense")
@@ -446,6 +464,7 @@ $section->addInput(new Form_Checkbox(
 	'and DHCP Leases will be retained.');
 
 $section->addInput(new Form_Input(
+	'-tmp-ram-disk-size',
 	'/tmp RAM Disk Size',
 	'number',
 	$pconfig['use_mfs_tmp_size'],
@@ -454,6 +473,7 @@ $section->addInput(new Form_Input(
 	'RAM disk. Leave blank for 40MB. Do not set lower than 40.');
 
 $section->addInput(new Form_Input(
+	'-var-ram-disk-size',
 	'/var RAM Disk Size',
 	'number',
 	$pconfig['use_mfs_var_size'],
@@ -462,6 +482,7 @@ $section->addInput(new Form_Input(
 	'RAM disk. Leave blank for 60MB. Do not set lower than 60.');
 
 $section->addInput(new Form_Input(
+	'periodic-rrd-backup',
 	'Periodic RRD Backup',
 	'number',
 	$config['system']['rrdbackup'],
@@ -471,6 +492,7 @@ $section->addInput(new Form_Input(
 	'frequent the backup, the more writes will happen to your media.');
 
 $section->addInput(new Form_Input(
+	'periodic-dhcp-leases-backup',
 	'Periodic DHCP Leases Backup',
 	'number',
 	$config['system']['rrdbackup'],
@@ -483,6 +505,7 @@ $form->add($section);
 $section = new Form_Section('Package settings');
 
 $section->addInput(new Form_Checkbox(
+	'package-signature',
 	'Package signature',
 	'Disable check package signature',
 	$pconfig['pkg_nochecksig']

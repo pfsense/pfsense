@@ -200,41 +200,38 @@ if ($act != "edit" ): ?>
 	$section = new Form_Section('Edit Tunable');
 
 	$section->addInput(new Form_Input(
+		'tunable',
 		'Tunable',
 		'text',
 		$pconfig['tunable']
 	))->setWidth(4);
 
 	$section->addInput(new Form_Input(
+		'descr',
 		'Description',
 		'text',
 		$pconfig['descr']
-	))->forceName('descr')->setWidth(4);
+	))->setWidth(4);
 
 	$section->addInput(new Form_Input(
+		'value',
 		'Value',
 		'text',
 		$pconfig['value']
 	))->setWidth(4);
 
 	if (isset($id) && $a_tunable[$id]) {
-		$section->addInput(new Form_Input(
+		$section->addGlobal(new Form_Input(
+			'id',
 			'id',
 			'hidden',
-			htmlspecialchars_decode($id)
+			$id
 		));
 	}
-
-	$form->setSubmit(new Form_Input(
-		'Submit',
-		'submit',
-		gettext('Save')
-	))->forceName('Submit')->removeClass('form-control')->addClass('btn btn-primary');
 
 	$form->add($section);
 	print $form;
 
 endif;
 
-include("fend.inc"); ?>
-
+include("fend.inc");

@@ -819,7 +819,7 @@ $section = new Form_Section('Edit Firewall rule');
 
 if (isset($id))
 {
-	$section->addInput(new Form_Input(
+	$form->addGlobal(new Form_Input(
 		'ID',
 		'hidden',
 		$id
@@ -828,20 +828,20 @@ if (isset($id))
 
 if (isset($a_filter[$id]))
 {
-	$section->addInput(new Form_Input(
+	$form->addGlobal(new Form_Input(
 		'Tracker',
 		'hidden',
 		$pconfig['tracker']
 	));
 }
 
-$section->addInput(new Form_Input(
+$form->addGlobal(new Form_Input(
 	'After',
 	'hidden',
 	$after
 ));
 
-$section->addInput(new Form_Input(
+$form->addGlobal(new Form_Input(
 	'Ruleid',
 	'hidden',
 	$pconfig['ruleid']
@@ -1291,18 +1291,18 @@ $section->addInput(new Form_Checkbox(
 $vlanprio = array("none", "be", "bk", "ee", "ca", "vi", "vo", "ic", "nc");
 $section->addInput(new Form_Select(
 	'VLAN Prio',
-	$vlanprio,
-	$pconfig['vlanprio']
+	$pconfig['vlanprio'],
+	$vlanprio
 ))->setHelp('Choose 802.1p priority to match on');
 
 $section->addInput(new Form_Select(
 	'VLAN Prio Set',
-	$vlanprio,
-	$pconfig['vlanprioset']
+	$pconfig['vlanprioset'],
+	$vlanprio
 ))->setHelp('Choose 802.1p priority to apply');
 
 $schedules = array('none'); //leave none to leave rule enabled all the time
-foreach ($config['schedules']['schedule'] as $schedule)
+foreach ((array)$config['schedules']['schedule'] as $schedule)
 {
 	if ($schedule['name'] != "")
 		$schedules[] = $schedule['name'];

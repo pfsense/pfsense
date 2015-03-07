@@ -309,7 +309,6 @@ $helppages = array(
 	'iperfserver.xml' => 'https://doc.pfsense.org/index.php/Iperf_package',
 	'jail_template.xml' => 'https://doc.pfsense.org/index.php/PfJailctl_package',
 	'jailctl.xml' => 'https://doc.pfsense.org/index.php/PfJailctl_package',
-	'jailctl.xml' => 'https://doc.pfsense.org/index.php/PfJailctl_package',
 	'jailctl_defaults.xml' => 'https://doc.pfsense.org/index.php/PfJailctl_package',
 	'jailctl_settings.xml' => 'https://doc.pfsense.org/index.php/PfJailctl_package',
 	'siproxd.xml' => 'https://doc.pfsense.org/index.php/Siproxd_package',

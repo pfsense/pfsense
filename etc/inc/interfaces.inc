@@ -4976,7 +4976,6 @@ function get_interfaces_with_gateway() {
 			case "pppoe":
 			case "pptp":
 			case "l2tp":
-			case "ppp";
 				$ints[$ifdescr] = $ifdescr;
 			break;
 			default:

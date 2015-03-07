@@ -175,6 +175,7 @@ $form = new Form;
 $section = new Form_Section('IPv6 Options');
 
 $section->addInput(new Form_Checkbox(
+	'allow-ipv6',
 	'Allow IPv6',
 	'All IPv6 traffic will be blocked by the firewall unless this box is checked',
 	$pconfig['ipv6allow']
@@ -183,6 +184,7 @@ $section->addInput(new Form_Checkbox(
 
 $group = new Form_Group('IPv6 over IPv4 Tunneling');
 $group->add(new Form_Checkbox(
+	'ipv6-over-ipv4-tunneling',
 	'IPv6 over IPv4 Tunneling',
 	'Enable IPv4 NAT encapsulation of IPv6 packets',
 	$pconfig['ipv6allow']
@@ -190,6 +192,7 @@ $group->add(new Form_Checkbox(
 	'blocks traffic.');
 
 $group->add(new Form_Input(
+	'ip-address',
 	'IP address',
 	'text',
 	$pconfig['ipv6nat_ipaddr']
@@ -201,6 +204,7 @@ $group->add(new Form_Input(
 $section->add($group);
 
 $section->addInput(new Form_Checkbox(
+	'prefer-ipv4-over-ipv6',
 	'Prefer IPv4 over IPv6',
 	'Prefer to use IPv4 even if IPv6 is available',
 	$pconfig['prefer_ipv4']
@@ -211,6 +215,7 @@ $form->add($section);
 $section = new Form_Section('Network Interfaces');
 
 $section->addInput(new Form_Checkbox(
+	'device-polling',
 	'Device polling',
 	'Enable device polling',
 	$pconfig['polling_enable']
@@ -222,6 +227,7 @@ $section->addInput(new Form_Checkbox(
 
 
 $section->addInput(new Form_Checkbox(
+	'hardware-checksum-offloading',
 	'Hardware Checksum Offloading',
 	'Disable hardware checksum offload',
 	isset($config['system']['disablechecksumoffloading'])
@@ -232,6 +238,7 @@ $section->addInput(new Form_Checkbox(
 	'interface.');
 
 $section->addInput(new Form_Checkbox(
+	'hardware-tcp-segmentation-offloading',
 	'Hardware TCP Segmentation Offloading',
 	'Disable hardware TCP segmentation offload',
 	isset($config['system']['disablesegmentationoffloading'])
@@ -241,6 +248,7 @@ $section->addInput(new Form_Checkbox(
 	'effect after you reboot the machine or re-configure each interface.');
 
 $section->addInput(new Form_Checkbox(
+	'hardware-large-receive-offloading',
 	'Hardware Large Receive Offloading',
 	'Disable hardware large receive offload',
 	isset($config['system']['disablelargereceiveoffloading'])
@@ -250,6 +258,7 @@ $section->addInput(new Form_Checkbox(
 	'machine or re-configure each interface.');
 
 $section->addInput(new Form_Checkbox(
+	'arp-handling',
 	'ARP Handling',
 	'Suppress ARP messages',
 	isset($pconfig['sharednet'])

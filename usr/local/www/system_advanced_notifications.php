@@ -174,6 +174,7 @@ $form = new Form;
 $section = new Form_Section('Growl');
 
 $section->addInput(new Form_Checkbox(
+	'disable-growl',
 	'Disable Growl',
 	'Disable Growl Notifications',
 	$pconfig['disable_growl']
@@ -181,6 +182,7 @@ $section->addInput(new Form_Checkbox(
 	'settings below.');
 
 $section->addInput(new Form_Input(
+	'registration-name',
 	'Registration Name',
 	'text',
 	$pconfig['name'],
@@ -188,6 +190,7 @@ $section->addInput(new Form_Input(
 ))->setHelp('Enter the name to register with the Growl server.');
 
 $section->addInput(new Form_Input(
+	'notification-name',
 	'Notification Name',
 	'text',
 	$pconfig['notification_name'],
@@ -196,6 +199,7 @@ $section->addInput(new Form_Input(
 ))->setHelp('Enter a name for the Growl notifications');
 
 $section->addInput(new Form_Input(
+	'ip-address',
 	'IP Address',
 	'text',
 	$pconfig['ipaddress']
@@ -203,12 +207,14 @@ $section->addInput(new Form_Input(
 	'notifications to.');
 
 $section->addInput(new Form_Input(
+	'password',
 	'Password',
 	'text',
 	$pconfig['password']
 ))->setHelp('Enter the password of the remote growl notification device.');
 
 $section->addInput(new Form_Input(
+	'test-growl',
 	'Test Growl',
 	'submit',
 	'Test Growl settings'
@@ -219,6 +225,7 @@ $form->add($section);
 $section = new Form_Section('E-Mail');
 
 $section->addInput(new Form_Checkbox(
+	'disable-smtp',
 	'Disable SMTP',
 	'Disable SMTP Notifications',
 	$pconfig['disable_smtp']
@@ -227,6 +234,7 @@ $section->addInput(new Form_Checkbox(
 	'in place to function.');
 
 $section->addInput(new Form_Input(
+	'e-mail-server',
 	'E-Mail server',
 	'text',
 	$pconfig['smtpipaddress']
@@ -234,6 +242,7 @@ $section->addInput(new Form_Input(
 	'which notifications will be sent.');
 
 $section->addInput(new Form_Input(
+	'smtp-port-of-e-mail-server',
 	'SMTP Port of E-Mail server',
 	'number',
 	$pconfig['smtpport']
@@ -242,12 +251,14 @@ $section->addInput(new Form_Input(
 
 $group = new Form_Group('Secure SMTP Connection');
 $group->add(new Form_Checkbox(
+	'enable-ssl-tls',
 	'Enable SSL/TLS',
 	'Enable SMTP over SSL/TLS',
 	isset($pconfig['smtpssl'])
 ));
 
 $group->add(new Form_Checkbox(
+	'secure-starttls',
 	'Secure STARTTLS',
 	'Enable STARTTLS',
 	isset($pconfig['smtptls'])
@@ -256,12 +267,14 @@ $group->add(new Form_Checkbox(
 $section->add($group);
 
 $section->addInput(new Form_Input(
+	'from-e-mail-address',
 	'From e-mail address',
 	'text',
 	$pconfig['smtpfromaddress']
 ))->setHelp('This is the e-mail address that will appear in the from field.');
 
 $section->addInput(new Form_Input(
+	'notification-e-mail-address',
 	'Notification E-Mail address',
 	'text',
 	$pconfig['smtpnotifyemailaddress']
@@ -269,18 +282,21 @@ $section->addInput(new Form_Input(
 	'notifications sent to.');
 
 $section->addInput(new Form_Input(
+	'notification-e-mail-auth-username-optional-',
 	'Notification E-Mail auth username (optional)',
 	'text',
 	$pconfig['smtpusername']
 ))->setHelp('Enter the e-mail address username for SMTP authentication.');
 
 $section->addInput(new Form_Input(
+	'notification-e-mail-auth-password',
 	'Notification E-Mail auth password',
 	'password',
 	$pconfig['smtppassword']
 ))->setHelp('Enter the e-mail address password for SMTP authentication.');
 
 $section->addInput(new Form_Input(
+	'test-smtp',
 	'Test SMTP',
 	'submit',
 	'Test SMTP settings'
@@ -288,6 +304,7 @@ $section->addInput(new Form_Input(
 	'marked as disabled.');
 
 $section->addInput(new Form_Checkbox(
+	'startup-shutdown-sound',
 	'Startup/Shutdown Sound',
 	'Disable the startup/shutdown beep',
 	$pconfig['disablebeep']

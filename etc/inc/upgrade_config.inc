@@ -3435,7 +3435,6 @@ function upgrade_110_to_111() {
 		"active_interface" => "network_interface",
 		"query_interface" => "outgoing_interface",
 		"unbound_verbosity" => "log_verbosity",
-		"unbound_verbosity" => "log_verbosity",
 		"msg_cache_size" => "msgcachesize",
 		"outgoing_num_tcp" => "outgoing_num_tcp",
 		"incoming_num_tcp" => "incoming_num_tcp",

@@ -6,18 +6,22 @@ class Form_Button extends Form_Input
 
 	public function __construct($name, $value, $link = null)
 	{
-		$this->_link = $link;
-
-		$type = isset($this->_link) ? null : 'submit';
+		// If we have a link; we're actually an <a class='btn'>
+		if (isset($link))
+		{
+			$this->_link = $link;
+			$this->addClass('btn-default');
+			$type = null;
+		}
+		else
+		{
+			$this->addClass('btn-primary');
+			$type = 'submit';
+		}
 
 		parent::__construct($name, $value, $type);
 
 		$this->removeClass('form-control')->addClass('btn');
-
-		if ('submit' == $type)
-			$this->addClass('btn-primary');
-		else
-			$this->addClass('btn-default');
 	}
 
 	protected function _getInput()

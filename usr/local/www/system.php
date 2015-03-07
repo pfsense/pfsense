@@ -80,7 +80,7 @@ function is_timezone($elt) {
 	return !preg_match("/\/$/", $elt);
 }
 
-if($pconfig['timezone'] <> $_POST['timezone']) {
+if($pconfig['timezone'] != $_POST['timezone']) {
 	filter_pflog_start(true);
 }
 
@@ -130,7 +130,7 @@ if ($_POST) {
 		if (($_POST[$dnsname] && !is_ipaddr($_POST[$dnsname]))) {
 			$input_errors[] = gettext("A valid IP address must be specified for DNS server $dnscounter.");
 		} else {
-			if(($_POST[$dnsgwname] <> "") && ($_POST[$dnsgwname] <> "none")) {
+			if(($_POST[$dnsgwname] != "") && ($_POST[$dnsgwname] != "none")) {
 				// A real gateway has been selected.
 				if (is_ipaddr($_POST[$dnsname])) {
 					if ((is_ipaddrv4($_POST[$dnsname])) && (validate_address_family($_POST[$dnsname], $_POST[$dnsgwname]) === false )) {
@@ -301,12 +301,14 @@ require('classes/Form.class.php');
 $form = new Form;
 $section = new Form_Section('System');
 $section->addInput(new Form_Input(
+	'hostname',
 	'Hostname',
 	'text',
 	$pconfig['hostname'],
 	['placeholder' => 'pfSense']
 ))->setHelp('Name of the firewall host, without domain part');
 $section->addInput(new Form_Input(
+	'domain',
 	'Domain',
 	'text',
 	$pconfig['domain'],
@@ -324,7 +326,7 @@ for ($i=1; $i<5; $i++)
 		continue;
 
 	$group = new Form_Group('DNS Server');
-	$group->add(new Form_Input('DNS Server', 'text', $pconfig['dns'.$i]));
+	$group->add(new Form_Input('dns['.$i.']', 'DNS Server', 'text', $pconfig['dns'.$i]));
 	$help = "Enter IP addresses to be used by the system for DNS resolution. " .
 		"These are also used for the DHCP service, DNS forwarder and for PPTP VPN clients.";
 
@@ -344,7 +346,12 @@ for ($i=1; $i<5; $i++)
 			$options[$gwname] = $gwname.' - '.$gwitem['friendlyiface'].' - '.$gwitem['gateway'];
 		}
 
-		$group->add(new Form_Select('Gateway', $pconfig['dns'.$i.'gw'], $options));
+		$group->add(new Form_Select(
+			'gateway',
+			'Gateway',
+			$pconfig['dns'.$i.'gw'],
+			$options
+		));
 
 		$help .= '<br/>'. "In addition, optionally select the gateway for each DNS server. " .
 			"When using multiple WAN connections there should be at least one unique DNS server per gateway.";
@@ -355,6 +362,7 @@ for ($i=1; $i<5; $i++)
 }
 
 $section->addInput(new Form_Checkbox(
+	'dnsallowoverride',
 	'DNS server override',
 	'Allow DNS server list to be overridden by DHCP/PPP on WAN',
 	$pconfig['dnsallowoverride']
@@ -364,6 +372,7 @@ $section->addInput(new Form_Checkbox(
 	'VPN clients.'), $g['product_name']));
 
 $section->addInput(new Form_Checkbox(
+	'dnslocalhost',
 	'Disable DNS forwarder',
 	'Do not use the DNS Forwarder as a DNS server for the firewall',
 	$pconfig['dnslocalhost']
@@ -376,17 +385,20 @@ $form->add($section);
 
 $section = new Form_Section('Localization');
 $section->addInput(new Form_Select(
+	'timezone',
 	'Timezone',
 	$pconfig['timezone'],
 	$timezonelist
 ))->setHelp('Select the location closest to you');
 $section->addInput(new Form_Input(
+	'timeservers',
 	'Timeservers',
 	'text',
 	$pconfig['timeservers']
 ))->setHelp('Use a space to separate multiple hosts (only one required). '.
 	'Remember to set up at least one DNS server if you enter a host name here!');
 $section->addInput(new Form_Select(
+	'language',
 	'Language',
 	$pconfig['language'],
 	get_locale_list()

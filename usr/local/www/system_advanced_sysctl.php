@@ -200,18 +200,21 @@ if ($act != "edit" ): ?>
 	$section = new Form_Section('Edit Tunable');
 
 	$section->addInput(new Form_Input(
+		'tunable',
 		'Tunable',
 		'text',
 		$pconfig['tunable']
 	))->setWidth(4);
 
 	$section->addInput(new Form_Input(
+		'descr',
 		'Description',
 		'text',
 		$pconfig['descr']
-	))->forceName('descr')->setWidth(4);
+	))->setWidth(4);
 
 	$section->addInput(new Form_Input(
+		'value',
 		'Value',
 		'text',
 		$pconfig['value']
@@ -219,6 +222,7 @@ if ($act != "edit" ): ?>
 
 	if (isset($id) && $a_tunable[$id]) {
 		$section->addGlobal(new Form_Input(
+			'id',
 			'id',
 			'hidden',
 			$id

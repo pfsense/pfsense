@@ -5,9 +5,9 @@ class Form_Select extends Form_Input
 	protected $_values;
 	protected $_value;
 
-	public function __construct($title, $value, array $values, $allowMultiple = false)
+	public function __construct($name, $title, $value, array $values, $allowMultiple = false)
 	{
-		parent::__construct($title, null);
+		parent::__construct($name, $title, null);
 
 		if ($allowMultiple)
 		{

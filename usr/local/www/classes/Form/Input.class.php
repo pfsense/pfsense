@@ -9,8 +9,9 @@ class Form_Input extends Form_Element
 	protected $_columnWidth;
 	protected $_columnClasses = array();
 
-	public function __construct($title, $type = 'text', $value = null, array $attributes = array())
+	public function __construct($name, $title, $type = 'text', $value = null, array $attributes = array())
 	{
+		$attributes['name'] = $name;
 		$this->_title = $title;
 		$this->addClass('form-control');
 
@@ -20,16 +21,8 @@ class Form_Input extends Form_Element
 		if (isset($value))
 			$attributes['value'] = $value;
 
-		$attributes['name'] = preg_replace('~[^a-z0-9_]+~', '-', strtolower($title));
 		$attributes['id'] = $attributes['name'];
 		$this->_attributes = $attributes;
-
-		return $this;
-	}
-
-	public function forceName($name)
-	{
-		$this->setAttribute('name', $name);
 
 		return $this;
 	}

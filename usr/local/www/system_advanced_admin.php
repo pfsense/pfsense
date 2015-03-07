@@ -297,6 +297,7 @@ $section = new Form_Section('WebConfigurator');
 $group = new Form_Group('Protocol');
 
 $group->add(new Form_Checkbox(
+	'protocol',
 	'Protocol',
 	'HTTP',
 	($pconfig['webguiproto']=='http'),
@@ -304,6 +305,7 @@ $group->add(new Form_Checkbox(
 ))->displayAsRadio()->setAttribute('data-toggle', 'disable')->setAttribute('data-target', '#ssl-certificate');
 
 $group->add($input = new Form_Checkbox(
+	'protocol',
 	'Protocol',
 	'HTTPS',
 	($pconfig['webguiproto']=='https'),
@@ -324,6 +326,7 @@ if (!$certs_available)
 		$values[ $cert['refid'] ] = $cert['descr'];
 
 	$section->addInput($input = new Form_Select(
+		'ssl-certificate',
 		'SSL Certificate',
 		$pconfig['ssl-certref'],
 		$values
@@ -334,6 +337,7 @@ if (!$certs_available)
 }
 
 $section->addInput(new Form_Input(
+	'tcp-port',
 	'TCP port',
 	'number',
 	$config['system']['webgui']['port'],
@@ -343,6 +347,7 @@ $section->addInput(new Form_Input(
 	'for HTTPS). Changes will take effect immediately after save.');
 
 $section->addInput(new Form_Input(
+	'max-processes',
 	'Max Processes',
 	'number',
 	$pconfig['max_procs']
@@ -351,6 +356,7 @@ $section->addInput(new Form_Input(
 	'users/browsers to access the GUI concurrently.');
 
 $section->addInput(new Form_Checkbox(
+	'webgui-redirect',
 	'WebGUI redirect',
 	'Disable webConfigurator redirect rule',
 	$pconfig['disablehttpredirect']
@@ -359,6 +365,7 @@ $section->addInput(new Form_Checkbox(
 	'Check this box to disable this automatically added redirect rule.');
 
 $section->addInput(new Form_Checkbox(
+	'webgui-login-autocomplete',
 	'WebGUI Login Autocomplete',
 	'Enable webConfigurator login autocomplete',
 	$pconfig['loginautocomplete']
@@ -369,6 +376,7 @@ $section->addInput(new Form_Checkbox(
 	'this option).');
 
 $section->addInput(new Form_Checkbox(
+	'webgui-login-messages',
 	'WebGUI login messages',
 	'Disable logging of webConfigurator successful logins',
 	$pconfig['quietlogin']
@@ -381,6 +389,7 @@ else
 	$lockout_interface = "WAN";
 
 $section->addInput(new Form_Checkbox(
+	'anti-lockout',
 	'Anti-lockout',
 	'Disable webConfigurator anti-lockout rule',
 	$pconfig['noantilockout']
@@ -393,6 +402,7 @@ $section->addInput(new Form_Checkbox(
 	'option in the console menu resets this setting as well.</em>', [$lockout_interface]);
 
 $section->addInput(new Form_Checkbox(
+	'dns-rebind-check',
 	'DNS Rebind Check',
 	'Disable DNS Rebinding Checks',
 	$pconfig['nodnsrebindcheck']
@@ -403,6 +413,7 @@ $section->addInput(new Form_Checkbox(
 	'name resolution in your environment.');
 
 $section->addInput(new Form_Input(
+	'alternate-hostnames',
 	'Alternate Hostnames',
 	'text',
 	htmlspecialchars($pconfig['althostnames'])
@@ -411,6 +422,7 @@ $section->addInput(new Form_Input(
 	'bypass the DNS Rebinding Attack checks. Separate hostnames with spaces.');
 
 $section->addInput(new Form_Checkbox(
+	'browser-http_referer-enforcement',
 	'Browser HTTP_REFERER enforcement',
 	'Disable HTTP_REFERER enforcement check',
 	$pconfig['nohttpreferercheck']
@@ -422,6 +434,7 @@ $section->addInput(new Form_Checkbox(
 	'href="http://en.wikipedia.org/wiki/HTTP_referrer">Wikipedia</a>.');
 
 $section->addInput($input = new Form_Checkbox(
+	'beast-attack-protection',
 	'BEAST Attack Protection',
 	'Mitigate the BEAST SSL Attack',
 	$pconfig['beast_protection']
@@ -440,6 +453,7 @@ if ($disable_beast_option)
 }
 
 $section->addInput(new Form_Checkbox(
+	'browser-tab-text',
 	'Browser tab text',
 	'Display page name first in browser tab',
 	$pconfig['pagenamefirst']
@@ -451,12 +465,14 @@ $form->add($section);
 $section = new Form_Section('Secure Shell');
 
 $section->addInput(new Form_Checkbox(
+	'secure-shell-server',
 	'Secure Shell Server',
 	'Enable Secure Shell',
 	isset($pconfig['enablesshd'])
 ));
 
 $section->addInput(new Form_Checkbox(
+	'authentication-method',
 	'Authentication Method',
 	'Disable password login for Secure Shell (RSA/DSA key only)',
 	$pconfig['sshdkeyonly']
@@ -465,6 +481,7 @@ $section->addInput(new Form_Checkbox(
 	'access.');
 
 $section->addInput(new Form_Input(
+	'ssh-port',
 	'SSH port',
 	'number',
 	$pconfig['sshport'],
@@ -478,6 +495,7 @@ if (!$g['enableserial_force'] && ($g['platform'] == "pfSense" || $g['platform'] 
 	$section = new Form_Section('Serial Communications');
 
 	$section->addInput(new Form_Checkbox(
+		'serial-terminal',
 		'Serial Terminal',
 		'Enables the first serial port with 115200/8/N/1 by default, or another speed selectable below.',
 		isset($pconfig['enableserial'])
@@ -487,12 +505,14 @@ if (!$g['enableserial_force'] && ($g['platform'] == "pfSense" || $g['platform'] 
 		'serial console.');
 
 	$section->addInput(new Form_Select(
+		'serial-speed',
 		'Serial Speed',
 		$pconfig['serialspeed'],
 		array(115200, 57600, 38400, 19200, 14400, 9600)
 	))->setHelp('Allows selection of different speeds for the serial console port.');
 
 	$section->addInput(new Form_Select(
+		'primary-console',
 		'Primary Console',
 		$pconfig['primaryconsole'],
 		array(
@@ -508,6 +528,7 @@ $form->add($section);
 $section = new Form_Section('Console Options');
 
 $section->addInput(new Form_Checkbox(
+	'console-menu',
 	'Console menu',
 	'Password protect the console menu',
 	$pconfig['disableconsolemenu']

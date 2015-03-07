@@ -4,9 +4,9 @@ class Form_Checkbox extends Form_Input
 {
 	protected $_description;
 
-	public function __construct($title, $description, $checked, $value = 'yes')
+	public function __construct($name, $title, $description, $checked, $value = 'yes')
 	{
-		parent::__construct($title, 'checkbox', $value);
+		parent::__construct($name, $title, 'checkbox', $value);
 
 		$this->_description = $description;
 		$this->removeClass('form-control');

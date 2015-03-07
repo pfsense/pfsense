@@ -14,6 +14,7 @@ class Form extends Form_Element
 	public function __construct()
 	{
 		$this->addGlobal(new Form_Input(
+			'save',
 			'Save',
 			'submit',
 			'Save'

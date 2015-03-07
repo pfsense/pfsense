@@ -8,12 +8,16 @@ foreach (glob('classes/Form/*.class.php') as $file)
 class Form extends Form_Element
 {
 	protected $_sections = array();
+	protected $_global = array();
 	protected $_labelWidth = 2;
-	protected $_submit;
 
 	public function __construct()
 	{
-		$this->setSubmit(new Form_Input('Save', 'submit', 'Save'))->removeClass('form-control')->addClass('btn btn-primary');
+		$this->addGlobal(new Form_Input(
+			'Save',
+			'submit',
+			'Save'
+		))->removeClass('form-control')->addClass('btn btn-primary');
 	}
 
 	public function add(Form_Section $section)
@@ -37,11 +41,11 @@ class Form extends Form_Element
 		return $this->_labelWidth;
 	}
 
-	public function setSubmit(Form_Input $submit)
+	public function addGlobal(Form_Input $input)
 	{
-		$this->_submit = $submit;
+		array_push($this->_global, $input);
 
-		return $submit;
+		return $input;
 	}
 
 	protected function _setParent()
@@ -51,18 +55,20 @@ class Form extends Form_Element
 
 	public function __toString()
 	{
-		$sections = implode('', $this->_sections);
+		$html = implode('', $this->_sections);
 
 		if (isset($this->_submit))
 		{
 			$this->_submit->setWidth(12 - $this->getLabelWidth());
 			$this->_submit->addColumnClass('col-sm-offset-'. $this->_labelWidth);
-			$sections .= $this->_submit;
+			$$html .= $this->_submit;
 		}
+
+		$html .= implode('', $this->_global);
 
 		return <<<EOT
 	<form class="form-horizontal" method="post">
-		{$sections}
+		{$html}
 	</form>
 EOT;
 	}

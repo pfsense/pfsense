@@ -54,8 +54,8 @@ function kill_client($port, $remipp) {
 
 	//$tcpsrv = "tcp://127.0.0.1:{$port}";
 	$tcpsrv = "unix://{$g['varetc_path']}/openvpn/{$port}.sock";
-	$errval;
-	$errstr;
+	$errval = null;
+	$errstr = null;
 
 	/* open a tcp connection to the management port of each server */
 	$fp = @stream_socket_client($tcpsrv, $errval, $errstr, 1);

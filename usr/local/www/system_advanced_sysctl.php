@@ -218,23 +218,16 @@ if ($act != "edit" ): ?>
 	))->setWidth(4);
 
 	if (isset($id) && $a_tunable[$id]) {
-		$section->addInput(new Form_Input(
+		$section->addGlobal(new Form_Input(
 			'id',
 			'hidden',
-			htmlspecialchars_decode($id)
+			$id
 		));
 	}
-
-	$form->setSubmit(new Form_Input(
-		'Submit',
-		'submit',
-		gettext('Save')
-	))->forceName('Submit')->removeClass('form-control')->addClass('btn btn-primary');
 
 	$form->add($section);
 	print $form;
 
 endif;
 
-include("fend.inc"); ?>
-
+include("fend.inc");

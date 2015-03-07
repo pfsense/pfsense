@@ -118,8 +118,8 @@ if (isset($_POST['after']) && (is_numericint($_POST['after']) || $_POST['after']
 	$after = $_POST['after'];
 
 if (isset($_GET['dup']) && is_numericint($_GET['dup'])) {
-	$id = $_GET['dup'];
-	$after = $_GET['dup'];
+		$id = $_GET['dup'];
+		$after = $_GET['dup'];
 }
 
 if (isset($id) && $a_filter[$id]) {
@@ -261,106 +261,106 @@ if ($_POST) {
 	unset($input_errors);
 
 	if( isset($a_filter[$id]['associated-rule-id']) ) {
-		$_POST['protocol'] = $pconfig['proto'];
+		$_POST['proto'] = $pconfig['proto'];
 		if ($pconfig['proto'] == "icmp")
-			$_POST['icmp-type'] = $pconfig['icmptype'];
+			$_POST['icmptype'] = $pconfig['icmptype'];
 	}
 
-	if (($_POST['tcp-ip-version'] != "") && ($_POST['gateway'] != "")) {
+	if (($_POST['ipprotocol'] != "") && ($_POST['gateway'] != "")) {
 		if(is_array($config['gateways']['gateway_group'])) {
 			foreach($config['gateways']['gateway_group'] as $gw_group) {
 				if($gw_group['name'] == $_POST['gateway']) {
 					$family = $a_gatewaygroups[$_POST['gateway']]['ipprotocol'];
-					if($_POST['tcp-ip-version'] == $family) {
+					if($_POST['ipprotocol'] == $family) {
 						continue;
 					}
-					if(($_POST['tcp-ip-version'] == "inet46") && ($_POST['tcp-ip-version'] != $family)) {
+					if(($_POST['ipprotocol'] == "inet46") && ($_POST['ipprotocol'] != $family)) {
 						$input_errors[] = gettext("You can not assign a gateway to a rule that applies to IPv4 and IPv6");
 					}
-					if(($_POST['tcp-ip-version'] == "inet6") && ($_POST['tcp-ip-version'] != $family)) {
+					if(($_POST['ipprotocol'] == "inet6") && ($_POST['ipprotocol'] != $family)) {
 						$input_errors[] = gettext("You can not assign an IPv4 gateway group on IPv6 Address Family rule");
 					}
-					if(($_POST['tcp-ip-version'] == "inet") && ($_POST['tcp-ip-version'] != $family)) {
+					if(($_POST['ipprotocol'] == "inet") && ($_POST['ipprotocol'] != $family)) {
 						$input_errors[] = gettext("You can not assign an IPv6 gateway group on IPv4 Address Family rule");
 					}
 				}
 			}
 		}
 	}
-	if (($_POST['tcp-ip-version'] != "") && ($_POST['gateway'] != "") && (is_ipaddr(lookup_gateway_ip_by_name($_POST['gateway'])))) {
-		if(($_POST['tcp-ip-version'] == "inet46") && ($_POST['gateway'] != "")) {
+	if (($_POST['ipprotocol'] != "") && ($_POST['gateway'] != "") && (is_ipaddr(lookup_gateway_ip_by_name($_POST['gateway'])))) {
+		if(($_POST['ipprotocol'] == "inet46") && ($_POST['gateway'] != "")) {
 			$input_errors[] = gettext("You can not assign a gateway to a rule that applies to IPv4 and IPv6");
 		}
-		if(($_POST['tcp-ip-version'] == "inet6") && (!is_ipaddrv6(lookup_gateway_ip_by_name($_POST['gateway'])))) {
+		if(($_POST['ipprotocol'] == "inet6") && (!is_ipaddrv6(lookup_gateway_ip_by_name($_POST['gateway'])))) {
 			$input_errors[] = gettext("You can not assign an IPv4 Gateway to an IPv6 Filter rule");
 		}
-		if(($_POST['tcp-ip-version'] == "inet") && (!is_ipaddrv4(lookup_gateway_ip_by_name($_POST['gateway'])))) {
+		if(($_POST['ipprotocol'] == "inet") && (!is_ipaddrv4(lookup_gateway_ip_by_name($_POST['gateway'])))) {
 			$input_errors[] = gettext("You can not assign an IPv6 Gateway to an IPv4 Filter rule");
 		}
 	}
 
-	if (($_POST['protocol'] != "tcp") && ($_POST['protocol'] != "udp") && ($_POST['protocol'] != "tcp/udp") && ($_POST['protocol'] != "icmp")) {
-		if($_POST['tcp-ip-version'] == "inet46")
+	if (($_POST['proto'] != "tcp") && ($_POST['proto'] != "udp") && ($_POST['proto'] != "tcp/udp") && ($_POST['proto'] != "icmp")) {
+		if($_POST['ipprotocol'] == "inet46")
 			$input_errors[] =  gettext("You can not assign a protocol other than ICMP, TCP, UDP or TCP/UDP to a rule that applies to IPv4 and IPv6");
 	}
-	if (($_POST['protocol'] == "icmp") && ($_POST['icmp-type'] != "")){
-		if($_POST['tcp-ip-version'] == "inet46")
+	if (($_POST['proto'] == "icmp") && ($_POST['icmptype'] != "")){
+		if($_POST['ipprotocol'] == "inet46")
 			$input_errors[] =  gettext("You can not assign a ICMP type to a rule that applies to IPv4 and IPv6");
 	}
 
-	if (($_POST['protocol'] != "tcp") && ($_POST['protocol'] != "udp") && ($_POST['protocol'] != "tcp/udp")) {
-		$_POST['source-port-begin'] = 0;
-		$_POST['source-port-end'] = 0;
-		$_POST['destination-port-begin'] = 0;
-		$_POST['destination-port-end'] = 0;
+	if (($_POST['proto'] != "tcp") && ($_POST['proto'] != "udp") && ($_POST['proto'] != "tcp/udp")) {
+		$_POST['srcbeginport'] = 0;
+		$_POST['srcendport'] = 0;
+		$_POST['dstbeginport'] = 0;
+		$_POST['dstendport'] = 0;
 	} else {
-		if ($_POST['source-port-begin-custom'] && !$_POST['source-port-begin'])
-			$_POST['source-port-begin'] = trim($_POST['source-port-begin-custom']);
-		if ($_POST['source-port-end-custom'] && !$_POST['source-port-end'])
-			$_POST['source-port-end'] = trim($_POST['source-port-end-custom']);
-		if ($_POST['source-port-begin'] == "any") {
-			$_POST['source-port-begin'] = 0;
-			$_POST['source-port-end'] = 0;
+		if ($_POST['srcbeginport_cust'] && !$_POST['srcbeginport'])
+			$_POST['srcbeginport'] = trim($_POST['srcbeginport_cust']);
+		if ($_POST['srcendport_cust'] && !$_POST['srcendport'])
+			$_POST['srcendport'] = trim($_POST['srcendport_cust']);
+		if ($_POST['srcbeginport'] == "any") {
+			$_POST['srcbeginport'] = 0;
+			$_POST['srcendport'] = 0;
 		} else {
-			if (!$_POST['source-port-end'])
-				$_POST['source-port-end'] = $_POST['source-port-begin'];
+			if (!$_POST['srcendport'])
+				$_POST['srcendport'] = $_POST['srcbeginport'];
 		}
-		if ($_POST['source-port-end'] == "any")
-			$_POST['source-port-end'] = $_POST['source-port-begin'];
+		if ($_POST['srcendport'] == "any")
+			$_POST['srcendport'] = $_POST['srcbeginport'];
 
-		if ($_POST['destination-port-begin-custom'] && !$_POST['destination-port-begin'])
-			$_POST['destination-port-begin'] = trim($_POST['destination-port-begin-custom']);
-		if ($_POST['destination-port-end-custom'] && !$_POST['destination-port-end'])
-			$_POST['destination-port-end'] = trim($_POST['destination-port-end-custom']);
+		if ($_POST['dstbeginport_cust'] && !$_POST['dstbeginport'])
+			$_POST['dstbeginport'] = trim($_POST['dstbeginport_cust']);
+		if ($_POST['dstendport_cust'] && !$_POST['dstendport'])
+			$_POST['dstendport'] = trim($_POST['dstendport_cust']);
 
-		if ($_POST['destination-port-begin'] == "any") {
-			$_POST['destination-port-begin'] = 0;
-			$_POST['destination-port-end'] = 0;
+		if ($_POST['dstbeginport'] == "any") {
+			$_POST['dstbeginport'] = 0;
+			$_POST['dstendport'] = 0;
 		} else {
-			if (!$_POST['destination-port-end'])
-				$_POST['destination-port-end'] = $_POST['destination-port-begin'];
+			if (!$_POST['dstendport'])
+				$_POST['dstendport'] = $_POST['dstbeginport'];
 		}
-		if ($_POST['destination-port-end'] == "any")
-			$_POST['destination-port-end'] = $_POST['destination-port-begin'];
+		if ($_POST['dstendport'] == "any")
+			$_POST['dstendport'] = $_POST['dstbeginport'];
 	}
 
-	if (is_specialnet($_POST['source-type'])) {
-		$_POST['source-address'] = $_POST['source-type'];
-		$_POST['source-addressmask'] = 0;
-	} else if ($_POST['source-type'] == "single") {
-		if (is_ipaddrv6($_POST['source-address']))
-			$_POST['source-addressmask'] = 128;
+	if (is_specialnet($_POST['srctype'])) {
+		$_POST['src'] = $_POST['srctype'];
+		$_POST['srcmask'] = 0;
+	} else if ($_POST['srctype'] == "single") {
+		if (is_ipaddrv6($_POST['src']))
+			$_POST['srcmask'] = 128;
 		else
-			$_POST['source-addressmask'] = 32;
+			$_POST['srcmask'] = 32;
 	}
-	if (is_specialnet($_POST['destination-type'])) {
-		$_POST['destination-address'] = $_POST['destination-type'];
-		$_POST['source-addressmask'] = 0;
-	}  else if ($_POST['destination-type'] == "single") {
-		if (is_ipaddrv6($_POST['destination-address']))
-			$_POST['source-addressmask'] = 128;
+	if (is_specialnet($_POST['dsttype'])) {
+		$_POST['dst'] = $_POST['dsttype'];
+		$_POST['dstmask'] = 0;
+	}  else if ($_POST['dsttype'] == "single") {
+		if (is_ipaddrv6($_POST['dst']))
+			$_POST['dstmask'] = 128;
 		else
-			$_POST['source-addressmask'] = 32;
+			$_POST['dstmask'] = 32;
 	}
 
 	$pconfig = $_POST;
@@ -377,135 +377,135 @@ if ($_POST) {
 		$reqdfieldsn[] = "Destination";
 	}
 
-	if($_POST['state-type'] == "modulate state" or $_POST['state-type'] == "synproxy state") {
-		if( $_POST['protocol'] != "tcp" )
-			$input_errors[] = sprintf(gettext("%s is only valid with protocol tcp."),$_POST['state-type']);
-		if(($_POST['state-type'] == "synproxy state") && ($_POST['gateway'] != ""))
-			$input_errors[] = sprintf(gettext("%s is only valid if the gateway is set to 'default'."),$_POST['state-type']);
+	if($_POST['statetype'] == "modulate state" or $_POST['statetype'] == "synproxy state") {
+		if( $_POST['proto'] != "tcp" )
+			$input_errors[] = sprintf(gettext("%s is only valid with protocol tcp."),$_POST['statetype']);
+		if(($_POST['statetype'] == "synproxy state") && ($_POST['gateway'] != ""))
+			$input_errors[] = sprintf(gettext("%s is only valid if the gateway is set to 'default'."),$_POST['statetype']);
 	}
 
 	if ( isset($a_filter[$id]['associated-rule-id'])===false &&
-	(!(is_specialnet($_POST['source-type']) || ($_POST['source-type'] == "single"))) ) {
+	(!(is_specialnet($_POST['srctype']) || ($_POST['srctype'] == "single"))) ) {
 		$reqdfields[] = "srcmask";
 		$reqdfieldsn[] = "Source bit count";
 	}
 	if ( isset($a_filter[$id]['associated-rule-id'])===false &&
-	(!(is_specialnet($_POST['destination-type']) || ($_POST['destination-type'] == "single"))) ) {
+	(!(is_specialnet($_POST['dsttype']) || ($_POST['dsttype'] == "single"))) ) {
 		$reqdfields[] = "dstmask";
 		$reqdfieldsn[] = gettext("Destination bit count");
 	}
 
 	do_input_validation($_POST, $reqdfields, $reqdfieldsn, $input_errors);
 
-	if (!$_POST['source-port-begin']) {
-		$_POST['source-port-begin'] = 0;
-		$_POST['source-port-end'] = 0;
+	if (!$_POST['srcbeginport']) {
+		$_POST['srcbeginport'] = 0;
+		$_POST['srcendport'] = 0;
 	}
-	if (!$_POST['destination-port-begin']) {
-		$_POST['destination-port-begin'] = 0;
-		$_POST['destination-port-end'] = 0;
+	if (!$_POST['dstbeginport']) {
+		$_POST['dstbeginport'] = 0;
+		$_POST['dstendport'] = 0;
 	}
 
-	if ($_POST['source-port-begin'] && !is_portoralias($_POST['source-port-begin']))
-		$input_errors[] = sprintf(gettext("%s is not a valid start source port. It must be a port alias or integer between 1 and 65535."),$_POST['source-port-begin']);
-	if ($_POST['source-port-end'] && !is_portoralias($_POST['source-port-end']))
-			$input_errors[] = sprintf(gettext("%s  is not a valid end source port. It must be a port alias or integer between 1 and 65535."),$_POST['source-port-end']);
-	if ($_POST['destination-port-begin'] && !is_portoralias($_POST['destination-port-begin']))
-			$input_errors[] = sprintf(gettext("%s is not a valid start destination port. It must be a port alias or integer between 1 and 65535."),$_POST['destination-port-begin']);
-	if ($_POST['destination-port-end'] && !is_portoralias($_POST['destination-port-end']))
-			$input_errors[] = sprintf(gettext("%s is not a valid end destination port. It must be a port alias or integer between 1 and 65535."),$_POST['destination-port-end']);
-	if ( !$_POST['source-port-begin-custom'] && $_POST['source-port-end-custom'])
-		if (is_alias($_POST['source-port-end-custom']))
+	if ($_POST['srcbeginport'] && !is_portoralias($_POST['srcbeginport']))
+		$input_errors[] = sprintf(gettext("%s is not a valid start source port. It must be a port alias or integer between 1 and 65535."),$_POST['srcbeginposrt']);
+	if ($_POST['srcendport'] && !is_portoralias($_POST['srcendport']))
+			$input_errors[] = sprintf(gettext("%s  is not a valid end source port. It must be a port alias or integer between 1 and 65535."),$_POST['srcendport']);
+	if ($_POST['dstbeginport'] && !is_portoralias($_POST['dstbeginport']))
+			$input_errors[] = sprintf(gettext("%s is not a valid start destination port. It must be a port alias or integer between 1 and 65535."),$_POST['dstbeginport']);
+	if ($_POST['dstendport'] && !is_portoralias($_POST['dstendport']))
+			$input_errors[] = sprintf(gettext("%s is not a valid end destination port. It must be a port alias or integer between 1 and 65535."),$_POST['dstendport']);
+	if ( !$_POST['srcbeginport_cust'] && $_POST['srcendport_cust'])
+		if (is_alias($_POST['srcendport_cust']))
 			$input_errors[] = 'If you put port alias in Source port range to: field you must put the same port alias in from: field';
-	if ( $_POST['source-port-begin-custom'] && $_POST['source-port-end-custom']){
-		if (is_alias($_POST['source-port-end-custom']) && is_alias($_POST['source-port-end-custom']) && $_POST['source-port-begin-custom'] != $_POST['destination-port-begin-custom'])
+	if ( $_POST['srcbeginport_cust'] && $_POST['srcendport_cust']){
+		if (is_alias($_POST['srcendport_cust']) && is_alias($_POST['srcendport_cust']) && $_POST['srcbeginport_cust'] != $_POST['srcendport_cust'])
 			$input_errors[] = 'The same port alias must be used in Source port range from: and to: fields';
-		if ((is_alias($_POST['source-port-begin-custom']) && (!is_alias($_POST['source-port-end-custom']) && $_POST['source-port-end-custom']!='')) ||
-			((!is_alias($_POST['source-port-begin-custom']) && $_POST['source-port-begin-custom']!='') && is_alias($_POST['source-port-end-custom'])))
+		if ((is_alias($_POST['srcbeginport_cust']) && (!is_alias($_POST['srcendport_cust']) && $_POST['srcendport_cust']!='')) ||
+			((!is_alias($_POST['srcbeginport_cust']) && $_POST['srcbeginport_cust']!='') && is_alias($_POST['srcendport_cust'])))
 			$input_errors[] = 'You cannot specify numbers and port aliases at the same time in Source port range from: and to: field';
 	}
-	if ( !$_POST['destination-port-begin-custom'] && $_POST['destination-port-end-custom'])
-		if (is_alias($_POST['destination-port-end-custom']))
+	if ( !$_POST['dstbeginport_cust'] && $_POST['dstendport_cust'])
+		if (is_alias($_POST['dstendport_cust']))
 			$input_errors[] = 'If you put port alias in Destination port range to: field you must put the same port alias in from: field';
-	if ( $_POST['destination-port-begin-custom'] && $_POST['destination-port-end-custom']){
-		if (is_alias($_POST['destination-port-end-custom']) && is_alias($_POST['destination-port-end-custom']) && $_POST['source-port-begin-custom'] != $_POST['destination-port-end-custom'])
+	if ( $_POST['dstbeginport_cust'] && $_POST['dstendport_cust']){
+		if (is_alias($_POST['dstendport_cust']) && is_alias($_POST['dstendport_cust']) && $_POST['dstbeginport_cust'] != $_POST['dstendport_cust'])
 			$input_errors[] = 'The same port alias must be used in Destination port range from: and to: fields';
-		if ((is_alias($_POST['destination-port-begin-custom']) && (!is_alias($_POST['destination-port-end-custom']) && $_POST['destination-port-end-custom']!='')) ||
-			((!is_alias($_POST['destination-port-begin-custom']) && $_POST['destination-port-begin-custom']!='') && is_alias($_POST['destination-port-end-custom'])))
+		if ((is_alias($_POST['dstbeginport_cust']) && (!is_alias($_POST['dstendport_cust']) && $_POST['dstendport_cust']!='')) ||
+			((!is_alias($_POST['dstbeginport_cust']) && $_POST['dstbeginport_cust']!='') && is_alias($_POST['dstendport_cust'])))
 			$input_errors[] = 'You cannot specify numbers and port aliases at the same time in Destination port range from: and to: field';
 	}
 
-	if ($_POST['source-address'])
-		$_POST['source-address'] = trim($_POST['source-address']);
-	if ($_POST['destination-address'])
-		$_POST['destination-address'] = trim($_POST['destination-address']);
+	if ($_POST['src'])
+		$_POST['src'] = trim($_POST['src']);
+	if ($_POST['dst'])
+		$_POST['dst'] = trim($_POST['dst']);
 
 	/* if user enters an alias and selects "network" then disallow. */
-	if($_POST['source-type'] == "network") {
-		if(is_alias($_POST['source-address']))
+	if($_POST['srctype'] == "network") {
+		if(is_alias($_POST['src']))
 			$input_errors[] = gettext("You must specify single host or alias for alias entries.");
 	}
-	if($_POST['destination-type'] == "network") {
-		if(is_alias($_POST['destination-address']))
+	if($_POST['dsttype'] == "network") {
+		if(is_alias($_POST['dst']))
 			$input_errors[] = gettext("You must specify single host or alias for alias entries.");
 	}
 
-	if (!is_specialnet($_POST['source-type'])) {
-		if (($_POST['source-address'] && !is_ipaddroralias($_POST['source-address']))) {
-			$input_errors[] = sprintf(gettext("%s is not a valid source IP address or alias."),$_POST['source-address']);
+	if (!is_specialnet($_POST['srctype'])) {
+		if (($_POST['src'] && !is_ipaddroralias($_POST['src']))) {
+			$input_errors[] = sprintf(gettext("%s is not a valid source IP address or alias."),$_POST['src']);
 		}
-		if (($_POST['source-addressmask'] && !is_numericint($_POST['source-addressmask']))) {
+		if (($_POST['srcmask'] && !is_numericint($_POST['srcmask']))) {
 			$input_errors[] = gettext("A valid source bit count must be specified.");
 		}
 	}
-	if (!is_specialnet($_POST['destination-type'])) {
-		if (($_POST['destination-address'] && !is_ipaddroralias($_POST['destination-address']))) {
-			$input_errors[] = sprintf(gettext("%s is not a valid destination IP address or alias."),$_POST['destination-address']);
+	if (!is_specialnet($_POST['dsttype'])) {
+		if (($_POST['dst'] && !is_ipaddroralias($_POST['dst']))) {
+			$input_errors[] = sprintf(gettext("%s is not a valid destination IP address or alias."),$_POST['dst']);
 		}
-		if (($_POST['source-addressmask'] && !is_numericint($_POST['source-addressmask']))) {
+		if (($_POST['dstmask'] && !is_numericint($_POST['dstmask']))) {
 			$input_errors[] = gettext("A valid destination bit count must be specified.");
 		}
 	}
-	if((is_ipaddr($_POST['source-address']) && is_ipaddr($_POST['destination-address']))) {
-		if(!validate_address_family($_POST['source-address'], $_POST['destination-address']))
-			$input_errors[] = sprintf(gettext("The Source IP address %s Address Family differs from the destination %s."), $_POST['source-address'], $_POST['destination-address']);
-		if((is_ipaddrv6($_POST['source-address']) || is_ipaddrv6($_POST['destination-address'])) && ($_POST['tcp-ip-version'] == "inet"))
+	if((is_ipaddr($_POST['src']) && is_ipaddr($_POST['dst']))) {
+		if(!validate_address_family($_POST['src'], $_POST['dst']))
+			$input_errors[] = sprintf(gettext("The Source IP address %s Address Family differs from the destination %s."), $_POST['src'], $_POST['dst']);
+		if((is_ipaddrv6($_POST['src']) || is_ipaddrv6($_POST['dst'])) && ($_POST['ipprotocol'] == "inet"))
 			$input_errors[] = gettext("You can not use IPv6 addresses in IPv4 rules.");
-		if((is_ipaddrv4($_POST['source-address']) || is_ipaddrv4($_POST['destination-address'])) && ($_POST['tcp-ip-version'] == "inet6"))
+		if((is_ipaddrv4($_POST['src']) || is_ipaddrv4($_POST['dst'])) && ($_POST['ipprotocol'] == "inet6"))
 			$input_errors[] = gettext("You can not use IPv4 addresses in IPv6 rules.");
 	}
 
-	if((is_ipaddr($_POST['source-address']) || is_ipaddr($_POST['destination-address'])) && ($_POST['tcp-ip-version'] == "inet46"))
+	if((is_ipaddr($_POST['src']) || is_ipaddr($_POST['dst'])) && ($_POST['ipprotocol'] == "inet46"))
 		$input_errors[] = gettext("You can not use a IPv4 or IPv6 address in combined IPv4 + IPv6 rules.");
 
-	if ($_POST['source-port-begin'] > $_POST['source-port-end']) {
+	if ($_POST['srcbeginport'] > $_POST['srcendport']) {
 		/* swap */
-		$tmp = $_POST['source-port-end'];
-		$_POST['source-port-end'] = $_POST['source-port-begin'];
-		$_POST['source-port-begin'] = $tmp;
+		$tmp = $_POST['srcendport'];
+		$_POST['srcendport'] = $_POST['srcbeginport'];
+		$_POST['srcbeginport'] = $tmp;
 	}
-	if ($_POST['destination-port-begin'] > $_POST['destination-port-end']) {
+	if ($_POST['dstbeginport'] > $_POST['dstendport']) {
 		/* swap */
-		$tmp = $_POST['destination-port-end'];
-		$_POST['destination-port-end'] = $_POST['destination-port-begin'];
-		$_POST['destination-port-begin'] = $tmp;
+		$tmp = $_POST['dstendport'];
+		$_POST['dstendport'] = $_POST['dstbeginport'];
+		$_POST['dstbeginport'] = $tmp;
 	}
-	if ($_POST['source-os']) {
-		if( $_POST['protocol'] != "tcp" )
+	if ($_POST['os']) {
+		if( $_POST['proto'] != "tcp" )
 			$input_errors[] = gettext("OS detection is only valid with protocol tcp.");
-		if (!in_array($_POST['source-os'], $ostypes))
+		if (!in_array($_POST['os'], $ostypes))
 			$input_errors[] = gettext("Invalid OS detection selection. Please select a valid OS.");
 	}
 
 	if ($_POST['ackqueue'] != "") {
-		if ($_POST['default-queue'] == "" )
+		if ($_POST['defaultqueue'] == "" )
 			$input_errors[] = gettext("You have to select a queue when you select an acknowledge queue too.");
-		else if ($_POST['ackqueue'] == $_POST['default-queue'])
+		else if ($_POST['ackqueue'] == $_POST['defaultqueue'])
 			$input_errors[] = gettext("Acknowledge queue and Queue cannot be the same.");
 	}
-	if (isset($_POST['floating']) && $_POST['pdnpipe'] != "" && (empty($_POST['tcp-ip-version']) || $_POST['tcp-ip-version'] == "any"))
+	if (isset($_POST['floating']) && $_POST['pdnpipe'] != "" && (empty($_POST['direction']) || $_POST['direction'] == "any"))
 		$input_errors[] = gettext("You can not use limiters in Floating rules without choosing a direction.");
-	if (isset($_POST['floating']) && $_POST['gateway'] != "" && (empty($_POST['tcp-ip-version']) || $_POST['tcp-ip-version'] == "any"))
+	if (isset($_POST['floating']) && $_POST['gateway'] != "" && (empty($_POST['direction']) || $_POST['direction'] == "any"))
 		$input_errors[] = gettext("You can not use gateways in Floating rules without choosing a direction.");
 	if ($_POST['pdnpipe'] && $_POST['pdnpipe'] != "") {
 		if ($_POST['dnpipe'] == "" )
@@ -521,59 +521,59 @@ if ($_POST) {
 	}
 	if( !empty($_POST['ruleid']) && !ctype_digit($_POST['ruleid']))
 		$input_errors[] = gettext('ID must be an integer');
-	if($_POST['layer7'] && $_POST['layer7'] != "") {
-		if(!($_POST['protocol'] == "tcp" || $_POST['protocol'] == "udp" || $_POST['protocol'] == "tcp/udp"))
+	if($_POST['l7container'] && $_POST['l7container'] != "") {
+		if(!($_POST['proto'] == "tcp" || $_POST['proto'] == "udp" || $_POST['proto'] == "tcp/udp"))
 			$input_errors[] = gettext("You can only select a layer7 container for TCP and/or UDP protocols");
-		if ($_POST['action'] != "pass")
+		if ($_POST['type'] != "pass")
 			$input_errors[] = gettext("You can only select a layer7 container for Pass type rules.");
 	}
 
-	if (!in_array($_POST['protocol'], array("tcp","tcp/udp"))) {
-		if (!empty($_POST['max-connections']))
+	if (!in_array($_POST['proto'], array("tcp","tcp/udp"))) {
+		if (!empty($_POST['max-src-conn']))
 			$input_errors[] = gettext("You can only specify the maximum number of established connections per host (advanced option) for TCP protocol.");
 		if (!empty($_POST['max-src-conn-rate']) || !empty($_POST['max-src-conn-rates']))
 			$input_errors[] = gettext("You can only specify the maximum new connections per host / per second(s) (advanced option) for TCP protocol.");
-		if (!empty($_POST['state-timeout']))
+		if (!empty($_POST['statetimeout']))
 			$input_errors[] = gettext("You can only specify the state timeout (advanced option) for TCP protocol.");
 	}
 
-	if ($_POST['action'] != "pass") {
-		if (!empty($_POST['max-states']))
+	if ($_POST['type'] != "pass") {
+		if (!empty($_POST['max']))
 			$input_errors[] = gettext("You can only specify the maximum state entries (advanced option) for Pass type rules.");
 		if (!empty($_POST['max-src-nodes']))
 			$input_errors[] = gettext("You can only specify the maximum number of unique source hosts (advanced option) for Pass type rules.");
-		if (!empty($_POST['max-connections']))
+		if (!empty($_POST['max-src-conn']))
 			$input_errors[] = gettext("You can only specify the maximum number of established connections per host (advanced option) for Pass type rules.");
 		if (!empty($_POST['max-src-states']))
 			$input_errors[] = gettext("You can only specify the maximum state entries per host (advanced option) for Pass type rules.");
 		if (!empty($_POST['max-src-conn-rate']) || !empty($_POST['max-src-conn-rates']))
 			$input_errors[] = gettext("You can only specify the maximum new connections per host / per second(s) (advanced option) for Pass type rules.");
-		if (!empty($_POST['state-timeout']))
+		if (!empty($_POST['statetimeout']))
 			$input_errors[] = gettext("You can only specify the state timeout (advanced option) for Pass type rules.");
 	}
 
-	if (($_POST['state-type'] == "none") && (empty($_POST['layer7']))) {
-		if (!empty($_POST['max-states']))
+	if (($_POST['statetype'] == "none") && (empty($_POST['l7container']))) {
+		if (!empty($_POST['max']))
 			$input_errors[] = gettext("You cannot specify the maximum state entries (advanced option) if statetype is none and no L7 container is selected.");
 		if (!empty($_POST['max-src-nodes']))
 			$input_errors[] = gettext("You cannot specify the maximum number of unique source hosts (advanced option) if statetype is none and no L7 container is selected.");
-		if (!empty($_POST['max-connections']))
+		if (!empty($_POST['max-src-conn']))
 			$input_errors[] = gettext("You cannot specify the maximum number of established connections per host (advanced option) if statetype is none and no L7 container is selected.");
 		if (!empty($_POST['max-src-states']))
 			$input_errors[] = gettext("You cannot specify the maximum state entries per host (advanced option) if statetype is none and no L7 container is selected.");
 		if (!empty($_POST['max-src-conn-rate']) || !empty($_POST['max-src-conn-rates']))
 			$input_errors[] = gettext("You cannot specify the maximum new connections per host / per second(s) (advanced option) if statetype is none and no L7 container is selected.");
-		if (!empty($_POST['state-timeout']))
+		if (!empty($_POST['statetimeout']))
 			$input_errors[] = gettext("You cannot specify the state timeout (advanced option) if statetype is none and no L7 container is selected.");
 	}
 
-	if (($_POST['max-states'] != "") && !is_posnumericint($_POST['max-states']))
+	if (($_POST['max'] != "") && !is_posnumericint($_POST['max']))
 		$input_errors[] = gettext("Maximum state entries (advanced option) must be a positive integer");
 
 	if (($_POST['max-src-nodes'] != "") && !is_posnumericint($_POST['max-src-nodes']))
 		$input_errors[] = gettext("Maximum number of unique source hosts (advanced option) must be a positive integer");
 
-	if (($_POST['max-connections'] != "") && !is_posnumericint($_POST['max-connections']))
+	if (($_POST['max-src-conn'] != "") && !is_posnumericint($_POST['max-src-conn']))
 		$input_errors[] = gettext("Maximum number of established connections per host (advanced option) must be a positive integer");
 
 	if (($_POST['max-src-states'] != "") && !is_posnumericint($_POST['max-src-states']))
@@ -582,7 +582,7 @@ if ($_POST) {
 	if (($_POST['max-src-conn-rate'] != "") && !is_posnumericint($_POST['max-src-conn-rate']))
 		$input_errors[] = gettext("Maximum new connections per host / per second(s) (advanced option) must be a positive integer");
 
-	if (($_POST['state-timeout'] != "") && !is_posnumericint($_POST['state-timeout']))
+	if (($_POST['statetimeout'] != "") && !is_posnumericint($_POST['statetimeout']))
 		$input_errors[] = gettext("State timeout (advanced option) must be a positive integer");
 
 	if ((($_POST['max-src-conn-rate'] != "" and $_POST['max-src-conn-rates'] == "")) ||
@@ -611,12 +611,12 @@ if ($_POST) {
 
 		$filterent['tracker'] = empty($_POST['tracker']) ? (int)microtime(true) : $_POST['tracker'];
 
-		$filterent['type'] = $_POST['action'];
+		$filterent['type'] = $_POST['type'];
 		if (isset($_POST['interface'] ))
 			$filterent['interface'] = $_POST['interface'];
 
-		if (isset($_POST['tcp-ip-version'] ))
-			$filterent['ipprotocol'] = $_POST['tcp-ip-version'];
+		if (isset($_POST['ipprotocol'] ))
+			$filterent['ipprotocol'] = $_POST['ipprotocol'];
 
 		if ($_POST['tcpflags_any']) {
 			$filterent['tcpflags_any'] = true;
@@ -641,7 +641,7 @@ if ($_POST) {
 		if (isset($_POST['tagged']))
 			$filterent['tagged'] = $_POST['tagged'];
 		if ($if == "FloatingRules" || isset($_POST['floating'])) {
-			$filterent['direction'] = $_POST['tcp-ip-version'];
+			$filterent['direction'] = $_POST['direction'];
 			if (isset($_POST['quick']) && $_POST['quick'] != "")
 				$filterent['quick'] = $_POST['quick'];
 			$filterent['floating'] = "yes";
@@ -651,28 +651,28 @@ if ($_POST) {
 		}
 
 		/* Advanced options */
-		if ($_POST['allow-ip-options'] == "yes")
+		if ($_POST['allowopts'] == "yes")
 			$filterent['allowopts'] = true;
 		else
 			unset($filterent['allowopts']);
-		if ($_POST['disable-reply-to'] == "yes")
+		if ($_POST['disablereplyto'] == "yes")
 			$filterent['disablereplyto'] = true;
 		else
 			unset($filterent['disablereplyto']);
-		$filterent['max'] = $_POST['max-states'];
+		$filterent['max'] = $_POST['max'];
 		$filterent['max-src-nodes'] = $_POST['max-src-nodes'];
-		$filterent['max-src-conn'] = $_POST['max-connections'];
+		$filterent['max-src-conn'] = $_POST['max-src-conn'];
 		$filterent['max-src-states'] = $_POST['max-src-states'];
-		$filterent['statetimeout'] = $_POST['state-timeout'];
-		$filterent['statetype'] = $_POST['state-type'];
-		$filterent['os'] = $_POST['source-os'];
-		if($_POST['no-pfsync'] != "")
+		$filterent['statetimeout'] = $_POST['statetimeout'];
+		$filterent['statetype'] = $_POST['statetype'];
+		$filterent['os'] = $_POST['os'];
+		if($_POST['nopfsync'] != "")
 			$filterent['nopfsync'] = true;
 		else
 			unset($filterent['nopfsync']);
 
 		/* Nosync directive - do not xmlrpc sync this item */
-		if($_POST['no-xmlrpc-sync'] != "")
+		if($_POST['nosync'] != "")
 			$filterent['nosync'] = true;
 		else
 			unset($filterent['nosync']);
@@ -686,49 +686,49 @@ if ($_POST) {
 			unset($filterent['max-src-conn-rates']);
 		}
 
-		if ($_POST['protocol'] != "any")
-			$filterent['protocol'] = $_POST['protocol'];
+		if ($_POST['proto'] != "any")
+			$filterent['protocol'] = $_POST['proto'];
 		else
 			unset($filterent['protocol']);
 
-		if ($_POST['protocol'] == "icmp") {
-			if ($filterent['ipprotocol'] == 'inet6' && $_POST['icmpv6-type'])
-				$filterent['icmptype'] = $_POST['icmpv6-type'];
-			else if ($filterent['ipprotocol'] != 'inet6' && $_POST['icmp-type'])
-				$filterent['icmptype'] = $_POST['icmp-type'];
+		if ($_POST['proto'] == "icmp") {
+			if ($filterent['ipprotocol'] == 'inet6' && $_POST['icmp6type'])
+				$filterent['icmptype'] = $_POST['icmp6type'];
+			else if ($filterent['ipprotocol'] != 'inet6' && $_POST['icmptype'])
+				$filterent['icmptype'] = $_POST['icmptype'];
 			else
 				unset($filterent['icmptype']);
 		} else
 			unset($filterent['icmptype']);
 
-		pconfig_to_address($filterent['source'], $_POST['source-address'],
-			$_POST['source-addressmask'], $_POST['source-not'],
-			$_POST['source-port-begin'], $_POST['source-port-end']);
+		pconfig_to_address($filterent['source'], $_POST['src'],
+			$_POST['srcmask'], $_POST['srcnot'],
+			$_POST['srcbeginport'], $_POST['srcendport']);
 
-		pconfig_to_address($filterent['destination'], $_POST['destination-address'],
-			$_POST['source-addressmask'], $_POST['destination-not'],
-			$_POST['destination-port-begin'], $_POST['destination-port-end']);
+		pconfig_to_address($filterent['destination'], $_POST['dst'],
+			$_POST['dstmask'], $_POST['dstnot'],
+			$_POST['dstbeginport'], $_POST['dstendport']);
 
 		if ($_POST['disabled'])
 			$filterent['disabled'] = true;
 		else
 			unset($filterent['disabled']);
 
-		if ($_POST['diffserv-code-point'])
-			$filterent['dscp'] = $_POST['diffserv-code-point'];
+		if ($_POST['dscp'])
+			$filterent['dscp'] = $_POST['dscp'];
 
 		if ($_POST['log'])
 			$filterent['log'] = true;
 		else
 			unset($filterent['log']);
-		strncpy($filterent['descr'], $_POST['description'], 52);
+		strncpy($filterent['descr'], $_POST['descr'], 52);
 
 		if ($_POST['gateway'] != "") {
 			$filterent['gateway'] = $_POST['gateway'];
 		}
 
-		if ($_POST['default-queue'] != "") {
-			$filterent['defaultqueue'] = $_POST['default-queue'];
+		if ($_POST['defaultqueue'] != "") {
+			$filterent['defaultqueue'] = $_POST['defaultqueue'];
 			if ($_POST['ackqueue'] != "")
 				$filterent['ackqueue'] = $_POST['ackqueue'];
 		}
@@ -739,19 +739,19 @@ if ($_POST) {
 				$filterent['pdnpipe'] = $_POST['pdnpipe'];
 		}
 
-		if ($_POST['layer7'] != "") {
-			$filterent['l7container'] = $_POST['layer7'];
+		if ($_POST['l7container'] != "") {
+			$filterent['l7container'] = $_POST['l7container'];
 		}
 
-		if ($_POST['schedule'] != "") {
-			$filterent['sched'] = $_POST['schedule'];
+		if ($_POST['sched'] != "") {
+			$filterent['sched'] = $_POST['sched'];
 		}
 
-		if ($_POST['vlan-prio'] != "") {
-			$filterent['vlanprio'] = $_POST['vlan-prio'];
+		if ($_POST['vlanprio'] != "") {
+			$filterent['vlanprio'] = $_POST['vlanprio'];
 		}
-		if ($_POST['vlan-prio-set'] != "") {
-			$filterent['vlanprioset'] = $_POST['vlan-prio-set'];
+		if ($_POST['vlanprioset'] != "") {
+			$filterent['vlanprioset'] = $_POST['vlanprioset'];
 		}
 
 		// If we have an associated nat rule, make sure the source and destination doesn't change
@@ -820,6 +820,7 @@ $section = new Form_Section('Edit Firewall rule');
 if (isset($id))
 {
 	$form->addGlobal(new Form_Input(
+		'id',
 		'ID',
 		'hidden',
 		$id
@@ -829,6 +830,7 @@ if (isset($id))
 if (isset($a_filter[$id]))
 {
 	$form->addGlobal(new Form_Input(
+		'tracker',
 		'Tracker',
 		'hidden',
 		$pconfig['tracker']
@@ -836,12 +838,14 @@ if (isset($a_filter[$id]))
 }
 
 $form->addGlobal(new Form_Input(
+	'after',
 	'After',
 	'hidden',
 	$after
 ));
 
 $form->addGlobal(new Form_Input(
+	'ruleid',
 	'Ruleid',
 	'hidden',
 	$pconfig['ruleid']
@@ -860,6 +864,7 @@ if ($if == "FloatingRules" || isset($pconfig['floating']))
 	$values['match'] = 'Match';
 
 $section->addInput(new Form_Select(
+	'type',
 	'Action',
 	$pconfig['type'],
 	$values
@@ -870,6 +875,7 @@ $section->addInput(new Form_Select(
 	'either case, the original packet is discarded.');
 
 $section->addInput(new Form_Checkbox(
+	'disabled',
 	'Disabled',
 	'Disable this rule',
 	$pconfig['disabled']
@@ -879,6 +885,7 @@ $section->addInput(new Form_Checkbox(
 if ($if == "FloatingRules" || isset($pconfig['floating']))
 {
 	$section->addInput(new Form_Checkbox(
+		'floating',
 		'Quick',
 		'Apply the action immediately on match.',
 		$pconfig['quick']
@@ -903,7 +910,8 @@ if ($edit_disabled)
 		'the interface, protocol, source, or destination of associated filter '.
 		'rules.'. $extra);
 
-	$section->addInput(new Form_Input(
+	$section->addGlobal(new Form_Input(
+		'associated-rule-id',
 		'Associated Rule ID',
 		'hidden',
 		$pconfig['associated-rule-id']
@@ -912,6 +920,7 @@ if ($edit_disabled)
 	if (!empty($pconfig['interface']))
 	{
 		$section->addInput(new Form_Input(
+			'interface',
 			'Interface',
 			'hidden',
 			$pconfig['interface']
@@ -951,6 +960,7 @@ if  ($config['openvpn']["openvpn-server"] || $config['openvpn']["openvpn-client"
 	$interfaces["openvpn"] = "OpenVPN";
 
 $section->addInput(new Form_Select(
+	'interface',
 	'Interface',
 	$pconfig['interface'],
 	$interfaces,
@@ -961,6 +971,7 @@ $section->addInput(new Form_Select(
 if ($if == "FloatingRules" || isset($pconfig['floating']))
 {
 	$section->addInput(new Form_Select(
+		'direction',
 		'Direction',
 		$pconfig['direction'],
 		array(
@@ -971,6 +982,7 @@ if ($if == "FloatingRules" || isset($pconfig['floating']))
 	));
 
 	$section->addInput(new Form_Input(
+		'floating',
 		'Floating',
 		'hidden',
 		'floating'
@@ -978,6 +990,7 @@ if ($if == "FloatingRules" || isset($pconfig['floating']))
 }
 
 $section->addInput(new Form_Select(
+	'ipprotocol',
 	'TCP/IP Version',
 	$pconfig['ipprotocol'],
 	array(
@@ -988,6 +1001,7 @@ $section->addInput(new Form_Select(
 ))->setHelp('Select the Internet Protocol version this rule applies to');
 
 $section->addInput(new Form_Select(
+	'proto',
 	'Protocol',
 	$pconfig['ipprotocol'],
 	array(
@@ -1009,12 +1023,14 @@ $section->addInput(new Form_Select(
 ))->setHelp('Select the Internet Protocol version this rule applies to');
 
 $section->addInput(new Form_Select(
+	'icmptype',
 	'ICMP type',
 	$pconfig['icmptype'],
 	$icmptypes
 ))->setHelp('If you selected ICMP for the protocol above, you may specify an ICMP type here.');
 
 $section->addInput(new Form_Select(
+	'icmp6type',
 	'ICMPv6 type',
 	$pconfig['icmptype'],
 	$icmp6types
@@ -1029,6 +1045,7 @@ foreach (['src' => 'Source', 'dst' => 'Destination'] as $type => $name)
 
 	$group = new Form_Group($name);
 	$group->add(new Form_Checkbox(
+		$type .'not',
 		$name .' not',
 		'Invert the sense of the match.',
 		$pconfig[$type.'not']
@@ -1066,18 +1083,21 @@ foreach (['src' => 'Source', 'dst' => 'Destination'] as $type => $name)
 	}
 
 	$group->add(new Form_Select(
+		$type . 'type',
 		$name .' Type',
 		$ruleType,
 		$ruleValues
 	));
 
 	$group->add(new Form_Input(
+		$type,
 		$name .' Address',
 		'text',
 		$pconfig[$type]
 	));
 
 	$group->add(new Form_Input(
+		$type .'mask',
 		$name .' addressmask',
 		'number',
 		$pconfig[$type.'mask'],
@@ -1092,6 +1112,7 @@ foreach (['src' => 'Source', 'dst' => 'Destination'] as $type => $name)
 
 	$group = new Form_Group($name .' port range');
 	$group->add($input = new Form_Select(
+		$type .'beginport',
 		$name .' port begin',
 		$pconfig[$type .'beginport'],
 		$portValues
@@ -1108,6 +1129,7 @@ foreach (['src' => 'Source', 'dst' => 'Destination'] as $type => $name)
 			'single port.');
 
 	$group->add(new Form_Input(
+		$type .'beginport_cust',
 		$name .' port begin custom',
 		'number',
 		(isset($portValues[ $pconfig[$type .'beginport'] ]) ? null : $pconfig[$type .'beginport']),
@@ -1115,12 +1137,14 @@ foreach (['src' => 'Source', 'dst' => 'Destination'] as $type => $name)
 	));
 
 	$group->add(new Form_Select(
+		$type .'endport',
 		$name .' port end',
 		$pconfig[$type .'endport'],
 		$portValues
 	));
 
 	$group->add(new Form_Input(
+		$type .'endport_cust',
 		$name .' port end custom',
 		'number',
 		(isset($portValues[ $pconfig[$type .'endport'] ]) ? null : $pconfig[$type .'endport']),
@@ -1133,6 +1157,7 @@ foreach (['src' => 'Source', 'dst' => 'Destination'] as $type => $name)
 
 $section = new Form_Section('Extra options');
 $section->addInput(new Form_Checkbox(
+	'log',
 	'Log',
 	'Log packets that are handled by this rule',
 	$pconfig['log']
@@ -1142,6 +1167,7 @@ $section->addInput(new Form_Checkbox(
 	'Settings</a> page).');
 
 $section->addInput(new Form_Input(
+	'descr',
 	'Description',
 	'text',
 	$pconfig['descr']
@@ -1151,18 +1177,21 @@ $form->add($section);
 $section = new Form_Section('Advanced options');
 
 $section->addInput(new Form_Select(
+	'os',
 	'Source OS',
 	$pconfig['os'],
 	['' => 'any'] + $ostypes
 ))->setHelp('Note: this only works for TCP rules. General OS choice matches all subtypes.');
 
 $section->addInput(new Form_Select(
+	'dscp',
 	'Diffserv Code Point',
 	$pconfig['dscp'],
 	array_combine($firewall_rules_dscp_types, $firewall_rules_dscp_types)
 ));
 
 $section->addInput(new Form_Checkbox(
+	'allowopts',
 	'Allow IP options',
 	'Allow packets with IP options to pass. Otherwise they are blocked by '.
 	'default. This is usually only seen with multicast traffic.',
@@ -1170,12 +1199,14 @@ $section->addInput(new Form_Checkbox(
 ));
 
 $section->addInput(new Form_Checkbox(
+	'disablereplyto',
 	'Disable reply-to',
 	'Disable auto generated reply-to for this rule.',
 	$pconfig['disablereplyto']
 ));
 
 $section->addInput(new Form_Input(
+	'tag',
 	'Tag',
 	'text',
 	$pconfig['tag']
@@ -1183,42 +1214,49 @@ $section->addInput(new Form_Input(
 	'on other NAT/filter rules. It is called <b>Policy filtering</b>.');
 
 $section->addInput(new Form_Input(
+	'tagged',
 	'Tagged',
 	'text',
 	$pconfig['tagged']
 ))->setHelp('You can match packet on a mark placed before on another rule.');
 
 $section->addInput(new Form_Input(
+	'max',
 	'Max. states',
 	'number',
 	$pconfig['max']
 ))->setHelp('Maximum state entries this rule can create.');
 
 $section->addInput(new Form_Input(
+	'max-src-nodes',
 	'Max. src nodes',
 	'number',
 	$pconfig['max-src-nodes']
 ))->setHelp('Maximum number of unique source hosts.');
 
 $section->addInput(new Form_Input(
+	'max-src-conn',
 	'Max. connections',
 	'number',
 	$pconfig['max-src-conn']
 ))->setHelp('Maximum number of established connections per host (TCP only).');
 
 $section->addInput(new Form_Input(
+	'max-src-states',
 	'Max. src. states',
 	'number',
 	$pconfig['max-src-states']
 ))->setHelp('Maximum state entries per host.');
 
 $section->addInput(new Form_Input(
+	'max-src-conn-rate',
 	'Max. src. conn. Rate',
 	'number',
 	$pconfig['max-src-conn-rate']
 ))->setHelp('Maximum state entries per host');
 
 $section->addInput(new Form_Input(
+	'max-src-conn-rates',
 	'Max. src. conn. Rates',
 	'number',
 	$pconfig['max-src-conn-rates'],
@@ -1226,6 +1264,7 @@ $section->addInput(new Form_Input(
 ))->setHelp('Maximum new connections per host / per second(s) (TCP only)');
 
 $section->addInput(new Form_Input(
+	'statetimeout',
 	'State timeout',
 	'number',
 	$pconfig['statetimeout'],
@@ -1241,6 +1280,7 @@ $outofflags = explode(',', $pconfig['tcpflags2']);
 foreach ($tcpflags as $tcpflag)
 {
 	$section->addInput(new Form_Checkbox(
+		'tcpflags1_'. $tcpflag,
 		'Set '. strtoupper($tcpflag),
 		null,
 		(array_search($tcpflag, $setflags) !== false),
@@ -1248,6 +1288,7 @@ foreach ($tcpflags as $tcpflag)
 	));
 
 	$section->addInput(new Form_Checkbox(
+		'tcpflags2_'. $tcpflag,
 		'Out of '. strtoupper($tcpflag),
 		null,
 		(array_search($tcpflag, $setflags) !== false),
@@ -1256,6 +1297,7 @@ foreach ($tcpflags as $tcpflag)
 }
 
 $section->addInput(new Form_Checkbox(
+	'tcpflags_any',
 	'Any',
 	'Any flags',
 	$pconfig['tcpflags_any'],
@@ -1266,12 +1308,14 @@ $form->add($section);
 $section = new Form_Section('State Type');
 
 $section->addInput(new Form_Checkbox(
+	'nopfsync',
 	'No pfSync',
 	'Prevent states created by this rule to be sync\'ed over pfsync.',
 	$pconfig['nopfsync']
 ));
 
 $section->addInput(new Form_Select(
+	'statetype',
 	'State type',
 	$pconfig['statetype'],
 	array(
@@ -1283,6 +1327,7 @@ $section->addInput(new Form_Select(
 ))->setHelp('Select which type of state tracking mechanism you would like to use.  If in doubt, use keep state.');
 
 $section->addInput(new Form_Checkbox(
+	'nosync',
 	'No XMLRPC Sync',
 	'Prevent the rule on Master from automatically syncing to other CARP members',
 	$pconfig['nosync']
@@ -1290,12 +1335,14 @@ $section->addInput(new Form_Checkbox(
 
 $vlanprio = array("none", "be", "bk", "ee", "ca", "vi", "vo", "ic", "nc");
 $section->addInput(new Form_Select(
+	'vlanprio',
 	'VLAN Prio',
 	$pconfig['vlanprio'],
 	$vlanprio
 ))->setHelp('Choose 802.1p priority to match on');
 
 $section->addInput(new Form_Select(
+	'vlanprioset',
 	'VLAN Prio Set',
 	$pconfig['vlanprioset'],
 	$vlanprio
@@ -1309,6 +1356,7 @@ foreach ((array)$config['schedules']['schedule'] as $schedule)
 }
 
 $section->addInput(new Form_Select(
+	'sched',
 	'Schedule',
 	$pconfig['sched'],
 	$schedules
@@ -1336,6 +1384,7 @@ foreach ((array)$a_gatewaygroups as $gwg_name => $gwg_data)
 }
 
 $section->addInput(new Form_Select(
+	'gateway',
 	'Gateway',
 	$pconfig['gateway'],
 	$gateways
@@ -1345,12 +1394,14 @@ $section->addInput(new Form_Select(
 $group = new Form_Group('In / Out pipe');
 
 $group->add(new Form_Select(
+	'dnpipe',
 	'DNpipe',
 	$pconfig['dnpipe'],
 	array('' => 'none') + array_keys($dnqlist)
 ));
 
 $group->add(new Form_Select(
+	'pdnpipe',
 	'PDNpipe',
 	$pconfig['pdnpipe'],
 	array('' => 'none') + array_keys($dnqlist)
@@ -1374,12 +1425,14 @@ foreach ($qlist as $idx => $q)
 }
 
 $group->add(new Form_Select(
+	'ackqueue',
 	'Ackqueue',
 	$pconfig['ackqueue'],
 	$qlist
 ));
 
 $group->add(new Form_Select(
+	'defaultqueue',
 	'Default Queue',
 	$pconfig['defaultqueue'],
 	$qlist
@@ -1390,6 +1443,7 @@ $section->add($group)->setHelp('Choose the Acknowledge Queue only if you have '.
 );
 
 $section->addInput(new Form_Select(
+	'l7container',
 	'Layer7',
 	$pconfig['l7container'],
 	array_keys($l7clist)

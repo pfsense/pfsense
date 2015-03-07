@@ -221,7 +221,7 @@ if ($act != "edit" ): ?>
 	))->setWidth(4);
 
 	if (isset($id) && $a_tunable[$id]) {
-		$section->addGlobal(new Form_Input(
+		$form->addGlobal(new Form_Input(
 			'id',
 			'id',
 			'hidden',

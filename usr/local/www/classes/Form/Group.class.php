@@ -10,6 +10,7 @@ class Form_Group extends Form_Element
 	public function __construct($title)
 	{
 		$this->_title = gettext($title);
+		$this->addClass('form-group');
 	}
 
 	public function add(Form_Input $input)
@@ -66,7 +67,7 @@ class Form_Group extends Form_Element
 		$help = isset($this->_help) ? '<div class="col-sm-'. (12 - $this->getLabelWidth()) .' col-sm-offset-'. $this->getLabelWidth() .'"><span class="help-block">'. gettext($this->_help). '</span></div>' : '';
 
 		return <<<EOT
-	<div class="form-group">
+	<div {$this->getHtmlClass()}>
 		<label for="{$target}" class="col-sm-{$this->getLabelWidth()} control-label">
 			{$this->_title}
 		</label>

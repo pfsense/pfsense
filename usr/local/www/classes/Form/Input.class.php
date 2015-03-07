@@ -124,6 +124,13 @@ class Form_Input extends Form_Element
 				$help = call_user_func_array('sprintf', array_merge([$help], $this->_helpParams));
 
 			$help = '<span class="help-block">'. $help .'</span>';
+
+		} else {
+			$columnClass = $this->getColumnHtmlClass();
+
+			// No classes => no element. This is useful for global inputs
+			if (empty($columnClass))
+				return (string)$input;
 		}
 
 		return <<<EOT

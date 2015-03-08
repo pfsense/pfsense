@@ -4,7 +4,7 @@ class Form_Button extends Form_Input
 {
 	protected $_link;
 
-	public function __construct($name, $value, $link = null)
+	public function __construct($name, $title, $link = null)
 	{
 		// If we have a link; we're actually an <a class='btn'>
 		if (isset($link))
@@ -19,7 +19,7 @@ class Form_Button extends Form_Input
 			$type = 'submit';
 		}
 
-		parent::__construct($name, $value, $type);
+		parent::__construct($name, null, $type, $title);
 
 		$this->removeClass('form-control')->addClass('btn');
 	}

@@ -216,7 +216,7 @@ include("head.inc");
 								$icon = "<img {$align} src=\"/themes/".$g['theme']."/images/icons/icon_pass_d.gif\" alt=\"backup\" />";
 							} else if($status == "INIT") {
 								$icon = "<img {$align} src=\"/themes/".$g['theme']."/images/icons/icon_log.gif\" alt=\"init\" />";
-							} else
+							} else {
 								$icon = "";
 							}
 						}

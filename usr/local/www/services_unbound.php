@@ -302,7 +302,7 @@ function show_advanced_dns() {
 									<select id="outgoing_interface" name="outgoing_interface[]" multiple="multiple" size="<?php echo $size; ?>">
 										<option value="" <?php if (empty($pconfig['outgoing_interface']) || empty($pconfig['outgoing_interface'][0])) echo 'selected="selected"'; ?>>All</option>
 										<?php
-											foreach ($interface_addresses as $laddr):
+											foreach ($interface_addresses as $laddr => $ldescr):
 												$selected = "";
 												if (in_array($laddr, $pconfig['outgoing_interface']))
 												$selected = 'selected="selected"';

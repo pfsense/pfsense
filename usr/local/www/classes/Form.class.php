@@ -10,6 +10,8 @@ class Form extends Form_Element
 	protected $_sections = array();
 	protected $_global = array();
 	protected $_labelWidth = 2;
+	// Empty is interpreted by all browsers to submit to the current URI
+	protected $_action;
 
 	public function __construct()
 	{
@@ -33,6 +35,11 @@ class Form extends Form_Element
 			throw new Exception('Incorrect size, pass a number between 1 and 12');
 
 		$this->_labelWidth = (int)$size;
+	}
+
+	public function setAction($uri)
+	{
+		$this->_action = $uri;
 	}
 
 	public function getLabelWidth()
@@ -66,7 +73,7 @@ class Form extends Form_Element
 		$html .= implode('', $this->_global);
 
 		return <<<EOT
-	<form class="form-horizontal" method="post">
+	<form class="form-horizontal" action="{$this->_action}" method="post">
 		{$html}
 	</form>
 EOT;

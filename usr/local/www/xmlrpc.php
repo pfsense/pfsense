@@ -280,11 +280,7 @@ function restore_config_section_xmlrpc($raw_params) {
 		}
 		/* Cleanup remaining old carps */
 		foreach ($oldvips as $oldvipif => $oldvippar) {
-			if (strstr($oldvippar['interface'], '_vip')) {
-				$oldvipif = explode('_vip', $oldvippar['interface']);
-				$oldvipif = $oldvipif[0];
-			} else
-				$oldvipif = get_real_interface($oldvippar['interface']);
+			$oldvipif = get_real_interface($oldvippar['interface']);
 			if (!empty($oldvipif)) {
 				if (is_ipaddrv6($oldvipif))
 					 mwexec("/sbin/ifconfig " . escapeshellarg($oldvipif) . " inet6 " . escapeshellarg($oldvipar['subnet']) . " delete");

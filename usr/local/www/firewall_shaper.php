@@ -64,7 +64,7 @@ read_altq_config();
 
 if ($_GET) {
 	if ($_GET['queue'])
-        	$qname = trim($_GET['queue']);
+		$qname = htmlspecialchars(trim($_GET['queue']));
         if ($_GET['interface'])
                 $interface = htmlspecialchars(trim($_GET['interface']));
         if ($_GET['action'])
@@ -164,7 +164,7 @@ if ($_GET) {
 				$q->SetInterface($interface);
 				$output_form .= $q->build_form();
 				$output_form .= "<input type=\"hidden\" name=\"parentqueue\" id=\"parentqueue\"";
-				$output_form .= " value=\"".$qname."\" />";
+				$output_form .= " value=\"".htmlspecialchars($qname)."\" />";
 				$newjavascript = $q->build_javascript();
                 unset($q);
 				$newqueue = true;

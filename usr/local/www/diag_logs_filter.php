@@ -114,7 +114,7 @@ $nentries = $config['syslog']['nentries'];
 if ($filterlogentries_qty)
 	$nentries = $filterlogentries_qty;
 
-if (!$nentries)
+if (!$nentries || !is_numeric($nentries))
 	$nentries = 50;
 
 if ($_POST['clear'])
@@ -179,41 +179,41 @@ include("head.inc");
 						</td>
 						<td>
 							<div align="center"><?=gettext("Time");?></div>
-							<div align="center"><input id="filterlogentries_time" name="filterlogentries_time" class="formfld search" type="text" size="12" value="<?= $filterfieldsarray['time'] ?>" /></div>
+							<div align="center"><input id="filterlogentries_time" name="filterlogentries_time" class="formfld search" type="text" size="12" value="<?= htmlspecialchars($filterfieldsarray['time']) ?>" /></div>
 						</td>
 						<td>
 							<div align="center"><?=gettext("Source IP Address");?></div>
-							<div align="center"><input id="filterlogentries_sourceipaddress" name="filterlogentries_sourceipaddress" class="formfld search" type="text" size="35" value="<?= $filterfieldsarray['srcip'] ?>" /></div>
+							<div align="center"><input id="filterlogentries_sourceipaddress" name="filterlogentries_sourceipaddress" class="formfld search" type="text" size="35" value="<?= htmlspecialchars($filterfieldsarray['srcip']) ?>" /></div>
 						</td>
 						<td>
 							<div align="center"><?=gettext("Source Port");?></div>
-							<div align="center"><input id="filterlogentries_sourceport" name="filterlogentries_sourceport" class="formfld search" type="text" size="10" value="<?= $filterfieldsarray['srcport'] ?>" /></div>
+							<div align="center"><input id="filterlogentries_sourceport" name="filterlogentries_sourceport" class="formfld search" type="text" size="10" value="<?= htmlspecialchars($filterfieldsarray['srcport']) ?>" /></div>
 						</td>
 						<td>
 							<div align="center"><?=gettext("Protocol");?></div>
-							<div align="center"><input id="filterlogentries_protocol" name="filterlogentries_protocol" class="formfld search" type="text" size="5" value="<?= $filterfieldsarray['proto'] ?>" /></div>
+							<div align="center"><input id="filterlogentries_protocol" name="filterlogentries_protocol" class="formfld search" type="text" size="5" value="<?= htmlspecialchars($filterfieldsarray['proto']) ?>" /></div>
 						</td>
 						<td>
 							<div align="center" style="vertical-align:top;"><?=gettext("Quantity");?></div>
-							<div align="center" style="vertical-align:top;"><input id="filterlogentries_qty" name="filterlogentries_qty" class="" type="text" size="6" value="<?= $filterlogentries_qty ?>" /></div>
+							<div align="center" style="vertical-align:top;"><input id="filterlogentries_qty" name="filterlogentries_qty" class="" type="text" size="6" value="<?= htmlspecialchars($filterlogentries_qty) ?>" /></div>
 						</td>
 					</tr>
 					<tr>
 						<td valign="top">
 							<div align="center"><?=gettext("Interface");?></div>
-							<div align="center"><input id="filterlogentries_interfaces" name="filterlogentries_interfaces" class="formfld search" type="text" size="12" value="<?= $filterfieldsarray['interface'] ?>" /></div>
+							<div align="center"><input id="filterlogentries_interfaces" name="filterlogentries_interfaces" class="formfld search" type="text" size="12" value="<?= htmlspecialchars($filterfieldsarray['interface']) ?>" /></div>
 						</td>
 						<td valign="top">
 							<div align="center"><?=gettext("Destination IP Address");?></div>
-							<div align="center"><input id="filterlogentries_destinationipaddress" name="filterlogentries_destinationipaddress" class="formfld search" type="text" size="35" value="<?= $filterfieldsarray['dstip'] ?>" /></div>
+							<div align="center"><input id="filterlogentries_destinationipaddress" name="filterlogentries_destinationipaddress" class="formfld search" type="text" size="35" value="<?= htmlspecialchars($filterfieldsarray['dstip']) ?>" /></div>
 						</td>
 						<td valign="top">
 							<div align="center"><?=gettext("Destination Port");?></div>
-							<div align="center"><input id="filterlogentries_destinationport" name="filterlogentries_destinationport" class="formfld search" type="text" size="10" value="<?= $filterfieldsarray['dstport'] ?>" /></div>
+							<div align="center"><input id="filterlogentries_destinationport" name="filterlogentries_destinationport" class="formfld search" type="text" size="10" value="<?= htmlspecialchars($filterfieldsarray['dstport']) ?>" /></div>
 						</td>
 						<td valign="top">
 							<div align="center"><?=gettext("Protocol Flags");?></div>
-							<div align="center"><input id="filterlogentries_protocolflags" name="filterlogentries_protocolflags" class="formfld search" type="text" size="5" value="<?= $filterfieldsarray['tcpflags'] ?>" /></div>
+							<div align="center"><input id="filterlogentries_protocolflags" name="filterlogentries_protocolflags" class="formfld search" type="text" size="5" value="<?= htmlspecialchars($filterfieldsarray['tcpflags']) ?>" /></div>
 						</td>
 						<td valign="bottom">
 							<div align="center"><input id="filterlogentries_submit" name="filterlogentries_submit" type="submit" class="formbtn" value="<?=gettext("Filter");?>" /></div>
@@ -271,11 +271,11 @@ include("head.inc");
 						</td>
 						<td>
 							<div align="center" style="vertical-align:top;"><?=gettext("Filter expression");?></div>
-							<div align="center" style="vertical-align:top;"><input id="filtertext" name="filtertext" class="formfld search" style="vertical-align:top;" type="text" size="35" value="<?=$filtertext?>" /></div>
+							<div align="center" style="vertical-align:top;"><input id="filtertext" name="filtertext" class="formfld search" style="vertical-align:top;" type="text" size="35" value="<?= htmlspecialchars($filtertext) ?>" /></div>
 						</td>
 						<td>
 							<div align="center" style="vertical-align:top;"><?=gettext("Quantity");?></div>
-							<div align="center" style="vertical-align:top;"><input id="filterlogentries_qty" name="filterlogentries_qty" class="" style="vertical-align:top;" type="text" size="6" value="<?= $filterlogentries_qty ?>" /></div>
+							<div align="center" style="vertical-align:top;"><input id="filterlogentries_qty" name="filterlogentries_qty" class="" style="vertical-align:top;" type="text" size="6" value="<?= htmlspecialchars($filterlogentries_qty) ?>" /></div>
 						</td>
 						<td>
 							<div align="center" style="vertical-align:top;">&nbsp;</div>
@@ -313,7 +313,7 @@ include("head.inc");
 				<?php if ( (!$filtertext) && (!$filterfieldsarray) )
 					printf(gettext("Last %s firewall log entries."),count($filterlog));
 				else
-					echo count($filterlog). ' ' . gettext("matched log entries.");
+					echo count($filterlog). ' ' . gettext("matched log entries.") . ' ';
 			    printf(gettext("Max(%s)"),$nentries);?>
 			  </td>
 			</tr>

@@ -19316,7 +19316,7 @@ msgstr "あなたは、IPv4フィルタルールにIPv6ゲートウェイを割�
 #: usr/local/www/firewall_rules_edit.php:329
 #: usr/local/www/firewall_rules_edit.php:329
 #, php-format
-msgid "%s is only valid with protocol tcp."
+msgid "%s is only valid with protocol TCP."
 msgstr "%sはプロトコルTCPでのみ有効です。"
 
 #: usr/local/www/firewall_rules_edit.php:299
@@ -19376,7 +19376,7 @@ msgstr "あなたは、IPv6ルールでIPv4アドレスを使用することは�
 #: usr/local/www/firewall_rules_edit.php:436
 #: usr/local/www/firewall_rules_edit.php:442
 #: usr/local/www/firewall_rules_edit.php:442
-msgid "OS detection is only valid with protocol tcp."
+msgid "OS detection is only valid with protocol TCP."
 msgstr "OS検出、プロトコルはTCPでのみ有効です。"
 
 #: usr/local/www/firewall_rules_edit.php:406

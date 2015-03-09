@@ -1534,6 +1534,10 @@ function alias_expand($name) {
 	global $aliastable;
 
 	if (isset($aliastable[$name])) {
+		// alias names cannot be strictly numeric. redmine #4289
+		if (is_numericint($name)) {
+			return null;
+		}
 		return "\${$name}";
 	} else if (is_ipaddr($name) || is_subnet($name) || is_port($name) || is_portrange($name)) {
 		return "{$name}";

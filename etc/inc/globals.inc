@@ -73,7 +73,7 @@ $g = array(
 	"disablecrashreporter" => false,
 	"crashreporterurl" => "https://crashreporter.pfsense.org/crash_reporter.php",
 	"debug" => false,
-	"latest_config" => "11.7",
+	"latest_config" => "11.8",
 	"nopkg_platforms" => array("cdrom"),
 	"minimum_ram_warning" => "101",
 	"minimum_ram_warning_text" => "128 MB",
@@ -165,7 +165,9 @@ $sysctls = array("net.inet.ip.portrange.first" => "1024",
 	"net.enc.out.ipsec_bpf_mask" => "0x0001",
 	"net.enc.out.ipsec_filter_mask" => "0x0001",
 	"net.enc.in.ipsec_bpf_mask" => "0x0002",
-	"net.enc.in.ipsec_filter_mask" => "0x0002"
+	"net.enc.in.ipsec_filter_mask" => "0x0002",
+	"net.inet.carp.senderr_demotion_factor" => 0, /* Do not demote CARP for interface send errors */
+	"net.pfsync.carp_demotion_factor" => 0 /* Do not demote CARP for pfsync errors */
 );
 
 /* Include override values for the above if needed. If the file doesn't exist, don't try to load it. */

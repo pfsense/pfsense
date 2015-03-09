@@ -87,18 +87,22 @@ if($_GET['downloadbackup']) {
 }
 
 if ($_GET['deletefile']) {
-	$filename = $_GET['deletefile'];
-	if(file_exists("/root/{$filename}")) {
+	$filename = basename($_GET['deletefile']);
+	if(file_exists("/root/{$filename}") && (preg_match("/pfSense-full-backup-\d+-\d+\.tgz/", $filename) == 1)) {
 		unlink("/root/" . $filename);
-		$savemsg = gettext("$filename has been deleted.");
+		$savemsg = htmlspecialchars($filename) . " " . gettext("has been deleted.");
+	} else {
+		$savemsg = htmlspecialchars($filename) . " " . gettext("has not been been deleted (invalid backup file or file does not exist).");
 	}
 }
 
 if ($_POST['restorefile']) {
-	$filename = $_POST['restorefile'];
-	if(file_exists("/root/{$filename}")) {
+	$filename = basename($_POST['restorefile']);
+	if(file_exists("/root/{$filename}") && (preg_match("/pfSense-full-backup-\d+-\d+\.tgz/", $filename) == 1)) {
 		mwexec_bg("/etc/rc.restore_full_backup /root/" . escapeshellcmd($filename));
-		$savemsg = gettext("The firewall is currently restoring $filename");
+		$savemsg = gettext("The firewall is currently restoring") . " " . htmlspecialchars($filename);
+	} else {
+		$savemsg = htmlspecialchars($filename) . " " . gettext("has not been been restored (invalid backup file or file does not exist).");
 	}
 }
 

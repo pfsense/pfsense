@@ -379,7 +379,7 @@ if ($_POST) {
 
 	if($_POST['statetype'] == "modulate state" or $_POST['statetype'] == "synproxy state") {
 		if( $_POST['proto'] != "tcp" )
-			$input_errors[] = sprintf(gettext("%s is only valid with protocol tcp."),$_POST['statetype']);
+			$input_errors[] = sprintf(gettext("%s is only valid with protocol TCP."),$_POST['statetype']);
 		if(($_POST['statetype'] == "synproxy state") && ($_POST['gateway'] != ""))
 			$input_errors[] = sprintf(gettext("%s is only valid if the gateway is set to 'default'."),$_POST['statetype']);
 	}
@@ -492,7 +492,7 @@ if ($_POST) {
 	}
 	if ($_POST['os']) {
 		if( $_POST['proto'] != "tcp" )
-			$input_errors[] = gettext("OS detection is only valid with protocol tcp.");
+			$input_errors[] = gettext("OS detection is only valid with protocol TCP.");
 		if (!in_array($_POST['os'], $ostypes))
 			$input_errors[] = gettext("Invalid OS detection selection. Please select a valid OS.");
 	}

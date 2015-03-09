@@ -51,11 +51,11 @@ if ($_POST) {
 	if (!$authcfg)
 		$input_errors[] = $_POST['authmode'] . " " . gettext("is not a valid authentication server");
 
-	if (empty($_POST['username']) || empty($_POST['password']))
+	if (empty($_POST['username']) || empty($_POST['passwordfld']))
 		$input_errors[] = gettext("A username and password must be specified.");
 
 	if (!$input_errors) {
-		if (authenticate_user($_POST['username'], $_POST['password'], $authcfg)) {
+		if (authenticate_user($_POST['username'], $_POST['passwordfld'], $authcfg)) {
 			$savemsg = gettext("User") . ": " . $_POST['username'] . " " . gettext("authenticated successfully.");
 			$groups = getUserGroups($_POST['username'], $authcfg);
 			$savemsg .= "<br />" . gettext("This user is a member of these groups") . ": <br />";
@@ -112,7 +112,7 @@ include("head.inc");
 	<tr>
 		<td width="22%" valign="top" class="vncell"><?=gettext("Password"); ?></td>
 		<td width="78%" class="vtable">
-			<input class="formfld pwd" type="password" size="20" id="password" name="password" value="<?=htmlspecialchars($pconfig['password']);?>" />
+			<input class="formfld pwd" type="password" size="20" id="passwordfld" name="passwordfld" value="<?=htmlspecialchars($pconfig['passwordfld']);?>" />
 		</td>
 	</tr>
 	<tr>

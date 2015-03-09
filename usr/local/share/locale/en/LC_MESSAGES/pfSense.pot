@@ -11894,7 +11894,7 @@ msgstr ""
 
 #: usr/local/www/firewall_rules_edit.php:382
 #, php-format
-msgid "%s is only valid with protocol tcp."
+msgid "%s is only valid with protocol TCP."
 msgstr ""
 
 #: usr/local/www/firewall_rules_edit.php:384
@@ -11928,7 +11928,7 @@ msgid "You can not use a IPv4 or IPv6 address in combined IPv4 + IPv6 rules."
 msgstr ""
 
 #: usr/local/www/firewall_rules_edit.php:495
-msgid "OS detection is only valid with protocol tcp."
+msgid "OS detection is only valid with protocol TCP."
 msgstr ""
 
 #: usr/local/www/firewall_rules_edit.php:497
@@ -20908,7 +20908,7 @@ msgid ""
 msgstr ""
 
 #: usr/local/www/services_ntpd.php:327
-msgid "Enable rrd graphs of NTP statistics (default: disabled)."
+msgid "Enable RRD graphs of NTP statistics (default: disabled)."
 msgstr ""
 
 #: usr/local/www/services_ntpd.php:333

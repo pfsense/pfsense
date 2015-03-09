@@ -200,7 +200,10 @@ function vpn_ipsec_configure($restart = false)
 				$ifacesuse[] = get_real_interface($vpninterface[0]);
 			} else {
 				$vpninterface = get_failover_interface($ph1ent['interface']);
-				if (!empty($vpninterface)) {
+				if (strpos($vpninterface, '_vip')) {
+					$vpninterface = explode('_vip', $vpninterface);
+					$ifacesuse[] = get_real_interface($vpninterface[0]);
+				} elseif (!empty($vpninterface)) {
 					$ifacesuse[] = $vpninterface;
 				}
 			}
@@ -421,7 +424,7 @@ EOD;
 		}
 		unset($cfgservers);
 
-		if (isset($a_client['net_list'])) {
+		if (isset($a_client['net_list']) && is_array($a_phase2)) {
 			$net_list = '';
 			foreach ($a_phase2 as $ph2ent) {
 				if (isset($ph2ent['disabled'])) {
@@ -456,14 +459,6 @@ EOD;
 		}
 
 		if (!empty($a_client['dns_split'])) {
-			$ipsec_dns = explode(',', $a_client['dns_split']);
-			foreach ($ipsec_dns as $ipsecidx => $ipsecdns) {
-				$ipsecdns = trim($ipsecdns);
-				$ipsec_dns[$ipsecidx] = "\"{$ipsecdns}\"";
-			}
-			$a_client['dns_split'] = implode(' ', $ipsec_dns);
-			unset($ipsec_dns);
-
 			$strongswan .= "\t\t\t28675 = {$a_client['dns_split']}\n";
 		}
 
@@ -682,7 +677,13 @@ EOD;
 						$vpninterface = $vpninterface[0];
 					} else {
 						$ifacesuse = get_failover_interface($ph1ent['interface']);
-						$vpninterface = convert_real_interface_to_friendly_interface_name($ifacesuse);
+						if (strpos($ifacesuse, '_vip')) {
+							$vpninterface = explode('_vip', $ifacesuse);
+							$ifacesuse = get_real_interface($vpninterface[0]);
+							$vpninterface = $vpninterface[0];
+						} else {
+							$vpninterface = convert_real_interface_to_friendly_interface_name($ifacesuse);
+						}
 					}
 
 					if (!empty($ifacesuse) && interface_has_gateway($vpninterface)) {
@@ -705,7 +706,13 @@ EOD;
 						$vpninterface = $vpninterface[0];
 					} else {
 						$ifacesuse = get_failover_interface($ph1ent['interface']);
-						$vpninterface = convert_real_interface_to_friendly_interface_name($ifacesuse);
+						if (strpos($ifacesuse, '_vip')) {
+							$vpninterface = explode('_vip', $ifacesuse);
+							$ifacesuse = get_real_interface($vpninterface[0]);
+							$vpninterface = $vpninterface[0];
+						} else {
+							$vpninterface = convert_real_interface_to_friendly_interface_name($ifacesuse);
+						}
 					}
 
 					if (!empty($ifacesuse) && interface_has_gateway($vpninterface)) {

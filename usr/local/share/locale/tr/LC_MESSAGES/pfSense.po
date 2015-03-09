@@ -12345,7 +12345,7 @@ msgstr "IPv4 ve IPv6 için uygulanacak ICMP türü kurallarını atayamazsınız
 
 #: usr/local/www/firewall_rules_edit.php:382
 #, php-format
-msgid "%s is only valid with protocol tcp."
+msgid "%s is only valid with protocol TCP."
 msgstr "%s sadece TCP protokolü ile çalışır."
 
 #: usr/local/www/firewall_rules_edit.php:384
@@ -12383,7 +12383,7 @@ msgstr ""
 "kullanamazsınız."
 
 #: usr/local/www/firewall_rules_edit.php:495
-msgid "OS detection is only valid with protocol tcp."
+msgid "OS detection is only valid with protocol TCP."
 msgstr "İşletim sistemi tespiti sadece TCP protokolünde çalışır."
 
 #: usr/local/www/firewall_rules_edit.php:497
@@ -22172,7 +22172,7 @@ msgid ""
 msgstr ""
 
 #: usr/local/www/services_ntpd.php:327
-msgid "Enable rrd graphs of NTP statistics (default: disabled)."
+msgid "Enable RRD graphs of NTP statistics (default: disabled)."
 msgstr ""
 
 #: usr/local/www/services_ntpd.php:333

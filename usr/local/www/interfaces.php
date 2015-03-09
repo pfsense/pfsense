@@ -522,6 +522,7 @@ if ($_POST['apply']) {
 						$input_errors[] = gettext("This interface is referenced by IPv4 VIPs. Please delete those before setting the interface to 'none' configuration.");
 				}
 			}
+			break;
 		case "dhcp":
 			if (in_array($wancfg['ipaddr'], array("ppp", "pppoe", "pptp", "l2tp")))
 				$input_errors[] = sprintf(gettext("You have to reassign the interface to be able to configure as %s."),$_POST['type']);
@@ -575,6 +576,7 @@ if ($_POST['apply']) {
 						$input_errors[] = gettext("This interface is referenced by IPv6 VIPs. Please delete those before setting the interface to 'none' configuration.");
 				}
 			}
+			break;
 		case "dhcp6":
 			if (in_array($wancfg['ipaddrv6'], array()))
 				$input_errors[] = sprintf(gettext("You have to reassign the interface to be able to configure as %s."),$_POST['type6']);

@@ -48,15 +48,17 @@ function vpn_ipsec_configure_loglevels($forconfig = false)
 
 	$cfgtext = array();
 	foreach ($ipsec_loglevels as $lkey => $ldescr) {
-		if (!isset($config['ipsec']["ipsec_{$lkey}"]) && !$forconfig)
+		if (!isset($config['ipsec']["ipsec_{$lkey}"]) && !$forconfig) {
 			mwexec("/usr/local/sbin/ipsec stroke loglevel {$lkey} -- -1", false);
-		else if (is_numeric($config['ipsec']["ipsec_{$lkey}"]) &&
-		    intval($config['ipsec']["ipsec_{$lkey}"]) >= 0 && intval($config['ipsec']["ipsec_{$lkey}"]) <= 5)
+		} else if (is_numeric($config['ipsec']["ipsec_{$lkey}"]) &&
+		    intval($config['ipsec']["ipsec_{$lkey}"]) >= 0 && intval($config['ipsec']["ipsec_{$lkey}"]) <= 5) {
 			$forconfig ? $cfgtext[] = "${lkey} " . (intval($config['ipsec']["ipsec_{$lkey}"]) - 1) :
 				mwexec("/usr/local/sbin/ipsec stroke loglevel {$lkey} " . (intval($config['ipsec']["ipsec_{$lkey}"]) - 1) , false);
+		}
 	}
-	if ($forconfig)
+	if ($forconfig) {
 		return implode(',', $cfgtext);
+	}
 }
 
 /* include all configuration functions */
@@ -65,30 +67,30 @@ function vpn_ipsec_convert_to_modp($index)
 
 	$convertion = "";
 	switch ($index) {
-	case '1':
-		$convertion = "modp768";
-		break;
-	case '2':
-		$convertion = "modp1024";
-		break;
-	case '5':
-		$convertion = "modp1536";
-		break;
-	case '14':
-		$convertion = "modp2048";
-		break;
-	case '15':
-		$convertion = "modp3072";
-		break;
-	case '16':      
-		$convertion = "modp4096";
-		break;
-	case '17':
-		$convertion = "modp6144";
-		break;
-	case '18':
-		$convertion = "modp8192";
-		break;
+		case '1':
+			$convertion = "modp768";
+			break;
+		case '2':
+			$convertion = "modp1024";
+			break;
+		case '5':
+			$convertion = "modp1536";
+			break;
+		case '14':
+			$convertion = "modp2048";
+			break;
+		case '15':
+			$convertion = "modp3072";
+			break;
+		case '16':
+			$convertion = "modp4096";
+			break;
+		case '17':
+			$convertion = "modp6144";
+			break;
+		case '18':
+			$convertion = "modp8192";
+			break;
 	}
 
 	return $convertion;
@@ -98,8 +100,9 @@ function vpn_ipsec_configure($restart = false)
 {
 	global $config, $g, $sa, $sn, $p1_ealgos, $p2_ealgos;
 
-	if ($g['platform'] == 'jail')
+	if ($g['platform'] == 'jail') {
 		return;
+	}
 
 	/* get the automatic ping_hosts.sh ready */
 	unlink_if_exists("{$g['vardb_path']}/ipsecpinghosts");
@@ -136,30 +139,41 @@ function vpn_ipsec_configure($restart = false)
 	mwexec("/sbin/ifconfig enc0 up");
 	set_single_sysctl("net.inet.ip.ipsec_in_use", "1");
 	/* needed for config files */
-	if (!is_dir("{$g['varetc_path']}/ipsec"))
+	if (!is_dir("{$g['varetc_path']}/ipsec")) {
 		mkdir("{$g['varetc_path']}/ipsec");
-	if (!is_dir("{$g['varetc_path']}/ipsec/ipsec.d"))
+	}
+	if (!is_dir("{$g['varetc_path']}/ipsec/ipsec.d")) {
 		mkdir("{$g['varetc_path']}/ipsec/ipsec.d");
-	if (!is_dir($capath))
+	}
+	if (!is_dir($capath)) {
 		mkdir($capath);
-	if (!is_dir($keypath))
+	}
+	if (!is_dir($keypath)) {
 		mkdir($keypath);
-	if (!is_dir("{$g['varetc_path']}/ipsec/ipsec.d/crls"))
+	}
+	if (!is_dir("{$g['varetc_path']}/ipsec/ipsec.d/crls")) {
 		mkdir("{$g['varetc_path']}/ipsec/ipsec.d/crls");
-	if (!is_dir($certpath))
+	}
+	if (!is_dir($certpath)) {
 		mkdir($certpath);
-	if (!is_dir("{$g['varetc_path']}/ipsec/ipsec.d/aacerts"))
+	}
+	if (!is_dir("{$g['varetc_path']}/ipsec/ipsec.d/aacerts")) {
 		mkdir("{$g['varetc_path']}/ipsec/ipsec.d/aacerts");
-	if (!is_dir("{$g['varetc_path']}/ipsec/ipsec.d/acerts"))
+	}
+	if (!is_dir("{$g['varetc_path']}/ipsec/ipsec.d/acerts")) {
 		mkdir("{$g['varetc_path']}/ipsec/ipsec.d/acerts");
-	if (!is_dir("{$g['varetc_path']}/ipsec/ipsec.d/ocspcerts"))
+	}
+	if (!is_dir("{$g['varetc_path']}/ipsec/ipsec.d/ocspcerts")) {
 		mkdir("{$g['varetc_path']}/ipsec/ipsec.d/ocspcerts");
-	if (!is_dir("{$g['varetc_path']}/ipsec/ipsec.d/reqs"))
+	}
+	if (!is_dir("{$g['varetc_path']}/ipsec/ipsec.d/reqs")) {
 		mkdir("{$g['varetc_path']}/ipsec/ipsec.d/reqs");
-	
+	}
 
-	if (platform_booting())
+
+	if (platform_booting()) {
 		echo gettext("Configuring IPsec VPN... ");
+	}
 
 	/* fastforwarding is not compatible with ipsec tunnels */
 	set_single_sysctl("net.inet.ip.fastforwarding", "0");
@@ -177,51 +191,59 @@ function vpn_ipsec_configure($restart = false)
 		$ipsecpinghosts = "";
 		/* step through each phase1 entry */
 		foreach ($a_phase1 as $ph1ent) {
-			if (isset($ph1ent['disabled']))
+			if (isset($ph1ent['disabled'])) {
 				continue;
+			}
 
 			if (strpos($ph1ent['interface'], '_vip')) {
 				$vpninterface = explode('_vip', $ph1ent['interface']);
 				$ifacesuse[] = get_real_interface($vpninterface[0]);
-                        } else {
-                                $vpninterface = get_failover_interface($ph1ent['interface']);
+			} else {
+				$vpninterface = get_failover_interface($ph1ent['interface']);
 				if (strpos($vpninterface, '_vip')) {
 					$vpninterface = explode('_vip', $vpninterface);
 					$ifacesuse[] = get_real_interface($vpninterface[0]);
-				} elseif (!empty($vpninterface))
+				} elseif (!empty($vpninterface)) {
 					$ifacesuse[] = $vpninterface;
+				}
 			}
-				
-			if ($ph1ent['mode'] == "aggressive" && ($ph1ent['authentication_method'] == "pre_shared_key" || $ph1ent['authentication_method'] == "xauth_psk_server")) 
+
+			if ($ph1ent['mode'] == "aggressive" && ($ph1ent['authentication_method'] == "pre_shared_key" || $ph1ent['authentication_method'] == "xauth_psk_server")) {
 				$aggressive_mode_psk = true;
+			}
 
 			$ikeid = $ph1ent['ikeid'];
 			$listeniflist = get_real_interface($a_phase1['interface']);
 
 			$ep = ipsec_get_phase1_src($ph1ent);
-			if (!is_ipaddr($ep))
+			if (!is_ipaddr($ep)) {
 				continue;
+			}
 
-			if(!in_array($ep,$ipmap))
+			if (!in_array($ep,$ipmap)) {
 				$ipmap[] = $ep;
+			}
 
 			/* see if this tunnel has a hostname for the remote-gateway. If so,
 			   try to resolve it now and add it to the list for filterdns */
 
-			if (isset ($ph1ent['mobile']))
+			if (isset ($ph1ent['mobile'])) {
 				continue;
+			}
 
 			$rg = $ph1ent['remote-gateway'];
 
 			if (!is_ipaddr($rg)) {
 				$filterdns_list[] = "{$rg}";
 				add_hostname_to_watch($rg);
-				if (!platform_booting())
+				if (!platform_booting()) {
 					$rg = resolve_retry($rg);
-				if (!is_ipaddr($rg))
+				}
+				if (!is_ipaddr($rg)) {
 					continue;
+				}
 			}
-			if(array_search($rg, $rgmap)) {
+			if (array_search($rg, $rgmap)) {
 				log_error("The remote gateway {$rg} already exists on another phase 1 entry");
 				continue;
 			}
@@ -230,23 +252,27 @@ function vpn_ipsec_configure($restart = false)
 			if (is_array($a_phase2)) {
 				/* step through each phase2 entry */
 				foreach ($a_phase2 as $ph2ent) {
-					if (isset($ph2ent['disabled']))
+					if (isset($ph2ent['disabled'])) {
 						continue;
+					}
 
-					if ($ikeid != $ph2ent['ikeid'])
+					if ($ikeid != $ph2ent['ikeid']) {
 						continue;
+					}
 
 					/* add an ipsec pinghosts entry */
 					if ($ph2ent['pinghost']) {
-						if (!is_array($iflist))
+						if (!is_array($iflist)) {
 							$iflist = get_configured_interface_list();
+						}
 						$srcip = null;
 						$local_subnet = ipsec_idinfo_to_cidr($ph2ent['localid'], true, $ph2ent['mode']);
-						if(is_ipaddrv6($ph2ent['pinghost'])) {
+						if (is_ipaddrv6($ph2ent['pinghost'])) {
 							foreach ($iflist as $ifent => $ifname) {
 								$interface_ip = get_interface_ipv6($ifent);
-								if(!is_ipaddrv6($interface_ip))
+								if (!is_ipaddrv6($interface_ip)) {
 									continue;
+								}
 								if (ip_in_subnet($interface_ip, $local_subnet)) {
 									$srcip = $interface_ip;
 									break;
@@ -255,8 +281,9 @@ function vpn_ipsec_configure($restart = false)
 						} else {
 							foreach ($iflist as $ifent => $ifname) {
 								$interface_ip = get_interface_ip($ifent);
-								if(!is_ipaddrv4($interface_ip))
+								if (!is_ipaddrv4($interface_ip)) {
 									continue;
+								}
 								if ($local_subnet == "0.0.0.0/0" || ip_in_subnet($interface_ip, $local_subnet)) {
 									$srcip = $interface_ip;
 									break;
@@ -274,13 +301,14 @@ function vpn_ipsec_configure($restart = false)
 							}
 						}
 						$dstip = $ph2ent['pinghost'];
-						if(is_ipaddrv6($dstip)) {
+						if (is_ipaddrv6($dstip)) {
 							$family = "inet6";
 						} else {
 							$family = "inet";
 						}
-						if (is_ipaddr($srcip))
+						if (is_ipaddr($srcip)) {
 							$ipsecpinghosts[] = "{$srcip}|{$dstip}|3|||||{$family}|\n";
+						}
 					}
 				}
 			}
@@ -291,35 +319,40 @@ function vpn_ipsec_configure($restart = false)
 	unset($iflist);
 
 	$accept_unencrypted = "";
-	if (isset($config['ipsec']['acceptunencryptedmainmode']))
+	if (isset($config['ipsec']['acceptunencryptedmainmode'])) {
 		$accept_unencrypted = "accept_unencrypted_mainmode_messages = yes";
+	}
 
 	$stronconf = '';
-	if (file_exists("{$g['varetc_path']}/ipsec/strongswan.conf"))
+	if (file_exists("{$g['varetc_path']}/ipsec/strongswan.conf")) {
 		$stronconf = file_get_contents("{$g['varetc_path']}/ipsec/strongswan.conf");
+	}
 
 	$i_dont_care_about_security_and_use_aggressive_mode_psk = "";
 	if ($aggressive_mode_psk) {
 		log_error("WARNING: Setting i_dont_care_about_security_and_use_aggressive_mode_psk option because a phase 1 is configured using aggressive mode with pre-shared keys. This is not a secure configuration.");
-		if (!empty($stronconf) && strpos($stronconf, 'i_dont_care_about_security_and_use_aggressive_mode_psk') === FALSE)
+		if (!empty($stronconf) && strpos($stronconf, 'i_dont_care_about_security_and_use_aggressive_mode_psk') === FALSE) {
 			$restart = true;
+		}
 		$i_dont_care_about_security_and_use_aggressive_mode_psk = "i_dont_care_about_security_and_use_aggressive_mode_psk=yes";
-	} 
+	}
 
 	$unity_enabled = 'yes';
-	if (isset($config['ipsec']['unityplugin']))
+	if (isset($config['ipsec']['unityplugin'])) {
 		$unity_enabled = 'no';
+	}
 
-	if (!empty($ifacesuse))
+	if (!empty($ifacesuse)) {
 		$ifacesuse = 'interfaces_use = ' . implode(',', array_unique($ifacesuse));
-	else
+	} else {
 		$ifacesuse = '';
+	}
 
 	unset($stronconf);
 
 	$strongswan = <<<EOD
 
-# Automatically generated config file - DO NOT MODIFY. Changes will be overwritten. 
+# Automatically generated config file - DO NOT MODIFY. Changes will be overwritten.
 starter {
 load_warning = no
 }
@@ -357,44 +390,56 @@ EOD;
 
 	if (is_array($a_client) && isset($a_client['enable'])) {
 		$strongswan .= "\t\tattr {\n";
-		if ($a_client['pool_address'] && $a_client['pool_netbits'])
+		if ($a_client['pool_address'] && $a_client['pool_netbits']) {
 			$strongswan .= "\t\t\tsubnet = {$a_client['pool_address']}/{$a_client['pool_netbits']}\n";
+		}
 
 		$cfgservers = array();
-		if (!empty($a_client['dns_server1']))
+		if (!empty($a_client['dns_server1'])) {
 			$cfgservers[] = $a_client['dns_server1'];
-		if (!empty($a_client['dns_server2']))
+		}
+		if (!empty($a_client['dns_server2'])) {
 			$cfgservers[] = $a_client['dns_server2'];
-		if (!empty($a_client['dns_server3']))
+		}
+		if (!empty($a_client['dns_server3'])) {
 			$cfgservers[] = $a_client['dns_server3'];
-		if (!empty($a_client['dns_server4']))
+		}
+		if (!empty($a_client['dns_server4'])) {
 			$cfgservers[] = $a_client['dns_server4'];
+		}
 
-		if (!empty($cfgservers))
+		if (!empty($cfgservers)) {
 			$strongswan .= "\t\t\tdns = " . implode(",", $cfgservers) . "\n";
+		}
 		unset($cfgservers);
 		$cfgservers = array();
-		if (!empty($a_client['wins_server1']))
+		if (!empty($a_client['wins_server1'])) {
 			$cfgservers[] = $a_client['wins_server1'];
-		if (!empty($a_client['wins_server2']))
+		}
+		if (!empty($a_client['wins_server2'])) {
 			$cfgservers[] = $a_client['wins_server2'];
-		if (!empty($cfgservers))
+		}
+		if (!empty($cfgservers)) {
 			$strongswan .= "\t\t\tnbns = " . implode(",", $cfgservers) . "\n";
+		}
 		unset($cfgservers);
 
 		if (isset($a_client['net_list']) && is_array($a_phase2)) {
 			$net_list = '';
 			foreach ($a_phase2 as $ph2ent) {
-				if (isset($ph2ent['disabled']))
+				if (isset($ph2ent['disabled'])) {
 					continue;
+				}
 
-				if (!isset($ph2ent['mobile']))
+				if (!isset($ph2ent['mobile'])) {
 					continue;
+				}
 
 				$localid = ipsec_idinfo_to_cidr($ph2ent['localid'], true, $ph2ent['mode']);
 
-				if (!empty($net_list))
+				if (!empty($net_list)) {
 					$net_list .= ",";
+				}
 				$net_list .= $localid;
 			}
 
@@ -417,14 +462,17 @@ EOD;
 			$strongswan .= "\t\t\t28675 = {$a_client['dns_split']}\n";
 		}
 
-		if (!empty($a_client['login_banner']))
+		if (!empty($a_client['login_banner'])) {
 			$strongswan .= "\t\t\t28672 = \"{$a_client['login_banner']}\"\n";
+		}
 
-		if (isset($a_client['save_passwd']))
+		if (isset($a_client['save_passwd'])) {
 			$strongswan .= "\t\t\t28673 = 1\n";
+		}
 
-		if ($a_client['pfs_group'])
+		if ($a_client['pfs_group']) {
 			$strongswan .= "\t\t\t28679 = \"{$a_client['pfs_group']}\"\n";
+		}
 		$strongswan .= "\t\t}\n";
 
 		if ($a_client['user_source'] != "none") {
@@ -434,10 +482,12 @@ EOD;
 			$firstsed = 0;
 			$authcfgs = explode(",", $a_client['user_source']);
 			foreach ($authcfgs as $authcfg) {
-				if ($firstsed > 0)
+				if ($firstsed > 0) {
 					$strongswan .= ",";
-				if ($authcfg == "system")
+				}
+				if ($authcfg == "system") {
 					$authcfg = "Local Database";
+				}
 				$strongswan .= $authcfg;
 				$firstsed = 1;
 			}
@@ -477,8 +527,9 @@ EOD;
 	if (is_array($a_phase1) && count($a_phase1)) {
 		foreach ($a_phase1 as $ph1ent) {
 
-			if (isset($ph1ent['disabled']))
+			if (isset($ph1ent['disabled'])) {
 				continue;
+			}
 
 			if (strstr($ph1ent['authentication_method'], 'rsa') ||
 			    in_array($ph1ent['authentication_method'], array('eap-mschapv2', 'eap-tls'))) {
@@ -515,16 +566,18 @@ EOD;
 				list ($myid_type, $myid_data) = ipsec_find_id($ph1ent, 'local');
 				list ($peerid_type, $peerid_data) = ipsec_find_id($ph1ent, 'peer', $rgmap);
 
-				if (empty($peerid_data))
+				if (empty($peerid_data)) {
 					continue;
+				}
 
 				$myid = isset($ph1ent['mobile']) ? trim($myid_data) : "%any";
 				$peerid = ($peerid_data != 'allusers') ? trim($peerid_data) : '';
 				if (!empty($ph1ent['pre-shared-key'])) {
-					if ($myid_type == 'fqdn' && !empty($myid_data))
+					if ($myid_type == 'fqdn' && !empty($myid_data)) {
 						$pskconf .= "@{$myid} {$peerid} : PSK 0s" . base64_encode(trim($ph1ent['pre-shared-key'])) . "\n";
-					else
+					} else {
 						$pskconf .= "{$myid} {$peerid} : PSK 0s" . base64_encode(trim($ph1ent['pre-shared-key'])) . "\n";
+					}
 				}
 			}
 		}
@@ -543,10 +596,12 @@ EOD;
 	/* add PSKs for mobile clients */
 	if (is_array($ipseccfg['mobilekey'])) {
 		foreach ($ipseccfg['mobilekey'] as $key) {
-			if ($key['ident'] == "allusers")
+			if ($key['ident'] == "allusers") {
 				$key['ident'] = '%any';
-			if (empty($key['type']))
+			}
+			if (empty($key['type'])) {
 				$key['type'] = 'PSK';
+			}
 			$pskconf .= "%any {$key['ident']} : {$key['type']} 0s" . base64_encode($key['pre-shared-key']) . "\n";
 		}
 		unset($key);
@@ -558,8 +613,9 @@ EOD;
 
 	$uniqueids = 'yes';
 	if (!empty($config['ipsec']['uniqueids'])) {
-		if (in_array($uniqueids, $ipsec_idhandling))
+		if (in_array($uniqueids, $ipsec_idhandling)) {
 			$uniqueids = $config['ipsec']['uniqueids'];
+		}
 	}
 	$natfilterrules = false;
 	/* begin ipsec.conf */
@@ -572,17 +628,20 @@ EOD;
 		$ipsecconf .= "\tcharondebug=\"" . vpn_ipsec_configure_loglevels(true) . "\"\n";
 
 		foreach ($a_phase1 as $ph1ent) {
-			if (isset($ph1ent['disabled']))
+			if (isset($ph1ent['disabled'])) {
 				continue;
+			}
 
-			if ($ph1ent['mode'] == "aggressive")
+			if ($ph1ent['mode'] == "aggressive") {
 				$aggressive = "yes";
-			else
+			} else {
 				$aggressive = "no";
+			}
 
 			$ep = ipsec_get_phase1_src($ph1ent);
-			if (!$ep)
+			if (!$ep) {
 				continue;
+			}
 
 			$ikeid = $ph1ent['ikeid'];
 			$keyexchange = "ikev1";
@@ -591,22 +650,25 @@ EOD;
 				if ($ph1ent['iketype'] == "ikev2") {
 					$keyexchange = "ikev2";
 					//$passive = "start";
-				} else if ($ph1ent['iketype'] == "auto")
+				} else if ($ph1ent['iketype'] == "auto") {
 					$keyexchange = "ike";
+				}
 			}
 
 			if (isset($ph1ent['mobile'])) {
 				$right_spec = "%any";
 				$passive = 'add';
 			} else {
-				if (isset($ph1ent['responderonly']))
+				if (isset($ph1ent['responderonly'])) {
 					$passive = 'add';
+				}
 
 				$right_spec = $ph1ent['remote-gateway'];
-				if (is_ipaddr($right_spec))
+				if (is_ipaddr($right_spec)) {
 					$sourcehost = $right_spec;
-				else
+				} else {
 					$sourcehost = $rgmap['remote-gateway'];
+				}
 
 				if ($ph1ent['protocol'] == 'inet') {
 					if (strpos($ph1ent['interface'], '_vip')) {
@@ -623,7 +685,7 @@ EOD;
 							$vpninterface = convert_real_interface_to_friendly_interface_name($ifacesuse);
 						}
 					}
-					
+
 					if (!empty($ifacesuse) && interface_has_gateway($vpninterface)) {
 						$gatewayip = get_interface_gateway($vpninterface);
 						$interfaceip = get_interface_ip($vpninterface);
@@ -652,7 +714,7 @@ EOD;
 							$vpninterface = convert_real_interface_to_friendly_interface_name($ifacesuse);
 						}
 					}
-					
+
 					if (!empty($ifacesuse) && interface_has_gateway($vpninterface)) {
 						$gatewayip = get_interface_gateway_v6($vpninterface);
 						$interfaceip = get_interface_ipv6($vpninterface);
@@ -670,124 +732,142 @@ EOD;
 			}
 
 			list ($myid_type, $myid_data) = ipsec_find_id($ph1ent, 'local');
-			if ($myid_type != 'address')
+			if ($myid_type != 'address') {
 				$myid_data = "{$myid_type}:{$myid_data}";
+			}
 
 			/* Only specify peer ID if we are not dealing with a mobile PSK-only tunnel */
 			$peerid_spec = '';
 			if (!isset($ph1ent['mobile'])) {
 				list ($peerid_type, $peerid_data) = ipsec_find_id($ph1ent, 'peer', $rgmap);
-				if ($peerid_type != 'address')
+				if ($peerid_type != 'address') {
 					$peerid_spec = "{$peerid_type}:{$peerid_data}";
-				else
+				} else {
 					$peerid_spec = $peerid_data;
+				}
 			}
 
 			if (is_array($ph1ent['encryption-algorithm']) && !empty($ph1ent['encryption-algorithm']['name']) && !empty($ph1ent['hash-algorithm'])) {
 				$ealgosp1 = '';
 				$ealg_id = $ph1ent['encryption-algorithm']['name'];
 				$ealg_kl = $ph1ent['encryption-algorithm']['keylen'];
-				if ($ealg_kl)
+				if ($ealg_kl) {
 					$ealgosp1 = "ike = {$ealg_id}{$ealg_kl}-{$ph1ent['hash-algorithm']}";
-				else
+				} else {
 					$ealgosp1 = "ike = {$ealg_id}-{$ph1ent['hash-algorithm']}";
+				}
 
 				$modp = vpn_ipsec_convert_to_modp($ph1ent['dhgroup']);
-				if (!empty($modp))
+				if (!empty($modp)) {
 					$ealgosp1 .= "-{$modp}";
+				}
 
 				$ealgosp1 .= "!";
 			}
 
 			if ($ph1ent['dpd_delay'] && $ph1ent['dpd_maxfail']) {
-				if ($passive == "route")
+				if ($passive == "route") {
 					$dpdline = "dpdaction = restart";
-				else
+				} else {
 					$dpdline = "dpdaction = clear";
+				}
 				$dpdline .= "\n\tdpddelay = {$ph1ent['dpd_delay']}s";
 				$dpdtimeout = $ph1ent['dpd_delay'] * ($ph1ent['dpd_maxfail'] + 1);
 				$dpdline .= "\n\tdpdtimeout = {$dpdtimeout}s";
-			} else
+			} else {
 				$dpdline = "dpdaction = none";
+			}
 
 			$ikelifeline = '';
-			if ($ph1ent['lifetime'])
+			if ($ph1ent['lifetime']) {
 				$ikelifeline = "ikelifetime = {$ph1ent['lifetime']}s";
+			}
 
 			$rightsourceip = NULL;
-			if (isset($ph1ent['mobile']) && !empty($a_client['pool_address'])) 
+			if (isset($ph1ent['mobile']) && !empty($a_client['pool_address'])) {
 				$rightsourceip = "\trightsourceip = {$a_client['pool_address']}/{$a_client['pool_netbits']}\n";
+			}
 
 			$authentication = "";
 			switch ($ph1ent['authentication_method']) {
-			case 'eap-mschapv2':
-				if (isset($ph1ent['mobile'])) {
-					$authentication = "eap_identity=%any\n\t";
-					$authentication .= "leftauth=pubkey\n\trightauth=eap-mschapv2";
-					if (!empty($ph1ent['certref']))
+				case 'eap-mschapv2':
+					if (isset($ph1ent['mobile'])) {
+						$authentication = "eap_identity=%any\n\t";
+						$authentication .= "leftauth=pubkey\n\trightauth=eap-mschapv2";
+						if (!empty($ph1ent['certref'])) {
+							$authentication .= "\n\tleftcert={$certpath}/cert-{$ph1ent['ikeid']}.crt";
+						}
+					}
+					break;
+				case 'eap-tls':
+					if (isset($ph1ent['mobile'])) {
+						$authentication = "eap_identity=%identity\n\t";
+						$authentication .= "leftauth=pubkey\n\trightauth=eap-tls";
+						if (!empty($ph1ent['certref'])) {
+							$authentication .= "\n\tleftcert={$certpath}/cert-{$ph1ent['ikeid']}.crt";
+						}
+					} else {
+						$authentication = "leftauth=eap-tls\n\trightauth=eap-tls";
+						if (!empty($ph1ent['certref'])) {
+							$authentication .= "\n\tleftcert={$certpath}/cert-{$ph1ent['ikeid']}.crt";
+						}
+					}
+					break;
+				case 'xauth_rsa_server':
+					$authentication = "leftauth = pubkey\n\trightauth = pubkey";
+					$authentication .= "\n\trightauth2 = xauth-generic";
+					if (!empty($ph1ent['certref'])) {
 						$authentication .= "\n\tleftcert={$certpath}/cert-{$ph1ent['ikeid']}.crt";
-				}
-				break;
-			case 'eap-tls':
-				if (isset($ph1ent['mobile'])) {
-					$authentication = "eap_identity=%identity\n\t";
-					$authentication .= "leftauth=pubkey\n\trightauth=eap-tls";
-					if (!empty($ph1ent['certref']))
+					}
+					break;
+				case 'xauth_psk_server':
+					$authentication = "leftauth = psk\n\trightauth = psk";
+					$authentication .= "\n\trightauth2 = xauth-generic";
+					break;
+				case 'pre_shared_key':
+					$authentication = "leftauth = psk\n\trightauth = psk";
+					break;
+				case 'rsasig':
+					$authentication = "leftauth = pubkey\n\trightauth = pubkey";
+					if (!empty($ph1ent['certref'])) {
 						$authentication .= "\n\tleftcert={$certpath}/cert-{$ph1ent['ikeid']}.crt";
-				} else {
-					$authentication = "leftauth=eap-tls\n\trightauth=eap-tls";
-					if (!empty($ph1ent['certref']))
+					}
+					break;
+				case 'hybrid_rsa_server':
+					$authentication = "leftauth = xauth-generic\n\trightauth = pubkey";
+					$authentication .= "\n\trightauth2 = xauth";
+					if (!empty($ph1ent['certref'])) {
 						$authentication .= "\n\tleftcert={$certpath}/cert-{$ph1ent['ikeid']}.crt";
-				}
-				break;
-			case 'xauth_rsa_server':
-				$authentication = "leftauth = pubkey\n\trightauth = pubkey";
-				$authentication .= "\n\trightauth2 = xauth-generic";
-				if (!empty($ph1ent['certref']))
-					$authentication .= "\n\tleftcert={$certpath}/cert-{$ph1ent['ikeid']}.crt";
-				break;
-			case 'xauth_psk_server':
-				$authentication = "leftauth = psk\n\trightauth = psk";
-				$authentication .= "\n\trightauth2 = xauth-generic";
-				break;
-			case 'pre_shared_key':
-				$authentication = "leftauth = psk\n\trightauth = psk";
-				break;
-			case 'rsasig':
-				$authentication = "leftauth = pubkey\n\trightauth = pubkey";
-				if (!empty($ph1ent['certref']))
-					$authentication .= "\n\tleftcert={$certpath}/cert-{$ph1ent['ikeid']}.crt";
-				break;
-			case 'hybrid_rsa_server':
-				$authentication = "leftauth = xauth-generic\n\trightauth = pubkey";
-				$authentication .= "\n\trightauth2 = xauth";
-				if (!empty($ph1ent['certref']))
-					$authentication .= "\n\tleftcert={$certpath}/cert-{$ph1ent['ikeid']}.crt";
-				break;
+					}
+					break;
 			}
 
 			$left_spec = $ep;
 
-			if (isset($ph1ent['reauth_enable']))
+			if (isset($ph1ent['reauth_enable'])) {
 				$reauth = "reauth = no";
-			else
+			} else {
 				$reauth = "reauth = yes";
-			if (isset($ph1ent['rekey_enable']))
+			}
+			if (isset($ph1ent['rekey_enable'])) {
 				$rekey = "rekey = no";
-			else
+			} else {
 				$rekey = "rekey = yes";
+			}
 
-			if ($ph1ent['nat_traversal'] == 'off')
+			if ($ph1ent['nat_traversal'] == 'off') {
 				$forceencaps = 'forceencaps = no';
-			else if ($ph1ent['nat_traversal'] == 'force')
+			} else if ($ph1ent['nat_traversal'] == 'force') {
 				$forceencaps = 'forceencaps = yes';
-			else
+			} else {
 				$forceencaps = 'forceencaps = no';
-				
-			if ($ph1ent['mobike'] == 'on')
+			}
+
+			if ($ph1ent['mobike'] == 'on') {
 				$mobike = 'mobike = yes';
-			else
+			} else {
 				$mobike = 'mobike = no';
+			}
 
 			$ipseclifetime = 0;
 			$rightsubnet_spec = array();
@@ -797,14 +877,17 @@ EOD;
 			$ealgoESPsp2arr = array();
 		if (is_array($a_phase2) && count($a_phase2)) {
 			foreach ($a_phase2 as $ph2ent) {
-				if ($ikeid != $ph2ent['ikeid'])
+				if ($ikeid != $ph2ent['ikeid']) {
 					continue;
+				}
 
-				if (isset($ph2ent['disabled']))
+				if (isset($ph2ent['disabled'])) {
 					continue;
+				}
 
-				if (isset($ph2ent['mobile']) && !isset($a_client['enable']))
+				if (isset($ph2ent['mobile']) && !isset($a_client['enable'])) {
 					continue;
+				}
 
 				if (($ph2ent['mode'] == 'tunnel') or ($ph2ent['mode'] == 'tunnel6')) {
 					$tunneltype = "type = tunnel";
@@ -813,8 +896,8 @@ EOD;
 					$leftsubnet_data = ipsec_idinfo_to_cidr($ph2ent['localid'], false, $ph2ent['mode']);
 
 					/* Do not print localid in some cases, such as a pure-psk or psk/xauth single phase2 mobile tunnel */
-					if (($localid_type == "none" || $localid_type == "mobile")
-					    && isset($ph1ent['mobile']) && (ipsec_get_number_of_phase2($ikeid)==1)) {
+					if (($localid_type == "none" || $localid_type == "mobile") &&
+					    isset($ph1ent['mobile']) && (ipsec_get_number_of_phase2($ikeid)==1)) {
 						$left_spec = '%any';
 					} else {
 						if ($localid_type != "address") {
@@ -828,11 +911,13 @@ EOD;
 						if (!empty($ph2ent['natlocalid'])) {
 							$natleftsubnet_data =  ipsec_idinfo_to_cidr($ph2ent['natlocalid'], false, $ph2ent['mode']);
 							if ($ph2ent['natlocalid']['type'] != "address") {
-								if (is_subnet($natleftsubnet_data))
+								if (is_subnet($natleftsubnet_data)) {
 									$leftsubnet_data = "{$natleftsubnet_data}|{$leftsubnet_data}";
+								}
 							} else {
-								if (is_ipaddr($natleftsubnet_data))
+								if (is_ipaddr($natleftsubnet_data)) {
 									$leftsubnet_data = "{$natleftsubnet_data}|{$leftsubnet_data}";
+								}
 							}
 							$natfilterrules = true;
 						}
@@ -862,8 +947,9 @@ EOD;
 					}
 				}
 
-				if (isset($a_client['pfs_group']))
+				if (isset($a_client['pfs_group'])) {
 					$ph2ent['pfsgroup'] = $a_client['pfs_group'];
+				}
 
 				if ($ph2ent['protocol'] == 'esp') {
 					if (is_array($ph2ent['encryption-algorithm-option'])) {
@@ -872,8 +958,9 @@ EOD;
 							$ealg_kl = $ealg['keylen'];
 
 							if (!empty($ealg_kl) && $ealg_kl == "auto") {
-								if (empty($p2_ealgos) || !is_array($p2_ealgos))
+								if (empty($p2_ealgos) || !is_array($p2_ealgos)) {
 									require("ipsec.inc");
+								}
 								$key_hi = $p2_ealgos[$ealg_id]['keysel']['hi'];
 								$key_lo = $p2_ealgos[$ealg_id]['keysel']['lo'];
 								$key_step = $p2_ealgos[$ealg_id]['keysel']['step'];
@@ -887,15 +974,17 @@ EOD;
 												$halgo = str_replace('hmac_', '', $halgo);
 												$tmpealgo = "{$ealg_id}{$keylen}-{$halgo}";
 												$modp = vpn_ipsec_convert_to_modp($ph2ent['pfsgroup']);
-												if (!empty($modp))
+												if (!empty($modp)) {
 													$tmpealgo .= "-{$modp}";
+												}
 												$ealgoESPsp2arr[] = $tmpealgo;
 											}
 										} else {
 											$tmpealgo = "{$ealg_id}{$keylen}";
 											$modp = vpn_ipsec_convert_to_modp($ph2ent['pfsgroup']);
-											if (!empty($modp))
+											if (!empty($modp)) {
 												$tmpealgo .= "-{$modp}";
+											}
 											$ealgoESPsp2arr[] = $tmpealgo;
 										}
 									}
@@ -906,15 +995,17 @@ EOD;
 										$halgo = str_replace('hmac_', '', $halgo);
 										$tmpealgo = "{$ealg_id}{$ealg_kl}-{$halgo}";
 										$modp = vpn_ipsec_convert_to_modp($ph2ent['pfsgroup']);
-										if (!empty($modp))
+										if (!empty($modp)) {
 											$tmpealgo .= "-{$modp}";
+										}
 										$ealgoESPsp2arr[] = $tmpealgo;
 									}
 								} else {
 									$tmpealgo = "{$ealg_id}{$ealg_kl}";
 									$modp = vpn_ipsec_convert_to_modp($ph2ent['pfsgroup']);
-									if (!empty($modp))
+									if (!empty($modp)) {
 										$tmpealgo .= "-{$modp}";
+									}
 									$ealgoESPsp2arr[] = $tmpealgo;
 								}
 							}
@@ -925,8 +1016,9 @@ EOD;
 						$modp = vpn_ipsec_convert_to_modp($ph2ent['pfsgroup']);
 						foreach ($ph2ent['hash-algorithm-option'] as $tmpAHalgo) {
 							$tmpAHalgo = str_replace('hmac_', '', $tmpAHalgo);
-							if (!empty($modp))
+							if (!empty($modp)) {
 								$tmpAHalgo = "-{$modp}";
+							}
 							$ealgoAHsp2arr[] = $tmpAHalgo;
 						}
 					}
@@ -935,8 +1027,9 @@ EOD;
 				$reqids[] = $ph2ent['reqid'];
 
 				if (!empty($ph2ent['lifetime'])) {
-					if ($ipseclifetime == 0 || intval($ipseclifetime) > intval($ph2ent['lifetime']))
+					if ($ipseclifetime == 0 || intval($ipseclifetime) > intval($ph2ent['lifetime'])) {
 						$ipseclifetime = intval($ph2ent['lifetime']);
+					}
 				}
 
 			}
@@ -963,61 +1056,74 @@ EOD;
 				$ipsecconnect .= "\tcompress = yes\n";
 				$enablecompression = true;
 			}
-			if (!empty($ikelifeline))
+			if (!empty($ikelifeline)) {
 				$ipsecconnect .= "\t{$ikelifeline}\n";
-			if ($ipseclifetime > 0)
+			}
+			if ($ipseclifetime > 0) {
 				$ipsecconnect .= "\tlifetime = {$ipseclifetime}s\n";
-			if (!empty($rightsourceip))
+			}
+			if (!empty($rightsourceip)) {
 				$ipsecconnect .= "{$rightsourceip}";
-			if (!empty($ealgosp1))
+			}
+			if (!empty($ealgosp1)) {
 				$ipsecconnect .= "\t{$ealgosp1}\n";
-			if (!empty($ealgoAHsp2arr))
+			}
+			if (!empty($ealgoAHsp2arr)) {
 				$ipsecconnect .= "\tah = " . join(',', $ealgoAHsp2arr) . "!\n";
-			if (!empty($ealgoESPsp2arr))
+			}
+			if (!empty($ealgoESPsp2arr)) {
 				$ipsecconnect .= "\tesp = " . join(',', $ealgoESPsp2arr) . "!\n";
-			if (!empty($authentication))
+			}
+			if (!empty($authentication)) {
 				$ipsecconnect .= "\t{$authentication}\n";
-			if (!empty($peerid_spec))
+			}
+			if (!empty($peerid_spec)) {
 				$ipsecconnect .= "\trightid = {$peerid_spec}\n";
-			if ($keyexchange == 'ikev1')
+			}
+			if ($keyexchange == 'ikev1') {
 				$ipsecconnect .= "\taggressive = {$aggressive}\n";
+			}
 
 			if (!isset($ph1ent['mobile']) && $keyexchange == 'ikev1') {
 				if (!empty($rightsubnet_spec)) {
 					$ipsecfin = '';
 					foreach ($rightsubnet_spec as $idx => $rsubnet) {
 						$ipsecfin .= "\nconn con{$ph1ent['ikeid']}00{$idx}\n";
-						if (!empty($reqids[$idx]))
+						if (!empty($reqids[$idx])) {
 							$ipsecfin .= "\treqid = " . $reqids[$idx] . "\n";
+						}
 						$ipsecfin .= $ipsecconnect;
 						$ipsecfin .= "\trightsubnet = {$rsubnet}\n";
 						$ipsecfin .= "\tleftsubnet = " . $leftsubnet_spec[$idx] . "\n";
 					}
-				} else
+				} else {
 					log_error("No phase2 specifications for tunnel with REQID = {$ikeid}");
+				}
 			} else {
 				$ipsecfin = "\nconn con{$ph1ent['ikeid']}\n";
-				if (!empty($reqids[$idx]))
+				if (!empty($reqids[$idx])) {
 					$ipsecfin .= "\treqid = " . $reqids[0] . "\n";
+				}
 				$ipsecfin .= $ipsecconnect;
 				if (!isset($ph1ent['mobile']) && !empty($rightsubnet_spec)) {
 					$tempsubnets = array();
-					foreach ($rightsubnet_spec as $rightsubnet)
+					foreach ($rightsubnet_spec as $rightsubnet) {
 						$tempsubnets[$rightsubnet] = $rightsubnet;
+					}
 					$ipsecfin .= "\trightsubnet = " . join(",", $tempsubnets) . "\n";
 					unset($tempsubnets, $rightsubnet);
 				}
 				if (!empty($leftsubnet_spec)) {
 					$tempsubnets = array();
-					foreach ($leftsubnet_spec as $leftsubnet)
+					foreach ($leftsubnet_spec as $leftsubnet) {
 						$tempsubnets[$leftsubnet] = $leftsubnet;
+					}
 					$ipsecfin .= "\tleftsubnet = " . join(",", $leftsubnet_spec) . "\n";
 					unset($tempsubnets, $leftsubnet);
 				}
 			}
 			$ipsecconf .= $ipsecfin;
 			unset($ipsecfin);
-
 		}
 	}
 
@@ -1025,14 +1131,15 @@ EOD;
 	unset($ipsecconf);
 	/* end ipsec.conf */
 
-	if ($enablecompression === true)
+	if ($enablecompression === true) {
 		set_single_sysctl('net.inet.ipcomp.ipcomp_enable', 1);
-	else
+	} else {
 		set_single_sysctl('net.inet.ipcomp.ipcomp_enable', 0);
+	}
 
-	/* mange process */
+	/* manage process */
 	if ($restart === true) {
-		mwexec("/usr/local/sbin/ipsec restart", false); 
+		mwexec("/usr/local/sbin/ipsec restart", false);
 	} else {
 		if (isvalidpid("{$g['varrun_path']}/charon.pid")) {
 			/* Read secrets */
@@ -1040,28 +1147,31 @@ EOD;
 			/* Update configuration changes */
 			mwexec("/usr/local/sbin/ipsec update", false);
 		} else {
-			mwexec("/usr/local/sbin/ipsec start", false); 
+			mwexec("/usr/local/sbin/ipsec start", false);
 		}
 	}
 
-	if ($natfilterrules == true)
+	if ($natfilterrules == true) {
 		filter_configure();
+	}
 	/* start filterdns, if necessary */
 	if (count($filterdns_list) > 0) {
 		$interval = 60;
-		if (!empty($ipseccfg['dns-interval']) && is_numeric($ipseccfg['dns-interval']))
+		if (!empty($ipseccfg['dns-interval']) && is_numeric($ipseccfg['dns-interval'])) {
 			$interval = $ipseccfg['dns-interval'];
+		}
 
 		$hostnames = "";
 		array_unique($filterdns_list);
-		foreach ($filterdns_list as $hostname)
+		foreach ($filterdns_list as $hostname) {
 			$hostnames .= "cmd {$hostname} '/usr/local/sbin/pfSctl -c \"service reload ipsecdns\"'\n";
+		}
 		file_put_contents("{$g['varetc_path']}/ipsec/filterdns-ipsec.hosts", $hostnames);
 		unset($hostnames);
 
-		if (isvalidpid("{$g['varrun_path']}/filterdns-ipsec.pid"))
+		if (isvalidpid("{$g['varrun_path']}/filterdns-ipsec.pid")) {
 			sigkillbypid("{$g['varrun_path']}/filterdns-ipsec.pid", "HUP");
-		else {
+		} else {
 			mwexec("/usr/local/sbin/filterdns -p {$g['varrun_path']}/filterdns-ipsec.pid -i {$interval} -c {$g['varetc_path']}/ipsec/filterdns-ipsec.hosts -d 1");
 		}
 	} else {
@@ -1069,8 +1179,9 @@ EOD;
 		@unlink("{$g['varrun_path']}/filterdns-ipsec.pid");
 	}
 
-	if (platform_booting())
+	if (platform_booting()) {
 		echo "done\n";
+	}
 
 	return count($filterdns_list);
 }
@@ -1111,8 +1222,9 @@ function vpn_ipsec_force_reload($interface = "") {
 function vpn_setup() {
 	global $g;
 
-	if ($g['platform'] == 'jail')
+	if ($g['platform'] == 'jail') {
 		return;
+	}
 
 	/* start pptpd */
 	vpn_pptpd_configure();
@@ -1130,8 +1242,9 @@ function vpn_netgraph_support() {
 		$realif = get_real_interface($iface);
 		/* Get support for netgraph(4) from the nic */
 		$ifinfo = pfSense_get_interface_addresses($realif);
-		if (!empty($ifinfo) && in_array($ifinfo['iftype'], array("ether", "vlan", "bridge")))
+		if (!empty($ifinfo) && in_array($ifinfo['iftype'], array("ether", "vlan", "bridge"))) {
 			pfSense_ngctl_attach(".", $realif);
+		}
 	}
 }
 
@@ -1142,11 +1255,13 @@ function vpn_pptpd_configure() {
 	$pptpdcfg = $config['pptpd'];
 
 	if (platform_booting()) {
-		if (!$pptpdcfg['mode'] || ($pptpdcfg['mode'] == "off"))
+		if (!$pptpdcfg['mode'] || ($pptpdcfg['mode'] == "off")) {
 			return 0;
+		}
 
-		if (platform_booting(true))
+		if (platform_booting(true)) {
 			echo gettext("Configuring PPTP VPN service... ");
+		}
 	} else {
 		/* kill mpd */
 		killbypid("{$g['varrun_path']}/pptp-vpn.pid");
@@ -1171,11 +1286,12 @@ function vpn_pptpd_configure() {
 	}
 
 	/* make sure pptp-vpn directory exists */
-	if (!file_exists("{$g['varetc_path']}/pptp-vpn"))
+	if (!file_exists("{$g['varetc_path']}/pptp-vpn")) {
 		mkdir("{$g['varetc_path']}/pptp-vpn");
+	}
 
 	switch ($pptpdcfg['mode']) {
-		case 'server' :
+		case 'server':
 			/* write mpd.conf */
 			$fd = fopen("{$g['varetc_path']}/pptp-vpn/mpd.conf", "w");
 			if (!$fd) {
@@ -1238,23 +1354,27 @@ EOD;
 EOD;
 			}
 
-			if  (isset($pptpdcfg["wins"]) && $pptpdcfg['wins'] != "")
+			if  (isset($pptpdcfg["wins"]) && $pptpdcfg['wins'] != "") {
 				$mpdconf  .=  "	set ipcp nbns {$pptpdcfg['wins']}\n";
+			}
 
 			if (!empty($pptpdcfg['dns1'])) {
 				$mpdconf .= "	set ipcp dns " . $pptpdcfg['dns1'];
-				if (!empty($pptpdcfg['dns2']))
+				if (!empty($pptpdcfg['dns2'])) {
 					$mpdconf .= " " . $pptpdcfg['dns2'];
+				}
 				$mpdconf .= "\n";
 			} elseif (isset ($config['dnsmasq']['enable'])) {
 				$mpdconf .= "	set ipcp dns " . get_interface_ip("lan");
-				if ($syscfg['dnsserver'][0])
+				if ($syscfg['dnsserver'][0]) {
 					$mpdconf .= " " . $syscfg['dnsserver'][0];
+				}
 				$mpdconf .= "\n";
 			} elseif (isset($config['unbound']['enable'])) {
 				$mpdconf .= "	set ipcp dns " . get_interface_ip("lan");
-				if ($syscfg['dnsserver'][0])
+				if ($syscfg['dnsserver'][0]) {
 					$mpdconf .= " " . $syscfg['dnsserver'][0];
+				}
 				$mpdconf .= "\n";
 			} elseif (is_array($syscfg['dnsserver']) && ($syscfg['dnsserver'][0])) {
 					$mpdconf .= "	set ipcp dns " . join(" ", $syscfg['dnsserver']) . "\n";
@@ -1267,15 +1387,15 @@ EOD;
 	set radius server {$pptpdcfg['radius']['server']['ip']} "{$pptpdcfg['radius']['server']['secret']}" {$authport} {$acctport}
 
 EOD;
-			if (isset ($pptpdcfg['radius']['server2']['enable'])) {
-				$authport = (isset($pptpdcfg['radius']['server2']['port']) && strlen($pptpdcfg['radius']['server2']['port']) > 1) ? $pptpdcfg['radius']['server2']['port'] : 1812;
-				$acctport = $authport + 1;
-				$mpdconf .=<<<EOD
+				if (isset ($pptpdcfg['radius']['server2']['enable'])) {
+					$authport = (isset($pptpdcfg['radius']['server2']['port']) && strlen($pptpdcfg['radius']['server2']['port']) > 1) ? $pptpdcfg['radius']['server2']['port'] : 1812;
+					$acctport = $authport + 1;
+					$mpdconf .=<<<EOD
 	set radius server {$pptpdcfg['radius']['server2']['ip']} "{$pptpdcfg['radius']['server2']['secret2']}" {$authport} {$acctport}
 
 EOD;
-			}
-			$mpdconf .=<<<EOD
+				}
+				$mpdconf .=<<<EOD
 	set radius retries 3
 	set radius timeout 10
 	set auth enable radius-auth
@@ -1349,12 +1469,13 @@ EOD;
 
 			break;
 
-		case 'redir' :
+		case 'redir':
 			break;
 	}
 
-	if (platform_booting())
+	if (platform_booting()) {
 		echo "done\n";
+	}
 
 	return 0;
 }
@@ -1363,8 +1484,9 @@ function vpn_pppoes_configure() {
 	global $config;
 
 	if (is_array($config['pppoes']['pppoe'])) {
-		foreach ($config['pppoes']['pppoe'] as $pppoe)
+		foreach ($config['pppoes']['pppoe'] as $pppoe) {
 			vpn_pppoe_configure($pppoe);
+		}
 	}
 }
 
@@ -1374,12 +1496,14 @@ function vpn_pppoe_configure(&$pppoecfg) {
 	$syscfg = $config['system'];
 
 	/* create directory if it does not exist */
-	if (!is_dir("{$g['varetc_path']}/pppoe{$pppoecfg['pppoeid']}-vpn"))
+	if (!is_dir("{$g['varetc_path']}/pppoe{$pppoecfg['pppoeid']}-vpn")) {
 		mkdir("{$g['varetc_path']}/pppoe{$pppoecfg['pppoeid']}-vpn");
+	}
 
 	if (platform_booting()) {
-		if (!$pppoecfg['mode'] || ($pppoecfg['mode'] == "off"))
+		if (!$pppoecfg['mode'] || ($pppoecfg['mode'] == "off")) {
 			return 0;
+		}
 
 		echo gettext("Configuring PPPoE Server service... ");
 	} else {
@@ -1393,14 +1517,15 @@ function vpn_pppoe_configure(&$pppoecfg) {
 
 	switch ($pppoecfg['mode']) {
 
-		case 'server' :
+		case 'server':
 
 			$pppoe_interface = get_real_interface($pppoecfg['interface']);
 
-			if ($pppoecfg['paporchap'] == "chap")
+			if ($pppoecfg['paporchap'] == "chap") {
 				$paporchap = "set link enable chap";
-			else
+			} else {
 				$paporchap = "set link enable pap";
+			}
 
 			/* write mpd.conf */
 			$fd = fopen("{$g['varetc_path']}/pppoe{$pppoecfg['pppoeid']}-vpn/mpd.conf", "w");
@@ -1467,18 +1592,21 @@ EOD;
 
 			if (!empty($pppoecfg['dns1'])) {
 				$mpdconf .= "	set ipcp dns " . $pppoecfg['dns1'];
-				if (!empty($pppoecfg['dns2']))
+				if (!empty($pppoecfg['dns2'])) {
 					$mpdconf .= " " . $pppoecfg['dns2'];
+				}
 				$mpdconf .= "\n";
 			} elseif (isset ($config['dnsmasq']['enable'])) {
 				$mpdconf .= "	set ipcp dns " . get_interface_ip("lan");
-				if ($syscfg['dnsserver'][0])
+				if ($syscfg['dnsserver'][0]) {
 					$mpdconf .= " " . $syscfg['dnsserver'][0];
+				}
 				$mpdconf .= "\n";
 			} elseif (isset ($config['unbound']['enable'])) {
 				$mpdconf .= "	set ipcp dns " . get_interface_ip("lan");
-				if ($syscfg['dnsserver'][0])
+				if ($syscfg['dnsserver'][0]) {
 					$mpdconf .= " " . $syscfg['dnsserver'][0];
+				}
 				$mpdconf .= "\n";
 			} elseif (is_array($syscfg['dnsserver']) && ($syscfg['dnsserver'][0])) {
 					$mpdconf .= "	set ipcp dns " . join(" ", $syscfg['dnsserver']) . "\n";
@@ -1487,10 +1615,12 @@ EOD;
 			if (isset ($pppoecfg['radius']['server']['enable'])) {
 				$radiusport = "";
 				$radiusacctport = "";
-				if (isset($pppoecfg['radius']['server']['port']))
+				if (isset($pppoecfg['radius']['server']['port'])) {
 					$radiusport = $pppoecfg['radius']['server']['port'];
-				if (isset($pppoecfg['radius']['server']['acctport']))
+				}
+				if (isset($pppoecfg['radius']['server']['acctport'])) {
 					$radiusacctport = $pppoecfg['radius']['server']['acctport'];
+				}
 				$mpdconf .=<<<EOD
 	set radius server {$pppoecfg['radius']['server']['ip']} "{$pppoecfg['radius']['server']['secret']}" {$radiusport} {$radiusacctport}
 	set radius retries 3
@@ -1549,7 +1679,7 @@ EOD;
 
 				if (!empty($pppoecfg['username'])) {
 					$item = explode(" ", $pppoecfg['username']);
-					foreach($item as $userdata) {
+					foreach ($item as $userdata) {
 						$data = explode(":", $userdata);
 						$mpdsecret .= "{$data[0]} \"" . base64_decode($data[1]) . "\" {$data[2]}\n";
 					}
@@ -1562,8 +1692,9 @@ EOD;
 			}
 
 			/* Check if previous instance is still up */
-			while (file_exists("{$g['varrun_path']}/pppoe{$pppoecfg['pppoeid']}-vpn.pid") && isvalidpid("{$g['varrun_path']}/pppoe{$pppoecfg['pppoeid']}-vpn.pid"))
+			while (file_exists("{$g['varrun_path']}/pppoe{$pppoecfg['pppoeid']}-vpn.pid") && isvalidpid("{$g['varrun_path']}/pppoe{$pppoecfg['pppoeid']}-vpn.pid")) {
 				killbypid("{$g['varrun_path']}/pppoe{$pppoecfg['pppoeid']}-vpn.pid");
+			}
 
 			/* Get support for netgraph(4) from the nic */
 			pfSense_ngctl_attach(".", $pppoe_interface);
@@ -1573,8 +1704,9 @@ EOD;
 			break;
 	}
 
-	if (platform_booting())
+	if (platform_booting()) {
 		echo gettext("done") . "\n";
+	}
 
 	return 0;
 }
@@ -1586,12 +1718,14 @@ function vpn_l2tp_configure() {
 	$l2tpcfg = $config['l2tp'];
 
 	/* create directory if it does not exist */
-	if (!is_dir("{$g['varetc_path']}/l2tp-vpn"))
+	if (!is_dir("{$g['varetc_path']}/l2tp-vpn")) {
 		mkdir("{$g['varetc_path']}/l2tp-vpn");
+	}
 
 	if (platform_booting()) {
-		if (!$l2tpcfg['mode'] || ($l2tpcfg['mode'] == "off"))
+		if (!$l2tpcfg['mode'] || ($l2tpcfg['mode'] == "off")) {
 			return 0;
+		}
 
 		echo gettext("Configuring l2tp VPN service... ");
 	} else {
@@ -1604,16 +1738,18 @@ function vpn_l2tp_configure() {
 	}
 
 	/* make sure l2tp-vpn directory exists */
-	if (!file_exists("{$g['varetc_path']}/l2tp-vpn"))
+	if (!file_exists("{$g['varetc_path']}/l2tp-vpn")) {
 		mkdir("{$g['varetc_path']}/l2tp-vpn");
+	}
 
 	switch ($l2tpcfg['mode']) {
 
-		case 'server' :
-			if ($l2tpcfg['paporchap'] == "chap")
+		case 'server':
+			if ($l2tpcfg['paporchap'] == "chap") {
 				$paporchap = "set link enable chap";
-			else
+			} else {
 				$paporchap = "set link enable pap";
+			}
 
 			/* write mpd.conf */
 			$fd = fopen("{$g['varetc_path']}/l2tp-vpn/mpd.conf", "w");
@@ -1676,21 +1812,24 @@ EOD;
 			}
 			if (is_ipaddr($l2tpcfg['dns1'])) {
 				$mpdconf .= "	set ipcp dns " . $l2tpcfg['dns1'];
-				if (is_ipaddr($l2tpcfg['dns2']))
+				if (is_ipaddr($l2tpcfg['dns2'])) {
 					$mpdconf .= " " . $l2tpcfg['dns2'];
+				}
 				$mpdconf .= "\n";
 			} elseif (isset ($config['dnsmasq']['enable'])) {
 				$mpdconf .= "	set ipcp dns " . get_interface_ip("lan");
-				if ($syscfg['dnsserver'][0])
+				if ($syscfg['dnsserver'][0]) {
 					$mpdconf .= " " . $syscfg['dnsserver'][0];
+				}
 				$mpdconf .= "\n";
 			} elseif (isset ($config['unbound']['enable'])) {
 				$mpdconf .= "	set ipcp dns " . get_interface_ip("lan");
-				if ($syscfg['dnsserver'][0])
+				if ($syscfg['dnsserver'][0]) {
 					$mpdconf .= " " . $syscfg['dnsserver'][0];
+				}
 				$mpdconf .= "\n";
 			} elseif (is_array($syscfg['dnsserver']) && ($syscfg['dnsserver'][0])) {
-					$mpdconf .= "	set ipcp dns " . join(" ", $syscfg['dnsserver']) . "\n";
+				$mpdconf .= "	set ipcp dns " . join(" ", $syscfg['dnsserver']) . "\n";
 			}
 
 			if (isset ($l2tpcfg['radius']['enable'])) {
@@ -1732,8 +1871,9 @@ l2tp{$i}:
 	set l2tp disable originate
 
 EOD;
-			if (!empty($l2tpcfg['secret']))
+				if (!empty($l2tpcfg['secret'])) {
 					$mpdlinks .= "set l2tp secret {$l2tpcfg['secret']}\n";
+				}
 			}
 
 			fwrite($fd, $mpdlinks);
@@ -1750,8 +1890,9 @@ EOD;
 			$mpdsecret = "\n\n";
 
 			if (is_array($l2tpcfg['user'])) {
-				foreach ($l2tpcfg['user'] as $user)
+				foreach ($l2tpcfg['user'] as $user) {
 					$mpdsecret .= "{$user['name']} \"{$user['password']}\" {$user['ip']}\n";
+				}
 			}
 
 			fwrite($fd, $mpdsecret);
@@ -1766,12 +1907,13 @@ EOD;
 
 			break;
 
-		case 'redir' :
+		case 'redir':
 			break;
 	}
 
-	if (platform_booting())
+	if (platform_booting()) {
 		echo "done\n";
+	}
 
 	return 0;
 }

@@ -29,7 +29,7 @@
 */
 
 /*
-	pfSense_BUILDER_BINARIES:	
+	pfSense_BUILDER_BINARIES:
 	pfSense_MODULE:	utils
 */
 
@@ -40,41 +40,43 @@ require_once("xmlrpc_client.inc");
  *   xmlrpc_params_to_php: Convert params array passed from XMLRPC server into a PHP array and return it.
  */
 function xmlrpc_params_to_php($params) {
-        $array = array();
-        for($i = 0; $i < $params->getNumParams(); $i++) {
-                $value = $params->getParam($i);
-                $array[] = XML_RPC_decode($value);
-        }
-        return $array;
+	$array = array();
+	for ($i = 0; $i < $params->getNumParams(); $i++) {
+		$value = $params->getParam($i);
+		$array[] = XML_RPC_decode($value);
+	}
+	return $array;
 }
- 
+
 /*
  *   xmlrpc_value_to_php: Convert an XMLRPC value into a PHP scalar/array and return it.
  */
 function xmlrpc_value_to_php($raw_value) {
 	/*
-        switch($raw_value->kindOf()) {
-        case "scalar":
-		if($raw_value->scalartyp() == "boolean") $return = (boolean) $raw_value->scalarval();
-                $return = $raw_value->scalarval();
-                break;
-        case "array":
-                $return = array();
-                for($i = 0; $i < $raw_value->arraysize(); $i++) {
-                        $value = $raw_value->arraymem($i);
-                        $return[] = xmlrpc_value_to_php($value);
-                }
-                break;
-        case "struct":
-                $return = array();
-                for($i = 0; $i < $raw_value->arraysize(); $i++) {
-                        list($key, $value) = $raw_value->structeach();
-                        $return[$key] = xmlrpc_value_to_php($value);
-                }
-                break;
-        }
+		switch ($raw_value->kindOf()) {
+			case "scalar":
+				if ($raw_value->scalartyp() == "boolean") {
+					$return = (boolean) $raw_value->scalarval();
+				}
+				$return = $raw_value->scalarval();
+				break;
+			case "array":
+				$return = array();
+				for ($i = 0; $i < $raw_value->arraysize(); $i++) {
+					$value = $raw_value->arraymem($i);
+					$return[] = xmlrpc_value_to_php($value);
+				}
+				break;
+			case "struct":
+				$return = array();
+				for ($i = 0; $i < $raw_value->arraysize(); $i++) {
+					list($key, $value) = $raw_value->structeach();
+					$return[$key] = xmlrpc_value_to_php($value);
+				}
+				break;
+		}
 	*/
-        return XML_RPC_decode($raw_value);
+	return XML_RPC_decode($raw_value);
 }
 
 /*
@@ -84,21 +86,23 @@ function php_value_to_xmlrpc($value, $force_array = false) {
 	$toreturn = XML_RPC_encode($value);
 	return $force_array ? array($toreturn) : $toreturn;
 	/*
-        if(gettype($value) == "array") {
-                $xmlrpc_type = "array";
-                $toreturn = array();
-                foreach($value as $key => $val) {
-                        if(is_string($key)) $xmlrpc_type = "struct";
-                        $toreturn[$key] = php_value_to_xmlrpc($val);
-                }
-                return new XML_RPC_Value($toreturn, $xmlrpc_type);
-        } else {
-                if($force_array == true) {
-                        return new XML_RPC_Value(array(new XML_RPC_Value($value, gettype($value))), "array");
-                } else {
-                        return new XML_RPC_Value($value, gettype($value));
-                }
-        }
+		if (gettype($value) == "array") {
+			$xmlrpc_type = "array";
+			$toreturn = array();
+			foreach ($value as $key => $val) {
+				if (is_string($key)) {
+					$xmlrpc_type = "struct";
+				}
+				$toreturn[$key] = php_value_to_xmlrpc($val);
+			}
+			return new XML_RPC_Value($toreturn, $xmlrpc_type);
+		} else {
+			if ($force_array == true) {
+				return new XML_RPC_Value(array(new XML_RPC_Value($value, gettype($value))), "array");
+			} else {
+				return new XML_RPC_Value($value, gettype($value));
+			}
+		}
 	*/
 }
 
@@ -114,13 +118,13 @@ function xmlrpc_auth(&$params) {
 	/* XXX: Should clarify from old behaviour what is in params[0] that differs from params['xmlrpcauth'] */
 	if (isset($config['system']['webgui']['authmode'])) {
 		$authcfg = auth_get_authserver($config['system']['webgui']['authmode']);
-                if (authenticate_user("admin", $params[0], $authcfg) ||
-                    authenticate_user("admin", $params[0])) {
+		if (authenticate_user("admin", $params[0], $authcfg) ||
+		    authenticate_user("admin", $params[0])) {
 			array_shift($params);
 			unset($params['xmlrpcauth']);
 			return true;
-                } else if (!empty($params['xmlrpcauth']) && (authenticate_user("admin", $params['xmlrpcauth'], $authcfg) ||
-                    authenticate_user("admin", $params['xmlrpcauth']))) {
+		} else if (!empty($params['xmlrpcauth']) && (authenticate_user("admin", $params['xmlrpcauth'], $authcfg) ||
+		    authenticate_user("admin", $params['xmlrpcauth']))) {
 			array_shift($params);
 			unset($params['xmlrpcauth']);
 			return true;

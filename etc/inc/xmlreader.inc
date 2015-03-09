@@ -37,9 +37,9 @@
 /* The following items will be treated as arrays in config.xml */
 function listtags() {
 	/*
-         * Please keep this list alpha sorted and no longer than 80 characters
-         * I know it's a pain, but it's a pain to find stuff too if it's not
-         */
+	 * Please keep this list alpha sorted and no longer than 80 characters
+	 * I know it's a pain, but it's a pain to find stuff too if it's not
+	 */
 	$ret = array(
 		'acls', 'alias', 'aliasurl', 'allowedip', 'allowedhostname', 'authserver',
 		'bridged', 'build_port_path',
@@ -72,61 +72,64 @@ function listtags_pkg() {
 }
 
 function add_elements(&$cfgarray, &$parser) {
-        global $listtags;
+	global $listtags;
 
-        while ($parser->read()) {
-                switch ($parser->nodeType) {
-                case XMLReader::WHITESPACE:
-                case XMLReader::SIGNIFICANT_WHITESPACE:
-                        break;
-                case XMLReader::ELEMENT:
-                        if (isset($listtags[strtolower($parser->name)])) {
-				$cfgref =& $cfgarray[$parser->name][count($cfgarray[$parser->name])];
-                        	if (!$parser->isEmptyElement) {
-                                        add_elements($cfgref, $parser);
-				} else
-					$cfgref = array();
-					
-                        } else {
-				if (isset($cfgarray[$parser->name]) && (!is_array($cfgarray[$parser->name]) || !isset($cfgarray[$parser->name][0]))) {
-					$nodebkp = $cfgarray[$parser->name];
-					$cfgarray[$parser->name] = array();
-					$cfgarray[$parser->name][] = $nodebkp;
-					$cfgref =& $cfgarray[$parser->name][0];
-					unset($nodebkp);
-				} else
-					$cfgref =& $cfgarray[$parser->name];
-
-                        	if ($parser->isEmptyElement) {
-					if (is_array($cfgref))
-						$cfgref[] = array();
-					else
-						$cfgref = "";
+	while ($parser->read()) {
+		switch ($parser->nodeType) {
+			case XMLReader::WHITESPACE:
+			case XMLReader::SIGNIFICANT_WHITESPACE:
+				break;
+			case XMLReader::ELEMENT:
+				if (isset($listtags[strtolower($parser->name)])) {
+					$cfgref =& $cfgarray[$parser->name][count($cfgarray[$parser->name])];
+					if (!$parser->isEmptyElement) {
+						add_elements($cfgref, $parser);
+					} else {
+						$cfgref = array();
+					}
 				} else {
-					if (is_array($cfgref)) {
-						$cfgref =& $cfgarray[$parser->name][count($cfgarray[$parser->name])];
-						add_elements($cfgref, $parser);
-					} else
-						add_elements($cfgref, $parser);
-				}
-			}
+					if (isset($cfgarray[$parser->name]) && (!is_array($cfgarray[$parser->name]) || !isset($cfgarray[$parser->name][0]))) {
+						$nodebkp = $cfgarray[$parser->name];
+						$cfgarray[$parser->name] = array();
+						$cfgarray[$parser->name][] = $nodebkp;
+						$cfgref =& $cfgarray[$parser->name][0];
+						unset($nodebkp);
+					} else {
+						$cfgref =& $cfgarray[$parser->name];
+					}
 
-			$i = 0;
-			while ($parser->moveToAttributeNo($i)) {
-				$cfgref[$parser->name] = $parser->value;
-				$i++;
-			}
-                        break;
-                case XMLReader::TEXT:
-		case XMLReader::CDATA:
-                        $cfgarray = $parser->value;
-                        break;
-                case XMLReader::END_ELEMENT:
-			return;
-			break;
-                default:
-                        break;
-                }
+					if ($parser->isEmptyElement) {
+						if (is_array($cfgref)) {
+							$cfgref[] = array();
+						} else {
+							$cfgref = "";
+						}
+					} else {
+						if (is_array($cfgref)) {
+							$cfgref =& $cfgarray[$parser->name][count($cfgarray[$parser->name])];
+							add_elements($cfgref, $parser);
+						} else {
+							add_elements($cfgref, $parser);
+						}
+					}
+				}
+
+				$i = 0;
+				while ($parser->moveToAttributeNo($i)) {
+					$cfgref[$parser->name] = $parser->value;
+					$i++;
+				}
+				break;
+			case XMLReader::TEXT:
+			case XMLReader::CDATA:
+				$cfgarray = $parser->value;
+				break;
+			case XMLReader::END_ELEMENT:
+				return;
+				break;
+			default:
+				break;
+		}
 	}
 }
 
@@ -134,11 +137,11 @@ function parse_xml_config($cffile, $rootobj, $isstring = "false") {
 	global $listtags;
 
 	$listtags = listtags();
-        if (isset($GLOBALS['custom_listtags'])) {
-          foreach($GLOBALS['custom_listtags'] as $tag) {
-            $listtags[$tag] = $tag;
-          }
-        }
+	if (isset($GLOBALS['custom_listtags'])) {
+		foreach ($GLOBALS['custom_listtags'] as $tag) {
+			$listtags[$tag] = $tag;
+		}
+	}
 
 	return parse_xml_config_raw($cffile, $rootobj);
 }
@@ -147,11 +150,11 @@ function parse_xml_config_pkg($cffile, $rootobj, $isstring = "false") {
 	global $listtags;
 
 	$listtags = listtags_pkg();
-        if (isset($GLOBALS['custom_listtags_pkg'])) {
-          foreach($GLOBALS['custom_listtags_pkg'] as $tag) {
-            $listtags[$tag] = $tag;
-          }
-        }
+	if (isset($GLOBALS['custom_listtags_pkg'])) {
+		foreach ($GLOBALS['custom_listtags_pkg'] as $tag) {
+			$listtags[$tag] = $tag;
+		}
+	}
 	return parse_xml_config_raw($cffile, $rootobj, $isstring);
 }
 
@@ -164,16 +167,20 @@ function parse_xml_config_raw($cffile, $rootobj, $isstring = "false") {
 	if ($par->open($cffile, "UTF-8", LIBXML_NOERROR | LIBXML_NOWARNING)) {
 		add_elements($parsedcfg, $par);
 		$par->close();
-	} else
+	} else {
 		log_error(sprintf(gettext("Error returned while trying to parse %s"), $cffile));
+	}
 
 	if ($rootobj) {
-		if (!is_array($rootobj))
+		if (!is_array($rootobj)) {
 			$rootobj = array($rootobj);
-		foreach ($rootobj as $rootobj_name)
-			if ($parsedcfg[$rootobj_name])
+		}
+		foreach ($rootobj as $rootobj_name) {
+			if ($parsedcfg[$rootobj_name]) {
 				break;
-		
+			}
+		}
+
 		return $parsedcfg[$rootobj_name];
 	} else {
 		return $parsedcfg;
@@ -181,55 +188,59 @@ function parse_xml_config_raw($cffile, $rootobj, $isstring = "false") {
 }
 
 function dump_xml_config_sub(& $writer, $arr) {
-        global $listtags;
+	global $listtags;
 
-        foreach ($arr as $ent => $val) {
-                if (is_array($val)) {
-                        /* is it just a list of multiple values? */
-                        if (isset($listtags[strtolower($ent)])) {
-                                foreach ($val as $cval) {
-                                        if (is_array($cval)) {
-                                                if (empty($cval))
-                                                        $writer->writeElement($ent);
-                                                else {
-                                                        $writer->startElement($ent);
-                                                        dump_xml_config_sub($writer, $cval);
-                                                        $writer->endElement();
-                                                }
-                                        } else {
-                                                if($cval === false) continue;
-                                                if ((is_bool($val) && ($val == true)) || ($val === ""))
-                                                        $writer->writeElement($ent);
-                                                else if (!is_bool($val))
+	foreach ($arr as $ent => $val) {
+		if (is_array($val)) {
+			/* is it just a list of multiple values? */
+			if (isset($listtags[strtolower($ent)])) {
+				foreach ($val as $cval) {
+					if (is_array($cval)) {
+						if (empty($cval)) {
+							$writer->writeElement($ent);
+						} else {
+							$writer->startElement($ent);
+							dump_xml_config_sub($writer, $cval);
+							$writer->endElement();
+						}
+					} else {
+						if ($cval === false) {
+							continue;
+						}
+						if ((is_bool($val) && ($val == true)) || ($val === "")) {
+							$writer->writeElement($ent);
+						} else if (!is_bool($val)) {
 							$writer->writeElement($ent, $cval);
-                                        }
-                                }
-                        } else if (empty($val)) {
-                                $writer->writeElement($ent);
-                        } else {
-                                /* it's an array */
-                                $writer->startElement($ent);
-                                dump_xml_config_sub($writer, $val);
-                                $writer->endElement();
-                        }
-                } else {
-			if ((is_bool($val) && ($val == true)) || ($val === ""))
-                                $writer->writeElement($ent);
-                        else if (!is_bool($val))
-                                $writer->writeElement($ent, $val);
-                }
-        }
+						}
+					}
+				}
+			} else if (empty($val)) {
+				$writer->writeElement($ent);
+			} else {
+				/* it's an array */
+				$writer->startElement($ent);
+				dump_xml_config_sub($writer, $val);
+				$writer->endElement();
+			}
+		} else {
+			if ((is_bool($val) && ($val == true)) || ($val === "")) {
+				$writer->writeElement($ent);
+			} else if (!is_bool($val)) {
+				$writer->writeElement($ent, $val);
+			}
+		}
+	}
 }
 
 function dump_xml_config($arr, $rootobj) {
 	global $listtags;
 
 	$listtags = listtags();
-        if (isset($GLOBALS['custom_listtags'])) {
-          foreach($GLOBALS['custom_listtags'] as $tag) {
-            $listtags[$tag] = $tag;
-          }
-        }
+	if (isset($GLOBALS['custom_listtags'])) {
+		foreach ($GLOBALS['custom_listtags'] as $tag) {
+			$listtags[$tag] = $tag;
+		}
+	}
 	return dump_xml_config_raw($arr, $rootobj);
 }
 
@@ -237,30 +248,30 @@ function dump_xml_config_pkg($arr, $rootobj) {
 	global $listtags;
 
 	$listtags = listtags_pkg();
-        if (isset($GLOBALS['custom_listtags_pkg'])) {
-          foreach($GLOBALS['custom_listtags_pkg'] as $tag) {
-            $listtags[$tag] = $tag;
-          }
-        }
+	if (isset($GLOBALS['custom_listtags_pkg'])) {
+		foreach ($GLOBALS['custom_listtags_pkg'] as $tag) {
+			$listtags[$tag] = $tag;
+		}
+	}
 	return dump_xml_config_raw($arr, $rootobj);
 }
 
 function dump_xml_config_raw($arr, $rootobj) {
 
-        $writer = new XMLWriter();
-        $writer->openMemory();
-        $writer->setIndent(true);
-        $writer->setIndentString("\t");
-        $writer->startDocument("1.0", "UTF-8");
-        $writer->startElement($rootobj);
+	$writer = new XMLWriter();
+	$writer->openMemory();
+	$writer->setIndent(true);
+	$writer->setIndentString("\t");
+	$writer->startDocument("1.0", "UTF-8");
+	$writer->startElement($rootobj);
 
-        dump_xml_config_sub($writer, $arr);
+	dump_xml_config_sub($writer, $arr);
 
-        $writer->endElement();
-        $writer->endDocument();
-        $xmlconfig = $writer->outputMemory(true);
+	$writer->endElement();
+	$writer->endDocument();
+	$xmlconfig = $writer->outputMemory(true);
 
-        return $xmlconfig;
+	return $xmlconfig;
 }
 
 ?>

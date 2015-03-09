@@ -568,9 +568,9 @@ function get_dates($curperiod, $graph) {
 						$end_fmt   = strftime("%m/%d/%Y %H:%M:%S", $end);
 						?>
 						<?=gettext("Start:");?>
-						<input id="startDateTime" title="<?= htmlentities($tz_msg); ?>." type="text" name="start" class="formfldunknown" size="24" value="<?= htmlentities($start_fmt); ?>" />
+						<input id="startDateTime" title="<?= htmlentities($tz_msg); ?>." type="text" name="start" class="formfld unknown" size="24" value="<?= htmlentities($start_fmt); ?>" />
 						<?=gettext("End:");?>
-						<input id="endDateTime" title="<?= htmlentities($tz_msg); ?>." type="text" name="end" class="formfldunknown" size="24" value="<?= htmlentities($end_fmt); ?>" />
+						<input id="endDateTime" title="<?= htmlentities($tz_msg); ?>." type="text" name="end" class="formfld unknown" size="24" value="<?= htmlentities($end_fmt); ?>" />
 						<input type="submit" name="Submit" value="<?=gettext("Go"); ?>" />
 						</td></tr>
 						<?php

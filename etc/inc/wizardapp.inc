@@ -107,7 +107,7 @@ $gamesplist['gamesforwindowslive'] = array();
 $gamesplist['arma2'] = array();
 	/* ARMA 2 */
 	$gamesplist['arma2'][] = array('arma2', 'udp', '2302', '2310', 'both');
-	
+
 $gamesplist['arma3'] = array();
 	/* ARMA 3 */
 	$gamesplist['arma3'][] = array('arma3-game-traffic', 'udp', '2302', '2302', 'both');
@@ -128,7 +128,7 @@ $gamesplist['battlefield2'] = array();
 	$gamesplist['battlefield2'][] = array('BF2-29900-29901-TCP', 'tcp', '29900', '29901', 'both');
 	$gamesplist['battlefield2'][] = array('BF2-27900', 'udp', '27900', '27900', 'both');
 	$gamesplist['battlefield2'][] = array('BF2-55123-55125', 'udp', '55123', '55125', 'both');
-	
+
 $gamesplist['battlefield3'] = array();
 	/* Battlefield 3 and Battlefield 4 */
 	$gamesplist['battlefield3'][] = array('BF3-1', 'tcp', '9988', '9988', 'both');
@@ -217,7 +217,7 @@ $gamesplist['dirt3'] = array();
 	/* ARMA 2 */
 	$gamesplist['dirt3'][] = array('Dirt3-1', 'tcp', '2300', '2400', 'both');
 	$gamesplist['dirt3'][] = array('Dirt3-2', 'udp', '2300', '2400', 'both');
-	$gamesplist['dirt3'][] = array('Dirt3-3', 'udp', '6073', '6073', 'both');	
+	$gamesplist['dirt3'][] = array('Dirt3-3', 'udp', '6073', '6073', 'both');
 	$gamesplist['dirt3'][] = array('Dirt3-4', 'tcp', '47624', '47624', 'both');
 
 $gamesplist['doom3'] = array();
@@ -277,7 +277,7 @@ $gamesplist['farcry3'] = array();
 	/* FarCry 3*/
 	$gamesplist['farcry3'][] = array('FarCry3-game', 'udp', '9000', '9000', 'both');
 	$gamesplist['farcry3'][] = array('FarCry3-punkbuster', 'udp', '10009', '10009', 'both');
-	
+
 $gamesplist['gunzonline'] = array();
 	/* GunZ Online */
 	$gamesplist['gunzonline'][] = array('GunZOnline', 'udp', '7700', '7700', 'both');
@@ -327,7 +327,7 @@ $gamesplist['planetside'] = array();
 	$gamesplist['planetside'][] = array('PlanetSide2', 'udp', '3016', '3021', 'both');
 	$gamesplist['planetside'][] = array('PlanetSide2', 'udp', '45000', '45010', 'both');
 	$gamesplist['planetside'][] = array('PlanetSide2', 'udp', '30000', '30500', 'both');
-	
+
 $gamesplist['planetside2'] = array();
 	/* PlanetSide 2 */
 	$gamesplist['planetside2'][] = array('PlanetSide2-game', 'udp', '20040', '20199', 'both');
@@ -337,7 +337,7 @@ $gamesplist['planetside2'] = array();
 $gamesplist['quakeiii'] = array();
 	/* quake3 */
 	$gamesplist['quakeiii'][] = array('Quake3', 'udp', '27910', '27919', 'both');
-	
+
 $gamesplist['quakeiv'] = array();
 	/* quake4 */
 	$gamesplist['quakeiv'][] = array('QuakeIV-server-udp', 'udp', '27650', '27650', 'both');
@@ -385,12 +385,12 @@ $voiplist['Asterisk'] = array();
 	$voiplist['Asterisk'][] = array('Asterisk', 'udp', '5060', '5069', 'both');
 	$voiplist['Asterisk'][] = array('Asterisk', 'udp', '10000', '20000', 'both');
 
-    /* VoicePulse server */	
+	/* VoicePulse server */
 $voiplist['VoicePulse'] = array();
 	$voiplist['VoicePulse'][] = array('VoicePulse', 'udp', '16384', '16482', 'both');
 	$voiplist['VoicePulse'][] = array('VoicePulse', 'udp', '4569', '4569', 'both');
 
-    /* Panasonic Hybrid PBX */
+	/* Panasonic Hybrid PBX */
 $voiplist['Panasonic'] = array();
 	$voiplist['Panasonic'][] = array('Panasonic1', 'udp', '8000', '8063', 'both');
 	$voiplist['Panasonic'][] = array('Panasonic2', 'udp', '9300', '9301', 'both');
@@ -401,7 +401,7 @@ $p2plist = array();
 	/* To add p2p clients, push Descr,Protocol,Start,End,src/dest/both onto p2plist */
 	$p2plist['aimster'] = array();
 		$p2plist['aimster'][] = array('Aimster', 'tcp', '7668', '7668', 'both');
-	$p2plist['bittorrent'] = array(); 
+	$p2plist['bittorrent'] = array();
 		$p2plist['bittorrent'][] = array('BitTorrent', 'tcp', '6881', '6999', 'both');
 		$p2plist['bittorrent'][] = array('BitTorrent', 'udp', '6881', '6999', 'both');
 	$p2plist['buddyshare'] = array();
@@ -420,7 +420,7 @@ $p2plist = array();
 		$p2plist['edonkey2000'][] = array('EDonkey2000', 'tcp', '4661', '4665', 'both');
 	$p2plist['fastTrack'] = array();
 		$p2plist['fastTrack'][] = array('FastTrack', 'tcp', '1214', '1214', 'both');
-	$p2plist['gnutella'] = array(); 
+	$p2plist['gnutella'] = array();
 		$p2plist['gnutella'][] = array('Gnutella-TCP', 'tcp', '6346', '6346', 'both');
 		$p2plist['gnutella'][] = array('Gnutella-UDP', 'udp', '6346', '6346', 'both');
 	$p2plist['grouper'] = array();
@@ -509,7 +509,7 @@ $othersplist = array();
 		$othersplist['msnmessenger'][] = array('MSN2', 'tcp', '6891', '6900', 'both');
 		$othersplist['msnmessenger'][] = array('MSN3', 'tcp', '6901', '6901', 'both');
 		$othersplist['msnmessenger'][] = array('MSN4', 'udp', '6901', '6901', 'both');
-		
+
 	$othersplist['teamspeak'] = array();
 		/* teamspeak  */
 		$othersplist['teamspeak'][] = array('TeamSpeak-1', 'tcp', '14534', '14534', 'both');
@@ -624,7 +624,7 @@ $othersplist = array();
 	$othersplist['git'] = array();
 		/* GIT  */
 		$othersplist['git'][] = array('git', 'tcp', '9418', '9418', 'both');
-	
+
 	$othersplist['hbci'] = array();
 		/* HBCI  */
 		$othersplist['hbci'][] = array('HBCI', 'tcp', '3000', '3000', 'both');
@@ -641,7 +641,7 @@ $othersplist = array();
 		/* nntp */
 		$othersplist['nntp'][] = array('NNTP1', 'tcp', '119', '119', 'both');
 		$othersplist['nntp'][] = array('NNTP2', 'udp', '119', '119', 'both');
-		
+
 	$othersplist['slingbox'] = array();
 		/* slingbox */
 		$othersplist['slingbox'][] = array('Slingbox1', 'tcp', '5001', '5001', 'both');

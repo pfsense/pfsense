@@ -112,18 +112,18 @@ include("head.inc"); ?>
 			<td width="22%" valign="top" class="vncellreq"><?=gettext("Host"); ?></td>
 			<td width="78%" class="vtable">
 			<?=$mandfldhtml;?>
-			<input name="host" type="text" class="formfld" id="host" size="20" value="<?=htmlspecialchars($host);?>" /></td>
+			<input name="host" type="text" class="formfld unknown" id="host" size="20" value="<?=htmlspecialchars($host);?>" /></td>
 		</tr>
 		<tr>
 			<td width="22%" valign="top" class="vncellreq"><?= gettext("Port"); ?></td>
 			<td width="78%" class="vtable">
-				<input name="port" type="text" class="formfld" id="port" size="10" value="<?=htmlspecialchars($port);?>" />
+				<input name="port" type="text" class="formfld unknown" id="port" size="10" value="<?=htmlspecialchars($port);?>" />
 			</td>
 		</tr>
 		<tr>
 			<td width="22%" valign="top" class="vncell"><?= gettext("Source Port"); ?></td>
 			<td width="78%" class="vtable">
-				<input name="srcport" type="text" class="formfld" id="srcport" size="10" value="<?=htmlspecialchars($srcport);?>" />
+				<input name="srcport" type="text" class="formfld unknown" id="srcport" size="10" value="<?=htmlspecialchars($srcport);?>" />
 				<br /><br /><?php echo gettext("This should typically be left blank."); ?>
 			</td>
 		</tr>

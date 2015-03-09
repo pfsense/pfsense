@@ -5320,7 +5320,7 @@ function get_interface_ipv6($interface = "wan", $flush = false) {
 				}
 				break;
 		}
-		if (isset($config['interfaces'][$interface]['dhcp6prefixonly'])) {
+		if (isset($config['interfaces'][$interface]['dhcp6prefixonly']) && empty(find_interface_ipv6($realif, $flush))) {
 			$curip = find_interface_ipv6_ll($realif, $flush);
 			if ($curip && is_ipaddrv6($curip) && ($curip != "::")) {
 				return $curip;

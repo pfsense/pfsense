@@ -62,36 +62,31 @@ function vpn_ipsec_configure_loglevels($forconfig = false)
 /* include all configuration functions */
 function vpn_ipsec_convert_to_modp($index)
 {
-
-	$convertion = "";
 	switch ($index) {
 	case '1':
-		$convertion = "modp768";
-		break;
+		return "modp768";
 	case '2':
-		$convertion = "modp1024";
-		break;
+		return "modp1024";
 	case '5':
-		$convertion = "modp1536";
-		break;
+		return "modp1536";
 	case '14':
-		$convertion = "modp2048";
-		break;
+		return "modp2048";
 	case '15':
-		$convertion = "modp3072";
-		break;
-	case '16':      
-		$convertion = "modp4096";
-		break;
+		return "modp3072";
+	case '16':
+		return "modp4096";
 	case '17':
-		$convertion = "modp6144";
-		break;
+		return "modp6144";
 	case '18':
-		$convertion = "modp8192";
-		break;
+		return "modp8192";
+	case '19':
+		return "ecp256";
+	case '20':
+		return "ecp384";
+	case '21':
+		return "ecp512";
 	}
-
-	return $convertion;
+	return "";
 }
 
 function vpn_ipsec_configure($restart = false)

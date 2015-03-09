@@ -214,7 +214,7 @@ include("head.inc");
                 <tr>
                   <td width="22%" valign="top" class="vncell"><?=gettext("Host");?></td>
                   <td width="78%" class="vtable"> 
-                    <input name="host" type="text" class="formfld" id="host" size="40" value="<?=htmlspecialchars($pconfig['host']);?>" />
+                    <input name="host" type="text" class="formfld unknown" id="host" size="40" value="<?=htmlspecialchars($pconfig['host']);?>" />
                     <br /> <span class="vexpl"><?=gettext("Name of the host, without".
                    " domain part"); ?><br />
                    <?=gettext("e.g."); ?> <em><?=gettext("myhost"); ?></em></span></td>
@@ -222,21 +222,21 @@ include("head.inc");
 				<tr>
                   <td width="22%" valign="top" class="vncellreq"><?=gettext("Domain");?></td>
                   <td width="78%" class="vtable"> 
-                    <input name="domain" type="text" class="formfld" id="domain" size="40" value="<?=htmlspecialchars($pconfig['domain']);?>" />
+                    <input name="domain" type="text" class="formfld unknown" id="domain" size="40" value="<?=htmlspecialchars($pconfig['domain']);?>" />
                     <br /> <span class="vexpl"><?=gettext("Domain of the host"); ?><br />
                    <?=gettext("e.g."); ?> <em><?=gettext("example.com"); ?></em></span></td>
                 </tr>
 				<tr>
                   <td width="22%" valign="top" class="vncellreq"><?=gettext("IP address");?></td>
                   <td width="78%" class="vtable"> 
-                    <input name="ip" type="text" class="formfld" id="ip" size="40" value="<?=htmlspecialchars($pconfig['ip']);?>" />
+                    <input name="ip" type="text" class="formfld unknown" id="ip" size="40" value="<?=htmlspecialchars($pconfig['ip']);?>" />
                     <br /> <span class="vexpl"><?=gettext("IP address of the host"); ?><br />
                    <?=gettext("e.g."); ?> <em>192.168.100.100</em> <?=gettext("or"); ?> <em>fd00:abcd::1</em></span></td>
                 </tr>
 				<tr>
                   <td width="22%" valign="top" class="vncell"><?=gettext("Description");?></td>
                   <td width="78%" class="vtable"> 
-                    <input name="descr" type="text" class="formfld" id="descr" size="40" value="<?=htmlspecialchars($pconfig['descr']);?>" />
+                    <input name="descr" type="text" class="formfld unknown" id="descr" size="40" value="<?=htmlspecialchars($pconfig['descr']);?>" />
                     <br /> <span class="vexpl"><?=gettext("You may enter a description here".
                    " for your reference (not parsed).");?></span></td>
                 </tr>

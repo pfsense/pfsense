@@ -8,6 +8,7 @@ class Form_Section extends Form_Element
 	public function __construct($title)
 	{
 		$this->_title = $title;
+		$this->addClass('panel', 'panel-default');
 	}
 
 	public function add(Form_Group $group)
@@ -41,7 +42,7 @@ class Form_Section extends Form_Element
 		$body = implode('', $this->_groups);
 
 		return <<<EOT
-	<div class="panel panel-default">
+	<div {$this->getHtmlClass()}>
 		<div class="panel-heading">
 			<h2 class="panel-title">{$title}</h2>
 		</div>

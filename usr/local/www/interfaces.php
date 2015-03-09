@@ -523,10 +523,6 @@ if ($_POST['apply']) {
 				}
 			}
 			break;
-		case "dhcp":
-			if (in_array($wancfg['ipaddr'], array("ppp", "pppoe", "pptp", "l2tp")))
-				$input_errors[] = sprintf(gettext("You have to reassign the interface to be able to configure as %s."),$_POST['type']);
-			break;
 		case "ppp":
 			$reqdfields = explode(" ", "port phone");
 			$reqdfieldsn = array(gettext("Modem Port"),gettext("Phone Number"));

@@ -310,10 +310,15 @@ function vpn_ipsec_configure($restart = false)
 	if (isset($config['ipsec']['unityplugin']))
 		$unity_enabled = 'no';
 
-	if (!empty($ifacesuse))
-		$ifacesuse = 'interfaces_use = ' . implode(',', array_unique($ifacesuse));
-	else
+	if (isset($config['ipsec']['enableinterfacesuse'])) {
+		if (!empty($ifacesuse)) {
+			$ifacesuse = 'interfaces_use = ' . implode(',', array_unique($ifacesuse));
+		} else {
+			$ifacesuse = '';
+		}
+	} else {
 		$ifacesuse = '';
+	}
 
 	unset($stronconf);
 

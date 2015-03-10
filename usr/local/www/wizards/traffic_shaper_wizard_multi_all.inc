@@ -532,8 +532,8 @@ function step3_stepsubmitphpaction() {
 	if (!$_POST['enable'])
 		return;
 
-	if($_POST['address']) {
-		if(!is_ipaddroralias($_POST['address'])) {
+	if($_POST['upstream_sip_server']) {
+		if(!is_ipaddroralias($_POST['upstream_sip_server'])) {
 			/* item is not an ip or alias.  error out */
 			$savemsg=gettext("Address must be a valid IP address or Firewall Alias.  Please correct this value to continue.");
 			$stepid--;
@@ -603,6 +603,10 @@ function step3_stepsubmitphpaction() {
 	unset($config['ezshaper']['step3']);
 	$config['ezshaper']['step3'] = array();
 
+	if (!empty($_POST['upstream_sip_server']))
+		$config['ezshaper']['step3']['address'] = $_POST['upstream_sip_server'];
+	if ($_POST['enable'] == 'on')
+		$config['ezshaper']['step3']['enable'] = 'on';
 	for ($i = 0; $i < $localint; $i++) {
 		$config['ezshaper']['step3']["local{$i}download"] = $_POST["local{$i}download"];
 		$config['ezshaper']['step3']["local{$i}downloadspeed"] = $_POST["local{$i}downloadspeed"];

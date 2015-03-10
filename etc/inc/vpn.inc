@@ -342,8 +342,12 @@ function vpn_ipsec_configure($restart = false)
 		$unity_enabled = 'no';
 	}
 
-	if (!empty($ifacesuse)) {
-		$ifacesuse = 'interfaces_use = ' . implode(',', array_unique($ifacesuse));
+	if (isset($config['ipsec']['enableinterfacesuse'])) {
+		if (!empty($ifacesuse)) {
+			$ifacesuse = 'interfaces_use = ' . implode(',', array_unique($ifacesuse));
+		} else {
+			$ifacesuse = '';
+		}
 	} else {
 		$ifacesuse = '';
 	}

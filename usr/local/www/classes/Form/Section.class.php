@@ -9,6 +9,8 @@ class Form_Section extends Form_Element
 	{
 		$this->_title = $title;
 		$this->addClass('panel', 'panel-default');
+
+		return $this;
 	}
 
 	public function add(Form_Group $group)

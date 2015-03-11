@@ -306,6 +306,54 @@ function filter_configure_sync($delete_states_if_needed = true) {
 	} else {
 		$limitrules .= "set optimization normal\n";
 	}
+	
+	$timeoutlist = "";
+        if (isset($config['system']['tcpfirsttimeout']) && is_numericint($config['system']['tcpfirsttimeout'])) {
+                $timeoutlist .= " tcp.first {$config['system']['tcpfirsttimeout']} ";
+        }
+        if (isset($config['system']['tcpopeningtimeout']) && is_numericint($config['system']['tcpopeningtimeout'])) {
+                $timeoutlist .= " tcp.opening {$config['system']['tcpopeningtimeout']} ";
+        }
+        if (isset($config['system']['tcpestablishedtimeout']) && is_numericint($config['system']['tcpestablishedtimeout'])) {
+                $timeoutlist .= " tcp.established {$config['system']['tcpestablishedtimeout']} ";
+        }
+        if (isset($config['system']['tcpclosingtimeout']) && is_numericint($config['system']['tcpclosingtimeout'])) {
+                $timeoutlist .= " tcp.closing {$config['system']['tcpclosingtimeout']} ";
+        }
+        if (isset($config['system']['tcpfinwaittimeout']) && is_numericint($config['system']['tcpfinwaittimeout'])) {
+                $timeoutlist .= " tcp.finwait {$config['system']['tcpfinwaittimeout']} ";
+        }
+        if (isset($config['system']['tcpclosedtimeout']) && is_numericint($config['system']['tcpclosedtimeout'])) {
+                $timeoutlist .= " tcp.closed {$config['system']['tcpclosedtimeout']} ";
+        }
+        if (isset($config['system']['udpfirsttimeout']) && is_numericint($config['system']['udpfirsttimeout'])) {
+                $timeoutlist .= " udp.first {$config['system']['udpfirsttimeout']} ";
+        }
+        if (isset($config['system']['udpsingletimeout']) && is_numericint($config['system']['udpsingletimeout'])) {
+                $timeoutlist .= " udp.single {$config['system']['udpsingletimeout']} ";
+        }
+        if (isset($config['system']['udpmultipletimeout']) && is_numericint($config['system']['udpmultipletimeout'])) {
+                $timeoutlist .= " udp.multiple {$config['system']['udpmultipletimeout']} ";
+        }
+        if (isset($config['system']['icmpfirsttimeout']) && is_numericint($config['system']['icmpfirsttimeout'])) {
+                $timeoutlist .= " icmp.first {$config['system']['icmpfirsttimeout']} ";
+        }
+        if (isset($config['system']['icmperrortimeout']) && is_numericint($config['system']['icmperrortimeout'])) {
+                $timeoutlist .= " icmp.error {$config['system']['icmperrortimeout']} ";
+        }
+        if (isset($config['system']['otherfirsttimeout']) && is_numericint($config['system']['otherfirsttimeout'])) {
+                $timeoutlist .= " other.first {$config['system']['otherfirsttimeout']} ";
+        }
+        if (isset($config['system']['othersingletimeout']) && is_numericint($config['system']['othersingletimeout'])) {
+                $timeoutlist .= " other.single {$config['system']['othersingletimeout']} ";
+        }
+        if (isset($config['system']['othermultipletimeout']) && is_numericint($config['system']['othermultipletimeout'])) {
+                $timeoutlist .= " other.multiple {$config['system']['othermultipletimeout']} ";
+        }
+	
+	if ($timeoutlist <> "") {
+		$limitrules .= "set timeout { $timeoutlist }\n";
+	}
 
 	if (!empty($config['system']['adaptivestart']) && !empty($config['system']['adaptiveend'])) {
 		$limitrules .= "set timeout { adaptive.start {$config['system']['adaptivestart']}, adaptive.end {$config['system']['adaptiveend']} }\n";

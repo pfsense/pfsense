@@ -41,7 +41,7 @@
 		<webgui>
 			<protocol>https</protocol>
 			<loginautocomplete/>
-			<beast_protection/>
+			<beast_protection//>
 		</webgui>
 		<disablenatreflection>yes</disablenatreflection>
 		<disablesegmentationoffloading/>

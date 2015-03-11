@@ -1341,28 +1341,10 @@ EOD;
 		$lighty_config .= "ssl.use-sslv2 = \"disable\"\n";
 		$lighty_config .= "ssl.use-sslv3 = \"disable\"\n";
 
-		/* Hifn accelerators do NOT work with the BEAST mitigation code. Do not allow it to be enabled if a Hifn card has been detected. */
-		$fd = @fopen("{$g['varlog_path']}/dmesg.boot", "r");
-		if ($fd) {
-			while (!feof($fd)) {
-				$dmesgl = fgets($fd);
-				if (preg_match("/^hifn.: (.*?),/", $dmesgl, $matches) && isset($config['system']['webgui']['beast_protection'])) {
-						unset($config['system']['webgui']['beast_protection']);
-						log_error("BEAST Protection disabled because a conflicting cryptographic accelerator card has been detected (" . $matches[1] . ")");
-					break;
-				}
-			}
-			fclose($fd);
-		}
-
 		// where ssl.cipher-list is set, this is automatically enabled, but set it explicitly anyway.
 		$lighty_config .= "ssl.honor-cipher-order = \"enable\"\n";
-		
-		if (isset($config['system']['webgui']['beast_protection'])) {
-			$lighty_config .= "ssl.cipher-list = \"ECDHE-RSA-AES256-SHA384:AES256-SHA256:HIGH:!MD5:!aNULL:!EDH:!AESGCM\"\n";
-		} else {
-			$lighty_config .= "ssl.cipher-list = \"AES128+EECDH:AES256+EECDH:AES128+EDH:AES256+EDH:AES128-SHA:AES256-SHA:!aNULL:!eNULL:!DSS\"\n";
-		}
+
+		$lighty_config .= "ssl.cipher-list = \"AES128+EECDH:AES256+EECDH:AES128+EDH:AES256+EDH:AES128-SHA:AES256-SHA:!aNULL:!eNULL:!DSS\"\n";
 
 		if(!(empty($ca) || (strlen(trim($ca)) == 0)))
 			$lighty_config .= "ssl.ca-file = \"{$g['varetc_path']}/{$ca_location}\"\n\n";

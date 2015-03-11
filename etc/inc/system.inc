@@ -1475,11 +1475,13 @@ EOD;
 			fclose($fd);
 		}
 
+		// where ssl.cipher-list is set, this is automatically enabled, but set it explicitly anyway.
+		$lighty_config .= "ssl.honor-cipher-order = \"enable\"\n";
+		
 		if (isset($config['system']['webgui']['beast_protection'])) {
-			$lighty_config .= "ssl.honor-cipher-order = \"enable\"\n";
 			$lighty_config .= "ssl.cipher-list = \"ECDHE-RSA-AES256-SHA384:AES256-SHA256:HIGH:!MD5:!aNULL:!EDH:!AESGCM\"\n";
 		} else {
-			$lighty_config .= "ssl.cipher-list = \"DHE-RSA-CAMELLIA256-SHA:DHE-DSS-CAMELLIA256-SHA:CAMELLIA256-SHA:DHE-DSS-AES256-SHA:AES256-SHA:DHE-RSA-CAMELLIA128-SHA:DHE-DSS-CAMELLIA128-SHA:CAMELLIA128-SHA:DHE-RSA-AES128-SHA:DHE-DSS-AES128-SHA:AES128-SHA:!aNULL:!eNULL:!3DES:@STRENGTH\"\n";
+			$lighty_config .= "ssl.cipher-list = \"AES128+EECDH:AES256+EECDH:AES128+EDH:AES256+EDH:AES128-SHA:AES256-SHA:!aNULL:!eNULL:!DSS\"\n";
 		}
 
 		if (!(empty($ca) || (strlen(trim($ca)) == 0))) {

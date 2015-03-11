@@ -335,7 +335,7 @@ if ($input_errors)
 		<tr>
 			<td width="22%" valign="top" class="vncellreq"><?=gettext("External subnet IP"); ?></td>
 			<td width="78%" class="vtable">
-				<input name="external" type="text" class="formfld" id="external" size="20" value="<?=htmlspecialchars($pconfig['external']);?>" />
+				<input name="external" type="text" class="formfld unknown" id="external" size="20" value="<?=htmlspecialchars($pconfig['external']);?>" />
 				<br />
 				<span class="vexpl">
 					<?=gettext("Enter the external (usually on a WAN) subnet's starting address for the 1:1 mapping.  " .

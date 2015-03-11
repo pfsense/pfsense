@@ -78,7 +78,7 @@ if ($_POST) {
 		$reqdfields = explode(" ", "username");
 		$reqdfieldsn = array(gettext("Username"));
 	} else {
-		$reqdfields = explode(" ", "username password");
+		$reqdfields = explode(" ", "username passwordfld1");
 		$reqdfieldsn = array(gettext("Username"),gettext("Password"));
 	}
 
@@ -87,13 +87,13 @@ if ($_POST) {
 	if (preg_match("/[^a-zA-Z0-9\.\-_]/", $_POST['username']))
 		$input_errors[] = gettext("The username contains invalid characters.");
 
-	if (preg_match("/^!/", $_POST['password']))
+	if (preg_match("/^!/", $_POST['passwordfld1']))
 		$input_errors[] = gettext("The password cannot start with '!'.");
 
-	if (!preg_match("/^[\x20-\x7E]*$/", $_POST['password']))
+	if (!preg_match("/^[\x20-\x7E]*$/", $_POST['passwordfld1']))
 		$input_errors[] = gettext("The password contains invalid characters.");
 
-	if (($_POST['password']) && ($_POST['password'] != $_POST['password2'])) {
+	if (($_POST['passwordfld1']) && ($_POST['passwordfld1'] != $_POST['passwordfld2'])) {
 		$input_errors[] = gettext("The passwords do not match.");
 	}
 	if (($_POST['ip'] && !is_ipaddr($_POST['ip']))) {
@@ -118,8 +118,8 @@ if ($_POST) {
 		$secretent['name'] = $_POST['username'];
 		$secretent['ip'] = $_POST['ip'];
 
-		if ($_POST['password'])
-			$secretent['password'] = $_POST['password'];
+		if ($_POST['passwordfld1'])
+			$secretent['password'] = $_POST['passwordfld1'];
 
 		if (isset($id) && $a_secret[$id])
 			$a_secret[$id] = $secretent;
@@ -155,8 +155,8 @@ include("head.inc");
                 <tr>
                   <td width="22%" valign="top" class="vncellreq"><?=gettext("Password");?></td>
                   <td width="78%" class="vtable">
-                    <?=$mandfldhtml;?><input name="password" type="password" class="formfld pwd" id="password" size="20" />
-                    <br /><?=$mandfldhtml;?><input name="password2" type="password" class="formfld pwd" id="password2" size="20" />
+                    <?=$mandfldhtml;?><input name="passwordfld1" type="password" class="formfld pwd" id="passwordfld1" size="20" />
+                    <br /><?=$mandfldhtml;?><input name="passwordfld2" type="password" class="formfld pwd" id="passwordfld2" size="20" />
                     &nbsp;(<?=gettext("confirmation");?>)<?php if (isset($id) && $a_secret[$id]): ?><br />
                     <span class="vexpl"><?=gettext("If you want to change the users' password, ".
                     "enter it here twice.");?></span><?php endif; ?></td>

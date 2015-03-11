@@ -366,7 +366,7 @@ function update_description(itemnum) {
 									<input name="adaptiveend" type="text" id="adaptiveend" value="<?php echo $pconfig['adaptiveend']; ?>" />
 									<br /><?=gettext("When reaching this number of state entries, all timeout values become zero, effectively purging all state entries immediately.  This value is used to define the scale factor, it should not actually be reached (set a lower state limit, see below).");?>
 									<br />
-									<span class="vexpl"><?=gettext("Note:  Leave this blank for the default(0).");?></span>
+									<span class="vexpl"><?=gettext("Note: Leave this blank for the default, which auto-calculates these values from your maximum state table size. Adaptive start is 60% and end is 120% of the state table size by default.");?></span>
 								</td>
 							</tr>
 							<tr>

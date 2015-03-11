@@ -47,6 +47,7 @@ foreach ($ipsec_loglevels as $lkey => $ldescr) {
 }
 $pconfig['unityplugin'] = isset($config['ipsec']['unityplugin']);
 $pconfig['compression'] = isset($config['ipsec']['compression']);
+$pconfig['enableinterfacesuse'] = isset($config['ipsec']['enableinterfacesuse']);
 $pconfig['acceptunencryptedmainmode'] = isset($config['ipsec']['acceptunencryptedmainmode']);
 $pconfig['maxmss_enable'] = isset($config['system']['maxmss_enable']);
 $pconfig['maxmss'] = $config['system']['maxmss'];
@@ -133,6 +134,15 @@ if ($_POST) {
 		} elseif (isset($config['ipsec']['compression'])) {
 			$needsrestart = true;
 			unset($config['ipsec']['compression']);
+		}
+		
+		if($_POST['enableinterfacesuse'] == "yes") {
+			if (!isset($config['ipsec']['enableinterfacesuse']))
+				$needsrestart = true;
+			$config['ipsec']['enableinterfacesuse'] = true;
+		} elseif (isset($config['ipsec']['enableinterfacesuse'])) {
+			$needsrestart = true;
+			unset($config['ipsec']['enableinterfacesuse']);
 		}
 
 		if($_POST['unityplugin'] == "yes") {
@@ -293,6 +303,15 @@ function maxmss_checked(obj) {
 							<strong><?=gettext("Enable IPCompression"); ?></strong>
 							<br />
 							<?=gettext("IPComp compression of content is proposed on the connection."); ?>
+						</td>
+					</tr>
+					<tr>
+						<td width="22%" valign="top" class="vncell"><?=gettext("Strict interface binding"); ?></td>
+						<td width="78%" class="vtable">
+							<input name="enableinterfacesuse" type="checkbox" id="enableinterfacesuse" value="yes" <?php if ($pconfig['enableinterfacesuse']) echo "checked=\"checked\""; ?> />
+							<strong><?=gettext("Enable strict interface binding"); ?></strong>
+							<br />
+							<?=gettext("Enable strongSwan's interfaces_use option to bind specific interfaces only. This option is known to break IPsec with dynamic IP interfaces. This is not recommended at this time."); ?>
 						</td>
 					</tr>
 					<tr>

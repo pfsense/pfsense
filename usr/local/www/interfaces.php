@@ -114,8 +114,8 @@ if ($wancfg['if'] == $a_ppps[$pppid]['if']) {
 	$pconfig['ptpid'] = $a_ppps[$pppid]['ptpid'];
 	$pconfig['port'] = $a_ppps[$pppid]['ports'];
 	if ($a_ppps[$pppid]['type'] == "ppp") {
-		$pconfig['username'] = $a_ppps[$pppid]['username'];
-		$pconfig['password'] = base64_decode($a_ppps[$pppid]['password']);
+		$pconfig['ppp_username'] = $a_ppps[$pppid]['username'];
+		$pconfig['ppp_password'] = base64_decode($a_ppps[$pppid]['password']);
 
 		$pconfig['phone'] = $a_ppps[$pppid]['phone'];
 		$pconfig['apn'] = $a_ppps[$pppid]['apn'];
@@ -522,9 +522,6 @@ if ($_POST['apply']) {
 						$input_errors[] = gettext("This interface is referenced by IPv4 VIPs. Please delete those before setting the interface to 'none' configuration.");
 				}
 			}
-		case "dhcp":
-			if (in_array($wancfg['ipaddr'], array("ppp", "pppoe", "pptp", "l2tp")))
-				$input_errors[] = sprintf(gettext("You have to reassign the interface to be able to configure as %s."),$_POST['type']);
 			break;
 		case "ppp":
 			$reqdfields = explode(" ", "port phone");
@@ -575,6 +572,7 @@ if ($_POST['apply']) {
 						$input_errors[] = gettext("This interface is referenced by IPv6 VIPs. Please delete those before setting the interface to 'none' configuration.");
 				}
 			}
+			break;
 		case "dhcp6":
 			if (in_array($wancfg['ipaddrv6'], array()))
 				$input_errors[] = sprintf(gettext("You have to reassign the interface to be able to configure as %s."),$_POST['type6']);
@@ -984,8 +982,8 @@ if ($_POST['apply']) {
 				$a_ppps[$pppid]['type'] = $_POST['type'];
 				$a_ppps[$pppid]['if'] = $_POST['type'].$_POST['ptpid'];
 				$a_ppps[$pppid]['ports'] = $_POST['port'];
-				$a_ppps[$pppid]['username'] = $_POST['username'];
-				$a_ppps[$pppid]['password'] = base64_encode($_POST['password']);
+				$a_ppps[$pppid]['username'] = $_POST['ppp_username'];
+				$a_ppps[$pppid]['password'] = base64_encode($_POST['ppp_password']);
 				$a_ppps[$pppid]['phone'] = $_POST['phone'];
 				$a_ppps[$pppid]['apn'] = $_POST['apn'];
 				$wancfg['if'] = $_POST['type'] . $_POST['ptpid'];
@@ -1599,8 +1597,8 @@ $types6 = array("none" => gettext("None"), "staticv6" => gettext("Static IPv6"),
 			success: function(data,textStatus,response) {
 				var xmldoc = response.responseXML;
 				var provider = xmldoc.getElementsByTagName('connection')[0];
-				jQuery('#username').val('');
-				jQuery('#password').val('');
+				jQuery('#ppp_username').val('');
+				jQuery('#ppp_password').val('');
 				if(provider.getElementsByTagName('apn')[0].firstChild.data == "CDMA") {
 					jQuery('#phone').val('#777');
 					jQuery('#apn').val('');
@@ -1608,10 +1606,10 @@ $types6 = array("none" => gettext("None"), "staticv6" => gettext("Static IPv6"),
 					jQuery('#phone').val('*99#');
 					jQuery('#apn').val(provider.getElementsByTagName('apn')[0].firstChild.data);
 				}
-				username = provider.getElementsByTagName('username')[0].firstChild.data;
-				password = provider.getElementsByTagName('password')[0].firstChild.data;
-				jQuery('#username').val(username);
-				jQuery('#password').val(password);
+				ppp_username = provider.getElementsByTagName('ppp_username')[0].firstChild.data;
+				ppp_password = provider.getElementsByTagName('ppp_password')[0].firstChild.data;
+				jQuery('#ppp_username').val(ppp_username);
+				jQuery('#ppp_password').val(ppp_password);
 			}
 		});
 	}
@@ -2617,13 +2615,13 @@ $types6 = array("none" => gettext("None"), "staticv6" => gettext("Static IPv6"),
 									<tr>
 										<td width="22%" valign="top" class="vncell"><?=gettext("Username"); ?></td>
 										<td width="78%" class="vtable">
-										<input name="username" type="text" class="formfld user" id="username" size="20" value="<?=htmlspecialchars($pconfig['username']);?>" />
+										<input name="ppp_username" type="text" class="formfld user" id="ppp_username" size="20" value="<?=htmlspecialchars($pconfig['ppp_username']);?>" />
 										</td>
 									</tr>
 									<tr>
 										<td width="22%" valign="top" class="vncell"><?=gettext("Password"); ?></td>
 										<td width="78%" class="vtable">
-										<input name="password" type="password" class="formfld pwd" id="password" size="20" value="<?=htmlspecialchars($pconfig['password']);?>" />
+										<input name="ppp_password" type="password" class="formfld pwd" id="ppp_password" size="20" value="<?=htmlspecialchars($pconfig['ppp_password']);?>" />
 										</td>
 									</tr>
 									<tr id="phone_num">

@@ -100,7 +100,7 @@ if ($_POST) {
 	if ($pconfig['type'] != "custom" && $pconfig['type'] != "custom-v6") {
 		$reqdfields[] = "host";
 		$reqdfieldsn[] = gettext("Hostname");
-		$reqdfields[] = "password";
+		$reqdfields[] = "passwordfld";
 		$reqdfieldsn[] = gettext("Password");
  		$reqdfields[] = "username";
  		$reqdfieldsn[] = gettext("Username");
@@ -133,7 +133,7 @@ if ($_POST) {
 		$dyndns = array();
 		$dyndns['type'] = $_POST['type'];
 		$dyndns['username'] = $_POST['username'];
-		$dyndns['password'] = $_POST['password'];
+		$dyndns['password'] = $_POST['passwordfld'];
 		$dyndns['host'] = $_POST['host'];
 		$dyndns['mx'] = $_POST['mx'];
 		$dyndns['wildcard'] = $_POST['wildcard'] ? true : false;
@@ -370,7 +370,7 @@ function _onTypeChange(type){
                 <tr>
                   <td width="22%" valign="top" class="vncellreq"><?=gettext("Password");?></td>
                   <td width="78%" class="vtable">
-                    <input name="password" type="password" class="formfld pwd" id="password" size="20" value="<?=htmlspecialchars($pconfig['password']);?>" />
+                    <input name="passwordfld" type="password" class="formfld pwd" id="passwordfld" size="20" value="<?=htmlspecialchars($pconfig['password']);?>" />
                     <br />
                     <?=gettext("FreeDNS (freedns.afraid.org): Enter your \"Authentication Token\" provided by FreeDNS.");?>
                     <br /><?= gettext("Route 53: Enter your Secret Access Key.");?>

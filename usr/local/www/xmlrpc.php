@@ -211,12 +211,17 @@ function restore_config_section_xmlrpc($raw_params) {
 	if (isset($params[0]['virtualip'])) {
 		if (is_array($config['virtualip']['vip'])) {
 			foreach ($config['virtualip']['vip'] as $vipindex => $vip) {
-				if ($vip['mode'] == "carp")
-					$oldvips["{$vip['interface']}_vip{$vip['vhid']}"] = "{$vip['password']}{$vip['advskew']}{$vip['subnet']}{$vip['subnet_bits']}{$vip['advbase']}";
-				else if ($vip['mode'] == "ipalias" && (strstr($vip['interface'], "_vip") || strstr($vip['interface'], "lo0")))
-					$oldvips[$vip['subnet']] = "{$vip['interface']}{$vip['subnet']}{$vip['subnet_bits']}";
-				else if (($vip['mode'] == "ipalias" || $vip['mode'] == 'proxyarp') && !(strstr($vip['interface'], "_vip") || strstr($vip['interface'], "lo0")))
+				if ($vip['mode'] == "carp") {
+					$oldvips["{$vip['interface']}_vip{$vip['vhid']}"]['content'] = "{$vip['password']}{$vip['advskew']}{$vip['subnet']}{$vip['subnet_bits']}{$vip['advbase']}";
+					$oldvips["{$vip['interface']}_vip{$vip['vhid']}"]['interface'] = $vip['interface'];
+					$oldvips["{$vip['interface']}_vip{$vip['vhid']}"]['subnet'] = $vip['subnet'];
+				} else if ($vip['mode'] == "ipalias" && (strstr($vip['interface'], "_vip") || strstr($vip['interface'], "lo0"))) {
+					$oldvips[$vip['subnet']]['content'] = "{$vip['interface']}{$vip['subnet']}{$vip['subnet_bits']}";
+					$oldvips[$vip['subnet']]['interface'] = $vip['interface'];
+					$oldvips[$vip['subnet']]['subnet'] = $vip['subnet'];
+				} else if (($vip['mode'] == "ipalias" || $vip['mode'] == 'proxyarp') && !(strstr($vip['interface'], "_vip") || strstr($vip['interface'], "lo0"))) {
 					$vipbackup[] = $vip;
+				}
 			}
 		}
 	}
@@ -247,7 +252,7 @@ function restore_config_section_xmlrpc($raw_params) {
 		$anyproxyarp = false;
 		foreach ($config['virtualip']['vip'] as $vip) {
 			if ($vip['mode'] == "carp" && isset($oldvips["{$vip['interface']}_vip{$vip['vhid']}"])) {
-				if ($oldvips["{$vip['interface']}_vip{$vip['vhid']}"] == "{$vip['password']}{$vip['advskew']}{$vip['subnet']}{$vip['subnet_bits']}{$vip['advbase']}") {
+				if ($oldvips["{$vip['interface']}_vip{$vip['vhid']}"]['content'] == "{$vip['password']}{$vip['advskew']}{$vip['subnet']}{$vip['subnet_bits']}{$vip['advbase']}") {
 					if (does_vip_exist($vip)) {
 						unset($oldvips["{$vip['interface']}_vip{$vip['vhid']}"]);
 						continue; // Skip reconfiguring this vips since nothing has changed.
@@ -255,7 +260,7 @@ function restore_config_section_xmlrpc($raw_params) {
 				}
 				unset($oldvips["{$vip['interface']}_vip{$vip['vhid']}"]);
 			} else if ($vip['mode'] == "ipalias" && strstr($vip['interface'], "_vip") && isset($oldvips[$vip['subnet']])) {
-				if ($oldvips[$vip['subnet']] == "{$vip['interface']}{$vip['subnet']}{$vip['subnet_bits']}") {
+				if ($oldvips[$vip['subnet']]['content'] == "{$vip['interface']}{$vip['subnet']}{$vip['subnet_bits']}") {
 					if (does_vip_exist($vip)) {
 						unset($oldvips[$vip['subnet']]);
 						continue; // Skip reconfiguring this vips since nothing has changed.
@@ -279,12 +284,8 @@ function restore_config_section_xmlrpc($raw_params) {
 			}
 		}
 		/* Cleanup remaining old carps */
-		foreach ($oldvips as $oldvipif => $oldvippar) {
-			if (strstr($oldvippar['interface'], '_vip')) {
-				$oldvipif = explode('_vip', $oldvippar['interface']);
-				$oldvipif = $oldvipif[0];
-			} else
-				$oldvipif = get_real_interface($oldvippar['interface']);
+		foreach ($oldvips as $oldvipar) {
+			$oldvipif = get_real_interface($oldvipar['interface']);
 			if (!empty($oldvipif)) {
 				if (is_ipaddrv6($oldvipif))
 					 mwexec("/sbin/ifconfig " . escapeshellarg($oldvipif) . " inet6 " . escapeshellarg($oldvipar['subnet']) . " delete");

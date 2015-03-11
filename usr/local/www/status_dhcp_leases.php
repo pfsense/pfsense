@@ -192,7 +192,7 @@ foreach($leases_content as $lease) {
 				if ($data[$f+1] == "never") {
 					// Quote from dhcpd.leases(5) man page:
 					// If a lease will never expire, date is never instead of an actual date.
-					$leases[$l]['end'] = $data[$f+1];
+					$leases[$l]['end'] = gettext("Never");
 					$f = $f+1;
 				} else {
 					$leases[$l]['end'] = $data[$f+2];

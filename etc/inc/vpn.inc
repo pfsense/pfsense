@@ -98,7 +98,7 @@ function vpn_ipsec_convert_to_modp($index)
 
 function vpn_ipsec_configure($restart = false)
 {
-	global $config, $g, $sa, $sn, $p1_ealgos, $p2_ealgos;
+	global $config, $g, $sa, $sn, $p1_ealgos, $p2_ealgos, $ipsec_idhandling;
 
 	if ($g['platform'] == 'jail') {
 		return;

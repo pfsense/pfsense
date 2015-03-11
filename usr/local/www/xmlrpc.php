@@ -258,7 +258,6 @@ function restore_config_section_xmlrpc($raw_params) {
 						continue; // Skip reconfiguring this vips since nothing has changed.
 					}
 				}
-				unset($oldvips["{$vip['interface']}_vip{$vip['vhid']}"]);
 			} else if ($vip['mode'] == "ipalias" && strstr($vip['interface'], "_vip") && isset($oldvips[$vip['subnet']])) {
 				if ($oldvips[$vip['subnet']]['content'] == "{$vip['interface']}{$vip['subnet']}{$vip['subnet_bits']}") {
 					if (does_vip_exist($vip)) {
@@ -285,9 +284,14 @@ function restore_config_section_xmlrpc($raw_params) {
 		}
 		/* Cleanup remaining old carps */
 		foreach ($oldvips as $oldvipar) {
-			$oldvipif = get_real_interface($oldvipar['interface']);
+			if (strstr($oldvipar['interface'], '_vip')) {
+				list($oldvipif, $vhid) = explode('_vip', $oldvipar['interface']);
+				$oldvipif = get_real_interface($oldvipif);
+			} else {
+				$oldvipif = get_real_interface($oldvipar['interface']);
+			}
 			if (!empty($oldvipif)) {
-				if (is_ipaddrv6($oldvipif))
+				if (is_ipaddrv6($oldvipar['subnet']))
 					 mwexec("/sbin/ifconfig " . escapeshellarg($oldvipif) . " inet6 " . escapeshellarg($oldvipar['subnet']) . " delete");
 				else
 					pfSense_interface_deladdress($oldvipif, $oldvipar['subnet']);

@@ -683,6 +683,17 @@ class Auth_RADIUS extends PEAR {
                     }
                 }
 
+		elseif ($vendor == 15000) { /* pfSense */
+			switch($attrv) {
+				case 1: /* pfSense-Group-Name */
+					if(!array_key_exists('groups',$this->attributes)) {
+						$this->attributes['groups'] = array();
+					}
+					array_push($this->attributes['groups'],radius_cvt_string($datav));
+					break;
+			}
+		}
+
                 break;
 
             case 85: /* Acct-Interim-Interval: RFC 2869 */

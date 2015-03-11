@@ -279,7 +279,7 @@ function getPrivPages(& $entry, & $allowed_pages) {
 }
 
 function getAllowedPages($username) {
-	global $config, $_SESSION;
+	global $config, $_SESSION, $radiusgroups;
 
 	if (!function_exists("ldap_connect")) {
 		return;
@@ -292,6 +292,9 @@ function getAllowedPages($username) {
 	// obtain ldap groups if we are in ldap mode
 	if ($authcfg['type'] == "ldap") {
 		$allowed_groups = @ldap_get_groups($username, $authcfg);
+	} else if ($authcfg['type'] == "radius") {
+		if(array_key_exists('radiusgroups',$_SESSION))
+			$allowed_groups = $_SESSION['radiusgroups'];
 	} else {
 		// search for a local user by name
 		$local_user = getUserEntry($username);

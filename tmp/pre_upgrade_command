@@ -21,6 +21,27 @@ if [ "${PRIOR_VERSION}" = "8" ] && grep -q 'sh /etc/rc.reboot' /etc/rc.firmware;
 		kill ${PID} >/dev/null 2>&1
 		kill -9 ${PID} >/dev/null 2>&1
 		sed -i '' -e 's,sh /,/tmp/sh.old /,' /etc/rc.firmware
+		# To avoid restarting rc.firmware twice because of #4328
+		sed -i '' -e '/^restore_chflags()/, /^}/ s/mtree *-PU/mtree -P/' /etc/rc.firmware
+		/etc/rc.firmware pfSenseupgrade "${IMG}"
+		exit
+	fi
+fi
+
+# One more hack to workaround #4328
+if grep -q 'mtree *-PU' /etc/rc.firmware; then
+	PROC=$(ps axwww | grep '/etc/rc.firmware *pfSenseupgrade')
+	PID=''
+	IMG=''
+	if [ -n "${PROC}" ]; then
+		PID=$(echo "${PROC}" | awk '{print $1}')
+		IMG=$(echo "${PROC}" | sed 's,^.*pfSenseupgrade *,,')
+	fi
+
+	if [ -n "${PID}" -a -n "${IMG}" -a -f "${IMG}" ]; then
+		kill ${PID} >/dev/null 2>&1
+		kill -9 ${PID} >/dev/null 2>&1
+		sed -i '' -e '/^restore_chflags()/, /^}/ s/mtree *-PU/mtree -P/' /etc/rc.firmware
 		/etc/rc.firmware pfSenseupgrade "${IMG}"
 		exit
 	fi

@@ -843,13 +843,13 @@ function fixup_default_gateway($ipprotocol, $gateways_status, $gateways_arr) {
 		if (($gwsttng['ipprotocol'] == $ipprotocol) && isset($gwsttng['defaultgw'])) {
 			$dfltgwfound = true;
 			$dfltgwname = $gwname;
-			if (!isset($gwsttng['monitor_disable']) && stristr($gateways_status[$gwname]['status'], "down")) {
+			if (!isset($gwsttng['monitor_disable']) && $gateways_status[$gwname]['status'] != "none") {
 				$dfltgwdown = true;
 			}
 		}
 		/* Keep a record of the last up gateway */
 		/* XXX: Blacklist lan for now since it might cause issues to those who have a gateway set for it */
-		if (empty($upgw) && ($gwsttng['ipprotocol'] == $ipprotocol) && (isset($gwsttng['monitor_disable']) || !stristr($gateways_status[$gwname]['status'], "down")) && $gwsttng[$gwname]['friendlyiface'] != "lan") {
+		if (empty($upgw) && ($gwsttng['ipprotocol'] == $ipprotocol) && (isset($gwsttng['monitor_disable']) || $gateways_status[$gwname]['status'] == "none") && $gwsttng[$gwname]['friendlyiface'] != "lan") {
 			$upgw = $gwname;
 		}
 		if ($dfltgwdown == true && !empty($upgw)) {

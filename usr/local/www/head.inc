@@ -299,79 +299,34 @@ if(! $g['disablehelpmenu']) {
 		</div>
 		<div class="collapse navbar-collapse" id="pf-navbar">
 			<ul class="nav navbar-nav">
+		<?php foreach ([
+				['name' => 'System',      'menu' => $system_menu,      'href' => null],
+				['name' => 'Interfaces',  'menu' => $interfaces_menu,  'href' => null],
+				['name' => 'Firewall',    'menu' => $firewall_menu,    'href' => null],
+				['name' => 'Services',    'menu' => $services_menu,    'href' => null],
+				['name' => 'VPN',         'menu' => $vpn_menu,         'href' => null],
+				['name' => 'Status',      'menu' => $status_menu,      'href' => null],
+				['name' => 'Diagnostics', 'menu' => $diagnostics_menu, 'href' => null],
+				['name' => 'Gold',        'menu' => $gold_menu,        'href' => '_blank'],
+				['name' => 'Help',        'menu' => $help_menu,        'href' => '_blank']
+			] as $item):
+				if ($item['name'] == 'Help' && $g['disablehelpmenu']) {
+					continue;
+				} ?>
 				<li class="dropdown">
-					<a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false"><?=gettext("System"); ?>
+					<a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
+						<?=gettext($item['name'])?>
 						<span class="caret"></span>
 					</a>
-
-					<ul class="dropdown-menu" role="menu"><?=output_menu($system_menu)?></ul>
+					<ul class="dropdown-menu" role="menu"><?=output_menu($item['menu'], $item['href'])?></ul>
 				</li>
-				<li class="dropdown">
-					<a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false"><?=gettext("Interfaces"); ?>
-						<span class="caret"></span>
-					</a>
-
-					<ul class="dropdown-menu" role="menu"><?=output_menu($interfaces_menu)?></ul>
-				</li>
-				<li class="dropdown">
-					<a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false"><?=gettext("Firewall"); ?>
-						<span class="caret"></span>
-					</a>
-
-					<ul class="dropdown-menu" role="menu"><?=output_menu($firewall_menu)?></ul>
-				</li>
-				<li class="dropdown">
-					<a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false"><?=gettext("Services"); ?>
-						<span class="caret"></span>
-					</a>
-
-					<ul class="dropdown-menu" role="menu"><?=output_menu($services_menu)?></ul>
-				</li>
-				<li class="dropdown">
-					<a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false"><?=gettext("VPN"); ?>
-						<span class="caret"></span>
-					</a>
-
-					<ul class="dropdown-menu" role="menu"><?=output_menu($vpn_menu)?></ul>
-				</li>
-				<li class="dropdown">
-					<a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false"><?=gettext("Status"); ?>
-						<span class="caret"></span>
-					</a>
-
-					<ul class="dropdown-menu" role="menu"><?=output_menu($status_menu)?></ul>
-				</li>
-				<li class="dropdown">
-					<a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false"><?=gettext("Diagnostics"); ?>
-						<span class="caret"></span>
-					</a>
-
-					<ul class="dropdown-menu" role="menu"><?=output_menu($diagnostics_menu)?></ul>
-				</li>
-				<li class="dropdown">
-					<a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false"><?=gettext("Gold"); ?>
-						<span class="caret"></span>
-					</a>
-
-					<ul class="dropdown-menu" role="menu"><?=output_menu($gold_menu, "_blank")?></ul>
-				</li>
-
+		<?php endforeach?>
 				<?php if(are_notices_pending()):?>
-					<?php $notices = get_notices(); ?>
+					<?php $notices = get_notices()?>
 					<li class="dropdown">
-						<a href="#" data-toggle="modal" data-target="#notices" role="button" aria-expanded="false"><?=gettext("Notices"); ?>
+						<a href="#" data-toggle="modal" data-target="#notices" role="button" aria-expanded="false"><?=gettext("Notices")?>
 							<span class="badge"><?=count($notices)?></span>
 						</a>
-					</li>
-				<?php endif; ?>
-
-				<?php if(! $g['disablehelpmenu']): ?>
-					<li class="dropdown">
-						<a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false"><?=gettext("Help"); ?>
-							<span class="caret"></span>
-						</a>
-
-						<ul class="dropdown-menu" role="menu"><?=output_menu($help_menu, "_blank"); ?></ul>
 					</li>
 				<?php endif?>
 			</ul>

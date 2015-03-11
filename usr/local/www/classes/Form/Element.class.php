@@ -5,9 +5,11 @@ class Form_Element
 	protected $_classes = array();
 	protected $_parent;
 
-	public function addClass($class)
+	public function addClass()
 	{
-		$this->_classes[$class] = true;
+		foreach (func_get_args() as $class) {
+			$this->_classes[$class] = true;
+		}
 
 		return $this;
 	}

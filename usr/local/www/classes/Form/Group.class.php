@@ -11,6 +11,8 @@ class Form_Group extends Form_Element
 	{
 		$this->_title = gettext($title);
 		$this->addClass('form-group');
+
+		return $this;
 	}
 
 	public function add(Form_Input $input)

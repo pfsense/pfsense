@@ -19,7 +19,7 @@ class Form_Button extends Form_Input
 			$type = 'submit';
 		}
 
-		parent::__construct($name, null, $type, $title);
+		parent::__construct($name, $title, $type);
 
 		$this->removeClass('form-control')->addClass('btn');
 	}

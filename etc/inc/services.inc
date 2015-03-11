@@ -2114,12 +2114,16 @@ begemotSnmpdModulePath."pf"     = "/usr/lib/snmp_pf.so"
 EOD;
 		    }
 
-		    if(isset($config['snmpd']['modules']['hostres'])) {
+		    /* XXX: hostres module crashes APU - ticket #4403 */
+		    $specplatform = system_identify_specific_platform();
+		    if(isset($config['snmpd']['modules']['hostres']) && $specplatform['name'] != 'APU') {
 			$snmpdconf .= <<<EOD
 begemotSnmpdModulePath."hostres"     = "/usr/lib/snmp_hostres.so"
 
 EOD;
 		    }
+		    unset($specplatform);
+
 		    if(isset($config['snmpd']['modules']['bridge'])) {
 			$snmpdconf .= <<<EOD
 begemotSnmpdModulePath."bridge"     = "/usr/lib/snmp_bridge.so"

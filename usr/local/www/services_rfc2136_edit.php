@@ -188,7 +188,7 @@ include("head.inc");
                 <tr>
                   <td width="22%" valign="top" class="vncellreq"><?=gettext("Server");?></td>
                   <td width="78%" class="vtable">
-                    <input name="server" type="text" class="formfld" id="server" size="30" value="<?=htmlspecialchars($pconfig['server'])?>" />
+                    <input name="server" type="text" class="formfld unknown" id="server" size="30" value="<?=htmlspecialchars($pconfig['server'])?>" />
                   </td>
                 </tr>
                 <tr>

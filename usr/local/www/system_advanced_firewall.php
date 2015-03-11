@@ -71,6 +71,20 @@ $pconfig['bypassstaticroutes'] = isset($config['filter']['bypassstaticroutes']);
 $pconfig['disablescrub'] = isset($config['system']['disablescrub']);
 $pconfig['tftpinterface'] = explode(",", $config['system']['tftpinterface']);
 $pconfig['disablevpnrules'] = isset($config['system']['disablevpnrules']);
+$pconfig['tcpfirsttimeout'] = $config['system']['tcpfirsttimeout']; 
+$pconfig['tcpopeningtimeout'] = $config['system']['tcpopeningtimeout']; 
+$pconfig['tcpestablishedtimeout'] = $config['system']['tcpestablishedtimeout']; 
+$pconfig['tcpclosingtimeout'] = $config['system']['tcpclosingtimeout']; 
+$pconfig['tcpfinwaittimeout'] = $config['system']['tcpfinwaittimeout']; 
+$pconfig['tcpclosedtimeout'] = $config['system']['tcpclosedtimeout']; 
+$pconfig['udpfirsttimeout'] = $config['system']['udpfirsttimeout']; 
+$pconfig['udpsingletimeout'] = $config['system']['udpsingletimeout']; 
+$pconfig['udpmultipletimeout'] = $config['system']['udpmultipletimeout']; 
+$pconfig['icmpfirsttimeout'] = $config['system']['icmpfirsttimeout']; 
+$pconfig['icmperrortimeout'] = $config['system']['icmperrortimeout']; 
+$pconfig['otherfirsttimeout'] = $config['system']['otherfirsttimeout']; 
+$pconfig['othersingletimeout'] = $config['system']['othersingletimeout']; 
+$pconfig['othermultipletimeout'] = $config['system']['othermultipletimeout']; 
 
 if ($_POST) {
 
@@ -100,6 +114,48 @@ if ($_POST) {
 	}
 	if ($_POST['reflectiontimeout'] && !is_numericint($_POST['reflectiontimeout'])) {
 		$input_errors[] = gettext("The Reflection timeout must be an integer.");
+	}
+	if ($_POST['tcpfirsttimeout'] && !is_numericint($_POST['tcpfirsttimeout'])) { 
+		$input_errors[] = gettext("The TCP first timeout value must be an integer.");
+	}
+	if ($_POST['tcpopeningtimeout'] && !is_numericint($_POST['tcpopeningtimeout'])) { 
+		$input_errors[] = gettext("The TCP opening timeout value must be an integer."); 
+	}
+	if ($_POST['tcpestablishedtimeout'] && !is_numericint($_POST['tcpestablishedtimeout'])) { 
+		$input_errors[] = gettext("The TCP established timeout value must be an integer."); 
+	}
+	if ($_POST['tcpclosingtimeout'] && !is_numericint($_POST['tcpclosingtimeout'])) { 
+		$input_errors[] = gettext("The TCP closing timeout value must be an integer."); 
+	}
+	if ($_POST['tcpfinwaittimeout'] && !is_numericint($_POST['tcpfinwaittimeout'])) { 
+		$input_errors[] = gettext("The TCP FIN wait timeout value must be an integer."); 
+	}
+	if ($_POST['tcpclosedtimeout'] && !is_numericint($_POST['tcpclosedtimeout'])) { 
+		$input_errors[] = gettext("The TCP closed timeout value must be an integer."); 
+	}
+	if ($_POST['udpfirsttimeout'] && !is_numericint($_POST['udpfirsttimeout'])) { 
+		$input_errors[] = gettext("The UDP first timeout value must be an integer."); 
+	}
+	if ($_POST['udpsingletimeout'] && !is_numericint($_POST['udpsingletimeout'])) { 
+		$input_errors[] = gettext("The UDP single timeout value must be an integer."); 
+	}
+	if ($_POST['udpmultipletimeout'] && !is_numericint($_POST['udpmultipletimeout'])) { 
+		$input_errors[] = gettext("The UDP multiple timeout value must be an integer."); 
+	}
+	if ($_POST['icmpfirsttimeout'] && !is_numericint($_POST['icmpfirsttimeout'])) { 
+		$input_errors[] = gettext("The ICMP first timeout value must be an integer."); 
+	}
+	if ($_POST['icmperrortimeout'] && !is_numericint($_POST['icmperrortimeout'])) { 
+		$input_errors[] = gettext("The ICMP error timeout value must be an integer."); 
+	}
+	if ($_POST['otherfirsttimeout'] && !is_numericint($_POST['otherfirsttimeout'])) { 
+		$input_errors[] = gettext("The Other first timeout value must be an integer."); 
+	}
+	if ($_POST['othersingletimeout'] && !is_numericint($_POST['othersingletimeout'])) { 
+		$input_errors[] = gettext("The Other single timeout value must be an integer."); 
+	}
+	if ($_POST['othermultipletimeout'] && !is_numericint($_POST['othermultipletimeout'])) { 
+		$input_errors[] = gettext("The Other multiple timeout value must be an integer."); 
 	}
 
 	ob_flush();
@@ -149,6 +205,77 @@ if ($_POST) {
 		$config['system']['maximumstates'] = $_POST['maximumstates'];
 		$config['system']['aliasesresolveinterval'] = $_POST['aliasesresolveinterval'];
 		$config['system']['maximumtableentries'] = $_POST['maximumtableentries'];
+
+		if (!empty($_POST['tcpfirsttimeout'])) {
+                        $config['system']['tcpfirsttimeout'] = $_POST['tcpfirsttimeout'];
+                } else {
+                        unset($config['system']['tcpfirsttimeout']);
+                }
+                if (!empty($_POST['tcpopeningtimeout'])) {
+                        $config['system']['tcpopeningtimeout'] = $_POST['tcpopeningtimeout'];
+                } else {
+                        unset($config['system']['tcpopeningtimeout']);
+                }
+                if (!empty($_POST['tcpestablishedtimeout'])) {
+                        $config['system']['tcpestablishedtimeout'] = $_POST['tcpestablishedtimeout'];
+                } else {
+                        unset($config['system']['tcpestablishedtimeout']);
+                }
+                if (!empty($_POST['tcpclosingtimeout'])) {
+                        $config['system']['tcpclosingtimeout'] = $_POST['tcpclosingtimeout'];
+                } else {
+                        unset($config['system']['tcpclosingtimeout']);
+                }
+                if (!empty($_POST['tcpfinwaittimeout'])) {
+                        $config['system']['tcpfinwaittimeout'] = $_POST['tcpfinwaittimeout'];
+                } else {
+                        unset($config['system']['tcpfinwaittimeout']);
+                }
+                if (!empty($_POST['tcpclosedtimeout'])) {
+                        $config['system']['tcpclosedtimeout'] = $_POST['tcpclosedtimeout'];
+                } else {
+                        unset($config['system']['tcpclosedtimeout']);
+                }
+                if (!empty($_POST['udpfirsttimeout'])) {
+                        $config['system']['udpfirsttimeout'] = $_POST['udpfirsttimeout'];
+                } else {
+                        unset($config['system']['udpfirsttimeout']);
+                }
+                if (!empty($_POST['udpsingletimeout'])) {
+                        $config['system']['udpsingletimeout'] = $_POST['udpsingletimeout'];
+                } else {
+                        unset($config['system']['udpsingletimeout']);
+                }
+                if (!empty($_POST['udpmultipletimeout'])) {
+                        $config['system']['udpmultipletimeout'] = $_POST['udpmultipletimeout'];
+                } else {
+                        unset($config['system']['udpmultipletimeout']);
+                }
+                if (!empty($_POST['icmpfirsttimeout'])) {
+                        $config['system']['icmpfirsttimeout'] = $_POST['icmpfirsttimeout'];
+                } else {
+                        unset($config['system']['icmpfirsttimeout']);
+                }
+                if (!empty($_POST['icmperrortimeout'])) {
+                        $config['system']['icmperrortimeout'] = $_POST['icmperrortimeout'];
+                } else {
+                        unset($config['system']['icmperrortimeout']);
+                }
+                if (!empty($_POST['otherfirsttimeout'])) {
+                        $config['system']['otherfirsttimeout'] = $_POST['otherfirsttimeout'];
+                } else {
+                        unset($config['system']['otherfirsttimeout']);
+                }
+                if (!empty($_POST['othersingletimeout'])) {
+                        $config['system']['othersingletimeout'] = $_POST['othersingletimeout'];
+                } else {
+                        unset($config['system']['othersingletimeout']);
+                }
+                if (!empty($_POST['othermultipletimeout'])) {
+                        $config['system']['othermultipletimeout'] = $_POST['othermultipletimeout'];
+                } else {
+                        unset($config['system']['othermultipletimeout']);
+                }
 
 		if($_POST['natreflection'] == "proxy") {
 			unset($config['system']['disablenatreflection']);
@@ -547,13 +674,80 @@ function update_description(itemnum) {
 											echo "<option></option>";
  ?>
 									</select>
-									<strong><?=gettext("Choose the interfaces where you want TFTP proxy helper to be enabled.");?></strong>
+									<br/><strong><?=gettext("Choose the interfaces where you want TFTP proxy helper to be enabled.");?></strong>
+								</td>
+							</tr>
+							<?php endif; ?>
+							<tr>
+								<td colspan="2" valign="top" class="listtopic"><?=gettext("State Timeouts");?></td>
+							</tr>
+							<tr>
+								<td colspan="2">
+									<strong><?=gettext("NOTE: The options below should usually be left at their defaults, as chosen by Firewall Optimization Options above. Click the Help link on this page for information.");?>&nbsp;</strong>
+								</td>
+							<br />
+							</tr>
+							<tr>
+								<td width="22%" valign="top" class="vncell"><?=gettext("TCP Timeouts");?></td>
+								<td width="78%" class="vtable">
+									<strong><?=gettext("TCP First: ");?></strong><input name="tcpfirsttimeout" id="tcpfirsttimeout" value="<?php echo $config['system']['tcpfirsttimeout']; ?>" /> <br/>
+									<?=gettext("Enter value for TCP first timeout in seconds. Leave blank for default (recommended).");?>
+									<br/><br/>
+									<strong><?=gettext("TCP Opening: ");?></strong><input name="tcpopeningtimeout" id="tcpopeningtimeout" value="<?php echo $config['system']['tcpopeningtimeout']; ?>" /><br />
+									<?=gettext("Enter value for TCP opening timeout in seconds. Leave blank for default (recommended).");?>									
+									<br/><br/>
+									<strong><?=gettext("TCP Established: ");?></strong><input name="tcpestablishedtimeout" id="tcpestablishedtimeout" value="<?php echo $config['system']['tcpestablishedtimeout']; ?>" /><br />
+									<?=gettext("Enter value for TCP established timeout in seconds. Leave blank for default (recommended).");?>
+									<br/><br/>
+									<strong><?=gettext("TCP Closing: ");?></strong><input name="tcpclosingtimeout" id="tcpclosingtimeout" value="<?php echo $config['system']['tcpclosingtimeout']; ?>" /><br />
+									<?=gettext("Enter value for TCP closing timeout in seconds. Leave blank for default (recommended).");?>
+									<br/><br/>
+									<strong><?=gettext("TCP FIN Wait: ");?></strong><input name="tcpfinwaittimeout" id="tcpfinwaittimeout" value="<?php echo $config['system']['tcpfinwaittimeout']; ?>" /><br />
+									<?=gettext("Enter value for TCP FIN wait timeout in seconds. Leave blank for default (recommended).");?>
+									<br/><br/>
+									<strong><?=gettext("TCP Closed: ");?></strong><input name="tcpclosedtimeout" id="tcpclosedtimeout" value="<?php echo $config['system']['tcpclosedtimeout']; ?>" /><br />
+									<?=gettext("Enter value for TCP closed timeout in seconds. Leave blank for default (recommended).");?>							
+								</td>
+							</tr>
+							<tr>
+								<td width="22%" valign="top" class="vncell"><?=gettext("UDP Timeouts");?></td>
+								<td width="78%" class="vtable">
+									<strong><?=gettext("UDP First: ");?></strong><input name="udpfirsttimeout" id="udpfirsttimeout" value="<?php echo $config['system']['udpfirsttimeout']; ?>" /><br />
+									<?=gettext("Enter value for UDP first timeout in seconds. Leave blank for default (recommended).");?>
+									<br /><br />
+									<strong><?=gettext("UDP Single: ");?></strong><input name="udpsingletimeout" id="udpsingletimeout" value="<?php echo $config['system']['udpsingletimeout']; ?>" /><br />
+									<?=gettext("Enter value for UDP single timeout in seconds. Leave blank for default (recommended).");?>
+									<br /><br />
+									<strong><?=gettext("UDP Multiple: ");?></strong><input name="udpmultipletimeout" id="udpmultipletimeout" value="<?php echo $config['system']['udpmultipletimeout']; ?>" /><br />
+									<?=gettext("Enter value for UDP multiple timeout in seconds. Leave blank for default (recommended).");?>
+								</td>
+							</tr>
+							<tr>
+								<td width="22%" valign="top" class="vncell"><?=gettext("ICMP Timeouts");?></td>
+								<td width="78%" class="vtable">
+									<strong><?=gettext("ICMP First: ");?></strong><input name="icmpfirsttimeout" id="icmpfirsttimeout" value="<?php echo $config['system']['icmpfirsttimeout']; ?>" /><br />
+									<?=gettext("Enter value for ICMP first timeout in seconds. Leave blank for default (recommended).");?>
+									<br /><br />
+									<strong><?=gettext("ICMP Error: ");?></strong><input name="icmperrortimeout" id="icmperrortimeout" value="<?php echo $config['system']['icmperrortimeout']; ?>" /><br />
+									<?=gettext("Enter value for ICMP error timeout in seconds. Leave blank for default (recommended).");?>
+								</td>
+							</tr>
+							<tr>
+								<td width="22%" valign="top" class="vncell"><?=gettext("Other Timeouts");?></td>
+								<td width="78%" class="vtable">
+									<strong><?=gettext("Other First: ");?></strong><input name="otherfirsttimeout" id="otherfirsttimeout" value="<?php echo $config['system']['otherfirsttimeout']; ?>" /><br />
+									<?=gettext("Enter value for Other first timeout in seconds. Leave blank for default (recommended).");?>
+									<br /><br />
+									<strong><?=gettext("Other Single: ");?></strong><input name="othersingletimeout" id="othersingletimeout" value="<?php echo $config['system']['othersingletimeout']; ?>" /><br />
+									<?=gettext("Enter value for Other single timeout in seconds. Leave blank for default (recommended).");?>
+									<br /><br />
+									<strong><?=gettext("Other Multiple: ");?></strong><input name="othermultipletimeout" id="othermultipletimeout" value="<?php echo $config['system']['othermultipletimeout']; ?>" /><br />
+									<?=gettext("Enter value for Other multiple timeout in seconds. Leave blank for default (recommended).");?>
 								</td>
 							</tr>
 							<tr>
 								<td colspan="2" class="list" height="12">&nbsp;</td>
 							</tr>
-							<?php endif; ?>
 							<tr>
 								<td width="22%" valign="top">&nbsp;</td>
 								<td width="78%"><input name="Submit" type="submit" class="formbtn" value="<?=gettext("Save");?>" /></td>

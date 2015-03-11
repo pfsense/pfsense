@@ -66,7 +66,7 @@ backup_chflags() {
 restore_chflags() {
 	TOPROCESS="bin lib libexec sbin usr"
 	for files in $TOPROCESS; do
-		cd / && /usr/bin/bzcat /tmp/chflags.dist.${files}.bz2 | /usr/sbin/mtree -PU -p /${files} >> /conf/upgrade_log.txt 2>&1
+		cd / && /usr/bin/bzcat /tmp/chflags.dist.${files}.bz2 | /usr/sbin/mtree -P -p /${files} >> /conf/upgrade_log.txt 2>&1
 	done
 }
 

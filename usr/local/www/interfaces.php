@@ -3277,7 +3277,7 @@ $types6 = array("none" => gettext("None"), "staticv6" => gettext("Static IPv6"),
 							<td valign="top" class="vncell"><?=gettext("Enable IEEE802.1X Authentication"); ?></td>
 							<td class="vtable">
 								<input name="ieee8021x" type="checkbox" value="yes"  class="formfld" id="ieee8021x" <?php if ($pconfig['ieee8021x']) echo "checked=\"checked\"";?> />
-								<br /><?=gettext("Setting this option will enable 802.1x authentication."); ?>
+								<br /><?=gettext("Setting this option will enable 802.1X authentication."); ?>
 								<br /><span class="red"><strong><?=gettext("NOTE"); ?>:</strong></span> <?=gettext("this option requires checking the \"Enable WPA box\"."); ?>
 							</td>
 						</tr>
@@ -3292,7 +3292,7 @@ $types6 = array("none" => gettext("None"), "staticv6" => gettext("Static IPv6"),
 							<td valign="top" class="vncell"><?=gettext("802.1X Authentication Server Port"); ?></td>
 							<td class="vtable">
 								<input name="auth_server_port" id="auth_server_port" type="text" class="formfld unknown" size="66" value="<?=htmlspecialchars($pconfig['auth_server_port']);?>" />
-								<br /><?=gettext("Leave blank for the default 1812 port."); ?>
+								<br /><?=gettext("Leave blank for the default port 1812."); ?>
 							</td>
 						</tr>
 						<tr>
@@ -3313,7 +3313,7 @@ $types6 = array("none" => gettext("None"), "staticv6" => gettext("Static IPv6"),
 							<td valign="top" class="vncell"><?=gettext("Secondary 802.1X Authentication Server Port"); ?></td>
 							<td class="vtable">
 								<input name="auth_server_port2" id="auth_server_port2" type="text" class="formfld unknown" size="66" value="<?=htmlspecialchars($pconfig['auth_server_port2']);?>" />
-								<br /><?=gettext("Leave blank for the default 1812 port."); ?>
+								<br /><?=gettext("Leave blank for the default port 1812."); ?>
 							</td>
 						</tr>
 						<tr>

@@ -810,6 +810,28 @@ if ($_POST['apply']) {
 				$input_errors[] = gettext("Secondary 802.1X Authentication Server Port must be a valid port number (1-65535).");
 			}
 		}
+		if (isset($_POST['channel']) && !is_numericint($_POST['channel'])) {
+			if (!is_numericint($_POST['channel'])) {
+				$input_errors[] = gettext("Invalid channel specified.");
+			} else {
+				if ($_POST['channel'] > 255 || $_POST['channel'] < 0) {
+					$input_errors[] = gettext("Channel must be between 0-255.");
+				}
+			}
+		}
+		if (!empty($_POST['distance']) && !is_numericint($_POST['distance'])) {
+			$input_errors[] = gettext("Distance must be an integer.");
+		}
+		if (isset($_POST['standard']) && (stristr($_POST['standard'], '11na') || stristr($_POST['standard'], '11a'))) {
+			if ($_POST['channel'] != 0 && $_POST['channel'] < 15) {
+				$input_errors[] = gettext("Channel selected is not valid for 802.11a or 802.11na.");
+			}
+		}
+		if (isset($_POST['standard']) && ($_POST['standard'] = "11b" || $_POST['standard'] = "11g")) {
+			if ($_POST['channel'] > 14) {
+				$input_errors[] = gettext("Channel selected is not valid for 802.11b or 802.11g.");
+			}
+		}
 		/* loop through keys and enforce size */
 		for ($i = 1; $i <= 4; $i++) {
 			if ($_POST['key' . $i]) {

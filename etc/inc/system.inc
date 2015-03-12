@@ -1464,9 +1464,6 @@ EOD;
 		// where ssl.cipher-list is set, this is automatically enabled, but set it explicitly anyway.
 		$lighty_config .= "ssl.honor-cipher-order = \"enable\"\n";
 
-		// Explicit disable compression to mitigate CRIME attack
-		$lighty_config .= "ssl.use-compression = \"disable\"\n";
-
 		$lighty_config .= "ssl.cipher-list = \"AES128+EECDH:AES256+EECDH:AES128+EDH:AES256+EDH:AES128-SHA:AES256-SHA:!aNULL:!eNULL:!DSS\"\n";
 
 		if (!(empty($ca) || (strlen(trim($ca)) == 0))) {

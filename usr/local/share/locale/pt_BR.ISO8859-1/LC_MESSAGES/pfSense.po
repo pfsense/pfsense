@@ -19876,7 +19876,7 @@ msgstr "Habilita Autenticação IEEE802.1X"
 #: usr/local/www/interfaces.php:2538 usr/local/www/interfaces.php:2568
 #: usr/local/www/interfaces.php:2614 usr/local/www/interfaces.php:2603
 #: usr/local/www/interfaces.php:2639
-msgid "Setting this option will enable 802.1x authentication."
+msgid "Setting this option will enable 802.1X authentication."
 msgstr "Configurando essa opção habilitará a autenticação 802.1x."
 
 #: usr/local/www/interfaces.php:2371
@@ -19929,7 +19929,7 @@ msgstr "Porta do Servidor de Autenticação 802.1X"
 #: usr/local/www/interfaces.php:2650 usr/local/www/interfaces.php:2618
 #: usr/local/www/interfaces.php:2639 usr/local/www/interfaces.php:2654
 #: usr/local/www/interfaces.php:2675
-msgid "Leave blank for the default 1812 port."
+msgid "Leave blank for the default port 1812."
 msgstr "Deixe em branco para usar a porta padrão 1812."
 
 #: usr/local/www/interfaces.php:2389 usr/local/www/interfaces.php:2569

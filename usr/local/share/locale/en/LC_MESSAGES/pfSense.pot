@@ -14843,7 +14843,7 @@ msgid "Enable IEEE802.1X Authentication"
 msgstr ""
 
 #: usr/local/www/interfaces.php:3283
-msgid "Setting this option will enable 802.1x authentication."
+msgid "Setting this option will enable 802.1X authentication."
 msgstr ""
 
 #: usr/local/www/interfaces.php:3284
@@ -14871,7 +14871,7 @@ msgid "802.1X Authentication Server Port"
 msgstr ""
 
 #: usr/local/www/interfaces.php:3298 usr/local/www/interfaces.php:3319
-msgid "Leave blank for the default 1812 port."
+msgid "Leave blank for the default port 1812."
 msgstr ""
 
 #: usr/local/www/interfaces.php:3302

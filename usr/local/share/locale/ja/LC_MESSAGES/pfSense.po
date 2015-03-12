@@ -23324,7 +23324,7 @@ msgstr "IEEE802.1X認証を有効にします"
 #: usr/local/www/interfaces.php:2538 usr/local/www/interfaces.php:2568
 #: usr/local/www/interfaces.php:2614 usr/local/www/interfaces.php:2603
 #: usr/local/www/interfaces.php:2603
-msgid "Setting this option will enable 802.1x authentication."
+msgid "Setting this option will enable 802.1X authentication."
 msgstr "このオプションを設定すると、 802.1x認証を有効にします。"
 
 #: usr/local/www/interfaces.php:2371
@@ -23381,7 +23381,7 @@ msgstr "802.1X認証サーバーポート"
 #: usr/local/www/interfaces.php:2650 usr/local/www/interfaces.php:2618
 #: usr/local/www/interfaces.php:2639 usr/local/www/interfaces.php:2618
 #: usr/local/www/interfaces.php:2639
-msgid "Leave blank for the default 1812 port."
+msgid "Leave blank for the default port 1812."
 msgstr "デフォルト1812ポートに対しては空白のままにします。"
 
 #: usr/local/www/interfaces.php:2389 usr/local/www/interfaces.php:2569

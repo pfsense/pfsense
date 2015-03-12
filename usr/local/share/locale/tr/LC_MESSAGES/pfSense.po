@@ -15479,7 +15479,7 @@ msgid "Enable IEEE802.1X Authentication"
 msgstr "IEEE802.1x Kimlik Doğrulamayı Etkinleştir"
 
 #: usr/local/www/interfaces.php:3283
-msgid "Setting this option will enable 802.1x authentication."
+msgid "Setting this option will enable 802.1X authentication."
 msgstr ""
 "Bu seçeneği etkinleştirmek 802.1x kimlik doğrulamanın devreye girmesini "
 "sağlayacaktır."
@@ -15511,7 +15511,7 @@ msgid "802.1X Authentication Server Port"
 msgstr "802.1x Kimlik doğrulama Sunucu Portu"
 
 #: usr/local/www/interfaces.php:3298 usr/local/www/interfaces.php:3319
-msgid "Leave blank for the default 1812 port."
+msgid "Leave blank for the default port 1812."
 msgstr "Varsayılan port olan 1812'yi kullanmak için boş bırakın."
 
 #: usr/local/www/interfaces.php:3302
@@ -19019,7 +19019,7 @@ msgstr ""
 
 #: usr/local/www/services_captiveportal.php:733
 msgid "Leave this field blank to use the default port (1812)."
-msgstr "Varsayılan 1812 portunu kullanmak için boş bırakınız."
+msgstr "Varsayılan port 1812unu kullanmak için boş bırakınız."
 
 #: usr/local/www/services_captiveportal.php:736
 #: usr/local/www/services_captiveportal.php:756

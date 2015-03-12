@@ -199,8 +199,10 @@ function vpn_ipsec_configure($restart = false)
 			$listeniflist = get_real_interface($a_phase1['interface']);
 
 			$ep = ipsec_get_phase1_src($ph1ent);
-			if (!is_ipaddr($ep))
+			if (!is_ipaddr($ep)) {
+				log_error("IPsec ERROR: Could not find phase 1 source for connection {$ph1ent['descr']}. Omitting from configuration file.");
 				continue;
+			}
 
 			if(!in_array($ep,$ipmap))
 				$ipmap[] = $ep;

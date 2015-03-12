@@ -771,9 +771,45 @@ if ($_POST['apply']) {
 		if ($_POST['mode'] == 'hostap') {
 			$reqdfields[] = "ssid";
 			$reqdfieldsn[] = gettext("SSID");
+			if (stristr($_POST['standard'], '11n')) {
+				if (!($_POST['wme_enable'])) {
+					$input_errors[] = gettext("802.11n standards require enabling WME.");
+				}
+			}
 		}
 		do_input_validation($_POST, $reqdfields, $reqdfieldsn, $input_errors);
 		check_wireless_mode();
+		if (isset($_POST['wpa_group_rekey']) && (!is_numericint($_POST['wpa_group_rekey']) || $_POST['wpa_group_rekey'] < 1 || $_POST['wpa_group_rekey'] > 9999)) {
+			$input_errors[] = gettext("Key Rotation must be an integer between 1 and 9999.");
+		}
+		if (isset($_POST['wpa_gmk_rekey']) && (!is_numericint($_POST['wpa_gmk_rekey']) || $_POST['wpa_gmk_rekey'] < 1 || $_POST['wpa_gmk_rekey'] > 9999)) {
+			$input_errors[] = gettext("Master Key Regeneration must be an integer between 1 and 9999.");
+		}
+		if (isset($_POST['wpa_group_rekey']) && isset($_POST['wpa_gmk_rekey'])) {
+			if ($_POST['wpa_group_rekey'] > $_POST['wpa_gmk_rekey']) {
+				$input_errors[] = gettext("Master Key Regeneration must be greater than Key Rotation.");
+			}
+		}
+		if (!empty($_POST['auth_server_addr'])) {
+			if (!is_domain($_POST['auth_server_addr']) && !is_ipaddr($_POST['auth_server_addr'])) {
+				$input_errors[] = gettext("802.1X Authentication Server must be an IP or hostname.");
+			}
+		}
+		if (!empty($_POST['auth_server_addr2'])) {
+			if (!is_domain($_POST['auth_server_addr2']) && !is_ipaddr($_POST['auth_server_addr2'])) {
+				$input_errors[] = gettext("Secondary 802.1X Authentication Server must be an IP or hostname.");
+			}
+		}
+		if (!empty($_POST['auth_server_port'])) {
+			if (!is_port($_POST['auth_server_port'])) {
+				$input_errors[] = gettext("802.1X Authentication Server Port must be a valid port number (1-65535).");
+			}
+		}
+		if (!empty($_POST['auth_server_port2'])) {
+			if (!is_port($_POST['auth_server_port2'])) {
+				$input_errors[] = gettext("Secondary 802.1X Authentication Server Port must be a valid port number (1-65535).");
+			}
+		}
 		/* loop through keys and enforce size */
 		for ($i = 1; $i <= 4; $i++) {
 			if ($_POST['key' . $i]) {

@@ -827,10 +827,13 @@ if ($_POST['apply']) {
 				$input_errors[] = gettext("Channel selected is not valid for 802.11a or 802.11na.");
 			}
 		}
-		if (isset($_POST['standard']) && ($_POST['standard'] = "11b" || $_POST['standard'] = "11g")) {
+		if (isset($_POST['standard']) && ($_POST['standard'] == "11b" || $_POST['standard'] == "11g")) {
 			if ($_POST['channel'] > 14) {
 				$input_errors[] = gettext("Channel selected is not valid for 802.11b or 802.11g.");
 			}
+		}
+		if (!empty($_POST['protmode']) && !in_array($_POST['protmode'], array("off", "cts", "rtscts"))) {
+			$input_errors[] = gettext("Invalid option chosen for OFDM Protection Mode");
 		}
 		/* loop through keys and enforce size */
 		for ($i = 1; $i <= 4; $i++) {

@@ -340,6 +340,15 @@ function vpn_ipsec_configure($restart = false)
 	$unity_enabled = 'yes';
 	if (isset($config['ipsec']['unityplugin'])) {
 		$unity_enabled = 'no';
+		if (file_exists("/usr/local/lib/ipsec/plugins/libstrongswan-unity.so")) {
+			conf_mount_rw();
+			mwexec("mv /usr/local/lib/ipsec/plugins/libstrongswan-unity.so /usr/local/lib/ipsec/plugins/libstrongswan-unity.MOVED");
+			conf_mount_ro();
+		}
+	} else if (file_exists("/usr/local/lib/ipsec/plugins/libstrongswan-unity.MOVED")) {
+		conf_mount_rw();
+		mwexec("mv /usr/local/lib/ipsec/plugins/libstrongswan-unity.MOVED /usr/local/lib/ipsec/plugins/libstrongswan-unity.so");
+		conf_mount_ro();
 	}
 
 	if (isset($config['ipsec']['enableinterfacesuse'])) {

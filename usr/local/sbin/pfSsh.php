@@ -48,8 +48,8 @@ if(!function_exists("readline")) {
 		$fp = fopen('php://stdin', 'r');
 		$textinput = chop(fgets($fp));
 		fclose($fp);
+		return $textinput;
 	}
-	return $textinput;
 }
 
 function more($text, $count=24) {

@@ -23278,7 +23278,7 @@ msgstr "キーローテーション"
 #: usr/local/www/interfaces.php:2593 usr/local/www/interfaces.php:2582
 #: usr/local/www/interfaces.php:2582
 msgid ""
-"Allowed values are 1-9999 but should not be longer than Master Key "
+"Allowed values are 1-9999. Must be longer than Master Key "
 "Regeneration time."
 msgstr ""指定できる値は1から9999ですが、マスターキーよりも長くすべきではない」再生時間。"
 
@@ -23294,7 +23294,7 @@ msgstr "マスターキーの再生成"
 #: usr/local/www/interfaces.php:2600 usr/local/www/interfaces.php:2589
 #: usr/local/www/interfaces.php:2589
 msgid ""
-"Allowed values are 1-9999 but should not be shorter than Key Rotation time."
+"Allowed values are 1-9999. Must be shorter than Key Rotation time."
 msgstr ""指定できる値は1から9999ですが、キーローテーション時間より短くすべきではない。"
 
 #: usr/local/www/interfaces.php:2360 usr/local/www/interfaces.php:2540

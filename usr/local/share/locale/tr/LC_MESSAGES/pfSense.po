@@ -15445,7 +15445,7 @@ msgstr "Anahtar Rotasyonu"
 
 #: usr/local/www/interfaces.php:3262
 msgid ""
-"Allowed values are 1-9999 but should not be longer than Master Key "
+"Allowed values are 1-9999. Must be longer than Master Key "
 "Regeneration time."
 msgstr ""
 "İzin verilen değerler 1 ile 9999 arasındadır ama Ana Anahtar Yenileme "
@@ -15457,7 +15457,7 @@ msgstr "Ana Anahtar Yenileme"
 
 #: usr/local/www/interfaces.php:3269
 msgid ""
-"Allowed values are 1-9999 but should not be shorter than Key Rotation time."
+"Allowed values are 1-9999. Must be shorter than Key Rotation time."
 msgstr ""
 "İzin verilen değerler 1 ile 9999 arasındadır ama Anahtar Rotasyon zamanından "
 "fazla olmamalıdır."

@@ -3286,7 +3286,7 @@ $types6 = array("none" => gettext("None"), "staticv6" => gettext("Static IPv6"),
 							<td class="vtable">
 								<select name="wpa_mode" class="formselect" id="wpa_mode">
 									<option <?php if ($pconfig['wpa_mode'] == '1') echo "selected=\"selected\"";?> value="1"><?=gettext("WPA"); ?></option>
-									<option <?php if ($pconfig['wpa_mode'] == '2') echo "selected=\"selected\"";?> value="2"><?=gettext("WPA2"); ?></option>
+									<option <?php if ($pconfig['wpa_mode'] == '2' || !isset($pconfig['wpa_mode'])) echo "selected=\"selected\"";?> value="2"><?=gettext("WPA2"); ?></option>
 									<option <?php if ($pconfig['wpa_mode'] == '3') echo "selected=\"selected\"";?> value="3"><?=gettext("Both"); ?></option>
 								</select>
 							</td>
@@ -3317,7 +3317,7 @@ $types6 = array("none" => gettext("None"), "staticv6" => gettext("Static IPv6"),
 							<td class="vtable">
 								<select name="wpa_pairwise" class="formselect" id="wpa_pairwise">
 									<option <?php if ($pconfig['wpa_pairwise'] == 'CCMP TKIP') echo "selected=\"selected\"";?> value="CCMP TKIP"><?=gettext("Both"); ?></option>
-									<option <?php if ($pconfig['wpa_pairwise'] == 'CCMP') echo "selected=\"selected\"";?> value="CCMP"><?=gettext("AES (recommended)"); ?></option>
+									<option <?php if ($pconfig['wpa_pairwise'] == 'CCMP' || !isset($pconfig['wpa_pairwise'])) echo "selected=\"selected\"";?> value="CCMP"><?=gettext("AES (recommended)"); ?></option>
 									<option <?php if ($pconfig['wpa_pairwise'] == 'TKIP') echo "selected=\"selected\"";?> value="TKIP"><?=gettext("TKIP"); ?></option>
 								</select>
 							</td>

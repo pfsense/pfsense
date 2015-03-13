@@ -878,7 +878,12 @@ if ($_POST['apply']) {
 		if ($_POST['passphrase']) {
 			$passlen = strlen($_POST['passphrase']);
 			if ($passlen < 8 || $passlen > 63)
-				$input_errors[] = gettext("The passphrase must be between 8 and 63 characters long.");
+				$input_errors[] = gettext("The WPA passphrase must be between 8 and 63 characters long.");
+		}
+		if ($_POST['wpa_enable'] == "yes") {
+			if (empty($_POST['passphrase']) && stristr($_POST['wpa_key_mgmt'], "WPA-PSK")) {
+				$input_errors[] = gettext("A WPA Passphrase must be specified when WPA PSK is enabled.");
+			}
 		}
 	}
 	if (!$input_errors) {
@@ -3273,7 +3278,7 @@ $types6 = array("none" => gettext("None"), "staticv6" => gettext("Static IPv6"),
 										</td>
 									</tr>
 								</table>
-								<br /><?=gettext("Passphrase must be from 8 to 63 characters."); ?>
+								<br /><?=gettext("WPA Passphrase must be between 8 and 63 characters long."); ?>
 							</td>
 						</tr>
 						<tr>

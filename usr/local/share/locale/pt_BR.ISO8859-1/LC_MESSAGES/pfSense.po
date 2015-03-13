@@ -18334,7 +18334,7 @@ msgstr "Tamanho de chave WEP inválido. Tamanhos devem ser de 40 (64) chaves de b
 #: usr/local/www/interfaces.php:662 usr/local/www/interfaces.php:677
 #: usr/local/www/interfaces.php:718 usr/local/www/interfaces.php:714
 #: usr/local/www/interfaces.php:719
-msgid "The passphrase must be between 8 and 63 characters long."
+msgid "The WPA passphrase must be between 8 and 63 characters long."
 msgstr "O tamanho da frase secreta deve ser entre 8 e 63 caracteres."
 
 #: usr/local/www/interfaces.php:659
@@ -19725,7 +19725,7 @@ msgstr "PSK:"
 #: usr/local/www/interfaces.php:2469 usr/local/www/interfaces.php:2499
 #: usr/local/www/interfaces.php:2545 usr/local/www/interfaces.php:2534
 #: usr/local/www/interfaces.php:2570
-msgid "Passphrase must be from 8 to 63 characters."
+msgid "WPA Passphrase must be between 8 and 63 characters long."
 msgstr "Frase secreta deve ter de 8 a 63 caracteres."
 
 #: usr/local/www/interfaces.php:2305 usr/local/www/interfaces.php:2485

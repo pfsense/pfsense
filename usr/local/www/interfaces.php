@@ -2986,6 +2986,7 @@ $types6 = array("none" => gettext("None"), "staticv6" => gettext("Static IPv6"),
 						<?php else: ?>
 						<input name="protmode" type="hidden" id="protmode" value="off" />
 						<?php endif; ?>
+						<?php /* txpower is disabled because of issues with it.
 						<tr>
 							<td valign="top" class="vncellreq"><?=gettext("Transmit power"); ?></td>
 							<td class="vtable">
@@ -3002,7 +3003,8 @@ $types6 = array("none" => gettext("None"), "staticv6" => gettext("Static IPv6"),
 								</select><br />
 								<?=gettext("Note: Typically only a few discreet power settings are available and the driver will use the setting closest to the specified value.  Not all adapters support changing the transmit power setting."); ?>
 							</td>
-						</tr>
+						</tr>*/
+						?>
 						<tr>
 							<td valign="top" class="vncellreq"><?=gettext("Channel"); ?></td>
 							<td class="vtable">

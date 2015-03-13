@@ -2630,9 +2630,10 @@ function interface_wireless_configure($if, &$wl, &$wlcfg) {
 	}
 
 	/* handle txpower setting */
-	/* if ($wlcfg['txpower'] <> "")
+	if($wlcfg['txpower'] <> "" && is_numeric($wlcfg['txpower'])) {
 		$wlcmd[] = "txpower " . escapeshellarg($wlcfg['txpower']);
-	*/
+	}
+	
 	/* handle wme option */
 	if (isset($wlcfg['wme']['enable'])) {
 		$wlcmd[] = "wme";
@@ -2662,6 +2663,8 @@ function interface_wireless_configure($if, &$wl, &$wlcfg) {
 			$i++;
 		}
 		$wlcmd[] = $wepset;
+	} else if (isset($wlcfg['wpa']['enable'])) {
+		$wlcmd[] = "authmode wpa wepmode off ";
 	} else {
 		$wlcmd[] = "authmode open wepmode off ";
 	}

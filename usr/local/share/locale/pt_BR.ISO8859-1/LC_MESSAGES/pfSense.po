@@ -19411,7 +19411,7 @@ msgstr "Nota: Esse campo pode ser usado para afinar os temporizadores ACK/CTS pa
 #: usr/local/www/interfaces.php:2271 usr/local/www/interfaces.php:2301
 #: usr/local/www/interfaces.php:2347 usr/local/www/interfaces.php:2336
 #: usr/local/www/interfaces.php:2372
-msgid "(measured in Meters and works only for Atheros based cards !)"
+msgid "(measured in meters)"
 msgstr "(medido em Metros e funciona somente com cartões baseados em Atheros!)"
 
 #: usr/local/www/interfaces.php:2110 usr/local/www/interfaces.php:2288

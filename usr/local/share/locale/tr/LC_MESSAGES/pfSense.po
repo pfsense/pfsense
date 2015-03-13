@@ -15140,7 +15140,7 @@ msgstr ""
 "mesafeyi belielemek için ACK/CTS zamanlayıcılarını ayarlamada kullanılabilir"
 
 #: usr/local/www/interfaces.php:3016
-msgid "(measured in Meters and works only for Atheros based cards !)"
+msgid "(measured in meters)"
 msgstr ""
 "(metre cinsinden ölçülür ve sadece Atheros tabanlı kartlarda çalışır !)"
 

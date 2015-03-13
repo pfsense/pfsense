@@ -13563,7 +13563,7 @@ msgid ""
 msgstr ""
 
 #: usr/local/www/interfaces.php:813
-msgid "The passphrase must be between 8 and 63 characters long."
+msgid "The WPA passphrase must be between 8 and 63 characters long."
 msgstr ""
 
 #: usr/local/www/interfaces.php:1383
@@ -14750,7 +14750,7 @@ msgid "PSK:"
 msgstr ""
 
 #: usr/local/www/interfaces.php:3214
-msgid "Passphrase must be from 8 to 63 characters."
+msgid "WPA Passphrase must be between 8 and 63 characters long."
 msgstr ""
 
 #: usr/local/www/interfaces.php:3218

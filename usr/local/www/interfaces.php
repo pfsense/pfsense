@@ -870,7 +870,7 @@ if ($_POST['apply']) {
 				}
 				if(strlen($_POST['key' . $i]) == 28)
 					continue;
-				$input_errors[] =  gettext("Invalid WEP key size.   Sizes should be 40 (64) bit keys or 104 (128) bit.");
+				$input_errors[] =  gettext("Invalid WEP key. Enter a valid 40, 64, 104 or 128 bit WEP key.");
 				break;
 			}
 		}
@@ -878,7 +878,7 @@ if ($_POST['apply']) {
 		if ($_POST['passphrase']) {
 			$passlen = strlen($_POST['passphrase']);
 			if ($passlen < 8 || $passlen > 63)
-				$input_errors[] = gettext("The length of the passphrase should be between 8 and 63 characters.");
+				$input_errors[] = gettext("The passphrase must be between 8 and 63 characters long.");
 		}
 	}
 	if (!$input_errors) {

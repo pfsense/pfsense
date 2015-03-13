@@ -18327,14 +18327,14 @@ msgstr "SSID"
 #: usr/local/www/interfaces.php:654 usr/local/www/interfaces.php:669
 #: usr/local/www/interfaces.php:710 usr/local/www/interfaces.php:706
 #: usr/local/www/interfaces.php:711
-msgid "Invalid WEP key size.   Sizes should be 40 (64) bit keys or 104 (128) bit."
+msgid "Invalid WEP key. Enter a valid 40, 64, 104 or 128 bit WEP key."
 msgstr "Tamanho de chave WEP inválido. Tamanhos devem ser de 40 (64) chaves de bit ou 104 (128) bits."
 
 #: usr/local/www/interfaces.php:591 usr/local/www/interfaces.php:665
 #: usr/local/www/interfaces.php:662 usr/local/www/interfaces.php:677
 #: usr/local/www/interfaces.php:718 usr/local/www/interfaces.php:714
 #: usr/local/www/interfaces.php:719
-msgid "The length of the passphrase should be between 8 and 63 characters."
+msgid "The passphrase must be between 8 and 63 characters long."
 msgstr "O tamanho da frase secreta deve ser entre 8 e 63 caracteres."
 
 #: usr/local/www/interfaces.php:659

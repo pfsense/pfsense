@@ -637,7 +637,7 @@ function ipsec_find_id(& $ph1ent, $side = "local", $rgmap = array()) {
 		$addr = ipsec_get_phase1_src($ph1ent);
 		if (!$addr)
 			return array();
-	} elseif ($side = "peer") {
+	} elseif ($side == "peer") {
 		$id_type = $ph1ent['peerid_type'];
 		$id_data = $ph1ent['peerid_data'];
 

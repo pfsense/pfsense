@@ -107,9 +107,12 @@ function adjust_gmt($dt) {
 	}
 	if ($dhcpleaseinlocaltime == "yes") {
 		$ts = strtotime($dt . " GMT");
-		return strftime("%Y/%m/%d %I:%M:%S%p", $ts);
-	} else
-		return $dt;
+		if ($ts !== false) {
+			return strftime("%Y/%m/%d %I:%M:%S%p", $ts);
+		}
+	}
+	/* If we did not need to convert to local time or the conversion failed, just return the input. */
+	return $dt;
 }
 
 function remove_duplicate($array, $field)
@@ -186,9 +189,16 @@ foreach($leases_content as $lease) {
 				$f = $f+3;
 				break;
 			case "ends":
-				$leases[$l]['end'] = $data[$f+2];
-				$leases[$l]['end'] .= " " . $data[$f+3];
-				$f = $f+3;
+				if ($data[$f+1] == "never") {
+					// Quote from dhcpd.leases(5) man page:
+					// If a lease will never expire, date is never instead of an actual date.
+					$leases[$l]['end'] = gettext("Never");
+					$f = $f+1;
+				} else {
+					$leases[$l]['end'] = $data[$f+2];
+					$leases[$l]['end'] .= " " . $data[$f+3];
+					$f = $f+3;
+				}
 				break;
 			case "tstp":
 				$f = $f+3;

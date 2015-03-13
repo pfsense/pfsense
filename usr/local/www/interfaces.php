@@ -771,14 +771,14 @@ if ($_POST['apply']) {
 		if ($_POST['mode'] == 'hostap') {
 			$reqdfields[] = "ssid";
 			$reqdfieldsn[] = gettext("SSID");
-			if (stristr($_POST['standard'], '11n')) {
-				if (!($_POST['wme_enable'])) {
-					$input_errors[] = gettext("802.11n standards require enabling WME.");
-				}
-			}
 			if (isset($_POST['channel']) && $_POST['channel'] == "0") {
 				// auto channel with hostap is broken, prevent this for now.
 				$input_errors[] = gettext("A specific channel, not auto, must be selected for Access Point mode.");
+			}
+		}
+		if (stristr($_POST['standard'], '11n')) {
+			if (!($_POST['wme_enable'])) {
+				$input_errors[] = gettext("802.11n standards require enabling WME.");
 			}
 		}
 		do_input_validation($_POST, $reqdfields, $reqdfieldsn, $input_errors);

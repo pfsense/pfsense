@@ -2416,9 +2416,11 @@ function interface_wireless_configure($if, &$wl, &$wlcfg) {
 	}
 
 	/* handle txpower setting */
+	// or don't. this has issues at the moment.
+	/*
 	if($wlcfg['txpower'] <> "" && is_numeric($wlcfg['txpower'])) {
 		$wlcmd[] = "txpower " . escapeshellarg($wlcfg['txpower']);
-	}
+	}*/
 	
 	/* handle wme option */
 	if(isset($wlcfg['wme']['enable'])) {

@@ -8,7 +8,7 @@ if [ "$script_type" = "client-connect" ]; then
 	fi
 elif [ "$script_type" = "client-disconnect" ]; then
 	command="/sbin/pfctl -a 'openvpn/$common_name' -F rules"
-        eval $command
+	eval $command
 	/sbin/pfctl -k $ifconfig_pool_remote_ip
 	/sbin/pfctl -K $ifconfig_pool_remote_ip
 fi

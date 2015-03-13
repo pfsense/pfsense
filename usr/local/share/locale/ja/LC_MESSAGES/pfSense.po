@@ -21626,7 +21626,7 @@ msgstr ""無効なWEPキーのサイズ。サイズは40 （ 64 ）ビットキ�
 #: usr/local/www/interfaces.php:662 usr/local/www/interfaces.php:677
 #: usr/local/www/interfaces.php:718 usr/local/www/interfaces.php:714
 #: usr/local/www/interfaces.php:714
-msgid "The length of the passphrase should be between 8 and 63 characters."
+msgid "The passphrase must be between 8 and 63 characters long."
 msgstr "パスフレーズの長さは8 〜63文字にする必要があります。"
 
 #: usr/local/www/interfaces.php:659

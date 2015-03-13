@@ -14104,13 +14104,13 @@ msgstr "SSID"
 
 #: usr/local/www/interfaces.php:805
 msgid ""
-"Invalid WEP key size.   Sizes should be 40 (64) bit keys or 104 (128) bit."
+"Invalid WEP key. Enter a valid 40, 64, 104 or 128 bit WEP key."
 msgstr ""
 "WEP anahtar boyutu geçersiz. Anahtar boyutu 40 (64) bit ya da 104 (128) bit "
 "olmalıdır."
 
 #: usr/local/www/interfaces.php:813
-msgid "The length of the passphrase should be between 8 and 63 characters."
+msgid "The passphrase must be between 8 and 63 characters long."
 msgstr "Şifre uzunluğu 8 ila 63 karakter arası olmalıdır."
 
 #: usr/local/www/interfaces.php:1383

@@ -776,6 +776,10 @@ if ($_POST['apply']) {
 					$input_errors[] = gettext("802.11n standards require enabling WME.");
 				}
 			}
+			if (isset($_POST['channel']) && $_POST['channel'] == "0") {
+				// auto channel with hostap is broken, prevent this for now.
+				$input_errors[] = gettext("A specific channel, not auto, must be selected for Access Point mode.");
+			}
 		}
 		do_input_validation($_POST, $reqdfields, $reqdfieldsn, $input_errors);
 		check_wireless_mode();

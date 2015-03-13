@@ -14540,7 +14540,7 @@ msgid ""
 msgstr ""
 
 #: usr/local/www/interfaces.php:3016
-msgid "(measured in Meters and works only for Atheros based cards !)"
+msgid "(measured in meters)"
 msgstr ""
 
 #: usr/local/www/interfaces.php:3021

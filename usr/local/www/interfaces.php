@@ -3075,7 +3075,7 @@ $types6 = array("none" => gettext("None"), "staticv6" => gettext("Static IPv6"),
 								<input name="distance" type="text" class="formfld unknown" id="distance" size="5" value="<?=htmlspecialchars($pconfig['distance']);?>" />
 								<br />
 								<?=gettext("Note: This field can be used to tune ACK/CTS timers to fit the distance between AP and Client"); ?><br />
-								<?=gettext("(measured in Meters and works only for Atheros based cards !)"); ?>
+								<?=gettext("(measured in meters)"); ?>
 							</td>
 						</tr>
 						<?php endif; ?>

@@ -299,20 +299,20 @@ if(! $g['disablehelpmenu']) {
 		</div>
 		<div class="collapse navbar-collapse" id="pf-navbar">
 			<ul class="nav navbar-nav">
-		<?php foreach ([
-				['name' => 'System',      'menu' => $system_menu,      'href' => null],
-				['name' => 'Interfaces',  'menu' => $interfaces_menu,  'href' => null],
-				['name' => 'Firewall',    'menu' => $firewall_menu,    'href' => null],
-				['name' => 'Services',    'menu' => $services_menu,    'href' => null],
-				['name' => 'VPN',         'menu' => $vpn_menu,         'href' => null],
-				['name' => 'Status',      'menu' => $status_menu,      'href' => null],
-				['name' => 'Diagnostics', 'menu' => $diagnostics_menu, 'href' => null],
-				['name' => 'Gold',        'menu' => $gold_menu,        'href' => '_blank'],
-				['name' => 'Help',        'menu' => $help_menu,        'href' => '_blank']
-			] as $item):
-				if ($item['name'] == 'Help' && $g['disablehelpmenu']) {
-					continue;
-				} ?>
+			<?php foreach ([
+					['name' => 'System',      'menu' => $system_menu,      'href' => null],
+					['name' => 'Interfaces',  'menu' => $interfaces_menu,  'href' => null],
+					['name' => 'Firewall',    'menu' => $firewall_menu,    'href' => null],
+					['name' => 'Services',    'menu' => $services_menu,    'href' => null],
+					['name' => 'VPN',         'menu' => $vpn_menu,         'href' => null],
+					['name' => 'Status',      'menu' => $status_menu,      'href' => null],
+					['name' => 'Diagnostics', 'menu' => $diagnostics_menu, 'href' => null],
+					['name' => 'Gold',        'menu' => $gold_menu,        'href' => '_blank'],
+					['name' => 'Help',        'menu' => $help_menu,        'href' => '_blank']
+				] as $item):
+					if ($item['name'] == 'Help' && $g['disablehelpmenu']) {
+						continue;
+					} ?>
 				<li class="dropdown">
 					<a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
 						<?=gettext($item['name'])?>
@@ -320,7 +320,7 @@ if(! $g['disablehelpmenu']) {
 					</a>
 					<ul class="dropdown-menu" role="menu"><?=output_menu($item['menu'], $item['href'])?></ul>
 				</li>
-		<?php endforeach?>
+			<?php endforeach?>
 				<?php if(are_notices_pending()):?>
 					<?php $notices = get_notices()?>
 					<li class="dropdown">
@@ -328,69 +328,59 @@ if(! $g['disablehelpmenu']) {
 							<span class="badge"><?=count($notices)?></span>
 						</a>
 					</li>
-				<?php endif?>
+					<?php
+					require_once('classes/Modal.class.php');
+
+					$modal_notices = new Modal('Notices', 'notices', 'large');
+
+					$modal_notices->addFooter(new Form_Button(
+						'close',
+						'Close',
+						''
+					))->setAttribute('data-dismiss', 'modal');
+
+					$modal_notices->addFooter(new Form_Button(
+						'mark_all_as_read',
+						'Mark all as read',
+						'/?closenotice=all'
+					))->addClass('btn-primary')->removeClass('btn-default');
+
+					$noticeCategories = $notice['category'];
+					foreach($notices as $time => $notice) {
+						if (!isset($noticeCategories[$notice['category']])) {
+							$noticeCategories[ $notice['category'] ] = array();
+						}
+						$notice['time'] = $time;
+						array_push($noticeCategories[$notice['category']], $notice);
+					}
+
+					foreach($noticeCategories as $category => $catNotices) {
+						$html .= "<h4>{$category}</h4>";
+						$html .= '<ul>';
+						foreach($catNotices as $notice) {
+							$html .= '<li>';
+							if (!empty($notice['url'])) {
+								$html .= "<a href=\"{$notice['url']}\">{$notice['id']}</a> - ";
+							}
+							$html .= "{$notice['notice']}<i> @ " . date('Y-m-d H:i:s', $notice['time']) . '</i>';
+							$html .= '</li>';
+						}
+						$html .= '</ul>';
+					}
+					$modal_notices->addHtml($html);
+					print $modal_notices;
+
+				endif;
+				?>
 			</ul>
 		</div>
 	</div>
-
-	<div class="modal fade" id="notices" role="dialog" aria-labelledby="noticesTitle" aria-hidden="true">
-		<div class="modal-dialog">
-			<div class="modal-content">
-				<div class="modal-header">
-					<button type="button" class="close" data-dismiss="modal" aria-label="Close">
-						<span aria-hidden="true">&times;</span>
-					</button>
-
-					<h3 class="modal-title" id="myModalLabel">Notices</h3>
-				</div>
-
-				<div class="modal-body">
-<?php
-$noticeCategories = array();
-foreach($notices as $time => $notice)
-{
-	if (!isset($noticeCategories[ $notice['category'] ]))
-		$noticeCategories[ $notice['category'] ] = array();
-
-	$notice['time'] = $time;
-	array_push($noticeCategories[ $notice['category'] ], $notice);
-}
-
-foreach($noticeCategories as $category => $catNotices):?>
-	<h4><?=$category?></h4>
-	<ul>
-<?php
-	foreach($catNotices as $notice):
-?>
-	<li>
-		<b>
-<?php if (!empty($notice['url'])):?>
-		<a href="<?=$notice['url']?>"><?=$notice['id']?></a> -
-<?php endif;?>
-		</b>
-		<?=$notice['notice']?>
-		<i>@ <?=date('Y-m-d H:i:s', $notice['time'])?></i>
-	</li>
-<?php 	endforeach;?>
-</ul>
-<?php endforeach;?>
-				</div>
-
-				<div class="modal-footer">
-					<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-					<a type="button" class="btn btn-primary" href="/?closenotice=all">Mark all as read</a>
-				</div>
-			</div>
-		</div>
-	</div>
-
 </nav>
 <div class="container">
 	<header class="header">
 		<?=genhtmltitle($pgtitle)?>
 		<ul class="context-links">
 <?php
-
 if (!$hide_service_status && !empty($shortcuts[$shortcut_section]['service'])) {
 	$ssvc = array();
 	switch ($shortcut_section) {
@@ -402,7 +392,6 @@ if (!$hide_service_status && !empty($shortcuts[$shortcut_section]['service'])) {
 			break;
 		default:
 			$ssvc = find_service_by_name($shortcuts[$shortcut_section]['service']);
-
 	}
 	if (!empty($ssvc)) {
 		// echo '<li>'. get_service_status_icon($ssvc, false). '</li>'; TODO: Add missing function

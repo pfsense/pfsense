@@ -457,26 +457,28 @@ function filter_configure_sync($delete_states_if_needed = true) {
 	update_filter_reload_status(gettext("Starting up layer7 daemon"));
 	layer7_start_l7daemon();
 
-	if (!empty($filterdns)) {
-		@file_put_contents("{$g['varetc_path']}/filterdns.conf", implode("", $filterdns));
-		unset($filterdns);
-		if (isvalidpid("{$g['varrun_path']}/filterdns.pid")) {
-			sigkillbypid("{$g['varrun_path']}/filterdns.pid", "HUP");
-		} else {
-			/*
-			 * FilterDNS has three debugging levels. The default chosen is 1.
-			 * Available are level 2 and greater then 2.
-			 */
-			if (isset($config['system']['aliasesresolveinterval']) && is_numeric($config['system']['aliasesresolveinterval'])) {
-				$resolve_interval = $config['system']['aliasesresolveinterval'];
+	if (!platform_booting()) {
+		if (!empty($filterdns)) {
+			@file_put_contents("{$g['varetc_path']}/filterdns.conf", implode("", $filterdns));
+			unset($filterdns);
+			if (isvalidpid("{$g['varrun_path']}/filterdns.pid")) {
+				sigkillbypid("{$g['varrun_path']}/filterdns.pid", "HUP");
 			} else {
-				$resolve_interval = 300;
+				/*
+				 * FilterDNS has three debugging levels. The default chosen is 1.
+				 * Available are level 2 and greater then 2.
+				 */
+				if (isset($config['system']['aliasesresolveinterval']) && is_numeric($config['system']['aliasesresolveinterval'])) {
+					$resolve_interval = $config['system']['aliasesresolveinterval'];
+				} else {
+					$resolve_interval = 300;
+				}
+				mwexec("/usr/local/sbin/filterdns -p {$g['varrun_path']}/filterdns.pid -i {$resolve_interval} -c {$g['varetc_path']}/filterdns.conf -d 1");
 			}
-			mwexec("/usr/local/sbin/filterdns -p {$g['varrun_path']}/filterdns.pid -i {$resolve_interval} -c {$g['varetc_path']}/filterdns.conf -d 1");
+		} else {
+			killbypid("{$g['varrun_path']}/filterdns.pid");
+			@unlink("{$g['varrun_path']}/filterdns.pid");
 		}
-	} else {
-		killbypid("{$g['varrun_path']}/filterdns.pid");
-		@unlink("{$g['varrun_path']}/filterdns.pid");
 	}
 
 	/* run items scheduled for after filter configure run */

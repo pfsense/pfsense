@@ -458,6 +458,8 @@ unset($g['booting']);
 /* If there are ipsec dynamic hosts try again to reload the tunnels as rc.newipsecdns does */
 if ($ipsec_dynamic_hosts) {
 	vpn_ipsec_configure();
+}
+if ($ipsec_dynamic_hosts || !empty($filterdns)) {
 	filter_configure();
 }
 

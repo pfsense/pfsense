@@ -2953,8 +2953,14 @@ $types6 = array("none" => gettext("None"), "staticv6" => gettext("Static IPv6"),
 								foreach($wl_modes as $wl_standard => $wl_channels) {
 									$rowIndex++;
 									echo "<option ";
-									if ($pconfig['standard'] == "$wl_standard")
+									if ($pconfig['standard'] == "$wl_standard") {
 										echo "selected=\"selected\" ";
+									}
+									if ($pconfig['standard'] == "") {
+										if ($wl_standard == "11ng") {
+											echo "selected=\"selected\" ";
+										}
+									}
 									echo "value=\"$wl_standard\">802.$wl_standard</option>\n";
 								}
 								if ($rowIndex == 0)

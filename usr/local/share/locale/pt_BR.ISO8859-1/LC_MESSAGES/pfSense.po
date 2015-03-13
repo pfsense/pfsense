@@ -19834,7 +19834,7 @@ msgstr "Rotação de Chave"
 #: usr/local/www/interfaces.php:2517 usr/local/www/interfaces.php:2547
 #: usr/local/www/interfaces.php:2593 usr/local/www/interfaces.php:2582
 #: usr/local/www/interfaces.php:2618
-msgid "Allowed values are 1-9999 but should not be longer than Master Key Regeneration time."
+msgid "Allowed values are 1-9999. Must be longer than Master Key Regeneration time."
 msgstr "Os valores permitidos são 1-9999 mas não devem ser mais longos que o tempo de Regeneração da Chave Master."
 
 #: usr/local/www/interfaces.php:2353 usr/local/www/interfaces.php:2533
@@ -19848,7 +19848,7 @@ msgstr "Regeneração da Chave Master"
 #: usr/local/www/interfaces.php:2524 usr/local/www/interfaces.php:2554
 #: usr/local/www/interfaces.php:2600 usr/local/www/interfaces.php:2589
 #: usr/local/www/interfaces.php:2625
-msgid "Allowed values are 1-9999 but should not be shorter than Key Rotation time."
+msgid "Allowed values are 1-9999. Must be shorter than Key Rotation time."
 msgstr "Os valores permitidos são 1-9999 mas devem ser menores que o tempo de Rotação da Chave."
 
 #: usr/local/www/interfaces.php:2360 usr/local/www/interfaces.php:2540

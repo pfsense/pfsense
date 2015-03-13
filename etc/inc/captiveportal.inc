@@ -1962,7 +1962,7 @@ function portal_allow($clientip,$clientmac,$username,$password = null, $attribut
 				if ($attributes['voucher'])
 					$mac['logintype'] = "voucher";
 			}
-			if ($username = "unauthenticated")
+			if ($username == "unauthenticated")
 				$mac['descr'] =  "Auto-added";
 			else
 				$mac['descr'] =  "Auto-added for user {$username}";

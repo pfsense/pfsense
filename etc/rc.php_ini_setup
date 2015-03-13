@@ -40,7 +40,7 @@ fi
 # Grab amount of memory that is detected
 if [ -f /var/log/dmesg.boot ]; then
 	AVAILMEM=`/bin/cat /var/log/dmesg.boot |/usr/bin/awk '/avail memory/ { memory=($4 / 1048576); printf("%0.0f\n", memory); exit}'`
-else 
+else
 	AVAILMEM=`/sbin/dmesg -a |/usr/bin/awk '/avail memory/ { memory=($4 / 1048576); printf("%0.0f\n", memory); exit}'`
 fi
 
@@ -61,7 +61,7 @@ if [  ${REALMEM} -lt $MIN_REALMEM_FOR_APC ]; then
 	echo ">>> Under $MIN_REALMEM_FOR_APC megabytes of ram detected.  Not enabling APC." | /usr/bin/logger -p daemon.info -i -t rc.php_ini_setup
 else
 
-	# Calculate APC SHM size according 
+	# Calculate APC SHM size according
 	# to detected memory values
 	if [ "$AVAILMEM" -gt "135" ]; then
 		APCSHMEMSIZE="10M"
@@ -83,11 +83,11 @@ fi
 # Set upload directory
 if [ "$PLATFORM" = "nanobsd" ]; then
 	UPLOADTMPDIR=`/usr/bin/grep upload_path /etc/inc/globals.inc | /usr/bin/cut -d'"' -f4`
-else 
+else
 	UPLOADTMPDIR="/tmp"
 fi
 
-# Define php modules.  Do not add .so, it will  
+# Define php modules.  Do not add .so, it will
 # be done automatically by the script below.
 PHPMODULES="standard"
 if [ "$LOWMEM" != "TRUE" ]; then
@@ -98,7 +98,7 @@ PHPMODULES="$PHPMODULES xml libxml dom"
 PHPMODULES="$PHPMODULES simplexml xmlreader xmlwriter"
 # Downloading via HTTP/FTP (pkg mgr, etc)
 PHPMODULES="$PHPMODULES curl date"
-# Internationalization 
+# Internationalization
 PHPMODULES="$PHPMODULES gettext"
 # User manager
 PHPMODULES="$PHPMODULES ldap openssl pcntl"
@@ -379,7 +379,7 @@ fi
 # Remove old log file if it exists.
 if [ -f /var/run/php_modules_load_errors.txt ]; then
 	/bin/rm /var/run/php_modules_load_errors.txt
-fi 
+fi
 
 for EXT in $PHPMODULES; do
 	PHPMODULESLC="$PHPMODULESLC `echo "$EXT" | /usr/bin/tr '[:upper:]' '[:lower:]'`"
@@ -392,7 +392,7 @@ for EXT in $PHPMODULESLC; do
 	for LM in $LOADED_MODULES; do
 		if [ "$EXT" = "$LM" ]; then
 			SHOULDREMOVE="false"
-		fi		
+		fi
 	done
 	# Handle low memory situations
 	if [ "$LOWMEM" = "TRUE" ]; then

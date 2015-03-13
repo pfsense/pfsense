@@ -13,8 +13,8 @@ echo "Restarting webConfigurator...";
 sigkillbyname("lighttpd", "KILL");
 
 while (is_process_running("lighttpd")) {
-        echo '.';
-        sleep(1);
+	echo '.';
+	sleep(1);
 }
 
 system_webgui_start();

@@ -37,30 +37,30 @@ function listtags() {
 	 * I know it's a pain, but it's a pain to find stuff too if it's not
 	 */
 	$ret = array(
-                'acls', 'alias', 'aliasurl', 'allowedip', 'allowedhostname', 'authserver',
-                'bridged', 'build_port_path',
-                'ca', 'cacert', 'cert', 'crl', 'clone', 'config', 'container', 'columnitem',
-                'depends_on_package', 'disk', 'dnsserver', 'dnsupdate', 'domainoverrides', 'dyndns',
-                'earlyshellcmd', 'element', 'encryption-algorithm-option',
-                'field', 'fieldname',
-                'gateway_item', 'gateway_group', 'gif', 'gre', 'group',
-                'hash-algorithm-option', 'hosts', 'member', 'ifgroupentry', 'igmpentry', 'interface_array', 'item', 'key',        
-                'lagg', 'lbaction', 'lbpool', 'l7rules', 'lbprotocol',
-                'member', 'menu', 'tab', 'mobilekey', 'monitor_type', 'mount',
+		'acls', 'alias', 'aliasurl', 'allowedip', 'allowedhostname', 'authserver',
+		'bridged', 'build_port_path',
+		'ca', 'cacert', 'cert', 'crl', 'clone', 'config', 'container', 'columnitem',
+		'depends_on_package', 'disk', 'dnsserver', 'dnsupdate', 'domainoverrides', 'dyndns',
+		'earlyshellcmd', 'element', 'encryption-algorithm-option',
+		'field', 'fieldname',
+		'gateway_item', 'gateway_group', 'gif', 'gre', 'group',
+		'hash-algorithm-option', 'hosts', 'member', 'ifgroupentry', 'igmpentry', 'interface_array', 'item', 'key',
+		'lagg', 'lbaction', 'lbpool', 'l7rules', 'lbprotocol',
+		'member', 'menu', 'tab', 'mobilekey', 'monitor_type', 'mount',
 		'npt', 'ntpserver',
-                'onetoone', 'openvpn-server', 'openvpn-client', 'openvpn-csc', 'option',
-                'package', 'passthrumac', 'phase1', 'phase2', 'ppp', 'pppoe', 'priv', 'proxyarpnet', 'pool',
+		'onetoone', 'openvpn-server', 'openvpn-client', 'openvpn-csc', 'option',
+		'package', 'passthrumac', 'phase1', 'phase2', 'ppp', 'pppoe', 'priv', 'proxyarpnet', 'pool',
 		'qinqentry', 'queue',
-                'pages', 'pipe', 'radnsserver', 'roll', 'route', 'row', 'rrddatafile', 'rule',
+		'pages', 'pipe', 'radnsserver', 'roll', 'route', 'row', 'rrddatafile', 'rule',
 		'schedule', 'service', 'servernat', 'servers',
-                'serversdisabled', 'shellcmd', 'staticmap', 'subqueue',
+		'serversdisabled', 'shellcmd', 'staticmap', 'subqueue',
 		'timerange', 'tunnel', 'user', 'vip', 'virtual_server', 'vlan',
 		'winsserver', 'wolentry', 'widget'
 	);
 	return array_flip($ret);
 }
 
-/* Package XML tags that should be treat as a list not as a traditional array */
+/* Package XML tags that should be treated as a list not as a traditional array */
 function listtags_pkg() {
 	$ret = array('build_port_path', 'depends_on_package', 'onetoone', 'queue', 'rule', 'servernat', 'alias', 'additional_files_needed', 'tab', 'template', 'menu', 'rowhelperfield', 'service', 'step', 'package', 'columnitem', 'option', 'item', 'field', 'package', 'file');
 
@@ -91,8 +91,8 @@ function startElement($parser, $name, $attrs) {
 	} else if (isset($ptr)) {
 		/* multiple entries not allowed for this element, bail out */
 		die(sprintf(gettext('XML error: %1$s at line %2$d cannot occur more than once') . "\n",
-				$name,
-				xml_get_current_line_number($parser)));
+		    $name,
+		    xml_get_current_line_number($parser)));
 	}
 
 	$depth++;
@@ -112,8 +112,9 @@ function endElement($parser, $name) {
 
 	array_pop($curpath);
 
-	if (isset($listtags[strtolower($name)]))
+	if (isset($listtags[strtolower($name)])) {
 		array_pop($curpath);
+	}
 
 	$depth--;
 }
@@ -143,26 +144,27 @@ function cData($parser, $data) {
 function parse_xml_config($cffile, $rootobj, $isstring = "false") {
 	global $listtags;
 	$listtags = listtags();
-        if (isset($GLOBALS['custom_listtags'])) {
-          foreach($GLOBALS['custom_listtags'] as $tag) {
-            $listtags[$tag] = $tag;
-          }
-        }
+	if (isset($GLOBALS['custom_listtags'])) {
+		foreach ($GLOBALS['custom_listtags'] as $tag) {
+			$listtags[$tag] = $tag;
+		}
+	}
 	return parse_xml_config_raw($cffile, $rootobj, $isstring);
 }
 
 function parse_xml_config_pkg($cffile, $rootobj, $isstring = "false") {
 	global $listtags;
 	$listtags = listtags_pkg();
-        if (isset($GLOBALS['custom_listtags_pkg'])) {
-          foreach($GLOBALS['custom_listtags_pkg'] as $tag) {
-            $listtags[$tag] = $tag;
-          }
-        }
+	if (isset($GLOBALS['custom_listtags_pkg'])) {
+		foreach ($GLOBALS['custom_listtags_pkg'] as $tag) {
+			$listtags[$tag] = $tag;
+		}
+	}
 	$cfg =parse_xml_config_raw($cffile, $rootobj, $isstring);
-	if ($cfg == -1)
+	if ($cfg == -1) {
 		return array();
-	
+	}
+
 	return $cfg;
 }
 
@@ -178,7 +180,7 @@ function parse_xml_config_raw($cffile, $rootobj, $isstring = "false") {
 
 	xml_set_element_handler($xml_parser, "startElement", "endElement");
 	xml_set_character_data_handler($xml_parser, "cdata");
-	xml_parser_set_option($xml_parser,XML_OPTION_SKIP_WHITE, 1); 
+	xml_parser_set_option($xml_parser,XML_OPTION_SKIP_WHITE, 1);
 
 	if (!($fp = fopen($cffile, "r"))) {
 		log_error(gettext("Error: could not open XML input") . "\n");
@@ -188,21 +190,24 @@ function parse_xml_config_raw($cffile, $rootobj, $isstring = "false") {
 	while ($data = fread($fp, 4096)) {
 		if (!xml_parse($xml_parser, $data, feof($fp))) {
 			log_error(sprintf(gettext('XML error: %1$s at line %2$d in %3$s') . "\n",
-						xml_error_string(xml_get_error_code($xml_parser)),
-						xml_get_current_line_number($xml_parser),
-						$cffile));
+				xml_error_string(xml_get_error_code($xml_parser)),
+				xml_get_current_line_number($xml_parser),
+				$cffile));
 			return -1;
 		}
 	}
 	xml_parser_free($xml_parser);
 
 	if ($rootobj) {
-		if (!is_array($rootobj))
+		if (!is_array($rootobj)) {
 			$rootobj = array($rootobj);
-		foreach ($rootobj as $rootobj_name)
-			if ($parsedcfg[$rootobj_name])
+		}
+		foreach ($rootobj as $rootobj_name) {
+			if ($parsedcfg[$rootobj_name]) {
 				break;
-		
+			}
+		}
+
 		if (!$parsedcfg[$rootobj_name]) {
 			log_error(sprintf(gettext("XML error: no %s object found!") . "\n", implode(" or ", $rootobj)));
 			return -1;
@@ -236,18 +241,20 @@ function dump_xml_config_sub($arr, $indent) {
 							$xmlconfig .= "</$ent>\n";
 						}
 					} else {
-						if($cval === false) continue;
+						if ($cval === false) {
+							continue;
+						}
 						$xmlconfig .= str_repeat("\t", $indent);
-						if((is_bool($cval) && $cval == true) || ($cval === "")) {
+						if ((is_bool($cval) && $cval == true) || ($cval === "")) {
 							$xmlconfig .= "<$ent/>\n";
-						} else if ((substr($ent, 0, 5) == "descr")
-							|| (substr($ent, 0, 6) == "detail")
-							|| (substr($ent, 0, 12) == "login_banner")
-							|| (substr($ent, 0, 9) == "ldap_attr")
-							|| (substr($ent, 0, 9) == "ldap_bind")
-							|| (substr($ent, 0, 11) == "ldap_basedn")
-							|| (substr($ent, 0, 18) == "ldap_authcn")
-							|| (substr($ent, 0, 19) == "ldap_extended_query")) {
+						} else if ((substr($ent, 0, 5) == "descr") ||
+						    (substr($ent, 0, 6) == "detail") ||
+						    (substr($ent, 0, 12) == "login_banner") ||
+						    (substr($ent, 0, 9) == "ldap_attr") ||
+						    (substr($ent, 0, 9) == "ldap_bind") ||
+						    (substr($ent, 0, 11) == "ldap_basedn") ||
+						    (substr($ent, 0, 18) == "ldap_authcn") ||
+						    (substr($ent, 0, 19) == "ldap_extended_query")) {
 							$xmlconfig .= "<$ent><![CDATA[" . htmlentities($cval) . "]]></$ent>\n";
 						} else {
 							$xmlconfig .= "<$ent>" . htmlentities($cval) . "</$ent>\n";
@@ -271,17 +278,18 @@ function dump_xml_config_sub($arr, $indent) {
 				$xmlconfig .= "<$ent/>\n";
 			} else if (!is_bool($val)) {
 				$xmlconfig .= str_repeat("\t", $indent);
-				if ((substr($ent, 0, 5) == "descr")
-				|| (substr($ent, 0, 6) == "detail")
-				|| (substr($ent, 0, 12) == "login_banner")
-				|| (substr($ent, 0, 9) == "ldap_attr")
-				|| (substr($ent, 0, 9) == "ldap_bind")
-				|| (substr($ent, 0, 11) == "ldap_basedn")
-				|| (substr($ent, 0, 18) == "ldap_authcn")
-				|| (substr($ent, 0, 19) == "ldap_extended_query"))
+				if ((substr($ent, 0, 5) == "descr") ||
+				    (substr($ent, 0, 6) == "detail") ||
+				    (substr($ent, 0, 12) == "login_banner") ||
+				    (substr($ent, 0, 9) == "ldap_attr") ||
+				    (substr($ent, 0, 9) == "ldap_bind") ||
+				    (substr($ent, 0, 11) == "ldap_basedn") ||
+				    (substr($ent, 0, 18) == "ldap_authcn") ||
+				    (substr($ent, 0, 19) == "ldap_extended_query"))
 					$xmlconfig .= "<$ent><![CDATA[" . htmlentities($val) . "]]></$ent>\n";
-				else
+				else {
 					$xmlconfig .= "<$ent>" . htmlentities($val) . "</$ent>\n";
+				}
 			}
 		}
 	}
@@ -292,22 +300,22 @@ function dump_xml_config_sub($arr, $indent) {
 function dump_xml_config($arr, $rootobj) {
 	global $listtags;
 	$listtags = listtags();
-        if (isset($GLOBALS['custom_listtags'])) {
-          foreach($GLOBALS['custom_listtags'] as $tag) {
-            $listtags[$tag] = $tag;
-          }
-        }
+	if (isset($GLOBALS['custom_listtags'])) {
+		foreach ($GLOBALS['custom_listtags'] as $tag) {
+			$listtags[$tag] = $tag;
+		}
+	}
 	return dump_xml_config_raw($arr, $rootobj);
 }
 
 function dump_xml_config_pkg($arr, $rootobj) {
 	global $listtags;
 	$listtags = listtags_pkg();
-        if (isset($GLOBALS['custom_listtags_pkg'])) {
-          foreach($GLOBALS['custom_listtags_pkg'] as $tag) {
-            $listtags[$tag] = $tag;
-          }
-        }
+	if (isset($GLOBALS['custom_listtags_pkg'])) {
+		foreach ($GLOBALS['custom_listtags_pkg'] as $tag) {
+			$listtags[$tag] = $tag;
+		}
+	}
 	return dump_xml_config_raw($arr, $rootobj);
 }
 

@@ -148,12 +148,14 @@ if ($_POST) {
 		elseif (isset($config['ntpd']['notrap']))
 			unset($config['ntpd']['notrap']);
 
-		if ((empty($_POST['statsgraph'])) != (isset($config['ntpd']['statsgraph'])));
-			enable_rrd_graphing();
+		if ((empty($_POST['statsgraph'])) == (isset($config['ntpd']['statsgraph'])))
+			$enable_rrd_graphing = true;
 		if (!empty($_POST['statsgraph']))
 			$config['ntpd']['statsgraph'] = $_POST['statsgraph'];
 		elseif (isset($config['ntpd']['statsgraph']))
 			unset($config['ntpd']['statsgraph']);
+		if (isset($enable_rrd_graphing))
+			enable_rrd_graphing();
 
 		if (!empty($_POST['leaptxt']))
 			$config['ntpd']['leapsec'] = base64_encode($_POST['leaptxt']);
@@ -295,10 +297,10 @@ include("head.inc");
 						
 						echo "<input name=\"server{$i}\" class=\"formfld unknown\" id=\"server{$i}\" size=\"30\" value=\"{$timeservers[$i]}\" type=\"text\" />&emsp;";
 						echo "\n<input name=\"servprefer{$i}\" class=\"formcheckbox\" id=\"servprefer{$i}\" onclick=\"CheckOffOther('servprefer{$i}', 'servselect{$i}')\" type=\"checkbox\"";
-						if (substr_count($config['ntpd']['prefer'], $timeservers[$i])) echo " checked=\"checked\"";
+						if (isset($config['ntpd']['prefer']) && isset($timeservers[$i]) && substr_count($config['ntpd']['prefer'], $timeservers[$i])) echo " checked=\"checked\"";
 						echo " />&nbsp;prefer&emsp;";
 						echo "\n<input name=\"servselect{$i}\" class=\"formcheckbox\" id=\"servselect{$i}\" onclick=\"CheckOffOther('servselect{$i}', 'servprefer{$i}')\" type=\"checkbox\"";
-						if (substr_count($config['ntpd']['noselect'], $timeservers[$i])) echo " checked=\"checked\"";
+						if (isset($config['ntpd']['noselect']) && isset($timeservers[$i]) && substr_count($config['ntpd']['noselect'], $timeservers[$i])) echo " checked=\"checked\"";
 						echo " />&nbsp;noselect\n<br />\n</div>\n";
 					}
 					?>
@@ -324,7 +326,7 @@ include("head.inc");
 				<td width="22%" valign="top" class="vncellreq">NTP graphs</td>
 				<td width="78%" class="vtable">
 					<input name="statsgraph" type="checkbox" class="formcheckbox" id="statsgraph" <?php if($pconfig['statsgraph']) echo " checked=\"checked\""; ?> />
-					<?php echo gettext("Enable rrd graphs of NTP statistics (default: disabled)."); ?>
+					<?php echo gettext("Enable RRD graphs of NTP statistics (default: disabled)."); ?>
 				</td>
 			</tr>
 			<tr>

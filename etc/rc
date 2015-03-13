@@ -102,8 +102,8 @@ else
 	# If /conf is a directory, convert it to a symlink to /cf/conf
 	if [ -d "/conf" ]; then
 		# If item is not a symlink then rm and recreate
-		CONFPOINTSTO=`readlink /conf` 
-		if ! test "x$CONFPOINTSTO" = "x/cf/conf"; then 
+		CONFPOINTSTO=`readlink /conf`
+		if ! test "x$CONFPOINTSTO" = "x/cf/conf"; then
 			/bin/rm -rf /conf
 			/bin/ln -s /cf/conf /conf
 		fi
@@ -225,8 +225,8 @@ if [ "$PLATFORM" = "cdrom" ] ; then
 	/bin/mkdir /tmp/unionfs/confdefault
 	/sbin/mount_unionfs /tmp/unionfs/usr /usr/
 	/sbin/mount_unionfs /tmp/unionfs/root /root/
-	/sbin/mount_unionfs /tmp/unionfs/bin /bin/		
-	/sbin/mount_unionfs /tmp/unionfs/sbin /sbin/	
+	/sbin/mount_unionfs /tmp/unionfs/bin /bin/
+	/sbin/mount_unionfs /tmp/unionfs/sbin /sbin/
 	/sbin/mount_unionfs /tmp/unionfs/boot /boot/
 	/sbin/mount_unionfs /tmp/unionfs/confdefault /conf.default/
 	echo "done."
@@ -269,22 +269,22 @@ if [ ! -L /etc/hosts ]; then
 fi
 
 if [ ! -L /etc/resolv.conf ]; then
-    /bin/rm -rf /etc/resolv.conf
-    /bin/ln -s /var/etc/resolv.conf /etc/resolv.conf
+	/bin/rm -rf /etc/resolv.conf
+	/bin/ln -s /var/etc/resolv.conf /etc/resolv.conf
 fi
 
 if [ ! -L /etc/resolvconf.conf ]; then
-    /bin/rm -rf /etc/resolvconf.conf
-    /bin/ln -s /var/etc/resolvconf.conf /etc/resolvconf.conf
+	/bin/rm -rf /etc/resolvconf.conf
+	/bin/ln -s /var/etc/resolvconf.conf /etc/resolvconf.conf
 fi
 
 # Setup compatibility link for packages that
 # have trouble overriding the PREFIX configure
 # argument since we build our packages in a
 # separated PREFIX area
-# Only create if symlink does not exist. 
+# Only create if symlink does not exist.
 if [ ! -h /tmp/tmp ]; then
-    /bin/ln -hfs / /tmp/tmp
+	/bin/ln -hfs / /tmp/tmp
 fi
 
 # Make sure our /tmp is 777 + Sticky
@@ -296,13 +296,13 @@ fi
 if [ ! "$PLATFORM" = "cdrom" ] ; then
 	# Malloc debugging check
 	if [ -L /etc/malloc.conf ]; then
-	    #ln -s aj /etc/malloc.conf
+		#ln -s aj /etc/malloc.conf
 		/bin/rm /etc/malloc.conf
 	fi
 fi
 
 if [ ! -L /etc/dhclient.conf ]; then
-    /bin/rm -rf /etc/dhclient.conf
+	/bin/rm -rf /etc/dhclient.conf
 fi
 
 if [ ! -d /var/tmp ]; then
@@ -310,7 +310,7 @@ if [ ! -d /var/tmp ]; then
 fi
 
 if [ ! -d /cf/conf/backup/ ]; then
-	/bin/mkdir -p /cf/conf/backup/ 
+	/bin/mkdir -p /cf/conf/backup/
 fi
 
 set -T
@@ -334,18 +334,18 @@ if [ ! ${DEFAULT_LOG_FILE_SIZE} ]; then
 fi
 
 for logfile in $LOG_FILES; do
-	if [ "$DISABLESYSLOGCLOG" -gt "0" ]; then 
+	if [ "$DISABLESYSLOGCLOG" -gt "0" ]; then
 		/usr/bin/touch /var/log/$logfile.log
-	else 
+	else
 		if [ ! -f /var/log/$logfile.log ]; then
 			if [ "$ENABLEFIFOLOG" -gt "0" ]; then
 				# generate fifolog files
 				/usr/sbin/fifolog_create -s ${DEFAULT_LOG_FILE_SIZE} /var/log/$logfile.log
-			else 
+			else
 				/usr/local/sbin/clog -i -s ${DEFAULT_LOG_FILE_SIZE} /var/log/$logfile.log
 			fi
 		fi
-	fi 
+	fi
 done
 
 # change permissions on newly created fifolog files.
@@ -368,7 +368,7 @@ echo -n "."
 
 # Make sure /etc/rc.conf doesn't exist.
 if [ -f /etc/rc.conf ]; then
-    /bin/rm -rf /etc/rc.conf
+	/bin/rm -rf /etc/rc.conf
 fi
 
 if [ ! "$PLATFORM" = "jail" ]; then
@@ -429,7 +429,7 @@ if [ -f $varrunpath/booting ]; then
 	/bin/rm $varrunpath/booting
 fi
 
-# If a shell was selected from recovery 
+# If a shell was selected from recovery
 # console then just drop to the shell now.
 if [ -f "/tmp/donotbootup" ]; then
 	echo "Dropping to recovery shell."

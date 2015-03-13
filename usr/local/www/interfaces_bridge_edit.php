@@ -264,6 +264,7 @@ function show_source_port_range() {
 
 <?php include("fbegin.inc"); ?>
 <?php if ($input_errors) print_input_errors($input_errors); ?>
+<?php $size=count($ifacelist); ?>
             <form action="interfaces_bridge_edit.php" method="post" name="iform" id="iform">
               <table width="100%" border="0" cellpadding="6" cellspacing="0" summary="interfaces bridge edit">
 				<tr>
@@ -272,7 +273,7 @@ function show_source_port_range() {
 				<tr>
                   <td width="22%" valign="top" class="vncellreq"><?=gettext("Member interfaces"); ?></td>
                   <td width="78%" class="vtable">
-				  <select name="members[]" multiple="multiple" class="formselect" size="3">
+				  <select name="members[]" multiple="multiple" class="formselect" size="<?php echo $size; ?>">
                       <?php
 						$members_array = explode(',', $pconfig['members']);
 						foreach ($ifacelist as $ifn => $ifinfo) {

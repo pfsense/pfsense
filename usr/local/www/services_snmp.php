@@ -425,8 +425,8 @@ function enable_change(whichone) {
 						if ($lip == $pconfig['bindip'])
 							$selected = "selected=\"selected\"";
 				?>
-					<option value="<?=$ldescr;?>" <?=$selected;?>>
-						<?=htmlspecialchars($lip['name']);?>
+					<option value="<?=$lip;?>" <?=$selected;?>>
+						<?=htmlspecialchars($ldescr);?>
 					</option>
 				<?php endforeach;
 				    unset($listenips);

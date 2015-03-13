@@ -40,10 +40,11 @@ if (count($todo) > 0) {
 		if ($r == 1) {
 			$result = "";
 			// TODO: Change it when pf supports tables with ports
-			if ($t['type'] == "urltable")
+			if ($t['type'] == "urltable") {
 				exec("/sbin/pfctl -t " . escapeshellarg($t['name']) . " -T replace -f /var/db/aliastables/" . escapeshellarg($t['name']) . ".txt 2>&1", $result);
-			else
+			} else {
 				$filter_reload = true;
+			}
 			log_error("{$argv[0]}: Updated {$t['name']} content from {$t['url']}: {$result[0]}");
 		} elseif ($r == -1) {
 			log_error("{$argv[0]}: {$t['name']} does not need updating.");
@@ -52,7 +53,8 @@ if (count($todo) > 0) {
 		}
 	}
 
-	if ($filter_reload)
+	if ($filter_reload) {
 		send_event("filter reload");
+	}
 }
 ?>

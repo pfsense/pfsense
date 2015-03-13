@@ -53,7 +53,7 @@ if (isset($config['system']['enablesshd'])) {
 		echo " done.\n";
 		exec("ps awux | grep '/usr/sbin/sshd' | grep -v grep | awk '{print $2}' | xargs kill");
 	}
-	
+
 } else {
 	echo "SSHD is currently disabled.  Would you like to enable? [y/n]? ";
 	$yn = chop(fgets($fp));
@@ -67,7 +67,7 @@ if (isset($config['system']['enablesshd'])) {
 		echo "\nReloading firewall rules.";
 		filter_configure();
 		echo " done.\n\n";
-	}	
+	}
 }
 
 fclose($fp);

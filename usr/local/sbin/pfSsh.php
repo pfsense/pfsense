@@ -124,12 +124,12 @@ $show_help_text = <<<EOF
 	/* to disable the firewall filter */
 	\$config['system']['disablefilter'] = true;
 	
-	/* to enable an interface and set it for dhcp */
+	/* to enable an interface and configure it as a DHCP client */
 	\$config['interfaces']['optx']['disabled'] = false;
 	\$config['interfaces']['optx']['ipaddr'] = "dhcp";
 	
-	/* to enable an interface and set a static ip address */
-	\$config['interfaces']['wan']['disabled'] = false;
+	/* to enable an interface and set a static IPv4 address */
+	\$config['interfaces']['wan']['enable'] = true;
 	\$config['interfaces']['wan']['ipaddr'] = "192.168.100.1";
 	\$config['interfaces']['wan']['subnet'] = "24";
 	

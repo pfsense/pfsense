@@ -7,7 +7,7 @@
 if [ -d "${RRDDBPATH}" ]; then
 	[ -z "$NO_REMOUNT" ] && /etc/rc.conf_mount_rw
 	[ -f "${CF_CONF_PATH}/rrd.tgz" ] && /bin/rm -f "${CF_CONF_PATH}"/rrd.tgz
-	
+
 	tgzlist=""
 
 	for rrdfile in "${RRDDBPATH}"/*.rrd ; do

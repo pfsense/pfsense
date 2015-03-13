@@ -110,7 +110,8 @@ if ($_POST) {
 		system_dhcpleases_configure();
 	} else {
 		if (isset($_POST['enable']) && isset($config['dnsmasq']['enable'])) {
-			$input_errors[] = "The DNS Forwarder is enabled. Disable it before enabling the DNS Resolver.";
+			if ($_POST['port'] == $config['dnsmasq']['port'])
+				$input_errors[] = "The DNS Forwarder is enabled using this port. Choose a non-conflicting port, or disable the DNS Forwarder.";
 		}
 
 		if (empty($_POST['active_interface'])) {
@@ -280,7 +281,7 @@ function show_advanced_dns() {
 									<select id="active_interface" name="active_interface[]" multiple="multiple" size="<?php echo $size; ?>">
 										<option value="all" <?php if (empty($pconfig['active_interface']) || empty($pconfig['active_interface'][0]) || in_array("all", $pconfig['active_interface'], true)) echo 'selected="selected"'; ?>>All</option>
 										<?php
-											foreach ($interface_addresses as $laddr => ldescr):
+											foreach ($interface_addresses as $laddr => $ldescr):
 												$selected = "";
 												if (in_array($laddr, $pconfig['active_interface']))
 													$selected = 'selected="selected"';
@@ -301,7 +302,7 @@ function show_advanced_dns() {
 									<select id="outgoing_interface" name="outgoing_interface[]" multiple="multiple" size="<?php echo $size; ?>">
 										<option value="" <?php if (empty($pconfig['outgoing_interface']) || empty($pconfig['outgoing_interface'][0])) echo 'selected="selected"'; ?>>All</option>
 										<?php
-											foreach ($interface_addresses as $laddr):
+											foreach ($interface_addresses as $laddr => $ldescr):
 												$selected = "";
 												if (in_array($laddr, $pconfig['outgoing_interface']))
 												$selected = 'selected="selected"';

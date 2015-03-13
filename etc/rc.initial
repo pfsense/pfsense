@@ -69,14 +69,14 @@ else
 fi
 
 for i in /var/db/pfi/capable_*; do
-    if [ -f $i -a ! -L /cf/conf ]; then
-	option98="98) Move configuration file to removable device"
-	break
-    fi
+	if [ -f $i -a ! -L /cf/conf ]; then
+		option98="98) Move configuration file to removable device"
+		break
+	fi
 done
 
 if [ "$PLATFORM" = "cdrom" ]; then
-    option99="99) Install ${product} to a hard drive, etc."
+	option99="99) Install ${product} to a hard drive, etc."
 fi
 
 # display a cheap menu
@@ -103,78 +103,78 @@ echo
 # see what the user has chosen
 case ${opmode} in
 0)
-        exit && exit && logout
-        ;;
+	exit && exit && logout
+	;;
 1)
-        /etc/rc.initial.setports
-        ;;
+	/etc/rc.initial.setports
+	;;
 2)
-        /etc/rc.initial.setlanip
-        ;;
+	/etc/rc.initial.setlanip
+	;;
 3)
-        /etc/rc.initial.password
-        ;;
+	/etc/rc.initial.password
+	;;
 4)
-        /etc/rc.initial.defaults
-        ;;
+	/etc/rc.initial.defaults
+	;;
 5)
-        /etc/rc.initial.reboot
-        ;;
+	/etc/rc.initial.reboot
+	;;
 6)
-        /etc/rc.initial.halt
-        ;;
+	/etc/rc.initial.halt
+	;;
 7)
-        /etc/rc.initial.ping
-        ;;
+	/etc/rc.initial.ping
+	;;
 8)
-        /bin/tcsh
-        ;;
+	/bin/tcsh
+	;;
 9)
-        /usr/local/sbin/pftop
-        ;;
+	/usr/local/sbin/pftop
+	;;
 10)
-		/usr/local/sbin/clog -f /var/log/filter.log
-		;;
+	/usr/local/sbin/clog -f /var/log/filter.log
+	;;
 11 | 111)
-		/etc/rc.restart_webgui
-		;;
+	/etc/rc.restart_webgui
+	;;
 12)
-		/usr/local/sbin/pfSsh.php
-		;;
-13) 
-		php -f /etc/rc.initial.firmware_update
-		;;
-14) 
-		php -f /etc/rc.initial.toggle_sshd
-		;;	
+	/usr/local/sbin/pfSsh.php
+	;;
+13)
+	php -f /etc/rc.initial.firmware_update
+	;;
+14)
+	php -f /etc/rc.initial.toggle_sshd
+	;;
 15)
-		/etc/rc.restore_config_backup
-		;;
+	/etc/rc.restore_config_backup
+	;;
 16)
-		/etc/rc.php-fpm_restart
-		;;
+	/etc/rc.php-fpm_restart
+	;;
 98)
-		if [ ! -f /tmp/config_moved ]; then
-			/etc/rc.initial.store_config_to_removable_device
-		fi
-		;;
+	if [ ! -f /tmp/config_moved ]; then
+		/etc/rc.initial.store_config_to_removable_device
+	fi
+	;;
 99)
-		if [ -e /dev/ukbd0 ]; then
-			env TERM=cons25 /scripts/lua_installer
-		else
-			/scripts/lua_installer
-		fi
-		;;
+	if [ -e /dev/ukbd0 ]; then
+		env TERM=cons25 /scripts/lua_installer
+	else
+		/scripts/lua_installer
+	fi
+	;;
 100)
-    	if grep "$WORD" "$CONFIG"; then
-			links "https://localhost"
-    	else
-			links "http://localhost"
-    	fi
-    	;;
+	if grep "$WORD" "$CONFIG"; then
+		links "https://localhost"
+	else
+		links "http://localhost"
+	fi
+	;;
 "")
-		kill $PPID ; exit
-		;;
+	kill $PPID ; exit
+	;;
 esac
 
 done

@@ -2430,11 +2430,11 @@ function filter_generate_address(& $rule, $target = "source", $isnat = false) {
 			$matches = "";
 			if ($rule['ipprotocol'] == "inet6") {
 				if (preg_match("/opt([0-9]*)$/", $rule[$target]['network'], $optmatch)) {
-					$opt_ip = $FilterIflist["opt{$optmatch[1]}"]['ipv6'];
-					if (!is_ipaddrv6($opt_ip)) {
+					$opt_sa = $FilterIflist["opt{$optmatch[1]}"]['sav6'];
+					if (!is_ipaddrv6($opt_sa)) {
 						return "";
 					}
-					$src = $opt_ip . "/" . $FilterIflist["opt{$optmatch[1]}"]['snv6'];
+					$src = $opt_sa . "/" . $FilterIflist["opt{$optmatch[1]}"]['snv6'];
 				/* check for opt$NUMip here */
 				} else if (preg_match("/opt([0-9]*)ip/", $rule[$target]['network'], $matches)) {
 					$src = $FilterIflist["opt{$matches[1]}"]['ipv6'];
@@ -2447,11 +2447,11 @@ function filter_generate_address(& $rule, $target = "source", $isnat = false) {
 				}
 			} else {
 				if (preg_match("/opt([0-9]*)$/", $rule[$target]['network'], $optmatch)) {
-					$opt_ip = $FilterIflist["opt{$optmatch[1]}"]['ip'];
-					if (!is_ipaddrv4($opt_ip)) {
+					$opt_sa = $FilterIflist["opt{$optmatch[1]}"]['sa'];
+					if (!is_ipaddrv4($opt_sa)) {
 						return "";
 					}
-					$src = $opt_ip . "/" . $FilterIflist["opt{$optmatch[1]}"]['sn'];
+					$src = $opt_sa . "/" . $FilterIflist["opt{$optmatch[1]}"]['sn'];
 				/* check for opt$NUMip here */
 				} else if (preg_match("/opt([0-9]*)ip/", $rule[$target]['network'], $matches)) {
 					$src = $FilterIflist["opt{$matches[1]}"]['ip'];

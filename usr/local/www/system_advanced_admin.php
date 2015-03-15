@@ -302,7 +302,7 @@ $group->add(new Form_Checkbox(
 	'HTTP',
 	($pconfig['webguiproto']=='http'),
 	'http'
-))->displayAsRadio()->setAttribute('data-toggle', 'disable')->setAttribute('data-target', '#ssl-certificate');
+))->displayAsRadio()->setAttribute('data-toggle', 'collapse')->setAttribute('data-target', '#ssl-certificate');
 
 $group->add($input = new Form_Checkbox(
 	'protocol',
@@ -310,7 +310,7 @@ $group->add($input = new Form_Checkbox(
 	'HTTPS',
 	($pconfig['webguiproto']=='https'),
 	'https'
-))->displayAsRadio()->setAttribute('data-toggle', 'disable')->setAttribute('data-target', '#ssl-certificate');
+))->displayAsRadio()->setAttribute('data-toggle', 'collapse')->setAttribute('data-target', '#ssl-certificate');
 
 $section->add($group);
 
@@ -333,7 +333,7 @@ if (!$certs_available)
 	));
 
 	if ($pconfig['webguiproto'] == 'http')
-		$input->setAttribute('disabled');
+		$input->addClass('collapse');
 }
 
 $section->addInput(new Form_Input(

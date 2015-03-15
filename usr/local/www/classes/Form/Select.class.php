@@ -26,7 +26,7 @@ class Form_Select extends Form_Input
 		$options = '';
 		foreach ($this->_values as $value => $name)
 		{
-			$selected = (is_array($this->_value) && in_array($value, $this->_value) || $this->_value == $value);
+			$selected = (is_array($this->_value) && array_key_exists($value, $this->_value) || $this->_value == $value);
 			$options .= '<option value="'. htmlspecialchars($value) .'"'.($selected ? ' selected' : '').'>'. gettext($name) .'</option>';
 		}
 

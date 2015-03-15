@@ -6,7 +6,7 @@ class Form_StaticText extends Form_Input
 
 	public function __construct($title, $text)
 	{
-		parent::__construct($title, null);
+		parent::__construct(null, $title);
 
 		$this->_text = $text;
 	}

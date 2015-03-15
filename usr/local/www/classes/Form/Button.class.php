@@ -30,10 +30,12 @@ class Form_Button extends Form_Input
 			return parent::_getInput();
 
 		$element = preg_replace('~^<input(.*)/>$~', 'a\1', parent::_getInput());
+		$link = htmlspecialchars($this->_link);
+		$title = htmlspecialchars($this->_title);
 
 		return <<<EOT
-	<{$element} href="{$this->_link}">
-		{$this->_title}
+	<{$element} href="{$link}">
+		{$title}
 	</a>
 EOT;
 	}

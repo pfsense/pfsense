@@ -3,18 +3,17 @@
  */
 
 $(function() {
-	$(function() {
-		enableGlobalPopovers();
-		bindCollapseToOptions();
-	});
+	// Enable popovers globally
+	$('[data-toggle="popover"]').popover()
+
+	runEvents();
+	bindCollapseToOptions();
 
 	/**
-	 * Enable popovers globally
+	 * Run in-page defined events
 	 */
-	var enableGlobalPopovers = function()
+	var runEvents = function()
 	{
-		$('[data-toggle="popover"]').popover();
-
 		while (func = window.events.shift())
 			func();
 	};
@@ -44,7 +43,7 @@ $(function() {
 		// Trigger change to open currently selected item
 		selects.trigger('change');
 	};
-})(jQuery);
+});
 
 // Custom handler for data-toggle=disable
 +function ($) {

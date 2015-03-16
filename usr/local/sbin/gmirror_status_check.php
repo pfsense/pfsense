@@ -9,11 +9,11 @@
 	modification, are permitted provided that the following conditions are met:
 
 	1. Redistributions of source code must retain the above copyright notice,
-	this list of conditions and the following disclaimer.
+	   this list of conditions and the following disclaimer.
 
 	2. Redistributions in binary form must reproduce the above copyright
-	notice, this list of conditions and the following disclaimer in the
-	documentation and/or other materials provided with the distribution.
+	   notice, this list of conditions and the following disclaimer in the
+	   documentation and/or other materials provided with the distribution.
 
 	THIS SOFTWARE IS PROVIDED ``AS IS'' AND ANY EXPRESS OR IMPLIED WARRANTIES,
 	INClUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY
@@ -54,8 +54,9 @@ if (file_exists($status_file)) {
 	sort($previous_mirror_list);
 	if (count($previous_mirror_status) > 0) {
 		// Check list of current mirrors vs old mirrors, notify if one has appeared/disappeared
-		if ($mirror_list != $previous_mirror_list)
+		if ($mirror_list != $previous_mirror_list) {
 			$notices[] = sprintf(gettext("List of mirrors changed. Old: (%s) New: (%s)"), implode(", ", $previous_mirror_list), implode(", ", $mirror_list));
+		}
 
 		// For each mirror, check the mirror status, notify if changed
 		foreach ($mirror_list as $mirror) {
@@ -73,11 +74,12 @@ if (file_exists($status_file)) {
 					// Check the drive status as it may be different.
 					asort($mirror_status[$mirror]['components']);
 					asort($previous_mirror_status[$mirror]['components']);
-					if ($mirror_status[$mirror]['components'] != $previous_mirror_status[$mirror]['components'])
+					if ($mirror_status[$mirror]['components'] != $previous_mirror_status[$mirror]['components']) {
 						$notices[] = sprintf(gettext("Mirror %s drive status changed. Old: (%s) New: (%s)"),
 								$mirror,
 								implode(", ", $previous_mirror_status[$mirror]['components']),
 								implode(", ", $mirror_status[$mirror]['components']));
+					}
 				}
 			}
 		}
@@ -87,7 +89,8 @@ if (count($notices)) {
 	file_notice("gmirror", implode("\n ", $notices), "GEOM Mirror Status Change", 1);
 }
 // Write out current status if changed
-if ($mirror_status != $previous_mirror_status)
+if ($mirror_status != $previous_mirror_status) {
 	file_put_contents($status_file, serialize($mirror_status));
+}
 
 ?>

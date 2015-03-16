@@ -35,7 +35,7 @@ $record['bwdownstream'] = 0;
 $record['simstate'] = 0;
 $record['service'] = 0;
 
-while(true) {
+while (true) {
 	$string = "";
 	$string = fgets($handle, 256);
 
@@ -44,7 +44,7 @@ while(true) {
 	$elements[0] = trim($elements[0]);
 	$elements[1] = trim($elements[1]);
 
-	switch($elements[0]) {
+	switch ($elements[0]) {
 		case "^MODE":
 			$record['mode'] = $elements[1];
 			break;
@@ -70,7 +70,7 @@ while(true) {
 			break;
 	}
 
-	if($i > 10) {
+	if ($i > 10) {
 		$csv = $header;
 		$csv .= implode(",", $record);
 		$csv .= "\n";

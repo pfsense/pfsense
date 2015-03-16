@@ -16,6 +16,6 @@ if [ "${dev_type}" = "tun" ]; then
 fi
 
 /usr/bin/touch /tmp/${1}up
-# reload filter 
+# reload filter
 /usr/local/sbin/pfSctl -c "interface newip ${1}"
 exit 0

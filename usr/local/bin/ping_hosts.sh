@@ -5,9 +5,9 @@
 # (C)2006 Scott Ullrich
 # All rights reserved.
 
-# Format of file should be deliminted by |
-#  Field 1:  Source ip
-#  Field 2:  Destination ip
+# Format of file should be delimited by |
+#  Field 1:  Source IP
+#  Field 2:  Destination IP
 #  Field 3:  Ping count
 #  Field 4:  Script to run when service is down
 #  Field 5:  Script to run once service is restored

@@ -13,13 +13,13 @@
 	</menu>
 	<additional_files_needed>
 		<item>https://packages.pfsense.org/packages/config/miniupnpd/miniupnpd.inc</item>
-	    <prefix>/usr/local/pkg/</prefix>
-	    <chmod>0755</chmod>
+		<prefix>/usr/local/pkg/</prefix>
+		<chmod>0755</chmod>
 	</additional_files_needed>
 	<additional_files_needed>
 		<item>https://packages.pfsense.org/packages/config/miniupnpd/status_upnp.php</item>
-	    <prefix>/usr/local/www/</prefix>
-	    <chmod>0755</chmod>
+		<prefix>/usr/local/www/</prefix>
+		<chmod>0755</chmod>
 	</additional_files_needed>
 	<additional_files_needed>
 		<prefix>/usr/local/sbin/</prefix>
@@ -42,7 +42,7 @@
 			<fieldname>enable</fieldname>
 			<type>checkbox</type>
 			<enablefields>enable_upnp,enable_natpmp,ext_iface,iface_array,download,upload,overridewanip,upnpqueue,logpackets,sysuptime,permdefault</enablefields>
-		</field>			
+		</field>
 		<field>
 			<fielddescr>Allow UPnP Port Mapping</fielddescr>
 			<fieldname>enable_upnp</fieldname>

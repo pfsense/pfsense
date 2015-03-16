@@ -39,8 +39,9 @@ class Form_Checkbox extends Form_Input
 		$this->removeClass('form-control');
 		$this->addColumnClass('checkbox');
 
-		if ($checked)
-			$this->_attributes['checked'] = 'checked';
+		if ($checked) {
+			$this->setAttribute('checked', 'checked');
+		}
 	}
 
 	public function displayAsRadio()

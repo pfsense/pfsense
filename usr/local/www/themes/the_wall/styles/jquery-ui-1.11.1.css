@@ -846,7 +846,7 @@ body .ui-tooltip {
 }
 .ui-widget-content {
 	border: 1px solid #aaaaaa;
-	background: #c9c9c9 url("images/ui-bg_inset-soft_50_c9c9c9_1x100.png") 50% bottom repeat-x;
+	background: #c9c9c9 url("../../../javascript/jquery/images/ui-bg_inset-soft_50_c9c9c9_1x100.png") 50% bottom repeat-x;
 	color: #333333;
 }
 .ui-widget-content a {
@@ -854,7 +854,7 @@ body .ui-tooltip {
 }
 .ui-widget-header {
 	border: 1px solid #bbbbbb;
-	/* background: #dddddd url("images/ui-bg_glass_35_dddddd_1x400.png") 50% 50% repeat-x; */
+	/* background: #dddddd url("../../../javascript/jquery/images/ui-bg_glass_35_dddddd_1x400.png") 50% 50% repeat-x; */
 	color: #444444;
 	font-weight: bold;
 }
@@ -868,7 +868,7 @@ body .ui-tooltip {
 .ui-widget-content .ui-state-default,
 .ui-widget-header .ui-state-default {
 	border: 1px solid #cccccc;
-	background: #eeeeee url("images/ui-bg_glass_60_eeeeee_1x400.png") 50% 50% repeat-x;
+	background: #eeeeee url("../../../javascript/jquery/images/ui-bg_glass_60_eeeeee_1x400.png") 50% 50% repeat-x;
 	font-weight: bold;
 	color: #3383bb;
 }
@@ -885,7 +885,7 @@ body .ui-tooltip {
 .ui-widget-content .ui-state-focus,
 .ui-widget-header .ui-state-focus {
 	border: 1px solid #bbbbbb;
-	background: #f8f8f8 url("images/ui-bg_glass_100_f8f8f8_1x400.png") 50% 50% repeat-x;
+	background: #f8f8f8 url("../../../javascript/jquery/images/ui-bg_glass_100_f8f8f8_1x400.png") 50% 50% repeat-x;
 	font-weight: bold;
 	color: #599fcf;
 }
@@ -904,7 +904,7 @@ body .ui-tooltip {
 .ui-widget-content .ui-state-active,
 .ui-widget-header .ui-state-active {
 	border: 1px solid #999999;
-	background: #999999 url("images/ui-bg_inset-hard_75_999999_1x100.png") 50% 50% repeat-x;
+	background: #999999 url("../../../javascript/jquery/images/ui-bg_inset-hard_75_999999_1x100.png") 50% 50% repeat-x;
 	font-weight: bold;
 	color: #ffffff;
 }
@@ -921,7 +921,7 @@ body .ui-tooltip {
 .ui-widget-content .ui-state-highlight,
 .ui-widget-header .ui-state-highlight {
 	border: 1px solid #ffffff;
-	background: #eeeeee url("images/ui-bg_flat_55_eeeeee_40x100.png") 50% 50% repeat-x;
+	background: #eeeeee url("../../../javascript/jquery/images/ui-bg_flat_55_eeeeee_40x100.png") 50% 50% repeat-x;
 	color: #444444;
 }
 .ui-state-highlight a,
@@ -933,7 +933,7 @@ body .ui-tooltip {
 .ui-widget-content .ui-state-error,
 .ui-widget-header .ui-state-error {
 	border: 1px solid #c0402a;
-	background: #c0402a url("images/ui-bg_flat_55_c0402a_40x100.png") 50% 50% repeat-x;
+	background: #c0402a url("../../../javascript/jquery/images/ui-bg_flat_55_c0402a_40x100.png") 50% 50% repeat-x;
 	color: #ffffff;
 }
 .ui-state-error a,
@@ -979,27 +979,27 @@ body .ui-tooltip {
 }
 .ui-icon,
 .ui-widget-content .ui-icon {
-	background-image: url("images/ui-icons_999999_256x240.png");
+	background-image: url("../../../javascript/jquery/images/ui-icons_999999_256x240.png");
 }
 .ui-widget-header .ui-icon {
-	background-image: url("images/ui-icons_999999_256x240.png");
+	background-image: url("../../../javascript/jquery/images/ui-icons_999999_256x240.png");
 }
 .ui-state-default .ui-icon {
-	background-image: url("images/ui-icons_70b2e1_256x240.png");
+	background-image: url("../../../javascript/jquery/images/ui-icons_70b2e1_256x240.png");
 }
 .ui-state-hover .ui-icon,
 .ui-state-focus .ui-icon {
-	background-image: url("images/ui-icons_3383bb_256x240.png");
+	background-image: url("../../../javascript/jquery/images/ui-icons_3383bb_256x240.png");
 }
 .ui-state-active .ui-icon {
-	background-image: url("images/ui-icons_454545_256x240.png");
+	background-image: url("../../../javascript/jquery/images/ui-icons_454545_256x240.png");
 }
 .ui-state-highlight .ui-icon {
-	background-image: url("images/ui-icons_3383bb_256x240.png");
+	background-image: url("../../../javascript/jquery/images/ui-icons_3383bb_256x240.png");
 }
 .ui-state-error .ui-icon,
 .ui-state-error-text .ui-icon {
-	background-image: url("images/ui-icons_fbc856_256x240.png");
+	background-image: url("../../../javascript/jquery/images/ui-icons_fbc856_256x240.png");
 }
 
 /* positioning */
@@ -1212,14 +1212,14 @@ body .ui-tooltip {
 
 /* Overlays */
 .ui-widget-overlay {
-	background: #eeeeee url("images/ui-bg_flat_0_eeeeee_40x100.png") 50% 50% repeat-x;
+	background: #eeeeee url("../../../javascript/jquery/images/ui-bg_flat_0_eeeeee_40x100.png") 50% 50% repeat-x;
 	opacity: .8;
 	filter: Alpha(Opacity=80); /* support: IE8 */
 }
 .ui-widget-shadow {
 	margin: -4px 0 0 -4px;
 	padding: 4px;
-	background: #aaaaaa url("images/ui-bg_flat_0_aaaaaa_40x100.png") 50% 50% repeat-x;
+	background: #aaaaaa url("../../../javascript/jquery/images/ui-bg_flat_0_aaaaaa_40x100.png") 50% 50% repeat-x;
 	opacity: .6;
 	filter: Alpha(Opacity=60); /* support: IE8 */
 	border-radius: 0pxdow;

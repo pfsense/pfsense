@@ -2533,7 +2533,10 @@ function interface_wireless_configure($if, &$wl, &$wlcfg) {
 	$wlcmd[] = "up";
 	/* Set a/b/g standard */
 	$standard = str_replace(" Turbo", "", $wlcfg['standard']);
-	$wlcmd[] = "mode " . escapeshellarg($standard);
+	/* skip mode entirely for "auto" */
+	if ($wlcfg['standard'] != "auto") {
+		$wlcmd[] = "mode " . escapeshellarg($standard);
+	}
 
 	/* XXX: Disable ampdu for now on mwl when running in 11n mode
 	 * to prevent massive packet loss under certain conditions. */
@@ -2920,10 +2923,13 @@ EOD;
 		}
 	}
 
-	/* The mode must be specified in a separate command before ifconfig
+	/* 20150318 cmb - Note: the below no longer appears to be true on FreeBSD 10.x, so don't set 
+	 * mode twice (for now at least). This can be removed entirely in the future if no problems are found
+	
+	 * The mode must be specified in a separate command before ifconfig
 	 * will allow the mode and channel at the same time in the next. */
-	mwexec("/sbin/ifconfig " . escapeshellarg($if) . " mode " . escapeshellarg($standard));
-	fwrite($wlan_setup_log, "/sbin/ifconfig " . escapeshellarg($if) . " mode " . escapeshellarg($standard) . "\n");
+	//mwexec("/sbin/ifconfig " . escapeshellarg($if) . " mode " . escapeshellarg($standard));
+	//fwrite($wlan_setup_log, "/sbin/ifconfig " . escapeshellarg($if) . " mode " . escapeshellarg($standard) . "\n");
 
 	/* configure wireless */
 	$wlcmd_args = implode(" ", $wlcmd);

@@ -2950,6 +2950,11 @@ $types6 = array("none" => gettext("None"), "staticv6" => gettext("Static IPv6"),
 							<select name="standard" class="formselect" id="standard">
 								<?php
 								$rowIndex = 0;
+								echo "<option ";
+								if ($pconfig['standard'] == "auto") {
+									echo "selected=\"selected\" ";
+								}
+								echo "value=\"auto\">auto</option>\n";
 								foreach($wl_modes as $wl_standard => $wl_channels) {
 									$rowIndex++;
 									echo "<option ";

@@ -1301,6 +1301,8 @@ function interface_bring_down($interface = "wan", $destroy = false, $ifacecfg = 
 			}
 			sleep(3);
 			unlink_if_exists("{$g['varetc_path']}/dhcp6c_{$interface}.conf");
+			unlink_if_exists("{$g['varetc_path']}/dhcp6c_{$interface}_script.sh");
+			unlink_if_exists("{$g['varetc_path']}/rtsold_{$realifv6}_script.sh");
 			if (does_interface_exist($realifv6)) {
 				$ip6 = find_interface_ipv6($realifv6);
 				if (is_ipaddrv6($ip6) && $ip6 != "::") {

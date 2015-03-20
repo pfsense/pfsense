@@ -4051,10 +4051,15 @@ function DHCP6_Config_File_Advanced($interface, $wancfg, $wanif) {
 
 function DHCP6_Config_File_Override($wancfg, $wanif) {
 
-	$dhcp6cconf = file_get_contents($wancfg['adv_dhcp6_config_file_override_path']);
-	$dhcp6cconf = DHCP6_Config_File_Substitutions($wancfg, $wanif, $dhcp6cconf);
+	$dhcp6cconf = @file_get_contents($wancfg['adv_dhcp6_config_file_override_path']);
 
-	return $dhcp6cconf;
+	if ($dhcp6cconf === false) {
+		printf("Error: cannot open {$wancfg['adv_dhcp6_config_file_override_path']} in DHCP6_Config_File_Override() for reading.\n");
+		return '';
+	} else {
+		$dhcp6cconf = DHCP6_Config_File_Substitutions($wancfg, $wanif, $dhcp6cconf);
+		return $dhcp6cconf;
+	}
 }
 
 

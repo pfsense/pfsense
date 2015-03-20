@@ -286,6 +286,7 @@ switch($wancfg['ipaddrv6']) {
 		$pconfig['type6'] = "dhcp6";
 		$pconfig['dhcp6prefixonly'] = isset($wancfg['dhcp6prefixonly']);
 		$pconfig['dhcp6usev4iface'] = isset($wancfg['dhcp6usev4iface']);
+		$pconfig['dhcp6debug'] = isset($wancfg['dhcp6debug']);
 		break;
 	case "6to4":
 		$pconfig['type6'] = "6to4";
@@ -916,6 +917,7 @@ if ($_POST['apply']) {
 		unset($wancfg['dhcp6-ia-pd-send-hint']);
 		unset($wancfg['dhcp6prefixonly']);
 		unset($wancfg['dhcp6usev4iface']);
+		unset($wancfg['dhcp6debug']);
 		unset($wancfg['track6-interface']);
 		unset($wancfg['track6-prefix-id']);
 		unset($wancfg['prefix-6rd']);
@@ -1140,6 +1142,8 @@ if ($_POST['apply']) {
 					$wancfg['dhcp6prefixonly'] = true;
 				if($_POST['dhcp6usev4iface'] == "yes")
 					$wancfg['dhcp6usev4iface'] = true;
+				if($_POST['dhcp6debug'] == "yes")
+					$wancfg['dhcp6debug'] = true;
 
 				if (!empty($_POST['adv_dhcp6_interface_statement_send_options']))
 					$wancfg['adv_dhcp6_interface_statement_send_options'] = $_POST['adv_dhcp6_interface_statement_send_options'];
@@ -2323,7 +2327,13 @@ $types6 = array("none" => gettext("None"), "staticv6" => gettext("Static IPv6"),
 											<?=gettext("Send an IPv6 prefix hint to indicate the desired prefix size for delegation"); ?>
 										</td>
 									</tr>
-
+									<tr style='display:none' id="basicdhcp6_show_dhcp6_debug">
+										<td width="22%" valign="top" class="vncell"><?=gettext("Debug"); ?></td>
+										<td width="78%" class="vtable">
+											<input name="dhcp6debug" type="checkbox" id="dhcp6debug" value="yes" <?php if ($pconfig['dhcp6debug'] == true) echo "checked=\"checked\""; ?> />
+											<?=gettext("Start DHCP6 client in debug mode"); ?>
+										</td>
+									</tr>
 									<tr style='display:none' id="show_adv_dhcp6_interface_statement">
 										<td width="22%" valign="top" class="vncell">
 											<?=gettext("<a target=\"FreeBSD_DHCP\" href=\"http://www.freebsd.org/cgi/man.cgi?query=dhcp6c.conf&amp;sektion=5&amp;apropos=0&amp;manpath=FreeBSD+10.1-RELEASE+and+Ports#Interface_statement\">Interface Statement</a>"); ?>
@@ -2483,6 +2493,7 @@ $types6 = array("none" => gettext("None"), "staticv6" => gettext("Static IPv6"),
 											document.getElementById("basicdhcp6_show_dhcp6_prefix_delegation_size").style.display = basic;
 											document.getElementById("basicdhcp6_show_dhcp6_prefix_send_hint").style.display = basic;
 											document.getElementById("basicdhcp6_show_dhcp6_prefix_only").style.display = basic;
+											document.getElementById("basicdhcp6_show_dhcp6_debug").style.display = basic;
 
 											document.getElementById("show_adv_dhcp6_interface_statement").style.display = advanced;
 											document.getElementById("show_adv_dhcp6_id_assoc_statement").style.display = advanced;

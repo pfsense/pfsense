@@ -81,8 +81,10 @@ function dhcp_clean_leases() {
 				$i++;
 			} while ($leases_contents[$i-1] != "}");
 			/* Check for a matching MAC address and if not present, keep it. */
-			if (! in_array($thismac, $staticmacs))
-				$newleases_contents = array_merge($newleases_contents, $templease);
+			if (! in_array($thismac, $staticmacs)) {
+				foreach ($templease as $value)
+					$newleases_contents[] = $value;
+			}
 		} else {
 			/* It's a line we want to keep, copy it over. */
 			$newleases_contents[] = $leases_contents[$i];

@@ -262,8 +262,6 @@ if (isset($id) && $a_group[$id]){
 	));
 }
 
-$ro = ($pconfig['gtype'] == "system");
-
 $section = new Form_Section('Group properties');
 
 if ($_GET['act'] != "new")
@@ -274,12 +272,15 @@ if ($_GET['act'] != "new")
 	));
 }
 
-$section->addInput(new Form_Input(
+$section->addInput($input = new Form_Input(
 	'groupname',
 	'Group name',
 	'text',
 	$pconfig['name']
 ));
+
+if ($pconfig['gtype'] == "system")
+	$input->setAttribute('readonly', 'readonly');
 
 $section->addInput(new Form_Input(
 	'description',

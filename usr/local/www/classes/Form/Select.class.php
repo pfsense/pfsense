@@ -53,7 +53,11 @@ class Form_Select extends Form_Input
 		$options = '';
 		foreach ($this->_values as $value => $name)
 		{
-			$selected = (is_array($this->_value) && array_key_exists($value, $this->_value) || $this->_value == $value);
+			if (isset($this->_attributes['multiple']))
+				$selected = in_array($value, (array)$this->_value);
+			else
+				$selected = ($this->_value == $value);
+
 			$options .= '<option value="'. htmlspecialchars($value) .'"'.($selected ? ' selected' : '').'>'. gettext($name) .'</option>';
 		}
 

@@ -3,12 +3,6 @@
  */
 
 $(function() {
-	// Enable popovers globally
-	$('[data-toggle="popover"]').popover()
-
-	runEvents();
-	bindCollapseToOptions();
-
 	/**
 	 * Run in-page defined events
 	 */
@@ -43,4 +37,10 @@ $(function() {
 		// Trigger change to open currently selected item
 		selects.trigger('change');
 	};
+
+	// Enable popovers globally
+	$('[data-toggle="popover"]').popover()
+
+	runEvents();
+	bindCollapseToOptions();
 });

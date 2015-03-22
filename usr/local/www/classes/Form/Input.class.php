@@ -29,7 +29,7 @@
 class Form_Input extends Form_Element
 {
 	protected $_title;
-	protected $_attributes;
+	protected $_attributes = array();
 	protected $_help;
 	protected $_helpParams = array();
 	protected $_columnWidth;
@@ -37,18 +37,16 @@ class Form_Input extends Form_Element
 
 	public function __construct($name, $title, $type = 'text', $value = null, array $attributes = array())
 	{
-		$attributes['name'] = $name;
+		$this->_attributes['name'] = $name;
+		$this->_attributes['id'] = $name;
 		$this->_title = $title;
 		$this->addClass('form-control');
 
 		if (isset($type))
-			$attributes['type'] = $type;
+			$this->_attributes['type'] = $type;
 
 		if (isset($value))
-			$attributes['value'] = $value;
-
-		$attributes['id'] = $attributes['name'];
-		$this->_attributes = $attributes;
+			$this->_attributes['value'] = $value;
 
 		return $this;
 	}

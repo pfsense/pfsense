@@ -42,6 +42,7 @@ class Form_Button extends Form_Input
 		else
 		{
 			$this->addClass('btn-primary');
+			$this->setAttribute('value', $title);
 			$type = 'submit';
 		}
 

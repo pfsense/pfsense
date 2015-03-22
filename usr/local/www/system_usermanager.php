@@ -101,7 +101,7 @@ if ($_POST['act'] == "deluser") {
 	$savemsg = gettext("User")." {$userdeleted} ".
 				gettext("successfully deleted")."<br />";
 }
-else if ($_POST['act'] == "new") {
+else if ($_GET['act'] == "new") {
 	/*
 	 * set this value cause the text field is read only
 	 * and the user should not be able to mess with this
@@ -109,24 +109,6 @@ else if ($_POST['act'] == "new") {
 	 */
 	$pconfig['utype'] = "user";
 	$pconfig['lifetime'] = 3650;
-}
-
-if(isset($_POST['dellall_x'])) {
-
-	$del_users = $_POST['delete_check'];
-
-	if(!empty($del_users)) {
-		foreach($del_users as $userid) {
-			if (isset($a_user[$userid]) && $a_user[$userid]['scope'] != "system") {
-				conf_mount_rw();
-				local_user_del($a_user[$userid]);
-				conf_mount_ro();
-				unset($a_user[$userid]);
-			}
-		}
-		$savemsg = gettext("Selected users removed successfully!");
-		write_config($savemsg);
-	}
 }
 
 if ($_POST['save']) {
@@ -339,8 +321,74 @@ $tab_array[] = array(gettext("Settings"), false, "system_usermanager_settings.ph
 $tab_array[] = array(gettext("Servers"), false, "system_authservers.php");
 display_top_tabs($tab_array);
 
-if ($_GET['act'] == "new" || $_GET['act'] == "edit" || $input_errors)
+if (!($_GET['act'] == "new" || $_GET['act'] == "edit" || $input_errors))
 {
+	?>
+<table class="table">
+	<thead>
+		<tr>
+			<th>&nbsp;</th>
+			<th><?=gettext("Username")?></th>
+			<th><?=gettext("Full name")?></th>
+			<th><?=gettext("Disabled")?></th>
+			<th><?=gettext("Groups")?></th>
+		</tr>
+	</thead>
+	<tbody>
+	</tbody>
+	<tbody>
+<?php
+foreach($a_user as $i => $userent):
+	?>
+	<tr>
+		<td>
+			<input type="checkbox" id="frc<?=$i?>" name="delete_check[]" value="<?=$i?>" <?=($userent['scope'] == "system" ? 'disabled="disabled"' : '')?>/>
+		</td>
+		<td>
+<?php
+	if($userent['scope'] != "user")
+		$usrimg = 'eye-open';
+	else
+		$usrimg = 'user';
+?>
+			<i class="icon icon-<?=$usrimg?>"></i>
+			<?=htmlspecialchars($userent['name'])?>
+		</td>
+		<td><?=htmlspecialchars($userent['descr'])?></td>
+		<td><?php if(isset($userent['disabled'])) echo "*"?></td>
+		<td><?=implode(",",local_user_get_groups($userent))?></td>
+		<td>
+			<form>
+				<input type="hidden" name="act" value="edit">
+				<input type="hidden" name="userid" value="<?=$i?>">
+				<input type="submit" class="btn btn-warning" value="edit" />
+			</form>
+<?php if($userent['scope'] != "system"): ?>
+			<form>
+				<input type="hidden" name="act" value="del">
+				<input type="hidden" name="userid" value="<?=$i?>">
+				<input type="submit" class="btn btn-danger" value="delete" />
+			</form>
+<?php endif; ?>
+		</td>
+	</tr>
+<?php endforeach; ?>
+	</tbody>
+</table>
+<a href="?act=new" class="btn btn-success">add new</a>
+<p>
+	<?=gettext("Additional users can be added here. User permissions for accessing " .
+	"the webConfigurator can be assigned directly or inherited from group memberships. " .
+	"An icon that appears grey indicates that it is a system defined object. " .
+	"Some system object properties can be modified but they cannot be deleted.")?>
+	<br /><br />
+	<?=gettext("Accounts created here are also used for other parts of the system " .
+	"such as OpenVPN, IPsec, and Captive Portal.")?>
+</p>
+<?php
+	include("foot.inc");
+	exit;
+}
 
 require('classes/Form.class.php');
 $form = new Form;
@@ -570,82 +618,6 @@ $section->addInput(new Form_Input(
 ));
 
 $form->add($section);
+print $form;
 
-echo $form;
-
-}
-else
-{
-
-?>
-<table class="table">
-	<thead>
-		<tr>
-			<th>&nbsp;</th>
-			<th><?=gettext("Username")?></th>
-			<th><?=gettext("Full name")?></th>
-			<th><?=gettext("Disabled")?></th>
-			<th><?=gettext("Groups")?></th>
-		</tr>
-	</thead>
-	<tbody>
-	</tbody>
-	<tbody>
-<?php
-foreach($a_user as $i => $userent):
-	?>
-	<tr>
-		<td>
-			<input type="checkbox" id="frc<?=$i?>" name="delete_check[]" value="<?=$i?>" <?=($userent['scope'] == "system" ? 'disabled="disabled"' : '')?>/>
-		</td>
-		<td>
-<?php
-	if($userent['scope'] != "user")
-		$usrimg = 'eye-open';
-	else
-		$usrimg = 'user';
-?>
-			<i class="icon icon-<?=$usrimg?>"></i>
-			<?=htmlspecialchars($userent['name'])?>
-		</td>
-		<td><?=htmlspecialchars($userent['descr'])?></td>
-		<td><?php if(isset($userent['disabled'])) echo "*"?></td>
-		<td><?=implode(",",local_user_get_groups($userent))?></td>
-		<td>
-			<form>
-				<input type="hidden" name="act" value="edit">
-				<input type="hidden" name="userid" value="<?=$i?>">
-				<input type="submit" class="btn btn-warning" value="edit" />
-			</form>
-<?php if($userent['scope'] != "system"): ?>
-			<form>
-				<input type="hidden" name="act" value="del">
-				<input type="hidden" name="userid" value="<?=$i?>">
-				<input type="submit" class="btn btn-danger" value="delete" />
-			</form>
-<?php endif; ?>
-		</td>
-	</tr>
-<?php endforeach; ?>
-	</tbody>
-</table>
-<a href="?act=new" class="btn btn-success">add new</a>
-<a href="" class="btn btn-danger">delete selected</a>
-<p>
-	<?=gettext("Additional users can be added here. User permissions for accessing " .
-	"the webConfigurator can be assigned directly or inherited from group memberships. " .
-	"An icon that appears grey indicates that it is a system defined object. " .
-	"Some system object properties can be modified but they cannot be deleted.")?>
-	<br /><br />
-	<?=gettext("Accounts created here are also used for other parts of the system " .
-	"such as OpenVPN, IPsec, and Captive Portal.")?>
-</p>
-
-<?php
-}
-?>
-			</div>
-		</td>
-	</tr>
-</table>
-<?php include("fend.inc");
+include('foot.inc');

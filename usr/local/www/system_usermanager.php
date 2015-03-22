@@ -323,7 +323,7 @@ display_top_tabs($tab_array);
 
 if (!($_GET['act'] == "new" || $_GET['act'] == "edit" || $input_errors))
 {
-	?>
+?>
 <table class="table">
 	<thead>
 		<tr>
@@ -358,17 +358,9 @@ foreach($a_user as $i => $userent):
 		<td><?php if(isset($userent['disabled'])) echo "*"?></td>
 		<td><?=implode(",",local_user_get_groups($userent))?></td>
 		<td>
-			<form>
-				<input type="hidden" name="act" value="edit">
-				<input type="hidden" name="userid" value="<?=$i?>">
-				<input type="submit" class="btn btn-warning" value="edit" />
-			</form>
+			<a href="?act=edit&amp;userid=<?=$i?>" class="btn btn-xs btn-primary">edit</a>
 <?php if($userent['scope'] != "system"): ?>
-			<form>
-				<input type="hidden" name="act" value="del">
-				<input type="hidden" name="userid" value="<?=$i?>">
-				<input type="submit" class="btn btn-danger" value="delete" />
-			</form>
+			<a href="?act=del&amp;userid=<?=$i?>" class="btn btn-xs btn-danger">delete</a>
 <?php endif; ?>
 		</td>
 	</tr>
@@ -442,7 +434,7 @@ $section->addInput($input = new Form_Input(
 if ($ro)
 	$input->setAttribute('disabled', 'disabled');
 
-$group = new Form_Group($input->getTitle());
+$group = new Form_Group('Password');
 $group->add(new Form_Input(
 	'passwordfld1',
 	'Password',
@@ -461,7 +453,7 @@ $section->addInput($input = new Form_Input(
 	'Full name',
 	'text',
 	htmlspecialchars($pconfig['descr'])
-))->setHelp('User"s full name, for your own information only');
+))->setHelp('User\'s full name, for your own information only');
 
 if ($ro)
 	$input->setAttribute('disabled', 'disabled');
@@ -549,10 +541,10 @@ if (isset($pconfig['uid']))
 }
 else
 {
-	$section = new Form_Section('Create certificate for user');
-
 	if (is_array($config['ca']) && count($config['ca']) > 0)
 	{
+		$section = new Form_Section('Create certificate for user');
+
 		$nonPrvCas = array();
 		foreach( $config['ca'] as $ca)
 		{
@@ -597,10 +589,11 @@ else
 				$pconfig['lifetime']
 			));
 		}
+
+		$form->add($section);
 	}
 }
 
-$form->add($section);
 $section = new Form_Section('Keys');
 
 $section->addInput(new Form_Textarea(
